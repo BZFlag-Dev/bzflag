@@ -73,6 +73,7 @@ const char *usageString =
 "[-p <port>] "
 "[-passdb <password file>] "
 "[-passwd <password>] "
+"[-poll <variable>=<value>]"
 #ifdef PRINTSCORE
 "[-printscore] "
 #endif
@@ -110,15 +111,13 @@ const char *usageString =
 "[-userdb <user permissions file>] "
 "[-vars <filename>] "
 "[-version] "
-"[-vetoTime <seconds> ] "
-"[-votePercentage <percentage>] "
-"[-voteRepeatTime <seconds>] "
-"[-votesRequired <num>] "
-"[-voteTime <seconds> ] "
 "[-world <filename>] "
 "[-worldsize < world size>] ";
 
 const char *extraUsageString =
+"\n"
+"BZFS Option Descriptions\n"
+"\n"
 "\t-a: maximum acceleration settings\n"
 "\t-admsg: specify a <msg> which will be broadcast every 15 minutes\n"
 "\t-autoTeam: automatically assign players to teams when they join\n"
@@ -130,7 +129,7 @@ const char *extraUsageString =
 "\t-conf: configuration file\n"
 "\t-cr: capture-the-flag style game with random world\n"
 "\t-d: increase debugging level\n"
-"\t-density: specify density of buildings for CTF or random worlds (default is 5)\n"
+"\t-density: specify building density for random worlds (default is 5)\n"
 "\t+f: always have flag <id> available\n"
 "\t-f: never randomly generate flag <id>\n"
 "\t-fb: allow flags on box buildings\n"
@@ -140,7 +139,7 @@ const char *extraUsageString =
 "\t-g: serve one game and then exit\n"
 "\t-groupdb: file to read for group permissions\n"
 "\t-h: use random building heights\n"
-"\t-handicap: give players an advantage based on their relative playing ability\n"
+"\t-handicap: give advantage based on relative playing ability\n"
 "\t-helpmsg: show the lines in <file> on command /help <name>\n"
 "\t-i: listen on <interface>\n"
 "\t-j: allow jumping\n"
@@ -154,6 +153,7 @@ const char *extraUsageString =
 "\t-p: use alternative port (default is 5154)\n"
 "\t-passdb: file to read for user passwords\n"
 "\t-passwd: specify a <password> for operator commands\n"
+"\t-poll: configure several aspects of the in-game polling system\n"
 #ifdef PRINTSCORE
 "\t-printscore: write score to stdout whenever it changes\n"
 #endif
@@ -175,7 +175,8 @@ const char *extraUsageString =
 "\t-sb: allow tanks to respawn on buildings\n"
 "\t-set <name>=<value>: set a BZDB variable's value\n"
 "\t-sl: limit flag <id> to <num> shots\n"
-"\t-speedtol: multiplyers over normal speed to auto kick at\n\t\tdefaults to 1.25, should not be less then 1.0\n"
+"\t-speedtol: multiplyers over normal speed to auto kick at\n"
+"\t\tdefaults to 1.25, should not be less then 1.0\n"
 "\t-srvmsg: specify a <msg> to print upon client login\n"
 "\t-st: shake bad flags in <time> seconds\n"
 "\t-sw: shake bad flags after <num> wins\n"
@@ -184,20 +185,28 @@ const char *extraUsageString =
 "\t-tftimeout: set timeout for team flag zapping (default=30)\n"
 #ifdef TIMELIMIT
 "\t-time: set time limit on each game\n"
-"\t-timemanual: countdown for timed games has to be started with /countdown\n"
+"\t-timemanual: countdown for timed games is started with /countdown\n"
 #endif
 "\t-tk: player does not die when killing a teammate\n"
-"\t-tkkr: team killer to wins percentage (1-100) above which player is kicked\n"
+"\t-tkkr: team-kills-to-wins percentage (1-100) for kicking tk-ing players\n"
 "\t-userdb: file to read for user access permissions\n"
 "\t-vars: file to read for worlds configuration variables\n"
-"\t-vetoTime: maximum seconds an authorized user has to cancel a poll (default is 20)\n"
-"\t-votePercentage: percentage of players required to affirm a poll (default is 50.1%)\n"
-"\t-voteRepeatTime: minimum seconds required before a player may request\n\t\tanother vote (default is 300)\n"
-"\t-votesRequired: minimum count of votes required to make a vote valid (default is 3)\n"
-"\t-voteTime: maximum amount of time a player has to vote on a  poll (default is 60)\n"
 "\t-version: print version and exit\n"
 "\t-world: world file to load\n"
-"\t-worldsize: numeric value for the size of the world ( def 400 )\n";
+"\t-worldsize: numeric value for the size of the world ( def 400 )\n"
+"\n"
+"Poll Variables:  (see -poll)\n"
+"\n"
+"\tbanTime: number of minutes player should be banned (default is 300)\n"
+"\tvetoTime: max seconds authorized user has to abort poll (default is 20)\n"
+"\tvotePercentage: percentage of players required to affirm a poll\n"
+"\t\t(default is 50.1%)\n"
+"\tvoteRepeatTime: minimum seconds required before a player may request\n"
+"\t\tanother vote (default is 300)\n"
+"\tvotesRequired: minimum number of additional votes required to make a\n"
+"\t\tvote valid (default is 2)\n"
+"\tvoteTime: maximum amount of time player has to vote (default is 60)\n"
+"\n";
 
 
 /* private */
@@ -510,7 +519,7 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
       checkArgc(1, i, argc, argv[i]);
       options.acl.setBanFile(argv[i]);
       if (!options.acl.load()) {
-	std::cerr << "could not load banfile \"" << argv[i] << "\"\n";
+	std::cerr << "could not load banfile \"" << argv[i] << "\"" << std::endl;
 	usage(argv[0]);
       }
     } else if (strcmp(argv[i], "-c") == 0) {
@@ -518,8 +527,8 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
       options.gameStyle |= int(TeamFlagGameStyle);
       if (options.gameStyle & int(RabbitChaseGameStyle)) {
 	options.gameStyle &= ~int(RabbitChaseGameStyle);
-	std::cerr << "Capture the flag incompatible with Rabbit Chase\n";
-	std::cerr << "Capture the flag assumed\n";
+	std::cerr << "Capture the flag incompatible with Rabbit Chase" << std::endl;
+	std::cerr << "Capture the flag assumed" << std::endl;
       }
       if (!teamFlagsAdded) {
         for (int t = RedTeam; t <= PurpleTeam; t++)
@@ -549,8 +558,8 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
       options.gameStyle |= int(TeamFlagGameStyle);
       if (options.gameStyle & int(RabbitChaseGameStyle)) {
 	options.gameStyle &= ~int(RabbitChaseGameStyle);
-	std::cerr << "Capture the flag incompatible with Rabbit Chase\n";
-	std::cerr << "Capture the flag assumed\n";
+	std::cerr << "Capture the flag incompatible with Rabbit Chase" << std::endl;
+	std::cerr << "Capture the flag assumed" << std::endl;
       }
       if (!teamFlagsAdded) {
         for (int t = RedTeam; t <= PurpleTeam; t++)
@@ -574,11 +583,11 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
       char *scan;
       for (scan = argv[i]+1; *scan == 'd'; scan++) count++;
       if (*scan != '\0') {
-	std::cerr << "bad argument \"" << argv[i] << "\"\n";
+	std::cerr << "bad argument \"" << argv[i] << "\"" << std::endl;
 	usage(argv[0]);
       }
       debugLevel += count;
-      // std::cout << "Debug level is now " << debugLevel << "\n";
+      // std::cout << "Debug level is now " << debugLevel << "" << std::endl;
     } else if (strcmp(argv[i], "-f") == 0) {
       // disallow given flag
       checkArgc(1, i, argc, argv[i]);
@@ -593,7 +602,7 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
       } else {
 	FlagType* fDesc = Flag::getDescFromAbbreviation(argv[i]);
 	if (fDesc == Flags::Null) {
-	  std::cerr << "invalid flag \"" << argv[i] << "\"\n";
+	  std::cerr << "invalid flag \"" << argv[i] << "\"" << std::endl;
 	  usage(argv[0]);
 	}
 	options.flagDisallowed[fDesc] = true;
@@ -624,7 +633,7 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
       } else {
 	FlagType *fDesc = Flag::getDescFromAbbreviation(argv[i]);
 	if (fDesc == Flags::Null) {
-	  std::cerr << "invalid flag \"" << argv[i] << "\"\n";
+	  std::cerr << "invalid flag \"" << argv[i] << "\"" << std::endl;
 	  usage(argv[0]);
 	} else if (fDesc->flagTeam != NoTeam) {
 	  options.numTeamFlags[fDesc->flagTeam] += rptCnt;
@@ -646,7 +655,7 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
     } else if (strcmp(argv[i], "-groupdb") == 0) {
       checkArgc(1, i, argc, argv[i]);
       groupsFile = argv[i];
-      std::cerr << "using group file \"" << argv[i] << "\"\n";
+      std::cerr << "using group file \"" << argv[i] << "\"" << std::endl;
     } else if (strcmp(argv[i], "-h") == 0) {
       options.randomHeights = true;
     } else if (strcmp(argv[i], "-help") == 0) {
@@ -654,7 +663,7 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
     } else if (strcmp(argv[i], "-helpmsg") == 0) {
       checkArgc(2, i, argc, argv[i]);
       if (!options.textChunker.parseFile(argv[i], argv[i+1])){
-	std::cerr << "couldn't read helpmsg file \"" << argv[i] << "\"\n";
+	std::cerr << "couldn't read helpmsg file \"" << argv[i] << "\"" << std::endl;
 	usage(argv[0]);
       }
       i++;
@@ -689,7 +698,7 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
       checkArgc(1, i, argc, argv[i]);
       options.maxPlayerScore = atoi(argv[i]);
       if (options.maxPlayerScore < 1) {
-	std::cerr << "disabling player score limit\n";
+	std::cerr << "disabling player score limit" << std::endl;
 	options.maxPlayerScore = 0;
       }
     } else if (strcmp(argv[i], "-ms") == 0) {
@@ -697,7 +706,7 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
       checkArgc(1, i, argc, argv[i]);
       int newMaxShots = atoi(argv[i]);
       if (newMaxShots < 1) {
-	std::cerr << "using minimum number of shots of 1\n";
+	std::cerr << "using minimum number of shots of 1" << std::endl;
 	options.maxShots = 1;
       } else if (newMaxShots > MaxShots) {
 	std::cerr << "using maximum number of shots of " << MaxShots << std::endl;
@@ -709,7 +718,7 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
       checkArgc(1, i, argc, argv[i]);
       options.maxTeamScore = atoi(argv[i]);
       if (options.maxTeamScore < 1) {
-	std::cerr << "disabling team score limit\n";
+	std::cerr << "disabling team score limit" << std::endl;
 	options.maxTeamScore = 0;
       }
     } else if (strcmp(argv[i], "-p") == 0) {
@@ -725,7 +734,7 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
       checkFromWorldFile(argv[i], fromWorldFile);
       checkArgc(1, i, argc, argv[i]);
       passFile = argv[i];
-      std::cerr << "using password file \"" << argv[i] << "\"\n";
+      std::cerr << "using password file \"" << argv[i] << "\"" << std::endl;
     } else if (strcmp(argv[i], "-passwd") == 0 || strcmp(argv[i], "-password") == 0) {
       checkFromWorldFile(argv[i], fromWorldFile);
       checkArgc(1, i, argc, argv[i]);
@@ -736,6 +745,31 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
       // try wksPort first and if we can't open that port then
       // let system assign a port for us.
       options.useFallbackPort = true;
+    } else if (strcmp(argv[i], "-poll") == 0) {
+      // parse the variety of poll system variables
+      checkArgc(1, i, argc, argv[i]);
+
+      std::vector<std::string> args = string_util::tokenize(argv[i], std::string("="), 2, true);
+      if (args.size() != 2) {
+	std::cerr << "expected -poll variable=value" << std::endl;
+	usage(argv[0]);
+      }
+
+      if (compare_nocase(args[0], "bantime") == 0) {
+	options.banTime = (unsigned short int)atoi(args[1].c_str());
+      } else if (compare_nocase(args[0], "vetotime") == 0) {
+	options.vetoTime = (unsigned short int)atoi(args[1].c_str());
+      } else if (compare_nocase(args[0], "votepercentage") == 0) {
+	options.votePercentage = (float)atof(args[1].c_str());
+      } else if (compare_nocase(args[0], "voterepeattime") == 0) {
+	options.voteRepeatTime = (unsigned short int)atoi(args[1].c_str());
+      } else if (compare_nocase(args[0], "votesrequired") == 0) {
+	options.votesRequired = (unsigned short int)atoi(args[1].c_str());
+      } else if (compare_nocase(args[0], "votetime") == 0) {
+	options.voteTime = (unsigned short int)atoi(args[1].c_str());
+      } else {
+	std::cerr << "unknown variable for -poll, skipping";
+      }
 #ifdef PRINTSCORE
     } else if (strcmp(argv[i], "-printscore") == 0) {
       // dump score whenever it changes
@@ -748,7 +782,7 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
       options.publicizedTitle = argv[i];
       if (options.publicizedTitle.length() > 127) {
 	argv[i][127] = '\0';
-	std::cerr << "description too long... truncated\n";
+	std::cerr << "description too long... truncated" << std::endl;
       }
     } else if (strcmp(argv[i], "-publicaddr") == 0) {
       checkFromWorldFile(argv[i], fromWorldFile);
@@ -771,8 +805,8 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
       options.gameStyle |= int(RabbitChaseGameStyle);
       if (options.gameStyle & int(TeamFlagGameStyle)) {
 	options.gameStyle &= ~int(TeamFlagGameStyle);
-	std::cerr << "Rabbit Chase incompatible with Capture the flag\n";
-	std::cerr << "Rabbit Chase assumed\n";
+	std::cerr << "Rabbit Chase incompatible with Capture the flag" << std::endl;
+	std::cerr << "Rabbit Chase assumed" << std::endl;;
       }
       // default selection style
       options.rabbitSelection = ScoreRabbitSelection; 
@@ -803,7 +837,7 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
       checkArgc(1, i, argc, argv[i]);
       options.reportPipe = argv[i];
     } else if (strcmp(argv[i], "-requireudp") == 0) {
-      std::cerr << "require UDP clients!\n";
+      std::cerr << "require UDP clients!" << std::endl;
       options.requireUDP = true;
     } else if (strcmp(argv[i], "+s") == 0) {
       // set required number of random flags
@@ -848,7 +882,7 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
       checkArgc(2, i, argc, argv[i]);
       FlagType *fDesc = Flag::getDescFromAbbreviation(argv[i]);
       if (fDesc == Flags::Null) {
-	std::cerr << "invalid flag \"" << argv[i] << "\"\n";
+	std::cerr << "invalid flag \"" << argv[i] << "\"" << std::endl;
 	usage(argv[0]);
       } else {
 	i++;
@@ -856,11 +890,11 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
 	if (isdigit(argv[i][0])){
 	  x = atoi(argv[i]);
 	  if (x < 1){
-	    std::cerr << "can only limit to 1 or more shots\n";
+	    std::cerr << "can only limit to 1 or more shots" << std::endl;
 	    usage(argv[0]);
 	  }
 	} else {
-	  std::cerr << "invalid shot limit \"" << argv[i] << "\"\n";
+	  std::cerr << "invalid shot limit \"" << argv[i] << "\"" << std::endl;
 	  usage(argv[0]);
 	}
 	options.flagLimit[fDesc] = x;
@@ -868,7 +902,7 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
     } else if (strcmp(argv[i], "-speedtol") == 0) {
       checkArgc(1, i, argc, argv[i]);
       speedTolerance = (float) atof(argv[i]);
-      std::cerr << "using speed autokick tolerance of \"" << speedTolerance << "\"\n";
+      std::cerr << "using speed autokick tolerance of \"" << speedTolerance << "\"" << std::endl;
     } else if (strcmp(argv[i], "-srvmsg") == 0) {
       checkArgc(1, i, argc, argv[i]);
       options.servermsg = argv[i];
@@ -907,14 +941,14 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
       // allow teleporters
       options.useTeleporters = true;
       if (options.worldFile != "")
-	std::cerr << "-t is meaningless when using a custom world, ignoring\n";
+	std::cerr << "-t is meaningless when using a custom world, ignoring" << std::endl;
     } else if (strcmp(argv[i], "-tftimeout") == 0) {
       // use team flag timeout
       checkArgc(1, i, argc, argv[i]);
       options.teamFlagTimeout = atoi(argv[i]);
       if (options.teamFlagTimeout < 0)
 	options.teamFlagTimeout = 0;
-      std::cerr << "using team flag timeout of " << options.teamFlagTimeout << " seconds\n";
+      std::cerr << "using team flag timeout of " << options.teamFlagTimeout << " seconds" << std::endl;
 #ifdef TIMELIMIT
     } else if (strcmp(argv[i], "-time") == 0) {
       checkArgc(1, i, argc, argv[i]);
@@ -922,7 +956,7 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
       if (options.timeLimit <= 0.0f) {
 	options.timeLimit = 300.0f;
       }
-      std::cerr << "using time limit of " << (int)options.timeLimit << " seconds\n";
+      std::cerr << "using time limit of " << (int)options.timeLimit << " seconds" << std::endl;
       options.timeElapsed = options.timeLimit;
     } else if (strcmp(argv[i], "-timemanual") == 0) {
       options.timeManualStart = true;
@@ -940,28 +974,13 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
     } else if (strcmp(argv[i], "-userdb") == 0) {
       checkArgc(1, i, argc, argv[i]);
       userDatabaseFile = argv[i];
-      std::cerr << "using userDB file \"" << argv[i] << "\"\n";
+      std::cerr << "using userDB file \"" << argv[i] << "\"" << std::endl;
     } else if (strcmp(argv[i], "-v") == 0 || strcmp(argv[i], "-version") == 0) {
       printVersion();
       exit(0);
     } else if (strcmp(argv[i], "-vars") == 0) {
       checkArgc(1, i, argc, argv[i]);
       options.bzdbVars = argv[i];
-    } else if (strcmp(argv[i], "-vetoTime") == 0) {
-      checkArgc(1, i, argc, argv[i]);
-      options.vetoTime = (unsigned short int)atoi(argv[i]);
-    } else if (strncmp(argv[i], "-votePercentage", 15) == 0) {
-      checkArgc(1, i, argc, argv[i]);
-      options.votePercentage = (float)atof(argv[i]);
-    } else if (strncmp(argv[i], "-voteRepeatTime", 15) == 0) {
-      checkArgc(1, i, argc, argv[i]);
-      options.voteRepeatTime = (unsigned short int)atoi(argv[i]);
-    } else if (strncmp(argv[i], "-votesRequired", 15) == 0) {
-      checkArgc(1, i, argc, argv[i]);
-      options.votesRequired = (unsigned short int)atoi(argv[i]);
-    } else if (strncmp(argv[i], "-voteTime", 9) == 0) {
-      checkArgc(1, i, argc, argv[i]);
-      options.voteTime = (unsigned short int)atoi(argv[i]);
     } else if (strcmp(argv[i], "-world") == 0) {
       checkFromWorldFile(argv[i], fromWorldFile);
       checkArgc(1, i, argc, argv[i]);
@@ -977,19 +996,19 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
       options.numAllowedFlags = 0; // FIXME - Huh, does a reset?
 
       if (options.useTeleporters)
-        std::cerr << "-t is meaningless when using a custom world, ignoring\n";
+        std::cerr << "-t is meaningless when using a custom world, ignoring" << std::endl;
     } else if (strcmp(argv[i], "-worldsize") == 0) {
       checkArgc(1, i, argc, argv[i]);
       BZDB.set(StateDatabase::BZDB_WORLDSIZE, string_util::format("%d",atoi(argv[i])*2));
-      std::cerr << "using world size of \"" << BZDB.eval(StateDatabase::BZDB_WORLDSIZE) << "\"\n";
+      std::cerr << "using world size of \"" << BZDB.eval(StateDatabase::BZDB_WORLDSIZE) << "\"" << std::endl;
     } else {
-      std::cerr << "bad argument \"" << argv[i] << "\"\n";
+      std::cerr << "bad argument \"" << argv[i] << "\"" << std::endl;
       usage(argv[0]);
     }
   }
 
   if (options.flagsOnBuildings && !(options.gameStyle & JumpingGameStyle)) {
-    std::cerr << "flags on boxes requires jumping\n";
+    std::cerr << "flags on boxes requires jumping" << std::endl;
     usage(argv[0]);
   }
 

@@ -4168,12 +4168,28 @@ int main(int argc, char **argv)
 	    if (votingarbiter->isPollSuccessful()) {
 	      // perform the action of the poll, if any
 	      std::string pollAction;
-	      if (action == "ban")
-		pollAction = "banned for 5 hours.";
-	      else if (action == "kick")
-		pollAction = "kicked.";
-	      else
+	      if (action == "ban") {
+		int hours = 0;
+		int minutes = clOptions->banTime % 60;
+		if (clOptions->banTime > 60) { 
+		  hours = clOptions->banTime / 60;
+		}
+		pollAction = std::string("banned for ");
+		if (hours > 0) {
+		  pollAction += string_util::format("%d hour%s%s",
+						    hours == 1 ? "." : "s",
+						    minutes > 0 ? " and " : "");
+		}
+		if (minutes > 0) {
+		  pollAction += string_util::format("%d minute%s",
+						    minutes > 1 ? "s" : "");
+		}
+		pollAction += ".";
+	      } else if (action == "kick") {
+		pollAction = std::string("kicked.");
+	      } else {
 		pollAction = action;
+	      }
 	      if (action != "flagreset")
 	      	sprintf(message, "%s has been %s", target.c_str(), pollAction.c_str());
 	      else
@@ -4184,7 +4200,7 @@ int main(int argc, char **argv)
 	       * is a ban poll, ban the weenie
 	       */
 	      if (action == "ban") {
-		clOptions->acl.ban(realIP.c_str(), target.c_str(), 300);
+		clOptions->acl.ban(realIP.c_str(), target.c_str(), clOptions->banTime);
 	      }
 	      
 	      if ((action == "ban") || (action == "kick")) {
