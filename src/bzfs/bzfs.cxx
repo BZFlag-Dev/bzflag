@@ -3686,6 +3686,9 @@ static void handleCommand(int t, const void *rawbuf)
 
     case MsgKrbTicket:
       playerData->authentication.verifyCredential((char *)buf, len);
+      // Not really the place here, but for initial testing we need something
+      if (playerData->authentication.isTrusted())
+	sendMessage(ServerPlayer, t, "Welcome, we trust you");
       break;
 
     // unknown msg type
