@@ -781,7 +781,7 @@ int WorldInfo::inBuilding(WorldInfo::ObstacleLocation **location, float x, float
   int i;
   for (i = 0; i < numBoxes; i++)
     if ((inRect(boxes[i].pos, boxes[i].rotation, boxes[i].size, x, y, r) && boxes[i].pos[2] < 
-        (z + flagHeight)) && (boxes[i].pos[2] + boxes[i].size[2]) > z) {
+	(z + flagHeight)) && (boxes[i].pos[2] + boxes[i].size[2]) > z) {
       if (location != NULL)
 	*location = &boxes[i];
       return 1;
@@ -792,7 +792,7 @@ int WorldInfo::inBuilding(WorldInfo::ObstacleLocation **location, float x, float
     modSize[1] = pyramids[i].size[1] * ((z - pyramids[i].pos[2]) / pyramids[i].size[2]);
     modSize[2] = pyramids[i].size[2];
     if ((inRect(pyramids[i].pos, pyramids[i].rotation, modSize,x,y,r)) && 
-        pyramids[i].pos[2] < (z + flagHeight) && (pyramids[i].pos[2] + pyramids[i].size[2]) > z) {
+	pyramids[i].pos[2] < (z + flagHeight) && (pyramids[i].pos[2] + pyramids[i].size[2]) > z) {
       if (location != NULL)
 	*location = &pyramids[i];
       return 2;
@@ -1057,7 +1057,7 @@ void *assembleSendPacket(int playerIndex, int *len)
       buf = (unsigned char *)nboPackUShort(buf, moving->seqno);
       n -= moving->length;
       if (n <= 2)
-        break;
+	break;
       memcpy((unsigned char *)buf, (unsigned char *)moving->data, moving->length);
       buf += moving->length;
     } // noinqueue
@@ -1265,22 +1265,22 @@ static void patchPlayerId(PlayerId fromId, PlayerId toId, const void *msg, int o
   if (id == fromId) {
 #ifdef DEBUG_PLAYERID
     fprintf(stderr, "patchPlayerId %c%c(%02x%02x)%08x:%u(%04x):%u(%04x)->",
-        *((unsigned char *)msg + 2), *((unsigned char *)msg + 3),
-        *((unsigned char *)msg + 2), *((unsigned char *)msg + 3),
-        ntohl(*(int *)((char *)msg + offset)),
-        ntohs(*((short *)((char *)msg + offset + 4))),
-        ntohs(*((short *)((char *)msg + offset + 4))),
-        ntohs(*((short *)((char *)msg + offset + 6))),
-        ntohs(*((short *)((char *)msg + offset + 6))));
+	*((unsigned char *)msg + 2), *((unsigned char *)msg + 3),
+	*((unsigned char *)msg + 2), *((unsigned char *)msg + 3),
+	ntohl(*(int *)((char *)msg + offset)),
+	ntohs(*((short *)((char *)msg + offset + 4))),
+	ntohs(*((short *)((char *)msg + offset + 4))),
+	ntohs(*((short *)((char *)msg + offset + 6))),
+	ntohs(*((short *)((char *)msg + offset + 6))));
 #endif
     toId.pack((char *)msg + offset);
 #ifdef DEBUG_PLAYERID
     fprintf(stderr, "%08x:%u(%04x):%u(%04x)\n",
-        ntohl(*(int *)((char *)msg + offset)),
-        ntohs(*((short *)((char *)msg + offset + 4))),
-        ntohs(*((short *)((char *)msg + offset + 4))),
-        ntohs(*((short *)((char *)msg + offset + 6))),
-        ntohs(*((short *)((char *)msg + offset + 6))));
+	ntohl(*(int *)((char *)msg + offset)),
+	ntohs(*((short *)((char *)msg + offset + 4))),
+	ntohs(*((short *)((char *)msg + offset + 4))),
+	ntohs(*((short *)((char *)msg + offset + 6))),
+	ntohs(*((short *)((char *)msg + offset + 6))));
 #endif
   }
 }
@@ -1311,14 +1311,14 @@ static void patchMessage(PlayerId fromId, PlayerId toId, const void *msg)
       ;;
     case MsgAlive:
       if (len == 32)
-        patchPlayerId(fromId, toId, msg, 4);
+	patchPlayerId(fromId, toId, msg, 4);
       ;;
     case MsgDropFlag:
     case MsgGrabFlag:
       if (len > 28)
 	// server version
-        patchPlayerId(fromId, toId, msg, 4);
-        patchPlayerId(fromId, toId, msg, 20);
+	patchPlayerId(fromId, toId, msg, 4);
+	patchPlayerId(fromId, toId, msg, 20);
       break;
       ;;
     case MsgFlagUpdate:
@@ -1335,13 +1335,13 @@ static void patchMessage(PlayerId fromId, PlayerId toId, const void *msg)
       patchPlayerId(fromId, toId, msg, 4);
       if (len > 16)
 	// server version
-        patchPlayerId(fromId, toId, msg, 12);
+	patchPlayerId(fromId, toId, msg, 12);
       break;
       ;;
     case MsgScore:
       if (len == 12)
 	// server version
-        patchPlayerId(fromId, toId, msg, 4);
+	patchPlayerId(fromId, toId, msg, 4);
       ;;
     case MsgAccept:
     case MsgClientVersion:
@@ -1419,7 +1419,7 @@ static void pwrite(int playerIndex, const void *b, int l)
       if (newCapacity >= 20 * 1024) {
 	fprintf(stderr, "dropping unresponsive player %d (%s) with %d bytes queued\n",
 	    playerIndex, p.callSign, p.outmsgSize + l);
-        UMDEBUG("REMOVE: CAPACITY\n");
+	UMDEBUG("REMOVE: CAPACITY\n");
 	removePlayer(playerIndex);
 	return;
       }
@@ -1588,7 +1588,7 @@ static int uread(int *playerIndex, int *nopackets)
       // still didn't find player so test for just address not port (ipmasq fw etc.)
       for (*playerIndex = 0; *playerIndex < MaxPlayers; (*playerIndex)++) {
 	if (!player[*playerIndex].ulinkup &&
-            memcmp(&uaddr.sin_addr, &player[*playerIndex].uaddr.sin_addr, sizeof(uaddr.sin_addr)) == 0) {
+	    memcmp(&uaddr.sin_addr, &player[*playerIndex].uaddr.sin_addr, sizeof(uaddr.sin_addr)) == 0) {
 	  UMDEBUG("uread() fuzzy udp up for player %d %s:%d actual port %d\n",
 	      *playerIndex, inet_ntoa(player[*playerIndex].uaddr.sin_addr),
 	      ntohs(player[*playerIndex].uaddr.sin_port), ntohs(uaddr.sin_port));
@@ -2349,7 +2349,7 @@ static boolean readWorldStream(istream& input, const char *location, WorldFileOb
       if (!object->read(buffer, input)) {
        // unknown token
        cerr << location << "(" << line << ") : " <<
-                       "invalid object parameter \"" << buffer << "\"" << endl;
+		       "invalid object parameter \"" << buffer << "\"" << endl;
        delete object;
        return False;
       }
@@ -2503,120 +2503,120 @@ static WorldInfo *defineTeamWorld()
     // make pyramids
     // around red base
     world->addPyramid(
-        basePos[1][0] + 0.5f * BaseSize - PyrBase,
-        basePos[1][1] - 0.5f * BaseSize - PyrBase, 0.0f, 0.0f,
-        PyrBase, PyrBase, PyrHeight);
+	basePos[1][0] + 0.5f * BaseSize - PyrBase,
+	basePos[1][1] - 0.5f * BaseSize - PyrBase, 0.0f, 0.0f,
+	PyrBase, PyrBase, PyrHeight);
     world->addPyramid(
-        basePos[1][0] + 0.5f * BaseSize + PyrBase,
-        basePos[1][1] - 0.5f * BaseSize + PyrBase, 0.0f, 0.0f,
-        PyrBase, PyrBase, PyrHeight);
+	basePos[1][0] + 0.5f * BaseSize + PyrBase,
+	basePos[1][1] - 0.5f * BaseSize + PyrBase, 0.0f, 0.0f,
+	PyrBase, PyrBase, PyrHeight);
     world->addPyramid(
-        basePos[1][0] + 0.5f * BaseSize + PyrBase,
-        basePos[1][1] + 0.5f * BaseSize - PyrBase, 0.0f, 0.0f,
-        PyrBase, PyrBase, PyrHeight);
+	basePos[1][0] + 0.5f * BaseSize + PyrBase,
+	basePos[1][1] + 0.5f * BaseSize - PyrBase, 0.0f, 0.0f,
+	PyrBase, PyrBase, PyrHeight);
     world->addPyramid(
-        basePos[1][0] + 0.5f * BaseSize - PyrBase,
-        basePos[1][1] + 0.5f * BaseSize + PyrBase, 0.0f, 0.0f,
-        PyrBase, PyrBase, PyrHeight);
+	basePos[1][0] + 0.5f * BaseSize - PyrBase,
+	basePos[1][1] + 0.5f * BaseSize + PyrBase, 0.0f, 0.0f,
+	PyrBase, PyrBase, PyrHeight);
 
     // around green base
     world->addPyramid(
-        basePos[2][0] - 0.5f * BaseSize + PyrBase,
-        basePos[2][1] - 0.5f * BaseSize - PyrBase, 0.0f, 0.0f,
-        PyrBase, PyrBase, PyrHeight);
+	basePos[2][0] - 0.5f * BaseSize + PyrBase,
+	basePos[2][1] - 0.5f * BaseSize - PyrBase, 0.0f, 0.0f,
+	PyrBase, PyrBase, PyrHeight);
     world->addPyramid(
-        basePos[2][0] - 0.5f * BaseSize - PyrBase,
-        basePos[2][1] - 0.5f * BaseSize + PyrBase, 0.0f, 0.0f,
-        PyrBase, PyrBase, PyrHeight);
+	basePos[2][0] - 0.5f * BaseSize - PyrBase,
+	basePos[2][1] - 0.5f * BaseSize + PyrBase, 0.0f, 0.0f,
+	PyrBase, PyrBase, PyrHeight);
     world->addPyramid(
-        basePos[2][0] - 0.5f * BaseSize - PyrBase,
-        basePos[2][1] + 0.5f * BaseSize - PyrBase, 0.0f, 0.0f,
-        PyrBase, PyrBase, PyrHeight);
+	basePos[2][0] - 0.5f * BaseSize - PyrBase,
+	basePos[2][1] + 0.5f * BaseSize - PyrBase, 0.0f, 0.0f,
+	PyrBase, PyrBase, PyrHeight);
     world->addPyramid(
-        basePos[2][0] - 0.5f * BaseSize + PyrBase,
-        basePos[2][1] + 0.5f * BaseSize + PyrBase, 0.0f, 0.0f,
-        PyrBase, PyrBase, PyrHeight);
+	basePos[2][0] - 0.5f * BaseSize + PyrBase,
+	basePos[2][1] + 0.5f * BaseSize + PyrBase, 0.0f, 0.0f,
+	PyrBase, PyrBase, PyrHeight);
 
     // around blue base
     world->addPyramid(
-        basePos[3][0] - 0.5f * BaseSize - PyrBase,
-        basePos[3][1] + 0.5f * BaseSize - PyrBase, 0.0f, 0.0f,
-        PyrBase, PyrBase, PyrHeight);
+	basePos[3][0] - 0.5f * BaseSize - PyrBase,
+	basePos[3][1] + 0.5f * BaseSize - PyrBase, 0.0f, 0.0f,
+	PyrBase, PyrBase, PyrHeight);
     world->addPyramid(
-        basePos[3][0] - 0.5f * BaseSize + PyrBase,
-        basePos[3][1] + 0.5f * BaseSize + PyrBase, 0.0f, 0.0f,
-        PyrBase, PyrBase, PyrHeight);
+	basePos[3][0] - 0.5f * BaseSize + PyrBase,
+	basePos[3][1] + 0.5f * BaseSize + PyrBase, 0.0f, 0.0f,
+	PyrBase, PyrBase, PyrHeight);
     world->addPyramid(
-        basePos[3][0] + 0.5f * BaseSize - PyrBase,
-        basePos[3][1] + 0.5f * BaseSize + PyrBase, 0.0f, 0.0f,
-        PyrBase, PyrBase, PyrHeight);
+	basePos[3][0] + 0.5f * BaseSize - PyrBase,
+	basePos[3][1] + 0.5f * BaseSize + PyrBase, 0.0f, 0.0f,
+	PyrBase, PyrBase, PyrHeight);
     world->addPyramid(
-        basePos[3][0] + 0.5f * BaseSize + PyrBase,
-        basePos[3][1] + 0.5f * BaseSize - PyrBase, 0.0f, 0.0f,
-        PyrBase, PyrBase, PyrHeight);
+	basePos[3][0] + 0.5f * BaseSize + PyrBase,
+	basePos[3][1] + 0.5f * BaseSize - PyrBase, 0.0f, 0.0f,
+	PyrBase, PyrBase, PyrHeight);
 
     // around purple base
     world->addPyramid(
-        basePos[4][0] - 0.5f * BaseSize - PyrBase,
-        basePos[4][1] - 0.5f * BaseSize + PyrBase, 0.0f, 0.0f,
-        PyrBase, PyrBase, PyrHeight);
+	basePos[4][0] - 0.5f * BaseSize - PyrBase,
+	basePos[4][1] - 0.5f * BaseSize + PyrBase, 0.0f, 0.0f,
+	PyrBase, PyrBase, PyrHeight);
     world->addPyramid(
-        basePos[4][0] - 0.5f * BaseSize + PyrBase,
-        basePos[4][1] - 0.5f * BaseSize - PyrBase, 0.0f, 0.0f,
-        PyrBase, PyrBase, PyrHeight);
+	basePos[4][0] - 0.5f * BaseSize + PyrBase,
+	basePos[4][1] - 0.5f * BaseSize - PyrBase, 0.0f, 0.0f,
+	PyrBase, PyrBase, PyrHeight);
     world->addPyramid(
-        basePos[4][0] + 0.5f * BaseSize - PyrBase,
-        basePos[4][1] - 0.5f * BaseSize - PyrBase, 0.0f, 0.0f,
-        PyrBase, PyrBase, PyrHeight);
+	basePos[4][0] + 0.5f * BaseSize - PyrBase,
+	basePos[4][1] - 0.5f * BaseSize - PyrBase, 0.0f, 0.0f,
+	PyrBase, PyrBase, PyrHeight);
     world->addPyramid(
-        basePos[4][0] + 0.5f * BaseSize + PyrBase,
-        basePos[4][1] - 0.5f * BaseSize + PyrBase, 0.0f, 0.0f,
-        PyrBase, PyrBase, PyrHeight);
+	basePos[4][0] + 0.5f * BaseSize + PyrBase,
+	basePos[4][1] - 0.5f * BaseSize + PyrBase, 0.0f, 0.0f,
+	PyrBase, PyrBase, PyrHeight);
 
     // in center
     world->addPyramid(
-        -(BoxBase + 0.25f * AvenueSize),
-        -(BoxBase + 0.25f * AvenueSize), 0.0f, 0.0f,
-        PyrBase, PyrBase, PyrHeight);
+	-(BoxBase + 0.25f * AvenueSize),
+	-(BoxBase + 0.25f * AvenueSize), 0.0f, 0.0f,
+	PyrBase, PyrBase, PyrHeight);
     world->addPyramid(
-        (BoxBase + 0.25f * AvenueSize),
-        -(BoxBase + 0.25f * AvenueSize), 0.0f, 0.0f,
-        PyrBase, PyrBase, PyrHeight);
+	(BoxBase + 0.25f * AvenueSize),
+	-(BoxBase + 0.25f * AvenueSize), 0.0f, 0.0f,
+	PyrBase, PyrBase, PyrHeight);
     world->addPyramid(
-        -(BoxBase + 0.25f * AvenueSize),
-        (BoxBase + 0.25f * AvenueSize), 0.0f, 0.0f,
-        PyrBase, PyrBase, PyrHeight);
+	-(BoxBase + 0.25f * AvenueSize),
+	(BoxBase + 0.25f * AvenueSize), 0.0f, 0.0f,
+	PyrBase, PyrBase, PyrHeight);
     world->addPyramid(
-        (BoxBase + 0.25f * AvenueSize),
-        (BoxBase + 0.25f * AvenueSize), 0.0f, 0.0f,
-        PyrBase, PyrBase, PyrHeight);
+	(BoxBase + 0.25f * AvenueSize),
+	(BoxBase + 0.25f * AvenueSize), 0.0f, 0.0f,
+	PyrBase, PyrBase, PyrHeight);
     world->addPyramid(0.0f, -(BoxBase + 0.5f * AvenueSize), 0.0f, 0.0f,
-        PyrBase, PyrBase, PyrHeight);
+	PyrBase, PyrBase, PyrHeight);
     world->addPyramid(0.0f,  (BoxBase + 0.5f * AvenueSize), 0.0f, 0.0f,
-        PyrBase, PyrBase, PyrHeight);
+	PyrBase, PyrBase, PyrHeight);
     world->addPyramid(-(BoxBase + 0.5f * AvenueSize), 0.0f, 0.0f, 0.0f,
-        PyrBase, PyrBase, PyrHeight);
+	PyrBase, PyrBase, PyrHeight);
     world->addPyramid( (BoxBase + 0.5f * AvenueSize), 0.0f, 0.0f, 0.0f,
-        PyrBase, PyrBase, PyrHeight);
+	PyrBase, PyrBase, PyrHeight);
 
     // halfway out from city center
     world->addPyramid(0.0f, -(3.0f * BoxBase + 1.5f * AvenueSize), 0.0f, 0.0f,
-        PyrBase, PyrBase, PyrHeight);
+	PyrBase, PyrBase, PyrHeight);
     world->addPyramid(0.0f,  (3.0f * BoxBase + 1.5f * AvenueSize), 0.0f, 0.0f,
-        PyrBase, PyrBase, PyrHeight);
+	PyrBase, PyrBase, PyrHeight);
     world->addPyramid(-(3.0f * BoxBase + 1.5f * AvenueSize), 0.0f, 0.0f, 0.0f,
-        PyrBase, PyrBase, PyrHeight);
+	PyrBase, PyrBase, PyrHeight);
     world->addPyramid( (3.0f * BoxBase + 1.5f * AvenueSize), 0.0f, 0.0f, 0.0f,
-        PyrBase, PyrBase, PyrHeight);
+	PyrBase, PyrBase, PyrHeight);
 
     // add boxes, four at once with same height so no team has an advantage
     const float xmin = -0.5f * ((2.0f * BoxBase + AvenueSize) * (CitySize - 1));
     const float ymin = -0.5f * ((2.0f * BoxBase + AvenueSize) * (CitySize - 1));
     for (int j = 0; j <= CitySize/2; j++)
       for (int i = 0; i < CitySize/2; i++)
-        if (i != CitySize/2 || j != CitySize/2) {
-          float h = BoxHeight;
-          if (randomHeights)
+	if (i != CitySize/2 || j != CitySize/2) {
+	  float h = BoxHeight;
+	  if (randomHeights)
   	    h *= 2.0f * (float)bzfrand() + 0.5f;
 	  world->addBox(
 	      xmin + float(i) * (2.0f * BoxBase + AvenueSize),
@@ -2638,7 +2638,7 @@ static WorldInfo *defineTeamWorld()
 	      -1.0f * (xmin + float(i) * (2.0f * BoxBase + AvenueSize)), 0.0f,
 	      randomBoxes ? (0.5f * M_PI * ((float)bzfrand() - 0.5f)) : 0.0f,
 	      BoxBase, BoxBase, h);
-        }
+	}
 
     // add teleporters
     if (useTeleporters) {
@@ -2939,7 +2939,7 @@ static void acceptClient()
 	listen(gameListen, 1) == -1) {
       nerror("creating client listen socket");
       if (gameListen != -1)
-        close(gameListen);
+	close(gameListen);
       gameListen = NotConnected;
     }
   }
@@ -3347,7 +3347,7 @@ static void resetFlag(int flagIndex)
 	flag[flagIndex].flag.position[2] = 0.0f;
       }
     } while (world->inBuilding(NULL, flag[flagIndex].flag.position[0], flag[flagIndex].flag.position[1], 
-        flag[flagIndex].flag.position[2], r));
+	flag[flagIndex].flag.position[2], r));
   }
 
   // required flags mustn't just disappear
@@ -3903,14 +3903,14 @@ static void scoreChanged(int playerIndex, uint16_t wins, uint16_t losses)
       killer.lagcount++;
       // warn players from time to time whose lag is > threshold (-lagwarn)
       if (lagwarnthresh > 0 && killer.lagavg > lagwarnthresh &&
-          killer.lagcount-killer.laglastwarn > 5 + 2 * killer.lagwarncount) {
-        char message[MessageLen];
-        sprintf(message,"*** Server Warning: your lag is too high (%d ms) ***",
-            int(killer.lagavg * 1000));
-        sendMessage(playerIndex, player[playerIndex].id,
-            player[playerIndex].team,message);
-        killer.laglastwarn = killer.lagcount;
-        killer.lagwarncount++;;
+	  killer.lagcount-killer.laglastwarn > 5 + 2 * killer.lagwarncount) {
+	char message[MessageLen];
+	sprintf(message,"*** Server Warning: your lag is too high (%d ms) ***",
+	    int(killer.lagavg * 1000));
+	sendMessage(playerIndex, player[playerIndex].id,
+	    player[playerIndex].team,message);
+	killer.laglastwarn = killer.lagcount;
+	killer.lagwarncount++;;
 	if (killer.lagwarncount++ > maxlagwarn) {
 	  // drop the player
 	  sprintf(message,"You have been kicked due to excessive lag (you have been warned %d times).",
@@ -4022,7 +4022,7 @@ static void parseCommand(const char *message, int t)
 	  buf = flag[i].flag.pack(buf);
 	  broadcastMessage(MsgDropFlag, sizeof(msg), msg);
 	}
-        resetFlag(i);
+	resetFlag(i);
       }
     } else if (strncmp(message + 6, "up", 2) == 0) {
       for (int i = 0; i < numFlags; i++) {
@@ -4042,8 +4042,10 @@ static void parseCommand(const char *message, int t)
 	    buf = flag[i].flag.pack(buf);
 	    broadcastMessage(MsgDropFlag, sizeof(msg), msg);
 	  }
-          flag[i].flag.status = FlagGoing;
-          sendFlagUpdate(i);
+	  flag[i].flag.status = FlagGoing;
+	  if (!flag[i].required)
+	    flag[i].flag.id = NullFlag;
+	  sendFlagUpdate(i);
 	}
       }
     } else if (strncmp(message + 6, "show", 4) == 0) {
@@ -4060,7 +4062,7 @@ static void parseCommand(const char *message, int t)
     const char *victimname = message + 6;
     for (i = 0; i < maxPlayers; i++)
       if (player[i].fd != NotConnected && strcmp(player[i].callSign, victimname) == 0)
-        break;
+	break;
     if (i < maxPlayers) {
       char kickmessage[MessageLen];
       player[i].toBeKicked = false;
@@ -4077,10 +4079,10 @@ static void parseCommand(const char *message, int t)
   else if (strncmp(message+1,"lagstats",8) == 0) {
     for (int i = 0; i < maxPlayers; i++)
       if (player[i].fd != NotConnected) {
-        char reply[MessageLen];
-        sprintf(reply,"%-12s : %4dms (%d)",player[i].callSign,
-                int(player[i].lagavg*1000),player[i].lagcount);
-        sendMessage(t,player[t].id,player[t].team,reply);
+	char reply[MessageLen];
+	sprintf(reply,"%-12s : %4dms (%d)",player[i].callSign,
+		int(player[i].lagavg*1000),player[i].lagcount);
+	sendMessage(t,player[t].id,player[t].team,reply);
       }
   }
   else {
@@ -4275,10 +4277,10 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
       UMDEBUG("Player %s [%d]: %s\n",player[t].callSign, t, message);
       // check for command
       if (message[0] == '/') {
-        parseCommand(message, t);
+	parseCommand(message, t);
       }
       else
-        sendMessage(t, targetPlayer, TeamColor(targetTeam), message);
+	sendMessage(t, targetPlayer, TeamColor(targetTeam), message);
       break;
     }
 
@@ -4300,10 +4302,10 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
     // player is requesting an additional UDP connection, sending its own UDP port
     case MsgUDPLinkRequest: {
       if (alsoUDP) {
-        uint16_t port;
-        buf = nboUnpackUShort(buf, port);
-        player[t].ulinkup = false;
-        createUDPcon(t, port);
+	uint16_t port;
+	buf = nboUnpackUShort(buf, port);
+	player[t].ulinkup = false;
+	createUDPcon(t, port);
       }
       break;
     }
@@ -4317,7 +4319,7 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
       // enable the downlink
       //player[t].ulinkup = true;
       if (!alsoUDP) {
-        fprintf(stderr,"Clients sent MsgUDPLinkEstablished without MsgUDPLinkRequest!\n");
+	fprintf(stderr,"Clients sent MsgUDPLinkEstablished without MsgUDPLinkRequest!\n");
       }
       break;
     }
@@ -4484,7 +4486,7 @@ static boolean parsePlayerCount(const char *argv)
     int commaCount = 1;
     while (*++scan)
       if (*scan == ',')
-        commaCount++;
+	commaCount++;
     if (commaCount != 4) {
       cerr << "improper player count list" << endl;
       return False;
@@ -4508,7 +4510,7 @@ static boolean parsePlayerCount(const char *argv)
 	// got a number
 	countCount++;
 	if (count < 0)
-          maxTeam[i] = 0;
+	  maxTeam[i] = 0;
 	else
 	  if (count > MaxPlayers)
 	    maxTeam[i] = MaxPlayers;
@@ -4599,18 +4601,18 @@ static void parse(int argc, char **argv)
 	requireUDP = true;
       } else
       if (strcmp(argv[i], "-srvmsg") == 0) {
-         if (++i == argc) {
-           cerr << "argument expected for -srvmsg" << endl;
-           usage(argv[0]);
-         }
-         servermsg = argv[i];
+	 if (++i == argc) {
+	   cerr << "argument expected for -srvmsg" << endl;
+	   usage(argv[0]);
+	 }
+	 servermsg = argv[i];
       } else
       if (strcmp(argv[i], "-world") == 0) {
-         if (++i == argc) {
-           cerr << "argument expected for -world" << endl;
-           usage(argv[0]);
-         }
-         worldFile = argv[i];
+	 if (++i == argc) {
+	   cerr << "argument expected for -world" << endl;
+	   usage(argv[0]);
+	 }
+	 worldFile = argv[i];
       }
       else if (strcmp(argv[i], "+f") == 0) {
       // add required flag
@@ -5356,7 +5358,7 @@ int main(int argc, char **argv)
 	char msg[2];
 	void *buf = msg;
 	buf = nboPackUShort(buf, (uint16_t)(int)timeLeft);
-        broadcastMessage(MsgTimeUpdate, sizeof(msg), msg);
+	broadcastMessage(MsgTimeUpdate, sizeof(msg), msg);
 	timeElapsed = newTimeElapsed;
       }
     }
@@ -5429,14 +5431,14 @@ int main(int argc, char **argv)
       if (requireUDP && player[i].toBeKicked) {
 	char message[MessageLen];
 	player[i].toBeKicked = false;
-        sprintf(message,"Your end is not using UDP, turn on udp");
-        sendMessage(i, player[i].id, player[i].team, message);
+	sprintf(message,"Your end is not using UDP, turn on udp");
+	sendMessage(i, player[i].id, player[i].team, message);
 
-        sprintf(message,"upgrade your client http://BZFlag.org/ or");
-        sendMessage(i, player[i].id, player[i].team, message);
+	sprintf(message,"upgrade your client http://BZFlag.org/ or");
+	sendMessage(i, player[i].id, player[i].team, message);
 
-        sprintf(message,"Try another server, Bye!");
-        sendMessage(i, player[i].id, player[i].team, message);
+	sprintf(message,"Try another server, Bye!");
+	sendMessage(i, player[i].id, player[i].team, message);
 
 	fprintf(stderr, "*** Kicking Player - no UDP [%d]\n",i);
 	removePlayer(i);
@@ -5482,8 +5484,8 @@ int main(int argc, char **argv)
 
       // check if we have any UDP packets pending
       if (FD_ISSET(udpSocket, &read_set)) {
-        int numpackets;
-        while (uread(&i, &numpackets) > 0) {
+	int numpackets;
+	while (uread(&i, &numpackets) > 0) {
 	  // read head
 	  uint16_t len, code;
 	  void *buf = player[i].udpmsg;
@@ -5495,7 +5497,7 @@ int main(int argc, char **argv)
 
 	  // handle the command for UDP
 	  handleCommand(i, code, len, player[i].udpmsg);
-        }
+	}
       }
 
       // now check messages from connected players and send queued messages
@@ -5535,9 +5537,9 @@ int main(int argc, char **argv)
 	  // and player is not using multicast
 	  // he/she must not be using the UDP link
 	  if (requireUDP && player[i].multicastRelay) {
-            if (code == MsgShotBegin) {
-              player[i].toBeKicked = true;
-            }
+	    if (code == MsgShotBegin) {
+	      player[i].toBeKicked = true;
+	    }
 	  }
 
 	  // handle the command
