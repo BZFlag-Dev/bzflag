@@ -1409,7 +1409,7 @@ savePlayersState ()
   // here in case the record buffer has grown past the original
   // packet.
   if (adminPtr != (adminBuf + sizeof(unsigned char))) {
-    buf = nboPackUByte (adminPtr, count);
+    nboPackUByte (adminBuf, count);
     routePacket (MsgAdminInfo,
                  (char*)adminPtr - (char*)adminBuf, adminBuf, HiddenPacket);
   }

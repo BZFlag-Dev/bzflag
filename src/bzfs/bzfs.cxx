@@ -3362,7 +3362,6 @@ static void handleCommand(int t, const void *rawbuf)
       // data: target player/team, message string
       PlayerId targetPlayer;
       char message[MessageLen];
-      void *bufcopy = buf; // copy for replay packet
       buf = nboUnpackUByte(buf, targetPlayer);
       buf = nboUnpackString(buf, message, sizeof(message));
       message[MessageLen - 1] = '\0';
@@ -3396,7 +3395,12 @@ static void handleCommand(int t, const void *rawbuf)
 	  pos++;
 	}
 	if (Record::enabled()) {
-	  Record::addPacket (MsgMessage, len, bufcopy, HiddenPacket);
+	  void *buf, *bufStart = getDirectMessageBuffer();
+	  buf = nboPackUByte (bufStart, t);       // the src player
+	  buf = nboPackUByte (buf, targetPlayer); // the dst player
+	  buf = nboPackString (buf, message, MessageLen);
+	  Record::addPacket (MsgMessage, (char*)buf - (char*)bufStart, bufStart,
+	                     HiddenPacket);
 	}
 	parseCommand(message, t);
       } else if (targetPlayer == AdminPlayers
