@@ -1,7 +1,9 @@
-bzflag (@VERSION@) unstable; urgency=low
+bzflag (@VERSION@) unstable frozen; urgency=medium
 
-  * CVS Build
-
+  * protocol changes - frozen and urgency=medium
+  * upstream update, many bug fixes and new features
+  * devfs audio support Closes: Bug#144965
+  * simplify descriptions Closes: Bug#124473,Bug#124478
  -- Tim Riker <Tim@Rikers.org>  @DATE@
 
 bzflag (1.7e4) unstable frozen; urgency=low
