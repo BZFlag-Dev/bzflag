@@ -368,10 +368,12 @@ void *MeshObstacle::pack(void *buf)
 
   // pack the state byte
   unsigned char stateByte = 0;
-  if (isDriveThrough())
+  if (isDriveThrough()) {
     stateByte |= _DRIVE_THRU;
-  if (isShootThrough())
+  }
+  if (isShootThrough()) {
     stateByte |= _SHOOT_THRU;
+  }
   buf = nboPackUByte(buf, stateByte);
 
   return buf;
@@ -422,10 +424,12 @@ void *MeshObstacle::unpack(void *buf)
   // unpack the state byte
   unsigned char stateByte;
   buf = nboUnpackUByte(buf, stateByte);
-  if (stateByte & _DRIVE_THRU)
+  if (stateByte & _DRIVE_THRU) {
     driveThrough = true;
-  if (stateByte & _SHOOT_THRU)
+  }
+  if (stateByte & _SHOOT_THRU) {
     shootThrough = true;
+  }
 
   finalize();
 

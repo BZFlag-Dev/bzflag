@@ -358,6 +358,12 @@ void *MeshFace::pack(void *buf)
   if (useTexcoords()) {
     stateByte = stateByte | (1 << 1);
   }
+  if (isDriveThrough()) {
+    stateByte = stateByte | (1 << 2);
+  }
+  if (isShootThrough()) {
+    stateByte = stateByte | (1 << 3);
+  }
   buf = nboPackUByte(buf, stateByte);
   // vertices
   buf = nboPackInt(buf, vertexCount);
@@ -391,6 +397,12 @@ void *MeshFace::unpack(void *buf)
   // state byte
   unsigned char stateByte = 0;
   buf = nboUnpackUByte(buf, stateByte);
+  if (stateByte & (1 << 2)) {
+    driveThrough = true;
+  }
+  if (stateByte & (1 << 3)) {
+    shootThrough = true;
+  }
   // vertices
   buf = nboUnpackInt(buf, vertexCount);
   vertices = new float*[vertexCount];
