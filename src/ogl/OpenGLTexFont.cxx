@@ -489,9 +489,20 @@ float			OpenGLTexFont::getWidth(const char* s) const
 
 float			OpenGLTexFont::getWidth(const char* s, int length) const
 {
+  char * str;
   float dx = 0.0f;
-  for (int i = 0; i < length; i++)
-    dx += rep->glyph[s[i] - 32].advance;
+  
+  str = strdup (s);
+  stripAnsiCodes (str, length);
+  length = strlen (str);
+  
+  for (int i = 0; i < length; i++) {
+    if ((str[i] >= 32) && (str[i] < 127))
+      dx += rep->glyph[str[i] - 32].advance;
+  }
+
+  free (str);
+    
   return width * dx;
 }
 

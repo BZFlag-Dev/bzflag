@@ -460,14 +460,10 @@ void			HUDRenderer::setAlert(int index, const char* string,
     alertClock[index].setClock(0.0f);
   }
   else {
-    char *tmpstr;
-    tmpstr = strdup(string);
-    OpenGLTexFont::stripAnsiCodes(tmpstr, strlen(tmpstr));
     alertLabel[index] = BundleMgr::getCurrentBundle()->getLocalString(string);
     alertLabelWidth[index] = alertFont.getWidth(alertLabel[index]);
     alertColor[index] = warning ? warningColor : messageColor;
     alertClock[index].setClock(duration);
-    delete [] tmpstr;
   }
 }
 
