@@ -70,7 +70,9 @@ protected:
 	//{{AFX_MSG(CTextToolView)
 	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
 	afx_msg void OnFontSetfont();
+	void DoFontSavefontfiles(CString filename);
 	afx_msg void OnFontSavefontfiles();
+	afx_msg void OnBatchProcessing();
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 };

@@ -15,6 +15,10 @@ TextToolBatch::TextToolBatch(std::string file) : position(0)
   loadFile(file);
 }
 
+TextToolBatch::~TextToolBatch()
+{
+}
+
 void TextToolBatch::loadFile(std::string file)
 {
   std::ifstream* input = new std::ifstream(file.c_str(), std::ios::in);
@@ -95,6 +99,8 @@ void TextToolBatch::loadFile(std::string file)
     }
 
   }
+
+  delete[] buffer;
 }
 
 bool TextToolBatch::getNext(BatchItem& item)

@@ -8,15 +8,17 @@
 #include "../../src/zlib/zconf.h"
 #include "../../src/zlib/zlib.h"
 
+#include <fstream>
+#include <string>
+#include <vector>
+
 // for htonl
 #include "winsock2.h"
 
 // interface headers
 #include "TextToolDoc.h"
 #include "TextToolView.h"
-
-// png filewriting
-#include <fstream>
+#include "TextToolBatch.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -34,6 +36,7 @@ BEGIN_MESSAGE_MAP(CTextToolView, CView)
 	ON_WM_ERASEBKGND()
 	ON_COMMAND(ID_FONT_SETFONT, OnFontSetfont)
 	ON_COMMAND(ID_FONT_SAVEFONTFILES, OnFontSavefontfiles)
+	ON_COMMAND(ID_FILE_BATCHPROCESSING, OnBatchProcessing)
 	//}}AFX_MSG_MAP
 	// Standard printing commands
 	ON_COMMAND(ID_FILE_PRINT, CView::OnFilePrint)
@@ -46,34 +49,35 @@ END_MESSAGE_MAP()
 
 CTextToolView::CTextToolView()
 {
-	// TODO: add construction code here
-	iLogicalPixelsY = -1;
+  // TODO: add construction code here
+  iLogicalPixelsY = -1;
 }
 
 CTextToolView::~CTextToolView()
 {
+  delete m_pFont;
 }
 
 BOOL CTextToolView::PreCreateWindow(CREATESTRUCT& cs)
 {
-	// TODO: Modify the Window class or styles here by modifying
-	//  the CREATESTRUCT cs
+  // TODO: Modify the Window class or styles here by modifying
+  //  the CREATESTRUCT cs
 
-	m_iMaxTextureWidth = 512;
-	m_iFontPointSize = -43;
-	m_iTextureZStep = 16;
+  m_iMaxTextureWidth = 512;
+  m_iFontPointSize = -43;
+  m_iTextureZStep = 16;
 
-	m_pFont = new CFont;
-	m_pFont->CreateFont(m_iFontPointSize,0,0,0,FW_NORMAL,FALSE,FALSE,0,
-					  ANSI_CHARSET,OUT_DEFAULT_PRECIS,CLIP_DEFAULT_PRECIS,
-					  DEFAULT_QUALITY,DEFAULT_PITCH | FF_SWISS,"Arial");
+  m_pFont = new CFont;
+  m_pFont->CreateFont(m_iFontPointSize,0,0,0,FW_NORMAL,FALSE,FALSE,0,
+		      ANSI_CHARSET,OUT_DEFAULT_PRECIS,CLIP_DEFAULT_PRECIS,
+		      DEFAULT_QUALITY,DEFAULT_PITCH | FF_SWISS,"Arial");
 
-	LOGFONT		rLogFont;
-	m_pFont->GetLogFont(&rLogFont);
+  LOGFONT rLogFont;
+  m_pFont->GetLogFont(&rLogFont);
 
-	m_iFontPointSize = -((rLogFont.lfHeight*72)/iLogicalPixelsY);
+  m_iFontPointSize = -((rLogFont.lfHeight*72)/iLogicalPixelsY);
 
-	return CView::PreCreateWindow(cs);
+  return CView::PreCreateWindow(cs);
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -276,266 +280,277 @@ void CTextToolView::OnFontSetfont()
 
 void CTextToolView::OnFontSavefontfiles()
 {
-	LOGFONT			rLogFont;
+  LOGFONT			rLogFont;
 
-	m_pFont->GetLogFont(&rLogFont);
+  m_pFont->GetLogFont(&rLogFont);
 
-	CString	szFaceNameT;
-	CString szFaceName;
-	szFaceNameT.Format("%s",rLogFont.lfFaceName);
+  CString	szFaceNameT;
+  CString szFaceName;
+  szFaceNameT.Format("%s",rLogFont.lfFaceName);
 
-	for (int i = 0; i < szFaceNameT.GetLength(); i++) {
-	  if (szFaceNameT[i] != ' ')
-	    szFaceName = szFaceName + szFaceNameT[i];
-	}
+  for (int i = 0; i < szFaceNameT.GetLength(); i++) {
+    if (szFaceNameT[i] != ' ')
+      szFaceName = szFaceName + szFaceNameT[i];
+  }
 
-	CString szType;
+  CString szType;
 
-	switch(rLogFont.lfWeight)
-	{
-		case FW_DONTCARE:
-		case FW_NORMAL:
-			break;
+  switch(rLogFont.lfWeight)
+  {
+    case FW_DONTCARE:
+    case FW_NORMAL:
+      break;
 
-		case FW_THIN:
-			szType = "Thin";
-			break;
-		case FW_EXTRALIGHT:
-			szType = "ExtraLight";
-			break;
-		case FW_LIGHT:
-			szType = "Light";
-			break;
-		case FW_MEDIUM:
-			szType = "Medium";
-			break;
-		case FW_SEMIBOLD:
-			szType = "SemiBold";
-			break;
-		case FW_BOLD:
-			szType = "Bold";
-			break;
-		case FW_EXTRABOLD:
-			szType = "ExtraBold";
-			break;
-		case FW_BLACK:
-			szType = "Black";
-			break;
+    case FW_THIN:
+      szType = "Thin";
+      break;
+    case FW_EXTRALIGHT:
+      szType = "ExtraLight";
+      break;
+    case FW_LIGHT:
+      szType = "Light";
+      break;
+    case FW_MEDIUM:
+      szType = "Medium";
+      break;
+    case FW_SEMIBOLD:
+      szType = "SemiBold";
+      break;
+    case FW_BOLD:
+      szType = "Bold";
+      break;
+    case FW_EXTRABOLD:
+      szType = "ExtraBold";
+      break;
+    case FW_BLACK:
+      szType = "Black";
+      break;
+  }
 
-	}
+  if (rLogFont.lfItalic != 0)
+    szType += "Italic";
 
-	if (rLogFont.lfItalic != 0)
-		szType += "Italic";
+  if (rLogFont.lfUnderline != 0)
+    szType += "Underline";
 
-	if (rLogFont.lfUnderline != 0)
-		szType += "Underline";
+  if (rLogFont.lfStrikeOut != 0)
+    szType += "Strike";
 
-	if (rLogFont.lfStrikeOut != 0)
-		szType += "Strike";
+  CString	szSize;
 
-	CString	szSize;
+  szSize.Format("_%d",m_iFontPointSize);
 
-	szSize.Format("_%d",m_iFontPointSize);
+  CString	szFileName = szFaceName + szType + szSize;
 
-	CString	szFileName = szFaceName + szType + szSize;
+  CFileDialog oFile(false,NULL,szFileName);
 
-	CFileDialog oFile(false,NULL,szFileName);
+  if (oFile.DoModal() == IDOK) {
+    DoFontSavefontfiles(oFile.GetPathName());
+  }
+}
 
-	if (oFile.DoModal() == IDOK)
-	{
+void CTextToolView::DoFontSavefontfiles(CString szPathName)
+{
+  CString	szPNGName = szPathName + ".png";
+  CString	szMetricFileName = szPathName + ".fmt";
 
-	  szFileName = oFile.GetFileName();
+  CDC	*pDC = GetDC();
+  CDC	*pDrawDC = pDC;//new CDC;
 
-	  CString	szPNGName = oFile.GetPathName() + ".png";
-	  CString	szMetricFileName = oFile.GetPathName() + ".fmt";
+  Invalidate(true);
+  // pDrawDC->CreateCompatibleDC(pDC);
 
-	  CDC	*pDC = GetDC();
-	  CDC	*pDrawDC = pDC;//new CDC;
+  if (!pDrawDC)
+    return;
 
-	  Invalidate(true);
-	  // pDrawDC->CreateCompatibleDC(pDC);
+  int iImageY = m_iMaxY;
 
-	  if (!pDrawDC)
-		  return;
+  int iPictureY = iImageY;
 
-	  int iImageY = m_iMaxY;
+  int y2 = 4;
 
-	  int iPictureY = iImageY;
+  // find next greater power of two
+  while (iPictureY > y2) {
+    y2 <<= 1;
+  }
+  iPictureY = y2;
 
-	  int y2 = 4;
+  // fill the DC with black
+  CRect	rect;
+  CBrush	blackBrush(RGB(0,0,0));
 
-	  // find next greater power of two
-	  while (iPictureY > y2) {
-	    y2 <<= 1;
-	  }
-	  iPictureY = y2;
+  COLORREF      rPixel = RGB(0,0,0);
 
-	  // fill the DC with black
-	  CRect	rect;
-	  CBrush	blackBrush(RGB(0,0,0));
+  rect.SetRect(0,0,m_iMaxTextureWidth,iImageY);
 
-	  COLORREF      rPixel = RGB(0,0,0);
+  pDrawDC->FillRect(&rect,&blackBrush);
+  OnDraw(pDrawDC);
 
-	  rect.SetRect(0,0,m_iMaxTextureWidth,iImageY);
+  std::ofstream* f = new std::ofstream(szPNGName, std::ios::out | std::ios::binary);
 
-	  pDrawDC->FillRect(&rect,&blackBrush);
-	  OnDraw(pDrawDC);
+  int temp = 0; //temporary values for binary file writing
+  char tempByte = 0;
+  int crc = 0;  //used for running CRC values
 
-	  std::ofstream* f = new std::ofstream(szPNGName, std::ios::out | std::ios::binary);
+  int w = 512, h = iPictureY;
+  unsigned long blength = (w + 1) * h * 4;
+  char* b = new char[blength];
 
-	  int temp = 0; //temporary values for binary file writing
-	  char tempByte = 0;
-	  int crc = 0;  //used for running CRC values
-
-	  int w = 512, h = iPictureY;
-	  unsigned long blength = (w + 1) * h * 4;
-	  char* b = new char[blength];
-
-	  // Write PNG headers
-	  (*f) << "\211PNG\r\n\032\n";
+  // Write PNG headers
+  (*f) << "\211PNG\r\n\032\n";
 #define	  PNGTAG(t_) ((((int)t_[0]) << 24) | \
 		      (((int)t_[1]) << 16) | \
 		      (((int)t_[2]) <<  8) | \
 			(int)t_[3])
 
-	  // IHDR chunk
-	  temp = htonl((int) 13);       //(length) IHDR is always 13 bytes long
-	  f->write((char*) &temp, 4);
-	  temp = htonl(PNGTAG("IHDR")); //(tag) IHDR
-	  f->write((char*) &temp, 4);
-	  crc = crc32(crc, (unsigned char*) &temp, 4);
-	  temp = htonl(w);	      //(data) Image width
-	  f->write((char*) &temp, 4);
-	  crc = crc32(crc, (unsigned char*) &temp, 4);
-	  temp = htonl(h);		//(data) Image height
-	  f->write((char*) &temp, 4);
-	  crc = crc32(crc, (unsigned char*) &temp, 4);
-	  tempByte = 8;		 //(data) Image bitdepth (8 bits/sample = 24 bits/pixel)
-	  f->write(&tempByte, 1);
-	  crc = crc32(crc, (unsigned char*) &tempByte, 1);
-	  tempByte = 6;		 //(data) Color type: RGBA = 6
-	  f->write(&tempByte, 1);
-	  crc = crc32(crc, (unsigned char*) &tempByte, 1);
-	  tempByte = 0;
-	  int i;
-	  for (i = 0; i < 3; i++) { //(data) Last three tags are compression (only 0 allowed), filtering (only 0 allowed), and interlacing (we don't use it, so it's 0)
-	    f->write(&tempByte, 1);
-	    crc = crc32(crc, (unsigned char*) &tempByte, 1);
-	  }
-	  crc = htonl(crc);
-	  f->write((char*) &crc, 4);    //(crc) write crc
+  // IHDR chunk
+  temp = htonl((int) 13);       //(length) IHDR is always 13 bytes long
+  f->write((char*) &temp, 4);
+  temp = htonl(PNGTAG("IHDR")); //(tag) IHDR
+  f->write((char*) &temp, 4);
+  crc = crc32(crc, (unsigned char*) &temp, 4);
+  temp = htonl(w);	      //(data) Image width
+  f->write((char*) &temp, 4);
+  crc = crc32(crc, (unsigned char*) &temp, 4);
+  temp = htonl(h);		//(data) Image height
+  f->write((char*) &temp, 4);
+  crc = crc32(crc, (unsigned char*) &temp, 4);
+  tempByte = 8;		 //(data) Image bitdepth (8 bits/sample = 24 bits/pixel)
+  f->write(&tempByte, 1);
+  crc = crc32(crc, (unsigned char*) &tempByte, 1);
+  tempByte = 6;		 //(data) Color type: RGBA = 6
+  f->write(&tempByte, 1);
+  crc = crc32(crc, (unsigned char*) &tempByte, 1);
+  tempByte = 0;
+  int i;
+  for (i = 0; i < 3; i++) { //(data) Last three tags are compression (only 0 allowed), filtering (only 0 allowed), and interlacing (we don't use it, so it's 0)
+    f->write(&tempByte, 1);
+    crc = crc32(crc, (unsigned char*) &tempByte, 1);
+  }
+  crc = htonl(crc);
+  f->write((char*) &crc, 4);    //(crc) write crc
 
-	  // IDAT chunk
+  // IDAT chunk
 
-	  // fill buffer with black
-	  for (i = 0; i < (long)blength; i++)
-	    b[i] = 0;
-	  // write image data over buffer
-	  for (int y = 0; y <= m_iMaxY - 1; y++) {
-	    const unsigned long line = y * (w * 4 + 1); //beginning of this line
-	    b[line] = 0;  //filter type byte at the beginning of each scanline (0 = no filter, 1 = sub filter)
-	    for (int x = 0; x < m_iMaxTextureWidth; x++) {
-	      // Grab a reference to the current pixel
-	      rPixel = pDrawDC->GetPixel(x, y);
-	      // Pixel color values
-	      b[line + x * 4 + 1] = GetRValue(rPixel);
-	      b[line + x * 4 + 2] = GetGValue(rPixel);
-	      b[line + x * 4 + 3] = GetBValue(rPixel);
-	      // Write Alpha channel as average of RGB, since it's grayscale anyhow
-	      b[line + x * 4 + 4] =(GetBValue(rPixel) + GetGValue(rPixel) + GetRValue(rPixel)) / 3;
-	    }
-	  }
+  // fill buffer with black
+  for (i = 0; i < (long)blength; i++)
+    b[i] = 0;
+  // write image data over buffer
+  for (int y = 0; y <= m_iMaxY - 1; y++) {
+    const unsigned long line = y * (w * 4 + 1); //beginning of this line
+    b[line] = 0;  //filter type byte at the beginning of each scanline (0 = no filter, 1 = sub filter)
+    for (int x = 0; x < m_iMaxTextureWidth; x++) {
+      // Grab a reference to the current pixel
+      rPixel = pDrawDC->GetPixel(x, y);
+      // Pixel color values
+      b[line + x * 4 + 1] = GetRValue(rPixel);
+      b[line + x * 4 + 2] = GetGValue(rPixel);
+      b[line + x * 4 + 3] = GetBValue(rPixel);
+      // Write Alpha channel as average of RGB, since it's grayscale anyhow
+      b[line + x * 4 + 4] =(GetBValue(rPixel) + GetGValue(rPixel) + GetRValue(rPixel)) / 3;
+    }
+  }
 
-	  unsigned long zlength = blength + 15;	    //length of bz[], will be changed by zlib to the length of the compressed string contained therein
-	  unsigned char* bz = new unsigned char[zlength]; //just like b, but compressed; might get bigger, so give it room
-	  // compress b into bz
-	  compress2(bz, &zlength, reinterpret_cast<const unsigned char*>(b), blength, 5);
-	  temp = htonl(zlength);			  //(length) IDAT length after compression
-	  f->write((char*) &temp, 4);
-	  temp = htonl(PNGTAG("IDAT"));		   //(tag) IDAT
-	  f->write((char*) &temp, 4);
-	  crc = crc32(crc = 0, (unsigned char*) &temp, 4);
-	  f->write(reinterpret_cast<char*>(bz), zlength);  //(data) This line of pixels, compressed
-	  crc = htonl(crc32(crc, bz, zlength));
-	  f->write((char*) &crc, 4);		       //(crc) write crc
+  unsigned long zlength = blength + 15;	    //length of bz[], will be changed by zlib to the length of the compressed string contained therein
+  unsigned char* bz = new unsigned char[zlength]; //just like b, but compressed; might get bigger, so give it room
+  // compress b into bz
+  compress2(bz, &zlength, reinterpret_cast<const unsigned char*>(b), blength, 5);
+  temp = htonl(zlength);			  //(length) IDAT length after compression
+  f->write((char*) &temp, 4);
+  temp = htonl(PNGTAG("IDAT"));		   //(tag) IDAT
+  f->write((char*) &temp, 4);
+  crc = crc32(crc = 0, (unsigned char*) &temp, 4);
+  f->write(reinterpret_cast<char*>(bz), zlength);  //(data) This line of pixels, compressed
+  crc = htonl(crc32(crc, bz, zlength));
+  f->write((char*) &crc, 4);		       //(crc) write crc
 
-	  // tEXt chunk containing bzflag build/version
-	  temp = htonl(28);//(length) tEXt is "Software\0BZFlag TextTool-W32"
-	  f->write((char*) &temp, 4);
-	  temp = htonl(PNGTAG("tEXt"));		   //(tag) tEXt
-	  f->write((char*) &temp, 4);
-	  crc = crc32(crc = 0, (unsigned char*) &temp, 4);
-	  strcpy(b, "Software"); //(data) Keyword
-	  f->write(reinterpret_cast<char*>(b), strlen(reinterpret_cast<const char*>(b)));
-	  crc = crc32(crc, reinterpret_cast<const unsigned char*>(b), strlen(b));
-	  tempByte = 0;					  //(data) Null character separator
-	  f->write(&tempByte, 1);
-	  crc = crc32(crc, (unsigned char*) &tempByte, 1);
-	  strcpy((char*) b, "BZFlag TextTool-W32");       //(data) Text contents (build/version)
-	  f->write(reinterpret_cast<char*>(b), strlen(reinterpret_cast<const char*>(b)));
-	  crc = htonl(crc32(crc, reinterpret_cast<const unsigned char*>(b), strlen(b)));
-	  f->write((char*) &crc, 4);		       //(crc) write crc
+  // tEXt chunk containing bzflag build/version
+  temp = htonl(28);//(length) tEXt is "Software\0BZFlag TextTool-W32"
+  f->write((char*) &temp, 4);
+  temp = htonl(PNGTAG("tEXt"));		   //(tag) tEXt
+  f->write((char*) &temp, 4);
+  crc = crc32(crc = 0, (unsigned char*) &temp, 4);
+  strcpy(b, "Software"); //(data) Keyword
+  f->write(reinterpret_cast<char*>(b), strlen(reinterpret_cast<const char*>(b)));
+  crc = crc32(crc, reinterpret_cast<const unsigned char*>(b), strlen(b));
+  tempByte = 0;					  //(data) Null character separator
+  f->write(&tempByte, 1);
+  crc = crc32(crc, (unsigned char*) &tempByte, 1);
+  strcpy((char*) b, "BZFlag TextTool-W32");       //(data) Text contents (build/version)
+  f->write(reinterpret_cast<char*>(b), strlen(reinterpret_cast<const char*>(b)));
+  crc = htonl(crc32(crc, reinterpret_cast<const unsigned char*>(b), strlen(b)));
+  f->write((char*) &crc, 4);		       //(crc) write crc
 
-	  // IEND chunk
-	  temp = htonl((int) 0);	//(length) IEND is always 0 bytes long
-	  f->write((char*) &temp, 4);
-	  temp = htonl(PNGTAG("IEND")); //(tag) IEND
-	  f->write((char*) &temp, 4);
-	  crc = htonl(crc32(crc = 0, (unsigned char*) &temp, 4));
-	  //(data) IEND has no data field
-	  f->write((char*) &crc, 4);     //(crc) write crc
-	  delete [] bz;
-	  delete [] b;
-	  delete f;
+  // IEND chunk
+  temp = htonl((int) 0);	//(length) IEND is always 0 bytes long
+  f->write((char*) &temp, 4);
+  temp = htonl(PNGTAG("IEND")); //(tag) IEND
+  f->write((char*) &temp, 4);
+  crc = htonl(crc32(crc = 0, (unsigned char*) &temp, 4));
+  //(data) IEND has no data field
+  f->write((char*) &crc, 4);     //(crc) write crc
+  delete [] bz;
+  delete [] b;
+  delete f;
 
-	  // pDrawDC->DeleteDC();
-	  // delete(pDrawDC);
-	  ReleaseDC(pDC);
+  // pDrawDC->DeleteDC();
+  // delete(pDrawDC);
+  ReleaseDC(pDC);
 
-	  FILE *fp = fopen(szMetricFileName,"wt");
-	  if (!fp)
-		  return;
+  FILE *fp = fopen(szMetricFileName,"wt");
+  if (!fp)
+    return;
 
-	  struct
-	  {
-		  int iInitalDist;
-		  int iCharWidth;
-		  int iWhiteSpaceDist;
-		  int iStartX;
-		  int iEndX;
-		  int iStartY;
-		  int iEndY;
-	  }rFontMetrics;
+  struct {
+    int iInitalDist;
+    int iCharWidth;
+    int iWhiteSpaceDist;
+    int iStartX;
+    int iEndX;
+    int iStartY;
+    int iEndY;
+  }rFontMetrics;
 
-	  int iNumChars = '~' - ' ';
+  int iNumChars = '~' - ' ';
 
-	  fprintf(fp,"NumChars: %d\nTextureWidth: %d\nTextureHeight: %d\nTextZStep: %d\n\n",iNumChars+1,m_iMaxTextureWidth,iPictureY,m_iTextureZStep);
+  fprintf(fp,"NumChars: %d\nTextureWidth: %d\nTextureHeight: %d\nTextZStep: %d\n\n",iNumChars+1,m_iMaxTextureWidth,iPictureY,m_iTextureZStep);
 
-	  for (int iChar = 0; iChar <= iNumChars; iChar++)
-	  {
+  for (int iChar = 0; iChar <= iNumChars; iChar++) {
+    rFontMetrics.iInitalDist = m_aWidths[iChar].abcA;
+    rFontMetrics.iCharWidth = m_aWidths[iChar].abcB;
+    rFontMetrics.iWhiteSpaceDist = m_aWidths[iChar].abcC;
 
-		  rFontMetrics.iInitalDist = m_aWidths[iChar].abcA;
-		  rFontMetrics.iCharWidth = m_aWidths[iChar].abcB;
-		  rFontMetrics.iWhiteSpaceDist = m_aWidths[iChar].abcC;
+    rFontMetrics.iStartX = m_arGlyphExtents[iChar].iStartX;
+    rFontMetrics.iEndX = m_arGlyphExtents[iChar].iEndX;
+    rFontMetrics.iStartY = m_arGlyphExtents[iChar].iStartY;
+    rFontMetrics.iEndY = m_arGlyphExtents[iChar].iEndY;
 
-		  rFontMetrics.iStartX = m_arGlyphExtents[iChar].iStartX;
-		  rFontMetrics.iEndX = m_arGlyphExtents[iChar].iEndX;
-		  rFontMetrics.iStartY = m_arGlyphExtents[iChar].iStartY;
-		  rFontMetrics.iEndY = m_arGlyphExtents[iChar].iEndY;
+    fprintf(fp,"Char: \"%c\"\nInitialDist: %d\nWidth: %d\nWhitespace: %d\n",iChar+32,rFontMetrics.iInitalDist,rFontMetrics.iCharWidth,rFontMetrics.iWhiteSpaceDist);
+    fprintf(fp,"StartX: %d\nEndX: %d\nStartY: %d\nEndY: %d\n\n",rFontMetrics.iStartX,rFontMetrics.iEndX,rFontMetrics.iStartY,rFontMetrics.iEndY);
+  }
+  fclose(fp);
 
-		  fprintf(fp,"Char: \"%c\"\nInitialDist: %d\nWidth: %d\nWhitespace: %d\n",iChar+32,rFontMetrics.iInitalDist,rFontMetrics.iCharWidth,rFontMetrics.iWhiteSpaceDist);
-		  fprintf(fp,"StartX: %d\nEndX: %d\nStartY: %d\nEndY: %d\n\n",rFontMetrics.iStartX,rFontMetrics.iEndX,rFontMetrics.iStartY,rFontMetrics.iEndY);
+  Invalidate(true);
+}
 
-	  }
-	  fclose(fp);
-	}
-	Invalidate(true);
+void CTextToolView::OnBatchProcessing()
+{
+  CFileDialog oFile(true,".ttb",0,0,"TextTool batch processing files (*.ttb)|*.ttb");
+
+  if (oFile.DoModal() == IDOK) {
+    std::string filename = oFile.GetFileName();
+
+    TextToolBatch* ttb = new TextToolBatch(filename);
+
+    delete ttb;
+  }
+
 }
 
 void CTextToolView::OnInitialUpdate()
 {
-	CView::OnInitialUpdate();
+  CView::OnInitialUpdate();
 
-	Invalidate(true);
-	UpdateWindow();
+  Invalidate(true);
+  UpdateWindow();
 }
