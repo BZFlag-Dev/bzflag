@@ -4958,6 +4958,62 @@ void drawFrame(const float dt)
       // draw right eye's view
       sceneRenderer->render(true, true);
       drawUI();
+    } else if (viewType == SceneRenderer::Interlaced) {
+      static float EyeDisplacement = 0.25f * BZDBCache::tankWidth;
+      static float FocalPlane = BZDB.eval(StateDatabase::BZDB_BOXBASE);
+      static bool init = false;
+      const int width = mainWindow->getWidth();
+      const int height = mainWindow->getHeight();
+      if (!init) {
+	init = true;
+	if (BZDB.isSet("eyesep"))
+	  EyeDisplacement = BZDB.eval("eyesep");
+	if (BZDB.isSet("focal"))
+	  FocalPlane = BZDB.eval("focal");
+      }
+
+      OpenGLGState::resetState();
+      // enable stencil test
+      glEnable(GL_STENCIL_TEST);
+
+      // clear stencil
+      glClearStencil(0);
+      // Clear color and stencil buffer
+      glClear(GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+      // All drawing commands fail the stencil test, and are not
+      // drawn, but increment the value in the stencil buffer.
+      glStencilFunc(GL_NEVER, 0x0, 0x0);
+      glStencilOp(GL_INCR, GL_INCR, GL_INCR);
+      glColor3f(1.0f, 1.0f, 1.0f);
+      for (int y=0;y<=height;y+=2) {
+	glBegin(GL_LINES);
+	glVertex2i(0, y);
+	glVertex2i(width, y);
+	glEnd();
+      }
+
+      // draw except where the stencil pattern is 0x1
+      // do not change the stencil buffer
+      glStencilFunc(GL_NOTEQUAL, 0x1, 0x1);
+      glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
+      // setup view for left eye
+      sceneRenderer->getViewFrustum().setOffset(EyeDisplacement, FocalPlane);
+      // draw left eye's view
+      sceneRenderer->render(false);
+
+      // draw where the stencil pattern is 0x1
+      // do not change the stencil buffer
+      glStencilFunc(GL_EQUAL, 0x1, 0x1);
+      glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
+      // set up view for right eye
+      sceneRenderer->getViewFrustum().setOffset(-EyeDisplacement, FocalPlane);
+      // draw right eye's view
+      sceneRenderer->render(true, true);
+
+      glStencilFunc(GL_ALWAYS, 0x1, 0x1);
+      glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
+      drawUI();
+
     } else {
       const int zoomFactor = getZoomFactor();
       if (zoomFactor != 1) {

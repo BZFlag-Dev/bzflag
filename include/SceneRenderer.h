@@ -64,7 +64,8 @@ public:
     Stereo,		// binocular stereo
     Stacked,		// top-bottom stereo view
     ThreeChannel,	// one wide view
-    Anaglyph		// red-blue stereo
+    Anaglyph,		// red-blue stereo
+    Interlaced		// right/left interlaced stereo
   };
 
   void		setWindow(MainWindow* _window);

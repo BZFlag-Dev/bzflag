@@ -231,7 +231,8 @@ static const char*	configViewValues[] = {
 				"stereo",
 				"stacked",
 				"three",
-				"anaglyph"
+				"anaglyph",
+				"interlaced"
 			};
 
 static std::string	getOldConfigFileName()
@@ -508,7 +509,7 @@ static void		usage()
 	" [-team {red|green|blue|purple|rogue|observer}]"
 	" [-time hh:mm:ss] [-notime]"
 	" [-version]"
-	" [-view {normal|stereo|stacked|three|anaglyph}]"
+	" [-view {normal|stereo|stacked|three|anaglyph|interlaced}]"
 	" [-window]"
 	" [-zoom <zoom-factor>]"
 	" [callsign@]server[:port]\n\nExiting.", argv0);
