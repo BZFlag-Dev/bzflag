@@ -324,17 +324,19 @@ cannot proceed.  A checklist of items to be completed follows:
 - ChangeLog includes a comment for all items added since the previous
   release, preferably denoting who made what changes.
 
-- Man files, bzfs_conf.html, and bzfs.conf files are updated with latest changes.
+- Man files, bzfs_conf.html, and bzfs.conf files are updated with
+  latest changes.
 
 - Version numbers are updated to the next expected release number.
   This minimally includes updating README, configure.in, and
   ChangeLog.  Other platform-specific README.* files should also be
   verfied that all version numbers are up-to-date.
 
+- Update package/win32/nsis/BZFlag.nsi (for windows) with appropriate
+  version numbers
+
 - Perform a "make distcheck".  This will verify that a proper source
   distribution can be made.
-
-- Update BZFlag.nsi (for windows) with appropriate version numbers
 
 - Tag the release.  Tag format should be consistent with the other
   tags using the format of vMAJOR_MINOR_RELEASE 
