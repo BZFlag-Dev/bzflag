@@ -19,7 +19,7 @@
 #include <vector>
 
 
-typedef enum { NOT_IN_BUILDING, IN_BASE, IN_BOX, IN_PYRAMID, IN_TELEPORTER } InBuildingType;
+typedef enum { NOT_IN_BUILDING, IN_BASE, IN_BOX_NOTDRIVETHROUGH, IN_BOX_DRIVETHROUGH, IN_PYRAMID, IN_TELEPORTER } InBuildingType;
 
 struct ObstacleLocation {
 public:

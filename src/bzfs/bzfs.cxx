@@ -2317,7 +2317,7 @@ void resetFlag(int flagIndex)
 					flagHeight);
     while (topmosttype != NOT_IN_BUILDING) {
       if ((clOptions->flagsOnBuildings
-	   && ((topmosttype == IN_BOX) || (topmosttype == IN_BASE)))
+	   && ((topmosttype == IN_BOX_NOTDRIVETHROUGH) || (topmosttype == IN_BASE)))
 	  && (obj->pos[2] < (pFlagInfo->flag.position[2] + flagHeight - Epsilon))
 	  && ((obj->pos[2] + obj->size[2] - Epsilon) > pFlagInfo->flag.position[2])
 	  && (world->inRect(obj->pos, obj->rotation, obj->size, pFlagInfo->flag.position[0], pFlagInfo->flag.position[1], 0.0f)))
@@ -3219,7 +3219,7 @@ static void dropFlag(int playerIndex, float pos[3])
     drpFlag.flag.landingPosition[1] = pos[1];
     drpFlag.flag.landingPosition[2] = 0.0f;
   }
-  else if (clOptions->flagsOnBuildings && (topmosttype == IN_BOX || topmosttype == IN_BASE)) {
+  else if (clOptions->flagsOnBuildings && (topmosttype == IN_BOX_NOTDRIVETHROUGH || topmosttype == IN_BASE)) {
     drpFlag.flag.landingPosition[0] = pos[0];
     drpFlag.flag.landingPosition[1] = pos[1];
     drpFlag.flag.landingPosition[2] = topmost->pos[2] + topmost->size[2];

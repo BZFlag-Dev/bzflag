@@ -212,7 +212,8 @@ InBuildingType WorldInfo::inBuilding(ObstacleLocation **location,
 	&& (inRect(box.pos, box.rotation, box.size, x, y, r))) {
       if (location != NULL)
 	*location = &box;
-      return IN_BOX;
+      if (box.driveThrough) return IN_BOX_DRIVETHROUGH;
+      else return IN_BOX_NOTDRIVETHROUGH;
     }
   }
   for (pyrit = pyramids.begin(); pyrit != pyramids.end(); ++pyrit) {
