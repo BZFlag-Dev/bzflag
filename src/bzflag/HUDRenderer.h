@@ -127,8 +127,6 @@ class HUDRenderer {
     void		renderTimes(void);
     void		drawPlayerScore(const Player*,
 					float x1, float x2, float x3, float y);
-    void		drawDeadPlayerScore(const Player*,
-					float x1, float x2, float x3, float y);
     void		drawTeamScore(int team, float x, float y);
 
     void		makeCrack(float crackpattern[HUDNumCracks][(1 << HUDCrackLevels) + 1][2], int n, int l, float a);

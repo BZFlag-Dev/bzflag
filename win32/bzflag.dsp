@@ -132,10 +132,6 @@ SOURCE=..\src\bzflag\daylight.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\src\bzflag\DeadPlayer.cxx
-# End Source File
-# Begin Source File
-
 SOURCE=..\src\bzflag\HUDDialog.cxx
 # End Source File
 # Begin Source File
@@ -258,10 +254,6 @@ SOURCE=..\src\bzflag\ControlPanel.h
 # Begin Source File
 
 SOURCE=..\src\bzflag\daylight.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\src\bzflag\DeadPlayer.h
 # End Source File
 # Begin Source File
 

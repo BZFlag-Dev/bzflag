@@ -20,7 +20,6 @@
 #include "BzfWindow.h"
 #include "LocalPlayer.h"
 #include "RemotePlayer.h"
-#include "DeadPlayer.h"
 #include "World.h"
 #include "BundleMgr.h"
 #include "Bundle.h"
@@ -1557,16 +1556,6 @@ void			HUDRenderer::drawPlayerScore(const Player* player,
   } else {
     minorFont.draw("      ", x5, y);
   }
-}
-
-void			HUDRenderer::drawDeadPlayerScore(const Player* player,
-					float x1, float x2, float x3, float y)
-{
-  // removed this - disconnected players should *NOT* show up in the score list
-  // draw dead player scores in a darker shade
-  sDim = true;
-  drawPlayerScore(player, x1, x2, x3, y);
-  sDim = false;
 }
 
 void			HUDRenderer::drawTeamScore(int teamIndex, float x1, float y)

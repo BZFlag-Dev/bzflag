@@ -2546,9 +2546,6 @@ static Player*		addPlayer(PlayerId id, void* msg, int showMessage)
     addMessage(player[i], message);
   }
 
-  // restore player's local score if player had been playing earlier
-  world->reviveDeadPlayer(player[i]);
-
   return player[i];
 }
 
@@ -2697,7 +2694,6 @@ static void		handleServerMessage(bool human, uint16_t code,
       int playerIndex = lookupPlayerIndex(id);
       if (playerIndex >= 0) {
 	addMessage(player[playerIndex], "signing off");
-	world->addDeadPlayer(player[playerIndex]);
 	if (myTank->getRecipient() == player[playerIndex])
 	  myTank->setRecipient(0);
 	if (myTank->getNemesis() == player[playerIndex])

@@ -32,7 +32,6 @@
 
 class Ray;
 class Player;
-class DeadPlayer;
 class RemotePlayer;
 class SceneDatabase;
 class FlagSceneNode;
@@ -62,7 +61,6 @@ class World {
     int			getMaxPlayers() const;
     int			getCurMaxPlayers() const;
     void		setCurMaxPlayers(int curMaxPlayers);
-    int			getMaxDeadPlayers() const;
     int			getMaxShots() const;
     int			getMaxFlags() const;
     float		getShakeTimeout() const;
@@ -74,7 +72,6 @@ class World {
     Team&		getTeam(int index);
     RemotePlayer**	getPlayers() const;
     RemotePlayer*&	getPlayer(int index) const;
-    DeadPlayer**	getDeadPlayers() const;
     Flag&		getFlag(int index) const;
     const float*	getBase(int) const;
     const std::vector<WallObstacle>	&getWalls() const;
@@ -103,9 +100,6 @@ class World {
     void		initFlag(int index);
     void		updateFlag(int index, float dt);
     void		addFlags(SceneDatabase*);
-
-    void		reviveDeadPlayer(Player* revivedPlayer);
-    void		addDeadPlayer(Player* dyingPlayer);
 
     static World*	getWorld();
     static void		setWorld(World*);
@@ -148,7 +142,6 @@ class World {
     std::vector<int>			teleportTargets;
     Team		team[NumTeams];
     RemotePlayer**	players;
-    DeadPlayer**	deadPlayers;
     Flag*		flags;
     FlagSceneNode**	flagNodes;
     FlagWarpSceneNode**	flagWarpNodes;
@@ -156,7 +149,6 @@ class World {
     EighthDimSceneNode** pyramidInsideNodes;
     EighthDimSceneNode** baseInsideNodes;
     static World*	playingField;
-    static const int	maxDeadPlayers;
     static BundleMgr	*bundleMgr;
     static std::string	locale;
 };
@@ -292,11 +284,6 @@ inline void		World::setCurMaxPlayers(int curMaxPlayers)
   this->curMaxPlayers = curMaxPlayers;
 }
 
-inline int		World::getMaxDeadPlayers() const
-{
-  return maxDeadPlayers;
-}
-
 inline int		World::getMaxShots() const
 {
   return maxShots;
@@ -350,11 +337,6 @@ inline RemotePlayer**	World::getPlayers() const
 inline RemotePlayer*&	World::getPlayer(int index) const
 {
   return players[index];
-}
-
-inline DeadPlayer**	World::getDeadPlayers() const
-{
-  return deadPlayers;
 }
 
 inline Flag&		World::getFlag(int index) const

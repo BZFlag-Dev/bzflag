@@ -22,7 +22,6 @@
 #include "Pack.h"
 #include "Ray.h"
 #include "Protocol.h"
-#include "DeadPlayer.h"
 #include "RemotePlayer.h"
 #include "FlagSceneNode.h"
 #include "FlagWarpSceneNode.h"
@@ -42,7 +41,6 @@ static OpenGLTexture*	flagTexture = NULL;
 //
 
 World*			World::playingField = NULL;
-const int		World::maxDeadPlayers = 20;
 BundleMgr*		World::bundleMgr;
 std::string		World::locale("");
 
@@ -54,7 +52,6 @@ World::World() : gameStyle(PlainGameStyle),
 				maxShots(1),
 				maxFlags(0),
 				players(NULL),
-				deadPlayers(NULL),
 				flags(NULL),
 				flagNodes(NULL),
 				flagWarpNodes(NULL),
@@ -74,9 +71,6 @@ World::World() : gameStyle(PlainGameStyle),
     bases[i][7] = 0.0f;
     bases[i][8] = 0.0f;
   }
-  deadPlayers = new DeadPlayer*[maxDeadPlayers];
-  for (i = 0; i < maxDeadPlayers; i++)
-    deadPlayers[i] = NULL;
 }
 
 World::~World()
@@ -87,9 +81,6 @@ World::~World()
   for (i = 0; i < curMaxPlayers; i++)
     delete players[i];
   delete[] players;
-  for (i = 0; i < maxDeadPlayers; i++)
-    delete deadPlayers[i];
-  delete[] deadPlayers;
 }
 
 void			World::init()
@@ -574,40 +565,6 @@ void			World::addFlags(SceneDatabase* scene)
 	flags[i].flightTime >= 0.5 * flags[i].flightEnd))
       scene->addDynamicNode(flagWarpNodes[i]);
   }
-}
-
-void			World::reviveDeadPlayer(Player* revivedPlayer)
-{
-  // see if player is in the list of the dead
-  for (int i = 0; i < maxDeadPlayers; i++) {
-    if (deadPlayers[i] == NULL)
-      continue;
-    if (strcmp(deadPlayers[i]->getCallSign(), revivedPlayer->getCallSign())!=0)
-      continue;
-
-    // that's the guy!  copy the local wins and losses (assuming the
-    // revived player's local wins and losses are zero).
-    revivedPlayer->changeLocalScore(deadPlayers[i]->getLocalWins(),
-				    deadPlayers[i]->getLocalLosses(),
-				    deadPlayers[i]->getLocalTeamKills());
-
-    // remove dead player.  keep dead player list packed but don't
-    // shuffle the order.  a linked list would be better.
-    delete deadPlayers[i];
-    for (int j = i + 1; j < maxDeadPlayers; j++)
-      deadPlayers[j - 1] = deadPlayers[j];
-    deadPlayers[maxDeadPlayers - 1] = NULL;
-  }
-}
-
-void			World::addDeadPlayer(Player* dyingPlayer)
-{
-  // player is leaving so save player info.  if dead player list is
-  // full then drop off oldest one.
-  delete deadPlayers[maxDeadPlayers - 1];
-  for (int i = maxDeadPlayers - 1; i > 0; i--)
-    deadPlayers[i] = deadPlayers[i - 1];
-  deadPlayers[0] = new DeadPlayer(*dyingPlayer);
 }
 
 //
