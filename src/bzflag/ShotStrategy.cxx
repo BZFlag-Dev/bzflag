@@ -9,7 +9,7 @@
  * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
-
+#include "StateDatabase.h"
 #include "ShotStrategy.h"
 #include "World.h"
 #include "Intersect.h"
@@ -434,59 +434,59 @@ float					SegmentedShotStrategy::checkHit(const BaseLocalPlayer* tank,
 			continue;
 
 /*
-    // skip segments that don't overlap in time with current interval
-    if (segments[i].end <= prevTime) continue;
-    if (currentTime <= segments[i].start) break;
+	// skip segments that don't overlap in time with current interval
+	if (segments[i].end <= prevTime) continue;
+	if (currentTime <= segments[i].start) break;
 */
 
-    // if shot segment and tank bboxes don't overlap then no hit
-    const ShotPathSegment& s = segments[i];
-    if (!isOverlapping(s.bbox, tankBBox)) continue;
-
-    // construct relative shot ray:  origin and velocity relative to
-    // my tank as a function of time (t=0 is start of the interval).
-    Ray relativeRay(Intersect::rayMinusRay(s.ray, prevTime - s.start,
-												tankLastMotion, 0.0f));
-
-    // get hit time
-    float t;
-    if (tank->getFlag() == NarrowFlag) {
-      // find closest approach to narrow box around tank.  width of box
-      // is shell radius so you can actually hit narrow tank head on.
-      static float origin[3] = { 0.0f, 0.0f, 0.0f };
-      t = Intersect::timeRayHitsBlock(relativeRay, origin, tank->getAngle(),
-						0.5f * TankLength, ShotRadius, TankHeight);
-    }
-    else {
-      // find time when shot hits sphere around tank
-      t = Intersect::rayAtDistanceFromOrigin(relativeRay, 0.99f * radius);
-    }
-
-    // short circuit if time is greater then smallest time so far
-    if (t > minTime) continue;
-
-    // make sure time falls within segment
-    if (t < 0.0f || t > dt) continue;
-    if (t > s.end - prevTime) continue;
-
-    // check if shot hits tank -- get position at time t, see if in radius
-    float closestPos[3];
-    relativeRay.getPoint(t, closestPos);
-    if (closestPos[0] * closestPos[0] +
-		closestPos[1] * closestPos[1] +
-		closestPos[2] * closestPos[2] < radius2) {
-      // save best time so far
-      minTime = t;
-
-      // compute location of tank at time of hit
-      float tankPos[3];
-      tank->getLastMotion().getPoint(t, tankPos);
-
-      // compute position of intersection
-      position[0] = tankPos[0] + closestPos[0];
-      position[1] = tankPos[1] + closestPos[1];
-      position[2] = tankPos[2] + closestPos[2];
-    }
+		// if shot segment and tank bboxes don't overlap then no hit
+		const ShotPathSegment& s = segments[i];
+		if (!isOverlapping(s.bbox, tankBBox)) continue;
+	
+		// construct relative shot ray:  origin and velocity relative to
+		// my tank as a function of time (t=0 is start of the interval).
+		Ray relativeRay(Intersect::rayMinusRay(s.ray, prevTime - s.start,
+													tankLastMotion, 0.0f));
+	
+		// get hit time
+		float t;
+		if (tank->getFlag() == NarrowFlag) {
+		  // find closest approach to narrow box around tank.  width of box
+		  // is shell radius so you can actually hit narrow tank head on.
+		  static float origin[3] = { 0.0f, 0.0f, 0.0f };
+		  t = Intersect::timeRayHitsBlock(relativeRay, origin, tank->getAngle(),
+							0.5f * TankLength, ShotRadius, TankHeight);
+		}
+		else {
+		  // find time when shot hits sphere around tank
+		  t = Intersect::rayAtDistanceFromOrigin(relativeRay, 0.99f * radius);
+		}
+	
+		// short circuit if time is greater then smallest time so far
+		if (t > minTime) continue;
+	
+		// make sure time falls within segment
+		if (t < 0.0f || t > dt) continue;
+		if (t > s.end - prevTime) continue;
+	
+		// check if shot hits tank -- get position at time t, see if in radius
+		float closestPos[3];
+		relativeRay.getPoint(t, closestPos);
+		if (closestPos[0] * closestPos[0] +
+			closestPos[1] * closestPos[1] +
+			closestPos[2] * closestPos[2] < radius2) {
+		  // save best time so far
+		  minTime = t;
+	
+		  // compute location of tank at time of hit
+		  float tankPos[3];
+		  tank->getLastMotion().getPoint(t, tankPos);
+	
+		  // compute position of intersection
+		  position[0] = tankPos[0] + closestPos[0];
+		  position[1] = tankPos[1] + closestPos[1];
+		  position[2] = tankPos[2] + closestPos[2];
+		}
 	}
 	return minTime;
 }
@@ -512,18 +512,29 @@ void					SegmentedShotStrategy::addShot(
 
 void					SegmentedShotStrategy::radarRender() const
 {
-	// Display lines for shots
-	const float* vel = getPath().getVelocity();
-	const float d = 1.0f / hypotf(vel[0], hypotf(vel[1], vel[2]));
+	const bool uselines = BZDB->isTrue("displayRadarShotsLines");
 	const float *orig = getPath().getPosition();
-	float dir[3];
-	dir[0] = vel[0] * d * 10.0f;
-	dir[1] = vel[1] * d * 10.0f;
-	dir[2] = vel[2] * d * 10.0f;
-	glBegin(GL_LINES);
-	glVertex2fv(orig);
-	glVertex2f(orig[0] + dir[0], orig[1] + dir[1]);
-	glEnd();
+
+	if (uselines) {
+		// Display lines for shots
+		const float* vel = getPath().getVelocity();
+		const float d = 1.0f / hypotf(vel[0], hypotf(vel[1], vel[2]));
+
+		float dir[3];
+		dir[0] = vel[0] * d * 10.0f;
+		dir[1] = vel[1] * d * 10.0f;
+		dir[2] = vel[2] * d * 10.0f;
+
+		glBegin(GL_LINES);
+		glVertex2fv(orig);
+		glVertex2f(orig[0] + dir[0], orig[1] + dir[1]);
+		glEnd();
+	}
+	else {
+		glBegin(GL_POINTS);
+		glVertex2fv(orig);
+		glEnd();
+	}
 }
 
 void					SegmentedShotStrategy::makeSegments(ObstacleEffect e)

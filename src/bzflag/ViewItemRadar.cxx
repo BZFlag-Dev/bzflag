@@ -65,6 +65,7 @@ void					ViewItemRadar::onPostRender(
 	const bool smoothingOn   = smooth && BZDB->isTrue("renderSmoothing");
 	const bool blend         = BZDB->isTrue("renderBlending");
 	const bool enhancedRadar = BZDB->isTrue("displayEnhancedRadar");
+	const bool coloredShots  = BZDB->isTrue("displayRadarColoredShots");
 
 	// get range
 	double range;
@@ -72,8 +73,8 @@ void					ViewItemRadar::onPostRender(
 		range = 0.5;
 	range *= WorldSize;
 
-	// estimate pixel size
-	GLfloat ps = 2.0*range/w;
+	// get size of pixel in model space (assumes radar is square)
+	GLfloat ps = 2.0f * range / GLfloat(w);
 
 	// FIXME -- should be using OpenGLGState objects
 	OpenGLGState::resetState();
@@ -82,7 +83,7 @@ void					ViewItemRadar::onPostRender(
 	if (myTank->getFlag() == JammingFlag && bzfrand() > decay) {
 		if (noiseTexture != NULL && BZDB->isTrue("renderTexturing")) {
 // FIXME -- only if quality is high enough
-      static const float np[][4] = {
+			static const float np[][4] = {
 								{ 0.00f, 0.00f, 1.00f, 1.00f },
 								{ 1.00f, 1.00f, 0.00f, 0.00f },
 								{ 0.50f, 0.50f, 1.50f, 1.50f },
@@ -96,27 +97,26 @@ void					ViewItemRadar::onPostRender(
 								{ 0.75f, 0.75f, 1.75f, 1.75f },
 								{ 1.75f, 1.75f, 0.75f, 0.75f }
 						};
-	  static const int sequences = countof(np);
-
-	  const float* noisePattern = np[(int)floor(sequences * bzfrand())];
-	  noiseTexture->execute();
-	  glEnable(GL_TEXTURE_2D);
-	  glColor3f(1.0f, 1.0f, 1.0f);
-	  glBegin(GL_QUADS);
-		glTexCoord2f(noisePattern[0], noisePattern[1]);
-		glVertex2f(0.0f, 0.0f);
-		glTexCoord2f(noisePattern[2], noisePattern[1]);
-		glVertex2f(   w, 0.0f);
-		glTexCoord2f(noisePattern[2], noisePattern[3]);
-		glVertex2f(   w,	h);
-		glTexCoord2f(noisePattern[0], noisePattern[3]);
-		glVertex2f(0.0f,	h);
-	  glEnd();
-	  glDisable(GL_TEXTURE_2D);
-	}
-
-	if (decay > 0.015f)
-	  decay *= 0.5f;
+			static const int sequences = countof(np);
+	  
+			const float* noisePattern = np[(int)floor(sequences * bzfrand())];
+			noiseTexture->execute();
+			glEnable(GL_TEXTURE_2D);
+			glColor3f(1.0f, 1.0f, 1.0f);
+			glBegin(GL_QUADS);
+			  glTexCoord2f(noisePattern[0], noisePattern[1]);
+			  glVertex2f(0.0f, 0.0f);
+			  glTexCoord2f(noisePattern[2], noisePattern[1]);
+			  glVertex2f(	w, 0.0f);
+			  glTexCoord2f(noisePattern[2], noisePattern[3]);
+			  glVertex2f(	w,	h);
+			  glTexCoord2f(noisePattern[0], noisePattern[3]);
+			  glVertex2f(0.0f,	h);
+			glEnd();
+			glDisable(GL_TEXTURE_2D);
+		}
+		if (decay > 0.015f)
+		  decay *= 0.5f;
 	}
 
 	else {
@@ -190,7 +190,9 @@ void					ViewItemRadar::onPostRender(
 			for (int j = 0; j < maxShots; j++) {
 				const ShotPath* shot = player->getShot(j);
 				if (shot && shot->getFlag() != InvisibleBulletFlag) {
-					if (myTank->getFlag() == ColorblindnessFlag)
+					if (!coloredShots)
+						glColor3f(1.0f, 1.0f, 1.0f);
+					else if (myTank->getFlag() == ColorblindnessFlag)
 						glColor3fv(Team::getRadarColor(RogueTeam));
 					else
 						glColor3fv(Team::getRadarColor(player->getTeam()));
@@ -264,13 +266,10 @@ void					ViewItemRadar::onPostRender(
 			drawFlag(0.0f, 0.0f, myTank->getPosition()[2],4*ps);
 		}
 
-		// get size of pixel in model space (assumes radar is square)
-		GLfloat ps = 2.0f * range / GLfloat(w);
-
 		// forward tick
 		glBegin(GL_LINES);
-			glVertex2f(0.0f, 1.0f - ps);
-			glVertex2f(0.0f, 1.0f - 4.0f * ps);
+			glVertex2f(0.0f, range - ps);
+			glVertex2f(0.0f, range - 4.0f * ps);
 		glEnd();
 
 		// view frustum edges

@@ -232,12 +232,33 @@
       <item label="Unavailable"/>
     </combo>
   </unless>
+  <button label="Radar Options" action="menu push radar"/>  
   <button label="Change Keys" action="menu push keys"/>
+</menu>
+
+<menu id="radar">
+  <size height="15%"/>
+  <space height="0.25x"/>
+  <static label="Radar Options"/>
+
+  <align ref="detail" pos="50%"/>
+  <size height="5%"/>
+  <space height="0.5x"/>
+  
   <combo label="Enhanced Radar:" name="displayEnhancedRadar">
     <item label="Off" value="0"/>
     <item label="On" value="1"/>
-  </combo>
+  </combo>  
+  <combo label="Shots as Lines" name="displayRadarShotsLines">
+    <item label="Off" value="0"/>
+    <item label="On" value="1"/>
+  </combo>    
+  <combo label="Colored Shots" name="displayRadarColoredShots">
+    <item label="Off" value="0"/>
+    <item label="On" value="1"/>
+  </combo>      
 </menu>
+
 
 <menu id="help">
   <size height="15%"/>
