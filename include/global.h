@@ -101,10 +101,9 @@ extern const GlobalDBItem		globalDBItems[];
 #endif // BZF_GLOBAL_H
 
 // Local Variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-
