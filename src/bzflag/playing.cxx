@@ -3207,9 +3207,7 @@ static void		handleServerMessage(bool human, uint16_t code,
       if (!strncmp((char*)msg,"CLIENTQUERY",strlen("CLIENTQUERY"))) {
 	char messageBuffer[MessageLen];
 	memset(messageBuffer, 0, MessageLen);
-	sprintf(messageBuffer,"Version %d.%d%c%d",
-	  (BZVERSION / 10000000) % 100, (BZVERSION / 100000) % 100,
-	  (char)('a' - 1 + (BZVERSION / 1000) % 100), BZVERSION % 1000);
+	sprintf(messageBuffer,"Version %s", VERSION);
 	if (startupInfo.useUDPconnection)
 	  strcat(messageBuffer,"+UDP");
 
@@ -6523,9 +6521,7 @@ void			startPlaying(BzfDisplay* _display,
   // print version
   {
     char bombMessage[80];
-    sprintf(bombMessage, "BZFlag version %d.%d%c%d",
-		(BZVERSION / 10000000) % 100, (BZVERSION / 100000) % 100,
-		(char)('a' - 1 + (BZVERSION / 1000) % 100), BZVERSION % 1000);
+    sprintf(bombMessage, "BZFlag version %s", VERSION);
     controlPanel->addMessage("");
     tmpString = ColorStrings[RedColor];
     tmpString += (const char *) bombMessage;

@@ -1052,16 +1052,13 @@ static bool startReplyClient(int index)
     sprintf(client[index].buffer,
 				"HTTP/1.1 200 OK\r\n"
 				"Date: %s\r\n"
-				"Server: bzfls/%d.%d%c%d\r\n"
+				"Server: bzfls/%s\r\n"
 				"Last-Modified: %s\r\n"
 				"Connection: close\r\n"
 				"Content-Type: text/plain\r\n"
 				"\r\n",
 				date,
-				(BZVERSION / 10000000) % 100,
-				(BZVERSION / 100000) % 100,
-				(char)('a' - 1 + (BZVERSION / 1000) % 100),
-				BZVERSION % 1000,
+				VERSION,
 				modified);
     client[index].offset = 0;
     client[index].length = strlen(client[index].buffer);

@@ -4368,9 +4368,7 @@ static void addPlayer(int playerIndex)
   char message[MessageLen];
 
 #ifdef SERVERLOGINMSG
-  sprintf(message,"BZFlag server %d.%d%c%d, http://BZFlag.org/",
-      (BZVERSION / 10000000) % 100, (BZVERSION / 100000) % 100,
-      (char)('a' - 1 + (BZVERSION / 1000) % 100), BZVERSION % 1000);
+  sprintf(message,"BZFlag server %s, http://BZFlag.org/", VERSION);
   sendMessage(ServerPlayer, playerIndex, message, true);
   
   if (clOptions.servermsg && (strlen(clOptions.servermsg) > 0)) {
@@ -6634,9 +6632,8 @@ static const char *extraUsageString =
 
 static void printVersion()
 {
-  printf("BZFlag server %d.%d%c%d (protocol %d.%d%c) http://BZFlag.org/\n",
-      (BZVERSION / 10000000) % 100, (BZVERSION / 100000) % 100,
-      (char)('a' - 1 + (BZVERSION / 1000) % 100), BZVERSION % 1000,
+  printf("BZFlag server %s (protocol %d.%d%c) http://BZFlag.org/\n",
+      VERSION,
       (BZVERSION / 10000000) % 100, (BZVERSION / 100000) % 100,
       (char)('a' - 1 + (BZVERSION / 1000) % 100));
   printf("%s\n", copyright);
@@ -7601,9 +7598,7 @@ int main(int argc, char **argv)
   if (timeBombString()) {
     char bombMessage[80];
     fprintf(stderr, "This release will expire on %s.\n", timeBombString());
-    sprintf(bombMessage, "Version %d.%d%c%d",
-	(BZVERSION / 10000000) % 100, (BZVERSION / 100000) % 100,
-	(char)('a' - 1 + (BZVERSION / 1000) % 100), BZVERSION % 1000);
+    sprintf(bombMessage, "Version %s", VERSION);
     fprintf(stderr, "%s\n", bombMessage);
   }
 

@@ -478,12 +478,9 @@ static void		parse(int argc, char** argv,
     else if (strcmp(argv[i], "-v") == 0 ||
 	     strcmp(argv[i], "-version") == 0 ||
 	     strcmp(argv[i], "--version") == 0) {
-      printFatalError("BZFlag client, version %d.%d%c%d\n"
+      printFatalError("BZFlag client, version %s\n"
 		"  protocol %c.%d%c",
-		(BZVERSION / 10000000) % 100,
-		(BZVERSION / 100000) % 100,
-		(char)('a' - 1 + (BZVERSION / 1000) % 100),
-		BZVERSION % 1000,
+		VERSION,
 		ServerVersion[4],
 		atoi(ServerVersion + 5),
 		ServerVersion[7]);
