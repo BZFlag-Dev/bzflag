@@ -3743,6 +3743,11 @@ int main(int argc, char **argv)
     std::cerr << "ERROR: A world was not specified" << std::endl;
     return 1;
   }
+  
+  // no original world weapons in replay mode
+  if (Replay::enabled()) {
+    wWeapons.clear();
+  }
 
   if (!serverStart()) {
 #if defined(_WIN32)
@@ -3856,16 +3861,17 @@ int main(int argc, char **argv)
       }
     }
     
-    // get time for the next replay packet (if active)
-    if (Replay::enabled()) {
-      float nextTime = Replay::nextTime ();
+    // get time for the next world weapons shot
+    if (wWeapons.count() > 0) {
+      float nextTime = wWeapons.nextTime ();
       if (nextTime < waitTime) {
         waitTime = nextTime;
       }
     }
-    // get time for the next world weapons shot, but not in replay mode
-    else if (wWeapons.count() > 0) {
-      float nextTime = wWeapons.nextTime ();
+
+    // get time for the next replay packet (if active)
+    if (Replay::enabled()) {
+      float nextTime = Replay::nextTime ();
       if (nextTime < waitTime) {
         waitTime = nextTime;
       }
@@ -4363,10 +4369,8 @@ int main(int argc, char **argv)
       }
     }
 
-    if (!Replay::enabled()) {
-      // Fire world weapons, if we aren't in replay mode
-      wWeapons.fire();
-    }
+    // Fire world weapons
+    wWeapons.fire();
   }
 
   serverStop();

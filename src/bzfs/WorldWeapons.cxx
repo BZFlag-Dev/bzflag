@@ -31,7 +31,14 @@ WorldWeapons::WorldWeapons()
 {
 }
 
+
 WorldWeapons::~WorldWeapons()
+{
+  clear();
+}
+
+
+void WorldWeapons::clear(void)
 {
   for (std::vector<Weapon*>::iterator it = weapons.begin();
        it != weapons.end(); ++it) {
