@@ -1,6 +1,11 @@
 recent bugs
 ------------
 
+- captured a screen shot while in a building with OO.  Flag was dropped and
+  player was stuck, though able to shoot from inside the building.  flag
+  should not have dropped, and should not have been able to shoot while
+  InBuilding either.
+
 - changing video format during game messes up rendering on one of my
   Linux boxes (the one with hardware rendering). Most prominently, the
   ground is no longer rendered, but I mgiht also get other side effects
