@@ -2,6 +2,7 @@
 
 			     BZFlag release notes
 
+* Added bzadmin - Lars Luthman
 * Munitions now bounce off buildings/ground in z direction - Dave Brosius
 * World object and -worldsize paramaters - Jeff Myers
 * Server side world parm (bzdb) file [clo] - Dave Brosius

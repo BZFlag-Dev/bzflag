@@ -16,6 +16,7 @@ AC_PROG_CC
 CFLAGS=
 AC_PROG_CXX
 CXXFLAGS=
+AC_PROG_LN_S
 AC_PROG_RANLIB
 
 # Just for kicks
@@ -210,6 +211,20 @@ INSTALL_DATA_DIR=`eval echo $datadir/bzflag`
 AC_SUBST(INSTALL_DATA_DIR)
 
 AC_DEFINE_UNQUOTED(BZVERSION, $VERSIONNUM, [Bzflag internal version])
+
+# do we want bzadmin?
+AC_ARG_ENABLE(bzadmin, [  --enable-bzadmin        build text client])
+AM_CONDITIONAL(BZADMIN_INCLUDED, test x$enable_bzadmin = xyes)
+if test x$enable_bzadmin = xyes; then
+   MP_WITH_CURSES
+   if test x$CURSES_LIB = x; then
+      AC_MSG_ERROR(could not find a curses library)
+   fi
+   # ugly hack
+   (cd src/bzadmin; rm ServerLink.cxx; $LN_S ../bzflag/ServerLink.cxx .)
+fi
+AC_SUBST(CURSES_LIB)
+
 
 AC_ARG_ENABLE(timebomb, [  --enable-timebomb       build exp Date])
 if test x$enable_timebomb = xyes; then

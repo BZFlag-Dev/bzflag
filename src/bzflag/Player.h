@@ -357,9 +357,36 @@ inline bool  Player::isAutoPilot() const
   return (autoPilot);
 }
 
-inline void  Player::setAutoPilot(bool _autoPilot)
+inline void* Player::pack(void* buf)
+{
+  ((Player*)this)->setDeadReckoning();
+  return state.pack(buf);
+}
+
+inline void Player::setAutoPilot(bool _autoPilot)
 {
   autoPilot = _autoPilot;
+}
+
+inline void Player::setDeadReckoning()
+{
+  // save stuff for dead reckoning
+  inputTime = TimeKeeper::getTick();
+  inputPrevTime = inputTime;
+  inputStatus = state.status;
+  inputPos[0] = state.pos[0];
+  inputPos[1] = state.pos[1];
+  inputPos[2] = state.pos[2];
+  inputSpeed = hypotf(state.velocity[0], state.velocity[1]);
+  if (cosf(state.azimuth) * state.velocity[0] + sinf(state.azimuth) * state.velocity[1] < 0.0f)
+    inputSpeed = -inputSpeed;
+  if (inputSpeed != 0.0f)
+    inputSpeedAzimuth = atan2f(state.velocity[1], state.velocity[0]);
+  else
+    inputSpeedAzimuth = 0.0f;
+  inputZSpeed = state.velocity[2];
+  inputAzimuth = state.azimuth;
+  inputAngVel = state.angVel;
 }
 
 #endif // BZF_PLAYER_H
