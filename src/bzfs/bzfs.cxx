@@ -4200,11 +4200,12 @@ int main(int argc, char **argv)
     NetHandler::setFd(&read_set, &write_set, maxFileDescriptor);
     // always listen for connections
     _FD_SET(wksSocket, &read_set);
-    if (wksSocket > maxFileDescriptor)
+    if (wksSocket > maxFileDescriptor) {
       maxFileDescriptor = wksSocket;
+    }
 
     // check for list server socket connected
-    if (listServerLinksCount)
+    if (listServerLinksCount) {
       if (listServerLink->isConnected()) {
 	if (listServerLink->phase == ListServerLink::CONNECTING)
 	  _FD_SET(listServerLink->linkSocket, &write_set);
@@ -4213,6 +4214,7 @@ int main(int argc, char **argv)
 	if (listServerLink->linkSocket > maxFileDescriptor)
 	  maxFileDescriptor = listServerLink->linkSocket;
       }
+    }
 
     // find timeout when next flag would hit ground
     TimeKeeper tm = TimeKeeper::getCurrent();
@@ -4224,16 +4226,19 @@ int main(int argc, char **argv)
 
     // get time for next flag drop
     float dropTime;
-    while ((dropTime = FlagInfo::getNextDrop(tm)) <= 0.0f)
+    while ((dropTime = FlagInfo::getNextDrop(tm)) <= 0.0f) {
       // if any flags were in the air, see if they've landed
       for (i = 0; i < numFlags; i++) {
 	FlagInfo &flag = *FlagInfo::get(i);
-	if (flag.landing(tm))
-	  if (flag.flag.status == FlagOnGround)
+	if (flag.landing(tm)) {
+	  if (flag.flag.status == FlagOnGround) {
 	    sendFlagUpdate(flag);
-	  else
+          } else {
 	    resetFlag(flag);
+          }
+        }
       }
+    }
     if (dropTime < waitTime) {
       waitTime = dropTime;
     }
@@ -4251,13 +4256,10 @@ int main(int argc, char **argv)
 
     // get time for the next replay packet (if active)
     if (Replay::enabled()) {
-      float nextTime;
-      while ((nextTime = Replay::nextTime()) <= 0.0f)
-	// send replay packets
-	if (Replay::playing())
-	  Replay::sendPackets();
-      if (nextTime < waitTime)
-	waitTime = nextTime;
+      float nextTime = Replay::nextTime ();
+      if (nextTime < waitTime) {
+        waitTime = nextTime;
+      }
     }
 
     // minmal waitTime
@@ -4266,13 +4268,18 @@ int main(int argc, char **argv)
     }
 
     // if there are buffered UDP, no wait at all
-    if (NetHandler::anyUDPPending())
+    if (NetHandler::anyUDPPending()) {
       waitTime = 0.0f;
+    }
 
-    // we have no pending packets
-    nfound = 0;
 
-    // wait for communication or for a flag to hit the ground
+    /**************
+     *  SELECT()  *
+     **************/
+
+    // wait for an incoming communication, a flag to hit the ground,
+    // a game countdown to end, a world weapon needed to be fired, 
+    // or a replay packet waiting to be sent.
     struct timeval timeout;
     timeout.tv_sec = long(floorf(waitTime));
     timeout.tv_usec = long(1.0e+6f * (waitTime - floorf(waitTime)));
@@ -4280,6 +4287,12 @@ int main(int argc, char **argv)
     //if (nfound)
     //	DEBUG1("nfound,read,write %i,%08lx,%08lx\n", nfound, read_set, write_set);
 
+    // send replay packets 
+    // (this check and response should follow immediately after the select() call)
+    if (Replay::playing()) {
+      Replay::sendPackets ();
+    }
+    
     // Synchronize PlayerInfo
     tm = TimeKeeper::getCurrent();
     PlayerInfo::setCurrentTime(tm);
