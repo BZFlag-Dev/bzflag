@@ -32,6 +32,7 @@
 
 /* implementation headers */
 #include "ErrorHandler.h"
+#include "StateDatabase.h"
 
 #define test_bit(nr, addr) \
 	(((1UL << ((nr) & 31)) & (((const unsigned int *) addr)[(nr) >> 5])) != 0)
@@ -46,9 +47,8 @@ bool             EvdevJoystick::isEvdevAvailable()
    * the environment variable BZFLAG_ENABLE_EVDEV=0
    */
 
-  char *envvar = getenv("BZFLAG_ENABLE_EVDEV");
-  if (envvar)
-    return atoi(envvar) != 0;
+  if (BZDB.isSet("enable_evdev") && !BZDB.isTrue("enable_evdev"))
+    return false;
 
   std::map<std::string,EvdevJoystickInfo> joysticks;
   scanForJoysticks(joysticks);
