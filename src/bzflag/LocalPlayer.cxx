@@ -735,6 +735,18 @@ void					LocalPlayer::setPause(bool pause)
 	}
 }
 
+void					LocalPlayer::setAutoPilot(bool autopilot)
+{
+	if (isAlive()) {
+		if (autopilot && !isAutoPilot()) {
+			setStatus(getStatus() | short(AutoPilot));
+		}
+		else if (!autopilot && isAutoPilot()) {
+			setStatus(getStatus() & ~short(AutoPilot));
+		}
+	}
+}
+
 bool					LocalPlayer::fireShot()
 {
 	// find an empty slot

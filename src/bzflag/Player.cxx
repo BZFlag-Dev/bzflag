@@ -345,6 +345,16 @@ bool					Player::getDeadReckoning(
 	((Player*)this)->inputPrevTime = TimeKeeper::getTick();
 	const float dt = inputPrevTime - inputTime;
 
+	if (inputStatus & AutoPilot) {
+		// AutoPilot bot code here
+		predictedPos[0] = inputPos[0];
+		predictedPos[1] = inputPos[1];
+		predictedPos[2] = inputPos[2];
+		predictedVel[0] = fabsf(inputSpeed) * cosf(inputSpeedAzimuth);
+		predictedVel[1] = fabsf(inputSpeed) * sinf(inputSpeedAzimuth);
+		predictedVel[2] = 0.0f;
+		*predictedAzimuth = inputAzimuth;
+	}
 	if (inputStatus & Paused) {
 		// don't move when paused
 		predictedPos[0] = inputPos[0];

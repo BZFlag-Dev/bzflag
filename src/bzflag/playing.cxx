@@ -172,7 +172,7 @@ static void				onGrabCursorChanged(const std::string& name, void*)
 {
 	if (mainWindow != NULL) {
 		const bool grab = BZDB->isTrue(name);
-		if (grab && !unmapped && (myTank == NULL || !myTank->isPaused()))
+		if (grab && !unmapped && (myTank == NULL || !(myTank->isPaused() || myTank->isAutoPilot())))
 			mainWindow->grabMouse();
 		else
 			mainWindow->ungrabMouse();
@@ -625,10 +625,10 @@ static std::string	cmdDrop(const std::string&,
 	if (myTank != NULL) {
 		FlagId flagId = myTank->getFlag();
 		if (flagId != NoFlag && !myTank->isPaused() &&
-		Flag::getType(flagId) != FlagSticky &&
-		!(flagId == PhantomZoneFlag && myTank->isFlagActive()) &&
-		!(flagId == OscOverthrusterFlag &&
-		myTank->getLocation() == LocalPlayer::InBuilding)) {
+				Flag::getType(flagId) != FlagSticky &&
+				!(flagId == PhantomZoneFlag && myTank->isFlagActive()) &&
+				!(flagId == OscOverthrusterFlag &&
+				myTank->getLocation() == LocalPlayer::InBuilding)) {
 			serverLink->sendDropFlag(DropReasonDropped, myTank->getPosition());
 			// changed: on windows it may happen the MsgDropFlag
 			// never comes back to us, so we drop it right away
@@ -718,7 +718,7 @@ static std::string	cmdPause(const std::string&,
 	if (args.size() != 0)
 		return "usage: pause";
 
-	if (myTank != NULL && !pausedByUnmap && myTank->isAlive()) {
+	if (myTank != NULL && !pausedByUnmap && myTank->isAlive() && !myTank->isAutoPilot()) {
 		if (myTank->isPaused()) {
 			myTank->setPause(false);
 			MSGMGR->insert("messages", "Resumed");
@@ -738,6 +738,32 @@ static std::string	cmdPause(const std::string&,
 			MSGMGR->insert("alertInfo", string_util::format("Pausing in %d",
 								static_cast<int>(pauseCountdown + 0.99f)),
 								NULL);
+		}
+	}
+
+	return std::string();
+}
+
+static std::string	cmdAutoPilot(const std::string&,
+								const CommandManager::ArgList& args)
+{
+	if (args.size() != 0)
+		return "usage: autopilot";
+
+	if (myTank != NULL && myTank->isAlive()) {
+		if (myTank->isAutoPilot()) {
+			myTank->setAutoPilot(false);
+			MSGMGR->insert("messages", "autopilot disabled");
+
+			// grab mouse
+			updateGrab();
+		}
+		else {
+			myTank->setAutoPilot(true);
+			MSGMGR->insert("messages", "autopilot enabled");
+
+			// ungrab mouse
+			updateGrab();
 		}
 	}
 
@@ -771,7 +797,8 @@ static const CommandListItem commandList[] = {
 	{ "identify",	&cmdIdentify,	"identify:  identify/lock-on-to player in view" },
 	{ "jump",		&cmdJump,		"jump:  make player jump" },
 	{ "send",		&cmdSend,		"send {all|team|nemesis}:  start composing a message" },
-	{ "pause",		&cmdPause,		"pause:  pause/resume" }
+	{ "pause",		&cmdPause,		"pause:  pause/resume" },
+	{ "autopilot",	&cmdAutoPilot,	"autopilot:  set/unset autopilot bot code" }
 };
 // ---- commands ----
 
@@ -827,7 +854,7 @@ static void				doEvent(BzfDisplay* display)
 			// already counting down to pausing, we're alive, and we're not
 			// already paused.
 			if (!pausedByUnmap && pauseCountdown == 0.0f &&
-		 		myTank && myTank->isAlive() && !myTank->isPaused()) {
+		 		myTank && myTank->isAlive() && !myTank->isPaused() && !myTank->isAutoPilot()) {
 				// get ready to pause (no cheating through instantaneous pausing)
 				pauseCountdown = 3.0f;
 
