@@ -205,7 +205,7 @@ void			Player::changeTeam(TeamColor _team)
     color[2] = 1.0f;
   }
   else {
-    if (!World::getWorld()->allowRabbit() || ( World::getWorld()->allowRabbit() && (team == RabbitTeam ))){
+    if (!World::getWorld()->allowRabbit() || team == RabbitTeam) {
       color[0] = _color[0];
       color[1] = _color[1];
       color[2] = _color[2];
