@@ -20,10 +20,11 @@
  * If we've got a socklen_t typedefed, define HAVE_SOCKLEN_T to
  * avoid #define'ing it in common.h */
 
-// IF YOU HAVE THE NEW PLAT SDK COMMOENT THIS OUT
-// VC5 and VC6 standard need it
-// AND David don't you DARE COMMIT a change to put this back.
-#define socklen_t int
+#ifndef socklen_t
+	#define socklen_t int
+#endif 
+
+//#define GRUFF_BUT_LOVEABLE_JEFF true
 
 /* Time Bomb expiration */
 /* #undef TIME_BOMB */

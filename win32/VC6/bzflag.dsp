@@ -585,6 +585,10 @@ SOURCE=..\..\include\TankSceneNode.h
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\src\bzflag\TargetingUtils.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\include\Team.h
 # End Source File
 # Begin Source File
