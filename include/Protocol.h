@@ -172,6 +172,7 @@ player to server messages:
 			--> /id,/ team (team flag was taken to)
 			<== MsgCaptureFlag
 			<== MsgFlagUpdate
+  MsgSetVar		<== count/[name/value]*
   MsgShotBegin		player has fired a shot
 			--> FiringInfo
 			<== MsgShotBegin

@@ -1050,7 +1050,7 @@ static void onGlobalChanged(const std::string& msg, void*)
   std::string name  = msg;
   std::string value = BZDB->get(msg);
   void *bufStart = getDirectMessageBuffer();
-  void *buf = bufStart;
+  buf = nboPackUShort(bufStart, 1);
   buf = nboPackUByte(buf, name.length());
   buf = nboPackString(buf, name.c_str(), name.length());
   buf = nboPackUByte(buf, value.length());
@@ -2903,6 +2903,9 @@ static void addPlayer(int playerIndex)
   void *buf, *bufStart = getDirectMessageBuffer();
   buf = nboPackUByte(bufStart, playerIndex);
   directMessage(playerIndex, MsgAccept, (char*)buf-(char*)bufStart, bufStart);
+
+  //send SetVars
+
 
   // abort if we hung up on the client
   if (player[playerIndex].fd == NotConnected)

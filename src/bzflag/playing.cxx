@@ -3247,16 +3247,34 @@ static void		handleServerMessage(bool human, uint16_t code,
     }
 
     case MsgSetVar: {
+	uint16_t numVars;
+	uint8_t oldNLen = 30, oldVLen = 30;
 	uint8_t nameLen, valueLen;
-	msg = nboUnpackUByte(msg, nameLen);
-	char* name = new char[nameLen + 1];
-	msg = nboUnpackString(msg, name, nameLen);
-	name[nameLen] = '\0';
-	msg = nboUnpackUByte(msg, valueLen);
-	char* value = new char[valueLen + 1];
-	msg = nboUnpackString(msg, value, valueLen);
-	value[valueLen] = '\0';
-	BZDB->set(name, value);
+
+	char* name = new char[oldNLen+1];
+	char* value = new char[oldVLen+1];
+
+	msg = nboUnpackUShort(msg,numVars);
+	for (int i = 0; i < numVars; i++) {
+	  msg = nboUnpackUByte(msg, nameLen);
+	  if (nameLen > oldNLen) {
+	    delete[] name;
+	    name = new char[nameLen+1];
+	    oldNLen = nameLen;
+	  }
+	  msg = nboUnpackString(msg, name, nameLen);
+	  name[nameLen] = '\0';
+
+	  msg = nboUnpackUByte(msg, valueLen);
+	  if (valueLen > oldVLen) {
+	    delete[] value;
+	    value = new char[valueLen+1];
+	    oldVLen = valueLen;
+	  }
+	  msg = nboUnpackString(msg, value, valueLen);
+	  value[valueLen] = '\0';
+	  BZDB->set(name, value);
+	}
 	delete[] name;
 	delete[] value;
 	break;
