@@ -133,22 +133,6 @@ void			ControlPanel::render(SceneRenderer& renderer)
   OpenGLGState::resetState();
   glScissor(x, y, w, h);
 
-  boolean doClear = True;
-  if (exposed > 0) {
-    exposed--;
-    doClear = False;
-
-    if (w != width) {
-      glColor3f(0.666667f, 0.666667f, 0.666667f);
-      glBegin(GL_QUADS);
-      glVertex2i(0, 0);
-      glVertex2i(w, 0);
-      glVertex2i(w, h);
-      glVertex2i(0, h);
-      glEnd();
-    }
-  }
-
   if (changedMessage) {
     changedMessage--;
   }
