@@ -76,7 +76,7 @@ if (!$result) {
     or die ("Could not create table: " . mysql_error());
 }
 
-debug($debugFile, "Deleteing inactive servers from list");
+debug($debugFile, "Deleting inactive servers from list");
 
 # remove all inactive servers from the table
 $timeout = 1800;    # timeout in seconds
