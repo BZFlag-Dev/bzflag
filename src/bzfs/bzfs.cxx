@@ -4228,6 +4228,7 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
 
 
     // player is requesting an additional UDP connection, sending its own UDP port
+    // FIXME this is broken for NAT firewalls
     case MsgUDPLinkRequest: {
 	uint16_t port;
 	buf = nboUnpackUShort(buf, port);
@@ -4237,6 +4238,7 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
     }
 
     // player is ready to receive data over UDP connection, sending 0
+    // FIXME it got our request and was able to reach our udp port
     case MsgUDPLinkEstablished: {
       DEBUG3("Player %s [%d] UDP confirmed\n", player[t].callSign, t);
       break;
