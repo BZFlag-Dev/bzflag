@@ -423,7 +423,7 @@ int			ServerLink::read(uint16_t& code, uint16_t& len,
   // only check server
   fd_set read_set;
   FD_ZERO(&read_set);
-  FD_SET(fd, &read_set);
+  _FD_SET(fd, &read_set);
   int nfound = select(fd+1, (fd_set*)&read_set, NULL, NULL,
 			(struct timeval*)(blockTime >= 0 ? &timeout : NULL));
   if (nfound == 0) return 0;
@@ -446,7 +446,7 @@ int			ServerLink::read(uint16_t& code, uint16_t& len,
   while (rlen >= 1 && tlen < 4) {
     printError("ServerLink::read() loop");
     FD_ZERO(&read_set);
-    FD_SET(fd, &read_set);
+    _FD_SET(fd, &read_set);
     nfound = select(fd+1, (fd_set*)&read_set, NULL, NULL, NULL);
     if (nfound == 0) continue;
     if (nfound < 0) return -1;
@@ -480,7 +480,7 @@ int			ServerLink::read(uint16_t& code, uint16_t& len,
   tlen = rlen;
   while (rlen >= 1 && tlen < int(len)) {
     FD_ZERO(&read_set);
-    FD_SET(fd, &read_set);
+    _FD_SET(fd, &read_set);
     nfound = select(fd+1, (fd_set*)&read_set, 0, 0, NULL);
     if (nfound == 0) continue;
     if (nfound < 0) return -1;

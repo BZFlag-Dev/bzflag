@@ -738,7 +738,7 @@ void			ServerMenu::checkEchos()
     fd_set read_set, write_set;
     FD_ZERO(&read_set);
     FD_ZERO(&write_set);
-    if (pingBcastSocket != -1) FD_SET(pingBcastSocket, &read_set);
+    if (pingBcastSocket != -1) _FD_SET(pingBcastSocket, &read_set);
     int fdMax = pingBcastSocket;
 
     // check for list server connection or data
@@ -746,9 +746,9 @@ void			ServerMenu::checkEchos()
       ListServer& listServer = listServers[i];
       if (listServer.socket != -1) {
 	if (listServer.phase == 2) {
-	  FD_SET(listServer.socket, &write_set);
+	  _FD_SET(listServer.socket, &write_set);
 	} else if (listServer.phase == 3) {
-	  FD_SET(listServer.socket, &read_set);
+	  _FD_SET(listServer.socket, &read_set);
 	}
 	if (listServer.socket > fdMax) {
 	  fdMax = listServer.socket;
