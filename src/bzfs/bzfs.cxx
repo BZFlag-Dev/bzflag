@@ -2771,10 +2771,10 @@ static WorldInfo *defineTeamWorld()
     if (randomCTF) {
       int i;
       float h = BoxHeight;
-      float numTeams = (maxTeam[1] > 0) + (maxTeam[2] > 0) + (maxTeam[3] > 0) + (maxTeam[4] > 0);
+      int numTeams = ((maxTeam[1] > 0) ? 1 : 0) + ((maxTeam[2] > 0) ? 1 : 0) + ((maxTeam[3] > 0) ? 1 : 0) + ((maxTeam[4] > 0) ? 1 : 0);
       if (numTeams == 0) {
-	cerr << "need some teams, use -mp" << endl;
-	exit(20);
+		cerr << "need some teams, use -mp" << endl;
+		exit(20);
       }
       const int numBoxes = int((0.5 + 0.6 * bzfrand()) * CitySize * CitySize);
       for (i = 0; i < numBoxes;) {
@@ -5760,10 +5760,10 @@ int main(int argc, char **argv)
     }
 
     // get time for next lagping
-    for (int j=0;j<maxPlayers;j++)
+    for (int p=0;p<maxPlayers;p++)
     {
-      if (player[j].state == PlayerAlive && player[j].nextping - tm < waitTime)
-        waitTime = player[j].nextping - tm;
+      if (player[p].state == PlayerAlive && player[p].nextping - tm < waitTime)
+        waitTime = player[p].nextping - tm;
     }
 
     // minmal waitTime
