@@ -36,5 +36,6 @@ inline int ServerList::updateFromCache() { return 0; }
 inline void ServerList::startServerPings() {}
 inline void ServerList::checkEchos() {}
 inline boolean ServerList::searchActive() {return true;}
+inline std::vector<ServerItem> ServerList::getServers() { return std::vector<ServerItem>(); }
 
 #endif
