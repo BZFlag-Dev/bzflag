@@ -1222,7 +1222,7 @@ static void dropFlag(int playerIndex, float pos[3]);
 // util functions
 int getPlayerIDByRegName(const std::string &regName)
 {
-  for (int i = 0; i < MaxPlayers; i++) {
+  for (int i = 0; i < curMaxPlayers; i++) {
     if (player[i].regName == regName)
       return i;
   }
@@ -2976,7 +2976,7 @@ static void serverStop()
 
   // tell players to quit
   int i;
-  for (i = 0; i < MaxPlayers; i++)
+  for (i = 0; i < curMaxPlayers; i++)
     directMessage(i, MsgSuperKill, 0, getDirectMessageBuffer());
 
   // close connections
@@ -4119,7 +4119,7 @@ static void addPlayer(int playerIndex)
 {
   // find out if we're the first player to join
   bool firstPlayer = true;
-  for (PlayerId playerid = 0; playerid < maxPlayers; playerid++) {
+  for (PlayerId playerid = 0; playerid < curMaxPlayers; playerid++) {
     if ((player[playerid].state != PlayerNoExist) && (playerid != playerIndex)) {
       firstPlayer = false;
       break;
@@ -4144,14 +4144,14 @@ static void addPlayer(int playerIndex)
 
   // look if there is as name clash, we won't allow this
   int i;
-  for (i = 0; i < maxPlayers; i++)
+  for (i = 0; i < curMaxPlayers; i++)
   {
     if (i == playerIndex || player[i].state <= PlayerInLimbo)
       continue;
     if (strcasecmp(player[i].callSign,player[playerIndex].callSign) == 0)
       break;
   }
-  if (i < maxPlayers)
+  if (i < curMaxPlayers)
   {
     // this is a hack; would better add a new reject type
     player[playerIndex].team = NoTeam;
@@ -4561,7 +4561,7 @@ static void annointNewRabbit()
   int oldRabbit = rabbitIndex;
   rabbitIndex = 255;
 
-  for (i = 0; i < maxPlayers; i++) {
+  for (i = 0; i < curMaxPlayers; i++) {
     if (i != oldRabbit && player[i].state == PlayerAlive) {
       float ratio = (player[i].wins - player[i].losses) * player[i].wins;
       if (ratio > topRatio) {
@@ -4572,7 +4572,7 @@ static void annointNewRabbit()
   }
   if (rabbitIndex == oldRabbit) {
     // nobody, or no other than old rabbit to choose from
-    for (i = 0; i < maxPlayers; i++) {
+    for (i = 0; i < curMaxPlayers; i++) {
       if (player[i].state > PlayerInLimbo && !player[i].Observer) {
 	float ratio = (player[i].wins - player[i].losses) * player[i].wins;
 	if (ratio > topRatio) {
@@ -5455,7 +5455,7 @@ static void parseCommand(const char *message, int t)
     done = true;
   // /superkill closes all player connections
   } else if (hasPerm(t, superKill) && strncmp(message + 1, "superkill", 8) == 0) {
-    for (i = 0; i < MaxPlayers; i++)
+    for (i = 0; i < curMaxPlayers; i++)
       removePlayer(i, "/superkill");
     gameOver = true;
   // /gameover command allows operator to end the game
