@@ -2421,8 +2421,8 @@ static void		checkEnvironment()
 	if (world->getFlag(i).id == NoFlag || world->getFlag(i).status != FlagOnGround)
 	  continue;
 	const float* fpos = world->getFlag(i).position;
-	if ((tpos[0] - fpos[0]) * (tpos[0] - fpos[0]) +
-	    (tpos[1] - fpos[1]) * (tpos[1] - fpos[1]) < radius2) {
+	if (tpos[2] == fpos[2] && ((tpos[0] - fpos[0]) * (tpos[0] - fpos[0]) +
+	    (tpos[1] - fpos[1]) * (tpos[1] - fpos[1]) < radius2)) {
 	  serverLink->sendGrabFlag(i);
 	  lastGrabSent=TimeKeeper::getTick();
 	}
