@@ -124,14 +124,14 @@ BackgroundRenderer::BackgroundRenderer(const SceneRenderer&) :
     // gstates
     gstate.reset();
     gstate.setShading();
-    gstate.setBlending(GL_ONE, GL_ONE);
+    gstate.setBlending((GLenum)GL_ONE, (GLenum)GL_ONE);
     receiverGState = gstate.getState();
   }
 
   // sun shadow stuff
   gstate.reset();
   gstate.setStipple(0.5f);
-  gstate.setCulling(GL_NONE);
+  gstate.setCulling((GLenum)GL_NONE);
   sunShadowsGState = gstate.getState();
 
   // sky stuff
@@ -141,7 +141,7 @@ BackgroundRenderer::BackgroundRenderer(const SceneRenderer&) :
   gstate.reset();
   sunGState = gstate.getState();
   gstate.reset();
-  gstate.setBlending(GL_ONE, GL_ONE);
+  gstate.setBlending((GLenum)GL_ONE, (GLenum)GL_ONE);
   moonGState[0] = gstate.getState();
   gstate.reset();
   moonGState[1] = gstate.getState();
@@ -159,7 +159,7 @@ BackgroundRenderer::BackgroundRenderer(const SceneRenderer&) :
     cloudsAvailable = true;
     gstate.reset();
     gstate.setShading();
-    gstate.setBlending(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    gstate.setBlending((GLenum)GL_SRC_ALPHA, (GLenum)GL_ONE_MINUS_SRC_ALPHA);
     gstate.setMaterial(defaultMaterial);
     gstate.setTexture(*cloudsTexture);
     gstate.setAlphaFunc();
