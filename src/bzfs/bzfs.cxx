@@ -4503,14 +4503,16 @@ static void grabFlag(int playerIndex, int flagIndex)
       flag[flagIndex].flag.status != FlagOnGround)
     return;
 
-  // verify position (times 2 for fudge factor)
-  const float radius2 = (TankRadius + FlagRadius) * (TankRadius + FlagRadius) * 2.0f;
+  //last Pos might be lagged by TankSpeed so include in calculation
+  const float radius2 = (TankSpeed*TankSpeed) + (TankRadius + FlagRadius) * (TankRadius + FlagRadius);
   const float* tpos = player[playerIndex].lastState.pos;
   const float* fpos = flag[flagIndex].flag.position;
-  if ((fabs(tpos[2] - fpos[2]) < 0.1f) && ((tpos[0] - fpos[0]) * (tpos[0] - fpos[0]) +
-	(tpos[1] - fpos[1]) * (tpos[1] - fpos[1]) > radius2)) {
-    DEBUG2("p[%d] %f %f %f tried to grab distant flag %f %f %f\n", playerIndex,
-	tpos[0], tpos[1], tpos[2], fpos[0], fpos[1], fpos[2]);
+  const float delta = (tpos[0] - fpos[0]) * (tpos[0] - fpos[0]) +
+		      (tpos[1] - fpos[1]) * (tpos[1] - fpos[1]);
+
+ if ((fabs(tpos[2] - fpos[2]) < 0.1f) && (delta > radius2)) {
+    DEBUG2("p[%d] %f %f %f tried to grab distant flag %f %f %f: distance=%f\n", playerIndex,
+	tpos[0], tpos[1], tpos[2], fpos[0], fpos[1], fpos[2], sqrt(delta));
     return;
   }
 
@@ -4735,6 +4737,9 @@ static void shotFired(int playerIndex, void *buf, int len)
     case VelocityFlag:
       tankSpeed *= VelocityAd;
     default:
+      //If shot is different height than player, can't be sure they didn't drop V in air
+      if (player[playerIndex].lastState.pos[2] != (firingInfo.shot.pos[2]-MuzzleHeight))
+	tankSpeed *= VelocityAd;
       break;
   }
   // FIXME, we should look at the actual TankSpeed ;-)
@@ -4762,11 +4767,12 @@ static void shotFired(int playerIndex, void *buf, int len)
 
   float delta = dx*dx + dy*dy + dz*dz;
   if (delta > (TankSpeed * TankSpeed * VelocityAd * VelocityAd)) {
-    DEBUG2("p[%d] shot origination %f %f %f to far from tank %f %f %f\n", playerIndex,
+    DEBUG2("p[%d] shot origination %f %f %f to far from tank %f %f %f: distance=%f\n", playerIndex,
 	    firingInfo.shot.pos[0], firingInfo.shot.pos[1], firingInfo.shot.pos[2],
 	    player[playerIndex].lastState.pos[0],
 	    player[playerIndex].lastState.pos[1],
-	    player[playerIndex].lastState.pos[2]);
+	    player[playerIndex].lastState.pos[2],
+	    sqrt(delta));
     return;
   }
 
