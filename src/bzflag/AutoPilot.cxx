@@ -58,7 +58,7 @@ bool isFlagUseful( FlagType *type )
 		  flagValue = (float)pr.first / (float)pr.second;
 	}
 	else
-		flagValue = 0.0f;
+		return true;
 
 	float avg;
 	if (totalCnt == 0)
@@ -400,7 +400,11 @@ bool chasePlayer( float &rotation, float &speed)
 bool lookForFlag( float &rotation, float &speed)
 {
   LocalPlayer *myTank = LocalPlayer::getMyTank();
-  const float *pos = myTank->getPosition();
+  float pos[3];
+  
+  memcpy( pos, myTank->getPosition(), sizeof( pos ));
+  if (pos[2] < 0.0f)
+	  pos[2] = 0.0f;
   World *world = World::getWorld();
   int closestFlag = -1;
 
