@@ -71,6 +71,7 @@ AC_CHECK_HEADERS( \
 AC_LANG_RESTORE
 AC_CHECK_HEADERS( \
 	sys/param.h \
+	values.h \
 )
 
 #Checks for types
