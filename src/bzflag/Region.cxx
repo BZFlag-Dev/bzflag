@@ -287,9 +287,9 @@ void					BzfRegion::splitEdge(const BzfRegion* oldNeighbor,
 	const int count = corners.size();
 	for (int i = 0; i < count; i++)
 		if (neighbors[i] == oldNeighbor) {
-			corners.insert(&corners[i + 1], p);
-			if (onRight) neighbors.insert(&neighbors[i], newNeighbor);
-			else neighbors.insert(&neighbors[i + 1], newNeighbor);
+			corners.insert(corners.begin() + i + 1, p);
+			if (onRight) neighbors.insert(neighbors.begin() + i, newNeighbor);
+			else neighbors.insert(neighbors.begin() + i + 1, newNeighbor);
 			tidy();
 			break;
 		}
@@ -321,8 +321,8 @@ void					BzfRegion::tidy()
 		const float* p1 = corners[i].get();
 		const float* p2 = corners[(i+1)%count].get();
 		if (fabs(p1[0] - p2[0]) < 1.0e-5 && fabs(p1[1] - p2[1]) < 1.0e-5) {
-			corners.erase(&corners[i]);
-			neighbors.erase(&neighbors[i]);
+			corners.erase(corners.begin() + i);
+			neighbors.erase(neighbors.begin() + i);
 			i--;
 			count--;
 		}
