@@ -4467,7 +4467,9 @@ static void		playingLoop()
 	    player[i]->addShots(scene, colorblind);
 	    overrideTeam = RogueTeam;
 	    if (!colorblind){
-	      if ((player[i]->getFlag() == Flags::Masquerade) && (myTank->getFlag() != Flags::Seer))
+	      if ((player[i]->getFlag() == Flags::Masquerade)
+		  && (myTank->getFlag() != Flags::Seer)
+		  && (myTank->getTeam() != ObserverTeam))
 		overrideTeam = myTank->getTeam();
 	      else
 		overrideTeam = player[i]->getTeam();
