@@ -83,7 +83,7 @@ void ServerList::readServerList(int index)
     listServer.buffer[listServer.bufferSize] = 0;
 
     char* base = listServer.buffer;
-    static char *tokenIdentifier = "TOKEN:";
+    static char *tokenIdentifier = "TOKEN: ";
     // walks entire reply including HTTP headers
     while (*base) {
       // find next newline
