@@ -1,7 +1,9 @@
 recent bugs
 ------------
 
-- player score doesn't seem to match the server's score when relaying to 
+- tabbed msg area does not properly fill in corners and bottom outline
+
+- player score doesn't seem to match the server's score when relaying to
   other players.  i.e. the local client see's their own player score that
   is different from what others see (due to differences in tk).  seems like
   tk is not included in score locally, but is in the server.
@@ -17,6 +19,7 @@ recent bugs
 
 - server has been reported to segfault (gethostname fails?) when chrooted
   and run as a private server (ask tegan for more details if needed)
+  Tim Riker says this one is fixed. Please re-test.
 
 - XIJoystick does not compile
 
@@ -42,8 +45,9 @@ recent bugs
 
 - sending bzfs a single byte udp packet sends bzfs into lala land. (trepan)
 
-- bzfrelay is probably broken for current net protocol. Should be just
-  forwarding TCP and UDP packets on a single port.
+- bzfrelay is broken for current net protocol. Should be just forwarding TCP
+  and UDP packets on a single port.  Could likely just be removed as there are
+  other apps that do bare forwarding and that is all that is needed now.
 
 - reached assertion on either World::getTeleportTarget() or
   World::getTeleporter() after getting killed while jumping towards a
