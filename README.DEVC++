@@ -10,8 +10,13 @@ is quite easy.
 3. The binary should be in each project's corresponding main source
    directory, such as src/bzflag/ for BZFlag client.
 
-You will need the DirectX SDK unless building using SDL. The DirectX 
-SDK can be retrieved from:
+4. MinGW32 (the compiler used by Dev-C++) will bloat compiled executables
+   because it adds a minimal debugging table, so you may want to run "strip",
+   a debug table remove located in the "\bin\" directory of Dev-C++, on the
+   outputed .exe's to remove nearly half of the original file size.
+
+You will need DirectX library unless building using SDL. DirectX can
+be retrieved from:
 
    http://www.microsoft.com/directX
 
