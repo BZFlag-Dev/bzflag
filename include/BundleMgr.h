@@ -34,7 +34,7 @@ class BundleMgr
 {
 public:
 	BundleMgr(const std::string &path, const std::string &bundleName);
-	BundleMgr::~BundleMgr();
+	~BundleMgr();
 	Bundle *getBundle(const std::string &locale, bool setcur = true);
 
 	static Bundle *getCurrentBundle();

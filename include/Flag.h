@@ -95,8 +95,8 @@ class FlagType {
     }
 
     const float*	getColor();
-    void* FlagType::pack(void* buf) const;
-    static void* FlagType::unpack(void* buf, FlagType* &desc);
+    void* pack(void* buf) const;
+    static void* unpack(void* buf, FlagType* &desc);
     /** Static wrapper function that makes sure that the flag map is
 	initialized before it's used. */
     static std::map<std::string, FlagType*>& getFlagMap();

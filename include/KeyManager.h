@@ -44,7 +44,7 @@ public:
   /** returns a set of keypress strings that correspond to keys bound
    * to a particular command
    */
-  std::vector<std::string> KeyManager::getKeysFromCommand(std::string command, bool press) const;
+  std::vector<std::string> getKeysFromCommand(std::string command, bool press) const;
 
   // convert a key event to/from a string
   std::string		keyEventToString(const BzfKeyEvent&) const;

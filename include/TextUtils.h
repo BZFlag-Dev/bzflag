@@ -37,7 +37,7 @@
  */
 class string_util {
   public:
-    static std::string string_util::vformat(const char* fmt, va_list args) {
+    static std::string vformat(const char* fmt, va_list args) {
       // FIXME -- should prevent buffer overflow in all cases
       // not all platforms support vsnprintf so we'll use vsprintf and a
       // big temporary buffer and hope for the best.
@@ -45,7 +45,7 @@ class string_util {
       vsprintf(buffer, fmt, args);
       return std::string(buffer);
     }
-    static std::string string_util::format(const char* fmt, ...) {
+    static std::string format(const char* fmt, ...) {
       va_list args;
       va_start(args, fmt);
       std::string result = vformat(fmt, args);
@@ -55,7 +55,7 @@ class string_util {
     // get a vector of strings from a string, using all of chars of the delims
     // string as separators. If maxTokens > 0, then the last 'token' may contain delimiters
     // as it just returns the rest of the line
-    static std::vector<std::string> string_util::tokenize(std::string& in, std::string delims, int maxTokens = 0){
+    static std::vector<std::string> tokenize(std::string& in, std::string delims, int maxTokens = 0){
       std::vector<std::string> out;
       int numTokens = 0;
 
@@ -81,7 +81,7 @@ class string_util {
       return out;
     }
 
-    static int string_util::parseDuration(std::string &duration)
+    static int parseDuration(std::string &duration)
     {
       int durationInt = 0;
       int t = 0;
