@@ -6249,7 +6249,6 @@
 		4E030CC0048E70E80009E055 = {
 			children = (
 				7BE2CA50051D099000FEBA07,
-				4E030CDA048E70E80009E055,
 				4E030CDC048E70E80009E055,
 				4E030CDD048E70E80009E055,
 				4E030CDE048E70E80009E055,
@@ -6264,12 +6263,6 @@
 			isa = PBXGroup;
 			name = MacOSX;
 			path = "";
-			refType = 4;
-		};
-		4E030CDA048E70E80009E055 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = "MacBZFlag-prefix.h";
 			refType = 4;
 		};
 		4E030CDB048E70E80009E055 = {
