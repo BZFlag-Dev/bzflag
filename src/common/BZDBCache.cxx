@@ -33,6 +33,10 @@ void BZDBCache::init()
   BZDB->addCallback(StateDatabase::BZDB_MAXLOD, serverCallback, NULL);
   BZDB->addCallback(StateDatabase::BZDB_TANKHEIGHT, serverCallback, NULL);
   BZDB->addCallback(StateDatabase::BZDB_FLAGRADIUS, serverCallback, NULL);
+
+  maxLOD     = BZDB->eval(StateDatabase::BZDB_MAXLOD);
+  tankHeight = BZDB->eval(StateDatabase::BZDB_TANKHEIGHT);
+  flagRadius = BZDB->eval(StateDatabase::BZDB_FLAGRADIUS);
 }
 
 void BZDBCache::clientCallback(const std::string& name, void *)
