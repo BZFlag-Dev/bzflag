@@ -614,7 +614,7 @@ end
 teleporter
 position     390.0 390.0 0.0
 rotation     45.0
-size         0.56  4.48  27.76
+size         0.56  4.48  27.7
 border       1.12
 end
 teleporter
@@ -643,7 +643,7 @@ end
 teleporter
 position     -390.0 -390.0 0.0
 rotation     45.0
-size         0.56  4.48  27.76
+size         0.56  4.48  27.7
 border       1.12
 end
 teleporter
@@ -672,7 +672,7 @@ end
 teleporter
 position     390.0 -390.0 0.0
 rotation     135.0
-size         0.56  4.48  27.76
+size         0.56  4.48  27.7
 border       1.12
 end
 teleporter
@@ -701,7 +701,7 @@ end
 teleporter
 position     -390.0 390.0 0.0
 rotation     135.0
-size         0.56  4.48  27.76
+size         0.56  4.48  27.7
 border       1.12
 end
 teleporter
