@@ -57,8 +57,27 @@ namespace ForceFeedback {
 
   void death()
   {
+    /* Nice long hard rumble for death */
     if (useForceFeedback())
       getJoystick()->ffRumble(1, 0.0f, 1.5f, 1.0f, 0.0f);
+  }
+
+  void shotFired()
+  {
+    /* Tiny little kick for a normal shot being fired */
+    if (useForceFeedback())
+      getJoystick()->ffRumble(1, 0.0f, 0.1f, 0.0f, 1.0f);
+  }
+
+  void laserFired()
+  {
+    /* Funky pulsating rumble for the laser.
+     * (Only tested so far with the Logitech Wingman Cordless Rumblepad,
+     *  some quirks in its driver may mean it's feeling a little different
+     *  than it should)
+     */
+    if (useForceFeedback())
+      getJoystick()->ffRumble(4, 0.01f, 0.02f, 1.0f, 1.0f);
   }
 
 }

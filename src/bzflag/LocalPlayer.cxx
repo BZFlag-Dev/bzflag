@@ -26,6 +26,7 @@
 #include "World.h"
 #include "sound.h"
 #include "RemotePlayer.h"
+#include "ForceFeedback.h"
 
 
 LocalPlayer*		LocalPlayer::mainPlayer = NULL;
@@ -1008,16 +1009,26 @@ bool			LocalPlayer::fireShot()
 
   server->sendBeginShot(firingInfo);
   if (gettingSound) {
-    if (firingInfo.flagType == Flags::ShockWave)
+    if (firingInfo.flagType == Flags::ShockWave) {
       playLocalSound(SFX_SHOCK);
-    else if (firingInfo.flagType == Flags::Laser)
+      ForceFeedback::shotFired();
+    }
+    else if (firingInfo.flagType == Flags::Laser) {
       playLocalSound(SFX_LASER);
-    else if (firingInfo.flagType == Flags::GuidedMissile)
+      ForceFeedback::laserFired();
+    }
+    else if (firingInfo.flagType == Flags::GuidedMissile) {
       playLocalSound(SFX_MISSILE);
-    else if (firingInfo.flagType == Flags::Thief)
+      ForceFeedback::shotFired();
+    }
+    else if (firingInfo.flagType == Flags::Thief) {
       playLocalSound(SFX_THIEF);
-    else
+      ForceFeedback::shotFired();
+    }
+    else {
       playLocalSound(SFX_FIRE);
+      ForceFeedback::shotFired();
+    }
   }
 
   shotStatistics.recordFire(firingInfo.flagType);
