@@ -4198,7 +4198,7 @@ static bool		gotBlowedUp(BaseLocalPlayer* tank,
     tank->explodeTank();
     if (tank == myTank) {
       if (reason == GotRunOver)
-	playLocalSound( SFX_RUNOVER );
+	playLocalSound(SFX_RUNOVER);
       else
 	playLocalSound(SFX_DIE);
     }
