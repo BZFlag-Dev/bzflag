@@ -138,6 +138,10 @@ LIB32=link.exe -lib
 # PROP Default_Filter "c;cxx"
 # Begin Source File
 
+SOURCE=..\..\src\common\AutoCompleter.cxx
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\src\common\Bundle.cxx
 # End Source File
 # Begin Source File
@@ -255,6 +259,10 @@ SOURCE=..\..\include\AnsiCodes.h
 # Begin Source File
 
 SOURCE=..\..\include\Address.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\include\AutoCompleter.h
 # End Source File
 # Begin Source File
 
