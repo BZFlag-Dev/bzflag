@@ -24,6 +24,7 @@ BZFlag 1.11
 * Bots drive around corners faster - Frank Thilo
 * Rip out the ref counted texture system, as TM controls this now - Dave Brosius
 * Bots aim better, try to evade shots - Frank Thilo
+* Added Admin Message Queue - Michael Hoffman
 
 BZFlag 1.10.4 "not a smurf"
 ---------------------------
