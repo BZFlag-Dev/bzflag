@@ -3680,6 +3680,14 @@ static void handleCommand(int t, const void *rawbuf)
     case MsgUDPLinkRequest:
       break;
 
+    case MsgKrbPrincipal:
+      playerData->authentication.setPrincipalName((char *)buf, len);
+      break;
+
+    case MsgKrbTicket:
+      playerData->authentication.verifyCredential((char *)buf, len);
+      break;
+
     // unknown msg type
     default:
       DEBUG1("Player [%d] sent unknown packet type (%x), \
@@ -4012,6 +4020,9 @@ int main(int argc, char **argv)
     }
   }
 
+  Authentication::init(clOptions->publicizedAddress.c_str(),
+		       clOptions->wksPort,
+		       clOptions->password.c_str());
 
   /* initialize the poll arbiter for voting if necessary */
   if (clOptions->voteTime > 0) {

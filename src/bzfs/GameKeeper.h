@@ -33,6 +33,7 @@
 #include "Score.h"
 #include "RecordReplay.h"
 #include "NetHandler.h"
+#include "Authentication.h"
 
 const int PlayerSlot = MaxPlayers + ReplayObservers;
 
@@ -81,6 +82,7 @@ public:
     FlagHistory       flagHistory;
     // Score
     Score             score;
+    Authentication    authentication;
   private:
     static Player *playerList[PlayerSlot];
     int    playerIndex;

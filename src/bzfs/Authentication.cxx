@@ -1,0 +1,149 @@
+/* bzflag
+ * Copyright (c) 1993 - 2004 Tim Riker
+ *
+ * This package is free software;  you can redistribute it and/or
+ * modify it under the terms of the license found in the file
+ * named LICENSE that should have accompanied this file.
+ *
+ * THIS PACKAGE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
+ * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
+ * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+ */
+
+/* interface header */
+#include "Authentication.h"
+
+/* system implementation headers */
+#ifdef HAVE_KRB5
+#include <com_err.h>
+#endif
+#include <sys/types.h>
+#include <unistd.h>
+#include <string>
+#include <assert.h>
+
+krb5_context   Authentication::context        = NULL;
+krb5_ccache    Authentication::cc             = NULL;
+krb5_principal Authentication::client;
+krb5_creds     Authentication::my_creds;
+bool           Authentication::authentication = false;
+
+Authentication::Authentication() : trusted(false)
+{
+}
+
+#ifdef HAVE_KRB5
+void Authentication::init(const char *address, int port, const char *password)
+{
+  assert(context == NULL);
+  assert(cc == NULL);
+
+  krb5_error_code retval;
+  char            ccfile[MAXPATHLEN+6]; // FILE:path+\0
+
+  // Initializing kerberos library
+  if ((retval = krb5_init_context(&context)))
+    com_err("bzfs:", retval, "while initializing krb5");
+
+  // Gettin a default cache different for any bzfs process
+  sprintf(ccfile, "FILE:/tmp/krb5cc_p%ld", (long)getpid());
+  if (context && (retval = krb5_cc_set_default_name(context, ccfile)))
+    com_err("bzfs:", retval, "setting default cache");
+  unlink(ccfile+strlen("FILE:"));
+
+  // Getting credential cache 
+  if (!retval && (retval = krb5_cc_default(context, &cc)))
+    com_err("bzfs:", retval, "getting credentials cache");
+
+  // Getting principal identifier
+  char serverPort[8];
+  snprintf(serverPort, sizeof(serverPort), "%d", port);
+  if (cc && (retval = krb5_sname_to_principal(context, address, serverPort,
+					      KRB5_NT_SRV_HST, &client)))
+    com_err("bzfs:", retval, "getting principal name");
+
+  // Initing credential cache
+  if (!retval && (retval = krb5_cc_initialize(context, cc, client)))
+    com_err("bzfs:", retval, "initializing credential cache");
+
+  char intPassword[128];
+  strncpy(intPassword, password, 128);
+  intPassword[127] = 0;
+  // Get credentials for server
+  if (!retval && (retval = krb5_get_init_creds_password(context, &my_creds,
+ 							client, intPassword,
+ 							krb5_prompter_posix,
+ 							NULL, 0, NULL, NULL)))
+    com_err("bzfs:", retval, "getting credential");
+
+  // Store credentials in cache
+  if (!retval && (retval = krb5_cc_store_cred(context, cc, &my_creds)))
+    com_err("bzfs:", retval, "storing credential in cache");
+
+  if (retval)
+    authentication = false;
+}
+#else
+void Authentication::init(const char *, int , const char *)
+{
+}
+#endif
+
+#ifdef HAVE_KRB5
+void Authentication::setPrincipalName(char *buf, int len)
+{
+  if (!authentication)
+    return;
+
+  krb5_error_code retval;
+  char            remotePrincipal[1024];
+
+  memcpy(remotePrincipal, buf, len);
+  remotePrincipal[len] = 0;
+
+  if ((retval = krb5_parse_name(context, remotePrincipal, &server)))
+    com_err("bzfs", retval, "parsing remote name");
+}
+#else
+void Authentication::setPrincipalName(char *, int)
+{
+}
+#endif
+
+#ifdef HAVE_KRB5
+void Authentication::verifyCredential(char *buf, int len)
+{
+  if (!authentication)
+    return;
+
+  krb5_creds        creds;
+  krb5_error_code   retval;
+  krb5_creds       *new_creds;
+
+  memset((char*)&creds, 0, sizeof(creds));
+  memcpy(&creds.client, &client, sizeof(client)); 
+  memcpy(&creds.server, &server, sizeof(server)); 
+
+  creds.second_ticket.length = len;
+  creds.second_ticket.data   = buf;
+
+  // Check authentication info
+  if ((retval = krb5_get_credentials(context, KRB5_GC_USER_USER, cc, &creds,
+				     &new_creds)))
+    com_err("bzfs", retval, "getting user-user ticket");
+  else
+    trusted = true;
+}
+#else
+void Authentication::verifyCredential(char *, int)
+{
+}
+#endif // HAVE_KRB5
+
+// Local Variables: ***
+// mode:C++ ***
+// tab-width: 8 ***
+// c-basic-offset: 2 ***
+// indent-tabs-mode: t ***
+// End: ***
+// ex: shiftwidth=2 tabstop=8

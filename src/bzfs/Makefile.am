@@ -8,6 +8,8 @@ AM_CPPFLAGS = -I$(top_srcdir)/include $(CURL_CFLAGS)
 bzfs_SOURCES = \
 	AccessControlList.cxx \
 	AccessControlList.h \
+	Authentication.cxx	\
+	Authentication.h	\
 	BZWError.cxx \
 	BZWError.h \
 	BZWReader.cxx \
