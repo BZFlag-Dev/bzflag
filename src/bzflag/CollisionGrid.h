@@ -9,6 +9,11 @@
  * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
+ 
+
+// FIXME - returned cell lists will likely contain
+//         the same obstacle more then once, find
+//         a fast way to avoid repetitive testing?
 
 #ifndef	__COLLISION_GRID__
 #define	__COLLISION_GRID__
