@@ -1660,8 +1660,8 @@ static void		handleServerMessage(bool human, uint16_t code,
     }
 
     case MsgTimeUpdate: {
-      uint16_t timeLeft;
-      msg = nboUnpackUShort(msg, timeLeft);
+      int32_t timeLeft;
+      msg = nboUnpackInt(msg, timeLeft);
       hud->setTimeLeft(timeLeft);
       if (timeLeft == 0) {
 	gameOver = true;

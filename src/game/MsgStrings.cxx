@@ -972,8 +972,8 @@ static MsgStringList handleMsgTimeUpdate (PacketInfo *pi)
 {
   MsgStringList list = listMsgBasics (pi);
   void *d = (void*)pi->data;
-  u16 timeLeft;
-  d = nboUnpackUShort(d, timeLeft);
+  int32_t timeLeft;
+  d = nboUnpackInt(d, timeLeft);
   listPush (list, 1, "timeLeft: %i", timeLeft);
 
   return list;

@@ -1878,7 +1878,7 @@ static void addPlayer(int playerIndex)
     }
 
     void *buf, *bufStart = getDirectMessageBuffer();
-    buf = nboPackUShort(bufStart, (uint16_t)(int)timeLeft);
+    buf = nboPackInt(bufStart, (int32_t)(int)timeLeft);
     result = directMessage(*playerData, MsgTimeUpdate,
 			   (char*)buf-(char*)bufStart, bufStart);
     if (result == -1)
@@ -4624,7 +4624,7 @@ int main(int argc, char **argv)
 	  // start client's clock
 	  char msg[2];
 	  void *buf = msg;
-	  nboPackUShort(buf, (uint16_t)(int)clOptions->timeLimit);
+	  nboPackInt(buf, (int32_t)(int)clOptions->timeLimit);
 	  broadcastMessage(MsgTimeUpdate, sizeof(msg), msg);
 
 	  // kill any players that are playing already
@@ -4676,7 +4676,7 @@ int main(int argc, char **argv)
       }
       if (timeLeft == 0.0f || newTimeElapsed - clOptions->timeElapsed >= 30.0f) {
 	void *buf, *bufStart = getDirectMessageBuffer();
-	buf = nboPackUShort(bufStart, (uint16_t)(int)timeLeft);
+	buf = nboPackInt(bufStart, (int32_t)(int)timeLeft);
 	broadcastMessage(MsgTimeUpdate, (char*)buf - (char*)bufStart, bufStart);
 	clOptions->timeElapsed = newTimeElapsed;
 	if (clOptions->oneGameOnly && timeLeft == 0.0f) {

@@ -299,13 +299,17 @@ BZAdminClient::ServerCode BZAdminClient::checkMessage() {
 
     case MsgTimeUpdate:
       if (messageMask[MsgTimeUpdate]) {
-	uint16_t timeLeft;
-	vbuf = nboUnpackUShort(vbuf, timeLeft);
+	int32_t timeLeft;
+	vbuf = nboUnpackInt(vbuf, timeLeft);
 	if (timeLeft == 0)
 	  lastMessage.first = "*** Time Expired.";
-	else
-	  lastMessage.first = std::string("*** ") +
-	    TextUtils::format("%d", timeLeft) + " seconds remaining.";
+	else {
+	  if (timeLeft < 0)
+	    lastMessage.first = "*** Paused.";
+	  else
+	    lastMessage.first = std::string("*** ") +
+	      TextUtils::format("%d", timeLeft) + " seconds remaining.";
+	}
       }
       break;
 
