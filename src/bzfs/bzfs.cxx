@@ -1934,42 +1934,40 @@ static bool serverStart()
 		return false;
 	}
 
-		// increase send/rcv buffer size
+	// increase send/rcv buffer size
 #if defined(_WIN32)
-		n = setsockopt(udpSocket,SOL_SOCKET,SO_SNDBUF,(const char *)&udpBufSize,sizeof(int));
+	n = setsockopt(udpSocket,SOL_SOCKET,SO_SNDBUF,(const char *)&udpBufSize,sizeof(int));
 #else
-		n = setsockopt(udpSocket,SOL_SOCKET,SO_SNDBUF,(const void *)&udpBufSize,sizeof(int));
+	n = setsockopt(udpSocket,SOL_SOCKET,SO_SNDBUF,(const void *)&udpBufSize,sizeof(int));
 #endif
-		if (n < 0) {
-			nerror("couldn't increase udp send buffer size");
-			closesocket(wksSocket);
-			closesocket(udpSocket);
-			return false;
-		}
-
-#if defined(_WIN32)
-		n = setsockopt(udpSocket,SOL_SOCKET,SO_RCVBUF,(const char *)&udpBufSize,sizeof(int));
-#else
-		n = setsockopt(udpSocket,SOL_SOCKET,SO_RCVBUF,(const void *)&udpBufSize,sizeof(int));
-#endif
-		if (n < 0) {
-			nerror("couldn't increase udp receive buffer size");
-			closesocket(wksSocket);
-			closesocket(udpSocket);
-			return false;
-		}
-		addr.sin_port = htons(wksPort);
-		if (bind(udpSocket, (struct sockaddr *) &addr, sizeof(addr)) == -1) {
-			nerror("couldn't bind udp listen port");
-			closesocket(wksSocket);
-			closesocket(udpSocket);
-			return false;
-		}
-		// don't buffer info, send it immediately
-		BzfNetwork::setNonBlocking(udpSocket);
-
-		maxFileDescriptor = udpSocket;
+	if (n < 0) {
+		nerror("couldn't increase udp send buffer size");
+		closesocket(wksSocket);
+		closesocket(udpSocket);
+		return false;
 	}
+
+#if defined(_WIN32)
+	n = setsockopt(udpSocket,SOL_SOCKET,SO_RCVBUF,(const char *)&udpBufSize,sizeof(int));
+#else
+	n = setsockopt(udpSocket,SOL_SOCKET,SO_RCVBUF,(const void *)&udpBufSize,sizeof(int));
+#endif
+	if (n < 0) {
+		nerror("couldn't increase udp receive buffer size");
+		closesocket(wksSocket);
+		closesocket(udpSocket);
+		return false;
+	}
+	addr.sin_port = htons(wksPort);
+	if (bind(udpSocket, (struct sockaddr *) &addr, sizeof(addr)) == -1) {
+		nerror("couldn't bind udp listen port");
+		closesocket(wksSocket);
+		closesocket(udpSocket);
+		return false;
+	}
+	// don't buffer info, send it immediately
+	BzfNetwork::setNonBlocking(udpSocket);
+	maxFileDescriptor = udpSocket;
 
 	for (int i = 0; i < MaxPlayers; i++) {	// no connections
 		player[i].fd = NotConnected;
@@ -4197,7 +4195,7 @@ static void parse(int argc, char **argv)
 	// parse command line
 	int playerCountArg = 0;
 	for (i = 1; i < argc; i++) {
-		else if (strcmp(argv[i], "-srvmsg") == 0) {
+		if (strcmp(argv[i], "-srvmsg") == 0) {
 			if (++i == argc) {
 				std::cerr << "argument expected for -srvmsg" << std::endl;
 				usage(argv[0]);
