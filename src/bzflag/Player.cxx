@@ -652,8 +652,10 @@ void Player::updateFlagEffect(FlagType* effectFlag)
 void Player::endShot(int index, bool isHit, bool showExplosion)
 {
   float pos[3];
-  if (doEndShot(index, isHit, pos) && showExplosion)
+  if (doEndShot(index, isHit, pos) && showExplosion) {
     addShotExplosion(pos);
+  }
+  return;
 }
 
 
@@ -1049,7 +1051,7 @@ void Player::getDeadReckoning(float* predictedPos, float* predictedAzimuth,
 bool Player::isDeadReckoningWrong() const
 {
   const uint16_t checkStates =
-    (PlayerState::Alive | PlayerState::Paused | PlayerState::OnDriver);
+    (PlayerState::Alive | PlayerState::Paused | PlayerState::Falling);
   // always send a new packet when some kinds of status change
   if ((state.status & checkStates) != (inputStatus & checkStates)) {
     return true;

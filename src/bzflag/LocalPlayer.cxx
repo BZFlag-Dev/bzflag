@@ -210,11 +210,14 @@ void			LocalPlayer::doUpdateMotion(float dt)
       // see if explosing time has expired
       if (lastTime - getExplodeTime() >= BZDB.eval(StateDatabase::BZDB_EXPLODETIME)) {
 	dt -= (lastTime - getExplodeTime()) - BZDB.eval(StateDatabase::BZDB_EXPLODETIME);
-	if (dt < 0.0f) dt = 0.0f;
+	if (dt < 0.0f) {
+	  dt = 0.0f;
+        }
 	setStatus(PlayerState::DeadStatus);
 	location = Dead;
-	if (isAutoPilot())
+	if (isAutoPilot()) {
 	  CMDMGR.run("restart");
+        }
       }
 
       // can't control explosion motion
