@@ -13,6 +13,7 @@ recent bugs
   number and then shoot yourself.  (fhffhqvb reported this)  1) Server should
   check that id's are valid to not propagate garbage and 2) Clients should
   not have actually crashed in unpack() regardless..
+
 - Address Exception reported when unpacking a FlagType in MsgFlagUpdate on client
   in Rabbit game. The reported message buffer address was bad (ie 0xbfffd7ed)
   Could we be running off the end of the packet (ie count is fubar'ed?)
@@ -32,7 +33,8 @@ recent bugs
   Was playing on ducati where a player was consistantly in #1 slot, but NEVER
   was rabbit. (The latter probaby happens when all players have a negative
   score, the formula does not work well then). Nope: Top player was 44-31 or there
-  abouts.
+  abouts. HMM. I played again and the picking was fine. Could it be a cheat client,
+  causing havoc?
 
 - Player kicked after getting V flag (and possibly TH) stolen by another thief.
 
