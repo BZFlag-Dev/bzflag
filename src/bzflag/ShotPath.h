@@ -63,11 +63,11 @@ class ShotPath {
     void		addShot(SceneDatabase*, bool colorblind);
 
     void		radarRender() const;
+    FiringInfo&		getFiringInfo();
 
   protected:
 			ShotPath(const FiringInfo&);
     void		updateShot(float dt);
-    FiringInfo&		getFiringInfo();
     const ShotStrategy*	getStrategy() const;
     ShotStrategy*	getStrategy();
 

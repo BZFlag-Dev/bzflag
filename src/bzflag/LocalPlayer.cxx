@@ -770,7 +770,7 @@ bool			LocalPlayer::fireShot()
   // make shot and put it in the table
   shots[i] = new LocalShotPath(firingInfo);
 
-  ServerLink::getServer()->sendBeginShot(firingInfo);
+  ServerLink::getServer()->sendBeginShot(shots[i]->getFiringInfo());
   if (firingInfo.flag == ShockWaveFlag)
     playLocalSound(SFX_SHOCK);
   else if (firingInfo.flag == LaserFlag)
@@ -825,8 +825,8 @@ bool			LocalPlayer::doEndShot(
 void			LocalPlayer::jump()
 {
   // can't jump unless on the ground or a building
-  if (location != OnGround && location != OnBuilding)
-    return;
+//  if (location != OnGround && location != OnBuilding)
+ //   return;
 
   // can only jump with a jumping flag or if jumping is allowed for all
   if (getFlag() != JumpingFlag && !World::getWorld()->allowJumping())
