@@ -184,7 +184,7 @@ bool VotingArbiter::voteNo(std::string player)
 
 bool VotingArbiter::isPollSuccessful(void) const 
 {
-  if (!this-knowsPoll()) {
+  if (!this->knowsPoll()) {
     return false;
   }
   unsigned long int votes = _votingBooth->getVoteCount(1);
