@@ -102,7 +102,7 @@ public:
   std::string getIdleStat();
   bool        canBeRabbit(bool relaxing = false);
   void        setPaused(bool pauses);
-  bool        isTooMuchIdling(TimeKeeper tm, float kickThresh);
+  bool        isTooMuchIdling(float kickThresh);
   bool        hasStartedToNotRespond();
   void        hasSent(char message[]);
   bool        hasPlayedEarly();

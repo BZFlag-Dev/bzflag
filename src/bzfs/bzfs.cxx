@@ -4120,8 +4120,7 @@ int main(int argc, char **argv)
 	GameKeeper::Player *otherData
 	  = GameKeeper::Player::getPlayerByIndex(i);
 	if (otherData
-	    && otherData->player.isTooMuchIdling(tm,
-						  clOptions->idlekickthresh)) {
+	    && otherData->player.isTooMuchIdling(clOptions->idlekickthresh)) {
 	  char message[MessageLen]
 	    = "You were kicked because you were idle too long";
 	  sendMessage(ServerPlayer, i,  message);

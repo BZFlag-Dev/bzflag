@@ -335,15 +335,16 @@ void PlayerInfo::setPaused(bool _paused) {
   pausedSince = now;
 };
 
-bool PlayerInfo::isTooMuchIdling(TimeKeeper tm, float kickThresh) {
+bool PlayerInfo::isTooMuchIdling(float kickThresh) {
   bool idling = false;
   if ((state > PlayerInLimbo) && (team != ObserverTeam)) {
-    int idletime = (int)(tm - lastupdate);
+    int idletime = (int)(now - lastupdate);
     int pausetime = 0;
-    if (paused && tm - pausedSince > idletime)
-      pausetime = (int)(tm - pausedSince);
+    if (paused && now - pausedSince > idletime)
+      pausetime = (int)(now - pausedSince);
     idletime = idletime > pausetime ? idletime : pausetime;
-    if (idletime > (tm - lastmsg < kickThresh ? 3 * kickThresh : kickThresh)) {
+    if (idletime
+	> (now - lastmsg < kickThresh ? 3 * kickThresh : kickThresh)) {
       DEBUG1("Kicking player %s [%d] idle %d\n", callSign, playerIndex,
 	     idletime);
       idling = true;
