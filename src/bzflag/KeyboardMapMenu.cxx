@@ -79,6 +79,7 @@ KeyboardMapMenu::KeyboardMapMenu() : defaultKey(this), editing(-1), quickKeysMen
   controls.push_back(createLabel(NULL, "Send to Teammates:"));
   controls.push_back(createLabel(NULL, "Send to Nemesis:"));
   controls.push_back(createLabel(NULL, "Send to Recipient:"));
+	controls.push_back(createLabel(NULL, "Send to Admin:"));
   controls.push_back(createLabel(NULL, "Jump:"));
   controls.push_back(createLabel(NULL, "Binoculars:"));
   controls.push_back(createLabel(NULL, "Toggle Score:"));
@@ -137,6 +138,7 @@ KeyboardMapMenu::KeyboardMapMenu() : defaultKey(this), editing(-1), quickKeysMen
   initkeymap("restart", 32);
   initkeymap("iconify", 33);
   initkeymap("fullscreen", 34);
+	initkeymap("send admin",35);
 }
 
 void KeyboardMapMenu::initkeymap(const std::string& name, int index)

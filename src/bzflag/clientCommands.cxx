@@ -83,7 +83,7 @@ const struct CommandListItem commandList[] = {
   { "restart",	&cmdRestart,	"restart:  restart playing" },
   { "destruct", &cmdDestruct,	"destruct:  self destruct" },
   { "pause",	&cmdPause,	"pause:  pause/resume" },
-  { "send",	&cmdSend,	"send {all|team|nemesis|recipient}:  start composing a message" },
+  { "send",	&cmdSend,	"send {all|team|nemesis|recipient|admin}:  start composing a message" },
 #ifdef SNAPPING
   { "screenshot", &cmdScreenshot, "screenshot:  take a screenshot" },
 #endif
@@ -294,7 +294,7 @@ std::string cmdSend(const std::string&, const CommandManager::ArgList& args)
 {
   static ComposeDefaultKey composeKeyHandler;
   if (args.size() != 1)
-    return "usage: send {all|team|nemesis|recipient}";
+    return "usage: send {all|team|nemesis|recipient|admin}";
   std::string composePrompt;
   if (args[0] == "all") {
     void* buf = messageMessage;
@@ -317,10 +317,10 @@ std::string cmdSend(const std::string&, const CommandManager::ArgList& args)
     const Player* recipient = myTank->getRecipient();
     if (!recipient) {
       for (int i = 0; i < curMaxPlayers; i++) {
-	if (player[i]) {
-	  myTank->setRecipient(player[i]);
-	  break;
-	}
+				if (player[i]) {
+				 myTank->setRecipient(player[i]);
+				 break;
+				}
       }
     }
     recipient = myTank->getRecipient();
@@ -331,8 +331,13 @@ std::string cmdSend(const std::string&, const CommandManager::ArgList& args)
       composePrompt += recipient->getCallSign();
       composePrompt += ": ";
     }
-  } else {
-    return "usage: send {all|team|nemesis|recipient}";
+  } else if (args[0] == "admin") {
+    void* buf = messageMessage;
+    buf = nboPackUByte(buf, AdminPlayers);
+    composePrompt = "Send to Admin : ";
+		
+	} else { 
+    return "usage: send {all|team|nemesis|recipient|admin}";
   }
   messageHistoryIndex = 0;
   hud->setComposing(composePrompt);
