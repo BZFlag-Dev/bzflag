@@ -1768,14 +1768,16 @@ static void		doAutoPilot(float &rotation, float &speed)
 	}
 
 	// weave towards the player
-        int period = int(TimeKeeper::getCurrent().getSeconds());
-        float bias = ((period % 4) < 2) ? M_PI/9.0f : -M_PI/9.0f;
-	rotation += bias;
-
-        if (rotation < -1.0f * M_PI) rotation += 2.0f * M_PI;
-	if (rotation > 1.0f * M_PI) rotation -= 2.0f * M_PI;
-
-	speed = M_PI/2.0f - fabs(rotation);
+	if (distance > 20.0f) {
+          int period = int(TimeKeeper::getCurrent().getSeconds());
+          float bias = ((period % 4) < 2) ? M_PI/9.0f : -M_PI/9.0f;
+	  rotation += bias;
+          if (rotation < -1.0f * M_PI) rotation += 2.0f * M_PI;
+	  if (rotation > 1.0f * M_PI) rotation -= 2.0f * M_PI;
+	  speed = M_PI/2.0f - fabs(rotation);
+	}
+	else
+	  speed = -0.5f;
 
 	if (World::getWorld()->allowJumping() || (myTank->getFlag() == Flags::Jumping)) {
 	//teach autopilot bad habits
@@ -1799,10 +1801,6 @@ static void		doAutoPilot(float &rotation, float &speed)
 	    }
 	  }
 	}
-
-	//Lastly don't get right on the tank, you can't shoot it
-	if (distance < 20.0f)
-	  speed = -0.5f;
       }
   }
 }
