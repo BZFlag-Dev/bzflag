@@ -28,10 +28,13 @@ make
 ./configure CC="cc -OPT:Olimit=65536 -DEFAULT:abi=n32:isa=mips4:proc=r10k -LANG:std -FE:template_in_elf_section -no_auto_include" CXX="CC -OPT:Olimit=65536 -DEFAULT:abi=n32:isa=mips4:proc=r10k -LANG:std -FE:template_in_elf_section -no_auto_include"
 make
 
-During the build, it is very likely that the build will hang when it
-gets to src/net/multicast.cxx.  This appears to be an optimization bug
-in the MIPSPro 7.3 compiler.  To get around this problem, abort the
-hung compilation and:
+If you try to boost the optimization to -O3, it is likely that the
+compiler will crash.
+
+During the build, it is also very likely that the build will hang.
+Perhaps when it gets to src/net/multicast.cxx, for example.  This
+appears to be related to C++ optimization bugs in the MIPSPro 7.3
+compiler.  To get around this problem, abort the hung compilation and:
 
 cd src/net/
 CC -OPT:Olimit=32768 -DEFAULT:abi=o32:isa=mips3:proc=r5k -LANG:std -FE:template_in_elf_section -no_auto_include -DHAVE_CONFIG_H -I. -I../../include -c -o multicast.o `test -f 'multicast.cxx' || echo './'`multicast.cxx
