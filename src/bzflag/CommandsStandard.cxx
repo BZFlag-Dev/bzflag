@@ -236,6 +236,21 @@ static std::string		cmdToggle(const std::string&,
   return std::string();
 }
 
+static std::string cmdMult(const std::string&, const CommandManager::ArgList& args)
+{
+  if (args.size() != 2)
+    return "usage: mult <name> <value>";
+  float value;
+  if (sscanf(BZDB->get(args[0]).c_str(), "%f", &value) != 1)
+    value = 0.0;
+  float amount;
+  if (sscanf(args[1].c_str(), "%f", &amount) != 1)
+    amount = 1.0;
+  value *= amount;
+  BZDB->set(args[0], string_util::format("%f", value), StateDatabase::User);
+  return std::string();
+}
+
 //
 // command name to function mapping
 //
@@ -254,7 +269,8 @@ static const CommandListItem commandList[] = {
   { "unset",	&cmdUnset,	"unset <name>:  unset a variable" },
   { "bind",	&cmdBind,	"bind <button-name> {up|down} <command> <args>...: bind a key" },
   { "unbind",	&cmdUnbind,	"unbind <button-name> {up|down}:  unbind a key" },
-  { "toggle",	&cmdToggle,	"toggle <name>:  toggle truth value of a variable" }
+  { "toggle",	&cmdToggle,	"toggle <name>:  toggle truth value of a variable" },
+  { "mult",	&cmdMult,	"mult <name> <value>:  multiply a variable by an amount" }
 };
 // FIXME -- may want a cmd to cycle through a list
 

@@ -107,7 +107,8 @@ static DefaultDBItem	defaultDBItems[] = {
   { "displayBinoculars",	"0",			false,	StateDatabase::ReadWrite,	NULL },
   { "displayScore",		"1",			true,	StateDatabase::ReadWrite,	NULL },
   { "displayZoom",		"1",			true,	StateDatabase::ReadWrite,	NULL },
-  { "displayFlagHelp",		"1",			true,	StateDatabase::ReadWrite,	setFlagHelp }
+  { "displayFlagHelp",		"1",			true,	StateDatabase::ReadWrite,	setFlagHelp },
+  { "displayRadarRange",	"1.0",			false,	StateDatabase::ReadWrite,	NULL }
 };
 
 // default key bindings
@@ -166,7 +167,10 @@ static const char*	bindingList[] = {
   "bind O down servercommand",
   "bind F down \"toggle displayFlagHelp\"",
   "bind \"Page Up\" down \"scrollpanel up\"",
-  "bind \"Page Down\" down \"scrollpanel down\""
+  "bind \"Page Down\" down \"scrollpanel down\"",
+  "bind 1 down \"set displayRadarRange 0.25\"",
+  "bind 2 down \"set displayRadarRange 0.5\"",
+  "bind 3 down \"set displayRadarRange 1.0\""
 };
 
 #ifdef ROBOT

@@ -40,7 +40,6 @@ RadarRenderer::RadarRenderer(const SceneRenderer&,
 				y(0),
 				w(0),
 				h(0),
-				range(RadarHiRangeFactor*WorldSize),
 				jammed(false),
 				decay(0.01),
 				list(0),
@@ -86,11 +85,6 @@ void			RadarRenderer::setShape(int _x, int _y, int _w, int _h)
   w = _w;
   h = _h;
   makeNoise();
-}
-
-void			RadarRenderer::setRange(float _range)
-{
-  range = _range;
 }
 
 void			RadarRenderer::setJammed(bool _jammed)
@@ -215,6 +209,7 @@ void			RadarRenderer::render(SceneRenderer& renderer,
     return;
 
   // prepare transforms
+  float range = BZDB->eval("displayRadarRange") * WorldSize;
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
   const int xSize = renderer.getWindow().getWidth();

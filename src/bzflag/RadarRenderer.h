@@ -38,10 +38,8 @@ class RadarRenderer {
     int			getY() const;
     int			getWidth() const;
     int			getHeight() const;
-    float		getRange() const;
 
     void		setShape(int x, int y, int w, int h);
-    void		setRange(float range);
     void		setJammed(bool = true);
 
     void		render(SceneRenderer&, bool blank = false);
@@ -105,11 +103,6 @@ inline int		RadarRenderer::getWidth() const
 inline int		RadarRenderer::getHeight() const
 {
   return h;
-}
-
-inline float		RadarRenderer::getRange() const
-{
-  return range;
 }
 
 #endif // BZF_RADAR_RENDERER_H
