@@ -105,7 +105,7 @@ bool			XDisplay::isEventPending() const
   return (XPending(rep->getDisplay()) != 0);
 }
 
-bool			XDisplay::peekEvent(BzfEvent& event) const
+bool			XDisplay::peekEvent(BzfEvent& /* event */) const
 {
   return false;
 }
