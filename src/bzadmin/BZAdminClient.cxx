@@ -221,12 +221,14 @@ BZAdminClient::ServerCode BZAdminClient::checkMessage() {
       vbuf = nboUnpackUShort(vbuf, tks);
       vbuf = nboUnpackString(vbuf, callsign, CallSignLen);
       vbuf = nboUnpackString(vbuf, email, EmailLen);
-      players[p].name.resize(0);
-      players[p].name.append(callsign);
+      players[p].name = callsign;
       players[p].team = TeamColor(team);
       players[p].wins = wins;
       players[p].losses = losses;
       players[p].tks = tks;
+      players[p].isRegistered = false;
+      players[p].isVerified = false;
+      players[p].isAdmin = false;
       if (ui != NULL)
 	ui->addedPlayer(p);
       if (messageMask[MsgAddPlayer]) {
