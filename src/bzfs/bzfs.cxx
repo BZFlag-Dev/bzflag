@@ -2638,7 +2638,7 @@ static void anointNewRabbit()
   }
 
   if (rabbitIndex != oldRabbit) {
-    if (oldRabbit != NoPlayer)
+    if (oldRabbit != NoPlayer && player[oldRabbit].state != PlayerDead)
       player[oldRabbit].team = RogueTeam;
     if (rabbitIndex != NoPlayer)
       player[rabbitIndex].team = RabbitTeam;
@@ -2959,6 +2959,7 @@ static void playerAlive(int playerIndex)
   broadcastMessage(MsgAlive, (char*)buf-(char*)bufStart, bufStart);
 
   if (clOptions->gameStyle & int(RabbitChaseGameStyle)) {
+    player[playerIndex].team = RogueTeam;
     if (rabbitIndex == NoPlayer) {
       anointNewRabbit();
     }
@@ -2985,10 +2986,13 @@ static void playerKilled(int victimIndex, int killerIndex, int reason,
 	player[victimIndex].state != PlayerAlive) return;
   player[victimIndex].state = PlayerDead;
 
+  bool tk = (player[victimIndex].team == player[killerIndex].team)
+    && (player[victimIndex].team != RabbitTeam)
+    && ((player[victimIndex].team != RogueTeam)
+	|| (clOptions->gameStyle & int(RabbitChaseGameStyle)));
+
   //update tk-score
-  if ((victimIndex != killerIndex) &&
-      (player[victimIndex].team == player[killerIndex].team) &&
-      ((player[victimIndex].team != RogueTeam) || (clOptions->gameStyle & int(RabbitChaseGameStyle)))) {
+  if ((victimIndex != killerIndex) && tk) {
      player[killerIndex].tks++;
      if ((player[killerIndex].tks >= 3) && (clOptions->teamKillerKickRatio > 0) && // arbitrary 3
 	 ((player[killerIndex].wins == 0) ||
@@ -3028,9 +3032,7 @@ static void playerKilled(int victimIndex, int killerIndex, int reason,
     player[victimIndex].losses++;
     if (killerIndex != InvalidPlayer) {
       if (victimIndex != killerIndex) {
-        if ((player[victimIndex].team != RogueTeam ||
-             (clOptions->gameStyle & int(RabbitChaseGameStyle)))
-	    && (player[victimIndex].team == player[killerIndex].team)) {
+        if (tk) {
 	  if (clOptions->teamKillerDies)
 	    playerKilled(killerIndex, killerIndex, reason, -1);
 	  else
