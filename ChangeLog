@@ -4,6 +4,7 @@
 BZFlag 1.12.0  (was 1.11.x)
 ---------------------------
 
+* Added /date and /time to request server date and time - Ian Agar
 * Added arc, cone, and sphere map objects - Dave Rodgers
 * Added user specified dynamic colors - Dave Rodgers
 * Added user specified texture matrices - Dave Rodgers
