@@ -127,7 +127,7 @@ bool CollisionManager::needReload () const
 {
   int newDepth = BZDB.evalInt (StateDatabase::BZDB_COLDETDEPTH);
   int newElements = BZDB.evalInt (StateDatabase::BZDB_COLDETELEMENTS);
-  float newWorldSize = (float)BZDB.evalInt (StateDatabase::BZDB_WORLDSIZE);
+  float newWorldSize = BZDB.eval (StateDatabase::BZDB_WORLDSIZE);
   if ((newDepth != maxDepth) || (newElements != minElements) ||
       (newWorldSize != WorldSize)) {
     return true;
