@@ -247,6 +247,8 @@ void handleFlagCmd(int t, const char *message)
 	      flag[i].flag.position[2]);
       sendMessage(ServerPlayer, t, message, true);
     }
+  } else {
+    sendMessage(ServerPlayer, t, "reset|show|up", true);
   }
   return;
 }
