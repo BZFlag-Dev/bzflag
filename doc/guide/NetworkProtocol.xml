@@ -440,8 +440,10 @@ type of object are:
 <screen>
 
   team base:
-	+----+----+----+----+----+----+----+----+
-	| 62 | 61 | team id |     center (x)    |
+        +----+----+----+----+
+        | 00 | 2A | 62 | 61 | length of base data, team code
+	+----+----+----+----+----+----+
+	| team id |     center (x)    |
 	+----+----+----+----+----+----+----+----+
 	|     center (y)    |     center (z)    |
 	+----+----+----+----+----+----+----+----+
@@ -455,60 +457,68 @@ type of object are:
 	+----+----+----+----+
 
   wall:
+        +----+----+----+----+
+        | 00 | 18 | 77 | 6C | length of wall data, wall code
 	+----+----+----+----+----+----+----+----+
-	| 77 | 6c |    center (x)     | center...
+	|    center (x)     |    center (y)     |
 	+----+----+----+----+----+----+----+----+
-	 (y)      |    center (z)     | angle...
+	|    center (z)     |    angle...       |
 	+----+----+----+----+----+----+----+----+
-		  |       width       | height...
+	|       width       |       height      |
 	+----+----+----+----+----+----+----+----+
-		  |
-	+----+----+
+
 
   pyramid:
+        +----+----+----+----+
+        | 00 | 1D | 70 | 79 | length of pyramid data, pyramid code
 	+----+----+----+----+----+----+----+----+
-	| 70 | 79 |    center (x)     | center...
+	|    center (x)     |    center (y)     |
 	+----+----+----+----+----+----+----+----+
-	 (y)      |    center (z)     | angle...
+	|    center (z)     |     angle         |
 	+----+----+----+----+----+----+----+----+
-		  |       width       | depth...
+	|       width       |     depth         |
 	+----+----+----+----+----+----+----+----+
-		  |      height       |
-	+----+----+----+----+----+----+
+	|      height       | sdf|
+	+----+----+----+----+----+
 
   box:
+        +----+----+----+----+
+        | 00 | 1D | 62 | 78 | length of box data, box code
 	+----+----+----+----+----+----+----+----+
-	| 62 | 78 |    center (x)     | center...
+	|    center (x)     |    center (y)     |
 	+----+----+----+----+----+----+----+----+
-	 (y)      |    center (z)     | angle...
+	|    center (z)     |     angle         |
 	+----+----+----+----+----+----+----+----+
-		  |       width       | depth...
+	|       width       |     depth         |
 	+----+----+----+----+----+----+----+----+
-		  |      height       |
-	+----+----+----+----+----+----+
+	|      height       | sdf|
+	+----+----+----+----+----+
 
   teleporter:
+        +----+----+----+----+
+        | 00 | 21 | 74 | 65 | length of teleporter data, teleporter code
 	+----+----+----+----+----+----+----+----+
-	| 74 | 65 |    center (x)     | center...
+	|    center (x)     |    center (y)     |
 	+----+----+----+----+----+----+----+----+
-	 (y)      |    center (z)     | angle...
+	|    center (z)     |       angle       |
 	+----+----+----+----+----+----+----+----+
-		  |       width       | depth...
+	|       width       |       depth       |
 	+----+----+----+----+----+----+----+----+
-		  |      height       | border...
+	|      height       |       border      |
 	+----+----+----+----+----+----+----+----+
-		  |
-	+----+----+
+	| sdf|
+	+----+
 
   teleporter link:
-	+----+----+----+----+----+----+
-	| 6c | 6e |  from   |   to    |
-	+----+----+----+----+----+----+
-
+	+----+----+----+----+
+	| 00 | 04 | 6C | 6E | length of link data, link code
+	+----+----+----+----+
+        |  from   |   to    |
+        +----+----+----+----+
   end of data:
-	+----+----+
-	| 65 | 64 |
-	+----+----+
+	+----+----+----+----+
+	| 00 | 00 | 65 | 64 | length of worldcodeend data, worldcodeend code
+	+----+----+----+----+
 
 The above values are interpreted as follows:
 
@@ -524,13 +534,16 @@ The above values are interpreted as follows:
 			in the world data has face indices 2*N and 2*N+1.  teleporter
 			links indicate which face teleports to which face;  faces may
 			teleport to themselves.
+  sdf (byte):           bit mask:
+                              drive through is bitmask 0x01
+                              shoot through is bitmask 0x02
 
-
+</screen>
+<screen>
 join game
 ---------
 Once connected a player normally requests to join the game.  The server replies with
 MsgSuperKill, MsgReject, or MsgAccept.
-
 
   --&gt;   +----+----+----+----+----+----+----+----+
 	| length  | 65 | 6e |  player id...             MsgEnter
