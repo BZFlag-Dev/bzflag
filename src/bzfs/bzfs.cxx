@@ -98,6 +98,11 @@ static const float	FlagHalfLife = 45.0f;
 static int		NotConnected = -1;	// do NOT change
 static int		InvalidPlayer = -1;
 
+//The minimum height above ground an object must be in order
+//to have a flag appear beneath it
+static int flagHeight = FlagAltitude;
+//float		WorldSize =	800.0f;		// meters
+
 static char *		servermsg = NULL;	// custom server login message
 
 enum PlayerState {
@@ -481,6 +486,43 @@ void                   CustomLink::write(WorldInfo* world) const
     world->addLink(from, to);
 }
 
+class CustomWorld : public WorldFileObject {
+  public:
+    CustomWorld();
+    virtual bool       read(const char* cmd, istream&);
+    virtual void       write(WorldInfo*) const;
+
+  protected:
+    int size;
+    int fHeight;
+};
+
+CustomWorld::CustomWorld()
+{
+   size = 800;
+   fHeight = 0;
+}
+
+bool                   CustomWorld::read(const char* cmd, istream& input)
+{
+  if (strcmp(cmd, "size") == 0)
+    input >> size;
+  else if (strcmp(cmd, "flagHeight") == 0)
+    input >> fHeight;
+  else
+    return False;
+  return True;
+}
+
+void                   CustomWorld::write(WorldInfo* world) const
+{
+	flagHeight = fHeight;
+	//WorldSize = size;
+    //world->addLink(from, to);
+}
+
+
+
 //
 // list of world file objects
 //
@@ -658,14 +700,14 @@ boolean			WorldInfo::inBuilding(float x, float y, float r) const
 {
   int i;
   for (i = 0; i < numPyramids; i++)
-    if (inRect(pyramids[i].pos, pyramids[i].rotation, pyramids[i].size,x,y,r))
+    if (inRect(pyramids[i].pos, pyramids[i].rotation, pyramids[i].size,x,y,r) && pyramids[i].pos[2] < flagHeight)
       return True;
   for (i = 0; i < numBoxes; i++)
-    if (inRect(boxes[i].pos, boxes[i].rotation, boxes[i].size, x, y, r))
+    if (inRect(boxes[i].pos, boxes[i].rotation, boxes[i].size, x, y, r) && boxes[i].pos[2] < flagHeight)
       return True;
   for (i = 0; i < numTeleporters; i++)
     if (inRect(teleporters[i].pos, teleporters[i].rotation,
-					teleporters[i].size, x, y, r))
+		teleporters[i].size, x, y, r) && teleporters[i].pos[2] < flagHeight)
       return True;
   return False;
 }
@@ -2089,6 +2131,10 @@ static boolean         readWorldStream(istream& input,
 
     else if (strcmp(buffer, "link") == 0)
       newObject = new CustomLink();
+
+    //todo:  only load one object of the type CustomWorld!
+	else if (strcmp(buffer, "world") == 0)
+      newObject = new CustomWorld();
 
     else if (object) {
       if (!object->read(buffer, input)) {
