@@ -2929,7 +2929,7 @@ static void getSpawnLocation(int playerId, float* pos, float *azimuth)
         int lastType = type;
 	int retriesRemaining = 50; // don't climb forever
         while (type != NOT_IN_BUILDING) {
-          pos[2] = building->pos[2] + building->size[2];
+          pos[2] = building->pos[2] + building->size[2] + 0.0001f;
           tries++;
           lastType = type;
           type = world->inBuilding(&building, pos[0], pos[1], pos[2],
