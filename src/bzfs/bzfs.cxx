@@ -2103,106 +2103,107 @@ void removePlayer(int playerIndex, const char *reason, bool notify)
   if (notify)
     directMessage(playerIndex, MsgSuperKill, 0, getDirectMessageBuffer());
 
-  bool wasPlaying = player[playerIndex].removePlayer(reason);
-
-  // player is outta here.  if player never joined a team then
-  // don't count as a player.
-
-  if (wasPlaying) {
   // if there is an active poll, cancel any vote this player may have made
   static VotingArbiter *arbiter = (VotingArbiter *)BZDB.getPointer("poll");
   if ((arbiter != NULL) && (arbiter->knowsPoll())) {
     arbiter->retractVote(std::string(player[playerIndex].getCallSign()));
   }
 
-  if (clOptions->gameStyle & int(RabbitChaseGameStyle))
-    if (playerIndex == rabbitIndex)
-      anointNewRabbit();
+  bool wasPlaying = player[playerIndex].removePlayer(reason);
 
-  if (!player[playerIndex].isTeam(NoTeam)) {
-    int flagid = player[playerIndex].getFlag();
-    if (flagid >= 0) {
-      // do not simply zap team flag
-      Flag &carriedflag = flag[flagid].flag;
-      if (carriedflag.type->flagTeam != ::NoTeam) {
-	dropFlag(playerIndex, lastState[playerIndex].pos);
-      }
-      else {
-	zapFlag(flagid);
-      }
-    }
+  // player is outta here.  if player never joined a team then
+  // don't count as a player.
 
-    // tell everyone player has left
-    void *buf, *bufStart = getDirectMessageBuffer();
-    buf = nboPackUByte(bufStart, playerIndex);
-    broadcastMessage(MsgRemovePlayer, (char*)buf-(char*)bufStart, bufStart);
+  if (wasPlaying) {
 
-    // decrease team size
-    int teamNum = int(player[playerIndex].getTeam());
-    --team[teamNum].team.size;
+    if (clOptions->gameStyle & int(RabbitChaseGameStyle))
+      if (playerIndex == rabbitIndex)
+	anointNewRabbit();
 
-    // if last active player on team then remove team's flag if no one
-    // is carrying it
-    if (Team::isColorTeam(player[playerIndex].getTeam())
-	&& team[teamNum].team.size == 0 &&
-        (clOptions->gameStyle & int(TeamFlagGameStyle))) {
-      int flagid = lookupFirstTeamFlag(teamNum);
+    if (!player[playerIndex].isTeam(NoTeam)) {
+      int flagid = player[playerIndex].getFlag();
       if (flagid >= 0) {
-        for (int n = 0; n < clOptions->numTeamFlags[teamNum]; n++) {
-          if (flag[flagid+n].player == -1
-	      || player[flag[flagid+n].player].isTeam((TeamColor)teamNum))
-	    zapFlag(flagid+n);
+	// do not simply zap team flag
+	Flag &carriedflag = flag[flagid].flag;
+	if (carriedflag.type->flagTeam != ::NoTeam) {
+	  dropFlag(playerIndex, lastState[playerIndex].pos);
+	}
+	else {
+	  zapFlag(flagid);
 	}
       }
+
+      // tell everyone player has left
+      void *buf, *bufStart = getDirectMessageBuffer();
+      buf = nboPackUByte(bufStart, playerIndex);
+      broadcastMessage(MsgRemovePlayer, (char*)buf-(char*)bufStart, bufStart);
+
+      // decrease team size
+      int teamNum = int(player[playerIndex].getTeam());
+      --team[teamNum].team.size;
+
+      // if last active player on team then remove team's flag if no one
+      // is carrying it
+      if (Team::isColorTeam(player[playerIndex].getTeam())
+	  && team[teamNum].team.size == 0 &&
+	  (clOptions->gameStyle & int(TeamFlagGameStyle))) {
+	int flagid = lookupFirstTeamFlag(teamNum);
+	if (flagid >= 0) {
+	  for (int n = 0; n < clOptions->numTeamFlags[teamNum]; n++) {
+	    if (flag[flagid+n].player == -1
+		|| player[flag[flagid+n].player].isTeam((TeamColor)teamNum))
+	      zapFlag(flagid+n);
+	  }
+	}
+      }
+
+      // send team update
+      sendTeamUpdate(-1, teamNum);
     }
 
-    // send team update
-    sendTeamUpdate(-1, teamNum);
-  }
+    fixTeamCount();
 
-  fixTeamCount();
-
-  // tell the list server the new number of players
-  listServerLink->queueMessage(ListServerLink::ADD);
+    // tell the list server the new number of players
+    listServerLink->queueMessage(ListServerLink::ADD);
   }
 
   while ((playerIndex >= 0)
-      && (playerIndex+1 == curMaxPlayers)
-      && !player[playerIndex].exist()
-      && !player[playerIndex].isConnected())
-  {
-     playerIndex--;
-     curMaxPlayers--;
-  }
+	 && (playerIndex+1 == curMaxPlayers)
+	 && !player[playerIndex].exist()
+	 && !player[playerIndex].isConnected())
+    {
+      playerIndex--;
+      curMaxPlayers--;
+    }
 
   if (wasPlaying) {
-  // anybody left?
-  int i;
-  for (i = 0; i < curMaxPlayers; i++)
-    if (player[i].isPlaying())
-      break;
+    // anybody left?
+    int i;
+    for (i = 0; i < curMaxPlayers; i++)
+      if (player[i].isPlaying())
+	break;
 
-  // if everybody left then reset world
-  if (i == curMaxPlayers) {
-    if (!clOptions->worldFile) {
-      bases.clear();
-    }
+    // if everybody left then reset world
+    if (i == curMaxPlayers) {
+      if (!clOptions->worldFile) {
+	bases.clear();
+      }
 
-    if (clOptions->oneGameOnly) {
-      done = true;
-      exitCode = 0;
+      if (clOptions->oneGameOnly) {
+	done = true;
+	exitCode = 0;
+      }
+      else if ((!clOptions->worldFile) && (!defineWorld())) {
+	done = true;
+	exitCode = 1;
+      }
+      else {
+	// republicize ourself.  this dereferences the URL chain
+	// again so we'll notice any pointer change when any game
+	// is over (i.e. all players have quit).
+	publicize();
+      }
     }
-    else if ((!clOptions->worldFile) && (!defineWorld())) {
-      done = true;
-      exitCode = 1;
-    }
-    else {
-      // republicize ourself.  this dereferences the URL chain
-      // again so we'll notice any pointer change when any game
-      // is over (i.e. all players have quit).
-      publicize();
-    }
-  }
   }
 }
 
