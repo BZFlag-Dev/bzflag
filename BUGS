@@ -8,11 +8,21 @@ recent bugs
   it turns back to normal. Also normal, when I switch off lighting.
   Would someone PLEASE buy chestal a graphics card? his doesn't handle
   the emissive property.
+  (CHestal) This happens with both of my cards, where the one isn't really used
+  because it's all software rendering, where the other uses hardware.
+  I can reproduce this by joining my test server ducati 59155 with -solo 1.
+  As soon as the rabbit bot is in view, other things get white, too.
+  This is either a bug in bzflag or in the gl stack which does not reset
+  the shininess or whatever properly. With more than 1 tank it's usually ok,
+  so I guess after drawing the rabbit tank it draws a rogue tank and resets
+  the material data.
 
 - Server handles MsgKilled correctly, but client displays it as 'killed by                       
   unknown>'; killer id is -1=InvalidPlayer, why not ServerPlayer? 
   Chestal, Can you show steps of how this happens? I get 
   'Killed by World Weapon (Rogue)'
+  (Chestal) Easy to reproduce on ducati 59155. Just get shot by the single
+  world weapon there.
 
 - Spawn code sometimes spawns you mid-air
 
