@@ -482,8 +482,8 @@ static void		usage()
 	" [-anonymous]"
 	" [-badwords <filterfile>]"
 	" [-config <configfile>]"
-	" [-debug]"
-	" [-directory <data-directory>]"
+	" [-d | -debug]"
+	" [-dir | -directory <data-directory>]"
 	" [-echo]"
 	" [-echoAnsi]"
 	" [-geometry <geometry-spec>]"
@@ -528,10 +528,11 @@ static void		parse(int argc, char** argv)
     } else if (strcmp(argv[i], "-config") == 0) {
       checkArgc(i, argc, argv[i]);
       // the setting has already been done in parseConfigName()
-    } else if (strcmp(argv[i], "-debug") == 0) {
+    } else if ((strcmp(argv[i], "-d") == 0) ||
+               (strcmp(argv[i], "-debug") == 0)) {
       debugLevel++;
-    } else if (strcmp(argv[i], "-d") == 0 ||
-		strcmp(argv[i], "-directory") == 0) {
+    } else if ((strcmp(argv[i], "-dir") == 0) ||
+               (strcmp(argv[i], "-directory") == 0)) {
       checkArgc(i, argc, argv[i]);
       if (strlen(argv[i]) == 0)
 	BZDB.unset("directory");
