@@ -27,6 +27,8 @@ use Socket;
 
 # get arguments:  server [port]
 ($servername,$port) = @ARGV;
+# handle :port in first arg
+($servername,$port) = split(":", $servername) if ($servername =~ /:/);
 $port = 5154 unless $port;
 
 # some socket defines
