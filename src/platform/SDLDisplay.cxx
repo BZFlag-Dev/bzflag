@@ -119,6 +119,8 @@ bool SDLDisplay::getEvent(BzfEvent& _event) const
   bool ctrl   = ((mode & KMOD_CTRL) != 0);
   bool alt    = ((mode & KMOD_ALT) != 0);
 
+  static const SDL_version *sdlver = SDL_Linked_Version();
+
   switch (event.type) {
 
   case SDL_MOUSEMOTION:
@@ -128,7 +130,10 @@ bool SDLDisplay::getEvent(BzfEvent& _event) const
     /* deal with a SDL bug when in windowed mode related to
      * Cocoa coordinate system of (0,0) in bottom-left corner.
      */
-    if (fullScreen) {
+    if ( (fullScreen) || 
+	 (sdlver->major > 1) ||
+	 (sdlver->minor > 2) ||
+	 (sdlver->patch > 6) ) {
       my = event.motion.y;
     } else {
       my = base_height - 1 - event.motion.y;
