@@ -65,11 +65,12 @@ bzflag_SOURCES = 			\
 noinst_HEADERS = \
 	stars.cxx
 
+RESOURCE =
+
 if WIN32
   RESOURCE = bzflag.res
-else
-  RESOURCE = 
 endif
+
 LDADD =	\
 	../net/libNet.a			\
 	../common/libCommon.a		\
@@ -80,7 +81,9 @@ LDADD =	\
 	../geometry/libGeometry.a	\
 	$(RESOURCE)			\
 	$(GLIBS)
+
 EXTRA_DIST = bzflag.bmp
+
 AM_CPPFLAGS = $(X_CFLAGS)
 
 bzflag.res: bzflag.rc bzflag.ico
