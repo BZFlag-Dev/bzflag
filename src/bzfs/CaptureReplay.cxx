@@ -426,7 +426,7 @@ routePacket (u16 code, int len, const void * data, u16 mode)
 bool 
 Capture::addPacket (u16 code, int len, const void * data, u16 mode)
 {
-  bool retval;
+  bool retval = false;
   
   // If this packet adds a player, save it before the
   // state update. If not, you'll get those annoying 
