@@ -41,13 +41,13 @@
 #define _CULLING_RAIN false
 
 
-void bzdbCallBack (const std::string & /* name */ , void *userData)
+void bzdbCallBack(const std::string& /* name */ , void *userData)
 {
-  ((WeatherRenderer *) userData)->set ();
+  ((WeatherRenderer*)userData)->set();
 }
 
 
-WeatherRenderer::WeatherRenderer ()
+WeatherRenderer::WeatherRenderer()
 {
   rainColor[0][0] = 0.75f;
   rainColor[0][1] = 0.75f;
@@ -61,9 +61,9 @@ WeatherRenderer::WeatherRenderer ()
   rainSize[0] = rainSize[1] = 1.0f;
 
   rainDensity = 1000;
-  rainSpeed = -100;
-  rainSpeedMod = 10;
-  rainSpread = 500;
+  rainSpeed = -100.0f;
+  rainSpeedMod = 10.0f;
+  rainSpread = 500.0f;
 
   doPuddles = true;
   doLineRain = true;
@@ -72,19 +72,19 @@ WeatherRenderer::WeatherRenderer ()
   cullRoofTops = true;
   roofPuddles = false;
 
-  rainStartZ = -1;
-  rainEndZ = 0;
+  rainStartZ = -1.0f;
+  rainEndZ = 0.0f;
 
-  lastRainTime = 0;
+  lastRainTime = 0.0f;
 
-  maxPuddleTime = 5;
+  maxPuddleTime = 5.0f;
   puddleSpeed = 1.0f;
 
   puddleColor[0] = puddleColor[1] = puddleColor[2] = puddleColor[3] = 1.0f;
 
-  dropList = puddleList =  INVALID_GL_LIST_ID;
+  dropList = puddleList = INVALID_GL_LIST_ID;
 
-  gridSize = 200;
+  gridSize = 200.0f;
 
   keyFactor = 1.0f / gridSize;
 
@@ -92,84 +92,82 @@ WeatherRenderer::WeatherRenderer ()
   cellCount = 0;
 
   // install callbacks
-  BZDB.addCallback ("_rainType", bzdbCallBack, this);
-  BZDB.addCallback ("_rainDensity", bzdbCallBack, this);
-  BZDB.addCallback ("_rainSpread", bzdbCallBack, this);
-  BZDB.addCallback ("_rainSpeedMod", bzdbCallBack, this);
-  BZDB.addCallback ("_rainStartZ", bzdbCallBack, this);
-  BZDB.addCallback ("_rainEndZ", bzdbCallBack, this);
-  BZDB.addCallback ("_rainBaseColor", bzdbCallBack, this);
-  BZDB.addCallback ("_useRainPuddles", bzdbCallBack, this);
-  BZDB.addCallback ("_useLineRain", bzdbCallBack, this);
-  BZDB.addCallback ("_useRainBillboards", bzdbCallBack, this);
-  BZDB.addCallback ("_rainPuddleSpeed", bzdbCallBack, this);
-  BZDB.addCallback ("_rainMaxPuddleTime", bzdbCallBack, this);
-  BZDB.addCallback ("_rainPuddleColor", bzdbCallBack, this);
-  BZDB.addCallback ("_rainPuddleTexture", bzdbCallBack, this);
-  BZDB.addCallback ("_rainTexture", bzdbCallBack, this);
-  BZDB.addCallback ("_rainSpins", bzdbCallBack, this);
-  BZDB.addCallback ("_rainRoofs", bzdbCallBack, this);
-  BZDB.addCallback ("userRainScale", bzdbCallBack, this);
+  BZDB.addCallback("_rainType", bzdbCallBack, this);
+  BZDB.addCallback("_rainDensity", bzdbCallBack, this);
+  BZDB.addCallback("_rainSpread", bzdbCallBack, this);
+  BZDB.addCallback("_rainSpeedMod", bzdbCallBack, this);
+  BZDB.addCallback("_rainStartZ", bzdbCallBack, this);
+  BZDB.addCallback("_rainEndZ", bzdbCallBack, this);
+  BZDB.addCallback("_rainBaseColor", bzdbCallBack, this);
+  BZDB.addCallback("_useRainPuddles", bzdbCallBack, this);
+  BZDB.addCallback("_useLineRain", bzdbCallBack, this);
+  BZDB.addCallback("_useRainBillboards", bzdbCallBack, this);
+  BZDB.addCallback("_rainPuddleSpeed", bzdbCallBack, this);
+  BZDB.addCallback("_rainMaxPuddleTime", bzdbCallBack, this);
+  BZDB.addCallback("_rainPuddleColor", bzdbCallBack, this);
+  BZDB.addCallback("_rainPuddleTexture", bzdbCallBack, this);
+  BZDB.addCallback("_rainTexture", bzdbCallBack, this);
+  BZDB.addCallback("_rainSpins", bzdbCallBack, this);
+  BZDB.addCallback("_rainRoofs", bzdbCallBack, this);
+  BZDB.addCallback("userRainScale", bzdbCallBack, this);
 }
 
 
-WeatherRenderer::~WeatherRenderer ()
+WeatherRenderer::~WeatherRenderer()
 {
   freeContext(); // free the display lists
-  BZDB.removeCallback ("_rainType", bzdbCallBack, this);
-  BZDB.removeCallback ("_rainDensity", bzdbCallBack, this);
-  BZDB.removeCallback ("_rainSpread", bzdbCallBack, this);
-  BZDB.removeCallback ("_rainSpeedMod", bzdbCallBack, this);
-  BZDB.removeCallback ("_rainStartZ", bzdbCallBack, this);
-  BZDB.removeCallback ("_rainEndZ", bzdbCallBack, this);
-  BZDB.removeCallback ("_rainBaseColor", bzdbCallBack, this);
-  BZDB.removeCallback ("_useRainPuddles", bzdbCallBack, this);
-  BZDB.removeCallback ("_useLineRain", bzdbCallBack, this);
-  BZDB.removeCallback ("_useRainBillboards", bzdbCallBack, this);
-  BZDB.removeCallback ("_rainPuddleSpeed", bzdbCallBack, this);
-  BZDB.removeCallback ("_rainMaxPuddleTime", bzdbCallBack, this);
-  BZDB.removeCallback ("_rainPuddleColor", bzdbCallBack, this);
-  BZDB.removeCallback ("_rainPuddleTexture", bzdbCallBack, this);
-  BZDB.removeCallback ("_rainTexture", bzdbCallBack, this);
-  BZDB.removeCallback ("_rainSpins", bzdbCallBack, this);
-  BZDB.removeCallback ("_rainRoofs", bzdbCallBack, this);
-  BZDB.removeCallback ("userRainScale", bzdbCallBack, this);
+  BZDB.removeCallback("_rainType", bzdbCallBack, this);
+  BZDB.removeCallback("_rainDensity", bzdbCallBack, this);
+  BZDB.removeCallback("_rainSpread", bzdbCallBack, this);
+  BZDB.removeCallback("_rainSpeedMod", bzdbCallBack, this);
+  BZDB.removeCallback("_rainStartZ", bzdbCallBack, this);
+  BZDB.removeCallback("_rainEndZ", bzdbCallBack, this);
+  BZDB.removeCallback("_rainBaseColor", bzdbCallBack, this);
+  BZDB.removeCallback("_useRainPuddles", bzdbCallBack, this);
+  BZDB.removeCallback("_useLineRain", bzdbCallBack, this);
+  BZDB.removeCallback("_useRainBillboards", bzdbCallBack, this);
+  BZDB.removeCallback("_rainPuddleSpeed", bzdbCallBack, this);
+  BZDB.removeCallback("_rainMaxPuddleTime", bzdbCallBack, this);
+  BZDB.removeCallback("_rainPuddleColor", bzdbCallBack, this);
+  BZDB.removeCallback("_rainPuddleTexture", bzdbCallBack, this);
+  BZDB.removeCallback("_rainTexture", bzdbCallBack, this);
+  BZDB.removeCallback("_rainSpins", bzdbCallBack, this);
+  BZDB.removeCallback("_rainRoofs", bzdbCallBack, this);
+  BZDB.removeCallback("userRainScale", bzdbCallBack, this);
 }
 
 
-void WeatherRenderer::init (void)
+void WeatherRenderer::init(void)
 {
   OpenGLGStateBuilder gstate;
-  TextureManager & tm = TextureManager::instance ();
+  TextureManager& tm = TextureManager::instance();
 
-  gstate.reset ();
-  gstate.setShading ();
-  gstate.setBlending ((GLenum) GL_SRC_ALPHA,
-		      (GLenum) GL_ONE_MINUS_SRC_ALPHA);
-  gstate.setAlphaFunc ();
-  rainGState = gstate.getState ();
+  gstate.reset();
+  gstate.setShading();
+  gstate.setBlending((GLenum) GL_SRC_ALPHA,
+		     (GLenum) GL_ONE_MINUS_SRC_ALPHA);
+  gstate.setAlphaFunc();
+  rainGState = gstate.getState();
 
   // just set up some default textures
-  gstate.setTexture (tm.getTextureID ("snowflake"));
-  texturedRainState = gstate.getState ();
+  gstate.setTexture(tm.getTextureID("snowflake"));
+  texturedRainState = gstate.getState();
 
-  gstate.setTexture (tm.getTextureID ("puddle"));
-  puddleState = gstate.getState ();
+  gstate.setTexture(tm.getTextureID("puddle"));
+  puddleState = gstate.getState();
 
-  buildPuddleList ();
+  buildPuddleList();
 }
 
 
-void WeatherRenderer::set (void)
+void WeatherRenderer::set(void)
 {
-  // TextureManager &tm = TextureManager::instance();
-
   // check the bzdb and see if we need to change any rain stuff
   rainDensity = 0;
 
-  if (dbItemSet ("_rainType") || dbItemSet ("_rainDensity")) {
+  if (dbItemSet("_rainType") || dbItemSet("_rainDensity")) {
     // default rain desnity
-    rainDensity = (int) (1000.0f * BZDB.eval("userRainScale"));
+    rainDensity = (int)(1000.0f * BZDB.eval("userRainScale"));
 
     // some defaults
     doLineRain = false;
@@ -187,50 +185,47 @@ void WeatherRenderer::set (void)
     rainColor[1][2] = 0.0f;
     rainColor[1][3] = 0.0f;
     rainSize[0] = rainSize[1] = 1.0f;
-    maxPuddleTime = 1.5F;
+    maxPuddleTime = 1.5f;
     puddleSpeed = 1.0f;
-    puddleColor[0] = puddleColor[1] = puddleColor[2] = puddleColor[3] =
-	1.0f;
+    puddleColor[0] = puddleColor[1] = puddleColor[2] = puddleColor[3] =	1.0f;
     spinRain = true;
     cullRoofTops = true;
     roofPuddles = false;
 
     rainSpread = 500.0f;
 
-    TextureManager & tm = TextureManager::instance ();
+    TextureManager& tm = TextureManager::instance();
 
     OpenGLGStateBuilder gstate;
-    gstate.reset ();
-    gstate.setShading ();
-    gstate.setBlending ((GLenum) GL_SRC_ALPHA,
-			(GLenum) GL_ONE_MINUS_SRC_ALPHA);
-    gstate.setAlphaFunc ();
+    gstate.reset();
+    gstate.setShading();
+    gstate.setBlending((GLenum) GL_SRC_ALPHA,
+		       (GLenum) GL_ONE_MINUS_SRC_ALPHA);
+    gstate.setAlphaFunc();
 
-    OpenGLGStateBuilder puddleGStateBuilder (puddleState);
+    OpenGLGStateBuilder puddleGStateBuilder(puddleState);
 
-    puddleGStateBuilder.setTexture (tm.getTextureID ("puddle"));
+    puddleGStateBuilder.setTexture(tm.getTextureID("puddle"));
 
-    if (dbItemSet ("_rainType")) {
-      std::string rainType = TextUtils::tolower (BZDB.get ("_rainType"));
+    if (dbItemSet("_rainType")) {
+      std::string rainType = TextUtils::tolower(BZDB.get("_rainType"));
 
       if (rainType == "snow") {
 	doBillBoards = false;
-	gstate.setTexture (tm.getTextureID ("snowflake"));
+	gstate.setTexture (tm.getTextureID("snowflake"));
 	rainSpeed = -20.0f;
 	rainSpeedMod = 5.0f;
 	doPuddles = false;
-      }
-      else if (rainType == "fatrain") {
+      } else if (rainType == "fatrain") {
 	doBillBoards = false;
 	rainSize[0] = 0.5f;
 	rainSize[1] = 0.75f;
-	gstate.setTexture (tm.getTextureID ("raindrop"));
+	gstate.setTexture(tm.getTextureID("raindrop"));
 	rainSpeed = -50.0f;
 	rainSpeedMod = 25.0f;
 	spinRain = false;
-      }
-      else if (rainType == "frog") {
-	gstate.setTexture (tm.getTextureID ("frog"));
+      } else if (rainType == "frog") {
+	gstate.setTexture(tm.getTextureID ("frog"));
 	rainSpeed = -100.0f;
 	rainSpeedMod = 5.0f;
 	doPuddles = true;
@@ -239,12 +234,12 @@ void WeatherRenderer::set (void)
 	puddleSpeed = 3.0f;
 	puddleColor[0] = 0.75f;
 	puddleColor[1] = puddleColor[2] = 0.0f;
-	rainSize[0] = 2.0;
+	rainSize[0] = 2.0f;
 	rainSize[1] = 2.0f;
       }
       else if (rainType == "particle") {
-	rainDensity = (int) (500.0f * BZDB.eval("userRainScale"));
-	gstate.setTexture (tm.getTextureID ("red_super_bolt"));
+	rainDensity = (int)(500.0f * BZDB.eval("userRainScale"));
+	gstate.setTexture(tm.getTextureID ("red_super_bolt"));
 	rainSpeed = -20.0f;
 	rainSpeedMod = 5.0f;
 	doPuddles = true;
@@ -253,11 +248,11 @@ void WeatherRenderer::set (void)
 	// ewww
 	puddleColor[0] = 1.0f;
 	puddleColor[1] = puddleColor[2] = 0.0f;
-	rainSize[0] = 1.0;
+	rainSize[0] = 1.0f;
 	rainSize[1] = 1.0f;
       }
       else if (rainType == "bubble") {
-	gstate.setTexture (tm.getTextureID ("bubble"));
+	gstate.setTexture(tm.getTextureID("bubble"));
 	rainSpeed = 20.0f;
 	rainSpeedMod = 1.0f;
 	doBillBoards = true;
@@ -267,81 +262,81 @@ void WeatherRenderer::set (void)
 	puddleColor[0] = 1.0f;
 	puddleColor[1] = puddleColor[2] = 1.0f;
 	doLineRain = true;
-	rainSize[0] = 0;
+	rainSize[0] = 0.0f;
 	rainSize[1] = 0.75f;
-	puddleGStateBuilder.setTexture (tm.getTextureID ("puddle"));
+	puddleGStateBuilder.setTexture(tm.getTextureID("puddle"));
       }
     }
 
-    if (dbItemSet ("_rainPuddleTexture")) {
-      puddleGStateBuilder.setTexture (
-	tm.getTextureID (BZDB.get("_rainPuddleTexture").c_str()));
+    if (dbItemSet("_rainPuddleTexture")) {
+      puddleGStateBuilder.setTexture(
+	tm.getTextureID(BZDB.get("_rainPuddleTexture").c_str()));
     }
 
     // see if the texture is specificly overiden
-    if (dbItemSet ("_rainTexture")) {
+    if (dbItemSet("_rainTexture")) {
       gstate.setTexture (
-	tm.getTextureID (BZDB.get ("_rainTexture").c_str ()));
+	tm.getTextureID(BZDB.get("_rainTexture").c_str()));
     }
 
-    texturedRainState = gstate.getState ();
+    texturedRainState = gstate.getState();
 
     // if there is a specific overides for stuff
-    if (dbItemSet ("_rainSpread"))
-      rainSpread = BZDB.eval ("_rainSpread");
+    if (dbItemSet("_rainSpread"))
+      rainSpread = BZDB.eval("_rainSpread");
 
-    if (dbItemSet ("_rainDensity"))
-      rainDensity = (int) (BZDB.eval("_rainDensity") * BZDB.eval("userRainScale"));
+    if (dbItemSet("_rainDensity"))
+      rainDensity = (int)(BZDB.eval("_rainDensity") * BZDB.eval("userRainScale"));
 
-    if (dbItemSet ("_rainSpeed"))
-      rainSpeed = BZDB.eval ("_rainSpeed");
+    if (dbItemSet("_rainSpeed"))
+      rainSpeed = BZDB.eval("_rainSpeed");
 
-    if (dbItemSet ("_rainSpeedMod"))
-      rainSpeedMod = BZDB.eval ("_rainSpeedMod");
+    if (dbItemSet("_rainSpeedMod"))
+      rainSpeedMod = BZDB.eval("_rainSpeedMod");
 
-    if (dbItemSet ("_rainSize"))
-      BZDB.evalPair ("_rainSize", rainSize);
+    if (dbItemSet("_rainSize"))
+      BZDB.evalPair("_rainSize", rainSize);
 
-    if (dbItemSet ("_rainStartZ"))
-      rainStartZ = BZDB.eval ("_rainStartZ");
+    if (dbItemSet("_rainStartZ"))
+      rainStartZ = BZDB.eval("_rainStartZ");
 
-    if (dbItemSet ("_rainEndZ"))
-      rainEndZ = BZDB.eval ("_rainEndZ");
+    if (dbItemSet("_rainEndZ"))
+      rainEndZ = BZDB.eval("_rainEndZ");
 
-    if (dbItemSet ("_rainBaseColor"))
-      parseColorString (BZDB.get ("_rainBaseColor"), rainColor[0]);
+    if (dbItemSet("_rainBaseColor"))
+      parseColorString(BZDB.get("_rainBaseColor"), rainColor[0]);
 
-    if (dbItemSet ("_rainTopColor"))
-      parseColorString (BZDB.get ("_rainTopColor"), rainColor[1]);
+    if (dbItemSet("_rainTopColor"))
+      parseColorString(BZDB.get("_rainTopColor"), rainColor[1]);
 
-    if (dbItemSet ("_useRainPuddles"))
-      doPuddles = BZDB.evalInt ("_useRainPuddles") == 1;
+    if (dbItemSet("_useRainPuddles"))
+      doPuddles = BZDB.isTrue("_useRainPuddles");
 
-    if (dbItemSet ("_useLineRain"))
-      doLineRain = BZDB.evalInt ("_useLineRain") == 1;
+    if (dbItemSet("_useLineRain"))
+      doLineRain = BZDB.isTrue("_useLineRain");
 
-    if (dbItemSet ("_useRainBillboards"))
-      doBillBoards = BZDB.evalInt ("_useRainBillboards") == 1;
+    if (dbItemSet("_useRainBillboards"))
+      doBillBoards = BZDB.isTrue("_useRainBillboards");
 
-    if (dbItemSet ("_rainPuddleColor"))
-      parseColorString (BZDB.get ("_rainPuddleColor"), puddleColor);
+    if (dbItemSet("_rainPuddleColor"))
+      parseColorString(BZDB.get("_rainPuddleColor"), puddleColor);
 
-    if (dbItemSet ("_rainPuddleSpeed"))
-      puddleSpeed = BZDB.eval ("rainPuddleSpeed");
+    if (dbItemSet("_rainPuddleSpeed"))
+      puddleSpeed = BZDB.eval("rainPuddleSpeed");
 
-    if (dbItemSet ("_rainMaxPuddleTime"))
-      maxPuddleTime = BZDB.eval ("_rainMaxPuddleTime");
+    if (dbItemSet("_rainMaxPuddleTime"))
+      maxPuddleTime = BZDB.eval("_rainMaxPuddleTime");
 
-    if (dbItemSet ("_rainSpins"))
-      spinRain = (BZDB.evalInt ("_rainSpins") == 1);
+    if (dbItemSet("_rainSpins"))
+      spinRain = BZDB.isTrue("_rainSpins");
 
-    if (dbItemSet ("_rainRoofs")) {
+    if (dbItemSet("_rainRoofs")) {
       cullRoofTops = (BZDB.evalInt("_rainRoofs") >= 1);
       roofPuddles = (BZDB.evalInt("_rainRoofs") >= 2);
     }
 
     // update the actual puddle material
-    puddleState = puddleGStateBuilder.getState ();
+    puddleState = puddleGStateBuilder.getState();
 
 
     // make sure we know where to start and stop the rain
@@ -380,20 +375,19 @@ void WeatherRenderer::set (void)
 
     int totalRain = rainCount;
     if (!_CULLING_RAIN)
-      totalRain = raindrops.size ();
+      totalRain = raindrops.size();
 
     if (totalRain < rainDensity) {
       for (int drops = totalRain; drops < rainDensity; drops++) {
 	rain drop;
 	drop.speed = rainSpeed +
-		      (((float) bzfrand () * 2.0f - 1.0f) * rainSpeedMod);
-	drop.pos[0] = (((float) bzfrand () * 2.0f - 1.0f) * rainSpread);
-	drop.pos[1] = (((float) bzfrand () * 2.0f - 1.0f) * rainSpread);
-	drop.pos[2] = rainStartZ +
-		      (((float) bzfrand ()) * rainHeightDelta);
+		      (((float) bzfrand() * 2.0f - 1.0f) * rainSpeedMod);
+	drop.pos[0] = (((float) bzfrand() * 2.0f - 1.0f) * rainSpread);
+	drop.pos[1] = (((float) bzfrand() * 2.0f - 1.0f) * rainSpread);
+	drop.pos[2] = rainStartZ + (((float) bzfrand()) * rainHeightDelta);
 	if (cullRoofTops) {
 	  drop.roofTop =
-	    RoofTops::getTopHeight (drop.pos[0], drop.pos[1], drop.pos[2]);
+	    RoofTops::getTopHeight(drop.pos[0], drop.pos[1], drop.pos[2]);
 	} else {
 	  drop.roofTop = 0.0f;
 	}
@@ -404,16 +398,15 @@ void WeatherRenderer::set (void)
 	  raindrops.push_back (drop);
 	}
       }
-      lastRainTime = TimeKeeper::getCurrent ().getSeconds ();
+      lastRainTime = TimeKeeper::getCurrent().getSeconds();
     }
     // recompute the drops based on the posible new size
-    buildDropList ();
+    buildDropList();
 
-    if (_CULLING_RAIN) // need to update the bbox depths on all the chunks
-    {
-      std::map < int, visibleChunk >::iterator itr = chunkMap.begin ();
+    if (_CULLING_RAIN) { // need to update the bbox depths on all the chunks
+      std::map<int, visibleChunk>::iterator itr = chunkMap.begin();
 
-      while (itr != chunkMap.end ()) {
+      while (itr != chunkMap.end()) {
 	itr->second.bbox.mins[2] =
 	    rainStartZ > rainEndZ ? rainEndZ : rainStartZ;
 	itr->second.bbox.maxs[2] =
@@ -421,22 +414,21 @@ void WeatherRenderer::set (void)
 	itr++;
       }
     }
-  }
-  else {
-    raindrops.clear ();
-    chunkMap.clear ();
+  } else {
+    raindrops.clear();
+    chunkMap.clear();
     rainCount = 0;
   }
 }
 
 
-void WeatherRenderer::update (void)
+void WeatherRenderer::update(void)
 {
   // update the time
-  float frameTime = TimeKeeper::getCurrent ().getSeconds () - lastRainTime;
-  lastRainTime = TimeKeeper::getCurrent ().getSeconds ();
+  float frameTime = TimeKeeper::getCurrent().getSeconds() - lastRainTime;
+  lastRainTime = TimeKeeper::getCurrent().getSeconds();
 
-  std::vector < rain > dropsToAdd;
+  std::vector<rain> dropsToAdd;
 
   // clamp the update time
   // its not an important sim so just keep it smooth
@@ -445,29 +437,25 @@ void WeatherRenderer::update (void)
 
   if (!_CULLING_RAIN) {
     // update all the drops in the world
-    std::vector < rain >::iterator itr = raindrops.begin ();
-    while (itr != raindrops.end ()) {
-      if (updateDrop (itr, frameTime, dropsToAdd))
+    std::vector<rain>::iterator itr = raindrops.begin();
+    while (itr != raindrops.end()) {
+      if (updateDrop(itr, frameTime, dropsToAdd))
 	itr++;
     }
-  }
-  else {
-    std::map < int, visibleChunk >::iterator itr = chunkMap.begin ();
+  } else {
+    std::map<int, visibleChunk>::iterator itr = chunkMap.begin();
 
-    while (itr != chunkMap.end ()) {
-      if (!itr->second.drops.size ())   // kill any empty chunks
-      {
+    while (itr != chunkMap.end()) {
+      if (!itr->second.drops.size()) {   // kill any empty chunks
 	// cellCount--;
 	// itr == chunkMap.erase(itr);
-      }
-      else {
-	std::vector < rain >::iterator dropItr =
-	    itr->second.drops.begin ();
-	while (dropItr != itr->second.drops.end ()) {
-	  if (updateDrop (dropItr, frameTime, dropsToAdd))
+      } else {
+	std::vector<rain>::iterator dropItr = itr->second.drops.begin();
+	while (dropItr != itr->second.drops.end()) {
+	  if (updateDrop(dropItr, frameTime, dropsToAdd)) {
 	    dropItr++;
-	  else {
-	    dropItr = itr->second.drops.erase (dropItr);
+	  } else {
+	    dropItr = itr->second.drops.erase(dropItr);
 	    rainCount--;
 	  }
 	}
@@ -476,76 +464,71 @@ void WeatherRenderer::update (void)
     }
 
     // add in any new drops
-    std::vector < rain >::iterator dropItr = dropsToAdd.begin ();
-    while (dropItr != dropsToAdd.end ()) {
-      addDrop (*dropItr);
+    std::vector<rain>::iterator dropItr = dropsToAdd.begin();
+    while (dropItr != dropsToAdd.end()) {
+      addDrop(*dropItr);
       dropItr++;
     }
   }
 
   // update all the puddles
-  std::vector < puddle >::iterator puddleItr = puddles.begin ();
+  std::vector<puddle>::iterator puddleItr = puddles.begin();
 
-  while (puddleItr != puddles.end ()) {
-    if (updatePuddle (puddleItr, frameTime))
+  while (puddleItr != puddles.end()) {
+    if (updatePuddle(puddleItr, frameTime))
       puddleItr++;
   }
 }
 
 
-void WeatherRenderer::draw (const SceneRenderer & sr)
+void WeatherRenderer::draw(const SceneRenderer& sr)
 {
   if (!_CULLING_RAIN) {
-    if (!raindrops.size ())
+    if (!raindrops.size())
       return;
-  }
-  else {
+  } else {
     if (!rainCount)
       return;
   }
 
   int visibleChunks = 0;
 
-  glDisable (GL_CULL_FACE);
-  glMatrixMode (GL_MODELVIEW);
-  glColor4f (1, 1, 1, 1.0f);
-  glDepthMask (GL_FALSE);
+  glDisable(GL_CULL_FACE);
+  glMatrixMode(GL_MODELVIEW);
+  glColor4f(1, 1, 1, 1.0f);
+  glDepthMask(GL_FALSE);
 
-  if (doLineRain) // we are doing line rain
-  {
-    rainGState.setState ();
-
-    glPushMatrix ();
-    glBegin (GL_LINES);
+  if (doLineRain) { // we are doing line rain
+    rainGState.setState();
+    glPushMatrix();
+    glBegin(GL_LINES);
+  } else {
+    texturedRainState.setState();
   }
-  else
-    texturedRainState.setState ();
 
-  if (!_CULLING_RAIN) // draw ALL the rain
-  {
-    std::vector < rain >::iterator itr = raindrops.begin ();
-    while (itr != raindrops.end ()) {
-      drawDrop (*itr, sr);
+  if (!_CULLING_RAIN) { // draw ALL the rain
+    std::vector<rain>::iterator itr = raindrops.begin();
+    while (itr != raindrops.end()) {
+      drawDrop(*itr, sr);
       itr++;
     }
   } else {
     // do the smart thing and just draw the rain that is VISIBLE
-    std::map < int, visibleChunk >::iterator itr = chunkMap.begin ();
+    std::map<int, visibleChunk>::iterator itr = chunkMap.begin();
 
-    const Frustum *frustum = &sr.getViewFrustum ();
-    while (itr != chunkMap.end ()) {
-      if (itr->second.drops.size ()) { // skip any empty chunks
+    const Frustum *frustum = &sr.getViewFrustum();
+    while (itr != chunkMap.end()) {
+      if (itr->second.drops.size()) { // skip any empty chunks
 	// see if the chunk is visible
 	Extents exts; // FIXME - possible nasty slowdown
 	// Not using an Extents bbox directly because it is nice to
 	// block the Extents copy constructor to avoid passing by value.
 	exts.set(itr->second.bbox.mins, itr->second.bbox.maxs);
-	if (testAxisBoxInFrustum (exts, frustum) != Outside) {
+	if (testAxisBoxInFrustum(exts, frustum) != Outside) {
 	  visibleChunks++;
-	  std::vector < rain >::iterator dropItr =
-	      itr->second.drops.begin ();
-	  while (dropItr != itr->second.drops.end ()) {
-	    drawDrop (*dropItr, sr);
+	  std::vector<rain>::iterator dropItr = itr->second.drops.begin();
+	  while (dropItr != itr->second.drops.end()) {
+	    drawDrop(*dropItr, sr);
 	    dropItr++;
 	  }
 	}
@@ -555,27 +538,26 @@ void WeatherRenderer::draw (const SceneRenderer & sr)
   }
 
   if (doLineRain) {
-    glEnd ();
-    glPopMatrix ();
+    glEnd();
+    glPopMatrix();
   }
 
   if (doPuddles) {
-    std::vector < puddle >::iterator puddleItr = puddles.begin ();
-
-    puddleState.setState ();
-    while (puddleItr != puddles.end ()) {
-      drawPuddle (*puddleItr);
+    std::vector<puddle>::iterator puddleItr = puddles.begin();
+    puddleState.setState();
+    while (puddleItr != puddles.end()) {
+      drawPuddle(*puddleItr);
       puddleItr++;
     }
   }
 
-  glEnable (GL_CULL_FACE);
-  glColor4f (1, 1, 1, 1);
-  glDepthMask (GL_TRUE);
+  glEnable(GL_CULL_FACE);
+  glColor4f(1, 1, 1, 1);
+  glDepthMask(GL_TRUE);
 }
 
 
-void WeatherRenderer::freeContext (void)
+void WeatherRenderer::freeContext(void)
 {
   if (dropList != INVALID_GL_LIST_ID) {
     glDeleteLists(dropList, 1);
@@ -589,15 +571,15 @@ void WeatherRenderer::freeContext (void)
 }
 
 
-void WeatherRenderer::rebuildContext (void)
+void WeatherRenderer::rebuildContext(void)
 {
-  buildDropList ();
-  buildPuddleList ();
+  buildDropList();
+  buildPuddleList();
   return;
 }
 
 
-void WeatherRenderer::buildDropList (bool draw)
+void WeatherRenderer::buildDropList(bool draw)
 {
   if (!draw) {
     if (dropList != INVALID_GL_LIST_ID) {
@@ -609,68 +591,67 @@ void WeatherRenderer::buildDropList (bool draw)
   }
 
   if (doBillBoards) {
-    glBegin (GL_QUADS);
-    glTexCoord2f (0, 0);
-    glVertex3f (-rainSize[0], -rainSize[1], 0);
+    glBegin(GL_QUADS);
+    glTexCoord2f(0, 0);
+    glVertex3f(-rainSize[0], -rainSize[1], 0);
+
+    glTexCoord2f(1, 0);
+    glVertex3f(rainSize[0], -rainSize[1], 0);
+
+    glTexCoord2f(1, 1);
+    glVertex3f(rainSize[0], rainSize[1], 0);
+
+    glTexCoord2f(0, 1);
+    glVertex3f(-rainSize[0], rainSize[1], 0);
+    glEnd();
+  } else {
+    glPushMatrix();
+    glBegin(GL_QUADS);
+    glTexCoord2f(0, 0);
+    glVertex3f(-rainSize[0], 0, -rainSize[1]);
+
+    glTexCoord2f(1, 0);
+    glVertex3f(rainSize[0], 0, -rainSize[1]);
+
+    glTexCoord2f(1, 1);
+    glVertex3f(rainSize[0], 0, rainSize[1]);
+
+    glTexCoord2f(0, 1);
+    glVertex3f(-rainSize[0], 0, rainSize[1]);
+    glEnd();
+
+    glRotatef(120, 0, 0, 1);
+
+    glBegin(GL_QUADS);
+    glTexCoord2f(0, 0);
+    glVertex3f(-rainSize[0], 0, -rainSize[1]);
 
     glTexCoord2f (1, 0);
-    glVertex3f (rainSize[0], -rainSize[1], 0);
+    glVertex3f(rainSize[0], 0, -rainSize[1]);
 
     glTexCoord2f (1, 1);
-    glVertex3f (rainSize[0], rainSize[1], 0);
+    glVertex3f(rainSize[0], 0, rainSize[1]);
 
     glTexCoord2f (0, 1);
-    glVertex3f (-rainSize[0], rainSize[1], 0);
-    glEnd ();
-  }
-  else {
-    glPushMatrix ();
-    glBegin (GL_QUADS);
-    glTexCoord2f (0, 0);
-    glVertex3f (-rainSize[0], 0, -rainSize[1]);
+    glVertex3f(-rainSize[0], 0, rainSize[1]);
+    glEnd();
 
-    glTexCoord2f (1, 0);
-    glVertex3f (rainSize[0], 0, -rainSize[1]);
+    glRotatef(120, 0, 0, 1);
 
-    glTexCoord2f (1, 1);
-    glVertex3f (rainSize[0], 0, rainSize[1]);
+    glBegin(GL_QUADS);
+    glTexCoord2f(0, 0);
+    glVertex3f(-rainSize[0], 0, -rainSize[1]);
 
-    glTexCoord2f (0, 1);
-    glVertex3f (-rainSize[0], 0, rainSize[1]);
-    glEnd ();
+    glTexCoord2f(1, 0);
+    glVertex3f(rainSize[0], 0, -rainSize[1]);
 
-    glRotatef (120, 0, 0, 1);
+    glTexCoord2f(1, 1);
+    glVertex3f(rainSize[0], 0, rainSize[1]);
 
-    glBegin (GL_QUADS);
-    glTexCoord2f (0, 0);
-    glVertex3f (-rainSize[0], 0, -rainSize[1]);
-
-    glTexCoord2f (1, 0);
-    glVertex3f (rainSize[0], 0, -rainSize[1]);
-
-    glTexCoord2f (1, 1);
-    glVertex3f (rainSize[0], 0, rainSize[1]);
-
-    glTexCoord2f (0, 1);
-    glVertex3f (-rainSize[0], 0, rainSize[1]);
-    glEnd ();
-
-    glRotatef (120, 0, 0, 1);
-
-    glBegin (GL_QUADS);
-    glTexCoord2f (0, 0);
-    glVertex3f (-rainSize[0], 0, -rainSize[1]);
-
-    glTexCoord2f (1, 0);
-    glVertex3f (rainSize[0], 0, -rainSize[1]);
-
-    glTexCoord2f (1, 1);
-    glVertex3f (rainSize[0], 0, rainSize[1]);
-
-    glTexCoord2f (0, 1);
-    glVertex3f (-rainSize[0], 0, rainSize[1]);
-    glEnd ();
-    glPopMatrix ();
+    glTexCoord2f(0, 1);
+    glVertex3f(-rainSize[0], 0, rainSize[1]);
+    glEnd();
+    glPopMatrix();
   }
 
   if (!draw) {
@@ -679,7 +660,7 @@ void WeatherRenderer::buildDropList (bool draw)
 }
 
 
-void WeatherRenderer::buildPuddleList (bool draw)
+void WeatherRenderer::buildPuddleList(bool draw)
 {
   float scale = 1;
   if (!draw) {
@@ -691,19 +672,19 @@ void WeatherRenderer::buildPuddleList (bool draw)
     glNewList(puddleList, GL_COMPILE);
   }
 
-  glBegin (GL_QUADS);
-  glTexCoord2f (0, 0);
-  glVertex3f (-scale, -scale, 0);
+  glBegin(GL_QUADS);
+  glTexCoord2f(0, 0);
+  glVertex3f(-scale, -scale, 0);
 
-  glTexCoord2f (1, 0);
-  glVertex3f (scale, -scale, 0);
+  glTexCoord2f(1, 0);
+  glVertex3f(scale, -scale, 0);
 
-  glTexCoord2f (1, 1);
-  glVertex3f (scale, scale, 0);
+  glTexCoord2f(1, 1);
+  glVertex3f(scale, scale, 0);
 
-  glTexCoord2f (0, 1);
-  glVertex3f (-scale, scale, 0);
-  glEnd ();
+  glTexCoord2f(0, 1);
+  glVertex3f(-scale, scale, 0);
+  glEnd();
 
   if (!draw) {
     glEndList();
@@ -711,8 +692,8 @@ void WeatherRenderer::buildPuddleList (bool draw)
 }
 
 
-bool WeatherRenderer::updateDrop (std::vector < rain >::iterator & drop,
-				  float frameTime, std::vector < rain > &toAdd)
+bool WeatherRenderer::updateDrop(std::vector<rain>::iterator& drop,
+				 float frameTime, std::vector<rain> &toAdd)
 {
   drop->pos[2] += drop->speed * frameTime;
 
@@ -744,14 +725,13 @@ bool WeatherRenderer::updateDrop (std::vector < rain >::iterator & drop,
     }
 
     if (!_CULLING_RAIN) {
-      if ((int) (raindrops.size ()) <= rainDensity) {
+      if ((int)(raindrops.size()) <= rainDensity) {
 	// reset this drop
 	drop->pos[2] = rainStartZ;
 	drop->speed =
-	    rainSpeed +
-	    ((float) (bzfrand () * 2.0f - 1.0f) * rainSpeedMod);
-	drop->pos[0] = (((float) bzfrand () * 2.0f - 1.0f) * rainSpread);
-	drop->pos[1] = (((float) bzfrand () * 2.0f - 1.0f) * rainSpread);
+	    rainSpeed + ((float) (bzfrand() * 2.0f - 1.0f) * rainSpeedMod);
+	drop->pos[0] = (((float) bzfrand() * 2.0f - 1.0f) * rainSpread);
+	drop->pos[1] = (((float) bzfrand() * 2.0f - 1.0f) * rainSpread);
 	if (cullRoofTops) {
 	  drop->roofTop =
 	    RoofTops::getTopHeight (drop->pos[0], drop->pos[1], drop->pos[2]);
@@ -760,9 +740,8 @@ bool WeatherRenderer::updateDrop (std::vector < rain >::iterator & drop,
 	}
 
 	return true;
-      }
-      else { // we need less rain, so don't do this one
-	drop = raindrops.erase (drop);
+      } else { // we need less rain, so don't do this one
+	drop = raindrops.erase(drop);
 	return false;
       }
     }
@@ -772,9 +751,9 @@ bool WeatherRenderer::updateDrop (std::vector < rain >::iterator & drop,
 	newDrop.pos[2] = rainStartZ;
 	newDrop.speed =
 	    rainSpeed +
-	    ((float) (bzfrand () * 2.0f - 1.0f) * rainSpeedMod);
-	newDrop.pos[0] = (((float) bzfrand () * 2.0f - 1.0f) * rainSpread);
-	newDrop.pos[1] = (((float) bzfrand () * 2.0f - 1.0f) * rainSpread);
+	    ((float) (bzfrand() * 2.0f - 1.0f) * rainSpeedMod);
+	newDrop.pos[0] = (((float) bzfrand() * 2.0f - 1.0f) * rainSpread);
+	newDrop.pos[1] = (((float) bzfrand() * 2.0f - 1.0f) * rainSpread);
 	if (cullRoofTops) {
 	  newDrop.roofTop =
 	    RoofTops::getTopHeight (newDrop.pos[0], newDrop.pos[1], newDrop.pos[2]);
@@ -782,7 +761,7 @@ bool WeatherRenderer::updateDrop (std::vector < rain >::iterator & drop,
 	  newDrop.roofTop = 0.0f;
 	}
 
-	toAdd.push_back (newDrop);
+	toAdd.push_back(newDrop);
       }
       // kill the drop
       return false;
@@ -792,11 +771,11 @@ bool WeatherRenderer::updateDrop (std::vector < rain >::iterator & drop,
 }
 
 
-bool WeatherRenderer::updatePuddle (std::vector < puddle >::iterator & splash,
-			       float frameTime)
+bool WeatherRenderer::updatePuddle(std::vector<puddle>::iterator& splash,
+				   float frameTime)
 {
   if (splash->time > maxPuddleTime) {
-    splash = puddles.erase (splash);
+    splash = puddles.erase(splash);
     return false;
   }
   splash->time += frameTime;
@@ -804,7 +783,7 @@ bool WeatherRenderer::updatePuddle (std::vector < puddle >::iterator & splash,
 }
 
 
-void WeatherRenderer::drawDrop (rain & drop, const SceneRenderer & sr)
+void WeatherRenderer::drawDrop(rain& drop, const SceneRenderer& sr)
 {
   if (doLineRain) {
     float alphaMod = 0;
@@ -816,109 +795,100 @@ void WeatherRenderer::drawDrop (rain & drop, const SceneRenderer & sr)
     if (alphaVal < 0)
       alphaVal = 0;
 
-    glColor4f (rainColor[0][0], rainColor[0][1], rainColor[0][2],
-	       alphaVal);
-    glVertex3fv (drop.pos);
+    glColor4f(rainColor[0][0], rainColor[0][1], rainColor[0][2], alphaVal);
+    glVertex3fv(drop.pos);
 
     alphaVal = rainColor[1][3] - alphaMod;
     if (alphaVal < 0)
       alphaVal = 0;
 
-    glColor4f (rainColor[1][0], rainColor[1][1], rainColor[1][2],
-	       alphaVal);
-    glVertex3f (drop.pos[0], drop.pos[1],
+    glColor4f(rainColor[1][0], rainColor[1][1], rainColor[1][2], alphaVal);
+    glVertex3f(drop.pos[0], drop.pos[1],
 		drop.pos[2] + (rainSize[1] - (drop.speed * 0.15f)));
-  }
-  else {
+  } else {
     float alphaMod = 0;
 
     if (drop.pos[2] < 2.0f)
       alphaMod = (2.0f - drop.pos[2]) * 0.5f;
 
-    glColor4f (1, 1, 1, 1.0f - alphaMod);
-    glPushMatrix ();
-    glTranslatef (drop.pos[0], drop.pos[1], drop.pos[2]);
+    glColor4f(1, 1, 1, 1.0f - alphaMod);
+    glPushMatrix();
+    glTranslatef(drop.pos[0], drop.pos[1], drop.pos[2]);
     if (doBillBoards)
-      sr.getViewFrustum ().executeBillboard ();
+      sr.getViewFrustum().executeBillboard();
     else if (spinRain)
-      glRotatef (lastRainTime * 10.0f * rainSpeed * 0.85f, 0, 1, 0);
+      glRotatef(lastRainTime * 10.0f * rainSpeed * 0.85f, 0, 1, 0);
 
     if (spinRain)
-      glRotatef (lastRainTime * 10.0f * rainSpeed, 0, 0, 1);
+      glRotatef(lastRainTime * 10.0f * rainSpeed, 0, 0, 1);
 
     if (1) {
       glCallList(dropList);
     } else {
-      buildDropList (true);
+      buildDropList(true);
     }
-    glPopMatrix ();
+    glPopMatrix();
   }
 }
 
 
-void WeatherRenderer::drawPuddle (puddle & splash)
+void WeatherRenderer::drawPuddle(puddle& splash)
 {
-  glPushMatrix ();
-  glTranslatef (splash.pos[0], splash.pos[1], splash.pos[2]);
+  glPushMatrix();
+  glTranslatef(splash.pos[0], splash.pos[1], splash.pos[2]);
 
-  float scale = fabs (splash.time * rainSpeed * 0.035f * puddleSpeed);
+  float scale = fabsf(splash.time * rainSpeed * 0.035f * puddleSpeed);
   float lifeTime = splash.time / maxPuddleTime;
 
-  glColor4f (puddleColor[0], puddleColor[1], puddleColor[2],
-	     1.0f - lifeTime);
+  glColor4f(puddleColor[0], puddleColor[1], puddleColor[2], 1.0f - lifeTime);
 
-  glScalef (scale, scale, scale);
+  glScalef(scale, scale, scale);
   if (1) {
     glCallList(puddleList);
   } else {
-    buildPuddleList (true);
+    buildPuddleList(true);
   }
 
-  glPopMatrix ();
+  glPopMatrix();
 }
 
 
-void WeatherRenderer::addDrop (rain & drop)
+void WeatherRenderer::addDrop(rain& drop)
 {
-  int key = keyFromPos (drop.pos[0], drop.pos[1]);
+  int key = keyFromPos(drop.pos[0], drop.pos[1]);
 
-  std::map < int, visibleChunk >::iterator itr = chunkMap.find (key);
+  std::map<int, visibleChunk>::iterator itr = chunkMap.find(key);
   rainCount++;
 
-  if (itr != chunkMap.end ()) {
-    itr->second.drops.push_back (drop);
+  if (itr != chunkMap.end()) {
+    itr->second.drops.push_back(drop);
     return;
   }
 
   visibleChunk chunk;
 
-  setChunkFromDrop (chunk, drop);
+  setChunkFromDrop(chunk, drop);
 
-  chunk.drops.push_back (drop);
+  chunk.drops.push_back(drop);
   chunkMap[key] = chunk;
   cellCount++;
 }
 
 
-int WeatherRenderer::keyFromPos (float x, float y)
+int WeatherRenderer::keyFromPos(float x, float y)
 {
-  // todo, optimze this
-  int keyX = (int) (x * keyFactor);
-  int keyY = (int) (y * keyFactor);
-
   short temp[2];
+  temp[0] = (short)(x * keyFactor);
+  temp[1] = (short)(y * keyFactor);
 
-  temp[0] = (short) keyX;
-  temp[1] = (short) keyY;
-
-  return *((int *) temp);
+  return *((int*) temp);
 }
 
 
-void WeatherRenderer::setChunkFromDrop (visibleChunk & chunk, rain & drop)
+void WeatherRenderer::setChunkFromDrop(visibleChunk& chunk, rain& drop)
 {
-  int keyX = (int) (drop.pos[0] * keyFactor);
-  int keyY = (int) (drop.pos[1] * keyFactor);
+  int keyX = (int)(drop.pos[0] * keyFactor);
+  int keyY = (int)(drop.pos[1] * keyFactor);
 
   chunk.bbox.mins[0] = keyX * gridSize;
   chunk.bbox.mins[1] = keyY * gridSize;
@@ -929,12 +899,12 @@ void WeatherRenderer::setChunkFromDrop (visibleChunk & chunk, rain & drop)
 }
 
 
-bool WeatherRenderer::dbItemSet (const char *name)
+bool WeatherRenderer::dbItemSet(const char *name)
 {
-  if (!BZDB.isSet (name))
+  if (!BZDB.isSet(name))
     return false;
 
-  if (TextUtils::tolower (BZDB.get (name)) == "none")
+  if (TextUtils::tolower(BZDB.get(name)) == "none")
     return false;
 
   return true;

@@ -12,7 +12,7 @@
 
 /*
 * WeatherRenderer:
-*	Encapsulates rendering of weather stuff ( rain and clouds )
+*	Encapsulates rendering of weather stuff (rain and clouds)
 *
 */
 
@@ -37,85 +37,85 @@ public:
 	~WeatherRenderer();
 
 	// called once to setup the rain state, load lists and materials and stuff
-	void init ( void );
+	void init(void);
 
 	// called each time the rain state needs to change, i.e. when the bzdb stuff changes
-	void set ( void );
+	void set(void);
 
 	// called to update the rain simulation state.
-	void update ( void );
+	void update(void);
 
 	// called to draw the rain for the current frame
-	void draw ( const SceneRenderer& sr );
+	void draw(const SceneRenderer& sr);
 
 	// called when the GL lists need to be deleted
-	void freeContext ( void );
+	void freeContext(void);
 
 	// called when the GL lists need to be remade
-	void rebuildContext ( void );
+	void rebuildContext(void);
 
 protected:
 	OpenGLGState				rainGState;
 	OpenGLGState				texturedRainState;
 	OpenGLGState				puddleState;
-	std::string					rainSkin;
-	std::vector<std::string>	rainTextures;
-	float						rainColor[2][4];
-	float						rainSize[2];
-	int							rainDensity;
-	float						rainSpeed;
-	float						rainSpeedMod;
-	float						rainSpread;
-	bool						doPuddles;
-	bool						doLineRain;
-	bool						doBillBoards;
-	bool						spinRain;
-	bool						cullRoofTops;
-	bool						roofPuddles;
-	float						rainStartZ;
-	float						rainEndZ;
-	float						maxPuddleTime;
-	float						puddleSpeed;
-	float						puddleColor[4];
-	GLuint						dropList;
-	GLuint						puddleList;
+	std::string				rainSkin;
+	std::vector<std::string>		rainTextures;
+	float					rainColor[2][4];
+	float					rainSize[2];
+	int					rainDensity;
+	float					rainSpeed;
+	float					rainSpeedMod;
+	float					rainSpread;
+	bool					doPuddles;
+	bool					doLineRain;
+	bool					doBillBoards;
+	bool					spinRain;
+	bool					cullRoofTops;
+	bool					roofPuddles;
+	float					rainStartZ;
+	float					rainEndZ;
+	float					maxPuddleTime;
+	float					puddleSpeed;
+	float					puddleColor[4];
+	GLuint					dropList;
+	GLuint					puddleList;
 
 public:
 	typedef struct {
-		float    pos[3];
-		float	 speed;
-		float    roofTop;
-		int		 texture;
+		float		pos[3];
+		float		speed;
+		float		roofTop;
+		int		texture;
 	} rain;
 
 protected:
-	std::vector<rain>			raindrops;
+	std::vector<rain>	raindrops;
 
 	typedef struct {
-		float			pos[3];
-		float			time;
-		int				texture;
+		float		pos[3];
+		float		time;
+		int		texture;
 	} puddle;
-	std::vector<puddle>			puddles;
+	std::vector<puddle>	puddles;
 
-	float						lastRainTime;
+	float			lastRainTime;
 
-	void buildDropList ( bool draw = false );
-	void buildPuddleList ( bool draw = false );
+	void buildDropList(bool draw = false);
+	void buildPuddleList(bool draw = false);
 
-	bool updateDrop ( std::vector<rain>::iterator &drop, float frameTime, std::vector<rain> &toAdd  );
-	bool updatePuddle ( std::vector<puddle>::iterator &splash, float frameTime );
+	bool updateDrop(std::vector<rain>::iterator &drop, float frameTime, std::vector<rain> &toAdd);
+	bool updatePuddle(std::vector<puddle>::iterator &splash, float frameTime);
 
-	void drawDrop ( rain &drop, const SceneRenderer& sr );
-	void drawPuddle ( puddle	&splash );
+	void drawDrop(rain &drop, const SceneRenderer& sr);
+	void drawPuddle(puddle &splash);
 
 	// some kinda culling
-	void addDrop ( rain & drop );
+	void addDrop(rain &drop);
 
-	int keyFromPos ( float x, float y );
+	int keyFromPos(float x, float y);
 
-	float				gridSize;
-	float				keyFactor;
+	float			gridSize;
+	float			keyFactor;
 
 public:
 	typedef struct {
@@ -125,15 +125,15 @@ public:
 
 protected:
 	typedef struct  {
-		std::vector<rain>	drops;
-		copyExtents		bbox;
+	  std::vector<rain>	drops;
+	  copyExtents		bbox;
 	} visibleChunk;
 
-	std::map<int,visibleChunk>	chunkMap;
+	std::map<int, visibleChunk>	chunkMap;
 
-	void setChunkFromDrop ( visibleChunk &chunk, rain & drop );
+	void setChunkFromDrop(visibleChunk &chunk, rain &drop);
 
-	bool dbItemSet ( const char* name );
+	bool dbItemSet(const char* name);
 
 	int	rainCount;
 	int	cellCount;

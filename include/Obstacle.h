@@ -79,7 +79,7 @@ class Obstacle {
   /** This function calculates extents from pos, size, and rotation */
   void setExtents();
 
-    /** This function returns true if the obstacle is valid */
+  /** This function returns true if the obstacle is valid */
   virtual bool isValid() const;
 
   /** This function returns true if the obstacle has a flat top */
