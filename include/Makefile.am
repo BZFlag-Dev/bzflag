@@ -2,7 +2,7 @@
 noinst_HEADERS =			\
 	AccessList.h			\
 	Address.h			\
-	AdnsHandler.h			\
+	AresHandler.h			\
 	AnsiCodes.h			\
 	ArcObstacle.h			\
 	AutoCompleter.h			\
@@ -129,6 +129,7 @@ noinst_HEADERS =			\
 	WordFilter.h			\
 	URLManager.h			\
 	ZSceneDatabase.h		\
+	ares.h				\
 	bz_Locale.h			\
 	bzfSDL.h			\
 	bzfgl.h				\

@@ -51,10 +51,6 @@ bool NetHandler::initHandlers(struct sockaddr_in addr) {
   // don't buffer info, send it immediately
   BzfNetwork::setNonBlocking(udpSocket);
 
-#ifdef HAVE_ADNS_H
-  AdnsHandler::startupResolver();
-#endif
-
   return true;
 }
 
@@ -81,6 +77,11 @@ void NetHandler::setFd(fd_set *read_set, fd_set *write_set, int &maxFile) {
   _FD_SET(udpSocket, read_set);
   if (udpSocket > maxFile)
     maxFile = udpSocket;
+  for (int i = 0; i < maxHandlers; i++) {
+    NetHandler *player = netPlayer[i];
+    if (player)
+      player->ares.setFd(read_set, write_set, maxFile);
+  }
 }
 
 int NetHandler::getUdpSocket() {
@@ -188,12 +189,21 @@ bool NetHandler::isUdpFdSet(fd_set *read_set) {
   return false;
 }
 
+void NetHandler::checkDNS(fd_set *read_set, fd_set *write_set) {
+  for (int i = 0; i < maxHandlers; i++) {
+    NetHandler *player = netPlayer[i];
+    if (player)
+      player->ares.process(read_set, write_set);
+  }
+}
+
 int NetHandler::udpSocket = -1;
 NetHandler *NetHandler::netPlayer[maxHandlers] = {NULL};
 
 NetHandler::NetHandler(PlayerInfo* _info, const struct sockaddr_in &clientAddr,
 		       int _playerIndex, int _fd)
-  : info(_info), playerIndex(_playerIndex), fd(_fd), tcplen(0), closed(false),
+  : ares(_playerIndex), info(_info), playerIndex(_playerIndex), fd(_fd),
+    tcplen(0), closed(false),
     outmsgOffset(0), outmsgSize(0), outmsgCapacity(0), outmsg(NULL),
     udpOutputLen(0), udpin(false), udpout(false), toBeKicked(false) {
   // store address information for player
@@ -223,9 +233,7 @@ NetHandler::NetHandler(PlayerInfo* _info, const struct sockaddr_in &clientAddr,
 #endif
   if (!netPlayer[playerIndex])
     netPlayer[playerIndex] = this;
-#ifdef HAVE_ADNS_H
-  adns = new AdnsHandler(_playerIndex, (struct sockaddr *) &clientAddr);
-#endif
+  ares.queryHostname((struct sockaddr *) &clientAddr);
 }
 
 NetHandler::~NetHandler() {
@@ -241,10 +249,6 @@ NetHandler::~NetHandler() {
 
   if (netPlayer[playerIndex] == this)
     netPlayer[playerIndex] = NULL;
-
-#ifdef HAVE_ADNS_H
-  delete adns;
-#endif
 }
 
 bool NetHandler::isFdSet(fd_set *set) {
@@ -666,11 +670,7 @@ in_addr NetHandler::getIPAddress() {
 }
 
 const char *NetHandler::getHostname() {
-#ifdef HAVE_ADNS_H
-  return adns->getHostname();
-#else
-  return NULL;
-#endif
+  return ares.getHostname();
 }
 
 // Local Variables: ***

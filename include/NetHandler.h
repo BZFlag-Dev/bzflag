@@ -23,7 +23,7 @@
 /* common interface headers */
 #include "PlayerInfo.h"
 #include "Address.h"
-#include "AdnsHandler.h"
+#include "AresHandler.h"
 
 enum RxStatus {
   ReadAll,
@@ -76,6 +76,9 @@ public:
   static void setFd(fd_set *read_set, fd_set *write_set, int &maxFile);
   static bool isUdpFdSet(fd_set *read_set);
   bool	isFdSet(fd_set *set);
+
+  /// Supporting DNS Asynchronous resolver
+  static void checkDNS(fd_set *read_set, fd_set *write_set);
 
   /// return the opened socket, usable from all other network internal client
   static int  getUdpSocket();
@@ -142,9 +145,7 @@ private:
   void	countMessage(uint16_t code, int len, int direction);
   void	dumpMessageStats();
 #endif
-#ifdef HAVE_ADNS_H
-  AdnsHandler *adns;
-#endif
+  AresHandler           ares;
 
   /// On win32, a socket is typedef UINT_PTR SOCKET;
   /// Hopefully int will be ok

@@ -122,4 +122,5 @@ LDADD = \
 	../game/libGame.a	\
 	../net/libNet.a		\
 	../common/libCommon.a	\
+	../c-ares/libcares.a	\
 	$(REGEX) $(ZLIB) $(CURL_LIBS) $(KRB5_LIBS) ../date/libDate.a

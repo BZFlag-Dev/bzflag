@@ -4031,7 +4031,6 @@ static void doStuffOnPlayer(GameKeeper::Player &playerData)
   }
 
   // Check host bans
-#ifdef HAVE_ADNS_H
   const char *hostname = playerData.netHandler->getHostname();
 
   if (hostname && playerData.needsHostbanChecked()) {
@@ -4058,7 +4057,6 @@ static void doStuffOnPlayer(GameKeeper::Player &playerData)
     }
     playerData.setNeedThisHostbanChecked(false);
   }
-#endif
 
   // update notResponding
   if (playerData.player.hasStartedToNotRespond()) {
@@ -5010,6 +5008,9 @@ int main(int argc, char **argv)
 	  }
 	}
       }
+
+      // process eventual resolver requests
+      NetHandler::checkDNS(&read_set, &write_set);
 
       // now check messages from connected players and send queued messages
       GameKeeper::Player *playerData;
