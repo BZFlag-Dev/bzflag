@@ -767,7 +767,7 @@ void handleRegisterCmd(int t, const char *message)
 		    " please /identify to login");
 	updateDatabases();
       } else {
-	  sendMessage(ServerPlayer, t, "Your password must be 3 or more characters");
+	sendMessage(ServerPlayer, t, "Your password must be 3 or more characters");
       }
     }
   }
@@ -1110,12 +1110,13 @@ void handleReloadCmd(int t, const char *)
 void handlePollCmd(int t, const char *message)
 {
   char reply[MessageLen] = {0};
+  std::string callsign = std::string(player[t].callSign);
 
   DEBUG2("Entered poll command handler (MessageLen is %d)\n", MessageLen);
 
   /* make sure player has permission to request a poll */
   if (!hasPerm(t, PlayerAccessInfo::poll)) {
-    sprintf(reply,"%s, you are presently not authorized to run /poll", player[t].callSign);
+    sprintf(reply,"%s, you are presently not authorized to run /poll", callsign.c_str());
     sendMessage(ServerPlayer, t, reply, true);
     return;
   }
@@ -1244,7 +1245,7 @@ void handlePollCmd(int t, const char *message)
     DEBUG2("Target specified to vote upon is [%s]\n", target.c_str());
 
     if ((target.length() == 0) && (cmd != "flagreset")) {
-      sprintf(reply,"%s, no target was specified for the [%s] vote", player[t].callSign, cmd.c_str());
+      sprintf(reply,"%s, no target was specified for the [%s] vote", callsign.c_str(), cmd.c_str());
       sendMessage(ServerPlayer, t, reply, true);
       sprintf(reply,"Usage: /poll %s target", cmd.c_str());
       sendMessage(ServerPlayer, t, reply, true);
@@ -1257,7 +1258,7 @@ void handlePollCmd(int t, const char *message)
       /* make sure the requested player is actually here */
       bool foundPlayer = false;
       for (int v = 0; v < curMaxPlayers; v++) {
-	if (strncasecmp(target.c_str(), player[v].callSign, 256) == 0) {
+	if (strncasecmp(target.c_str(), callsign.c_str(), 256) == 0) {
 	  targetIP = player[v].peer.getDotNotation().c_str();
 	  foundPlayer = true;
 	  break;
@@ -1275,22 +1276,22 @@ void handlePollCmd(int t, const char *message)
     /* create and announce the new poll */
     bool canDo = false;
     if (cmd == "ban") {
-      canDo = (arbiter->pollToBan(target, std::string(player[t].callSign), targetIP));
+      canDo = (arbiter->pollToBan(target, callsign, targetIP));
     } else if (cmd == "kick") {
-      canDo = (arbiter->pollToKick(target, std::string(player[t].callSign), targetIP));
+      canDo = (arbiter->pollToKick(target, callsign, targetIP));
     } else if (cmd == "set") {
-      canDo = (arbiter->pollToSet(target, std::string(player[t].callSign)));
+      canDo = (arbiter->pollToSet(target, callsign));
     } else if (cmd == "flagreset") {
-      canDo = (arbiter->pollToResetFlags(std::string(player[t].callSign)));
+      canDo = (arbiter->pollToResetFlags(callsign));
     }
 
     if (!canDo) {
-      sprintf(reply,"You are not able to request a %s poll right now, %s", cmd.c_str(), player[t].callSign);
+      sprintf(reply,"You are not able to request a %s poll right now, %s", cmd.c_str(), callsign.c_str());
       sendMessage(ServerPlayer, t, reply, true);
       return;
     } else {
-	sprintf(reply,"A poll to %s %s has been requested by %s", cmd.c_str(), target.c_str(), player[t].callSign);
-	sendMessage(ServerPlayer, AllPlayers, reply, true);
+      sprintf(reply,"A poll to %s %s has been requested by %s", cmd.c_str(), target.c_str(), callsign.c_str());
+      sendMessage(ServerPlayer, AllPlayers, reply, true);
     }
 
     unsigned int necessaryToSucceed = (unsigned int)((clOptions->votePercentage / 100.0) * (double)available);
@@ -1304,17 +1305,17 @@ void handlePollCmd(int t, const char *message)
     for (int j = 0; j < curMaxPlayers; j++) {
       // any registered/known users on the server (including observers) are eligible to vote
       if ((player[j].fd != NotConnected) && userExists(player[j].regName)) {
-	arbiter->grantSuffrage(std::string(player[j].callSign));
+	arbiter->grantSuffrage(callsign);
       }
     }
 
     // automatically place a vote for the player requesting the poll
-    DEBUG2("Attempting to automatically place a vote for [%s]\n", player[t].callSign);
+    DEBUG2("Attempting to automatically place a vote for [%s]\n", callsign.c_str());
 
-    bool voted = arbiter->voteYes(std::string(player[t].callSign));
+    bool voted = arbiter->voteYes(callsign);
     if (!voted) {
       sendMessage(ServerPlayer, t, "Unable to automatically place your vote for some unknown reason", true);
-      DEBUG2("Unable to automatically place a vote for [%s]\n", player[t].callSign);
+      DEBUG2("Unable to automatically place a vote for [%s]\n", callsign.c_str());
     }
 
   } else if (cmd == "vote") {
@@ -1346,10 +1347,11 @@ void handlePollCmd(int t, const char *message)
 void handleVoteCmd(int t, const char *message)
 {
   char reply[MessageLen] = {0};
+  std::string callsign = std::string(player[t].callSign);
 
   if (!hasPerm(t, PlayerAccessInfo::vote)) {
     /* permission denied for /vote */
-    sprintf(reply,"%s, you are presently not authorized to run /vote", player[t].callSign);
+    sprintf(reply,"%s, you are presently not authorized to run /vote", callsign.c_str());
     sendMessage(ServerPlayer, t, reply, true);
     return;
   }
@@ -1427,23 +1429,23 @@ void handleVoteCmd(int t, const char *message)
   // cast the vote or complain
   bool cast = false;
   if (vote == 0) {
-    if ((cast = arbiter->voteNo(std::string(player[t].callSign))) == true) {
+    if ((cast = arbiter->voteNo(callsign)) == true) {
       /* player voted no */
-      sprintf(reply,"%s, your vote in opposition of the %s has been recorded", player[t].callSign, arbiter->getPollAction().c_str());
+      sprintf(reply,"%s, your vote in opposition of the %s has been recorded", callsign.c_str(), arbiter->getPollAction().c_str());
       sendMessage(ServerPlayer, t, reply, true);
     }
   } else if (vote == 1) {
-    if ((cast = arbiter->voteYes(std::string(player[t].callSign))) == true) {
+    if ((cast = arbiter->voteYes(callsign)) == true) {
       /* player voted yes */
-      sprintf(reply,"%s, your vote in favor of the %s has been recorded", player[t].callSign, arbiter->getPollAction().c_str());
+      sprintf(reply,"%s, your vote in favor of the %s has been recorded", callsign.c_str(), arbiter->getPollAction().c_str());
       sendMessage(ServerPlayer, t, reply, true);
     }
   } else {
     if (answer.length() == 0) {
-      sprintf(reply,"%s, you did not provide a vote answer", player[t].callSign);
+      sprintf(reply,"%s, you did not provide a vote answer", callsign.c_str());
       sendMessage(ServerPlayer, t, reply, true);
     } else {
-      sprintf(reply,"%s, you did not vote in favor or in opposition", player[t].callSign);
+      sprintf(reply,"%s, you did not vote in favor or in opposition", callsign.c_str());
       sendMessage(ServerPlayer, t, reply, true);
     }
     sendMessage(ServerPlayer, t, "Usage: /vote yes|no|y|n|1|0|yea|nay|si|ja|nein|oui|non|sim|nao", true);
@@ -1452,7 +1454,7 @@ void handleVoteCmd(int t, const char *message)
 
   if (!cast) {
     /* player was unable to cast their vote; probably already voted */
-    sprintf(reply,"%s, you have already voted on the poll to %s %s", player[t].callSign, arbiter->getPollAction().c_str(), arbiter->getPollTarget().c_str());
+    sprintf(reply,"%s, you have already voted on the poll to %s %s", callsign.c_str(), arbiter->getPollAction().c_str(), arbiter->getPollTarget().c_str());
     sendMessage(ServerPlayer, t, reply, true);
     return;
   }
@@ -1503,11 +1505,11 @@ void handleViewReportsCmd(int t, const char * /*message*/)
   }
   if (clOptions->reportFile.size() == 0 && clOptions->reportPipe.size() == 0) {
     line = "The /report command is disabled on this server or there are no reports filed.";
-      sendMessage(ServerPlayer, t, line.c_str(), true);
+    sendMessage(ServerPlayer, t, line.c_str(), true);
   } 
   std::ifstream ifs(clOptions->reportFile.c_str(), std::ios::in);
   while (std::getline(ifs, line))
-     sendMessage(ServerPlayer, t, line.c_str(), true);
+    sendMessage(ServerPlayer, t, line.c_str(), true);
 }
  
 
@@ -1526,12 +1528,10 @@ void handleClientqueryCmd(int t, const char * /*message*/)
 }
 
 
-
 // Local Variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-
