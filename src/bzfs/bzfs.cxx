@@ -3613,7 +3613,7 @@ static void captureFlag(int playerIndex, TeamColor teamCaptured)
   // player captured a flag.  can either be enemy flag in player's own
   // team base, or player's own flag in enemy base.
   int flagIndex = int(player[playerIndex].flag);
-  if (flagIndex < 0 || (flag[flagIndex].flag.type->flagTeam != ::NoTeam))
+  if (flagIndex < 0 || (flag[flagIndex].flag.type->flagTeam == ::NoTeam))
     return;
 
   // player no longer has flag and put flag back at it's base
