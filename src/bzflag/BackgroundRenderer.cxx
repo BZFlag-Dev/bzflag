@@ -199,7 +199,6 @@ BackgroundRenderer::BackgroundRenderer(const SceneRenderer&) :
     int mountainTexture;
     int width  = 0;
     int height = 0;
-	numMountainTextures = -1;
 	bool done = false;
 	while (!done){
 		char text[256];
@@ -215,7 +214,7 @@ BackgroundRenderer::BackgroundRenderer(const SceneRenderer&) :
 			done = true;
 	}
 
-    if (numMountainTextures) {
+    if (numMountainTextures>0) {
       mountainsAvailable = true;
 
       // prepare common gstate
