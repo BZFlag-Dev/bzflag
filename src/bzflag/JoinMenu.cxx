@@ -11,10 +11,10 @@
  */
 
 /* interface header */
+#ifdef _WIN32
+#include <winsock2.h>
+#endif
 #include "JoinMenu.h"
-
-/* common implementation headers */
-#include "Protocol.h"
 
 /* local implementation headers */
 #include "StartupInfo.h"
@@ -23,6 +23,7 @@
 #include "MenuDefaultKey.h"
 #include "ServerStartMenu.h"
 #include "ServerMenu.h"
+#include "Protocol.h"
 
 /* from playing.h */
 StartupInfo* getStartupInfo();
