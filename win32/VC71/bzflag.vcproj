@@ -483,38 +483,6 @@ copy debug\*.pdb ..\..\*.pdb
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\src\bzflag\ServerList.cxx">
-			</File>
-			<File
-				RelativePath="..\..\src\bzflag\ServerListCache.cxx">
-				<FileConfiguration
-					Name="Debug|Win32">
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="0"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""
-						BasicRuntimeChecks="3"/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32">
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="2"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="KRB5 Debug|Win32">
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="0"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""
-						BasicRuntimeChecks="3"/>
-				</FileConfiguration>
-			</File>
-			<File
 				RelativePath="..\..\src\bzflag\ShotStatistics.cxx">
 			</File>
 			<File
@@ -1543,12 +1511,6 @@ copy debug\*.pdb ..\..\*.pdb
 			</File>
 			<File
 				RelativePath="..\..\src\bzflag\ServerLink.h">
-			</File>
-			<File
-				RelativePath="..\..\src\bzflag\ServerList.h">
-			</File>
-			<File
-				RelativePath="..\..\src\bzflag\ServerListCache.h">
 			</File>
 			<File
 				RelativePath="..\..\src\bzflag\ServerMenu.h">

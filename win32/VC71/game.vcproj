@@ -217,6 +217,12 @@
 				RelativePath="..\..\src\game\Ray.cxx">
 			</File>
 			<File
+				RelativePath="..\..\src\game\ServerList.cxx">
+			</File>
+			<File
+				RelativePath="..\..\src\game\ServerListCache.cxx">
+			</File>
+			<File
 				RelativePath="..\..\src\game\TextureMatrix.cxx">
 			</File>
 			<File
@@ -259,6 +265,12 @@
 			</File>
 			<File
 				RelativePath="..\..\include\Ray.h">
+			</File>
+			<File
+				RelativePath="..\..\include\ServerList.h">
+			</File>
+			<File
+				RelativePath="..\..\include\ServerListCache.h">
 			</File>
 			<File
 				RelativePath="..\..\include\VotingArbiter.h">
