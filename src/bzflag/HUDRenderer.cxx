@@ -915,7 +915,8 @@ void			HUDRenderer::renderScoreboard(void)
   minorFont.draw(bdl->getLocalString(scoreLabel), x1, y0);
   minorFont.draw(bdl->getLocalString(killLabel), x2, y0);
   minorFont.draw(bdl->getLocalString(playerLabel), x3, y0);
-  minorFont.draw(bdl->getLocalString(teamScoreLabel), x5, y0);
+  if (!World::getWorld()->allowRabbit())
+    minorFont.draw(bdl->getLocalString(teamScoreLabel), x5, y0);
   const float dy = minorFont.getSpacing();
   int y = (int)(y0 - dy);
 
