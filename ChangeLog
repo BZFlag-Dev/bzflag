@@ -35,6 +35,7 @@
 * Get rid of reconnect port - David Trowbridge
 * Hunt opponent in HUD - Adam Krell, David Trowbridge
 * Flag system cleanup - Dave Brosius
+* Server-side callsign and improved chat filtering - Sean Morrison
 * Rabbit game style - David Trowbridge, Dave Brosius
 
 BZFlag 1.7g2 "Steely Eyed Banana" (was 1.7g1)
