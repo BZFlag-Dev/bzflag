@@ -19,15 +19,12 @@
 
 // bzfs-specific headers
 #include "CmdLineOptions.h"
+#include "TeamBases.h"
 
 // external dependancies
 extern const int CtfTeams;
-extern bool hasBase[];
 extern CmdLineOptions *clOptions;
-extern float basePos[][3];
-extern float baseRotation[];
-extern float baseSize[][3];
-extern float safetyBasePos[][3];
+extern BasesList bases;
 
 CustomBase::CustomBase()
 {
@@ -41,10 +38,7 @@ CustomBase::CustomBase()
 bool CustomBase::read(const char *cmd, std::istream& input) {
   if (strcmp(cmd, "color") == 0) {
     input >> color;
-    if ((color >= 0) && (color < CtfTeams)) {
-      hasBase[color] = true;
-    }
-    else
+    if ((color < 0) || (color >= CtfTeams))
       return false;
   }
   else {
@@ -60,16 +54,9 @@ bool CustomBase::read(const char *cmd, std::istream& input) {
 
 
 void CustomBase::write(WorldInfo* world) const {
-  basePos[color][0] = pos[0];
-  basePos[color][1] = pos[1];
-  basePos[color][2] = pos[2];
-  baseRotation[color] = rotation;
-  baseSize[color][0] = size[0];
-  baseSize[color][1] = size[1];
-  baseSize[color][2] = size[2];
-  safetyBasePos[color][0] = 0;
-  safetyBasePos[color][1] = 0;
-  safetyBasePos[color][2] = 0;
+  float safety[] = { 0.0f, 0.0f, 0.0f };
+  bases[color]->addBase( pos, size, rotation, safety );
+
   world->addBase(pos[0], pos[1], pos[2], rotation, size[0], size[1], size[2],
 		 driveThrough, shootThrough);
 }

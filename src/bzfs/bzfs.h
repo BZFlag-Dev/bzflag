@@ -58,6 +58,7 @@ static const char copyright[] = "Copyright (c) 1993 - 2003 Tim Riker";
 
 // system headers
 #include <string>
+#include <map>
 #include <string.h>
 #include <sys/types.h>
 #include <errno.h>
@@ -100,6 +101,7 @@ static const char copyright[] = "Copyright (c) 1993 - 2003 Tim Riker";
 #include "VotingArbiter.h"
 #include "PlayerInfo.h"
 #include "PackVars.h"
+#include "TeamBases.h"
 
 // types for reading world files
 #include "WorldFileObstacle.h"
@@ -110,7 +112,6 @@ static const char copyright[] = "Copyright (c) 1993 - 2003 Tim Riker";
 #include "CustomBase.h"
 #include "CustomWeapon.h"
 #include "CustomWorld.h"
-
 
 #endif
 
