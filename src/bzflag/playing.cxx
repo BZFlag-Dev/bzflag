@@ -4747,7 +4747,6 @@ std::string		getCacheDirectoryName()
 
   // yes your suposed to have the "my" in front of it. I know it's silly, but it's the MS way.
   name += "\\My BZFlag Files\\cache";
-  mkdir(name.c_str());
   return name;
 
 #elif defined(__APPLE__)
@@ -4760,18 +4759,7 @@ std::string		getCacheDirectoryName()
     err = ::FSRefMakePath(&libraryFolder, (UInt8*)buff, sizeof(buff));
     if(err == ::noErr) {
       std::strcat(buff, "/BZFlag");
-      struct stat statbuf;
-      if (!(stat(buff, &statbuf) == 0 && (S_ISDIR(statbuf.st_mode)))) {
-	if(mkdir(buff, 0777) != 0) {
-	  return NULL;
-	}
-      }
       std::strcat(buff, "/cache");
-      if (!(stat(buff, &statbuf) == 0 && (S_ISDIR(statbuf.st_mode)))) {
-	if(mkdir(buff, 0777) != 0) {
-	  return NULL;
-	}
-      }
       fprintf(stderr, "cache dir is \"%s\"\n", buff);
       cacheName = buff;
     }
