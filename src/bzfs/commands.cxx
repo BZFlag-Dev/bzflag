@@ -1493,7 +1493,7 @@ void handleVetoCmd(int t, const char * /*message*/)
 
 void handleClientqueryCmd(int t, const char * /*message*/)
 {
-  DEBUG2("Clientquery requested by %s [%d]", player[t].callSign, t);
+  DEBUG2("Clientquery requested by %s [%d]\n", player[t].callSign, t);
   sendMessage(ServerPlayer, AllPlayers, "[Sent version information per request]");
   // send server's own version string just for kicks
   sendMessage(ServerPlayer, t, string_util::format("BZFS Version: %s", getAppVersion()).c_str());
