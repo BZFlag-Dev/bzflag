@@ -296,13 +296,14 @@ clean(char *cp)
   strcpy(ocp, foo);
 }
 
-un_bi()
+int un_bi()
 {
   if (current_BI)
   {
     printf("</%c>", current_BI);
     current_BI = 0;
   }
+  return 0;
 }
 
 int
@@ -621,7 +622,7 @@ process_line()
 }
 
 
-main()
+int main()
 {
   while (process_line());
   printf("</ul>\n<!--#exec cmd=\"trailer\" -->\n");
