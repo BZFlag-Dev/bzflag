@@ -1,4 +1,4 @@
-EXTRA_DIST = bzflag.mcp prefix
+EXTRA_DIST = bzflag.mcp
 
 MAINTAINERCLEANFILES = \
 	Makefile.in
