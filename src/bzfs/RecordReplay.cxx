@@ -79,7 +79,7 @@ typedef struct RRpacket {
   char *data;
 } RRpacket;
 static const int RRpacketHdrSize = sizeof(RRpacket) - 
-                                   (2 * sizeof(RRpacket*) - sizeof(void*));
+                                   (2 * sizeof(RRpacket*) - sizeof(char*));
 typedef struct {
   u32 byteCount;
   u32 packetCount;
