@@ -202,7 +202,7 @@ void			RadarRenderer::render(SceneRenderer& renderer,
   glScissor(ox + x, oy + y, w, h);
 
   LocalPlayer *myTank = LocalPlayer::getMyTank();
-  if (myTank && myTank->getFlag() == Flags::Burrow) {
+  if (myTank && (myTank->getFlag() == Flags::Burrow) && (myTank->getPosition()[2] == BurrowDepth)) {
     glScissor( ox + x + w*0.3f, oy + y + h*0.3f, w*0.4f, h*0.4f);
   }
 
