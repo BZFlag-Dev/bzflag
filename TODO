@@ -7,9 +7,7 @@ THESE SHOULD HAPPEN BEFORE THE NEXT RELEASE:
   (apparently this needs a better explanation)
   ( put all calls to all version numbers into funcs
     from commom, version strings are now built up from
-    sub vars in config.h. THIS NEEDS TO BE PUT INTO
-    THE AUTOCONF STUFF BEFORE ANYTHING OTHER THEN
-    WINDOWS WILL BUILD Jeff Myers )
+    sub vars in config.h. )
 
 * support gameinfo requests as one time udp packets (if udp)
   This should function like the old broadcast server locator
