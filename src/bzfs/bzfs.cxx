@@ -5482,10 +5482,6 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
 
 	unsigned short numClientFlags;
 	buf = nboUnpackUShort(buf, numClientFlags);
-	if (numClientFlags != (LastFlag-FirstFlag+1)) {
-		directMessage(t, MsgNull, 0, getDirectMessageBuffer());
-		return;
-	}
 
 	bool *hasFlag = new bool[LastFlag - FirstFlag + 1];
 	memset( hasFlag, 0, LastFlag - FirstFlag + 1);
@@ -5496,11 +5492,8 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
 		if (strlen(abbv) == 0)
 			continue;
 		FlagId fID = Flag::getIDFromAbbreviation( abbv );
-		if (fID == NullFlag) {
-			directMessage(t, MsgNull, 0, getDirectMessageBuffer());
-			break;
-		}
-		hasFlag[fID-FirstFlag] = true;
+		if (fID != NullFlag)
+			hasFlag[fID-FirstFlag] = true;
 	}
 	for (i = FirstFlag; i <= LastFlag; i++)
 		if (!hasFlag[i-FirstFlag])
@@ -5508,7 +5501,7 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
 
 	delete hasFlag;
 	if (i <= LastFlag) {
-		directMessage(t, MsgNull, 0, getDirectMessageBuffer());
+		directMessage(t, MsgSuperKill, 0, getDirectMessageBuffer());
 		break;
 	}
 

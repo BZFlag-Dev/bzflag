@@ -4625,7 +4625,7 @@ static void markOld(std::string &fileName)
 #endif
 }
 
-static bool negotiateFlags(ServerLink* serverLink)
+static int negotiateFlags(ServerLink* serverLink)
 {
   uint16_t code, len;
   char msg[MaxPacketLen];
@@ -4637,12 +4637,8 @@ static bool negotiateFlags(ServerLink* serverLink)
   }
   serverLink->send( MsgNegotiateFlags, buf - msg, msg );
 
-  if (serverLink->read(code, len, msg, 5000) <= 0) return false;
-  if (code == MsgNull || code == MsgSuperKill) return false;
-  if (code != MsgNegotiateFlags) return false;
-
-
-  return true;
+  if (serverLink->read(code, len, msg, 5000) <= 0) return MsgNull;
+  return code;
 }
 
 //
@@ -5035,10 +5031,19 @@ static bool		joinGame(const StartupInfo* info,
   // set tank textures
   Player::setTexture(*tankTexture);
 
-  if (!negotiateFlags(serverLink)) {
+  int code = negotiateFlags(serverLink);
+  switch (code) {
+    case MsgSuperKill:
 	printError("Your tank is not capable of carrying flags found in this world");
 	leaveGame();
 	return false;
+    break;
+    case MsgNull:
+        printError("Communication error joining game [No immediate respose].");
+        leaveGame();
+	return false;
+    break;
+
   }
 
   // create world
