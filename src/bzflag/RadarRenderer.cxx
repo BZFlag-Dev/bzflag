@@ -420,16 +420,30 @@ void			RadarRenderer::render(SceneRenderer& renderer,
     // draw flags not on tanks.
     const int maxFlags = world.getMaxFlags();
     for (i = 0; i < maxFlags; i++) {
+      // draw normal flags
       const Flag& flag = world.getFlag(i);
       if (flag.status == FlagNoExist || flag.status == FlagOnTank)
+	continue;
+      if (flag.id >= FirstTeamFlag && flag.id <= LastTeamFlag)
+	continue;
+      const float cs = colorScale(flag.position[2], MuzzleHeight, BZDB->isTrue("enhancedradar"));
+      const float *flagcolor = Flag::getColor(flag.id);
+      glColor3f(flagcolor[0] * cs, flagcolor[1] * cs, flagcolor[2] * cs);
+      drawFlag(flag.position[0], flag.position[1], flag.position[2]);
+    }
+    for (i = 0; i < maxFlags; i++) {
+      // draw team flags
+      const Flag& flag = world.getFlag(i);
+      if (flag.status == FlagNoExist || flag.status == FlagOnTank)
+	continue;
+      if (flag.id < FirstTeamFlag || flag.id > LastTeamFlag)
 	continue;
       // Flags change color by height
       const float cs = colorScale(flag.position[2], MuzzleHeight, BZDB->isTrue("enhancedradar"));
       const float *flagcolor = Flag::getColor(flag.id);
       glColor3f(flagcolor[0] * cs, flagcolor[1] * cs, flagcolor[2] * cs);
       // always draw team flags
-      drawFlag(flag.position[0], flag.position[1], flag.position[2],
-              flag.id >= FirstTeamFlag && flag.id <= LastTeamFlag);
+      drawFlag(flag.position[0], flag.position[1], flag.position[2], true);
     }
     // draw antidote flag
     const float* antidotePos =
