@@ -45,8 +45,7 @@ public:
 
   /** A default constructor. It tries to connect to the server at host:port.
       If it doesn't succeed, calls to isValid() will return false. */
-  BZAdminClient(std::string callsign, std::string password, std::string host, int port,
-		BZAdminUI* bzInterface = NULL);
+  BZAdminClient(BZAdminUI* bzInterface = NULL);
 
   /** Formats an incoming message. */
   std::string formatMessage(const std::string& msg, PlayerId src, PlayerId dst,

@@ -29,13 +29,12 @@
 #include "version.h"
 #include "Team.h"
 #include "ServerList.h"
+#include "ErrorHandler.h"
 
 StartupInfo startupInfo;
 
-BZAdminClient::BZAdminClient(std::string callsign, std::string password, std::string host,
-			     int port, BZAdminUI* bzInterface)
-  : myTeam(ObserverTeam), sLink(Address(host), port), valid(false),
-    ui(bzInterface) {
+BZAdminClient::BZAdminClient(BZAdminUI* bzInterface)
+  : myTeam(ObserverTeam), sLink(Address(startupInfo.serverName), startupInfo.serverPort), valid(false), ui(bzInterface) {
 
   if (sLink.getState() != ServerLink::Okay) {
     switch (sLink.getState()) {
@@ -68,7 +67,11 @@ BZAdminClient::BZAdminClient(std::string callsign, std::string password, std::st
     std::cout << std::endl;
     return;
   }
-  sLink.sendEnter(TankPlayer, myTeam, callsign.c_str(), "bzadmin", "");
+  if ((startupInfo.token[0] == '\0') && (startupInfo.password[0] != '\0')) {
+    // won't really output anything, just gets token
+    outputServerList();
+  }
+  sLink.sendEnter(TankPlayer, myTeam, startupInfo.callsign, "bzadmin", startupInfo.token);
   if (sLink.getState() != ServerLink::Okay) {
     std::cerr << "Rejected." << std::endl;
     return;
@@ -405,11 +408,8 @@ bool BZAdminClient::isValid() const {
 }
 
 void BZAdminClient::outputServerList() const {
-  if (!ui) {
-    return;
-  }
-
-  ui->outputMessage(std::string("Server List:"), Yellow);
+  if (ui)
+    ui->outputMessage(std::string("Server List:"), Yellow);
   ServerList serverList;
 
   serverList.startServerPings(&startupInfo);
@@ -419,10 +419,12 @@ void BZAdminClient::outputServerList() const {
     if (!serverList.searchActive() && serverList.serverFound()) {
       break;
     }
-    if (serverList.serverFound()) {
-      ui->outputMessage(TextUtils::format("...retrieving list of servers... (found %d)", serverList.size()), Yellow);
-    } else {
-      ui->outputMessage(std::string("...waiting on the list server..."), Yellow);
+    if (ui) {
+      if (!serverList.serverFound()) {
+	ui->outputMessage(std::string("...waiting on the list server..."), Yellow);
+      } else {
+	ui->outputMessage(TextUtils::format("...retrieving list of servers... (found %d)", serverList.size()), Yellow);
+      }
     }
     serverList.checkEchos(&startupInfo);
     TimeKeeper::sleep(1.0f);
@@ -430,13 +432,15 @@ void BZAdminClient::outputServerList() const {
   // what is your final answer?
   serverList.checkEchos(&startupInfo);
 
-  std::vector<ServerItem> servers = serverList.getServers();
-  for (std::vector<ServerItem>::const_iterator server = servers.begin();
-       server != servers.end();
-       server++) {
-    ui->outputMessage(std::string("  ") + server->description, Yellow);
+  if (ui) {
+    std::vector<ServerItem> servers = serverList.getServers();
+    for (std::vector<ServerItem>::const_iterator server = servers.begin();
+	 server != servers.end();
+	 server++) {
+      ui->outputMessage(std::string("  ") + server->description, Yellow);
+    }
+    ui->outputMessage(std::string("End Server List."), Yellow);
   }
-  ui->outputMessage(std::string("End Server List."), Yellow);
 
   return;
 }

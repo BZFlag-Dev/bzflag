@@ -462,7 +462,7 @@ void			ServerList::checkEchos(StartupInfo *info)
 		     listServer.pathname.c_str(), getServerVersion(),
 		     info->callsign, info->password,
 		     listServer.hostname.c_str());
-	    //printError(url);
+	    //DEBUG0("url: %s\n",url);
 	    errorSending = send(listServer.socket, url, int(strlen(url)), 0)
 	      != (int) strlen(url);
 	  }

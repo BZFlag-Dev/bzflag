@@ -134,7 +134,7 @@ int main(int argc, char** argv) {
     }
     cPos = callsign.find(':');
     if (cPos != -1) {
-      password = atoi(callsign.substr(cPos + 1).c_str());
+      password = callsign.substr(cPos + 1).c_str();
       callsign = callsign.substr(0, cPos);
     }
     strncpy(startupInfo.callsign, callsign.c_str(), sizeof(startupInfo.callsign) - 1);
@@ -148,7 +148,7 @@ int main(int argc, char** argv) {
     startupInfo.serverPort << std::endl;
 
   // try to connect
-  BZAdminClient client(startupInfo.callsign, startupInfo.password, startupInfo.serverName, startupInfo.serverPort);
+  BZAdminClient client;
   if (!client.isValid())
     return 1;
 
