@@ -2849,8 +2849,26 @@ void removePlayer(int playerIndex, const char *reason, bool notify)
   }
 }
 
+static boolean enemyProximityCheck(int team, float *pos, float safeDist)
+{
+  safeDist*= safeDist;
+  for (int i = 0; i < curMaxPlayers; i++) {
+    if ((player[i].state >= PlayerInLimbo) && (player[i].team != team) && (player[i].team != ObserverTeam)) {
+      float *enemyPos = player[i].lastState.pos;
+      if (fabs(enemyPos[2] - pos[2]) < 1.0f) {
+        float x = enemyPos[0] - pos[0];
+        float y = enemyPos[1] - pos[1];
+        float distSq = x * x + y * y;
+        if (distSq < safeDist)
+	  return true;
+      }
+    }
+  }
 
-static void getSpawnLocation( int playerId, float* pos, float *azimuth)
+  return false;
+}
+
+static void getSpawnLocation(int playerId, float* pos, float *azimuth)
 {
   const float tankRadius = BZDB.eval(StateDatabase::BZDB_TANKRADIUS);
   int team = player[playerId].team;
@@ -2868,7 +2886,8 @@ static void getSpawnLocation( int playerId, float* pos, float *azimuth)
     WorldInfo::ObstacleLocation *building;
 
     int inAirAttempts = 20;
-    long int nearInfiniteFailsafe = 1000000;
+    long int failSafeLimit = 100;
+    float minProximity = size / 10.0f;
     bool foundspot = false;
     while (!foundspot) {
       pos[0] = ((float)bzfrand() - 0.5f) * (size - 2.0f * tankRadius);
@@ -2892,7 +2911,7 @@ static void getSpawnLocation( int playerId, float* pos, float *azimuth)
 
         // in a building? try climbing on roof until on top
         int lastType = type;
-	int retriesRemaining = 1000; // don't climb forever
+	int retriesRemaining = 50; // don't climb forever
         while (type != NOT_IN_BUILDING) {
           pos[2] = building->pos[2] + building->size[2];
           lastType = type;
@@ -2905,7 +2924,10 @@ static void getSpawnLocation( int playerId, float* pos, float *azimuth)
         }
         // ok, when not on top of pyramid or teleporter
         if (lastType != IN_PYRAMID  &&  lastType != IN_TELEPORTER) {
-          foundspot = true;
+	  if (!enemyProximityCheck(team, pos, minProximity)){
+            foundspot = true;
+	    minProximity *= 0.99f;
+	  }
         }
       }
 
@@ -2915,10 +2937,9 @@ static void getSpawnLocation( int playerId, float* pos, float *azimuth)
       }
 
       // simple check for a hanging server
-      if (--nearInfiniteFailsafe <= 0) {
-	sendMessage(ServerPlayer, playerId, "Server is shutting down due to fatal player spawn issues..\n");
-	DEBUG1("ERROR: getSpawnLocation seems to be stuck .. shutting down\n");
-	exit(1);
+      if (--failSafeLimit <= 0) {
+	//Just drop the sucka in, and pray
+	pos[2] = maxWorldHeight;
       }
     }
   }
