@@ -19,6 +19,11 @@
 #define	BZF_HUDDIALOG_H
 
 #include "HUDui.h"
+
+#if defined(_WIN32)
+	#pragma warning(disable: 4786)
+#endif
+
 #include <vector>
 
 class HUDDialog {

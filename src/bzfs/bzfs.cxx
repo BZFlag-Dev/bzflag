@@ -46,6 +46,11 @@ const int udpBufSize = 128000;
 #include <iomanip>
 
 #if defined(_WIN32)
+	#pragma warning(disable: 4786)
+#endif
+
+
+#if defined(_WIN32)
 #include <windows.h>
 #define strcasecmp _stricmp
 #define popen _popen

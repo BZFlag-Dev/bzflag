@@ -17,6 +17,10 @@
 #ifndef BZF_COMMON_H
 #define	BZF_COMMON_H
 
+#if defined(_WIN32)
+	#pragma warning(disable: 4786)
+#endif
+
 #ifndef _WIN32
 // use <> instead of "" cause autoconf recommends it
 #include <config.h>

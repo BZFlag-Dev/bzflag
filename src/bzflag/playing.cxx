@@ -12,6 +12,10 @@
 
 static const char copyright[] = "Copyright (c) 1993 - 2003 Tim Riker";
 
+#if defined(_WIN32)
+	#pragma warning(disable: 4786)
+#endif
+
 #include <string>
 #include <vector>
 #include <deque>

@@ -17,6 +17,10 @@
 #ifndef	BZF_REGION_H
 #define	BZF_REGION_H
 
+#if defined(_WIN32)
+	#pragma warning(disable: 4786)
+#endif
+
 #include "common.h"
 #include <vector>
 

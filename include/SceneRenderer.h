@@ -17,6 +17,10 @@
 #ifndef	BZF_SCENE_RENDERER_H
 #define	BZF_SCENE_RENDERER_H
 
+#if defined(_WIN32)
+	#pragma warning(disable: 4786)
+#endif
+
 #include "common.h"
 #include "OpenGLLight.h"
 #include "ViewFrustum.h"

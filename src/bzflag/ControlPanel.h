@@ -13,6 +13,10 @@
 #ifndef	BZF_CONTROL_PANEL_H
 #define	BZF_CONTROL_PANEL_H
 
+#if defined(_WIN32)
+	#pragma warning(disable: 4786)
+#endif
+
 #include "MainWindow.h"
 #include "global.h"
 #include "OpenGLTexture.h"

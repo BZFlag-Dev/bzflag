@@ -10,6 +10,10 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
+#if defined(_WIN32)
+	#pragma warning(disable: 4786)
+#endif
+
 #if !defined(WIN32)
 
 #include "ErrorHandler.h"
