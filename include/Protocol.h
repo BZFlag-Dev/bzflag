@@ -35,13 +35,11 @@
 // well known service port number for bzflag server
 const int		ServerPort = 5154;
 
-// address and port for multicast communication between players
-// this is the sgi-dog multicast address.
-const char* const	BroadcastAddress = "224.0.1.2";
+// port for udp broadcasts used to find servers on local lan
 const int		BroadcastPort = 5154;
 
 // URL for default list server
-const char* const	DefaultListServerURL = "http://list.bzflag.bz/db/";
+const char* const	DefaultListServerURL = "http://db.bzflag.org/db/";
 
 // multicast ttl's
 const int		DefaultTTL = 8;
