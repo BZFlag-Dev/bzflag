@@ -329,16 +329,14 @@ int			ServerLink::read(uint16_t& code, uint16_t& len,
     int n;
 
     AddrLen recvlen = sizeof(urecvaddr);
-    unsigned char ubuf[8192];
-    n = recvfrom(urecvfd, (char *)ubuf, 8192, 0, &urecvaddr, (socklen_t*) &recvlen);
+    unsigned char ubuf[MaxPacketLen];
+    n = recvfrom(urecvfd, (char *)ubuf, MaxPacketLen, 0, &urecvaddr, (socklen_t*) &recvlen);
     if (n>0) {
       // unpack header and get message
       void* buf = ubuf;
       buf = nboUnpackUShort(buf, len);
       buf = nboUnpackUShort(buf, code);
       UDEBUG("<** UDP Packet Code %x Len %x\n",code, len);
-      if (len > MaxPacketLen)
-	len = MaxPacketLen;
       memcpy((char *)msg,(char *)buf, len);
       return 1;
     }
