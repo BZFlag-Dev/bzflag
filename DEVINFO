@@ -142,7 +142,8 @@ Sounds are stored as 22.050KHz WAV files. We will likely move to OGG.
 
 Images
 ======
-Images are stored as .rgb (SGI) format at present. We will likely move to PNG.
+Images are stored as .png (portable network graphics format). Compression,
+but no additional options such as interlacing.
 
 
 Details -- common
@@ -197,6 +198,10 @@ Details -- scene
 ================
 FIXME
 
-Details -- ui
-=============
+Details -- mediafile
+====================
 FIXME
+
+Details -- zlib
+===============
+zlib compression library for PNG decompression
