@@ -337,6 +337,8 @@ int			ServerLink::read(uint16_t& code, uint16_t& len,
       buf = nboUnpackUShort(buf, len);
       buf = nboUnpackUShort(buf, code);
       UDEBUG("<** UDP Packet Code %x Len %x\n",code, len);
+      if (len > MaxPacketLen)
+	len = MaxPacketLen;
       memcpy((char *)msg,(char *)buf, len);
       return 1;
     }
