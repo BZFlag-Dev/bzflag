@@ -57,6 +57,13 @@ public:
 	 * this plan's goals.
 	 */
 	virtual Plan *createSubPlan() = 0;
+
+	/**
+	 * execute the plan. set the rotation and speed
+	 *
+	 */
+	virtual void execute( float &rotation, float &velocity ) = 0;
+
 private:
 	TimeKeeper planExpiration;
 };
@@ -770,6 +777,69 @@ bool Plan::isValid()
 	return (delta < 0.0f);
 }
 
+class GotoPointPlan : public Plan
+{
+public:
+	GotoPointPlan(float *pt)
+		: Plan(20.0f)
+	{
+		memcpy( gotoPt, pt, sizeof( gotoPt ));
+	}
+	
+	virtual bool usesSubPlan()
+	{
+		return false;
+	}
+
+	virtual Plan *createSubPlan() 
+	{
+		return NULL;
+	}
+
+	virtual void execute( float &rotation, float &velocity )
+	{
+	}
+
+private:
+	float gotoPt[3];
+};
+
+class WeavePlan : public Plan
+{
+public:
+	WeavePlan(int pID, bool right )
+		: Plan(10.0)
+	{
+		playerID = pID;
+		weaveRight = right;
+	}
+
+	virtual bool isValid()
+	{
+		LocalPlayer *myTank = LocalPlayer::getMyTank();
+		const float *pVel = myTank->getVelocity();
+		return (pVel[0] > 0.0f) || (pVel[1] > 0.0f) || (pVel[2] > 0.0f);
+	}
+
+	virtual bool usesSubPlan()
+	{
+		return false;
+	}
+
+	virtual Plan* createSubPlan()
+	{
+		return NULL;
+	}
+
+	virtual void execute( float &rotation, float &velocity )
+	{
+	}
+
+private:
+	int playerID;
+	bool weaveRight;
+};
+
 class HuntPlayerPlan : public Plan
 {
 public:
@@ -806,11 +876,22 @@ public:
 
 	virtual Plan *createSubPlan()
 	{
-		return NULL;
+		Player *pPlayer = lookupPlayer(playerID);
+ 		LocalPlayer *myTank = LocalPlayer::getMyTank();
+        bool isObscured = TargetingUtils::isLocationObscured( myTank->getPosition(), pPlayer->getPosition());
+		if (isObscured) {
+			float pt[3];
+			// fill in pt with a open spot to go to
+			return new GotoPointPlan(pt);
+		} else {
+			return new WeavePlan(playerID, bzfrand() > 0.5f);
+		}
+	}
+
+	virtual void execute( float &, float *)
+	{
 	}
 
 private:
 	int playerID;
 };
-
-
