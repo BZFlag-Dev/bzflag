@@ -70,7 +70,7 @@ struct CmdLineOptions
     banTime(300), voteTime(60), vetoTime(2), votesRequired(2),
     votePercentage(50.1f), voteRepeatTime(300), disableSet(false),
     disableFlagReset(false), disableBan(false), disableKick(false),
-    autoTeam(false), citySize(5)
+    autoTeam(false), citySize(5), suppressMasterBanList(false)
   {
     int i;
     for (FlagTypeMap::iterator it = FlagType::getFlagMap().begin();
@@ -112,6 +112,8 @@ struct CmdLineOptions
   uint16_t		shakeTimeout;
   int			teamFlagTimeout;
   int			maxlagwarn;
+
+	bool			suppressMasterBanList;
 
   float			lagwarnthresh;
   float			idlekickthresh;

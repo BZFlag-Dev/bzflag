@@ -76,6 +76,7 @@ const char *usageString =
 "[-mps <score>] "
 "[-ms <shots>] "
 "[-mts <score>] "
+"[-no_master_banlist]"
 "[-p <port>] "
 "[-passdb <password file>] "
 "[-passwd <password>] "
@@ -157,6 +158,7 @@ const char *extraUsageString =
 "\t-mps: set player score limit on each game\n"
 "\t-ms: maximum simultaneous shots per player\n"
 "\t-mts: set team score limit on each game\n"
+"\t-no_master_banlist: has public servers ignore the master ban list\n"
 "\t-p: use alternative port (default is 5154)\n"
 "\t-passdb: file to read for user passwords\n"
 "\t-passwd: specify a <password> for operator commands\n"
@@ -732,7 +734,9 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
 	std::cerr << "disabling team score limit" << std::endl;
 	options.maxTeamScore = 0;
       }
-    } else if (strcmp(argv[i], "-p") == 0) {
+		} else if (strcmp(argv[i],"-no_master_banlist") == 0){
+			options.suppressMasterBanList = true;
+		} else if (strcmp(argv[i], "-p") == 0) {
       // use a different port
       checkFromWorldFile(argv[i], fromWorldFile);
       checkArgc(1, i, argc, argv[i]);
