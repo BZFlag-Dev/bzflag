@@ -1251,18 +1251,18 @@ void			LocalPlayer::explodeTank()
   float explodeTime  = BZDB->eval(StateDatabase::BZDB_EXPLODETIME);
   float explodeTime2 = explodeTime * explodeTime;
   float tMax2;
-  const float zMax  = 49.0;
+  const float zMax  = 49.0f;
   setExplode(TimeKeeper::getTick());
   const float* oldVelocity = getVelocity();
   float newVelocity[3];
   newVelocity[0] = oldVelocity[0];
   newVelocity[1] = oldVelocity[1];
   if (gravity < 0) {
-    tMax2 = - 2.0 * zMax / gravity;
+    tMax2 = - 2.0f * zMax / gravity;
     if (explodeTime2 > tMax2)
       newVelocity[2] = - sqrtf(tMax2) * gravity;
     else
-      newVelocity[2] = - 0.5 * gravity * explodeTime;
+      newVelocity[2] = - 0.5f * gravity * explodeTime;
   } else {
     newVelocity[2] = oldVelocity[2];
   }
