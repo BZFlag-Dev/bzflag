@@ -4111,8 +4111,7 @@ static void		playingLoop()
 	const bool isNotResponding = player[i]->isNotResponding();
 	if (!wasNotResponding && isNotResponding) {
 	  addMessage(player[i], "not responding");
-	}
-	else if (wasNotResponding && !isNotResponding) {
+	} else if (wasNotResponding && !isNotResponding) {
 	  addMessage(player[i], "okay");
 	}
       }
@@ -4329,13 +4328,11 @@ static void		playingLoop()
       const int oldDestructCountdown = (int)(destructCountdown + 0.99f);
       destructCountdown -= dt;
       if (destructCountdown <= 0.0f) {
-
 	// now actually destruct
 	gotBlowedUp( myTank, SelfDestruct, myTank->getId() );
 
 	hud->setAlert(1, NULL, 0.0f, true);
-      }
-      else if ((int)(destructCountdown + 0.99f) != oldDestructCountdown) {
+      } else if ((int)(destructCountdown + 0.99f) != oldDestructCountdown) {
 	// update countdown alert
 	char msgBuf[40];
 	sprintf(msgBuf, "Self Destructing in %d", (int)(destructCountdown + 0.99f));
@@ -4497,16 +4494,16 @@ static void		playingLoop()
 	if (myTank->getFlag() == Flags::Cloaking) {
 	  // and make it invisible
 	  myTank->setInvisible();
-	} else if (roaming)
+	} else if (roaming) {
 	  myTank->setHidden(false);
-	else {
+	} else {
 	  // or make it hidden
 	  myTank->setHidden();
 	}
 	// add my shells
 	myTank->addShots(scene, false);
 
-	//add server shells
+	// add server shells
 	if (world)
 	  world->getWorldWeapons()->addShots(scene, false);
 
@@ -4855,8 +4852,8 @@ static void		playingLoop()
 
       // remove dynamic nodes from this frame
       if (scene) scene->removeDynamicNodes();
-    }
-    else {
+
+    } else {
       // wait around a little to avoid spinning the CPU when iconified
       media->sleep(0.05f);
     }
@@ -4872,8 +4869,7 @@ static void		playingLoop()
 	   ((fireButton && myTank->getFlag() == Flags::MachineGun) ||
             (myTank->getFlag() == Flags::TriggerHappy)))
 	  myTank->fireShot();
-      }
-      else {
+      } else {
 	int mx, my;
 	mainWindow->getMousePosition(mx, my);
       }
@@ -5319,8 +5315,7 @@ void			startPlaying(BzfDisplay* _display,
 	    mainWindow->setPosition(x, y);
 	  }
 	  mainWindow->setSize(w, h);
-	}
-	else {
+	} else {
 	  mainWindow->setFullscreen();
 	}
 
@@ -5456,8 +5451,7 @@ void			startPlaying(BzfDisplay* _display,
       startupInfo.callsign[0] && startupInfo.serverName[0]) {
     joinGameCallback = &joinGameHandler;
     controlPanel->addMessage("Trying...");
-  }
-  else {
+  } else {
     HUDDialogStack::get()->push(mainMenu);
   }
 
