@@ -10,8 +10,10 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#include "common.h"
+/* interface header */
+#include "GetCacheDir.h"
 
+/* implementation system headers */
 #ifndef _WIN32
 #  include <stdlib.h>
 #  include <unistd.h>
@@ -24,8 +26,9 @@
 #  include <direct.h>
 #  include <shlobj.h>
 #endif  // _WIN32
-
-#include "GetCacheDir.h"
+#if defined(__APPLE__)
+#  include <CoreServices/CoreServices.h>
+#endif
 
 
 std::string		getCacheDirectoryName()
@@ -86,8 +89,9 @@ std::string		getCacheDirectoryName()
 #endif
 }
 
+
 // Local Variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***
