@@ -963,14 +963,11 @@ std::string		ServerCommandKey::makePattern(const InAddr& address)
     return dotChunks[0] +"."+ dotChunks[1] + ".*.*";
   case Ban3: 
     return dotChunks[0] +".*.*.*";
-    break;
-
   default:
-    return "";
-    break;
+    ;
   }
 
-
+  return "";
 }
 
 bool			ServerCommandKey::keyPress(const BzfKeyEvent& key)
