@@ -1635,6 +1635,9 @@ static void		doAutoPilot(float &rotation, float &speed)
       else {
         TimeKeeper now = TimeKeeper::getCurrent();
         if (now - lastShot >= (1.0f / World::getWorld()->getMaxShots())) {
+         
+	  float errorLimit = World::getWorld()->getMaxShots() * BZDB->eval(StateDatabase::BZDB_LOCKONANGLE) / 8.0f;
+	  float closeErrorLimit = errorLimit * 2.0f;
 
 	  for (t = 0; t < curMaxPlayers; t++) {
 	    if (t != myTank->getId() && player[t] &&
@@ -1650,8 +1653,8 @@ static void		doAutoPilot(float &rotation, float &speed)
 	        if (targetRotation < -1.0f * M_PI) targetRotation += 2.0f * M_PI;
 	        if (targetRotation > 1.0f * M_PI) targetRotation -= 2.0f * M_PI;
 
-	        if ((fabs(targetRotation) < BZDB->eval(StateDatabase::BZDB_LOCKONANGLE))
-	        ||  ((distance < 50.0f) && (fabs(targetRotation) < BZDB->eval(StateDatabase::BZDB_TARGETINGANGLE)))) {
+	        if ((fabs(targetRotation) < errorLimit)
+	        ||  ((distance < 50.0f) && (fabs(targetRotation) < closeErrorLimit))) {
 		  float d = hypotf(tp[0] - pos[0], tp[1] - pos[1]);
 		  const Obstacle *building = NULL;
 		  if (myTank->getFlag() != Flags::SuperBullet)
