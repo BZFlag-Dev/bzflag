@@ -21,7 +21,7 @@ EXTRA_DIST = \
 	TogaSerifBold-32.fmt	\
 	VeraMonoBold-8.fmt	\
 	VeraMonoBold-12.fmt	\
-	VeraMonoBold-16.fmt	\
+	VeraMonoBold-16.fmt
 
 MAINTAINERCLEANFILES = \
 	Makefile.in
