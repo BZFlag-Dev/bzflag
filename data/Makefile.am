@@ -32,7 +32,6 @@ EXTRA_DIST =			\
 	green_laser.png		\
 	green_super_bolt.png	\
 	green_tank.png		\
-	highflag.png		\
 	hunt.wav		\
 	hunt_select.wav		\
 	hunter_tank.png		\
