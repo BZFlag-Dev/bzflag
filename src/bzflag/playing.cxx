@@ -3454,9 +3454,12 @@ static void		handlePlayerMessage(uint16_t code, uint16_t,
   switch (code) {
     case MsgPlayerUpdate: {
       PlayerId id;
+      int32_t order;
       msg = nboUnpackUByte(msg, id);
       Player* tank = lookupPlayer(id);
       if (!tank || tank == myTank) break;
+      nboUnpackInt(msg, order); // peek! don't update the msg pointer
+      if (order <= tank->getOrder()) break;
       short oldStatus = tank->getStatus();
       tank->unpack(msg);
       short newStatus = tank->getStatus();
