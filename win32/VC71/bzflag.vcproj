@@ -585,6 +585,9 @@ copy debug\*.pdb ..\..\*.pdb
 				Name="game"
 				Filter="">
 				<File
+					RelativePath="..\..\src\bzflag\ComposeDefaultKey.cxx">
+				</File>
+				<File
 					RelativePath="..\..\src\bzflag\LocalPlayer.cxx">
 					<FileConfiguration
 						Name="Debug|Win32">
@@ -685,6 +688,12 @@ copy debug\*.pdb ..\..\*.pdb
 					</FileConfiguration>
 				</File>
 				<File
+					RelativePath="..\..\src\bzflag\Roster.cxx">
+				</File>
+				<File
+					RelativePath="..\..\src\bzflag\ServerCommandKey.cxx">
+				</File>
+				<File
 					RelativePath="..\..\src\bzflag\ShotPath.cxx">
 					<FileConfiguration
 						Name="Debug|Win32">
@@ -723,6 +732,9 @@ copy debug\*.pdb ..\..\*.pdb
 							AdditionalIncludeDirectories=""
 							PreprocessorDefinitions=""/>
 					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\..\src\bzflag\SilenceDefaultKey.cxx">
 				</File>
 				<File
 					RelativePath="..\..\src\bzflag\World.cxx">
@@ -765,6 +777,55 @@ copy debug\*.pdb ..\..\*.pdb
 					</FileConfiguration>
 				</File>
 			</Filter>
+			<Filter
+				Name="menus"
+				Filter="">
+				<File
+					RelativePath="..\..\src\bzflag\FormatMenu.cxx">
+				</File>
+				<File
+					RelativePath="..\..\src\bzflag\GUIOptionsMenu.cxx">
+				</File>
+				<File
+					RelativePath="..\..\src\bzflag\HelpMenu.cxx">
+				</File>
+				<File
+					RelativePath="..\..\src\bzflag\HUDDialogStack.cxx">
+				</File>
+				<File
+					RelativePath="..\..\src\bzflag\JoinMenu.cxx">
+				</File>
+				<File
+					RelativePath="..\..\src\bzflag\KeyboardMapMenu.cxx">
+				</File>
+				<File
+					RelativePath="..\..\src\bzflag\MainMenu.cxx">
+				</File>
+				<File
+					RelativePath="..\..\src\bzflag\MenuDefaultKey.cxx">
+				</File>
+				<File
+					RelativePath="..\..\src\bzflag\OptionsMenu.cxx">
+				</File>
+				<File
+					RelativePath="..\..\src\bzflag\QuickKeysMenu.cxx">
+				</File>
+				<File
+					RelativePath="..\..\src\bzflag\QuitMenu.cxx">
+				</File>
+				<File
+					RelativePath="..\..\src\bzflag\SaveWorldMenu.cxx">
+				</File>
+				<File
+					RelativePath="..\..\src\bzflag\ServerItem.cxx">
+				</File>
+				<File
+					RelativePath="..\..\src\bzflag\ServerMenu.cxx">
+				</File>
+				<File
+					RelativePath="..\..\src\bzflag\ServerStartMenu.cxx">
+				</File>
+			</Filter>
 		</Filter>
 		<Filter
 			Name="Header Files"
@@ -779,13 +840,28 @@ copy debug\*.pdb ..\..\*.pdb
 				RelativePath="..\..\include\CommandsStandard.h">
 			</File>
 			<File
+				RelativePath="..\..\src\bzflag\ComposeDefaultKey.h">
+			</File>
+			<File
 				RelativePath="..\..\src\bzflag\ControlPanel.h">
 			</File>
 			<File
 				RelativePath="..\..\src\bzflag\daylight.h">
 			</File>
 			<File
+				RelativePath="..\..\src\bzflag\FormatMenu.h">
+			</File>
+			<File
+				RelativePath="..\..\src\bzflag\GUIOptionsMenu.h">
+			</File>
+			<File
+				RelativePath="..\..\src\bzflag\HelpMenu.h">
+			</File>
+			<File
 				RelativePath="..\..\src\bzflag\HUDDialog.h">
+			</File>
+			<File
+				RelativePath="..\..\src\bzflag\HUDDialogStack.h">
 			</File>
 			<File
 				RelativePath="..\..\src\bzflag\HUDRenderer.h">
@@ -794,13 +870,28 @@ copy debug\*.pdb ..\..\*.pdb
 				RelativePath="..\..\src\bzflag\HUDui.h">
 			</File>
 			<File
+				RelativePath="..\..\src\bzflag\JoinMenu.h">
+			</File>
+			<File
+				RelativePath="..\..\src\bzflag\KeyboardMapMenu.h">
+			</File>
+			<File
 				RelativePath="..\..\src\bzflag\LocalPlayer.h">
+			</File>
+			<File
+				RelativePath="..\..\src\bzflag\MainMenu.h">
 			</File>
 			<File
 				RelativePath="..\..\src\bzflag\MainWindow.h">
 			</File>
 			<File
+				RelativePath="..\..\src\bzflag\MenuDefaultKey.h">
+			</File>
+			<File
 				RelativePath="..\..\src\bzflag\menus.h">
+			</File>
+			<File
+				RelativePath="..\..\src\bzflag\OptionsMenu.h">
 			</File>
 			<File
 				RelativePath="..\..\src\bzflag\Player.h">
@@ -810,6 +901,12 @@ copy debug\*.pdb ..\..\*.pdb
 			</File>
 			<File
 				RelativePath="..\..\include\Protocol.h">
+			</File>
+			<File
+				RelativePath="..\..\src\bzflag\QuickKeysMenu.h">
+			</File>
+			<File
+				RelativePath="..\..\src\bzflag\QuitMenu.h">
 			</File>
 			<File
 				RelativePath="..\..\src\bzflag\RadarRenderer.h">
@@ -824,10 +921,22 @@ copy debug\*.pdb ..\..\*.pdb
 				RelativePath="..\..\src\bzflag\RobotPlayer.h">
 			</File>
 			<File
+				RelativePath="..\..\src\bzflag\Roster.h">
+			</File>
+			<File
+				RelativePath="..\..\src\bzflag\SaveWorldMenu.h">
+			</File>
+			<File
 				RelativePath="..\..\src\bzflag\SceneBuilder.h">
 			</File>
 			<File
 				RelativePath="..\..\include\SceneRenderer.h">
+			</File>
+			<File
+				RelativePath="..\..\src\bzflag\ServerCommandKey.h">
+			</File>
+			<File
+				RelativePath="..\..\src\bzflag\ServerItem.h">
 			</File>
 			<File
 				RelativePath="..\..\src\bzflag\ServerLink.h">
@@ -836,10 +945,19 @@ copy debug\*.pdb ..\..\*.pdb
 				RelativePath="..\..\src\bzflag\ServerListCache.h">
 			</File>
 			<File
+				RelativePath="..\..\src\bzflag\ServerMenu.h">
+			</File>
+			<File
+				RelativePath="..\..\src\bzflag\ServerStartMenu.h">
+			</File>
+			<File
 				RelativePath="..\..\src\bzflag\ShotPath.h">
 			</File>
 			<File
 				RelativePath="..\..\src\bzflag\ShotStrategy.h">
+			</File>
+			<File
+				RelativePath="..\..\src\bzflag\SilenceDefaultKey.h">
 			</File>
 			<File
 				RelativePath="..\..\include\Singleton.h">
