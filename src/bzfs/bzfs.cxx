@@ -471,7 +471,7 @@ static int lookupPlayer(const PlayerId& id)
   return id;
 }
 
-static int lookupTeamFlag(int teamindex)
+static int lookupFirstTeamFlag(int teamindex)
 {
   for (int i = 0; i < numFlags; i++) {
     if (flag[i].flag.type->flagTeam == teamindex)
@@ -2375,7 +2375,7 @@ static void addPlayer(int playerIndex)
     team[teamIndex].team.won = 0;
     team[teamIndex].team.lost = 0;
     if (clOptions->gameStyle & int(TeamFlagGameStyle)) {
-      int flagid = lookupTeamFlag(teamIndex);
+      int flagid = lookupFirstTeamFlag(teamIndex);
       if (flagid >= 0 && flag[flagid].flag.status == FlagNoExist) {
         // can't call resetFlag() here cos it'll screw up protocol for
         // player just joining, so do it later
@@ -2437,9 +2437,11 @@ static void addPlayer(int playerIndex)
 
   // reset that flag
   if (resetTeamFlag) {
-    int flagid = lookupTeamFlag(teamIndex);
-    if (flagid >= 0)
-      resetFlag(flagid);
+    int flagid = lookupFirstTeamFlag(teamIndex);
+    if (flagid >= 0) {
+      for (int n = 0; n < clOptions->numTeamFlags; n++)
+        resetFlag(n+flagid);
+    }
   }
 
   fixTeamCount();
@@ -2864,10 +2866,13 @@ void removePlayer(int playerIndex, const char *reason, bool notify)
     // is carrying it
     if (Team::isColorTeam(player[playerIndex].team) && team[teamNum].team.size == 0 &&
         (clOptions->gameStyle & int(TeamFlagGameStyle))) {
-      int flagid = lookupTeamFlag(teamNum);
-      if (flagid >=0 &&
-          (flag[flagid].player == -1 || player[flag[flagid].player].team == teamNum))
-	zapFlag(flagid);
+      int flagid = lookupFirstTeamFlag(teamNum);
+      if (flagid >= 0) {
+        for (int n = 0; n < clOptions->numTeamFlags; n++) {
+          if ((flag[flagid+n].player == -1 || player[flag[flagid+n].player].team == teamNum))
+	    zapFlag(flagid+n);
+	}
+      }
     }
 
     // send team update
@@ -4999,13 +5004,16 @@ int main(int argc, char **argv)
     if (clOptions->gameStyle & TeamFlagGameStyle) {
       for (i = RedTeam; i < CtfTeams; ++i) {
         if (team[i].flagTimeout - tm < 0 && team[i].team.size == 0) {
-          int flagid = lookupTeamFlag(i);
-          if (flagid >= 0 &&
-	      flag[flagid].flag.status != FlagNoExist &&
-	      flag[flagid].player == -1) {
-	    DEBUG1("Flag timeout for team %d\n", i);
-            zapFlag(i - 1);
-          }
+          int flagid = lookupFirstTeamFlag(i);
+	  if (flagid >= 0) {
+	    for (int n = 0; n < clOptions->numTeamFlags; n++) {
+              if (flag[flagid+n].flag.status != FlagNoExist &&
+	          flag[flagid+n].player == -1) {
+	        DEBUG1("Flag timeout for team %d\n", i);
+                zapFlag(flagid+n);
+	      }
+	    }
+	  }
 	}
       }
     }

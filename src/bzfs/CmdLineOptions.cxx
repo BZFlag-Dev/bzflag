@@ -45,7 +45,7 @@ const char *usageString =
 "[-badwords <filename>] "
 "[-ban ip{,ip}*] "
 "[-banfile <filename>] "
-"[-c] "
+"[-c [numteamflags]] "
 "[-conf <filename>] "
 "[-cr [density]] "
 "[-d] "
@@ -120,7 +120,7 @@ const char *extraUsageString =
 "\t-badwords: bad-world file\n"
 "\t-ban ip{,ip}*: ban players based on ip address\n"
 "\t-banfile: specify a file to load and store the banlist in\n"
-"\t-c: capture-the-flag style game\n"
+"\t-c: [numteamflags] capture-the-flag style game, with optional number of team flags per team\n"
 "\t-conf: configuration file\n"
 "\t-cr [density]: capture-the-flag style game with random world\n\t\toptionally specify integer density (default 5)\n"
 "\t-d: increase debugging level\n"
@@ -443,6 +443,15 @@ void parse(int argc, char **argv, CmdLineOptions &options)
 	options.gameStyle &= ~int(RabbitChaseGameStyle);
 	fprintf(stderr, "Capture the flag incompatible with Rabbit Chase\n");
 	fprintf(stderr, "Capture the flag assumed\n");
+      }
+      if (i+1 != argc) {
+	int matches = sscanf(argv[i+1], "%d", &options.numTeamFlags);
+	if (matches == 1) {
+	  if (options.numTeamFlags <= 0)
+	    fprintf(stderr, "Invalid number of team flags: 1 assumed\n");
+	  else
+	    i++;
+	}
       }
     } else if (strcmp(argv[i], "-conf") == 0) {
       if (++i == argc) {
@@ -1058,7 +1067,7 @@ void parse(int argc, char **argv, CmdLineOptions &options)
   if (options.gameStyle & TeamFlagGameStyle) {
     for (int col = RedTeam; col <= PurpleTeam; col++)
       if (options.maxTeam[col] > 0)
-        numFlags++;
+        numFlags += options.numTeamFlags;
   }
   for (FlagTypeMap::iterator it = FlagType::getFlagMap().begin();
        it != FlagType::getFlagMap().end(); ++it) {
@@ -1092,28 +1101,36 @@ void parse(int argc, char **argv, CmdLineOptions &options)
   int f = 0;
   if (options.gameStyle & TeamFlagGameStyle) {
     if (options.maxTeam[RedTeam] > 0) {
-      flag[f].required = true;
-      flag[f].flag.type = Flags::RedTeam;
-      flag[f].flag.endurance = FlagNormal;
-      f++;
+      for (int n = 0; n < options.numTeamFlags; n++) {
+        flag[f].required = true;
+        flag[f].flag.type = Flags::RedTeam;
+        flag[f].flag.endurance = FlagNormal;
+        f++;
+      }
     }
     if (options.maxTeam[GreenTeam] > 0) {
-      flag[f].required = true;
-      flag[f].flag.type = Flags::GreenTeam;
-      flag[f].flag.endurance = FlagNormal;
-      f++;
+      for (int n = 0; n < options.numTeamFlags; n++) {
+        flag[f].required = true;
+        flag[f].flag.type = Flags::GreenTeam;
+        flag[f].flag.endurance = FlagNormal;
+        f++;
+      }
     }
     if (options.maxTeam[BlueTeam] > 0) {
-      flag[f].required = true;
-      flag[f].flag.type = Flags::BlueTeam;
-      flag[f].flag.endurance = FlagNormal;
-      f++;
+      for (int n = 0; n < options.numTeamFlags; n++) {
+        flag[f].required = true;
+        flag[f].flag.type = Flags::BlueTeam;
+        flag[f].flag.endurance = FlagNormal;
+        f++;
+      }
     }
     if (options.maxTeam[PurpleTeam] > 0) {
-      flag[f].required = true;
-      flag[f].flag.type = Flags::PurpleTeam;
-      flag[f].flag.endurance = FlagNormal;
-      f++;
+      for (int n = 0; n < options.numTeamFlags; n++) {
+        flag[f].required = true;
+        flag[f].flag.type = Flags::PurpleTeam;
+        flag[f].flag.endurance = FlagNormal;
+        f++;
+      }
     }
   }
 
