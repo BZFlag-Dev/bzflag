@@ -146,7 +146,7 @@ private:
   static std::string	dereferenceFile(const std::string& pathname);
   static void		insertLines(std::vector<std::string>& list,
 				    int index, const std::string& data);
-}
+};
 
 #endif // BZF_NETWORK_H
 
