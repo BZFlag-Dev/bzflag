@@ -232,12 +232,22 @@ void			TankSceneNode::setColorOverride(const float *override)
 
 void			TankSceneNode::setNormal()
 {
+  if (style != TankRenderNode::Normal) {
+    lowRenderNode.freeParts();
+    medRenderNode.freeParts();
+    highRenderNode.freeParts();
+  }
   style = TankRenderNode::Normal;
   setRadius(baseRadius);
 }
 
 void			TankSceneNode::setObese()
 {
+  if (style != TankRenderNode::Obese) {
+    lowRenderNode.freeParts();
+    medRenderNode.freeParts();
+    highRenderNode.freeParts();
+  }
   style = TankRenderNode::Obese;
   float factor = BZDB->eval(StateDatabase::BZDB_OBESEFACTOR);
   setRadius(factor*factor*baseRadius);
@@ -245,6 +255,11 @@ void			TankSceneNode::setObese()
 
 void			TankSceneNode::setTiny()
 {
+  if (style != TankRenderNode::Tiny) {
+    lowRenderNode.freeParts();
+    medRenderNode.freeParts();
+    highRenderNode.freeParts();
+  }
   style = TankRenderNode::Tiny;
   float factor = BZDB->eval(StateDatabase::BZDB_TINYFACTOR);
   setRadius(factor*factor*baseRadius);
@@ -252,12 +267,22 @@ void			TankSceneNode::setTiny()
 
 void			TankSceneNode::setNarrow()
 {
+  if (style != TankRenderNode::Narrow) {
+    lowRenderNode.freeParts();
+    medRenderNode.freeParts();
+    highRenderNode.freeParts();
+  }
   style = TankRenderNode::Narrow;
   setRadius(baseRadius);
 }
 
 void			TankSceneNode::setThief()
 {
+  if (style != TankRenderNode::Thief) {
+    lowRenderNode.freeParts();
+    medRenderNode.freeParts();
+    highRenderNode.freeParts();
+  }
   style = TankRenderNode::Thief;
   float factor = BZDB->eval(StateDatabase::BZDB_THIEFTINYFACTOR);
   setRadius(factor*factor*baseRadius);
