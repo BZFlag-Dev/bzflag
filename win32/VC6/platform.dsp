@@ -161,6 +161,10 @@ SOURCE=..\..\src\platform\BzfWindow.cxx
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\src\platform\DXJoystick.cxx
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\src\platform\PlatformFactory.cxx
 # End Source File
 # Begin Source File
@@ -250,6 +254,10 @@ SOURCE=..\..\include\common.h
 # Begin Source File
 
 SOURCE=.\config.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\platform\DXJoystick.h
 # End Source File
 # Begin Source File
 

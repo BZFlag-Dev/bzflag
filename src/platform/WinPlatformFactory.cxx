@@ -16,6 +16,7 @@
 #include "SDLDisplay.h"
 #include "SDLJoystick.h"
 #else
+#include "DXJoystick.h"
 #include "WinMedia.h"
 #include "WinDisplay.h"
 #include "WinVisual.h"
@@ -110,8 +111,10 @@ BzfMedia*		WinPlatformFactory::createMedia()
 
 BzfJoystick*		WinPlatformFactory::createJoystick()
 {
-#ifdef HAVE_SDL
+#if defined(HAVE_SDL)
   return new SDLJoystick();
+#elif defined(DIRECTINPUT_HEADER_VERSION) && (DIRECTINPUT_HEADER_VERSION >= 0x0700)
+  return new DXJoystick();
 #else
   return new WinJoystick();
 #endif
