@@ -40,7 +40,14 @@ public:
 };
 
 
-/** A helper class that can be used to add interfaces when the program loads.*/
+/** A helper class that can be used to add interfaces when the program loads.
+    To register the UI class @c MyBZAdminUI, you need a UICreator that returns
+    a pointer to a @c MyBZAdminUI (casted to a BZAdminUI *). Then you include
+    a static member variable of the type @c UIAdder in @c MyBZAdminUI, and 
+    initialize it with the constructor call 
+    <code>UIAdder MyBZAdminUI::myUIAdder("my_ui", &MyBZAdminUI::myCreator)
+    </code>. The constructor will then register @c myCreator in the UIMap with
+    the name "my_ui". */
 class UIAdder {
 public:
   UIAdder(const std::string& name, UICreator creator);

@@ -19,7 +19,12 @@
 #include "global.h"
 
 
-/** This class is an abstract base class for all bzadmin interfaces. */
+/** This class is an abstract base class for all bzadmin interfaces. 
+    All subclasses should register themselves in the UIMap. This should
+    be done in the same files as the subclass is defined in, and it should
+    be done before the main() function is called (i.e. when global variables
+    and static member variables are initialized). This can be done using 
+    UIAdder. */
 class BZAdminUI {
 public:
 
