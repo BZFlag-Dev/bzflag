@@ -151,6 +151,10 @@ SOURCE=..\..\src\bzfs\CustomZone.cxx
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\src\bzfs\DelayQueue.cxx
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\src\bzfs\EntryZones.cxx
 # End Source File
 # Begin Source File
@@ -284,6 +288,10 @@ SOURCE=..\..\src\bzfs\CustomWorld.h
 # Begin Source File
 
 SOURCE=..\..\src\bzfs\CustomZone.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\bzfs\DelayQueue.h
 # End Source File
 # Begin Source File
 
