@@ -137,3 +137,11 @@ bool TargetingUtils::getFirstCollisionPoint( const float *src, const float *targ
   collisionPt[2] = src[2] + dir[2] * t;
   return true;
 }
+
+// Local Variables: ***
+// mode:C++ ***
+// tab-width: 8 ***
+// c-basic-offset: 2 ***
+// indent-tabs-mode: t ***
+// End: ***
+// ex: shiftwidth=2 tabstop=8
