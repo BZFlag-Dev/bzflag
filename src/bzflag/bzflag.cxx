@@ -654,7 +654,6 @@ static void		parse(int argc, char** argv,
       }
       else if (strcmp(argv[i], "off") == 0) {
 	BZDB->set("zbuffer", "disable");
-	resources.addValue("zbuffer", "disable");
       }
       else {
 	printFatalError("Invalid argument for %s.", argv[i-1]);
@@ -1193,8 +1192,8 @@ int			main(int argc, char** argv)
 
   // restore rendering configuration
   if (startupInfo.hasConfiguration) {
-    if (db.hasValue("zbuffersplit"))
-      renderer.setZBufferSplit(db.getValue("zbuffersplit") == "1");
+    if (BZDB->isSet("zbuffersplit"))
+      renderer.setZBufferSplit(BZDB->isTrue("zbuffersplit"));
     if (BZDB->isSet("texture")) {
       OpenGLTexture::setFilter(BZDB->get("texture"));
     }
