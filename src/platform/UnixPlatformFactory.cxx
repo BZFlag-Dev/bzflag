@@ -41,9 +41,9 @@ UnixPlatformFactory::~UnixPlatformFactory()
 	// do nothing
 }
 
-istream*				UnixPlatformFactory::createConfigInStream() const
+std::istream*				UnixPlatformFactory::createConfigInStream() const
 {
-	istream* stream   = NULL;
+	std::istream* stream   = NULL;
 	std::string filename = getConfigFileName();
 
 	// try host specific name first
@@ -63,9 +63,9 @@ istream*				UnixPlatformFactory::createConfigInStream() const
 	return stream;
 }
 
-ostream*				UnixPlatformFactory::createConfigOutStream() const
+std::ostream*				UnixPlatformFactory::createConfigOutStream() const
 {
-	ostream* stream   = NULL;
+	std::ostream* stream   = NULL;
 	std::string filename = getConfigFileName();
 
 	// try host specific name first

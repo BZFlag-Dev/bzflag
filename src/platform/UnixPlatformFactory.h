@@ -30,8 +30,8 @@ public:
 	UnixPlatformFactory();
 	~UnixPlatformFactory();
 
-	istream*			createConfigInStream() const;
-	ostream*			createConfigOutStream() const;
+	std::istream*			createConfigInStream() const;
+	std::ostream*			createConfigOutStream() const;
 	void				createConsole();
 	void				writeConsole(const char*, bool error);
 	double				getTime() const;
