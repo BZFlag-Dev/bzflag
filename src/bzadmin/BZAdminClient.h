@@ -17,6 +17,7 @@
 #include <string>
 
 #include "BZAdminUI.h"
+#include "PlayerInfo.h"
 #include "ServerLink.h"
 #include "UIMap.h"
 
@@ -35,8 +36,7 @@ public:
     Superkilled,
     CommError
   };
-
-
+  
   /** A default constructor. It tries to connect to the server at host:port.
       If it doesn't succeed, calls to isValid() will return false. */
   BZAdminClient(std::string callsign, std::string host, int port,

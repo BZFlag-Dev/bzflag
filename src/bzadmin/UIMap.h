@@ -17,10 +17,8 @@
 #include <string>
 
 #include "BZAdminUI.h"
+#include "PlayerInfo.h"
 #include "Singleton.h"
-
-
-typedef std::map<PlayerId, std::string> PlayerIdMap;
 
 
 /** The function type that creates interface objects. */

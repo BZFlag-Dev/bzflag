@@ -10,11 +10,13 @@ bin_PROGRAMS = bzadmin
 endif
 
 if HAVE_CURSES
-CURSES_SRC = CursesUI.h CursesUI.cxx
+CURSES_SRC = CursesUI.h CursesUI.cxx CursesMenu.h CursesMenu.cxx
 else
 CURSES_SRC =
 
 EXTRA_bzadmin_SOURCES = \
+	CursesMenu.h \
+	CursesMenu.cxx \
 	CursesUI.h \
 	CursesUI.cxx
 endif
@@ -28,6 +30,7 @@ bzadmin_SOURCES = \
 	$(CURSES_SRC) \
 	OptionParser.h \
 	OptionParser.cxx \
+	PlayerInfo.h \
 	ServerLink.cxx \
 	StdBothUI.h \
 	StdBothUI.cxx \

@@ -33,6 +33,7 @@
 #include "Address.h"
 #include "AutoCompleter.h"
 #include "BZAdminUI.h"
+#include "CursesMenu.h"
 #include "global.h"
 #include "UIMap.h"
 
@@ -78,6 +79,15 @@ protected:
       resized. */
   void handleResize(int lines, int cols);
 
+  /** All messages that are written in the main window are saved in a buffer.
+      This function updates the main window with the contents of that buffer.
+      It is useful to do this when the window has been resized (because
+      the terminal has been resized, or because the menu has been toggled).
+      @param numberOfMessages The last @c numberOfMessages messages from the
+                              buffer will be written to the window.
+  */
+  void updateMainWinFromBuffer(unsigned int numberOfMessages);
+  
   /** This function redraws the target window (the line that says who you are
       talking to). */
   void updateTargetWin();
@@ -86,9 +96,35 @@ protected:
       messages). */
   void updateCmdWin();
 
+  /** This function toggles the visibility of the menu window. */
+  void toggleMenu();
+  
+  /** This function sets the menu to the main menu. */
+  static void initMainMenu(CursesMenu& menu);
+  
+  /** This function sets the menu to the player menu. */
+  static void initPlayerMenu(CursesMenu& menu);
+  
+  /** This function sets the menu to the ban menu. */
+  static void initBanMenu(CursesMenu& menu);
+  
+  /** This function sets the menu to the "Set server variables" submenu. */
+  static void initServerVarMenu(CursesMenu& menu);
+  
+  /** Add a single BZDBCMItem to the menu. */
+  static void addBZDBCMItem(const std::string& name, void* menu);
+  
+  /** This function sets the menu to the filter menu. */
+  static void initFilterMenu(CursesMenu& menu);
+
   WINDOW* mainWin;
   WINDOW* targetWin;
   WINDOW* cmdWin;
+  WINDOW* menuWin;
+  
+  bool inMenu;
+  CursesMenu menu;
+  
   std::string cmd;
   const PlayerIdMap& players;
   PlayerIdMap::const_iterator targetIter;
@@ -97,7 +133,10 @@ protected:
   std::vector<std::string> history;
   unsigned int maxHistory;
   unsigned int currentHistory;
-
+  std::vector<std::string> msgBuffer;
+  unsigned int maxBufferSize;
+  unsigned int scrollOffset;
+  
   static UIAdder uiAdder;
 };
 

@@ -22,7 +22,8 @@ UIAdder CursesUI::uiAdder("curses", &CursesUI::creator);
 
 
 CursesUI::CursesUI(const PlayerIdMap& p, PlayerId m) :
-  players(p), me(m), maxHistory(20), currentHistory(0) {
+  inMenu(false), menu(p), players(p), me(m), maxHistory(20), 
+  currentHistory(0), maxBufferSize(300) {
 
   // initialize ncurses
   initscr();
@@ -47,7 +48,10 @@ CursesUI::CursesUI(const PlayerIdMap& p, PlayerId m) :
   keypad(cmdWin, TRUE);
   nodelay(cmdWin, TRUE);
   updateCmdWin();
-
+  
+  // initialize the menu
+  menu.setUpdateCallback(initMainMenu);
+  
   // register commands for tab completion
   comp.registerWord("/ban ");
   comp.registerWord("/banlist");
@@ -95,8 +99,16 @@ CursesUI::~CursesUI() {
 
 
 void CursesUI::outputMessage(const std::string& msg) {
-  waddstr(mainWin, (msg + "\n").c_str());
-  wrefresh(mainWin);
+  // add message to the message buffer, remove the oldest message if it's full
+  if (msgBuffer.size() == maxBufferSize)
+    msgBuffer.erase(msgBuffer.begin());
+  msgBuffer.push_back(msg);
+
+  // if we have scrolled away from the bottom, don't show the new message
+  if (scrollOffset == 0) {
+    waddstr(mainWin, (msg + "\n").c_str());
+    wrefresh(mainWin);
+  }
 }
 
 
@@ -104,15 +116,26 @@ bool CursesUI::checkCommand(std::string& str) {
   wrefresh(cmdWin);
   str = "";
   int i;
+
+  // get a character and do checks that are always needed
   int c = wgetch(cmdWin);
   switch (c) {
-
-  case KEY_RESIZE:
-    handleResize(LINES, COLS);
+   case KEY_RESIZE:
+     handleResize(LINES, COLS);
+     return false;
+  case KEY_F(2):
+    toggleMenu();
     return false;
-
   case ERR:
     return false;
+  }
+  
+  // if the menu is active, use the keystrokes for that
+  if (inMenu)
+    return menu.handleKey(c, str);
+  
+  // if not, go ahead and parse commands
+  switch (c) {
 
     // clear command (21 is Ctrl-U)
   case 21:
@@ -148,12 +171,20 @@ bool CursesUI::checkCommand(std::string& str) {
     updateCmdWin();
     return true;
 
-    // scroll main window - doesn't work
-  case KEY_NPAGE:
-    wscrl(mainWin, 1);
+    // scroll main window
+  case KEY_NPAGE: 
+    scrollOffset = (scrollOffset < unsigned(LINES - 2) / 2 ? 
+		    0 : scrollOffset - (LINES - 2) / 2);
+    updateMainWinFromBuffer(LINES - 2);
     return false;
   case KEY_PPAGE:
-    wscrl(mainWin, -1);
+    if (msgBuffer.size() < unsigned(LINES - 2))
+      scrollOffset = 0;
+    else if (scrollOffset > msgBuffer.size() - (LINES - 2) - (LINES - 2) / 2)
+      scrollOffset = msgBuffer.size() - (LINES - 2);
+    else
+      scrollOffset += (LINES - 2) / 2;
+    updateMainWinFromBuffer(LINES - 2);
     return false;
 
     // change target
@@ -194,10 +225,31 @@ bool CursesUI::checkCommand(std::string& str) {
   case KEY_F(5):
     if (targetIter != players.end() && targetIter->first != me) {
       cmd = "/kick ";
-      cmd += targetIter->second;
+      cmd += targetIter->second.name;
       targetIter = players.find(me);
       updateCmdWin();
       updateTargetWin();
+    }
+    return false;
+
+    // ban target (only works if we have done /playerlist earlier)
+  case KEY_F(6):
+    if (targetIter != players.end() && targetIter->first != me) {
+      if (targetIter->second.ip != "") {
+	cmd = "/ban ";
+	cmd += targetIter->second.ip;
+	targetIter = players.find(me);
+	updateCmdWin();
+	updateTargetWin();
+      }
+      else {
+	std::string msg = "--- Can't ban ";
+	msg += targetIter->second.name + ", you don't have the IP address";
+	outputMessage(msg);
+	outputMessage("--- Trying to fetch IP addresses...");
+	str = "/playerlist";
+	return true;
+      }
     }
     return false;
 
@@ -220,7 +272,7 @@ bool CursesUI::checkCommand(std::string& str) {
 
 void CursesUI::addedPlayer(PlayerId p) {
   PlayerIdMap::const_iterator iter = players.find(p);
-  comp.registerWord(iter->second);
+  comp.registerWord(iter->second.name);
   if (p == me)
     targetIter = iter;
 }
@@ -231,7 +283,7 @@ void CursesUI::removingPlayer(PlayerId p) {
     targetIter = players.find(me);
     updateTargetWin();
   }
-  comp.unregisterWord(players.find(p)->second);
+  comp.unregisterWord(players.find(p)->second.name);
 }
 
 
@@ -244,13 +296,26 @@ PlayerId CursesUI::getTarget() const {
 
 void CursesUI::handleResize(int lines, int cols) {
   resizeterm(lines, cols);
+  wresize(mainWin, lines - 2, cols);
+  updateMainWinFromBuffer(lines - 2);
   mvwin(targetWin, lines - 2, 0);
   wresize(targetWin, 1, cols);
   mvwin(cmdWin, lines - 1, 0);
   wresize(cmdWin, 1, cols);
-  wresize(mainWin, lines - 2, cols);
   updateTargetWin();
   updateCmdWin();
+  wrefresh(mainWin);
+}
+
+
+void CursesUI::updateMainWinFromBuffer(unsigned int numberOfMessages) {
+  wclear(mainWin);
+  int start = msgBuffer.size() - numberOfMessages - scrollOffset;
+  start = (start < 0 ? 0 : start);
+  unsigned int end = start + numberOfMessages;
+  end = (end >= msgBuffer.size() ? msgBuffer.size() : end);
+  for (unsigned int i = start ; i < end; ++i)
+    waddstr(mainWin, (msgBuffer[i] + "\n").c_str());
   wrefresh(mainWin);
 }
 
@@ -261,7 +326,7 @@ void CursesUI::updateTargetWin() {
   wmove(targetWin, 1, 1);
   std::string tmp = "Send to ";
   tmp = tmp + (targetIter == players.end() || targetIter->first == me ?
-	       "all" : targetIter->second) + ":";
+	       "all" : targetIter->second.name) + ":";
   waddstr(targetWin, tmp.c_str());
   wrefresh(targetWin);
 }
@@ -273,6 +338,80 @@ void CursesUI::updateCmdWin() {
   waddstr(cmdWin, cmd.c_str());
   wmove(cmdWin, 1, 1 + cmd.size());
   wrefresh(cmdWin);
+}
+
+
+void CursesUI::toggleMenu() {
+  if (!inMenu) {
+    wresize(mainWin, LINES - 2 - (LINES - 2) / 2, COLS);
+    mvwin(mainWin, (LINES - 2) / 2, 0);
+    updateMainWinFromBuffer(LINES - 2 - (LINES - 2) / 2);
+    inMenu = true;
+    menuWin = newwin((LINES - 2) / 2, 0, 0, 0);
+    menu.setWindow(menuWin);
+    menu.showMenu();
+  }
+  else {
+    menu.setWindow(NULL);
+    delwin(menuWin);
+    wresize(mainWin, LINES - 2, COLS);
+    mvwin(mainWin, 0, 0);
+    updateMainWinFromBuffer(LINES - 2);
+    inMenu = false;
+  }
+  wrefresh(targetWin);
+  wrefresh(cmdWin);
+}
+
+
+void CursesUI::initMainMenu(CursesMenu& menu) {
+  menu.clear();
+  menu.addItem(new SubmenuCMItem("Show players",
+				  &CursesUI::initPlayerMenu));
+  //menu.addItem(new SubmenuCMItem("Edit banlist",
+  //				  &CursesUI::initBanMenu));
+  menu.addItem(new SubmenuCMItem("Edit server variables", 
+				  &CursesUI::initServerVarMenu));
+  //menu.addItem(new SubmenuCMItem("Edit message filter",
+  //				  &CursesUI::initFilterMenu));
+}
+
+
+void CursesUI::initPlayerMenu(CursesMenu& menu) {
+  menu.clear();
+  PlayerIdMap::const_iterator it;
+  for (it = menu.players.begin(); it != menu.players.end(); ++it)
+    menu.addItem(new PlayerCMItem(menu.players, it->first));
+  menu.addItem(new CommandCMItem("Reload playerlist", "/playerlist", true));
+  menu.addItem(new SubmenuCMItem("Back to main menu",
+				  &CursesUI::initMainMenu));
+}
+
+
+void CursesUI::initBanMenu(CursesMenu& menu) {
+  menu.clear();
+  menu.addItem(new SubmenuCMItem("Not implemented - go back",
+				  &CursesUI::initMainMenu));
+}
+
+
+void CursesUI::initServerVarMenu(CursesMenu& menu) {
+  menu.clear();
+  BZDB.iterate(&CursesUI::addBZDBCMItem, &menu);
+  menu.addItem(new SubmenuCMItem("Back to main menu",
+				 &CursesUI::initMainMenu));
+}
+
+
+void CursesUI::addBZDBCMItem(const std::string& name, void* menu) {
+  ((CursesMenu*)menu)->addItem(new BZDBCMItem(name));
+}
+
+
+void CursesUI::initFilterMenu(CursesMenu& menu) {
+  menu.clear();
+  menu.addItem(new SubmenuCMItem("Not implemented - go back",
+				  &CursesUI::initMainMenu));
 }
 
 

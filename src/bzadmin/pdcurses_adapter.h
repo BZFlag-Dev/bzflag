@@ -10,6 +10,9 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
+#ifndef PDCURSES_ADAPTER_H
+#define PDCURSES_ADAPTER_H
+
 #include <cstring>
 
 #include "config.h"
@@ -74,6 +77,8 @@ inline int resizeterm(int lines, int cols) {
   return resize_term(lines, cols);
 }
 
+
+#endif 
 // Local Variables: ***
 // mode: C++ ***
 // tab-width: 8 ***

@@ -112,8 +112,8 @@ BZAdminClient::ServerCode BZAdminClient::getServerString(std::string& str) {
       vbuf = nboUnpackUShort(vbuf, tks);
       vbuf = nboUnpackString(vbuf, callsign, CallSignLen);
       vbuf = nboUnpackString(vbuf, email, EmailLen);
-      players[p].resize(0);
-      players[p].append(callsign);
+      players[p].name.resize(0);
+      players[p].name.append(callsign);
       if (ui != NULL)
 	ui->addedPlayer(p);
       returnString = returnString + "*** '" + callsign + "' joined the game.";
@@ -122,7 +122,8 @@ BZAdminClient::ServerCode BZAdminClient::getServerString(std::string& str) {
 
     case MsgRemovePlayer:
       vbuf = nboUnpackUByte(vbuf, p);
-      returnString = returnString + "*** '" + players[p] + "' left the game.";
+      returnString = returnString + "*** '" + players[p].name + 
+	"' left the game.";
       if (ui != NULL)
 	ui->removingPlayer(p);
       players.erase(p);
@@ -139,9 +140,9 @@ BZAdminClient::ServerCode BZAdminClient::getServerString(std::string& str) {
 
       // find the player names and build a kill message string
       it = players.find(victim);
-      victimName = (it != players.end() ? it->second : "<unknown>");
+      victimName = (it != players.end() ? it->second.name : "<unknown>");
       it = players.find(killer);
-      killerName = (it != players.end() ? it->second : "<unknown>");
+      killerName = (it != players.end() ? it->second.name : "<unknown>");
       returnString = "*** ";
       returnString += victimName + ": ";
       if (killer == victim) {
@@ -166,12 +167,34 @@ BZAdminClient::ServerCode BZAdminClient::getServerString(std::string& str) {
       PlayerId me = sLink.getId();
       vbuf = nboUnpackUByte(vbuf, src);
       vbuf = nboUnpackUByte(vbuf, dst);
+      returnString = std::string((char*)vbuf);
+      
+      // parse playerlist
+      if (src == ServerPlayer && returnString[0] == '[') {
+	char* ipHere;
+	p = PlayerId(std::strtol(returnString.c_str() + 1, &ipHere, 10));
+	if (ipHere - returnString.c_str() >= 2 && ipHere[0] == ']' && 
+	    std::strlen(ipHere) >= 19 && ipHere[17] == ':') {
+	  std::string& ip = players[p].ip; 
+	  ip = &ipHere[19];
+	  ip = ip.substr(0, ip.find(' '));
+	}
+      }
+      
+      // parse banlist
+      static int parsingBanlist = 0;
+       if (parsingBanlist == 0 && returnString == "IP Ban List")
+	parsingBanlist = 1;
+      else if (parsingBanlist == 1 && returnString == "-----------")
+	parsingBanlist = 2;
+      else if (parsingBanlist == 2) {
+	ui->outputMessage("--- PARSING BAN LIST");
+      }
 
       // is the message for me?
       TeamColor dstTeam = (dst >= 244 && dst <= 250 ?
 			   TeamColor(250 - dst) : NoTeam);
       if (dst == AllPlayers || src == me || dst == me || dstTeam == myTeam) {
-	returnString = std::string((char*)vbuf);
 	if (returnString == "CLIENTQUERY") {
 	  sendMessage(std::string("bzadmin ") + getAppVersion(), src);
 	  if (ui != NULL)
@@ -267,8 +290,10 @@ std::string BZAdminClient::formatMessage(const std::string& msg, PlayerId src,
 
   // get sender and receiver
   const std::string srcName = (src == ServerPlayer ? "SERVER" :
-			  (players.count(src) ? players[src] : "(UNKNOWN)"));
-  const std::string dstName = (players.count(dst) ? players[dst] : "(UNKNOWN)");
+			       (players.count(src) ? players[src].name : 
+				"(UNKNOWN)"));
+  const std::string dstName = (players.count(dst) ? players[dst].name : 
+			       "(UNKNOWN)");
 
   // direct message to or from me
   if (dst == me || players.count(dst)) {
