@@ -83,6 +83,7 @@ print " ricochet" if $style & 0x0020;
 print " shaking" if $style & 0x0040;
 print " antidote" if $style & 0x0080;
 print " time-sync" if $style & 0x0100;
+print " rabbit-hunt" if $style & 0x0200;
 print "\n";
 print "maxPlayers: $maxPlayers\nmaxShots: $maxShots\n";
 print "team sizes: $rogueSize $redSize $greenSize $blueSize $purpleSize" .
