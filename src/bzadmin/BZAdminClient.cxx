@@ -14,7 +14,9 @@
 #pragma warning( 4: 4786)
 #endif
 
+#include <cmath>
 #include <iostream>
+#include <sstream>
 
 #include "BZAdminClient.h"
 #include "StateDatabase.h"
@@ -183,23 +185,20 @@ BZAdminClient::getServerString(std::string& str, ColorCode& colorCode) {
       returnString = std::string((char*)vbuf);
       
       // parse playerlist
-      if (src == ServerPlayer && returnString[0] == '[') {
-	char* ipHere;
-#ifdef _WIN32
-	p = PlayerId(atol(returnString.c_str() + 1));
-#else
-	p = PlayerId(std::strtol(returnString.c_str() + 1, &ipHere, 10));
-#endif
-	if (ipHere[0] == ']') {
-	  std::vector<std::string> tokens;
-	  tokens = string_util::tokenize(ipHere + 1, " ");
-	  if (*tokens.rbegin() == "udp" || *tokens.rbegin() == "udp+")
-	    tokens.pop_back();
-	  if (tokens.size() >= 2) {
-	    std::string callsign = *(++tokens.rbegin());
-	    if (*callsign.rbegin() == ':') {
-	      players[p].ip = *tokens.rbegin();
-	    }
+      std::istringstream iss(returnString);
+      char c, d;
+      int pt;
+      iss>>c>>pt>>d;
+      PlayerIdMap::iterator iter;
+      if (c == '[' && (iter = players.find(pt)) != players.end() && d == ']') {
+	std::vector<std::string> tokens;
+	tokens = string_util::tokenize(iss.str(), " ");
+	if (*tokens.rbegin() == "udp" || *tokens.rbegin() == "udp+")
+	  tokens.pop_back();
+	if (tokens.size() >= 2) {
+	  std::string callsign = *(++tokens.rbegin());
+	  if (*callsign.rbegin() == ':') {
+	    iter->second.ip = *tokens.rbegin();
 	  }
 	}
       }
