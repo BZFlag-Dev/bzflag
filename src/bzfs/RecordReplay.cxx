@@ -926,37 +926,39 @@ bool Replay::skip(int playerIndex, int seconds)
     return false;
   }
   
-  if (seconds == 0) {
-    // just skip the time offset to the next packet,
-    // resetStates() is not required
-    ReplayOffset = getRRtime() - ReplayPos->timestamp;
-    return true;
-  }
-
-  RRpacket *p = ReplayPos;
-  RRtime nowtime = p->timestamp;
-  RRtime target = nowtime + ((RRtime)seconds * (RRtime)1000000);
-  
-  if (seconds > 0) {
-    do {
-      p = nextStatePacket ();
-    } while ((p != NULL) && (p->timestamp < target));
-    if (p == NULL) {
-      sendMessage (ServerPlayer, playerIndex, "skipped to the end");
-    }
+  RRtime nowtime;
+  if (Replaying) {
+    nowtime = getRRtime() - ReplayOffset;
   }
   else {
-    do {
-      p = prevStatePacket ();
-    } while ((p != NULL) && (p->timestamp > target));
-    if (p == NULL) {
-      sendMessage (ServerPlayer, playerIndex, "skipped to the beginning");
+    nowtime = ReplayPos->timestamp;
+  }
+  
+  if (seconds != 0) {
+    RRpacket *p = ReplayPos;
+    RRtime target = nowtime + ((RRtime)seconds * (RRtime)1000000);
+    
+    if (seconds > 0) {
+      do {
+        p = nextStatePacket ();
+      } while ((p != NULL) && (p->timestamp < target));
+      if (p == NULL) {
+        sendMessage (ServerPlayer, playerIndex, "skipped to the end");
+      }
     }
-  }      
-   
-  // reset the replay observers' view of state  
-  resetStates();
-
+    else {
+      do {
+        p = prevStatePacket ();
+      } while ((p != NULL) && (p->timestamp > target));
+      if (p == NULL) {
+        sendMessage (ServerPlayer, playerIndex, "skipped to the beginning");
+      }
+    }      
+     
+    // reset the replay observers' view of state  
+    resetStates();
+  }
+    
   // setup the new time offset  
   ReplayOffset = getRRtime() - ReplayPos->timestamp;
   
@@ -973,7 +975,7 @@ bool Replay::skip(int playerIndex, int seconds)
 
 bool Replay::pause(int playerIndex)
 {
-  if ((ReplayFile != NULL) && (ReplayPos != NULL)) {
+  if ((ReplayFile != NULL) && (ReplayPos != NULL) && Replaying) {
     Replaying = false;
     sendMessage (ServerPlayer, playerIndex, "Replay paused");
   }
@@ -1194,9 +1196,6 @@ nextFilePacket ()
   // set the file position
   if ((ReplayPos->nextFilePos == 0) ||
       (fseek (ReplayFile, ReplayPos->nextFilePos, SEEK_SET) < 0)) {
-    
-    printf ("fseek (ReplayFile, %i, SEEK_SET) = %i\n", ReplayPos->nextFilePos,
-            fseek (ReplayFile, ReplayPos->nextFilePos, SEEK_SET));
   }
   else {
     p = loadPacket (ReplayFile);
