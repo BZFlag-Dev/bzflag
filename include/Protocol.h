@@ -229,7 +229,7 @@ server to player messages:
   MsgShotEnd		shot has expired
 			<== id (shooter id), shot number, reason
   MsgScore		player score has changed
-			<== id (player id), wins, losses
+			<== id (player id), wins, losses, tks
   MsgTeleport		player has teleported
 			<== id, from-teleporter, to-teleporter
   MsgMessage		message to players

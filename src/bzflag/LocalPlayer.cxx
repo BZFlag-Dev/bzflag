@@ -997,9 +997,10 @@ void			LocalPlayer::setFlag(FlagId id)
 }
 
 void			LocalPlayer::changeScore(short deltaWins,
-						short deltaLosses)
+						short deltaLosses,
+						short deltaTks)
 {
-  Player::changeScore(deltaWins, deltaLosses);
+  Player::changeScore(deltaWins, deltaLosses, deltaTks);
   if (deltaWins > 0 && World::getWorld()->allowShakeWins() &&
 						flagShakingWins > 0) {
     flagShakingWins -= deltaWins;

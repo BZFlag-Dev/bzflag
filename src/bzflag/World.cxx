@@ -577,7 +577,8 @@ void			World::reviveDeadPlayer(Player* revivedPlayer)
     // that's the guy!  copy the local wins and losses (assuming the
     // revived player's local wins and losses are zero).
     revivedPlayer->changeLocalScore(deadPlayers[i]->getLocalWins(),
-				    deadPlayers[i]->getLocalLosses());
+				    deadPlayers[i]->getLocalLosses(),
+				    deadPlayers[i]->getLocalTeamKills());
 
     // remove dead player.  keep dead player list packed but don't
     // shuffle the order.  a linked list would be better.

@@ -92,7 +92,7 @@ const float		HUDRenderer::altitudeOffset = 20.0f;
 const GLfloat		HUDRenderer::black[3] = { 0.0f, 0.0f, 0.0f };
 std::string		HUDRenderer::headingLabel[36];
 std::string		HUDRenderer::altitudeLabel[20];
-std::string		HUDRenderer::scoreSpacingLabel("888 (888-888)");
+std::string		HUDRenderer::scoreSpacingLabel("888 (888-888)[88]");
 std::string		HUDRenderer::scoreLabel("Score");
 std::string		HUDRenderer::killLabel("Kills");
 std::string		HUDRenderer::teamScoreSpacingLabel("888 (888-888) 888");
@@ -1501,8 +1501,8 @@ void			HUDRenderer::drawPlayerScore(const Player* player,
     sprintf(email, " (%s)", player->getEmailAddress());
   else
     email[0] = '\0';
-  sprintf(score, "%d (%d-%d)", player->getScore(),
-      player->getWins(), player->getLosses());
+  sprintf(score, "%d (%d-%d)[%d]", player->getScore(),
+      player->getWins(), player->getLosses(), player->getTeamKills());
   if (LocalPlayer::getMyTank() != player)
     sprintf(kills, "%d/%d", player->getLocalWins(), player->getLocalLosses());
   else

@@ -2581,6 +2581,7 @@ static void sendPlayerUpdate(int playerIndex, int index)
   buf = nboPackUShort(buf, uint16_t(pPlayer->team));
   buf = nboPackUShort(buf, uint16_t(pPlayer->wins));
   buf = nboPackUShort(buf, uint16_t(pPlayer->losses));
+  buf = nboPackUShort(buf, uint16_t(pPlayer->tks));
   buf = nboPackString(buf, pPlayer->callSign, CallSignLen);
   buf = nboPackString(buf, pPlayer->email, EmailLen);
   // this playerid is for the player itself to get our playerid (hack)
@@ -4922,6 +4923,7 @@ static void playerKilled(int victimIndex, int killerIndex, int reason,
       buf = nboPackUByte(bufStart, killerIndex);
       buf = nboPackUShort(buf, player[killerIndex].wins);
       buf = nboPackUShort(buf, player[killerIndex].losses);
+      buf = nboPackUShort(buf, player[killerIndex].tks);
       broadcastMessage(MsgScore, (char*)buf-(char*)bufStart, bufStart);
     }
 
@@ -4930,6 +4932,7 @@ static void playerKilled(int victimIndex, int killerIndex, int reason,
     buf = nboPackUByte(bufStart, victimIndex);
     buf = nboPackUShort(buf, player[victimIndex].wins);
     buf = nboPackUShort(buf, player[victimIndex].losses);
+    buf = nboPackUShort(buf, player[victimIndex].tks);
     broadcastMessage(MsgScore, (char*)buf-(char*)bufStart, bufStart);
 
     // see if the player reached the score limit

@@ -109,7 +109,7 @@ class LocalPlayer : public BaseLocalPlayer {
 							float& minTime) const;
 
     void		setFlag(FlagId);
-    void		changeScore(short deltaWins, short deltaLosses);
+    void		changeScore(short deltaWins, short deltaLosses, short deltaTeamKills);
 
     void		addAntidote(SceneDatabase*);
 

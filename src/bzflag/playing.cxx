@@ -2472,13 +2472,14 @@ void			notifyBzfKeyMapChanged()
 
 static Player*		addPlayer(PlayerId id, void* msg, int showMessage)
 {
-  uint16_t team, type, wins, losses;
+  uint16_t team, type, wins, losses, tks;
   char callsign[CallSignLen];
   char email[EmailLen];
   msg = nboUnpackUShort(msg, type);
   msg = nboUnpackUShort(msg, team);
   msg = nboUnpackUShort(msg, wins);
   msg = nboUnpackUShort(msg, losses);
+  msg = nboUnpackUShort(msg, tks);
   msg = nboUnpackString(msg, callsign, CallSignLen);
   msg = nboUnpackString(msg, email, EmailLen);
 
@@ -2501,7 +2502,7 @@ static Player*		addPlayer(PlayerId id, void* msg, int showMessage)
   // add player
   if (PlayerType(type) == TankPlayer || PlayerType(type) == ComputerPlayer) {
     player[i] = new RemotePlayer(id, TeamColor(team), callsign, email);
-    player[i]->changeScore(short(wins), short(losses));
+    player[i]->changeScore(short(wins), short(losses), short(tks));
   }
 
   if (showMessage) {
@@ -2635,13 +2636,14 @@ static void		handleServerMessage(bool human, uint16_t code,
 #if defined(FIXME) && defined(ROBOT)
       for (int i = 0; i < numRobots; i++) {
 	void *tmpbuf = msg;
-	uint16_t team, type, wins, losses;
+	uint16_t team, type, wins, losses, tks;
 	char callsign[CallSignLen];
 	char email[EmailLen];
 	tmpbuf = nboUnpackUShort(tmpbuf, type);
 	tmpbuf = nboUnpackUShort(tmpbuf, team);
 	tmpbuf = nboUnpackUShort(tmpbuf, wins);
 	tmpbuf = nboUnpackUShort(tmpbuf, losses);
+	tmpbuf = nboUnpackUShort(tmpbuf, tks);
 	tmpbuf = nboUnpackString(tmpbuf, callsign, CallSignLen);
 	tmpbuf = nboUnpackString(tmpbuf, email, EmailLen);
 	fprintf(stderr, "id %d:%u:%s %d:%u:%s\n",
@@ -2792,11 +2794,11 @@ static void		handleServerMessage(bool human, uint16_t code,
 		 playLocalSound( SFX_KILL_TEAM );
 	    }
 	    // teammate
-	    killerLocal->changeScore(0, 1);
+	    killerLocal->changeScore(0, 1, 1);
 	  }
 	  else
 	    // enemy
-	    killerLocal->changeScore(1, 0);
+	    killerLocal->changeScore(1, 0, 0);
 	}
       }
 
@@ -2808,12 +2810,12 @@ static void		handleServerMessage(bool human, uint16_t code,
 	 !(killerPlayer == myTank && victimPlayer == myTank)) {
 	if (killerLocal == myTank) {
 	  if (victimPlayer)
-	    victimPlayer->changeLocalScore(1, 0);
+	    victimPlayer->changeLocalScore(1, 0, 0);
 	  myTank->setNemesis(victimPlayer);
 	}
 	else {
 	  if (killerPlayer)
-	    killerPlayer->changeLocalScore(0, 1);
+	    killerPlayer->changeLocalScore(0, 1, killerPlayer->getTeam() == victimPlayer->getTeam() ? 1 : 0);
 	  myTank->setNemesis(killerPlayer);
 	}
       }
@@ -3133,15 +3135,17 @@ static void		handleServerMessage(bool human, uint16_t code,
 
     case MsgScore: {
       PlayerId id;
-      uint16_t wins, losses;
+      uint16_t wins, losses, tks;
       msg = nboUnpackUByte(msg, id);
       msg = nboUnpackUShort(msg, wins);
       msg = nboUnpackUShort(msg, losses);
+      msg = nboUnpackUShort(msg, tks);
 
       int i = lookupPlayerIndex(id);
       if (i >= 0)
 	player[i]->changeScore(wins - player[i]->getWins(),
-                               losses - player[i]->getLosses());
+                               losses - player[i]->getLosses(),
+			       tks - player[i]->getTeamKills());
       break;
     }
 
@@ -3740,7 +3744,7 @@ static void		handleMyTankKilled(int reason)
 	playLocalSound(SFX_DIE);
 
   // i lose a point
-  myTank->changeScore(0, 1);
+  myTank->changeScore(0, 1, 0);
 }
 #endif
 
@@ -3827,7 +3831,7 @@ static bool		gotBlowedUp(BaseLocalPlayer* tank,
 
     // i lose a point
     if (reason != GotCaptured)
-      tank->changeScore(0, 1);
+      tank->changeScore(0, 1, 0);
 
     // tell server I'm dead if it won't already know
     if (reason == GotShot || reason == GotRunOver || reason == GenocideEffect)

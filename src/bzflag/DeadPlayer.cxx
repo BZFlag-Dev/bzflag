@@ -20,8 +20,8 @@ DeadPlayer::DeadPlayer(const Player& livePlayer) :
 					livePlayer.getEmailAddress())
 {
   // get wins and losses
-  changeScore(livePlayer.getWins(), livePlayer.getLosses());
-  changeLocalScore(livePlayer.getLocalWins(), livePlayer.getLocalLosses());
+  changeScore(livePlayer.getWins(), livePlayer.getLosses(), livePlayer.getTeamKills());
+  changeLocalScore(livePlayer.getLocalWins(), livePlayer.getLocalLosses(), livePlayer.getLocalTeamKills());
 }
 
 DeadPlayer::~DeadPlayer()

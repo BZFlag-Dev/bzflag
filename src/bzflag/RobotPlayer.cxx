@@ -294,9 +294,10 @@ void			RobotPlayer::setTeam(TeamColor team)
 }
 
 void			RobotPlayer::changeScore(short deltaWins,
-						short deltaLosses)
+						short deltaLosses,
+						short deltaTeamKills)
 {
-  Player::changeScore(deltaWins, deltaLosses);
+  Player::changeScore(deltaWins, deltaLosses, deltaTeamKills);
 }
 
 void			RobotPlayer::restart()

@@ -44,8 +44,10 @@ Player::Player(const PlayerId& _id, TeamColor _team,
 				teleporterProximity(0.0f),
 				wins(0),
 				losses(0),
+				tks(0),
 				localWins(0),
-				localLosses(0)
+				localLosses(0),
+				localTks(0)
 {
   static const float zero[3] = { 0.0f, 0.0f, 0.0f };
   move(zero, 0.0f);
@@ -188,16 +190,18 @@ void			Player::setTeleport(const TimeKeeper& t,
   setStatus(getStatus() | short(PlayerState::Teleporting));
 }
 
-void			Player::changeScore(short deltaWins, short deltaLosses)
+void			Player::changeScore(short deltaWins, short deltaLosses, short deltaTeamKills)
 {
   wins += deltaWins;
   losses += deltaLosses;
+  tks += deltaTeamKills;
 }
 
-void			Player::changeLocalScore(short dWins, short dLosses)
+void			Player::changeLocalScore(short dWins, short dLosses, short dTeamKills)
 {
   localWins += dWins;
   localLosses += dLosses;
+  localTks += dTeamKills;
 }
 
 void			Player::setFlag(FlagId _flag)

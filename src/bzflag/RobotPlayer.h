@@ -46,7 +46,7 @@ class RobotPlayer : public BaseLocalPlayer {
     bool		checkHit(const Player* source, const ShotPath*& hit,
 							float& minTime) const;
     void		explodeTank();
-    void		changeScore(short deltaWins, short deltaLosses);
+    void		changeScore(short deltaWins, short deltaLosses, short deltaTeamKills);
 
   private:
     bool		doEndShot(int index, bool isHit, float* pos);

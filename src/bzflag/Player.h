@@ -50,9 +50,11 @@ class Player {
     void		getMuzzle(float*) const;
     short		getWins() const;
     short		getLosses() const;
+    short		getTeamKills() const;
     short		getScore() const;
     short		getLocalWins() const;
     short		getLocalLosses() const;
+    short		getLocalTeamKills() const;
     const TimeKeeper&	getExplodeTime() const;
     const TimeKeeper&	getTeleportTime() const;
     short		getFromTeleporter() const;
@@ -94,8 +96,8 @@ class Player {
     void		setAngularVelocity(float);
     void		changeTeam(TeamColor);
     virtual void	setFlag(FlagId);
-    virtual void	changeScore(short deltaWins, short deltaLosses);
-    void		changeLocalScore(short deltaWins, short deltaLosses);
+    virtual void	changeScore(short deltaWins, short deltaLosses, short deltaTeamKills);
+    void		changeLocalScore(short deltaWins, short deltaLosses, short deltaTeamKills);
     void		setStatus(short);
     void		setExplode(const TimeKeeper&);
     void		setTeleport(const TimeKeeper&, short from, short to);
@@ -144,10 +146,12 @@ class Player {
     float		teleporterProximity;	// how close to a teleporter
     short		wins;			// number of kills
     short		losses;			// number of deaths
+    short		tks;			// number of teamkills
 
     // score of local player against this player
     short		localWins;		// local player won this many
     short		localLosses;		// local player lost this many
+    short		localTks;		// local player team killed this many
 
     // highly dynamic data
     PlayerState		state;
@@ -238,6 +242,11 @@ inline short		Player::getLosses() const
   return losses;
 }
 
+inline short		Player::getTeamKills() const
+{
+  return tks;
+}
+
 inline short		Player::getLocalWins() const
 {
   return localWins;
@@ -246,6 +255,11 @@ inline short		Player::getLocalWins() const
 inline short		Player::getLocalLosses() const
 {
   return localLosses;
+}
+
+inline short		Player::getLocalTeamKills() const
+{
+  return localTks;
 }
 
 inline short		Player::getScore() const
