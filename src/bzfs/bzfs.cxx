@@ -127,7 +127,7 @@ static TimeKeeper lastWorldParmChange;
 void sendMessage(int playerIndex, PlayerId targetPlayer, const char *message);
 
 void removePlayer(int playerIndex, const char *reason, bool notify=true);
-void resetFlag(int flagIndex);
+void resetFlag(FlagInfo &flag);
 static void dropFlag(int playerIndex, float pos[3]);
 static void dropAssignedFlag(int playerIndex);
 
@@ -1192,7 +1192,7 @@ static bool defineWorld()
   }
   numFlagsInAir = 0;
   for (i = 0; i < numFlags; i++)
-    resetFlag(i);
+    resetFlag(FlagInfo::flagList[i]);
 
   return true;
 }
@@ -1747,7 +1747,7 @@ static void addPlayer(int playerIndex)
 	  && FlagInfo::flagList[flagid].flag.status == FlagNoExist) {
 	// reset those flags
 	for (int n = 0; n < clOptions->numTeamFlags[teamIndex]; n++)
-	  resetFlag(n+flagid);
+	  resetFlag(FlagInfo::flagList[n+flagid]);
       }
     }
   }
@@ -1810,38 +1810,33 @@ static void addPlayer(int playerIndex)
 }
 
 
-void resetFlag(int flagIndex)
+void resetFlag(FlagInfo &flag)
 {
   // NOTE -- must not be called until world is defined
   assert(world != NULL);
 
-  if (flagIndex < 0) {
-    // invalid flag
-    return;
-  }
   float flagHeight = BZDB.eval(StateDatabase::BZDB_FLAGHEIGHT);
   float baseSize = BZDB.eval(StateDatabase::BZDB_BASESIZE);
-  FlagInfo *pFlagInfo = &FlagInfo::flagList[flagIndex];
 
   // reposition flag
   float flagPos[3] = {0.0f, 0.0f, 0.0f};
 
-  int teamIndex = pFlagInfo->teamIndex();
+  int teamIndex = flag.teamIndex();
   if ((teamIndex >= ::RedTeam) &&  (teamIndex <= ::PurpleTeam)
       && (bases.find(teamIndex) != bases.end())) {
     TeamBases &teamBases = bases[teamIndex];
-    const TeamBase &base = teamBases.getRandomBase( flagIndex );
+    const TeamBase &base = teamBases.getRandomBase(flag.getIndex());
     flagPos[0] = base.position[0];
     flagPos[1] = base.position[1];
     flagPos[2] = base.position[2] + base.size[2];
   } else {
     // random position (not in a building)
     float r = BZDB.eval(StateDatabase::BZDB_TANKRADIUS);
-    if (pFlagInfo->flag.type == Flags::Obesity)
+    if (flag.flag.type == Flags::Obesity)
       r *= 2.0f * BZDB.eval(StateDatabase::BZDB_OBESEFACTOR);
     const Obstacle *obj;
     float worldSize = BZDB.eval(StateDatabase::BZDB_WORLDSIZE);
-    if (!world->getZonePoint(std::string(pFlagInfo->flag.type->flagAbbv),
+    if (!world->getZonePoint(std::string(flag.flag.type->flagAbbv),
 			     flagPos)) {
       flagPos[0] = (worldSize - baseSize) * ((float)bzfrand() - 0.5f);
       flagPos[1] = (worldSize - baseSize) * ((float)bzfrand() - 0.5f);
@@ -1857,7 +1852,7 @@ void resetFlag(int flagIndex)
     int topmosttype = world->cylinderInBuilding(&obj, flagPos, r, flagHeight);
 
     while ((topmosttype != NOT_IN_BUILDING) || (flagPos[2] <= deadUnder)) {
-      if (world->getZonePoint(std::string(pFlagInfo->flag.type->flagAbbv),
+      if (world->getZonePoint(std::string(flag.flag.type->flagAbbv),
 			      flagPos)
 	  && (flagPos[2] > deadUnder)) {
         // if you got a related flag zone specified, always use
@@ -1885,23 +1880,23 @@ void resetFlag(int flagIndex)
   }
 
   // reset a flag's info
-  pFlagInfo->resetFlag(flagPos);
+  flag.resetFlag(flagPos);
 
   // required flags mustn't just disappear
-  if (pFlagInfo->required) {
+  if (flag.required) {
     if (teamIndex != ::NoTeam) {
       if (team[teamIndex].team.size == 0)
-	pFlagInfo->flag.status = FlagNoExist;
+	flag.flag.status = FlagNoExist;
       else
-	pFlagInfo->flag.status = FlagOnGround;
+	flag.flag.status = FlagOnGround;
     } else {
       // flag in now entering game
       numFlagsInAir++;
-      pFlagInfo->addFlag();
+      flag.addFlag();
     }
   }
 
-  sendFlagUpdate(*pFlagInfo);
+  sendFlagUpdate(flag);
 }
 
 
@@ -1914,39 +1909,41 @@ void zapFlag(int flagIndex)
     return;
   }
 
+  FlagInfo &flag = FlagInfo::flagList[flagIndex];
   // see if someone had grabbed flag.  tell 'em to drop it.
-  const int playerIndex = FlagInfo::flagList[flagIndex].player;
+  const int playerIndex = flag.player;
   if (playerIndex != -1) {
     GameKeeper::Player *playerData
       = GameKeeper::Player::getPlayerByIndex(playerIndex);
-    FlagInfo::flagList[flagIndex].player = -1;
-    FlagInfo::flagList[flagIndex].flag.status = FlagNoExist;
+    flag.player      = -1;
+    flag.flag.status = FlagNoExist;
     playerData->player.resetFlag();
 
-    void *buf, *bufStart = getDirectMessageBuffer();
-    buf = nboPackUByte(bufStart, playerIndex);
-    buf = FlagInfo::flagList[flagIndex].pack(buf);
+    void *bufStart = getDirectMessageBuffer();
+    void *buf      = nboPackUByte(bufStart, playerIndex);
+    buf            = flag.pack(buf);
     broadcastMessage(MsgDropFlag, (char*)buf-(char*)bufStart, bufStart);
   }
 
   // if flag was flying then it flies no more
-  if (FlagInfo::flagList[flagIndex].flag.status == FlagInAir ||
-      FlagInfo::flagList[flagIndex].flag.status == FlagComing ||
-      FlagInfo::flagList[flagIndex].flag.status == FlagGoing)
+  if (flag.flag.status == FlagInAir ||
+      flag.flag.status == FlagComing ||
+      flag.flag.status == FlagGoing)
     numFlagsInAir--;
 
   // reset flag status
-  resetFlag(flagIndex);
+  resetFlag(flag);
 }
 
 // try to get over a bug where extraneous flag are attached to a tank
 // not really found why, but this should fix
 // Should be called when we sure that tank does not hold any
 static void dropAssignedFlag(int playerIndex) {
-  for (int flagIndex  = 0; flagIndex < numFlags; flagIndex++)
-    if (FlagInfo::flagList[flagIndex].flag.status == FlagOnTank
-	&& FlagInfo::flagList[flagIndex].flag.owner == playerIndex)
-      resetFlag(flagIndex);
+  for (int flagIndex = 0; flagIndex < numFlags; flagIndex++) {
+    FlagInfo &flag = FlagInfo::flagList[flagIndex];
+    if (flag.flag.status == FlagOnTank && flag.flag.owner == playerIndex)
+      resetFlag(flag);
+  }
 } // dropAssignedFlag
 
 static void anointNewRabbit(int killerId = NoPlayer)
@@ -2668,7 +2665,9 @@ static void captureFlag(int playerIndex, TeamColor teamCaptured)
   int flagIndex = playerData->player.getFlag();
   if (flagIndex < 0)
     return;
-  int teamIndex = FlagInfo::flagList[flagIndex].teamIndex();
+  FlagInfo &flag = FlagInfo::flagList[flagIndex];
+
+  int teamIndex = flag.teamIndex();
   if (teamIndex == ::NoTeam)
     return;
 
@@ -2697,7 +2696,7 @@ static void captureFlag(int playerIndex, TeamColor teamCaptured)
 
   // player no longer has flag and put flag back at it's base
   playerData->player.resetFlag();
-  resetFlag(flagIndex);
+  resetFlag(flag);
 
   // send MsgCaptureFlag
   void *buf, *bufStart = getDirectMessageBuffer();
@@ -4383,18 +4382,19 @@ int main(int argc, char **argv)
     // if any flags were in the air, see if they've landed
     if (numFlagsInAir > 0) {
       for (i = 0; i < numFlags; i++) {
-	if (FlagInfo::flagList[i].flag.status == FlagInAir ||
-	    FlagInfo::flagList[i].flag.status == FlagComing) {
-	  if (FlagInfo::flagList[i].dropDone - tm <= 0.0f) {
-	    FlagInfo::flagList[i].flag.status = FlagOnGround;
+	FlagInfo &flag = FlagInfo::flagList[i];
+	if (flag.flag.status == FlagInAir ||
+	    flag.flag.status == FlagComing) {
+	  if (flag.dropDone - tm <= 0.0f) {
+	    flag.flag.status = FlagOnGround;
 	    numFlagsInAir--;
-	    sendFlagUpdate(FlagInfo::flagList[i]);
+	    sendFlagUpdate(flag);
 	  }
-	} else if (FlagInfo::flagList[i].flag.status == FlagGoing) {
-	  if (FlagInfo::flagList[i].dropDone - tm <= 0.0f) {
-	    FlagInfo::flagList[i].flag.status = FlagNoExist;
+	} else if (flag.flag.status == FlagGoing) {
+	  if (flag.dropDone - tm <= 0.0f) {
+	    flag.flag.status = FlagNoExist;
 	    numFlagsInAir--;
-	    resetFlag(i);
+	    resetFlag(flag);
 	  }
 	}
       }
