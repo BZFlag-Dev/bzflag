@@ -280,6 +280,9 @@ bool PNGImageFile::expand()
 
 bool PNGImageFile::expand()
 {
+  if (bitDepth == 8 && colorDepth != 3)
+    return true;
+ 
   unsigned char *pData = getLineBuffer();
 
   int width = getWidth();
