@@ -246,7 +246,7 @@ void FontManager::drawString(float x, float y, float z, int faceID, float size,
   // if the font is large enough, and the scaling factor
   // is not an integer, then turn on the max filtering.
   bool textureFiltering = false;
-  if ((size > 12.0f) && (fabsf(scale - floorf(scale)) > 0.001f)) {
+  if ((size > 12.0f) && (fabsf(scale - floorf(scale + 0.5f)) > 0.001f)) {
     textureFiltering = true;
     int texID = pFont->getTextureID();
     TextureManager& tm = TextureManager::instance();
