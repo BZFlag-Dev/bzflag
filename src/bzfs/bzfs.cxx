@@ -719,6 +719,8 @@ static void closeListServer()
   }
 }
 
+static void openListServer();
+
 static void readListServer()
 {
   ListServerLink& link = listServerLink;
@@ -726,13 +728,16 @@ static void readListServer()
     char    buf[256];
     recv(link.socket, buf, sizeof(buf), 0);
     closeListServer();
+    if (link.nextMessageType != ListServerLink::NONE)
+      // There was a pending request arrived after we write:
+      // we should redo all the stuff
+      openListServer();
   }
 }
 
 static void openListServer()
 {
   ListServerLink& link = listServerLink;
-  link.nextMessageType = ListServerLink::NONE;
 
   // start opening connection if not already doing so
   if (link.socket == NotConnected) {
@@ -788,6 +793,11 @@ static void openListServer()
 }
 
 
+// Sending message to list server foresee 3 stages
+// 1. Connection
+// 2. Writing
+// 3. Reading & closing
+// These phases are started via sendMessageToListServer
 static void sendMessageToListServer(ListServerLink::MessageType type)
 {
   // ignore if not publicizing
@@ -796,11 +806,14 @@ static void sendMessageToListServer(ListServerLink::MessageType type)
 
   // start opening connections if not already doing so
   if (listServerLinksCount) {
-    openListServer();
 
-    // record next message to send.  note that each message overrides
-    // any other message.
     ListServerLink& link = listServerLink;
+
+    // Open network connection only if closed
+    if (link.socket == NotConnected)
+      openListServer();
+
+    // record next message to send.
     link.nextMessageType = type;
   }
 }
