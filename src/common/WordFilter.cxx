@@ -182,7 +182,7 @@ bool WordFilter::aggressiveFilter(char *input) const
 
 	    /* we are in the middle of a word.. see if we can match a prefix before this */
 	    bool foundit =  false;
-	    for (ExpCompareSet::iterator j = prefixes.begin();
+	    for (ExpCompareSet::const_iterator j = prefixes.begin();
 		 j != prefixes.end(); ++j) {
 	      if (regexec(j->compiled, sInput.c_str(), 1, match, 0) == 0) {
 
@@ -217,7 +217,7 @@ bool WordFilter::aggressiveFilter(char *input) const
 
 	    /* we are at the start of a word, but not at the end, try to get to the end */
 	    bool foundit = false;
-	    for (ExpCompareSet::iterator j = suffixes.begin();
+	    for (ExpCompareSet::const_iterator j = suffixes.begin();
 		 j != suffixes.end(); ++j) {
 //std::cout << "checking " << j->word << " against [" << input + endOffset << "]" << std::endl;
 
