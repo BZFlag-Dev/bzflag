@@ -1491,6 +1491,23 @@ void handleVetoCmd(int t, const char * /*message*/)
   return;
 }
 
+void handleViewReportsCmd(int t, const char * /*message*/)
+{
+  std::string line;
+  if (!hasPerm(t, PlayerAccessInfo::viewReports)) {
+    sendMessage(ServerPlayer, t, "You do not have permission to run the viewreports command");
+    return;
+  }
+  if (clOptions->reportFile.size() == 0 && clOptions->reportPipe.size() == 0) {
+    line = "The /report command is disabled on this server or there are no reports filed.";
+      sendMessage(ServerPlayer, t, line.c_str(), true);
+  } 
+  std::ifstream ifs(clOptions->reportFile.c_str(), std::ios::in);
+  while (std::getline(ifs, line))
+     sendMessage(ServerPlayer, t, line.c_str(), true);
+}
+ 
+
 void handleClientqueryCmd(int t, const char * /*message*/)
 {
   DEBUG2("Clientquery requested by %s [%d]\n", player[t].callSign, t);

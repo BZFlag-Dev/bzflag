@@ -3657,6 +3657,9 @@ static void parseCommand(const char *message, int t)
   } else if (strncmp(message + 1, "veto", 4) == 0) {
     handleVetoCmd(t, message);
 
+  } else if (strncmp(message + 1, "viewreports", 11) == 0) {
+    handleViewReportsCmd(t, message);
+
   } else if (strncmp(message + 1, "clientquery", 11) == 0) {
     handleClientqueryCmd(t, message);
 
