@@ -1,4 +1,4 @@
-INCLUDES = -I../bzflag
+INCLUDES = -I@top_srcdir@/src/bzflag
 
 MAINTAINERCLEANFILES = \
 	ServerLink.cxx \
@@ -39,11 +39,8 @@ bzadmin_SOURCES = \
 noinst_HEADERS = \
 	buildDate.cxx
 
-# ugly hack
-#all-local: ServerLink.cxx
-#
-ServerLink.cxx: ../bzflag/ServerLink.cxx
-	cp -a ../bzflag/ServerLink.cxx .
+ServerLink.cxx: @top_srcdir@/src/bzflag/ServerLink.cxx
+	cp -a @top_srcdir@/src/bzflag/ServerLink.cxx .
 
 LDADD = ../net/libNet.a ../common/libCommon.a @CURSES_LIB@
 
