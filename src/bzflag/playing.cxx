@@ -1965,9 +1965,9 @@ static std::string cmdDrop(const std::string&, const CommandManager::ArgList& ar
   if (args.size() != 0)
     return "usage: drop";
   if (myTank != NULL) {
-    FlagDesc* flag = myTank->getFlag();
+    FlagType* flag = myTank->getFlag();
     if (flag != Flags::Null && !myTank->isPaused() &&
-        flag->flagType != FlagSticky &&
+        flag->endurance != FlagSticky &&
         !(flag == Flags::PhantomZone && myTank->isFlagActive()) &&
 	!(flag == Flags::OscillationOverthruster &&
 	myTank->getLocation() == LocalPlayer::InBuilding)) {
@@ -2666,7 +2666,7 @@ static void		updateHighScores()
   }
 }
 
-static void		updateFlag(FlagDesc* flag)
+static void		updateFlag(FlagType* flag)
 {
   if (flag == Flags::Null) {
     hud->setColor(1.0f, 0.625f, 0.125f);
@@ -2675,7 +2675,7 @@ static void		updateFlag(FlagDesc* flag)
   else {
     const float* color = flag->getColor();
     hud->setColor(color[0], color[1], color[2]);
-    hud->setAlert(2, flag->flagName, 3.0f, flag->flagType == FlagSticky);
+    hud->setAlert(2, flag->flagName, 3.0f, flag->endurance == FlagSticky);
   }
 
   if (BZDB->isTrue("displayFlagHelp"))
@@ -2691,7 +2691,7 @@ static void		updateFlag(FlagDesc* flag)
 			flag->flagTeam != myTank->getTeam() &&
 			World::getWorld()->allowTeamFlags());
   hud->setMarker(1, World::getWorld()->allowAntidote() &&
-			flag != Flags::Null && flag->flagType == FlagSticky);
+			flag != Flags::Null && flag->endurance == FlagSticky);
 }
 
 void			notifyBzfKeyMapChanged()
@@ -3077,7 +3077,7 @@ static void		handleServerMessage(bool human, uint16_t code,
 	  playerStr += ColorStrings[WhiteColor];
 
 	  // Give more informative kill messages
-	  FlagDesc* shotFlag = shot->getFlag();
+	  FlagType* shotFlag = shot->getFlag();
 	  if (shotFlag == Flags::Laser) {
 	    message += "was fried by ";
 	    message += playerStr;
@@ -3165,7 +3165,7 @@ static void		handleServerMessage(bool human, uint16_t code,
 	}
 	else {
 	  // grabbed flag
-	  playLocalSound(myTank->getFlag()->flagType != FlagSticky ?
+	  playLocalSound(myTank->getFlag()->endurance != FlagSticky ?
 	      SFX_GRAB_FLAG : SFX_GRAB_BAD);
 	  updateFlag(myTank->getFlag());
 	}
@@ -3177,7 +3177,7 @@ static void		handleServerMessage(bool human, uint16_t code,
 	playLocalSound(SFX_ALERT);
       }
       else {
-	FlagDesc* fd = world->getFlag(flagIndex).desc;
+	FlagType* fd = world->getFlag(flagIndex).desc;
 	if ( fd->flagTeam != NoTeam
 	     && fd->flagTeam != tank->getTeam()
 	     && ((tank && (tank->getTeam() == myTank->getTeam())))
@@ -3331,13 +3331,13 @@ static void		handleServerMessage(bool human, uint16_t code,
 
       if (human) {
         const float* pos = firingInfo.shot.pos;
-        if (firingInfo.flag == Flags::ShockWave)
+        if (firingInfo.flagType == Flags::ShockWave)
           playWorldSound(SFX_SHOCK, pos[0], pos[1], pos[2]);
-        else if (firingInfo.flag == Flags::Laser)
+        else if (firingInfo.flagType == Flags::Laser)
           playWorldSound(SFX_LASER, pos[0], pos[1], pos[2]);
-        else if (firingInfo.flag == Flags::GuidedMissile)
+        else if (firingInfo.flagType == Flags::GuidedMissile)
           playWorldSound(SFX_MISSILE, pos[0], pos[1], pos[2]);
-        else if (firingInfo.flag == Flags::Thief)
+        else if (firingInfo.flagType == Flags::Thief)
           playWorldSound(SFX_THIEF, pos[0], pos[1], pos[2]);
         else
           playWorldSound(SFX_FIRE, pos[0], pos[1], pos[2]);
@@ -4092,7 +4092,7 @@ static bool		gotBlowedUp(BaseLocalPlayer* tank,
 	  shotId = hit->getShotId();
 
   // you can't take it with you
-  const FlagDesc* flag = tank->getFlag();
+  const FlagType* flag = tank->getFlag();
   if (flag != Flags::Null) {
     // tell other players I've dropped my flag
     lookupServer(tank)->sendDropFlag(tank->getPosition());
@@ -4192,7 +4192,7 @@ static void		checkEnvironment()
   // skip this if i'm dead or paused
   if (!myTank->isAlive() || myTank->isPaused()) return;
 
-  FlagDesc* flagd = myTank->getFlag();
+  FlagType* flagd = myTank->getFlag();
   if (flagd->flagTeam != NoTeam) {
     // have I captured a flag?
     TeamColor base = world->whoseBase(myTank->getPosition());
@@ -4247,7 +4247,7 @@ static void		checkEnvironment()
       // Set HUD alert about what the flag is
       message += world->getFlag(closestFlag).desc->flagName;
       hud->setAlert(2, message.c_str(), 0.5f,
-		    world->getFlag(closestFlag).desc->flagType == FlagSticky);
+		    world->getFlag(closestFlag).desc->endurance == FlagSticky);
     }
   }
 
@@ -4273,7 +4273,7 @@ static void		checkEnvironment()
     if (hit->isStoppedByHit())
       serverLink->sendEndShot(hit->getPlayer(), hit->getShotId(), 1);
 
-    FlagDesc* killerFlag = hit->getFlag();
+    FlagType* killerFlag = hit->getFlag();
     bool stopShot;
 
     if (killerFlag == Flags::Thief) {
@@ -4666,7 +4666,7 @@ static void		checkEnvironment(RobotPlayer* tank)
     if (hit->isStoppedByHit())
       lookupServer(tank)->sendEndShot(hit->getPlayer(), hit->getShotId(), 1);
 
-    FlagDesc* killerFlag = hit->getFlag();
+    FlagType* killerFlag = hit->getFlag();
     bool stopShot;
 
     if (killerFlag == Flags::Thief) {
@@ -4945,13 +4945,13 @@ static bool negotiateFlags(ServerLink* serverLink)
   uint16_t code, len;
   char msg[MaxPacketLen];
   char *buf = msg;
-  std::map<std::string, FlagDesc*>::iterator i;
+  std::map<std::string, FlagType*>::iterator i;
 
   /* Send MsgNegotiateFlags to the server with
    * the abbreviations for all the flags we support.
    */
-  for (i = FlagDesc::getFlagMap().begin();
-       i != FlagDesc::getFlagMap().end(); i++) {
+  for (i = FlagType::getFlagMap().begin();
+       i != FlagType::getFlagMap().end(); i++) {
     buf = (char*) i->second->pack(buf);
   }
   serverLink->send( MsgNegotiateFlags, buf - msg, msg );
@@ -4974,7 +4974,7 @@ static bool negotiateFlags(ServerLink* serverLink)
     buf = msg;
 
     for (i=0; i<numFlags; i++) {
-      /* We can't use FlagDesc::unpack() here, since it counts on the
+      /* We can't use FlagType::unpack() here, since it counts on the
        * flags existing in our flag database.
        */
       if (i)
@@ -5709,7 +5709,7 @@ static void		playingLoop()
       pauseCountdown -= dt;
       if (pauseCountdown <= 0.0f) {
 	// okay, now we pause.  first drop any team flag we may have.
-	const FlagDesc* flagd = myTank->getFlag();
+	const FlagType* flagd = myTank->getFlag();
 	if (flagd->flagTeam != NoTeam)
 	  serverLink->sendDropFlag(myTank->getPosition());
 

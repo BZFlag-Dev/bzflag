@@ -61,8 +61,8 @@ struct CmdLineOptions
     debug(0)
   {
     int i;
-    for (std::map<std::string, FlagDesc*>::iterator it = FlagDesc::getFlagMap().begin();
-	 it != FlagDesc::getFlagMap().end(); ++it) {
+    for (std::map<std::string, FlagType*>::iterator it = FlagType::getFlagMap().begin();
+	 it != FlagType::getFlagMap().end(); ++it) {
 	flagCount[it->second] = 0;
 	flagLimit[it->second] = -1;
 	flagDisallowed[it->second] = false;
@@ -121,9 +121,9 @@ struct CmdLineOptions
   bool			publicizedAddressGiven;
 
   uint16_t		maxTeam[NumTeams];
-  std::map<FlagDesc*,int> flagCount;
-  std::map<FlagDesc*,int> flagLimit; // # shots allowed / flag
-  std::map<FlagDesc*,bool> flagDisallowed;
+  std::map<FlagType*,int> flagCount;
+  std::map<FlagType*,int> flagLimit; // # shots allowed / flag
+  std::map<FlagType*,bool> flagDisallowed;
 
   AccessControlList	acl;
   TextChunkManager	textChunker;

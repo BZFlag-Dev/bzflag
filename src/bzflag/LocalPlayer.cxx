@@ -206,7 +206,7 @@ void			LocalPlayer::doUpdate(float dt)
 
   // drop bad flag if timeout has expired
   if (!isPaused() && dt > 0.0f && World::getWorld()->allowShakeTimeout() &&
-      getFlag() != Flags::Null && getFlag()->flagType == FlagSticky &&
+      getFlag() != Flags::Null && getFlag()->endurance == FlagSticky &&
       flagShakingTime > 0.0f) {
     flagShakingTime -= dt;
     if (flagShakingTime <= 0.0f) {
@@ -857,7 +857,7 @@ bool			LocalPlayer::fireShot()
   // prepare shot
   FiringInfo firingInfo(*this, i + getSalt());
   firingInfo.shot.team = getTeam();
-  if (firingInfo.flag == Flags::ShockWave) {
+  if (firingInfo.flagType == Flags::ShockWave) {
     // move shot origin under tank and make it stationary
     const float* pos = getPosition();
     firingInfo.shot.pos[0] = pos[0];
@@ -878,13 +878,13 @@ bool			LocalPlayer::fireShot()
   shots[i] = new LocalShotPath(firingInfo);
 
   ServerLink::getServer()->sendBeginShot(firingInfo);
-  if (firingInfo.flag == Flags::ShockWave)
+  if (firingInfo.flagType == Flags::ShockWave)
     playLocalSound(SFX_SHOCK);
-  else if (firingInfo.flag == Flags::Laser)
+  else if (firingInfo.flagType == Flags::Laser)
     playLocalSound(SFX_LASER);
-  else if (firingInfo.flag == Flags::GuidedMissile)
+  else if (firingInfo.flagType == Flags::GuidedMissile)
     playLocalSound(SFX_MISSILE);
-  else if (firingInfo.flag == Flags::Thief)
+  else if (firingInfo.flagType == Flags::Thief)
     playLocalSound(SFX_THIEF);
   else
     playLocalSound(SFX_FIRE);
@@ -1040,7 +1040,7 @@ bool			LocalPlayer::checkHit(const Player* source,
 
     // short circuit test if shot can't possibly hit.
     // only superbullet or shockwave can kill zoned dude
-    const FlagDesc* shotFlag = shot->getFlag();
+    const FlagType* shotFlag = shot->getFlag();
     if (getFlag() == Flags::PhantomZone && isFlagActive() &&
 		shotFlag != Flags::SuperBullet && shotFlag != Flags::ShockWave)
       continue;
@@ -1068,13 +1068,13 @@ bool			LocalPlayer::checkHit(const Player* source,
   return goodHit;
 }
 
-void			LocalPlayer::setFlag(FlagDesc* flag)
+void			LocalPlayer::setFlag(FlagType* flag)
 {
   Player::setFlag(flag);
 
   float worldSize = BZDB->eval(StateDatabase::BZDB_WORLDSIZE);
   // if it's bad then reset countdowns and set antidote flag
-  if (getFlag() != Flags::Null && getFlag()->flagType == FlagSticky) {
+  if (getFlag() != Flags::Null && getFlag()->endurance == FlagSticky) {
     if (World::getWorld()->allowShakeTimeout())
       flagShakingTime = World::getWorld()->getFlagShakeTimeout();
     if (World::getWorld()->allowShakeWins())

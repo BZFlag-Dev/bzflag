@@ -63,7 +63,7 @@ TeamInfo team[NumTeams];
 int numFlags;
 static int numFlagsInAir;
 // types of extra flags allowed
-std::vector<FlagDesc*> allowedFlags;
+std::vector<FlagType*> allowedFlags;
 bool done = false;
 // true if hit time/score limit
  bool gameOver = true;
@@ -369,7 +369,7 @@ class CustomWeapon : public WorldFileObstacle {
   protected:
     float initdelay;
     std::vector<float> delay;
-    FlagDesc *type;
+    FlagType *type;
     static TimeKeeper sync;
 };
 
@@ -3455,7 +3455,7 @@ static void grabFlag(int playerIndex, int flagIndex)
   buf = flag[flagIndex].flag.pack(buf);
   broadcastMessage(MsgGrabFlag, (char*)buf-(char*)bufStart, bufStart);
 
-  std::vector<FlagDesc*> *pFH = &player[playerIndex].flagHistory;
+  std::vector<FlagType*> *pFH = &player[playerIndex].flagHistory;
   if (pFH->size() >= MAX_FLAG_HISTORY)
     pFH->erase(pFH->begin());
   pFH->push_back(flag[flagIndex].flag.desc );
@@ -3669,15 +3669,15 @@ static void shotFired(int playerIndex, void *buf, int len)
 
   // make sure the shooter flag is a valid index to prevent segfaulting later
   if (shooter.flag < 0) {
-    firingInfo.flag = Flags::Null;
+    firingInfo.flagType = Flags::Null;
     repack = true;
   }
 
   // verify player flag
-  if ((firingInfo.flag != Flags::Null) && (firingInfo.flag != flag[shooter.flag].flag.desc)) {
+  if ((firingInfo.flagType != Flags::Null) && (firingInfo.flagType != flag[shooter.flag].flag.desc)) {
     DEBUG2("Player %s [%d] shot flag mismatch %s %s\n", shooter.callSign,
-	   playerIndex, firingInfo.flag->flagAbbv, flag[shooter.flag].flag.desc->flagAbbv);
-    firingInfo.flag = Flags::Null;
+	   playerIndex, firingInfo.flagType->flagAbbv, flag[shooter.flag].flag.desc->flagAbbv);
+    firingInfo.flagType = Flags::Null;
     repack = true;
   }
 
@@ -3691,17 +3691,17 @@ static void shotFired(int playerIndex, void *buf, int len)
   float shotSpeed = BZDB->eval(StateDatabase::BZDB_SHOTSPEED);
   float tankSpeed = BZDB->eval(StateDatabase::BZDB_TANKSPEED);
   float lifetime = BZDB->eval(StateDatabase::BZDB_RELOADTIME);
-  if (firingInfo.flag == Flags::ShockWave) {
+  if (firingInfo.flagType == Flags::ShockWave) {
       shotSpeed = 0.0f;
       tankSpeed = 0.0f;
   }
-  else if (firingInfo.flag == Flags::Velocity) {
+  else if (firingInfo.flagType == Flags::Velocity) {
       tankSpeed *= BZDB->eval(StateDatabase::BZDB_VELOCITYAD);
   }
-  else if (firingInfo.flag == Flags::Thief) {
+  else if (firingInfo.flagType == Flags::Thief) {
       tankSpeed *= BZDB->eval(StateDatabase::BZDB_THIEFVELAD);
   }
-  else if ((firingInfo.flag == Flags::Burrow) && (firingInfo.shot.pos[2] < BZDB->eval(StateDatabase::BZDB_MUZZLEHEIGHT))) {
+  else if ((firingInfo.flagType == Flags::Burrow) && (firingInfo.shot.pos[2] < BZDB->eval(StateDatabase::BZDB_MUZZLEHEIGHT))) {
       tankSpeed *= BZDB->eval(StateDatabase::BZDB_BURROWSPEEDAD);
   }
   else {
@@ -3734,7 +3734,7 @@ static void shotFired(int playerIndex, void *buf, int len)
   float dz = shooter.lastState.pos[2] - shot.pos[2];
 
   float front = BZDB->eval(StateDatabase::BZDB_MUZZLEFRONT);
-  if (firingInfo.flag == Flags::Obesity)
+  if (firingInfo.flagType == Flags::Obesity)
     front *= BZDB->eval(StateDatabase::BZDB_OBESEFACTOR);
 
   float delta = dx*dx + dy*dy + dz*dz;
@@ -3997,24 +3997,24 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
 
     case MsgNegotiateFlags: {
 	void *bufStart;
-	std::map<std::string,FlagDesc*>::iterator it;
-	std::set<FlagDesc*>::iterator m_it;
-	std::map<FlagDesc*,bool> hasFlag;
-	std::set<FlagDesc*> missingFlags;
+	std::map<std::string,FlagType*>::iterator it;
+	std::set<FlagType*>::iterator m_it;
+	std::map<FlagType*,bool> hasFlag;
+	std::set<FlagType*> missingFlags;
 	int i;
 	unsigned short numClientFlags = len/2;
 
 	/* Unpack incoming message containing the list of flags our client supports */
 	for (i = 0; i < numClientFlags; i++) {
-		FlagDesc *fDesc;
-		buf = FlagDesc::unpack(buf, fDesc);
+		FlagType *fDesc;
+		buf = FlagType::unpack(buf, fDesc);
 		if (fDesc != Flags::Null)
 		  hasFlag[fDesc] = true;
 	}
 
 	/* Compare them to the flags this game might need, generating a list of missing flags */
-	for (it = FlagDesc::getFlagMap().begin();
-	     it != FlagDesc::getFlagMap().end(); ++it) {
+	for (it = FlagType::getFlagMap().begin();
+	     it != FlagType::getFlagMap().end(); ++it) {
 		if (!hasFlag[it->second]) {
 		   if (clOptions->flagCount[it->second] > 0)
 		     missingFlags.insert(it->second);

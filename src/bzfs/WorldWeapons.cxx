@@ -42,7 +42,7 @@ void WorldWeapons::fire()
       void *buf, *bufStart = getDirectMessageBuffer();
 
       FiringInfo firingInfo;
-      firingInfo.flag = (FlagDesc*)w->type;
+      firingInfo.flagType = (FlagType*)w->type;
       firingInfo.lifetime = BZDB->eval(StateDatabase::BZDB_RELOADTIME);
       firingInfo.shot.player = ServerPlayer;
       memmove(firingInfo.shot.pos, w->origin, 3 * sizeof(float));
@@ -69,7 +69,7 @@ void WorldWeapons::fire()
   }
 }
 
-void WorldWeapons::add(const FlagDesc *type, const float *origin, float direction, float initdelay, const std::vector<float> &delay, TimeKeeper &sync)
+void WorldWeapons::add(const FlagType *type, const float *origin, float direction, float initdelay, const std::vector<float> &delay, TimeKeeper &sync)
 {
   Weapon *w = new Weapon();
   w->type = type;
@@ -79,7 +79,7 @@ void WorldWeapons::add(const FlagDesc *type, const float *origin, float directio
   w->nextTime += initdelay;
   w->nextDelay = 0;
   w->delay = delay;
- 
+
   weapons.push_back(w);
 }
 

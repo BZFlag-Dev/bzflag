@@ -42,7 +42,7 @@ void			RemotePlayer::addShot(const FiringInfo& info)
   shots[shotNum] = newShot;
   // Update tanks position and set dead reckoning for better lag handling
   // shot origin is center of tank for shockwave
-  if (info.flag == Flags::ShockWave) {
+  if (info.flagType == Flags::ShockWave) {
     newpos[0] = info.shot.pos[0];
     newpos[1] = info.shot.pos[1];
     newpos[2] = info.shot.pos[2];
@@ -50,9 +50,9 @@ void			RemotePlayer::addShot(const FiringInfo& info)
   // shot origin is muzzle for other shots
   else {
 	  float front = BZDB->eval(StateDatabase::BZDB_MUZZLEFRONT);
-    if (info.flag == Flags::Obesity) front *= BZDB->eval(StateDatabase::BZDB_OBESEFACTOR);
-    else if (info.flag == Flags::Tiny) front *= BZDB->eval(StateDatabase::BZDB_TINYFACTOR);
-    else if (info.flag == Flags::Thief) front *= BZDB->eval(StateDatabase::BZDB_THIEFTINYFACTOR);
+    if (info.flagType == Flags::Obesity) front *= BZDB->eval(StateDatabase::BZDB_OBESEFACTOR);
+    else if (info.flagType == Flags::Tiny) front *= BZDB->eval(StateDatabase::BZDB_TINYFACTOR);
+    else if (info.flagType == Flags::Thief) front *= BZDB->eval(StateDatabase::BZDB_THIEFTINYFACTOR);
     newpos[0] = info.shot.pos[0]-(front * f[0]);
     newpos[1] = info.shot.pos[1]-(front * f[1]);
     newpos[2] = info.shot.pos[2]-(front * f[2])-BZDB->eval(StateDatabase::BZDB_MUZZLEHEIGHT);

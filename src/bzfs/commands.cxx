@@ -411,11 +411,11 @@ void handleFlaghistoryCmd(int t, const char *)
     if (player[i].state > PlayerInLimbo && player[i].team != ObserverTeam) {
       char flag[MessageLen];
       sprintf(reply,"%-16s : ",player[i].callSign );
-      std::vector<FlagDesc*>::iterator fhIt = player[i].flagHistory.begin();
+      std::vector<FlagType*>::iterator fhIt = player[i].flagHistory.begin();
 
       while (fhIt != player[i].flagHistory.end()) {
-	FlagDesc * fDesc = (FlagDesc*)(*fhIt);
-	if (fDesc->flagType == FlagNormal)
+	FlagType * fDesc = (FlagType*)(*fhIt);
+	if (fDesc->endurance == FlagNormal)
 	  sprintf(flag, "(*%c) ", fDesc->flagName[0] );
 	else
 	  sprintf(flag, "(%s) ", fDesc->flagAbbv );

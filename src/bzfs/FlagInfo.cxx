@@ -28,7 +28,7 @@
 // flags list
 FlagInfo *flag = NULL;
 
-bool setRequiredFlag(FlagInfo& flag, FlagDesc *desc)
+bool setRequiredFlag(FlagInfo& flag, FlagType *desc)
 {
   flag.required = true;
   flag.flag.desc = desc;

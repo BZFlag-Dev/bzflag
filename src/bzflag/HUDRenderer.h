@@ -74,7 +74,7 @@ class HUDRenderer {
     void		setDrawTime(float drawTimeInseconds);
     void		setAlert(int num, const char* string, float duration,
 						bool warning = false);
-    void		setFlagHelp(FlagDesc* desc, float duration);
+    void		setFlagHelp(FlagType* desc, float duration);
     void		initCracks();
     void		setCracks(bool showCracks);
     void		setMarker(int index, bool = true);

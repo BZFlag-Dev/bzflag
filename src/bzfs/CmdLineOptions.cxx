@@ -35,7 +35,7 @@ extern std::string groupsFile;
 extern std::string userDatabaseFile;
 extern uint16_t softmaxPlayers;
 extern uint16_t maxPlayers;
-extern std::vector<FlagDesc*> allowedFlags;
+extern std::vector<FlagType*> allowedFlags;
 
 const char *usageString =
 "[-a <vel> <rot>] "
@@ -289,7 +289,7 @@ void extraUsage(const char *pname)
   printVersion();
   printf("\nUsage: %s %s\n", pname, usageString);
   printf("\n%s\nFlag codes:\n", extraUsageString);
-  for (std::map<std::string, FlagDesc*>::iterator it = FlagDesc::getFlagMap().begin(); it != FlagDesc::getFlagMap().end(); ++it)
+  for (std::map<std::string, FlagType*>::iterator it = FlagType::getFlagMap().begin(); it != FlagType::getFlagMap().end(); ++it)
     printf("\t%2.2s %s\n", (*it->second).flagAbbv, (*it->second).flagName);
   exit(0);
 }
@@ -446,7 +446,7 @@ void parse(int argc, char **argv, CmdLineOptions &options)
 	  options.flagDisallowed[*it] = true;
       }
       else {
-	FlagDesc* fDesc = Flag::getDescFromAbbreviation(argv[i]);
+	FlagType* fDesc = Flag::getDescFromAbbreviation(argv[i]);
 	if (fDesc == Flags::Null) {
 	  fprintf(stderr, "invalid flag \"%s\"\n", argv[i]);
 	  usage(argv[0]);
@@ -473,7 +473,7 @@ void parse(int argc, char **argv, CmdLineOptions &options)
 	for (FlagSet::iterator it = goodFlags.begin(); it != goodFlags.end(); it++)
 	  options.flagCount[*it] += rptCnt;
       } else {
-	FlagDesc *fDesc = Flag::getDescFromAbbreviation(argv[i]);
+	FlagType *fDesc = Flag::getDescFromAbbreviation(argv[i]);
 	if (fDesc == Flags::Null) {
 	  fprintf(stderr, "invalid flag \"%s\"\n", argv[i]);
 	  usage(argv[0]);
@@ -724,7 +724,7 @@ void parse(int argc, char **argv, CmdLineOptions &options)
 	usage(argv[0]);
       } else {
 	i++;
-	FlagDesc *fDesc = Flag::getDescFromAbbreviation(argv[i]);
+	FlagType *fDesc = Flag::getDescFromAbbreviation(argv[i]);
 	if (fDesc == Flags::Null) {
 	  fprintf(stderr, "invalid flag \"%s\"\n", argv[i]);
 	  usage(argv[0]);
@@ -975,7 +975,7 @@ void parse(int argc, char **argv, CmdLineOptions &options)
   // make table of allowed extra flags
   if (options.numExtraFlags > 0) {
     // now count how many aren't disallowed
-    for (std::map<std::string,FlagDesc*>::iterator it = FlagDesc::getFlagMap().begin(); it != FlagDesc::getFlagMap().end(); ++it)
+    for (std::map<std::string,FlagType*>::iterator it = FlagType::getFlagMap().begin(); it != FlagType::getFlagMap().end(); ++it)
       if (!options.flagDisallowed[it->second])
 	options.numAllowedFlags++;
 
@@ -987,8 +987,8 @@ void parse(int argc, char **argv, CmdLineOptions &options)
     // otherwise make table of allowed flags
     else {
       allowedFlags.clear();
-      for (std::map<std::string,FlagDesc*>::iterator it = FlagDesc::getFlagMap().begin(); it != FlagDesc::getFlagMap().end(); ++it) {
-	FlagDesc *fDesc = it->second;
+      for (std::map<std::string,FlagType*>::iterator it = FlagType::getFlagMap().begin(); it != FlagType::getFlagMap().end(); ++it) {
+	FlagType *fDesc = it->second;
 	if ((fDesc == Flags::Null) || (fDesc->flagTeam != ::NoTeam))
 	  continue;
 	if (!options.flagDisallowed[it->second])
@@ -1003,8 +1003,8 @@ void parse(int argc, char **argv, CmdLineOptions &options)
     // rogues don't get a flag
     numFlags += CtfTeams - 1;
   }
-  for (std::map<std::string, FlagDesc*>::iterator it = FlagDesc::getFlagMap().begin();
-       it != FlagDesc::getFlagMap().end(); ++it) {
+  for (std::map<std::string, FlagType*>::iterator it = FlagType::getFlagMap().begin();
+       it != FlagType::getFlagMap().end(); ++it) {
     numFlags += options.flagCount[it->second];
   }
 
@@ -1050,8 +1050,8 @@ void parse(int argc, char **argv, CmdLineOptions &options)
   }
 
 
-  for (std::map<std::string, FlagDesc*>::iterator it2 = FlagDesc::getFlagMap().begin(); it2 != FlagDesc::getFlagMap().end(); ++it2) {
-    FlagDesc *fDesc = it2->second;
+  for (std::map<std::string, FlagType*>::iterator it2 = FlagType::getFlagMap().begin(); it2 != FlagType::getFlagMap().end(); ++it2) {
+    FlagType *fDesc = it2->second;
 
     if ((fDesc != Flags::Null) && (fDesc->flagTeam == NoTeam)) {
       if (options.flagCount[it2->second] > 0) {

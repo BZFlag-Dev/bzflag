@@ -38,7 +38,7 @@ Player::Player(const PlayerId& _id, TeamColor _team,
 				id(_id),
 				team(_team),
 				type(_type),
-				flag(Flags::Null),
+				flagType(Flags::Null),
 				fromTeleporter(0),
 				toTeleporter(0),
 				teleporterProximity(0.0f),
@@ -91,9 +91,9 @@ Player::~Player()
 float			Player::getRadius() const
 {
   float tankRadius = BZDB->eval(StateDatabase::BZDB_TANKRADIUS);
-  if (flag == Flags::Obesity) return tankRadius * BZDB->eval(StateDatabase::BZDB_OBESEFACTOR);
-  if (flag == Flags::Tiny)    return tankRadius * BZDB->eval(StateDatabase::BZDB_TINYFACTOR);
-  if (flag == Flags::Thief)   return tankRadius * BZDB->eval(StateDatabase::BZDB_THIEFTINYFACTOR);
+  if (flagType == Flags::Obesity) return tankRadius * BZDB->eval(StateDatabase::BZDB_OBESEFACTOR);
+  if (flagType == Flags::Tiny)    return tankRadius * BZDB->eval(StateDatabase::BZDB_TINYFACTOR);
+  if (flagType == Flags::Thief)   return tankRadius * BZDB->eval(StateDatabase::BZDB_THIEFTINYFACTOR);
   return tankRadius;
 }
 
@@ -101,9 +101,9 @@ void			Player::getMuzzle(float* m) const
 {
   // okay okay, I should really compute the up vector instead of using [0,0,1]
   float front = BZDB->eval(StateDatabase::BZDB_MUZZLEFRONT);
-  if (flag == Flags::Obesity) front *= BZDB->eval(StateDatabase::BZDB_OBESEFACTOR);
-  else if (flag == Flags::Tiny) front *= BZDB->eval(StateDatabase::BZDB_TINYFACTOR);
-  else if (flag == Flags::Thief) front *= BZDB->eval(StateDatabase::BZDB_THIEFTINYFACTOR);
+  if (flagType == Flags::Obesity) front *= BZDB->eval(StateDatabase::BZDB_OBESEFACTOR);
+  else if (flagType == Flags::Tiny) front *= BZDB->eval(StateDatabase::BZDB_TINYFACTOR);
+  else if (flagType == Flags::Thief) front *= BZDB->eval(StateDatabase::BZDB_THIEFTINYFACTOR);
   m[0] = state.pos[0] + front * forward[0];
   m[1] = state.pos[1] + front * forward[1];
   m[2] = state.pos[2] + front * forward[2] + BZDB->eval(StateDatabase::BZDB_MUZZLEHEIGHT);
@@ -206,9 +206,9 @@ void			Player::changeLocalScore(short dWins, short dLosses, short dTeamKills)
   localTks += dTeamKills;
 }
 
-void			Player::setFlag(FlagDesc* _flag)
+void			Player::setFlag(FlagType* _flag)
 {
-  flag = _flag;
+  flagType = _flag;
 }
 
 void			Player::endShot(int index,
@@ -221,7 +221,7 @@ void			Player::endShot(int index,
 
 void			Player::updateSparks(float /*dt*/)
 {
-  if (flag != Flags::PhantomZone || !isFlagActive()) {
+  if (flagType != Flags::PhantomZone || !isFlagActive()) {
 	  teleporterProximity = World::getWorld()->getProximity(state.pos, BZDB->eval(StateDatabase::BZDB_TANKRADIUS));
     if (teleporterProximity == 0.0f) {
       color[3] = 1.0f;
@@ -230,7 +230,7 @@ void			Player::updateSparks(float /*dt*/)
     }
   }
 
-  if (flag == Flags::PhantomZone && isFlagActive()) {
+  if (flagType == Flags::PhantomZone && isFlagActive()) {
     // almost totally transparent
     color[3] = 0.25f;
   }
@@ -249,10 +249,10 @@ void			Player::addPlayer(SceneDatabase* scene,
   tankNode->move(state.pos, forward);
   tankNode->setColorOverride(colorOverride);
   if (isAlive()) {
-    if (flag == Flags::Obesity) tankNode->setObese();
-    else if (flag == Flags::Tiny) tankNode->setTiny();
-    else if (flag == Flags::Narrow) tankNode->setNarrow();
-    else if (flag == Flags::Thief) tankNode->setThief();
+    if (flagType == Flags::Obesity) tankNode->setObese();
+    else if (flagType == Flags::Tiny) tankNode->setTiny();
+    else if (flagType == Flags::Narrow) tankNode->setNarrow();
+    else if (flagType == Flags::Thief) tankNode->setThief();
     else tankNode->setNormal();
     tankNode->setExplodeFraction(0.0f);
     scene->addDynamicNode(tankNode);

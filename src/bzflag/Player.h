@@ -42,7 +42,7 @@ class Player {
     const char*		getCallSign() const;
     const char*		getEmailAddress() const;
     const PlayerType    getPlayerType() const;
-    FlagDesc*		getFlag() const;
+    FlagType*		getFlag() const;
     long		getOrder() const;
     short		getStatus() const;
     const float*	getPosition() const;
@@ -102,7 +102,7 @@ class Player {
     void		setVelocity(const float* velocity);
     void		setAngularVelocity(float);
     void		changeTeam(TeamColor);
-    virtual void	setFlag(FlagDesc*);
+    virtual void	setFlag(FlagType*);
     virtual void	changeScore(short deltaWins, short deltaLosses, short deltaTeamKills);
     void		changeLocalScore(short deltaWins, short deltaLosses, short deltaTeamKills);
     void		setStatus(short);
@@ -147,7 +147,7 @@ class Player {
     PlayerType          type;                   // Human/Computer
 
     // relatively stable data
-    FlagDesc*		flag;			// flag I'm holding
+    FlagType*		flagType;		// flag type I'm holding
     TimeKeeper		explodeTime;		// time I started exploding
     TimeKeeper		teleportTime;		// time I started teleporting
     short		fromTeleporter;		// teleporter I entered
@@ -211,9 +211,9 @@ inline const PlayerType	Player::getPlayerType() const
   return type;
 }
 
-inline FlagDesc*	Player::getFlag() const
+inline FlagType*	Player::getFlag() const
 {
-  return flag;
+  return flagType;
 }
 
 inline long		Player::getOrder() const

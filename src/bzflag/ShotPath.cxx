@@ -34,7 +34,7 @@ FiringInfo::FiringInfo(const BaseLocalPlayer& tank, int id)
   shot.vel[1] = tankVel[1] + shotSpeed * dir[1];
   shot.vel[2] = tankVel[2] + shotSpeed * dir[2];
   shot.dt = 0.0f;
-  flag = tank.getFlag();
+  flagType = tank.getFlag();
   lifetime = BZDB->eval(StateDatabase::BZDB_RELOADTIME);
 }
 
@@ -54,24 +54,24 @@ ShotPath::ShotPath(const FiringInfo& info) :
   // each flag should be a flyweight object derived from a
   // base Flag class with a virtual makeShotStrategy() member.
   // just remember -- it's only a game.
-  if (firingInfo.flag->flagShot == NormalShot)
+  if (firingInfo.flagType->flagShot == NormalShot)
     strategy = new NormalShotStrategy(this);
   else {
-    if (firingInfo.flag == Flags::RapidFire)
+    if (firingInfo.flagType == Flags::RapidFire)
       strategy = new RapidFireStrategy(this);
-    else if (firingInfo.flag == Flags::MachineGun)
+    else if (firingInfo.flagType == Flags::MachineGun)
       strategy = new MachineGunStrategy(this);
-    else if (firingInfo.flag == Flags::GuidedMissile)
+    else if (firingInfo.flagType == Flags::GuidedMissile)
       strategy = new GuidedMissileStrategy(this);
-    else if (firingInfo.flag == Flags::Laser)
+    else if (firingInfo.flagType == Flags::Laser)
       strategy = new LaserStrategy(this);
-    else if (firingInfo.flag == Flags::Ricochet)
+    else if (firingInfo.flagType == Flags::Ricochet)
       strategy = new RicochetStrategy(this);
-    else if (firingInfo.flag == Flags::SuperBullet)
+    else if (firingInfo.flagType == Flags::SuperBullet)
       strategy = new SuperBulletStrategy(this);
-    else if (firingInfo.flag == Flags::ShockWave)
+    else if (firingInfo.flagType == Flags::ShockWave)
       strategy = new ShockWaveStrategy(this);
-    else if (firingInfo.flag == Flags::Thief)
+    else if (firingInfo.flagType == Flags::Thief)
       strategy = new ThiefStrategy(this);
     else
       assert(0);    // shouldn't happen

@@ -57,7 +57,7 @@ enum FlagStatus {
 			FlagComing,
 			FlagGoing
 };
-enum FlagType {
+enum FlagEndurance {
 			FlagNormal = 0,		// permanent flag
 			FlagUnstable = 1,	// disappears after use
 			FlagSticky = 2		// can't be dropped normally
@@ -77,13 +77,13 @@ enum ShotType {
 const int		FlagPLen = 6 + PlayerIdPLen + 48;
 
 
-class FlagDesc {
+class FlagType {
   public:
-    FlagDesc( const char* name, const char* abbv, FlagType fType,
+    FlagType( const char* name, const char* abbv, FlagEndurance _endurance,
 	      ShotType sType, FlagQuality quality, TeamColor team, const char* help ) {
       flagName = name;
       flagAbbv = abbv;
-      flagType = fType;
+      endurance = _endurance;
       flagShot = sType;
       flagQuality = quality;
       flagHelp = help;
@@ -95,26 +95,26 @@ class FlagDesc {
     }
 
     const float*	getColor();
-    void* FlagDesc::pack(void* buf) const;
-    static void* FlagDesc::unpack(void* buf, FlagDesc* &desc);
+    void* FlagType::pack(void* buf) const;
+    static void* FlagType::unpack(void* buf, FlagType* &desc);
     /** Static wrapper function that makes sure that the flag map is
 	initialized before it's used. */
-    static std::map<std::string, FlagDesc*>& getFlagMap();
+    static std::map<std::string, FlagType*>& getFlagMap();
 
-    const char*         flagName;
-    const char*         flagAbbv;
-    FlagType            flagType;
-    const char*         flagHelp;
-    FlagQuality	        flagQuality;
-    ShotType            flagShot;
-    TeamColor           flagTeam;
+    const char*		flagName;
+    const char*		flagAbbv;
+    FlagEndurance	endurance;
+    const char*		flagHelp;
+    FlagQuality		flagQuality;
+    ShotType		flagShot;
+    TeamColor		flagTeam;
 
-    typedef std::set<FlagDesc*> FlagSet;
-    static int	        flagCount;
-    static FlagSet      flagSets[NumQualities];
+    typedef std::set<FlagType*> FlagSet;
+    static int		flagCount;
+    static FlagSet	flagSets[NumQualities];
 };
 
-typedef FlagDesc::FlagSet  FlagSet;
+typedef FlagType::FlagSet  FlagSet;
 
 class Flag {
   public:
@@ -123,12 +123,12 @@ class Flag {
 
     static FlagSet&	getGoodFlags();
     static FlagSet&	getBadFlags();
-    static FlagDesc*	getDescFromAbbreviation(const char* abbreviation);
+    static FlagType*	getDescFromAbbreviation(const char* abbreviation);
 
   public:
-    FlagDesc*		desc;
+    FlagType*		desc;
     FlagStatus		status;
-    FlagType		type;
+    FlagEndurance	type;
     PlayerId		owner;			// who has flag
     float		position[3];		// position on ground
     float		launchPosition[3];	// position flag launched from
@@ -146,7 +146,7 @@ class Flag {
 // instances are created.
 //
 namespace Flags {
-  extern FlagDesc
+  extern FlagType
     *Null,
     *RedTeam, *GreenTeam, *BlueTeam, *PurpleTeam, *Velocity, *QuickTurn,
     *OscillationOverthruster, *RapidFire, *MachineGun, *GuidedMissile, *Laser,

@@ -268,7 +268,7 @@ bool			RobotPlayer::checkHit(const Player* source,
 
     // short circuit test if shot can't possibly hit.
     // only superbullet or shockwave can kill zoned dude
-    const FlagDesc* shotFlag = shot->getFlag();
+    const FlagType* shotFlag = shot->getFlag();
     if (getFlag() == Flags::PhantomZone && isFlagActive() &&
 		shotFlag != Flags::SuperBullet && shotFlag != Flags::ShockWave)
       continue;

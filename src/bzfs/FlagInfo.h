@@ -41,7 +41,7 @@ struct FlagInfo {
 extern FlagInfo *flag;
 
 
-bool setRequiredFlag(FlagInfo& flag, FlagDesc *desc);
+bool setRequiredFlag(FlagInfo& flag, FlagType *desc);
 
 
 #else

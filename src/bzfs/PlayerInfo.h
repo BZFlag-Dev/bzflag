@@ -143,7 +143,7 @@ struct PlayerInfo {
     TimeKeeper lastupdate;
     TimeKeeper lastmsg;
 
-    std::vector<FlagDesc*> flagHistory;
+    std::vector<FlagType*> flagHistory;
 #ifdef TIMELIMIT
     // player played before countdown started
     bool playedEarly;

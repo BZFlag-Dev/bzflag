@@ -27,11 +27,11 @@ public:
   WorldWeapons();
   ~WorldWeapons();
   void fire();
-  void add( const FlagDesc *type, const float *origin, float direction, float initdelay, const std::vector<float> &delay, TimeKeeper &sync);
+  void add( const FlagType *type, const float *origin, float direction, float initdelay, const std::vector<float> &delay, TimeKeeper &sync);
 private:
   struct Weapon
   {
-    const FlagDesc	*type;
+    const FlagType	*type;
     float		origin[3];
     float		direction;
     std::vector<float>  delay;

@@ -104,7 +104,7 @@ class LocalPlayer : public BaseLocalPlayer {
     void		restart(const float* pos, float azimuth);
     bool		checkHit(const Player* source, const ShotPath*& hit,
 							float& minTime) const;
-    void		setFlag(FlagDesc*);
+    void		setFlag(FlagType*);
     void		changeScore(short deltaWins, short deltaLosses, short deltaTeamKills);
 
     void		addAntidote(SceneDatabase*);

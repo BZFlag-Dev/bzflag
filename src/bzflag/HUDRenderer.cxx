@@ -485,7 +485,7 @@ void			HUDRenderer::setComposing(const std::string &prompt,
   }
 }
 
-void			HUDRenderer::setFlagHelp(FlagDesc* desc, float duration)
+void			HUDRenderer::setFlagHelp(FlagType* desc, float duration)
 {
   flagHelpClock.setClock(duration);
 
@@ -700,7 +700,7 @@ void			HUDRenderer::renderStatus(void)
   float x = 0.25f * h;
   float y = (float)window.getViewHeight() - h;
   TeamColor teamIndex = player->getTeam();
-  FlagDesc* flag = player->getFlag();
+  FlagType* flag = player->getFlag();
 
   // print player name and score in upper left corner in team (radar) color
   if (!roaming && (!playerHasHighScore || scoreClock.isOn())) {
@@ -713,7 +713,7 @@ void			HUDRenderer::renderStatus(void)
   if (flag != Flags::Null) {
     sprintf(buffer, "%s", BundleMgr::getCurrentBundle()->getLocalString(flag->flagName).c_str());
     x = (float)window.getWidth() - 0.25f * h - majorFont.getWidth(buffer);
-    if (flag->flagType == FlagSticky)
+    if (flag->endurance == FlagSticky)
       hudColor3fv(warningColor);
     else
       hudColor3fv(messageColor);
@@ -725,7 +725,7 @@ void			HUDRenderer::renderStatus(void)
     userTime = *localtime(&timeNow);
     sprintf(buffer, "%2d:%2.2d", userTime.tm_hour, userTime.tm_min);
     x = (float)window.getWidth() - 0.25f * h - majorFont.getWidth(buffer);
-    if (flag->flagType == FlagSticky)
+    if (flag->endurance == FlagSticky)
       hudColor3fv(warningColor);
     else
       hudColor3fv(messageColor);
@@ -757,7 +757,7 @@ void			HUDRenderer::renderStatus(void)
 	break;
 
       case LocalPlayer::Ready:
-	if (flag != Flags::Null && flag->flagType == FlagSticky &&
+	if (flag != Flags::Null && flag->endurance == FlagSticky &&
 	    World::getWorld()->allowShakeTimeout()) {
 	  /* have a bad flag -- show time left 'til we shake it */
 	  statusColor = yellowColor;
@@ -1532,10 +1532,10 @@ void			HUDRenderer::drawPlayerScore(const Player* player,
 
   // "Purple Team" is longest possible string for flag indicator
   char flag[12]="";
-  FlagDesc* flagd = player->getFlag();
+  FlagType* flagd = player->getFlag();
   if (flagd != Flags::Null) {
     sprintf(flag,"/%s",
-	    flagd->flagType == FlagNormal ?
+	    flagd->endurance == FlagNormal ?
 	    flagd->flagName : flagd->flagAbbv);
   }
 
