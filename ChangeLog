@@ -4,6 +4,8 @@
 BZFlag 1.12.0  (was 1.11.x)
 ---------------------------
 
+* Reduce client and server network utilization via tolerance tweaking
+	- Alfredo Tupone, Sean Morrison
 * WorldWeapons and EntryZones are saved client-side - Dave Rodgers
 * Improved client map saves using map 'options' - Dave Rodgers
 * Autopilot is now capable of playing CTF - Ian Agar
