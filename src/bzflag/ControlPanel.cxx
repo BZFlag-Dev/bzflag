@@ -22,12 +22,13 @@
 #include "MainWindow.h"
 #include "BzfWindow.h"
 #include "RadarRenderer.h"
-#include "texture.h"
 #include "ErrorHandler.h"
 #include "Team.h"
 #include "OpenGLGState.h"
 #include "StateDatabase.h"
 #include "BZDBCache.h"
+#include "AnsiCodes.h"
+#include "FontManager.h"
 
 void			printFatalError(const char* fmt, ...);
 
@@ -38,7 +39,7 @@ void			printFatalError(const char* fmt, ...);
 ControlPanelMessage::ControlPanelMessage(const std::string& _string)
 {
   this->string = _string;
-  rawLength = OpenGLTexFont::rawStrlen(_string.c_str(), _string.length());
+  rawLength = stripAnsiCodes(string).length();
 }
 
 //
@@ -112,14 +113,15 @@ void			ControlPanel::render(SceneRenderer& renderer)
   glLoadIdentity();
   OpenGLGState::resetState();
 
-  const float lineHeight = messageFont.getSpacing();
+  FontManager &fm = FontManager::instance();
+  const float lineHeight = fm.getStrHeight(fontFace, fontSize, " ");
   const float margin = lineHeight / 4.0f;
 
   if (changedMessage > 0) {
     changedMessage--;
   }
   float fx = messageAreaPixels[0] + margin;
-  float fy = messageAreaPixels[1] + margin + messageFont.getDescent() + 1.0f;
+  float fy = messageAreaPixels[1] + margin + 1.0f;
   glScissor(x + messageAreaPixels[0],
       y + messageAreaPixels[1],
       messageAreaPixels[2],
@@ -127,7 +129,7 @@ void			ControlPanel::render(SceneRenderer& renderer)
 
   OpenGLGState::resetState();
   if (renderer.getPanelOpacity() > 0.0f) {
-  // nice blended messages background
+    // nice blended messages background
     if (BZDBCache::blend && renderer.getPanelOpacity() < 1.0f)
       glEnable(GL_BLEND);
     glColor4f(0.0f, 0.0f, 0.0f, renderer.getPanelOpacity());
@@ -153,7 +155,8 @@ void			ControlPanel::render(SceneRenderer& renderer)
   //  maxScrollPages       = This number * maxLines is the total maximum
   //                         lines of messages (and scrollback)
   // The font is fixed, so getWidth() returns the same for any char.
-  const int lineCharWidth = (int)(messageAreaPixels[2] / (messageFont.getWidth("-")));
+  const int lineCharWidth = (int)(messageAreaPixels[2] / 
+			     (fm.getStrLength(fontFace, fontSize, "-")));
 
   i = messages.size() - 1;
   if (messagesOffset > 0) {
@@ -210,7 +213,7 @@ void			ControlPanel::render(SceneRenderer& renderer)
 
       // only draw message if inside message area
       if (j + msgy < maxLines)
-	messageFont.draw(msg, n, fx, fy + msgy * lineHeight);
+	fm.drawString(fx, fy + msgy * lineHeight, 0, fontFace, fontSize, msg);
 
       // account for portion drawn (or skipped)
       msg += n;
@@ -316,12 +319,12 @@ void			ControlPanel::resize()
 			    radarAreaPixels[2], radarAreaPixels[3]);
 
   const bool useBigFont = messageAreaPixels[2] / (BZDB.isTrue("bigfont") ? 60.0f : 80.0f) > 10.0f;
-  const float fontSize = useBigFont ? 11.0f : 7.0f;
-  if (useBigFont)
-    messageFont = TextureFont::getTextureFont(TextureFont::FixedBold, true);
-  else
-    messageFont = TextureFont::getTextureFont(TextureFont::Fixed, true);
-  messageFont.setSize(fontSize, fontSize);
+  fontSize = useBigFont ? 11.0f : 7.0f;
+  FontManager &fm = FontManager::instance();
+  fontFace = fm.getFaceID("VeraMonoBold");
+
+  // rebuild font gstates
+  fm.rebuild();
 
   maxLines = int(messageAreaPixels[3] / fontSize);
 
@@ -345,6 +348,10 @@ void			ControlPanel::expose()
 {
   exposed = numBuffers;
   changedMessage = numBuffers;
+
+  // rebuild font gstates
+  FontManager &fm = FontManager::instance();
+  fm.rebuild();
 }
 
 void			ControlPanel::exposeCallback(void* self)
@@ -408,12 +415,7 @@ void			ControlPanel::addMessage(const std::string& line)
     if (echoAnsi) {
       std::cout << line << ColorStrings[ResetColor] << std::endl;
     } else {
-      char *tmpstr;
-
-      tmpstr = strdup(line.c_str());
-      OpenGLTexFont::stripAnsiCodes(tmpstr, strlen(tmpstr));
-      std::cout << tmpstr << std::endl;
-      delete [] tmpstr;
+      std::cout << stripAnsiCodes(line) << std::endl;
     }
     fflush(stdout);
   }

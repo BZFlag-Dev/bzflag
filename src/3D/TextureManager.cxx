@@ -17,7 +17,6 @@
 #include "TextureManager.h"
 #include "TextUtils.h"
 
-#include "texture.h"
 #include "global.h"
 #include "MediaFile.h"
 #include "ErrorHandler.h"
@@ -54,7 +53,7 @@ TextureManager::TextureManager()
 TextureManager::~TextureManager()
 {
   // we are done remove all textures
-  for( TextureNameMap::iterator it = textureNames.begin(); it != textureNames.end(); ++it) {
+  for (TextureNameMap::iterator it = textureNames.begin(); it != textureNames.end(); ++it) {
     ImageInfo &tex = it->second;
     if (tex.texture != NULL) {
       delete tex.texture;
@@ -66,25 +65,27 @@ TextureManager::~TextureManager()
 
 int TextureManager::getTextureID( const char* name, bool reportFail )
 {
-  if (!name)
+  if (!name) {
+    DEBUG2("Could not get texture ID; no provided name\n");
     return -1;
+  }
 
   std::string texName = name;
   // see if we have the texture
   TextureNameMap::iterator it = textureNames.find(texName);
-  if (it != textureNames.end())
+  if (it != textureNames.end()) {
     return it->second.id;
-  else { // we don't have it so try and load it
+  } else { // we don't have it so try and load it
     FileTextureInit	file;
     file.filter = OpenGLTexture::LinearMipmapLinear;
     file.name = texName;
     ImageInfo info;
-    OpenGLTexture *image = loadTexture(file,reportFail);
+    OpenGLTexture *image = loadTexture(file, reportFail);
     if (!image) {
-      DEBUG1("Image not found or unloadable: %s\n", name);
+      DEBUG2("Image not found or unloadable: %s\n", name);
       return -1;
     }
-    return addTexture(name,image);
+    return addTexture(name, image);
   }
   return -1;
 }
@@ -165,7 +166,7 @@ int TextureManager::addTexture( const char* name, OpenGLTexture *texture )
   // this is why IDs are way better than objects for this stuff
   TextureNameMap::iterator it = textureNames.find(name);
   if (it != textureNames.end()) {
-   DEBUG4("Texture %s already exists, overwriting\n", name);
+   DEBUG3("Texture %s already exists, overwriting\n", name);
    textureIDs.erase(textureIDs.find(it->second.id));
    delete it->second.texture;
   }
@@ -180,6 +181,8 @@ int TextureManager::addTexture( const char* name, OpenGLTexture *texture )
   textureNames[name] = info;
   textureIDs[info.id] = &textureNames[name];
 
+  DEBUG4("Added texture %s: id %d\n", name, info.id);
+
   return info.id;
 }
 
@@ -188,8 +191,8 @@ OpenGLTexture* TextureManager::loadTexture(FileTextureInit &init, bool reportFai
   int width, height;
   std::string nameToTry = "";
 
-  if (BZDB.isSet( "altImageDir" )) {
-    nameToTry = BZDB.get( "altImageDir" );
+  if (BZDB.isSet("altImageDir")) {
+    nameToTry = BZDB.get("altImageDir");
 #ifdef WIN32
     nameToTry += '\\';
 #else
@@ -201,9 +204,9 @@ OpenGLTexture* TextureManager::loadTexture(FileTextureInit &init, bool reportFai
   }
   unsigned char* image = NULL;
   if (nameToTry.size() && nameToTry.c_str())
-    image = MediaFile::readImage( nameToTry, &width, &height);
+    image = MediaFile::readImage(nameToTry, &width, &height);
   if (!image)
-    image = MediaFile::readImage( init.name, &width, &height);
+    image = MediaFile::readImage(init.name, &width, &height);
   if (!image) {
     if (reportFail) {
       std::vector<std::string> args;
@@ -219,9 +222,9 @@ OpenGLTexture* TextureManager::loadTexture(FileTextureInit &init, bool reportFai
   return texture;
 }
 
-int TextureManager::newTexture ( const char* name, int x, int y, unsigned char* data, OpenGLTexture::Filter filter, bool repeat, int format  )
+int TextureManager::newTexture(const char* name, int x, int y, unsigned char* data, OpenGLTexture::Filter filter, bool repeat, int format)
 {
-  return addTexture(name,new OpenGLTexture(x,y,data,filter,repeat,format));
+  return addTexture(name, new OpenGLTexture(x, y, data, filter, repeat, format));
 }
 
 
@@ -239,7 +242,7 @@ int noiseProc(ProcTextureInit &init)
     noise[i+2] = n;
     noise[i+3] = n;
   }
-  int texture = init.manager->newTexture(init.name.c_str(),noizeSize,noizeSize,noise,init.filter);
+  int texture = init.manager->newTexture(init.name.c_str(), noizeSize, noizeSize, noise, init.filter);
   delete[] noise;
   return texture;
 }

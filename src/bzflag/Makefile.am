@@ -126,9 +126,7 @@ bzflag_SOURCES =			\
 	sound.cxx			\
 	sound.h				\
 	stars.cxx			\
-	stars.h				\
-	texture.cxx
-
+	stars.h
 
 
 if WIN32
@@ -154,6 +152,7 @@ REGEX = \
 endif
 
 LDADD =	\
+	../3D/lib3D.a			\
 	../net/libNet.a			\
 	../common/libCommon.a		\
 	../game/libGame.a		\
@@ -164,7 +163,6 @@ LDADD =	\
 	../scene/libSceneDB.a		\
 	../geometry/libGeometry.a	\
 	../mediafile/libMediaFile.a	\
-	../3D/lib3D.a			\
 	$(REGEX)			\
 	$(ZLIB)				\
 	$(RESOURCE)			\

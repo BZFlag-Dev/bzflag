@@ -19,6 +19,7 @@
 
 /* common implementation headers */
 #include "TextUtils.h"
+#include "FontManager.h"
 
 /* local implementation headers */
 #include "StateDatabase.h"
@@ -33,8 +34,8 @@ AudioMenu::AudioMenu()
   std::string currentDevice = BZDB.get("audioDevice");
 
   HUDuiLabel* label = new HUDuiLabel;
-  label->setFont(MainMenu::getFont());
-  label->setString("Audio Setting");
+  label->setFontFace(MainMenu::getFontFace());
+  label->setString("Audio Settings");
   list.push_back(label);
 
   HUDuiList* option = new HUDuiList;
@@ -43,7 +44,7 @@ AudioMenu::AudioMenu()
   std::vector<std::string>* options;
 
   option = new HUDuiList;
-  option->setFont(MainMenu::getFont());
+  option->setFontFace(MainMenu::getFontFace());
   option->setLabel("Sound Volume:");
   option->setCallback(callback, (void*)"s");
   options = &option->getList();
@@ -62,7 +63,7 @@ AudioMenu::AudioMenu()
    If more platforms get setDriver functions, they can be added. */   
 #ifdef HAVE_SDL
   driver = new HUDuiTypeIn;
-  driver->setFont(MainMenu::getFont());
+  driver->setFontFace(MainMenu::getFontFace());
   driver->setLabel("Driver:");
   driver->setMaxLength(10);
   driver->setString(currentDriver);
@@ -73,7 +74,7 @@ AudioMenu::AudioMenu()
 
 #ifdef HAVE_SDL
   device = new HUDuiTypeIn;
-  device->setFont(MainMenu::getFont());
+  device->setFontFace(MainMenu::getFontFace());
   device->setLabel("Device:");
   device->setMaxLength(10);
   device->setString(currentDevice);
@@ -105,29 +106,30 @@ void			AudioMenu::resize(int width, int height)
   int i;
 
   // use a big font for title, smaller font for the rest
-  const float titleFontWidth = (float)height / 10.0f;
-  const float titleFontHeight = (float)height / 10.0f;
-  const float fontWidth = (float)height / 30.0f;
-  const float fontHeight = (float)height / 30.0f;
+  const float titleFontSize = (float)height / 15.0f;
+  const float fontSize = (float)height / 45.0f;
+  FontManager &fm = FontManager::instance();
+  int fontFace = MainMenu::getFontFace();
 
   // reposition title
   std::vector<HUDuiControl*>& list = getControls();
   HUDuiLabel* title = (HUDuiLabel*)list[0];
-  title->setFontSize(titleFontWidth, titleFontHeight);
-  const OpenGLTexFont& titleFont = title->getFont();
-  const float titleWidth = titleFont.getWidth(title->getString());
+  title->setFontSize(titleFontSize);
+  const float titleWidth = fm.getStrLength(fontFace, titleFontSize, title->getString());
+  const float titleHeight = fm.getStrHeight(fontFace, titleFontSize, " ");
   float x = 0.5f * ((float)width - titleWidth);
-  float y = (float)height - titleFont.getHeight();
+  float y = (float)height - titleHeight;
   title->setPosition(x, y);
 
   // reposition options
   x = 0.5f * ((float)width);
-  y -= 0.6f * titleFont.getHeight();
+  y -= 0.6f * titleHeight;
+  const float h = fm.getStrHeight(fontFace, fontSize, " ");
   const int count = list.size();
   for (i = 1; i < count; i++) {
-    list[i]->setFontSize(fontWidth, fontHeight);
+    list[i]->setFontSize(fontSize);
     list[i]->setPosition(x, y);
-    y -= 1.0f * list[i]->getFont().getHeight();
+    y -= 1.0f * h;
   }
 
   i = 1;
@@ -144,7 +146,6 @@ void			AudioMenu::callback(HUDuiControl* w, void* data) {
       BZDB.set("volume", string_util::format("%d", list->getIndex()));
       setSoundVolume(list->getIndex());
       break;
-
   }
 }
 

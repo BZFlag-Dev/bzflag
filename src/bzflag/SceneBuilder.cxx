@@ -23,7 +23,6 @@
 #include "TankSceneNode.h"
 #include "StateDatabase.h"
 #include "TextureManager.h"
-#include "texture.h"
 #include "ObstacleSceneNodeGenerator.h"
 
 //

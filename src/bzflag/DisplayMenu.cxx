@@ -22,6 +22,7 @@
 #include "BzfDisplay.h"
 #include "SceneRenderer.h"
 #include "BZDBCache.h"
+#include "FontManager.h"
 
 /* local implementation headers */
 #include "MainMenu.h"
@@ -41,13 +42,16 @@ DisplayMenu::DisplayMenu() : formatMenu(NULL)
   std::vector<HUDuiControl*>& list  = getControls();
   HUDuiList* option;
 
+  // cache font face id
+  int fontFace = MainMenu::getFontFace();
+
   HUDuiLabel* label = new HUDuiLabel;
-  label->setFont(MainMenu::getFont());
-  label->setString("Display Setting");
+  label->setFontFace(fontFace);
+  label->setString("Display Settings");
   list.push_back(label);
 
   option = new HUDuiList;
-  option->setFont(MainMenu::getFont());
+  option->setFontFace(fontFace);
   option->setLabel("Dithering:");
   option->setCallback(callback, (void*)"1");
   options = &option->getList();
@@ -57,7 +61,7 @@ DisplayMenu::DisplayMenu() : formatMenu(NULL)
   list.push_back(option);
 
   option = new HUDuiList;
-  option->setFont(MainMenu::getFont());
+  option->setFontFace(fontFace);
   option->setLabel("Blending:");
   option->setCallback(callback, (void*)"2");
   options = &option->getList();
@@ -67,7 +71,7 @@ DisplayMenu::DisplayMenu() : formatMenu(NULL)
   list.push_back(option);
 
   option = new HUDuiList;
-  option->setFont(MainMenu::getFont());
+  option->setFontFace(fontFace);
   option->setLabel("Smoothing:");
   option->setCallback(callback, (void*)"3");
   options = &option->getList();
@@ -77,7 +81,7 @@ DisplayMenu::DisplayMenu() : formatMenu(NULL)
   list.push_back(option);
 
   option = new HUDuiList;
-  option->setFont(MainMenu::getFont());
+  option->setFontFace(fontFace);
   option->setLabel("Lighting:");
   option->setCallback(callback, (void*)"4");
   options = &option->getList();
@@ -87,7 +91,7 @@ DisplayMenu::DisplayMenu() : formatMenu(NULL)
   list.push_back(option);
 
   option = new HUDuiList;
-  option->setFont(MainMenu::getFont());
+  option->setFontFace(fontFace);
   option->setLabel("Texturing:");
   option->setCallback(callback, (void*)"5");
   options = &option->getList();
@@ -102,7 +106,7 @@ DisplayMenu::DisplayMenu() : formatMenu(NULL)
   list.push_back(option);
 
   option = new HUDuiList;
-  option->setFont(MainMenu::getFont());
+  option->setFontFace(fontFace);
   option->setLabel("Quality:");
   option->setCallback(callback, (void*)"6");
   options = &option->getList();
@@ -114,7 +118,7 @@ DisplayMenu::DisplayMenu() : formatMenu(NULL)
   list.push_back(option);
 
   option = new HUDuiList;
-  option->setFont(MainMenu::getFont());
+  option->setFontFace(fontFace);
   option->setLabel("Shadows:");
   option->setCallback(callback, (void*)"7");
   options = &option->getList();
@@ -124,7 +128,7 @@ DisplayMenu::DisplayMenu() : formatMenu(NULL)
   list.push_back(option);
 
   option = new HUDuiList;
-  option->setFont(MainMenu::getFont());
+  option->setFontFace(fontFace);
   option->setLabel("Depth Buffer:");
   option->setCallback(callback, (void*)"8");
   options = &option->getList();
@@ -141,7 +145,7 @@ DisplayMenu::DisplayMenu() : formatMenu(NULL)
 
 #if defined(DEBUG_RENDERING)
   option = new HUDuiList;
-  option->setFont(MainMenu::getFont());
+  option->setFontFace(fontFace);
   option->setLabel("Hidden Line:");
   option->setCallback(callback, (void*)"a");
   options = &option->getList();
@@ -151,7 +155,7 @@ DisplayMenu::DisplayMenu() : formatMenu(NULL)
   list.push_back(option);
 
   option = new HUDuiList;
-  option->setFont(MainMenu::getFont());
+  option->setFontFace(fontFace);
   option->setLabel("Wireframe:");
   option->setCallback(callback, (void*)"b");
   options = &option->getList();
@@ -161,7 +165,7 @@ DisplayMenu::DisplayMenu() : formatMenu(NULL)
   list.push_back(option);
 
   option = new HUDuiList;
-  option->setFont(MainMenu::getFont());
+  option->setFontFace(fontFace);
   option->setLabel("Depth Complexity:");
   option->setCallback(callback, (void*)"c");
   options = &option->getList();
@@ -173,7 +177,7 @@ DisplayMenu::DisplayMenu() : formatMenu(NULL)
 
   BzfWindow* window = getMainWindow()->getWindow();
   option = new HUDuiList;
-  option->setFont(MainMenu::getFont());
+  option->setFontFace(fontFace);
   option->setLabel("Brightness:");
   option->setCallback(callback, (void*)"g");
   if (window->hasGammaControl()) {
@@ -191,7 +195,7 @@ DisplayMenu::DisplayMenu() : formatMenu(NULL)
     videoFormat = NULL;
   } else {
     videoFormat = label = new HUDuiLabel;
-    label->setFont(MainMenu::getFont());
+    label->setFontFace(fontFace);
     label->setLabel("Change Video Format");
     list.push_back(label);
   }
@@ -220,29 +224,30 @@ void			DisplayMenu::resize(int width, int height)
   int i;
 
   // use a big font for title, smaller font for the rest
-  const float titleFontWidth = (float)height / 10.0f;
-  const float titleFontHeight = (float)height / 10.0f;
-  const float fontWidth = (float)height / 30.0f;
-  const float fontHeight = (float)height / 30.0f;
+  const float titleFontSize = (float)height / 15.0f;
+  const float fontSize = (float)height / 45.0f;
+  FontManager &fm = FontManager::instance();
+  int fontFace = MainMenu::getFontFace();
 
   // reposition title
   std::vector<HUDuiControl*>& list = getControls();
   HUDuiLabel* title = (HUDuiLabel*)list[0];
-  title->setFontSize(titleFontWidth, titleFontHeight);
-  const OpenGLTexFont& titleFont = title->getFont();
-  const float titleWidth = titleFont.getWidth(title->getString());
+  title->setFontSize(titleFontSize);
+  const float titleWidth = fm.getStrLength(fontFace, titleFontSize, title->getString());
+  const float titleHeight = fm.getStrHeight(fontFace, titleFontSize, " ");
   float x = 0.5f * ((float)width - titleWidth);
-  float y = (float)height - titleFont.getHeight();
+  float y = (float)height - titleHeight;
   title->setPosition(x, y);
 
   // reposition options
   x = 0.5f * ((float)width);
-  y -= 0.6f * titleFont.getHeight();
+  y -= 0.6f * titleHeight;
+  const float h = fm.getStrHeight(fontFace, fontSize, " ");
   const int count = list.size();
   for (i = 1; i < count; i++) {
-    list[i]->setFontSize(fontWidth, fontHeight);
+    list[i]->setFontSize(fontSize);
     list[i]->setPosition(x, y);
-    y -= 1.0f * list[i]->getFont().getHeight();
+    y -= 1.0f * h;
   }
 
   i = 1;

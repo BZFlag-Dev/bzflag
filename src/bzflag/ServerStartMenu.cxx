@@ -38,6 +38,7 @@
 /* common implementation headers */
 #include "TextUtils.h"
 #include "DirectoryNames.h"
+#include "FontManager.h"
 
 /* local implementation headers */
 #include "MenuDefaultKey.h"
@@ -553,48 +554,43 @@ void ServerStartMenu::execute()
 void ServerStartMenu::setStatus(const char* msg, const std::vector<std::string> *parms)
 {
   status->setString(msg, parms);
-  const OpenGLTexFont& font = status->getFont();
-  const float width = font.getWidth(status->getString());
+  FontManager &fm = FontManager::instance();
+  const float width = fm.getStrLength(status->getFontFace(), status->getFontSize(), status->getString());
   status->setPosition(center - 0.5f * width, status->getY());
 }
 
 void ServerStartMenu::resize(int width, int height)
 {
   HUDDialog::resize(width, height);
+  center = 0.5f * (float)width;
 
   // use a big font for title, smaller font for the rest
-  const float titleFontWidth = (float)height / 10.0f;
-  const float titleFontHeight = (float)height / 10.0f;
-  const float bigFontWidth = (float)height / 24.0f;
-  const float bigFontHeight = (float)height / 24.0f;
-  const float fontWidth = (float)height / 36.0f;
-  const float fontHeight = (float)height / 36.0f;
-  center = 0.5f * (float)width;
+  const float titleFontSize = (float)height / 15.0f;
+  const float fontSize = (float)height / 54.0f;
+  FontManager &fm = FontManager::instance();
 
   // reposition title
   std::vector<HUDuiControl*>& list = getControls();
   HUDuiLabel* title = (HUDuiLabel*)list[0];
-  title->setFontSize(titleFontWidth, titleFontHeight);
-  const OpenGLTexFont& titleFont = title->getFont();
-  const float titleWidth = titleFont.getWidth(title->getString());
+  title->setFontSize(titleFontSize);
+  const float titleWidth = fm.getStrLength(title->getFontFace(), titleFontSize, title->getString());
+  const float titleHeight = fm.getStrHeight(title->getFontFace(), titleFontSize, " ");
   float x = 0.5f * ((float)width - titleWidth);
-  float y = (float)height - titleFont.getHeight();
+  float y = (float)height - titleHeight;
   title->setPosition(x, y);
 
   // reposition options
   x = 0.5f * (float)width;
-  y -= 0.6f * titleFont.getHeight();
-  list[1]->setFontSize(fontWidth, fontHeight);
-  const float h = list[1]->getFont().getHeight();
+  y -= 0.6f * titleHeight;
+  const float h = fm.getStrHeight(list[1]->getFontFace(), fontSize, " ");
   const int count = list.size();
   for (int i = 1; i < count; i++) {
     if (list[i] == start) {
-      y -= bigFontHeight;
-      list[i]->setFontSize(bigFontWidth, bigFontHeight);
+      y -= 1.5f * h;
+      list[i]->setFontSize(1.5f * fontSize);
       list[i]->setPosition(x, y);
-    }
-    else {
-      list[i]->setFontSize(fontWidth, fontHeight);
+    } else {
+      list[i]->setFontSize(fontSize);
       list[i]->setPosition(x, y);
     }
     y -= 1.0f * h;
@@ -604,7 +600,7 @@ void ServerStartMenu::resize(int width, int height)
 HUDuiList* ServerStartMenu::createList(const char* str)
 {
   HUDuiList* list = new HUDuiList;
-  list->setFont(MainMenu::getFont());
+  list->setFontFace(MainMenu::getFontFace());
   if (str) list->setLabel(str);
   return list;
 }
@@ -612,7 +608,7 @@ HUDuiList* ServerStartMenu::createList(const char* str)
 HUDuiLabel* ServerStartMenu::createLabel(const char* str)
 {
   HUDuiLabel* label = new HUDuiLabel;
-  label->setFont(MainMenu::getFont());
+  label->setFontFace(MainMenu::getFontFace());
   if (str) label->setString(str);
   return label;
 }

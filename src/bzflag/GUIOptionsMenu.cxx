@@ -21,6 +21,7 @@
 #include "BundleMgr.h"
 #include "BZDBCache.h"
 #include "TextUtils.h"
+#include "FontManager.h"
 
 /* local implementation headers */
 #include "MainMenu.h"
@@ -37,13 +38,16 @@ GUIOptionsMenu::GUIOptionsMenu()
   // add controls
   std::vector<HUDuiControl*>& list = getControls();
 
+  // cache font face ID
+  int fontFace = MainMenu::getFontFace();
+
   HUDuiLabel* label = new HUDuiLabel;
-  label->setFont(MainMenu::getFont());
+  label->setFontFace(fontFace);
   label->setString("GUI Options");
   list.push_back(label);
 
   HUDuiList* option = new HUDuiList;
-  option->setFont(MainMenu::getFont());
+  option->setFontFace(fontFace);
   option->setLabel("Enhanced radar:");
   option->setCallback(callback, (void*)"e");
   std::vector<std::string>* options = &option->getList();
@@ -53,7 +57,7 @@ GUIOptionsMenu::GUIOptionsMenu()
   list.push_back(option);
 
   option = new HUDuiList;
-  option->setFont(MainMenu::getFont());
+  option->setFontFace(fontFace);
   option->setLabel("Controlpanel & Score FontSize:");
   option->setCallback(callback, (void*)"w");
   options = &option->getList();
@@ -64,7 +68,7 @@ GUIOptionsMenu::GUIOptionsMenu()
 
   // set Radar Translucency
   option = new HUDuiList;
-  option->setFont(MainMenu::getFont());
+  option->setFontFace(fontFace);
   option->setLabel("Radar & Panel Opacity:");
   option->setCallback(callback, (void*)"y");
   option->createSlider(11);
@@ -73,7 +77,7 @@ GUIOptionsMenu::GUIOptionsMenu()
 
   // toggle coloring of shots on radar
   option = new HUDuiList;
-  option->setFont(MainMenu::getFont());
+  option->setFontFace(fontFace);
   option->setLabel("Colored shots on radar:");
   option->setCallback(callback, (void*)"z");
   options = &option->getList();
@@ -84,7 +88,7 @@ GUIOptionsMenu::GUIOptionsMenu()
 
   // set radar shot length
   option = new HUDuiList;
-  option->setFont(MainMenu::getFont());
+  option->setFontFace(fontFace);
   option->setLabel("Radar Shot Length:");
   option->setCallback(callback, (void*)"l");
   option->createSlider(11);
@@ -93,7 +97,7 @@ GUIOptionsMenu::GUIOptionsMenu()
 
   // set radar shot size
   option = new HUDuiList;
-  option->setFont(MainMenu::getFont());
+  option->setFontFace(fontFace);
   option->setLabel("Radar Shot Size:");
   option->setCallback(callback, (void*)"s");
   option->createSlider(11);
@@ -102,7 +106,7 @@ GUIOptionsMenu::GUIOptionsMenu()
 
   // set radar size
   option = new HUDuiList;
-  option->setFont(MainMenu::getFont());
+  option->setFontFace(fontFace);
   option->setLabel("Radar & Panel Size:");
   option->setCallback(callback, (void*)"R");
   option->createSlider(11);
@@ -111,7 +115,7 @@ GUIOptionsMenu::GUIOptionsMenu()
 
   // set maxmotion size
   option = new HUDuiList;
-  option->setFont(MainMenu::getFont());
+  option->setFontFace(fontFace);
   option->setLabel("Mouse Box Size:");
   option->setCallback(callback, (void*)"M");
   option->createSlider(11);
@@ -120,7 +124,7 @@ GUIOptionsMenu::GUIOptionsMenu()
 
   // set locale
   option = new HUDuiList;
-  option->setFont(MainMenu::getFont());
+  option->setFontFace(fontFace);
   option->setLabel("Locale:");
   option->setCallback(callback, (void*)"L");
   options = &option->getList();
@@ -149,7 +153,7 @@ GUIOptionsMenu::GUIOptionsMenu()
 
   // GUI coloring
   option = new HUDuiList;
-  option->setFont(MainMenu::getFont());
+  option->setFontFace(fontFace);
   option->setLabel("Control panel coloring:");
   option->setCallback(callback, (void*)"c");
   options = &option->getList();
@@ -159,7 +163,7 @@ GUIOptionsMenu::GUIOptionsMenu()
   list.push_back(option);
   // Underline color
   option = new HUDuiList;
-  option->setFont(MainMenu::getFont());
+  option->setFontFace(fontFace);
   option->setLabel("Underline color:");
   option->setCallback(callback, (void*)"u");
   options = &option->getList();
@@ -170,7 +174,7 @@ GUIOptionsMenu::GUIOptionsMenu()
   list.push_back(option);
   // Killer Highlight
   option = new HUDuiList;
-  option->setFont(MainMenu::getFont());
+  option->setFontFace(fontFace);
   option->setLabel("Killer Highlight:");
   option->setCallback(callback, (void*)"k");
   options = &option->getList();
@@ -196,29 +200,29 @@ void			GUIOptionsMenu::resize(int width, int height)
   HUDDialog::resize(width, height);
 
   // use a big font for title, smaller font for the rest
-  const float titleFontWidth = (float)height / 10.0f;
-  const float titleFontHeight = (float)height / 10.0f;
-  const float fontWidth = (float)height / 30.0f;
-  const float fontHeight = (float)height / 30.0f;
+  const float titleFontSize = (float)height / 15.0f;
+  const float fontSize = (float)height / 45.0f;
+  FontManager &fm = FontManager::instance();
 
   // reposition title
   std::vector<HUDuiControl*>& list = getControls();
   HUDuiLabel* title = (HUDuiLabel*)list[0];
-  title->setFontSize(titleFontWidth, titleFontHeight);
-  const OpenGLTexFont& titleFont = title->getFont();
-  const float titleWidth = titleFont.getWidth(title->getString());
+  title->setFontSize(titleFontSize);
+  const float titleWidth = fm.getStrLength(MainMenu::getFontFace(), titleFontSize, title->getString());
+  const float titleHeight = fm.getStrHeight(MainMenu::getFontFace(), titleFontSize, " ");
   float x = 0.5f * ((float)width - titleWidth);
-  float y = (float)height - titleFont.getHeight();
+  float y = (float)height - titleHeight;
   title->setPosition(x, y);
 
   // reposition options
   x = 0.5f * ((float)width + 0.5f * titleWidth);
-  y -= 0.6f * titleFont.getHeight();
+  y -= 0.6f * titleHeight;
+  const float h = fm.getStrHeight(MainMenu::getFontFace(), fontSize, " ");
   const int count = list.size();
   for (int i = 1; i < count; i++) {
-    list[i]->setFontSize(fontWidth, fontHeight);
+    list[i]->setFontSize(fontSize);
     list[i]->setPosition(x, y);
-    y -= 1.0f * list[i]->getFont().getHeight();
+    y -= 1.0f * h;
   }
 
   // load current settings
@@ -235,7 +239,20 @@ void			GUIOptionsMenu::resize(int width, int height)
     ((HUDuiList*)list[i++])->setIndex(renderer->getMaxMotionFactor());
     i++; // locale
     ((HUDuiList*)list[i++])->setIndex(BZDB.isTrue("colorful") ? 1 : 0);
-    ((HUDuiList*)list[i++])->setIndex(atoi(OpenGLTexFont::getUnderlineColor().c_str()));
+
+    // underline color - does this HAVE to be so complicated?
+    std::vector<std::string>* options = &((HUDuiList*)list[i++])->getList();
+    std::string uColor = BZDB.get("underlineColor");
+    std::vector<std::string>::iterator itr;
+    int j = 0;
+    for (itr = options->begin(); itr != options->end(); itr++) {
+      if (uColor == (*itr)) {
+        ((HUDuiList*)list[i])->setIndex(j);
+	break;
+      }
+      j++;
+    }
+
     ((HUDuiList*)list[i++])->setIndex(static_cast<int>(BZDB.eval("killerhighlight")));
   }
 }
@@ -292,7 +309,9 @@ void			GUIOptionsMenu::callback(HUDuiControl* w, void* data)
 
     case 'u':
       {
-	OpenGLTexFont::setUnderlineColor(list->getIndex());
+	std::vector<std::string>* options = &list->getList();
+	std::string color = (*options)[list->getIndex()];
+	BZDB.set("underlineColor", color);
 	break;
       }
 

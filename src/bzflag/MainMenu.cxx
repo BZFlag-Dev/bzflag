@@ -18,8 +18,8 @@
 #include <vector>
 
 /* common implementation headers */
-#include "texture.h"
 #include "TextureManager.h"
+#include "FontManager.h"
 
 /* local implementation headers */
 #include "HelpMenu.h"
@@ -32,15 +32,9 @@
 /* from playing.cxx */
 void leaveGame();
 
-OpenGLTexFont*		MainMenu::mainFont = NULL;
-
 MainMenu::MainMenu() : HUDDialog(), joinMenu(NULL),
-				optionsMenu(NULL), quitMenu(NULL)
+		       optionsMenu(NULL), quitMenu(NULL)
 {
-  // create font
-  font = TextureFont::getTextureFont(TextureFont::HelveticaBold, true);
-  mainFont = &font;
-
   // add controls
   createControls();
 }
@@ -60,7 +54,7 @@ void	  MainMenu::createControls()
   
   // add controls
   textureLabel = new HUDuiTextureLabel;
-  textureLabel->setFont(font);
+  textureLabel->setFontFace(getFontFace());
   textureLabel->setTexture(title);
   textureLabel->setString("BZFlag");
   list.push_back(textureLabel);
@@ -98,23 +92,23 @@ void	  MainMenu::createControls()
 HUDuiControl* MainMenu::createLabel(const char* string)
 {
   HUDuiLabel* control = new HUDuiLabel;
-  control->setFont(font);
+  control->setFontFace(getFontFace());
   control->setString(string);
   return control;
 }
 
 MainMenu::~MainMenu()
 {
-  mainFont = NULL;
   delete joinMenu;
   delete optionsMenu;
   delete quitMenu;
   HelpMenu::done();
 }
 
-const OpenGLTexFont&	MainMenu::getFont()
+const int		MainMenu::getFontFace()
 {
-  return *mainFont;
+  // create font
+  return FontManager::instance().getFaceID("TogaSansBold");
 }
 
 HUDuiDefaultKey*	MainMenu::getDefaultKey()
@@ -148,40 +142,37 @@ void			MainMenu::resize(int width, int height)
   HUDDialog::resize(width, height);
 
   // use a big font
-  const float titleFontWidth = (float)height / 10.0f;
-  const float titleFontHeight = (float)height / 10.0f;
-  const float fontWidth = (float)height / 12.0f;
-  const float fontHeight = (float)height / 12.0f;
-  const float tinyFontWidth = (float)height / 36.0f;
-  const float tinyFontHeight = (float)height / 36.0f;
+  const float titleFontSize = (float)height / 15.0f;
+  const float tinyFontSize = (float)height / 54.0f;
+  const float fontSize = (float)height / 18.0f;
+  FontManager &fm = FontManager::instance();
+  int fontFace = getFontFace();
 
   // reposition title
   std::vector<HUDuiControl*>& list = getControls();
   HUDuiLabel* title = (HUDuiLabel*)list[0];
-  title->setFontSize(titleFontWidth, titleFontHeight);
-  const OpenGLTexFont& titleFont = title->getFont();
-  const float titleWidth = titleFont.getWidth(title->getString());
+  title->setFontSize(titleFontSize);
+  const float titleWidth = fm.getStrLength(fontFace, titleFontSize, title->getString());
   float x = 0.5f * ((float)width - titleWidth);
-  float y = (float)height - titleFont.getHeight();
+  float y = (float)height - fm.getStrHeight(fontFace, titleFontSize, title->getString());
   title->setPosition(x, y);
 
   // reposition instructions
   HUDuiLabel* hint = (HUDuiLabel*)list[1];
-  hint->setFontSize(tinyFontWidth, tinyFontHeight);
-  const OpenGLTexFont& hintFont = hint->getFont();
-  const float hintWidth = hintFont.getWidth(hint->getString());
-  y -= 1.25f * tinyFontHeight;
+  hint->setFontSize(tinyFontSize);
+  const float hintWidth = fm.getStrLength(fontFace, tinyFontSize, hint->getString());
+  y -= 1.25f * fm.getStrHeight(fontFace, tinyFontSize, title->getString());
   hint->setPosition(0.5f * ((float)width - hintWidth), y);
-  y -= 1.5f * fontHeight;
+  y -= 1.5f * fm.getStrHeight(fontFace, fontSize, title->getString());
 
   // reposition menu items
-  x += 0.5f * fontHeight;
+  x += 0.5f * fontSize;
   const int count = list.size();
   for (int i = 2; i < count; i++) {
     HUDuiLabel* label = (HUDuiLabel*)list[i];
-    label->setFontSize(fontWidth, fontHeight);
+    label->setFontSize(fontSize);
     label->setPosition(x, y);
-    y -= 1.2f * fontHeight;
+    y -= 1.2f * fm.getStrHeight(fontFace, fontSize, title->getString());
   }
 }
 

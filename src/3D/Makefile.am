@@ -6,10 +6,12 @@ MAINTAINERCLEANFILES = \
 	Makefile.in
 
 lib3D_a_SOURCES =		\
-	TextureManager.cxx	\
+	3DOptionsManager.cxx	\
 	DisplayListManager.cxx	\
 	DrawablesManager.cxx	\
-	3DOptionsManager.cxx
+	FontManager.cxx		\
+	TextureFont.cxx		\
+	TextureManager.cxx
 
 EXTRA_DIST = \
 	README

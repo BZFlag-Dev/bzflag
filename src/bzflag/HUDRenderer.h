@@ -21,7 +21,6 @@
 
 /* common interface headers */
 #include "global.h"
-#include "OpenGLTexFont.h"
 #include "TimeKeeper.h"
 #include "HUDui.h"
 #include "Flag.h"
@@ -83,7 +82,7 @@ public:
   void		setDim(bool);
 
   bool		getComposing() const;
-  std::string		getComposeString() const;
+  std::string	getComposeString() const;
   void		setComposeString(const std::string &message) const;
   void		setComposeString(const std::string &message, bool _allowEdit) const;
 
@@ -96,7 +95,7 @@ public:
   bool		getHunting() const;
   void		setHuntIndicator(bool _huntIndicator);
   void		setHuntPosition(int _huntPosition);
-  int			getHuntPosition() const;
+  int		getHuntPosition() const;
   bool		getHuntSelection() const;
   void		setHuntSelection(bool _huntSelection);
   bool		getHuntIndicator() const;
@@ -126,7 +125,7 @@ protected:
   void		drawTeamScore(int team, float x, float y);
 
   void		makeCrack(float crackpattern[HUDNumCracks][(1 << HUDCrackLevels) + 1][2], int n, int l, float a);
-  std::string		makeHelpString(const char* help) const;
+  std::string	makeHelpString(const char* help) const;
 
 private:
   void		setBigFontSize(int width, int height);
@@ -138,34 +137,43 @@ private:
   void		setLabelsFontSize(int width, int height);
 
   void		resize(bool firstTime);
-  static void		resizeCallback(void*);
-  static int		tankScoreCompare(const void* _a, const void* _b);
-  static int		teamScoreCompare(const void* _a, const void* _b);
+  static void	resizeCallback(void*);
+  static int	tankScoreCompare(const void* _a, const void* _b);
+  static int	teamScoreCompare(const void* _a, const void* _b);
 
 private:
   const BzfDisplay*	display;
   MainWindow&		window;
-  bool		firstRender;
+  bool			firstRender;
   int			noMotionSize;
   int			maxMotionSize;
-  float		headingOffset;
+  float			headingOffset;
   GLfloat		hudColor[3];
   GLfloat		messageColor[3];
   GLfloat		warningColor[3];
-  OpenGLTexFont	bigFont;
-  OpenGLTexFont	alertFont;
-  OpenGLTexFont	majorFont;
-  OpenGLTexFont	minorFont;
-  OpenGLTexFont	headingFont;
-  OpenGLTexFont	composeFont;
-  OpenGLTexFont	labelsFont;
+
+  int		bigFontFace;
+  float		bigFontSize;
+  int		alertFontFace;
+  float		alertFontSize;
+  int		majorFontFace;
+  float		majorFontSize;
+  int		minorFontFace;
+  float		minorFontSize;
+  int		headingFontFace;
+  float		headingFontSize;
+  int		composeFontFace;
+  float		composeFontSize;
+  int		labelsFontFace;
+  float		labelsFontSize;
+
   bool		playing;
   bool		roaming;
   bool		dim;
   bool		sDim;
-  int			numPlayers;
-  int			timeLeft;
-  TimeKeeper		timeSet;
+  int		numPlayers;
+  int		timeLeft;
+  TimeKeeper	timeSet;
   bool		playerHasHighScore;
   bool		teamHasHighScore;
   float		heading;
@@ -173,7 +181,7 @@ private:
   bool		altitudeTape;
   float		fps;
   float		drawTime;
-  int			headingMarkSpacing;
+  int		headingMarkSpacing;
   float		headingLabelWidth[36];
   float		altitudeMarkSpacing;
   float		altitudeLabelMaxWidth;
@@ -185,8 +193,8 @@ private:
   float		autoPilotWidth;
   float		cancelDestructLabelWidth;
   float		gameOverLabelWidth;
-  std::string		restartLabel;
-  std::string		roamingLabel;
+  std::string	restartLabel;
+  std::string	roamingLabel;
 
   FlashClock		globalClock;
   FlashClock		scoreClock;

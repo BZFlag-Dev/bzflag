@@ -21,7 +21,6 @@
 #include "common.h"
 #include "BzfEvent.h"
 #include "OpenGLGState.h"
-#include "OpenGLTexFont.h"
 #include "OpenGLTexture.h"
 #include "TimeKeeper.h"
 #include "Bundle.h"
@@ -68,7 +67,8 @@ class HUDuiControl {
     float		getHeight() const;
     float		getLabelWidth() const;
     std::string		getLabel() const;
-    const OpenGLTexFont	&getFont() const;
+    int			getFontFace() const;
+    float		getFontSize() const;
     HUDuiControl*	getPrev() const;
     HUDuiControl*	getNext() const;
     HUDuiCallback	getCallback() const;
@@ -78,8 +78,8 @@ class HUDuiControl {
     void		setSize(float width, float height);
     void		setLabelWidth(float width);
     void		setLabel(const std::string& label);
-    void		setFont(const OpenGLTexFont&);
-    void		setFontSize(float w, float h);
+    void		setFontFace(int face);
+    void		setFontSize(float size);
     void		setPrev(HUDuiControl*);
     void		setNext(HUDuiControl*);
     void		setCallback(HUDuiCallback, void*);
@@ -105,7 +105,8 @@ class HUDuiControl {
 
   private:
     bool		showingFocus;
-    OpenGLTexFont	font;
+    int			fontFace;
+    float		fontSize;
     float		x, y;
     float		width, height;
     float		fontHeight;

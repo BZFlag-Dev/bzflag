@@ -20,6 +20,7 @@
 /* common implementation headers */
 #include "BzfWindow.h"
 #include "StateDatabase.h"
+#include "FontManager.h"
 
 /* local implementation headers */
 #include "MainWindow.h"
@@ -33,16 +34,18 @@ MainWindow*    getMainWindow();
 InputMenu::InputMenu() : keyboardMapMenu(NULL)
 {
   std::string currentJoystickDevice = BZDB.get("joystickname");
+  // cache font face ID
+  int fontFace = MainMenu::getFontFace();
   // add controls
   std::vector<HUDuiControl*>& list = getControls();
 
   HUDuiLabel* label = new HUDuiLabel;
-  label->setFont(MainMenu::getFont());
-  label->setString("Input Setting");
+  label->setFontFace(fontFace);
+  label->setString("Input Settings");
   list.push_back(label);
 
   keyMapping = new HUDuiLabel;
-  keyMapping->setFont(MainMenu::getFont());
+  keyMapping->setFontFace(fontFace);
   keyMapping->setLabel("Change Key Mapping");
   list.push_back(keyMapping);
 
@@ -51,7 +54,7 @@ InputMenu::InputMenu() : keyboardMapMenu(NULL)
   option = new HUDuiList;
   std::vector<std::string>* options = &option->getList();
   // set joystick Device
-  option->setFont(MainMenu::getFont());
+  option->setFontFace(fontFace);
   option->setLabel("Joystick device:");
   option->setCallback(callback, (void*)"J");
   options = &option->getList();
@@ -73,7 +76,7 @@ InputMenu::InputMenu() : keyboardMapMenu(NULL)
   list.push_back(option);
 
   forceInput = new HUDuiList;
-  forceInput->setFont(MainMenu::getFont());
+  forceInput->setFontFace(fontFace);
   forceInput->setLabel("Force input device:");
   forceInput->setCallback(callback, (void*)"F");
   options = &forceInput->getList();
@@ -86,7 +89,7 @@ InputMenu::InputMenu() : keyboardMapMenu(NULL)
 
   option = new HUDuiList;
   // set joystick Device
-  option->setFont(MainMenu::getFont());
+  option->setFontFace(fontFace);
   option->setLabel("Confine mouse:");
   option->setCallback(callback, (void*)"G");
   options = &option->getList();
@@ -158,29 +161,29 @@ void			InputMenu::resize(int width, int height)
   int i;
 
   // use a big font for title, smaller font for the rest
-  const float titleFontWidth = (float)height / 10.0f;
-  const float titleFontHeight = (float)height / 10.0f;
-  const float fontWidth = (float)height / 30.0f;
-  const float fontHeight = (float)height / 30.0f;
+  const float titleFontSize = (float)height / 15.0f;
+  const float fontSize = (float)height / 45.0f;
+  FontManager &fm = FontManager::instance();
 
   // reposition title
   std::vector<HUDuiControl*>& list = getControls();
   HUDuiLabel* title = (HUDuiLabel*)list[0];
-  title->setFontSize(titleFontWidth, titleFontHeight);
-  const OpenGLTexFont& titleFont = title->getFont();
-  const float titleWidth = titleFont.getWidth(title->getString());
+  title->setFontSize(titleFontSize);
+  const float titleWidth = fm.getStrLength(MainMenu::getFontFace(), titleFontSize, title->getString());
+  const float titleHeight = fm.getStrHeight(MainMenu::getFontFace(), titleFontSize, " ");
   float x = 0.5f * ((float)width - titleWidth);
-  float y = (float)height - titleFont.getHeight();
+  float y = (float)height - titleHeight;
   title->setPosition(x, y);
 
   // reposition options
   x = 0.5f * ((float)width + 0.5f * titleWidth);
-  y -= 0.6f * titleFont.getHeight();
+  y -= 0.6f * titleHeight;
+  const float h = fm.getStrHeight(MainMenu::getFontFace(), fontSize, " ");
   const int count = list.size();
   for (i = 1; i < count; i++) {
-    list[i]->setFontSize(fontWidth, fontHeight);
+    list[i]->setFontSize(fontSize);
     list[i]->setPosition(x, y);
-    y -= 1.0f * list[i]->getFont().getHeight();
+    y -= 1.0f * h;
   }
 
   // load current settings

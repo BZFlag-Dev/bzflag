@@ -32,11 +32,9 @@ public:
   void resize(int width, int height);
   void createControls();
 
-  static const OpenGLTexFont& getFont();
+  static const int getFontFace();
 
 private:
-  OpenGLTexFont	font;
-  static OpenGLTexFont* mainFont;
 
   HUDuiControl* createLabel(const char* string);
 

@@ -17,7 +17,7 @@
 #include <vector>
 
 /* common implementation headers */
-#include "OpenGLTexFont.h"
+#include "FontManager.h"
 
 /* local implementation headers */
 #include "MainMenu.h"
@@ -47,12 +47,12 @@ QuitMenu::QuitMenu()
   HUDuiLabel* label;
 
   label = new HUDuiLabel;
-  label->setFont(MainMenu::getFont());
+  label->setFontFace(MainMenu::getFontFace());
   label->setString("Enter to quit, Esc to resume");
   list.push_back(label);
 
   label = new HUDuiLabel;
-  label->setFont(MainMenu::getFont());
+  label->setFontFace(MainMenu::getFontFace());
   label->setString("Really quit?");
   list.push_back(label);
 
@@ -68,33 +68,31 @@ void QuitMenu::resize(int width, int height)
   HUDDialog::resize(width, height);
 
   // use a big font
-  float fontWidth = (float)height / 10.0f;
-  float fontHeight = (float)height / 10.0f;
-  float smallFontWidth = (float)height / 36.0f;
-  float smallFontHeight = (float)height / 36.0f;
+  float fontSize = (float)height / 15.0f;
+  float smallFontSize = (float)height / 54.0f;
   float x, y;
+  FontManager &fm = FontManager::instance();
+  const int fontFace = MainMenu::getFontFace();
+
+  // heights
+  const float fontHeight = fm.getStrHeight(fontFace, fontSize, " ");
+  const float smallFontHeight = fm.getStrHeight(fontFace, smallFontSize, " ");
 
   // get stuff
   std::vector<HUDuiControl*>& list = getControls();
   HUDuiLabel* label = (HUDuiLabel*)list[0];
-  label->setFontSize(smallFontWidth, smallFontHeight);
-  const OpenGLTexFont& font = label->getFont();
-  smallFontWidth = label->getFont().getWidth();
-  smallFontHeight = label->getFont().getHeight();
 
   // help message
-  label = (HUDuiLabel*)list[0];
-  const float stringWidth = font.getWidth(label->getString());
+  label->setFontSize(smallFontSize);
+  const float stringWidth = fm.getStrLength(fontFace, smallFontSize, label->getString());
   x = 0.5f * ((float)width - stringWidth);
-  y = (float)height - fontHeight - 1.5f * font.getHeight();
+  y = (float)height - fontHeight - 1.5f * smallFontHeight;
   label->setPosition(x, y);
 
   // quit message
   label = (HUDuiLabel*)list[1];
-  label->setFontSize(fontWidth, fontHeight);
-  fontWidth = label->getFont().getWidth();
-  fontHeight = label->getFont().getHeight();
-  const float labelWidth = label->getFont().getWidth(label->getString());
+  label->setFontSize(fontSize);
+  const float labelWidth = fm.getStrLength(fontFace, fontSize, label->getString());
   x = 0.5f * ((float)width - labelWidth);
   y = (float)height - 3.5f * fontHeight;
   label->setPosition(x, y);

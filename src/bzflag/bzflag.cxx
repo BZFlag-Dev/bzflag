@@ -64,12 +64,12 @@
 #include "TextUtils.h"
 #include "ActionBinding.h"
 #include "ServerStartMenu.h"
-#include "OpenGLTexFont.h"
+#include "FontManager.h"
 
 // invoke incessant rebuilding for build versioning
 #include "version.h"
 
-int beginendCount=0;
+int beginendCount = 0;
 
 extern std::vector<std::string>& getSilenceList();
 const char*		argv0;
@@ -110,7 +110,7 @@ static DefaultDBItem	defaultDBItems[] = {
   { "mouseboxsize",		"5",			true,	StateDatabase::ReadWrite,	NULL },
   { "bigfont",			"0",			true,	StateDatabase::ReadWrite,	NULL },
   { "colorful",			"1",			true,	StateDatabase::ReadWrite,	NULL },
-  { "underline",		"0",			true,	StateDatabase::ReadWrite,	NULL },
+  { "underlineColor",		"cyan",			true,	StateDatabase::ReadWrite,	NULL },
   { "zbuffer",			"1",			true,	StateDatabase::ReadWrite,	NULL },
   { "killerhighlight",		"0",			true,	StateDatabase::ReadWrite,	NULL },
   { "serverCacheAge",		"0",			true,	StateDatabase::ReadWrite,	NULL },
@@ -657,8 +657,6 @@ void			dumpResources(BzfDisplay* display,
 
   BZDB.set("mouseboxsize", string_util::format("%d", renderer.getMaxMotionFactor()));
 
-  BZDB.set("underline", OpenGLTexFont::getUnderlineColor());
-
   // don't save these configurations
   BZDB.setPersistent("_window", false);
   BZDB.setPersistent("_multisample", false);
@@ -1048,7 +1046,17 @@ int			main(int argc, char** argv)
 #endif
   }
 
-  // set window size (we do it here because the OpenGL context isn't yet bound)
+  // initialize font system
+  FontManager &fm = FontManager::instance();
+  // load fonts from data directory
+  fm.loadAll(PlatformFactory::getMedia()->getMediaDirectory());
+  // try to get a font - only returns -1 if there are no fonts at all
+  if (fm.getFaceID("TogaSansBold") < 0) {
+    printFatalError("No fonts found.  Exiting");
+    return 1;
+  }
+
+  // initialize locale system
 
   BundleMgr *bm = new BundleMgr(PlatformFactory::getMedia()->getMediaDirectory(), "bzflag");
   World::setBundleMgr(bm);
@@ -1059,6 +1067,8 @@ int			main(int argc, char** argv)
 
   bool setPosition = false, setSize = false;
   int x = 0, y = 0, w = 0, h = 0;
+
+  // set window size (we do it here because the OpenGL context isn't yet bound)
 
   if (BZDB.isSet("geometry")) {
     char xs, ys;
@@ -1221,8 +1231,6 @@ int			main(int argc, char** argv)
       renderer.setRadarSize(atoi(BZDB.get("radarsize").c_str()));
     if (BZDB.isSet("mouseboxsize"))
       renderer.setMaxMotionFactor(atoi(BZDB.get("mouseboxsize").c_str()));
-    if (BZDB.isSet("underline"))
-      OpenGLTexFont::setUnderlineColor(atoi(BZDB.get("underline").c_str()));
   }
 
   // grab the mouse only if allowed

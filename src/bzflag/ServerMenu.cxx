@@ -26,6 +26,7 @@
 #include "Protocol.h"
 #include "TimeKeeper.h"
 #include "TextUtils.h"
+#include "FontManager.h"
 
 /* local implementation headers */
 #include "ServerListCache.h"
@@ -144,7 +145,7 @@ ServerMenu::ServerMenu() : defaultKey(this),
 void ServerMenu::addLabel(const char* msg, const char* _label)
 {
   HUDuiLabel* label = new HUDuiLabel;
-  label->setFont(MainMenu::getFont());
+  label->setFontFace(MainMenu::getFontFace());
   label->setString(msg);
   label->setLabel(_label);
   getControls().push_back(label);
@@ -474,26 +475,26 @@ void			ServerMenu::resize(int width, int height)
   std::vector<HUDuiControl*>& list = getControls();
 
   // use a big font for title, smaller font for the rest
-  const float titleFontWidth = (float)height / 10.0f;
-  const float titleFontHeight = (float)height / 10.0f;
+  const float titleFontSize = (float)height / 15.0f;
+  FontManager &fm = FontManager::instance();
 
   // reposition title
   float x, y;
   {
     HUDuiLabel* title = (HUDuiLabel*)list[0];
-    title->setFontSize(titleFontWidth, titleFontHeight);
-    const OpenGLTexFont& titleFont = title->getFont();
-    const float titleWidth = titleFont.getWidth(title->getString());
+    title->setFontSize(titleFontSize);
+    const float titleWidth = fm.getStrLength(title->getFontFace(), titleFontSize, title->getString());
+    const float titleHeight = fm.getStrHeight(title->getFontFace(), titleFontSize, " ");
     x = 0.5f * ((float)width - titleWidth);
-    y = (float)height - titleFont.getHeight();
+    y = (float)height - titleHeight;
     title->setPosition(x, y);
   }
 
   // reposition server readouts
   int i;
   const float y0 = y;
-  float fontWidth = (float)height / 36.0f;
-  float fontHeight = (float)height / 36.0f;
+  float fontSize = (float)height / 54.0f;
+  float fontHeight = fm.getStrHeight(MainMenu::getFontFace(), fontSize, " ");
   for (i = 1; i < NumReadouts - 2; i++) {
     if (i % 7 == 1) {
       x = (0.125f + 0.25f * (float)((i - 1) / 7)) * (float)width;
@@ -501,9 +502,8 @@ void			ServerMenu::resize(int width, int height)
     }
 
     HUDuiLabel* label = (HUDuiLabel*)list[i];
-    label->setFontSize(fontWidth, fontHeight);
-    const OpenGLTexFont& font = label->getFont();
-    y -= 1.0f * font.getHeight();
+    label->setFontSize(fontSize);
+    y -= 1.0f * fontHeight;
     label->setPosition(x, y);
   }
 
@@ -511,25 +511,23 @@ void			ServerMenu::resize(int width, int height)
 
   // reposition search status readout
   {
-    fontWidth = (float)height / 24.0f;
-    fontHeight = (float)height / 24.0f;
-    status->setFontSize(fontWidth, fontHeight);
-    const OpenGLTexFont& font = status->getFont();
-    const float statusWidth = font.getWidth(status->getString());
+    fontSize = (float)height / 36.0f;
+    float fontHeight = fm.getStrHeight(MainMenu::getFontFace(), fontSize, " ");
+    status->setFontSize(fontSize);
+    const float statusWidth = fm.getStrLength(status->getFontFace(), fontSize, status->getString());
     x = 0.5f * ((float)width - statusWidth);
-    y -= 0.8f * font.getHeight();
+    y -= 0.8f * fontHeight;
     status->setPosition(x, y);
   }
 
   // position page readout and server item list
-  fontWidth = (float)height / 36.0f;
-  fontHeight = (float)height / 36.0f;
+  fontSize = (float)height / 54.0f;
+  fontHeight = fm.getStrHeight(MainMenu::getFontFace(), fontSize, " ");
   x = 0.125f * (float)width;
   for (i = -1; i < NumItems; ++i) {
     HUDuiLabel* label = (HUDuiLabel*)list[i + NumReadouts];
-    label->setFontSize(fontWidth, fontHeight);
-    const OpenGLTexFont& font = label->getFont();
-    y -= 1.0f * font.getHeight();
+    label->setFontSize(fontSize);
+    y -= 1.0f * fontHeight;
     label->setPosition(x, y);
   }
 }
@@ -537,8 +535,8 @@ void			ServerMenu::resize(int width, int height)
 void			ServerMenu::setStatus(const char* msg, const std::vector<std::string> *parms)
 {
   status->setString(msg, parms);
-  const OpenGLTexFont& font = status->getFont();
-  const float statusWidth = font.getWidth(status->getString());
+  FontManager &fm = FontManager::instance();
+  const float statusWidth = fm.getStrLength(status->getFontFace(), status->getFontSize(), status->getString());
   status->setPosition(0.5f * ((float)width - statusWidth), status->getY());
 }
 

@@ -33,7 +33,6 @@
 #include "TankSceneNode.h"
 #include "StateDatabase.h"
 #include "TextUtils.h"
-#include "texture.h"
 #include "BZDBCache.h"
 
 /* FIXME - local implementation dependancies */

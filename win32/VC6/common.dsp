@@ -202,6 +202,10 @@ SOURCE=..\..\src\common\md5.cxx
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\src\common\OSFile.cxx
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\src\common\PlayerState.cxx
 # End Source File
 # Begin Source File
@@ -240,6 +244,10 @@ SOURCE=..\..\src\common\WordFilter.cxx
 # Begin Group "Header Files"
 
 # PROP Default_Filter "h"
+# Begin Source File
+
+SOURCE=..\..\include\AnsiCodes.h
+# End Source File
 # Begin Source File
 
 SOURCE=..\..\include\Address.h
@@ -327,6 +335,10 @@ SOURCE=..\..\include\MathUtils.h
 # Begin Source File
 
 SOURCE=..\..\include\md5.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\include\OSFile.h
 # End Source File
 # Begin Source File
 

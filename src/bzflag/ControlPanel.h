@@ -14,14 +14,12 @@
 #define	BZF_CONTROL_PANEL_H
 
 #if defined(_MSC_VER)
-	#pragma warning(disable: 4786)
+  #pragma warning(disable: 4786)
 #endif
 
 #include "common.h"
 #include "MainWindow.h"
 #include "global.h"
-#include "OpenGLTexture.h"
-#include "OpenGLTexFont.h"
 #include "OpenGLGState.h"
 #include <string>
 #include <vector>
@@ -73,7 +71,8 @@ class ControlPanel {
     RadarRenderer*	radarRenderer;
     SceneRenderer*	renderer;
 
-    OpenGLTexFont	messageFont;
+    int			fontFace;
+    float		fontSize;
     float		du, dv;
     int			radarAreaPixels[4];
     int			messageAreaPixels[4];

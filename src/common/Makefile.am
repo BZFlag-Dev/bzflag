@@ -14,6 +14,7 @@ libCommon_a_SOURCES  =			\
 	Flag.cxx			\
 	KeyManager.cxx			\
 	Language.cxx			\
+	OSFile.cxx			\
 	PlayerState.cxx			\
 	PositionTracker.cxx		\
 	ShotUpdate.cxx			\
@@ -38,5 +39,4 @@ MAINTAINERCLEANFILES = \
 	Makefile.in
 
 EXTRA_DIST = \
-	OSFile.cxx	\
 	README

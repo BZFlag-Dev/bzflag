@@ -87,6 +87,8 @@ static const char copyright[] = "Copyright (c) 1993 - 2004 Tim Riker";
 #include "CommandsStandard.h"
 #include "commands.h"
 #include "DirectoryNames.h"
+#include "AnsiCodes.h"
+#include "TextureManager.h"
 
 // versioning that makes us recompile every time
 #include "version.h"
@@ -267,42 +269,42 @@ bool		shouldGrabMouse()
 void        warnAboutMainFlags()
 {
   // warning message for hidden flags 
-	if (!BZDBCache::displayMainFlags){
-		std::string showFlagsMsg = ColorStrings[YellowColor];
+  if (!BZDBCache::displayMainFlags){
+    std::string showFlagsMsg = ColorStrings[YellowColor];
     showFlagsMsg += "Flags on field hidden, to show them ";
-		std::vector<std::string> keys = KEYMGR.getKeysFromCommand("toggleFlags main", true);
+    std::vector<std::string> keys = KEYMGR.getKeysFromCommand("toggleFlags main", true);
 
-		if (keys.size() != 0) {
-  			showFlagsMsg += "hit \"";
-        showFlagsMsg += ColorStrings[WhiteColor];
-				showFlagsMsg += tolower(keys[0][0]);
-        showFlagsMsg += ColorStrings[YellowColor];
-				showFlagsMsg += "\"";
-		} else {
-			showFlagsMsg += " bind a key to Toggle Flags on Field";
-		}
-		addMessage(NULL, showFlagsMsg);
-	}
+    if (keys.size() != 0) {
+      showFlagsMsg += "hit \"";
+      showFlagsMsg += ColorStrings[WhiteColor];
+      showFlagsMsg += tolower(keys[0][0]);
+      showFlagsMsg += ColorStrings[YellowColor];
+      showFlagsMsg += "\"";
+    } else {
+      showFlagsMsg += " bind a key to Toggle Flags on Field";
+    }
+    addMessage(NULL, showFlagsMsg);
+  }
 }
 
 void        warnAboutRadarFlags()
 {
-	if (!BZDB.isTrue("displayRadarFlags")){
+  if (!BZDB.isTrue("displayRadarFlags")){
     std::string showFlagsMsg = ColorStrings[YellowColor];
-		showFlagsMsg += "Flags on radar hidden, to show them ";
-		std::vector<std::string> keys = KEYMGR.getKeysFromCommand("toggleFlags radar", true);
+    showFlagsMsg += "Flags on radar hidden, to show them ";
+    std::vector<std::string> keys = KEYMGR.getKeysFromCommand("toggleFlags radar", true);
 
-		if (keys.size() != 0) {
-  			showFlagsMsg += "hit \"";
-        showFlagsMsg += ColorStrings[WhiteColor];
-				showFlagsMsg += tolower(keys[0][0]);
-        showFlagsMsg += ColorStrings[YellowColor];
-				showFlagsMsg += "\"";
-		} else {
-			showFlagsMsg += " bind a key to Toggle Flags on Radar";
-		}
-		addMessage(NULL, showFlagsMsg);
-	}
+    if (keys.size() != 0) {
+      showFlagsMsg += "hit \"";
+      showFlagsMsg += ColorStrings[WhiteColor];
+      showFlagsMsg += tolower(keys[0][0]);
+      showFlagsMsg += ColorStrings[YellowColor];
+      showFlagsMsg += "\"";
+    } else {
+      showFlagsMsg += " bind a key to Toggle Flags on Radar";
+    }
+    addMessage(NULL, showFlagsMsg);
+  }
 }
 
 BzfDisplay*		getDisplay()
@@ -987,11 +989,6 @@ void		addMessage(const Player* player,
     }
     fullMessage += msg;
   } else {
-    char *tmpstr = strdup(msg.c_str());
-    OpenGLTexFont::stripAnsiCodes(tmpstr, strlen(tmpstr));
-    std::string cleanMsg = tmpstr;
-    free(tmpstr);
-
     if (oldColor != NULL)
       fullMessage = oldColor;
 
@@ -1005,7 +1002,7 @@ void		addMessage(const Player* player,
 #endif
       fullMessage += ": ";
     }
-    fullMessage += cleanMsg;
+    fullMessage += stripAnsiCodes(msg);
   }
   controlPanel->addMessage(fullMessage);
 }
@@ -1167,7 +1164,7 @@ static Player*		addPlayer(PlayerId id, void* msg, int showMessage)
   msg = nboUnpackString(msg, email, EmailLen);
 
   // Strip any ANSI color codes
-  OpenGLTexFont::stripAnsiCodes (callsign, strlen (callsign));
+  strncpy(callsign, stripAnsiCodes(std::string(callsign)).c_str(), 32);
 
   // id is slot, check if it's empty
   const int i = id;
@@ -2051,14 +2048,12 @@ static void		handleServerMessage(bool human, uint16_t code,
       }
     }
 
-    OpenGLTexFont::stripAnsiCodes((char*) msg, strlen ((char*) msg));
-
     // if filtering is turned on, filter away the goo
     if (wordfilter != NULL) {
       wordfilter->filter((char *)msg);
     }
-
-    std::string origText = std::string((char*)msg);
+    
+    std::string origText = stripAnsiCodes(std::string((char*)msg));
     std::string text = BundleMgr::getCurrentBundle()->getLocalString(origText);
 
     if (toAll || toAdmin || srcPlayer == myTank  || dstPlayer == myTank ||
@@ -2141,14 +2136,14 @@ static void		handleServerMessage(bool human, uint16_t code,
 	fullMsg += ColorStrings[CyanColor];
 	fullMsg += text;
       }
-      const char *oldcolor = NULL;
+      std::string oldcolor = "";
       if (!srcPlayer || srcPlayer->getTeam() == NoTeam)
         oldcolor = ColorStrings[RogueTeam];
       else if (srcPlayer->getTeam() == ObserverTeam)
         oldcolor = ColorStrings[CyanColor];
       else
         oldcolor = ColorStrings[srcPlayer->getTeam()];
-      addMessage(NULL, fullMsg, false, oldcolor);
+      addMessage(NULL, fullMsg, false, oldcolor.c_str());
 
       if (!srcPlayer || srcPlayer!=myTank)
 	hud->setAlert(0, fullMsg.c_str(), 3.0f, false);
@@ -4752,8 +4747,7 @@ static void		playingLoop()
 	  glCopyPixels(x, y, w, h, GL_COLOR);
 	  glPixelZoom(1.0f, 1.0f);
 	  if (BZDB.isTrue("dither")) glEnable(GL_DITHER);
-	}
-	else {
+	} else {
 	  // normal rendering
 	  sceneRenderer->render();
 	}
@@ -4764,6 +4758,7 @@ static void		playingLoop()
 	controlPanel->render(*sceneRenderer);
 	if (radar) radar->render(*sceneRenderer, blankRadar);
       }
+
 
       // get frame end time
       if (showDrawTime) {
@@ -5411,6 +5406,7 @@ void			startPlaying(BzfDisplay* _display,
     controlPanel->addMessage(bombMessage);
   }
 
+  // print copyright
   tmpString = ColorStrings[RogueColor];
   tmpString += copyright;
   controlPanel->addMessage(tmpString);

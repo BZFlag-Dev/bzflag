@@ -16,9 +16,9 @@
 #include "bzfgl.h"
 #include "HUDui.h"
 #include "World.h"
-#include "texture.h"
 #include "BundleMgr.h"
 #include "TextureManager.h"
+#include "FontManager.h"
 
 static const GLfloat	dimTextColor[3] = { 0.7f, 0.7f, 0.7f };
 static const GLfloat	moreDimTextColor[3] = { 0.4f, 0.4f, 0.4f };
@@ -100,6 +100,7 @@ TimeKeeper		HUDuiControl::lastTime;
 int			HUDuiControl::totalCount = 0;
 
 HUDuiControl::HUDuiControl() : showingFocus(true),
+				fontFace(-1), fontSize(11),
 				x(0.0f), y(0.0f),
 				width(1.0f), height(1.0f),
 				fontHeight(11.0f),
@@ -148,9 +149,14 @@ std::string		HUDuiControl::getLabel() const
   return BundleMgr::getCurrentBundle()->getLocalString(label);
 }
 
-const OpenGLTexFont&	HUDuiControl::getFont() const
+int			HUDuiControl::getFontFace() const
 {
-  return font;
+  return fontFace;
+}
+
+float			HUDuiControl::getFontSize() const
+{
+  return fontSize;
 }
 
 HUDuiControl*		HUDuiControl::getPrev() const
@@ -194,18 +200,21 @@ void			HUDuiControl::setLabel(const std::string& _label)
 {
 
   label = _label;
-  if (font.isValid()) trueLabelWidth = font.getWidth(getLabel());
+  if (fontFace >= 0) {
+    FontManager &fm = FontManager::instance();
+    trueLabelWidth = fm.getStrLength(fontFace, fontSize, getLabel());
+  }
 }
 
-void			HUDuiControl::setFont(const OpenGLTexFont& _font)
+void			HUDuiControl::setFontFace(int _fontFace)
 {
-  font = _font;
+  fontFace = _fontFace;
   onSetFont();
 }
 
-void			HUDuiControl::setFontSize(float w, float h)
+void			HUDuiControl::setFontSize(float size)
 {
-  font.setSize(w, h);
+  fontSize = size;
   onSetFont();
 }
 
@@ -229,12 +238,11 @@ void			HUDuiControl::setCallback(HUDuiCallback _cb, void* _ud)
 
 void			HUDuiControl::onSetFont()
 {
-  if (font.isValid()) {
-    int ascent = (int)font.getAscent();
-    fontHeight = (float)(ascent | 1) - 4.0f;
-    trueLabelWidth = font.getWidth(label);
-  }
-  else {
+  if (fontFace >= 0) {
+    fontHeight = fontSize;
+    FontManager &fm = FontManager::instance();
+    trueLabelWidth = fm.getStrLength(fontFace, fontSize, label);
+  } else {
     fontHeight = 11.0f;
     trueLabelWidth = 0.0f;
   }
@@ -323,11 +331,13 @@ void			HUDuiControl::renderFocus()
 void			HUDuiControl::renderLabel()
 {
   std::string theLabel = getLabel();
-  if (theLabel.length() > 0 && getFont().isValid()) {
-    trueLabelWidth = getFont().getWidth(theLabel) + getFont().getWidth("99");
+  if (theLabel.length() > 0 && fontFace >= 0) {
+    FontManager &fm = FontManager::instance();
+    trueLabelWidth = fm.getStrLength(fontFace, fontSize, theLabel) + 
+		     fm.getStrLength(fontFace, fontSize, "99");
     const float dx = (desiredLabelWidth > trueLabelWidth)
       ? desiredLabelWidth : trueLabelWidth;
-    font.draw(theLabel, x - dx, y);
+    fm.drawString(x - dx, y, 0, fontFace, fontSize, theLabel);
   }
 }
 
@@ -464,9 +474,10 @@ bool			HUDuiList::doKeyRelease(const BzfKeyEvent&)
 void			HUDuiList::doRender()
 {
   Bundle *bdl = BundleMgr::getCurrentBundle();
-  if (index != -1 && getFont().isValid()) {
+  if (index != -1 && getFontFace() >= 0) {
     glColor3fv(hasFocus() ? textColor : dimTextColor);
-    getFont().draw(bdl->getLocalString(list[index]), getX(), getY());
+    FontManager &fm = FontManager::instance();
+    fm.drawString(getX(), getY(), 0, getFontFace(), getFontSize(), bdl->getLocalString(list[index]));
   }
 }
 
@@ -606,17 +617,20 @@ bool			HUDuiTypeIn::doKeyRelease(const BzfKeyEvent& key)
 
 void			HUDuiTypeIn::doRender()
 {
-  if (!getFont().isValid()) return;
+  if (getFontFace() < 0) return;
 
   // render string
   glColor3fv(hasFocus() ? textColor : dimTextColor);
-  getFont().draw(string, getX(), getY());
+
+  FontManager &fm = FontManager::instance();
+
+  fm.drawString(getX(), getY(), 0, getFontFace(), getFontSize(), string);
 
   // find the position of where to draw the input cursor
-  float start = getFont().getWidth(string.substr(0, cursorPos));
+  float start = fm.getStrLength(getFontFace(), getFontSize(), string.substr(0, cursorPos));
 
   if (HUDui::getFocus() == this && allowEdit) {
-    getFont().draw("_", getX() + start, getY());
+    fm.drawString(getX() + start, getY(), 0, getFontFace(), getFontSize(), "_");
   }
 }
 
@@ -717,11 +731,12 @@ void			HUDuiLabel::setDarker(bool d)
 
 void			HUDuiLabel::doRender()
 {
-  if (!getFont().isValid()) return;
+  if (getFontFace() < 0) return;
   // render string
   glColor3fv(hasFocus() ? textColor : dimTextColor);
   if (!hasFocus() && darker) glColor3fv(moreDimTextColor);
-  getFont().draw(getString(), getX(), getY());
+  FontManager &fm = FontManager::instance();
+  fm.drawString(getX(), getY(), 0, getFontFace(), getFontSize(), getString());
 }
 
 //
@@ -747,20 +762,19 @@ void			HUDuiTextureLabel::setTexture(const int t)
 
 void			HUDuiTextureLabel::doRender()
 {
-  if (!getFont().isValid()) return;
+  if (getFontFace() < 0) return;
 
   // render string if texture filter is Off, otherwise draw the texture
   // about the same size and position as the string would be.
   if (OpenGLTexture::getFilter() == OpenGLTexture::Off || !gstate.isTextured() || texture < 0) {
     HUDuiLabel::doRender();
-  }
-  else { // why use a font? it's an image, use the image size, let every pixel be seen!!! :)
-    const OpenGLTexFont& font = getFont();
-    const float height = font.getHeight();//texture.getHeight();//
+  } else { // why use a font? it's an image, use the image size, let every pixel be seen!!! :)
+    const float height = getFontSize();//texture.getHeight();//
     TextureManager  &tm = TextureManager::instance();
 
     const float width = height * 1.0f/tm.GetAspectRatio(texture);//font.getWidth(getString());
-    const float descent = font.getDescent();
+    //const float descent = font.getDescent();
+    const float descent = 0;
     const float x = getX();
     const float y = getY();
     gstate.setState();

@@ -18,10 +18,10 @@
 #include <string>
 
 /* common implementation headers */
-#include "OpenGLTexFont.h"
 #include "BzfWindow.h"
 #include "BzfDisplay.h"
 #include "ErrorHandler.h"
+#include "FontManager.h"
 
 /* local implementation headers */
 #include "MainMenu.h"
@@ -137,7 +137,7 @@ FormatMenu::~FormatMenu()
 void FormatMenu::addLabel(const char* msg, const char* _label)
 {
   HUDuiLabel* label = new HUDuiLabel;
-  label->setFont(MainMenu::getFont());
+  label->setFontFace(MainMenu::getFontFace());
   label->setString(msg);
   label->setLabel(_label);
   getControls().push_back(label);
@@ -243,52 +243,48 @@ void FormatMenu::resize(int width, int height)
   HUDDialog::resize(width, height);
 
   // use a big font for title, smaller font for the rest
-  const float titleFontWidth = (float)height / 10.0f;
-  const float titleFontHeight = (float)height / 10.0f;
+  const float titleFontSize = (float)height / 15.0f;
+  FontManager &fm = FontManager::instance();
+  int fontFace = MainMenu::getFontFace();
 
   // reposition title
   float x, y;
   std::vector<HUDuiControl*>& list = getControls();
   {
     HUDuiLabel* title = (HUDuiLabel*)list[0];
-    title->setFontSize(titleFontWidth, titleFontHeight);
-    const OpenGLTexFont& titleFont = title->getFont();
-    const float titleWidth = titleFont.getWidth(title->getString());
+    title->setFontSize(titleFontSize);
+    const float titleWidth = fm.getStrLength(fontFace, titleFontSize, title->getString());
+    const float titleHeight = fm.getStrHeight(fontFace, titleFontSize, " ");
     x = 0.5f * ((float)width - titleWidth);
-    y = (float)height - titleFont.getHeight();
+    y = (float)height - titleHeight;
     title->setPosition(x, y);
   }
 
   // reposition test and current format messages
-  float fontWidth = (float)height / 36.0f;
-  float fontHeight = (float)height / 36.0f;
+  float fontSize = (float)height / 54.0f;
   {
     HUDuiLabel* label = (HUDuiLabel*)list[1];
-    label->setFontSize(fontWidth, fontHeight);
-    const OpenGLTexFont& font = label->getFont();
-    const float stringWidth = font.getWidth(label->getString());
+    label->setFontSize(fontSize);
+    const float stringWidth = fm.getStrLength(fontFace, fontSize, label->getString());
     x = 0.5f * ((float)width - stringWidth);
-    y -= 1.5f * font.getHeight();
+    y -= 1.5f * fm.getStrHeight(fontFace, fontSize, " ");
     label->setPosition(x, y);
   }
   {
     HUDuiLabel* label = currentLabel;
-    label->setFontSize(fontWidth, fontHeight);
-    const OpenGLTexFont& font = label->getFont();
-    y -= 1.0f * font.getHeight();
+    label->setFontSize(fontSize);
+    y -= 1.0f * fm.getStrHeight(fontFace, fontSize, " ");
     label->setPosition(0.5f * (float)width, y);
   }
 
   // position page readout
-  fontWidth = (float)height / 36.0f;
-  fontHeight = (float)height / 36.0f;
+  fontSize = (float)height / 54.0f;
   {
     HUDuiLabel* label = pageLabel;
-    label->setFontSize(fontWidth, fontHeight);
-    const OpenGLTexFont& font = label->getFont();
-    const float stringWidth = font.getWidth(label->getString());
+    label->setFontSize(fontSize);
+    const float stringWidth = fm.getStrLength(fontFace, fontSize, label->getString());
     x = 0.5f * ((float)width - stringWidth);
-    y -= 2.0f * font.getHeight();
+    y -= 2.0f * fm.getStrHeight(fontFace, fontSize, " ");
     label->setPosition(x, y);
   }
 
@@ -304,9 +300,8 @@ void FormatMenu::resize(int width, int height)
     }
 
     HUDuiLabel* label = (HUDuiLabel*)list[i + NumReadouts];
-    label->setFontSize(fontWidth, fontHeight);
-    const OpenGLTexFont& font = label->getFont();
-    y -= 1.0f * font.getHeight();
+    label->setFontSize(fontSize);
+    y -= 1.0f * fm.getStrHeight(fontFace, fontSize, " ");
     label->setPosition(x, y);
   }
 }

@@ -1,5 +1,5 @@
 # Microsoft Developer Studio Project File - Name="ogl" - Package Owner=<4>
-# Microsoft Developer Studio Generated Build File, Format Version 6.00
+# Microsoft Developer Studio Generated Build File, Format Version 5.00
 # ** DO NOT EDIT **
 
 # TARGTYPE "Win32 (x86) Static Library" 0x0104
@@ -24,11 +24,9 @@ CFG=ogl - Win32 SDL_Debug
 !MESSAGE 
 
 # Begin Project
-# PROP AllowPerConfigDependencies 0
 # PROP Scc_ProjName ""
 # PROP Scc_LocalPath ""
 CPP=cl.exe
-RSC=rc.exe
 
 !IF  "$(CFG)" == "ogl - Win32 Release"
 
@@ -42,11 +40,12 @@ RSC=rc.exe
 # PROP Output_Dir "..\..\src\ogl"
 # PROP Intermediate_Dir "..\..\src\ogl\Release"
 # PROP Target_Dir ""
+RSC=rc.exe
+# ADD BASE RSC /l 0x409 /d "NDEBUG"
+# ADD RSC /l 0x409 /d "NDEBUG"
 # ADD BASE CPP /nologo /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_MBCS" /D "_LIB" /YX /FD /c
 # ADD CPP /nologo /MD /W3 /GX /O2 /I "..\..\include" /I "..\..\win32" /I ".\\" /D "WIN32" /D "NDEBUG" /D "_MBCS" /D "_LIB" /FD /c
 # SUBTRACT CPP /YX
-# ADD BASE RSC /l 0x409 /d "NDEBUG"
-# ADD RSC /l 0x409 /d "NDEBUG"
 BSC32=bscmake.exe
 # ADD BASE BSC32 /nologo
 # ADD BSC32 /nologo
@@ -66,11 +65,12 @@ LIB32=link.exe -lib
 # PROP Output_Dir "..\..\src\ogl\Debug"
 # PROP Intermediate_Dir "..\..\src\ogl\Debug"
 # PROP Target_Dir ""
-# ADD BASE CPP /nologo /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_MBCS" /D "_LIB" /YX /FD /GZ /c
-# ADD CPP /nologo /MDd /W3 /Gm /GX /ZI /Od /I "..\..\include" /I "..\..\win32" /I ".\\" /D "WIN32" /D "_DEBUG" /D "_MBCS" /D "_LIB" /FD /GZ /c
-# SUBTRACT CPP /YX
+RSC=rc.exe
 # ADD BASE RSC /l 0x409 /d "_DEBUG"
 # ADD RSC /l 0x409 /d "_DEBUG"
+# ADD BASE CPP /nologo /W3 /GX /Od /D "WIN32" /D "_DEBUG" /D "_MBCS" /D "_LIB" /YX /FD /ZI /GZ /c
+# ADD CPP /nologo /MDd /W3 /GX /Od /I "..\..\include" /I "..\..\win32" /I ".\\" /D "WIN32" /D "_DEBUG" /D "_MBCS" /D "_LIB" /FD /ZI /GZ /c
+# SUBTRACT CPP /YX
 BSC32=bscmake.exe
 # ADD BASE BSC32 /nologo
 # ADD BSC32 /nologo
@@ -90,12 +90,13 @@ LIB32=link.exe -lib
 # PROP Output_Dir "..\..\src\ogl\SDL_Release"
 # PROP Intermediate_Dir "..\..\src\ogl\SDL_Release"
 # PROP Target_Dir ""
+RSC=rc.exe
+# ADD BASE RSC /l 0x409 /d "NDEBUG"
+# ADD RSC /l 0x409 /d "NDEBUG"
 # ADD BASE CPP /nologo /MD /W3 /GX /O2 /I "..\..\include" /I "..\..\win32" /I ".\\" /D "WIN32" /D "NDEBUG" /D "_MBCS" /D "_LIB" /FD /c
 # SUBTRACT BASE CPP /YX
 # ADD CPP /nologo /MD /W3 /GX /O2 /I "..\..\include" /I "..\..\win32" /I ".\\" /D "WIN32" /D "NDEBUG" /D "_MBCS" /D "_LIB" /D "HAVE_SDL" /FD /c
 # SUBTRACT CPP /YX
-# ADD BASE RSC /l 0x409 /d "NDEBUG"
-# ADD RSC /l 0x409 /d "NDEBUG"
 BSC32=bscmake.exe
 # ADD BASE BSC32 /nologo
 # ADD BSC32 /nologo
@@ -115,12 +116,13 @@ LIB32=link.exe -lib
 # PROP Output_Dir "..\..\src\ogl\SDL_Debug"
 # PROP Intermediate_Dir "..\..\src\ogl\SDL_Debug"
 # PROP Target_Dir ""
-# ADD BASE CPP /nologo /MDd /W3 /Gm /GX /ZI /Od /I "..\..\include" /I "..\..\win32" /I ".\\" /D "WIN32" /D "_DEBUG" /D "_MBCS" /D "_LIB" /FD /GZ /c
-# SUBTRACT BASE CPP /YX
-# ADD CPP /nologo /MDd /W3 /Gm /GX /ZI /Od /I "..\..\include" /I "..\..\win32" /I ".\\" /D "WIN32" /D "_DEBUG" /D "_MBCS" /D "_LIB" /D "HAVE_SDL" /FD /GZ /c
-# SUBTRACT CPP /YX
+RSC=rc.exe
 # ADD BASE RSC /l 0x409 /d "_DEBUG"
 # ADD RSC /l 0x409 /d "_DEBUG"
+# ADD BASE CPP /nologo /MDd /W3 /GX /Od /I "..\..\include" /I "..\..\win32" /I ".\\" /D "WIN32" /D "_DEBUG" /D "_MBCS" /D "_LIB" /FD /ZI /GZ /c
+# SUBTRACT BASE CPP /YX
+# ADD CPP /nologo /MDd /W3 /GX /Od /I "..\..\include" /I "..\..\win32" /I ".\\" /D "WIN32" /D "_DEBUG" /D "_MBCS" /D "_LIB" /D "HAVE_SDL" /FD /ZI /GZ /c
+# SUBTRACT CPP /YX
 BSC32=bscmake.exe
 # ADD BASE BSC32 /nologo
 # ADD BSC32 /nologo
@@ -157,10 +159,6 @@ SOURCE=..\..\src\ogl\OpenGLMaterial.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\src\ogl\OpenGLTexFont.cxx
-# End Source File
-# Begin Source File
-
 SOURCE=..\..\src\ogl\OpenGLTexture.cxx
 # End Source File
 # Begin Source File
@@ -194,10 +192,6 @@ SOURCE=..\..\include\OpenGLLight.h
 # Begin Source File
 
 SOURCE=..\..\include\OpenGLMaterial.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\include\OpenGLTexFont.h
 # End Source File
 # Begin Source File
 

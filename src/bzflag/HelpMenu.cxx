@@ -18,9 +18,9 @@
 #include <string>
 
 /* common implementation headers */
-#include "OpenGLTexFont.h"
 #include "KeyManager.h"
 #include "Flag.h"
+#include "FontManager.h"
 
 /* local implementation headers */
 #include "HUDui.h"
@@ -71,7 +71,7 @@ HUDuiControl* HelpMenu::createLabel(const char* string,
 				    const char* label)
 {
   HUDuiLabel* control = new HUDuiLabel;
-  control->setFont(MainMenu::getFont());
+  control->setFontFace(MainMenu::getFontFace());
   if (string) control->setString(string);
   if (label) control->setLabel(label);
   return control;
@@ -87,24 +87,23 @@ void HelpMenu::resize(int width, int height)
   HUDDialog::resize(width, height);
 
   // use a big font for title, smaller font for the rest
-  const float titleFontWidth = (float)height / 15.0f;
-  const float titleFontHeight = (float)height / 15.0f;
-  const float fontWidth = (float)height / 48.0f;
-  const float fontHeight = (float)height / 48.0f;
+  const float titleFontSize = (float)height / 23.0f;
+  const float fontSize = (float)height / 72.0f;
+  FontManager &fm = FontManager::instance();
 
   // reposition title
   std::vector<HUDuiControl*>& list = getControls();
   HUDuiLabel* title = (HUDuiLabel*)list[0];
-  title->setFontSize(titleFontWidth, titleFontHeight);
-  const OpenGLTexFont& titleFont = title->getFont();
-  const float titleWidth = titleFont.getWidth(title->getString());
+  title->setFontSize(titleFontSize);
+  const float titleWidth = fm.getStrLength(MainMenu::getFontFace(), titleFontSize, title->getString());
+  const float titleHeight = fm.getStrHeight(MainMenu::getFontFace(), titleFontSize, " ");
   float x = 0.5f * ((float)width - titleWidth);
-  float y = (float)height - titleFont.getHeight();
+  float y = (float)height - titleHeight;
   title->setPosition(x, y);
 
   // position focus holder off screen
-  list[1]->setFontSize(fontWidth, fontHeight);
-  const float h = list[1]->getFont().getHeight();
+  list[1]->setFontSize(fontSize);
+  const float h = fm.getStrHeight(MainMenu::getFontFace(), fontSize, " ");
   y -= 1.25f * h;
   list[1]->setPosition(0.5f * ((float)width + h), y);
 
@@ -113,7 +112,7 @@ void HelpMenu::resize(int width, int height)
   y -= 1.5f * h;
   const int count = list.size();
   for (int i = 2; i < count; i++) {
-    list[i]->setFontSize(fontWidth, fontHeight);
+    list[i]->setFontSize(fontSize);
     list[i]->setPosition(x, y);
     y -= 1.0f * h;
   }
@@ -546,6 +545,7 @@ Help9Menu::Help9Menu() : HelpMenu("Credits")
   list.push_back(createLabel("Dave Brosius, David Trowbridge", ""));
   list.push_back(createLabel("Sean Morrison, Tupone Alfredo", ""));
   list.push_back(createLabel("Lars Luthman, Nils McCarthy", ""));
+  list.push_back(createLabel("Daniel Remenak", ""));
   list.push_back(createLabel("", ""));
   list.push_back(createLabel("Tamar Cohen", "Tank Models:"));
   list.push_back(createLabel("", ""));

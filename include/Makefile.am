@@ -2,6 +2,7 @@ noinst_HEADERS =		\
 	3DOptionsManager.h	\
 	Address.h		\
 	AdnsHandler.h		\
+	AnsiCodes.h		\
 	BSPSceneDatabase.h	\
 	BZDBCache.h		\
 	BaseBuilding.h		\
@@ -32,6 +33,7 @@ noinst_HEADERS =		\
 	EighthDimSceneNode.h	\
 	ErrorHandler.h		\
 	FileManager.h		\
+	FontManager.h		\
 	Flag.h			\
 	FlagSceneNode.h		\
 	FlagWarpSceneNode.h	\
@@ -50,7 +52,6 @@ noinst_HEADERS =		\
 	OpenGLGState.h		\
 	OpenGLLight.h		\
 	OpenGLMaterial.h	\
-	OpenGLTexFont.h		\
 	OpenGLTexture.h		\
 	OSFile.h		\
 	PTSceneNode.h		\
@@ -80,6 +81,7 @@ noinst_HEADERS =		\
 	Teleporter.h		\
 	TextUtils.h		\
 	TextureManager.h	\
+	TextureFont.h		\
 	TimeBomb.h		\
 	TimeKeeper.h		\
 	TracerSceneNode.h	\
@@ -103,7 +105,6 @@ noinst_HEADERS =		\
 	network.h		\
 	regex.h			\
 	resource.h		\
-	texture.h		\
 	udpnetwork.h		\
 	version.h		\
 	win32.h

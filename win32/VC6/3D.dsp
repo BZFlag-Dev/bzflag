@@ -66,8 +66,8 @@ LIB32=link.exe -lib
 # PROP Output_Dir "..\..\src\common\Debug"
 # PROP Intermediate_Dir "..\..\src\common\Debug"
 # PROP Target_Dir ""
-# ADD BASE CPP /nologo /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_MBCS" /D "_LIB" /YX /FD /GZ /c
-# ADD CPP /nologo /MDd /W3 /Gm /GX /ZI /Od /I "./" /I "../../include" /D "WIN32" /D "_DEBUG" /D "_MBCS" /D "_LIB" /YX /FD /GZ /c
+# ADD BASE CPP /nologo /W3 /Gm /GX /Zi /Od /D "WIN32" /D "_DEBUG" /D "_MBCS" /D "_LIB" /YX /FD /Gz /c
+# ADD CPP /nologo /MDd /W3 /Gm /GX /Zi /Od /I "./" /I "../../include" /D "WIN32" /D "_DEBUG" /D "_MBCS" /D "_LIB" /YX /FD /GZ /c
 # ADD BASE RSC /l 0x409 /d "_DEBUG"
 # ADD RSC /l 0x409 /d "_DEBUG"
 BSC32=bscmake.exe
@@ -112,8 +112,8 @@ LIB32=link.exe -lib
 # PROP Output_Dir "..\..\src\3D\SDL_Debug"
 # PROP Intermediate_Dir "..\..\src\3D\SDL_Debug"
 # PROP Target_Dir ""
-# ADD BASE CPP /nologo /MDd /W3 /Gm /GX /ZI /Od /I "./" /I "../../include" /D "WIN32" /D "_DEBUG" /D "_MBCS" /D "_LIB" /YX /FD /GZ /c
-# ADD CPP /nologo /MDd /W3 /Gm /GX /ZI /Od /I "./" /I "../../include" /D "WIN32" /D "_DEBUG" /D "_MBCS" /D "_LIB" /D "HAVE_SDL" /YX /FD /GZ /c
+# ADD BASE CPP /nologo /MDd /W3 /Gm /GX /Zi /Od /I "./" /I "../../include" /D "WIN32" /D "_DEBUG" /D "_MBCS" /D "_LIB" /YX /FD /Gz /c
+# ADD CPP /nologo /MDd /W3 /Gm /GX /Zi /Od /I "./" /I "../../include" /D "WIN32" /D "_DEBUG" /D "_MBCS" /D "_LIB" /D "HAVE_SDL" /YX /FD /GZ /c
 # ADD BASE RSC /l 0x409 /d "_DEBUG"
 # ADD RSC /l 0x409 /d "_DEBUG"
 BSC32=bscmake.exe
@@ -136,11 +136,23 @@ LIB32=link.exe -lib
 # PROP Default_Filter "cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
 # Begin Source File
 
+SOURCE=..\..\src\3D\3DOptionsManager.cxx
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\src\3D\DisplayListManager.cxx
 # End Source File
 # Begin Source File
 
 SOURCE=..\..\src\3D\DrawablesManager.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\3D\FontManager.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\3D\TextureFont.cxx
 # End Source File
 # Begin Source File
 
@@ -150,6 +162,14 @@ SOURCE=..\..\src\3D\TextureManager.cxx
 # Begin Group "Header Files"
 
 # PROP Default_Filter "h;hpp;hxx;hm;inl"
+# Begin Source File
+
+SOURCE=..\..\include\3DOptionsManager.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\include\AnsiCodes.h
+# End Source File
 # Begin Source File
 
 SOURCE=..\..\include\Bundle.h
@@ -188,6 +208,10 @@ SOURCE=..\..\include\ErrorHandler.h
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\include\FontManager.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\include\global.h
 # End Source File
 # Begin Source File
@@ -197,10 +221,6 @@ SOURCE=..\..\include\MediaFile.h
 # Begin Source File
 
 SOURCE=..\..\include\OpenGLGState.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\include\OpenGLTexFont.h
 # End Source File
 # Begin Source File
 
@@ -216,7 +236,7 @@ SOURCE=..\..\include\StateDatabase.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\include\texture.h
+SOURCE=..\..\include\TextureFont.h
 # End Source File
 # Begin Source File
 

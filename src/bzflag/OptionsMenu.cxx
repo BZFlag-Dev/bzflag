@@ -20,10 +20,10 @@
 #include <string>
 
 /* common implementation headers */
-#include "OpenGLTexFont.h"
 #include "StateDatabase.h"
 #include "BZDBCache.h"
 #include "TextUtils.h"
+#include "FontManager.h"
 
 /* local implementation headers */
 #include "MainMenu.h"
@@ -41,43 +41,46 @@ OptionsMenu::OptionsMenu() : guiOptionsMenu(NULL), saveWorldMenu(NULL),
 			     inputMenu(NULL), audioMenu(NULL),
 			     displayMenu(NULL)
 {
+  // cache font face ID
+  int fontFace = MainMenu::getFontFace();
+
   // add controls
   std::vector<HUDuiControl*>& list = getControls();
   HUDuiList* option;
   std::vector<std::string>* options;
 
   HUDuiLabel* label = new HUDuiLabel;
-  label->setFont(MainMenu::getFont());
+  label->setFontFace(fontFace);
   label->setString("Options");
   list.push_back(label);
 
   inputSetting = label = new HUDuiLabel;
-  label->setFont(MainMenu::getFont());
+  label->setFontFace(fontFace);
   label->setLabel("Input Settings");
   list.push_back(label);
 
   audioSetting = label = new HUDuiLabel;
-  label->setFont(MainMenu::getFont());
+  label->setFontFace(fontFace);
   label->setLabel("Audio Settings");
   list.push_back(label);
 
   displaySetting = label = new HUDuiLabel;
-  label->setFont(MainMenu::getFont());
+  label->setFontFace(fontFace);
   label->setLabel("Display Settings");
   list.push_back(label);
 
   guiOptions = label = new HUDuiLabel;
-  label->setFont(MainMenu::getFont());
+  label->setFontFace(fontFace);
   label->setLabel("GUI Options");
   list.push_back(label);
 
   label = new HUDuiLabel;
-  label->setFont(MainMenu::getFont());
+  label->setFontFace(fontFace);
   label->setLabel("");
   list.push_back(label);
 
   option = new HUDuiList;
-  option->setFont(MainMenu::getFont());
+  option->setFontFace(fontFace);
   option->setLabel("UDP network connection:");
   option->setCallback(callback, (void*)"U");
   options = &option->getList();
@@ -87,7 +90,7 @@ OptionsMenu::OptionsMenu() : guiOptionsMenu(NULL), saveWorldMenu(NULL),
   list.push_back(option);
 
   option = new HUDuiList;
-  option->setFont(MainMenu::getFont());
+  option->setFontFace(fontFace);
   option->setLabel("Server List Cache:");
   option->setCallback(callback, (void*)"S");
   options = &option->getList();
@@ -105,12 +108,12 @@ OptionsMenu::OptionsMenu() : guiOptionsMenu(NULL), saveWorldMenu(NULL),
   list.push_back(option);
 
   clearCache = label = new HUDuiLabel;
-  label->setFont(MainMenu::getFont());
+  label->setFontFace(fontFace);
   label->setLabel("Clear Server List Cache");
   list.push_back(label);
 
   saveWorld = label = new HUDuiLabel;
-  label->setFont(MainMenu::getFont());
+  label->setFontFace(fontFace);
   label->setLabel("Save World");
   list.push_back(label);
 
@@ -159,29 +162,29 @@ void OptionsMenu::resize(int width, int height)
   HUDDialog::resize(width, height);
 
   // use a big font for title, smaller font for the rest
-  const float titleFontWidth = (float)height / 10.0f;
-  const float titleFontHeight = (float)height / 10.0f;
-  const float fontWidth = (float)height / 30.0f;
-  const float fontHeight = (float)height / 30.0f;
+  const float titleFontSize = (float)height / 15.0f;
+  const float fontSize = (float)height / 45.0f;
+  FontManager &fm = FontManager::instance();
 
   // reposition title
   std::vector<HUDuiControl*>& list = getControls();
   HUDuiLabel* title = (HUDuiLabel*)list[0];
-  title->setFontSize(titleFontWidth, titleFontHeight);
-  const OpenGLTexFont& titleFont = title->getFont();
-  const float titleWidth = titleFont.getWidth(title->getString());
+  title->setFontSize(titleFontSize);
+  const float titleWidth = fm.getStrLength(MainMenu::getFontFace(), titleFontSize, title->getString());
+  const float titleHeight = fm.getStrHeight(MainMenu::getFontFace(), titleFontSize, " ");
   float x = 0.5f * ((float)width - titleWidth);
-  float y = (float)height - titleFont.getHeight();
+  float y = (float)height - titleHeight;
   title->setPosition(x, y);
 
   // reposition options in two columns
   x = 0.5f * (float)width;
-  y -= 0.6f * titleFont.getHeight();
+  y -= 0.6f * titleHeight;
   const int count = list.size();
+  const float h = fm.getStrHeight(MainMenu::getFontFace(), fontSize, " ");
   for (i = 1; i < count; i++) {
-    list[i]->setFontSize(fontWidth, fontHeight);
+    list[i]->setFontSize(fontSize);
     list[i]->setPosition(x, y);
-    y -= 1.0f * list[i]->getFont().getHeight();
+    y -= 1.0f * h;
   }
 
   // load current settings
