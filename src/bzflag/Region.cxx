@@ -115,8 +115,8 @@ float			BzfRegion::getDistance(const float p[2]) const
   float        m[2];
   float        t;
   float        edgeSquareDist;
-  for (int i = 0; i < count; i++) {
-    p2   = corners[i].get();
+  for (int c = 0; c < count; c++) {
+    p2   = corners[c].get();
     d[0] = p2[1] - p1[0];
     d[1] = p2[1] - p1[1];
     m[0] = p[0]  - p1[0];
