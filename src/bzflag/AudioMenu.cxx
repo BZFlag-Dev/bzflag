@@ -47,6 +47,7 @@ AudioMenu::AudioMenu()
   option = new HUDuiList;
   std::vector<std::string>* options;
 
+  // Sound Volume
   option = new HUDuiList;
   option->setFontFace(MainMenu::getFontFace());
   option->setLabel("Sound Volume:");
@@ -65,6 +66,8 @@ AudioMenu::AudioMenu()
    Disable driver selection for others as it gets saved in config
    and can screw things up if you switch from non-SDL to SDL build.
    If more platforms get setDriver functions, they can be added. */
+
+  // Driver
 #ifdef HAVE_SDL
   driver = new HUDuiTypeIn;
   driver->setFontFace(MainMenu::getFontFace());
@@ -76,6 +79,7 @@ AudioMenu::AudioMenu()
   driver = NULL;
 #endif // HAVE_SDL
 
+  // Device
 #ifdef HAVE_SDL
   device = new HUDuiTypeIn;
   device->setFontFace(MainMenu::getFontFace());
@@ -86,6 +90,17 @@ AudioMenu::AudioMenu()
 #else
   device = NULL;
 #endif // HAVE_SDL
+
+  // Remotes Sounds
+  option = new HUDuiList;
+  option->setFontFace(MainMenu::getFontFace());
+  option->setLabel("Remote Sounds:");
+  option->setCallback(callback, (void*)"r");
+  options = &option->getList();
+  options->push_back(std::string("Off"));
+  options->push_back(std::string("On"));
+  option->update();
+  list.push_back(option);
 
   initNavigation(list, 1,list.size()-1);
 }
@@ -139,6 +154,9 @@ void			AudioMenu::resize(int width, int height)
   i = 1;
   // sound
   ((HUDuiList*)list[i++])->setIndex(getSoundVolume());
+  i++; // driver
+  i++; // device
+  ((HUDuiList*)list[i++])->setIndex(BZDB.isTrue("remoteSounds") ? 1 : 0);
 }
 
 void			AudioMenu::callback(HUDuiControl* w, void* data) {
@@ -149,6 +167,9 @@ void			AudioMenu::callback(HUDuiControl* w, void* data) {
     case 's':
       BZDB.set("volume", TextUtils::format("%d", list->getIndex()));
       setSoundVolume(list->getIndex());
+      break;
+    case 'r':
+      BZDB.setBool("remoteSounds", (list->getIndex() == 0) ? false : true);
       break;
   }
 }
