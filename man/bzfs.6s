@@ -46,6 +46,7 @@ bzfs \- BZFlag game server
 [\fB\-synctime\fR]
 [\fB\-t\fR]
 [\fB\-time \fItime-limit\fR]
+[\fB\-timemanual\fR]
 [\fB\-tk\fR]
 [\fB\-tkkr \fIpercent\fR]
 [\fB\-ttl \fIttl\fR]
@@ -244,6 +245,11 @@ Adds teleporters to the game.
 \fB\-time\fI time-limit\fR
 Sets a time limit on the game to \fItime-limit\fR.  The game will be
 stopped \fItime-limit\fR seconds after the first player connects.
+.TP
+\fB\-timemanual\fR
+When using \fB-time\fR, the countdown will start when the first player
+joins. With \fB-timemanual\fR, the countdown has to be started manually
+using the \fI/countdown\fR command. This is useful for matches.
 .TP
 .B -tk
 Changes the default behaviour where a player dies when he kills a teammate.
