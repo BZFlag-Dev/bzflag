@@ -113,6 +113,11 @@
 						d.writeln("-ban \"" + mainform.ban_list.value + "\"<br/><br/>");
 					}
 
+					if (mainform.ban_file.value.length > 0) {
+						d.writeln("#Ban File<br/>");
+						d.writeln("-banfile \"" + mainform.ban_file.value + "\"<br/><br/>");
+					}
+
 					if (mainform.idle_kick_time.value != 0) {
 						d.writeln("#Idle Kick Threshold [s]<br/>");
 						d.writeln("-maxidle " + mainform.idle_kick_time.value + "<br/><br/>");
@@ -546,6 +551,10 @@
 						<tr span="2">
 							<td>Ban List</td>
 							<td colspan="3"><input type="text" name="ban_list" size="100" title="Ban players based on ip addresses"/></td>
+						</tr>
+						<tr span="2">
+							<td>Ban File</td>
+							<td colspan="3"><input type="file" name="ban_file" size="100" title="Ban file"/></td>
 						</tr>
 						<tr>
 							<td>Idle Kick Time</td>
