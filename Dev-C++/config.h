@@ -15,6 +15,10 @@
 #ifndef _DEVCPP_CONFIG
 #define _DEVCPP_CONFIG
 
+#if defined(WIN32) && !defined(_WIN32)
+#define _WIN32
+#endif
+
 /* Building regex */
 #define BUILD_REGEX 1
 
@@ -60,7 +64,7 @@
     #else
       #define BZ_BUILD_OS			"W32-DevC++-MinGW32"
     #endif //DEBUG
-  #endif //_WIN32
+  #endif //__linux
 #endif
 
 #ifdef _WIN32
@@ -69,6 +73,6 @@
   #endif
   #define _WIN32_WINNT 0x0400
   #include <Windows.h>
-#endif //_WIN32
+#endif //WIN32
 
 #endif //_DEVCPP_CONFIG
