@@ -20,6 +20,69 @@
 #include <vector>
 
 
+/** This is an abstract base class for all different option types. */
+class Parser {
+public:
+  Parser(const std::string& usageText, const std::string& helpText)
+    : usage(usageText), help(helpText) { }
+  virtual ~Parser() { }
+  /** This function is called when the option that this parser is mapped
+      to is given on the command line. */
+  virtual int parse(char** argv) = 0;
+  const std::string usage;
+  const std::string help;
+};
+
+/** This is a template class for the variable parser. */
+template <class T>
+class VariableParser : public Parser {
+public:
+  VariableParser(T& variable, const std::string& usageText,
+		 const std::string& helpText)
+    : Parser(usageText, helpText), var(variable) { }
+  virtual int parse(char** argv) {
+    std::istringstream iss(argv[0]);
+    iss>>var;
+    return 1;
+  }
+protected:
+  T& var;
+};
+
+/** This is a specialization for @c string variables. It copies the
+    entire parameter instead of just the first word (which the
+    stream operator would have done). */
+template<> 
+class VariableParser<std::string> : public Parser {
+public:
+  VariableParser(std::string& variable, const std::string& usageText,
+		 const std::string& helpText)
+    : Parser(usageText, helpText), var(variable) { }
+  virtual int parse(char** argv) {
+    var = argv[0];
+    return 1;
+  }
+protected:
+  std::string& var;
+};
+
+/** This is a specialization for @c bool variables. It does not
+    take a parameter, but just sets the variable to @c true. */
+template<> 
+class VariableParser<bool> : public Parser {
+public:
+  VariableParser(bool& variable, const std::string& usageText,
+		 const std::string& helpText)
+    : Parser(usageText, helpText), var(variable) { }
+  virtual int parse(char**) {
+    var = true;
+    return 0;
+  }
+protected:
+  bool& var;
+};
+
+
 /** This class handles all the command line parsing for bzadmin. */
 class OptionParser {
 public:
@@ -65,72 +128,6 @@ public:
 
 protected:
 
-  /** This is an abstract base class for all different option types. */
-  class Parser {
-  public:
-    Parser(const std::string& usageText, const std::string& helpText)
-      : usage(usageText), help(helpText) { }
-    virtual ~Parser() { }
-    /** This function is called when the option that this parser is mapped
-	to is given on the command line. */
-    virtual int parse(char** argv) = 0;
-    const std::string usage;
-    const std::string help;
-  };
-
-  /** This is a template class for the variable parser. */
-  template <class T>
-  class VariableParser : public Parser {
-  public:
-    VariableParser(T& variable, const std::string& usageText,
-		   const std::string& helpText)
-      : Parser(usageText, helpText), var(variable) { }
-    virtual int parse(char** argv) {
-      std::istringstream iss(argv[0]);
-      iss>>var;
-      return 1;
-    }
-  protected:
-    T& var;
-  };
-
-#ifdef _WIN32
-  /** This is a specialization for @c string variables. It copies the
-      entire parameter instead of just the first word (which the
-      stream operator would have done). */
-  template<>
-#endif
-      class VariableParser<std::string> : public Parser {
-  public:
-    VariableParser(std::string& variable, const std::string& usageText,
-		   const std::string& helpText)
-      : Parser(usageText, helpText), var(variable) { }
-    virtual int parse(char** argv) {
-      var = argv[0];
-      return 1;
-    }
-  protected:
-    std::string& var;
-  };
-
-#ifdef _WIN32
-  /** This is a specialization for @c bool variables. It does not
-      take a parameter, but just sets the variable to @c true. */
-  template<>
-#endif
-      class VariableParser<bool> : public Parser {
-  public:
-    VariableParser(bool& variable, const std::string& usageText,
-		   const std::string& helpText)
-      : Parser(usageText, helpText), var(variable) { }
-    virtual int parse(char**) {
-      var = true;
-      return 0;
-    }
-  protected:
-    bool& var;
-  };
-
   std::map<std::string, Parser*> parsers;
   std::vector<std::string> parameters;
   std::string error;
@@ -138,8 +135,8 @@ protected:
   std::string usageSuf;
 };
 
-
 #endif
+
 
 // Local variables: ***
 // mode:C++ ***
