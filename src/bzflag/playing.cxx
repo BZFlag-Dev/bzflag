@@ -2634,7 +2634,7 @@ static bool		gotBlowedUp(BaseLocalPlayer* tank,
 				    PlayerId killer,
 				    const ShotPath* hit)
 {
-  if (tank->getTeam() == ObserverTeam || !tank->isAlive())
+  if (tank && (tank->getTeam() == ObserverTeam || !tank->isAlive()))
     return false;
 
   int shotId = -1;
@@ -2696,7 +2696,7 @@ static bool		gotBlowedUp(BaseLocalPlayer* tank,
     if (reason != GotCaptured)
       tank->changeScore(0, 1, 0);
 
-    // tell server I'm dead if it won't already know
+    // tell server I'm dead in case it doesn't already know
     if (reason == GotShot || reason == GotRunOver ||
         reason == GenocideEffect || reason == SelfDestruct ||
         reason == DeadUnderDeath)
@@ -2712,21 +2712,28 @@ static bool		gotBlowedUp(BaseLocalPlayer* tank,
     } else {
       // 1-4 are messages sent when the player dies because of someone else
       if (reason >= GotShot && reason <= GenocideEffect) {
-	// matching the team-display style of other kill messages
-	TeamColor team = lookupPlayer(killer)->getTeam();
-	if (hit)
-	  team = hit->getTeam();
-	if (myTank->getTeam() == team && team != RogueTeam) {
-	  blowedUpNotice += "teammate " ;
-	  blowedUpNotice += lookupPlayer(killer)->getCallSign();
-	} else {
-	  blowedUpNotice += lookupPlayer(killer)->getCallSign();
-	  blowedUpNotice += " (";
-          if (World::getWorld()->allowRabbit() && lookupPlayer(killer)->getTeam() != RabbitTeam)
-            blowedUpNotice+= "Hunter";
-          else
-	    blowedUpNotice += Team::getName(lookupPlayer(killer)->getTeam());
-	  blowedUpNotice += ")";
+	Player *killerPlayer = lookupPlayer(killer);
+	if (!killerPlayer) {
+	  blowedUpNotice = "Killed by the server";
+	} else { 
+
+	  // matching the team-display style of other kill messages
+	  TeamColor team = killerPlayer->getTeam();
+	  if (hit)
+	    team = hit->getTeam();
+	  if (myTank->getTeam() == team && team != RogueTeam) {
+	    blowedUpNotice += "teammate " ;
+	    blowedUpNotice += killerPlayer->getCallSign();
+	  } else {
+	    blowedUpNotice += killerPlayer->getCallSign();
+	    blowedUpNotice += " (";
+	    if (World::getWorld()->allowRabbit() && killerPlayer->getTeam() != RabbitTeam) {
+              blowedUpNotice+= "Hunter";
+	    } else {
+	      blowedUpNotice += Team::getName(killerPlayer->getTeam());
+	    }
+	    blowedUpNotice += ")";
+	  }
 	}
       }
     }
