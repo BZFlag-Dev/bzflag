@@ -26,6 +26,7 @@
 #include "OpenGLTexture.h"
 #include "SceneRenderer.h"
 #include "StateDatabase.h"
+#include "DirectoryNames.h"
 
 /* local implementation headers */
 #include "MenuDefaultKey.h"
@@ -80,9 +81,14 @@ void SaveWorldMenu::execute()
   if (pWorld == NULL) {
     status->setString( "No world loaded to save" );
   } else {
-    bool success = World::getWorld()->writeWorld(filename->getString());
+    std::string fullname = getWorldDirName();
+    fullname += filename->getString();
+    fullname += ".bzw";
+    bool success = World::getWorld()->writeWorld(fullname);
     if (success) {
-      status->setString( "File Saved" );
+      std::string newLabel = "File Saved: ";
+      newLabel += fullname;
+      status->setString( newLabel );
     } else {
       status->setString( "Error saving file" );
     }

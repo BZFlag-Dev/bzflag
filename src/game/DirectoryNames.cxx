@@ -120,6 +120,14 @@ extern std::string		getScreenShotDirName()
 }
 
 
+extern std::string		getWorldDirName()
+{
+  std::string name = getConfigDirName();
+  name += "worlds";
+  name += DirectorySeparator;
+  return name;
+}
+
 
 // Local Variables: ***
 // mode: C++ ***

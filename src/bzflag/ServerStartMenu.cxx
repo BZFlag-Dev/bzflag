@@ -202,12 +202,18 @@ ServerStartMenu::ServerStartMenu()
   items = &list->getList();
   items->push_back("random map");
 
-  /* add a list of world files found.  look in the current directory
-   * as well as in the config file directory.
-   */
+
+  // add a list of .bzw files found in the world file dir
+  std::string searchDir = getWorldDirName();
+  scanWorldFiles (searchDir, items);
+
+  // add a list of .bzw files found in the config file dir
+  searchDir = getConfigDirName();
+  scanWorldFiles (searchDir, items);
+
+  // add a list of .bzw files found in the data or current dir
+  searchDir = BZDB.get("directory"); // could be an empty string
 #ifdef _WIN32
-  /* add a list of .bzw files found in the current dir */
-  std::string searchDir = BZDB.get("directory");
   if (searchDir.length() == 0) {
     long availDrives = GetLogicalDrives();
     for (int i = 2; i < 31; i++) {
@@ -218,82 +224,17 @@ ServerStartMenu::ServerStartMenu()
       }
     }
   }
-
-  searchDir += "\\";
-  std::string pattern = searchDir + "*.bzw";
-  WIN32_FIND_DATA findData;
-  HANDLE h = FindFirstFile(pattern.c_str(), &findData);
-  if (h != INVALID_HANDLE_VALUE) {
-    std::string file;
-    std::string suffix;
-    while (FindNextFile(h, &findData)) {
-      file = findData.cFileName;
-      worldFiles[file] = searchDir + file;
-      items->push_back(file);
-    }
-  }
-
-  /* add a list of .bzw files found in the config file dir */
-  searchDir = getConfigDirName();
-  pattern = searchDir + "*.bzw";
-  h = FindFirstFile(pattern.c_str(), &findData);
-  if (h != INVALID_HANDLE_VALUE) {
-    std::string file;
-    std::string suffix;
-    while (FindNextFile(h, &findData)) {
-      file = findData.cFileName;
-      worldFiles[file] = searchDir + file;
-      items->push_back(file);
-    }
-  }
+  searchDir += DirectorySeparator;
 #else
-  /* add a list of .bzw files found in the current dir */
-  std::string pattern = BZDB.get("directory") + "/";
-  DIR *directory = opendir(pattern.c_str());
-  if (directory) {
-    struct dirent* contents;
-    std::string file;
-    std::string suffix;
-    while ((contents = readdir(directory))) {
-      file = contents->d_name;
-      if (file.length() > 4) {
-	suffix = file.substr(file.length()-4, 4);
-	if (compare_nocase(suffix, ".bzw") == 0) {
-	  worldFiles[file] = pattern + file;
-	  items->push_back(file);
-	}
-      }
-    }
-    closedir(directory);
+  if (searchDir.length() > 0) {
+    searchDir += DirectorySeparator;
   }
-
-  /* add a list of .bzw files found in the config file dir */
-  struct passwd* pwent = getpwuid(getuid());
-  pattern = "";
-  if (pwent && pwent->pw_dir) {
-    pattern += std::string(pwent->pw_dir);
-    pattern += "/";
+  else {
+    searchDir = ".";
   }
-  pattern += ".bzf/";
-  directory = opendir(pattern.c_str());
-  if (directory) {
-    struct dirent* contents;
-    std::string file;
-    std::string suffix;
-    while ((contents = readdir(directory))) {
-      file = contents->d_name;
-      if (file.length() > 4) {
-	suffix = file.substr(file.length()-4, 4);
-	if (compare_nocase(suffix, ".bzw") == 0) {
-	  worldFiles[file] = pattern + file;
-	  items->push_back(file);
-	}
-      }
-    }
-    closedir(directory);
-  }
-
-#endif
+#endif // _WIN32
+  scanWorldFiles (searchDir, items);
+  
 
   list->update();
   controls.push_back(list);
@@ -318,6 +259,46 @@ ServerStartMenu::ServerStartMenu()
 ServerStartMenu::~ServerStartMenu()
 {
 }
+
+void ServerStartMenu::scanWorldFiles (std::string& searchDir,
+                                      std::vector<std::string>* items)
+{
+#ifdef _WIN32
+  std::string pattern = searchDir + "*.bzw";
+  WIN32_FIND_DATA findData;
+  HANDLE h = FindFirstFile(pattern.c_str(), &findData);
+  if (h != INVALID_HANDLE_VALUE) {
+    std::string file;
+    std::string suffix;
+    while (FindNextFile(h, &findData)) {
+      file = findData.cFileName;
+      worldFiles[file] = searchDir + file;
+      items->push_back(file);
+    }
+  }
+#else
+  /* add a list of .bzw files found in the current dir */
+  DIR *directory = opendir(searchDir.c_str());
+  if (directory) {
+    struct dirent* contents;
+    std::string file;
+    std::string suffix;
+    while ((contents = readdir(directory))) {
+      file = contents->d_name;
+      if (file.length() > 4) {
+	suffix = file.substr(file.length()-4, 4);
+	if (compare_nocase(suffix, ".bzw") == 0) {
+	  worldFiles[file] = searchDir + file;
+	  items->push_back(file);
+	}
+      }
+    }
+    closedir(directory);
+  }
+#endif // _WIN32
+  return;
+}
+
 
 HUDuiDefaultKey* ServerStartMenu::getDefaultKey()
 {
