@@ -237,12 +237,6 @@ void			RobotPlayer::doUpdateMotion(float dt)
         // ignore invisible bullets completely for now (even when visible)
         if (shot->getFlag() == Flags::InvisibleBullet)
           continue;
-      	if (p->getFlag() == Flags::PhantomZone && p->isFlagActive() &&
-      			(getFlag() == Flags::PhantomZone && !isFlagActive()) ||
-      			(getFlag() != Flags::PhantomZone))
-    			continue;
-				if (shot->getFlag() == Flags::Laser && LocalPlayer::getFlag() == Flags::Cloaking)
-					continue; //cloaked tanks can't die from lasers
 
         const float* shotPos = shot->getPosition();
         if ((fabs(shotPos[2] - position[2]) > BZDBCache::tankHeight) && (shot->getFlag() != Flags::GuidedMissile))
