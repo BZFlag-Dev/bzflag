@@ -127,6 +127,9 @@ AC_CHECK_LIB(bind, gethostent)
 
 AC_CHECK_LIB(m, sqrtf)
 
+# check to see if we have adns available to do hostname lookups in server
+AC_CHECK_LIB(adns, adns_init)
+
 # avoid using X11 in BeOS
 if test $host_os != beos; then
   CPPFLAGS=
@@ -151,6 +154,12 @@ AC_TRY_LINK([
  regexec(0, 0, 0, 0, 0)],
 [AC_DEFINE(HAVE_REGEX_H, 1, [Define to 1 if you have regex stuff available])],
 [AC_MSG_WARN([regexp/regcomp seems not being available on your system])])
+
+AC_TRY_LINK([
+#include <adns.h>],
+[adns_init(0, (adns_initflags)0, 0)],
+[AC_DEFINE(HAVE_ADNS_H, 1, [Define to 1 if you have ADNS available])],
+[AC_MSG_WARN([adns seems to not be available on your system.  See http://www.chiark.greenend.org.uk/~ian/adns/ if you want to be able to use hostmask based bans.])])
 
 ac_cv_search_glBegin=no
 ac_cv_search_gluScaleImage=no

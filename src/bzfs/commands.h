@@ -75,14 +75,21 @@ void handleFlagCmd(int t, const char *message);
 void handleKickCmd(int t, const char *message);
 
 
-/** unban command hook function
+/** banlist command hook function
  *
  * /banlist command shows ips that are banned
  */
 void handleBanlistCmd(int t, const char *);
 
 
-/** unban command hook function
+/** hostbanlist command hook function
+ *
+ * /hostbanlist command shows ips that are banned
+ */
+void handleHostBanlistCmd(int t, const char *);
+
+
+/** ban command hook function
  *
  * /ban command allows operator to ban players based on ip
  * /ban <ip> [duration] ...
@@ -91,11 +98,27 @@ void handleBanlistCmd(int t, const char *);
 void handleBanCmd(int t, const char *message);
 
 
+/** hostban command hook function
+ *
+ * /hostban command allows operator to ban players based on hostname
+ * /hostban <hostpat> [duration] ...
+ * any text after duration is considered as the reason for banning.
+ * <hostpat> may contain *'s as wildcards
+ */
+void handleHostBanCmd(int t, const char *message);
+
+
 /** unban command hook function
  *
  * /unban command allows operator to remove ips from the banlist
  */
 void handleUnbanCmd(int t, const char *message);
+
+/** hostunban command hook function
+ *
+ * /hostunban command allows operator to remove host patterns from the banlist
+ */
+void handleHostUnbanCmd(int t, const char *message);
 
 
 /** lagwarn command hook function

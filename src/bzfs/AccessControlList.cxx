@@ -49,6 +49,13 @@ void AccessControlList::expire() {
       ++it;
     }
   }
+  for (hostBanList_t::iterator it = hostBanList.begin(); it != hostBanList.end();) {
+    if (it->banEnd <= now) {
+      it = hostBanList.erase(it);
+    } else {
+      ++it;
+    }
+  }
 }
 
 // Local Variables: ***
