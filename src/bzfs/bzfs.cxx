@@ -10,6 +10,7 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 #include "bzfs.h"
+#include "NetHandler.h"
 
 const int udpBufSize = 128000;
 
@@ -40,6 +41,7 @@ static PingPacket pingReply;
 static int maxFileDescriptor;
 // players list FIXME should be resized based on maxPlayers
 PlayerInfo player[MaxPlayers];
+NetHandler *netPlayer[MaxPlayers] = {};
 // Last known position, vel, etc
 PlayerState lastState[MaxPlayers];
 // team info
@@ -118,7 +120,9 @@ bool hasPerm(int playerIndex, PlayerAccessInfo::AccessPerm right)
 
 static void pwrite(int playerIndex, const void *b, int l)
 {
-  int result = player[playerIndex].pwrite(b, l, udpSocket);
+  if (!netPlayer[playerIndex])
+    return;
+  int result = netPlayer[playerIndex]->pwrite(b, l, udpSocket);
   if (result == -1)
     removePlayer(playerIndex, "ECONNRESET/EPIPE", false);
 }
@@ -136,7 +140,7 @@ char *getDirectMessageBuffer()
 // for MsgShotBegin the receiving buffer gets used directly
 void directMessage(int playerIndex, uint16_t code, int len, const void *msg)
 {
-  if (!player[playerIndex].isConnected())
+  if (!netPlayer[playerIndex])
     return;
 
   // send message to one player
@@ -232,10 +236,9 @@ static int uread(int *playerIndex, int *nopackets, int& n,
 
   *nopackets = 0;
 
-  PlayerInfo *pPlayerInfo;
   PlayerId pi;
-  for (pi = 0, pPlayerInfo = player; pi < curMaxPlayers; pi++, pPlayerInfo++) {
-    if (pPlayerInfo->isMyUdpAddrPort(uaddr)) {
+  for (pi = 0; pi < curMaxPlayers; pi++) {
+    if (netPlayer[pi]->isMyUdpAddrPort(uaddr)) {
       break;
     }
   }
@@ -246,7 +249,7 @@ static int uread(int *playerIndex, int *nopackets, int& n,
     tmpbuf = nboUnpackUShort(tmpbuf, code);
     if ((len == 1) && (code == MsgUDPLinkRequest)) {
       tmpbuf = nboUnpackUByte(tmpbuf, pi);
-      if ((pi <= curMaxPlayers) && (player[pi].setUdpIn(uaddr))) {
+      if ((pi <= curMaxPlayers) && (netPlayer[pi]->setUdpIn(uaddr))) {
 	if (uaddr.sin_port)
 	  // send client the message that we are ready for him
 	  sendUDPupdate(pi);
@@ -261,8 +264,9 @@ static int uread(int *playerIndex, int *nopackets, int& n,
   if (pi == curMaxPlayers) {
     // no match, discard packet
     DEBUG2("uread() discard packet! %s:%d choices p(l) h:p", inet_ntoa(uaddr.sin_addr), ntohs(uaddr.sin_port));
-    for (pi = 0, pPlayerInfo = player; pi < curMaxPlayers; pi++, pPlayerInfo++) {
-      pPlayerInfo->debugUdpInfo();
+    for (pi = 0; pi < curMaxPlayers; pi++) {
+      if (netPlayer[pi])
+	netPlayer[pi]->UdpInfo();
     }
     DEBUG2("\n");
     *playerIndex = 0;
@@ -270,13 +274,12 @@ static int uread(int *playerIndex, int *nopackets, int& n,
   }
 
   *playerIndex = pi;
-  pPlayerInfo = &player[pi];
 
-  pPlayerInfo->debugUdpRead(n, uaddr, udpSocket);
+  netPlayer[pi]->debugUdpRead(n, uaddr, udpSocket);
 
   if (n > 0) {
     *nopackets = 1;
-    pPlayerInfo->udpFillRead(ubuf, n);
+    player[pi].udpFillRead(ubuf, n);
     return n;
   }
   return 0;
@@ -630,7 +633,8 @@ static void serverStop()
 
   // close connections
   for (i = 0; i < MaxPlayers; i++) {
-    player[i].closeComm();
+    if (netPlayer[i])
+      delete netPlayer[i];
   }
 
   // remove from list server and disconnect
@@ -1389,6 +1393,8 @@ static void acceptClient()
 
   // FIXME add new client server welcome packet here when client code is ready
   player[playerIndex].initPlayer(clientAddr, fd, playerIndex);
+  netPlayer[playerIndex] = new NetHandler(& player[playerIndex], clientAddr,
+					  playerIndex, fd);
   lastState[playerIndex].order = 0;
 
   // if game was over and this is the first player then game is on
@@ -1498,8 +1504,6 @@ static void rejectPlayer(int playerIndex, uint16_t code)
 // as we are fixing, look also at unconnected player slot to rub it
 static void fixTeamCount() {
   int playerIndex;
-  for (playerIndex = 0; playerIndex < maxPlayers; playerIndex++)
-    player[playerIndex].dropUnconnected();
   int teamNum;
   for (teamNum = RogueTeam; teamNum < RabbitTeam; teamNum++)
     team[teamNum].team.size = 0;
@@ -1663,7 +1667,7 @@ static void addPlayer(int playerIndex)
   }
 
   // abort if we hung up on the client
-  if (!player[playerIndex].isConnected())
+  if (!netPlayer[playerIndex])
     return;
 
   // player is signing on (has already connected via addClient).
@@ -1692,17 +1696,17 @@ static void addPlayer(int playerIndex)
   // because of an error.
   if (!player[playerIndex].isBot()) {
     int i;
-    if (player[playerIndex].isConnected()) {
+    if (netPlayer[playerIndex]) {
       sendTeamUpdate(playerIndex);
       sendFlagUpdate(-1, playerIndex);
     }
-    for (i = 0; i < curMaxPlayers && player[playerIndex].isConnected(); i++)
+    for (i = 0; i < curMaxPlayers && netPlayer[playerIndex]; i++)
       if (player[i].isPlaying() && i != playerIndex)
 	sendPlayerUpdate(i, playerIndex);
   }
 
   // if new player connection was closed (because of an error) then stop here
-  if (!player[playerIndex].isConnected())
+  if (!netPlayer[playerIndex])
     return;
 
   // send MsgAddPlayer to everybody -- this concludes MsgEnter response
@@ -1739,7 +1743,7 @@ static void addPlayer(int playerIndex)
 #endif
 
   // again check if player was disconnected
-  if (!player[playerIndex].isConnected())
+  if (!netPlayer[playerIndex])
     return;
 
   // reset that flag
@@ -2090,7 +2094,18 @@ void removePlayer(int playerIndex, const char *reason, bool notify)
     arbiter->retractVote(std::string(player[playerIndex].getCallSign()));
   }
 
-  bool wasPlaying = player[playerIndex].removePlayer(reason);
+  bool wasPlaying = false;
+  // check if we are called again for a dropped player!
+  if (netPlayer[playerIndex]) {
+    // status message
+    DEBUG1("Player %s [%d] removed: %s\n",
+	   player[playerIndex].getCallSign(), playerIndex, reason);
+    wasPlaying = player[playerIndex].removePlayer();
+    if (wasPlaying)
+      netPlayer[playerIndex]->dumpMessageStats();
+    delete netPlayer[playerIndex];
+    netPlayer[playerIndex] = NULL;
+  }
 
   // player is outta here.  if player never joined a team then
   // don't count as a player.
@@ -2151,7 +2166,7 @@ void removePlayer(int playerIndex, const char *reason, bool notify)
   while ((playerIndex >= 0)
 	 && (playerIndex+1 == curMaxPlayers)
 	 && !player[playerIndex].exist()
-	 && !player[playerIndex].isConnected())
+	 && !netPlayer[playerIndex])
     {
       playerIndex--;
       curMaxPlayers--;
@@ -2399,9 +2414,9 @@ static void sendQueryPlayers(int playerIndex)
   directMessage(playerIndex, MsgQueryPlayers, (char*)buf-(char*)bufStart, bufStart);
 
   // now send the teams and players
-  if (player[playerIndex].isConnected())
+  if (netPlayer[playerIndex])
     sendTeamUpdate(playerIndex);
-  for (i = 0; i < curMaxPlayers && player[playerIndex].isConnected(); i++)
+  for (i = 0; i < curMaxPlayers && netPlayer[playerIndex]; i++)
     if (player[i].isPlaying())
       sendPlayerUpdate(i, playerIndex);
 }
@@ -2842,7 +2857,7 @@ static void captureFlag(int playerIndex, TeamColor teamCaptured)
 
   // everyone on losing team is dead
   for (int i = 0; i < curMaxPlayers; i++)
-    if (player[i].isConnected() &&
+    if (netPlayer[i] &&
 	flag[flagIndex].flag.type->flagTeam == int(player[i].getTeam()) &&
 	player[i].isAlive()) {
       player[i].setDead();
@@ -3163,14 +3178,13 @@ static void handleCommand(int t, uint16_t code, uint16_t len,
 {
   void *buf = (void*)((char*)rawbuf + 4);
 #ifdef NETWORK_STATS
-  player[t].countMessage(code, len, 0);
+  netPlayer[t]->countMessage(code, len, 0);
 #endif
   switch (code) {
     // player joining
     case MsgEnter: {
       player[t].unpackEnter(buf);
       addPlayer(t);
-      player[t].debugAdd();
       break;
     }
 
@@ -3427,7 +3441,7 @@ static void handleCommand(int t, uint16_t code, uint16_t len,
     }
 
     case MsgUDPLinkEstablished:
-      player[t].setUdpOut();
+      netPlayer[t]->setUdpOut();
       break;
 
     case MsgNewRabbit: {
@@ -3967,7 +3981,8 @@ int main(int argc, char **argv)
     FD_ZERO(&read_set);
     FD_ZERO(&write_set);
     for (i = 0; i < curMaxPlayers; i++) {
-      player[i].fdSet(&read_set, &write_set, maxFileDescriptor);
+      if (netPlayer[i])
+	netPlayer[i]->fdSet(&read_set, &write_set, maxFileDescriptor);
     }
     // always listen for connections
     _FD_SET(wksSocket, &read_set);
@@ -4396,7 +4411,7 @@ int main(int argc, char **argv)
 
     for (i = 0; i < curMaxPlayers; i++) {
       // kick any clients that need to be
-      std::string reasonToKick = player[i].reasonToKick();
+      std::string reasonToKick = netPlayer[i]->reasonToKick();
       if (reasonToKick != "") {
 	removePlayer(i, reasonToKick.c_str(), false);
       }
@@ -4464,11 +4479,11 @@ int main(int argc, char **argv)
       // now check messages from connected players and send queued messages
       for (i = 0; i < curMaxPlayers; i++) {
 	// send whatever we have ... if any
-	if (player[i].pflush(&write_set) == -1) {
+	if (netPlayer[i] && netPlayer[i]->pflush(&write_set) == -1) {
 	  removePlayer(i, "ECONNRESET/EPIPE", false);
 	}
 
-	if (player[i].exist() && player[i].fdIsSet(&read_set)) {
+	if (netPlayer[i] && netPlayer[i]->fdIsSet(&read_set)) {
 	  // read header if we don't have it yet
 	  if (!pread(i, 4))
 	    // if header not ready yet then skip the read of the body

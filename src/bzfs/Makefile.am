@@ -27,7 +27,6 @@ bzfs_SOURCES = \
 	CustomZone.cxx \
 	CustomZone.h \
 	DelayQueue.cxx \
-	DelayQueue.h \
 	EntryZones.cxx \
 	EntryZones.h \
 	FlagInfo.cxx \
@@ -36,8 +35,6 @@ bzfs_SOURCES = \
 	ListServerConnection.h \
 	PackVars.h \
 	Permissions.cxx \
-	Permissions.h \
-	PlayerInfo.h \
 	PlayerInfo.cxx \
 	TeamBases.cxx \
 	TeamBases.h \

@@ -39,6 +39,7 @@
 #include "Permissions.h"
 #include "CmdLineOptions.h"
 #include "PlayerInfo.h"
+#include "NetHandler.h"
 
 // FIXME -- need to pull communication out of bzfs.cxx...
 
@@ -46,6 +47,7 @@
 extern void sendMessage(int playerIndex, PlayerId targetPlayer, const char *message, bool fullBuffer=false);
 extern bool hasPerm(int playerIndex, PlayerAccessInfo::AccessPerm right);
 extern PlayerInfo player[MaxPlayers];
+extern NetHandler *netPlayer[MaxPlayers];
 extern CmdLineOptions *clOptions;
 extern uint16_t curMaxPlayers;
 extern int NotConnected;
@@ -311,8 +313,7 @@ void handleKickCmd(int t, const char *message)
   const char *victimname = argv[1].c_str();
 
   for (i = 0; i < curMaxPlayers; i++) {
-    if (player[i].isConnected() && strcasecmp(player[i].getCallSign(),
-					      victimname) == 0) {
+    if (netPlayer[i] && strcasecmp(player[i].getCallSign(), victimname) == 0) {
       break;
     }
   }
@@ -391,7 +392,7 @@ void handleBanCmd(int t, const char *message)
       strcpy(reply, "IP pattern added to banlist");
       char kickmessage[MessageLen];
       for (int i = 0; i < curMaxPlayers; i++) {
-	if (player[i].isConnected()
+	if (netPlayer[i]
 	    && !clOptions->acl.validate(player[i].getIPAddress())) {
 	  sprintf(kickmessage,"You were banned from this server by %s",
 		  player[t].getCallSign());
@@ -447,7 +448,7 @@ void handleHostBanCmd(int t, const char *message)
     strcpy(reply, "Host pattern added to banlist");
     char kickmessage[MessageLen];
     for (int i = 0; i < curMaxPlayers; i++) {
-      if (player[i].isConnected() && player[i].getHostname()
+      if (netPlayer[i] && player[i].getHostname()
 	  && (!clOptions->acl.hostValidate(player[i].getHostname()))) {
 	sprintf(kickmessage,"You were banned from this server by %s",
 		player[t].getCallSign());
@@ -590,7 +591,7 @@ void handlePlayerlistCmd(int t, const char *)
 
   for (int i = 0; i < curMaxPlayers; i++) {
     if (player[i].isPlaying()) {
-      player[i].getPlayerList(reply);
+      netPlayer[i]->getPlayerList(reply);
       sendMessage(ServerPlayer, t, reply, true);
     }
   }
