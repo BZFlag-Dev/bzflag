@@ -136,8 +136,8 @@ for (1..$numPlayers) {
  die $! unless $code == 0x6170;
  $score = $won - $lost;
  print "player $sign ($teamName[$team] team) is a $playerType[$type]:\n";
- print "  $email\n";
  print "  score: $score ($won wins, $lost losses)\n";
+ print "  $email\n";
 }
 
 # close socket

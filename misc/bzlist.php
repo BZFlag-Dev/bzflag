@@ -141,10 +141,10 @@ function dump ($server) {
     echo "player " . $server['player'][$player]['sign']
 	. " (" . $teamName[$server['player'][$player]['team']]
 	. " team) is a " . $playerType[$server['player'][$player]['type']] . ":\n";
-    echo "  " . $server['player'][$player]['email'] . "\n";
     echo "  score: " . ( $server['player'][$player]['won'] - $server['player'][$player]['lost'] )
 	. " (" . $server['player'][$player]['won']
 	. " wins, " . $server['player'][$player]['lost'] . " losses)\n";
+    echo "  " . $server['player'][$player]['email'] . "\n";
   }
   //var_dump($server);
   return;
