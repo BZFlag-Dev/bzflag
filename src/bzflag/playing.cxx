@@ -5827,8 +5827,8 @@ static void		playingLoop()
 	 init = true;
 	 if (BZDB->isSet("eyesep"))
 	   EyeDisplacement = BZDB->eval("eyesep");
-	 if (resources->hasValue("focal"))
-	   FocalPlane = (float)atof(resources->getValue("focal").c_str());
+	 if (BZDB->isSet("focal"))
+	   FocalPlane = BZDB->eval("focal");
        }
 
        // setup view for left eye
@@ -5865,8 +5865,8 @@ static void		playingLoop()
 	  init = true;
 	  if (BZDB->isSet("eyesep"))
 	    EyeDisplacement = BZDB->eval("eyesep");
-	  if (resources->hasValue("focal"))
-	    FocalPlane = (float)atof(resources->getValue("focal").c_str());
+	  if (BZDB->isSet("focal"))
+	    FocalPlane = BZDB->eval("focal");
 	}
 
 	// setup view for left eye

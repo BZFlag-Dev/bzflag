@@ -357,8 +357,7 @@ static void		usage()
   exit(1);
 }
 
-static void		parse(int argc, char** argv,
-				ResourceDatabase& resources)
+static void		parse(int argc, char** argv)
 {
   for (int i = 1; i < argc; i++) {
     if (strcmp(argv[i], "-a") == 0 ||
@@ -672,7 +671,7 @@ static void		parse(int argc, char** argv,
 	printFatalError("Missing argument for %s.", argv[i-1]);
 	usage();
       }
-      resources.addValue("focal", argv[i]);
+      BZDB->set("focal", argv[i]);
     }
     else if (strncmp(argv[i], "-psn", 3) == 0) {
 	std::vector<std::string> args;
@@ -995,7 +994,7 @@ int			main(int argc, char** argv)
   startupInfo.useUDPconnection=true;
 
   // parse arguments
-  parse(argc, argv, db);
+  parse(argc, argv);
 
   // get email address if not anonymous
   std::string email;
