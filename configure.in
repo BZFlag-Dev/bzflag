@@ -27,7 +27,7 @@ AC_PROG_LN_S
 AC_PROG_RANLIB
 AC_CHECK_PROG(HASPOD2MAN, pod2man, yes, no)
 if test $HASPOD2MAN = no; then
-	AC_MSG_ERROR(could not find pod2man)
+    AC_MSG_WARN([some man pages will not be generated])
 fi
 AC_ISC_POSIX
 
