@@ -471,8 +471,11 @@ void parse(int argc, char **argv, CmdLineOptions &options)
 	FlagSet badFlags = Flag::getBadFlags();
 	for (FlagSet::iterator it = badFlags.begin(); it != badFlags.end(); it++)
 	  options.flagDisallowed[*it] = true;
-      }
-      else {
+      } else if (strcmp(argv[i], "good") == 0) {
+	FlagSet goodFlags = Flag::getGoodFlags();
+	for (FlagSet::iterator it = goodFlags.begin(); it != goodFlags.end(); it++)
+	  options.flagDisallowed[*it] = true;
+      } else {
 	FlagType* fDesc = Flag::getDescFromAbbreviation(argv[i]);
 	if (fDesc == Flags::Null) {
 	  fprintf(stderr, "invalid flag \"%s\"\n", argv[i]);
@@ -498,6 +501,10 @@ void parse(int argc, char **argv, CmdLineOptions &options)
       if (strcmp(argv[i], "good") == 0) {
 	FlagSet goodFlags = Flag::getGoodFlags();
 	for (FlagSet::iterator it = goodFlags.begin(); it != goodFlags.end(); it++)
+	  options.flagCount[*it] += rptCnt;
+      } else if (strcmp(argv[i], "bad") == 0) {
+	FlagSet badFlags = Flag::getBadFlags();
+	for (FlagSet::iterator it = badFlags.begin(); it != badFlags.end(); it++)
 	  options.flagCount[*it] += rptCnt;
       } else {
 	FlagType *fDesc = Flag::getDescFromAbbreviation(argv[i]);
