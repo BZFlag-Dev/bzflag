@@ -2385,7 +2385,8 @@ static void makeGameSettings()
   // the settings
   buf = nboPackFloat  (buf, BZDBCache::worldSize);
   buf = nboPackUShort (buf, clOptions->gameStyle);
-  buf = nboPackUShort (buf, maxPlayers);
+  // An hack to fix a bug on the client
+  buf = nboPackUShort (buf, PlayerSlot);
   buf = nboPackUShort (buf, clOptions->maxShots);
   buf = nboPackUShort (buf, numFlags);
   buf = nboPackFloat  (buf, clOptions->linearAcceleration);
