@@ -4247,10 +4247,10 @@ static void shotFired(int playerIndex, void *buf, int len)
   }
 
   // verify player flag
-  if ((firingInfo.flag.desc != Flags::Null) && (firingInfo.flag.desc != flag[shooter.flag].flag.desc)) {
+  if ((firingInfo.flag != Flags::Null) && (firingInfo.flag != flag[shooter.flag].flag.desc)) {
     DEBUG2("Player %s [%d] shot flag mismatch %d %d\n", shooter.callSign,
-	   playerIndex, firingInfo.flag, flag[shooter.flag].flag.id);
-    firingInfo.flag = NullFlag;
+	   playerIndex, firingInfo.flag->flagAbbv, flag[shooter.flag].flag.desc->flagAbbv);
+    firingInfo.flag = Flags::Null;
     repack = true;
   }
 
@@ -4264,19 +4264,17 @@ static void shotFired(int playerIndex, void *buf, int len)
   float shotSpeed = ShotSpeed;
   float tankSpeed = TankSpeed;
   float lifetime = ReloadTime;
-  switch (firingInfo.flag) {
-    case ShockWaveFlag:
+  if (firingInfo.flag == Flags::ShockWave) {
       shotSpeed = 0.0f;
       tankSpeed = 0.0f;
-      break;
-    case VelocityFlag:
+  }
+  else if (firingInfo.flag == Flags::HighSpeed) {
       tankSpeed *= VelocityAd;
-      break;
-    default:
+  }
+  else {
       //If shot is different height than player, can't be sure they didn't drop V in air
       if (shooter.lastState.pos[2] != (shot.pos[2]-MuzzleHeight))
 	tankSpeed *= VelocityAd;
-      break;
   }
 
   // FIXME, we should look at the actual TankSpeed ;-)
@@ -4303,7 +4301,7 @@ static void shotFired(int playerIndex, void *buf, int len)
   float dz = shooter.lastState.pos[2] - shot.pos[2];
 
   float front = MuzzleFront;
-  if (firingInfo.flag == ObesityFlag)
+  if (firingInfo.flag == Flags::Obesity)
     front *= ObeseFactor;
 
   float delta = dx*dx + dy*dy + dz*dz;
@@ -4330,7 +4328,7 @@ static void shotFired(int playerIndex, void *buf, int len)
     FlagInfo & fInfo = flag[shooter.flag];
     fInfo.numShots++; // increase the # shots fired
 
-    int limit = clOptions.flagLimit[fInfo.flag.id];
+    int limit = clOptions.flagLimit[fInfo.flag.desc];
     if (limit != -1){ // if there is a limit for players flag
       int shotsLeft = limit -  fInfo.numShots;
       if (shotsLeft > 0) { //still have some shots left
@@ -4510,8 +4508,7 @@ static void parseCommand(const char *message, int t)
       }
     } else if (strncmp(message + 6, "up", 2) == 0) {
       for (int i = 0; i < numFlags; i++) {
-	if (int(flag[i].flag.id) < int(FirstTeamFlag) ||
-	    int(flag[i].flag.id) > int(LastTeamFlag)) {
+        if (flag[i].flag.desc->flagTeam != ::NoTeam) {
 	  // see if someone had grabbed flag.  tell 'em to drop it.
 	  const int playerIndex = flag[i].player;
 	  if (playerIndex != -1) {
@@ -4527,7 +4524,7 @@ static void parseCommand(const char *message, int t)
 	  }
 	  flag[i].flag.status = FlagGoing;
 	  if (!flag[i].required)
-	    flag[i].flag.id = NullFlag;
+	    flag[i].flag.desc = Flags::Null;
 	  sendFlagUpdate(i);
 	}
       }
@@ -4535,7 +4532,7 @@ static void parseCommand(const char *message, int t)
       for (int i = 0; i < numFlags; i++) {
 	char message[MessageLen];
 	sprintf(message, "%d p:%d r:%d g:%d i:%s s:%d p:%3.1fx%3.1fx%3.1f", i, flag[i].player,
-	    flag[i].required, flag[i].grabs, Flag::getAbbreviation(flag[i].flag.id),
+	    flag[i].required, flag[i].grabs, flag[i].flag.desc->flagAbbv,
 	    flag[i].flag.status,
 	    flag[i].flag.position[0],
 	    flag[i].flag.position[1],
@@ -4646,14 +4643,14 @@ static void parseCommand(const char *message, int t)
 	char reply[MessageLen];
 	char flag[MessageLen];
 	sprintf(reply,"%-16s : ",player[i].callSign );
-	std::vector<int>::iterator fhIt = player[i].flagHistory.begin();
+	std::vector<FlagDesc*>::iterator fhIt = player[i].flagHistory.begin();
 
 	while (fhIt != player[i].flagHistory.end()) {
-	  FlagId fID = (FlagId)(*fhIt);
-	  if (Flag::getType(fID) == FlagNormal)
-	    sprintf( flag, "(*%c) ", Flag::getName(fID)[0] );
+	  FlagDesc * fDesc = (FlagDesc*)(*fhIt);
+	  if (fDesc->flagType == FlagNormal)
+	    sprintf( flag, "(*%c) ", fDesc->flagName[0] );
 	  else
-	    sprintf( flag, "(%s) ", Flag::getAbbreviation((FlagId)(*fhIt)) );
+	    sprintf( flag, "(%s) ", fDesc->flagAbbv );
 	  strcat( reply, flag );
 	  fhIt++;
 	}
@@ -5115,46 +5112,35 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
 
       case MsgNegotiateFlags: {
 	void *bufStart;
-	char abbv[3];
+	std::map<std::string,FlagDesc*>::iterator it;
+	std::set<FlagDesc*>::iterator m_it;
+	std::map<FlagDesc*,bool> hasFlag;
+	std::set<FlagDesc*> missingFlags;
 	int i;
-
 	unsigned short numClientFlags;
+
 	buf = nboUnpackUShort(buf, numClientFlags);
 
-	bool *hasFlag = new bool[LastFlag - FirstFlag + 1];
-	memset( hasFlag, 0, LastFlag - FirstFlag + 1);
-
 	for (i = 0; i < numClientFlags; i++) {
-		buf = nboUnpackString( buf, abbv, 2);
-		abbv[2] = 0;
-		if (strlen(abbv) == 0)
-			continue;
-		FlagId fID = Flag::getIDFromAbbreviation( abbv );
-		if (fID != NullFlag)
-			hasFlag[fID-FirstFlag] = true;
+		FlagDesc *fDesc;
+		buf = FlagDesc::unpack(buf, fDesc);
+		if (fDesc != Flags::Null)
+		  hasFlag[fDesc] = true;
 	}
-	for (i = FirstFlag; i <= LastFlag; i++) {
-		if (!hasFlag[i-FirstFlag]) {
-		   if (clOptions.flagCount[i] > 0)
-		     break;
-		   if ((clOptions.numExtraFlags > 0) && !clOptions.flagDisallowed[i])
-		     break;
+
+	for (it = FlagDesc::flagMap.begin(); it != FlagDesc::flagMap.end(); ++it) {
+		if (!hasFlag[it->second]) {
+		   if (clOptions.flagCount[it->second] > 0)
+		     missingFlags.insert(it->second);
+		   if ((clOptions.numExtraFlags > 0) && !clOptions.flagDisallowed[it->second])
+		     missingFlags.insert(it->second);
 		}
 	}
 
-	delete[] hasFlag;
-	if (i <= LastFlag) {
-		directMessage(t, MsgSuperKill, 0, getDirectMessageBuffer());
-		break;
-	}
-
 	bufStart = getDirectMessageBuffer();
-	buf = nboPackUShort(bufStart,LastFlag-FirstFlag+1);
-	for (i = FirstFlag; i <= LastFlag; i++) {
-		buf = nboPackUShort(buf, i);
-		const char *abbv = Flag::getAbbreviation((FlagId)i);
-		buf = nboPackString(buf, abbv, 2);
-	}
+	buf = nboPackUShort(bufStart,missingFlags.size());
+	for (m_it = missingFlags.begin(); m_it != missingFlags.end(); ++it)
+	  buf = (*m_it)->pack(buf);
 	directMessage(t, MsgNegotiateFlags, (char*)buf-(char*)bufStart, bufStart);
 	break;
     }
@@ -5395,7 +5381,7 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
 
 	// if tank is not driving cannot be sure it didn't toss (V) in flight
 	// if tank is not alive cannot be sure it didn't just toss (V)
-	if (flag[player[t].flag].flag.id == VelocityFlag)
+	if (flag[player[t].flag].flag.desc == Flags::HighSpeed)
 	  maxPlanarSpeedSqr *= VelocityAd*VelocityAd;
 	else {
 	  // If player is moving vertically, or not alive the speed checks seem to be problematic
@@ -5608,8 +5594,8 @@ static void extraUsage(const char *pname)
   printVersion();
   printf("\nUsage: %s %s\n", pname, usageString);
   printf("\n%s\nFlag codes:\n", extraUsageString);
-  for (int f = int(FirstSuperFlag); f <= int(LastSuperFlag); f++)
-    printf("\t%2.2s %s\n", Flag::getAbbreviation(FlagId(f)), Flag::getName(FlagId(f)));
+  for (std::map<std::string, FlagDesc*>::iterator it = FlagDesc::flagMap.begin(); it != FlagDesc::flagMap.end(); ++it)
+    printf("\t%2.2s %s\n", (*it->second).flagAbbv, (*it->second).flagName);
   exit(0);
 }
 
