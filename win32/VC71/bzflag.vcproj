@@ -80,8 +80,8 @@ copy debug\*.pdb ..\..\*.pdb
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory=".\..\bin"
-			IntermediateDirectory=".\Release"
+			OutputDirectory=".\..\..\src\bzflag\"
+			IntermediateDirectory=".\..\..\src\bzflag\"
 			ConfigurationType="1"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE"
@@ -150,6 +150,9 @@ copy debug\*.pdb ..\..\*.pdb
 		<Filter
 			Name="Source Files"
 			Filter="cpp;c;cxx;rc;def;r;odl;idl;hpj;bat">
+			<File
+				RelativePath="..\..\src\bzflag\ActionBinding.cxx">
+			</File>
 			<File
 				RelativePath="..\..\src\bzflag\BackgroundRenderer.cxx">
 				<FileConfiguration
@@ -827,6 +830,9 @@ copy debug\*.pdb ..\..\*.pdb
 			</File>
 			<File
 				RelativePath="..\..\src\bzflag\ShotStrategy.h">
+			</File>
+			<File
+				RelativePath="..\..\include\Singleton.h">
 			</File>
 			<File
 				RelativePath="..\..\src\bzflag\sound.h">
