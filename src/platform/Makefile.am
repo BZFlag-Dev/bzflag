@@ -1,3 +1,7 @@
+# SUBDIRS mult always be processed
+# so they end up in the dist
+SUBDIRS = MacOSX
+
 if LINUX
 libPlatform_a_SOURCES =				\
 	PlatformFactory.cxx			\
@@ -64,7 +68,6 @@ libPlatform_a_SOURCES =				\
 	XWindow.h
 else
 if MACOS
-SUBDIRS = MacOSX
 libPlatform_a_SOURCES =				\
 	PlatformFactory.cxx			\
 	BzfDisplay.cxx				\
