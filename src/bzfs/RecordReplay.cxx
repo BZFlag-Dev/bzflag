@@ -867,10 +867,16 @@ bool Replay::sendFileList(int playerIndex)
     do {
       std::string name = RecordDir;
       name += findData.cFileName;
-      if (isRecordFile (name.c_str())) {
-        snprintf (buffer, MessageLen, "file:  %s", findData.cFileName);
-        sendMessage (ServerPlayer, playerIndex, buffer, true);
-        count++;
+      FILE *file = getRecordFile (name.c_str());
+      if (file != NULL) {
+        RRtime filetime;
+        if (loadFileTime (&filetime, file)) {
+          snprintf (buffer, MessageLen, "file:  %-20s  [%9.1f seconds]",
+                    findData.cFileName, (float)filetime/1000000.0f);
+          sendMessage (ServerPlayer, playerIndex, buffer, true);
+          count++;
+        }
+        fclose (file);
       }
     } while (FindNextFile(h, &findData));
 
