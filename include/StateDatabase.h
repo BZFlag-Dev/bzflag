@@ -170,10 +170,6 @@ public:
    */
   bool                          getDebug() const;
   
-  /** get the singleton instance of the state database
-   */
-  static StateDatabase* getInstance();
-
   static const std::string	BZDB_ANGLETOLERANCE;
   static const std::string	BZDB_ANGULARAD;
   static const std::string	BZDB_BOXHEIGHT;
