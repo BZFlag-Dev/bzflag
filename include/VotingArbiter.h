@@ -167,6 +167,11 @@ public:
    */
   bool hasSuffrage(const std::string &player) const;
 
+  /**
+   * returns whether or not a user has voted
+   */
+  bool hasVoted(const std::string &player) const;
+
   /** apply a yes vote; returns true if the vote could be made
    */
   bool voteYes(const std::string &player);

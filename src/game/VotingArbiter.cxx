@@ -191,6 +191,10 @@ bool VotingArbiter::hasSuffrage(const std::string &player) const
   return true;
 }
 
+bool VotingArbiter::hasVoted(const std::string &player) const{
+	return _votingBooth->hasVoted(TextUtils::tolower(player));
+}
+
 bool VotingArbiter::voteYes(const std::string &player)
 {
   if (!this->knowsPoll() || this->isPollClosed()) {

@@ -1550,9 +1550,16 @@ static void handleVoteCmd(GameKeeper::Player *playerData, const char *message)
     return;
   }
 
-  if (!cast) {
-    /* player was unable to cast their vote; probably already voted */
+  if (arbiter->hasVoted(callsign)) {
+    /* player already voted */
     sprintf(reply,"%s, you have already voted on the poll to %s %s", callsign.c_str(), arbiter->getPollAction().c_str(), arbiter->getPollTarget().c_str());
+    sendMessage(ServerPlayer, t, reply);
+    return;
+  }
+
+  if (!cast){
+    /* There was an error while voting, probably could send a less generic message */
+    sprintf(reply,"%s, there was an error while voting on the poll to %s %s", callsign.c_str(), arbiter->getPollAction().c_str(), arbiter->getPollTarget().c_str());
     sendMessage(ServerPlayer, t, reply);
     return;
   }
