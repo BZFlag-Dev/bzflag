@@ -204,9 +204,9 @@ GUIOptionsMenu::GUIOptionsMenu()
   option->setLabel("Killer Highlight:");
   option->setCallback(callback, (void*)"k");
   options = &option->getList();
-  options->push_back(std::string("Blinking"));
-  options->push_back(std::string("Underline"));
   options->push_back(std::string("None"));
+  options->push_back(std::string("Pulsating"));
+  options->push_back(std::string("Underline"));
   option->update();
   list.push_back(option);
 

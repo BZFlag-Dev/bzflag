@@ -25,7 +25,7 @@
 #define ANSI_STR_BRIGHT		"\033[1m"
 #define ANSI_STR_DIM		"\033[2m"
 #define ANSI_STR_UNDERLINE	"\033[4m"
-#define ANSI_STR_BLINK		"\033[5m"
+#define ANSI_STR_PULSATING	"\033[5m"
 #define ANSI_STR_REVERSE	"\033[7m"	// unimplemented
 
 #define ANSI_STR_FG_BLACK	"\033[30m"	// grey
@@ -54,7 +54,7 @@ typedef enum {
   FinalResetColor       = 11,
   BrightColor		= 12,
   DimColor		= 13,
-  BlinkColor		= 9,
+  PulsatingColor	= 9,
   UnderlineColor	= 10,
 
   YellowColor		= 0,
@@ -72,7 +72,7 @@ static std::string ColorStrings[14] = {
   ANSI_STR_FG_BLACK,    // 6  Grey      (bright black is grey)
   ANSI_STR_FG_CYAN,     // 7  Cyan
   ANSI_STR_RESET,       // 8  Reset
-  ANSI_STR_BLINK,       // 9  Blink
+  ANSI_STR_PULSATING,   // 9  Pulsating
   ANSI_STR_UNDERLINE,   // 10 Underline
   ANSI_STR_RESET_FINAL, // 11 Really reset (no brightness added)
   ANSI_STR_BRIGHT,	// 12 Bright mode

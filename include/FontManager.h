@@ -58,7 +58,7 @@ protected:
   friend class Singleton<FontManager>;
 
 private:
-  void		getBlinkColor(const GLfloat* color, GLfloat* blinkColor) const;
+  void		getPulseColor(const GLfloat* color, GLfloat* pulseColor) const;
   TextureFont*	getClosestSize(int faceID, float size);
   float		getClosestRealSize(int faceID, float size);
   FontFaceMap	faceNames;

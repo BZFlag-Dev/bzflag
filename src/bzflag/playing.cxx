@@ -1047,9 +1047,9 @@ void		addMessage(const Player* player, const std::string& msg,
   if (BZDB.isTrue("colorful")) {
     if (player) {
       if (highlight) {
-	if (BZDB.get("killerhighlight") == "0")
-	  fullMessage += ColorStrings[BlinkColor];
-	else if (BZDB.get("killerhighlight") == "1")
+	if (BZDB.get("killerhighlight") == "1")
+	  fullMessage += ColorStrings[PulsatingColor];
+	else if (BZDB.get("killerhighlight") == "2")
 	  fullMessage += ColorStrings[UnderlineColor];
       }
       int color = player->getTeam();
@@ -1677,9 +1677,9 @@ static void		handleServerMessage(bool human, uint16_t code,
 	  playerStr += "teammate ";
 
 	if (victimPlayer == myTank) {
-	  if (BZDB.get("killerhighlight") == "0")
-	    playerStr += ColorStrings[BlinkColor];
-	  else if (BZDB.get("killerhighlight") == "1")
+	  if (BZDB.get("killerhighlight") == "1")
+	    playerStr += ColorStrings[PulsatingColor];
+	  else if (BZDB.get("killerhighlight") == "2")
 	    playerStr += ColorStrings[UnderlineColor];
 	}
 	playerStr += ColorStrings[killerPlayer->getTeam()];
@@ -2137,9 +2137,9 @@ static void		handleServerMessage(bool human, uint16_t code,
 	if (dstPlayer == myTank && srcPlayer == myTank) {
     	  fullMsg = text;
 	} else {
-	  if (BZDB.get("killerhighlight") == "0")
-	    fullMsg += ColorStrings[BlinkColor];
-	  else if (BZDB.get("killerhighlight") == "1")
+	  if (BZDB.get("killerhighlight") == "1")
+	    fullMsg += ColorStrings[PulsatingColor];
+	  else if (BZDB.get("killerhighlight") == "2")
 	    fullMsg += ColorStrings[UnderlineColor];
 	  fullMsg += "[";
 	  if (srcPlayer == myTank) {

@@ -24,9 +24,10 @@
 #include "OpenGLGState.h"
 #include "TimeKeeper.h"
 
-// constants for blinking text
-#define BLINK_DEPTH	(0.5f)
-#define BLINK_RATE	(0.25f)
+// depth is how dark it should get (1.0 is to black)
+#define PULSE_DEPTH	(0.4f)
+// rate is how fast it should pulsate (smaller is faster)
+#define PULSE_RATE	(1.0f)
 
 // initialize the singleton
 template <>
@@ -233,7 +234,7 @@ void FontManager::drawString(float x, float y, float z, int faceID, float size, 
 
   // sane defaults
   bool bright = true;
-  bool blink = false;
+  bool pulsating = false;
   bool underline = false;
   // negatives are invalid, we use them to signal "no change"
   GLfloat color[3] = {-1.0f, -1.0f, -1.0f};
@@ -272,9 +273,9 @@ void FontManager::drawString(float x, float y, float z, int faceID, float size, 
   // split string into parts based on the embedded ANSI codes, render each separately
   // there has got to be a faster way to do this
   while (endSend >= 0) {
-    // blink the text, if desired
-    if (blink)
-      getBlinkColor(color, color);
+    // pulsate the text, if desired
+    if (pulsating)
+      getPulseColor(color, color);
     // render text
     if (endSend - startSend > 0) {
       tmpText = text.substr(startSend, (endSend - startSend));
@@ -330,14 +331,14 @@ void FontManager::drawString(float x, float y, float z, int faceID, float size, 
 	// settings other than color
 	if (tmpText == ANSI_STR_RESET) {
 	  bright = true;
-	  blink = false;
+	  pulsating = false;
 	  underline = false;
 	  color[0] = BrightColors[WhiteColor][0];
 	  color[1] = BrightColors[WhiteColor][1];
 	  color[2] = BrightColors[WhiteColor][2];
 	} else if (tmpText == ANSI_STR_RESET_FINAL) {
 	  bright = false;
-	  blink = false;
+	  pulsating = false;
 	  underline = false;
 	  color[0] = DimColors[WhiteColor][0];
 	  color[1] = DimColors[WhiteColor][1];
@@ -348,8 +349,8 @@ void FontManager::drawString(float x, float y, float z, int faceID, float size, 
 	  bright = false;
 	} else if (tmpText == ANSI_STR_UNDERLINE) {
 	  underline = !underline;
-	} else if (tmpText == ANSI_STR_BLINK) {
-	  blink = !blink;
+	} else if (tmpText == ANSI_STR_PULSATING) {
+	  pulsating = !pulsating;
 	} else {
 	  DEBUG2("ANSI Code %s not supported\n", tmpText.c_str());
 	}
@@ -489,17 +490,17 @@ float	    FontManager::getClosestRealSize(int faceID, float desiredSize)
   }
 }
 
-void	    FontManager::getBlinkColor(const GLfloat *color, GLfloat *blinkColor) const
+void	    FontManager::getPulseColor(const GLfloat *color, GLfloat *pulseColor) const
 {
-  float blinkTime = TimeKeeper::getCurrent().getSeconds();
+  float pulseTime = TimeKeeper::getCurrent().getSeconds();
 
-  float blinkFactor = fmodf(blinkTime, BLINK_RATE) - BLINK_RATE/2.0f;
-  blinkFactor = fabsf(blinkFactor) / (BLINK_RATE/2.0f);
-  blinkFactor = BLINK_DEPTH * blinkFactor + (1.0f - BLINK_DEPTH);
+  float pulseFactor = fmodf(pulseTime, PULSE_RATE) - PULSE_RATE/2.0f;
+  pulseFactor = fabsf(pulseFactor) / (PULSE_RATE/2.0f);
+  pulseFactor = PULSE_DEPTH * pulseFactor + (1.0f - PULSE_DEPTH);
 
-  blinkColor[0] = color[0] * blinkFactor;
-  blinkColor[1] = color[1] * blinkFactor;
-  blinkColor[2] = color[2] * blinkFactor;
+  pulseColor[0] = color[0] * pulseFactor;
+  pulseColor[1] = color[1] * pulseFactor;
+  pulseColor[2] = color[2] * pulseFactor;
 }
 
 // Local Variables: ***
