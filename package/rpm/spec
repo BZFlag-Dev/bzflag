@@ -11,7 +11,7 @@
 # WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 
 %define name bzflag
-%define version 1.7g0
+%define version 1.7g1
 %define release 1
 
 %define bzbindir	/usr/X11R6/bin

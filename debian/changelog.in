@@ -1,8 +1,13 @@
 bzflag (@VERSION@) unstable; urgency=medium
 
+  * CVS Build
+ -- Tim Riker <Tim@Rikers.org>  @DATE@
+
+bzflag (1.7g0) unstable; urgency=medium
+
   * compatibile with newer compilers Closes: Bug#134031
   * removed period from description Closes: Bug#151306
- -- Tim Riker <Tim@Rikers.org>  @DATE@
+ -- Tim Riker <Tim@Rikers.org>  Sun, 08 Dec 2002 01:37:22 -0700
 
 bzflag (1.7e6) unstable; urgency=medium
 
