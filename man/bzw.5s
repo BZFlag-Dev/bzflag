@@ -247,7 +247,7 @@ Instantiates a group, and possibly modifies subobjects
 .br
 \fB  phydrv\fR example_phydrv     # reassign any valid physics drivers
 .br
-\fB  material\fR example_material # set material properties
+\fB  matref\fR example_material # set material properties
 .br
                             # (except for the color)
 .br
@@ -831,7 +831,7 @@ worldStream :=
 .TP
 material :=
 .br
-	  "matref" <material_name>
+	  "name" <material_name>
 .br
 	| "resetmat"
 .br
