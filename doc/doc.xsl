@@ -39,6 +39,9 @@
 		<xsl:apply-templates select="bookinfo"/>
 		<xsl:call-template name="ctrl"/>
 		<xsl:call-template name="chapters"/>
+		<script language="JavaScript">
+			switchDiv(&quot;<xsl:value-of select="chapter[1]/@id"/>&quot;);
+		</script>
 		</body>
 	</html>
 
@@ -79,22 +82,19 @@
 </xsl:template>
 
 <xsl:template name="chapters">
-	<table border = "0" width="100%">
-		<xsl:for-each select="chapter">
-			<xsl:element name="div">
-				<xsl:attribute name="id"><xsl:value-of select="@id"/></xsl:attribute>
-				<xsl:attribute name="style">display:none;</xsl:attribute>
+	<xsl:for-each select="chapter">
+		<xsl:element name="div">
+			<xsl:attribute name="id"><xsl:value-of select="@id"/></xsl:attribute>
+			<xsl:attribute name="style">display:none;</xsl:attribute>
+			<table width="100%">
 				<xsl:for-each select="para">
 					<tr><td>
 						<xsl:value-of select="."/>
 					</td></tr>
 				</xsl:for-each>
-			</xsl:element>
-		</xsl:for-each>
-	</table>
-	<script language="JavaScript">
-		switchDiv(&quot;<xsl:value-of select="chapter[1]/@id"/>&quot;);
-	</script>
+			</table>
+		</xsl:element>
+	</xsl:for-each>
 </xsl:template>
 
 
