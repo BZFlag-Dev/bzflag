@@ -16,8 +16,10 @@ bzfs \- BZFlag game server
 [\fB\-help\fR]
 [\fB\-i \fIinterface\fR]
 [\fB\-j\fR]
-[\fB\-lagwarn \fR{\fItime/ms\fR}]
-[\fB\-maxidle \fR{\fItime/s\fR}]
+[\fB\-lagdrop \fIwarn-count\fR]
+[\fB\-lagwarn \fR\fItime/ms\fR]
+[\fB\-maxidle \fR\fItime/s\fR]
+[\fB\-mo \fIobserver-count\fR]
 [\fB\-mp \fR{\fIcount\fR|[\fIrogue-count\fR]\fB,\fR[\fIred-count\fR]\fB,\fR[\fIgreen-count\fR]\fB,\fR[\fIblue-count\fR]\fB,\fR[\fIpurple-count\fR]}]
 [\fB\-mps \fR{\fImax-score\fR}]
 [\fB\-ms \fIshots\fR]
@@ -102,13 +104,19 @@ network. This is also the TCP/UDP/IP address the server will listen on.
 .B -j
 Allows jumping.
 .TP
+\fB\-lagdrop \fIwarn-count\fR
+Kicks players after \fIwarn-count\fR lag warnings.
+.TP
 \fB-lagwarn\fI time/ms\fR
-Send warnings to players that lag more than time.
+Send warnings to players that lag more than \fItime\fR.
 .TP
 \fB-maxidle\fI time/s\fR
 Kick players that did not play longer than time seconds. Pausing players are
 not kicked. If a player uttered a word recently, he will be kicked after
 thrice the given time.
+.TP
+\fB\-mo \fIobserver-count\fR
+Sets the maximum number of observers. If not set, no observers are allowed.
 .TP
 \fB-mp\fR {\fIcount\fR|[\fIrogue\fR]\fB,\fR[\fIred\fR]\fB,\fR[\fIgreen\fR]\fB,\fR[\fIblue\fR]\fB,\fR[\fIpurple\fR]}
 Sets the maximum number of players, total or per team.  A single value sets
