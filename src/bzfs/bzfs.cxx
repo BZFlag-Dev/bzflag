@@ -2682,12 +2682,16 @@ static void captureFlag(int playerIndex, TeamColor teamCaptured)
 															 lastState[playerIndex].pos[1],
 															 lastState[playerIndex].pos[2]);
   	if ((flag[flagIndex].flag.type->flagTeam == playerData->player.getTeam() &&
-			 	 base == playerData->player.getTeam()))
+			 	 base == playerData->player.getTeam()))	{
+      DEBUG1("\"%s\" (%d) sent MsgCaptureFlag for taking its own flag onto its own base",
+							playerData->player.getCallSign(), playerIndex);
 			return; //sanity check
-
+		}
   	if ((flag[flagIndex].flag.type->flagTeam != playerData->player.getTeam() &&
 			 	 base != playerData->player.getTeam())) {
        char message[MessageLen];
+       DEBUG1("\"%s\" (%d) tried to capture opponent flag without reaching its own base",
+							playerData->player.getCallSign(), playerIndex);
        strcpy(message, "Autokick: Tried to capture opponent flag without landing on your base");
        sendMessage(ServerPlayer, playerIndex, message);
        removePlayer(playerIndex, "capturecheat");
