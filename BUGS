@@ -1,6 +1,11 @@
 recent bugs
 ------------
 
+- shake time isn't sent properly. it appears to be packed and unpacked correctly,
+  but a randomish value gets sent over the wire. my only conclusion is that its
+  become haunted. Perhaps the easiest way to fix is just to refactor the world
+  packing code into something non-gross.
+
 - README.UNIX is out of date
 
 - resetting key map is not implemented
