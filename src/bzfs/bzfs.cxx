@@ -3551,7 +3551,7 @@ static void zapFlag(int flagIndex)
   resetFlag(flagIndex);
 }
 
-static void annointNewRabbit()
+static void anointNewRabbit()
 {
   float topRatio = -100000.0f;
   int i;
@@ -3683,7 +3683,7 @@ static void removePlayer(int playerIndex, char *reason, bool notify)
 
   if (clOptions.gameStyle & int(RabbitChaseGameStyle))
     if (playerIndex == rabbitIndex)
-      annointNewRabbit();
+      anointNewRabbit();
 
   if (player[playerIndex].team != NoTeam) {
     int flagid = player[playerIndex].flag;
@@ -3959,7 +3959,7 @@ static void playerKilled(int victimIndex, int killerIndex, int reason,
 
   if (clOptions.gameStyle & int(RabbitChaseGameStyle)) {
     if (victimIndex == rabbitIndex)
-      annointNewRabbit();
+      anointNewRabbit();
   } else {
     // change the team scores -- rogues don't have team scores.  don't
     // change team scores for individual player's kills in capture the
@@ -5312,7 +5312,7 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
 
     case MsgNewRabbit: {
       if (t == rabbitIndex)
-        annointNewRabbit();
+        anointNewRabbit();
       break;
     }
 
