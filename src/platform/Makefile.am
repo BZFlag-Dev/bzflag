@@ -161,6 +161,12 @@ EXTRA_libPlatform_a_SOURCES =		\
 	LinuxMedia.cxx			\
 	LinuxMedia.h			\
 	usbjoy.cxx			\
+	SDLPlatformFactory.cxx		\
+	SDLPlatformFactory.h		\
+	SDLMedia.cxx			\
+	SDLMedia.h			\
+	SDLDisplay.h			\
+	SDLDisplay.cxx			\
 	SolarisPlatformFactory.cxx	\
 	SolarisPlatformFactory.h	\
 	SolarisMedia.cxx		\
