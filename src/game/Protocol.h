@@ -92,6 +92,15 @@ const uint16_t			MsgTeleport = 0x7470;					// 'tp'
 const uint16_t			MsgSetTTL = 0x7474;						// 'tt'
 const uint16_t			MsgTeamUpdate = 0x7475;					// 'tu'
 
+// request for additional UDP link
+const uint16_t			MsgUDPLinkRequest = 0x6f66;				// 'of'
+const uint16_t			MsgUDPLinkEstablished = 0x6f67;			// 'og'
+const uint16_t			MsgUDPLinkUpdate = 0x6f68;				// 'oh'
+const uint16_t			MsgClientVersion = 0x6f6a;				// 'oj'
+
+// server control message
+const uint16_t			MsgServerControl = 0x6f69;				// 'oi'
+
 // world database codes
 const uint16_t			WorldCodeBase = 0x6261;					// 'ba'
 const uint16_t			WorldCodeBox = 0x6278;					// 'bx'
@@ -118,134 +127,5 @@ const uint16_t			RejectBadType = 0x0002;
 const uint16_t			RejectNoRogues = 0x0003;
 const uint16_t			RejectTeamFull = 0x0004;
 const uint16_t			RejectServerFull = 0x0005;
-
-// request for additional UDP link
-
-const uint16_t			MsgUDPLinkRequest = 0x6f66;				// 'of'
-const uint16_t			MsgUDPLinkEstablished = 0x6f67;			// 'og'
-const uint16_t			MsgUDPLinkUpdate = 0x6f68;				// 'oh'
-const uint16_t			MsgClientVersion = 0x6f6a;				// 'oj'
-
-// server control message
-
-const uint16_t			MsgServerControl = 0x6f69;				// 'oi'
-
-/* server communication protocol:
---> incoming messages (to server)
-<-- outgoing messages to single player
-<== outgoing messages to all players
-
-player to server messages:
-MsgEnter				player is joining game
-						--> id, type, team, name, email address
-						<-- MsgReject (if rejected)
-						<-- MsgAccept (if accepted)
-						if accepted, new player is sent (following MsgAccept):
-						<-- MsgTeamUpdate (one per team)
-						<-- MsgFlagUpdate (one per existing flag)
-						<-- MsgAddPlayer (one per already joined player)
-						add, finally, sent to all:
-						<== MsgAddPlayer (player being accepted)
-MsgExit				player is signing off
-						--> /id/
-						<== MsgRemovePlayer
-MsgGetWorld				request for playing field database
-						--> bytes read so far
-						<-- MsgGetWorld
-MsgQueryGame				request for game state
-						<-- MsgQueryGame
-MsgQueryPlayers		request for player list
-						<-- MsgQueryPlayers
-MsgAlive				player says he's coming alive
-						--> /id,/ position, forward-vector
-						<== MsgAlive
-MsgKilled				player says he's been killed
-						--> /id,/ killer-id, killer-shot-id
-						<== MsgKilled
-MsgGrabFlag				player wants to grab flag
-						--> /id,/ flag
-						<== MsgGrabFlag
-MsgDropFlag				player wants to drop flag
-						--> /id,/ position
-						<== MsgDropFlag
-						<== MsgFlagUpdate
-MsgCaptureFlag		player captured flag
-						--> /id,/ team (team flag was taken to)
-						<== MsgCaptureFlag
-						<== MsgFlagUpdate
-MsgShotBegin				player has fired a shot
-						--> FiringInfo
-						<== MsgShotBegin
-MsgShotEnd				shot has terminated
-						--> shooter id, shot number, reason
-						<== MsgShotEnd
-MsgScore				player score has changed
-						--> wins, losses
-						<== MsgScore
-MsgTeleport				player has teleported
-						--> /id,/ from-teleporter, to-teleporter
-						<== MsgTeleport
-MsgMessage				player is sending a message
-						--> /id,/ target-id/team-id, message string
-						<== MsgMessage
-MsgAcquireRadio		player wants to transmit
-						--> /id,/ flags
-						<== MsgAcquireRadio (if available)
-MsgReleaseRadio		player is done transmitting
-						--> /id/
-						<== MsgReleaseRadio
-						(give radio to next player who wanted it)
-MsgNetworkRelay		player can't use multicast, server must relay
-						--> <none>
-						<-- MsgAccept or MsgReject
-
-server to player messages:
-MsgSuperKill				player must disconnect from server
-						<== <none>
-MsgTimeUpdate				game time left, if == 0 player is dead and can't restart
-						<== time (left, in seconds)
-MsgScoreOver				score limit reached, player is dead and can't restart
-						<== id (winner), team (winner)
-MsgAccept				player request is accepted
-						<== <none>
-MsgReject				player request is rejected
-						<== <none>
-MsgAddPlayer				notification of new tank in game
-						<== id, type, team, name, email
-MsgRemovePlayer		player has exited the server
-						<== id
-MsgFlagUpdate				update of flag info
-						<== flag, flag-info
-MsgTeamUpdate				update of team info
-						<== team, team-info
-MsgGetWorld				chunk of world database
-						<-- bytes left, next 256 byte chunk of world database
-MsgAlive				player is alive
-						<== id, position, forward-vector
-MsgKilled				player is dead
-						<== id (victim id), killer-id, killer-shot-id
-MsgGrabFlag				notification that flag is grabbed
-						<== id (grabber), flag, flag-info
-MsgDropFlag				notification that flag is in air
-						<== id (dropper), flag, flag-info
-MsgCaptureFlag		notification that flag has been captured
-						<== id (capturer), flag, team
-MsgShotBegin				some player has fired a shot
-						<== FiringInfo
-MsgShotEnd				shot has expired
-						<== id (shooter id), shot number, reason
-MsgScore				player score has changed
-						<== id (player id), wins, losses
-MsgTeleport				player has teleported
-						<== id, from-teleporter, to-teleporter
-MsgMessage				message to players
-						<== from-id, to-id/team-id, message string
-MsgAcquireRadio		player is granted request to transmit
-						<== id, flags
-MsgReleaseRadio		player is no longer transmitting
-						<== id
-MsgQueryGame				game status
-MsgQueryPlayers		list of players
-*/
 
 #endif // BZF_PROTOCOL_H
