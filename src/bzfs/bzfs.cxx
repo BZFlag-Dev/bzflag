@@ -4335,6 +4335,8 @@ static void playerKilled(int victimIndex, int killerIndex,
 #endif
   if (winningTeam != (int)NoTeam)
     checkTeamScore(killerIndex, winningTeam);
+  if (player[victimIndex].team == player[killerIndex].team)
+    playerKilled(killerIndex, killerIndex, shotIndex);
 }
 
 static void grabFlag(int playerIndex, int flagIndex)
