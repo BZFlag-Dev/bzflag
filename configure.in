@@ -71,7 +71,7 @@ else
     AC_DEFINE(HAVE_SOCKLEN_T, 1, [if socklen_t is defined, make note of it])
 fi
 
-AM_CONDITIONAL(LINUX, test x$host_os = xlinux-gnu)
+AM_CONDITIONAL(LINUX, test x$host_os = xlinux-gnu -o x$host_os = xlinux)
 AM_CONDITIONAL(BEOS, test x$host_os = xbeos)
 AM_CONDITIONAL(PC,    test x$host_vendor = xpc)
 AM_CONDITIONAL(PPC,   test x$host_vendor = xppc)
@@ -151,7 +151,7 @@ if test $host_os != beos; then
 
   AC_CHECK_LIB(Xext, XextAddDisplay, [GLIBS="-lXext $GLIBS"], [], $GLIBS)
 
-  if test $host_os = linux-gnu; then
+  if test x$host_os = xlinux-gnu -o x$host_os = xlinux ; then
     AC_CHECK_LIB(Xxf86vm, XF86VidModeGetAllModeLines, [GLIBS="-lXxf86vm $GLIBS"], [], $GLIBS)
     AC_CHECK_LIB(Xi, XListInputDevices, [GLIBS="-lXi $GLIBS"], [], $GLIBS)
   fi
@@ -304,7 +304,7 @@ fi
 AC_DEFINE_UNQUOTED(INSTALL_DATA_DIR, "$INSTALL_DATA_DIR",
 [Data file directory])
 case $host_os in
-     linux-gnu)
+     linux*)
 	CPPFLAGS="$CPPFLAGS -D_BSD_SOURCE -D_POSIX_SOURCE";
 	CPPFLAGS="$CPPFLAGS -I\$(top_srcdir)/include"
 	AC_DEFINE(HALF_RATE_AUDIO, 1, [Half rate Audio])
@@ -369,7 +369,7 @@ esac
 # /c to compile only
 if test x$enable_debug = xyes; then
    case $host_os in
-     linux-gnu|cygwin|mingw32)
+     linux*|cygwin|mingw32)
 	CFLAGS="$CFLAGS -g";
 	CPPFLAGS="$CPPFLAGS -Werror";
 	CXXFLAGS="$CXXFLAGS -g -Wno-deprecated";
@@ -400,7 +400,7 @@ if test x$enable_debug = xyes; then
     AC_DEFINE(DEBUG, 1, [Debugging enabled])
 else
     case $host_os in
-	linux-gnu|cygwin|mingw32)
+	linux*|cygwin|mingw32)
 		CFLAGS="$CFLAGS -O2";
 		CXXFLAGS="$CXXFLAGS -O2";
 		CXXFLAGS="$CXXFLAGS -ffast-math -fomit-frame-pointer";
