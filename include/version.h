@@ -14,8 +14,12 @@
 
 /* For the the windows version stuff, it should pull from a resouce later */
 
-#ifndef _GETBUILD_DATE_
-#define _GETBUILD_DATE_
+#ifndef __VERSION_H__
+#define __VERSION_H__
+
+#include <sstream>
+#include <string>
+
 #include <stdio.h>
 #include <string.h>
 
@@ -55,7 +59,6 @@ inline int getBuildDate()
 
 	return (year*10000) + (month*100)+ day;
 }
-#endif //_GETBUILD_DATE_
 // protocol version
 // TODO make this sucker an int when we change BZFS stuff
 #ifndef BZ_PROTO_VERSION
@@ -81,3 +84,32 @@ inline int getBuildDate()
 #ifndef BZ_BUILD_DATE
 #define BZ_BUILD_DATE		getBuildDate()
 #endif
+
+
+// just a place to put the version stuff, as there was no where else
+// version strings
+
+inline const char*			getProtocolVersion()
+{
+  static std::string protVersion = BZ_PROTO_VERSION;
+  return protVersion.c_str();
+}
+
+inline const char*			getServerVersion()
+{
+  static std::string serverVersion = std::string("BZFS") + getProtocolVersion();
+  return serverVersion.c_str();
+}
+
+inline const char*		getAppVersion()
+{
+  static std::string	appVersion = "";
+  if (!appVersion.size()){
+    std::ostringstream	appVersionStream;
+    appVersionStream << BZ_MAJOR_VERSION << "." << BZ_MINOR_VERSION << "." << BZ_REV << "-" << BZ_BUILD_OS << "-" << BZ_BUILD_TYPE << BZ_BUILD_DATE;
+    appVersion = appVersionStream.str();
+  }
+  return appVersion.c_str();
+}
+
+#endif //_GETBUILD_DATE_

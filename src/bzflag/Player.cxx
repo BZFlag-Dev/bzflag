@@ -12,13 +12,13 @@
 
 #include <string.h>
 #include "common.h"
+#include "playing.h"
 #include "Player.h"
 #include "World.h"
 #include "TankSceneNode.h"
 #include "SphereSceneNode.h"
 #include "SceneDatabase.h"
 #include "OpenGLMaterial.h"
-#include "playing.h"
 
 // for dead reckoning
 static const float	MaxUpdateTime = 1.0f;		// seconds

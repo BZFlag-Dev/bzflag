@@ -11,6 +11,7 @@
  */
 
 #include "common.h"
+#include "playing.h"
 #include "ShotStrategy.h"
 #include "World.h"
 #include "Intersect.h"
@@ -24,7 +25,6 @@
 #include "sound.h"
 #include "OpenGLTexture.h"
 #include "texture.h"
-#include "playing.h"
 #include "Team.h"
 #include "SceneRenderer.h"
 #include "StateDatabase.h"

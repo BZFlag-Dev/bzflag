@@ -11,11 +11,11 @@
  */
 
 #include "common.h"
+#include "playing.h"
 #include "ShotPath.h"
 #include "ShotStrategy.h"
 #include "LocalPlayer.h"
 #include "Protocol.h"
-#include "playing.h"
 #include "Flag.h"
 
 //

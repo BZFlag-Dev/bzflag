@@ -18,8 +18,6 @@
 #define	BZF_GLOBAL_H
 
 #include <math.h>
-#include <sstream>
-#include <string>
 #include "common.h"
 #include "StateDatabase.h"
 

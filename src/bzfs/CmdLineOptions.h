@@ -16,7 +16,6 @@
 /* system headers */
 #include <string>
 #include <map>
-#include <vector>
 
 /* bzflag common headers */
 #include "config.h"

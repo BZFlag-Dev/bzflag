@@ -17,15 +17,23 @@
 #ifndef	BZF_PLAYING_H
 #define	BZF_PLAYING_H
 
-#ifdef _WIN32
-#pragma warning( 4 : 4786 )
+#if defined(_WIN32)
+#pragma warning(disable: 4786)
+#pragma warning(disable: 4100)
+#pragma warning(disable: 4511)
 #endif
 
+// system includes
 #include <string>
 #include <vector>
-#include "common.h"
-#include "global.h"
-#include "Address.h"
+
+#include "BzfDisplay.h"
+#include "MainWindow.h"
+#include "SceneRenderer.h"
+#include "Player.h"
+
+#define MAX_MESSAGE_HISTORY (20)
+
 
 class SceneRenderer;
 

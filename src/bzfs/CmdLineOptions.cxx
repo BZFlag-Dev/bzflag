@@ -10,13 +10,21 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-/* no header other than CmdLineOptions.h should be included here */
-
 #ifdef _WIN32
 #pragma warning( 4:4786)
 #endif
 
+/* this should be the only header necessary except for headers specific
+ * to the class implementation (such as version.h)
+ */
 #include "CmdLineOptions.h"
+
+// invoke persistent recompilation of this for build versioning
+#include "version.h"
+
+/* XXX implementation specific header for global that should eventually go
+ * away */
+#include <vector>
 
 
 /* data nasties */

@@ -100,6 +100,8 @@ static const char copyright[] = "Copyright (c) 1993 - 2003 Tim Riker";
 #include "FlagInfo.h"
 #include "VotingArbiter.h"
 
+// invoke incessant rebuilding for build versioning
+#include "version.h"
 
 #endif
 // ex: shiftwidth=2 tabstop=8

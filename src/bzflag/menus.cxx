@@ -69,6 +69,10 @@
 #include "ServerListCache.h"
 #include "BZDBCache.h"
 
+// cause persistent rebuilding for build versioning
+#include "version.h"
+
+
 #ifdef _WIN32
 #define PATH_MAX MAX_PATH
 #endif

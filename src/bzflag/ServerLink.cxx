@@ -17,12 +17,16 @@
 #include <sys/types.h>
 #include <ctype.h>
 #include <time.h>
+
 #include "common.h"
 #include "ServerLink.h"
 #include "Pack.h"
 #include "LocalPlayer.h"
 #include "ErrorHandler.h"
 #include "network.h"
+
+// invoke persistent rebuilding for current version dates
+#include "version.h"
 
 // FIXME this should not be here! gag!
 // oversight on Tim's part when checking in patches

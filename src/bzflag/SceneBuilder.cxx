@@ -12,6 +12,7 @@
 
 #include <stdio.h>
 #include "common.h"
+#include "playing.h"
 #include "SceneBuilder.h"
 #include "SceneRenderer.h"
 #include "SceneDatabase.h"
@@ -21,7 +22,6 @@
 #include "WallSceneNode.h"
 #include "TankSceneNode.h"
 #include "StateDatabase.h"
-#include "playing.h"
 #include "texture.h"
 
 static const char*	wallFilename = "wall";

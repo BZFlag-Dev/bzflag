@@ -17,6 +17,7 @@
 
 #include <string.h>
 #include "common.h"
+#include "playing.h"
 #include "World.h"
 #include "global.h"
 #include "Pack.h"
@@ -30,7 +31,6 @@
 #include "EighthDBoxSceneNode.h"
 #include "EighthDPyrSceneNode.h"
 #include "EighthDBaseSceneNode.h"
-#include "playing.h"
 #include "texture.h"
 #include "StateDatabase.h"
 #include "Flag.h"

@@ -26,6 +26,10 @@
 #include "TimeKeeper.h"
 #include "bzfio.h"
 
+// incessint rebuilding for current versioning
+#include "version.h"
+
+
 //
 // PingPacket
 //

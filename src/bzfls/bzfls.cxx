@@ -34,6 +34,7 @@ static const char copyright[] = "Copyright (c) 1993 - 2003 Tim Riker";
 #include "Ping.h"
 #include "TimeKeeper.h"
 #include "TimeBomb.h"
+#include "version.h"
 
 float		WorldSize =	DEFAULT_WORLD;					// meters
 

@@ -17,6 +17,9 @@
   #pragma warning(disable: 4786)
 #endif
 
+#include <string>
+#include <map>
+
 #include "menus.h"
 
 

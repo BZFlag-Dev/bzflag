@@ -16,7 +16,6 @@
 
 
 #include "global.h"
-#include "version.h"
 
 GlobalDBItem				globalDBItems[] = {
 	{ "_angleTolerance",		"0.01",				false, StateDatabase::Locked},
@@ -82,33 +81,5 @@ GlobalDBItem				globalDBItems[] = {
 	{ "_worldSize",			"800.0",			false, StateDatabase::Locked},
 };
 
-
-
-
-// just a place to put the version stuff, as there was no where else
-// version strings
-
-const char*			getServerVersion()
-{
-  static std::string serverVersion = std::string("BZFS") + getProtocolVersion();
-  return serverVersion.c_str();
-}
-
-const char*			getProtocolVersion()
-{
-  static std::string protVersion = BZ_PROTO_VERSION;
-  return protVersion.c_str();
-}
-
-const char*		getAppVersion()
-{
-    static std::string	appVersion = "";
-	if (!appVersion.size()){
-       std::ostringstream	appVersionStream;
-       appVersionStream << BZ_MAJOR_VERSION << "." << BZ_MINOR_VERSION << "." << BZ_REV << "-" << BZ_BUILD_OS << "-" << BZ_BUILD_TYPE << BZ_BUILD_DATE;
-       appVersion = appVersionStream.str();
-	}
-  return appVersion.c_str();
-}
 
 

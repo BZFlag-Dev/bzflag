@@ -10,11 +10,15 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#include "FileManager.h"
-#include "menus.h"
 #include "ServerListCache.h"
+
+#include "FileManager.h"
 #include "playing.h"
 #include "Protocol.h"
+
+// invoke persistent rebuilding for build versioning
+#include "version.h"
+
 
 //
 // ServerListCache
