@@ -222,7 +222,7 @@ void			Player::setTeleport(const TimeKeeper& t,
   setStatus(getStatus() | short(PlayerState::Teleporting));
 }
 
-void			Player::updateFlagProperties(float dt)
+void			Player::updateTank(float dt)
 {
   // copy the current dimensions to the old dimensions
   memcpy (oldDimensions, dimensions, sizeof(float[3]));
@@ -291,8 +291,29 @@ void			Player::updateFlagProperties(float dt)
     color[3] = alpha * (1.0f - (0.75f * teleporterProximity));
   } 
   tankNode->setColor(color);
+  
+  setupTreads(dt);
 
   return;
+}
+
+void			Player::setupTreads(float dt)
+{
+  // setup the tread offsets
+  float speedFactor = sqrtf ((getVelocity()[0] * getVelocity()[0]) +
+                             (getVelocity()[1] * getVelocity()[1]));
+  if (dimensions[0] > 0.001f) {
+    speedFactor = speedFactor / dimensions[0];
+  } else {
+    speedFactor = 1.0e6f;
+  }
+  float angularFactor = getAngularVelocity();
+  dt = dt * 0.25f;
+  float leftOff = dt * (speedFactor + angularFactor);
+  float rightOff = dt * (speedFactor - angularFactor);
+  tankNode->addTreadOffsets(leftOff, rightOff);
+
+  return;  
 }
 
 void			Player::changeScore(short deltaWins, short deltaLosses, short deltaTeamKills)
@@ -454,7 +475,7 @@ void			Player::addToScene(SceneDatabase* scene,
 
   tankNode->move(state.pos, forward);
   setVisualTeam(effectiveTeam);
-  
+
   if (isAlive()) {
     if (flagType == Flags::Obesity) tankNode->setObese();
     else if (flagType == Flags::Tiny) tankNode->setTiny();

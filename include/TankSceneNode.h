@@ -113,6 +113,8 @@ class TankSceneNode : public SceneNode {
     void		setThief();
     void		setExplodeFraction(float t);
     void		setClipPlane(const GLfloat* plane);
+    
+    void		addTreadOffsets(float left, float right);
 
     // hidden still renders shadow (turns off cloaked)
     void		setHidden(bool hidden = true);
@@ -230,6 +232,8 @@ class TankSceneNode : public SceneNode {
     GLfloat		azimuth, elevation;
     GLfloat		baseRadius;
     float		dimensions[3]; // tank dimensions
+    float		leftTreadOffset;
+    float		rightTreadOffset;
     bool		useDimensions;
     bool		useOverride, hidden, cloaked;
     bool		transparent, sort;

@@ -48,7 +48,7 @@ public:
   PlayerId	getId() const;
   TeamColor	getTeam() const;
   void		setTeam(TeamColor);
-  void		updateFlagProperties(float dt);
+  void		updateTank(float dt);
   const char*	getCallSign() const;
   const char*	getEmailAddress() const;
   PlayerType	getPlayerType() const;
@@ -150,6 +150,7 @@ private:
 				 float* predictedAzimuth,
 				 float* predictedVel) const;
   void setVisualTeam (TeamColor team );
+  void setupTreads(float dt);
 private:
   // data not communicated with other players
   bool			notResponding;

@@ -93,6 +93,8 @@ const int		TankSceneNode::numLOD = 3;
 int			TankSceneNode::maxLevel = numLOD;
 
 TankSceneNode::TankSceneNode(const GLfloat pos[3], const GLfloat forward[3]) :
+                                leftTreadOffset(0.0f), 
+                                rightTreadOffset(0.0f), 
                                 useDimensions(false),
 				useOverride(false),
 				hidden(false),
@@ -179,6 +181,13 @@ void			TankSceneNode::move(const GLfloat pos[3],
   azimuth = 180.0f / M_PI*atan2f(forward[1], forward[0]);
   elevation = -180.0f / M_PI*atan2f(forward[2], hypotf(forward[0],forward[1]));
   setCenter(pos);
+}
+
+void			TankSceneNode::addTreadOffsets(float left, float right)
+{
+  leftTreadOffset = fmodf (leftTreadOffset + left, 1.0f);
+  rightTreadOffset = fmodf (rightTreadOffset - right, 1.0f);
+  return;
 }
 
 void			TankSceneNode::notifyStyleChange()
@@ -741,6 +750,22 @@ void			TankSceneNode::TankRenderNode::renderPart(Part part)
 		 -centerOfGravity[part][1],
 		 -centerOfGravity[part][2]);
   }
+  
+  bool usingTexMat = false;
+  if (part == LeftTread) {
+    usingTexMat = true;
+    glMatrixMode(GL_TEXTURE);
+    glLoadIdentity();
+    glTranslatef(sceneNode->leftTreadOffset, 0.0f, 0.0f); //FIXME
+    glMatrixMode(GL_MODELVIEW);
+  }
+  else if (part == RightTread) {
+    usingTexMat = true;
+    glMatrixMode(GL_TEXTURE);
+    glLoadIdentity();
+    glTranslatef(sceneNode->rightTreadOffset, 0.0f, 0.0f); //FIXME
+    glMatrixMode(GL_MODELVIEW);
+  }
 
   // set color
   switch (part) {
@@ -769,6 +794,13 @@ void			TankSceneNode::TankRenderNode::renderPart(Part part)
     renderLights();
   }
 
+  // clear the texture matrix
+  if (usingTexMat) {
+    glMatrixMode(GL_TEXTURE);
+    glLoadIdentity();
+    glMatrixMode(GL_MODELVIEW);
+  }
+  
   // restore transform
   if (isExploding) glPopMatrix();
 }
