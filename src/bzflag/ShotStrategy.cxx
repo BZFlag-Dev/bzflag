@@ -518,7 +518,7 @@ float			SegmentedShotStrategy::checkHit(const BaseLocalPlayer* tank,
 
     // get hit time
     float t;
-    if (tank->getFlag() == Flags::Narrow) {
+    if ((tank->getFlag() == Flags::Narrow) || (tank->getFlag() == Flags::Thief)) {
       // find closest approach to narrow box around tank.  width of box
       // is shell radius so you can actually hit narrow tank head on.
       static float origin[3] = { 0.0f, 0.0f, 0.0f };
@@ -799,7 +799,7 @@ ThiefStrategy::ThiefStrategy(ShotPath* path) :
 {
   // speed up shell and decrease lifetime
   FiringInfo& f = getFiringInfo(path);
-  f.lifetime /= (ThiefAdShotVel * ThiefAdRate)/2.0f;
+  f.lifetime /= (ThiefAdShotVel * ThiefAdRate)/3.0f;
   f.shot.vel[0] *= ThiefAdShotVel;
   f.shot.vel[1] *= ThiefAdShotVel;
   f.shot.vel[2] *= ThiefAdShotVel;
@@ -808,9 +808,9 @@ ThiefStrategy::ThiefStrategy(ShotPath* path) :
   // make segments
   makeSegments(Stop);
   setCurrentTime(getLastTime());
-  endTime = f.lifetime;
+  endTime = f.lifetime * (ThiefAdShotVel * ThiefAdRate)/3.0f;
 
-  // make laser scene nodes
+  // make thief scene nodes
   const int numSegments = getSegments().size();
   thiefNodes = new LaserSceneNode*[numSegments];
   for (int i = 0; i < numSegments; i++) {
