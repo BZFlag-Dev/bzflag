@@ -356,7 +356,10 @@ void			RadarRenderer::render(SceneRenderer& renderer,
       const Flag& flag = world.getFlag(i);
       if (flag.status == FlagNoExist || flag.status == FlagOnTank)
 	continue;
-      glColor3fv(Flag::getColor(flag.id));
+      // Flags change color by height
+      const float cs = colorScale(flag.position[2], MuzzleHeight, renderer.useEnhancedRadar());
+      const float *flagcolor = Flag::getColor(flag.id);
+      glColor3f(flagcolor[0] * cs, flagcolor[1] * cs, flagcolor[2] * cs);
       drawFlag(flag.position[0], flag.position[1], flag.position[2]);
     }
     // draw antidote flag
@@ -423,7 +426,7 @@ void			RadarRenderer::render(SceneRenderer& renderer,
   glPopMatrix();
 }
 
-float			RadarRenderer::colorScale(const Obstacle& o, boolean enhancedRadar)
+float			RadarRenderer::colorScale(const float z, const float h, boolean enhancedRadar)
 {
   float scaleColor;
   if (enhancedRadar == True) {
@@ -431,12 +434,11 @@ float			RadarRenderer::colorScale(const Obstacle& o, boolean enhancedRadar)
 
     // Scale color so that objects that are close to tank's level are opaque
     const float zTank = myTank->getPosition()[2];
-    const float zObstacle = o.getPosition()[2];
-    const float hObstacle = o.getHeight();
-    if (zTank >= (zObstacle + hObstacle))
-      scaleColor = 1.0f - (zTank - (zObstacle + hObstacle)) / colorFactor;
-    else if (zTank <= zObstacle)
-      scaleColor = 1.0f - (zObstacle - zTank) / colorFactor;
+
+    if (zTank >= (z + h))
+      scaleColor = 1.0f - (zTank - (z + h)) / colorFactor;
+    else if (zTank <= z)
+      scaleColor = 1.0f - (z - zTank) / colorFactor;
     else
       scaleColor = 1.0f;
 
@@ -510,7 +512,7 @@ void			RadarRenderer::makeList(boolean smoothingOn, SceneRenderer& renderer)
   glBegin(GL_QUADS);
   for (i = 0; i < count; i++) {
     const BoxBuilding& box = boxes[i];
-    const float cs = colorScale(box, enhancedRadar);
+    const float cs = colorScale(box.getPosition()[2], box.getHeight(), enhancedRadar);
     glColor4f(0.25f * cs, 0.5f * cs, 0.5f * cs, transScale(box));
     const float c = cosf(box.getRotation());
     const float s = sinf(box.getRotation());
@@ -530,7 +532,7 @@ void			RadarRenderer::makeList(boolean smoothingOn, SceneRenderer& renderer)
   glBegin(GL_QUADS);
   for (i = 0; i < count; i++) {
     const PyramidBuilding& pyr = pyramids[i];
-    const float cs = colorScale(pyr, enhancedRadar);
+    const float cs = colorScale(pyr.getPosition()[2], pyr.getHeight(), enhancedRadar);
     glColor4f(0.25f * cs, 0.5f * cs, 0.5f * cs, transScale(pyr));
     const float c = cosf(pyr.getRotation());
     const float s = sinf(pyr.getRotation());
@@ -550,7 +552,7 @@ void			RadarRenderer::makeList(boolean smoothingOn, SceneRenderer& renderer)
     count = boxes.getLength();
     for (i = 0; i < count; i++) {
       const BoxBuilding& box = boxes[i];
-      const float cs = colorScale(box, enhancedRadar);
+      const float cs = colorScale(box.getPosition()[2], box.getHeight(), enhancedRadar);
       glColor4f(0.25f * cs, 0.5f * cs, 0.5f * cs, transScale(box));
       const float c = cosf(box.getRotation());
       const float s = sinf(box.getRotation());
@@ -568,7 +570,7 @@ void			RadarRenderer::makeList(boolean smoothingOn, SceneRenderer& renderer)
     count = pyramids.getLength();
     for (i = 0; i < count; i++) {
       const PyramidBuilding& pyr = pyramids[i];
-      const float cs = colorScale(pyr, enhancedRadar);
+      const float cs = colorScale(pyr.getPosition()[2], pyr.getHeight(), enhancedRadar);
       glColor4f(0.25f * cs, 0.5f * cs, 0.5f * cs, transScale(pyr));
       const float c = cosf(pyr.getRotation());
       const float s = sinf(pyr.getRotation());
@@ -618,7 +620,7 @@ void			RadarRenderer::makeList(boolean smoothingOn, SceneRenderer& renderer)
   glBegin(GL_LINES);
   for (i = 0; i < count; i++) {
     const Teleporter& tele = teleporters[i];
-    const float cs = colorScale(tele, enhancedRadar);
+    const float cs = colorScale(tele.getPosition()[2], tele.getHeight(), enhancedRadar);
     glColor4f(1.0f * cs, 1.0f * cs, 0.25f * cs, transScale(tele));
     const float w = tele.getBreadth();
     const float c = w * cosf(tele.getRotation());
