@@ -1,0 +1,72 @@
+Filtering
+=========
+
+BZFlag has the ability to filter text on both the server and in the client.
+Filtering is provided as a means for users and server operators to prohibit
+specific content.  Server operators may impose some control on the chat content
+of their servers, as well as potentially specify callsigns that are deemed
+unacceptible.  Users also have the ability to filter chat messages regardless
+of how a server is configured.
+
+In general, filtering is intended to provide a means to censor obscene, 
+profane, and generally very offensive content.  A "bad words" list is fed to
+the filter and content that matches any of the words in it are censored.
+
+Although any censor or filtering system is inherintly not going to catch all
+potential situations of abuse, it is sufficient to prevent "accidents" as well
+making the user have to take active action to bypass the filtering.  There is
+rather strong emphasis placed on the difference between preventing passive
+inappropriate chat content and preventing players that actively attempt to
+cause trouble on servers (aka assclowns).  The latter will ultimately be able
+to find means around the filtering and are best handled by either the voting
+system or more traditional administrative means (bans and kicks).  The filter
+has been shown to be rather effective, however, at preventing accidental
+moments of disgust by generally unoffensive players.
+
+
+Client Filtering
+----------------
+
+It can be done.  It involves throwing a bad words file into your BZFlag 
+configuration directory and adding a line to your configuration file.
+
+
+Server Filtering
+----------------
+
+In the default mode, the filter will be "aggressive" in how it compares
+what is specified in the bad words file, matching many common variations
+of input automatically.  There is a more simple mode provided on the server
+filter that will allow a more simple exact match comparison.  While in general
+exact match comparisons are not useful for prohibiting any sort of content, it
+is much less demanding on a system that the default filter.
+
+There are server options.  See the bzfs manpage for more details.
+
+
+The Bad Words File
+------------------
+
+The format of the bad words file is rather simple.  There is one word or phrase
+specified on each line.  Spaces and punctuation are significant (i.e. if you 
+specify them, they must also match).  Comments may be added to the file in a 
+shell script style by preceeding the comment by a "#" character; the comment
+continues until the end of the line.  Empty lines are fine.
+
+Compiling a rather comprehensive list of truely offensive words is a rather
+unappealing and time-consuming task.  It gets even more complicated when you
+begin to consider the international community that BZFlag players interact with
+on a day to day basis.  So, we done it for you.
+
+There are two default filter files in the misc/ directory of the BZFlag source
+code releases.  One file (misc/multilingualSwearList.txt) is a comprehensive
+list of obscene and offensive words and phrases in dozens of languages.  The
+file is updated as corrections and additions are made.  The other more simple
+file (misc/simpleSwearList.txt) is provided for systems that cannot handle the
+resource requirements of the complete list.  Either list may be used as a
+starting point for server administrators and users that wish to enable
+filtering.  Both lists are written for the default aggressive filtering mode,
+but will also work with the simple filter.
+
+There are lots of details regarding how the aggressive filter behaves that 
+should probably be documented here as well.
