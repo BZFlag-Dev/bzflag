@@ -4951,11 +4951,11 @@ static void		playingLoop()
 
     // adjust properties based on flags (dimensions, cloaking, etc...)
     if (myTank) {
-      myTank->updateTank(dt);
+      myTank->updateTank(dt, true);
     }
     for (i = 0; i < curMaxPlayers; i++) {
       if (player[i]) {
-        player[i]->updateTank(dt);
+        player[i]->updateTank(dt, false);
       }
     }
 

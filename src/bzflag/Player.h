@@ -49,7 +49,7 @@ public:
   PlayerId	getId() const;
   TeamColor	getTeam() const;
   void		setTeam(TeamColor);
-  void		updateTank(float dt);
+  void		updateTank(float dt, bool local);
   const char*	getCallSign() const;
   const char*	getEmailAddress() const;
   PlayerType	getPlayerType() const;
@@ -69,7 +69,6 @@ public:
   short		getTeamKills() const;
   short		getScore() const;
   const float*	getDimensions() const;
-  const float*	getOldDimensions() const;
   short		getRabbitScore() const;
   short		getLocalWins() const;
   short		getLocalLosses() const;
@@ -152,8 +151,11 @@ private:
 				 float* predictedAzimuth,
 				 float* predictedVel) const;
   void setVisualTeam (TeamColor team );
-  void setupTreads(float dt);
   void updateFlagEffect(FlagType* flag);
+  void updateDimensions(float dt, bool local);
+  void updateTreads(float dt);
+  void updateTranslucency(float dt);
+  bool hitObstacleResizing();
 private:
   // data not communicated with other players
   bool			notResponding;
@@ -181,7 +183,6 @@ private:
   // relatively stable data
   FlagType*		flagType;		// flag type I'm holding
   float			dimensions[3];		// current tank dimensions
-  float			oldDimensions[3];	// old tank dimensions
   float			dimensionsScale[3];	// use to scale the dimensions
   float			dimensionsRate[3];	 // relative to scale
   float			dimensionsTarget[3]; // relative to scale
@@ -295,11 +296,6 @@ inline float		Player::getAngle() const
 inline const float*	Player::getDimensions() const
 {
   return dimensions;
-}
-
-inline const float*	Player::getOldDimensions() const
-{
-  return oldDimensions;
 }
 
 inline const float*	Player::getForward() const

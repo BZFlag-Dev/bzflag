@@ -6,8 +6,6 @@ recent bugs
 - when a shield flag is dropped due to its owner being shot, it is not
   always zapped like it should be.
 
-- spawn expansion can seal your tank in buildings
-
 - sometimes players will recieve the message "So-and-so destroyed by server"
   instead of "So-and-so killed by such-and-such".  Appears to depend on
   So-and-so's player slot.

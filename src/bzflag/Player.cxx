@@ -24,6 +24,7 @@
 #include "TextureManager.h"
 #include "ShotPath.h"
 #include "ShotStatistics.h"
+#include "CollisionManager.h"
 #include "Obstacle.h"
 
 
@@ -87,7 +88,6 @@ Player::Player(const PlayerId& _id, TeamColor _team,
   dimensions[0] = 0.5f * BZDBCache::tankLength;
   dimensions[1] = 0.5f * BZDBCache::tankWidth;
   dimensions[2] = BZDBCache::tankHeight;
-  memcpy (oldDimensions, dimensions, sizeof(float[3]));
   for (int i = 0; i < 3; i++) {  
     dimensionsRate[i] = 0.0f;
     dimensionsScale[i] = 1.0f;
@@ -125,12 +125,14 @@ static float rabbitRank (int wins, int losses) {
   return average * penalty;
 }
 
-short		Player::getRabbitScore() const
+
+short Player::getRabbitScore() const
 {
   return (int)(rabbitRank(wins, losses) * 100.0);
 }
 
-float			Player::getRadius() const
+
+float Player::getRadius() const
 {
   // NOTE: this encompasses everything but Narrow
   //       the Obese, Tiny, and Thief flags adjust
@@ -138,7 +140,8 @@ float			Player::getRadius() const
   return (dimensionsScale[0] * BZDBCache::tankRadius);
 }
 
-void			Player::getMuzzle(float* m) const
+
+void Player::getMuzzle(float* m) const
 {
   // NOTE: like getRadius(), we only use dimensionsScale[0].
   //       as well, we do not use BZDB_MUZZLEFRONT, but the
@@ -157,12 +160,14 @@ void			Player::getMuzzle(float* m) const
   return;
 }
 
-float			Player::getMuzzleHeight() const
+
+float Player::getMuzzleHeight() const
 {
   return (dimensionsScale[2] * BZDB.eval(StateDatabase::BZDB_MUZZLEHEIGHT));
 }
 
-void			Player::move(const float* _pos, float _azimuth)
+
+void Player::move(const float* _pos, float _azimuth)
 {
   // assumes _forward is normalized
   state.pos[0] = _pos[0];
@@ -180,24 +185,28 @@ void			Player::move(const float* _pos, float _azimuth)
   forward[2] = 0.0f;
 
   // compute teleporter proximity
-  if (World::getWorld())
-    teleporterProximity = World::getWorld()
-      ->getProximity(state.pos, BZDBCache::tankRadius);
+  if (World::getWorld()) {
+    teleporterProximity =
+      World::getWorld()->getProximity(state.pos, BZDBCache::tankRadius);
+  }
 }
 
-void			Player::setVelocity(const float* _velocity)
+
+void Player::setVelocity(const float* _velocity)
 {
   state.velocity[0] = _velocity[0];
   state.velocity[1] = _velocity[1];
   state.velocity[2] = _velocity[2];
 }
 
-void			Player::setAngularVelocity(float _angVel)
+
+void Player::setAngularVelocity(float _angVel)
 {
   state.angVel = _angVel;
 }
 
-void			Player::changeTeam(TeamColor _team)
+
+void Player::changeTeam(TeamColor _team)
 {
   // set team
   team = _team;
@@ -206,12 +215,14 @@ void			Player::changeTeam(TeamColor _team)
   setVisualTeam(team);
 }
 
-void			Player::setStatus(short _status)
+
+void Player::setStatus(short _status)
 {
   state.status = _status;
 }
 
-void			Player::setExplode(const TimeKeeper& t)
+
+void Player::setExplode(const TimeKeeper& t)
 {
   if (!isAlive()) return;
   explodeTime = t;
@@ -222,8 +233,8 @@ void			Player::setExplode(const TimeKeeper& t)
   updateFlagEffect(Flags::Null);
 }
 
-void			Player::setTeleport(const TimeKeeper& t,
-					    short from, short to)
+
+void Player::setTeleport(const TimeKeeper& t, short from, short to)
 {
   if (!isAlive()) return;
   teleportTime = t;
@@ -232,15 +243,32 @@ void			Player::setTeleport(const TimeKeeper& t,
   setStatus(getStatus() | short(PlayerState::Teleporting));
 }
 
-void			Player::updateTank(float dt)
+
+void Player::updateTank(float dt, bool local)
 {
-  // copy the current dimensions to the old dimensions
+  updateDimensions(dt, local);
+  updateTreads(dt);
+  updateTranslucency(dt);
+  return;
+}
+
+
+void Player::updateDimensions(float dt, bool local)
+{
+  // copy the current information
+  float oldRates[3];
+  float oldScales[3];
+  float oldDimensions[3];
+  memcpy (oldRates, dimensionsRate, sizeof(float[3]));
+  memcpy (oldScales, dimensionsScale, sizeof(float[3]));
   memcpy (oldDimensions, dimensions, sizeof(float[3]));
   
   // update the dimensions
+  bool resizing = false;
   for (int i = 0; i < 3; i++) {
     if (dimensionsRate[i] != 0.0f) {
-      dimensionsScale[i] += dt * dimensionsRate[i];
+      resizing = true;
+      dimensionsScale[i] += (dt * dimensionsRate[i]);
       if (dimensionsRate[i] < 0.0f) {
         if (dimensionsScale[i] < dimensionsTarget[i]) {
           dimensionsScale[i] = dimensionsTarget[i];
@@ -252,9 +280,29 @@ void			Player::updateTank(float dt)
           dimensionsRate[i] = 0.0f;
         }
       }
+    } else {
+      // safety play, should not be required
+      dimensionsScale[i] = dimensionsTarget[i];
     }
   }
   
+  // set the actual dimensions based on the scale
+  dimensions[0] = dimensionsScale[0] * (0.5f * BZDBCache::tankLength);
+  dimensions[1] = dimensionsScale[1] * (0.5f * BZDBCache::tankWidth);
+  dimensions[2] = dimensionsScale[2] * BZDBCache::tankHeight;
+
+  // do not resize if it will cause a collision
+  // only checked for the local player, remote is computationally expensive
+  if (local) {
+    // also do not bother with collision checking if we are not resizing
+    if (resizing && hitObstacleResizing()) {
+      // copy the old information
+      memcpy (dimensions, oldDimensions, sizeof(float[3]));
+      memcpy (dimensionsScale, oldScales, sizeof(float[3]));
+      memcpy (dimensionsRate, oldRates, sizeof(float[3]));
+    }
+  }
+
   // check if the dimensions are at a steady state
   if ((dimensionsScale[0] == dimensionsTarget[0]) &&
       (dimensionsScale[1] == dimensionsTarget[1]) &&
@@ -264,14 +312,48 @@ void			Player::updateTank(float dt)
     useDimensions = true;
   }
   
-  // set the actual dimensions based on the scale
-  dimensions[0] = dimensionsScale[0] *
-                  0.5f * BZDBCache::tankLength;
-  dimensions[1] = dimensionsScale[1] * 
-                  0.5f * BZDBCache::tankWidth;
-  dimensions[2] = dimensionsScale[2] *
-                  BZDBCache::tankHeight;
-                  
+  return;
+}
+
+
+bool Player::hitObstacleResizing()
+{
+  const float* dims = dimensions;
+  
+  // check walls
+  const World* world = World::getWorld();
+  if (world) {
+    const std::vector<WallObstacle*>& walls = world->getWalls();
+    std::vector<WallObstacle*>::const_iterator wallScan = walls.begin();
+    while (wallScan != walls.end()) {
+      const WallObstacle& wall = **wallScan;
+      if (wall.inBox(getPosition(), getAngle(), dims[0], dims[1], dims[2])) {
+        return true;
+      }
+      wallScan++;
+    }
+  }
+
+  // check everything else
+  const ObsList* olist =
+    COLLISIONMGR.boxTest(getPosition(), getAngle(), dims[0], dims[1], dims[2]);
+  
+  for (int i = 0; i < olist->count; i++) {
+    const Obstacle* obs = olist->list[i];
+    const bool onTop = obs->isFlatTop() &&
+      ((obs->getPosition()[2] + obs->getHeight()) <= getPosition()[2]);
+    if (!obs->isDriveThrough() && !onTop &&
+        obs->inBox(getPosition(), getAngle(), dims[0], dims[1], dims[2])) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
+
+void Player::updateTranslucency(float dt)
+{
   // update the alpha value
   if (alphaRate != 0.0f) {
     alpha += dt * alphaRate;
@@ -302,12 +384,11 @@ void			Player::updateTank(float dt)
   } 
   tankNode->setColor(color);
   
-  setupTreads(dt);
-  
   return;
 }
+  
 
-void			Player::setupTreads(float dt)
+void Player::updateTreads(float dt)
 {
   // setup the tread offsets
   float speedFactor = inputSpeed;
@@ -329,21 +410,24 @@ void			Player::setupTreads(float dt)
   return;  
 }
 
-void			Player::changeScore(short deltaWins, short deltaLosses, short deltaTeamKills)
+
+void Player::changeScore(short deltaWins, short deltaLosses, short deltaTeamKills)
 {
   wins += deltaWins;
   losses += deltaLosses;
   tks += deltaTeamKills;
 }
 
-void			Player::changeLocalScore(short dWins, short dLosses, short dTeamKills)
+
+void Player::changeLocalScore(short dWins, short dLosses, short dTeamKills)
 {
   localWins += dWins;
   localLosses += dLosses;
   localTks += dTeamKills;
 }
 
-void			Player::setFlag(FlagType* _flag)
+
+void Player::setFlag(FlagType* _flag)
 {
   // set the type
   flagType = _flag;
@@ -351,7 +435,8 @@ void			Player::setFlag(FlagType* _flag)
   return;
 }
   
-void			Player::updateFlagEffect(FlagType* effectFlag)
+  
+void Player::updateFlagEffect(FlagType* effectFlag)
 {
   float FlagEffectTime = BZDB.eval(StateDatabase::BZDB_FLAGEFFECTTIME);
   if (FlagEffectTime <= 0.0f) {
@@ -404,15 +489,16 @@ void			Player::updateFlagEffect(FlagType* effectFlag)
   return;
 }
 
-void			Player::endShot(int index,
-					bool isHit, bool showExplosion)
+
+void Player::endShot(int index, bool isHit, bool showExplosion)
 {
   float pos[3];
   if (doEndShot(index, isHit, pos) && showExplosion)
     addShotExplosion(pos);
 }
 
-void			Player::setVisualTeam (TeamColor visualTeam)
+
+void Player::setVisualTeam (TeamColor visualTeam)
 {
   // only do all this junk when the effective team color actually changes
   if (visualTeam == lastVisualTeam)
@@ -476,9 +562,8 @@ void			Player::setVisualTeam (TeamColor visualTeam)
 }
 
 
-void			Player::addToScene(SceneDatabase* scene,
-					   TeamColor effectiveTeam,
-					   bool inCockpit, bool showIDL)
+void Player::addToScene(SceneDatabase* scene, TeamColor effectiveTeam,
+                        bool inCockpit, bool showIDL)
 {
   if (!isAlive() && !isExploding()) {
     return;
@@ -568,7 +653,7 @@ void			Player::addToScene(SceneDatabase* scene,
 }
 
 
-bool			Player::needsToBeRendered(bool cloaked, bool showTreads)
+bool Player::needsToBeRendered(bool cloaked, bool showTreads)
 {
   if (cloaked && !showTreads) {
     return false;
@@ -589,7 +674,7 @@ bool			Player::needsToBeRendered(bool cloaked, bool showTreads)
 }
 
 
-void            Player::setLandingSpeed(float velocity)
+void Player::setLandingSpeed(float velocity)
 {
   float squishiness = BZDB.eval(StateDatabase::BZDB_SQUISHFACTOR);
   if (squishiness < 0.001f) {
@@ -629,7 +714,7 @@ void            Player::setLandingSpeed(float velocity)
 }
 
 
-void			Player::spawnEffect()
+void Player::spawnEffect()
 {
   const float squishiness = BZDB.eval(StateDatabase::BZDB_SQUISHFACTOR);
   if (squishiness > 0.0f) {
@@ -644,13 +729,13 @@ void			Player::spawnEffect()
 }
 
 
-int			Player::getMaxShots() const
+int Player::getMaxShots() const
 {
   return World::getWorld()->getMaxShots();
 }
 
 
-void			Player::addShots(SceneDatabase* scene,
+void Player::addShots(SceneDatabase* scene,
 					 bool colorblind) const
 {
   const int count = getMaxShots();
@@ -661,7 +746,8 @@ void			Player::addShots(SceneDatabase* scene,
   }
 }
 
-void*			Player::unpack(void* buf, uint16_t code)
+
+void* Player::unpack(void* buf, uint16_t code)
 {
   float timestamp;
   PlayerId id;
@@ -673,7 +759,8 @@ void*			Player::unpack(void* buf, uint16_t code)
   return buf;
 }
 
-bool			Player::validTeamTarget(const Player *possibleTarget) const
+
+bool Player::validTeamTarget(const Player *possibleTarget) const
 {
   TeamColor myTeam = getTeam();
   TeamColor targetTeam = possibleTarget->getTeam();
@@ -686,9 +773,9 @@ bool			Player::validTeamTarget(const Player *possibleTarget) const
   return !World::getWorld()->allowRabbit();
 }
 
-bool			Player::getDeadReckoning(
-						 float* predictedPos, float* predictedAzimuth,
-						 float* predictedVel) const
+
+bool Player::getDeadReckoning(float* predictedPos, float* predictedAzimuth,
+			      float* predictedVel) const
 {
   // see if predicted position and orientation (only) are close enough
   const float dt2 = inputPrevTime - inputTime;
@@ -765,7 +852,8 @@ bool			Player::getDeadReckoning(
   return (dt < BZDB.eval(StateDatabase::BZDB_NOTRESPONDINGTIME));
 }
 
-bool			Player::isDeadReckoningWrong() const
+
+bool Player::isDeadReckoningWrong() const
 {
   // always send a new packet when some kinds of status change
   if ((state.status & (PlayerState::Alive | PlayerState::Paused | PlayerState::Falling)) !=
@@ -806,7 +894,8 @@ bool			Player::isDeadReckoningWrong() const
   return false;
 }
 
-void			Player::doDeadReckoning()
+
+void Player::doDeadReckoning()
 {
   if (!isAlive() && !isExploding())
     return;
@@ -843,11 +932,12 @@ void			Player::doDeadReckoning()
   setVelocity(predictedVel);
 }
 
+
 // How long does the filter takes to be considered "initialized"
 const int   DRStateStable      = 10;
 const float maxToleratedJitter = 1.0f;
 
-void			Player::setDeadReckoning(float timestamp)
+void Player::setDeadReckoning(float timestamp)
 {
   // offset should be the time packet has been delayed above average
   offset = timestamp - (TimeKeeper::getTick() - TimeKeeper::getNullTime())
@@ -935,7 +1025,8 @@ void			Player::setDeadReckoning(float timestamp)
   }
 }
 
-void			Player::setDeadReckoning()
+
+void Player::setDeadReckoning()
 {
   // save stuff for dead reckoning
   inputTime = TimeKeeper::getTick();
@@ -955,6 +1046,7 @@ void			Player::setDeadReckoning()
   inputAzimuth = state.azimuth;
   inputAngVel = state.angVel;
 }
+
 
 // Local Variables: ***
 // mode:C++ ***
