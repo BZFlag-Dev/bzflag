@@ -787,7 +787,7 @@ static void		doKeyPlaying(const BzfKeyEvent& key, bool pressed)
     std::string name = tokens[tokens.size() - 1]; //the last token is the seed
     int c;
     bool found = false;
-    for (c = 0; c <= curMaxPlayers; c++)
+    for (c = 0; c < curMaxPlayers; c++)
       if (player[c] &&
 	  (strncmp(name.c_str(), player[c]->getCallSign(), name.size()) == 0) &&
 	  (hud->getTabCompletionRotation() != c)) {
@@ -796,12 +796,12 @@ static void		doKeyPlaying(const BzfKeyEvent& key, bool pressed)
     }
     if (found) {
       hud->setTabCompletionRotation(c);
-      std::string line = std::string("");
+      std::string line;
       for (int d = 0; d <= (int)tokens.size() - 2; d++) //reassemble the string
         line += tokens[d] + " ";
-      hud->setComposeString((line + player[c]->getCallSign()));
-    } else if (hud->getTabCompletionRotation() != -1) { //can't lock up a callsign forever
-      hud->setTabCompletionRotation(-1);
+      hud->setComposeString(line + player[c]->getCallSign());
+    } else {
+      hud->setTabCompletionRotation(-1);  //can't lock up a callsign forever
     }
   }
   else if (key.ascii == 0 &&
