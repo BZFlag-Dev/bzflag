@@ -2514,12 +2514,9 @@ static void		addMessage(const Player* player,
     }
     fullMessage += msg;
   } else {
-    std::string cleanMsg;
-    char *tmpstr;
-
-    tmpstr = strdup(msg.c_str());
+    char *tmpstr = strdup(msg.c_str());
     OpenGLTexFont::stripAnsiCodes(tmpstr, strlen(tmpstr));
-    cleanMsg = tmpstr;
+    std::string cleanMsg = tmpstr;
     free(tmpstr);
 
     if (oldColor != NULL)
