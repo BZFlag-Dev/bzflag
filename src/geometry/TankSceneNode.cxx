@@ -710,7 +710,7 @@ void TankSceneNode::TankRenderNode::render()
     renderPart(Body);
     renderPart(Turret);
     renderPart(Barrel);
-    if (!isShadow && (TankSceneNode::maxLevel == -1)) {
+    if (BZDBCache::zbuffer && (TankSceneNode::maxLevel == -1)) {
       for (int i = 0; i < 4; i++) {
         renderPart((TankPart)(LeftWheel0 + i));
         renderPart((TankPart)(RightWheel0 + i));
@@ -749,7 +749,7 @@ void TankSceneNode::TankRenderNode::renderParts()
 {
   // draw parts in back to front order
   if (!above) {
-    if (!isShadow && (TankSceneNode::maxLevel == -1)) {
+    if (BZDBCache::zbuffer && (TankSceneNode::maxLevel == -1)) {
       renderPart(LeftTread);
       renderPart(RightTread);
       for (int i = 0; i < 4; i++) {
@@ -781,7 +781,7 @@ void TankSceneNode::TankRenderNode::renderParts()
       renderPart(Turret);
     }
     renderPart(Body);
-    if (!isShadow && (TankSceneNode::maxLevel == -1)) {
+    if (BZDBCache::zbuffer && (TankSceneNode::maxLevel == -1)) {
       renderPart(LeftTread);
       renderPart(RightTread);
       for (int i = 0; i < 4; i++) {
@@ -814,7 +814,8 @@ void TankSceneNode::TankRenderNode::renderPart(TankPart part)
   
   // setup the animation texture matrix
   bool usingTexMat = false;
-  if (!isShadow && (TankSceneNode::maxLevel == -1) && (part >= BasicTankParts)) {
+  if (!isShadow && BZDBCache::zbuffer && (TankSceneNode::maxLevel == -1) &&
+      (part >= BasicTankParts)) {
     usingTexMat = setupTextureMatrix(part);
   }
  
@@ -862,11 +863,8 @@ void TankSceneNode::TankRenderNode::renderPart(TankPart part)
 
   // get the list
   GLuint list;
-  if (!isShadow) {
-    list = TANKGEOMMGR.getPartList(ShadowOff, part, drawSize, drawLOD);
-  } else {
-    list = TANKGEOMMGR.getPartList(ShadowOn, part, drawSize, LowTankLOD);
-  }
+  TankShadow shadow = isShadow ? ShadowOn : ShadowOff;
+  list = TANKGEOMMGR.getPartList(shadow, part, drawSize, drawLOD);
   
   // draw the part
   glCallList(list);
