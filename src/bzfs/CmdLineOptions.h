@@ -54,7 +54,7 @@ struct CmdLineOptions
     servermsg(""),
     advertisemsg(""), worldFile(""), pingInterface(""),
     listServerURL(DefaultListServerURL), password(""),
-    publicizedTitle(""), publicizedAddress(""),
+    publicizedTitle(""), publicizedAddress(""), suppressMasterBanList(false),
     maxShots(1), maxTeamScore(0), maxPlayerScore(0),
     numExtraFlags(0), teamKillerKickRatio(0),
     numAllowedFlags(0), shakeWins(0), shakeTimeout(0),
@@ -70,7 +70,7 @@ struct CmdLineOptions
     banTime(300), voteTime(60), vetoTime(2), votesRequired(2),
     votePercentage(50.1f), voteRepeatTime(300), disableSet(false),
     disableFlagReset(false), disableBan(false), disableKick(false),
-    autoTeam(false), citySize(5), suppressMasterBanList(false)
+    autoTeam(false), citySize(5)
   {
     int i;
     for (FlagTypeMap::iterator it = FlagType::getFlagMap().begin();
@@ -102,6 +102,8 @@ struct CmdLineOptions
   std::string	publicizedTitle;
   std::string	publicizedAddress;
 
+  bool			suppressMasterBanList;
+  
   uint16_t		maxShots;
   int			maxTeamScore;
   int			maxPlayerScore;
@@ -113,7 +115,6 @@ struct CmdLineOptions
   int			teamFlagTimeout;
   int			maxlagwarn;
 
-	bool			suppressMasterBanList;
 
   float			lagwarnthresh;
   float			idlekickthresh;
