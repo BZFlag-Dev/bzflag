@@ -148,6 +148,10 @@ SOURCE=..\src\common\TimeBomb.cxx
 
 SOURCE=..\src\common\TimeKeeper.cxx
 # End Source File
+# Begin Source File
+
+SOURCE=..\src\common\WordFilter.cxx
+# End Source File
 # End Group
 # Begin Group "Header Files"
 
@@ -251,6 +255,10 @@ SOURCE=..\include\TimeBomb.h
 # Begin Source File
 
 SOURCE=..\include\TimeKeeper.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\include\WordFilter.h
 # End Source File
 # End Group
 # End Target
