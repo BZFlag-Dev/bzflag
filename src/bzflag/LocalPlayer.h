@@ -88,6 +88,7 @@ public:
 			 float& minTime) const;
   void		setFlag(FlagType*);
   void		changeScore(short deltaWins, short deltaLosses, short deltaTeamKills);
+  float		updateHandicap();
 
   void		addAntidote(SceneDatabase*);
 
@@ -160,6 +161,7 @@ private:
   int           stuckingFrameCount;
   bool		spawning;
   int		wingsFlapCount;
+  float		handicap;
 };
 
 

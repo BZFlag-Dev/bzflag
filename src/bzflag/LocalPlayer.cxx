@@ -21,6 +21,7 @@
 /* local implementation headers */
 #include "World.h"
 #include "sound.h"
+#include "RemotePlayer.h"
 
 
 LocalPlayer*		LocalPlayer::mainPlayer = NULL;
@@ -44,7 +45,8 @@ LocalPlayer::LocalPlayer(const PlayerId& id,
   nemesis(NULL),
   recipient(NULL),
   stuckingFrameCount(0),
-  spawning(false)
+  spawning(false),
+  handicap(0.0f)
 {
   // initialize shots array to no shots fired
   const int numShots = World::getWorld()->getMaxShots();
@@ -769,6 +771,10 @@ float			LocalPlayer::getReloadTime() const
       (shots[i]->getCurrentTime() - shots[i]->getStartTime());
     if (t < minTime) minTime = t;
   }
+
+  // apply any handicap advantage to reload
+  minTime = minTime * (1.0f + handicap);
+
   if (minTime < 0.0f) minTime = 0.0f;
   return minTime;
 }
@@ -830,6 +836,7 @@ void			LocalPlayer::restart(const float* pos, float _azimuth)
   setKeyboardAngVel(0.0f);
   resetKey();
   doUpdateMotion(0.0f);
+  updateHandicap();
 
   // make me alive now
   setStatus(getStatus() | short(PlayerState::Alive));
@@ -867,8 +874,11 @@ void			LocalPlayer::setDesiredSpeed(float fracOfMaxSpeed)
     fracOfMaxSpeed = 0.0f;
   }
 
+  // apply handicap advantage to tank speed
+  fracOfMaxSpeed *= (1.0f - handicap);
+
   // set desired speed
-  desiredSpeed = fracOfMaxSpeed * BZDB.eval(StateDatabase::BZDB_TANKSPEED);
+  desiredSpeed = BZDB.eval(StateDatabase::BZDB_TANKSPEED) * fracOfMaxSpeed;
 }
 
 void			LocalPlayer::setDesiredAngVel(float fracOfMaxAngVel)
@@ -1254,6 +1264,46 @@ void			LocalPlayer::changeScore(short deltaWins,
       server->sendDropFlag(getPosition());
     }
   }
+}
+
+float LocalPlayer::updateHandicap()
+{
+  /* compute and return the handicap */
+
+  if (World::getWorld()->allowHandicap()) {
+    int wins = 0;
+    int losses = 0;
+    const int maxplayers = World::getWorld()->getMaxPlayers();
+
+    // compute overall wins and losses in relation to other players
+    for (int i = 0; i < maxplayers; i++) {
+      RemotePlayer *player = World::getWorld()->getPlayer(i);
+      if ((player == NULL) || (player->getId() == LocalPlayer::getMyTank()->getId())) {
+	continue;
+      }
+      wins += player->getLocalWins();
+      losses += player->getLocalLosses();
+    }
+
+    // a standard deviation of 20 points will provide a handicap
+    handicap = float(wins - losses) / 20.0f;
+
+    /* limit how much of a handicap is afforded, and only provide
+     * handicap advantages instead of disadvantages.
+     */
+    if (handicap > 0.0f) {
+      // disadvantage
+      handicap = 0.0f;
+    } else if (handicap < -0.5f) {
+      // advantage
+      handicap = -0.5f;
+    }
+
+    return handicap;
+  }
+
+  // no handicap gameplay
+  return 0.0f;
 }
 
 void			LocalPlayer::addAntidote(SceneDatabase* scene)
