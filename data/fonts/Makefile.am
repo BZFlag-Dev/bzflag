@@ -1,27 +1,27 @@
 EXTRA_DIST = \
 	readme			\
-	LuxiMono-8.png		\
-	LuxiMono-11.png		\
-	LuxiMono-16.png		\
-	TogaSansBold-8.png	\
-	TogaSansBold-16.png	\
-	TogaSansBold-32.png	\
-	TogaSerifBold-16.png	\
-	TogaSerifBold-32.png	\
-	VeraMonoBold-8.png	\
-	VeraMonoBold-12.png	\
-	VeraMonoBold-16.png	\
-	LuxiMono-8.fmt		\
-	LuxiMono-11.fmt		\
-	LuxiMono-16.fmt		\
-	TogaSansBold-8.fmt	\
-	TogaSansBold-16.fmt	\
-	TogaSansBold-32.fmt	\
-	TogaSerifBold-16.fmt	\
-	TogaSerifBold-32.fmt	\
-	VeraMonoBold-8.fmt	\
-	VeraMonoBold-12.fmt	\
-	VeraMonoBold-16.fmt
+	LuxiMono_8.png		\
+	LuxiMono_11.png		\
+	LuxiMono_16.png		\
+	TogaSansBold_8.png	\
+	TogaSansBold_16.png	\
+	TogaSansBold_32.png	\
+	TogaSerifBold_16.png	\
+	TogaSerifBold_32.png	\
+	VeraMonoBold_8.png	\
+	VeraMonoBold_12.png	\
+	VeraMonoBold_16.png	\
+	LuxiMono_8.fmt		\
+	LuxiMono_11.fmt		\
+	LuxiMono_16.fmt		\
+	TogaSansBold_8.fmt	\
+	TogaSansBold_16.fmt	\
+	TogaSansBold_32.fmt	\
+	TogaSerifBold_16.fmt	\
+	TogaSerifBold_32.fmt	\
+	VeraMonoBold_8.fmt	\
+	VeraMonoBold_12.fmt	\
+	VeraMonoBold_16.fmt
 
 MAINTAINERCLEANFILES = \
 	Makefile.in
