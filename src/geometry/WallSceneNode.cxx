@@ -40,6 +40,7 @@ WallSceneNode::WallSceneNode() : numLODs(0),
   setLightedModulateColor(1.0f, 1.0f, 1.0f);
   ZFlip = false;
   useColorTexture = false;
+  wantBlending = false;
 }
 
 WallSceneNode::~WallSceneNode()
