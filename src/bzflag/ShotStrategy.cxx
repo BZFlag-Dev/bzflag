@@ -118,7 +118,7 @@ const Obstacle* ShotStrategy::getFirstBuilding(const Ray& ray,
     return closestObstacle;
   }
 
-  const ObsList* olist = colMgr->rayTest (&ray);
+  const ObsList* olist = colMgr->rayTest (&ray, t);
 
   for (int i = 0; i < olist->count; i++) {
     const Obstacle* obs = olist->list[i];

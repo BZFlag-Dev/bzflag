@@ -882,6 +882,126 @@ IntersectLevel testAxisBoxOcclusion(const float* boxMins,
   return result;
 }
 
+// return true if the ray hits the box
+// if it does hit, set the inTime value
+bool testRayHitsAxisBox(const Ray* ray,
+                        const float mins[3], const float maxs[3],
+                        float* inTime)
+{
+  int a;  
+  const float* const o = ray->getOrigin();
+  const float* const v = ray->getDirection();
+  const float* extents[2] = { mins, maxs };
+  int zone[3];
+  bool inside = true;
+
+  // setup the zones  
+  for (a = 0; a < 3; a++) {  
+    if (o[a] < mins[a]) {
+      if (v[a] <= 0.0f) {
+        return false;
+      }
+      zone[a] = 0;
+      inside = false;
+    }
+    else if (o[a] > maxs[a]) {
+      if (v[a] >= 0.0f) {
+        return false;
+      }
+      zone[a] = 1;
+      inside = false;
+    }
+    else {
+      zone[a] = -1;
+    }
+  }
+  
+  int hitPlane;
+  float hitTime[3];
+  
+  if (inside) {
+    *inTime = 0.0f;
+  }
+  else {
+    // calculate the hitTimes
+    for (a = 0; a < 3; a++) {
+      if (zone[a] < 0) {
+        hitTime[a] = -1.0f;
+      } else {
+        hitTime[a] = (extents[zone[a]][a] - o[a]) / v[a];
+      }
+    }
+    
+    // use the largest hitTime
+    hitPlane = 0;
+    if (hitTime[1] > hitTime[0]) {
+      hitPlane = 1;
+    }
+    if (hitTime[2] > hitTime[hitPlane]) {
+      hitPlane = 2;
+    }
+    
+    // check the hitPlane
+    const float useTime = hitTime[hitPlane];
+    if (useTime < 0.0f) {
+      return false;
+    }
+    for (a = 0; a < 3; a++) {
+      if (a != hitPlane) {
+        const float hitDist = o[a] + (useTime * v[a]);
+        if ((hitDist < mins[a]) || (hitDist > maxs[a])) {
+          return false;
+        }
+      }
+    }
+    *inTime = useTime;
+  }
+  
+  return true;
+}
+
+
+// return true if the ray hits the box
+// if it does hit, set the inTime and outTime values
+bool testRayHitsAxisBox(const Ray* ray,
+                        const float mins[3], const float maxs[3],
+                        float* inTime, float* outTime)
+{
+  if (!testRayHitsAxisBox(ray, mins, maxs, inTime)) {
+    return false;
+  }
+  
+  int a;  
+  const float* const o = ray->getOrigin();
+  const float* const v = ray->getDirection();
+  
+  // calculate the hitTimes for the outTime
+  float hitTime[3];
+  for (a = 0; a < 3; a++) {
+    if (v[a] == 0.0f) {
+      hitTime[a] = MAXFLOAT;
+    }
+    else if (v[a] < 0.0f) {
+      hitTime[a] = (mins[a] - o[a]) / v[a];
+    }
+    else {
+      hitTime[a] = (maxs[a] - o[a]) / v[a];
+    }
+  }
+  
+  // use the smallest hitTime
+  int hitPlane = 0;
+  if (hitTime[1] < hitTime[0]) {
+    hitPlane = 1;
+  }
+  if (hitTime[2] < hitTime[hitPlane]) {
+    hitPlane = 2;
+  }
+  *outTime = hitTime[hitPlane];
+  
+  return true;
+}                        
+                        
 
 // Local Variables: ***
 // mode:C++ ***

@@ -465,11 +465,6 @@ bool MeshFace::inMovingBox(const float*, float,
 }
 
 
-// This is only used when the player has an Oscillation Overthruster
-// flag, and only after we already know that the tank is interfering
-// with this tetrahedron, so it doesn't have to be particularly fast.
-// As a note, some of the info from the original collision test might
-// be handy here.
 bool MeshFace::isCrossing(const float* /*p*/, float /*angle*/,
                           float /*dx*/, float /*dy*/, float /*height*/,
                           float* _plane) const

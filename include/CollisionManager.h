@@ -45,6 +45,11 @@ typedef union {
   } named;
 } SplitObsList;
 
+typedef struct {
+  int count;
+  class ColDetNode** list;
+} ColDetNodeList;
+
 
 // well you know my name is Simon, and I like to do drawings
 typedef void (*DrawLinesFunc)(int pointCount, const float (*points)[3]);
@@ -71,21 +76,23 @@ class CollisionManager {
 
 
     // test against an axis aligned bounding box
-    const ObsList *axisBoxTest (const float *mins, const float* maxs) const;
+    const ObsList* axisBoxTest (const float *mins, const float* maxs) const;
 
     // test against a cylinder
-    const ObsList *cylinderTest (const float *pos,
+    const ObsList* cylinderTest (const float *pos,
                                  float radius, float height) const;
     // test against a box
-    const ObsList *boxTest (const float* pos, float angle,
+    const ObsList* boxTest (const float* pos, float angle,
                             float dx, float dy, float dz) const;
     // test against a moving box
-    const ObsList *movingBoxTest (const float* oldPos, float oldAngle,
+    const ObsList* movingBoxTest (const float* oldPos, float oldAngle,
                                   const float* pos, float angle,
                                   float dx, float dy, float dz) const;
     // test against a Ray
-    const ObsList *rayTest (const Ray* ray) const;
+    const ObsList* rayTest (const Ray* ray, float timeLeft) const;
 
+    // test against a Ray (and return a list of ColDetNodes)
+    const ColDetNodeList* rayTestNodes (const Ray* ray, float timeLeft) const;
 
     // test against a box and return a split list
     //const SplitObsList *boxTestSplit (const float* pos, float angle,
@@ -115,12 +122,16 @@ class ColDetNode {
                ObsList *fullList);
     ~ColDetNode();
 
-    int getCount();
+    int getCount() const;
+    const ObsList* getList() const;
+    float getInTime() const;
+    float getOutTime() const;
 
     // these fill in the FullList return list
     void axisBoxTest (const float* mins, const float* maxs) const;
     void boxTest (const float* pos, float angle, float dx, float dy, float dz) const;
-    void rayTest (const Ray* ray) const;
+    void rayTest (const Ray* ray, float timeLeft) const;
+    void rayTestNodes (const Ray* ray, float timeLeft) const;
 
     // this fills in the SplitList return list
     // (FIXME: not yet implemented, boxTestSplit might be useful for radar)
@@ -140,13 +151,28 @@ class ColDetNode {
     unsigned char childCount;
     ColDetNode* children[8];
     ObsList fullList;
+    mutable float inTime, outTime;
 };
 
 
-
-inline int ColDetNode::getCount()
+inline int ColDetNode::getCount() const
 {
   return count;
+}
+
+inline const ObsList* ColDetNode::getList() const
+{
+  return &fullList;
+}
+
+inline float ColDetNode::getInTime() const
+{
+  return inTime;
+}
+
+inline float ColDetNode::getOutTime() const
+{
+  return outTime;
 }
 
 
@@ -158,7 +184,6 @@ inline int CollisionManager::getObstacleCount() const
     return root->getCount();
   }
 }
-
 
 inline float CollisionManager::getMaxWorldHeight() const
 {

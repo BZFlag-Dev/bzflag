@@ -120,6 +120,18 @@ bool                   textRayInAxisBox(const Ray& ray,
                                         float& enterTime, float& leaveTime);
 
 
+// return true if the ray hits the box
+// if it does hit, set the inTime value
+bool testRayHitsAxisBox(const Ray* ray,
+                        const float mins[3], const float maxs[3],
+                        float* inTime);
+
+// return true if the ray hits the box
+// if it does hit, set the inTime and outTime values
+bool testRayHitsAxisBox(const Ray* ray,
+                        const float mins[3], const float maxs[3],
+                        float* inTime, float* outTime);
+                        
 
 #endif // BZF_INTERSECT_H
 

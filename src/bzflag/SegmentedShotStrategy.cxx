@@ -338,8 +338,9 @@ void			SegmentedShotStrategy::makeSegments(ObstacleEffect e)
   float minTime = BZDB.eval(StateDatabase::BZDB_MUZZLEFRONT) / hypotf(v[0], hypotf(v[1], v[2]));
 
   // if all shots ricochet and obstacle effect is stop, then make it ricochet
-  if (e == Stop && World::getWorld()->allShotsRicochet())
+  if (e == Stop && World::getWorld()->allShotsRicochet()) {
     e = Reflect;
+  }
 
   // prepare first segment
   float o[3], d[3];
@@ -367,101 +368,108 @@ void			SegmentedShotStrategy::makeSegments(ObstacleEffect e)
     bool hitGround = getGround(r, Epsilon, t);
     Obstacle* building = (Obstacle*)((e != Through) ? getFirstBuilding(r, Epsilon, t) : NULL);
     const Teleporter* teleporter = getFirstTeleporter(r, Epsilon, t, face);
-	t -= minTime;
-	minTime = 0.0f;
+    t -= minTime;
+    minTime = 0.0f;
 
-	// if hit outer wall with ricochet and hit is above top of wall
-	// then ignore hit.
-	if (!teleporter && building && e == Reflect &&
-	building->getType() == WallObstacle::getClassName() &&
-	o[2] + t * d[2] > building->getHeight())
-	  t = timeLeft;
+    // if hit outer wall with ricochet and hit is above top of wall
+    // then ignore hit.
+    if (!teleporter && building && (e == Reflect) &&
+        (building->getType() == WallObstacle::getClassName()) &&
+        ((o[2] + t * d[2]) > building->getHeight())) {
+      t = timeLeft;
+    }
 
-	// construct next shot segment and add it to list
-	TimeKeeper endTime(startTime);
-	if (t < 0.0f) endTime += Epsilon;
-	else endTime += t;
-	ShotPathSegment segment(startTime, endTime, rs, reason);
-	segments.push_back(segment);
-	startTime = endTime;
+    // construct next shot segment and add it to list
+    TimeKeeper endTime(startTime);
+    if (t < 0.0f) {
+      endTime += Epsilon;
+    } else {
+      endTime += t;
+    }
+    ShotPathSegment segment(startTime, endTime, rs, reason);
+    segments.push_back(segment);
+    startTime = endTime;
 
-	// used up this much time in segment
-	if (t < 0.0f) timeLeft -= Epsilon;
-	else timeLeft -= t;
+    // used up this much time in segment
+    if (t < 0.0f) {
+      timeLeft -= Epsilon;
+    } else {
+      timeLeft -= t;
+    }
 
-	// check in reverse order to see what we hit first
-	reason = ShotPathSegment::Through;
-	if (teleporter) {
-	  // entered teleporter -- teleport it
-	  int source = World::getWorld()->getTeleporter(teleporter, face);
-	  int target = World::getWorld()->getTeleportTarget(source);
-	  if (target == randomTeleporter) {
-	    unsigned int tmp = path.getShotId() + i;
-            tmp = (tmp * 1103515245 + 12345) >> 8; // from POSIX rand() example
-            tmp = tmp % (2 * World::getWorld()->getTeleporters().size());
-            target = tmp;
-          }
+    // check in reverse order to see what we hit first
+    reason = ShotPathSegment::Through;
+    if (teleporter) {
+      // entered teleporter -- teleport it
+      int source = World::getWorld()->getTeleporter(teleporter, face);
+      int target = World::getWorld()->getTeleportTarget(source);
+      if (target == randomTeleporter) {
+        unsigned int tmp = path.getShotId() + i;
+        tmp = (tmp * 1103515245 + 12345) >> 8; // from POSIX rand() example
+        tmp = tmp % (2 * World::getWorld()->getTeleporters().size());
+        target = tmp;
+      }
 
-	  int outFace;
-	  const Teleporter* outTeleporter =
-			World::getWorld()->getTeleporter(target, outFace);
-	  o[0] += t * d[0];
-	  o[1] += t * d[1];
-	  o[2] += t * d[2];
-	  teleporter->getPointWRT(*outTeleporter, face, outFace,
-						o, d, 0.0f, o, d, NULL);
-	  reason = ShotPathSegment::Teleport;
-	}
-	else if (building) {
-	  // hit building -- can bounce off or stop, buildings ignored for Through
-	  switch (e) {
-	    case Stop:
-	      timeLeft = 0.0f;
-	    break;
+      int outFace;
+      const Teleporter* outTeleporter =
+                    World::getWorld()->getTeleporter(target, outFace);
+      o[0] += t * d[0];
+      o[1] += t * d[1];
+      o[2] += t * d[2];
+      teleporter->getPointWRT(*outTeleporter, face, outFace,
+                                            o, d, 0.0f, o, d, NULL);
+      reason = ShotPathSegment::Teleport;
+    }
+    else if (building) {
+      // hit building -- can bounce off or stop, buildings ignored for Through
+      switch (e) {
+        case Stop:
+          timeLeft = 0.0f;
+        break;
 
-	  case Reflect: {
-	    // move origin to point of reflection
-	    o[0] += t * d[0];
-	    o[1] += t * d[1];
-	    o[2] += t * d[2];
+      case Reflect: {
+        // move origin to point of reflection
+        o[0] += t * d[0];
+        o[1] += t * d[1];
+        o[2] += t * d[2];
 
-	    // reflect direction about normal to building
-	    float normal[3];
-	    building->get3DNormal(o, normal);
-	    reflect(d, normal);
-	    reason = ShotPathSegment::Ricochet;
-	    }
-	    break;
+        // reflect direction about normal to building
+        float normal[3];
+        building->get3DNormal(o, normal);
+        reflect(d, normal);
+        reason = ShotPathSegment::Ricochet;
+        }
+        break;
 
-	  case Through:
-	    assert(0);
-	  }
-	}
-	else if (hitGround)	// we hit the ground
-	{
-	  switch (e) {
-	    case Stop:
-	    case Through:
-	      timeLeft = 0.0f;
-	      break;
+      case Through:
+        assert(0);
+      }
+    }
+    else if (hitGround)	// we hit the ground
+    {
+      switch (e) {
+        case Stop:
+        case Through:
+          timeLeft = 0.0f;
+          break;
 
-	    case Reflect: {
-	      // move origin to point of reflection
-	      o[0] += t * d[0];
-	      o[1] += t * d[1];
-	      o[2] += t * d[2];
+        case Reflect: {
+          // move origin to point of reflection
+          o[0] += t * d[0];
+          o[1] += t * d[1];
+          o[2] += t * d[2];
 
-	      // reflect direction about normal to building
-	      float normal[3];
-	      normal[0] = 0.0f;
-	      normal[1] = 0.0f;
-	      normal[2] = 1.0f;
-	      reflect(d, normal);
-	      reason = ShotPathSegment::Ricochet;
-	      break;
-	    }
-	  }
-	}
+          // reflect direction about normal to building
+          float normal[3];
+          normal[0] = 0.0f;
+          normal[1] = 0.0f;
+          normal[2] = 1.0f;
+          reflect(d, normal);
+          reason = ShotPathSegment::Ricochet;
+          break;
+        }
+      }
+    }
   }
   lastTime = startTime;
 

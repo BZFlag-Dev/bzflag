@@ -16,6 +16,7 @@
 /* system implementation headers */
 #include <vector>
 #include <math.h>
+#include <stdlib.h>
 
 /* common implementation headers */
 #include "StateDatabase.h"
@@ -35,10 +36,12 @@ static int leafNodes = 0;
 static int totalNodes = 0;
 static int totalElements = 0;
 
-static ObsList       FullList;  // the complete list of obstacles
-static SplitObsList  SplitList; // the complete split list of obstacles
-static ObsList       FullPad;   // for returning a full list of obstacles
-static SplitObsList  SplitPad;  // for returning a split list of obstacles
+static ObsList       	FullList;  // the complete list of obstacles
+static SplitObsList  	SplitList; // the complete split list of obstacles
+static ObsList       	FullPad;   // for returning a full list of obstacles
+static SplitObsList 	SplitPad;  // for returning a split list of obstacles
+
+static ColDetNodeList 	RayList;   // for returning a list a ray hit nodes
 
 
 /* static functions */
@@ -55,6 +58,13 @@ inline static void addToFullPadList (Obstacle* obs)
 {
   FullPad.list[FullPad.count] = obs;
   FullPad.count++;
+  return;
+}
+
+inline static void addToRayList (ColDetNode* node)
+{
+  RayList.list[RayList.count] = node;
+  RayList.count++;
   return;
 }
 
@@ -86,6 +96,7 @@ CollisionManager::CollisionManager ()
   root = NULL;
   FullPad.list = NULL;
   FullList.list = NULL;
+  RayList.list = NULL;
   clear();
 }
 
@@ -109,10 +120,13 @@ void CollisionManager::clear ()
 
   delete[] FullPad.list;
   delete[] FullList.list;
+  delete[] RayList.list;
   FullPad.list = NULL;
   FullPad.count = 0;
   FullList.list = NULL;
   FullList.count = 0;
+  RayList.list = NULL;
+  RayList.count = 0;
 
   for (int i = 0; i < 5; i++) {
     SplitPad.array[i].list = NULL;
@@ -139,7 +153,7 @@ bool CollisionManager::needReload () const
 }
 
 
-const ObsList *CollisionManager::axisBoxTest (const float* _mins,
+const ObsList* CollisionManager::axisBoxTest (const float* _mins,
                                               const float* _maxs) const
 {
   FullPad.count = 0;
@@ -156,7 +170,7 @@ const ObsList *CollisionManager::axisBoxTest (const float* _mins,
 }
 
 
-const ObsList *CollisionManager::cylinderTest (const float *pos,
+const ObsList* CollisionManager::cylinderTest (const float *pos,
                                                float radius, float height) const
 {
   float tmpMins[3], tmpMaxs[3];
@@ -181,7 +195,7 @@ const ObsList *CollisionManager::cylinderTest (const float *pos,
 }
 
 
-const ObsList *CollisionManager::boxTest (const float* pos, float /*angle*/,
+const ObsList* CollisionManager::boxTest (const float* pos, float /*angle*/,
                                           float dx, float dy, float dz) const
 {
   float radius = sqrtf (dx*dx + dy*dy);
@@ -189,7 +203,7 @@ const ObsList *CollisionManager::boxTest (const float* pos, float /*angle*/,
 }
 
 
-const ObsList *CollisionManager::movingBoxTest (
+const ObsList* CollisionManager::movingBoxTest (
                                   const float* oldPos, float /*oldAngle*/,
                                   const float* pos, float /*angle*/,
                                   float dx, float dy, float dz) const
@@ -210,12 +224,30 @@ const ObsList *CollisionManager::movingBoxTest (
 }
 
 
-const ObsList *CollisionManager::rayTest (const Ray* ray) const
+static int compareRayNodes (const void *a, const void *b)
+{
+  const ColDetNode* nodeA = *((ColDetNode**)a);
+  const ColDetNode* nodeB = *((ColDetNode**)b);
+  return (nodeA->getInTime() > nodeB->getInTime());
+}
+
+
+const ObsList* CollisionManager::rayTest (const Ray* ray, float timeLeft) const
 {
   FullPad.count = 0;
+  
+  RayList.count = 0;
 
   // get the list
-  root->rayTest (ray);
+  root->rayTest (ray, timeLeft + 0.1f);
+  
+  // sort the list of node
+  printf ("RayList:\n");
+  qsort (RayList.list, RayList.count, sizeof(ColDetNode*), compareRayNodes);
+  for (int x = 0; x < RayList.count; x++) {
+    printf ("  in: %-8.6f  out: %-8.6f\n",
+            RayList.list[x]->getInTime(), RayList.list[x]->getOutTime());
+  }
 
   // clear the collisionState on the obstacles
   for (int i = 0; i < FullPad.count; i++) {
@@ -223,6 +255,26 @@ const ObsList *CollisionManager::rayTest (const Ray* ray) const
   }
 
   return &FullPad;
+}
+
+
+const ColDetNodeList* CollisionManager::rayTestNodes (const Ray* ray, 
+                                                      float timeLeft) const
+{
+  RayList.count = 0;
+
+  // get the list
+  root->rayTestNodes (ray, timeLeft + 0.1f);
+  
+  // sort the list of node
+  printf ("RayList:\n");
+  qsort (RayList.list, RayList.count, sizeof(ColDetNode*), compareRayNodes);
+  for (int x = 0; x < RayList.count; x++) {
+    printf ("  in: %-8.6f  out: %-8.6f\n",
+            RayList.list[x]->getInTime(), RayList.list[x]->getOutTime());
+  }
+
+  return &RayList;
 }
 
 
@@ -301,6 +353,10 @@ void CollisionManager::load (std::vector<MeshObstacle*>   &meshes,
   DEBUG2 ("ColDet Octree leaf nodes  = %i\n", leafNodes);
   DEBUG2 ("ColDet Octree total nodes = %i\n", totalNodes);
   DEBUG2 ("ColDet Octree total elements = %i\n", totalElements);
+  
+  // setup the ray list
+  RayList.list = new ColDetNode*[leafNodes];
+  RayList.count = 0;
 
   // setup the split list
   Obstacle** listPtr = FullList.list;
@@ -609,24 +665,15 @@ void ColDetNode::boxTest (const float* pos, float angle,
 }
 
 
-void ColDetNode::rayTest (const Ray* ray) const
+void ColDetNode::rayTest (const Ray* ray, float timeLeft) const
 {
-  int i;
-  float pos[3];
-  pos[0] = 0.5f * (maxs[0] + mins[0]);
-  pos[1] = 0.5f * (maxs[1] + mins[1]);
-  pos[2] = mins[2];
-  float size[3];
-  size[0] = 0.5f * (maxs[0] - mins[0]);
-  size[1] = 0.5f * (maxs[1] - mins[1]);
-  size[2] = (maxs[2] - mins[2]);
-
-  if (timeRayHitsBlock(*ray, pos, 0.0f, size[0], size[1], size[2]) < -0.5f) {
+  if (!testRayHitsAxisBox(ray, mins, maxs, &inTime) ||
+      (inTime > timeLeft)) {
     return;
   }
 
   if (childCount == 0) {
-    for (i = 0; i < fullList.count; i++) {
+    for (int i = 0; i < fullList.count; i++) {
       Obstacle* obs = fullList.list[i];
       if (obs->collisionState == false) {
         obs->collisionState = true;
@@ -635,8 +682,28 @@ void ColDetNode::rayTest (const Ray* ray) const
     }
   }
   else {
-    for (i = 0; i < childCount; i++) {
-      children[i]->rayTest (ray);
+    for (int i = 0; i < childCount; i++) {
+      children[i]->rayTest (ray, timeLeft);
+    }
+  }
+
+  return;
+}
+
+
+void ColDetNode::rayTestNodes (const Ray* ray, float timeLeft) const
+{
+  if (!testRayHitsAxisBox(ray, mins, maxs, &inTime, &outTime) ||
+      (inTime > timeLeft)) {
+    return;
+  }
+
+  if (childCount == 0) {
+    addToRayList((ColDetNode*)this);
+  }
+  else {
+    for (int i = 0; i < childCount; i++) {
+      children[i]->rayTestNodes (ray, timeLeft);
     }
   }
 

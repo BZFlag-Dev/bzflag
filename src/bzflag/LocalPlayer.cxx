@@ -396,11 +396,14 @@ void			LocalPlayer::doUpdateMotion(float dt)
     &&  (obstacle->getType() != WallObstacle::getClassName())
     &&  (obstacle->getType() != TetraBuilding::getClassName())
     &&  (obstacle->getType() != PyramidBuilding::getClassName())
-    &&  (obstacleTop != tmpPos[2]) && obstacleTop < (tmpPos[2] + BZDB.eval( StateDatabase::BZDB_MAXBUMPHEIGHT))) {
+    &&  (obstacleTop != tmpPos[2]) && 
+        (obstacleTop < (tmpPos[2] + BZDB.eval(StateDatabase::BZDB_MAXBUMPHEIGHT)))) {
       newPos[0] = oldPosition[0];
       newPos[1] = oldPosition[1];
       newPos[2] = obstacleTop;
-      const Obstacle* bumpObstacle = getHitBuilding(newPos, tmpAzimuth, newPos, newAzimuth, phased, expelled);
+      const Obstacle* bumpObstacle = getHitBuilding(newPos, tmpAzimuth,
+                                                    newPos, newAzimuth,
+                                                    phased, expelled);
       if (bumpObstacle == NULL) {
         move(newPos, getAngle());
         newPos[0] += newVelocity[0]*dt*0.5f;
@@ -583,8 +586,9 @@ void			LocalPlayer::doUpdateMotion(float dt)
       // save teleport info
       setTeleport(lastTime, source, target);
       server->sendTeleport(source, target);
-      if (gettingSound)
-      playLocalSound(SFX_TELEPORT);
+      if (gettingSound) {
+        playLocalSound(SFX_TELEPORT);
+      }
     }
   }
 
@@ -598,10 +602,12 @@ void			LocalPlayer::doUpdateMotion(float dt)
 
   // set falling status
   if (location == OnGround || location == OnBuilding ||
-      (location == InBuilding && newPos[2] == 0.0f))
+      (location == InBuilding && newPos[2] == 0.0f)) {
     setStatus(getStatus() & ~short(PlayerState::Falling));
-  else if (location == InAir || location == InBuilding)
+  }
+  else if (location == InAir || location == InBuilding) {
     setStatus(getStatus() | short(PlayerState::Falling));
+  }
 
   // compute firing status
   switch (location) {
@@ -630,21 +636,24 @@ void			LocalPlayer::doUpdateMotion(float dt)
 
   // see if I'm over my antidote
   if (antidoteFlag && location == OnGround) {
-    float dist = (flagAntidotePos[0] - newPos[0]) *
-      (flagAntidotePos[0] - newPos[0]) +
-      (flagAntidotePos[1] - newPos[1]) *
-      (flagAntidotePos[1] - newPos[1]);
-    if (dist < (getRadius() + BZDBCache::flagRadius) * (getRadius() + BZDBCache::flagRadius))
+    float dist = 
+      ((flagAntidotePos[0] - newPos[0]) * (flagAntidotePos[0] - newPos[0])) +
+      ((flagAntidotePos[1] - newPos[1]) * (flagAntidotePos[1] - newPos[1]));
+    const float twoRads = getRadius() + BZDBCache::flagRadius;
+    if (dist < (twoRads * twoRads)) {
       server->sendDropFlag(getPosition());
+    }
   }
   // don't forget to wave
-  if (antidoteFlag)
+  if (antidoteFlag) {
     antidoteFlag->waveFlag(dt, 0.0f);
+  }
 
   if ((getFlag() == Flags::Bouncy) && ((location == OnGround) || (location == OnBuilding))) {
     if (oldLocation != InAir) {
-      if ((TimeKeeper::getCurrent() - bounceTime) > 0)
+      if ((TimeKeeper::getCurrent() - bounceTime) > 0) {
         this->jump();
+      }
     }
     else {
       bounceTime = TimeKeeper::getCurrent();
@@ -654,15 +663,18 @@ void			LocalPlayer::doUpdateMotion(float dt)
 
   if (gettingSound) {
     if (oldPosition[0] != newPos[0] || oldPosition[1] != newPos[1] ||
-	oldPosition[2] != newPos[2] || oldAzimuth != newAzimuth)
+	oldPosition[2] != newPos[2] || oldAzimuth != newAzimuth) {
       moveSoundReceiver(newPos[0], newPos[1], newPos[2], newAzimuth,
-			(NEAR_ZERO(dt, ZERO_TOLERANCE) || teleporter != NULL && getFlag() != Flags::PhantomZone));
-    if (NEAR_ZERO(dt, ZERO_TOLERANCE))
+			NEAR_ZERO(dt, ZERO_TOLERANCE) || 
+			((teleporter != NULL) && (getFlag() != Flags::PhantomZone)));
+    }
+    if (NEAR_ZERO(dt, ZERO_TOLERANCE)) {
       speedSoundReceiver(newVelocity[0], newVelocity[1], newVelocity[2]);
-    else
+    } else {
       speedSoundReceiver((newPos[0] - oldPosition[0]) / dt,
 			 (newPos[1] - oldPosition[1]) / dt,
 			 (newPos[2] - oldPosition[2]) / dt);
+    }
   }
 }
 
