@@ -24,28 +24,38 @@
 /* local implementation headers */
 #include "HelpMenu.h"
 #include "HUDDialogStack.h"
+#include "LocalPlayer.h"
 
+/* from playing.cxx */
+void leaveGame();
 
 OpenGLTexFont*		MainMenu::mainFont = NULL;
 
 MainMenu::MainMenu() : HUDDialog(), joinMenu(NULL),
 				optionsMenu(NULL), quitMenu(NULL)
 {
-  TextureManager &tm = TextureManager::instance();
-
   // create font
   font = TextureFont::getTextureFont(TextureFont::HelveticaBold, true);
   mainFont = &font;
 
-  // load title
-
-  int title = tm.getTextureID( "title" );
-
   // add controls
+  createControls();
+}
+
+void	  MainMenu::createControls()
+{
+  TextureManager &tm = TextureManager::instance();
   std::vector<HUDuiControl*>& list = getControls();
   HUDuiLabel* label;
   HUDuiTextureLabel* textureLabel;
 
+  // clear controls
+  list.erase(list.begin(), list.end());
+
+  // load title
+  int title = tm.getTextureID( "title" );
+  
+  // add controls
   textureLabel = new HUDuiTextureLabel;
   textureLabel->setFont(font);
   textureLabel->setTexture(title);
@@ -72,12 +82,24 @@ MainMenu::MainMenu() : HUDDialog(), joinMenu(NULL),
   label->setString("Help");
   list.push_back(label);
 
+  LocalPlayer* myTank = LocalPlayer::getMyTank();
+  if (!(myTank == NULL)) {
+    label = new HUDuiLabel;
+    label->setFont(font);
+    label->setString("Leave Game");
+    list.push_back(label);
+  }
+
   label = new HUDuiLabel;
   label->setFont(font);
   label->setString("Quit");
   list.push_back(label);
 
-  initNavigation(list, 2, list.size()-1);
+  resize(HUDDialog::getWidth(), HUDDialog::getHeight());
+  initNavigation(list, 2, list.size() - 1);
+
+  // set focus back at the top in case the item we had selected does not exist anymore
+  list[2]->setFocus();
 }
 
 MainMenu::~MainMenu()
@@ -103,6 +125,7 @@ void			MainMenu::execute()
 {
   std::vector<HUDuiControl*>& list = getControls();
   HUDuiControl* focus = HUDui::getFocus();
+  LocalPlayer* myTank = LocalPlayer::getMyTank();
   if (focus == list[2]) {
     if (!joinMenu) joinMenu = new JoinMenu;
     HUDDialogStack::get()->push(joinMenu);
@@ -114,7 +137,13 @@ void			MainMenu::execute()
   else if (focus == list[4]) {
     HUDDialogStack::get()->push(HelpMenu::getHelpMenu());
   }
-  else if (focus == list[5]) {
+  // this menu item only exists if you're connected to a game
+  else if ((focus == list[5]) && (myTank != NULL)) {
+    leaveGame();
+    // myTank should be NULL now, recreate menu
+    createControls();
+  }
+  else if (focus == list[list.size() - 1]) {
     if (!quitMenu) quitMenu = new QuitMenu;
     HUDDialogStack::get()->push(quitMenu);
   }

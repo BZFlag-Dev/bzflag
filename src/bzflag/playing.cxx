@@ -508,7 +508,10 @@ static bool		doKeyCommon(const BzfKeyEvent& key, bool pressed)
 {
   const std::string cmd = KEYMGR.get(key, pressed);
   if (key.ascii == 27) {
-    if (pressed) HUDDialogStack::get()->push(mainMenu);
+    if (pressed) {
+      mainMenu->createControls();
+      HUDDialogStack::get()->push(mainMenu);
+    }
     return true;
   } else if (hud->getHunt()) {
     if (key.button == BzfKeyEvent::Down ||
@@ -4513,7 +4516,7 @@ static bool		enterServer(ServerLink* serverLink, World* world,
   return false;
 }
 
-static void		leaveGame()
+void		leaveGame()
 {
   // delete scene database
   sceneRenderer->setSceneDatabase(NULL);

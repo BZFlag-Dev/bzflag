@@ -36,6 +36,7 @@ public:
   HUDuiDefaultKey* getDefaultKey();
   void execute();
   void resize(int width, int height);
+  void createControls();
 
   static const OpenGLTexFont& getFont();
 
