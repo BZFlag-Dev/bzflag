@@ -3,9 +3,9 @@ critical bugs
 
 - bzc file writing seems to be goofy. Some options never are written into
   the file, and some (binds) get written more than once. [I have two
-  bind lines for the same key]  there is  trouble remapping the 
+  bind lines for the same key]  there is  trouble remapping the
   Identify/Respawn" key from "right mouse or i" to something else.  tried
-  remapping to "w" during gameplay and it fails for  windows and os x.  also 
+  remapping to "w" during gameplay and it fails for  windows and os x.  also
   fails to respawn with right mouse if you try to change the setting during
   game.  the values do not appear to be persistent properly either (quit and
   return and it's displayed wrong).  resetting key map doesn't seem to fully
@@ -25,20 +25,21 @@ recent bugs
 
 - Flaghelp falls into the radar area when radar is 'bigger'
 
-- Address Exception reported when unpacking a FlagType in MsgFlagUpdate on client
-  in Rabbit game. The reported message buffer address was bad (ie 0xbfffd7ed)
-  Could we be running off the end of the packet (ie count is fubar'ed?)
-  Perhaps add sanity check for not overruning end of buffer.
+- Address Exception reported when unpacking a FlagType in MsgFlagUpdate on
+  client in Rabbit game. The reported message buffer address was bad (ie
+  0xbfffd7ed) Could we be running off the end of the packet (ie count is
+  fubar'ed?) Perhaps add sanity check for not overruning end of buffer.
 
-- On a FFA game, where no purple was allowed a Team size of 65535 was displayed for Purple.
+- On a FFA game, where no purple was allowed a Team size of 65535 was displayed
+  for Purple.
 
 - Rabbit selection is borken. Two things. A player often is Rabbit two times
-  in a row, which was intended to be illegal, and high scoring tanks get bypassed.
-  Was playing on ducati where a player was consistantly in #1 slot, but NEVER
-  was rabbit. (The latter probaby happens when all players have a negative
-  score, the formula does not work well then). Nope: Top player was 44-31 or there
-  abouts. HMM. I played again and the picking was fine. Could it be a cheat client,
-  causing havoc?
+  in a row, which was intended to be illegal, and high scoring tanks get
+  bypassed.  Was playing on ducati where a player was consistantly in #1 slot,
+  but NEVER was rabbit. (The latter probaby happens when all players have a
+  negative score, the formula does not work well then). Nope: Top player was
+  44-31 or there abouts. HMM. I played again and the picking was fine. Could it
+  be a cheat client, causing havoc?
 
 - Player kicked after getting V flag (and possibly TH) stolen by another thief.
 
