@@ -851,7 +851,7 @@ static int uread(int *playerIndex, int *nopackets, int& n,
     }
   }
   if (pi == curMaxPlayers) {
-    ushort len, code;
+    unsigned short len, code;
     void *tmpbuf;
     tmpbuf = nboUnpackUShort(ubuf, len);
     tmpbuf = nboUnpackUShort(tmpbuf, code);
