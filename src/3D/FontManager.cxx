@@ -291,6 +291,8 @@ void FontManager::drawString(float x, float y, float z, int faceID, float size, 
 	OpenGLGState::resetState();  // FIXME - full reset required?
 	if (underlineColor[0] >= 0)
 	  glColor3fv(underlineColor);
+	else
+	  glColor3fv(color);
 	// still have a translated matrix, these coordinates are
 	// with respect to the string just drawn
 	glBegin(GL_LINES);
