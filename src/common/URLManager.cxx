@@ -63,6 +63,7 @@ bool URLManager::getURL ( const std::string, std::string&)
 		return false;
 	}
 
+	// FIXME: This could block for a _long_ time.
 	result = curl_easy_perform((CURL*)easyHandle);
 	if (result == (CURLcode)CURLOPT_ERRORBUFFER) {
 		DEBUG1("Error: server reported: %d\n",result);
@@ -121,6 +122,7 @@ bool URLManager::getURL (const std::string, void **, unsigned int&)
 		DEBUG1("Something wrong with CURL; Error:  %d\n",result);
 	}
 
+	// FIXME: This could block for a _long_ time.
 	result = curl_easy_perform((CURL*)easyHandle);
 	if (result == (CURLcode)CURLOPT_ERRORBUFFER) {
 		DEBUG1("Error: server reported: %d\n",result);
@@ -215,5 +217,3 @@ static size_t writeFunction(void *ptr, size_t size, size_t nmemb,void *stream)
 	return len;
 }
 #endif // HAVE_CURL
-
-
