@@ -286,6 +286,10 @@ SOURCE=..\..\src\bzflag\BackgroundRenderer.cxx
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\src\bzflag\WeatherRenderer.cxx
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\src\bzflag\BaseLocalPlayer.cxx
 # End Source File
 # Begin Source File
@@ -1099,6 +1103,10 @@ SOURCE=..\..\include\WordFilter.h
 # Begin Source File
 
 SOURCE=..\..\src\bzflag\World.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\bzflag\WeatherRenderer.h
 # End Source File
 # Begin Source File
 

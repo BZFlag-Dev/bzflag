@@ -987,6 +987,9 @@ copy debug\*.pdb ..\..\*.pdb
 							BasicRuntimeChecks="3"/>
 					</FileConfiguration>
 				</File>
+				<File
+					RelativePath="..\..\src\bzflag\WeatherRenderer.cxx">
+				</File>
 			</Filter>
 			<Filter
 				Name="game"
@@ -1564,6 +1567,9 @@ copy debug\*.pdb ..\..\*.pdb
 			</File>
 			<File
 				RelativePath="..\..\include\version.h">
+			</File>
+			<File
+				RelativePath="..\..\src\bzflag\WeatherRenderer.h">
 			</File>
 			<File
 				RelativePath="..\..\src\bzflag\World.h">
