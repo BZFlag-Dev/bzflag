@@ -1507,7 +1507,7 @@ void bzMatrixMode(GLenum mode)
 #ifdef _WIN32
 #  define GET_CURRENT_CONTEXT wglGetCurrentContext
 #else
-#  ifdef __APPLE__
+#  ifdef HAVE_AGL_AGL_H
 #    include <AGL/agl.h>
 #    define GET_CURRENT_CONTEXT aglGetCurrentContext
 #  else
