@@ -388,7 +388,10 @@ void			SceneRenderer::getGroundUV(const float p[2],
 {
   float repeat = 0.01f;
     if (BZDB.isSet( "groundTexRepeat" ))
-	   repeat = BZDB.eval( "groundTexRepeat" );
+      repeat = BZDB.eval( "groundTexRepeat" );
+
+    if (BZDB.eval("useQuality")>=3)
+      repeat = BZDB.eval( "groundHighResTexRepeat" );
 
   uv[0] = repeat * p[0];
   uv[1] = repeat * p[1];

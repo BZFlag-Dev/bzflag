@@ -125,6 +125,11 @@ static DefaultDBItem	defaultDBItems[] = {
   { "maxQuality",		"3",			false,	StateDatabase::ReadWrite,	NULL },
   { "altImageDir",		"alternate",		true,	StateDatabase::ReadWrite,	NULL },
   { "groundTexRepeat",		"0.1",                  true,	StateDatabase::ReadWrite,	NULL },
+  { "groundHighResTexRepeat",	"0.05",                  true,	StateDatabase::ReadWrite,	NULL },
+  { "boxWallTexRepeat",		"1.5",                  true,	StateDatabase::ReadWrite,	NULL },
+  { "boxWallHighResTexRepeat",	"6.0",                  true,	StateDatabase::ReadWrite,	NULL },
+  { "pryWallTexRepeat",		"3.0",                  true,	StateDatabase::ReadWrite,	NULL },
+  { "pryWallHighResTexRepeat",	"8.0",                  true,	StateDatabase::ReadWrite,	NULL },
 
   // default texture names
   { "stdGroundTexture",		"std_ground",		true,	StateDatabase::ReadWrite,	NULL },

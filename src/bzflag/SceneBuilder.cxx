@@ -286,9 +286,13 @@ void			SceneDatabaseBuilder::addBox(SceneDatabase* db,
 
   useColorTexture[1] = BZDB.isTrue("texture") && boxTopTexture && boxTopTexture->isValid();
 
+  float texutureFactor = BZDB.eval("boxWallTexRepeat");
+  if (BZDB.eval("useQuality")>=3)
+    texutureFactor = BZDB.eval("boxWallHighResTexRepeat");
+
   while ((node = ((part != 5) ? nodeGen->getNextNode(
-				-1.5f*boxTexWidth,
-				-1.5f*boxTexWidth, boxLOD) :
+				-texutureFactor*boxTexWidth,
+				-texutureFactor*boxTexWidth, boxLOD) :
     // I'm using boxTexHeight for roof since textures are same
     // size and this number is available
 				nodeGen->getNextNode(
@@ -335,8 +339,12 @@ void			SceneDatabaseBuilder::addPyramid(SceneDatabase* db,
   useColorTexture = BZDB.isTrue("texture") && pyramidTexture && pyramidTexture->isValid();
 
   // Using boxTexHeight since it's (currently) the same and it's already available
-  while ((node = nodeGen->getNextNode(-3.0f * boxTexHeight,
-				-3.0f * boxTexHeight,
+  float texutureFactor = BZDB.eval("pryWallTexRepeat");
+  if (BZDB.eval("useQuality")>=3)
+    texutureFactor = BZDB.eval("pryWallHighResTexRepeat");
+
+  while ((node = nodeGen->getNextNode(-texutureFactor * boxTexHeight,
+				-texutureFactor * boxTexHeight,
 				pyramidLOD))) {
     node->setColor(pyramidColors[part]);
     node->setModulateColor(pyramidModulateColors[part]);
