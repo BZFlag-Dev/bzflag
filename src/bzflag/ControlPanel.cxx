@@ -343,7 +343,7 @@ void			ControlPanel::render(SceneRenderer& renderer)
 
     // draw each line of text
     int msgy = numLines - 1;
-    for (int l = 0; l < lines.size(); l++)  {
+    for (int l = 0; l < (int)lines.size(); l++)  {
       assert(msgy >= 0);
 
       // only draw message if inside message area
