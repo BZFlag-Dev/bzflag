@@ -1,5 +1,5 @@
-critical bugs
--------------
+recent bugs
+------------
 
 - bunny hunt issues.  observed the player selection consistently toggle
   between the best player (score-wise) and one of the worst players non-stop
@@ -7,11 +7,7 @@ critical bugs
   not only had better scores and were not dead and were not previously bunny
   and had a much better value for 	killCount * (killCount - deathCount)
   mac suspects valid players are getting skipped altogether for some reason..
-	need to test that theory.
-
-
-recent bugs
-------------
+  need to test that theory.
 
 - Shift+Tab seems to be bound to jump without being bound to jump
 
