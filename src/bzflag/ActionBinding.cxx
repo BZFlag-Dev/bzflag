@@ -39,6 +39,8 @@ ActionBinding::ActionBinding() {
   wayToBindActions.insert(std::make_pair(std::string("toggle displayScore"), press));
   wayToBindActions.insert(std::make_pair(std::string("viewZoom toggle"),
 					 press));
+  wayToBindActions.insert(std::make_pair(std::string("viewZoom in"), press));
+  wayToBindActions.insert(std::make_pair(std::string("viewZoom out"), press));
   wayToBindActions.insert(std::make_pair(std::string("pause"), press));
   wayToBindActions.insert(std::make_pair(std::string("fullscreen"), press));
   wayToBindActions.insert(std::make_pair(std::string("iconify"), press));
@@ -107,6 +109,10 @@ ActionBinding::ActionBinding() {
   defaultBinding.insert(std::make_pair(std::string("S"), std::string("toggle displayScore")));
   defaultBinding.insert(std::make_pair(std::string("B"),
 				       std::string("viewZoom toggle")));
+  defaultBinding.insert(std::make_pair(std::string("Ctrl+Wheel Up"),
+				       std::string("viewZoom in")));
+  defaultBinding.insert(std::make_pair(std::string("Ctrl+Wheel Down"),
+				       std::string("viewZoom out")));
   defaultBinding.insert(std::make_pair(std::string("Pause"), std::string("pause")));
   defaultBinding.insert(std::make_pair(std::string("P"), std::string("pause")));
   defaultBinding.insert(std::make_pair(std::string("F1"), std::string("fullscreen")));

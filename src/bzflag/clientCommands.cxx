@@ -381,12 +381,12 @@ std::string cmdViewZoom(const std::string&,
   float fov = BZDB.eval("displayFOV");
 
   if (args[0] == "in") {
-    fov += 0.1f;
+    fov += 1.0f;
     if (fov > 60.0f)
       fov = 60.0f;
     BZDB.setFloat("displayFOV", fov);
   } else if (args[0] == "out") {
-    fov -= 0.1f;
+    fov -= 1.0f;
     if (fov < 15.0f)
       fov = 15.0f;
     BZDB.setFloat("displayFOV", fov);
