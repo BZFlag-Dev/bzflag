@@ -25,8 +25,11 @@
 #define ANSI_STR_BRIGHT		"\033[1m"
 #define ANSI_STR_DIM		"\033[2m"
 #define ANSI_STR_UNDERLINE	"\033[4m"
+#define ANSI_STR_NO_UNDERLINE	"\033[24m"
 #define ANSI_STR_PULSATING	"\033[5m"
+#define ANSI_STR_NO_PULSATE	"\033[25m"
 #define ANSI_STR_REVERSE	"\033[7m"	// unimplemented
+#define ANSI_STR_NO_REVERSE	"\033[27m"	// unimplemented
 
 #define ANSI_STR_FG_BLACK	"\033[30m"	// grey
 #define ANSI_STR_FG_RED		"\033[31m"
@@ -55,14 +58,16 @@ typedef enum {
   BrightColor		= 12,
   DimColor		= 13,
   PulsatingColor	= 9,
+  NonPulsatingColor	= 14,
   UnderlineColor	= 10,
+  NonUnderlineColor	= 15,
 
   YellowColor		= 0,
   DefaultColor		= 6	// default to grey
 } ColorCodes;
 
 // These enum values have to line up with those above
-static std::string ColorStrings[14] = {
+static std::string ColorStrings[16] = {
   ANSI_STR_FG_YELLOW,   // 0  Rogue     (yellow)
   ANSI_STR_FG_RED,      // 1  Red
   ANSI_STR_FG_GREEN,    // 2  Green
@@ -76,7 +81,9 @@ static std::string ColorStrings[14] = {
   ANSI_STR_UNDERLINE,   // 10 Underline
   ANSI_STR_RESET_FINAL, // 11 Really reset (no brightness added)
   ANSI_STR_BRIGHT,	// 12 Bright mode
-  ANSI_STR_DIM		// 13 Dim mode
+  ANSI_STR_DIM, 	// 13 Dim mode
+  ANSI_STR_NO_PULSATE,  // 14 No Pulsating
+  ANSI_STR_NO_UNDERLINE // 15 No Underlining
 };
 
 // strip ANSI codes from a string

@@ -380,9 +380,13 @@ void FontManager::drawString(float x, float y, float z, int faceID, float size,
 	} else if (tmpText == ANSI_STR_DIM) {
 	  bright = false;
 	} else if (tmpText == ANSI_STR_UNDERLINE) {
-	  underline = !underline;
+	  underline = true;
 	} else if (tmpText == ANSI_STR_PULSATING) {
-	  pulsating = !pulsating;
+	  pulsating = true;
+	} else if (tmpText == ANSI_STR_NO_UNDERLINE) {
+	  underline = false;
+	} else if (tmpText == ANSI_STR_NO_PULSATE) {
+	  pulsating = false;
 	} else {
 	  DEBUG2("ANSI Code %s not supported\n", tmpText.c_str());
 	}
