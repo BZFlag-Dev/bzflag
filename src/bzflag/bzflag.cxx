@@ -220,6 +220,8 @@ static void		setVisual(BzfVisual* visual,
 static void		usage()
 {
   printFatalError("usage: %s"
+	" [-3dfx]"
+	" [-no3dfx]"
 	" [-anonymous]"
 	" [-callsign <call-sign>]"
 	" [-directory <data-directory>]"
@@ -276,7 +278,9 @@ static void		parse(int argc, char** argv,
     else if (strcmp(argv[i], "-e") == 0 || strcmp(argv[i], "-echo") == 0) {
       echoToConsole = True;
     }
-    else if (strcmp(argv[i], "-h") == 0 || strcmp(argv[i], "-help") == 0) {
+    else if (strcmp(argv[i], "-h") == 0 ||
+	     strcmp(argv[i], "-help") == 0 ||
+	     strcmp(argv[i], "--help") == 0) {
       usage();
     }
     else if (strcmp(argv[i], "-g") == 0 || strcmp(argv[i], "-geometry") == 0) {
@@ -415,7 +419,9 @@ static void		parse(int argc, char** argv,
 	printFatalError("Using maximum ttl of %d.", startupInfo.ttl);
       }
     }
-    else if (strcmp(argv[i], "-v") == 0 || strcmp(argv[i], "-version") == 0) {
+    else if (strcmp(argv[i], "-v") == 0 ||
+	     strcmp(argv[i], "-version") == 0 ||
+	     strcmp(argv[i], "--version") == 0) {
 #if defined(ALPHA_RELEASE) || defined(BETA_RELEASE)
       printFatalError("BZFLAG client, version %d.%d%c build %d %s\n"
 #else
@@ -464,6 +470,20 @@ static void		parse(int argc, char** argv,
     }
     else if (strcmp(argv[i], "-window") == 0) {
       resources.addValue("window", "");
+    }
+    else if (strcmp(argv[i], "-3dfx") == 0 || strcmp(argv[i], "-3Dfx") == 0) {
+#if !defined(__linux__)
+      putenv("MESA_GLX_FX=fullscreen");
+#else
+      setenv("MESA_GLX_FX", "fullscreen", 1);
+#endif
+    }
+    else if (strcmp(argv[i], "-no3dfx") == 0 || strcmp(argv[i], "-no3Dfx") == 0) {
+#if !defined(__linux__)
+      putenv("MESA_GLX_FX=");
+#else
+      unsetenv("MESA_GLX_FX");
+#endif
     }
 #ifdef DEBUG
     else if (strcmp(argv[i], "-date") == 0) {
@@ -910,15 +930,6 @@ int			main(int argc, char** argv)
   // the resolution to use)
   const boolean useFullscreen = needsFullscreen();
   if (useFullscreen) {
-    // hack for Mesa 3Dfx fullscreen support.  enable it by default but
-    // let users force it off.
-    if (!getenv("BZF_GLX_FX_DISABLE") && !getenv("MESA_GLX_FX"))
-#if !defined(__linux__)
-      putenv("MESA_GLX_FX=fullscreen");
-#else
-      setenv("MESA_GLX_FX", "fullscreen", 0);
-#endif
-
     // tell window to be fullscreen
     window->setFullscreen();
 
@@ -938,7 +949,8 @@ int			main(int argc, char** argv)
 
   // now make the main window wrapper.  this'll cause the OpenGL context
   // to be bound for the first time.
-  MainWindow mainWindow(window);
+  MainWindow* pmainWindow = new MainWindow(window);
+  MainWindow& mainWindow = *pmainWindow;
   // set fullscreen again so MainWindow object knows it's full screen
   if (useFullscreen)
     mainWindow.setFullscreen();
@@ -1072,8 +1084,11 @@ int			main(int argc, char** argv)
   dumpResources(display, renderer);
 
   // shut down
-  closeSound();
+  display->setDefaultResolution();
+  delete pmainWindow;
+  delete window;
   delete visual;
+  closeSound();
   delete display;
   delete platformFactory;
 

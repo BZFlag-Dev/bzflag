@@ -26,7 +26,7 @@
 #include "playing.h"
 #include "texture.h"
 
-static OpenGLTexture	flagTexture;
+static OpenGLTexture*	flagTexture = NULL;
 
 //
 // World
@@ -83,12 +83,19 @@ World::~World()
 
 void			World::init()
 {
-  flagTexture = getTexture("flag", OpenGLTexture::Max, False);
+  flagTexture = new OpenGLTexture;
+  *flagTexture = getTexture("flag", OpenGLTexture::Max, False);
+}
+
+void			World::done()
+{
+  delete flagTexture;
+  flagTexture = NULL;
 }
 
 void			World::setFlagTexture(FlagSceneNode* flag)
 {
-  flag->setTexture(flagTexture);
+  flag->setTexture(*flagTexture);
 }
 
 void			World::setWorld(World* _playingField)
@@ -705,7 +712,7 @@ void			WorldBuilder::preGetWorld()
     world->flags[i].position[2] = 0.0f;
     world->flagNodes[i] = new FlagSceneNode(world->flags[i].position);
     world->flagWarpNodes[i] = new FlagWarpSceneNode(world->flags[i].position);
-    world->flagNodes[i]->setTexture(flagTexture);
+    world->flagNodes[i]->setTexture(*flagTexture);
   }
 
   // prepare inside nodes arrays

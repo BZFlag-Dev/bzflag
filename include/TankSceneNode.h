@@ -32,7 +32,16 @@ class TankIDLSceneNode : public SceneNode {
     void		notifyStyleChange(const SceneRenderer&);
     void		addRenderNodes(SceneRenderer&);
 
-  protected:
+  // Irix 7.2.1 and solaris compilers appear to have a bug.  if the
+  // following declaration isn't public it generates an error when trying
+  // to declare SphereFragmentSceneNode::FragmentRenderNode a friend in
+  // SphereSceneNode::SphereRenderNode.  i think this is a bug in the
+  // compiler because:
+  //   no other compiler complains
+  //   public/protected/private adjust access not visibility
+  //     SphereSceneNode isn't requesting access, it's granting it
+//  protected:
+  public:
     class IDLRenderNode : public RenderNode {
       public:
 			IDLRenderNode(const TankIDLSceneNode*);
@@ -45,15 +54,6 @@ class TankIDLSceneNode : public SceneNode {
 	static const GLfloat	idlVertex[][3];
     };
     friend class IDLRenderNode;
-
-    // Irix 7.2.1 compilers appear to have a bug.  without the following
-    // friend declaration it generates an error when trying to declare
-    // SphereFragmentSceneNode::FragmentRenderNode a friend.  i think
-    // this is a bug in the compiler because:
-    //   no other compiler complains
-    //   public/protected/private adjust access not visibility
-    //     SphereSceneNode isn't requesting access, it's granting it
-    friend class TankSceneNode;
 
   private:
     const TankSceneNode	*tank;

@@ -27,9 +27,9 @@
 #include "PlayerLink.h"
 #include "Team.h"
 
-static OpenGLTexture	boltTexture[NumTeams];
-static OpenGLTexture	laserTexture;
-static OpenGLTexture	gmTexture;
+static OpenGLTexture*	boltTexture[NumTeams];
+static OpenGLTexture*	laserTexture;
+static OpenGLTexture*	gmTexture;
 
 //
 // ShotPathStrategy
@@ -48,13 +48,30 @@ ShotStrategy::~ShotStrategy()
 
 void			ShotStrategy::init()
 {
-  boltTexture[RogueTeam] = getTexture("ybolt", OpenGLTexture::Linear);
-  boltTexture[RedTeam] = getTexture("rbolt", OpenGLTexture::Linear);
-  boltTexture[GreenTeam] = getTexture("gbolt", OpenGLTexture::Linear);
-  boltTexture[BlueTeam] = getTexture("bbolt", OpenGLTexture::Linear);
-  boltTexture[PurpleTeam] = getTexture("pbolt", OpenGLTexture::Linear);
-  laserTexture = getTexture("laser", OpenGLTexture::Max);
-  gmTexture = getTexture("missile", OpenGLTexture::Max);
+  for (int i = 0; i < (int)(sizeof(boltTexture) / sizeof(boltTexture[0])); i++)
+    boltTexture[i] = new OpenGLTexture;
+  laserTexture = new OpenGLTexture;
+  gmTexture = new OpenGLTexture;
+
+  *boltTexture[RogueTeam] = getTexture("ybolt", OpenGLTexture::Linear);
+  *boltTexture[RedTeam] = getTexture("rbolt", OpenGLTexture::Linear);
+  *boltTexture[GreenTeam] = getTexture("gbolt", OpenGLTexture::Linear);
+  *boltTexture[BlueTeam] = getTexture("bbolt", OpenGLTexture::Linear);
+  *boltTexture[PurpleTeam] = getTexture("pbolt", OpenGLTexture::Linear);
+  *laserTexture = getTexture("laser", OpenGLTexture::Max);
+  *gmTexture = getTexture("missile", OpenGLTexture::Max);
+}
+
+void			ShotStrategy::done()
+{
+  delete gmTexture;
+  delete laserTexture;
+  gmTexture = NULL;
+  laserTexture = NULL;
+  for (int i = 0; i < (int)(sizeof(boltTexture) / sizeof(boltTexture[0])); i++) {
+    delete boltTexture[i];
+    boltTexture[i] = NULL;
+  }
 }
 
 boolean			ShotStrategy::isStoppedByHit() const
@@ -288,8 +305,8 @@ SegmentedShotStrategy::SegmentedShotStrategy(ShotPath* _path) :
   boltSceneNode = new BoltSceneNode(_path->getPosition());
   const float* c = Team::getRadarColor(team);
   boltSceneNode->setColor(c[0], c[1], c[2]);
-  if (boltTexture[team].isValid())
-    boltSceneNode->setTexture(boltTexture[team]);
+  if (boltTexture[team] && boltTexture[team]->isValid())
+    boltSceneNode->setTexture(*boltTexture[team]);
 }
 
 SegmentedShotStrategy::~SegmentedShotStrategy()
@@ -480,8 +497,8 @@ void			SegmentedShotStrategy::addShot(
     TeamColor tmpTeam = colorblind ? RogueTeam : team;
     const float* c = Team::getRadarColor(tmpTeam);
     boltSceneNode->setColor(c[0], c[1], c[2]);
-    if (boltTexture[tmpTeam].isValid())
-      boltSceneNode->setTexture(boltTexture[tmpTeam]);
+    if (boltTexture[tmpTeam] && boltTexture[tmpTeam]->isValid())
+      boltSceneNode->setTexture(*boltTexture[tmpTeam]);
   }
   scene->addDynamicNode(boltSceneNode);
 }
@@ -770,7 +787,8 @@ LaserStrategy::LaserStrategy(ShotPath* path) :
     dir[1] = t * rawdir[1];
     dir[2] = t * rawdir[2];
     laserNodes[i] = new LaserSceneNode(ray.getOrigin(), dir);
-    if (laserTexture.isValid()) laserNodes[i]->setTexture(laserTexture);
+    if (laserTexture && laserTexture->isValid())
+      laserNodes[i]->setTexture(*laserTexture);
   }
   setCurrentSegment(numSegments - 1);
 }
@@ -835,8 +853,8 @@ GuidedMissileStrategy::GuidedMissileStrategy(ShotPath* _path) :
 				needUpdate(True)
 {
   ptSceneNode = new BoltSceneNode(_path->getPosition());
-  if (gmTexture.isValid()) {
-    ptSceneNode->setTexture(gmTexture);
+  if (gmTexture && gmTexture->isValid()) {
+    ptSceneNode->setTexture(*gmTexture);
     ptSceneNode->setTextureAnimation(4, 4);
     ptSceneNode->setColor(1.0f, 0.2f, 0.0f);
     ptSceneNode->setFlares(True);

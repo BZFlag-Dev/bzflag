@@ -927,14 +927,14 @@ static boolean		audioInnerLoop(boolean noWaiting)
 	  break;
 
 	case SQC_SET_VOLUME:
-	  volumeAtten = 0.1f * (float)cmd.code;
+	  volumeAtten = 0.2f * (float)cmd.code;
 	  if (volumeAtten <= 0.0f) {
 	    mutingOn = True;
 	    volumeAtten = 0.0f;
 	  }
-	  else if (volumeAtten >= 1.0f) {
+	  else if (volumeAtten >= 2.0f) {
 	    mutingOn = False;
-	    volumeAtten = 1.0f;
+	    volumeAtten = 2.0f;
 	  }
 	  else {
 	    mutingOn = False;

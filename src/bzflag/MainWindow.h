@@ -76,7 +76,7 @@ class MainWindow {
 			MainWindow(const MainWindow&);
     MainWindow&		operator=(const MainWindow&);
 
-    static void		resize(void*);
+    static void		resizeCB(void*);
 
   private:
     BzfWindow*		window;

@@ -28,7 +28,8 @@ static const float	MaxUpdateTime = 1.0f;		// seconds
 // Player
 //
 
-OpenGLTexture		Player::tankTexture;
+OpenGLTexture*		Player::tankTexture = NULL;
+int			Player::totalCount = 0;
 
 Player::Player(const PlayerId& _id, TeamColor _team,
 		const char* name, const char* _email) :
@@ -66,6 +67,8 @@ Player::Player(const PlayerId& _id, TeamColor _team,
   changeTeam(team);
   pausedSphere = new SphereSceneNode(pos, 1.5f * TankRadius);
   pausedSphere->setColor(0.0f, 0.0f, 0.0f, 0.5f);
+
+  totalCount++;
 }
 
 Player::~Player()
@@ -73,6 +76,10 @@ Player::~Player()
   delete tankIDLNode;
   delete tankNode;
   delete pausedSphere;
+  if (--totalCount == 0) {
+    delete tankTexture;
+    tankTexture = NULL;
+  }
 }
 
 float			Player::getRadius() const
@@ -129,7 +136,9 @@ void			Player::setAngularVelocity(float _angVel)
 
 void			Player::setTexture(const OpenGLTexture& _texture)
 {
-  tankTexture = _texture;
+  if (!tankTexture)
+    tankTexture = new OpenGLTexture;
+  *tankTexture = _texture;
 }
 
 void			Player::changeTeam(TeamColor _team)
@@ -150,7 +159,7 @@ void			Player::changeTeam(TeamColor _team)
   color[3] = 1.0f;
   tankNode->setColor(color);
   tankNode->setMaterial(OpenGLMaterial(tankSpecular, tankEmissive, 20.0f));
-  tankNode->setTexture(tankTexture);
+  tankNode->setTexture(*tankTexture);
 }
 
 void			Player::setStatus(short _status)

@@ -18,8 +18,8 @@ CONFIG	= solaris
 # tools
 #
 AR	= ar cru
-CC	= gcc
-CXX	= g++
+CC	= cc
+CXX	= CC
 CD	= cd
 CP	= cp
 ECHO	= echo
@@ -35,11 +35,12 @@ SHELL	= /bin/sh
 #
 PCDEFS   = -DSUN_OGL_NO_VERTEX_MACROS
 PCXXDEFS = -DSUN_OGL_NO_VERTEX_MACROS
+
 #
 # compiler options
 #
-PCOPTS   = -fPIC
-PCXXOPTS = -fPIC -fno-exceptions -fno-rtti
+PCOPTS   = 
+PCXXOPTS = 
 COPT     = -DNDEBUG -O
 CXXOPT   = -DNDEBUG -O
 CDEBUG   = -DDEBUG -g

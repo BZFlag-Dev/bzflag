@@ -18,14 +18,14 @@
 # increase build number for every potentially released build.
 # must change this in MSDev project, too.
 #
-VERSION = 10704006
+VERSION = 10704007
 
 #
 # version id string and build number.  these should be consistent with
 # VERSION.
 #
 VERSIONID = 1.7d
-VERSIONBUILD = 6
+VERSIONBUILD = 7
 
 #
 # uncomment one of these to change the release type.

@@ -62,6 +62,7 @@ class XDisplay : public BzfDisplay {
     boolean		getKey(const XEvent&, BzfKeyEvent&) const;
 
     boolean		doSetResolution(int);
+    boolean		doSetDefaultResolution();
 
   private:
     Rep*		rep;
@@ -84,6 +85,10 @@ class XDisplayMode {
     // set the display mode to modeNumber (an index into the list
     // returned by init().  return True iff successful.
     virtual boolean	set(int modeNumber);
+
+    // similar to set() except mode is to be treated as the default
+    // mode.  default implementation calls set().
+    virtual boolean	setDefault(int modeNumber);
 };
 
 #endif // BZF_XDISPLAY_H

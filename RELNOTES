@@ -1,6 +1,24 @@
 
                              bzflag 1.7 release notes
 
+bzflag 1.7d release 7
+---------------------
+
+* added sym link for bzfs in RPM spec file
+    can't launch server from client without it
+* changed RPM naming scheme to be more standard (now named 1.7d.7)
+* fixes for solaris compiler
+* fixed tarball make target to include top level directory
+* fixed mix-up between brightness and volume controls on options menu
+* fixed busy wait bug in linux sound code
+* incremented number of sound chunks on linux and fixed low water mark
+* reduced sound latency on linux
+* doubled sound volume
+* fixes for linux resolution changes (now destroys/recreates OpenGL contexts)
+* workaround for accelerated glx preventing screen redraw after exit
+* added -3dfx and -no3dfx bzflag options to set/unset MESA_GLX_FX
+
+
 bzflag 1.7d release 6
 ---------------------
 

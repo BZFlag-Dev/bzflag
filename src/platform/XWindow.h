@@ -61,6 +61,9 @@ class XWindow : public BzfWindow {
     // other X stuff
     static XWindow*	lookupWindow(Window);
 
+    static void		reactivateAll();
+    static void		deactivateAll();
+
   private:
     void		loadColormap();
     unsigned short	getIntensityValue(float i) const;

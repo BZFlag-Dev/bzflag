@@ -52,6 +52,7 @@ class BzfDisplay {
     int			getNumResolutions() const;
     const ResInfo*	getResolution(int index) const;
     int			getResolution() const;
+    int			getDefaultResolution() const;
     boolean		setResolution(int index);
     boolean		setDefaultResolution();
     int			findResolution(const char* name) const;

@@ -105,6 +105,7 @@ class World {
     static void		setWorld(World*);
 
     static void		init();
+    static void		done();
     static void		setFlagTexture(FlagSceneNode*);
 
   private:

@@ -819,7 +819,7 @@ HUDuiLabel*		KeyboardMapMenu::createLabel(
 class OptionsMenu : public HUDDialog {
   public:
 			OptionsMenu();
-			~OptionsMenu() { }
+			~OptionsMenu();
 
     HUDuiDefaultKey*	getDefaultKey()
 				{ return MenuDefaultKey::getInstance(); }
@@ -833,9 +833,11 @@ class OptionsMenu : public HUDDialog {
   private:
     HUDuiControl*	videoFormat;
     HUDuiControl*	keyMapping;
+    FormatMenu*		formatMenu;
+    KeyboardMapMenu*	keyboardMapMenu;
 };
 
-OptionsMenu::OptionsMenu()
+OptionsMenu::OptionsMenu() : formatMenu(NULL), keyboardMapMenu(NULL)
 {
   // add controls
   HUDuiControlList& list = getControls();
@@ -1057,16 +1059,22 @@ OptionsMenu::OptionsMenu()
   setFocus(list[1]);
 }
 
+OptionsMenu::~OptionsMenu()
+{
+  delete formatMenu;
+  delete keyboardMapMenu;
+}
+
 void			OptionsMenu::execute()
 {
   HUDuiControl* focus = HUDui::getFocus();
   if (focus == videoFormat) {
-    static FormatMenu formatMenu;
-    HUDDialogStack::get()->push(&formatMenu);
+    if (!formatMenu) formatMenu = new FormatMenu;
+    HUDDialogStack::get()->push(formatMenu);
   }
   else if (focus == keyMapping) {
-    static KeyboardMapMenu keyboardMapMenu;
-    HUDDialogStack::get()->push(&keyboardMapMenu);
+    if (!keyboardMapMenu) keyboardMapMenu = new KeyboardMapMenu;
+    HUDDialogStack::get()->push(keyboardMapMenu);
   }
 }
 
@@ -1119,11 +1127,15 @@ void			OptionsMenu::resize(int width, int height)
 
     if (videoFormat)
       i++;
-    ((HUDuiList*)list[i++])->setIndex(getSoundVolume());
 
+    // brightness
     BzfWindow* window = getMainWindow()->getWindow();
     if (window->hasGammaControl())
-      ((HUDuiList*)list[i++])->setIndex(gammaToIndex(window->getGamma()));
+      ((HUDuiList*)list[i])->setIndex(gammaToIndex(window->getGamma()));
+    i++;
+
+    // sound
+    ((HUDuiList*)list[i++])->setIndex(getSoundVolume());
 
     if (!renderer->useTexture())
       tex->setIndex(0);
@@ -1231,8 +1243,6 @@ float			OptionsMenu::indexToGamma(int index)
 
 class HelpMenu;
 
-static HelpMenu*	getHelpMenu(HUDDialog* = NULL, boolean next = True);
-
 class HelpMenuDefaultKey : public MenuDefaultKey {
   public:
 			HelpMenuDefaultKey() { }
@@ -1251,6 +1261,9 @@ class HelpMenu : public HUDDialog {
     void		execute() { }
     void		resize(int width, int height);
 
+   static HelpMenu*	getHelpMenu(HUDDialog* = NULL, boolean next = True);
+   static void		done();
+
   protected:
     HUDuiControl*	createLabel(const char* string,
 				const char* label = NULL);
@@ -1258,6 +1271,7 @@ class HelpMenu : public HUDDialog {
 
   private:
     HelpMenuDefaultKey	defaultKey;
+    static HelpMenu**	helpMenus;
 };
 
 boolean			HelpMenuDefaultKey::keyPress(const BzfKeyEvent& key)
@@ -1265,13 +1279,13 @@ boolean			HelpMenuDefaultKey::keyPress(const BzfKeyEvent& key)
   if (key.button == BzfKeyEvent::PageUp) {
     HUDDialog* oldMenu = HUDDialogStack::get()->top();
     HUDDialogStack::get()->pop();
-    HUDDialogStack::get()->push(getHelpMenu(oldMenu, False));
+    HUDDialogStack::get()->push(HelpMenu::getHelpMenu(oldMenu, False));
     return True;
   }
   if (key.button == BzfKeyEvent::PageDown || key.ascii == 13) {
     HUDDialog* oldMenu = HUDDialogStack::get()->top();
     HUDDialogStack::get()->pop();
-    HUDDialogStack::get()->push(getHelpMenu(oldMenu, True));
+    HUDDialogStack::get()->push(HelpMenu::getHelpMenu(oldMenu, True));
     return True;
   }
   return MenuDefaultKey::keyPress(key);
@@ -1862,27 +1876,40 @@ float			Help9Menu::getLeftSide(int width, int height)
 // help menu getter
 //
 
-static HelpMenu*	getHelpMenu(HUDDialog* dialog, boolean next)
+static const int	numHelpMenus = 9;
+HelpMenu**		HelpMenu::helpMenus = NULL;
+
+HelpMenu*		HelpMenu::getHelpMenu(HUDDialog* dialog, boolean next)
 {
-  static Help1Menu help1;
-  static Help2Menu help2;
-  static Help3Menu help3;
-  static Help4Menu help4;
-  static Help5Menu help5;
-  static Help6Menu help6;
-  static Help7Menu help7;
-  static Help8Menu help8;
-  static Help9Menu help9;
-  if (dialog == &help1) return next ? (HelpMenu*)&help2 : (HelpMenu*)&help9;
-  if (dialog == &help2) return next ? (HelpMenu*)&help3 : (HelpMenu*)&help1;
-  if (dialog == &help3) return next ? (HelpMenu*)&help4 : (HelpMenu*)&help2;
-  if (dialog == &help4) return next ? (HelpMenu*)&help5 : (HelpMenu*)&help3;
-  if (dialog == &help5) return next ? (HelpMenu*)&help6 : (HelpMenu*)&help4;
-  if (dialog == &help6) return next ? (HelpMenu*)&help7 : (HelpMenu*)&help5;
-  if (dialog == &help7) return next ? (HelpMenu*)&help8 : (HelpMenu*)&help6;
-  if (dialog == &help8) return next ? (HelpMenu*)&help9 : (HelpMenu*)&help7;
-  if (dialog == &help9) return next ? (HelpMenu*)&help1 : (HelpMenu*)&help8;
-  return next ? (HelpMenu*)&help1 : (HelpMenu*)&help9;
+  if (!helpMenus) {
+    helpMenus = new HelpMenu*[numHelpMenus];
+    helpMenus[0] = new Help1Menu;
+    helpMenus[1] = new Help2Menu;
+    helpMenus[2] = new Help3Menu;
+    helpMenus[3] = new Help4Menu;
+    helpMenus[4] = new Help5Menu;
+    helpMenus[5] = new Help6Menu;
+    helpMenus[6] = new Help7Menu;
+    helpMenus[7] = new Help8Menu;
+    helpMenus[8] = new Help9Menu;
+  }
+  for (int i = 0; i < numHelpMenus; i++)
+    if (dialog == helpMenus[i])
+      if (next)
+	return helpMenus[(i + 1) % numHelpMenus];
+      else
+	return helpMenus[(i - 1 + numHelpMenus) % numHelpMenus];
+  return next ? helpMenus[0] : helpMenus[numHelpMenus - 1];
+}
+
+void			HelpMenu::done()
+{
+  if (helpMenus) {
+    for (int i = 0; i < numHelpMenus; i++)
+      delete helpMenus[i];
+    delete[] helpMenus;
+    helpMenus = NULL;
+  }
 }
 
 //
@@ -3266,7 +3293,7 @@ HUDuiLabel*		ServerStartMenu::createLabel(const char* str)
 class JoinMenu : public HUDDialog {
   public:
 			JoinMenu();
-			~JoinMenu() { }
+			~JoinMenu();
 
     HUDuiDefaultKey*	getDefaultKey()
 				{ return MenuDefaultKey::getInstance(); }
@@ -3291,12 +3318,15 @@ class JoinMenu : public HUDDialog {
     HUDuiLabel*		status;
     HUDuiLabel*		failedMessage;
     ErrorCallback	oldErrorCallback;
+    ServerStartMenu*	serverStartMenu;
+    ServerMenu*		serverMenu;
     static JoinMenu*	activeMenu;
 };
 
 JoinMenu*		JoinMenu::activeMenu = NULL;
 
-JoinMenu::JoinMenu() : oldErrorCallback(NULL)
+JoinMenu::JoinMenu() : oldErrorCallback(NULL),
+				serverStartMenu(NULL), serverMenu(NULL)
 {
   // add controls
   HUDuiControlList& list = getControls();
@@ -3395,6 +3425,12 @@ JoinMenu::JoinMenu() : oldErrorCallback(NULL)
   setFocus(list[1]);
 }
 
+JoinMenu::~JoinMenu()
+{
+  delete serverStartMenu;
+  delete serverMenu;
+}
+
 void			JoinMenu::show()
 {
   activeMenu = this;
@@ -3435,13 +3471,13 @@ void			JoinMenu::execute()
   HUDuiControlList& list = getControls();
   HUDuiControl* focus = HUDui::getFocus();
   if (focus == list[7]) {
-    static ServerStartMenu serverStartMenu;
-    HUDDialogStack::get()->push(&serverStartMenu);
+    if (!serverStartMenu) serverStartMenu = new ServerStartMenu;
+    HUDDialogStack::get()->push(serverStartMenu);
   }
 
   else if (focus == list[1]) {
-    static ServerMenu serverMenu;
-    HUDDialogStack::get()->push(&serverMenu);
+    if (!serverMenu) serverMenu = new ServerMenu;
+    HUDDialogStack::get()->push(serverMenu);
   }
 
   else if (focus == list[2]) {
@@ -3556,13 +3592,14 @@ void			JoinMenu::resize(int width, int height)
 //
 
 static const char*	titleFile = "title";
-OpenGLTexFont		MainMenu::font;
-OpenGLTexture		MainMenu::title;
+OpenGLTexFont*		MainMenu::mainFont = NULL;
 
-MainMenu::MainMenu() : HUDDialog()
+MainMenu::MainMenu() : HUDDialog(), joinMenu(NULL),
+				optionsMenu(NULL), quitMenu(NULL)
 {
-  // force creation of font
-  getFont();
+  // create font
+  font = TextureFont::getTextureFont(TextureFont::HelveticaBoldItalic, True);
+  mainFont = &font;
 
   // load title
   title = getTexture(titleFile, OpenGLTexture::Linear, False, True);
@@ -3623,15 +3660,16 @@ MainMenu::MainMenu() : HUDDialog()
 
 MainMenu::~MainMenu()
 {
-  // do nothing
+  mainFont = NULL;
+  delete joinMenu;
+  delete optionsMenu;
+  delete quitMenu;
+  HelpMenu::done();
 }
 
 const OpenGLTexFont&	MainMenu::getFont()
 {
-  // make font
-  if (!font.isValid())
-    font = TextureFont::getTextureFont(TextureFont::HelveticaBoldItalic, True);
-  return font;
+  return *mainFont;
 }
 
 HUDuiDefaultKey*	MainMenu::getDefaultKey()
@@ -3644,19 +3682,19 @@ void			MainMenu::execute()
   HUDuiControlList& list = getControls();
   HUDuiControl* focus = HUDui::getFocus();
   if (focus == list[2]) {
-    static JoinMenu joinMenu;
-    HUDDialogStack::get()->push(&joinMenu);
+    if (!joinMenu) joinMenu = new JoinMenu;
+    HUDDialogStack::get()->push(joinMenu);
   }
   else if (focus == list[3]) {
-    static OptionsMenu optionsMenu;
-    HUDDialogStack::get()->push(&optionsMenu);
+    if (!optionsMenu) optionsMenu = new OptionsMenu;
+    HUDDialogStack::get()->push(optionsMenu);
   }
   else if (focus == list[4]) {
-    HUDDialogStack::get()->push(getHelpMenu());
+    HUDDialogStack::get()->push(HelpMenu::getHelpMenu());
   }
   else if (focus == list[5]) {
-    static QuitMenu quitMenu;
-    HUDDialogStack::get()->push(&quitMenu);
+    if (!quitMenu) quitMenu = new QuitMenu;
+    HUDDialogStack::get()->push(quitMenu);
   }
 }
 

@@ -21,8 +21,8 @@
 #
 
 %define name bzflag
-%define version 1.7d
-%define release 6
+%define version 1.7d.6
+%define release 1
 
 %define bzbasedir	/usr/X11R6/lib/X11/bzflag
 %define bzbindir	%{bzbasedir}/bin
@@ -38,7 +38,7 @@ copyright:	Chris Schoeneman 1993-1999
 packager:	Chris Schoeneman <crs23@bigfoot.com>
 url:		http://www.bigfoot.com/~bzflag/
 summary:	multiplayer 3D tank battle game
-source:		http://www.bigfoot.com/~bzflag/packages/src/%{name}-%{version}-%{release}.src.tar.gz
+source:		http://www.bigfoot.com/~bzflag/packages/src/%{name}-%{version}.src.tar.gz
 buildroot:	/var/tmp/%{name}-%{version}-%{release}-root
 
 # all we want here is to remove glide, but RPM does not provide a way. ;-(
@@ -84,6 +84,7 @@ gzip $RPM_BUILD_ROOT%{bzmandir}/man6/*.6
 install -m644 data/*.rgb data/*.wav $RPM_BUILD_ROOT%{bzdatadir}
 install bin/* $RPM_BUILD_ROOT%{bzbindir}
 ln -s %{bzbindir}/bzflag $RPM_BUILD_ROOT/usr/X11R6/bin/bzflag
+ln -s %{bzbindir}/bzfs $RPM_BUILD_ROOT/usr/X11R6/bin/bzfs
 
 %clean
 rm -rf $RPM_BUILD_ROOT

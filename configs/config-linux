@@ -52,11 +52,11 @@ PCXXDEFS = -D_BSD_SOURCE -D_POSIX_SOURCE -DHALF_RATE_AUDIO \
 #
 # compiler options
 #
-PCOPTS   = -fPIC -Wall -W -ansi $(ACOPTS)
-PCXXOPTS = -fPIC -Wall -W -fno-exceptions -fno-rtti $(ACXXOPTS)
-COPT     = -DNDEBUG -O5
-CXXOPT   = -DNDEBUG -O5 -ffast-math -fomit-frame-pointer -fnonnull-objects \
-		-fexpensive-optimizations -funroll-loops
+PCOPTS   = -Wall -W -ansi $(ACOPTS)
+PCXXOPTS = -Wall -W -fno-exceptions -fno-rtti $(ACXXOPTS)
+COPT     = -DNDEBUG -O2
+CXXOPT   = -DNDEBUG -O2 -ffast-math -fomit-frame-pointer -fnonnull-objects \
+		-fexpensive-optimizations
 CDEBUG   = -DDEBUG -g
 CXXDEBUG = -DDEBUG -g
 CWOFF    =
@@ -65,8 +65,8 @@ CXXWOFF  =
 #
 # search paths
 #
-PCINCS   = -I/usr/X11R6/include
-PCXXINCS = -I/usr/X11R6/include
+PCINCS   = -I/usr/include -I/usr/X11R6/include
+PCXXINCS = -I/usr/include -I/usr/X11R6/include
 
 #
 # linker options

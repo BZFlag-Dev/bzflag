@@ -21,6 +21,10 @@
 #include "HUDDialog.h"
 #include "OpenGLTexFont.h"
 
+class JoinMenu;
+class OptionsMenu;
+class QuitMenu;
+
 class MenuDefaultKey : public HUDuiDefaultKey {
   public:
 			MenuDefaultKey();
@@ -47,8 +51,12 @@ class MainMenu : public HUDDialog {
     static const OpenGLTexFont& getFont();
 
   private:
-    static OpenGLTexFont font;
-    static OpenGLTexture title;
+    OpenGLTexFont	font;
+    OpenGLTexture	title;
+    JoinMenu*		joinMenu;
+    OptionsMenu*	optionsMenu;
+    QuitMenu*		quitMenu;
+    static OpenGLTexFont* mainFont;
 };
 
 class ServerStartMenu : public HUDDialog {

@@ -45,6 +45,8 @@
 
 #if defined(sun)
 #define CNCTType		struct sockaddr
+#define RecvType		char*
+#define SendType		const char*
 #endif
 
 #if !defined(INADDR_NONE)
@@ -52,6 +54,12 @@
 #endif
 #if !defined(CNCTType)
 #define CNCTType		const struct sockaddr
+#endif
+#if !defined(RecvType)
+#define RecvType		void*
+#endif
+#if !defined(SendType)
+#define SendType		const void*
 #endif
 
 #define	RELAY_BUFLEN		4096		/* size of relay buffers */
@@ -566,7 +574,7 @@ static void		closingRelay(Relay* relay, int sendReject)
 
   /* send client a rejection if requested */
   if (sendReject)
-    send(relay->fdSrc, "BZFS107d\000\000", 10, 0);
+    send(relay->fdSrc, (SendType)"BZFS107d\000\000", 10, 0);
 }
 
 static void		createRelay(struct sockaddr_in* serverAddr,
@@ -743,7 +751,7 @@ static void		readHello(Relay* relay, struct sockaddr_in* serverAddr)
   int n;
 
   /* read data from server */
-  n = recv(relay->fdDst, relay->dstMark, 10, 0);
+  n = recv(relay->fdDst, (RecvType)relay->dstMark, 10, 0);
   if (n < 0) {
     printl(DL_NOTICE, BZFR_LOG_WARN, "error reading from server: %s",
 							strerror(errno));
@@ -768,7 +776,7 @@ static void		readHello(Relay* relay, struct sockaddr_in* serverAddr)
 	relay->dstToSrcBuffer[2] != 'F' ||
 	relay->dstToSrcBuffer[3] != 'S') {
       /* not a bzflag server.  pass on whatever gibberish we got */
-      send(relay->fdSrc, relay->dstToSrcBuffer, 10, 0);
+      send(relay->fdSrc, (SendType)relay->dstToSrcBuffer, 10, 0);
       closingRelay(relay, 0);
 
       for (n = 0; n < 10; n++)
@@ -786,7 +794,7 @@ static void		readHello(Relay* relay, struct sockaddr_in* serverAddr)
     /* if port is zero, server is rejecting connection */
     if (port == 0) {
       printl(DL_NOTICE, BZFR_LOG_INFO, "server rejected %s", relay->srcName);
-      send(relay->fdSrc, relay->dstToSrcBuffer, 10, 0);
+      send(relay->fdSrc, (SendType)relay->dstToSrcBuffer, 10, 0);
       closingRelay(relay, 0);
       return;
     }
@@ -866,7 +874,7 @@ static void		connectToServerAgain(Relay* relay,
   relay->dstToSrcBuffer[9] = (unsigned char)(ntohs(addr.sin_port) & 0xff);
 
   /* send hello message to client to cause client to reconnect */
-  if (send(relay->fdSrc, relay->dstToSrcBuffer, 10, 0) != 10) {
+  if (send(relay->fdSrc, (SendType)relay->dstToSrcBuffer, 10, 0) != 10) {
     printl(DL_NOTICE, BZFR_LOG_ERR, "cannot send hello to client %s: %s",
 		relay->srcName, strerror(errno));
     closingRelay(relay, 0);
@@ -926,7 +934,7 @@ static void		acceptClientReconnect(Relay* relays)
 static void		readFromServer(Relay* relay)
 {
   /* read from server */
-  int n = recv(relay->fdDst, relay->dstToSrcBuffer, RELAY_BUFLEN, 0);
+  int n = recv(relay->fdDst, (RecvType)relay->dstToSrcBuffer, RELAY_BUFLEN, 0);
 
   /* put relay in closing state if server hungup */
   if (n == 0) {
@@ -943,7 +951,7 @@ static void		readFromServer(Relay* relay)
 static void		readFromClient(Relay* relay)
 {
   /* read from client */
-  int n = recv(relay->fdSrc, relay->srcToDstBuffer, RELAY_BUFLEN, 0);
+  int n = recv(relay->fdSrc, (RecvType)relay->srcToDstBuffer, RELAY_BUFLEN, 0);
 
   /* shutdown relay if client hungup */
   if (n == 0) {
@@ -960,7 +968,7 @@ static void		readFromClient(Relay* relay)
 static void		writeToServer(Relay* relay)
 {
   /* write data to server */
-  int n = send(relay->fdDst, relay->srcMark, relay->srcToDstFilled, 0);
+  int n = send(relay->fdDst, (SendType)relay->srcMark, relay->srcToDstFilled, 0);
 
   /* update output queue and record bytes sent */
   if (n > 0) {
@@ -973,7 +981,7 @@ static void		writeToServer(Relay* relay)
 static void		writeToClient(Relay* relay)
 {
   /* write data to client */
-  int n = send(relay->fdSrc, relay->dstMark, relay->dstToSrcFilled, 0);
+  int n = send(relay->fdSrc, (SendType)relay->dstMark, relay->dstToSrcFilled, 0);
 
   /* update output queue and record bytes sent */
   if (n > 0) {
@@ -1511,14 +1519,14 @@ parseServerArg:
        * on these sockets so just throw away anything that comes in. */
       if (scan->fdOldSrc != -1 && FD_ISSET(scan->fdOldSrc, &read_set)) {
 	char buffer[256];
-	if (recv(scan->fdOldSrc, buffer, sizeof(buffer), 0) == 0) {
+	if (recv(scan->fdOldSrc, (RecvType)buffer, sizeof(buffer), 0) == 0) {
 	  close(scan->fdOldSrc);
 	  scan->fdOldSrc = -1;
 	}
       }
       if (scan->fdOldDst != -1 && FD_ISSET(scan->fdOldDst, &read_set)) {
 	char buffer[256];
-	if (recv(scan->fdOldDst, buffer, sizeof(buffer), 0) == 0) {
+	if (recv(scan->fdOldDst, (RecvType)buffer, sizeof(buffer), 0) == 0) {
 	  close(scan->fdOldDst);
 	  scan->fdOldDst = -1;
 	}

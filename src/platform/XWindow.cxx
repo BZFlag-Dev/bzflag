@@ -12,6 +12,7 @@
 
 #include "XWindow.h"
 #include "XVisual.h"
+#include "OpenGLGState.h"
 #if defined(__linux__) && defined(XF86VIDMODE_EXT)
 #  define USE_XF86VIDMODE_EXT
 #  define private c_private
@@ -632,4 +633,20 @@ XWindow*		XWindow::lookupWindow(Window w)
   XWindow* scan = first;
   while (scan && scan->window != w) scan = scan->next;
   return scan;
+}
+
+void			XWindow::deactivateAll()
+{
+  for (XWindow* scan = first; scan; scan = scan->next)
+    scan->freeContext();
+}
+
+void			XWindow::reactivateAll()
+{
+  for (XWindow* scan = first; scan; scan = scan->next)
+    scan->makeContext();
+
+  // reload context data
+  if (first)
+    OpenGLGState::initContext();
 }

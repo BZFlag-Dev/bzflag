@@ -44,11 +44,11 @@ pristine: clobber
 	$(CD) package; $(MAKE) $(MFLAGS) clobber
 	$(RMR) $(LIBDIR) $(TARGETDIR) $(PACKAGEDIR)
 	$(RM) config-sys
-	-$(RM) $(DEPTH)/bzflag-$(VERSIONID)-$(VERSIONBUILD).src.tar
-	-$(RM) $(DEPTH)/bzflag-$(VERSIONID)-$(VERSIONBUILD).src.tar.gz
+	-$(RM) $(DEPTH)/bzflag-$(VERSIONID).$(VERSIONBUILD).src.tar
+	-$(RM) $(DEPTH)/bzflag-$(VERSIONID).$(VERSIONBUILD).src.tar.gz
 
 tarball: pristine
-	tar cf $(DEPTH)/.bzflag-$(VERSIONID)-$(VERSIONBUILD).src.tar $(DEPTH)/*
-	gzip $(DEPTH)/.bzflag-$(VERSIONID)-$(VERSIONBUILD).src.tar
-	mv $(DEPTH)/.bzflag-$(VERSIONID)-$(VERSIONBUILD).src.tar.gz \
-		$(DEPTH)/bzflag-$(VERSIONID)-$(VERSIONBUILD).src.tar.gz
+	cd $(DEPTH)/..; \
+	tar cf bzflag-$(VERSIONID).$(VERSIONBUILD).src.tar bzflag; \
+	gzip bzflag-$(VERSIONID).$(VERSIONBUILD).src.tar; \
+	mv bzflag-$(VERSIONID).$(VERSIONBUILD).src.tar.gz bzflag

@@ -138,7 +138,7 @@ boolean			LinuxMedia::openIoctl(
   return True;
 }
 
-static const int	NumChunks = 3;
+static const int	NumChunks = 4;
 
 boolean			LinuxMedia::openAudioHardware()
 {
@@ -166,7 +166,7 @@ boolean			LinuxMedia::openAudioHardware()
 
   // now how many fragments and what's the low water mark (in fragments)?
   int fragmentInfo = (NumChunks << 16) | fragmentSize;
-  audioLowWaterMark = NumChunks - 1;
+  audioLowWaterMark = 2;
 
   // open device (but don't wait for it)
   audioPortFd = open("/dev/dsp", O_WRONLY | O_NDELAY, 0);
@@ -213,9 +213,12 @@ boolean			LinuxMedia::openAudioHardware()
   // we couldn't set the fragment size then force the buffer size to
   // the size we would've asked for.  we'll force the buffer to be
   // flushed after we write that much data to keep latency low.
-  if (noSetFragment || !openIoctl(SNDCTL_DSP_GETBLKSIZE,
-						&audioBufferSize, False))
+  if (noSetFragment ||
+	!openIoctl(SNDCTL_DSP_GETBLKSIZE, &audioBufferSize, False) ||
+	audioBufferSize > (1 << fragmentSize)) {
     audioBufferSize = 1 << fragmentSize;
+    noSetFragment = true;
+  }
   if (!audio8Bit)
     audioBufferSize >>= 1;
 
@@ -341,7 +344,7 @@ boolean			LinuxMedia::isAudioTooEmpty() const
     audio_buf_info info;
     if (ioctl(audioPortFd, SNDCTL_DSP_GETOSPACE, &info) < 0)
       return False;
-    return info.fragments >= audioLowWaterMark;
+    return info.fragments > info.fragstotal - audioLowWaterMark;
   }
 }
 
@@ -440,7 +443,7 @@ void			LinuxMedia::audioSleep(
       FD_ZERO(&commandSelectSet);
       FD_SET(queueOut, &commandSelectSet);
       tv.tv_sec=0;
-      tv.tv_usec=0;
+      tv.tv_usec=50000;
       if (select(maxFd, &commandSelectSet, 0, 0, &tv)) break;
 
     } while (endTime<0.0 || (TimeKeeper::getCurrent()-start)<endTime);

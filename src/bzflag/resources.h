@@ -20,7 +20,12 @@
 #include "common.h"
 #include "BzfString.h"
 
+#if defined(sun)
+// solaris compiler doesn't like declaration of istream
+#include "bzfio.h"
+#else
 class istream;
+#endif
 
 class ResourceDatabase {
   public:

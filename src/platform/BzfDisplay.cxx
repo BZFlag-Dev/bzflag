@@ -95,6 +95,11 @@ int			BzfDisplay::getResolution() const
   return currentResolution;
 }
 
+int			BzfDisplay::getDefaultResolution() const
+{
+  return defaultResolution;
+}
+
 boolean			BzfDisplay::setResolution(int index)
 {
   if (index < 0 || index >= numResolutions) return False;

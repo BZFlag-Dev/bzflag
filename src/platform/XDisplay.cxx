@@ -270,6 +270,11 @@ boolean			XDisplay::doSetResolution(int modeIndex)
   return mode->set(modeIndex);
 }
 
+boolean			XDisplay::doSetDefaultResolution()
+{
+  return mode->setDefault(getDefaultResolution());
+}
+
 //
 // XDisplayMode
 //
@@ -294,4 +299,9 @@ boolean			XDisplayMode::set(int)
 {
   // no switching
   return False;
+}
+
+boolean			XDisplayMode::setDefault(int mode)
+{
+  return set(mode);
 }

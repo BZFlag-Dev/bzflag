@@ -132,7 +132,8 @@ class Player {
     SphereSceneNode*	pausedSphere;
     GLfloat		color[4];
     boolean		notResponding;
-    static OpenGLTexture tankTexture;
+    static OpenGLTexture* tankTexture;
+    static int		totalCount;
 
     // permanent data
     PlayerId		id;			// my credentials

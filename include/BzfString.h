@@ -39,7 +39,12 @@
 
 #include "common.h"
 
+#if defined(sun)
+// solaris compiler doesn't like declaration of ostream
+#include "bzfio.h"
+#else
 class ostream;
+#endif
 
 class BzfString {
   public:

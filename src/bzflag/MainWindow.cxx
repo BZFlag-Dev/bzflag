@@ -33,13 +33,13 @@ MainWindow::MainWindow(BzfWindow* _window) :
 				minPanelHeight(120),
 				minViewHeight(120)
 {
-  window->addResizeCallback(resize, this);
+  window->addResizeCallback(resizeCB, this);
   resize();
 }
 
 MainWindow::~MainWindow()
 {
-  window->removeResizeCallback(resize, this);
+  window->removeResizeCallback(resizeCB, this);
 }
 
 void			MainWindow::setZoomFactor(int _zoomFactor)
@@ -222,7 +222,7 @@ void			MainWindow::resize()
   setQuadrant(quadrant);
 }
 
-void			MainWindow::resize(void* _self)
+void			MainWindow::resizeCB(void* _self)
 {
   MainWindow* self = (MainWindow*)_self;
   self->resize();

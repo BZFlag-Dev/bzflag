@@ -89,10 +89,11 @@ boolean			HUDuiDefaultKey::keyRelease(const BzfKeyEvent&)
 // HUDuiControl
 //
 
-OpenGLGState		HUDuiControl::gstate;
-OpenGLTexture		HUDuiControl::arrow;
+OpenGLGState*		HUDuiControl::gstate;
+OpenGLTexture*		HUDuiControl::arrow;
 int			HUDuiControl::arrowFrame = 0;
 TimeKeeper		HUDuiControl::lastTime;
+int			HUDuiControl::totalCount = 0;
 
 HUDuiControl::HUDuiControl() : showingFocus(True),
 				x(0.0f), y(0.0f),
@@ -103,31 +104,35 @@ HUDuiControl::HUDuiControl() : showingFocus(True),
 				prev(this), next(this),
 				cb(NULL), userData(NULL)
 {
-  static boolean init = False;
-  if (!init) {
-    init = True;
-
+  if (totalCount == 0) {
     // load arrow texture
-    arrow = getTexture(arrowFile, OpenGLTexture::Linear);
+    arrow = new OpenGLTexture;
+    *arrow = getTexture(arrowFile, OpenGLTexture::Linear);
 
     // make gstate for focus arrow
-    OpenGLGStateBuilder builder(gstate);
-    builder.setTexture(arrow);
+    gstate = new OpenGLGState;
+    OpenGLGStateBuilder builder(*gstate);
+    builder.setTexture(*arrow);
     builder.setBlending();
 //    builder.setSmoothing();
     builder.enableTextureReplace();
-    gstate = builder.getState();
+    *gstate = builder.getState();
 
     // get start time for animation
     lastTime = TimeKeeper::getCurrent();
   }
 
-  // do nothing
+  totalCount++;
 }
 
 HUDuiControl::~HUDuiControl()
 {
-  // do nothing
+  if (--totalCount == 0) {
+    delete arrow;
+    delete gstate;
+    arrow = NULL;
+    gstate = NULL;
+  }
 }
 
 float			HUDuiControl::getLabelWidth() const
@@ -255,7 +260,7 @@ void			HUDuiControl::renderFocus()
 {
   const float fh2 = floorf(0.5f * fontHeight);
 
-  if (gstate.isTextured()) {
+  if (gstate->isTextured()) {
     static const int uFrames = 1; // 4;
     static const int vFrames = 1; // 4;
     static const float du = 1.0f / (float)uFrames;
@@ -263,7 +268,7 @@ void			HUDuiControl::renderFocus()
 
     const float u = (float)(arrowFrame % uFrames) / (float)uFrames;
     const float v = (float)(arrowFrame / uFrames) / (float)vFrames;
-    gstate.setState();
+    gstate->setState();
     glColor3f(1.0f, 1.0f, 1.0f);
     glBegin(GL_QUADS);
       glTexCoord2f(u, v);
@@ -284,7 +289,7 @@ void			HUDuiControl::renderFocus()
   }
 
   else {
-    gstate.setState();
+    gstate->setState();
     glColor3f(1.0f, 1.0f, 1.0f);
     glBegin(GL_TRIANGLES);
       glVertex2f(x - fh2 - fontHeight, y + fontHeight - 1.0f);

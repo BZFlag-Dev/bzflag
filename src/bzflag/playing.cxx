@@ -4202,6 +4202,8 @@ void			startPlaying(BzfDisplay* _display,
   sceneRenderer->setSceneDatabase(NULL);
   delete zScene;
   delete bspScene;
+  ShotStrategy::done();
+  World::done();
   zScene = NULL;
   bspScene = NULL;
   mainWindow = NULL;
