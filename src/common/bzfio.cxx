@@ -27,9 +27,9 @@ void setDebugTimestamp (bool enable, bool micros)
   doMicros = micros;
 }
 
-static char *timestamp (char *buf){
+static char *timestamp (char *buf, bool micros){
   struct tm *tm;
-  if (doMicros) {
+  if (micros) {
     struct timeval tv;
     gettimeofday (&tv, NULL);
     tm = localtime (&tv.tv_sec);
@@ -57,11 +57,11 @@ void formatDebug(const char* fmt, ...)
     va_end(args);
     #if defined(_MSC_VER)
       if (doTimestamp) 
-	      W32_DEBUG_TRACE(tsbuf);
+	      W32_DEBUG_TRACE(timestamp (tsbuf, doMicros));
       W32_DEBUG_TRACE(buffer);
     #else
       if (doTimestamp)
-        std::cout << timestamp (tsbuf);
+        std::cout << timestamp (tsbuf, doMicros);
       std::cout << buffer;
     #endif
   }
