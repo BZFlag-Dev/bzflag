@@ -807,7 +807,7 @@ static void sendMessageToListServerForReal(int index)
   if (link.socket == NotConnected)
     return;
 
-  char msg[2048] = "";
+  char msg[4096] = "";
 
   if (link.nextMessageType == ListServerLink::ADD) {
     if (gameOver) {
@@ -853,10 +853,24 @@ static void sendMessageToListServerForReal(int index)
     if (send(link.socket, msg, strlen(msg), 0) == -1) {
       perror("List server send failed");
       DEBUG3("Unable to send to the list server!\n");
+    } else {
+      /* listen for a reply - this is necessary for extremely laggy
+       * interconnects or proxy servers where the socket is closed
+       * before the server has a chance to begin sending back a response,
+       * resulting in the request never being fully delivered.
+       */
+      TimeKeeper timer=TimeKeeper::getCurrent();
+      float elapsed=0.0f;
+      const float MAX_ELAPSE = 0.1f; // wait up to this many seconds for the
+                                     // list server to respond.
+      while ((recv(link.socket, msg, strlen(msg), 0) == -1) && ((elapsed = (TimeKeeper::getCurrent() - timer)) < MAX_ELAPSE))
+	;;
+      DEBUG3("received a reply from list server after %.3f seconds (max wait is %.3f seconds)\n", elapsed, MAX_ELAPSE);
+      DEBUG4("BEGIN list server reply\n%s\nEND list server reply\n", msg);
     }
   }
 
-  // hangup (we don't care about replies)
+  // hangup
   closeListServer(index);
 }
 
@@ -2158,11 +2172,8 @@ static void rejectPlayer(int playerIndex, uint16_t code)
 
 static void addPlayer(int playerIndex)
 {
-  // find out if we're the first player to join
-  bool firstPlayer = true;
   for (PlayerId playerid = 0; playerid < curMaxPlayers; playerid++) {
     if ((player[playerid].state != PlayerNoExist) && (playerid != playerIndex)) {
-      firstPlayer = false;
       break;
     }
   }
