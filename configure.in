@@ -152,7 +152,7 @@ case $host_os in
 	fi;;
 esac
 
-if test $prefix == NONE; then
+if test $prefix = NONE; then
 	prefix=$ac_default_prefix
 fi
 INSTALL_DATA_DIR=`eval echo $datadir/bzflag`
