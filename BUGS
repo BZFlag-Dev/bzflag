@@ -10,6 +10,9 @@ must fix for 1.10.4 patch release
 recent bugs
 ------------
 
+- The window isn't shaded when the menu is shown unless we're connected to a
+  server
+
 - On a multihead Linux system with Xinerama, BZFlag spans itself across all
   monitors- usually not what the user wants. This could be fixed by implementing
   Xinerama support in BZFlag's X platform code, or by just implementing an SDL
