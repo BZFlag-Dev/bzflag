@@ -498,7 +498,7 @@ bool			ComposeDefaultKey::keyPress(const BzfKeyEvent& key)
 	(key.button == BzfKeyEvent::Down))
       return true;
   }
-  
+
   switch (key.ascii) {
     case 3:	// ^C
     case 27:	// escape
@@ -3323,7 +3323,7 @@ static void		handleServerMessage(bool human, uint16_t code,
 	delete[] value;
 	break;
     }
-		
+
     case MsgTeleport: {
       PlayerId id;
       uint16_t from, to;
@@ -6091,7 +6091,9 @@ static void		playingLoop()
 	if (radar) radar->render(*sceneRenderer, blankRadar);
 
 	// set up view for right eye
-	glColorMask(GL_FALSE, GL_FALSE, GL_TRUE, GL_FALSE);
+	glColorMask(GL_FALSE, GL_TRUE, GL_TRUE, GL_FALSE);
+	// for red/blue to somewhat work ...
+	//glColorMask(GL_FALSE, GL_FALSE, GL_TRUE, GL_FALSE);
 	sceneRenderer->getViewFrustum().setOffset(-EyeDisplacement, FocalPlane);
 
 	// draw right eye's view
@@ -6525,7 +6527,7 @@ void			startPlaying(BzfDisplay* _display,
     BZDB->setPersistent(globalDBItems[gi].name, globalDBItems[gi].persistent);
     BZDB->setPermission(globalDBItems[gi].name, globalDBItems[gi].permission);
   }
-  
+
   // initalization
   display = _display;
   sceneRenderer = &renderer;
