@@ -40,6 +40,9 @@
 /* Require libcurl */
 #define HAVE_CURL 1
 
+/* Use modern template for std::count */
+#define HAVE_STD_COUNT 1
+
 // define our OS
 #ifndef BZ_BUILD_OS
   #if defined(_MSC_VER) && (_MSC_VER == 1100)

@@ -36,6 +36,9 @@
 /* On windows, strcasecmp is really strcmp */
 #define HAVE_STRICMP 1
 
+/* Use modern template for std::count */
+#define HAVE_STD_COUNT 1
+
 /* Define to 1 if you have regex stuff available */
 /* undef HAVE_REGEX_H */
 
