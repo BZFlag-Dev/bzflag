@@ -178,6 +178,9 @@
 				RelativePath="..\..\src\game\BzMaterial.cxx">
 			</File>
 			<File
+				RelativePath="..\..\src\game\CacheManager.cxx">
+			</File>
+			<File
 				RelativePath="..\..\src\game\CollisionManager.cxx">
 			</File>
 			<File

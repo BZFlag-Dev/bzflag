@@ -316,6 +316,9 @@ copy debug\*.pdb ..\..\*.pdb
 				</FileConfiguration>
 			</File>
 			<File
+				RelativePath="..\..\src\bzflag\CacheMenu.cxx">
+			</File>
+			<File
 				RelativePath="..\..\src\bzflag\callbacks.cxx">
 				<FileConfiguration
 					Name="Debug|Win32">
@@ -378,6 +381,9 @@ copy debug\*.pdb ..\..\*.pdb
 						PreprocessorDefinitions=""
 						BasicRuntimeChecks="3"/>
 				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\src\bzflag\Downloads.cxx">
 			</File>
 			<File
 				RelativePath="..\..\src\bzflag\EntryZone.cxx">
@@ -1350,6 +1356,9 @@ copy debug\*.pdb ..\..\*.pdb
 				RelativePath="..\..\src\bzflag\BaseLocalPlayer.h">
 			</File>
 			<File
+				RelativePath="..\..\src\bzflag\CacheMenu.h">
+			</File>
+			<File
 				RelativePath="..\..\src\bzflag\callbacks.h">
 			</File>
 			<File
@@ -1369,6 +1378,9 @@ copy debug\*.pdb ..\..\*.pdb
 			</File>
 			<File
 				RelativePath="..\..\src\bzflag\DisplayMenu.h">
+			</File>
+			<File
+				RelativePath="..\..\src\bzflag\Downloads.h">
 			</File>
 			<File
 				RelativePath="..\..\src\bzflag\EffectsMenu.h">
