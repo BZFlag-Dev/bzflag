@@ -263,10 +263,7 @@ void sendFlagUpdate(FlagInfo &flag)
 {
   void *buf, *bufStart = getDirectMessageBuffer();
   buf = nboPackUShort(bufStart,1);
-  if (idIsIn)
-    buf = flag.pack(buf);
-  else
-    buf = flag.fakePack(buf);
+  buf = flag.pack(buf, idIsIn);
   broadcastMessage(MsgFlagUpdate, (char*)buf - (char*)bufStart, bufStart);
 }
 
@@ -299,10 +296,7 @@ static void sendFlagUpdate(int playerIndex)
 	buf    = nboPackUShort(bufStart,0); //placeholder
       }
 
-      if (idIsIn)
-	buf = flag.pack(buf);
-      else
-	buf = flag.fakePack(buf);
+      buf = flag.pack(buf, idIsIn);
       length += sizeof(uint16_t)+FlagPLen;
       cnt++;
     }

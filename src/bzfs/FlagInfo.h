@@ -29,8 +29,7 @@ public:
 
   void setRequiredFlag(FlagType *desc);
   void addFlag();
-  void *pack(void *buf);
-  void *fakePack(void *buf);
+  void *pack(void *buf, bool hide = false);
   void dropFlag(float pos[3], float landingPos[3], bool vanish);
   void resetFlag(float position[3], bool teamIsEmpty);
   void grab(int playerIndex);

@@ -139,17 +139,14 @@ void FlagInfo::addFlag()
     grabs = int(floor(maxGrabs * (float)bzfrand())) + 1;
 }
 
-void *FlagInfo::pack(void *buf)
+void *FlagInfo::pack(void *buf, bool hide)
 {
+  if (FlagInfo::flagList[flagIndex].flag.type->flagTeam != ::NoTeam)
+    hide = false;
+  if (FlagInfo::flagList[flagIndex].player != -1)
+    hide = false;
   buf = nboPackUShort(buf, flagIndex);
-  buf = FlagInfo::flagList[flagIndex].flag.pack(buf);
-  return buf;
-}
-
-void *FlagInfo::fakePack(void *buf)
-{
-  buf = nboPackUShort(buf, flagIndex);
-  if (FlagInfo::flagList[flagIndex].flag.type->flagTeam == ::NoTeam)
+  if (hide)
     buf = FlagInfo::flagList[flagIndex].flag.fakePack(buf);
   else
     buf = FlagInfo::flagList[flagIndex].flag.pack(buf);
