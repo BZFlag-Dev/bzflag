@@ -1878,21 +1878,12 @@ void resetFlag(FlagInfo &flag)
     }
   }
 
-  // reset a flag's info
-  flag.resetFlag(flagPos);
+  bool teamIsEmpty = true;
+  if (teamIndex != ::NoTeam)
+    teamIsEmpty = (team[teamIndex].team.size == 0);
 
-  // required flags mustn't just disappear
-  if (flag.required) {
-    if (teamIndex != ::NoTeam) {
-      if (team[teamIndex].team.size == 0)
-	flag.flag.status = FlagNoExist;
-      else
-	flag.flag.status = FlagOnGround;
-    } else {
-      // flag in now entering game
-      flag.addFlag();
-    }
-  }
+  // reset a flag's info
+  flag.resetFlag(flagPos, teamIsEmpty);
 
   sendFlagUpdate(flag);
 }

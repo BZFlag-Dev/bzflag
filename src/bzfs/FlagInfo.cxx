@@ -168,11 +168,10 @@ void FlagInfo::dropFlag(float pos[3], float landingPos[3], bool vanish)
   flag.initialVelocity = -BZDB.eval(StateDatabase::BZDB_GRAVITY) * upTime;
 }
 
-void FlagInfo::resetFlag(float position[3])
+void FlagInfo::resetFlag(float position[3], bool teamIsEmpty)
 {
   // reset a flag's info
   player      = -1;
-  flag.status = FlagNoExist;
   // if it's a random flag, reset flag id
   if (flagIndex >= numFlags - numExtraFlags)
     flag.type = Flags::Null;
@@ -180,6 +179,19 @@ void FlagInfo::resetFlag(float position[3])
   flag.position[0] = position[0];
   flag.position[1] = position[1];
   flag.position[2] = position[2];
+
+  // required flags mustn't just disappear
+  if (required) {
+    if (flag.type->flagTeam == ::NoTeam)
+      // flag in now entering game
+      addFlag();
+    else if (teamIsEmpty)
+      flag.status = FlagNoExist;
+    else
+      flag.status = FlagOnGround;
+  } else {
+    flag.status = FlagNoExist;
+  }
 }
 
 void FlagInfo::grab(int playerIndex)

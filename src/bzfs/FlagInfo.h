@@ -31,7 +31,7 @@ public:
   void addFlag();
   void *pack(void *buf);
   void dropFlag(float pos[3], float landingPos[3], bool vanish);
-  void resetFlag(float position[3]);
+  void resetFlag(float position[3], bool teamIsEmpty);
   void grab(int playerIndex);
   int  teamIndex();
   int  getIndex();
