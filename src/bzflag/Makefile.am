@@ -84,6 +84,8 @@ bzflag_SOURCES =			\
 	OptionsMenu.h			\
 	Player.cxx			\
 	Player.h			\
+	Plan.cxx			\
+	Plan.h			\
 	QuickKeysMenu.cxx		\
 	QuickKeysMenu.h			\
 	QuitMenu.cxx			\

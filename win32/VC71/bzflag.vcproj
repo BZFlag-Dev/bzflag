@@ -423,6 +423,9 @@ copy debug\*.pdb ..\..\*.pdb
 				RelativePath="..\..\src\bzflag\motd.cxx">
 			</File>
 			<File
+				RelativePath="..\..\src\bzflag\Plan.cxx">
+			</File>
+			<File
 				RelativePath="..\..\src\bzflag\Region.cxx">
 				<FileConfiguration
 					Name="Debug|Win32">
@@ -1452,6 +1455,9 @@ copy debug\*.pdb ..\..\*.pdb
 			</File>
 			<File
 				RelativePath="..\..\src\bzflag\OptionsMenu.h">
+			</File>
+			<File
+				RelativePath="..\..\src\bzflag\Plan.h">
 			</File>
 			<File
 				RelativePath="..\..\src\bzflag\Player.h">
