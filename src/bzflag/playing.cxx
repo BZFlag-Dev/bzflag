@@ -2647,6 +2647,12 @@ static void		handleServerMessage(bool human, uint16_t code,
 	  sprintf(buf,"%d", portNo);
 	  args.push_back(buf);
 	  printError("Server sent downlink endpoint information, port {1}",&args);
+#if ROBOT
+	  // robots code use to change relay between human and robots;
+	  // setPortForUPD update fields, used by human player, on the relay;
+	  // so we are setting relay for the human
+	  playerLink->setRelay(serverLink);
+#endif
 	  playerLink->setPortForUPD(portNo);
       break;
 
