@@ -1,5 +1,7 @@
 DIST_SUBDIRS = res
 
+bin_PROGRAMS = TextTool
+
 TextTool_SOURCES = \
 	MainFrm.cpp \
 	StdAfx.cpp \
