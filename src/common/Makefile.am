@@ -6,6 +6,7 @@ libCommon_a_SOURCES  =			\
 	BZDBCache.cxx			\
 	CommandManager.cxx		\
 	ConfigFileManager.cxx		\
+	Country.cxx			\
 	ErrorHandler.cxx		\
 	FileManager.cxx			\
 	Flag.cxx			\
@@ -14,6 +15,8 @@ libCommon_a_SOURCES  =			\
 	Team.cxx			\
 	TimeBomb.cxx			\
 	TimeKeeper.cxx			\
+	Language.cxx			\
+	Locale.cxx			\
 	PlayerState.cxx			\
 	StateDatabase.cxx		\
 	WordFilter.cxx			\
