@@ -2124,10 +2124,14 @@ static std::string	cmdAutoPilot(const std::string&, const CommandManager::ArgLis
   if (args.size() != 0)
     return "usage: autopilot";
 
+  char messageBuffer[MessageLen];
+  memset(messageBuffer, 0, MessageLen);
+
   if (myTank != NULL) {
     if (myTank->isAutoPilot()) {
       myTank->setAutoPilot(false);
       hud->setAlert(0, "autopilot disabled", 1.0f, true);
+      strcpy(messageBuffer, " [ROGER] Releasing Controls of " );
 
       // grab mouse
       if (shouldGrabMouse()) mainWindow->grabMouse();
@@ -2135,10 +2139,17 @@ static std::string	cmdAutoPilot(const std::string&, const CommandManager::ArgLis
     else {
       myTank->setAutoPilot(true);
       hud->setAlert(0, "autopilot enabled", 1.0f, true);
+      strcpy(messageBuffer, " [ROGER] Taking Controls of " );
 
       // ungrab mouse
       mainWindow->ungrabMouse();
     }
+
+    strcat( messageBuffer, myTank->getCallSign());
+    void* buf = messageMessage;
+    buf = nboPackString(buf, messageBuffer, MessageLen);
+    serverLink->send(MsgMessage, sizeof(messageMessage), messageMessage);
+
   }
 
   return std::string();
