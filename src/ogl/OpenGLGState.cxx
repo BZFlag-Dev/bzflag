@@ -1172,6 +1172,7 @@ void			OpenGLGState::initGLState()
 
 void		    OpenGLGState::setInvertCull(bool value)
 {
+  // NOTE: use glFrontFace() ?
   invertCull = value;
 }
 
