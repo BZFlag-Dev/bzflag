@@ -119,6 +119,11 @@ bool VotingArbiter::pollToBan(std::string player, std::string playerRequesting, 
   return (this->poll(player, playerRequesting, "ban", playerIP));
 }
 
+bool VotingArbiter::pollToSet(std::string setting, std::string playerRequesting)
+{
+  return (this->poll(setting, playerRequesting, "set"));
+}
+
 bool VotingArbiter::closePoll(void)
 {
   if (this->isPollClosed()) {
