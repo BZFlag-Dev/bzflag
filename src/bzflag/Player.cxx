@@ -89,11 +89,6 @@ Player::~Player()
   }
 }
 
-void			Player::setId(PlayerId& newId)
-{
-  id = newId;
-}
-
 float			Player::getRadius() const
 {
   if (flag == Flags::Obesity) return TankRadius * ObeseFactor;

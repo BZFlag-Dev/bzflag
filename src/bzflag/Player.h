@@ -65,8 +65,6 @@ class Player {
     virtual int		getMaxShots() const;
     virtual ShotPath*	getShot(int index) const = 0;
 
-    void		setId(PlayerId&);
-
     void		addPlayer(SceneDatabase*, const float* colorOverride,
 							bool showIDL);
     virtual void	addShots(SceneDatabase*, bool colorblind) const;
