@@ -155,7 +155,43 @@ class WordFilter
   /** utility method that returns the position of the 
    * first printable character from a string
    */
-  int firstPrintable(const std::string &input) const
+  inline int firstAlphanumeric(const std::string &input) const
+  {
+    if (input.size() == 0) {
+      return -1;
+    }
+
+    int i = 0;
+    /* range of printable characters, with failsafe */
+    while (!isAlphanumeric(input[i])) {
+      i++;
+    }
+    return i;
+  }
+
+
+  /** utility method that returns the position of the 
+   * first printable character from a string
+   */
+  inline int firstNonalphanumeric(const std::string &input) const
+  {
+    if (input.size() == 0) {
+      return -1;
+    }
+
+    int i = 0;
+    /* range of printable characters, with failsafe */
+    while (isAlphanumeric(input[i])) {
+      i++;
+    }
+    return i;
+  }
+  
+
+  /** utility method that returns the position of the 
+   * first printable character from a string
+   */
+  inline int firstPrintable(const std::string &input) const
   {
     if (input.size() == 0) {
       return -1;
@@ -230,9 +266,8 @@ class WordFilter
       } else if (isAlphanumeric(c)) {
 	input[start + j] = filterChars[randomCharPos];
 	count++;
-      } else {
-	std::cerr << "Impossible sanity check reached in " << __FILE__ << ":" << __LINE__ << std::endl;
-      }
+      } /* else it is non-letters so we can ignore */
+      
     }
     return count;
   }
