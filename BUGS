@@ -5,7 +5,7 @@ recent bugs
   during the next protocol breakage
 
 - do all Riva128 systems require "noMeshClusers"? Is there a 
-  workout to make vertex array work on those cards?
+  workaround to make vertex array work on those cards?
 
 - team flags will not sit on buildings if the -fb option is used
   (bzfs.cxx / line 2708) should the team flags always be allowed
