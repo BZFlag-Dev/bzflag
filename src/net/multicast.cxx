@@ -246,7 +246,7 @@ int			openMulticast(const Address& address, int port,
   /* check interface */
   if (net_interface && net_interface[0]) {
     ifaddr.s_addr = inet_addr(net_interface);
-    if (ifaddr.s_addr == (unsigned long)-1) {
+    if (ifaddr.s_addr == (uint32_t)-1) {
       struct hostent* hp = gethostbyname(net_interface);
       if (!hp) {
 	std::vector<std::string> args;
