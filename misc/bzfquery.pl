@@ -60,7 +60,7 @@ die "not a bzflag server" if ($magic ne "BZFS");
 die "incompatible version" if ($protocol ne "1910");
 
 # quit if rejected
-die "rejected by server" if ($port == 0);
+die "rejected by server" if ($id == 255);
 
 # send game request
 print S pack("n2", 0, 0x7167);
@@ -93,15 +93,11 @@ print "team sizes: $rogueSize $redSize $greenSize $blueSize $purpleSize" .
 print "max sizes:  $rogueMax $redMax $greenMax $blueMax $purpleMax\n";
 if ($style & 0x0040) {
   print "wins to shake bad flag: $shakeWins\n";
-  print "time to shake bad flag: ";
-  print $shakeTimeout / 10;
-  print "\n";
+  print "time to shake bad flag: " . $shakeTimeout / 10 . "\n";
 }
 print "max player score: $maxPlayerScore\n";
 print "max team score: $maxTeamScore\n";
-print "max time: ";
-print $maxTime / 10;
-print "\n";
+print "max time: " . $maxTime / 10 . "\n\n";
 
 # send players request
 print S pack("n2", 0, 0x7170);
@@ -111,40 +107,37 @@ die $! unless sysread(S, $buffer, 8) == 8;
 ($len,$code,$numTeams,$numPlayers) = unpack("n4", $buffer);
 die $! unless $code == 0x7170;
 
-# TimRiker: re-read the number of teams???
+# get the teams
+# TimRiker: MsgTeamUpdate has numTeams too
 die $! unless sysread(S, $buffer, 5) == 5;
 ($len,$code,$numTeams) = unpack("n n C", $buffer);
-
-# get the teams
-print "\n";
+die $! unless $code == 0x7475;
 @teamName = ("Rogue", "Red", "Green", "Blue", "Purple", "Observer", "Rabbit");
 for (1..$numTeams) {
-die $! unless sysread(S, $buffer, 8) == 8;
-($team,$size,$won,$lost) = unpack("n4", $buffer);
-die $! unless $code == 0x7475;
-$score = $won - $lost;
-print "$teamName[$team] team:\n";
-print "  $size players\n  score: $score ($won wins, $lost losses)\n";
+ die $! unless sysread(S, $buffer, 8) == 8;
+ ($team,$size,$won,$lost) = unpack("n4", $buffer);
+ $score = $won - $lost;
+ print "$teamName[$team] team: $size players, score: $score ($won wins, $lost losses)\n";
 }
 print "\n";
 
 # get the players
 @playerType = ("tank", "observer", "robot tank");
 for (1..$numPlayers) {
+ # one MsgAddPlayer per player
+ $bytesRead = sysread(S, $buffer, 175);
+ while ($bytesRead != 175 && $bytesRead != 0){
+  $bytesRead += sysread(S, $buffer, 175-$bytesRead)
+ }
+ if ($bytesRead == undef || $bytesRead < 175){ die $!; }
 
-$bytesRead = sysread(S, $buffer, 175);
-while ($bytesRead != 175 && $bytesRead != 0){
- $bytesRead += sysread(S, $buffer, 175-$bytesRead)
-}
-if ($bytesRead == undef || $bytesRead < 175){ die $!; }
-
-($len,$code,$pID,$type,$team,$won,$lost,$tks,$sign,$email) =
+ ($len,$code,$pID,$type,$team,$won,$lost,$tks,$sign,$email) =
 					unpack("n2Cn5A32A128", $buffer);
-die $! unless $code == 0x6170;
-$score = $won - $lost;
-print "player $sign ($teamName[$team] team) is a $playerType[$type]:\n";
-print "  $email\n";
-print "  score: $score ($won wins, $lost losses)\n";
+ die $! unless $code == 0x6170;
+ $score = $won - $lost;
+ print "player $sign ($teamName[$team] team) is a $playerType[$type]:\n";
+ print "  $email\n";
+ print "  score: $score ($won wins, $lost losses)\n";
 }
 
 # close socket
