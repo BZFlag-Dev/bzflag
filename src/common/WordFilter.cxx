@@ -44,7 +44,7 @@ bool WordFilter::simpleFilter(char *input) const
       //      memset(input+startPosition,'*', endPosition-startPosition);
       
       /* fill with random filter chars */
-      if (filterCharacters(input, startPosition, endPosition, true) > 0) {
+      if (filterCharacters(input, startPosition, endPosition-startPosition, true) > 0) {
 	filtered=true;
       }
     }
@@ -315,6 +315,7 @@ WordFilter::WordFilter()
   
   /* SUFFIXES */
 
+#if 0
   // noun
   fix.word = "dom";
   suffixes.insert(fix);
@@ -414,14 +415,15 @@ WordFilter::WordFilter()
     i->expression = this->expressionFromString(i->word);
     std::cout << "expression: " << i->expression << std::endl;
   }
+#endif
 
   /* PREFIXES */
 
   // bz-specific
 
 #if 0
-  /* XXX adding prefixes significantly increases the expression count
-   * and is rather expensive (slow)
+  /* XXX adding prefixes _significantly_ increases the expression count
+   * and is rather expensive (slow, XN+N extra checks for N words) 
    */
   fix.word = "bz";
   prefixes.insert(fix);
@@ -470,8 +472,6 @@ bool WordFilter::addToFilter(const std::string &word, const std::string &express
     addToFilter(word, expression, append);
 
   } else if (append) {
-    filter_t appendWord;
-    
     /* add words with all suffixes appended */
     for (std::set<filter_t, expressionCompare>::iterator i = suffixes.begin();
 	 i != suffixes.end(); ++i) {
@@ -489,9 +489,11 @@ bool WordFilter::addToFilter(const std::string &word, const std::string &express
 	addToFilter(i->word + word + j->word, 
 		    i->expression + expression + j->expression, 
 		    false);
-      }
-      
+      }      
     }
+
+    /* don't forget to add the unadulterated word */
+    addToFilter(word, expression, false);
   } else {
     /* base case */
     filter_t newFilter;
@@ -580,10 +582,8 @@ void WordFilter::loadFromFile(const std::string &fileName)
 bool WordFilter::filter(char *input, bool simple) const
 {
   if (simple) {
-    std::cout << "NOT aggressive" << std::endl;
     return simpleFilter(input);
   }
-  std::cout << "aggressive" << std::endl;
   return aggressiveFilter(input);
 }
 
@@ -636,17 +636,18 @@ int main (int argc, char *argv[])
   }
   
   WordFilter filter;
-  //  filter.addToFilter("fuck?!", true);
+  filter.addToFilter("fuck", true);
   filter.addToFilter("test");
-  //  filter.addToFilter("tah fei kei (tfk)?", true);
 
   filter.outputWords();
   filter.outputFilter();
 
   char message3[1024] = " This test is a fucKing simple test; you're NOT a beezeebitch!! ";
-  std::cout << message3 << std::endl;
-  filter.filter(message3, false);
-  std::cout << message3 << std::endl;
+  std::cout << "PRE  SIMPLE " << message3 << std::endl;
+  filter.filter(message3, true);
+  std::cout << "POST SIMPLE " << message3 << std::endl;
+
+  exit(0);
 
   std::cout << "Loading file" << std::endl;
   filter.loadFromFile(argv[1]);
