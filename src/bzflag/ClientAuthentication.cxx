@@ -33,8 +33,8 @@ krb5_creds        ClientAuthentication::creds;
 krb5_creds       *ClientAuthentication::new_creds;
 krb5_principal    ClientAuthentication::client;
 krb5_principal    ClientAuthentication::server;
-char              ClientAuthentication::principalName[128];
 #endif
+char              ClientAuthentication::principalName[128];
 bool              ClientAuthentication::authentication = false;
 
 #ifdef HAVE_KRB5
