@@ -431,7 +431,7 @@ void BitmapFont::free(void)
   loaded = false;
 }
 
-void BitmapFont::filter(bool dofilter)
+void BitmapFont::filter(bool /*dofilter*/)
 {
 }
 
