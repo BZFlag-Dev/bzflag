@@ -1,3 +1,9 @@
+# FIXME find a way to avoid this dir during the makes.
+# SUBDIRS is NOT processed conditionally on some versions of automake
+# DIST_SUBDIRS might be supported?
+# do NOT move this without trying a "make distcheck" on non-mac
+SUBDIRS = MacOSX
+
 if LINUX
 libPlatform_a_SOURCES =				\
 	PlatformFactory.cxx			\
@@ -72,12 +78,6 @@ libPlatform_a_SOURCES =				\
 	BzfMedia.cxx				\
 	wave.cxx				\
 	wave.h
-# SUBDIRS is processed conditionally.
-# automake will prepare a subdist for us including MacOSX
-# In not MacOS system this subdirectory will then not being navigated for 
-#  normal make
-SUBDIRS = MacOSX
-
 else
 if BEOS
 libPlatform_a_SOURCES =				\
