@@ -667,8 +667,8 @@ void parse(int argc, char **argv, CmdLineOptions &options)
 	checkArgc(1, i, argc, argv[i]);
       // at least put password someplace that ps won't see
       options.password = (char *)malloc(strlen(argv[i]) + 1);
-      strcpy(options.password, argv[i]);
-      memset(argv[i], ' ', strlen(options.password));
+      options.password = argv[i];
+      memset(argv[i], ' ', options.password.size());
     } else if (strcmp(argv[i], "-pf") == 0) {
       // try wksPort first and if we can't open that port then
       // let system assign a port for us.
@@ -842,7 +842,7 @@ void parse(int argc, char **argv, CmdLineOptions &options)
     } else if (strcmp(argv[i], "-t") == 0) {
       // allow teleporters
       options.useTeleporters = true;
-      if (options.worldFile != NULL)
+      if (options.worldFile != "")
 	std::cerr << "-t is meaningless when using a custom world, ignoring\n";
     } else if (strcmp(argv[i], "-tftimeout") == 0) {
       // use team flag timeout
@@ -940,7 +940,7 @@ void parse(int argc, char **argv, CmdLineOptions &options)
     options.flagCount[Flags::Ricochet] = 0;
     options.flagDisallowed[Flags::Ricochet] = true;
   }
-  if (!options.useTeleporters && !options.worldFile) {
+  if (!options.useTeleporters && (options.worldFile == "")) {
     options.flagCount[Flags::PhantomZone] = 0;
     options.flagDisallowed[Flags::PhantomZone] = true;
   }

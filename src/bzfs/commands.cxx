@@ -99,7 +99,7 @@ void handlePasswordCmd(int t, const char *message)
 	   player[t].getCallSign());
     sendMessage(ServerPlayer, t, "Too many attempts");
   } else {
-    if (clOptions->password && strncmp(message + 10, clOptions->password, strlen(clOptions->password)) == 0){
+    if ((clOptions->password != "") && strncmp(message + 10, clOptions->password.c_str(), clOptions->password.size()) == 0){
       accessInfo[t].setAdmin();
       sendIPUpdate(t, -1);
       sendMessage(ServerPlayer, t, "You are now an administrator!");

@@ -577,7 +577,7 @@ static void relayPlayerPacket(int index, uint16_t len, const void *rawbuf, uint1
 
 static WorldInfo *defineTeamWorld()
 {
-  if (!clOptions->worldFile) {
+  if (clOptions->worldFile == "") {
     world = new WorldInfo();
     if (!world)
       return NULL;
@@ -1005,7 +1005,7 @@ static WorldInfo *defineTeamWorld()
 
     return world;
   } else {
-    return defineWorldFromFile(clOptions->worldFile);
+    return defineWorldFromFile(clOptions->worldFile.c_str());
   }
 }
 
@@ -1120,8 +1120,8 @@ static bool defineWorld()
   // make world and add buildings
   if (clOptions->gameStyle & TeamFlagGameStyle) {
     world = defineTeamWorld();
-  } else if (clOptions->worldFile) {
-    world = defineWorldFromFile(clOptions->worldFile);
+  } else if (clOptions->worldFile != "") {
+    world = defineWorldFromFile(clOptions->worldFile.c_str());
   } else {
     world = defineRandomWorld();
   }
@@ -1175,7 +1175,7 @@ static bool defineWorld()
   MD5 md5;
   md5.update((unsigned char *)worldDatabase, worldDatabaseSize);
   md5.finalize();
-  if (clOptions->worldFile == NULL)
+  if (clOptions->worldFile == "")
     strcpy(hexDigest, "t");
   else
     strcpy(hexDigest, "p");
@@ -1691,10 +1691,10 @@ static void addPlayer(int playerIndex)
   sprintf(message,"BZFlag server %s, http://BZFlag.org/", getAppVersion());
   sendMessage(ServerPlayer, playerIndex, message, true);
 
-  if (clOptions->servermsg && (strlen(clOptions->servermsg) > 0)) {
+  if (clOptions->servermsg != "") {
 
     // split the servermsg into several lines if it contains '\n'
-    const char* i = clOptions->servermsg;
+    const char* i = clOptions->servermsg.c_str();
     const char* j;
     while ((j = strstr(i, "\\n")) != NULL) {
       unsigned int l = j - i < MessageLen - 1 ? j - i : MessageLen - 1;
@@ -2107,7 +2107,7 @@ void removePlayer(int playerIndex, const char *reason, bool notify)
 
     // if everybody left then reset world
     if (i == curMaxPlayers) {
-      if (!clOptions->worldFile) {
+      if (clOptions->worldFile == "") {
 	bases.clear();
       }
 
@@ -2115,7 +2115,7 @@ void removePlayer(int playerIndex, const char *reason, bool notify)
 	done = true;
 	exitCode = 0;
       }
-      else if ((!clOptions->worldFile) && (!defineWorld())) {
+      else if ((clOptions->worldFile == "") && (!defineWorld())) {
 	done = true;
 	exitCode = 1;
       }
@@ -3697,8 +3697,8 @@ int main(int argc, char **argv)
     BZDB.setPermission("poll", StateDatabase::ReadOnly);
   }
 
-  if (clOptions->pingInterface) {
-    serverAddress = Address::getHostAddress(clOptions->pingInterface);
+  if (clOptions->pingInterface != "") {
+    serverAddress = Address::getHostAddress(clOptions->pingInterface.c_str());
   }
 
 // TimR use 0.0.0.0 by default, multicast will need to have a -i specified for now.
@@ -4147,14 +4147,14 @@ int main(int argc, char **argv)
 
     // periodic advertising broadcast
     static const std::vector<std::string>* adLines = clOptions->textChunker.getTextChunk("admsg");
-    if (clOptions->advertisemsg || adLines != NULL) {
+    if ((clOptions->advertisemsg != "") || adLines != NULL) {
       static TimeKeeper lastbroadcast = TimeKeeper::getCurrent();
       if (TimeKeeper::getCurrent() - lastbroadcast > 900) {
 	// every 15 minutes
 	char message[MessageLen];
-	if (clOptions->advertisemsg != NULL) {
+	if (clOptions->advertisemsg != "") {
 	  // split the admsg into several lines if it contains '\n'
-	  const char* c = clOptions->advertisemsg;
+	  const char* c = clOptions->advertisemsg.c_str();
 	  const char* j;
 	  while ((j = strstr(c, "\\n")) != NULL) {
 	    int l = j - c < MessageLen - 1 ? j - c : MessageLen - 1;

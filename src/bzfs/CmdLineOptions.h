@@ -38,9 +38,6 @@
 const int MaxPlayers = 200;
 const int MaxShots = 10;
 
-extern const char *usageString;
-extern const char *extraUsageString;
-
 // rabbit selection algorithms
 enum RabbitSelection {
   ScoreRabbitSelection,		// default method based on score
@@ -58,9 +55,9 @@ struct CmdLineOptions
 {
   CmdLineOptions()
   : wksPort(ServerPort), gameStyle(PlainGameStyle),
-    rabbitSelection(ScoreRabbitSelection), servermsg(NULL),
-    advertisemsg(NULL), worldFile(NULL), pingInterface(NULL),
-    listServerURL(DefaultListServerURL), password(NULL),
+    rabbitSelection(ScoreRabbitSelection), servermsg(""),
+    advertisemsg(""), worldFile(""), pingInterface(""),
+    listServerURL(DefaultListServerURL), password(""),
     publicizedTitle(""), publicizedAddress(""),
     maxShots(1), maxTeamScore(0), maxPlayerScore(0),
     numExtraFlags(0), teamKillerKickRatio(0),
@@ -95,15 +92,15 @@ struct CmdLineOptions
   int			gameStyle;
   int			rabbitSelection;
 
-  const char		*servermsg;
-  const char		*advertisemsg;
-  const char		*worldFile;
-  const char		*pingInterface;
-  const char		*listServerURL;
-  char			*password;
+  std::string   servermsg;
+  std::string   advertisemsg;
+  std::string   worldFile;
+  std::string   pingInterface;
+  std::string   listServerURL;
+  std::string   password;
 
-  std::string		publicizedTitle;
-  std::string		publicizedAddress;
+  std::string	publicizedTitle;
+  std::string	publicizedAddress;
 
   uint16_t		maxShots;
   int			maxTeamScore;
