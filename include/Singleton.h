@@ -177,7 +177,7 @@ class Singleton : public CreationPolicy, public ThreadingModel {
 };
 
 // statically initialize the instance to nothing
-template < typename T, typename CreationPolicy = CreateUsingNew<T>, typename ThreadingModel = SingleThreaded >
+template < typename T, typename CreationPolicy, typename ThreadingModel >
 T* Singleton<T, CreationPolicy, ThreadingModel>::_instance = 0;
 
 #endif /* __SINGLETON_H__ */
