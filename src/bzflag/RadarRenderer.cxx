@@ -106,7 +106,7 @@ void RadarRenderer::drawTank(const float pos[3], const Player* player)
 
   // 'ps' is pixel scale, setup in render()
   const float tankRadius = BZDBCache::tankRadius;
-  float minSize = (2.0f * ps);
+  float minSize = 1.5f + (ps * BZDBCache::radarTankPixels);
   GLfloat size;
   if (tankRadius < minSize) {
     size = minSize;
@@ -449,7 +449,7 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
 
 
     // get size of pixel in model space (assumes radar is square)
-    ps = BZDBCache::radarTankPixels * (range / GLfloat(w));
+    ps = 2.0f * (range / GLfloat(w));
 
     float tankWidth = BZDBCache::tankWidth;
     float tankLength = BZDBCache::tankLength;
