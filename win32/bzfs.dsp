@@ -151,6 +151,10 @@ SOURCE=..\include\bzfio.h
 # End Source File
 # Begin Source File
 
+SOURCE=..\src\bzfs\bzfs.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\include\BzfString.h
 # End Source File
 # Begin Source File
