@@ -258,10 +258,10 @@ float TetraBuilding::intersect(const Ray& ray) const
   // see if the point is within the face
   for (p = 0; p < 4; p++) {
     int target = order[p];
-    if (times[target] == Infinity) {
+    float targetTime = times[target];
+    if (targetTime == Infinity) {
       continue;
     }
-    float targetTime = times[target];
     // get the contact location
     float point[3];
     point[0] = (dir[0] * targetTime) + origin[0];
@@ -282,7 +282,7 @@ float TetraBuilding::intersect(const Ray& ray) const
       }
     }
     if (gotFirstHit) {
-      lastPlaneShot = p;
+      lastPlaneShot = target;
       return targetTime;
     }
   }
