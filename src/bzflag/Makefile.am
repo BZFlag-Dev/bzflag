@@ -18,7 +18,6 @@ bzflag_SOURCES =			\
 	ComposeDefaultKey.h		\
 	ControlPanel.cxx		\
 	ControlPanel.h			\
-	CommandsStandard.cxx		\
 	FlashClock.cxx			\
 	FlashClock.h			\
 	FormatMenu.cxx			\
@@ -111,8 +110,10 @@ bzflag_SOURCES =			\
 	WorldPlayer.cxx			\
 	WorldPlayer.h			\
 	bzflag.cxx			\
-	callbacks.h			\
 	callbacks.cxx			\
+	callbacks.h			\
+	commands.cxx			\
+	commands.h			\
 	daylight.cxx			\
 	daylight.h			\
 	playing.cxx			\
@@ -153,6 +154,7 @@ else
 LDADD =	\
 	../net/libNet.a			\
 	../common/libCommon.a		\
+	../game/libGame.a		\
 	../obstacle/libObstacle.a	\
 	../platform/libPlatform.a	\
 	../ogl/libGLKit.a		\
