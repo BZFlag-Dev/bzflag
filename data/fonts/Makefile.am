@@ -1,4 +1,5 @@
 EXTRA_DIST = \
+	readme			\
 	LuxiMono-8.png		\
 	LuxiMono-11.png		\
 	LuxiMono-16.png		\
