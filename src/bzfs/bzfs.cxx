@@ -71,6 +71,8 @@ const int udpBufSize = 128000;
 #include "Ping.h"
 #include "TimeBomb.h"
 
+static void sendMessage(int playerIndex, const PlayerId& targetPlayer, TeamColor targetTeam, const char *message);
+
 // DisconnectTimeout is how long to wait for a reconnect before
 // giving up.  this should be pretty short to avoid bad clients
 // from using up our resources, but long enough to allow for
@@ -355,6 +357,36 @@ public:
         return false;
     }
     return true;
+  }
+
+  void sendBans(int playerIndex, PlayerId id, TeamColor teamColor)
+  {
+	  char banlistmessage[MessageLen];
+
+      sendMessage(playerIndex, id, teamColor, "IP Ban List");
+      sendMessage(playerIndex, id, teamColor, "-----------");
+	  int numBans = banList.getLength();
+	  for (int i = 0; i < numBans; i++) {
+		  char *pMsg = banlistmessage;
+		  in_addr mask = banList[i];
+
+		  for (int j = 0; j < 4; j++) {
+			unsigned char b = (unsigned char)mask.s_addr;
+
+			if (b == 0xFF)
+				*(pMsg++) = '*';
+			else {
+			  sprintf( pMsg, "%d", b );
+			  pMsg += strlen(pMsg);
+			}
+			*(pMsg++) = '.';
+			mask.s_addr >>= 8;
+		  }
+
+		  pMsg--;
+		  *pMsg = 0;
+		  sendMessage(playerIndex, id, teamColor, banlistmessage);
+	  }
   }
 
 private:
@@ -4537,6 +4569,10 @@ static void parseCommand(const char *message, int t)
       sprintf(errormessage, "player %s not found", victimname);
       sendMessage(t, player[t].id, player[t].team, errormessage);
     }
+  }
+  // /banlist command shows ips that are banned
+  else if (player[t].Admin && strncmp(message+1, "banlist", 7) == 0) {
+	acl.sendBans(t,player[t].id,player[t].team);
   }
   // /ban command allows operator to ban players based on ip
   else if (player[t].Admin && strncmp(message+1, "ban", 3) == 0) {
