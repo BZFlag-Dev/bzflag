@@ -1,19 +1,31 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_INIT(src/bzflag/bzflag.cxx)
-AM_INIT_AUTOMAKE(bzflag, 1.9a0)
+
+# Version numbers
+MAJOR_VERSION=1
+MINOR_VERSION=9
+REV=0
+BUILD_DATE=`date +%Y%m%d`
+
+AM_INIT_AUTOMAKE(bzflag, $MAJOR_VERSION.$MINOR_VERSION.$REV-$BUILD_DATE)
 AM_CONFIG_HEADER(include/config.h)
 
+# Need this here for $host_os
 AC_CANONICAL_HOST
 
+# Let the C++ code know about the version
 AC_DEFINE(BZ_PROTO_VERSION, "109a", [Server Protocol version])
-AC_DEFINE_UNQUOTED(BZ_MAJOR_VERSION, 1, [Bzflag Major Version Number])
-AC_DEFINE_UNQUOTED(BZ_MINOR_VERSION, 9, [Bzflag Minor Version Number])
-AC_DEFINE_UNQUOTED(BZ_REV, 0, [Bzflag Revision Number])
+AC_DEFINE_UNQUOTED(BZ_MAJOR_VERSION, $MAJOR_VERSION, 
+                   [Bzflag Major Version Number])
+AC_DEFINE_UNQUOTED(BZ_MINOR_VERSION, $MINOR_VERSION, 
+                   [Bzflag Minor Version Number])
+AC_DEFINE_UNQUOTED(BZ_REV, $REV, [Bzflag Revision Number])
 AC_DEFINE(BZ_BUILD_SOURCE, "CVS", [Bzflag Build Environment])
 AC_DEFINE_UNQUOTED(BZ_BUILD_OS, "$host_os", [Bzflag System Environment])
-AC_DEFINE_UNQUOTED(BZ_BUILD_DATE, `date +%Y%m%d`, [Bzflag Build Date])
+AC_DEFINE_UNQUOTED(BZ_BUILD_DATE, $BUILD_DATE, [Bzflag Build Date])
 AC_DEFINE_UNQUOTED(BZ_BUILD_USER, "`whoami`", [User who compiled Bzflag])
+
 
 #Checks for programs.
 AC_PROG_MAKE_SET
