@@ -1585,8 +1585,6 @@ static void		doKeyNotPlaying(const BzfKeyEvent& key, bool pressed)
 
 static void		doKeyPlaying(const BzfKeyEvent& key, bool pressed)
 {
-  static ComposeDefaultKey composeKeyHandler;
-  static SilenceDefaultKey silenceKeyHandler;
   static ServerCommandKey serverCommandKeyHandler;
 
   if (HUDui::getFocus())
@@ -1710,14 +1708,7 @@ static void		doKeyPlaying(const BzfKeyEvent& key, bool pressed)
   }
   //  else
 
-  if (keymap.isMappedTo(BzfKeyMap::ChooseSilence, key)) {
-    if (pressed) {
-      messageHistoryIndex = 0;
-      hud->setComposing("[Un]Silence  :");
-      HUDui::setDefaultKey(&silenceKeyHandler);
-    }
-  }
-  else if (keymap.isMappedTo(BzfKeyMap::ServerCommand, key)) {
+  if (keymap.isMappedTo(BzfKeyMap::ServerCommand, key)) {
     if (pressed) {
       static bool prevAdmin = admin;
       if (prevAdmin == false && admin == true) serverCommandKeyHandler.adminInit();
@@ -2214,6 +2205,17 @@ static std::string cmdRoam(const std::string&, const CommandManager::ArgList& ar
   return std::string();
 }
 
+static std::string cmdSilence(const std::string&, const CommandManager::ArgList& args)
+{
+  static SilenceDefaultKey silenceKeyHandler;
+  if (args.size() != 0)
+    return "usage: silence";
+  messageHistoryIndex = 0;
+  hud->setComposing("[Un]Silence: ");
+  HUDui::setDefaultKey(&silenceKeyHandler);
+  return std::string();
+}
+
 struct CommandListItem {
   const char* name;
   CommandManager::CommandFunction func;
@@ -2232,7 +2234,8 @@ static const CommandListItem commandList[] = {
   { "screenshot", &cmdScreenshot, "screenshot:  take a screenshot" },
 #endif
   { "time",	&cmdTime,	"time {forward|backward}:  adjust the current time" },
-  { "roam",	&cmdRoam,	"roam {rotate|translate|zoom|cycle} <args>:  roam around" }
+  { "roam",	&cmdRoam,	"roam {rotate|translate|zoom|cycle} <args>:  roam around" },
+  { "silence",	&cmdSilence,	"silence:  silence/unsilence a player" }
 };
 
 static void		doEvent(BzfDisplay* display)

@@ -134,6 +134,7 @@ static const char*	bindingList[] = {
   "bind + down \"time forward\"",
   "bind H down \"toggle displayRadarFlags\"",
   "bind J down \"toggle displayMainFlags\"",
+  "bind K down \"silence\"",
   "bind \"Left Arrow\" down \"roam rotate left\"",
   "bind \"Left Arrow\" up \"roam rotate stop\"",
   "bind \"Right Arrow\" down \"roam rotate right\"",
