@@ -1527,8 +1527,11 @@ void			HUDRenderer::drawPlayerScore(const Player* player,
 
   // dim the font if we're dim
   std::string playerInfo = dim ? ColorStrings[DimColor] : "";
+  TeamColor teamIndex = player->getTeam();
+  if (teamIndex < RogueTeam)
+    teamIndex = RogueTeam;
   // callsign
-  playerInfo += ColorStrings[player->getTeam()] + player->getCallSign();
+  playerInfo += ColorStrings[teamIndex] + player->getCallSign();
   // email in parenthesis
   if (player->getEmailAddress()[0] != '\0')
     playerInfo += (std::string(" (") + player->getEmailAddress()) + ")";
@@ -1554,7 +1557,7 @@ void			HUDRenderer::drawPlayerScore(const Player* player,
 	       + (flagd->endurance == FlagNormal ? flagd->flagName : flagd->flagAbbv);
     // back to original color
     if (coloredFlag) {
-      playerInfo += ColorStrings[player->getTeam()];
+      playerInfo += ColorStrings[teamIndex];
     }
   }
   // status
@@ -1568,7 +1571,7 @@ void			HUDRenderer::drawPlayerScore(const Player* player,
 
   // draw
   if (player->getTeam() != ObserverTeam) {
-    hudColor3fv(Team::getRadarColor(player->getTeam()));
+    hudColor3fv(Team::getRadarColor(teamIndex));
     fm.drawString(x1, y, 0, minorFontFace, minorFontSize, score);
     fm.drawString(x2, y, 0, minorFontFace, minorFontSize, kills);
   }
