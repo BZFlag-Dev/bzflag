@@ -5087,8 +5087,6 @@ static bool		enterServer(ServerLink* serverLink, World* world,
   serverLink->sendEnter(TankPlayer, myTank->getTeam(),
 			myTank->getCallSign(), myTank->getEmailAddress());
 
-  roaming = (myTank->getTeam() == ObserverTeam);
-
   // wait for response
   uint16_t code, len;
   char msg[MaxPacketLen];
@@ -5153,6 +5151,7 @@ static bool		enterServer(ServerLink* serverLink, World* world,
 	myTank->setTeam((TeamColor)team);
 	controlPanel->setControlColor(Team::getRadarColor(myTank->getTeam()));
 	radar->setControlColor(Team::getRadarColor(myTank->getTeam()));
+	roaming = (myTank->getTeam() == ObserverTeam);
 
 	// scan through flags and, for flags on
 	// tanks, tell the tank about its flag.
