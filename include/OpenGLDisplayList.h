@@ -27,10 +27,10 @@ class OpenGLDisplayList {
 			~OpenGLDisplayList();
     OpenGLDisplayList&	operator=(const OpenGLDisplayList&);
 
-    boolean		operator==(const OpenGLDisplayList&) const;
-    boolean		operator!=(const OpenGLDisplayList&) const;
-    boolean		operator<(const OpenGLDisplayList&) const;
-    boolean		isValid() const;
+    bool		operator==(const OpenGLDisplayList&) const;
+    bool		operator!=(const OpenGLDisplayList&) const;
+    bool		operator<(const OpenGLDisplayList&) const;
+    bool		isValid() const;
     GLuint		getList() const;
 
     void		begin();
@@ -48,7 +48,7 @@ class OpenGLDisplayList {
     };
 
     void		ref();
-    boolean		unref();
+    bool		unref();
 
   private:
     Rep*		rep;

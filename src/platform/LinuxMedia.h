@@ -26,26 +26,26 @@ class LinuxMedia : public BzfMedia {
 			LinuxMedia();
 			~LinuxMedia();
 
-    double		stopwatch(boolean);
+    double		stopwatch(bool);
     void		sleep(float);
-    boolean		openAudio();
+    bool		openAudio();
     void		closeAudio();
-    boolean		startAudioThread(void (*)(void*), void*);
+    bool		startAudioThread(void (*)(void*), void*);
     void		stopAudioThread();
-    boolean		hasAudioThread() const;
+    bool		hasAudioThread() const;
     void		writeSoundCommand(const void*, int);
-    boolean		readSoundCommand(void*, int);
+    bool		readSoundCommand(void*, int);
     int			getAudioOutputRate() const;
     int			getAudioBufferSize() const;
     int			getAudioBufferChunkSize() const;
-    boolean		isAudioTooEmpty() const;
+    bool		isAudioTooEmpty() const;
     void		writeAudioFrames(const float* samples, int numFrames);
-    void		audioSleep(boolean checkLowWater, double maxTime);
+    void		audioSleep(bool checkLowWater, double maxTime);
 
   private:
-    boolean		checkForAudioHardware();
-    boolean		openAudioHardware();
-    boolean		openIoctl(int cmd, void* value, boolean req = True);
+    bool		checkForAudioHardware();
+    bool		openAudioHardware();
+    bool		openIoctl(int cmd, void* value, bool req = true);
     static void		audioThreadInit(void*);
 
     void		writeAudioFrames8Bit(
@@ -56,7 +56,7 @@ class LinuxMedia : public BzfMedia {
     static double	getTime();
 
   private:
-    boolean		audioReady;
+    bool		audioReady;
     int			audioOutputRate;
     int			audioBufferSize;
     int			audioLowWaterMark;
@@ -66,10 +66,10 @@ class LinuxMedia : public BzfMedia {
     short*		outputBuffer;
     pid_t		childProcID;
     double		stopwatchTime;
-    boolean		audio8Bit;
+    bool		audio8Bit;
 
-    boolean		noSetFragment;
-    boolean		getospaceBroken;
+    bool		noSetFragment;
+    bool		getospaceBroken;
     int			chunksPending;
     double		chunkTime;
     double		chunksPerSecond;

@@ -29,9 +29,9 @@ class PingPacket {
 			PingPacket();
 			~PingPacket();
 
-    boolean		read(int fd, struct sockaddr_in*);
-    boolean		write(int fd, const struct sockaddr_in*) const;
-    boolean		waitForReply(int fd, const Address& from,
+    bool		read(int fd, struct sockaddr_in*);
+    bool		write(int fd, const struct sockaddr_in*) const;
+    bool		waitForReply(int fd, const Address& from,
 				int millisecondsToBlock = 0);
 
     void*		pack(void*, const char* version) const;
@@ -41,9 +41,9 @@ class PingPacket {
     void		unpackHex(char*);
     static void		repackHexPlayerCounts(char*, int* counts);
 
-    static boolean	isRequest(int fd, struct sockaddr_in*,
+    static bool	isRequest(int fd, struct sockaddr_in*,
 						int* minReplyTTL = NULL);
-    static boolean	sendRequest(int fd, const struct sockaddr_in*,
+    static bool	sendRequest(int fd, const struct sockaddr_in*,
 						int minReplyTTL = 0);
 
   public:

@@ -47,18 +47,18 @@ void			HUDui::setDefaultKey(HUDuiDefaultKey* _defaultKey)
   defaultKey = _defaultKey;
 }
 
-boolean			HUDui::keyPress(const BzfKeyEvent& key)
+bool			HUDui::keyPress(const BzfKeyEvent& key)
 {
-  if (defaultKey && defaultKey->keyPress(key)) return True;
-  if (focus && focus->doKeyPress(key)) return True;
-  return False;
+  if (defaultKey && defaultKey->keyPress(key)) return true;
+  if (focus && focus->doKeyPress(key)) return true;
+  return false;
 }
 
-boolean			HUDui::keyRelease(const BzfKeyEvent& key)
+bool			HUDui::keyRelease(const BzfKeyEvent& key)
 {
-  if (defaultKey && defaultKey->keyRelease(key)) return True;
-  if (focus && focus->doKeyRelease(key)) return True;
-  return False;
+  if (defaultKey && defaultKey->keyRelease(key)) return true;
+  if (focus && focus->doKeyRelease(key)) return true;
+  return false;
 }
 
 //
@@ -75,14 +75,14 @@ HUDuiDefaultKey::~HUDuiDefaultKey()
   // do nothing
 }
 
-boolean			HUDuiDefaultKey::keyPress(const BzfKeyEvent&)
+bool			HUDuiDefaultKey::keyPress(const BzfKeyEvent&)
 {
-  return False;
+  return false;
 }
 
-boolean			HUDuiDefaultKey::keyRelease(const BzfKeyEvent&)
+bool			HUDuiDefaultKey::keyRelease(const BzfKeyEvent&)
 {
-  return False;
+  return false;
 }
 
 //
@@ -95,7 +95,7 @@ int			HUDuiControl::arrowFrame = 0;
 TimeKeeper		HUDuiControl::lastTime;
 int			HUDuiControl::totalCount = 0;
 
-HUDuiControl::HUDuiControl() : showingFocus(True),
+HUDuiControl::HUDuiControl() : showingFocus(true),
 				x(0.0f), y(0.0f),
 				width(1.0f), height(1.0f),
 				fontHeight(11.0f),
@@ -140,7 +140,7 @@ float			HUDuiControl::getLabelWidth() const
   return desiredLabelWidth;
 }
 
-BzfString		HUDuiControl::getLabel() const
+std::string		HUDuiControl::getLabel() const
 {
   return label;
 }
@@ -187,7 +187,7 @@ void			HUDuiControl::setLabelWidth(float labelWidth)
   desiredLabelWidth = labelWidth;
 }
 
-void			HUDuiControl::setLabel(const BzfString& _label)
+void			HUDuiControl::setLabel(const std::string& _label)
 {
   label = _label;
   if (font.isValid()) trueLabelWidth = font.getWidth(label);
@@ -236,7 +236,7 @@ void			HUDuiControl::onSetFont()
   }
 }
 
-boolean			HUDuiControl::hasFocus() const
+bool			HUDuiControl::hasFocus() const
 {
   return this == HUDui::getFocus();
 }
@@ -246,7 +246,7 @@ void			HUDuiControl::setFocus()
   HUDui::setFocus(this);
 }
 
-void			HUDuiControl::showFocus(boolean _showingFocus)
+void			HUDuiControl::showFocus(bool _showingFocus)
 {
   showingFocus = _showingFocus;
 }
@@ -308,7 +308,7 @@ void			HUDuiControl::renderFocus()
 
 void			HUDuiControl::renderLabel()
 {
-  if (label.getLength() > 0 && font.isValid()) {
+  if (label.length() > 0 && font.isValid()) {
     const float dx = (desiredLabelWidth > trueLabelWidth) ?
 			desiredLabelWidth : trueLabelWidth;
     font.draw(label, x - dx - 2.0f * fontHeight, y);
@@ -345,11 +345,11 @@ int			HUDuiList::getIndex() const
 void			HUDuiList::setIndex(int _index)
 {
   if (_index < 0) index = 0;
-  else if (_index >= list.getLength()) index = list.getLength() - 1;
+  else if (_index >= list.size()) index = list.size() - 1;
   else index = _index;
 }
 
-BzfStringAList&		HUDuiList::getList()
+std::vector<std::string>&		HUDuiList::getList()
 {
   return list;
 }
@@ -359,11 +359,11 @@ void			HUDuiList::update()
   setIndex(index);
 }
 
-boolean			HUDuiList::doKeyPress(const BzfKeyEvent& key)
+bool			HUDuiList::doKeyPress(const BzfKeyEvent& key)
 {
   if (key.ascii == '\t') {
     HUDui::setFocus(getNext());
-    return True;
+    return true;
   }
 
   switch (key.button) {
@@ -377,14 +377,14 @@ boolean			HUDuiList::doKeyPress(const BzfKeyEvent& key)
 
     case BzfKeyEvent::Left:
       if (index != -1) {
-	if (--index < 0) index = list.getLength() - 1;
+	if (--index < 0) index = list.size() - 1;
 	doCallback();
       }
       break;
 
     case BzfKeyEvent::Right:
       if (index != -1) {
-	if (++index >= list.getLength()) index = 0;
+	if (++index >= list.size()) index = 0;
 	doCallback();
       }
       break;
@@ -398,22 +398,22 @@ boolean			HUDuiList::doKeyPress(const BzfKeyEvent& key)
 
     case BzfKeyEvent::End:
       if (index != -1) {
-	index = list.getLength() - 1;
+	index = list.size() - 1;
 	doCallback();
       }
       break;
 
     default:
-      return False;
+      return false;
   }
 
-  return True;
+  return true;
 }
 
-boolean			HUDuiList::doKeyRelease(const BzfKeyEvent&)
+bool			HUDuiList::doKeyRelease(const BzfKeyEvent&)
 {
   // ignore key releases
-  return False;
+  return false;
 }
 
 void			HUDuiList::doRender()
@@ -442,7 +442,7 @@ int			HUDuiTypeIn::getMaxLength() const
   return maxLength;
 }
 
-BzfString		HUDuiTypeIn::getString() const
+std::string		HUDuiTypeIn::getString() const
 {
   return string;
 }
@@ -450,20 +450,20 @@ BzfString		HUDuiTypeIn::getString() const
 void			HUDuiTypeIn::setMaxLength(int _maxLength)
 {
   maxLength = _maxLength;
-  string.truncate(maxLength);
+  string = string.substr(0, maxLength);
   if (cursorPos > maxLength)
     cursorPos = maxLength;
   onSetFont();
 }
 
-void			HUDuiTypeIn::setString(const BzfString& _string)
+void			HUDuiTypeIn::setString(const std::string& _string)
 {
   string = _string;
-  cursorPos = string.getLength();
+  cursorPos = string.length();
   onSetFont();
 }
 
-boolean			HUDuiTypeIn::doKeyPress(const BzfKeyEvent& key)
+bool			HUDuiTypeIn::doKeyPress(const BzfKeyEvent& key)
 {
   static const char backspace = '\b';	// ^H
   static const char whitespace = ' ';
@@ -472,71 +472,71 @@ boolean			HUDuiTypeIn::doKeyPress(const BzfKeyEvent& key)
   if (c == 0) switch (key.button) {
     case BzfKeyEvent::Up:
       HUDui::setFocus(getPrev());
-      return True;
+      return true;
 
     case BzfKeyEvent::Down:
       HUDui::setFocus(getNext());
-      return True;
+      return true;
 
     case BzfKeyEvent::Left:
       if (cursorPos > 0)
 	cursorPos--;
-      return True;
+      return true;
 
     case BzfKeyEvent::Right:
-      if (cursorPos < string.getLength())
+      if (cursorPos < string.length())
 	cursorPos++;
-      return True;
+      return true;
 
     case BzfKeyEvent::Delete:
-      if (cursorPos < string.getLength()) {
+      if (cursorPos < string.length()) {
 	cursorPos++;
         c = backspace;
       }
       else
-	return True;
+	return true;
       break;
 
     default:
-      return False;
+      return false;
   }
 
   if (c == '\t') {
     HUDui::setFocus(getNext());
-    return True;
+    return true;
   }
   if (!isprint(c) && c != backspace)
-    return False;
+    return false;
 
   if (c == backspace) {
     if (cursorPos == 0) goto noRoom;
 
     cursorPos--;
-    string = string(0, cursorPos) + string(cursorPos + 1, string.getLength() - cursorPos + 1);
+    string = string.substr(0, cursorPos) + string.substr(cursorPos + 1, string.length() - cursorPos + 1);
     onSetFont();
   }
   else {
     if (isspace(c)) c = whitespace;
-    if (string.getLength() == maxLength) goto noRoom;
+    if (string.length() == maxLength) goto noRoom;
 
-    string = string(0, cursorPos) + c + string( cursorPos, string.getLength() - cursorPos);
+    string = string.substr(0, cursorPos) + c + string.substr( cursorPos, string.length() - cursorPos);
     cursorPos++;
     onSetFont();
   }
-  return True;
+  return true;
 
 noRoom:
   // ring bell?
-  return True;
+  return true;
 }
 
-boolean			HUDuiTypeIn::doKeyRelease(const BzfKeyEvent& key)
+bool			HUDuiTypeIn::doKeyRelease(const BzfKeyEvent& key)
 {
   if (key.ascii == '\t' || !isprint(key.ascii))	// ignore non-printing and tab
-    return False;
+    return false;
 
   // slurp up releases
-  return True;
+  return true;
 }
 
 void			HUDuiTypeIn::doRender()
@@ -547,7 +547,7 @@ void			HUDuiTypeIn::doRender()
   glColor3fv(hasFocus() ? textColor : dimTextColor);
   getFont().draw(string, getX(), getY());
 
-  float start = getFont().getWidth(string.getString(), cursorPos);
+  float start = getFont().getWidth(string.c_str(), cursorPos);
 /*  float stop;
   if (cursorPos >= string.getLength())
     stop = start + getFont().getWidth("m", 1);
@@ -570,12 +570,12 @@ HUDuiLabel::~HUDuiLabel()
 {
 }
 
-BzfString		HUDuiLabel::getString() const
+std::string		HUDuiLabel::getString() const
 {
   return string;
 }
 
-void			HUDuiLabel::setString(const BzfString& _string)
+void			HUDuiLabel::setString(const std::string& _string)
 {
   string = _string;
   onSetFont();
@@ -586,7 +586,7 @@ void			HUDuiLabel::onSetFont()
   HUDuiControl::onSetFont();
 }
 
-boolean			HUDuiLabel::doKeyPress(const BzfKeyEvent& key)
+bool			HUDuiLabel::doKeyPress(const BzfKeyEvent& key)
 {
   if (key.ascii == 0) switch (key.button) {
     case BzfKeyEvent::Up:
@@ -598,25 +598,25 @@ boolean			HUDuiLabel::doKeyPress(const BzfKeyEvent& key)
       break;
 
     default:
-      return False;
+      return false;
   }
 
   if (key.ascii == '\t') {
     HUDui::setFocus(getNext());
-    return True;
+    return true;
   }
 
   switch (key.ascii) {
     case 13:
     case 27:
-      return False;
+      return false;
   }
-  return True;
+  return true;
 }
 
-boolean			HUDuiLabel::doKeyRelease(const BzfKeyEvent&)
+bool			HUDuiLabel::doKeyRelease(const BzfKeyEvent&)
 {
-  return False;
+  return false;
 }
 
 void			HUDuiLabel::doRender()

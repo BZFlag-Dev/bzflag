@@ -96,13 +96,13 @@ class SphereSceneNode : public SceneNode {
       public:
 			SphereRenderNode(const SphereSceneNode*);
 			~SphereRenderNode();
-	void		setHighResolution(boolean);
+	void		setHighResolution(bool);
 	void		setBaseIndex(int index);
 	void		render();
 	const GLfloat*	getPosition() { return sceneNode->getSphere(); }
       private:
 	const SphereSceneNode* sceneNode;
-	boolean		highResolution;
+	bool		highResolution;
 	int		baseIndex;
 	static GLfloat	geom[2 * SphereRes * (SphereRes + 1)][3];
 	static GLfloat	lgeom[SphereLowRes * (SphereLowRes + 1)][3];
@@ -112,9 +112,9 @@ class SphereSceneNode : public SceneNode {
   private:
     GLfloat		radius;
     GLfloat		color[4];
-    boolean		transparent;
-    boolean		blending;
-    boolean		lighting;
+    bool		transparent;
+    bool		blending;
+    bool		lighting;
     OpenGLGState	gstate;
     SphereRenderNode	renderNode;
     SphereFragmentSceneNode**	parts;

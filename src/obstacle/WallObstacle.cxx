@@ -15,7 +15,7 @@
 #include "Intersect.h"
 #include "QuadWallSceneNode.h"
 
-BzfString		WallObstacle::typeName("WallObstacle");
+std::string		WallObstacle::typeName("WallObstacle");
 
 WallObstacle::WallObstacle(const float* p, float a, float b, float h) :
 				Obstacle(p, a, 0.0, b, h)
@@ -32,12 +32,12 @@ WallObstacle::~WallObstacle()
   // do nothing
 }
 
-BzfString		WallObstacle::getType() const
+std::string		WallObstacle::getType() const
 {
   return typeName;
 }
 
-BzfString		WallObstacle::getClassName() // const
+std::string		WallObstacle::getClassName() // const
 {
   return typeName;
 }
@@ -60,12 +60,12 @@ void			WallObstacle::getNormal(const float*, float* n) const
   n[2] = plane[2];
 }
 
-boolean			WallObstacle::isInside(const float* p, float r) const
+bool			WallObstacle::isInside(const float* p, float r) const
 {
   return p[0] * plane[0] + p[1] * plane[1] + p[2] * plane[2] + plane[3] < r;
 }
 
-boolean			WallObstacle::isInside(const float* p, float angle,
+bool			WallObstacle::isInside(const float* p, float angle,
 				float halfWidth, float halfBreadth) const
 {
   const float xWidth = cosf(angle);
@@ -78,28 +78,28 @@ boolean			WallObstacle::isInside(const float* p, float angle,
   // check to see if any corner is inside negative half-space
   corner[0] = p[0] - xWidth * halfWidth - xBreadth * halfBreadth;
   corner[1] = p[1] - yWidth * halfWidth - yBreadth * halfBreadth;
-  if (isInside(corner, 0.0)) return True;
+  if (isInside(corner, 0.0)) return true;
   corner[0] = p[0] + xWidth * halfWidth - xBreadth * halfBreadth;
   corner[1] = p[1] + yWidth * halfWidth - yBreadth * halfBreadth;
-  if (isInside(corner, 0.0)) return True;
+  if (isInside(corner, 0.0)) return true;
   corner[0] = p[0] - xWidth * halfWidth + xBreadth * halfBreadth;
   corner[1] = p[1] - yWidth * halfWidth + yBreadth * halfBreadth;
-  if (isInside(corner, 0.0)) return True;
+  if (isInside(corner, 0.0)) return true;
   corner[0] = p[0] + xWidth * halfWidth + xBreadth * halfBreadth;
   corner[1] = p[1] + yWidth * halfWidth + yBreadth * halfBreadth;
-  if (isInside(corner, 0.0f)) return True;
+  if (isInside(corner, 0.0f)) return true;
 
-  return False;
+  return false;
 }
 
-boolean			WallObstacle::getHitNormal(
+bool			WallObstacle::getHitNormal(
 				const float*, float,
 				const float*, float,
 				float, float,
 				float* normal) const
 {
   getNormal(NULL, normal);
-  return True;
+  return true;
 }
 
 ObstacleSceneNodeGenerator*	WallObstacle::newSceneNodeGenerator() const
@@ -123,7 +123,7 @@ WallSceneNodeGenerator::~WallSceneNodeGenerator()
 }
 
 WallSceneNode*		WallSceneNodeGenerator::getNextNode(
-				float uRepeats, float vRepeats, boolean lod)
+				float uRepeats, float vRepeats, bool lod)
 {
   if (getNodeNumber() == 1) return NULL;
 

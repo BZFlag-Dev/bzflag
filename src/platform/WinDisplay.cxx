@@ -161,11 +161,11 @@ LONG WINAPI		WinDisplay::Rep::windowProc(HWND hwnd, UINT msg,
 WinDisplay::WinDisplay(const char* displayName, const char*) :
 				rep(NULL),
 				hwnd(NULL),
-				using3Dfx(False),
+				using3Dfx(false),
 				fullWidth(0),
 				fullHeight(0),
 				resolutions(NULL),
-				translated(False),
+				translated(false),
 				charCode(0)
 {
   rep = new Rep(displayName);
@@ -207,7 +207,7 @@ WinDisplay::~WinDisplay()
   rep->unref();
 }
 
-boolean			WinDisplay::isFullScreenOnly() const
+bool			WinDisplay::isFullScreenOnly() const
 {
   return using3Dfx;
 }
@@ -222,21 +222,21 @@ int			WinDisplay::getFullHeight() const
   return fullHeight;
 }
 
-boolean			WinDisplay::isValid() const
+bool			WinDisplay::isValid() const
 {
   return rep->hInstance != NULL;
 }
 
-boolean			WinDisplay::isEventPending() const
+bool			WinDisplay::isEventPending() const
 {
   MSG msg;
   return (PeekMessage(&msg, NULL, 0, 0, PM_NOREMOVE) != 0);
 }
 
-boolean			WinDisplay::getEvent(BzfEvent& event) const
+bool			WinDisplay::getEvent(BzfEvent& event) const
 {
   MSG msg;
-  if (GetMessage(&msg, NULL, 0, 0) == -1) return False;
+  if (GetMessage(&msg, NULL, 0, 0) == -1) return false;
   event.window = WinWindow::lookupWindow(msg.hwnd);
   switch (msg.message) {
     case WM_CLOSE:
@@ -279,7 +279,7 @@ boolean			WinDisplay::getEvent(BzfEvent& event) const
 	case WM_LBUTTONDOWN:	event.keyDown.button = BzfKeyEvent::LeftMouse; break;
 	case WM_MBUTTONDOWN:	event.keyDown.button = BzfKeyEvent::MiddleMouse; break;
 	case WM_RBUTTONDOWN:	event.keyDown.button = BzfKeyEvent::RightMouse; break;
-	default:		return False;
+	default:		return false;
       }
       break;
 
@@ -293,40 +293,40 @@ boolean			WinDisplay::getEvent(BzfEvent& event) const
 	case WM_LBUTTONUP:	event.keyUp.button = BzfKeyEvent::LeftMouse; break;
 	case WM_MBUTTONUP:	event.keyUp.button = BzfKeyEvent::MiddleMouse; break;
 	case WM_RBUTTONUP:	event.keyUp.button = BzfKeyEvent::RightMouse; break;
-	default:		return False;
+	default:		return false;
       }
       break;
 
     case WM_KEYDOWN:
     case WM_SYSKEYDOWN:
-      ((WinDisplay*)this)->translated = (boolean)(TranslateMessage(&msg) != 0);
+      ((WinDisplay*)this)->translated = (bool)(TranslateMessage(&msg) != 0);
       if (!translated) ((WinDisplay*)this)->charCode = 0;
-      if (isNastyKey(msg)) return False;
+      if (isNastyKey(msg)) return false;
       DispatchMessage(&msg);
       event.type = BzfEvent::KeyDown;
-      if (!getKey(msg, event.keyDown)) return False;
+      if (!getKey(msg, event.keyDown)) return false;
       break;
 
     case WM_KEYUP:
     case WM_SYSKEYUP: {
-      ((WinDisplay*)this)->translated = (boolean)(TranslateMessage(&msg) != 0);
-      if (isNastyKey(msg)) return False;
+      ((WinDisplay*)this)->translated = (bool)(TranslateMessage(&msg) != 0);
+      if (isNastyKey(msg)) return false;
       DispatchMessage(&msg);
       event.type = BzfEvent::KeyUp;
-      if (!getKey(msg, event.keyUp)) return False;
+      if (!getKey(msg, event.keyUp)) return false;
       break;
     }
 
     default:
       TranslateMessage(&msg);
       DispatchMessage(&msg);
-      return False;
+      return false;
   }
 
-  return True;
+  return true;
 }
 
-boolean			WinDisplay::getKey(const MSG& msg,
+bool			WinDisplay::getKey(const MSG& msg,
 					BzfKeyEvent& key) const
 {
   key.shift = 0;
@@ -357,30 +357,30 @@ boolean			WinDisplay::getKey(const MSG& msg,
   return (key.ascii != 0 || key.button != 0);
 }
 
-boolean			WinDisplay::isNastyKey(const MSG& msg) const
+bool			WinDisplay::isNastyKey(const MSG& msg) const
 {
   switch (msg.wParam) {
     case VK_LWIN:
     case VK_RWIN:
       // disable windows keys
-      return True;
+      return true;
 
     case VK_ESCAPE:
       // disable ctrl+escape (which pops up the start menu)
       if (GetKeyState(VK_CONTROL) < 0)
-	return True;
+	return true;
       break;
   }
-  return False;
+  return false;
 }
 
-boolean			WinDisplay::setDefaultResolution()
+bool			WinDisplay::setDefaultResolution()
 {
   ChangeDisplaySettings(0, 0);
-  return True;
+  return true;
 }
 
-boolean			WinDisplay::doSetResolution(int index)
+bool			WinDisplay::doSetResolution(int index)
 {
   // try setting the format
   Resolution& format = resolutions[index];
@@ -398,14 +398,14 @@ boolean			WinDisplay::doSetResolution(int index)
   // test the change before really doing it
   if (ChangeDisplaySettings(&dm, CDS_FULLSCREEN | CDS_TEST) !=
 						DISP_CHANGE_SUCCESSFUL)
-    return False;
+    return false;
 
   // deactivate windows before resolution change.  if we don't do this
   // then the app will almost certainly crash in the OpenGL driver.
   WinWindow::deactivateAll();
 
   // change resolution
-  const boolean changed = (ChangeDisplaySettings(&dm, CDS_FULLSCREEN) ==
+  const bool changed = (ChangeDisplaySettings(&dm, CDS_FULLSCREEN) ==
 						DISP_CHANGE_SUCCESSFUL);
 
   // reactivate previously deactivated window after change
@@ -420,7 +420,7 @@ BzfDisplay::ResInfo**	WinDisplay::getVideoFormats(
   HDC hDC = GetDC(GetDesktopWindow());
 
   // get the current display depth
-  const boolean changeDepth = canChangeDepth();
+  const bool changeDepth = canChangeDepth();
   int currentDepth = GetDeviceCaps(hDC, BITSPIXEL) * GetDeviceCaps(hDC, PLANES);
 
   // count the resolutions
@@ -521,7 +521,7 @@ BzfDisplay::ResInfo**	WinDisplay::getVideoFormats(
 }
 
 #define OSR2_BUILD_NUMBER 1111
-boolean			WinDisplay::canChangeDepth()
+bool			WinDisplay::canChangeDepth()
 {
   // not all versions of windows change dynamically change bit depth.
   // NT 4.0 and 95 OSR2 can and we assume anything later then them
@@ -529,17 +529,17 @@ boolean			WinDisplay::canChangeDepth()
   OSVERSIONINFO vinfo;
   vinfo.dwOSVersionInfoSize = sizeof(vinfo);
   if (!GetVersionEx(&vinfo))
-    return False;
+    return false;
   if (vinfo.dwMajorVersion > 4)
-    return True;
+    return true;
   if (vinfo.dwMajorVersion == 4) {
     if (vinfo.dwPlatformId == VER_PLATFORM_WIN32_NT)
-      return True;
+      return true;
     if (vinfo.dwPlatformId == VER_PLATFORM_WIN32_WINDOWS &&
 	LOWORD(vinfo.dwBuildNumber) >= OSR2_BUILD_NUMBER)
-      return True;
+      return true;
   }
-  return False;
+  return false;
 }
 
 const int		WinDisplay::asciiMap[] = {

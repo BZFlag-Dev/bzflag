@@ -5,8 +5,6 @@
 #include "common.h"
 #include "BzfDisplay.h"
 #include "BzfEvent.h"
-#include "AList.h"
-#include "BzfString.h"
 #include "bzfgl.h"
 
 #include <Carbon/Carbon.h>
@@ -23,14 +21,14 @@ class MacDisplay : public BzfDisplay {
     MacDisplay (const char *name, const char *videoFormat);
     ~MacDisplay() {};
 
-    boolean isValid() const { return is_valid;   }
-    boolean isEventPending() const {
+    bool isValid() const { return is_valid;   }
+    bool isEventPending() const {
       EventRecord eventRec;
       return EventAvail(everyEvent, &eventRec);
     }
 
-    boolean getEvent(BzfEvent&) const;
-    //void    setPending (boolean val) const { pending = val; }
+    bool getEvent(BzfEvent&) const;
+    //void    setPending (bool val) const { pending = val; }
 
     int getWidth() const;
     int getHeight() const;
@@ -47,7 +45,7 @@ class MacDisplay : public BzfDisplay {
 
   private:
 
-    boolean doSetResolution(int) { return false; }
+    bool doSetResolution(int) { return false; }
 
     void getKey(BzfKeyEvent &bzf_event, EventRecord &event_rec) const;
 
@@ -56,9 +54,9 @@ class MacDisplay : public BzfDisplay {
     int screen_height;
     //int     screen_depth;
 
-    boolean is_valid;
+    bool is_valid;
 
-    static boolean pending;
+    static bool pending;
 
     static CGLContextObj  context;
     static CGrafPtr    window;

@@ -18,10 +18,10 @@
 #include "OpenGLTexture.h"
 
 BoltSceneNode::BoltSceneNode(const GLfloat pos[3]) :
-				drawFlares(False),
-				blending(False),
-				texturing(False),
-				colorblind(False),
+				drawFlares(false),
+				blending(false),
+				texturing(false),
+				colorblind(false),
 				size(1.0f),
 				renderNode(this)
 {
@@ -47,7 +47,7 @@ BoltSceneNode::~BoltSceneNode()
   // do nothing
 }
 
-void			BoltSceneNode::setFlares(boolean on)
+void			BoltSceneNode::setFlares(bool on)
 {
   drawFlares = on;
 }
@@ -72,12 +72,12 @@ void			BoltSceneNode::setColor(const GLfloat* rgb)
   setColor(rgb[0], rgb[1], rgb[2]);
 }
 
-boolean			BoltSceneNode::getColorblind() const
+bool			BoltSceneNode::getColorblind() const
 {
   return colorblind;
 }
 
-void			BoltSceneNode::setColorblind(boolean _colorblind)
+void			BoltSceneNode::setColorblind(bool _colorblind)
 {
   colorblind = _colorblind;
 }
@@ -164,9 +164,9 @@ BoltSceneNode::BoltRenderNode::BoltRenderNode(
 				numFlares(0)
 {
   // initialize core and corona if not already done
-  static boolean init = False;
+  static bool init = false;
   if (!init) {
-    init = True;
+    init = true;
     core[0][0] = 0.0f;
     core[0][1] = 0.0f;
     for (int i = 0; i < 8; i++) {

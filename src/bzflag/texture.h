@@ -18,23 +18,23 @@
 #define	BZF_TEXTURE_H
 
 #include "common.h"
-#include "BzfString.h"
 #include "OpenGLTexture.h"
 #include "OpenGLTexFont.h"
+#include <string>
 
-unsigned char*		getTextureImage(const BzfString& file,
+unsigned char*		getTextureImage(const std::string& file,
 				int& width, int& height, int& depth);
-unsigned char*		getTextImage(const BzfString& file,
+unsigned char*		getTextImage(const std::string& file,
 				int& width, int& height);
-OpenGLTexture		getTexture(const BzfString& file,
+OpenGLTexture		getTexture(const std::string& file,
 				int* width = NULL, int* height = NULL,
 				OpenGLTexture::Filter = OpenGLTexture::Max,
-				boolean repeat = True,
-				boolean noError = False);
-OpenGLTexture		getTexture(const BzfString& file,
+				bool repeat = true,
+				bool noError = false);
+OpenGLTexture		getTexture(const std::string& file,
 				OpenGLTexture::Filter = OpenGLTexture::Max,
-				boolean repeat = True,
-				boolean noError = False);
+				bool repeat = true,
+				bool noError = false);
 
 class TextureFont {
   public:
@@ -47,7 +47,7 @@ class TextureFont {
 			FixedBold
     };
 
-    static OpenGLTexFont getTextureFont(Font, boolean required = False);
+    static OpenGLTexFont getTextureFont(Font, bool required = false);
 
 // sun's compiler is broken: sizeof(fontFileName) fails unless
 // fontFileName is public.

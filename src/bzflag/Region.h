@@ -18,7 +18,7 @@
 #define	BZF_REGION_H
 
 #include "common.h"
-#include "AList.h"
+#include <vector>
 
 class RegionPoint {
   public:
@@ -32,16 +32,12 @@ class RegionPoint {
     float		p[2];
 };
 
-class BzfRegion;
-BZF_DEFINE_ALIST(RegionPointList, RegionPoint);
-BZF_DEFINE_ALIST(RegionList, BzfRegion*);
-
 class BzfRegion {
   public:
 			BzfRegion(int sides, const float p[][2]);
 			~BzfRegion();
 
-    boolean		isInside(const float p[2]) const;
+    bool		isInside(const float p[2]) const;
     int			classify(const float p1[2], const float p2[2]) const;
     BzfRegion*		orphanSplitRegion(const float p1[2], const float p2[2]);
 
@@ -49,7 +45,7 @@ class BzfRegion {
     const RegionPoint&	getCorner(int index) const;
     BzfRegion*		getNeighbor(int index) const;
 
-    boolean		test(int mailboxIndex);
+    bool		test(int mailboxIndex);
     void		setPathStuff(float distance, BzfRegion* target,
 					const float p[2], int mailboxIndex);
     float		getDistance() const;
@@ -61,15 +57,15 @@ class BzfRegion {
     void		splitEdge(const BzfRegion* oldNeighbor,
 					BzfRegion* newNeighbor,
 					const RegionPoint& p,
-					boolean onRight);
+					bool onRight);
     void		addSide(const RegionPoint&, BzfRegion* neighbor);
     void		setNeighbor(const BzfRegion* oldNeighbor,
 					BzfRegion* newNeighbor);
     void		tidy();
 
   private:
-    RegionPointList	corners;
-    RegionList		neighbors;
+    std::vector<RegionPoint>	corners;
+    std::vector<BzfRegion*>		neighbors;
     int			mailbox;
 
     BzfRegion*		target;
@@ -84,7 +80,7 @@ class RegionPriorityQueue {
     void		insert(BzfRegion* region, float priority);
     BzfRegion*		remove();
     void		removeAll();
-    boolean		isEmpty() const;
+    bool		isEmpty() const;
 
   private:
     struct Node {

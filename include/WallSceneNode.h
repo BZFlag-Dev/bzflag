@@ -56,7 +56,7 @@ class WallSceneNode : public SceneNode {
 
     void		setColor();
 
-    boolean		cull(const ViewFrustum&) const;
+    bool		cull(const ViewFrustum&) const;
     void		notifyStyleChange(const SceneRenderer& renderer);
 
     void		copyStyle(WallSceneNode*);
@@ -90,10 +90,10 @@ class WallSceneNode : public SceneNode {
     GLfloat		lightedColor[4];
     GLfloat		lightedModulateColor[4];
     int			style;
-    boolean		transparent;
-    boolean		modulateTransparent;
-    boolean		lightedTransparent;
-    boolean		lightedModulateTransparent;
+    bool		transparent;
+    bool		modulateTransparent;
+    bool		lightedTransparent;
+    bool		lightedModulateTransparent;
     OpenGLGState	gstate;
 };
 

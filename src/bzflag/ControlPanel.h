@@ -18,20 +18,19 @@
 #include "OpenGLTexture.h"
 #include "OpenGLTexFont.h"
 #include "OpenGLGState.h"
-#include "BzfString.h"
-#include "AList.h"
+#include <string>
+#include <vector>
 
 class RadarRenderer;
 class SceneRenderer;
 
 class ControlPanelMessage {
   public:
-			ControlPanelMessage(const BzfString&, const GLfloat*);
+			ControlPanelMessage(const std::string&, const GLfloat*);
   public:
-    BzfString		string;
+    std::string		string;
     GLfloat		color[3];
 };
-BZF_DEFINE_ALIST(ControlPanelMessageList, ControlPanelMessage);
 
 class ControlPanel {
   public:
@@ -44,7 +43,7 @@ class ControlPanel {
 
     void		setNumberOfFrameBuffers(int);
 
-    void		addMessage(const BzfString&, const GLfloat* = NULL);
+    void		addMessage(const std::string&, const GLfloat* = NULL);
 	void		setMessagesOffset(int offset, int whence);
     void		setStatus(const char*);
     void		setRadarRenderer(RadarRenderer*);
@@ -62,8 +61,8 @@ class ControlPanel {
 
   private:
     MainWindow&		window;
-    boolean		resized;
-    boolean		blend;
+    bool		resized;
+    bool		blend;
     int			numBuffers;
     int			exposed;
     int			changedMessage;
@@ -73,7 +72,7 @@ class ControlPanel {
     float		du, dv;
     int			radarAreaPixels[4];
     int			messageAreaPixels[4];
-    ControlPanelMessageList	messages;
+    std::vector<ControlPanelMessage>	messages;
     GLfloat		teamColor[3];
     static int		messagesOffset;
     static const int	maxScrollPages;

@@ -13,7 +13,7 @@
 #include <math.h>
 #include "Intersect.h"
 
-boolean			testCircleCircle(const float* o1, float r1,
+bool			testCircleCircle(const float* o1, float r1,
 					const float* o2, float r2)
 {
   const float x = o1[0] - o2[0];
@@ -22,7 +22,7 @@ boolean			testCircleCircle(const float* o1, float r1,
   return (x * x + y * y <= r * r);
 }
 
-boolean			testSphereSphere(const float* o1, float r1,
+bool			testSphereSphere(const float* o1, float r1,
 					const float* o2, float r2)
 {
   const float x = o1[0] - o2[0];
@@ -107,8 +107,8 @@ void			getNormalRect(const float* p1, const float* p2,
   n[2] = 0.0f;
 }
 
-// True iff axis aligned rect centered at origin intersects circle
-boolean			testOrigRectCircle(float dx, float dy,
+// true iff axis aligned rect centered at origin intersects circle
+bool			testOrigRectCircle(float dx, float dy,
 					const float* p, float r)
 {
   // Algorithm from Graphics Gems, pp51-53.
@@ -135,10 +135,10 @@ boolean			testOrigRectCircle(float dx, float dy,
   else if (ry - dy > 0.0)				// due north
     return ry - dy < r;
 
-  return True;						// circle origin in rect
+  return true;						// circle origin in rect
 }
 
-boolean			testRectCircle(const float* p1, float angle,
+bool			testRectCircle(const float* p1, float angle,
 					float dx, float dy,
 					const float* p2, float r)
 {
@@ -382,7 +382,7 @@ float			timeAndSideRayHitsRect(const Ray& r,
   return timeAndSideRayHitsOrigRect(pb, db, dx, dy, side);
 }
 
-static boolean		testOrigRectRect(const float* p, float angle,
+static bool		testOrigRectRect(const float* p, float angle,
 					float dx1, float dy1,
 					float dx2, float dy2)
 {
@@ -393,13 +393,13 @@ static boolean		testOrigRectRect(const float* p, float angle,
   int	i, region[4][2];
 
   // get corners of first rect and classify according to position with
-  // respect to second rect, return True iff any lies inside second.
+  // respect to second rect, return true iff any lies inside second.
   for (i = 0; i < 4; i++) {
     corner1[i][0] = p[0] + c * dx1 * box[i][0] - s * dy1 * box[i][1];
     corner1[i][1] = p[1] + s * dx1 * box[i][0] + c * dy1 * box[i][1];
     region[i][0] = corner1[i][0] < -dx2 ? -1 : (corner1[i][0] > dx2 ? 1 : 0);
     region[i][1] = corner1[i][1] < -dy2 ? -1 : (corner1[i][1] > dy2 ? 1 : 0);
-    if (!region[i][0] && !region[i][1]) return True;
+    if (!region[i][0] && !region[i][1]) return true;
   }
 
   // check each edge of rect1
@@ -408,15 +408,15 @@ static boolean		testOrigRectRect(const float* p, float angle,
     int j = (i + 1) % 4;
 
     // if the edge lies completely to one side of rect2 then continue
-    // if it crosses the center then return True
+    // if it crosses the center then return true
     if (region[i][0] == region[j][0])
       if (region[i][0] == 0 && region[i][1] != region[j][1])
-	return True;
+	return true;
       else
 	continue;
     else if (region[i][1] == region[j][1])
       if (region[i][1] == 0)
-	return True;
+	return true;
       else
 	continue;
 
@@ -443,12 +443,12 @@ static boolean		testOrigRectRect(const float* p, float angle,
     e[1] = corner1[j][1] - corner1[i][1];
     if ((e[1]*(corner2[0]-corner1[i][0])-e[0]*(corner2[1]-corner1[i][1])) *
 	(e[1]*(corner2[0]+corner1[i][0])-e[0]*(corner2[1]+corner1[i][1])) > 0.0)
-      return True;
+      return true;
   }
-  return False;
+  return false;
 }
 
-boolean			testRectRect(const float* p1, float angle1,
+bool			testRectRect(const float* p1, float angle1,
 					float dx1, float dy1,
 					const float* p2, float angle2,
 					float dx2, float dy2)
@@ -468,7 +468,7 @@ boolean			testRectRect(const float* p1, float angle1,
   return testOrigRectRect(pb, angle2 - angle1, dx2, dy2, dx1, dy1);
 }
 
-boolean			testRectInRect(const float* p1, float angle1,
+bool			testRectInRect(const float* p1, float angle1,
 					float dx1, float dy1,
 					const float* p2, float angle2,
 					float dx2, float dy2)
@@ -492,8 +492,8 @@ boolean			testRectInRect(const float* p1, float angle1,
   for (int i = 0; i < 4; i++) {
     const float x = pb[0] + c2 * dx2 * box[i][0] - s2 * dy2 * box[i][1];
     const float y = pb[1] + s2 * dx2 * box[i][0] + c2 * dy2 * box[i][1];
-    if (fabsf(x) > dx1 || fabsf(y) > dy1) return False;
+    if (fabsf(x) > dx1 || fabsf(y) > dy1) return false;
   }
-  return True;
+  return true;
 }
 // ex: shiftwidth=2 tabstop=8

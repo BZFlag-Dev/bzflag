@@ -15,7 +15,7 @@
 #include "Intersect.h"
 #include "QuadWallSceneNode.h"
 
-BzfString		BoxBuilding::typeName("BoxBuilding");
+std::string		BoxBuilding::typeName("BoxBuilding");
 
 BoxBuilding::BoxBuilding(const float* p, float a, float w, float b, float h) :
 				Obstacle(p, a, w, b, h)
@@ -28,12 +28,12 @@ BoxBuilding::~BoxBuilding()
   // do nothing
 }
 
-BzfString		BoxBuilding::getType() const
+std::string		BoxBuilding::getType() const
 {
   return typeName;
 }
 
-BzfString		BoxBuilding::getClassName() // const
+std::string		BoxBuilding::getClassName() // const
 {
   return typeName;
 }
@@ -49,7 +49,7 @@ void			BoxBuilding::getNormal(const float* p, float* n) const
   getNormalRect(p, getPosition(), getRotation(), getWidth(), getBreadth(), n);
 }
 
-boolean			BoxBuilding::isInside(const float* p,
+bool			BoxBuilding::isInside(const float* p,
 						float radius) const
 {
   return p[2] < getPosition()[2] + getHeight() && testRectCircle(getPosition(), getRotation(),
@@ -57,7 +57,7 @@ boolean			BoxBuilding::isInside(const float* p,
 					&& p[2] >= getPosition()[2];
 }
 
-boolean			BoxBuilding::isInside(const float* p, float a,
+bool			BoxBuilding::isInside(const float* p, float a,
 						float dx, float dy) const
 {
   return p[2] < getPosition()[2] + getHeight() && testRectRect(getPosition(), getRotation(),
@@ -66,15 +66,15 @@ boolean			BoxBuilding::isInside(const float* p, float a,
 					&& p[2] >= getPosition()[2];
 }
 
-boolean			BoxBuilding::isCrossing(const float* p, float a,
+bool			BoxBuilding::isCrossing(const float* p, float a,
 					float dx, float dy, float* plane) const
 {
   // if not inside or contained then not crossing
   if (!isInside(p, a, dx, dy) ||
 	testRectInRect(getPosition(), getRotation(),
 			getWidth(), getBreadth(), p, a, dx, dy))
-    return False;
-  if (!plane) return True;
+    return false;
+  if (!plane) return true;
 
   // it's crossing -- choose which wall is being crossed (this
   // is a guestimate, should really do a careful test).  just
@@ -101,10 +101,10 @@ boolean			BoxBuilding::isCrossing(const float* p, float a,
   // now finish off plane equation
   plane[2] = 0.0;
   plane[3] = -(plane[0] * pw[0] + plane[1] * pw[1]);
-  return True;
+  return true;
 }
 
-boolean			BoxBuilding::getHitNormal(
+bool			BoxBuilding::getHitNormal(
 				const float* pos1, float azimuth1,
 				const float* pos2, float azimuth2,
 				float width, float breadth,
@@ -165,7 +165,7 @@ BoxSceneNodeGenerator::~BoxSceneNodeGenerator()
 }
 
 WallSceneNode*		BoxSceneNodeGenerator::getNextNode(
-				float uRepeats, float vRepeats, boolean lod)
+				float uRepeats, float vRepeats, bool lod)
 {
   if (getNodeNumber() == 6) return NULL;
 

@@ -2,7 +2,7 @@
 #include "BzfEvent.h"
 #include <CoreFoundation/CoreFoundation.h>
 
-boolean     MacDisplay::pending;
+bool     MacDisplay::pending;
 CGrafPtr    MacDisplay::window;
 CGLContextObj  MacDisplay::context;
 
@@ -37,7 +37,7 @@ MacDisplay::MacDisplay(const char *name, const char *videoFormat) {
 
 static int           event_cnt = 0;
 
-boolean MacDisplay::getEvent (BzfEvent &bzf_event) const {
+bool MacDisplay::getEvent (BzfEvent &bzf_event) const {
 
   EventRecord eventRec;
   int         gotEvent = false;

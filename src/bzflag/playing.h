@@ -19,8 +19,8 @@
 
 #include "common.h"
 #include "global.h"
-#include "AList.h"
-#include "BzfString.h"
+#include <string>
+#include <vector>
 
 class SceneRenderer;
 class BzfKeyMap;
@@ -30,30 +30,29 @@ struct StartupInfo {
 			StartupInfo();
 
   public:
-    boolean		hasConfiguration;
-    boolean		autoConnect;
+    bool		hasConfiguration;
+    bool		autoConnect;
     char		serverName[80];
     int			serverPort;
     int			ttl;
-    boolean		useUDPconnection;
+    bool		useUDPconnection;
     char		multicastInterface[65];
     TeamColor		team;
     char		callsign[CallSignLen];
     char		email[EmailLen];
-    BzfString		listServerURL;
+    std::string		listServerURL;
     int			listServerPort;
-    boolean		joystick;
-    BzfString		joystickName;
+    bool		joystick;
+    std::string		joystickName;
 };
 
-typedef void		(*JoinGameCallback)(boolean success, void* data);
+typedef void		(*JoinGameCallback)(bool success, void* data);
 typedef void		(*PlayingCallback)(void*);
 struct PlayingCallbackItem {
   public:
     PlayingCallback	cb;
     void*		data;
 };
-BZF_DEFINE_ALIST(PlayingCallbackList, PlayingCallbackItem);
 
 class BzfDisplay;
 class MainWindow;
@@ -69,14 +68,14 @@ void			setSceneDatabase();
 StartupInfo*		getStartupInfo();
 BzfKeyMap&			getBzfKeyMap();
 void			notifyBzfKeyMapChanged();
-boolean			setVideoFormat(int, boolean test = False);
+bool			setVideoFormat(int, bool test = false);
 Player*			lookupPlayer(const PlayerId& id);
 void			startPlaying(BzfDisplay* display,
 				SceneRenderer&,
 				ResourceDatabase&,
 				StartupInfo*);
 
-boolean			addExplosion(const float* pos,
+bool			addExplosion(const float* pos,
 				float size, float duration);
 void			addTankExplosion(const float* pos);
 void			addShotExplosion(const float* pos);

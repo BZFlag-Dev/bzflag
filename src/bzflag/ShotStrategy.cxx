@@ -85,9 +85,9 @@ void			ShotStrategy::done()
   }
 }
 
-boolean			ShotStrategy::isStoppedByHit() const
+bool			ShotStrategy::isStoppedByHit() const
 {
-  return True;
+  return true;
 }
 
 void			ShotStrategy::sendUpdate(const FiringInfo&) const
@@ -141,64 +141,79 @@ const Obstacle*		ShotStrategy::getFirstBuilding(const Ray& ray,
   const Obstacle* closestObstacle = NULL;
 
   // check walls
-  WallObstaclesCIterator wallScan(World::getWorld()->getWalls());
-  while (!wallScan.isDone()) {
-    const WallObstacle& wall = wallScan.getItem();
-    const float wallt = wall.intersect(ray);
-    if (wallt > min && wallt < t) {
-      t = wallt;
-      closestObstacle = &wall;
+  {
+    const std::vector<WallObstacle> &walls = World::getWorld()->getWalls();
+    std::vector<WallObstacle>::const_iterator it = walls.begin();
+    while (it != walls.end()) {
+      const WallObstacle& wall = *it;
+      const float wallt = wall.intersect(ray);
+      if (wallt > min && wallt < t) {
+	t = wallt;
+	closestObstacle = &wall;
+      }
+      it++;
     }
-    wallScan.next();
   }
 
   // check teleporter borders
-  TeleportersCIterator teleporterScan(World::getWorld()->getTeleporters());
-  while (!teleporterScan.isDone()) {
-    const Teleporter& teleporter = teleporterScan.getItem();
-    const float telet = teleporter.intersect(ray);
-    int face;
-    if (telet > min && telet < t &&
-			teleporter.isTeleported(ray, face) < 0.0f) {
-      t = telet;
-      closestObstacle = &teleporter;
+  {
+    const std::vector<Teleporter> &teleporters = World::getWorld()->getTeleporters();
+    std::vector<Teleporter>::const_iterator it = teleporters.begin();
+    while (it != teleporters.end()) {
+      const Teleporter& teleporter = *it;
+      const float telet = teleporter.intersect(ray);
+      int face;
+      if (telet > min && telet < t && teleporter.isTeleported(ray, face) < 0.0f) {
+	t = telet;
+	closestObstacle = &teleporter;
+      }
+      it++;
     }
-    teleporterScan.next();
   }
 
   // check boxes
-  BoxBuildingsCIterator boxScan(World::getWorld()->getBoxes());
-  while (!boxScan.isDone()) {
-    const BoxBuilding& box = boxScan.getItem();
-    const float boxt = box.intersect(ray);
-    if (boxt > min && boxt < t) {
-      t = boxt;
-      closestObstacle = &box;
+  {
+    const std::vector<BoxBuilding> &boxes = World::getWorld()->getBoxes();
+    std::vector<BoxBuilding>::const_iterator it = boxes.begin();
+    while (it != boxes.end()) {
+      const BoxBuilding& box = *it;
+      const float boxt = box.intersect(ray);
+      if (boxt > min && boxt < t) {
+	t = boxt;
+	closestObstacle = &box;
+      }
+      it++;
     }
-    boxScan.next();
   }
 
-  BaseBuildingsCIterator baseScan(World::getWorld()->getBases());
-  while(!baseScan.isDone()) {
-    const BaseBuilding &baseb = baseScan.getItem();
-    const float baset = baseb.intersect(ray);
-    if(baset > min && baset < t) {
-      t = baset;
-      closestObstacle = &baseb;
+  // check bases
+  {
+    const std::vector<BaseBuilding> &bases = World::getWorld()->getBases();
+    std::vector<BaseBuilding>::const_iterator it = bases.begin();
+    while (it != bases.end()) {
+      const BaseBuilding& base = *it;
+      const float baset = base.intersect(ray);
+      if (baset > min && baset < t) {
+	t = baset;
+	closestObstacle = &base;
+      }
+      it++;
     }
-    baseScan.next();
   }
 
   // check pyramids
-  PyramidBuildingsCIterator pyramidScan(World::getWorld()->getPyramids());
-  while (!pyramidScan.isDone()) {
-    const PyramidBuilding& pyramid = pyramidScan.getItem();
-    const float pyrt = pyramid.intersect(ray);
-    if (pyrt > min && pyrt < t) {
-      t = pyrt;
-      closestObstacle = &pyramid;
+  {
+    const std::vector<PyramidBuilding> &pyramids = World::getWorld()->getPyramids();
+    std::vector<PyramidBuilding>::const_iterator it = pyramids.begin();
+    while (it != pyramids.end()) {
+      const PyramidBuilding& pyramid = *it;
+      const float pyramidt = pyramid.intersect(ray);
+      if (pyramidt > min && pyramidt < t) {
+	t = pyramidt;
+	closestObstacle = &pyramid;
+      }
+      it++;
     }
-    pyramidScan.next();
   }
 
   return closestObstacle;
@@ -210,16 +225,19 @@ const Teleporter*	ShotStrategy::getFirstTeleporter(const Ray& ray,
   const Teleporter* closestTeleporter = NULL;
   int face;
 
-  TeleportersCIterator teleporterScan(World::getWorld()->getTeleporters());
-  while (!teleporterScan.isDone()) {
-    const Teleporter& teleporter = teleporterScan.getItem();
-    const float telet = teleporter.isTeleported(ray, face);
-    if (telet > min && telet < t) {
-      t = telet;
-      f = face;
-      closestTeleporter = &teleporter;
+  {
+    const std::vector<Teleporter> &teleporters = World::getWorld()->getTeleporters();
+    std::vector<Teleporter>::const_iterator it = teleporters.begin();
+    while (it != teleporters.end()) {
+      const Teleporter& teleporter = *it;
+      const float telet = teleporter.isTeleported(ray, face);
+      if (telet > min && telet < t) {
+	t = telet;
+	f = face;
+	closestTeleporter = &teleporter;
+      }
+      it++;
     }
-    teleporterScan.next();
   }
 
   return closestTeleporter;
@@ -338,7 +356,7 @@ void			SegmentedShotStrategy::update(float dt)
   currentTime += dt;
 
   // see if we've moved to another segment
-  const int numSegments = segments.getLength();
+  const int numSegments = segments.size();
   if (segment < numSegments && segments[segment].end <= currentTime) {
     lastSegment = segment;
     while (segment < numSegments && segments[segment].end <= currentTime) {
@@ -395,17 +413,17 @@ const TimeKeeper&	SegmentedShotStrategy::getLastTime() const
   return lastTime;
 }
 
-boolean			SegmentedShotStrategy::isOverlapping(
+bool			SegmentedShotStrategy::isOverlapping(
 				const float (*bbox1)[3],
 				const float (*bbox2)[3]) const
 {
-  if (bbox1[1][0] < bbox2[0][0]) return False;
-  if (bbox1[0][0] > bbox2[1][0]) return False;
-  if (bbox1[1][1] < bbox2[0][1]) return False;
-  if (bbox1[0][1] > bbox2[1][1]) return False;
-  if (bbox1[1][2] < bbox2[0][2]) return False;
-  if (bbox1[0][2] > bbox2[1][2]) return False;
-  return True;
+  if (bbox1[1][0] < bbox2[0][0]) return false;
+  if (bbox1[0][0] > bbox2[1][0]) return false;
+  if (bbox1[1][1] < bbox2[0][1]) return false;
+  if (bbox1[0][1] > bbox2[1][1]) return false;
+  if (bbox1[1][2] < bbox2[0][2]) return false;
+  if (bbox1[0][2] > bbox2[1][2]) return false;
+  return true;
 }
 
 void			SegmentedShotStrategy::setCurrentSegment(int _segment)
@@ -441,7 +459,7 @@ float			SegmentedShotStrategy::checkHit(const BaseLocalPlayer* tank,
 
   // check each segment in interval (prevTime,currentTime]
   const float dt = currentTime - prevTime;
-  const int numSegments = segments.getLength();
+  const int numSegments = segments.size();
   for (int i = lastSegment; i <= segment && i < numSegments; i++) {
     // can never hit your own first laser segment
     if (i == 0 && getPath().getFlag() == LaserFlag &&
@@ -507,7 +525,7 @@ float			SegmentedShotStrategy::checkHit(const BaseLocalPlayer* tank,
 }
 
 void			SegmentedShotStrategy::addShot(
-				SceneDatabase* scene, boolean colorblind)
+				SceneDatabase* scene, bool colorblind)
 {
   const ShotPath& path = getPath();
   boltSceneNode->move(path.getPosition(), path.getVelocity());
@@ -568,7 +586,7 @@ void			SegmentedShotStrategy::makeSegments(ObstacleEffect e)
   o[1] = path.getPosition()[1];
   o[2] = path.getPosition()[2];
 
-  segments.removeAll();
+  segments.clear();
   ShotPathSegment::Reason reason = ShotPathSegment::Initial;
   do {
     // construct ray and find the first building, teleporter, or outer wall
@@ -598,7 +616,7 @@ void			SegmentedShotStrategy::makeSegments(ObstacleEffect e)
     if (t < 0.0f) endTime += Epsilon;
     else endTime += t;
     ShotPathSegment segment(startTime, endTime, rs, reason);
-    segments.append(segment);
+    segments.push_back(segment);
     startTime = endTime;
 
     // used up this much time in segment
@@ -651,7 +669,7 @@ void			SegmentedShotStrategy::makeSegments(ObstacleEffect e)
   lastTime = startTime;
 
   // make bounding box for entire path
-  const int numSegments = segments.getLength();
+  const int numSegments = segments.size();
   if (numSegments > 0) {
     const ShotPathSegment& firstSegment = segments[0];
     bbox[0][0] = firstSegment.bbox[0][0];
@@ -677,7 +695,7 @@ void			SegmentedShotStrategy::makeSegments(ObstacleEffect e)
   }
 }
 
-const ShotPathSegments&	SegmentedShotStrategy::getSegments() const
+const std::vector<ShotPathSegment>&	SegmentedShotStrategy::getSegments() const
 {
   return segments;
 }
@@ -810,7 +828,7 @@ LaserStrategy::LaserStrategy(ShotPath* path) :
   endTime = f.lifetime;
 
   // make laser scene nodes
-  const int numSegments = getSegments().getLength();
+  const int numSegments = getSegments().size();
   laserNodes = new LaserSceneNode*[numSegments];
   const LocalPlayer* myTank = LocalPlayer::getMyTank();
   TeamColor tmpTeam = (myTank->getFlag() == ColorblindnessFlag) ? RogueTeam : team;
@@ -832,7 +850,7 @@ LaserStrategy::LaserStrategy(ShotPath* path) :
 
 LaserStrategy::~LaserStrategy()
 {
-  const int numSegments = getSegments().getLength();
+  const int numSegments = getSegments().size();
   for (int i = 0; i < numSegments; i++)
     delete laserNodes[i];
   delete[] laserNodes;
@@ -844,10 +862,10 @@ void			LaserStrategy::update(float dt)
   if (cumTime >= endTime) setExpired();
 }
 
-void			LaserStrategy::addShot(SceneDatabase* scene, boolean)
+void			LaserStrategy::addShot(SceneDatabase* scene, bool)
 {
   // laser is so fast we always show every segment
-  const int numSegments = getSegments().getLength();
+  const int numSegments = getSegments().size();
   for (int i = 0; i < numSegments; i++)
     scene->addDynamicNode(laserNodes[i]);
 }
@@ -855,8 +873,8 @@ void			LaserStrategy::addShot(SceneDatabase* scene, boolean)
 void			LaserStrategy::radarRender() const
 {
   // draw all segments
-  const ShotPathSegments& segments = getSegments();
-  const int numSegments = segments.getLength();
+  const std::vector<ShotPathSegment>& segments = getSegments();
+  const int numSegments = segments.size();
   glBegin(GL_LINES);
     for (int i = 0; i < numSegments; i++) {
       const ShotPathSegment& segment = segments[i];
@@ -869,9 +887,9 @@ void			LaserStrategy::radarRender() const
   glEnd();
 }
 
-boolean			LaserStrategy::isStoppedByHit() const
+bool			LaserStrategy::isStoppedByHit() const
 {
-  return False;
+  return false;
 }
 
 //
@@ -888,14 +906,14 @@ static float		limitAngle(float a)
 GuidedMissileStrategy::GuidedMissileStrategy(ShotPath* _path) :
 				ShotStrategy(_path),
 				renderTimes(0),
-				needUpdate(True)
+				needUpdate(true)
 {
   ptSceneNode = new BoltSceneNode(_path->getPosition());
   if (gmTexture && gmTexture->isValid()) {
     ptSceneNode->setTexture(*gmTexture);
     ptSceneNode->setTextureAnimation(4, 4);
     ptSceneNode->setColor(1.0f, 0.2f, 0.0f);
-    ptSceneNode->setFlares(True);
+    ptSceneNode->setFlares(true);
   }
 
   // get initial shot info
@@ -916,10 +934,10 @@ GuidedMissileStrategy::GuidedMissileStrategy(ShotPath* _path) :
   currentTime = getPath().getStartTime();
   Ray ray = Ray(f.shot.pos, dir);
   ShotPathSegment segment(currentTime, currentTime, ray);
-  segments.append(segment);
-  segments.append(segment);
-  segments.append(segment);
-  segments.append(segment);
+  segments.push_back(segment);
+  segments.push_back(segment);
+  segments.push_back(segment);
+  segments.push_back(segment);
 
   // setup shot
   f.shot.vel[0] = ShotSpeed * dir[0];
@@ -958,7 +976,7 @@ GuidedMissileStrategy::~GuidedMissileStrategy()
 
 void			GuidedMissileStrategy::update(float dt)
 {
-  const boolean isRemote = (getPath().getPlayer() !=
+  const bool isRemote = (getPath().getPlayer() !=
 				LocalPlayer::getMyTank()->getId());
 
   // ignore packets that arrive out of order
@@ -994,13 +1012,13 @@ void			GuidedMissileStrategy::update(float dt)
     // see if the target changed
     if (target) {
       if (lastTarget != target->getId()) {
-	needUpdate = True;
+	needUpdate = true;
 	lastTarget = target->getId();
       }
     }
     else {
       if (lastTarget.number != -1) {
-	needUpdate = True;
+	needUpdate = true;
 	lastTarget.number = -1;
       }
     }
@@ -1077,8 +1095,8 @@ void			GuidedMissileStrategy::update(float dt)
 
   // throw out old segment and add new one
   ShotPathSegment nextSegment(prevTime, segmentEndTime, ray);
-  segments.rotate(3, 0);
-  segments[3] = nextSegment;
+  segments.insert(segments.begin(), nextSegment);
+  segments.pop_back();
 
   // update shot
   newDirection[0] *= ShotSpeed;
@@ -1145,7 +1163,7 @@ float			GuidedMissileStrategy::checkHit(const BaseLocalPlayer* tank,
   Ray tankLastMotion(lastTankPositionRaw, tankLastMotionRaw.getDirection());
 
   // check each segment
-  const int numSegments = segments.getLength();
+  const int numSegments = segments.size();
   int i = 0;
   // only test most recent segment if shot is from my tank
   if (numSegments > 1 && tank->getId() == getPath().getPlayer())
@@ -1212,7 +1230,7 @@ void			GuidedMissileStrategy::sendUpdate(
 {
   // only send an update when needed
   if (!needUpdate) return;
-  ((GuidedMissileStrategy*)this)->needUpdate = False;
+  ((GuidedMissileStrategy*)this)->needUpdate = false;
 
   // construct and send packet
   char packet[ShotUpdatePLen + PlayerIdPLen];
@@ -1256,7 +1274,7 @@ void			GuidedMissileStrategy::readUpdate(
 }
 
 void			GuidedMissileStrategy::addShot(
-				SceneDatabase* scene, boolean)
+				SceneDatabase* scene, bool)
 {
   ptSceneNode->move(getPath().getPosition(), getPath().getVelocity());
   scene->addDynamicNode(ptSceneNode);
@@ -1360,13 +1378,13 @@ float			ShockWaveStrategy::checkHit(const BaseLocalPlayer* tank,
     return Infinity;
 }
 
-boolean			ShockWaveStrategy::isStoppedByHit() const
+bool			ShockWaveStrategy::isStoppedByHit() const
 {
-  return False;
+  return false;
 }
 
 void			ShockWaveStrategy::addShot(
-				SceneDatabase* scene, boolean)
+				SceneDatabase* scene, bool)
 {
   scene->addDynamicSphere(shockNode);
 }

@@ -28,25 +28,25 @@ class OpenGLGStateState {
 			~OpenGLGStateState();
 
     void		reset();
-    void		enableTexture(boolean);
-    void		enableTextureReplace(boolean);
-    void		enableMaterial(boolean);
+    void		enableTexture(bool);
+    void		enableTextureReplace(bool);
+    void		enableMaterial(bool);
     void		setTexture(const OpenGLTexture&);
     void		setMaterial(const OpenGLMaterial&);
     void		setBlending(GLenum sFactor, GLenum dFactor);
     void		setStipple(float alpha);
-    void		setSmoothing(boolean smooth);
+    void		setSmoothing(bool smooth);
     void		setCulling(GLenum culling);
     void		setShading(GLenum);
     void		setAlphaFunc(GLenum func, GLclampf ref);
 
-    boolean		isBlended() const
+    bool		isBlended() const
 				{ return unsorted.hasBlending; }
-    boolean		isTextured() const
+    bool		isTextured() const
 				{ return sorted.texture.isValid(); }
-    boolean		isTextureReplace() const
+    bool		isTextureReplace() const
 				{ return sorted.hasTextureReplace; }
-    boolean		isLighted() const
+    bool		isLighted() const
 				{ return sorted.material.isValid(); }
 
     void		resetOpenGLState() const;
@@ -59,13 +59,13 @@ class OpenGLGStateState {
 			~Sorted();
 
 	void		reset();
-	boolean		operator==(const Sorted&) const;
-	boolean		operator<(const Sorted&) const;
+	bool		operator==(const Sorted&) const;
+	bool		operator<(const Sorted&) const;
 
       public:
-	boolean		hasTexture;
-	boolean		hasTextureReplace;
-	boolean		hasMaterial;
+	bool		hasTexture;
+	bool		hasTextureReplace;
+	bool		hasMaterial;
 	OpenGLTexture	texture;
 	OpenGLMaterial	material;
     };
@@ -78,12 +78,12 @@ class OpenGLGStateState {
 	void		reset();
 
       public:
-	boolean		hasBlending;
-	boolean		hasStipple;
-	boolean		hasSmoothing;
-	boolean		hasCulling;
-	boolean		hasShading;
-	boolean		hasAlphaFunc;
+	bool		hasBlending;
+	bool		hasStipple;
+	bool		hasSmoothing;
+	bool		hasCulling;
+	bool		hasShading;
+	bool		hasAlphaFunc;
 	GLenum		blendSFactor;
 	GLenum		blendDFactor;
 	int		stippleIndex;
@@ -107,10 +107,10 @@ class OpenGLGStateRep {
 			OpenGLGStateRep(const OpenGLGStateState&);
 			~OpenGLGStateRep();
 
-    boolean		isBlended() { return state.isBlended(); }
-    boolean		isTextured() { return state.isTextured(); }
-    boolean		isTextureReplace() { return state.isTextureReplace(); }
-    boolean		isLighted() { return state.isLighted(); }
+    bool		isBlended() { return state.isBlended(); }
+    bool		isTextured() { return state.isTextured(); }
+    bool		isTextureReplace() { return state.isTextureReplace(); }
+    bool		isLighted() { return state.isLighted(); }
     void		setState();
     static void		resetState();
 
@@ -140,9 +140,9 @@ class OpenGLGStateRep {
 //
 
 OpenGLGStateState::Sorted::Sorted() :
-				hasTexture(False),
-				hasTextureReplace(False),
-				hasMaterial(False)
+				hasTexture(false),
+				hasTextureReplace(false),
+				hasMaterial(false)
 {
   // do nothing
 }
@@ -154,26 +154,26 @@ OpenGLGStateState::Sorted::~Sorted()
 
 void			OpenGLGStateState::Sorted::reset()
 {
-  hasTexture = False;
-  hasTextureReplace = False;
-  hasMaterial = False;
+  hasTexture = false;
+  hasTextureReplace = false;
+  hasMaterial = false;
   texture = OpenGLTexture();
   material = OpenGLMaterial();
 }
 
-boolean			OpenGLGStateState::Sorted::operator==(
+bool			OpenGLGStateState::Sorted::operator==(
 				const Sorted& s) const
 {
   if (hasTexture != s.hasTexture || texture != s.texture)
-    return False;
+    return false;
   if (hasTextureReplace != s.hasTextureReplace)
-    return False;
+    return false;
   if (hasMaterial != s.hasMaterial || material != s.material)
-    return False;
-  return True;
+    return false;
+  return true;
 }
 
-boolean			OpenGLGStateState::Sorted::operator<(
+bool			OpenGLGStateState::Sorted::operator<(
 				const Sorted& s) const
 {
   // do arbitrary sorting:
@@ -189,16 +189,16 @@ boolean			OpenGLGStateState::Sorted::operator<(
   if (hasMaterial) return material < s.material;
 
   // states are the same
-  return False;
+  return false;
 }
 
 OpenGLGStateState::Unsorted::Unsorted() :
-				hasBlending(False),
-				hasStipple(False),
-				hasSmoothing(False),
-				hasCulling(True),
-				hasShading(False),
-				hasAlphaFunc(False),
+				hasBlending(false),
+				hasStipple(false),
+				hasSmoothing(false),
+				hasCulling(true),
+				hasShading(false),
+				hasAlphaFunc(false),
 				blendSFactor(GL_ONE),
 				blendDFactor(GL_ZERO),
 				stippleIndex(0),
@@ -216,11 +216,11 @@ OpenGLGStateState::Unsorted::~Unsorted()
 
 void			OpenGLGStateState::Unsorted::reset()
 {
-  hasBlending = False;
-  hasStipple = False;
-  hasSmoothing = False;
-  hasCulling = True;
-  hasShading = False;
+  hasBlending = false;
+  hasStipple = false;
+  hasSmoothing = false;
+  hasCulling = true;
+  hasShading = false;
   culling = GL_BACK;
 }
 
@@ -240,25 +240,25 @@ void			OpenGLGStateState::reset()
   unsorted.reset();
 }
 
-void			OpenGLGStateState::enableTexture(boolean on)
+void			OpenGLGStateState::enableTexture(bool on)
 {
   if (on) sorted.hasTexture = sorted.texture.isValid();
-  else sorted.hasTexture = False;
+  else sorted.hasTexture = false;
 }
 
-void			OpenGLGStateState::enableTextureReplace(boolean)
+void			OpenGLGStateState::enableTextureReplace(bool)
 {
   // FIXME -- disabled for now
   //   most gstates haven't been adjusted to use/not-use texture
   //   replacement, so if this is turned on then those must be
   //   fixed appropriately.
-  sorted.hasTextureReplace = False;
+  sorted.hasTextureReplace = false;
 }
 
-void			OpenGLGStateState::enableMaterial(boolean on)
+void			OpenGLGStateState::enableMaterial(bool on)
 {
   if (on) sorted.hasMaterial = sorted.material.isValid();
-  else sorted.hasMaterial = False;
+  else sorted.hasMaterial = false;
 }
 
 void			OpenGLGStateState::setTexture(
@@ -290,7 +290,7 @@ void			OpenGLGStateState::setStipple(float alpha)
 	(unsorted.stippleIndex < OpenGLGState::getOpaqueStippleIndex());
 }
 
-void			OpenGLGStateState::setSmoothing(boolean smooth)
+void			OpenGLGStateState::setSmoothing(bool smooth)
 {
   unsorted.hasSmoothing = smooth;
 }
@@ -856,22 +856,22 @@ void			OpenGLGState::setState() const
   rep->setState();
 }
 
-boolean			OpenGLGState::isBlended() const
+bool			OpenGLGState::isBlended() const
 {
   return rep->isBlended();
 }
 
-boolean			OpenGLGState::isTextured() const
+bool			OpenGLGState::isTextured() const
 {
   return rep->isTextured();
 }
 
-boolean			OpenGLGState::isTextureReplace() const
+bool			OpenGLGState::isTextureReplace() const
 {
   return rep->isTextureReplace();
 }
 
-boolean			OpenGLGState::isLighted() const
+bool			OpenGLGState::isLighted() const
 {
   return rep->isLighted();
 }
@@ -1076,17 +1076,17 @@ void			OpenGLGStateBuilder::reset()
   state->reset();
 }
 
-void			OpenGLGStateBuilder::enableTexture(boolean on)
+void			OpenGLGStateBuilder::enableTexture(bool on)
 {
   state->enableTexture(on);
 }
 
-void			OpenGLGStateBuilder::enableTextureReplace(boolean on)
+void			OpenGLGStateBuilder::enableTextureReplace(bool on)
 {
   state->enableTextureReplace(on);
 }
 
-void			OpenGLGStateBuilder::enableMaterial(boolean on)
+void			OpenGLGStateBuilder::enableMaterial(bool on)
 {
   state->enableMaterial(on);
 }
@@ -1098,7 +1098,7 @@ void			OpenGLGStateBuilder::resetBlending()
 
 void			OpenGLGStateBuilder::resetSmoothing()
 {
-  state->setSmoothing(False);
+  state->setSmoothing(false);
 }
 
 void			OpenGLGStateBuilder::resetAlphaFunc()
@@ -1129,7 +1129,7 @@ void			OpenGLGStateBuilder::setStipple(float alpha)
   state->setStipple(alpha);
 }
 
-void			OpenGLGStateBuilder::setSmoothing(boolean smooth)
+void			OpenGLGStateBuilder::setSmoothing(bool smooth)
 {
   state->setSmoothing(smooth);
 }

@@ -22,7 +22,7 @@ const GLfloat		PhotonTorpedoSceneNode::FlareSize = 1.0f;
 const GLfloat		PhotonTorpedoSceneNode::FlareSpread = 0.08f;
 
 PhotonTorpedoSceneNode::PhotonTorpedoSceneNode(const GLfloat pos[3]) :
-				blending(False),
+				blending(false),
 				renderNode(this)
 {
   OpenGLGStateBuilder builder(gstate);
@@ -103,9 +103,9 @@ PhotonTorpedoSceneNode::PTRenderNode::PTRenderNode(
 				numFlares(0)
 {
   // initialize core and corona if not already done
-  static boolean init = False;
+  static bool init = false;
   if (!init) {
-    init = True;
+    init = true;
     core[0][0] = 0.0f;
     core[0][1] = 0.0f;
     for (int i = 0; i < 8; i++) {

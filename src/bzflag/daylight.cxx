@@ -38,7 +38,7 @@ static double		getGreenwichSideral(double julianDay)
   return radPerHour * (greenwichMidnight + dayFraction * siderealHoursPerHour);
 }
 
-static void		getTruePosition(double julianDay,
+static void		gettruePosition(double julianDay,
 					float latitude, float longitude,
 					double sx, double sy, double sz,
 					float pos[3])
@@ -132,7 +132,7 @@ void			getSunPosition(double julianDay, float latitude,
   sz = cos(trueLongitude);
 
   // get true position
-  getTruePosition(julianDay, latitude, longitude, sx, sy, sz, pos);
+  gettruePosition(julianDay, latitude, longitude, sx, sy, sz, pos);
 }
 
 void			getMoonPosition(double julianDay, float latitude,
@@ -197,7 +197,7 @@ void			getMoonPosition(double julianDay, float latitude,
   sz = cos(geocentricLatitude) * cos(geocentricLongitude);
 
   // get true position
-  getTruePosition(julianDay, latitude, longitude, sx, sy, sz, pos);
+  gettruePosition(julianDay, latitude, longitude, sx, sy, sz, pos);
 }
 
 static void		lerpColor(GLfloat out[3], const GLfloat t0[3],
@@ -260,13 +260,13 @@ void			getSunColor(const float sunDir[3], GLfloat color[3],
   }
 }
 
-boolean			getSunsetTop(const float sunDir[3], float& topAltitude)
+bool			getSunsetTop(const float sunDir[3], float& topAltitude)
 {
   if (sunDir[2] > nightElevation && sunDir[2] < dayElevation) {
     topAltitude = (sunDir[2]-nightElevation) / (dayElevation-nightElevation);
-    return True;
+    return true;
   }
-  return False;
+  return false;
 }
 
 void			getSkyColor(const float sunDir[3], GLfloat sky[4][3])
@@ -349,12 +349,12 @@ void			getSkyColor(const float sunDir[3], GLfloat sky[4][3])
   }
 }
 
-boolean			areShadowsCast(const float sunDir[3])
+bool			areShadowsCast(const float sunDir[3])
 {
   return sunDir[2] > 0.5 * dayElevation;
 }
 
-boolean			areStarsVisible(const float sunDir[3])
+bool			areStarsVisible(const float sunDir[3])
 {
   return sunDir[2] < dawnElevation;
 }

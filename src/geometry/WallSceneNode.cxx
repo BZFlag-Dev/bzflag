@@ -59,13 +59,13 @@ void			WallSceneNode::setPlane(const GLfloat _plane[4])
   plane[3] = n * _plane[3];
 }
 
-boolean			WallSceneNode::cull(const ViewFrustum& frustum) const
+bool			WallSceneNode::cull(const ViewFrustum& frustum) const
 {
   // cull if eye is behind (or on) plane
   const GLfloat* eye = frustum.getEye();
   const GLfloat* plane = getPlane();
   if (eye[0]*plane[0] + eye[1]*plane[1] + eye[2]*plane[2] + plane[3] <= 0.0f)
-    return True;
+    return true;
 
   // get signed distance of wall center to each frustum side.
   // if more than radius outside then cull
@@ -76,13 +76,13 @@ boolean			WallSceneNode::cull(const ViewFrustum& frustum) const
     const GLfloat* norm = frustum.getSide(i);
     d[i] = sphere[0] * norm[0] + sphere[1] * norm[1] +
 		sphere[2] * norm[2] + norm[3];
-    if (d[i] < 0.0f && (d2[i] = d[i]*d[i]) > sphere[3]) return True;
+    if (d[i] < 0.0f && (d2[i] = d[i]*d[i]) > sphere[3]) return true;
   }
 
   // see if center of wall is inside each frustum side
   if (d[0] >= 0.0f && d[1] >= 0.0f && d[2] >= 0.0f &&
       d[3] >= 0.0f && d[4] >= 0.0f)
-    return False;
+    return false;
 
   // most complicated test:  for sides sphere is behind, see if
   // center is beyond radius times the sine of the angle between
@@ -93,11 +93,11 @@ boolean			WallSceneNode::cull(const ViewFrustum& frustum) const
     if (d[i] >= 0.0f) continue;
     const GLfloat* norm = frustum.getSide(i);
     const GLfloat c = norm[0]*plane[0] + norm[1]*plane[1] + norm[2]*plane[2];
-    if (d2[i] > sphere[3] * (1.0f - c*c)) return True;
+    if (d2[i] > sphere[3] * (1.0f - c*c)) return true;
   }
 
   // probably visible
-  return False;
+  return false;
 }
 
 int			WallSceneNode::pickLevelOfDetail(
@@ -158,7 +158,7 @@ GLfloat			WallSceneNode::getDistance(const GLfloat* eye) const
 void			WallSceneNode::setColor(
 				GLfloat r, GLfloat g, GLfloat b, GLfloat a)
 {
-  const boolean oldTransparent = (color[3] != 1.0f);
+  const bool oldTransparent = (color[3] != 1.0f);
   color[0] = r;
   color[1] = g;
   color[2] = b;
@@ -168,7 +168,7 @@ void			WallSceneNode::setColor(
 
 void			WallSceneNode::setColor(const GLfloat* rgba)
 {
-  const boolean oldTransparent = (color[3] != 1.0f);
+  const bool oldTransparent = (color[3] != 1.0f);
   color[0] = rgba[0];
   color[1] = rgba[1];
   color[2] = rgba[2];
@@ -179,7 +179,7 @@ void			WallSceneNode::setColor(const GLfloat* rgba)
 void			WallSceneNode::setModulateColor(
 				GLfloat r, GLfloat g, GLfloat b, GLfloat a)
 {
-  const boolean oldTransparent = (modulateColor[3] != 1.0f);
+  const bool oldTransparent = (modulateColor[3] != 1.0f);
   modulateColor[0] = r;
   modulateColor[1] = g;
   modulateColor[2] = b;
@@ -189,7 +189,7 @@ void			WallSceneNode::setModulateColor(
 
 void			WallSceneNode::setModulateColor(const GLfloat* rgba)
 {
-  const boolean oldTransparent = (modulateColor[3] != 1.0f);
+  const bool oldTransparent = (modulateColor[3] != 1.0f);
   modulateColor[0] = rgba[0];
   modulateColor[1] = rgba[1];
   modulateColor[2] = rgba[2];
@@ -200,7 +200,7 @@ void			WallSceneNode::setModulateColor(const GLfloat* rgba)
 void			WallSceneNode::setLightedColor(
 				GLfloat r, GLfloat g, GLfloat b, GLfloat a)
 {
-  const boolean oldTransparent = (lightedColor[3] != 1.0f);
+  const bool oldTransparent = (lightedColor[3] != 1.0f);
   lightedColor[0] = r;
   lightedColor[1] = g;
   lightedColor[2] = b;
@@ -210,7 +210,7 @@ void			WallSceneNode::setLightedColor(
 
 void			WallSceneNode::setLightedColor(const GLfloat* rgba)
 {
-  const boolean oldTransparent = (lightedColor[3] != 1.0f);
+  const bool oldTransparent = (lightedColor[3] != 1.0f);
   lightedColor[0] = rgba[0];
   lightedColor[1] = rgba[1];
   lightedColor[2] = rgba[2];
@@ -221,7 +221,7 @@ void			WallSceneNode::setLightedColor(const GLfloat* rgba)
 void			WallSceneNode::setLightedModulateColor(
 				GLfloat r, GLfloat g, GLfloat b, GLfloat a)
 {
-  const boolean oldTransparent = (lightedModulateColor[3] != 1.0f);
+  const bool oldTransparent = (lightedModulateColor[3] != 1.0f);
   lightedModulateColor[0] = r;
   lightedModulateColor[1] = g;
   lightedModulateColor[2] = b;
@@ -233,7 +233,7 @@ void			WallSceneNode::setLightedModulateColor(
 void			WallSceneNode::setLightedModulateColor(
 				const GLfloat* rgba)
 {
-  const boolean oldTransparent = (lightedModulateColor[3] != 1.0f);
+  const bool oldTransparent = (lightedModulateColor[3] != 1.0f);
   lightedModulateColor[0] = rgba[0];
   lightedModulateColor[1] = rgba[1];
   lightedModulateColor[2] = rgba[2];
@@ -262,7 +262,7 @@ void			WallSceneNode::notifyStyleChange(
 				const SceneRenderer& renderer)
 {
   float alpha;
-  boolean lighted = (renderer.useLighting() && gstate.isLighted());
+  bool lighted = (renderer.useLighting() && gstate.isLighted());
   OpenGLGStateBuilder builder(gstate);
   style = 0;
   if (lighted) {
@@ -274,11 +274,11 @@ void			WallSceneNode::notifyStyleChange(
   }
   if (renderer.useTexture() && gstate.isTextured()) {
     style += 2;
-    builder.enableTexture(True);
+    builder.enableTexture(true);
     alpha = lighted ? lightedModulateColor[3] : modulateColor[3];
   }
   else {
-    builder.enableTexture(False);
+    builder.enableTexture(false);
     alpha = lighted ? lightedColor[3] : color[3];
   }
   builder.enableTextureReplace(renderer.useTextureReplace());
@@ -340,7 +340,7 @@ int			WallSceneNode::splitWall(const GLfloat* plane,
   // no count how many vertices are on either side of the plane
   // (including vertices created when splitting)
   int frontCount = 0, backCount = 0;
-  boolean prevInFront = initInFront, inFront;
+  bool prevInFront = initInFront, inFront;
   for (j = count - 1, i = 0; i < count; j = i, i++) {
     GLfloat d = vertex[i][0] * plane[0] + vertex[i][1] * plane[1] +
 					vertex[i][2] * plane[2] + plane[3];

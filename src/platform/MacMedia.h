@@ -22,33 +22,32 @@ class MacMedia : public BzfMedia {
     MacMedia();
     ~MacMedia();
 
-    double stopwatch(boolean);
+    double stopwatch(bool);
     void sleep(float );
 
-    boolean openAudio();
+    bool openAudio();
     void closeAudio();
 
-    boolean isAudioBrainDead() const;
-    boolean startAudioThread(void (*)(void*), void *);
+    bool isAudioBrainDead() const;
+    bool startAudioThread(void (*)(void*), void *);
     void stopAudioThread();
-    boolean hasAudioThread() const;
-    boolean isAudioTooEmpty() const;
+    bool hasAudioThread() const;
+    bool isAudioTooEmpty() const;
 
     void writeAudioFrames(const float *, int);
     void writeSoundCommand(const void*, int);
-    boolean readSoundCommand(void*, int);
+    bool readSoundCommand(void*, int);
 
     int getAudioOutputRate() const;
     int getAudioBufferSize() const;
     int getAudioBufferChunkSize() const;
 
-    void audioSleep(boolean, double);
+    void audioSleep(bool, double);
 
     void  writeAudio(void);
 
     //unsigned char* doReadImage(const char*, int&, int&, int&) const;
 
-    //BzfString makePath(const BzfString &, const BzfString &) const;
   private:
 
     SndCommand command;

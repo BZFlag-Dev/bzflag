@@ -19,7 +19,7 @@
 #define	BZF_HUDDIALOG_H
 
 #include "HUDui.h"
-#include "AList.h"
+#include <vector>
 
 class HUDDialog {
   public:
@@ -40,21 +40,19 @@ class HUDDialog {
 
 
   protected:
-    const HUDuiControlList&	getControls() const { return list; }
-    HUDuiControlList&		getControls() { return list; }
+    const std::vector<HUDuiControl*>&	getControls() const { return list; }
+    std::vector<HUDuiControl*>&		getControls() { return list; }
 
   private:
-    HUDuiControlList	list;
+    std::vector<HUDuiControl*>	list;
     HUDuiControl*	focus;
 };
-
-BZF_DEFINE_ALIST(HUDDialogList, HUDDialog*);
 
 class HUDDialogStack {
   public:
     static HUDDialogStack*	get();
 
-    boolean		isActive() const;
+    bool		isActive() const;
     HUDDialog*		top() const;
     void		push(HUDDialog*);
     void		pop();
@@ -68,7 +66,7 @@ class HUDDialogStack {
     static void		resize(void*);
 
   private:
-    HUDDialogList	stack;
+    std::vector<HUDDialog*>	stack;
     static HUDDialogStack globalStack;
 };
 

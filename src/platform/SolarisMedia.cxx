@@ -48,7 +48,7 @@ SolarisMedia::~SolarisMedia()
   // do nothing
 }
 
-double			SolarisMedia::stopwatch(boolean start)
+double			SolarisMedia::stopwatch(bool start)
 {
 	struct timeval tv;
 	gettimeofday(&tv, 0);
@@ -70,17 +70,17 @@ void			SolarisMedia::sleep(float timeInSeconds)
 
 static const int	NumChunks = 4;
 
-boolean			SolarisMedia::openAudio()
+bool			SolarisMedia::openAudio()
 {
   int fd[2];
 
   if(audio_ready)
-    return False;
+    return false;
 
   audio_fd = open("/dev/audio", O_WRONLY  | O_NDELAY);
 
   if(audio_fd < 0)
-    return False;
+    return false;
 
   if(DEBUG_SOLARIS)
     fprintf(stderr, "Audio device '/dev/audio' opened\n");
@@ -88,7 +88,7 @@ boolean			SolarisMedia::openAudio()
   audioctl_fd = open("/dev/audioctl", O_RDWR);
 
   if(audioctl_fd < 0)
-    return False;
+    return false;
 
   if(DEBUG_SOLARIS)
     fprintf(stderr, "Opened audio control device '/dev/audioctl'\n");
@@ -107,7 +107,7 @@ boolean			SolarisMedia::openAudio()
       fprintf(stderr, "Cannot get audio information.\n");
     close(audio_fd);
     close(audioctl_fd);
-    return False;
+    return false;
   }
 
   if(DEBUG_SOLARIS)
@@ -120,7 +120,7 @@ boolean			SolarisMedia::openAudio()
       fprintf(stderr, "Cannot get audio information.\n");
     close(audio_fd);
     close(audioctl_fd);
-    return False;
+    return false;
   }
 
   AUDIO_INITINFO(&a_info);
@@ -139,7 +139,7 @@ boolean			SolarisMedia::openAudio()
     if(DEBUG_SOLARIS)
       fprintf(stderr, "Warning: Cannot set audio parameters.\n");
 
-    return False;
+    return false;
   }
 
   if(DEBUG_SOLARIS)
@@ -147,7 +147,7 @@ boolean			SolarisMedia::openAudio()
 
   if (pipe(fd)<0) {
     closeAudio();
-    return False;
+    return false;
   }
 
   queueIn = fd[1];
@@ -164,12 +164,12 @@ boolean			SolarisMedia::openAudio()
   childProcID=0;
 
   // ready to go
-  audio_ready = True;
+  audio_ready = true;
 
   if(DEBUG_SOLARIS)
     fprintf(stderr, "Audio ready.\n");
 
-  return True;
+  return true;
 }
 
 
@@ -179,24 +179,24 @@ void			SolarisMedia::closeAudio()
   close(audioctl_fd);
 }
 
-boolean			SolarisMedia::startAudioThread(
+bool			SolarisMedia::startAudioThread(
 				void (*proc)(void*), void* data)
 {
   // if no audio thread then just call proc and return
   if (!hasAudioThread()) {
     proc(data);
-    return True;
+    return true;
   }
 
   // has an audio thread so fork and call proc
-  if (childProcID) return True;
+  if (childProcID) return true;
   if ((childProcID=fork()) > 0) {
     close(queueOut);
     close(audio_fd);
-    return True;
+    return true;
   }
   else if (childProcID < 0) {
-    return False;
+    return false;
   }
   close(queueIn);
   proc(data);
@@ -209,13 +209,13 @@ void			SolarisMedia::stopAudioThread()
   childProcID=0;
 }
 
-boolean			SolarisMedia::hasAudioThread() const
+bool			SolarisMedia::hasAudioThread() const
 {
   // XXX -- adjust this if the system always uses or never uses a thread
 #if defined(NO_AUDIO_THREAD)
-  return False;
+  return false;
 #else
-  return True;
+  return true;
 #endif
 }
 
@@ -225,7 +225,7 @@ void			SolarisMedia::writeSoundCommand(const void* cmd, int len)
   write(queueIn, cmd, len);
 }
 
-boolean			SolarisMedia::readSoundCommand(void* cmd, int len)
+bool			SolarisMedia::readSoundCommand(void* cmd, int len)
 {
   return (read(queueOut, cmd, len)==len);
 }
@@ -245,7 +245,7 @@ int			SolarisMedia::getAudioBufferChunkSize() const
   return audioBufferSize>>1;
 }
 
-boolean			SolarisMedia::isAudioTooEmpty() const
+bool			SolarisMedia::isAudioTooEmpty() const
 {
   ioctl(audioctl_fd, AUDIO_GETINFO, &a_info);
   return ((int)a_info.play.eof >= eof_written - audioLowWaterMark);
@@ -282,7 +282,7 @@ void			SolarisMedia::writeAudioFrames(
 }
 
 void			SolarisMedia::audioSleep(
-				boolean checkLowWater, double endTime)
+				bool checkLowWater, double endTime)
 {
   fd_set commandSelectSet;
   struct timeval tv;

@@ -69,7 +69,7 @@ void			WinVisual::setLevel(int level)
   else pfd.iLayerType = PFD_MAIN_PLANE;
 }
 
-void			WinVisual::setDoubleBuffer(boolean on)
+void			WinVisual::setDoubleBuffer(bool on)
 {
   if (on) pfd.dwFlags |= PFD_DOUBLEBUFFER;
   else pfd.dwFlags &= ~PFD_DOUBLEBUFFER;
@@ -106,7 +106,7 @@ void			WinVisual::setAccum(int minRed, int minGreen,
   pfd.cAccumBits = minRed + minGreen + minBlue + minAlpha;
 }
 
-void			WinVisual::setStereo(boolean on)
+void			WinVisual::setStereo(bool on)
 {
   if (on) pfd.dwFlags |= PFD_STEREO;
   else pfd.dwFlags &= ~PFD_STEREO;
@@ -117,14 +117,14 @@ void			WinVisual::setMultisample(int)
   // do nothing
 }
 
-boolean			WinVisual::build()
+bool			WinVisual::build()
 {
   if (pixelFormat == -1) {
     if (hDC == NULL) {
       HWND hwnd = CreateWindow("BZFLAG", "bzflag",
 			WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_POPUP,
 			0, 0, 1, 1, NULL, NULL, display->hInstance, NULL);
-      if (hwnd == NULL) return False;
+      if (hwnd == NULL) return false;
       hDC = GetDC(hwnd);
       pixelFormat = ChoosePixelFormat(hDC, &pfd);
       ReleaseDC(hwnd, hDC);

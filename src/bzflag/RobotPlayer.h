@@ -19,10 +19,9 @@
 
 #include "LocalPlayer.h"
 #include "Region.h"
+#include <vector>
 
 class ServerLink;
-
-BZF_DEFINE_ALIST(RegionAzimuthList, float);
 
 class RobotPlayer : public BaseLocalPlayer {
   public:
@@ -33,22 +32,22 @@ class RobotPlayer : public BaseLocalPlayer {
 
     float		getTargetPriority(const Player*) const;
     const Player*	getTarget() const;
-    void		setTarget(const RegionList& regions, const Player*);
+    void		setTarget(const std::vector<BzfRegion*>& regions, const Player*);
 
     ShotPath*		getShot(int index) const;
 
     void		setTeam(TeamColor);
     void		restart();
-    boolean		checkHit(const Player* source, const ShotPath*& hit,
+    bool		checkHit(const Player* source, const ShotPath*& hit,
 							float& minTime) const;
     void		explodeTank();
     void		changeScore(short deltaWins, short deltaLosses);
 
   private:
-    boolean		doEndShot(int index, boolean isHit, float* pos);
+    bool		doEndShot(int index, bool isHit, float* pos);
     void		doUpdate(float dt);
     void		doUpdateMotion(float dt);
-    BzfRegion*		findRegion(const RegionList& list,
+    BzfRegion*		findRegion(const std::vector<BzfRegion*>& list,
 					const float p[2]) const;
     float		getRegionExitPoint(
 				const float p1[2], const float p2[2],
@@ -62,10 +61,10 @@ class RobotPlayer : public BaseLocalPlayer {
     ServerLink*		server;
     LocalShotPath**	shots;
     const Player*	target;
-    RegionPointList	path;
-    RegionAzimuthList	pathAzimuth;
+    std::vector<RegionPoint>	path;
+    std::vector<float>	pathAzimuth;
     int			pathIndex;
-    boolean		scoreChanged;
+    bool		scoreChanged;
     float		timeSinceShot;
 };
 

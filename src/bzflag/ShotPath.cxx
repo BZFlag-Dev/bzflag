@@ -92,8 +92,8 @@ ShotPath::ShotPath(const FiringInfo& info) :
 				reloadTime(ReloadTime),
 				startTime(TimeKeeper::getTick()),
 				currentTime(TimeKeeper::getTick()),
-				expiring(False),
-				expired(False)
+				expiring(false),
+				expired(false)
 {
   // eek!  a giant switch statement, how un-object-oriented!
   // each flag should be a flyweight object derived from a
@@ -168,13 +168,13 @@ float			ShotPath::checkHit(const BaseLocalPlayer* player,
   return strategy->checkHit(player, position);
 }
 
-boolean			ShotPath::isStoppedByHit() const
+bool			ShotPath::isStoppedByHit() const
 {
   return strategy->isStoppedByHit();
 }
 
 void			ShotPath::addShot(SceneDatabase* scene,
-						boolean colorblind)
+						bool colorblind)
 {
   strategy->addShot(scene, colorblind);
 }
@@ -216,13 +216,13 @@ void			ShotPath::setVelocity(const float* v)
 
 void			ShotPath::setExpiring()
 {
-  expiring = True;
+  expiring = true;
 }
 
 void			ShotPath::setExpired()
 {
-  expiring = True;
-  expired = True;
+  expiring = true;
+  expired = true;
   getStrategy()->expire();
 }
 

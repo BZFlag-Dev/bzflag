@@ -57,34 +57,34 @@ MenuDefaultKey		MenuDefaultKey::instance;
 MenuDefaultKey::MenuDefaultKey() { }
 MenuDefaultKey::~MenuDefaultKey() { }
 
-boolean			MenuDefaultKey::keyPress(const BzfKeyEvent& key)
+bool			MenuDefaultKey::keyPress(const BzfKeyEvent& key)
 {
   switch (key.ascii) {
     case 27:	// escape
       HUDDialogStack::get()->pop();
-      return True;
+      return true;
 
     case 13:	// return
       HUDDialogStack::get()->top()->execute();
-      return True;
+      return true;
   }
 
   if (getBzfKeyMap().isMappedTo(BzfKeyMap::Quit, key)) {
     getMainWindow()->setQuit();
-    return True;
+    return true;
   }
 
-  return False;
+  return false;
 }
 
-boolean			MenuDefaultKey::keyRelease(const BzfKeyEvent& key)
+bool			MenuDefaultKey::keyRelease(const BzfKeyEvent& key)
 {
   switch (key.ascii) {
     case 27:	// escape
     case 13:	// return
-      return True;
+      return true;
   }
-  return False;
+  return false;
 }
 
 //
@@ -96,23 +96,23 @@ class QuitMenuDefaultKey : public MenuDefaultKey {
 			QuitMenuDefaultKey() { }
 			~QuitMenuDefaultKey() { }
 
-    boolean		keyPress(const BzfKeyEvent&);
-    boolean		keyRelease(const BzfKeyEvent&);
+    bool		keyPress(const BzfKeyEvent&);
+    bool		keyRelease(const BzfKeyEvent&);
 };
 
-boolean			QuitMenuDefaultKey::keyPress(const BzfKeyEvent& key)
+bool			QuitMenuDefaultKey::keyPress(const BzfKeyEvent& key)
 {
   if (key.ascii == 'Y' || key.ascii == 'y') {
     getMainWindow()->setQuit();
-    return True;
+    return true;
   }
   return MenuDefaultKey::keyPress(key);
 }
 
-boolean			QuitMenuDefaultKey::keyRelease(const BzfKeyEvent& key)
+bool			QuitMenuDefaultKey::keyRelease(const BzfKeyEvent& key)
 {
   if (key.ascii == 'Y' || key.ascii == 'y')
-    return True;
+    return true;
   return MenuDefaultKey::keyRelease(key);
 }
 
@@ -134,21 +134,21 @@ class QuitMenu : public HUDDialog {
 QuitMenu::QuitMenu()
 {
   // add controls
-  HUDuiControlList& list = getControls();
+  std::vector<HUDuiControl*>& list = getControls();
   HUDuiLabel* label;
 
   label = new HUDuiLabel;
   label->setFont(MainMenu::getFont());
   label->setString("Enter to quit, Esc to resume");
-  list.append(label);
+  list.push_back(label);
 
   label = new HUDuiLabel;
   label->setFont(MainMenu::getFont());
   label->setString("Really quit?");
-  list.append(label);
+  list.push_back(label);
 
   // set control order
-  const int count = list.getLength();
+  const int count = list.size();
   for (int i = 0; i < count; i++) {
     list[i]->setNext(list[i]);
     list[i]->setPrev(list[i]);
@@ -178,7 +178,7 @@ void			QuitMenu::resize(int width, int height)
   float x, y;
 
   // get stuff
-  HUDuiControlList& list = getControls();
+  std::vector<HUDuiControl*>& list = getControls();
   HUDuiLabel* label = (HUDuiLabel*)list[0];
   label->setFontSize(smallFontWidth, smallFontHeight);
   const OpenGLTexFont& font = label->getFont();
@@ -215,8 +215,8 @@ class FormatMenuDefaultKey : public MenuDefaultKey {
 				menu(_menu) { }
 			~FormatMenuDefaultKey() { }
 
-    boolean		keyPress(const BzfKeyEvent&);
-    boolean		keyRelease(const BzfKeyEvent&);
+    bool		keyPress(const BzfKeyEvent&);
+    bool		keyRelease(const BzfKeyEvent&);
 
   private:
     FormatMenu*		menu;
@@ -234,7 +234,7 @@ class FormatMenu : public HUDDialog {
     void		execute();
     void		resize(int width, int height);
 
-    void		setFormat(boolean test);
+    void		setFormat(bool test);
 
   public:
     static const int	NumItems;
@@ -250,69 +250,69 @@ class FormatMenu : public HUDDialog {
     HUDuiLabel*		currentLabel;
     HUDuiLabel*		pageLabel;
     int			selectedIndex;
-    boolean*		badFormats;
+    bool*		badFormats;
 
     static const int	NumColumns;
     static const int	NumReadouts;
 };
 
-boolean			FormatMenuDefaultKey::keyPress(const BzfKeyEvent& key)
+bool			FormatMenuDefaultKey::keyPress(const BzfKeyEvent& key)
 {
   if (key.ascii == 0) switch (key.button) {
     case BzfKeyEvent::Up:
       if (HUDui::getFocus()) {
 	menu->setSelected(menu->getSelected() - 1);
       }
-      return True;
+      return true;
 
     case BzfKeyEvent::Down:
       if (HUDui::getFocus()) {
 	menu->setSelected(menu->getSelected() + 1);
       }
-      return True;
+      return true;
 
     case BzfKeyEvent::PageUp:
       if (HUDui::getFocus()) {
 	menu->setSelected(menu->getSelected() - FormatMenu::NumItems);
       }
-      return True;
+      return true;
 
     case BzfKeyEvent::PageDown:
       if (HUDui::getFocus()) {
 	menu->setSelected(menu->getSelected() + FormatMenu::NumItems);
       }
-      return True;
+      return true;
   }
 
   else if (key.ascii == '\t') {
     if (HUDui::getFocus()) {
 	menu->setSelected(menu->getSelected() + 1);
     }
-    return True;
+    return true;
   }
 
   else if (key.ascii == 'T' || key.ascii == 't') {
-    menu->setFormat(True);
-    return True;
+    menu->setFormat(true);
+    return true;
   }
   return MenuDefaultKey::keyPress(key);
 }
 
-boolean			FormatMenuDefaultKey::keyRelease(const BzfKeyEvent& key)
+bool			FormatMenuDefaultKey::keyRelease(const BzfKeyEvent& key)
 {
   switch (key.button) {
     case BzfKeyEvent::Up:
     case BzfKeyEvent::Down:
     case BzfKeyEvent::PageUp:
     case BzfKeyEvent::PageDown:
-      return True;
+      return true;
   }
   switch (key.ascii) {
     case 27:	// escape
     case 13:	// return
     case 'T':
     case 't':
-      return True;
+      return true;
   }
   return MenuDefaultKey::keyRelease(key);
 }
@@ -327,9 +327,9 @@ FormatMenu::FormatMenu() : defaultKey(this), badFormats(NULL)
 
   BzfDisplay* display = getDisplay();
   numFormats = display->getNumResolutions();
-  badFormats = new boolean[numFormats];
+  badFormats = new bool[numFormats];
   for (i = 0; i < numFormats; i++)
-    badFormats[i] = False;
+    badFormats[i] = false;
 
   // add controls
   addLabel("Video Format", "");
@@ -368,7 +368,7 @@ void			FormatMenu::addLabel(
   label->setFont(MainMenu::getFont());
   label->setString(msg);
   label->setLabel(_label);
-  getControls().append(label);
+  getControls().push_back(label);
 }
 
 int			FormatMenu::getSelected() const
@@ -379,7 +379,7 @@ int			FormatMenu::getSelected() const
 void			FormatMenu::setSelected(int index)
 {
   BzfDisplay* display = getDisplay();
-  HUDuiControlList& list = getControls();
+  std::vector<HUDuiControl*>& list = getControls();
 
   // clamp index
   if (index < 0)
@@ -443,17 +443,17 @@ void			FormatMenu::show()
 
 void			FormatMenu::execute()
 {
-  setFormat(False);
+  setFormat(false);
 }
 
-void			FormatMenu::setFormat(boolean test)
+void			FormatMenu::setFormat(bool test)
 {
   if (selectedIndex >= numFormats || badFormats[selectedIndex])
     return;
 
   if (!setVideoFormat(selectedIndex, test)) {
     // can't load format
-    badFormats[selectedIndex] = True;
+    badFormats[selectedIndex] = true;
   }
   else if (!test) {
     // print OpenGL renderer, which might have changed
@@ -474,7 +474,7 @@ void			FormatMenu::resize(int width, int height)
 
   // reposition title
   float x, y;
-  HUDuiControlList& list = getControls();
+  std::vector<HUDuiControl*>& list = getControls();
   {
     HUDuiLabel* title = (HUDuiLabel*)list[0];
     title->setFontSize(titleFontWidth, titleFontHeight);
@@ -548,8 +548,8 @@ class KeyboardMapMenuDefaultKey : public MenuDefaultKey {
 			KeyboardMapMenuDefaultKey(KeyboardMapMenu*);
 			~KeyboardMapMenuDefaultKey() { }
 
-    boolean		keyPress(const BzfKeyEvent&);
-    boolean		keyRelease(const BzfKeyEvent&);
+    bool		keyPress(const BzfKeyEvent&);
+    bool		keyRelease(const BzfKeyEvent&);
 
   public:
     KeyboardMapMenu*	menu;
@@ -565,7 +565,7 @@ class KeyboardMapMenu : public HUDDialog {
     void		dismiss();
     void		resize(int width, int height);
 
-    boolean		isEditing() const;
+    bool		isEditing() const;
     void		setKey(const BzfKeyEvent&);
 
   private:
@@ -585,7 +585,7 @@ KeyboardMapMenuDefaultKey::KeyboardMapMenuDefaultKey(KeyboardMapMenu* _menu) :
   // do nothing
 }
 
-boolean			KeyboardMapMenuDefaultKey::keyPress(
+bool			KeyboardMapMenuDefaultKey::keyPress(
 				const BzfKeyEvent& key)
 {
   // escape key has usual effect
@@ -599,55 +599,55 @@ boolean			KeyboardMapMenuDefaultKey::keyPress(
   // ignore keys we don't know
   if (key.ascii != 0 && isspace(key.ascii)) {
     if (key.ascii != ' ' && key.ascii != '\t' && key.ascii != '\r')
-      return True;
+      return true;
   }
 
   // all other keys modify mapping
   menu->setKey(key);
-  return True;
+  return true;
 }
 
-boolean			KeyboardMapMenuDefaultKey::keyRelease(
+bool			KeyboardMapMenuDefaultKey::keyRelease(
 				const BzfKeyEvent&)
 {
   // ignore key releases
-  return True;
+  return true;
 }
 
 KeyboardMapMenu::KeyboardMapMenu() : defaultKey(this), editing(BzfKeyMap::LastKey)
 {
   // add controls
-  HUDuiControlList& controls = getControls();
+  std::vector<HUDuiControl*>& controls = getControls();
 
-  controls.append(createLabel("Key Mapping"));
+  controls.push_back(createLabel("Key Mapping"));
 
-  controls.append(reset = createLabel(NULL, "Reset Defaults"));
-  controls.append(createLabel(NULL, "Fire shot:"));
-  controls.append(createLabel(NULL, "Drop flag:"));
-  controls.append(createLabel(NULL, "Identify/Lock On:"));
-  controls.append(createLabel(NULL, "Radar Short:"));
-  controls.append(createLabel(NULL, "Radar Medium:"));
-  controls.append(createLabel(NULL, "Radar Long:"));
-  controls.append(createLabel(NULL, "Send to All:"));
-  controls.append(createLabel(NULL, "Send to Teammates:"));
-  controls.append(createLabel(NULL, "Send to Nemesis:"));
-  controls.append(createLabel(NULL, "Send to Recipient:"));
-  controls.append(createLabel(NULL, "Jump:"));
-  controls.append(createLabel(NULL, "Binoculars:"));
-  controls.append(createLabel(NULL, "Toggle Score:"));
-  controls.append(createLabel(NULL, "Tank Labels:"));
-  controls.append(createLabel(NULL, "Flag Help:"));
-  controls.append(createLabel(NULL, "Time Forward:"));
-  controls.append(createLabel(NULL, "Time Backward:"));
-  controls.append(createLabel(NULL, "Pause/Resume:"));
-  controls.append(createLabel(NULL, "Self Destruct/Cancel:"));
-  controls.append(createLabel(NULL, "Fast Quit:"));
-  controls.append(createLabel(NULL, "Scroll Backward:"));
-  controls.append(createLabel(NULL, "Scroll Forward:"));
-  controls.append(createLabel(NULL, "Slow Keyboard Motion:"));
+  controls.push_back(reset = createLabel(NULL, "Reset Defaults"));
+  controls.push_back(createLabel(NULL, "Fire shot:"));
+  controls.push_back(createLabel(NULL, "Drop flag:"));
+  controls.push_back(createLabel(NULL, "Identify/Lock On:"));
+  controls.push_back(createLabel(NULL, "Radar Short:"));
+  controls.push_back(createLabel(NULL, "Radar Medium:"));
+  controls.push_back(createLabel(NULL, "Radar Long:"));
+  controls.push_back(createLabel(NULL, "Send to All:"));
+  controls.push_back(createLabel(NULL, "Send to Teammates:"));
+  controls.push_back(createLabel(NULL, "Send to Nemesis:"));
+  controls.push_back(createLabel(NULL, "Send to Recipient:"));
+  controls.push_back(createLabel(NULL, "Jump:"));
+  controls.push_back(createLabel(NULL, "Binoculars:"));
+  controls.push_back(createLabel(NULL, "Toggle Score:"));
+  controls.push_back(createLabel(NULL, "Tank Labels:"));
+  controls.push_back(createLabel(NULL, "Flag Help:"));
+  controls.push_back(createLabel(NULL, "Time Forward:"));
+  controls.push_back(createLabel(NULL, "Time Backward:"));
+  controls.push_back(createLabel(NULL, "Pause/Resume:"));
+  controls.push_back(createLabel(NULL, "Self Destruct/Cancel:"));
+  controls.push_back(createLabel(NULL, "Fast Quit:"));
+  controls.push_back(createLabel(NULL, "Scroll Backward:"));
+  controls.push_back(createLabel(NULL, "Scroll Forward:"));
+  controls.push_back(createLabel(NULL, "Slow Keyboard Motion:"));
 
   // set control order
-  const int count = controls.getLength();
+  const int count = controls.size();
   controls[0]->setNext(controls[0]);
   controls[0]->setPrev(controls[0]);
   controls[1]->setNext(controls[2]);
@@ -663,7 +663,7 @@ KeyboardMapMenu::KeyboardMapMenu() : defaultKey(this), editing(BzfKeyMap::LastKe
   setFocus(controls[1]);
 }
 
-boolean			KeyboardMapMenu::isEditing() const
+bool			KeyboardMapMenu::isEditing() const
 {
   return editing != BzfKeyMap::LastKey;
 }
@@ -702,7 +702,7 @@ void			KeyboardMapMenu::execute()
   }
   else {
     // start editing
-    HUDuiControlList& list = getControls();
+    std::vector<HUDuiControl*>& list = getControls();
     editing = BzfKeyMap::LastKey;
     for (int i = 0; i < (int)BzfKeyMap::LastKey; i++)
       if (list[i + 2] == focus) {
@@ -737,7 +737,7 @@ void			KeyboardMapMenu::resize(int width, int height)
   const float fontHeight = (float)height / 38.0f;
 
   // reposition title
-  HUDuiControlList& list = getControls();
+  std::vector<HUDuiControl*>& list = getControls();
   HUDuiLabel* title = (HUDuiLabel*)list[0];
   title->setFontSize(titleFontWidth, titleFontHeight);
   const OpenGLTexFont& titleFont = title->getFont();
@@ -752,7 +752,7 @@ void			KeyboardMapMenu::resize(int width, int height)
   y = topY;
   list[1]->setFontSize(fontWidth, fontHeight);
   const float h = list[1]->getFont().getHeight();
-  const int count = list.getLength();
+  const int count = list.size();
   const int mid = count / 2;
 
   for (i = 1; i <= mid; i++) {
@@ -776,11 +776,11 @@ void			KeyboardMapMenu::update()
 {
   // load current settings
   BzfKeyMap& map = getBzfKeyMap();
-  HUDuiControlList& list = getControls();
+  std::vector<HUDuiControl*>& list = getControls();
   for (int j = 0; j < (int)BzfKeyMap::LastKey; j++) {
     const BzfKeyEvent& key1 = map.get((BzfKeyMap::Key)j);
     const BzfKeyEvent& key2 = map.getAlternate((BzfKeyMap::Key)j);
-    BzfString value;
+    std::string value;
     if (key1.ascii == 0 && key1.button == 0) {
       if (j == (int)editing)
 	value = "???";
@@ -833,32 +833,32 @@ class GUIOptionsMenu : public HUDDialog {
 GUIOptionsMenu::GUIOptionsMenu()
 {
   // add controls
-  HUDuiControlList& list = getControls();
+  std::vector<HUDuiControl*>& list = getControls();
 
   HUDuiLabel* label = new HUDuiLabel;
   label->setFont(MainMenu::getFont());
   label->setString("GUI Options");
-  list.append(label);
+  list.push_back(label);
 
   HUDuiList* option = new HUDuiList;
   option->setFont(MainMenu::getFont());
   option->setLabel("Enhanced radar:");
   option->setCallback(callback, (void*)"e");
-  BzfStringAList* options = &option->getList();
-  options->append(BzfString("Off"));
-  options->append(BzfString("On"));
+  std::vector<std::string>* options = &option->getList();
+  options->push_back(std::string("Off"));
+  options->push_back(std::string("On"));
   option->update();
-  list.append(option);
+  list.push_back(option);
 
   option = new HUDuiList;
   option->setFont(MainMenu::getFont());
   option->setLabel("Controlpanel & Score FontSize:");
   option->setCallback(callback, (void*)"w");
   options = &option->getList();
-  options->append(BzfString("normal"));
-  options->append(BzfString("bigger"));
+  options->push_back(std::string("normal"));
+  options->push_back(std::string("bigger"));
   option->update();
-  list.append(option);
+  list.push_back(option);
 
   // set Radar Translucency
   option = new HUDuiList;
@@ -866,29 +866,29 @@ GUIOptionsMenu::GUIOptionsMenu()
   option->setLabel("Radar & Panel Opacity:");
   option->setCallback(callback, (void*)"y");
   options = &option->getList();
-  options->append(BzfString("[O----------]"));
-  options->append(BzfString("[-O---------]"));
-  options->append(BzfString("[--O--------]"));
-  options->append(BzfString("[---O-------]"));
-  options->append(BzfString("[----O------]"));
-  options->append(BzfString("[-----O-----]"));
-  options->append(BzfString("[------O----]"));
-  options->append(BzfString("[-------O---]"));
-  options->append(BzfString("[--------O--]"));
-  options->append(BzfString("[---------O-]"));
-  options->append(BzfString("[----------O]"));
+  options->push_back(std::string("[O----------]"));
+  options->push_back(std::string("[-O---------]"));
+  options->push_back(std::string("[--O--------]"));
+  options->push_back(std::string("[---O-------]"));
+  options->push_back(std::string("[----O------]"));
+  options->push_back(std::string("[-----O-----]"));
+  options->push_back(std::string("[------O----]"));
+  options->push_back(std::string("[-------O---]"));
+  options->push_back(std::string("[--------O--]"));
+  options->push_back(std::string("[---------O-]"));
+  options->push_back(std::string("[----------O]"));
   option->update();
-  list.append(option);
+  list.push_back(option);
 
   option = new HUDuiList;
   option->setFont(MainMenu::getFont());
   option->setLabel("Colored shots on radar:");
   option->setCallback(callback, (void*)"z");
   options = &option->getList();
-  options->append(BzfString("Off"));
-  options->append(BzfString("On"));
+  options->push_back(std::string("Off"));
+  options->push_back(std::string("On"));
   option->update();
-  list.append(option);
+  list.push_back(option);
 
   // set radar shot length
   option = new HUDuiList;
@@ -896,15 +896,15 @@ GUIOptionsMenu::GUIOptionsMenu()
   option->setLabel("Radar Shot Length:");
   option->setCallback(callback, (void*)"l");
   options = &option->getList();
-  options->append(BzfString("[O---]"));
-  options->append(BzfString("[-O--]"));
-  options->append(BzfString("[--O-]"));
-  options->append(BzfString("[---O]"));
+  options->push_back(std::string("[O---]"));
+  options->push_back(std::string("[-O--]"));
+  options->push_back(std::string("[--O-]"));
+  options->push_back(std::string("[---O]"));
   option->update();
-  list.append(option);
+  list.push_back(option);
 
   // set control order
-  const int count = list.getLength();
+  const int count = list.size();
   list[0]->setNext(list[0]);
   list[0]->setPrev(list[0]);
   list[1]->setPrev(list[count - 1]);
@@ -937,7 +937,7 @@ void			GUIOptionsMenu::resize(int width, int height)
   const float fontHeight = (float)height / 30.0f;
 
   // reposition title
-  HUDuiControlList& list = getControls();
+  std::vector<HUDuiControl*>& list = getControls();
   HUDuiLabel* title = (HUDuiLabel*)list[0];
   title->setFontSize(titleFontWidth, titleFontHeight);
   const OpenGLTexFont& titleFont = title->getFont();
@@ -949,7 +949,7 @@ void			GUIOptionsMenu::resize(int width, int height)
   // reposition options
   x = 0.5f * ((float)width + 0.5f * titleWidth);
   y -= 0.6f * titleFont.getHeight();
-  const int count = list.getLength();
+  const int count = list.size();
   for (int i = 1; i < count; i++) {
     list[i]->setFontSize(fontWidth, fontHeight);
     list[i]->setPosition(x, y);
@@ -1030,88 +1030,88 @@ OptionsMenu::OptionsMenu() : formatMenu(NULL), keyboardMapMenu(NULL),
                              guiOptionsMenu(NULL)
 {
   // add controls
-  HUDuiControlList& list = getControls();
+  std::vector<HUDuiControl*>& list = getControls();
 
   HUDuiLabel* label = new HUDuiLabel;
   label->setFont(MainMenu::getFont());
   label->setString("Options");
-  list.append(label);
+  list.push_back(label);
 
   HUDuiList* option = new HUDuiList;
   option->setFont(MainMenu::getFont());
   option->setLabel("Dithering:");
   option->setCallback(callback, (void*)"1");
-  BzfStringAList* options = &option->getList();
-  options->append(BzfString("Off"));
-  options->append(BzfString("On"));
+  std::vector<std::string>* options = &option->getList();
+  options->push_back(std::string("Off"));
+  options->push_back(std::string("On"));
   option->update();
-  list.append(option);
+  list.push_back(option);
 
   option = new HUDuiList;
   option->setFont(MainMenu::getFont());
   option->setLabel("Blending:");
   option->setCallback(callback, (void*)"2");
   options = &option->getList();
-  options->append(BzfString("Off"));
-  options->append(BzfString("On"));
+  options->push_back(std::string("Off"));
+  options->push_back(std::string("On"));
   option->update();
-  list.append(option);
+  list.push_back(option);
 
   option = new HUDuiList;
   option->setFont(MainMenu::getFont());
   option->setLabel("Smoothing:");
   option->setCallback(callback, (void*)"3");
   options = &option->getList();
-  options->append(BzfString("Off"));
-  options->append(BzfString("On"));
+  options->push_back(std::string("Off"));
+  options->push_back(std::string("On"));
   option->update();
-  list.append(option);
+  list.push_back(option);
 
   option = new HUDuiList;
   option->setFont(MainMenu::getFont());
   option->setLabel("Lighting:");
   option->setCallback(callback, (void*)"4");
   options = &option->getList();
-  options->append(BzfString("Off"));
-  options->append(BzfString("On"));
+  options->push_back(std::string("Off"));
+  options->push_back(std::string("On"));
   option->update();
-  list.append(option);
+  list.push_back(option);
 
   option = new HUDuiList;
   option->setFont(MainMenu::getFont());
   option->setLabel("Texturing:");
   option->setCallback(callback, (void*)"5");
   options = &option->getList();
-  options->append(BzfString("Off"));
-  options->append(BzfString("Nearest"));
-  options->append(BzfString("Linear"));
-  options->append(BzfString("Nearest Mipmap Nearest"));
-  options->append(BzfString("Linear Mipmap Nearest"));
-  options->append(BzfString("Nearest Mipmap Linear"));
-  options->append(BzfString("Linear Mipmap Linear"));
+  options->push_back(std::string("Off"));
+  options->push_back(std::string("Nearest"));
+  options->push_back(std::string("Linear"));
+  options->push_back(std::string("Nearest Mipmap Nearest"));
+  options->push_back(std::string("Linear Mipmap Nearest"));
+  options->push_back(std::string("Nearest Mipmap Linear"));
+  options->push_back(std::string("Linear Mipmap Linear"));
   option->update();
-  list.append(option);
+  list.push_back(option);
 
   option = new HUDuiList;
   option->setFont(MainMenu::getFont());
   option->setLabel("Quality:");
   option->setCallback(callback, (void*)"6");
   options = &option->getList();
-  options->append(BzfString("Low"));
-  options->append(BzfString("Medium"));
-  options->append(BzfString("High"));
+  options->push_back(std::string("Low"));
+  options->push_back(std::string("Medium"));
+  options->push_back(std::string("High"));
   option->update();
-  list.append(option);
+  list.push_back(option);
 
   option = new HUDuiList;
   option->setFont(MainMenu::getFont());
   option->setLabel("Shadows:");
   option->setCallback(callback, (void*)"7");
   options = &option->getList();
-  options->append(BzfString("Off"));
-  options->append(BzfString("On"));
+  options->push_back(std::string("Off"));
+  options->push_back(std::string("On"));
   option->update();
-  list.append(option);
+  list.push_back(option);
 
   option = new HUDuiList;
   option->setFont(MainMenu::getFont());
@@ -1121,14 +1121,14 @@ OptionsMenu::OptionsMenu() : formatMenu(NULL), keyboardMapMenu(NULL),
   GLint value;
   glGetIntegerv(GL_DEPTH_BITS, &value);
   if (value == 0) {
-    options->append(BzfString("Not available"));
+    options->push_back(std::string("Not available"));
   }
   else {
-    options->append(BzfString("Off"));
-    options->append(BzfString("On"));
+    options->push_back(std::string("Off"));
+    options->push_back(std::string("On"));
   }
   option->update();
-  list.append(option);
+  list.push_back(option);
 
 #if defined(DEBUG_RENDERING)
   option = new HUDuiList;
@@ -1136,30 +1136,30 @@ OptionsMenu::OptionsMenu() : formatMenu(NULL), keyboardMapMenu(NULL),
   option->setLabel("Hidden Line:");
   option->setCallback(callback, (void*)"a");
   options = &option->getList();
-  options->append(BzfString("Off"));
-  options->append(BzfString("On"));
+  options->push_back(std::string("Off"));
+  options->push_back(std::string("On"));
   option->update();
-  list.append(option);
+  list.push_back(option);
 
   option = new HUDuiList;
   option->setFont(MainMenu::getFont());
   option->setLabel("Wireframe:");
   option->setCallback(callback, (void*)"b");
   options = &option->getList();
-  options->append(BzfString("Off"));
-  options->append(BzfString("On"));
+  options->push_back(std::string("Off"));
+  options->push_back(std::string("On"));
   option->update();
-  list.append(option);
+  list.push_back(option);
 
   option = new HUDuiList;
   option->setFont(MainMenu::getFont());
   option->setLabel("Depth Complexity:");
   option->setCallback(callback, (void*)"c");
   options = &option->getList();
-  options->append(BzfString("Off"));
-  options->append(BzfString("On"));
+  options->push_back(std::string("Off"));
+  options->push_back(std::string("On"));
   option->update();
-  list.append(option);
+  list.push_back(option);
 #endif
 
   BzfDisplay* display = getDisplay();
@@ -1171,7 +1171,7 @@ OptionsMenu::OptionsMenu() : formatMenu(NULL), keyboardMapMenu(NULL),
     videoFormat = label = new HUDuiLabel;
     label->setFont(MainMenu::getFont());
     label->setLabel("Change Video Format");
-    list.append(label);
+    list.push_back(label);
   }
 
   BzfWindow* window = getMainWindow()->getWindow();
@@ -1181,27 +1181,27 @@ OptionsMenu::OptionsMenu() : formatMenu(NULL), keyboardMapMenu(NULL),
   option->setCallback(callback, (void*)"g");
   options = &option->getList();
   if (window->hasGammaControl()) {
-    options->append(BzfString("[O--------------]"));
-    options->append(BzfString("[-O-------------]"));
-    options->append(BzfString("[--O------------]"));
-    options->append(BzfString("[---O-----------]"));
-    options->append(BzfString("[----O----------]"));
-    options->append(BzfString("[-----O---------]"));
-    options->append(BzfString("[------O--------]"));
-    options->append(BzfString("[-------O-------]"));
-    options->append(BzfString("[--------O------]"));
-    options->append(BzfString("[---------O-----]"));
-    options->append(BzfString("[----------O----]"));
-    options->append(BzfString("[-----------O---]"));
-    options->append(BzfString("[------------O--]"));
-    options->append(BzfString("[-------------O-]"));
-    options->append(BzfString("[--------------O]"));
+    options->push_back(std::string("[O--------------]"));
+    options->push_back(std::string("[-O-------------]"));
+    options->push_back(std::string("[--O------------]"));
+    options->push_back(std::string("[---O-----------]"));
+    options->push_back(std::string("[----O----------]"));
+    options->push_back(std::string("[-----O---------]"));
+    options->push_back(std::string("[------O--------]"));
+    options->push_back(std::string("[-------O-------]"));
+    options->push_back(std::string("[--------O------]"));
+    options->push_back(std::string("[---------O-----]"));
+    options->push_back(std::string("[----------O----]"));
+    options->push_back(std::string("[-----------O---]"));
+    options->push_back(std::string("[------------O--]"));
+    options->push_back(std::string("[-------------O-]"));
+    options->push_back(std::string("[--------------O]"));
   }
   else {
-    options->append(BzfString("Unavailable"));
+    options->push_back(std::string("Unavailable"));
   }
   option->update();
-  list.append(option);
+  list.push_back(option);
 
   option = new HUDuiList;
   option->setFont(MainMenu::getFont());
@@ -1209,46 +1209,46 @@ OptionsMenu::OptionsMenu() : formatMenu(NULL), keyboardMapMenu(NULL),
   option->setCallback(callback, (void*)"s");
   options = &option->getList();
   if (isSoundOpen()) {
-    options->append(BzfString("Off"));
-    options->append(BzfString("1"));
-    options->append(BzfString("2"));
-    options->append(BzfString("3"));
-    options->append(BzfString("4"));
-    options->append(BzfString("5"));
-    options->append(BzfString("6"));
-    options->append(BzfString("7"));
-    options->append(BzfString("8"));
-    options->append(BzfString("9"));
-    options->append(BzfString("10"));
+    options->push_back(std::string("Off"));
+    options->push_back(std::string("1"));
+    options->push_back(std::string("2"));
+    options->push_back(std::string("3"));
+    options->push_back(std::string("4"));
+    options->push_back(std::string("5"));
+    options->push_back(std::string("6"));
+    options->push_back(std::string("7"));
+    options->push_back(std::string("8"));
+    options->push_back(std::string("9"));
+    options->push_back(std::string("10"));
   }
   else {
-    options->append(BzfString("Unavailable"));
+    options->push_back(std::string("Unavailable"));
   }
   option->update();
-  list.append(option);
+  list.push_back(option);
 
   option = new HUDuiList;
   option->setFont(MainMenu::getFont());
   option->setLabel("UDP network connection:");
   option->setCallback(callback, (void*)"U");
   options = &option->getList();
-  options->append(BzfString("Off"));
-  options->append(BzfString("On"));
+  options->push_back(std::string("Off"));
+  options->push_back(std::string("On"));
   option->update();
-  list.append(option);
+  list.push_back(option);
 
   keyMapping = label = new HUDuiLabel;
   label->setFont(MainMenu::getFont());
   label->setLabel("Change Key Mapping");
-  list.append(label);
+  list.push_back(label);
 
   guiOptions = label = new HUDuiLabel;
   label->setFont(MainMenu::getFont());
   label->setLabel("GUI Options");
-  list.append(label);
+  list.push_back(label);
 
   // set control order
-  const int count = list.getLength();
+  const int count = list.size();
   list[0]->setNext(list[0]);
   list[0]->setPrev(list[0]);
   list[1]->setPrev(list[count - 1]);
@@ -1297,7 +1297,7 @@ void			OptionsMenu::resize(int width, int height)
   const float fontHeight = (float)height / 30.0f;
 
   // reposition title
-  HUDuiControlList& list = getControls();
+  std::vector<HUDuiControl*>& list = getControls();
   HUDuiLabel* title = (HUDuiLabel*)list[0];
   title->setFontSize(titleFontWidth, titleFontHeight);
   const OpenGLTexFont& titleFont = title->getFont();
@@ -1309,7 +1309,7 @@ void			OptionsMenu::resize(int width, int height)
   // reposition options
   x = 0.5f * ((float)width + 0.5f * titleWidth);
   y -= 0.6f * titleFont.getHeight();
-  const int count = list.getLength();
+  const int count = list.size();
   for (int i = 1; i < count; i++) {
     list[i]->setFontSize(fontWidth, fontHeight);
     list[i]->setPosition(x, y);
@@ -1470,8 +1470,8 @@ class HelpMenuDefaultKey : public MenuDefaultKey {
 			HelpMenuDefaultKey() { }
 			~HelpMenuDefaultKey() { }
 
-    boolean		keyPress(const BzfKeyEvent&);
-    boolean		keyRelease(const BzfKeyEvent&);
+    bool		keyPress(const BzfKeyEvent&);
+    bool		keyRelease(const BzfKeyEvent&);
 };
 
 class HelpMenu : public HUDDialog {
@@ -1483,7 +1483,7 @@ class HelpMenu : public HUDDialog {
     void		execute() { }
     void		resize(int width, int height);
 
-   static HelpMenu*	getHelpMenu(HUDDialog* = NULL, boolean next = True);
+   static HelpMenu*	getHelpMenu(HUDDialog* = NULL, bool next = true);
    static void		done();
 
   protected:
@@ -1496,37 +1496,37 @@ class HelpMenu : public HUDDialog {
     static HelpMenu**	helpMenus;
 };
 
-boolean			HelpMenuDefaultKey::keyPress(const BzfKeyEvent& key)
+bool			HelpMenuDefaultKey::keyPress(const BzfKeyEvent& key)
 {
   if (key.button == BzfKeyEvent::PageUp) {
     HUDDialog* oldMenu = HUDDialogStack::get()->top();
     HUDDialogStack::get()->pop();
-    HUDDialogStack::get()->push(HelpMenu::getHelpMenu(oldMenu, False));
-    return True;
+    HUDDialogStack::get()->push(HelpMenu::getHelpMenu(oldMenu, false));
+    return true;
   }
   if (key.button == BzfKeyEvent::PageDown || key.ascii == 13) {
     HUDDialog* oldMenu = HUDDialogStack::get()->top();
     HUDDialogStack::get()->pop();
-    HUDDialogStack::get()->push(HelpMenu::getHelpMenu(oldMenu, True));
-    return True;
+    HUDDialogStack::get()->push(HelpMenu::getHelpMenu(oldMenu, true));
+    return true;
   }
   return MenuDefaultKey::keyPress(key);
 }
 
-boolean			HelpMenuDefaultKey::keyRelease(const BzfKeyEvent& key)
+bool			HelpMenuDefaultKey::keyRelease(const BzfKeyEvent& key)
 {
   if (key.button == BzfKeyEvent::PageUp ||
       key.button == BzfKeyEvent::PageDown || key.ascii == 13)
-    return True;
+    return true;
   return MenuDefaultKey::keyRelease(key);
 }
 
 HelpMenu::HelpMenu(const char* title) : HUDDialog()
 {
   // add controls
-  HUDuiControlList& list = getControls();
-  list.append(createLabel(title));
-  list.append(createLabel("Page Down for next page",
+  std::vector<HUDuiControl*>& list = getControls();
+  list.push_back(createLabel(title));
+  list.push_back(createLabel("Page Down for next page",
 			  "Page Up for previous page"));
 
   // set control order
@@ -1561,7 +1561,7 @@ void			HelpMenu::resize(int width, int height)
   const float fontHeight = (float)height / 36.0f;
 
   // reposition title
-  HUDuiControlList& list = getControls();
+  std::vector<HUDuiControl*>& list = getControls();
   HUDuiLabel* title = (HUDuiLabel*)list[0];
   title->setFontSize(titleFontWidth, titleFontHeight);
   const OpenGLTexFont& titleFont = title->getFont();
@@ -1579,7 +1579,7 @@ void			HelpMenu::resize(int width, int height)
   // reposition options
   x = getLeftSide(width, height);
   y -= 1.5f * h;
-  const int count = list.getLength();
+  const int count = list.size();
   for (int i = 2; i < count; i++) {
     list[i]->setFontSize(fontWidth, fontHeight);
     list[i]->setPosition(x, y);
@@ -1605,31 +1605,31 @@ class Help1Menu : public HelpMenu {
 Help1Menu::Help1Menu() : HelpMenu("Controls")
 {
   // add controls
-  HUDuiControlList& list = getControls();
-  list.append(createLabel("controls tank motion", "Mouse Position:"));
-  list.append(createLabel("fires shot"));
-  list.append(createLabel("drops flag (if not bad)"));
-  list.append(createLabel("identifies player (locks on GM)"));
-  list.append(createLabel("jump (if allowed)"));
-  list.append(createLabel("short radar range"));
-  list.append(createLabel("medium radar range"));
-  list.append(createLabel("long radar range"));
-  list.append(createLabel("toggle binoculars"));
-  list.append(createLabel("toggle heads-up flag help"));
-  list.append(createLabel("send message to teammates"));
-  list.append(createLabel("send message to everybody"));
-  list.append(createLabel("send message to nemesis"));
-  list.append(createLabel("send message to recipient"));
-  list.append(createLabel("toggle score sheet"));
-  list.append(createLabel("toggle tank labels"));
-  list.append(createLabel("set time of day backward"));
-  list.append(createLabel("set time of day forward"));
-  list.append(createLabel("pause/resume"));
-  list.append(createLabel("self destruct/cancel"));
-  list.append(createLabel("quit"));
-  list.append(createLabel("scroll message log backward"));
-  list.append(createLabel("scroll message log forward"));
-  list.append(createLabel("show/dismiss menu", "Esc:"));
+  std::vector<HUDuiControl*>& list = getControls();
+  list.push_back(createLabel("controls tank motion", "Mouse Position:"));
+  list.push_back(createLabel("fires shot"));
+  list.push_back(createLabel("drops flag (if not bad)"));
+  list.push_back(createLabel("identifies player (locks on GM)"));
+  list.push_back(createLabel("jump (if allowed)"));
+  list.push_back(createLabel("short radar range"));
+  list.push_back(createLabel("medium radar range"));
+  list.push_back(createLabel("long radar range"));
+  list.push_back(createLabel("toggle binoculars"));
+  list.push_back(createLabel("toggle heads-up flag help"));
+  list.push_back(createLabel("send message to teammates"));
+  list.push_back(createLabel("send message to everybody"));
+  list.push_back(createLabel("send message to nemesis"));
+  list.push_back(createLabel("send message to recipient"));
+  list.push_back(createLabel("toggle score sheet"));
+  list.push_back(createLabel("toggle tank labels"));
+  list.push_back(createLabel("set time of day backward"));
+  list.push_back(createLabel("set time of day forward"));
+  list.push_back(createLabel("pause/resume"));
+  list.push_back(createLabel("self destruct/cancel"));
+  list.push_back(createLabel("quit"));
+  list.push_back(createLabel("scroll message log backward"));
+  list.push_back(createLabel("scroll message log forward"));
+  list.push_back(createLabel("show/dismiss menu", "Esc:"));
 }
 
 float			Help1Menu::getLeftSide(int width, int height)
@@ -1670,11 +1670,11 @@ void			Help1Menu::resize(int width, int height)
 
   // get current key mapping and set strings appropriately
   BzfKeyMap& map = getBzfKeyMap();
-  HUDuiControlList& list = getControls();
+  std::vector<HUDuiControl*>& list = getControls();
   for (int j = 0; j < (int)(sizeof(key) / sizeof(key[0])); j++) {
     if (key[j] == BzfKeyMap::LastKey) continue;
 
-    BzfString value;
+    std::string value;
     const BzfKeyEvent& key1 = map.get(key[j]);
     if (key1.ascii == 0 && key1.button == 0) {
       value = "<not mapped>";
@@ -1708,41 +1708,41 @@ class Help2Menu : public HelpMenu {
 Help2Menu::Help2Menu() : HelpMenu("General")
 {
   // add controls
-  HUDuiControlList& list = getControls();
-  list.append(createLabel(
+  std::vector<HUDuiControl*>& list = getControls();
+  list.push_back(createLabel(
 	"BZFlag is a multi-player networked tank battle game.  There are five teams:"));
-  list.append(createLabel(
+  list.push_back(createLabel(
 	"red, green, blue, purple, and rogues (rogue tanks are black).  Destroying a"));
-  list.append(createLabel(
+  list.push_back(createLabel(
 	"player on another team scores a win, while being destroyed or destroying a"));
-  list.append(createLabel(
+  list.push_back(createLabel(
 	"teammate scores a loss.  Individual and aggregate team scores are tallied."));
-  list.append(createLabel(
+  list.push_back(createLabel(
 	"Rogues have no teammates (not even other rogues),so they cannot shoot"));
-  list.append(createLabel(
+  list.push_back(createLabel(
 	"teammates and they don't have a team score."));
-  list.append(createLabel(""));
-  list.append(createLabel(
+  list.push_back(createLabel(""));
+  list.push_back(createLabel(
 	"There are two styles of play, determined by the server configuration:  capture-"));
-  list.append(createLabel(
+  list.push_back(createLabel(
 	"the-flag and free-for-all.  In free-for-all the object is simply to get the"));
-  list.append(createLabel(
+  list.push_back(createLabel(
 	"highest score by shooting opponents.  The object in capture-the-flag is to"));
-  list.append(createLabel(
+  list.push_back(createLabel(
 	"capture enemy flags while preventing opponents from capturing yours.  In this"));
-  list.append(createLabel(
+  list.push_back(createLabel(
 	"style, each team (but not rogues) has a team base and each team with at least"));
-  list.append(createLabel(
+  list.push_back(createLabel(
 	"one player has a team flag which has the color of the team.  To capture a flag,"));
-  list.append(createLabel(
+  list.push_back(createLabel(
 	"you must grab it and bring it back to your team base (you must be on the ground"));
-  list.append(createLabel(
+  list.push_back(createLabel(
 	"in your base to register the capture).  Capturing a flag destroys all the players"));
-  list.append(createLabel(
+  list.push_back(createLabel(
 	"on that team and gives your team score a bonus;  the players will restart on"));
-  list.append(createLabel(
+  list.push_back(createLabel(
 	"their team base.  Taking your flag onto an enemy base counts as a capture against"));
-  list.append(createLabel(
+  list.push_back(createLabel(
 	"your team but not for the enemy team."));
 }
 
@@ -1759,40 +1759,40 @@ class Help3Menu : public HelpMenu {
 Help3Menu::Help3Menu() : HelpMenu("Environment")
 {
   // add controls
-  HUDuiControlList& list = getControls();
-  list.append(createLabel(
+  std::vector<HUDuiControl*>& list = getControls();
+  list.push_back(createLabel(
 	"The world environment contains an outer wall and several buildings."));
-  list.append(createLabel(
+  list.push_back(createLabel(
 	"You cannot go outside the outer wall (you can't even jump over it)."));
-  list.append(createLabel(
+  list.push_back(createLabel(
 	"You cannot normally drive or shoot through buildings."));
-  list.append(createLabel(
+  list.push_back(createLabel(
 	""));
-  list.append(createLabel(
+  list.push_back(createLabel(
 	"The server may be configured to include teleporters:  large transparent"));
-  list.append(createLabel(
+  list.push_back(createLabel(
 	"black slabs.  Objects entering one side of a teleporter are instantly"));
-  list.append(createLabel(
+  list.push_back(createLabel(
 	"moved to one side of another (or possibly the same) teleporter.  The"));
-  list.append(createLabel(
+  list.push_back(createLabel(
 	"teleport is reversible;  reentering the same side of the destination"));
-  list.append(createLabel(
+  list.push_back(createLabel(
 	"teleporter brings you back to where you started.  Teleport connections"));
-  list.append(createLabel(
+  list.push_back(createLabel(
 	"are fixed at the start of the game and don't change during the game."));
-  list.append(createLabel(
+  list.push_back(createLabel(
 	"The connections are always the same in the capture-the-flag style."));
-  list.append(createLabel(
+  list.push_back(createLabel(
 	"Each side of a teleporter teleports independently of the other side."));
-  list.append(createLabel(
+  list.push_back(createLabel(
 	"It's possible for a teleporter to teleport to the opposite side of"));
-  list.append(createLabel(
+  list.push_back(createLabel(
 	"itself.  Such a thru-teleporter acts almost as if it wasn't there."));
-  list.append(createLabel(
+  list.push_back(createLabel(
 	"A teleporter can also teleport to the same side of itself.  This is a"));
-  list.append(createLabel(
+  list.push_back(createLabel(
 	"reverse teleporter.  Shooting at a reverse teleporter is likely to be"));
-  list.append(createLabel(
+  list.push_back(createLabel(
 	"self destructive;  shooting a laser at one is invariably fatal."));
 }
 
@@ -1809,42 +1809,42 @@ class Help4Menu : public HelpMenu {
 Help4Menu::Help4Menu() : HelpMenu("Flags I")
 {
   // add controls
-  HUDuiControlList& list = getControls();
-  list.append(createLabel(
+  std::vector<HUDuiControl*>& list = getControls();
+  list.push_back(createLabel(
 	"Flags come in two varieties:  team flags and super flags.  Team flags"));
-  list.append(createLabel(
+  list.push_back(createLabel(
 	"are used only in the capture-the-flag style.  The server may also be"));
-  list.append(createLabel(
+  list.push_back(createLabel(
 	"configured to supply super flags, which give your tank some advantage"));
-  list.append(createLabel(
+  list.push_back(createLabel(
 	"or disadvantage.  You normally can't tell which until you pick one up,"));
-  list.append(createLabel(
+  list.push_back(createLabel(
 	"but good flags generally outnumber bad flags two to one."));
-  list.append(createLabel(
+  list.push_back(createLabel(
 	""));
-  list.append(createLabel(
+  list.push_back(createLabel(
 	"Team flags are not allowed to be in Bad Places.  Bad Places are:  on"));
-  list.append(createLabel(
+  list.push_back(createLabel(
 	"a building or on an enemy base.  Team flags dropped in a Bad Place are"));
-  list.append(createLabel(
+  list.push_back(createLabel(
 	"moved to a safety position.  Captured flags are placed back on their"));
-  list.append(createLabel(
+  list.push_back(createLabel(
 	"team base.  Super flags dropped above a building always disappear."));
-  list.append(createLabel(
+  list.push_back(createLabel(
 	""));
-  list.append(createLabel(
+  list.push_back(createLabel(
 	"A random good super flag will remain for up to 4 possessions.  After"));
-  list.append(createLabel(
+  list.push_back(createLabel(
 	"that it'll disappear and will eventually be replaced by a new random"));
-  list.append(createLabel(
+  list.push_back(createLabel(
 	"flag.  Bad random super flags disappear after the first possession."));
-  list.append(createLabel(
+  list.push_back(createLabel(
 	"Bad super flags can't normally be dropped.  The server can be set to"));
-  list.append(createLabel(
+  list.push_back(createLabel(
 	"automatically drop the flag for you after some time, after you destroy"));
-  list.append(createLabel(
+  list.push_back(createLabel(
 	"a certain number of enemies, and/or when you grab an antidote flag."));
-  list.append(createLabel(
+  list.push_back(createLabel(
 	"Antidote flags are yellow and only appear when you have a bad flag."));
 }
 
@@ -1864,42 +1864,42 @@ class Help5Menu : public HelpMenu {
 Help5Menu::Help5Menu() : HelpMenu("Flags II")
 {
   // add controls
-  HUDuiControlList& list = getControls();
-  list.append(createLabel(
+  std::vector<HUDuiControl*>& list = getControls();
+  list.push_back(createLabel(
 	"", "Good Flags:"));
-  list.append(createLabel(
+  list.push_back(createLabel(
 	"boosts top speed", "High Speed (V)"));
-  list.append(createLabel(
+  list.push_back(createLabel(
 	"boosts turn rate", "Quick Turn (A)"));
-  list.append(createLabel(
+  list.push_back(createLabel(
 	"can drive through buildings", "Oscillation Overthruster (OO)"));
-  list.append(createLabel(
+  list.push_back(createLabel(
 	"faster shots more often", "Rapid Fire (F)"));
-  list.append(createLabel(
+  list.push_back(createLabel(
 	"very fast reload, very short range", "Machine Gun (MG)"));
-  list.append(createLabel(
+  list.push_back(createLabel(
 	"shots guide themselves (right mouse locks on)", "Guided Missile (GM)"));
-  list.append(createLabel(
+  list.push_back(createLabel(
 	"infinite shot speed and range, long reload time", "Laser (L)"));
-  list.append(createLabel(
+  list.push_back(createLabel(
 	"shots ricochet", "Ricochet (R)"));
-  list.append(createLabel(
+  list.push_back(createLabel(
 	"shoots through buildings", "Super Bullet (SB)"));
-  list.append(createLabel(
+  list.push_back(createLabel(
 	"tank invisible on enemy radar", "Stealth (ST)"));
-  list.append(createLabel(
+  list.push_back(createLabel(
 	"tank invisible out the window", "Cloaking (CL)"));
-  list.append(createLabel(
+  list.push_back(createLabel(
 	"shots invisible on radar", "Invisible Bullet (IB)"));
-  list.append(createLabel(
+  list.push_back(createLabel(
 	"tank becomes smaller", "Tiny (T)"));
-  list.append(createLabel(
+  list.push_back(createLabel(
 	"tank becomes paper thin", "Narrow (N)"));
-  list.append(createLabel(
+  list.push_back(createLabel(
 	"getting hit just drops the flag", "Shield(SH)"));
-  list.append(createLabel(
+  list.push_back(createLabel(
 	"destroy tanks by touching them", "Steamroller (SR)"));
-  list.append(createLabel(
+  list.push_back(createLabel(
 	"expanding spherical shell of destruction", "Shock Wave (SW)"));
 }
 
@@ -1924,34 +1924,34 @@ class Help6Menu : public HelpMenu {
 Help6Menu::Help6Menu() : HelpMenu("Flags III")
 {
   // add controls
-  HUDuiControlList& list = getControls();
-  list.append(createLabel(
+  std::vector<HUDuiControl*>& list = getControls();
+  list.push_back(createLabel(
 	"teleport to enter/leave zone", "Phantom Zone (PZ)"));
-  list.append(createLabel(
+  list.push_back(createLabel(
 	"destroys player and all player's teammates", "Genocide (G)"));
-  list.append(createLabel(
+  list.push_back(createLabel(
 	"allows tank to jump", "Jumping (JP)"));
-  list.append(createLabel(
+  list.push_back(createLabel(
 	"shows type of nearest superflag", "Identify (ID)"));
-  list.append(createLabel(
+  list.push_back(createLabel(
 	"", ""));
-  list.append(createLabel(
+  list.push_back(createLabel(
 	"", "Bad Flags:"));
-  list.append(createLabel(
+  list.push_back(createLabel(
 	"can't identify tanks", "Colorblindness (CB)"));
-  list.append(createLabel(
+  list.push_back(createLabel(
 	"makes tank very large", "Obesity (O)"));
-  list.append(createLabel(
+  list.push_back(createLabel(
 	"tank can't turn right", "Left Turn Only (<-)"));
-  list.append(createLabel(
+  list.push_back(createLabel(
 	"tank can't turn left", "Right Turn Only (->)"));
-  list.append(createLabel(
+  list.push_back(createLabel(
 	"tank has lots of momentum", "Momentum (M)"));
-  list.append(createLabel(
+  list.push_back(createLabel(
 	"can't see out the window", "Blindness (B)"));
-  list.append(createLabel(
+  list.push_back(createLabel(
 	"can't see anything on radar", "Jamming (JM)"));
-  list.append(createLabel(
+  list.push_back(createLabel(
 	"fish eye view out the window", "Wide Angle (WA)"));
 }
 
@@ -1973,42 +1973,42 @@ class Help7Menu : public HelpMenu {
 Help7Menu::Help7Menu() : HelpMenu("Readouts I")
 {
   // add controls
-  HUDuiControlList& list = getControls();
-  list.append(createLabel(
+  std::vector<HUDuiControl*>& list = getControls();
+  list.push_back(createLabel(
 	"The radar is on the left side of the control panel.  It shows an overhead"));
-  list.append(createLabel(
+  list.push_back(createLabel(
 	"x-ray view of the game.  Buildings and the outer wall are shown in light"));
-  list.append(createLabel(
+  list.push_back(createLabel(
 	"blue.  Team bases are outlined in the team color.  Teleporters are short"));
-  list.append(createLabel(
+  list.push_back(createLabel(
 	"yellow lines.  Tanks are dots in the tank's team color, except rogues are"));
-  list.append(createLabel(
+  list.push_back(createLabel(
 	"yellow.  The size of the tank's dot is a rough indication of the tank's"));
-  list.append(createLabel(
+  list.push_back(createLabel(
 	"altitude:  higher tanks have larger dots.  Flags are small crosses.  Team"));
-  list.append(createLabel(
+  list.push_back(createLabel(
 	"flags are in the team color, superflags are white, and the antidote flag"));
-  list.append(createLabel(
+  list.push_back(createLabel(
 	"is yellow.  Shots are small dots (or lines or circles, for lasers and"));
-  list.append(createLabel(
+  list.push_back(createLabel(
 	"shock waves, respectively).  Your tank is always dead center and forward"));
-  list.append(createLabel(
+  list.push_back(createLabel(
 	"is always up on the radar.  The yellow V is your field of view.  North"));
-  list.append(createLabel(
+  list.push_back(createLabel(
 	"is indicated by the letter N."));
-  list.append(createLabel(
+  list.push_back(createLabel(
 	""));
-  list.append(createLabel(
+  list.push_back(createLabel(
 	"The heads-up-display (HUD) has several displays.  The two boxes in the"));
-  list.append(createLabel(
+  list.push_back(createLabel(
 	"center of the view are the motion control boxes;  within the small box"));
-  list.append(createLabel(
+  list.push_back(createLabel(
 	"your tank won't move, outside the large box you don't move any faster than"));
-  list.append(createLabel(
+  list.push_back(createLabel(
 	"at the edge of the large box.  Moving the mouse above or below the small"));
-  list.append(createLabel(
+  list.push_back(createLabel(
 	"box moves forward or backward, respectively.  Similarly for left and right."));
-  list.append(createLabel(
+  list.push_back(createLabel(
 	"The distance away from the small box determines the speed."));
 }
 
@@ -2025,42 +2025,42 @@ class Help8Menu : public HelpMenu {
 Help8Menu::Help8Menu() : HelpMenu("Readouts II")
 {
   // add controls
-  HUDuiControlList& list = getControls();
-  list.append(createLabel(
+  std::vector<HUDuiControl*>& list = getControls();
+  list.push_back(createLabel(
 	"Above the larger box is a tape showing your current heading.  North is"));
-  list.append(createLabel(
+  list.push_back(createLabel(
 	"0, east is 90, etc.  If jumping is allowed or you have the jumping flag,"));
-  list.append(createLabel(
+  list.push_back(createLabel(
 	"an altitude tape appears to the right of the larger box."));
-  list.append(createLabel(
+  list.push_back(createLabel(
 	""));
-  list.append(createLabel(
+  list.push_back(createLabel(
 	"Small colored diamonds or arrows may appear on the heading tape.  An"));
-  list.append(createLabel(
+  list.push_back(createLabel(
 	"arrow pointing left means that a particular flag is to your left, an"));
-  list.append(createLabel(
+  list.push_back(createLabel(
 	"arrow pointing right means that the flag is to your right, and a diamond"));
-  list.append(createLabel(
+  list.push_back(createLabel(
 	"indicates the heading to the flag by its position on the heading tape."));
-  list.append(createLabel(
+  list.push_back(createLabel(
 	"In capture-the-flag mode a marker always shows where your team flag is."));
-  list.append(createLabel(
+  list.push_back(createLabel(
 	"A yellow marker shows the way to the antidote flag."));
-  list.append(createLabel(
+  list.push_back(createLabel(
 	""));
-  list.append(createLabel(
+  list.push_back(createLabel(
 	"At the top of the display are, from left to right, your callsign and"));
-  list.append(createLabel(
+  list.push_back(createLabel(
 	"score, your status, and the flag you have.  Your callsign is in the"));
-  list.append(createLabel(
+  list.push_back(createLabel(
 	"color of your team.  Your status is one of:  ready, dead, sealed, zoned"));
-  list.append(createLabel(
+  list.push_back(createLabel(
 	"or reloading (showing the time until reloaded).  It can also show the"));
-  list.append(createLabel(
+  list.push_back(createLabel(
 	"time until a bad flag is dropped (if there's a time limit)."));
-  list.append(createLabel(
+  list.push_back(createLabel(
 	""));
-  list.append(createLabel(
+  list.push_back(createLabel(
 	"Other informational messages may occasionally flash on the HUD."));
 }
 
@@ -2080,28 +2080,28 @@ class Help9Menu : public HelpMenu {
 Help9Menu::Help9Menu() : HelpMenu("Credits")
 {
   // add controls
-  HUDuiControlList& list = getControls();
-  list.append(createLabel("Tim Riker", "Maintainer:"));
-  list.append(createLabel("", ""));
-  list.append(createLabel("Chris Schoeneman", "Original Author:"));
-  list.append(createLabel("", ""));
-  list.append(createLabel("David Hoeferlin, Tom Hubina", "Code Contributors:"));
-  list.append(createLabel("Dan Kartch, Jed Lengyel", ""));
-  list.append(createLabel("Jeff Myers, Tim Olson", ""));
-  list.append(createLabel("Brian Smits, Greg Spencer", ""));
-  list.append(createLabel("Daryll Strauss, Frank Thilo", ""));
-  list.append(createLabel("Dave Brosius, David Trowbridge", ""));
-  list.append(createLabel("", ""));
-  list.append(createLabel("Tamar Cohen", "Tank Models:"));
-  list.append(createLabel("", ""));
-  list.append(createLabel("Kevin Novins, Rick Pasetto", "Special Thanks:"));
-  list.append(createLabel("Adam Rosen, Erin Shaw", ""));
-  list.append(createLabel("Ben Trumbore, Don Greenberg", ""));
-  list.append(createLabel("", ""));
-  list.append(createLabel("http://BZFlag.org/",
+  std::vector<HUDuiControl*>& list = getControls();
+  list.push_back(createLabel("Tim Riker", "Maintainer:"));
+  list.push_back(createLabel("", ""));
+  list.push_back(createLabel("Chris Schoeneman", "Original Author:"));
+  list.push_back(createLabel("", ""));
+  list.push_back(createLabel("David Hoeferlin, Tom Hubina", "Code Contributors:"));
+  list.push_back(createLabel("Dan Kartch, Jed Lengyel", ""));
+  list.push_back(createLabel("Jeff Myers, Tim Olson", ""));
+  list.push_back(createLabel("Brian Smits, Greg Spencer", ""));
+  list.push_back(createLabel("Daryll Strauss, Frank Thilo", ""));
+  list.push_back(createLabel("Dave Brosius, David Trowbridge", ""));
+  list.push_back(createLabel("", ""));
+  list.push_back(createLabel("Tamar Cohen", "Tank Models:"));
+  list.push_back(createLabel("", ""));
+  list.push_back(createLabel("Kevin Novins, Rick Pasetto", "Special Thanks:"));
+  list.push_back(createLabel("Adam Rosen, Erin Shaw", ""));
+  list.push_back(createLabel("Ben Trumbore, Don Greenberg", ""));
+  list.push_back(createLabel("", ""));
+  list.push_back(createLabel("http://BZFlag.org/",
 						"BZFlag Home Page:"));
-  list.append(createLabel("", ""));
-  list.append(createLabel("Tim Riker", "Copyright (c) 1993 - 2002"));
+  list.push_back(createLabel("", ""));
+  list.push_back(createLabel("Tim Riker", "Copyright (c) 1993 - 2002"));
 }
 
 float			Help9Menu::getLeftSide(int width, int height)
@@ -2116,7 +2116,7 @@ float			Help9Menu::getLeftSide(int width, int height)
 static const int	numHelpMenus = 9;
 HelpMenu**		HelpMenu::helpMenus = NULL;
 
-HelpMenu*		HelpMenu::getHelpMenu(HUDDialog* dialog, boolean next)
+HelpMenu*		HelpMenu::getHelpMenu(HUDDialog* dialog, bool next)
 {
   if (!helpMenus) {
     helpMenus = new HelpMenu*[numHelpMenus];
@@ -2161,8 +2161,8 @@ class ServerMenuDefaultKey : public MenuDefaultKey {
 				menu(_menu) { }
 			~ServerMenuDefaultKey() { }
 
-    boolean		keyPress(const BzfKeyEvent&);
-    boolean		keyRelease(const BzfKeyEvent&);
+    bool		keyPress(const BzfKeyEvent&);
+    bool		keyRelease(const BzfKeyEvent&);
 
   private:
     ServerMenu*		menu;
@@ -2170,11 +2170,10 @@ class ServerMenuDefaultKey : public MenuDefaultKey {
 
 class ServerItem {
   public:
-    BzfString		name;
-    BzfString		description;
+    std::string		name;
+    std::string		description;
     PingPacket		ping;
 };
-BZF_DEFINE_ALIST(ServerList, ServerItem);
 
 static const int	MaxListServers = 5;
 class ListServer {
@@ -2216,7 +2215,7 @@ class ServerMenu : public HUDDialog {
 
   private:
     ServerMenuDefaultKey defaultKey;
-    ServerList		servers;
+    std::vector<ServerItem>		servers;
     int			pingInSocket;
     struct sockaddr_in	pingInAddr;
     int			pingBcastSocket;
@@ -2234,59 +2233,59 @@ class ServerMenu : public HUDDialog {
     static const int	NumReadouts;
 };
 
-boolean			ServerMenuDefaultKey::keyPress(const BzfKeyEvent& key)
+bool			ServerMenuDefaultKey::keyPress(const BzfKeyEvent& key)
 {
   if (key.ascii == 0) switch (key.button) {
     case BzfKeyEvent::Up:
       if (HUDui::getFocus()) {
 	menu->setSelected(menu->getSelected() - 1);
       }
-      return True;
+      return true;
 
     case BzfKeyEvent::Down:
       if (HUDui::getFocus()) {
 	menu->setSelected(menu->getSelected() + 1);
       }
-      return True;
+      return true;
 
     case BzfKeyEvent::PageUp:
       if (HUDui::getFocus()) {
 	menu->setSelected(menu->getSelected() - ServerMenu::NumItems);
       }
-      return True;
+      return true;
 
     case BzfKeyEvent::PageDown:
       if (HUDui::getFocus()) {
 	menu->setSelected(menu->getSelected() + ServerMenu::NumItems);
       }
-      return True;
+      return true;
   }
 
   else if (key.ascii == '\t') {
     if (HUDui::getFocus()) {
 	menu->setSelected(menu->getSelected() + 1);
     }
-    return True;
+    return true;
   }
 
   return MenuDefaultKey::keyPress(key);
 }
 
-boolean			ServerMenuDefaultKey::keyRelease(const BzfKeyEvent& key)
+bool			ServerMenuDefaultKey::keyRelease(const BzfKeyEvent& key)
 {
   switch (key.button) {
     case BzfKeyEvent::Up:
     case BzfKeyEvent::Down:
     case BzfKeyEvent::PageUp:
     case BzfKeyEvent::PageDown:
-      return True;
+      return true;
   }
   switch (key.ascii) {
     case 27:	// escape
     case 13:	// return
-      return True;
+      return true;
   }
-  return False;
+  return false;
 }
 
 const int		ServerMenu::NumReadouts = 21;
@@ -2337,7 +2336,7 @@ void			ServerMenu::addLabel(
   label->setFont(MainMenu::getFont());
   label->setString(msg);
   label->setLabel(_label);
-  getControls().append(label);
+  getControls().push_back(label);
 }
 
 int			ServerMenu::getSelected() const
@@ -2349,8 +2348,8 @@ void			ServerMenu::setSelected(int index)
 {
   // clamp index
   if (index < 0)
-    index = servers.getLength() - 1;
-  else if (index != 0 && index >= servers.getLength())
+    index = servers.size() - 1;
+  else if (index != 0 && index >= servers.size())
     index = 0;
 
   // ignore if no change
@@ -2365,27 +2364,27 @@ void			ServerMenu::setSelected(int index)
   // if page changed then load items for this page
   if (oldPage != newPage) {
     // fill items
-    HUDuiControlList& list = getControls();
+    std::vector<HUDuiControl*>& list = getControls();
     const int base = newPage * NumItems;
     for (int i = 0; i < NumItems; ++i) {
       HUDuiLabel* label = (HUDuiLabel*)list[i + NumReadouts];
-      if (base + i < servers.getLength())
+      if (base + i < servers.size())
 	label->setString(servers[base + i].description);
       else
 	label->setString("");
     }
 
     // change page label
-    if (servers.getLength() > NumItems) {
+    if (servers.size() > NumItems) {
       char msg[50];
-      sprintf(msg, "Page %d of %d\n", newPage + 1, (servers.getLength() +
+      sprintf(msg, "Page %d of %d\n", newPage + 1, (servers.size() +
 						NumItems - 1) / NumItems);
       pageLabel->setString(msg);
     }
   }
 
   // set focus to selected item
-  if (servers.getLength() > 0) {
+  if (servers.size() > 0) {
     const int indexOnPage = selectedIndex % NumItems;
     getControls()[NumReadouts + indexOnPage]->setFocus();
   }
@@ -2396,7 +2395,7 @@ void			ServerMenu::setSelected(int index)
 
 void			ServerMenu::pick()
 {
-  if (servers.getLength() == 0)
+  if (servers.size() == 0)
     return;
 
   // get server info
@@ -2405,7 +2404,7 @@ void			ServerMenu::pick()
 
   // update server readouts
   char buf[60];
-  HUDuiControlList& list = getControls();
+  std::vector<HUDuiControl*>& list = getControls();
   sprintf(buf, "%d/%d", ping.rogueCount + ping.redCount +
 			ping.greenCount + ping.blueCount +
 			ping.purpleCount, ping.maxPlayers);
@@ -2525,10 +2524,10 @@ void			ServerMenu::pick()
 void			ServerMenu::show()
 {
   // clear server list
-  servers.removeAll();
+  servers.clear();
 
   // clear server readouts
-  HUDuiControlList& list = getControls();
+  std::vector<HUDuiControl*>& list = getControls();
   ((HUDuiLabel*)list[1])->setLabel("");
   ((HUDuiLabel*)list[2])->setLabel("");
   ((HUDuiLabel*)list[3])->setLabel("");
@@ -2560,7 +2559,7 @@ void			ServerMenu::show()
   // time instead of only first time just in case one of the pointers
   // has changed.
   const StartupInfo* info = getStartupInfo();
-  if (info->listServerURL.getLength() == 0)
+  if (info->listServerURL.size() == 0)
     phase = -1;
   else
     phase = 0;
@@ -2599,12 +2598,12 @@ void			ServerMenu::show()
 
 void			ServerMenu::execute()
 {
-  if (selectedIndex < 0 || selectedIndex >= servers.getLength())
+  if (selectedIndex < 0 || selectedIndex >= servers.size())
     return;
 
   // update startup info
   StartupInfo* info = getStartupInfo();
-  strcpy(info->serverName, servers[selectedIndex].name);
+  strcpy(info->serverName, servers[selectedIndex].name.c_str());
   info->serverPort = ntohs((unsigned short)
 				servers[selectedIndex].ping.serverId.port);
 
@@ -2639,7 +2638,7 @@ void			ServerMenu::resize(int _width, int _height)
   height = _height;
 
   // get number of servers
-  HUDuiControlList& list = getControls();
+  std::vector<HUDuiControl*>& list = getControls();
 
   // use a big font for title, smaller font for the rest
   const float titleFontWidth = (float)height / 10.0f;
@@ -2713,26 +2712,26 @@ void			ServerMenu::checkEchos()
   // lookup server list in phase 0
   if (phase == 0) {
     // dereference URL
-    BzfStringAList urls, failedURLs;
-    urls.append(getStartupInfo()->listServerURL);
+    std::vector<std::string> urls, failedURLs;
+    urls.push_back(getStartupInfo()->listServerURL);
     BzfNetwork::dereferenceURLs(urls, MaxListServers, failedURLs);
 
     // print urls we failed to open
     int i;
-    for (i = 0; i < failedURLs.getLength(); ++i)
-	printError("Can't open list server: %s", (const char*)failedURLs[i]);
+    for (i = 0; i < failedURLs.size(); ++i)
+	printError("Can't open list server: %s", failedURLs[i].c_str());
 
     // check urls for validity
     numListServers = 0;
-    for (i = 0; i < urls.getLength(); ++i) {
+    for (i = 0; i < urls.size(); ++i) {
 	// parse url
-	BzfString protocol, hostname, path;
+	std::string protocol, hostname, path;
 	int port = ServerPort + 1;
 	Address address;
 	if (!BzfNetwork::parseURL(urls[i], protocol, hostname, port, path) ||
 	    protocol != "bzflist" || port < 1 || port > 65535 ||
-	    (address = Address::getHostAddress(hostname)).isAny()) {
-	    printError("Can't open list server: %s", (const char*)urls[i]);
+	    (address = Address::getHostAddress(hostname.c_str())).isAny()) {
+	    printError("Can't open list server: %s", urls[i].c_str());
 	    continue;
 	}
 
@@ -3016,14 +3015,14 @@ int			ServerMenu::getPlayerCount(int index) const
 void			ServerMenu::addToList(ServerItem& info)
 {
   // update if we already have it
-  const int count = servers.getLength();
+  const int count = servers.size();
   int i;
   for (i = 0; i < count; i++) {
     ServerItem& server = servers[i];
     if (server.ping.serverId.serverHost.s_addr ==
 				info.ping.serverId.serverHost.s_addr &&
 	server.ping.serverId.port == info.ping.serverId.port) {
-      if (server.description.getLength() < info.description.getLength())
+      if (server.description.size() < info.description.size())
 	server.description = info.description;
       break;
     }
@@ -3036,17 +3035,19 @@ void			ServerMenu::addToList(ServerItem& info)
     setStatus(msg);
 
     // add to server list
-    servers.append(info);
+    servers.push_back(info);
   }
 
   // sort by number of players
-  const int n = servers.getLength();
+  const int n = servers.size();
   for (i = 0; i < n - 1; ++i) {
     int indexWithMin = i;
     for (int j = i + 1; j < n; ++j)
       if (getPlayerCount(j) > getPlayerCount(indexWithMin))
 	indexWithMin = j;
-    servers.swap(i, indexWithMin);
+    ServerItem temp = servers[i];
+    servers[i] = servers[indexWithMin];
+    servers[indexWithMin] = temp;
   }
 
   // force update
@@ -3069,149 +3070,149 @@ char			ServerStartMenu::settings[] = "bfaaaaabaaacaa";
 ServerStartMenu::ServerStartMenu()
 {
   // add controls
-  HUDuiControlList& controls = getControls();
+  std::vector<HUDuiControl*>& controls = getControls();
   HUDuiList* list;
   HUDuiLabel* label;
-  BzfStringAList* items;
+  std::vector<std::string>* items;
 
-  controls.append(createLabel("Start Server"));
+  controls.push_back(createLabel("Start Server"));
 
   list = createList("Style:");
   items = &list->getList();
-  items->append("Capture the Flag");
-  items->append("Free for All");
+  items->push_back("Capture the Flag");
+  items->push_back("Free for All");
   list->update();
-  controls.append(list);
+  controls.push_back(list);
 
   list = createList("Max Players:");
   items = &list->getList();
-  items->append("2");
-  items->append("3");
-  items->append("4");
-  items->append("8");
-  items->append("20");
-  items->append("40");
+  items->push_back("2");
+  items->push_back("3");
+  items->push_back("4");
+  items->push_back("8");
+  items->push_back("20");
+  items->push_back("40");
   list->update();
-  controls.append(list);
+  controls.push_back(list);
 
   list = createList("Max Shots:");
   items = &list->getList();
-  items->append("1");
-  items->append("2");
-  items->append("3");
-  items->append("4");
-  items->append("5");
+  items->push_back("1");
+  items->push_back("2");
+  items->push_back("3");
+  items->push_back("4");
+  items->push_back("5");
   list->update();
-  controls.append(list);
+  controls.push_back(list);
 
   list = createList("Teleporters:");
   items = &list->getList();
-  items->append("no");
-  items->append("yes");
+  items->push_back("no");
+  items->push_back("yes");
   list->update();
-  controls.append(list);
+  controls.push_back(list);
 
   list = createList("Ricochet:");
   items = &list->getList();
-  items->append("no");
-  items->append("yes");
+  items->push_back("no");
+  items->push_back("yes");
   list->update();
-  controls.append(list);
+  controls.push_back(list);
 
   list = createList("Jumping:");
   items = &list->getList();
-  items->append("no");
-  items->append("yes");
+  items->push_back("no");
+  items->push_back("yes");
   list->update();
-  controls.append(list);
+  controls.push_back(list);
 
   list = createList("Superflags:");
   items = &list->getList();
-  items->append("no");
-  items->append("good flags only");
-  items->append("all flags");
+  items->push_back("no");
+  items->push_back("good flags only");
+  items->push_back("all flags");
   list->update();
-  controls.append(list);
+  controls.push_back(list);
 
   list = createList("Max Superflags:");
   items = &list->getList();
-  items->append("10");
-  items->append("20");
-  items->append("30");
-  items->append("40");
+  items->push_back("10");
+  items->push_back("20");
+  items->push_back("30");
+  items->push_back("40");
   list->update();
-  controls.append(list);
+  controls.push_back(list);
 
   list = createList("Bad Flag Antidote:");
   items = &list->getList();
-  items->append("no");
-  items->append("yes");
+  items->push_back("no");
+  items->push_back("yes");
   list->update();
-  controls.append(list);
+  controls.push_back(list);
 
   list = createList("Bad Flag Time Limit:");
   items = &list->getList();
-  items->append("no limit");
-  items->append("15 seconds");
-  items->append("30 seconds");
-  items->append("60 seconds");
-  items->append("180 seconds");
+  items->push_back("no limit");
+  items->push_back("15 seconds");
+  items->push_back("30 seconds");
+  items->push_back("60 seconds");
+  items->push_back("180 seconds");
   list->update();
-  controls.append(list);
+  controls.push_back(list);
 
   list = createList("Bad Flag Win Limit:");
   items = &list->getList();
-  items->append("no limit");
-  items->append("drop after 1 win");
-  items->append("drop after 2 wins");
-  items->append("drop after 3 wins");
+  items->push_back("no limit");
+  items->push_back("drop after 1 win");
+  items->push_back("drop after 2 wins");
+  items->push_back("drop after 3 wins");
   list->update();
-  controls.append(list);
+  controls.push_back(list);
 
   list = createList("Server Visibility:");
   items = &list->getList();
-  items->append("local host only (ttl=0)");
-  items->append("subnet only (ttl=1)");
-  items->append("local area (ttl=8)");
-  items->append("site (ttl=32)");
-  items->append("organization (ttl=64)");
-  items->append("continent (ttl=128)");
-  items->append("world (ttl=255)");
+  items->push_back("local host only (ttl=0)");
+  items->push_back("subnet only (ttl=1)");
+  items->push_back("local area (ttl=8)");
+  items->push_back("site (ttl=32)");
+  items->push_back("organization (ttl=64)");
+  items->push_back("continent (ttl=128)");
+  items->push_back("world (ttl=255)");
   list->update();
-  controls.append(list);
+  controls.push_back(list);
 
   list = createList("Game Over:");
   items = &list->getList();
-  items->append("never");
-  items->append("after 5 minutes");
-  items->append("after 15 minutes");
-  items->append("after 60 minutes");
-  items->append("after 3 hours");
-  items->append("when a player gets +3");
-  items->append("when a player gets +10");
-  items->append("when a player gets +25");
-  items->append("when a team gets +3");
-  items->append("when a team gets +10");
-  items->append("when a team gets +25");
-  items->append("when a team gets +100");
+  items->push_back("never");
+  items->push_back("after 5 minutes");
+  items->push_back("after 15 minutes");
+  items->push_back("after 60 minutes");
+  items->push_back("after 3 hours");
+  items->push_back("when a player gets +3");
+  items->push_back("when a player gets +10");
+  items->push_back("when a player gets +25");
+  items->push_back("when a team gets +3");
+  items->push_back("when a team gets +10");
+  items->push_back("when a team gets +25");
+  items->push_back("when a team gets +100");
   list->update();
-  controls.append(list);
+  controls.push_back(list);
 
   list = createList("Server Reset:");
   items = &list->getList();
-  items->append("no, quit after game");
-  items->append("yes, reset for more games");
+  items->push_back("no, quit after game");
+  items->push_back("yes, reset for more games");
   list->update();
-  controls.append(list);
+  controls.push_back(list);
 
   label = createLabel("Start");
-  controls.append(label);
+  controls.push_back(label);
 
   status = createLabel("");
-  controls.append(status);
+  controls.push_back(status);
 
   failedMessage = createLabel("");
-  controls.append(failedMessage);
+  controls.push_back(failedMessage);
 
   // set control order
   controls[0]->setNext(controls[0]);
@@ -3275,7 +3276,7 @@ void			ServerStartMenu::setSettings(const char* _settings)
 
 void			ServerStartMenu::loadSettings()
 {
-  HUDuiControlList& controls = getControls();
+  std::vector<HUDuiControl*>& controls = getControls();
   const char* scan = settings;
   for (int i = 1; *scan; i++, scan++)
     ((HUDuiList*)controls[i])->setIndex(*scan - 'a');
@@ -3288,7 +3289,7 @@ void			ServerStartMenu::show()
 
 void			ServerStartMenu::dismiss()
 {
-  HUDuiControlList& controls = getControls();
+  std::vector<HUDuiControl*>& controls = getControls();
   char* scan = settings;
   for (int i = 1; *scan; i++, scan++)
     *scan = (char)('a' + ((HUDuiList*)controls[i])->getIndex());
@@ -3298,7 +3299,7 @@ void			ServerStartMenu::execute()
 {
   static const char*	serverApp = "bzfs";
 
-  HUDuiControlList& list = getControls();
+  std::vector<HUDuiControl*>& list = getControls();
   HUDuiControl* focus = HUDui::getFocus();
   if (focus == list[15]) {
     // start it up:
@@ -3487,7 +3488,7 @@ void			ServerStartMenu::resize(int width, int height)
   center = 0.5f * (float)width;
 
   // reposition title
-  HUDuiControlList& list = getControls();
+  std::vector<HUDuiControl*>& list = getControls();
   HUDuiLabel* title = (HUDuiLabel*)list[0];
   title->setFontSize(titleFontWidth, titleFontHeight);
   const OpenGLTexFont& titleFont = title->getFont();
@@ -3501,7 +3502,7 @@ void			ServerStartMenu::resize(int width, int height)
   y -= 0.6f * titleFont.getHeight();
   list[1]->setFontSize(fontWidth, fontHeight);
   const float h = list[1]->getFont().getHeight();
-  const int count = list.getLength();
+  const int count = list.size();
   for (int i = 1; i < count; i++) {
     if (i == 15) {
       y -= bigFontHeight;
@@ -3550,7 +3551,7 @@ class JoinMenu : public HUDDialog {
 
   private:
     static void		teamCallback(HUDuiControl*, void*);
-    static void		joinGameCallback(boolean, void*);
+    static void		joinGameCallback(bool, void*);
     static void		joinErrorCallback(const char* msg);
     void		setStatus(const char*);
     void		loadInfo();
@@ -3575,51 +3576,51 @@ JoinMenu::JoinMenu() : oldErrorCallback(NULL),
 				serverStartMenu(NULL), serverMenu(NULL)
 {
   // add controls
-  HUDuiControlList& list = getControls();
+  std::vector<HUDuiControl*>& list = getControls();
   StartupInfo* info = getStartupInfo();
 
   HUDuiLabel* label = new HUDuiLabel;
   label->setFont(MainMenu::getFont());
   label->setString("Join Game");
-  list.append(label);
+  list.push_back(label);
 
   HUDuiLabel* findServer = new HUDuiLabel;
   findServer->setFont(MainMenu::getFont());
   findServer->setString("Find Server");
-  list.append(findServer);
+  list.push_back(findServer);
 
   HUDuiLabel* connectLabel = new HUDuiLabel;
   connectLabel->setFont(MainMenu::getFont());
   connectLabel->setString("Connect");
-  list.append(connectLabel);
+  list.push_back(connectLabel);
 
   callsign = new HUDuiTypeIn;
   callsign->setFont(MainMenu::getFont());
   callsign->setLabel("Callsign:");
   callsign->setMaxLength(CallSignLen - 1);
   callsign->setString(info->callsign);
-  list.append(callsign);
+  list.push_back(callsign);
 
   team = new HUDuiList;
   team->setFont(MainMenu::getFont());
   team->setLabel("Team:");
   team->setCallback(teamCallback, NULL);
-  BzfStringAList& teams = team->getList();
-  teams.append(BzfString(Team::getName(RogueTeam)));
-  teams.append(BzfString(Team::getName(RedTeam)));
-  teams.append(BzfString(Team::getName(GreenTeam)));
-  teams.append(BzfString(Team::getName(BlueTeam)));
-  teams.append(BzfString(Team::getName(PurpleTeam)));
+  std::vector<std::string>& teams = team->getList();
+  teams.push_back(std::string(Team::getName(RogueTeam)));
+  teams.push_back(std::string(Team::getName(RedTeam)));
+  teams.push_back(std::string(Team::getName(GreenTeam)));
+  teams.push_back(std::string(Team::getName(BlueTeam)));
+  teams.push_back(std::string(Team::getName(PurpleTeam)));
   team->update();
   team->setIndex((int)info->team);
-  list.append(team);
+  list.push_back(team);
 
   server = new HUDuiTypeIn;
   server->setFont(MainMenu::getFont());
   server->setLabel("Server:");
   server->setMaxLength(64);
   server->setString(info->serverName);
-  list.append(server);
+  list.push_back(server);
 
   char buffer[10];
   sprintf(buffer, "%d", info->serverPort);
@@ -3628,22 +3629,22 @@ JoinMenu::JoinMenu() : oldErrorCallback(NULL),
   port->setLabel("Port:");
   port->setMaxLength(5);
   port->setString(buffer);
-  list.append(port);
+  list.push_back(port);
 
   HUDuiLabel* startServer = new HUDuiLabel;
   startServer->setFont(MainMenu::getFont());
   startServer->setString("Start Server");
-  list.append(startServer);
+  list.push_back(startServer);
 
   status = new HUDuiLabel;
   status->setFont(MainMenu::getFont());
   status->setString("");
-  list.append(status);
+  list.push_back(status);
 
   failedMessage = new HUDuiLabel;
   failedMessage->setFont(MainMenu::getFont());
   failedMessage->setString("");
-  list.append(failedMessage);
+  list.push_back(failedMessage);
 
   // set control order
   list[0]->setNext(list[0]);
@@ -3706,15 +3707,15 @@ void			JoinMenu::loadInfo()
 {
   // load startup info with current settings
   StartupInfo* info = getStartupInfo();
-  strcpy(info->callsign, callsign->getString());
+  strcpy(info->callsign, callsign->getString().c_str());
   info->team = (TeamColor)team->getIndex();
-  strcpy(info->serverName, server->getString());
-  info->serverPort = atoi(port->getString());
+  strcpy(info->serverName, server->getString().c_str());
+  info->serverPort = atoi(port->getString().c_str());
 }
 
 void			JoinMenu::execute()
 {
-  HUDuiControlList& list = getControls();
+  std::vector<HUDuiControl*>& list = getControls();
   HUDuiControl* focus = HUDui::getFocus();
   if (focus == list[7]) {
     if (!serverStartMenu) serverStartMenu = new ServerStartMenu;
@@ -3756,7 +3757,7 @@ void			JoinMenu::execute()
   }
 }
 
-void			JoinMenu::joinGameCallback(boolean okay, void* _self)
+void			JoinMenu::joinGameCallback(bool okay, void* _self)
 {
   JoinMenu* self = (JoinMenu*)_self;
   if (okay) {
@@ -3810,7 +3811,7 @@ void			JoinMenu::resize(int width, int height)
   center = 0.5f * (float)width;
 
   // reposition title
-  HUDuiControlList& list = getControls();
+  std::vector<HUDuiControl*>& list = getControls();
   HUDuiLabel* title = (HUDuiLabel*)list[0];
   title->setFontSize(titleFontWidth, titleFontHeight);
   const OpenGLTexFont& titleFont = title->getFont();
@@ -3824,7 +3825,7 @@ void			JoinMenu::resize(int width, int height)
   y -= 0.6f * titleFont.getHeight();
   list[1]->setFontSize(fontWidth, fontHeight);
   const float h = list[1]->getFont().getHeight();
-  const int count = list.getLength();
+  const int count = list.size();
   for (int i = 1; i < count; i++) {
     list[i]->setFontSize(fontWidth, fontHeight);
     list[i]->setPosition(x, y);
@@ -3844,14 +3845,14 @@ MainMenu::MainMenu() : HUDDialog(), joinMenu(NULL),
 				optionsMenu(NULL), quitMenu(NULL)
 {
   // create font
-  font = TextureFont::getTextureFont(TextureFont::HelveticaBold, True);
+  font = TextureFont::getTextureFont(TextureFont::HelveticaBold, true);
   mainFont = &font;
 
   // load title
-  title = getTexture(titleFile, OpenGLTexture::Linear, False, True);
+  title = getTexture(titleFile, OpenGLTexture::Linear, false, true);
 
   // add controls
-  HUDuiControlList& list = getControls();
+  std::vector<HUDuiControl*>& list = getControls();
   HUDuiLabel* label;
   HUDuiTextureLabel* textureLabel;
 
@@ -3859,32 +3860,32 @@ MainMenu::MainMenu() : HUDDialog(), joinMenu(NULL),
   textureLabel->setFont(font);
   textureLabel->setTexture(title);
   textureLabel->setString("BZFlag");
-  list.append(textureLabel);
+  list.push_back(textureLabel);
 
   label = new HUDuiLabel;
   label->setFont(font);
   label->setString("Up/Down arrows to move, Enter to select, Esc to dismiss");
-  list.append(label);
+  list.push_back(label);
 
   label = new HUDuiLabel;
   label->setFont(font);
   label->setString("Join Game");
-  list.append(label);
+  list.push_back(label);
 
   label = new HUDuiLabel;
   label->setFont(font);
   label->setString("Options");
-  list.append(label);
+  list.push_back(label);
 
   label = new HUDuiLabel;
   label->setFont(font);
   label->setString("Help");
-  list.append(label);
+  list.push_back(label);
 
   label = new HUDuiLabel;
   label->setFont(font);
   label->setString("Quit");
-  list.append(label);
+  list.push_back(label);
 
   // set control order
   list[0]->setNext(list[0]);
@@ -3925,7 +3926,7 @@ HUDuiDefaultKey*	MainMenu::getDefaultKey()
 
 void			MainMenu::execute()
 {
-  HUDuiControlList& list = getControls();
+  std::vector<HUDuiControl*>& list = getControls();
   HUDuiControl* focus = HUDui::getFocus();
   if (focus == list[2]) {
     if (!joinMenu) joinMenu = new JoinMenu;
@@ -3955,7 +3956,7 @@ void			MainMenu::resize(int width, int height)
   const float tinyFontHeight = (float)height / 36.0f;
 
   // reposition title
-  HUDuiControlList& list = getControls();
+  std::vector<HUDuiControl*>& list = getControls();
   HUDuiLabel* title = (HUDuiLabel*)list[0];
   title->setFontSize(titleFontWidth, titleFontHeight);
   const OpenGLTexFont& titleFont = title->getFont();
@@ -3975,7 +3976,7 @@ void			MainMenu::resize(int width, int height)
 
   // reposition menu items
   x += 0.5f * fontHeight;
-  const int count = list.getLength();
+  const int count = list.size();
   for (int i = 2; i < count; i++) {
     HUDuiLabel* label = (HUDuiLabel*)list[i];
     label->setFontSize(fontWidth, fontHeight);

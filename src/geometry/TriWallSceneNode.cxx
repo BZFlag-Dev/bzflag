@@ -93,7 +93,7 @@ TriWallSceneNode::TriWallSceneNode(const GLfloat base[3],
 				const GLfloat vEdge[3],
 				float uRepeats,
 				float vRepeats,
-				boolean makeLODs)
+				bool makeLODs)
 {
   // record plane info
   GLfloat plane[4], sphere[4];

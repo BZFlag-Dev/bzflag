@@ -23,7 +23,7 @@ class EighthDimSceneNode : public SceneNode {
   public:
 			~EighthDimSceneNode();
 
-    boolean		cull(const ViewFrustum&) const;
+    bool		cull(const ViewFrustum&) const;
     void		notifyStyleChange(const SceneRenderer&);
     void		addRenderNodes(SceneRenderer&);
 

@@ -55,26 +55,26 @@ BzfRegion::BzfRegion(int sides, const float p[][2]) :
 				mailbox(0), target(0), A(0.0, 0.0)
 {
   for (int i = 0; i < sides; i++) {
-    corners.append(RegionPoint(p[i]));
-    neighbors.append((BzfRegion*)0);
+    corners.push_back(RegionPoint(p[i]));
+    neighbors.push_back((BzfRegion*)0);
   }
 }
 
 BzfRegion::~BzfRegion()
 {
   // tell neighbors I'm going away
-  const int count = corners.getLength();
+  const int count = corners.size();
   for (int i = 0; i < count; i++)
     if (neighbors[i])
       neighbors[i]->setNeighbor(this, 0);
 }
 
-boolean			BzfRegion::isInside(const float p[2]) const
+bool			BzfRegion::isInside(const float p[2]) const
 {
   // see if testPoint is inside my edges
-  const int count = corners.getLength();
-  if (count < 3) return False;
-  boolean inside = False;
+  const int count = corners.size();
+  if (count < 3) return false;
+  bool inside = false;
   const float* p1 = corners[count - 1].get();
   const float* p2 = NULL;
   for (int i = 0; i < count; p1 = p2, i++) {
@@ -102,7 +102,7 @@ int			BzfRegion::classify(const float e1[2],
   const float dy = e2[1] - e1[1];
   const float d = dy * e1[0] - dx * e1[1];
   int toRight = 0, onEdge = 0;
-  const int count = corners.getLength();
+  const int count = corners.size();
   for (int i = 0; i < count; i++) {
     const float* p = corners[i].get();
     const float e = -dy * p[0] + dx * p[1] + d;
@@ -116,7 +116,7 @@ int			BzfRegion::classify(const float e1[2],
 
 int			BzfRegion::getNumSides() const
 {
-  return neighbors.getLength();
+  return neighbors.size();
 }
 
 const RegionPoint&	BzfRegion::getCorner(int index) const
@@ -136,7 +136,7 @@ BzfRegion*		BzfRegion::orphanSplitRegion(const float e1[2],
   // return new region (the other half of the split), or NULL if no
   // split occured.  the new region (if it exists) will be to the
   // right of the cutting edge (when moving from e1 to e2).
-  const int count = corners.getLength();
+  const int count = corners.size();
   if (count == 0) return NULL;
   int i, split = 0, edge[2];
   float tsplit[2], etsplit[2];
@@ -208,25 +208,25 @@ BzfRegion*		BzfRegion::orphanSplitRegion(const float e1[2],
     // same place and to point to their new neighbor
     // tell them about their new neighbor.
     if (neighbors[edge[0]])
-      neighbors[edge[0]]->splitEdge(this, newRegion, n1, True);
+      neighbors[edge[0]]->splitEdge(this, newRegion, n1, true);
     if (neighbors[edge[1]])
-      neighbors[edge[1]]->splitEdge(this, newRegion, n2, False);
+      neighbors[edge[1]]->splitEdge(this, newRegion, n2, false);
 
     // remove old edges from myself and add new ones
-    RegionPointList newCorners;
-    RegionList newNeighbors;
-    newCorners.append(n2);
-    newNeighbors.append(neighbors[edge[1]]);
+    std::vector<RegionPoint> newCorners;
+    std::vector<BzfRegion*> newNeighbors;
+    newCorners.push_back(n2);
+    newNeighbors.push_back(neighbors[edge[1]]);
     for (i = edge[1] + 1; i < count; i++) {
-      newCorners.append(corners[i]);
-      newNeighbors.append(neighbors[i]);
+      newCorners.push_back(corners[i]);
+      newNeighbors.push_back(neighbors[i]);
     }
     for (i = 0; i <= edge[0]; i++) {
-      newCorners.append(corners[i]);
-      newNeighbors.append(neighbors[i]);
+      newCorners.push_back(corners[i]);
+      newNeighbors.push_back(neighbors[i]);
     }
-    newCorners.append(n1);
-    newNeighbors.append(newRegion);
+    newCorners.push_back(n1);
+    newNeighbors.push_back(newRegion);
     corners = newCorners;
     neighbors = newNeighbors;
   }
@@ -249,21 +249,21 @@ BzfRegion*		BzfRegion::orphanSplitRegion(const float e1[2],
     // same place and to point to their new neighbor
     // tell them about their new neighbor.
     if (neighbors[edge[0]])
-      neighbors[edge[0]]->splitEdge(this, newRegion, n1, False);
+      neighbors[edge[0]]->splitEdge(this, newRegion, n1, false);
     if (neighbors[edge[1]])
-      neighbors[edge[1]]->splitEdge(this, newRegion, n2, True);
+      neighbors[edge[1]]->splitEdge(this, newRegion, n2, true);
 
     // remove old edges from myself and add new ones
-    RegionPointList newCorners;
-    RegionList newNeighbors;
-    newCorners.append(n1);
-    newNeighbors.append(neighbors[edge[0]]);
+    std::vector<RegionPoint> newCorners;
+    std::vector<BzfRegion*> newNeighbors;
+    newCorners.push_back(n1);
+    newNeighbors.push_back(neighbors[edge[0]]);
     for (i = edge[0] + 1; i <= edge[1]; i++) {
-      newCorners.append(corners[i]);
-      newNeighbors.append(neighbors[i]);
+      newCorners.push_back(corners[i]);
+      newNeighbors.push_back(neighbors[i]);
     }
-    newCorners.append(n2);
-    newNeighbors.append(newRegion);
+    newCorners.push_back(n2);
+    newNeighbors.push_back(newRegion);
     corners = newCorners;
     neighbors = newNeighbors;
   }
@@ -279,17 +279,27 @@ BzfRegion*		BzfRegion::orphanSplitRegion(const float e1[2],
 void			BzfRegion::splitEdge(const BzfRegion* oldNeighbor,
 						BzfRegion* newNeighbor,
 						const RegionPoint& p,
-						boolean onRight)
+						bool onRight)
 {
   // split my edge which has neighbor oldNeighbor at point p.
   // set the neighbor for the edge on the right if onRight is true
   // or on the left if onRight is false to newNeighbor.
-  const int count = corners.getLength();
+  const int count = corners.size();
   for (int i = 0; i < count; i++)
     if (neighbors[i] == oldNeighbor) {
-      corners.insert(p, i + 1);
-      if (onRight) neighbors.insert(newNeighbor, i);
-      else neighbors.insert(newNeighbor, i + 1);
+      std::vector<RegionPoint>::iterator it1 = corners.begin();
+      for(int j = 0; j < i + 1; j++) it1++;
+      corners.insert(it1, p);
+      if (onRight) {
+	std::vector<BzfRegion*>::iterator it2 = neighbors.begin();
+	for(int j = 0; j < i + 1; j++) it2++;
+	neighbors.insert(it2, newNeighbor);
+      }
+      else {
+	std::vector<BzfRegion*>::iterator it2 = neighbors.begin();
+	for(int j = 0; j < i + 1; j++) it2++;
+	neighbors.insert(it2, newNeighbor);
+      }
       tidy();
       break;
     }
@@ -298,14 +308,14 @@ void			BzfRegion::splitEdge(const BzfRegion* oldNeighbor,
 void			BzfRegion::addSide(const RegionPoint& p,
 						BzfRegion* neighbor)
 {
-  corners.append(p);
-  neighbors.append(neighbor);
+  corners.push_back(p);
+  neighbors.push_back(neighbor);
 }
 
 void			BzfRegion::setNeighbor(const BzfRegion* oldNeighbor,
 						BzfRegion* newNeighbor)
 {
-  const int count = corners.getLength();
+  const int count = corners.size();
   for (int i = 0; i < count; i++)
     if (neighbors[i] == oldNeighbor) {
       neighbors[i] = newNeighbor;
@@ -316,20 +326,24 @@ void			BzfRegion::setNeighbor(const BzfRegion* oldNeighbor,
 void			BzfRegion::tidy()
 {
   // throw out degenerate edges
-  int count = corners.getLength();
+  int count = corners.size();
   for (int i = 0; i < count; i++) {
     const float* p1 = corners[i].get();
     const float* p2 = corners[(i+1)%count].get();
     if (fabs(p1[0] - p2[0]) < 1.0e-5 && fabs(p1[1] - p2[1]) < 1.0e-5) {
-      corners.remove(i);
-      neighbors.remove(i);
+      std::vector<RegionPoint>::iterator it1 = corners.begin();
+      for(int j = 0; j < i; j++) it1++;
+      corners.erase(it1);
+      std::vector<BzfRegion*>::iterator it2 = neighbors.begin();
+      for(int k = 0; k < i; k++) it2++;
+      neighbors.erase(it2);
       i--;
       count--;
     }
   }
 }
 
-boolean			BzfRegion::test(int mailboxIndex)
+bool			BzfRegion::test(int mailboxIndex)
 {
   return (mailbox != mailboxIndex);
 }
@@ -414,7 +428,7 @@ void			RegionPriorityQueue::removeAll()
   head = 0;
 }
 
-boolean			RegionPriorityQueue::isEmpty() const
+bool			RegionPriorityQueue::isEmpty() const
 {
   return (head == 0);
 }

@@ -43,15 +43,15 @@ class OpenGLMaterial {
 			~OpenGLMaterial();
     OpenGLMaterial&	operator=(const OpenGLMaterial&);
 
-    boolean		operator==(const OpenGLMaterial&) const;
-    boolean		operator!=(const OpenGLMaterial&) const;
-    boolean		operator<(const OpenGLMaterial&) const;
+    bool		operator==(const OpenGLMaterial&) const;
+    bool		operator!=(const OpenGLMaterial&) const;
+    bool		operator<(const OpenGLMaterial&) const;
 
     const GLfloat*	getSpecularColor() const;
     const GLfloat*	getEmissiveColor() const;
     GLfloat		getShininess() const;
 
-    boolean		isValid() const;
+    bool		isValid() const;
     GLuint		getList() const;
     void		execute() const;
 
@@ -71,7 +71,7 @@ class OpenGLMaterial {
 				GLfloat shininess);
 	static void	initContext(void*);
       public:
-	boolean		init;
+	bool		init;
 	int		refCount;
 	Rep*		prev;
 	Rep*		next;

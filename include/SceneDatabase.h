@@ -47,7 +47,7 @@ class SceneDatabase {
     virtual void	addDynamicSphere(SphereSceneNode*) = 0;
     virtual void	removeDynamicNodes() = 0;
     virtual void	removeAllNodes() = 0;
-    virtual boolean	isOrdered() = 0;
+    virtual bool	isOrdered() = 0;
 
     virtual SceneIterator*	getRenderIterator() = 0;
 

@@ -30,7 +30,7 @@ class ZSceneDatabase : public SceneDatabase {
     void		addDynamicSphere(SphereSceneNode*);
     void		removeDynamicNodes();
     void		removeAllNodes();
-    boolean		isOrdered();
+    bool		isOrdered();
 
     SceneIterator*	getRenderIterator();
 
@@ -55,7 +55,7 @@ class ZSceneIterator : public SceneIterator {
 
   private:
     const ZSceneDatabase* db;
-    boolean		staticDone, dynamicDone;
+    bool		staticDone, dynamicDone;
     int			staticIndex, dynamicIndex;
 };
 

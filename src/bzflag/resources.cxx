@@ -11,7 +11,6 @@
  */
 
 #include "resources.h"
-#include "BzfString.h"
 #include "BzfDisplay.h"
 #include "network.h"
 #include "ErrorHandler.h"
@@ -34,43 +33,52 @@ ResourceDatabase::~ResourceDatabase()
   // do nothing
 }
 
-boolean			ResourceDatabase::hasValue(const BzfString& name) const
+bool			ResourceDatabase::hasValue(const std::string& name) const
 {
   return getNameIndex(name) != -1;
 }
 
-BzfString		ResourceDatabase::getValue(const BzfString& name) const
+std::string		ResourceDatabase::getValue(const std::string& name) const
 {
   const int index = getNameIndex(name);
-  if (index == -1) return BzfString();
+  if (index == -1) return std::string();
   return values[index];
 }
 
 void			ResourceDatabase::addValue(
-				const BzfString& name, const BzfString& value)
+				const std::string& name, const std::string& value)
 {
   const int index = getNameIndex(name);
   if (index == -1) {
-    names.append(name);
-    values.append(value);
+    names.push_back(name);
+    values.push_back(value);
   }
   else {
     values[index] = value;
   }
 }
 
-void			ResourceDatabase::removeValue(const BzfString& name)
+void			ResourceDatabase::removeValue(const std::string& name)
 {
   const int index = getNameIndex(name);
   if (index == -1) return;
-  names.remove(index);
-  values.remove(index);
+  std::vector<std::string>::iterator it;
+  {
+    it = names.begin();
+    for(int i = 0; i < index; i++) it++;
+    names.erase(it);
+  }
+  {
+    it = values.begin();
+    for(int i = 0; i < index; i++) it++;
+    values.erase(it);
+  }
 }
 
 int			ResourceDatabase::getNameIndex(
-				const BzfString& name) const
+				const std::string& name) const
 {
-  const int count = names.getLength();
+  const int count = names.size();
   for (int i = 0; i < count; i++)
     if (names[i] == name)
       return i;
@@ -122,9 +130,9 @@ istream&		operator>>(istream& input, ResourceDatabase& db)
 
 ostream&		operator<<(ostream& s, const ResourceDatabase& db)
 {
-  const int count = db.names.getLength();
+  const int count = db.names.size();
   for (int i = 0; i < count; i++) {
-    int length = db.names[i].getLength();
+    int length = db.names[i].length();
     s << db.names[i] << "\t";
     for (; length < 24; length += 8) s << "\t";
     s << db.values[i] << endl;

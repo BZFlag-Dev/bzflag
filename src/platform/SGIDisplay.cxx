@@ -17,10 +17,10 @@
 #include <stdlib.h>
 
 typedef int		(*XErrorHandler_t)(Display*, XErrorEvent*);
-static boolean		errorHappened;
+static bool		errorHappened;
 static int		errorHandler(Display*, XErrorEvent*)
 {
-  errorHappened = True;
+  errorHappened = true;
   return 0;
 }
 
@@ -43,18 +43,18 @@ class Resolution {
 				XSGIvcVideoFormatInfo* formats);
 			~Resolution();
 
-    boolean		isValid() const;
+    bool		isValid() const;
     const char*		getName() const;
     int			getNumChannels() const;
     const Config*	getConfigs() const;
-    boolean		setFormat(Display*, int screen) const;
+    bool		setFormat(Display*, int screen) const;
 
   private:
     void		setConfig(int index, const XSGIvcVideoFormatInfo*);
 
   private:
-    boolean		valid;
-    boolean		combination;
+    bool		valid;
+    bool		combination;
     char*		name;
     int			numChannels;
     void*		data;
@@ -62,7 +62,7 @@ class Resolution {
 };
 
 Resolution::Resolution(XSGIvcVideoFormatInfo* format) :
-				valid(True), data(NULL)
+				valid(true), data(NULL)
 {
   name = new char[strlen(format->name) + 1];
   strcpy(name, format->name);
@@ -71,7 +71,7 @@ Resolution::Resolution(XSGIvcVideoFormatInfo* format) :
   config = new Config[numChannels];
   setConfig(0, format);
 
-  combination = False;
+  combination = false;
   XSGIvcVideoFormatInfo* _data = new XSGIvcVideoFormatInfo;
   *_data = *format;
   data = _data;
@@ -79,7 +79,7 @@ Resolution::Resolution(XSGIvcVideoFormatInfo* format) :
 
 Resolution::Resolution(const char* comboName, int numFormats,
 				XSGIvcVideoFormatInfo* formats) :
-				valid(True), data(NULL)
+				valid(true), data(NULL)
 {
   name = new char[strlen(comboName) + 1];
   strcpy(name, comboName);
@@ -89,7 +89,7 @@ Resolution::Resolution(const char* comboName, int numFormats,
   for (int i = 0; i < numChannels; i++)
     setConfig(i, formats + i);
 
-  combination = True;
+  combination = true;
   char* _data = new char[strlen(comboName) + 1];
   strcpy(_data, comboName);
   data = _data;
@@ -111,7 +111,7 @@ void			Resolution::setConfig(int index,
   config[index].refresh = (int)(format->verticalRetraceRate + 0.5f);
 }
 
-boolean			Resolution::isValid() const
+bool			Resolution::isValid() const
 {
   return valid;
 }
@@ -131,9 +131,9 @@ const Resolution::Config* Resolution::getConfigs() const
   return config;
 }
 
-boolean			Resolution::setFormat(Display* dpy, int screen) const
+bool			Resolution::setFormat(Display* dpy, int screen) const
 {
-  errorHappened = False;
+  errorHappened = false;
   XErrorHandler_t prevErrorHandler = XSetErrorHandler(&errorHandler);
 
   Status status;
@@ -146,12 +146,12 @@ boolean			Resolution::setFormat(Display* dpy, int screen) const
 			XSGIVC_QVFHeight |
 			XSGIVC_QVFWidth |
 			XSGIVC_QVFSwapbufferRate,
-			False);
+			false);
   }
 
-  XSync(dpy, False);
+  XSync(dpy, false);
   XSetErrorHandler(prevErrorHandler);
-  if (!status || errorHappened) ((Resolution*)this)->valid = False;
+  if (!status || errorHappened) ((Resolution*)this)->valid = false;
   return valid;
 }
 
@@ -237,7 +237,7 @@ XDisplayMode::ResInfo**	SGIDisplayMode::init(XDisplay* _display,
   if (screenInfo.numChannels < 1) return NULL;
   numVideoChannels = screenInfo.numChannels;
 
-  errorHappened = False;
+  errorHappened = false;
   XErrorHandler_t prevErrorHandler = XSetErrorHandler(&errorHandler);
 
   // get the current format on each channel
@@ -261,11 +261,11 @@ XDisplayMode::ResInfo**	SGIDisplayMode::init(XDisplay* _display,
 
     XSGIvcVideoFormatInfo pattern;
     for (i = 0; i < numVideoChannels; i++) {
-      errorHappened = False;
+      errorHappened = false;
       int numFormats = 0;
       XSGIvcVideoFormatInfo* formats = XSGIvcListVideoFormats(
 				rep->getDisplay(), rep->getScreen(), i,
-				&pattern, 0, False, 4096, &numFormats);
+				&pattern, 0, false, 4096, &numFormats);
       if (!formats || errorHappened) numFormats = 0;
 
       videoFormats[i] = new Resolution*[numFormats];
@@ -306,7 +306,7 @@ XDisplayMode::ResInfo**	SGIDisplayMode::init(XDisplay* _display,
 
   // now get the combo formats
   if (screenInfo.flags & XSGIVC_SIFFormatCombination) {
-    errorHappened = False;
+    errorHappened = false;
     int numCombos;
     char** comboNames = XSGIvcListVideoFormatsCombinations(
 					rep->getDisplay(), rep->getScreen(),
@@ -315,7 +315,7 @@ XDisplayMode::ResInfo**	SGIDisplayMode::init(XDisplay* _display,
 
     videoCombos = new Resolution*[numCombos];
     for (i = 0; i < numCombos; i++) {
-      errorHappened = False;
+      errorHappened = false;
       int numFormats, bestMatch = 0;
       XSGIvcVideoFormatInfo* formats =
 		XSGIvcListVideoFormatsInCombination(
@@ -334,8 +334,8 @@ XDisplayMode::ResInfo**	SGIDisplayMode::init(XDisplay* _display,
 	if (!defaultVideoCombo || bestMatch != numVideoChannels) {
 	  int match = 0;
 	  for (int j = 0; j < numVideoChannels; j++) {
-	    const boolean hasFormat = (j < numFormats && formats[j].name[0]);
-	    const boolean isActive = (channelFormat[j] != NULL);
+	    const bool hasFormat = (j < numFormats && formats[j].name[0]);
+	    const bool isActive = (channelFormat[j] != NULL);
 
 	    // no match if channel is inactive and there's a format or
 	    // channel is active and there's no format.
@@ -427,7 +427,7 @@ XDisplayMode::ResInfo**	SGIDisplayMode::init(XDisplay* _display,
   return NULL;
 }
 
-boolean			SGIDisplayMode::set(int index)
+bool			SGIDisplayMode::set(int index)
 {
   // ignore attempts to set video format to current format.
   // normally this only happens when restoring the default
@@ -438,14 +438,14 @@ boolean			SGIDisplayMode::set(int index)
   // the display to flicker even when the format isn't
   // really changing.
   if (index == lastResolution)
-    return True;
+    return true;
 
   if (resolutions[index]->setFormat(display->getRep()->getDisplay(),
 				display->getRep()->getScreen())) {
     lastResolution = index;
-    return True;
+    return true;
   }
-  return False;
+  return false;
 }
 
 #endif

@@ -32,15 +32,15 @@ class BackgroundRenderer {
 			BackgroundRenderer(const SceneRenderer&);
 			~BackgroundRenderer();
 
-    void		renderSkyAndGround(SceneRenderer&, boolean fullWindow);
+    void		renderSkyAndGround(SceneRenderer&, bool fullWindow);
     void		render(SceneRenderer&);
 
-    boolean		getBlank() const;
-    boolean		getInvert() const;
-    boolean		getSimpleGround() const;
-    void		setBlank(boolean blank = True);
-    void		setInvert(boolean invert = True);
-    void		setSimpleGround(boolean simple = True);
+    bool		getBlank() const;
+    bool		getInvert() const;
+    bool		getSimpleGround() const;
+    void		setBlank(bool blank = true);
+    void		setInvert(bool invert = true);
+    void		setSimpleGround(bool simple = true);
     void		setCelestial(const SceneRenderer&,
 					const float sunDirection[3],
 					const float moonDirection[3]);
@@ -66,9 +66,9 @@ class BackgroundRenderer {
 
   private:
     // rendering state
-    boolean		blank;
-    boolean		invert;
-    boolean		simpleGround;
+    bool		blank;
+    bool		invert;
+    bool		simpleGround;
     int			style;
     int			styleIndex;
 
@@ -83,7 +83,7 @@ class BackgroundRenderer {
     OpenGLGState	gridGState;
 
     // stuff for team bases
-    boolean		doTeamBases;
+    bool		doTeamBases;
     OpenGLGState	teamBasesGState;
     OpenGLDisplayList	teamBasesList;
 
@@ -91,8 +91,8 @@ class BackgroundRenderer {
     OpenGLGState	receiverGState;
 
     // stuff for mountains
-    boolean		mountainsAvailable;
-    boolean		mountainsVisible;
+    bool		mountainsAvailable;
+    bool		mountainsVisible;
     int			numMountainTextures;
     int			mountainsMinWidth;
     OpenGLGState*	mountainsGState;
@@ -100,19 +100,19 @@ class BackgroundRenderer {
 
     // stuff for clouds
     GLfloat		cloudDriftU, cloudDriftV;
-    boolean		cloudsAvailable;
-    boolean		cloudsVisible;
+    bool		cloudsAvailable;
+    bool		cloudsVisible;
     OpenGLGState	cloudsGState;
     OpenGLDisplayList	cloudsList;
 
     // stuff for sun shadows
-    boolean		doShadows;
-    boolean		shadowsVisible;
+    bool		doShadows;
+    bool		shadowsVisible;
     OpenGLGState	sunShadowsGState;
 
     // celestial stuff
-    boolean		doStars;
-    boolean		doSunset;
+    bool		doStars;
+    bool		doSunset;
     GLfloat		skyZenithColor[3];
     GLfloat		skySunDirColor[3];
     GLfloat		skyAntiSunDirColor[3];
@@ -145,32 +145,32 @@ class BackgroundRenderer {
 // BackgroundRenderer
 //
 
-inline boolean		BackgroundRenderer::getBlank() const
+inline bool		BackgroundRenderer::getBlank() const
 {
   return blank;
 }
 
-inline void		BackgroundRenderer::setBlank(boolean _blank)
+inline void		BackgroundRenderer::setBlank(bool _blank)
 {
   blank = _blank;
 }
 
-inline boolean		BackgroundRenderer::getInvert() const
+inline bool		BackgroundRenderer::getInvert() const
 {
   return invert;
 }
 
-inline void		BackgroundRenderer::setInvert(boolean _invert)
+inline void		BackgroundRenderer::setInvert(bool _invert)
 {
   invert = _invert;
 }
 
-inline boolean		BackgroundRenderer::getSimpleGround() const
+inline bool		BackgroundRenderer::getSimpleGround() const
 {
   return simpleGround;
 }
 
-inline void		BackgroundRenderer::setSimpleGround(boolean _simple)
+inline void		BackgroundRenderer::setSimpleGround(bool _simple)
 {
   simpleGround = _simple;
 }

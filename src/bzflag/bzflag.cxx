@@ -52,13 +52,13 @@
 #include "PlatformFactory.h"
 
 const char*		argv0;
-static boolean		anonymous = False;
-static BzfString	anonymousName("anonymous");
-static boolean		noAudio = False;
+static bool		anonymous = false;
+static std::string	anonymousName("anonymous");
+static bool		noAudio = false;
 struct tm		userTime;
 static StartupInfo	startupInfo;
 static ResourceDatabase	db;
-boolean			echoToConsole = False;
+bool			echoToConsole = false;
 
 static BzfDisplay*	display = NULL;
 
@@ -112,14 +112,14 @@ static const char*	configFilterValues[] = {
 				"linearmipmaplinear"
 			};
 
-static BzfString	getConfigFileName()
+static std::string	getConfigFileName()
 {
 #if !defined(_WIN32) & !defined(macintosh)
 
-  BzfString name;
+  std::string name;
   struct passwd* pwent = getpwuid(getuid());
   if (pwent && pwent->pw_dir) {
-    name += BzfString(pwent->pw_dir);
+    name += std::string(pwent->pw_dir);
     name += "/";
   }
   name += ".bzflag";
@@ -138,7 +138,7 @@ static BzfString	getConfigFileName()
   // the closest thing to a home directory on windows.  use root of
   // C drive as a default in case we can't get the path or it doesn't
   // exist.
-  BzfString name("C:");
+  std::string name("C:");
   char dir[MAX_PATH];
   ITEMIDLIST* idl;
   if (SUCCEEDED(SHGetSpecialFolderLocation(NULL, CSIDL_PERSONAL, &idl))) {
@@ -165,12 +165,12 @@ static BzfString	getConfigFileName()
 }
 
 #if !defined(_WIN32) & !defined(macintosh)
-static BzfString	getConfigFileName2()
+static std::string	getConfigFileName2()
 {
-  BzfString name;
+  std::string name;
   struct passwd* pwent = getpwuid(getuid());
   if (pwent && pwent->pw_dir) {
-    name += BzfString(pwent->pw_dir);
+    name += std::string(pwent->pw_dir);
     name += "/";
   }
   name += ".bzflag";
@@ -178,10 +178,10 @@ static BzfString	getConfigFileName2()
 }
 #endif
 
-static void		setTeamColor(TeamColor team, const BzfString& value)
+static void		setTeamColor(TeamColor team, const std::string& value)
 {
   float color[3];
-  if (sscanf((const char*)value, "%f %f %f", color+0, color+1, color+2) != 3)
+  if (sscanf(value.c_str(), "%f %f %f", color+0, color+1, color+2) != 3)
     return;
   if (color[0] < 0.0f) color[0] = 0.0f;
   else if (color[0] > 1.0f) color[0] = 1.0f;
@@ -192,10 +192,10 @@ static void		setTeamColor(TeamColor team, const BzfString& value)
   Team::setColors(team, color, Team::getRadarColor(team));
 }
 
-static void		setRadarColor(TeamColor team, const BzfString& value)
+static void		setRadarColor(TeamColor team, const std::string& value)
 {
   float color[3];
-  if (sscanf((const char*)value, "%f %f %f", color+0, color+1, color+2) != 3)
+  if (sscanf(value.c_str(), "%f %f %f", color+0, color+1, color+2) != 3)
     return;
   if (color[0] < 0.0f) color[0] = 0.0f;
   else if (color[0] > 1.0f) color[0] = 1.0f;
@@ -211,7 +211,7 @@ static void		setVisual(BzfVisual* visual,
 {
   // sine qua non
   visual->setLevel(0);
-  visual->setDoubleBuffer(True);
+  visual->setDoubleBuffer(true);
   visual->setRGBA(1, 1, 1, 0);
 
   // ask for a zbuffer if not disabled.  we might choose not to use it
@@ -229,7 +229,7 @@ static void		setVisual(BzfVisual* visual,
 #ifdef USE_GL_STEREO
   if (resources.hasValue("view") &&
 	resources.getValue("view") == configViewValues[1])
-    visual->setStereo(True);
+    visual->setStereo(true);
 #endif
 }
 
@@ -270,7 +270,7 @@ static void		parse(int argc, char** argv,
   for (int i = 1; i < argc; i++) {
     if (strcmp(argv[i], "-a") == 0 ||
 		strcmp(argv[i], "-anonymous") == 0) {
-      anonymous = True;
+      anonymous = true;
     }
     else if (strcmp(argv[i], "-c") == 0 || strcmp(argv[i], "-callsign") == 0) {
       if (++i == argc) {
@@ -294,7 +294,7 @@ static void		parse(int argc, char** argv,
 	resources.addValue("directory", argv[i]);
     }
     else if (strcmp(argv[i], "-e") == 0 || strcmp(argv[i], "-echo") == 0) {
-      echoToConsole = True;
+      echoToConsole = true;
     }
     else if (strcmp(argv[i], "-h") == 0 ||
 	     strcmp(argv[i], "-help") == 0 ||
@@ -373,7 +373,7 @@ static void		parse(int argc, char** argv,
     }
     else if (strcmp(argv[i], "-m") == 0 ||
 		strcmp(argv[i], "-mute") == 0) {
-      noAudio = True;
+      noAudio = true;
     }
     else if (strcmp(argv[i], "-multisample") == 0) {
       resources.addValue("multisample", "");
@@ -579,7 +579,7 @@ static void		parse(int argc, char** argv,
       }
       else {
 	strcpy(startupInfo.serverName, argv[i]);
-	startupInfo.autoConnect = True;
+	startupInfo.autoConnect = true;
       }
     }
     else {
@@ -657,7 +657,7 @@ void			dumpResources(BzfDisplay* display,
     for (int i = 0; i < (int)BzfKeyMap::LastKey; i++) {
       // get value string
       const BzfKeyEvent& key1 = map.get((BzfKeyMap::Key)i);
-      BzfString value;
+      std::string value;
       if (key1.ascii != 0 || key1.button != 0) {
 	value = BzfKeyMap::getKeyEventString(key1);
 	const BzfKeyEvent& key2 = map.getAlternate((BzfKeyMap::Key)i);
@@ -668,7 +668,7 @@ void			dumpResources(BzfDisplay* display,
       }
 
       // add it
-      const BzfString name = BzfKeyMap::getKeyName((BzfKeyMap::Key)i);
+      const std::string name = BzfKeyMap::getKeyName((BzfKeyMap::Key)i);
       db.addValue(name, value);
     }
   }
@@ -700,29 +700,29 @@ void			dumpResources(BzfDisplay* display,
 
   // save configuration
   {
-    ofstream resourceStream(getConfigFileName());
+    ofstream resourceStream(getConfigFileName().c_str());
     if (resourceStream)
       resourceStream << db;
   }
 }
 
-static boolean		needsFullscreen()
+static bool		needsFullscreen()
 {
   // fullscreen if not in a window
-  if (!db.hasValue("window")) return True;
+  if (!db.hasValue("window")) return true;
 
   // not fullscreen if view is default (normal)
-  if (!db.hasValue("view")) return False;
+  if (!db.hasValue("view")) return false;
 
   // fullscreen if view is not default
-  BzfString value = db.getValue("view");
+  std::string value = db.getValue("view");
   for (int i = 1; i < (int)(sizeof(configViewValues) /
 			sizeof(configViewValues[0])); i++)
     if (value == configViewValues[i])
-      return True;
+      return true;
 
   // bogus view, default to normal so no fullscreen
-  return False;
+  return false;
 }
 
 //
@@ -769,21 +769,17 @@ int			main(int argc, char** argv)
 
   // read resources
   {
-    #ifdef __MWERKS__
-	ifstream resourceStream(getConfigFileName(), ios::in);
-     #else
-    ifstream resourceStream(getConfigFileName(), ios::in);
-     #endif
+    ifstream resourceStream(getConfigFileName().c_str(), ios::in);
     if (resourceStream) {
-      startupInfo.hasConfiguration = True;
+      startupInfo.hasConfiguration = true;
       resourceStream >> db;
     }
 
 #if !defined(_WIN32) & !defined(macintosh)
     else {
-      ifstream resourceStream2(getConfigFileName2(), ios::in);
+      ifstream resourceStream2(getConfigFileName2().c_str(), ios::in);
       if (resourceStream2) {
-	startupInfo.hasConfiguration = True;
+	startupInfo.hasConfiguration = true;
 	resourceStream2 >> db;
       }
     }
@@ -793,12 +789,12 @@ int			main(int argc, char** argv)
   // restore some configuration (command line overrides these)
   if (startupInfo.hasConfiguration) {
     if (db.hasValue("callsign")) {
-      strncpy(startupInfo.callsign, db.getValue("callsign"),
+      strncpy(startupInfo.callsign, db.getValue("callsign").c_str(),
 					sizeof(startupInfo.callsign) - 1);
       startupInfo.callsign[sizeof(startupInfo.callsign) - 1] = '\0';
     }
     if (db.hasValue("team")) {
-      BzfString value = db.getValue("team");
+      std::string value = db.getValue("team");
       for (int i = 0; i < NumTeams; i++)
 	if (value == Team::getName((TeamColor)i)) {
 	  startupInfo.team = (TeamColor)i;
@@ -806,15 +802,15 @@ int			main(int argc, char** argv)
 	}
     }
     if (db.hasValue("server")) {
-      strncpy(startupInfo.serverName, db.getValue("server"),
+      strncpy(startupInfo.serverName, db.getValue("server").c_str(),
 					sizeof(startupInfo.serverName) - 1);
       startupInfo.serverName[sizeof(startupInfo.serverName) - 1] = '\0';
     }
     if (db.hasValue("port")) {
-      startupInfo.serverPort = atoi(db.getValue("port"));
+      startupInfo.serverPort = atoi(db.getValue("port").c_str());
     }
     if (db.hasValue("interface")) {
-      strncpy(startupInfo.multicastInterface, db.getValue("interface"),
+      strncpy(startupInfo.multicastInterface, db.getValue("interface").c_str(),
 				sizeof(startupInfo.multicastInterface) - 1);
       startupInfo.multicastInterface[
 			sizeof(startupInfo.multicastInterface) - 1] = '\0';
@@ -829,21 +825,21 @@ int			main(int argc, char** argv)
     BzfKeyMap& map = getBzfKeyMap();
     for (int i = 0; i < (int)BzfKeyMap::LastKey; i++) {
       BzfKeyMap::Key key = (BzfKeyMap::Key)i;
-      const BzfString name = BzfKeyMap::getKeyName(key);
+      const std::string name = BzfKeyMap::getKeyName(key);
       if (db.hasValue(name)) {
 	// get saved value
-	const BzfString value = db.getValue(name);
-	const char* const charValue = value;
+	const std::string value = db.getValue(name);
+	const char* const charValue = value.c_str();
 
 	// find separator (forward slash) and get first and second values
 	const char* const sep = strchr(charValue + 1, '/');
-	const BzfString value1 = sep ? value(0, sep - charValue) : value;
-	const BzfString value2 = sep ? value(sep - charValue + 1).getString() : "";
+	const std::string value1 = sep ? value.substr(0, sep - charValue) : value;
+	const std::string value2 = sep ? value.substr(sep - charValue + 1).c_str() : "";
 
 	// lookup values
 	BzfKeyEvent event1, event2;
-	const boolean okay1 = BzfKeyMap::translateStringToEvent(value1, event1);
-	const boolean okay2 = BzfKeyMap::translateStringToEvent(value2, event2);
+	const bool okay1 = BzfKeyMap::translateStringToEvent(value1, event1);
+	const bool okay2 = BzfKeyMap::translateStringToEvent(value2, event2);
 
 	// set values
 	if (okay1 || okay2) {
@@ -893,11 +889,11 @@ int			main(int argc, char** argv)
   parse(argc, argv, db);
 
   // get email address if not anonymous
-  BzfString email;
+  std::string email;
   if (db.hasValue("email"))
     email = db.getValue("email");
   else {
-    BzfString email = anonymousName;
+    std::string email = anonymousName;
     if (!anonymous) {
       const char* hostname = Address::getHostName();
 #if defined(_WIN32)
@@ -917,8 +913,8 @@ int			main(int argc, char** argv)
       }
     }
   }
-  email.truncate(sizeof(startupInfo.email) - 1);
-  strcpy(startupInfo.email, email);
+  email = email.substr(0, sizeof(startupInfo.email) - 1);
+  strcpy(startupInfo.email, email.c_str());
 
   // make platform factory
   PlatformFactory* platformFactory = PlatformFactory::getInstance();
@@ -944,7 +940,7 @@ int			main(int argc, char** argv)
 
   /* initialize the joystick */
   if (startupInfo.joystick)
-    window->initJoystick(startupInfo.joystickName.getString());
+    window->initJoystick(startupInfo.joystickName.c_str());
 
   // set data directory if user specified
   if (db.hasValue("directory"))
@@ -959,14 +955,14 @@ int			main(int argc, char** argv)
 #endif
 */
   // set window size (we do it here because the OpenGL context isn't yet bound)
-  boolean setPosition = False, setSize = False;
+  bool setPosition = false, setSize = false;
   int x = 0, y = 0, w = 0, h = 0;
   if (db.hasValue("geometry")) {
     int count = 0;
     char xs, ys;
-    BzfString geometry = db.getValue("geometry");
+    std::string geometry = db.getValue("geometry");
     if (geometry == "default" ||
-	((count = sscanf(geometry, "%dx%d%c%d%c%d",
+	((count = sscanf(geometry.c_str(), "%dx%d%c%d%c%d",
 		&w, &h, &xs, &x, &ys, &y)) != 6 && count != 2) ||
 	w < 0 || h < 0) {
       db.removeValue("geometry");
@@ -975,7 +971,7 @@ int			main(int argc, char** argv)
 				(ys != '-' && ys != '+'))) {
       db.removeValue("geometry");
     }
-    setSize = True;
+    setSize = true;
     if (w < 256)
       w = 256;
     if (h < 192)
@@ -985,7 +981,7 @@ int			main(int argc, char** argv)
 	x = display->getWidth() - x - w;
       if (ys == '-')
 	y = display->getHeight() - y - h;
-      setPosition = True;
+      setPosition = true;
     }
 
       // must call this before setFullscreen() is called
@@ -995,7 +991,7 @@ int			main(int argc, char** argv)
   // set window size (we do it here because the OpenGL context isn't yet
   // bound and 3Dfx passthrough cards use the window size to determine
   // the resolution to use)
-  const boolean useFullscreen = needsFullscreen();
+  const bool useFullscreen = needsFullscreen();
   if (useFullscreen) {
     // tell window to be fullscreen
     window->setFullscreen();
@@ -1027,7 +1023,7 @@ int			main(int argc, char** argv)
   if (!noAudio) {
     openSound("bzflag");
     if (startupInfo.hasConfiguration && db.hasValue("volume"))
-      setSoundVolume(atoi(db.getValue("volume")));
+      setSoundVolume(atoi(db.getValue("volume").c_str()));
   }
 
   // set main window's minimum size (arbitrary but should be big enough
@@ -1061,7 +1057,7 @@ int			main(int argc, char** argv)
   // set gamma if set in resources and we have gamma control
   if (db.hasValue("gamma")) {
     if (mainWindow.getWindow()->hasGammaControl())
-      mainWindow.getWindow()->setGamma((float)atof(db.getValue("gamma")));
+      mainWindow.getWindow()->setGamma((float)atof(db.getValue("gamma").c_str()));
   }
 
   // make scene renderer
@@ -1084,7 +1080,7 @@ int			main(int argc, char** argv)
     if (db.hasValue("zbuffersplit"))
       renderer.setZBufferSplit(db.getValue("zbuffersplit") == "yes");
     if (db.hasValue("texture")) {
-      BzfString value = db.getValue("texture");
+      std::string value = db.getValue("texture");
       for (int i = 0; i < (int)(sizeof(configFilterValues) /
 				sizeof(configFilterValues[0])); i++)
 	if (value == configFilterValues[i]) {
@@ -1094,7 +1090,7 @@ int			main(int argc, char** argv)
       renderer.setTexture(OpenGLTexture::getFilter() != OpenGLTexture::Off);
     }
     if (db.hasValue("quality")) {
-      BzfString value = db.getValue("quality");
+      std::string value = db.getValue("quality");
       for (int i = 0; i < (int)(sizeof(configQualityValues) /
 				sizeof(configQualityValues[0])); i++)
 	if (value == configQualityValues[i]) {
@@ -1106,7 +1102,7 @@ int			main(int argc, char** argv)
 				renderer.useQuality() < 2);
     if (db.hasValue("view")) {
       renderer.setViewType(SceneRenderer::Normal);
-      BzfString value = db.getValue("view");
+      std::string value = db.getValue("view");
       for (int i = 0; i < (int)(sizeof(configViewValues) /
 				sizeof(configViewValues[0])); i++)
 	if (value == configViewValues[i]) {
@@ -1116,15 +1112,15 @@ int			main(int argc, char** argv)
     }
 
     if (db.hasValue("maxlod"))
-      renderer.setMaxLOD(atoi(db.getValue("maxlod")));
+      renderer.setMaxLOD(atoi(db.getValue("maxlod").c_str()));
 
     if (db.hasValue("latitude"))
-      renderer.setLatitude((float)atof(db.getValue("latitude")));
+      renderer.setLatitude((float)atof(db.getValue("latitude").c_str()));
     if (db.hasValue("longitude"))
-      renderer.setLongitude((float)atof(db.getValue("longitude")));
+      renderer.setLongitude((float)atof(db.getValue("longitude").c_str()));
 
     if (db.hasValue("startcode"))
-      ServerStartMenu::setSettings(db.getValue("startcode"));
+      ServerStartMenu::setSettings(db.getValue("startcode").c_str());
     if (db.hasValue("showflaghelp"))
       renderer.setShowFlagHelp(db.getValue("showflaghelp") == "yes");
     if (db.hasValue("showscore"))
@@ -1137,11 +1133,11 @@ int			main(int argc, char** argv)
     if (db.hasValue("coloredradarshots"))
       renderer.setColoredShots(db.getValue("coloredradarshots") == "yes");
     if (db.hasValue("linedradarshots")) {
-      int length = atoi(db.getValue("linedradarshots"));
+      int length = atoi(db.getValue("linedradarshots").c_str());
       renderer.setRadarShotLength(length);
     }
     if (db.hasValue("panelopacity")) {
-      renderer.setPanelOpacity((float)atof(db.getValue("panelopacity")));
+      renderer.setPanelOpacity((float)atof(db.getValue("panelopacity").c_str()));
     if (db.hasValue("bigfont"))
       renderer.setBigFont(db.getValue("bigfont") == "yes");
     }

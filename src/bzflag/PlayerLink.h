@@ -70,7 +70,7 @@ class PlayerLink {
     int			fdOut;
     struct sockaddr_in	inAddr;
     struct sockaddr_in	outAddr;
-    boolean		useRelay;
+    bool		useRelay;
     ServerLink*		relay;
     static PlayerLink*	multicast;
 };

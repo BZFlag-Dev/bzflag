@@ -17,7 +17,6 @@
 #ifndef	BZF_TELEPORTER_H
 #define	BZF_TELEPORTER_H
 
-#include "AList.h"
 #include "Obstacle.h"
 
 class Teleporter : public Obstacle {
@@ -27,20 +26,20 @@ class Teleporter : public Obstacle {
 				float borderSize);
 			~Teleporter();
 
-    BzfString		getType() const;
-    static BzfString	getClassName(); // const
+    std::string		getType() const;
+    static std::string	getClassName(); // const
 
     float		getBorder() const;
 
     float		intersect(const Ray&) const;
     void		getNormal(const float* p, float* n) const;
-    boolean		isInside(const float* p, float radius) const;
-    boolean		isInside(const float* p, float angle,
+    bool		isInside(const float* p, float radius) const;
+    bool		isInside(const float* p, float angle,
 				float halfWidth, float halfBreadth) const;
-    boolean		isCrossing(const float* p, float angle,
+    bool		isCrossing(const float* p, float angle,
 				float halfWidth, float halfBreadth,
 				float* plane) const;
-    boolean		getHitNormal(
+    bool		getHitNormal(
 				const float* pos1, float azimuth1,
 				const float* pos2, float azimuth2,
 				float halfWidth, float halfBreadth,
@@ -48,7 +47,7 @@ class Teleporter : public Obstacle {
 
     float		isTeleported(const Ray&, int& face) const;
     float		getProximity(const float* p, float radius) const;
-    boolean		hasCrossed(const float* p1, const float* p2,
+    bool		hasCrossed(const float* p1, const float* p2,
 							int& face) const;
     void		getPointWRT(const Teleporter& t2, int face1, int face2,
 				const float* pIn, const float* dIn, float aIn,
@@ -58,17 +57,15 @@ class Teleporter : public Obstacle {
 
   private:
     float		border;
-    static BzfString	typeName;
+    static std::string	typeName;
 };
-
-BZF_DEFINE_ALIST(Teleporters, Teleporter);
 
 class TeleporterSceneNodeGenerator : public ObstacleSceneNodeGenerator {
   friend class Teleporter;
   public:
 			~TeleporterSceneNodeGenerator();
 
-    WallSceneNode*	getNextNode(float, float, boolean);
+    WallSceneNode*	getNextNode(float, float, bool);
 
   protected:
 			TeleporterSceneNodeGenerator(const Teleporter*);

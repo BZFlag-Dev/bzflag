@@ -26,7 +26,7 @@ class TriWallSceneNode : public WallSceneNode {
 				const GLfloat tEdge[3],
 				float uRepeats = 1.0,
 				float vRepeats = 1.0,
-				boolean makeLODs = True);
+				bool makeLODs = true);
 			~TriWallSceneNode();
 
     int			split(const float*, SceneNode*&, SceneNode*&) const;

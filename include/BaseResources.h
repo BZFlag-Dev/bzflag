@@ -17,8 +17,13 @@
 #ifndef BZF_BASE_RESOURCES_H
 #define	BZF_BASE_RESOURCES_H
 
+#ifdef _WIN32
+#pragma warning( 4: 4786 )
+#endif
+
 #include "common.h"
-#include "BzfString.h"
+#include <string>
+#include <vector>
 
 class ostream;
 
@@ -29,16 +34,16 @@ class BaseResources {
 			~BaseResources();
     BaseResources&	operator=(const BaseResources&);
 
-    boolean		hasName(const BzfString&) const;
-    const BzfStringAList& getNames() const;
+    bool		hasName(const std::string&) const;
+    const std::vector<std::string>& getNames() const;
 
-    void		addName(const BzfString&);
+    void		addName(const std::string&);
 
   protected:
-    static ostream&	print(ostream&, const BzfString& name,
+    static ostream&	print(ostream&, const std::string& name,
 					const char* format, ...); // const
-    static boolean	match(const BzfString& wildName,
-					const BzfString& name); // const
+    static bool	match(const std::string& wildName,
+					const std::string& name); // const
   private:
     static int		doMatch(const char* pattern,
 					const char* string); // const
@@ -46,14 +51,14 @@ class BaseResources {
 					const char* string); // const
 
   private:
-    BzfStringAList	names;
+    std::vector<std::string>	names;
 };
 
 //
 // BaseResources
 //
 
-inline const BzfStringAList&	BaseResources::getNames() const
+inline const std::vector<std::string>&	BaseResources::getNames() const
 {
   return names;
 }

@@ -127,7 +127,7 @@ LocalPlayer::LocalPlayer(const PlayerId& id,
 				desiredAngVel(0.0f),
 				lastSpeed(0.0f),
 				insideBuilding(NULL),
-				anyShotActive(False),
+				anyShotActive(false),
 				magnify(0),
 				target(NULL),
 				nemesis(NULL),
@@ -138,7 +138,7 @@ LocalPlayer::LocalPlayer(const PlayerId& id,
   shots = new LocalShotPath*[numShots];
   for (int i = 0; i < numShots; i++)
     shots[i] = NULL;
-  keyboardMoving = False;
+  keyboardMoving = false;
 }
 
 LocalPlayer::~LocalPlayer()
@@ -166,7 +166,7 @@ void			LocalPlayer::setMyTank(LocalPlayer* player)
 
 void			LocalPlayer::doUpdate(float dt)
 {
-  const boolean hadShotActive = anyShotActive;
+  const bool hadShotActive = anyShotActive;
   const int numShots = World::getWorld()->getMaxShots();
 
   // if paused then boost the reload times by dt (so that, effectively,
@@ -187,11 +187,11 @@ void			LocalPlayer::doUpdate(float dt)
     }
 
   // update shots
-  anyShotActive = False;
+  anyShotActive = false;
   for (i = 0; i < numShots; i++)
     if (shots[i]) {
       shots[i]->update(dt);
-      if (!shots[i]->isExpired()) anyShotActive = True;
+      if (!shots[i]->isExpired()) anyShotActive = true;
     }
 
   // if no shots now out (but there had been) then reset target
@@ -236,7 +236,7 @@ void			LocalPlayer::doUpdateMotion(float dt)
     setStatus(getStatus() & ~short(Teleporting));
 
   // phased means we can pass through buildings
-  const boolean phased = (location == Dead || location == Exploding ||
+  const bool phased = (location == Dead || location == Exploding ||
 			(getFlag() == OscOverthrusterFlag) ||
 			(getFlag() == PhantomZoneFlag && isFlagActive()));
 
@@ -303,7 +303,7 @@ void			LocalPlayer::doUpdateMotion(float dt)
   // move the tank up to the collision, adjust the velocity to
   // prevent interpenetration, and repeat.  avoid infinite loops
   // by only allowing a maximum number of repeats.
-  boolean expelled;
+  bool expelled;
   const Obstacle* obstacle;
   float timeStep = dt;
   if (location != Dead && location != Exploding) location = OnGround;
@@ -346,7 +346,7 @@ void			LocalPlayer::doUpdateMotion(float dt)
       if (newPos[2] < 0.0f) newPos[2] = 0.0f;
 
       // see if we hit anything
-      boolean searchExpelled;
+      bool searchExpelled;
       const Obstacle* searchObstacle =
 		getHitBuilding(newPos, newAzimuth, phased, searchExpelled);
 
@@ -547,7 +547,7 @@ void			LocalPlayer::doUpdateMotion(float dt)
 }
 
 const Obstacle*		LocalPlayer::getHitBuilding(const float* p, float a,
-				boolean phased, boolean& expelled) const
+				bool phased, bool& expelled) const
 {
   float length = 0.5f * TankLength;
   float width = 0.5f * TankWidth;
@@ -574,7 +574,7 @@ const Obstacle*		LocalPlayer::getHitBuilding(const float* p, float a,
   return obstacle;
 }
 
-boolean			LocalPlayer::getHitNormal(const Obstacle* o,
+bool			LocalPlayer::getHitNormal(const Obstacle* o,
 				const float* pos1, float azimuth1,
 				const float* pos2, float azimuth2,
 				float* normal) const
@@ -653,7 +653,7 @@ void			LocalPlayer::restart(const float* pos, float _azimuth)
       delete shots[i];
       shots[i] = NULL;
     }
-  anyShotActive = False;
+  anyShotActive = false;
 
   // no target
   target = NULL;
@@ -669,7 +669,7 @@ void			LocalPlayer::restart(const float* pos, float _azimuth)
   setAngularVelocity(0.0f);
   setKeyboardSpeed(0.0f);
   setKeyboardAngVel(0.0f);
-  setSlowKeyboard(False);
+  setSlowKeyboard(false);
   resetKey();
   doUpdateMotion(0.0f);
 
@@ -721,7 +721,7 @@ void			LocalPlayer::setDesiredAngVel(float fracOfMaxAngVel)
   desiredAngVel = fracOfMaxAngVel * TankAngVel;
 }
 
-void			LocalPlayer::setPause(boolean pause)
+void			LocalPlayer::setPause(bool pause)
 {
   if (isAlive()) {
     if (pause && !isPaused()) {
@@ -733,7 +733,7 @@ void			LocalPlayer::setPause(boolean pause)
   }
 }
 
-boolean			LocalPlayer::fireShot()
+bool			LocalPlayer::fireShot()
 {
   // find an empty slot
   const int numShots = World::getWorld()->getMaxShots();
@@ -741,12 +741,12 @@ boolean			LocalPlayer::fireShot()
   for (i = 0; i < numShots; i++)
     if (!shots[i])
       break;
-  if (i == numShots) return False;
+  if (i == numShots) return false;
 
   // make sure we're allowed to shoot
   if (!isAlive() || isPaused() || location == InBuilding ||
 	(getFlag() == PhantomZoneFlag && isFlagActive()))
-    return False;
+    return false;
 
   // prepare shot
   FiringInfo firingInfo(*this, i + getSalt());
@@ -780,38 +780,38 @@ boolean			LocalPlayer::fireShot()
   else
     playLocalSound(SFX_FIRE);
 
-  return True;
+  return true;
 }
 
-boolean			LocalPlayer::doEndShot(
-				int id, boolean isHit, float* pos)
+bool			LocalPlayer::doEndShot(
+				int id, bool isHit, float* pos)
 {
   const int index = id & 255;
   const int salt = (id >> 8) & 127;
 
   // special id used in some messages (and really shouldn't be sent here)
   if (id == -1)
-    return False;
+    return false;
 
   // ignore bogus shots (those with a bad index or for shots that don't exist)
   if (index < 0 || index >= World::getWorld()->getMaxShots() || !shots[index])
-    return False;
+    return false;
 
   // ignore shots that already ending
   if (shots[index]->isExpired() || shots[index]->isExpiring())
-    return False;
+    return false;
 
   // ignore shots that have the wrong salt.  since we reuse shot indices
   // it's possible for an old MsgShotEnd to arrive after we've started a
   // new shot.  that's where the salt comes in.  it changes for each shot
   // so we can identify an old shot from a new one.
   if (salt != ((shots[index]->getShotId() >> 8) & 127))
-    return False;
+    return false;
 
   // don't stop if it's because were hitting something and we don't stop
   // when we hit something.
   if (isHit && !shots[index]->isStoppedByHit())
-    return False;
+    return false;
 
   // end it
   const float* shotPos = shots[index]->getPosition();
@@ -819,7 +819,7 @@ boolean			LocalPlayer::doEndShot(
   pos[1] = shotPos[1];
   pos[2] = shotPos[2];
   shots[index]->setExpired();
-  return True;
+  return true;
 }
 
 void			LocalPlayer::jump()
@@ -912,10 +912,10 @@ void			LocalPlayer::doForces(float /*dt*/,
 }
 
 // NOTE -- minTime should be initialized to Infinity by the caller
-boolean			LocalPlayer::checkHit(const Player* source,
+bool			LocalPlayer::checkHit(const Player* source,
 				const ShotPath*& hit, float& minTime) const
 {
-  boolean goodHit = False;
+  bool goodHit = false;
 
   // if firing tank is paused then it doesn't count
   if (source->isPaused()) return goodHit;
@@ -952,7 +952,7 @@ boolean			LocalPlayer::checkHit(const Player* source,
       continue;
 
     // okay, shot hit
-    goodHit = True;
+    goodHit = true;
     hit = shot;
     minTime = t;
   }

@@ -22,10 +22,10 @@ void			(*SceneNode::stipple)(GLfloat);
 
 SceneNode::SceneNode() : styleMailbox(0)
 {
-  static boolean init = False;
+  static bool init = false;
   if (!init) {
-    init = True;
-    setColorOverride(False);
+    init = true;
+    setColorOverride(false);
   }
 
   setCenter(0.0f, 0.0f, 0.0f);
@@ -55,7 +55,7 @@ void __stdcall		SceneNode::noColor3fv(const GLfloat*) { }
 void __stdcall		SceneNode::noColor4fv(const GLfloat*) { }
 void			SceneNode::noStipple(GLfloat) { }
 
-void			SceneNode::setColorOverride(boolean on)
+void			SceneNode::setColorOverride(bool on)
 {
   if (on) {
     color3f  = &noColor3f;
@@ -165,7 +165,7 @@ int			SceneNode::split(const float*,
   return 1;
 }
 
-boolean			SceneNode::cull(const ViewFrustum& view) const
+bool			SceneNode::cull(const ViewFrustum& view) const
 {
   // if center of object is outside view frustum and distance is
   // greater than radius of object then cull.
@@ -174,9 +174,9 @@ boolean			SceneNode::cull(const ViewFrustum& view) const
     const GLfloat d = sphere[0] * norm[0] +
 		      sphere[1] * norm[1] +
 		      sphere[2] * norm[2] + norm[3];
-    if (d < 0.0f && d * d > sphere[3]) return True;
+    if (d < 0.0f && d * d > sphere[3]) return true;
   }
-  return False;
+  return false;
 }
 
 //

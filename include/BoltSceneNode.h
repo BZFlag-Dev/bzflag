@@ -27,7 +27,7 @@ class BoltSceneNode : public ShotSceneNode {
 			BoltSceneNode(const GLfloat pos[3]);
 			~BoltSceneNode();
 
-    void		setFlares(boolean);
+    void		setFlares(bool);
     void		setSize(float radius);
     void		setColor(GLfloat r, GLfloat g, GLfloat b);
     void		setColor(const GLfloat* rgb);
@@ -35,8 +35,8 @@ class BoltSceneNode : public ShotSceneNode {
     void		setColorblindTexture(const OpenGLTexture&);
     void		setTextureAnimation(int cu, int cv);
 
-    boolean		getColorblind() const;
-    void		setColorblind(boolean);
+    bool		getColorblind() const;
+    void		setColorblind(bool);
 
     void		move(const GLfloat pos[3], const GLfloat forward[3]);
     void		addLight(SceneRenderer&);
@@ -76,10 +76,10 @@ class BoltSceneNode : public ShotSceneNode {
     friend class BoltRenderNode;
 
   private:
-    boolean		drawFlares;
-    boolean		blending;
-    boolean		texturing;
-    boolean		colorblind;
+    bool		drawFlares;
+    bool		blending;
+    bool		texturing;
+    bool		colorblind;
     float		size;
     GLfloat		color[3];
     OpenGLLight		light;

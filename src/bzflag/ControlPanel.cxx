@@ -31,7 +31,7 @@ void			printFatalError(const char* fmt, ...);
 // ControlPanelMessage
 //
 
-ControlPanelMessage::ControlPanelMessage(const BzfString& _string,
+ControlPanelMessage::ControlPanelMessage(const std::string& _string,
 				const GLfloat* _color) :
 				string(_string)
 {
@@ -53,7 +53,7 @@ extern void		printMissingDataDirectoryError(const char*);
 
 ControlPanel::ControlPanel(MainWindow& _mainWindow, SceneRenderer& renderer) :
 				window(_mainWindow),
-				resized(False),
+				resized(false),
 				numBuffers(2),
 				radarRenderer(NULL)
 {
@@ -152,7 +152,7 @@ void			ControlPanel::render(SceneRenderer& renderer)
   // The font is fixed, so getWidth() returns the same for any char.
   const int lineCharWidth = (int)(messageAreaPixels[2] / (messageFont.getWidth("-")));
 
-  i = messages.getLength() - 1;
+  i = messages.size() - 1;
   if (messagesOffset>0) {
     if (i-messagesOffset > 0)
       i-=messagesOffset;
@@ -163,8 +163,8 @@ void			ControlPanel::render(SceneRenderer& renderer)
     glColor3fv(messages[i].color);
 
     // get message and its length
-    const char* msg = messages[i].string.getString();
-    int lineLen = messages[i].string.getLength();
+    const char* msg = messages[i].string.c_str();
+    int lineLen = messages[i].string.length();
 
     // compute lines in message
     const int numLines = (lineLen + lineCharWidth - 1) / lineCharWidth;
@@ -289,15 +289,15 @@ void			ControlPanel::resize()
   const float addSize = SceneRenderer::getInstance()->useBigFont() ? 5.0f : 0.0f;
   const float fontSize = addSize + (float)messageAreaPixels[3] / 12.4444f;
   if (fontSize > 10.0f)
-    messageFont = TextureFont::getTextureFont(TextureFont::FixedBold, True);
+    messageFont = TextureFont::getTextureFont(TextureFont::FixedBold, true);
   else
-    messageFont = TextureFont::getTextureFont(TextureFont::Fixed, True);
+    messageFont = TextureFont::getTextureFont(TextureFont::Fixed, true);
   // pick font size, room for 20 lines plus 4/9 line margin
   //const float fontSize = (float)messageAreaPixels[3] / 9.4444f;
   messageFont.setSize(fontSize, fontSize);
 
   // note that we've been resized at least once
-  resized = True;
+  resized = true;
   expose();
 }
 
@@ -329,17 +329,17 @@ void			ControlPanel::setMessagesOffset(int offset, int whence)
   // whence = 0, 1, or 2 (akin to SEEK_SET, SEEK_CUR, SEEK_END)
   switch (whence) {
     case 0:
-      if (offset < messages.getLength())
+      if (offset < messages.size())
 	messagesOffset=offset;
       else
-	messagesOffset=messages.getLength()-1;
+	messagesOffset=messages.size()-1;
       break;
     case 1:
       if (offset>0) {
-	if (messagesOffset+offset < messages.getLength())
+	if (messagesOffset+offset < messages.size())
 	  messagesOffset+=offset;
 	else
-	  messagesOffset=messages.getLength()-1;
+	  messagesOffset=messages.size()-1;
       }
       else if (offset<0) {
 	if (messagesOffset+offset >= 0)
@@ -350,7 +350,7 @@ void			ControlPanel::setMessagesOffset(int offset, int whence)
       break;
     case 2:
       if (offset<0) {
-	if (messages.getLength()-offset >= 0)
+	if (messages.size()-offset >= 0)
 	  messagesOffset+=offset;
 	else
 	  messagesOffset=0;
@@ -360,25 +360,25 @@ void			ControlPanel::setMessagesOffset(int offset, int whence)
   changedMessage = numBuffers;
 }
 
-void			ControlPanel::addMessage(const BzfString& line,
+void			ControlPanel::addMessage(const std::string& line,
 						const GLfloat* color)
 {
   ControlPanelMessage item(line, color);
 
-  if (messages.getLength() < maxLines * maxScrollPages) {
+  if (messages.size() < maxLines * maxScrollPages) {
     // not full yet so just append it
-    messages.append(item);
+    messages.push_back(item);
   }
   else {
     // rotate list and replace oldest (in newest position after rotate)
-    messages.rotate(messages.getLength() - 1, 0);
-    messages[messages.getLength() - 1] = item;
+    messages.erase(messages.begin());
+    messages.push_back(item);
   }
 
   // this stuff has no effect on win32 (there's no console)
-  extern boolean echoToConsole;
+  extern bool echoToConsole;
   if (echoToConsole)
-    fprintf(stdout, "%s\n", (const char*)line);
+    fprintf(stdout, "%s\n", line.c_str());
     fflush(stdout);
 
   changedMessage = numBuffers;

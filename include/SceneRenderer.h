@@ -39,9 +39,7 @@ class FlareLight {
     float		color[3];
 };
 
-#include "AList.h"
-BZF_DEFINE_ALIST(OpenGLLightList, OpenGLLight*);
-BZF_DEFINE_ALIST(FlareLightList, FlareLight);
+#include <vector>
 
 class SceneRenderer {
   public:
@@ -59,49 +57,49 @@ class SceneRenderer {
 
     MainWindow&		getWindow() const;
 
-    boolean		useABGR() const;
-    boolean		useBlending() const;
-    boolean		useSmoothing() const;
-    boolean		useLighting() const;
-    boolean		useTexture() const;
-    boolean		useTextureReplace() const;
-    boolean		useZBuffer() const;
-    boolean		useStencil() const;
+    bool		useABGR() const;
+    bool		useBlending() const;
+    bool		useSmoothing() const;
+    bool		useLighting() const;
+    bool		useTexture() const;
+    bool		useTextureReplace() const;
+    bool		useZBuffer() const;
+    bool		useStencil() const;
     int			useQuality() const;
-    boolean		useShadows() const;
-    boolean		useDithering() const;
-    boolean		useDepthComplexity() const;
-    boolean		useWireframe() const;
-    boolean		useHiddenLine() const;
-    boolean		useEnhancedRadar() const;
-    boolean		useColoredShots() const;
+    bool		useShadows() const;
+    bool		useDithering() const;
+    bool		useDepthComplexity() const;
+    bool		useWireframe() const;
+    bool		useHiddenLine() const;
+    bool		useEnhancedRadar() const;
+    bool		useColoredShots() const;
     int			getRadarShotLength() const;
     float		getPanelOpacity() const;
-    boolean		useBigFont() const;
-    boolean		isLastFrame() const;
-    boolean		isSameFrame() const;
+    bool		useBigFont() const;
+    bool		isLastFrame() const;
+    bool		isSameFrame() const;
     ViewType		getViewType() const;
     int			getMaxLOD() const;
 
-    void		setBlending(boolean on);
-    void		setSmoothing(boolean on);
-    void		setLighting(boolean on);
-    void		setTexture(boolean on);
-    void		setTextureReplace(boolean on);
-    void		setZBuffer(boolean on);
-    void		setZBufferSplit(boolean on);
+    void		setBlending(bool on);
+    void		setSmoothing(bool on);
+    void		setLighting(bool on);
+    void		setTexture(bool on);
+    void		setTextureReplace(bool on);
+    void		setZBuffer(bool on);
+    void		setZBufferSplit(bool on);
     void		setQuality(int value);
-    void		setShadows(boolean on);
-    void		setDithering(boolean on);
-    void		setDepthComplexity(boolean on);
-    void		setWireframe(boolean on);
-    void		setHiddenLine(boolean on);
-    void		setEnhancedRadar(boolean on);
-    void		setColoredShots(boolean on);
+    void		setShadows(bool on);
+    void		setDithering(bool on);
+    void		setDepthComplexity(bool on);
+    void		setWireframe(bool on);
+    void		setHiddenLine(bool on);
+    void		setEnhancedRadar(bool on);
+    void		setColoredShots(bool on);
     void		setRadarShotLength(int l);
     void		setPanelOpacity(float opacity);
-    void		setBigFont(boolean on);
-    void		setDim(boolean on);
+    void		setBigFont(bool on);
+    void		setDim(bool on);
     void		setViewType(ViewType);
     void		setMaxLOD(int maxLOD);
 
@@ -109,10 +107,10 @@ class SceneRenderer {
 
     void		getGroundUV(const float p[2], float uv[2]) const;
 
-    boolean		getBlank() const;
-    boolean		getInvert() const;
-    void		setBlank(boolean blank = True);
-    void		setInvert(boolean invert = True);
+    bool		getBlank() const;
+    bool		getInvert() const;
+    void		setBlank(bool blank = true);
+    void		setInvert(bool invert = true);
 
     const ViewFrustum&	getViewFrustum() const;
     ViewFrustum&	getViewFrustum();
@@ -120,7 +118,7 @@ class SceneRenderer {
     int			getNumLights() const;
     int			getNumAllLights() const;
     const OpenGLLight&	getLight(int index) const;
-    void		enableLight(int index, boolean = True);
+    void		enableLight(int index, bool = true);
     void		clearLights();
     void		addLight(OpenGLLight&);
     void		addFlareLight(const float* pos, const float* color);
@@ -129,7 +127,7 @@ class SceneRenderer {
     const GLfloat*	getSunColor() const;
     const GLfloat*	getSunScaledColor() const;
     GLfloat		getSunBrightness() const;
-    void		enableSun(boolean = True);
+    void		enableSun(bool = true);
     const GLfloat*	getCelestialTransform() const;
     float		getLatitude();
     float		getLongitude();
@@ -144,21 +142,21 @@ class SceneRenderer {
 
     const RenderNodeList& getShadowList() const;
 
-    void		render(boolean lastFrame = True,
-				boolean sameFrame = False,
-				boolean fullWindow = False);
-    boolean		testAndSetStyle(int& _style) const
-				{ if (_style == style) return True;
-				  _style = style; return False; }
+    void		render(bool lastFrame = true,
+				bool sameFrame = false,
+				bool fullWindow = false);
+    bool		testAndSetStyle(int& _style) const
+				{ if (_style == style) return true;
+				  _style = style; return false; }
     void		notifyStyleChange();
     void		addRenderNode(RenderNode* node, const OpenGLGState*);
     void		addShadowNode(RenderNode* node);
-    boolean		getShowFlagHelp() const;
-    void		setShowFlagHelp(boolean showFlagHelp);
-    boolean		getScore() const;
-    void		setScore(boolean showScore);
-    boolean		getLabels() const;
-    void		setLabels(boolean showLabels);
+    bool		getShowFlagHelp() const;
+    void		setShowFlagHelp(bool showFlagHelp);
+    bool		getScore() const;
+    void		setScore(bool showScore);
+    bool		getLabels() const;
+    void		setLabels(bool showLabels);
 
   private:
     // disallowed -- don't want to deal with potential state problems
@@ -169,14 +167,14 @@ class SceneRenderer {
 
   private:
     MainWindow&		window;
-    boolean		blank;
-    boolean		invert;
+    bool		blank;
+    bool		invert;
     ViewFrustum		frustum;
     GLint		maxLights;
     GLint		reservedLights;
-    OpenGLLightList	lights;
+    std::vector<OpenGLLight*>	lights;
     OpenGLLight		theSun;
-    boolean		sunOrMoonUp;
+    bool		sunOrMoonUp;
     GLfloat		sunDirection[3];	// or moon
     GLfloat		sunColor[3];
     GLfloat		sunScaledColor[3];
@@ -187,46 +185,46 @@ class SceneRenderer {
     BackgroundRenderer*	background;
     static const GLint	SunLight;
 
-    boolean		abgr;
-    boolean		useBlendingOn;
-    boolean		useSmoothingOn;
-    boolean		useLightingOn;
-    boolean		useTextureOn;
-    boolean		useTextureReplaceOn;
+    bool		abgr;
+    bool		useBlendingOn;
+    bool		useSmoothingOn;
+    bool		useLightingOn;
+    bool		useTextureOn;
+    bool		useTextureReplaceOn;
     int			useQualityValue;
-    boolean		useShadowsOn;
-    boolean		useDitheringOn;
-    boolean		useDepthComplexityOn;
-    boolean		useWireframeOn;
-    boolean		useHiddenLineOn;
-    boolean		useEnhancedRadarOn;
-    boolean		useColoredShotsOn;
+    bool		useShadowsOn;
+    bool		useDitheringOn;
+    bool		useDepthComplexityOn;
+    bool		useWireframeOn;
+    bool		useHiddenLineOn;
+    bool		useEnhancedRadarOn;
+    bool		useColoredShotsOn;
     int			radarShotLength;
     float		panelOpacity;
-    boolean		useBigFontOn;
-    boolean		useFogHack;
-    boolean		useZBufferOn;
-    boolean		useStencilOn;
+    bool		useBigFontOn;
+    bool		useFogHack;
+    bool		useZBufferOn;
+    bool		useStencilOn;
     ViewType		viewType;
     int			maxLOD;
     RenderNodeList	shadowList;
     RenderNodeGStateList orderedList;
-    boolean		inOrder;
+    bool		inOrder;
     int			style;
     SceneIterator*	sceneIterator;
     int			depthRange;
     int			numDepthRanges;
     double		depthRangeSize;
-    boolean		useDimming;
-    boolean		canUseHiddenLine;
-    boolean		exposed;
-    boolean		lastFrame;
-    boolean		sameFrame;
-    FlareLightList	flareLightList;
+    bool		useDimming;
+    bool		canUseHiddenLine;
+    bool		exposed;
+    bool		lastFrame;
+    bool		sameFrame;
+    std::vector<FlareLight>	flareLightList;
     OpenGLGState	flareGState;
-    boolean		showFlagHelp;
-    boolean		showScore;
-    boolean		showLabels;
+    bool		showFlagHelp;
+    bool		showScore;
+    bool		showLabels;
 
     static SceneRenderer* instance;
 };
@@ -240,22 +238,22 @@ inline MainWindow&		SceneRenderer::getWindow() const
   return window;
 }
 
-inline boolean			SceneRenderer::getBlank() const
+inline bool			SceneRenderer::getBlank() const
 {
   return blank;
 }
 
-inline void			SceneRenderer::setBlank(boolean _blank)
+inline void			SceneRenderer::setBlank(bool _blank)
 {
   blank = _blank;
 }
 
-inline boolean			SceneRenderer::getInvert() const
+inline bool			SceneRenderer::getInvert() const
 {
   return invert;
 }
 
-inline void			SceneRenderer::setInvert(boolean _invert)
+inline void			SceneRenderer::setInvert(bool _invert)
 {
   invert = _invert;
 }
@@ -305,12 +303,12 @@ inline BackgroundRenderer*	SceneRenderer::getBackground()
   return background;
 }
 
-inline boolean			SceneRenderer::isLastFrame() const
+inline bool			SceneRenderer::isLastFrame() const
 {
   return lastFrame;
 }
 
-inline boolean			SceneRenderer::isSameFrame() const
+inline bool			SceneRenderer::isSameFrame() const
 {
   return sameFrame;
 }

@@ -35,13 +35,13 @@ NewMedia::~NewMedia()
   // do nothing
 }
 
-double			NewMedia::stopwatch(boolean start)
+double			NewMedia::stopwatch(bool start)
 {
   if (start) {
     // XXX -- save current time
     return 0.0;
   }
-  // XXX -- return time since last stopwatch(True)
+  // XXX -- return time since last stopwatch(true)
   return 0.0;
 }
 
@@ -50,10 +50,10 @@ void			NewMedia::sleep(float timeInSeconds)
   // XXX -- go to sleep for timeInSeconds seconds (which can be fractional)
 }
 
-boolean			NewMedia::openAudio()
+bool			NewMedia::openAudio()
 {
   // XXX -- open audio device and prepare for IPC with audio thread
-  return False;
+  return false;
 }
 
 void			NewMedia::closeAudio()
@@ -61,19 +61,19 @@ void			NewMedia::closeAudio()
   // XXX -- shut down audio device and IPC stuff
 }
 
-boolean			NewMedia::startAudioThread(
+bool			NewMedia::startAudioThread(
 				void (*proc)(void*), void* data)
 {
   // if no audio thread then just call proc and return
   if (!hasAudioThread()) {
     proc(data);
-    return True;
+    return true;
   }
 
   // XXX -- spawn a thread that calls proc, passing it data.
-  // we will need to communicate with this thread.  return True
+  // we will need to communicate with this thread.  return true
   // if successfully started.
-  return False;
+  return false;
 }
 
 void			NewMedia::stopAudioThread()
@@ -81,13 +81,13 @@ void			NewMedia::stopAudioThread()
   // XXX -- terminate audio thread
 }
 
-boolean			NewMedia::hasAudioThread() const
+bool			NewMedia::hasAudioThread() const
 {
   // XXX -- adjust this if the system always uses or never uses a thread
 #if defined(NO_AUDIO_THREAD)
-  return False;
+  return false;
 #else
-  return True;
+  return true;
 #endif
 }
 
@@ -96,10 +96,10 @@ void			NewMedia::writeSoundCommand(const void* cmd, int len)
   // XXX -- send a command to the audio thread
 }
 
-boolean			NewMedia::readSoundCommand(void* cmd, int len)
+bool			NewMedia::readSoundCommand(void* cmd, int len)
 {
   // XXX -- read a sent command
-  return False;
+  return false;
 }
 
 int			NewMedia::getAudioOutputRate() const
@@ -132,13 +132,13 @@ int			NewMedia::getAudioBufferChunkSize() const
   return 0;
 }
 
-boolean			NewMedia::isAudioTooEmpty() const
+bool			NewMedia::isAudioTooEmpty() const
 {
-  // XXX -- return True if the audio subsystem has fallen below
+  // XXX -- return true if the audio subsystem has fallen below
   // the low water mark of samples.  that is, when the number of
   // samples left to play has fallen low enough that we should
   // start preparing more audio chunks.
-  return False;
+  return false;
 }
 
 void			NewMedia::writeAudioFrames(
@@ -150,10 +150,10 @@ void			NewMedia::writeAudioFrames(
 }
 
 void			NewMedia::audioSleep(
-				boolean checkLowWater, double endTime)
+				bool checkLowWater, double endTime)
 {
   // XXX -- wait for an audio command to appear.  stop waiting
-  // if checkLowWater is True and the audio has drained to the
+  // if checkLowWater is true and the audio has drained to the
   // low water mark.  stop waiting if endTime >= 0.0 and
   // endTime seconds have passed since this method was called.
 }

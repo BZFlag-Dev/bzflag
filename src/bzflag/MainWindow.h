@@ -41,27 +41,27 @@ class MainWindow {
 
     BzfWindow*		getWindow() const { return window; }
 
-    boolean		getQuit() const;
+    bool		getQuit() const;
     int			getOriginX() const;
     int			getOriginY() const;
     int			getWidth() const;
     int			getHeight() const;
     int			getViewHeight() const;
-    boolean		getFullscreen();
-    boolean		getFullView() const;
+    bool		getFullscreen();
+    bool		getFullView() const;
 
     void		setQuit();
     void		setPosition(int x, int y);
     void		setSize(int width, int height);
     void		setMinSize(int width, int height);
-    void		setFullView(boolean);
+    void		setFullView(bool);
     void		setFullscreen();
     void		setNoMouseGrab();
 
     void		setZoomFactor(int);
     void		setQuadrant(Quadrant);
 
-    void		showWindow(boolean = True);
+    void		showWindow(bool = true);
     void		warpMouse();
     void		grabMouse();
     void		ungrabMouse();
@@ -69,7 +69,7 @@ class MainWindow {
     void		resize();
 
     // return true iff there's a joystick available (and it's been initialized)
-    boolean		joystick() const;
+    bool		joystick() const;
 
     // FIXME -- try to get rid of these.  we'd like to receive
     // events instead because it means no round trip to the server
@@ -87,11 +87,11 @@ class MainWindow {
 
   private:
     BzfWindow*		window;
-    boolean		quit;
+    bool		quit;
     Quadrant		quadrant;
-    boolean		isFullscreen;
-    boolean		isFullView;
-    boolean		allowMouseGrab;
+    bool		isFullscreen;
+    bool		isFullView;
+    bool		allowMouseGrab;
     int			zoomFactor;
     int			trueWidth, trueHeight;
     int			xOrigin, yOrigin;
@@ -106,7 +106,7 @@ class MainWindow {
 // MainWindow
 //
 
-inline boolean		MainWindow::getQuit() const
+inline bool		MainWindow::getQuit() const
 {
   return quit;
 }
@@ -136,7 +136,7 @@ inline int		MainWindow::getViewHeight() const
   return viewHeight;
 }
 
-inline boolean		MainWindow::getFullView() const
+inline bool		MainWindow::getFullView() const
 {
   return isFullView;
 }

@@ -87,7 +87,7 @@ World::~World()
 void			World::init()
 {
   flagTexture = new OpenGLTexture;
-  *flagTexture = getTexture("flag", OpenGLTexture::Max, False);
+  *flagTexture = getTexture("flag", OpenGLTexture::Max, false);
 }
 
 void			World::done()
@@ -108,7 +108,7 @@ void			World::setWorld(World* _playingField)
 
 int			World::getTeleportTarget(int source) const
 {
-  assert(source >= 0 && source < 2 * teleporters.getLength());
+  assert(source >= 0 && source < 2 * teleporters.size());
   return teleportTargets[source];
 }
 
@@ -116,7 +116,7 @@ int			World::getTeleporter(const Teleporter* teleporter,
 							int face) const
 {
   // search for teleporter
-  const int count = teleporters.getLength();
+  const int count = teleporters.size();
   for (int i = 0; i < count; i++)
     if (teleporter == &teleporters[i])
       return 2 * i + face;
@@ -125,7 +125,7 @@ int			World::getTeleporter(const Teleporter* teleporter,
 
 const Teleporter*	World::getTeleporter(int source, int& face) const
 {
-  assert(source >= 0 && source < 2 * teleporters.getLength());
+  assert(source >= 0 && source < 2 * teleporters.size());
   face = (source & 1);
   return &teleporters[source / 2];
 }
@@ -135,15 +135,15 @@ EighthDimSceneNode*	World::getInsideSceneNode(const Obstacle* o) const
   if (!o) return NULL;
 
   int i;
-  const int numBases = basesR.getLength();
+  const int numBases = basesR.size();
   for (i = 0; i < numBases; i++)
     if (&(basesR[i]) == o)
       return baseInsideNodes[i];
-  const int numBoxes = boxes.getLength();
+  const int numBoxes = boxes.size();
   for (i = 0; i < numBoxes; i++)
     if (&(boxes[i]) == o)
       return boxInsideNodes[i];
-  const int numPyramids = pyramids.getLength();
+  const int numPyramids = pyramids.size();
   for (i = 0; i < numPyramids; i++)
     if (&(pyramids[i]) == o)
       return pyramidInsideNodes[i];
@@ -175,39 +175,39 @@ TeamColor		World::whoseBase(const float* pos) const
 const Obstacle*		World::inBuilding(const float* pos, float radius) const
 {
   // check boxes
-  BoxBuildingsCIterator boxScan(boxes);
-  while (!boxScan.isDone()) {
-    const BoxBuilding& box = boxScan.getItem();
+  std::vector<BoxBuilding>::const_iterator boxScan = boxes.begin();
+  while (boxScan != boxes.end()) {
+    const BoxBuilding& box = *boxScan;
     if (box.isInside(pos, radius))
       return &box;
-    boxScan.next();
+    boxScan++;
   }
 
   // check pyramids
-  PyramidBuildingsCIterator pyramidScan(pyramids);
-  while (!pyramidScan.isDone()) {
-    const PyramidBuilding& pyramid = pyramidScan.getItem();
+  std::vector<PyramidBuilding>::const_iterator pyramidScan = pyramids.begin();
+  while (pyramidScan != pyramids.end()) {
+    const PyramidBuilding& pyramid = *pyramidScan;
     if (pyramid.isInside(pos, radius))
       return &pyramid;
-    pyramidScan.next();
+    pyramidScan++;
   }
 
   // check bases
-  BaseBuildingsCIterator baseScan(basesR);
-  while(!baseScan.isDone()) {
-    const BaseBuilding &base = baseScan.getItem();
+  std::vector<BaseBuilding>::const_iterator baseScan = basesR.begin();
+  while (baseScan != basesR.end()) {
+    const BaseBuilding &base = *baseScan;
     if(base.isInside(pos, radius))
       return &base;
-    baseScan.next();
+    baseScan++;
   }
 
   // check teleporters
-  TeleportersCIterator teleporterScan(teleporters);
-  while (!teleporterScan.isDone()) {
-    const Teleporter& teleporter = teleporterScan.getItem();
+  std::vector<Teleporter>::const_iterator teleporterScan = teleporters.begin();
+  while (teleporterScan != teleporters.end()) {
+    const Teleporter& teleporter = *teleporterScan;
     if (teleporter.isInside(pos, radius))
       return &teleporter;
-    teleporterScan.next();
+    teleporterScan++;
   }
 
   // nope
@@ -218,65 +218,65 @@ const Obstacle*		World::hitBuilding(const float* pos, float angle,
 						float dx, float dy) const
 {
   // check walls
-  WallObstaclesCIterator wallScan(walls);
-  while (!wallScan.isDone()) {
-    const WallObstacle& wall = wallScan.getItem();
+  std::vector<WallObstacle>::const_iterator wallScan = walls.begin();
+  while (wallScan != walls.end()) {
+    const WallObstacle& wall = *wallScan;
     if (wall.isInside(pos, angle, dx, dy))
       return &wall;
-    wallScan.next();
+    wallScan++;
   }
 
   // check teleporters
-  TeleportersCIterator teleporterScan(teleporters);
-  while (!teleporterScan.isDone()) {
-    const Teleporter& teleporter = teleporterScan.getItem();
+  std::vector<Teleporter>::const_iterator teleporterScan = teleporters.begin();
+  while (teleporterScan != teleporters.end()) {
+    const Teleporter& teleporter = *teleporterScan;
     if (teleporter.isInside(pos, angle, dx, dy))
       return &teleporter;
-    teleporterScan.next();
+    teleporterScan++;
   }
 
   // strike one -- check boxes
-  BoxBuildingsCIterator boxScan(boxes);
-  while (!boxScan.isDone()) {
-    const BoxBuilding& box = boxScan.getItem();
+  std::vector<BoxBuilding>::const_iterator boxScan = boxes.begin();
+  while (boxScan != boxes.end()) {
+    const BoxBuilding& box = *boxScan;
     if (box.isInside(pos, angle, dx, dy))
       return &box;
-    boxScan.next();
+    boxScan++;
   }
 
   // strike two -- check pyramids
-  PyramidBuildingsCIterator pyramidScan(pyramids);
-  while (!pyramidScan.isDone()) {
-    const PyramidBuilding& pyramid = pyramidScan.getItem();
+  std::vector<PyramidBuilding>::const_iterator pyramidScan = pyramids.begin();
+  while (pyramidScan != pyramids.end()) {
+    const PyramidBuilding& pyramid = *pyramidScan;
     if (pyramid.isInside(pos, angle, dx, dy))
       return &pyramid;
-    pyramidScan.next();
+    pyramidScan++;
   }
 
   // strike three -- check bases
-  BaseBuildingsCIterator baseScan(basesR);
-  while(!baseScan.isDone()) {
-    const BaseBuilding &base = baseScan.getItem();
+  std::vector<BaseBuilding>::const_iterator baseScan = basesR.begin();
+  while (baseScan != basesR.end()) {
+    const BaseBuilding &base = *baseScan;
     if(base.isInside(pos, angle, dx, dy))
       return &base;
-    baseScan.next();
+    baseScan++;
   }
   // strike four -- you're out
   return NULL;
 }
 
-boolean			World::crossingTeleporter(const float* pos,
+bool			World::crossingTeleporter(const float* pos,
 					float angle, float dx, float dy,
 					float* plane) const
 {
-  TeleportersCIterator teleporterScan(teleporters);
-  while (!teleporterScan.isDone()) {
-    const Teleporter& teleporter = teleporterScan.getItem();
+  std::vector<Teleporter>::const_iterator teleporterScan = teleporters.begin();
+  while (teleporterScan != teleporters.end()) {
+    const Teleporter& teleporter = *teleporterScan;
     if (teleporter.isCrossing(pos, angle, dx, dy, plane))
-      return True;
-    teleporterScan.next();
+      return true;
+    teleporterScan++;
   }
-  return False;
+  return false;
 }
 
 const Teleporter*	World::crossesTeleporter(const float* oldPos,
@@ -284,12 +284,12 @@ const Teleporter*	World::crossesTeleporter(const float* oldPos,
 						int& face) const
 {
   // check teleporters
-  TeleportersCIterator teleporterScan(teleporters);
-  while (!teleporterScan.isDone()) {
-    const Teleporter& teleporter = teleporterScan.getItem();
+  std::vector<Teleporter>::const_iterator teleporterScan = teleporters.begin();
+  while (teleporterScan != teleporters.end()) {
+    const Teleporter& teleporter = *teleporterScan;
     if (teleporter.hasCrossed(oldPos, newPos, face))
       return &teleporter;
-    teleporterScan.next();
+    teleporterScan++;
   }
 
   // didn't cross
@@ -299,12 +299,12 @@ const Teleporter*	World::crossesTeleporter(const float* oldPos,
 const Teleporter*	World::crossesTeleporter(const Ray& r, int& face) const
 {
   // check teleporters
-  TeleportersCIterator teleporterScan(teleporters);
-  while (!teleporterScan.isDone()) {
-    const Teleporter& teleporter = teleporterScan.getItem();
+  std::vector<Teleporter>::const_iterator teleporterScan = teleporters.begin();
+  while (teleporterScan != teleporters.end()) {
+    const Teleporter& teleporter = *teleporterScan;
     if (teleporter.isTeleported(r, face) > Epsilon)
       return &teleporter;
-    teleporterScan.next();
+    teleporterScan++;
   }
 
   // didn't cross
@@ -315,11 +315,11 @@ float			World::getProximity(const float* p, float r) const
 {
   // get maximum over all teleporters
   float bestProximity = 0.0;
-  TeleportersCIterator teleporterScan(teleporters);
-  while (!teleporterScan.isDone()) {
-    const float proximity = teleporterScan.getItem().getProximity(p, r);
-    if (proximity > bestProximity) bestProximity = proximity;
-    teleporterScan.next();
+  std::vector<Teleporter>::const_iterator teleporterScan = teleporters.begin();
+  while (teleporterScan != teleporters.end()) {
+	const float proximity = teleporterScan->getProximity(p, r);
+	if (proximity > bestProximity) bestProximity = proximity;
+		teleporterScan++;
   }
   return bestProximity;
 }
@@ -345,21 +345,21 @@ void			World::freeInsideNodes()
 {
   // free eighth dimension nodes
   if (boxInsideNodes) {
-    const int numBoxes = boxes.getLength();
+    const int numBoxes = boxes.size();
     for (int i = 0; i < numBoxes; i++)
       delete boxInsideNodes[i];
     delete[] boxInsideNodes;
     boxInsideNodes = NULL;
   }
   if (pyramidInsideNodes) {
-    const int numPyramids = pyramids.getLength();
+    const int numPyramids = pyramids.size();
     for (int i = 0; i < numPyramids; i++)
       delete pyramidInsideNodes[i];
     delete[] pyramidInsideNodes;
     pyramidInsideNodes = NULL;
   }
   if (baseInsideNodes) {
-    const int numBases = basesR.getLength();
+    const int numBases = basesR.size();
     for(int i = 0; i < numBases; i++)
       delete baseInsideNodes[i];
     delete [] baseInsideNodes;
@@ -514,13 +514,13 @@ void			World::updateFlag(int index, float dt)
     for (int i = 0; i < curMaxPlayers; i++)
       if (players[i] && players[i]->getId() == flag.owner) {
 	const float* dir = players[i]->getForward();
-	flagNodes[index]->setBillboard(False);
+	flagNodes[index]->setBillboard(false);
 	flagNodes[index]->turn(atan2f(dir[1], dir[0]));
 	break;
       }
   }
   else {
-    flagNodes[index]->setBillboard(True);
+    flagNodes[index]->setBillboard(true);
   }
 }
 
@@ -598,7 +598,7 @@ static const int	TeleportArrayGranularity = 16;
 WorldBuilder::WorldBuilder() : targetArraySize(TeleportArrayGranularity)
 {
   world = new World;
-  owned = True;
+  owned = true;
   teleportTargets = new int[2 * targetArraySize];
 }
 
@@ -761,7 +761,7 @@ void			WorldBuilder::preGetWorld()
   // prepare inside nodes arrays
   world->freeInsideNodes();
   GLfloat obstacleSize[3];
-  const int numBoxes = world->boxes.getLength();
+  const int numBoxes = world->boxes.size();
   world->boxInsideNodes = new EighthDimSceneNode*[numBoxes];
   for (i = 0; i < numBoxes; i++) {
     const Obstacle& o = world->boxes[i];
@@ -771,7 +771,7 @@ void			WorldBuilder::preGetWorld()
     world->boxInsideNodes[i] = new EighthDBoxSceneNode(o.getPosition(),
 						obstacleSize, o.getRotation());
   }
-  const int numPyramids = world->pyramids.getLength();
+  const int numPyramids = world->pyramids.size();
   world->pyramidInsideNodes = new EighthDimSceneNode*[numPyramids];
   for (i = 0; i < numPyramids; i++) {
     const Obstacle& o = world->pyramids[i];
@@ -781,7 +781,7 @@ void			WorldBuilder::preGetWorld()
     world->pyramidInsideNodes[i] = new EighthDPyrSceneNode(o.getPosition(),
 						obstacleSize, o.getRotation());
   }
-  const int numBases = world->basesR.getLength();
+  const int numBases = world->basesR.size();
   world->baseInsideNodes = new EighthDimSceneNode*[numBases];
   for (i = 0; i < numBases; i++) {
     const Obstacle& o = world->basesR[i];
@@ -795,14 +795,14 @@ void			WorldBuilder::preGetWorld()
   // copy teleporter target list
   if (world->teleportTargets)
     delete[] world->teleportTargets;
-  const int size = 2 * world->teleporters.getLength();
+  const int size = 2 * world->teleporters.size();
   world->teleportTargets = new int[size];
   ::memcpy(world->teleportTargets, teleportTargets, size * sizeof(int));
 }
 
 World*			WorldBuilder::getWorld()
 {
-  owned = False;
+  owned = false;
   preGetWorld();
   return world;
 }
@@ -857,28 +857,28 @@ void			WorldBuilder::setEpochOffset(uint32_t seconds) const
 
 void			WorldBuilder::append(const WallObstacle& wall)
 {
-  world->walls.append(wall);
+  world->walls.push_back(wall);
 }
 
 void			WorldBuilder::append(const BoxBuilding& box)
 {
-  world->boxes.append(box);
+  world->boxes.push_back(box);
 }
 
 void			WorldBuilder::append(const PyramidBuilding& pyramid)
 {
-  world->pyramids.append(pyramid);
+  world->pyramids.push_back(pyramid);
 }
 
 void			WorldBuilder::append(const BaseBuilding& base)
 {
-  world->basesR.append(base);
+  world->basesR.push_back(base);
 }
 
 void			WorldBuilder::append(const Teleporter& teleporter)
 {
   // save telelporter
-  world->teleporters.append(teleporter);
+  world->teleporters.push_back(teleporter);
 }
 
 void			WorldBuilder::setTeleporterTarget(int src, int tgt)

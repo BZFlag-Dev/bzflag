@@ -62,7 +62,7 @@ typedef struct {
 
 static void		sendSound(SoundCommand* s);
 static void		audioLoop(void*);
-static boolean		allocAudioSamples();
+static bool		allocAudioSamples();
 static void		freeAudioSamples(void);
 static int		resampleAudio(const float* in,
 				int frames, int rate, AudioSamples* out);
@@ -166,14 +166,14 @@ void			closeSound(void)
   usingAudio = 0;
 }
 
-boolean			isSoundOpen()
+bool			isSoundOpen()
 {
   return usingAudio != 0;
 }
 
-static boolean		allocAudioSamples()
+static bool		allocAudioSamples()
 {
-  boolean anyFile = False;
+  bool anyFile = false;
 
   for (int i = 0; i < SFX_COUNT; i++) {
     // read it
@@ -181,7 +181,7 @@ static boolean		allocAudioSamples()
     float* samples = PlatformFactory::getMedia()->
 				readSound(soundFiles[i], numFrames, rate);
     if (samples && resampleAudio(samples, numFrames, rate, soundSamples + i))
-      anyFile = True;
+      anyFile = true;
     delete[] samples;
   }
 
@@ -284,7 +284,7 @@ void			speedSoundReceiver(float vx, float vy, float vz)
 }
 
 void			playWorldSound(int soundCode,
-				float x, float y, float z, boolean important)
+				float x, float y, float z, bool important)
 {
   SoundCommand s;
   if (soundSamples[soundCode].length == 0) return;
@@ -364,7 +364,7 @@ int			getSoundVolume()
 
 typedef struct {
   AudioSamples*		samples;		/* event sound effect */
-  boolean		busy;			/* true iff in use */
+  bool		busy;			/* true iff in use */
   long			ptr;			/* current sample */
   double		ptrFracLeft;		/* fractional step ptr */
   double		ptrFracRight;		/* fractional step ptr */
@@ -452,7 +452,7 @@ static int		recalcEventIgnoring(SoundEvent* e)
   float travelTime = (float)(curTime - e->time);
   if (travelTime > e->samples->duration + timeSizeOfWorld) {
     // sound front has passed all points in world
-    e->busy = False;
+    e->busy = false;
     return (e->flags & SEF_IGNORING) ? 0 : -1;
   }
 
@@ -590,7 +590,7 @@ static int		addLocalContribution(SoundEvent* e, long* len)
 
   /* free event if ran out of samples */
   if ((e->ptr += numSamples) == e->samples->length) {
-    e->busy = False;
+    e->busy = false;
     return -1;
   }
 
@@ -666,9 +666,9 @@ static int		addWorldContribution(SoundEvent* e, long* len)
 
     // next sample
     if ((e->ptrFracLeft += sampleStep) >= e->samples->dmlength)
-      fini = True;
+      fini = true;
     if ((e->ptrFracRight += sampleStep) >= e->samples->dmlength)
-      fini = True;
+      fini = true;
   }
 
   // add contribution
@@ -689,9 +689,9 @@ static int		addWorldContribution(SoundEvent* e, long* len)
 
     // next sample
     if ((e->ptrFracLeft += sampleStep) >= e->samples->dmlength)
-      fini = True;
+      fini = true;
     if ((e->ptrFracRight += sampleStep) >= e->samples->dmlength)
-      fini = True;
+      fini = true;
   }
   e->lastLeftAtten = leftAtten;
   e->lastRightAtten = rightAtten;
@@ -893,14 +893,14 @@ static int		findBestLocalSlot()
 // audioLoop() simply generates samples and keeps the audio hw fed
 //
 static BzfMedia*	media = NULL;
-static boolean		usingSameThread = False;
+static bool		usingSameThread = false;
 
-static boolean		audioInnerLoop(boolean noWaiting)
+static bool		audioInnerLoop(bool noWaiting)
 {
     int i, j;
 
     // sleep until audio buffers hit low water mark or new command available
-    media->audioSleep(True, noWaiting ? 0.0 : endTime);
+    media->audioSleep(true, noWaiting ? 0.0 : endTime);
 
     /* get time step */
     prevTime = curTime;
@@ -914,7 +914,7 @@ static boolean		audioInnerLoop(boolean noWaiting)
     while (media->readSoundCommand(&cmd, sizeof(SoundCommand))) {
       switch (cmd.cmd) {
 	case SQC_QUIT:
-	  return True;
+	  return true;
 
 	case SQC_CLEAR:
 	  /* FIXME */
@@ -934,15 +934,15 @@ static boolean		audioInnerLoop(boolean noWaiting)
 	case SQC_SET_VOLUME:
 	  volumeAtten = 0.2f * (float)cmd.code;
 	  if (volumeAtten <= 0.0f) {
-	    mutingOn = True;
+	    mutingOn = true;
 	    volumeAtten = 0.0f;
 	  }
 	  else if (volumeAtten >= 2.0f) {
-	    mutingOn = False;
+	    mutingOn = false;
 	    volumeAtten = 2.0f;
 	  }
 	  else {
-	    mutingOn = False;
+	    mutingOn = false;
 	  }
 	  break;
 
@@ -955,7 +955,7 @@ static boolean		audioInnerLoop(boolean noWaiting)
 	  event->ptr = 0;
 	  event->flags = 0;
 	  event->time = curTime;
-	  event->busy = True;
+	  event->busy = true;
 	  event->lastLeftAtten = event->lastRightAtten = volumeAtten;
 	  portUseCount++;
 	  break;
@@ -982,7 +982,7 @@ static boolean		audioInnerLoop(boolean noWaiting)
 	  event->y = cmd.data[1];
 	  event->z = cmd.data[2];
 	  event->time = curTime;
-	  event->busy = True;
+	  event->busy = true;
 	  /* don't increment use count because we're ignoring the sound */
 	  recalcEventDistance(event);
 	  break;
@@ -1002,7 +1002,7 @@ static boolean		audioInnerLoop(boolean noWaiting)
 	  event->y = cmd.data[1];
 	  event->z = cmd.data[2];
 	  event->time = curTime;
-	  event->busy = True;
+	  event->busy = true;
 	  portUseCount++;
 	  recalcEventDistance(event);
 	  break;
@@ -1045,7 +1045,7 @@ static boolean		audioInnerLoop(boolean noWaiting)
       media->writeAudioFrames(scratch, audioBufferSize >> 1);
     }
 
-    return False;
+    return false;
 }
 
 static void		audioLoop(void*)
@@ -1059,7 +1059,7 @@ static void		audioLoop(void*)
   timeSizeOfWorld = 1.414f * WorldSize / SpeedOfSound;
   for (i = 0; i < MaxEvents; i++) {
     events[i].samples = NULL;
-    events[i].busy = False;
+    events[i].busy = false;
   }
   portUseCount = 0;
   for (i = 0; i < FadeDuration; i += 2) {
@@ -1078,10 +1078,10 @@ static void		audioLoop(void*)
   if (usingSameThread) return;
 
   // loop until requested to stop
-  boolean done = False;
+  bool done = false;
   while (!done) {
-    if (audioInnerLoop(False))
-      done = True;
+    if (audioInnerLoop(false))
+      done = true;
   }
 
   delete[] scratch;
@@ -1090,6 +1090,6 @@ static void		audioLoop(void*)
 void			updateSound()
 {
   if (isSoundOpen() && usingSameThread)
-    audioInnerLoop(True);
+    audioInnerLoop(true);
 }
 // ex: shiftwidth=2 tabstop=8

@@ -23,9 +23,9 @@ const int		NumSlices = 2 * SphereRes;
 const int		NumParts = SphereLowRes * SphereLowRes;
 
 SphereSceneNode::SphereSceneNode(const GLfloat pos[3], GLfloat _radius) :
-				transparent(False),
-				blending(False),
-				lighting(False),
+				transparent(false),
+				blending(false),
+				lighting(false),
 				renderNode(this),
 				parts(NULL)
 {
@@ -54,7 +54,7 @@ void			SphereSceneNode::setColor(
   color[1] = g;
   color[2] = b;
   color[3] = a;
-  const boolean oldTransparent = transparent;
+  const bool oldTransparent = transparent;
   transparent = (color[3] != 1.0f);
   if (oldTransparent != transparent) forceNotifyStyleChange();
 }
@@ -65,7 +65,7 @@ void			SphereSceneNode::setColor(const GLfloat* rgba)
   color[1] = rgba[1];
   color[2] = rgba[2];
   color[3] = rgba[3];
-  const boolean oldTransparent = transparent;
+  const bool oldTransparent = transparent;
   transparent = (color[3] != 1.0f);
   if (oldTransparent != transparent) forceNotifyStyleChange();
 }
@@ -147,7 +147,7 @@ void			SphereSceneNode::addRenderNodes(
 void			SphereSceneNode::addShadowNodes(
 				SceneRenderer& renderer)
 {
-  renderNode.setHighResolution(False);
+  renderNode.setHighResolution(false);
   renderNode.setBaseIndex(0);
   renderer.addShadowNode(&renderNode);
 }
@@ -164,13 +164,13 @@ GLfloat			SphereSceneNode::SphereRenderNode::
 SphereSceneNode::SphereRenderNode::SphereRenderNode(
 				const SphereSceneNode* _sceneNode) :
 				sceneNode(_sceneNode),
-				highResolution(False),
+				highResolution(false),
 				baseIndex(0)
 {
   // initialize geometry if first instance
-  static boolean init = False;
+  static bool init = false;
   if (!init) {
-    init = True;
+    init = true;
 
     // high resolution sphere
     int i, j;
@@ -203,7 +203,7 @@ SphereSceneNode::SphereRenderNode::~SphereRenderNode()
 }
 
 void			SphereSceneNode::SphereRenderNode::
-				setHighResolution(boolean _highResolution)
+				setHighResolution(bool _highResolution)
 {
   highResolution = _highResolution;
 }

@@ -138,7 +138,7 @@ ServerLink::ServerLink(const Address& serverAddress, int port, int number) :
 #if !defined(_WIN32)
   bzSignal(SIGALRM, SIG_PF(timeout));
   alarm(5);
-  const boolean okay = (connect(query, (CNCTType*)&addr, sizeof(addr)) >= 0);
+  const bool okay = (connect(query, (CNCTType*)&addr, sizeof(addr)) >= 0);
   alarm(0);
   bzSignal(SIGALRM, SIG_IGN);
 #else // Connection timeout for Windows
@@ -152,7 +152,7 @@ ServerLink::ServerLink(const Address& serverAddress, int port, int number) :
 	hConnected = CreateEvent(NULL, FALSE, FALSE, "Connected Event");
 
 	hThread=CreateThread(NULL, 0, ThreadConnect, &conn, 0, &ThreadID);
-	const boolean okay = (WaitForSingleObject(hConnected, 5000) == WAIT_OBJECT_0);
+	const bool okay = (WaitForSingleObject(hConnected, 5000) == WAIT_OBJECT_0);
 	if(!okay)
 		TerminateThread(hThread ,1);
 
@@ -318,7 +318,7 @@ void			ServerLink::setServer(ServerLink* _server)
 void			ServerLink::send(uint16_t code, uint16_t len,
 							const void* msg)
 {
-  boolean needForSpeed=false;
+  bool needForSpeed=false;
   if (state != Okay) return;
   char msgbuf[MaxPacketLen];
   void* buf = msgbuf;

@@ -21,11 +21,11 @@
 
 MainWindow::MainWindow(BzfWindow* _window) :
 				window(_window),
-				quit(False),
+				quit(false),
 				quadrant(FullWindow),
-				isFullscreen(False),
-				isFullView(True),
-				allowMouseGrab(True),
+				isFullscreen(false),
+				isFullView(true),
+				allowMouseGrab(true),
 				zoomFactor(1),
 				width(0),
 				minWidth(MinX),
@@ -47,7 +47,7 @@ void			MainWindow::setZoomFactor(int _zoomFactor)
 
 void			MainWindow::setQuit()
 {
-  quit = True;
+  quit = true;
 }
 
 void			MainWindow::setMinSize(int _minWidth, int _minHeight)
@@ -69,7 +69,7 @@ void			MainWindow::setSize(int width, int height)
   resize();
 }
 
-void			MainWindow::showWindow(boolean on)
+void			MainWindow::showWindow(bool on)
 {
   window->showWindow(on);
   if (on) resize();
@@ -101,26 +101,26 @@ void			MainWindow::ungrabMouse()
   if (allowMouseGrab) window->ungrabMouse();
 }
 
-boolean			MainWindow::getFullscreen()
+bool			MainWindow::getFullscreen()
 {
   return isFullscreen;
 }
 
 void			MainWindow::setFullscreen()
 {
-  isFullscreen = True;
+  isFullscreen = true;
   window->setFullscreen();
   resize();
 }
 
-void			MainWindow::setFullView(boolean _isFullView)
+void			MainWindow::setFullView(bool _isFullView)
 {
   isFullView = _isFullView;
 }
 
 void			MainWindow::setNoMouseGrab()
 {
-  allowMouseGrab = False;
+  allowMouseGrab = false;
 }
 
 void			MainWindow::setQuadrant(Quadrant _quadrant)
@@ -216,7 +216,7 @@ void			MainWindow::resizeCB(void* _self)
 }
 
 
-boolean			MainWindow::joystick() const
+bool			MainWindow::joystick() const
 {
   return window->joystick();
 }

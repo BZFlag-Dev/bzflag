@@ -31,11 +31,11 @@ Obstacle::~Obstacle()
   // do nothing
 }
 
-boolean			Obstacle::isCrossing(const float*, float,
+bool			Obstacle::isCrossing(const float*, float,
 						float, float, float*) const
 {
   // never crossing by default
-  return False;
+  return false;
 }
 
 float			Obstacle::getHitNormal(
@@ -87,7 +87,7 @@ float			Obstacle::getHitNormal(
 
   // now do the same with obstacle's corners against moving object.
   // we must transform the building into moving object's space.
-  boolean isObstacle = False;
+  bool isObstacle = false;
   c1 = cosf(oAzimuth);
   s1 = sinf(oAzimuth);
   for (i = 0; i < 4; i++) {
@@ -108,7 +108,7 @@ float			Obstacle::getHitNormal(
     if (side >= 0 && t <= minTime) {
       minTime = t;
       bestSide = side;
-      isObstacle = True;
+      isObstacle = true;
     }
   }
 

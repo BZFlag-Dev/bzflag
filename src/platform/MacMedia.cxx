@@ -16,7 +16,7 @@ MacMedia::MacMedia() {
 
 MacMedia::~MacMedia() {}
 
-double MacMedia::stopwatch(boolean start) { return 0; }
+double MacMedia::stopwatch(bool start) { return 0; }
 
 void   MacMedia::sleep(float   secs ) {}
 
@@ -25,7 +25,7 @@ void   MacMedia::sleep(float   secs ) {}
 #define CHUNK_SIZE  (1024 * 4)
 #define BUFFER_SIZE (CHUNK_SIZE * 8)
 
-boolean MacMedia::openAudio() {
+bool MacMedia::openAudio() {
   buffer = new SInt16 [BUFFER_SIZE];
   rpos = wpos = buffer;
 
@@ -64,11 +64,11 @@ void    MacMedia::closeAudio() {
     free(buffer);
 }
 
-boolean MacMedia::isAudioBrainDead() const {
+bool MacMedia::isAudioBrainDead() const {
   return false;
 }
 
-boolean MacMedia::startAudioThread(void (*proc)(void*), void* data) {
+bool MacMedia::startAudioThread(void (*proc)(void*), void* data) {
   audio_proc = proc;
 
   audio_proc(NULL);
@@ -78,11 +78,11 @@ boolean MacMedia::startAudioThread(void (*proc)(void*), void* data) {
 
 void    MacMedia::stopAudioThread() {}
 
-boolean MacMedia::hasAudioThread() const {
+bool MacMedia::hasAudioThread() const {
   return false;
 }
 
-boolean MacMedia::isAudioTooEmpty () const {
+bool MacMedia::isAudioTooEmpty () const {
   return queued_chunks <= 20;
 }
 
@@ -146,7 +146,7 @@ void MacMedia::writeSoundCommand(const void *data, int length) {
   command_queue.push(temp);
 }
 
-boolean MacMedia::readSoundCommand  (void *data, int length) {
+bool MacMedia::readSoundCommand  (void *data, int length) {
   if (!command_queue.empty()) {
     char *temp = command_queue.front();
     memcpy (data, temp, length);
@@ -170,7 +170,7 @@ int     MacMedia::getAudioBufferChunkSize() const {
   return CHUNK_SIZE;
 }
 
-void    MacMedia::audioSleep(boolean checkLowWater, double maxTime) {
+void    MacMedia::audioSleep(bool checkLowWater, double maxTime) {
 
 }
 // ex: shiftwidth=2 tabstop=8

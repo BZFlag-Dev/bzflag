@@ -28,7 +28,7 @@ class XVisual : public BzfVisual {
 			~XVisual();
 
     void		setLevel(int level);
-    void		setDoubleBuffer(boolean);
+    void		setDoubleBuffer(bool);
     void		setIndex(int minDepth);
     void		setRGBA(int minRed, int minGreen,
 				int minBlue, int minAlpha);
@@ -36,10 +36,10 @@ class XVisual : public BzfVisual {
     void		setStencil(int minDepth);
     void		setAccum(int minRed, int minGreen,
 				int minBlue, int minAlpha);
-    void		setStereo(boolean);
+    void		setStereo(bool);
     void		setMultisample(int minSamples);
 
-    boolean		build();
+    bool		build();
 
     // for other X stuff
     XVisualInfo*	get();
@@ -50,12 +50,12 @@ class XVisual : public BzfVisual {
     void		removeAttribute(int index);
     void		editAttribute(int index, int value);
 
-    boolean		matchRequirements(XVisualInfo*) const;
-    static boolean	visualClassIsBetter(int thisBetter, int thanThis);
+    bool		matchRequirements(XVisualInfo*) const;
+    static bool		visualClassIsBetter(int thisBetter, int thanThis);
 
   private:
     XDisplay::Rep*	display;
-    boolean		multisampleExt;
+    bool		multisampleExt;
     int			attributes[65];
     int			attributeCount;
     XVisualInfo*	visual;

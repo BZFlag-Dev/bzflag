@@ -42,25 +42,25 @@ class RadarRenderer {
 
     void		setShape(int x, int y, int w, int h);
     void		setRange(float range);
-    void		setJammed(boolean = True);
+    void		setJammed(bool = true);
 
-    void		render(SceneRenderer&, boolean blank = False);
+    void		render(SceneRenderer&, bool blank = false);
     void		freeList();
-    void		makeList(boolean, SceneRenderer&);
+    void		makeList(bool, SceneRenderer&);
 
   private:
     // no copying
     RadarRenderer(const RadarRenderer&);
     RadarRenderer&	operator=(const RadarRenderer&);
 
-    boolean		makeNoise();
+    bool		makeNoise();
     void		makeNoiseTexture();
     void		drawShot(const ShotPath*);
     void		drawTank(float x, float y, float z);
     void		drawFlag(float x, float y, float z);
     void		drawFlagOnTank(float x, float y, float z);
 
-    static float	colorScale(const float z, const float h, boolean enhanced);
+    static float	colorScale(const float z, const float h, bool enhanced);
     static float	transScale(const Obstacle& o);
 
     void		doInitContext();
@@ -72,9 +72,9 @@ class RadarRenderer {
     int			w, h;
     float		ps;
     float		range;
-    boolean		blend;
-    boolean		smooth;
-    boolean		jammed;
+    bool		blend;
+    bool		smooth;
+    bool		jammed;
     double		decay;
     GLuint		list;
     GLfloat		teamColor[3];

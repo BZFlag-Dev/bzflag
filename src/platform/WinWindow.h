@@ -27,9 +27,9 @@ class WinWindow : public BzfWindow {
 			WinWindow(const WinDisplay*, WinVisual*);
 			~WinWindow();
 
-    boolean		isValid() const;
+    bool		isValid() const;
 
-    void		showWindow(boolean);
+    void		showWindow(bool);
 
     void		getPosition(int& x, int& y);
     void		getSize(int& width, int& height) const;
@@ -49,7 +49,7 @@ class WinWindow : public BzfWindow {
 
     void		setGamma(float);
     float		getGamma() const;
-    boolean		hasGammaControl() const;
+    bool		hasGammaControl() const;
 
     void		makeCurrent();
     void		swapBuffers();
@@ -60,8 +60,8 @@ class WinWindow : public BzfWindow {
     HWND		getHandle() const;
     LONG		queryNewPalette();
     void		paletteChanged();
-    boolean		activate();
-    boolean		deactivate();
+    bool		activate();
+    bool		deactivate();
     void		onDestroy();
     static WinWindow*	lookupWindow(HWND);
     static void		deactivateAll();
@@ -81,17 +81,17 @@ class WinWindow : public BzfWindow {
   private:
     const WinDisplay*	display;
     WinVisual		visual;
-    boolean		inDestroy;
+    bool		inDestroy;
     HWND		hwnd;
     HWND		hwndChild;
     HGLRC		hRC;
     HDC			hDC;
     HDC			hDCChild;
-    boolean		inactiveDueToDeactivate;
-    boolean		inactiveDueToDeactivateAll;
-    boolean		useColormap;
-    boolean		hasGamma;
-    boolean		has3DFXGamma;
+    bool		inactiveDueToDeactivate;
+    bool		inactiveDueToDeactivateAll;
+    bool		useColormap;
+    bool		hasGamma;
+    bool		has3DFXGamma;
     float		gammaVal;
     WORD		origGammaRamps[6 * 256];
     PIXELFORMATDESCRIPTOR pfd;

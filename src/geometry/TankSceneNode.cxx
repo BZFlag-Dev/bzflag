@@ -32,10 +32,10 @@ const int		TankSceneNode::numLOD = 3;
 int			TankSceneNode::maxLevel = numLOD;
 
 TankSceneNode::TankSceneNode(const GLfloat pos[3], const GLfloat forward[3]) :
-				colorblind(False),
-				hidden(False),
-				invisible(False),
-				clip(False),
+				colorblind(false),
+				hidden(false),
+				invisible(false),
+				clip(false),
 				style(TankRenderNode::Normal),
 				lowRenderNode(this),
 				medRenderNode(this),
@@ -63,7 +63,7 @@ TankSceneNode::~TankSceneNode()
 void			TankSceneNode::setColor(
 				GLfloat r, GLfloat g, GLfloat b, GLfloat a)
 {
-  const boolean oldTransparent = (color[3] != 1.0f);
+  const bool oldTransparent = (color[3] != 1.0f);
   color[0] = r;
   color[1] = g;
   color[2] = b;
@@ -74,7 +74,7 @@ void			TankSceneNode::setColor(
 
 void			TankSceneNode::setColor(const GLfloat* rgba)
 {
-  const boolean oldTransparent = (color[3] != 1.0f);
+  const bool oldTransparent = (color[3] != 1.0f);
   color[0] = rgba[0];
   color[1] = rgba[1];
   color[2] = rgba[2];
@@ -133,7 +133,7 @@ void			TankSceneNode::notifyStyleChange(
   }
   else {
     builder2.resetBlending();
-    builder2.setSmoothing(False);
+    builder2.setSmoothing(false);
   }
   lightsGState = builder2.getState();
 }
@@ -164,9 +164,9 @@ void			TankSceneNode::addRenderNodes(
     const GLfloat d = dx * dx + dy * dy;
     dx += cosf(azimuth * M_PI / 180.0f);
     dy += sinf(azimuth * M_PI / 180.0f);
-    const boolean towards = d < (dx * dx + dy * dy);
+    const bool towards = d < (dx * dx + dy * dy);
     // note: above test should take elevation into account
-    const boolean above = sphere[2] > eye[2];
+    const bool above = sphere[2] > eye[2];
     node->sortOrder(above, towards);
   }
 
@@ -180,7 +180,7 @@ void			TankSceneNode::addShadowNodes(
   renderer.addShadowNode(&shadowRenderNode);
 }
 
-void			TankSceneNode::setColorblind(boolean on)
+void			TankSceneNode::setColorblind(bool on)
 {
   colorblind = on;
 }
@@ -217,10 +217,10 @@ void			TankSceneNode::setExplodeFraction(float t)
 void			TankSceneNode::setClipPlane(const GLfloat* plane)
 {
   if (!plane) {
-    clip = False;
+    clip = false;
   }
   else {
-    clip = True;
+    clip = true;
     clipPlane[0] = GLdouble(plane[0]);
     clipPlane[1] = GLdouble(plane[1]);
     clipPlane[2] = GLdouble(plane[2]);
@@ -228,16 +228,16 @@ void			TankSceneNode::setClipPlane(const GLfloat* plane)
   }
 }
 
-void			TankSceneNode::setHidden(boolean _hidden)
+void			TankSceneNode::setHidden(bool _hidden)
 {
   hidden = _hidden;
-  invisible = False;
+  invisible = false;
 }
 
-void			TankSceneNode::setInvisible(boolean _invisible)
+void			TankSceneNode::setInvisible(bool _invisible)
 {
   invisible = _invisible;
-  hidden = False;
+  hidden = false;
 }
 
 void			TankSceneNode::setMaxLOD(int _maxLevel)
@@ -503,9 +503,9 @@ GLfloat			TankSceneNode::TankRenderNode::normalScale[3];
 TankSceneNode::TankRenderNode::TankRenderNode(
 				const TankSceneNode* _sceneNode) :
 				sceneNode(_sceneNode),
-				isShadow(False),
-				above(False),
-				towards(False)
+				isShadow(false),
+				above(false),
+				towards(false)
 {
   // prepare explosion rotations and translations
   for (int i = 0; i < 5; i++) {
@@ -540,11 +540,11 @@ TankSceneNode::TankRenderNode::~TankRenderNode()
 
 void			TankSceneNode::TankRenderNode::setShadow()
 {
-  isShadow = True;
+  isShadow = true;
 }
 
 void			TankSceneNode::TankRenderNode::sortOrder(
-				boolean _above, boolean _towards)
+				bool _above, bool _towards)
 {
   above = _above;
   towards = _towards;

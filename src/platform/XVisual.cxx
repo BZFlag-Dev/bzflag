@@ -29,8 +29,8 @@ XVisual::~XVisual()
   display->unref();
 }
 
-// NOTE:  to keep searching simple I cheat.  All boolean attributes
-//	are followed by GLX_USE_GL (which is a boolean and ignored)
+// NOTE:  to keep searching simple I cheat.  All bool attributes
+//	are followed by GLX_USE_GL (which is a bool and ignored)
 //	so that interesting attributes always fall on even indices.
 
 void			XVisual::setLevel(int level)
@@ -40,7 +40,7 @@ void			XVisual::setLevel(int level)
   else editAttribute(index, level);
 }
 
-void			XVisual::setDoubleBuffer(boolean on)
+void			XVisual::setDoubleBuffer(bool on)
 {
   int index = findAttribute(GLX_DOUBLEBUFFER);
   if (!on) {
@@ -120,7 +120,7 @@ void			XVisual::setAccum(int minRed, int minGreen,
   else editAttribute(index, minAlpha);
 }
 
-void			XVisual::setStereo(boolean on)
+void			XVisual::setStereo(bool on)
 {
   int index = findAttribute(GLX_STEREO);
   if (!on) {
@@ -170,7 +170,7 @@ void			XVisual::editAttribute(int index, int value)
   attributes[index+1] = value;
 }
 
-boolean			XVisual::build()
+bool			XVisual::build()
 {
   if (!visual && getenv("MESA_RGB_VISUAL") == NULL) {
     // check each available visual looking for the best match.
@@ -260,25 +260,25 @@ boolean			XVisual::build()
   return visual != NULL;
 }
 
-boolean			XVisual::matchRequirements(XVisualInfo* v) const
+bool			XVisual::matchRequirements(XVisualInfo* v) const
 {
   // check RGBA, DOUBLEBUFFER, and STEREO
   int value;
   if (glXGetConfig(display->getDisplay(), v, GLX_RGBA, &value) != 0 ||
 			(findAttribute(GLX_RGBA) != -1) != value)
-    return False;
+    return false;
   if (glXGetConfig(display->getDisplay(), v, GLX_DOUBLEBUFFER, &value) != 0 ||
 			(findAttribute(GLX_DOUBLEBUFFER) != -1) != value)
-    return False;
+    return false;
   if (glXGetConfig(display->getDisplay(), v, GLX_STEREO, &value) != 0 ||
 			(findAttribute(GLX_STEREO) != -1) != value)
-    return False;
+    return false;
 
   // check the rest
   for (int i = 0; i < attributeCount; i += 2) {
     // get value of desired attribute from visual
     if (glXGetConfig(display->getDisplay(), v, attributes[i], &value) != 0)
-      return False;
+      return false;
 
     // compare to desired value
     switch (attributes[i]) {
@@ -290,7 +290,7 @@ boolean			XVisual::matchRequirements(XVisualInfo* v) const
 
       case GLX_LEVEL:
 	if (value != attributes[i + 1])
-	  return False;
+	  return false;
 	break;
 
       case GLX_BUFFER_SIZE:
@@ -308,7 +308,7 @@ boolean			XVisual::matchRequirements(XVisualInfo* v) const
       case GLX_SAMPLES_SGIS:
 #endif
 	if (value < attributes[i + 1])
-	  return False;
+	  return false;
 	break;
 
       default:
@@ -316,44 +316,44 @@ boolean			XVisual::matchRequirements(XVisualInfo* v) const
     }
   }
 
-  return True;
+  return true;
 }
 
-boolean			XVisual::visualClassIsBetter(int a, int b)
+bool			XVisual::visualClassIsBetter(int a, int b)
 {
     // not better if the same
     if (a == b)
-	return False;
+	return false;
 
     // direct color is best
     if (a == DirectColor)
-	return True;
+	return true;
     if (b == DirectColor)
-	return False;
+	return false;
 
     // then pseudo color (because we can adjust it)
     if (a == PseudoColor)
-	return True;
+	return true;
     if (b == PseudoColor)
-	return False;
+	return false;
 
     // then true color
     if (a == TrueColor)
-	return True;
+	return true;
     if (b == TrueColor)
-	return False;
+	return false;
 
     // then static color
     if (a == StaticColor)
-	return True;
+	return true;
     if (b == StaticColor)
-	return False;
+	return false;
 
     // then gray scale
     if (a == GrayScale)
-	return True;
+	return true;
 
-    return False;
+    return false;
 }
 
 XVisualInfo*		XVisual::get()

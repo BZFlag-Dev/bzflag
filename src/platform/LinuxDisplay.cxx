@@ -155,17 +155,17 @@ XDisplayMode::ResInfo**	LinuxDisplayMode::init(XDisplay* _display,
   return resInfo;
 }
 
-boolean			LinuxDisplayMode::set(int index)
+bool			LinuxDisplayMode::set(int index)
 {
-  return doSet(index, True);
+  return doSet(index, true);
 }
 
-boolean			LinuxDisplayMode::setDefault(int index)
+bool			LinuxDisplayMode::setDefault(int index)
 {
-  return doSet(index, False);
+  return doSet(index, false);
 }
 
-boolean			LinuxDisplayMode::doSet(int index, boolean position)
+bool			LinuxDisplayMode::doSet(int index, bool position)
 {
   // ignore attempts to set video format to current format.
   // normally this only happens when restoring the default
@@ -176,7 +176,7 @@ boolean			LinuxDisplayMode::doSet(int index, boolean position)
   // the display to flicker even when the format isn't
   // really changing.
   if (index == lastResolution || numResolutions <= 1)
-    return True;
+    return true;
 
   // deactivate windows before resolution change.  if we don't do this
   // then the app will almost certainly crash in the OpenGL driver.
@@ -197,17 +197,17 @@ boolean			LinuxDisplayMode::doSet(int index, boolean position)
       XF86VidModeSetViewPort(display->getRep()->getDisplay(),
 				display->getRep()->getScreen(), 0, 0);
     }
-    XSync(display->getRep()->getDisplay(), False);
+    XSync(display->getRep()->getDisplay(), false);
     lastResolution = index;
 
     // reactivate previously deactivated window after change
     XWindow::reactivateAll();
-    return True;
+    return true;
   }
 
   // reactivate previously deactivated window after change
   XWindow::reactivateAll();
-  return False;
+  return false;
 }
 
 #endif

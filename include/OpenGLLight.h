@@ -17,11 +17,15 @@
 #ifndef	BZF_OPENGL_LIGHT_H
 #define	BZF_OPENGL_LIGHT_H
 
+#ifdef _WIN32
+#pragma warning( 4: 4786 )
+#endif
+
+#include <vector>
 #include "bzfgl.h"
 #include "common.h"
-#include "AList.h"
 
-BZF_DEFINE_ALIST(OpenGLLightDLStack, GLuint);
+typedef std::vector<GLuint> OpenGLLightDLStack;
 
 class OpenGLLight {
   friend class OpenGLLightCleanup;
@@ -47,7 +51,7 @@ class OpenGLLight {
     void		execute(int index) const;
 
     static GLint	getMaxLights();
-    static void		enableLight(int index, boolean = True); // const
+    static void		enableLight(int index, bool = true); // const
 
   protected:
     void		makeLists();

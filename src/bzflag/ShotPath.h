@@ -59,9 +59,9 @@ class ShotPath {
   public:
     virtual		~ShotPath();
 
-    boolean		isExpiring() const;
-    boolean		isExpired() const;
-    boolean		isReloaded() const;
+    bool		isExpiring() const;
+    bool		isExpired() const;
+    bool		isReloaded() const;
     const PlayerId&	getPlayer() const;
     uint16_t		getShotId() const;
     FlagId		getFlag() const;
@@ -75,10 +75,10 @@ class ShotPath {
     float		checkHit(const BaseLocalPlayer*, float position[3]) const;
     void		setExpiring();
     void		setExpired();
-    boolean		isStoppedByHit() const;
+    bool		isStoppedByHit() const;
     void		boostReloadTime(float dt);
 
-    void		addShot(SceneDatabase*, boolean colorblind);
+    void		addShot(SceneDatabase*, bool colorblind);
 
     void		radarRender() const;
 
@@ -100,8 +100,8 @@ class ShotPath {
     float		reloadTime;		// time to reload
     TimeKeeper		startTime;		// time of firing
     TimeKeeper		currentTime;		// current time
-    boolean		expiring;		// shot has almost terminated
-    boolean		expired;		// shot has terminated
+    bool		expiring;		// shot has almost terminated
+    bool		expired;		// shot has terminated
 };
 
 class LocalShotPath : public ShotPath {
@@ -126,17 +126,17 @@ class RemoteShotPath : public ShotPath {
 // ShotPath
 //
 
-inline boolean		ShotPath::isExpiring() const
+inline bool		ShotPath::isExpiring() const
 {
   return expiring;
 }
 
-inline boolean		ShotPath::isExpired() const
+inline bool		ShotPath::isExpired() const
 {
   return expired;
 }
 
-inline boolean		ShotPath::isReloaded() const
+inline bool		ShotPath::isReloaded() const
 {
   return (currentTime - startTime >= reloadTime);
 }

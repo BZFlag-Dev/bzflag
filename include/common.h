@@ -17,6 +17,9 @@
 #ifndef BZF_COMMON_H
 #define	BZF_COMMON_H
 
+#include <string>
+#include <stdarg.h>
+
 // Might we be BSDish? sys/param.h has BSD defined if so
 #if (defined(__unix__) || defined(unix)) && !defined(USG)
 #include <sys/param.h>
@@ -35,32 +38,6 @@
         #undef TCP_NODELAY
         #undef TCP_MAXSEG
 #endif
-
-// Normally, user types are capitalized but X11 already defines Bool
-// _and_ Boolean.  We don't want to include any X header files here
-// so we have to use lowercase.  Way to go, X.
-//
-// Oh jeez, windows defines boolean and BOOLEAN!  *sigh*  alright,
-// I'll match the type that windows uses which is unsigned char
-// (I was using int).
-//
-// note -- this isn't bool because this predates common availability
-// of compilers that support bool.
-typedef	unsigned char	boolean;
-
-// Boolean constants.  Again X messes us up.  At least this time
-// X uses #define so we can undo its evil effects.  If Xlib.h is
-// included after this file, we'll get the defines and not the
-// booleans.  We could include Xlib.h here to avoid this but that
-// would reduce the portability of this file, and besides it's huge.
-#ifdef False
-#undef False
-#endif
-#ifdef True
-#undef True
-#endif
-const boolean		False = 0;
-const boolean		True = !False;
 
 // some platforms don't have float versions of the math library
 #if defined(_old_linux_) || defined(_MACOSX_) || defined(sun)
@@ -126,7 +103,6 @@ typedef uint_t		uint32_t;
   #include <inttypes.h>
 
 // my own strcasecmp, missing in MSL
-// maybe this should be in BzfString.h ?
   #ifdef __MWERKS__
     #include "strcasecmp.h"
   #endif
@@ -165,12 +141,25 @@ typedef unsigned int	uint32_t;
 
 #endif /* !defined(_WIN32) */
 
+class string_util {
+  public:
+    static std::string string_util::vformat(const char* fmt, va_list args) {
+      // FIXME -- should prevent buffer overflow in all cases
+      // not all platforms support vsnprintf so we'll use vsprintf and a
+      // big temporary buffer and hope for the best.
+      char buffer[8192];
+      vsprintf(buffer, fmt, args);
+      return std::string(buffer);
+    }
+    static std::string string_util::format(const char* fmt, ...) {
+      va_list args;
+      va_start(args, fmt);
+      std::string result = vformat(fmt, args);
+      va_end(args);
+      return result;
+    }
+};
+
 #endif // BZF_COMMON_H
 
-#ifdef False
-#undef False
-#endif
-#ifdef True
-#undef True
-#endif
 // ex: shiftwidth=2 tabstop=8

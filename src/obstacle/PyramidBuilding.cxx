@@ -16,7 +16,7 @@
 #include "TriWallSceneNode.h"
 #include "QuadWallSceneNode.h"
 
-BzfString		PyramidBuilding::typeName("PyramidBuilding");
+std::string		PyramidBuilding::typeName("PyramidBuilding");
 
 PyramidBuilding::PyramidBuilding(const float* p, float a,
 				float w, float b, float h) :
@@ -30,12 +30,12 @@ PyramidBuilding::~PyramidBuilding()
   // do nothing
 }
 
-BzfString		PyramidBuilding::getType() const
+std::string		PyramidBuilding::getType() const
 {
   return typeName;
 }
 
-BzfString		PyramidBuilding::getClassName() // const
+std::string		PyramidBuilding::getClassName() // const
 {
   return typeName;
 }
@@ -64,7 +64,7 @@ void			PyramidBuilding::getNormal(const float* p,
   n[2] = h * getWidth();
 }
 
-boolean			PyramidBuilding::isInside(const float* p,
+bool			PyramidBuilding::isInside(const float* p,
 						float radius) const
 {
   // really rough -- doesn't decrease size with height
@@ -73,7 +73,7 @@ boolean			PyramidBuilding::isInside(const float* p,
 					&& p[2] >= getPosition()[2];
 }
 
-boolean			PyramidBuilding::isInside(const float* p, float a,
+bool			PyramidBuilding::isInside(const float* p, float a,
 						float dx, float dy) const
 {
   const float s = shrinkFactor(p[2]);
@@ -83,15 +83,15 @@ boolean			PyramidBuilding::isInside(const float* p, float a,
 					&& p[2] >= getPosition()[2];
 }
 
-boolean			PyramidBuilding::isCrossing(const float* p, float a,
+bool			PyramidBuilding::isCrossing(const float* p, float a,
 					float dx, float dy, float* plane) const
 {
   // if not inside or contained then not crossing
   if (!isInside(p, a, dx, dy) ||
 	testRectInRect(getPosition(), getRotation(),
 			getWidth(), getBreadth(), p, a, dx, dy))
-    return False;
-  if (!plane) return True;
+    return false;
+  if (!plane) return true;
 
   // it's crossing -- choose which wall is being crossed (this
   // is a guestimate, should really do a careful test).  just
@@ -121,17 +121,17 @@ boolean			PyramidBuilding::isCrossing(const float* p, float a,
   plane[1] *= h * getHeight();
   plane[2] = h * getWidth();
   plane[3] = -(plane[0] * pw[0] + plane[1] * pw[1]);
-  return True;
+  return true;
 }
 
-boolean			PyramidBuilding::getHitNormal(
+bool			PyramidBuilding::getHitNormal(
 				const float* pos1, float,
 				const float*, float,
 				float, float,
 				float* normal) const
 {
   getNormal(pos1, normal);
-  return True;
+  return true;
 }
 
 ObstacleSceneNodeGenerator*	PyramidBuilding::newSceneNodeGenerator() const
@@ -199,7 +199,7 @@ PyramidSceneNodeGenerator::~PyramidSceneNodeGenerator()
 }
 
 WallSceneNode*		PyramidSceneNodeGenerator::getNextNode(
-				float uRepeats, float vRepeats, boolean lod)
+				float uRepeats, float vRepeats, bool lod)
 {
 
 	bool isSquare = false;

@@ -15,7 +15,7 @@
 #include "Intersect.h"
 #include "QuadWallSceneNode.h"
 
-BzfString		BaseBuilding::typeName("BaseBuilding");
+std::string		BaseBuilding::typeName("BaseBuilding");
 
 BaseBuilding::BaseBuilding(const float *p, float rotation,
 	const float *size, int _team) :
@@ -34,12 +34,12 @@ BaseBuilding::~BaseBuilding()
   // do nothing
 }
 
-BzfString		BaseBuilding::getType() const
+std::string		BaseBuilding::getType() const
 {
   return typeName;
 }
 
-BzfString		BaseBuilding::getClassName()
+std::string		BaseBuilding::getClassName()
 {
   return typeName;
 }
@@ -55,14 +55,14 @@ void			BaseBuilding::getNormal(const float *p, float *n) const
   getNormalRect(p, getPosition(), getRotation(), getWidth(), getBreadth(), n);
 }
 
-boolean			BaseBuilding::isInside(const float *p, float radius) const
+bool			BaseBuilding::isInside(const float *p, float radius) const
 {
   return p[2] < getPosition()[2] + getHeight() && testRectCircle(getPosition(), getRotation(),
       					getWidth(), getBreadth(), p, radius)
     					&& p[2] > getPosition()[2];
 }
 
-boolean			BaseBuilding::isInside(const float *p, float angle,
+bool			BaseBuilding::isInside(const float *p, float angle,
 			float dx, float dy) const
 {
   return p[2] < getPosition()[2] + getHeight() && testRectRect(getPosition(), getRotation(),
@@ -71,7 +71,7 @@ boolean			BaseBuilding::isInside(const float *p, float angle,
     					&& p[2] >= getPosition()[2];
 }
 
-boolean			BaseBuilding::isCrossing(const float *p, float angle,
+bool			BaseBuilding::isCrossing(const float *p, float angle,
 			float dx, float dy,
 			float *plane) const
 {
@@ -79,8 +79,8 @@ boolean			BaseBuilding::isCrossing(const float *p, float angle,
   if (!isInside(p, angle, dx, dy) ||
       testRectInRect(getPosition(), getRotation(),
 	getWidth(), getBreadth(), p, angle, dx, dy))
-    return False;
-  if(!plane) return True;
+    return false;
+  if(!plane) return true;
 
   // it's crossing -- choose which wall is being crossed (this
   // is a guestimate, should really do a careful test). Just
@@ -106,10 +106,10 @@ boolean			BaseBuilding::isCrossing(const float *p, float angle,
   // now finish off plane equation
   plane[2] = 0.0;
   plane[3] = -(plane[0] * pw[0] + plane[1] * pw[1]);
-  return True;
+  return true;
 }
 
-boolean			BaseBuilding::getHitNormal(const float *pos1, float azimuth1,
+bool			BaseBuilding::getHitNormal(const float *pos1, float azimuth1,
 			const float *pos2, float azimuth2,
 			float halfWidth, float halfBreadth,
 			float *normal) const
@@ -167,7 +167,7 @@ BaseSceneNodeGenerator::~BaseSceneNodeGenerator()
   // do nothing
 }
 
-WallSceneNode*	BaseSceneNodeGenerator::getNextNode(float uRepeats, float vRepeats, boolean lod)
+WallSceneNode*	BaseSceneNodeGenerator::getNextNode(float uRepeats, float vRepeats, bool lod)
 {
   const GLfloat *pos = base->getPosition();
   if(getNodeNumber() >= 1 && pos[2] == 0) return NULL;

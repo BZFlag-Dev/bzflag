@@ -27,7 +27,7 @@ class FlagSceneNode : public SceneNode {
     void		waveFlag(float dt, float droop);
     void		move(const GLfloat pos[3]);
     void		turn(GLfloat angle);
-    void		setBillboard(boolean billboard);
+    void		setBillboard(bool billboard);
 
     const GLfloat*	getColor() const { return color; }
     void		setColor(GLfloat r, GLfloat g,
@@ -52,13 +52,13 @@ class FlagSceneNode : public SceneNode {
     friend class FlagRenderNode;
 
   private:
-    boolean		billboard;
+    bool		billboard;
     GLfloat		angle;
     float		ripple1, ripple2;
     GLfloat		color[4];
-    boolean		transparent;
-    boolean		blending;
-    boolean		texturing;
+    bool		transparent;
+    bool		blending;
+    bool		texturing;
     OpenGLGState	gstate;
     FlagRenderNode	renderNode;
     static const GLfloat Width;

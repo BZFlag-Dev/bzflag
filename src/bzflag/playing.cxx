@@ -78,12 +78,7 @@ static const char copyright[] = "Copyright (c) 1993 - 2002 Tim Riker";
 #include "Ping.h"
 #include "OpenGLTexture.h"
 
-#include "AList.h"
-BZF_DEFINE_ALIST(ExplosionList, BillboardSceneNode*);
-
 #define MAX_MESSAGE_HISTORY (10)
-BZF_DEFINE_ALIST(MessageHistoryList, BzfString);
-BZF_DEFINE_ALIST(SilenceList, BzfString);
 
 static const float	FlagHelpDuration = 60.0f;
 
@@ -111,15 +106,15 @@ static RemotePlayer**	player = NULL;
 static int		numFlags = 0;
 static JoinGameCallback	joinGameCallback = NULL;
 static void*		joinGameUserData = NULL;
-static boolean		serverError = False;
-static boolean		serverDied = False;
-static boolean		fireButton = False;
-static boolean		restartOnBase = False;
-static boolean		firstLife = False;
-static boolean		showFPS = False;
-static boolean		showDrawTime = False;
-static boolean		pausedByUnmap = False;
-static boolean		unmapped = False;
+static bool		serverError = false;
+static bool		serverDied = false;
+static bool		fireButton = false;
+static bool		restartOnBase = false;
+static bool		firstLife = false;
+static bool		showFPS = false;
+static bool		showDrawTime = false;
+static bool		pausedByUnmap = false;
+static bool		unmapped = false;
 static int		preUnmapFormat = -1;
 static double		epochOffset;
 static double		lastEpochOffset;
@@ -129,27 +124,27 @@ static float		destructCountdown = 0.0f;
 //static float		maxPauseCountdown = 0.0f;
 static float		testVideoFormatTimer = 0.0f;
 static int		testVideoPrevFormat = -1;
-static PlayingCallbackList	playingCallbacks;
-boolean			gameOver = False;
-static boolean		Observer = False;
+static std::vector<PlayingCallbackItem>	playingCallbacks;
+bool			gameOver = false;
+static bool		Observer = false;
 static OpenGLTexture*	tankTexture = NULL;
-static ExplosionList	explosions;
-static ExplosionList	prototypeExplosions;
+static std::vector<BillboardSceneNode*>	explosions;
+static std::vector<BillboardSceneNode*>	prototypeExplosions;
 static int		savedVolume = -1;
-static boolean		grabMouseAlways = False;
+static bool		grabMouseAlways = false;
 
 static char		messageMessage[PlayerIdPLen + 2 + MessageLen];
 
-static MessageHistoryList	messageHistory;
+static std::vector<std::string>	messageHistory;
 static int		messageHistoryIndex = 0;
-static SilenceList	silencePlayers;
+static std::vector<std::string>	silencePlayers;
 
 static void		restartPlaying();
 static void		setTarget();
 static void		handleFlagDropped(Player* tank);
 static void		handlePlayerMessage(uint16_t, uint16_t, void*);
 static Player*		getPlayerByName( const char* name );
-static void		addMessage(const Player* player, const BzfString& msg, const GLfloat* color = NULL);
+static void		addMessage(const Player* player, const std::string& msg, const GLfloat* color = NULL);
 extern void		dumpResources(BzfDisplay*, SceneRenderer&);
 
 enum BlowedUpReason {
@@ -168,7 +163,7 @@ static const char*	blowedUpMessage[] = {
 			  "Teammate hit with Genocide by ",
 			  "Tank Self Destructed",
 			};
-static boolean		gotBlowedUp(BaseLocalPlayer* tank,
+static bool		gotBlowedUp(BaseLocalPlayer* tank,
 					BlowedUpReason reason,
 					const PlayerId& killer,
 					int shotId = -1);
@@ -183,8 +178,8 @@ static int		numRobots = 0;
 extern struct tm	userTime;
 static double		userTimeEpochOffset;
 
-StartupInfo::StartupInfo() : hasConfiguration(False),
-				autoConnect(False),
+StartupInfo::StartupInfo() : hasConfiguration(false),
+				autoConnect(false),
 				serverPort(ServerPort),
 				ttl(DefaultTTL),
 				team(RogueTeam),
@@ -196,19 +191,19 @@ StartupInfo::StartupInfo() : hasConfiguration(False),
   strcpy(callsign, "");
   strcpy(email, "");
   joystickName = "joystick";
-  joystick = False;
+  joystick = false;
 }
 
 //
 // should we grab the mouse?
 //
 
-static void		setGrabMouse(boolean grab)
+static void		setGrabMouse(bool grab)
 {
   grabMouseAlways = grab;
 }
 
-static boolean		shouldGrabMouse()
+static bool		shouldGrabMouse()
 {
   return grabMouseAlways && !unmapped &&
 			(myTank == NULL || !myTank->isPaused());
@@ -253,7 +248,7 @@ BzfKeyMap&			getBzfKeyMap()
   return keymap;
 }
 
-boolean			setVideoFormat(int index, boolean test)
+bool			setVideoFormat(int index, bool test)
 {
 #if defined(_WIN32)
   // give windows extra time to test format (context reloading takes a while)
@@ -264,14 +259,14 @@ boolean			setVideoFormat(int index, boolean test)
 
   // ignore bad formats or when the format test timer is running
   if (testVideoFormatTimer != 0.0f || !display->isValidResolution(index))
-    return False;
+    return false;
 
   // ignore if no change
-  if (display->getResolution() == index) return True;
+  if (display->getResolution() == index) return true;
 
   // change it
   testVideoPrevFormat = display->getResolution();
-  if (!display->setResolution(index)) return False;
+  if (!display->setResolution(index)) return false;
 
   // handle resize
   mainWindow->setFullscreen();
@@ -279,7 +274,7 @@ boolean			setVideoFormat(int index, boolean test)
   mainWindow->warpMouse();
   if (test) testVideoFormatTimer = testDuration;
   else if (shouldGrabMouse()) mainWindow->grabMouse();
-  return True;
+  return true;
 }
 
 void			addPlayingCallback(PlayingCallback cb, void* data)
@@ -287,24 +282,24 @@ void			addPlayingCallback(PlayingCallback cb, void* data)
   PlayingCallbackItem item;
   item.cb = cb;
   item.data = data;
-  playingCallbacks.append(item);
+  playingCallbacks.push_back(item);
 }
 
 void			removePlayingCallback(PlayingCallback _cb, void* data)
 {
-  const int count = playingCallbacks.getLength();
-  for (int i = 0; i < count; i++) {
-    const PlayingCallbackItem& cb = playingCallbacks[i];
-    if (cb.cb == _cb && cb.data == data) {
-      playingCallbacks.remove(i);
+  std::vector<PlayingCallbackItem>::iterator it = playingCallbacks.begin();
+  while(it != playingCallbacks.end()) {
+    if(it->cb == _cb && it->data == data) {
+      playingCallbacks.erase(it);
       break;
     }
+    it++;
   }
 }
 
 static void		callPlayingCallbacks()
 {
-  const int count = playingCallbacks.getLength();
+  const int count = playingCallbacks.size();
   for (int i = 0; i < count; i++) {
     const PlayingCallbackItem& cb = playingCallbacks[i];
     (*cb.cb)(cb.data);
@@ -321,7 +316,7 @@ void			joinGame(JoinGameCallback cb, void* data)
 // handle joining status when server provided on command line
 //
 
-void			joinGameHandler(boolean okay, void*)
+void			joinGameHandler(bool okay, void*)
 {
   if (!okay) printError("Connection failed.");
 }
@@ -354,8 +349,8 @@ static void		suicide(int sig)
 static void		hangup(int sig)
 {
   bzSignal(sig, SIG_PF(hangup));
-  serverDied = True;
-  serverError = True;
+  serverDied = true;
+  serverError = true;
 }
 
 //
@@ -364,13 +359,13 @@ static void		hangup(int sig)
 
 class ComposeDefaultKey : public HUDuiDefaultKey {
   public:
-    boolean		keyPress(const BzfKeyEvent&);
-    boolean		keyRelease(const BzfKeyEvent&);
+    bool		keyPress(const BzfKeyEvent&);
+    bool		keyRelease(const BzfKeyEvent&);
 };
 
-boolean			ComposeDefaultKey::keyPress(const BzfKeyEvent& key)
+bool			ComposeDefaultKey::keyPress(const BzfKeyEvent& key)
 {
-  boolean sendIt;
+  bool sendIt;
   if (keymap.isMappedTo(BzfKeyMap::Jump, key)) {
     // jump while typing
     myTank->jump();
@@ -379,34 +374,34 @@ boolean			ComposeDefaultKey::keyPress(const BzfKeyEvent& key)
   if (!myTank->isKeyboardMoving()) {
     if ((key.button == BzfKeyEvent::Up) ||
 	(key.button == BzfKeyEvent::Down))
-      return True;
+      return true;
   }
 
   switch (key.ascii) {
     case 3:	// ^C
     case 27:	// escape
 //    case 127:	// delete
-      sendIt = False;			// finished composing -- don't send
+      sendIt = false;			// finished composing -- don't send
       break;
 
     case 4:	// ^D
     case 13:	// return
-      sendIt = True;
+      sendIt = true;
       break;
 
     default:
-      return False;
+      return false;
   }
 
   if (sendIt) {
-    BzfString message = hud->getComposeString();
-    if (message.getLength() > 0) {
-      const char* silence = message.getString();
+    std::string message = hud->getComposeString();
+    if (message.length() > 0) {
+      const char* silence = message.c_str();
       if (strncmp(silence, "SILENCE", 7) == 0) {
 	Player *loudmouth = getPlayerByName(silence + 8);
 	if (loudmouth) {
-	  silencePlayers.append(silence + 8);
-	  BzfString message = "Silenced ";
+	  silencePlayers.push_back(silence + 8);
+	  std::string message = "Silenced ";
 	  message += (silence + 8);
 	  addMessage(NULL, message);
 	}
@@ -414,34 +409,40 @@ boolean			ComposeDefaultKey::keyPress(const BzfKeyEvent& key)
       else if (strncmp(silence, "UNSILENCE", 9) == 0) {
 	Player *loudmouth = getPlayerByName(silence + 10);
 	if (loudmouth) {
-	  for (int i = 0; i < silencePlayers.getLength(); i++) {
-	    if (strcmp(silencePlayers[i], silence + 10) == 0) {
-	      silencePlayers.remove(i);
-	      BzfString message = "Unsilenced ";
-	      message += (silence + 10);
-	      addMessage(NULL, message);
-	      break;
-	    }
-	  }
+	  std::vector<std::string>::iterator it = silencePlayers.begin();
+	  for (; it != silencePlayers.end(); it++) {
+            if (*it == silence + 10) {
+            silencePlayers.erase(it);
+            std::string message = "Unsilenced ";
+            message += (silence + 10);
+            addMessage(NULL, message);
+            break;
+            }
+          }
 	}
       }
       else {
-	int i, mhLen = messageHistory.getLength();
+	int i, mhLen = messageHistory.size();
 	for (i = 0; i < mhLen; i++) {
 	  if (messageHistory[i] == message) {
-	    messageHistory.rotate( i, 0 );
+	    std::string tmp = messageHistory[0];
+	    messageHistory.insert(messageHistory.begin(), messageHistory[messageHistory.size() - 1]);
+	    messageHistory.pop_back();
 	    break;
 	  }
 	}
 	if (i == mhLen) {
-	  if (mhLen >= MAX_MESSAGE_HISTORY)
-	    messageHistory.remove( mhLen - 1 );
-	  messageHistory.prepend( message );
+	  if (mhLen >= MAX_MESSAGE_HISTORY) {
+	    std::vector<std::string>::iterator it = messageHistory.begin();
+	    for(int j = 0; j < mhLen - 1; j++) it++;
+	    messageHistory.erase(it);
+	  }
+	  messageHistory.insert(messageHistory.begin(), message);
 	}
 
 	char messageBuffer[MessageLen];
 	memset(messageBuffer, 0, MessageLen);
-	strncpy(messageBuffer, message, MessageLen);
+	strncpy(messageBuffer, message.c_str(), MessageLen);
 	nboPackString(messageMessage + PlayerIdPLen + 2, messageBuffer, MessageLen);
 	serverLink->send(MsgMessage, sizeof(messageMessage), messageMessage);
       }
@@ -449,22 +450,22 @@ boolean			ComposeDefaultKey::keyPress(const BzfKeyEvent& key)
   }
 
   messageHistoryIndex = 0;
-  hud->setComposing(BzfString());
+  hud->setComposing(std::string());
   HUDui::setDefaultKey(NULL);
-  return True;
+  return true;
 }
 
-boolean			ComposeDefaultKey::keyRelease(const BzfKeyEvent& key)
+bool			ComposeDefaultKey::keyRelease(const BzfKeyEvent& key)
 {
   if (!myTank->isKeyboardMoving()) {
     if (key.button == BzfKeyEvent::Up) {
-      if (messageHistoryIndex < messageHistory.getLength()) {
+      if (messageHistoryIndex < messageHistory.size()) {
 	hud->setComposeString(messageHistory[messageHistoryIndex]);
 	messageHistoryIndex++;
       }
       else
-	hud->setComposeString(BzfString());
-      return True;
+	hud->setComposeString(std::string());
+      return true;
     }
     else if (key.button == BzfKeyEvent::Down) {
       if (messageHistoryIndex > 0){
@@ -472,10 +473,10 @@ boolean			ComposeDefaultKey::keyRelease(const BzfKeyEvent& key)
 	hud->setComposeString(messageHistory[messageHistoryIndex]);
       }
       else
-	hud->setComposeString(BzfString());
-      return True;
+	hud->setComposeString(std::string());
+      return true;
     }
-    else if ((key.shift == BzfKeyEvent::ShiftKey || hud->getComposeString().isNull()) &&
+    else if ((key.shift == BzfKeyEvent::ShiftKey || (hud->getComposeString().length() == 0)) &&
              (key.button == BzfKeyEvent::Left || key.button == BzfKeyEvent::Right)) {
       const Player *recipient = myTank->getRecipient();
       if(!recipient) {
@@ -530,12 +531,12 @@ boolean			ComposeDefaultKey::keyRelease(const BzfKeyEvent& key)
 	void* buf = messageMessage;
 	buf = recipient->getId().pack(buf);
 	buf = nboPackUShort( buf, uint16_t(RogueTeam));
-	BzfString composePrompt = "Send to ";
+	std::string composePrompt = "Send to ";
 	composePrompt += recipient->getCallSign();
 	composePrompt += ": ";
 	hud->setComposing(composePrompt);
       }
-      return False;
+      return false;
     }
   }
   return keyPress(key);
@@ -550,9 +551,9 @@ boolean			ComposeDefaultKey::keyRelease(const BzfKeyEvent& key)
 #define SNAPPING
 #endif
 #if defined(FREEZING)
-static boolean		motionFreeze = False;
+static bool		motionFreeze = false;
 #endif
-static boolean		roaming = False;
+static bool		roaming = false;
 enum roamingView {
   roamViewFree = 0,
   roamViewTrack,
@@ -573,28 +574,28 @@ static void setRoamingLabel()
   if (player[roamTrackTank]) {
     switch (roamView) {
       case roamViewTrack:
-	hud->setRoamingLabel(BzfString("Tracking ") +
+	hud->setRoamingLabel(std::string("Tracking ") +
 			     player[roamTrackTank]->getCallSign());
 	break;
 
       case roamViewFollow:
-	hud->setRoamingLabel(BzfString("Following ") +
+	hud->setRoamingLabel(std::string("Following ") +
 			     player[roamTrackTank]->getCallSign());
 	break;
 
       case roamViewFP:
-	hud->setRoamingLabel(BzfString("Driving with ") +
+	hud->setRoamingLabel(std::string("Driving with ") +
 			     player[roamTrackTank]->getCallSign());
 	break;
 
       case roamViewFlag:
-	hud->setRoamingLabel(BzfString("Tracking ") +
+	hud->setRoamingLabel(std::string("Tracking ") +
 			     Flag::getName(world->getFlag(roamTrackFlag).id) +
 			     " Flag");
 	break;
 
       default:
-	hud->setRoamingLabel(BzfString("Roaming"));
+	hud->setRoamingLabel(std::string("Roaming"));
 	break;
     }
   }
@@ -612,28 +613,28 @@ static void		showKeyboardStatus()
     controlPanel->addMessage("Mouse movement");
 }
 
-static boolean		doKeyCommon(const BzfKeyEvent& key, boolean pressed)
+static bool		doKeyCommon(const BzfKeyEvent& key, bool pressed)
 {
   if (keymap.isMappedTo(BzfKeyMap::TimeForward, key)) {
     // plus five minutes
     if (pressed) clockAdjust += 5.0f * 60.0f;
-    return True;
+    return true;
   }
 
   else if (keymap.isMappedTo(BzfKeyMap::TimeBackward, key)) {
     // minus five minutes
     if (pressed) clockAdjust -= 5.0f * 60.0f;
-    return True;
+    return true;
   }
 
   else if (key.ascii == 27) {
     if (pressed) HUDDialogStack::get()->push(mainMenu);
-    return True;
+    return true;
   }
 
   else if (keymap.isMappedTo(BzfKeyMap::Quit, key)) {
     getMainWindow()->setQuit();
-    return True;
+    return true;
   }
 
   else {
@@ -647,7 +648,7 @@ static boolean		doKeyCommon(const BzfKeyEvent& key, boolean pressed)
 	    showFPS = !showFPS;
 	    if (!showFPS) hud->setFPS(-1.0);
 	  }
-	  return True;
+	  return true;
 	}
 	break;
 
@@ -659,7 +660,7 @@ static boolean		doKeyCommon(const BzfKeyEvent& key, boolean pressed)
 	    showDrawTime = !showDrawTime;
 	    if (!showDrawTime) hud->setDrawTime(-1.0);
 	  }
-	  return True;
+	  return true;
 	}
 	break;
 
@@ -689,7 +690,7 @@ static boolean		doKeyCommon(const BzfKeyEvent& key, boolean pressed)
 	// plus 30 seconds
 	if (keymap.isMapped(key.ascii) == BzfKeyMap::LastKey) {
 	  if (pressed) clockAdjust += 30.0f;
-	  return True;
+	  return true;
 	}
 	break;
 
@@ -698,16 +699,16 @@ static boolean		doKeyCommon(const BzfKeyEvent& key, boolean pressed)
 	// minus 30 seconds
 	if (keymap.isMapped(key.ascii) == BzfKeyMap::LastKey) {
 	  if (pressed) clockAdjust -= 30.0f;
-	  return True;
+	  return true;
 	}
 	break;
     }
   }
 
-  return False;
+  return false;
 }
 
-static void		doKeyNotPlaying(const BzfKeyEvent& key, boolean pressed)
+static void		doKeyNotPlaying(const BzfKeyEvent& key, bool pressed)
 {
   // handle key
   if (HUDDialogStack::get()->isActive()) {
@@ -719,7 +720,7 @@ static void		doKeyNotPlaying(const BzfKeyEvent& key, boolean pressed)
   }
 }
 
-static void		doKeyPlaying(const BzfKeyEvent& key, boolean pressed)
+static void		doKeyPlaying(const BzfKeyEvent& key, bool pressed)
 {
   static ComposeDefaultKey composeKeyHandler;
 
@@ -985,7 +986,7 @@ static void		doKeyPlaying(const BzfKeyEvent& key, boolean pressed)
 	   keymap.isMappedTo(BzfKeyMap::SendRecipient, key)) {
     // start composing a message
     if (pressed) {
-      BzfString composePrompt;
+      std::string composePrompt;
       if (keymap.isMappedTo(BzfKeyMap::SendAll, key)) {
 	void* buf = messageMessage;
 	buf = nboPackUInt(buf, 0);
@@ -1099,7 +1100,7 @@ static void		doKeyPlaying(const BzfKeyEvent& key, boolean pressed)
     if (pressed && !pausedByUnmap) {
       if (myTank->isAlive()) {
 	if (myTank->isPaused()) {
-	  myTank->setPause(False);
+	  myTank->setPause(false);
 	  controlPanel->addMessage("Resumed");
 
 	  // restore the sound
@@ -1114,13 +1115,13 @@ static void		doKeyPlaying(const BzfKeyEvent& key, boolean pressed)
 	}
 	else if (pauseCountdown > 0.0f) {
 	  pauseCountdown = 0.0f;
-	  hud->setAlert(1, "Pause cancelled", 1.5f, True);
+	  hud->setAlert(1, "Pause cancelled", 1.5f, true);
 	}
 	else {
 	  pauseCountdown = 5.0f;
 	  char msgBuf[40];
 	  sprintf(msgBuf, "Pausing in %d", (int)(pauseCountdown + 0.99f));
-	  hud->setAlert(1, msgBuf, 1.0f, False);
+	  hud->setAlert(1, msgBuf, 1.0f, false);
 	}
       }
     }
@@ -1131,13 +1132,13 @@ static void		doKeyPlaying(const BzfKeyEvent& key, boolean pressed)
       if (myTank->isAlive()) {
 	if (destructCountdown > 0.0f) {
 	  destructCountdown = 0.0f;
-	  hud->setAlert(1, "Self Destruct cancelled", 1.5f, True);
+	  hud->setAlert(1, "Self Destruct cancelled", 1.5f, true);
 	}
 	else {
 	  destructCountdown = 5.0f;
 	  char msgBuf[40];
 	  sprintf(msgBuf, "Self Destructing in %d", (int)(destructCountdown + 0.99f));
-	  hud->setAlert(1, msgBuf, 1.0f, False);
+	  hud->setAlert(1, msgBuf, 1.0f, false);
 	}
       }
     }
@@ -1167,7 +1168,7 @@ static void		doKeyPlaying(const BzfKeyEvent& key, boolean pressed)
 	char messageBuffer[MessageLen];
 	memset(messageBuffer, 0, MessageLen);
 	strncpy(messageBuffer,
-		resources->getValue(name).getString(),
+		resources->getValue(name).c_str(),
 		MessageLen);
 	nboPackString(messageMessage + PlayerIdPLen + 2,
 		      messageBuffer, MessageLen);
@@ -1188,7 +1189,7 @@ static void		doKeyPlaying(const BzfKeyEvent& key, boolean pressed)
       case BzfKeyEvent::Right:
       case BzfKeyEvent::Up:
       case BzfKeyEvent::Down:
-	myTank->setKeyboardMoving(True);
+	myTank->setKeyboardMoving(true);
 	showKeyboardStatus();
 	break;
       }
@@ -1197,7 +1198,7 @@ static void		doKeyPlaying(const BzfKeyEvent& key, boolean pressed)
   }
 }
 
-static float getKeyValue(boolean pressed)
+static float getKeyValue(bool pressed)
 {
   if (pressed)
     return 1;
@@ -1331,10 +1332,10 @@ static void		doEvent(BzfDisplay* display)
       // is uniconified.  if the player was paused because of an unmap
       // then resume.
       if (pausedByUnmap) {
-	pausedByUnmap = False;
+	pausedByUnmap = false;
 	pauseCountdown = 0.0f;
 	if (myTank && myTank->isAlive() && myTank->isPaused()) {
-	  myTank->setPause(False);
+	  myTank->setPause(false);
 	  controlPanel->addMessage("Resumed");
 	}
       }
@@ -1353,7 +1354,7 @@ static void		doEvent(BzfDisplay* display)
 	savedVolume = -1;
       }
 
-      unmapped = False;
+      unmapped = false;
       if (shouldGrabMouse())
 	mainWindow->grabMouse();
       break;
@@ -1369,7 +1370,7 @@ static void		doEvent(BzfDisplay* display)
 	pauseCountdown = 5.0f;
 
 	// set this even though we haven't really paused yet
-	pausedByUnmap = True;
+	pausedByUnmap = true;
       }
 
       // ungrab the mouse if we're running full screen
@@ -1387,27 +1388,27 @@ static void		doEvent(BzfDisplay* display)
 	setSoundVolume(0);
       }
 
-      unmapped = True;
+      unmapped = true;
       mainWindow->ungrabMouse();
       break;
 
     case BzfEvent::KeyUp:
       if (!myTank)
-	doKeyNotPlaying(event.keyDown, False);
+	doKeyNotPlaying(event.keyDown, false);
       else
-	doKeyPlaying(event.keyDown, False);
+	doKeyPlaying(event.keyDown, false);
       break;
 
     case BzfEvent::KeyDown:
       if (!myTank)
-	doKeyNotPlaying(event.keyUp, True);
+	doKeyNotPlaying(event.keyUp, true);
       else
-	doKeyPlaying(event.keyUp, True);
+	doKeyPlaying(event.keyUp, true);
       break;
 
     case BzfEvent::MouseMove:
       if (myTank && myTank->isAlive() && myTank->isKeyboardMoving()) {
-	myTank->setKeyboardMoving(False);
+	myTank->setKeyboardMoving(false);
 	showKeyboardStatus();
       }
       break;
@@ -1489,10 +1490,10 @@ static ServerLink*	lookupServer(const Player* player)
 }
 
 static void		addMessage(const Player* player,
-				const BzfString& msg,
+				const std::string& msg,
 				const GLfloat* color)
 {
-  BzfString fullMessage;
+  std::string fullMessage;
   if (player) {
     fullMessage += player->getCallSign();
 #ifndef BWSUPPORT
@@ -1527,40 +1528,40 @@ static void		updateHighScores()
   /* check scores to see if my team and/or have the high score.  change
    * `>= bestScore' to `> bestScore' if you want to share the number
    * one spot. */
-  boolean anyPlayers = False;
+  bool anyPlayers = false;
   int i;
   for (i = 0; i < curMaxPlayers; i++)
     if (player[i]) {
-      anyPlayers = True;
+      anyPlayers = true;
       break;
     }
 #ifdef ROBOT
   if (!anyPlayers) {
     for (i = 0; i < numRobots; i++)
       if (robots[i]) {
-	anyPlayers = True;
+	anyPlayers = true;
 	break;
       }
   }
 #endif
   if (!anyPlayers) {
-    hud->setPlayerHasHighScore(False);
-    hud->setTeamHasHighScore(False);
+    hud->setPlayerHasHighScore(false);
+    hud->setTeamHasHighScore(false);
     return;
   }
 
-  boolean haveBest = True;
+  bool haveBest = true;
   int bestScore = myTank ? myTank->getScore() : 0;
   for (i = 0; i < curMaxPlayers; i++)
     if (player[i] && player[i]->getScore() >= bestScore) {
-      haveBest = False;
+      haveBest = false;
       break;
     }
 #ifdef ROBOT
   if (haveBest) {
     for (i = 0; i < numRobots; i++)
       if (robots[i] && robots[i]->getScore() >= bestScore) {
-	haveBest = False;
+	haveBest = false;
 	break;
       }
   }
@@ -1570,19 +1571,19 @@ static void		updateHighScores()
   if (myTank && myTank->getTeam() != RogueTeam) {
     const Team& myTeam = World::getWorld()->getTeam(int(myTank->getTeam()));
     bestScore = myTeam.won - myTeam.lost;
-    haveBest = True;
+    haveBest = true;
     for (i = 0; i < NumTeams; i++) {
       if (i == int(myTank->getTeam())) continue;
       const Team& team = World::getWorld()->getTeam(i);
       if (team.activeSize > 0 && team.won - team.lost >= bestScore) {
-	haveBest = False;
+	haveBest = false;
 	break;
       }
     }
     hud->setTeamHasHighScore(haveBest);
   }
   else {
-    hud->setTeamHasHighScore(False);
+    hud->setTeamHasHighScore(false);
   }
 }
 
@@ -1645,7 +1646,7 @@ static Player*		addPlayer(const PlayerId& id, void* msg,
   if (i == maxPlayers) {
     // if this happens the server has screwed up
     printError("Server error when adding player");
-    serverError = True;
+    serverError = true;
     return NULL;
   }
 
@@ -1660,7 +1661,7 @@ static Player*		addPlayer(const PlayerId& id, void* msg,
   }
 
   if (showMessage) {
-    BzfString message("joining as a");
+    std::string message("joining as a");
     switch (PlayerType(type)) {
       case TankPlayer:
 	message += " tank";
@@ -1676,7 +1677,7 @@ static Player*		addPlayer(const PlayerId& id, void* msg,
 	break;
     }
     if (!player[i]) {
-      BzfString name(callsign);
+      std::string name(callsign);
       name += ": ";
       name += message;
       message = name;
@@ -1695,10 +1696,10 @@ static Player*		addPlayer(const PlayerId& id, void* msg,
   return player[i];
 }
 
-static void		handleServerMessage(boolean human, uint16_t code,
+static void		handleServerMessage(bool human, uint16_t code,
 						uint16_t, void* msg)
 {
-  boolean checkScores = False;
+  bool checkScores = false;
   switch (code) {
 
     case MsgUDPLinkRequest:
@@ -1710,7 +1711,7 @@ static void		handleServerMessage(boolean human, uint16_t code,
 
     case MsgSuperKill:
       printError("Server forced a disconnect");
-      serverError = True;
+      serverError = true;
       break;
 
     case MsgTimeUpdate: {
@@ -1718,10 +1719,10 @@ static void		handleServerMessage(boolean human, uint16_t code,
       msg = nboUnpackUShort(msg, timeLeft);
       hud->setTimeLeft(timeLeft);
       if (timeLeft == 0) {
-	gameOver = True;
+	gameOver = true;
 	myTank->explodeTank();
 	controlPanel->addMessage("Time Expired");
-	hud->setAlert(0, "Time Expired", 10.0f, True);
+	hud->setAlert(0, "Time Expired", 10.0f, true);
 #ifdef ROBOT
 	for (int i = 0; i < numRobots; i++)
 	  robots[i]->explodeTank();
@@ -1739,7 +1740,7 @@ static void		handleServerMessage(boolean human, uint16_t code,
       Player* player = lookupPlayer(id);
 
       // make a message
-      BzfString msg;
+      std::string msg;
       if (team == (uint16_t)NoTeam) {
 	// a player won
 	if (player) {
@@ -1758,11 +1759,11 @@ static void		handleServerMessage(boolean human, uint16_t code,
       }
       msg += " won the game";
 
-      gameOver = True;
+      gameOver = true;
       hud->setTimeLeft(-1);
       myTank->explodeTank();
       controlPanel->addMessage(msg);
-      hud->setAlert(0, msg, 10.0f, True);
+      hud->setAlert(0, msg.c_str(), 10.0f, true);
 #ifdef ROBOT
       for (int i = 0; i < numRobots; i++)
 	robots[i]->explodeTank();
@@ -1789,9 +1790,9 @@ static void		handleServerMessage(boolean human, uint16_t code,
       PlayerId id;
       msg = id.unpack(msg);
       if (id == myTank->getId()) break;		// that's odd -- it's me!
-      addPlayer(id, msg, True);
+      addPlayer(id, msg, true);
       updateNumPlayers();
-      checkScores = True;
+      checkScores = true;
       break;
     }
 
@@ -1815,7 +1816,7 @@ static void		handleServerMessage(boolean human, uint16_t code,
 	World::getWorld()->setCurMaxPlayers(curMaxPlayers);
 
 	updateNumPlayers();
-	checkScores = True;
+	checkScores = true;
       }
       break;
     }
@@ -1833,7 +1834,7 @@ static void		handleServerMessage(boolean human, uint16_t code,
       msg = nboUnpackUShort(msg, team);
       msg = teams[int(team)].unpack(msg);
       updateNumPlayers();
-      checkScores = True;
+      checkScores = true;
       break;
     }
 
@@ -1852,7 +1853,7 @@ static void		handleServerMessage(boolean human, uint16_t code,
 	tank->setVelocity(zero);
 	tank->setAngularVelocity(0.0f);
 	tank->setDeadReckoning();
-	playWorldSound(SFX_POP, pos[0], pos[1], pos[2], True);
+	playWorldSound(SFX_POP, pos[0], pos[1], pos[2], true);
       }
       break;
     }
@@ -1899,13 +1900,13 @@ static void		handleServerMessage(boolean human, uint16_t code,
 	// local player did it
 	if (shotId >= 0) {
 	  // terminate the shot
-	  killerLocal->endShot(shotId, True);
+	  killerLocal->endShot(shotId, true);
 	}
 	if (victimPlayer && killerLocal != victimPlayer) {
 	  if (victimPlayer->getTeam() == killerLocal->getTeam() &&
 	      killerLocal->getTeam() != RogueTeam) {
 	    if (killerLocal == myTank) {
-		 hud->setAlert(1, "Don't shoot teammates!!!", 3.0f, True);
+		 hud->setAlert(1, "Don't shoot teammates!!!", 3.0f, true);
 		 playLocalSound( SFX_KILL_TEAM );
 	    }
 	    // teammate
@@ -1947,7 +1948,7 @@ static void		handleServerMessage(boolean human, uint16_t code,
 	  addMessage(victimPlayer, "destroyed by <unknown>");
 #endif
 	} else if ((shotId == -1) || (killerPlayer->getShot(int(shotId)) == NULL)) {
-	  BzfString message("destroyed by ");
+	  std::string message("destroyed by ");
 	  if (killerPlayer->getTeam() == victimPlayer->getTeam() &&
 	      killerPlayer->getTeam() != RogueTeam)
 	    message += "teammate ";
@@ -1955,8 +1956,8 @@ static void		handleServerMessage(boolean human, uint16_t code,
 	  addMessage(victimPlayer, message);
 	} else {
 	  const ShotPath* shot = killerPlayer->getShot(int(shotId));
-	  BzfString message;
-	  BzfString teammate;
+	  std::string message;
+	  std::string teammate;
 	  if (killerPlayer->getTeam() == victimPlayer->getTeam() &&
 	      killerPlayer->getTeam() != RogueTeam)
 	    teammate += "teammate ";
@@ -2033,7 +2034,7 @@ static void		handleServerMessage(boolean human, uint16_t code,
       }
 #endif
 
-      checkScores = True;
+      checkScores = true;
       break;
     }
 
@@ -2064,7 +2065,7 @@ static void		handleServerMessage(boolean human, uint16_t code,
       }
       else if (tank && tank->getTeam() != myTank->getTeam() &&
 	  int(world->getFlag(flagIndex).id) == int(myTank->getTeam())) {
-	hud->setAlert(1, "Flag Alert!!!", 3.0f, True);
+	hud->setAlert(1, "Flag Alert!!!", 3.0f, true);
 	playLocalSound(SFX_ALERT);
       }
       else {
@@ -2072,13 +2073,13 @@ static void		handleServerMessage(boolean human, uint16_t code,
 	if (((fID >= RedFlag) && (fID <= PurpleFlag))
 	    && (int(fID) != int(tank->getTeam()))
 	    && ((tank && (tank->getTeam() == myTank->getTeam())))) {
-	  hud->setAlert(1, "Team Grab!!!", 3.0f, False);
+	  hud->setAlert(1, "Team Grab!!!", 3.0f, false);
 	  const float* pos = tank->getPosition();
 	  playWorldSound(SFX_TEAMGRAB, pos[0], pos[1], pos[2], false);
 	}
       }
       if (tank) {
-	BzfString message("grabbed ");
+	std::string message("grabbed ");
 	message += Flag::getName(tank->getFlag());
 	message += " flag";
 	addMessage(tank, message);
@@ -2116,13 +2117,13 @@ static void		handleServerMessage(boolean human, uint16_t code,
 
 	// add message
 	if (int(capturer->getTeam()) == capturedTeam) {
-	  BzfString message("took my flag into ");
+	  std::string message("took my flag into ");
 	  message += Team::getName(TeamColor(team));
 	  message += " territory";
 	  addMessage(capturer, message);
 	}
 	else {
-	  BzfString message("captured ");
+	  std::string message("captured ");
 	  message += Team::getName(TeamColor(capturedTeam));
 	  message += "'s flag";
 	  addMessage(capturer, message);
@@ -2139,7 +2140,7 @@ static void		handleServerMessage(boolean human, uint16_t code,
       // blow up if my team flag captured
       if (capturedTeam == int(myTank->getTeam())) {
 	gotBlowedUp(myTank, GotCaptured, id);
-	restartOnBase = True;
+	restartOnBase = true;
       }
 
       // everybody who's alive on capture team will be blowing up
@@ -2151,7 +2152,7 @@ static void		handleServerMessage(boolean human, uint16_t code,
 	    player[i]->isAlive() &&
 	    player[i]->getTeam() == capturedTeam) {
 	  const float* pos = player[i]->getPosition();
-	  playWorldSound(SFX_EXPLOSION, pos[0], pos[1], pos[2], False);
+	  playWorldSound(SFX_EXPLOSION, pos[0], pos[1], pos[2], false);
 	  float explodePos[3];
 	  explodePos[0] = pos[0];
 	  explodePos[1] = pos[1];
@@ -2160,7 +2161,7 @@ static void		handleServerMessage(boolean human, uint16_t code,
 	}
       }
 
-      checkScores = True;
+      checkScores = true;
       break;
     }
 
@@ -2196,10 +2197,10 @@ static void		handleServerMessage(boolean human, uint16_t code,
       BaseLocalPlayer* localPlayer = getLocalPlayer(id);
 
       if (localPlayer)
-	localPlayer->endShot(int(shotId), False, reason == 0);
+	localPlayer->endShot(int(shotId), false, reason == 0);
       else for (int i = 0; i < curMaxPlayers; i++)
 	if (player[i] && player[i]->getId() == id) {
-	  player[i]->endShot(int(shotId), False, reason == 0);
+	  player[i]->endShot(int(shotId), false, reason == 0);
 	  break;
 	}
       break;
@@ -2247,8 +2248,8 @@ static void		handleServerMessage(boolean human, uint16_t code,
       msg = nboUnpackUShort(msg, team);
       Player* srcPlayer = lookupPlayer(src);
       Player* dstPlayer = lookupPlayer(dst);
-      BzfString srcName;
-      BzfString dstName;
+      std::string srcName;
+      std::string dstName;
 
 #ifdef DEBUG
       char srcNameText[26], dstNameText[26];
@@ -2268,8 +2269,8 @@ static void		handleServerMessage(boolean human, uint16_t code,
 	srcName = srcPlayer->getCallSign();
 
       bool ignore = false;
-      for (int i = 0; i < silencePlayers.getLength(); i++) {
-	if (strcmp(srcName, silencePlayers[i]) == 0) {
+      for (int i = 0; i < silencePlayers.size(); i++) {
+	if (strcmp(srcName.c_str(), silencePlayers[i].c_str()) == 0) {
 	  ignore = true;
 	  break;
 	}
@@ -2320,7 +2321,7 @@ static void		handleServerMessage(boolean human, uint16_t code,
 	  (int(team) == int(RogueTeam) ||
 	  int(team) == int(myTank->getTeam())))) {
 	// message is for me
-	BzfString fullMsg;
+	std::string fullMsg;
 
 	// direct message to or from me
 	if (dstPlayer) {
@@ -2365,7 +2366,7 @@ static void		handleServerMessage(boolean human, uint16_t code,
 	addMessage(NULL, fullMsg, msgColor);
 
 	if (!srcPlayer || srcPlayer!=myTank)
-	hud->setAlert(0, fullMsg, 3.0f, False);
+	hud->setAlert(0, fullMsg.c_str(), 3.0f, false);
       }
       break;
     }
@@ -2487,10 +2488,10 @@ static void		doMessages()
   // handle server messages
   if (serverLink) {
     while (!serverError && (e = serverLink->read(code, len, msg, 0)) == 1)
-      handleServerMessage(True, code, len, msg);
+      handleServerMessage(true, code, len, msg);
     if (e == -2) {
       printError("Server communication error");
-      serverError = True;
+      serverError = true;
       return;
     }
   }
@@ -2499,7 +2500,7 @@ static void		doMessages()
   for (int i = 0; i < numRobots; i++) {
     while ((e = robotServer[i]->read(code, len, msg, 0)) == 1);
       if (code == MsgKilled || code == MsgShotBegin || code == MsgShotEnd)
-	handleServerMessage(False, code, len, msg);
+	handleServerMessage(false, code, len, msg);
   }
 #endif
 
@@ -2552,7 +2553,7 @@ static void		restartPlaying()
   int locateCount = 0;
   startPoint[2] = 0.0f;
   float bestStartPoint[3], bestDist = -1e6;
-  boolean located;
+  bool located;
 
   // check for valid starting (no unfair advantage to player or enemies)
   // should find a good location in a few tries... locateCount is a safety
@@ -2603,7 +2604,7 @@ static void		restartPlaying()
     const float mySin = sinf(-startAzimuth);
 
     // check each enemy tank
-    located = True;
+    located = true;
     float worstDist = 1e6;
     for (int i = 0; i < curMaxPlayers; i++) {
       // ignore missing player
@@ -2626,7 +2627,7 @@ static void		restartPlaying()
 				4.0f * TankLength, 4.0f * TankWidth,
 				2.0f * TankHeight);
 	if (t >= 0.0f && t < MinShotImpact) {
-	  located = False;
+	  located = false;
 	  break;
 	}
       }
@@ -2678,15 +2679,15 @@ static void		restartPlaying()
       bestStartPoint[2] = startPoint[2];
     }
     if (bestDist < 0.0f)
-      located = False;
+      located = false;
   } while (!located && ++locateCount <= MaxTries);
 
   // restart the tank
   myTank->restart(bestStartPoint, startAzimuth);
   if (!Observer)
     serverLink->sendAlive(myTank->getPosition(), myTank->getForward());
-  restartOnBase = False;
-  firstLife = False;
+  restartOnBase = false;
+  firstLife = false;
   mainWindow->warpMouse();
   playLocalSound(SFX_POP);
 
@@ -2712,21 +2713,21 @@ static void		updateFlags(float dt)
   }
 }
 
-boolean			addExplosion(const float* _pos,
+bool			addExplosion(const float* _pos,
 				float size, float duration)
 {
   // ignore if no prototypes available;
-  if (prototypeExplosions.getLength() == 0) return False;
+  if (prototypeExplosions.size() == 0) return false;
 
   // don't show explosions if quality isn't high
-  if (sceneRenderer->useQuality() < 2) return False;
+  if (sceneRenderer->useQuality() < 2) return false;
 
   // don't add explosion if blending or texture mapping are off
   if (!sceneRenderer->useBlending() || !sceneRenderer->useTexture())
-    return False;
+    return false;
 
   // pick a random prototype explosion
-  const int index = (int)(bzfrand() * (float)prototypeExplosions.getLength());
+  const int index = (int)(bzfrand() * (float)prototypeExplosions.size());
 
   // make a copy and initialize it
   BillboardSceneNode* newExplosion = prototypeExplosions[index]->copy();
@@ -2742,14 +2743,14 @@ boolean			addExplosion(const float* _pos,
   newExplosion->setLightFadeStartTime(0.7f * duration);
 
   // add copy to list of current explosions
-  explosions.append(newExplosion);
+  explosions.push_back(newExplosion);
 
-  if (size < (3.0f * TankLength)) return True; // shot explosion
+  if (size < (3.0f * TankLength)) return true; // shot explosion
 
   int boom = (int) (bzfrand() * 8.0) + 3;
   while (boom--) {
   // pick a random prototype explosion
-  const int index = (int)(bzfrand() * (float)prototypeExplosions.getLength());
+  const int index = (int)(bzfrand() * (float)prototypeExplosions.size());
 
   // make a copy and initialize it
   BillboardSceneNode* newExplosion = prototypeExplosions[index]->copy();
@@ -2765,10 +2766,10 @@ boolean			addExplosion(const float* _pos,
   newExplosion->setLightFadeStartTime(0.7f * duration);
 
   // add copy to list of current explosions
-  explosions.append(newExplosion);
+  explosions.push_back(newExplosion);
   }
 
-  return True;
+  return true;
 }
 
 void			addTankExplosion(const float* pos)
@@ -2792,7 +2793,7 @@ static void		updateExplosions(float dt)
 {
   // update time of all explosions
   int i;
-  const int count = explosions.getLength();
+  const int count = explosions.size();
   for (i = 0; i < count; i++)
     explosions[i]->updateTime(dt);
 
@@ -2800,13 +2801,15 @@ static void		updateExplosions(float dt)
   for (i = count - 1; i >= 0; i--)
     if (explosions[i]->isAtEnd()) {
       delete explosions[i];
-      explosions.remove(i);
+      std::vector<BillboardSceneNode*>::iterator it = explosions.begin();
+      for(int j = 0; j < i; j++) it++;
+      explosions.erase(it);
     }
 }
 
 static void		addExplosions(SceneDatabase* scene)
 {
-  const int count = explosions.getLength();
+  const int count = explosions.size();
   for (int i = 0; i < count; i++)
     scene->addDynamicNode(explosions[i]);
 }
@@ -2835,7 +2838,7 @@ static void		handleFlagDropped(Player* tank)
   }
 
   // add message
-  BzfString message("dropped ");
+  std::string message("dropped ");
   message += Flag::getName(tank->getFlag());
   message += " flag";
   addMessage(tank, message);
@@ -2844,13 +2847,13 @@ static void		handleFlagDropped(Player* tank)
   tank->setFlag(NoFlag);
 }
 
-static boolean		gotBlowedUp(BaseLocalPlayer* tank,
+static bool		gotBlowedUp(BaseLocalPlayer* tank,
 					BlowedUpReason reason,
 					const PlayerId& killer,
 					int shotId)
 {
   if (Observer || !tank->isAlive())
-    return False;
+    return false;
 
   // you can't take it with you
   const FlagId flag = tank->getFlag();
@@ -2905,7 +2908,7 @@ static boolean		gotBlowedUp(BaseLocalPlayer* tank,
 
   // print reason if it's my tank
   if (tank == myTank && blowedUpMessage[reason]) {
-    BzfString blowedUpNotice = blowedUpMessage[reason];
+    std::string blowedUpNotice = blowedUpMessage[reason];
     // first, check if i'm the culprit
     if (reason == GotShot && getLocalPlayer(killer) == myTank)
       blowedUpNotice = "Shot myself";
@@ -2925,7 +2928,7 @@ static boolean		gotBlowedUp(BaseLocalPlayer* tank,
 	}
       }
     }
-    hud->setAlert(0, blowedUpNotice, 4.0f, True);
+    hud->setAlert(0, blowedUpNotice.c_str(), 4.0f, true);
     controlPanel->addMessage(blowedUpNotice);
   }
 
@@ -2978,7 +2981,7 @@ static void		checkEnvironment()
   else if (flagId == IdentifyFlag) {
     // identify closest flag
     const float* tpos = myTank->getPosition();
-    BzfString message("Closest Flag: ");
+    std::string message("Closest Flag: ");
     float minDist = IdentityRange * IdentityRange;
     int closestFlag = -1;
     for (int i = 0; i < numFlags; i++) {
@@ -2996,7 +2999,7 @@ static void		checkEnvironment()
     if (closestFlag != -1) {
       // Set HUD alert about what the flag is
       message += Flag::getName(world->getFlag(closestFlag).id);
-      hud->setAlert(2, message, 0.5f,
+      hud->setAlert(2, message.c_str(), 0.5f,
 		Flag::getType(world->getFlag(closestFlag).id) == FlagSticky);
     }
   }
@@ -3016,7 +3019,7 @@ static void		checkEnvironment()
     // after dropping our shield flag.
     if (hit->isStoppedByHit())
       serverLink->sendEndShot(hit->getPlayer(), hit->getShotId(), 1);
-    const boolean stopShot =
+    const bool stopShot =
 	gotBlowedUp(myTank, GotShot, hit->getPlayer(), hit->getShotId());
     if (stopShot || hit->isStoppedByHit()) {
       Player* hitter = lookupPlayer(hit->getPlayer());
@@ -3053,7 +3056,7 @@ static void		setTarget()
   // initialize best target
   Player* bestTarget = NULL;
   float bestDistance = Infinity;
-  boolean lockedOn = False;
+  bool lockedOn = false;
 
   // figure out which tank is centered in my sights
   for (int i = 0; i < curMaxPlayers; i++) {
@@ -3080,7 +3083,7 @@ static void		setTarget()
 	d < bestDistance) {				// is it better?
       bestTarget = player[i];
       bestDistance = d;
-      lockedOn = True;
+      lockedOn = true;
     }
     else if (a < 0.3f &&				// about 17 degrees
 	player[i]->getFlag() != StealthFlag &&		// can't "see" stealth
@@ -3096,7 +3099,7 @@ static void		setTarget()
     myTank->setTarget(bestTarget);
     myTank->setNemesis(bestTarget);
 
-    BzfString msg("Locked on ");
+    std::string msg("Locked on ");
     msg += bestTarget->getCallSign();
     msg += " (";
     msg += Team::getName(bestTarget->getTeam());
@@ -3108,14 +3111,14 @@ static void		setTarget()
       msg += ")";
     }
     addMessage(NULL, msg);
-    hud->setAlert(1, msg, 2.0f, 1);
+    hud->setAlert(1, msg.c_str(), 2.0f, 1);
   }
   else if (myTank->getFlag() == ColorblindnessFlag) {
     addMessage(NULL, "Looking at a tank");
     hud->setAlert(1, "Looking at a tank", 2.0f, 0);
   }
   else {
-    BzfString msg("Looking at ");
+    std::string msg("Looking at ");
     msg += bestTarget->getCallSign();
     msg += " (";
     msg += Team::getName(bestTarget->getTeam());
@@ -3127,7 +3130,7 @@ static void		setTarget()
       msg += ")";
     }
     addMessage(NULL, msg);
-    hud->setAlert(1, msg, 2.0f, 0);
+    hud->setAlert(1, msg.c_str(), 2.0f, 0);
     myTank->setNemesis(bestTarget);
   }
 }
@@ -3146,9 +3149,9 @@ static void		updateDaylight(double offset, SceneRenderer& renderer)
 // some robot stuff
 //
 
-static RegionList	obstacleList;
+static std::vector<BzfRegion*>	obstacleList;
 
-static void		addObstacle(RegionList& list, const Obstacle& obstacle)
+static void		addObstacle(std::vector<BzfRegion*>& list, const Obstacle& obstacle)
 {
   float p[4][2];
   const float* c = obstacle.getPosition();
@@ -3172,7 +3175,7 @@ static void		addObstacle(RegionList& list, const Obstacle& obstacle)
   p[3][0] = c[0] - xx + yx;
   p[3][1] = c[1] - xy + yy;
 
-  int numRegions = list.getLength();
+  int numRegions = list.size();
   for (int k = 0; k < numRegions; k++) {
     BzfRegion* region = list[k];
     int side[4];
@@ -3182,9 +3185,13 @@ static void		addObstacle(RegionList& list, const Obstacle& obstacle)
 		(side[3] = region->classify(p[3], p[0])) == 1)
       continue;
     if (side[0] == -1 && side[1] == -1 && side[2] == -1 && side[3] == -1) {
-      list.swap(k, numRegions-1);
-      list.swap(numRegions-1, list.getLength()-1);
-      list.remove(list.getLength()-1);
+      BzfRegion* temp = list[k];
+      list[k] = list[numRegions-1];
+      list[numRegions-1] = temp;
+      temp = list[numRegions-1];
+      list[numRegions-1] = list[list.size()-1];
+      list[list.size()-1] = temp;
+      list.pop_back();
       numRegions--;
       k--;
       delete region;
@@ -3197,7 +3204,7 @@ static void		addObstacle(RegionList& list, const Obstacle& obstacle)
       const float* p2 = p[(j+1)&3];
       BzfRegion* newRegion = region->orphanSplitRegion(p2, p1);
       if (!newRegion) continue;		// no split
-      if (region != list[k]) list.append(region);
+      if (region != list[k]) list.push_back(region);
       region = newRegion;
     }
     if (region != list[k]) delete region;
@@ -3207,10 +3214,10 @@ static void		addObstacle(RegionList& list, const Obstacle& obstacle)
 static void		makeObstacleList()
 {
   int i;
-  const int count = obstacleList.getLength();
+  const int count = obstacleList.size();
   for (i = 0; i < count; i++)
     delete obstacleList[i];
-  obstacleList.removeAll();
+  obstacleList.clear();
 
   // FIXME -- shouldn't hard code game area
   float gameArea[4][2];
@@ -3222,18 +3229,18 @@ static void		makeObstacleList()
   gameArea[2][1] =  0.5f * WorldSize;
   gameArea[3][0] = -0.5f * WorldSize;
   gameArea[3][1] =  0.5f * WorldSize;
-  obstacleList.append(new BzfRegion(4, gameArea));
+  obstacleList.push_back(new BzfRegion(4, gameArea));
 
-  const BoxBuildings& boxes = World::getWorld()->getBoxes();
-  const int numBoxes = boxes.getLength();
+  const std::vector<BoxBuilding>& boxes = World::getWorld()->getBoxes();
+  const int numBoxes = boxes.size();
   for (i = 0; i < numBoxes; i++)
     addObstacle(obstacleList, boxes[i]);
-  const PyramidBuildings& pyramids = World::getWorld()->getPyramids();
-  const int numPyramids = pyramids.getLength();
+  const std::vector<PyramidBuilding>& pyramids = World::getWorld()->getPyramids();
+  const int numPyramids = pyramids.size();
   for (i = 0; i < numPyramids; i++)
     addObstacle(obstacleList, pyramids[i]);
-  const Teleporters& teleporters = World::getWorld()->getTeleporters();
-  const int numTeleporters = teleporters.getLength();
+  const std::vector<Teleporter>& teleporters = World::getWorld()->getTeleporters();
+  const int numTeleporters = teleporters.size();
   for (i = 0; i < numTeleporters; i++)
     addObstacle(obstacleList, teleporters[i]);
 }
@@ -3267,14 +3274,14 @@ static void		updateRobots(float dt)
 {
   static float newTargetTimeout = 2.0f;
   static float clock = 0.0f;
-  boolean pickTarget = False;
+  bool pickTarget = false;
   int i;
 
   // see if we should look for new targets
   clock += dt;
   if (clock > newTargetTimeout) {
     while (clock > newTargetTimeout) clock -= newTargetTimeout;
-    pickTarget = True;
+    pickTarget = true;
   }
 
   // start dead robots and retarget
@@ -3324,7 +3331,7 @@ static void		checkEnvironment(RobotPlayer* tank)
 
   // if not dead yet, see if i got run over by the steamroller
   else if (tank->getPosition()[2] == 0.0) {
-    boolean dead = False;
+    bool dead = false;
     const float* myPos = tank->getPosition();
     const float myRadius = tank->getRadius();
     if (myTank->getFlag() == SteamrollerFlag && !myTank->isPaused()) {
@@ -3332,7 +3339,7 @@ static void		checkEnvironment(RobotPlayer* tank)
       const float radius = myRadius + SRRadiusMult * myTank->getRadius();
       if (hypot(hypot(myPos[0] - pos[0], myPos[1] - pos[1]), myPos[2] - pos[2]) < radius) {
 	gotBlowedUp(tank, GotRunOver, myTank->getId());
-	dead = True;
+	dead = true;
       }
     }
     for (i = 0; !dead && i < curMaxPlayers; i++)
@@ -3343,7 +3350,7 @@ static void		checkEnvironment(RobotPlayer* tank)
 	  const float radius = myRadius + SRRadiusMult * player[i]->getRadius();
 	  if (hypot(hypot(myPos[0] - pos[0], myPos[1] - pos[1]), myPos[2] - pos[2]) < radius) {
 	    gotBlowedUp(tank, GotRunOver, player[i]->getId());
-	    dead = True;
+	    dead = true;
 	  }
       }
   }
@@ -3364,7 +3371,7 @@ static void		sendRobotUpdates()
     }
 }
 
-static void		addRobots(boolean useMulticastRelay)
+static void		addRobots(bool useMulticastRelay)
 {
   uint16_t code, len;
   char msg[MaxPacketLen];
@@ -3414,10 +3421,10 @@ static void		addRobots(boolean useMulticastRelay)
 
 #endif
 
-static BzfString	getCacheDirectoryName()
+static std::string	getCacheDirectoryName()
 {
 #if defined(_WIN32)
-  BzfString name("C:");
+  std::string name("C:");
   char dir[MAX_PATH];
   ITEMIDLIST* idl;
   if (SUCCEEDED(SHGetSpecialFolderLocation(NULL, CSIDL_PERSONAL, &idl))) {
@@ -3441,10 +3448,10 @@ static BzfString	getCacheDirectoryName()
 #elif defined(macintosh)
   return "";
 #else
-  BzfString name;
+  std::string name;
   struct passwd *pwent = getpwuid(getuid());
   if (pwent && pwent->pw_dir) {
-    name += BzfString(pwent->pw_dir);
+    name += std::string(pwent->pw_dir);
     name += "/";
   }
   name += ".bzflag-cache";
@@ -3456,8 +3463,8 @@ static BzfString	getCacheDirectoryName()
   }
 
   struct stat statbuf;
-  if (!(stat(name.getString(), &statbuf) == 0 && (S_ISDIR(statbuf.st_mode)))) {
-    if(mkdir(name.getString(), 0777) != 0) {
+  if (!(stat(name.c_str(), &statbuf) == 0 && (S_ISDIR(statbuf.st_mode)))) {
+    if(mkdir(name.c_str(), 0777) != 0) {
       return "bzflag-cache";
     }
   }
@@ -3471,7 +3478,7 @@ static void cleanWorldCache()
   char buffer[10];
   int cacheLimit = 100L * 1024L;
   if (resources->hasValue("worldCacheLimit"))
-    cacheLimit = atoi(resources->getValue("worldCacheLimit"));
+    cacheLimit = atoi(resources->getValue("worldCacheLimit").c_str());
   else {
 #ifndef _WIN32
     snprintf(buffer, 10, "%d", cacheLimit);
@@ -3481,7 +3488,7 @@ static void cleanWorldCache()
     resources->addValue("worldCacheLimit", buffer);
   }
 
-  BzfString worldPath = getCacheDirectoryName();
+  std::string worldPath = getCacheDirectoryName();
 
   char *oldestFile = NULL;
   int oldestSize = 0;
@@ -3489,7 +3496,7 @@ static void cleanWorldCache()
 
   do {
 #ifdef _WIN32
-	  BzfString pattern = worldPath + "/*.bwc";
+	  std::string pattern = worldPath + "/*.bwc";
 
 	  WIN32_FIND_DATA findData;
 	  HANDLE h = FindFirstFile(pattern, &findData);
@@ -3512,13 +3519,13 @@ static void cleanWorldCache()
 	    FindClose(h);
 	  }
 #else
-	  DIR *directory = opendir(worldPath);
+	  DIR *directory = opendir(worldPath.c_str());
 	  if (directory) {
 	    struct dirent* contents;
 	    struct stat statbuf;
 	    time_t oldestTime = time(NULL);
 	    while ((contents = readdir(directory))) {
-	      stat((worldPath + "/") + contents->d_name, &statbuf);
+	      stat(((worldPath + "/") + contents->d_name).c_str(), &statbuf);
 	      if (statbuf.st_atime < oldestTime) {
 		if (oldestFile)
 		  free(oldestFile);
@@ -3541,7 +3548,7 @@ static void cleanWorldCache()
 	  }
 
 	  if (oldestFile != NULL)
-	    remove((getCacheDirectoryName() + "/") + oldestFile);
+	    remove(((getCacheDirectoryName() + "/") + oldestFile).c_str());
 
 	  if (oldestFile != NULL)
 	    free(oldestFile);
@@ -3549,7 +3556,7 @@ static void cleanWorldCache()
   } while (oldestFile && (totalSize > cacheLimit));
 }
 
-static void markOld(BzfString &fileName)
+static void markOld(std::string &fileName)
 {
 #ifdef _WIN32
   FILETIME ft;
@@ -3570,7 +3577,7 @@ static void markOld(BzfString &fileName)
   struct utimbuf times;
   times.actime = 0;
   times.modtime = 0;
-  utime(fileName, &times);
+  utime(fileName.c_str(), &times);
 #endif
 }
 
@@ -3583,7 +3590,7 @@ static World*		makeWorld(ServerLink* serverLink)
   FILE *cachedWorld = NULL;
   uint16_t code, len, size;
   char msg[MaxPacketLen];
-  BzfString worldPath;
+  std::string worldPath;
   bool isTemp = false;
 
   //ask for the hash of the world (ignoring all other messages)
@@ -3599,7 +3606,7 @@ static World*		makeWorld(ServerLink* serverLink)
 	  worldPath += "/";
 	  worldPath += hexDigest;
 	  worldPath += ".bwc";
-	  cachedWorld = fopen( worldPath.getString(), "rb" );
+	  cachedWorld = fopen( worldPath.c_str(), "rb" );
   }
 
   char* worldDatabase;
@@ -3637,9 +3644,9 @@ static World*		makeWorld(ServerLink* serverLink)
 		}
 	  }
 
-	  if (worldPath.getLength() > 0) {
+	  if (worldPath.length() > 0) {
 		  cleanWorldCache();
-		  cachedWorld = fopen(worldPath.getString(), "wb");
+		  cachedWorld = fopen(worldPath.c_str(), "wb");
 		  if (cachedWorld != NULL) {
 			  fwrite(worldDatabase, size, 1, cachedWorld);
 			  fclose(cachedWorld);
@@ -3668,7 +3675,7 @@ static World*		makeWorld(ServerLink* serverLink)
   return worldBuilder.getWorld();
 }
 
-static boolean		enterServer(ServerLink* serverLink, World* world,
+static bool		enterServer(ServerLink* serverLink, World* world,
 						LocalPlayer* myTank)
 {
 
@@ -3691,15 +3698,15 @@ static boolean		enterServer(ServerLink* serverLink, World* world,
   char msg[MaxPacketLen];
   if (serverLink->read(code, len, msg, -1) < 0) {
     printError("Communication error joining game [No immediate respose].");
-    return False;
+    return false;
   }
   if (code == MsgSuperKill) {
     printError("Server forced disconnection.");
-    return False;
+    return false;
   }
   if (code != MsgAccept && code != MsgReject) {
     printError("Communication error joining game [Wrong Code %04x].",code);
-    return False;
+    return false;
   }
   if (code == MsgReject) {
     uint16_t rejectCode;
@@ -3724,7 +3731,7 @@ static boolean		enterServer(ServerLink* serverLink, World* world,
 	printError("This game is full.  Try again later.");
 	break;
     }
-    return False;
+    return false;
   }
 
   // get updates
@@ -3777,9 +3784,9 @@ static boolean		enterServer(ServerLink* serverLink, World* world,
 		  break;
 		}
 	  }
-	  return True;
+	  return true;
 	}
-	addPlayer(id, buf, False);
+	addPlayer(id, buf, false);
 	break;
       }
       case MsgTeamUpdate: {
@@ -3814,7 +3821,7 @@ static boolean		enterServer(ServerLink* serverLink, World* world,
 
 failed:
   printError("Communication error joining game");
-  return False;
+  return false;
 }
 
 static void		leaveGame()
@@ -3844,14 +3851,14 @@ static void		leaveGame()
   }
   numRobots = 0;
 
-  const int count = obstacleList.getLength();
+  const int count = obstacleList.size();
   for (i = 0; i < count; i++)
     delete obstacleList[i];
-  obstacleList.removeAll();
+  obstacleList.clear();
 #endif
 
   // my tank goes away
-  const boolean sayGoodbye = (myTank != NULL);
+  const bool sayGoodbye = (myTank != NULL);
   LocalPlayer::setMyTank(NULL);
   delete myTank;
   myTank = NULL;
@@ -3874,15 +3881,15 @@ static void		leaveGame()
   player = NULL;
 
   // update UI
-  hud->setPlaying(False);
-  hud->setCracks(False);
-  hud->setPlayerHasHighScore(False);
-  hud->setTeamHasHighScore(False);
+  hud->setPlaying(false);
+  hud->setCracks(false);
+  hud->setPlayerHasHighScore(false);
+  hud->setTeamHasHighScore(false);
   hud->setHeading(0.0f);
   hud->setAltitude(0.0f);
-  hud->setAltitudeTape(False);
-  hud->setMarker(0, False);
-  hud->setMarker(1, False);
+  hud->setAltitudeTape(false);
+  hud->setMarker(0, false);
+  hud->setMarker(1, false);
 
   // shut down player channel
   PlayerLink::setMulticast(NULL);
@@ -3909,18 +3916,18 @@ static void		leaveGame()
   sceneRenderer->getViewFrustum().setView(eyePoint, targetPoint);
 
   // reset some flags
-  gameOver = False;
-  serverError = False;
-  serverDied = False;
+  gameOver = false;
+  serverError = false;
+  serverDied = false;
 }
 
-static boolean		joinGame(const StartupInfo* info,
+static bool		joinGame(const StartupInfo* info,
 				ServerLink* _serverLink,
 				PlayerLink* _playerLink)
 {
   // assume everything's okay for now
-  serverDied = False;
-  serverError = False;
+  serverDied = false;
+  serverError = false;
 
   serverLink = _serverLink;
   playerLink = _playerLink;
@@ -3928,7 +3935,7 @@ static boolean		joinGame(const StartupInfo* info,
   if (!serverLink || !playerLink) {
     printError("Memory error");
     leaveGame();
-    return False;
+    return false;
   }
 
   // printError("Join Game");
@@ -3964,7 +3971,7 @@ static boolean		joinGame(const StartupInfo* info,
     }
 
     leaveGame();
-    return False;
+    return false;
   }
 
   // check inter-player connection
@@ -3972,7 +3979,7 @@ static boolean		joinGame(const StartupInfo* info,
   if (playerLink->getState() == PlayerLink::SocketError) {
     printError("Couldn't make inter-player connection");
     leaveGame();
-    return False;
+    return false;
   }
 */
 
@@ -3984,7 +3991,7 @@ static boolean		joinGame(const StartupInfo* info,
   if (!world) {
     printError("Error downloading world database");
     leaveGame();
-    return False;
+    return false;
   }
 
   ServerLink::setServer(serverLink);
@@ -4003,10 +4010,10 @@ static boolean		joinGame(const StartupInfo* info,
   numFlags = world->getMaxFlags();
 
   // make scene database
-  const boolean oldUseZBuffer = sceneRenderer->useZBuffer();
-  sceneRenderer->setZBuffer(False);
+  const bool oldUseZBuffer = sceneRenderer->useZBuffer();
+  sceneRenderer->setZBuffer(false);
   bspScene = sceneBuilder->make(world);
-  sceneRenderer->setZBuffer(True);
+  sceneRenderer->setZBuffer(true);
   if (sceneRenderer->useZBuffer())
     zScene = sceneBuilder->make(world);
   sceneRenderer->setZBuffer(oldUseZBuffer);
@@ -4027,13 +4034,13 @@ static boolean		joinGame(const StartupInfo* info,
     delete myTank;
     myTank = NULL;
     leaveGame();
-    return False;
+    return false;
   }
 
   // check multicast `connection' to server.  if we get no response then
   // we have to assume the network can't do multicasting.  fall back to
   // using the server as a relay.
-  boolean multicastOkay = False;
+  bool multicastOkay = false;
   if (playerLink->getState() == PlayerLink::Okay) {
     // send 5 pings, one every 2/10ths of a second.  wait up to two
     // seconds after the last ping for a reply.  that's kinda long but
@@ -4067,7 +4074,7 @@ static boolean		joinGame(const StartupInfo* info,
 	// same port at the same time we are.
 	if (ping.waitForReply(pingInSocket, myAddress, 200) &&
 	    ping.serverId.port == htons(info->serverPort)) {
-	  multicastOkay = True;
+	  multicastOkay = true;
 	  break;
 	}
       }
@@ -4094,7 +4101,7 @@ static boolean		joinGame(const StartupInfo* info,
     if (serverLink->read(code, len, msgbuf, 1000) <= 0 || code == MsgReject) {
       printError("Couldn't make inter-player connection");
       leaveGame();
-      return False;
+      return false;
     }
 
     // prepare player link to use the server as a relay
@@ -4143,17 +4150,17 @@ static boolean		joinGame(const StartupInfo* info,
   hud->setHeading(myTank->getAngle());
   hud->setAltitude(myTank->getPosition()[2]);
   hud->setTimeLeft(-1);
-  fireButton = False;
-  firstLife = True;
+  fireButton = false;
+  firstLife = true;
 
-  return True;
+  return true;
 }
 
-static boolean		joinInternetGame(const StartupInfo* info)
+static bool		joinInternetGame(const StartupInfo* info)
 {
   // open server
   Address serverAddress(info->serverName);
-  if (serverAddress.isAny()) return False;
+  if (serverAddress.isAny()) return false;
   ServerLink* serverLink = new ServerLink(serverAddress, info->serverPort);
 
   Address multicastAddress(BroadcastAddress);
@@ -4177,7 +4184,7 @@ static boolean		joinInternetGame(const StartupInfo* info)
   return joinGame(info, serverLink, playerLink);
 }
 
-static boolean		joinGame()
+static bool		joinGame()
 {
   // assume we have everything we need to join.  figure out how
   // to join by which arguments are set in StartupInfo.
@@ -4187,7 +4194,7 @@ static boolean		joinGame()
 
   // can't figure out how to join
   printError("Can't figure out how to join.");
-  return False;
+  return false;
 }
 
 //
@@ -4217,7 +4224,7 @@ static void		renderDialog()
 static int		getZoomFactor()
 {
   if (!resources->hasValue("zoom")) return 1;
-  const int zoom = atoi(resources->getValue("zoom"));
+  const int zoom = atoi(resources->getValue("zoom").c_str());
   if (zoom < 1) return 1;
   if (zoom > 8) return 8;
   return zoom;
@@ -4240,8 +4247,8 @@ static void		playingLoop()
   // get view type (constant for entire game)
   const SceneRenderer::ViewType viewType = sceneRenderer->getViewType();
   const int zoomFactor = getZoomFactor();
-  const boolean fakeCursor = resources->hasValue("fakecursor") &&
-		strcmp(resources->getValue("fakecursor"), "yes") == 0;
+  const bool fakeCursor = resources->hasValue("fakecursor") &&
+		strcmp(resources->getValue("fakecursor").c_str(), "yes") == 0;
   mainWindow->setZoomFactor(zoomFactor);
   if (fakeCursor)
     mainWindow->getWindow()->hideMouse();
@@ -4265,14 +4272,14 @@ static void		playingLoop()
     // do dead reckoning on remote players
     for (i = 0; i < curMaxPlayers; i++)
       if (player[i]) {
-	const boolean wasNotResponding = player[i]->isNotResponding();
+	const bool wasNotResponding = player[i]->isNotResponding();
 	player[i]->doDeadReckoning();
-	const boolean isNotResponding = player[i]->isNotResponding();
+	const bool isNotResponding = player[i]->isNotResponding();
 	if (!wasNotResponding && isNotResponding) {
-	  addMessage(player[i], BzfString("not responding"));
+	  addMessage(player[i], std::string("not responding"));
 	}
 	else if (wasNotResponding && !isNotResponding) {
-	  addMessage(player[i], BzfString("okay"));
+	  addMessage(player[i], std::string("okay"));
 	}
       }
 
@@ -4354,7 +4361,7 @@ static void		playingLoop()
     if (!myTank) pauseCountdown = 0.0f;
     if (pauseCountdown > 0.0f && !myTank->isAlive()) {
       pauseCountdown = 0.0f;
-      hud->setAlert(1, NULL, 0.0f, True);
+      hud->setAlert(1, NULL, 0.0f, true);
     }
 //    if (maxPauseCountdown > 0.0f) {
 //     const int oldMaxPauseCountdown = (int)(maxPauseCountdown + 0.99f);
@@ -4365,7 +4372,7 @@ static void		playingLoop()
 //	  if ((int)(maxPauseCountdown + 0.99f) != oldMaxPauseCountdown) {
 //		char msgBuf[40];
 //		sprintf(msgBuf, "Pause Countdown %d", (int)(maxPauseCountdown + 0.99f));
-//		hud->setAlert(1, msgBuf, 1.0f, False);
+//		hud->setAlert(1, msgBuf, 1.0f, false);
 //	  }
 //	}
     if (pauseCountdown > 0.0f) {
@@ -4378,8 +4385,8 @@ static void		playingLoop()
 	  serverLink->sendDropFlag(myTank->getPosition());
 
 	// now actually pause
-	myTank->setPause(True);
-	hud->setAlert(1, NULL, 0.0f, True);
+	myTank->setPause(true);
+	hud->setAlert(1, NULL, 0.0f, true);
 	controlPanel->addMessage("Paused");
 
 	// turn off the sound
@@ -4396,7 +4403,7 @@ static void		playingLoop()
 	// update countdown alert
 	char msgBuf[40];
 	sprintf(msgBuf, "Pausing in %d", (int)(pauseCountdown + 0.99f));
-	hud->setAlert(1, msgBuf, 1.0f, False);
+	hud->setAlert(1, msgBuf, 1.0f, false);
       }
     }
 
@@ -4404,7 +4411,7 @@ static void		playingLoop()
     if (!myTank) destructCountdown = 0.0f;
     if (destructCountdown > 0.0f && !myTank->isAlive()) {
       destructCountdown = 0.0f;
-      hud->setAlert(1, NULL, 0.0f, True);
+      hud->setAlert(1, NULL, 0.0f, true);
     }
     if (destructCountdown > 0.0f) {
       const int oldDestructCountdown = (int)(destructCountdown + 0.99f);
@@ -4414,13 +4421,13 @@ static void		playingLoop()
 	// now actually destruct
 	gotBlowedUp( myTank, SelfDestruct, myTank->getId() );
 
-	hud->setAlert(1, NULL, 0.0f, True);
+	hud->setAlert(1, NULL, 0.0f, true);
       }
       else if ((int)(destructCountdown + 0.99f) != oldDestructCountdown) {
 	// update countdown alert
 	char msgBuf[40];
 	sprintf(msgBuf, "Self Destructing in %d", (int)(destructCountdown + 0.99f));
-	hud->setAlert(1, msgBuf, 1.0f, False);
+	hud->setAlert(1, msgBuf, 1.0f, false);
       }
     }
 
@@ -4549,7 +4556,7 @@ static void		playingLoop()
 	  myTank->move(virtPos, roamViewAngle * M_PI / 180.0f);
 #endif
 	fov = roamZoom * M_PI / 180.0f;
-	moveSoundReceiver(eyePoint[0], eyePoint[1], eyePoint[2], 0.0, False);
+	moveSoundReceiver(eyePoint[0], eyePoint[1], eyePoint[2], 0.0, false);
       }
       sceneRenderer->getViewFrustum().setProjection(fov,
 	  1.1f, 1.5f * WorldSize,
@@ -4562,30 +4569,30 @@ static void		playingLoop()
       SceneDatabase* scene = sceneRenderer->getSceneDatabase();
       if (scene && myTank) {
 	// add my tank
-	myTank->addPlayer(scene, False, False);
+	myTank->addPlayer(scene, false, false);
 	if (myTank->getFlag() == CloakingFlag) {
 	  // and make it invisible
 	  myTank->setInvisible();
 	} else if (roaming)
-	  myTank->setHidden(False);
+	  myTank->setHidden(false);
 	else {
 	  // or make it hidden
 	  myTank->setHidden();
 	}
 	// add my shells
-	myTank->addShots(scene, False);
+	myTank->addShots(scene, false);
 	// add antidote flag
 	myTank->addAntidote(scene);
 	// add flags
 	world->addFlags(scene);
 
 	// add other tanks and shells
-	const boolean colorblind = (myTank->getFlag() == ColorblindnessFlag);
+	const bool colorblind = (myTank->getFlag() == ColorblindnessFlag);
 	for (i = 0; i < curMaxPlayers; i++)
 	  if (player[i]) {
 	    player[i]->updateSparks(dt);
 	    player[i]->addShots(scene, colorblind);
-	    player[i]->addPlayer(scene, colorblind, True);
+	    player[i]->addPlayer(scene, colorblind, true);
 	    if (player[i]->getFlag() == CloakingFlag)
 	      player[i]->setInvisible();
 	    else
@@ -4626,14 +4633,14 @@ static void		playingLoop()
 	// get an accurate measure of frame time (at expense of frame rate)
 	glFinish();
 #endif
-	media->stopwatch(True);
+	media->stopwatch(true);
       }
 
       // draw frame
-      const boolean blankRadar = myTank && myTank->isPaused();
+      const bool blankRadar = myTank && myTank->isPaused();
       if (viewType == SceneRenderer::ThreeChannel) {
 	// draw center channel
-	sceneRenderer->render(False);
+	sceneRenderer->render(false);
 	hud->render(*sceneRenderer);
 	renderDialog();
 	controlPanel->render(*sceneRenderer);
@@ -4650,7 +4657,7 @@ static void		playingLoop()
 	sceneRenderer->getViewFrustum().setView(eyePoint, targetPoint);
 
 	// draw left channel
-	sceneRenderer->render(False, True, True);
+	sceneRenderer->render(false, true, true);
 
 	// set up for drawing right channel
 	mainWindow->setQuadrant(MainWindow::LowerRight);
@@ -4661,7 +4668,7 @@ static void		playingLoop()
 	sceneRenderer->getViewFrustum().setView(eyePoint, targetPoint);
 
 	// draw right channel
-	sceneRenderer->render(True, True, True);
+	sceneRenderer->render(true, true, true);
 
 #if defined(DEBUG_RENDERING)
 	// set up for drawing rear channel
@@ -4673,7 +4680,7 @@ static void		playingLoop()
 	sceneRenderer->getViewFrustum().setView(eyePoint, targetPoint);
 
 	// draw rear channel
-	sceneRenderer->render(True, True, True);
+	sceneRenderer->render(true, true, true);
 #endif
 	// back to center channel
 	mainWindow->setQuadrant(MainWindow::UpperRight);
@@ -4681,20 +4688,20 @@ static void		playingLoop()
       else if (viewType == SceneRenderer::Stacked) {
        static float EyeDisplacement = 0.25f * TankWidth;
        static float FocalPlane = BoxBase;
-       static boolean init = False;
+       static bool init = false;
        if (!init) {
-	 init = True;
+	 init = true;
 	 if (resources->hasValue("eyesep"))
-	   EyeDisplacement = (float)atof(resources->getValue("eyesep"));
+	   EyeDisplacement = (float)atof(resources->getValue("eyesep").c_str());
 	 if (resources->hasValue("focal"))
-	   FocalPlane = (float)atof(resources->getValue("focal"));
+	   FocalPlane = (float)atof(resources->getValue("focal").c_str());
        }
 
        // setup view for left eye
        sceneRenderer->getViewFrustum().setOffset(EyeDisplacement, FocalPlane);
 
        // draw left eye's view
-       sceneRenderer->render(False);
+       sceneRenderer->render(false);
        hud->render(*sceneRenderer);
        renderDialog();
        controlPanel->render(*sceneRenderer);
@@ -4705,7 +4712,7 @@ static void		playingLoop()
        sceneRenderer->getViewFrustum().setOffset(-EyeDisplacement, FocalPlane);
 
        // draw right eye's view
-       sceneRenderer->render(True, True);
+       sceneRenderer->render(true, true);
        hud->render(*sceneRenderer);
        renderDialog();
        controlPanel->render(*sceneRenderer);
@@ -4719,13 +4726,13 @@ static void		playingLoop()
       else if (viewType == SceneRenderer::Stereo) {
 	static float EyeDisplacement = 0.25f * TankWidth;
 	static float FocalPlane = BoxBase;
-	static boolean init = False;
+	static bool init = false;
 	if (!init) {
-	  init = True;
+	  init = true;
 	  if (resources->hasValue("eyesep"))
-	    EyeDisplacement = (float)atof(resources->getValue("eyesep"));
+	    EyeDisplacement = (float)atof(resources->getValue("eyesep").c_str());
 	  if (resources->hasValue("focal"))
-	    FocalPlane = (float)atof(resources->getValue("focal"));
+	    FocalPlane = (float)atof(resources->getValue("focal").c_str());
 	}
 
 	// setup view for left eye
@@ -4735,7 +4742,7 @@ static void		playingLoop()
 	sceneRenderer->getViewFrustum().setOffset(EyeDisplacement, FocalPlane);
 
 	// draw left eye's view
-	sceneRenderer->render(False);
+	sceneRenderer->render(false);
 #ifndef USE_GL_STEREO
 	hud->render(*sceneRenderer);
 	renderDialog();
@@ -4752,7 +4759,7 @@ static void		playingLoop()
 	sceneRenderer->getViewFrustum().setOffset(-EyeDisplacement, FocalPlane);
 
 	// draw right eye's view
-	sceneRenderer->render(True, True);
+	sceneRenderer->render(true, true);
 #ifndef USE_GL_STEREO
 	hud->render(*sceneRenderer);
 	renderDialog();
@@ -4827,7 +4834,7 @@ static void		playingLoop()
 	// get an accurate measure of frame time (at expense of frame rate)
 	glFinish();
 #endif
-	hud->setDrawTime((float)media->stopwatch(False));
+	hud->setDrawTime((float)media->stopwatch(false));
       }
 
       // draw a fake cursor if requested.  this is mostly intended for
@@ -4947,14 +4954,14 @@ static void		playingLoop()
   }
 
   // hide window
-  mainWindow->showWindow(False);
+  mainWindow->showWindow(false);
 }
 
 //
 // game initialization
 //
 
-static float		timeConfiguration(boolean useZBuffer)
+static float		timeConfiguration(bool useZBuffer)
 {
   // prepare depth buffer if requested
   sceneRenderer->setZBuffer(useZBuffer);
@@ -4982,26 +4989,26 @@ static void		timeConfigurations()
   static const float MaxFrameTime = 0.050f;	// seconds
 
   // ignore results of first test.  OpenGL could be doing lazy setup.
-  sceneRenderer->setBlending(False);
-  sceneRenderer->setSmoothing(False);
-  sceneRenderer->setLighting(False);
-  sceneRenderer->setTexture(False);
+  sceneRenderer->setBlending(false);
+  sceneRenderer->setSmoothing(false);
+  sceneRenderer->setLighting(false);
+  sceneRenderer->setTexture(false);
   sceneRenderer->setQuality(0);
-  sceneRenderer->setDithering(True);
-  sceneRenderer->setShadows(False);
-  sceneRenderer->setEnhancedRadar(False);
+  sceneRenderer->setDithering(true);
+  sceneRenderer->setShadows(false);
+  sceneRenderer->setEnhancedRadar(false);
   OpenGLTexture::setFilter(OpenGLTexture::Off);
-  timeConfiguration(True);
+  timeConfiguration(true);
 
   // time lowest quality with and without blending.  some systems
   // stipple very slowly even though everything else is fast.  we
   // don't want to conclude the system is slow because of stippling.
   printError("  lowest quality");
-  const float timeNoBlendNoZ = timeConfiguration(False);
-  const float timeNoBlendZ   = timeConfiguration(True);
-  sceneRenderer->setBlending(True);
-  const float timeBlendNoZ   = timeConfiguration(False);
-  const float timeBlendZ     = timeConfiguration(True);
+  const float timeNoBlendNoZ = timeConfiguration(false);
+  const float timeNoBlendZ   = timeConfiguration(true);
+  sceneRenderer->setBlending(true);
+  const float timeBlendNoZ   = timeConfiguration(false);
+  const float timeBlendZ     = timeConfiguration(true);
   if (timeNoBlendNoZ > MaxFrameTime &&
       timeNoBlendZ   > MaxFrameTime &&
       timeBlendNoZ   > MaxFrameTime &&
@@ -5010,41 +5017,41 @@ static void		timeConfigurations()
 	timeNoBlendNoZ < timeBlendNoZ &&
 	timeNoBlendNoZ < timeBlendZ) {
       // no depth, no blending definitely fastest
-      sceneRenderer->setZBuffer(False);
-      sceneRenderer->setBlending(False);
+      sceneRenderer->setZBuffer(false);
+      sceneRenderer->setBlending(false);
     }
     if (timeNoBlendZ < timeBlendNoZ &&
 	timeNoBlendZ < timeBlendZ) {
       // no blending faster than blending
-      sceneRenderer->setZBuffer(True);
-      sceneRenderer->setBlending(False);
+      sceneRenderer->setZBuffer(true);
+      sceneRenderer->setBlending(false);
     }
     if (timeBlendNoZ < timeBlendZ) {
       // blending faster than depth
-      sceneRenderer->setZBuffer(False);
-      sceneRenderer->setBlending(True);
+      sceneRenderer->setZBuffer(false);
+      sceneRenderer->setBlending(true);
     }
     // blending and depth faster than without either
-    sceneRenderer->setZBuffer(True);
-    sceneRenderer->setBlending(True);
+    sceneRenderer->setZBuffer(true);
+    sceneRenderer->setBlending(true);
     return;
   }
 
   // leave blending on if blending clearly faster than stippling
   if (timeBlendNoZ > timeNoBlendNoZ || timeBlendNoZ > timeNoBlendZ &&
       timeBlendZ   > timeNoBlendNoZ || timeBlendZ   > timeNoBlendZ) {
-    sceneRenderer->setBlending(False);
+    sceneRenderer->setBlending(false);
   }
 
   // try texturing.  if it's too slow then fall back to
   // lowest quality and return.
-  sceneRenderer->setTexture(True);
+  sceneRenderer->setTexture(true);
   sceneRenderer->setQuality(1);
   OpenGLTexture::setFilter(OpenGLTexture::Nearest);
   printError("  lowest quality with texture");
-  if (timeConfiguration(False) > MaxFrameTime ||
-      timeConfiguration(True) > MaxFrameTime) {
-    sceneRenderer->setTexture(False);
+  if (timeConfiguration(false) > MaxFrameTime ||
+      timeConfiguration(true) > MaxFrameTime) {
+    sceneRenderer->setTexture(false);
     OpenGLTexture::setFilter(OpenGLTexture::Off);
     sceneRenderer->setQuality(0);
     return;
@@ -5052,69 +5059,69 @@ static void		timeConfigurations()
 
   // everything
   printError("  full quality");
-  sceneRenderer->setBlending(True);
-  sceneRenderer->setSmoothing(True);
-  sceneRenderer->setLighting(True);
-  sceneRenderer->setTexture(True);
+  sceneRenderer->setBlending(true);
+  sceneRenderer->setSmoothing(true);
+  sceneRenderer->setLighting(true);
+  sceneRenderer->setTexture(true);
   sceneRenderer->setQuality(2);
-  sceneRenderer->setDithering(True);
-  sceneRenderer->setShadows(True);
-  sceneRenderer->setEnhancedRadar(True);
+  sceneRenderer->setDithering(true);
+  sceneRenderer->setShadows(true);
+  sceneRenderer->setEnhancedRadar(true);
   OpenGLTexture::setFilter(OpenGLTexture::LinearMipmapLinear);
-  if (timeConfiguration(True) < MaxFrameTime) return;
-  if (timeConfiguration(False) < MaxFrameTime) return;
+  if (timeConfiguration(true) < MaxFrameTime) return;
+  if (timeConfiguration(false) < MaxFrameTime) return;
 
   // try it without shadows -- some platforms stipple very slowly
-  sceneRenderer->setShadows(False);
-  if (timeConfiguration(True) < MaxFrameTime) return;
-  if (timeConfiguration(False) < MaxFrameTime) return;
+  sceneRenderer->setShadows(false);
+  if (timeConfiguration(true) < MaxFrameTime) return;
+  if (timeConfiguration(false) < MaxFrameTime) return;
 
   // no high quality
   printError("  medium quality");
   sceneRenderer->setQuality(1);
-  if (timeConfiguration(True) < MaxFrameTime) return;
-  if (timeConfiguration(False) < MaxFrameTime) return;
+  if (timeConfiguration(true) < MaxFrameTime) return;
+  if (timeConfiguration(false) < MaxFrameTime) return;
   printError("  low quality");
   sceneRenderer->setQuality(0);
-  if (timeConfiguration(True) < MaxFrameTime) return;
-  if (timeConfiguration(False) < MaxFrameTime) return;
+  if (timeConfiguration(true) < MaxFrameTime) return;
+  if (timeConfiguration(false) < MaxFrameTime) return;
 
   // lower quality texturing
   printError("  nearest texturing");
   OpenGLTexture::setFilter(OpenGLTexture::Nearest);
-  if (timeConfiguration(True) < MaxFrameTime) return;
-  if (timeConfiguration(False) < MaxFrameTime) return;
+  if (timeConfiguration(true) < MaxFrameTime) return;
+  if (timeConfiguration(false) < MaxFrameTime) return;
 
   // no texturing
   printError("  no texturing");
-  sceneRenderer->setTexture(False);
+  sceneRenderer->setTexture(false);
   OpenGLTexture::setFilter(OpenGLTexture::Off);
-  if (timeConfiguration(True) < MaxFrameTime) return;
-  if (timeConfiguration(False) < MaxFrameTime) return;
+  if (timeConfiguration(true) < MaxFrameTime) return;
+  if (timeConfiguration(false) < MaxFrameTime) return;
 
   // no blending
   printError("  no blending");
-  sceneRenderer->setBlending(False);
-  if (timeConfiguration(True) < MaxFrameTime) return;
-  if (timeConfiguration(False) < MaxFrameTime) return;
+  sceneRenderer->setBlending(false);
+  if (timeConfiguration(true) < MaxFrameTime) return;
+  if (timeConfiguration(false) < MaxFrameTime) return;
 
   // no smoothing.  shouldn't really affect fill rate too much.
   printError("  no smoothing");
-  sceneRenderer->setSmoothing(False);
-  if (timeConfiguration(True) < MaxFrameTime) return;
-  if (timeConfiguration(False) < MaxFrameTime) return;
+  sceneRenderer->setSmoothing(false);
+  if (timeConfiguration(true) < MaxFrameTime) return;
+  if (timeConfiguration(false) < MaxFrameTime) return;
 
   // no lighting.  shouldn't really affect fill rate, either.
   printError("  no lighting");
-  sceneRenderer->setLighting(False);
-  if (timeConfiguration(True) < MaxFrameTime) return;
-  if (timeConfiguration(False) < MaxFrameTime) return;
+  sceneRenderer->setLighting(false);
+  if (timeConfiguration(true) < MaxFrameTime) return;
+  if (timeConfiguration(false) < MaxFrameTime) return;
 
   // no dithering
   printError("  no dithering");
-  sceneRenderer->setDithering(False);
-  if (timeConfiguration(True) < MaxFrameTime) return;
-  if (timeConfiguration(False) < MaxFrameTime) return;
+  sceneRenderer->setDithering(false);
+  if (timeConfiguration(true) < MaxFrameTime) return;
+  if (timeConfiguration(false) < MaxFrameTime) return;
 }
 
 static void		findFastConfiguration()
@@ -5150,7 +5157,7 @@ static void		findFastConfiguration()
   static const GLfloat color[4] = { 1.0f, 1.0f, 1.0f, 0.5f };
   SceneDatabase* timingScene = new ZSceneDatabase;
   WallSceneNode* node = new QuadWallSceneNode(base,
-					sEdge, tEdge, 1.0f, 1.0f, True);
+					sEdge, tEdge, 1.0f, 1.0f, true);
   node->setColor(color);
   node->setModulateColor(color);
   node->setLightedColor(color);
@@ -5159,7 +5166,7 @@ static void		findFastConfiguration()
   node->setMaterial(OpenGLMaterial(color, color));
   timingScene->addStaticNode(node);
   sceneRenderer->setSceneDatabase(timingScene);
-  sceneRenderer->setDim(False);
+  sceneRenderer->setDim(false);
 
   timeConfigurations();
 
@@ -5229,27 +5236,27 @@ void			startPlaying(BzfDisplay* _display,
   // if no configuration, turn off fancy rendering so startup is fast,
   // even on a slow machine.
   if (!_info->hasConfiguration) {
-    sceneRenderer->setBlending(False);
-    sceneRenderer->setSmoothing(False);
-    sceneRenderer->setLighting(False);
-    sceneRenderer->setTexture(False);
+    sceneRenderer->setBlending(false);
+    sceneRenderer->setSmoothing(false);
+    sceneRenderer->setLighting(false);
+    sceneRenderer->setTexture(false);
     sceneRenderer->setQuality(0);
-    sceneRenderer->setDithering(False);
-    sceneRenderer->setShadows(False);
-    sceneRenderer->setEnhancedRadar(False);
+    sceneRenderer->setDithering(false);
+    sceneRenderer->setShadows(false);
+    sceneRenderer->setEnhancedRadar(false);
     OpenGLTexture::setFilter(OpenGLTexture::Off);
   }
 
   // should we grab the mouse?  yes if fullscreen.
   if (!resources->hasValue("window"))
-    setGrabMouse(True);
+    setGrabMouse(true);
 #if defined(__linux__) && !defined(DEBUG)
   // linux usually has a virtual root window so grab mouse always
-  setGrabMouse(True);
+  setGrabMouse(true);
 #endif
 
   // show window and clear it immediately
-  mainWindow->showWindow(True);
+  mainWindow->showWindow(true);
   glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
   glDisable(GL_SCISSOR_TEST);
   glClear(GL_COLOR_BUFFER_BIT);
@@ -5295,9 +5302,9 @@ void			startPlaying(BzfDisplay* _display,
 
   // set the resolution (only if in full screen mode)
   if (!resources->hasValue("window") && resources->hasValue("resolution")) {
-    BzfString videoFormat = resources->getValue("resolution");
-    if (!videoFormat.isNull()) {
-      const int format = display->findResolution(videoFormat);
+    std::string videoFormat = resources->getValue("resolution");
+    if (videoFormat.length() != 0) {
+      const int format = display->findResolution(videoFormat.c_str());
       if (display->isValidResolution(format) &&
 	  display->getResolution() != format &&
 	  display->setResolution(format)) {
@@ -5306,7 +5313,7 @@ void			startPlaying(BzfDisplay* _display,
 	if (resources->hasValue("geometry")) {
 	  int w, h, x, y, count;
 	  char xs, ys;
-	  count = sscanf(resources->getValue("geometry"),
+	  count = sscanf(resources->getValue("geometry").c_str(),
 			"%dx%d%c%d%c%d", &w, &h, &xs, &x, &ys, &y);
 	  if (w < 256) w = 256;
 	  if (h < 192) h = 192;
@@ -5372,7 +5379,7 @@ void			startPlaying(BzfDisplay* _display,
 					sizeof(explosionNames[0])); i++) {
     // try loading texture
     OpenGLTexture tex = getTexture(explosionNames[i],
-				OpenGLTexture::Linear, False, True);
+				OpenGLTexture::Linear, false, true);
     if (!tex.isValid()) continue;
 
     // make explosion scene node
@@ -5384,7 +5391,7 @@ void			startPlaying(BzfDisplay* _display,
     explosion->setLightAttenuation(0.04f, 0.0f, 0.01f);
 
     // add it to list of prototype explosions
-    prototypeExplosions.append(explosion);
+    prototypeExplosions.push_back(explosion);
   }
 
   // get tank textures
@@ -5451,9 +5458,9 @@ void			startPlaying(BzfDisplay* _display,
 
   // clean up
   delete tankTexture;
-  for (i = 0; i < prototypeExplosions.getLength(); i++)
+  for (i = 0; i < prototypeExplosions.size(); i++)
     delete prototypeExplosions[i];
-  prototypeExplosions.removeAll();
+  prototypeExplosions.clear();
   *_info = startupInfo;
   leaveGame();
   setErrorCallback(NULL);

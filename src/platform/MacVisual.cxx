@@ -73,7 +73,7 @@ void MacVisual::setLevel(int level) {
   //addAttribute2(GL_LEVEL, level);
 }
 
-void MacVisual::setDoubleBuffer(boolean dbl_buffer) {
+void MacVisual::setDoubleBuffer(bool dbl_buffer) {
   if (dbl_buffer)
     addAttribute1(kCGLPFADoubleBuffer);
   else
@@ -118,7 +118,7 @@ void MacVisual::setAccum(int r, int g, int b, int a) {
 */
 }
 
-void MacVisual::setStereo(boolean stereo) {
+void MacVisual::setStereo(bool stereo) {
 /*
   if (stereo)
     addAttribute1(AGL_STEREO);
@@ -127,7 +127,7 @@ void MacVisual::setStereo(boolean stereo) {
 */
 }
 
-boolean MacVisual::build() {
+bool MacVisual::build() {
  // GLint attrib[] = { AGL_DOUBLEBUFFER, AGL_RGBA, AGL_DEPTH_SIZE, 24, AGL_NONE };
   GLint *attrib = new GLint[attributes.size()];
   for (int i = 0; i < attributes.size(); i++)

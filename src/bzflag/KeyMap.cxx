@@ -249,28 +249,28 @@ BzfKeyMap::Key		BzfKeyMap::isMapped(const BzfKeyEvent& event) const
   return LastKey;
 }
 
-boolean			BzfKeyMap::isMappedTo(Key key,
+bool			BzfKeyMap::isMappedTo(Key key,
 				const BzfKeyEvent& event) const
 {
   if (event.ascii == 0 && event.button == 0)
-    return False;
+    return false;
 
   if (map1[key].ascii == toupper(event.ascii) &&
       map1[key].button == event.button)
-    return True;
+    return true;
   if (map2[key].ascii == toupper(event.ascii) &&
       map2[key].button == event.button)
-    return True;
+    return true;
 
-  return False;
+  return false;
 }
 
-BzfString		BzfKeyMap::getKeyName(Key key)
+std::string		BzfKeyMap::getKeyName(Key key)
 {
-  return BzfString(keyName[key]);
+  return std::string(keyName[key]);
 }
 
-BzfKeyMap::Key		BzfKeyMap::lookupKeyName(const BzfString& name)
+BzfKeyMap::Key		BzfKeyMap::lookupKeyName(const std::string& name)
 {
   for (int i = 0; i < (int)(sizeof(keyName) / sizeof(keyName[0])); i++)
     if (name == keyName[i])
@@ -278,11 +278,11 @@ BzfKeyMap::Key		BzfKeyMap::lookupKeyName(const BzfString& name)
   return LastKey;
 }
 
-BzfString		BzfKeyMap::getKeyEventString(const BzfKeyEvent& event)
+std::string		BzfKeyMap::getKeyEventString(const BzfKeyEvent& event)
 {
   if (event.ascii != 0) {
     if (event.ascii == '\b') return "Backspace";
-    if (!isspace(event.ascii)) return BzfString(&event.ascii, 1);
+    if (!isspace(event.ascii)) return std::string(&event.ascii, 1);
     if (event.ascii == ' ') return "Space";
     if (event.ascii == '\t') return "Tab";
     if (event.ascii == '\r') return "Enter";
@@ -292,45 +292,45 @@ BzfString		BzfKeyMap::getKeyEventString(const BzfKeyEvent& event)
   return eventNames[event.button];
 }
 
-boolean			BzfKeyMap::translateStringToEvent(
-				const BzfString& value, BzfKeyEvent& event)
+bool			BzfKeyMap::translateStringToEvent(
+				const std::string& value, BzfKeyEvent& event)
 {
   event.shift = 0;
 
   // ignore bogus value
-  if (value == "???") return False;
+  if (value == "???") return false;
 
   // check for plain ascii (one character) values
-  if (value.getLength() == 1) {
+  if (value.size() == 1) {
     char c = value[0];
     if (isalnum(c) || ispunct(c)) {
       event.ascii = c;
       event.button = 0;
-      return True;
+      return true;
     }
-    return False;
+    return false;
   }
 
   // check whitespace values
   if (value == "Space") {
     event.ascii = ' ';
     event.button = 0;
-    return True;
+    return true;
   }
   if (value == "Tab") {
     event.ascii = '\t';
     event.button = 0;
-    return True;
+    return true;
   }
   if (value == "Backspace") {
     event.ascii = '\b';
     event.button = 0;
-    return True;
+    return true;
   }
   if (value == "Enter") {
     event.ascii = '\r';
     event.button = 0;
-    return True;
+    return true;
   }
 
   // check non-ascii button strings
@@ -338,9 +338,9 @@ boolean			BzfKeyMap::translateStringToEvent(
     if (value == eventNames[i]) {
       event.ascii = 0;
       event.button = i;
-      return True;
+      return true;
     }
 
-  return False;
+  return false;
 }
 // ex: shiftwidth=2 tabstop=8

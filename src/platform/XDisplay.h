@@ -24,7 +24,6 @@
 #include <X11/extensions/XInput.h>
 #endif
 
-class BzfString;
 class BzfKeyEvent;
 class XDisplayMode;
 
@@ -34,9 +33,9 @@ class XDisplay : public BzfDisplay {
 				XDisplayMode* adoptedVideoModeChanger = NULL);
 			~XDisplay();
 
-    boolean		isValid() const;
-    boolean		isEventPending() const;
-    boolean		getEvent(BzfEvent&) const;
+    bool		isValid() const;
+    bool		isEventPending() const;
+    bool		getEvent(BzfEvent&) const;
 
     // for other X stuff
     class Rep {
@@ -85,10 +84,10 @@ class XDisplay : public BzfDisplay {
 			XDisplay(const XDisplay&);
     XDisplay&		operator=(const XDisplay&);
 
-    boolean		getKey(const XEvent&, BzfKeyEvent&) const;
+    bool		getKey(const XEvent&, BzfKeyEvent&) const;
 
-    boolean		doSetResolution(int);
-    boolean		doSetDefaultResolution();
+    bool		doSetResolution(int);
+    bool		doSetDefaultResolution();
 
   private:
     Rep*		rep;
@@ -110,11 +109,11 @@ class XDisplayMode {
 
     // set the display mode to modeNumber (an index into the list
     // returned by init().  return True iff successful.
-    virtual boolean	set(int modeNumber);
+    virtual bool	set(int modeNumber);
 
     // similar to set() except mode is to be treated as the default
     // mode.  default implementation calls set().
-    virtual boolean	setDefault(int modeNumber);
+    virtual bool	setDefault(int modeNumber);
 };
 
 #endif // BZF_XDISPLAY_H

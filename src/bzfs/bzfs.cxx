@@ -101,7 +101,6 @@ static float flagHeight = FlagAltitude;
 //float WorldSize = 800.0f;
 
 #define MAX_FLAG_HISTORY (10)
-BZF_DEFINE_ALIST(FlagHistoryList, int);
 
 // custom server login message
 static char *servermsg = NULL;
@@ -167,7 +166,7 @@ struct PlayerInfo {
     // player's score
     int wins, losses, tks;
     // if player can't multicast
-    boolean multicastRelay;
+    bool multicastRelay;
 
     // input buffers
     // bytes read in current msg
@@ -186,7 +185,7 @@ struct PlayerInfo {
     char *outmsg;
 
     // UDP connection
-    boolean ulinkup;
+    bool ulinkup;
     struct sockaddr_in uaddr;
     // TCP connection
     struct sockaddr_in taddr;
@@ -197,9 +196,9 @@ struct PlayerInfo {
     unsigned short lastRecvPacketNo;
     unsigned short lastSendPacketNo;
 
-    boolean toBeKicked;
+    bool toBeKicked;
 
-    boolean Admin;
+    bool Admin;
     bool Observer;
 
     // lag measurement
@@ -213,7 +212,7 @@ struct PlayerInfo {
     bool lagkillerpending;
     TimeKeeper lagkillertime;
 
-    FlagHistoryList flagHistory;
+    std::vector<int> flagHistory;
 #ifdef TIMELIMIT
     // player played before countdown started
     bool playedEarly;
@@ -245,8 +244,8 @@ struct FlagInfo {
     int player;
     // how many grabs before removed
     int grabs;
-    // True if flag must be in game
-    boolean required;
+    // true if flag must be in game
+    bool required;
     // time flag will land
     TimeKeeper dropDone;
 };
@@ -274,8 +273,8 @@ class WorldInfo {
     int getDatabaseSize() const;
 
   private:
-    boolean inRect(const float *p1, float angle, const float *size, float x, float y, float radius) const;
-    boolean rectHitCirc(float dx, float dy, const float *p, float r) const;
+    bool inRect(const float *p1, float angle, const float *size, float x, float y, float radius) const;
+    bool rectHitCirc(float dx, float dy, const float *p, float r) const;
 
   public:
     struct ObstacleLocation {
@@ -348,18 +347,16 @@ typedef struct BanInfo
     TimeKeeper	banEnd;
 } BanInfo;
 
-BZF_DEFINE_ALIST(IPMaskList, BanInfo);
-
 class AccessControlList
 {
 public:
   void ban(in_addr &ipAddr, int period = 0) {
 
-    banList.append(BanInfo(ipAddr, period));
+    banList.push_back(BanInfo(ipAddr, period));
   }
 
-  bool ban(BzfString &ipList, int period = 0) {
-    return ban((const char *)ipList, period);
+  bool ban(std::string &ipList, int period = 0) {
+    return ban(ipList.c_str(), period);
   }
 
   bool ban(const char *ipList, int period = 0) {
@@ -387,21 +384,22 @@ public:
   }
 
   bool unban(in_addr &ipAddr) {
-    int numBans = banList.getLength();
+    int numBans = banList.size();
     bool found = false;
-    for (int i = 0; i < numBans; i++) {
-      if (banList[i].addr.s_addr == ipAddr.s_addr) {
-	banList.remove(i);
-	i--;
+    std::vector<BanInfo>::iterator it = banList.begin();
+    while (it != banList.end()) {
+      if (it->addr.s_addr == ipAddr.s_addr) {
+	banList.erase(it);
 	numBans--;
 	found = true;
       }
+      it++;
     }
     return found;
   }
 
-  bool unban(BzfString &ipList) {
-    return unban((const char *)ipList);
+  bool unban(std::string &ipList) {
+    return unban(ipList.c_str());
   }
 
   bool unban(const char *ipList) {
@@ -425,14 +423,16 @@ public:
   }
 
   bool validate(in_addr &ipAddr) {
-    int numBans = banList.getLength();
+    int numBans = banList.size();
 	TimeKeeper now = TimeKeeper::getCurrent();
 
     for (int i = 0; i < numBans; i++) {
       in_addr mask = banList[i].addr;
       TimeKeeper banEnd = banList[i].banEnd;
 	  if (banEnd <= now) {
-		banList.remove(i);
+	        std::vector<BanInfo>::iterator it = banList.begin();
+	        for (int j = 0; i != j; j++) it++;
+		banList.erase(it);
 		i--;
 		numBans--;
 		continue;
@@ -458,11 +458,13 @@ public:
     sendMessage(playerIndex, id, teamColor, "IP Ban List");
     sendMessage(playerIndex, id, teamColor, "-----------");
     TimeKeeper now = TimeKeeper::getCurrent();
-    int numBans = banList.getLength();
+    int numBans = banList.size();
     for (int i = 0; i < numBans; i++) {
 	char *pMsg = banlistmessage;
 	if (banList[i].banEnd <= now) {
-	  banList.remove(i);
+	  std::vector<BanInfo>::iterator it = banList.begin();
+	  for (int j = 0; i != j; j++) it++;
+	  banList.erase(it);
 	  i--;
 	  numBans--;
 	  continue;
@@ -523,7 +525,7 @@ private:
     return true;
   }
 
-  IPMaskList  banList;
+  std::vector<BanInfo>  banList;
 };
 
 // access control list
@@ -535,8 +537,8 @@ static Address serverAddress;
 static int wksPort = ServerPort;
 // well known service socket
 static int wksSocket;
-static boolean useGivenPort = False;
-static boolean useFallbackPort = False;
+static bool useGivenPort = false;
+static bool useFallbackPort = false;
 // reconnectSocket should also be on serverAddress
 static int reconnectPort = ServerPort + 1;
 static int reconnectSocket;
@@ -560,8 +562,8 @@ static struct sockaddr_in relayOutAddr;
 static const char *pingInterface = NULL;
 static int pingTTL = DefaultTTL;
 static int playerTTL = DefaultTTL;
-static boolean handlePings = True;
-static boolean noMulticastRelay = False;
+static bool handlePings = true;
+static bool noMulticastRelay = false;
 static PingPacket pingReply;
 // highest fd used
 static int maxFileDescriptor;
@@ -582,26 +584,26 @@ static FlagId *allowedFlags = NULL;
 static int numAllowedFlags;
 // num randomly generated flags
 static int numExtraFlags;
-static boolean done = False;
-// True if hit time/score limit
-static boolean gameOver = True;
+static bool done = false;
+// true if hit time/score limit
+static bool gameOver = true;
 static int exitCode = 0;
-// True if -b on cmd line
-static boolean randomBoxes;
-// True if -h on cmd line
-static boolean randomHeights;
-// True if -cr on cmd line
-static boolean randomCTF;
-// True if -t on cmd line
-static boolean useTeleporters;
-// False if -tk on cmd line
-static boolean teamKillerDies;
-// True if -fb on cmd line
-static boolean flagsOnBuildings;
+// true if -b on cmd line
+static bool randomBoxes;
+// true if -h on cmd line
+static bool randomHeights;
+// true if -cr on cmd line
+static bool randomCTF;
+// true if -t on cmd line
+static bool useTeleporters;
+// false if -tk on cmd line
+static bool teamKillerDies;
+// true if -fb on cmd line
+static bool flagsOnBuildings;
 // if players tk*100/wins > teamKillerKickRatio -> kicked
 static int teamKillerKickRatio;
-// True if -g on cmd line
-static boolean oneGameOnly;
+// true if -g on cmd line
+static bool oneGameOnly;
 static int gameStyle;
 static uint16_t maxPlayers = MaxPlayers;
 static uint16_t curMaxPlayers = 0;
@@ -616,17 +618,17 @@ static int broadcastRadio = InvalidPlayer;
 static int maxPlayerScore = 0;
 static int maxTeamScore = 0;
 static int debug = 0;
-static boolean hasBase[NumTeams] = { false };
+static bool hasBase[NumTeams] = { false };
 
 static char hexDigest[50];
 
-// True if only new clients allowed
-static boolean requireUDP;
-// True if UDP can be used in parallel to TCP connections
-static boolean alsoUDP;
+// true if only new clients allowed
+static bool requireUDP;
+// true if UDP can be used in parallel to TCP connections
+static bool alsoUDP;
 
 #ifdef PRINTSCORE
-static boolean printScore = False;
+static bool printScore = false;
 #endif
 #ifdef TIMELIMIT
 static float timeLimit = 0.0f;
@@ -634,9 +636,9 @@ static float timeElapsed = 0.0f;
 static TimeKeeper gameStartTime;
 static bool countdownActive = false;
 #endif
-static boolean publicizeServer = False;
-static BzfString publicizedAddress;
-static boolean publicizedAddressGiven = False;
+static bool publicizeServer = false;
+static std::string publicizedAddress;
+static bool publicizedAddressGiven = false;
 static const char *publicizedTitle = NULL;
 static const char *listServerURL = DefaultListServerURL;
 static TimeKeeper listServerLastAddTime;
@@ -704,8 +706,8 @@ bool WorldFileObstacle::read(const char *cmd, istream& input)
   } else if (strcmp(cmd, "size") == 0)
     input >> size[0] >> size[1] >> size[2];
   else
-    return False;
-  return True;
+    return false;
+  return true;
 }
 
 class CustomBox : public WorldFileObstacle {
@@ -766,7 +768,7 @@ bool CustomGate::read(const char *cmd, istream& input)
     input >> border;
   else
     return WorldFileObstacle::read(cmd, input);
-  return True;
+  return true;
 }
 
 void CustomGate::write(WorldInfo *world) const
@@ -798,8 +800,8 @@ bool CustomLink::read(const char *cmd, istream& input)
   else if (strcmp(cmd, "to") == 0)
     input >> to;
   else
-    return False;
-  return True;
+    return false;
+  return true;
 }
 
 void CustomLink::write(WorldInfo *world) const
@@ -831,7 +833,7 @@ bool CustomBase::read(const char *cmd, istream& input) {
       hasBase[color] = true;
     }
     else
-      return False;
+      return false;
   }
   else {
     WorldFileObstacle::read(cmd, input);
@@ -840,7 +842,7 @@ bool CustomBase::read(const char *cmd, istream& input) {
       pos[2] = 0;
     }
   }
-  return True;
+  return true;
 }
 
 void CustomBase::write(WorldInfo* world) const {
@@ -881,8 +883,8 @@ bool CustomWorld::read(const char *cmd, istream& input)
   else if (strcmp(cmd, "flagHeight") == 0)
     input >> fHeight;
   else
-    return False;
-  return True;
+    return false;
+  return true;
 }
 
 void CustomWorld::write(WorldInfo * /*world*/) const
@@ -892,15 +894,12 @@ void CustomWorld::write(WorldInfo * /*world*/) const
   //world->addLink(from, to);
 }
 
-// list of world file objects
-BZF_DEFINE_ALIST(WorldFileObjectList, WorldFileObject*);
-
-static void emptyWorldFileObjectList(WorldFileObjectList& list)
+static void emptyWorldFileObjectList(std::vector<WorldFileObject*>& list)
 {
-  const int n = list.getLength();
+  const int n = list.size();
   for (int i = 0; i < n; ++i)
     delete list[i];
-  list.removeAll();
+  list.clear();
 }
 
 // WorldInfo
@@ -1028,7 +1027,7 @@ void WorldInfo::addLink(int from, int to)
   }
 }
 
-boolean WorldInfo::rectHitCirc(float dx, float dy, const float *p, float r) const
+bool WorldInfo::rectHitCirc(float dx, float dy, const float *p, float r) const
 {
   // Algorithm from Graphics Gems, pp51-53.
   const float rr = r * r, rx = -p[0], ry = -p[1];
@@ -1055,10 +1054,10 @@ boolean WorldInfo::rectHitCirc(float dx, float dy, const float *p, float r) cons
     return ry - dy < r;
 
   // circle origin in rect
-  return True;
+  return true;
 }
 
-boolean WorldInfo::inRect(const float *p1, float angle, const float *size, float x, float y, float r) const
+bool WorldInfo::inRect(const float *p1, float angle, const float *size, float x, float y, float r) const
 {
   // translate origin
   float pa[2];
@@ -1234,7 +1233,7 @@ void printQueueDepth(int playerIndex)
   DEBUG4("Player %d RECV QUEUE %d   SEND QUEUE %d\n", playerIndex, d,u);
 }
 
-boolean enqueuePacket(int playerIndex, int op, int rseqno, void *msg, int n)
+bool enqueuePacket(int playerIndex, int op, int rseqno, void *msg, int n)
 {
   struct PacketQueue *oldpacket;
   struct PacketQueue *newpacket;
@@ -2263,7 +2262,7 @@ static void sendMessageToListServerForReal(int index)
 
     // send ADD message
     sprintf(msg, "%s %s %d %s %.*s %.256s\n\n", link.nextMessage,
-	(const char*)publicizedAddress,
+	publicizedAddress.c_str(),
 	VERSION % 1000,
 	ServerVersion,
 	PingPacketHexPackedSize, gameInfo,
@@ -2272,15 +2271,15 @@ static void sendMessageToListServerForReal(int index)
   else if (strcmp(link.nextMessage, "REMOVE") == 0) {
     // send REMOVE
     sprintf(msg, "%s %s\n\n", link.nextMessage,
-	(const char*)publicizedAddress);
+	publicizedAddress.c_str());
   }
   else if (strcmp(link.nextMessage, "SETNUM") == 0) {
     // pretend there are no players if the game is over
     if (gameOver)
-      sprintf(msg, "%s %s 0 0 0 0 0\n\n", link.nextMessage, (const char*)publicizedAddress);
+      sprintf(msg, "%s %s 0 0 0 0 0\n\n", link.nextMessage, publicizedAddress.c_str());
     else
       sprintf(msg, "%s %s %d %d %d %d %d\n\n", link.nextMessage,
-	  (const char*)publicizedAddress,
+	  publicizedAddress.c_str(),
 	  team[0].team.activeSize,
 	  team[1].team.activeSize,
 	  team[2].team.activeSize,
@@ -2306,17 +2305,17 @@ static void publicize()
   if (publicizeServer && publicizedTitle) {
     // dereference URL, including following redirections.  get no
     // more than MaxListServers urls.
-    BzfStringAList urls, failedURLs;
-    urls.append(listServerURL);
+    std::vector<std::string> urls, failedURLs;
+    urls.push_back(listServerURL);
     BzfNetwork::dereferenceURLs(urls, MaxListServers, failedURLs);
 
-    for (int j = 0; j < failedURLs.getLength(); ++j)
-      DEBUG2("failed: %s\n", (const char*)failedURLs[j]);
+    for (unsigned int j = 0; j < failedURLs.size(); ++j)
+      DEBUG2("failed: %s\n", failedURLs[j].c_str());
 
     // check url list for validity
-    for (int i = 0; i < urls.getLength(); ++i) {
+    for (unsigned int i = 0; i < urls.size(); ++i) {
       // parse url
-      BzfString protocol, hostname, pathname;
+      std::string protocol, hostname, pathname;
       int port = ServerPort + 1;
       if (!BzfNetwork::parseURL(urls[i], protocol, hostname, port, pathname))
 	continue;
@@ -2330,7 +2329,7 @@ static void publicize()
 	continue;
 
       // ignore if bad address
-      Address address = Address::getHostAddress(hostname);
+      Address address = Address::getHostAddress(hostname.c_str());
       if (address.isAny())
 	continue;
 
@@ -2346,7 +2345,7 @@ static void publicize()
   }
 }
 
-static boolean serverStart()
+static bool serverStart()
 {
 #if defined(_WIN32)
   const BOOL optOn = TRUE;
@@ -2377,7 +2376,7 @@ static boolean serverStart()
   wksSocket = socket(AF_INET, SOCK_STREAM, 0);
   if (wksSocket == -1) {
     nerror("couldn't make connect socket");
-    return False;
+    return false;
   }
 #ifdef SO_REUSEADDR
   /* set reuse address */
@@ -2385,14 +2384,14 @@ static boolean serverStart()
   if (setsockopt(wksSocket, SOL_SOCKET, SO_REUSEADDR, (SSOType)&opt, sizeof(opt)) < 0) {
     nerror("serverStart: setsockopt SO_REUSEADDR");
     close(wksSocket);
-    return False;
+    return false;
   }
 #endif
   if (bind(wksSocket, (const struct sockaddr*)&addr, sizeof(addr)) == -1) {
     if (!useFallbackPort) {
       nerror("couldn't bind connect socket");
       close(wksSocket);
-      return False;
+      return false;
     }
 
     // if we get here then try binding to any old port the system gives us
@@ -2400,7 +2399,7 @@ static boolean serverStart()
     if (bind(wksSocket, (const struct sockaddr*)&addr, sizeof(addr)) == -1) {
       nerror("couldn't bind connect socket");
       close(wksSocket);
-      return False;
+      return false;
     }
 
     // fixup ping reply
@@ -2415,7 +2414,7 @@ static boolean serverStart()
   if (listen(wksSocket, 5) == -1) {
     nerror("couldn't make connect socket queue");
     close(wksSocket);
-    return False;
+    return false;
   }
   maxFileDescriptor = wksSocket;
 
@@ -2425,7 +2424,7 @@ static boolean serverStart()
     reconnectSocket = socket(AF_INET, SOCK_STREAM, 0);
     if (reconnectSocket == -1) {
       nerror("couldn't make reconnect socket");
-      return False;
+      return false;
     }
 #ifdef SO_REUSEADDR
     // set reuse address
@@ -2434,20 +2433,20 @@ static boolean serverStart()
       nerror("serverStart: setsockopt SO_REUSEADDR");
       close(wksSocket);
       close(reconnectSocket);
-      return False;
+      return false;
     }
 #endif
     if (bind(reconnectSocket, (const struct sockaddr*)&addr, sizeof(addr)) == -1) {
       nerror("couldn't bind reconnect socket");
       close(wksSocket);
       close(reconnectSocket);
-      return False;
+      return false;
     }
     if (listen(reconnectSocket, 5) == -1) {
       nerror("couldn't make reconnect socket queue");
       close(wksSocket);
       close(reconnectSocket);
-      return False;
+      return false;
     }
     maxFileDescriptor = reconnectSocket;
   }
@@ -2458,7 +2457,7 @@ static boolean serverStart()
     // we open a udp socket on the same port if alsoUDP
     if ((udpSocket = socket(AF_INET, SOCK_DGRAM, 0)) < 0) {
       nerror("couldn't make udp connect socket");
-      return False;
+      return false;
     }
 
     // increase send/rcv buffer size
@@ -2472,7 +2471,7 @@ static boolean serverStart()
       close(wksSocket);
       close(reconnectSocket);
       close(udpSocket);
-      return False;
+      return false;
     }
 
 #if defined(_WIN32)
@@ -2485,7 +2484,7 @@ static boolean serverStart()
       close(wksSocket);
       close(reconnectSocket);
       close(udpSocket);
-      return False;
+      return false;
     }
     addr.sin_port = htons(wksPort);
     if (bind(udpSocket, (struct sockaddr *) &addr, sizeof(addr)) == -1) {
@@ -2493,7 +2492,7 @@ static boolean serverStart()
       close(wksSocket);
       close(reconnectSocket);
       close(udpSocket);
-      return False;
+      return false;
     }
     // don't buffer info, send it immediately
     BzfNetwork::setNonBlocking(udpSocket);
@@ -2537,7 +2536,7 @@ static boolean serverStart()
 
   listServerLinksCount = 0;
   publicize();
-  return True;
+  return true;
 }
 
 static void serverStop()
@@ -2603,17 +2602,17 @@ static void serverStop()
 	if (listServerLinks[i].socket != NotConnected &&
 	    FD_ISSET(listServerLinks[i].socket, &write_set))
 	  sendMessageToListServerForReal(i);
-  } while (True);
+  } while (true);
 
   // stop list server communication
   closeListServers();
 }
 
-static boolean startPlayerPacketRelay(int playerIndex)
+static bool startPlayerPacketRelay(int playerIndex)
 {
   // return true if already started
   if (noMulticastRelay || (relayInSocket != -1 && relayOutSocket != -1))
-    return True;
+    return true;
 
   Address multicastAddress(BroadcastAddress);
   if (relayInSocket == -1)
@@ -2636,15 +2635,15 @@ static boolean startPlayerPacketRelay(int playerIndex)
       if (i != playerIndex &&
 	  player[i].state > PlayerInLimbo && !player[i].multicastRelay) {
 	directMessage(i, MsgNetworkRelay, 0, getDirectMessageBuffer());
-	player[i].multicastRelay = True;
+	player[i].multicastRelay = true;
       }
-    noMulticastRelay = True;
+    noMulticastRelay = true;
 
-    return True;
+    return true;
   }
   if (maxFileDescriptor < relayOutSocket)
     maxFileDescriptor = relayOutSocket;
-  return True;
+  return true;
 }
 
 static void stopPlayerPacketRelay()
@@ -2653,7 +2652,7 @@ static void stopPlayerPacketRelay()
   closeMulticast(relayOutSocket);
   relayInSocket = -1;
   relayOutSocket = -1;
-  noMulticastRelay = False;
+  noMulticastRelay = false;
 }
 
 static void relayPlayerPacket()
@@ -2720,7 +2719,7 @@ static istream &readToken(istream& input, char *buffer, int n)
   return input;
 }
 
-static boolean readWorldStream(istream& input, const char *location, WorldFileObjectList& list)
+static bool readWorldStream(istream& input, const char *location, std::vector<WorldFileObject*>& list)
 {
   int line = 1;
   char buffer[1024];
@@ -2750,12 +2749,12 @@ static boolean readWorldStream(istream& input, const char *location, WorldFileOb
 
     else if (strcmp(buffer, "end") == 0) {
       if (object) {
-	list.append(object);
+	list.push_back(object);
 	object = NULL;
       }
       else {
 	printf("%s(%d) : unexpected \"end\" token\n", location, line);
-	return False;
+	return false;
       }
     }
 
@@ -2783,7 +2782,7 @@ static boolean readWorldStream(istream& input, const char *location, WorldFileOb
         // unknown token
 	printf("%s(%d) : invalid object parameter \"%s\"\n", location, line, buffer);
 	delete object;
-	return False;
+	return false;
       }
     }
 
@@ -2792,7 +2791,7 @@ static boolean readWorldStream(istream& input, const char *location, WorldFileOb
       // unknown token
       printf("%s(%d) : invalid object type \"%s\"\n", location, line, buffer);
       delete object;
-      return False;
+      return false;
     }
 
     // discard remainder of line
@@ -2805,10 +2804,10 @@ static boolean readWorldStream(istream& input, const char *location, WorldFileOb
   if (object) {
     printf("%s(%d) : missing \"end\" token\n", location, line);
     delete object;
-    return False;
+    return false;
   }
 
-  return True;
+  return true;
 }
 
 static WorldInfo *defineWorldFromFile(const char *filename)
@@ -2826,7 +2825,7 @@ static WorldInfo *defineWorldFromFile(const char *filename)
     return NULL;
 
   // read file
-  WorldFileObjectList list;
+  std::vector<WorldFileObject*> list;
   if (!readWorldStream(input, filename, list)) {
     emptyWorldFileObjectList(list);
     delete world;
@@ -2850,7 +2849,7 @@ static WorldInfo *defineWorldFromFile(const char *filename)
   world->addWall(-0.5f * WorldSize, 0.0f, 0.0f, 0.0f, 0.5f * WorldSize, WallHeight);
 
   // add objects
-  const int n = list.getLength();
+  const int n = list.size();
   for (int i = 0; i < n; ++i)
     list[i]->write(world);
 
@@ -3349,7 +3348,7 @@ static WorldInfo *defineRandomWorld()
   return world;
 }
 
-static boolean defineWorld()
+static bool defineWorld()
 {
   // clean up old database
   delete world;
@@ -3370,7 +3369,7 @@ static boolean defineWorld()
    }
    if (world == NULL)
    {
-      return False;
+      return false;
    }
 
   // package up world
@@ -3436,7 +3435,7 @@ static boolean defineWorld()
   for (i = 0; i < numFlags; i++)
     resetFlag(i);
 
-  return True;
+  return true;
 }
 
 static TeamColor whoseBase(float x, float y, float z)
@@ -3594,7 +3593,7 @@ static void addClient(int acceptSocket)
   if (player[playerIndex].fd > maxFileDescriptor)
     maxFileDescriptor = player[playerIndex].fd;
   player[playerIndex].peer = Address(player[playerIndex].taddr);
-  player[playerIndex].multicastRelay = False;
+  player[playerIndex].multicastRelay = false;
   player[playerIndex].tcplen = 0;
   player[playerIndex].udplen = 0;
   assert(player[playerIndex].outmsg == NULL);
@@ -3612,7 +3611,7 @@ static void addClient(int acceptSocket)
       if (player[i].state >= PlayerInLimbo)
 	count++;
     if (count == 1) {
-      gameOver = False;
+      gameOver = false;
 #ifdef TIMELIMIT
       gameStartTime = TimeKeeper::getCurrent();
       if (timeLimit > 0.0f) {
@@ -3641,7 +3640,7 @@ static void shutdownAcceptClient(int playerIndex)
   }
 }
 
-static void respondToPing(boolean broadcast = False)
+static void respondToPing(bool broadcast = false)
 {
   // get and discard ping packet
   int minReplyTTL;
@@ -3822,7 +3821,7 @@ static void addPlayer(int playerIndex)
 
   // update team state and if first active player on team,
   // add team's flag and reset it's score
-  boolean resetTeamFlag = False;
+  bool resetTeamFlag = false;
   int teamIndex = int(player[playerIndex].team);
   if (++team[teamIndex].team.size == 1) {
     team[teamIndex].radio = -1;
@@ -3835,7 +3834,7 @@ static void addPlayer(int playerIndex)
     if ((gameStyle & int(TeamFlagGameStyle)) && teamIndex != int(RogueTeam))
       // can't call resetFlag() here cos it'll screw up protocol for
       // player just joining, so do it later
-      resetTeamFlag = True;
+      resetTeamFlag = true;
   }
 
   // send new player updates on each player, all existing flags, and all teams.
@@ -3864,7 +3863,7 @@ static void addPlayer(int playerIndex)
   // if necessary force multicast relaying
   if (noMulticastRelay) {
     directMessage(playerIndex, MsgNetworkRelay, 0, getDirectMessageBuffer());
-    player[playerIndex].multicastRelay = True;
+    player[playerIndex].multicastRelay = true;
   }
 
   // send update of info for team just joined
@@ -4090,11 +4089,11 @@ static void removePlayer(int playerIndex)
   }
   player[playerIndex].outmsgSize = 0;
 
-  player[playerIndex].flagHistory.removeAll();
+  player[playerIndex].flagHistory.clear();
 
   // can we turn off relaying now?
   if (player[playerIndex].multicastRelay) {
-    player[playerIndex].multicastRelay = False;
+    player[playerIndex].multicastRelay = false;
     int i;
     for (i = 0; i < curMaxPlayers; i++)
       if (player[i].state > PlayerInLimbo && player[i].multicastRelay)
@@ -4189,11 +4188,11 @@ static void removePlayer(int playerIndex)
   // if everybody left then reset world
   if (i == curMaxPlayers) {
     if (oneGameOnly) {
-      done = True;
+      done = true;
       exitCode = 0;
     }
     else if ((!worldFile) && (!defineWorld())) {
-      done = True;
+      done = true;
       exitCode = 1;
     }
     else {
@@ -4303,7 +4302,7 @@ static void checkTeamScore(int playerIndex, int teamIndex)
     buf = player[playerIndex].id.pack(bufStart);
     buf = nboPackUShort(buf, uint16_t(teamIndex));
     broadcastMessage(MsgScoreOver, (char*)buf-(char*)bufStart, bufStart);
-    gameOver = True;
+    gameOver = true;
   }
 }
 
@@ -4400,7 +4399,7 @@ static void playerKilled(int victimIndex, int killerIndex,
 	buf = player[killerIndex].id.pack(bufStart);
 	buf = nboPackUShort(buf, uint16_t(NoTeam));
 	broadcastMessage(MsgScoreOver, (char*)buf-(char*)bufStart, bufStart);
-	gameOver = True;
+	gameOver = true;
     }
   }
 
@@ -4454,10 +4453,10 @@ static void grabFlag(int playerIndex, int flagIndex)
   buf = flag[flagIndex].flag.pack(buf);
   broadcastMessage(MsgGrabFlag, (char*)buf-(char*)bufStart, bufStart);
 
-  FlagHistoryList *pFH = &player[playerIndex].flagHistory;
-  if (pFH->getLength() >= MAX_FLAG_HISTORY)
-	  pFH->remove( 0 );
-  pFH->append( flag[flagIndex].flag.id );
+  std::vector<int> *pFH = &player[playerIndex].flagHistory;
+  if (pFH->size() >= MAX_FLAG_HISTORY)
+	  pFH->erase(pFH->begin());
+  pFH->push_back( flag[flagIndex].flag.id );
 }
 
 static void dropFlag(int playerIndex, float pos[3])
@@ -4742,19 +4741,19 @@ static void parseCommand(const char *message, int t)
     }
   // /shutdownserver terminates the server
   } else if (player[t].Admin && strncmp(message + 1, "shutdownserver", 8) == 0) {
-    done = True;
+    done = true;
   // /superkill closes all player connections
   } else if (player[t].Admin && strncmp(message + 1, "superkill", 8) == 0) {
     for (i = 0; i < MaxPlayers; i++)
       directMessage(i, MsgSuperKill, 0, getDirectMessageBuffer());
-    gameOver = True;
+    gameOver = true;
   // /gameover command allows operator to end the game
   } else if (player[t].Admin && strncmp(message + 1, "gameover", 8) == 0) {
     void *buf, *bufStart = getDirectMessageBuffer();
     buf = player[t].id.pack(bufStart);
     buf = nboPackUShort(buf, uint16_t(NoTeam));
     broadcastMessage(MsgScoreOver, (char*)buf-(char*)bufStart, bufStart);
-    gameOver = True;
+    gameOver = true;
 #ifdef TIMELIMIT
   // /countdown starts timed game
   } else if (player[t].Admin && strncmp(message + 1, "countdown", 9) == 0) {
@@ -4805,7 +4804,7 @@ static void parseCommand(const char *message, int t)
   // /flag command allows operator to control flags
   } else if (player[t].Admin && strncmp(message + 1, "flag ", 5) == 0) {
     if (strncmp(message + 6, "reset", 5) == 0) {
-      boolean onlyUnused = strncmp(message + 11, " unused", 7) == 0;
+      bool onlyUnused = strncmp(message + 11, " unused", 7) == 0;
       for (int i = 0; i < numFlags; i++) {
 	  // see if someone had grabbed flag,
 	  const int playerIndex = flag[i].player;
@@ -4964,16 +4963,16 @@ static void parseCommand(const char *message, int t)
 	char reply[MessageLen];
 	char flag[MessageLen];
 	sprintf(reply,"%-16s : ",player[i].callSign );
-	FlagHistoryListIterator fhIt(player[i].flagHistory);
+	std::vector<int>::iterator fhIt = player[i].flagHistory.begin();
    
-	while (!fhIt.isDone()) {
-	  FlagId fID = (FlagId)fhIt.getItem();
+	while (fhIt != player[i].flagHistory.end()) {
+	  FlagId fID = (FlagId)(*fhIt);
 	  if (Flag::getType(fID) == FlagNormal)
 	    sprintf( flag, "(*%c) ", Flag::getName(fID)[0] );
 	  else
-	    sprintf( flag, "(%s) ", Flag::getAbbreviation((FlagId)fhIt.getItem()) );
+	    sprintf( flag, "(%s) ", Flag::getAbbreviation((FlagId)(*fhIt)) );
 	  strcat( reply, flag );
-	  fhIt.inc();
+	  fhIt++;
 	}
 	sendMessage(t,player[t].id,player[t].team,reply);
       }
@@ -5058,7 +5057,7 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
     // player can't use multicast;  we must relay
     case MsgNetworkRelay:
       if (startPlayerPacketRelay(t)) {
-	player[t].multicastRelay = True;
+	player[t].multicastRelay = true;
 	directMessage(t, MsgAccept, 0, getDirectMessageBuffer());
       }
       else {
@@ -5297,7 +5296,7 @@ static void terminateServer(int /*sig*/)
   bzSignal(SIGINT, SIG_PF(terminateServer));
   bzSignal(SIGTERM, SIG_PF(terminateServer));
   exitCode = 0;
-  done = True;
+  done = true;
 }
 
 static const char *usageString =
@@ -5452,7 +5451,7 @@ static int lookupFlag(const char *code)
   return f;
 }
 
-static boolean parsePlayerCount(const char *argv)
+static bool parsePlayerCount(const char *argv)
 {
   // either a single number or 5 optional numbers separated by 4
   // (mandatory) commas.
@@ -5466,7 +5465,7 @@ static boolean parsePlayerCount(const char *argv)
 	commaCount++;
     if (commaCount != 4) {
       printf("improper player count list\n");
-      return False;
+      return false;
     }
 
     // reset the counts
@@ -5514,7 +5513,7 @@ static boolean parsePlayerCount(const char *argv)
     long count = strtol(argv, &tail, 10);
     if (argv == tail) {
       printf("improper player count\n");
-      return False;
+      return false;
     }
     if (count < 1)
       softmaxPlayers = 1;
@@ -5526,28 +5525,28 @@ static boolean parsePlayerCount(const char *argv)
   maxPlayers = softmaxPlayers + maxObservers;
   if (maxPlayers > MaxPlayers)
     maxPlayers = MaxPlayers;
-  return True;
+  return true;
 }
 
-static boolean setRequiredFlag(FlagInfo& flag, FlagId id)
+static bool setRequiredFlag(FlagInfo& flag, FlagId id)
 {
-  flag.required = True;
+  flag.required = true;
   flag.flag.id = id;
   flag.flag.type = Flag::getType(id);
-  return True;
+  return true;
 }
 
 static void parse(int argc, char **argv)
 {
   // initialize state
   gameStyle = PlainGameStyle;
-  randomBoxes = False;
-  randomHeights = False;
-  useTeleporters = False;
-  teamKillerDies = True;
-  flagsOnBuildings = False;
+  randomBoxes = false;
+  randomHeights = false;
+  useTeleporters = false;
+  teamKillerDies = true;
+  flagsOnBuildings = false;
   teamKillerKickRatio = 0;
-  oneGameOnly = False;
+  oneGameOnly = false;
   numExtraFlags = 0;
   maxShots = 1;
   linearAcceleration = 0.0f;
@@ -5560,12 +5559,12 @@ static void parse(int argc, char **argv)
 
   // prepare flag counts
   int f, i, flagCount[LastFlag + 1];
-  boolean flagDisallowed[LastFlag + 1];
+  bool flagDisallowed[LastFlag + 1];
   for (i = int(FirstFlag); i <= int(LastFlag); i++) {
     flagCount[i] = 0;
-    flagDisallowed[i] = False;
+    flagDisallowed[i] = false;
   }
-  boolean allFlagsOut = False;
+  bool allFlagsOut = false;
 
   // prepare team max counts
   // no limits by default
@@ -5658,7 +5657,7 @@ static void parse(int argc, char **argv)
       else {
 	numExtraFlags = 16;
       }
-      allFlagsOut = True;
+      allFlagsOut = true;
     }
     else if (strcmp(argv[i], "-a") == 0) {
       // momentum settings
@@ -5684,11 +5683,11 @@ static void parse(int argc, char **argv)
     }
     else if (strcmp(argv[i], "-b") == 0) {
       // random rotation to boxes in capture-the-flag game
-      randomBoxes = True;
+      randomBoxes = true;
     }
     else if (strcmp(argv[i], "-cr") == 0) {
       // CTF with random world
-      randomCTF = True;
+      randomCTF = true;
       // capture the flag style
       gameStyle |= int(TeamFlagGameStyle);
     }
@@ -5709,7 +5708,7 @@ static void parse(int argc, char **argv)
     }
     else if (strcmp(argv[i], "-fb") == 0) {
       // flags on buildings
-      flagsOnBuildings = True;
+      flagsOnBuildings = true;
     }
     else if (strcmp(argv[i], "-f") == 0) {
       // disallow given flag
@@ -5718,28 +5717,28 @@ static void parse(int argc, char **argv)
 	usage(argv[0]);
       }
       if (strcmp(argv[i], "bad") == 0) {
-	flagDisallowed[ColorblindnessFlag] = True;
-	flagDisallowed[ObesityFlag] = True;
-	flagDisallowed[LeftTurnOnlyFlag] = True;
-	flagDisallowed[RightTurnOnlyFlag] = True;
-	flagDisallowed[MomentumFlag] = True;
-	flagDisallowed[BlindnessFlag] = True;
-	flagDisallowed[JammingFlag] = True;
-	flagDisallowed[WideAngleFlag] = True;
+	flagDisallowed[ColorblindnessFlag] = true;
+	flagDisallowed[ObesityFlag] = true;
+	flagDisallowed[LeftTurnOnlyFlag] = true;
+	flagDisallowed[RightTurnOnlyFlag] = true;
+	flagDisallowed[MomentumFlag] = true;
+	flagDisallowed[BlindnessFlag] = true;
+	flagDisallowed[JammingFlag] = true;
+	flagDisallowed[WideAngleFlag] = true;
       }
       else {
 	if ((f = lookupFlag(argv[i])) == int(NoFlag)) {
 	  fprintf(stderr, "invalid flag \"%s\"\n", argv[i]);
 	  usage(argv[0]);
 	}
-	flagDisallowed[f] = True;
+	flagDisallowed[f] = true;
       }
     }
     else if (strcmp(argv[i], "-g") == 0) {
-      oneGameOnly = True;
+      oneGameOnly = true;
     }
     else if (strcmp(argv[i], "-h") == 0) {
-      randomHeights = True;
+      randomHeights = true;
     }
     else if (strcmp(argv[i], "-help") == 0) {
       extraUsage(argv[0]);
@@ -5830,7 +5829,7 @@ static void parse(int argc, char **argv)
       if (wksPort < 1 || wksPort > 65535)
 	wksPort = ServerPort;
       else
-	useGivenPort = True;
+	useGivenPort = true;
     }
     else if (strcmp(argv[i], "-pr") == 0) {
       // use a different port
@@ -5845,12 +5844,12 @@ static void parse(int argc, char **argv)
     else if (strcmp(argv[i], "-pf") == 0) {
       // try wksPort first and if we can't open that port then
       // let system assign a port for us.
-      useFallbackPort = True;
+      useFallbackPort = true;
     }
 #ifdef PRINTSCORE
     else if (strcmp(argv[i], "-printscore") == 0) {
       // dump score whenever it changes
-      printScore = True;
+      printScore = true;
     }
 #endif
     else if (strcmp(argv[i], "-public") == 0) {
@@ -5858,7 +5857,7 @@ static void parse(int argc, char **argv)
 	fprintf(stderr, "argument expected for -public\n");
 	usage(argv[0]);
       }
-      publicizeServer = True;
+      publicizeServer = true;
       publicizedTitle = argv[i];
       if (strlen(publicizedTitle) > 127) {
 	argv[i][127] = '\0';
@@ -5871,7 +5870,7 @@ static void parse(int argc, char **argv)
 	usage(argv[0]);
       }
       publicizedAddress = argv[i];
-      publicizedAddressGiven = True;
+      publicizedAddressGiven = true;
     }
     else if (strcmp(argv[i], "-publiclist") == 0) {
       if (++i == argc) {
@@ -5882,7 +5881,7 @@ static void parse(int argc, char **argv)
     }
     else if (strcmp(argv[i], "-q") == 0) {
       // don't handle pings
-      handlePings = False;
+      handlePings = false;
     }
     else if (strcmp(argv[i], "-r") == 0) {
       // allow rogues
@@ -5898,7 +5897,7 @@ static void parse(int argc, char **argv)
       else {
 	numExtraFlags = 16;
       }
-      allFlagsOut = False;
+      allFlagsOut = false;
     }
     else if (strcmp(argv[i], "-sa") == 0) {
       // insert antidote flags
@@ -5950,7 +5949,7 @@ static void parse(int argc, char **argv)
     }
     else if (strcmp(argv[i], "-t") == 0) {
       // allow teleporters
-      useTeleporters = True;
+      useTeleporters = true;
       if (worldFile != NULL)
 	fprintf(stderr, "-t is meaningless when using a custom world, ignoring\n");
     }
@@ -5971,7 +5970,7 @@ static void parse(int argc, char **argv)
 #endif
     else if (strcmp(argv[i], "-tk") == 0) {
       // team killer does not die
-      teamKillerDies = False;
+      teamKillerDies = false;
     }
     else if (strcmp(argv[i], "-tkkr") == 0) {
       if (++i == argc) {
@@ -6052,19 +6051,19 @@ static void parse(int argc, char **argv)
   // first disallow flags inconsistent with game style
   if (gameStyle & InertiaGameStyle) {
     flagCount[int(MomentumFlag)] = 0;
-    flagDisallowed[int(MomentumFlag)] = True;
+    flagDisallowed[int(MomentumFlag)] = true;
   }
   if (gameStyle & JumpingGameStyle) {
     flagCount[int(JumpingFlag)] = 0;
-    flagDisallowed[int(JumpingFlag)] = True;
+    flagDisallowed[int(JumpingFlag)] = true;
   }
   if (gameStyle & RicochetGameStyle) {
     flagCount[int(RicochetFlag)] = 0;
-    flagDisallowed[int(RicochetFlag)] = True;
+    flagDisallowed[int(RicochetFlag)] = true;
   }
   if (!useTeleporters && !worldFile) {
     flagCount[int(PhantomZoneFlag)] = 0;
-    flagDisallowed[int(PhantomZoneFlag)] = True;
+    flagDisallowed[int(PhantomZoneFlag)] = true;
   }
 
   // make table of allowed extra flags
@@ -6120,20 +6119,20 @@ static void parse(int argc, char **argv)
     flag[i].flag.initialVelocity = 0.0f;
     flag[i].player = -1;
     flag[i].grabs = 0;
-    flag[i].required = False;
+    flag[i].required = false;
   }
   f = 0;
   if (gameStyle & TeamFlagGameStyle) {
-    flag[0].required = True;
+    flag[0].required = true;
     flag[0].flag.id = RedFlag;
     flag[0].flag.type = FlagNormal;
-    flag[1].required = True;
+    flag[1].required = true;
     flag[1].flag.id = GreenFlag;
     flag[1].flag.type = FlagNormal;
-    flag[2].required = True;
+    flag[2].required = true;
     flag[2].flag.id = BlueFlag;
     flag[2].flag.type = FlagNormal;
-    flag[3].required = True;
+    flag[3].required = true;
     flag[3].flag.id = PurpleFlag;
     flag[3].flag.type = FlagNormal;
     f = 4;
@@ -6249,9 +6248,9 @@ int main(int argc, char **argv)
   // firewalls).  use my official hostname if it appears to be
   // canonicalized, otherwise use my IP in dot notation.
   // set publicized address if not set by arguments
-  if (publicizedAddress.isNull()) {
+  if (publicizedAddress.length() == 0) {
     publicizedAddress = Address::getHostName();
-    if (strchr(publicizedAddress, '.') == NULL)
+    if (strchr(publicizedAddress.c_str(), '.') == NULL)
       publicizedAddress = serverAddress.getDotNotation();
     if (wksPort != ServerPort) {
       char portString[20];
@@ -6292,7 +6291,7 @@ int main(int argc, char **argv)
   if (debug >= 2) {
     // print networking info
     fprintf(stderr, "listening on %s:%i\n",
-	serverAddress.getDotNotation(), wksPort);
+	serverAddress.getDotNotation().c_str(), wksPort);
   }
 
   TimeKeeper lastSuperFlagInsertion = TimeKeeper::getCurrent();
@@ -6380,7 +6379,7 @@ int main(int argc, char **argv)
       float timeLeft = timeLimit - newTimeElapsed;
       if (timeLeft <= 0.0f) {
 	timeLeft = 0.0f;
-	gameOver = True;
+	gameOver = true;
       }
       if (timeLeft == 0.0f || newTimeElapsed - timeElapsed >= 30.0f) {
 	void *buf, *bufStart = getDirectMessageBuffer();
@@ -6388,7 +6387,7 @@ int main(int argc, char **argv)
 	broadcastMessage(MsgTimeUpdate, (char*)buf-(char*)bufStart, bufStart);
 	timeElapsed = newTimeElapsed;
 	if (oneGameOnly && timeLeft == 0.0f) {
-	  done = True;
+	  done = true;
 	  exitCode = 0;
 	}
       }
@@ -6545,7 +6544,7 @@ int main(int argc, char **argv)
       if (pingInSocket != -1 && FD_ISSET(pingInSocket, &read_set))
 	respondToPing();
       if (pingBcastSocket != -1 && FD_ISSET(pingBcastSocket, &read_set))
-	respondToPing(True);
+	respondToPing(true);
 
       // now check multicast for relay
       if (relayInSocket != -1 && FD_ISSET(relayInSocket, &read_set))

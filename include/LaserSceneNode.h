@@ -27,7 +27,7 @@ class LaserSceneNode : public SceneNode {
 
     void		setTexture(const OpenGLTexture&);
 
-    boolean		cull(const ViewFrustum&) const;
+    bool		cull(const ViewFrustum&) const;
 
     void		notifyStyleChange(const SceneRenderer&);
     void		addRenderNodes(SceneRenderer&);
@@ -48,7 +48,7 @@ class LaserSceneNode : public SceneNode {
   private:
     GLfloat		azimuth, elevation;
     GLfloat		length;
-    boolean		texturing;
+    bool		texturing;
     OpenGLGState	gstate;
     LaserRenderNode	renderNode;
 };

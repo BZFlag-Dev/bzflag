@@ -45,7 +45,7 @@
 /* prepare sound effects generator and shut it down */
 void			openSound(const char* pname);
 void			closeSound(void);
-boolean			isSoundOpen();
+bool			isSoundOpen();
 
 /* reposition sound receiver (no Doppler) or move it (w/Doppler effect) */
 void			moveSoundReceiver(float x, float y, float z, float t,
@@ -55,7 +55,7 @@ void			speedSoundReceiver(float vx, float vy, float vz);
 /* sound effect event at given position in world */
 void			playWorldSound(int soundCode,
 				float x, float y, float z,
-				boolean important = False);
+				bool important = false);
 
 /* sound effect positioned at receiver */
 void			playLocalSound(int soundCode);

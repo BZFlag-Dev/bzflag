@@ -37,7 +37,7 @@ RobotPlayer::RobotPlayer(const PlayerId& _id, const char* _name,
   shots = new LocalShotPath*[numShots];
   for (int i = 0; i < numShots; i++)
     shots[i] = NULL;
-  scoreChanged = False;
+  scoreChanged = false;
 }
 
 RobotPlayer::~RobotPlayer()
@@ -58,35 +58,35 @@ ShotPath*		RobotPlayer::getShot(int index) const
 }
 
 // NOTE -- code taken directly from LocalPlayer
-boolean			RobotPlayer::doEndShot(
-				int id, boolean isHit, float* pos)
+bool			RobotPlayer::doEndShot(
+				int id, bool isHit, float* pos)
 {
   const int index = id & 255;
   const int salt = (id >> 8) & 127;
 
   // special id used in some messages (and really shouldn't be sent here)
   if (id == -1)
-    return False;
+    return false;
 
   // ignore bogus shots (those with a bad index or for shots that don't exist)
   if (index < 0 || index >= World::getWorld()->getMaxShots() || !shots[index])
-    return False;
+    return false;
 
   // ignore shots that already ending
   if (shots[index]->isExpired() || shots[index]->isExpiring())
-    return False;
+    return false;
 
   // ignore shots that have the wrong salt.  since we reuse shot indices
   // it's possible for an old MsgShotEnd to arrive after we've started a
   // new shot.  that's where the salt comes in.  it changes for each shot
   // so we can identify an old shot from a new one.
   if (salt != ((shots[index]->getShotId() >> 8) & 127))
-    return False;
+    return false;
 
   // don't stop if it's because were hitting something and we don't stop
   // when we hit something.
   if (isHit && !shots[index]->isStoppedByHit())
-    return False;
+    return false;
 
   // end it
   const float* shotPos = shots[index]->getPosition();
@@ -94,7 +94,7 @@ boolean			RobotPlayer::doEndShot(
   pos[1] = shotPos[1];
   pos[2] = shotPos[2];
   shots[index]->setExpired();
-  return True;
+  return true;
 }
 
 // NOTE -- code mostly taken from LocalPlayer::doUpdate()
@@ -134,7 +134,7 @@ void			RobotPlayer::doUpdate(float dt)
       shots[i]->update(dt);
 
   if (scoreChanged) {
-    scoreChanged = False;
+    scoreChanged = false;
     server->sendNewScore(getWins(), getLosses());
   }
 }
@@ -154,7 +154,7 @@ void			RobotPlayer::doUpdateMotion(float dt)
   float azimuth = oldAzimuth;
 
   if (isAlive()) {
-    while (dt > 0.0 && pathIndex < path.getLength()) {
+    while (dt > 0.0 && pathIndex < path.size()) {
       float azimuthDiff = pathAzimuth[pathIndex] - azimuth;
       if (azimuthDiff > M_PI) azimuthDiff -= 2.0f * M_PI;
       else if (azimuthDiff < -M_PI) azimuthDiff += 2.0f * M_PI;
@@ -228,11 +228,11 @@ void			RobotPlayer::doUpdateMotion(float dt)
 
 // NOTE -- code taken directly from LocalPlayer
 // NOTE -- minTime should be initialized to Infinity by the caller
-boolean			RobotPlayer::checkHit(const Player* source,
+bool			RobotPlayer::checkHit(const Player* source,
 						const ShotPath*& hit,
 						float& minTime) const
 {
-  boolean goodHit = False;
+  bool goodHit = false;
 
   // if firing tank is paused then it doesn't count
   if (source->isPaused()) return goodHit;
@@ -271,7 +271,7 @@ boolean			RobotPlayer::checkHit(const Player* source,
 */
 
     // okay, shot hit
-    goodHit = True;
+    goodHit = true;
     hit = shot;
     minTime = t;
   }
@@ -289,7 +289,7 @@ void			RobotPlayer::explodeTank()
   newVelocity[2] = -0.5f * Gravity * ExplodeTime;
   setVelocity(newVelocity);
   target = NULL;
-  path.removeAll();
+  path.clear();
 }
 
 void			RobotPlayer::setTeam(TeamColor team)
@@ -301,7 +301,7 @@ void			RobotPlayer::changeScore(short deltaWins,
 						short deltaLosses)
 {
   Player::changeScore(deltaWins, deltaLosses);
-  scoreChanged = True;
+  scoreChanged = true;
 }
 
 void			RobotPlayer::restart()
@@ -334,8 +334,8 @@ void			RobotPlayer::restart()
     }
 
   // no target
-  path.removeAll();
-  pathAzimuth.removeAll();
+  path.clear();
+  pathAzimuth.clear();
   target = NULL;
   pathIndex = 0;
 
@@ -370,13 +370,13 @@ const Player*		RobotPlayer::getTarget() const
   return target;
 }
 
-void			RobotPlayer::setTarget(const RegionList& regions,
+void			RobotPlayer::setTarget(const std::vector<BzfRegion*>& regions,
 							const Player* _target)
 {
   static int mailbox = 0;
 
-  path.removeAll();
-  pathAzimuth.removeAll();
+  path.clear();
+  pathAzimuth.clear();
   target = _target;
   if (!target) return;
 
@@ -405,17 +405,17 @@ void			RobotPlayer::setTarget(const RegionList& regions,
     float segmentAzimuth = atan2f(p1[1] - p2[1], p1[0] - p2[0]);
     if (segmentAzimuth < 0.0f) segmentAzimuth += 2.0f * M_PI;
     p2 = p1;
-    pathAzimuth.append(segmentAzimuth);
-    path.append(p1);
+    pathAzimuth.push_back(segmentAzimuth);
+    path.push_back(p1);
     next = next->getTarget();
   } while (next && next != headRegion);
   pathIndex = 0;
 }
 
-BzfRegion*		RobotPlayer::findRegion(const RegionList& list,
+BzfRegion*		RobotPlayer::findRegion(const std::vector<BzfRegion*>& list,
 						const float p[2]) const
 {
-  const int count = list.getLength();
+  const int count = list.size();
   for (int i = 0; i < count; i++)
     if (list[i]->isInside(p))
       return list[i];

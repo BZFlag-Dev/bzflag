@@ -20,10 +20,10 @@
 
 #include "global.h"
 #include "common.h"
-#include "BzfString.h"
 #include "OpenGLTexFont.h"
 #include "TimeKeeper.h"
 #include "HUDui.h"
+#include <string>
 
 class BzfDisplay;
 class SceneRenderer;
@@ -44,7 +44,7 @@ class FlashClock {
     void		setClock(float time);
     void		setClock(float time, float onTime, float offTime);
 
-    boolean		isOn();
+    bool		isOn();
 
   private:
     TimeKeeper		startTime;
@@ -63,33 +63,33 @@ class HUDRenderer {
     int			getMaxMotionSize() const;
 
     void		setColor(float r, float g, float b);
-    void		setPlaying(boolean playing);
-    void		setRoaming(boolean roaming);
-    void		setPlayerHasHighScore(boolean = True);
-    void		setTeamHasHighScore(boolean = True);
+    void		setPlaying(bool playing);
+    void		setRoaming(bool roaming);
+    void		setPlayerHasHighScore(bool = true);
+    void		setTeamHasHighScore(bool = true);
     void		setHeading(float angle);
     void		setAltitude(float altitude);
-    void		setAltitudeTape(boolean = True);
+    void		setAltitudeTape(bool = true);
     void		setFPS(float fps);
     void		setDrawTime(float drawTimeInseconds);
     void		setAlert(int num, const char* string, float duration,
-						boolean warning = False);
+						bool warning = false);
     void		setFlagHelp(FlagId, float duration);
-    void		setCracks(boolean showCracks);
-    void		setMarker(int index, boolean = True);
+    void		setCracks(bool showCracks);
+    void		setMarker(int index, bool = true);
     void		setMarkerHeading(int index, float heading);
     void		setMarkerColor(int index, float r, float g, float b);
-    void		setRestartKeyLabel(const BzfString&);
-    void		setRoamingLabel(const BzfString&);
+    void		setRestartKeyLabel(const std::string&);
+    void		setRoamingLabel(const std::string&);
     void		setTimeLeft(int timeLeftInSeconds);
 
-    void		setDim(boolean);
+    void		setDim(bool);
 
-    boolean		getComposing() const;
-    BzfString		getComposeString() const;
-    void		setComposeString(const BzfString &message) const;
+    bool		getComposing() const;
+    std::string		getComposeString() const;
+    void		setComposeString(const std::string &message) const;
 
-    void		setComposing(const BzfString &prompt);
+    void		setComposing(const std::string &prompt);
 
     void		render(SceneRenderer&);
 
@@ -117,7 +117,7 @@ class HUDRenderer {
     void		drawTeamScore(int team, float x, float y);
 
     void		makeCrack(int n, int l, float a);
-    BzfString		makeHelpString(const char* help) const;
+    std::string		makeHelpString(const char* help) const;
 
   private:
     void		setBigFontSize(int width, int height);
@@ -128,14 +128,14 @@ class HUDRenderer {
     void		setComposeFontSize(int width, int height);
     void		setLabelsFontSize(int width, int height);
 
-    void		resize(boolean firstTime);
+    void		resize(bool firstTime);
     static void		resizeCallback(void*);
     static int		tankScoreCompare(const void* _a, const void* _b);
     static int		teamScoreCompare(const void* _a, const void* _b);
 
     class Marker {
       public:
-	boolean		on;
+	bool		on;
 	float		heading;
 	GLfloat		color[3];
     };
@@ -143,7 +143,7 @@ class HUDRenderer {
   private:
     const BzfDisplay*	display;
     MainWindow&		window;
-    boolean		firstRender;
+    bool		firstRender;
     int			noMotionSize;
     int			maxMotionSize;
     float		headingOffset;
@@ -157,18 +157,18 @@ class HUDRenderer {
     OpenGLTexFont	headingFont;
     OpenGLTexFont	composeFont;
     OpenGLTexFont	labelsFont;
-    boolean		playing;
-    boolean		roaming;
-    boolean		dim;
-    boolean		sDim;
+    bool		playing;
+    bool		roaming;
+    bool		dim;
+    bool		sDim;
     int			numPlayers;
     int			timeLeft;
     TimeKeeper		timeSet;
-    boolean		playerHasHighScore;
-    boolean		teamHasHighScore;
+    bool		playerHasHighScore;
+    bool		teamHasHighScore;
     float		heading;
     float		altitude;
-    boolean		altitudeTape;
+    bool		altitudeTape;
     float		fps;
     float		drawTime;
     int			headingMarkSpacing;
@@ -182,28 +182,28 @@ class HUDRenderer {
     float		resumeLabelWidth;
     float		cancelDestructLabelWidth;
     float		gameOverLabelWidth;
-    BzfString		restartLabel;
-    BzfString		roamingLabel;
+    std::string		restartLabel;
+    std::string		roamingLabel;
 
     FlashClock		globalClock;
     FlashClock		scoreClock;
 
     FlashClock		alertClock[MaxAlerts];
-    BzfString		alertLabel[MaxAlerts];
+    std::string		alertLabel[MaxAlerts];
     float		alertLabelWidth[MaxAlerts];
     const GLfloat*	alertColor[MaxAlerts];
 
     float		flagHelpY;
     FlashClock		flagHelpClock;
-    BzfString		flagHelp[int(LastFlag) - int(FirstFlag) + 1];
+    std::string		flagHelp[int(LastFlag) - int(FirstFlag) + 1];
     int			flagHelpIndex;
     int			flagHelpLines;
 
-    boolean		showOptions;
-    boolean		showCompose;
+    bool		showOptions;
+    bool		showCompose;
 
     GLfloat		cracks[HUDNumCracks][(1 << HUDCrackLevels) + 1][2];
-    boolean		showCracks;
+    bool		showCracks;
 
     Marker		marker[MaxHUDMarkers];
 
@@ -211,18 +211,18 @@ class HUDRenderer {
 
     static const float	altitudeOffset;
     static const GLfloat black[3];
-    static BzfString	headingLabel[36];
-    static BzfString	altitudeLabel[20];
-    static BzfString	scoreSpacingLabel;
-    static BzfString	scoreLabel;
-    static BzfString	killLabel;
-    static BzfString	teamScoreLabel;
-    static BzfString	teamScoreSpacingLabel;
-    static BzfString	playerLabel;
-    static BzfString	restartLabelFormat;
-    static BzfString	resumeLabel;
-    static BzfString	cancelDestructLabel;
-    static BzfString	gameOverLabel;
+    static std::string	headingLabel[36];
+    static std::string	altitudeLabel[20];
+    static std::string	scoreSpacingLabel;
+    static std::string	scoreLabel;
+    static std::string	killLabel;
+    static std::string	teamScoreLabel;
+    static std::string	teamScoreSpacingLabel;
+    static std::string	playerLabel;
+    static std::string	restartLabelFormat;
+    static std::string	resumeLabel;
+    static std::string	cancelDestructLabel;
+    static std::string	gameOverLabel;
     static const char*	flagHelpString[int(LastFlag) - int(FirstFlag) + 1];
 };
 

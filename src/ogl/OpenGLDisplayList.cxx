@@ -58,7 +58,7 @@ OpenGLDisplayList&	OpenGLDisplayList::operator=(
   return *this;
 }
 
-boolean			OpenGLDisplayList::operator==(
+bool			OpenGLDisplayList::operator==(
 				const OpenGLDisplayList& list) const
 {
   // follow test compares undefined display lists equal even if
@@ -66,19 +66,19 @@ boolean			OpenGLDisplayList::operator==(
   return rep->list == list.rep->list;
 }
 
-boolean			OpenGLDisplayList::operator!=(
+bool			OpenGLDisplayList::operator!=(
 				const OpenGLDisplayList& list) const
 {
   return rep->list != list.rep->list;
 }
 
-boolean			OpenGLDisplayList::operator<(
+bool			OpenGLDisplayList::operator<(
 				const OpenGLDisplayList& list) const
 {
   return rep->list < list.rep->list;
 }
 
-boolean			OpenGLDisplayList::isValid() const
+bool			OpenGLDisplayList::isValid() const
 {
   return rep->list != 0;
 }
@@ -111,7 +111,7 @@ void			OpenGLDisplayList::ref()
   ++rep->refCount;
 }
 
-boolean			OpenGLDisplayList::unref()
+bool			OpenGLDisplayList::unref()
 {
   return --rep->refCount == 0;
 }

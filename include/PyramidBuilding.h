@@ -17,7 +17,6 @@
 #ifndef	BZF_PYRAMID_BUILDING_H
 #define	BZF_PYRAMID_BUILDING_H
 
-#include "AList.h"
 #include "Obstacle.h"
 
 class PyramidBuilding : public Obstacle {
@@ -26,18 +25,18 @@ class PyramidBuilding : public Obstacle {
 				float width, float breadth, float height);
 			~PyramidBuilding();
 
-    BzfString		getType() const;
-    static BzfString	getClassName(); // const
+    std::string		getType() const;
+    static std::string	getClassName(); // const
 
     float		intersect(const Ray&) const;
     void		getNormal(const float* p, float* n) const;
-    boolean		isInside(const float* p, float radius) const;
-    boolean		isInside(const float* p, float angle,
+    bool		isInside(const float* p, float radius) const;
+    bool		isInside(const float* p, float angle,
 				float halfWidth, float halfBreadth) const;
-    boolean		isCrossing(const float* p, float angle,
+    bool		isCrossing(const float* p, float angle,
 				float halfWidth, float halfBreadth,
 				float* plane) const;
-    boolean		getHitNormal(
+    bool		getHitNormal(
 				const float* pos1, float azimuth1,
 				const float* pos2, float azimuth2,
 				float halfWidth, float halfBreadth,
@@ -51,17 +50,15 @@ class PyramidBuilding : public Obstacle {
     float		shrinkFactor(float z) const;
 
   private:
-    static BzfString	typeName;
+    static std::string	typeName;
 };
-
-BZF_DEFINE_ALIST(PyramidBuildings, PyramidBuilding);
 
 class PyramidSceneNodeGenerator : public ObstacleSceneNodeGenerator {
   friend class PyramidBuilding;
   public:
 			~PyramidSceneNodeGenerator();
 
-    WallSceneNode*	getNextNode(float, float, boolean);
+    WallSceneNode*	getNextNode(float, float, bool);
 
   protected:
 			PyramidSceneNodeGenerator(const PyramidBuilding*);

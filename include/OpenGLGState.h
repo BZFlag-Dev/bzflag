@@ -40,10 +40,10 @@ class OpenGLGState {
 			~OpenGLGState();
     OpenGLGState&	operator=(const OpenGLGState& state);
     void		setState() const;
-    boolean		isBlended() const;
-    boolean		isTextured() const;
-    boolean		isTextureReplace() const;
-    boolean		isLighted() const;
+    bool		isBlended() const;
+    bool		isTextured() const;
+    bool		isTextureReplace() const;
+    bool		isLighted() const;
     void		addRenderNode(RenderNode* node) const;
     static void		resetState();
     static void		clearLists();
@@ -107,9 +107,9 @@ class OpenGLGStateBuilder {
     OpenGLGStateBuilder &operator=(const OpenGLGState&);
 
     void		reset();
-    void		enableTexture(boolean = True);
-    void		enableTextureReplace(boolean = True);
-    void		enableMaterial(boolean = True);
+    void		enableTexture(bool = true);
+    void		enableTextureReplace(bool = true);
+    void		enableMaterial(bool = true);
     void		resetBlending();
     void		resetSmoothing();
     void		resetAlphaFunc();
@@ -118,7 +118,7 @@ class OpenGLGStateBuilder {
     void		setBlending(GLenum sFactor = GL_SRC_ALPHA,
 				    GLenum dFactor = GL_ONE_MINUS_SRC_ALPHA);
     void		setStipple(float alpha);
-    void		setSmoothing(boolean smooth = True);
+    void		setSmoothing(bool smooth = true);
     void		setCulling(GLenum culling);
     void		setShading(GLenum shading = GL_SMOOTH);
     void		setAlphaFunc(GLenum func = GL_GEQUAL,

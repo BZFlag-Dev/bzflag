@@ -34,7 +34,7 @@ int			Player::totalCount = 0;
 Player::Player(const PlayerId& _id, TeamColor _team,
 		const char* name, const char* _email) :
 				id(_id),
-				notResponding(False),
+				notResponding(false),
 				team(_team),
 				flag(NoFlag),
 				fromTeleporter(0),
@@ -203,7 +203,7 @@ void			Player::setFlag(FlagId _flag)
 }
 
 void			Player::endShot(int index,
-				boolean isHit, boolean showExplosion)
+				bool isHit, bool showExplosion)
 {
   float pos[3];
   if (doEndShot(index, isHit, pos) && showExplosion)
@@ -233,8 +233,8 @@ void			Player::updateSparks(float /*dt*/)
 }
 
 void			Player::addPlayer(SceneDatabase* scene,
-						boolean colorblind,
-						boolean showIDL)
+						bool colorblind,
+						bool showIDL)
 {
   if (!isAlive() && !isExploding()) return;
   tankNode->move(pos, forward);
@@ -291,18 +291,18 @@ void			Player::addPlayer(SceneDatabase* scene,
   }
 }
 
-void			Player::setHidden(boolean hidden)
+void			Player::setHidden(bool hidden)
 {
   tankNode->setHidden(hidden);
 }
 
-void			Player::setInvisible(boolean invisible)
+void			Player::setInvisible(bool invisible)
 {
   tankNode->setInvisible(invisible);
 }
 
 void			Player::addShots(SceneDatabase* scene,
-					boolean colorblind) const
+					bool colorblind) const
 {
   const int count = World::getWorld()->getMaxShots();
   for (int i = 0; i < count; i++) {
@@ -357,7 +357,7 @@ void			Player::setDeadReckoning()
   inputAngVel = angVel;
 }
 
-boolean			Player::getDeadReckoning(
+bool			Player::getDeadReckoning(
 				float* predictedPos, float* predictedAzimuth,
 				float* predictedVel) const
 {
@@ -436,39 +436,39 @@ boolean			Player::getDeadReckoning(
   return (dt < 3.5f * MaxUpdateTime);
 }
 
-boolean			Player::isDeadReckoningWrong() const
+bool			Player::isDeadReckoningWrong() const
 {
   // always send a new packet when some kinds of status change
   if ((status & (Alive | Paused | Falling)) !=
       (inputStatus & (Alive | Paused | Falling)))
-    return True;
+    return true;
 
   // never send a packet when dead
-  if (!(status & Alive)) return False;
+  if (!(status & Alive)) return false;
 
   // otherwise always send at least one packet per second
-  if (TimeKeeper::getTick() - inputTime >= MaxUpdateTime) return True;
+  if (TimeKeeper::getTick() - inputTime >= MaxUpdateTime) return true;
 
   // get predicted state
   float predictedPos[3], predictedAzimuth, predictedVel[3];
   getDeadReckoning(predictedPos, &predictedAzimuth, predictedVel);
 
   // always send a new packet on reckoned touchdown
-  if (predictedPos[2] < 0.0f) return True;
+  if (predictedPos[2] < 0.0f) return true;
 
   // client side throttling
   const int throttleRate = 30; // should be configurable
   const float minUpdateTime = throttleRate > 0 ? 1.0f / throttleRate : 0.0f;
-  if (TimeKeeper::getTick() - inputTime < minUpdateTime) return False;
+  if (TimeKeeper::getTick() - inputTime < minUpdateTime) return false;
 
   // see if position and azimuth are close enough
-  if (fabsf(pos[0] - predictedPos[0]) > PositionTolerance) return True;
-  if (fabsf(pos[1] - predictedPos[1]) > PositionTolerance) return True;
-  if (fabsf(pos[2] - predictedPos[2]) > PositionTolerance) return True;
-  if (fabsf(azimuth - predictedAzimuth) > AngleTolerance) return True;
+  if (fabsf(pos[0] - predictedPos[0]) > PositionTolerance) return true;
+  if (fabsf(pos[1] - predictedPos[1]) > PositionTolerance) return true;
+  if (fabsf(pos[2] - predictedPos[2]) > PositionTolerance) return true;
+  if (fabsf(azimuth - predictedAzimuth) > AngleTolerance) return true;
 
   // prediction is good enough
-  return False;
+  return false;
 }
 
 void			Player::doDeadReckoning()
@@ -481,7 +481,7 @@ void			Player::doDeadReckoning()
   notResponding = !getDeadReckoning(predictedPos, &predictedAzimuth,
 								predictedVel);
 
-  if (!isAlive()) notResponding = False;
+  if (!isAlive()) notResponding = false;
 
   // if hit ground then update input state (since we don't want to fall
   // anymore)

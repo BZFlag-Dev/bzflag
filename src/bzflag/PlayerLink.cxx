@@ -46,7 +46,7 @@ PlayerLink*		PlayerLink::multicast = NULL;
 PlayerLink::PlayerLink(const Address& multicastAddress, int port,
 					int _ttl, const char* net_interface) :
 					ttl(_ttl),
-					useRelay(False),
+					useRelay(false),
 					relay(NULL)
 {
   fdIn = openMulticast(multicastAddress, port, NULL,
@@ -102,7 +102,7 @@ PlayerLink::~PlayerLink()
 
 void			PlayerLink::setUseRelay()
 {
-  useRelay = True;
+  useRelay = true;
 }
 
 void			PlayerLink::setRelay(ServerLink* _relay)

@@ -18,7 +18,7 @@
  * the data will be transformed to GL_LUMINANCE_ALPHA.  If,
  * for all pixels, the alpha component is opaque, then the
  * data will be transformed to GL_LUMINANCE or GL_RGB.
- * hasAlpha() will return True iff the alpha component was
+ * hasAlpha() will return true iff the alpha component was
  * kept.
  *
  * OpenGLTexture reference counts so copying or assigning a
@@ -61,17 +61,17 @@ class OpenGLTexture {
 			OpenGLTexture(int width, int height,
 					const GLvoid* pixels,
 					Filter maxFilter = Linear,
-					boolean repeat = True,
+					bool repeat = true,
 					int internalFormat = 0);
 			OpenGLTexture(const OpenGLTexture&);
 			~OpenGLTexture();
     OpenGLTexture&	operator=(const OpenGLTexture&);
 
-    boolean		operator==(const OpenGLTexture&) const;
-    boolean		operator!=(const OpenGLTexture&) const;
-    boolean		operator<(const OpenGLTexture&) const;
-    boolean		isValid() const;
-    boolean		hasAlpha() const;
+    bool		operator==(const OpenGLTexture&) const;
+    bool		operator!=(const OpenGLTexture&) const;
+    bool		operator<(const OpenGLTexture&) const;
+    bool		isValid() const;
+    bool		hasAlpha() const;
     GLuint		getList() const;
 
     void		execute() const;
@@ -85,7 +85,7 @@ class OpenGLTexture {
 			Rep(int width, int height,
 					const GLvoid* pixels,
 					int maxFilter,
-					boolean repeat,
+					bool repeat,
 					int internalFormat);
 			~Rep();
 	void		setFilter(int filter);
@@ -93,7 +93,7 @@ class OpenGLTexture {
       public:
 	int		refCount;
 	GLuint		list;
-	boolean		alpha;
+	bool		alpha;
 	Rep*		next;
 	static Rep*	first;
 
@@ -107,7 +107,7 @@ class OpenGLTexture {
 	const int	width;
 	const int	height;
 	GLubyte*	image;
-	boolean		repeat;
+	bool		repeat;
 	int		internalFormat;
 
 	int			maxFilter;
@@ -116,7 +116,7 @@ class OpenGLTexture {
     };
 
     void		ref();
-    boolean		unref();
+    bool		unref();
     static void		bind(Rep*);
 
   private:
@@ -129,12 +129,12 @@ class OpenGLTexture {
 // OpenGLTexture
 //
 
-inline boolean		OpenGLTexture::isValid() const
+inline bool		OpenGLTexture::isValid() const
 {
   return rep != NULL;
 }
 
-inline boolean		OpenGLTexture::hasAlpha() const
+inline bool		OpenGLTexture::hasAlpha() const
 {
   return rep != NULL && rep->alpha;
 }

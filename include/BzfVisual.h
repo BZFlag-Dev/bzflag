@@ -26,7 +26,7 @@ class BzfVisual {
     virtual		~BzfVisual();
 
     virtual void	setLevel(int level) = 0;
-    virtual void	setDoubleBuffer(boolean) = 0;
+    virtual void	setDoubleBuffer(bool) = 0;
     virtual void	setIndex(int minDepth) = 0;
     virtual void	setRGBA(int minRed, int minGreen,
 				int minBlue, int minAlpha) = 0;
@@ -34,10 +34,10 @@ class BzfVisual {
     virtual void	setStencil(int minDepth) = 0;
     virtual void	setAccum(int minRed, int minGreen,
 				int minBlue, int minAlpha) = 0;
-    virtual void	setStereo(boolean) = 0;
+    virtual void	setStereo(bool) = 0;
     virtual void	setMultisample(int minSamples) = 0;
 
-    virtual boolean	build() = 0;
+    virtual bool	build() = 0;
 
   private:
 			BzfVisual(const BzfVisual&);

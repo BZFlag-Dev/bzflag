@@ -60,7 +60,7 @@ OpenGLLight::~OpenGLLight()
   OpenGLGState::unregisterContextInitializer(initContext, (void*)this);
 
   // put display lists on oldLists list
-  oldLists.append(listBase);
+  oldLists.push_back(listBase);
   delete[] list;
 }
 
@@ -176,10 +176,10 @@ void			OpenGLLight::makeLists()
   freeLists();
 
   // make display lists
-  const int count = oldLists.getLength();
+  const int count = oldLists.size();
   if (count != 0) {
     listBase = oldLists[count - 1];
-    oldLists.remove(count - 1);
+    oldLists.pop_back();
   }
   else {
     listBase = glGenLists(numLights);
@@ -202,7 +202,7 @@ GLint			OpenGLLight::getMaxLights()
 }
 
 void			OpenGLLight::enableLight(int index,
-						boolean on) // const
+						bool on) // const
 {
   if (on) glEnable((GLenum)(GL_LIGHT0 + index));
   else glDisable((GLenum)(GL_LIGHT0 + index));
@@ -211,7 +211,7 @@ void			OpenGLLight::enableLight(int index,
 void			OpenGLLight::cleanup()
 {
   // free all display lists on oldLists list
-  const int count = oldLists.getLength();
+  const int count = oldLists.size();
   for (int i = 0; i < count; i++) {
     // FIXME -- can't call safely since context is probably gone
     // glDeleteLists(oldLists[i], getMaxLights());

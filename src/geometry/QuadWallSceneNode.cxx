@@ -124,7 +124,7 @@ QuadWallSceneNode::QuadWallSceneNode(const GLfloat base[3],
 				float vOffset,
 				float uRepeats,
 				float vRepeats,
-				boolean makeLODs)
+				bool makeLODs)
 {
   init(base, uEdge, vEdge, uOffset, vOffset, uRepeats, vRepeats, makeLODs);
 }
@@ -134,7 +134,7 @@ QuadWallSceneNode::QuadWallSceneNode(const GLfloat base[3],
 				const GLfloat vEdge[3],
 				float uRepeats,
 				float vRepeats,
-				boolean makeLODs)
+				bool makeLODs)
 {
   init(base, uEdge, vEdge, 0.0f, 0.0f, uRepeats, vRepeats, makeLODs);
 }
@@ -146,7 +146,7 @@ void			QuadWallSceneNode::init(const GLfloat base[3],
 				float vOffset,
 				float uRepeats,
 				float vRepeats,
-				boolean makeLODs)
+				bool makeLODs)
 {
   // record plane and bounding sphere info
   GLfloat plane[4], sphere[4];
@@ -195,14 +195,14 @@ void			QuadWallSceneNode::init(const GLfloat base[3],
   int numLevels = (uLevels < vLevels ? uLevels : vLevels);
 
   // if overly rectangular then add levels to square it up
-  boolean needsSquaring = False;
+  bool needsSquaring = false;
   if (makeLODs) {
     if (uLevels >= vLevels+2) {
-      needsSquaring = True;
+      needsSquaring = true;
       numLevels += (uLevels - vLevels) / 2;
     }
     else if (vLevels >= uLevels+2) {
-      needsSquaring = True;
+      needsSquaring = true;
       numLevels += (vLevels - uLevels) / 2;
     }
   }

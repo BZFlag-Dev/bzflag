@@ -15,9 +15,9 @@ class MacWindow : public BzfWindow {
     MacWindow(const MacDisplay*, MacVisual*);
     ~MacWindow();
 
-    boolean isValid() const;
+    bool isValid() const;
 
-    void showWindow(boolean);
+    void showWindow(bool);
 
     void getPosition(int& x, int& y);
     void getSize(int& width, int& height) const;
@@ -37,7 +37,7 @@ class MacWindow : public BzfWindow {
 
     void setGamma(float);
     float getGamma() const;
-    boolean hasGammaControl() const;
+    bool hasGammaControl() const;
 
     void makeCurrent();
     void swapBuffers();

@@ -43,8 +43,8 @@ class ShotStrategy {
 
     virtual void	update(float dt) = 0;
     virtual float	checkHit(const BaseLocalPlayer*, float pos[3]) const = 0;
-    virtual boolean	isStoppedByHit() const;
-    virtual void	addShot(SceneDatabase*, boolean colorblind) = 0;
+    virtual bool	isStoppedByHit() const;
+    virtual void	addShot(SceneDatabase*, bool colorblind) = 0;
     virtual void	expire();
     virtual void	radarRender() const = 0;
 
@@ -95,8 +95,6 @@ class ShotPathSegment {
     float		bbox[2][3];
 };
 
-BZF_DEFINE_ALIST(ShotPathSegments, ShotPathSegment);
-
 class SegmentedShotStrategy : public ShotStrategy {
   public:
 			SegmentedShotStrategy(ShotPath*);
@@ -104,7 +102,7 @@ class SegmentedShotStrategy : public ShotStrategy {
 
     void		update(float dt);
     float		checkHit(const BaseLocalPlayer*, float[3]) const;
-    void		addShot(SceneDatabase*, boolean colorblind);
+    void		addShot(SceneDatabase*, bool colorblind);
     void		radarRender() const;
     TeamColor	team;
 
@@ -115,13 +113,13 @@ class SegmentedShotStrategy : public ShotStrategy {
 			Reflect = 2
     };
     void		makeSegments(ObstacleEffect = Stop);
-    const ShotPathSegments&	getSegments() const;
+    const std::vector<ShotPathSegment>&	getSegments() const;
     static void		reflect(float* v, const float* n); // const
 
     void		setCurrentTime(const TimeKeeper&);
     const TimeKeeper&	getLastTime() const;
 
-    boolean		isOverlapping(const float (*bbox1)[3],
+    bool		isOverlapping(const float (*bbox1)[3],
 				const float (*bbox2)[3]) const;
 
     void		setCurrentSegment(int segment);
@@ -131,7 +129,7 @@ class SegmentedShotStrategy : public ShotStrategy {
     TimeKeeper		currentTime;
     TimeKeeper		lastTime;
     int			segment, lastSegment;
-    ShotPathSegments	segments;
+    std::vector<ShotPathSegment>	segments;
     BoltSceneNode*	boltSceneNode;
     float		bbox[2][3];
     int			firstSegment;
@@ -161,8 +159,8 @@ class LaserStrategy : public SegmentedShotStrategy {
 			~LaserStrategy();
 
     void		update(float dt);
-    boolean		isStoppedByHit() const;
-    void		addShot(SceneDatabase*, boolean colorblind);
+    bool		isStoppedByHit() const;
+    void		addShot(SceneDatabase*, bool colorblind);
     void		radarRender() const;
 
   private:
@@ -192,7 +190,7 @@ class GuidedMissileStrategy : public ShotStrategy {
     float		checkHit(const BaseLocalPlayer*, float[3]) const;
     void		sendUpdate(const FiringInfo&) const;
     void		readUpdate(uint16_t, void*);
-    void		addShot(SceneDatabase*, boolean colorblind);
+    void		addShot(SceneDatabase*, bool colorblind);
     void		expire();
     void		radarRender() const;
 
@@ -202,7 +200,7 @@ class GuidedMissileStrategy : public ShotStrategy {
   private:
     TimeKeeper		prevTime;
     TimeKeeper		currentTime;
-    ShotPathSegments	segments;
+    std::vector<ShotPathSegment>	segments;
 	int			renderTimes;
     float		azimuth;
     float		elevation;
@@ -210,7 +208,7 @@ class GuidedMissileStrategy : public ShotStrategy {
     int			earlySegment;
     BoltSceneNode*	ptSceneNode;
 
-    boolean		needUpdate;
+    bool		needUpdate;
     PlayerId		lastTarget;
 };
 
@@ -221,8 +219,8 @@ class ShockWaveStrategy : public ShotStrategy {
 
     void		update(float dt);
     float		checkHit(const BaseLocalPlayer*, float[3]) const;
-    boolean		isStoppedByHit() const;
-    void		addShot(SceneDatabase*, boolean colorblind);
+    bool		isStoppedByHit() const;
+    void		addShot(SceneDatabase*, bool colorblind);
     void		radarRender() const;
 
   private:

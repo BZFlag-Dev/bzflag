@@ -31,7 +31,7 @@ class DeadPlayer : public Player {
     ShotPath*		getShot(int) const { return NULL; }
 
   private:
-    boolean		doEndShot(int, boolean, float*) { return False; }
+    bool		doEndShot(int, bool, float*) { return false; }
 };
 
 #endif // BZF_DEADPLAYER_H

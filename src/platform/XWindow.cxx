@@ -39,8 +39,8 @@ XWindow::XWindow(const XDisplay* _display, XVisual* _visual) :
 				window(None),
 				colormap(None),
 				context(NULL),
-				noWM(False),
-				defaultColormap(True),
+				noWM(false),
+				defaultColormap(true),
 				prev(NULL),
 				next(NULL),
 				colormapPixels(NULL),
@@ -92,7 +92,7 @@ XWindow::XWindow(const XDisplay* _display, XVisual* _visual) :
   // to ask us before destroying our window when the user clicks
   // the close-window button.
   Atom a;
-  a = XInternAtom(display->getDisplay(), "WM_DELETE_WINDOW", True);
+  a = XInternAtom(display->getDisplay(), "WM_DELETE_WINDOW", true);
   if (a != None)
     XSetWMProtocols(display->getDisplay(), window, &a, 1);
 
@@ -109,9 +109,9 @@ XWindow::XWindow(const XDisplay* _display, XVisual* _visual) :
     // allocate colors
     unsigned long rMask, gMask, bMask, pixel;
     if (XAllocColorPlanes(display->getDisplay(),
-				colormap, True, &pixel, 1,
+				colormap, true, &pixel, 1,
 				rBits, gBits, bBits, &rMask, &gMask, &bMask))
-      defaultColormap = False;
+      defaultColormap = false;
   }
 
   // these shouldn't happen because we request an RGBA visual, but Mesa
@@ -122,9 +122,9 @@ XWindow::XWindow(const XDisplay* _display, XVisual* _visual) :
     unsigned long mask;
     colormapPixels = new unsigned long[visual.colormap_size];
     if (colormapPixels && XAllocColorCells(display->getDisplay(),
-				colormap, True, &mask,
+				colormap, true, &mask,
 				0, colormapPixels, visual.colormap_size))
-      defaultColormap = False;
+      defaultColormap = false;
   }
   if (!defaultColormap) {
     loadColormap();
@@ -134,7 +134,7 @@ XWindow::XWindow(const XDisplay* _display, XVisual* _visual) :
   // make an OpenGL context for the window.  do *not* bind it to the
   // window yet:  to support 3Dfx correctly we have to wait until the
   // window has been sized.
-  context = glXCreateContext(display->getDisplay(), &visual, NULL, True);
+  context = glXCreateContext(display->getDisplay(), &visual, NULL, true);
   if (context == NULL) {
     XDestroyWindow(display->getDisplay(), window);
     XFreeColormap(display->getDisplay(), colormap);
@@ -173,12 +173,12 @@ XWindow::~XWindow()
   display->unref();
 }
 
-boolean			XWindow::isValid() const
+bool			XWindow::isValid() const
 {
   return window != None;
 }
 
-void			XWindow::showWindow(boolean show)
+void			XWindow::showWindow(bool show)
 {
   if (show) {
     // show window and wait for it (window manager may make us wait)
@@ -235,7 +235,7 @@ void			XWindow::setPosition(int x, int y)
   xsh.flags |= USPosition | PPosition;
   XSetWMNormalHints(display->getDisplay(), window, &xsh);
   XMoveWindow(display->getDisplay(), window, x, y);
-  XSync(display->getDisplay(), False);
+  XSync(display->getDisplay(), false);
 }
 
 void			XWindow::setSize(int width, int height)
@@ -248,7 +248,7 @@ void			XWindow::setSize(int width, int height)
   xsh.flags |= PBaseSize;
   XSetWMNormalHints(display->getDisplay(), window, &xsh);
   XResizeWindow(display->getDisplay(), window, width, height);
-  XSync(display->getDisplay(), False);
+  XSync(display->getDisplay(), false);
 }
 
 void			XWindow::setMinSize(int width, int height)
@@ -272,8 +272,8 @@ void			XWindow::setFullscreen()
   // see if a motif based window manager is running.  do this by
   // getting the _MOTIF_WM_INFO property on the root window.  if
   // it exists then make sure the window it refers to also exists.
-  boolean isMWMRunning = False;
-  Atom a = XInternAtom(display->getDisplay(), "_MOTIF_WM_INFO", True);
+  bool isMWMRunning = false;
+  Atom a = XInternAtom(display->getDisplay(), "_MOTIF_WM_INFO", true);
   if (a) {
     struct BzfPropMotifWmInfo {
       public:
@@ -287,7 +287,7 @@ void			XWindow::setFullscreen()
     unsigned long bytes_after;
     long* mwmInfo;
     XGetWindowProperty(display->getDisplay(), display->getRootWindow(),
-			a, 0, 4, False,
+			a, 0, 4, false,
 			a, &type, &format, &nitems, &bytes_after,
 			(unsigned char**)&mwmInfo);
     if (mwmInfo) {
@@ -302,7 +302,7 @@ void			XWindow::setFullscreen()
 		&children, &numChildren)) {
 	XFree(children);
 	if (parent == display->getRootWindow())
-	  isMWMRunning = True;
+	  isMWMRunning = true;
       }
     }
   }
@@ -316,14 +316,14 @@ void			XWindow::setFullscreen()
     hints[2] = 0;
     hints[3] = 0;
     long* xhints;
-    a = XInternAtom(display->getDisplay(), "_MOTIF_WM_HINTS", False);
+    a = XInternAtom(display->getDisplay(), "_MOTIF_WM_HINTS", false);
     {
       // get current hints
       Atom type;
       int format;
       unsigned long nitems;
       unsigned long bytes_after;
-      XGetWindowProperty(display->getDisplay(), window, a, 0, 4, False,
+      XGetWindowProperty(display->getDisplay(), window, a, 0, 4, false,
 			a, &type, &format, &nitems, &bytes_after,
 			(unsigned char**)&xhints);
       if (xhints) {
@@ -338,7 +338,7 @@ void			XWindow::setFullscreen()
     hints[2] = 0;			// no decorations
     XChangeProperty(display->getDisplay(), window, a, a, 32,
 			PropModeReplace, (unsigned char*)&hints, 4);
-    noWM = False;
+    noWM = false;
   }
 
   else {
@@ -346,10 +346,10 @@ void			XWindow::setFullscreen()
     // manager from messing with our appearance.  unfortunately, the user
     // can't move or iconify the window either.
     XSetWindowAttributes attr;
-    attr.override_redirect = True;
+    attr.override_redirect = true;
     XChangeWindowAttributes(display->getDisplay(),
 				window, CWOverrideRedirect, &attr);
-    noWM = True;
+    noWM = true;
   }
 
   // now set position and size
@@ -400,7 +400,7 @@ void			XWindow::setFullscreen()
   // probably be ignored.
   if (!noWM) {
     XSetWindowAttributes attr;
-    attr.override_redirect = True;
+    attr.override_redirect = true;
     XChangeWindowAttributes(display->getDisplay(),
 				window, CWOverrideRedirect, &attr);
   }
@@ -409,11 +409,11 @@ void			XWindow::setFullscreen()
 			xsh.base_width, xsh.base_height);
   if (!noWM) {
     XSetWindowAttributes attr;
-    attr.override_redirect = False;
+    attr.override_redirect = false;
     XChangeWindowAttributes(display->getDisplay(),
 				window, CWOverrideRedirect, &attr);
   }
-  XSync(display->getDisplay(), False);
+  XSync(display->getDisplay(), false);
 }
 
 void			XWindow::warpMouse(int x, int y)
@@ -437,7 +437,7 @@ void			XWindow::getMouse(int& x, int& y) const
 void			XWindow::grabMouse()
 {
   XGrabPointer(display->getDisplay(), window,
-		True, 0, GrabModeAsync, GrabModeAsync,
+		true, 0, GrabModeAsync, GrabModeAsync,
 		window, None, CurrentTime);
 }
 
@@ -484,7 +484,7 @@ float			XWindow::getGamma() const
   return gammaVal;
 }
 
-boolean			XWindow::hasGammaControl() const
+bool			XWindow::hasGammaControl() const
 {
   return !defaultColormap;
 }
@@ -503,7 +503,7 @@ void			XWindow::swapBuffers()
 void			XWindow::makeContext()
 {
   if (!context)
-    context = glXCreateContext(display->getDisplay(), &visual, NULL, True);
+    context = glXCreateContext(display->getDisplay(), &visual, NULL, true);
   makeCurrent();
 }
 
@@ -724,7 +724,7 @@ void			XWindow::initJoystick(char* joystickName)
   }
 }
 
-boolean                       XWindow::joystick() const
+bool                       XWindow::joystick() const
 {
   return (device != NULL);
 }

@@ -15,8 +15,6 @@ include $(DEPTH)/Make-common
 TARGETS  = $(LIBDIR)/libCommon.a
 
 CXXFILES =				\
-	AList.cxx			\
-	BzfString.cxx			\
 	ErrorHandler.cxx		\
 	Flag.cxx			\
 	Team.cxx			\

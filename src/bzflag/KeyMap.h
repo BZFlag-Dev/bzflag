@@ -19,7 +19,7 @@
 
 #include "common.h"
 #include "BzfEvent.h"
-#include "BzfString.h"
+#include <string>
 
 class BzfKeyMap {
   public:
@@ -63,12 +63,12 @@ class BzfKeyMap {
     Key			isMapped(char) const;
     Key			isMapped(BzfKeyEvent::Button) const;
     Key			isMapped(const BzfKeyEvent&) const;
-    boolean		isMappedTo(Key, const BzfKeyEvent&) const;
+    bool		isMappedTo(Key, const BzfKeyEvent&) const;
 
-    static BzfString	getKeyEventString(const BzfKeyEvent&);
-    static BzfString	getKeyName(Key);
-    static Key		lookupKeyName(const BzfString&);
-    static boolean	translateStringToEvent(const BzfString&, BzfKeyEvent&);
+    static std::string	getKeyEventString(const BzfKeyEvent&);
+    static std::string	getKeyName(Key);
+    static Key		lookupKeyName(const std::string&);
+    static bool	translateStringToEvent(const std::string&, BzfKeyEvent&);
 
   private:
     BzfKeyEvent		map1[LastKey];

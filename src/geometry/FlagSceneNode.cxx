@@ -32,11 +32,11 @@ const GLfloat		FlagSceneNode::Height = Unit;
 const GLfloat		FlagSceneNode::Base = Unit;
 
 FlagSceneNode::FlagSceneNode(const GLfloat pos[3]) :
-				billboard(True),
+				billboard(true),
 				angle(0.0f),
-				transparent(False),
-				blending(False),
-				texturing(False),
+				transparent(false),
+				blending(false),
+				texturing(false),
 				renderNode(this)
 {
   setColor(1.0f, 1.0f, 1.0f, 1.0f);
@@ -69,7 +69,7 @@ void			FlagSceneNode::turn(GLfloat _angle)
   angle = _angle * 180.0f / M_PI;
 }
 
-void			FlagSceneNode::setBillboard(boolean _billboard)
+void			FlagSceneNode::setBillboard(bool _billboard)
 {
   if (billboard == _billboard) return;
   billboard = _billboard;
@@ -83,7 +83,7 @@ void			FlagSceneNode::setColor(
   color[1] = g;
   color[2] = b;
   color[3] = a;
-  const boolean oldTransparent = transparent;
+  const bool oldTransparent = transparent;
   transparent = (color[3] != 1.0f);
   if (oldTransparent != transparent) forceNotifyStyleChange();
 }
@@ -94,7 +94,7 @@ void			FlagSceneNode::setColor(const GLfloat* rgba)
   color[1] = rgba[1];
   color[2] = rgba[2];
   color[3] = rgba[3];
-  const boolean oldTransparent = transparent;
+  const bool oldTransparent = transparent;
   transparent = (color[3] != 1.0f);
   if (oldTransparent != transparent) forceNotifyStyleChange();
 }

@@ -25,7 +25,7 @@
 
 #include "common.h"
 #include "Ray.h"
-#include "BzfString.h"
+#include <string>
 
 class ObstacleSceneNodeGenerator;
 class WallSceneNode;
@@ -36,7 +36,7 @@ class Obstacle {
 				float hwidth, float hbreadth, float height);
     virtual		~Obstacle();
 
-    virtual BzfString	getType() const = 0;
+    virtual std::string	getType() const = 0;
 
     const float*	getPosition() const;
     float		getRotation() const;
@@ -46,13 +46,13 @@ class Obstacle {
 
     virtual float	intersect(const Ray&) const = 0;
     virtual void	getNormal(const float* p, float* n) const = 0;
-    virtual boolean	isInside(const float* p, float radius) const = 0;
-    virtual boolean	isInside(const float* p, float angle,
+    virtual bool	isInside(const float* p, float radius) const = 0;
+    virtual bool	isInside(const float* p, float angle,
 				float halfWidth, float halfBreadth) const = 0;
-    virtual boolean	isCrossing(const float* p, float angle,
+    virtual bool	isCrossing(const float* p, float angle,
 				float halfWidth, float halfBreadth,
 				float* plane) const;
-    virtual boolean	getHitNormal(
+    virtual bool	getHitNormal(
 				const float* pos1, float azimuth1,
 				const float* pos2, float azimuth2,
 				float halfWidth, float halfBreadth,
@@ -82,7 +82,7 @@ class ObstacleSceneNodeGenerator {
     virtual		~ObstacleSceneNodeGenerator();
 
     virtual WallSceneNode* getNextNode(float uRepeats, float vRepeats,
-							boolean lod) = 0;
+							bool lod) = 0;
 
   protected:
 			ObstacleSceneNodeGenerator();

@@ -414,9 +414,9 @@ MacWindow::~MacWindow() {
   displays.Release();
 }
 
-boolean MacWindow::isValid() const { return true; }
+bool MacWindow::isValid() const { return true; }
 
-void MacWindow::showWindow(boolean show) {
+void MacWindow::showWindow(bool show) {
   hideMouse();
 }
 
@@ -470,7 +470,7 @@ void MacWindow::hideMouse() { HideCursor(); }
 
 void MacWindow::setGamma(float)         {}
 float MacWindow::getGamma()        const { return 0.0;   }
-boolean MacWindow::hasGammaControl() const { return false; }
+bool MacWindow::hasGammaControl() const { return false; }
 
 void MacWindow::makeContext() {}
 void MacWindow::freeContext() {}

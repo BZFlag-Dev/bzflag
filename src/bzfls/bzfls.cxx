@@ -80,9 +80,9 @@ class Server {
     void		setTitle(const char* title);
 
     Server*		getNext() const;
-    boolean		isReferenced() const;
-    boolean		isStale(const TimeKeeper&) const;
-    boolean		isFresh() const;
+    bool		isReferenced() const;
+    bool		isStale(const TimeKeeper&) const;
+    bool		isFresh() const;
     const char*		getTitle() const;
     const char*		getAddress() const;
     const char*		getVersion() const;
@@ -98,7 +98,7 @@ class Server {
   private:
     Server*		prev;
     Server*		next;
-    boolean		fresh;
+    bool		fresh;
     int			refCount;
     char*		title;
     char		version[9];
@@ -113,7 +113,7 @@ class Server {
 struct Client {
   public:
     int			fd;
-    boolean		sendingReply;
+    bool		sendingReply;
     char		buffer[MaxInputMsgSize];
     int			offset;
     int			length;
@@ -128,7 +128,7 @@ class TestServer {
 
     void		addAfter(TestServer*);
     void		setWait();
-    boolean		testWaitAndReset();
+    bool		testWaitAndReset();
     Server*		orphanServer();
 
     TestServer*		getNext() const;
@@ -141,12 +141,12 @@ class TestServer {
     TestServer*		next;
     int			fd;
     Server*		server;
-    boolean		wait;
+    bool		wait;
     TimeKeeper		startTime;
 };
 
 static int		debug = 0;
-static boolean		useGivenPort = False;
+static bool		useGivenPort = false;
 static int		wksSocket;
 static int		wksPort = ServerPort + 1;
 static int		maxFileDescriptor;
@@ -177,7 +177,7 @@ Server::Server(const char* inNamePort,
 		const char* inTitle) :
 		prev(NULL),
 		next(NULL),
-		fresh(True),
+		fresh(true),
 		refCount(1),
 		time(TimeKeeper::getCurrent())
 {
@@ -266,7 +266,7 @@ void Server::setStale()
     unref();
     DEBUG1("server %s is stale\n", nameport);
   }
-  fresh = False;
+  fresh = false;
 }
 
 void Server::setFresh()
@@ -276,7 +276,7 @@ void Server::setFresh()
     DEBUG1("server %s is fresh\n", nameport);
   }
   time = TimeKeeper::getCurrent();
-  fresh = True;
+  fresh = true;
 }
 
 void Server::setNumPlayers(int* players)
@@ -303,17 +303,17 @@ Server* Server::getNext() const
   return next;
 }
 
-boolean Server::isReferenced() const
+bool Server::isReferenced() const
 {
   return (refCount > 0);
 }
 
-boolean Server::isStale(const TimeKeeper& currentTime) const
+bool Server::isStale(const TimeKeeper& currentTime) const
 {
   return (currentTime - time >= ServerExpiration);
 }
 
-boolean Server::isFresh() const
+bool Server::isFresh() const
 {
   return fresh;
 }
@@ -368,7 +368,7 @@ TestServer::TestServer(int in_fd, Server* inServer) :
 				next(NULL),
 				fd(in_fd),
 				server(inServer),
-				wait(False),
+				wait(false),
 				startTime(TimeKeeper::getCurrent())
 {
   // do nothing
@@ -398,14 +398,14 @@ void TestServer::addAfter(TestServer* newServer)
 
 void TestServer::setWait()
 {
-  wait = True;
+  wait = true;
 }
 
-boolean TestServer::testWaitAndReset()
+bool TestServer::testWaitAndReset()
 {
-  if (!wait) return False;
-  wait = False;
-  return True;
+  if (!wait) return false;
+  wait = false;
+  return true;
 }
 
 Server* TestServer::orphanServer()
@@ -516,7 +516,7 @@ static void acceptClient(int fd)
   }
 
   // prepare client slot
-  client[index].sendingReply = False;
+  client[index].sendingReply = false;
   client[index].offset       = 0;
   client[index].length       = sizeof(client[index].buffer) - 1;
   client[index].nextServer   = NULL;
@@ -547,7 +547,7 @@ static void removeClient(int index)
 }
 
 // start the server
-static boolean serverStart()
+static bool serverStart()
 {
 #if defined(_WIN32)
   const BOOL optOn = TRUE;
@@ -578,7 +578,7 @@ static boolean serverStart()
   wksSocket = socket(AF_INET, SOCK_STREAM, 0);
   if (wksSocket == -1) {
     nerror("couldn't make connect socket");
-    return False;
+    return false;
   }
 #ifdef SO_REUSEADDR
   /* set reuse address */
@@ -586,20 +586,20 @@ static boolean serverStart()
   if (setsockopt(wksSocket, SOL_SOCKET, SO_REUSEADDR, (SSOType)&opt, sizeof(opt)) < 0) {
     nerror("serverStart: setsockopt SO_REUSEADDR");
     close(wksSocket);
-    return False;
+    return false;
   }
 #endif
   if (bind(wksSocket, (const struct sockaddr*)&addr, sizeof(addr)) == -1) {
     nerror("couldn't bind connect socket");
     close(wksSocket);
-    return False;
+    return false;
   }
 
   // listen for connections
   if (listen(wksSocket, 5) == -1) {
     nerror("couldn't make connect socket queue");
     close(wksSocket);
-    return False;
+    return false;
   }
   maxFileDescriptor = wksSocket;
 
@@ -615,7 +615,7 @@ static boolean serverStart()
 
   // initialize times
   lastChangeTime = getTime();
-  return True;
+  return true;
 }
 
 // shutdown the server
@@ -675,22 +675,22 @@ static void checkList(const TimeKeeper& time)
 }
 
 // check if server at address is accessible and responsive
-static boolean scheduleServerTest(Server* server)
+static bool scheduleServerTest(Server* server)
 {
   // create socket, make it non-blocking, and start connection
   int fd = socket(AF_INET, SOCK_STREAM, 0);
   if (fd < 0)
-    return False;
+    return false;
   if (BzfNetwork::setNonBlocking(fd) < 0) {
     close(fd);
-    return False;
+    return false;
   }
   int port = ServerPort;
   if (server->getPort()) {
     port = atoi(server->getPort());
     if (port < 1 || port > 65535) {
       close(fd);
-      return False;
+      return false;
     }
   }
   struct sockaddr_in addr;
@@ -699,7 +699,7 @@ static boolean scheduleServerTest(Server* server)
   addr.sin_addr = Address::getHostAddress(server->getName());
   if (addr.sin_addr.s_addr == 0) {
     close(fd);
-    return False;
+    return false;
   }
   sprintf(server->address, "%s", inet_ntoa(addr.sin_addr)); // FIXME this will bomb on ipv6
   if (connect(fd, (CNCTType*)&addr, sizeof(addr)) < 0) {
@@ -710,7 +710,7 @@ static boolean scheduleServerTest(Server* server)
     if (getErrno() != EINPROGRESS) {
       // connect failed
       close(fd);
-      return False;
+      return false;
     }
     else {
       // connection in progress.  must now wait for connection to
@@ -721,7 +721,7 @@ static boolean scheduleServerTest(Server* server)
 	testingList->addAfter(new TestServer(fd, server));
       else
 	testingList = new TestServer(fd, server);
-      return True;
+      return true;
     }
   }
   else {
@@ -732,7 +732,7 @@ static boolean scheduleServerTest(Server* server)
     else
       serverList = server;
     lastChangeTime = getTime();
-    return True;
+    return true;
   }
 }
 
@@ -842,14 +842,14 @@ static int findMsgEnd(const char* buffer, int, int start)
 
 // parse a whitespace separated string into tokens (modifying input string).
 // parse up to argc-1 tokens and remaining tokens go into last argument.
-// return False if insufficient tokens found (last argument can be empty),
-// else return True.
-static boolean parseRequest(char* buffer, char** args, int argc,
-				boolean lastEmpty = False)
+// return false if insufficient tokens found (last argument can be empty),
+// else return true.
+static bool parseRequest(char* buffer, char** args, int argc,
+				bool lastEmpty = false)
 {
   // string must not be empty or have leading whitespace
   if (*buffer == '\0' || isspace(*buffer))
-    return False;
+    return false;
 
   // parse
   int i = 0;
@@ -864,9 +864,9 @@ static boolean parseRequest(char* buffer, char** args, int argc,
     // failed if we reached end of string and not at last argument.
     if (*buffer == '\0')
       if (i == argc)
-	return True;
+	return true;
       else if (!lastEmpty || i < argc - 1)
-	return False;
+	return false;
       else
 	break;
 
@@ -878,16 +878,16 @@ static boolean parseRequest(char* buffer, char** args, int argc,
       ++buffer;
 
     if (*buffer == '\0')
-     return False;
+     return false;
   }
 
   // rest goes into last argument
   args[i] = buffer;
-  return True;
+  return true;
 }
 
 // continue sending reply
-static boolean continueReplyClient(int index)
+static bool continueReplyClient(int index)
 {
   // go to the next fresh server in the list
   Server* server = client[index].nextServer;
@@ -903,7 +903,7 @@ static boolean continueReplyClient(int index)
   // done if no more servers
   if (server == NULL) {
     client[index].nextServer = NULL;
-    return False;
+    return false;
   } else
     client[index].nextServer = server->getNext();
 
@@ -917,22 +917,22 @@ static boolean continueReplyClient(int index)
   client[index].offset = 0;
   client[index].length = strlen(client[index].buffer);
 
-  return True;
+  return true;
 }
 
 // parse a request and begin reply
-static boolean startReplyClient(int index)
+static bool startReplyClient(int index)
 {
   // now replying
-  client[index].sendingReply = True;
+  client[index].sendingReply = true;
 
   // get request
   char* request = (char*)client[index].buffer;
 
   // parse request to get command
   char* args[NumTeams + 5];
-  if (!parseRequest(request, args, 2, True))
-    return False;
+  if (!parseRequest(request, args, 2, true))
+    return false;
 
   // get command into cmd and remaining arguments into request
   char* cmd = args[0];
@@ -948,14 +948,14 @@ static boolean startReplyClient(int index)
     // ADD <name>[:<port>] <build> <version> <gameinfo> <title>
     if (!parseRequest(request, args, 5)) {
       numAddsBad++;
-      return False;
+      return false;
     }
 
     // addServer adds :port if needed
     client[index].buffer[0] = (char)addServer(args[0], args[2], args[1], args[3], args[4]);
     client[index].offset = 0;
     client[index].length = 1;
-    return True;
+    return true;
   }
 
   else if (strcmp(cmd, "REMOVE") == 0) {
@@ -983,7 +983,7 @@ static boolean startReplyClient(int index)
 
     client[index].offset = 0;
     client[index].length = 1;
-    return True;
+    return true;
   }
 
   else if (strcmp(cmd, "SETNUM") == 0) {
@@ -994,7 +994,7 @@ static boolean startReplyClient(int index)
     // SETNUM <address> <rogue-count> <r-count> <g-count> <b-count> <p-count>
     if (!parseRequest(request, args, NumTeams + 1)) {
       numSetsBad++;
-      return False;
+      return false;
     }
 
     // lookup server
@@ -1018,7 +1018,7 @@ static boolean startReplyClient(int index)
 
     client[index].offset = 0;
     client[index].length = 1;
-    return True;
+    return true;
   }
 
   else if (strcmp(cmd, "LIST") == 0) {
@@ -1042,7 +1042,7 @@ static boolean startReplyClient(int index)
     // GET <url> HTTP/*
     if (!parseRequest(request, args, 2)) {
       numGetsBad++;
-      return False;
+      return false;
     }
 
     // ignore all HTTP headers (which are in args[2]).  print HTTP
@@ -1072,7 +1072,7 @@ static boolean startReplyClient(int index)
     client[index].nextServer = serverList;
     refServerList(client[index].nextServer);
 
-    return True;
+    return true;
   }
   else {
     numBad++;
@@ -1080,7 +1080,7 @@ static boolean startReplyClient(int index)
   }
 
   // unrecognized
-  return False;
+  return false;
 }
 
 static void readClient(int index, const TimeKeeper& tm)
@@ -1242,7 +1242,7 @@ static void bootstrapList(int argc, char** argv)
 {
   int i;
   FILE* file;
-  boolean stdinDone = False;
+  bool stdinDone = false;
   char buffer[MaxInputMsgSize];
   char* args[5];
 
@@ -1253,7 +1253,7 @@ static void bootstrapList(int argc, char** argv)
       if (stdinDone)
 	continue;
       file = stdin;
-      stdinDone = True;
+      stdinDone = true;
     }
     else {
       file = fopen(argv[i], "r");
@@ -1276,14 +1276,14 @@ static void bootstrapList(int argc, char** argv)
 }
 
 static int exitCode = 0;
-static boolean done = False;
+static bool done = false;
 
 static void terminateServer(int /*sig*/)
 {
   bzSignal(SIGINT, SIG_PF(terminateServer));
   bzSignal(SIGTERM, SIG_PF(terminateServer));
   exitCode = 0;
-  done = True;
+  done = true;
 }
 
 static const char* usageString =
@@ -1338,7 +1338,7 @@ static int parse(int argc, char** argv)
       }
       wksPort = atoi(argv[i]);
       if (wksPort < 1 || wksPort > 65535) wksPort = ServerPort;
-      else useGivenPort = True;
+      else useGivenPort = true;
     }
     else if (strcmp(argv[i], "-v") == 0 || strcmp(argv[i], "-version") == 0) {
       printVersion(stdout);

@@ -30,8 +30,8 @@ class MenuDefaultKey : public HUDuiDefaultKey {
 			MenuDefaultKey();
 			~MenuDefaultKey();
 
-    boolean		keyPress(const BzfKeyEvent&);
-    boolean		keyRelease(const BzfKeyEvent&);
+    bool		keyPress(const BzfKeyEvent&);
+    bool		keyRelease(const BzfKeyEvent&);
 
     static MenuDefaultKey* getInstance() { return &instance; }
 

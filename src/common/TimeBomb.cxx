@@ -19,7 +19,7 @@
 #define TIME_BOMB ""
 #endif
 
-boolean			timeBombBoom()
+bool			timeBombBoom()
 {
   const char* timeBomb = timeBombString();
   if (timeBomb) {
@@ -28,11 +28,11 @@ boolean			timeBombBoom()
     time(&t);
     const struct tm* tm = localtime(&t);
     sscanf(timeBomb, "%d/%d/%d", &month, &day, &year);
-    if (tm->tm_year > year - 1900) return True;
-    if (tm->tm_year == year - 1900 && tm->tm_mon > month - 1) return True;
-    if (tm->tm_mon == month - 1 && tm->tm_mday >= day) return True;
+    if (tm->tm_year > year - 1900) return true;
+    if (tm->tm_year == year - 1900 && tm->tm_mon > month - 1) return true;
+    if (tm->tm_mon == month - 1 && tm->tm_mday >= day) return true;
   }
-  return False;
+  return false;
 }
 
 const char*		timeBombString()

@@ -32,11 +32,11 @@ class LinuxDisplayMode : public XDisplayMode {
 			~LinuxDisplayMode();
 
     ResInfo**		init(XDisplay* owner, int& num, int& current);
-    boolean		set(int);
-    boolean		setDefault(int);
+    bool		set(int);
+    bool		setDefault(int);
 
   private:
-    boolean		doSet(int, boolean position);
+    bool		doSet(int, bool position);
 
   private:
     XDisplay*		display;

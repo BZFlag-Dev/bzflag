@@ -20,12 +20,12 @@
 #include "common.h"
 #include "Ray.h"
 
-// True iff circles (in z = const plane) intersect
-boolean			testCircleCircle(const float* o1, float r1,
+// true iff circles (in z = const plane) intersect
+bool			testCircleCircle(const float* o1, float r1,
 					const float* o2, float r2);
 
-// True iff spheres intersect
-boolean			testSphereSphere(const float* o1, float r1,
+// true iff spheres intersect
+bool			testSphereSphere(const float* o1, float r1,
 					const float* o2, float r2);
 
 // returns normal to 2d rect (size 2dx x 2dy) by point p
@@ -33,8 +33,8 @@ void			getNormalRect(const float* p, const float* boxPos,
 					float boxAngle, float dx,
 					float dy, float* n);
 
-// True iff 2d rect (size 2dx x 2dy) intersects circle (in z = const plane)
-boolean			testRectCircle(const float* boxPos, float boxAngle,
+// true iff 2d rect (size 2dx x 2dy) intersects circle (in z = const plane)
+bool			testRectCircle(const float* boxPos, float boxAngle,
 					float dx, float dy,
 					const float* circPos, float circRadius);
 
@@ -54,14 +54,14 @@ float			timeRayHitsBlock(const Ray& r, const float* boxPos,
 					float boxAngle, float dx,
 					float dy, float dz);
 
-// True iff rectangles intersect (in z = const plane)
-boolean			testRectRect(const float* p1, float angle1,
+// true iff rectangles intersect (in z = const plane)
+bool			testRectRect(const float* p1, float angle1,
 					float dx1, float dy1,
 					const float* p2, float angle2,
 					float dx2, float dy2);
 
-// True iff first rectangle contains second intersect (in z = const plane)
-boolean			testRectInRect(const float* bigPos, float angle1,
+// true iff first rectangle contains second intersect (in z = const plane)
+bool			testRectInRect(const float* bigPos, float angle1,
 					float dx1, float dy1,
 					const float* smallPos, float angle2,
 					float dx2, float dy2);

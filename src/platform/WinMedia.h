@@ -29,27 +29,27 @@ class WinMedia : public BzfMedia {
 			~WinMedia();
 
     void		sleep(float);
-    boolean		openAudio();
+    bool		openAudio();
     void		closeAudio();
-    boolean		startAudioThread(void (*)(void*), void*);
+    bool		startAudioThread(void (*)(void*), void*);
     void		stopAudioThread();
-    boolean		hasAudioThread() const;
+    bool		hasAudioThread() const;
     void		writeSoundCommand(const void*, int);
-    boolean		readSoundCommand(void*, int);
+    bool		readSoundCommand(void*, int);
     int			getAudioOutputRate() const;
     int			getAudioBufferSize() const;
     int			getAudioBufferChunkSize() const;
-    boolean		isAudioTooEmpty() const;
+    bool		isAudioTooEmpty() const;
     void		writeAudioFrames(const float* samples, int numFrames);
-    void		audioSleep(boolean checkLowWater, double maxTime);
+    void		audioSleep(bool checkLowWater, double maxTime);
 
   private:
     static DWORD WINAPI	audioThreadInit(void*);
 
   private:
     HWND		window;
-    boolean		audioReady;
-    boolean		audioPlaying;
+    bool		audioReady;
+    bool		audioPlaying;
     IDirectSound*	audioInterface;
     IDirectSoundBuffer*	audioPrimaryPort;
     IDirectSoundBuffer*	audioPort;

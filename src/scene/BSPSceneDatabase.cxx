@@ -24,7 +24,7 @@
 // BSPSceneDatabase::Node
 //
 
-BSPSceneDatabase::Node::Node(boolean _dynamic, SceneNode* _node):
+BSPSceneDatabase::Node::Node(bool _dynamic, SceneNode* _node):
 				dynamic(_dynamic),
 				count(0),
 				node(_node),
@@ -57,7 +57,7 @@ void			BSPSceneDatabase::addStaticNode(SceneNode* node)
 
   // insert static node
   if (!root) {
-    root = new Node(False, node);
+    root = new Node(false, node);
     setDepth(1);
   }
   else {
@@ -69,7 +69,7 @@ void			BSPSceneDatabase::addDynamicNode(SceneNode* node)
 {
   // insert dynamic node
   if (!root) {
-    root = new Node(True, node);
+    root = new Node(true, node);
     setDepth(1);
   }
   else {
@@ -111,9 +111,9 @@ void			BSPSceneDatabase::removeAllNodes()
   depth = 0;
 }
 
-boolean			BSPSceneDatabase::isOrdered()
+bool			BSPSceneDatabase::isOrdered()
 {
-  return True;
+  return true;
 }
 
 void			BSPSceneDatabase::free(Node* node)
@@ -165,7 +165,7 @@ void			BSPSceneDatabase::insertStatic(int level,
   if (front) {
     if (root->front) insertStatic(level+1, root->front, front);
     else {
-      root->front = new Node(False, front);
+      root->front = new Node(false, front);
       setDepth(level+1);
     }
     root->count++;
@@ -173,7 +173,7 @@ void			BSPSceneDatabase::insertStatic(int level,
   if (back) {
     if (root->back) insertStatic(level+1, root->back, back);
     else {
-      root->back = new Node(False, back);
+      root->back = new Node(false, back);
       setDepth(level+1);
     }
     root->count++;
@@ -196,14 +196,14 @@ void			BSPSceneDatabase::insertDynamic(int level, Node* root,
   if (d >= 0.0) {
     if (root->front) insertDynamic(level+1, root->front, node);
     else {
-      root->front = new Node(True, node);
+      root->front = new Node(true, node);
       setDepth(level+1);
     }
   }
   else {
     if (root->back) insertDynamic(level+1, root->back, node);
     else {
-      root->back = new Node(True, node);
+      root->back = new Node(true, node);
       setDepth(level+1);
     }
   }
@@ -250,7 +250,6 @@ BSPSceneIterator::BSPSceneIterator(const BSPSceneDatabase* _db) :
   eye[0] = 0.0f;
   eye[1] = 0.0f;
   eye[2] = 0.0f;
-  stack.setShrinkable(False);
 }
 
 BSPSceneIterator::~BSPSceneIterator()
@@ -269,16 +268,16 @@ void			BSPSceneIterator::resetFrustum(
 
 void			BSPSceneIterator::reset()
 {
-  stack.removeAll();
-  stack.append(BSPSceneIteratorItem(db->root));
+  stack.clear();
+  stack.push_back(BSPSceneIteratorItem(db->root));
 }
 
 SceneNode*		BSPSceneIterator::getNext()
 {
 restart:
-  if (stack.getLength() == 0) return NULL;
+  if (stack.size() == 0) return NULL;
 
-  BSPSceneIteratorItem& item = stack[stack.getLength() - 1];
+  BSPSceneIteratorItem& item = stack[stack.size() - 1];
   switch (item.side) {
     case BSPSceneIteratorItem::None: {
       // pick first part
@@ -290,13 +289,13 @@ restart:
 	  // eye is in front so render:  back, node, front
 	  item.side = BSPSceneIteratorItem::Back;
 	  if (item.node->back)
-	    stack.append(BSPSceneIteratorItem(item.node->back));
+	    stack.push_back(BSPSceneIteratorItem(item.node->back));
 	}
 	else {
 	  // eye is in back so render:  front, node, back
 	  item.side = BSPSceneIteratorItem::Front;
 	  if (item.node->front)
-	    stack.append(BSPSceneIteratorItem(item.node->front));
+	    stack.push_back(BSPSceneIteratorItem(item.node->front));
 	}
       }
 
@@ -304,7 +303,7 @@ restart:
 	// nodes without split planes should be rendered back, node, front
 	item.side = BSPSceneIteratorItem::Back;
 	if (item.node->back)
-	  stack.append(BSPSceneIteratorItem(item.node->back));
+	  stack.push_back(BSPSceneIteratorItem(item.node->back));
       }
       goto restart;
     }
@@ -322,18 +321,18 @@ restart:
     case BSPSceneIteratorItem::Back + BSPSceneIteratorItem::Center: {
       // did back and center;  now do front
       BSPSceneDatabase::Node* front = item.node->front;
-      stack.remove(stack.getLength() - 1);
+      stack.pop_back();
       if (front)
-	stack.append(BSPSceneIteratorItem(front));
+	stack.push_back(BSPSceneIteratorItem(front));
       goto restart;
     }
 
     case BSPSceneIteratorItem::Front + BSPSceneIteratorItem::Center: {
       // did front and center;  now do back
       BSPSceneDatabase::Node* back = item.node->back;
-      stack.remove(stack.getLength() - 1);
+      stack.pop_back();
       if (back)
-	stack.append(BSPSceneIteratorItem(back));
+	stack.push_back(BSPSceneIteratorItem(back));
       goto restart;
     }
   }

@@ -39,11 +39,10 @@ Address::Address()
   addr.s_addr = htonl(INADDR_ANY);
 }
 
-Address::Address(const BzfString& name)
+Address::Address(const std::string& name)
 {
   memset(&addr, 0, sizeof(addr));
-  Address a = getHostAddress((const char*)(name.isNull() ?
-					NULL : (const char*)name));
+  Address a = getHostAddress((const char*)(name.length() ? name.c_str() : NULL));
   addr = a.addr;
 }
 
@@ -78,24 +77,24 @@ Address::operator InAddr() const
   return addr;
 }
 
-boolean			Address::operator==(const Address& address) const
+bool			Address::operator==(const Address& address) const
 {
   return addr.s_addr == address.addr.s_addr;
 }
 
-boolean			Address::operator!=(const Address& address) const
+bool			Address::operator!=(const Address& address) const
 {
   return addr.s_addr != address.addr.s_addr;
 }
 
-boolean			Address::isAny() const
+bool			Address::isAny() const
 {
   return addr.s_addr == htonl(INADDR_ANY);
 }
 
-char *			Address::getDotNotation() const
+std::string		Address::getDotNotation() const
 {
-  return inet_ntoa(addr);
+  return std::string(inet_ntoa(addr));
 }
 
 #if !defined(_WIN32)
@@ -161,7 +160,7 @@ Address			Address::getHostAddress(const char* hname)
   return a;
 }
 
-BzfString		Address::getHostByAddress(InAddr addr)
+std::string		Address::getHostByAddress(InAddr addr)
 {
 #if !defined(_WIN32)
   // set alarm to avoid waiting too long
@@ -169,7 +168,7 @@ BzfString		Address::getHostByAddress(InAddr addr)
   if (oldAlarm != SIG_ERR) {
     if (setjmp(alarmEnv) != 0) {
       // alarm went off
-      return BzfString(inet_ntoa(addr));
+      return std::string(inet_ntoa(addr));
     }
 
     // wait up to this many seconds
@@ -189,9 +188,9 @@ BzfString		Address::getHostByAddress(InAddr addr)
 
   if (!hent) {
     // can't lookup name -- return in standard dot notation
-    return BzfString(inet_ntoa(addr));
+    return std::string(inet_ntoa(addr));
   }
-  return BzfString(hent->h_name);
+  return std::string(hent->h_name);
 }
 
 const char*		Address::getHostName(const char* hostname) // const
@@ -253,13 +252,13 @@ void*			PlayerId::unpack(void* _buf)
   return (void*)buf;
 }
 
-boolean			PlayerId::operator==(const PlayerId& id) const
+bool			PlayerId::operator==(const PlayerId& id) const
 {
   return serverHost.s_addr == id.serverHost.s_addr &&
 			port == id.port && number == id.number;
 }
 
-boolean			PlayerId::operator!=(const PlayerId& id) const
+bool			PlayerId::operator!=(const PlayerId& id) const
 {
   return serverHost.s_addr != id.serverHost.s_addr ||
 			port != id.port || number != id.number;

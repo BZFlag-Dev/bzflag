@@ -62,6 +62,7 @@ int			BzfNetwork::setNonBlocking(int fd)
 
 #else /* defined(_WIN32) */
 
+#pragma warning( 4: 4786 )
 #include "network.h"
 #include "ErrorHandler.h"
 #include "Address.h"
@@ -193,9 +194,9 @@ int			BzfNetwork::setNonBlocking(int fd)
 // note that partially formed urls are not allowed.  for example, the
 // http:// cannot be elided.
 
-BzfString		BzfNetwork::dereferenceHTTP(
-				const BzfString& hostname, int port,
-				const BzfString& pathname)
+std::string		BzfNetwork::dereferenceHTTP(
+				const std::string& hostname, int port,
+				const std::string& pathname)
 {
   // we need to getenv("HTTP_PROXY") here and use if if it exists
   // note that a complete implementation may have:
@@ -206,15 +207,15 @@ BzfString		BzfNetwork::dereferenceHTTP(
   // 401 auth required challenge
 
   // lookup server address
-  Address address = Address::getHostAddress(hostname);
+  Address address = Address::getHostAddress(hostname.c_str());
   if (address.isAny())
-    return BzfString();
+    return std::string();
 
   // create socket
   int fd = socket(AF_INET, SOCK_STREAM, 0);
   if (fd == -1) {
     nerror("creating socket for HTTP");
-    return BzfString();
+    return std::string();
   }
 
   // connect to HTTP server
@@ -225,21 +226,21 @@ BzfString		BzfNetwork::dereferenceHTTP(
   if (connect(fd, (CNCTType*)&addr, sizeof(addr)) < 0) {
     nerror("connecting to HTTP server");
     close(fd);
-    return BzfString();
+    return std::string();
   }
 
   // form request
-  BzfString data("GET ");
+  std::string data("GET ");
   data += pathname;			// FIXME -- escape special characters
   data += " HTTP/1.0\r\nHost: ";
   data += hostname;
   data += "\r\nAccept: */*\r\n\r\n";
 
   // send request
-  if (send(fd, (const char*)data, data.getLength(), 0) < 0) {
+  if (send(fd, data.c_str(), data.length(), 0) < 0) {
     nerror("sending request to HTTP server");
     close(fd);
-    return BzfString();
+    return std::string();
   }
 
   // slurp up reply
@@ -253,83 +254,71 @@ BzfString		BzfNetwork::dereferenceHTTP(
   if (size < 0) {
     nerror("receiving reply from HTTP server");
     close(fd);
-    return BzfString();
+    return std::string();
   }
 
   // close socket
   close(fd);
 
   // parse reply.  first check for HTTP response and get the result code.
-  const char* scan = data;
-  char code[4];
-  if (strncmp(data, "HTTP/1.", 7) != 0)
-    return BzfString();
-  scan += 7;
-  while (*scan && !isspace(*scan)) ++scan;
-  while (*scan &&  isspace(*scan)) ++scan;
-  memcpy(code, scan, 3);
-  code[3] = '\0';
-
-  // what was the result?  we only accept results 200 (OK) and 302
-  // (object moved).
-  if (strcmp(code, "200") == 0) {
-    // skip past headers to body
-    const char* body = strstr(scan, "\r\n\r\n");
-    if (body)
-      body += 4;
-    else {
-      body = strstr(scan, "\n\n");
-      if (body)
-	body += 2;
-      else
-	return BzfString();
-    }
-
-    // data is entire body
-    return data(body - data);
+  if (data.substr(0, 7) != "HTTP/1.") {
+    return std::string();
   }
-  else if (strcmp(code, "302") == 0) {
+  unsigned int scanpos = 7;
+  for(;(scanpos < data.length()) && data[scanpos] != ' '; scanpos++);
+  for(;(scanpos < data.length()) && data[scanpos] == ' '; scanpos++);
+  std::string code = data.substr(scanpos, 3);
+  data = data.substr(scanpos + 3);
+  std::string body;
+
+  // what was the result?  we only accept 200 (OK) and 302 (object moved)
+  if (code == "200") {
+    // skip past headers to body
+    int bodypos = data.find("\r\n\r\n");
+    if(bodypos != -1) {
+      body = data.substr(bodypos + 4);
+    }
+    else {
+      bodypos = data.find("\n\n");
+      if(bodypos != -1)
+        body = data.substr(bodypos + 2);
+      else
+        return std::string();
+    }
+    if(body[body.length() - 1] == '\n')
+      body = body.substr(0, body.length() - 1);
+    return body;
+  } else if (code == "302") {
     // find Location: header
-    const char* location = strstr(scan, "Location:");
-    if (!location)
-      return BzfString();
+    int locpos = data.find("Location:");
+    if(locpos != -1)
+      return std::string();
 
     // data is rest of Location: header line sans leading/trailing whitespace.
-    // skip to beginning of url.
-    location += 9;
-    while (*location && isspace(*location))
-      ++location;
-
-    // find end of header line, minus whitespace
-    const char* end = strchr(location, '\n');
-    if (!end)
-      return BzfString();
-    while (end > location && isspace(end[-1]))
-      --end;
-
-    // get length
-    const int urlLength = end - location;
-    if (urlLength == 0)
-      return BzfString();
-
-    // copy url
-    return data(location - data, urlLength);
+    // skip to beginnning of url;
+    locpos += 9;
+    for(;(locpos < data.length()) && data[locpos] != ' '; locpos++);
+    std::string location = data.substr(locpos);
+    locpos = location.find_first_of("\n");
+    if(locpos == -1)
+      return std::string();
+    return location.substr(0, locpos);
   }
 
-  return BzfString();
+  return std::string();
 }
 
-BzfString		BzfNetwork::dereferenceFile(
-				const BzfString& pathname)
+std::string		BzfNetwork::dereferenceFile(
+				const std::string& pathname)
 {
   // open file
-  FILE* file = fopen(pathname, "r");
+  FILE* file = fopen(pathname.c_str(), "r");
   if (!file)
-    return BzfString();
+    return std::string();
 
   // slurp up file
   char line[256];
-  BzfString data;
+  std::string data;
   while (fgets(line, sizeof(line), file))
     data += line;
 
@@ -339,12 +328,12 @@ BzfString		BzfNetwork::dereferenceFile(
   return data;
 }
 
-void			BzfNetwork::insertLines(BzfStringAList& list,
-				int index, const BzfString& data)
+void			BzfNetwork::insertLines(std::vector<std::string>& list,
+				int index, const std::string& data)
 {
     const char* start, *end, *tail;
 
-    start = data;
+    start = data.c_str();
     while (*start) {
 	// skip leading whitespace
 	while (*start && isspace(*start))
@@ -361,8 +350,11 @@ void			BzfNetwork::insertLines(BzfStringAList& list,
 	    tail--;
 
 	// if non-empty and not beginning with # then add to list
-	if (end > start && *start != '#')
-	    list.insert(data(start - data, end - start), index++);
+	if (end > start && *start != '#') {
+	    std::vector<std::string>::iterator it = list.begin();
+	    for(int i = 0; i < index++; i++) it++;
+	    list.insert(it, data.substr(start - data.c_str(), end - start));
+	}
 
 	// go to next line
 	start = end;
@@ -371,14 +363,14 @@ void			BzfNetwork::insertLines(BzfStringAList& list,
     }
 }
 
-boolean			BzfNetwork::dereferenceURLs(
-				BzfStringAList& list, int max,
-				BzfStringAList& failedList)
+bool			BzfNetwork::dereferenceURLs(
+				std::vector<std::string>& list, unsigned int max,
+				std::vector<std::string>& failedList)
 {
-    int i = 0;
+    unsigned int i = 0;
 
-    while (i < list.getLength() && i < max) {
-	BzfString protocol, hostname, pathname;
+    while (i < list.size() && i < max) {
+	std::string protocol, hostname, pathname;
 	int port = 0;
 
 	// parse next url
@@ -388,30 +380,34 @@ boolean			BzfNetwork::dereferenceURLs(
 	if (protocol == "http") {
 	    // get data
 	    if (port == 0) port = 80;
-	    BzfString data = dereferenceHTTP(hostname, port, pathname);
+	    std::string data = dereferenceHTTP(hostname, port, pathname);
 
 	    // insert new URLs
-	    if (data.getLength() == 0)
-		failedList.append(list[i]);
+	    if (data.length() == 0)
+		failedList.push_back(list[i]);
 	    else
-		insertLines(list, i + 1, data);
+	    	list.push_back(data);
 
 	    // done with this URL
-	    list.remove(i);
+	    std::vector<std::string>::iterator it = list.begin();
+	    for(unsigned int j = 0; j < i; j++) it++;
+	    list.erase(it);
 	}
 
 	else if (protocol == "file") {
 	    // get data
-	    BzfString data = dereferenceFile(pathname);
+	    std::string data = dereferenceFile(pathname);
 
 	    // insert new URLs
-	    if (data.getLength() == 0)
-		failedList.append(list[i]);
+	    if (data.length() == 0)
+		failedList.push_back(list[i]);
 	    else
-		insertLines(list, i + 1, data);
+	    	list.push_back(data);
 
 	    // done with this URL
-	    list.remove(i);
+	    std::vector<std::string>::iterator it = list.begin();
+	    for(unsigned int j = 0; j < i; j++) it++;
+	    list.erase(it);
 	}
 
 	else if (protocol == "bzflist") {
@@ -421,81 +417,83 @@ boolean			BzfNetwork::dereferenceURLs(
 
 	else {
 	    // invalid protocol or url
-	    failedList.append(list[i]);
-	    list.remove(i);
+	    failedList.push_back(list[i]);
+	    std::vector<std::string>::iterator it = list.begin();
+	    for(unsigned int j = 0; j < i; j++) it++;
+	    list.erase(it);
 	}
     }
 
     // remove any urls we didn't get to
-    while (list.getLength() > max)
-	list.remove(list.getLength() - 1);
+    while (list.size() > max) {
+      std::vector<std::string>::iterator it = list.begin();
+      for(unsigned int j = list.size() - 1; j < i; j++) it++;
+      list.erase(it);
+    }
 
-    return (list.getLength() > 0);
+    return (list.size() > 0);
 }
 
 // parse a url into its parts
-boolean			BzfNetwork::parseURL(const BzfString& url,
-				BzfString& protocol,
-				BzfString& hostname,
+bool			BzfNetwork::parseURL(const std::string& url,
+				std::string& protocol,
+				std::string& hostname,
 				int& port,
-				BzfString& pathname)
+				std::string& pathname)
 {
   static const char* defaultHostname = "localhost";
 
-  // scan for :
-  const char* base = url;
-  const char* scan = base;
-  while (*scan != '\0' && *scan != ':' && !isspace(*scan))
-    ++scan;
+  std::string mungedurl;
 
-  // url is bad if delimiter not found or is first character or whitespace
-  // found.
-  if (*scan == '\0' || scan == base || isspace(*scan))
-    return False;
+
+  int delimiterpos = 0;
+  for(; (delimiterpos < url.length()) && (url[delimiterpos] != ':') && (url[delimiterpos] != ' '); delimiterpos++);
+  if(url[delimiterpos] != ':')
+    return false;
 
   // set defaults
   hostname = defaultHostname;
 
   // store protocol
-  protocol = url(base - url, scan - base);
-  scan++;
+  protocol = url.substr(0, delimiterpos);
+  mungedurl = url.substr(delimiterpos + 1);
+
 
   // store hostname and optional port for some protocols
   if (protocol == "http" || protocol == "bzflist") {
-    if (scan[0] == '/' && scan[1] == '/') {
-      // scan over hostname and store it
-      base = scan + 2;
-      scan = base;
-      while (*scan != '\0' && *scan != ':' &&
-			*scan != '/' && *scan != '\\' && !isspace(*scan))
-	++scan;
-      if (isspace(*scan))
-	return False;
-      if (scan != base)
-	hostname = url(base - url, scan - base);
+    if (mungedurl[0] == '/' && mungedurl[1] == '/') {
+      mungedurl = mungedurl.substr(2);
+      int pos = 0;
+      for(; (pos < mungedurl.length()) && (mungedurl[pos] != ':') && (mungedurl[pos] != '/') && (mungedurl[pos] != '\\') && (mungedurl[pos] != ' '); pos++);
 
-      // scan over and store port number
-      if (*scan == ':') {
-	scan++;
-	base = scan;
-	while (isdigit(*scan))
-	  ++scan;
-	port = atoi(base);
+      if(mungedurl[pos] == ' ')
+	return false;
+	
+      if(pos != 0)
+	hostname = mungedurl.substr(0, pos);
+
+      mungedurl = mungedurl.substr(pos);
+      pos = 0;
+
+      if(mungedurl[0] == ':') {
+	pos++;
+	for(; isdigit(mungedurl[pos]); pos++);
+	mungedurl[pos] = '\0';
+	port = atoi(mungedurl.c_str() + 1);
       }
 
-      // next character must be / or \ or there must be no next character
-      if (*scan != '\0' && *scan != '/' && *scan != '\\')
-	return False;
+      mungedurl = mungedurl.substr(pos);
+
+      if((mungedurl[0] != '\0') && (mungedurl[0] != '/') && (mungedurl[0] != '\\'))
+	return false;
+
     }
   }
-  base = scan;
-
-  // store pathname
-  if (*base != 0)
-    pathname = url(base - url);
+  if(mungedurl.length() != 0)
+    pathname = mungedurl;
   else
     pathname = "";
 
-  return True;
+  return true;
 }
 // ex: shiftwidth=2 tabstop=8

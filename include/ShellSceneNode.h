@@ -39,12 +39,12 @@ class ShellSceneNode : public ShotSceneNode {
       public:
 			ShellRenderNode(const ShellSceneNode*);
 			~ShellRenderNode();
-	void		setLighting(boolean);
+	void		setLighting(bool);
 	void		render();
 	const GLfloat*	getPosition() { return sceneNode->getSphere(); }
       private:
 	const ShellSceneNode* sceneNode;
-	boolean		lighted;
+	bool		lighted;
     };
     friend class ShellRenderNode;
 

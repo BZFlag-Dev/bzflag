@@ -26,9 +26,9 @@ class BzfDisplay {
 			BzfDisplay();
     virtual		~BzfDisplay();
 
-    virtual boolean	isValid() const = 0;
-    virtual boolean	isEventPending() const = 0;
-    virtual boolean	getEvent(BzfEvent&) const = 0;
+    virtual bool	isValid() const = 0;
+    virtual bool	isEventPending() const = 0;
+    virtual bool	getEvent(BzfEvent&) const = 0;
 
     int			getWidth() const;
     int			getHeight() const;
@@ -53,10 +53,10 @@ class BzfDisplay {
     const ResInfo*	getResolution(int index) const;
     int			getResolution() const;
     int			getDefaultResolution() const;
-    boolean		setResolution(int index);
-    boolean		setDefaultResolution();
+    bool		setResolution(int index);
+    bool		setDefaultResolution();
     int			findResolution(const char* name) const;
-    boolean		isValidResolution(int index) const;
+    bool		isValidResolution(int index) const;
 
   protected:
     void		initResolutions(ResInfo**, int num, int current);
@@ -65,8 +65,8 @@ class BzfDisplay {
 			BzfDisplay(const BzfDisplay&);
     BzfDisplay&		operator=(const BzfDisplay&);
 
-    virtual boolean	doSetResolution(int) = 0;
-    virtual boolean	doSetDefaultResolution();
+    virtual bool	doSetResolution(int) = 0;
+    virtual bool	doSetDefaultResolution();
 
   private:
     int			passWidth, passHeight;

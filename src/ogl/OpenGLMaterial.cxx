@@ -50,7 +50,7 @@ OpenGLMaterial::Rep*	OpenGLMaterial::Rep::getRep(
 OpenGLMaterial::Rep::Rep(const GLfloat* _specular,
 				const GLfloat* _emissive,
 				GLfloat _shininess) :
-				init(False),
+				init(false),
 				refCount(1),
 				shininess(_shininess)
 {
@@ -103,14 +103,14 @@ void			OpenGLMaterial::Rep::execute()
     glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, emissive);
     glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, shininess);
     glEndList();
-    init = True;
+    init = true;
   }
   glCallList(list);
 }
 
 void			OpenGLMaterial::Rep::initContext(void* self)
 {
-  ((Rep*)self)->init = False;
+  ((Rep*)self)->init = false;
 }
 
 //
@@ -150,25 +150,25 @@ OpenGLMaterial&		OpenGLMaterial::operator=(const OpenGLMaterial& m)
   return *this;
 }
 
-boolean			OpenGLMaterial::operator==(const OpenGLMaterial& m) const
+bool			OpenGLMaterial::operator==(const OpenGLMaterial& m) const
 {
   return rep == m.rep;
 }
 
-boolean			OpenGLMaterial::operator!=(const OpenGLMaterial& m) const
+bool			OpenGLMaterial::operator!=(const OpenGLMaterial& m) const
 {
   return rep != m.rep;
 }
 
-boolean			OpenGLMaterial::operator<(const OpenGLMaterial& m) const
+bool			OpenGLMaterial::operator<(const OpenGLMaterial& m) const
 {
-  if (rep == m.rep) return False;
-  if (!m.rep) return False;
-  if (!rep) return True;
+  if (rep == m.rep) return false;
+  if (!m.rep) return false;
+  if (!rep) return true;
   return (rep->list < m.rep->list);
 }
 
-boolean			OpenGLMaterial::isValid() const
+bool			OpenGLMaterial::isValid() const
 {
   return (rep != NULL);
 }

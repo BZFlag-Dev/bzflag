@@ -18,7 +18,7 @@
 #define	BZF_WINDOW_H
 
 #include "common.h"
-#include "AList.h"
+#include <vector>
 
 class BzfDisplay;
 
@@ -27,7 +27,6 @@ class BzfWindowCB {
     void		(*cb)(void*);
     void*		data;
 };
-BZF_DEFINE_ALIST(BzfWindowCBAList, BzfWindowCB);
 
 class BzfWindow {
   public:
@@ -35,9 +34,9 @@ class BzfWindow {
     virtual		~BzfWindow();
 
     const BzfDisplay*	getDisplay() const { return display; }
-    virtual boolean	isValid() const = 0;
+    virtual bool	isValid() const = 0;
 
-    virtual void	showWindow(boolean) = 0;
+    virtual void	showWindow(bool) = 0;
 
     virtual void	getPosition(int& x, int& y) = 0;
     virtual void	getSize(int& width, int& height) const = 0;
@@ -57,7 +56,7 @@ class BzfWindow {
 
     virtual void	setGamma(float) = 0;
     virtual float	getGamma() const = 0;
-    virtual boolean	hasGammaControl() const = 0;
+    virtual bool	hasGammaControl() const = 0;
 
     virtual void	makeCurrent() = 0;
     virtual void	swapBuffers() = 0;
@@ -65,7 +64,7 @@ class BzfWindow {
     virtual void	freeContext() = 0;
 
     virtual void	initJoystick(const char* joystickName);
-    virtual boolean	joystick() const { return False; }
+    virtual bool	joystick() const { return false; }
     virtual void	getJoy(int& x, int& y) const { x = 0; y = 0; }
     virtual unsigned long getJoyButtons() const { return 0; }
 
@@ -79,8 +78,8 @@ class BzfWindow {
 
   private:
     const BzfDisplay*	display;
-    BzfWindowCBAList	exposeCallbacks;
-    BzfWindowCBAList	resizeCallbacks;
+    std::vector<BzfWindowCB>	exposeCallbacks;
+    std::vector<BzfWindowCB>	resizeCallbacks;
 };
 
 #endif // BZF_WINDOW_H

@@ -46,17 +46,17 @@ void			getSunColor(const float sunDir[3], GLfloat color[3],
 // horizon away from sun, respectively.
 void			getSkyColor(const float sunDir[3], GLfloat sky[4][3]);
 
-// True if sun is high enough to cast shadows.  sun direction should be
+// true if sun is high enough to cast shadows.  sun direction should be
 // normalized.
-boolean			areShadowsCast(const float sunDir[3]);
+bool			areShadowsCast(const float sunDir[3]);
 
-// True if sun is low enough to let stars be visible.  sun direction
+// true if sun is low enough to let stars be visible.  sun direction
 // should be normalized.
-boolean			areStarsVisible(const float sunDir[3]);
+bool			areStarsVisible(const float sunDir[3]);
 
-// True if near sunset and sky color interpolation shouldn't be from
+// true if near sunset and sky color interpolation shouldn't be from
 // zenith, but from somewhere lower to flatten out the colors.
-boolean			getSunsetTop(const float sunDir[3], float& topAltitude);
+bool			getSunsetTop(const float sunDir[3], float& topAltitude);
 
 #endif // BZF_DAYLIGHT_H
 // ex: shiftwidth=2 tabstop=8

@@ -27,10 +27,10 @@ EighthDimSceneNode::~EighthDimSceneNode()
   // do nothing
 }
 
-boolean			EighthDimSceneNode::cull(const ViewFrustum&) const
+bool			EighthDimSceneNode::cull(const ViewFrustum&) const
 {
   // no culling
-  return False;
+  return false;
 }
 
 void			EighthDimSceneNode::notifyStyleChange(

@@ -37,7 +37,7 @@ class BaseLocalPlayer : public Player {
 #endif
 
     virtual void	explodeTank() = 0;
-    virtual boolean	checkHit(const Player* source,
+    virtual bool	checkHit(const Player* source,
 				const ShotPath*& hit, float& minTime) const = 0;
 
   protected:
@@ -90,8 +90,8 @@ class LocalPlayer : public BaseLocalPlayer {
     void		setTeam(TeamColor);
     void		setDesiredSpeed(float fracOfMaxSpeed);
     void		setDesiredAngVel(float fracOfMaxAngVel);
-    void		setPause(boolean = True);
-    boolean		fireShot();
+    void		setPause(bool = true);
+    bool		fireShot();
     void		explodeTank();
     void		jump();
     void		setMagnify(int zoom);
@@ -104,7 +104,7 @@ class LocalPlayer : public BaseLocalPlayer {
     const Player*	getRecipient() const;
 
     void		restart(const float* pos, float azimuth);
-    boolean		checkHit(const Player* source, const ShotPath*& hit,
+    bool		checkHit(const Player* source, const ShotPath*& hit,
 							float& minTime) const;
 
     void		setFlag(FlagId);
@@ -112,31 +112,31 @@ class LocalPlayer : public BaseLocalPlayer {
 
     void		addAntidote(SceneDatabase*);
 
-    boolean		isKeyboardMoving() const;
+    bool		isKeyboardMoving() const;
     void		setKeyboardMoving(bool status);
     void 		setKeyboardSpeed(float speed);
     void 		setKeyboardAngVel(float angVel);
     float 		getKeyboardSpeed() const;
     float 		getKeyboardAngVel() const;
-    void 		setKey(int button, boolean pressed);
-    boolean             getKeyPressed() const;
+    void 		setKey(int button, bool pressed);
+    bool             getKeyPressed() const;
     int 		getKeyButton() const;
     void                resetKey();
-    void                setSlowKeyboard(boolean slow);
-    boolean             hasSlowKeyboard() const;
+    void                setSlowKeyboard(bool slow);
+    bool             hasSlowKeyboard() const;
 
     static LocalPlayer*	getMyTank();
     static void		setMyTank(LocalPlayer*);
 
   protected:
-    boolean		doEndShot(int index, boolean isHit, float* pos);
+    bool		doEndShot(int index, bool isHit, float* pos);
     void		doUpdate(float dt);
     void		doUpdateMotion(float dt);
     void		doMomentum(float dt, float& speed, float& angVel);
     void		doForces(float dt, float* velocity, float& angVel);
     const Obstacle*	getHitBuilding(const float* pos, float angle,
-				boolean phased, boolean& expel) const;
-    boolean		getHitNormal(const Obstacle* o,
+				bool phased, bool& expel) const;
+    bool		getHitNormal(const Obstacle* o,
 				const float* pos1, float azimuth1,
 				const float* pos2, float azimuth2,
 				float* normal) const;
@@ -154,18 +154,18 @@ class LocalPlayer : public BaseLocalPlayer {
     const Obstacle*	insideBuilding;
     GLfloat		crossingPlane[4];
     LocalShotPath**	shots;
-    boolean		anyShotActive;
+    bool		anyShotActive;
     int			magnify;
     const Player*	target;
     const Player*	nemesis;
     const Player*	recipient;
     static LocalPlayer*	mainPlayer;
-    boolean		keyboardMoving;
+    bool		keyboardMoving;
     float		keyboardSpeed;
     float		keyboardAngVel;
     int 		keyButton;
-    boolean             keyPressed;
-    boolean             slowKeyboard;
+    bool             keyPressed;
+    bool             slowKeyboard;
 };
 
 //
@@ -207,7 +207,7 @@ inline const Obstacle*	LocalPlayer::getContainingBuilding() const
   return insideBuilding;
 }
 
-inline boolean LocalPlayer::isKeyboardMoving() const
+inline bool LocalPlayer::isKeyboardMoving() const
 {
   return keyboardMoving;
 }
@@ -237,7 +237,7 @@ inline float LocalPlayer::getKeyboardAngVel() const
   return keyboardAngVel;
 }
 
-inline void LocalPlayer::setKey(int button, boolean pressed)
+inline void LocalPlayer::setKey(int button, bool pressed)
 {
   keyButton = button;
   keyPressed = pressed;
@@ -246,10 +246,10 @@ inline void LocalPlayer::setKey(int button, boolean pressed)
 inline void LocalPlayer::resetKey()
 {
   keyButton = BzfKeyEvent::NoButton;
-  keyPressed = False;
+  keyPressed = false;
 }
 
-inline boolean LocalPlayer::getKeyPressed() const
+inline bool LocalPlayer::getKeyPressed() const
 {
   return keyPressed;
 }
@@ -259,12 +259,12 @@ inline int LocalPlayer::getKeyButton() const
   return keyButton;
 }
 
-inline void LocalPlayer::setSlowKeyboard(boolean slow)
+inline void LocalPlayer::setSlowKeyboard(bool slow)
 {
   slowKeyboard = slow;
 }
 
-inline boolean LocalPlayer::hasSlowKeyboard() const
+inline bool LocalPlayer::hasSlowKeyboard() const
 {
   return slowKeyboard;
 }

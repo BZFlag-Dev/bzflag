@@ -19,7 +19,7 @@
 
 #include "common.h"
 
-boolean			timeBombBoom();
+bool			timeBombBoom();
 const char*		timeBombString();
 
 #endif /* BZF_TIME_BOMB_H */

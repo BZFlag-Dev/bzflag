@@ -26,7 +26,7 @@ class QuadWallSceneNode : public WallSceneNode {
 				const GLfloat tEdge[3],
 				float uRepeats = 1.0,
 				float vRepeats = 1.0,
-				boolean makeLODs = True);
+				bool makeLODs = true);
 			QuadWallSceneNode(const GLfloat base[3],
 				const GLfloat sEdge[3],
 				const GLfloat tEdge[3],
@@ -34,7 +34,7 @@ class QuadWallSceneNode : public WallSceneNode {
 				float vOffset,
 				float uRepeats,
 				float vRepeats,
-				boolean makeLODs);
+				bool makeLODs);
 			~QuadWallSceneNode();
 
     int			split(const float*, SceneNode*&, SceneNode*&) const;
@@ -50,7 +50,7 @@ class QuadWallSceneNode : public WallSceneNode {
 				float vOffset,
 				float uRepeats,
 				float vRepeats,
-				boolean makeLODs);
+				bool makeLODs);
 
   protected:
     class Geometry : public RenderNode {

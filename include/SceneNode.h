@@ -56,12 +56,12 @@ class SceneNode {
 
     virtual const GLfloat* getPlane() const;
     virtual GLfloat	getDistance(const GLfloat* eye) const;
-    virtual boolean	cull(const ViewFrustum&) const;
+    virtual bool	cull(const ViewFrustum&) const;
     virtual void	addLight(SceneRenderer&);
     virtual int		split(const float* plane,
 				SceneNode*& front, SceneNode*& back) const;
 
-    static void		setColorOverride(boolean = True);
+    static void		setColorOverride(bool = true);
     static void		glColor3f(GLfloat r, GLfloat g, GLfloat b)
 				{ (*color3f)(r, g, b); }
     static void		glColor4f(GLfloat r, GLfloat g, GLfloat b, GLfloat a)

@@ -43,16 +43,16 @@ class World {
 			World();
 			~World();
 
-    boolean		allowTeamFlags() const;
-    boolean		allowSuperFlags() const;
-    boolean		allowRogues() const;
-    boolean		allowJumping() const;
-    boolean		allowInertia() const;
-    boolean		allShotsRicochet() const;
-    boolean		allowAntidote() const;
-    boolean		allowShakeTimeout() const;
-    boolean		allowShakeWins() const;
-    boolean		allowTimeOfDayAdjust() const;
+    bool		allowTeamFlags() const;
+    bool		allowSuperFlags() const;
+    bool		allowRogues() const;
+    bool		allowJumping() const;
+    bool		allowInertia() const;
+    bool		allShotsRicochet() const;
+    bool		allowAntidote() const;
+    bool		allowShakeTimeout() const;
+    bool		allowShakeWins() const;
+    bool		allowTimeOfDayAdjust() const;
     float		getLinearAcceleration() const;
     float		getAngularAcceleration() const;
     float		getFlagShakeTimeout() const;
@@ -75,11 +75,11 @@ class World {
     DeadPlayer**	getDeadPlayers() const;
     Flag&		getFlag(int index) const;
     const float*	getBase(int) const;
-    const WallObstacles	&getWalls() const;
-    const BoxBuildings&	getBoxes() const;
-    const PyramidBuildings& getPyramids() const;
-    const BaseBuildings &getBases() const;
-    const Teleporters&	getTeleporters() const;
+    const std::vector<WallObstacle>	&getWalls() const;
+    const std::vector<BoxBuilding>&	getBoxes() const;
+    const std::vector<PyramidBuilding>& getPyramids() const;
+    const std::vector<BaseBuilding> &getBases() const;
+    const std::vector<Teleporter>&	getTeleporters() const;
     const Teleporter*	getTeleporter(int source, int& face) const;
     int			getTeleporter(const Teleporter*, int face) const;
     int			getTeleportTarget(int source) const;
@@ -90,7 +90,7 @@ class World {
     const Obstacle*	hitBuilding(const float* pos, float angle,
 					float tankWidth,
 					float tankBreadth) const;
-    boolean		crossingTeleporter(const float* oldPos, float angle,
+    bool		crossingTeleporter(const float* oldPos, float angle,
 					float tankWidth, float tankBreadth,
 					float* plane) const;
     const Teleporter*	crossesTeleporter(const float* oldPos,
@@ -132,11 +132,11 @@ class World {
     int			shakeWins;
     uint32_t		epochOffset;
     float		bases[NumTeams][9];
-    BoxBuildings	boxes;
-    PyramidBuildings	pyramids;
-    BaseBuildings	basesR;
-    Teleporters		teleporters;
-    WallObstacles	walls;
+    std::vector<BoxBuilding>	boxes;
+    std::vector<PyramidBuilding>	pyramids;
+    std::vector<BaseBuilding>	basesR;
+    std::vector<Teleporter>		teleporters;
+    std::vector<WallObstacle>	walls;
     int*		teleportTargets;
     Team		team[NumTeams];
     RemotePlayer**	players;
@@ -184,7 +184,7 @@ class WorldBuilder {
     void		preGetWorld();
 
   private:
-    boolean		owned;
+    bool		owned;
     World*		world;
     int			targetArraySize;
     int*		teleportTargets;
@@ -194,52 +194,52 @@ class WorldBuilder {
 // World
 //
 
-inline boolean		World::allowTeamFlags() const
+inline bool		World::allowTeamFlags() const
 {
   return (gameStyle & short(TeamFlagGameStyle)) != 0;
 }
 
-inline boolean		World::allowSuperFlags() const
+inline bool		World::allowSuperFlags() const
 {
   return (gameStyle & short(SuperFlagGameStyle)) != 0;
 }
 
-inline boolean		World::allowRogues() const
+inline bool		World::allowRogues() const
 {
   return (gameStyle & short(RoguesGameStyle)) != 0;
 }
 
-inline boolean		World::allowJumping() const
+inline bool		World::allowJumping() const
 {
   return (gameStyle & short(JumpingGameStyle)) != 0;
 }
 
-inline boolean		World::allowInertia() const
+inline bool		World::allowInertia() const
 {
   return (gameStyle & short(InertiaGameStyle)) != 0;
 }
 
-inline boolean		World::allShotsRicochet() const
+inline bool		World::allShotsRicochet() const
 {
   return (gameStyle & short(RicochetGameStyle)) != 0;
 }
 
-inline boolean		World::allowAntidote() const
+inline bool		World::allowAntidote() const
 {
   return (gameStyle & short(AntidoteGameStyle)) != 0;
 }
 
-inline boolean		World::allowShakeTimeout() const
+inline bool		World::allowShakeTimeout() const
 {
   return (gameStyle & short(ShakableGameStyle)) != 0 && shakeTimeout != 0.0f;
 }
 
-inline boolean		World::allowShakeWins() const
+inline bool		World::allowShakeWins() const
 {
   return (gameStyle & short(ShakableGameStyle)) != 0 && shakeWins != 0;
 }
 
-inline boolean		World::allowTimeOfDayAdjust() const
+inline bool		World::allowTimeOfDayAdjust() const
 {
   return (gameStyle & short(TimeSyncGameStyle)) == 0;
 }
@@ -354,27 +354,27 @@ inline const float*	World::getBase(int team) const
   return bases[team];
 }
 
-inline const WallObstacles&	World::getWalls() const
+inline const std::vector<WallObstacle>&	World::getWalls() const
 {
   return walls;
 }
 
-inline const BaseBuildings&	World::getBases() const
+inline const std::vector<BaseBuilding>&	World::getBases() const
 {
   return basesR;
 }
 
-inline const BoxBuildings&	World::getBoxes() const
+inline const std::vector<BoxBuilding>&	World::getBoxes() const
 {
   return boxes;
 }
 
-inline const PyramidBuildings&	World::getPyramids() const
+inline const std::vector<PyramidBuilding>&	World::getPyramids() const
 {
   return pyramids;
 }
 
-inline const Teleporters&	World::getTeleporters() const
+inline const std::vector<Teleporter>&	World::getTeleporters() const
 {
   return teleporters;
 }

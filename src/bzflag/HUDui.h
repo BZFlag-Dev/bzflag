@@ -20,12 +20,12 @@
 
 #include "common.h"
 #include "BzfEvent.h"
-#include "BzfString.h"
 #include "OpenGLGState.h"
 #include "OpenGLTexFont.h"
 #include "OpenGLTexture.h"
-#include "AList.h"
 #include "TimeKeeper.h"
+#include <string>
+#include <vector>
 
 class HUDuiControl;
 class HUDuiDefaultKey;
@@ -40,8 +40,8 @@ class HUDui {
     static HUDuiDefaultKey* getDefaultKey();
     static void		setDefaultKey(HUDuiDefaultKey*);
 
-    static boolean	keyPress(const BzfKeyEvent&);
-    static boolean	keyRelease(const BzfKeyEvent&);
+    static bool	keyPress(const BzfKeyEvent&);
+    static bool	keyRelease(const BzfKeyEvent&);
 
   private:
     static HUDuiControl *focus;
@@ -53,8 +53,8 @@ class HUDuiDefaultKey {
 			HUDuiDefaultKey();
     virtual		~HUDuiDefaultKey();
 
-    virtual boolean	keyPress(const BzfKeyEvent&);
-    virtual boolean	keyRelease(const BzfKeyEvent&);
+    virtual bool	keyPress(const BzfKeyEvent&);
+    virtual bool	keyRelease(const BzfKeyEvent&);
 };
 
 class HUDuiControl {
@@ -68,7 +68,7 @@ class HUDuiControl {
     float		getWidth() const;
     float		getHeight() const;
     float		getLabelWidth() const;
-    BzfString		getLabel() const;
+    std::string		getLabel() const;
     const OpenGLTexFont	&getFont() const;
     HUDuiControl*	getPrev() const;
     HUDuiControl*	getNext() const;
@@ -78,16 +78,16 @@ class HUDuiControl {
     void		setPosition(float x, float y);
     void		setSize(float width, float height);
     void		setLabelWidth(float width);
-    void		setLabel(const BzfString& label);
+    void		setLabel(const std::string& label);
     void		setFont(const OpenGLTexFont&);
     void		setFontSize(float w, float h);
     void		setPrev(HUDuiControl*);
     void		setNext(HUDuiControl*);
     void		setCallback(HUDuiCallback, void*);
 
-    boolean		hasFocus() const;
+    bool		hasFocus() const;
     void		setFocus();
-    void		showFocus(boolean);
+    void		showFocus(bool);
 
     void		render();
 
@@ -95,8 +95,8 @@ class HUDuiControl {
 
   protected:
     virtual void	onSetFont();
-    virtual boolean	doKeyPress(const BzfKeyEvent&) = 0;
-    virtual boolean	doKeyRelease(const BzfKeyEvent&) = 0;
+    virtual bool	doKeyPress(const BzfKeyEvent&) = 0;
+    virtual bool	doKeyRelease(const BzfKeyEvent&) = 0;
     virtual void	doRender() = 0;
 
     void		renderFocus();
@@ -105,13 +105,13 @@ class HUDuiControl {
     void		doCallback();
 
   private:
-    boolean		showingFocus;
+    bool		showingFocus;
     OpenGLTexFont	font;
     float		x, y;
     float		width, height;
     float		fontHeight;
     float		desiredLabelWidth, trueLabelWidth;
-    BzfString		label;
+    std::string		label;
     HUDuiControl*	prev, *next;
     HUDuiCallback	cb;
     void*		userData;
@@ -130,17 +130,17 @@ class HUDuiList : public HUDuiControl {
     int			getIndex() const;
     void		setIndex(int);
 
-    BzfStringAList&	getList();
+    std::vector<std::string>&	getList();
     void		update();
 
   protected:
-    boolean		doKeyPress(const BzfKeyEvent&);
-    boolean		doKeyRelease(const BzfKeyEvent&);
+    bool		doKeyPress(const BzfKeyEvent&);
+    bool		doKeyRelease(const BzfKeyEvent&);
     void		doRender();
 
   private:
     int			index;
-    BzfStringAList	list;
+    std::vector<std::string>	list;
 };
 
 class HUDuiTypeIn : public HUDuiControl {
@@ -149,19 +149,19 @@ class HUDuiTypeIn : public HUDuiControl {
 			~HUDuiTypeIn();
 
     int			getMaxLength() const;
-    BzfString		getString() const;
+    std::string		getString() const;
 
     void		setMaxLength(int);
-    void		setString(const BzfString&);
+    void		setString(const std::string&);
 
   protected:
-    boolean		doKeyPress(const BzfKeyEvent&);
-    boolean		doKeyRelease(const BzfKeyEvent&);
+    bool		doKeyPress(const BzfKeyEvent&);
+    bool		doKeyRelease(const BzfKeyEvent&);
     void		doRender();
 
   private:
     int			maxLength;
-    BzfString		string;
+    std::string		string;
     int			cursorPos;
 };
 
@@ -170,17 +170,17 @@ class HUDuiLabel : public HUDuiControl {
 			HUDuiLabel();
 			~HUDuiLabel();
 
-    BzfString		getString() const;
-    void		setString(const BzfString&);
+    std::string		getString() const;
+    void		setString(const std::string&);
 
   protected:
     void		onSetFont();
-    boolean		doKeyPress(const BzfKeyEvent&);
-    boolean		doKeyRelease(const BzfKeyEvent&);
+    bool		doKeyPress(const BzfKeyEvent&);
+    bool		doKeyRelease(const BzfKeyEvent&);
     void		doRender();
 
   private:
-    BzfString		string;
+    std::string		string;
 };
 
 class HUDuiTextureLabel : public HUDuiLabel {
@@ -197,8 +197,6 @@ class HUDuiTextureLabel : public HUDuiLabel {
     OpenGLGState	gstate;
     OpenGLTexture	texture;
 };
-
-BZF_DEFINE_ALIST(HUDuiControlList, HUDuiControl*);
 
 //
 // HUDuiControl

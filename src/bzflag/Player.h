@@ -17,7 +17,6 @@
 #include "global.h"
 #include "TimeKeeper.h"
 #include "Address.h"
-#include "AList.h"
 #include "ShotPath.h"
 #include "OpenGLTexture.h"
 
@@ -72,26 +71,26 @@ class Player {
     float		getTeleporterProximity() const;
     virtual ShotPath*	getShot(int index) const = 0;
 
-    void		addPlayer(SceneDatabase*, boolean colorblind,
-							boolean showIDL);
-    void		addShots(SceneDatabase*, boolean colorblind) const;
-    void		setHidden(boolean hidden = True);
-    void		setInvisible(boolean invisible = True);
+    void		addPlayer(SceneDatabase*, bool colorblind,
+							bool showIDL);
+    void		addShots(SceneDatabase*, bool colorblind) const;
+    void		setHidden(bool hidden = true);
+    void		setInvisible(bool invisible = true);
 
     static void		setTexture(const OpenGLTexture&);
 
-    boolean		isAlive() const;
-    boolean		isPaused() const;
-    boolean		isFlagActive() const;
-    boolean		isTeleporting() const;
-    boolean		isExploding() const;
-    boolean		isCrossingWall() const;
-    boolean		isNotResponding() const;
+    bool		isAlive() const;
+    bool		isPaused() const;
+    bool		isFlagActive() const;
+    bool		isTeleporting() const;
+    bool		isExploding() const;
+    bool		isCrossingWall() const;
+    bool		isNotResponding() const;
     void		resetNotResponding();
 
     // returns true iff dead reckoning is too different from the
     // current tank state.
-    boolean		isDeadReckoningWrong() const;
+    bool		isDeadReckoningWrong() const;
 
     // update state based on dead reckoning
     void		doDeadReckoning();
@@ -108,8 +107,8 @@ class Player {
     void		setExplode(const TimeKeeper&);
     void		setTeleport(const TimeKeeper&, short from, short to);
     void		updateSparks(float dt);
-    void		endShot(int index, boolean isHit = False,
-				boolean showExplosion = False);
+    void		endShot(int index, bool isHit = false,
+				bool showExplosion = false);
 
     void*		pack(void*) const;
     void*		unpack(void*);
@@ -121,8 +120,8 @@ class Player {
     // was already terminated.  position must be set to the shot's
     // position if you return true (it's okay to return false if
     // there's no meaningful shot position).
-    virtual boolean	doEndShot(int index, boolean isHit, float* position) = 0;
-    boolean		getDeadReckoning(float* predictedPos,
+    virtual bool	doEndShot(int index, bool isHit, float* position) = 0;
+    bool		getDeadReckoning(float* predictedPos,
 				float* predictedAzimuth,
 				float* predictedVel) const;
 
@@ -132,7 +131,7 @@ class Player {
     TankIDLSceneNode*	tankIDLNode;
     SphereSceneNode*	pausedSphere;
     GLfloat		color[4];
-    boolean		notResponding;
+    bool		notResponding;
     static OpenGLTexture* tankTexture;
     static int		totalCount;
 
@@ -288,44 +287,44 @@ inline float		Player::getTeleporterProximity() const
   return teleporterProximity;
 }
 
-inline boolean		Player::isAlive() const
+inline bool		Player::isAlive() const
 {
   return (status & short(Alive)) != 0;
 }
 
-inline boolean		Player::isPaused() const
+inline bool		Player::isPaused() const
 {
   return (status & short(Paused)) != 0;
 }
 
-inline boolean		Player::isFlagActive() const
+inline bool		Player::isFlagActive() const
 {
   return (status & short(FlagActive)) != 0;
 }
 
-inline boolean		Player::isTeleporting() const
+inline bool		Player::isTeleporting() const
 {
   return (status & short(Teleporting)) != 0;
 }
 
-inline boolean		Player::isExploding() const
+inline bool		Player::isExploding() const
 {
   return (status & short(Exploding)) != 0;
 }
 
-inline boolean		Player::isCrossingWall() const
+inline bool		Player::isCrossingWall() const
 {
   return (status & short(CrossingWall)) != 0;
 }
 
-inline boolean		Player::isNotResponding() const
+inline bool		Player::isNotResponding() const
 {
   return notResponding;
 }
 
 inline void		Player::resetNotResponding()
 {
-  notResponding = False;
+  notResponding = false;
 }
 
 #endif // BZF_PLAYER_H

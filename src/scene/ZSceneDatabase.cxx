@@ -86,9 +86,9 @@ void			ZSceneDatabase::removeAllNodes()
   dynamicCount = 0;
 }
 
-boolean			ZSceneDatabase::isOrdered()
+bool			ZSceneDatabase::isOrdered()
 {
-  return False;
+  return false;
 }
 
 SceneIterator*		ZSceneDatabase::getRenderIterator()

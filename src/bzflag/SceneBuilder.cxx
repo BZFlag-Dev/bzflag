@@ -28,7 +28,7 @@ static const char*	boxtopFilename = "roof";
 static const char*	pyramidFilename = "pyrwall";
 static const char*	teleporterFilename = "caution";
 
-static OpenGLTexture	getImage(const BzfString& file,
+static OpenGLTexture	getImage(const std::string& file,
 				float* aspectRatio = NULL,
 				OpenGLTexture::Filter f =
 					OpenGLTexture::LinearMipmapLinear)
@@ -200,30 +200,35 @@ SceneDatabase*		SceneDatabaseBuilder::make(const World* world)
   // FIXME -- when making BSP tree, try several shuffles for best tree
 
   // add nodes to database
-  WallObstaclesCIterator wallScan(world->getWalls());
-  while (!wallScan.isDone()) {
-    addWall(db, wallScan.getItem());
-    wallScan.next();
+  std::vector<WallObstacle> walls = world->getWalls();
+  std::vector<WallObstacle>::iterator wallScan = walls.begin();
+  while (wallScan != walls.end()) {
+    addWall(db, *wallScan);
+    ++wallScan;
   }
-  BoxBuildingsCIterator boxScan(world->getBoxes());
-  while (!boxScan.isDone()) {
-    addBox(db, boxScan.getItem());
-    boxScan.next();
+  std::vector<BoxBuilding> boxes = world->getBoxes();
+  std::vector<BoxBuilding>::iterator boxScan = boxes.begin();
+  while (boxScan != boxes.end()) {
+    addBox(db, *boxScan);
+    ++boxScan;
   }
-  TeleportersCIterator teleporterScan(world->getTeleporters());
-  while (!teleporterScan.isDone()) {
-    addTeleporter(db, teleporterScan.getItem());
-    teleporterScan.next();
+  std::vector<Teleporter> teleporters = world->getTeleporters();
+  std::vector<Teleporter>::iterator teleporterScan = teleporters.begin();
+  while (teleporterScan != teleporters.end()) {
+    addTeleporter(db, *teleporterScan);
+    ++teleporterScan;
   }
-  PyramidBuildingsCIterator pyramidScan(world->getPyramids());
-  while (!pyramidScan.isDone()) {
-    addPyramid(db, pyramidScan.getItem());
-    pyramidScan.next();
+  std::vector<PyramidBuilding> pyramids = world->getPyramids();
+  std::vector<PyramidBuilding>::iterator pyramidScan = pyramids.begin();
+  while (pyramidScan != pyramids.end()) {
+    addPyramid(db, *pyramidScan);
+    ++pyramidScan;
   }
-  BaseBuildingsCIterator baseScan(world->getBases());
-  while (!baseScan.isDone()) {
-    addBase(db, baseScan.getItem());
-    baseScan.next();
+  std::vector<BaseBuilding> baseBuildings = world->getBases();
+  std::vector<BaseBuilding>::iterator baseScan = baseBuildings.begin();
+  while (baseScan != baseBuildings.end()) {
+    addBase(db, *baseScan);
+    ++baseScan;
   }
 
   return db;

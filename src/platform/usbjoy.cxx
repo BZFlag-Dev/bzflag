@@ -37,7 +37,7 @@ public:
 	int axis_scale[MAX_AXIS];
 	int axis_const[MAX_AXIS];
 	unsigned long buttons;
-	boolean status;
+	bool status;
 private:
 	int fd;
 	struct hid_item *hids;
@@ -172,7 +172,7 @@ void XWindow::initJoystick(const char *joystickName)
 	stick= new usb_joystick(joystickName);
 }
 
-boolean XWindow::joystick() const
+bool XWindow::joystick() const
 {
 	return (stick!=NULL)?stick->status:FALSE;
 }

@@ -28,7 +28,7 @@ class WinVisual : public BzfVisual {
 			~WinVisual();
 
     void		setLevel(int level);
-    void		setDoubleBuffer(boolean);
+    void		setDoubleBuffer(bool);
     void		setIndex(int minDepth);
     void		setRGBA(int minRed, int minGreen,
 				int minBlue, int minAlpha);
@@ -36,10 +36,10 @@ class WinVisual : public BzfVisual {
     void		setStencil(int minDepth);
     void		setAccum(int minRed, int minGreen,
 				int minBlue, int minAlpha);
-    void		setStereo(boolean);
+    void		setStereo(bool);
     void		setMultisample(int minSamples);
 
-    boolean		build();
+    bool		build();
 
     // for other Windows stuff
     void		reset();

@@ -25,17 +25,17 @@ WinWindow::WinWindow(const WinDisplay* _display, WinVisual* _visual) :
 				BzfWindow(_display),
 				display(_display),
 				visual(*_visual),
-				inDestroy(False),
+				inDestroy(false),
 				hwnd(NULL),
 				hwndChild(NULL),
 				hRC(NULL),
 				hDC(NULL),
 				hDCChild(NULL),
-				inactiveDueToDeactivate(False),
-				inactiveDueToDeactivateAll(False),
-				useColormap(False),
-				hasGamma(False),
-				has3DFXGamma(False),
+				inactiveDueToDeactivate(false),
+				inactiveDueToDeactivateAll(false),
+				useColormap(false),
+				hasGamma(false),
+				has3DFXGamma(false),
 				gammaVal(1.0f),
 				prev(NULL),
 				next(NULL)
@@ -94,12 +94,12 @@ WinWindow::~WinWindow()
   display->getRep()->unref();
 }
 
-boolean			WinWindow::isValid() const
+bool			WinWindow::isValid() const
 {
   return hwnd != NULL;
 }
 
-void			WinWindow::showWindow(boolean on)
+void			WinWindow::showWindow(bool on)
 {
   ShowWindow(hwnd, on ? SW_SHOW : SW_HIDE);
 }
@@ -234,7 +234,7 @@ float			WinWindow::getGamma() const
   return gammaVal;
 }
 
-boolean			WinWindow::hasGammaControl() const
+bool			WinWindow::hasGammaControl() const
 {
   return useColormap || hasGamma || has3DFXGamma;
 }
@@ -401,19 +401,19 @@ void			WinWindow::deactivateAll()
 {
   for (WinWindow* scan = first; scan; scan = scan->next) {
     scan->freeContext();
-    scan->inactiveDueToDeactivateAll = True;
+    scan->inactiveDueToDeactivateAll = true;
   }
 }
 
 void			WinWindow::reactivateAll()
 {
-  boolean anyNewChildren = False;
+  bool anyNewChildren = false;
   for (WinWindow* scan = first; scan; scan = scan->next) {
-    const boolean hadChild = (scan->hDCChild != NULL);
-    scan->inactiveDueToDeactivateAll = False;
+    const bool hadChild = (scan->hDCChild != NULL);
+    scan->inactiveDueToDeactivateAll = false;
     scan->makeContext();
     if (!hadChild && scan->hDCChild != NULL)
-      anyNewChildren = True;
+      anyNewChildren = true;
   }
 
   // reload context data
@@ -458,9 +458,9 @@ void			WinWindow::paletteChanged()
   }
 }
 
-boolean			WinWindow::activate()
+bool			WinWindow::activate()
 {
-  inactiveDueToDeactivate = False;
+  inactiveDueToDeactivate = false;
 
   // restore window
   ShowWindow(hwnd, SW_RESTORE);
@@ -468,7 +468,7 @@ boolean			WinWindow::activate()
 				SWP_NOACTIVATE | SWP_NOMOVE | SWP_NOSIZE);
 
   // recreate OpenGL context
-  const boolean hadChild = (hDCChild != NULL);
+  const bool hadChild = (hDCChild != NULL);
   makeContext();
 
   if (!hadChild && hDCChild != NULL) {
@@ -478,29 +478,29 @@ boolean			WinWindow::activate()
     // force a redraw
     callExposeCallbacks();
 
-    return True;
+    return true;
   }
 
-  return False;
+  return false;
 }
 
-boolean			WinWindow::deactivate()
+bool			WinWindow::deactivate()
 {
   // minimize window while not active.  skip if being destroyed.
   if (!inDestroy)
     ShowWindow(hwnd, SW_MINIMIZE);
 
   // destroy OpenGL context
-  const boolean hadChild = (hDCChild != NULL);
+  const bool hadChild = (hDCChild != NULL);
   freeContext();
 
-  inactiveDueToDeactivate = True;
+  inactiveDueToDeactivate = true;
   return hadChild;
 }
 
 void			WinWindow::onDestroy()
 {
-  inDestroy = True;
+  inDestroy = true;
 }
 
 BYTE			WinWindow::getIntensityValue(float i) const
@@ -542,7 +542,7 @@ void			WinWindow::makeColormap(
     logicalPalette->palPalEntry[i].peFlags = 0;
   }
 
-  static const boolean matchGDI = False;
+  static const bool matchGDI = false;
   if (matchGDI) {
     // default colors reserved by system
     static const int NUM_GDI_COLORS = 20;

@@ -18,12 +18,12 @@
 #include "OpenGLTexture.h"
 
 BillboardSceneNode::BillboardSceneNode(const GLfloat pos[3]) :
-				show(False),
-				hasAlpha(False),
-				hasTexture(False),
-				hasTextureAlpha(False),
-				looping(False),
-				lightSource(False),
+				show(false),
+				hasAlpha(false),
+				hasTexture(false),
+				hasTextureAlpha(false),
+				looping(false),
+				lightSource(false),
 				width(1.0f), height(1.0f),
 				cu(1), cv(1),
 				t(0.0f), duration(0.0f),
@@ -89,7 +89,7 @@ BillboardSceneNode*	BillboardSceneNode::copy() const
   return e;
 }
 
-void			BillboardSceneNode::setLoop(boolean _looping)
+void			BillboardSceneNode::setLoop(bool _looping)
 {
   looping = _looping;
 }
@@ -128,7 +128,7 @@ void			BillboardSceneNode::updateTime(float dt)
     prepLight();
 }
 
-boolean			BillboardSceneNode::isAtEnd() const
+bool			BillboardSceneNode::isAtEnd() const
 {
   return t == duration;
 }
@@ -147,12 +147,12 @@ void			BillboardSceneNode::setFrame()
   }
 }
 
-boolean			BillboardSceneNode::isLight() const
+bool			BillboardSceneNode::isLight() const
 {
   return lightSource && show;
 }
 
-void			BillboardSceneNode::setLight(boolean on)
+void			BillboardSceneNode::setLight(bool on)
 {
   if (lightSource == on) return;
   lightSource = on;

@@ -18,7 +18,7 @@
 const GLfloat		LaserRadius = 0.1f;
 
 LaserSceneNode::LaserSceneNode(const GLfloat pos[3], const GLfloat forward[3]) :
-				texturing(False),
+				texturing(false),
 				renderNode(this)
 {
   // prepare rendering info
@@ -49,10 +49,10 @@ void			LaserSceneNode::setTexture(const OpenGLTexture& texture)
   forceNotifyStyleChange();
 }
 
-boolean			LaserSceneNode::cull(const ViewFrustum&) const
+bool			LaserSceneNode::cull(const ViewFrustum&) const
 {
   // no culling
-  return False;
+  return false;
 }
 
 void			LaserSceneNode::notifyStyleChange(
@@ -68,7 +68,7 @@ void			LaserSceneNode::notifyStyleChange(
   }
   else {
     builder.resetBlending();
-    builder.setSmoothing(False);
+    builder.setSmoothing(false);
   }
   gstate = builder.getState();
 }
@@ -90,9 +90,9 @@ LaserSceneNode::LaserRenderNode::LaserRenderNode(
 				sceneNode(_sceneNode)
 {
   // initialize geometry if first instance
-  static boolean init = False;
+  static bool init = false;
   if (!init) {
-    init = True;
+    init = true;
     for (int i = 0; i < 6; i++) {
       geom[i][0] = -LaserRadius * cosf(2.0f * M_PI * float(i) / 6.0f);
       geom[i][1] =  LaserRadius * sinf(2.0f * M_PI * float(i) / 6.0f);

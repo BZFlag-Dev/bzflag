@@ -35,7 +35,7 @@ class SGIDisplayMode : public XDisplayMode {
 			~SGIDisplayMode();
 
     ResInfo**		init(XDisplay* owner, int& num, int& current);
-    boolean		set(int);
+    bool		set(int);
 
   private:
     XDisplay*		display;

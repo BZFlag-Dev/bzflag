@@ -15,7 +15,7 @@
 #include "Intersect.h"
 #include "QuadWallSceneNode.h"
 
-BzfString		Teleporter::typeName("Teleporter");
+std::string		Teleporter::typeName("Teleporter");
 
 Teleporter::Teleporter(const float* p, float a, float w,
 				float b, float h, float _border) :
@@ -30,12 +30,12 @@ Teleporter::~Teleporter()
   // do nothing
 }
 
-BzfString		Teleporter::getType() const
+std::string		Teleporter::getType() const
 {
   return typeName;
 }
 
-BzfString		Teleporter::getClassName() // const
+std::string		Teleporter::getClassName() // const
 {
   return typeName;
 }
@@ -61,7 +61,7 @@ void			Teleporter::getNormal(const float* p1, float* n) const
   getNormalRect(p1, cc, getRotation(), b, b, n);
 }
 
-boolean			Teleporter::isInside(const float* p,
+bool			Teleporter::isInside(const float* p,
 						float radius) const
 {
   return p[2] >= getPosition()[2] &&
@@ -70,7 +70,7 @@ boolean			Teleporter::isInside(const float* p,
 			getWidth(), getBreadth(), p, radius);
 }
 
-boolean			Teleporter::isInside(const float* p, float a,
+bool			Teleporter::isInside(const float* p, float a,
 						float dx, float dy) const
 {
   if ((p[2] < getHeight() + getPosition()[2] - getBorder())
@@ -82,23 +82,23 @@ boolean			Teleporter::isInside(const float* p, float a,
     float o[2];
     o[0] = getPosition()[0] - s * d;
     o[1] = getPosition()[1] + c * d;
-    if (testRectRect(p, a, dx, dy, o, getRotation(), r, r)) return True;
+    if (testRectRect(p, a, dx, dy, o, getRotation(), r, r)) return true;
     o[0] = getPosition()[0] + s * d;
     o[1] = getPosition()[1] - c * d;
-    if (testRectRect(p, a, dx, dy, o, getRotation(), r, r)) return True;
+    if (testRectRect(p, a, dx, dy, o, getRotation(), r, r)) return true;
   }
 
   else if (p[2] <= getHeight() + getPosition()[2]  && p[2] > getPosition()[2]) {
     // test crossbar
     if (testRectRect(p, a, dx, dy, getPosition(), getRotation(),
 					getWidth(), getBreadth()))
-      return True;
+      return true;
   }
 
-  return False;
+  return false;
 }
 
-boolean			Teleporter::isCrossing(const float* p, float a,
+bool			Teleporter::isCrossing(const float* p, float a,
 					float dx, float dy, float* plane) const
 {
   // if not inside or contained then not crossing
@@ -106,8 +106,8 @@ boolean			Teleporter::isCrossing(const float* p, float a,
   if (!testRectRect(p, a, dx, dy,
 		p2, getRotation(), getWidth(), getBreadth() - getBorder()) ||
 		p[2] < p2[2] || p[2] > p2[2] + getHeight() - getBorder())
-    return False;
-  if (!plane) return True;
+    return false;
+  if (!plane) return true;
 
   // it's crossing -- choose which wall is being crossed (this
   // is a guestimate, should really do a careful test).  just
@@ -124,10 +124,10 @@ boolean			Teleporter::isCrossing(const float* p, float a,
   // now finish off plane equation
   plane[2] = 0.0f;
   plane[3] = -(plane[0] * pw[0] + plane[1] * pw[1]);
-  return True;
+  return true;
 }
 
-// return True iff ray goes through teleporting part
+// return true iff ray goes through teleporting part
 float			Teleporter::isTeleported(const Ray& r, int& face) const
 {
   // get t's for teleporter with and without border
@@ -202,7 +202,7 @@ float			Teleporter::getProximity(const float* p,
   return t > 0.0f ? (t > 1.0f ? 1.0f : t) : 0.0f;
 }
 
-boolean			Teleporter::hasCrossed(const float* p1,
+bool			Teleporter::hasCrossed(const float* p1,
 						const float* p2, int& f) const
 {
   // check above/below teleporter
@@ -210,7 +210,7 @@ boolean			Teleporter::hasCrossed(const float* p1,
   if ((p1[2] < p[2] && p2[2] < p[2]) ||
 	(p1[2] > p[2] + getHeight() - getBorder() &&
 	 p2[2] > p[2] + getHeight() - getBorder()))
-    return False;
+    return false;
 
   const float c = cosf(-getRotation()), s = sinf(-getRotation());
   const float x1 = c * (p1[0] - p[0]) - s * (p1[1] - p[1]);
@@ -218,9 +218,9 @@ boolean			Teleporter::hasCrossed(const float* p1,
   const float y2 = c * (p2[1] - p[1]) + s * (p2[0] - p[0]);
   if (x1 * x2 < 0.0f && fabsf(y2) <= getBreadth() - getBorder()) {
     f = (x1 > 0.0f) ? 0 : 1;
-    return True;
+    return true;
   }
-  return False;
+  return false;
 }
 
 void			Teleporter::getPointWRT(const Teleporter& t2,
@@ -297,7 +297,7 @@ void			Teleporter::getPointWRT(const Teleporter& t2,
   }
 }
 
-boolean			Teleporter::getHitNormal(
+bool			Teleporter::getHitNormal(
 				const float* pos1, float azimuth1,
 				const float* pos2, float azimuth2,
 				float width, float breadth,
@@ -332,7 +332,7 @@ TeleporterSceneNodeGenerator::~TeleporterSceneNodeGenerator()
 
 WallSceneNode*		TeleporterSceneNodeGenerator::getNextNode(
 				float /*uRepeats*/, float /*vRepeats*/,
-				boolean lod)
+				bool lod)
 {
   static const float texCoords[][4][2] = {
 			 { { 0.0f, 0.0f }, { 0.5f, 0.0f }, { 0.5f, 9.5f }, { 0.0f, 9.5f } },

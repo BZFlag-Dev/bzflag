@@ -22,9 +22,9 @@
 #define	BZF_INET_ADDR_H
 
 #include <sys/types.h>
+#include <string>
 #include "network.h"
 #include "common.h"
-#include "BzfString.h"
 #include "Pack.h"
 
 typedef struct in_addr	InAddr;			// shorthand
@@ -32,7 +32,7 @@ typedef struct in_addr	InAddr;			// shorthand
 class Address {
   public:
 			Address();
-			Address(const BzfString&);
+			Address(const std::string&);
 			Address(const Address&);
 			Address(const InAddr&);		    // input in nbo
 			Address(const struct sockaddr_in&); // input in nbo
@@ -40,16 +40,16 @@ class Address {
     Address&		operator=(const Address&);
 
 			operator InAddr() const;
-    boolean		operator==(const Address&) const;
-    boolean		operator!=(const Address&) const;
-    boolean		isAny() const;
-    char*		getDotNotation() const;
+    bool		operator==(const Address&) const;
+    bool		operator!=(const Address&) const;
+    bool		isAny() const;
+    std::string		getDotNotation() const;
 
     void*		pack(void*) const;
     void*		unpack(void*);
 
     static Address	getHostAddress(const char* hostname = NULL);
-    static BzfString	getHostByAddress(InAddr);
+    static std::string	getHostByAddress(InAddr);
     static const char*	getHostName(const char* hostname = NULL);
 
   private:
@@ -64,8 +64,8 @@ class PlayerId {
     void*		pack(void*) const;
     void*		unpack(void*);
 
-    boolean		operator==(const PlayerId&) const;
-    boolean		operator!=(const PlayerId&) const;
+    bool		operator==(const PlayerId&) const;
+    bool		operator!=(const PlayerId&) const;
 
   public:
     // host and port in network byte order

@@ -29,14 +29,14 @@ class BillboardSceneNode : public SceneNode {
 
     virtual BillboardSceneNode*	copy() const;
 
-    void		setLoop(boolean = True);
+    void		setLoop(bool = true);
     void		setDuration(float);
     void		resetTime();
     void		updateTime(float dt);
-    boolean		isAtEnd() const;
+    bool		isAtEnd() const;
 
-    boolean		isLight() const;
-    void		setLight(boolean = True);
+    bool		isLight() const;
+    void		setLight(bool = true);
     void		setLightColor(GLfloat r, GLfloat g, GLfloat b);
     void		setLightAttenuation(GLfloat c, GLfloat l, GLfloat q);
     void		setLightScaling(GLfloat intensityScaleFactor);
@@ -78,12 +78,12 @@ class BillboardSceneNode : public SceneNode {
     void		prepLight();
 
   private:
-    boolean		show;
-    boolean		hasAlpha;
-    boolean		hasTexture;
-    boolean		hasTextureAlpha;
-    boolean		looping;
-    boolean		lightSource;
+    bool		show;
+    bool		hasAlpha;
+    bool		hasTexture;
+    bool		hasTextureAlpha;
+    bool		looping;
+    bool		lightSource;
     float		width, height;
     GLfloat		color[4];
     GLfloat		angle;

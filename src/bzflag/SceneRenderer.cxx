@@ -66,46 +66,46 @@ SceneRenderer*		SceneRenderer::instance = NULL;
 
 SceneRenderer::SceneRenderer(MainWindow& _window) :
 				window(_window),
-				blank(False),
-				invert(False),
+				blank(false),
+				invert(false),
 				sunBrightness(1.0f),
 				latitude(37.5f),
 				longitude(122.0f),
 				scene(NULL),
 				background(NULL),
-				abgr(False),
-				useBlendingOn(True),
-				useSmoothingOn(True),
-				useLightingOn(True),
-				useTextureOn(True),
-				useTextureReplaceOn(True),
+				abgr(false),
+				useBlendingOn(true),
+				useSmoothingOn(true),
+				useLightingOn(true),
+				useTextureOn(true),
+				useTextureReplaceOn(true),
 				useQualityValue(2),
-				useShadowsOn(True),
-				useDitheringOn(True),
-				useDepthComplexityOn(False),
-				useWireframeOn(False),
-				useHiddenLineOn(False),
-				useEnhancedRadarOn(True),
-				useColoredShotsOn(True),
+				useShadowsOn(true),
+				useDitheringOn(true),
+				useDepthComplexityOn(false),
+				useWireframeOn(false),
+				useHiddenLineOn(false),
+				useEnhancedRadarOn(true),
+				useColoredShotsOn(true),
 				radarShotLength(0),
 				panelOpacity(0.3f),
-                                useBigFontOn(False),
-				useFogHack(False),
+                                useBigFontOn(false),
+				useFogHack(false),
 				viewType(Normal),
 				maxLOD(32767),
-				inOrder(False),
+				inOrder(false),
 				style(0),
 				sceneIterator(NULL),
 				depthRange(0),
 				numDepthRanges(1),
 				depthRangeSize(1.0),
-				useDimming(False),
-				canUseHiddenLine(False),
-				exposed(True),
-				lastFrame(True),
-				sameFrame(False),
-				showFlagHelp(False),
-				showScore(False)
+				useDimming(false),
+				canUseHiddenLine(false),
+				exposed(true),
+				lastFrame(true),
+				sameFrame(false),
+				showFlagHelp(false),
+				showScore(false)
 {
   instance = this;
 
@@ -137,13 +137,13 @@ SceneRenderer::SceneRenderer(MainWindow& _window) :
 	strrncmp(renderer, "-XZ", 3) == 0 ||
 	strrncmp(renderer, "-Elan", 5) == 0 ||
 	strrncmp(renderer, "-Extreme", 8) == 0)
-      abgr = True;
+      abgr = true;
   }
 #endif
 
   // can only do hidden line if polygon offset is available
 #if defined(GL_VERSION_1_1)
-  canUseHiddenLine = True;
+  canUseHiddenLine = true;
 #elif defined(GL_EXT_polygon_offset)
   canUseHiddenLine = (strstr(extensions, "GL_EXT_polygon_offset") != NULL);
 #endif
@@ -152,10 +152,10 @@ SceneRenderer::SceneRenderer(MainWindow& _window) :
   // to fade the screen;  otherwise fall back on a full screen blended
   // polygon.
   if (strncmp(version, "1.1", 3) == 0)
-    useFogHack = True;
+    useFogHack = true;
 /* IMPACT at 1.0 used to allow fog hack but not after patch 1935
   if (strncmp(renderer, "IMPACT", 6) == 0)
-    useFogHack = True;
+    useFogHack = true;
 */
 
   // prepare context with stuff that'll never change
@@ -190,42 +190,42 @@ SceneRenderer::~SceneRenderer()
   instance = NULL;
 }
 
-boolean			SceneRenderer::useABGR() const
+bool			SceneRenderer::useABGR() const
 {
   return abgr;
 }
 
-boolean			SceneRenderer::useBlending() const
+bool			SceneRenderer::useBlending() const
 {
   return useBlendingOn;
 }
 
-boolean			SceneRenderer::useSmoothing() const
+bool			SceneRenderer::useSmoothing() const
 {
   return useSmoothingOn;
 }
 
-boolean			SceneRenderer::useLighting() const
+bool			SceneRenderer::useLighting() const
 {
   return useLightingOn;
 }
 
-boolean			SceneRenderer::useTexture() const
+bool			SceneRenderer::useTexture() const
 {
   return useTextureOn;
 }
 
-boolean			SceneRenderer::useTextureReplace() const
+bool			SceneRenderer::useTextureReplace() const
 {
   return useTextureReplaceOn;
 }
 
-boolean			SceneRenderer::useZBuffer() const
+bool			SceneRenderer::useZBuffer() const
 {
   return useZBufferOn;
 }
 
-boolean			SceneRenderer::useStencil() const
+bool			SceneRenderer::useStencil() const
 {
   return useStencilOn;
 }
@@ -235,12 +235,12 @@ int			SceneRenderer::useQuality() const
   return useQualityValue;
 }
 
-boolean			SceneRenderer::useShadows() const
+bool			SceneRenderer::useShadows() const
 {
   return useShadowsOn;
 }
 
-boolean			SceneRenderer::useDithering() const
+bool			SceneRenderer::useDithering() const
 {
   return useDitheringOn;
 }
@@ -255,37 +255,37 @@ int			SceneRenderer::getMaxLOD() const
   return maxLOD;
 }
 
-void			SceneRenderer::setBlending(boolean on)
+void			SceneRenderer::setBlending(bool on)
 {
   useBlendingOn = on;
   notifyStyleChange();
 }
 
-void			SceneRenderer::setSmoothing(boolean on)
+void			SceneRenderer::setSmoothing(bool on)
 {
   useSmoothingOn = on;
   notifyStyleChange();
 }
 
-void			SceneRenderer::setLighting(boolean on)
+void			SceneRenderer::setLighting(bool on)
 {
   useLightingOn = on;
   notifyStyleChange();
 }
 
-void			SceneRenderer::setTexture(boolean on)
+void			SceneRenderer::setTexture(bool on)
 {
   useTextureOn = on;
   notifyStyleChange();
 }
 
-void			SceneRenderer::setTextureReplace(boolean on)
+void			SceneRenderer::setTextureReplace(bool on)
 {
   useTextureReplaceOn = on;
   notifyStyleChange();
 }
 
-void			SceneRenderer::setZBuffer(boolean on)
+void			SceneRenderer::setZBuffer(bool on)
 {
   if (on) {
     GLint value;
@@ -295,7 +295,7 @@ void			SceneRenderer::setZBuffer(boolean on)
   useZBufferOn = on;
 }
 
-void			SceneRenderer::setZBufferSplit(boolean on)
+void			SceneRenderer::setZBufferSplit(bool on)
 {
   if (!on) {
     if (numDepthRanges != 1) {
@@ -341,13 +341,13 @@ void			SceneRenderer::setQuality(int value)
     TankSceneNode::setMaxLOD(2);
 }
 
-void			SceneRenderer::setShadows(boolean on)
+void			SceneRenderer::setShadows(bool on)
 {
   useShadowsOn = on;
   notifyStyleChange();
 }
 
-void			SceneRenderer::setDithering(boolean on)
+void			SceneRenderer::setDithering(bool on)
 {
   useDitheringOn = on;
   window.getWindow()->makeCurrent();
@@ -355,12 +355,12 @@ void			SceneRenderer::setDithering(boolean on)
   else glDisable(GL_DITHER);
 }
 
-boolean			SceneRenderer::useDepthComplexity() const
+bool			SceneRenderer::useDepthComplexity() const
 {
   return useDepthComplexityOn;
 }
 
-void			SceneRenderer::setDepthComplexity(boolean on)
+void			SceneRenderer::setDepthComplexity(bool on)
 {
   if (on) {
     GLint bits;
@@ -371,47 +371,47 @@ void			SceneRenderer::setDepthComplexity(boolean on)
 }
 
 
-void			SceneRenderer::setWireframe(boolean on)
+void			SceneRenderer::setWireframe(bool on)
 {
   useWireframeOn = on;
 }
 
-boolean			SceneRenderer::useWireframe() const
+bool			SceneRenderer::useWireframe() const
 {
   return useWireframeOn;
 }
 
-boolean			SceneRenderer::getScore() const
+bool			SceneRenderer::getScore() const
 {
   return showScore;
 }
 
-void			SceneRenderer::setScore(boolean _showScore)
+void			SceneRenderer::setScore(bool _showScore)
 {
   showScore = _showScore;
 }
 
-boolean			SceneRenderer::getLabels() const
+bool			SceneRenderer::getLabels() const
 {
   return showLabels;
 }
 
-void			SceneRenderer::setLabels(boolean _showLabels)
+void			SceneRenderer::setLabels(bool _showLabels)
 {
   showLabels = _showLabels;
 }
 
-boolean			SceneRenderer::getShowFlagHelp() const
+bool			SceneRenderer::getShowFlagHelp() const
 {
   return showFlagHelp;
 }
 
-void			SceneRenderer::setShowFlagHelp(boolean _showFlagHelp)
+void			SceneRenderer::setShowFlagHelp(bool _showFlagHelp)
 {
   showFlagHelp = _showFlagHelp;
 }
 
-void			SceneRenderer::setHiddenLine(boolean on)
+void			SceneRenderer::setHiddenLine(bool on)
 {
   useHiddenLineOn = on && useZBuffer() && canUseHiddenLine;
   if (!useHiddenLineOn) { depthRange = 0; return; }
@@ -422,18 +422,18 @@ void			SceneRenderer::setHiddenLine(boolean on)
 #endif
 }
 
-boolean			SceneRenderer::useHiddenLine() const
+bool			SceneRenderer::useHiddenLine() const
 {
   return useHiddenLineOn;
 }
 
-void			SceneRenderer::setEnhancedRadar(boolean _setEnhancedRadar)
+void			SceneRenderer::setEnhancedRadar(bool _setEnhancedRadar)
 {
   useEnhancedRadarOn = _setEnhancedRadar;
   notifyStyleChange();
 }
 
-boolean			SceneRenderer::useEnhancedRadar() const
+bool			SceneRenderer::useEnhancedRadar() const
 {
     return useEnhancedRadarOn;
 }
@@ -454,13 +454,13 @@ float			SceneRenderer::getPanelOpacity() const
   return panelOpacity;
 }
 
-void			SceneRenderer::setColoredShots(boolean _setColoredShots)
+void			SceneRenderer::setColoredShots(bool _setColoredShots)
 {
     useColoredShotsOn = _setColoredShots;
     notifyStyleChange();
 }
 
-boolean		SceneRenderer::useColoredShots() const
+bool		SceneRenderer::useColoredShots() const
 {
     return useColoredShotsOn;
 }
@@ -476,19 +476,19 @@ int			SceneRenderer::getRadarShotLength() const
     return radarShotLength;
 }
 
-void			SceneRenderer::setBigFont(boolean _setBigFont)
+void			SceneRenderer::setBigFont(bool _setBigFont)
 {
     useBigFontOn = _setBigFont;
     notifyStyleChange();
     window.getWindow()->callResizeCallbacks();
 }
 
-boolean			SceneRenderer::useBigFont() const
+bool			SceneRenderer::useBigFont() const
 {
   return useBigFontOn;
 }
 
-void			SceneRenderer::setDim(boolean on)
+void			SceneRenderer::setDim(bool on)
 {
   useDimming = on;
 }
@@ -506,7 +506,7 @@ void			SceneRenderer::setMaxLOD(int _maxLOD)
 
 void			SceneRenderer::setExposed()
 {
-  exposed = True;
+  exposed = true;
 }
 
 void			SceneRenderer::setSceneDatabase(SceneDatabase* db)
@@ -520,7 +520,7 @@ void			SceneRenderer::setSceneDatabase(SceneDatabase* db)
   }
   else {
     sceneIterator = NULL;
-    inOrder = False;
+    inOrder = false;
   }
 }
 
@@ -530,7 +530,7 @@ void			SceneRenderer::setBackground(BackgroundRenderer* br)
 }
 
 #ifdef LOST
-void			SceneRenderer::setCulling(boolean enabled)
+void			SceneRenderer::setCulling(bool enabled)
 {
   background->setSimpleGround(!enabled);
   sceneIterator->setNoCullingByNearby(!enabled);
@@ -544,12 +544,12 @@ void			SceneRenderer::getGroundUV(const float p[2],
   uv[1] = 0.01f * p[1];
 }
 
-void			SceneRenderer::enableLight(int index, boolean on)
+void			SceneRenderer::enableLight(int index, bool on)
 {
   lights[index]->enableLight(index + reservedLights, on);
 }
 
-void			SceneRenderer::enableSun(boolean on)
+void			SceneRenderer::enableSun(bool on)
 {
   if (useLighting() && sunOrMoonUp)
     theSun.enableLight(SunLight, on);
@@ -558,29 +558,29 @@ void			SceneRenderer::enableSun(boolean on)
 void			SceneRenderer::addLight(OpenGLLight& light)
 {
   // add light
-  lights.append(&light);
+  lights.push_back(&light);
 }
 
 void			SceneRenderer::addFlareLight(
 				const float* pos, const float* color)
 {
-  flareLightList.append(FlareLight(pos, color));
+  flareLightList.push_back(FlareLight(pos, color));
 }
 
 int			SceneRenderer::getNumLights() const
 {
-  if (lights.getLength() > maxLights) return maxLights;
-  return lights.getLength();
+  if (lights.size() > maxLights) return maxLights;
+  return lights.size();
 }
 
 int			SceneRenderer::getNumAllLights() const
 {
-  return lights.getLength();
+  return lights.size();
 }
 
 void			SceneRenderer::clearLights()
 {
-  lights.removeAll();
+  lights.clear();
 }
 
 float			SceneRenderer::getLatitude()
@@ -618,18 +618,18 @@ void			SceneRenderer::setTimeOfDay(double julianDay)
   // set sun position
   if (sunDir[2] >= -0.009f) {
     // sun is our source of illumination
-    sunOrMoonUp = True;
+    sunOrMoonUp = true;
     theSun.setDirection(sunDir);
   }
   else if (moonDir[2] > -0.009f) {
     // moon is our source of illumination
-    sunOrMoonUp = True;
+    sunOrMoonUp = true;
     theSun.setDirection(moonDir);
   }
   else {
     // `the moon is down' (well, so is the sun, but that's not Shakespeare)
     // -- ambient only
-    sunOrMoonUp = False;
+    sunOrMoonUp = false;
   }
 
   // set sun and ambient colors
@@ -651,9 +651,9 @@ void			SceneRenderer::setTimeOfDay(double julianDay)
 }
 
 void			SceneRenderer::render(
-				boolean _lastFrame,
-				boolean _sameFrame,
-				boolean fullWindow)
+				bool _lastFrame,
+				bool _sameFrame,
+				bool fullWindow)
 {
   static const GLfloat blindnessColor[4] = { 1.0f, 1.0f, 0.0f, 1.0f };
   static const GLfloat dimnessColor[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
@@ -679,7 +679,7 @@ void			SceneRenderer::render(
       SceneNode* node;
       while ((node = sceneIterator->getNext()) != NULL)
 	node->addLight(*this);
-      numLights = lights.getLength();
+      numLights = lights.size();
 
       // pick maxLights most important light sources
       // should go by full lighting function but we'll just go by distance
@@ -690,7 +690,9 @@ void			SceneRenderer::render(
 	  for (int j = i + 1; j < numLights; j++) {
 	    GLfloat importance = lights[j]->getImportance(eye);
 	    if (importance > maxImportance) {
-	      lights.swap(i, j);
+	      OpenGLLight* temp = lights[i];
+	      lights[j] = lights[i];
+	      lights[i] = temp;
 	      maxImportance = importance;
 	    }
 	  }
@@ -706,7 +708,7 @@ void			SceneRenderer::render(
     OpenGLGState::clearLists();
     orderedList.clear();
     shadowList.clear();
-    flareLightList.removeAll();
+    flareLightList.clear();
 
     // make the lists of render nodes sorted in optimal rendering order
     if (sceneIterator) {
@@ -738,7 +740,7 @@ void			SceneRenderer::render(
   if (!blank && LocalPlayer::getMyTank())
     teleporterProximity = LocalPlayer::getMyTank()->getTeleporterProximity();
 
-  boolean reallyUseFogHack = useFogHack && (useQualityValue >= 2);
+  bool reallyUseFogHack = useFogHack && (useQualityValue >= 2);
   if (reallyUseFogHack) {
     if (useDimming) {
       const float density = dimDensity;
@@ -786,7 +788,7 @@ void			SceneRenderer::render(
     if (exposed || useHiddenLineOn || --depthRange < 0) {
       depthRange = numDepthRanges - 1;
       glClear(GL_DEPTH_BUFFER_BIT);
-      exposed = False;
+      exposed = false;
     }
     if (!sameFrame && numDepthRanges != 1) {
       if (useHiddenLineOn) {
@@ -854,9 +856,9 @@ void			SceneRenderer::render(
 
     // shut off lights
     if (useLighting()) {
-      theSun.enableLight(SunLight, False);
+      theSun.enableLight(SunLight, false);
       for (i = 0; i < numLights; i++)
-	lights[i]->enableLight(i + reservedLights, False);
+	lights[i]->enableLight(i + reservedLights, false);
     }
 
     if (useZBuffer()) glDisable(GL_DEPTH_TEST);
@@ -954,7 +956,7 @@ void			SceneRenderer::notifyStyleChange()
       builder.setBlending(GL_ONE, GL_ONE);
     else
       builder.resetBlending();
-    builder.setSmoothing(False);
+    builder.setSmoothing(false);
   }
   flareGState = builder.getState();
 */

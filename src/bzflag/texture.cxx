@@ -19,37 +19,37 @@
 
 void			printFatalError(const char* fmt, ...);
 
-unsigned char*		getTextureImage(const BzfString& file,
+unsigned char*		getTextureImage(const std::string& file,
 				int& width, int& height, int& depth)
 {
-  if (file.isNull()) return NULL;
-  printError("loading %s...", (const char*)file);
+  if (file.length() == 0) return NULL;
+  printError("loading %s...", file.c_str());
   return PlatformFactory::getMedia()->readImage(file, width, height, depth);
 }
 
-unsigned char*		getTextImage(const BzfString& file,
+unsigned char*		getTextImage(const std::string& file,
 				int& width, int& height)
 {
-  if (file.isNull()) return NULL;
-  printError("loading %s...", (const char*)file);
+  if (file.length() == 0) return NULL;
+  printError("loading %s...", file.c_str());
   int depth;
   unsigned char* image = PlatformFactory::getMedia()->
 			readImage(file, width, height, depth);
   return image;
 }
 
-OpenGLTexture		getTexture(const BzfString& file,
+OpenGLTexture		getTexture(const std::string& file,
 				int* _width, int* _height,
 				OpenGLTexture::Filter filter,
-				boolean repeat,
-				boolean noError)
+				bool repeat,
+				bool noError)
 {
-  if (file.isNull()) return OpenGLTexture();
+  if (file.length() == 0) return OpenGLTexture();
 
   int width, height, depth;
   unsigned char* image = getTextureImage(file, width, height, depth);
   if (!image) {
-    if (!noError) printError("cannot load texture: %s", (const char*)file);
+    if (!noError) printError("cannot load texture: %s", file.c_str());
     return OpenGLTexture();
   }
 
@@ -61,10 +61,10 @@ OpenGLTexture		getTexture(const BzfString& file,
   return tex;
 }
 
-OpenGLTexture		getTexture(const BzfString& file,
+OpenGLTexture		getTexture(const std::string& file,
 				OpenGLTexture::Filter filter,
-				boolean repeat,
-				boolean noError)
+				bool repeat,
+				bool noError)
 {
   return getTexture(file, NULL, NULL, filter, repeat, noError);
 }
@@ -84,7 +84,7 @@ void			printMissingDataDirectoryError(const char* msg)
 // TextureFont
 //
 
-static boolean		anyFontLoaded = False;
+static bool		anyFontLoaded = false;
 const char*		TextureFont::fontFileName[] = {
 				"timesbr",
 				"timesbi",
@@ -96,11 +96,11 @@ const char*		TextureFont::fontFileName[] = {
 OpenGLTexFont*		TextureFont::font[sizeof(TextureFont::fontFileName) /
 					  sizeof(TextureFont::fontFileName[0])];
 
-OpenGLTexFont		TextureFont::getTextureFont(Font index, boolean required)
+OpenGLTexFont		TextureFont::getTextureFont(Font index, bool required)
 {
-  static boolean init = False;
+  static bool init = false;
   if (!init) {
-    init = True;
+    init = true;
     for (int i = 0; i < (int)(sizeof(fontFileName) /
 					sizeof(fontFileName[0])); i++)
       font[i] = NULL;
@@ -112,7 +112,7 @@ OpenGLTexFont		TextureFont::getTextureFont(Font index, boolean required)
     if (image) {
       font[index] = new OpenGLTexFont(width, height, image);
       delete[] image;
-      anyFontLoaded = True;
+      anyFontLoaded = true;
     }
     else if (required) {
       // can't print message usual way because we're going down

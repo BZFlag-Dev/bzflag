@@ -51,7 +51,7 @@ PingPacket::~PingPacket()
   // do nothing
 }
 
-boolean			PingPacket::read(int fd, struct sockaddr_in* addr)
+bool			PingPacket::read(int fd, struct sockaddr_in* addr)
 {
   char buffer[PacketSize], serverVersion[9];
   uint16_t len, code;
@@ -59,7 +59,7 @@ boolean			PingPacket::read(int fd, struct sockaddr_in* addr)
   // get packet
   int n = recvMulticast(fd, buffer, sizeof(buffer), addr);
   if (n < 4)
-    return False;
+    return false;
 
   // decode header
   void* buf = buffer;
@@ -68,11 +68,11 @@ boolean			PingPacket::read(int fd, struct sockaddr_in* addr)
 
   // make sure we got the rest of the message
   if (len != n - 4)
-    return False;
+    return false;
 
   // check that it's a reply
   if (code != PingCodeReply)
-    return False;
+    return false;
 
   // unpack body of reply
   buf = unpack(buf, serverVersion);
@@ -83,7 +83,7 @@ boolean			PingPacket::read(int fd, struct sockaddr_in* addr)
   return (strncmp(serverVersion, ServerVersion, 7) == 0);
 }
 
-boolean			PingPacket::waitForReply(int fd,
+bool			PingPacket::waitForReply(int fd,
 				const Address& from,
 				int millisecondsToBlock)
 {
@@ -116,17 +116,17 @@ boolean			PingPacket::waitForReply(int fd,
     // if got a message read it.  if a ping packet and from right
     // sender then return success.
     if (nfound < 0)
-      return False;
+      return false;
     if (nfound > 0 && read(fd, NULL))
       if (sourceAddr == from)
-	return True;
+	return true;
 
     currentTime = TimeKeeper::getCurrent();
   } while (currentTime - startTime < blockTime);
-  return False;
+  return false;
 }
 
-boolean			PingPacket::write(int fd,
+bool			PingPacket::write(int fd,
 					const struct sockaddr_in* addr) const
 {
   char buffer[PacketSize];
@@ -137,15 +137,15 @@ boolean			PingPacket::write(int fd,
   return sendMulticast(fd, buffer, sizeof(buffer), addr) == sizeof(buffer);
 }
 
-boolean			PingPacket::isRequest(int fd,
+bool			PingPacket::isRequest(int fd,
 				struct sockaddr_in* addr, int* minReplyTTL)
 {
-  if (fd < 0) return False;
+  if (fd < 0) return false;
   char buffer[6];
   void *msg = buffer;
   uint16_t len, code;
   int size = recvMulticast(fd, buffer, sizeof(buffer), addr);
-  if (size < 2) return False;
+  if (size < 2) return false;
   msg = nboUnpackUShort(msg, len);
   msg = nboUnpackUShort(msg, code);
   if (minReplyTTL && size == 6 && len == 2 && code == PingCodeRequest) {
@@ -159,11 +159,11 @@ boolean			PingPacket::isRequest(int fd,
   return code == PingCodeRequest || code == PingCodeOldRequest;
 }
 
-boolean			PingPacket::sendRequest(int fd,
+bool			PingPacket::sendRequest(int fd,
 					const struct sockaddr_in* addr,
 					int replyMinTTL)
 {
-  if (fd < 0 || !addr) return False;
+  if (fd < 0 || !addr) return false;
   char buffer[6];
   void *msg = buffer;
   msg = nboPackUShort(msg, 2);

@@ -19,8 +19,6 @@
 
 #include "common.h"
 #include "BzfDisplay.h"
-#include "AList.h"
-#include "BzfString.h"
 #include <windows.h>
 #include "bzfgl.h"
 
@@ -33,13 +31,13 @@ class WinDisplay : public BzfDisplay {
 				const char* videoFormat);
 			~WinDisplay();
 
-    boolean		isValid() const;
-    boolean		isEventPending() const;
-    boolean		getEvent(BzfEvent&) const;
+    bool		isValid() const;
+    bool		isEventPending() const;
+    bool		getEvent(BzfEvent&) const;
 
-    boolean		setDefaultResolution();
+    bool		setDefaultResolution();
 
-    boolean		isFullScreenOnly() const;
+    bool		isFullScreenOnly() const;
     int			getFullWidth() const;
     int			getFullHeight() const;
 
@@ -67,12 +65,12 @@ class WinDisplay : public BzfDisplay {
 			WinDisplay(const WinDisplay&);
     WinDisplay&		operator=(const WinDisplay&);
 
-    boolean		getKey(const MSG&, BzfKeyEvent&) const;
-    boolean		isNastyKey(const MSG&) const;
+    bool		getKey(const MSG&, BzfKeyEvent&) const;
+    bool		isNastyKey(const MSG&) const;
 
-    boolean		doSetResolution(int);
+    bool		doSetResolution(int);
     ResInfo**		getVideoFormats(int& num, int& current);
-    static boolean	canChangeDepth();
+    static bool		canChangeDepth();
 
   private:
     Rep*		rep;
@@ -85,7 +83,7 @@ class WinDisplay : public BzfDisplay {
     Resolution*		resolutions;
 
     // for key to character translations
-    boolean		translated;
+    bool		translated;
     int			charCode;
 
     // keyboard mapping

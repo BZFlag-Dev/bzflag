@@ -28,14 +28,14 @@ HUDDialog::HUDDialog() : focus(NULL)
 HUDDialog::~HUDDialog()
 {
   // delete all controls left on list
-  const int count = list.getLength();
+  const int count = list.size();
   for (int i = 0; i < count; i++)
     delete list[i];
 }
 
 void			HUDDialog::render()
 {
-  const int count = list.getLength();
+  const int count = list.size();
   for (int i = 0; i < count; i++)
     list[i]->render();
 }
@@ -72,14 +72,14 @@ HUDDialogStack*		HUDDialogStack::get()
   return &globalStack;
 }
 
-boolean			HUDDialogStack::isActive() const
+bool			HUDDialogStack::isActive() const
 {
-  return stack.getLength() != 0;
+  return stack.size() != 0;
 }
 
 HUDDialog*		HUDDialogStack::top() const
 {
-  const int index = stack.getLength();
+  const int index = stack.size();
   if (index == 0) return NULL;
   return stack[index - 1];
 }
@@ -88,14 +88,14 @@ void			HUDDialogStack::push(HUDDialog* dialog)
 {
   if (!dialog) return;
   if (isActive()) {
-    const int index = stack.getLength() - 1;
+    const int index = stack.size() - 1;
     stack[index]->setFocus(HUDui::getFocus());
     stack[index]->dismiss();
   }
   else {
     getMainWindow()->getWindow()->addResizeCallback(resize, this);
   }
-  stack.append(dialog);
+  stack.push_back(dialog);
   HUDui::setDefaultKey(dialog->getDefaultKey());
   HUDui::setFocus(dialog->getFocus());
   dialog->resize(getMainWindow()->getWidth(), getMainWindow()->getHeight());
@@ -105,10 +105,12 @@ void			HUDDialogStack::push(HUDDialog* dialog)
 void			HUDDialogStack::pop()
 {
   if (isActive()) {
-    const int index = stack.getLength() - 1;
+    const int index = stack.size() - 1;
     stack[index]->setFocus(HUDui::getFocus());
     stack[index]->dismiss();
-    stack.remove(index);
+    std::vector<HUDDialog*>::iterator it = stack.begin();
+    for(int i = 0; i < index; i++) it++;
+    stack.erase(it);
     if (index > 0) {
       HUDDialog* dialog = stack[index - 1];
       HUDui::setDefaultKey(dialog->getDefaultKey());
@@ -128,7 +130,7 @@ void			HUDDialogStack::pop()
 void			HUDDialogStack::render()
 {
   if (isActive())
-    stack[stack.getLength() - 1]->render();
+    stack[stack.size() - 1]->render();
 }
 
 void			HUDDialogStack::resize(void* _self)

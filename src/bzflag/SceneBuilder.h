@@ -56,23 +56,23 @@ class SceneDatabaseBuilder {
     OpenGLMaterial	wallMaterial;
     OpenGLTexture	wallTexture;
     float		wallTexWidth, wallTexHeight;
-    boolean		wallLOD;
+    bool		wallLOD;
 
     OpenGLMaterial	boxMaterial;
     OpenGLTexture	boxTexture;
     OpenGLTexture	boxTopTexture;
     float		boxTexWidth, boxTexHeight;
-    boolean		boxLOD;
+    bool		boxLOD;
 
     OpenGLMaterial	pyramidMaterial;
     OpenGLTexture	pyramidTexture;
-    boolean		pyramidLOD;
+    bool		pyramidLOD;
 
-    boolean		baseLOD;
+    bool		baseLOD;
 
     OpenGLMaterial	teleporterMaterial;
     OpenGLTexture	teleporterTexture;
-    boolean		teleporterLOD;
+    bool		teleporterLOD;
 
     static const GLfloat wallColors[4][4];
     static const GLfloat wallModulateColors[4][4];

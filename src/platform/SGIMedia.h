@@ -25,29 +25,29 @@ class SGIMedia : public BzfMedia {
 			SGIMedia();
 			~SGIMedia();
 
-    double		stopwatch(boolean);
+    double		stopwatch(bool);
     void		sleep(float);
-    boolean		openAudio();
+    bool		openAudio();
     void		closeAudio();
-    boolean		startAudioThread(void (*)(void*), void*);
+    bool		startAudioThread(void (*)(void*), void*);
     void		stopAudioThread();
-    boolean		hasAudioThread() const;
+    bool		hasAudioThread() const;
     void		writeSoundCommand(const void*, int);
-    boolean		readSoundCommand(void*, int);
+    bool		readSoundCommand(void*, int);
     int			getAudioOutputRate() const;
     int			getAudioBufferSize() const;
     int			getAudioBufferChunkSize() const;
-    boolean		isAudioTooEmpty() const;
+    bool		isAudioTooEmpty() const;
     void		writeAudioFrames(const float* samples, int numFrames);
-    void		audioSleep(boolean checkLowWater, double maxTime);
+    void		audioSleep(bool checkLowWater, double maxTime);
 
   private:
-    boolean		checkForAudioHardware();
-    boolean		openAudioHardware();
+    bool		checkForAudioHardware();
+    bool		openAudioHardware();
     static void		audioThreadInit(void*);
 
   private:
-    boolean		audioReady;
+    bool		audioReady;
     long		originalAudioParams[8];
     long		audioParams[6];
     long		audioOutputRate;

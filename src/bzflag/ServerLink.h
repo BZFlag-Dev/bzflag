@@ -98,7 +98,7 @@ class ServerLink {
     struct sockaddr     usendaddr;
     int 		urecvfd;
     struct sockaddr     urecvaddr;
-    boolean 		ulinkup;
+    bool 		ulinkup;
 
     PlayerId		id;
     char		version[9];

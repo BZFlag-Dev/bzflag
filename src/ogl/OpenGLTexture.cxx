@@ -67,10 +67,10 @@ const GLenum		OpenGLTexture::Rep::magnifyFilter[] = {
 OpenGLTexture::Rep::Rep(int _width, int _height,
 				const GLvoid* pixels,
 				int _maxFilter,
-				boolean _repeat,
+				bool _repeat,
 				int _internalFormat) :
 				refCount(1), list(0),
-				alpha(False),
+				alpha(false),
 				width(_width),
 				height(_height),
 				repeat(_repeat),
@@ -208,17 +208,17 @@ void			OpenGLTexture::Rep::doInitContext()
 #elif defined(GL_INTENSITY4_EXT)
     case GL_INTENSITY4_EXT:
 #endif
-      alpha = True;
+      alpha = true;
       break;
 
     default:
-      alpha = False;
+      alpha = false;
       break;
   }
 
   // now make texture map display list (compute all mipmaps, if requested).
   // compute next mipmap from current mipmap to save time.
-  const boolean mipmap = ((int)maxFilter > (int)Linear);
+  const bool mipmap = ((int)maxFilter > (int)Linear);
   GLint mipmapLevel = 0;
 
 #if defined(BZF_TEXTURE_OBJECT)
@@ -234,7 +234,7 @@ void			OpenGLTexture::Rep::doInitContext()
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T,
 			repeat ? GL_REPEAT : GL_CLAMP);
   do {
-    boolean doScale = (scaledWidth != tmpWidth || scaledHeight != tmpHeight);
+    bool doScale = (scaledWidth != tmpWidth || scaledHeight != tmpHeight);
 
     // scale image to next mipmap level
     if (doScale)
@@ -295,7 +295,7 @@ OpenGLTexture::OpenGLTexture()
 OpenGLTexture::OpenGLTexture(int width, int height,
 				const GLvoid* pixels,
 				Filter maxFilter,
-				boolean repeat,
+				bool repeat,
 				int internalFormat)
 {
   rep = new Rep(width, height, pixels, (int)maxFilter, repeat, internalFormat);
@@ -352,21 +352,21 @@ void			OpenGLTexture::setFilter(Filter _filter)
 #endif // BZF_TEXTURE_OBJECT
 }
 
-boolean			OpenGLTexture::operator==(const OpenGLTexture& t) const
+bool			OpenGLTexture::operator==(const OpenGLTexture& t) const
 {
   return (rep == t.rep);
 }
 
-boolean			OpenGLTexture::operator!=(const OpenGLTexture& t) const
+bool			OpenGLTexture::operator!=(const OpenGLTexture& t) const
 {
   return (rep != t.rep);
 }
 
-boolean			OpenGLTexture::operator<(const OpenGLTexture& t) const
+bool			OpenGLTexture::operator<(const OpenGLTexture& t) const
 {
-  if (rep == t.rep) return False;
-  if (!t.rep) return False;
-  if (!rep) return True;
+  if (rep == t.rep) return false;
+  if (!t.rep) return false;
+  if (!rep) return true;
   return (rep->list < t.rep->list);
 }
 
@@ -386,7 +386,7 @@ void			OpenGLTexture::ref()
   if (rep) ++rep->refCount;
 }
 
-boolean			OpenGLTexture::unref()
+bool			OpenGLTexture::unref()
 {
   return (rep && --rep->refCount == 0);
 }
@@ -415,33 +415,33 @@ int			OpenGLTexture::Rep::getBestFormat(
   for (i = 0; i < size; scan += 4, i++)
     if (scan[0] != scan[1] || scan[0] != scan[2])
       break;
-  const boolean useLuminance = (i == size);
+  const bool useLuminance = (i == size);
 
   // see if all pixels are opaque
   scan = (const GLubyte*)pixels;
   for (i = 0; i < size; scan += 4, i++)
     if (scan[3] != 0xff)
       break;
-  const boolean useAlpha = (i != size);
+  const bool useAlpha = (i != size);
 
   // intensity format defined in 1.1 and an extension in 1.0
 #if defined(GL_VERSION_1_1)
-  static const boolean hasTextureExt = True;
+  static const bool hasTextureExt = true;
 #elif defined(GL_INTENSITY_EXT)
-  static const boolean hasTextureExt = (strstr((const char*)
+  static const bool hasTextureExt = (strstr((const char*)
 		glGetString(GL_EXTENSIONS), "GL_EXT_texture") != NULL);
 #else
-  static const boolean hasTextureExt = False;
+  static const bool hasTextureExt = false;
 #endif // defined(GL_VERSION_1_1)
 
   // see if all pixels are r=g=b=a.  if so return intensity format.
   // SGI IMPACT and 3Dfx systems don't support GL_INTENSITY.
   const char* const glRenderer = (const char*)glGetString(GL_RENDERER);
-  static boolean noIntensity =
+  static bool noIntensity =
 	(strncmp(glRenderer, "IMPACT", 6) == 0) ||
 	(strncmp(glRenderer, "3Dfx", 4) == 0);
   if (!noIntensity) {
-    boolean useIntensity = False;
+    bool useIntensity = false;
     if (hasTextureExt && useLuminance) {
       scan = (const GLubyte*)pixels;
       for (i = 0; i < size; scan += 4, i++)

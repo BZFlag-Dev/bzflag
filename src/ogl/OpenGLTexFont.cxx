@@ -11,7 +11,7 @@
  */
 
 #include "OpenGLTexFont.h"
-#include "BzfString.h"
+#include <string>
 #include <string.h>
 #include <math.h>
 
@@ -52,7 +52,7 @@ OpenGLTexFont::Rep::Rep(int dx, int dy, const unsigned char* pixels) :
 
   // make texture
   texture = OpenGLTexture(dx, dy - 28, pixels + 4 * 28 * dx,
-		OpenGLTexture::Linear, True, format);
+		OpenGLTexture::Linear, true, format);
 
   // font constants
   const int tmpAscent = getValue(pixels, dx, 0, 0);
@@ -93,7 +93,7 @@ OpenGLTexFont::Rep::Rep(int dx, int dy, const unsigned char* pixels) :
   builder.setTexture(texture);
   builder.setBlending();
   builder.setAlphaFunc();
-  builder.enableTextureReplace(False);
+  builder.enableTextureReplace(false);
   gstate = builder.getState();
 }
 
@@ -346,7 +346,7 @@ OpenGLTexFont&		OpenGLTexFont::operator=(const OpenGLTexFont& f)
   return *this;
 }
 
-boolean			OpenGLTexFont::isValid() const
+bool			OpenGLTexFont::isValid() const
 {
   return rep->texture.isValid();
 }
@@ -390,9 +390,9 @@ float			OpenGLTexFont::getHeight() const
   return height;
 }
 
-float			OpenGLTexFont::getWidth(const BzfString& s) const
+float			OpenGLTexFont::getWidth(const std::string& s) const
 {
-  return getWidth((const char*)s, s.getLength());
+  return getWidth(s.c_str(), s.length());
 }
 
 float			OpenGLTexFont::getWidth(const char* s) const
@@ -419,10 +419,10 @@ float			OpenGLTexFont::getBaselineFromCenter() const
   return 0.5f * (getDescent() - getAscent());
 }
 
-void			OpenGLTexFont::draw(const BzfString& s,
+void			OpenGLTexFont::draw(const std::string& s,
 				float x, float y, float z) const
 {
-  draw((const char*)s, s.getLength(), x, y, z);
+  draw(s.c_str(), s.length(), x, y, z);
 }
 
 void			OpenGLTexFont::draw(const char* s,

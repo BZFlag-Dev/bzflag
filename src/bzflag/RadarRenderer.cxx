@@ -35,7 +35,7 @@ RadarRenderer::RadarRenderer(const SceneRenderer& renderer,
 				w(0),
 				h(0),
 				range(RadarHiRange),
-				jammed(False),
+				jammed(false),
 				decay(0.01),
 				list(0),
 				noise(NULL)
@@ -43,16 +43,16 @@ RadarRenderer::RadarRenderer(const SceneRenderer& renderer,
   setControlColor();
 
   blend = renderer.useBlending();
-  smooth = True;
+  smooth = true;
 #if defined(GLX_SAMPLES_SGIS) && defined(GLX_SGIS_multisample)
   GLint bits;
   glGetIntergerv(GL_SAMPLES_SGIS, &bits);
-  if (bits > 0) smooth = False;
+  if (bits > 0) smooth = false;
 #endif
 
   // watch for context recreation
   OpenGLGState::registerContextInitializer(initContext, (void*)this);
-  if (makeNoise()==True)
+  if (makeNoise()==true)
     makeNoiseTexture();
   else noiseTexture=0;
 }
@@ -87,7 +87,7 @@ void			RadarRenderer::setRange(float _range)
   range = _range;
 }
 
-void			RadarRenderer::setJammed(boolean _jammed)
+void			RadarRenderer::setJammed(bool _jammed)
 {
   jammed = _jammed;
   decay = 0.01;
@@ -100,7 +100,7 @@ void			RadarRenderer::freeList()
   list = 0;
 }
 
-boolean			RadarRenderer::makeNoise()
+bool			RadarRenderer::makeNoise()
 {
   delete[] noise;
   const int size = 4 * 128 * 128;
@@ -177,9 +177,9 @@ void RadarRenderer::drawFlagOnTank(float x, float y, float)
 }
 
 void			RadarRenderer::render(SceneRenderer& renderer,
-							boolean blank)
+							bool blank)
 {
-  const boolean smoothingOn = smooth && renderer.useSmoothing();
+  const bool smoothingOn = smooth && renderer.useSmoothing();
 
   const int ox = renderer.getWindow().getOriginX();
   const int oy = renderer.getWindow().getOriginY();
@@ -266,7 +266,7 @@ void			RadarRenderer::render(SceneRenderer& renderer,
       glDisable(GL_TEXTURE_2D);
     }
 
-    else if (noiseTexture != 0 && renderer.useTexture()==True &&
+    else if (noiseTexture != 0 && renderer.useTexture()==true &&
 	renderer.useQuality()==0) {
       glEnable(GL_TEXTURE_2D);
       noiseTexture->execute();
@@ -470,10 +470,10 @@ void			RadarRenderer::render(SceneRenderer& renderer,
   glPopMatrix();
 }
 
-float			RadarRenderer::colorScale(const float z, const float h, boolean enhancedRadar)
+float			RadarRenderer::colorScale(const float z, const float h, bool enhancedRadar)
 {
   float scaleColor;
-  if (enhancedRadar == True) {
+  if (enhancedRadar == true) {
     const LocalPlayer* myTank = LocalPlayer::getMyTank();
 
     // Scale color so that objects that are close to tank's level are opaque
@@ -519,9 +519,9 @@ float			RadarRenderer::transScale(const Obstacle& o)
   return scaleColor;
 }
 
-void			RadarRenderer::makeList(boolean smoothingOn, SceneRenderer& renderer)
+void			RadarRenderer::makeList(bool smoothingOn, SceneRenderer& renderer)
 {
-  const boolean enhancedRadar = renderer.useEnhancedRadar();
+  const bool enhancedRadar = renderer.useEnhancedRadar();
 
   // antialias if smoothing is on.
   if (smoothingOn) {
@@ -531,8 +531,8 @@ void			RadarRenderer::makeList(boolean smoothingOn, SceneRenderer& renderer)
   }
 
   // draw walls.  walls are flat so a line will do.
-  const WallObstacles& walls = world.getWalls();
-  int count = walls.getLength();
+  const std::vector<WallObstacle>& walls = world.getWalls();
+  int count = walls.size();
   glColor3f(0.25f, 0.5f, 0.5f);
   glBegin(GL_LINES);
   int i;
@@ -548,11 +548,11 @@ void			RadarRenderer::makeList(boolean smoothingOn, SceneRenderer& renderer)
   glEnd();
 
   // don't blend the polygons if enhanced radar disabled
-  if (smoothingOn && enhancedRadar == False) glDisable(GL_BLEND);
+  if (smoothingOn && enhancedRadar == false) glDisable(GL_BLEND);
 
   // draw box buildings.
-  const BoxBuildings& boxes = world.getBoxes();
-  count = boxes.getLength();
+  const std::vector<BoxBuilding>& boxes = world.getBoxes();
+  count = boxes.size();
   glBegin(GL_QUADS);
   for (i = 0; i < count; i++) {
     const BoxBuilding& box = boxes[i];
@@ -571,8 +571,8 @@ void			RadarRenderer::makeList(boolean smoothingOn, SceneRenderer& renderer)
   glEnd();
 
   // draw pyramid buildings
-  const PyramidBuildings& pyramids = world.getPyramids();
-  count = pyramids.getLength();
+  const std::vector<PyramidBuilding>& pyramids = world.getPyramids();
+  count = pyramids.size();
   glBegin(GL_QUADS);
   for (i = 0; i < count; i++) {
     const PyramidBuilding& pyr = pyramids[i];
@@ -593,7 +593,7 @@ void			RadarRenderer::makeList(boolean smoothingOn, SceneRenderer& renderer)
   // now draw antialiased outlines around the polygons
   if (smoothingOn) {
     glEnable(GL_BLEND);
-    count = boxes.getLength();
+    count = boxes.size();
     for (i = 0; i < count; i++) {
       const BoxBuilding& box = boxes[i];
       const float cs = colorScale(box.getPosition()[2], box.getHeight(), enhancedRadar);
@@ -611,7 +611,7 @@ void			RadarRenderer::makeList(boolean smoothingOn, SceneRenderer& renderer)
       glEnd();
     }
 
-    count = pyramids.getLength();
+    count = pyramids.size();
     for (i = 0; i < count; i++) {
       const PyramidBuilding& pyr = pyramids[i];
       const float cs = colorScale(pyr.getPosition()[2], pyr.getHeight(), enhancedRadar);
@@ -658,8 +658,8 @@ void			RadarRenderer::makeList(boolean smoothingOn, SceneRenderer& renderer)
   // filter the ends of line segments, we'll draw the line in each
   // direction (which degrades the antialiasing).  Newport graphics
   // is one system that doesn't do correct filtering.
-  const Teleporters& teleporters = world.getTeleporters();
-  count = teleporters.getLength();
+  const std::vector<Teleporter>& teleporters = world.getTeleporters();
+  count = teleporters.size();
   glColor3f(1.0f, 1.0f, 0.25f);
   glBegin(GL_LINES);
   for (i = 0; i < count; i++) {

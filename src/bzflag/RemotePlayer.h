@@ -27,7 +27,7 @@ class RemotePlayer : public Player {
     void		updateShots(float dt);
 
   private:
-    boolean		doEndShot(int index, boolean isHit, float* pos);
+    bool		doEndShot(int index, bool isHit, float* pos);
 
   private:
     int			numShots;

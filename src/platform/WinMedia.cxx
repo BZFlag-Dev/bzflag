@@ -26,7 +26,7 @@ void*			WinMedia::threadData;
 
 WinMedia::WinMedia(WinWindow* _window) :
 				window(_window->getHandle()),
-				audioReady(False),
+				audioReady(false),
 				audioInterface(NULL),
 				audioPrimaryPort(NULL),
 				audioPort(NULL),
@@ -49,19 +49,19 @@ void			WinMedia::sleep(float timeInSeconds)
   WaitForSingleObject(dummyEvent, (DWORD)(1000.0f * timeInSeconds));
 }
 
-boolean			WinMedia::openAudio()
+bool			WinMedia::openAudio()
 {
   // don't re-initialize
-  if (audioReady) return False;
+  if (audioReady) return false;
 
   // create DirectSound interface pointer
   if (DirectSoundCreate(NULL, &audioInterface, NULL) != DS_OK)
-    return False;
+    return false;
 
   // set cooperative level
   if (audioInterface->SetCooperativeLevel(window, DSSCL_EXCLUSIVE) != DS_OK) {
     closeAudio();
-    return False;
+    return false;
   }
 
   // create audio command queue
@@ -107,11 +107,11 @@ boolean			WinMedia::openAudio()
   }
   if (FAILED(status)) {
     closeAudio();
-    return False;
+    return false;
   }
 
   // haven't started playing yet
-  audioPlaying = False;
+  audioPlaying = false;
 
   // have written zero samples so far
   audioWritePtr = 0;
@@ -152,15 +152,15 @@ boolean			WinMedia::openAudio()
   }
   if (FAILED(status)) {
     closeAudio();
-    return False;
+    return false;
   }
 //  audioPrimaryPort->Play(0, 0, DSBPLAY_LOOPING);
 
   // make an output buffer
   outputBuffer = new short[audioBufferChunkSize];
 
-  audioReady = True;
-  return True;
+  audioReady = true;
+  return true;
 }
 
 void			WinMedia::closeAudio()
@@ -186,17 +186,17 @@ void			WinMedia::closeAudio()
   if (audioCommandMutex) CloseHandle(audioCommandMutex);
   delete[] audioCommandBuffer;
 
-  audioReady = False;
+  audioReady = false;
   audioInterface = NULL;
   audioPrimaryPort = NULL;
   audioPort = NULL;
   outputBuffer = NULL;
 }
 
-boolean			WinMedia::startAudioThread(
+bool			WinMedia::startAudioThread(
 				void (*proc)(void*), void* data)
 {
-  if (audioThread || !proc) return False;
+  if (audioThread || !proc) return false;
   threadProc = proc;
   threadData = data;
 
@@ -219,9 +219,9 @@ void			WinMedia::stopAudioThread()
   audioThread = NULL;
 }
 
-boolean			WinMedia::hasAudioThread() const
+bool			WinMedia::hasAudioThread() const
 {
-  return True;
+  return true;
 }
 
 DWORD WINAPI		WinMedia::audioThreadInit(void*)
@@ -267,17 +267,17 @@ void			WinMedia::writeSoundCommand(const void* msg, int len)
   ReleaseMutex(audioCommandMutex);
 }
 
-boolean			WinMedia::readSoundCommand(void* msg, int len)
+bool			WinMedia::readSoundCommand(void* msg, int len)
 {
   // no event unless signaled non-empty
   if (WaitForSingleObject(audioCommandEvent, 0) != WAIT_OBJECT_0)
-    return False;
+    return false;
 
   // take ownership of the buffer.  if we can't then give up after
   // resetting the event flag.
   if (WaitForSingleObject(audioCommandMutex, INFINITE) != WAIT_OBJECT_0) {
     ResetEvent(audioCommandEvent);
-    return False;
+    return false;
   }
 
   // read message
@@ -299,7 +299,7 @@ boolean			WinMedia::readSoundCommand(void* msg, int len)
   // release hold of buffer
   ReleaseMutex(audioCommandMutex);
 
-  return True;
+  return true;
 }
 
 int			WinMedia::getAudioOutputRate() const
@@ -321,7 +321,7 @@ int			WinMedia::getAudioBufferChunkSize() const
   return audioBufferChunkSize / audioNumChannels;
 }
 
-boolean			WinMedia::isAudioTooEmpty() const
+bool			WinMedia::isAudioTooEmpty() const
 {
   // the write offset returned by GetCurrentPosition() is probably
   // useless.  the documentation certainly is.
@@ -332,7 +332,7 @@ boolean			WinMedia::isAudioTooEmpty() const
     if (samplesLeft < 0) samplesLeft += audioBufferSize;
     return samplesLeft <= audioLowWaterMark;
   }
-  return False;
+  return false;
 }
 
 void			WinMedia::writeAudioFrames(
@@ -393,7 +393,7 @@ void			WinMedia::writeAudioFrames(
     audioPort->Unlock(ptr1, size1, ptr2, size2);
 
     if (!audioPlaying) {
-      audioPlaying = True;
+      audioPlaying = true;
       audioPort->Play(0, 0, DSBPLAY_LOOPING);
     }
 
@@ -405,7 +405,7 @@ void			WinMedia::writeAudioFrames(
 }
 
 void			WinMedia::audioSleep(
-				boolean checkLowWater, double maxTime)
+				bool checkLowWater, double maxTime)
 {
   // wait for a message on the command queue.  do this by waiting
   // for the command queue event.

@@ -54,9 +54,9 @@ class XWindow : public BzfWindow {
 			XWindow(const XDisplay*, XVisual*);
 			~XWindow();
 
-    boolean		isValid() const;
+    bool		isValid() const;
 
-    void		showWindow(boolean);
+    void		showWindow(bool);
 
     void		getPosition(int& x, int& y);
     void		getSize(int& width, int& height) const;
@@ -76,7 +76,7 @@ class XWindow : public BzfWindow {
 
     void		setGamma(float);
     float		getGamma() const;
-    boolean		hasGammaControl() const;
+    bool		hasGammaControl() const;
 
     void		makeCurrent();
     void		swapBuffers();
@@ -85,14 +85,14 @@ class XWindow : public BzfWindow {
 
 #ifdef USBJOYSTICK
     void               initJoystick(const char* joystickName);
-    boolean            joystick() const;
+    bool               joystick() const;
     void               getJoy(int& x, int& y) const;
     unsigned long      getJoyButtons() const;
 #endif
 
 #ifdef XIJOYSTICK
     void		initJoystick(char* joystickName);
-    boolean		joystick() const;
+    bool		joystick() const;
     void		getJoy(int& x, int& y) const;
 #endif
 
@@ -113,8 +113,8 @@ class XWindow : public BzfWindow {
     Window		window;
     Colormap		colormap;
     GLXContext		context;
-    boolean		noWM;
-    boolean		defaultColormap;
+    bool		noWM;
+    bool		defaultColormap;
     XWindow*		prev;
     XWindow*		next;
     XVisualInfo		visual;

@@ -17,10 +17,14 @@
 #ifndef	BZF_BSP_SCENE_DATABASE_H
 #define	BZF_BSP_SCENE_DATABASE_H
 
+#ifdef _WIN32
+#pragma warning( 4:4786 )
+#endif
+
+#include <vector>
 #include "bzfgl.h"
 #include "common.h"
 #include "SceneDatabase.h"
-#include "AList.h"
 
 class BSPSceneDatabase : public SceneDatabase {
   public:
@@ -32,7 +36,7 @@ class BSPSceneDatabase : public SceneDatabase {
     void		addDynamicSphere(SphereSceneNode*);
     void		removeDynamicNodes();
     void		removeAllNodes();
-    boolean		isOrdered();
+    bool		isOrdered();
 
     SceneIterator*	getRenderIterator();
 
@@ -41,9 +45,9 @@ class BSPSceneDatabase : public SceneDatabase {
     friend class BSPSceneIteratorItem;
     class Node {
       public:
-			Node(boolean dynamic, SceneNode* node);
+			Node(bool dynamic, SceneNode* node);
       public:
-	boolean		dynamic;
+	bool		dynamic;
 	int		count;
 	SceneNode*	node;
 	Node*		front;
@@ -72,7 +76,8 @@ class BSPSceneIteratorItem {
     BSPSceneDatabase::Node*	node;
     int				side;
 };
-BZF_DEFINE_ALIST(BSPSceneIteratorStack, BSPSceneIteratorItem);
+
+typedef std::vector<BSPSceneIteratorItem> BSPSceneIteratorStack;
 
 class BSPSceneIterator : public SceneIterator {
   public:

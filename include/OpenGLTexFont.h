@@ -20,8 +20,7 @@
 #include "common.h"
 #include "OpenGLTexture.h"
 #include "OpenGLGState.h"
-
-class BzfString;
+#include <string>
 
 class OpenGLTexFont {
   public:
@@ -34,17 +33,17 @@ class OpenGLTexFont {
 
     void		setSize(float width, float height);
 
-    boolean		isValid() const;
+    bool		isValid() const;
     float		getAscent() const;
     float		getDescent() const;
     float		getWidth() const;
     float		getHeight() const;
-    float		getWidth(const BzfString&) const;
+    float		getWidth(const std::string&) const;
     float		getWidth(const char* string) const;
     float		getWidth(const char* string, int length) const;
     float		getSpacing() const;
     float		getBaselineFromCenter() const;
-    void		draw(const BzfString&,
+    void		draw(const std::string&,
 				float x, float y, float z = 0.0f) const;
     void		draw(const char*,
 				float x, float y, float z = 0.0f) const;

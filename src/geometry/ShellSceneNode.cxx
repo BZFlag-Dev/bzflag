@@ -73,7 +73,7 @@ void			ShellSceneNode::notifyStyleChange(
 				const SceneRenderer& renderer)
 {
   OpenGLGStateBuilder builder(gstate);
-  const boolean lighting = renderer.useLighting();
+  const bool lighting = renderer.useLighting();
   builder.enableMaterial(lighting);
   builder.setShading(lighting ? GL_SMOOTH : GL_FLAT);
   renderNode.setLighting(lighting);
@@ -97,7 +97,7 @@ void			ShellSceneNode::addShadowNodes(SceneRenderer& renderer)
 ShellSceneNode::ShellRenderNode::ShellRenderNode(
 				const ShellSceneNode* _sceneNode) :
 				sceneNode(_sceneNode),
-				lighted(False)
+				lighted(false)
 {
   // do nothing
 }
@@ -108,7 +108,7 @@ ShellSceneNode::ShellRenderNode::~ShellRenderNode()
 }
 
 void			ShellSceneNode::ShellRenderNode::
-				setLighting(boolean _lighted)
+				setLighting(bool _lighted)
 {
   lighted = _lighted;
 }

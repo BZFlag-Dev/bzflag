@@ -51,26 +51,26 @@ PingPacket::~PingPacket()
   // do nothing
 }
 
-boolean			PingPacket::read(int fd, struct sockaddr_in* addr)
+bool			PingPacket::read(int fd, struct sockaddr_in* addr)
 {
   char buffer[PacketSize], serverVersion[9];
   uint16_t len, code;
 
   if (recvMulticast(fd, buffer, sizeof(buffer), addr) != sizeof(buffer))
-    return False;				// bad packet/different version
+    return false;				// bad packet/different version
 
   void* buf = buffer;
   buf = nboUnpackUShort(buf, len);
   buf = nboUnpackUShort(buf, code);
   if (code != PingCodeReply)
-    return False;				// not a reply
+    return false;				// not a reply
 
   // get server version and compare against my version.  ignore
   // last character of version number.  that's only used to indicate
   // compatible client-side changes.
   buf = nboUnpackString(buf, serverVersion, 8);
   if (strncmp(serverVersion, ServerVersion, 7))
-    return False;				// different version
+    return false;				// different version
 
   buf = serverId.unpack(buf);
   buf = sourceAddr.unpack(buf);
@@ -92,10 +92,10 @@ boolean			PingPacket::read(int fd, struct sockaddr_in* addr)
   buf = nboUnpackUShort(buf, maxPlayerScore);
   buf = nboUnpackUShort(buf, maxTeamScore);
   buf = nboUnpackUShort(buf, maxTime);
-  return True;
+  return true;
 }
 
-boolean			PingPacket::waitForReply(int fd,
+bool			PingPacket::waitForReply(int fd,
 				const Address& from,
 				int millisecondsToBlock)
 {
@@ -128,17 +128,17 @@ boolean			PingPacket::waitForReply(int fd,
     // if got a message read it.  if a ping packet and from right
     // sender then return success.
     if (nfound < 0)
-      return False;
+      return false;
     if (nfound > 0 && read(fd, NULL))
       if (sourceAddr == from)
-	return True;
+	return true;
 
     currentTime = TimeKeeper::getCurrent();
   } while (currentTime - startTime < blockTime);
-  return False;
+  return false;
 }
 
-boolean			PingPacket::write(int fd,
+bool			PingPacket::write(int fd,
 					const struct sockaddr_in* addr) const
 {
   char buffer[PacketSize];
@@ -169,15 +169,15 @@ boolean			PingPacket::write(int fd,
   return sendMulticast(fd, buffer, sizeof(buffer), addr) == sizeof(buffer);
 }
 
-boolean			PingPacket::isRequest(int fd,
+bool			PingPacket::isRequest(int fd,
 				struct sockaddr_in* addr, int* minReplyTTL)
 {
-  if (fd < 0) return False;
+  if (fd < 0) return false;
   char buffer[6];
   void *msg = buffer;
   uint16_t len, code;
   int size = recvMulticast(fd, buffer, sizeof(buffer), addr);
-  if (size < 2) return False;
+  if (size < 2) return false;
   msg = nboUnpackUShort(msg, len);
   msg = nboUnpackUShort(msg, code);
   if (minReplyTTL && size == 6 && len == 2 && code == PingCodeRequest) {
@@ -191,11 +191,11 @@ boolean			PingPacket::isRequest(int fd,
   return code == PingCodeRequest || code == PingCodeOldRequest;
 }
 
-boolean			PingPacket::sendRequest(int fd,
+bool			PingPacket::sendRequest(int fd,
 					const struct sockaddr_in* addr,
 					int replyMinTTL)
 {
-  if (fd < 0 || !addr) return False;
+  if (fd < 0 || !addr) return false;
   char buffer[6];
   void *msg = buffer;
   msg = nboPackUShort(msg, 2);

@@ -18,19 +18,20 @@
 #define	BZF_RESOURCES_H
 
 #include "common.h"
-#include "BzfString.h"
 #include "bzfio.h"
+#include <string>
+#include <vector>
 
 class ResourceDatabase {
   public:
 			ResourceDatabase();
 			~ResourceDatabase();
 
-    boolean		hasValue(const BzfString& name) const;
-    BzfString		getValue(const BzfString& name) const;
+    bool		hasValue(const std::string& name) const;
+    std::string		getValue(const std::string& name) const;
 
-    void		addValue(const BzfString& name, const BzfString& value);
-    void		removeValue(const BzfString& name);
+    void		addValue(const std::string& name, const std::string& value);
+    void		removeValue(const std::string& name);
 
     friend istream&	operator>>(istream&, ResourceDatabase&);
     friend ostream&	operator<<(ostream&, const ResourceDatabase&);
@@ -39,11 +40,11 @@ class ResourceDatabase {
 			ResourceDatabase(const ResourceDatabase&);
     ResourceDatabase&	operator=(const ResourceDatabase&);
 
-    int			getNameIndex(const BzfString& name) const;
+    int			getNameIndex(const std::string& name) const;
 
   public:
-    BzfStringAList	names;
-    BzfStringAList	values;
+    std::vector<std::string>	names;
+    std::vector<std::string>	values;
 };
 
 #endif // BZF_RESOURCES_H

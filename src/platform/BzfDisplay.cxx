@@ -100,37 +100,37 @@ int			BzfDisplay::getDefaultResolution() const
   return defaultResolution;
 }
 
-boolean			BzfDisplay::setResolution(int index)
+bool			BzfDisplay::setResolution(int index)
 {
-  if (index < 0 || index >= numResolutions) return False;
-  if (index == currentResolution) return True;
-  if (!resolutions[index]) return False;
+  if (index < 0 || index >= numResolutions) return false;
+  if (index == currentResolution) return true;
+  if (!resolutions[index]) return false;
   if (!doSetResolution(index)) {
     delete resolutions[index];
     resolutions[index] = NULL;
-    return False;
+    return false;
   }
   currentResolution = index;
-  return True;
+  return true;
 }
 
-boolean			BzfDisplay::setDefaultResolution()
+bool			BzfDisplay::setDefaultResolution()
 {
   const int oldResolution = currentResolution;
   currentResolution = -1;
   if (!doSetDefaultResolution()) {
     currentResolution = oldResolution;
-    return False;
+    return false;
   }
-  return True;
+  return true;
 }
 
-boolean			BzfDisplay::doSetDefaultResolution()
+bool			BzfDisplay::doSetDefaultResolution()
 {
   if (numResolutions >= 2 && defaultResolution < numResolutions)
     return setResolution(defaultResolution);
   else
-    return False;
+    return false;
 }
 
 int			BzfDisplay::findResolution(const char* name) const
@@ -141,9 +141,9 @@ int			BzfDisplay::findResolution(const char* name) const
   return -1;
 }
 
-boolean			BzfDisplay::isValidResolution(int index) const
+bool			BzfDisplay::isValidResolution(int index) const
 {
-  if (index < 0 || index >= numResolutions) return False;
+  if (index < 0 || index >= numResolutions) return false;
   return resolutions[index] != NULL;
 }
 

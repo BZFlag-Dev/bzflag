@@ -82,7 +82,7 @@ class TankSceneNode : public SceneNode {
     void		addRenderNodes(SceneRenderer&);
     void		addShadowNodes(SceneRenderer&);
 
-    void		setColorblind(boolean on);
+    void		setColorblind(bool on);
     void		setNormal();
     void		setObese();
     void		setTiny();
@@ -91,10 +91,10 @@ class TankSceneNode : public SceneNode {
     void		setClipPlane(const GLfloat* plane);
 
     // hidden still renders shadow (turns off invisible)
-    void		setHidden(boolean hidden = True);
+    void		setHidden(bool hidden = true);
 
     // invisible renders nothing (turns off hidden)
-    void		setInvisible(boolean invisible = True);
+    void		setInvisible(bool invisible = true);
 
     static void		setMaxLOD(int maxLevel);
 
@@ -111,7 +111,7 @@ class TankSceneNode : public SceneNode {
 			TankRenderNode(const TankSceneNode*);
 			~TankRenderNode();
 	void		setShadow();
-	void		sortOrder(boolean above, boolean towards);
+	void		sortOrder(bool above, bool towards);
 	void		render();
 	const GLfloat*	getPosition() { return sceneNode->getSphere(); }
       protected:
@@ -138,10 +138,10 @@ class TankSceneNode : public SceneNode {
 	const TankSceneNode* sceneNode;
 	const GLfloat*	color;
 	GLfloat		alpha;
-	boolean		isShadow;
-	boolean		above;
-	boolean		towards;
-	boolean		isExploding;
+	bool		isShadow;
+	bool		above;
+	bool		towards;
+	bool		isExploding;
 	GLfloat		explodeFraction;
 	GLfloat		vel[5][2];
 	GLfloat		spin[5][4];
@@ -200,10 +200,10 @@ class TankSceneNode : public SceneNode {
   private:
     GLfloat		azimuth, elevation;
     GLfloat		baseRadius;
-    boolean		colorblind, hidden, invisible;
-    boolean		transparent, sort, blending;
+    bool		colorblind, hidden, invisible;
+    bool		transparent, sort, blending;
     float		explodeFraction;
-    boolean		clip;
+    bool		clip;
     GLfloat		color[4];
     GLdouble		clipPlane[4];
     TankRenderNode::Style style;

@@ -58,19 +58,19 @@ const GLfloat		BackgroundRenderer::receiverColorInv[3] =
 const int		NumStars = sizeof(stars)/sizeof(stars[0]);
 
 BackgroundRenderer::BackgroundRenderer(const SceneRenderer&) :
-				blank(False),
-				invert(False),
+				blank(false),
+				invert(false),
 				style(0),
 				gridSpacing(60.0f),	// meters
 				gridCount(4.0f),
-				mountainsAvailable(False),
+				mountainsAvailable(false),
 				numMountainTextures(0),
 				mountainsGState(NULL),
 				mountainsList(NULL),
 				cloudDriftU(0.0f),
 				cloudDriftV(0.0f)
 {
-  static boolean init = False;
+  static bool init = false;
   OpenGLGStateBuilder gstate;
   static const GLfloat	black[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
   OpenGLMaterial defaultMaterial(black, black, 0.0f);
@@ -78,7 +78,7 @@ BackgroundRenderer::BackgroundRenderer(const SceneRenderer&) :
 
   // initialize global to class stuff
   if (!init) {
-    init = True;
+    init = true;
 
     // sky pyramid must fit inside far clipping plane
     const GLfloat skySize = 1.3f * WorldSize;
@@ -153,11 +153,11 @@ BackgroundRenderer::BackgroundRenderer(const SceneRenderer&) :
   starGState[1] = gstate.getState();
 
   // make cloud stuff
-  cloudsAvailable = False;
+  cloudsAvailable = false;
   OpenGLTexture cloudsTexture = getTexture(cloudFilename,
 					OpenGLTexture::LinearMipmapLinear);
   if (cloudsTexture.isValid()) {
-    cloudsAvailable = True;
+    cloudsAvailable = true;
     gstate.reset();
     gstate.setShading();
     gstate.setBlending(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -168,7 +168,7 @@ BackgroundRenderer::BackgroundRenderer(const SceneRenderer&) :
   }
 
   // make mountain stuff
-  mountainsAvailable = False;
+  mountainsAvailable = false;
   {
     // get mountain texture then break up into textures no larger than
     // 256 pixels wide and no higher than wide, whichever is less (go
@@ -179,7 +179,7 @@ BackgroundRenderer::BackgroundRenderer(const SceneRenderer&) :
     unsigned char* mountainImage = getTextureImage(mountainFilename,
 							width, height, depth);
     if (mountainImage) {
-      mountainsAvailable = True;
+      mountainsAvailable = true;
 
       // prepare common gstate
       gstate.reset();
@@ -202,7 +202,7 @@ BackgroundRenderer::BackgroundRenderer(const SceneRenderer&) :
 	numMountainTextures = 1;
 	mountainsGState = new OpenGLGState[numMountainTextures];
 	gstate.setTexture(OpenGLTexture(width, height,
-				mountainImage, OpenGLTexture::Linear, True));
+				mountainImage, OpenGLTexture::Linear, true));
 	mountainsGState[0] = gstate.getState();
       }
       else {
@@ -261,7 +261,7 @@ BackgroundRenderer::BackgroundRenderer(const SceneRenderer&) :
 
 	  // make texture and set gstate
 	  gstate.setTexture(OpenGLTexture(dx + 2, height,
-				subimage, OpenGLTexture::Linear, False));
+				subimage, OpenGLTexture::Linear, false));
 	  mountainsGState[n] = gstate.getState();
 	}
 	delete[] subimage;
@@ -421,7 +421,7 @@ void			BackgroundRenderer::addCloudDrift(GLfloat uDrift,
 }
 
 void			BackgroundRenderer::renderSkyAndGround(
-				SceneRenderer& renderer, boolean fullWindow)
+				SceneRenderer& renderer, bool fullWindow)
 {
   notifyStyleChange(renderer);
 
@@ -691,14 +691,14 @@ void			BackgroundRenderer::drawGroundShadows(
   glMultMatrixf(shadowProjection);
 
   // disable color updates
-  SceneNode::setColorOverride(True);
+  SceneNode::setColorOverride(true);
 
   sunShadowsGState.setState();
   glColor3f(0.0f, 0.0f, 0.0f);
   renderer.getShadowList().render();
 
   // enable color updates
-  SceneNode::setColorOverride(False);
+  SceneNode::setColorOverride(false);
 
   OpenGLGState::resetState();
 
@@ -712,10 +712,10 @@ void			BackgroundRenderer::drawGroundReceivers(
   static const int receiverSlices = 8;
   static const float receiverRingSize = 1.2f;	// meters
   static float angle[receiverSlices + 1][2];
-  static boolean init = False;
+  static bool init = false;
 
   if (!init) {
-    init = True;
+    init = true;
     const float receiverSliceAngle = 2.0f * M_PI / float(receiverSlices);
     for (int i = 0; i <= receiverSlices; i++) {
       angle[i][0] = cosf((float)i * receiverSliceAngle);
@@ -837,7 +837,7 @@ void			BackgroundRenderer::doInitDisplayLists()
   SceneRenderer& renderer = *(getSceneRenderer());
 
   // need some workarounds on RIVA 128
-  boolean isRiva128 = (strncmp((const char*)glGetString(GL_RENDERER),
+  bool isRiva128 = (strncmp((const char*)glGetString(GL_RENDERER),
 						"RIVA 128", 8) == 0);
 
   //
