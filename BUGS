@@ -1,6 +1,13 @@
 recent bugs
 ------------
 
+- using the -worldsize option makes the client rendering go berzerk (see the 
+  brlcad.org Test Server)
+
+- SAVEWORLD of a -cr world does not output the team color, and world reader
+  doesn't assign a default team/color when color attribute isn't present.
+  (2 separate issues really)
+
 - Flipped pyramids are not safe to walk on: getting stucked
 
 - bzadmin exits when the curses interface is used (both ncurses and pdcurses)
