@@ -23,7 +23,7 @@ UIAdder CursesUI::uiAdder("curses", &CursesUI::creator);
 
 CursesUI::CursesUI(const PlayerIdMap& p, PlayerId m) :
   menuState(0), menu(p), players(p), me(m), maxHistory(20), 
-  currentHistory(0), maxBufferSize(300) {
+  currentHistory(0), maxBufferSize(300), scrollOffset(0) {
 
   // initialize ncurses
   initscr();
