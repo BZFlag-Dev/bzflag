@@ -3427,7 +3427,7 @@ static bool defineWorld()
       return false;
    }
 
-   maxTankHeight = world->getMaxWorldHeight() + 1.0 + ((JumpVelocity*JumpVelocity) / (2.0 * -Gravity));
+   maxTankHeight = world->getMaxWorldHeight() + 1.0f + ((JumpVelocity*JumpVelocity) / (2.0f * -Gravity));
 
    // package up world
   world->packDatabase();
@@ -4504,14 +4504,14 @@ static void grabFlag(int playerIndex, int flagIndex)
     return;
 
   //last Pos might be lagged by TankSpeed so include in calculation
-  const float radius2 = (TankSpeed*TankSpeed) + (TankRadius + FlagRadius) * (TankRadius + FlagRadius);
+  const float radius2 = (TankSpeed + TankRadius + FlagRadius) * (TankSpeed + TankRadius + FlagRadius);
   const float* tpos = player[playerIndex].lastState.pos;
   const float* fpos = flag[flagIndex].flag.position;
   const float delta = (tpos[0] - fpos[0]) * (tpos[0] - fpos[0]) +
 		      (tpos[1] - fpos[1]) * (tpos[1] - fpos[1]);
 
- if ((fabs(tpos[2] - fpos[2]) < 0.1f) && (delta > radius2)) {
-   DEBUG2("Player %s [%d] %f %f %f tried to grab distant flag %f %f %f: distance=%f\n",
+  if ((fabs(tpos[2] - fpos[2]) < 0.1f) && (delta > radius2)) {
+    DEBUG2("Player %s [%d] %f %f %f tried to grab distant flag %f %f %f: distance=%f\n",
         player[playerIndex].callSign, playerIndex,
 	tpos[0], tpos[1], tpos[2], fpos[0], fpos[1], fpos[2], sqrt(delta));
     return;
@@ -4739,12 +4739,14 @@ static void shotFired(int playerIndex, void *buf, int len)
       break;
     case VelocityFlag:
       tankSpeed *= VelocityAd;
+      break;
     default:
       //If shot is different height than player, can't be sure they didn't drop V in air
       if (shooter.lastState.pos[2] != (shot.pos[2]-MuzzleHeight))
 	tankSpeed *= VelocityAd;
       break;
   }
+
   // FIXME, we should look at the actual TankSpeed ;-)
   shotSpeed += tankSpeed;
 
@@ -4764,13 +4766,17 @@ static void shotFired(int playerIndex, void *buf, int len)
   }
 
   // verify position
-
   float dx = shooter.lastState.pos[0] - shot.pos[0];
   float dy = shooter.lastState.pos[1] - shot.pos[1];
   float dz = shooter.lastState.pos[2] - shot.pos[2];
 
+  float front = MuzzleFront;
+  if (firingInfo.flag == ObesityFlag)
+    front *= ObeseFactor;
+
   float delta = dx*dx + dy*dy + dz*dz;
-  if (delta > (TankSpeed * TankSpeed * VelocityAd * VelocityAd) + MuzzleFront) {
+  if (delta > (TankSpeed * VelocityAd + front) *
+              (TankSpeed * VelocityAd + front)) {
     DEBUG2("Player %s [%d] shot origination %f %f %f too far from tank %f %f %f: distance=%f\n",
             shooter.callSign, playerIndex,
 	    shot.pos[0], shot.pos[1], shot.pos[2],
@@ -5455,7 +5461,8 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
       ||  ((state.status & PlayerState::Alive) == 0))
 	maxPlanarSpeedSqr *= VelocityAd*VelocityAd;
 
-      if (curPlanarSpeedSqr > (4.0 + maxPlanarSpeedSqr)) {
+      // tanks can get faster than allowed, probably due to floating point
+      if (curPlanarSpeedSqr > (10.0f + maxPlanarSpeedSqr)) {
         char message[MessageLen];
         DEBUG1("kicking Player %s [%d]: tank too fast (tank: %f,allowed> %f)\n",
                player[t].callSign, t,
