@@ -367,8 +367,8 @@ static bool checkAuthorizations(BzMaterialManager::TextureSet& set)
     if (parseHostname(url, hostname) && !hostAccess[hostname]) {
       hostFailed = true;
       // remove the url
-      set.erase(set_it);
       MATERIALMGR.setTextureLocal(url, "");
+      set.erase(set_it);
       // send a message
       std::string msg = ColorStrings[RedColor];
       msg += "local denial: ";
