@@ -2805,7 +2805,7 @@ static boolean readWorldStream(istream& input, const char *location, WorldFileOb
 static WorldInfo *defineWorldFromFile(const char *filename)
 {
   // open file
-  ifstream input(filename, ios::in | ios::nocreate);
+  ifstream input(filename, ios::in);
   if (!input) {
     cerr << "could not find bzflag world file : " << filename << endl;
     return NULL;
