@@ -17,6 +17,9 @@ THESE SHOULD HAPPEN BEFORE THE NEXT RELEASE:
 
 THESE ARE LOWER PRIORITY
 
+* the "Right click mouse to enter" message should be generated from what
+  the "Identify/Respawn" are bound to.
+
 * add ability to capture a screenshot to a gamma-corrected png from
   inside the game.
 
