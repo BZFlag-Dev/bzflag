@@ -4917,7 +4917,9 @@ static void playerKilled(int victimIndex, int killerIndex, int reason,
     player[victimIndex].losses++;
     if (killerIndex != InvalidPlayer) {
       if (victimIndex != killerIndex) {
-	if (((player[victimIndex].team != RogueTeam) || (clOptions.gameStyle & int(RabbitChaseGameStyle)))
+        if (((player[victimIndex].team != RogueTeam) ||
+             (clOptions.gameStyle & int(RabbitChaseGameStyle) &&
+              killerIndex!=rabbitIndex && victimIndex!=rabbitIndex))
 	    && (player[victimIndex].team == player[killerIndex].team)) {
 	  if (clOptions.teamKillerDies)
 	    playerKilled(killerIndex, killerIndex, reason, -1);
