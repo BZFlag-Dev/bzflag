@@ -865,18 +865,16 @@ int			main(int argc, char** argv)
     if (db.hasValue("purpleradar"))
       setRadarColor(PurpleTeam, db.getValue("purpleradar"));
 
-	startupInfo.useUDPconnection=true;
-	if (db.hasValue("udpnet")) {
-		if (!strcmp(db.getValue("udpnet"),"no")) {
-			startupInfo.useUDPconnection=false;
-		}
-	}
-
 
     // ignore window name in config file (it's used internally)
     db.removeValue("window");
     db.removeValue("multisample");
   }
+
+  // use UDP?
+  startupInfo.useUDPconnection=true;
+  if (db.hasValue("udpnet"))
+    startupInfo.useUDPconnection=(db.getValue("udpnet") == "yes");
 
   // parse arguments
   parse(argc, argv, db);
