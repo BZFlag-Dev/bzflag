@@ -204,7 +204,7 @@ class WordFilter
   unsigned int loadFromFile(const std::string &fileName, bool verbose=false);
 
   /** adds a new filter to the existing filter list */
-  bool addToFilter(const std::string &word, const std::string &expression="");
+  bool addToFilter(const std::string &word, const std::string &expression=std::string(""));
 
   /** given an input string, filter the input
    * using either the simple or agressive filter

@@ -283,15 +283,15 @@ bool WordFilter::aggressiveFilter(char *input) const
   } /* iterate over characters */
 
   /* finally filter the input.  only filter actual alphanumerics. */
-  for (unsigned int i=0; i < matchCount; i++) {
+  for (unsigned int l = 0; l < matchCount; l++) {
     /* !!! debug */
 #ifdef DEBUG
     char tmp[256] = {0};
-    strncpy(tmp, input + matchPair[i*2], matchPair[(i*2)+1]);
+    strncpy(tmp, input + matchPair[l*2], matchPair[(l*2)+1]);
     std::cout << "Matched: [" << tmp << "]" << std::endl;
 #endif
 
-    if (filterCharacters(input, matchPair[i*2], matchPair[(i*2)+1]) <= 0) {
+    if (filterCharacters(input, matchPair[l*2], matchPair[(l*2)+1]) <= 0) {
       // XXX with multiple matching, we will be unable to filter overlapping matches
       //      std::cerr << "Unable to filter characters" << std::endl;
       continue;
@@ -861,7 +861,7 @@ unsigned int WordFilter::loadFromFile(const std::string &fileName, bool verbose)
       }
     }
 
-    bool added = addToFilter(filterWord, "");
+    bool added = addToFilter(filterWord, std::string(""));
     if ((!added) && (verbose)) {
 	std::cout << std::endl << "Word is already added: " << filterWord << std::endl;
     } else {
@@ -906,8 +906,9 @@ void WordFilter::outputFilter(void) const
     for (ExpCompareSet::const_iterator j = filters[i].begin(); \
 	 j != filters[i].end(); \
 	 ++j) {
-      std::cout << count++ << ": " << j->word << std::endl;
-      std::cout << "    " << expressionFromString(j->word) << std::endl;
+      std::string jword = j->word;
+      std::cout << count++ << ": " << jword << std::endl;
+      std::cout << "    " << expressionFromString(jword) << std::endl;
     }
   }
 
