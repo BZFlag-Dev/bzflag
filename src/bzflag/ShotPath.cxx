@@ -23,7 +23,7 @@
 
 void*					ShotUpdate::pack(void* buf) const
 {
-	buf = player.pack(buf);
+	buf = nboPackUByte( buf, player );
 	buf = nboPackUShort(buf, id);
 	buf = nboPackVector(buf, pos);
 	buf = nboPackVector(buf, vel);
@@ -33,7 +33,7 @@ void*					ShotUpdate::pack(void* buf) const
 
 void*					ShotUpdate::unpack(void* buf)
 {
-	buf = player.unpack(buf);
+	buf = nboUnpackUByte( buf, player );
 	buf = nboUnpackUShort(buf, id);
 	buf = nboUnpackVector(buf, pos);
 	buf = nboUnpackVector(buf, vel);

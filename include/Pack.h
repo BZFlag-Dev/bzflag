@@ -24,6 +24,7 @@
 
 #include "common.h"
 
+void*					nboPackUByte(void*, uint8_t);
 void*					nboPackShort(void*, int16_t);
 void*					nboPackInt(void*, int32_t);
 void*					nboPackUShort(void*, uint16_t);
@@ -32,6 +33,7 @@ void*					nboPackFloat(void*, float);
 void*					nboPackVector(void*, const float*);
 void*					nboPackString(void*, const void*, int len);
 
+void*					nboUnpackUByte(void*, uint8_t&);
 void*					nboUnpackShort(void*, int16_t&);
 void*					nboUnpackInt(void*, int32_t&);
 void*					nboUnpackUShort(void*, uint16_t&);

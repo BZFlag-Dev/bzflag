@@ -228,40 +228,40 @@ void*					Address::unpack(void* _buf)
 }
 
 //
-// PlayerId
+// ServerId
 //
 
-void*					PlayerId::pack(void* _buf) const
+void*			ServerId::pack(void* _buf) const
 {
-	// everything in PlayerId is already in network byte order
-	unsigned char* buf = (unsigned char*)_buf;
-	int32_t hostaddr = int32_t(serverHost.s_addr);
-	::memcpy(buf, &hostaddr, sizeof(int32_t));		buf += sizeof(int32_t);
-	::memcpy(buf, &port, sizeof(uint16_t));	buf += sizeof(int16_t);
-	::memcpy(buf, &number, sizeof(int16_t));	buf += sizeof(int16_t);
-	return (void*)buf;
+  // everything in ServerId is already in network byte order
+  unsigned char* buf = (unsigned char*)_buf;
+  int32_t hostaddr = int32_t(serverHost.s_addr);
+  ::memcpy(buf, &hostaddr, sizeof(int32_t));	buf += sizeof(int32_t);
+  ::memcpy(buf, &port, sizeof(int16_t));	buf += sizeof(int16_t);
+  ::memcpy(buf, &number, sizeof(int16_t));	buf += sizeof(int16_t);
+  return (void*)buf;
 }
 
-void*					PlayerId::unpack(void* _buf)
+void*			ServerId::unpack(void* _buf)
 {
-	// everything in PlayerId should be stored in network byte order
-	unsigned char* buf = (unsigned char*)_buf;
-	int32_t hostaddr;
-	::memcpy(&hostaddr, buf, sizeof(int32_t));		buf += sizeof(int32_t);
-	::memcpy(&port, buf, sizeof(uint16_t));	buf += sizeof(int16_t);
-	::memcpy(&number, buf, sizeof(int16_t));	buf += sizeof(int16_t);
-	serverHost.s_addr = u_long(hostaddr);
-	return (void*)buf;
+  // everything in PlayerId should be stored in network byte order
+  unsigned char* buf = (unsigned char*)_buf;
+  int32_t hostaddr;
+  ::memcpy(&hostaddr, buf, sizeof(int32_t));	buf += sizeof(int32_t);
+  ::memcpy(&port, buf, sizeof(int16_t));	buf += sizeof(int16_t);
+  ::memcpy(&number, buf, sizeof(int16_t));	buf += sizeof(int16_t);
+  serverHost.s_addr = u_long(hostaddr);
+  return (void*)buf;
 }
 
-bool					PlayerId::operator==(const PlayerId& id) const
+boolean			ServerId::operator==(const ServerId& id) const
 {
-	return serverHost.s_addr == id.serverHost.s_addr &&
-						port == id.port && number == id.number;
+  return serverHost.s_addr == id.serverHost.s_addr &&
+			port == id.port && number == id.number;
 }
 
-bool					PlayerId::operator!=(const PlayerId& id) const
+boolean			ServerId::operator!=(const ServerId& id) const
 {
-	return serverHost.s_addr != id.serverHost.s_addr ||
-						port != id.port || number != id.number;
+  return serverHost.s_addr != id.serverHost.s_addr ||
+			port != id.port || number != id.number;
 }

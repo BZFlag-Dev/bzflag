@@ -13,7 +13,7 @@
 #include "RemotePlayer.h"
 #include "World.h"
 
-RemotePlayer::RemotePlayer(const PlayerId& id, TeamColor team,
+RemotePlayer::RemotePlayer(PlayerId id, TeamColor team,
 										const char* name, const char* email) :
 								Player(id, team, name, email)
 {

@@ -47,7 +47,7 @@ public:
 							int minReplyTTL = 0);
 
 public:
-	PlayerId			serverId;
+	ServerId			serverId;
 	Address				sourceAddr;
 	uint16_t			gameStyle;
 	uint16_t			maxPlayers;

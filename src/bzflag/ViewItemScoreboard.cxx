@@ -84,9 +84,12 @@ BzfString				ViewItemScoreboardPlayerFormatter::format(
 
 		case ViewItemScoreboard::Part::ID:
 			return BzfString::format(part.format.c_str(),
-								inet_ntoa(player->getId().serverHost),
-								ntohs(player->getId().port),
-								ntohs(player->getId().number));
+//								inet_ntoa(player->getId().serverHost),
+//								ntohs(player->getId().port),
+//								ntohs(player->getId().number));
+								"x.x.x.x",
+								0,
+								0);
 
 		case ViewItemScoreboard::Part::Flag:
 			if (player->getFlag() == NoFlag)

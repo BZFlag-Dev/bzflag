@@ -199,9 +199,7 @@ ServerLink::ServerLink(const Address& serverAddress, int port, int number) :
 */
 
 	// setup local player's id
-	id.serverHost = serverAddress;
-	id.port = addr.sin_port;
-	id.number = htons(number);
+	id = 0;
 
 	// reconnect at new port
 	addr.sin_family = AF_INET;
@@ -677,7 +675,6 @@ void					ServerLink::sendEnter(PlayerType type,
 	char msg[PlayerIdPLen + 4 + CallSignLen + EmailLen];
 	::memset(msg, 0, sizeof(msg));
 	void* buf = msg;
-	buf = id.pack(buf);
 	buf = nboPackUShort(buf, uint16_t(type));
 	buf = nboPackUShort(buf, uint16_t(team));
 	::memcpy(buf, name, ::strlen(name));
@@ -719,7 +716,7 @@ void					ServerLink::sendKilled(const PlayerId& killer,
 {
 	char msg[PlayerIdPLen + 2];
 	void* buf = msg;
-	buf = killer.pack(buf);
+	buf = nboPackUByte( buf, killer );
 	buf = nboPackShort(buf, int16_t(shotId));
 	send(MsgKilled, sizeof(msg), msg);
 }
@@ -737,7 +734,7 @@ void					ServerLink::sendEndShot(const PlayerId& source,
 {
 	char msg[PlayerIdPLen + 4];
 	void* buf = msg;
-	buf = source.pack(buf);
+	buf = nboPackUByte( buf, source );
 	buf = nboPackShort(buf, int16_t(shotId));
 	buf = nboPackUShort(buf, uint16_t(reason));
 	send(MsgShotEnd, sizeof(msg), msg);

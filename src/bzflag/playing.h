@@ -19,13 +19,13 @@
 
 #include "common.h"
 #include "global.h"
+#include "Address.h"
 
 class BzfDisplay;
 class BzfWindow;
-class PlayerId;
 class Player;
 
-Player*					lookupPlayer(const PlayerId& id);
+Player*					lookupPlayer(PlayerId id);
 void					startPlaying(BzfDisplay* display, BzfWindow*);
 
 bool					addExplosion(const float* pos,

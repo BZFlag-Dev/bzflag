@@ -25,7 +25,7 @@ class SceneNodeTransform;
 // FIXME -- clean this up (was needed for old robot tanks)
 class BaseLocalPlayer : public Player {
 public:
-	BaseLocalPlayer(const PlayerId&,
+	BaseLocalPlayer(PlayerId,
 										const char* name, const char* email);
 	~BaseLocalPlayer();
 
@@ -73,7 +73,7 @@ public:
 		InAir					// playing in air
 	};
 
-	LocalPlayer(const PlayerId&, const char* name, const char* email);
+	LocalPlayer(PlayerId, const char* name, const char* email);
 	~LocalPlayer();
 
 	Location			getLocation() const;

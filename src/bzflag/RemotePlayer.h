@@ -18,7 +18,7 @@
 
 class RemotePlayer : public Player {
 public:
-	RemotePlayer(const PlayerId&, TeamColor team,
+	RemotePlayer(PlayerId, TeamColor team,
 							const char* name, const char* email);
 	~RemotePlayer();
 

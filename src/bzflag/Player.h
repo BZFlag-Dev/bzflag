@@ -38,11 +38,11 @@ public:
 		Falling =		0x0040		// tank accel'd by gravity
 	};
 
-	Player(const PlayerId&, TeamColor,
+	Player(PlayerId, TeamColor,
 							const char* callsign, const char* emailAddress);
 	virtual ~Player();
 
-	const PlayerId&		getId() const;
+	PlayerId			getId() const;
 	TeamColor			getTeam() const;
 	const char*			getCallSign() const;
 	const char*			getEmailAddress() const;
@@ -67,7 +67,7 @@ public:
 	float				getTeleporterProximity() const;
 	virtual ShotPath*	getShot(int index) const = 0;
 
-	void				setId(const PlayerId&);
+	void				setId(PlayerId);
 
 	void				addPlayerSceneNode(SceneNodeGroup*,
 							bool viewerIsColorblind);
@@ -181,7 +181,7 @@ private:
 // Player
 //
 
-inline const PlayerId&	Player::getId() const
+inline PlayerId	Player::getId() const
 {
 	return id;
 }

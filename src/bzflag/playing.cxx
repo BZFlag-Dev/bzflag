@@ -689,7 +689,7 @@ static BzfString	cmdSend(const BzfString&,
 		const Player *nemesis = myTank->getNemesis();
 		if (!nemesis) {
 			void* buf = messageMessage;
-			buf = nemesis->getId().pack(buf);
+			buf = nboPackUByte( buf, nemesis->getId());
 			buf = nboPackUShort( buf, uint16_t(RogueTeam));
 			composePrompt = "Send to ";
 			composePrompt += nemesis->getCallSign();
@@ -868,7 +868,7 @@ static void				doEvent(BzfDisplay* display)
 // misc utility routines
 //
 
-Player*					lookupPlayer(const PlayerId& id)
+Player*					lookupPlayer(PlayerId id)
 {
 	// check my tank first
 	if (myTank->getId() == id)
@@ -1145,7 +1145,7 @@ static void				handleServerMessage(bool human, uint16_t code,
 			// unpack packet
 			PlayerId id;
 			uint16_t team;
-			msg = id.unpack(msg);
+			msg = nboUnpackUByte( msg, id );
 			msg = nboUnpackUShort(msg, team);
 			Player* player = lookupPlayer(id);
 
@@ -1195,7 +1195,7 @@ static void				handleServerMessage(bool human, uint16_t code,
 
 		case MsgAddPlayer: {
 			PlayerId id;
-			msg = id.unpack(msg);
+			msg = nboUnpackUByte( msg, id );
 			if (id == myTank->getId())
 				break;			// that's odd -- it's me!
 			addPlayer(id, msg, true);
@@ -1206,7 +1206,7 @@ static void				handleServerMessage(bool human, uint16_t code,
 
 		case MsgRemovePlayer: {
 			PlayerId id;
-			msg = id.unpack(msg);
+			msg = nboUnpackUByte( msg, id );
 			int playerIndex = lookupPlayerIndex(id);
 			if (playerIndex >= 0) {
 				addMessage(player[playerIndex], "signing off");
@@ -1239,7 +1239,7 @@ static void				handleServerMessage(bool human, uint16_t code,
 		case MsgAlive: {
 			PlayerId id;
 			float pos[3], forward[3];
-			msg = id.unpack(msg);
+			msg = nboUnpackUByte( msg, id );
 			msg = nboUnpackVector(msg, pos);
 			msg = nboUnpackVector(msg, forward);
 			int playerIndex = lookupPlayerIndex(id);
@@ -1259,8 +1259,8 @@ static void				handleServerMessage(bool human, uint16_t code,
 		case MsgKilled: {
 			PlayerId victim, killer;
 			int16_t shotId;
-			msg = victim.unpack(msg);
-			msg = killer.unpack(msg);
+			msg = nboUnpackUByte( msg, victim );
+			msg = nboUnpackUByte( msg, killer );
 			msg = nboUnpackShort(msg, shotId);
 			int victimIndex = lookupPlayerIndex(victim);
 			int killerIndex = lookupPlayerIndex(killer);
@@ -1362,7 +1362,7 @@ static void				handleServerMessage(bool human, uint16_t code,
 		case MsgGrabFlag: {
 			PlayerId id;
 			uint16_t flagIndex;
-			msg = id.unpack(msg);
+			msg = nboUnpackUByte( msg, id );
 			msg = nboUnpackUShort(msg, flagIndex);
 			msg = world->getFlag(int(flagIndex)).unpack(msg);
 			Player* tank = lookupPlayer(id);
@@ -1401,7 +1401,7 @@ static void				handleServerMessage(bool human, uint16_t code,
 		case MsgDropFlag: {
 			PlayerId id;
 			uint16_t flagIndex;
-			msg = id.unpack(msg);
+			msg = nboUnpackUByte( msg, id );
 			msg = nboUnpackUShort(msg, flagIndex);
 			msg = world->getFlag(int(flagIndex)).unpack(msg);
 			Player* tank = lookupPlayer(id);
@@ -1414,7 +1414,7 @@ static void				handleServerMessage(bool human, uint16_t code,
 		case MsgCaptureFlag: {
 			PlayerId id;
 			uint16_t flagIndex, team;
-			msg = id.unpack(msg);
+			msg = nboUnpackUByte( msg, id );
 			msg = nboUnpackUShort(msg, flagIndex);
 			msg = nboUnpackUShort(msg, team);
 			Player* capturer = lookupPlayer(id);
@@ -1503,7 +1503,7 @@ static void				handleServerMessage(bool human, uint16_t code,
 			PlayerId id;
 			int16_t shotId;
 			uint16_t reason;
-			msg = id.unpack(msg);
+			msg = nboUnpackUByte( msg, id );
 			msg = nboUnpackShort(msg, shotId);
 			msg = nboUnpackUShort(msg, reason);
 			BaseLocalPlayer* localPlayer = getLocalPlayer(id);
@@ -1521,7 +1521,7 @@ static void				handleServerMessage(bool human, uint16_t code,
 		case MsgScore: {
 			PlayerId id;
 			uint16_t wins, losses;
-			msg = id.unpack(msg);
+			msg = nboUnpackUByte( msg, id );
 			msg = nboUnpackUShort(msg, wins);
 			msg = nboUnpackUShort(msg, losses);
 			// only update score of remote players (local score is already known)
@@ -1537,7 +1537,7 @@ static void				handleServerMessage(bool human, uint16_t code,
 		case MsgTeleport: {
 			PlayerId id;
 			uint16_t from, to;
-			msg = id.unpack(msg);
+			msg = nboUnpackUByte( msg, id );
 			msg = nboUnpackUShort(msg, from);
 			msg = nboUnpackUShort(msg, to);
 			Player* tank = lookupPlayer(id);
@@ -1555,8 +1555,8 @@ static void				handleServerMessage(bool human, uint16_t code,
 			PlayerId src;
 			PlayerId dst;
 			uint16_t team;
-			msg = src.unpack(msg);
-			msg = dst.unpack(msg);
+			msg = nboUnpackUByte( msg, src );
+			msg = nboUnpackUByte( msg, dst );
 			msg = nboUnpackUShort(msg, team);
 			Player* srcPlayer = lookupPlayer(src);
 			Player* dstPlayer = lookupPlayer(dst);
@@ -1643,7 +1643,7 @@ static void				handleServerMessage(bool human, uint16_t code,
 		case MsgAcquireRadio: {
 			PlayerId id;
 			uint16_t types;
-			msg = id.unpack(msg);
+			msg = nboUnpackUByte( msg, id );
 			msg = nboUnpackUShort(msg, types);
 			Player* tank = lookupPlayer(id);
 			if (tank == myTank) {
@@ -1657,7 +1657,7 @@ static void				handleServerMessage(bool human, uint16_t code,
 
 		case MsgReleaseRadio: {
 			PlayerId id;
-			msg = id.unpack(msg);
+			msg = nboUnpackUByte( msg, id );
 			Player* tank = lookupPlayer(id);
 			if (tank == myTank) {
 				// FIXME -- i lost the radio, disable transmission
@@ -1691,7 +1691,7 @@ static void				handlePlayerMessage(uint16_t code, uint16_t,
 	switch (code) {
 		case MsgPlayerUpdate: {
 			PlayerId id;
-			msg = id.unpack(msg);
+			msg = nboUnpackUByte( msg, id );
 			Player* tank = lookupPlayer(id);
 			if (!tank || tank == myTank) break;
 			short oldStatus = tank->getStatus();
@@ -1723,7 +1723,7 @@ static void				handlePlayerMessage(uint16_t code, uint16_t,
 				(RemoteShotPath*)remoteTank->getShot(shot.id);
 			if (shotPath) shotPath->update(shot, code, msg);
 			PlayerId targetId;
-			targetId.unpack(msg);
+			msg = nboUnpackUByte( msg, targetId );
 			Player* targetTank = lookupPlayer(targetId);
 			if (targetTank && (targetTank == myTank)) {
 				static TimeKeeper lastLockMsg;
@@ -2444,7 +2444,7 @@ static bool				enterServer(ServerLink* serverLink, World* world,
 		switch (code) {
 			case MsgAddPlayer: {
 				PlayerId id;
-				buf = id.unpack(buf);
+				buf = nboUnpackUByte( buf, id );
 				if (id == myTank->getId()) {
 					// it's me!  end of updates
 					{
@@ -2464,10 +2464,9 @@ static bool				enterServer(ServerLink* serverLink, World* world,
 							printError("id test %p %p %p %8.8x %8.8x",
 									myTank, tmpbuf, msg,
 				  					*(int *)tmpbuf, *((int *)tmpbuf + 1));
-							tmpbuf = id.unpack(tmpbuf);
+							tmpbuf = nboUnpackUByte( tmpbuf, id );
 							myTank->setId(id);
 							printError("id test %p", myTank);
-							serverLink->send(MsgIdAck, 0, NULL);
 						}
 					}
 					// scan through flags and, for flags on

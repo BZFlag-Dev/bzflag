@@ -57,21 +57,25 @@ private:
 	static Address		localAddress;
 };
 
-const int				PlayerIdPLen = 8;
+const int				PlayerIdPLen = 1;
 
-class PlayerId {
-public:
-	void*				pack(void*) const;
-	void*				unpack(void*);
+typedef byte			PlayerId;
 
-	bool				operator==(const PlayerId&) const;
-	bool				operator!=(const PlayerId&) const;
+const int				ServerIdPLen = 8;
 
-public:
-	// host and port in network byte order
-	InAddr				serverHost;		// server host
-	uint16_t			port;			// server port
-	int16_t				number;			// local player number
+class ServerId {
+  public:
+    void*		pack(void*) const;
+    void*		unpack(void*);
+
+    boolean		operator==(const ServerId&) const;
+    boolean		operator!=(const ServerId&) const;
+
+  public:
+    // host and port in network byte order
+    InAddr		serverHost;		// server host
+    int16_t		port;			// server port
+    int16_t		number;			// local player number
 };
 
 #endif // BZF_INET_ADDR_H

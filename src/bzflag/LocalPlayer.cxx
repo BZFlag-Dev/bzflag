@@ -28,7 +28,7 @@
 // BaseLocalPlayer
 //
 
-BaseLocalPlayer::BaseLocalPlayer(const PlayerId& id,
+BaseLocalPlayer::BaseLocalPlayer(PlayerId id,
 								const char* name, const char* email) :
 								Player(id, RogueTeam, name, email),
 								lastTime(TimeKeeper::getTick()),
@@ -121,7 +121,7 @@ Ray						BaseLocalPlayer::getLastMotion() const
 
 LocalPlayer*			LocalPlayer::mainPlayer = NULL;
 
-LocalPlayer::LocalPlayer(const PlayerId& id,
+LocalPlayer::LocalPlayer(PlayerId id,
 								const char* name, const char* email) :
 								BaseLocalPlayer(id, name, email),
 								location(Dead),

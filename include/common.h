@@ -79,6 +79,8 @@ typedef uint_t			uint32_t;
 
 #endif
 
+typedef unsigned char	uint8_t;
+
 #if defined( macintosh )
 
 // need some integer types

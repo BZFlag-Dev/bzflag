@@ -28,7 +28,7 @@ static const float		MaxUpdateTime = 1.0f;				// seconds
 // Player
 //
 
-Player::Player(const PlayerId& _id, TeamColor _team,
+Player::Player(PlayerId _id, TeamColor _team,
 				const char* name, const char* _email) :
 								notResponding(false),
 								id(_id),
@@ -73,7 +73,7 @@ Player::~Player()
 	transformSceneNode->unref();
 }
 
-void					Player::setId(const PlayerId& newID)
+void					Player::setId(PlayerId newID)
 {
 	// crs 1/1/02 -- not even sure why this is needed;  the id shouldn't
 	// change but there's some code in playing.cxx that wants to set it.
