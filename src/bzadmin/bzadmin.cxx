@@ -218,8 +218,15 @@ bool getServerString(ServerLink& sLink, string& str, BZAdminUI& ui) {
       TeamColor dstTeam = (dst >= 244 && dst <= 250 ?
 			   TeamColor(250 - dst) : NoTeam);
       if (dst == AllPlayers || src == me || dst == me || dstTeam == myTeam) {
-	str = formatMessage((char*)vbuf, src, dst, dstTeam, me);
-	return true;
+	str = (char*)vbuf;
+	if (str == "CLIENTQUERY") {
+	  sendMessage(sLink, string("bzadmin ") + getAppVersion(), src);
+	  ui.outputMessage("    [Sent versioninfo per request]");
+	}
+	else {
+	  str = formatMessage((char*)vbuf, src, dst, dstTeam, me);
+	  return true;
+	}
       }
     }
 
