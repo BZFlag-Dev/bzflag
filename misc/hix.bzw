@@ -56,9 +56,9 @@
 
 # top of the world
 box
-position 0.0 0.0 30.0
+position 0.0 0.0 29.0
 rotation 45.0
-size     7.5 7.5 15.0
+size     7.5 7.5 16.0
 end
 
 # cross bars
