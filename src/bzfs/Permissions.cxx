@@ -16,6 +16,7 @@
 
 #include <string>
 #include <fstream>
+#include <algorithm>
 #include <stdlib.h>
 #include "Permissions.h"
 #include "md5.h"
@@ -30,13 +31,7 @@ bool hasGroup(PlayerAccessInfo& info, const std::string &group)
   std::string str = group;
   makeupper(str);
 
-  std::vector<std::string>::iterator itr = info.groups.begin();
-  while (itr != info.groups.end()) {
-    if ((*itr) == str)
-      return true;
-    itr++;
-  }
-  return false;
+  return find(info.groups.begin(), info.groups.end(), str) != info.groups.end();
 }
 
 bool addGroup(PlayerAccessInfo& info, const std::string &group)
@@ -59,15 +54,8 @@ bool removeGroup(PlayerAccessInfo& info, const std::string &group)
   std::string str = group;
   makeupper(str);
 
-  std::vector<std::string>::iterator itr = info.groups.begin();
-  while (itr != info.groups.end()) {
-    if ((*itr) == str) {
-      itr = info.groups.erase(itr);
-      return true;
-    } else
-      itr++;
-  }
-  return false;
+  info.groups.erase(find(info.groups.begin(), info.groups.end(), str));
+  return true;
 }
 
 bool hasPerm(PlayerAccessInfo& info, PlayerAccessInfo::AccessPerm right)
@@ -76,14 +64,12 @@ bool hasPerm(PlayerAccessInfo& info, PlayerAccessInfo::AccessPerm right)
     return false;
   if (info.explicitAllows.test(right))
     return true;
-  std::vector<std::string>::iterator itr = info.groups.begin();
-  PlayerAccessMap::iterator group;
-  while (itr != info.groups.end()) {
-    group = groupAccess.find(*itr);
-    if (group != groupAccess.end())
-      if (group->second.explicitAllows.test(right))
-	return true;
-    itr++;
+
+  for (std::vector<std::string>::iterator itr=info.groups.begin(), end=info.groups.end();
+       itr!=end; ++itr) {
+    PlayerAccessMap::iterator group = groupAccess.find(*itr);
+    if (group != groupAccess.end() && group->second.explicitAllows.test(right))
+      return true;
   }
   return false;
 }
