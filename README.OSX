@@ -1,15 +1,20 @@
 README for Mac OS X platforms
 -----------------------------
 
-The Mac OS X client of bzflag is presently incomplete.  Certain
-keybindings and functionality is incomplete.  Most notable issue
-is that the client cannot run in windowed mode.  Roaming keys do
-not work.  Due to an obscure cross-platform bug that rears its
-head rather nastily on OS X, the Lighting option should be
-turned off (on the GUI menu in the client).
+BZFlag should run rather nicely on Mac OS X.  There are all but
+a few issues to be taken care of for the port to be complete
+compared to some of the other existing ports.  It is, however,
+completely playable and in active use.  
+
+The most notable issue yet to be resolved is that the client 
+cannot run in windowed mode.  Due to an obscure cross-platform
+bug that rears its head rather nastily on OS X, the Lighting
+option should be turned off (on the GUI menu in the client) if
+frequent crashes are experienced during gameplay.
 
 BZFlag may be built either using the same instructions as those
 for Unix, or using the Project Builder project in the 
-src/platform/MacOSX directory.
+src/platform/MacOSX directory.  Everything should build
+successfully, including the optional bzadmin client.
 
-See the generic install instructions in README
+See the generic install instructions in README for more details.
