@@ -82,24 +82,42 @@ bool				ConfigFileManager::write(std::string filename)
 void				ConfigFileManager::addDefaults()
 {
   BZDB->setDefault("udpnet", "yes");
+  BZDB->set("udpnet", "yes");
   BZDB->setDefault("team", "Rogue");
+  BZDB->set("team", "Rogue");
   BZDB->setDefault("list", "http://BZFlag.SourceForge.net/list-server.txt");
+  BZDB->set("list", "http://BZFlag.SourceForge.net/list-server.txt");
   BZDB->setDefault("volume", "10");
+  BZDB->set("volume", "10");
   BZDB->setDefault("latitude", "37.5");
+  BZDB->set("latitude", "37.5");
   BZDB->setDefault("longitude", "122");
+  BZDB->set("longitude", "122");
   // FIXME: keys?
   BZDB->setDefault("joystick", "no");
+  BZDB->set("joystick", "no");
   BZDB->setDefault("enhancedRadar", "yes");
+  BZDB->set("enhancedRadar", "yes");
   BZDB->setDefault("coloredradarshots", "yes");
+  BZDB->set("coloredradarshots", "yes");
   BZDB->setDefault("linedradarshots", "0");
+  BZDB->set("linedradarshots", "0");
   BZDB->setDefault("panelopacity", "0.3");
+  BZDB->set("panelopacity", "0.3");
   BZDB->setDefault("radarsize", "4");
+  BZDB->set("radarsize", "4");
   BZDB->setDefault("mouseboxsize", "5");
+  BZDB->set("mouseboxsize", "5");
   BZDB->setDefault("bigfont", "no");
+  BZDB->set("bigfont", "no");
   BZDB->setDefault("colorful", "yes");
+  BZDB->set("colorful", "yes");
   BZDB->setDefault("underline", "0");
+  BZDB->set("underline", "0");
   BZDB->setDefault("killerhighlight", "0");
+  BZDB->set("killerhighlight", "0");
   BZDB->setDefault("serverCacheAge", "0");
+  BZDB->set("serverCacheAge", "0");
 }
 
 ConfigFileManager*		ConfigFileManager::getInstance()
