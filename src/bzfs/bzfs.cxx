@@ -4636,12 +4636,27 @@ static void dropFlag(int playerIndex, float pos[3])
   else
     pFlagInfo->flag.status = FlagGoing;
   numFlagsInAir++;
-
-  for (float i = pos[2]; i >= 0.0f; i -= 0.1f) {
-    topmosttype = world->inBuilding(&container, pos[0], pos[1], i, 0);
-    if (topmosttype != NOT_IN_BUILDING) {
+  
+  topmosttype = world->inBuilding(&container, pos[0], pos[1], pos[2], 0);
+  
+  // the tank is inside a building - find the roof
+  if (topmosttype != NOT_IN_BUILDING) {
+    topmost = container;
+    int tmp;
+    for (float i = container->pos[2] + container->size[2]; 
+	 (tmp = world->inBuilding(&container, pos[0], pos[1], i, 0)) != 
+	   NOT_IN_BUILDING; i += 0.1f) {
+      topmosttype = tmp;
       topmost = container;
-      break;
+    }
+  }
+  
+  // the tank is _not_ inside a building - find the floor
+  else {
+    for (float i = pos[2]; i >= 0.0f; i -= 0.1f) {
+      topmosttype = world->inBuilding(&topmost, pos[0], pos[1], i, 0);
+      if (topmosttype != NOT_IN_BUILDING)
+        break;
     }
   }
 
