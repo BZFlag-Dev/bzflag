@@ -10,16 +10,19 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
+/* interface header */
 #include "MacPlatformFactory.h"
+
+/* implementation headers */
 #ifdef HAVE_SDL
-#include "SDLMedia.h"
-#include "SDLDisplay.h"
-#include "SDLJoystick.h"
+#  include "SDLMedia.h"
+#  include "SDLDisplay.h"
+#  include "SDLJoystick.h"
 #else
-#include "MacDisplay.h"
-#include "MacVisual.h"
-#include "MacWindow.h"
-#include "MacMedia.h"
+#  include "MacDisplay.h"
+#  include "MacVisual.h"
+#  include "MacWindow.h"
+#  include "MacMedia.h"
 #endif
 
 PlatformFactory* PlatformFactory::getInstance()
