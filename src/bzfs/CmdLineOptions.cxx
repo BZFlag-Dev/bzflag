@@ -1022,6 +1022,7 @@ void parse(int argc, char **argv, CmdLineOptions &options)
   if (options.gameStyle & JumpingGameStyle) {
     options.flagCount[Flags::Jumping] = 0;
     options.flagDisallowed[Flags::Jumping] = true;
+  } else {
     options.flagCount[Flags::Wings] = 0;
     options.flagDisallowed[Flags::Wings] = true;
   }
