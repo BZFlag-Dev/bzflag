@@ -6,12 +6,12 @@ BZFlag 1.10.4
 -------------
 
 * Allow user to define quickMessages via the menu system - Frank Thilo
-* Configfile options equal to the defaults are written to bzc but commented out - Dave Brosius
-* Added -show and -hide options to bzadmin to tell it which messages to show - Lars Luthman
+* Defaults vars are written to config but commented out - Dave Brosius
+* Added -show and -hide options to bzadmin for messages - Lars Luthman
 * Added support for more message types to bzadmin - lan56 @ SF, Lars Luthman
-* Added menu with BZDB editor and playerlist to bzadmin's curses UI - Lars Luthman
+* Added menu with BZDB editor and playerlist to bzadmin curses UI - Lars Luthman
 * can freeze tod in client, if allowed, via -time hh:mm:ss - Tupone Alfredo
-* Allow variable number of team flags per team thru +f B*{2} or +f team{3} - Dave Brosius
+* Allow variable number of team flags per team with +f bzfs option - Dave Brosius
 * Added private and team chat sounds - Sean Morrison
 * Specify a world file on the Start Server menu gui - Sean Morrison
 * Server sends warning to privmsg sender to an invalid target - Lars Luthman
@@ -61,10 +61,10 @@ BZFlag 1.10.4
 * Add experimental quality setting for enhanced effects- Jeff Myers
 * Tunf off tank LOD, and ground grid for experimental quality - Jeff Myers
 * Add sides to the body of the hightank model - Jeff Myers
-* Increase flag segementation slightly for high quality, increase massively for experimental quality - Jeff Myers
+* Improve flag texture for high and experimental quality levels - Jeff Myers
 * Increase moon segments for exp. quality - Jeff Myers
 * Replace flag texture with one from pyBZFlag - Jeff Myers
-* Use a geometry based flagpole in exp. quality with a setable width from BZDB - Jeff Myers
+* Added ability to set flagpole width for exp. quality level - Jeff Myers
 * Don't do teleporter fog when roaming as an observer - Jeff Myers
 * Pull many world textures from pyBZFlag - Jeff Myers
 
