@@ -879,7 +879,7 @@ KeyboardMapMenu::KeyboardMapMenu() : defaultKey(this), editing(-1), quickKeysMen
   controls.push_back(createLabel(NULL, "Send to Teammates:"));
   controls.push_back(createLabel(NULL, "Send to Nemesis:"));
   controls.push_back(createLabel(NULL, "Send to Recipient:"));
-	controls.push_back(createLabel(NULL, "Send to Admin:"));
+  controls.push_back(createLabel(NULL, "Send to Admin:"));
   controls.push_back(createLabel(NULL, "Jump:"));
   controls.push_back(createLabel(NULL, "Binoculars:"));
   controls.push_back(createLabel(NULL, "Toggle Score:"));
@@ -903,36 +903,39 @@ KeyboardMapMenu::KeyboardMapMenu() : defaultKey(this), editing(-1), quickKeysMen
 
   initNavigation(controls, 2, controls.size()-1);
 
-  initkeymap("fire", 3);
-  initkeymap("drop", 4);
-  initkeymap("identify", 5);
-  initkeymap("set displayRadarRange 0.25", 6);
-  initkeymap("set displayRadarRange 0.5", 7);
-  initkeymap("set displayRadarRange 1.0", 8);
-  initkeymap("send all", 9);
-  initkeymap("send team", 10);
-  initkeymap("send nemesis", 11);
-  initkeymap("send recipient", 12);
-  initkeymap("jump", 13);
-  initkeymap("toggle displayBinoculars", 14);
-  initkeymap("toggle displayScore", 15);
-  initkeymap("toggle displayLabels", 16);
-  initkeymap("toggle displayFlagHelp", 17);
-  initkeymap("time forward", 18);
-  initkeymap("time backward", 19);
-  initkeymap("pause", 20);
-  initkeymap("destruct", 21);
-  initkeymap("quit", 22);
-  initkeymap("scrollpanel up", 23);
-  initkeymap("scrollpanel down", 24);
-  initkeymap("toggle slowKeyboard", 25);
-  initkeymap("toggleFlags radar", 26);
-  initkeymap("toggleFlags main", 27);
-  initkeymap("silence", 28);
-  initkeymap("servercommand", 29);
-  initkeymap("hunt", 30);
-  initkeymap("autopilot", 31);
-  initkeymap("send admin", 12);
+  int i = 3;
+
+  initkeymap("fire", i++);
+  initkeymap("drop", i++);
+  initkeymap("identify", i++);
+  initkeymap("set displayRadarRange 0.25", i++);
+  initkeymap("set displayRadarRange 0.5", i++);
+  initkeymap("set displayRadarRange 1.0", i++);
+  initkeymap("send all", i++);
+  initkeymap("send team", i++);
+  initkeymap("send nemesis", i++);
+  initkeymap("send recipient", i++);
+  initkeymap("send admin", i++);
+  initkeymap("jump", i++);
+  initkeymap("toggle displayBinoculars", i++);
+  initkeymap("toggle displayScore", i++);
+  initkeymap("toggle displayLabels", i++);
+  initkeymap("toggle displayFlagHelp", i++);
+  initkeymap("time forward", i++);
+  initkeymap("time backward", i++);
+  initkeymap("pause", i++);
+  initkeymap("destruct", i++);
+  initkeymap("quit", i++);
+  initkeymap("scrollpanel up", i++);
+  initkeymap("scrollpanel down", i++);
+  initkeymap("toggle slowKeyboard", i++);
+  initkeymap("toggleFlags radar", i++);
+  initkeymap("toggleFlags main", i++);
+  initkeymap("silence", i++);
+  initkeymap("servercommand", i++);
+  initkeymap("hunt", i++);
+  initkeymap("autopilot", i++);
+  
 }
 
 void			KeyboardMapMenu::initkeymap(const std::string& name, int index)
