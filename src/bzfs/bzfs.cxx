@@ -4935,7 +4935,7 @@ static void terminateServer(int /*sig*/)
 }
 
 static const char *usageString =
-"[-a <vel> <rot>] [-b] [-c] [+f {good|<id>}] [-f {bad|<id>}] [-g] "
+"[-a <vel> <rot>] [-b] [-c] [-cr] [+f {good|<id>}] [-f {bad|<id>}] [-g] "
 "[-ban ip{,ip}*] "
 "[-h] "
 "[-i interface] "
@@ -5004,6 +5004,7 @@ static void extraUsage(const char *pname)
   cout << "\t -b: randomly oriented buildings" << endl;
   cout << "\t -ban ip{,ip}*: ban players based on ip address" << endl;
   cout << "\t -c: capture-the-flag style game" << endl;
+  cout << "\t -cr: capture-the-flag style game with random world" << endl;
 //  cout << "\t -d: increase debugging level" << endl;
   cout << "\t +f: always have flag <id> available" << endl;
   cout << "\t -f: never randomly generate flag <id>" << endl;
