@@ -3,6 +3,7 @@
 
 * add new updates here without heading until a release
 
+* -badword server support - Dave Brosius
 * resize radar/msg area - Frank Thilo
 * Drop team flags where player last was on exit - Dave Brosius
 * tanks driving to fast are kicked - Dave Brosius

@@ -55,6 +55,7 @@ const int udpBufSize = 128000;
 #if !defined(_WIN32)
 #include <fcntl.h>
 #endif
+#include <set>
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
@@ -310,6 +311,53 @@ private:
   std::vector<BanInfo>  banList;
 };
 
+class BadWordList
+{
+public:
+  void parseFile(const std::string &fileName)
+  {
+    char buffer[1024];
+    ifstream badWordStrm(fileName.c_str());
+    while (badWordStrm.good()) {
+      badWordStrm.getline(buffer,1024);
+      std::string badWord = buffer;
+      int pos = badWord.find_first_not_of("\t \r\n");
+      if (pos > 0)
+        badWord = badWord.substr(pos);
+      pos = badWord.find_first_of("\t \r\n");
+      if ((pos >= 0) & (pos < badWord.length()))
+	badWord = badWord.substr(0, pos);
+      if (badWord.length() > 0)
+        badWords.insert(badWord);
+    }
+  }
+
+  void filter(char *input)
+  {
+    std::string line = input;
+    int startPos = line.find_first_not_of("\t \r\n");
+    while (startPos >= 0) {
+      int endPos = line.find_first_of("\t \r\n", startPos+1);
+      if (endPos < 0)
+        endPos = line.length();
+      std::string word = line.substr(startPos, endPos-startPos);
+      if (badWords.find(word) != badWords.end())
+	 memset(input+startPos,'*', endPos-startPos);
+      startPos = line.find_first_not_of("\t \r\n", endPos);
+    }
+  }
+
+private:
+  struct BadLess
+  {
+    bool operator()(const std::string& s1, const std::string& s2) const {
+	return strcasecmp(s1.c_str(), s2.c_str()) < 0;
+    }
+  };
+  std::set<std::string, BadLess> badWords;
+
+};
+
 struct CmdLineOptions
 {
   CmdLineOptions()
@@ -388,6 +436,7 @@ struct CmdLineOptions
   int			flagCount[LastFlag + 1];//
   bool			flagDisallowed[LastFlag + 1];//
   AccessControlList	acl;
+  BadWordList		bwl;
 };
 
 enum ClientState {
@@ -5387,8 +5436,10 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
       if (message[0] == '/') {
 	parseCommand(message, t);
       }
-      else
+      else {
+	clOptions.bwl.filter(message);
 	sendMessage(t, targetPlayer, TeamColor(targetTeam), message);
+      }
       break;
     }
 
@@ -5517,6 +5568,7 @@ static const char *usageString =
 "[-a <vel> <rot>] "
 "[-admsg <text>] "
 "[-b] "
+"[-badwords <filename>] "
 "[-ban ip{,ip}*] "
 "[-c] "
 "[-conf <filename>] "
@@ -5571,6 +5623,7 @@ static const char *extraUsageString =
 "\t-a: maximum acceleration settings\n"
 "\t-admsg: specify a <msg> which will be broadcast every 15 minutes\n"
 "\t-b: randomly oriented buildings\n"
+"\t-badwords: bad-world file\n"
 "\t-ban ip{,ip}*: ban players based on ip address\n"
 "\t-c: capture-the-flag style game\n"
 "\t-cr: capture-the-flag style game with random world\n"
@@ -5919,6 +5972,14 @@ static void parse(int argc, char **argv, CmdLineOptions &options)
 	options.angularAcceleration = 0.0f;
       options.gameStyle |= int(InertiaGameStyle);
     }
+    else if (strcmp(argv[i], "-badwords") == 0) {
+      if (++i == argc) {
+	fprintf(stderr, "argument expected for -ban\n");
+	usage(argv[0]);
+      }
+      else
+	options.bwl.parseFile(argv[i]);
+   }
     else if (strcmp(argv[i], "-ban") == 0) {
       if (++i == argc) {
 	fprintf(stderr, "argument expected for -ban\n");
