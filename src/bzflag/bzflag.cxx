@@ -668,6 +668,24 @@ static bool		needsFullscreen()
   return false;
 }
 
+static void createCacheSignature ()
+{
+  // This file is to be used by archiving and mirroring tools avoid
+  // this directory (and any of its sub-directories). Please see:
+  //         < http://www.brynosaurus.com/cachedir/ >
+  
+  const char cacheSignature[] = "Signature: 8a477f597d28d172789f06886806bc55\n";
+  std::string cacheTagName =  getCacheDirName();
+  cacheTagName += ".IsCacheDirectory";
+  std::ostream* cacheTag = FILEMGR.createDataOutStream(cacheTagName, true, true);
+  if (cacheTag != NULL) {
+    cacheTag->write(cacheSignature, strlen (cacheSignature));
+  }
+  delete cacheTag;
+
+  return;
+}  
+
 //
 // main()
 //	initialize application and enter event loop
@@ -715,6 +733,8 @@ int			main(int argc, char** argv)
 		"Exiting.", timeBombString());
     exit(0);
   }
+  
+  createCacheSignature();
 
   // initialize global objects and classes
   bzfsrand(time(0));
