@@ -31,9 +31,6 @@ static const char copyright[] = "Copyright (c) 1993 - 2004 Tim Riker";
 #include <dirent.h>
 #include <utime.h>
 #endif
-#if defined(__APPLE__)
-#include <CoreServices/CoreServices.h>
-#endif
 #include "../zlib/zconf.h"
 #include "../zlib/zlib.h"
 
