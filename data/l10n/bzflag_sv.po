@@ -438,6 +438,18 @@ msgstr "Fšrsluten"
 msgid "Zoned"
 msgstr "Fantom"
 
+#msgid "Score"
+#msgstr ""
+
+#msgid "Kills"
+#msgstr ""
+
+#msgid "Team Score"
+#msgstr ""
+
+#msgid "Player"
+#msgstr ""
+
 # Super Flags
 
 msgid "High Speed"

@@ -887,10 +887,10 @@ void			HUDRenderer::renderScoreboard(void)
   const float y0 = (float)window.getViewHeight() -
       majorFont.getSpacing() - alertFont.getSpacing() * 2.0f + alertFont.getDescent();
   hudColor3fv(messageColor);
-  minorFont.draw(scoreLabel, x1, y0);
-  minorFont.draw(killLabel, x2, y0);
-  minorFont.draw(playerLabel, x3, y0);
-  minorFont.draw(teamScoreLabel, x5, y0);
+  minorFont.draw(bdl->getLocalString(scoreLabel), x1, y0);
+  minorFont.draw(bdl->getLocalString(killLabel), x2, y0);
+  minorFont.draw(bdl->getLocalString(playerLabel), x3, y0);
+  minorFont.draw(bdl->getLocalString(teamScoreLabel), x5, y0);
   const float dy = minorFont.getSpacing();
   int y = (int)(y0 - dy);
 

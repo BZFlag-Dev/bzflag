@@ -528,6 +528,18 @@ msgstr "Erreur lors de la connexion au serveur."
 msgid "Error downloading world database"
 msgstr "Erreur lors du téléchargement de la carte"
 
+#msgid "Score"
+#msgstr ""
+
+#msgid "Kills"
+#msgstr ""
+
+#msgid "Team Score"
+#msgstr ""
+
+#msgid "Player"
+#msgstr ""
+
 # Super Flags
 
 msgid "High Speed"

@@ -530,6 +530,18 @@ msgstr "3RR0R c0NN3c+iNG T0 5ErveR. "
 msgid "Error downloading world database"
 msgstr "3Rr0r DOwnlo4d1ng W0rlD D4T48@53"
 
+msgid "Score"
+msgstr "$c0R3"
+
+msgid "Kills"
+msgstr "k1115"
+
+msgid "Team Score"
+msgstr "t3@m $c0r3"
+
+msgid "Player"
+msgstr "p1@y3r"
+
 # Super Flags
 
 msgid "High Speed"
