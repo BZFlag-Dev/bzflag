@@ -24,7 +24,7 @@
 #endif
 
 /* Version number of package */
-#define VERSION "1.7g1"
+#define VERSION "1.7g2"
 
 /* Bzflag internal version */
 #define BZVERSION 10707001
