@@ -35,7 +35,7 @@ struct ListServerLink {
     Address address;
     int port;
     int socket;
-    const char *nextMessage;
+    enum MessageType {NONE,ADD,REMOVE} nextMessageType;
     std::string hostname;
     std::string pathname;
 };
@@ -717,7 +717,7 @@ static void closeListServer(int index)
     close(link.socket);
     DEBUG4("Closing List server %d\n",index);
     link.socket = NotConnected;
-    link.nextMessage = "";
+    link.nextMessageType = ListServerLink::NONE;
   }
 }
 
@@ -736,7 +736,7 @@ static void openListServer(int index)
     return;
 
   ListServerLink& link = listServerLinks[index];
-  link.nextMessage = "";
+  link.nextMessageType = ListServerLink::NONE;
 
   // start opening connection if not already doing so
   if (link.socket == NotConnected) {
@@ -778,7 +778,7 @@ static void openListServer(int index)
 }
 
 
-static void sendMessageToListServer(const char *msg)
+static void sendMessageToListServer(ListServerLink::MessageType type)
 {
   // ignore if not publicizing
   if (!clOptions->publicizeServer)
@@ -791,8 +791,7 @@ static void sendMessageToListServer(const char *msg)
     // record next message to send.  note that each message overrides
     // any other message.
     ListServerLink& link = listServerLinks[i];
-    if (strcmp(link.nextMessage, "ADD") != 0)
-      link.nextMessage = msg;
+    link.nextMessageType = type;
   }
 }
 
@@ -808,8 +807,9 @@ static void sendMessageToListServerForReal(int index)
   if (link.socket == NotConnected)
     return;
 
-  char msg[2048];
-  if (strcmp(link.nextMessage, "ADD") == 0) {
+  char msg[2048] = "";
+
+  if (link.nextMessageType == ListServerLink::ADD) {
     if (gameOver) {
       // pretend there are no players if the game is over.
       pingReply.rogueCount = 0;
@@ -840,7 +840,7 @@ static void sendMessageToListServerForReal(int index)
       url_encode(clOptions->publicizedTitle).c_str(),
       link.hostname.c_str());
   }
-  else if (strcmp(link.nextMessage, "REMOVE") == 0) {
+  else if (link.nextMessageType == ListServerLink::REMOVE) {
     // send REMOVE (must send blank line)
     sprintf(msg, "GET %s?action=REMOVE&nameport=%s HTTP/1.1\r\n"
       "Host: %s\r\nCache-Control: no-cache\r\n\r\n",
@@ -848,10 +848,12 @@ static void sendMessageToListServerForReal(int index)
       clOptions->publicizedAddress.c_str(),
       link.hostname.c_str());
   }
-  DEBUG3("%s\n",msg);
-  if (send(link.socket, msg, strlen(msg), 0) == -1) {
-    perror("List server send failed");
-    DEBUG3("Unable to send to the list server!\n");
+  if (strlen(msg) > 0) {
+    DEBUG3("%s\n",msg);
+    if (send(link.socket, msg, strlen(msg), 0) == -1) {
+      perror("List server send failed");
+      DEBUG3("Unable to send to the list server!\n");
+    }
   }
 
   // hangup (we don't care about replies)
@@ -905,7 +907,7 @@ static void publicize()
     }
 
     // schedule message for list server
-    sendMessageToListServer("ADD");
+    sendMessageToListServer(ListServerLink::ADD);
     DEBUG3("Sent ADD message to list server\n");
   }
 }
@@ -1071,7 +1073,7 @@ static void serverStop()
   // take some time but we don't want to wait too long.  we do
   // our own multiplexing loop and wait for a maximum of 3 seconds
   // total.
-  sendMessageToListServer("REMOVE");
+  sendMessageToListServer(ListServerLink::REMOVE);
   TimeKeeper start = TimeKeeper::getCurrent();
   do {
     // compute timeout
@@ -2421,7 +2423,7 @@ static void addPlayer(int playerIndex)
     resetFlag(teamIndex-1);
 
   // tell the list server the new number of players
-  sendMessageToListServer("ADD");
+  sendMessageToListServer(ListServerLink::ADD);
 
 #ifdef PRINTSCORE
   dumpScore();
@@ -2819,7 +2821,7 @@ void removePlayer(int playerIndex, const char *reason, bool notify)
   dumpPlayerMessageStats(playerIndex);
 #endif
   // tell the list server the new number of players
-  sendMessageToListServer("ADD");
+  sendMessageToListServer(ListServerLink::ADD);
 
   while ((playerIndex >= 0)
       && (playerIndex+1 == curMaxPlayers)
@@ -4903,7 +4905,7 @@ int main(int argc, char **argv)
 	}
 
 	// send add request
-	sendMessageToListServer("ADD");
+        sendMessageToListServer(ListServerLink::ADD);
 	listServerLastAddTime = tm;
       }
 
