@@ -83,10 +83,6 @@ Player::~Player()
     delete tankIDLNode;
     delete tankNode;
     delete pausedSphere;
-    if (--totalCount == 0) {
-      delete tankTexture;
-      tankTexture = NULL;
-    }
   }
 }
 
