@@ -181,4 +181,4 @@ std::string			FileManager::catPath(
   return c;
 #endif
 }
-// ex: shiftwidth=4 tabstop=4
+// ex: shiftwidth=2 tabstop=8
