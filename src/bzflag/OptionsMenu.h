@@ -13,6 +13,8 @@
 #ifndef	__OPTIONSMENU_H__
 #define	__OPTIONSMENU_H__
 
+#include "common.h"
+
 /* local interface headers */
 #include "HUDDialog.h"
 #include "MenuDefaultKey.h"
