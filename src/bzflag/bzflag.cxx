@@ -511,7 +511,7 @@ static void		parse(int argc, char** argv)
       }
       if ((strcmp(argv[i], "a") == 0) || 
 	  (strcmp(argv[i], "auto") == 0) || 
-	  (strcmp(argv[i], "automatic") == 0) {
+	  (strcmp(argv[i], "automatic") == 0)) {
 	startupInfo.team = AutomaticTeam;
       }	else if (strcmp(argv[i], "r") == 0 || strcmp(argv[i], "red") == 0) {
 	startupInfo.team = RedTeam;
