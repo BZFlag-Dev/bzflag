@@ -39,7 +39,7 @@ again.
 Public \fBbzfs\fR servers (i.e. those that used the \fI-public\fR
 option) register themselves with \fBbzfls\fR servers at regular
 intervals and update their information, such as the number of
-current players, as it changes.  \fBBzflag\fR clients query the
+current players, as it changes.  \fBBZFlag\fR clients query the
 \fBbzfls\fR servers to provide the user a list of available
 servers.  Working together these programs provide users an easy
 way to find games.
@@ -61,7 +61,7 @@ to provide automatic server finding.  You do not need to run
 your own bzfls under normal circumstances.
 .PP
 If you want a private list of servers then you can run bzfls
-but you must also get clients and servers to use it.  Bzflag
+but you must also get clients and servers to use it.  BZFlag
 uses the \fB-list\fI url\fR option to specify an alternate
 bzfls server.  Bzfs uses \fB-publiclist\fI url\fR.  See URLs
 below for a description of the url format.

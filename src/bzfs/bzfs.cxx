@@ -337,7 +337,7 @@ static int maxTeamScore = 0;
 static int debug = 0;
 
 // True if only new clients allowed
-static boolean udpOnly;
+static boolean requireUDP;
 // True if UDP can be used in parallel to TCP connections
 static boolean alsoUDP;
 
@@ -3939,7 +3939,11 @@ static const char *usageString =
 "[-i interface] "
 "[-j] "
 "[-mp {<count>|[<count>],[<count>],[<count>],[<count>],[<count>]}] "
-"[-ms <shots>] [-p <port>] "
+"[-mps <score>] "
+"[-ms <shots>] "
+"[-mts <score>] "
+"[-p <port>] "
+"[-noudp] "
 #ifdef PRINTSCORE
 "[-printscore] "
 #endif
@@ -3947,17 +3951,17 @@ static const char *usageString =
 "[-publicaddr <server-hostname>[:<server-port>]] "
 "[-publiclist <list-server-url>] "
 "[+r] "
-"[-r] [{+s|-s} [<num>]] "
+"[-r] "
+"[-requireudp]"
+"[{+s|-s} [<num>]] "
 "[-sa] "
 "[-st <time>] [-sw <num>] [-synctime] "
 "[-t] "
 #ifdef TIMELIMIT
 "[-time <seconds>] "
 #endif
-"[-ttl <ttl>]"
-"[-udponly]"
-"[-noudp]"
-"[-srvmsg <text>]"
+"[-ttl <ttl>] "
+"[-srvmsg <text>] "
 "[-world <filename>]";
 
 static void printVersion(ostream& out)
@@ -3997,12 +4001,13 @@ static void extraUsage(const char *pname)
   cout << "\t -f: never randomly generate flag <id>" << endl;
   cout << "\t -g: serve one game and then exit" << endl;
   cout << "\t -h: use random building heights" << endl;
-  cout << "\t -i: listen for/reply to pings on <interface>" << endl;
+  cout << "\t -i: listen on <interface>" << endl;
   cout << "\t -j: allow jumping" << endl;
   cout << "\t -mp: maximum players total or per team" << endl;
-  cout << "\t -ms: maximum simultaneous shots per player" << endl;
   cout << "\t -mps: set player score limit on each game" << endl;
+  cout << "\t -ms: maximum simultaneous shots per player" << endl;
   cout << "\t -mts: set team score limit on each game" << endl;
+  cout << "\t -noudp: never use the new UDP networking" << endl;
   cout << "\t -p: use alternative port (default is " <<
 					ServerPort << ")" << endl;
 #ifdef PRINTSCORE
@@ -4014,9 +4019,11 @@ static void extraUsage(const char *pname)
   cout << "\t -q: don't listen for or respond to pings" << endl;
   cout << "\t +r: all shots ricochet" << endl;
   cout << "\t -r: allow rogue tanks" << endl;
+  cout << "\t -requireudp: require clients to use udp" << endl;
   cout << "\t +s: always have <num> super flags (default=16)" << endl;
   cout << "\t -s: allow up to <num> super flags (default=16)" << endl;
   cout << "\t -sa: insert antidote superflags" << endl;
+  cout << "\t -srvmsg: specify a <msg> to print upon client login" << endl;
   cout << "\t -st: shake bad flags in <time> seconds" << endl;
   cout << "\t -sw: shake bad flags after <num> wins" << endl;
   cout << "\t -synctime: synchronize time of day on all clients" << endl;
@@ -4026,9 +4033,6 @@ static void extraUsage(const char *pname)
 #endif
   cout << "\t -ttl: time-to-live for pings (default=" << pingTTL << ")" << endl;
   cout << "\t -world: world file to load" << endl;
-  cout << "\t -noudp: never use the new UDP networking" << endl;
-  cout << "\t -udponly: allow only new clients" << endl;
-  cout << "\t -srvmsg: specify a <msg> to print upon client login" << endl;
   cout << "\nFlag codes:" << endl;
   for (int f = int(FirstSuperFlag); f <= int(LastSuperFlag); f++)
     cout << "\t " << setw(2) << Flag::getAbbreviation(FlagId(f)) <<
@@ -4144,7 +4148,7 @@ static void parse(int argc, char **argv)
   linearAcceleration = 0.0f;
   angularAcceleration = 0.0f;
   numAllowedFlags = 0;
-  udpOnly = false;
+  requireUDP = false;
   alsoUDP = true;
   delete[] flag;  flag = NULL;
   delete[] allowedFlags;  allowedFlags = NULL;
@@ -4170,9 +4174,9 @@ static void parse(int argc, char **argv)
 	UMDEBUG("Setup: Server will use only TCP for connections\n");
 	alsoUDP = false;
       } else
-      if (strcmp(argv[i], "-udponly") == 0) {
-	UMDEBUG("Setup: Server runs for new (UDP) clients only!\n");
-	udpOnly = true;
+      if (strcmp(argv[i], "-requireudp") == 0) {
+	UMDEBUG("Setup: Server requires (UDP) clients!\n");
+	requireUDP = true;
       } else
       if (strcmp(argv[i], "-srvmsg") == 0) {
          if (++i == argc) {
@@ -5001,10 +5005,13 @@ int main(int argc, char **argv)
 
     for (i = 0; i < maxPlayers; i++) {
       // kick any clients that don't speak UDP
-      if (udpOnly && player[i].toBeKicked) {
+      if (requireUDP && player[i].toBeKicked) {
 	char message[MessageLen];
 	player[i].toBeKicked = false;
-        sprintf(message,"Your end does not support UDP");
+        sprintf(message,"Your end is not using UDP, turn on udp");
+        sendMessage(i, player[i].id, player[i].team, message);
+
+        sprintf(message,"upgrade your client http://BZFlag.org/ or");
         sendMessage(i, player[i].id, player[i].team, message);
 
         sprintf(message,"Try another server, Bye!");
@@ -5109,7 +5116,7 @@ int main(int argc, char **argv)
 
 	  // simple ruleset, if player sends a MsgShotBegin over TCP
 	  // he/she must not be using the UDP link
-	  if (udpOnly) {
+	  if (requireUDP) {
             if (code == MsgShotBegin) {
               player[i].toBeKicked = true;
             }

@@ -28,7 +28,7 @@ BZFlag \- a tank battle game
 [\fB\-zbuffer \fR{\fIon\fR | \fIoff\fR}]
 [\fIserver\fR]
 .SH DESCRIPTION
-.B Bzflag
+.B BZFlag
 is a 3D multi-player tank battle game that allows users
 to play against each other in a networked environment.
 There are five teams:  red, green, blue, purple and rogue

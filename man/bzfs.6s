@@ -19,12 +19,14 @@ bzfs \- BZFlag game server
 [\fB\-ms \fIshots\fR]
 [\fB\-mts \fR{\fImax-score\fR}]
 [\fB\-p \fIport\fR]
+[\fB\-noudp\fR]
 [\fB\-public \fIdescription\fR]
 [\fB\-publicaddr \fIaddress\fR[\fI:port\fR]]
 [\fB\-publiclist \fIurl\fR]
 [\fB\-q\fR]
 [\fB\+r\fR]
 [\fB\-r\fR]
+[\fB\-requireudp\fR]
 [\fB\+s \fIflag-count\fR]
 [\fB\-s \fIflag-count\fR]
 [\fB\-sa\fR]
@@ -80,7 +82,7 @@ Shows a help page and lists all the valid flag id's.
 Server will listen for and respond to ``pings'' (sent via multicast)
 on the given interface.  The server uses the first multicast enabled
 interface by default.  Clients use this to find active servers on the
-network.
+network. This is also the TCP/UDP/IP address the server will listen on.
 .TP
 .B -j
 Allows jumping.
@@ -107,6 +109,9 @@ declared the winner and the game is over.
 \fB-p\fI port\fR
 Listen for game connections on \fIport\fR instead of the default port.
 Use \fB-help\fR to print the default port.
+.TP
+.B -noudp
+Do not use a parallel UDP channel for player communication.
 .TP
 \fB-public\fI description\fR
 Advertise this server on the internet with the given \fIdescription\fR.
@@ -136,7 +141,7 @@ automatically.  See \fBbzfls\fR for a description of the format of
 .TP
 .B -q
 If specified, the server will not listen for nor respond to ``pings''.
-\fBBzflag\fR sends out these pings to give the user a list of
+\fBBZFlag\fR sends out these pings to give the user a list of
 available servers.  This effectively makes the server private,
 especially if the \fB-p\fR option is also used.
 .TP
@@ -146,6 +151,10 @@ Super bullets, shock waves, and guided missiles do not.
 .TP
 .B -r
 Allows rogues to join the game.  By default, no rogue players are allowed.
+.TP
+.B -requireudp
+Require clients to use parallel UDP. If players fire before opening a
+UDP channel, kick them off the server.
 .TP
 \fB+s\fI num-flags\fR
 The server will have an extra \fInum-flags\fR random super flags available
