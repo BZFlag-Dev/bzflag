@@ -256,6 +256,10 @@ bool SDLDisplay::getEvent(BzfEvent& _event) const
     _event.resize.height = event.resize.h;
     break;
 
+  case SDL_VIDEOEXPOSE:
+    _event.type = BzfEvent::Redraw;
+    break;
+
   case SDL_ACTIVEEVENT:
     if (event.active.state & SDL_APPACTIVE)
       if (event.active.gain == 0) {
