@@ -4734,7 +4734,7 @@ static void shotFired(int playerIndex, void *buf, int len)
   shotSpeed += tankSpeed;
 
   // verify lifetime
-  if (firingInfo.lifetime != lifetime) {
+  if (fabs(firingInfo.lifetime - lifetime) > Epsilon) {
     DEBUG2("shot lifetime mismatch %f %f\n", firingInfo.lifetime, lifetime);
     return;
   }
