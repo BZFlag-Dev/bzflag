@@ -36,7 +36,7 @@ CXXFILES =				\
 	RemotePlayer.cxx		\
 	DeadPlayer.cxx			\
 	ServerLink.cxx			\
-	sound.cxx			\
+	SoundManager.cxx		\
 	bzflag.cxx			\
 	$(NULL)
 

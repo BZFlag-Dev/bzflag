@@ -18,10 +18,10 @@
 #include "SceneNodeTransform.h"
 #include "SceneManager.h"
 #include "ServerLink.h"
-#include "sound.h"
 #include "Flag.h"
 #include "StateDatabase.h"
 #include "BzfEvent.h"
+#include "SoundManager.h"
 #include <stdlib.h>
 #include <math.h>
 
@@ -506,7 +506,7 @@ void					LocalPlayer::doUpdateMotion(float dt)
 			// change zoned state
 			setStatus(getStatus() ^ FlagActive);
 			if (getStatus() & FlagActive)
-		      playLocalSound( SFX_PHANTOM );
+		      SOUNDMGR->playLocalSound("phantom");
 		}
 		else {
 			// teleport
@@ -522,13 +522,13 @@ void					LocalPlayer::doUpdateMotion(float dt)
 			// save teleport info
 			setTeleport(lastTime, source, target);
 			ServerLink::getServer()->sendTeleport(source, target);
-			playLocalSound(SFX_TELEPORT);
+			SOUNDMGR->playLocalSound("teleport");
 		}
 	}
 
 	// play landing sound if we weren't on something and now we are
 	if (oldLocation == InAir && (location == OnGround || location == OnBuilding))
-		playLocalSound(SFX_LAND);
+		SOUNDMGR->playLocalSound("land");
 
 	// set falling status
 	if (location == OnGround || location == OnBuilding ||
@@ -574,12 +574,12 @@ void					LocalPlayer::doUpdateMotion(float dt)
 
 	if (oldPosition[0] != newPos[0] || oldPosition[1] != newPos[1] ||
 		oldPosition[2] != newPos[2] || oldAzimuth != newAzimuth)
-		moveSoundReceiver(newPos[0], newPos[1], newPos[2], newAzimuth,
+		SOUNDMGR->moveSoundReceiver(newPos[0], newPos[1], newPos[2], newAzimuth,
 		(dt == 0.0f || teleporter != NULL && getFlag() != PhantomZoneFlag));
 	if (dt == 0.0f)
-		speedSoundReceiver(newVelocity[0], newVelocity[1], newVelocity[2]);
+		SOUNDMGR->speedSoundReceiver(newVelocity[0], newVelocity[1], newVelocity[2]);
 	else
-		speedSoundReceiver((newPos[0] - oldPosition[0]) / dt,
+		SOUNDMGR->speedSoundReceiver((newPos[0] - oldPosition[0]) / dt,
 						(newPos[1] - oldPosition[1]) / dt,
 						(newPos[2] - oldPosition[2]) / dt);
 }
@@ -812,13 +812,13 @@ bool					LocalPlayer::fireShot()
 
 	ServerLink::getServer()->sendBeginShot(firingInfo);
 	if (firingInfo.flag == ShockWaveFlag)
-		playLocalSound(SFX_SHOCK);
+		SOUNDMGR->playLocalSound("shock");
 	else if (firingInfo.flag == LaserFlag)
-		playLocalSound(SFX_LASER);
+		SOUNDMGR->playLocalSound("laser");
 	else if (firingInfo.flag == GuidedMissileFlag)
-		playLocalSound(SFX_MISSILE);
+		SOUNDMGR->playLocalSound("missile");
 	else
-		playLocalSound(SFX_FIRE);
+		SOUNDMGR->playLocalSound("fire");
 
 	return true;
 }
@@ -881,7 +881,7 @@ void					LocalPlayer::jump()
 	newVelocity[2] = /*oldVelocity[2] +*/ JumpVelocity;
 	setVelocity(newVelocity);
 	location = InAir;
-	playLocalSound(SFX_JUMP);
+	SOUNDMGR->playLocalSound("jump");
 }
 
 void					LocalPlayer::setTarget(const Player* _target)

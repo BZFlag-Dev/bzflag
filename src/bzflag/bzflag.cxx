@@ -25,7 +25,6 @@
 #include "playing.h"
 #include "TimeBomb.h"
 #include "Team.h"
-#include "sound.h"
 #include "KeyManager.h"
 #include "BzfDisplay.h"
 #include "BzfVisual.h"
@@ -43,6 +42,7 @@
 #include "ViewReader.h"
 #include "CommandReader.h"
 #include "ConfigFileManager.h"
+#include "SoundManager.h"
 #include <iostream>
 
 static const char*			argv0;
@@ -919,8 +919,8 @@ int						main(int argc, char** argv)
 	// creating the window because DirectSound is a bonehead API.
 	// if we can't open the audio then mark the feature as missing.
 	if (BZDB->isTrue("featuresAudio")) {
-		openSound("bzflag");
-		if (!isSoundOpen())
+		SOUNDMGR->openSound("bzflag");
+		if (!SOUNDMGR->isOpen())
 			BZDB->set("featuresAudio", "0");
 	}
 
@@ -994,13 +994,14 @@ int						main(int argc, char** argv)
 	delete window;
 	window = NULL;
 	delete visual;
-	closeSound();
+	SOUNDMGR->closeSound();
 	delete display;
 	delete MPLATFORM;
 	delete PLATFORM;
 	delete FILEMGR;
 	delete MENUMGR;
 	delete CMDMGR;
+	delete SOUNDMGR;
 	delete BZDB;
 	// FIXME -- clean up other singletons
 

@@ -17,7 +17,6 @@
 #include "Obstacle.h"
 #include "LocalPlayer.h"
 #include "ServerLink.h"
-#include "sound.h"
 #include "playing.h"
 #include "Team.h"
 #include "SceneNodeGeometry.h"
@@ -26,6 +25,7 @@
 #include "SceneNodeMatrixTransform.h"
 #include "SceneNodeParameters.h"
 #include "SceneManager.h"
+#include "SoundManager.h"
 #include "math3D.h"
 #include "bzfgl.h"
 
@@ -335,7 +335,7 @@ void					SegmentedShotStrategy::update(float dt)
 						// play ricochet sound.  ricochet of local player's shots
 						// are important, others are not.
 						const Real* pos = segments[segment].ray.getOrigin().get();
-						playWorldSound(SFX_RICOCHET, pos[0], pos[1], pos[2],
+						SOUNDMGR->playWorldSound("ricochet", pos[0], pos[1], pos[2],
 				getPath().getPlayer() == LocalPlayer::getMyTank()->getId());
 						break;
 					}
