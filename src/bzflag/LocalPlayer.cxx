@@ -631,15 +631,20 @@ void			LocalPlayer::doUpdateMotion(float dt)
     if (!obstacle || !expelled) break;
 
     float obstacleTop = obstacle->getPosition()[2] + obstacle->getHeight();
-    if ((oldLocation != InAir) && (obstacleTop != tmpPos[2]) && obstacleTop < (tmpPos[2] + BZDB.eval( StateDatabase::BZDB_MAXBUMPHEIGHT))) {
+    if ((oldLocation != InAir) 
+    &&  (obstacle->getType() != WallObstacle::getClassName())
+    &&  (obstacle->getType() != PyramidBuilding::getClassName())
+    &&  (obstacleTop != tmpPos[2]) && obstacleTop < (tmpPos[2] + BZDB.eval( StateDatabase::BZDB_MAXBUMPHEIGHT))) {
       newPos[0] = oldPosition[0];
       newPos[1] = oldPosition[1];
       newPos[2] = obstacleTop;
-      move(newPos, getAngle());
-      newPos[0] += newVelocity[0]*dt*0.5f;
-      newPos[1] += newVelocity[1]*dt*0.5f;
-      obstacle = NULL;
-      break;
+      const Obstacle* bumpObstacle = getHitBuilding(newPos, tmpAzimuth, newPos, newAzimuth, phased, expelled);
+      if (bumpObstacle == NULL) {
+        move(newPos, getAngle());
+        newPos[0] += newVelocity[0]*dt*0.5f;
+        newPos[1] += newVelocity[1]*dt*0.5f;
+        break;
+      }
     }
 
 
