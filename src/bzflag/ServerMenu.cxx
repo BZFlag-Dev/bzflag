@@ -74,7 +74,7 @@ bool ServerMenuDefaultKey::keyPress(const BzfKeyEvent& key)
 
   else if (key.ascii == '\t') {
     if (HUDui::getFocus()) {
-	menu->setSelected(menu->getSelected() + 1);
+      menu->setSelected(menu->getSelected() + 1);
     }
     return true;
   }
@@ -463,8 +463,6 @@ void			ServerMenu::dismiss()
 {
   // no more callbacks
   removePlayingCallback(&playingCB, this);
-
-
 }
 
 void			ServerMenu::resize(int width, int height)
@@ -545,9 +543,9 @@ void			ServerMenu::setStatus(const char* msg, const std::vector<std::string> *pa
 }
 
 void ServerMenu::updateStatus() {
-  if(serverList.searchActive()) {
+  if (serverList.searchActive()) {
     setStatus("Searching");
-  } else if(serversFound < serverList.size()) {
+  } else if (serversFound < serverList.size()) {
     std::vector<std::string> args;
     char buffer [80];
     sprintf(buffer, "%d", serverList.size());
@@ -567,7 +565,6 @@ void			ServerMenu::playingCB(void* _self)
   ((ServerMenu*)_self)->serverList.checkEchos();
 
   ((ServerMenu*)_self)->updateStatus();
-  
 }
 
 // Local Variables: ***

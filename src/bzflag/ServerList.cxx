@@ -34,37 +34,37 @@ void addPlayingCallback(PlayingCallback, void* data);
 void removePlayingCallback(PlayingCallback, void* data);
 
 ServerList::ServerList() :
-	m_numListServers(0),
-	m_serverCache(ServerListCache::get()),
-	m_pingBcastSocket(-1)
+	numListServers(0),
+	serverCache(ServerListCache::get()),
+	pingBcastSocket(-1)
 {
 }
 
 ServerList::~ServerList() {
-	_shutDown();
+  _shutDown();
 }
 
 void ServerList::startServerPings() {
 	
-// schedule lookup of server list url.  dereference URL chain every
+  // schedule lookup of server list url.  dereference URL chain every
   // time instead of only first time just in case one of the pointers
   // has changed.
   const StartupInfo* info = getStartupInfo();
   if (info->listServerURL.size() == 0)
-    m_phase = -1;
+    phase = -1;
   else
-    m_phase = 0;
+    phase = 0;
 
   // also try broadcast
-  m_pingBcastSocket = openBroadcast(BroadcastPort, NULL, &m_pingBcastAddr);
-  if (m_pingBcastSocket != -1)
-    PingPacket::sendRequest(m_pingBcastSocket, &m_pingBcastAddr);
+  pingBcastSocket = openBroadcast(BroadcastPort, NULL, &pingBcastAddr);
+  if (pingBcastSocket != -1)
+    PingPacket::sendRequest(pingBcastSocket, &pingBcastAddr);
 
 }
 
 void ServerList::readServerList(int index)
 {
-  ListServer& listServer = m_listServers[index];
+  ListServer& listServer = listServers[index];
 
   // read more data into server list buffer
   int n = recv(listServer.socket, listServer.buffer + listServer.bufferSize,
@@ -158,14 +158,12 @@ void ServerList::readServerList(int index)
     // remove parsed replies
     listServer.bufferSize -= (base - listServer.buffer);
     memmove(listServer.buffer, base, listServer.bufferSize);
-  }
-  else if (n == 0) {
+  } else if (n == 0) {
     // server hungup
     close(listServer.socket);
     listServer.socket = -1;
     listServer.phase = 4;
-  }
-  else if (n < 0) {
+  } else if (n < 0) {
     close(listServer.socket);
     listServer.socket = -1;
     listServer.phase = -1;
@@ -179,11 +177,11 @@ void ServerList::addToList(ServerItem& info, bool doCache)
 
   // search and delete entry for this item if it exists
   // (updating info in place may "unsort" the list)
-  for (i = 0; i < (int)m_servers.size(); i++) {
-    ServerItem& server = m_servers[i];
+  for (i = 0; i < (int)servers.size(); i++) {
+    ServerItem& server = servers[i];
     if (server.ping.serverId.serverHost.s_addr == info.ping.serverId.serverHost.s_addr
 	&& server.ping.serverId.port == info.ping.serverId.port) {
-      m_servers.erase(m_servers.begin() + i); // erase this item
+      servers.erase(servers.begin() + i); // erase this item
     }
   }
 
@@ -193,8 +191,8 @@ void ServerList::addToList(ServerItem& info, bool doCache)
   // insert new item before the first serveritem with is deemed to be less
   // in value than the item to be inserted -- cached items are less than
   // non-cached, items that have more players are more, etc..
-  for (i = 0; i < (int)m_servers.size(); i++) {
-    ServerItem& server = m_servers[i];
+  for (i = 0; i < (int)servers.size(); i++) {
+    ServerItem& server = servers[i];
     if (server < info){
       insertPoint = i;
       break;
@@ -202,17 +200,16 @@ void ServerList::addToList(ServerItem& info, bool doCache)
   }
 
   if (insertPoint == -1){ // no spot to insert it into -- goes on back
-    m_servers.push_back(info);
-  }
-  else {  // found a spot to insert it into
-    m_servers.insert(m_servers.begin() + insertPoint,info);
+    servers.push_back(info);
+  } else {  // found a spot to insert it into
+    servers.insert(servers.begin() + insertPoint,info);
   }
 
   // update display
   /*
   char buffer [80];
   std::vector<std::string> args;
-  sprintf(buffer, "%d", (int)m_servers.size());
+  sprintf(buffer, "%d", (int)servers.size());
   args.push_back(buffer);
   setStatus("Servers found: {1}", &args);
   */
@@ -229,7 +226,7 @@ void ServerList::addToList(ServerItem& info, bool doCache)
     // on save we delete at most as many items as we added
     // if the added list is normal, we weed most out, if we
     // get few items, we weed few items out
-    m_serverCache->incAddedNum();
+    serverCache->incAddedNum();
 
     // make string like "sdfsd.dmsd.com:123"
     char buffer [100];
@@ -241,78 +238,77 @@ void ServerList::addToList(ServerItem& info, bool doCache)
     info.setUpdateTime();
 
     SRV_STR_MAP::iterator iter;
-    iter = m_serverCache->find(serverAddress);  // erase entry to allow update
-    if (iter != m_serverCache->end()){ // if we find it, update it
+    iter = serverCache->find(serverAddress);  // erase entry to allow update
+    if (iter != serverCache->end()){ // if we find it, update it
       iter->second = info;
-    }
-    else {
+    } else {
       // insert into cache -- wasn't found
-      m_serverCache->insert(serverAddress,info);
+      serverCache->insert(serverAddress,info);
     }
   }
 }
 
 void			ServerList::checkEchos()
 {
-    // *** NOTE *** searching spinner update was here
+  // *** NOTE *** searching spinner update was here
 
-  // lookup server list in m_phase 0
-  if (m_phase == 0) {
+  // lookup server list in phase 0
+  if (phase == 0) {
     int i;
 
     std::vector<std::string> urls;
     urls.push_back(getStartupInfo()->listServerURL);
 
     // check urls for validity
-    m_numListServers = 0;
+    numListServers = 0;
     for (i = 0; i < (int)urls.size(); ++i) {
-	// parse url
-	std::string protocol, hostname, path;
-	int port = 80;
-	Address address;
-	if (!BzfNetwork::parseURL(urls[i], protocol, hostname, port, path) ||
-	    protocol != "http" || port < 1 || port > 65535 ||
-	    (address = Address::getHostAddress(hostname)).isAny()) {
-	    std::vector<std::string> args;
-	    args.push_back(urls[i]);
-	    printError("Can't open list server: {1}", &args);
-	    if (!m_addedCacheToList) {
-	      m_addedCacheToList = true;
-	      addCacheToList();
-	    }
-	    continue;
+      // parse url
+      std::string protocol, hostname, path;
+      int port = 80;
+      Address address;
+      if (!BzfNetwork::parseURL(urls[i], protocol, hostname, port, path) ||
+	protocol != "http" || port < 1 || port > 65535 ||
+	(address = Address::getHostAddress(hostname)).isAny()) {
+	std::vector<std::string> args;
+	args.push_back(urls[i]);
+	printError("Can't open list server: {1}", &args);
+	if (!addedCacheToList) {
+	  addedCacheToList = true;
+	  addCacheToList();
 	}
+	continue;
+      }
 
-	// add to list
-	m_listServers[m_numListServers].address = address;
-	m_listServers[m_numListServers].hostname = hostname;
-	m_listServers[m_numListServers].pathname = path;
-	m_listServers[m_numListServers].port    = port;
-	m_listServers[m_numListServers].socket  = -1;
-	m_listServers[m_numListServers].phase   = 2;
-	m_numListServers++;
+      // add to list
+      listServers[numListServers].address = address;
+      listServers[numListServers].hostname = hostname;
+      listServers[numListServers].pathname = path;
+      listServers[numListServers].port    = port;
+      listServers[numListServers].socket  = -1;
+      listServers[numListServers].phase   = 2;
+      numListServers++;
     }
 
-    // do m_phase 1 only if we found a valid list server url
-    if (m_numListServers > 0)
-      m_phase = 1;
+    // do phase 1 only if we found a valid list server url
+    if (numListServers > 0)
+      phase = 1;
     else
-      m_phase = -1;
+      phase = -1;
   }
 
-  // connect to list servers in m_phase 1
-  else if (m_phase == 1) {
-    m_phase = -1;
-    for (int i = 0; i < m_numListServers; i++) {
-      ListServer& listServer = m_listServers[i];
+  // connect to list servers in phase 1
+  else if (phase == 1) {
+    phase = -1;
+    for (int i = 0; i < numListServers; i++) {
+      ListServer& listServer = listServers[i];
 
       // create socket.  give up on failure.
       listServer.socket = socket(AF_INET, SOCK_STREAM, 0);
       if (listServer.socket < 0) {
 	printError("Can't create list server socket");
 	listServer.socket = -1;
-	if (!m_addedCacheToList) {
-	  m_addedCacheToList = true;
+	if (!addedCacheToList) {
+	  addedCacheToList = true;
 	  addCacheToList();
 	}
 	continue;
@@ -323,8 +319,8 @@ void			ServerList::checkEchos()
 	printError("Error with list server socket");
 	close(listServer.socket);
 	listServer.socket = -1;
-	if (!m_addedCacheToList){
-	  m_addedCacheToList = true;
+	if (!addedCacheToList){
+	  addedCacheToList = true;
 	  addCacheToList();
 	}
 	continue;
@@ -344,16 +340,16 @@ void			ServerList::checkEchos()
 	  printError("Can't connect list server socket");
 	  close(listServer.socket);
 	  listServer.socket = -1;
-	  if (!m_addedCacheToList){
-	    m_addedCacheToList = true;
+	  if (!addedCacheToList){
+	    addedCacheToList = true;
 	    addCacheToList();
 	  }
 	  continue;
 	}
       }
 
-      // at least this socket is okay so proceed to m_phase 2
-      m_phase = 2;
+      // at least this socket is okay so proceed to phase 2
+      phase = 2;
     }
   }
 
@@ -370,12 +366,12 @@ void			ServerList::checkEchos()
     fd_set read_set, write_set;
     FD_ZERO(&read_set);
     FD_ZERO(&write_set);
-    if (m_pingBcastSocket != -1) _FD_SET(m_pingBcastSocket, &read_set);
-    int fdMax = m_pingBcastSocket;
+    if (pingBcastSocket != -1) _FD_SET(pingBcastSocket, &read_set);
+    int fdMax = pingBcastSocket;
 
     // check for list server connection or data
-    for (i = 0; i < m_numListServers; i++) {
-      ListServer& listServer = m_listServers[i];
+    for (i = 0; i < numListServers; i++) {
+      ListServer& listServer = listServers[i];
       if (listServer.socket != -1) {
 	if (listServer.phase == 2) {
 	  _FD_SET(listServer.socket, &write_set);
@@ -398,8 +394,8 @@ void			ServerList::checkEchos()
     ServerItem serverInfo;
     sockaddr_in addr;
     
-    if (m_pingBcastSocket != -1 && FD_ISSET(m_pingBcastSocket, &read_set)) {
-      if (serverInfo.ping.read(m_pingBcastSocket, &addr)) {
+    if (pingBcastSocket != -1 && FD_ISSET(pingBcastSocket, &read_set)) {
+      if (serverInfo.ping.read(pingBcastSocket, &addr)) {
 	serverInfo.ping.serverId.serverHost = addr.sin_addr;
 	serverInfo.cached = false;
 	addToListWithLookup(serverInfo);
@@ -407,8 +403,8 @@ void			ServerList::checkEchos()
     }
 
     // check list servers
-    for (i = 0; i < m_numListServers; i++) {
-      ListServer& listServer = m_listServers[i];
+    for (i = 0; i < numListServers; i++) {
+      ListServer& listServer = listServers[i];
       if (listServer.socket != -1) {
 	// read more data from server
 	if (FD_ISSET(listServer.socket, &read_set)) {
@@ -435,12 +431,11 @@ void			ServerList::checkEchos()
 	    // probably unable to connect to server
 	    close(listServer.socket);
 	    listServer.socket = -1;
-	    if (!m_addedCacheToList){
-	      m_addedCacheToList = true;
+	    if (!addedCacheToList){
+	      addedCacheToList = true;
 	      addCacheToList();
 	     }
-	  }
-	  else {
+	  } else {
 	    listServer.phase = 3;
 	    listServer.bufferSize = 0;
 	  }
@@ -473,22 +468,22 @@ void			ServerList::addToListWithLookup(ServerItem& info)
 // add the entire cache to the server list
 void			ServerList::addCacheToList()
 {
-  for (SRV_STR_MAP::iterator iter = m_serverCache->begin();
-       iter != m_serverCache->end(); iter++){
+  for (SRV_STR_MAP::iterator iter = serverCache->begin();
+       iter != serverCache->end(); iter++){
     addToList(iter->second);
   }
 }
 
 const std::vector<ServerItem>& ServerList::getServers() {
-	return m_servers;
+  return servers;
 }
 
 std::vector<ServerItem>::size_type ServerList::size() {
-	return m_servers.size();
+  return servers.size();
 }
 
 void ServerList::clear() {
-	m_servers.clear();
+  servers.clear();
 }
 
 int ServerList::updateFromCache() {
@@ -497,11 +492,11 @@ int ServerList::updateFromCache() {
 
   int numItemsAdded = 0;
   
-  for (SRV_STR_MAP::const_iterator iter = m_serverCache->begin();
-       iter != m_serverCache->end(); iter++) {
+  for (SRV_STR_MAP::const_iterator iter = serverCache->begin();
+       iter != serverCache->end(); iter++) {
     // if maxCacheAge is 0 we add nothing
     // if the item is young enough we add it
-    if (m_serverCache->getMaxCacheAge() != 0 && iter->second.getAgeMinutes() < m_serverCache->getMaxCacheAge()) {
+    if (serverCache->getMaxCacheAge() != 0 && iter->second.getAgeMinutes() < serverCache->getMaxCacheAge()) {
       ServerItem aCopy = iter->second;
       addToList(aCopy);
       numItemsAdded ++;
@@ -512,21 +507,21 @@ int ServerList::updateFromCache() {
 }
 
 bool ServerList::searchActive() {
-	return ((m_phase < 2) ? true : false);
+  return ((phase < 2) ? true : false);
 }
 
 void ServerList::_shutDown() {
   // close server list sockets
-  for (int i = 0; i < m_numListServers; i++)
-    if (m_listServers[i].socket != -1) {
-      close(m_listServers[i].socket);
-      m_listServers[i].socket = -1;
+  for (int i = 0; i < numListServers; i++)
+    if (listServers[i].socket != -1) {
+      close(listServers[i].socket);
+      listServers[i].socket = -1;
     }
-  m_numListServers = 0;
+  numListServers = 0;
 
   // close input multicast socket
-  closeMulticast(m_pingBcastSocket);
-  m_pingBcastSocket = -1;
+  closeMulticast(pingBcastSocket);
+  pingBcastSocket = -1;
 }
 
 // Local Variables: ***
@@ -536,4 +531,3 @@ void ServerList::_shutDown() {
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

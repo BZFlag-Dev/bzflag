@@ -23,33 +23,33 @@
 
 class ServerList {
 public:
-	ServerList();
-	virtual ~ServerList();
-	
-	void readServerList(int index);
-	void addToList(ServerItem&, bool doCache=false);
-	void addToListWithLookup(ServerItem&);
-	void checkEchos();
-	void addCacheToList();
-	void startServerPings();
+  ServerList();
+  virtual ~ServerList();
+  
+  void readServerList(int index);
+  void addToList(ServerItem&, bool doCache=false);
+  void addToListWithLookup(ServerItem&);
+  void checkEchos();
+  void addCacheToList();
+  void startServerPings();
 
-	bool searchActive();
-	const std::vector<ServerItem>& getServers();
-	std::vector<ServerItem>::size_type size();
-	int updateFromCache();
-	void clear();
+  bool searchActive();
+  const std::vector<ServerItem>& getServers();
+  std::vector<ServerItem>::size_type size();
+  int updateFromCache();
+  void clear();
 private:
-	void _shutDown();
+  void _shutDown();
 private:
-	bool m_addedCacheToList;
-	long m_numListServers;
-	int m_phase;
-	std::vector<ServerItem> m_servers;
-	ListServer m_listServers[MaxListServers];
-	ServerListCache* m_serverCache;
-	struct sockaddr_in pingInAddr;
-	int m_pingBcastSocket;
-	struct sockaddr_in m_pingBcastAddr;
+  bool addedCacheToList;
+  long numListServers;
+  int phase;
+  std::vector<ServerItem> servers;
+  ListServer listServers[MaxListServers];
+  ServerListCache* serverCache;
+  struct sockaddr_in pingInAddr;
+  int pingBcastSocket;
+  struct sockaddr_in pingBcastAddr;
 };
 
 #endif
