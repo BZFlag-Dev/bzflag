@@ -5339,7 +5339,7 @@ static void parse(int argc, char **argv)
     maxTeam[i] = MaxPlayers;
 
   // parse command line
-  int playerCountArg = 0;
+  int playerCountArg = 0,playerCountArg2 = 0;
   for (i = 1; i < argc; i++) {
       if (strcmp(argv[i], "-noudp") == 0) {
 	DEBUG3("Setup: Server will use only TCP for connections\n");
@@ -5530,7 +5530,10 @@ static void parse(int argc, char **argv)
 	cerr << "argument expected for -mp" << endl;
 	usage(argv[0]);
       }
-      playerCountArg = i;
+      if (playerCountArg == 0)
+        playerCountArg = i;
+      else
+        playerCountArg2 = i;
     }
     else if (strcmp(argv[i], "-ms") == 0) {
       // set maximum number of shots
@@ -5774,7 +5777,8 @@ static void parse(int argc, char **argv)
 
   // get player counts.  done after other arguments because we need
   // to ignore counts for rogues if rogues aren't allowed.
-  if (playerCountArg > 0 && !parsePlayerCount(argv[playerCountArg]))
+  if (playerCountArg > 0 && (!parsePlayerCount(argv[playerCountArg]) ||
+      playerCountArg2 > 0 && !parsePlayerCount(argv[playerCountArg2])))
     usage(argv[0]);
 
   // make table of allowed extra flags
