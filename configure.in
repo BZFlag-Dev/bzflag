@@ -20,8 +20,8 @@ AC_PROG_LN_S
 AC_PROG_RANLIB
 
 # Just for kicks
-echo -n "checking for artificial intelligence for robots..."
-echo " warning: not found"
+echo -n "checking for artificial intelligence for robots..." 1>&6
+echo " warning: not found" 1>&6
 
 #Checks for types
 #AM_CHECK_TYPES(socklen_t)
