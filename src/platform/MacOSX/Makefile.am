@@ -1,5 +1,6 @@
 SUBDIRS = English.lproj BZFlag.pbproj
 
+if MACOS
 libMac_a_SOURCES =			\
 	MacPlatformFactory.cxx		\
 	MacPlatformFactory.h		\
@@ -14,6 +15,7 @@ libMac_a_SOURCES =			\
 
 if CLIENT_INCLUDED
 noinst_LIBRARIES = libMac.a
+endif
 endif
 
 MAINTAINERCLEANFILES = Makefile.in
