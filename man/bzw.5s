@@ -831,7 +831,7 @@ worldStream :=
 .TP
 material :=
 .br
-	  "name" <material_name>
+	  "matref" <material_name>
 .br
 	| "resetmat"
 .br
