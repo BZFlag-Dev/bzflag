@@ -285,6 +285,16 @@ float*	    SDLMedia::doReadSound(const std::string &filename, int &numFrames,
   return data;
 }
 
+void SDLMedia::audioDriver(std::string& driverName)
+{
+  char driver[128] = "SDL: audio not available";
+  char *result = SDL_AudioDriverName(driver, sizeof(driver));
+  if (result)
+    driverName = driver;
+  else
+    driverName = "SDL: audio not available";
+}
+
 #endif //HAVE_SDL
 // Local Variables: ***
 // mode:C++ ***

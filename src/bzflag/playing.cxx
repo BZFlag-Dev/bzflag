@@ -5837,6 +5837,13 @@ void			startPlaying(BzfDisplay* _display,
   tmpString += (const char*)glGetString(GL_RENDERER);
   controlPanel->addMessage(tmpString);
 
+  PlatformFactory::getMedia()->audioDriver(tmpString);
+  if (tmpString != "") {
+    tmpString = ColorStrings[PurpleColor] + "Audio Driver : " + tmpString;
+    controlPanel->addMessage(tmpString);
+  }
+
+
   // get current MOTD
   if (!BZDB.isTrue("disableMOTD")) {
     controlPanel->addMessage(ColorStrings[UnderlineColor] + ColorStrings[WhiteColor] +

@@ -47,6 +47,7 @@ class SDLMedia : public BzfMedia {
     void		setDevice(std::string deviceName);
     float*		doReadSound(const std::string& filename,
 				    int& numFrames, int& rate) const;
+    void                audioDriver(std::string& driverName);
 
   private:
     void		fillAudio (Uint8 *, int);

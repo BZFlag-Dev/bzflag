@@ -478,6 +478,11 @@ void	BzfMedia::setDriver(std::string) {
 void	BzfMedia::setDevice(std::string) {
 };
 
+void BzfMedia::audioDriver(std::string& driverName)
+{
+  driverName = "";
+}
+
 // Local Variables: ***
 // mode:C++ ***
 // tab-width: 8 ***
