@@ -29,6 +29,7 @@ void onVolumeChange(const std::string& name, void*)
 
 SoundManager::SoundManager()
 {
+	usingAudio = false;
 	soundFiles.clear();
 	soundFiles.push_back("fire");
 	soundFiles.push_back("explosion");
