@@ -50,6 +50,7 @@ files in the new bzflag directory:
   misc/		- miscellany
   package/	- stuff to build installable packages
   src/		- bzflag, bzfs, etc. source code
+    bzadmin/      - bzadmin app source code (text admin/chat client)
     bzflag/	  - bzflag app source code (game client)
     bzfls/	  - bzfls app source code (list of servers server)
     bzfrelay/	  - bzfrelay source code (firewall relay for servers)
@@ -61,6 +62,7 @@ files in the new bzflag directory:
     obstacle/	  - collision detection stuff
     ogl/	  - OpenGL utility classes
     platform/	  - platform dependent code
+      MacOSX/       - Mac OS X specific files, including PB project
     scene/	  - high level rendering algorithms
     zlib/	  - compression library
   win32/	- extra stuff for building on win32 platforms
@@ -114,6 +116,7 @@ system for more information:
   UNIX, Linux			README.UNIX
   IRIX				README.IRIX
   Solaris			README.SOLARIS
+  Mac OS X			README.OSX
   Windows 95/98/NT		README.WIN32, README.MINGW32
 
 
