@@ -526,7 +526,7 @@ static void handleKickCmd(GameKeeper::Player *playerData, const char *message)
 
   i = GameKeeper::Player::getPlayerIDByName(argv[1]);
 
-  if (i < curMaxPlayers) {
+  if ((i < curMaxPlayers) && (i >= 0)) {
     char kickmessage[MessageLen];
 
     // admins can override antiperms
