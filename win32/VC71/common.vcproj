@@ -296,6 +296,9 @@
 				RelativePath="..\..\src\common\bzfio.cxx">
 			</File>
 			<File
+				RelativePath="..\..\src\common\bzglob.cxx">
+			</File>
+			<File
 				RelativePath="..\..\src\common\bzsignal.c">
 				<FileConfiguration
 					Name="Debug|Win32">
