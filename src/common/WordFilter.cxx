@@ -550,6 +550,20 @@ WordFilter::WordFilter()
   return;
 }
 
+/** default copy constructor */
+WordFilter::WordFilter(const WordFilter& filter)
+  : alphabet(filter.alphabet),
+    filterChars(filter.filterChars),
+    suffixes(filter.suffixes),
+    prefixes(filter.prefixes)
+{
+  for (int i=0; i < MAX_FILTERS; i++) {
+    filters[i] = filter.filters[i];
+  }
+}
+
+
+
 /** destructor releases the compiled bad words */
 WordFilter::~WordFilter(void)
 {

@@ -34,6 +34,20 @@ VotingBooth::VotingBooth(std::string question, bool requireUnique)
   return;
 }
 
+VotingBooth::VotingBooth(const VotingBooth& booth)
+  : _question(booth._question),
+    _responseCount(booth._responseCount),
+    _voterCount(booth._voterCount),
+    _requireUnique(booth._requireUnique)
+{
+  for (int i=0; i < MAX_VOTE_RESPONSES; i++) {
+    _response[i] = booth._response[i];
+    _vote[i] = booth._vote[i];
+    _voter[i] = booth._voter[i];
+  }
+  return;
+}
+
 VotingBooth::~VotingBooth(void)
 {
   return;
