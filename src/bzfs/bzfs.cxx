@@ -67,6 +67,7 @@ const int udpBufSize = 128000;
 #include "RegionManagerFlagSpawn.h"
 #include "RegionReaderFlagSpawn.h"
 #include "ConfigFileManager.h"
+#include "StateDatabase.h"
 #include <sstream>
 
 #include "WorldInfo.h"
@@ -1877,9 +1878,9 @@ static Real getSafeFlagRadius(FlagId id)
 {
 	// compute safety radius.  flag should not be within this distance
 	// of any building.
-	Real r = TankRadius;
+	Real r = atof(BZDB->get("tankRadius").c_str());
 	if (id == ObesityFlag)
-		r *= R_(2.0) * ObeseFactor;
+		r *= R_(2.0) * atof(BZDB->get("obeseFactor").c_str());
 	return r;
 }
 
@@ -1953,10 +1954,10 @@ static bool addFlag(int flagIndex)
 	numFlagsInAir++;
 
 	// compute drop time
-	const float flightTime = 2.0f * sqrtf(-2.0f * FlagAltitude / Gravity);
+	const float flightTime = 2.0f * sqrtf(-2.0f * atof(BZDB->get("flagAltitude").c_str()) / atof(BZDB->get("gravity").c_str()));
 	flag[flagIndex].flag.flightTime = 0.0f;
 	flag[flagIndex].flag.flightEnd = flightTime;
-	flag[flagIndex].flag.initialVelocity = -0.5f * Gravity * flightTime;
+	flag[flagIndex].flag.initialVelocity = -0.5f * atof(BZDB->get("gravity").c_str()) * flightTime;
 	flag[flagIndex].dropDone = TimeKeeper::getCurrent();
 	flag[flagIndex].dropDone += flightTime;
 
@@ -2334,7 +2335,7 @@ static void dropFlag(PlayerId playerId, FlagDropReason reason, float pos[3])
 	numFlagsInAir++;
 
 	// flags are dropped from the top of the tank
-	pos[2] += TankHeight;
+	pos[2] += atof(BZDB->get("tankHeight").c_str());
 
 	// get landing position
 	Vec3 landingPos = pos;
@@ -2415,16 +2416,16 @@ static void dropFlag(PlayerId playerId, FlagDropReason reason, float pos[3])
 	pFlagInfo->flag.position[2] = pFlagInfo->flag.landingPosition[2];
 	pFlagInfo->flag.launchPosition[0] = pos[0];
 	pFlagInfo->flag.launchPosition[1] = pos[1];
-	pFlagInfo->flag.launchPosition[2] = pos[2] + TankHeight;
+	pFlagInfo->flag.launchPosition[2] = pos[2] + atof(BZDB->get("tankHeight").c_str());
 
 	// compute flight info -- flight time depends depends on start and end
 	// altitudes and desired height above start altitude.
 	const float thrownAltitude = (pFlagInfo->flag.id == ShieldFlag) ?
-								ShieldFlight * FlagAltitude : FlagAltitude;
+								atof(BZDB->get("shieldFlight").c_str()) * atof(BZDB->get("flagAltitude").c_str()) : atof(BZDB->get("flagAltitude").c_str());
 	const float maxAltitude = pos[2] + thrownAltitude;
-	const float upTime = sqrtf(-2.0f * thrownAltitude / Gravity);
+	const float upTime = sqrtf(-2.0f * thrownAltitude / atof(BZDB->get("gravity").c_str()));
 	const float downTime = sqrtf(-2.0f * (maxAltitude -
-								pFlagInfo->flag.landingPosition[2]) / Gravity);
+								pFlagInfo->flag.landingPosition[2]) / atof(BZDB->get("gravity").c_str()));
 	const float flightTime = upTime + downTime;
 
 	// set flight info
@@ -2432,7 +2433,7 @@ static void dropFlag(PlayerId playerId, FlagDropReason reason, float pos[3])
 	pFlagInfo->dropDone += flightTime;
 	pFlagInfo->flag.flightTime = 0.0f;
 	pFlagInfo->flag.flightEnd = flightTime;
-	pFlagInfo->flag.initialVelocity = -Gravity * upTime;
+	pFlagInfo->flag.initialVelocity = -atof(BZDB->get("gravity").c_str()) * upTime;
 
 	// player no longer has flag -- send MsgDropFlag
 	player[playerId].flag = -1;
@@ -2447,7 +2448,7 @@ static void dropFlag(PlayerId playerId, FlagDropReason reason, float pos[3])
 	sendFlagUpdate(flagIndex);
 }
 
-static void captureFlag(PlayerId playerId, float pos[3])
+static void captureFlag(PlayerId playerId, float*)
 {
 	// player captured a flag.  can either be enemy flag in player's own
 	// team base, or player's own flag in enemy base.
@@ -3226,6 +3227,7 @@ static void parse(int argc, char **argv)
 				flagCount[CloakingFlag]++;
 				flagCount[MasqueradeFlag]++;
 				flagCount[ThiefFlag]++;
+				flagCount[BurrowFlag]++;
 				flagCount[SeerFlag]++;
 			}
 			else {
@@ -3562,7 +3564,7 @@ static void parse(int argc, char **argv)
 
 	if (gameStyle & int(KingoftheHillGameStyle)) {
 		
-		for (int i = 0; i < NumTeams; i++) {
+		for (unsigned int i = 0; i < NumTeams; i++) {
 			maxTeam[RogueTeam] += maxTeam[i];
 			maxTeam[i] = 0;
 		}
@@ -3697,6 +3699,8 @@ static void parse(int argc, char **argv)
 					f++;
 				if (setRequiredFlag(flag[f], ThiefFlag))
 					f++;
+				if (setRequiredFlag(flag[f], BurrowFlag))
+					f++;
 				if (setRequiredFlag(flag[f], SeerFlag))
 					f++;
 			}
@@ -3790,6 +3794,20 @@ int main(int argc, char **argv)
 	}
 #endif /* defined(_WIN32) */
 	bzfsrand(time(0));
+
+	// set default DB entries
+	for (unsigned int i = 0; i < countof(globalDBItems); ++i) {
+		assert(globalDBItems[i].name != NULL);
+		if (globalDBItems[i].value != NULL) {
+			BZDB->set(globalDBItems[i].name, globalDBItems[i].value);
+			BZDB->setDefault(globalDBItems[i].name, globalDBItems[i].value);
+		}
+		BZDB->setPersistent(globalDBItems[i].name, globalDBItems[i].persistent);
+		BZDB->setPermission(globalDBItems[i].name, globalDBItems[i].permission);
+		if (globalDBItems[i].callback != NULL)
+			BZDB->addCallback(globalDBItems[i].name,
+								globalDBItems[i].callback, NULL);
+	}
 
 	// parse arguments
 	parse(argc, argv);

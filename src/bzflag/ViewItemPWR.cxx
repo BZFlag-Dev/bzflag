@@ -61,7 +61,7 @@ void			ViewItemPWR::drawShots(float w, float h)
 
 	if (tank->getReloadTime() > EPSILON) {
 		glColor4f(1.0, 0.0, 0.0, 0.5);
-		drawPB(0, 0, w, h * tank->getReloadTime()/5.0); // fix this constant
+		drawPB(0, 0, int(w), int(h * tank->getReloadTime() / 5.0)); // fix this constant
 	}
 	else {
 		int maxshots = World::getWorld()->getMaxShots();
@@ -74,7 +74,7 @@ void			ViewItemPWR::drawShots(float w, float h)
 			}
 			else {
 				glColor3fv(Team::getRadarColor(tank->getTeam()));
-				drawPB(0, i * 10, w, 7);
+				drawPB(0, i * 10, int(w), 7);
 			}
 		}
 	}

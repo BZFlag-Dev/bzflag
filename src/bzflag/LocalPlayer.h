@@ -73,7 +73,8 @@ public:
 		OnGround,				// playing on ground
 		InBuilding,				// playing in building
 		OnBuilding,				// playing on building
-		InAir					// playing in air
+		InAir,					// playing in air
+		BelowGround				// playing below ground
 	};
 	enum _RoamView {
 		RoamViewTrack = 0,			// tracking another player

@@ -34,26 +34,26 @@ WorldInfo *defineTeamWorld()
 	baseRotation[0] = 0.0f;
 	baseSize[0][0] = 0.0f;
 	baseSize[0][1] = 0.0f;
-	basePos[1][0] = (-WorldSize + BaseSize) / 2.0f;
+	basePos[1][0] = (-atof(BZDB->get("worldSize").c_str()) + BaseSize) / 2.0f;
 	basePos[1][1] = 0.0f;
 	basePos[1][2] = 0.0f;
 	baseRotation[1] = 0.0f;
 	baseSize[1][0] = BaseSize / 2.0f;
 	baseSize[1][1] = BaseSize / 2.0f;
-	basePos[2][0] = (WorldSize - BaseSize) / 2.0f;
+	basePos[2][0] = (atof(BZDB->get("worldSize").c_str()) - BaseSize) / 2.0f;
 	basePos[2][1] = 0.0f;
 	basePos[2][2] = 0.0f;
 	baseRotation[2] = 0.0f;
 	baseSize[2][0] = BaseSize / 2.0f;
 	baseSize[2][1] = BaseSize / 2.0f;
 	basePos[3][0] = 0.0f;
-	basePos[3][1] = (-WorldSize + BaseSize) / 2.0f;
+	basePos[3][1] = (-atof(BZDB->get("worldSize").c_str()) + BaseSize) / 2.0f;
 	basePos[3][2] = 0.0f;
 	baseRotation[3] = 0.0f;
 	baseSize[3][0] = BaseSize / 2.0f;
 	baseSize[3][1] = BaseSize / 2.0f;
 	basePos[4][0] = 0.0f;
-	basePos[4][1] = (WorldSize - BaseSize) / 2.0f;
+	basePos[4][1] = (atof(BZDB->get("worldSize").c_str()) - BaseSize) / 2.0f;
 	basePos[4][2] = 0.0f;
 	baseRotation[4] = 0.0f;
 	baseSize[4][0] = BaseSize / 2.0f;
@@ -75,10 +75,10 @@ WorldInfo *defineTeamWorld()
 	safetyBasePos[4][2] = basePos[4][2];
 
 	// make walls
-	world->addWall(0.0f, 0.5f * WorldSize, 0.0f, 1.5f * M_PI, 0.5f * WorldSize, WallHeight);
-	world->addWall(0.5f * WorldSize, 0.0f, 0.0f, M_PI, 0.5f * WorldSize, WallHeight);
-	world->addWall(0.0f, -0.5f * WorldSize, 0.0f, 0.5f * M_PI, 0.5f * WorldSize, WallHeight);
-	world->addWall(-0.5f * WorldSize, 0.0f, 0.0f, 0.0f, 0.5f * WorldSize, WallHeight);
+	world->addWall(0.0f, 0.5f * atof(BZDB->get("worldSize").c_str()), 0.0f, 1.5f * M_PI, 0.5f * atof(BZDB->get("worldSize").c_str()), WallHeight);
+	world->addWall(0.5f * atof(BZDB->get("worldSize").c_str()), 0.0f, 0.0f, M_PI, 0.5f * atof(BZDB->get("worldSize").c_str()), WallHeight);
+	world->addWall(0.0f, -0.5f * atof(BZDB->get("worldSize").c_str()), 0.0f, 0.5f * M_PI, 0.5f * atof(BZDB->get("worldSize").c_str()), WallHeight);
+	world->addWall(-0.5f * atof(BZDB->get("worldSize").c_str()), 0.0f, 0.0f, 0.0f, 0.5f * atof(BZDB->get("worldSize").c_str()), WallHeight);
 
 	// make pyramids
 	// around red base

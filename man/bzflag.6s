@@ -449,6 +449,14 @@ Tank becomes paper thin.  It's very hard (but not impossible) to hit
 a narrow tank from the front or back.  However, the tank is as
 long as usual so hitting it from the side has normal difficulty.
 .TP
+.B Thief (TH)
+30% speed increase, 1/2 size tank. 10x faster reload. Thief beam, with 2/3
+range steals another tank's flag.
+.TP
+.B Burrow (BU)
+Tank drives partly underground, can't be hit by normal shots.
+SW, GM kills. Can be steamrolled by anyone. Can't jump, and slower tank.
+.TP
 .B Shield (SH)
 Getting shot while in possession of this flag simply drops the flag
 (instead of destroying the tank).  Since the flag may not disappear

@@ -203,10 +203,10 @@ static std::string defineFlagSpawn()
 						"</box>\n"
 					"</shape>\n"
 				"</flag-spawn>\n",
-				0.0, 0.0, 0.5 * WorldSize,
-				0.5 * WorldSize - BaseSize,
-				0.5 * WorldSize - BaseSize,
-				0.5 * WorldSize);
+				0.0, 0.0, 0.5 * atof(BZDB->get("worldSize").c_str()),
+				0.5 * atof(BZDB->get("worldSize").c_str()) - BaseSize,
+				0.5 * atof(BZDB->get("worldSize").c_str()) - BaseSize,
+				0.5 * atof(BZDB->get("worldSize").c_str()));
 	return xml;
 }
 

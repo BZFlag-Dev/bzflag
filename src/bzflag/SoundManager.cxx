@@ -51,7 +51,8 @@ SoundManager::SoundManager()
 	soundFiles.push_back("missile");
 	soundFiles.push_back("lock");
 	soundFiles.push_back("thief");
-//	soundFiles.push_back("rain");
+	soundFiles.push_back("burrow");
+	soundFiles.push_back("rain");
 }
 
 void			SoundManager::openSound(const char*)
@@ -957,7 +958,7 @@ void audioLoop(void*)
 	audioBufferSize = MPLATFORM->getAudioBufferChunkSize() << 1;
 
 	// initialize
-	timeSizeOfWorld = 1.414 * WorldSize / SpeedOfSound;
+	timeSizeOfWorld = 1.414 * atof(BZDB->get("worldSize").c_str()) / SpeedOfSound;
 	for (int i = 0; i < MaxEvents; i++) {
 		events[i].samples = NULL;
 		events[i].busy = false;

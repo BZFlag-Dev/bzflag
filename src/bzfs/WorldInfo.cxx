@@ -19,7 +19,7 @@
 // WorldInfo
 //
 
-WorldInfo::WorldInfo() : database(NULL), flagHeight(FlagAltitude)
+WorldInfo::WorldInfo() : database(NULL), flagHeight(11.0) //FIXME
 {
 	// do nothing
 }

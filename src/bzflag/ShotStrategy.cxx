@@ -405,10 +405,10 @@ float					SegmentedShotStrategy::checkHit(const BaseLocalPlayer* tank,
 	if (getPath().isExpired()) return minTime;
 
 	// get tank radius
-	float radius = TankRadius;
-	if (tank->getFlag() == ObesityFlag) radius *= ObeseFactor;
-	else if (tank->getFlag() == TinyFlag) radius *= TinyFactor;
-	else if (tank->getFlag() == ThiefFlag) radius *= ThiefTinyFactor;
+	float radius = atof(BZDB->get("tankRadius").c_str());
+	if (tank->getFlag() == ObesityFlag) radius *= atof(BZDB->get("obeseFactor").c_str());
+	else if (tank->getFlag() == TinyFlag) radius *= atof(BZDB->get("tinyFactor").c_str());
+	else if (tank->getFlag() == ThiefFlag) radius *= atof(BZDB->get("thiefTinyFactor").c_str());
 	const float radius2 = radius * radius;
 
 	// tank is positioned from it's bottom so shift position up by
@@ -417,7 +417,7 @@ float					SegmentedShotStrategy::checkHit(const BaseLocalPlayer* tank,
 	float lastTankPositionRaw[3];
 	lastTankPositionRaw[0] = tankLastMotionRaw.getOrigin()[0];
 	lastTankPositionRaw[1] = tankLastMotionRaw.getOrigin()[1];
-	lastTankPositionRaw[2] = tankLastMotionRaw.getOrigin()[2] + 0.5f * TankHeight;
+	lastTankPositionRaw[2] = tankLastMotionRaw.getOrigin()[2] + 0.5f * atof(BZDB->get("tankHeight").c_str());
 	Ray tankLastMotion = Ray(Vec3(lastTankPositionRaw), tankLastMotionRaw.getDirection());
 
 	// if bounding box of tank and entire shot doesn't overlap then no hit
@@ -455,7 +455,7 @@ float					SegmentedShotStrategy::checkHit(const BaseLocalPlayer* tank,
 		  // is shell radius so you can actually hit narrow tank head on.
 		  static float origin[3] = { 0.0f, 0.0f, 0.0f };
 		  t = Intersect::timeRayHitsBlock(relativeRay, origin, tank->getAngle(),
-							0.5f * TankLength, ShotRadius, TankHeight);
+							0.5f * atof(BZDB->get("tankLength").c_str()), ShotRadius, atof(BZDB->get("tankHeight").c_str()));
 		}
 		else {
 		  // find time when shot hits sphere around tank
@@ -545,7 +545,7 @@ void					SegmentedShotStrategy::makeSegments(ObstacleEffect e)
 	const float* v = path.getVelocity();
 	TimeKeeper startTime = path.getStartTime();
 	float timeLeft = path.getLifetime();
-	float minTime = MuzzleFront / hypotf(v[0], hypotf(v[1], v[2]));
+	float minTime = atof(BZDB->get("muzzleFront").c_str()) / hypotf(v[0], hypotf(v[1], v[2]));
 
 	// if all shots ricochet and obstacle effect is stop, then make it ricochet
 	if (e == Stop && World::getWorld()->allShotsRicochet())
@@ -709,11 +709,11 @@ RapidFireStrategy::RapidFireStrategy(ShotPath* path) :
 {
 	// speed up shell and decrease lifetime
 	FiringInfo& f = getFiringInfo(path);
-	f.lifetime *= RFireAdLife;
-	f.shot.vel[0] *= RFireAdVel;
-	f.shot.vel[1] *= RFireAdVel;
-	f.shot.vel[2] *= RFireAdVel;
-	setReloadTime(path->getReloadTime() / RFireAdRate);
+	f.lifetime *= atof(BZDB->get("rFireAdLife").c_str());
+	f.shot.vel[0] *= atof(BZDB->get("rFireAdVel").c_str());
+	f.shot.vel[1] *= atof(BZDB->get("rFireAdVel").c_str());
+	f.shot.vel[2] *= atof(BZDB->get("rFireAdVel").c_str());
+	setReloadTime(path->getReloadTime() / atof(BZDB->get("rFireAdRate").c_str()));
 
 	// make segments
 	makeSegments(Stop);
@@ -733,11 +733,11 @@ MachineGunStrategy::MachineGunStrategy(ShotPath* path) :
 {
 	// speed up shell and decrease lifetime
 	FiringInfo& f = getFiringInfo(path);
-	f.lifetime *= MGunAdLife;
-	f.shot.vel[0] *= MGunAdVel;
-	f.shot.vel[1] *= MGunAdVel;
-	f.shot.vel[2] *= MGunAdVel;
-	setReloadTime(path->getReloadTime() / MGunAdRate);
+	f.lifetime *= atof(BZDB->get("mGunAdLife").c_str());
+	f.shot.vel[0] *= atof(BZDB->get("mGunAdVel").c_str());
+	f.shot.vel[1] *= atof(BZDB->get("mGunAdVel").c_str());
+	f.shot.vel[2] *= atof(BZDB->get("mGunAdVel").c_str());
+	setReloadTime(path->getReloadTime() / atof(BZDB->get("mGunAdRate").c_str()));
 
 	// make segments
 	makeSegments(Stop);
@@ -790,11 +790,11 @@ LaserStrategy::LaserStrategy(ShotPath* path) :
 {
 	// speed up shell and decrease lifetime
 	FiringInfo& f = getFiringInfo(path);
-	f.lifetime *= LaserAdLife;
-	f.shot.vel[0] *= LaserAdVel;
-	f.shot.vel[1] *= LaserAdVel;
-	f.shot.vel[2] *= LaserAdVel;
-	setReloadTime(path->getReloadTime() / LaserAdRate);
+	f.lifetime *= atof(BZDB->get("laserAdLife").c_str());
+	f.shot.vel[0] *= atof(BZDB->get("laserAdVel").c_str());
+	f.shot.vel[1] *= atof(BZDB->get("laserAdVel").c_str());
+	f.shot.vel[2] *= atof(BZDB->get("laserAdVel").c_str());
+	setReloadTime(path->getReloadTime() / atof(BZDB->get("laserAdRate").c_str()));
 
 	// make segments
 	makeSegments(Stop);
@@ -908,11 +908,11 @@ ThiefStrategy::ThiefStrategy(ShotPath* path) :
 {
 	// speed up shell and decrease lifetime
 	FiringInfo& f = getFiringInfo(path);
-	f.lifetime *= (ThiefAdShotVel * ThiefVelAd) / 3000;
-	f.shot.vel[0] *= ThiefVelAd;
-	f.shot.vel[1] *= ThiefVelAd;
-	f.shot.vel[2] *= ThiefVelAd;
-	setReloadTime(path->getReloadTime() / ThiefAdRate);
+	f.lifetime *= (atof(BZDB->get("thiefAdShotVel").c_str()) * atof(BZDB->get("thiefVelAd").c_str())) / 3000;
+	f.shot.vel[0] *= atof(BZDB->get("thiefVelAd").c_str());
+	f.shot.vel[1] *= atof(BZDB->get("thiefVelAd").c_str());
+	f.shot.vel[2] *= atof(BZDB->get("thiefVelAd").c_str());
+	setReloadTime(path->getReloadTime() / atof(BZDB->get("thiefAdRate").c_str()));
 
 	// make segments
 	makeSegments(Stop);
@@ -1057,9 +1057,9 @@ GuidedMissileStrategy::GuidedMissileStrategy(ShotPath* _path) :
 	segments.push_back(segment);
 
 	// setup shot
-	f.shot.vel[0] = ShotSpeed * dir[0];
-	f.shot.vel[1] = ShotSpeed * dir[1];
-	f.shot.vel[2] = ShotSpeed * dir[2];
+	f.shot.vel[0] = atof(BZDB->get("shotSpeed").c_str()) * dir[0];
+	f.shot.vel[1] = atof(BZDB->get("shotSpeed").c_str()) * dir[1];
+	f.shot.vel[2] = atof(BZDB->get("shotSpeed").c_str()) * dir[2];
 
 	// set next position to starting position
 	nextPos[0] = f.shot.pos[0];
@@ -1068,12 +1068,12 @@ GuidedMissileStrategy::GuidedMissileStrategy(ShotPath* _path) :
 
 	// check that first segment doesn't start inside a building
 	float startPos[3];
-	startPos[0] = f.shot.pos[0] - MuzzleFront * dir[0];
-	startPos[1] = f.shot.pos[1] - MuzzleFront * dir[1];
-	startPos[2] = f.shot.pos[2] - MuzzleFront * dir[2];
+	startPos[0] = f.shot.pos[0] - atof(BZDB->get("muzzleFront").c_str()) * dir[0];
+	startPos[1] = f.shot.pos[1] - atof(BZDB->get("muzzleFront").c_str()) * dir[1];
+	startPos[2] = f.shot.pos[2] - atof(BZDB->get("muzzleFront").c_str()) * dir[2];
 	Ray firstRay = Ray(startPos, dir);
 	prevTime = currentTime;
-	prevTime += -MuzzleFront / ShotSpeed;
+	prevTime += -atof(BZDB->get("muzzleFront").c_str()) / atof(BZDB->get("shotSpeed").c_str());
 	checkBuildings(firstRay);
 	prevTime = currentTime;
 
@@ -1099,7 +1099,7 @@ GuidedMissileStrategy::~GuidedMissileStrategy()
 }
 
 // NOTE -- ray is base of shot segment and normalized direction of flight.
-//		distance traveled is ShotSpeed * dt.
+//		distance traveled is atof(BZDB->get("shotSpeed").c_str()) * dt.
 
 void					GuidedMissileStrategy::update(float dt)
 {
@@ -1160,7 +1160,7 @@ void					GuidedMissileStrategy::update(float dt)
 		desiredDir[0] = targetPos[0] - nextPos[0];
 		desiredDir[1] = targetPos[1] - nextPos[1];
 		desiredDir[2] = targetPos[2] - nextPos[2];
-		desiredDir[2] += MuzzleHeight;	// aim for turret
+		desiredDir[2] += atof(BZDB->get("muzzleHeight").c_str());	// aim for turret
 
 		// compute desired angles
 		float newAzimuth = atan2f(desiredDir[1], desiredDir[0]);
@@ -1169,21 +1169,21 @@ void					GuidedMissileStrategy::update(float dt)
 
 		// compute new azimuth
 		float deltaAzimuth = limitAngle(newAzimuth - azimuth);
-		if (fabsf(deltaAzimuth) <= dt * GMissileAng)
+		if (fabsf(deltaAzimuth) <= dt * atof(BZDB->get("gMissileAng").c_str()))
 			azimuth = limitAngle(newAzimuth);
 		else if (deltaAzimuth > 0.0f)
-			azimuth = limitAngle(azimuth + dt * GMissileAng);
+			azimuth = limitAngle(azimuth + dt * atof(BZDB->get("gMissileAng").c_str()));
 		else
-			azimuth = limitAngle(azimuth - dt * GMissileAng);
+			azimuth = limitAngle(azimuth - dt * atof(BZDB->get("gMissileAng").c_str()));
 
 		// compute new elevation
 		float deltaElevation = limitAngle(newElevation - elevation);
-		if (fabsf(deltaElevation) <= dt * GMissileAng)
+		if (fabsf(deltaElevation) <= dt * atof(BZDB->get("gMissileAng").c_str()))
 			elevation = limitAngle(newElevation);
 		else if (deltaElevation > 0.0f)
-			elevation = limitAngle(elevation + dt * GMissileAng);
+			elevation = limitAngle(elevation + dt * atof(BZDB->get("gMissileAng").c_str()));
 		else
-			elevation = limitAngle(elevation - dt * GMissileAng);
+			elevation = limitAngle(elevation - dt * atof(BZDB->get("gMissileAng").c_str()));
 	}
 	float newDirection[3];
 	newDirection[0] = cosf(azimuth) * cosf(elevation);
@@ -1195,7 +1195,7 @@ void					GuidedMissileStrategy::update(float dt)
 	if ((++renderTimes % 3) == 0) addShotPuff(nextPos);
 
 	// get next position
-	ray.getPoint(dt * ShotSpeed, nextPos);
+	ray.getPoint(dt * atof(BZDB->get("shotSpeed").c_str()), nextPos);
 
 	// see if we hit something
 	TimeKeeper segmentEndTime(currentTime);
@@ -1206,7 +1206,7 @@ void					GuidedMissileStrategy::update(float dt)
 			float t = ray.getOrigin()[2] / (ray.getOrigin()[2] - nextPos[2]);
 			segmentEndTime = prevTime;
 			segmentEndTime += t * (currentTime - prevTime);
-			ray.getPoint(t / ShotSpeed, nextPos);
+			ray.getPoint(t / atof(BZDB->get("shotSpeed").c_str()), nextPos);
 			addShotExplosion(nextPos);
 		}
 
@@ -1226,16 +1226,16 @@ void					GuidedMissileStrategy::update(float dt)
 	segments.push_back(nextSegment);
 
 	// update shot
-	newDirection[0] *= ShotSpeed;
-	newDirection[1] *= ShotSpeed;
-	newDirection[2] *= ShotSpeed;
+	newDirection[0] *= atof(BZDB->get("shotSpeed").c_str());
+	newDirection[1] *= atof(BZDB->get("shotSpeed").c_str());
+	newDirection[2] *= atof(BZDB->get("shotSpeed").c_str());
 	setPosition(nextPos);
 	setVelocity(newDirection);
 }
 
 float					GuidedMissileStrategy::checkBuildings(const Ray& ray)
 {
-	float t = (currentTime - prevTime) * ShotSpeed;
+	float t = (currentTime - prevTime) * atof(BZDB->get("shotSpeed").c_str());
 	int face;
 	const Obstacle* building = getFirstBuilding(ray, Epsilon, t);
 	const Teleporter* teleporter = getFirstTeleporter(ray, Epsilon, t, face);
@@ -1250,16 +1250,16 @@ float					GuidedMissileStrategy::checkBuildings(const Ray& ray)
 						World::getWorld()->getTeleporter(target, outFace);
 		teleporter->getPointWRT(*outTeleporter, face, outFace,
 						nextPos, NULL, azimuth, nextPos, NULL, &azimuth);
-		return t / ShotSpeed;
+		return t / atof(BZDB->get("shotSpeed").c_str());
 	}
 
 	else if (building) {
 		// expire on next update
 		setExpiring();
 		float pos[3];
-		ray.getPoint(t / ShotSpeed, pos);
+		ray.getPoint(t / atof(BZDB->get("shotSpeed").c_str()), pos);
 		addShotExplosion(pos);
-		return t / ShotSpeed;
+		return t / atof(BZDB->get("shotSpeed").c_str());
 	}
 	return -1.0f;
 }
@@ -1275,10 +1275,10 @@ float					GuidedMissileStrategy::checkHit(const BaseLocalPlayer* tank,
 		return minTime;
 
 	// get tank radius
-	float radius = TankRadius;
-	if (tank->getFlag() == ObesityFlag) radius *= ObeseFactor;
-	else if (tank->getFlag() == TinyFlag) radius *= TinyFactor;
-	else if (tank->getFlag() == ThiefFlag) radius *= ThiefTinyFactor;
+	float radius = atof(BZDB->get("tankRadius").c_str());
+	if (tank->getFlag() == ObesityFlag) radius *= atof(BZDB->get("obeseFactor").c_str());
+	else if (tank->getFlag() == TinyFlag) radius *= atof(BZDB->get("tinyFactor").c_str());
+	else if (tank->getFlag() == ThiefFlag) radius *= atof(BZDB->get("thiefTinyFactor").c_str());
 	const float radius2 = radius * radius;
 
 	// tank is positioned from it's bottom so shift position up by
@@ -1287,7 +1287,7 @@ float					GuidedMissileStrategy::checkHit(const BaseLocalPlayer* tank,
 	float lastTankPositionRaw[3];
 	lastTankPositionRaw[0] = tankLastMotionRaw.getOrigin()[0];
 	lastTankPositionRaw[1] = tankLastMotionRaw.getOrigin()[1];
-	lastTankPositionRaw[2] = tankLastMotionRaw.getOrigin()[2] + 0.5f * TankHeight;
+	lastTankPositionRaw[2] = tankLastMotionRaw.getOrigin()[2] + 0.5f * atof(BZDB->get("tankHeight").c_str());
 	Ray tankLastMotion = Ray(Vec3(lastTankPositionRaw), tankLastMotionRaw.getDirection());
 
 	// check each segment
@@ -1300,7 +1300,7 @@ float					GuidedMissileStrategy::checkHit(const BaseLocalPlayer* tank,
 		const Ray& ray = segments[i].ray;
 
 		// construct ray with correct velocity
-		Ray speedRay(ray.getOrigin(), ShotSpeed * ray.getDirection());
+		Ray speedRay(ray.getOrigin(), atof(BZDB->get("shotSpeed").c_str()) * ray.getDirection());
 
 		// construct relative shot ray:  origin and velocity relative to
 		// my tank as a function of time (t=0 is start of the interval).
@@ -1313,7 +1313,7 @@ float					GuidedMissileStrategy::checkHit(const BaseLocalPlayer* tank,
 			// is shell radius so you can actually hit narrow tank head on.
 			static float origin[3] = { 0.0f, 0.0f, 0.0f };
 			t = Intersect::timeRayHitsBlock(relativeRay, origin, tank->getAngle(),
-				      0.5f * TankLength, ShotRadius, TankHeight);
+				      0.5f * atof(BZDB->get("tankLength").c_str()), ShotRadius, atof(BZDB->get("tankHeight").c_str()));
 		}
 		else {
 			// find time when shot hits sphere around tank
@@ -1446,13 +1446,13 @@ void					GuidedMissileStrategy::radarRender() const
 
 ShockWaveStrategy::ShockWaveStrategy(ShotPath* path) :
 								ShotStrategy(path),
-								radius(ShockInRadius),
-								radius2(ShockInRadius * ShockInRadius),
+								radius(atof(BZDB->get("shockInRadius").c_str())),
+								radius2(atof(BZDB->get("shockInRadius").c_str()) * atof(BZDB->get("shockInRadius").c_str())),
 								startTime(TimeKeeper::getCurrent())
 {
 	// setup shot
 	FiringInfo& f = getFiringInfo(path);
-	f.lifetime *= ShockAdLife;
+	f.lifetime *= atof(BZDB->get("shockAdLife").c_str());
 
 	// get team
 	Player* p = lookupPlayer(path->getPlayer());
@@ -1460,9 +1460,9 @@ ShockWaveStrategy::ShockWaveStrategy(ShotPath* path) :
 
 	// make/get scene nodes
 	transformSceneNode = new SceneNodeTransform;
-	transformSceneNode->scale.push(ShockOutRadius,
-								ShockOutRadius,
-								ShockOutRadius);
+	transformSceneNode->scale.push(atof(BZDB->get("shockOutRadius").c_str()),
+								atof(BZDB->get("shockOutRadius").c_str()),
+								atof(BZDB->get("shockOutRadius").c_str()));
 	parametersSceneNode = new SceneNodeParameters;
 	transformSceneNode->pushChild(parametersSceneNode);
 	parametersSceneNode->unref();
@@ -1486,11 +1486,11 @@ ShockWaveStrategy::~ShockWaveStrategy()
 
 void					ShockWaveStrategy::update(float dt)
 {
-	radius += dt * (ShockOutRadius - ShockInRadius) / getPath().getLifetime();
+	radius += dt * (atof(BZDB->get("shockOutRadius").c_str()) - atof(BZDB->get("shockInRadius").c_str())) / getPath().getLifetime();
 	radius2 = radius * radius;
 
 	// expire when full size
-	if (radius >= ShockOutRadius)
+	if (radius >= atof(BZDB->get("shockOutRadius").c_str()))
 		setExpired();
 }
 

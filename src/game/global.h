@@ -19,6 +19,7 @@
 
 #include <math.h>
 #include "common.h"
+#include "StateDatabase.h"
 
 // values affecting struct and class layout
 const int				CallSignLen = 32;		// including terminating NUL
@@ -49,17 +50,7 @@ const float				Epsilon =		1.0e-5f;			// arbitrary
 const float				Infinity =		MAXFLOAT;			// arbitrary
 
 // universe info
-const float				Gravity =		-9.8f;				// meters/sec/sec
-const float				WorldSize =		800.0f;				// meters
 const float				BaseSize =		60.0f;				// meters
-
-// rough tank geometry
-const float				TankLength =	6.0f;				// meters
-const float				TankWidth =		2.8f;				// meters
-const float				TankHeight =	2.05f;				// meters
-const float				TankRadius =	0.72f * TankLength;	// meters
-const float				MuzzleHeight =	1.57f;				// meters
-const float				MuzzleFront =	TankRadius + 0.1f;	// meters
 
 // rough shot geometry
 const float				ShotRadius =	0.5f;				// meters
@@ -67,40 +58,26 @@ const float				ShotLength =	0.5f;				// meters
 const float				ShotTailLength=	10.0f;				// meters
 
 // outer wall geometry
-const float				WallPosition =	0.5f*WorldSize +	// meters
-											0.75f * TankLength;
-const float				WallHeight =	3.0f*TankHeight;	// meters
+const float				WallPosition =	404.5f;				// meters
+const float				WallHeight =	6.15f;				// meters
 
 // pyramid geometry
-const float				PyrBase =		4.0f*TankHeight;	// meters
-const float				PyrHeight =		5.0f*TankHeight;	// meters
+const float				PyrBase =		8.2f;				// meters
+const float				PyrHeight =		10.25f;				// meters
 
 // box geometry
-const float				BoxBase = 		5.0f*TankLength;	// meters
-const float				BoxHeight = 	6.0f*MuzzleHeight;	// meters
+const float				BoxBase = 		30.0f;				// meters
+const float				BoxHeight = 	56.52f;				// meters
 
 // teleporter geometry (My God, it's full of stars...)
-const float				TeleUnit =		0.4f * TankWidth;	// meters
+const float				TeleUnit =		1.12f;				// meters
 const float				TeleWidth =		1.0f * TeleUnit;	// meters
 const float				TeleBreadth =	4.0f * TeleUnit;	// meters
 const float				TeleHeight = 	9.0f * TeleUnit;	// meters
 
-// tank performance info
-const float				TankSpeed =		25.0f;				// meters/sec
-const float				TankAngVel =	M_PI / 4.0f;		// radians/sec
-const float				ShotSpeed =		100.0f;				// meters/sec
-const float				ShotRange = 	350.0f;				// meters
-const float				ReloadTime =	ShotRange / ShotSpeed;	// seconds
-
 // city geometry
 const int				CitySize = 		5;
 const float				AvenueSize = 	2.0f * BoxBase;		// meters
-
-// other game info
-const float				ExplodeTime =	5.0f;				// seconds
-const float				TeleportTime =	1.0f;				// seconds
-const float				FlagAltitude =	11.0f;				// meters
-const float				FlagRadius =	2.5f;				// meters
 
 // readout stuff
 const int				MaxMessages =	20;					// msg. history length
@@ -190,6 +167,7 @@ enum FlagId {
 						CloakingFlag,			// make you invisible out window
 						MasqueradeFlag,			// makes tank look like teammate
 						ThiefFlag,				// can steal another's flag
+						BurrowFlag,				// burrows tank into the ground
 						SeerFlag,				// see cloak, stealth and masquerade as normal
 
 						// the bad super flags
@@ -204,14 +182,13 @@ enum FlagId {
 												// but isn't)
 
 						// the rest are not yet implemented
-						MagnetFlag,				// draws shots toward you
-						KamikaziFlag,			// self destruct big time
-						HeatSeekerFlag,			// aims at strongest heat source
-						DeathFlag,				// die the instant you grab it
-						PossessionFlag,			// control another tank's motion
-						Kamikazi,				// large destruct radius when dropped
+						Magnet,					// draws shots toward you
+						Kamikazi,				// self destruct big time
+						HeatSeeker,				// aims at strongest heat source
+						Death,					// die the instant you grab it
+						Possession,				// control another tank's motion
 						Suicide,				// high speed, fast shots, die at first kill
-						ECM,					// disable radars of nearby tanks (not teammates)
+						ECMFlag,				// disable radars of nearby tanks (not teammates)
 						InterdimensionalTeleport,		// teleport (to random teleporter) when dropped
 						SmartBomb,				// drop, gets to apex, large radius of destruction
 												// (including player who dropped it)
@@ -227,36 +204,15 @@ enum FlagId {
 						LastSuperFlag =		LastFlag
 };
 
-// Super flag characteristic modifiers
-const float				VelocityAd =	1.5f;				// 50% faster
-const float				AngularAd =		1.5f;				// 50% faster turns
-const float				RFireAdVel =	1.5f;				// 50% faster shots
-const float				RFireAdRate =	2.0f;				// 2x faster reload
-const float				RFireAdLife =	1.0f/RFireAdRate;// 1/2 normal lifetime
-const float				MGunAdVel =		1.5f;				// 50% faster shots
-const float				MGunAdRate =	10.0f;				// 10x faster reload
-const float				MGunAdLife =	1.0f/MGunAdRate;	// 1/10 normal lifetime
-const float				LaserAdVel =	1000.0f;			// 1000x faster shots
-const float				LaserAdRate =	0.5f;				// 1/2x faster reload
-const float				LaserAdLife =	0.1f;				// 1/10 normal lifetime
-const float				GMissileAng =	M_PI / 5.0f;		// max turn rate (rad/s)
-const float				TinyFactor =	0.4f;				// 40% normal size
-const float				ShieldFlight =	2.7f;				// flag goes 170% higher
-const float				SRRadiusMult =	2.0;				// 200% normal radius
-const float				ShockAdLife =	0.20f;				// 20% normal lifetime
-const float				ShockInRadius =	TankLength;			// size of tank
-const float				ShockOutRadius=	2.0f * BoxBase;		// size of building
-const float				JumpVelocity =	19.0f;				// m/s
-const float				IdentityRange =	50.0f;				// meters
-const float				ObeseFactor =	2.5f;				// 250% normal size
-const float				WideAngleAng =	M_PI / 1.8f;		// 100 degree fov
-const float				ThiefVelAd =    1.67f;				// 2/3 faster
-const float				ThiefTinyFactor=0.5f;				// 50% normal size
-const float				ThiefAdShotVel =1000.0f;			// 1000x faster shots
-const float				ThiefAdRate =   10.0f;				// 10x faster
-const float				MomentumLinAcc=	1.0f;				//
-const float				MomentumAngAcc=	1.0f;				//
-const float				MagnetPower =	0.0f;				// off
+struct GlobalDBItem {
+public:
+	const char*				name;
+	const char*				value;
+	bool					persistent;
+	StateDatabase::Permission	permission;
+	StateDatabase::Callback	callback;
+};
+extern GlobalDBItem			globalDBItems[48];
 
 #endif // BZF_GLOBAL_H
 // ex: shiftwidth=4 tabstop=4

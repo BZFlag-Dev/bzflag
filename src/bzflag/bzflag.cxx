@@ -615,7 +615,7 @@ static DefaultDBItem		defaultDBItems[] = {
 	{ "timeFPS",			NULL,		false, StateDatabase::ReadOnly,  NULL },
 	{ "multisample",		NULL,		false, StateDatabase::ReadOnly,  NULL },
 	{ "windowGeometry",		"fullscreen",	true,  StateDatabase::ReadWrite, NULL },
-	{ "windowResolution",	NULL,		true,  StateDatabase::ReadWrite, onResolutionChanged }
+	{ "windowResolution",	NULL,		true,  StateDatabase::ReadWrite, onResolutionChanged },
 };
 
 // default key bindings
@@ -760,6 +760,18 @@ int						main(int argc, char** argv)
 		if (defaultDBItems[i].callback != NULL)
 			BZDB->addCallback(defaultDBItems[i].name,
 								defaultDBItems[i].callback, NULL);
+	}
+	for (i = 0; i < countof(globalDBItems); ++i) {
+		assert(globalDBItems[i].name != NULL);
+		if (globalDBItems[i].value != NULL) {
+			BZDB->set(globalDBItems[i].name, globalDBItems[i].value);
+			BZDB->setDefault(globalDBItems[i].name, globalDBItems[i].value);
+		}
+		BZDB->setPersistent(globalDBItems[i].name, globalDBItems[i].persistent);
+		BZDB->setPermission(globalDBItems[i].name, globalDBItems[i].permission);
+		if (globalDBItems[i].callback != NULL)
+			BZDB->addCallback(globalDBItems[i].name,
+								globalDBItems[i].callback, NULL);
 	}
 
 	// other default DB entries

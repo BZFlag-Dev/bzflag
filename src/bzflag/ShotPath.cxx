@@ -56,12 +56,12 @@ FiringInfo::FiringInfo(const BaseLocalPlayer& tank, int id)
 	tank.getMuzzle(shot.pos);
 	const float* dir = tank.getForward();
 	const float* tankVel = tank.getVelocity();
-	shot.vel[0] = tankVel[0] + ShotSpeed * dir[0];
-	shot.vel[1] = tankVel[1] + ShotSpeed * dir[1];
-	shot.vel[2] = tankVel[2] + ShotSpeed * dir[2];
+	shot.vel[0] = tankVel[0] + atof(BZDB->get("shotSpeed").c_str()) * dir[0];
+	shot.vel[1] = tankVel[1] + atof(BZDB->get("shotSpeed").c_str()) * dir[1];
+	shot.vel[2] = tankVel[2] + atof(BZDB->get("shotSpeed").c_str()) * dir[2];
 	shot.dt = 0.0f;
 	flag = tank.getFlag();
-	lifetime = ReloadTime;
+	lifetime = atof(BZDB->get("reloadTime").c_str());
 }
 
 void*					FiringInfo::pack(void* buf) const
@@ -88,7 +88,7 @@ void*					FiringInfo::unpack(void* buf)
 
 ShotPath::ShotPath(const FiringInfo& info) :
 								firingInfo(info),
-								reloadTime(ReloadTime),
+								reloadTime(atof(BZDB->get("reloadTime").c_str())),
 								startTime(TimeKeeper::getTick()),
 								currentTime(TimeKeeper::getTick()),
 								expiring(false),
@@ -127,6 +127,7 @@ ShotPath::ShotPath(const FiringInfo& info) :
 		case MasqueradeFlag:
 		case SeerFlag:
 		case JammingFlag:
+		case BurrowFlag:
 		case WideAngleFlag:
 			strategy = new NormalShotStrategy(this);
 			break;

@@ -18,6 +18,7 @@ CXXFILES =				\
 	Flag.cxx			\
 	Ping.cxx			\
 	Team.cxx			\
+	global.cxx			\
 	$(NULL)
 
 targets: $(TARGETS)

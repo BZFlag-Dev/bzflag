@@ -85,27 +85,27 @@ void					Player::setId(PlayerId newID)
 float					Player::getRadius() const
 {
 	if (flag == ObesityFlag)
-		return TankRadius * ObeseFactor;
+		return atof(BZDB->get("tankRadius").c_str()) * atof(BZDB->get("obeseFactor").c_str());
 	else if (flag == TinyFlag)
-		return TankRadius * TinyFactor;
+		return atof(BZDB->get("tankRadius").c_str()) * atof(BZDB->get("tinyFactor").c_str());
 	else if (flag == ThiefFlag)
-		return TankRadius * ThiefTinyFactor;
-	return TankRadius;
+		return atof(BZDB->get("tankRadius").c_str()) * atof(BZDB->get("thiefTinyFactor").c_str());
+	return atof(BZDB->get("tankRadius").c_str());
 }
 
 void					Player::getMuzzle(float* m) const
 {
 	// okay okay, I should really compute the up vector instead of using [0,0,1]
-	float front = MuzzleFront;
+	float front = atof(BZDB->get("muzzleFront").c_str());
 	if (flag == ObesityFlag)
-		front *= ObeseFactor;
+		front *= atof(BZDB->get("obeseFactor").c_str());
 	else if (flag == TinyFlag)
-		front *= TinyFactor;
+		front *= atof(BZDB->get("tinyFactor").c_str());
 	else if (flag == ThiefFlag)
-		front *= ThiefTinyFactor;
+		front *= atof(BZDB->get("thiefTinyFactor").c_str());
 	m[0] = pos[0] + front * forward[0];
 	m[1] = pos[1] + front * forward[1];
-	m[2] = pos[2] + front * forward[2] + MuzzleHeight;
+	m[2] = pos[2] + front * forward[2] + atof(BZDB->get("muzzleHeight").c_str());
 }
 
 void					Player::move(const float* _pos, float _azimuth)
@@ -127,7 +127,7 @@ void					Player::move(const float* _pos, float _azimuth)
 
 	// compute teleporter proximity
 	if (World::getWorld())
-		teleporterProximity = World::getWorld()->getProximity(pos, TankRadius);
+		teleporterProximity = World::getWorld()->getProximity(pos, atof(BZDB->get("tankRadius").c_str()));
 }
 
 void					Player::setVelocity(const float* _velocity)
@@ -223,7 +223,7 @@ void					Player::updateSparks(float /*dt*/)
 {
 	// FIXME -- need animated alpha on tanks
 	if (flag != PhantomZoneFlag || !isFlagActive()) {
-		teleporterProximity = World::getWorld()->getProximity(pos, TankRadius);
+		teleporterProximity = World::getWorld()->getProximity(pos, atof(BZDB->get("tankRadius").c_str()));
 		if (teleporterProximity == 0.0f) {
 			// FIXME -- alpha = 1.0f;
 			return;
@@ -262,9 +262,12 @@ void					Player::addPlayerSceneNode(
 	transformSceneNode->translate.push(pos[0], pos[1], pos[2]);
 	transformSceneNode->rotate.push(0.0f, 0.0f, 1.0f, azimuth * 180.0f / M_PI);
 	if (flag == ObesityFlag)
-		transformSceneNode->scale.push(ObeseFactor, ObeseFactor, 1.0f);
+		transformSceneNode->scale.push(atof(BZDB->get("obeseFactor").c_str()), atof(BZDB->get("obeseFactor").c_str()), 1.0f);
 	else if (flag == TinyFlag)
-		transformSceneNode->scale.push(TinyFactor, TinyFactor, 1.0f);
+		transformSceneNode->scale.push(atof(BZDB->get("tinyFactor").c_str()), atof(BZDB->get("tinyFactor").c_str()), 1.0f);
+	else if (flag == BurrowFlag)
+		// FIXME -- should set clipping plane
+		transformSceneNode->scale.push(atof(BZDB->get("thiefTinyFactor").c_str()), atof(BZDB->get("thiefTinyFactor").c_str()), 1.0f);
 	else if (flag == NarrowFlag)
 		transformSceneNode->scale.push(1.0f, 0.01f, 1.0f);
 
@@ -292,7 +295,7 @@ void					Player::addPlayerSceneNode(
 
 	// add black cap
 	if (isAlive() && (isPaused() || isNotResponding())) {
-//    pausedSphere->move(pos, 1.5f * TankRadius);
+//    pausedSphere->move(pos, 1.5f * atof(BZDB->get("tankRadius").c_str()));
 //    group->pushChild(pauseSceneNode);
 	}
 }
@@ -389,7 +392,7 @@ bool					Player::getDeadReckoning(
 			*predictedAzimuth = inputAzimuth;
 
 		// update z with Newtownian integration (like LocalPlayer)
-		((Player*)this)->inputZSpeed += Gravity * (dt - dt2);
+		((Player*)this)->inputZSpeed += atof(BZDB->get("gravity").c_str()) * (dt - dt2);
 		((Player*)this)->inputPos[2] += inputZSpeed * (dt - dt2);
 	}
 	else {
@@ -435,6 +438,8 @@ bool					Player::getDeadReckoning(
 
 bool					Player::isDeadReckoningWrong() const
 {
+	float depthLimit = (getFlag() == BurrowFlag) ? atof(BZDB->get("burrowDepth").c_str()) : 0.0f;
+
 	// always send a new packet when some kinds of status change
 	if ((status & (Alive | Paused | Falling)) !=
       (inputStatus & (Alive | Paused | Falling)))
@@ -451,7 +456,7 @@ bool					Player::isDeadReckoningWrong() const
 	getDeadReckoning(predictedPos, &predictedAzimuth, predictedVel);
 
 	// always send a new packet on reckoned touchdown
-	if (predictedPos[2] < 0.0f) return true;
+	if (predictedPos[2] < depthLimit) return true;
 
 	// see if position and azimuth are close enough
 	if (fabsf(pos[0] - predictedPos[0]) > PositionTolerance) return true;
@@ -473,8 +478,10 @@ void					Player::doDeadReckoning()
 
 	// if hit ground then update input state (since we don't want to fall
 	// anymore)
-	if (predictedPos[2] < 0.0f) {
-		predictedPos[2] = 0.0f;
+
+	float depthLimit = (getFlag() == BurrowFlag) ? atof(BZDB->get("burrowDepth").c_str()) : 0.0f;
+	if (predictedPos[2] < depthLimit) {
+		predictedPos[2] = depthLimit;
 		predictedVel[2] = 0.0f;
 		inputStatus &= ~Falling;
 		inputZSpeed = 0.0f;

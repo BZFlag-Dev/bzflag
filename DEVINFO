@@ -323,6 +323,7 @@ ImageFile	-- a generic image file reader
 MediaFile	-- static methods for reading media files of known types
 SGIImageFile	-- an SGI image format file reader
 WaveAudioFile	-- a WAV audio format file reader
+OggAudioFile	-- an Ogg Vorbis audio format file reader (uses libvorbisfile)
 
 Details -- mplatform
 ====================
