@@ -19,8 +19,6 @@
 
 #include "BzfVisual.h"
 #include "WinDisplay.h"
-#define WINVER 0x0400
-#include <windows.h>
 
 class WinVisual : public BzfVisual {
   public:

@@ -35,8 +35,6 @@ static const char copyright[] = "Copyright (c) 1993 - 2004 Tim Riker";
 #include <iomanip>
 
 #if defined(_WIN32)
-#define WINVER 0x0400
-#include <windows.h>
 #define popen _popen
 #define pclose _pclose
 #define sleep(_x) Sleep(1000 * (_x))

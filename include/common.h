@@ -18,7 +18,7 @@
 #define	BZF_COMMON_H
 
 // this should always be the very FIRST header
-#include <config.h>
+#include "config.h"
 
 #if (_MSC_VER)
 // turn off bogus `this used in base member initialization list'

@@ -15,17 +15,6 @@
 
 /** this file contains headers necessary for opengl */
 
-#ifdef _WIN32
-/* windows wants to include winsock but we can't allow that.  we
- * include winsock2.h (in network.h) and the two don't play together.
- */
-#  define _WINSOCKAPI_
-/* including windows.h slows down compiles a *lot*.  should
- * replace this with only the necessary definitions.
- */
-#  include <windows.h>
-#endif // _WIN32
-
 #ifdef __APPLE__
 #  include <OpenGL/OpenGL.h>
 #  include <OpenGL/gl.h>

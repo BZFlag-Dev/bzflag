@@ -18,8 +18,6 @@
 #define	BZF_WINMEDIA_H
 
 #include "BzfMedia.h"
-#define WINVER 0x0400
-#include <windows.h>
 #include <dsound.h>
 
 class WinWindow;

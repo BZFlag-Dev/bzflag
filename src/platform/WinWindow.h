@@ -20,7 +20,6 @@
 #include "BzfWindow.h"
 #include "WinDisplay.h"
 #include "WinVisual.h"
-#include <windows.h>
 
 class WinWindow : public BzfWindow {
   public:

@@ -14,10 +14,6 @@
 #include <stdio.h>
 #include <stdarg.h>
 #include "bzfio.h"
-#if defined(_WIN32)
-#define WINVER 0x0400
-#include <windows.h>
-#endif
 #include "common.h"
 #include "BundleMgr.h"
 #include "Bundle.h"

@@ -23,9 +23,6 @@
 #endif
 
 #ifdef _WIN32
-  #define WINVER 0x0400
-  #define WIN32_LEAN_AND_MEAN        // Exclude rarely-used stuff from Windows headers
-  #include <windows.h>
   #include <io.h>
   #include <direct.h>
 #else

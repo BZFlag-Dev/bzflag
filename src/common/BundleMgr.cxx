@@ -17,9 +17,6 @@
 #if (!defined(_WIN32) && !defined(WIN32))
 #include <sys/types.h>
 #include <dirent.h>
-#else
-#define WINVER 0x0400
-#include <windows.h>
 #endif
 
 #include <string>

@@ -10,9 +10,9 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#include "callbacks.h"
 #include "LocalPlayer.h"
-#include "HUDRenderer.h"
+
+
 
 extern LocalPlayer*	myTank;
 extern HUDRenderer*	hud;

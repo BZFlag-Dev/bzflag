@@ -10,15 +10,12 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#include <string.h>
-// glu used to resample textures for mipmaps;  should use something better.
 #ifdef _WIN32
-#define WINVER 0x0400
-#include <windows.h>
+#include "win32.h"
 #endif
 
-#include "bzfgl.h"
 #include "common.h"
+#include "bzfgl.h"
 #include "OpenGLTexture.h"
 #include "OpenGLGState.h"
 

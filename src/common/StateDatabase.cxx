@@ -13,10 +13,6 @@
 #if defined(_MSC_VER)
 #pragma warning(4:4503)
 #endif
-#ifdef _WIN32
-#define WINVER 0x0400
-#include <windows.h>
-#endif
 
 
 #include "StateDatabase.h"
