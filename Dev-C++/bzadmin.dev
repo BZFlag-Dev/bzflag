@@ -10,8 +10,8 @@ Libs=
 PrivateResource=
 ResourceIncludes=
 MakeIncludes=
-Compiler=-Wall -Werror
-CppCompiler=-Wall -Werror
+Compiler=-Wall -Werror_@@_
+CppCompiler=-Wall -Werror_@@_
 Linker=-lwsock32 -lwinmm_@@_
 IsCpp=1
 Icon=
@@ -27,7 +27,7 @@ CustomMakefile=
 IncludeVersionInfo=0
 SupportXPThemes=0
 CompilerSet=0
-CompilerSettings=0000000001010000000000
+CompilerSettings=0000000001010000000100
 
 [Unit1]
 FileName=..\src\bzadmin\UIMap.cxx
