@@ -303,7 +303,6 @@ void CTextToolView::OnFontSavefontfiles()
 		case FW_EXTRALIGHT:
 			szType = "ExtraLight";
 			break;
-			break;
 		case FW_LIGHT: 
 			szType = "Light";
 			break;
@@ -488,70 +487,7 @@ void CTextToolView::OnFontSavefontfiles()
 	  delete [] bz;
 	  delete [] b;
 	  delete f;
-/*
-		int iBPP = 4;
 
-		BITMAPFILEHEADER	FileHeader;
-		BITMAPINFOHEADER	InfoHeader;
-	
-		FileHeader.bfType = 0x4d42;
-		FileHeader.bfSize = sizeof(BITMAPFILEHEADER)+sizeof(BITMAPINFOHEADER) + (m_iMaxTextureWidth * iPictureY * iBPP);
-		FileHeader.bfReserved1 = 0;
-		FileHeader.bfReserved2 = 0;
-		FileHeader.bfOffBits = sizeof(BITMAPFILEHEADER)+sizeof(BITMAPINFOHEADER);
-
-		fwrite(&FileHeader,sizeof(BITMAPFILEHEADER),1,fp);
-
-		InfoHeader.biSize = sizeof(BITMAPINFOHEADER);
-		InfoHeader.biWidth = m_iMaxTextureWidth;
-		InfoHeader.biHeight = iPictureY;
-		InfoHeader.biPlanes = 1;
-		InfoHeader.biBitCount = iBPP*8;
-		InfoHeader.biCompression = BI_RGB;
-		InfoHeader.biSizeImage = (m_iMaxTextureWidth * iPictureY * iBPP);
-		InfoHeader.biXPelsPerMeter = 350;
-		InfoHeader.biYPelsPerMeter = 350;
-		InfoHeader.biClrUsed = 0;
-		InfoHeader.biClrImportant  = 0;
-
-		fwrite(&InfoHeader,sizeof(BITMAPINFOHEADER),1,fp);
-
-		unsigned char *szData = (unsigned char*)malloc(m_iMaxTextureWidth * iPictureY * iBPP);
-
-		unsigned char	*pPos = szData;
-
-		COLORREF       rPixel = RGB(0,0,0);
-
-		// write black to full the buffer
-		for (int b = 0; b < (iPictureY-m_iMaxY); b++)
-		{
-			for (int x = 0; x < m_iMaxTextureWidth; x++)
-			{
-				*pPos++ = GetBValue(rPixel);
-				*pPos++ = GetGValue(rPixel);
-				*pPos++ = GetRValue(rPixel);
-				*pPos++ = 0;
-			}
-		}
-		
-		for (int y = m_iMaxY-1; y >= 0;y--)
-		{
-			for (int x = 0; x < m_iMaxTextureWidth; x++)
-			{
-				rPixel = pDrawDC->GetPixel(x,y);
-
-				*pPos++ = GetBValue(rPixel);
-				*pPos++ = GetGValue(rPixel);
-				*pPos++ = GetRValue(rPixel);
-				if (iBPP >3)
-				{
-					*pPos++ = (GetBValue(rPixel)+GetGValue(rPixel)+GetRValue(rPixel))/3;
-				}
-			}
-		}
-		fwrite(szData,m_iMaxTextureWidth * iPictureY * iBPP,1,fp);
-		fclose(fp);
-*/
 	  // pDrawDC->DeleteDC();
 	  // delete(pDrawDC);
 	  ReleaseDC(pDC);
