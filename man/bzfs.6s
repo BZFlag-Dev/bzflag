@@ -344,6 +344,7 @@ UDP connection is not working. Try using TCP only on servers that allow it.
 .SH GENERAL SERVER COMMANDS
 
 .TP
+.br
 .B /lagstats
 Lists network delays by player. Example:
 .ft CW
@@ -414,8 +415,8 @@ Shows all flags with information Example:
 0: p:-1 r:1 g:1 1:V s:1 p:159.1x43.2x0.0
 1: p:2 r:1 g:1 1:SW s:1 p:209.1x143.2x10.0
 2: p:-1 r:1 g:3 1:L s:1 p:-29.1x301.2x0.0
-.ft R
 
+.br
 .TP
 .B /kick {playerName}
 Kick a named player off the server.Example:
