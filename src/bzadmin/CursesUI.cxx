@@ -327,8 +327,11 @@ void CursesUI::updateMainWinFromBuffer(unsigned int numberOfMessages) {
   start = (start < 0 ? 0 : start);
   unsigned int end = start + numberOfMessages;
   end = (end >= msgBuffer.size() ? msgBuffer.size() : end);
-  for (unsigned int i = start ; i < end; ++i)
+  for (unsigned int i = start ; i < end; ++i) {
+    wattron(mainWin, COLOR_PAIR(msgBuffer[i].second));
     waddstr(mainWin, (msgBuffer[i].first + "\n").c_str());
+    wattroff(mainWin, COLOR_PAIR(msgBuffer[i].second));
+  }
   wrefresh(mainWin);
 }
 
