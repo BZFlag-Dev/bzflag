@@ -49,8 +49,8 @@ public:
   unsigned short won;  // wins by team members
   unsigned short lost; // losses by team members
   
-  static float tankColor[NumTeams][3];
-  static float radarColor[NumTeams][3];
+  static float tankColor[NumTeams][4];
+  static float radarColor[NumTeams][4];
 };
 
 

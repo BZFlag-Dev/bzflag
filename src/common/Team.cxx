@@ -14,23 +14,23 @@
 #include "Team.h"
 #include "Pack.h"
 
-float			Team::tankColor[NumTeams][3] = {
-				{ 0.0f, 0.0f, 0.0f },   // rogue
-				{ 1.0f, 0.0f, 0.0f },   // red
-				{ 0.0f, 1.0f, 0.0f },   // green
-				{ 0.2f, 0.2f, 1.0f },   // blue
-				{ 1.0f, 0.0f, 1.0f },   // purple
-				{ 0.0f, 0.0f, 0.0f },   // observer
-				{ 1.0f, 1.0f, 1.0f }    // rabbit
+float			Team::tankColor[NumTeams][4] = {
+				{ 0.0f, 0.0f, 0.0f, 1.0f },   // rogue
+				{ 1.0f, 0.0f, 0.0f, 1.0f },   // red
+				{ 0.0f, 1.0f, 0.0f, 1.0f },   // green
+				{ 0.2f, 0.2f, 1.0f, 1.0f },   // blue
+				{ 1.0f, 0.0f, 1.0f, 1.0f },   // purple
+				{ 0.0f, 0.0f, 0.0f, 1.0f },   // observer
+				{ 1.0f, 1.0f, 1.0f, 1.0f }    // rabbit
 			};
-float			Team::radarColor[NumTeams][3] = {
-				{ 1.0f, 1.0f, 0.0f },	// rogue
-				{ 1.0f, 0.15f, 0.15f }, // red
-				{ 0.2f, 0.9f, 0.2f },	// green
-				{ 0.08f, 0.25, 1.0f },	// blue
-				{ 1.0f, 0.4f, 1.0f },	// purple
-				{ 0.0f, 0.0f, 0.0f },	// observer
-				{ 1.0f, 1.0f, 1.0f }    // rabbit
+float			Team::radarColor[NumTeams][4] = {
+				{ 1.0f, 1.0f, 0.0f, 1.0f },	// rogue
+				{ 1.0f, 0.15f, 0.15f, 1.0f }, // red
+				{ 0.2f, 0.9f, 0.2f, 1.0f },	// green
+				{ 0.08f, 0.25, 1.0f, 1.0f },	// blue
+				{ 1.0f, 0.4f, 1.0f, 1.0f },	// purple
+				{ 0.0f, 0.0f, 0.0f, 1.0f },	// observer
+				{ 1.0f, 1.0f, 1.0f, 1.0f }    // rabbit
 			};
 
 Team::Team()
@@ -90,7 +90,7 @@ const char*		Team::getName(TeamColor team) // const
 
 const float*		Team::getTankColor(TeamColor team) // const
 {
-  if (int(team) < 0) {
+  if ((int(team) < 0) || (int(team) >= NumTeams)) {
     return tankColor[0];
   }
   return tankColor[int(team)];
@@ -98,7 +98,7 @@ const float*		Team::getTankColor(TeamColor team) // const
 
 const float*		Team::getRadarColor(TeamColor team) // const
 {
-  if (int(team) < 0) {
+  if ((int(team) < 0) || (int(team) >= NumTeams)) {
     return radarColor[0];
   }
   return radarColor[int(team)];
@@ -115,15 +115,17 @@ void			Team::setColors(TeamColor team,
 {
   const int teamIndex = int(team);
   // ignore bogus team color
-  if (teamIndex < 0)
+  if ((teamIndex < 0) || (teamIndex >= NumTeams))
     return;
 
   tankColor[teamIndex][0] = tank[0];
   tankColor[teamIndex][1] = tank[1];
   tankColor[teamIndex][2] = tank[2];
+  tankColor[teamIndex][3] = tank[3];
   radarColor[teamIndex][0] = radar[0];
   radarColor[teamIndex][1] = radar[1];
   radarColor[teamIndex][2] = radar[2];
+  radarColor[teamIndex][3] = radar[3];
 }
 
 // Local Variables: ***
