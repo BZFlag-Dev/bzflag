@@ -345,3 +345,4 @@ void updateDatabases()
   if(userDatabaseFile.size())
     writePermsFile(userDatabaseFile);
 }
+// ex: shiftwidth=2 tabstop=8
