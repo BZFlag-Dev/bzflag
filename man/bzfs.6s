@@ -12,6 +12,7 @@ bzfs \- BZFlag game server
 [\fB\-c\fR]
 [\fB\-conf \fIconfigfile\fR]
 [\fB\-cr\fR]
+[\fB\-d\fR]
 [\fB\+f \fR{\fIgood\fR|\fIflag-id\fR}[\fI{count}\fR]]
 [\fB\-f \fR{\fIbad\fR|\fIflag-id\fR}]
 [\fB\-fb\fR]
@@ -36,7 +37,7 @@ bzfs \- BZFlag game server
 [\fB\-p \fIport\fR]
 [\fB\-passdb \fIfile\fR]
 [\fB\-passwd \fIpassword\fR]
-[\fB\-pr \fIport\fR]
+[\fB\-printscore\fR]
 [\fB\-public \fIdescription\fR]
 [\fB\-publicaddr \fIaddress\fR[\fI:port\fR]]
 [\fB\-publiclist \fIurl\fR]
@@ -110,6 +111,9 @@ bzfs options, rather than setting them on the command line.
 .B -cr
 Enables the capture-the-flag style game with random map.  By default,
 the free-for-all style is used.
+.TP
+.B -d
+Increase debugging level. More -d are used, more debugging info are obtained.
 .TP
 \fB+f\fR {\fIgood\fR|\fIflag-id\fR}[\fI{count}\fR]
 Forces the existence of the given flag.  If specified multiple times
@@ -210,11 +214,8 @@ Load passwords from file
 Specify a server administrator password for use in remote administration
 such as /kick messages.
 .TP
-\fB-pr\fI port\fR
-Listen for reconnects on \fIport\fR. The current bzflag protocol is a little
-braindead in that it requires clients to reconnect to another port after
-having registered on the main port. Both this and the main port must be open
-for incoming TCP connections.
+.B -printscore
+Write score to stdout whenever it changes
 .TP
 \fB-public\fI description\fR
 Advertise this server on the internet with the given \fIdescription\fR.
@@ -399,7 +400,8 @@ More experienced players will still dominate the game, but beginners will
 have an easier time making kills.
 .SS Networking
 Communication between the server and clients (i.e. between \fBbzfs\fR and
-\fBbzflag\fR) during a game is via TCP.  Use the \fB-help\fR option to get
+\fBbzflag\fR) during a game is via TCP and UDP.  Use the \fB-help\fR option
+to get
 the server's default port.  If there's a firewall between the server and
 client, the firewall must accept connections from the client to this port
 and forward them to the server.  See \fBbzfrelay\fR for a BZFlag firewall
@@ -413,12 +415,12 @@ advertised using \fI-public\fR by querying \fBbzfls\fR servers.
 Game information is relayed through the server. Some communication between
 clients, such as position and orientation information, is normally sent via UDP
 packets.  Other data, like flag grab and kill messages, are sent to the server
-via TCP. The setver then turns around and broadcasts these packets  to all
+via TCP. The server then turns around and broadcasts these packets  to all
 players. Since being in a game implies connection to the server, all players
-are guaranteed to get all messages sent via TCP.  But the multicast UDP
+are guaranteed to get all messages sent via TCP.  But the UDP
 packets may be discarded.  If other players can see your tank in the game but
 it never appears to move and shots go through it, chances are high that your
-UDP connection is not working. Try using TCP only on servers that allow it.
+UDP connection is not working.
 
 .SH GENERAL SERVER COMMANDS
 
