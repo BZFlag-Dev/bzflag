@@ -22,10 +22,12 @@
 #include <string>
 #include <assert.h>
 
+#ifdef HAVE_KRB5
 krb5_context   Authentication::context        = NULL;
 krb5_ccache    Authentication::cc             = NULL;
 krb5_principal Authentication::client;
 krb5_creds     Authentication::my_creds;
+#endif
 bool           Authentication::authentication = false;
 
 Authentication::Authentication() : trusted(false)
