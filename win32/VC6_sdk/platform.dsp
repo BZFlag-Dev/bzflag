@@ -159,10 +159,6 @@ SOURCE=..\..\include\BzfMedia.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\include\BzfString.h
-# End Source File
-# Begin Source File
-
 SOURCE=..\..\include\BzfVisual.h
 # End Source File
 # Begin Source File
@@ -196,10 +192,6 @@ SOURCE=..\..\include\Pack.h
 # Begin Source File
 
 SOURCE=..\..\include\PlatformFactory.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\include\resource.h
 # End Source File
 # Begin Source File
 

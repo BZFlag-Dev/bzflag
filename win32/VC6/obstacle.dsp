@@ -139,10 +139,6 @@ SOURCE=..\..\include\bzfio.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\include\BzfString.h
-# End Source File
-# Begin Source File
-
 SOURCE=..\..\include\CallbackList.h
 # End Source File
 # Begin Source File
@@ -156,14 +152,6 @@ SOURCE=.\config.h
 # Begin Source File
 
 SOURCE=..\..\include\global.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\include\Intersect.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\include\Intersect.h
 # End Source File
 # Begin Source File
 

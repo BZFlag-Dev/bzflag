@@ -119,10 +119,6 @@ SOURCE=..\..\src\ogl\RenderNode.cxx
 # PROP Default_Filter "h;hpp;hxx;hm;inl"
 # Begin Source File
 
-SOURCE=..\include\bzfio.h
-# End Source File
-# Begin Source File
-
 SOURCE=..\..\include\common.h
 # End Source File
 # Begin Source File

@@ -237,6 +237,10 @@ SOURCE=..\..\src\bzflag\WorldPlayer.cxx
 # PROP Default_Filter "h;hpp;hxx;hm;inl"
 # Begin Source File
 
+SOURCE=..\..\src\bzflag\ActionBinding.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\include\Address.h
 # End Source File
 # Begin Source File
@@ -477,10 +481,6 @@ SOURCE="C:\Program Files\Microsoft SDK\include\PropIdl.h"
 # End Source File
 # Begin Source File
 
-SOURCE=..\include\Protocol.h
-# End Source File
-# Begin Source File
-
 SOURCE=..\..\include\PyramidBuilding.h
 # End Source File
 # Begin Source File
@@ -606,10 +606,6 @@ SOURCE=..\..\include\TimeBomb.h
 # Begin Source File
 
 SOURCE=..\..\include\TimeKeeper.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\include\version.h
 # End Source File
 # Begin Source File
 

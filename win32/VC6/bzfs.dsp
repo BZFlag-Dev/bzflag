@@ -303,10 +303,6 @@ SOURCE=..\..\include\PlayerState.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\include\Protocol.h
-# End Source File
-# Begin Source File
-
 SOURCE=..\..\include\ShotUpdate.h
 # End Source File
 # Begin Source File
@@ -336,10 +332,6 @@ SOURCE=..\..\include\TimeBomb.h
 # Begin Source File
 
 SOURCE=..\..\include\TimeKeeper.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\include\version.h
 # End Source File
 # Begin Source File
 

@@ -481,10 +481,6 @@ SOURCE="C:\Program Files\Microsoft SDK\include\PropIdl.h"
 # End Source File
 # Begin Source File
 
-SOURCE=..\include\Protocol.h
-# End Source File
-# Begin Source File
-
 SOURCE=..\..\include\PyramidBuilding.h
 # End Source File
 # Begin Source File
@@ -610,10 +606,6 @@ SOURCE=..\..\include\TimeBomb.h
 # Begin Source File
 
 SOURCE=..\..\include\TimeKeeper.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\include\version.h
 # End Source File
 # Begin Source File
 
