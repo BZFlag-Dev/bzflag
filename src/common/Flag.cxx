@@ -166,13 +166,9 @@ void* FlagDesc::unpack(void* buf, FlagDesc* &desc)
   return buf;
 }
 
-static std::map<std::string, FlagDesc*> *__flagMap = NULL;
-
 std::map<std::string, FlagDesc*>& FlagDesc::getFlagMap() {
-  if (__flagMap == NULL) {
-    __flagMap = new map<std::string, FlagDesc*>;
-  }
-  return *__flagMap;
+  static std::map<std::string, FlagDesc*> flagMap;
+  return flagMap;
 }
 
 void*			Flag::pack(void* buf) const
