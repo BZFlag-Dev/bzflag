@@ -2243,7 +2243,7 @@ static void addPlayer(int playerIndex)
   // automatically assign the player's team
   if ((clOptions->autoTeam) || (t == AutomaticTeam)) {
     std::vector<TeamColor> minIndex;
-    int mostEmpty = 0;
+    int mostEmpty = softmaxPlayers;
 
     for (int i = (int)RogueTeam; i < (int)ObserverTeam; i++) {
       // if the team is valid and not full
