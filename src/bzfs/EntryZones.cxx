@@ -166,9 +166,6 @@ void EntryZones::makeSplitLists (int zone,
                  ((team = matchTeamColor(mit->first.c_str()+1)) != -1)) {
           safety.push_back ((TeamColor)team);
         }
-        else if (mit->first == "") {
-          // seems to always be there
-        }
         else {
           printf ("EntryZones::makeSplitLists() ERROR on (%s)\n", mit->first.c_str());
         }

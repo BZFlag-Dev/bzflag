@@ -45,19 +45,23 @@ bool CustomZone::read(const char *cmd, std::istream& input) {
         FlagSet &fs = Flag::getGoodFlags();
 	for (FlagSet::iterator it = fs.begin(); it != fs.end(); ++it) {
 	  FlagType *f = *it;
-	  qualifiers.push_back(f->flagAbbv);
+	  if (f->endurance != FlagNormal) { // Null and Team flags
+	    qualifiers.push_back(f->flagAbbv);
+	  }
 	}
       }
       else if (flag == "bad") {
 	FlagSet &fs = Flag::getBadFlags();
 	for (FlagSet::iterator it = fs.begin(); it != fs.end(); ++it) {
 	  FlagType *f = *it;
-	  qualifiers.push_back(f->flagAbbv);
+	  if (f->endurance != FlagNormal) { // Null and Team flags
+	    qualifiers.push_back(f->flagAbbv);
+	  }
 	}
       }
       else {
         type = Flag::getDescFromAbbreviation(flag.c_str());
-        if (type == NULL)
+        if (type == Flags::Null)
           return false;
         qualifiers.push_back(flag);
       }
