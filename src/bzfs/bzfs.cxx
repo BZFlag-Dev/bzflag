@@ -3320,15 +3320,21 @@ static void handleCommand(int t, const void *rawbuf)
 	                     HiddenPacket);
 	}
 	parseCommand(message, t);
-      } else if (targetPlayer == AdminPlayers
-		 && playerData->accessInfo.hasPerm
-		 (PlayerAccessInfo::adminMessages)) {
-	sendMessage (t, AdminPlayers, message);
       }
-      // check if the target player is invalid
-      else if (realPlayer(targetPlayer)) {
+      else if (targetPlayer == AdminPlayers) {
+        if (playerData->accessInfo.hasPerm(PlayerAccessInfo::adminMessages)) {
+	  sendMessage (t, AdminPlayers, message);
+        }
+        else {
+	  sendMessage(ServerPlayer, t,
+	              "You do not have permission to speak on the admin channel.");
+        }
+      }
+      else if (realPlayer(targetPlayer) || (targetPlayer == AllPlayers)) {
+        // most messages should come here
 	sendMessage(t, targetPlayer, message);
-      } else {
+      }
+      else {
 	sendMessage(ServerPlayer, t, "The player you tried to talk to does not exist!");
       }
       break;
