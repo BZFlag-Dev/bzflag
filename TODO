@@ -17,8 +17,23 @@ THESE SHOULD HAPPEN BEFORE THE NEXT RELEASE:
 
 * complete the tetrahedron collision code (trepan)
 
+* fix the misalignment between the selected server and the one that
+  is joined when the Server List Cache is enabled.
+
+* make the TextureManager mode switching work   :)
+
 
 THESE ARE LOWER PRIORITY
+
+* separate the map from the game configuration parameters in the
+  world database such that a game configuration change doesn't
+  necessitate a full world download. it's probably easiest to always
+  download the game config and the map hash, and then download the
+  map as required.
+
+* use the zlib compression library to compress the map information
+  that goes over the wire (some testing on rather large maps shows 
+  approx. 85% compression)
 
 * instead of kicking laggy players, they should be made observers
   unless there are no observer slots left (then kick).
