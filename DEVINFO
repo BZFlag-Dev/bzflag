@@ -25,8 +25,8 @@ bzfrelay	-- the BZFlag relay (for relaying to servers)
 bzadmin		-- the BZFlag admin tool and chat client
 
 Note that only a few directories contain code directly related to the game
-BZFlag.  In particular: bzflag, bzfls, and bzfs. (And obstacle, but that will
-hopefully be made more general some day.) The rest of the code could
+BZFlag.  In particular: bzflag, bzfls, bzadmin, and bzfs. (And obstacle, but 
+that will hopefully be made more general some day.) The rest of the code could
 potentially be used in a different game. If your code is BZFlag specific then
 it should go into one of the above directories (game if used by more than one
 app, otherwise into the appropriate app directory).  If not then put it in one
