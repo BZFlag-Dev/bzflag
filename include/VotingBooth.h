@@ -73,6 +73,7 @@ class VotingBooth
   /** lookup the id of a vote option
    */
   vote_t getOptionIDFromString(std::string name);
+  std::string getStringFromOptionID(vote_t id);
 
   /** a given user id/name responds and votes to a particular poll
    * option.
