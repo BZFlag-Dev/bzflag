@@ -30,6 +30,9 @@
 				var freeForAll = (mainform.game_style.value == "ffa");	
 
 				var rabbit = (mainform.game_style.value == "rc");
+				mainform.world_type.disabled = mainform.game_style.value == "bc";
+				if (mainform.world_type.disabled)
+					mainform.world_type.checked = false;
 				mainform.allow_teleporters.disabled = mainform.world_type.checked;
 				mainform.world_file.disabled = !mainform.world_type.checked;
 				mainform.randomly_orient_buildings.disabled = mainform.world_type.checked;
@@ -734,7 +737,7 @@
 							<td>World File</td>
 							<td colspan="2">
 								<input type="checkbox" name="world_type" onClick="return ableControls()" title="Whether or not the world is based on a file"/>
-								<input type="file" name="world_file" title="World file to load"/>
+								<input type="file" name="world_file" title="World file to load" disabled/>
 							</td>
 						</tr>
 						<tr>
