@@ -905,6 +905,7 @@ void			LocalPlayer::setNemesis(const Player* _nemesis)
 
 void			LocalPlayer::setRecipient(const Player* _recipient)
 {
+  if ((_recipient == NULL) || (_recipient->getId() <= LastRealPlayer))
 	recipient = _recipient;
 }
 
