@@ -216,6 +216,7 @@ copy debug\*.pdb ..\..\*.pdb
 		</Configuration>
 		<Configuration
 			Name="KRB5 Release|Win32"
+			IntermediateDirectory="$(ConfigurationName)"
 			ConfigurationType="1">
 			<Tool
 				Name="VCCLCompilerTool"
@@ -381,6 +382,9 @@ copy debug\*.pdb ..\..\*.pdb
 			</File>
 			<File
 				RelativePath="..\..\src\bzflag\ForceFeedback.cxx">
+			</File>
+			<File
+				RelativePath="..\..\src\bzflag\LoginMenu.cxx">
 			</File>
 			<File
 				RelativePath="..\..\src\bzflag\MainWindow.cxx">
@@ -1437,6 +1441,9 @@ copy debug\*.pdb ..\..\*.pdb
 			</File>
 			<File
 				RelativePath="..\..\src\bzflag\LocalPlayer.h">
+			</File>
+			<File
+				RelativePath="..\..\src\bzflag\LoginMenu.h">
 			</File>
 			<File
 				RelativePath="..\..\src\bzflag\MainMenu.h">
