@@ -69,27 +69,22 @@ public:
   void 	      incSpamWarns();
   int	      getSpamWarns();
   void        resetPlayer(bool ctf);
-  void        removePlayer();
   void        setRestartOnBase(bool on);
   bool        shouldRestartAtBase();
   bool        isPlaying();
-  bool        exist();
   void        signingOn();
   bool        isAlive();
   bool        isDead();
   void        setAlive();
   void        setDead();
   bool        isPaused();
-  bool        isNotResponding();
   bool        isBot();
   bool        isHuman();
   void       *packUpdate(void *buf);
   void       *packId(void *buf);
-  void        unpackEnter(void *buf);
+  bool        unpackEnter(void *buf, uint16_t &rejectCode, char *rejectMsg);
   const char *getCallSign() const;
-  bool        isCallSignReadable();
   const char *getEMail() const;
-  bool        isEMailReadable();
   void       *packVirtualFlagCapture(void *buf);
   bool        isTeam(TeamColor team) const;
   bool        isObserver() const;
@@ -111,7 +106,6 @@ public:
   bool        isTooMuchIdling(TimeKeeper tm, float kickThresh);
   bool        hasStartedToNotRespond();
   void        hasSent(char message[]);
-  void        addFlagToHistory();
   bool        hasPlayedEarly();
   void        setPlayedEarly();
   void        setReplayState(PlayerReplayState state);
@@ -125,6 +119,8 @@ private:
 
   void        cleanCallSign();
   void        cleanEMail();
+  bool        isCallSignReadable();
+  bool        isEMailReadable();
 
   int         playerIndex;
 

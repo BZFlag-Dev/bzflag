@@ -77,10 +77,6 @@ bool PlayerInfo::isPlaying() {
   return state > PlayerInLimbo;
 };
 
-bool PlayerInfo::exist() {
-  return state != PlayerNoExist;
-};
-
 void PlayerInfo::signingOn() {
   state = PlayerDead;
 };
@@ -106,10 +102,6 @@ bool PlayerInfo::isPaused() {
   return paused;
 };
 
-bool PlayerInfo::isNotResponding() {
-  return notResponding;
-};
-
 bool PlayerInfo::isBot() {
   return type == ComputerPlayer;
 };
@@ -130,7 +122,8 @@ void *PlayerInfo::packId(void *buf) {
   return buf;
 }
 
-void PlayerInfo::unpackEnter(void *buf) {
+bool PlayerInfo::unpackEnter(void *buf, uint16_t &rejectCode, char *rejectMsg)
+{
   // data: type, team, name, email
   uint16_t _type;
   int16_t _team;
@@ -142,6 +135,32 @@ void PlayerInfo::unpackEnter(void *buf) {
   buf = nboUnpackString(buf, email, EmailLen);
   cleanCallSign();
   cleanEMail();
+
+  // don't allow empty callsign
+  if (callSign[0] == '\0') {
+    rejectCode   = RejectBadCallsign;
+    strcpy(rejectMsg, "The callsign was rejected.  Try a different callsign.");
+    return false;
+  }
+  // no spoofing the server name
+  if (strcasecmp(callSign, "SERVER") == 0) {
+    rejectCode   = RejectRepeatCallsign;
+    strcpy(rejectMsg, "The callsign specified is already in use.");
+    return false;
+  }
+  if (!isCallSignReadable()) {
+    DEBUG2("rejecting unreadable callsign: %s\n", callSign);
+    rejectCode   = RejectBadCallsign;
+    strcpy(rejectMsg, "The callsign was rejected.  Try a different callsign.");
+    return false;
+  }
+  if (!isEMailReadable()) {
+    DEBUG2("rejecting unreadable player email: %s (%s)\n", callSign, email);
+    rejectCode   = RejectBadEmail;
+    strcpy(rejectMsg, "The e-mail was rejected.  Try a different e-mail.");
+    return false;
+  }
+  return true;
 };
 
 const char *PlayerInfo::getCallSign() const {

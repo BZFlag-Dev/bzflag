@@ -1446,13 +1446,6 @@ static void addPlayer(int playerIndex)
   if (!playerData)
     return;
 
-  // don't allow empty callsign
-  if (playerData->player.getCallSign()[0] == '\0') {
-    rejectPlayer(playerIndex, RejectBadCallsign,
-                 "The callsign was rejected.  Try a different callsign.");
-    return;
-  }
-
   GameKeeper::Player *otherData;
   // look if there is as name clash, we won't allow this
   int i;
@@ -1469,13 +1462,6 @@ static void addPlayer(int playerIndex)
     }
   }
   
-  // no spoofing the server name
-  if (strcasecmp (playerData->player.getCallSign(), "SERVER") == 0) {
-     rejectPlayer(playerIndex, RejectRepeatCallsign,
-                  "The callsign specified is already in use.");
-     return;
-  }
-
   // make sure the callsign is not obscene/filtered
   if (clOptions->filterCallsigns) {
     DEBUG2("checking callsign: %s\n",playerData->player.getCallSign());
@@ -1490,14 +1476,6 @@ static void addPlayer(int playerIndex)
     }
   }
 
-  if (!playerData->player.isCallSignReadable()) {
-    DEBUG2("rejecting unreadable callsign: %s\n",
-	   playerData->player.getCallSign());
-    rejectPlayer(playerIndex, RejectBadCallsign,
-                 "The callsign was rejected.  Try a different callsign.");
-    return;
-  }
-
   // make sure the email is not obscene/filtered
   if (clOptions->filterCallsigns) {
     DEBUG2("checking email: %s\n",playerData->player.getEMail());
@@ -1510,16 +1488,6 @@ static void addPlayer(int playerIndex)
       return ;
     }
   }
-
-  if (!playerData->player.isEMailReadable()) {
-    DEBUG2("rejecting unreadable player email: %s (%s)\n", 
-	   playerData->player.getCallSign(),
-	   playerData->player.getEMail());
-    rejectPlayer(playerIndex, RejectBadEmail,
-                 "The e-mail was rejected.  Try a different e-mail.");
-    return;
-  }
-
 
   // no quick rejoining, make 'em wait
   float waitTime = rejoinList.waitTime (playerIndex);
@@ -3092,10 +3060,16 @@ static void handleCommand(int t, const void *rawbuf)
   switch (code) {
     // player joining
     case MsgEnter: {
-      playerData->player.unpackEnter(buf);
+      uint16_t rejectCode;
+      char     rejectMsg[128];
+      bool result = playerData->player.unpackEnter(buf, rejectCode, rejectMsg);
       DEBUG1("Player %s [%d] has joined from %s\n",
 	     playerData->player.getCallSign(), t, handler->getTargetIP());
-      addPlayer(t);
+      if (result) {
+	addPlayer(t);
+      } else {
+	rejectPlayer(t, rejectCode, rejectMsg);
+      }
       break;
     }
 
