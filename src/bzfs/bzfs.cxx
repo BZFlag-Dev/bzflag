@@ -2627,6 +2627,17 @@ void zapFlag(int flagIndex)
   resetFlag(flagIndex);
 }
 
+// Take into account the quality of player wins/(wins+loss)
+// Try to penalize winning casuality 
+static float rabbitRank (PlayerInfo& player) {
+  int sum = player.wins + player.losses;
+  if (sum == 0)
+    return 0.5;
+  float average = (float)player.wins/(float)sum;
+  // IIRC that is how wide is the gaussian
+  float penalty = (1 - 0.5 / sqrt((float)sum));
+  return average * penalty;
+}
 
 static void anointNewRabbit()
 {
@@ -2637,7 +2648,7 @@ static void anointNewRabbit()
 
   for (i = 0; i < curMaxPlayers; i++) {
     if (i != oldRabbit && !player[i].paused && !player[i].notResponding && player[i].state == PlayerAlive && player[i].team != ObserverTeam) {
-      float ratio = (float)(player[i].wins - player[i].losses) * player[i].wins;
+      float ratio = rabbitRank(player[i]);
       if (ratio > topRatio) {
 	topRatio = ratio;
 	rabbitIndex = i;
@@ -2648,7 +2659,7 @@ static void anointNewRabbit()
     // nobody, or no other than old rabbit to choose from
     for (i = 0; i < curMaxPlayers; i++) {
       if (player[i].state > PlayerInLimbo && !player[i].paused && !player[i].notResponding && player[i].team != ObserverTeam) {
-	float ratio = (float)(player[i].wins - player[i].losses) * player[i].wins;
+	float ratio = rabbitRank(player[i]);
 	if (ratio > topRatio) {
 	  topRatio = ratio;
 	  rabbitIndex = i;
