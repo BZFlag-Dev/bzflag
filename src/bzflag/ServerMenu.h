@@ -18,17 +18,17 @@
 #include <string>
 
 /* common interface headers */
+#include "ListServer.h"
 #include "BzfEvent.h"
 #include "HUDDialog.h"
-#include "HUDui.h"
 #include "ServerItem.h"
-#include "ListServer.h"
 #include "ServerListCache.h"
 
 /* local interface headers */
 #include "MenuDefaultKey.h"
 
 class ServerMenu;
+class HUDuiLabel;
 
 class ServerMenuDefaultKey : public MenuDefaultKey {
 public:

@@ -17,6 +17,8 @@
 
 /* local interface headers */
 
+#include "Team.h"
+
 
 class StartupInfo
 {

@@ -30,6 +30,7 @@
 #include "HUDDialogStack.h"
 #include "ControlPanel.h"
 #include "StartupInfo.h"
+#include "ServerListCache.h"
 
 /* FIXME - from playing.h */
 StartupInfo* getStartupInfo();

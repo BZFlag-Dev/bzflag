@@ -32,6 +32,7 @@
 #include "MainMenu.h"
 #include "StartupInfo.h"
 #include "HUDDialogStack.h"
+#include "ErrorHandler.h"
 
 /* from playing.h */
 StartupInfo* getStartupInfo();

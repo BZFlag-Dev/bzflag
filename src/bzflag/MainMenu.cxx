@@ -25,6 +25,9 @@
 #include "HelpMenu.h"
 #include "HUDDialogStack.h"
 #include "LocalPlayer.h"
+#include "JoinMenu.h"
+#include "OptionsMenu.h"
+#include "QuitMenu.h"
 
 /* from playing.cxx */
 void leaveGame();
