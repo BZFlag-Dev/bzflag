@@ -185,7 +185,7 @@ void			RadarRenderer::render(SceneRenderer& renderer,
   const int oy = renderer.getWindow().getOriginY();
   float opacity = renderer.getPanelOpacity();
 
-  if (opacity < 1.0f) {
+  if ((opacity < 1.0f) && (opacity > 0.0f)) {
     glScissor(ox + x - 2, oy + y - 2, w + 4, h + 4);
   
     // draw nice blended background
