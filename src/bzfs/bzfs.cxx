@@ -786,7 +786,7 @@ public:
 
   void filter(char *input)
   {
-    static std::string 
+    static std::string
       alphabet("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ");
     if (badWords.size() == 0) // all words allowed -> skip processing
       return;
@@ -897,7 +897,7 @@ struct CmdLineOptions
   AccessControlList	acl;
   TextChunkManager	textChunker;
   BadWordList		bwl;
-  
+
   std::string		reportFile;
   std::string		reportPipe;
 };
@@ -3582,7 +3582,7 @@ static WorldInfo *defineTeamWorld()
 	  basePos[4][0] + 0.5f * BaseSize + PyrBase,
 	  basePos[4][1] - 0.5f * BaseSize + PyrBase, 0.0f, 0.0f,
 	  PyrBase, PyrBase, PyrHeight);
-    }	 
+    }
 
     // create symmetric map of random buildings for random CTF mode
     if (clOptions.randomCTF) {
@@ -3601,28 +3601,28 @@ static WorldInfo *defineTeamWorld()
 	float x=WorldSize * ((float)bzfrand() - 0.5f);
 	float y=WorldSize * ((float)bzfrand() - 0.5f);
 	// don't place near center and bases
-	if ((redGreen && 
-	     (hypotf(fabs(x-basePos[1][0]),fabs(y-basePos[1][1])) <= 
+	if ((redGreen &&
+	     (hypotf(fabs(x-basePos[1][0]),fabs(y-basePos[1][1])) <=
 	      BoxBase*4 ||
-	      hypotf(fabs(-x-basePos[1][0]),fabs(-y-basePos[1][1])) <= 
+	      hypotf(fabs(-x-basePos[1][0]),fabs(-y-basePos[1][1])) <=
 	      BoxBase*4)) ||
-	    (bluePurple && 
-	     (hypotf(fabs(y-basePos[3][0]),fabs(-x-basePos[3][1])) <= 
+	    (bluePurple &&
+	     (hypotf(fabs(y-basePos[3][0]),fabs(-x-basePos[3][1])) <=
 	      BoxBase*4 ||
-	      hypotf(fabs(-y-basePos[3][0]),fabs(x-basePos[3][1])) <= 
+	      hypotf(fabs(-y-basePos[3][0]),fabs(x-basePos[3][1])) <=
 	      BoxBase*4)) ||
-	    (redGreen && bluePurple && 
-	     (hypotf(fabs(x-basePos[3][0]),fabs(y-basePos[3][1])) <= 
+	    (redGreen && bluePurple &&
+	     (hypotf(fabs(x-basePos[3][0]),fabs(y-basePos[3][1])) <=
 	      BoxBase*4 ||
-	      hypotf(fabs(-x-basePos[3][0]),fabs(-y-basePos[3][1])) <= 
+	      hypotf(fabs(-x-basePos[3][0]),fabs(-y-basePos[3][1])) <=
 	      BoxBase*4 ||
-	      hypotf(fabs(y-basePos[1][0]),fabs(-x-basePos[1][1])) <= 
+	      hypotf(fabs(y-basePos[1][0]),fabs(-x-basePos[1][1])) <=
 	      BoxBase*4 ||
-	      hypotf(fabs(-y-basePos[1][0]),fabs(x-basePos[1][1])) <= 
+	      hypotf(fabs(-y-basePos[1][0]),fabs(x-basePos[1][1])) <=
 	      BoxBase*4)) ||
 	    (hypotf(fabs(x),fabs(y)) <= WorldSize/12))
 	  continue;
-	
+
 	float angle=2.0f * M_PI * (float)bzfrand();
 	if (redGreen) {
 	  world->addBox(x,y,0.0f, angle, BoxBase, BoxBase, h);
@@ -3645,28 +3645,28 @@ static WorldInfo *defineTeamWorld()
 	float x=WorldSize * ((float)bzfrand() - 0.5f);
 	float y=WorldSize * ((float)bzfrand() - 0.5f);
 	// don't place near center or bases
-	if ((redGreen && 
-	     (hypotf(fabs(x-basePos[1][0]),fabs(y-basePos[1][1])) <= 
+	if ((redGreen &&
+	     (hypotf(fabs(x-basePos[1][0]),fabs(y-basePos[1][1])) <=
 	      PyrBase*6 ||
-	      hypotf(fabs(-x-basePos[1][0]),fabs(-y-basePos[1][1])) <= 
+	      hypotf(fabs(-x-basePos[1][0]),fabs(-y-basePos[1][1])) <=
 	      PyrBase*6)) ||
-	    (bluePurple && 
-	     (hypotf(fabs(y-basePos[3][0]),fabs(-x-basePos[3][1])) <= 
+	    (bluePurple &&
+	     (hypotf(fabs(y-basePos[3][0]),fabs(-x-basePos[3][1])) <=
 	      PyrBase*6 ||
-	      hypotf(fabs(-y-basePos[3][0]),fabs(x-basePos[3][1])) <= 
+	      hypotf(fabs(-y-basePos[3][0]),fabs(x-basePos[3][1])) <=
 	      PyrBase*6)) ||
-	    (redGreen && bluePurple && 
-	     (hypotf(fabs(x-basePos[3][0]),fabs(y-basePos[3][1])) <= 
+	    (redGreen && bluePurple &&
+	     (hypotf(fabs(x-basePos[3][0]),fabs(y-basePos[3][1])) <=
 	      PyrBase*6 ||
-	      hypotf(fabs(-x-basePos[3][0]),fabs(-y-basePos[3][1])) <= 
+	      hypotf(fabs(-x-basePos[3][0]),fabs(-y-basePos[3][1])) <=
 	      PyrBase*6 ||
-	      hypotf(fabs(y-basePos[1][0]),fabs(-x-basePos[1][1])) <= 
+	      hypotf(fabs(y-basePos[1][0]),fabs(-x-basePos[1][1])) <=
 	      PyrBase*6 ||
-	      hypotf(fabs(-y-basePos[1][0]),fabs(x-basePos[1][1])) <= 
+	      hypotf(fabs(-y-basePos[1][0]),fabs(x-basePos[1][1])) <=
 	      PyrBase*6)) ||
 	    (hypotf(fabs(x),fabs(y)) <= WorldSize/12))
 	  continue;
-	
+
 	float angle=2.0f * M_PI * (float)bzfrand();
 	if (redGreen) {
 	  world->addPyramid(x,y, 0.0f, angle,PyrBase, PyrBase, h);
@@ -3696,17 +3696,17 @@ static WorldInfo *defineTeamWorld()
 	    continue;
 	  // if to close to a base then try again
 	  if ((redGreen &&
-	       (hypotf(fabs(x-basePos[1][0]),fabs(y-basePos[1][1])) <= 
+	       (hypotf(fabs(x-basePos[1][0]),fabs(y-basePos[1][1])) <=
 		BaseSize*4 ||
-		hypotf(fabs(x-basePos[2][0]),fabs(y-basePos[2][1])) <= 
-		BaseSize*4)) || 
+		hypotf(fabs(x-basePos[2][0]),fabs(y-basePos[2][1])) <=
+		BaseSize*4)) ||
 	      (bluePurple &&
-	       (hypotf(fabs(x-basePos[3][0]),fabs(y-basePos[3][1])) <= 
+	       (hypotf(fabs(x-basePos[3][0]),fabs(y-basePos[3][1])) <=
 		BaseSize*4 ||
-		hypotf(fabs(x-basePos[4][0]),fabs(y-basePos[4][1])) <= 
+		hypotf(fabs(x-basePos[4][0]),fabs(y-basePos[4][1])) <=
 		BaseSize*4)))
 	    continue;
-	  
+
 	  linked[i/teamFactor][0] = linked[i/teamFactor][1] = 0;
 	  if (redGreen) {
 	    world->addTeleporter(x, y, 0.0f, rotation, 0.5f*TeleWidth,
@@ -3716,10 +3716,10 @@ static WorldInfo *defineTeamWorld()
 	    i+=2;
 	  }
 	  if (bluePurple) {
-	    world->addTeleporter(y, -x, 0.0f, rotation + M_PI / 2, 
+	    world->addTeleporter(y, -x, 0.0f, rotation + M_PI / 2,
 				 0.5f*TeleWidth, TeleBreadth, 2.0f*TeleHeight,
 				 TeleWidth);
-	    world->addTeleporter(-y, x, 0.0f, rotation + M_PI * 3 / 2, 
+	    world->addTeleporter(-y, x, 0.0f, rotation + M_PI * 3 / 2,
 				 0.5f*TeleWidth, TeleBreadth, 2.0f*TeleHeight,
 				 TeleWidth);
 	    i+=2;
@@ -3869,7 +3869,7 @@ static WorldInfo *defineTeamWorld()
 	world->addLink(15, 6);
       }
     }
-    
+
     return world;
   } else {
     return defineWorldFromFile(clOptions.worldFile);
@@ -4150,10 +4150,10 @@ static void acceptClient()
   if (playerIndex < maxPlayers) {
     DEBUG1("Player [%d] accept() from %s:%d on %i\n", playerIndex,
 	inet_ntoa(clientAddr.sin_addr), ntohs(clientAddr.sin_port), fd);
-  
+
     if (playerIndex >= curMaxPlayers)
       curMaxPlayers = playerIndex+1;
-  
+
     // record what port we accepted on
     player[playerIndex].time = TimeKeeper::getCurrent();
     player[playerIndex].fd = fd;
@@ -4505,8 +4505,8 @@ static void addPlayer(int playerIndex)
 	++team[teamIndex].team.activeSize == 1) {
     team[teamIndex].team.won = 0;
     team[teamIndex].team.lost = 0;
-    if ((clOptions.gameStyle & int(TeamFlagGameStyle)) && 
-	teamIndex != int(RogueTeam) && 
+    if ((clOptions.gameStyle & int(TeamFlagGameStyle)) &&
+	teamIndex != int(RogueTeam) &&
 	flag[teamIndex - 1].flag.status == FlagNoExist)
       // can't call resetFlag() here cos it'll screw up protocol for
       // player just joining, so do it later
@@ -4581,9 +4581,9 @@ static void addPlayer(int playerIndex)
       (BZVERSION / 10000000) % 100, (BZVERSION / 100000) % 100,
       (char)('a' - 1 + (BZVERSION / 1000) % 100), BZVERSION % 1000);
   sendMessage(playerIndex, player[playerIndex].id, player[playerIndex].team, message, true);
-  
+
   if (clOptions.servermsg && (strlen(clOptions.servermsg) > 0)) {
-    
+
     // split the servermsg into several lines if it contains '\n'
     const char* i = clOptions.servermsg;
     const char* j;
@@ -4591,13 +4591,13 @@ static void addPlayer(int playerIndex)
       unsigned int l = j - i < MessageLen - 1 ? j - i : MessageLen - 1;
       strncpy(message, i, l);
       message[l] = '\0';
-      sendMessage(playerIndex, player[playerIndex].id, 
+      sendMessage(playerIndex, player[playerIndex].id,
 		  player[playerIndex].team, message, true);
       i = j + 2;
     }
     strncpy(message, i, MessageLen - 1);
     message[strlen(i) < MessageLen - 1 ? strlen(i) : MessageLen - 1] = '\0';
-    sendMessage(playerIndex, player[playerIndex].id, 
+    sendMessage(playerIndex, player[playerIndex].id,
 		player[playerIndex].team, message);
   }
 
@@ -4608,7 +4608,7 @@ static void addPlayer(int playerIndex)
       sendMessage(playerIndex, player[playerIndex].id, player[playerIndex].team, (*lines)[i].c_str());
     }
   }
-  
+
   if (player[playerIndex].Observer)
     sendMessage(playerIndex, player[playerIndex].id, player[playerIndex].team,"You are in observer mode.");
 #endif
@@ -4894,7 +4894,7 @@ static void removePlayer(int playerIndex, char *reason, bool notify)
       if (flag[teamNum - 1].player == -1 ||
 	  player[flag[teamNum - 1].player].team == teamNum)
 	zapFlag(teamNum - 1);
-    }	   
+    }
 
     // send team update
     sendTeamUpdate(teamNum);
@@ -5232,21 +5232,21 @@ static void dropFlag(int playerIndex, float pos[3])
   else
     pFlagInfo->flag.status = FlagGoing;
   numFlagsInAir++;
-  
+
   topmosttype = world->inBuilding(&container, pos[0], pos[1], pos[2], 0);
-  
+
   // the tank is inside a building - find the roof
   if (topmosttype != NOT_IN_BUILDING) {
     topmost = container;
     int tmp;
-    for (float i = container->pos[2] + container->size[2]; 
-	 (tmp = world->inBuilding(&container, pos[0], pos[1], i, 0)) != 
+    for (float i = container->pos[2] + container->size[2];
+	 (tmp = world->inBuilding(&container, pos[0], pos[1], i, 0)) !=
 	   NOT_IN_BUILDING; i += 0.1f) {
       topmosttype = tmp;
       topmost = container;
     }
   }
-  
+
   // the tank is _not_ inside a building - find the floor
   else {
     for (float i = pos[2]; i >= 0.0f; i -= 0.1f) {
@@ -5259,7 +5259,7 @@ static void dropFlag(int playerIndex, float pos[3])
   // figure out landing spot -- if flag in a Bad Place
   // when dropped, move to safety position or make it going
   TeamColor teamBase = whoseBase(pos[0], pos[1],
-				 (topmosttype == NOT_IN_BUILDING ? pos[2] : 
+				 (topmosttype == NOT_IN_BUILDING ? pos[2] :
 				  topmost->pos[2] + topmost->size[2] + 0.01f));
   FlagId flagId = pFlagInfo->flag.id;
   bool isTeamFlag = (flagId >= FirstTeamFlag) && (flagId <= LastTeamFlag);
@@ -5307,7 +5307,7 @@ static void dropFlag(int playerIndex, float pos[3])
   }
   else
     pFlagInfo->flag.status = FlagGoing;
-  
+
   // if it is a team flag, check if there are any players left in that team -
   // if not, start the flag timeout
   if (isTeamFlag && team[flagIndex + 1].team.activeSize == 0) {
@@ -5489,15 +5489,15 @@ static void shotFired(int playerIndex, void *buf, int len)
   if (repack)
     firingInfo.pack(buf);
 
- 
+
   // if shooter has a flag
-  
+
   char message[MessageLen];
   if (shooter.flag >= 0){
-    
+
     FlagInfo & fInfo = flag[shooter.flag];
     fInfo.numShots++; // increase the # shots fired
-   
+
     int limit = clOptions.flagLimit[fInfo.flag.id];
     if (limit != -1){ // if there is a limit for players flag
       int shotsLeft = limit -  fInfo.numShots;
@@ -5516,15 +5516,15 @@ static void shotFired(int playerIndex, void *buf, int len)
 	    lastPos[i] = shooter.lastState.pos[i];
 	  }
 	  fInfo.grabs = 0; // recycle this flag now
-	  dropFlag(playerIndex, lastPos);	 
+	  dropFlag(playerIndex, lastPos);
 	} else { // more shots fired than allowed
 	  // do nothing for now -- could return and not allow shot
 	}
-      } // end no shots left 
-    } // end is limit 
-  } // end of player has flag 
+      } // end no shots left
+    } // end is limit
+  } // end of player has flag
 
-  broadcastMessage(MsgShotBegin, len, buf); 
+  broadcastMessage(MsgShotBegin, len, buf);
 
 }
 
@@ -6577,12 +6577,12 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
       // test all the map bounds + some fudge factor, just in case
       float	fudge = 5.0f;
       bool InBounds = true;
- 
+
       if ( (state.pos[1] >= WorldSize*0.5f + fudge) || (state.pos[1] <= -WorldSize*0.5f - fudge))
 	InBounds = false;
       else if ( (state.pos[0] >= WorldSize*0.5f + fudge) || (state.pos[0] <= -WorldSize*0.5f - fudge))
 	InBounds = false;
- 
+
       // kick em cus they are cheating
       if (!InBounds)
       {
@@ -6592,17 +6592,17 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
 	sendMessage(t, player[t].id, player[t].team, message, true);
 	removePlayer(t, "Out of map bounds");
       }
-	     
+
 
       // check for highspeed cheat; if inertia is enabled, skip test for now
       if (clOptions.linearAcceleration == 0.0f) {
 	// Doesn't account for going fast backwards, or jumping/falling
 	float curPlanarSpeedSqr = state.velocity[0]*state.velocity[0] +
 				  state.velocity[1]*state.velocity[1];
-  
+
 	float maxPlanarSpeedSqr = TankSpeed*TankSpeed;
-  
-	bool logOnly = false; 
+
+	bool logOnly = false;
 
 	// if tank is not driving cannot be sure it didn't toss (V) in flight
 	// if tank is not alive cannot be sure it didn't just toss (V)
@@ -6770,8 +6770,8 @@ static const char *extraUsageString =
 "\t-q: don't listen for or respond to pings\n"
 "\t+r: all shots ricochet\n"
 "\t-r: allow rogue tanks\n"
-"\t-reportfile <filename>: the file to store reports in\n" 
-"\t-reportpipe <filename>: the program to pipe reports through\n" 
+"\t-reportfile <filename>: the file to store reports in\n"
+"\t-reportpipe <filename>: the program to pipe reports through\n"
 "\t-requireudp: require clients to use udp\n"
 "\t+s: always have <num> super flags (default=16)\n"
 "\t-s: allow up to <num> super flags (default=16)\n"
@@ -7100,10 +7100,10 @@ static void parse(int argc, char **argv, CmdLineOptions &options)
 	  } else {
 	    fprintf(stderr, "invalid shot limit \"%s\"\n", argv[i]);
 	    usage(argv[0]);
-	  } 
-	  options.flagLimit[f] = x; 
-	  
-	} 
+	  }
+	  options.flagLimit[f] = x;
+
+	}
       }
     }
     else if (strcmp(argv[i], "+r") == 0) {
@@ -8078,7 +8078,7 @@ int main(int argc, char **argv)
 	}
       }
     }
-    
+
     // check team flag timeouts
     if (clOptions.gameStyle & TeamFlagGameStyle) {
       for (i = 0; i < NumTeams; ++i) {
