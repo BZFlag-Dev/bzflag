@@ -1631,8 +1631,6 @@ static void		doAutoPilot(float &rotation, float &speed)
     else { // See if anyone is shootable, if so do so. Then figure out how to chase my target
       myTank->setTarget(player[target]);
 
-      bool shotFired = false;
-
       float dir[3] = {cosf(myAzimuth), sinf(myAzimuth), 0.0f};
       pos[2] += BZDB.eval(StateDatabase::BZDB_MUZZLEHEIGHT);
       Ray tankRay(pos, dir);
@@ -1662,7 +1660,6 @@ static void		doAutoPilot(float &rotation, float &speed)
 	  if (hasSWTarget) {
 	    myTank->fireShot();
 	    lastShot = TimeKeeper::getTick();;
-	    shotFired = true;
 	  }
 	}
       }
@@ -1695,7 +1692,6 @@ static void		doAutoPilot(float &rotation, float &speed)
 		  if (!isTargetObscured) {
 		    myTank->fireShot();
 		    lastShot = now;
-		    shotFired = true;
 		    t = curMaxPlayers;
 		  }
 		}
