@@ -351,6 +351,25 @@ or continues if the list is empty.
 </para>
 <screen>
 
+getting the world hash
+----------------------
+  --&gt;   +----+----+----+----+
+	| 00 | 00 | 77 | 68 |                         MsgWantWHash
+	+----+----+----+----+
+  &lt;--   +----+----+----+----+----+----+----+----+
+	| length  | 77 | 68 | world hash data... |     MsgWantWHash
+	+----+----+----+----+----+----+----+----+
+</screen>
+<para>
+To improve performance World (bzc) files are cached on the client. The name of the
+cache file is an md5 hash of the file that is computed on the server. this hash is
+sent to the client, and the client looks for a file by that name in the bz world
+cache directory. If the hash starts with a 't', the world is a random world.
+If the hash starts with a 'p' the world is from a world file. If the client can
+find the file locally, it does not sent the following MsgGetWorld packet.
+</para>
+<screen>
+
 getting the world database
 --------------------------
   --&gt;   +----+----+----+----+----+----+
