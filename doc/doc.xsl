@@ -10,7 +10,7 @@
 		<head>
 			<title>BZFlag - <xsl:value-of select="bookinfo/title"/></title>
 			<script language="JavaScript">
-				var curDiv = <xsl:value-of select="chapter[1]/@id"/>
+				var curDiv = &quot;<xsl:value-of select="chapter[1]/@id"/>&quot;;
 				function switchDiv( divName )
 				{
 					var el = document.getElementById( curDiv );
@@ -49,15 +49,14 @@
 	<table border="1" width="100%">
 		<tr>
 		<xsl:for-each select="chapter">
-			<td width="$chapWidth%">
+			<xsl:element name="td">
+				<xsl:attribute name="width"><xsl:value-of select="$chapWidth"/>%</xsl:attribute>
 				<xsl:variable name="divid"><xsl:value-of select="@id"/></xsl:variable>
 				<xsl:element name="a">
-					<xsl:attribute name="href">
-						 &apos;javascript:switchDiv(&quot;<xsl:value-of select="$divid"/>&quot;)&apos;
-					</xsl:attribute>
+					<xsl:attribute name="href">&apos;javascript:switchDiv(&quot;<xsl:value-of select="$divid"/>&quot;)&apos;</xsl:attribute>
 					<xsl:value-of select="title"/>
 				</xsl:element>
-			</td>
+			</xsl:element>
 		</xsl:for-each>
 		</tr>
 	</table>
