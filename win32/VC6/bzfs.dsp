@@ -103,6 +103,10 @@ SOURCE=..\..\src\bzfs\AccessControlList.cxx
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\src\bzfs\Authentication.cxx
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\src\bzfs\bzfs.cxx
 # End Source File
 # Begin Source File
@@ -276,6 +280,10 @@ SOURCE=..\..\src\bzfs\AccessControlList.h
 # Begin Source File
 
 SOURCE=..\..\include\Address.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\bzfs\Authentication.h
 # End Source File
 # Begin Source File
 
