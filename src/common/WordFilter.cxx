@@ -20,8 +20,6 @@
 
 
 /* private */
-int callocCount=0;
-int freeCount=0;
 
 /* protected */
 
@@ -320,7 +318,6 @@ regex_t *WordFilter::getCompiledExpression(const std::string &word) const
     return (regex_t *)NULL;
 
   }
-  callocCount++;
 
   if ( regcomp(compiledReg, word.c_str(), REG_EXTENDED | REG_ICASE) != 0 ) {
     std::cerr << "Warning: unable to compile regular expression for [" << word << "]" << std::endl;
@@ -633,7 +630,6 @@ WordFilter::~WordFilter(void)
 	 i != filters[j].end();
 	 i++) {
       if (i->compiled) {
-	freeCount++;
 	regfree(i->compiled);
 	free(i->compiled);
       }
@@ -644,7 +640,6 @@ WordFilter::~WordFilter(void)
        i != prefixes.end();
        i++) {
     if (i->compiled) {
-      freeCount++;
       regfree(i->compiled);
       free(i->compiled);
     }
@@ -654,13 +649,10 @@ WordFilter::~WordFilter(void)
        i != suffixes.end();
        i++) {
     if (i->compiled) {
-      freeCount++;
       regfree(i->compiled);
       free(i->compiled);
     }
   }
-
-  std::cout << "Allocated " << callocCount << " blocks, free of " << freeCount << " blocks" << std::endl;
 
   return;
 }
