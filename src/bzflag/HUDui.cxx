@@ -132,7 +132,6 @@ HUDuiControl::HUDuiControl() : showingFocus(true),
 HUDuiControl::~HUDuiControl()
 {
   if (--totalCount == 0) {
-    delete arrow;
     delete gstate;
     arrow = NULL;
     gstate = NULL;
