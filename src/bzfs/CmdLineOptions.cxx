@@ -1081,7 +1081,7 @@ void parse(int argc, char **argv, CmdLineOptions &options)
     flag[i].flag.type = Flags::Null;
     flag[i].flag.status = FlagNoExist;
     flag[i].flag.endurance = FlagNormal;
-    flag[i].flag.owner = 0;
+    flag[i].flag.owner = NoPlayer;
     flag[i].flag.position[0] = 0.0f;
     flag[i].flag.position[1] = 0.0f;
     flag[i].flag.position[2] = 0.0f;
