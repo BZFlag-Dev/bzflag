@@ -2613,9 +2613,6 @@ static Player*		addPlayer(PlayerId id, void* msg, int showMessage)
       case TankPlayer:
 	message += " tank";
 	break;
-      case JAFOPlayer:
-	message += "n observer";
-	break;
       case ComputerPlayer:
 	message += " robot tank";
 	break;

@@ -29,7 +29,6 @@ const int		MessageLen = 128;	// including terminating NUL
 // types of things we can be
 enum PlayerType {
 			TankPlayer,
-			JAFOPlayer,
 			ComputerPlayer
 };
 
