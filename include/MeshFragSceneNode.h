@@ -84,6 +84,8 @@ class MeshFragSceneNode : public WallSceneNode {
     GLfloat* texcoords;
 
     float mins[3], maxs[3];
+
+  friend class MeshFragSceneNode::Geometry;
 };
 
 
