@@ -22,6 +22,27 @@ else
   AC_DEFINE_UNQUOTED(BZ_BUILD_USER, "anonymous", [User who compiled BZFlag])
 fi
 
+# check for kerberos option
+AC_ARG_WITH(kerberos, [  --with-kerberos	  with Kerberos support])
+if test "x$with_kerberos" != xno ; then
+   with_kerberos=yes
+fi
+
+# check for regex option (on means build our own)
+AC_ARG_WITH(regex, [  --with-regex		  Use bzflag regex lib])
+if test x$with_regex != xno ; then
+   AC_DEFINE(BUILD_REGEX, 1, [Building regex])
+fi
+AM_CONDITIONAL(BUILD_REGEX, test "x$with_regex" != "xno")
+
+# check for SDL option (enabled by default now)
+AC_ARG_WITH(SDL, [  --without-SDL		  do not use Simple DirectMedia Layer])
+if test x$with_SDL != xno; then
+  with_SDL=yes
+fi
+
+dnl FIXME: need to move the rest of the ARGs up here too
+
 #Checks for programs.
 AC_PROG_MAKE_SET
 AC_PROG_CC
@@ -71,15 +92,13 @@ AC_SUBST(CURL_CFLAGS)
 AC_SUBST(CURL_LIBS)
 
 # Testing if kerberos 5 is in the system
-AC_MSG_CHECKING([for krb5])
-if eval krb5-config --version >/dev/null >/dev/null; then
-  AC_MSG_RESULT([found])
-  KRB5_CFLAGS=`krb5-config --cflags`
-  KRB5_LIBS=`krb5-config --libs`
-  AC_DEFINE(HAVE_KRB5, 1, [Using Kerberos 5])
-else
-  AC_MSG_RESULT(FAILED)
-  AC_MSG_WARN([krb5-config was not found])
+KRB5_CONFIG=no
+if test "x$with_kerberos" = "xyes" ; then
+  AC_PATH_PROG(KRB5_CONFIG, krb5-config, no)
+  if test "x$KRB5_CONFIG" != "xno" ; then
+    KRB5_CFLAGS=`$KRB5_CONFIG --cflags`
+    KRB5_LIBS=`$KRB5_CONFIG --libs`
+  fi
 fi
 AC_SUBST(KRB5_CFLAGS)
 AC_SUBST(KRB5_LIBS)
@@ -98,6 +117,12 @@ AC_CHECK_HEADERS( \
 	cstdio \
 	cstring \
 )
+if test "x$with_kerberos" = "xyes" ; then
+  AC_CHECK_HEADERS(\
+	krb5.h\
+	Kerberos/Kerberos.h \
+  )
+fi
 AC_LANG_RESTORE
 AC_CHECK_HEADERS( \
 	sys/param.h \
@@ -337,10 +362,6 @@ fi
 
 savedLIBS=$LIBS
 LIBS="$GLIBS $LIBS"
-AC_ARG_WITH(SDL, [  --without-SDL              do not use Simple DirectMedia Layer])
-if test x$with_SDL != xno; then
-  with_SDL=yes
-fi
 AC_LANG_C
 if test x$with_SDL = xyes; then
   AM_PATH_SDL(1.2.5,, with_SDL=no)
@@ -505,14 +526,24 @@ else
      AC_DEFINE(NDEBUG, 1, [Debugging disabled])
 fi;
 
-
-# do we want to build our own regex lib
-AC_ARG_WITH(regex, [  --with-regex            Use bzflag regex lib])
-if test x$with_regex != xno ; then
-   AC_DEFINE(BUILD_REGEX, 1, [Building regex])
-fi;
-AM_CONDITIONAL(BUILD_REGEX, test "x$with_regex" != "xno")
-
+have_krb5=no
+AC_MSG_CHECKING([for Kerberos functionality])
+if test "x$with_kerberos" = "xyes" ; then
+  if test "x$KRB5_CONFIG" != "xno" ; then
+    have_krb5=yes
+  elif test "x$ac_cv_header_krb5_h" = "xyes" ; then
+    have_krb5=yes
+  elif test "x$ac_cv_header_Kerberos_Kerberos_h" = "xyes" ; then
+    have_krb5=yes
+  fi
+  if test "x$have_krb5" = "xyes" ; then
+    AC_DEFINE(HAVE_KRB5, 1, [Using Kerberos 5])
+    AC_MSG_RESULT([yes])
+  else
+    AC_MSG_RESULT([no])
+    AC_MSG_ERROR(Kerberos build support was requested, but Kerberos support was not found)
+  fi
+fi
 
 LIBDIR="\$(top_srcdir)/lib"
 AC_SUBST(LIBDIR)
