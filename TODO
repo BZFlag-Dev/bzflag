@@ -140,9 +140,6 @@ THESE ARE LOWER PRIORITY
   port on a game server. Note that performance will suck and udp will not be
   available.
 
-* allow /dev/dsp* on Linux to be selected someplace. command line,
-  environment var, config file, who knows. ;-)
-
 * some bzdb values are stored elsewhere and written to bzdb
   only on exit. these should be stored in bzdb for the entire
   time
