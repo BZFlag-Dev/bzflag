@@ -425,7 +425,7 @@ RxStatus PlayerInfo::receive(size_t length) {
     } else {
       returnValue = ReadError;
     }
-  } else if (size == 0) {
+  } else { // if (size == 0)
     returnValue = ReadDiscon;
   }
   return returnValue;
