@@ -68,6 +68,7 @@ static const char copyright[] = "Copyright (c) 1993 - 2003 Tim Riker";
 #include "HUDui.h"
 #include "World.h"
 #include "Team.h"
+#include "FileManager.h"
 #include "Flag.h"
 #include "LocalPlayer.h"
 #include "RemotePlayer.h"
@@ -4791,13 +4792,6 @@ std::string		getCacheDirectoryName()
     name += getenv("HOST");
   }
 
-  struct stat statbuf;
-  if (!(stat(name.c_str(), &statbuf) == 0 && (S_ISDIR(statbuf.st_mode)))) {
-    if(mkdir(name.c_str(), 0777) != 0) {
-      return "bzflag-cache";
-    }
-  }
-
   return name;
 #endif
 }
@@ -4973,7 +4967,7 @@ static bool negotiateFlags(ServerLink* serverLink)
 
 static World*		makeWorld(ServerLink* serverLink)
 {
-  FILE *cachedWorld = NULL;
+  istream *cachedWorld = NULL;
   uint16_t code, len;
   uint32_t size;
   char msg[MaxPacketLen];
@@ -4993,7 +4987,7 @@ static World*		makeWorld(ServerLink* serverLink)
 	  worldPath += "/";
 	  worldPath += hexDigest;
 	  worldPath += ".bwc";
-	  cachedWorld = fopen( worldPath.c_str(), "rb" );
+	  cachedWorld = FILEMGR->createDataInStream(worldPath, true);
   }
 
   char* worldDatabase;
@@ -5032,27 +5026,26 @@ static World*		makeWorld(ServerLink* serverLink)
 	  }
 	  //add final chunk
 	  ::memcpy(worldDatabase + int(ptr), buf, len - sizeof(uint32_t));
-
+	  
 	  if (worldPath.length() > 0) {
-		  cleanWorldCache();
-		  cachedWorld = fopen(worldPath.c_str(), "wb");
-		  if (cachedWorld != NULL) {
-			  fwrite(worldDatabase, size, 1, cachedWorld);
-			  fclose(cachedWorld);
-			  if (isTemp)
-			    markOld(worldPath);
-		  }
+	    cleanWorldCache();
+	    ostream* cacheOut = FILEMGR->
+	      createDataOutStream(worldPath, true, true);
+	    if (cacheOut != NULL) {
+	      cacheOut->write(worldDatabase, size);
+	      delete cacheOut;
+	      if (isTemp)
+		markOld(worldPath);
+	    }
 	  }
   }
   else
   {
-
-	  fseek( cachedWorld, 0, SEEK_END );
-	  long size = ftell( cachedWorld );
-	  fseek( cachedWorld, 0, SEEK_SET );
-	  worldDatabase = new char[size];
-	  fread( worldDatabase, size, 1, cachedWorld );
-	  fclose( cachedWorld );
+    cachedWorld->seekg(0, ios_base::end);
+    streampos size = cachedWorld->tellg();
+    cachedWorld->seekg(0);
+    worldDatabase = new char[size];
+    cachedWorld->read(worldDatabase, size);
   }
 
   // make world
@@ -5063,7 +5056,8 @@ static World*		makeWorld(ServerLink* serverLink)
   }
 
   delete[] worldDatabase;
-
+  delete cachedWorld;
+  
   // return world
   return worldBuilder.getWorld();
 }
