@@ -30,7 +30,7 @@
 #include <stdio.h>
 
 // Might we be BSDish? sys/param.h has BSD defined if so
-#if (defined(__unix__) || defined(unix) || defined(_MACOSX_)) && !defined(USG)
+#if (defined(__unix__) || defined(unix) || defined(__APPLE__)) && !defined(USG)
 #include <sys/param.h>
 #endif
 
@@ -48,13 +48,13 @@ typedef int socklen_t;
 #include <stddef.h>
 
 // some platforms don't have float versions of the math library
-#if defined(_old_linux_) || defined(_MACOSX_) || defined(sun)
+#if defined(_old_linux_) || defined(__APPLE__) || defined(sun)
 #define	asinf		(float)asin
 #define	atanf		(float)atan
 #define	atan2f		(float)atan2
 #define	cosf		(float)cos
 #define	expf		(float)exp
-#if !defined(_MACOSX_)
+#if !defined(__APPLE__)
 #define	fabsf		(float)fabs
 #define	floorf		(float)floor
 #define	fmodf		(float)fmod
@@ -73,7 +73,7 @@ typedef int socklen_t;
 #define bzfsrand(_s)	srand(_s)
 
 
-#if !defined(_WIN32) & !defined(macintosh)
+#if !defined(_WIN32) && !defined(__APPLE__)
 
 #ifndef BSD
 #include <values.h>

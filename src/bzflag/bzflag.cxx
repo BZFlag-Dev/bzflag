@@ -1004,7 +1004,7 @@ int			main(int argc, char** argv)
   if (db.hasValue("directory"))
     PlatformFactory::getMedia()->setMediaDirectory(db.getValue("directory"));
 
-#if defined(_MACOSX_)
+#if defined(__APPLE__)
     else
     {
 	extern char *GetMacOSXDataPath(void);

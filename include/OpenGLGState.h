@@ -19,7 +19,7 @@
 
 #include "common.h"
 #include "bzfgl.h"
-#if defined(_MACOSX_)
+#if defined(__APPLE__)
 #include <OpenGL/gl.h>
 #endif
 

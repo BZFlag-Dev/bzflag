@@ -40,8 +40,8 @@ static const char copyright[] = "Copyright (c) 1993 - 2003 Tim Riker";
 #include <dirent.h>
 #include <utime.h>
 #endif
-#if defined(_MACOSX_)
-#include <Carbon/Carbon.h>
+#if defined(__APPLE__)
+#include <CoreServices/CoreServices.h>
 #endif
 
 // yikes! that's a lotsa includes!
@@ -4385,7 +4385,7 @@ std::string		getCacheDirectoryName()
   mkdir(name.c_str());
   return name;
 
-#elif defined(_MACOSX_)
+#elif defined(__APPLE__)
   std::string cacheName;
   ::FSRef libraryFolder;
   ::OSErr err;

@@ -59,7 +59,7 @@ Bundle *BundleMgr::getBundle(const std::string &locale, bool setcur /*= true*/)
     path += "_" + locale;
   path += ".po";
   
-#ifdef _MACOSX_
+#ifdef __APPLE__
   // This is MacOS X. Use the CoreFoundation resource location API
   // to find the correct language resource if 'default' is specified.
   if (locale.length() == 7 && locale.compare("default") == 0) {

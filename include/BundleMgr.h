@@ -10,8 +10,8 @@
 #include <map>
 #include "common.h"
 
-#ifdef _MACOSX_
-#include <CoreFoundation/CoreFoundation.h>
+#ifdef __APPLE__
+#import <CoreFoundation/CoreFoundation.h>
 #endif
 
 class Bundle;

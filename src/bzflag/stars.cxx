@@ -10,7 +10,7 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#if defined(_MACOSX_)
+#if defined(__APPLE__)
 #include <OpenGL/gl.h>
 #endif
 #include "common.h"

@@ -46,7 +46,7 @@
 #include <netinet/tcp.h>
 #include <arpa/inet.h>
 #include <netdb.h>
-#if defined(_old_linux_) || (!defined(__linux__) && !defined(sun) && !defined(__FreeBSD__) && !defined(_MACOSX_) && !defined(macintosh))
+#if defined(_old_linux_) || (!defined(__linux__) && !defined(sun) && !defined(__FreeBSD__) && !defined(__APPLE__) && !defined(macintosh))
 #include <bstring.h>
 #endif
 

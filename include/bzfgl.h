@@ -28,7 +28,7 @@
 #include <windows.h>
 #endif
 
-#if defined(_MACOSX_)
+#if defined(__APPLE__)
 #include <OpenGL/gl.h>
 #include <OpenGL/glu.h>
 #else

@@ -3582,7 +3582,7 @@ void			ServerMenu::addToList(ServerItem& info, bool doCache)
   // update display
   char buffer [80];
   std::vector<std::string> args;
-  sprintf(buffer, "%d", servers.size());
+  sprintf(buffer, "%d", (int)servers.size());
   args.push_back(buffer);
   setStatus("Servers found: {1}", &args);
 

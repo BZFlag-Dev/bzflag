@@ -200,7 +200,6 @@ case $host_os in
 	CPPFLAGS="$CPPFLAGS -I\$(top_srcdir)/include"
 	fi;;
      macos|darwin*)
-	CPPFLAGS="$CPPFLAGS -D_MACOSX_";
 	CPPFLAGS="$CPPFLAGS -I\$(top_srcdir)/include"
 	AC_DEFINE(_BSD_SOCKLEN_T_, int, [BSD Socket Length])
 	CPPFLAGS="$CPPFLAGS -Wall -W";
