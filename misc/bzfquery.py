@@ -101,7 +101,7 @@ class Server :
 			struct.unpack( '4s4sb' , header )
 		if magic != 'BZFS' :
 			raise Exception( 'Not a bzflag server.' )
-		if self.protocol not in [ '0023' ] :
+		if self.protocol not in [ '0025' ] :
 			raise Exception( 'Not compatible with server.' )
 
 	def cmd( self , command ) :
