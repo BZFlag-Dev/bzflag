@@ -2291,7 +2291,7 @@ static void		addMessage(const Player* player,
       int color = player->getTeam();
       if (color < 0 || color > 4) color = 5;
 
-      fullMessage += ColorStrings[player->getTeam()];
+      fullMessage += ColorStrings[color];
       fullMessage += player->getCallSign();
 
       if (highlight)
