@@ -370,11 +370,12 @@ void                    EvdevJoystick::ffResetRumble()
 #endif
 }
 
+#ifdef HAVE_FF_EFFECT_RUMBLE
 void                    EvdevJoystick::ffRumble(int count,
 						float delay, float duration,
-						float strong_motor, float weak_motor)
+						float strong_motor,
+						float weak_motor)
 {
-#ifdef HAVE_FF_EFFECT_RUMBLE
   if (!ffHasRumble())
     return;
 
@@ -402,8 +403,12 @@ void                    EvdevJoystick::ffRumble(int count,
     event.value = count;
     write(joystickfd, &event, sizeof(event));
   }
-#endif
 }
+#else
+void EvdevJoystick::ffRumble(int, float, float, float, float)
+{
+}
+#endif
 
 #endif /* HAVE_LINUX_INPUT_H */
 
