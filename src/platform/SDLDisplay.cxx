@@ -81,7 +81,10 @@ SDLDisplay::SDLDisplay() : fullScreen(false), base_width(640),
     // if no modes then make default
     resolutions[0] = new ResInfo ("default", 640, 480, 0);
   }
-  
+
+  // limit us to the main display
+  putenv("SDL_SINGLEDISPLAY=1");
+
   // register modes
   initResolutions(resolutions, numResolutions, defaultResolutionIndex);
 
