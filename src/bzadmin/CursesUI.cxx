@@ -419,7 +419,7 @@ void CursesUI::initMainMenu(CursesMenu& menu) {
   menu.addItem(new SubmenuCMItem("Edit server variables", 
 				  &CursesUI::initServerVarMenu));
   //menu.addItem(new SubmenuCMItem("Edit message filter",
-  //				  &CursesUI::initFilterMenu));
+  //				 &CursesUI::initFilterMenu));
 }
 
 
@@ -431,7 +431,7 @@ void CursesUI::initPlayerMenu(CursesMenu& menu) {
     menu.addItem(new PlayerCMItem(menu.players, it->first));
   menu.addItem(new CommandCMItem("Reload playerlist", "/playerlist", true));
   menu.addItem(new SubmenuCMItem("Back to main menu",
-				  &CursesUI::initMainMenu));
+				 &CursesUI::initMainMenu));
 }
 
 
@@ -460,8 +460,8 @@ void CursesUI::addBZDBCMItem(const std::string& name, void* menu) {
 void CursesUI::initFilterMenu(CursesMenu& menu) {
   menu.setHeader("MESSAGE FILTER EDITOR");
   menu.clear();
-  menu.addItem(new SubmenuCMItem("Not implemented - go back",
-				  &CursesUI::initMainMenu));
+  menu.addItem(new SubmenuCMItem("Back to main menu",
+				 &CursesUI::initMainMenu));
 }
 
 
