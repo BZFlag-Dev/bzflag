@@ -1583,40 +1583,42 @@ static int uread(int *playerIndex, int *nopackets)
 
   *nopackets = 0;
 
+  PlayerInfo *pPlayerInfo;
   if ((n = recvfrom(udpSocket, (char *)ubuf, MaxPacketLen, MSG_PEEK, (struct sockaddr*)&uaddr, &recvlen)) != -1) {
     uint16_t len, lseqno;
     void *pmsg;
-    for (*playerIndex = 0; *playerIndex < MaxPlayers; (*playerIndex)++) {
-      if ((player[*playerIndex].ulinkup) &&
-	  (player[*playerIndex].uaddr.sin_port == uaddr.sin_port) &&
-	  (memcmp(&player[*playerIndex].uaddr.sin_addr, &uaddr.sin_addr, sizeof(uaddr.sin_addr)) == 0)) {
+    int pi;
+    for (pi = 0, pPlayerInfo = player; pi < MaxPlayers; pi++, pPlayerInfo++) {
+      if ((pPlayerInfo->ulinkup) &&
+	  (pPlayerInfo->uaddr.sin_port == uaddr.sin_port) &&
+	  (memcmp(&pPlayerInfo->uaddr.sin_addr, &uaddr.sin_addr, sizeof(uaddr.sin_addr)) == 0)) {
 	break;
       }
     }
-    if (*playerIndex == MaxPlayers) {
+    if (pi == MaxPlayers) {
       // didn't find player so test for exact match new player
-      for (*playerIndex = 0; *playerIndex < MaxPlayers; (*playerIndex)++) {
-	if (!player[*playerIndex].ulinkup &&
-	    (player[*playerIndex].uaddr.sin_port == uaddr.sin_port) &&
-	    (memcmp(&player[*playerIndex].uaddr.sin_addr, &uaddr.sin_addr, sizeof(uaddr.sin_addr)) == 0)) {
+      for (pi = 0, pPlayerInfo = player; pi < MaxPlayers; pi++, pPlayerInfo++) {
+	if (!pPlayerInfo->ulinkup &&
+	    (pPlayerInfo->uaddr.sin_port == uaddr.sin_port) &&
+	    (memcmp(&pPlayerInfo->uaddr.sin_addr, &uaddr.sin_addr, sizeof(uaddr.sin_addr)) == 0)) {
 	  UMDEBUG("uread() exact udp up for player %d %s:%d\n",
-	      *playerIndex, inet_ntoa(player[*playerIndex].uaddr.sin_addr),
-	      ntohs(player[*playerIndex].uaddr.sin_port));
-	  player[*playerIndex].ulinkup = true;
+	      pi, inet_ntoa(pPlayerInfo->uaddr.sin_addr),
+	      ntohs(pPlayerInfo->uaddr.sin_port));
+	  pPlayerInfo->ulinkup = true;
 	  break;
 	}
       }
     }
-    if (*playerIndex == MaxPlayers) {
+    if (pi == MaxPlayers) {
       // still didn't find player so test for just address not port (ipmasq fw etc.)
-      for (*playerIndex = 0; *playerIndex < MaxPlayers; (*playerIndex)++) {
-	if (!player[*playerIndex].ulinkup &&
-	    memcmp(&uaddr.sin_addr, &player[*playerIndex].uaddr.sin_addr, sizeof(uaddr.sin_addr)) == 0) {
+      for (pi = 0, pPlayerInfo = player; pi < MaxPlayers; pi++, pPlayerInfo++) {
+	if (!pPlayerInfo->ulinkup &&
+	    memcmp(&uaddr.sin_addr, &pPlayerInfo->uaddr.sin_addr, sizeof(uaddr.sin_addr)) == 0) {
 	  UMDEBUG("uread() fuzzy udp up for player %d %s:%d actual port %d\n",
-	      *playerIndex, inet_ntoa(player[*playerIndex].uaddr.sin_addr),
-	      ntohs(player[*playerIndex].uaddr.sin_port), ntohs(uaddr.sin_port));
-	  player[*playerIndex].uaddr.sin_port = uaddr.sin_port;
-	  player[*playerIndex].ulinkup = true;
+	      pi, inet_ntoa(pPlayerInfo->uaddr.sin_addr),
+	      ntohs(pPlayerInfo->uaddr.sin_port), ntohs(uaddr.sin_port));
+	  pPlayerInfo->uaddr.sin_port = uaddr.sin_port;
+	  pPlayerInfo->ulinkup = true;
 	  break;
 	}
       }
@@ -1624,15 +1626,15 @@ static int uread(int *playerIndex, int *nopackets)
 
     // get the packet
     n = recv(udpSocket, (char *)ubuf, MaxPacketLen, 0);
-    if (*playerIndex == MaxPlayers) {
+    if (pi == MaxPlayers) {
       // no match, discard packet
       UMDEBUG("uread() discard packet! %s:%d choices p(l) h:p", inet_ntoa(uaddr.sin_addr), ntohs(uaddr.sin_port));
-      for (*playerIndex = 0; *playerIndex < MaxPlayers; (*playerIndex)++) {
-	if (player[*playerIndex].fd != -1) {
+      for (pi = 0, pPlayerInfo = player; pi < MaxPlayers; pi++, pPlayerInfo++) {
+	if (pPlayerInfo->fd != -1) {
 	  UMDEBUG(" %d(%d) %s:%d",
-	      *playerIndex, player[*playerIndex].ulinkup,
-	      inet_ntoa(player[*playerIndex].uaddr.sin_addr),
-	      ntohs(player[*playerIndex].uaddr.sin_port));
+	      pi, pPlayerInfo->ulinkup,
+	      inet_ntoa(pPlayerInfo->uaddr.sin_addr),
+	      ntohs(pPlayerInfo->uaddr.sin_port));
 	}
       }
       UMDEBUG("\n");
@@ -1640,15 +1642,17 @@ static int uread(int *playerIndex, int *nopackets)
       return 0;
     }
 
+    *playerIndex = pi;
+    pPlayerInfo = &player[pi];
     UMDEBUG("uread() player %d %s:%d len %d from %s:%d on %i\n",
-	*playerIndex, inet_ntoa(player[*playerIndex].uaddr.sin_addr),
-	ntohs(player[*playerIndex].uaddr.sin_port), n, inet_ntoa(uaddr.sin_addr),
+	pi, inet_ntoa(pPlayerInfo->uaddr.sin_addr),
+	ntohs(pPlayerInfo->uaddr.sin_port), n, inet_ntoa(uaddr.sin_addr),
 	ntohs(uaddr.sin_port), udpSocket);
 
     if (n > 0) {
       // got something! now disassemble the package block into single BZPackets
       // filling up the dqueue with these packets
-      disassemblePacket(*playerIndex, ubuf, nopackets);
+      disassemblePacket(pi, ubuf, nopackets);
 
       // old code is obsolete
       // if (*nopackets > 6 )
@@ -1657,17 +1661,17 @@ static int uread(int *playerIndex, int *nopackets)
     // have something in the receive buffer? so get it
     // due to the organization sequence and reliability is always granted
     // even if some packets are lost during transfer
-    pmsg =  getPacketFromClient(*playerIndex, &len, &lseqno);
+    pmsg =  getPacketFromClient(pi, &len, &lseqno);
     if (pmsg != NULL) {
       int clen = len;
       if (clen < 1024) {
-	memcpy(player[*playerIndex].udpmsg,pmsg,clen);
-	player[*playerIndex].udplen = clen;
+	memcpy(pPlayerInfo->udpmsg,pmsg,clen);
+	pPlayerInfo->udplen = clen;
       }
       // be sure to free the packet again
       free(pmsg);
       UDEBUG("GOT UDP READ %d Bytes [%d]\n",len, lseqno);
-      return player[*playerIndex].udplen;
+      return pPlayerInfo->udplen;
     }
   }
   return 0;
