@@ -10,26 +10,23 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-/*
- * Include c++ iostream.
- */
-
 #ifndef __GET_CACHE_DIR_H__
 #define __GET_CACHE_DIR_H__
 
 #include "common.h"
 
+/* interface system headers */
+#include <string>
+
 extern std::string		getCacheDirectoryName();
 
 #endif  // __GET_CACHE_DIR_H__
 
-/*
- * Local Variables: ***
- * mode:C++ ***
- * tab-width: 8 ***
- * c-basic-offset: 2 ***
- * indent-tabs-mode: t ***
- * End: ***
- * ex: shiftwidth=2 tabstop=8
- */
 
+// Local Variables: ***
+// mode: C++ ***
+// tab-width: 8 ***
+// c-basic-offset: 2 ***
+// indent-tabs-mode: t ***
+// End: ***
+// ex: shiftwidth=2 tabstop=8
