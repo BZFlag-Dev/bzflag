@@ -716,10 +716,17 @@ void			TankSceneNode::TankRenderNode::renderPart(Part part)
 		 -centerOfGravity[part][2]);
   }
 
+  const GLfloat* clr = color;  
+  const GLfloat white[3] = {1.0f, 1.0f, 1.0f};
+  
+  if (BZDBCache::texture) {
+    clr = white;
+  }
+
   // set color
   switch (part) {
     case Body:
-      myColor4f(color[0], color[1], color[2], alpha);
+      myColor4f(clr[0], clr[1], clr[2], alpha);
       break;
 
     case Barrel:
@@ -727,12 +734,12 @@ void			TankSceneNode::TankRenderNode::renderPart(Part part)
       break;
 
     case Turret:
-      myColor4f(0.9f * color[0], 0.9f * color[1], 0.9f * color[2], alpha);
+      myColor4f(0.9f * clr[0], 0.9f * clr[1], 0.9f * clr[2], alpha);
       break;
 
     case LeftTread:
     case RightTread:
-      myColor4f(0.5f * color[0], 0.5f * color[1], 0.5f * color[2], alpha);
+      myColor4f(0.5f * clr[0], 0.5f * clr[1], 0.5f * clr[2], alpha);
       break;
   }
 

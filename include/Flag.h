@@ -229,7 +229,7 @@ namespace Flags {
     *Wings, *ReverseControls, *Agility,
     *Colorblindness, *Obesity, *LeftTurnOnly, *RightTurnOnly, *Momentum,
     *Blindness, *Jamming, *WideAngle, *NoJumping, *TriggerHappy,
-    *ReverseOnly, *ForwardOnly, *Bouncy, *Lag;
+    *ReverseOnly, *ForwardOnly, *Bouncy;
 
   /** This function initializes all the FlagType objects in the Flags
       namespace. */

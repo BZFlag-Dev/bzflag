@@ -4239,8 +4239,8 @@ void			drawFrame(const float dt)
 
       // add my tank if required
       const bool cloaked = myTank->getFlag() == Flags::Cloaking;
-      if (myTank->needsToBeRendered(cloaked, true)) {
-        myTank->addToScene(scene, myTank->getTeam(), true, true);
+      if (myTank->needsToBeRendered(cloaked, false)) {
+        myTank->addToScene(scene, myTank->getTeam(), false, true);
       }
 
       // add my shells
@@ -4280,11 +4280,10 @@ void			drawFrame(const float dt)
           const bool following = roaming && (roamView == roamViewFP) && 
                                  (roamTrackWinner == i);
           const bool showPlayer = !following;
-          const bool inCockpit = following;
                                
           // add player tank if required
           if (player[i]->needsToBeRendered(cloaked, showPlayer)) {
-            player[i]->addToScene(scene, effectiveTeam, inCockpit, showPlayer);
+            player[i]->addToScene(scene, effectiveTeam, false, showPlayer);
           }
         }
       }
