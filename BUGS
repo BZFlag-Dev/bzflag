@@ -24,7 +24,8 @@ recent bugs
 - Rabbit selection is borken. Two things. A player often is Rabbit two times
   in a row, which was intended to be illegal, and high scoring tanks get bypassed.
   Was playing on ducati where a player was consistantly in #1 slot, but NEVER 
-  was rabbit.
+  was rabbit. (The latter probaby happens when all players have a negative
+  score, the formula does not work well then).
 
 - Address Exception reported when unpacking a FlagType in MsgFlagUpdate on client
   in Rabbit game. The reported message buffer address was bad (ie 0xbfffd7ed)
