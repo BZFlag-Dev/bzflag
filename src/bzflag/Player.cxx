@@ -31,23 +31,23 @@ OpenGLTexture*		Player::tankTexture = NULL;
 int			Player::totalCount = 0;
 
 Player::Player(const PlayerId& _id, TeamColor _team,
-		const char* name, const char* _email, const PlayerType _type) :
-				notResponding(false),
-				autoPilot(false),
-				hunted(false),
-				id(_id),
-				team(_team),
-				type(_type),
-				flagType(Flags::Null),
-				fromTeleporter(0),
-				toTeleporter(0),
-				teleporterProximity(0.0f),
-				wins(0),
-				losses(0),
-				tks(0),
-				localWins(0),
-				localLosses(0),
-				localTks(0)
+	       const char* name, const char* _email, const PlayerType _type) :
+  notResponding(false),
+  autoPilot(false),
+  hunted(false),
+  id(_id),
+  team(_team),
+  type(_type),
+  flagType(Flags::Null),
+  fromTeleporter(0),
+  toTeleporter(0),
+  teleporterProximity(0.0f),
+  wins(0),
+  losses(0),
+  tks(0),
+  localWins(0),
+  localLosses(0),
+  localTks(0)
 {
   static const float zero[3] = { 0.0f, 0.0f, 0.0f };
   move(zero, 0.0f);
@@ -179,11 +179,11 @@ void			Player::setExplode(const TimeKeeper& t)
   if (!isAlive()) return;
   explodeTime = t;
   setStatus((getStatus() | short(PlayerState::Exploding) | short(PlayerState::Falling)) &
-			~(short(PlayerState::Alive) | short(PlayerState::Paused)));
+	    ~(short(PlayerState::Alive) | short(PlayerState::Paused)));
 }
 
 void			Player::setTeleport(const TimeKeeper& t,
-						short from, short to)
+					    short from, short to)
 {
   if (!isAlive()) return;
   teleportTime = t;
@@ -212,7 +212,7 @@ void			Player::setFlag(FlagType* _flag)
 }
 
 void			Player::endShot(int index,
-				bool isHit, bool showExplosion)
+					bool isHit, bool showExplosion)
 {
   float pos[3];
   if (doEndShot(index, isHit, pos) && showExplosion)
@@ -222,7 +222,7 @@ void			Player::endShot(int index,
 void			Player::updateSparks(float /*dt*/)
 {
   if (flagType != Flags::PhantomZone || !isFlagActive()) {
-	  teleporterProximity = World::getWorld()->getProximity(state.pos, BZDB->eval(StateDatabase::BZDB_TANKRADIUS));
+    teleporterProximity = World::getWorld()->getProximity(state.pos, BZDB->eval(StateDatabase::BZDB_TANKRADIUS));
     if (teleporterProximity == 0.0f) {
       color[3] = 1.0f;
       tankNode->setColor(color);
@@ -242,8 +242,8 @@ void			Player::updateSparks(float /*dt*/)
 }
 
 void			Player::addPlayer(SceneDatabase* scene,
-						const float* colorOverride,
-						bool showIDL)
+					  const float* colorOverride,
+					  bool showIDL)
 {
   if (!isAlive() && !isExploding()) return;
   tankNode->move(state.pos, forward);
@@ -264,11 +264,11 @@ void			Player::addPlayer(SceneDatabase* scene,
       float tankWidth = BZDB->eval(StateDatabase::BZDB_TANKWIDTH);
       const GLfloat a = atan2f(forward[1], forward[0]);
       const Obstacle* obstacle = World::getWorld()->hitBuilding(state.pos, a,
-					0.5f * tankLength, 0.5f * tankWidth);
+								0.5f * tankLength, 0.5f * tankWidth);
       if (obstacle && obstacle->isCrossing(state.pos, a,
-				0.5f * tankLength, 0.5f * tankWidth, plane) ||
-		World::getWorld()->crossingTeleporter(state.pos, a,
-				0.5f * tankLength, 0.5f * tankWidth, plane)) {
+					   0.5f * tankLength, 0.5f * tankWidth, plane) ||
+	  World::getWorld()->crossingTeleporter(state.pos, a,
+						0.5f * tankLength, 0.5f * tankWidth, plane)) {
 	// stick in interdimensional lights node
 	if (showIDL) {
 	  tankIDLNode->move(plane);
@@ -293,8 +293,8 @@ void			Player::addPlayer(SceneDatabase* scene,
   else if (isExploding()) {
     float t = (TimeKeeper::getTick() - explodeTime) / BZDB->eval(StateDatabase::BZDB_EXPLODETIME);
     if (t > 1.0f) {
-// FIXME
-//      setStatus(DeadStatus);
+      // FIXME
+      //      setStatus(DeadStatus);
       t = 1.0f;
     }
     else if (t < 0.0f) {
@@ -326,7 +326,7 @@ int			Player::getMaxShots() const
 }
 
 void			Player::addShots(SceneDatabase* scene,
-					bool colorblind) const
+					 bool colorblind) const
 {
   const int count = getMaxShots();
   for (int i = 0; i < count; i++) {
@@ -357,8 +357,8 @@ bool			Player::validTeamTarget(const Player *possibleTarget) const
 }
 
 bool			Player::getDeadReckoning(
-				float* predictedPos, float* predictedAzimuth,
-				float* predictedVel) const
+						 float* predictedPos, float* predictedAzimuth,
+						 float* predictedVel) const
 {
   // see if predicted position and orientation (only) are close enough
   const float dt2 = inputPrevTime - inputTime;
@@ -484,7 +484,7 @@ void			Player::doDeadReckoning()
   // get predicted state
   float predictedPos[3], predictedAzimuth, predictedVel[3];
   notResponding = !getDeadReckoning(predictedPos, &predictedAzimuth,
-								predictedVel);
+				    predictedVel);
 
   if (!isAlive()) notResponding = false;
 
@@ -508,10 +508,9 @@ void			Player::doDeadReckoning()
 
 
 // Local variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-
