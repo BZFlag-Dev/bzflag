@@ -20,9 +20,8 @@
 class SpawnPosition {
 
 public:
-  SpawnPosition::SpawnPosition(int playerId, bool onGroundOnly,
-			       bool notNearEdges);
-  SpawnPosition::~SpawnPosition();
+  SpawnPosition(int playerId, bool onGroundOnly, bool notNearEdges);
+  ~SpawnPosition();
 
   const float getX() const;
   const float getY() const;
