@@ -37,7 +37,7 @@
 					d.writeln("#Copy and paste into a simple text file and name it like <i>sample.conf</i>.<br/>");
 					d.writeln("#Use it like <code>bzfs -conf <i>sample.conf</i></code><br/><br/>");
 
-					if (mainform.port.value != 5155) {
+					if (mainform.port.value != 5154) {
 						d.writeln("#Initial port clients connect on<br/>");
 						d.writeln("-p " + mainform.port.value + "<br/><br/>");
 					}
@@ -379,7 +379,7 @@
 				<table width="100%">
 					<tr>
 						<td>Port</td>
-						<td><input type="text" name="port" value="5155" size="30" title="Initial port clients connect on"/></td>
+						<td><input type="text" name="port" value="5154" size="30" title="Initial port clients connect on"/></td>
 						<td>Reconnect Port</td>
 						<td><input type="text" name="reconnect_port" value="5156" size="30" title="Reconnect port"/></td>
 					</tr>
