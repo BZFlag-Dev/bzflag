@@ -33,7 +33,7 @@ BZFlag \- a tank battle game
 [\fB\-solo \fInumber-of-robots\fR]
 [\fB\-team \fR{\fIautomatic\fR | \fIred\fR | \fIgreen\fR | \fIblue\fR | \fIpurple\fR | \fIrogue\fR}]
 [\fB\-version\fR]
-[\fB\-view \fR{\fInormal\fR | \fIstereo\fR | \fIthree\fR}]
+[\fB\-view \fR{\fInormal\fR | \fIstereo\fR | \fIstacked\fR | \fIthree\fR | \fIanaglyph\fR}]
 [\fB\-window\fR]
 [\fB\-zbuffer \fR{\fIon\fR | \fIoff\fR}]
 [[\fIcallsign@\fR]\fIserver\fR[\fI:port\fR]]
@@ -173,18 +173,19 @@ join as an observer.
 .B -version
 Prints the version number of the executable.
 .TP
-\fB-view\fR {\fInormal\fR | \fIstereo\fR | \fIthree\fR}
-Chooses one of three possible display options.  \fINormal\fR will
-render a single view to the entire screen.  \fIStereo\fR will try
-to allocate a stereo (in-a-window) capable buffer and then draw a
-single view in stereo.  Your system must support stereo-in-a-window
-buffers and stereo goggles.  \fIThree\fR will render the front view
-to the upper right quadrant of the display, a left view to the lower
-left quadrant, and a right view to the lower right quadrant.  This
-is intended for systems capable of driving multiple monitors from
-various areas of the display surface, yielding a wrap around view.
-Note that setting an unsupported view option will often lead to BZFlag not
-running successfully. To correct this, run with -view normal.
+\fB\-view \fR{\fInormal\fR | \fIstereo\fR | \fIstacked\fR | \fIthree\fR | \fIanaglyph\fR}
+Chooses one of the possible display options.  \fINormal\fR will render a single
+view to the entire screen.  \fIStereo\fR will try to allocate a stereo
+(in-a-window) capable buffer and then draw a single view in stereo.  Your
+system must support stereo-in-a-window buffers.  \fIThree\fR will render the
+front view to the upper right quadrant of the display, a left view to the lower
+left quadrant, and a right view to the lower right quadrant.  This is intended
+for systems capable of driving multiple monitors from various areas of the
+display surface, yielding a wrap around view. \fIstacked\fR will render the two
+right eye view on the upper half of the display and the left eye on the lower
+half. \fIanaglyph\fR supports red-cyan stereo viewing glasses. Note that
+setting an unsupported view option will often lead to BZFlag not running
+successfully. To correct this, run with -view normal.
 .TP
 .B -window
 Runs the application in a window instead of full screen.
