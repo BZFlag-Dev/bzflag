@@ -1823,20 +1823,27 @@ void resetFlag(int flagIndex)
 					r, flagHeight);
 					
     while ((topmosttype != NOT_IN_BUILDING) || (pFlagInfo->flag.position[2] <= deadUnder)) {
-      if ((clOptions->flagsOnBuildings
+
+      if (world->getZonePoint(std::string(pFlagInfo->flag.type->flagAbbv), pFlagInfo->flag.position)
+          && (pFlagInfo->flag.position[2] > deadUnder)) {
+        // if you got a related flag zone specified, always use
+        // it. there may be obstacles in the zone that cause the
+        // NOT_IN_BUILDING test to fail a couple of times, but
+        // hopefully the map maker is using zones wisely.
+      }
+      else if ((clOptions->flagsOnBuildings
 	  && ((topmosttype == IN_BOX_NOTDRIVETHROUGH) || (topmosttype == IN_BASE)))
 	  && (obj->pos[2] < (pFlagInfo->flag.position[2] + flagHeight - Epsilon))
 	  && ((obj->pos[2] + obj->size[2] - Epsilon) > pFlagInfo->flag.position[2])
-	  && (world->inRect(obj->pos, obj->rotation, obj->size, pFlagInfo->flag.position[0], pFlagInfo->flag.position[1], 0.0f)))
-      {
+	  && (world->inRect(obj->pos, obj->rotation, obj->size, pFlagInfo->flag.position[0], pFlagInfo->flag.position[1], 0.0f))) {
 	pFlagInfo->flag.position[2] = obj->pos[2] + obj->size[2];
       }
-      else
-      {
+      else {
 	pFlagInfo->flag.position[0] = (worldSize - baseSize) * ((float)bzfrand() - 0.5f);
 	pFlagInfo->flag.position[1] = (worldSize - baseSize) * ((float)bzfrand() - 0.5f);
 	pFlagInfo->flag.position[2] = 0.0f;
       }
+
       topmosttype = world->inBuilding(&obj,
 				      pFlagInfo->flag.position[0],
 				      pFlagInfo->flag.position[1],
