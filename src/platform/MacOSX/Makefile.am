@@ -20,6 +20,8 @@ endif
 
 MAINTAINERCLEANFILES = Makefile.in
 
+AM_CPPFLAGS = $(SDL_CFLAGS)
+
 EXTRA_DIST =				\
 	BZFlag_Prefix.h			\
 	MacBZFlag.icns			\
