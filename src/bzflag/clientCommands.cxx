@@ -78,6 +78,7 @@ void setRoamingLabel(bool force);
 extern bool admin;
 extern void warnAboutMainFlags();
 extern void warnAboutRadarFlags();
+extern void warnAboutConsoleAndRadar();
 
 
 const struct CommandListItem commandList[] = {
@@ -103,7 +104,8 @@ const struct CommandListItem commandList[] = {
   { "autopilot",&cmdAutoPilot,	"autopilot:  set/unset autopilot bot code" },
   { "messagepanel", &cmdMessagePanel,
     "messagepanel {all|chat|server|misc}:  set message tab" },
-  { "toggleFlags", &cmdToggleFlags, "toggleFlags {main|radar}:  turn off on field radar flags"}
+  { "toggleConsoleAndRadar", &cmdToggleConsoleAndRadar, "toggleConsoleAndRadar:  turn off/on radar and console"},
+  { "toggleFlags", &cmdToggleFlags, "toggleFlags {main|radar}:  turn off/on field radar flags"}
 };
 
 
@@ -148,6 +150,17 @@ CommandManager::ArgList& args)
   } else {
      return "usage: main|radar";
   }
+
+  return std::string();
+}
+
+std::string cmdToggleConsoleAndRadar (const std::string&, const
+CommandManager::ArgList& args)
+{
+  if (args.size() != 0)
+    return "usage: toggleConsoleAndRadar";
+  CMDMGR.run("toggle displayConsoleAndRadar");
+  warnAboutConsoleAndRadar();
 
   return std::string();
 }

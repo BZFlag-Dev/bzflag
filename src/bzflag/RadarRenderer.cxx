@@ -152,6 +152,10 @@ void RadarRenderer::drawFlagOnTank(float x, float y, float)
 void			RadarRenderer::render(SceneRenderer& renderer,
 							bool blank)
 {
+  if (!BZDB.isTrue("displayConsoleAndRadar")) {
+    return;
+  }
+
   const bool smoothingOn = smooth && BZDB.isTrue("smooth");
 
   const int ox = renderer.getWindow().getOriginX();

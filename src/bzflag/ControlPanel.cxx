@@ -145,6 +145,10 @@ void			ControlPanel::setControlColor(const GLfloat *color)
 
 void			ControlPanel::render(SceneRenderer& renderer)
 {
+  if (!BZDB.isTrue("displayConsoleAndRadar")) {
+    return;
+  }
+  
   if (!resized) resize();
   if (!changedMessage && renderer.getPanelOpacity() == 1.0f)
     return;

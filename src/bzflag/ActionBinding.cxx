@@ -46,6 +46,7 @@ ActionBinding::ActionBinding() {
 #endif
   wayToBindActions.insert(std::make_pair(std::string("time backward"), press));
   wayToBindActions.insert(std::make_pair(std::string("time forward"), press));
+  wayToBindActions.insert(std::make_pair(std::string("toggleConsoleAndRadar"), press));
   wayToBindActions.insert(std::make_pair(std::string("toggleFlags radar"), press));
   wayToBindActions.insert(std::make_pair(std::string("toggleFlags main"), press));
   wayToBindActions.insert(std::make_pair(std::string("silence"), press));
@@ -104,8 +105,8 @@ ActionBinding::ActionBinding() {
   defaultBinding.insert(std::make_pair(std::string("B"), std::string("toggle displayBinoculars")));
   defaultBinding.insert(std::make_pair(std::string("Pause"), std::string("pause")));
   defaultBinding.insert(std::make_pair(std::string("P"), std::string("pause")));
-  defaultBinding.insert(std::make_pair(std::string("F1"),
-				       std::string("fullscreen")));
+  defaultBinding.insert(std::make_pair(std::string("F1"), std::string("fullscreen")));
+  defaultBinding.insert(std::make_pair(std::string("F3"), std::string("toggleConsoleAndRadar")));
   defaultBinding.insert(std::make_pair(std::string("F4"), std::string("iconify")));
 #ifdef SNAPPING
   defaultBinding.insert(std::make_pair(std::string("F5"), std::string("screenshot")));

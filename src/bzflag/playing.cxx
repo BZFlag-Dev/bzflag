@@ -307,6 +307,22 @@ void        warnAboutRadarFlags()
   }
 }
 
+void        warnAboutConsoleAndRadar()
+{
+  if (!BZDB.isTrue("displayConsoleAndRadar")){
+    std::string message = ColorStrings[YellowColor];
+    message += "To show the console and radar ";
+    std::vector<std::string> keys = KEYMGR.getKeysFromCommand("toggleConsoleAndRadar", true);
+
+    message += "hit \"" + ColorStrings[WhiteColor];
+    message += keys[0];
+    message += ColorStrings[YellowColor] + "\"";
+
+    // can't use a console message for this one
+    hud->setAlert(3, message.c_str(), 2.0f, true);
+  }
+}
+
 BzfDisplay*		getDisplay()
 {
   return display;
@@ -3948,8 +3964,10 @@ static bool		joinGame(const StartupInfo* info,
   fireButton = false;
   firstLife = true;
   
-  warnAboutMainFlags();
-  warnAboutRadarFlags();
+  
+  BZDB.setBool ("displayMainFlags", true);
+  BZDB.setBool ("displayRadarFlags", true);
+  BZDB.setBool ("displayConsoleAndRadar", true);
   
   return true;
 }
