@@ -172,7 +172,7 @@ std::string		BzfMedia::getSoundExtension() const
 }
 
 unsigned char*		BzfMedia::doReadImage(const char* filename,
-				int& dx, int& dy, int& dz) const
+				int& dx, int& dy, int&) const
 {
   return MediaFile::readImage( filename, &dx, &dy );
 }

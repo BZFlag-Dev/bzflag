@@ -85,6 +85,8 @@ LDADD =	\
 	../ogl/libGLKit.a		\
 	../scene/libSceneDB.a		\
 	../geometry/libGeometry.a	\
+	../mediafile/libMediaFile.a	\
+	../zlib/libz.a			\
 	$(RESOURCE)			\
 	$(GLIBS)
 else
@@ -96,6 +98,8 @@ LDADD =	\
 	../ogl/libGLKit.a		\
 	../scene/libSceneDB.a		\
 	../geometry/libGeometry.a	\
+	../mediafile/libMediaFile.a	\
+	../zlib/libz.a			\
 	$(RESOURCE)			\
 	$(GLIBS)
 endif
