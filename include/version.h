@@ -103,19 +103,19 @@ inline int getBuildDate()
 
 inline const char*		getProtocolVersion()
 {
-  static std::string protVersion = BZ_PROTO_VERSION;
+  std::string protVersion = BZ_PROTO_VERSION;
   return protVersion.c_str();
 }
 
 inline const char*		getServerVersion()
 {
-  static std::string serverVersion = std::string("BZFS") + getProtocolVersion();
+  std::string serverVersion = std::string("BZFS") + getProtocolVersion();
   return serverVersion.c_str();
 }
 
 inline const char*		getAppVersion()
 {
-  static std::string	appVersion = "";
+  std::string	appVersion = "";
   if (!appVersion.size()){
     std::ostringstream	appVersionStream;
     // TODO add current platform, release, cpu, etc
