@@ -30,7 +30,6 @@ class BzfDisplay;
 class SceneRenderer;
 class MainWindow;
 class Player;
-enum FlagId;
 
 const int		MaxAlerts = 3;
 const int		MaxHUDMarkers = 3;
@@ -75,7 +74,7 @@ class HUDRenderer {
     void		setDrawTime(float drawTimeInseconds);
     void		setAlert(int num, const char* string, float duration,
 						bool warning = false);
-    void		setFlagHelp(FlagId, float duration);
+    void		setFlagHelp(FlagDesc* desc, float duration);
     void		initCracks();
     void		setCracks(bool showCracks);
     void		setMarker(int index, bool = true);
@@ -211,9 +210,8 @@ class HUDRenderer {
 
     float		flagHelpY;
     FlashClock		flagHelpClock;
-    std::string		flagHelp[int(LastFlag) - int(FirstFlag) + 1];
-    int			flagHelpIndex;
     int			flagHelpLines;
+    std::string		flagHelpText;
 
     bool		showOptions;
     bool		showCompose;
@@ -240,7 +238,6 @@ class HUDRenderer {
     static std::string	resumeLabel;
     static std::string	cancelDestructLabel;
     static std::string	gameOverLabel;
-    static const char*	flagHelpString[int(LastFlag) - int(FirstFlag) + 1];
     bool		huntIndicator;
     bool		hunting;
     int			huntPosition;

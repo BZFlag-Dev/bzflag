@@ -41,7 +41,7 @@ void			RemotePlayer::addShot(const FiringInfo& info)
   shots[shotNum] = newShot;
   // Update tanks position and set dead reckoning for better lag handling
   // shot origin is center of tank for shockwave
-  if (info.flag == ShockWaveFlag) {
+  if (info.flag == Flags::ShockWave) {
     newpos[0] = info.shot.pos[0];
     newpos[1] = info.shot.pos[1];
     newpos[2] = info.shot.pos[2];
@@ -49,8 +49,8 @@ void			RemotePlayer::addShot(const FiringInfo& info)
   // shot origin is muzzle for other shots
   else {
     float front = MuzzleFront;
-    if (info.flag == ObesityFlag) front *= ObeseFactor;
-    else if (info.flag == TinyFlag) front *= TinyFactor;
+    if (info.flag == Flags::Obesity) front *= ObeseFactor;
+    else if (info.flag == Flags::Tiny) front *= TinyFactor;
     newpos[0] = info.shot.pos[0]-(front * f[0]);
     newpos[1] = info.shot.pos[1]-(front * f[1]);
     newpos[2] = info.shot.pos[2]-(front * f[2])-MuzzleHeight;

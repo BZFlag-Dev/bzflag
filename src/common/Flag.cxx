@@ -20,89 +20,107 @@
 #include "Flag.h"
 #include "Pack.h"
 
-int Flag::Desc::flagCount = 0;
-FlagSet Flag::Desc::flagSets[NumQualities];
+std::map<std::string, FlagDesc*> FlagDesc::flagMap;
+int FlagDesc::flagCount = 0;
+FlagSet FlagDesc::flagSets[NumQualities];
 
-Flag::Desc	Flag::descriptions[] =
+
+// Initialize flag description singletons in our Flags namespace
+namespace Flags {
+  FlagDesc *Null		    = new FlagDesc( "", "", FlagNormal, NormalShot, FlagGood, NoTeam, NULL );
+  FlagDesc *RedTeam                 = new FlagDesc( "Red Team", "R*", FlagNormal, NormalShot, FlagGood, ::RedTeam,
+						    "Team flag:  If it's yours, prevent other teams from taking it.  If it's not take it to your base to capture it!" );
+  FlagDesc *GreenTeam               = new FlagDesc( "Green Team", "G*", FlagNormal, NormalShot, FlagGood, ::GreenTeam,
+						    "Team flag:  If it's yours, prevent other teams from taking it.  If it's not take it to your base to capture it!" );
+  FlagDesc *BlueTeam                = new FlagDesc( "Blue Team", "B*", FlagNormal, NormalShot, FlagGood, ::BlueTeam,
+						    "Team flag:  If it's yours, prevent other teams from taking it.  If it's not take it to your base to capture it!" );
+  FlagDesc *PurpleTeam              = new FlagDesc( "Purple Team", "P*", FlagNormal, NormalShot, FlagGood, ::PurpleTeam,
+						    "Team flag:  If it's yours, prevent other teams from taking it.  If it's not take it to your base to capture it!" );
+  FlagDesc *Velocity                = new FlagDesc( "Velocity", "V", FlagUnstable, NormalShot, FlagGood, NoTeam,
+						    "Velocity (+V):  Tank moves faster.  Outrun bad guys." );
+  FlagDesc *QuickTurn               = new FlagDesc( "Quick Turn", "A", FlagUnstable, NormalShot, FlagGood, NoTeam,
+						    "Angular velocity (+A):  Tank turns faster.  Dodge quicker." );
+  FlagDesc *OscillationOverthruster = new FlagDesc( "Oscillation Overthruster", "OO", FlagUnstable, NormalShot, FlagGood, NoTeam,
+						    "Oscillation Overthruster (+OO):  Can drive through buildings.  Can't backup or shoot while inside." );
+  FlagDesc *RapidFire               = new FlagDesc( "Rapid Fire", "F", FlagUnstable, SpecialShot, FlagGood, NoTeam,
+						    "rapid Fire (+F):  Shoots more often.  Shells go faster but not as far." );
+  FlagDesc *MachineGun              = new FlagDesc( "Machine Gun", "MG", FlagUnstable, SpecialShot, FlagGood, NoTeam,
+						    "Machine Gun (+MG):  Very fast reload and very short range." );
+  FlagDesc *GuidedMissile           = new FlagDesc( "Guided Missile", "GM", FlagUnstable, SpecialShot, FlagGood, NoTeam,
+						    "Guided Missile (+GM):  Shots track a target.  Lock on with right button.  Can lock on or retarget after firing." );
+  FlagDesc *Laser                   = new FlagDesc( "Laser", "L", FlagUnstable, SpecialShot, FlagGood, NoTeam,
+						    "Laser (+L):  Shoots a laser.  Infinite speed and range but long reload time.");
+  FlagDesc *Ricochet                = new FlagDesc( "Ricochet", "R", FlagUnstable, SpecialShot, FlagGood, NoTeam,
+						    "Ricochet (+R):  Shots bounce off walls.  Don't shoot yourself!" );
+  FlagDesc *SuperBullet             = new FlagDesc( "Super Bullet", "SB", FlagUnstable, SpecialShot, FlagGood, NoTeam,
+						    "SuperBullet (+SB):  Shoots through buildings.  Can kill Phantom Zone." );
+  FlagDesc *InvisibleBullet         = new FlagDesc( "Invisible Bullet", "IB", FlagUnstable, NormalShot, FlagGood, NoTeam,
+						    "Invisible Bullet (+IB):  Your shots don't appear on other radars.  Can still see them out window.");
+  FlagDesc *Stealth                 = new FlagDesc( "Stealth", "ST", FlagUnstable, NormalShot, FlagGood, NoTeam,
+						    "STealth (+ST):  Tank is invisible on radar.  Shots are still visible.  Sneak up behind enemies!");
+  FlagDesc *Tiny                    = new FlagDesc( "Tiny", "T", FlagUnstable, NormalShot, FlagGood, NoTeam,
+						    "Tiny (+T):  Tank is small and can get through small openings.  Very hard to hit." );
+  FlagDesc *Narrow                  = new FlagDesc( "Narrow", "N", FlagUnstable, NormalShot, FlagGood, NoTeam,
+						    "Narrow (+N):  Tank is super thin.  Very hard to hit from front but is normal size from side.  Can get through small openings.");
+  FlagDesc *Shield                  = new FlagDesc( "Shield", "SH", FlagUnstable, NormalShot, FlagGood, NoTeam,
+						    "SHield (+SH):  Getting hit only drops flag.  Flag flies an extra-long time.");
+  FlagDesc *Steamroller             = new FlagDesc( "Steamroller", "SR", FlagUnstable, NormalShot, FlagGood, NoTeam,
+						    "SteamRoller (+SR):  Destroys tanks you touch but you have to get really close.");
+  FlagDesc *ShockWave               = new FlagDesc( "Shock Wave", "SW", FlagUnstable, SpecialShot, FlagGood, NoTeam,
+						    "Shock Wave (+SW):  Firing destroys all tanks nearby.  Don't kill teammates!  Can kill tanks on/in buildings.");
+  FlagDesc *PhantomZone             = new FlagDesc( "Phantom Zone", "PZ", FlagUnstable, NormalShot, FlagGood, NoTeam,
+						    "Phantom Zone (+PZ):  Teleporting toggles Zoned effect.  Zoned tank can drive through buildings.  Zoned tank can't shoot or be shot (except by superbullet and shock wave).");
+  FlagDesc *Genocide                = new FlagDesc( "Genocide", "G", FlagUnstable, NormalShot, FlagGood, NoTeam,
+						    "Genocide (+G):  Killing one tank kills that tank's whole team.");
+  FlagDesc *Jumping                 = new FlagDesc( "Jumping", "JP", FlagUnstable, NormalShot, FlagGood, NoTeam,
+						    "JumPing (+JP):  Tank can jump.  Use Tab key.  Can't steer in the air.");
+  FlagDesc *Identify                = new FlagDesc( "Identify", "ID", FlagUnstable, NormalShot, FlagGood, NoTeam,
+						    "IDentify (+ID):  Identifies type of nearest flag.");
+  FlagDesc *Cloaking                = new FlagDesc( "Cloaking", "CL", FlagUnstable, NormalShot, FlagGood, NoTeam,
+						    "CLoaking (+CL):  Makes your tank invisible out-the-window.  Still visible on radar.");
+  FlagDesc *Useless                 = new FlagDesc( "Useless", "US", FlagUnstable, NormalShot, FlagGood, NoTeam,
+						    "USeless (+US):  You have found the useless flag. Use it wisely.");
+  FlagDesc *Masquerade              = new FlagDesc( "Masquerade", "MQ", FlagUnstable, NormalShot, FlagGood, NoTeam,
+						    "MasQuerade (+MQ):  In opponent's hud, you appear as a teammate.");
+  FlagDesc *Seer                    = new FlagDesc( "Seer", "SE", FlagUnstable, NormalShot, FlagGood, NoTeam,
+						    "SEer (+SE):  See stealthed, cloaked and masquerading tanks as normal.");
+  FlagDesc *Colorblindness          = new FlagDesc( "Colorblindness", "CB", FlagSticky, NormalShot, FlagBad, NoTeam,
+						    "ColorBlindness (-CB):  Can't tell team colors.  Don't shoot teammates!");
+  FlagDesc *Obesity                 = new FlagDesc( "Obesity", "O", FlagSticky, NormalShot, FlagBad, NoTeam,
+						    "Obesity (-O):  Tank becomes very large.  Can't fit through teleporters.");
+  FlagDesc *LeftTurnOnly            = new FlagDesc( "Left Turn Only", "LT", FlagSticky, NormalShot, FlagBad, NoTeam,
+						    "left turn only (-LT):  Can't turn right.");
+  FlagDesc *RightTurnOnly           = new FlagDesc( "Right Turn Only", "RT", FlagSticky, NormalShot, FlagBad, NoTeam,
+						    "right turn only (-RT):  Can't turn left.");
+  FlagDesc *Momentum                = new FlagDesc( "Momentum", "M", FlagSticky, NormalShot, FlagBad, NoTeam,
+						    "Momentum (-M):  Tank has inertia.  Acceleration is limited.");
+  FlagDesc *Blindness               = new FlagDesc( "Blindness", "B", FlagSticky, NormalShot, FlagBad, NoTeam,
+						    "Blindness (-B):  Can't see out window.  Radar still works.");
+  FlagDesc *Jamming                 = new FlagDesc( "Jamming", "JM", FlagSticky, NormalShot, FlagBad, NoTeam,
+						    "JaMming (-JM):  Radar doesn't work.  Can still see.");
+  FlagDesc *WideAngle               = new FlagDesc( "Wide Angle", "WA", FlagSticky, NormalShot, FlagBad, NoTeam,
+						    "Wide Angle (-WA):  Fish-eye lens distorts view.");
+}
+
+void* FlagDesc::pack(void* buf) const
 {
-	Desc( "", "", FlagNormal, NormalShot, FlagGood, NULL ), //NullFlag
-	Desc( "Red Team", "R*", FlagNormal, NormalShot, FlagGood,
-		"Team flag:  If it's yours, prevent other teams from taking it.  If it's not take it to your base to capture it!" ),
-	Desc( "Green Team", "G*", FlagNormal, NormalShot, FlagGood,
-		"Team flag:  If it's yours, prevent other teams from taking it.  If it's not take it to your base to capture it!" ),
-	Desc( "Blue Team", "B*", FlagNormal, NormalShot, FlagGood,
-		"Team flag:  If it's yours, prevent other teams from taking it.  If it's not take it to your base to capture it!" ),
-	Desc( "Purple Team", "P*", FlagNormal, NormalShot, FlagGood,
-		"Team flag:  If it's yours, prevent other teams from taking it.  If it's not take it to your base to capture it!" ),
-	Desc( "High Speed", "V", FlagUnstable, NormalShot, FlagGood,
-		"Velocity (+V):  Tank moves faster.  Outrun bad guys." ),
-	Desc( "Quick Turn", "A", FlagUnstable, NormalShot, FlagGood,
-		"Angular velocity (+A):  Tank turns faster.  Dodge quicker." ),
-	Desc( "Oscillation Overthruster", "OO", FlagUnstable, NormalShot, FlagGood,
-		"Oscillation Overthruster (+OO):  Can drive through buildings.  Can't backup or shoot while inside." ),
-	Desc( "Rapid Fire", "F", FlagUnstable, SpecialShot, FlagGood,
-		"rapid Fire (+F):  Shoots more often.  Shells go faster but not as far." ),
-	Desc( "Machine Gun", "MG", FlagUnstable, SpecialShot, FlagGood,
-		"Machine Gun (+MG):  Very fast reload and very short range." ),
-	Desc( "Guided Missile", "GM", FlagUnstable, SpecialShot, FlagGood,
-		"Guided Missile (+GM):  Shots track a target.  Lock on with right button.  Can lock on or retarget after firing." ),
-	Desc( "Laser", "L", FlagUnstable, SpecialShot, FlagGood,
-		"Laser (+L):  Shoots a laser.  Infinite speed and range but long reload time."),
-	Desc( "Ricochet", "R", FlagUnstable, SpecialShot, FlagGood,
-		"Ricochet (+R):  Shots bounce off walls.  Don't shoot yourself!" ),
-	Desc( "Super Bullet", "SB", FlagUnstable, SpecialShot, FlagGood,
-		"SuperBullet (+SB):  Shoots through buildings.  Can kill Phantom Zone." ),
-	Desc( "Invisible Bullet", "IB", FlagUnstable, NormalShot, FlagGood,
-		"Invisible Bullet (+IB):  Your shots don't appear on other radars.  Can still see them out window."),
-	Desc( "Stealth", "ST", FlagUnstable, NormalShot, FlagGood,
-		"STealth (+ST):  Tank is invisible on radar.  Shots are still visible.  Sneak up behind enemies!"),
-	Desc( "Tiny", "T", FlagUnstable, NormalShot, FlagGood,
-		"Tiny (+T):  Tank is small and can get through small openings.  Very hard to hit." ),
-	Desc( "Narrow", "N", FlagUnstable, NormalShot, FlagGood,
-		"Narrow (+N):  Tank is super thin.  Very hard to hit from front but is normal size from side.  Can get through small openings."),
-	Desc( "Shield", "SH", FlagUnstable, NormalShot, FlagGood,
-		"SHield (+SH):  Getting hit only drops flag.  Flag flies an extra-long time."),
-	Desc( "Steamroller", "SR", FlagUnstable, NormalShot, FlagGood,
-		"SteamRoller (+SR):  Destroys tanks you touch but you have to get really close."),
-	Desc( "Shock Wave", "SW", FlagUnstable, SpecialShot, FlagGood,
-		"Shock Wave (+SW):  Firing destroys all tanks nearby.  Don't kill teammates!  Can kill tanks on/in buildings."),
-	Desc( "Phantom Zone", "PZ", FlagUnstable, NormalShot, FlagGood,
-		"Phantom Zone (+PZ):  Teleporting toggles Zoned effect.  Zoned tank can drive through buildings.  Zoned tank can't shoot or be shot (except by superbullet and shock wave)."),
-	Desc( "Genocide", "G", FlagUnstable, NormalShot, FlagGood,
-		"Genocide (+G):  Killing one tank kills that tank's whole team."),
-	Desc( "Jumping", "J", FlagUnstable, NormalShot, FlagGood,
-		"JumPing (+JP):  Tank can jump.  Use Tab key.  Can't steer in the air."),
-	Desc( "Identify", "ID", FlagUnstable, NormalShot, FlagGood,
-		"IDentify (+ID):  Identifies type of nearest flag."),
-	Desc( "Cloaking", "CL", FlagUnstable, NormalShot, FlagGood,
-		"CLoaking (+CL):  Makes your tank invisible out-the-window.  Still visible on radar."),
-	Desc( "Useless", "US", FlagUnstable, NormalShot, FlagGood,
-		"USeless (+US):  You have found the useless flag. Use it wisely."),
-	Desc( "Masquerade", "MQ", FlagUnstable, NormalShot, FlagGood,
-		"MasQuerade (+MQ):  In opponent's hud, you appear as a teammate."),
-	Desc( "Seer", "SE", FlagUnstable, NormalShot, FlagGood,
-		"SEer (+SE):  See stealthed, cloaked and masquerading tanks as normal."),
-	Desc( "Colorblindness", "CB", FlagSticky, NormalShot, FlagBad,
-		"ColorBlindness (-CB):  Can't tell team colors.  Don't shoot teammates!"),
-	Desc( "Obesity", "O", FlagSticky, NormalShot, FlagBad,
-		"Obesity (-O):  Tank becomes very large.  Can't fit through teleporters."),
-	Desc( "Left Turn Only", "<-", FlagSticky, NormalShot, FlagBad,
-		"left turn only (- <-):  Can't turn right."),
-	Desc( "Right Turn Only", "->", FlagSticky, NormalShot, FlagBad,
-		"right turn only (- ->):  Can't turn left."),
-	Desc( "Momentum", "M", FlagSticky, NormalShot, FlagBad,
-		"Momentum (-M):  Tank has inertia.  Acceleration is limited."),
-	Desc( "Blindness", "B", FlagSticky, NormalShot, FlagBad,
-		"Blindness (-B):  Can't see out window.  Radar still works."),
-	Desc( "Jamming", "JM", FlagSticky, NormalShot, FlagBad,
-		"JaMming (-JM):  Radar doesn't work.  Can still see."),
-	Desc( "Wide Angle", "WA", FlagSticky, NormalShot, FlagBad,
-		"Wide Angle (-WA):  Fish-eye lens distorts view."),
-};
+  buf = nboPackUByte(buf, flagAbbv[0]);
+  buf = nboPackUByte(buf, flagAbbv[1]);
+  return buf;
+}
+
+void* FlagDesc::unpack(void* buf, FlagDesc* &desc)
+{
+  unsigned char abbv[3] = {0,0,0};
+  buf = nboUnpackUByte(buf, abbv[0]);
+  buf = nboUnpackUByte(buf, abbv[1]);
+  desc = Flag::getDescFromAbbreviation((const char *)abbv);
+  return buf;
+}
 
 void*			Flag::pack(void* buf) const
 {
-  buf = nboPackUShort(buf, uint16_t(id));
+  buf = desc->pack(buf);
   buf = nboPackUShort(buf, uint16_t(status));
   buf = nboPackUShort(buf, uint16_t(type));
   buf = nboPackUByte(buf, owner);
@@ -118,7 +136,8 @@ void*			Flag::pack(void* buf) const
 void*			Flag::unpack(void* buf)
 {
   uint16_t data;
-  buf = nboUnpackUShort(buf, data); id = FlagId(data);
+
+  buf = FlagDesc::unpack(buf, desc);
   buf = nboUnpackUShort(buf, data); status = FlagStatus(data);
   buf = nboUnpackUShort(buf, data); type = FlagType(data);
   buf = nboUnpackUByte(buf, owner);
@@ -131,66 +150,42 @@ void*			Flag::unpack(void* buf)
   return buf;
 }
 
-const char*		Flag::getName(FlagId id)
+FlagDesc* Flag::getDescFromAbbreviation(const char* abbreviation)
 {
-  return descriptions[id].flagName;
-}
+  std::map<std::string, FlagDesc*>::iterator i;
+  std::string abbvString;
 
-const char*		Flag::getAbbreviation(FlagId id)
-{
-  return descriptions[id].flagAbbv;
-}
-
-FlagId	Flag::getIDFromAbbreviation(const char* abbreviation)
-{
-  for (int q = 0; q < NumQualities; q++) {
-    for (std::set<FlagId>::iterator it = Flag::Desc::flagSets[q].begin();
-         it != Flag::Desc::flagSets[q].end(); ++it) {
-	   const char* abbrev = Flag::getAbbreviation(*it);
-           if (strcasecmp(abbreviation, abbrev) == 0)
-	      return *it;
-	 }
+  /* Uppercase the abbreviation */
+  while (*abbreviation) {
+    abbvString += toupper(*abbreviation);
+    abbreviation++;
   }
-  return NullFlag;
-}
 
-FlagType		Flag::getType(FlagId id)
-{
-  return descriptions[id].flagType;
-}
-
-const char*		Flag::getHelp(FlagId id )
-{
-  return descriptions[id].flagHelp;
-}
-
-ShotType		Flag::getShotType( FlagId id )
-{
-  return descriptions[id].flagShot;
+  i = FlagDesc::flagMap.find(abbvString);
+  if (i == FlagDesc::flagMap.end())
+    /* Not found, return the Null flag */
+    return Flags::Null;
+  else
+    return i->second;
 }
 
 FlagSet&		Flag::getGoodFlags()
 {
-  return Flag::Desc::flagSets[FlagGood];
+  return FlagDesc::flagSets[FlagGood];
 }
 
 FlagSet&		Flag::getBadFlags()
 {
-  return Flag::Desc::flagSets[FlagBad];
+  return FlagDesc::flagSets[FlagBad];
 }
 
-const float*		Flag::getColor(FlagId id)
+const float*		FlagDesc::getColor()
 {
   static const float superColor[3] = { 1.0, 1.0, 1.0 };
-  switch (id) {
-    case NoFlag:
-    case RedFlag:
-    case GreenFlag:
-    case BlueFlag:
-    case PurpleFlag:
-      return Team::getTankColor(TeamColor(id));
-    default:
-      return superColor;
-  }
+
+  if (flagTeam == NoTeam)
+    return superColor;
+  else
+    return Team::getTankColor(flagTeam);
 }
 // ex: shiftwidth=2 tabstop=8

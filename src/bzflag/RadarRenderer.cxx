@@ -348,24 +348,25 @@ void			RadarRenderer::render(SceneRenderer& renderer,
     const int curMaxPlayers = world.getCurMaxPlayers();
     for (i = 0; i < curMaxPlayers; i++) {
       RemotePlayer* player = world.getPlayer(i);
-      if (!player || !player->isAlive() || ((player->getFlag() == StealthFlag) && (myTank->getFlag() != SeerFlag)))
+      if (!player || !player->isAlive() || ((player->getFlag() == Flags::Stealth) &&
+					    (myTank->getFlag() != Flags::Seer)))
 	continue;
 
       GLfloat x = player->getPosition()[0];
       GLfloat y = player->getPosition()[1];
       GLfloat z = player->getPosition()[2];
-      if (player->getFlag() != NoFlag) {
-	glColor3fv(Flag::getColor(player->getFlag()));
+      if (player->getFlag() != Flags::Null) {
+	glColor3fv(player->getFlag()->getColor());
 	drawFlagOnTank(x, y, z);
       }
 
-      if (myTank->getFlag() == ColorblindnessFlag)
+      if (myTank->getFlag() == Flags::Colorblindness)
 	glColor3fv(Team::getRadarColor(RogueTeam));
       else {
 	if (player->isPaused() || player->isNotResponding()) {
 	  const float dimfactor=0.4f;
 	  const float *color = Team::getRadarColor(myTank->getFlag() ==
-	    ColorblindnessFlag ? RogueTeam : player->getTeam());
+			       Flags::Colorblindness ? RogueTeam : player->getTeam());
 	  float dimmedcolor[3];
 	  dimmedcolor[0] = color[0] * dimfactor;
 	  dimmedcolor[1] = color[1] * dimfactor;
@@ -398,10 +399,10 @@ void			RadarRenderer::render(SceneRenderer& renderer,
       if (!player) continue;
       for (int j = 0; j < maxShots; j++) {
 	const ShotPath* shot = player->getShot(j);
-        if (shot && shot->getFlag() != InvisibleBulletFlag) {
+        if (shot && shot->getFlag() != Flags::InvisibleBullet) {
           const float *shotcolor;
 	  if (BZDB->isTrue("coloredradarshots")) {
-            if (myTank->getFlag() == ColorblindnessFlag)
+            if (myTank->getFlag() == Flags::Colorblindness)
               shotcolor = Team::getRadarColor(RogueTeam);
             else
               shotcolor = Team::getRadarColor(player->getTeam());
@@ -423,10 +424,10 @@ void			RadarRenderer::render(SceneRenderer& renderer,
       const Flag& flag = world.getFlag(i);
       if (flag.status == FlagNoExist || flag.status == FlagOnTank)
 	continue;
-      if (flag.id >= FirstTeamFlag && flag.id <= LastTeamFlag)
+      if (flag.desc->flagTeam != NoTeam)
 	continue;
       const float cs = colorScale(flag.position[2], MuzzleHeight, BZDB->isTrue("enhancedradar"));
-      const float *flagcolor = Flag::getColor(flag.id);
+      const float *flagcolor = flag.desc->getColor();
       glColor3f(flagcolor[0] * cs, flagcolor[1] * cs, flagcolor[2] * cs);
       drawFlag(flag.position[0], flag.position[1], flag.position[2]);
     }
@@ -435,11 +436,11 @@ void			RadarRenderer::render(SceneRenderer& renderer,
       const Flag& flag = world.getFlag(i);
       if (flag.status == FlagNoExist || flag.status == FlagOnTank)
 	continue;
-      if (flag.id < FirstTeamFlag || flag.id > LastTeamFlag)
+      if (flag.desc->flagTeam == NoTeam)
 	continue;
       // Flags change color by height
       const float cs = colorScale(flag.position[2], MuzzleHeight, BZDB->isTrue("enhancedradar"));
-      const float *flagcolor = Flag::getColor(flag.id);
+      const float *flagcolor = flag.desc->getColor();
       glColor3f(flagcolor[0] * cs, flagcolor[1] * cs, flagcolor[2] * cs);
       // always draw team flags
       drawFlag(flag.position[0], flag.position[1], flag.position[2], true);
@@ -498,8 +499,8 @@ void			RadarRenderer::render(SceneRenderer& renderer,
     drawTank(0.0f, 0.0f, myTank->getPosition()[2]);
 
     // my flag
-    if (myTank->getFlag() != NoFlag) {
-      glColor3fv(Flag::getColor(myTank->getFlag()));
+    if (myTank->getFlag() != Flags::Null) {
+      glColor3fv(myTank->getFlag()->getColor());
       drawFlagOnTank(0.0f, 0.0f, myTank->getPosition()[2]);
     }
   }

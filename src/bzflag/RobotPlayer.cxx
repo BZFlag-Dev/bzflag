@@ -240,16 +240,16 @@ bool			RobotPlayer::checkHit(const Player* source,
     if (!shot || shot->isExpired()) continue;
 
     // my own shock wave cannot kill me
-    if (source == this && shot->getFlag() == ShockWaveFlag) continue;
+    if (source == this && shot->getFlag() == Flags::ShockWave) continue;
 
     // short circuit test if shot can't possibly hit.
     // only superbullet or shockwave can kill zoned dude
-    const FlagId shotFlag = shot->getFlag();
-    if (getFlag() == PhantomZoneFlag && isFlagActive() &&
-		shotFlag != SuperBulletFlag && shotFlag != ShockWaveFlag)
+    const FlagDesc* shotFlag = shot->getFlag();
+    if (getFlag() == Flags::PhantomZone && isFlagActive() &&
+		shotFlag != Flags::SuperBullet && shotFlag != Flags::ShockWave)
       continue;
     // laser can't hit a cloaked tank
-    if (getFlag() == CloakingFlag && shotFlag == LaserFlag)
+    if (getFlag() == Flags::Cloaking && shotFlag == Flags::Laser)
       continue;
 
     // test myself against shot
@@ -318,7 +318,7 @@ void			RobotPlayer::restart()
   setStatus(short(PlayerState::DeadStatus));
 
   // can't have a flag
-  setFlag(NoFlag);
+  setFlag(Flags::Null);
 
   // get rid of existing shots
   const int numShots = World::getWorld()->getMaxShots();

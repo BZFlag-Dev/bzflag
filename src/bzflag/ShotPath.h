@@ -32,6 +32,7 @@
 #include "Address.h"
 #include "Player.h"
 #include "ShotUpdate.h"
+#include "Flag.h"
 
 class ShotStrategy;
 class BaseLocalPlayer;
@@ -46,7 +47,7 @@ class ShotPath {
     bool		isReloaded() const;
     const PlayerId&	getPlayer() const;
     uint16_t		getShotId() const;
-    FlagId		getFlag() const;
+    FlagDesc*		getFlag() const;
     float		getLifetime() const;
     float		getReloadTime() const;
     const TimeKeeper&	getStartTime() const;
@@ -133,7 +134,7 @@ inline uint16_t		ShotPath::getShotId() const
   return firingInfo.shot.id;
 }
 
-inline FlagId		ShotPath::getFlag() const
+inline FlagDesc*	ShotPath::getFlag() const
 {
   return firingInfo.flag;
 }

@@ -186,10 +186,11 @@ struct CmdLineOptions
     teamKillerDies(true), printScore(false), publicizeServer(false), publicizedAddressGiven(false), debug(0)
   {
     int i;
-    for (i = int(FirstFlag); i <= int(LastFlag); i++) {
-	flagCount[i] = 0;
-	flagLimit[i] = -1;
-	flagDisallowed[i] = false;
+    for (std::map<std::string, FlagDesc*>::iterator it = FlagDesc::flagMap.begin(); 
+	 it != FlagDesc::flagMap.end(); ++it) {
+	flagCount[it->second] = 0;
+	flagLimit[it->second] = -1;
+	flagDisallowed[it->second] = false;
     }
 
     for (i = 0; i < NumTeams; i++)
@@ -249,9 +250,10 @@ struct CmdLineOptions
   int			debug;
 
   uint16_t		maxTeam[NumTeams];
-  int			flagCount[LastFlag + 1];//
-  int			flagLimit[LastFlag + 1]; // # shots allowed / flag
-  bool			flagDisallowed[LastFlag + 1];//
+  std::map<FlagDesc*,int> flagCount;
+  std::map<FlagDesc*,int> flagLimit; // # shots allowed / flag
+  std::map<FlagDesc*,bool> flagDisallowed;
+
   AccessControlList	acl;
   TextChunkManager	textChunker;
   BadWordList		bwl;
@@ -361,7 +363,7 @@ struct PlayerInfo {
     TimeKeeper nextping,lastping;
     int pingseqno,pingslost,pingssent;
 
-    std::vector<int> flagHistory;
+    std::vector<FlagDesc*> flagHistory;
 #ifdef TIMELIMIT
     // player played before countdown started
     bool playedEarly;
@@ -461,7 +463,7 @@ static FlagInfo *flag = NULL;
 static int numFlags;
 static int numFlagsInAir;
 // types of extra flags allowed
-static FlagId *allowedFlags = NULL;
+static std::set<FlagDesc*> allowedFlags;
 static bool done = false;
 // true if hit time/score limit
 static bool gameOver = true;
@@ -3440,8 +3442,20 @@ static void addFlag(int flagIndex)
 static void randomFlag(int flagIndex)
 {
   // pick a random flag
-  flag[flagIndex].flag.id = allowedFlags[int(clOptions.numAllowedFlags * (float)bzfrand())];
-  flag[flagIndex].flag.type = Flag::getType(flag[flagIndex].flag.id);
+  //FIXME for now just save an iterator that loops over all flags in order
+  static std::set<FlagDesc*>::iterator randomIt = allowedFlags.end();
+
+  if (randomIt == allowedFlags.end()) {
+    randomIt = allowedFlags.begin();
+  }
+  else {
+    randomIt++;
+    if (randomIt == allowedFlags.end()) {
+      randomIt = allowedFlags.begin();
+    }
+  }
+
+  flag[flagIndex].flag.desc = *randomIt;
   addFlag(flagIndex);
 }
 
@@ -3461,12 +3475,11 @@ static void resetFlag(int flagIndex)
 
   // if it's a random flag, reset flag id
   if (flagIndex >= numFlags - clOptions.numExtraFlags)
-    pFlagInfo->flag.id = NullFlag;
+    pFlagInfo->flag.desc = Flags::Null;
 
   // reposition flag
-  if (int(pFlagInfo->flag.id) >= int(FirstTeamFlag) &&
-	int(pFlagInfo->flag.id) <= int(LastTeamFlag)) {
-    int teamIndex = int(pFlagInfo->flag.id);
+  if (pFlagInfo->flag.desc->flagTeam != ::NoTeam) {
+    int teamIndex = pFlagInfo->flag.desc->flagTeam;
     pFlagInfo->flag.position[0] = basePos[teamIndex][0];
     pFlagInfo->flag.position[1] = basePos[teamIndex][1];
     pFlagInfo->flag.position[2] = basePos[teamIndex][2];
@@ -3476,7 +3489,7 @@ static void resetFlag(int flagIndex)
   } else {
     // random position (not in a building)
     float r = TankRadius;
-    if (pFlagInfo->flag.id == ObesityFlag)
+    if (pFlagInfo->flag.desc == Flags::Obesity)
        r *= 2.0f * ObeseFactor;
     WorldInfo::ObstacleLocation *obj;
     pFlagInfo->flag.position[0] = (WorldSize - BaseSize) * ((float)bzfrand() - 0.5f);
@@ -3503,13 +3516,13 @@ static void resetFlag(int flagIndex)
 
   // required flags mustn't just disappear
   if (pFlagInfo->required) {
-    if (int(pFlagInfo->flag.id) >= FirstTeamFlag &&
-	int(pFlagInfo->flag.id) <= LastTeamFlag)
-      if (team[int(pFlagInfo->flag.id)].team.activeSize == 0)
+    if (pFlagInfo->flag.desc->flagTeam != ::NoTeam) {
+      if (team[pFlagInfo->flag.desc->flagTeam].team.activeSize == 0)
 	pFlagInfo->flag.status = FlagNoExist;
       else
 	pFlagInfo->flag.status = FlagOnGround;
-    else if (pFlagInfo->flag.id == NullFlag)
+    }
+    else if (pFlagInfo->flag.desc == Flags::Null)
       randomFlag(flagIndex);
     else
       addFlag(flagIndex);
@@ -3690,7 +3703,7 @@ static void removePlayer(int playerIndex, char *reason, bool notify)
     if (flagid >= 0) {
       // do not simply zap team flag
       Flag &carriedflag = flag[flagid].flag;
-      if (carriedflag.id >= FirstTeamFlag && carriedflag.id <= LastTeamFlag) {
+      if (carriedflag.desc->flagTeam != ::NoTeam) {
 	dropFlag(playerIndex, player[playerIndex].lastState.pos);
       }
       else {
@@ -3906,7 +3919,7 @@ static void playerKilled(int victimIndex, int killerIndex, int reason,
   if (flagid >= 0) {
     // do not simply zap team flag
     Flag &carriedflag=flag[flagid].flag;
-    if (carriedflag.id >= FirstTeamFlag && carriedflag.id <= LastTeamFlag) {
+    if (carriedflag.desc->flagTeam != ::NoTeam) {
       dropFlag(victimIndex, carriedflag.position);
     }
     else {
@@ -4028,10 +4041,10 @@ static void grabFlag(int playerIndex, int flagIndex)
   buf = flag[flagIndex].flag.pack(buf);
   broadcastMessage(MsgGrabFlag, (char*)buf-(char*)bufStart, bufStart);
 
-  std::vector<int> *pFH = &player[playerIndex].flagHistory;
+  std::vector<FlagDesc*> *pFH = &player[playerIndex].flagHistory;
   if (pFH->size() >= MAX_FLAG_HISTORY)
 	  pFH->erase(pFH->begin());
-  pFH->push_back( flag[flagIndex].flag.id );
+  pFH->push_back( flag[flagIndex].flag.desc );
 }
 
 static void dropFlag(int playerIndex, float pos[3])
@@ -4084,20 +4097,21 @@ static void dropFlag(int playerIndex, float pos[3])
   TeamColor teamBase = whoseBase(pos[0], pos[1],
 				 (topmosttype == NOT_IN_BUILDING ? pos[2] :
 				  topmost->pos[2] + topmost->size[2] + 0.01f));
-  FlagId flagId = pFlagInfo->flag.id;
-  bool isTeamFlag = (flagId >= FirstTeamFlag) && (flagId <= LastTeamFlag);
+
+  int flagTeam = pFlagInfo->flag.desc->flagTeam;
+  bool isTeamFlag = flagTeam != ::NoTeam;
 
   if (pFlagInfo->flag.status == FlagGoing) {
     pFlagInfo->flag.landingPosition[0] = pos[0];
     pFlagInfo->flag.landingPosition[1] = pos[1];
     pFlagInfo->flag.landingPosition[2] = pos[2];
   }
-  else if (isTeamFlag && ((FlagId)teamBase == flagId) && (topmosttype == IN_BASE)) {
+  else if (isTeamFlag && (teamBase == flagTeam) && (topmosttype == IN_BASE)) {
     pFlagInfo->flag.landingPosition[0] = pos[0];
     pFlagInfo->flag.landingPosition[1] = pos[1];
     pFlagInfo->flag.landingPosition[2] = topmost->pos[2] + topmost->size[2];
   }
-  else if (isTeamFlag && (teamBase != NoTeam) && ((FlagId)teamBase != flagId)) {
+  else if (isTeamFlag && (teamBase != NoTeam) && (teamBase != flagTeam)) {
     pFlagInfo->flag.landingPosition[0] = safetyBasePos[int(teamBase)][0];
     pFlagInfo->flag.landingPosition[1] = safetyBasePos[int(teamBase)][1];
     pFlagInfo->flag.landingPosition[2] = safetyBasePos[int(teamBase)][2];
@@ -4123,9 +4137,9 @@ static void dropFlag(int playerIndex, float pos[3])
 	pFlagInfo->flag.landingPosition[2] = 0.0f;
     }
     else {// oh well, whatcha gonna do?
-	pFlagInfo->flag.landingPosition[0] = basePos[flagId][0];
-	pFlagInfo->flag.landingPosition[1] = basePos[flagId][1];
-	pFlagInfo->flag.landingPosition[2] = basePos[flagId][2];
+	pFlagInfo->flag.landingPosition[0] = basePos[flagTeam][0];
+	pFlagInfo->flag.landingPosition[1] = basePos[flagTeam][1];
+	pFlagInfo->flag.landingPosition[2] = basePos[flagTeam][2];
     }
   }
   else
@@ -4147,7 +4161,7 @@ static void dropFlag(int playerIndex, float pos[3])
 
   // compute flight info -- flight time depends depends on start and end
   // altitudes and desired height above start altitude.
-  const float thrownAltitude = (pFlagInfo->flag.id == ShieldFlag) ?
+  const float thrownAltitude = (pFlagInfo->flag.desc == Flags::Shield) ?
       ShieldFlight * FlagAltitude : FlagAltitude;
   const float maxAltitude = pos[2] + thrownAltitude;
   const float upTime = sqrtf(-2.0f * thrownAltitude / Gravity);
@@ -4178,9 +4192,7 @@ static void captureFlag(int playerIndex, TeamColor teamCaptured)
   // player captured a flag.  can either be enemy flag in player's own
   // team base, or player's own flag in enemy base.
   int flagIndex = int(player[playerIndex].flag);
-  if (flagIndex < 0 ||
-      int(flag[flagIndex].flag.id) < int(FirstTeamFlag) ||
-      int(flag[flagIndex].flag.id) > int(LastTeamFlag))
+  if (flagIndex < 0 || (flag[flagIndex].flag.desc->flagTeam != ::NoTeam))
     return;
 
   // player no longer has flag and put flag back at it's base
@@ -4197,21 +4209,21 @@ static void captureFlag(int playerIndex, TeamColor teamCaptured)
   // everyone on losing team is dead
   for (int i = 0; i < curMaxPlayers; i++)
     if (player[i].fd != NotConnected &&
-	int(flag[flagIndex].flag.id) == int(player[i].team) &&
+	flag[flagIndex].flag.desc->flagTeam == int(player[i].team) && 
 	player[i].state == PlayerAlive) {
       player[i].state = PlayerDead;
     }
 
   // update score (rogues can't capture flags)
   int winningTeam = (int)NoTeam;
-  if (int(flag[flagIndex].flag.id) != int(player[playerIndex].team)) {
+  if (int(flag[flagIndex].flag.desc->flagTeam) != int(player[playerIndex].team)) {
     // player captured enemy flag
     winningTeam = int(player[playerIndex].team);
     team[winningTeam].team.won++;
     sendTeamUpdate(winningTeam);
   }
-  team[int(flag[flagIndex].flag.id)].team.lost++;
-  sendTeamUpdate(int(flag[flagIndex].flag.id));
+  team[int(flag[flagIndex].flag.desc->flagTeam)].team.lost++;
+  sendTeamUpdate(int(flag[flagIndex].flag.desc->flagTeam));
 #ifdef PRINTSCORE
   dumpScore();
 #endif
@@ -4236,10 +4248,10 @@ static void shotFired(int playerIndex, void *buf, int len)
   }
 
   // verify player flag
-  if ((firingInfo.flag != NullFlag) && (firingInfo.flag != flag[shooter.flag].flag.id)) {
-    DEBUG2("Player %s [%d] shot flag mismatch %d %d\n", shooter.callSign,
-	   playerIndex, firingInfo.flag, flag[shooter.flag].flag.id);
-    firingInfo.flag = NullFlag;
+  if ((firingInfo.flag != Flags::Null) && (firingInfo.flag != flag[shooter.flag].flag.desc)) {
+    DEBUG2("Player %s [%d] shot flag mismatch %s %s\n", shooter.callSign,
+	   playerIndex, firingInfo.flag->flagAbbv, flag[shooter.flag].flag.desc->flagAbbv);
+    firingInfo.flag = Flags::Null;
     repack = true;
   }
 
@@ -4253,19 +4265,17 @@ static void shotFired(int playerIndex, void *buf, int len)
   float shotSpeed = ShotSpeed;
   float tankSpeed = TankSpeed;
   float lifetime = ReloadTime;
-  switch (firingInfo.flag) {
-    case ShockWaveFlag:
+  if (firingInfo.flag == Flags::ShockWave) {
       shotSpeed = 0.0f;
       tankSpeed = 0.0f;
-      break;
-    case VelocityFlag:
+  }
+  else if (firingInfo.flag == Flags::Velocity) {
       tankSpeed *= VelocityAd;
-      break;
-    default:
+  }
+  else {
       //If shot is different height than player, can't be sure they didn't drop V in air
       if (shooter.lastState.pos[2] != (shot.pos[2]-MuzzleHeight))
 	tankSpeed *= VelocityAd;
-      break;
   }
 
   // FIXME, we should look at the actual TankSpeed ;-)
@@ -4292,7 +4302,7 @@ static void shotFired(int playerIndex, void *buf, int len)
   float dz = shooter.lastState.pos[2] - shot.pos[2];
 
   float front = MuzzleFront;
-  if (firingInfo.flag == ObesityFlag)
+  if (firingInfo.flag == Flags::Obesity)
     front *= ObeseFactor;
 
   float delta = dx*dx + dy*dy + dz*dz;
@@ -4319,7 +4329,7 @@ static void shotFired(int playerIndex, void *buf, int len)
     FlagInfo & fInfo = flag[shooter.flag];
     fInfo.numShots++; // increase the # shots fired
 
-    int limit = clOptions.flagLimit[fInfo.flag.id];
+    int limit = clOptions.flagLimit[fInfo.flag.desc];
     if (limit != -1){ // if there is a limit for players flag
       int shotsLeft = limit -  fInfo.numShots;
       if (shotsLeft > 0) { //still have some shots left
@@ -4499,8 +4509,7 @@ static void parseCommand(const char *message, int t)
       }
     } else if (strncmp(message + 6, "up", 2) == 0) {
       for (int i = 0; i < numFlags; i++) {
-	if (int(flag[i].flag.id) < int(FirstTeamFlag) ||
-	    int(flag[i].flag.id) > int(LastTeamFlag)) {
+        if (flag[i].flag.desc->flagTeam != ::NoTeam) {
 	  // see if someone had grabbed flag.  tell 'em to drop it.
 	  const int playerIndex = flag[i].player;
 	  if (playerIndex != -1) {
@@ -4516,7 +4525,7 @@ static void parseCommand(const char *message, int t)
 	  }
 	  flag[i].flag.status = FlagGoing;
 	  if (!flag[i].required)
-	    flag[i].flag.id = NullFlag;
+	    flag[i].flag.desc = Flags::Null;
 	  sendFlagUpdate(i);
 	}
       }
@@ -4524,7 +4533,7 @@ static void parseCommand(const char *message, int t)
       for (int i = 0; i < numFlags; i++) {
 	char message[MessageLen];
 	sprintf(message, "%d p:%d r:%d g:%d i:%s s:%d p:%3.1fx%3.1fx%3.1f", i, flag[i].player,
-	    flag[i].required, flag[i].grabs, Flag::getAbbreviation(flag[i].flag.id),
+	    flag[i].required, flag[i].grabs, flag[i].flag.desc->flagAbbv,
 	    flag[i].flag.status,
 	    flag[i].flag.position[0],
 	    flag[i].flag.position[1],
@@ -4635,14 +4644,14 @@ static void parseCommand(const char *message, int t)
 	char reply[MessageLen];
 	char flag[MessageLen];
 	sprintf(reply,"%-16s : ",player[i].callSign );
-	std::vector<int>::iterator fhIt = player[i].flagHistory.begin();
+	std::vector<FlagDesc*>::iterator fhIt = player[i].flagHistory.begin();
 
 	while (fhIt != player[i].flagHistory.end()) {
-	  FlagId fID = (FlagId)(*fhIt);
-	  if (Flag::getType(fID) == FlagNormal)
-	    sprintf( flag, "(*%c) ", Flag::getName(fID)[0] );
+	  FlagDesc * fDesc = (FlagDesc*)(*fhIt);
+	  if (fDesc->flagType == FlagNormal)
+	    sprintf( flag, "(*%c) ", fDesc->flagName[0] );
 	  else
-	    sprintf( flag, "(%s) ", Flag::getAbbreviation((FlagId)(*fhIt)) );
+	    sprintf( flag, "(%s) ", fDesc->flagAbbv );
 	  strcat( reply, flag );
 	  fhIt++;
 	}
@@ -5104,46 +5113,35 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
 
       case MsgNegotiateFlags: {
 	void *bufStart;
-	char abbv[3];
+	std::map<std::string,FlagDesc*>::iterator it;
+	std::set<FlagDesc*>::iterator m_it;
+	std::map<FlagDesc*,bool> hasFlag;
+	std::set<FlagDesc*> missingFlags;
 	int i;
+	unsigned short numClientFlags = len/2;
 
-	unsigned short numClientFlags;
-	buf = nboUnpackUShort(buf, numClientFlags);
-
-	bool *hasFlag = new bool[LastFlag - FirstFlag + 1];
-	memset( hasFlag, 0, LastFlag - FirstFlag + 1);
-
+	/* Unpack incoming message containing the list of flags our client supports */
 	for (i = 0; i < numClientFlags; i++) {
-		buf = nboUnpackString( buf, abbv, 2);
-		abbv[2] = 0;
-		if (strlen(abbv) == 0)
-			continue;
-		FlagId fID = Flag::getIDFromAbbreviation( abbv );
-		if (fID != NullFlag)
-			hasFlag[fID-FirstFlag] = true;
+		FlagDesc *fDesc;
+		buf = FlagDesc::unpack(buf, fDesc);
+		if (fDesc != Flags::Null)
+		  hasFlag[fDesc] = true;
 	}
-	for (i = FirstFlag; i <= LastFlag; i++) {
-		if (!hasFlag[i-FirstFlag]) {
-		   if (clOptions.flagCount[i] > 0)
-		     break;
-		   if ((clOptions.numExtraFlags > 0) && !clOptions.flagDisallowed[i])
-		     break;
+
+	/* Compare them to the flags this game might need, generating a list of missing flags */
+	for (it = FlagDesc::flagMap.begin(); it != FlagDesc::flagMap.end(); ++it) {
+		if (!hasFlag[it->second]) {
+		   if (clOptions.flagCount[it->second] > 0)
+		     missingFlags.insert(it->second);
+		   if ((clOptions.numExtraFlags > 0) && !clOptions.flagDisallowed[it->second])
+		     missingFlags.insert(it->second);
 		}
 	}
 
-	delete[] hasFlag;
-	if (i <= LastFlag) {
-		directMessage(t, MsgSuperKill, 0, getDirectMessageBuffer());
-		break;
-	}
-
-	bufStart = getDirectMessageBuffer();
-	buf = nboPackUShort(bufStart,LastFlag-FirstFlag+1);
-	for (i = FirstFlag; i <= LastFlag; i++) {
-		buf = nboPackUShort(buf, i);
-		const char *abbv = Flag::getAbbreviation((FlagId)i);
-		buf = nboPackString(buf, abbv, 2);
-	}
+	/* Pack a message with the list of missing flags */
+	buf = bufStart = getDirectMessageBuffer();
+	for (m_it = missingFlags.begin(); m_it != missingFlags.end(); ++it)
+	  buf = (*m_it)->pack(buf);
 	directMessage(t, MsgNegotiateFlags, (char*)buf-(char*)bufStart, bufStart);
 	break;
     }
@@ -5384,7 +5382,7 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
 
 	// if tank is not driving cannot be sure it didn't toss (V) in flight
 	// if tank is not alive cannot be sure it didn't just toss (V)
-	if (flag[player[t].flag].flag.id == VelocityFlag)
+	if (flag[player[t].flag].flag.desc == Flags::Velocity)
 	  maxPlanarSpeedSqr *= VelocityAd*VelocityAd;
 	else {
 	  // If player is moving vertically, or not alive the speed checks seem to be problematic
@@ -5597,28 +5595,11 @@ static void extraUsage(const char *pname)
   printVersion();
   printf("\nUsage: %s %s\n", pname, usageString);
   printf("\n%s\nFlag codes:\n", extraUsageString);
-  for (int f = int(FirstSuperFlag); f <= int(LastSuperFlag); f++)
-    printf("\t%2.2s %s\n", Flag::getAbbreviation(FlagId(f)), Flag::getName(FlagId(f)));
+  for (std::map<std::string, FlagDesc*>::iterator it = FlagDesc::flagMap.begin(); it != FlagDesc::flagMap.end(); ++it)
+    printf("\t%2.2s %s\n", (*it->second).flagAbbv, (*it->second).flagName);
   exit(0);
 }
 
-static int lookupFlag(const char *code)
-{
-  int f = atoi(code);
-
-  if (strcasecmp(code, "LT") == 0)
-    f = LeftTurnOnlyFlag;
-  else if (strcasecmp(code, "RT") == 0)
-    f = RightTurnOnlyFlag;
-  else if (f == 0)
-    for (f = int(FirstSuperFlag); f <= int(LastSuperFlag); f++)
-      if (strcasecmp(code, Flag::getAbbreviation(FlagId(f))) == 0)
-	break;
-  if (f < int(FirstSuperFlag) || f > int(LastSuperFlag))
-    f = int(NoFlag);
-
-  return f;
-}
 
 static bool parsePlayerCount(const char *argv, CmdLineOptions &options)
 {
@@ -5697,11 +5678,10 @@ static bool parsePlayerCount(const char *argv, CmdLineOptions &options)
   return true;
 }
 
-static bool setRequiredFlag(FlagInfo& flag, FlagId id)
+static bool setRequiredFlag(FlagInfo& flag, FlagDesc *desc)
 {
   flag.required = true;
-  flag.flag.id = id;
-  flag.flag.type = Flag::getType(id);
+  flag.flag.desc = desc;
   return true;
 }
 
@@ -5753,7 +5733,6 @@ static void parse(int argc, char **argv, CmdLineOptions &options)
 {
   CmdLineOptions confOptions;
   delete[] flag;  flag = NULL;
-  delete[] allowedFlags;  allowedFlags = NULL;
 
   // prepare flag counts
   int f, i;
@@ -5817,11 +5796,12 @@ static void parse(int argc, char **argv, CmdLineOptions &options)
 	  options.flagCount[*it] += rptCnt;
       }
       else {
-	if ((f = lookupFlag(argv[i])) == int(NoFlag)) {
+	FlagDesc *fDesc = Flag::getDescFromAbbreviation(argv[i]);
+	if (fDesc == Flags::Null) {
 	  fprintf(stderr, "invalid flag \"%s\"\n", argv[i]);
 	  usage(argv[0]);
 	}
-	options.flagCount[f] += rptCnt;
+	options.flagCount[fDesc] += rptCnt;
       }
     }
     else if (strcmp(argv[i], "-sl") == 0) {
@@ -5832,19 +5812,8 @@ static void parse(int argc, char **argv, CmdLineOptions &options)
       }
       else{
 	i++;
-	f = lookupFlag(argv[i]);
-	if (f == int(NoFlag)){
-	// enable lookup of team flags
-	  static char* teamFlags[] = {"RE","GR","BL","PU"};
-	  static FlagId ids[] = {RedFlag, GreenFlag,BlueFlag,PurpleFlag};
-	  for (int j = 0 ; j < 4; j ++){
-	    if (strcasecmp(argv[i], teamFlags[j]) == 0){
-	      f = ids[j];
-	      break;
-	    }
-	  }
-	}
-	if (f == int(NoFlag)) { // still no flag?
+	FlagDesc *fDesc = Flag::getDescFromAbbreviation(argv[i]);
+	if (fDesc == Flags::Null) {
 	  fprintf(stderr, "invalid flag \"%s\"\n", argv[i]);
 	  usage(argv[0]);
 	}
@@ -5861,7 +5830,7 @@ static void parse(int argc, char **argv, CmdLineOptions &options)
 	    fprintf(stderr, "invalid shot limit \"%s\"\n", argv[i]);
 	    usage(argv[0]);
 	  }
-	  options.flagLimit[f] = x;
+	  options.flagLimit[fDesc] = x;
 
 	}
       }
@@ -5985,11 +5954,12 @@ static void parse(int argc, char **argv, CmdLineOptions &options)
 	  options.flagDisallowed[*it] = true;
       }
       else {
-	if ((f = lookupFlag(argv[i])) == int(NoFlag)) {
+	FlagDesc* fDesc = Flag::getDescFromAbbreviation(argv[i]);
+	if (fDesc == Flags::Null) {
 	  fprintf(stderr, "invalid flag \"%s\"\n", argv[i]);
 	  usage(argv[0]);
 	}
-	options.flagDisallowed[f] = true;
+	options.flagDisallowed[fDesc] = true;
       }
     }
     else if (strcmp(argv[i], "-helpmsg") == 0) {
@@ -6381,20 +6351,20 @@ static void parse(int argc, char **argv, CmdLineOptions &options)
 
   // first disallow flags inconsistent with game style
   if (options.gameStyle & InertiaGameStyle) {
-    options.flagCount[int(MomentumFlag)] = 0;
-    options.flagDisallowed[int(MomentumFlag)] = true;
+    options.flagCount[Flags::Momentum] = 0;
+    options.flagDisallowed[Flags::Momentum] = true;
   }
   if (options.gameStyle & JumpingGameStyle) {
-    options.flagCount[int(JumpingFlag)] = 0;
-    options.flagDisallowed[int(JumpingFlag)] = true;
+    options.flagCount[Flags::Jumping] = 0;
+    options.flagDisallowed[Flags::Jumping] = true;
   }
   if (options.gameStyle & RicochetGameStyle) {
-    options.flagCount[int(RicochetFlag)] = 0;
-    options.flagDisallowed[int(RicochetFlag)] = true;
+    options.flagCount[Flags::Ricochet] = 0;
+    options.flagDisallowed[Flags::Ricochet] = true;
   }
   if (!options.useTeleporters && !options.worldFile) {
-    options.flagCount[int(PhantomZoneFlag)] = 0;
-    options.flagDisallowed[int(PhantomZoneFlag)] = true;
+    options.flagCount[Flags::PhantomZone] = 0;
+    options.flagDisallowed[Flags::PhantomZone] = true;
   }
   bool hasTeam = false;
   for (int p = RedTeam; p <= PurpleTeam; p++) {
@@ -6404,12 +6374,12 @@ static void parse(int argc, char **argv, CmdLineOptions &options)
     }
   }
   if (!hasTeam) {
-    options.flagCount[int(GenocideFlag)] = 0;
-    options.flagDisallowed[int(GenocideFlag)] = true;
-    options.flagCount[int(ColorblindnessFlag)] = 0;
-    options.flagDisallowed[int(ColorblindnessFlag)] = true;
-    options.flagCount[int(MasqueradeFlag)] = 0;
-    options.flagDisallowed[int(MasqueradeFlag)] = true;
+    options.flagCount[Flags::Genocide] = 0;
+    options.flagDisallowed[Flags::Genocide] = true;
+    options.flagCount[Flags::Colorblindness] = 0;
+    options.flagDisallowed[Flags::Colorblindness] = true;
+    options.flagCount[Flags::Masquerade] = 0;
+    options.flagDisallowed[Flags::Masquerade] = true;
   }
 
   if (options.gameStyle & int(RabbitChaseGameStyle)) {
@@ -6421,8 +6391,8 @@ static void parse(int argc, char **argv, CmdLineOptions &options)
   // make table of allowed extra flags
   if (options.numExtraFlags > 0) {
     // now count how many aren't disallowed
-    for (i = int(FirstSuperFlag); i <= int(LastSuperFlag); i++)
-      if (!options.flagDisallowed[i])
+    for (std::map<std::string,FlagDesc*>::iterator it = FlagDesc::flagMap.begin(); it != FlagDesc::flagMap.end(); ++it)
+      if (!options.flagDisallowed[it->second])
 	options.numAllowedFlags++;
 
     // if none allowed then no extra flags either
@@ -6432,11 +6402,10 @@ static void parse(int argc, char **argv, CmdLineOptions &options)
 
     // otherwise make table of allowed flags
     else {
-      allowedFlags = new FlagId[options.numAllowedFlags];
-      int j = 0;
-      for (i = int(FirstSuperFlag); i <= int(LastSuperFlag); i++)
-	if (!options.flagDisallowed[i])
-	  allowedFlags[j++] = FlagId(i);
+      allowedFlags.clear();
+      for (std::map<std::string,FlagDesc*>::iterator it = FlagDesc::flagMap.begin(); it != FlagDesc::flagMap.end(); ++it)
+	if (!options.flagDisallowed[it->second])
+	  allowedFlags.insert(it->second);
     }
   }
 
@@ -6445,13 +6414,16 @@ static void parse(int argc, char **argv, CmdLineOptions &options)
   // rogues don't get a flag
   if (options.gameStyle & TeamFlagGameStyle)
     numFlags += NumTeams - 1;
-  for (i = int(FirstFlag); i <= int(LastFlag); i++)
-    numFlags += options.flagCount[i];
+  for (std::map<std::string, FlagDesc*>::iterator it = FlagDesc::flagMap.begin(); 
+       it != FlagDesc::flagMap.end(); ++it) {
+    numFlags += options.flagCount[it->second];
+  }
+
   flag = new FlagInfo[numFlags];
 
   // prep flags
   for (i = 0; i < numFlags; i++) {
-    flag[i].flag.id = NullFlag;
+    flag[i].flag.desc = Flags::Null;
     flag[i].flag.status = FlagNoExist;
     flag[i].flag.type = FlagNormal;
     flag[i].flag.owner = 0;
@@ -6474,24 +6446,26 @@ static void parse(int argc, char **argv, CmdLineOptions &options)
   f = 0;
   if (options.gameStyle & TeamFlagGameStyle) {
     flag[0].required = true;
-    flag[0].flag.id = RedFlag;
+    flag[0].flag.desc = Flags::RedTeam;
     flag[0].flag.type = FlagNormal;
     flag[1].required = true;
-    flag[1].flag.id = GreenFlag;
+    flag[1].flag.desc = Flags::RedTeam;
     flag[1].flag.type = FlagNormal;
     flag[2].required = true;
-    flag[2].flag.id = BlueFlag;
+    flag[2].flag.desc = Flags::BlueTeam;
     flag[2].flag.type = FlagNormal;
     flag[3].required = true;
-    flag[3].flag.id = PurpleFlag;
+    flag[3].flag.desc = Flags::PurpleTeam;
     flag[3].flag.type = FlagNormal;
     f = 4;
   }
 
-  for (i = int(FirstFlag); i <= int(LastFlag); i++) {
-    if (options.flagCount[i] > 0) {
-	  for (int j = 0; j < options.flagCount[i]; j++) {
-		  if (setRequiredFlag(flag[f], (FlagId)i))
+
+  for (std::map<std::string, FlagDesc*>::iterator it = FlagDesc::flagMap.begin(); 
+       it != FlagDesc::flagMap.end(); ++it) {
+    if (options.flagCount[it->second] > 0) {
+	  for (int j = 0; j < options.flagCount[it->second]; j++) {
+		  if (setRequiredFlag(flag[f], it->second))
 			f++;
 	  }
 	  options.gameStyle |= int(SuperFlagGameStyle);
@@ -6858,7 +6832,7 @@ int main(int argc, char **argv)
       if ((float)bzfrand() > t) {
 	// find an empty slot for an extra flag
 	for (i = numFlags - clOptions.numExtraFlags; i < numFlags; i++)
-	  if (flag[i].flag.id == NullFlag)
+	  if (flag[i].flag.desc == Flags::Null)
 	    break;
 	if (i != numFlags)
 	  randomFlag(i);
@@ -7034,7 +7008,6 @@ int main(int argc, char **argv)
 
   // free misc stuff
   delete[] flag;  flag = NULL;
-  delete[] allowedFlags;  allowedFlags = NULL;
   delete world;
   delete[] worldDatabase;
 #if defined(_WIN32)

@@ -106,7 +106,7 @@ class LocalPlayer : public BaseLocalPlayer {
     bool		checkHit(const Player* source, const ShotPath*& hit,
 							float& minTime) const;
 
-    void		setFlag(FlagId);
+    void		setFlag(FlagDesc*);
     void		changeScore(short deltaWins, short deltaLosses, short deltaTeamKills);
 
     void		addAntidote(SceneDatabase*);
