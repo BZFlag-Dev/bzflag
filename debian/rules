@@ -60,7 +60,7 @@ bzflag: build
 	# copy files into debian/$@/ here
 	cp -pr data/[^C]* debian/$@/usr/share/bzflag/
 	cp -p man/bzflag.6 debian/$@/usr/share/man/man6/
-	cp -p bin/bzflag debian/$@/usr/games/
+	cp -p src/bzflag/bzflag debian/$@/usr/games/
 #	dh_installdebconf -p$@
 	dh_installdocs -p$@
 	dh_installmenu -p$@
@@ -90,7 +90,7 @@ bzflag-server: build
 	dh_installdirs -p$@
 	# copy files into debian/$@/ here
 	cp -p man/bzfs.6 man/bzfrelay.6 man/bzfls.6 debian/$@/usr/share/man/man6
-	cp -p bin/bzfs bin/bzfrelay bin/bzfls misc/bzfquery.pl debian/$@/usr/games
+	cp -p src/bzfs/bzfs src/bzfrelay/bzfrelay src/bzfls/bzfls misc/bzfquery.pl debian/$@/usr/games
 	chmod a+rx debian/$@/usr/games/bzfquery.pl
 #	dh_installdebconf -p$@
 	dh_installdocs -p$@
