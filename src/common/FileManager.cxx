@@ -146,8 +146,12 @@ std::ostream*			FileManager::createDataOutStream(
 	}
       }
     }
+    std::ofstream* stream = new std::ofstream(filename.c_str(), mode);
+    if (stream && *stream)
+      return stream;
 #else
     // create all directories above the file
+    i = 2; // don't stat on a drive, it will fail
     while ((i = filename.find('\\', i+1)) != -1) {
       struct stat statbuf;
       if (!(stat(filename.substr(0, i).c_str(), &statbuf) == 0 &&
@@ -159,11 +163,10 @@ std::ostream*			FileManager::createDataOutStream(
 	}
       }
     }
-
-#endif
     std::ofstream* stream = new std::ofstream(filename.c_str(), mode);
-    if (stream && *stream)
+    if (stream)
       return stream;
+#endif
     delete stream;
     return NULL;
   }

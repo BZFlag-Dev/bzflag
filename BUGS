@@ -32,8 +32,6 @@ recent bugs
   Action: breaking protocols and pass the base height?
           changing hix.bzw?
 
-- bzflag.bzc isn't being written
-
 - bzfls.pl doesn't properly list multiple servers from the same ip (brlcad.org
   is a good example)
 
