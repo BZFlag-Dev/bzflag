@@ -832,7 +832,7 @@ static void handleKillCmd(GameKeeper::Player *playerData, const char *message)
       sendMessage(ServerPlayer, i, killmessage);
     }
     // kill the player
-    playerKilled(i, t, 0, -1, Flags::Null, -1);
+    playerKilled(i, ServerPlayer, 0, -1, Flags::Null, -1);
 
   } else {
     char errormessage[MessageLen];
