@@ -1,12 +1,6 @@
 must fix for 1.10.4 patch release
 ---------------------------------
 
-- Now and then it is possible to shoot through pyramids; changing the angle
-  and/or point of collision slightly stops it. 
-  http://www.home.unix-ag.org/thilo/bzflag/pyr.html contains 3 screenshots
-  depicting the problem. The first screenshot shows a passing shot, the
-  others shots which rico just fine.
-
 - MQ changes color not texture, when using a color texture, blends both color and texture (JM).
 
 - the aggressive filter will occasionally encounter a false-positive match
