@@ -1,4 +1,4 @@
-to do list for bzflag
+to do list for BZFlag
 ---------------------
 
 THESE SHOULD HAPPEN BEFORE THE NEXT RELEASE:
@@ -17,10 +17,10 @@ THESE ARE LOWER PRIORITY
   from any udp address, not just a "connected" player.
   bzfls should use this udp to confirm server availability
   before falling back to tcp pipe for the same msgs.
-  Posibly make the server list have 2 modes, Internet and LAN
+  Possibly make the server list have 2 modes, Internet and LAN
   using the left and right arrow keys to change between them.
-  boroadcast for LAN servers only happens when on the LAN seting
-  to minimise trafic, and difirentiate the servers.
+  broadcast for LAN servers only happens when on the LAN setting
+  to minimize traffic, and differentiate the servers.
 
 * shorten laser to like 1.25 normal shot
     ( this is not a simple change, and it should be evaluated for play
@@ -34,14 +34,14 @@ THESE ARE LOWER PRIORITY
      a simple change. ##
 
 * would be nice if LocalPlayer<->Robots wouldn't relayPackets
-  (MsgPlayerUpdate) thru server. bzflag should be able to act
+  (MsgPlayerUpdate) through server. bzflag should be able to act
   as a relay for a local player and the server should know to
   only send one MsgUpdate to the master, who will relay to the
   connected players/bots. This will allow multiple players
   behind one slow net connection to play multiple players
-  behind another sloow connection. (for example)
+  behind another slow connection. (for example)
 
-* rework the BZDB->eval() cacheing to support expression
+* rework the BZDB->eval() caching to support expression
   dependencies - if a variable changes, all the expressions
   that use that variable should be updated as well, or at
   the least, flush the entire cache when a callback happens
@@ -64,7 +64,7 @@ THESE ARE LOWER PRIORITY
 * Lag information should be appended to MsgPlayerUpdate packet
   by server, and use half in dead reckoning calculations
 
-* create new 64x64, 48x48, 32x32, 16x16 official bzflag icons.
+* create new 64x64, 48x48, 32x32, 16x16 official BZFlag icons.
   Should feature the BZFlag tank. The large ones should include
   the BZFlag logo. All should feature transparency.
 
@@ -114,9 +114,6 @@ THESE ARE LOWER PRIORITY
 * build a prototype(4) for bsd, solaris
 
 * fix up irix idb
-
-* break the net compatibility to allow some fixes
-   including:
 
 * ipv6 support
 
