@@ -5562,6 +5562,26 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
 	removePlayer(t, "too high");
 	break;
       }
+		// make sure the player is still in the map
+	  // test all the map bounds + some fudge factor, just in case
+	  float	fudge = 10.0f;
+	  bool InBounds = true;
+
+	  if ( (state.pos[1] >= WorldSize + fudge) || (state.pos[1] <= -WorldSize - fudge))
+		  InBounds = false;
+	  else if ( (state.pos[0] >= WorldSize + fudge) || (state.pos[0] <= -WorldSize - fudge))
+		  InBounds = false;
+
+	  // kick em cus they are cheating
+	  if (!InBounds)
+	  {
+		char message[MessageLen];
+		DEBUG1("kicking Player %s [%d]: Out of map bounds\n", player[t].callSign, t);
+		strcpy( message, "Autokick: Out of world bounds, XY pos out of bounds, Don't cheat." );
+		sendMessage(t, player[t].id, player[t].team, message);
+		removePlayer(t, "Out of map bounds");
+	  }
+		  
 
       // check for highspeec cheat; if inertia is enabled, skip test for now
       if (clOptions.linearAcceleration == 0.0f) {
