@@ -275,7 +275,7 @@ case $host_os in
 esac;
 
 # Check for the math lib
-AC_CHECK_LIB(m, sqrtf)
+AC_CHECK_LIB(m, tanf)
 
 # for BeOS - old network stack don't have those libs ( move it in the case switch ?)
 AC_CHECK_LIB(socket, socket)
@@ -654,29 +654,33 @@ AC_CHECK_FUNCS(\
 	_stricmp \
 	_strnicmp \
 	_vsnprintf \
-	asinf \
-	atan2f \
-	atanf \
 	atexit \
-	cosf \
-	expf \
-	fabsf \
-	floorf \
-	fmodf \
 	getrlimit \
 	glXGetCurrentContext \
-	hypotf \
-	logf \
-	powf \
 	select \
-	sinf \
 	snooze \
-	sqrtf \
-	tanf \
 	usleep \
 	vsnprintf \
 	wglGetCurrentContext \
 )
+
+# check for various IEEE and c99 standard math functions in libm
+AC_CHECK_LIB([m], [acosf], [AC_DEFINE([HAVE_ACOSF],[1],[libm includes acosf])])
+AC_CHECK_LIB([m], [asinf], [AC_DEFINE([HAVE_ASINF],[1],[libm includes asinf])])
+AC_CHECK_LIB([m], [atan2f], [AC_DEFINE([HAVE_ATAN2F],[1],[libm includes atan2f])])
+AC_CHECK_LIB([m], [atanf], [AC_DEFINE([HAVE_ATANF],[1],[libm includes atanf])])
+AC_CHECK_LIB([m], [cosf], [AC_DEFINE([HAVE_COSF],[1],[libm includes cosf])])
+AC_CHECK_LIB([m], [expf], [AC_DEFINE([HAVE_EXPF],[1],[libm includes expf])])
+AC_CHECK_LIB([m], [fabsf], [AC_DEFINE([HAVE_FABSF],[1],[libm includes fabsf])])
+AC_CHECK_LIB([m], [floorf], [AC_DEFINE([HAVE_FLOORF],[1],[libm includes floorf])])
+AC_CHECK_LIB([m], [fmodf], [AC_DEFINE([HAVE_FMODF],[1],[libm includes fmodf])])
+AC_CHECK_LIB([m], [hypotf], [AC_DEFINE([HAVE_HYPOTF],[1],[libm includes hypotf])])
+AC_CHECK_LIB([m], [logf], [AC_DEFINE([HAVE_LOGF],[1],[libm includes logf])])
+AC_CHECK_LIB([m], [powf], [AC_DEFINE([HAVE_POWF],[1],[libm includes powf])])
+AC_CHECK_LIB([m], [sinf], [AC_DEFINE([HAVE_SINF],[1],[libm includes sinf])])
+AC_CHECK_LIB([m], [sqrtf], [AC_DEFINE([HAVE_SQRTF],[1],[libm includes sqrtf])])
+AC_CHECK_LIB([m], [tanf], [AC_DEFINE([HAVE_TANF],[1],[libm includes tanf])])
+
 
 if test "x$with_kerberos" = "xyes" ; then
   have_krb5=no
