@@ -20,5 +20,3 @@
 
 /* Enabling Robots */
 #define ROBOT 1
-
-
