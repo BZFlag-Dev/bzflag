@@ -288,7 +288,7 @@ bool Teleporter::inMovingBox(const float* oldP, float /*oldAngle */,
 
 
 bool Teleporter::isCrossing(const float* p, float a,
-			    float dx, float dy, float dz, float* plane) const
+			    float dx, float dy, float /* dz */, float* plane) const
 {
   // if not inside or contained then not crossing
   const float* p2 = getPosition();
