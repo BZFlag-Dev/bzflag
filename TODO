@@ -33,7 +33,6 @@ THESE ARE LOWER PRIORITY
   * convert to multi from simple
   * use curl_multi_fdset so it's non-blocking
   * implement list server access in curl
-  * confirm that curl supports mac / windows / etc
 
 * fix the misalignment between the selected server and the one that
   is joined when the Server List Cache is enabled.
