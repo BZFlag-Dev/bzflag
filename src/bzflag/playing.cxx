@@ -115,6 +115,7 @@ static float		testVideoFormatTimer = 0.0f;
 static int		testVideoPrevFormat = -1;
 static PlayingCallbackList	playingCallbacks;
 boolean			gameOver = False;
+static boolean 		Observer = False;
 static OpenGLTexture*	tankTexture = NULL;
 static ExplosionList	explosions;
 static ExplosionList	prototypeExplosions;
@@ -677,7 +678,7 @@ static void		doKeyPlaying(const BzfKeyEvent& key, boolean pressed)
 
   if (keymap.isMappedTo(BzfKeyMap::FireShot, key)) {
     fireButton = pressed;
-    if (pressed && myTank->isAlive())
+    if (pressed && myTank->isAlive() && !Observer)
       myTank->fireShot();
   }
 
@@ -2338,6 +2339,8 @@ static void		restartPlaying()
 
   // restart the tank
   myTank->restart(bestStartPoint, startAzimuth);
+  if (!Observer)
+    serverLink->sendAlive(myTank->getPosition(), myTank->getForward());
   serverLink->sendAlive(myTank->getPosition(), myTank->getForward());
   restartOnBase = False;
   firstLife = False;
@@ -2503,7 +2506,7 @@ static boolean		gotBlowedUp(BaseLocalPlayer* tank,
 					const PlayerId& killer,
 					int shotId)
 {
-  if (!tank->isAlive())
+  if (Observer || !tank->isAlive())
     return False;
 
   // you can't take it with you
@@ -2572,7 +2575,7 @@ static boolean		gotBlowedUp(BaseLocalPlayer* tank,
 
 static void		checkEnvironment()
 {
-  if (!myTank) return;
+  if (!myTank || Observer) return;
 
   // skip this if i'm dead or paused
   if (!myTank->isAlive() || myTank->isPaused()) return;
@@ -3110,6 +3113,9 @@ static boolean		enterServer(ServerLink* serverLink, World* world,
   serverLink->sendEnter(TankPlayer, myTank->getTeam(),
 		myTank->getCallSign(), myTank->getEmailAddress());
 
+  // @ as first lettter of callsign is observer
+  Observer = myTank->getCallSign()[0] == '@';
+
   // wait for response
   uint16_t code, len;
   char msg[MaxPacketLen];
@@ -3549,7 +3555,8 @@ static boolean		joinGame(const StartupInfo* info,
   serverLink->send(MsgSetTTL, sizeof(msg), msg);
 
   // decide how start for first time
-  restartOnBase = world->allowTeamFlags() && myTank->getTeam() != RogueTeam;
+  restartOnBase = world->allowTeamFlags() && myTank->getTeam() != RogueTeam &&
+                  !Observer;
 
   // if server constrains time then adjust it
   if (!world->allowTimeOfDayAdjust()) {
@@ -4234,7 +4241,7 @@ static void		playingLoop()
     if (myTank) {
       if (myTank->isAlive() && !myTank->isPaused()) {
 	doMotion();
-	if (fireButton && myTank->getFlag() == MachineGunFlag)
+	if (fireButton && myTank->getFlag() == MachineGunFlag && !Observer)
 	  myTank->fireShot();
       }
       else {
@@ -4282,7 +4289,7 @@ static void		playingLoop()
 #endif
 
     // send my data
-    if (playerLink && myTank->isDeadReckoningWrong()) {
+    if (playerLink && myTank->isDeadReckoningWrong() && !Observer) {
       playerLink->setRelay(serverLink);
       playerLink->sendPlayerUpdate(myTank);
     }

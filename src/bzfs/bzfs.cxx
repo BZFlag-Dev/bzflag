@@ -195,6 +195,7 @@ struct PlayerInfo {
     boolean toBeKicked;
 
     boolean Admin;
+    bool Observer;
 
     // lag measurement
     float lagavg,lagalpha;
@@ -475,6 +476,9 @@ static PingPacket pingReply;
 static int maxFileDescriptor;
 // players list
 static PlayerInfo player[MaxPlayers];
+// players + observers
+static uint16_t softmaxPlayers = MaxPlayers;
+static int maxObservers = 0;
 // team info
 static TeamInfo team[NumTeams];
 // flags list
@@ -3593,7 +3597,7 @@ static void addPlayer(int playerIndex)
   int i;
   for (i = 0; i < maxPlayers; i++)
   {
-    if (i == playerIndex  || player[i].state <= PlayerInLimbo)
+    if (i == playerIndex || player[i].state <= PlayerInLimbo)
       continue;
     if (strcasecmp(player[i].callSign,player[playerIndex].callSign) == 0)
       break;
@@ -3604,11 +3608,30 @@ static void addPlayer(int playerIndex)
     player[playerIndex].team = NoTeam;
   }
 
+  // use '@' as first letter of callsign to become observer
+  player[playerIndex].Observer = player[playerIndex].callSign[0]=='@';
   TeamColor t = player[playerIndex].team;
+
+  int numplayers=0;
+  for (i=0;i<NumTeams;i++)
+  {
+    numplayers+=team[i].team.activeSize;
+  }
+
+  int numobservers = 0;
+  for (i=0;i<MaxPlayers;i++) {
+    if (i != playerIndex && player[i].state > PlayerInLimbo &&
+        player[i].Observer)
+      numobservers++;
+  }
+
   if ((t == NoTeam && (player[playerIndex].type == TankPlayer ||
-	player[playerIndex].type == ComputerPlayer)) ||
-	(t == RogueTeam && !(gameStyle & RoguesGameStyle)) ||
-	(team[int(t)].team.activeSize >= maxTeam[int(t)])) {
+      player[playerIndex].type == ComputerPlayer)) ||
+      (t == RogueTeam && !(gameStyle & RoguesGameStyle)) ||
+      (!player[playerIndex].Observer &&
+       (team[int(t)].team.activeSize >= maxTeam[int(t)] ||
+        numplayers >= softmaxPlayers)) ||
+      (player[playerIndex].Observer && numobservers >= maxObservers)) {
     uint16_t code = RejectBadRequest;
     if (player[playerIndex].type != TankPlayer &&
 	player[playerIndex].type != ComputerPlayer)
@@ -3617,6 +3640,9 @@ static void addPlayer(int playerIndex)
       code = RejectBadTeam;
     else if (t == RogueTeam && !(gameStyle & RoguesGameStyle))
       code = RejectNoRogues;
+    else if (!player[playerIndex].Observer && numplayers >= softmaxPlayers ||
+             player[playerIndex].Observer && numobservers >= maxObservers)   
+      code = RejectServerFull;
     else if (team[int(t)].team.activeSize >= maxTeam[int(t)]) {
       // if team is full then check if server is full
       code = RejectServerFull;
@@ -3682,7 +3708,7 @@ static void addPlayer(int playerIndex)
   if (++team[teamIndex].team.size == 1) {
     team[teamIndex].radio = -1;
   }
-  if ((player[playerIndex].type == TankPlayer ||
+  if ((!player[playerIndex].Observer && player[playerIndex].type == TankPlayer ||
 	player[playerIndex].type == ComputerPlayer) &&
 	++team[teamIndex].team.activeSize == 1) {
     team[teamIndex].team.won = 0;
@@ -3764,6 +3790,8 @@ static void addPlayer(int playerIndex)
     sprintf(message,"%s",servermsg);
     sendMessage(playerIndex, player[playerIndex].id, player[playerIndex].team, message);
   }
+  if (player[playerIndex].Observer)
+    sendMessage(playerIndex, player[playerIndex].id, player[playerIndex].team,"You are in observer mode.");
 #endif
 }
 
@@ -3982,7 +4010,7 @@ static void removePlayer(int playerIndex)
     // decrease team size
     int teamNum = int(player[playerIndex].team);
     --team[teamNum].team.size;
-    if (player[playerIndex].type == TankPlayer ||
+    if (!player[playerIndex].Observer && player[playerIndex].type == TankPlayer ||
 		player[playerIndex].type == ComputerPlayer)
       --team[teamNum].team.activeSize;
 
@@ -4108,6 +4136,9 @@ static void playerAlive(int playerIndex, const float *pos, const float *fwd)
   player[playerIndex].state = PlayerAlive;
   player[playerIndex].flag = -1;
 
+  if (player[playerIndex].Observer)
+    return;
+
   // send MsgAlive
   void *buf, *bufStart = getDirectMessageBuffer();
   buf = player[playerIndex].id.pack(bufStart);
@@ -4193,7 +4224,8 @@ static void playerKilled(int victimIndex, int killerIndex,
 static void grabFlag(int playerIndex, int flagIndex)
 {
   // player wants to take possession of flag
-  if (player[playerIndex].state != PlayerAlive ||
+  if (player[playerIndex].Observer ||
+      player[playerIndex].state != PlayerAlive ||
       player[playerIndex].flag != -1 ||
       flag[flagIndex].flag.status != FlagOnGround)
     return;
@@ -4824,6 +4856,8 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
 
     // player declaring self destroyed
     case MsgKilled: {
+      if (player[t].Observer)
+        break;
       // data: id of killer, shot id of killer
       PlayerId killer;
       int16_t shot;
@@ -4864,11 +4898,14 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
     case MsgShotBegin:
       // data: firing info
       // special case -- don't unpack firing info cos we just pass it on
-      shotFired(t, buf, int(len));
+      if (!player[t].Observer)
+        shotFired(t, buf, int(len));
       break;
 
     // shot ended prematurely
     case MsgShotEnd: {
+      if (player[t].Observer)
+        break;
       // data: shooter id, shot number, reason
       PlayerId sourcePlayer;
       int16_t shot;
@@ -4882,6 +4919,8 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
 
     // player score changed
     case MsgScore: {
+      if (player[t].Observer)
+        break;
       // data: wins, losses
       uint16_t wins, losses;
       buf = nboUnpackUShort(buf, wins);
@@ -4892,6 +4931,8 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
 
     // player teleported
     case MsgTeleport: {
+      if (player[t].Observer)
+        break;
       uint16_t from, to;
       buf = nboUnpackUShort(buf, from);
       buf = nboUnpackUShort(buf, to);
@@ -4981,6 +5022,8 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
     case MsgGMUpdate:
     case MsgAudio:
     case MsgVideo:
+      if (player[t].Observer)
+        break;
       if (player[t].multicastRelay)
 	relayPlayerPacket(t, len, rawbuf);
       break;
@@ -5003,6 +5046,7 @@ static const char *usageString =
 "[-j] "
 "[-lagdrop <num>] "
 "[-lagwarn <time/ms>] "
+"[-mo <count> ]"
 "[-mp {<count>|[<count>],[<count>],[<count>],[<count>],[<count>]}] "
 "[-mps <score>] "
 "[-ms <shots>] "
@@ -5074,6 +5118,7 @@ static void extraUsage(const char *pname)
   cout << "\t -h: use random building heights" << endl;
   cout << "\t -i: listen on <interface>" << endl;
   cout << "\t -j: allow jumping" << endl;
+  cout << "\t -mo: maximum number of additional observers allowed" << endl;
   cout << "\t -mp: maximum players total or per team" << endl;
   cout << "\t -mps: set player score limit on each game" << endl;
   cout << "\t -ms: maximum simultaneous shots per player" << endl;
@@ -5184,9 +5229,9 @@ static boolean parsePlayerCount(const char *argv)
 
     // if all counts explicitly listed then add 'em up and set maxPlayers
     if (countCount == NumTeams) {
-      maxPlayers = 0;
+      softmaxPlayers = 0;
       for (i = 0; i < NumTeams; i++)
-	maxPlayers += maxTeam[i];
+	softmaxPlayers += maxTeam[i];
     }
   }
   else {
@@ -5197,12 +5242,15 @@ static boolean parsePlayerCount(const char *argv)
       return False;
     }
     if (count < 1)
-      maxPlayers = 1;
+      softmaxPlayers = 1;
     else
       if (count > MaxPlayers)
-	maxPlayers = MaxPlayers;
-    else maxPlayers = uint16_t(count);
+	softmaxPlayers = MaxPlayers;
+    else softmaxPlayers = uint16_t(count);
   }
+  maxPlayers = softmaxPlayers + maxObservers;
+  if (maxPlayers > MaxPlayers)
+    maxPlayers = MaxPlayers;
   return True;
 }
 
@@ -5420,6 +5468,18 @@ static void parse(int argc, char **argv)
     else if (strcmp(argv[i], "-j") == 0) {
       // allow jumping
       gameStyle |= int(JumpingGameStyle);
+    }
+    else if (strcmp(argv[i], "-mo") == 0) {
+      // set maximum number of observers
+      if (++i == argc) {
+	cerr << "argument expected for -mo" << endl;
+	usage(argv[0]);
+      }
+      maxObservers = atoi(argv[i]);
+      if (maxObservers < 0) {
+        cerr << "using minimum number of 0 observers" << endl;
+        maxObservers=0;
+      }
     }
     else if (strcmp(argv[i], "-mp") == 0) {
       // set maximum number of players

@@ -4,6 +4,7 @@
 BZFlag 1.7e5
 ------------
 
+* observer hack, should be a team - Frank Thilo
 * /countdown - Frank Thilo
 * PatchId fixes - Frank Thilo, Tim Riker
 * New lag measurement using pings - Frank Thilo
