@@ -60,13 +60,7 @@ const int udpBufSize = 128000;
 #if !defined(_WIN32)
 #include <fcntl.h>
 #endif
-/* work around an ugly STL bug in BeOS */
-#ifdef __BEOS__
-#define private public
-#endif
-#ifdef __BEOS__
-#undef private
-#endif
+
 #include <string>
 #include <string.h>
 #include <sys/types.h>
@@ -386,13 +380,7 @@ static struct sockaddr_in pingOutAddr;
 // broadcast pings in/out here
 static int pingBcastSocket;
 static struct sockaddr_in pingBcastAddr;
-// listen for player packets
-static int relayInSocket;
-static struct sockaddr_in relayInAddr;
 // relay player packets
-static int relayOutSocket;
-static struct sockaddr_in relayOutAddr;
-static int playerTTL = DefaultTTL;
 static bool handlePings = true;
 static PingPacket pingReply;
 // highest fd used
@@ -449,8 +437,7 @@ static uint8_t rabbitIndex = NoPlayer;
 static WorldWeapons  wWeapons;
 
 
-static void stopPlayerPacketRelay();
-static void removePlayer(int playerIndex, char *reason, bool notify=true);
+static void removePlayer(int playerIndex, const char *reason, bool notify=true);
 static void resetFlag(int flagIndex);
 static void dropFlag(int playerIndex, float pos[3]);
 
@@ -1662,10 +1649,6 @@ static bool serverStart()
       maxFileDescriptor = pingBcastSocket;
   }
 
-  // initialize player packet relaying to be off
-  relayInSocket = -1;
-  relayOutSocket = -1;
-
   for (int i = 0; i < MaxPlayers; i++) {	// no connections
     player[i].fd = NotConnected;
     player[i].state = PlayerNoExist;
@@ -1693,7 +1676,6 @@ static void serverStop()
   closeMulticast(pingBcastSocket);
   closeMulticast(pingInSocket);
   closeMulticast(pingOutSocket);
-  stopPlayerPacketRelay();
 
   // tell players to quit
   int i;
@@ -1749,69 +1731,9 @@ static void serverStop()
   closeListServers();
 }
 
-static bool startPlayerPacketRelay(int playerIndex)
-{
-  // return true if already started
-  if ((relayInSocket != -1 && relayOutSocket != -1))
-    return true;
-
-  Address multicastAddress(BroadcastAddress);
-  if (relayInSocket == -1)
-    relayInSocket = openMulticast(multicastAddress, BroadcastPort, NULL,
-	clOptions->pingTTL, clOptions->pingInterface, "r", &relayInAddr);
-  if (relayOutSocket == -1)
-    relayOutSocket = openMulticast(multicastAddress, BroadcastPort, NULL,
-	clOptions->pingTTL, clOptions->pingInterface, "w", &relayOutAddr);
-  if (relayInSocket == -1 || relayOutSocket == -1) {
-    stopPlayerPacketRelay();
-
-    return true;
-  }
-  if (maxFileDescriptor < relayOutSocket)
-    maxFileDescriptor = relayOutSocket;
-  return true;
-}
-
-static void stopPlayerPacketRelay()
-{
-  closeMulticast(relayInSocket);
-  closeMulticast(relayOutSocket);
-  relayInSocket = -1;
-  relayOutSocket = -1;
-}
-
-static void relayPlayerPacket()
-{
-  // XXX -- accumulate data until we've received all data in message
-  // get packet from multicast port and multiplex to player's needing a relay.
-  // first get packet header
-  char buffer[MaxPacketLen];
-  const int msglen = recvMulticast(relayInSocket, buffer, MaxPacketLen, NULL);
-  if (msglen < 4) {
-    DEBUG2("incomplete read of player message header\n");
-    return;
-  }
-
-  // verify length
-  uint16_t len;
-  nboUnpackUShort(buffer, len);
-  if (int(len) != msglen - 4) {
-    DEBUG2("incomplete read of player message body\n");
-    return;
-  }
-
-  // relay packet to all players needing multicast relay
-  for (int i = 0; i < curMaxPlayers; i++)
-    pwrite(i, buffer, msglen);
-}
-
 static void relayPlayerPacket(int index, uint16_t len, const void *rawbuf)
 {
-  // broadcast it
-  if (relayOutSocket != -1)
-    sendMulticast(relayOutSocket, rawbuf, len + 4, &relayOutAddr);
-
-  // relay packet to all players needing multicast relay
+  // relay packet to all players except origin
   for (int i = 0; i < curMaxPlayers; i++)
     if (i != index)
       pwrite(i, rawbuf, len + 4);
@@ -2924,6 +2846,7 @@ static void addPlayer(int playerIndex)
   player[playerIndex].Admin = false;
   player[playerIndex].passwordAttempts = 0;
 
+  player[playerIndex].regName = player[playerIndex].callSign;
   makeupper(player[playerIndex].regName);
 
   player[playerIndex].accessInfo.explicitAllows.reset();
@@ -3294,7 +3217,7 @@ static void pausePlayer(int playerIndex, bool paused)
   broadcastMessage(MsgPause, (char*)buf-(char*)bufStart, bufStart);
 }
 
-static void removePlayer(int playerIndex, char *reason, bool notify)
+static void removePlayer(int playerIndex, const char *reason, bool notify)
 {
   // player is signing off or sent a bad packet.  since the
   // bad packet can come before MsgEnter, we must be careful
@@ -3526,10 +3449,7 @@ static void sendQueryPlayers(int playerIndex)
 
 static void playerAlive(int playerIndex, const float *pos, const float *fwd)
 {
-  // player is coming alive.  strictly speaking, this can be inferred
-  // from the multicast info, but it's nice to have a clear statement.
-  // it also allows clients that don't snoop the multicast group to
-  // find about it.
+  // player is coming alive.
   player[playerIndex].state = PlayerAlive;
   player[playerIndex].flag = -1;
 
@@ -5128,10 +5048,10 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
 
     //Fall thru
     case MsgGMUpdate:
-	    if (code == MsgGMUpdate)
-	      int i = 0;
     case MsgAudio:
     case MsgVideo:
+      // observer shouldn't send bulk messages anymore, they used to when it was
+      // a server-only hack; but the check does not hurt, either
       if (player[t].team == ObserverTeam)
 	break;
       relayPlayerPacket(t, len, rawbuf);
@@ -6433,9 +6353,6 @@ int main(int argc, char **argv)
       FD_SET(pingInSocket, &read_set);
     if (pingBcastSocket != -1)
       FD_SET(pingBcastSocket, &read_set);
-    // always listen for packets to relay
-    if (relayInSocket != -1)
-      FD_SET(relayInSocket, &read_set);
 
     // check for list server socket connected
     for (i = 0; i < listServerLinksCount; i++)
@@ -6677,9 +6594,6 @@ int main(int argc, char **argv)
       if (pingBcastSocket != -1 && FD_ISSET(pingBcastSocket, &read_set))
 	respondToPing(true);
 
-      // now check multicast for relay
-      if (relayInSocket != -1 && FD_ISSET(relayInSocket, &read_set))
-	relayPlayerPacket();
 
       // check for connection to list server
       for (i = 0; i < listServerLinksCount; ++i)
@@ -6744,7 +6658,6 @@ int main(int argc, char **argv)
 	  player[i].tcplen = 0;
 
 	  // simple ruleset, if player sends a MsgShotBegin over TCP
-	  // and player is not using multicast
 	  // he/she must not be using the UDP link
 	  if (clOptions->requireUDP && (player[i].type != ComputerPlayer)) {
 	    if (code == MsgShotBegin) {
