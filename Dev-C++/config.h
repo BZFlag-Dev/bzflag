@@ -11,6 +11,7 @@
  */
 
 /* this config is just for Dev-C++ since it doesn't use automake */
+
 #ifndef _DEVCPP_CONFIG
 #define _DEVCPP_CONFIG
 
@@ -23,7 +24,9 @@
 #endif
 
 /* Currently builds with SDL */
-#define HAVE_SDL 1
+#ifndef BZFLAG_CXX
+# define HAVE_SDL 1
+#endif
 
 /* Building regex */
 #define BUILD_REGEX 1
