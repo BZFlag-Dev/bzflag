@@ -165,6 +165,8 @@ ActionBinding::ActionBinding() {
   defaultBinding.insert(std::make_pair(std::string("1"), std::string("set displayRadarRange 0.25")));
   defaultBinding.insert(std::make_pair(std::string("2"), std::string("set displayRadarRange 0.5")));
   defaultBinding.insert(std::make_pair(std::string("3"), std::string("set displayRadarRange 1.0")));
+  defaultBinding.insert(std::make_pair(std::string("4"), std::string("radarZoom in")));
+  defaultBinding.insert(std::make_pair(std::string("5"), std::string("radarZoom out")));
   defaultBinding.insert(std::make_pair(std::string("A"), std::string("toggle slowKeyboard")));
   defaultBinding.insert(std::make_pair(std::string("U"), std::string("hunt")));
   defaultBinding.insert(std::make_pair(std::string("Right Mouse"), std::string("restart")));
