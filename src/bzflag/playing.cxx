@@ -3188,7 +3188,7 @@ static void		sendRobotUpdates()
 {
   for (int i = 0; i < numRobots; i++)
     if (robots[i]->isDeadReckoningWrong()) {
-      serverLink->sendPlayerUpdate(robots[i]);
+      robotServer[i]->sendPlayerUpdate(robots[i]);
     }
 }
 
