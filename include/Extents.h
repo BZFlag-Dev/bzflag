@@ -10,9 +10,9 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-/* Frustum
- *	Encapsulates the data to record the minimal and maximums
- *      values along the principal axes of an axes aligned box.
+/* Extents
+ *	Encapsulates the data to record the minimum and maximum
+ *      values along each axis of an axis-aligned bounding box.
  */
 
 #ifndef	BZF_EXTENTS_H
@@ -199,4 +199,3 @@ inline const float Extents::getWidth(int axis) const
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-
