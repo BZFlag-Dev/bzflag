@@ -20,6 +20,7 @@
 #include "OpenGLGState.h"
 #include "BzfString.h"
 #include "AList.h"
+#include "resources.h"
 
 class RadarRenderer;
 class SceneRenderer;
@@ -35,7 +36,7 @@ BZF_DEFINE_ALIST(ControlPanelMessageList, ControlPanelMessage);
 
 class ControlPanel {
   public:
-			ControlPanel(MainWindow&, SceneRenderer&);
+			ControlPanel(MainWindow&, SceneRenderer&, ResourceDatabase *_resources);
 			~ControlPanel();
 
 	void		setControlColor(const GLfloat *color = NULL);
@@ -85,6 +86,7 @@ class ControlPanel {
     static int		messagesOffset;
     static const int	maxScrollPages;
     static const int	maxLines;
+    GLfloat				background[4];
 };
 
 #endif // BZF_CONTROL_PANEL_H

@@ -24,11 +24,12 @@
 #include "Team.h"
 #include "Flag.h"
 #include "OpenGLGState.h"
+#include "resources.h"
 
 const float		RadarRenderer::colorFactor = 40.0f;
 
 RadarRenderer::RadarRenderer(const SceneRenderer& renderer,
-						const World& _world) :
+						const World& _world, ResourceDatabase *resources) :
 				world(_world),
 				x(0),
 				y(0),
@@ -45,6 +46,10 @@ RadarRenderer::RadarRenderer(const SceneRenderer& renderer,
   background[1] = 0.0f;
   background[2] = 0.0f;
   background[3] = 0.5f;
+
+  if (resources->hasValue( "opacity" ))
+	  background[3] = (float) atof(resources->getValue( "opacity" ));
+
   blend = renderer.useBlending();
   smooth = True;
 #if defined(GLX_SAMPLES_SGIS) && defined(GLX_SGIS_multisample)

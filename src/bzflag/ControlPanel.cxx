@@ -51,7 +51,7 @@ const int		ControlPanel::maxScrollPages = 4;
 int				ControlPanel::messagesOffset = 0;
 extern void		printMissingDataDirectoryError(const char*);
 
-ControlPanel::ControlPanel(MainWindow& _mainWindow, SceneRenderer& renderer) :
+ControlPanel::ControlPanel(MainWindow& _mainWindow, SceneRenderer& renderer, ResourceDatabase *resources) :
 				window(_mainWindow),
 				resized(False),
 				numBuffers(2),
@@ -76,6 +76,15 @@ ControlPanel::ControlPanel(MainWindow& _mainWindow, SceneRenderer& renderer) :
   messageAreaUV[1] = dy * 5.0f;
   messageAreaUV[2] = dx * 199.0f;
   messageAreaUV[3] = dy * 42.0f;
+
+  background[0] = 0;
+  background[1] = 0;
+  background[2] = 0;
+  background[3] = 0.3f;
+
+  if (resources->hasValue( "opacity" ))
+	  background[3] = (float) atof(resources->getValue( "opacity" ));
+
 
   // other initialization
   width = 1;
@@ -142,7 +151,7 @@ void			ControlPanel::render(SceneRenderer& renderer)
   // nice blended messages background
   if(renderer.useBlending())
     glEnable(GL_BLEND);
-  glColor4f(0.0f, 0.0f, 0.0, 0.3f );
+  glColor4f(background[0], background[1], background[2], background[3] );
   glRecti(messageAreaPixels[0] + 1,
       messageAreaPixels[1] + 1,
       messageAreaPixels[0] + messageAreaPixels[2] - 1,

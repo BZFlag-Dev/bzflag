@@ -3728,7 +3728,7 @@ static boolean		joinGame(const StartupInfo* info,
   setSceneDatabase();
 
   // make radar
-  radar = new RadarRenderer(*sceneRenderer, *world);
+  radar = new RadarRenderer(*sceneRenderer, *world, resources);
   controlPanel->setRadarRenderer(radar);
   controlPanel->resize();
 
@@ -4883,7 +4883,7 @@ void			startPlaying(BzfDisplay* _display,
   mainWindow = &sceneRenderer->getWindow();
 
   // make control panel
-  ControlPanel _controlPanel(*mainWindow, *sceneRenderer);
+  ControlPanel _controlPanel(*mainWindow, *sceneRenderer, resources);
   controlPanel = &_controlPanel;
 
   // tell the control panel how many frame buffers there are.  we
