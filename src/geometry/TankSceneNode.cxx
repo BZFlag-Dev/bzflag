@@ -727,11 +727,12 @@ void TankSceneNode::TankRenderNode::render()
     renderPart(LeftCasing);
     renderPart(RightCasing);
     if (drawLOD == HighTankLOD) {
-      if (!isShadow || isExploding) {
-        for (int i = 0; i < 4; i++) {
-          renderPart((TankPart)(LeftWheel0 + i));
-          renderPart((TankPart)(RightWheel0 + i));
+      for (int i = 0; i < 4; i++) {
+        if (isShadow && ((i == 1) || (i == 2)) && !isExploding) {
+          continue;
         }
+        renderPart((TankPart)(LeftWheel0 + i));
+        renderPart((TankPart)(RightWheel0 + i));
       }
       renderPart(LeftTread);
       renderPart(RightTread);
@@ -766,11 +767,12 @@ void TankSceneNode::TankRenderNode::renderParts()
     renderPart(LeftCasing);
     renderPart(RightCasing);
     if (drawLOD == HighTankLOD) {
-      if (!isShadow || isExploding) {
-        for (int i = 0; i < 4; i++) {
-          renderPart((TankPart)(LeftWheel0 + i));
-          renderPart((TankPart)(RightWheel0 + i));
+      for (int i = 0; i < 4; i++) {
+        if (isShadow && ((i == 1) || (i == 2)) && !isExploding) {
+          continue;
         }
+        renderPart((TankPart)(LeftWheel0 + i));
+        renderPart((TankPart)(RightWheel0 + i));
       }
       renderPart(LeftTread);
       renderPart(RightTread);
@@ -798,11 +800,12 @@ void TankSceneNode::TankRenderNode::renderParts()
     renderPart(LeftCasing);
     renderPart(RightCasing);
     if (drawLOD == HighTankLOD) {
-      if (!isShadow || isExploding) {
-        for (int i = 0; i < 4; i++) {
-          renderPart((TankPart)(LeftWheel0 + i));
-          renderPart((TankPart)(RightWheel0 + i));
+      for (int i = 0; i < 4; i++) {
+        if (isShadow && ((i == 1) || (i == 2)) && !isExploding) {
+          continue;
         }
+        renderPart((TankPart)(LeftWheel0 + i));
+        renderPart((TankPart)(RightWheel0 + i));
       }
       renderPart(LeftTread);
       renderPart(RightTread);
