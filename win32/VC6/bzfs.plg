@@ -1,0 +1,123 @@
+<html>
+<body>
+<pre>
+<h1>Build Log</h1>
+<h3>
+--------------------Configuration: date - Win32 Release--------------------
+</h3>
+<h3>Command Lines</h3>
+Creating temporary file "C:\DOCUME~1\JeffM\LOCALS~1\Temp\RSP11B.tmp" with contents
+[
+/nologo /MT /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_MBCS" /D "_LIB" /Fp"Release/date.pch" /YX /Fo"Release/" /Fd"Release/" /FD /c 
+"C:\Documents and Settings\JeffM\Desktop\bzflag\src\date\buildDate.cxx"
+]
+Creating command line "cl.exe @C:\DOCUME~1\JeffM\LOCALS~1\Temp\RSP11B.tmp" 
+Creating command line "link.exe -lib /nologo /out:"..\..\src\date\date.lib"  ".\Release\buildDate.obj" "
+<h3>Output Window</h3>
+Compiling...
+buildDate.cxx
+Creating library...
+Creating temporary file "C:\DOCUME~1\JeffM\LOCALS~1\Temp\RSP11C.bat" with contents
+[
+@echo off
+type ..\..\src\date\buildDate.cxx > __bd.cxx
+type __bd.cxx > ..\..\src\date\buildDate.cxx
+del __bd.cxx
+]
+Creating command line "C:\DOCUME~1\JeffM\LOCALS~1\Temp\RSP11C.bat"
+Touching buildDate.cxx...
+<h3>
+--------------------Configuration: bzfs - Win32 Release--------------------
+</h3>
+<h3>Command Lines</h3>
+Creating temporary file "C:\DOCUME~1\JeffM\LOCALS~1\Temp\RSP11D.tmp" with contents
+[
+/nologo /MT /W3 /GX /O2 /I "..\..\include" /I "..\..\win32" /D "_CONSOLE" /D "WIN32" /D "NDEBUG" /D "_MBCS" /Fo"Release/" /Fd"Release/" /FD /c 
+"C:\Documents and Settings\JeffM\Desktop\bzflag\src\bzfs\AccessControlList.cxx"
+"C:\Documents and Settings\JeffM\Desktop\bzflag\src\bzfs\bzfs.cxx"
+"C:\Documents and Settings\JeffM\Desktop\bzflag\src\bzfs\CmdLineOptions.cxx"
+"C:\Documents and Settings\JeffM\Desktop\bzflag\src\bzfs\commands.cxx"
+"C:\Documents and Settings\JeffM\Desktop\bzflag\src\bzfs\CustomBase.cxx"
+"C:\Documents and Settings\JeffM\Desktop\bzflag\src\bzfs\CustomBox.cxx"
+"C:\Documents and Settings\JeffM\Desktop\bzflag\src\bzfs\CustomGate.cxx"
+"C:\Documents and Settings\JeffM\Desktop\bzflag\src\bzfs\CustomLink.cxx"
+"C:\Documents and Settings\JeffM\Desktop\bzflag\src\bzfs\CustomPyramid.cxx"
+"C:\Documents and Settings\JeffM\Desktop\bzflag\src\bzfs\CustomWeapon.cxx"
+"C:\Documents and Settings\JeffM\Desktop\bzflag\src\bzfs\CustomWorld.cxx"
+"C:\Documents and Settings\JeffM\Desktop\bzflag\src\bzfs\FlagInfo.cxx"
+"C:\Documents and Settings\JeffM\Desktop\bzflag\src\bzfs\Permissions.cxx"
+"C:\Documents and Settings\JeffM\Desktop\bzflag\src\bzfs\TextChunkManager.cxx"
+"C:\Documents and Settings\JeffM\Desktop\bzflag\src\bzfs\VotingArbiter.cxx"
+"C:\Documents and Settings\JeffM\Desktop\bzflag\src\bzfs\WorldFileObject.cxx"
+"C:\Documents and Settings\JeffM\Desktop\bzflag\src\bzfs\WorldFileObstacle.cxx"
+"C:\Documents and Settings\JeffM\Desktop\bzflag\src\bzfs\WorldInfo.cxx"
+"C:\Documents and Settings\JeffM\Desktop\bzflag\src\bzfs\WorldWeapons.cxx"
+]
+Creating command line "cl.exe @C:\DOCUME~1\JeffM\LOCALS~1\Temp\RSP11D.tmp" 
+Creating temporary file "C:\DOCUME~1\JeffM\LOCALS~1\Temp\RSP11E.tmp" with contents
+[
+ws2_32.lib winmm.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:console /incremental:no /pdb:"../src/bzfs/bzfs.pdb" /machine:I386 /out:"..\..\src\bzfs\bzfs.exe" 
+".\Release\AccessControlList.obj"
+".\Release\bzfs.obj"
+".\Release\CmdLineOptions.obj"
+".\Release\commands.obj"
+".\Release\CustomBase.obj"
+".\Release\CustomBox.obj"
+".\Release\CustomGate.obj"
+".\Release\CustomLink.obj"
+".\Release\CustomPyramid.obj"
+".\Release\CustomWeapon.obj"
+".\Release\CustomWorld.obj"
+".\Release\FlagInfo.obj"
+".\Release\Permissions.obj"
+".\Release\TextChunkManager.obj"
+".\Release\VotingArbiter.obj"
+".\Release\WorldFileObject.obj"
+".\Release\WorldFileObstacle.obj"
+".\Release\WorldInfo.obj"
+".\Release\WorldWeapons.obj"
+"\Documents and Settings\JeffM\Desktop\bzflag\src\common\common.lib"
+"\Documents and Settings\JeffM\Desktop\bzflag\src\net\net.lib"
+"\Documents and Settings\JeffM\Desktop\bzflag\src\date\date.lib"
+]
+Creating command line "link.exe @C:\DOCUME~1\JeffM\LOCALS~1\Temp\RSP11E.tmp"
+<h3>Output Window</h3>
+Compiling...
+AccessControlList.cxx
+bzfs.cxx
+CmdLineOptions.cxx
+commands.cxx
+CustomBase.cxx
+CustomBox.cxx
+CustomGate.cxx
+CustomLink.cxx
+CustomPyramid.cxx
+CustomWeapon.cxx
+CustomWorld.cxx
+FlagInfo.cxx
+Permissions.cxx
+TextChunkManager.cxx
+VotingArbiter.cxx
+WorldFileObject.cxx
+WorldFileObstacle.cxx
+WorldInfo.cxx
+WorldWeapons.cxx
+Generating Code...
+Linking...
+Creating temporary file "C:\DOCUME~1\JeffM\LOCALS~1\Temp\RSP120.bat" with contents
+[
+@echo off
+copy ..\..\src\bzfs\*.exe ..\*.exe
+]
+Creating command line "C:\DOCUME~1\JeffM\LOCALS~1\Temp\RSP120.bat"
+
+..\..\src\bzfs\bzfs.exe
+        1 file(s) copied.
+
+
+
+<h3>Results</h3>
+bzfs.exe - 0 error(s), 0 warning(s)
+</pre>
+</body>
+</html>
