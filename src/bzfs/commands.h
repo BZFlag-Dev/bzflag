@@ -16,9 +16,9 @@
 // implementation-specific bzflag headers
 #include "GameKeeper.h"
 
-/* quit command hook function
+/* serverquery command hook function
  *
- * /quit
+ * /serverquery
  */ 
 void handleServerQueryCmd(GameKeeper::Player *playerData, const char *);
  
