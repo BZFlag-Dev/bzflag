@@ -197,6 +197,9 @@
 			Name="Source Files"
 			Filter="c;cxx">
 			<File
+				RelativePath="..\..\src\common\AccessList.cxx">
+			</File>
+			<File
 				RelativePath="..\..\src\common\AutoCompleter.cxx">
 			</File>
 			<File
@@ -810,6 +813,9 @@
 		<Filter
 			Name="Header Files"
 			Filter="h">
+			<File
+				RelativePath="..\..\include\AccessList.h">
+			</File>
 			<File
 				RelativePath="..\..\include\Address.h">
 			</File>
