@@ -76,13 +76,13 @@ if eval curl-config --version >/dev/null >/dev/null; then
   AC_MSG_RESULT([found])
   KRB5_CFLAGS=`krb5-config --cflags`
   KRB5_LIBS=`krb5-config --libs`
-  AC_SUBST(KRB5_CFLAGS)
-  AC_SUBST(KRB5_LIBS)
   AC_DEFINE(HAVE_KRB5, 1, [Using Kerberos 5])
 else
   AC_MSG_RESULT(FAILED)
   AC_MSG_WARN([krb5-config was not found])
 fi
+AC_SUBST(KRB5_CFLAGS)
+AC_SUBST(KRB5_LIBS)
 
 
 # Just for kicks
