@@ -41,3 +41,4 @@ private:
 };
 
 #endif //__BZWERROR_H__
+
