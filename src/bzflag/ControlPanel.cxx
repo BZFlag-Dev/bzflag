@@ -352,7 +352,7 @@ void			ControlPanel::setMessagesOffset(int offset, int whence)
       break;
     case 2:
       if (offset<0) {
-	if (messages.size()-offset >= 0)
+	if (messages.size() >= offset)
 	  messagesOffset+=offset;
 	else
 	  messagesOffset=0;
