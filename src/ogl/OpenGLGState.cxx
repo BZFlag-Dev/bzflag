@@ -150,7 +150,9 @@ class OpenGLGStateRep {
 OpenGLGStateState::Sorted::Sorted() :
 				hasTexture(false),
 				hasTextureReplace(false),
-				hasMaterial(false)
+				hasMaterial(false),
+				texture(-1),
+				material(OpenGLMaterial())
 {
   // do nothing
 }
