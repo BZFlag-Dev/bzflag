@@ -1087,7 +1087,6 @@ tsaunima		# zh - fuck your mother
 # Dutch (Holland-Belgium)
 dikzak                  # nl - fatty
 eikel                   # nl - dickhead
-ekrem			# nl - ??
 godverdomme             # nl - damn
 #hoer                    # nl - hooker/hoar
 hoerenzoon              # nl - son of a prostitute
@@ -1131,8 +1130,6 @@ vitt/puts               # et - cunt
 runkkari		# fi - wanker
 kusi	   		# fi - piss
 kusipaeae               # fi - pisshead
-kyrpa			# fi - ??
-mulkku			# fi - ??
 munaa			# fi - cock
 paska                   # fi - shit
 paskiainen              # fi - bastard
@@ -1263,7 +1260,6 @@ paliarhido              # el - old balls
 poustis                 # el - faggot
 poutsos                 # el - dick
 salta gamisou           # el - go fuck yourself
-se gamo kai hino, les na pahino?       # el - ???
 segrafa sta archidia-mu # el - bullshit. (lit. i write that on my balls.)
 skila                   # el - bitch
 su gamo to spiti, ti mana kai to theo  # el - i'll fuck your family one by one,the god that you believe in and especially your mother(the absolute greek insult)
@@ -1556,22 +1552,16 @@ pedar sag               # fa - (lit.) your father is a dog
 
 # Polish
 coorva                  # pl - fuck
-# chuj			# pl - ??
-# dupa			# pl - ?? ass
 dupek                   # pl - asshole
 dziwka                  # pl - whore (light)
 gowno                   # pl - shit
 huj                     # pl - dick
-huju			# pl - ??
-kurva                   # pl - ??
 kurwa                   # pl - whore (hard), fig. "oh shit!"
-odpierdol		# pl - ??
 pierdol	      	      	# pl - fuck
 pierdolec               # pl - fucker
 pojebany                # pl - fucked up
 spieprzaj               # pl - piss off
 spierdalaj              # pl - fuck off
-# supa			# pl - ??
 zajebiste               # pl - "fucking awesome"
 zapierdol	      	# pl - fuck
 zapierdole	      	# pl - fuck
@@ -1605,11 +1595,6 @@ caralho                 # pt - cock
 cabra                   # pt - bitch
 voi te foder            # pt - fuck you
 vai para o caralho      # pt - go piss off (go to hell)
-
-# Romanian
-pula			# ro - ??
-muie			# ro - ??
-pizda			# ro - ??
 
 # Russian
 baltattsya kak govno v prorubi # ru - to be flighty or indecisive (Lit. to bob like shit in a hole in the ice)
