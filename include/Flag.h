@@ -78,6 +78,7 @@ const int		FlagPLen = 6 + PlayerIdPLen + 48;
 
 class FlagType;
 typedef std::map<std::string, FlagType*> FlagTypeMap;
+typedef std::set<FlagType*> FlagSet;
 
 class FlagType {
   public:
@@ -90,8 +91,16 @@ class FlagType {
       flagQuality = quality;
       flagHelp = help;
       flagTeam = team;
+      //      std::set<FlagType*>& flagset = flagSets[flagQuality];
 
-      flagSets[flagQuality].insert(this);
+      /* allocate flagset array on first use to work around mipspro
+       * std::set compiler bug of making flagSets a fixed array.
+       */
+      if (flagSets == NULL) {
+	flagSets = new FlagSet[2];
+      }
+
+      (flagSets[flagQuality]).insert(this);
       getFlagMap()[flagAbbv] = this;
       flagCount++;
     }
@@ -111,12 +120,10 @@ class FlagType {
     ShotType		flagShot;
     TeamColor		flagTeam;
 
-    typedef std::set<FlagType*> FlagSet;
     static int		flagCount;
-    static FlagSet	flagSets[NumQualities];
+    static FlagSet	*flagSets;
 };
 
-typedef FlagType::FlagSet  FlagSet;
 
 class Flag {
   public:
