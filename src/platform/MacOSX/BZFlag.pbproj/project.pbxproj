@@ -1375,6 +1375,82 @@
 			isa = PBXTargetDependency;
 			target = 14953626049CCA4100A80164;
 		};
+		14ACDFBF04B665F900A80164 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = WordFilter.cxx;
+			refType = 4;
+		};
+		14ACDFC004B665F900A80164 = {
+			fileRef = 14ACDFBF04B665F900A80164;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		14ACDFC104B666F700A80164 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = WordFilter.h;
+			refType = 4;
+		};
+		14ACDFC204B666F700A80164 = {
+			fileRef = 14ACDFC104B666F700A80164;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		14ACDFC304B6670D00A80164 = {
+			isa = PBXTargetDependency;
+			target = 14953626049CCA4100A80164;
+		};
+		14ACDFD604B6B05F00A80164 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = AccessControlList.cxx;
+			refType = 4;
+		};
+		14ACDFD704B6B05F00A80164 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = AccessControlList.h;
+			refType = 4;
+		};
+		14ACDFD804B6B05F00A80164 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = TextChunkManager.cxx;
+			refType = 4;
+		};
+		14ACDFD904B6B05F00A80164 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = TextChunkManager.h;
+			refType = 4;
+		};
+		14ACDFDA04B6B05F00A80164 = {
+			fileRef = 14ACDFD604B6B05F00A80164;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		14ACDFDB04B6B05F00A80164 = {
+			fileRef = 14ACDFD704B6B05F00A80164;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		14ACDFDC04B6B05F00A80164 = {
+			fileRef = 14ACDFD804B6B05F00A80164;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		14ACDFDD04B6B05F00A80164 = {
+			fileRef = 14ACDFD904B6B05F00A80164;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
 		14C1C18A04B63B8C00A80164 = {
 			buildActionMask = 2147483647;
 			files = (
@@ -2869,6 +2945,7 @@
 				1401FCC904B57C2200A80164,
 				1401FCCA04B57C2200A80164,
 				1401FCCB04B57C2200A80164,
+				14ACDFC104B666F700A80164,
 			);
 			isa = PBXGroup;
 			name = include;
@@ -4722,6 +4799,10 @@
 			children = (
 				4E030C55048E70E70009E055,
 				4E030C58048E70E70009E055,
+				14ACDFD604B6B05F00A80164,
+				14ACDFD704B6B05F00A80164,
+				14ACDFD804B6B05F00A80164,
+				14ACDFD904B6B05F00A80164,
 			);
 			isa = PBXGroup;
 			path = bzfs;
@@ -4758,6 +4839,7 @@
 				14C1C1BD04B63D2500A80164,
 				14C1C1BE04B63D2500A80164,
 				14C1C1D004B63FE400A80164,
+				14ACDFBF04B665F900A80164,
 			);
 			isa = PBXGroup;
 			path = common;
@@ -6117,6 +6199,7 @@
 				4E030DC8048EAD510009E055,
 				4E030DC9048EAD560009E055,
 				1495362A049CEBF900A80164,
+				14ACDFC204B666F700A80164,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -6152,6 +6235,7 @@
 				14C1C1C004B63D2500A80164,
 				14C1C1C104B63D2500A80164,
 				14C1C1D104B63FE400A80164,
+				14ACDFC004B665F900A80164,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -6197,6 +6281,7 @@
 				WRAPPER_EXTENSION = framework;
 			};
 			dependencies = (
+				14ACDFC304B6670D00A80164,
 			);
 			isa = PBXFrameworkTarget;
 			name = libCommonNet;
@@ -7238,6 +7323,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				14953631049CEC6100A80164,
+				14ACDFDB04B6B05F00A80164,
+				14ACDFDD04B6B05F00A80164,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -7246,6 +7333,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				4E030DD2048EAE540009E055,
+				14ACDFDA04B6B05F00A80164,
+				14ACDFDC04B6B05F00A80164,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
