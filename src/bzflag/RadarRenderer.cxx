@@ -276,6 +276,7 @@ void			RadarRenderer::render(SceneRenderer& renderer,
     if (decay <= 0.015f) decay = 1.0f;
     else decay *= 0.5f;
 
+
     // get size of pixel in model space (assumes radar is square)
     ps = 2.0f * range / GLfloat(w);
 
@@ -283,6 +284,18 @@ void			RadarRenderer::render(SceneRenderer& renderer,
     const LocalPlayer* myTank = LocalPlayer::getMyTank();
     const float* pos = myTank->getPosition();
     float angle = myTank->getAngle();
+
+    // draw the view angle blewow stuff
+    // view frustum edges
+    glColor3f(1.0f, 0.625f, 0.125f);
+    const float fovx = renderer.getViewFrustum().getFOVx();
+    const float viewWidth = range * tanf(0.5f * fovx);
+    glBegin(GL_LINE_STRIP);
+    glVertex2f(-viewWidth, range);
+    glVertex2f(0.0f, 0.0f);
+    glVertex2f(viewWidth, range);
+    glEnd();
+
     glPushMatrix();
     glRotatef(90.0f - angle * 180.0f / M_PI, 0.0f, 0.0f, 1.0f);
     glPushMatrix();
@@ -468,16 +481,6 @@ void			RadarRenderer::render(SceneRenderer& renderer,
     glBegin(GL_LINES);
     glVertex2f(0.0f, range - ps);
     glVertex2f(0.0f, range - 4.0f * ps);
-    glEnd();
-
-    // view frustum edges
-    glColor3f(1.0f, 0.625f, 0.125f);
-    const float fovx = renderer.getViewFrustum().getFOVx();
-    const float viewWidth = range * tanf(0.5f * fovx);
-    glBegin(GL_LINE_STRIP);
-    glVertex2f(-viewWidth, range);
-    glVertex2f(0.0f, 0.0f);
-    glVertex2f(viewWidth, range);
     glEnd();
 
     if (smoothingOn) {
