@@ -35,6 +35,7 @@
 				mainform.random_building_heights.disabled = mainform.world_type.checked;
 				mainform.balanced_ctf_map.disabled = (mainform.world_type.checked) || !ctf || freeForAll || rabbit;
 				mainform.rabbit_selection.disabled = !rabbit;
+				mainform.num_team_flags.disabled = !ctf;
 				mainform.ctf_map_citysize.disabled = !(mainform.balanced_ctf_map.checked) || (mainform.balanced_ctf_map.disabled);
 
 				return true;
@@ -252,7 +253,10 @@
 
 					if (mainform.game_style.value == "ctf") {
 						d.writeln("#Capture the flag game style<br/>");
-						d.writeln("-c<br/><br/>");
+						if (mainform.num_team_flags.value > 1)
+							d.writeln("-c " + mainform.num_team_flags.value + "<br/><br/>");
+						else
+							d.writeln("-c<br/><br/>");
 					}
 					else if (mainform.game_style.value == 'rc') {
 						d.writeln("#Rabbit chase game style<br/>");
@@ -289,14 +293,14 @@
 						d.writeln("-h<br/><br/>");
 					}
 
-					if (mainform.world_size.value != 400) {
-						d.writeln("#World size in meters<br/>");
-						d.writeln("-worldsize " + mainform.world_size.value + "<br/><br/>");
-					}
-
 					if (mainform.exit_one_game.checked) {
 						d.writeln("#Serve one game and exit<br/>");
 						d.writeln("-g<br/><br/>");
+					}
+
+					if (mainform.world_size.value != 400) {
+						d.writeln("#World size in meters<br/>");
+						d.writeln("-worldsize " + mainform.world_size.value + "<br/><br/>");
 					}
 
 					if (mainform.maximum_players.value != 40) {
@@ -691,6 +695,12 @@
 									<option value="9">9</option>
 								</select> density level
 							</td>
+							<td>Number of Team Flags</td>
+							<td>
+								<input type="text" name="num_team_flags" value="1" size="30" title="Number of team flags per team" disabled/>
+							</td>
+						</tr>
+						<tr>
 							<td>Rabbit Selection</td>
 							<td>
 								<select name="rabbit_selection" value="score" title="Rabbit Selection Algorithm" disabled>
@@ -719,16 +729,16 @@
 							</td>
 						</tr>
 						<tr>
-							<td>World Size</td>
-							<td>
-								<input type="text" name="world_size" value="400" size="30" title="Size in meters of world"/>
-							</td>
 							<td>Exit after one game</td>
 							<td>
 								<input type="checkbox" name="exit_one_game" title="Whether or not the server shuts down after one game"/>
 							</td>
 						</tr>
 						<tr>
+							<td>World Size</td>
+							<td>
+								<input type="text" name="world_size" value="400" size="30" title="Size in meters of world"/>
+							</td>
 							<td>Maximum Players</td>
 							<td><input type="text" name="maximum_players" value="40" size="30" title="Maximum number of players who can join (n), or max players per team (n,n,n,n,n,n)"/></td>
 						</tr>
