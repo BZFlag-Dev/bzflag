@@ -11,8 +11,10 @@ THESE ARE LOWER PRIORITY
 
 * Fix the Windows version of bzadmin so that EOF quits the program, like
   the UNIX version (see checkCommand() in StdBothUI.cxx).
+  Try to build bzadmin on Win32 using PDCurses (it almost works with
+  the X11 version of PDCurses). It currently works with stdin/stdout.
 
-- bzflag should use the system-supplied zlib if available. Check in
+* bzflag should use the system-supplied zlib if available. Check in
   configure and use system if it's good.
 
 * provide the ability to publish a singer server to multiple list servers.
@@ -58,9 +60,6 @@ THESE ARE LOWER PRIORITY
   - player/password registration
   - open group registration. one nick is master for each group
   - karma see http://bzflag.org/wiki/KarmaSystem
-
-* Try to build bzadmin on Win32 using PDCurses (it almost works with
-  the X11 version of PDCurses). It currently works with stdin/stdout.
 
 * rewrite mac os x display/window code to support app switching,
   resolution mode changes, screen captures, etc.
