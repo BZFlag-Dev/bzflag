@@ -1568,13 +1568,30 @@ static void handleGrouppermsCmd(GameKeeper::Player *playerData, const char *)
     line = itr->first + ":   ";
     sendMessage(ServerPlayer, t, line.c_str());
 
-    for (int i = 0; i < PlayerAccessInfo::lastPerm; i++) {
-      if (itr->second.explicitAllows.test(i)) {
-	line = "     ";
-	line += nameFromPerm((PlayerAccessInfo::AccessPerm)i);
-	sendMessage(ServerPlayer, t, line.c_str());
-      }
-    }
+		// allows first
+		if (itr->second.explicitAllows.any()) {
+			sendMessage(ServerPlayer, t, "  Allows");
+    	for (int i = 0; i < PlayerAccessInfo::lastPerm; i++) {
+     		if (itr->second.explicitAllows.test(i) && !itr->second.explicitDenys.test(i) ) {
+		 			line = "     ";
+					line += nameFromPerm((PlayerAccessInfo::AccessPerm)i);
+					sendMessage(ServerPlayer, t, line.c_str());
+      	}
+    	}
+		}
+		
+		// same about denys
+		if (itr->second.explicitDenys.any()) {
+			sendMessage(ServerPlayer, t, "  Denys");
+    	for (int i = 0; i < PlayerAccessInfo::lastPerm; i++) {
+     		if (itr->second.explicitDenys.test(i) ) {
+		 			line = "     ";
+					line += nameFromPerm((PlayerAccessInfo::AccessPerm)i);
+					sendMessage(ServerPlayer, t, line.c_str());
+      	}
+    	}
+		}
+			
     itr++;
   }
   return;

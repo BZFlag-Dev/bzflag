@@ -4121,44 +4121,49 @@ static void doStuffOnPlayer(GameKeeper::Player &playerData)
 
 void initGroups()
 {
-  // reload the databases
+ 
+	// make sure that the 'admin' & 'default' groups exist
+
+  PlayerAccessInfo info;
+  info.explicitAllows[PlayerAccessInfo::actionMessage] = true;
+  info.explicitAllows[PlayerAccessInfo::adminMessageSend] = true;
+  info.explicitAllows[PlayerAccessInfo::date] = true;
+  info.explicitAllows[PlayerAccessInfo::flagHistory] = true;
+  info.explicitAllows[PlayerAccessInfo::idleStats] = true;
+  info.explicitAllows[PlayerAccessInfo::lagStats] = true;
+  info.explicitAllows[PlayerAccessInfo::privateMessage] = true;
+  info.explicitAllows[PlayerAccessInfo::spawn] = true;
+	info.explicitAllows[PlayerAccessInfo::talk] = true;
+	info.groupState[PlayerAccessInfo::isGroup] = true;
+	info.groupState[PlayerAccessInfo::isDefault] = true;
+	groupAccess["EVERYONE"] = info;
+  
+	// VERIFIED
+  info.explicitAllows.reset();
+	info.groupState.reset();
+  info.explicitAllows[PlayerAccessInfo::poll] = true;
+  info.explicitAllows[PlayerAccessInfo::vote] = true;
+	info.explicitAllows[PlayerAccessInfo::pollBan] = true;
+	info.explicitAllows[PlayerAccessInfo::pollKick] = true;
+  info.explicitAllows[PlayerAccessInfo::pollSet] = true;
+  info.explicitAllows[PlayerAccessInfo::pollFlagReset] = true;
+	info.groupState[PlayerAccessInfo::isGroup] = true;
+	info.groupState[PlayerAccessInfo::isDefault] = true;
+	groupAccess["VERIFIED"] = info;
+
+	//  LOCAL.ADMIN
+  info.explicitAllows.reset();
+	info.groupState.reset();
+  for (int i = 0; i < PlayerAccessInfo::lastPerm; i++)
+  info.explicitAllows[i] = true;
+	info.groupState[PlayerAccessInfo::isGroup] = true;
+	info.groupState[PlayerAccessInfo::isDefault] = true;
+  info.explicitAllows[PlayerAccessInfo::hideAdmin ] = false;
+  groupAccess["LOCAL.ADMIN"] = info;
+  
+	// load databases
   if (groupsFile.size())
     PlayerAccessInfo::readGroupsFile(groupsFile);
-  // make sure that the 'admin' & 'default' groups exist
-  // FIXME same code is in bzfs to init groups on start
-  PlayerAccessMap::iterator itr = groupAccess.find("EVERYONE");
-  if (itr == groupAccess.end()) {
-    PlayerAccessInfo info;
-    info.explicitAllows[PlayerAccessInfo::actionMessage] = true;
-    info.explicitAllows[PlayerAccessInfo::adminMessageSend] = true;
-    info.explicitAllows[PlayerAccessInfo::date] = true;
-    info.explicitAllows[PlayerAccessInfo::flagHistory] = true;
-    info.explicitAllows[PlayerAccessInfo::idleStats] = true;
-    info.explicitAllows[PlayerAccessInfo::lagStats] = true;
-    info.explicitAllows[PlayerAccessInfo::privateMessage] = true;
-    info.explicitAllows[PlayerAccessInfo::spawn] = true;
-    info.explicitAllows[PlayerAccessInfo::talk] = true;
-    groupAccess["EVERYONE"] = info;
-  }
-  itr = groupAccess.find("VERIFIED");
-  if (itr == groupAccess.end()) {
-    PlayerAccessInfo info;
-    info.explicitAllows[PlayerAccessInfo::poll] = true;
-    info.explicitAllows[PlayerAccessInfo::pollBan] = true;
-    info.explicitAllows[PlayerAccessInfo::pollKick] = true;
-    info.explicitAllows[PlayerAccessInfo::pollSet] = true;
-    info.explicitAllows[PlayerAccessInfo::pollFlagReset] = true;
-    info.explicitAllows[PlayerAccessInfo::vote] = true;
-    groupAccess["VERIFIED"] = info;
-  }
-  itr = groupAccess.find("LOCAL.ADMIN");
-  if (itr == groupAccess.end()) {
-    PlayerAccessInfo info;
-    for (int i = 0; i < PlayerAccessInfo::lastPerm; i++)
-      info.explicitAllows[i] = true;
-    info.explicitAllows[PlayerAccessInfo::hideAdmin ] = false;
-    groupAccess["LOCAL.ADMIN"] = info;
-  }
 }
 
 

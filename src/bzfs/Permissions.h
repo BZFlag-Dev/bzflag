@@ -102,6 +102,14 @@ public:
       // make sure it's the last real right 
       lastPerm
     };
+	
+  enum GroupStates
+	{
+	  isGroup,  // we can check if this is a group or a player
+	  isDefault,   // mark default groups
+	  isReferenced, // do not allow to alter group perms once it's referenced
+	  lastState
+	};
 
   void	setName(const char* callSign);
 
@@ -141,9 +149,12 @@ public:
   static bool writePermsFile(const std::string &filename);
   static void updateDatabases();
   std::bitset<lastPerm>		explicitAllows;
-  std::vector<std::string>	groups;
-private:
   std::bitset<lastPerm>		explicitDenys;
+	std::bitset<lastState>	groupState;
+  std::vector<std::string>	groups;
+  	
+	
+private:
   bool				verified;
   TimeKeeper			loginTime;
   int				loginAttempts;

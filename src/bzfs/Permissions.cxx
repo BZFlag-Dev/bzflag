@@ -423,40 +423,102 @@ PlayerAccessInfo::AccessPerm permFromName(const std::string &name)
   return PlayerAccessInfo::lastPerm;
 }
 
-void parsePermissionString(const std::string &permissionString, std::bitset<PlayerAccessInfo::lastPerm> &perms)
+void parsePermissionString(const std::string &permissionString, PlayerAccessInfo &info)
 {
   if (permissionString.length() < 1)
     return;
-  perms.reset();
 
   std::istringstream permStream(permissionString);
   std::string word;
 
   while (permStream >> word) {
     makeupper(word);
-    if (word[0] != '*') {
-      // regular permission
-      PlayerAccessInfo::AccessPerm perm = permFromName(word);
-      if (perm != PlayerAccessInfo::lastPerm) {
-	perms.set(perm);
-      }
-    } else {
-      // referenced group
-      std::string refname = word.c_str() + 1;
-      PlayerAccessMap::iterator refgroup = groupAccess.find(refname);
-      if (refgroup != groupAccess.end()) {
-	for (int i = 0; i < PlayerAccessInfo::lastPerm; i++) {
-	  PlayerAccessInfo::AccessPerm perm = (PlayerAccessInfo::AccessPerm)i;
-	  if (refgroup->second.hasPerm(perm) == true) {
-	    perms.set(perm);
-	  }
+ 	
+    // do we have an operator? check for a leading, non alphabetic character
+		char first = NULL;
+		if (!TextUtils::isAlphabetic(word[0])) {
+			first = word[0];
+			word.erase(0,1);
+		}
+		
+		// Operators are not allowed for userdb
+		// FIXME: until now we don't use userdb permissions at all
+		if ( !info.groupState.test(PlayerAccessInfo::isGroup) && first != NULL){
+			DEBUG1("userdb: illegal permission string, operators are not allowed in udserdb\n");
+			return;
+		}
+		
+			
+		// if we have an operator, lets handle it
+		// operators are only allowed for groups, they make no sense for userdb
+		if ( info.groupState.test(PlayerAccessInfo::isGroup) && first != NULL) {
+			
+			switch (first) {
+				case '*': {
+					// referenced group
+					// don't copy setThis, groups have to be named explicitly for every group
+					// to prevent unexpected side effects
+      		PlayerAccessMap::iterator refgroup = groupAccess.find(word);
+      		if (refgroup != groupAccess.end()) {
+						info.explicitAllows |= refgroup->second.explicitAllows;
+						info.explicitDenys |= refgroup->second.explicitDenys;
+						refgroup->second.groupState.set(PlayerAccessInfo::isReferenced);
+      		} else {
+					DEBUG1("groupdb: unknown group \"%s\" was referenced\n", word.c_str());
+					}
+				continue;
+				} 
+				
+				case '!': {
+					// forbid a permission
+					PlayerAccessInfo::AccessPerm perm = permFromName(word);
+     		 		if (perm != PlayerAccessInfo::lastPerm) 
+						info.explicitDenys.set(perm);
+					else
+						DEBUG1("groupdb: Cannot forbid unknown permission %s\n", word.c_str());
+
+					continue;
+				} 
+			
+				case '-': {
+					// remove a permission
+					PlayerAccessInfo::AccessPerm perm = permFromName(word);
+	      	if (perm != PlayerAccessInfo::lastPerm) 
+						info.explicitAllows.reset(perm);
+					else 
+						if (word == "ALL")
+							info.explicitAllows.reset();
+					else
+						DEBUG1("groupdb: Cannot remove unknown permission %s\n", word.c_str());
+    	  	
+					continue;
+				}
+				
+				// + is like no operator, just let it pass trough
+				case '+': break;
+				
+				default : 
+					DEBUG1("groupdb: ignoring unknown operator type %c\n", first);
+			}
+		}
+	
+
+		
+    // regular permission
+		PlayerAccessInfo::AccessPerm perm = permFromName(word);
+		if (perm != PlayerAccessInfo::lastPerm)
+			info.explicitAllows.set(perm);
+		else
+			if (word == "ALL"){
+				info.explicitAllows.set();  
+				info.explicitAllows[PlayerAccessInfo::lastPerm ] = false;
+			}
+		    
+		else
+			DEBUG1("groupdb: Cannot set unknown permission %s\n", word.c_str());
 	}
-      } else {
-	DEBUG1("WARNING: unknown group \"%s\" was referenced\n", refname.c_str());
-      }
-    }
-  }
 }
+
 
 bool readPassFile(const std::string &filename)
 {
@@ -510,29 +572,45 @@ bool PlayerAccessInfo::readGroupsFile(const std::string &filename)
 
     // check for a comment string
     bool skip = true;
-    for (std::string::size_type i = 0; i < line.size(); i++) {
-      const char c = line[i];
+    for (std::string::size_type pos = 0; pos < line.size(); pos++) {
+      const char c = line[pos];
       if (!TextUtils::isWhitespace(c)) {
-	if (c != '#') {
-	  skip = false;
-	}
-	break;
+	    if (c != '#') {
+	      skip = false;
+	    }
+	    break;
       }
     }
     if (skip) continue;
+	
+	makeupper(line);
 
     std::string::size_type colonpos = line.find(':');
     if (colonpos != std::string::npos) {
       std::string name = line.substr(0, colonpos);
       std::string perm = line.substr(colonpos + 1);
-      makeupper(name);
-      PlayerAccessInfo info;
-      parsePermissionString(perm, info.explicitAllows);
+	  
+		  // check if we already have this group, else make a new
+		  PlayerAccessInfo info;
+		  PlayerAccessMap::iterator oldgroup = groupAccess.find(name);
+		  if ( oldgroup != groupAccess.end())
+			info = oldgroup->second;
+		  else
+			info.groupState[PlayerAccessInfo::isGroup] = true;
+	  
+		  // don't allow changing permissions for a group 
+		  // that was used as a reference before
+		  if ( info.groupState.test(isReferenced)){
+				DEBUG1("groupdb: skipping groupdb line (%i), group was used as reference before\n", linenum);
+				continue;
+		  	}
+      parsePermissionString(perm, info);
       info.verified = true;
       groupAccess[name] = info;
-    } else {
-      DEBUG1("WARNING: bad groupdb line (%i)\n", linenum);
-    }
+    } 
+			
+		else DEBUG1("WARNING: bad groupdb line (%i)\n", linenum);
+    
   }
 
   return true;
@@ -564,10 +642,14 @@ bool PlayerAccessInfo::readPermsFile(const std::string &filename)
     // 3rd line - allows
     std::string perms;
     std::getline(in, perms);
-    parsePermissionString(perms, info.explicitAllows);
+    parsePermissionString(perms, info);
 
-    std::getline(in, perms);
-    parsePermissionString(perms, info.explicitDenys);
+    // 4th line - denies
+		// FIXME: not nice ... any ideas how to make it better?
+		std::getline(in, perms);
+		PlayerAccessInfo dummy;
+    parsePermissionString(perms, dummy);
+		info.explicitDenys = dummy.explicitAllows;
 
     userDatabase[name] = info;
   }
