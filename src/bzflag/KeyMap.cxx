@@ -13,7 +13,7 @@
 #include "KeyMap.h"
 #include <ctype.h>
 
-const BzfKeyEvent	KeyMap::defaults1[] = {
+const BzfKeyEvent	BzfKeyMap::defaults1[] = {
 				{ 0, BzfKeyEvent::LeftMouse, 0 },
 				{ 0, BzfKeyEvent::MiddleMouse, 0 },
 				{ 0, BzfKeyEvent::RightMouse, 0 },
@@ -34,7 +34,7 @@ const BzfKeyEvent	KeyMap::defaults1[] = {
 				{ 0, BzfKeyEvent::PageDown, 0 }
 
 			};
-const BzfKeyEvent	KeyMap::defaults2[] = {
+const BzfKeyEvent	BzfKeyMap::defaults2[] = {
 				{ 0, 0, 0 },
 				{ ' ', 0, 0 },
 				{ 0, 0, 0 },
@@ -54,7 +54,7 @@ const BzfKeyEvent	KeyMap::defaults2[] = {
 				{ 0, 0, 0 },
 				{ 0, 0, 0 }
 			};
-const char*		KeyMap::keyName[] = {
+const char*		BzfKeyMap::keyName[] = {
 				"fireKey",
 				"dropFlagKey",
 				"identifyKey",
@@ -75,7 +75,7 @@ const char*		KeyMap::keyName[] = {
 				"scrollForwardKey",
 			};
 
-const char*		KeyMap::eventNames[] = {
+const char*		BzfKeyMap::eventNames[] = {
 				"???",
 				"Pause",
 				"Home",
@@ -105,17 +105,17 @@ const char*		KeyMap::eventNames[] = {
 				"Right Mouse"
 			};
 
-KeyMap::KeyMap()
+BzfKeyMap::BzfKeyMap()
 {
   resetAll();
 }
 
-KeyMap::~KeyMap()
+BzfKeyMap::~BzfKeyMap()
 {
   // do nothing
 }
 
-void			KeyMap::resetAll()
+void			BzfKeyMap::resetAll()
 {
   reset(FireShot);
   reset(DropFlag);
@@ -137,14 +137,14 @@ void			KeyMap::resetAll()
   reset(ScrollForward);
 }
 
-void			KeyMap::reset(Key key)
+void			BzfKeyMap::reset(Key key)
 {
   clear(key);
   set(key, defaults1[key]);
   set(key, defaults2[key]);
 }
 
-void			KeyMap::clear(Key key)
+void			BzfKeyMap::clear(Key key)
 {
   map1[key].ascii = 0;
   map1[key].button = 0;
@@ -154,7 +154,7 @@ void			KeyMap::clear(Key key)
   map2[key].shift = 0;
 }
 
-void			KeyMap::set(Key key, const BzfKeyEvent& event)
+void			BzfKeyMap::set(Key key, const BzfKeyEvent& event)
 {
   if ((map1[key].ascii != 0 || map1[key].button != 0) &&
       (map2[key].ascii != 0 || map2[key].button != 0))
@@ -170,7 +170,7 @@ void			KeyMap::set(Key key, const BzfKeyEvent& event)
   }
 }
 
-void			KeyMap::unset(Key key, const BzfKeyEvent& event)
+void			BzfKeyMap::unset(Key key, const BzfKeyEvent& event)
 {
   if (event.ascii == 0 && event.button == 0) return;
   if (map1[key].ascii == toupper(event.ascii) &&
@@ -186,17 +186,17 @@ void			KeyMap::unset(Key key, const BzfKeyEvent& event)
   }
 }
 
-const BzfKeyEvent&	KeyMap::get(Key key) const
+const BzfKeyEvent&	BzfKeyMap::get(Key key) const
 {
   return map1[key];
 }
 
-const BzfKeyEvent&	KeyMap::getAlternate(Key key) const
+const BzfKeyEvent&	BzfKeyMap::getAlternate(Key key) const
 {
   return map2[key];
 }
 
-KeyMap::Key		KeyMap::isMapped(char ascii) const
+BzfKeyMap::Key		BzfKeyMap::isMapped(char ascii) const
 {
   BzfKeyEvent event;
   event.ascii = ascii;
@@ -205,7 +205,7 @@ KeyMap::Key		KeyMap::isMapped(char ascii) const
   return isMapped(event);
 }
 
-KeyMap::Key		KeyMap::isMapped(BzfKeyEvent::Button button) const
+BzfKeyMap::Key		BzfKeyMap::isMapped(BzfKeyEvent::Button button) const
 {
   BzfKeyEvent event;
   event.ascii = 0;
@@ -214,7 +214,7 @@ KeyMap::Key		KeyMap::isMapped(BzfKeyEvent::Button button) const
   return isMapped(event);
 }
 
-KeyMap::Key		KeyMap::isMapped(const BzfKeyEvent& event) const
+BzfKeyMap::Key		BzfKeyMap::isMapped(const BzfKeyEvent& event) const
 {
   if (event.ascii == 0 && event.button == 0)
     return LastKey;
@@ -230,7 +230,7 @@ KeyMap::Key		KeyMap::isMapped(const BzfKeyEvent& event) const
   return LastKey;
 }
 
-boolean			KeyMap::isMappedTo(Key key,
+boolean			BzfKeyMap::isMappedTo(Key key,
 				const BzfKeyEvent& event) const
 {
   if (event.ascii == 0 && event.button == 0)
@@ -246,12 +246,12 @@ boolean			KeyMap::isMappedTo(Key key,
   return False;
 }
 
-BzfString		KeyMap::getKeyName(Key key)
+BzfString		BzfKeyMap::getKeyName(Key key)
 {
   return BzfString(keyName[key]);
 }
 
-KeyMap::Key		KeyMap::lookupKeyName(const BzfString& name)
+BzfKeyMap::Key		BzfKeyMap::lookupKeyName(const BzfString& name)
 {
   for (int i = 0; i < (int)(sizeof(keyName) / sizeof(keyName[0])); i++)
     if (name == keyName[i])
@@ -259,7 +259,7 @@ KeyMap::Key		KeyMap::lookupKeyName(const BzfString& name)
   return LastKey;
 }
 
-BzfString		KeyMap::getKeyEventString(const BzfKeyEvent& event)
+BzfString		BzfKeyMap::getKeyEventString(const BzfKeyEvent& event)
 {
   if (event.ascii != 0) {
     if (event.ascii == '\b') return "Backspace";
@@ -273,7 +273,7 @@ BzfString		KeyMap::getKeyEventString(const BzfKeyEvent& event)
   return eventNames[event.button];
 }
 
-boolean			KeyMap::translateStringToEvent(
+boolean			BzfKeyMap::translateStringToEvent(
 				const BzfString& value, BzfKeyEvent& event)
 {
   event.shift = 0;

@@ -10,6 +10,10 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
+#ifdef macintosh
+#include "mac_funcs.h"
+#endif
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -20,7 +24,9 @@
 #include <process.h>
 #else
 #include <sys/types.h>
-#include <sys/wait.h>
+#ifndef GUSI_20
+  #include <sys/wait.h>
+#endif
 #include <unistd.h>
 #endif
 #include <math.h>
@@ -63,7 +69,7 @@ boolean			MenuDefaultKey::keyPress(const BzfKeyEvent& key)
       return True;
   }
 
-  if (getKeyMap().isMappedTo(KeyMap::Quit, key)) {
+  if (getBzfKeyMap().isMappedTo(BzfKeyMap::Quit, key)) {
     getMainWindow()->setQuit();
     return True;
   }
@@ -570,7 +576,7 @@ class KeyboardMapMenu : public HUDDialog {
   private:
     KeyboardMapMenuDefaultKey defaultKey;
     HUDuiControl*	reset;
-    KeyMap::Key		editing;
+    BzfKeyMap::Key		editing;
 };
 
 KeyboardMapMenuDefaultKey::KeyboardMapMenuDefaultKey(KeyboardMapMenu* _menu) :
@@ -608,7 +614,7 @@ boolean			KeyboardMapMenuDefaultKey::keyRelease(
   return True;
 }
 
-KeyboardMapMenu::KeyboardMapMenu() : defaultKey(this), editing(KeyMap::LastKey)
+KeyboardMapMenu::KeyboardMapMenu() : defaultKey(this), editing(BzfKeyMap::LastKey)
 {
   // add controls
   HUDuiControlList& controls = getControls();
@@ -682,20 +688,20 @@ KeyboardMapMenu::KeyboardMapMenu() : defaultKey(this), editing(KeyMap::LastKey)
 
 boolean			KeyboardMapMenu::isEditing() const
 {
-  return editing != KeyMap::LastKey;
+  return editing != BzfKeyMap::LastKey;
 }
 
 void			KeyboardMapMenu::setKey(const BzfKeyEvent& event)
 {
-  if (editing != KeyMap::LastKey) {
+  if (editing != BzfKeyMap::LastKey) {
     // check for previous mapping
-    KeyMap& map = getKeyMap();
-    const KeyMap::Key previous = map.isMapped(event);
+    BzfKeyMap& map = getBzfKeyMap();
+    const BzfKeyMap::Key previous = map.isMapped(event);
 
     // ignore setting to same value
     if (previous != editing) {
       // if there was a previous setting remove it
-      if (previous != KeyMap::LastKey)
+      if (previous != BzfKeyMap::LastKey)
 	map.unset(previous, event);
 
       // map new key
@@ -703,7 +709,7 @@ void			KeyboardMapMenu::setKey(const BzfKeyEvent& event)
     }
 
     // not editing anymore
-    editing = KeyMap::LastKey;
+    editing = BzfKeyMap::LastKey;
 
     // make sure we update strings
     update();
@@ -714,21 +720,21 @@ void			KeyboardMapMenu::execute()
 {
   const HUDuiControl* const focus = HUDui::getFocus();
   if (focus == reset) {
-    getKeyMap().resetAll();
+    getBzfKeyMap().resetAll();
     update();
   }
   else {
     // start editing
     HUDuiControlList& list = getControls();
-    editing = KeyMap::LastKey;
-    for (int i = 0; i < (int)KeyMap::LastKey; i++)
+    editing = BzfKeyMap::LastKey;
+    for (int i = 0; i < (int)BzfKeyMap::LastKey; i++)
       if (list[i + 2] == focus) {
-	editing = (KeyMap::Key)i;
+	editing = (BzfKeyMap::Key)i;
 	break;
       }
 
-    KeyMap& map = getKeyMap();
-    if (editing != KeyMap::LastKey) {
+    BzfKeyMap& map = getBzfKeyMap();
+    if (editing != BzfKeyMap::LastKey) {
       BzfKeyEvent event;
       event.ascii = 0;
       event.button = 0;
@@ -740,8 +746,8 @@ void			KeyboardMapMenu::execute()
 
 void			KeyboardMapMenu::dismiss()
 {
-  editing = KeyMap::LastKey;
-  notifyKeyMapChanged();
+  editing = BzfKeyMap::LastKey;
+  notifyBzfKeyMapChanged();
 }
 
 void			KeyboardMapMenu::resize(int width, int height)
@@ -781,11 +787,11 @@ void			KeyboardMapMenu::resize(int width, int height)
 void			KeyboardMapMenu::update()
 {
   // load current settings
-  KeyMap& map = getKeyMap();
+  BzfKeyMap& map = getBzfKeyMap();
   HUDuiControlList& list = getControls();
-  for (int j = 0; j < (int)KeyMap::LastKey; j++) {
-    const BzfKeyEvent& key1 = map.get((KeyMap::Key)j);
-    const BzfKeyEvent& key2 = map.getAlternate((KeyMap::Key)j);
+  for (int j = 0; j < (int)BzfKeyMap::LastKey; j++) {
+    const BzfKeyEvent& key1 = map.get((BzfKeyMap::Key)j);
+    const BzfKeyEvent& key2 = map.getAlternate((BzfKeyMap::Key)j);
     BzfString value;
     if (key1.ascii == 0 && key1.button == 0) {
       if (j == (int)editing)
@@ -794,10 +800,10 @@ void			KeyboardMapMenu::update()
 	value = "<not mapped>";
     }
     else {
-      value += KeyMap::getKeyEventString(key1);
+      value += BzfKeyMap::getKeyEventString(key1);
       if (key2.ascii != 0 || key2.button != 0) {
 	value += " or ";
-	value += KeyMap::getKeyEventString(key2);
+	value += BzfKeyMap::getKeyEventString(key2);
       }
       else if (j == (int)editing) {
 	value += " or ???";
@@ -1441,35 +1447,35 @@ float			Help1Menu::getLeftSide(int width, int height)
 
 void			Help1Menu::resize(int width, int height)
 {
-  static const KeyMap::Key key[] = {
-				KeyMap::LastKey,
-				KeyMap::LastKey,
-				KeyMap::LastKey,
-				KeyMap::FireShot,
-				KeyMap::DropFlag,
-				KeyMap::Identify,
-				KeyMap::Jump,
-				KeyMap::ShortRange,
-				KeyMap::MediumRange,
-				KeyMap::LongRange,
-				KeyMap::Binoculars,
-				KeyMap::FlagHelp,
-				KeyMap::SendTeam,
-				KeyMap::SendAll,
-				KeyMap::Score,
-				KeyMap::TimeForward,
-				KeyMap::TimeBackward,
-				KeyMap::Pause,
-				KeyMap::Quit,
-				KeyMap::ScrollBackward,
-				KeyMap::ScrollForward
+  static const BzfKeyMap::Key key[] = {
+				BzfKeyMap::LastKey,
+				BzfKeyMap::LastKey,
+				BzfKeyMap::LastKey,
+				BzfKeyMap::FireShot,
+				BzfKeyMap::DropFlag,
+				BzfKeyMap::Identify,
+				BzfKeyMap::Jump,
+				BzfKeyMap::ShortRange,
+				BzfKeyMap::MediumRange,
+				BzfKeyMap::LongRange,
+				BzfKeyMap::Binoculars,
+				BzfKeyMap::FlagHelp,
+				BzfKeyMap::SendTeam,
+				BzfKeyMap::SendAll,
+				BzfKeyMap::Score,
+				BzfKeyMap::TimeForward,
+				BzfKeyMap::TimeBackward,
+				BzfKeyMap::Pause,
+				BzfKeyMap::Quit,
+				BzfKeyMap::ScrollBackward,
+				BzfKeyMap::ScrollForward
 			};
 
   // get current key mapping and set strings appropriately
-  KeyMap& map = getKeyMap();
+  BzfKeyMap& map = getBzfKeyMap();
   HUDuiControlList& list = getControls();
   for (int j = 0; j < (int)(sizeof(key) / sizeof(key[0])); j++) {
-    if (key[j] == KeyMap::LastKey) continue;
+    if (key[j] == BzfKeyMap::LastKey) continue;
 
     BzfString value;
     const BzfKeyEvent& key1 = map.get(key[j]);
@@ -1477,11 +1483,11 @@ void			Help1Menu::resize(int width, int height)
       value = "<not mapped>";
     }
     else {
-      value = KeyMap::getKeyEventString(key1);
+      value = BzfKeyMap::getKeyEventString(key1);
       const BzfKeyEvent& key2 = map.getAlternate(key[j]);
       if (key2.ascii != 0 || key2.button != 0) {
 	value += " or ";
-	value += KeyMap::getKeyEventString(key2);
+	value += BzfKeyMap::getKeyEventString(key2);
       }
     }
     value += ":";
@@ -3224,7 +3230,9 @@ void			ServerStartMenu::execute()
     else {
       setStatus("Server started.");
     }
+#elif defined (macintosh)
 
+  MacLaunchServer (arg, args);
 #else /* defined(_WIN32) */
 
     // UNIX

@@ -1,0 +1,73 @@
+IMPORTANT:
+Type cmd-. to shutdown server. Quitting from File menu will not work.
+
+BUGS:
+
+COMMANDS:
+Server must be customized using these commands, enter at prompt.
+
+Example:
+-r  +r -j -c -b
+Allow Rogues, enable reflections, allow jumping, capture the flag, random buildings
+
+usage:  [-a <vel> <rot>] [-b] [-c] [+f {good|<id>}] [-f {bad|<id>}] [-g] [-h] [-i interface] [-j] [-mp {<count>|[<count>],[<count>],[<count>],[<count>],[<count>]}] [-ms <shots>] [-p <port>] [-public <server-description>] [-publicaddr <server-hostname>[:<server-port>]] [-publiclist <list-server-url>] [+r] [-r] [{+s|-s} [<num>]] [-sa] [-st <time>] [-sw <num>] [-synctime] [-t] [-time <seconds>] [-ttl <ttl>]
+     -a: maximum acceleration settings
+     -b: randomly oriented buildings
+     -c: capture-the-flag style game
+     +f: always have flag <id> available
+     -f: never randomly generate flag <id>
+     -g: serve one game and then exit
+     -h: use random building heights
+     -i: listen for/reply to pings on <interface>
+     -j: allow jumping
+     -mp: maximum players total or per team
+     -ms: maximum simultaneous shots per player
+     -mps: set player score limit on each game
+     -mts: set team score limit on each game
+     -p: use alternative port (default is 5155)
+     -public <server-description>
+     -publicaddr <effective-server-hostname>[:<effective-server-port>]
+     -publiclist <list-server-url>
+     -q: don't listen for or respond to pings
+     +r: all shots ricochet
+     -r: allow rogue tanks
+     +s: always have <num> super flags (default=16)
+     -s: allow up to <num> super flags (default=16)
+     -sa: insert antidote superflags
+     -st: shake bad flags in <time> seconds
+     -sw: shake bad flags after <num> wins
+     -synctime: synchronize time of day on all clients
+     -t: allow teleporters
+     -time: set time limit on each game
+     -ttl: time-to-live for pings (default=8)
+
+Flag codes:
+      V High Speed
+      A Quick Turn
+     OO Oscillation Overthruster
+      F Rapid Fire
+     MG Machine Gun
+     GM Guided Missile
+      L Laser
+      R Ricochet
+     SB Super Bullet
+     IB Invisible Bullet
+     ST Stealth
+      T Tiny
+      N Narrow
+     SH Shield
+     SR Steamroller
+     SW Shock Wave
+     PZ Phantom Zone
+      G Genocide
+     JP Jumping
+     ID Identify
+     CL Cloaking
+     CB Colorblindness
+      O Obesity
+     <- Left Turn Only
+     -> Right Turn Only
+      M Momentum
+      B Blindness
+     JM Jamming
+     WA Wide Angle

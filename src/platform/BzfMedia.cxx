@@ -406,6 +406,7 @@ float*			BzfMedia::doReadSound(const char* filename,
     return 0;
   }
   closeWavFile(file);
+
 #ifdef HALF_RATE_AUDIO
   numFrames/=2;
   rate/=2;
@@ -444,6 +445,7 @@ float*			BzfMedia::doReadSound(const char* filename,
 #ifdef HALF_RATE_AUDIO
 	rawpos+=4;
 #endif
+
       }
     }
   }

@@ -71,7 +71,7 @@ BZF_DEFINE_ALIST(ExplosionList, BillboardSceneNode*);
 static const float	FlagHelpDuration = 60.0f;
 
 static StartupInfo	startupInfo;
-static KeyMap		keymap;
+static BzfKeyMap		keymap;
 static MainMenu*	mainMenu;
 static ServerLink*	serverLink = NULL;
 static PlayerLink*	playerLink = NULL;
@@ -220,7 +220,7 @@ StartupInfo*		getStartupInfo()
   return &startupInfo;
 }
 
-KeyMap&			getKeyMap()
+BzfKeyMap&			getBzfKeyMap()
 {
   return keymap;
 }
@@ -443,13 +443,13 @@ static void		doMotion()
 
 static boolean		doKeyCommon(const BzfKeyEvent& key, boolean pressed)
 {
-  if (keymap.isMappedTo(KeyMap::TimeForward, key)) {
+  if (keymap.isMappedTo(BzfKeyMap::TimeForward, key)) {
     // plus five minutes
     if (pressed) clockAdjust += 5.0f * 60.0f;
     return True;
   }
 
-  else if (keymap.isMappedTo(KeyMap::TimeBackward, key)) {
+  else if (keymap.isMappedTo(BzfKeyMap::TimeBackward, key)) {
     // minus five minutes
     if (pressed) clockAdjust -= 5.0f * 60.0f;
     return True;
@@ -460,7 +460,7 @@ static boolean		doKeyCommon(const BzfKeyEvent& key, boolean pressed)
     return True;
   }
 
-  else if (keymap.isMappedTo(KeyMap::Quit, key)) {
+  else if (keymap.isMappedTo(BzfKeyMap::Quit, key)) {
     getMainWindow()->setQuit();
     return True;
   }
@@ -471,7 +471,7 @@ static boolean		doKeyCommon(const BzfKeyEvent& key, boolean pressed)
       case 'T':
       case 't':
 	// toggle frames-per-second display
-	if (keymap.isMapped(key.ascii) == KeyMap::LastKey) {
+	if (keymap.isMapped(key.ascii) == BzfKeyMap::LastKey) {
 	  if (pressed) {
 	    showFPS = !showFPS;
 	    if (!showFPS) hud->setFPS(-1.0);
@@ -483,7 +483,7 @@ static boolean		doKeyCommon(const BzfKeyEvent& key, boolean pressed)
       case 'Y':
       case 'y':
 	// toggle milliseconds for drawing
-	if (keymap.isMapped(key.ascii) == KeyMap::LastKey) {
+	if (keymap.isMapped(key.ascii) == BzfKeyMap::LastKey) {
 	  if (pressed) {
 	    showDrawTime = !showDrawTime;
 	    if (!showDrawTime) hud->setDrawTime(-1.0);
@@ -516,7 +516,7 @@ static boolean		doKeyCommon(const BzfKeyEvent& key, boolean pressed)
       case ']':
       case '}':
 	// plus 30 seconds
-	if (keymap.isMapped(key.ascii) == KeyMap::LastKey) {
+	if (keymap.isMapped(key.ascii) == BzfKeyMap::LastKey) {
 	  if (pressed) clockAdjust += 30.0f;
 	  return True;
 	}
@@ -525,7 +525,7 @@ static boolean		doKeyCommon(const BzfKeyEvent& key, boolean pressed)
       case '[':
       case '{':
 	// minus 30 seconds
-	if (keymap.isMapped(key.ascii) == KeyMap::LastKey) {
+	if (keymap.isMapped(key.ascii) == BzfKeyMap::LastKey) {
 	  if (pressed) clockAdjust -= 30.0f;
 	  return True;
 	}
@@ -648,13 +648,13 @@ static void		doKeyPlaying(const BzfKeyEvent& key, boolean pressed)
   }
 #endif
 
-  if (keymap.isMappedTo(KeyMap::FireShot, key)) {
+  if (keymap.isMappedTo(BzfKeyMap::FireShot, key)) {
     fireButton = pressed;
     if (pressed && myTank->isAlive())
       myTank->fireShot();
   }
 
-  else if (keymap.isMappedTo(KeyMap::DropFlag, key)) {
+  else if (keymap.isMappedTo(BzfKeyMap::DropFlag, key)) {
     if (pressed) {
       FlagId flagId = myTank->getFlag();
       if (flagId != NoFlag && !myTank->isPaused() &&
@@ -670,7 +670,7 @@ static void		doKeyPlaying(const BzfKeyEvent& key, boolean pressed)
     }
   }
 
-  else if (keymap.isMappedTo(KeyMap::Identify, key)) {
+  else if (keymap.isMappedTo(BzfKeyMap::Identify, key)) {
     if (pressed && !gameOver && !myTank->isAlive() && !myTank->isExploding()) {
       restartPlaying();
     }
@@ -682,23 +682,23 @@ static void		doKeyPlaying(const BzfKeyEvent& key, boolean pressed)
     }
   }
 
-  else if (keymap.isMappedTo(KeyMap::Jump, key)) {
+  else if (keymap.isMappedTo(BzfKeyMap::Jump, key)) {
     if (pressed) myTank->jump();
   }
 
-  else if (keymap.isMappedTo(KeyMap::Binoculars, key)) {
+  else if (keymap.isMappedTo(BzfKeyMap::Binoculars, key)) {
     if (pressed) {
       if (myTank->getFlag() != WideAngleFlag)
 	myTank->setMagnify(1 - myTank->getMagnify());
     }
   }
 
-  else if (keymap.isMappedTo(KeyMap::SendAll, key) ||
-	   keymap.isMappedTo(KeyMap::SendTeam, key)) {
+  else if (keymap.isMappedTo(BzfKeyMap::SendAll, key) ||
+	   keymap.isMappedTo(BzfKeyMap::SendTeam, key)) {
     // start composing a message
     if (pressed) {
       const char* composePrompt;
-      if (keymap.isMappedTo(KeyMap::SendAll, key)) {
+      if (keymap.isMappedTo(BzfKeyMap::SendAll, key)) {
 	void* buf = messageMessage;
 	buf = nboPackUInt(buf, 0);
 	buf = nboPackShort(buf, 0);
@@ -721,28 +721,28 @@ static void		doKeyPlaying(const BzfKeyEvent& key, boolean pressed)
       HUDui::setDefaultKey(&composeKeyHandler);
     }
   }
-  else if (keymap.isMappedTo(KeyMap::ScrollBackward, key)) {
+  else if (keymap.isMappedTo(BzfKeyMap::ScrollBackward, key)) {
     // scroll message list backward
     if (pressed) {
       controlPanel->setMessagesOffset(1,1);
     }
   }
 
-  else if (keymap.isMappedTo(KeyMap::ScrollForward, key)) {
+  else if (keymap.isMappedTo(BzfKeyMap::ScrollForward, key)) {
     // scroll message list forward
     if (pressed) {
       controlPanel->setMessagesOffset(-1,1);
     }
   }
 
-  else if (keymap.isMappedTo(KeyMap::Score, key)) {
+  else if (keymap.isMappedTo(BzfKeyMap::Score, key)) {
     // toggle score board
     if (pressed) {
       sceneRenderer->setScore(!sceneRenderer->getScore());
     }
   }
 
-  else if (keymap.isMappedTo(KeyMap::FlagHelp, key)) {
+  else if (keymap.isMappedTo(BzfKeyMap::FlagHelp, key)) {
     // toggle flag help
     if (pressed) {
       sceneRenderer->setShowFlagHelp(!sceneRenderer->getShowFlagHelp());
@@ -751,22 +751,22 @@ static void		doKeyPlaying(const BzfKeyEvent& key, boolean pressed)
     }
   }
 
-  else if (keymap.isMappedTo(KeyMap::ShortRange, key)) {
+  else if (keymap.isMappedTo(BzfKeyMap::ShortRange, key)) {
     // smallest radar range
     if (pressed) radar->setRange(RadarLowRange);
   }
 
-  else if (keymap.isMappedTo(KeyMap::MediumRange, key)) {
+  else if (keymap.isMappedTo(BzfKeyMap::MediumRange, key)) {
     // medium radar range
     if (pressed) radar->setRange(RadarMedRange);
   }
 
-  else if (keymap.isMappedTo(KeyMap::LongRange, key)) {
+  else if (keymap.isMappedTo(BzfKeyMap::LongRange, key)) {
     // largest radar range
     if (pressed) radar->setRange(RadarHiRange);
   }
 
-  else if (keymap.isMappedTo(KeyMap::Pause, key)) {
+  else if (keymap.isMappedTo(BzfKeyMap::Pause, key)) {
     // pause/resume
     if (pressed && !pausedByUnmap) {
       if (myTank->isAlive()) {
@@ -1099,10 +1099,10 @@ static void		updateFlag(FlagId id)
 			id != NoFlag && Flag::getType(id) == FlagSticky);
 }
 
-void			notifyKeyMapChanged()
+void			notifyBzfKeyMapChanged()
 {
-  hud->setRestartKeyLabel(KeyMap::getKeyEventString(
-					keymap.get(KeyMap::Identify)));
+  hud->setRestartKeyLabel(BzfKeyMap::getKeyEventString(
+					keymap.get(BzfKeyMap::Identify)));
 }
 
 //
@@ -1425,6 +1425,7 @@ static void		handleServerMessage(boolean human, uint16_t code,
 	}
       }
 
+#ifdef ROBOT    
       // blow up robots on victim's team if shot was genocide
       if (killerPlayer && victimPlayer && shotId >= 0) {
 	const ShotPath* shot = killerPlayer->getShot(int(shotId));
@@ -1435,6 +1436,7 @@ static void		handleServerMessage(boolean human, uint16_t code,
 		robots[i]->getTeam() != RogueTeam)
 	      gotBlowedUp(robots[i], GenocideEffect, killerPlayer->getId());
       }
+#endif
 
       checkScores = True;
       break;
@@ -3318,8 +3320,13 @@ static void		playingLoop()
     roamDPos[0] = roamDPos[1] = roamDPos[2] = 0.0f;
     roamDTheta = roamDPhi = roamDZoom = 0.0f;
 #endif
+//#ifndef macintosh    
     while (!mainWindow->getQuit() && display->isEventPending())
       doEvent(display);
+
+//#else
+//     doEvent(display);
+//#endif
 
     // invoke callbacks
     callPlayingCallbacks();
@@ -4205,7 +4212,9 @@ void			startPlaying(BzfDisplay* _display,
   bzSignal(SIGHUP, SIG_IGN);
   if (bzSignal(SIGQUIT, SIG_IGN) != SIG_IGN)
     bzSignal(SIGQUIT, SIG_PF(dying));
+  #ifndef GUSI_20
   bzSignal(SIGBUS, SIG_PF(dying));
+  #endif
   bzSignal(SIGUSR1, SIG_IGN);
   bzSignal(SIGUSR2, SIG_IGN);
 #endif /* !defined(_WIN32) */
@@ -4263,7 +4272,7 @@ void			startPlaying(BzfDisplay* _display,
   updateNumPlayers();
   updateFlag(NoFlag);
   updateHighScores();
-  notifyKeyMapChanged();
+  notifyBzfKeyMapChanged();
 
   // make background renderer
   BackgroundRenderer background(renderer);

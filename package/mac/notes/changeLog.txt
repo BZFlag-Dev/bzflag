@@ -1,0 +1,77 @@
+*********************
+Compiler Errors in bzflag.cxx
+*********************
+
+bzflag.cxx :660
+  This is where you are reading in the resource file...
+  ifstream resourceStream(getConfigFileName(), ios::in | ios::nocreate);
+  ios::nocreate is not part of the Nov97 ANSI C++ Draft. See for yourself:
+  http://www.cygnus.com/misc/wp/nov97/lib-iostreams.html#lib.iostreams.base
+  
+  I put this:
+#ifdef __MWERKS__ // identifies metrowerks compiler
+		ifstream resourceStream(getConfigFileName(), ios::in | ios::nocreate);
+#else
+		ifstream resourceStream(getConfigFileName(), ios::in );
+#endif
+
+bzflag.cxx :672
+	getConfigFile2 () is undefined...
+
+#if !defined(_WIN32) & !defined(macintosh)
+	
+bzflag.cxx 112:
+	we dont't have that home-directory stuff...
+#if !defined(_WIN32) & !defined(macintosh)
+
+bzflag.cxx 137:
+#if !defined(_WIN32) & !defined(macintosh)
+
+bzflag.cxx 773:
+#if !defined(_WIN32) & !defined(macintosh)
+    const char* username = cuserid(NULL);
+
+bzflag.cxx 780:
+#elif defined( macintosh )
+	char *username = "mac user"; // temporary fix only, need system api call here later
+	
+*********************************
+Compiler Warnings in bzflag.cxx:
+*********************************
+	
+	These functions need prototypes, I just put them at top of bzflag.cxx for now.
+
+void	dumpResources(BzfDisplay* display, SceneRenderer& renderer);
+void	printFatalError(const char* fmt, ...);
+				
+ok, bzflag.cxx compiles! Probably some run-time issues will arise, however
+
+********************************
+Compiler Errors in menus.cxx
+********************************
+
+menu.cxx 22:
+	we don't have sys/wait.h
+
+#if !defined (macintosh)
+	#include <sys/wait.h>
+#endif
+
+menu.cxx 2677:
+	#ifdef macintosh
+		// disable this feature until I can figure out how to get it working
+		setStatus ("Server cannot start: this function is not implemented.");
+
+	#elif defined(_WIN32)
+
+ok, menu.cxx compiles!
+
+Address.cxx
+ I had to comment this from the top:
+ // Address			Address::localAddress("");
+
+What was happening was that the static var was calling my sockets
+library before it(sockets library) was initialized.
+
+Note: had to and env var ROBOTS
+Q: Is this OK? Should robots always be compiled in?

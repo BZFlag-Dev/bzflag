@@ -23,7 +23,7 @@
 #include "BzfString.h"
 
 class SceneRenderer;
-class KeyMap;
+class BzfKeyMap;
 
 struct StartupInfo {
   public:
@@ -67,8 +67,8 @@ MainWindow*		getMainWindow();
 SceneRenderer*		getSceneRenderer();
 void			setSceneDatabase();
 StartupInfo*		getStartupInfo();
-KeyMap&			getKeyMap();
-void			notifyKeyMapChanged();
+BzfKeyMap&			getBzfKeyMap();
+void			notifyBzfKeyMapChanged();
 boolean			setVideoFormat(int, boolean test = False);
 Player*			lookupPlayer(const PlayerId& id);
 void			startPlaying(BzfDisplay* display,

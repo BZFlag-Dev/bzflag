@@ -99,7 +99,11 @@ Ray			BaseLocalPlayer::getLastMotion() const
   return Ray(lastPosition, getVelocity());
 }
 
-const float		(*BaseLocalPlayer::getLastMotionBBox() const)[3]
+#ifdef __MWERKS__
+  const float		(*BaseLocalPlayer::getLastMotionBBox() )[3] const
+#else
+  const float		(*BaseLocalPlayer::getLastMotionBBox() const)[3]
+#endif
 {
   return bbox;
 }

@@ -74,7 +74,7 @@ int			openBroadcast(int port, const char* service,
     close(fd);
     return -1;
   }
-#else if defined(SO_REUSEADDR)
+#elif defined(SO_REUSEADDR)
   /* set reuse address */
   opt = optOn;
   if (setsockopt(fd, SOL_SOCKET, SO_REUSEADDR,
@@ -288,7 +288,7 @@ int			openMulticast(const Address& address, int port,
 
   /* set options on socket */
   if (mode[0] == 'w') {
-#if defined(_WIN32) || defined(__linux__)
+#if defined(_WIN32) || defined(__linux__) || defined(GUSI_20)
     /* windows requires socket to be bound before using multicast sockopts */
     /* linux requires that we bind to an interface's address to send */
     struct sockaddr_in tmpAddr;

@@ -74,7 +74,8 @@ const boolean		True = !False;
 #define bzfrand()	((double)rand() / ((double)RAND_MAX + 1.0))
 #define bzfsrand(_s)	srand(_s)
 
-#if !defined(_WIN32)
+
+#if !defined(_WIN32) & !defined(macintosh)
 
 #ifndef __FreeBSD__
 #include <values.h>
@@ -93,6 +94,40 @@ typedef uint_t		uint32_t;
 #endif
 
 #endif
+
+#if defined( macintosh )
+
+// missing constants
+
+  #ifndef MAXFLOAT
+    #define	MAXFLOAT	3.402823466e+38f
+  #endif
+
+  #ifndef M_PI
+    #define	M_PI		  3.14159265358979323846f
+  #endif
+
+  #ifndef M_SQRT1_2
+    #define	M_SQRT1_2	0.70710678118654752440f
+  #endif
+
+// need some integer types
+  #include <inttypes.h>
+
+// my own strcasecmp, missing in MSL
+// maybe this should be in BzfString.h ?
+  #ifdef __MWERKS__
+    #include "strcasecmp.h"
+  #endif
+  
+  #ifndef setenv
+    #define setenv(a,b,c)
+  #endif
+  
+  #ifndef putenv
+    #define putenv(a)
+  #endif
+#endif /* defined( macintosh ) */
 
 #if defined(_WIN32)
 

@@ -91,15 +91,13 @@ ServerLink::ServerLink(const Address& serverAddress, int port, int number) :
 				state(SocketError),	// assume failure
 				fd(-1)			// assume failure
 {
-  int i;
+  int i, err, wait;
   char cServerVersion[128];
 
   struct protoent* p;
 #if defined(_WIN32)
-  BOOL on = TRUE;
   BOOL off = FALSE;
 #else
-  int on = 1;
   int off = 0;
 #endif
 
@@ -143,11 +141,13 @@ ServerLink::ServerLink(const Address& serverAddress, int port, int number) :
   alarm(0);
   bzSignal(SIGALRM, SIG_IGN);
 #endif // !defined(_WIN32)
-  if (!okay) goto done;
+  if (!okay)
+    goto done;
 
   // get server version and verify (last digit in version is ignored)
   i = recv(query, (char*)version, 8, 0);
-  if (i < 8) goto done;
+  if (i < 8)
+    goto done;
   
   sprintf(cServerVersion,"Server version: '%8s'",version);
   printError(cServerVersion);
@@ -185,8 +185,32 @@ ServerLink::ServerLink(const Address& serverAddress, int port, int number) :
   addr.sin_family = AF_INET;
   addr.sin_addr = serverAddress;
   fd = socket(AF_INET, SOCK_STREAM, 0);
-  if (fd < 0) goto done;
-  if (connect(fd, (CNCTType*)&addr, sizeof(addr)) < 0) {
+  if (fd < 0)
+    goto done;
+  err = connect(fd, (CNCTType*)&addr, sizeof(addr));
+
+/*
+  int blockTime = 5000;
+  struct timeval timeout;
+  timeout.tv_sec = blockTime / 1000;
+  timeout.tv_usec = blockTime - 1000 * timeout.tv_sec;
+
+  // only check server
+  fd_set read_set;
+  FD_ZERO(&read_set);
+  FD_SET(fd, &read_set);
+  int nfound = select(fd+1, NULL, (fd_set*)&read_set, NULL,
+			(struct timeval*)(blockTime >= 0 ? &timeout : NULL));
+*/
+  
+//  printf ("select\n");
+  printf("waiting...");
+  wait = 100000000;
+  while(wait > 0)
+    wait--;
+  printf("done\n");
+  
+  if (err < 0) {
     close(fd);
     fd = -1;
     goto done;
@@ -210,11 +234,11 @@ ServerLink::ServerLink(const Address& serverAddress, int port, int number) :
   packetsReceived = 0;
 #endif
 
-// FIXME -- packet recording
-if (getenv("BZFLAGSAVE")) {
-  packetStream = fopen(getenv("BZFLAGSAVE"), "w");
-  packetStartTime = TimeKeeper::getCurrent();
-}
+  // FIXME -- packet recording
+  if (getenv("BZFLAGSAVE")) {
+    packetStream = fopen(getenv("BZFLAGSAVE"), "w");
+    packetStartTime = TimeKeeper::getCurrent();
+  }
 
 done:
   close(query);
@@ -346,7 +370,7 @@ void			ServerLink::send(uint16_t code, uint16_t len,
 #endif
 }
 
-void*			ServerLink::getPacketFromServer(uint16_t* length, uint16_t* seqno)
+void*			ServerLink::getPacketFromServer(uint16_t* length, uint16_t* /* seqno */)
 {
 	struct PacketQueue *moving=dqueue;
 	if (moving != NULL) {
@@ -394,7 +418,7 @@ void			ServerLink::enqueuePacket(int op, int rseqno, void *msg, int n)
 	if (op == SEND) uqueue=newpacket; else dqueue=newpacket;
 }
 
-void			ServerLink::disqueuePacket(int op, int rseqno)
+void			ServerLink::disqueuePacket(int op, int /*rseqno*/)
 {
 	struct PacketQueue *moving;
 
@@ -551,7 +575,11 @@ int			ServerLink::read(uint16_t& code, uint16_t& len,
 
   // get packet header -- keep trying until we get 4 bytes or an error
   char headerBuffer[4];
-  int rlen = recv(fd, (char*)headerBuffer, 4, 0);
+ 
+  
+  int rlen = 0;
+  rlen = recv(fd, (char*)headerBuffer, 4, 0);
+  
   int tlen = rlen;
   while (rlen >= 1 && tlen < 4) {
     FD_ZERO(&read_set);

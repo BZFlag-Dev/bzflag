@@ -23,7 +23,7 @@
 #include <sys/stat.h>
 #include <direct.h>
 
-#else /* defined(_WIN32) */
+#elif !defined(macintosh)
 #include <pwd.h>
 #endif /* defined(_WIN32) */
 #include <stdarg.h>
@@ -114,7 +114,7 @@ static const char*	configFilterValues[] = {
 
 static BzfString	getConfigFileName()
 {
-#if !defined(_WIN32)
+#if !defined(_WIN32) & !defined(macintosh)
 
   BzfString name;
   struct passwd* pwent = getpwuid(getuid());
@@ -132,7 +132,7 @@ static BzfString	getConfigFileName()
 
   return name;
 
-#else /* !defined(_WIN32) */
+#elif defined(_WIN32) /* !defined(_WIN32) */
 
   // get location of personal files from system.  this appears to be
   // the closest thing to a home directory on windows.  use root of
@@ -159,10 +159,12 @@ static BzfString	getConfigFileName()
   name += "\\bzflag.bzc";
   return name;
 
-#endif /* !defined(_WIN32) */
+#elif defined(macintosh)
+  return "bzflag.bzc";
+#endif /* !defined(_WIN32) & !defined(macintosh) */
 }
 
-#if !defined(_WIN32)
+#if !defined(_WIN32) & !defined(macintosh)
 static BzfString	getConfigFileName2()
 {
   BzfString name;
@@ -664,22 +666,22 @@ void			dumpResources(BzfDisplay* display,
     db.addValue("longitude", buf);
   }
   {
-    KeyMap& map = getKeyMap();
-    for (int i = 0; i < (int)KeyMap::LastKey; i++) {
+    BzfKeyMap& map = getBzfKeyMap();
+    for (int i = 0; i < (int)BzfKeyMap::LastKey; i++) {
       // get value string
-      const BzfKeyEvent& key1 = map.get((KeyMap::Key)i);
+      const BzfKeyEvent& key1 = map.get((BzfKeyMap::Key)i);
       BzfString value;
       if (key1.ascii != 0 || key1.button != 0) {
-	value = KeyMap::getKeyEventString(key1);
-	const BzfKeyEvent& key2 = map.getAlternate((KeyMap::Key)i);
+	value = BzfKeyMap::getKeyEventString(key1);
+	const BzfKeyEvent& key2 = map.getAlternate((BzfKeyMap::Key)i);
 	if (key2.ascii != 0 || key2.button != 0) {
 	  value += "/";
-	  value += KeyMap::getKeyEventString(key2);
+	  value += BzfKeyMap::getKeyEventString(key2);
 	}
       }
 
       // add it
-      const BzfString name = KeyMap::getKeyName((KeyMap::Key)i);
+      const BzfString name = BzfKeyMap::getKeyName((BzfKeyMap::Key)i);
       db.addValue(name, value);
     }
   }
@@ -765,13 +767,17 @@ int			main(int argc, char** argv)
 
   // read resources
   {
+    #ifdef __MWERKS__
+        ifstream resourceStream(getConfigFileName(), ios::in);
+     #else
     ifstream resourceStream(getConfigFileName(), ios::in | ios::nocreate);
+     #endif
     if (resourceStream) {
       startupInfo.hasConfiguration = True;
       resourceStream >> db;
     }
 
-#if !defined(_WIN32)
+#if !defined(_WIN32) & !defined(macintosh)
     else {
       ifstream resourceStream2(getConfigFileName2(), ios::in | ios::nocreate);
       if (resourceStream2) {
@@ -818,10 +824,10 @@ int			main(int argc, char** argv)
       startupInfo.joystickName = db.getValue("joystickname");
 
     // key mapping
-    KeyMap& map = getKeyMap();
-    for (int i = 0; i < (int)KeyMap::LastKey; i++) {
-      KeyMap::Key key = (KeyMap::Key)i;
-      const BzfString name = KeyMap::getKeyName(key);
+    BzfKeyMap& map = getBzfKeyMap();
+    for (int i = 0; i < (int)BzfKeyMap::LastKey; i++) {
+      BzfKeyMap::Key key = (BzfKeyMap::Key)i;
+      const BzfString name = BzfKeyMap::getKeyName(key);
       if (db.hasValue(name)) {
 	// get saved value
 	const BzfString value = db.getValue(name);
@@ -834,8 +840,8 @@ int			main(int argc, char** argv)
 
 	// lookup values
 	BzfKeyEvent event1, event2;
-	const boolean okay1 = KeyMap::translateStringToEvent(value1, event1);
-	const boolean okay2 = KeyMap::translateStringToEvent(value2, event2);
+	const boolean okay1 = BzfKeyMap::translateStringToEvent(value1, event1);
+	const boolean okay2 = BzfKeyMap::translateStringToEvent(value2, event2);
 
 	// set values
 	if (okay1 || okay2) {
@@ -888,14 +894,16 @@ int			main(int argc, char** argv)
     BzfString email = anonymousName;
     if (!anonymous) {
       const char* hostname = Address::getHostName();
-#if !defined(_WIN32)
-      struct passwd* pwent = getpwuid(getuid());
-      const char* username = pwent ? pwent->pw_name : NULL;
-#else /* !defined(_WIN32) */
+#if defined(_WIN32)
       char username[256];
       DWORD usernameLen = sizeof(username);
       GetUserName(username, &usernameLen);
-#endif /* !defined(_WIN32) */
+#elif defined(macintosh)
+      const char *username = "mac_user";
+#else
+      struct passwd* pwent = getpwuid(getuid());
+      const char* username = pwent ? pwent->pw_name : NULL;
+#endif
       if (username && hostname) {
         email = username;
         email += "@";
@@ -1020,6 +1028,7 @@ int			main(int argc, char** argv)
   glMatrixMode(GL_MODELVIEW);
   glLoadIdentity();
   glEnable(GL_SCISSOR_TEST);
+//  glEnable(GL_CULL_FACE);
   glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
   OpenGLGState::init();
 

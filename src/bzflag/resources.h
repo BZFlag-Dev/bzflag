@@ -20,7 +20,7 @@
 #include "common.h"
 #include "BzfString.h"
 
-#if defined(sun)
+#if defined(sun) || defined(macintosh)
 // solaris compiler doesn't like declaration of istream
 #include "bzfio.h"
 #else

@@ -1,0 +1,17 @@
+Project layout...
+
+bzflag
+|--- OpenGL SDK - Apple's OpenGL SDK developer.apple.com/opengl
+|--- GUSI_20 - GUSI 2.0 or later get it  here
+	ftp://sunsite.cnlab-switch.ch/software/platform/macos/src/mw_c
+|--- bzflag-1.7d.9
+	|--- package
+		|--- mac
+			|--- bzflag - contains app and data
+			|--- bzfs
+			|--- bzflag.mcp - CW 5.3 project
+			|--- lib - put local libs here
+			|--- notes - contains changelog                      
+			|--- platform - MacOS specific implementations of required functions
+			|--- prefix - specify global compile-time settings
+			|--- src - misc source and support files

@@ -21,7 +21,7 @@
 #include "BzfEvent.h"
 #include "BzfString.h"
 
-class KeyMap {
+class BzfKeyMap {
   public:
     enum Key {
 			FireShot,
@@ -45,8 +45,8 @@ class KeyMap {
 			LastKey
     };
 
-			KeyMap();
-			~KeyMap();
+			BzfKeyMap();
+			~BzfKeyMap();
 
     void		resetAll();
     void		reset(Key);

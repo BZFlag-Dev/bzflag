@@ -138,7 +138,7 @@ ControlPanel::ControlPanel(MainWindow& _mainWindow, SceneRenderer& renderer) :
       scan += 4;
     }
     panelFormat = GL_ABGR_EXT;
-#endif GL_ABGR_EXT
+#endif // GL_ABGR_EXT
   }
 
   // gstate for background

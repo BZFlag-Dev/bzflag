@@ -28,7 +28,9 @@
 #include <unistd.h>
 #include <sys/ioctl.h>
 #include <sys/socket.h>
-#include <sys/param.h>
+#ifndef GUSI_20
+  #include <sys/param.h>
+#endif
 #include <net/if.h>
 #include <netinet/in.h>
 #if defined(__linux__)
@@ -39,8 +41,23 @@
 #include <netinet/tcp.h>
 #include <arpa/inet.h>
 #include <netdb.h>
-#if defined(_old_linux_) || (!defined(__linux__) && !defined(sun) && !defined(__FreeBSD__))
+#if defined(_old_linux_) || (!defined(__linux__) && !defined(sun) && !defined(__FreeBSD__) && !defined(macintosh))
 #include <bstring.h>
+#endif
+
+// add our own def block
+#if defined (macintosh)
+  #ifdef GUSI_20
+    #define getsockname(a,b,c)       getsockname(a,b,(unsigned int *)c)
+    #define accept(a,b,c)            accept(a,b,(unsigned int *)c)
+    #define recvfrom(a,b,c,d,e,f)    recvfrom(a, (void*)b, (unsigned long)c, d, e, (unsigned int*)f)
+
+    #define MAXHOSTNAMELEN 255
+
+    #define O_NDELAY O_NONBLOCK
+
+    #define hstrerror(x) "hstrerror is broken" 
+  #endif
 #endif
 
 #if defined(__linux__) && !defined(_old_linux_)
