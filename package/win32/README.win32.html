@@ -1,0 +1,215 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<HTML>
+<HEAD>
+    <TITLE>BZFlag README</TITLE>
+</HEAD>
+<BODY>
+<H1>
+B<FONT SIZE="4">ZFLAG</FONT> R<FONT SIZE="4">EADME</FONT>
+</H1>
+<HR>
+<P>
+This is the README file for the Windows version of BZFlag.
+</P>
+<P>
+<A HREF="http://BZFlag.SourceForge.net/">BZFlag</A> is a network
+multiplayer 3D tank battle game.  You can play against several
+other people anywhere on a TCP/IP based network, including the
+Internet.  BZFlag is freeware;  please read the file COPYING
+found where you installed BZFlag.
+</P>
+<HR>
+<H3>R<FONT SIZE="2">EQUIREMENTS</FONT></H3>
+<P>
+BZFlag should run well on a Windows 95/98/NT/2000/XP system with 32MB RAM,
+though 64MB is recommended.  Later versions of Windows will naturally
+require more memory.  Any graphics card will work but a
+3D graphics card with OpenGL acceleration is highly recommended.
+A sound card with DirectSound support is optional.  A network
+card or a modem with PPP software (such as Dial-up Networking, provided
+with Windows) is required.
+</P>
+<P>
+BZFlag requires, but does not come with, three free "libraries."  Note
+that Windows 98 and later ship with these libraries, so unless you are
+using Windows 95 or NT4, you should not need to download them.
+<UL>
+    <LI><A HREF="ftp://ftp.microsoft.com/softlib/mslfiles/opengl95.exe">OpenGL</A>
+	-- a vendor neutral, platform independent 3D graphics library
+    <LI><A HREF="http://www.microsoft.com/directx/homeuser/downloads/default.asp">DirectX</A>
+	-- Microsoft's multimedia libraries
+    <LI><A HREF="http://www.microsoft.com/windows95/downloads/contents/wuadmintools/s_wunetworkingtools/w95sockets2/?RLD=114">Winsock 2</A>
+	-- a TCP/IP network library
+</UL>
+The easiest way to find out if you have the necessary libraries installed
+is to run <B>bzflag.exe</B> (you can find a shortcut in your start menu if
+you chose to install one).  Look for these errors:
+<UL>
+    <LI>OPENGL32.DLL not found -- install OpenGL
+    <LI>DSOUND.DLL not found -- install DirectX
+    <LI>WS2_32.DLL not found -- install Winsock 2
+</UL>
+</P>
+<HR>
+<H3>U<FONT SIZE="2">NINSTALLING</FONT></H3>
+<P>
+Run Add/Remove Programs (from the control panel), select BZFlag, and
+press Add/Remove....
+</P>
+<HR>
+<H3>P<FONT SIZE="2">LAYING</FONT></H3>
+<P>
+To begin playing BZFlag, launch bzflag.exe using the start menu
+or quicklaunch shortcuts.  The game will go fullscreen (unless you
+are starting in windowed mode), load its data files, and show the
+main menu.
+<P>
+</P>
+Use the arrow, enter, and escape keys to navigate the menus.
+You should first browse the `Help' menu.  Use Page Up and Page
+Down to cycle through the help pages.  These pages explain the
+game, how to play, and which keys are bound to which controls.
+You can change the key bindings from the `Change Key Mapping'
+menu under `Options' menu.
+<P>
+</P>
+To play you must join a game using the `Join Game' menu.  You
+have the option of starting a server on your own machine using
+`Start Server.'  Once started you'll still need to choose which
+server to connect to.
+<P>
+</P>
+Use `Find Server' to search for an existing server.  Select a
+server from the list and press enter (press escape to cancel).
+This sets the server name and port number in the `Join Game'
+menu.  You can enter a name manually if `Find Server' doesn't
+show the server you want.  You may need to set the port too.
+The default port number is 5154 and most servers will use this.
+<P>
+</P>
+If you haven't entered a callsign before, you need to type one
+before connecting to a server.  This is the name you'll be known
+by during the game.  You should also choose a team before
+joining the server.  Note that some servers will reject Rogues;
+you'll need to choose a team color to join those servers.  You
+cannot change teams once you've joined a game, though you can
+reconnect later with a different team and/or callsign.
+<P>
+</P>
+Once you have your callsign, team, server, and port set up, use
+`Connect' to join the game.  If anything goes wrong, the game
+will show an error message telling you how to correct the
+problem.  Otherwise, you'll find yourself ready to play.
+<P>
+</P>
+Your name and score are shown in your team color in the upper
+left.  The scoreboard lists all the players (in order by score),
+their scores, what flag they are carrying (if any), and the
+number of times you've killed and been killed by that player.
+Your current status is at the top center.  Press the right
+mouse button to start playing!
+</P>
+<HR>
+<H3>T<FONT SIZE="2">ROUBLE</FONT></H3>
+<P>
+Typical problems with BZFlag involve either the graphics or the
+network.
+</P>
+<P>
+<B>Graphics</B>:  BZFlag uses OpenGL for rendering.  If you don't have
+a graphics card that accelerates OpenGL you'll never get a good
+frame rate.  Some cards support OpenGL better than others so you
+may want to fiddle with the graphics options in the `Options'
+menu if your frame rate is low or the graphics look wrong.  The
+`t' and `y' keys toggle frame rate and time-per-frame readouts.
+If you are having very low framerates, ensure that Lighting and
+Shadows are off.
+</P>
+<P>
+If the game runs but the rendering is wrong, your OpenGL driver
+is broken.  It is <B>not</B> a problem with BZFlag.  Try getting the
+latest OpenGL drivers from your card manufacturer (or even the
+latest reference drivers from the chipset manufacturer).  The
+freeware <A HREF="http://mesa3d.sourceforge.net/">Mesa library</A>
+accelerates OpenGL on 3Dfx cards.<BR>
+Useful links:<BR>
+<A HREF="http://www.nvidia.com/content/drivers/drivers.asp">nVidia
+accelerated reference drivers</A><BR>
+<A HREF="http://www.ati.com/support/driver.html">ATI accelerated
+drivers</A><BR>
+<A HREF="http://www.matrox.com/mga/support/drivers/home.cfm">Matrox
+accelerated drivers</A><BR>
+<A HREF="http://download.sis.com/index1.htm">SiS reference drivers</A>
+</P>
+<P>
+BZFlag prints the renderer name when it starts up in the message
+window.  If it says `Generic' then you're using software only.
+You either haven't installed the OpenGL ICD correctly, or you are
+not using the right drivers.  Quit the game, fix the problem and
+run BZFlag again.
+</P>
+<P>
+One exception to this is if the rendering is too dark.  This is
+because BZFlag assumes a linear brightness mapping, but this isn't
+true unless you've set the appropriate gamma correction for your
+display.  If your graphics card supports `gamma correction' in the
+`Advanced' section of the display control panel, then modify the
+gamma to a level that makes BZFlag look better.  Gamma correction
+should be a standard part of the operating system, but as of
+Windows 98 and NT 4.0 Microsoft has neglected to do this.  If your
+card doesn't support gamma correction, you'll simply have to adjust
+the brightness slider in the options to get the brightest results
+you can.
+</P>
+<P>
+<B>Network</B>:  Network problems can be more difficult to track down.
+If BZFlag complains that it Winsock isn't available or is the
+wrong version, download Winsock 2 from the Microsoft website and
+install it.  Watch out for beta versions of Winsock.  One beta
+version has a bug that causes BZFlag to run at no more than one
+frame per second.
+</P>
+<P>
+If you can start BZFlag but can't seem to join any servers, try
+starting one on your own system.  If this fails, it's probably
+because bzfs.exe wasn't found.  You should put bzflag.exe and
+bzfs.exe in the same directory and run BZFlag from that directory.
+This is how the installer sets things up.  Quit BZFlag, fix the
+problem, and restart.
+</P>
+<P>
+If you're sure bzfs.exe is being found, check that you've got
+TCP/IP networking setup.  If you can access the network using a
+web browser then TCP/IP should be setup correctly.  If not, try
+getting the browser working then try BZFlag again.
+</P>
+<P>
+If you can connect to a server on your own host but not other
+hosts then your TCP/IP networking probably isn't setup properly or
+your network cable isn't hooked into the network.  Again, try to
+get a web browser working across your network then try BZFlag again.
+</P>
+<P>
+If you can't find servers on your network, there either aren't any
+servers or your network doesn't support multicasting.  Either `Start
+Server' or enter the server host name manually on the `Join Game'
+menu then Connect.
+</P>
+<P>
+If you can join the server but you can't see other players or other
+players never move and you can't shoot them then the game has
+decided that multicasting is available, but it was wrong.  Modify
+the shortcut to bzflag.exe (or otherwise run bzflag.exe) with the
+command line option `-ttl 0'.
+</P>
+<P>
+If you're using BZFlag over a modem, you'll need to run PPP (usually
+in the form of Windows' Dial-up Networking) before starting BZFlag.
+BZFlag only uses TCP/IP networking;  PPP makes TCP/IP work over your modem.
+</P>
+<P>
+Visit the <A HREF="http://BZFlag.SourceForge.net/">BZFlag
+Home Page</A> for more information and online help.
+</P>
+</BODY>
+</HTML>
