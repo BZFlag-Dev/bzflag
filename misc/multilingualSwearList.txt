@@ -1771,7 +1771,7 @@ pipote			# es - clitoris (lit. big sunflower seed)
 polla			# es - penis
 popa			# es - arse
 puta                    # es - (feminine) whore, bitch
-puto                    # es - (masculine) dickhead, asshole
+#puto                    # es - (masculine) dickhead, asshole
 raja			# es - cunt (lit. slit)
 reata			# es - penis
 rejue			# es - prostitute (mexican/guatemalan slang)
