@@ -46,7 +46,7 @@ class BaseBuilding : public Obstacle {
 				float *normal) const;
     ObstacleSceneNodeGenerator* newSceneNodeGenerator() const;
     void		getCorner(int index, float *pos) const;
-    const int		getTeam() const;
+    int			getTeam() const;
   private:
     static std::string	typeName;
     int team;

@@ -193,7 +193,7 @@ void			BaseBuilding::getCorner(int index, float *pos) const
   if(index >= 4) pos[2] += getHeight();
 }
 
-const int	BaseBuilding::getTeam() const {
+int	BaseBuilding::getTeam() const {
   return team;
 }
 
