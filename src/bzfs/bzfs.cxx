@@ -344,12 +344,12 @@ public:
     int numBans = banList.getLength();
     for (int i = 0; i < numBans; i++) {
       in_addr mask = banList[i];
-      if (mask.s_addr & 0x00ffffff == 0x00ffffff)
-        mask.s_addr = (mask.s_addr & 0xff000000) | (ipAddr.s_addr | 0xff000000);
-      if (mask.s_addr & 0x0000ffff == 0x0000ffff)
-        mask.s_addr = (mask.s_addr & 0xffff0000) | (ipAddr.s_addr | 0xffff0000);
-      if (mask.s_addr & 0x000000ff == 0x000000ff)
-        mask.s_addr = (mask.s_addr & 0xffffff00) | (ipAddr.s_addr | 0xffffff00);
+      if (ntohl(mask.s_addr) & 0x00ffffff == 0x00ffffff)
+        mask.s_addr = htonl((ntohl(mask.s_addr) & 0xff000000) | (ntohl(ipAddr.s_addr) | 0xff000000));
+	  else if (ntohl(mask.s_addr) & 0x0000ffff == 0x0000ffff)
+        mask.s_addr = htonl((ntohl(mask.s_addr) & 0xffff0000) | (ntohl(ipAddr.s_addr) | 0xffff0000));
+	  else if (ntohl(mask.s_addr) & 0x000000ff == 0x000000ff)
+        mask.s_addr = htonl((ntohl(mask.s_addr) & 0xffffff00) | (ntohl(ipAddr.s_addr) | 0xffffff00));
 
       if (mask.s_addr == ipAddr.s_addr)
         return false;
@@ -382,8 +382,8 @@ private:
     else
       b[3] = atoi(ip);
 
-	mask.s_addr= ((unsigned int)b[0] << 24) |
-        ((unsigned int)b[1] << 16) | ((unsigned int)b[2] << 8) | (unsigned int)b[3];
+	mask.s_addr= htonl(((unsigned int)b[0] << 24) |
+        ((unsigned int)b[1] << 16) | ((unsigned int)b[2] << 8) | (unsigned int)b[3]);
     return true;
   }
 
