@@ -27,7 +27,6 @@
 #ifndef _WIN32
 #include <unistd.h>
 #endif
-#include <string>
 #include <assert.h>
 
 #ifdef HAVE_KRB5
@@ -111,26 +110,31 @@ void Authentication::init(const char *, int , const char *)
 }
 #endif
 
-#ifdef HAVE_KRB5
 void Authentication::setPrincipalName(char *buf, int len)
 {
+  if (len > 1023)
+    return;
+
+  // Saving principal name
+  char name[1024];
+  memcpy(name, buf, len);
+  name[len] = 0;
+  principalName = name;
+
   if (!authentication)
     return;
 
+#ifdef HAVE_KRB5
   krb5_error_code retval;
   char            remotePrincipal[1024];
 
-  memcpy(remotePrincipal, buf, len);
-  remotePrincipal[len] = 0;
+  buf[len] = 0;
+  snprintf(remotePrincipal, 1024, "%s@BZFLAG.ORG", name);
 
   if ((retval = krb5_parse_name(context, remotePrincipal, &server)))
     com_err("bzfs", retval, "parsing remote name");
-}
-#else
-void Authentication::setPrincipalName(char *, int)
-{
-}
 #endif
+}
 
 #ifdef HAVE_KRB5
 void Authentication::verifyCredential(char *buf, int len)

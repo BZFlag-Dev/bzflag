@@ -72,6 +72,12 @@ void ClientAuthentication::sendCredential(ServerLink&)
   assert(cc != NULL);
   assert(principalName != NULL);
 
+  char simpleName[128];
+  int i;
+  strncpy(simpleName, principalName, 128);
+  for (i = 0; i < 127 && simpleName[i] && (simpleName[i] != '@'); i++);
+  simpleName[i] = 0;
+
   krb5_error_code retval;
   /* Get credentials for server */
   memset((char*)&creds, 0, sizeof(creds));
@@ -82,7 +88,7 @@ void ClientAuthentication::sendCredential(ServerLink&)
 				     &new_creds)))
     err("bzflag:", retval, "getting TGT");
   if (!retval) {
-    serverLink.sendKerberosTicket(principalName, &new_creds->ticket);
+    serverLink.sendKerberosTicket(simpleName, &new_creds->ticket);
   }
 #endif
 }

@@ -23,6 +23,7 @@
 	#endif 
 #include <krb5.h>
 #endif
+#include <string>
 
 class Authentication {
  public:
@@ -32,6 +33,7 @@ class Authentication {
   void        setPrincipalName(char *buf, int len);
   void        verifyCredential(char *buf, int len);
   bool        isTrusted() {return trusted;};
+  std::string getPrincipal() {return principalName;};
 private:
 #ifdef HAVE_KRB5
   static krb5_context   context;
@@ -42,6 +44,7 @@ private:
 #endif
   static bool           authentication;
   bool                  trusted;
+  std::string           principalName;
 };
 
 #endif
