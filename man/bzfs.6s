@@ -929,13 +929,13 @@ the "," and "." message keys in the game and then selecting your recipient, this
 will send some message to particular player.  The quotes are optional.
 
 TP
-.B /reloadmasterban
+.B /masterbanreload
 
 Forces the server to flush any bans from the master server, and reload bans from the
 the internet. Local bans are unaffected. This command requires the UNBAN permision.
 
 TP
-.B /flushmasterban
+.B /masterbanflush
 
 Forces the server to flush any bans from the master server, efectly removing them.
 Local bans are unaffected. This command requires the UNBAN permision.
