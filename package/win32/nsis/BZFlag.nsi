@@ -47,6 +47,7 @@ Section "BZFlag (required)"
 	File ..\..\..\src\bzflag\bzflag.exe
 	File ..\..\..\src\bzadmin\bzadmin.exe
 	File ..\..\..\src\bzfs\bzfs.exe
+	File SDL.dll
 
 	; make the data dir
 	SetOutPath $INSTDIR\data
@@ -126,6 +127,7 @@ Section "Uninstall"
 	Delete $INSTDIR\bzflag.exe
 	Delete $INSTDIR\bzfs.exe
 	Delete $INSTDIR\bzadmin.exe
+	Delete $INSTDIR\SDL.dll
 	Delete $INSTDIR\doc\*.*
 	Delete $INSTDIR\data\*.*
 	Delete $INSTDIR\data\l10n\*.*
