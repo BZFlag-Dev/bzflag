@@ -835,6 +835,9 @@ void			SceneRenderer::render(
 
     doRender();
 
+	if (background)
+		background->renderEnvironment(*this);
+
     if (useHiddenLineOn) {
 #if defined(GL_VERSION_1_1)
       glDisable(GL_POLYGON_OFFSET_FILL);

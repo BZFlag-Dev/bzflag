@@ -39,6 +39,7 @@ class BackgroundRenderer {
 
     void		renderSkyAndGround(SceneRenderer&, bool fullWindow);
     void		render(SceneRenderer&);
+	void		renderEnvironment(SceneRenderer&);
 
     void                resize();
 
@@ -114,6 +115,9 @@ class BackgroundRenderer {
     bool		cloudsVisible;
     OpenGLGState	cloudsGState;
     OpenGLDisplayList	cloudsList;
+
+	// stuff for rain
+	OpenGLGState	rainGState;
 
     // stuff for sun shadows
     bool		doShadows;

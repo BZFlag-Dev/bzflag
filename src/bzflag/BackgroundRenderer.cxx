@@ -68,7 +68,10 @@ BackgroundRenderer::BackgroundRenderer(const SceneRenderer&) :
   static bool init = false;
   OpenGLGStateBuilder gstate;
   static const GLfloat	black[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
+  static const GLfloat	white[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
   OpenGLMaterial defaultMaterial(black, black, 0.0f);
+  OpenGLMaterial rainMaterial(white, white, 0.0f);
+
   int i;
 
   // initialize global to class stuff
@@ -190,6 +193,14 @@ BackgroundRenderer::BackgroundRenderer(const SceneRenderer&) :
     gstate.setAlphaFunc();
     cloudsGState = gstate.getState();
   }
+
+  gstate.reset();
+ // gstate.setShading();
+  gstate.setBlending((GLenum)GL_SRC_ALPHA, (GLenum)GL_ONE_MINUS_SRC_ALPHA);
+  gstate.setMaterial(rainMaterial);
+ // gstate.setTexture(cloudsTexture);
+  //gstate.setAlphaFunc();
+  rainGState = gstate.getState();
 
   // make mountain stuff
   mountainsAvailable = false;
@@ -496,6 +507,24 @@ void			BackgroundRenderer::render(SceneRenderer& renderer)
       }
     }
   }
+}
+
+void			BackgroundRenderer::renderEnvironment(SceneRenderer& renderer)
+{
+	if (renderer.useQuality() < 3)
+		return;
+
+	return; // just a hook for now
+	if (!blank) {
+		rainGState.setState();
+		glMatrixMode(GL_MODELVIEW);
+		glPushMatrix();	
+			glBegin(GL_LINES);
+				glVertex3f(100,100,100);
+				glVertex3f(0,0,0);
+			glEnd();
+		glPopMatrix();
+	}
 }
 
 
