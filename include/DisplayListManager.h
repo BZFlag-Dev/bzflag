@@ -38,7 +38,7 @@ public:
   void freeList ( int list );
   bool callList ( int list );
 
-  void release( void );
+  void release ( void );
   void acquire ( void );
 
 protected:
@@ -55,7 +55,7 @@ private:
   displayListMap    lists;
 };
 
-#endif//_DISPLAY_LIST_MANAGER_H
+#endif //_DISPLAY_LIST_MANAGER_H
 
 // Local Variables: ***
 // mode: C++ ***
