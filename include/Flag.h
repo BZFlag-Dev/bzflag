@@ -116,6 +116,7 @@ class Flag {
     static FlagSet&	getGoodFlags();
     static FlagSet&	getBadFlags();
     static FlagDesc*	getDescFromAbbreviation(const char* abbreviation);
+    const float*	getColor(FlagId id);
 
   public:
     FlagDesc*		desc;

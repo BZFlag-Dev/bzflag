@@ -141,22 +141,12 @@ void*			Flag::unpack(void* buf)
 
 FlagDesc* Flag::getDescFromAbbreviation(const char* abbreviation)
 {
-
-}
-
-FlagType		Flag::getType(FlagId id)
-{
-  return descriptions[id].flagType;
-}
-
-const char*		Flag::getHelp(FlagId id )
-{
-  return descriptions[id].flagHelp;
-}
-
-ShotType		Flag::getShotType( FlagId id )
-{
-  return descriptions[id].flagShot;
+  std::map<std::string, FlagDesc*>::iterator i;
+  i = FlagDesc::flagMap.find(abbreviation);
+  if (i == FlagDesc::flagMap.end())
+    return Flags::Null;
+  else
+    return *i;
 }
 
 FlagSet&		Flag::getGoodFlags()
@@ -169,7 +159,7 @@ FlagSet&		Flag::getBadFlags()
   return Flag::Desc::flagSets[FlagBad];
 }
 
-const float*		Flag::getColor(FlagId id)
+const float*		FlagDesc::getColor(FlagId id)
 {
   static const float superColor[3] = { 1.0, 1.0, 1.0 };
   switch (id) {
