@@ -1491,11 +1491,15 @@ void handleClientqueryCmd(int t, const char * /*message*/)
   DEBUG2("Clientquery requested by %s [%d]\n", player[t].getCallSign(), t);
   sendMessage(ServerPlayer, AllPlayers, "[Sent version information per request]");
   // send server's own version string just for kicks
-  sendMessage(ServerPlayer, t, string_util::format("BZFS Version: %s", getAppVersion()).c_str());
+  sendMessage(ServerPlayer, t, 
+              string_util::format("BZFS Version: %s", getAppVersion()).c_str());
   // send all players' version strings
-  // is faking a message from the remote client rude? did that so that /clientquery and CLIENTQUERY look about the same.
+  // is faking a message from the remote client rude?
+  // did that so that /clientquery and CLIENTQUERY look about the same.
   for (int i = 0; i < curMaxPlayers;i++) {
-    sendMessage(i, t, string_util::format("Version: %s", player[i].getClientVersion()).c_str());
+    if (player[i].isPlaying()) {
+      sendMessage(i, t, string_util::format("Version: %s", player[i].getClientVersion()).c_str());
+    }
   }
   return;
 }
