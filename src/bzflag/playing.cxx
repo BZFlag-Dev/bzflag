@@ -1820,29 +1820,7 @@ static void		doKeyPlaying(const BzfKeyEvent& key, bool pressed)
   }
   //  else
 
-  if (keymap.isMappedTo(BzfKeyMap::FireShot, key)) {
-    fireButton = pressed;
-    if (pressed && myTank->isAlive() && !Observer)
-      myTank->fireShot();
-  }
-
-  else if (keymap.isMappedTo(BzfKeyMap::DropFlag, key)) {
-    if (pressed) {
-      FlagId flagId = myTank->getFlag();
-      if (flagId != NoFlag && !myTank->isPaused() &&
-	  Flag::getType(flagId) != FlagSticky &&
-	  !(flagId == PhantomZoneFlag && myTank->isFlagActive()) &&
-	  !(flagId == OscOverthrusterFlag &&
-	  myTank->getLocation() == LocalPlayer::InBuilding)) {
-	serverLink->sendDropFlag(myTank->getPosition());
-		// changed: on windows it may happen the MsgDropFlag
-		// never comes back to us, so we drop it right away
-		handleFlagDropped(myTank);
-	  }
-    }
-  }
-
-  else if (keymap.isMappedTo(BzfKeyMap::Identify, key)) {
+  if (keymap.isMappedTo(BzfKeyMap::Identify, key)) {
     if (pressed && !gameOver && !Observer && !myTank->isAlive() && !myTank->isExploding()) {
       restartPlaying();
     }
@@ -1852,10 +1830,6 @@ static void		doKeyPlaying(const BzfKeyEvent& key, bool pressed)
       if (pressed && myTank->isAlive() && !myTank->isPaused())
 	setTarget();
     }
-  }
-
-  else if (keymap.isMappedTo(BzfKeyMap::Jump, key)) {
-    if (pressed) myTank->jump();
   }
 
   else if (keymap.isMappedTo(BzfKeyMap::Binoculars, key)) {
@@ -2217,8 +2191,28 @@ static std::string cmdFire(const std::string&, const CommandManager::ArgList& ar
 {
   if (args.size() != 0)
     return "usage: fire";
-  if (myTank != NULL && myTank->isAlive())
+  if (myTank != NULL && myTank->isAlive() && !Observer)
     myTank->fireShot();
+  return std::string();
+}
+
+static std::string cmdDrop(const std::string&, const CommandManager::ArgList& args)
+{
+  if (args.size() != 0)
+    return "usage: drop";
+  if (myTank != NULL) {
+    FlagId flagId = myTank->getFlag();
+    if (flagId != NoFlag && !myTank->isPaused() &&
+        Flag::getType(flagId) != FlagSticky &&
+        !(flagId == PhantomZoneFlag && myTank->isFlagActive()) &&
+	!(flagId == OscOverthrusterFlag &&
+	myTank->getLocation() == LocalPlayer::InBuilding)) {
+      serverLink->sendDropFlag(myTank->getPosition());
+      // changed: on windows it may happen the MsgDropFlag
+      // never comes back to us, so we drop it right away
+      handleFlagDropped(myTank);
+    }
+  }
   return std::string();
 }
 
@@ -2230,7 +2224,8 @@ struct CommandListItem {
 
 static const CommandListItem commandList[] = {
   { "fire",	&cmdFire,	"fire:  fire a shot" },
-  { "jump",	&cmdJump,	"jump:  make player jump" }
+  { "jump",	&cmdJump,	"jump:  make player jump" },
+  { "drop",	&cmdDrop,	"drop:  drop the current flag" }
 };
 
 static void		doEvent(BzfDisplay* display)

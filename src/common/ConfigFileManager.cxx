@@ -34,10 +34,14 @@ void writeKEYMGR(const std::string& name, bool press, const std::string& command
 {
   std::ostream& s = *reinterpret_cast<std::ostream*>(stream);
   // quotify anything with a space
-  std::string value = command;
+  std::string value = name;
   if (value.find(' ') != value.npos)
     value = std::string("\"") + value + "\"";
-  s << "bind " << name << ' ' << (press ? "down" : "up") << ' ' << value << std::endl;
+  s << "bind " << value << ' ' << (press ? "down " : "up ");
+  value = command;
+  if (value.find(' ') != value.npos)
+    value = std::string("\"") + value + "\"";
+  s << value << std::endl;
 }
 
 ConfigFileManager::ConfigFileManager()
