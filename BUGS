@@ -24,8 +24,6 @@ recent bugs
 - Mac OS X client sometimes (50/50) seems to now start to a black
   screen (only the console tab tabs render).  must be recent..
 
-- teleporters ricochet on the frame seems incorrect
-
 - GM and SW flags occasionally do not show in the scoreboard:
   - right clicking still shows the correct flag
   - seemed to track a specific player (not slot or team)
@@ -60,11 +58,6 @@ recent bugs
   move the window to a secondary monitor, you cannot control the
   brightness of the (SDL) window since it presently modifying the
   gamma of the display that started it.
-
-- player score doesn't seem to match the server's score when relaying to
-  other players.  i.e. the local client see's their own player score that
-  is different from what others see (due to differences in tk).  seems like
-  tk is not included in score locally, but is in the server.
 
 - dropping a team flag, when the related team is empty, start a timeout.
   The related code does not take into account that we can have now
