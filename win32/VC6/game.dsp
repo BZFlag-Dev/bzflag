@@ -154,7 +154,7 @@ SOURCE=..\..\src\game\DirectoryNames.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\src\game\Frustrum.cxx
+SOURCE=..\..\src\game\Frustum.cxx
 # End Source File
 # Begin Source File
 
@@ -198,7 +198,7 @@ SOURCE=..\..\include\DirectoryNames.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\include\Frustrum.h
+SOURCE=..\..\include\Frustum.h
 # End Source File
 # Begin Source File
 
