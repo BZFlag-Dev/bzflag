@@ -113,6 +113,6 @@ bzflag.res: bzflag.rc bzflag.ico
 
 bzflag$(EXEEXT): $(bzflag_OBJECTS) $(bzflag_DEPENDENCIES) 
 	@rm -f bzflag$(EXEEXT)
-	$(CXX) -o buildDate.o -c $(srcdir)/buildDate.cc
+	$(CXX) -o buildDate.o -c $(srcdir)/buildDate.cxx
 	$(CXXLINK) $(bzflag_LDFLAGS) $(bzflag_OBJECTS) buildDate.o \
 	$(bzflag_LDADD) $(LIBS)
