@@ -7,7 +7,7 @@ recent bugs
   incorrectly as if the wall were in front. (may be related to older depth
   render bug, may be os x specific)
 
-- os x client audio is very choppy when the user has a video card installed
+- os x client audio is very choppy when the user has a sound card installed
 
 - if a tank carries the burrow flag and is on the edge of the world, they may
   get kicked for being out of bounds.
