@@ -672,7 +672,6 @@ void			dumpResources(BzfDisplay* display,
   BZDB->set("showlabels", renderer.getLabels() ? "yes" : "no");
 
   BZDB->set("panelopacity", string_util::format("%f", renderer.getPanelOpacity()));
-  db.addValue("panelopacity", string_util::format("%f", renderer.getPanelOpacity()));
 
   BZDB->set("radarsize", string_util::format("%f", renderer.getRadarSize()));
   db.addValue("radarsize", string_util::format("%f", renderer.getRadarSize()));
@@ -1129,8 +1128,8 @@ int			main(int argc, char** argv)
     if (BZDB->isSet("showscore"))
       renderer.setLabels(BZDB->isTrue("showlabels"));
 
-    if (db.hasValue("panelopacity"))
-      renderer.setPanelOpacity((float)atof(db.getValue("panelopacity").c_str()));
+    if (BZDB->isSet("panelopacity"))
+      renderer.setPanelOpacity(BZDB->eval("panelopacity"));
     if (db.hasValue("radarsize"))
       renderer.setRadarSize(atoi(db.getValue("radarsize").c_str()));
     if (db.hasValue("mouseboxsize"))
