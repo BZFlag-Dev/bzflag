@@ -18,6 +18,7 @@
 #include <sstream>
 
 /* common implementation headers */
+#include "ParseColor.h"
 #include "TextureMatrix.h"
 #include "DynamicColor.h"
 
@@ -64,45 +65,47 @@ bool parseMaterials(const char* cmd, std::istream& input,
   }
   else if (strcasecmp(cmd, "ambient") == 0) {
     float ambient[4];
-    if (!(input >> ambient[0] >> ambient[1] >> ambient[2] >> ambient[3])) {
-      std::cout << "missing " << cmd << " parameters" << std::endl;
-      error = true;
-    }
-    for (i = 0; i < materialCount; i++) {
-      materials[i].setAmbient(ambient);
+    error = !parseColorStream(input, ambient);
+    if (!error) {
+      for (i = 0; i < materialCount; i++) {
+        materials[i].setAmbient(ambient);
+      }
+    } else {
+      std::cout << "bad " << cmd << " specification" << std::endl;
     }
   }
   else if ((strcasecmp(cmd, "diffuse") == 0) || // currently used by bzflag
            (strcasecmp(cmd, "color") == 0)) {
     float diffuse[4];
-    if (!(input >> diffuse[0] >> diffuse[1] >> diffuse[2] >> diffuse[3])) {
-      std::cout << "missing " << cmd << " parameters" << std::endl;
-      error = true;
-    }
-    for (i = 0; i < materialCount; i++) {
-      materials[i].setDiffuse(diffuse);
+    error = !parseColorStream(input, diffuse);
+    if (!error) {
+      for (i = 0; i < materialCount; i++) {
+        materials[i].setDiffuse(diffuse);
+      }
+    } else {
+      std::cout << "bad " << cmd << " specification" << std::endl;
     }
   }
   else if (strcasecmp(cmd, "specular") == 0) {
     float specular[4];
-    if (!(input >> specular[0] >> specular[1]
-                >> specular[2] >> specular[3])) {
-      std::cout << "missing " << cmd << " parameters" << std::endl;
-      error = true;
-    }
-    for (i = 0; i < materialCount; i++) {
-      materials[i].setSpecular(specular);
+    error = !parseColorStream(input, specular);
+    if (!error) {
+      for (i = 0; i < materialCount; i++) {
+        materials[i].setSpecular(specular);
+      }
+    } else {
+      std::cout << "bad " << cmd << " specification" << std::endl;
     }
   }
   else if (strcasecmp(cmd, "emission") == 0) {
     float emission[4];
-    if (!(input >> emission[0] >> emission[1]
-                >> emission[2] >> emission[3])) {
-      std::cout << "missing " << cmd << " parameters" << std::endl;
-      error = true;
-    }
-    for (i = 0; i < materialCount; i++) {
-      materials[i].setEmission(emission);
+    error = !parseColorStream(input, emission);
+    if (!error) {
+      for (i = 0; i < materialCount; i++) {
+        materials[i].setEmission(emission);
+      }
+    } else {
+      std::cout << "bad " << cmd << " specification" << std::endl;
     }
   }
   else if (strcasecmp(cmd, "shininess") == 0) {

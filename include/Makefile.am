@@ -67,6 +67,7 @@ noinst_HEADERS =			\
 	OSFile.h			\
 	PTSceneNode.h			\
 	Pack.h				\
+	ParseColor.h			\
 	Ping.h				\
 	PlatformFactory.h		\
 	PlayerInfo.h			\

@@ -18,6 +18,7 @@ libCommon_a_SOURCES  =			\
 	KeyManager.cxx			\
 	Language.cxx			\
 	OSFile.cxx			\
+	ParseColor.cxx			\
 	PlayerState.cxx			\
 	PositionTracker.cxx		\
 	ShotUpdate.cxx			\
