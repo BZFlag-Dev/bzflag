@@ -151,6 +151,10 @@ SOURCE=..\..\src\bzfs\CustomGate.cxx
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\src\bzfs\CustomGroup.cxx
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\src\bzfs\CustomLink.cxx
 # End Source File
 # Begin Source File
@@ -164,6 +168,10 @@ SOURCE=..\..\src\bzfs\CustomMesh.cxx
 # Begin Source File
 
 SOURCE=..\..\src\bzfs\CustomMeshFace.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\bzfs\CustomMeshTransform.cxx
 # End Source File
 # Begin Source File
 
@@ -200,6 +208,10 @@ SOURCE=..\..\src\bzfs\CustomWorld.cxx
 # Begin Source File
 
 SOURCE=..\..\src\bzfs\CustomZone.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\bzfs\DropGeometry.cxx
 # End Source File
 # Begin Source File
 
@@ -375,6 +387,10 @@ SOURCE=..\..\src\bzfs\CustomGate.h
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\src\bzfs\CustomGroup.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\src\bzfs\CustomLink.h
 # End Source File
 # Begin Source File
@@ -388,6 +404,10 @@ SOURCE=..\..\src\bzfs\CustomMesh.h
 # Begin Source File
 
 SOURCE=..\..\src\bzfs\CustomMeshFace.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\bzfs\CustomMeshTransform.h
 # End Source File
 # Begin Source File
 
@@ -424,6 +444,10 @@ SOURCE=..\..\src\bzfs\CustomWorld.h
 # Begin Source File
 
 SOURCE=..\..\src\bzfs\CustomZone.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\include\DropGeometry.h
 # End Source File
 # Begin Source File
 

@@ -483,10 +483,11 @@ void MeshTransform::prepend(const MeshTransform& xform)
   }
   MeshTransform oldCopy = *this;
   transforms.clear();
-  for (unsigned int i = 0; i < xform.transforms.size(); i++) {
+  unsigned int i;
+  for (i = 0; i < xform.transforms.size(); i++) {
     transforms.push_back(xform.transforms[i]);
   }
-  for (unsigned int i = 0; i < oldCopy.transforms.size(); i++) {
+  for (i = 0; i < oldCopy.transforms.size(); i++) {
     transforms.push_back(oldCopy.transforms[i]);
   }
   return;

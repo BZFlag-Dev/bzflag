@@ -174,6 +174,14 @@ SOURCE=..\..\src\game\LagInfo.cxx
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\src\game\LinkManager.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\game\MeshTransform.cxx
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\src\game\NetHandler.cxx
 # End Source File
 # Begin Source File
@@ -234,7 +242,15 @@ SOURCE=..\..\include\LagInfo.h
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\include\LinkManager.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\include\NetHandler.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\include\MeshTransform.h
 # End Source File
 # Begin Source File
 

@@ -185,6 +185,18 @@ SOURCE=..\..\src\obstacle\Obstacle.cxx
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\src\obstacle\ObstacleList.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\obstacle\ObstacleModifier.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\obstacle\ObstacleMgr.cxx
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\src\obstacle\ObstacleSceneNodeGenerator.cxx
 # End Source File
 # Begin Source File
@@ -294,6 +306,18 @@ SOURCE=..\..\include\MeshObstacle.h
 # Begin Source File
 
 SOURCE=..\..\include\MeshSceneNodeGenerator.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\include\ObstacleList.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\include\ObstacleMgr.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\include\ObstacleModifier.h
 # End Source File
 # Begin Source File
 
