@@ -127,9 +127,9 @@ bool WordFilter::aggressiveFilter(char *input) const
 
     /* look at all of the filters that start with the letter wordIndices[j]
      */
-    for (std::set<filter_t, expressionCompare>::iterator i = filters[wordIndices[j]].begin(); \
-	 i != filters[wordIndices[j]].end();
-	 ++i) {
+    const unsigned int firstchar = (unsigned char)wordIndices[j];
+    for (std::set<filter_t, expressionCompare>::iterator i = filters[firstchar].begin();
+	 i != filters[firstchar].end(); ++i) {
 
       /* the big kahuna burger processing goes on here */
       regCode = regexec(i->compiled, input, 1, match, 0);
