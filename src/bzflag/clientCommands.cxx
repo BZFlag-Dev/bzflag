@@ -355,14 +355,14 @@ std::string cmdRadarZoom(const std::string&,
   float range = BZDB.eval("displayRadarRange");
 
   if (args[0] == "in") {
-    range *= 1.05;
-    if (range > 1.5)
-      range = 1.5;
+    range *= 1.05f;
+    if (range > 1.5f)
+      range = 1.5f;
     BZDB.setFloat("displayRadarRange", range);
   } else if (args[0] == "out") {
-    range /= 1.05;
-    if (range < 0.125)
-      range = 0.125;
+    range /= 1.05f;
+    if (range < 0.125f)
+      range = 0.125f;
     BZDB.setFloat("displayRadarRange", range);
   } else {
     return "usage: radarZoom {in|out}";
