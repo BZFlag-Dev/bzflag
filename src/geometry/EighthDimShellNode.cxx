@@ -85,16 +85,12 @@ void EighthDimShellNode::notifyStyleChange()
   }
 
   OpenGLGStateBuilder gb = *gs;
-  
-//  if (BZDBCache::blend) {
-//    gb.setBlending(GL_ONE, GL_ONE);
-//  } else {
-//    gb.setStipple(0.75f);
-//  }
-//  gb.enableSphereMap(true);
 
-//  gb.resetBlending(); // disable blending
-//  gb.enableTexture(false);
+  if (BZDBCache::blend && (RENDERER.useQuality() >= 3)) {
+    gb.setBlending(GL_ONE, GL_ONE);
+  } else {
+    gb.resetBlending();
+  }
 
   gb.setCulling(GL_FRONT); // invert the culling
 
@@ -135,6 +131,10 @@ void EighthDimShellNode::ShellRenderNode::render()
 //  glLogicOp(GL_XOR);
 //  glEnable(GL_COLOR_LOGIC_OP);
 //  glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_FALSE);  
+
+  if (BZDBCache::blend && RENDERER.useQuality() >= 3) {
+    renderNode->render();
+  }
 
   glPolygonMode(GL_BACK, GL_LINE);
   glLineWidth(3.0f);
