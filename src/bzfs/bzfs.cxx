@@ -87,6 +87,8 @@ struct PlayerInfo {
     // Last known position, vel, etc
     PlayerState lastState;
 
+    TimeKeeper lastFlagDropTime;
+
     // input buffers
     // bytes read in current msg
     int tcplen;
@@ -3051,6 +3053,7 @@ static void zapFlag(int flagIndex)
     buf = nboPackUShort(buf, uint16_t(flagIndex));
     buf = flag[flagIndex].flag.pack(buf);
     broadcastMessage(MsgDropFlag, (char*)buf-(char*)bufStart, bufStart);
+    player[playerIndex].lastFlagDropTime = TimeKeeper::getCurrent();
   }
 
   // if flag was flying then it flies no more
@@ -3705,6 +3708,9 @@ static void dropFlag(int playerIndex, float pos[3])
 
   // notify of new flag state
   sendFlagUpdate(flagIndex);
+
+  player[playerIndex].lastFlagDropTime = TimeKeeper::getCurrent();
+
 }
 
 static void captureFlag(int playerIndex, TeamColor teamCaptured)
@@ -4041,6 +4047,8 @@ static void parseCommand(const char *message, int t)
 	    buf = nboPackUShort(buf, uint16_t(i));
 	    buf = flag[i].flag.pack(buf);
 	    broadcastMessage(MsgDropFlag, (char*)buf-(char*)bufStart, bufStart);
+	    player[playerIndex].lastFlagDropTime = TimeKeeper::getCurrent();
+
 	  }
 	  if ((playerIndex == -1) || (!onlyUnused))
 	    resetFlag(i);
@@ -4060,6 +4068,7 @@ static void parseCommand(const char *message, int t)
 	    buf = nboPackUShort(buf, uint16_t(i));
 	    buf = flag[i].flag.pack(buf);
 	    broadcastMessage(MsgDropFlag, (char*)buf-(char*)bufStart, bufStart);
+	    player[playerIndex].lastFlagDropTime = TimeKeeper::getCurrent();
 	  }
 	  flag[i].flag.status = FlagGoing;
 	  if (!flag[i].required)
@@ -5300,6 +5309,8 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
 	player[from].flag = -1;
         buf = flag[flagIndex].flag.pack(buf);
 	broadcastMessage(MsgTransferFlag, (char*)buf - (char*)bufStart, bufStart);
+	player[from].lastFlagDropTime = TimeKeeper::getCurrent();
+	player[to].lastFlagDropTime = TimeKeeper::getCurrent();
 	break;
     }
 
@@ -5408,54 +5419,58 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
 	removePlayer(t, "Out of map bounds");
       }
 
+      // Speed problems occur around flag drops, so don't check for a short period of time
+      // after player drops a flag. Currently 1/4 second, adjust as needed. Maybe BZDB?
 
-      // check for highspeed cheat; if inertia is enabled, skip test for now
-      if (clOptions->linearAcceleration == 0.0f) {
-	// Doesn't account for going fast backwards, or jumping/falling
-	float curPlanarSpeedSqr = state.velocity[0]*state.velocity[0] +
-				  state.velocity[1]*state.velocity[1];
+      if (TimeKeeper::getCurrent() - player[t].lastFlagDropTime >= 0.25f) {
+        // check for highspeed cheat; if inertia is enabled, skip test for now
+        if (clOptions->linearAcceleration == 0.0f) {
+	  // Doesn't account for going fast backwards, or jumping/falling
+	  float curPlanarSpeedSqr = state.velocity[0]*state.velocity[0] +
+				    state.velocity[1]*state.velocity[1];
 
-	float maxPlanarSpeedSqr = BZDB->eval(StateDatabase::BZDB_TANKSPEED)*BZDB->eval(StateDatabase::BZDB_TANKSPEED);
+	  float maxPlanarSpeedSqr = BZDB->eval(StateDatabase::BZDB_TANKSPEED)*BZDB->eval(StateDatabase::BZDB_TANKSPEED);
 
-	bool logOnly = false;
+	  bool logOnly = false;
 
-	// if tank is not driving cannot be sure it didn't toss (V) in flight
-	// if tank is not alive cannot be sure it didn't just toss (V)
-	if (flag[player[t].flag].flag.desc == Flags::Velocity)
-	  maxPlanarSpeedSqr *= BZDB->eval(StateDatabase::BZDB_VELOCITYAD)*BZDB->eval(StateDatabase::BZDB_VELOCITYAD);
-	else if (flag[player[t].flag].flag.desc == Flags::Thief)
-	  maxPlanarSpeedSqr *= BZDB->eval(StateDatabase::BZDB_THIEFVELAD) * BZDB->eval(StateDatabase::BZDB_THIEFVELAD);
-	else {
-	  // If player is moving vertically, or not alive the speed checks seem to be problematic
-	  // If this happens, just log it for now, but don't actually kick
-	  if ((player[t].lastState.pos[2] != state.pos[2])
-	  ||  (player[t].lastState.velocity[2] != state.velocity[2])
-	  ||  ((state.status & PlayerState::Alive) == 0)) {
-	    logOnly = true;
+	  // if tank is not driving cannot be sure it didn't toss (V) in flight
+	  // if tank is not alive cannot be sure it didn't just toss (V)
+  	  if (flag[player[t].flag].flag.desc == Flags::Velocity)
+	    maxPlanarSpeedSqr *= BZDB->eval(StateDatabase::BZDB_VELOCITYAD)*BZDB->eval(StateDatabase::BZDB_VELOCITYAD);
+	  else if (flag[player[t].flag].flag.desc == Flags::Thief)
+	    maxPlanarSpeedSqr *= BZDB->eval(StateDatabase::BZDB_THIEFVELAD) * BZDB->eval(StateDatabase::BZDB_THIEFVELAD);
+	  else {
+	    // If player is moving vertically, or not alive the speed checks seem to be problematic
+	    // If this happens, just log it for now, but don't actually kick
+	    if ((player[t].lastState.pos[2] != state.pos[2])
+	    ||  (player[t].lastState.velocity[2] != state.velocity[2])
+	    ||  ((state.status & PlayerState::Alive) == 0)) {
+	      logOnly = true;
+	    }
 	  }
-	}
 
-	// allow a 5% tolerance level for speed
-	float realtol=1.0f;
-	if(speedTolerance>1.0f)
-	realtol = speedTolerance;
-	maxPlanarSpeedSqr *= realtol;
-	if (curPlanarSpeedSqr > maxPlanarSpeedSqr) {
-	  if (logOnly) {
-	    DEBUG1("Logging Player %s [%d] tank too fast (tank: %f, allowed: %f){Dead or v[z] != 0}\n",
+	  // allow a 5% tolerance level for speed
+	  float realtol=1.0f;
+	  if(speedTolerance>1.0f)
+	  realtol = speedTolerance;
+	  maxPlanarSpeedSqr *= realtol;
+	  if (curPlanarSpeedSqr > maxPlanarSpeedSqr) {
+	    if (logOnly) {
+	           DEBUG1("Logging Player %s [%d] tank too fast (tank: %f, allowed: %f){Dead or v[z] != 0}\n",
 		   player[t].callSign, t,
 		   sqrt(curPlanarSpeedSqr), sqrt(maxPlanarSpeedSqr));
+	    }
+	    else {
+	           char message[MessageLen];
+	           DEBUG1("kicking Player %s [%d] tank too fast (tank: %f, allowed: %f)\n",
+	           player[t].callSign, t,
+	           sqrt(curPlanarSpeedSqr), sqrt(maxPlanarSpeedSqr));
+	           strcpy(message, "Autokick: Tank moving too fast, Update your client." );
+	           sendMessage(ServerPlayer, t, message, true);
+	           removePlayer(t, "too fast");
+	    }
+	    break;
 	  }
-	  else {
-	    char message[MessageLen];
-	    DEBUG1("kicking Player %s [%d] tank too fast (tank: %f, allowed: %f)\n",
-	      player[t].callSign, t,
-	      sqrt(curPlanarSpeedSqr), sqrt(maxPlanarSpeedSqr));
-	    strcpy(message, "Autokick: Tank moving too fast, Update your client." );
-	    sendMessage(ServerPlayer, t, message, true);
-	    removePlayer(t, "too fast");
-	  }
-	  break;
 	}
       }
 
