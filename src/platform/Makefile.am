@@ -64,6 +64,7 @@ libPlatform_a_SOURCES =				\
 	XWindow.h
 else
 if MACOS
+SUBDIRS = MacOSX
 libPlatform_a_SOURCES =				\
 	PlatformFactory.cxx			\
 	BzfDisplay.cxx				\
@@ -71,17 +72,7 @@ libPlatform_a_SOURCES =				\
 	BzfWindow.cxx				\
 	BzfMedia.cxx				\
 	wave.cxx				\
-	wave.h					\
-	MacPlatformFactory.cxx 			\
-	MacPlatformFactory.h 			\
-	MacDisplay.cxx				\
-	MacDisplay.h				\
-	MacVisual.cxx				\
-	MacVisual.h				\
-	MacWindow.cxx				\
-	MacWindow.h				\
-	MacMedia.cxx				\
-	MacMedia.h
+	wave.h
 else
 if WIN32
 libPlatform_a_SOURCES =				\

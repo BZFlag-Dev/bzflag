@@ -73,6 +73,19 @@ else
 RESOURCE =
 endif
 
+if MACOS
+LDADD =	\
+	../net/libNet.a			\
+	../common/libCommon.a		\
+	../obstacle/libObstacle.a	\
+	../platform/libPlatform.a	\
+	../platform/MacOSX/libMac.a	\
+	../ogl/libGLKit.a		\
+	../scene/libSceneDB.a		\
+	../geometry/libGeometry.a	\
+	$(RESOURCE)			\
+	$(GLIBS)
+else
 LDADD =	\
 	../net/libNet.a			\
 	../common/libCommon.a		\
@@ -83,6 +96,8 @@ LDADD =	\
 	../geometry/libGeometry.a	\
 	$(RESOURCE)			\
 	$(GLIBS)
+endif
+
 
 EXTRA_DIST = bzflag.bmp
 
