@@ -24,6 +24,7 @@ libObstacle_a_SOURCES =			\
 	TeleporterSceneNodeGenerator.cxx\
 	TeleporterSceneNodeGenerator.h	\
 	WallObstacle.cxx		\
+	WallSceneNodeGenerator.cxx \
 	WallSceneNodeGenerator.h
 	
 	
