@@ -804,6 +804,9 @@ int						main(int argc, char** argv)
 	// parse arguments
 	parse(argc, argv);
 
+	// check presence of data directory
+
+
 	// hook up console echo if requested
 	if (echoToConsole) {
 		PLATFORM->createConsole();
@@ -952,6 +955,16 @@ int						main(int argc, char** argv)
 	// map font names to font files
 	for (i = 0; i < countof(fontMap); ++i)
 		OpenGLTexFont::mapFont(fontMap[i].name, fontMap[i].filename);
+	
+	if (!OpenGLTexFont::isAnyMappedFontLoaded()) {
+	  setErrorCallback(fatalErrorCallback);
+	  printError("Failed to load font data.\nCheck presence of data directory");
+	  delete display;
+	  delete window;
+	  // let's pray the various singletons get garbage collected.
+
+	  return 1;
+	}
 
 	// read the configuration files (user.bzc if it exists, else config.bzc)
 	{
