@@ -33,6 +33,7 @@ noinst_HEADERS =		\
 	Flag.h			\
 	FlagSceneNode.h		\
 	FlagWarpSceneNode.h	\
+	GetCacheDir.h		\
 	Intersect.h		\
 	KeyManager.h		\
 	Language.h		\

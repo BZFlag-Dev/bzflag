@@ -6,7 +6,8 @@ MAINTAINERCLEANFILES = \
 libGame_a_SOURCES = \
 	CommandsStandard.cxx		\
 	NetHandler.cxx			\
-	VotingArbiter.cxx
+	VotingArbiter.cxx		\
+	GetCacheDir.cxx
 
 EXTRA_DIST = \
 	README

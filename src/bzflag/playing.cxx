@@ -89,6 +89,7 @@ static const char copyright[] = "Copyright (c) 1993 - 2004 Tim Riker";
 #include "FlashClock.h"
 #include "CommandsStandard.h"
 #include "commands.h"
+#include "GetCacheDir.h"
 
 // versioning that makes us recompile every time
 #include "version.h"
@@ -3270,64 +3271,6 @@ static void		addRobots()
 }
 
 #endif
-
-std::string		getCacheDirectoryName()
-{
-#if defined(_WIN32)
-  std::string name("C:");
-  char dir[MAX_PATH];
-  ITEMIDLIST* idl;
-  if (SUCCEEDED(SHGetSpecialFolderLocation(NULL, CSIDL_PERSONAL, &idl))) {
-    if (SHGetPathFromIDList(idl, dir)) {
-      struct stat statbuf;
-      if (stat(dir, &statbuf) == 0 && (statbuf.st_mode & _S_IFDIR) != 0)
-	name = dir;
-    }
-
-    IMalloc* shalloc;
-    if (SUCCEEDED(SHGetMalloc(&shalloc))) {
-      shalloc->Free(idl);
-      shalloc->Release();
-    }
-  }
-
-  // yes your suposed to have the "my" in front of it. I know it's silly, but it's the MS way.
-  name += "\\My BZFlag Files\\cache";
-  return name;
-
-#elif defined(__APPLE__)
-  std::string cacheName;
-  ::FSRef libraryFolder;
-  ::OSErr err;
-  err = ::FSFindFolder(::kUserDomain, ::kApplicationSupportFolderType, true, &libraryFolder);
-  if(err == ::noErr) {
-    char buff[1024];
-    err = ::FSRefMakePath(&libraryFolder, (UInt8*)buff, sizeof(buff));
-    if(err == ::noErr) {
-      std::strcat(buff, "/BZFlag");
-      std::strcat(buff, "/cache");
-      cacheName = buff;
-    }
-  }
-  return cacheName;
-#else
-  std::string name;
-  struct passwd *pwent = getpwuid(getuid());
-  if (pwent && pwent->pw_dir) {
-    name += std::string(pwent->pw_dir);
-    name += "/";
-  }
-  name += ".bzf/cache";
-
-  // add in hostname on UNIX
-  if (getenv("HOST")) {
-    name += ".";
-    name += getenv("HOST");
-  }
-
-  return name;
-#endif
-}
 
 static void cleanWorldCache()
 {

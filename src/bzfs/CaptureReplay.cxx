@@ -58,7 +58,7 @@ typedef struct CRpacket {
   void *data;
 } CRpacket;
 static const int CRpacketHdrLen = sizeof (CRpacket) - 
-                                   (2*sizeof(CRpacket*) - sizeof (void *));
+                                  (2 * sizeof (CRpacket*) - sizeof (void *));
 
 typedef struct {
   int byteCount;
@@ -233,7 +233,7 @@ bool Capture::stop (int playerIndex)
     Capture::init();
   }
   sendMessage(ServerPlayer, playerIndex, "Capture stopped");
-  
+
   return true;
 }
 
@@ -1186,16 +1186,16 @@ openWriteFile (int playerIndex, const char *filename)
   return openFile (filename, "wb");
 }
 
-static inline int osStat ( const char* dir, struct stat & buf )
+static inline int osStat (const char *dir, struct stat *buf)
 {
 #ifdef _WIN32
-  return _stat(dir, (struct _stat*)(&buf));
+  return _stat(dir, (struct _stat *) buf);
 #else
-  return stat (dir, &buf);
+  return stat (dir, buf);
 #endif
 }
 
-static inline int osMkDir ( const char* dir, int mode )
+static inline int osMkDir (const char *dir, int mode)
 {
 #ifdef _WIN32
   return mkdir(dir);
@@ -1209,7 +1209,7 @@ makeDirExist (int playerIndex)
 {
   struct stat statbuf;
 
-	if (osStat (ReplayDir, statbuf) < 0) {
+  if (osStat (ReplayDir, &statbuf) < 0) {
     // try to make the directory
     if (osMkDir (ReplayDir, 0755) < 0) {
       sendMessage (ServerPlayer, playerIndex, 
@@ -1510,4 +1510,3 @@ print_msg_code (u16 code)
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

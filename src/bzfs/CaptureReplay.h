@@ -23,6 +23,8 @@ enum ReplayPacketMode {
   HiddenPacket = 2
 };
 
+extern bool setReplayDir (const char *dirname);
+
 namespace Capture {
   extern bool init ();
   extern bool kill ();
@@ -78,10 +80,6 @@ namespace Replay {
 //   state of the game during replay. It'll just be firing the
 //   packets back out the way that they came.
 //
-// - Player and Flag states have to be saved when a capture is
-//   started. If not, how will you know what the field started
-//   like?
-//
 // - We have to watch for collisions between the PlayerID's that
 //   are being sent by the replay, and the PlayerIDs of those
 //   watching. For now, I'm just going to force replay watching
@@ -93,7 +91,7 @@ namespace Replay {
 //   take snapshots of the player and flag states periodically.
 //   These state packets will only be saved if there have been
 //   broadcasted packets, so that idle servers won't neccesarily
-//   have massive files if there saving straight to a file.
+//   have massive files if they're saving straight to a file.
 //
 // - Ideally, it would be nice to be able to set replay mode for
 //   individual players. Then, admins would be able to review events
