@@ -48,13 +48,10 @@
 #include "TextUtils.h"
 
 
-#if defined (UINT8_MAX)
-static const unsigned short int MAX_FILTERS = UINT8_MAX;
-#else
-static const unsigned short int MAX_FILTERS = 2048;
-#endif
-
-static const unsigned short int MAX_WORDS = 256;
+/* words are stored by the index of their first letter of
+* UTF-8 format.
+*/
+static const unsigned short int MAX_FILTER_SETS = 256;
 
 
 /** WordFilter will load a list of words and phrases from a file or one at
@@ -126,7 +123,7 @@ class WordFilter
   /** word expressions to be filtered including compiled regexp versions */
   struct expressionCompare {
     bool operator () (const filter_t& word1, const filter_t& word2) const {
-      return strncasecmp(word1.word.c_str(), word2.word.c_str(), 1024) < 0;
+      return (strncasecmp(word1.word.c_str(), word2.word.c_str(), 1024) < 0);
     }
   };
 
@@ -137,7 +134,7 @@ class WordFilter
    * minimal hashing and rather fast lookups.
    */
   // XXX consider making a numeric hash to avoid array overflows
-  std::set<filter_t, expressionCompare> filters[MAX_FILTERS];
+  std::set<filter_t, expressionCompare> filters[MAX_FILTER_SETS];
 
 
   /** used by the agressive filter */
@@ -182,6 +179,11 @@ class WordFilter
    * expression for some given expression
    */
   regex_t *getCompiledExpression(const std::string &expression) const;
+
+  /** returns a set of characters that represent the
+   * given character in "l33t-speak"
+   */
+  std::string l33tspeakSetFromCharacter(const char c) const;
 
   /** expands a word into an uncompiled regular
    *  expression.

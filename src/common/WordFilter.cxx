@@ -16,8 +16,11 @@
 #pragma warning( 4:4786)
 #endif
 
+// this classes interface
 #include "WordFilter.h"
 
+// implementation-specific headers
+#include "TimeKeeper.h"
 
 /* protected */
 
@@ -70,7 +73,7 @@ bool WordFilter::aggressiveFilter(char *input) const
 
   /* implicit limit of only match up to 256 words per input */
   /* !!! make dynamic */
-  int matchPair[MAX_WORDS * 2];
+  int matchPair[MAX_FILTER_SETS * 2];
   int matchCount = 0;
 
   int regCode;
@@ -80,22 +83,22 @@ bool WordFilter::aggressiveFilter(char *input) const
     return false;
   }
   std::string line = input + startPosition;
-  std::bitset<MAX_WORDS * 4> startBoundaryArray = 0;
-  std::bitset<MAX_WORDS * 4> endBoundaryArray = 0;
+  std::bitset<MAX_FILTER_SETS * 4> startBoundaryArray = 0;
+  std::bitset<MAX_FILTER_SETS * 4> endBoundaryArray = 0;
 
   startBoundaryArray.set(startPosition);
   int inputPosition = startPosition;
   startPosition = 0;
 
   int endPosition;
-  unsigned char wordIndices[MAX_WORDS];
+  unsigned char wordIndices[MAX_FILTER_SETS];
   unsigned int wordIndexLength=0;
 
   char characterIndex;
 
   /* clear memory for arrays */
-  memset(matchPair, 0, MAX_WORDS * 2 * sizeof matchPair[0]);
-  memset(wordIndices, 0, MAX_WORDS * sizeof wordIndices[0]);
+  memset(matchPair, 0, MAX_FILTER_SETS * 2 * sizeof matchPair[0]);
+  memset(wordIndices, 0, MAX_FILTER_SETS * sizeof wordIndices[0]);
 
   /* iterate over all the words start position in the input and keep track
    * of the starting character of each word (we only need to check those)
@@ -257,73 +260,82 @@ regex_t *WordFilter::getCompiledExpression(const std::string &word) const
 }
 
 
+std::string WordFilter::l33tspeakSetFromCharacter(const char c) const
+{
+  std::string set = "";
+
+  if (!isAlphanumeric(c)) {
+    /* escape the non-alphanumeric (punctuation or control chars) */
+    set[0] = '\\';
+    set[1] = c;
+    return set;
+  }
+
+  switch(c) {
+    case 'l':
+      set = "li1!|/\\";
+      break;
+    case 'i':
+      set = "il|!/\\";
+      break;
+    case 'e':
+      set = "e3";
+      break;
+    case 's':
+      // dollarsign $ may not be the first char..
+      set = "s$z5";
+      break;
+    case 't':
+      set = "t+";
+      break;
+    case 'c':
+      set = "c\\{(";
+      break;
+    case 'a':
+      set = "a4@";
+      break;
+    case 'b':
+      set = "b8";
+      break;
+    case 'o':
+      set ="o0";
+      break;
+    case 'g':
+      set = "g9";
+      break;
+    case 'z':
+      set = "zs";
+      break;
+    default:
+      set = "c";
+      break;
+  }
+
+  return set;
+}
+
+
 std::string WordFilter::expressionFromString(const std::string &word) const
 {
   /* create the regular expression description */
   std::string expression;
   unsigned int length = word.length();
-  char c[8];
-
+  std::string charSet;
+  
   /* individual characters expand into a potential set of matchable characters */
   for (unsigned int i = 0; i < length; i++) {
-    c[0] = c[1] = c[2] = c[3] = c[4] = c[5] = c[6] = c[7] = 0;
-    // convert to lowercase for simplicity and speed
-    c[0] = tolower(word[i]);
 
+    // convert to lowercase for simplicity and speed
+    charSet = l33tspeakSetFromCharacter(tolower(word[i]));
+    
     /* we specifically will create a regular expression that should at least
      * match exactly the given input, including any spaces or special
      * characters.  including spaces or other characters in the input will
-     * make them required to create a match.  BUT.. they need to be escaped
-     * so that the regexp compiles properly.
+     * make them required to create a match.
      */
-    if (!isAlphanumeric(c[0])) {
-      /* escape the non-alphanumeric */
-      c[1] = c[0];
-      c[0] = '\\';
-    }
-    /* character classes for l33t-speak */
-    if ( c[0] == 'l' ) {
-      c[1] = 'i';
-      c[2] = '1';
-      c[4] = '!';
-      c[5] = '|';
-      c[6] = '/';
-      c[7] = '\\';
-      //      c[8] = '\\';
-    } else if ( c[0] == 'i' ) {
-      c[1] = 'l';
-      c[2] = '|';
-      c[3] = '!';
-      c[4] = '/';
-      c[5] = '\\';
-      //      c[6] = '\\';
-    } else if ( c[0] == 'e' ) {
-      c[1] = '3';
-    } else if ( c[0] == 's' ) {
-      c[1] = '$'; // should never be the last character
-      c[2] = 'z';
-      c[3] = '5';
-    } else if ( c[0] == 't' ) {
-      c[1] = '+';
-    } else if ( c[0] == 'c' ) {
-      c[1] = '\\';
-      c[2] = '(';
-    } else if ( c[0] == 'a' ) {
-      c[1] = '4';
-      c[2] = '@';
-    } else if ( c[0] == 'b' ) {
-      c[1] = '8';
-    } else if ( c[0] == 'o' ) {
-      c[1] = '0';
-    } else if ( c[0] == 'g' ) {
-      c[1] = '9';
-    } else if ( c[0] == 'z' ) {
-      c[1] = 's';
-    }
-    // need to handle 'f' special for f=>(f|ph)
 
     /* append multi-letter expansions */
-    if (c[0] == 'f') {
+    if (charSet[0] == 'f') {
       /* ensure we don't capture non-printables after end of word */
       if (i != length - 1) {
 	expression.append("[fp]+[^[:alpha:]]*h?[^[:alpha:]]*");
@@ -331,14 +343,14 @@ std::string WordFilter::expressionFromString(const std::string &word) const
 	expression.append("[fp]+h?");
       }
     } else {
-      if ( c[1] != 0 ) {
+      if ( charSet.size() == 1 ) {
 	/* appends characters classes */
 	expression.append("[");
-	expression.append(c);
+	expression.append(charSet);
 	expression.append("]");
       } else {
 	/* append single characters */
-	expression.append(c);
+	expression.append(charSet);
       }
 
       /* ensure we don't capture non-printables after end of word. these do
@@ -561,7 +573,7 @@ WordFilter::WordFilter(const WordFilter& filter)
     suffixes(filter.suffixes),
     prefixes(filter.prefixes)
 {
-  for (int i=0; i < MAX_FILTERS; i++) {
+  for (int i=0; i < MAX_FILTER_SETS; i++) {
     filters[i] = filter.filters[i];
   }
 }
@@ -571,7 +583,7 @@ WordFilter::WordFilter(const WordFilter& filter)
 /** destructor releases the compiled bad words */
 WordFilter::~WordFilter(void)
 {
-  for (int j = 0; j < MAX_FILTERS; ++j) {
+  for (int j = 0; j < MAX_FILTER_SETS; ++j) {
     for (std::set<filter_t, expressionCompare>::iterator i = filters[j].begin();
 	 i != filters[j].end();
 	 ++i) {
@@ -599,6 +611,7 @@ bool WordFilter::addToFilter(const std::string &word, const std::string &express
     return addToFilter(word, expression, append);
 
   } else if (append) {
+#if 0
     /* add words with all suffixes appended */
     std::set<filter_t, expressionCompare>::iterator i;
     std::string fullSuffix = "((";
@@ -614,9 +627,10 @@ bool WordFilter::addToFilter(const std::string &word, const std::string &express
     fullSuffix.append("))*");
     //    std::cout << "prefixes: " << fullSuffix << std::endl;
     return addToFilter(word, expression +  fullSuffix, false);
+#endif
 
-    /* add words with all prefixes prepended */
 #if 0
+    /* add words with all prefixes prepended */
     std::string fullPrefix = "((";
     for (i = prefixes.begin();
 	 i != prefixes.end();) {
@@ -751,15 +765,23 @@ unsigned int WordFilter::loadFromFile(const std::string &fileName, bool verbose)
  */
 bool WordFilter::filter(char *input, bool simple) const
 {
+  TimeKeeper before = TimeKeeper::getCurrent();
+  bool filtered;
   if (simple) {
-    return simpleFilter(input);
+    filtered = simpleFilter(input);
+  } else {
+    filtered = aggressiveFilter(input);
   }
-  return aggressiveFilter(input);
+  TimeKeeper after = TimeKeeper::getCurrent();
+#if 0
+  std::cout << "Time elapsed: " << after - before << " seconds" << std::endl;
+#endif
+  return filtered;
 }
 
 void WordFilter::outputFilter(void) const
 {
-  for (int i=0; i < MAX_FILTERS; ++i) {
+  for (int i=0; i < MAX_FILTER_SETS; ++i) {
     int count=0;
     for (std::set<filter_t, expressionCompare>::const_iterator j = filters[i].begin(); \
 	 j != filters[i].end(); \
@@ -773,7 +795,7 @@ void WordFilter::outputFilter(void) const
 void WordFilter::outputWords(void) const
 {
   //		std::cout << "size of compiled set is " << () << std::endl;
-  for (int i=0; i < MAX_FILTERS; ++i) {
+  for (int i=0; i < MAX_FILTER_SETS; ++i) {
     int count=0;
     for (std::set<filter_t, expressionCompare>::const_iterator j = filters[i].begin(); \
 	 j != filters[i].end(); \
@@ -786,7 +808,7 @@ void WordFilter::outputWords(void) const
 unsigned long int WordFilter::wordCount(void) const
 {
   int count=0;
-  for (int i=0; i < MAX_FILTERS; ++i) {
+  for (int i=0; i < MAX_FILTER_SETS; ++i) {
     for (std::set<filter_t, expressionCompare>::const_iterator j = filters[i].begin(); \
 	 j != filters[i].end(); \
 	 ++j) {
