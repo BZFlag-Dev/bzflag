@@ -178,51 +178,6 @@ typedef unsigned int	uint32_t;
 
 #endif /* !defined(_WIN32) */
 
-class string_util {
-  public:
-    static std::string string_util::vformat(const char* fmt, va_list args) {
-      // FIXME -- should prevent buffer overflow in all cases
-      // not all platforms support vsnprintf so we'll use vsprintf and a
-      // big temporary buffer and hope for the best.
-      char buffer[8192];
-      vsprintf(buffer, fmt, args);
-      return std::string(buffer);
-    }
-    static std::string string_util::format(const char* fmt, ...) {
-      va_list args;
-      va_start(args, fmt);
-      std::string result = vformat(fmt, args);
-      va_end(args);
-      return result;
-    }
-    // get a vector of strings from a string, using all of chars of the delims
-    // string as separators
-    static std::vector<std::string> string_util::tokenize(std::string in, std::string delims){
-      std::vector<std::string> out;
-      std::ostringstream outputString;
-      std::istringstream inStream (in);
-
-      std::string candidate;
-      std::string testme;
-
-      int character;
-      while ( (character = inStream.get()) != EOF){
-	testme = (char) character;
-	if (testme.find_first_of(delims) != std::string::npos){
-	  candidate = outputString.str();
-	  outputString.str(""); // clear it
-	  if (candidate != "")  out.push_back(candidate);
-	} else {
-	  outputString << (char)character;
-	}
-      }
-
-      candidate = outputString.str();
-      if (candidate != "")  out.push_back(candidate);
-      return out;
-    }
-};
-
 #ifdef countof
 #undef countof
 #endif
