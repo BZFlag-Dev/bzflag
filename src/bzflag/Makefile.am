@@ -13,6 +13,12 @@ bzflag_SOURCES =			\
 	ControlPanel.cxx		\
 	ControlPanel.h			\
 	CommandsStandard.cxx		\
+	FormatMenu.cxx			\
+	FormatMenu.h			\
+	GUIOptionsMenu.cxx		\
+	GUIOptionsMenu.h		\
+	HelpMenu.cxx			\
+	HelpMenu.h			\
 	HUDDialog.cxx			\
 	HUDDialog.h			\
 	HUDDialogStack.cxx		\
@@ -21,12 +27,27 @@ bzflag_SOURCES =			\
 	HUDRenderer.h			\
 	HUDui.cxx			\
 	HUDui.h				\
+	JoinMenu.cxx			\
+	JoinMenu.h			\
+	KeyboardMapMenu.cxx		\
+	KeyboardMapMenu.h		\
+	LiserServer.h			\
 	LocalPlayer.cxx			\
 	LocalPlayer.h			\
+	MainMenu.cxx			\
+	MainMenu.h			\
 	MainWindow.cxx			\
 	MainWindow.h			\
+	MenuDefaultKey.h		\
+	MenuDefaultKey.cxx		\
+	OptionsMenu.cxx			\
+	OptionsMenu.h			\
 	Player.cxx			\
 	Player.h			\
+	QuickKeysMenu.cxx		\
+	QuickKeysMenu.h			\
+	QuitMenu.cxx			\
+	QuitMenu.h			\
 	RadarRenderer.cxx		\
 	RadarRenderer.h			\
 	Region.cxx			\
@@ -35,13 +56,21 @@ bzflag_SOURCES =			\
 	RemotePlayer.h			\
 	RobotPlayer.cxx			\
 	RobotPlayer.h			\
+	SaveWorldMenu.cxx		\
+	SaveWorldMenu.h			\
 	SceneBuilder.cxx		\
 	SceneBuilder.h			\
 	SceneRenderer.cxx		\
+	ServerItem.cxx			\
+	ServerItem.h			\
 	ServerListCache.cxx		\
 	ServerListCache.h		\
 	ServerLink.cxx			\
 	ServerLink.h			\
+	ServerMenu.cxx			\
+	ServerMenu.h			\
+	ServerStartMenu.cxx		\
+	ServerStartMenu.h		\
 	ShotPath.cxx			\
 	ShotPath.h			\
 	ShotStrategy.cxx		\
@@ -58,8 +87,6 @@ bzflag_SOURCES =			\
 	callbacks.cxx			\
 	daylight.cxx			\
 	daylight.h			\
-	menus.cxx			\
-	menus.h				\
 	playing.cxx			\
 	playing.h			\
 	sound.cxx			\
@@ -78,6 +105,7 @@ LDADD =	\
 	../net/libNet.a			\
 	../common/libCommon.a		\
 	../obstacle/libObstacle.a	\
+	../platform/MacOSX/libMac.a	\
 	../platform/libPlatform.a	\
 	../ogl/libGLKit.a		\
 	../scene/libSceneDB.a		\

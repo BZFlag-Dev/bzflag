@@ -225,8 +225,8 @@ static std::string		cmdUnbind(const std::string&,
   if (args.size() != 2)
     return "usage: unbind <button-name> {up|down}";
 
-  BzfKeyEvent key;
-  if (!KEYMGR.stringToKeyEvent(args[0], key))
+  BzfKeyEvent key_event;
+  if (!KEYMGR.stringToKeyEvent(args[0], key_event))
     return std::string("bind error: unknown button name \"") + args[0] + "\"";
 
   bool down;
@@ -237,8 +237,8 @@ static std::string		cmdUnbind(const std::string&,
   else
     return std::string("bind error: illegal state \"") + args[1] + "\"";
 
-  if (key.ascii != 27)
-    KEYMGR.unbind(key, down);
+  if (key_event.ascii != 27)
+    KEYMGR.unbind(key_event, down);
 
   return std::string();
 }

@@ -45,7 +45,6 @@
 #include "TimeBomb.h"
 #include "Team.h"
 #include "sound.h"
-#include "menus.h"
 #include "ConfigFileManager.h"
 #include "CommandsStandard.h"
 #include "BzfDisplay.h"
@@ -65,6 +64,9 @@
 #include "WordFilter.h"
 #include "TextUtils.h"
 #include "ActionBinding.h"
+#include "ServerStartMenu.h"
+#include "OpenGLTexFont.h"
+
 
 // invoke incessant rebuilding for build versioning
 #include "version.h"

@@ -17,18 +17,18 @@
   #pragma warning(disable: 4786)
 #endif
 
+/* system interface headers */
 #include <string>
 #include <map>
 
-#include "menus.h"
+/* local interface headers */
+#include "ServerItem.h"
 
 
 static const size_t MAX_STRING = 200; // size of description/name
 typedef std::map<std::string, ServerItem> SRV_STR_MAP;
 
 class ServerListCache {
-
-
 public:
 
   ServerListCache();
