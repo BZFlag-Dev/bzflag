@@ -101,6 +101,12 @@ public:
 
 protected:
 
+  /** This function prints a /set command for the BZDB variable with name 
+      @c name to the current UI. It assumes that there actually is an UI,
+      if @c ui is NULL this function could crash the program. It has to be
+      static because it is used as a callback for StateDatabase::iterate(). */
+  static void listSetVars(const std::string& name, void* thisObject);
+
   std::map<PlayerId, std::string> players;
   TeamColor myTeam;
   ServerLink sLink;

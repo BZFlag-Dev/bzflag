@@ -16,6 +16,7 @@
 
 #include <iostream>
 
+#include "StateDatabase.h"
 #include "BZAdminClient.h"
 #include "version.h"
 
@@ -41,6 +42,7 @@ BZAdminClient::BZAdminClient(std::string callsign, std::string host,
   showMessageType(MsgRemovePlayer);
   showMessageType(MsgSuperKill);
   showMessageType(MsgMessage);
+  showMessageType(MsgSetVar);
 }
 
 
@@ -65,11 +67,35 @@ BZAdminClient::ServerCode BZAdminClient::getServerString(std::string& str) {
 
     void* vbuf = inbuf;
     PlayerId p;
-    std::map<PlayerId, std::string>::const_iterator i;
+    std::map<PlayerId, std::string>::const_iterator it;
     std::string victimName, killerName;
 
     switch (code) {
 
+    case MsgSetVar:
+      // code stolen from playing.cxx
+      uint16_t numVars;
+      uint8_t nameLen, valueLen;
+      
+      char name[MaxPacketLen];
+      char value[MaxPacketLen];
+      
+      vbuf = nboUnpackUShort(vbuf, numVars);
+      for (int i = 0; i < numVars; i++) {
+	vbuf = nboUnpackUByte(vbuf, nameLen);
+	vbuf = nboUnpackString(vbuf, name, nameLen);
+	name[nameLen] = '\0';
+	
+	vbuf = nboUnpackUByte(vbuf, valueLen);
+	vbuf = nboUnpackString(vbuf, value, valueLen);
+	value[valueLen] = '\0';
+	
+	BZDB.set(name, value);
+	BZDB.setPersistent(name, false);
+	BZDB.setPermission(name, StateDatabase::Locked);
+      }
+      return GotMessage;
+      
     case MsgAddPlayer:
 
       vbuf = nboUnpackUByte(vbuf, p);
@@ -108,10 +134,10 @@ BZAdminClient::ServerCode BZAdminClient::getServerString(std::string& str) {
       vbuf = nboUnpackShort(vbuf, shotId);
 
       // find the player names and build a kill message string
-      i = players.find(victim);
-      victimName = (i != players.end() ? i->second : "<unknown>");
-      i = players.find(killer);
-      killerName = (i != players.end() ? i->second : "<unknown>");
+      it = players.find(victim);
+      victimName = (it != players.end() ? it->second : "<unknown>");
+      it = players.find(killer);
+      killerName = (it != players.end() ? it->second : "<unknown>");
       str = "*** ";
       str += victimName + ": ";
       if (killer == victim) {
@@ -206,6 +232,13 @@ void BZAdminClient::runLoop() {
 
 void BZAdminClient::sendMessage(const std::string& msg,
 				PlayerId target) {
+  // /set is a local command, don't send it, just list the BZDB variables
+  if (msg == "/set") {
+    if (ui != NULL)
+      BZDB.iterate(listSetVars, this);
+    return;
+  }
+  
   char buffer[MessageLen];
   char buffer2[1 + MessageLen];
   void* buf = buffer2;
@@ -286,6 +319,15 @@ void BZAdminClient::ignoreMessageType(uint16_t type) {
 
 void BZAdminClient::showMessageType(uint16_t type) {
   messageMask[type] = true;
+}
+
+
+void BZAdminClient::listSetVars(const std::string& name, void* thisObject) {
+  char message[MessageLen];
+  if (BZDB.getPermission(name) == StateDatabase::Locked) {
+    sprintf(message, "/set %s %f", name.c_str(), BZDB.eval(name));
+    ((BZAdminClient*)thisObject)->ui->outputMessage(message);
+  }
 }
 
 
