@@ -73,6 +73,7 @@ CursesUI::CursesUI(BZAdminClient& c) :
   comp.registerWord("/banlist");
   comp.registerWord("/countdown");
   comp.registerWord("/clientquery");
+  comp.registerWord("/date");
   comp.registerWord("/deregister");
   comp.registerWord("/flag ");
   comp.registerWord("reset");
@@ -119,8 +120,10 @@ CursesUI::CursesUI(BZAdminClient& c) :
   comp.registerWord("/setpass ");
   comp.registerWord("/shutdownserver");
   comp.registerWord("/superkill");
+  comp.registerWord("/time");
   comp.registerWord("/unban ");
   comp.registerWord("/veto");
+  comp.registerWord("/viewreports");
   comp.registerWord("/vote");
 }
 
