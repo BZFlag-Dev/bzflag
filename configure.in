@@ -434,4 +434,5 @@ AC_OUTPUT(Makefile
 	src/platform/MacOSX/English.lproj/MainMenu.nib/Makefile
 	src/zlib/Makefile
 	src/mediafile/Makefile
-	src/bzflag/Makefile)
+	src/bzflag/Makefile
+	src/bzadmin/Makefile)
