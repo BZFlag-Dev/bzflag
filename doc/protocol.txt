@@ -19,8 +19,8 @@ values would be preferred.
 
 * player ids are now in lockstep on server and all clients.
 
-* special player numbers. 0 = server, 255 = everyone, 254 = rogue team,
-250-253 = colored teams, 1-maxplayers = normal players. Note that maxplayers in
+* special player numbers. 0 = server, 255 = everyone, 254 = invalid 253 = rogue team,
+249-252 = colored teams, 1-maxplayers = normal players. Note that maxplayers in
 this context includes observers as well as proper players.
 
 * should msgtype just be a u8 ? the 2 char format is not very useful if the
@@ -210,9 +210,9 @@ MsgSuperKill, MsgReject, or MsgAccept.
 	... avatar
 
   <--   MsgAccept
-	u16 length = 1
-	u8	playerid
+	u16 length
 	u16 0x6163
+	u8	playerid
 
 	or
 
