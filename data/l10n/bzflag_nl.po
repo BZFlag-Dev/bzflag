@@ -510,7 +510,7 @@ msgstr "Blinddoek"
 msgid "Jamming"
 msgstr "Storing"
 
-msgid "Wide Angle
+msgid "Wide Angle"
 msgstr "Groothoek Lens"
 
 # Flag help

@@ -533,7 +533,7 @@ msgstr ""
 msgid "Jamming"
 msgstr ""
 
-msgid "Wide Angle
+msgid "Wide Angle"
 msgstr ""
 
 # Flag help

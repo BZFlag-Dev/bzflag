@@ -511,7 +511,7 @@ msgstr "Blindheit"
 msgid "Jamming"
 msgstr "Radarstörung"
 
-msgid "Wide Angle
+msgid "Wide Angle"
 msgstr "Fischauge"
 
 # Flag help

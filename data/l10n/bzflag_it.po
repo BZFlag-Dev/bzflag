@@ -509,7 +509,7 @@ msgstr "Cecita"
 msgid "Jamming"
 msgstr "Disturbi Radar"
 
-msgid "Wide Angle
+msgid "Wide Angle"
 msgstr "Grandangolo"
 
 # Flag help

@@ -509,7 +509,7 @@ msgstr "Colta direita somente"
 msgid "Jamming"
 msgstr "Que atola"
 
-msgid "Wide Angle
+msgid "Wide Angle"
 msgstr "Ângulo largo"
 
 # Flag help

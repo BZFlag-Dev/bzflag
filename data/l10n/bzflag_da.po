@@ -509,7 +509,7 @@ msgstr "Blindhed"
 #msgid "Jamming"
 #msgstr ""
 
-msgid "Wide Angle
+msgid "Wide Angle"
 msgstr "Vid vinkel"
 
 # Flag help
