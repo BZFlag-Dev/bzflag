@@ -124,6 +124,8 @@ static DefaultDBItem	defaultDBItems[] = {
   { "maxQuality",		"3",			false,	StateDatabase::ReadWrite,	NULL },
   { "qualityForNice",		"2",			false,	StateDatabase::ReadWrite,	NULL },
   { "qualityForTexture",	"2",			false,	StateDatabase::ReadWrite,	NULL },
+  { "qualityForDither",	  	"1",			false,	StateDatabase::ReadWrite,	NULL },
+  { "qualityForSmooth",		"1",			false,	StateDatabase::ReadWrite,	NULL },
   { "textureFilterMode",	"6",			false,	StateDatabase::ReadWrite,	NULL },
   { "altImageDir",		"alternate",		true,	StateDatabase::ReadWrite,	NULL },
   { "groundTexRepeat",		"0.1",                  true,	StateDatabase::ReadWrite,	NULL },
