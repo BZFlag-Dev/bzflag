@@ -113,7 +113,7 @@
 #endif
 
 static const float	FlagHelpDuration = 60.0f;
-static StartupInfo	startupInfo;
+StartupInfo	startupInfo;
 static MainMenu*	mainMenu;
 ServerLink*		serverLink = NULL;
 World*			world = NULL;

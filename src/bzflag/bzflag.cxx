@@ -89,7 +89,6 @@ static std::string	anonymousName("anonymous");
 static std::string	alternateConfig;
 static bool		noAudio = false;
 struct tm		userTime;
-static StartupInfo	startupInfo;
 bool			echoToConsole = false;
 bool			echoAnsi = false;
 int			debugLevel = 0;
