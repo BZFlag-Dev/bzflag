@@ -5120,6 +5120,7 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
 	int i;
 	unsigned short numClientFlags = len/2;
 
+	/* Unpack incoming message containing the list of flags our client supports */
 	for (i = 0; i < numClientFlags; i++) {
 		FlagDesc *fDesc;
 		buf = FlagDesc::unpack(buf, fDesc);
@@ -5127,6 +5128,7 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
 		  hasFlag[fDesc] = true;
 	}
 
+	/* Compare them to the flags this game might need, generating a list of missing flags */
 	for (it = FlagDesc::flagMap.begin(); it != FlagDesc::flagMap.end(); ++it) {
 		if (!hasFlag[it->second]) {
 		   if (clOptions.flagCount[it->second] > 0)
@@ -5136,7 +5138,8 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
 		}
 	}
 
-	bufStart = getDirectMessageBuffer();
+	/* Pack a message with the list of missing flags */
+	buf = bufStart = getDirectMessageBuffer();
 	for (m_it = missingFlags.begin(); m_it != missingFlags.end(); ++it)
 	  buf = (*m_it)->pack(buf);
 	directMessage(t, MsgNegotiateFlags, (char*)buf-(char*)bufStart, bufStart);
