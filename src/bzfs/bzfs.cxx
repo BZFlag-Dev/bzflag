@@ -2718,6 +2718,7 @@ static void acceptClient()
 
   if (!clOptions->acl.validate( clientAddr.sin_addr)) {
     close(fd);
+    return;
   }
 
   // send server version and playerid
@@ -2743,6 +2744,7 @@ static void acceptClient()
     DEBUG1("all slots occupied, rejecting accept() from %s:%d on %i\n",
 	   inet_ntoa(clientAddr.sin_addr), ntohs(clientAddr.sin_port), fd);
     close(fd);
+    return;
   }
 
   // store address information for player
@@ -2754,6 +2756,7 @@ static void acceptClient()
   if (playerIndex == maxPlayers) { // full?
     DEBUG2("acceptClient: close(%d)\n", fd);
     close(fd);
+    return;
   }
 
   // FIXME add new client server welcome packet here when client code is ready
