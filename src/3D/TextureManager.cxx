@@ -80,7 +80,10 @@ int TextureManager::getTextureID( const char* name, bool reportFail )
     file.filter = OpenGLTexture::LinearMipmapLinear;
     file.name = texName;
     ImageInfo info;
-    return addTexture(name,loadTexture(file,reportFail));
+    OpenGLTexture *image = loadTexture(file,reportFail);
+    if (!image)
+      return -1;
+    return addTexture(name,image);
   }  
   return -1;
 }
@@ -204,7 +207,6 @@ OpenGLTexture* TextureManager::loadTexture(FileTextureInit &init, bool reportFai
       args.push_back(init.name);
       printError("cannot load texture: {1}", &args);
     }
-    { int patlabor_make_sure_to_check_for_null_now; }
     return NULL;
   }
 
