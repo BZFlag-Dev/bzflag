@@ -184,6 +184,7 @@ public:
   
 
   static const std::string	BZDB_AGILITYADVEL;
+  static const std::string	BZDB_AGILITYADANGVEL;
   static const std::string	BZDB_AGILITYDODGECOUNT;
   static const std::string	BZDB_AGILITYTIMEWINDOW;
   static const std::string	BZDB_AGILITYVELDELTA;
