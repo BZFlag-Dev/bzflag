@@ -176,6 +176,74 @@ PostBuild_Cmds=copy ..\..\src\bzflag\SDL_debug\*.exe ..\..\*.exe	copy  ..\..\src
 # Begin Group "Source Files"
 
 # PROP Default_Filter "cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
+# Begin Group "MenuSources"
+
+# PROP Default_Filter ""
+# Begin Source File
+
+SOURCE=..\..\src\bzflag\FormatMenu.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\bzflag\GUIOptionsMenu.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\bzflag\HelpMenu.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\bzflag\HUDDialog.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\bzflag\HUDDialogStack.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\bzflag\JoinMenu.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\bzflag\KeyboardMapMenu.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\bzflag\MainMenu.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\bzflag\MenuDefaultKey.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\bzflag\OptionsMenu.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\bzflag\QuickKeysMenu.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\bzflag\QuitMenu.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\bzflag\SaveWorldMenu.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\bzflag\ServerItem.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\bzflag\ServerMenu.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\bzflag\ServerStartMenu.cxx
+# End Source File
+# End Group
 # Begin Source File
 
 SOURCE=..\..\src\bzflag\ActionBinding.cxx
@@ -312,6 +380,70 @@ SOURCE=..\..\src\bzflag\WorldPlayer.cxx
 # Begin Group "Header Files"
 
 # PROP Default_Filter "h;hpp;hxx;hm;inl"
+# Begin Group "Menu Headers"
+
+# PROP Default_Filter ""
+# Begin Source File
+
+SOURCE=..\..\src\bzflag\FormatMenu.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\bzflag\GUIOptionsMenu.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\bzflag\HelpMenu.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\bzflag\HUDDialog.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\bzflag\JoinMenu.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\bzflag\KeyboardMapMenu.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\bzflag\MainMenu.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\bzflag\MenuDefaultKey.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\bzflag\OptionsMenu.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\bzflag\QuickKeysMenu.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\bzflag\QuitMenu.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\bzflag\SaveWorldMenu.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\bzflag\ServerItem.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\bzflag\ServerMenu.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\bzflag\ServerStartMenu.h
+# End Source File
+# End Group
 # Begin Source File
 
 SOURCE=..\..\src\bzflag\ActionBinding.h
