@@ -76,6 +76,7 @@ noinst_HEADERS =		\
 	ViewFrustum.h		\
 	WallObstacle.h		\
 	WallSceneNode.h		\
+	WordFilter.h		\
 	ZSceneDatabase.h
 
 MAINTAINERCLEANFILES = \
