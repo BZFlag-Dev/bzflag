@@ -4793,7 +4793,7 @@ int main(int argc, char **argv)
     // kick idle players
     if (clOptions->idlekickthresh > 0) {
       for (int i=0;i<curMaxPlayers;i++) {
-        if (player[i].team != ObserverTeam) {
+        if (player[i].state > PlayerInLimbo && player[i].team != ObserverTeam) {
           int idletime = (int)(tm - player[i].lastupdate);
           if (player[i].paused && tm - player[i].pausedSince > idletime)
             idletime = (int)(tm - player[i].pausedSince);
