@@ -3034,13 +3034,14 @@ static void sendQueryPlayers(int playerIndex)
 
 static void playerAlive(int playerIndex)
 {
+  // ignore multiple MsgAlive; also observer should not send MsgAlive; diagnostic?
+  if (player[playerIndex].state != PlayerDead ||
+      player[playerIndex].team == ObserverTeam)
+    return;
+
   // player is coming alive.
   player[playerIndex].state = PlayerAlive;
   player[playerIndex].flag = -1;
-
-  // Observer should not send MsgAlive; diagnostic?
-  if (player[playerIndex].team == ObserverTeam)
-    return;
 
   // send MsgAlive
   float pos[3], fwd;
