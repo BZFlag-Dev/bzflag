@@ -752,6 +752,7 @@ void GroupDefinitionMgr::clear()
   world.clear();
   for (unsigned int i = 0; i < list.size(); i++) {
     list[i]->clear();
+    delete list[i];
   }
   list.clear();
   return;
@@ -763,6 +764,7 @@ void GroupDefinitionMgr::tighten()
   for (unsigned int i = 0; i < list.size(); i++) {
     list[i]->tighten();
   }
+  world.tighten();
   return;
 }
 
