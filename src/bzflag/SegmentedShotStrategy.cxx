@@ -56,10 +56,10 @@ SegmentedShotStrategy::SegmentedShotStrategy(ShotPath* _path, bool transparent) 
   TextureManager &tm = TextureManager::instance();
   std::string imageName = Team::getImagePrefix(team);
   if (transparent)
-	  imageName += BZDB.get("superPrefix");
+    imageName += BZDB.get("superPrefix");
   imageName += BZDB.get("boltTexture");
 
- int texture = tm.getTextureID(imageName.c_str());
+  int texture = tm.getTextureID(imageName.c_str());
   if (texture >= 0)
     boltSceneNode->setTexture(texture);
 }
@@ -160,7 +160,6 @@ float			SegmentedShotStrategy::checkHit(const BaseLocalPlayer* tank,
 
   float scaleFactor = 1.0f;
 
-
   if (tank->getFlag() == Flags::Obesity)   scaleFactor = BZDB.eval(StateDatabase::BZDB_OBESEFACTOR);
   else if (tank->getFlag() == Flags::Tiny) scaleFactor = BZDB.eval(StateDatabase::BZDB_TINYFACTOR);
   else if (tank->getFlag() == Flags::Thief) scaleFactor = BZDB.eval(StateDatabase::BZDB_THIEFTINYFACTOR);
@@ -205,8 +204,7 @@ float			SegmentedShotStrategy::checkHit(const BaseLocalPlayer* tank,
 
     // construct relative shot ray:  origin and velocity relative to
     // my tank as a function of time (t=0 is start of the interval).
-    Ray relativeRay(rayMinusRay(s.ray, prevTime - s.start,
-						tankLastMotion, 0.0f));
+    Ray relativeRay(rayMinusRay(s.ray, prevTime - s.start, tankLastMotion, 0.0f));
 
     // get hit time
     float t;
@@ -265,8 +263,8 @@ void			SegmentedShotStrategy::addShot(
     const float* c = Team::getRadarColor(tmpTeam);
     boltSceneNode->setColor(c[0], c[1], c[2]);
     TextureManager &tm = TextureManager::instance();
-	std::string imageName = Team::getImagePrefix(team);
-	imageName +="bolt";
+    std::string imageName = Team::getImagePrefix(team);
+    imageName += "bolt";
     int texture = tm.getTextureID(imageName.c_str());
     if (texture >= 0)
       boltSceneNode->setTexture(texture);
@@ -419,8 +417,8 @@ void			SegmentedShotStrategy::makeSegments(ObstacleEffect e)
 	    building->get3DNormal(o, normal);
 	    reflect(d, normal);
 	    reason = ShotPathSegment::Ricochet;
-	}
-	  break;
+	    }
+	    break;
 
 	  case Through:
 	    assert(0);
@@ -704,7 +702,7 @@ LaserStrategy::LaserStrategy(ShotPath* path) :
 
   TextureManager &tm = TextureManager::instance();
   std::string imageName = Team::getImagePrefix(tmpTeam);
-  imageName +="bolt";
+  imageName += "bolt";
   int texture = tm.getTextureID(imageName.c_str());
 
   for (int i = 0; i < numSegments; i++) {

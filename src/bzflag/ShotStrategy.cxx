@@ -119,7 +119,7 @@ const Obstacle* ShotStrategy::getFirstBuilding(const Ray& ray,
     std::vector<Teleporter>::const_iterator it = teleporters.begin();
     while (it != teleporters.end()) {
       const Teleporter& teleporter = *it;
-      if (!teleporter.isShootThrough()){
+      if (!teleporter.isShootThrough()) {
 	const float telet = teleporter.intersect(ray);
 	int face;
 	if (telet > min && telet < t && teleporter.isTeleported(ray, face) < 0.0f) {
@@ -137,7 +137,7 @@ const Obstacle* ShotStrategy::getFirstBuilding(const Ray& ray,
     std::vector<BoxBuilding>::const_iterator it = boxes.begin();
     while (it != boxes.end()) {
       const BoxBuilding& box = *it;
-      if (!box.isShootThrough()){
+      if (!box.isShootThrough()) {
 	const float boxt = box.intersect(ray);
 	if (boxt > min && boxt < t) {
 	  t = boxt;
@@ -154,7 +154,7 @@ const Obstacle* ShotStrategy::getFirstBuilding(const Ray& ray,
     std::vector<BaseBuilding>::const_iterator it = bases.begin();
     while (it != bases.end()) {
       const BaseBuilding& base = *it;
-      if (!base.isShootThrough()){
+      if (!base.isShootThrough()) {
 	const float baset = base.intersect(ray);
 	if (baset > min && baset < t) {
 	  t = baset;
@@ -171,7 +171,7 @@ const Obstacle* ShotStrategy::getFirstBuilding(const Ray& ray,
     std::vector<PyramidBuilding>::const_iterator it = pyramids.begin();
     while (it != pyramids.end()) {
       const PyramidBuilding& pyramid = *it;
-      if (!pyramid.isShootThrough()){
+      if (!pyramid.isShootThrough()) {
 	const float pyramidt = pyramid.intersect(ray);
 	if (pyramidt > min && pyramidt < t) {
 	  t = pyramidt;
@@ -225,11 +225,10 @@ bool ShotStrategy::getGround(const Ray& r, float min, float &t) const
     return false;
 
   float groundT = r.getOrigin()[2] / -r.getDirection()[2];
-  if ((groundT > min) && (groundT < t))
-    {
-      t = groundT;
-      return true;
-    }
+  if ((groundT > min) && (groundT < t)) {
+    t = groundT;
+    return true;
+  }
   return false;
 }
 

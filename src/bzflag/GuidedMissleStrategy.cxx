@@ -135,10 +135,10 @@ void GuidedMissileStrategy::update(float dt)
   if (isRemote) {
     if (lastTarget != NoPlayer)
       target = lookupPlayer(lastTarget);
-  }
-  else {
+  } else {
     LocalPlayer* myTank = LocalPlayer::getMyTank();
-    if (myTank) target = myTank->getTarget();
+    if (myTank)
+      target = myTank->getTarget();
 
     // see if the target changed
     if (target) {
@@ -146,8 +146,7 @@ void GuidedMissileStrategy::update(float dt)
 	needUpdate = true;
 	lastTarget = target->getId();
       }
-    }
-    else {
+    } else {
       if (lastTarget != NoPlayer) {
 	needUpdate = true;
 	lastTarget = NoPlayer;
@@ -203,7 +202,7 @@ void GuidedMissileStrategy::update(float dt)
   newDirection[2] = sinf(elevation);
   Ray ray = Ray(nextPos, newDirection);
 
-  // Changed: GM leave smoke trail, call add puff every 3 updates
+  // GM leave smoke trail, call add puff every 3 updates
   if ((++renderTimes % 3) == 0) addShotPuff(nextPos);
 
   // get next position
@@ -221,10 +220,8 @@ void GuidedMissileStrategy::update(float dt)
       segmentEndTime += t * (currentTime - prevTime);
       ray.getPoint(t / shotSpeed, nextPos);
       addShotExplosion(nextPos);
-    }
-
-    // see if we hit a building
-    else {
+    } else {
+      // see if we hit a building
       const float t = checkBuildings(ray);
       if (t >= 0.0f) {
 	segmentEndTime = prevTime;
@@ -265,9 +262,7 @@ float GuidedMissileStrategy::checkBuildings(const Ray& ray)
     teleporter->getPointWRT(*outTeleporter, face, outFace,
 			    nextPos, NULL, azimuth, nextPos, NULL, &azimuth);
     return t / shotSpeed;
-  }
-
-  else if (building) {
+  } else if (building) {
     // expire on next update
     setExpiring();
     float pos[3];
@@ -338,8 +333,7 @@ float GuidedMissileStrategy::checkHit(const BaseLocalPlayer* tank, float positio
 			   0.5f * BZDB.eval(StateDatabase::BZDB_TANKLENGTH),
 			   shotRadius,
 			   BZDBCache::tankHeight);
-    }
-    else {
+    } else {
       // find time when shot hits sphere around tank
       t = rayAtDistanceFromOrigin(relativeRay, 0.99f * radius);
     }
@@ -470,7 +464,6 @@ void GuidedMissileStrategy::radarRender() const
       glVertex2fv(orig);
       glEnd();
       glPointSize(1.0f);
-
     } else {
       // draw the tiny missle
       glBegin(GL_POINTS);

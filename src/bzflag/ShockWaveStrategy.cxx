@@ -80,9 +80,9 @@ float ShockWaveStrategy::checkHit(const BaseLocalPlayer* tank, float position[3]
     position[1] = playerPos[1];
     position[2] = playerPos[2];
     return 0.5f;
-  }
-  else
+  } else {
     return Infinity;
+  }
 }
 
 bool ShockWaveStrategy::isStoppedByHit() const

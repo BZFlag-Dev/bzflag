@@ -120,9 +120,10 @@ void			ShotPath::updateShot(float dt)
   currentTime += dt;
 
   // update shot
-  if (!expired)
+  if (!expired) {
     if (expiring) setExpired();
     else getStrategy()->update(dt);
+  }
 }
 
 void			ShotPath::setReloadTime(float _reloadTime)
