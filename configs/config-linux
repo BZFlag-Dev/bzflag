@@ -12,35 +12,43 @@
 #
 # configuration for generic linux
 #
-CONFIG  = linux
+CONFIG	= linux
+
+#
+# use XF86 vidmode extension (comment out to disable)
+#
+XF86VIDMODE_DEF = -DXF86VIDMODE_EXT
+XF86VIDMODE_LIB = -lXxf86vm
 
 #
 # tools
 #
-AR      = /usr/bin/ar cru
+AR	= /usr/bin/ar cru
 CC	= /usr/bin/gcc
 CXX	= /usr/bin/g++
 CD	= cd
-CP      = /bin/cp
+CP	= /bin/cp
 LD	= /usr/bin/ld
 MKDIR	= /bin/mkdir
-NROFF   = /usr/bin/nroff
-RM      = /bin/rm -f
-RMR     = $(RM) -r
+NROFF	= /usr/bin/nroff
+RM	= /bin/rm -f
+RMR	= $(RM) -r
 SHELL	= /bin/sh
 ECHO	= echo
 
 #
 # compiler definitions
 #
-PCDEFS   = -D_BSD_SOURCE -D_POSIX_SOURCE -DHALF_RATE_AUDIO -DNO_AUDIO_THREAD
-PCXXDEFS = -D_BSD_SOURCE -D_POSIX_SOURCE -DHALF_RATE_AUDIO -DNO_AUDIO_THREAD
+PCDEFS   = -D_BSD_SOURCE -D_POSIX_SOURCE -DHALF_RATE_AUDIO -DNO_AUDIO_THREAD \
+	   $(XF86VIDMODE_DEF)
+PCXXDEFS = -D_BSD_SOURCE -D_POSIX_SOURCE -DHALF_RATE_AUDIO -DNO_AUDIO_THREAD \
+	   $(XF86VIDMODE_DEF)
 
 #
 # compiler options
 #
-PCOPTS   = -fPIC -ansi $(ACOPTS)
-PCXXOPTS = -fPIC -fno-exceptions -fno-rtti $(ACXXOPTS)
+PCOPTS   = -fPIC -Wall -W -ansi $(ACOPTS)
+PCXXOPTS = -fPIC -Wall -W -fno-exceptions -fno-rtti $(ACXXOPTS)
 COPT     = -DNDEBUG -O5
 CXXOPT   = -DNDEBUG -O5 -ffast-math -fomit-frame-pointer -fnonnull-objects \
 		-fexpensive-optimizations -funroll-loops
@@ -72,11 +80,12 @@ AUDIO_LIBS =				\
 	$(NULL)
 
 DISPLAY_LIBS =				\
+	$(XF86VIDMODE_LIB)		\
 	$(NULL)
 
 GL_LIBS =				\
-	-lMesaGLU			\
-	-lMesaGL			\
+	-lGLU				\
+	-lGL				\
 	$(NULL)
 
 IMAGE_LIBS =				\

@@ -17,14 +17,10 @@ include $(DEPTH)/configs/config-linux
 #
 # configuration for linux i386
 #
-CONFIG  = linux-i386
+CONFIG	= linux-i386
 
 #
 # platform adjustments
 #
 ACOPTS   = -m486
 ACXXOPTS = -m486
-DISPLAY_LIBS =				\
-	-lXxf86vm			\
-	$(NULL)
-

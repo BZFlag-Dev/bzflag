@@ -168,6 +168,12 @@ $(COMMONPREF)clobber: clean $(_FORCE)
 	$(CXXF) -c $<
 
 #
+# default to optimized build
+#
+COPTIMIZER    = $(COPT)
+CXXOPTIMIZER  = $(CXXOPT)
+
+#
 # slurp up configuration
 #
 include $(DEPTH)/config

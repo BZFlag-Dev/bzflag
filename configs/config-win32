@@ -12,30 +12,30 @@
 #
 # configuration for generic platform
 #
-CONFIG  = config-win32
+CONFIG	= config-win32
 
 #
 # tools
 #
-AR      = link.exe -lib
+AR	= link.exe -lib
 CC	= cl.exe
 CXX	= cl.exe
 CD	= cd
-CP      = copy.exe
+CP	= copy.exe
 ECHO	= echo
 LD	= link.exe
 MKDIR	= mkdir.exe
-NROFF   = 
+NROFF	= 
 RC	= rc.exe
-RM      = del.exe /F /Q
-RMR     = del.exe /F /Q /S
+RM	= del.exe /F /Q
+RMR	= del.exe /F /Q /S
 SHELL	= 
 
 #
 # compiler definitions
 #
 PCDEFS   = /D "WIN32" /D "_MBCS" # C compiler definitions
-PCXXDEFS = /D "WIN32" /D "_MBCS" # C++ compiler definitions
+PCXXDEFS = /D "WIN32" /D "_MBCS" # C++ compiler definition
 # /nologo /D "_WINDOWS" /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /c 
 # /nologo /D "_WINDOWS" /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /c 
 

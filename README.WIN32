@@ -18,6 +18,8 @@ that can read Visual C++ projects and workspaces.  Then:
   * build
   * select `bzfs Release' as the active configuration
   * build
+  * select `bzfls Release' as the active configuration
+  * build
 
 Packaging bzflag on win32 isn't yet as simple as typing `make'
 or building a workspace.  To build the installer:

@@ -12,21 +12,21 @@
 #
 # configuration for irix mips3
 #
-CONFIG  = irix-mips3
+CONFIG	= irix-mips3
 
 #
 # tools
 #
-AR      = $(TOOLROOT)/usr/bin/ar cru
+AR	= $(TOOLROOT)/usr/bin/ar cru
 CC	= $(TOOLROOT)/usr/bin/cc
 CXX	= $(TOOLROOT)/usr/bin/CC
 CD	= cd
-CP      = /usr/bin/cp
+CP	= /usr/bin/cp
 LD	= $(TOOLROOT)/usr/bin/ld
 MKDIR	= /usr/bin/mkdir
-NROFF   = $(TOOLROOT)/usr/bin/nroff
-RM      = /usr/bin/rm -f
-RMR     = $(RM) -r
+NROFF	= $(TOOLROOT)/usr/bin/nroff
+RM	= /usr/bin/rm -f
+RMR	= $(RM) -r
 SHELL	= /bin/sh
 ECHO	= echo
 

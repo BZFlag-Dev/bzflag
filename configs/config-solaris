@@ -12,22 +12,22 @@
 #
 # configuration for generic platform
 #
-CONFIG  = solaris
+CONFIG	= solaris
 
 #
 # tools
 #
-AR      = ar cru
+AR	= ar cru
 CC	= gcc
 CXX	= g++
 CD	= cd
-CP      = cp
+CP	= cp
 ECHO	= echo
 LD	= ld
 MKDIR	= mkdir
-NROFF   = nroff
-RM      = rm -f
-RMR     = $(RM) -r
+NROFF	= nroff
+RM	= rm -f
+RMR	= $(RM) -r
 SHELL	= /bin/sh
 
 #

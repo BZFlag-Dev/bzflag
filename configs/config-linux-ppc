@@ -17,7 +17,7 @@ include $(DEPTH)/configs/config-linux
 #
 # configuration for linux PPC
 #
-CONFIG  = linux-ppc
+CONFIG	= linux-ppc
 
 #
 # platform adjustments

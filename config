@@ -18,7 +18,14 @@
 # increase build number for every potentially released build.
 # must change this in MSDev project, too.
 #
-VERSION = 10703002
+VERSION = 10704005
+
+#
+# version id string and build number.  these should be consistent with
+# VERSION.
+#
+VERSIONID = 1.7d
+VERSIONBUILD = 5
 
 #
 # uncomment one of these to change the release type.
@@ -41,12 +48,3 @@ VERSION = 10703002
 # uncomment to enable robot tanks
 #
 ROBOTS = -DROBOT
-
-#
-# make optimized (first pair) or debug build (second pair)
-#
-COPTIMIZER    = $(COPT)
-CXXOPTIMIZER  = $(CXXOPT)
-#COPTIMIZER   = $(CDEBUG)
-#CXXOPTIMIZER = $(CXXDEBUG)
-

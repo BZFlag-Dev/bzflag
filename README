@@ -1,5 +1,5 @@
 
-                                    bzflag 1.7c
+                                    bzflag 1.7d
 
                         Copyright 1993-1999 Chris Schoeneman
 
@@ -10,12 +10,15 @@ Chris Schoeneman
 475 Hawthorne Av
 Palo Alto, CA 94301
 crs23@bigfoot.com
+bzflag@bigfoot.com
 
 
 Introduction
 ============
 
-FIXME
+This is the readme file for the bzflag source tree.  It includes
+a manifest, simple build instructions, and other information for
+bzflag development.
 
 
 bzflag Home Page
@@ -32,12 +35,15 @@ site.  This web site includes pages for downloading the compiled
 and source code versions.  Compiled versions are distributed
 as installable packages.  Source code is archived in various
 formats.  After unpacking you should have the following files
-in the new bzflag1.7c directory:
+in the new bzflag directory:
 
   README	- this file
   README.*	- platform specific details
+  BUGS		- a list of known bugs
   LICENSE	- the bzflag license
   PORTING	- a guide for porting bzflag
+  RELNOTES	- release notes for this and prior versions
+  TODO		- (incomplete) list of things to do
   Make-common	- definitions and rules for all make files
   Make-sys	- Makefile that does the real work at the top level
   Makefile	- top level Makefile
@@ -48,9 +54,10 @@ in the new bzflag1.7c directory:
   misc/		- miscellany
   package/	- stuff to build installable packages
   src/		- bzflag, bzfs, etc. source code
-    bzflag/	  - bzflag app source code
-    bzfrelay/	  - bzfrelay source code
-    bzfs/	  - bzfs app source code
+    bzflag/	  - bzflag app source code (game client)
+    bzfls/	  - bzfls app source code (list of servers server)
+    bzfrelay/	  - bzfrelay source code (firewall relay for servers)
+    bzfs/	  - bzfs app source code (game server)
     common/	  - general purpose classes
     geometry/	  - geometry rendering classes
     net/	  - networking classes and functions
@@ -70,12 +77,19 @@ steps:
   % make <platform>
   % make
 
+The first make configures the build for the named platform.
+The second make actually does the build.  Doing make without
+configuring for a platform lists the available platforms.
+You can also append `-debug' to a platform name to configure
+a debug build.
+
 Some platforms may be different.  See the README file
 appropriate to your system for more information:
 
   Platform			README file
   --------			-----------
   UNIX, Linux			README.UNIX
+  Solaris			README.SOLARIS
   Windows 95/98/NT		README.WIN32
 
 
@@ -117,27 +131,45 @@ tree back to its original state.
 
 To build bzflag for an unsupported platform, see PORTING.
 
-The ./config file has a number of build options.  Of particular
-interest are the *OPTIMIZER macros, which let you switch
-between optimized and debug builds.
+The ./config file has a number of build options that you
+may find interesting.
 
 
 Mailing Lists
 =============
 
-FIXME -- user and developer mailing lists
+There are two bzflag mailing lists, a user list and a
+developer's list.  The former is for general bzflag
+discussion and annoucements.  The latter is for coding and
+development discussion only.
+
+To join the user list, send mail to
+
+  bzflag-list-request@groundhog.pair.com
+
+with `subscribe' in the *subject*.  The body of the message can
+be empty;  it will be ignored.
+
+Joining the developer's list is the same, except send the mail
+to:
+
+  bzflag-dev-list-request@groundhog.pair.com
 
 
 Contributions
 =============
 
-FIXME
+Send mail to bzflag@bigfoot.com to discuss contributions to
+the official bzflag source code.  Small changes can be
+included in the mail itself.
 
 
 Bug Reports
 ===========
 
-FIXME
+Send bug reports to bzflag@bigfoot.com.  Please include which
+version of bzflag you're using (including patch numbers) and
+what platform you're running on.
 
 
 Known Bugs
@@ -146,19 +178,36 @@ Known Bugs
 See BUGS.
 
 
-Future Plans
-============
-
-See FUTURE.
-
-
 Contributors
 ============
 
-FIXME
+Bzflag was written mainly by Chris Schoeneman.  Several others
+deserve mention for their contributions:
+
+  Bjorn Augustsson
+  Tamar Cohen
+  Phillip Ezolt
+  David Hoeferlin
+  Tom Hubina
+  Dan Kartch
+  Jed Lengyel
+  Jeff Myers
+  Tim Olson
+  Brian Smits
+  Greg Spencer
+  Andrew White
+  Nafees Bin Zafar
+
+Special thanks go to:
+
+  Kevin Novins
+  Rick Pasetto
+  Adam Rosen
+  Erin Shaw
+  Ben Trumbore
+  Don Greenberg
 
 
-FIMXE -- move stuff below elsewhere
 Source Tree Organization
 ========================
 

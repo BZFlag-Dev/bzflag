@@ -17,6 +17,14 @@ DEPTH = ..
 
 include $(DEPTH)/configs/config-$(PLATFORM)
 
+# copy config file to config-sys
 default:
+	@$(ECHO) > $(DEPTH)/config-sys
 	@$(CP) config-$(PLATFORM) $(DEPTH)/config-sys
 
+# copy config file to config-sys and append macros to do debug build
+debug:
+	@$(ECHO) > $(DEPTH)/config-sys
+	@$(CP) config-$(PLATFORM) $(DEPTH)/config-sys
+	@$(ECHO) "COPTIMIZER   = $(CDEBUG)" >> $(DEPTH)/config-sys
+	@$(ECHO) "CXXOPTIMIZER   = $(CXXDEBUG)" >> $(DEPTH)/config-sys
