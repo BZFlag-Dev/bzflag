@@ -81,6 +81,10 @@ public:
     static void    passTCPMutex();
     static void    freeTCPMutex();
 
+    // For hostban checking, to avoid check and check again
+    static void    setRecheckAll(bool on);
+    bool           mustCheckHostBan();
+
     // players
     PlayerInfo	player;
     // Net Handler
@@ -106,6 +110,9 @@ public:
     static pthread_mutex_t mutex;
     int	       refCount;
 #endif
+    bool              checkHostnameBan;
+    // In case you want recheck all condition on all players
+    static bool       checkAllPlayer;
   };
   class Flag {
   };
@@ -148,6 +155,21 @@ inline void GameKeeper::Player::freeTCPMutex()
   if (result)
     std::cerr << "Could not unlock mutex" << std::endl;
 #endif
+}
+
+// For hostban checking, to avoid check and check again
+inline void GameKeeper::Player::setRecheckAll(bool on)
+{
+  checkAllPlayer = on;
+}
+
+inline bool GameKeeper::Player::mustCheckHostBan()
+{
+  if (checkHostnameBan) {
+    checkHostnameBan = false;
+    return true;
+  }
+  return checkAllPlayer;
 }
 
 #endif

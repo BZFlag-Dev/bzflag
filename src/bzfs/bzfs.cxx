@@ -1783,29 +1783,6 @@ static void addPlayer(int playerIndex)
       return;
     }
   
-    // Checking hostname resolution and ban player if has to
-    const char *hostname = playerData->netHandler->getHostname();
-  
-    HostBanInfo hostInfo("*");
-    if (hostname && !clOptions->acl.hostValidate(hostname,&hostInfo) &&
-    !playerIsAntiBanned) {
-      std::string reason = "bannedhost for: ";
-      if (hostInfo.reason.size())
-        reason += hostInfo.reason;
-      else
-        reason += "General Ban";
-
-      if (hostInfo.bannedBy.size()) {
-        reason += " by ";
-        reason += hostInfo.bannedBy;
-      }
-
-      if (hostInfo.fromMaster)
-        reason += " from the master server";
-      rejectPlayer(playerIndex,RejectHostBanned, reason.c_str());
-      return;
-    }
-
   // make sure the callsign is not obscene/filtered
   if (clOptions->filterCallsigns) {
     DEBUG2("checking callsign: %s\n",playerData->player.getCallSign());
@@ -3975,6 +3952,34 @@ static void doStuffOnPlayer(GameKeeper::Player &playerData)
       return;
     }
   }
+
+  // Check host bans
+#ifdef HAVE_ADNS_H
+  const char *hostname = playerData.netHandler->getHostname();
+
+  if (hostname && !playerData.accessInfo.hasPerm(PlayerAccessInfo::antiban)
+      && playerData.mustCheckHostBan()) {
+    HostBanInfo hostInfo("*");
+    if (!clOptions->acl.hostValidate(hostname, &hostInfo)) {
+      std::string reason = "bannedhost for: ";
+      if (hostInfo.reason.size())
+        reason += hostInfo.reason;
+      else
+        reason += "General Ban";
+
+      if (hostInfo.bannedBy.size()) {
+        reason += " by ";
+        reason += hostInfo.bannedBy;
+      }
+
+      if (hostInfo.fromMaster)
+        reason += " from the master server";
+
+      removePlayer(p, reason.c_str());
+      return;
+    }
+  }
+#endif
   
   // update notResponding
   if (playerData.player.hasStartedToNotRespond()) {
@@ -4586,6 +4591,7 @@ int main(int argc, char **argv)
 	continue;
       doStuffOnPlayer(*playerData);
     }
+    GameKeeper::Player::setRecheckAll(false);
 
     // manage voting poll for collective kicks/bans/sets
     if ((clOptions->voteTime > 0) && (votingarbiter != NULL)) {

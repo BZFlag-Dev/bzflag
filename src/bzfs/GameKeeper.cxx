@@ -21,6 +21,7 @@
 extern PlayerState      lastState[PlayerSlot];
 
 GameKeeper::Player *GameKeeper::Player::playerList[PlayerSlot] = {NULL};
+bool                GameKeeper::Player::checkAllPlayer         = false;
 
 #if defined(USE_THREADS)
 pthread_mutex_t GameKeeper::Player::mutex = PTHREAD_MUTEX_INITIALIZER;
@@ -37,7 +38,8 @@ GameKeeper::Player::Player(int _playerIndex,
 			   tcpCallback _clientCallback):
   player(_playerIndex), lagInfo(&player),
   lastState(&::lastState[_playerIndex]),
-  playerIndex(_playerIndex), closed(false), clientCallback(_clientCallback)
+  playerIndex(_playerIndex), closed(false), clientCallback(_clientCallback),
+  checkHostnameBan(false)
 {
   playerList[playerIndex] = this;
 
@@ -212,6 +214,7 @@ void GameKeeper::Player::signingOn(bool ctf)
   player.resetPlayer(ctf);
   player.signingOn();
   lagInfo.reset();
+  checkHostnameBan = true;
 }
 
 int GameKeeper::Player::getPlayerIDByName(const std::string &name)
