@@ -928,10 +928,11 @@ GuidedMissileStrategy::GuidedMissileStrategy(ShotPath* _path) :
   elevation = limitAngle(atan2f(dir[2], hypotf(dir[1], dir[0])));
 
   // mark early segments for special treatment
-  earlySegment = 2;
+  
 
   // initialize segments
-  currentTime = getPath().getStartTime();
+  initTime = getPath().getStartTime();
+  currentTime = initTime;
   Ray ray = Ray(f.shot.pos, dir);
   ShotPathSegment segment(currentTime, currentTime, ray);
   segments.push_back(segment);
@@ -985,9 +986,6 @@ void			GuidedMissileStrategy::update(float dt)
   // update time
   prevTime = currentTime;
   currentTime += dt;
-
-  // countdown early segments
-  if (earlySegment) earlySegment--;
 
   // if shot life ran out then send notification and expire shot.
   // only local shots are expired.
@@ -1144,7 +1142,7 @@ float			GuidedMissileStrategy::checkHit(const BaseLocalPlayer* tank,
   if (getPath().isExpired()) return minTime;
 
   // can't shoot myself for first few segments (kludge!)
-  if (earlySegment && tank->getId() == getPath().getPlayer())
+  if (((TimeKeeper::getCurrent() - initTime) < 0.5) && (tank->getId() == getPath().getPlayer()))
     return minTime;
 
   // get tank radius
