@@ -17,18 +17,24 @@
 #ifndef BZF_COMMON_H
 #define	BZF_COMMON_H
 
-#include <config.h>
+#if (_MSC_VER)
+// turn off bogus `this used in base member initialization list'
+#  pragma warning(disable: 4786)
+#  pragma warning(disable: 4503)
+#  pragma warning(disable: 4355)
+#endif // _MSC_VER
 
 #include <string>
 #include <sstream>
 #include <vector>
 #include <stdarg.h>
 #include <stdio.h>
-#include "bzfio.h"
 
 #ifdef _WIN32
 #  include "win32.h"
 #endif
+#include <config.h>
+#include "bzfio.h"
 
 extern int debugLevel;
 // Like verbose debug messages?
