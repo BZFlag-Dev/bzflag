@@ -1281,8 +1281,12 @@ bool WorldFileObstacle::read(const char *cmd, istream& input)
 	else if (strcasecmp(cmd, "rotation") == 0) {
     input >> rotation;
     rotation = rotation * M_PI / 180.0f;
-  } else if (strcasecmp(cmd, "size") == 0)
+  } else if (strcasecmp(cmd, "size") == 0){
     input >> size[0] >> size[1] >> size[2];
+	size[0] = fabs(size[0]);	// make sure they are postive, no more tricks
+	size[1] = fabs(size[1]);
+	size[2] = fabs(size[2]);
+  }
     else if (strcasecmp(cmd, "drivethrough") == 0)
     driveThrough = true;
     else if (strcasecmp(cmd, "shootthrough") == 0)
