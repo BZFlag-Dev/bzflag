@@ -93,6 +93,8 @@ void RadarRenderer::drawTank(float x, float y, float z)
   float tankRadius = BZDBCache::tankRadius;
   float boxHeight = BZDB.eval(StateDatabase::BZDB_BOXHEIGHT);
   GLfloat s = tankRadius > 1.5f + 2.0f * ps ? tankRadius : 1.5f + 2.0f * ps;
+  if (z < 0.0f)
+    s = 0.5f;
   glRectf(x - s, y - s, x + s, y + s);
 
   // Changes with height.
