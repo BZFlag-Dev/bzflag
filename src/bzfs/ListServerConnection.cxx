@@ -21,7 +21,7 @@
 #include "bzfio.h"
 #include "version.h"
 #include "TextUtils.h"
-#include "protocol.h"
+#include "Protocol.h"
 
 extern Address serverAddress;
 extern PingPacket getTeamCounts();
