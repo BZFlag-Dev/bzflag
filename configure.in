@@ -2,7 +2,7 @@
 
 AC_INIT(src/bzflag/bzflag.cxx)
 
-# Version numbers
+# Version numbers 
 MAJOR_VERSION=1
 MINOR_VERSION=9
 REV=0
@@ -237,8 +237,6 @@ if test x$enable_bzadmin = xyes; then
       AC_MSG_WARN([could not find a curses library, will build bzadmin \
                   without curses])
    fi
-   # ugly hack
-   (cd src/bzadmin; rm ServerLink.cxx; $LN_S ../bzflag/ServerLink.cxx .)
 fi
 AM_CONDITIONAL(HAVE_CURSES, test x$CURSES_LIB != x)
 AC_SUBST(CURSES_LIB)

@@ -30,6 +30,10 @@ bzadmin_SOURCES = \
 	UIMap.cxx \
 	bzadmin.cxx
 
+# ugly hack
+all-local:
+	cd @top_srcdir@/src/bzadmin; rm ServerLink.cxx; $(LN_S) ../bzflag/ServerLink.cxx .
+
 endif
 
 LDADD = ../net/libNet.a ../common/libCommon.a @CURSES_LIB@
