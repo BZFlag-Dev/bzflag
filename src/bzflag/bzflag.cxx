@@ -169,7 +169,7 @@ static DefaultDBItem	defaultDBItems[] = {
   { "jumpTyping",		"1",			true,	StateDatabase::ReadWrite,	NULL },
   { "maxCacheMB",		"32",			true,	StateDatabase::ReadWrite,	NULL },
   { "doDownloads",		"1",			true,	StateDatabase::ReadWrite,	NULL },
-  { "updateDownloads",		"1",			true,	StateDatabase::ReadWrite,	NULL },
+  { "updateDownloads",		"0",			true,	StateDatabase::ReadWrite,	NULL },
 
   // default texture names
   { "stdGroundTexture",		"std_ground",		true,	StateDatabase::ReadWrite,	NULL },

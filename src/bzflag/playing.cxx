@@ -1543,12 +1543,14 @@ static void loadCachedWorld()
     delete worldBuilder;
   worldBuilder = NULL;
 
-  // do the downloads
+  HUDDialogStack::get()->setFailedMessage("Downloading files...");
+  drawFrame(0.0f);
   Downloads::doDownloads();
 
   HUDDialogStack::get()->setFailedMessage("Entering game...");
   drawFrame(0.0f);
   joinInternetGame2();
+
   // it worked!  pop all the menus.
   HUDDialogStack* stack = HUDDialogStack::get();
   while (stack->isActive())
