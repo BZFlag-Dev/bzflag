@@ -1,10 +1,9 @@
 noinst_LIBRARIES = libCommon.a
 
 libCommon_a_SOURCES  =			\
+	BZDBCache.cxx			\
 	Bundle.cxx			\
 	BundleMgr.cxx			\
-	BZDBCache.cxx			\
-	bz_Locale.cxx			\
 	CommandManager.cxx		\
 	ConfigFileManager.cxx		\
 	Country.cxx			\
@@ -12,19 +11,25 @@ libCommon_a_SOURCES  =			\
 	FileManager.cxx			\
 	Flag.cxx			\
 	KeyManager.cxx			\
+	Language.cxx			\
+	PlayerState.cxx			\
 	ShotUpdate.cxx			\
+	StateDatabase.cxx		\
 	Team.cxx			\
 	TimeBomb.cxx			\
 	TimeKeeper.cxx			\
-	Language.cxx			\
-	PlayerState.cxx			\
-	StateDatabase.cxx		\
-	WordFilter.cxx			\
 	VotingBooth.cxx			\
-	bzsignal.c			\
+	WordFilter.cxx			\
+	bz_Locale.cxx			\
 	bzfio.cxx			\
+	bzsignal.c			\
 	global.cxx			\
 	md5.cxx
+
+if BUILD_REGEX
+libCommon_a_LIBADD = \
+	../regex/libregex.a
+endif
 
 MAINTAINERCLEANFILES = \
 	Makefile.in
