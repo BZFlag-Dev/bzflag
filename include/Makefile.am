@@ -38,6 +38,7 @@ noinst_HEADERS =		\
 	GLCollect.h		\
 	Intersect.h		\
 	KeyManager.h		\
+	LagInfo.h		\
 	Language.h		\
 	LaserSceneNode.h	\
 	MathUtils.h		\
