@@ -66,6 +66,7 @@ EXTRA_DIST =			\
 	rabbit_laser.png	\
 	rabbit_super_bolt.png	\
 	rabbit_tank.png		\
+	radar.png		\
 	raindrop.png		\
 	red_basetop.png		\
 	red_basewall.png	\
