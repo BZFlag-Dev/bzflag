@@ -74,12 +74,12 @@ bool			ComposeDefaultKey::keyPress(const BzfKeyEvent& key)
 {
   bool sendIt;
   LocalPlayer *myTank = LocalPlayer::getMyTank();
-  if (KEYMGR.get(key, true) == "jump") {
+  if (myTank && KEYMGR.get(key, true) == "jump") {
     // jump while typing
     myTank->setJump();
   }
 
-  if (myTank->getInputMethod() != LocalPlayer::Keyboard) {
+  if (!myTank || myTank->getInputMethod() != LocalPlayer::Keyboard) {
     if ((key.button == BzfKeyEvent::Up) ||
 	(key.button == BzfKeyEvent::Down))
       return true;
@@ -163,7 +163,7 @@ bool			ComposeDefaultKey::keyPress(const BzfKeyEvent& key)
 	  }
 	}
 #endif
-      } else {
+      } else if (serverLink) {
 	int i, mhLen = messageHistory.size();
 	for (i = 0; i < mhLen; i++) {
 	  if (messageHistory[i] == message) {
@@ -197,7 +197,7 @@ bool			ComposeDefaultKey::keyPress(const BzfKeyEvent& key)
 bool			ComposeDefaultKey::keyRelease(const BzfKeyEvent& key)
 {
   LocalPlayer *myTank = LocalPlayer::getMyTank();
-  if (myTank->getInputMethod() != LocalPlayer::Keyboard) {
+  if (!myTank || myTank->getInputMethod() != LocalPlayer::Keyboard) {
     if (key.button == BzfKeyEvent::Up) {
       if (messageHistoryIndex < messageHistory.size()) {
 	hud->setComposeString(messageHistory[messageHistoryIndex]);
@@ -216,8 +216,10 @@ bool			ComposeDefaultKey::keyRelease(const BzfKeyEvent& key)
 	hud->setComposeString(std::string());
       return true;
     }
-    else if ((key.shift == BzfKeyEvent::ShiftKey || (hud->getComposeString().length() == 0)) &&
-	     (key.button == BzfKeyEvent::Left || key.button == BzfKeyEvent::Right)) {
+    else if (myTank && ((key.shift == BzfKeyEvent::ShiftKey
+			 || (hud->getComposeString().length() == 0)) &&
+			(key.button == BzfKeyEvent::Left
+			 || key.button == BzfKeyEvent::Right))) {
       // exclude robot from private message recipient.
       // No point sending messages to robot (now)
       selectNextRecipient(key.button != BzfKeyEvent::Left, false);
