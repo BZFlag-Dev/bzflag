@@ -498,29 +498,28 @@ bool navigate( float &rotation, float &speed)
   }
   if (myTank->getFlag()->flagTeam != NoTeam) {
     World *world = World::getWorld();
-  	const float *temp = world->getBase(myTank->getTeam());
-  	if (temp == NULL) {
-			serverLink->sendDropFlag(myTank->getPosition());
-			handleFlagDropped(myTank);
-		}
-  	if ((((int) *(world->getBase(myTank->getTeam()))+2 >= (int) *(myTank->getPosition())) ||
- 				 (temp[0] == pos[0] && temp[1] == pos[1])) &&
-  			myTank->getFlag()->flagTeam == myTank->getTeam()) {
-			serverLink->sendDropFlag(myTank->getPosition());
-			handleFlagDropped(myTank);
-		}
-		else {
-			float baseAzimuth = TargetingUtils::getTargetAzimuth( pos, temp );
-			rotation = TargetingUtils::getTargetRotation( myAzimuth, baseAzimuth );
-			speed = M_PI/2.0f - fabs(rotation);
-		}
-	}
-	else
-  	speed = 1.0f;
-  float jumpVel = BZDB.eval(StateDatabase::BZDB_JUMPVELOCITY);
-  float maxJump = (jumpVel * jumpVel) / (2 * -BZDB.eval(StateDatabase::BZDB_GRAVITY));
-  if (myTank->getLocation() == LocalPlayer::InAir && myTank->getFlag() == Flags::Wings)
-      myTank->jump();
+    const float *temp = world->getBase(myTank->getTeam());
+    if (temp == NULL) {
+      serverLink->sendDropFlag(myTank->getPosition());
+      handleFlagDropped(myTank);
+    }
+    if ((((int) *(world->getBase(myTank->getTeam())) + 2
+	  >= (int) *(myTank->getPosition()))
+	 || (temp[0] == pos[0] && temp[1] == pos[1])) &&
+	myTank->getFlag()->flagTeam == myTank->getTeam()) {
+      serverLink->sendDropFlag(myTank->getPosition());
+      handleFlagDropped(myTank);
+    } else {
+      float baseAzimuth = TargetingUtils::getTargetAzimuth(pos, temp);
+      rotation = TargetingUtils::getTargetRotation(myAzimuth, baseAzimuth);
+      speed = M_PI/2.0f - fabs(rotation);
+    }
+  } else {
+    speed = 1.0f;
+  }
+  if (myTank->getLocation() == LocalPlayer::InAir
+      && myTank->getFlag() == Flags::Wings)
+    myTank->jump();
   navRot = rotation;
   navSpeed = speed;
   lastNavChange = TimeKeeper::getCurrent();
