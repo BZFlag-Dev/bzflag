@@ -125,7 +125,6 @@ bool PlayerAccessInfo::isAllowedToEnter() {
 
 void PlayerAccessInfo::storeInfo(const char* pwd) {
   PlayerAccessInfo info;
-  info.groups.push_back("DEFAULT");
   info.groups.push_back("REGISTERED");
   std::string pass = pwd;
   setUserPassword(regName.c_str(), pass.c_str());
