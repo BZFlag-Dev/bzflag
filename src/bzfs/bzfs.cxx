@@ -346,7 +346,7 @@ static void pwrite(int playerIndex, const void *b, int l)
       if (newCapacity >= 20 * 1024) {
 	DEBUG2("Player %s [%d] drop, unresponsive with %d bytes queued\n",
 	    p.callSign, playerIndex, p.outmsgSize + l);
-	removePlayer(playerIndex, NULL, false);
+	removePlayer(playerIndex, "Unable to communicate with player -- unresponsive connection", false);
 	return;
       }
 
