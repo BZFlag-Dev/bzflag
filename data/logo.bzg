@@ -1,0 +1,39 @@
+# bzflag
+# Copyright (c) 1993 - 2002 Tim Riker
+#
+# This package is free software;  you can redistribute it and/or
+# modify it under the terms of the license found in the file
+# named LICENSE that should have accompanied this file.
+#
+# THIS PACKAGE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
+# IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
+# WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+
+<geometry>
+	<color>
+		1 1 1 1
+	</color>
+	<texcoord>
+		0 0
+		1 0
+		1 1
+		0 1
+	</texcoord>
+	<vertex>
+		0 0 0
+		1 0 0
+		1 1 0
+		0 1 0
+	</vertex>
+	<gstate>
+		<blending src="sa" dst="1-sa" />
+		<texture filename="logo" rgba="true" />
+		<shading model="flag" />
+		<depth func="1" write="off" />
+		<primitive type="tfan">
+			<index>
+				0 1 2 3
+			</index>
+		</primitive>
+	</gstate>
+</geometry>
