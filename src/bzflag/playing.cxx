@@ -2032,8 +2032,10 @@ static std::string cmdPause(const std::string&, const CommandManager::ArgList& a
 {
   if (args.size() != 0)
     return "usage: pause";
+
   if (!pausedByUnmap && myTank->isAlive() && !myTank->isAutoPilot()) {
     if (myTank->isPaused()) {
+      // already paused, so unpause
       myTank->setPause(false);
       controlPanel->addMessage("Resumed");
 
@@ -2046,10 +2048,28 @@ static std::string cmdPause(const std::string&, const CommandManager::ArgList& a
       // grab mouse
       if (shouldGrabMouse())
 	mainWindow->grabMouse();
+
     } else if (pauseCountdown > 0.0f) {
+      // player aborted pause
       pauseCountdown = 0.0f;
       hud->setAlert(1, "Pause cancelled", 1.5f, true);
+
+    } else if (myTank->getLocation() == LocalPlayer::InBuilding) {
+      // custom message when trying to pause while in a building
+      // (could get stuck on un-pause if flag is taken)
+      hud->setAlert(1, "Can't pause while inside a building", 1.0f, false);
+
+    } else if (myTank->getLocation() == LocalPlayer::InAir) {
+      // custom message when trying to pause when jumping/falling
+      hud->setAlert(1, "Can't pause when you are in the air", 1.0f, false);
+
+    } else if (myTank->getLocation() != LocalPlayer::OnGround &&
+	       myTank->getLocation() != LocalPlayer::OnBuilding) {
+      // catch-all message when trying to pause when you should not
+      hud->setAlert(1, "Unable to pause right now", 1.0f, false);
+
     } else {
+      // update the pause alert message
       pauseCountdown = 5.0f;
       char msgBuf[40];
       sprintf(msgBuf, "Pausing in %d", (int) (pauseCountdown + 0.99f));
@@ -5702,30 +5722,50 @@ static void		playingLoop()
       const int oldPauseCountdown = (int)(pauseCountdown + 0.99f);
       pauseCountdown -= dt;
       if (pauseCountdown <= 0.0f) {
-	// okay, now we pause.  first drop any team flag we may have.
-	const FlagType* flagd = myTank->getFlag();
-	if (flagd->flagTeam != NoTeam)
-	  serverLink->sendDropFlag(myTank->getPosition());
 
-	if (World::getWorld()->allowRabbit() && (myTank->getTeam() == RabbitTeam))
-	  serverLink->sendNewRabbit();
+	/* make sure it is really safe to pause..  make sure the player is
+	 * still on the ground and not in a building
+	 */
+	if (myTank->getLocation() == LocalPlayer::InBuilding) {
+	  // custom message when trying to pause while in a building
+	  // (could get stuck on un-pause if flag is taken/lost)
+	  hud->setAlert(1, "Can't pause while inside a building", 1.0f, false);
+	  
+	} else if (myTank->getLocation() == LocalPlayer::InAir) {
+	  // custom message when trying to pause when jumping/falling
+	  hud->setAlert(1, "Can't pause when you are in the air", 1.0f, false);
+	  
+	} else if (myTank->getLocation() != LocalPlayer::OnGround &&
+		   myTank->getLocation() != LocalPlayer::OnBuilding) {
+	  // catch-all message when trying to pause when you should not
+	  hud->setAlert(1, "Unable to pause right now", 1.0f, false);
 
-	// now actually pause
-	myTank->setPause(true);
-	hud->setAlert(1, NULL, 0.0f, true);
-	controlPanel->addMessage("Paused");
+	} else {
+	  // okay, now we pause.  first drop any team flag we may have.
+	  const FlagType* flagd = myTank->getFlag();
+	  if (flagd->flagTeam != NoTeam)
+	    serverLink->sendDropFlag(myTank->getPosition());
+	  
+	  if (World::getWorld()->allowRabbit() && (myTank->getTeam() == RabbitTeam))
+	    serverLink->sendNewRabbit();
+	  
+	  // now actually pause
+	  myTank->setPause(true);
+	  hud->setAlert(1, NULL, 0.0f, true);
+	  controlPanel->addMessage("Paused");
 
-	// turn off the sound
-	if (savedVolume == -1) {
-	  savedVolume = getSoundVolume();
-	  setSoundVolume(0);
+	  // turn off the sound
+	  if (savedVolume == -1) {
+	    savedVolume = getSoundVolume();
+	    setSoundVolume(0);
+	  }
+
+	  // ungrab mouse
+	  mainWindow->ungrabMouse();
 	}
 
-	// ungrab mouse
-	mainWindow->ungrabMouse();
-      }
-      else if ((int)(pauseCountdown + 0.99f) != oldPauseCountdown &&
-	       !pausedByUnmap) {
+      } else if ((int)(pauseCountdown + 0.99f) != oldPauseCountdown &&
+		 !pausedByUnmap) {
 	// update countdown alert
 	char msgBuf[40];
 	sprintf(msgBuf, "Pausing in %d", (int)(pauseCountdown + 0.99f));
