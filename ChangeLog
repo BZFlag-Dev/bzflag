@@ -4,7 +4,7 @@
 BZFlag 1.12.0  (was 1.11.x)
 ---------------------------
 
-* Clientquery can now be requested from individuals, instead of from all players - Ian Agar
+* /clientquery can now be requested on single individuals - Ian Agar
 * Added support for irc-like /me actions - Sean Morrison
 * Seer flag now can see Invisible Bullets - Dave Rodgers
 * Added admin message sounds - Cameron Mandrake, Sean Morrison
