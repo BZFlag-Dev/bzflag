@@ -54,7 +54,19 @@ bool StdBothUI::checkCommand(string& str) {
 
 #ifdef _WIN32
   unsigned long numRead = 0;
-  gotChar = 0 != ReadFile(console, &buffer[pos], 1, &numRead, NULL);
+  INPUT_RECORD inputEvent;
+  if (WaitForSingleObject(console, 1000) == WAIT_OBJECT_0) {
+    PeekConsoleInput(console, &inputEvent, 1, &numRead);
+    if (numRead > 0) {
+      if ((inputEvent.EventType  != KEY_EVENT)
+      ||  (inputEvent.Event.KeyEvent.bKeyDown == 0)
+      ||  (inputEvent.Event.KeyEvent.uChar.AsciiChar == 0)) {
+        ReadConsoleInput(console, &inputEvent, 1, &numRead);
+      }
+      else
+        gotChar = 0 != ReadFile(console, &buffer[pos], 1, &numRead, NULL);
+    }
+  }
 #else
   fd_set rfds;
   timeval tv;
