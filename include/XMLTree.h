@@ -11,11 +11,13 @@
 #include <string>
 
 #ifndef OLD_SGI_STL
-// egcs doesn't support std::foo<> (i.e. std namespace on a template).
-// we need std::std::unary_function<> so use std::unary_function and a macro.
-//#define std::std::unary_function std::unary_function
-//#define std::unary_function std::std::unary_function
+// egcs doesn't support std::foo<> (i.e. std namespace on a template).  We need
+// std::unary_function<> so use unary_function and a typedef.  This requires
+// coding for the broken systems and emulating the broken behavior on the good
+// ones with the typedef.
+typedef std::unary_function unary_function;
 #endif
+
 
 class XMLStreamPosition {
 public:
@@ -204,7 +206,7 @@ private:
 //
 
 template <class T>
-class XMLSetVar_t : public std::unary_function<T, T> {
+class XMLSetVar_t : public unary_function<T, T> {
 public:
 	XMLSetVar_t(T* dst_) : dst(dst_) { }
 	T operator()(const T& arg) const
@@ -240,7 +242,7 @@ xmlSetVar(T& arg)
 #endif
 
 template <class Object, class Arg, class Result>
-class XMLSetMethod_t : public std::unary_function<Arg, XML_SET_METHOD_RESULT> {
+class XMLSetMethod_t : public unary_function<Arg, XML_SET_METHOD_RESULT> {
 public:
 	typedef Result (Object::*Member)(Arg);
 	XMLSetMethod_t(Object* object_, Member member_) :
@@ -265,7 +267,7 @@ xmlSetMethod(Object* object, Result (Object::*member)(Arg))
 }
 
 template <class Operation, class Function>
-class XMLStr2Num_t : public std::unary_function<std::string,
+class XMLStr2Num_t : public unary_function<std::string,
 										typename Operation::result_type> {
 public:
 	XMLStr2Num_t(const Operation& op_, Function func_) :
@@ -318,7 +320,7 @@ xmlStrToFloat(const Operation& op)
 }
 
 template <class T>
-class XMLMin_t : public std::unary_function<T, T> {
+class XMLMin_t : public unary_function<T, T> {
 public:
 	XMLMin_t(T x_) : x(x_) { }
 	T					operator()(T a) const
@@ -338,7 +340,7 @@ XMLMin_t<T> xmlMin(T x)
 }
 
 template <class T>
-class XMLMax_t : public std::unary_function<T, T> {
+class XMLMax_t : public unary_function<T, T> {
 public:
 	XMLMax_t(T x_) : x(x_) { }
 	T					operator()(T a) const
@@ -358,7 +360,7 @@ XMLMax_t<T> xmlMax(T x)
 }
 
 template <class Outer, class Inner>
-class XMLCompose_t : public std::unary_function<typename Inner::argument_type,
+class XMLCompose_t : public unary_function<typename Inner::argument_type,
 											typename Outer::result_type> {
 public:
 	XMLCompose_t(Outer outer_, Inner inner_) : outer(outer_), inner(inner_) { }
@@ -388,7 +390,7 @@ public:
 };
 
 template <class E, class Operation>
-class XMLParseEnum_t : public std::unary_function<std::string,
+class XMLParseEnum_t : public unary_function<std::string,
 										typename Operation::result_type> {
 public:
 	XMLParseEnum_t(const E* enumerants_, const Operation& op) :
