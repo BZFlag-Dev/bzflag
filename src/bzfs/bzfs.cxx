@@ -425,6 +425,9 @@ static void publicize()
 
   listServerLinksCount = 0;
 
+  if (listServerLink) 
+    delete listServerLink;
+  
   if (clOptions->publicizeServer) {
     // list server initialization
     listServerLink = new ListServerLink(clOptions->listServerURL, clOptions->publicizedAddress, clOptions->publicizedTitle);
