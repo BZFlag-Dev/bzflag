@@ -318,14 +318,14 @@ void handleKickCmd(int t, const char *message)
   const char *victimname = argv[1].c_str();
 
   for (i = 0; i < curMaxPlayers; i++) {
-    if (player[i].fd != NotConnected && strcmp(player[i].callSign, victimname) == 0) {
+    if (player[i].fd != NotConnected && strcasecmp(player[i].callSign, victimname) == 0) {
       break;
     }
   }
   
   if (i < curMaxPlayers) {
     char kickmessage[MessageLen];
-    sprintf(kickmessage,"You were kicked off the server by %s", player[t].callSign);
+    sprintf(kickmessage, "You were kicked off the server by %s", player[t].callSign);
     sendMessage(ServerPlayer, i, kickmessage, true);
     if (argv.size() > 2) {
       sprintf(kickmessage, " reason given : %s",argv[2].c_str());
