@@ -19,7 +19,6 @@
 #include "ServerLink.h"
 #include "sound.h"
 #include "playing.h"
-#include "PlayerLink.h"
 #include "Team.h"
 #include "SceneNodeGeometry.h"
 #include "SceneNodeGroup.h"
@@ -1234,7 +1233,7 @@ void					GuidedMissileStrategy::sendUpdate(
 	void *buf = (void*)packet;
 	buf = firingInfo.shot.pack(buf);
 	buf = nboPackUByte(buf, lastTarget);
-	PlayerLink::getMulticast()->send(MsgGMUpdate, sizeof(packet), packet);
+	ServerLink::getServer()->send(MsgGMUpdate, sizeof(packet), packet);
 }
 
 void					GuidedMissileStrategy::readUpdate(

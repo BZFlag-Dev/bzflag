@@ -90,10 +90,6 @@ SOURCE=..\src\game\Flag.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\src\game\Ping.cxx
-# End Source File
-# Begin Source File
-
 SOURCE=..\src\game\Team.cxx
 # End Source File
 # End Group

@@ -125,10 +125,6 @@ SOURCE=..\src\bzflag\Player.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\src\bzflag\PlayerLink.cxx
-# End Source File
-# Begin Source File
-
 SOURCE=..\src\bzflag\playing.cxx
 # End Source File
 # Begin Source File

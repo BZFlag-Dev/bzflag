@@ -64,7 +64,6 @@ const int udpBufSize = 128000;
 #include "TimeKeeper.h"
 #include "Flag.h"
 #include "Team.h"
-#include "multicast.h"
 #include "Ping.h"
 #include "TimeBomb.h"
 
@@ -141,8 +140,6 @@ struct PlayerInfo {
 		int flag;
 		// player's score
 		int wins, losses;
-		// if player can't multicast
-		bool multicastRelay;
 
 		// input buffers
 		// bytes read in current msg
@@ -284,27 +281,8 @@ static bool useGivenPort = false;
 static bool useFallbackPort = false;
 // udpSocket should also be on serverAddress
 static int udpSocket;
-// listen for pings here
-static int pingInSocket;
-static struct sockaddr_in pingInAddr;
-// reply to pings here
-static int pingOutSocket;
-static struct sockaddr_in pingOutAddr;
-// broadcast pings in/out here
-static int pingBcastSocket;
-static struct sockaddr_in pingBcastAddr;
-// listen for player packets
-static int relayInSocket;
-static struct sockaddr_in relayInAddr;
-// relay player packets
-static int relayOutSocket;
-static struct sockaddr_in relayOutAddr;
-static const char *pingInterface = NULL;
-static int pingTTL = DefaultTTL;
-static int playerTTL = DefaultTTL;
-static bool handlePings = true;
-static bool noMulticastRelay = false;
 static PingPacket pingReply;
+static const char *serverInterface = NULL;
 // highest fd used
 static int maxFileDescriptor;
 // players list
@@ -384,7 +362,6 @@ static float lagwarnthresh = -1.0;
 static int maxlagwarn = 10000;
 static char *password = NULL;
 
-static void stopPlayerPacketRelay();
 static void removePlayer(int playerIndex);
 static void resetFlag(int flagIndex);
 static void releaseRadio(int playerIndex);
@@ -1092,8 +1069,7 @@ const void *assembleUDPPacket(int playerIndex, const void *b, int *l)
 }
 
 // write an UDP packet down the link to the client, we don't know if it comes through
-// so this code is using a queuing mechanism. As it turns out the queue is not strictly
-// needed if we only use the Multicast messages...
+// so this code is using a queuing mechanism.
 
 static int puwrite(int playerIndex, const void *b, int l)
 {
@@ -1801,11 +1777,11 @@ static void sendMessageToListServerForReal(int index)
 
 		// send ADD message
 		sprintf(msg, "%s %s %d %s %.*s %.256s\n\n", link.nextMessage,
-		publicizedAddress.c_str(),
-		VERSION % 1000,
-		ServerVersion,
-		PingPacketHexPackedSize, gameInfo,
-		publicizedTitle);
+				publicizedAddress.c_str(),
+				VERSION % 1000,
+				ServerVersion,
+				PingPacketHexPackedSize, gameInfo,
+				publicizedTitle);
 	}
 	else if (strcmp(link.nextMessage, "REMOVE") == 0) {
 		// send REMOVE
@@ -2006,31 +1982,6 @@ static bool serverStart()
 		maxFileDescriptor = udpSocket;
 	}
 
-	// open sockets to receive and reply to pings
-	Address multicastAddress(BroadcastAddress);
-	pingInSocket = openMulticast(multicastAddress, ServerPort, NULL,
-							pingTTL, pingInterface, "r", &pingInAddr);
-	pingOutSocket = openMulticast(multicastAddress, ServerPort, NULL,
-							pingTTL, pingInterface, "w", &pingOutAddr);
-	pingBcastSocket = openBroadcast(BroadcastPort, NULL, &pingBcastAddr);
-	if (pingInSocket == -1 || pingOutSocket == -1) {
-		closeMulticast(pingInSocket);
-		closeMulticast(pingOutSocket);
-		pingInSocket = -1;
-		pingOutSocket = -1;
-	}
-	else {
-		maxFileDescriptor = pingOutSocket;
-	}
-	if (pingBcastSocket != -1) {
-		if (pingBcastSocket > maxFileDescriptor)
-			maxFileDescriptor = pingBcastSocket;
-	}
-
-	// initialize player packet relaying to be off
-	relayInSocket = -1;
-	relayOutSocket = -1;
-
 	for (int i = 0; i < MaxPlayers; i++) {	// no connections
 		player[i].fd = NotConnected;
 		player[i].state = PlayerNoExist;
@@ -2055,10 +2006,6 @@ static void serverStop()
 	// reject attempts to talk to server
 	shutdown(wksSocket, 2);
 	closesocket(wksSocket);
-	closeMulticast(pingBcastSocket);
-	closeMulticast(pingInSocket);
-	closeMulticast(pingOutSocket);
-	stopPlayerPacketRelay();
 
 	// tell players to quit
 	int i;
@@ -2114,88 +2061,11 @@ static void serverStop()
 	closeListServers();
 }
 
-static bool startPlayerPacketRelay(int playerIndex)
-{
-	// return true if already started
-	if (noMulticastRelay || (relayInSocket != -1 && relayOutSocket != -1))
-		return true;
-
-	Address multicastAddress(BroadcastAddress);
-	if (relayInSocket == -1)
-		relayInSocket = openMulticast(multicastAddress, BroadcastPort, NULL,
-								pingTTL, pingInterface, "r", &relayInAddr);
-	if (relayOutSocket == -1)
-		relayOutSocket = openMulticast(multicastAddress, BroadcastPort, NULL,
-								pingTTL, pingInterface, "w", &relayOutAddr);
-	if (relayInSocket == -1 || relayOutSocket == -1) {
-		stopPlayerPacketRelay();
-
-		// can't multicast.  can't just reject the player requesting
-		// relaying because then it would be impossible for a server
-		// that can't multicast to serve a game unless all players
-		// could multicast.  since many platforms don't support
-		// multicasting yet, we'll have to do it the hard way -- when
-		// we can't multicast and a player wants relaying we must
-		// force all players to start relaying.
-		for (int i = 0; i < maxPlayers; i++)
-			if (i != playerIndex &&
-					player[i].state > PlayerInLimbo && !player[i].multicastRelay) {
-				directMessage(i, MsgNetworkRelay, 0, getDirectMessageBuffer());
-				player[i].multicastRelay = true;
-			}
-		noMulticastRelay = true;
-
-		return true;
-	}
-	if (maxFileDescriptor < relayOutSocket)
-		maxFileDescriptor = relayOutSocket;
-	return true;
-}
-
-static void stopPlayerPacketRelay()
-{
-	closeMulticast(relayInSocket);
-	closeMulticast(relayOutSocket);
-	relayInSocket = -1;
-	relayOutSocket = -1;
-	noMulticastRelay = false;
-}
-
-static void relayPlayerPacket()
-{
-	// XXX -- accumulate data until we've received all data in message
-	// get packet from multicast port and multiplex to player's needing a relay.
-	// first get packet header
-	char buffer[MaxPacketLen];
-	const int msglen = recvMulticast(relayInSocket, buffer, MaxPacketLen, NULL);
-	if (msglen < 4) {
-		fprintf(stderr, "incomplete read of player message header\n");
-		return;
-	}
-
-	// verify length
-	uint16_t len;
-	nboUnpackUShort(buffer, len);
-	if (int(len) != msglen - 4) {
-		fprintf(stderr, "incomplete read of player message body\n");
-		return;
-	}
-
-	// relay packet to all players needing multicast relay
-	for (int i = 0; i < maxPlayers; i++)
-		if (player[i].multicastRelay)
-			pwrite(i, buffer, msglen);
-}
-
 static void relayPlayerPacket(int index, uint16_t len, const void *rawbuf)
 {
-	// broadcast it
-	if (relayOutSocket != -1)
-		sendMulticast(relayOutSocket, rawbuf, len + 4, &relayOutAddr);
-
-	// relay packet to all players needing multicast relay
+	// relay packet to all players
 	for (int i = 0; i < maxPlayers; i++)
-		if (i != index && player[i].multicastRelay)
+		if (i != index)
 			pwrite(i, rawbuf, len + 4);
 }
 
@@ -2858,7 +2728,6 @@ static void acceptClient()
 	player[playerIndex].fd = fd;
 	player[playerIndex].state = PlayerInLimbo;
 	player[playerIndex].peer = Address(player[playerIndex].taddr);
-	player[playerIndex].multicastRelay = false;
 	player[playerIndex].tcplen = 0;
 	player[playerIndex].udplen = 0;
 	assert(player[playerIndex].outmsg == NULL);
@@ -2883,55 +2752,6 @@ static void acceptClient()
 #endif
 		}
 	}
-}
-
-static void respondToPing(bool broadcast = false)
-{
-	// get and discard ping packet
-	int minReplyTTL;
-	struct sockaddr_in addr;
-	if (broadcast) {
-		if (!PingPacket::isRequest(pingBcastSocket, &addr, &minReplyTTL)) return;
-	}
-	else {
-		if (!PingPacket::isRequest(pingInSocket, &addr, &minReplyTTL)) return;
-	}
-
-	// if no output port then ignore
-	if (!broadcast && pingOutSocket == -1)
-		return;
-
-	// if I'm ignoring pings and the ping is not from a connected host
-	// then ignore the ping.
-	if (!handlePings) {
-		int i;
-		Address remoteAddress(addr);
-		for (i = 0; i < maxPlayers; i++)
-			if (player[i].fd != NotConnected && player[i].peer == remoteAddress)
-				break;
-		if (i == maxPlayers)
-			return;
-	}
-
-	// boost my reply ttl if ping requests it
-	if (minReplyTTL > MaximumTTL)
-		minReplyTTL = MaximumTTL;
-	if (pingOutSocket != -1 && minReplyTTL > pingTTL) {
-		pingTTL = minReplyTTL;
-		setMulticastTTL(pingOutSocket, pingTTL);
-	}
-
-	// reply with current game info on pingOutSocket or pingBcastSocket
-	pingReply.sourceAddr = addr;
-	pingReply.rogueCount = team[0].team.activeSize;
-	pingReply.redCount = team[1].team.activeSize;
-	pingReply.greenCount = team[2].team.activeSize;
-	pingReply.blueCount = team[3].team.activeSize;
-	pingReply.purpleCount = team[4].team.activeSize;
-	if (broadcast)
-		pingReply.write(pingBcastSocket, &pingBcastAddr);
-	else
-		pingReply.write(pingOutSocket, &pingOutAddr);
 }
 
 static void sendMessage(int playerIndex, const PlayerId& targetPlayer, TeamColor targetTeam, const char *message)
@@ -3056,12 +2876,6 @@ static void addPlayer(int playerIndex)
 	for (i = 0; i < maxPlayers && player[playerIndex].fd != NotConnected; i++)
 		if (player[i].state > PlayerInLimbo && i != playerIndex)
 			sendPlayerUpdate(i, playerIndex);
-
-	// if necessary force multicast relaying
-	if (noMulticastRelay) {
-		directMessage(playerIndex, MsgNetworkRelay, 0, getDirectMessageBuffer());
-		player[playerIndex].multicastRelay = true;
-	}
 
 	// if new player connection was closed (because of an error) then stop here
 	if (player[playerIndex].fd == NotConnected)
@@ -3290,17 +3104,6 @@ static void removePlayer(int playerIndex)
 		player[playerIndex].outmsg = NULL;
 	}
 
-	// can we turn off relaying now?
-	if (player[playerIndex].multicastRelay) {
-		player[playerIndex].multicastRelay = false;
-		int i;
-		for (i = 0; i < maxPlayers; i++)
-			if (player[i].state > PlayerInLimbo && player[i].multicastRelay)
-				break;
-		if (i == maxPlayers)
-			stopPlayerPacketRelay();
-	}
-
 	// player is outta here.  if player never joined a team then
 	// don't count as a player.
 	if (player[playerIndex].state == PlayerInLimbo) {
@@ -3450,10 +3253,7 @@ static void sendQueryPlayers(int playerIndex)
 
 static void playerAlive(int playerIndex, const float *pos, const float *fwd)
 {
-	// player is coming alive.  strictly speaking, this can be inferred
-	// from the multicast info, but it's nice to have a clear statement.
-	// it also allows clients that don't snoop the multicast group to
-	// find about it.
+	// player is coming alive.
 	player[playerIndex].state = PlayerAlive;
 	player[playerIndex].flag = -1;
 
@@ -3985,34 +3785,6 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
 			removePlayer(t);
 			break;
 
-		// player requesting new ttl
-		case MsgSetTTL: {
-			// data: ttl
-			uint16_t ttl;
-			nboUnpackUShort(buf, ttl);
-			if (ttl > (uint16_t)MaximumTTL) ttl = (uint16_t)MaximumTTL;
-			if ((int)ttl > playerTTL) {
-				void *buf, *bufStart = getDirectMessageBuffer();
-				buf = nboPackUShort(bufStart, ttl);
-				broadcastMessage(MsgSetTTL, (char*)buf-(char*)bufStart, bufStart);
-				playerTTL = (int)ttl;
-			}
-			break;
-		}
-
-		// player can't use multicast;  we must relay
-		case MsgNetworkRelay:
-			if (startPlayerPacketRelay(t)) {
-				player[t].multicastRelay = true;
-				void *buf, *bufStart = getDirectMessageBuffer();
-				buf = nboPackUByte(bufStart, t);
-				directMessage(t, MsgAccept, (char*)buf-(char*)bufStart, bufStart);
-			}
-			else {
-				directMessage(t, MsgReject, 0, getDirectMessageBuffer());
-			}
-			break;
-
 		// player wants more of world database
 		case MsgGetWorld: {
 			// data: count (bytes read so far)
@@ -4187,13 +3959,12 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
 		case MsgServerControl:
 			break;
 
-		// player is sending multicast data
+		// just forward these. FIXME should patch playerid
 		case MsgPlayerUpdate:
 		case MsgGMUpdate:
 		case MsgAudio:
 		case MsgVideo:
-			if (player[t].multicastRelay)
-				relayPlayerPacket(t, len, rawbuf);
+			relayPlayerPacket(t, len, rawbuf);
 			break;
 	}
 }
@@ -4234,7 +4005,6 @@ static const char *usageString =
 #ifdef TIMELIMIT
 "[-time <seconds>] "
 #endif
-"[-ttl <ttl>] "
 "[-srvmsg <text>] "
 "[-world <filename>]";
 
@@ -4307,7 +4077,6 @@ static void extraUsage(const char *pname)
 #ifdef TIMELIMIT
 	std::cout << "\t -time: set time limit on each game" << std::endl;
 #endif
-	std::cout << "\t -ttl: time-to-live for pings (default=" << pingTTL << ")" << std::endl;
 	std::cout << "\t -world: world file to load" << std::endl;
 	std::cout << "\t -passwd: specify a <password> for operator commands" << std::endl;
 	std::cout << "\t -lagwarn: lag warning threshhold time [ms]" << std::endl;
@@ -4601,7 +4370,7 @@ static void parse(int argc, char **argv)
 				std::cerr << "argument expected for -i" << std::endl;
 				usage(argv[0]);
 			}
-			pingInterface = argv[i];
+			serverInterface = argv[i];
 		}
 		else if (strcmp(argv[i], "-j") == 0) {
 			// allow jumping
@@ -4706,10 +4475,6 @@ static void parse(int argc, char **argv)
 			}
 			listServerURL = argv[i];
 		}
-		else if (strcmp(argv[i], "-q") == 0) {
-			// don't handle pings
-			handlePings = false;
-		}
 		else if (strcmp(argv[i], "-r") == 0) {
 			// allow rogues
 			gameStyle |= int(RoguesGameStyle);
@@ -4763,7 +4528,7 @@ static void parse(int argc, char **argv)
 			}
 			else if (count > 20) {
 				shakeWins = 20;
-				std::cerr << "using maximum ttl of " << shakeWins << std::endl;
+				std::cerr << "using maximum shake win count of " << shakeWins << std::endl;
 			}
 			else {
 				shakeWins = uint16_t(count);
@@ -4793,22 +4558,6 @@ static void parse(int argc, char **argv)
 			timeElapsed = timeLimit;
 		}
 #endif
-		else if (strcmp(argv[i], "-ttl") == 0) {
-			// use a different ttl
-			if (++i == argc) {
-				std::cerr << "argument expected for -ttl" << std::endl;
-				usage(argv[0]);
-			}
-			pingTTL = atoi(argv[i]);
-			if (pingTTL < 0) {
-				pingTTL = 0;
-				std::cerr << "using minimum ttl of " << pingTTL << std::endl;
-			}
-			else if (pingTTL > MaximumTTL) {
-				pingTTL = MaximumTTL;
-				std::cerr << "using maximum ttl of " << pingTTL << std::endl;
-			}
-		}
 		else if (strcmp(argv[i], "-v") == 0 || strcmp(argv[i], "-version") == 0) {
 			printVersion(std::cout);
 			exit(0);
@@ -5068,11 +4817,8 @@ int main(int argc, char **argv)
 	// parse arguments
 	parse(argc, argv);
 
-	if (pingInterface)
-		serverAddress = Address::getHostAddress(pingInterface);
-// TimR use 0.0.0.0 by default, multicast will need to have a -i specified for now.
-//  if (!pingInterface)
-//    pingInterface = serverAddress.getHostName();
+	if (serverInterface)
+		serverAddress = Address::getHostAddress(serverInterface);
 
 
 	// my address to publish.  allow arguments to override (useful for
@@ -5144,16 +4890,9 @@ int main(int argc, char **argv)
 		}
 		// always listen for connections
 		FD_SET(wksSocket, &read_set);
-		if (alsoUDP)
-			FD_SET(udpSocket, &read_set);
-		// always listen for pings
-		if (pingInSocket != -1)
-			FD_SET(pingInSocket, &read_set);
-		if (pingBcastSocket != -1)
-			FD_SET(pingBcastSocket, &read_set);
-		// always listen for packets to relay
-		if (relayInSocket != -1)
-			FD_SET(relayInSocket, &read_set);
+
+		// always listen for UDP traffic
+		FD_SET(udpSocket, &read_set);
 
 		// check for list server socket connected
 		for (i = 0; i < listServerLinksCount; i++)
@@ -5300,16 +5039,6 @@ int main(int argc, char **argv)
 			if (FD_ISSET(wksSocket, &read_set))
 				acceptClient();
 
-			// now check pings
-			if (pingInSocket != -1 && FD_ISSET(pingInSocket, &read_set))
-				respondToPing();
-			if (pingBcastSocket != -1 && FD_ISSET(pingBcastSocket, &read_set))
-				respondToPing(true);
-
-			// now check multicast for relay
-			if (relayInSocket != -1 && FD_ISSET(relayInSocket, &read_set))
-				relayPlayerPacket();
-
 			// check for connection to list server
 			for (i = 0; i < listServerLinksCount; ++i)
 				if (listServerLinks[i].socket != NotConnected &&
@@ -5365,15 +5094,6 @@ int main(int argc, char **argv)
 
 					// clear out message
 					player[i].tcplen = 0;
-
-					// simple ruleset, if player sends a MsgShotBegin over TCP
-					// and player is not using multicast
-					// he/she must not be using the UDP link
-					if (requireUDP && player[i].multicastRelay) {
-						if (code == MsgShotBegin) {
-							player[i].toBeKicked = true;
-						}
-					}
 
 					// handle the command
 					handleCommand(i, code, len, player[i].tcpmsg);

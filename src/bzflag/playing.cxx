@@ -29,7 +29,6 @@ static const char copyright[] = "Copyright (c) 1993 - 2002 Tim Riker";
 #include "Protocol.h"
 #include "Pack.h"
 #include "ServerLink.h"
-#include "PlayerLink.h"
 #include "StateDatabase.h"
 #include "SceneBuilder.h"
 #include "MenuManager.h"
@@ -74,7 +73,6 @@ public:
 typedef std::vector<ExplosionInfo> ExplosionList;
 
 static ServerLink*		serverLink = NULL;
-static PlayerLink*		playerLink = NULL;
 static World*			world = NULL;
 static LocalPlayer*		myTank = NULL;
 static BzfDisplay*		display = NULL;
@@ -1118,8 +1116,8 @@ static void				handleServerMessage(bool human, uint16_t code,
 		case MsgUDPLinkRequest:
 			uint16_t portNo;
 			msg = nboUnpackUShort(msg, portNo);
-		  printError("Server sent downlink endpoint information, port %d",portNo);
-		  playerLink->setPortForUPD(portNo);
+			printError("Server sent downlink endpoint information, port %d",portNo);
+     		serverLink->setUDPRemotePort(portNo);
 			break;
 
 		case MsgSuperKill:
@@ -1175,21 +1173,6 @@ static void				handleServerMessage(bool human, uint16_t code,
 */
 			myTank->explodeTank();
 			MSGMGR->insert("alertGameOver", msg, warningColor);
-			break;
-		}
-
-		case MsgSetTTL: {
-			uint16_t ttl;
-			nboUnpackUShort(msg, ttl);
-			if ((int)ttl > playerLink->getTTL())
-				playerLink->setTTL((int)ttl);
-			break;
-		}
-
-		case MsgNetworkRelay: {
-			// server is telling us that we must use multicast relaying
-			playerLink->setUseRelay();
-			printError("Now using server as relay");
 			break;
 		}
 
@@ -1757,16 +1740,6 @@ static void				doMessages()
 		if (e == -2) {
 			printError("Server communication error");
 			serverError = true;
-			return;
-		}
-	}
-
-	// handle player messages
-	if (playerLink) {
-		while ((e = playerLink->read(code, len, msg, 0)) == 1)
-			handlePlayerMessage(code, len, msg);
-		if (e == -2) {
-			printError("Player communication error");
 			return;
 		}
 	}
@@ -2445,8 +2418,7 @@ static bool				enterServer(ServerLink* serverLink, World* world,
 		goto failed;
 	}
 	while (code == MsgAddPlayer || code == MsgTeamUpdate ||
-		 code == MsgFlagUpdate || code == MsgNetworkRelay ||
-		 code == MsgUDPLinkRequest) {
+		 code == MsgFlagUpdate || code == MsgUDPLinkRequest) {
 		void* buf = msg;
 		switch (code) {
 			case MsgAddPlayer: {
@@ -2504,12 +2476,6 @@ static bool				enterServer(ServerLink* serverLink, World* world,
 				buf = nboUnpackUShort(buf, flag);
 				buf = world->getFlag(int(flag)).unpack(buf);
 				world->initFlag(int(flag));
-				break;
-			}
-			case MsgNetworkRelay: {
-				playerLink->setUseRelay();
-				playerLink->setRelay(serverLink);
-				printError("Using server as relay");
 				break;
 			}
 			case MsgUDPLinkRequest:
@@ -2590,11 +2556,6 @@ static void				leaveGame()
 	MSGMGR->get("alertFlag")->clear();
 	MSGMGR->get("alertStatus")->clear();
 
-	// shut down player channel
-	PlayerLink::setMulticast(NULL);
-	delete playerLink;
-	playerLink = NULL;
-
 	// shut down server connection
 	if (sayGoodbye) serverLink->send(MsgExit, 0, NULL);
 	ServerLink::setServer(NULL);
@@ -2639,13 +2600,11 @@ static void dumpScene()
 }
 */
 
-static bool				joinGame(ServerLink* _serverLink,
-								PlayerLink* _playerLink)
+static bool				joinGame(ServerLink* _serverLink)
 {
 	// this stuff should be ready
 	assert(!BZDB->isEmpty("infoTeam"));
 	assert(Team::getEnum(BZDB->get("infoTeam")) != NoTeam);
-	assert(!BZDB->isEmpty("infoNetworkTTL"));
 	assert(!BZDB->isEmpty("infoPort"));
 	assert(atoi(BZDB->get("infoPort").c_str()) != 0);
 
@@ -2654,9 +2613,8 @@ static bool				joinGame(ServerLink* _serverLink,
 	serverError = false;
 
 	serverLink = _serverLink;
-	playerLink = _playerLink;
 
-	if (!serverLink || !playerLink) {
+	if (!serverLink) {
 		BZDB->set("connectError",  "Out of memory error.");
 		leaveGame();
 		return false;
@@ -2696,15 +2654,6 @@ static bool				joinGame(ServerLink* _serverLink,
 		leaveGame();
 		return false;
 	}
-
-	// check inter-player connection
-/* NOTE -- this will be handled later when we try to fallback to TCP
-	if (playerLink->getState() == PlayerLink::SocketError) {
-		printError("Couldn't make inter-player connection");
-		leaveGame();
-		return false;
-	}
-*/
 
 	// prepare to get models
 	SCENEMGR->open();
@@ -2749,7 +2698,6 @@ static bool				joinGame(ServerLink* _serverLink,
 	explosion = SCENEMGR->find("explosion");
 
 	ServerLink::setServer(serverLink);
-	PlayerLink::setMulticast(playerLink);
 	World::setWorld(world);
 
 	// prep teams
@@ -2808,97 +2756,8 @@ static bool				joinGame(ServerLink* _serverLink,
 		return false;
 	}
 
-	// get TTL
-	int ttl = atoi(BZDB->get("infoNetworkTTL").c_str());
-
-	// check multicast `connection' to server.  if we get no response then
-	// we have to assume the network can't do multicasting.  fall back to
-	// using the server as a relay.
-	bool multicastOkay = false;
-	if (playerLink->getState() == PlayerLink::Okay) {
-		// send 5 pings, one every 2/10ths of a second.  wait up to two
-		// seconds after the last ping for a reply.  that's kinda long but
-		// let's be generous.  first open the sockets.
-		Address multicastAddress(BroadcastAddress);
-		struct sockaddr_in pingOutAddr, pingInAddr;
-		const int pingOutSocket = openMulticast(multicastAddress,
-								ServerPort, NULL,
-								ttl, BZDB->get("infoMulticastInterface").c_str(),
-								"w", &pingOutAddr);
-		const int pingInSocket = openMulticast(multicastAddress,
-								ServerPort, NULL,
-								ttl, BZDB->get("infoMulticastInterface").c_str(),
-								"r", &pingInAddr);
-		if (pingOutSocket != -1 && pingInSocket != -1) {
-			Address myAddress("");
-
-			// get port
-			int port = atoi(BZDB->get("infoPort").c_str());
-
-			// now send pings and wait for an echo
-			int count = 5;
-			PingPacket ping;
-			while (count-- > 0) {
-				// send another ping
-				ping.sendRequest(pingOutSocket, &pingOutAddr, ttl);
-
-				// wait for a response.  if the ping didn't originate with me
-				// or if it's for a server on a different port than the server
-				// I want then ignore.  should check server's address but the
-				// server could be multihomed so we might not get the address
-				// we expect.  problems can only occur if another process on
-				// this host is trying to contact another server using the
-				// same port at the same time we are.
-				if (ping.waitForReply(pingInSocket, myAddress, 200) &&
-					ping.serverId.port == htons(port)) {
-					multicastOkay = true;
-					break;
-				}
-			}
-
-			// if no reply yet, wait another couple of seconds
-			if (!multicastOkay)
-				multicastOkay = (ping.waitForReply(pingInSocket, myAddress, 2000) &&
-								ping.serverId.port == htons(port));
-		}
-
-		// close sockets
-		closeMulticast(pingOutSocket);
-		closeMulticast(pingInSocket);
-	}
-
-	// if multicast isn't okay then ask server if it can relay for us.
-	// give up after waiting for one second.  if we don't get a valid
-	// reply or our request is rejected then quit game because we won't
-	// be able to talk to other players.
-	if (!multicastOkay && playerLink->getState() != PlayerLink::ServerRelay) {
-		char msgbuf[MaxPacketLen];
-		uint16_t code, len;
-		serverLink->send(MsgNetworkRelay, 0, NULL);
-		if (serverLink->read(code, len, msgbuf, 1000) <= 0 || code == MsgReject) {
-			BZDB->set("connectError",  "Couldn't make inter-player connection");
-			leaveGame();
-			return false;
-		}
-
-		// prepare player link to use the server as a relay
-		playerLink->setUseRelay();
-		playerLink->setRelay(serverLink);
-		printError("Using multicast relay");
-	}
-
-	// use parallel UDP if using server relay
-	if (playerLink->getState() == PlayerLink::ServerRelay)
-		playerLink->enableUDPConIfRelayed();
-/*
-	else
-		printError("No UDP connection, see Options to enable.");
-*/
-
-	// tell server what ttl I need
-	char msg[2];
-	nboPackUShort(msg, playerLink->getTTL());
-	serverLink->send(MsgSetTTL, sizeof(msg), msg);
+	// use parallel UDP
+	serverLink->enableUDPCon();
 
 	// decide how start for first time
 	restartOnBase = world->allowTeamFlags() && myTank->getTeam() != RogueTeam;
@@ -2931,7 +2790,6 @@ static bool				joinInternetGame()
 	// this stuff should be ready
 	assert(!BZDB->isEmpty("infoTeam"));
 	assert(Team::getEnum(BZDB->get("infoTeam")) != NoTeam);
-	assert(!BZDB->isEmpty("infoNetworkTTL"));
 	assert(!BZDB->isEmpty("infoServer"));
 	assert(!BZDB->isEmpty("infoPort"));
 	assert(atoi(BZDB->get("infoPort").c_str()) != 0);
@@ -2943,12 +2801,7 @@ static bool				joinInternetGame()
 	ServerLink* serverLink = new ServerLink(serverAddress,
 								atoi(BZDB->get("infoPort").c_str()));
 
-	Address multicastAddress(BroadcastAddress);
-	PlayerLink* playerLink = new PlayerLink(multicastAddress, BroadcastPort,
-								atoi(BZDB->get("infoNetworkTTL").c_str()),
-								BZDB->get("infoMulticastInterface").c_str());
-
-	return joinGame(serverLink, playerLink);
+	return joinGame(serverLink);
 }
 
 static void				tryConnecting()
@@ -3514,9 +3367,8 @@ static void				playingLoop()
 		}
 
 		// send my data
-		if (playerLink && myTank->isDeadReckoningWrong()) {
-			playerLink->setRelay(serverLink);
-			playerLink->sendPlayerUpdate(myTank);
+		if (serverLink && myTank->isDeadReckoningWrong()) {
+			serverLink->sendPlayerUpdate(myTank);
 		}
 	}
 }

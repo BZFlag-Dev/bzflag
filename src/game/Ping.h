@@ -20,7 +20,7 @@
 
 #include "Address.h"
 #include "Pack.h"
-#include "multicast.h"
+//#include "multicast.h"
 
 static const int		PingPacketHexPackedSize = 2 * 2 * 18;
 
@@ -29,10 +29,10 @@ public:
 	PingPacket();
 	~PingPacket();
 
-	bool				read(int fd, struct sockaddr_in*);
-	bool				write(int fd, const struct sockaddr_in*) const;
-	bool				waitForReply(int fd, const Address& from,
-							int millisecondsToBlock = 0);
+	//bool				read(int fd, struct sockaddr_in*);
+	//bool				write(int fd, const struct sockaddr_in*) const;
+	//bool				waitForReply(int fd, const Address& from,
+	//						int millisecondsToBlock = 0);
 
 	void*				pack(void*, const char* version) const;
 	void*				unpack(void*, char* version);
@@ -41,10 +41,8 @@ public:
 	void				unpackHex(char*);
 	static void			repackHexPlayerCounts(char*, int* counts);
 
-	static bool			isRequest(int fd, struct sockaddr_in*,
-							int* minReplyTTL = NULL);
-	static bool			sendRequest(int fd, const struct sockaddr_in*,
-							int minReplyTTL = 0);
+	//static bool			sendRequest(int fd, const struct sockaddr_in*,
+	//						int minReplyTTL = 0);
 
 public:
 	ServerId			serverId;

@@ -50,8 +50,7 @@ public:
 						HasMessageLink = 8
 	};
 
-	ServerLink(const Address& serverAddress,
-							int port = ServerPort, int number = 0);
+	ServerLink(const Address& serverAddress, int port = ServerPort);
 	~ServerLink();
 
 	State				getState() const;
@@ -66,6 +65,7 @@ public:
 
 	void				sendEnter(PlayerType, TeamColor,
 							const char* name, const char* email);
+	void				sendPlayerUpdate(const Player*);
 	void				sendCaptureFlag(TeamColor);
 	void				sendGrabFlag(int flagIndex);
 	void				sendDropFlag(const float* position);

@@ -90,10 +90,6 @@ SOURCE=..\src\net\Address.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\src\net\multicast.cxx
-# End Source File
-# Begin Source File
-
 SOURCE=..\src\net\network.cxx
 # End Source File
 # Begin Source File
@@ -111,10 +107,6 @@ SOURCE=..\src\net\udpnetwork.cxx
 # Begin Source File
 
 SOURCE=..\include\Address.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\include\multicast.h
 # End Source File
 # Begin Source File
 

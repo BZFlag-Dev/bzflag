@@ -214,13 +214,6 @@ menus.cxx
     // UNIX
 
 
-**************
-multicast.cxx
-**************
-
-77 : should be #elif rather than #else if
-331: ditto
-
 **********
 network.h
 **********

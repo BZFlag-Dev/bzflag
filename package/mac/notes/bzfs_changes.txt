@@ -93,10 +93,3 @@ network.cxx
 #elif defined(macintosh)
 #define hstrerror(x) "<network error>"
 #endif
-
-**************
-multicast.cxx
-**************
-
-77 : should be #elif rather than #else if
-331: ditto

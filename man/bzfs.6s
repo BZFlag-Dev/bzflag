@@ -81,10 +81,9 @@ Buildings are given random heights.
 Shows a help page and lists all the valid flag id's.
 .TP
 \fB-i\fI interface\fR
-Server will listen for and respond to ``pings'' (sent via multicast)
-on the given interface.  The server uses the first multicast enabled
-interface by default.  Clients use this to find active servers on the
-network. This is also the TCP/UDP/IP address the server will listen on.
+Server will listen for and respond to ``pings'' on the given interface.
+Clients use this to find active servers on the network. This is also the
+TCP/UDP/IP address the server will listen on.
 .TP
 .B -j
 Allows jumping.
@@ -124,11 +123,7 @@ such as /kick messages.
 .TP
 \fB-public\fI description\fR
 Advertise this server on the internet with the given \fIdescription\fR.
-By default, a server will respond to broadcast or multicast queries,
-allowing clients to find servers on the local subnet or accessible
-through multicast routers.  However, this doesn't allow clients to
-find servers not accessible via multicast.  The \fB-public\fR option
-causes the server to register itself with a \fBbzfls\fR server, which
+Causes the server to register itself with a \fBbzfls\fR server, which
 clients can query to get a list of \fBbzfs\fR servers.
 .TP
 \fB-publicaddr\fI address\fR[:\fIport\fR]
@@ -247,65 +242,7 @@ client, the firewall must accept connections from the client to this port
 and forward them to the server.  See \fBbzfrelay\fR for a BZFlag firewall
 relay.
 .PP
-Clients can search for servers by sending and receiving multicast UDP
-packets.  For a client to discover a server, there must be
-a multicast route between them with fewer hops than the default TTL
-(time-to-live) which is 8 or whatever the TTL was set to using the
-\fB-ttl\fR option to \fBbzflag\fR.  However, a client can still connect
-to a server beyond the multicast TTL.  Clients can also find servers
-advertised using \fI-public\fR by querying \fBbzfls\fR servers.
-.PP
-Some communication between clients, such as position and orientation
-information, is normally sent directly via multicast UDP packets.  Other
-data, like flag grab and kill messages, are sent to the server via TCP
-which then turns around and broadcasts it to all players via TCP.  Since
-being in a game implies connection to the server, all players are
-guaranteed to get all messages sent via TCP.  But the multicast UDP
-packets may be routed differently.  If other players can see your tank in
-the game but it never appears to move and shots go through it, chances
-are high that your multicast packets are not getting routed correctly.
-.PP
-BZFlag will, upon connecting to a server, attempt to contact the server
-via multicast.  If it gets a reply then multicasting is used for the
-duration of the game.  If it receives no reply then it falls back to
-using the TCP server connection to transmit player-to-player packets.
-The server will broadcast these packets to the other players and send
-any multicast player-to-player packets to the player via TCP.  This
-normally solves any communication problems at the expense of higher
-network traffic.  However, there still may be problems if you can
-multicast to the server but not to some other players.
-.PP
-The first thing to check is that multicast packets are being sent on
-the right interface.  By default, multicast packets are sent on the
-first multicast capable interface.  This is normally the right choice,
-but if your system has more than one network interface (other than the
-loopback interface), then you may have to use a different interface.
-A typical scenario of this situation is a remote system connected via
-ISDN to a main network.  Use \fBnetstat -i\fR to list your interfaces,
-then use the \fB-interface\fR \fIinterface\fR option to \fBbzflag\fR,
-replacing \fIinterface\fR with the correct interface IP address.
-.PP
-The next thing to check is the TTL (time-to-live) on the client.  By
-default it is 8.  This means all other players must be no more than
-8 hops (multicast routers) away.  You can use a TTL as high as 255.
-Since sites are recommended to not forward multicast packets with TTL's
-below 32 outside the site, you cannot normally play BZFlag across the
-Internet unless you set the TTL above 32.  If any player joins the
-game using a TTL greater than everyone else, then the server and all
-clients automatically begin using the higher TTL.  This helps ensure
-that everyone can see everyone else, but, due the nature of the network
-geometry, this cannot be guaranteed.
-.PP
-If the TTL is high enough, check the multicast network.  You must have
-a multicast router between all subnets from your subnet to every other
-subnet with a player.  If all players are on the same subnet then no
-multicast router is required.  Since multicast routers connecting a
-site to the Internet normally prevent packets with TTL's below 32 from
-going out onto the Internet, you can't normally play BZFlag across the
-Internet if the TTL not above 32.  However, you may be able to create
-a multicast tunnel, a virtual point-to-point link between any two
-subnets on the Internet.  You'll need to run a tunneling router at both
-ends of the tunnel.  See \fBmrouted\fR for more information about a
-multicast router.
+Clients find servers advertised using \fI-public\fR by querying 
+\fBbzfls\fR servers.
 .SH SEE ALSO
 bzflag(6), bzfls(6), bzfrelay(6), mrouted(1)

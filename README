@@ -227,9 +227,7 @@ UDP added by Frank Siegert, frank@this.net, frank@bzflag.de
 
 This Client and Server now implement UDP unicast relay networking. It
 should provide much better timing and stability compared to the old TCP
-way. To stress test the new way the Client now always forces to relay
-even if Multicasting is available. Please use an older client if you
-need to run multicasting.
+way.
 
 This release is compatible with older networking. If this clients connects
 to an older server the normal TCP based networking is used. Also if an older

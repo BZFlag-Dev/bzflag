@@ -91,12 +91,7 @@ to use this on some systems when bzflag cannot correctly determine the
 display size.
 .TP
 \fB-interface\fI interface\fR
-Send all multicast packets through \fIinterface\fR, which should be
-the IP address of one the host's multicast capable interfaces.
-Communication between players is normally via multicast as this is
-much more efficient than unicasting to all other players and more
-flexible and efficient than broadcasting to all hosts.  The first
-multicast capable interface is used by default.
+The address to bind to. The server normally listens on all addresses.
 .TP
 \fB-latitude\fI latitude\fR
 Uses \fIlatitude\fR when computing celesital object positions.
@@ -130,10 +125,6 @@ The server must be listening on this port (see the -p option on
 .TP
 \fB-team\fI team-name\fR
 Chooses the player's team.
-.TP
-\fB-ttl\fI time-to-live\fR
-Sets the maximum time-to-live of the inter-player multicast packets.
-Any site more than this many hops away will not be reachable.
 .TP
 .B -version
 Prints the version number of the executable.

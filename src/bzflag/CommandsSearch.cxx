@@ -15,7 +15,6 @@
 #include "StateDatabase.h"
 #include "ErrorHandler.h"
 #include "network.h"
-#include "multicast.h"
 #include "PlatformFactory.h"
 #include "Protocol.h"
 #include "playing.h"
@@ -87,10 +86,7 @@ static const unsigned int firstPerServerName = 3;
 
 CommandsSearch*			CommandsSearch::instance = NULL;
 
-CommandsSearch::CommandsSearch() : phase(Idle),
-								pingInSocket(-1),
-								pingOutSocket(-1),
-								pingBcastSocket(-1)
+CommandsSearch::CommandsSearch() : phase(Idle)
 {
 	// add callback for each frame
 	addPlayingCallback(&onFrameCB, this);
@@ -112,9 +108,6 @@ CommandsSearch::~CommandsSearch()
 
 	// remove frame callback
 	removePlayingCallback(&onFrameCB, this);
-
-	// close sockets
-	closePingSockets();
 
 	// close list server sockets
 	clearListServers();
@@ -283,12 +276,6 @@ void					CommandsSearch::onSearch()
 		phase = Idle;
 	else
 		phase = LookupListServers;
-
-	// open sockets if they're not open yet
-	openPingSockets();
-
-	// send pings
-	sendPing();
 }
 
 void					CommandsSearch::onFrame()
@@ -313,49 +300,6 @@ void					CommandsSearch::onFrame()
 
 	// process echos
 	handleReplies();
-}
-
-void					CommandsSearch::openPingSockets()
-{
-	int ttl = atoi(BZDB->get("infoNetworkTTL").c_str());
-	Address multicastAddress(BroadcastAddress);
-	if (ttl > 0 && pingInSocket == -1)
-		pingInSocket  = openMulticast(multicastAddress,
-								ServerPort, NULL,
-								ttl,
-								BZDB->get("infoMulticastInterface").c_str(),
-								"r", &pingInAddr);
-	if (ttl > 0 && pingOutSocket == -1)
-		pingOutSocket = openMulticast(multicastAddress,
-								ServerPort, NULL,
-								ttl,
-								BZDB->get("infoMulticastInterface").c_str(),
-								"w", &pingOutAddr);
-
-	// open broadcast
-	if (pingBcastSocket == -1)
-		pingBcastSocket = openBroadcast(BroadcastPort, NULL, &pingBcastAddr);
-}
-
-void					CommandsSearch::closePingSockets()
-{
-	closeMulticast(pingInSocket);
-	closeMulticast(pingOutSocket);
-	closeMulticast(pingBcastSocket);
-	pingInSocket    = -1;
-	pingOutSocket   = -1;
-	pingBcastSocket = -1;
-}
-
-void					CommandsSearch::sendPing()
-{
-	int ttl = atoi(BZDB->get("infoNetworkTTL").c_str());
-	if (ttl > 1 && pingInSocket != -1 && pingOutSocket != -1) {
-		PingPacket::sendRequest(pingOutSocket, &pingOutAddr, ttl);
-	}
-	if (pingBcastSocket != -1) {
-		PingPacket::sendRequest(pingBcastSocket, &pingBcastAddr, 1);
-	}
 }
 
 void					CommandsSearch::clearListServers()
@@ -469,15 +413,10 @@ void					CommandsSearch::handleReplies()
 		timeout.tv_usec = 0;
 
 		// prepare socket sets
+		int fdMax = -1;
 		fd_set read_set, write_set;
 		FD_ZERO(&read_set);
 		FD_ZERO(&write_set);
-		if (pingInSocket != -1)
-			FD_SET(pingInSocket, &read_set);
-		if (pingBcastSocket != -1)
-			FD_SET(pingBcastSocket, &read_set);
-		int fdMax = (pingInSocket > pingBcastSocket) ?
-								pingInSocket : pingBcastSocket;
 
 		// check for list server connection or data
 		ListServerList::iterator index;
@@ -488,8 +427,7 @@ void					CommandsSearch::handleReplies()
 					FD_SET(listServer.socket, &write_set);
 				else if (listServer.phase == WaitForReply)
 					FD_SET(listServer.socket, &read_set);
-				if (listServer.socket > fdMax)
-					fdMax = listServer.socket;
+				fdMax = listServer.socket;
 			}
 		}
 
@@ -497,15 +435,6 @@ void					CommandsSearch::handleReplies()
 		const int nfound = select(fdMax + 1, &read_set, &write_set, 0, &timeout);
 		if (nfound <= 0)
 			break;
-
-		// check broadcast and multicast sockets
-		GameServer serverInfo;
-		if (pingInSocket != -1 && FD_ISSET(pingInSocket, &read_set))
-			if (serverInfo.ping.read(pingInSocket, NULL))
-				addGameServerWithLookup(serverInfo);
-		if (pingBcastSocket != -1 && FD_ISSET(pingBcastSocket, &read_set))
-			if (serverInfo.ping.read(pingBcastSocket, NULL))
-				addGameServerWithLookup(serverInfo);
 
 		// check list servers
 		for (index = listServers.begin(); index != listServers.end(); ++index) {

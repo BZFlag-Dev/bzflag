@@ -343,7 +343,7 @@ static void				parse(int argc, char** argv)
 				printError("Missing argument for %s.", argv[i-1]);
 				usage();
 			}
-			BZDB->set("infoMulticastInterface", argv[i]);
+			BZDB->set("infoInterface", argv[i]);
 		}
 		else if (strcmp(argv[i], "-list") == 0) {
 			if (++i == argc) {
@@ -400,22 +400,6 @@ static void				parse(int argc, char** argv)
 				printError("Invalid argument for %s.", argv[i-1]);
 				usage();
     		}
-    	}
-    	else if (strcmp(argv[i], "-ttl") == 0) {
-    		if (++i == argc) {
-			  printError("Missing argument for %s.", argv[i-1]);
-			  usage();
-    		}
-    		int ttl = atoi(argv[i]);
-    		if (ttl < 0) {
-				ttl = 0;
-				printError("Using minimum ttl of %d.", ttl);
-    		}
-    		else if (ttl > MaximumTTL) {
-				ttl = MaximumTTL;
-				printError("Using maximum ttl of %d.", ttl);
-    		}
-    		BZDB->set("infoNetworkTTL", BzfString::format("%d", ttl));
     	}
     	else if (strcmp(argv[i], "-joystick") == 0) {
     		if (++i == argc) {
@@ -768,7 +752,6 @@ int						main(int argc, char** argv)
 			BZDB->set("infoEmail", email);
 		}
 	}
-	BZDB->set("infoNetworkTTL", BzfString::format("%d", DefaultTTL));
 
 	// read resources
 	{

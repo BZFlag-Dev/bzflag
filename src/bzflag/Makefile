@@ -37,7 +37,6 @@ CXXFILES =				\
 	RemotePlayer.cxx		\
 	DeadPlayer.cxx			\
 	ServerLink.cxx			\
-	PlayerLink.cxx			\
 	daylight.cxx			\
 	sound.cxx			\
 	bzflag.cxx			\

@@ -46,9 +46,8 @@ public:
 	virtual void		expire();
 	virtual void		radarRender() const = 0;
 
-	// prepare a shot update packet and send it using
-	// PlayerLink::getMulticast().  first part of message must be the
-	// ShotUpdate portion of FiringInfo.
+	// prepare a shot update packet and send it. first part of message must be
+	// the ShotUpdate portion of FiringInfo.
 	virtual void		sendUpdate(const FiringInfo&) const;
 
 	// update shot based on message.  code is the message code.  msg

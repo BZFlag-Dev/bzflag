@@ -261,7 +261,6 @@ only receive the following kinds of messages:
 	MsgFlagUpdate
 	MsgTeamUpdate
 	MsgAddPlayer
-	MsgNetworkRelay
 
 leave game
 ----------

@@ -91,7 +91,7 @@ static const unsigned long endPacket = 0;
 
 ServerLink*				ServerLink::server = NULL;
 
-ServerLink::ServerLink(const Address& serverAddress, int port, int number) :
+ServerLink::ServerLink(const Address& serverAddress, int port) :
 								state(SocketError),		// assume failure
 								fd(-1)					// assume failure
 {
@@ -629,6 +629,16 @@ void					ServerLink::sendEnter(PlayerType type,
 	::memcpy(buf, email, ::strlen(email));
 	buf = (void*)((char*)buf + EmailLen);
 	send(MsgEnter, sizeof(msg), msg);
+}
+
+void					ServerLink::sendPlayerUpdate(const Player* player)
+{
+	if (state == SocketError) return;
+	char msg[PlayerUpdatePLen];
+	void* buf = msg;
+	buf = nboPackUByte(buf, player->getId());
+	buf = player->pack(buf);
+	send(MsgPlayerUpdate, sizeof(msg), msg);
 }
 
 void					ServerLink::enableUDPCon()

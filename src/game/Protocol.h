@@ -37,17 +37,8 @@ const char* const		ServerVersion = "BZFS108a";
 // well known service port number for bzflag server
 const int				ServerPort = 5155;
 
-// address and port for multicast communication between players
-// this is the sgi-dog multicast address.
-const char* const		BroadcastAddress = "224.0.1.2";
-const int				BroadcastPort = 5154;
-
 // URL for default list server
 const char* const		DefaultListServerURL = "http://BZFlag.SourceForge.net/list-server.txt";
-
-// multicast ttl's
-const int				DefaultTTL = 8;
-const int				MaximumTTL = 255;
 
 // maximum size of any message (including header and length fields)
 const int				MaxPacketLen = 1024;
@@ -55,7 +46,7 @@ const int				MaxPacketLen = 1024;
 // null message code -- should never be sent
 const uint16_t			MsgNull = 0x0000;
 
-// multicast message codes
+// unreliable message codes
 const uint16_t			MsgPlayerUpdate = 0x7075;				// 'pu'
 const uint16_t			MsgGMUpdate = 0x676d;					// 'gm'
 const uint16_t			MsgAudio = 0x6175;						// 'au'
@@ -76,7 +67,6 @@ const uint16_t			MsgGetWorld = 0x6777;					// 'gw'
 const uint16_t			MsgIdAck = 0x6964;						// 'id'
 const uint16_t			MsgKilled = 0x6b6c;						// 'kl'
 const uint16_t			MsgMessage = 0x6d67;					// 'mg'
-const uint16_t			MsgNetworkRelay = 0x6e72;				// 'nr'
 const uint16_t			MsgQueryGame = 0x7167;					// 'qg'
 const uint16_t			MsgQueryPlayers = 0x7170;				// 'qp'
 const uint16_t			MsgReject = 0x726a;						// 'rj'
@@ -89,7 +79,6 @@ const uint16_t			MsgShotEnd = 0x7365;					// 'se'
 const uint16_t			MsgSuperKill = 0x736b;					// 'sk'
 const uint16_t			MsgTimeUpdate = 0x746f;					// 'to'
 const uint16_t			MsgTeleport = 0x7470;					// 'tp'
-const uint16_t			MsgSetTTL = 0x7474;						// 'tt'
 const uint16_t			MsgTeamUpdate = 0x7475;					// 'tu'
 
 // request for additional UDP link

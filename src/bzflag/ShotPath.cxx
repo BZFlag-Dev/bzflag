@@ -14,7 +14,6 @@
 #include "ShotStrategy.h"
 #include "LocalPlayer.h"
 #include "Protocol.h"
-#include "PlayerLink.h"
 #include "playing.h"
 
 //
@@ -252,8 +251,7 @@ void					LocalShotPath::update(float dt)
 	updateShot(dt);
 
 	// send updates if necessary
-	if (PlayerLink::getMulticast())
-		getStrategy()->sendUpdate(getFiringInfo());
+	getStrategy()->sendUpdate(getFiringInfo());
 }
 
 //
