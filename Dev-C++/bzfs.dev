@@ -4,12 +4,12 @@ Name=bzfs
 Ver=1
 IsCpp=1
 Type=1
-Compiler=-D__GNUWIN32__ -W -D_CONSOLE -DWIN32 -D_MBCS_@@_
-CppCompiler=-D__GNUWIN32__ -W -D_CONSOLE -DWIN32 -D_MBCS_@@_
+Compiler=-DBUILD_REGEX=1 -D__GNUWIN32__ -W -D_CONSOLE -DWIN32 -D_MBCS_@@_
+CppCompiler=-DBUILD_REGEX=1 -D__GNUWIN32__ -W -D_CONSOLE -DWIN32 -D_MBCS_@@_
 Includes=..\include;..\win32;.
 Linker=-lws2_32 -lwinmm -lkernel32 -luser32 -lgdi32 -lwinspool -lcomdlg32 -ladvapi32 -lshell32 -lole32 -loleaut32 -luuid_@@_
 Libs=
-UnitCount=157
+UnitCount=164
 Folders="Header Files","Header Files/bzfs","Header Files/common","Header Files/game","Header Files/net","Header Files/regex","Resource Files","Source Files","Source Files/bzfs","Source Files/common","Source Files/date","Source Files/game","Source Files/Net","Source Files/regex"
 ObjFiles=
 PrivateResource=
@@ -1328,9 +1328,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit158]
-FileName=..\src\regex\regex2.h
+FileName=..\src\bzfs\WorldFileObstacle.cxx
 CompileCpp=1
-Folder=Header Files/regex
+Folder=Header Files/common
 Compile=1
 Link=1
 Priority=1000
@@ -1338,9 +1338,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit159]
-FileName=..\src\geometry\models\tank\low_body.cxx
+FileName=..\src\obstacle\PyramidBuilding.cxx
 CompileCpp=1
-Folder=Source Files
+Folder=Header Files/common
 Compile=1
 Link=1
 Priority=1000
@@ -1348,9 +1348,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit160]
-FileName=..\src\geometry\models\tank\low_ltread.cxx
+FileName=..\src\obstacle\BoxBuilding.cxx
 CompileCpp=1
-Folder=Source Files
+Folder=Header Files/common
 Compile=1
 Link=1
 Priority=1000
@@ -1358,9 +1358,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit161]
-FileName=..\src\geometry\models\tank\low_rtread.cxx
+FileName=..\src\obstacle\Teleporter.cxx
 CompileCpp=1
-Folder=Source Files
+Folder=Header Files/common
 Compile=1
 Link=1
 Priority=1000
@@ -1368,9 +1368,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit162]
-FileName=..\src\geometry\models\tank\low_turret.cxx
+FileName=..\src\obstacle\Obstacle.cxx
 CompileCpp=1
-Folder=Source Files
+Folder=Header Files/common
 Compile=1
 Link=1
 Priority=1000
@@ -1378,9 +1378,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit164]
-FileName=..\src\geometry\models\tank\medium_body.cxx
+FileName=..\src\obstacle\BaseBuilding.cxx
 CompileCpp=1
-Folder=Source Files
+Folder=Header Files/common
 Compile=1
 Link=1
 Priority=1000
@@ -1721,6 +1721,16 @@ BuildCmd=
 FileName=..\src\regex\regcomp.c
 CompileCpp=0
 Folder=Source Files/regex
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit163]
+FileName=..\src\obstacle\WallObstacle.cxx
+CompileCpp=1
+Folder=Header Files/common
 Compile=1
 Link=1
 Priority=1000
