@@ -4127,9 +4127,8 @@ static void		checkEnvironment()
     const float* myPos = myTank->getPosition();
     const float myRadius = myTank->getRadius();
     for (i = 0; i < curMaxPlayers; i++)
-      if (player[i] &&
-	 ((player[i]->getFlag() == Flags::Steamroller) || (myTank->getFlag() == Flags::Burrow)) &&
-	  !player[i]->isPaused()) {
+      if (player[i] && !player[i]->isPaused() &&
+	 ((player[i]->getFlag() == Flags::Steamroller) || ((myTank->getFlag() == Flags::Burrow) && player[i]->isAlive()))) {
 	const float* pos = player[i]->getPosition();
 	if (!(flagd == Flags::PhantomZone && myTank->isFlagActive())) {
 	  const float radius = myRadius + SRRadiusMult * player[i]->getRadius();
@@ -4518,7 +4517,7 @@ static void		checkEnvironment(RobotPlayer* tank)
     bool dead = false;
     const float* myPos = tank->getPosition();
     const float myRadius = tank->getRadius();
-    if (((myTank->getFlag() == Flags::Steamroller) || (tank->getFlag() == Flags::Burrow)) && !myTank->isPaused()) {
+    if (((myTank->getFlag() == Flags::Steamroller) || ((tank->getFlag() == Flags::Burrow) && myTank->isAlive())) && !myTank->isPaused()) {
       const float* pos = myTank->getPosition();
       const float radius = myRadius + SRRadiusMult * myTank->getRadius();
       if (hypot(hypot(myPos[0] - pos[0], myPos[1] - pos[1]), myPos[2] - pos[2]) < radius) {
@@ -4527,9 +4526,8 @@ static void		checkEnvironment(RobotPlayer* tank)
       }
     }
     for (i = 0; !dead && i < curMaxPlayers; i++)
-      if (player[i] &&
-	  ((player[i]->getFlag() == Flags::Steamroller) || (myTank->getFlag() == Flags::Burrow)) &&
-	  !player[i]->isPaused()) {
+      if (player[i] && !player[i]->isPaused() &&
+	  ((player[i]->getFlag() == Flags::Steamroller) || ((myTank->getFlag() == Flags::Burrow) && player[i]->isAlive()))) {
 	  const float* pos = player[i]->getPosition();
 	  const float radius = myRadius + SRRadiusMult * player[i]->getRadius();
 	  if (hypot(hypot(myPos[0] - pos[0], myPos[1] - pos[1]), myPos[2] - pos[2]) < radius) {
