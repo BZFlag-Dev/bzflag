@@ -1727,11 +1727,12 @@ static void		doAutoPilot(float &rotation, float &speed)
 	  if ((myTank->getFlag() != Flags::SuperBullet) && (velocity[0] > 3.0f) || (velocity[1] > 3.0f))
 	    building = ShotStrategy::getFirstBuilding(tankRay, -0.5f, d);
 	  if (building) {
-	    if ((d > 20.f) && (d < 50.0f) 
-	       && (building->getType() == BoxBuilding::typeName)
-	       && (((building->getPosition()[2] - pos[2] + building->getHeight()) ) < 17.0f)) {
-	   
-	     myTank->jump();
+	    if ((d > 20.f) && (d < 50.0f) && (building->getType() == BoxBuilding::typeName)) {
+	      float jumpVel = BZDB->eval(StateDatabase::BZDB_JUMPVELOCITY);
+	      float maxJump = (jumpVel * jumpVel) / (2 * -BZDB->eval(StateDatabase::BZDB_GRAVITY));
+
+	      if (((building->getPosition()[2] - pos[2] + building->getHeight()) ) < maxJump)
+	        myTank->jump();
 	    }
 	  }
 	}
