@@ -398,24 +398,55 @@ void readOBJ ( CModel &model, std::string file )
 					for ( int i = 1; i < partCount; i++ )
 					{
 						std::string section = lineParts[i];
-						std::vector<std::string>	vertItems = TextUtils::tokenize(section,std::string("/"));
-						if (vertItems.size() == 3)
-						{
-							std::string vertPart = vertItems[0];
-							std::string uvPart = vertItems[1];
-							std::string normPart = vertItems[2];
 
+            // TextUtils::tokenize() does not make 3
+            // strings from "1//2", so do it the hard way
+            const std::string::size_type npos = std::string::npos;
+						std::string::size_type pos1, pos2 = npos;
+            pos1 = section.find_first_of('/');
+            if (pos1 != npos) {
+              pos2 = section.find_first_of('/', pos1 + 1);
+						}
+
+						std::string vertPart, uvPart, normPart;
+						if (pos1 == npos) {
+						  vertPart = section;
+						} else {
+						  vertPart = section.substr(0, pos1);
+						  if (pos2 == npos) {
+						    uvPart = section.substr(pos1 + 1, npos);
+							} else {
+						    uvPart = section.substr(pos1 + 1, pos2 - pos1 - 1);
+						    normPart = section.substr(pos2 + 1, npos);
+							}
+						}
+						
+						if (vertPart.size() > 0) {
 							face.verts.push_back(atoi(vertPart.c_str())-1);
+						}
+						if (uvPart.size() > 0) {
 							face.texCoords.push_back(atoi(uvPart.c_str())-1);
+						}
+						if (normPart.size() > 0) {
 							face.normals.push_back(atoi(normPart.c_str())-1);
 						}
-						else
-						{
-							printf ("bad face triplet specification: %s\n", section.c_str());
-						}
-					}	
+					}
 
-					mesh.faces.push_back(face);
+          bool valid = true;					
+					const int vSize = (int)face.verts.size();
+					const int nSize = (int)face.normals.size();
+					const int tSize = (int)face.texCoords.size();
+					if ((nSize != 0) && (nSize != vSize)) {
+						printf ("vertex/normal count mismatch\n");
+						valid = false;
+					}
+					if ((tSize != 0) && (tSize != vSize)) {
+						printf ("vertex/texcoord count mismatch\n");
+						valid = false;
+					}
+					if (valid) {
+					  mesh.faces.push_back(face);
+					}
 				}
 			}
 		}
@@ -520,7 +551,7 @@ void writeBZW  ( CModel &model, std::string file )
 				fprintf(fp," %d",*indexItr++);
 			fprintf (fp,"\n");
 
-      if (useNormals) {
+      if (useNormals && (face.normals.size() > 0)) {
 				indexItr = face.normals.begin();
 				fprintf (fp,"    normals");
 				while ( indexItr != face.normals.end() )
@@ -528,7 +559,7 @@ void writeBZW  ( CModel &model, std::string file )
 				fprintf (fp,"\n");
 			}
 
-      if (useTexcoords) {
+      if (useTexcoords && (face.texCoords.size() > 0)) {
 				indexItr = face.texCoords.begin();
 				fprintf (fp,"    texcoords");
 				while ( indexItr != face.texCoords.end() )
