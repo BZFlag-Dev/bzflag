@@ -4811,7 +4811,7 @@ void drawFrame(const float dt)
 
   } else {
     // wait around a little to avoid spinning the CPU when iconified
-    media->sleep(0.05f);
+    TimeKeeper::sleep(0.05f);
   }
 }
 

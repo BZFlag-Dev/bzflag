@@ -5060,7 +5060,7 @@ int main(int argc, char **argv)
     } else if (nfound < 0) {
       if (getErrno() != EINTR) {
 	// test code - do not uncomment, will cause big stuttering
-	// sleep(1);
+	// TimeKeeper::sleep(1.0f);
       }
     } else {
       if (NetHandler::anyUDPPending())

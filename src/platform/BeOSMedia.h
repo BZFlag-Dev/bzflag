@@ -46,9 +46,6 @@ public:
   void				audioSleep(bool checkLowWater, double maxTime);
 
   // sleep for given number of seconds
-  virtual void	sleep(float timeInSeconds);
-
-  // sleep for given number of seconds
   double	stopwatch(bool start);
 private:
   BeOSMedia(const BeOSMedia&);

@@ -51,12 +51,6 @@ double			SDLMedia::stopwatch(bool start)
     return (double) currentTick * 0.001;
 }
 
-void			SDLMedia::sleep(float timeInSeconds)
-{
-  // Not used ... however ... here it is
-  SDL_Delay((Uint32) (timeInSeconds * 1000.0));
-}
-
 bool			SDLMedia::openAudio()
 {
   // don't re-initialize

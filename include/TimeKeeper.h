@@ -78,6 +78,9 @@ public:
   /** prints an float time difference in human-readable form */
   static const std::string	printTime(float diff);
 
+  /** sleep for a given number of floating point seconds */
+  static void		sleep(float); //const
+
 private:
   double		seconds;
   static TimeKeeper	currentTime;
@@ -139,6 +142,7 @@ inline float		TimeKeeper::getSeconds(void) const
 {
   return (float)seconds;
 }
+
 
 #endif // BZF_TIME_KEEPER_H
 

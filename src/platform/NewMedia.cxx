@@ -45,11 +45,6 @@ double			NewMedia::stopwatch(bool start)
   return 0.0;
 }
 
-void			NewMedia::sleep(float timeInSeconds)
-{
-  // XXX -- go to sleep for timeInSeconds seconds (which can be fractional)
-}
-
 bool			NewMedia::openAudio()
 {
   // XXX -- open audio device and prepare for IPC with audio thread

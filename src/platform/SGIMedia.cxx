@@ -81,14 +81,6 @@ double			SGIMedia::stopwatch(bool start)
   }
 }
 
-void			SGIMedia::sleep(float timeInSeconds)
-{
-  struct timeval tv;
-  tv.tv_sec = (long)timeInSeconds;
-  tv.tv_usec = (long)(1.0e6 * (timeInSeconds - floor(timeInSeconds)));
-  select(0, NULL, NULL, NULL, &tv);
-}
-
 bool			SGIMedia::openAudio()
 {
   // don't re-initialize

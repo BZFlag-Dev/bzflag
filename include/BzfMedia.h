@@ -63,9 +63,6 @@ class BzfMedia {
     // sleep for given number of seconds
     virtual double	stopwatch(bool start);
 
-    // sleep for given number of seconds
-    virtual void	sleep(float timeInSeconds) = 0;
-
     // initialize the audio subsystem.  return true iff successful.
     virtual bool	openAudio() = 0;
 

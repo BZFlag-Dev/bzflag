@@ -228,7 +228,7 @@ void JoinMenu::execute()
       for (int i = 0; i < 40; i++) {
 	serverList->checkEchos(getStartupInfo());
 	if (info->token[0] != '\0') break;
-	media->sleep(0.25f);
+	TimeKeeper::sleep(0.25f);
       }
       delete serverList;
     }

@@ -38,17 +38,10 @@ WinMedia::WinMedia(WinWindow* _window) :
 				audioCommandMutex(NULL),
 				audioThread(NULL)
 {
-  dummyEvent = CreateEvent(NULL, TRUE, FALSE, NULL);
 }
 
 WinMedia::~WinMedia()
 {
-  CloseHandle(dummyEvent);
-}
-
-void			WinMedia::sleep(float timeInSeconds)
-{
-  WaitForSingleObject(dummyEvent, (DWORD)(1000.0f * timeInSeconds));
 }
 
 bool			WinMedia::openAudio()

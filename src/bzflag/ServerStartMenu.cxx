@@ -533,7 +533,7 @@ void ServerStartMenu::execute()
     }
     else if (pid != 0) {
       // parent process.  wait a bit and check if child died.
-      sleep(1);
+      TimeKeeper::sleep(1.0f);
       if (waitpid(pid, NULL, WNOHANG) != 0) {
 	setStatus("Failed.");
       } else {

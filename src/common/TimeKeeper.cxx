@@ -205,6 +205,49 @@ const std::string TimeKeeper::printTime(float diff)
   return printTime(temp);
 }
 
+
+void TimeKeeper::sleep(float seconds)
+{
+  if (seconds <= 0.0f) {
+    return;
+  }
+
+#ifdef HAVE_USLEEP
+  usleep((unsigned int)(1.0e6 * seconds));
+  return;
+#endif
+#ifdef HAVE_SLEEP
+  // equivalent to _sleep() on win32 (not sleep(3))
+  Sleep(seconds * 1000);
+  return;
+#endif
+#ifdef HAVE_SNOOZE
+  snooze((bigtime_t)(1.0e6 * seconds));
+  return;
+#endif
+#ifdef HAVE_SELECT
+  struct timeval tv;
+  tv.tv_sec = (long)seconds;
+  tv.tv_usec = (long)(1.0e6 * (seconds - tv.tv_sec));
+  select(0, NULL, NULL, NULL, &tv);
+  return;
+#endif
+#ifdef HAVE_WAITFORSINGLEOBJECT
+  HANDLE dummyEvent = CreateEvent(NULL, TRUE, FALSE, NULL);
+  WaitForSingleObject(dummyEvent, (DWORD)(1000.0f * seconds));
+  CloseHandle(dummyEvent);
+  return;
+#endif
+
+  // fall-back case is fugly manual timekeeping
+  TimeKeeper now = TimeKeeper::getCurrent();
+  while ((TimeKeeper::getCurrent() - now) < seconds) {
+    continue;
+  }
+  return;
+}
+
+
 // Local Variables: ***
 // mode: C++ ***
 // tab-width: 8 ***

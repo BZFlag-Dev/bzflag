@@ -60,14 +60,6 @@ double			SolarisMedia::stopwatch(bool start)
 	return (double)tv.tv_sec + 1.0e-6 * (double)tv.tv_usec - stopwatchTime;
 }
 
-void			SolarisMedia::sleep(float timeInSeconds)
-{
-	struct timeval tv;
-	tv.tv_sec = (long)timeInSeconds;
-	tv.tv_usec = (long)(1.0e6 * (timeInSeconds - tv.tv_sec));
-	select(0, NULL, NULL, NULL, &tv);
-}
-
 static const int	NumChunks = 4;
 
 bool			SolarisMedia::openAudio()

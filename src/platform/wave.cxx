@@ -283,6 +283,8 @@ int main(int argc, char *argv[]) {
   }
   write(fd, data, samples*channels);
   fprintf(stderr, "sound is %dus\n", samples * (1000000 / audioOutputRate));
+
+  // FIXME: can/should use TimeKeeper
   usleep(samples * (1000000 / audioOutputRate));
 /*
   while (1) {

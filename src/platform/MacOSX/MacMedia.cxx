@@ -18,8 +18,6 @@ MacMedia::~MacMedia() {}
 
 double MacMedia::stopwatch(bool start) { return 0; }
 
-void   MacMedia::sleep(float   secs ) {}
-
 // Audio
 
 #define CHUNK_SIZE  (1024 * 4)

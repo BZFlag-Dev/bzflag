@@ -25,7 +25,6 @@ class MacMedia : public BzfMedia {
     ~MacMedia();
 
     double stopwatch(bool);
-    void sleep(float );
 
     bool openAudio();
     void closeAudio();

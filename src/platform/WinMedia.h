@@ -27,7 +27,6 @@ class WinMedia : public BzfMedia {
 			WinMedia(WinWindow*);
 			~WinMedia();
 
-    void		sleep(float);
     bool		openAudio();
     void		closeAudio();
     bool		startAudioThread(void (*)(void*), void*);
@@ -68,7 +67,6 @@ class WinMedia : public BzfMedia {
     HANDLE		audioCommandEvent;
     HANDLE		audioCommandMutex;
     HANDLE		audioThread;
-    HANDLE		dummyEvent;
     static void		(*threadProc)(void*);
     static void*	threadData;
 };

@@ -72,14 +72,6 @@ double			LinuxMedia::stopwatch(bool start)
   return getTime() - stopwatchTime;
 }
 
-void			LinuxMedia::sleep(float timeInSeconds)
-{
-  struct timeval tv;
-  tv.tv_sec = (long)timeInSeconds;
-  tv.tv_usec = (long)(1.0e6 * (timeInSeconds - tv.tv_sec));
-  select(0, NULL, NULL, NULL, &tv);
-}
-
 bool			LinuxMedia::openAudio()
 {
   // don't re-initialize

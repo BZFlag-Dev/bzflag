@@ -37,7 +37,6 @@ class SolarisMedia : public BzfMedia {
 			~SolarisMedia();
 
     double		stopwatch(bool);
-    void		sleep(float);
     bool		openAudio();
     void		closeAudio();
     bool		startAudioThread(void (*)(void*), void*);

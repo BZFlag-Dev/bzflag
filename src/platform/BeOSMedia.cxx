@@ -535,12 +535,6 @@ void					BeOSMedia::audioSleep(
   DBG(("audioSleep error 0x%08lx\n", err));
 }
 
-void					BeOSMedia::sleep(float timeInSeconds)
-{
-  DBG(("BeOSMedia::sleep(%f)\n", timeInSeconds));
-  snooze((bigtime_t)(1.0e6 * timeInSeconds));
-}
-
 double					BeOSMedia::stopwatch(bool start)
 {
   return BzfMedia::stopwatch(start); // not better
