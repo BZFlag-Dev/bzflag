@@ -3599,6 +3599,18 @@ static bool		enterServer(ServerLink* serverLink, World* world,
     case RejectServerFull:
       printError("This game is full.  Try again later.");
       break;
+      
+    case RejectBadCallsign:
+      printError("The callsign was rejected.  Try a different callsign.");
+      break;
+
+    case RejectRepeatCallsign:
+      printError("The callsign specified is already in use.");
+      break;
+
+    case RejectBadEmail:
+      printError("The e-mail was rejected.  Try a different e-mail.");
+      break;
     }
     return false;
   }
