@@ -267,8 +267,8 @@ void			HUDuiControl::renderFocus()
   if (gstate->isTextured()) { // asumes there are w/h fames of animatin h x h in each image
 	float imageSize = arrow->getHeight();
     int uFrames = 1;
-	if (imageSize != 0)
-		uFrames = arrow->getWidth()/imageSize; // 4;
+    if (imageSize != 0)
+      uFrames = int(arrow->getWidth()/imageSize); // 4;
     int vFrames = 1; // 4;
     float du = 1.0f / (float)uFrames;
     float dv = 1.0f / (float)vFrames;
