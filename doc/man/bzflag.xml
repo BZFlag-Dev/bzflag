@@ -204,12 +204,15 @@ join as an observer.</para>
 <para>Chooses one of three possible display options.  <emphasis remap='I'>Normal</emphasis> will
 render a single view to the entire screen.  <emphasis remap='I'>Stereo</emphasis> will try
 to allocate a stereo (in-a-window) capable buffer and then draw a
-single view in stereo.  You're system must support stereo-in-a-window
+single view in stereo.  Your system must support stereo-in-a-window
 buffers and stereo goggles.  <emphasis remap='I'>Three</emphasis> will render the front view
 to the upper right quadrant of the display, a left view to the lower
 left quadrant, and a right view to the lower right quadrant.  This
 is intended for systems capable of driving multiple monitors from
-various areas of the display surface, yielding a wrap around view.</para>
+various areas of the display surface, yielding a wrap around view.
+Note that setting an unsupported view option will often lead to BZFlag not
+running successfully. To correct this, run with -view normal.
+</para>
 </listitem>
 </varlistentry>
 <varlistentry>
