@@ -138,7 +138,8 @@ float			Teleporter::isTeleported(const Ray& r, int& face) const
 
   // if intersection with border is before one without then doesn't teleport
   // (cos it hit the border first).  also no teleport if no intersection.
-  if ((tb >= 0.0f && tb < t) || t < 0.0f) return -1.0f;
+  if ((tb >= 0.0f && t - tb > 1e-6) || t < 0.0f)
+    return -1.0f;
 
   // get teleport position.  if above or below teleporter then no teleportation.
   float p[3];

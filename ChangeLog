@@ -21,6 +21,7 @@ BZFlag 1.7e1
 * stop using signal() as suggested by Frank Thilo - TimR
 * Triple buffering support (actually n way buffering) - XiGraphics
 * Joystick support - XiGraphics
+* teleporter shot handling improved - chestal
 
 
 BZFlag 1.7e release 000
