@@ -710,6 +710,9 @@ copy debug\*.pdb ..\..\*.pdb
 				</FileConfiguration>
 			</File>
 			<File
+				RelativePath="..\..\src\bzflag\TextureManager.cxx">
+			</File>
+			<File
 				RelativePath="..\..\src\bzflag\World.cxx">
 				<FileConfiguration
 					Name="Debug|Win32">
@@ -830,6 +833,9 @@ copy debug\*.pdb ..\..\*.pdb
 			</File>
 			<File
 				RelativePath="..\..\src\bzflag\texture.h">
+			</File>
+			<File
+				RelativePath="..\..\include\TextureManager.h">
 			</File>
 			<File
 				RelativePath="..\include\TextUtils.h">
