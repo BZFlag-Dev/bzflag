@@ -522,7 +522,7 @@ void			LocalPlayer::doUpdateMotion(float dt)
   bool expelled;
   const Obstacle* obstacle;
   float timeStep = dt;
-  if (location != Dead && location != Exploding) location = OnGround;
+//  if (location != Dead && location != Exploding) location = OnGround;
   for (int numSteps = 0; numSteps < MaxSteps; numSteps++) {
     // record position at beginning of time step
     float tmpPos[3], tmpAzimuth;
@@ -939,7 +939,7 @@ void			LocalPlayer::restart(const float* pos, float _azimuth)
 
   // initialize position/speed state
   static const float zero[3] = { 0.0f, 0.0f, 0.0f };
-  location = OnGround;
+  location = (pos[2] > 0.0f) ? OnBuilding : OnGround;
   lastSpeed = 0.0f;
   desiredSpeed = 0.0f;
   desiredAngVel = 0.0f;
