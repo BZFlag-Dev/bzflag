@@ -26,24 +26,7 @@ THESE ARE LOWER PRIORITY
   type that would be be called during ObstacleMgr::makeWorld()  (including
   materials, physics drivers, texture matrices, transforms, and dynamic
   colors).
-   * TimRiker asks what the point of this is? The server is already open
-     source. If you want a new object, add it to the source, no? Is this just
-     to allow compound referenced objects in world files? I'd say that a script
-     to generate the full world file might be a better approach. A way to read
-     a world file from stdin might be nice so that you could pipe the script
-     to bzfs on start up.
-   * trepan answers:
-     1. do you know that bzflag now has grouping?  "define/enddef" & "group/end"
-     2. yes, this is to allow for a library of grouped objects. the group
-        modifications properties (transforms, tinting, etc...) were setup to
-        allow for this type of functionality. Bob make a car group definition
-        and sticks it a *.bzw lib file... Sheila then simply calls "group car"
-        after having done "include BobLib.bzw", and then tints it, etc...
-     3. i disagree that forcing users to write their own scripts to achieve
-        this functionality is the right approach. 
-     4. the culling by 0 reference count should be done even if the -lib or
-        "include" features are not.
-        
+
 * Teach Roger how to avoid driving into the water on maps that have
   waterlevels set.  Probably needs to know not to drive into deadly
   physics drivers too.
@@ -69,8 +52,6 @@ THESE ARE LOWER PRIORITY
 * add language translations for the new flags
 
 * improve the mesh collision code (edging)
-
-* speed up the radar rendering
 
 * bzflag and bzadmin should support command line central passwords:
   "User:Password@bzflag.example.com:1234"
@@ -269,9 +250,6 @@ THESE NEED TO WAIT FOR THE NEXT PROTOCOL BREAKAGE
 
 * server should send less frequent updates for "distant" players
 
-* move team base packing into WorldInfo (bzfs)
-  and add height (z)
-
 * remove flipz from pyr net code and replace with neg height.
 
 * ipv6 support
@@ -281,8 +259,6 @@ THESE NEED TO WAIT FOR THE NEXT PROTOCOL BREAKAGE
 
 * make the texture manager give out IDs ( wrapered or raw ),
   and have everyone use the ID, not the image pointer, as it can change.
-
-* allow user specified textures for world on a per object basis.
 
 * allow user specified textures for tanks on a per tank basis.
 
@@ -319,8 +295,6 @@ THESE NEED TO WAIT FOR THE NEXT PROTOCOL BREAKAGE
 * look into burning global lighting into world, perhaps with lightmaps. Allow map lights.
 
 * look into useing projected textures or some other shadow method that allows for better shadows.
-
-* look into removing the GL 1.0 code and requireing GL 1.1
 
 * see if 3dfx/other old hardware limits are still practical.
 

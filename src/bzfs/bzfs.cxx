@@ -1042,7 +1042,7 @@ static WorldInfo *defineTeamWorld()
       bases.erase(t);
     } else {
       const float *pos  = bases[t].getBasePosition(0);
-      const float  size = BZDB.eval(StateDatabase::BZDB_BASESIZE);
+      const float  size = 0.5f * BZDB.eval(StateDatabase::BZDB_BASESIZE);
       world->addBase(pos[0], pos[1], pos[2], 0.0f,
 		     size, size, 0.0f, t, false, false);
     }
