@@ -16,10 +16,10 @@
 /** this file contains headers necessary for SDL */
 
 #ifdef HAVE_SDL
-#  ifdef _WIN32
+#  ifdef _MSC_VER
 #    include <SDL/SDL.h>
 #    include <SDL/SDL_thread.h>
-#  else // cus linux is wierd
+#  else // autotools adds an SDL-specific include path
 #    include "SDL.h"
 #    include "SDL_thread.h"
 #  endif //_WIN32
