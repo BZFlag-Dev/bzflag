@@ -65,7 +65,7 @@ else {
   $servdb->do("DELETE FROM servers WHERE lastmod < $staletime");
 }
 
-print header;
+print header(-type=>'text/plain');
 
 ###############################################################################
 # Do stuff based on what the 'action' is...
