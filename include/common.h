@@ -18,7 +18,10 @@
 #define	BZF_COMMON_H
 
 #if (_WIN32)
+// turn off bogus `this used in base member initialization list'
 	#pragma warning(disable: 4786)
+	#pragma warning(disable: 4503)
+	#pragma warning(disable: 4355)
 #endif
 
 #include <config.h>
@@ -33,12 +36,6 @@
 #if (defined(__unix__) || defined(unix) || defined(__APPLE__)) && !defined(USG)
 #include <sys/param.h>
 #endif
-
-#if defined(_WIN32)
-// turn off bogus `this used in base member initialization list'
-#pragma warning(disable: 4355)
-#pragma warning( 4 : 4786 )
-#endif /* defined(_WIN32) */
 
 #if !defined HAVE_SOCKLEN_T
 typedef int socklen_t;
