@@ -1,5 +1,5 @@
 # bzflag
-# Copyright (c) 1993 - 2001 Tim Riker
+# Copyright (c) 1993 - 2002 Tim Riker
 #
 # This package is free software;  you can redistribute it and/or
 # modify it under the terms of the license found in the file
@@ -66,8 +66,10 @@ PCOPTS   = -Wall -W -ansi $(ACOPTS)
 PCXXOPTS = -Wall -W $(ACXXOPTS)
 COPT     = -DNDEBUG -O2
 CXXOPT   = -DNDEBUG -O2 -ffast-math -fexpensive-optimizations
-CDEBUG   = -DDEBUG -g -Werror
-CXXDEBUG = -DDEBUG -g -Werror
+#CDEBUG   = -DDEBUG -g -Werror
+#CXXDEBUG = -DDEBUG -g -Werror
+CDEBUG   = -DDEBUG -g
+CXXDEBUG = -DDEBUG -g
 CWOFF    =
 CXXWOFF  =
 
