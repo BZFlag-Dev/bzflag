@@ -4252,7 +4252,7 @@ static void extraUsage(const char *pname)
   cout << "\t -world: world file to load" << endl;
   cout << "\t -passwd: specify a <password> for operator commands" << endl;
   cout << "\t -lagwarn: lag warning threshhold time [ms]" << endl;
-  cout << "\t -lagdrop: drop player after this many lag warnings" <<
+  cout << "\t -lagdrop: drop player after this many lag warnings" << endl;
   cout << "\nFlag codes:" << endl;
   for (int f = int(FirstSuperFlag); f <= int(LastSuperFlag); f++)
     cout << "\t " << setw(2) << Flag::getAbbreviation(FlagId(f)) <<
