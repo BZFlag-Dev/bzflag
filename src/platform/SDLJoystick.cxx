@@ -45,18 +45,13 @@ void			SDLJoystick::initJoystick(const char* joystickName)
     }
     return;
   }
-  int numJoystick = SDL_NumJoysticks();
-  if (!numJoystick) {
+  char num = joystickName[0];
+  int  i   = (int)num - '0';
+  if (!isdigit(num) || i >= SDL_NumJoysticks()) {
     printError("No supported SDL joysticks were found.");
     joystickID = NULL;
     return;
   }
-  int i;
-  for (i = 0; i < numJoystick; i++)
-    if (strcmp(SDL_JoystickName(i), joystickName) == 0)
-      break;
-  if (i >= numJoystick)
-    i = 0;
   joystickID = SDL_JoystickOpen(i);
   if (joystickID == NULL)
     return;
@@ -113,8 +108,11 @@ void                    SDLJoystick::getJoyDevices(std::vector<std::string>
 {
   int numJoystick = SDL_NumJoysticks();
   int i;
-  for (i = 0; i < numJoystick; i++)
-    list.push_back(SDL_JoystickName(i));
+  for (i = 0; i < numJoystick; i++) {
+    char joystickName[256];
+    sprintf(joystickName, "%d - %s", i, SDL_JoystickName(i));
+    list.push_back(joystickName);
+  }
 }
 #endif
 
