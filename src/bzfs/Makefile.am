@@ -1,6 +1,6 @@
-bin_PROGRAMS = ../../bin/bzfs
+bin_PROGRAMS = bzfs
 
-______bin_bzfs_SOURCES = bzfs.cxx
+bzfs_SOURCES = bzfs.cxx
 
-LDADD = $(LIBDIR)/libNet.a $(LIBDIR)/libCommon.a
+LDADD = ../net/libNet.a ../common/libCommon.a
 

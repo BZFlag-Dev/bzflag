@@ -1,7 +1,7 @@
-bin_PROGRAMS = ../../bin/bzfls
+bin_PROGRAMS = bzfls
 
-______bin_bzfls_SOURCES = bzfls.cxx
+bzfls_SOURCES = bzfls.cxx
 
 LDADD =					\
-	$(LIBDIR)/libNet.a		\
-	$(LIBDIR)/libCommon.a
+	../net/libNet.a			\
+	../common/libCommon.a

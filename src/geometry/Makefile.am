@@ -1,8 +1,8 @@
 SUBDIRS = models
 
-noinst_LIBRARIES = ../../lib/libGeometry.a
+noinst_LIBRARIES = libGeometry.a
 
-______lib_libGeometry_a_SOURCES  =      \
+libGeometry_a_SOURCES  =		\
 	ViewFrustum.cxx			\
 	Ray.cxx				\
 	SceneNode.cxx			\
@@ -23,5 +23,4 @@ ______lib_libGeometry_a_SOURCES  =      \
 	FlagSceneNode.cxx		\
 	FlagWarpSceneNode.cxx		\
 	TankSceneNode.cxx		\
-	BillboardSceneNode.cxx		\
-	$(NULL)
+	BillboardSceneNode.cxx		

@@ -131,7 +131,7 @@ case $host_os in
 	fi;;
 esac
 
-INSTALL_DATA_DIR="\\\"\${pkglibdir}\\\""
+INSTALL_DATA_DIR="\\\"\${datadir}/bzflag\\\""
 AC_SUBST(INSTALL_DATA_DIR)
 
 CPPFLAGS="-DVERSION=$PACKAGE_VERSION"
@@ -290,6 +290,7 @@ AC_CONFIG_FILES(Makefile
                 man/Makefile
                 package/Makefile
 		data/Makefile
+		data/l10n/Makefile
 		bzwtransform/Makefile
 		debian/Makefile
 		misc/Makefile

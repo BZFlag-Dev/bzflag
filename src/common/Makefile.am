@@ -1,6 +1,6 @@
-noinst_LIBRARIES = ../../lib/libCommon.a
+noinst_LIBRARIES = libCommon.a
 
-______lib_libCommon_a_SOURCES  = 	\
+libCommon_a_SOURCES  =		 	\
 	Bundle.cxx			\
 	BundleMgr.cxx			\
 	ErrorHandler.cxx		\

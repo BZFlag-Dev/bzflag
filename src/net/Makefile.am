@@ -1,10 +1,9 @@
-noinst_LIBRARIES = ../../lib/libNet.a
+noinst_LIBRARIES = libNet.a
 
-______lib_libNet_a_SOURCES = 		\
+libNet_a_SOURCES =	 		\
 	Address.cxx			\
 	Pack.cxx			\
 	Ping.cxx			\
 	multicast.cxx			\
 	udpnetwork.cxx			\
-	network.cxx			\
-	$(NULL)
+	network.cxx			

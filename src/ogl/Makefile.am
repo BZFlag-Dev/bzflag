@@ -1,10 +1,9 @@
-noinst_LIBRARIES = ../../lib/libGLKit.a
+noinst_LIBRARIES = libGLKit.a
 
-______lib_libGLKit_a_SOURCES = 		\
+libGLKit_a_SOURCES =	 		\
 	OpenGLGState.cxx		\
 	OpenGLLight.cxx			\
 	OpenGLMaterial.cxx		\
 	OpenGLTexture.cxx		\
 	OpenGLTexFont.cxx		\
-	OpenGLDisplayList.cxx		\
-	$(NULL)
+	OpenGLDisplayList.cxx		

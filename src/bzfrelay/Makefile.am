@@ -1,6 +1,6 @@
 if WIN32
 else
-bin_PROGRAMS = ../../bin/bzfrelay
+bin_PROGRAMS = bzfrelay
 endif
 
-______bin_bzfrelay_SOURCES = bzfrelay.c
+bzfrelay_SOURCES = bzfrelay.c

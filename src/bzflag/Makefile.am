@@ -1,6 +1,6 @@
-bin_PROGRAMS = ../../bin/bzflag
+bin_PROGRAMS = bzflag
 
-______bin_bzflag_SOURCES = 		\
+bzflag_SOURCES = 			\
 	MainWindow.cxx			\
 	MainWindow.h			\
 	ControlPanel.cxx		\
@@ -62,22 +62,22 @@ ______bin_bzflag_SOURCES = 		\
 noinst_HEADERS = \
 	stars.cxx
 if WIN32
-LDADD = $(LIBDIR)/libNet.a		\
-	$(LIBDIR)/libCommon.a		\
-	$(LIBDIR)/libObstacle.a		\
-	$(LIBDIR)/libPlatform.a		\
-	$(LIBDIR)/libGLKit.a		\
-	$(LIBDIR)/libSceneDB.a		\
-	$(LIBDIR)/libGeometry.a		\
+LDADD = ../net/libNet.a			\
+	../common/libCommon.a		\
+	../obstacle/libObstacle.a	\
+	../platform/libPlatform.a	\
+	../ogl/libGLKit.a		\
+	../scene/libSceneDB.a		\
+	../geometry/libGeometry.a	\
 	bzflag.res
 else
-LDADD = $(LIBDIR)/libNet.a		\
-	$(LIBDIR)/libCommon.a		\
-	$(LIBDIR)/libObstacle.a		\
-	$(LIBDIR)/libPlatform.a		\
-	$(LIBDIR)/libGLKit.a		\
-	$(LIBDIR)/libSceneDB.a		\
-	$(LIBDIR)/libGeometry.a
+LDADD = ../net/libNet.a			\
+	../common/libCommon.a		\
+	../obstacle/libObstacle.a	\
+	../platform/libPlatform.a	\
+	../ogl/libGLKit.a		\
+	../scene/libSceneDB.a		\
+	../geometry/libGeometry.a
 endif
 EXTRA_DIST = bzflag.bmp
 

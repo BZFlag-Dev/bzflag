@@ -1,11 +1,10 @@
-noinst_LIBRARIES = ../../lib/libObstacle.a
+noinst_LIBRARIES = libObstacle.a
 
-______lib_libObstacle_a_SOURCES = 	\
+libObstacle_a_SOURCES =		 	\
 	Intersect.cxx			\
 	Obstacle.cxx			\
 	BoxBuilding.cxx			\
 	BaseBuilding.cxx		\
 	PyramidBuilding.cxx		\
 	Teleporter.cxx			\
-	WallObstacle.cxx		\
-	$(NULL)
+	WallObstacle.cxx		
