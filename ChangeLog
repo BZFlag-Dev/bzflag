@@ -1,6 +1,8 @@
 
-
 			     BZFlag release notes
+
+BZFlag 1.10.0 "Break the world" (was 1.9.x)
+-------------------------------------------
 
 * Initial Docbook documentation - Sean Morrison
 * Persistent bans with -banfile <filename> - Lars Luthman
@@ -62,7 +64,7 @@
 * Rabbit game style - David Trowbridge, Dave Brosius
 
 BZFlag 1.7g2 "Steely Eyed Banana" (was 1.7g1)
--------------------------------------------------------
+---------------------------------------------
 
 * public release now under LGPL v2.1 - Tim Riker
 * change LICENSE to COPYING - Tim Riker
@@ -104,7 +106,7 @@ BZFlag 1.7g2 "Steely Eyed Banana" (was 1.7g1)
 * extend admin command -> /flag reset unused - Dave Brosius
 
 BZFlag 1.7g0 "Holy Dancing Monkeys" (was 1.7e7)
--------------------------------------------------------
+-----------------------------------------------
 
 * -tkkr auto team killer - Dave Brosius
 * world file caching - Colin Bayer, Dave Brosius, others
@@ -184,7 +186,7 @@ BZFlag 1.7e6 or Armoured Smashing Fist 2002 (was 1.7e5)
 
 
 BZFlag 1.7e4 (was 1.7e3 while in development)
-------------
+---------------------------------------------
 
 * ::memset() instead of bzero() - Björn Augustsson
 * win32 audio thread fix for win2k - crs
@@ -449,17 +451,17 @@ BZFlag 1.7c release 2
 first official open source release.
 
 * misc. changes for solaris (Bjorn Augustsson)
-  * changed u_int* to uint*
-  * replaced [ds]rand48() with [s]rand()
-  * changed variable name `sun' with 'theSun'
-  * changed ioctl FIONBIO to fcntl O_NDELAY
-  * changed FNDELAY to O_NDELAY
-  * glColor*() are macros;  changed code that took address of function
-  * no hstrerror
-  * solaris defines SIG_PF
+* changed u_int* to uint*
+* replaced [ds]rand48() with [s]rand()
+* changed variable name `sun' with 'theSun'
+* changed ioctl FIONBIO to fcntl O_NDELAY
+* changed FNDELAY to O_NDELAY
+* glColor*() are macros;  changed code that took address of function
+* no hstrerror
+* solaris defines SIG_PF
 * added unofficial solaris config (Bjorn Augustsson)
-  * porting is not complete
-  * not included in platform list
+* porting is not complete
+* not included in platform list
 * made generic linux config (Phillip Ezolt)
 * ifdef'd DEADLINE code for irix
 * static/dynamic libaudio fix for irix
@@ -471,5 +473,3 @@ BZFlag 1.7c release 1
 ---------------------
 
 preliminary open source release.
-
-

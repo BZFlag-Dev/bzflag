@@ -3,6 +3,16 @@ bzflag (@VERSION@) unstable; urgency=medium
   * CVS Build
  -- Tim Riker <Tim@Rikers.org>  @DATE@
 
+bzflag (1.9.10) unstable; urgency=medium
+
+  * Release Manager: networking changed. update needed in stable and testing
+  * many upstream changes
+  * license change to LGPL
+  * versioning changed Closes: #223098
+  * lintian fixes Closes: #215930
+
+ -- Tim Riker <Tim@Rikers.org>  Tue, 09 Dec 2003 01:45:58 -0600
+
 bzflag (1.7g2-1) unstable; urgency=low
 
   * flatten symlinks Closes: #198137
