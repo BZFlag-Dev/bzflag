@@ -15,8 +15,21 @@
 #include "common.h"
 
 #include <stdarg.h>
+/* system implementation headers */
 #include <time.h>
-#include <sys/time.h>
+#include <string>
+#ifdef HAVE_UNISTD_H
+#  include <unistd.h>
+#endif
+#ifdef __BEOS__
+#  include <OS.h>
+#endif
+#if !defined(_WIN32)
+#  include <sys/time.h>
+#  include <sys/types.h>
+#else /* !defined(_WIN32) */
+#  include <mmsystem.h>
+#endif
 
 static bool doTimestamp = false;
 static bool doMicros = false;
@@ -27,8 +40,10 @@ void setDebugTimestamp (bool enable, bool micros)
   doMicros = micros;
 }
 
-static char *timestamp (char *buf, bool micros){
+static char *timestamp (char *buf, bool micros)
+{
   struct tm *tm;
+#if !defined(_WIN32)
   if (micros) {
     struct timeval tv;
     gettimeofday (&tv, NULL);
@@ -36,12 +51,15 @@ static char *timestamp (char *buf, bool micros){
     sprintf (buf, "%04d-%02d-%02d %02d:%02d:%02d.%06ld: ", tm->tm_year+1900, tm->tm_mon+1,
              tm->tm_mday, tm->tm_hour, tm->tm_min, tm->tm_sec, tv.tv_usec );
   } else {
-	  time_t tt;
-	  time (&tt);
+#endif
+    time_t tt;
+    time (&tt);
     tm = localtime (&tt);
     sprintf (buf, "%04d-%02d-%02d %02d:%02d:%02d: ", tm->tm_year+1900, tm->tm_mon+1,
              tm->tm_mday, tm->tm_hour, tm->tm_min, tm->tm_sec );
+#if !defined(_WIN32)
   }
+#endif
   return buf;
 }
 
@@ -57,7 +75,7 @@ void formatDebug(const char* fmt, ...)
     va_end(args);
     #if defined(_MSC_VER)
       if (doTimestamp) 
-	      W32_DEBUG_TRACE(timestamp (tsbuf, doMicros));
+        W32_DEBUG_TRACE(timestamp (tsbuf, false));
       W32_DEBUG_TRACE(buffer);
     #else
       if (doTimestamp)
