@@ -1878,7 +1878,7 @@ static void addPlayer(int playerIndex)
     }
 
     void *buf, *bufStart = getDirectMessageBuffer();
-    buf = nboPackInt(bufStart, (int32_t)(int)timeLeft);
+    buf = nboPackUInt(bufStart, (uint32_t)timeLeft);
     result = directMessage(*playerData, MsgTimeUpdate,
 			   (char*)buf-(char*)bufStart, bufStart);
     if (result == -1)
@@ -4676,7 +4676,7 @@ int main(int argc, char **argv)
       }
       if (timeLeft == 0.0f || newTimeElapsed - clOptions->timeElapsed >= 30.0f) {
 	void *buf, *bufStart = getDirectMessageBuffer();
-	buf = nboPackInt(bufStart, (int32_t)(int)timeLeft);
+	buf = nboPackUInt(bufStart, (uint32_t)timeLeft);
 	broadcastMessage(MsgTimeUpdate, (char*)buf - (char*)bufStart, bufStart);
 	clOptions->timeElapsed = newTimeElapsed;
 	if (clOptions->oneGameOnly && timeLeft == 0.0f) {

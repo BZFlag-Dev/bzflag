@@ -64,7 +64,7 @@ HUDRenderer::HUDRenderer(const BzfDisplay* _display,
 				roaming(false),
 				dim(false),
 				numPlayers(0),
-				timeLeft(-1),
+				timeLeft(~0u),
 				playerHasHighScore(false),
 				teamHasHighScore(false),
 				heading(0.0),
@@ -484,7 +484,7 @@ void			HUDRenderer::setRoamingLabel(const std::string& label)
   roamingLabel = label;
 }
 
-void			HUDRenderer::setTimeLeft(int _timeLeft)
+void			HUDRenderer::setTimeLeft(uint32_t _timeLeft)
 {
   timeLeft = _timeLeft;
   timeSet = TimeKeeper::getTick();
@@ -712,7 +712,11 @@ void			HUDRenderer::renderStatus(void)
   static const GLfloat yellowColor[3] = { 1.0f, 1.0f, 0.0f };
   static const GLfloat greenColor[3] = { 0.0f, 1.0f, 0.0f };
   const GLfloat* statusColor = warningColor;
-  if (timeLeft >= 0) {
+  if (timeLeft == 0) {
+    strcpy(buffer, "");
+  } else if (timeLeft == ~0u) {
+    strcpy(buffer, "*paused* ");
+  } else {
     int t = timeLeft - (int)(TimeKeeper::getTick() - timeSet);
     if (t < 0) t = 0;
     if (t >= 3600)
@@ -721,8 +725,6 @@ void			HUDRenderer::renderStatus(void)
       sprintf(buffer, "%d:%02d   ", t / 60, t % 60);
     else
       sprintf(buffer, "0:%02d   ", t);
-  } else {
-    strcpy(buffer, "");
   }
   if (!roaming) {
     switch (player->getFiringStatus()) {

@@ -77,7 +77,7 @@ public:
   void		addMarker(float heading, const float *color);
   void		setRestartKeyLabel(const std::string&);
   void		setRoamingLabel(const std::string&);
-  void		setTimeLeft(int timeLeftInSeconds);
+  void		setTimeLeft(uint32_t timeLeftInSeconds);
 
   void		setDim(bool);
 
@@ -171,7 +171,7 @@ private:
   bool		roaming;
   bool		dim;
   int		numPlayers;
-  int		timeLeft;
+  uint32_t	timeLeft;
   TimeKeeper	timeSet;
   bool		playerHasHighScore;
   bool		teamHasHighScore;
