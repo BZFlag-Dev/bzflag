@@ -238,8 +238,8 @@ void			RobotPlayer::doUpdateMotion(float dt)
         if (shot->getFlag() == Flags::InvisibleBullet)
           continue;
       	if (p->getFlag() == Flags::PhantomZone && p->isFlagActive() &&
-      			(LocalPlayer::getFlag() == Flags::PhantomZone && !LocalPlayer::isFlagActive()) ||
-      			(LocalPlayer::getFlag() != Flags::PhantomZone))
+      			(getFlag() == Flags::PhantomZone && !isFlagActive()) ||
+      			(getFlag() != Flags::PhantomZone))
     			continue;
 				if (shot->getFlag() == Flags::Laser && LocalPlayer::getFlag() == Flags::Cloaking)
 					continue; //cloaked tanks can't die from lasers
