@@ -458,7 +458,7 @@ static void handleCountdownCmd(GameKeeper::Player *playerData, const char *messa
       countdownDelay = 0;
     }
 
-    sendMessage(ServerPlayer, t, "Team scores reset, countdown started.");
+    sendMessage(ServerPlayer, AllPlayers, TextUtils::format("Team scores reset, countdown Started by %s.",playerData->player.getCallSign()).c_str());
 
     // let everyone know what's going on
     int timeArray[4];
