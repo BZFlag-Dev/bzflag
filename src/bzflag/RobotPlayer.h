@@ -17,16 +17,19 @@
 #ifndef	BZF_ROBOT_PLAYER_H
 #define	BZF_ROBOT_PLAYER_H
 
-#if defined(_MSC_VER)
-	#pragma warning(disable: 4786)
-#endif
-
-#include <vector>
 #include "common.h"
-#include "LocalPlayer.h"
-#include "Region.h"
 
-class ServerLink;
+/* system interface headers */
+#include <vector>
+
+/* interface header */
+#include "LocalPlayer.h"
+
+/* local interface headers */
+#include "Region.h"
+#include "RegionPriorityQueue.h"
+#include "ServerLink.h"
+
 
 class RobotPlayer : public LocalPlayer {
   public:

@@ -10,19 +10,16 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-/*
- *
- */
+#ifndef	__REGION_H__
+#define	__REGION_H__
 
-#ifndef	BZF_REGION_H
-#define	BZF_REGION_H
-
-#if defined(_MSC_VER)
-	#pragma warning(disable: 4786)
-#endif
-
-#include <vector>
 #include "common.h"
+
+/* system interface headers */
+#include <vector>
+
+
+const float             maxDistance = 1.0e6;
 
 class RegionPoint {
   public:
@@ -36,7 +33,6 @@ class RegionPoint {
     float		p[2];
 };
 
-const float             maxDistance = 1.0e6;
 
 class BzfRegion {
   public:
@@ -81,36 +77,13 @@ class BzfRegion {
     RegionPoint		A;
 };
 
-class RegionPriorityQueue {
-  public:
-			RegionPriorityQueue();
-			~RegionPriorityQueue();
-    void		insert(BzfRegion* region, float priority);
-    BzfRegion*		remove();
-    void		removeAll();
-    bool		isEmpty() const;
 
-  private:
-    struct Node {
-      public:
-			Node(BzfRegion* region, float priority);
-      public:
-	Node*		next;
-	BzfRegion*	region;
-	float		priority;
-    };
-
-  private:
-    Node*		head;
-};
-
-#endif // BZF_REGION_H
+#endif /* __REGION_H__ */
 
 // Local Variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

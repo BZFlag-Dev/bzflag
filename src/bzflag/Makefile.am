@@ -60,6 +60,8 @@ bzflag_SOURCES =			\
 	RadarRenderer.h			\
 	Region.cxx			\
 	Region.h			\
+	RegionPriorityQueue.cxx		\
+	RegionPriorityQueue.h		\
 	RemotePlayer.cxx		\
 	RemotePlayer.h			\
 	RobotPlayer.cxx			\
