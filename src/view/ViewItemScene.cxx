@@ -145,7 +145,7 @@ void					ViewItemScene::onPostRender(
 // parsing function objects
 //
 
-class ViewSetRotation_t : public std::unary_function<std::string, ViewSize&> {
+class ViewSetRotation_t : public unary_function<std::string, ViewSize&> {
 public:
 	ViewSetRotation_t(ViewSize& size_) : size(size_) { }
 	ViewSize&			operator()(const std::string& arg) const

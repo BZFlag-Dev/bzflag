@@ -19,7 +19,7 @@
 // function objects for parsing view
 //
 
-class ViewSetColor_t : public std::unary_function<std::string, float*> {
+class ViewSetColor_t : public unary_function<std::string, float*> {
 public:
 	ViewSetColor_t(float* color_) : color(color_) { }
 	float*				operator()(const std::string& arg) const

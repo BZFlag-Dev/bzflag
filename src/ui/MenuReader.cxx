@@ -21,7 +21,7 @@
 //
 
 template <class Object>
-class MenuSetSizeMethod_t : public std::unary_function<std::string, void> {
+class MenuSetSizeMethod_t : public unary_function<std::string, void> {
 public:
 	typedef void (Object::*Member)(float, float);
 	MenuSetSizeMethod_t(Object* object_, Member member_) :

@@ -36,9 +36,66 @@ commented where they occur except:
 #include <iterator>
 #include <set>
 
+/* crs -- workaround for old SGI STL that lacks allocator<> */
+#if defined(__SGI_STL_INTERNAL_ALLOC_H) && defined(__ALLOC)
+#define OLD_SGI_STL
+inline void* bzAllocate(size_t size)
+{
+	set_new_handler(0);
+	return ::operator new(size);
+}
+inline void bzDeallocate(void* p, size_t)
+{
+	delete p;
+}
+template <class T>
+class allocator {
+public:
+	typedef size_t     size_type;
+	typedef ptrdiff_t  difference_type;
+	typedef T*         pointer;
+	typedef const T*   const_pointer;
+	typedef T&         reference;
+	typedef const T&   const_reference;
+	typedef T          value_type;
+
+	allocator() {}
+	allocator(const allocator&) {}
+	template <class T1> allocator(const allocator<T1>&) {}
+	~allocator() {}
+
+	pointer address(reference __x) const { return &__x; }
+	const_pointer address(const_reference __x) const { return &__x; }
+
+	// __n is permitted to be 0.  The C++ standard says nothing about what
+	// the return value is when __n == 0.
+	T* allocate(size_type __n, const void* = 0) {
+		return __n != 0 ? static_cast<T*>(bzAllocate(__n * sizeof(T))) : 0;
+	}
+
+	// __p is not permitted to be a null pointer.
+	void deallocate(pointer __p, size_type __n)
+	{ bzDeallocate(__p, __n * sizeof(T)); }
+
+	size_type max_size() const
+	{ return size_t(-1) / sizeof(T); }
+
+	void construct(pointer __p, const T& __val) { new(__p) T(__val); }
+	void destroy(pointer __p) { __p->~T(); }
+};
+
+#else
+
+// egcs doesn't support std::foo<> (i.e. std namespace on a template).
+// we need std::unary_function<> so we'll use unary_function and a
+// macro.
+#define std::unary_function unary_function
+
+#endif
+
 #if defined(_MSC_VER) || defined(__BCPLUSPLUS__) // these do not have HP style construct/destroy 
 template <class T1, class T2>
-inline void constructor(T1* p, T2& val) 
+inline void constructor(T1* p, const T2& val) 
 	{
 	new ((void *) p) T1(val);
 	}
@@ -379,6 +436,7 @@ class tree {
 
 		// merge with other tree, creating new branches and leaves only if they are not already present
 		void     merge(iterator position, iterator other, bool duplicate_leaves=false);
+#if !defined(OLD_SGI_STL) // crs -- can't get this (unused method) to compile
 		// sort (std::sort only moves values of nodes, this one moves children as well)
 		void     sort(sibling_iterator from, sibling_iterator to, bool deep=false);
 		template<class StrictWeakOrdering>
@@ -425,6 +483,7 @@ class tree {
 					}
 				}
 			}
+#endif
 		// compare subtrees starting at the two iterators (compares nodes as well as tree structure)
 		template<class BinaryPredicate>
 		bool     equal(iterator one, iterator two, iterator three, BinaryPredicate) const
@@ -456,6 +515,7 @@ class tree {
 		tree_node *head; 
 		void empty_initialise_();
 		void copy_(const tree<T, tree_node_allocator>& other);
+#if !defined(OLD_SGI_STL)
 		template<class StrictWeakOrdering>
 		class compare_nodes {
 			public:
@@ -466,6 +526,7 @@ class tree {
 					return comp(a->data, b->data);
 					}
 		};
+#endif
 };
 
 
@@ -481,7 +542,7 @@ tree<T, tree_node_allocator>::tree()
 template <class T, class tree_node_allocator>
 void tree<T, tree_node_allocator>::empty_initialise_() 
 	{ 
-	head = alloc_.allocate(1,0); // MSVC does not have default second argument 
+	head = alloc_.allocate(1,0);
 
 	head->parent=0;
 	head->first_child=0;
@@ -514,7 +575,7 @@ template <class T, class tree_node_allocator>
 void tree<T, tree_node_allocator>::copy_(const tree<T, tree_node_allocator>& other) 
 	{
 	tree_node* tmp = alloc_.allocate(1,0);
-	constructor(&tmp->data);
+	constructor(&tmp->data, T());
 	tmp->first_child=0;
 	tmp->last_child=0;
 	tmp->parent=head;
@@ -982,12 +1043,14 @@ void tree<T, tree_node_allocator>::merge(iterator position, iterator other, bool
 		}
 	}
 
+#if !defined(OLD_SGI_STL)
 template <class T, class tree_node_allocator>
 void tree<T, tree_node_allocator>::sort(sibling_iterator from, sibling_iterator to, bool deep)
 	{
 	std::less<T> comp;
 	sort(from, to, comp, deep);
 	}
+#endif
 
 template <class T, class tree_node_allocator>
 int tree<T, tree_node_allocator>::size() const
