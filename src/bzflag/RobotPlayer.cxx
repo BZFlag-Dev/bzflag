@@ -117,6 +117,8 @@ void			RobotPlayer::doUpdate(float dt)
   // fire shot if any available
   timeSinceShot += dt;
   float reloadTime = BZDB->eval(StateDatabase::BZDB_RELOADTIME);
+  float tankRadius = BZDB->eval(StateDatabase::BZDB_TANKRADIUS);
+  float shotRange  = BZDB->eval(StateDatabase::BZDB_SHOTRANGE);
 #if !defined(SHOOTING_FIX)
   timeSinceShot += reloadTime / numShots;
 #endif
@@ -130,6 +132,7 @@ void			RobotPlayer::doUpdate(float dt)
   if ((int)path.size() != 0 && timerForShot <= 0.0f) {
     const float* p1     = target->getPosition();
     const float* p2     = getPosition();
+    float shootingRange = hypotf(p1[0] - p2[0], p1[1] - p2[1]);
     float shootingAngle = atan2f(p1[1] - p2[1], p1[0] - p2[0]);
     if (shootingAngle < 0.0f)
       shootingAngle += 2.0f * M_PI;
@@ -139,7 +142,9 @@ void			RobotPlayer::doUpdate(float dt)
     else
       if (azimuthDiff < -M_PI)
 	azimuthDiff += 2.0f * M_PI;
-    if (fabs(azimuthDiff) < 0.01f)
+    if ((shootingRange < tankRadius)
+	|| (shootingRange <= shotRange
+	    && fabs(azimuthDiff) < tankRadius / shootingRange))
       shoot = true;
   }
   if (isAlive() && timeSinceShot > reloadTime / numShots && shoot) {
