@@ -1015,6 +1015,97 @@ std::string PlayerInfo::reasonToKick() {
   return reason;
 };
 
+void PlayerInfo::updateLagPlayerUpdate(float timestamp, bool ooo) {
+  if (ooo) {
+    lostavg   = lostavg * (1 - lostalpha) + lostalpha;
+    lostalpha = lostalpha / (0.99f + lostalpha);
+  }
+  TimeKeeper now = TimeKeeper::getCurrent();
+
+  // don't calc jitter if more than 2 seconds between packets
+  if (lasttimestamp > 0.0f && timestamp - lasttimestamp < 2.0f) {
+    const float jitter = fabs(now - lastupdate - (timestamp - lasttimestamp));
+    // time is smoothed exponentially using a dynamic smoothing factor
+    jitteravg   = jitteravg * (1 - jitteralpha) + jitteralpha * fabs(jitter);
+    jitteralpha = jitteralpha / (0.99f + jitteralpha);
+    lostavg     = lostavg * (1 - lostalpha);
+    lostalpha   = lostalpha / (0.99f + lostalpha);
+  }
+  lasttimestamp = timestamp;
+  lastupdate    = now;
+};
+
+// update absolute latency based on LagPing messages
+int PlayerInfo::updatePingLag(void *buf, float threshold, float max,
+			      bool &warn, bool &kick) {
+  uint16_t _pingseqno;
+  int lag;
+  nboUnpackUShort(buf, _pingseqno);
+  if (pingseqno == _pingseqno) {
+    float timepassed = TimeKeeper::getCurrent() - lastping;
+    // time is smoothed exponentially using a dynamic smoothing factor
+    lagavg   = lagavg * (1 - lagalpha) + lagalpha * timepassed;
+    lagalpha = lagalpha / (0.9f + lagalpha);
+    lag      = int(lagavg * 1000);
+    lagcount++;
+
+    // warn players from time to time whose lag is > threshold (-lagwarn)
+    if ((team != ObserverTeam) && (threshold > 0) && lagavg > threshold
+	&& lagcount - laglastwarn > 2 * lagwarncount) {
+      laglastwarn = lagcount;
+      lagwarncount++;
+      warn = true;
+      if (lagwarncount++ > max) {
+	kick = true;
+      } else {
+	kick = true;
+      }
+    } else {
+      warn = false;
+      kick = false;
+    }
+    lostavg     = lostavg * (1 - lostalpha);
+    lostalpha   = lostalpha / (0.99f + lostalpha);
+    pingpending = false;
+  } else {
+    warn = false;
+    kick = false;
+  }
+  return lag;
+};
+
+bool PlayerInfo::nextPing(float &waitTime) {
+  TimeKeeper tm = TimeKeeper::getCurrent();
+  bool shouldPing = false;
+  if ((state > PlayerInLimbo) && (type == TankPlayer)
+      && (nextping - tm < waitTime)) {
+    waitTime   = nextping - tm;
+    shouldPing = true;
+  };
+  return shouldPing;
+};
+
+int PlayerInfo::getNextPingSeqno() {
+  TimeKeeper tm = TimeKeeper::getCurrent();
+  if ((state <= PlayerInLimbo) || (type != TankPlayer) || nextping - tm >= 0)
+    // no time for pinging
+    return -1;
+
+ pingseqno = (pingseqno + 1) % 10000;
+  if (pingpending) {
+    // ping lost
+    lostavg   = lostavg * (1 - lostalpha) + lostalpha;
+    lostalpha = lostalpha / (0.99f + lostalpha);
+  }
+
+  pingpending = true;
+  lastping    = tm;
+  nextping    = tm;
+  nextping   += 10.0f;
+  pingssent++;
+  return pingseqno;
+};
+
 // Local Variables: ***
 // mode:C++ ***
 // tab-width: 8 ***

@@ -197,6 +197,11 @@ public:
   bool        isTooMuchIdling(TimeKeeper tm, float kickThresh, int index);
   bool        hasStartedToNotRespond();
   std::string reasonToKick();
+  int         updatePingLag(void *buf, float threshold, float max,
+			    bool &warn, bool &kick);
+  void        updateLagPlayerUpdate(float timestamp, bool ooo);
+  bool        nextPing(float &waitTime);
+  int         getNextPingSeqno();
 private:
   void        udpSend(int udpSocket, const void *b, size_t l);
   int         send(const void *buffer, size_t length);
@@ -280,7 +285,6 @@ private:
     std::string toBeKickedReason;
 
 
-public:
     // lag measurement
     float lagavg, jitteravg, lostavg, lagalpha, jitteralpha, lostalpha;
     int lagcount, laglastwarn, lagwarncount;
@@ -288,6 +292,7 @@ public:
     TimeKeeper nextping, lastping;
     int pingseqno, pingssent;
 
+public:
     // idle kick + jitter measurement
     float lasttimestamp;
     TimeKeeper lastupdate;
