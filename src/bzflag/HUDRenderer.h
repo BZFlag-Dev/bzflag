@@ -173,7 +173,6 @@ private:
   bool		playing;
   bool		roaming;
   bool		dim;
-  bool		sDim;
   int		numPlayers;
   int		timeLeft;
   TimeKeeper	timeSet;

@@ -56,6 +56,8 @@ public:
   float getStrHeight(int faceID, float size, const std::string &text);
   float getStrHeight(std::string face, float size, const std::string &text);
 
+  void setDimFactor(float newDimFactor);
+
   void unloadAll(void);
 
 protected:
@@ -75,6 +77,12 @@ private:
 
   static void    callback(const std::string& name, void *);
   static GLfloat underlineColor[3];
+  float		 dimFactor;
 };
+
+inline void FontManager::setDimFactor(float newDimFactor)
+{
+  dimFactor = newDimFactor;
+}
 
 #endif //_FONT_MANAGER_H_

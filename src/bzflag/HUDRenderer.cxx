@@ -64,7 +64,6 @@ HUDRenderer::HUDRenderer(const BzfDisplay* _display,
 				playing(false),
 				roaming(false),
 				dim(false),
-				sDim(false),
 				numPlayers(0),
 				timeLeft(-1),
 				playerHasHighScore(false),
@@ -617,8 +616,6 @@ void			HUDRenderer::hudSColor3fv(const GLfloat* c)
 {
   if (dim)
     glColor3f(dimFactor * c[0], dimFactor * c[1], dimFactor * c[2]);
-  else if (sDim)
-    glColor3f(0.5f * c[0], 0.5f * c[1], 0.5f * c[2]);
   else
     glColor3fv(c);
 }
@@ -1539,8 +1536,10 @@ void			HUDRenderer::drawPlayerScore(const Player* player,
   else
     strcpy(kills, "");
 
+  // dim the font if we're dim
+  std::string playerInfo = dim ? ColorStrings[DimColor] : "";
   // callsign
-  std::string playerInfo = ColorStrings[player->getTeam()] + player->getCallSign();
+  playerInfo += ColorStrings[player->getTeam()] + player->getCallSign();
   // email in parenthesis
   if (player->getEmailAddress()[0] != '\0')
     playerInfo += (std::string(" (") + player->getEmailAddress()) + ")";
@@ -1576,6 +1575,7 @@ void			HUDRenderer::drawPlayerScore(const Player* player,
     playerInfo += "[nr]";
 
   FontManager &fm = FontManager::instance();
+  fm.setDimFactor(dimFactor);
 
   // draw
   if (player->getTeam() != ObserverTeam) {

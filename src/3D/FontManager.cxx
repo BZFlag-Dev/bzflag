@@ -55,16 +55,6 @@ static GLfloat BrightColors[8][3] = {
   {0.5f,0.5f,0.5f}, // grey
   {0.0f,1.0f,1.0f}  // cyan
 };
-static GLfloat DimColors[8][3] = {
-  {0.7f,0.7f,0.0f}, // yellow
-  {0.7f,0.0f,0.0f}, // red
-  {0.0f,0.7f,0.0f}, // green
-  {0.1f,0.1f,0.7f}, // blue
-  {0.7f,0.0f,0.7f}, // purple
-  {0.7f,0.7f,0.7f}, // white
-  {0.0f,0.0f,0.0f}, // black
-  {0.0f,0.7f,0.7f}  // cyan
-};
 
 GLfloat FontManager::underlineColor[3];
 void FontManager::callback(const std::string &, void *)
@@ -86,7 +76,7 @@ void FontManager::callback(const std::string &, void *)
   }
 }
 
-FontManager::FontManager() : Singleton<FontManager>()
+FontManager::FontManager() : Singleton<FontManager>(), dimFactor(0.7f)
 {
   faceNames.clear();
   fontFaces.clear();
@@ -360,9 +350,9 @@ void FontManager::drawString(float x, float y, float z, int faceID, float size,
 	    color[1] = BrightColors[i][1];
 	    color[2] = BrightColors[i][2];
 	  } else {
-	    color[0] = DimColors[i][0];
-	    color[1] = DimColors[i][1];
-	    color[2] = DimColors[i][2];
+	    color[0] = BrightColors[i][0] * dimFactor;
+	    color[1] = BrightColors[i][1] * dimFactor;
+	    color[2] = BrightColors[i][2] * dimFactor;
 	  }
 	  tookCareOfANSICode = true;
 	  break;
@@ -382,9 +372,9 @@ void FontManager::drawString(float x, float y, float z, int faceID, float size,
 	  bright = false;
 	  pulsating = false;
 	  underline = false;
-	  color[0] = DimColors[WhiteColor][0];
-	  color[1] = DimColors[WhiteColor][1];
-	  color[2] = DimColors[WhiteColor][2];
+	  color[0] = BrightColors[WhiteColor][0] * dimFactor;
+	  color[1] = BrightColors[WhiteColor][1] * dimFactor;
+	  color[2] = BrightColors[WhiteColor][2] * dimFactor;
 	} else if (tmpText == ANSI_STR_BRIGHT) {
 	  bright = true;
 	} else if (tmpText == ANSI_STR_DIM) {
