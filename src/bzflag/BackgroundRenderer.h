@@ -70,7 +70,7 @@ class WeatherRenderer {
 		float						rainEndZ;
 		float						maxPuddleTime;
 		float						puddleSpeed;
-		float						puddleColor[3];
+		float						puddleColor[4];
 		OpenGLDisplayList			dropList;
 		OpenGLDisplayList			puddleList;
 
@@ -97,7 +97,6 @@ class WeatherRenderer {
 		bool updateDrop ( std::vector<rain>::iterator &drop, float frameTime );
 		bool updatePuddle ( std::vector<puddle>::iterator &splash, float frameTime );
 };
-
 
 class BackgroundRenderer {
   public:
@@ -178,32 +177,7 @@ class BackgroundRenderer {
     OpenGLGState	cloudsGState;
     OpenGLDisplayList	cloudsList;
 
-	// stuff for rain
-	OpenGLGState				rainGState;
-	OpenGLGState				texturedRainState;
-	OpenGLGState				puddleState;
-	std::vector<std::string>	rainTextures;
-	float						rainColor[4][2];
-	float						rainSize[2];
-	int							rainDensity;
-	float						rainSpeed;
-	float						rainSpeedMod;
-	float						rainSpread;
-	bool						doBillboards;
-	typedef struct {
-		float    pos[3];
-		float	 speed;
-		int		 texture;
-	}rain;
-	std::vector<rain>			raindrops;
-	bool									doPuddles;
-	typedef struct {
-		float			pos[3];
-		float			time;
-		int				texture;
-	}puddle;
-	std::vector<puddle>			puddles;
-	float									lastRainTime;
+		WeatherRenderer				weather;
 
     // stuff for sun shadows
     bool		doShadows;
