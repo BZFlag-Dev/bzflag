@@ -58,10 +58,6 @@ recent bugs
   brightness of the (SDL) window since it presently modifying the
   gamma of the display that started it.
 
-- /poll kick sometimes(?) crashes the server
-
-- player counts do not seem to get updated on list server
-
 - player score doesn't seem to match the server's score when relaying to
   other players.  i.e. the local client see's their own player score that
   is different from what others see (due to differences in tk).  seems like
@@ -108,9 +104,6 @@ recent bugs
 - client crashes upon receipt of a corrupted MsgFlagUpdate message.
   (See http://bzflag.secretplace.us/packet.txt for an example)
 
-- Mac OS X client outputs an Info.plist file with the permissions set
-  incorrectly if building an application bundle via XCode.
-
 - doc/guide/NetworkProtocol.xml is not up to date
 
 - Shift+Tab seems to be bound to jump without being bound to jump
@@ -129,21 +122,12 @@ recent bugs
   for causing it to queue too many packages (there's a limit at 20kB, when I
   removed it the queue went up to at least 64kB)
 
-- os x client audio is very choppy when the user has a sound card installed
-
-- make distcheck does not work unless bzflag is configured the same day you
-  do make distcheck. Cause is the different version of the two, for the date
-  things
-
 - make maintainer-clean does not enter DIST_SUBDIRS
   so all Makefile.in and Makefile files are not removed correctly
   (this is probably a bug in automake 1.4, not in our files)
 
 older bugs in BZFlag
 ---------------------
-
-see the bug tracker on SourceForge for more
-http://SourceForge.net/tracker/?group_id=3248&atid=103248
 
 * exploding tank parts sometimes move along the ground instead of
    flying up into the air.
@@ -173,3 +157,7 @@ http://SourceForge.net/tracker/?group_id=3248&atid=103248
 
 * error dialogs on win32 may appear off screen
    only when display resolution was changed
+
+---
+see the bug tracker on SourceForge for more
+http://SourceForge.net/tracker/?group_id=3248&atid=103248
