@@ -653,7 +653,7 @@ void					ServerLink::sendEnter(PlayerType type,
 												const char* email)
 {
 	if (state != Okay) return;
-	char msg[PlayerIdPLen + 4 + CallSignLen + EmailLen];
+	char msg[4 + CallSignLen + EmailLen];
 	::memset(msg, 0, sizeof(msg));
 	void* buf = msg;
 	buf = nboPackUShort(buf, uint16_t(type));
