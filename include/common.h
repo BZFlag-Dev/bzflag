@@ -76,7 +76,16 @@ typedef int socklen_t;
 #if !defined(_WIN32) && !defined(__APPLE__)
 
 #ifndef BSD
+#ifndef __BEOS__
 #include <values.h>
+#else
+#include <limits.h>
+/* BeOS: FIXME */
+
+#define MAXSHORT SHORT_MAX
+#define MAXINT INT_MAX
+#define MAXLONG LONG_MAX
+#endif
 #endif
 #include <sys/types.h>
 
@@ -93,7 +102,7 @@ typedef uint_t		uint32_t;
 
 #endif
 
-#if defined( macintosh )
+#if defined( macintosh ) || defined( __BEOS__ )
 
 // missing constants
 
@@ -124,7 +133,7 @@ typedef uint_t		uint32_t;
   #ifndef putenv
     #define putenv(a)
   #endif
-#endif /* defined( macintosh ) */
+#endif /* defined( macintosh ) || defined( __BEOS__ ) */
 
 #if defined(_WIN32)
 

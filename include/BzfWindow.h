@@ -63,6 +63,8 @@ class BzfWindow {
     virtual bool	hasGammaControl() const = 0;
 
     virtual void	makeCurrent() = 0;
+    virtual void	yieldCurrent();
+    virtual void	releaseCurrent();
     virtual void	swapBuffers() = 0;
     virtual void	makeContext() = 0;
     virtual void	freeContext() = 0;

@@ -52,6 +52,11 @@
 #define SendType		const char*
 #endif
 
+#if defined(__BEOS__)
+#define socklen_t int
+#define O_NDELAY O_NONBLOCK
+#endif
+
 #if !defined(INADDR_NONE)
 #define INADDR_NONE		((in_addr_t)0xffffffff)
 #endif
@@ -1009,14 +1014,19 @@ static int		daemonize(void)
 {
   int i;
   pid_t pid;
+#ifdef HAVE_RLIMIT
   struct rlimit rl;
+#endif
+  int rlim_max = 1024;
 
   umask(0);
 
   /* get the maximum number of file descriptors.  we really want the
    * highest open file descriptor but i don't know how to get that. */
+#ifdef HAVE_RLIMIT
   if (getrlimit(RLIMIT_NOFILE, &rl) < 0)
     return -1;
+#endif
 
   /* become session leader to detach from controlling terminal */
   if ((pid = fork()) < 0)
@@ -1032,13 +1042,16 @@ static int		daemonize(void)
   else if (pid != 0)
     exit(0);
 
+#ifdef HAVE_RLIMIT
   /* if infinity then set to a lower limit.  this is bad but we don't want
    * to try closing all fd's up to RLIM_INFINITY. */
   if (rl.rlim_max == RLIM_INFINITY)
     rl.rlim_max = 1024;
+  rlim_max = (int)rl.rlim_max;
+#endif
 
   /* close all files except stderr */
-  for (i = 0; i < (int)rl.rlim_max; i++)
+  for (i = 0; i < rlim_max; i++)
     if (i != 2)
       if (close(i) < 0 && errno != EBADF)
 	return -1;

@@ -5087,8 +5087,11 @@ static bool		joinGame(const StartupInfo* info,
   sceneRenderer->setZBuffer(oldUseZBuffer);
   setSceneDatabase();
 
+  mainWindow->getWindow()->yieldCurrent();
   // make radar
   radar = new RadarRenderer(*sceneRenderer, *world);
+  mainWindow->getWindow()->yieldCurrent();
+
   controlPanel->setRadarRenderer(radar);
   controlPanel->resize();
 
@@ -5334,8 +5337,12 @@ static void		playingLoop()
     TimeKeeper::setTick();
     const float dt = TimeKeeper::getTick() - prevTime;
 
+    mainWindow->getWindow()->yieldCurrent();
+
     // handle incoming packets
     doMessages();
+
+    mainWindow->getWindow()->yieldCurrent();
 
     // do dead reckoning on remote players
     for (i = 0; i < curMaxPlayers; i++)
@@ -5365,13 +5372,19 @@ static void		playingLoop()
       joinGameCallback = NULL;
     }
 
+    mainWindow->getWindow()->yieldCurrent();
+
     // handle events
     clockAdjust = 0.0f;
     while (!mainWindow->getQuit() && display->isEventPending())
       doEvent(display);
 
+    mainWindow->getWindow()->yieldCurrent();
+
     // invoke callbacks
     callPlayingCallbacks();
+
+    mainWindow->getWindow()->yieldCurrent();
 
     // quick out
     if (mainWindow->getQuit()) break;
@@ -6403,6 +6416,7 @@ void			startPlaying(BzfDisplay* _display,
   sceneRenderer->render();
   controlPanel->render(*sceneRenderer);
   mainWindow->getWindow()->swapBuffers();
+  mainWindow->getWindow()->yieldCurrent();
 
   // make heads up display
   HUDRenderer _hud(display, renderer);

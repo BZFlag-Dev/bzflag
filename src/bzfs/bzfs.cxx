@@ -65,7 +65,14 @@ const int udpBufSize = 128000;
 #include <set>
 #include <vector>
 #include <map>
+/* work around an ugly STL bug in BeOS */
+#ifdef __BEOS__
+#define private public
+#endif
 #include <bitset>
+#ifdef __BEOS__
+#undef private
+#endif
 #include <algorithm>
 #include <string>
 #include <sstream>

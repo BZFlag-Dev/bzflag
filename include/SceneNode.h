@@ -34,6 +34,9 @@
 
 #if !defined(_WIN32)
 // bonehead win32 cruft.  just make it go away on other platforms.
+#ifdef __stdcall
+#undef __stdcall
+#endif
 #define	__stdcall
 #endif
 

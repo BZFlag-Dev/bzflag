@@ -24,6 +24,7 @@ AC_TRY_COMPILE([#include <unistd.h>], [socklen_t a;], [AC_DEFINE(HAVE_SOCKLEN_T)
 
 AC_CANONICAL_HOST
 AM_CONDITIONAL(LINUX, test x$host_os = xlinux-gnu)
+AM_CONDITIONAL(BEOS, test x$host_os = xbeos)
 AM_CONDITIONAL(PC,    test x$host_vendor = xpc)
 AM_CONDITIONAL(PPC,   test x$host_vendor = xppc)
 
@@ -94,27 +95,47 @@ case $host_os in
     LDFLAGS="$LDFLAGS -L/usr/demo/SOUND/lib";;
   irix*)
     GLIBS="-lXsgivc -lX11 -laudio $GLIBS";;
+  beos)
+    GLIBS=" -lmedia -lgame $GLIBS";
+#    LIBS="-lbind -lsocket -lbe";;
+    LIBS="-lbe";;
 esac;
+
+AC_CHECK_FUNC(getrlimit)
+
+# for BeOS - old network stack don't have those libs ( move it in the case switch ?)
+AC_CHECK_LIB(socket, socket)
+AC_CHECK_LIB(bind, gethostent)
 
 AC_CHECK_LIB(m, sqrtf)
 
-CPPFLAGS=
-if test x$X_DISPLAY_MISSING = x; then
-  GLIBS="$X_PRE_LIBS -lX11 $EXTRA_LIBS $GLIBS"
-fi
-
-AC_CHECK_LIB(Xext, XextAddDisplay, [GLIBS="-lXext $GLIBS"], [], $GLIBS)
-
-if test $host_os = linux-gnu; then
-  AC_CHECK_LIB(Xxf86vm, XF86VidModeGetAllModeLines, [GLIBS="-lXxf86vm $GLIBS"], [], $GLIBS)
-  AC_CHECK_LIB(Xi, XListInputDevices, [GLIBS="-lXi $GLIBS"], [], $GLIBS)
+# avoid using X11 in BeOS
+if test $host_os != beos; then
+  CPPFLAGS=
+  if test x$X_DISPLAY_MISSING = x; then
+    GLIBS="$X_PRE_LIBS -lX11 $EXTRA_LIBS $GLIBS"
+  fi
+  
+  AC_CHECK_LIB(Xext, XextAddDisplay, [GLIBS="-lXext $GLIBS"], [], $GLIBS)
+  
+  if test $host_os = linux-gnu; then
+    AC_CHECK_LIB(Xxf86vm, XF86VidModeGetAllModeLines, [GLIBS="-lXxf86vm $GLIBS"], [], $GLIBS)
+    AC_CHECK_LIB(Xi, XListInputDevices, [GLIBS="-lXi $GLIBS"], [], $GLIBS)
+  fi
 fi
 
 if test $host_os = mingw32; then
   LIBS="-mwindows -lgdi32 -lws2_32 -ldsound -lwinmm $LIBS"
   GLIBS="-lglu32 -lopengl32"
 else
-  AC_CHECK_LIB(GL, glBegin, [GLIBS="-lGL $GLIBS"], [], $GLIBS)
+  # BeOS: if no libGL2, then fall back on libGL
+  if test $host_os = beos; then
+    AC_CHECK_LIB(GL2, glBegin, [GLIBS="-lGL2 $GLIBS"], [], $GLIBS)
+    AC_DEFINE(BEOS_USE_GL2, 1, [Use new GL Kit for BeOS])
+  fi
+  if test x$ac_cv_lib_GL2_glBegin != xyes; then
+    AC_CHECK_LIB(GL, glBegin, [GLIBS="-lGL $GLIBS"], [], $GLIBS)
+  fi
   AC_CHECK_LIB(GLU, gluScaleImage, [GLIBS="-lGLU $GLIBS"], [], $GLIBS)
 fi
 AC_SUBST(GLIBS)
@@ -241,6 +262,10 @@ if test x$enable_debug = xyes; then
      irix)
 	CFLAGS="$CFLAGS -g";
 	CXXFLAGS="$CXXFLAGS -g";;
+     beos)
+	CFLAGS="$CFLAGS -g";
+	CPPFLAGS="$CPPFLAGS -Werror";
+	CXXFLAGS="$CXXFLAGS -g -Wno-deprecated";;
     esac;
     AC_DEFINE(DEBUG, 1, [Debugging enabled])
 else
@@ -270,6 +295,10 @@ else
 		   CFLAGS="$CFLAGS -O2";
 		   CXXFLAGS="$CXXFLAGS -O2";
 		fi;;
+	 beos)
+		CFLAGS="$CFLAGS -O2";
+		CXXFLAGS="$CXXFLAGS -O2";
+		CXXFLAGS="$CXXFLAGS -ffast-math -fomit-frame-pointer";;
      esac;
      AC_DEFINE(NDEBUG, 1, [Debugging disabled])
 fi;

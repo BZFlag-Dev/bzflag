@@ -77,6 +77,26 @@ libPlatform_a_SOURCES =				\
 	wave.cxx				\
 	wave.h
 else
+if BEOS
+libPlatform_a_SOURCES =				\
+	PlatformFactory.cxx			\
+	BzfDisplay.cxx				\
+	BzfVisual.cxx				\
+	BzfWindow.cxx				\
+	BzfMedia.cxx				\
+	wave.cxx				\
+	wave.h					\
+	BeOSPlatformFactory.cxx 		\
+	BeOSPlatformFactory.h 			\
+	BeOSDisplay.cxx				\
+	BeOSDisplay.h				\
+	BeOSVisual.cxx				\
+	BeOSVisual.h				\
+	BeOSWindow.cxx				\
+	BeOSWindow.h				\
+	BeOSMedia.cxx				\
+	BeOSMedia.h
+else
 if WIN32
 libPlatform_a_SOURCES =				\
 	PlatformFactory.cxx			\
@@ -96,6 +116,7 @@ libPlatform_a_SOURCES =				\
 	WinWindow.h				\
 	WinMedia.cxx				\
 	WinMedia.h
+endif
 endif
 endif
 endif
@@ -140,6 +161,16 @@ EXTRA_libPlatform_a_SOURCES = 		\
  	MacWindow.h			\
  	MacMedia.cxx			\
  	MacMedia.h			\
+	BeOSPlatformFactory.cxx 	\
+	BeOSPlatformFactory.h 		\
+	BeOSDisplay.cxx			\
+	BeOSDisplay.h			\
+	BeOSVisual.cxx			\
+	BeOSVisual.h			\
+	BeOSWindow.cxx			\
+	BeOSWindow.h			\
+	BeOSMedia.cxx			\
+	BeOSMedia.h			\
  	WinPlatformFactory.cxx 		\
  	WinPlatformFactory.h 		\
  	WinDisplay.cxx			\

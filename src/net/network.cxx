@@ -34,6 +34,10 @@
 #define hstrerror(x) "<network error>"
 #endif
 
+#ifndef O_NDELAY
+#define O_NDELAY O_NONBLOCK
+#endif
+
 extern "C" {
 
 void			nerror(const char* msg)
@@ -74,6 +78,7 @@ int			getErrno()
 
 int			BzfNetwork::setNonBlocking(int fd)
 {
+/* XXX: FIXME: net_server -> use setsockopt() */
   int mode = fcntl(fd, F_GETFL, 0);
   if (mode == -1 || fcntl(fd, F_SETFL, mode | O_NDELAY) < 0)
     return -1;

@@ -46,7 +46,7 @@
 #include <netinet/tcp.h>
 #include <arpa/inet.h>
 #include <netdb.h>
-#if defined(_old_linux_) || (!defined(__linux__) && !defined(sun) && !defined(__FreeBSD__) && !defined(__APPLE__) && !defined(macintosh))
+#if defined(_old_linux_) || (!defined(__linux__) && !defined(sun) && !defined(__FreeBSD__) && !defined(__APPLE__) && !defined(macintosh) && !defined(__BEOS__))
 #include <bstring.h>
 #endif
 
@@ -93,6 +93,11 @@ void			bzfherror(const char* msg);
 int			getErrno();
 
 }
+
+/* BeOS net_server has closesocket(), which _must_ be used in place of close() */
+#if defined(__BEOS__) && (IPPROTO_TCP != 6)
+#define close(__x) closesocket(__x)
+#endif
 
 #else /* !defined(_WIN32) */
 
