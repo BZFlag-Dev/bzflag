@@ -5,7 +5,6 @@
 #include "common.h"
 #include "BzfDisplay.h"
 #include "BzfEvent.h"
-#include "AList.h"
 #include "BzfString.h"
 #include "bzfgl.h"
 
