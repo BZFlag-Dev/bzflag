@@ -70,7 +70,7 @@
 #include "BZDBCache.h"
 #include "TextUtils.h"
 #include "TextureManager.h"
-
+#include "ActionBinding.h"
 
 // cause persistent rebuilding for build versioning
 #include "version.h"
@@ -599,10 +599,7 @@ class KeyboardMapMenu : public HUDDialog {
 
     bool		isEditing() const;
     void		setKey(const BzfKeyEvent&);
-    void		onReset(const std::string& name, bool, const std::string&);
     void		onScan(const std::string& name, bool press, const std::string& cmd);
-    static void		onResetCB(const std::string& name, bool press,
-				    const std::string& cmd, void* userData);
     static void		onScanCB(const std::string& name, bool press,
 				 const std::string& cmd, void* userData);
 
@@ -752,12 +749,8 @@ void			KeyboardMapMenu::setKey(const BzfKeyEvent& event)
       break;
   if ((KEYMGR.keyEventToString(event) == it->second.key1 && it->second.key2.empty()) || (KEYMGR.keyEventToString(event) == it->second.key2))
     return;
-  KEYMGR.unbind(event, false);
-  if (it->first == "fire") {
-    KEYMGR.bind(event, false, it->first);
-  }
-  KEYMGR.unbind(event, true);
-  KEYMGR.bind(event, true, it->first);
+  ActionBinding::instance().associate(KEYMGR.keyEventToString(event),
+				      it->first);
   editing = -1;
   update();
 }
@@ -766,11 +759,7 @@ void			KeyboardMapMenu::execute()
 {
   const HUDuiControl* const focus = HUDui::getFocus();
   if (focus == reset) {
-    // FIXME - need to reset keymap to default values
-    KEYMGR.iterate(onResetCB, this);
-    for (unsigned int i = 0; i < numDefaultBindings; ++i) {
-      CMDMGR.run(defaultBindings[i]);
-    }
+    ActionBinding::instance().resetBindings();
     update();
   }
   else {
@@ -781,16 +770,7 @@ void			KeyboardMapMenu::execute()
       if (list[it->second.index] == focus) {
 	editing = it->second.index;
 	if (!it->second.key1.empty() && !it->second.key2.empty()) {
-	  // gotta kill the old values
-	  BzfKeyEvent ev;
-	  KEYMGR.stringToKeyEvent(it->second.key1, ev);
-	  KEYMGR.unbind(ev, true);
-	  if (it->first == "fire")
-	    KEYMGR.unbind(ev, false);
-	  KEYMGR.stringToKeyEvent(it->second.key2, ev);
-	  KEYMGR.unbind(ev, true);
-	  if (it->first == "fire")
-	    KEYMGR.unbind(ev, false);
+	  ActionBinding::instance().deassociate(it->first);
 	}
       }
     }
@@ -893,14 +873,6 @@ void			KeyboardMapMenu::update()
   }
 }
 
-void			KeyboardMapMenu::onReset(const std::string&, bool press,
-						   const std::string& cmd)
-{
-  BzfKeyEvent ev;
-  KEYMGR.stringToKeyEvent(cmd, ev);
-  KEYMGR.unbind(ev, press);
-}
-
 void			KeyboardMapMenu::onScan(const std::string& name, bool press,
 						const std::string& cmd)
 {
@@ -913,12 +885,6 @@ void			KeyboardMapMenu::onScan(const std::string& name, bool press,
     it->second.key1 = name;
   else if (it->second.key2.empty())
     it->second.key2 = name;
-}
-
-void			KeyboardMapMenu::onResetCB(const std::string& name, bool press,
-						     const std::string& cmd, void* userData)
-{
-  reinterpret_cast<KeyboardMapMenu*>(userData)->onReset(name, press, cmd);
 }
 
 void			KeyboardMapMenu::onScanCB(const std::string& name, bool press,

@@ -58,6 +58,8 @@ bzflag_SOURCES =			\
 	menus.h				\
 	ServerListCache.cxx		\
 	ServerListCache.h		\
+	ActionBinding.cxx		\
+	ActionBinding.h			\
 	TextureManager.cxx
 
 noinst_HEADERS = \

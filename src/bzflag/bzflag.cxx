@@ -62,6 +62,7 @@
 #include "BZDBCache.h"
 #include "WordFilter.h"
 #include "TextUtils.h"
+#include "ActionBinding.h"
 
 // invoke incessant rebuilding for build versioning
 #include "version.h"
@@ -117,79 +118,6 @@ static DefaultDBItem	defaultDBItems[] = {
   { "displayFlagHelp",		"1",			true,	StateDatabase::ReadWrite,	setFlagHelp },
   { "displayRadarRange",	"0.5",			false,	StateDatabase::ReadWrite,	NULL }
 };
-
-// default key bindings
-const char*	defaultBindings[] = {
-  "bind F12 down quit",
-  "bind \"Left Mouse\" down fire",
-  "bind \"Left Mouse\" up fire",
-  "bind Enter down fire",
-  "bind \"Middle Mouse\" down drop",
-  "bind Space down drop",
-  "bind \"Right Mouse\" down identify",
-  "bind I down identify",
-  "bind Tab down jump",
-  "bind N down \"send all\"",
-  "bind M down \"send team\"",
-  "bind , down \"send nemesis\"",
-  "bind . down \"send recipient\"",
-  "bind S down \"toggle displayScore\"",
-  "bind B down \"toggle displayBinoculars\"",
-  "bind Pause down pause",
-  "bind P down pause",
-#ifdef SNAPPING
-  "bind F5 down screenshot",
-#endif
-  "bind - down \"time backward\"",
-  "bind = down \"time forward\"",
-  "bind H down \"toggle displayRadarFlags\"",
-  "bind J down \"toggle displayMainFlags\"",
-  "bind K down \"silence\"",
-  "bind L down \"toggle displayLabels\"",
-  "bind Delete down destruct",
-  "bind \"Ctrl+Left Arrow\" down \"roam rotate left\"",
-  "bind \"Ctrl+Left Arrow\" up \"roam rotate stop\"",
-  "bind \"Ctrl+Right Arrow\" down \"roam rotate right\"",
-  "bind \"Ctrl+Right Arrow\" up \"roam rotate stop\"",
-  "bind \"Ctrl+Up Arrow\" down \"roam rotate up\"",
-  "bind \"Ctrl+Up Arrow\" up \"roam rotate stop\"",
-  "bind \"Ctrl+Down Arrow\" down \"roam rotate down\"",
-  "bind \"Ctrl+Down Arrow\" up \"roam rotate stop\"",
-  "bind \"Shift+Left Arrow\" down \"roam translate left\"",
-  "bind \"Shift+Left Arrow\" up \"roam translate stop\"",
-  "bind \"Shift+Right Arrow\" down \"roam translate right\"",
-  "bind \"Shift+Right Arrow\" up \"roam translate stop\"",
-  "bind \"Shift+Up Arrow\" down \"roam translate forward\"",
-  "bind \"Shift+Up Arrow\" up \"roam translate stop\"",
-  "bind \"Shift+Down Arrow\" down \"roam translate backward\"",
-  "bind \"Shift+Down Arrow\" up \"roam translate stop\"",
-  "bind \"Alt+Up Arrow\" down \"roam translate up\"",
-  "bind \"Alt+Up Arrow\" up \"roam translate stop\"",
-  "bind \"Alt+Down Arrow\" down \"roam translate down\"",
-  "bind \"Alt+Down Arrow\" up \"roam translate stop\"",
-  "bind F6 down \"roam cycle subject backward\"",
-  "bind F7 down \"roam cycle subject forward\"",
-  "bind F8 down \"roam cycle type forward\"",
-  "bind F9 down \"roam zoom in\"",
-  "bind F9 up \"roam zoom stop\"",
-  "bind F10 down \"roam zoom out\"",
-  "bind F10 up \"roam zoom stop\"",
-  "bind F11 down \"roam zoom normal\"",
-  "bind F11 up \"roam zoom stop\"",
-  "bind O down servercommand",
-  "bind F down \"toggle displayFlagHelp\"",
-  "bind \"Page Up\" down \"scrollpanel up\"",
-  "bind \"Page Down\" down \"scrollpanel down\"",
-  "bind 1 down \"set displayRadarRange 0.25\"",
-  "bind 2 down \"set displayRadarRange 0.5\"",
-  "bind 3 down \"set displayRadarRange 1.0\"",
-  "bind A down \"toggle slowKeyboard\"",
-  "bind U down hunt",
-  "bind \"Right Mouse\" up restart",
-  "bind I up restart",
-  "bind 9 down autopilot"
-};
-const unsigned int numDefaultBindings = countof(defaultBindings);
 
 #ifdef ROBOT
 // ROBOT -- tidy up
@@ -840,10 +768,12 @@ int			main(int argc, char** argv)
       startupInfo.hasConfiguration = true;
 #endif
 
-  if (!startupInfo.hasConfiguration)
+  if (startupInfo.hasConfiguration)
+    // get curremt configuration
+    ActionBinding::instance().getFromBindings();
+  else
     // bind default keys
-    for (i = 0; i < numDefaultBindings; ++i)
-      CMDMGR.run(defaultBindings[i]);
+    ActionBinding::instance().resetBindings();
 
   ServerListCache::get()->loadCache();
 

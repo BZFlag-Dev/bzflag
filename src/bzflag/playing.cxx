@@ -127,6 +127,7 @@ static bool		admin = false; // am I an admin?
 static bool		serverError = false;
 static bool		serverDied = false;
 static bool		fireButton = false;
+static bool             roamButton = false;
 static bool		firstLife = false;
 static bool		showFPS = false;
 static bool		showDrawTime = false;
@@ -1414,6 +1415,7 @@ static bool		doKeyCommon(const BzfKeyEvent& key, bool pressed)
   if (!cmd.empty()) {
     if (cmd=="fire")
       fireButton = pressed;
+    roamButton = pressed;
     std::string result = CMDMGR.run(cmd);
     if (!result.empty())
       std::cerr << result << std::endl;
@@ -2246,7 +2248,13 @@ static std::string cmdRoam(const std::string&, const CommandManager::ArgList& ar
   if (args[0] == "rotate") {
     if (args.size() != 2)
       return "usage: roam rotate {left|right|up|down|stop}";
-    if (args[1] == "left") {
+    if (!roamButton || args[1] == "stop") {
+      roamDTheta  = 0.0f;
+      roamDPhi    = 0.0f;
+      roamDPos[0] = 0.0f;
+      roamDPos[1] = 0.0f;
+      roamDPos[2] = 0.0f;
+    } else if (args[1] == "left") {
       roamDTheta = 90.0f * (roamZoom / 90.0f);
     } else if (args[1] == "right") {
       roamDTheta = -90.0f * (roamZoom / 90.0f);
@@ -2254,19 +2262,19 @@ static std::string cmdRoam(const std::string&, const CommandManager::ArgList& ar
       roamDPhi = -60.0f * (roamZoom / 90.0f);
     } else if (args[1] == "down") {
       roamDPhi = 60.0f * (roamZoom / 90.0f);
-    } else if (args[1] == "stop") {
-      roamDTheta  = 0.0f;
-      roamDPhi    = 0.0f;
-      roamDPos[0] = 0.0f;
-      roamDPos[1] = 0.0f;
-      roamDPos[2] = 0.0f;
     } else {
       return "usage: roam rotate {left|right|up|down|stop}";
     }
   } else if (args[0] == "translate") {
     if (args.size() != 2)
       return "usage: roam translate {left|right|forward|backward|up|down|stop}";
-    if (args[1] == "left") {
+    if (!roamButton || args[1] == "stop") {
+      roamDTheta  = 0.0f;
+      roamDPhi    = 0.0f;
+      roamDPos[0] = 0.0f;
+      roamDPos[1] = 0.0f;
+      roamDPos[2] = 0.0f;
+    } else if (args[1] == "left") {
       roamDPos[1] = 4.0f * BZDB.eval(StateDatabase::BZDB_TANKSPEED);
     } else if (args[1] == "right") {
       roamDPos[1] = -4.0f * BZDB.eval(StateDatabase::BZDB_TANKSPEED);
@@ -2278,26 +2286,20 @@ static std::string cmdRoam(const std::string&, const CommandManager::ArgList& ar
       roamDPos[2] = 4.0f * BZDB.eval(StateDatabase::BZDB_TANKSPEED);
     } else if (args[1] == "down") {
       roamDPos[2] = -4.0f * BZDB.eval(StateDatabase::BZDB_TANKSPEED);
-    } else if (args[1] == "stop") {
-      roamDTheta  = 0.0f;
-      roamDPhi    = 0.0f;
-      roamDPos[0] = 0.0f;
-      roamDPos[1] = 0.0f;
-      roamDPos[2] = 0.0f;
     } else {
       return "usage: roam translate {left|right|forward|backward|up|down|stop}";
     }
   } else if (args[0] == "zoom") {
     if (args.size() != 2)
       return "usage: roam zoom {in|out|normal|stop}";
-    if (args[1] == "in") {
+    if (!roamButton || args[1] == "stop") {
+      roamDZoom = 0.0f;
+    } else if (args[1] == "in") {
       roamDZoom = 50.0f;
     } else if (args[1] == "out") {
       roamDZoom = -50.0f;
     } else if (args[1] == "normal") {
       roamZoom = 60.0f;
-    } else if (args[1] == "stop") {
-      roamDZoom = 0.0f;
     } else {
       return "usage: roam zoom {in|out|normal|stop}";
     }
