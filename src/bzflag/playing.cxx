@@ -9,7 +9,7 @@
  * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
-
+ 
 static const char copyright[] = "Copyright (c) 1993 - 2004 Tim Riker";
 
 #include "common.h"
@@ -165,6 +165,10 @@ extern void		dumpResources(BzfDisplay*, SceneRenderer&);
 static void		setRobotTarget(RobotPlayer* robot);
 extern void		doAutoPilot(float &rotation, float &speed);
 extern void		teachAutoPilot( FlagType *, int );
+
+// Far and Near Frustum clipping planes
+const float NearPlane = 0.5f;
+const float FarPlaneScale = 1.5f; // gets multiplied by BZDB_WORLDSIZE
 
 enum BlowedUpReason {
   GotKilledMsg,
@@ -3810,8 +3814,10 @@ void		leaveGame()
   targetPoint[1] = eyePoint[1] + 0.0f;
   targetPoint[2] = eyePoint[2] + 0.0f;
   sceneRenderer->getViewFrustum().setProjection(60.0f * M_PI / 180.0f,
-						1.1f, 1.5f * worldSize, mainWindow->getWidth(),
-						mainWindow->getHeight(), mainWindow->getViewHeight());
+						NearPlane, FarPlaneScale * worldSize, 
+						mainWindow->getWidth(),
+						mainWindow->getHeight(), 
+						mainWindow->getViewHeight());
   sceneRenderer->getViewFrustum().setView(eyePoint, targetPoint);
 
   // reset some flags
@@ -4199,7 +4205,7 @@ void			drawFrame(const float dt)
     }
     float worldSize = BZDB.eval(StateDatabase::BZDB_WORLDSIZE);
     sceneRenderer->getViewFrustum().setProjection(fov,
-						  1.1f, 1.5f * worldSize,
+						  NearPlane, FarPlaneScale * worldSize,
 						  mainWindow->getWidth(),
 						  mainWindow->getHeight(),
 						  mainWindow->getViewHeight());
@@ -4490,7 +4496,9 @@ void			drawFrame(const float dt)
 	const int w = mainWindow->getWidth();
 	const int h = mainWindow->getHeight();
 	const int vh = mainWindow->getViewHeight();
-	sceneRenderer->getViewFrustum().setProjection(fov, 1.1f, 1.5f * worldSize, w, h, vh);
+	sceneRenderer->getViewFrustum().setProjection(fov, NearPlane, 
+	                                              FarPlaneScale * worldSize,
+	                                              w, h, vh);
 	sceneRenderer->render();
 
 	// set entire window
@@ -5159,7 +5167,7 @@ static void		findFastConfiguration()
   static const GLfloat targetPoint[3] = { 0.0f, 10.0f, muzzleHeight };
   float worldSize = BZDB.eval(StateDatabase::BZDB_WORLDSIZE);
   sceneRenderer->getViewFrustum().setProjection(45.0f * M_PI / 180.0f,
-						1.1f, 1.5f * worldSize,
+						NearPlane, FarPlaneScale * worldSize,
 						mainWindow->getWidth(),
 						mainWindow->getHeight(),
 						mainWindow->getViewHeight());
