@@ -202,7 +202,7 @@ class CustomBox : public WorldFileObstacle {
 CustomBox::CustomBox()
 {
   size[0] = size[1] = BoxBase;
-  size[2] = BZDB->eval(StateDatabase::BZDB_BOXHEIGHT);
+  size[2] = BZDB.eval(StateDatabase::BZDB_BOXHEIGHT);
 }
 
 
@@ -221,8 +221,8 @@ class CustomPyramid : public WorldFileObstacle {
 
 CustomPyramid::CustomPyramid()
 {
-  size[0] = size[1] = BZDB->eval(StateDatabase::BZDB_PYRBASE);
-  size[2] = BZDB->eval(StateDatabase::BZDB_PYRHEIGHT);
+  size[0] = size[1] = BZDB.eval(StateDatabase::BZDB_PYRBASE);
+  size[2] = BZDB.eval(StateDatabase::BZDB_PYRHEIGHT);
 }
 
 
@@ -451,7 +451,7 @@ bool CustomWorld::read(const char *cmd, istream& input)
   if (strcmp(cmd, "size") == 0) {
     input >> size;
 	size *=2;
-    BZDB->set(StateDatabase::BZDB_WORLDSIZE, string_util::format("%d", size));
+    BZDB.set(StateDatabase::BZDB_WORLDSIZE, string_util::format("%d", size));
   }
   else if (strcmp(cmd, "flagHeight") == 0)
     input >> fHeight;
@@ -463,7 +463,7 @@ bool CustomWorld::read(const char *cmd, istream& input)
 
 void CustomWorld::write(WorldInfo*) const
 {
-  BZDB->set(StateDatabase::BZDB_FLAGHEIGHT, string_util::format("%f", fHeight));
+  BZDB.set(StateDatabase::BZDB_FLAGHEIGHT, string_util::format("%f", fHeight));
 }
 
 
@@ -763,7 +763,7 @@ void broadcastMessage(uint16_t code, int len, const void *msg)
 static void onGlobalChanged(const std::string& msg, void*)
 {
   std::string name  = msg;
-  std::string value = BZDB->get(msg);
+  std::string value = BZDB.get(msg);
   void *bufStart = getDirectMessageBuffer();
   void *buf = nboPackUShort(bufStart, 1);
   buf = nboPackUByte(buf, name.length());
@@ -1649,8 +1649,8 @@ static WorldInfo *defineWorldFromFile(const char *filename)
   }
 
   // make walls
-  float wallHeight = BZDB->eval(StateDatabase::BZDB_WALLHEIGHT);
-  float worldSize = BZDB->eval(StateDatabase::BZDB_WORLDSIZE);
+  float wallHeight = BZDB.eval(StateDatabase::BZDB_WALLHEIGHT);
+  float worldSize = BZDB.eval(StateDatabase::BZDB_WORLDSIZE);
   world->addWall(0.0f, 0.5f * worldSize, 0.0f, 1.5f * M_PI, 0.5f * worldSize, wallHeight);
   world->addWall(0.5f * worldSize, 0.0f, 0.0f, M_PI, 0.5f * worldSize, wallHeight);
   world->addWall(0.0f, -0.5f * worldSize, 0.0f, 0.5f * M_PI, 0.5f * worldSize, wallHeight);
@@ -1674,10 +1674,10 @@ static WorldInfo *defineTeamWorld()
     if (!world)
       return NULL;
 
-    const float worldSize = BZDB->eval(StateDatabase::BZDB_WORLDSIZE);
+    const float worldSize = BZDB.eval(StateDatabase::BZDB_WORLDSIZE);
     const float worldfactor = worldSize / (float)DEFAULT_WORLD;
     const int actCitySize = int(CitySize * worldfactor);
-    const float pyrBase = BZDB->eval(StateDatabase::BZDB_PYRBASE);
+    const float pyrBase = BZDB.eval(StateDatabase::BZDB_PYRBASE);
 
     // set team base and team flag safety positions
     basePos[0][0] = 0.0f;
@@ -1731,13 +1731,13 @@ static WorldInfo *defineTeamWorld()
     safetyBasePos[4][2] = basePos[4][2];
 
     // make walls
-    const float wallHeight = BZDB->eval(StateDatabase::BZDB_WALLHEIGHT);
+    const float wallHeight = BZDB.eval(StateDatabase::BZDB_WALLHEIGHT);
     world->addWall(0.0f, 0.5f * worldSize, 0.0f, 1.5f * M_PI, 0.5f * worldSize, wallHeight);
     world->addWall(0.5f * worldSize, 0.0f, 0.0f, M_PI, 0.5f * worldSize, wallHeight);
     world->addWall(0.0f, -0.5f * worldSize, 0.0f, 0.5f * M_PI, 0.5f * worldSize, wallHeight);
     world->addWall(-0.5f * worldSize, 0.0f, 0.0f, 0.0f, 0.5f * worldSize, wallHeight);
 
-    const float pyrHeight = BZDB->eval(StateDatabase::BZDB_PYRHEIGHT);
+    const float pyrHeight = BZDB.eval(StateDatabase::BZDB_PYRHEIGHT);
     // make pyramids
     if (!clOptions->randomCTF || (clOptions->maxTeam[1] > 0)) {
       // around red base
@@ -1822,7 +1822,7 @@ static WorldInfo *defineTeamWorld()
     // create symmetric map of random buildings for random CTF mode
     if (clOptions->randomCTF) {
       int i;
-      float h = BZDB->eval(StateDatabase::BZDB_BOXHEIGHT);
+      float h = BZDB.eval(StateDatabase::BZDB_BOXHEIGHT);
       const bool redGreen = clOptions->maxTeam[1] > 0 || clOptions->maxTeam[2] > 0;
       const bool bluePurple = clOptions->maxTeam[3] > 0 || clOptions->maxTeam[4] > 0;
       if (!redGreen && !bluePurple) {
@@ -1830,7 +1830,7 @@ static WorldInfo *defineTeamWorld()
 	exit(20);
       }
       const int numBoxes = int((0.5 + 0.4 * bzfrand()) * actCitySize * actCitySize);
-      const float boxHeight = BZDB->eval(StateDatabase::BZDB_BOXHEIGHT);
+      const float boxHeight = BZDB.eval(StateDatabase::BZDB_BOXHEIGHT);
       for (i = 0; i < numBoxes;) {
 	if (clOptions->randomHeights)
 	  h = boxHeight * (2.0f * (float)bzfrand() + 0.5f);
@@ -1873,7 +1873,7 @@ static WorldInfo *defineTeamWorld()
       }
 
       // make pyramids
-      h = BZDB->eval(StateDatabase::BZDB_PYRHEIGHT);
+      h = BZDB.eval(StateDatabase::BZDB_PYRHEIGHT);
       const int numPyrs = int((0.5 + 0.4 * bzfrand()) * actCitySize * actCitySize * 2);
       for (i = 0; i < numPyrs; i++) {
 	if (clOptions->randomHeights)
@@ -2039,7 +2039,7 @@ static WorldInfo *defineTeamWorld()
       // add boxes, four at once with same height so no team has an advantage
       const float xmin = -0.5f * ((2.0f * BoxBase + AvenueSize) * (actCitySize - 1));
       const float ymin = -0.5f * ((2.0f * BoxBase + AvenueSize) * (actCitySize - 1));
-      const float boxHeight = BZDB->eval(StateDatabase::BZDB_BOXHEIGHT);
+      const float boxHeight = BZDB.eval(StateDatabase::BZDB_BOXHEIGHT);
       for (int j = 0; j <= actCitySize/2; j++)
 	for (int i = 0; i < actCitySize/2; i++)
       if (i != actCitySize/2 || j != actCitySize/2) {
@@ -2121,8 +2121,8 @@ static WorldInfo *defineRandomWorld()
     return NULL;
 
   // make walls
-  float worldSize = BZDB->eval(StateDatabase::BZDB_WORLDSIZE);
-  float wallHeight = BZDB->eval(StateDatabase::BZDB_WALLHEIGHT);
+  float worldSize = BZDB.eval(StateDatabase::BZDB_WORLDSIZE);
+  float wallHeight = BZDB.eval(StateDatabase::BZDB_WALLHEIGHT);
   world->addWall(0.0f, 0.5f * worldSize, 0.0f, 1.5f * M_PI, 0.5f * worldSize, wallHeight);
   world->addWall(0.5f * worldSize, 0.0f, 0.0f, M_PI, 0.5f * worldSize, wallHeight);
   world->addWall(0.0f, -0.5f * worldSize, 0.0f, 0.5f * M_PI, 0.5f * worldSize, wallHeight);
@@ -2133,7 +2133,7 @@ static WorldInfo *defineRandomWorld()
   const int numTeleporters = 8 + int(8 * (float)bzfrand() * worldfactor);
   // make boxes
   int i;
-  float boxHeight = BZDB->eval(StateDatabase::BZDB_BOXHEIGHT);
+  float boxHeight = BZDB.eval(StateDatabase::BZDB_BOXHEIGHT);
   float h = boxHeight;
   const int numBoxes = int((0.5f + 0.7f * bzfrand()) * actCitySize * actCitySize);
   for (i = 0; i < numBoxes; i++) {
@@ -2146,8 +2146,8 @@ static WorldInfo *defineRandomWorld()
   }
 
   // make pyramids
-  float pyrHeight = BZDB->eval(StateDatabase::BZDB_PYRHEIGHT);
-  float pyrBase = BZDB->eval(StateDatabase::BZDB_PYRBASE);
+  float pyrHeight = BZDB.eval(StateDatabase::BZDB_PYRHEIGHT);
+  float pyrBase = BZDB.eval(StateDatabase::BZDB_PYRBASE);
   h = pyrHeight;
   const int numPyrs = int((0.5f + 0.7f * bzfrand()) * actCitySize * actCitySize);
   for (i = 0; i < numPyrs; i++) {
@@ -2254,7 +2254,7 @@ static bool defineWorld()
   buf = nboPackUShort(buf, WorldCodeHeaderSize);
   buf = nboPackUShort(buf, WorldCodeHeader);
   buf = nboPackUShort(buf, mapVersion);
-  buf = nboPackFloat(buf, BZDB->eval(StateDatabase::BZDB_WORLDSIZE));
+  buf = nboPackFloat(buf, BZDB.eval(StateDatabase::BZDB_WORLDSIZE));
   buf = nboPackUShort(buf, clOptions->gameStyle);
   buf = nboPackUShort(buf, maxPlayers);
   buf = nboPackUShort(buf, clOptions->maxShots);
@@ -2680,7 +2680,7 @@ static void addPlayer(int playerIndex)
   //send SetVars
   { // scoping is mandatory
      PackVars pv(bufStart, playerIndex);
-     BZDB->iterate(PackVars::packIt, &pv);
+     BZDB.iterate(PackVars::packIt, &pv);
   }
 
   // abort if we hung up on the client
@@ -2826,10 +2826,10 @@ static void addFlag(int flagIndex)
   numFlagsInAir++;
 
   // compute drop time
-  const float flightTime = 2.0f * sqrtf(-2.0f * BZDB->eval(StateDatabase::BZDB_FLAGALTITUDE) / BZDB->eval(StateDatabase::BZDB_GRAVITY));
+  const float flightTime = 2.0f * sqrtf(-2.0f * BZDB.eval(StateDatabase::BZDB_FLAGALTITUDE) / BZDB.eval(StateDatabase::BZDB_GRAVITY));
   flag[flagIndex].flag.flightTime = 0.0f;
   flag[flagIndex].flag.flightEnd = flightTime;
-  flag[flagIndex].flag.initialVelocity = -0.5f * BZDB->eval(StateDatabase::BZDB_GRAVITY) * flightTime;
+  flag[flagIndex].flag.initialVelocity = -0.5f * BZDB.eval(StateDatabase::BZDB_GRAVITY) * flightTime;
   flag[flagIndex].dropDone = TimeKeeper::getCurrent();
   flag[flagIndex].dropDone += flightTime;
 
@@ -2884,11 +2884,11 @@ void resetFlag(int flagIndex)
     }
   } else {
     // random position (not in a building)
-    float r = BZDB->eval(StateDatabase::BZDB_TANKRADIUS);
+    float r = BZDB.eval(StateDatabase::BZDB_TANKRADIUS);
     if (pFlagInfo->flag.desc == Flags::Obesity)
-      r *= 2.0f * BZDB->eval(StateDatabase::BZDB_OBESEFACTOR);
+      r *= 2.0f * BZDB.eval(StateDatabase::BZDB_OBESEFACTOR);
     WorldInfo::ObstacleLocation *obj;
-    float worldSize = BZDB->eval(StateDatabase::BZDB_WORLDSIZE);
+    float worldSize = BZDB.eval(StateDatabase::BZDB_WORLDSIZE);
     pFlagInfo->flag.position[0] = (worldSize - BaseSize) * ((float)bzfrand() - 0.5f);
     pFlagInfo->flag.position[1] = (worldSize - BaseSize) * ((float)bzfrand() - 0.5f);
     pFlagInfo->flag.position[2] = 0.0f;
@@ -2896,7 +2896,7 @@ void resetFlag(int flagIndex)
 					pFlagInfo->flag.position[1],pFlagInfo->flag.position[2], r);
     while (topmosttype != NOT_IN_BUILDING) {
       if ((clOptions->flagsOnBuildings && (topmosttype == IN_BOX))
-	  && (obj->pos[2] < (pFlagInfo->flag.position[2] + BZDB->eval(StateDatabase::BZDB_FLAGHEIGHT))) && ((obj->pos[2] + obj->size[2]) > pFlagInfo->flag.position[2])
+	  && (obj->pos[2] < (pFlagInfo->flag.position[2] + BZDB.eval(StateDatabase::BZDB_FLAGHEIGHT))) && ((obj->pos[2] + obj->size[2]) > pFlagInfo->flag.position[2])
           && (world->inRect(obj->pos, obj->rotation, obj->size, pFlagInfo->flag.position[0], pFlagInfo->flag.position[1], 0.0f)))
       {
         pFlagInfo->flag.position[2] = obj->pos[2] + obj->size[2];
@@ -3100,7 +3100,7 @@ void removePlayer(int playerIndex, const char *reason, bool notify)
   player[playerIndex].state = PlayerNoExist;
 
   // if there is an active poll, cancel any vote this player may have made
-  static VotingArbiter *arbiter = (VotingArbiter *)BZDB->getPointer("poll");
+  static VotingArbiter *arbiter = (VotingArbiter *)BZDB.getPointer("poll");
   if ((arbiter != NULL) && (arbiter->knowsPoll())) {
     arbiter->retractVote(player[playerIndex].callSign);
   }
@@ -3431,9 +3431,9 @@ static void grabFlag(int playerIndex, int flagIndex)
     return;
 
   //last Pos might be lagged by TankSpeed so include in calculation
-  const float flagRadius = BZDB->eval(StateDatabase::BZDB_FLAGRADIUS);
-  const float tankRadius = BZDB->eval(StateDatabase::BZDB_TANKRADIUS);
-  const float tankSpeed = BZDB->eval(StateDatabase::BZDB_TANKSPEED);
+  const float flagRadius = BZDB.eval(StateDatabase::BZDB_FLAGRADIUS);
+  const float tankRadius = BZDB.eval(StateDatabase::BZDB_TANKRADIUS);
+  const float tankSpeed = BZDB.eval(StateDatabase::BZDB_TANKSPEED);
   const float radius2 = (tankSpeed + tankRadius + flagRadius) * (tankSpeed + tankRadius + flagRadius);
   const float* tpos = player[playerIndex].lastState.pos;
   const float* fpos = flag[flagIndex].flag.position;
@@ -3552,7 +3552,7 @@ static void dropFlag(int playerIndex, float pos[3])
     // people were cheating by dropping their flag above the nearest
     // convenient building which makes it fly all the way back to
     // your own base.  make it fly to the center of the board.
-    topmosttype = world->inBuilding(&container, 0.0f, 0.0f, 0.0f, BZDB->eval(StateDatabase::BZDB_TANKRADIUS));
+    topmosttype = world->inBuilding(&container, 0.0f, 0.0f, 0.0f, BZDB.eval(StateDatabase::BZDB_TANKRADIUS));
     if (topmosttype == NOT_IN_BUILDING) {
 	drpFlag.flag.landingPosition[0] = 0.0f;
 	drpFlag.flag.landingPosition[1] = 0.0f;
@@ -3584,12 +3584,12 @@ static void dropFlag(int playerIndex, float pos[3])
 
   // compute flight info -- flight time depends depends on start and end
   // altitudes and desired height above start altitude
-  const float flagAltitude = BZDB->eval(StateDatabase::BZDB_FLAGALTITUDE);
+  const float flagAltitude = BZDB.eval(StateDatabase::BZDB_FLAGALTITUDE);
   const float thrownAltitude = (drpFlag.flag.desc == Flags::Shield) ?
-     BZDB->eval(StateDatabase::BZDB_SHIELDFLIGHT) * flagAltitude : flagAltitude;
+     BZDB.eval(StateDatabase::BZDB_SHIELDFLIGHT) * flagAltitude : flagAltitude;
   const float maxAltitude = pos[2] + thrownAltitude;
-  const float upTime = sqrtf(-2.0f * thrownAltitude / BZDB->eval(StateDatabase::BZDB_GRAVITY));
-  const float downTime = sqrtf(-2.0f * (maxAltitude - pos[2]) / BZDB->eval(StateDatabase::BZDB_GRAVITY));
+  const float upTime = sqrtf(-2.0f * thrownAltitude / BZDB.eval(StateDatabase::BZDB_GRAVITY));
+  const float downTime = sqrtf(-2.0f * (maxAltitude - pos[2]) / BZDB.eval(StateDatabase::BZDB_GRAVITY));
   const float flightTime = upTime + downTime;
 
   // set flight info
@@ -3597,7 +3597,7 @@ static void dropFlag(int playerIndex, float pos[3])
   drpFlag.dropDone += flightTime;
   drpFlag.flag.flightTime = 0.0f;
   drpFlag.flag.flightEnd = flightTime;
-  drpFlag.flag.initialVelocity = -BZDB->eval(StateDatabase::BZDB_GRAVITY) * upTime;
+  drpFlag.flag.initialVelocity = -BZDB.eval(StateDatabase::BZDB_GRAVITY) * upTime;
 
   // player no longer has flag -- send MsgDropFlag
   player[playerIndex].flag = -1;
@@ -3675,7 +3675,6 @@ static void shotFired(int playerIndex, void *buf, int len)
 
   // make sure the shooter flag is a valid index to prevent segfaulting later
   if (shooter.flag < 0) {
-    DEBUG1("ERROR: BAD SHOOTER FLAG INDEX (%d)\n", shooter.flag);
     firingInfo.flag = Flags::Null;
     repack = true;
   }
@@ -3695,26 +3694,26 @@ static void shotFired(int playerIndex, void *buf, int len)
     return;
   }
 
-  float shotSpeed = BZDB->eval(StateDatabase::BZDB_SHOTSPEED);
-  float tankSpeed = BZDB->eval(StateDatabase::BZDB_TANKSPEED);
-  float lifetime = BZDB->eval(StateDatabase::BZDB_RELOADTIME);
+  float shotSpeed = BZDB.eval(StateDatabase::BZDB_SHOTSPEED);
+  float tankSpeed = BZDB.eval(StateDatabase::BZDB_TANKSPEED);
+  float lifetime = BZDB.eval(StateDatabase::BZDB_RELOADTIME);
   if (firingInfo.flag == Flags::ShockWave) {
       shotSpeed = 0.0f;
       tankSpeed = 0.0f;
   }
   else if (firingInfo.flag == Flags::Velocity) {
-      tankSpeed *= BZDB->eval(StateDatabase::BZDB_VELOCITYAD);
+      tankSpeed *= BZDB.eval(StateDatabase::BZDB_VELOCITYAD);
   }
   else if (firingInfo.flag == Flags::Thief) {
-      tankSpeed *= BZDB->eval(StateDatabase::BZDB_THIEFVELAD);
+      tankSpeed *= BZDB.eval(StateDatabase::BZDB_THIEFVELAD);
   }
-  else if ((firingInfo.flag == Flags::Burrow) && (firingInfo.shot.pos[2] < BZDB->eval(StateDatabase::BZDB_MUZZLEHEIGHT))) {
-      tankSpeed *= BZDB->eval(StateDatabase::BZDB_BURROWSPEEDAD);
+  else if ((firingInfo.flag == Flags::Burrow) && (firingInfo.shot.pos[2] < BZDB.eval(StateDatabase::BZDB_MUZZLEHEIGHT))) {
+      tankSpeed *= BZDB.eval(StateDatabase::BZDB_BURROWSPEEDAD);
   }
   else {
       //If shot is different height than player, can't be sure they didn't drop V in air
-      if (shooter.lastState.pos[2] != (shot.pos[2]-BZDB->eval(StateDatabase::BZDB_MUZZLEHEIGHT)))
-	tankSpeed *= BZDB->eval(StateDatabase::BZDB_VELOCITYAD);
+      if (shooter.lastState.pos[2] != (shot.pos[2]-BZDB.eval(StateDatabase::BZDB_MUZZLEHEIGHT)))
+	tankSpeed *= BZDB.eval(StateDatabase::BZDB_VELOCITYAD);
   }
 
   // FIXME, we should look at the actual TankSpeed ;-)
@@ -3740,13 +3739,13 @@ static void shotFired(int playerIndex, void *buf, int len)
   float dy = shooter.lastState.pos[1] - shot.pos[1];
   float dz = shooter.lastState.pos[2] - shot.pos[2];
 
-  float front = BZDB->eval(StateDatabase::BZDB_MUZZLEFRONT);
+  float front = BZDB.eval(StateDatabase::BZDB_MUZZLEFRONT);
   if (firingInfo.flag == Flags::Obesity)
-    front *= BZDB->eval(StateDatabase::BZDB_OBESEFACTOR);
+    front *= BZDB.eval(StateDatabase::BZDB_OBESEFACTOR);
 
   float delta = dx*dx + dy*dy + dz*dz;
-  if (delta > (BZDB->eval(StateDatabase::BZDB_TANKSPEED) * BZDB->eval(StateDatabase::BZDB_VELOCITYAD) + front) *
-	      (BZDB->eval(StateDatabase::BZDB_TANKSPEED) * BZDB->eval(StateDatabase::BZDB_VELOCITYAD) + front)) {
+  if (delta > (BZDB.eval(StateDatabase::BZDB_TANKSPEED) * BZDB.eval(StateDatabase::BZDB_VELOCITYAD) + front) *
+	      (BZDB.eval(StateDatabase::BZDB_TANKSPEED) * BZDB.eval(StateDatabase::BZDB_VELOCITYAD) + front)) {
     DEBUG2("Player %s [%d] shot origination %f %f %f too far from tank %f %f %f: distance=%f\n",
 	    shooter.callSign, playerIndex,
 	    shot.pos[0], shot.pos[1], shot.pos[2],
@@ -4298,11 +4297,11 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
       player[t].lasttimestamp = timestamp;
       player[t].lastupdate = now;
 
-      //Don't kick players up to 5 seconds after a world parm has changed, 5-> BZBB var?
+      //Don't kick players up to 5 seconds after a world parm has changed, 5-> BZDB var?
       if (now - lastWorldParmChange > 5.0f) { 
-        float gravity = BZDB->eval(StateDatabase::BZDB_GRAVITY);
+        float gravity = BZDB.eval(StateDatabase::BZDB_GRAVITY);
         if (gravity < 0.0f) {
-          float maxTankHeight = maxWorldHeight + 1.08f * ((BZDB->eval(StateDatabase::BZDB_JUMPVELOCITY)*BZDB->eval(StateDatabase::BZDB_JUMPVELOCITY)) / (2.0f * -gravity));
+          float maxTankHeight = maxWorldHeight + 1.08f * ((BZDB.eval(StateDatabase::BZDB_JUMPVELOCITY)*BZDB.eval(StateDatabase::BZDB_JUMPVELOCITY)) / (2.0f * -gravity));
 
           if (state.pos[2] > maxTankHeight) {
 	    char message[MessageLen];
@@ -4318,13 +4317,13 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
         // test all the map bounds + some fudge factor, just in case
         float	fudge = 5.0f;
         bool InBounds = true;
-        float worldSize = BZDB->eval(StateDatabase::BZDB_WORLDSIZE);
+        float worldSize = BZDB.eval(StateDatabase::BZDB_WORLDSIZE);
         if ( (state.pos[1] >= worldSize*0.5f + fudge) || (state.pos[1] <= -worldSize*0.5f - fudge))
 	  InBounds = false;
         else if ( (state.pos[0] >= worldSize*0.5f + fudge) || (state.pos[0] <= -worldSize*0.5f - fudge))
        	  InBounds = false;
 
-        if (state.pos[2]<BZDB->eval(StateDatabase::BZDB_BURROWDEPTH))
+        if (state.pos[2]<BZDB.eval(StateDatabase::BZDB_BURROWDEPTH))
 	  InBounds = false;
 
 
@@ -4348,16 +4347,16 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
 	    float curPlanarSpeedSqr = state.velocity[0]*state.velocity[0] +
 				      state.velocity[1]*state.velocity[1];
 
-	    float maxPlanarSpeedSqr = BZDB->eval(StateDatabase::BZDB_TANKSPEED)*BZDB->eval(StateDatabase::BZDB_TANKSPEED);
+	    float maxPlanarSpeedSqr = BZDB.eval(StateDatabase::BZDB_TANKSPEED)*BZDB.eval(StateDatabase::BZDB_TANKSPEED);
 
 	    bool logOnly = false;
 
 	    // if tank is not driving cannot be sure it didn't toss (V) in flight
 	    // if tank is not alive cannot be sure it didn't just toss (V)
   	    if (flag[player[t].flag].flag.desc == Flags::Velocity)
-	      maxPlanarSpeedSqr *= BZDB->eval(StateDatabase::BZDB_VELOCITYAD)*BZDB->eval(StateDatabase::BZDB_VELOCITYAD);
+	      maxPlanarSpeedSqr *= BZDB.eval(StateDatabase::BZDB_VELOCITYAD)*BZDB.eval(StateDatabase::BZDB_VELOCITYAD);
 	    else if (flag[player[t].flag].flag.desc == Flags::Thief)
-	      maxPlanarSpeedSqr *= BZDB->eval(StateDatabase::BZDB_THIEFVELAD) * BZDB->eval(StateDatabase::BZDB_THIEFVELAD);
+	      maxPlanarSpeedSqr *= BZDB.eval(StateDatabase::BZDB_THIEFVELAD) * BZDB.eval(StateDatabase::BZDB_THIEFVELAD);
 	    else {
 	      // If player is moving vertically, or not alive the speed checks seem to be problematic
 	      // If this happens, just log it for now, but don't actually kick
@@ -4432,10 +4431,10 @@ static std::string cmdSet(const std::string&, const CommandManager::ArgList& arg
 {
   switch (args.size()) {
     case 2:
-      if (BZDB->isSet(args[0])) {
-	StateDatabase::Permission permission=BZDB->getPermission(args[0]);
+      if (BZDB.isSet(args[0])) {
+	StateDatabase::Permission permission=BZDB.getPermission(args[0]);
 	if ((permission == StateDatabase::ReadWrite) || (permission == StateDatabase::Locked)) {
-	  BZDB->set(args[0], args[1], StateDatabase::Server);
+	  BZDB.set(args[0], args[1], StateDatabase::Server);
 	  lastWorldParmChange = TimeKeeper::getCurrent();
 	  return args[0] + " set";
 	}
@@ -4444,8 +4443,8 @@ static std::string cmdSet(const std::string&, const CommandManager::ArgList& arg
       else
 	return "variable " + args[0] + " does not exist";
     case 1:
-      if (BZDB->isSet(args[0])) {
-	return args[0] + "=" + BZDB->get(args[0]);
+      if (BZDB.isSet(args[0])) {
+	return args[0] + "=" + BZDB.get(args[0]);
       }
       else
 	return "variable " + args[0] + " does not exist";
@@ -4457,10 +4456,10 @@ static std::string cmdSet(const std::string&, const CommandManager::ArgList& arg
 static std::string cmdReset(const std::string&, const CommandManager::ArgList& args)
 {
   if (args.size() == 1) {
-    if (BZDB->isSet(args[0])) {
-      StateDatabase::Permission permission=BZDB->getPermission(args[0]);
+    if (BZDB.isSet(args[0])) {
+      StateDatabase::Permission permission=BZDB.getPermission(args[0]);
       if ((permission == StateDatabase::ReadWrite) || (permission == StateDatabase::Locked)) {
-	BZDB->set(args[0], BZDB->getDefault(args[0]), StateDatabase::Server);
+	BZDB.set(args[0], BZDB.getDefault(args[0]), StateDatabase::Server);
 	lastWorldParmChange = TimeKeeper::getCurrent();
 	return args[0] + " reset";
       }
@@ -4480,6 +4479,11 @@ static std::string cmdReset(const std::string&, const CommandManager::ArgList& a
  */
 int main(int argc, char **argv)
 {
+
+#if DEBUG && 0
+  CrashReporter *crashreporter = CrashReporter::getInstance();
+#endif
+
   VotingArbiter *votingarbiter = (VotingArbiter *)NULL;
 
   setvbuf(stdout, (char *)NULL, _IOLBF, 0);
@@ -4544,15 +4548,15 @@ int main(int argc, char **argv)
   for (unsigned int gi = 0; gi < countof(globalDBItems); ++gi) {
     assert(globalDBItems[gi].name != NULL);
     if (globalDBItems[gi].value != NULL) {
-      BZDB->set(globalDBItems[gi].name, globalDBItems[gi].value);
-      BZDB->setDefault(globalDBItems[gi].name, globalDBItems[gi].value);
+      BZDB.set(globalDBItems[gi].name, globalDBItems[gi].value);
+      BZDB.setDefault(globalDBItems[gi].name, globalDBItems[gi].value);
     }
-    BZDB->setPersistent(globalDBItems[gi].name, globalDBItems[gi].persistent);
-    BZDB->setPermission(globalDBItems[gi].name, globalDBItems[gi].permission);
-    BZDB->addCallback(std::string(globalDBItems[gi].name), onGlobalChanged, (void*) NULL);
+    BZDB.setPersistent(globalDBItems[gi].name, globalDBItems[gi].persistent);
+    BZDB.setPermission(globalDBItems[gi].name, globalDBItems[gi].permission);
+    BZDB.addCallback(std::string(globalDBItems[gi].name), onGlobalChanged, (void*) NULL);
   }
-  CMDMGR->add("set", cmdSet, "set <name> [<value>]");
-  CMDMGR->add("reset", cmdReset, "reset <name>");
+  CMDMGR.add("set", cmdSet, "set <name> [<value>]");
+  CMDMGR.add("reset", cmdReset, "reset <name>");
 
   BZDBCache::init();
 
@@ -4595,8 +4599,8 @@ int main(int argc, char **argv)
     }
     // override the default voter count to the max number of players possible
     votingarbiter->setAvailableVoters(maxplayers);
-    BZDB->setPointer("poll", (void *)votingarbiter);
-    BZDB->setPermission("poll", StateDatabase::ReadOnly);
+    BZDB.setPointer("poll", (void *)votingarbiter);
+    BZDB.setPermission("poll", StateDatabase::ReadOnly);
   }
 
   if (clOptions->pingInterface)
@@ -4807,7 +4811,7 @@ int main(int argc, char **argv)
     }
 
     // update notResponding
-    float notRespondingTime = BZDB->eval(StateDatabase::BZDB_NOTRESPONDINGTIME);
+    float notRespondingTime = BZDB.eval(StateDatabase::BZDB_NOTRESPONDINGTIME);
     for (int h = 0; h < curMaxPlayers; h++) {
       if (player[h].state > PlayerInLimbo) {
 	bool oldnr = player[h].notResponding;
