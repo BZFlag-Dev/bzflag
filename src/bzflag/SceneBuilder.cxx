@@ -17,7 +17,12 @@
 #include "SceneNodes.h"
 #include "SceneReader.h"
 #include <sstream>
+
+#ifdef WIN32
+using namespace std;
+#else
 typedef std::istringstream istringstream;
+#endif
 
 //
 // SceneDatabaseBuilder

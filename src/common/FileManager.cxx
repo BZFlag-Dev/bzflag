@@ -15,8 +15,13 @@
 #include "StateDatabase.h"
 #include <ctype.h>
 #include <fstream>
+
+#ifdef WIN32
+using namespace std;
+#else
 typedef std::ifstream ifstream;
 typedef std::ofstream ofstream;
+#endif
 
 //
 // FileManager
