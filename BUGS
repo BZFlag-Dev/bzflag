@@ -1,6 +1,9 @@
 recent bugs
 ------------
 
+- G`othic reports that spaces in the bzfs -vars "D:\Program Files\..." 
+  filepath causes the file to not be found on windows.
+
 - the aggressive filter will occasionally encounter a false-positive match
   due to apostrophe's -- need to take then into consideration.  need a
   a better way to handle localized pre/suffix matching too as a handful
