@@ -141,7 +141,7 @@ static void write_tcp_data(ares_channel channel, fd_set *write_fds, time_t now)
 	  /* Can't allocate iovecs; just send the first request. */
 	  sendreq = server->qhead;
 
-          count = send(server->tcp_socket, sendreq->data, sendreq->len, 0);
+          count = send(server->tcp_socket, sendreq->data, (int)sendreq->len, 0);
 
 	  if (count < 0)
 	    {
@@ -452,7 +452,7 @@ static int open_tcp_socket(ares_channel channel, struct server_state *server)
   struct sockaddr_in sockin;
 
   /* Acquire a socket. */
-  s = socket(AF_INET, SOCK_STREAM, 0);
+  s = (int)socket(AF_INET, SOCK_STREAM, 0);
   if (s == -1)
     return -1;
 
@@ -499,7 +499,7 @@ static int open_udp_socket(ares_channel channel, struct server_state *server)
   struct sockaddr_in sockin;
 
   /* Acquire a socket. */
-  s = socket(AF_INET, SOCK_DGRAM, 0);
+  s = (int)socket(AF_INET, SOCK_DGRAM, 0);
   if (s == -1)
     return -1;
 
