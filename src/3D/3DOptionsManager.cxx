@@ -188,6 +188,7 @@ void OptionsManager::computeBestSetings ( void )
 }
 
   OptionsManager::OptionsManager(const OptionsManager &om)
+    : Singleton<OptionsManager>()
   {
     options = om.options;
   }

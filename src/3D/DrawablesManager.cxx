@@ -28,6 +28,7 @@ DrawablesManager::DrawablesManager()
 }
 
 DrawablesManager::DrawablesManager(const DrawablesManager &dm)
+  : Singleton<DrawablesManager>()
 {
   list = dm.list;
 }
@@ -44,7 +45,8 @@ DrawablesManager::~DrawablesManager()
 }
 
 // this is gonna be slow
-void DrawablesManager::add ( BaseDrawable* item, int texture, int pass, int priority, void* param)
+void DrawablesManager::add (BaseDrawable* item, int texture, int pass,
+			    int priority, void*)
 {
   drawableItem  drawItem;
   drawItem.item = item;

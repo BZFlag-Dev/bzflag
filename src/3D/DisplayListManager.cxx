@@ -29,6 +29,7 @@ DisplayListManager::DisplayListManager()
 }
 
 DisplayListManager::DisplayListManager(const DisplayListManager &dm)
+  : Singleton<DisplayListManager>()
 {
   release();
   lists = dm.lists;
