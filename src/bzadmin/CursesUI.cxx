@@ -66,6 +66,24 @@ CursesUI::CursesUI(const map<PlayerId, string>& p, PlayerId m) :
   comp.registerWord("/countdown");
   comp.registerWord("/lagwarn ");
   comp.registerWord("/quit");
+  comp.registerWord("/unban ");
+  comp.registerWord("/lagwarn ");
+  comp.registerWord("/help");
+  comp.registerWord("/identify ");
+  comp.registerWord("/register ");
+  comp.registerWord("/ghost ");
+  comp.registerWord("/deregister");
+  comp.registerWord("/setpass ");
+  comp.registerWord("/groupperms");
+  comp.registerWord("/setgroup ");
+  comp.registerWord("/removegroup ");
+  comp.registerWord("/reload");
+  comp.registerWord("/poll ");
+  comp.registerWord("ban");
+  comp.registerWord("kick");
+  comp.registerWord("vote");
+  comp.registerWord("veto");
+  comp.registerWord("/");
 }
 
 
