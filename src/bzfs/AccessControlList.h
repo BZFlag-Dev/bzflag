@@ -60,7 +60,7 @@ struct BanInfo
   bool operator!=(const BanInfo &rhs) const {
     return addr.s_addr != rhs.addr.s_addr;
   }
-  
+
   in_addr	addr;
   TimeKeeper	banEnd;
   std::string	bannedBy;	// Who did perform the ban
@@ -70,12 +70,12 @@ struct BanInfo
 
 /** This struct contains information about a hostban - the host pattern that
     was banned, the time the ban will expire, the callsign of the player who
-    performed the ban, and the reason. It also has operators defined for 
+    performed the ban, and the reason. It also has operators defined for
     checking if two bans are equal. */
 struct HostBanInfo
 {
-  /** This constructor creates a new HostBanInfo with the host pattern 
-      @c hostpat, the ban performer @c bannedBy, and the expiration time 
+  /** This constructor creates a new HostBanInfo with the host pattern
+      @c hostpat, the ban performer @c bannedBy, and the expiration time
       @c period minutes from now. */
   HostBanInfo(std::string hostpat, const char *bannedBy = NULL, int period = 0 ) {
     this->hostpat = hostpat;
@@ -96,7 +96,7 @@ struct HostBanInfo
   bool operator != (const HostBanInfo& rhs) const {
     return hostpat != rhs.hostpat;
   }
-  
+
   std::string hostpat;
   TimeKeeper banEnd;
   std::string bannedBy;
@@ -118,7 +118,7 @@ class AccessControlList
 public:
 
   /** This function will add a ban for the address @c ipAddr with the given
-      parameters. If that address already is banned the old ban will be 
+      parameters. If that address already is banned the old ban will be
       replaced. */
   void ban(in_addr &ipAddr, const char *bannedBy, int period = 0, const char *reason=NULL ) {
     BanInfo toban(ipAddr, bannedBy, period);
@@ -129,15 +129,15 @@ public:
     else
       banList.push_back(toban);
   }
-  
+
   /** This function takes a list of addresses as a string and tries to ban them
-      using the given parameters. The string should be comma separated, 
+      using the given parameters. The string should be comma separated,
       like this: "1.2.3.4,5.6.7.8,9.10.11.12". */
   bool ban(std::string &ipList, const char *bannedBy=NULL, int period = 0, const char *reason=NULL) {
     return ban(ipList.c_str(), bannedBy, period, reason);
   }
-  
-  /** This function takes a list of addresses as a <code>const char*</code> 
+
+  /** This function takes a list of addresses as a <code>const char*</code>
       and tries to ban them using the given parameters. The string should be
       comma separated, like this: "1.2.3.4,5.6.7.8,9.10.11.12". */
   bool ban(const char *ipList, const char *bannedBy=NULL, int period = 0, const char *reason=NULL) {
@@ -163,7 +163,7 @@ public:
     free(buf);
     return added;
   }
-  
+
   /** This function adds a hostban for the host pattern @c hostpat with the
       given parameters. If the host pattern already is banned the old ban will
       be replaced. */
@@ -176,8 +176,8 @@ public:
     else
       hostBanList.push_back(toban);
   }
-  
-  /** This function removes any ban for the address @c ipAddr. 
+
+  /** This function removes any ban for the address @c ipAddr.
       @returns @c true if there was a ban for that address, @c false if there
                wasn't.
   */
@@ -189,7 +189,7 @@ public:
     }
     return false;
   }
-  
+
   /** This function unbans any addresses given in @c ipList, which should be
       a comma separated string in the same format as in the ban() functions.
       @returns @c true if there was a ban for any of the addresses, @c false
@@ -223,7 +223,7 @@ public:
     free(buf);
     return success;
   }
-  
+
   /** This function removes any ban for the host pattern @c hostpat.
       @returns @c true if there was a ban for the host pattern, @c false
                otherwise.
@@ -236,7 +236,7 @@ public:
     }
     return false;
   }
-  
+
   /** This function checks if an address is "valid" or not. Valid in this case
       means that it has not been banned.
       @returns @c true if the address is valid, @c false if not
@@ -259,7 +259,7 @@ public:
     }
     return true;
   }
-  
+
   /** This function checks if a host matches a given host pattern.
       @returns @c true if a match is found, @c false otherwise.
   */
@@ -288,7 +288,7 @@ public:
 	return true;
     return false;
   }
-  
+
   /** This function checks that a hostname is "valid". In this case valid means
       "not banned".
       @returns @c true if the hostname is valid, @c false if it isn't.
@@ -301,10 +301,10 @@ public:
 	return false;
       }
     }
-    
+
     return true;
   }
-  
+
   /** This function sends a textual list of all IP bans to a player. */
   void sendBans(PlayerId id)
   {
@@ -353,7 +353,7 @@ public:
       }
     }
   }
-  
+
   /** This function sends a textual list of all host bans to a player. */
   void sendHostBans(PlayerId id)
   {
@@ -395,16 +395,16 @@ public:
       It only returns @c false if the file exist but is not in the correct
       format, otherwise @c true is returned. */
   bool load() {
-    
+
     // try to open the ban file
     std::ifstream is(banFile.c_str());
     if (!is.good())
       // file does not exist, but that's OK, we'll create it later if needed
-      return true; 
+      return true;
 
     // clear all current bans
     banList.clear();
-   
+
     // try to read ban entries
     std::string ipAddress, hostpat, bannedBy, reason, tmp;
     long banEnd;
@@ -515,7 +515,7 @@ private:
   /** This function converts a <code>char*</code> containing an IP mask to an
       @c in_addr. */
   bool convert(char *ip, in_addr &mask);
-  
+
   /** This function checks all bans to see if any of them have expired,
       and removes those who have. */
   void expire();

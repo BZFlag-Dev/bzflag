@@ -22,7 +22,7 @@ class SGIImageFile : public ImageFile {
 public:
   SGIImageFile(std::istream*);
   virtual ~SGIImageFile();
-  
+
   /** This function returns the default extension of SGI image files. */
   static std::string	getExtension();
 

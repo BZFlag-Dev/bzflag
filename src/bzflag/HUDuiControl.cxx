@@ -281,7 +281,7 @@ void			HUDuiControl::renderLabel()
   std::string theLabel = getLabel();
   if (theLabel.length() > 0 && fontFace >= 0) {
     FontManager &fm = FontManager::instance();
-    trueLabelWidth = fm.getStrLength(fontFace, fontSize, theLabel) + 
+    trueLabelWidth = fm.getStrLength(fontFace, fontSize, theLabel) +
 		     fm.getStrLength(fontFace, fontSize, "99");
     const float dx = (desiredLabelWidth > trueLabelWidth)
       ? desiredLabelWidth : trueLabelWidth;

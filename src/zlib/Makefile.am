@@ -35,4 +35,4 @@ libz_a_SOURCES =	\
 EXTRA_DIST = \
 	README \
 	maketree.c	\
-	zlib.html 
+	zlib.html

@@ -25,7 +25,7 @@ to install it and stay updated.
 If you would like to build BZAdmin in curses mode, you need to download PDCurses
 from http://pdcurses.sourceforge.net/.  Build it according to their instructions
 for MingW, and rename the resulting library from pdcurses.a to libpdcurses.a.
-Then copy libpdcurses.a and curses.h to the appropriate subdirectories of your 
+Then copy libpdcurses.a and curses.h to the appropriate subdirectories of your
 MingW32 install (lib and include respectively).
 
 If you want to build using SDL support, you should get SDL at libsdl.org and
@@ -33,8 +33,8 @@ follow their instructions to install it under MinGW before configuring bzflag.
 Then move on to Part III.
 
 If you want to build without using SDL, you have to get yourself a couple of
-header files to interface the MS DirectX subsystem. They are normally part 
-of any Microsoft development kit; you can get from your Visual C installation 
+header files to interface the MS DirectX subsystem. They are normally part
+of any Microsoft development kit; you can get from your Visual C installation
 if you have one, or from MSDN on internet.
 Any way you got these files, you should copy either on the MinGW installation,
 under the include directory or, if you don't like to clutter the MinGW
@@ -61,7 +61,7 @@ or MSYS will choke.  In WinCVS, this can be done with the "Check out text files
 with the Unix LF (0xA)" option in Global Preferences; in TortoiseCVS, use the
 "Unix line endings" option in Advanced Preferences.
 
-If you get the bzflag files from a released source tarball, or using MSYS' own 
+If you get the bzflag files from a released source tarball, or using MSYS' own
 cvs utility, they should already be in the correct format.
 
 It's easiest to check out BZFlag into a subdirectory of wherever you installed
@@ -127,5 +127,5 @@ A. Follow the above directions to get the needed DirectX headers from the MS DX 
 
 Q. I get errors not mentioned in this file.
 A. File a support request at http://sourceforge.net/projects/bzflag or jump on
-   #bzflag on irc.freenode.net and ask for help compiling on MingW.  Be sure to 
+   #bzflag on irc.freenode.net and ask for help compiling on MingW.  Be sure to
    include the first few lines of error if you file a support request.

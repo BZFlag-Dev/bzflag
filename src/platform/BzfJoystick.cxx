@@ -54,7 +54,7 @@ void			BzfJoystick::getJoy(int& x, int& y) const
 }
 
 void                    BzfJoystick::getJoyDevices(std::vector<std::string>
-						 &list) const 
+						 &list) const
 {
   list.clear();
 }

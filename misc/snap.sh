@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-#  s n a p . s h 
+#  s n a p . s h
 #
 # Generates a snapshot and patch of a sourceforge cvs project
 #
@@ -30,7 +30,7 @@ usage ( ) {
   exit 1
 }
 
-[ ! "x$1" = "x" ] && project="$1" || usage "Missing the name of the cvs module to get" 
+[ ! "x$1" = "x" ] && project="$1" || usage "Missing the name of the cvs module to get"
 [ ! "x$2" = "x" ] && cvsget="$2" || cvsget="."
 [ ! "x$3" = "x" ] && cvsweb="$3" || cvsweb="."
 [ ! "x$4" = "x" ] && cvsmeth="$4" || cvsmeth="checkout"

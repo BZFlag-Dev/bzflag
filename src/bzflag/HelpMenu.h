@@ -29,7 +29,7 @@ class HelpMenuDefaultKey : public MenuDefaultKey {
 public:
   HelpMenuDefaultKey() { }
   ~HelpMenuDefaultKey() { }
-  
+
   bool keyPress(const BzfKeyEvent&);
   bool keyRelease(const BzfKeyEvent&);
 };
@@ -38,16 +38,16 @@ public:
 class HelpMenu : public HUDDialog {
 public:
   HelpMenu(const char* title = "Help");
-  ~HelpMenu() 
-  { 
+  ~HelpMenu()
+  {
   }
 
-  HUDuiDefaultKey* getDefaultKey() 
-  { 
-    return &defaultKey; 
+  HUDuiDefaultKey* getDefaultKey()
+  {
+    return &defaultKey;
   }
-  void execute() 
-  { 
+  void execute()
+  {
   }
   void resize(int width, int height);
 

@@ -76,7 +76,7 @@ bool			testRectInRect(const float* bigPos, float angle1,
 					float dx1, float dy1,
 					const float* smallPos, float angle2,
 					float dx2, float dy2);
-					
+
 // return t at which ray intersects 2d rect (size 2dx x 2dy) and side
 // of intersection.  0,1,2,3 for east, north, west, south;  -1 if never;
 // -2 if starts inside.
@@ -117,7 +117,7 @@ bool                   textRayInAxisBox(const Ray& ray,
                                         const float* boxMins,
                                         const float* boxMaxs,
                                         float& enterTime, float& leaveTime);
-					 
+
 
 
 #endif // BZF_INTERSECT_H

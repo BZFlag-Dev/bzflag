@@ -28,7 +28,7 @@ class OggAudioFile : public AudioFile {
 public:
   OggAudioFile(std::istream*);
   virtual ~OggAudioFile();
-  
+
   /** This class returns the default extension of Ogg Vorbis files. */
   static std::string	getExtension();
 

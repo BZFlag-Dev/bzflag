@@ -137,7 +137,7 @@ static std::string		cmdSet(const std::string&,
 {
   switch (args.size()) {
 
-    case 0: 
+    case 0:
       {
 	// print out all values that are set
 	std::string result;

@@ -25,7 +25,7 @@
 CustomTetra::CustomTetra()
 {
   vertexCount = 0; // no vertices have yet been defined
-  
+
   // make all of the planes visible
   for (int i = 0; i < 4; i++) {
     visible[i] = true;
@@ -34,7 +34,7 @@ CustomTetra::CustomTetra()
       colors[j][i] = 1.0f;
     }
   }
-  
+
   // NOTE - we can't use WorldFileObstable as the base class
   //        because of the position, size, and rotation fields
   driveThrough = false;
@@ -61,7 +61,7 @@ bool CustomTetra::read(const char *cmd, std::istream& input)
     unsigned int bytecolor[4];
     if (vertexCount < 1) {
       // assign to all planes
-      input >> bytecolor[0] >> bytecolor[1] 
+      input >> bytecolor[0] >> bytecolor[1]
             >> bytecolor[2] >> bytecolor[3];
       for (int v = 0; v < 4; v++) {
         colored[v] = true;
@@ -78,7 +78,7 @@ bool CustomTetra::read(const char *cmd, std::istream& input)
       std::cout << "Extra tetrahedron color" << std::endl;
       // keep on chugging
     }
-    else { 
+    else {
       input >> bytecolor[0] >> bytecolor[1]
             >> bytecolor[2] >> bytecolor[3];
       colored[vertexCount - 1] = true;
@@ -113,7 +113,7 @@ void CustomTetra::write(WorldInfo *world) const
               << vertexCount << ")" << std::endl;
     return;
   }
-  
+
   world->addTetra(vertices, visible, colored, colors, driveThrough, shootThrough);
 }
 

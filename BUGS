@@ -2,7 +2,7 @@ recent bugs
 ------------
 
 - dropping a team flag, when the related team is empty, start a timeout.
-  The related code does not take into account that we can have now 
+  The related code does not take into account that we can have now
   multiple team flags.
 
 - if the display cannot initialize properly, it will start bzflag with a
@@ -10,7 +10,7 @@ recent bugs
   available mode that is possible, lowering memory usage, or reporting
   an error and aborting.
 
-- server has been reported to segfault (gethostname fails?) when chrooted 
+- server has been reported to segfault (gethostname fails?) when chrooted
   and run as a private server (ask tegan for more details if needed)
 
 - XIJoystick does not compile
@@ -24,7 +24,7 @@ recent bugs
 - bullets now travel through the top of a block instead of reflecting off.
   The bullets appear to be half(or more) submerged into the block.
 
-- Can be kicked with WINGS for going to high when adjusting wings gravity, 
+- Can be kicked with WINGS for going to high when adjusting wings gravity,
   jump count or jump velocity.
 
 - texture method doesn't seem to be settable from the gui, sometimes -
@@ -43,7 +43,7 @@ recent bugs
 - reached assertion on either World::getTeleportTarget() or
   World::getTeleporter() after getting killed while jumping towards a
   teleporter (and landing in front of the teleporter, albeit dead).  i
-  didn't respawn, waited a couple sec (was chatting), then the assertion was 
+  didn't respawn, waited a couple sec (was chatting), then the assertion was
   raised.
 
 - Change any documentation/help that says rabbit hunters are black (s/b orange)
@@ -57,7 +57,7 @@ recent bugs
   with publicaddr set to machine:5156 and then also runs another on 59999 with
   publicaddr set to machine:5156 (by accident or otherwise), then player joins
   to the 59999 server mask the 5156 server.  it'd be easy to blow this off as
-  expected behavior, but I expect one can also trojan any server's counts 
+  expected behavior, but I expect one can also trojan any server's counts
   using this same technique..
 
 - client crashes upon receipt of a corrupted MsgFlagUpdate message.
@@ -111,7 +111,7 @@ recent bugs
 
 - Shift+Tab seems to be bound to jump without being bound to jump
   It doesn't happen on Linux. Shift+Tab action is untranslated by XLookupString
-  (xfree86 4.3), so need custom code to go into bzflag. 
+  (xfree86 4.3), so need custom code to go into bzflag.
 
 - menu does not display modified values after quitting and returning, although
   the bindings appear to remain in effect.

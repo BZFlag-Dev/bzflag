@@ -30,7 +30,7 @@ void Score::dump() {
 float Score::ranking() {
   if (randomRanking)
     return (float)bzfrand();
-    
+
   // otherwise do score-based ranking
   int sum = wins + losses;
   if (sum == 0)

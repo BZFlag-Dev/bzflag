@@ -80,7 +80,7 @@ there, the game looks for data files in the current directory, then
 in the default installation location \fIINSTALL_DATA_DIR\fR.
 .TP
 .B -config
-Specify the configuration file to load. The name is relative to the 
+Specify the configuration file to load. The name is relative to the
 default configuration directory. This is usually only used by developers.
 .TP
 .B -debug

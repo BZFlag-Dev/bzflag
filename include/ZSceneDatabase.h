@@ -43,7 +43,7 @@ class ZSceneDatabase : public SceneDatabase {
     int			dynamicCount;
     int			dynamicSize;
     SceneNode**		dynamicList;
-    
+
 };
 
 class ZSceneIterator : public SceneIterator {
@@ -66,7 +66,7 @@ class ZSceneIterator : public SceneIterator {
     int			culledCount;
     int			cullDepth;
     int			cullElements;
-    
+
     void                makeCuller();
 };
 

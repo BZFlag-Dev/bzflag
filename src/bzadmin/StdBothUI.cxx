@@ -89,7 +89,7 @@ bool StdBothUI::checkCommand(std::string& str) {
     str = "/quit";
     return true;
   }
-  
+
   static char buffer[MessageLen + 1];
   static int pos = 0;
 

@@ -30,8 +30,8 @@ public:
   ~OptionsMenu();
 
   HUDuiDefaultKey* getDefaultKey()
-  { 
-    return MenuDefaultKey::getInstance(); 
+  {
+    return MenuDefaultKey::getInstance();
   }
   void		execute();
   void		resize(int width, int height);

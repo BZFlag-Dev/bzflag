@@ -27,7 +27,7 @@ class ServerList {
 public:
   ServerList();
   virtual ~ServerList();
-  
+
   void readServerList(int index);
   void addToList(ServerItem&, bool doCache=false);
   void addToListWithLookup(ServerItem&);

@@ -23,8 +23,8 @@ UIAdder CursesUI::uiAdder("curses", &CursesUI::creator);
 
 CursesUI::CursesUI(BZAdminClient& c) :
   BZAdminUI(c),
-  menuState(NoMenu), menu(c), client(c), players(c.getPlayers()), 
-  me(c.getMyId()), maxHistory(20), currentHistory(0), 
+  menuState(NoMenu), menu(c), client(c), players(c.getPlayers()),
+  me(c.getMyId()), maxHistory(20), currentHistory(0),
   maxBufferSize(300), scrollOffset(0) {
 
   // initialize ncurses
@@ -60,14 +60,14 @@ CursesUI::CursesUI(BZAdminClient& c) :
   keypad(cmdWin, TRUE);
   nodelay(cmdWin, TRUE);
   updateCmdWin();
-  
+
   // initialize the menu
   menu.setUpdateCallback(initMainMenu);
-  
+
   // add additional chat targets
   additionalTargets[PlayerId(250 - ObserverTeam)] = PlayerInfo("teammates");
   additionalTargets[AdminPlayers] = PlayerInfo("admins");
-    
+
   // register commands for tab completion
   comp.registerWord("/ban ");
   comp.registerWord("/banlist");
@@ -168,11 +168,11 @@ bool CursesUI::checkCommand(std::string& str) {
   case ERR:
     return false;
   }
-  
+
   // if the menu is active, use the keystrokes for that
   if (menuState == 1)
     return menu.handleKey(c, str);
-  
+
   // if not, go ahead and parse commands
   switch (c) {
 
@@ -212,8 +212,8 @@ bool CursesUI::checkCommand(std::string& str) {
     return true;
 
     // scroll main window
-  case KEY_NPAGE: 
-    scrollOffset = (scrollOffset < unsigned(LINES - 2) / 2 ? 
+  case KEY_NPAGE:
+    scrollOffset = (scrollOffset < unsigned(LINES - 2) / 2 ?
 		    0 : scrollOffset - (LINES - 2) / 2);
     updateMainWinFromBuffer(LINES - 2);
     return false;
@@ -430,7 +430,7 @@ void CursesUI::initMainMenu(CursesMenu& menu) {
 				  &CursesUI::initPlayerMenu));
   //menu.addItem(new SubmenuCMItem("Edit banlist",
   //				  &CursesUI::initBanMenu));
-  menu.addItem(new SubmenuCMItem("Edit server variables", 
+  menu.addItem(new SubmenuCMItem("Edit server variables",
 				  &CursesUI::initServerVarMenu));
   menu.addItem(new SubmenuCMItem("Edit message filter",
   				 &CursesUI::initFilterMenu));

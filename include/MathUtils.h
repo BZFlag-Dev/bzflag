@@ -80,15 +80,15 @@ float   __two = 2.0f;
     else i = ((i) >> 15) & 0xFF;                                             \
 }
 
-inline unsigned long FP_NORM_TO_BYTE2(float p)                                                 
-{                                                                            
-  float fpTmp = p + 1.0f;                                                      
-  return ((*(unsigned *)&fpTmp) >> 15) & 0xFF;  
+inline unsigned long FP_NORM_TO_BYTE2(float p)
+{
+  float fpTmp = p + 1.0f;
+  return ((*(unsigned *)&fpTmp) >> 15) & 0xFF;
 }
 
-inline unsigned long FP_NORM_TO_BYTE3(float p)     
+inline unsigned long FP_NORM_TO_BYTE3(float p)
 {
-  float ftmp = p + 12582912.0f;                                                      
+  float ftmp = p + 12582912.0f;
   return ((*(unsigned long *)&ftmp) & 0xFF);
 }
 
@@ -100,14 +100,14 @@ inline unsigned long FP_NORM_TO_BYTE3(float p)
  * accuracy is not a stringent concern.
  *
  * For the square root and inverse square root routines below, they
- * are 
+ * are
 
  */
 class math_util {
 
 private:
   /** table of precomputed square root values */
-  static unsigned int _fast_sqrt_table[0x10000];  
+  static unsigned int _fast_sqrt_table[0x10000];
   /** keep track of whether the table was precomputed yet */
   static bool _built_fast_sqrt_table;
 
@@ -122,28 +122,28 @@ private:
     unsigned int i;
   } FastSqrtUnion;
 
-protected: 
- 
+protected:
+
   static void  build_sqrt_table()
   {
     unsigned int i;
     FastSqrtUnion s;
-    
+
     for (i = 0; i <= 0x7FFF; i++) {
       // Build a float with the bit pattern i as mantissa
       //  and an exponent of 0, stored as 127
       s.i = (i << 8) | (0x7F << 23);
       s.f = (float)sqrt(s.f);
-	
+
       // Take the square root then strip the first 7 bits of
       //  the mantissa into the table
       _fast_sqrt_table[i + 0x8000] = (s.i & 0x7FFFFF);
-	
-      // Repeat the process, this time with an exponent of 1, 
+
+      // Repeat the process, this time with an exponent of 1,
       //  stored as 128
       s.i = (i << 8) | (0x80 << 23);
       s.f = (float)sqrt(s.f);
-	
+
       _fast_sqrt_table[i] = (s.i & 0x7FFFFF);
     }
   }
@@ -159,7 +159,7 @@ protected:
 
   /* INVERSE SQUARE ROOT */
 
-  /** system implementation of floating point square root estimate 
+  /** system implementation of floating point square root estimate
    */
   static inline float fastinvsqrt0(float n)
   {
@@ -169,7 +169,7 @@ protected:
     return f;
   }
 
-  /** software estimate of inverse square root 
+  /** software estimate of inverse square root
    */
   static inline float fastinvsqrt1(float n)
   {
@@ -179,7 +179,7 @@ protected:
     return f;
   }
 
-  /** hardware instruction based inverse square root estimate 
+  /** hardware instruction based inverse square root estimate
    */
   static inline float fastinvsqrt2 (float n)
   {
@@ -198,7 +198,7 @@ protected:
 
   /* SQUARE ROOT */
 
-  /** system implementation of floating point square root 
+  /** system implementation of floating point square root
    */
   static inline float fastsqrt0(float n)
   {
@@ -217,18 +217,18 @@ protected:
       build_sqrt_table();
       _built_fast_sqrt_table = true;
     }
-    
+
     // check for square root of 0
     if (FP_BITS(n) == 0) {
       return 0.0;
     }
-    
+
     FP_BITS(n) = _fast_sqrt_table[(FP_BITS(n) >> 8) & 0xFFFF] | ((((FP_BITS(n) - 0x3F800000) >> 1) + 0x3F800000) & 0x7F800000);
-    
+
     return n;
   }
 
-  /** hardware instruction based square root estimate 
+  /** hardware instruction based square root estimate
    */
   static inline float fastsqrt2(float n)
   {
@@ -262,7 +262,7 @@ public:
    * into account -- they are all assumed to be insufficient if
    * accuracy is required.
    */
-  static void optimize() 
+  static void optimize()
   {
     /* array of function pointers for testing */
     float (*mathTest[6])(float) = {fastsqrt0, fastsqrt1, fastsqrt0,

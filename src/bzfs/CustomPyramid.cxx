@@ -33,7 +33,7 @@ bool CustomPyramid::read(const char *cmd, std::istream& input)
 {
   if (strcasecmp(cmd, "flipz") == 0)
     flipZ = true;
-  else 
+  else
     return WorldFileObstacle::read(cmd, input);
   return true;
 }

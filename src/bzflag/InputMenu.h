@@ -34,7 +34,7 @@ public:
   ~InputMenu();
 
   HUDuiDefaultKey* getDefaultKey()
-  { 
+  {
     return MenuDefaultKey::getInstance();
   }
   void execute();

@@ -19,10 +19,10 @@ class RejoinList {
   public:
     RejoinList ();
     ~RejoinList ();
-    
+
     bool add (int playerIndex);
     float waitTime (int playerIndex);
-    
+
   private:
     std::list<struct RejoinNode*> queue;
 };

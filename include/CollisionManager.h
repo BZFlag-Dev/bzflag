@@ -9,7 +9,7 @@
  * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
- 
+
 #ifndef	__COLLISION_GRID__
 #define	__COLLISION_GRID__
 
@@ -55,22 +55,22 @@ class CollisionManager {
 
     CollisionManager();
     ~CollisionManager();
-    
+
     void load (std::vector<BoxBuilding>     &boxes,
                std::vector<BaseBuilding>    &bases,
                std::vector<PyramidBuilding> &pyrs,
                std::vector<TetraBuilding>   &tetras,
                std::vector<Teleporter>      &teles);
-    
+
     // some basics
     bool needReload() const;         // octree parameter has changed
     int getObstacleCount() const;    // total number of obstacles
     float getMaxWorldHeight() const; // maximum Z level in the world
-    
+
 
     // test against an axis aligned bounding box
     const ObsList *axisBoxTest (const float *mins, const float* maxs) const;
-    
+
     // test against a cylinder
     const ObsList *cylinderTest (const float *pos,
                                  float radius, float height) const;
@@ -83,8 +83,8 @@ class CollisionManager {
                                   float dx, float dy, float dz) const;
     // test against a Ray
     const ObsList *rayTest (const Ray* ray) const;
-    
-                
+
+
     // test against a box and return a split list
     //const SplitObsList *boxTestSplit (const float* pos, float angle,
     //                                  float dx, float dy, float dz) const;
@@ -93,15 +93,15 @@ class CollisionManager {
     void draw (DrawLinesFunc drawLinesFunc);
 
   private:
-  
-    void clear ();                  // reset the state 
+
+    void clear ();                  // reset the state
     void setExtents(ObsList* list); // gather the extents
 
     class ColDetNode* root;   // the root of the octree
 
     float mins[3];
     float maxs[3];
-    
+
     float WorldSize;
 };
 
@@ -112,9 +112,9 @@ class ColDetNode {
                const float* mins, const float* maxs,
                ObsList *fullList);
     ~ColDetNode();
-    
+
     int getCount();
-    
+
     // these fill in the FullList return list
     void axisBoxTest (const float* mins, const float* maxs) const;
     void boxTest (const float* pos, float angle, float dx, float dy, float dz) const;
@@ -123,14 +123,14 @@ class ColDetNode {
     // this fills in the SplitList return list
     // (FIXME: not yet implemented, boxTestSplit might be useful for radar)
     //void boxTestSplit (const float* pos, float angle, float dx, float dy, float dz) const;
-    
+
     // make some pretty drawings
     void draw(DrawLinesFunc drawLinesFunc);
 
   private:
     void makeChildren ();
     void resizeCell ();
-    
+
     unsigned char depth;
     int count;
     float mins[3];

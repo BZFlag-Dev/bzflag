@@ -59,7 +59,7 @@ public:
   void addBox(float x, float y, float z, float r, float w, float d, float h, bool drive = false, bool shoot = false);
   void addPyramid(float x, float y, float z, float r, float w, float d, float h, bool drive = false, bool shoot = false, bool flipZ = false);
   void addTeleporter(float x, float y, float z, float r, float w, float d, float h, float b, bool drive = false, bool shoot = false);
-  void addTetra(const float (*vertices)[3], const bool *visible, 
+  void addTetra(const float (*vertices)[3], const bool *visible,
                 const bool *colored, const float (*colors)[4],
                 bool drive = false, bool shoot = false);
   void addBase(float x, float y, float z, float r, float w, float d, float h,
@@ -105,7 +105,7 @@ public:
   InBuildingType cylinderInBuilding(const Obstacle **obstacle,
 			            const float* pos,
 			            float radius, float height = 0.0f);
-  
+
   /** check collision between world object and a Z-axis aligned box.
    * return value is kind of collision.
    * location will return a pointer to the world colliding object
@@ -113,7 +113,7 @@ public:
   InBuildingType boxInBuilding(const Obstacle **obstacle,
 			       const float* pos, float angle,
 			       float width, float breadth, float height);
-  
+
   /** see if the CollisionManager's view of the world size
    * matches that of BZDB. if not, reload the CollisionManager
    */
@@ -138,7 +138,7 @@ private:
   EntryZones	       entryZones;
   WorldWeapons         worldWeapons;
   std::vector<int> teleportTargets;
-  
+
   CollisionManager collisionManager;
 
   char *database;

@@ -15,7 +15,7 @@
 
 class WallSceneNode;
 
-class ObstacleSceneNodeGenerator 
+class ObstacleSceneNodeGenerator
 {
   public:
     virtual		~ObstacleSceneNodeGenerator();

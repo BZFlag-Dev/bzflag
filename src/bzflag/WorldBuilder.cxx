@@ -93,7 +93,7 @@ void* WorldBuilder::unpack(void* buf)
     return NULL;
   }
   buf = uncompressedWorld;
-  
+
   // read geometry
   buf = nboUnpackUShort(buf, len);
   buf = nboUnpackUShort(buf, code);
@@ -186,7 +186,7 @@ void* WorldBuilder::unpack(void* buf)
         }
 	buf = nboUnpackUByte(buf, planeflags);
 	buf = nboUnpackUByte(buf, tempflags);
-	
+
 	for (int p = 0; p < 4; p++) {
 	  if (planeflags & (1 << p)) {
             visible[p] = true;
@@ -199,7 +199,7 @@ void* WorldBuilder::unpack(void* buf)
             colored[p] = false;
           }
         }
-          
+
 	TetraBuilding tetra(vertices, visible, colored, colors,
 			    (tempflags & _DRIVE_THRU) != 0,
 			    (tempflags & _SHOOT_THRU) != 0);
@@ -299,7 +299,7 @@ void* WorldBuilder::unpack(void* buf)
       }
       case WorldCodeWeapon: {
 	Weapon weapon;
-        uint16_t delays; 
+        uint16_t delays;
 
 	buf = FlagType::unpack(buf, weapon.type);
 	buf = nboUnpackFloat(buf, weapon.pos[0]);
@@ -308,14 +308,14 @@ void* WorldBuilder::unpack(void* buf)
 	buf = nboUnpackFloat(buf, weapon.dir);
 	buf = nboUnpackFloat(buf, weapon.initDelay);
 	buf = nboUnpackUShort(buf, delays);
-	
+
 	uint16_t weapon_len = WorldCodeWeaponSize + (delays * sizeof(float));
 	if (len != weapon_len) {
           delete[] uncompressedWorld;
           DEBUG1 ("WorldBuilder::unpack() bad weapon size\n");
 	  return NULL;
 	}
-	
+
 	int i;
 	for (i = 0; i < delays; i++) {
 	  float delay;
@@ -380,11 +380,11 @@ void* WorldBuilder::unpack(void* buf)
     if ((char*)buf >= (uncompressedWorld + uncompressedSize)) {
       buf = compressedWorld + compressedSize;
     }
-    
+
     buf = nboUnpackUShort(buf, len);
     buf = nboUnpackUShort(buf, code);
   }
-  
+
   delete[] uncompressedWorld;
 
   world->loadCollisionManager();

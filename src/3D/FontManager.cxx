@@ -128,7 +128,7 @@ void FontManager::loadAll(std::string directory)
 	    GetTypeFaceName((char*)str.c_str());
 
 	    FontFaceMap::iterator faceItr = faceNames.find(str);
-	    
+
 	    int faceID = 0;
 	    if (faceItr == faceNames.end()) {
 	      // its new
@@ -157,9 +157,9 @@ int FontManager::getFaceID(std::string faceName)
     return -1;
 
   GetTypeFaceName((char*)faceName.c_str());
-  
+
   FontFaceMap::iterator faceItr = faceNames.find(faceName);
-  
+
   int faceID = 0;
   if (faceItr == faceNames.end()) {
     // see if there is a default
@@ -224,7 +224,7 @@ void FontManager::drawString(float x, float y, float z, int faceID, float size, 
 
   float scale = size / (float)pFont->getSize();
 
-  /* 
+  /*
    * Colorize text based on ANSI codes embedded in it
    * Break the text every time an ANSI code
    * is encountered and do a separate pFont->drawString code for
@@ -236,7 +236,7 @@ void FontManager::drawString(float x, float y, float z, int faceID, float size, 
   bool blink = false;
   bool underline = false;
   // negatives are invalid, we use them to signal "no change"
-  GLfloat color[3] = {-1.0f, -1.0f, -1.0f}; 
+  GLfloat color[3] = {-1.0f, -1.0f, -1.0f};
 
   // set underline color
   const char* uColor = BZDB.get("underlineColor").c_str();
@@ -462,7 +462,7 @@ TextureFont* FontManager::getClosestSize(int faceID, float size)
     }
   }
   // if we don't have one that is larger then take the largest one we have and pray for good scaling
-  if (!pFont)	
+  if (!pFont)
     pFont = fontFaces[faceID].rbegin()->second;
 
   return pFont;
@@ -470,7 +470,7 @@ TextureFont* FontManager::getClosestSize(int faceID, float size)
 
 float	    FontManager::getClosestRealSize(int faceID, float desiredSize)
 {
-  /* 
+  /*
    * tiny fonts scale poorly, this function will return the nearest unscaled size of a font
    * if the font is too tiny to scale, and a scaled size if it's big enough.
    */

@@ -76,7 +76,7 @@ private:
   HUDuiLabel* pageLabel;
   int selectedIndex;
   unsigned int serversFound;
-  
+
   static const int NumReadouts;
 };
 

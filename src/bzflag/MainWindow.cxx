@@ -273,7 +273,7 @@ void                    MainWindow::getJoyDevices(std::vector<std::string>
 }
 
 void	                MainWindow::initJoystick(std::string &joystickName) {
-  joystick->initJoystick(joystickName.c_str());  
+  joystick->initJoystick(joystickName.c_str());
 };
 
 // Local Variables: ***

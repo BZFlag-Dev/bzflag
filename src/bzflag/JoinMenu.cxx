@@ -244,7 +244,7 @@ void JoinMenu::joinErrorCallback(const char* msg)
   JoinMenu* self = activeMenu;
   self->failedMessage->setString(msg);
   FontManager &fm = FontManager::instance();
-  const float width = fm.getStrLength(MainMenu::getFontFace(), 
+  const float width = fm.getStrLength(MainMenu::getFontFace(),
 	self->failedMessage->getFontSize(), self->failedMessage->getString());
   self->failedMessage->setPosition(self->center - 0.5f * width,
 				   self->failedMessage->getY());
@@ -267,7 +267,7 @@ void JoinMenu::setStatus(const char* msg, const std::vector<std::string> *)
 {
   status->setString(msg);
   FontManager &fm = FontManager::instance();
-  const float width = fm.getStrLength(status->getFontFace(), 
+  const float width = fm.getStrLength(status->getFontFace(),
 		status->getFontSize(), status->getString());
   status->setPosition(center - 0.5f * width, status->getY());
   if (!oldErrorCallback) joinErrorCallback("");

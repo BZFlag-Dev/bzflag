@@ -32,18 +32,18 @@ namespace Record {
   extern bool setDirectory (const char *dirname);
 
   extern bool start (int playerIndex);
-  extern bool stop (int playerIndex); 
+  extern bool stop (int playerIndex);
   extern bool setSize (int playerIndex, int Mbytes);  // set max size, in Mbytes
   extern bool setRate (int playerIndex, int seconds); // set state update rate
   extern bool saveFile (int playerIndex, const char *filename); // unbuffered save
   extern bool saveBuffer (int playerIndex, const char *filename, int seconds);
   extern bool sendStats (int playerIndex);
-  
+
   extern bool enabled ();
 
   extern bool addPacket (uint16_t code, int len, const void * data,
                          uint16_t mode = RealPacket);
-                                                  
+
   extern void sendHelp (int playerIndex);
 };
 
@@ -57,7 +57,7 @@ namespace Replay {
   extern bool play (int playerIndex);
   extern bool skip (int playerIndex, int seconds); // 0 secs jumps to next packet
   extern bool pause (int playerIndex);
-  
+
   extern bool enabled ();
   extern bool playing ();
 
@@ -69,7 +69,7 @@ namespace Replay {
 
 // Some notes:
 //
-// - Any packets that get broadcast are buffered. Look for the 
+// - Any packets that get broadcast are buffered. Look for the
 //   Record::addPacket() hook in broadcastMessage(). For now,
 //   it will not be mainting any information with regards to the
 //   state of the game during replay. It'll just be firing the

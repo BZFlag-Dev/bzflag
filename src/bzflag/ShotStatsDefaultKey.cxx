@@ -28,8 +28,8 @@ ShotStatsDefaultKey::ShotStatsDefaultKey() { }
 ShotStatsDefaultKey::~ShotStatsDefaultKey() { }
 
 ShotStatsDefaultKey* ShotStatsDefaultKey::getInstance()
-{ 
-  return &instance; 
+{
+  return &instance;
 }
 
 bool ShotStatsDefaultKey::keyPress(const BzfKeyEvent& key)

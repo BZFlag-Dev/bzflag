@@ -72,12 +72,12 @@ bool			WallSceneNode::cull(const ViewFrustum& frustum) const
   const GLfloat* plane = getPlane();
   if (eye[0]*plane[0] + eye[1]*plane[1] + eye[2]*plane[2] + plane[3] <= 0.0f)
     return true;
-    
+
   // if the Visibility culler tells us that we're
   // fully visible, then skip the rest of these tests
   if (octreeState == OctreeVisible)
     return false;
- 
+
   // get signed distance of wall center to each frustum side.
   // if more than radius outside then cull
   int i;

@@ -433,7 +433,7 @@ int			sendMulticast(int fd, const void* buffer,
 
 #ifndef socklen_t
 	#define socklen_t int
-#endif 
+#endif
 #endif //WIN32
 
 int			recvMulticast(int fd, void* buffer, int bufferLength,

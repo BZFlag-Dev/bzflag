@@ -70,7 +70,7 @@ float WorldWeapons::nextTime ()
 void WorldWeapons::fire()
 {
   TimeKeeper nowTime = TimeKeeper::getCurrent();
-  
+
   for (std::vector<Weapon*>::iterator it = weapons.begin();
        it != weapons.end(); ++it) {
     Weapon *w = *it;

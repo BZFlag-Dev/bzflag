@@ -166,7 +166,7 @@ void			RobotPlayer::doUpdate(float dt)
 
     const float targetdistance = hypotf(p1[0] - p2[0], p1[1] - p2[1]) -
       BZDB.eval(StateDatabase::BZDB_MUZZLEFRONT) - tankRadius;
-      
+
     const float missby = fabs(azimuthDiff) *
       (targetdistance - BZDB.eval(StateDatabase::BZDB_TANKLENGTH));
     // only shoot if we miss by less than half a tanklength and no building inbetween

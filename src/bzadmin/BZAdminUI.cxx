@@ -18,9 +18,9 @@
 #include "BZAdminUI.h"
 
 
-void BZAdminUI::handleNewPacket(uint16_t) { 
+void BZAdminUI::handleNewPacket(uint16_t) {
   if (client.getLastMessage().first.size() > 0)
-    outputMessage(client.getLastMessage().first, 
+    outputMessage(client.getLastMessage().first,
 		  client.getLastMessage().second);
 }
 

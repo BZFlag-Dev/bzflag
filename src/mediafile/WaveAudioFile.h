@@ -21,7 +21,7 @@ class WaveAudioFile : public AudioFile {
 public:
   WaveAudioFile(std::istream*);
   virtual ~WaveAudioFile();
-  
+
   /** This function returns the default extension of WAVE audio files. */
   static std::string	getExtension();
 

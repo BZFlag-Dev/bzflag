@@ -557,7 +557,7 @@ void ServerMenu::updateStatus() {
     pageLabel->setString("");
     selectedIndex = -1;
     setSelected(0);
-    
+
     serversFound = serverList.size();
   }
 }

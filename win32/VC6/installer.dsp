@@ -7,19 +7,19 @@
 CFG=installer - Win32 Debug
 !MESSAGE This is not a valid makefile. To build this project using NMAKE,
 !MESSAGE use the Export Makefile command and run
-!MESSAGE 
+!MESSAGE
 !MESSAGE NMAKE /f "installer.mak".
-!MESSAGE 
+!MESSAGE
 !MESSAGE You can specify a configuration when running NMAKE
 !MESSAGE by defining the macro CFG on the command line. For example:
-!MESSAGE 
+!MESSAGE
 !MESSAGE NMAKE /f "installer.mak" CFG="installer - Win32 Debug"
-!MESSAGE 
+!MESSAGE
 !MESSAGE Possible choices for configuration are:
-!MESSAGE 
+!MESSAGE
 !MESSAGE "installer - Win32 Release" (based on "Win32 (x86) Generic Project")
 !MESSAGE "installer - Win32 Debug" (based on "Win32 (x86) Generic Project")
-!MESSAGE 
+!MESSAGE
 
 # Begin Project
 # PROP AllowPerConfigDependencies 0
@@ -53,7 +53,7 @@ MTL=midl.exe
 # PROP Intermediate_Dir "Debug"
 # PROP Target_Dir ""
 
-!ENDIF 
+!ENDIF
 
 # Begin Target
 
@@ -65,31 +65,31 @@ SOURCE=..\..\package\win32\nsis\BZFlag.nsi
 
 !IF  "$(CFG)" == "installer - Win32 Release"
 
-USERDEP__BZFLA="..\..\src\bzfs\bzfs.exe"	"..\..\src\bzflag\bzflag.exe"	"..\..\src\bzadmin\bzadmin.exe"	
+USERDEP__BZFLA="..\..\src\bzfs\bzfs.exe"	"..\..\src\bzflag\bzflag.exe"	"..\..\src\bzadmin\bzadmin.exe"
 # Begin Custom Build - Building installer using $(InputPath)
 InputDir=\bz\bz_cvs\bzflag\package\win32\nsis
 InputPath=..\..\package\win32\nsis\BZFlag.nsi
 
 "..\..\dist\bzflag1.11.0.exe" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	cd $(InputDir) 
-	makensis $(InputDir)\BZFlag 
-	
+	cd $(InputDir)
+	makensis $(InputDir)\BZFlag
+
 # End Custom Build
 
 !ELSEIF  "$(CFG)" == "installer - Win32 Debug"
 
-USERDEP__BZFLA="..\..\src\bzfs\debug\bzfs.exe"	"..\..\src\bzflag\debug\bzflag.exe"	"..\..\src\bzadmin\debug\bzadmin.exe"	
+USERDEP__BZFLA="..\..\src\bzfs\debug\bzfs.exe"	"..\..\src\bzflag\debug\bzflag.exe"	"..\..\src\bzadmin\debug\bzadmin.exe"
 # Begin Custom Build - Building installer using $(InputPath)
 InputDir=\bz\bz_cvs\bzflag\package\win32\nsis
 InputPath=..\..\package\win32\nsis\BZFlag.nsi
 
 "..\..\dist\bzflag1.11.0.exe" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	cd $(InputDir) 
-	makensis $(InputDir)\BZFlag 
-	
+	cd $(InputDir)
+	makensis $(InputDir)\BZFlag
+
 # End Custom Build
 
-!ENDIF 
+!ENDIF
 
 # End Source File
 # Begin Source File

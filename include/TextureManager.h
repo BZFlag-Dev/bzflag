@@ -36,7 +36,7 @@ struct FileTextureInit
 };
 
 
-typedef  struct 
+typedef  struct
 {
   int   id;
   int   x;
@@ -64,7 +64,7 @@ class TextureManager : public Singleton<TextureManager>
 public:
   int getTextureID( const char* name, bool reportFail = true );
   int addTexture( const char*, OpenGLTexture *texture  );
-  
+
   bool bind ( int id );
   bool bind ( const char* name );
 

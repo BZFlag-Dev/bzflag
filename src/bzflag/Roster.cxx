@@ -47,7 +47,7 @@ Player* lookupPlayer(PlayerId id)
 int lookupPlayerIndex(PlayerId id)
 {
   // check my tank first
-  
+
   if (LocalPlayer::getMyTank()->getId() == id)
     return -2;
 

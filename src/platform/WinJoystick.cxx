@@ -63,7 +63,7 @@ void	      WinJoystick::initJoystick(const char* joystickName)
   xMax = (float)joyCaps.wXmax;
   yMin = (float)joyCaps.wYmin;
   yMax = (float)joyCaps.wYmax;
-  
+
   inited = true;
 }
 
@@ -114,7 +114,7 @@ unsigned long WinJoystick::getJoyButtons() const
     return 0;
   }
 
-  unsigned long retbuts = joyInfo.dwButtons;  
+  unsigned long retbuts = joyInfo.dwButtons;
   unsigned long buttons = 0;
   if (retbuts & JOY_BUTTON1)  buttons = buttons | 0x00001;
   if (retbuts & JOY_BUTTON2)  buttons = buttons | 0x00002;

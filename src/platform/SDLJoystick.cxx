@@ -35,7 +35,7 @@ SDLJoystick::SDLJoystick() : joystickID(NULL)
     args.push_back(SDL_GetError());
     printError("Could not initialize SDL Joystick subsystem: %s.\n", &args);
   };
-} 
+}
 
 SDLJoystick::~SDLJoystick()
 {

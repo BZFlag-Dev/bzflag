@@ -63,7 +63,7 @@ int main(int argc, char** argv) {
   std::string uiName("curses");
   std::vector<std::string> visibleMsgs;
   std::vector<std::string> invisibleMsgs;
-  
+
   // no curses, use stdboth as default instead
   const UIMap& interfaces = UIMap::instance();
   if (interfaces.find("curses") == interfaces.end())
@@ -88,7 +88,7 @@ int main(int argc, char** argv) {
 		      "tell bzadmin not to show these message types");
   if (!op.parse(argc, argv))
     return 1;
-  
+
   // check that we have callsign and host in the right format and extract them
   int atPos;
   std::string name = "", host = "";
@@ -112,7 +112,7 @@ int main(int argc, char** argv) {
     name = op.getParameters()[0].substr(0, atPos);
     host = op.getParameters()[0].substr(atPos + 1);
   }
-  
+
   int port = ServerPort;
   int cPos = host.find(':');
   if (cPos != -1) {
@@ -129,7 +129,7 @@ int main(int argc, char** argv) {
 
   // try to connect
   BZAdminClient client(name, host, port);
-  if (!client.isValid()) 
+  if (!client.isValid())
     return 1;
 
   unsigned int i;

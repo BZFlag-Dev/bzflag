@@ -111,9 +111,9 @@ void USBJoystick::initJoystick(const char *name)
 	default: interesting_hid = FALSE;
       }
       if (interesting_hid) {
-	axis_const[which_axis] = 1000 + (2000 * h.logical_maximum) / 
+	axis_const[which_axis] = 1000 + (2000 * h.logical_maximum) /
 	  (h.logical_minimum - h.logical_maximum);
-	axis_scale[which_axis] = (2000 * 10000) / 
+	axis_scale[which_axis] = (2000 * 10000) /
 	  (h.logical_maximum - h.logical_minimum);
 	axis[which_axis] = (h.logical_minimum + h.logical_maximum) / 2;
 	if (num_axis < (which_axis + 1))
@@ -136,7 +136,7 @@ void USBJoystick::initJoystick(const char *name)
   status = true;
 }
 
-void USBJoystick::poll() 
+void USBJoystick::poll()
 {
   int len;
 

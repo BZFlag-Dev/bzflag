@@ -54,7 +54,7 @@ int GameKeeper::Player::count()
   Player *playerData;
   int     count = 0;
 
-  for (int i = 0; i < PlayerSlot; i++) 
+  for (int i = 0; i < PlayerSlot; i++)
     if ((playerData = playerList[i]) && playerData->player.isPlaying())
       count++;
   return count;
@@ -86,7 +86,7 @@ void GameKeeper::Player::dumpScore()
 
   std::cout << "\n#players\n";
   int p;
-  for (p = 0; p < PlayerSlot; p++) 
+  for (p = 0; p < PlayerSlot; p++)
     if ((playerData = playerList[p]) && playerData->player.isPlaying()) {
       playerData->score.dump();
       std::cout << ' ' << playerData->player.getCallSign() << std::endl;

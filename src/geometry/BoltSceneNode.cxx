@@ -187,7 +187,7 @@ BoltSceneNode::BoltRenderNode::BoltRenderNode(
       corona[i][1] = ring[i][1];
     }
   }
-  
+
   textureColor[0] = 1.0f;
   textureColor[1] = 1.0f;
   textureColor[2] = 1.0f;

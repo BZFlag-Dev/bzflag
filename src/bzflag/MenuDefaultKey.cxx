@@ -29,8 +29,8 @@ MenuDefaultKey::MenuDefaultKey() { }
 MenuDefaultKey::~MenuDefaultKey() { }
 
 MenuDefaultKey* MenuDefaultKey::getInstance()
-{ 
-  return &instance; 
+{
+  return &instance;
 }
 
 bool MenuDefaultKey::keyPress(const BzfKeyEvent& key)

@@ -17,11 +17,11 @@
 // EmptySceneNodeGenerator
 //
 
-EmptySceneNodeGenerator::~EmptySceneNodeGenerator() 
+EmptySceneNodeGenerator::~EmptySceneNodeGenerator()
 {
 }
 
-WallSceneNode* EmptySceneNodeGenerator::getNextNode(float, float, bool) 
+WallSceneNode* EmptySceneNodeGenerator::getNextNode(float, float, bool)
 {
   return NULL;
 }

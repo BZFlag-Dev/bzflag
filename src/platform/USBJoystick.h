@@ -40,7 +40,7 @@ public:
     void	getJoy(int& x, int& y) const;
     unsigned long getJoyButtons() const;
     void        getJoyDevices(std::vector<std::string> &list) const;
-    
+
 private:
     void    poll();
     int	    num_axis;

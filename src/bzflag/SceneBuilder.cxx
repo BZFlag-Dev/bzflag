@@ -321,7 +321,7 @@ void			SceneDatabaseBuilder::addBox(SceneDatabase* db,
     boxTexture = tm.getTextureID(o.userTextures[0].c_str(),false);
   if (boxTexture < 0)
     boxTexture = tm.getTextureID(BZDB.get("boxWallTexture").c_str(),true);
-   
+
   useColorTexture[0] = boxTexture >= 0;
 
   int boxTopTexture = -1;
@@ -436,11 +436,11 @@ void			SceneDatabaseBuilder::addTetra(SceneDatabase* db,
   while ((node = nodeGen->getNextNode(-textureFactor * boxTexHeight,
 				      -textureFactor * boxTexHeight,
                                       tetraLOD))) {
-                                      
+
     while (!o.isVisiblePlane(realPart)) {
       realPart = (realPart + 1) % 4;
     }
-    
+
     if (!o.isColoredPlane(realPart)) {
       node->setColor(tetraColors[part]);
       node->setModulateColor(tetraModulateColors[part]);
@@ -555,7 +555,7 @@ void			SceneDatabaseBuilder::addTeleporter(SceneDatabase* db,
     teleporterTexture = tm.getTextureID(o.userTextures[0].c_str(),false);
   if (teleporterTexture < 0)
     teleporterTexture = tm.getTextureID(BZDB.get("cautionTexture").c_str(),true);
-   
+
   useColorTexture = teleporterTexture >= 0;
 
   while ((node = nodeGen->getNextNode(1.0, o.getHeight() / o.getBreadth(),
@@ -566,7 +566,7 @@ void			SceneDatabaseBuilder::addTeleporter(SceneDatabase* db,
       node->setLightedColor(teleporterLightedColors[0]);
       node->setLightedModulateColor(teleporterLightedModulateColors[0]);
       node->setMaterial(teleporterMaterial);
-      node->setTexture(teleporterTexture); 
+      node->setTexture(teleporterTexture);
       node->setUseColorTexture(useColorTexture);
     } else if (part >= 2 && part <= 11) {
       node->setColor(teleporterColors[1]);

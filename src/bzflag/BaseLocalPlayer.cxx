@@ -101,7 +101,7 @@ const float (*BaseLocalPlayer::getLastMotionBBox() const)[3]
 }
 
 #if 0
-// BEGIN MASSIVE_NASTY_COMMENT_BLOCK 
+// BEGIN MASSIVE_NASTY_COMMENT_BLOCK
 
 // This massive nasty comment block is for client-side spawning!
 //

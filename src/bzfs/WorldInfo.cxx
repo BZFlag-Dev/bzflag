@@ -77,7 +77,7 @@ void WorldInfo::addTetra(const float (*vertices)[3], const bool *visible,
   TetraBuilding tetra (vertices, visible, colored, colors, drive, shoot);
   tetras.push_back (tetra);
 
-  float tetraHeight = tetra.getPosition()[2] + tetra.getHeight();  
+  float tetraHeight = tetra.getPosition()[2] + tetra.getHeight();
   if (tetraHeight > maxHeight) {
     maxHeight = tetraHeight;
   }
@@ -132,7 +132,7 @@ void WorldInfo::addWeapon(const FlagType *type, const float *origin, float direc
                           float initdelay, const std::vector<float> &delay, TimeKeeper &sync)
 {
   worldWeapons.add(type, origin, direction, initdelay, delay, sync);
-}                          
+}
 
 float WorldInfo::getMaxWorldHeight()
 {
@@ -222,10 +222,10 @@ InBuildingType WorldInfo::cylinderInBuilding(const Obstacle **location,
   if (height < Epsilon) {
     height = Epsilon;
   }
-    
+
   *location = NULL;
 
-  // check everything but walls  
+  // check everything but walls
   const ObsList* olist = collisionManager.cylinderTest (pos, radius, height);
   for (int i = 0; i < olist->count; i++) {
     const Obstacle* obs = olist->list[i];
@@ -236,7 +236,7 @@ InBuildingType WorldInfo::cylinderInBuilding(const Obstacle **location,
   }
 
   return classifyHit (*location);
-} 
+}
 
 InBuildingType WorldInfo::cylinderInBuilding(const Obstacle **location,
 				             float x, float y, float z, float radius,
@@ -253,10 +253,10 @@ InBuildingType WorldInfo::boxInBuilding(const Obstacle **location,
   if (height < Epsilon) {
     height = Epsilon;
   }
-    
+
   *location = NULL;
-  
-  // check everything but walls  
+
+  // check everything but walls
   const ObsList* olist =
     collisionManager.boxTest (pos, angle, width, breadth, height);
   for (int i = 0; i < olist->count; i++) {
@@ -266,10 +266,10 @@ InBuildingType WorldInfo::boxInBuilding(const Obstacle **location,
       break;
     }
   }
-  
+
   return classifyHit (*location);
 }
-  
+
 InBuildingType WorldInfo::classifyHit (const Obstacle* obstacle)
 {
   if (obstacle == NULL) {
@@ -300,7 +300,7 @@ InBuildingType WorldInfo::classifyHit (const Obstacle* obstacle)
     printf ("*** Unknown obstacle type in WorldInfo::boxInBuilding()\n");
     return IN_BASE;
   }
-} 
+}
 
 bool WorldInfo::getZonePoint(const std::string &qualifier, float *pt)
 {
@@ -349,8 +349,8 @@ int WorldInfo::packDatabase(const BasesList* baseList)
       numBases += base_it->second.size();
     }
   }
-  
-  databaseSize = 
+
+  databaseSize =
     (2 + 2 + WorldCodeBaseSize) * numBases +
     (2 + 2 + WorldCodeWallSize) * walls.size() +
     (2 + 2 + WorldCodeBoxSize) * boxes.size() +
@@ -364,7 +364,7 @@ int WorldInfo::packDatabase(const BasesList* baseList)
   void *databasePtr = database;
 
   unsigned char	bitMask;
-  
+
   // add bases
   if (baseList != NULL) {
     for (base_it = baseList->begin(); base_it != baseList->end(); ++base_it) {
@@ -372,7 +372,7 @@ int WorldInfo::packDatabase(const BasesList* baseList)
     }
   }
 
-  // add walls  
+  // add walls
   for (std::vector<WallObstacle>::iterator wall_it = walls.begin();
        wall_it != walls.end(); ++wall_it) {
     WallObstacle &wall = *wall_it;
@@ -488,25 +488,25 @@ int WorldInfo::packDatabase(const BasesList* baseList)
 
   databasePtr = worldWeapons.pack (databasePtr);
   databasePtr = entryZones.pack (databasePtr);
-  
+
   // compress the map database
   uLongf gzDBlen = databaseSize + (databaseSize/512) + 12;
   char* gzDB = new char[gzDBlen];
-  int code = compress2 ((Bytef*)gzDB, &gzDBlen, 
+  int code = compress2 ((Bytef*)gzDB, &gzDBlen,
                         (Bytef*)database, databaseSize, 9);
   if (code != Z_OK) {
     printf ("Could not create compressed world database: %i\n", code);
     exit (1);
   }
-  
+
   // switch to the compressed map database
   uncompressedSize = databaseSize;
   databaseSize = gzDBlen;
   char *oldDB = database;
   database = gzDB;
-  delete[] oldDB; 
+  delete[] oldDB;
 
-  DEBUG1 ("Map size: uncompressed = %i, compressed = %i\n", 
+  DEBUG1 ("Map size: uncompressed = %i, compressed = %i\n",
            uncompressedSize, databaseSize);
 
   return 1;

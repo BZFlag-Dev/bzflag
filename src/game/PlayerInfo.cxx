@@ -321,7 +321,7 @@ void *PlayerInfo::setClientVersion(size_t length, void *buf) {
   buf = nboUnpackString(buf, versionString, length);
   clientVersion = std::string(versionString);
   delete[] versionString;
-  DEBUG2("Player %s [%d] sent version string: %s\n", 
+  DEBUG2("Player %s [%d] sent version string: %s\n",
 	 callSign, playerIndex, clientVersion.c_str());
   return buf;
 }

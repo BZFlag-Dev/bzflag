@@ -31,10 +31,10 @@ class BZAdminClient;
     UIAdder. */
 class BZAdminUI {
 public:
-  
+
   /** This constructor just sets the BZAdminClient reference. */
   BZAdminUI(BZAdminClient& c) : client(c) { }
-  
+
   /** Need a virtual destructor so subclasses get to do their cleanups. */
   virtual ~BZAdminUI() { }
 

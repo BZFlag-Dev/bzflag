@@ -46,14 +46,14 @@ BZFlag 1.12.0  (was 1.11.x)
 * bzadmin can now send and receive team and admin messages - Lars Luthman
 * Added _deadUnder (water-like feature for maps) - Dave Rodgers
 * bzadmin's curses menu will now update automagically - Lars Luthman
-* Added message filter editor for bzadmin using menu or cmds - Lars Luthman 
+* Added message filter editor for bzadmin using menu or cmds - Lars Luthman
 * Added team flag safety zones - Dave Rodgers
 * Added MsgScoreOver and MsgTimeUpdate to BZAdmin - Ian Agar
 * Have BZAdmin allow whitespace in callsign and host - Ian Agar
 * Prevent message flooding/spamming - Ian Agar
 * Consolidated polling system bzfs options (-poll) - Ian Agar, Sean Morrison
 * Improved server pause cheat detection and reporting - Ian Agar, Sean Morrison
-* Changed the way Roaming keys drives the Observer - Alfredo Tupone 
+* Changed the way Roaming keys drives the Observer - Alfredo Tupone
 * Fixing cross-correlation between driving keys - Alfredo Tupone
 * Added configuration of driving keys - Alfredo Tupone
 * Server is now valgrind-happy - Alfredo Tupone, Daniel Remenak, Sean Morrison
@@ -218,7 +218,7 @@ BZFlag 1.10.0  "Break the world" (was 1.9.x)
 	falling through floor when lagging
 	being stuck when tank expands
 	shot going into the ground
-	collision with pyramids 
+	collision with pyramids
 * Avoiding stuck on connection - Alfredo Tupone
 * Web/Database based list server - Alfredo Tupone, ...
 * Fixed bugs in the bzfs manual and the bzfs help output - KR (through Lars)
@@ -253,7 +253,7 @@ BZFlag 1.10.0  "Break the world" (was 1.9.x)
 * Thief Flag - Dave Brosius
 * MsgPlayerUpdate now has order, reject ooo packets - Dave Brosius
 * Removed old UDP queueing code and headers - Micah Dowty
-* Convert closed FlagIds to flexible FlagType's 
+* Convert closed FlagIds to flexible FlagType's
 	- Micah Dowty, Dave Brosius, Tim Riker
 * Add back PNG support from 1.8 - Dave Brosius, Sean Morrison
 * Add back BZDB from 1.8 - David Trowbridge, Dave Brosius
@@ -312,7 +312,7 @@ BZFlag 1.7g2  "Steely Eyed Banana" (was 1.7g1)
 * remove non-printable characters in callsign in server - Frank Thilo
 * +f sw{5} syntax to add a bunch of flags - Dave Brosius
 * tanks which jump too high get kicked - Dave Brosius
-* server drops bogus shots (anti cheating) 
+* server drops bogus shots (anti cheating)
 	- Tim Riker, Dave Brosius, Frank Thilo
 * i18n support in client - Dave Brosius, Isak Styf
 * Optional config file interface for bzfs settings - Dave Brosius
@@ -501,7 +501,7 @@ BZFlag 1.7e release 000
 * non-blocking I/O for bzfs and name lookups by crs
 * phantom player fix by Frank Siegert <frank@this.net>
 
-	
+
 BZFlag 1.7d release 9
 ---------------------
 

@@ -33,16 +33,16 @@
 #if defined(DEBUG) || defined(_DEBUG)
 // headers needed only for _debugLookups()
 #include <map>
-#include "TimeKeeper.h" 
+#include "TimeKeeper.h"
 
 void	_debugLookups(const std::string &name)
 {
   if (!BZDB.getDebug())
     return;
-  
+
   typedef std::map<std::string,int> EvalCntMap;
   static const float interval = 20.0f;
-  
+
   /* This bit of nastyness help debug BDZB->eval accesses sorted from worst to best*/
   static EvalCntMap cnts;
   static TimeKeeper last = TimeKeeper::getCurrent();

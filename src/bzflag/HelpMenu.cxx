@@ -400,13 +400,13 @@ Help5Menu::Help5Menu() : HelpMenu("Good Flags")
   FlagSet fs = Flag::getGoodFlags();
   for (FlagSet::iterator it = fs.begin(); it != fs.end(); it++) {
 
-    if (((*it)->flagQuality != FlagGood) || 
+    if (((*it)->flagQuality != FlagGood) ||
 	((*it)->flagTeam != NoTeam) ||
 	(strcmp((*it)->flagName,"") == 0)) {
       continue;
     }
 
-    list.push_back(createLabel((*it)->flagHelp, (*it)->label().c_str())); 
+    list.push_back(createLabel((*it)->flagHelp, (*it)->label().c_str()));
   }
 }
 
@@ -442,7 +442,7 @@ Help6Menu::Help6Menu() : HelpMenu("Bad Flags")
       continue;
     }
 
-    list.push_back(createLabel((*it)->flagHelp, (*it)->label().c_str())); 
+    list.push_back(createLabel((*it)->flagHelp, (*it)->label().c_str()));
   }
 }
 

@@ -65,7 +65,7 @@ public:
     void          *packPlayerUpdate(void *buf);
     void           signingOn(bool ctf);
 
-    // players 
+    // players
     PlayerInfo        player;
     // Net Handler
     NetHandler       *netHandler;

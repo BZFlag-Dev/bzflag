@@ -17,7 +17,7 @@
 
 
 CursesMenuItem::CursesMenuItem(const std::string& str) : text(str) {
-  
+
 }
 
 
@@ -49,15 +49,15 @@ bool CursesMenuItem::handleKey(int, std::string&, CursesMenu&) {
 
 
 void CursesMenuItem::deselect() {
-  
+
 }
 
 
 SubmenuCMItem::SubmenuCMItem(const std::string& str, MenuCallback callback)
   : CursesMenuItem(str), cb(callback) {
-  
+
 }
-  
+
 
 bool SubmenuCMItem::handleKey(int c, std::string&, CursesMenu& menu) {
   // different key codes for the enter key
@@ -71,9 +71,9 @@ bool SubmenuCMItem::handleKey(int c, std::string&, CursesMenu& menu) {
 
 CallbackCMItem::CallbackCMItem(const std::string& str, MenuCallback callback)
   : CursesMenuItem(str), cb(callback) {
-  
+
 }
-  
+
 
 bool CallbackCMItem::handleKey(int c, std::string&, CursesMenu& menu) {
   // different key codes for the enter key
@@ -85,9 +85,9 @@ bool CallbackCMItem::handleKey(int c, std::string&, CursesMenu& menu) {
 
 
 CommandCMItem::CommandCMItem(const std::string& str, const std::string& cmd,
-			     bool update) 
+			     bool update)
   : CursesMenuItem(str), command(cmd), forceUpdate(update) {
-  
+
 }
 
 
@@ -105,13 +105,13 @@ bool CommandCMItem::handleKey(int c, std::string& str, CursesMenu& menu) {
 
 BoolCMItem::BoolCMItem(std::string name, bool& variable,  std::string trueText,
 			  std::string falseText)
-  : CursesMenuItem(name), varRef(variable), trueTxt(trueText), 
+  : CursesMenuItem(name), varRef(variable), trueTxt(trueText),
     falseTxt(falseText) {
-    
+
 }
 
 
-void BoolCMItem::showItem(WINDOW* menuWin, int line, int col, int width, 
+void BoolCMItem::showItem(WINDOW* menuWin, int line, int col, int width,
 			  bool selected) {
   /* print the name of the variable to the left of the center and the
      value to the right, use reverse video if it is selected */
@@ -138,14 +138,14 @@ bool BoolCMItem::handleKey(int c, std::string&, CursesMenu&) {
 }
 
 
-FilterCMItem::FilterCMItem(const std::string& msgType, BZAdminClient& c) : 
-  messageType(msgType), client(c), 
+FilterCMItem::FilterCMItem(const std::string& msgType, BZAdminClient& c) :
+  messageType(msgType), client(c),
   numMsgType(c.getMessageTypeMap().find(msgType)->second) {
-    
+
 }
 
 
-void FilterCMItem::showItem(WINDOW* menuWin, int line, int col, int width, 
+void FilterCMItem::showItem(WINDOW* menuWin, int line, int col, int width,
 			    bool selected) {
   /* print the name of the message type to the left of the center and the
      status to the right, use reverse video if it is selected */
@@ -180,13 +180,13 @@ bool FilterCMItem::handleKey(int c, std::string&, CursesMenu&) {
 }
 
 
-BZDBCMItem::BZDBCMItem(const std::string& variable) 
+BZDBCMItem::BZDBCMItem(const std::string& variable)
   : CursesMenuItem(variable), editing(false) {
-  
+
 }
 
 
-void BZDBCMItem::showItem(WINDOW* menuWin, int line, int col, int width, 
+void BZDBCMItem::showItem(WINDOW* menuWin, int line, int col, int width,
 			  bool selected) {
   /* print the name of the variable to the left of the center and the
      value to the right, use reverse video if it is selected, but don't use
@@ -220,10 +220,10 @@ bool BZDBCMItem::handleKey(int c, std::string& str, CursesMenu&) {
     editString = BZDB.get(text);
     return false;
   }
-  
+
   // OK, we're editing
   switch (c) {
-    
+
     // different codes for the return key - stop and send a /set command
   case '\n':
   case 13:
@@ -231,20 +231,20 @@ bool BZDBCMItem::handleKey(int c, std::string& str, CursesMenu&) {
     str = "/set ";
     str += text + " \"" + editString + "\"";
     return true;
-    
+
     // ESC - stop editing, don't touch the BZDB value
   case 27:
     editing = false;
     break;
-    
+
     // backspace/delete - delete the last character
   case KEY_BACKSPACE:
   case KEY_DC:
   case 127:
-    editString = (editString.size() > 0 ? 
+    editString = (editString.size() > 0 ?
 		  editString.substr(0, editString.size() - 1) : editString);
     break;
-    
+
     // valid characters - edit the string
   default:
     if (c < 32 || c > 127 || editString.size() > 30)
@@ -252,7 +252,7 @@ bool BZDBCMItem::handleKey(int c, std::string& str, CursesMenu&) {
     editString += char(c);
     break;
   }
-  
+
   return false;
 }
 
@@ -262,9 +262,9 @@ void BZDBCMItem::deselect() {
 }
 
 
-PlayerCMItem::PlayerCMItem(const PlayerIdMap& players, PlayerId playerId) 
+PlayerCMItem::PlayerCMItem(const PlayerIdMap& players, PlayerId playerId)
   : CursesMenuItem(), playerMap(players), id(playerId) {
-    
+
 }
 
 
@@ -294,7 +294,7 @@ void PlayerCMItem::showItem(WINDOW* menuWin, int line, int col, int width,
     if (selected)
       wattron(menuWin, A_REVERSE);
     wmove(menuWin, line, col);
-    waddstr(menuWin, 
+    waddstr(menuWin,
 	    (oss.str().substr(0, width - ip.size() - 1) + " ").c_str());
     waddstr(menuWin, ip.c_str());
     if (selected)
@@ -305,7 +305,7 @@ void PlayerCMItem::showItem(WINDOW* menuWin, int line, int col, int width,
 
 CursesMenu::CursesMenu(BZAdminClient& c)
   : client(c), players(c.getPlayers()), dirty(true) {
-  
+
 }
 
 
@@ -323,53 +323,53 @@ void CursesMenu::addItem(CursesMenuItem* item) {
   items.push_back(item);
 }
 
-  
+
 void CursesMenu::clear() {
   for (unsigned int i = 0; i < items.size(); ++i)
     delete items[i];
   items.clear();
   selection = 0;
 }
-  
+
 
 void CursesMenu::showMenu() {
   if (window == NULL)
     return;
   werase(window);
-  
+
   // update the menu if needed
   rebuild();
-  
+
   // get the window size
   int x1, x2, y1, y2, w, h;
   getbegyx(window, y1, x1);
   getmaxyx(window, y2, x2);
   w = x2 - x1;
   h = y2 - y1;
-  
+
   wmove(window, 0, w / 2 - header.size() / 2);
   waddstr(window, header.c_str());
-  
+
   // this magic should scroll the menu so that the selected menu item
   // always is visible
   int start = selection - (h / 2 - 2);
-  start = (start + (h - 3) > (signed)items.size() ? 
+  start = (start + (h - 3) > (signed)items.size() ?
 	   items.size() - (h - 3) : start);
   start = (start < 0 ? 0 : start);
   int end = start + (h - 3);
   end = ((unsigned)end > items.size() ? items.size() : end);
-  
+
   // show the menu items
   for (int i = start; i < end; ++i)
     items[i]->showItem(window, 2 + (i - start), 10, w - 20, i == selection);
-  
+
   // draw a line at the bottom of the menu window
   wmove(window, h - 1, 0);
   wattron(window, A_UNDERLINE);
   for (int i = 0; i < COLS; ++i)
     waddstr(window, " ");
   wattroff(window, A_UNDERLINE);
-  
+
   wrefresh(window);
 }
 

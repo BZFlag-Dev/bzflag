@@ -49,7 +49,7 @@ class Address {
     bool		isAny() const;
     std::string		getDotNotation() const;
     uint8_t		getIPVersion() const;
-  
+
     void*		pack(void*) const;
     void*		unpack(void*);
 

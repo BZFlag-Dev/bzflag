@@ -207,17 +207,17 @@ void handleMsgCmd(GameKeeper::Player *playerData, const char *message)
       }
     }
   }
-  
+
   recipient = arguments.substr(callsignStart, callsignEnd - callsignStart + 1);
   to = getTarget(recipient.c_str());
-  
+
   // valid callsign
   if (to >= curMaxPlayers) {
     message2 = string_util::format("No such callsign.", recipient.c_str());
     sendMessage(ServerPlayer, from, message2.c_str());
     return;
   }
-  
+
   // make sure there is something to send
   if ((messageStart >= arguments.size() - 1) || (messageStart == 0)) {
     // found player, but nothing to send
@@ -225,7 +225,7 @@ void handleMsgCmd(GameKeeper::Player *playerData, const char *message)
     sendMessage(ServerPlayer, from, message2.c_str());
     return;
   }
-  
+
   // send the message
   sendMessage(from, to, arguments.c_str() + messageStart + 1);
   return;
@@ -309,7 +309,7 @@ void handleMsgCmd2(GameKeeper::Player *playerData, const char *message)
       sendMessage(ServerPlayer, t, "No callsign provided.");
       sendMessage(ServerPlayer, t, "Usage: /msg callsign some message");
     } else if (endPosition + 1 == arguments.size()) {
-      // made it to the end of the string 
+      // made it to the end of the string
 
       if (getTarget(arguments.c_str() + 1) < curMaxPlayers) {
 	// got to the end ofthe string and matched a player name
@@ -382,7 +382,7 @@ void handleSetCmd(GameKeeper::Player *playerData, const char *message)
   }
   sendMessage(ServerPlayer, t, CMDMGR.run(message+1).c_str());
   snprintf(message2, MessageLen, "Variable Modification Notice by %s of %s",
-	   playerData->player.getCallSign(), message+1); 
+	   playerData->player.getCallSign(), message+1);
   sendMessage(ServerPlayer, AllPlayers, message2);
   return;
 }
@@ -603,7 +603,7 @@ void handleKickCmd(GameKeeper::Player *playerData, const char *message)
   }
   int i;
   std::vector<std::string> argv = string_util::tokenize(message, " \t", 3, true);
-  
+
   if (argv.size() < 2) {
     sendMessage(ServerPlayer, t, "Syntax: /kick <PlayerName/\"Player Name\"> [reason]");
     sendMessage(ServerPlayer, t, "        Please keep in mind that reason is displayed to the user.");
@@ -1065,10 +1065,10 @@ void handleIdentifyCmd(GameKeeper::Player *playerData, const char *message)
     } else {
       if (playerData->accessInfo.isPasswordMatching(message + 10)) {
 	sendMessage(ServerPlayer, t, "Password Accepted, welcome back.");
-	
+
 	// get their real info
 	playerData->accessInfo.setPermissionRights();
-	
+
 	// if they have the PLAYERLIST permission, send the IP list
 	sendIPUpdate(t, -1);
       } else {
@@ -1415,10 +1415,10 @@ void handleReloadCmd(GameKeeper::Player *playerData, const char *)
     sendMessage(ServerPlayer, t, "You do not have permission to run the reload command");
     return;
   }
-  
+
   // reload the banlist
   clOptions->acl.load();
-  
+
   groupAccess.clear();
   userDatabase.clear();
   passwordDatabase.clear();
@@ -1668,7 +1668,7 @@ void handlePollCmd(GameKeeper::Player *playerData, const char *message)
 	  }
 	}
       } // end admin check
-      
+
     }
 
     /* create and announce the new poll */
@@ -1925,7 +1925,7 @@ void handleViewReportsCmd(GameKeeper::Player *playerData, const char *)
   if (clOptions->reportFile.size() == 0 && clOptions->reportPipe.size() == 0) {
     line = "The /report command is disabled on this server or there are no reports filed.";
     sendMessage(ServerPlayer, t, line.c_str());
-  } 
+  }
   std::ifstream ifs(clOptions->reportFile.c_str(), std::ios::in);
   if (ifs.fail()) {
     sendMessage(ServerPlayer, t, "Error reading from report file.");
@@ -1934,7 +1934,7 @@ void handleViewReportsCmd(GameKeeper::Player *playerData, const char *)
   while (std::getline(ifs, line))
     sendMessage(ServerPlayer, t, line.c_str());
 }
- 
+
 
 void handleClientqueryCmd(GameKeeper::Player *playerData, const char * message)
 {
@@ -1960,7 +1960,7 @@ void handleClientqueryCmd(GameKeeper::Player *playerData, const char * message)
   }
   sendMessage(ServerPlayer, AllPlayers, "[Sent version information per request]");
   // send server's own version string just for kicks
-  sendMessage(ServerPlayer, t, 
+  sendMessage(ServerPlayer, t,
               string_util::format("BZFS Version: %s", getAppVersion()).c_str());
   // send all players' version strings
   // is faking a message from the remote client rude?
@@ -1997,7 +1997,7 @@ void handleRecordCmd(GameKeeper::Player *playerData, const char * message)
   else if (strncmp (buf, "size", 4) == 0) {
     buf = buf + 4;
     while ((*buf != '\0') && isspace (*buf)) buf++; // eat whitespace
-    
+
     if (*buf == '\0') {
       Record::sendHelp (t);
       return;
@@ -2048,7 +2048,7 @@ void handleRecordCmd(GameKeeper::Player *playerData, const char * message)
   else if (strncmp (buf, "file", 4) == 0) {
     buf = buf + 4;
     while ((*buf != '\0') && isspace (*buf)) buf++; // eat whitespace
-  
+
     if (*buf == '\0') {
       Record::sendHelp (t);
     }
@@ -2059,7 +2059,7 @@ void handleRecordCmd(GameKeeper::Player *playerData, const char * message)
   else {
     Record::sendHelp (t);
   }
-  
+
   return;
 }
 
@@ -2082,7 +2082,7 @@ void handleReplayCmd(GameKeeper::Player *playerData, const char * message)
   else if (strncmp (buf, "load", 4) == 0) {
     buf = buf + 4;
     while ((*buf != '\0') && isspace (*buf)) buf++; // eat whitespace
-    
+
     if (*buf == '\0') {
       Replay::sendHelp (t);
     }
@@ -2096,7 +2096,7 @@ void handleReplayCmd(GameKeeper::Player *playerData, const char * message)
   else if (strncmp (buf, "skip", 4) == 0) {
     buf = buf + 4;
     while ((*buf != '\0') && isspace (*buf)) buf++; // eat whitespace
-    
+
     if (*buf == '\0') {
       Replay::skip (t, 0);
     }
@@ -2111,7 +2111,7 @@ void handleReplayCmd(GameKeeper::Player *playerData, const char * message)
   else {
     Replay::sendHelp (t);
   }
-  
+
   return;
 }
 

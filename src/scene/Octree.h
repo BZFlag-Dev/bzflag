@@ -32,15 +32,15 @@ class Octree {
                         const Frustum* frustum) const;
     void clear ();
     void draw () const;
-    
+
 
   private: // methods
-  
+
     void getExtents(float* mins, float* maxs,
                     SceneNode** list, int listSize);
 
   private: // data
-  
+
     OctreeNode* root;
 };
 
@@ -60,18 +60,18 @@ class OctreeNode {
     OctreeNode* getChild (int child);
 
     int getCount() const;    // number of nodes in this and subnodes
-    int getChildren() const; // number of children 
+    int getChildren() const; // number of children
     int getListSize() const; // number of nodes in this node
     SceneNode** getList() const;     // list of nodes
     void getExtents(float* mins, float* maxs) const;
 
     void draw ();
-    
+
   private:
-  
+
     void makeChildren ();
     void resizeCell ();
-  
+
     enum CullLevel {
       NoCull,
       PartialCull,

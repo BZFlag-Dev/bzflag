@@ -117,7 +117,7 @@ class World {
 
     static World*	getWorld();
     static void		setWorld(World*);
-    
+
     static const CollisionManager* getCollisionManager();
 
     static BundleMgr*	getBundleMgr();
@@ -134,7 +134,7 @@ class World {
     void                checkCollisionManager();
 
     bool		writeWorld(std::string filename);
-    
+
     void		drawCollisionGrid();
 
 

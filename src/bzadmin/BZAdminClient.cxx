@@ -34,7 +34,7 @@ BZAdminClient::BZAdminClient(std::string callsign, std::string host,
 			     int port, BZAdminUI* bzInterface)
   : myTeam(ObserverTeam), sLink(Address(host), port), valid(false),
     ui(bzInterface) {
-    
+
   if (sLink.getState() != ServerLink::Okay) {
     std::cerr<<"Could not connect to "<<host<<':'<<port<<'.'<<std::endl;
     return;
@@ -44,7 +44,7 @@ BZAdminClient::BZAdminClient(std::string callsign, std::string host,
     std::cerr << "Rejected." << std::endl;
     return;
   }
-  
+
   std::string reason;
   uint16_t code, rejcode;
   if (sLink.readEnter (reason, code, rejcode)) {
@@ -52,11 +52,11 @@ BZAdminClient::BZAdminClient(std::string callsign, std::string host,
   } else {
     std::cerr << reason << std::endl;
   }
-  
-  
+
+
   // tell BZDB to shut up, we can't have debug data printed to stdout
   BZDB.setDebug(false);
-  
+
   //send our version string for /clientquery
   sLink.sendVersionString();
 
@@ -68,7 +68,7 @@ BZAdminClient::BZAdminClient(std::string callsign, std::string host,
   showMessageType(MsgPause);
   showMessageType(MsgRemovePlayer);
   showMessageType(MsgSuperKill);
-  
+
   // initialise the colormap
   colorMap[NoTeam] = Yellow;
   colorMap[RogueTeam] = Yellow;
@@ -77,7 +77,7 @@ BZAdminClient::BZAdminClient(std::string callsign, std::string host,
   colorMap[BlueTeam] = Blue;
   colorMap[PurpleTeam] = Purple;
   colorMap[ObserverTeam] = Cyan;
-  
+
   // initialise the msg type map
   msgTypeMap["bzdb"] = MsgSetVar;
   msgTypeMap["chat"] = MsgMessage;
@@ -116,31 +116,31 @@ BZAdminClient::ServerCode BZAdminClient::checkMessage() {
     PlayerIdMap::const_iterator it;
     std::string victimName, killerName;
     Address a;
-    
+
     switch (code) {
 
     case MsgNewRabbit:
       if (messageMask[MsgNewRabbit]) {
 	vbuf = nboUnpackUByte(vbuf, p);
-	lastMessage.first = std::string("*** '") + players[p].name + 
+	lastMessage.first = std::string("*** '") + players[p].name +
 	  "' is now the rabbit.";
       }
       break;
-      
+
     case MsgPause:
       if (messageMask[MsgPause]) {
 	uint8_t paused;
 	vbuf = nboUnpackUByte(vbuf, p);
 	vbuf = nboUnpackUByte(vbuf, paused);
-	lastMessage.first = std::string("*** '") + players[p].name + "': " + 
+	lastMessage.first = std::string("*** '") + players[p].name + "': " +
 	  (paused ? "paused" : "resumed") + ".";
       }
       break;
-      
+
     case MsgAlive:
       if (messageMask[MsgAlive]) {
 	vbuf = nboUnpackUByte(vbuf, p);
-	lastMessage.first = std::string("*** '") + players[p].name + 
+	lastMessage.first = std::string("*** '") + players[p].name +
 	  "' has respawned.";
       }
       break;
@@ -149,25 +149,25 @@ BZAdminClient::ServerCode BZAdminClient::checkMessage() {
       if (messageMask[MsgLagPing])
 	lastMessage.first = "*** Received lag ping from server.";
       break;
-      
+
     case MsgSetVar:
       // code stolen from playing.cxx
       uint16_t numVars;
       uint8_t nameLen, valueLen;
-      
+
       char name[MaxPacketLen];
       char value[MaxPacketLen];
-      
+
       vbuf = nboUnpackUShort(vbuf, numVars);
       for (i = 0; i < numVars; i++) {
 	vbuf = nboUnpackUByte(vbuf, nameLen);
 	vbuf = nboUnpackString(vbuf, name, nameLen);
 	name[nameLen] = '\0';
-	
+
 	vbuf = nboUnpackUByte(vbuf, valueLen);
 	vbuf = nboUnpackString(vbuf, value, valueLen);
 	value[valueLen] = '\0';
-	
+
 	BZDB.set(name, value);
 	BZDB.setPersistent(name, false);
 	BZDB.setPermission(name, StateDatabase::Locked);
@@ -206,13 +206,13 @@ BZAdminClient::ServerCode BZAdminClient::checkMessage() {
 	lastMessage.first = joinMsg;
       }
       break;
-      
+
     case MsgRemovePlayer:
       vbuf = nboUnpackUByte(vbuf, p);
       if (ui != NULL)
 	ui->removingPlayer(p);
       if (messageMask[MsgRemovePlayer]) {
-	lastMessage.first = std::string("*** '") + players[p].name + 
+	lastMessage.first = std::string("*** '") + players[p].name +
 	  "' left the game.";
       }
       players.erase(p);
@@ -231,12 +231,12 @@ BZAdminClient::ServerCode BZAdminClient::checkMessage() {
 	players[p].ip = a.getDotNotation();
       }
       if (messageMask[MsgAdminInfo]) {
-	lastMessage.first = std::string("*** IP update received, ") + 
+	lastMessage.first = std::string("*** IP update received, ") +
 	  string_util::format("%d", numIPs) + " IP" +(numIPs == 1 ? "" : "s") +
 	  " updated.";
       }
       break;
-      
+
     case MsgScoreOver:
       if (messageMask[MsgScoreOver]) {
  	PlayerId id;
@@ -252,7 +252,7 @@ BZAdminClient::ServerCode BZAdminClient::checkMessage() {
 	lastMessage.first = std::string("*** \'") + victimName + "\' won the game.";
       }
       break;
-      
+
     case MsgTimeUpdate:
       if (messageMask[MsgTimeUpdate]) {
 	uint16_t timeLeft;
@@ -260,11 +260,11 @@ BZAdminClient::ServerCode BZAdminClient::checkMessage() {
 	if (timeLeft == 0)
 	  lastMessage.first = "*** Time Expired.";
 	else
-	  lastMessage.first = std::string("*** ") + 
+	  lastMessage.first = std::string("*** ") +
 	    string_util::format("%d", timeLeft) + " seconds remaining.";
       }
       break;
-      
+
     case MsgKilled:
       if (messageMask[MsgKilled]) {
 	PlayerId victim, killer;
@@ -273,7 +273,7 @@ BZAdminClient::ServerCode BZAdminClient::checkMessage() {
 	vbuf = nboUnpackUByte(vbuf, killer);
 	vbuf = nboUnpackShort(vbuf, reason);
 	vbuf = nboUnpackShort(vbuf, shotId);
-	
+
 	// find the player names and build a kill message string
 	it = players.find(victim);
 	victimName = (it != players.end() ? it->second.name : "<unknown>");
@@ -284,7 +284,7 @@ BZAdminClient::ServerCode BZAdminClient::checkMessage() {
 	  lastMessage.first = lastMessage.first + "blew myself up.";
 	}
 	else {
-	  lastMessage.first = lastMessage.first + "destroyed by '" + 
+	  lastMessage.first = lastMessage.first + "destroyed by '" +
 	    killerName + "'.";
 	}
       }
@@ -309,13 +309,13 @@ BZAdminClient::ServerCode BZAdminClient::checkMessage() {
 	}
       }
       if (messageMask[MsgScore]) {
-	lastMessage.first = 
+	lastMessage.first =
 	  std::string("*** Received score update, score for ")+
-	  string_util::format("%d", numScores) + " player" + 
+	  string_util::format("%d", numScores) + " player" +
 	  (numScores == 1 ? "s" : "") + " updated.";
       }
       break;
-      
+
     case MsgMessage:
 
       // unpack the message header
@@ -324,15 +324,15 @@ BZAdminClient::ServerCode BZAdminClient::checkMessage() {
       PlayerId me = sLink.getId();
       vbuf = nboUnpackUByte(vbuf, src);
       vbuf = nboUnpackUByte(vbuf, dst);
-      
+
       // format the message depending on src and dst
       TeamColor dstTeam = (dst >= 244 && dst <= 250 ?
 			   TeamColor(250 - dst) : NoTeam);
       if (messageMask[MsgMessage]) {
 	lastMessage.first = formatMessage((char*)vbuf, src, dst,dstTeam, me);
 	PlayerIdMap::const_iterator iter = players.find(src);
-	lastMessage.second = (iter == players.end() ? 
-			      colorMap[NoTeam] : 
+	lastMessage.second = (iter == players.end() ?
+			      colorMap[NoTeam] :
 			      colorMap[iter->second.team]);
       }
       break;
@@ -341,13 +341,13 @@ BZAdminClient::ServerCode BZAdminClient::checkMessage() {
       ui->handleNewPacket(code);
     return GotMessage;
   }
-  
+
   if (sLink.getState() != ServerLink::Okay) {
     if (ui != NULL)
       ui->outputMessage("--- ERROR: Communication error", Red);
     return CommError;
   }
-  
+
   return NoMessage;
 }
 
@@ -380,7 +380,7 @@ void BZAdminClient::runLoop() {
 	break;
       else if (cmd.substr(0, 6) == "/show ") {
 	if ((iter = msgTypeMap.find(cmd.substr(6))) == msgTypeMap.end()) {
-	  ui->outputMessage(std::string("--- ERROR: ") + cmd.substr(6) + 
+	  ui->outputMessage(std::string("--- ERROR: ") + cmd.substr(6) +
 			    " is an unknown message type", Red);
 	}
 	else {
@@ -391,7 +391,7 @@ void BZAdminClient::runLoop() {
       }
       else if (cmd.substr(0, 6) == "/hide ") {
 	if ((iter = msgTypeMap.find(cmd.substr(6))) == msgTypeMap.end()) {
-	  ui->outputMessage(std::string("--- ERROR: ") + cmd.substr(6) + 
+	  ui->outputMessage(std::string("--- ERROR: ") + cmd.substr(6) +
 			    " is an unknown message type", Red);
 	}
 	else {
@@ -430,7 +430,7 @@ void BZAdminClient::sendMessage(const std::string& msg,
       BZDB.iterate(listSetVars, this);
     return;
   }
-  
+
   char buffer[MessageLen];
   char buffer2[1 + MessageLen];
   void* buf = buffer2;
@@ -450,9 +450,9 @@ std::string BZAdminClient::formatMessage(const std::string& msg, PlayerId src,
 
   // get sender and receiver
   const std::string srcName = (src == ServerPlayer ? "SERVER" :
-			       (players.count(src) ? players[src].name : 
+			       (players.count(src) ? players[src].name :
 				"(UNKNOWN)"));
-  const std::string dstName = (players.count(dst) ? players[dst].name : 
+  const std::string dstName = (players.count(dst) ? players[dst].name :
 			       "(UNKNOWN)");
 
   // direct message to or from me
@@ -547,12 +547,12 @@ const std::map<std::string, uint16_t>& BZAdminClient::getMessageTypeMap() const
 {
   return msgTypeMap;
 }
-  
+
 bool BZAdminClient::getFilterStatus(uint16_t msgType) const {
   std::map<uint16_t, bool>::const_iterator iter = messageMask.find(msgType);
   if (iter == messageMask.end())
     return false;
-  else 
+  else
     return iter->second;
 }
 

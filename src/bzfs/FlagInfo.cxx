@@ -106,7 +106,7 @@ void FlagInfo::addFlag()
   flag.initialVelocity   = -0.5f * gravity * flightTime;
   dropDone               = TimeKeeper::getCurrent();
   dropDone              += flightTime;
-	
+
   if (flag.type == Flags::Null)
     // pick a random flag
     flag.type = allowedFlags[(int)(allowedFlags.size() * (float)bzfrand())];

@@ -271,7 +271,7 @@ bool		shouldGrabMouse()
 
 void        warnAboutMainFlags()
 {
-  // warning message for hidden flags 
+  // warning message for hidden flags
   if (!BZDBCache::displayMainFlags){
     std::string showFlagsMsg = ColorStrings[YellowColor];
     showFlagsMsg += "Flags on field hidden, to show them ";
@@ -340,7 +340,7 @@ SceneRenderer*		getSceneRenderer()
 void			setSceneDatabase()
 {
   SceneDatabase *scene; // FIXME - test the zbuffer here
-  
+
   // delete the old database
   sceneRenderer->setSceneDatabase(NULL);
 
@@ -349,13 +349,13 @@ void			setSceneDatabase()
   scene = sceneBuilder->make(world);
   float elapsed = TimeKeeper::getCurrent() - startTime;
 
-  // print debugging info  
+  // print debugging info
   if (BZDB.isTrue("zbuffer")) {
     DEBUG2("ZSceneDatabase processed in %.3f seconds.\n", elapsed);
   } else {
     DEBUG2("BSPSceneDatabase processed in %.3f seconds.\n", elapsed);
   }
-  
+
   // set the scene
   sceneRenderer->setSceneDatabase(scene);
 }
@@ -620,7 +620,7 @@ static bool		doKeyCommon(const BzfKeyEvent& key, bool pressed)
   // if we don't have a tank, the key commands don't apply
   if (!myTank) {
     return false;
-  } 
+  }
 
   switch (keyboardMovement) {
     case Left:
@@ -659,7 +659,7 @@ static bool		doKeyCommon(const BzfKeyEvent& key, bool pressed)
 	  if (!showFPS) hud->setFPS(-1.0);
 	}
 	return true;
-	  
+
       case 'Y':
       case 'y':
 	// toggle milliseconds for drawing
@@ -668,28 +668,28 @@ static bool		doKeyCommon(const BzfKeyEvent& key, bool pressed)
 	  if (!showDrawTime) hud->setDrawTime(-1.0);
 	}
 	return true;
-	  
+
 	/* XXX -- for testing forced recreation of OpenGL context
 	   case 'o':
 	   if (pressed) {
 	   // destroy OpenGL context
 	   getMainWindow()->getWindow()->freeContext();
-	     
+
 	   // recreate OpenGL context
 	   getMainWindow()->getWindow()->makeContext();
 
 	   // force a redraw (mainly for control panel)
 	   getMainWindow()->getWindow()->callExposeCallbacks();
-	     
+
 	   // cause sun/moon to be repositioned immediately
 	   lastEpochOffset = epochOffset - 5.0;
-	     
+
 	   // reload display lists and textures and initialize other state
 	   OpenGLGState::initContext();
 	   }
 	   break;
 	*/
-	  
+
       case ']':
       case '}':
 	// plus 30 seconds
@@ -701,7 +701,7 @@ static bool		doKeyCommon(const BzfKeyEvent& key, bool pressed)
 	// minus 30 seconds
 	if (pressed) clockAdjust -= 30.0f;
 	return true;
-	  
+
       default:
 	break;
     } // end switch on key
@@ -812,7 +812,7 @@ static void		doKeyPlaying(const BzfKeyEvent& key, bool pressed)
       if (keyboardMovement != None)
 	if (BZDB.isTrue("allowInputChange"))
 	  myTank->setInputMethod(LocalPlayer::Keyboard);
-    } 
+    }
   }
 }
 
@@ -1298,7 +1298,7 @@ static bool removePlayer (PlayerId id)
   if (playerIndex < 0) {
     return false;
   }
-  
+
   addMessage(player[playerIndex], "signing off");
   if (myTank->getRecipient() == player[playerIndex])
     myTank->setRecipient(0);
@@ -2096,7 +2096,7 @@ static void		handleServerMessage(bool human, uint16_t code,
     if (wordfilter != NULL) {
       wordfilter->filter((char *)msg);
     }
-    
+
     std::string origText = stripAnsiCodes(std::string((char*)msg));
     std::string text = BundleMgr::getCurrentBundle()->getLocalString(origText);
 
@@ -2140,9 +2140,9 @@ static void		handleServerMessage(bool human, uint16_t code,
 		playLocalSound( SFX_MESSAGE_PRIVATE );
 	      lastMsg = TimeKeeper::getTick();
 	    }
-	  } 
+	  }
 	  fullMsg += "]" + ColorStrings[ResetColor] + " " + ColorStrings[CyanColor] + text;
-	} 
+	}
       } else {
 	// team / admin message
 	if (toAdmin) {
@@ -2208,7 +2208,7 @@ static void		handleServerMessage(bool human, uint16_t code,
     int i;
     unsigned char lastPlayer;
     msg = nboUnpackUByte(msg, lastPlayer);
-    
+
     // remove players up to 'lastPlayer'
     // any PlayerId above lastPlayer is a replay observers
     for (i=0 ; i<lastPlayer ; i++) {
@@ -2216,7 +2216,7 @@ static void		handleServerMessage(bool human, uint16_t code,
         checkScores = true;
       }
     }
-    
+
     // remove all of the flags
     for (i=0 ; i<numFlags; i++) {
       Flag& flag = world->getFlag(i);
@@ -2226,7 +2226,7 @@ static void		handleServerMessage(bool human, uint16_t code,
     }
     break;
   }
-  
+
     // inter-player relayed message
   case MsgPlayerUpdate:
   case MsgPlayerUpdateSmall:
@@ -2249,7 +2249,7 @@ static void		handlePlayerMessage(uint16_t code, uint16_t,
 					    void* msg)
 {
   switch (code) {
-  case MsgPlayerUpdate: 
+  case MsgPlayerUpdate:
   case MsgPlayerUpdateSmall: {
     float timestamp; // could be used to enhance deadreckoning, but isn't for now
     PlayerId id;
@@ -2474,19 +2474,19 @@ void addDeadUnder (SceneDatabase *db, float dt)
   static float texShift = 0.0f;
   static GLfloat black[3] = {0.0f, 0.0f, 0.0f};
   static OpenGLMaterial material(black, black, 0.0f);
-  
+
   float deadUnder = BZDB.eval(StateDatabase::BZDB_DEADUNDER);
   if (deadUnder < 0.0f) {
     return;
   }
-  
+
   float size = BZDB.eval (StateDatabase::BZDB_WORLDSIZE);
   GLfloat base[3]  = {-size/2.0f, -size/2.0f, deadUnder};
   GLfloat sEdge[3] = {0.0f, size, 0.0f};
   GLfloat tEdge[3] = {size, 0.0f, 0.0f};
 
   texShift = fmodf (texShift + (dt / 30.0f), 1.0f);
-  QuadWallSceneNode* node = new QuadWallSceneNode (base, tEdge, sEdge, 
+  QuadWallSceneNode* node = new QuadWallSceneNode (base, tEdge, sEdge,
                                                    texShift, 0.0f, 2.0, 2.0, false);
 
   TextureManager &tm = TextureManager::instance();
@@ -2512,9 +2512,9 @@ void addDeadUnder (SceneDatabase *db, float dt)
   node->setUseColorTexture(false);
 
   db->addDynamicNode(node);
-  
+
   return;
-} 
+}
 
 #ifdef ROBOT
 static void		handleMyTankKilled(int reason)
@@ -2789,7 +2789,7 @@ static void		checkEnvironment()
   const ShotPath* hit = NULL;
   float minTime = Infinity;
   float deadUnder = BZDB.eval(StateDatabase::BZDB_DEADUNDER);
-  
+
 
   if (myTank->getFlag() != Flags::Thief)
     myTank->checkHit(myTank, hit, minTime);
@@ -3159,7 +3159,7 @@ static void		setRobotTarget(RobotPlayer* robot)
 	  (robot->getFlag() != Flags::PhantomZone || !robot->isFlagActive()))
         continue;
 
-      if (World::getWorld()->allowTeamFlags() && 
+      if (World::getWorld()->allowTeamFlags() &&
       	  (robot->getTeam() == RedTeam && player[j]->getFlag() == Flags::RedTeam) ||
       	  (robot->getTeam() == GreenTeam && player[j]->getFlag() == Flags::GreenTeam) ||
       	  (robot->getTeam() == BlueTeam && player[j]->getFlag() == Flags::BlueTeam) ||
@@ -3236,7 +3236,7 @@ static void		checkEnvironment(RobotPlayer* tank)
   tank->checkHit( World::getWorld()->getWorldWeapons(), hit, minTime);
 
   float deadUnder = BZDB.eval(StateDatabase::BZDB_DEADUNDER);
-  
+
   if (hit) {
     // i got shot!  terminate the shot that hit me and blow up.
     // force shot to terminate locally immediately (no server round trip);
@@ -3345,7 +3345,7 @@ static void		addRobots()
 
     j++;
   }
-  
+
   if (numRobots > 0) {
     makeObstacleList();
     RobotPlayer::setObstacleList(&obstacleList);
@@ -3640,7 +3640,7 @@ static bool		enterServer(ServerLink* serverLink, World* world,
   // get updates
   uint16_t len;
   char msg[MaxPacketLen];
-  
+
   if (serverLink->read(code, len, msg, -1) < 0) {
     goto failed;
   }
@@ -3669,7 +3669,7 @@ static bool		enterServer(ServerLink* serverLink, World* world,
 	  if ((TeamColor)team == ObserverTeam) {
 	    teamMsg += "as an Observer";
 	  } else {
-	    teamMsg += string_util::format("to the %s", 
+	    teamMsg += string_util::format("to the %s",
 					   Team::getName((TeamColor)team));
 	  }
 	} else {
@@ -3978,12 +3978,12 @@ static bool		joinGame(const StartupInfo* info,
   hud->setTimeLeft(-1);
   fireButton = false;
   firstLife = true;
-  
-  
+
+
   BZDB.setBool ("displayMainFlags", true);
   BZDB.setBool ("displayRadarFlags", true);
   BZDB.setBool ("displayConsoleAndRadar", true);
-  
+
   return true;
 }
 
@@ -4099,7 +4099,7 @@ static void		playingLoop()
 
     // handle incoming packets
     doMessages();
-    
+
     // see if the world collision grid needs to be updated
     if (world) {
       world->checkCollisionManager();
@@ -4280,11 +4280,11 @@ static void		playingLoop()
 	  // custom message when trying to pause while in a building
 	  // (could get stuck on un-pause if flag is taken/lost)
 	  hud->setAlert(1, "Can't pause while inside a building", 1.0f, false);
-	
+
 	} else if (myTank->getLocation() == LocalPlayer::InAir) {
 	  // custom message when trying to pause when jumping/falling
 	  hud->setAlert(1, "Can't pause when you are in the air", 1.0f, false);
-	
+
 	} else if (myTank->getLocation() != LocalPlayer::OnGround &&
 		   myTank->getLocation() != LocalPlayer::OnBuilding) {
 	  // catch-all message when trying to pause when you should not
@@ -4295,10 +4295,10 @@ static void		playingLoop()
 	  const FlagType* flagd = myTank->getFlag();
 	  if (flagd->flagTeam != NoTeam)
 	    serverLink->sendDropFlag(myTank->getPosition());
-	
+
 	  if (World::getWorld()->allowRabbit() && (myTank->getTeam() == RabbitTeam))
 	    serverLink->sendNewRabbit();
-	
+
 	  // now actually pause
 	  myTank->setPause(true);
 	  hud->setAlert(1, NULL, 0.0f, true);
@@ -4521,7 +4521,7 @@ static void		playingLoop()
 
 	TeamColor overrideTeam = RogueTeam;
 	const bool colorblind = (myTank->getFlag() == Flags::Colorblindness);
-	  
+
 	// add other tanks and shells
 	for (i = 0; i < curMaxPlayers; i++)
 	  if (player[i]) {
@@ -4545,7 +4545,7 @@ static void		playingLoop()
 
 	// add explosions
 	addExplosions(scene);
-	
+
 	// add water-like graphics for the deadUnder line
 	addDeadUnder (scene, dt);
 
@@ -4587,7 +4587,7 @@ static void		playingLoop()
       if (roaming && myTank) {
         myTank->setZpos(roamPos[2]);
       }
-      
+
       // draw frame
       const bool blankRadar = myTank && myTank->isPaused();
       if (viewType == SceneRenderer::ThreeChannel) {
@@ -5379,7 +5379,7 @@ void			startPlaying(BzfDisplay* _display,
     sprintf(text, "explode%d", explostion);
 
     int tex = tm.getTextureID(text, false);
-    
+
     if (tex < 0) {
       done = true;
     } else {

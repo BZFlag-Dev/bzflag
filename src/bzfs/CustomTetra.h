@@ -31,7 +31,7 @@ class CustomTetra : public WorldFileObject {
     float vertices[4][3];
     bool colored[4];
     float colors[4][4];
-    
+
     bool driveThrough; //FIXME
     bool shootThrough; //FIXME
 };

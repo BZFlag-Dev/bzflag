@@ -32,7 +32,7 @@ TetraBuilding::TetraBuilding(const float (*_vertices)[3], const bool *_visible,
   memcpy (visible, _visible, 4 * sizeof (bool));
   memcpy (colored, _colored, 4 * sizeof (bool));
   memcpy (colors, _colors, 4 * sizeof (float[4]));
-  
+
   // make sure the the planes are facing outwards
   float edge[3][3]; // edges from vertex 0
   for (v = 0; v < 3; v++) {
@@ -66,7 +66,7 @@ TetraBuilding::TetraBuilding(const float (*_vertices)[3], const bool *_visible,
       }
     }
   }
-  
+
   // setup the extents
   mins[0] = mins[1] = mins[2] = +Infinity;
   maxs[0] = maxs[1] = maxs[2] = -Infinity;
@@ -93,9 +93,9 @@ TetraBuilding::TetraBuilding(const float (*_vertices)[3], const bool *_visible,
   driveThrough = drive;
   shootThrough = shoot;
   ZFlip = false;
-  
+
   return;
-}                             
+}
 
 
 TetraBuilding::~TetraBuilding()
@@ -120,7 +120,7 @@ const char* TetraBuilding::getClassName() // const
 bool TetraBuilding::isValid() const
 {
   int v, a;
-  
+
   float edge[3][3]; // edges from vertex 0
   for (v = 0; v < 3; v++) {
     for (a = 0; a < 3; a++) {
@@ -133,7 +133,7 @@ bool TetraBuilding::isValid() const
   cross[2] = (edge[0][0] * edge[1][1]) - (edge[0][1] * edge[1][0]);
   float dot =
     (cross[0] * edge[2][0]) + (cross[1] * edge[2][1]) + (cross[2] * edge[2][2]);
-    
+
   if (fabsf(dot) < 0.0001) {
     return false; // tetrahedrons require a volume
   }
@@ -146,7 +146,7 @@ bool TetraBuilding::isValid() const
       }
     }
   }
-  
+
   return true;
 }
 
@@ -194,7 +194,7 @@ static bool makePlane (const float* p1, const float* p2, const float* pc,
   r[3] = -((pc[0] * r[0]) + (pc[1] * r[1]) + (pc[2] * r[2]));
 
   return true;
-}                       
+}
 
 
 float TetraBuilding::intersect(const Ray& ray) const
@@ -206,13 +206,13 @@ float TetraBuilding::intersect(const Ray& ray) const
   //
   // find where the ray crosses each plane, and then
   // check the dot-product of the three bounding planes
-  // to see if the intersection point is contained within 
+  // to see if the intersection point is contained within
   // the face.
   //
   //  L - line unit vector          Lo - line origin
   //  N - plane normal unit vector  d  - plane offset
   //  P - point in question         t - time
-  //  
+  //
   //  (N dot P) + d = 0                      { plane equation }
   //  P = (t * L) + Lo                       { line equation }
   //  t (N dot L) + (N dot Lo) + d = 0
@@ -223,7 +223,7 @@ float TetraBuilding::intersect(const Ray& ray) const
   const float* dir = ray.getDirection();
   const float* origin = ray.getOrigin();
   float times[4];
-  
+
   // get the time until the shot would hit each plane
   for (p = 0; p < 4; p++) {
     const float linedot = (planes[p][0] * dir[0]) +
@@ -243,7 +243,7 @@ float TetraBuilding::intersect(const Ray& ray) const
       times[p] = Infinity;
     }
   }
-  
+
   // sort, smallest time first - FIXME (ick, bubble sort)
   int order[4] = { 0, 1, 2, 3 };
   for (int i = 3; i > 0; i--) {
@@ -254,7 +254,7 @@ float TetraBuilding::intersect(const Ray& ray) const
         order[j - 1] = tmp;
     }
   }
-  
+
   // see if the point is within the face
   for (p = 0; p < 4; p++) {
     int target = order[p];
@@ -279,7 +279,7 @@ float TetraBuilding::intersect(const Ray& ray) const
       if (d > 0.001f) {
         gotFirstHit = false;
         break;
-      }      
+      }
     }
     if (gotFirstHit) {
       lastPlaneShot = p;
@@ -294,7 +294,7 @@ float TetraBuilding::intersect(const Ray& ray) const
 void TetraBuilding::get3DNormal(const float* /*p*/, float* n) const
 {
   // intersect() must be called on this obstacle
-  // before this function can be used. 
+  // before this function can be used.
   memcpy (n, planes[lastPlaneShot], sizeof(float[3]));
   return;
 }
@@ -358,7 +358,7 @@ bool TetraBuilding::inMovingBox(const float*, float,
 {
   angle = sqrtf ((dx * dx) + (dy * dy));
   return inCylinder (p, angle, height);
-}                                          
+}
 
 
 // This is only used when the player has an Oscillation Overthruster
@@ -375,7 +375,7 @@ bool TetraBuilding::isCrossing(const float* p, float angle,
   const float sinval = sin(angle);
   int bv, tp; // box vertices, tetra planes
 
-  // make the box vertices  
+  // make the box vertices
   corner[0][0] = (cosval * dx) - (sinval * dy);
   corner[1][0] = (cosval * dx) + (sinval * dy);
   corner[0][1] = (cosval * dy) + (sinval * dx);
@@ -403,7 +403,7 @@ bool TetraBuilding::isCrossing(const float* p, float angle,
                       (corner[bv][2] * planes[tp][2]) + planes[tp][3];
 
       int newdir = (d > 0.0f) ? +1 : -1;
- 
+
       if (bv == 0) {
         splitdir = newdir;
       }
@@ -416,7 +416,7 @@ bool TetraBuilding::isCrossing(const float* p, float angle,
       break;
     }
   }
-  
+
   // copy the plane information if requested
   if (tp < 4) {
     if (plane != NULL) {
@@ -424,7 +424,7 @@ bool TetraBuilding::isCrossing(const float* p, float angle,
     }
     return true;
   }
-  
+
   return false;
 }
 

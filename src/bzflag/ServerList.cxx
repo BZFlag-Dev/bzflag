@@ -33,7 +33,7 @@
 #if !defined(_WIN32)
 #include <errno.h>
 #endif
-                                                                                
+
 /* from playing.h */
 StartupInfo* getStartupInfo();
 typedef void (*PlayingCallback)(void*);
@@ -221,7 +221,7 @@ void ServerList::addToList(ServerItem& info, bool doCache)
   args.push_back(buffer);
   setStatus("Servers found: {1}", &args);
   */
-  
+
   // force update
   /*
   const int oldSelectedIndex = selectedIndex;
@@ -366,7 +366,7 @@ void			ServerList::checkEchos()
     int i;
 
     // *** NOTE *** searching spinner update was here
-    
+
     struct timeval timeout;
     timeout.tv_sec = 0;
     timeout.tv_usec = 250;
@@ -397,11 +397,11 @@ void			ServerList::checkEchos()
     if (nfound <= 0) {
       break;
     }
-    
+
     // check broadcast sockets
     ServerItem serverInfo;
     sockaddr_in addr;
-    
+
     if (pingBcastSocket != -1 && FD_ISSET(pingBcastSocket, &read_set)) {
       if (serverInfo.ping.read(pingBcastSocket, &addr)) {
 	serverInfo.ping.serverId.serverHost = addr.sin_addr;
@@ -499,7 +499,7 @@ int ServerList::updateFromCache() {
   clear();
 
   int numItemsAdded = 0;
-  
+
   for (SRV_STR_MAP::const_iterator iter = serverCache->begin();
        iter != serverCache->end(); iter++) {
     // if maxCacheAge is 0 we add nothing

@@ -44,7 +44,7 @@ bool CustomZone::read(const char *cmd, std::istream& input) {
 
     while (parms >> flag) {
       FlagType *type;
-      
+
       if (flag == "good") {
         FlagSet &fs = Flag::getGoodFlags();
 	for (FlagSet::iterator it = fs.begin(); it != fs.end(); ++it) {
@@ -101,7 +101,7 @@ bool CustomZone::read(const char *cmd, std::istream& input) {
 }
 
 
-void CustomZone::write(WorldInfo* worldInfo) const 
+void CustomZone::write(WorldInfo* worldInfo) const
 {
   worldInfo->addZone( this );
 }
@@ -129,7 +129,7 @@ float CustomZone::getDistToPoint (const float *_pos) const
   v[1] = _pos[1] - pos[1];
   v[2] = _pos[2] - pos[2];
   dist = sqrtf (v[0]*v[0] + v[1]*v[1] + v[2]*v[2]);
-  
+
   return dist;
 }
 

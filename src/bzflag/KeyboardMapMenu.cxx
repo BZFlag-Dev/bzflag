@@ -113,7 +113,7 @@ KeyboardMapMenu::KeyboardMapMenu() : defaultKey(this), editing(-1), quickKeysMen
   controls.push_back(quickKeys = createLabel(NULL, "Define Quick Keys"));
 
   initNavigation(controls, 2, controls.size()-1);
-  
+
   int i = 3;
   initkeymap("fire", i);
   initkeymap("drop", ++i);

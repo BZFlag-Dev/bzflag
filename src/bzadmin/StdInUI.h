@@ -24,9 +24,9 @@
 /** This class is an interface for bzadmin that reads commands from stdin. */
 class StdInUI : public BZAdminUI {
 public:
-  
+
   StdInUI(BZAdminClient& c);
-  
+
   bool checkCommand(std::string& str);
 
   /** This function returns a pointer to a dynamically allocated

@@ -242,7 +242,7 @@ NetHandler::~NetHandler() {
 
 #ifdef HAVE_ADNS_H
   delete adns;
-#endif 
+#endif
 }
 
 bool NetHandler::exists(int _playerIndex) {
@@ -271,7 +271,7 @@ bool NetHandler::isFdSet(fd_set *set) {
 int NetHandler::send(const void *buffer, size_t length) {
 
   int n = ::send(fd, (const char *)buffer, (int)length, 0);
-  if (n >= 0) 
+  if (n >= 0)
     return n;
 
   // get error code
@@ -373,7 +373,7 @@ int NetHandler::pwrite(const void *b, int l) {
   if (l == 0) {
     return 0;
   }
-  
+
   if (closed)
     return 0;
 
@@ -584,7 +584,7 @@ void NetHandler::getPlayerList(char *list) {
 #endif
 	  udpin ? " udp" : "",
 	  udpout ? "+" : "");
-}; 
+};
 
 const char *NetHandler::getTargetIP() {
   return peer.getDotNotation().c_str();

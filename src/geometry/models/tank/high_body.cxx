@@ -72,7 +72,7 @@ void DrawOBJIndexFace ( int v1,int t1,int n1,int v2,int t2,int n2,int v3,int t3,
   doNormal3f(sideNormals[n1-1][0], sideNormals[n1-1][1],sideNormals[n1-1][2]);
   glTexCoord2f(sideUVs[t1-1][0],sideUVs[t1-1][1]);
   doVertex3f(sideVerts[v1-1][0], sideVerts[v1-1][1], sideVerts[v1-1][2]);
-  
+
   doNormal3f(sideNormals[n2-1][0], sideNormals[n2-1][1],sideNormals[n2-1][2]);
   glTexCoord2f(sideUVs[t2-1][0],sideUVs[t2-1][1]);
   doVertex3f(sideVerts[v2-1][0], sideVerts[v2-1][1], sideVerts[v2-1][2]);

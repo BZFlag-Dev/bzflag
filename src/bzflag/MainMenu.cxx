@@ -54,7 +54,7 @@ void	  MainMenu::createControls()
 
   // load title
   int title = tm.getTextureID( "title" );
-  
+
   // add controls
   textureLabel = new HUDuiTextureLabel;
   textureLabel->setFontFace(getFontFace());

@@ -10,12 +10,12 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-// interface header 
+// interface header
 #include "RejoinList.h"
 
 // common headers
 #include "TimeKeeper.h"
-#include "PlayerInfo.h"    
+#include "PlayerInfo.h"
 #include "StateDatabase.h"  // for StateDatabase::BZDB_REJOINTIME
 
 // bzfs specific headers
@@ -70,7 +70,7 @@ float RejoinList::waitTime (int playerIndex)
   std::list<struct RejoinNode*>::iterator it;
   TimeKeeper thenTime = TimeKeeper::getCurrent();
   thenTime += -BZDB.eval(StateDatabase::BZDB_REJOINTIME);
-  
+
   // remove old entries
   it = queue.begin();
   while (it != queue.end()) {
@@ -93,7 +93,7 @@ float RejoinList::waitTime (int playerIndex)
     }
     it++;
   }
-  
+
   return value;
 }
 

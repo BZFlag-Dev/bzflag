@@ -45,7 +45,7 @@ class BoxBuilding : public Obstacle {
     bool                isCrossing(const float* p, float angle,
                                    float halfWidth, float halfBreadth, float height,
                                    float* plane) const;
-                                   
+
     bool		getHitNormal(
 				const float* pos1, float azimuth1,
 				const float* pos2, float azimuth2,

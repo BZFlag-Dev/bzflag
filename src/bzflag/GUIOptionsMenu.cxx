@@ -295,14 +295,14 @@ void			GUIOptionsMenu::callback(HUDuiControl* w, void* data)
       BZDB.set("enhancedradar", list->getIndex() ? "1" : "0");
       break;
 
-    case 'C': 
+    case 'C':
       {
 	BZDB.setInt("cpanelfontsize", list->getIndex());
 	getMainWindow()->getWindow()->callResizeCallbacks();
 	break;
       }
 
-    case 'S': 
+    case 'S':
       {
 	BZDB.setInt("scorefontsize", list->getIndex());
 	getMainWindow()->getWindow()->callResizeCallbacks();

@@ -35,7 +35,7 @@ public:
   unsigned int count(); // returns the number of world weapons
   int packSize() const;
   void *pack(void *buf) const;
-  
+
 private:
   struct Weapon
   {

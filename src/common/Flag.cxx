@@ -286,7 +286,7 @@ const std::string FlagType::label() const
   /* modify the flag name to exemplify the abbreviation */
   int charPosition;
   for (i = 0; i < strlen(flagAbbv); i++) {
-    
+
     charPosition = caseName.find_first_of(tolower(flagAbbv[i]), 0);
 
     if (charPosition > 0) {
@@ -311,7 +311,7 @@ const std::string FlagType::label() const
     caseName += " flag";
   } else {
     /* non-team flags */
-    caseName += string_util::format(" (%c%s)", 
+    caseName += string_util::format(" (%c%s)",
 				    flagQuality==FlagGood?'+':'-',
 				    flagAbbv);
   }
@@ -322,7 +322,7 @@ const std::string FlagType::label() const
 
 const std::string FlagType::information() const
 {
-  return string_util::format("%s: %s", 
+  return string_util::format("%s: %s",
 			     label().c_str(),
 			     flagHelp);
 }

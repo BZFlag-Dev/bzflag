@@ -90,7 +90,7 @@ ShotPath *findWorstBullet(float &minDistance)
       ShotPath* shot = player[t]->getShot(s);
       if (!shot || shot->isExpired())
         continue;
-    
+
       if (shot->getFlag() == Flags::InvisibleBullet && myTank->getFlag() != Flags::Seer)
         continue; //Theoretically Roger could triangulate the sound
       if (player[t]->getFlag() == Flags::PhantomZone && player[t]->isFlagActive() &&
@@ -243,7 +243,7 @@ bool	stuckOnWall(float &rotation, float &speed)
   const float *pos = myTank->getPosition();
   float myAzimuth = myTank->getAngle();
 
-  const bool phased = myTank->getFlag() == Flags::OscillationOverthruster 
+  const bool phased = myTank->getFlag() == Flags::OscillationOverthruster
 	              || ((myTank->getFlag() == Flags::PhantomZone) && myTank->isFlagActive());
 
   if (!phased && (TargetingUtils::getOpenDistance(pos, myAzimuth) < 5.0f)) {
@@ -278,10 +278,10 @@ RemotePlayer *findBestTarget()
 
   for (int t = 0; t < curMaxPlayers; t++) {
     if ((t != myTank->getId())
-    &&  (player[t]) 
+    &&  (player[t])
     &&  (player[t]->isAlive())
     &&  (!player[t]->isPaused())
-    &&  (!player[t]->isNotResponding()) 
+    &&  (!player[t]->isNotResponding())
     &&  (myTank->validTeamTarget(player[t]))) {
 
       if((player[t]->getFlag() == Flags::PhantomZone && player[t]->isFlagActive() &&
@@ -308,7 +308,7 @@ RemotePlayer *findBestTarget()
       if (d < distance) {
         if ((player[t]->getFlag() != Flags::Stealth)
 	||  (myTank->getFlag() == Flags::Seer)
-        ||  ((!isObscured) &&  
+        ||  ((!isObscured) &&
 	     (TargetingUtils::getTargetAngleDifference(pos, myAzimuth, player[t]->getPosition()) <= 30.0f))) {
 	  target = player[t];
 	  distance = d;
@@ -358,12 +358,12 @@ bool chasePlayer(float &rotation, float &speed)
 
     float dir[3] = {cosf(myAzimuth), sinf(myAzimuth), 0.0f};
     Ray tankRay(pos, dir);
-  
+
     building = ShotStrategy::getFirstBuilding(tankRay, -0.5f, d);
     if (building && (myTank->getFlag() != Flags::OscillationOverthruster ||
        (myTank->getFlag() == Flags::PhantomZone && !myTank->isFlagActive()))) {
       //If roger can drive around it, just do that
-      
+
       float leftDistance = TargetingUtils::getOpenDistance( pos, myAzimuth + (M_PI/6.0f));
       if (leftDistance > (2.0f * d)) {
         speed = 0.5f;
@@ -423,7 +423,7 @@ bool lookForFlag(float &rotation, float &speed)
 {
   LocalPlayer *myTank = LocalPlayer::getMyTank();
   float pos[3];
-  
+
   memcpy( pos, myTank->getPosition(), sizeof( pos ));
   if (pos[2] < 0.0f)
     pos[2] = 0.0f;
@@ -437,7 +437,7 @@ bool lookForFlag(float &rotation, float &speed)
   float minDist = Infinity;
 	int teamFlag = -1;
   for (int i = 0; i < numFlags; i++) {
-    if ((world->getFlag(i).type == Flags::Null) 
+    if ((world->getFlag(i).type == Flags::Null)
      || (world->getFlag(i).status != FlagOnGround))
       continue;
 
@@ -491,7 +491,7 @@ bool navigate(float &rotation, float &speed)
 
   LocalPlayer *myTank = LocalPlayer::getMyTank();
   float pos[3];
-  
+
   memcpy(pos, myTank->getPosition(), sizeof(pos));
   if (pos[2] < 0.0f)
     pos[2] = 0.01f;
@@ -565,7 +565,7 @@ bool fireAtTank()
 	    player[t]->isAlive() && !player[t]->isPaused() &&
 	    !player[t]->isNotResponding()) {
 
-	  if ((player[t]->getFlag() == Flags::PhantomZone) 
+	  if ((player[t]->getFlag() == Flags::PhantomZone)
 	  &&  (player[t]->isFlagActive()) &&
       	(!(myTank->getFlag() == Flags::PhantomZone && myTank->isFlagActive()) ||
 	  (myTank->getFlag() != Flags::ShockWave && myTank->getFlag() != Flags::SuperBullet)))
@@ -611,7 +611,7 @@ bool fireAtTank()
 	    !player[t]->isNotResponding() &&
 	    myTank->validTeamTarget(player[t])) {
 
-	  if ((player[t]->getFlag() == Flags::PhantomZone) 
+	  if ((player[t]->getFlag() == Flags::PhantomZone)
 	  &&  (player[t]->isFlagActive()) && ((myTank->getFlag() == Flags::PhantomZone &&
    	       !myTank->isFlagActive()) || (myTank->getFlag() != Flags::PhantomZone)))
 	    continue;

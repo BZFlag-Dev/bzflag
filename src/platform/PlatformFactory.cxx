@@ -29,7 +29,7 @@ PlatformFactory::PlatformFactory()
   if (SDL_Init(flags) == -1) {
     printFatalError("Could not initialize SDL: %s.\n", SDL_GetError());
     exit(-1);
-  }; 
+  };
 #endif
 }
 

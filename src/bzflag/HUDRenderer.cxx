@@ -649,14 +649,14 @@ void			HUDRenderer::renderAlerts(void)
 
   FontManager &fm = FontManager::instance();
 
-  float y = (float)window.getViewHeight() + 
+  float y = (float)window.getViewHeight() +
 	    -fm.getStrHeight(majorFontFace, majorFontSize, " ") +
 	    -fm.getStrHeight(alertFontFace, alertFontSize, " ");
 
   for (int i = 0; i < MaxAlerts; i++) {
     if (alertClock[i].isOn()) {
       hudColor3fv(alertColor[i]);
-      fm.drawString(centerx - 0.5f * alertLabelWidth[i], y, 0, 
+      fm.drawString(centerx - 0.5f * alertLabelWidth[i], y, 0,
 		    alertFontFace, alertFontSize, alertLabel[i]);
       y -= fm.getStrHeight(alertFontFace, alertFontSize, " ");
     }
@@ -1066,7 +1066,7 @@ void			HUDRenderer::renderTimes(void)
     sprintf(buf, "FPS: %d", int(fps));
     hudColor3f(1.0f, 1.0f, 1.0f);
     fm.drawString((float)(centerx - maxMotionSize), (float)centery + (float)maxMotionSize +
-		3.0f * fm.getStrHeight(headingFontFace, headingFontSize, "0"), 0, 
+		3.0f * fm.getStrHeight(headingFontFace, headingFontSize, "0"), 0,
 		headingFontFace, headingFontSize, buf);
   }
   if (drawTime > 0.0f) {
@@ -1074,7 +1074,7 @@ void			HUDRenderer::renderTimes(void)
     sprintf(buf, "time: %dms", (int)(drawTime * 1000.0f));
     hudColor3f(1.0f, 1.0f, 1.0f);
     fm.drawString((float)(centerx + maxMotionSize) - fm.getStrLength(headingFontFace, headingFontSize, buf),
-		  (float)centery + (float)maxMotionSize + 
+		  (float)centery + (float)maxMotionSize +
 		  3.0f * fm.getStrHeight(headingFontFace, headingFontSize, "0"), 0, headingFontFace, headingFontSize, buf);
   }
 }
@@ -1528,7 +1528,7 @@ void			HUDRenderer::drawPlayerScore(const Player* player,
   else
     email[0] = '\0';
   if (World::getWorld()->allowRabbit())
-    sprintf(score, "%2d%% %d(%d-%d)[%d]", 
+    sprintf(score, "%2d%% %d(%d-%d)[%d]",
 	    player->getRabbitScore(),
 	    player->getScore(),
 	    player->getWins(), player->getLosses(), player->getTeamKills());

@@ -57,32 +57,32 @@ protected:
   /** Utility method to skip data. */
   void skip(uint32_t bytes);
 
-  /** Utility method to read a 2 byte little-endian number into host byte 
+  /** Utility method to read a 2 byte little-endian number into host byte
       order. */
   uint16_t read16LE();
-  /** Utility method to read a 2 byte big-endian number into host byte 
+  /** Utility method to read a 2 byte big-endian number into host byte
       order. */
   uint16_t read16BE();
   /** Utility method to read a 4 byte little-endian number into host byte
       order. */
   uint32_t read32LE();
-  /** Utility method to read a 4 byte big-endian number into host byte 
+  /** Utility method to read a 4 byte big-endian number into host byte
       order. */
   uint32_t read32BE();
 
-  /** Utility method to byte swap a little-endian 2 byte number in place 
+  /** Utility method to byte swap a little-endian 2 byte number in place
       into host byte order. Returns the byte swapped data. */
   static uint16_t swap16LE(uint16_t*);
-  
+
   /** Utility method to byte swap a big-endian 2 byte number in place into
       host byte order. Returns the byte swapped data. */
   static uint16_t swap16BE(uint16_t*);
-  
-  /** Utility method to byte swap a little-endian 4 byte number in place 
+
+  /** Utility method to byte swap a little-endian 4 byte number in place
       into host byte order. Returns the byte swapped data. */
   static uint32_t swap32LE(uint32_t*);
-  
-  /** Utility method to byte swap a big-endian 4 byte number in place into 
+
+  /** Utility method to byte swap a big-endian 4 byte number in place into
       host byte order. Returns the byte swapped data. */
   static uint32_t swap32BE(uint32_t*);
 

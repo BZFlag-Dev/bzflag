@@ -29,7 +29,7 @@ public:
   ~AudioMenu();
 
   HUDuiDefaultKey* getDefaultKey()
-  { 
+  {
     return MenuDefaultKey::getInstance();
   }
   void execute();

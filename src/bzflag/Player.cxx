@@ -92,7 +92,7 @@ Player::~Player()
 }
 
 // Take into account the quality of player wins/(wins+loss)
-// Try to penalize winning casuality 
+// Try to penalize winning casuality
 static float rabbitRank (int wins, int losses) {
   // otherwise do score-based ranking
   int sum = wins + losses;
@@ -338,7 +338,7 @@ void			Player::addToScene(SceneDatabase* scene,
 								0.5f * tankLength, 0.5f * tankWidth,
 								BZDBCache::tankHeight);
       if (obstacle && obstacle->isCrossing(state.pos, a,
-					   0.5f * tankLength, 0.5f * tankWidth, 
+					   0.5f * tankLength, 0.5f * tankWidth,
 					   BZDBCache::tankHeight, plane) ||
 	  World::getWorld()->crossingTeleporter(state.pos, a,
 						0.5f * tankLength, 0.5f * tankWidth,

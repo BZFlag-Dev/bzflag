@@ -28,7 +28,7 @@ class DelayQueue {
   public:
     DelayQueue ();
     ~DelayQueue ();
-    
+
     void init();
     void dequeuePackets();
 
@@ -36,7 +36,7 @@ class DelayQueue {
     bool getPacket (int *length, void **data); // true if packet available
 
     float nextPacketTime ();
-    
+
   private:
     DelayNode *input;
     DelayNode *output;

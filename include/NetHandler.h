@@ -94,7 +94,7 @@ public:
   */
   static int  getUdpSocket();
 
-  /** 
+  /**
       udpReceive will try to get the next udp message received
 
       return the playerIndex if found, -1 when no player had an open udp
@@ -126,7 +126,7 @@ public:
   int         pwrite(const void *b, int l);
   int         pflush(fd_set *set);
   std::string reasonToKick();
-  void        getPlayerList(char *list); 
+  void        getPlayerList(char *list);
   const char *getTargetIP();
   int         sizeOfIP();
   void       *packAdminInfo(void *buf);

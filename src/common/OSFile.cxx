@@ -240,7 +240,7 @@ bool OSFile::open ( const char *mode )
 		strcpy(modeToUse,mode);
 
 	std::string	fileName;
-	
+
 	if (info->useGlobalPath)
 		fileName = osBaseDir;
 	fileName += info->osName;
@@ -290,7 +290,7 @@ unsigned char  OSFile::readChar ( void )
 const char* OSFile::readLine ( void )
 {
 	static std::string line;
-	
+
 	line = "";
 	char c = readChar();
 	while (c != 0 && c != '\n' && c != 10)
@@ -313,7 +313,7 @@ const char* OSFile::scanStr ( void )
 {
 	if (!isOpen())
 		return 0;
-	
+
 	static char temp[1024] = {0};
 	if (fscanf(info->fp,"%s",temp)!=1)
 		return NULL;
@@ -368,7 +368,7 @@ unsigned int OSFile::size ( void )
 	fseek(info->fp,0,SEEK_END);
 	unsigned int len = ftell(info->fp);
 	fseek(info->fp,pos, SEEK_SET);
-	
+
 	return len;
 }
 
@@ -413,7 +413,7 @@ const char* OSFile::getFileName ( void )
 	const char *ext = getExtension();
 	if (ext)
 	    info->title.resize(info->title.size() - strlen(ext) - 1);
-    
+
 	return info->title.c_str();
 }
 
@@ -449,7 +449,7 @@ const char* OSFile::getOSFileDir ( void )
 const char* OSFile::getFullOSPath ( void )
 {
 	static std::string	szPath;
-	
+
 	szPath.empty();
 	szPath = osBaseDir;
 	szPath += info->osName;
@@ -594,7 +594,7 @@ const char* OSDir::getFullOSPath ( void )
 	static std::string	szFilePath;
 
 	szFilePath.empty();
-	szFilePath = osBaseDir; 
+	szFilePath = osBaseDir;
 
 	szFilePath += info->baseOSDir;
 	return szFilePath.c_str();
@@ -624,7 +624,7 @@ bool OSDir::getNextFile ( OSFile &oFile, const char* fileMask, bool bRecursive )
 		realMask = fileMask;
 
 	getUpperName((char*)realMask.c_str());
-	
+
 	std::string theFileExt;
 	if (info->namePos == -1)
 	{
@@ -635,7 +635,7 @@ bool OSDir::getNextFile ( OSFile &oFile, const char* fileMask, bool bRecursive )
 
 		info->namePos = 0;
 	}
-	
+
 	int size = info->nameList.size();
 	if (info->namePos >= size)
 	{
@@ -661,7 +661,7 @@ bool OSDir::windowsAddFileStack(std::string pathName, std::string fileMask, bool
 {
 #ifdef _WIN32
 	struct _finddata_t fileInfo;
-	
+
 	long		hFile;
 	std::string searchstr;
 
@@ -682,7 +682,7 @@ bool OSDir::windowsAddFileStack(std::string pathName, std::string fileMask, bool
 	{
 		while (!bDone)
 		{
-			if ((strlen(fileInfo.name) >0) && (strcmp(fileInfo.name,".") != 0) && 
+			if ((strlen(fileInfo.name) >0) && (strcmp(fileInfo.name,".") != 0) &&
                 (strcmp(fileInfo.name,"..") != 0))
 			{
 				FilePath = pathName;
@@ -706,7 +706,7 @@ bool OSDir::windowsAddFileStack(std::string pathName, std::string fileMask, bool
 		pathName.size();
 	}
 	return false;
-#endif 
+#endif
 }
 
 // linux mask filter functions
@@ -748,7 +748,7 @@ static int match_multi (const char **mask, const char **string)
 				msk++;
 				str++;
 				if ((*msk == '\0') && (*str != '\0'))	/* advanced check */
-				{										
+				{
 					str++;
 					strtop++;
 					str = strtop;
@@ -771,7 +771,7 @@ static int match_multi (const char **mask, const char **string)
 }
 
 static int match_mask (const char *mask, const char *string)
-{ 
+{
 	if (mask == NULL)
 		return 0;
 

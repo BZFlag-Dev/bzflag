@@ -43,7 +43,7 @@ SpawnPosition::SpawnPosition(int playerId, bool onGroundOnly, bool notNearEdges)
   azimuth = (float)bzfrand() * 2.0f * M_PI;
 
   if (playerData->player.shouldRestartAtBase() &&
-      (team >= RedTeam) && (team <= PurpleTeam) && 
+      (team >= RedTeam) && (team <= PurpleTeam) &&
       (bases.find(team) != bases.end())) {
     TeamBases &teamBases = bases[team];
     const TeamBase &base = teamBases.getRandomBase((int)(bzfrand() * 100));
@@ -163,7 +163,7 @@ SpawnPosition::~SpawnPosition()
 {
 }
 
-const bool SpawnPosition::isFacing(const float *enemyPos, const float enemyAzimuth, 
+const bool SpawnPosition::isFacing(const float *enemyPos, const float enemyAzimuth,
 				   const float deviation) const
 {
   // vector points from test to enemy
@@ -171,12 +171,12 @@ const bool SpawnPosition::isFacing(const float *enemyPos, const float enemyAzimu
   float dy = enemyPos[0] - testPos[1];
   float angActual = atan2f (dy, dx);
   float diff = fmodf(enemyAzimuth - angActual, M_PI * 2.0f);
-  
+
   // now diff is between {-PI*2 and +PI*2}, and we're looking for values around
   // -PI or +PI, because that's when the enemy is facing the source.
   diff = fabsf (diff); // between {0 and +PI*2}
   diff = fabsf (diff - M_PI);
-  
+
   if (diff < (deviation / 2.0f)) {
     return true;
   } else {

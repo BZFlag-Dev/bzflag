@@ -30,7 +30,7 @@ public:
   ~DisplayMenu();
 
   HUDuiDefaultKey* getDefaultKey()
-  { 
+  {
     return MenuDefaultKey::getInstance();
   }
   void execute();

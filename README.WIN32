@@ -19,11 +19,11 @@ installer builder is found.
 If you want to build with SDL:
 Choose the Lib tab, and add SDLMain.lib and SDL.lib. These can be
 downloaded from libsdl.org. Also add the SDL include directory
-to the Includes tab.  Next copy SDL.dll to the directory 
-that bzflag is running from, e.g. src/bzflag/SDL_Release or 
+to the Includes tab.  Next copy SDL.dll to the directory
+that bzflag is running from, e.g. src/bzflag/SDL_Release or
 src/bzflag/SDL_Debug.
-When you want to build, set the active configuration to 
-"BZFlag - Win32 SDL_Release" or "BZFlag - Win32 SDL_Debug" 
+When you want to build, set the active configuration to
+"BZFlag - Win32 SDL_Release" or "BZFlag - Win32 SDL_Debug"
 instead of the normal Win32 Release/Debug targets.
 
 Then each time you want to build an installer

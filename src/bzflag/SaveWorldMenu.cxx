@@ -75,8 +75,8 @@ SaveWorldMenu::~SaveWorldMenu()
 
 
 HUDuiDefaultKey* SaveWorldMenu::getDefaultKey()
-{ 
-  return MenuDefaultKey::getInstance(); 
+{
+  return MenuDefaultKey::getInstance();
 }
 
 void SaveWorldMenu::execute()

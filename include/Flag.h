@@ -83,7 +83,7 @@ enum FlagEndurance {
   FlagSticky = 2
 };
 
-/** This enum tells the "quality" of the flag type, i.e. whether it's good 
+/** This enum tells the "quality" of the flag type, i.e. whether it's good
     or bad */
 enum FlagQuality {
   FlagGood = 0,
@@ -150,7 +150,7 @@ public:
   static void* unpack(void* buf, FlagType* &desc);
 
   /** Static wrapper function that makes sure that the flag map is
-   * initialized before it's used. 
+   * initialized before it's used.
    */
   static FlagTypeMap& getFlagMap();
 
@@ -181,19 +181,19 @@ public:
   void* unpack(void*);
 
   /** This function returns a set of all good flagtypes that are available in
-      the game. 
+      the game.
       @see FlagType
-      @see FlagQuality 
+      @see FlagQuality
   */
   static FlagSet& getGoodFlags();
-  
+
   /** This function returns a set of all bad flagtypes that are available in
-      the game. 
+      the game.
       @see FlagType
       @see FlagQuality
   */
   static FlagSet& getBadFlags();
-  
+
   /** This function returns a pointer to the FlagType object that is associated
       with the given abbreviation. If there is no such FlagType object, NULL
       is returned. */
@@ -211,10 +211,10 @@ public:
   float initialVelocity;	// initial launch velocity
 };
 
-/** Flags no longer use enumerated IDs. Over the wire, flags are all 
-    represented by their abbreviation, null-padded to two bytes. Internally, 
+/** Flags no longer use enumerated IDs. Over the wire, flags are all
+    represented by their abbreviation, null-padded to two bytes. Internally,
     flags are now represented by pointers to singleton FlagType classes.
-    
+
     For more information about these flags, see Flag.cxx where these FlagType
     instances are created.
 */
@@ -227,11 +227,11 @@ namespace Flags {
     *Shield, *Steamroller, *ShockWave, *PhantomZone, *Genocide, *Jumping,
     *Identify, *Cloaking, *Useless, *Masquerade, *Seer, *Thief, *Burrow,
     *Wings, *ReverseControls, *Agility,
-    *Colorblindness, *Obesity, *LeftTurnOnly, *RightTurnOnly, *Momentum, 
+    *Colorblindness, *Obesity, *LeftTurnOnly, *RightTurnOnly, *Momentum,
     *Blindness, *Jamming, *WideAngle, *NoJumping, *TriggerHappy,
     *ReverseOnly, *ForwardOnly, *Bouncy, *Lag;
-  
-  /** This function initializes all the FlagType objects in the Flags 
+
+  /** This function initializes all the FlagType objects in the Flags
       namespace. */
   void init();
 }

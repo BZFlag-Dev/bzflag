@@ -26,7 +26,7 @@ public:
   ~SaveWorldMenu();
 
   HUDuiDefaultKey* getDefaultKey();
-  
+
   void execute();
   void resize(int width, int height);
 

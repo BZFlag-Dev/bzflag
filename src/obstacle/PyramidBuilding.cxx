@@ -178,7 +178,7 @@ bool			PyramidBuilding::inMovingBox(const float*, float,
                                              float dx, float dy, float dz) const
 {
   return inBox (p, angle, dx, dy, dz);
-}                                          
+}
 
 bool			PyramidBuilding::isCrossing(const float* p, float a,
 					float dx, float dy, float height, float* plane) const

@@ -53,7 +53,7 @@ SDLDisplay::SDLDisplay() : fullScreen(false), base_width(640),
     char name[80];
     int  h;
     int  w;
-    int  j = 0; 
+    int  j = 0;
 
     defaultResolutionIndex = 0;
 #ifdef WIN32
@@ -535,7 +535,7 @@ void SDLVisual::setStencil(int minDepth) {
 void SDLVisual::setStereo(bool on) {
   SDL_GL_SetAttribute(SDL_GL_STEREO, on ? 1 : 0);
 };
-  
+
 SDLWindow::SDLWindow(const SDLDisplay* _display, SDLVisual*)
   : BzfWindow(_display), x(-1), y(-1), hasGamma(true), GLContextInited(false)
 {
@@ -585,7 +585,7 @@ static float CalculateGammaFromRamp(Uint16 ramp[256]) {
   */
   float sum = 0.0;
   int i, count = 0;
-  
+
   float gamma = 1.0;
   for (i = 1; i < 256; ++i) {
     if ((ramp[i] != 0) && (ramp[i] != 65535)) {

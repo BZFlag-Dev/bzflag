@@ -43,7 +43,7 @@ private:
   DisplayListManager& operator=(const DisplayListManager &dm);
   ~DisplayListManager();
   void rebuildLists();
-  
+
   int               lastID;
   displayListMap    lists;
 };

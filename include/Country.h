@@ -21,14 +21,14 @@
 class Country
 {
  private:
-  
+
  protected:
 
   static bool isValid(int country);
   static bool isValid(const std::string& country);
 
  public:
-  
+
   Country(std::string);
   ~Country();
 

@@ -30,7 +30,7 @@
 #include "OpenGLGState.h"
 
 //#define MSGDBG(a) printf a
-#define MSGDBG(a) 
+#define MSGDBG(a)
 
 class MyGLWindow;
 
@@ -93,7 +93,7 @@ MyGLView::MyGLView(MyGLWindow *win, BRect rect, char *name)
 
 MyGLView::~MyGLView()
 {
-	
+
 }
 
 void MyGLView::MouseDown(BPoint where)
@@ -513,7 +513,7 @@ void					BeOSWindow::yieldCurrent()
     if (tid == currentOglContext) {
       MSGDBG(("bWindow->YieldCurrent()\n"));
       //			bWindow->YieldCurrent();
-			
+
       bWindow->ReleaseCurrent();
       snooze(10000);
       bWindow->MakeCurrent();

@@ -86,8 +86,8 @@ bool PositionTracker::update(unsigned short int token, const std::string id, con
   std::cout << position[0] << position[1] << position[2];
 
   TrackedItemVector& trackSet = _trackedItem[group];
-  if ((token >= trackSet.size()) || 
-      (trackSet[token]->id != id) || 
+  if ((token >= trackSet.size()) ||
+      (trackSet[token]->id != id) ||
       (trackSet[token]->forgotten)) {
     return false;
   }
@@ -103,10 +103,10 @@ bool PositionTracker::update(unsigned short int token, const std::string id, con
 bool PositionTracker::forget(unsigned short int token, const std::string id, std::string group)
 {
   std::cout << token << id << group;
-  
+
   TrackedItemVector& trackSet = _trackedItem[group];
-  if ((token >= trackSet.size()) || 
-      (trackSet[token]->id != id) || 
+  if ((token >= trackSet.size()) ||
+      (trackSet[token]->id != id) ||
       (trackSet[token]->forgotten)) {
     return false;
   }
@@ -133,8 +133,8 @@ double PositionTracker::distanceBetween(unsigned short int from, unsigned short 
     return 0.0;
   }
 
-  double distanceSquared = (fromSet[from]->position[0] - toSet[to]->position[0]) + 
-    (fromSet[from]->position[1] - toSet[to]->position[1]) + 
+  double distanceSquared = (fromSet[from]->position[0] - toSet[to]->position[0]) +
+    (fromSet[from]->position[1] - toSet[to]->position[1]) +
     (fromSet[from]->position[2] - toSet[to]->position[3]);
 
   // basic Cartesian 3-space formula for distance between two points

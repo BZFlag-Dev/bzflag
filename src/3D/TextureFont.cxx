@@ -87,7 +87,7 @@ bool TextureFont::fmtRead(OSFile &file, std::string expectedLeft, std::string &r
 }
 
 bool TextureFont::load(OSFile &file)
-{	
+{
   const char *extension = file.getExtension();
 
   if (!extension)
@@ -161,7 +161,7 @@ bool TextureFont::load(OSFile &file)
   }
 
   // faceName.erase(faceName.size()-sizeof(temp),faceName.size());
-  
+
   if (extension)
     texture.erase(texture.size() - sizeof(extension), texture.size());
 
@@ -186,7 +186,7 @@ void TextureFont::preLoadLists(void)
   textureID = tm.getTextureID(textureAndDir.c_str());
 
   DEBUG4("Font %s (face %s) has texture ID %d\n", texture.c_str(), faceName.c_str(), textureID);
-  
+
   if (textureID == -1) {
     DEBUG2("Font texture %s has invalid ID\n", texture.c_str());
     return;
@@ -200,7 +200,7 @@ void TextureFont::preLoadLists(void)
     glLoadIdentity();
 
     glNewList(listIDs[i], GL_COMPILE);
-    
+
     glTranslatef((float)fontMetrics[i].initialDist, 0, 0);
 
     float fFontY = (float)fontMetrics[i].endY - fontMetrics[i].startY;
@@ -216,7 +216,7 @@ void TextureFont::preLoadLists(void)
 
       glTexCoord2f((float)fontMetrics[i].endX / (float)textureXSize, 1.0f - (float)fontMetrics[i].endY / (float)textureYSize);
       glVertex3f(fFontX, 0, 0);
-      
+
       glTexCoord2f((float)fontMetrics[i].endX / (float)textureXSize, 1.0f - (float)fontMetrics[i].startY / (float)textureYSize);
       glVertex3f(fFontX, fFontY, 0);
     glEnd();
@@ -261,9 +261,9 @@ float TextureFont::getStrLength(float scale, const char *str)
 
       if (charToUse == 0) {
 	if (i == 0)
-	  thisPassLen += fontMetrics[charToUse].initialDist + fontMetrics[charToUse].charWidth+fontMetrics[charToUse].whiteSpaceDist; 
+	  thisPassLen += fontMetrics[charToUse].initialDist + fontMetrics[charToUse].charWidth+fontMetrics[charToUse].whiteSpaceDist;
 	else
-	  thisPassLen += fontMetrics[lastCharacter].whiteSpaceDist + fontMetrics[charToUse].whiteSpaceDist+fontMetrics[charToUse].initialDist + fontMetrics[charToUse].charWidth; 
+	  thisPassLen += fontMetrics[lastCharacter].whiteSpaceDist + fontMetrics[charToUse].whiteSpaceDist+fontMetrics[charToUse].initialDist + fontMetrics[charToUse].charWidth;
       } else {
 	float fFontX = (float)fontMetrics[charToUse].endX - fontMetrics[charToUse].startX;
 	thisPassLen += fFontX + (float)fontMetrics[charToUse].initialDist;
@@ -326,9 +326,9 @@ void TextureFont::drawString(float scale, GLfloat color[3], const char *str)
 
       if (charToUse == 0) {
 	if (i == 0)
-	  glTranslatef((float)fontMetrics[charToUse].initialDist + (float)fontMetrics[charToUse].charWidth + (float)fontMetrics[charToUse].whiteSpaceDist, 0, 0); 
+	  glTranslatef((float)fontMetrics[charToUse].initialDist + (float)fontMetrics[charToUse].charWidth + (float)fontMetrics[charToUse].whiteSpaceDist, 0, 0);
 	else
-	  glTranslatef((float)fontMetrics[lastCharacter].whiteSpaceDist + (float)fontMetrics[charToUse].whiteSpaceDist + fontMetrics[charToUse].initialDist + (float)fontMetrics[charToUse].charWidth, 0, 0); 
+	  glTranslatef((float)fontMetrics[lastCharacter].whiteSpaceDist + (float)fontMetrics[charToUse].whiteSpaceDist + fontMetrics[charToUse].initialDist + (float)fontMetrics[charToUse].charWidth, 0, 0);
       } else {
 	glCallList(listIDs[charToUse]);
       }

@@ -23,7 +23,7 @@
 // Common implementation headers
 #include "Flag.h"
 
-ShotStatistics::ShotStatistics() : 
+ShotStatistics::ShotStatistics() :
       normalFired(0), normalHit(0),
       guidedMissileFired(0), guidedMissileHit(0),
       laserFired(0), laserHit(0),
@@ -83,7 +83,7 @@ FlagType* ShotStatistics::getFavoriteFlag() const
   /* return the flag the player fired most */
   std::vector<FlagStat> flags;
   FlagStat greatest = std::make_pair(Flags::Null, 0.0f);
-  
+
   // no entry for none/null - looking for favorite *flag*
   flags.push_back(std::make_pair(Flags::GuidedMissile, (float)guidedMissileFired));
   flags.push_back(std::make_pair(Flags::Laser, (float)laserFired));
@@ -106,19 +106,19 @@ FlagType* ShotStatistics::getBestFlag() const
   /* return the flag with the best hits/fired ratio */
   std::vector<FlagStat> flags;
   FlagStat greatest = std::make_pair(Flags::Null, 0.0f);
-  
+
   // normal shots have the opportunity to be best
-  flags.push_back(std::make_pair(Flags::Null, 
+  flags.push_back(std::make_pair(Flags::Null,
     ((float)normalHit / normalFired)));
-  flags.push_back(std::make_pair(Flags::GuidedMissile, 
+  flags.push_back(std::make_pair(Flags::GuidedMissile,
     ((float)guidedMissileHit / guidedMissileFired)));
-  flags.push_back(std::make_pair(Flags::Laser, 
+  flags.push_back(std::make_pair(Flags::Laser,
     ((float)laserHit / laserFired)));
-  flags.push_back(std::make_pair(Flags::SuperBullet, 
+  flags.push_back(std::make_pair(Flags::SuperBullet,
     ((float)superBulletHit / superBulletFired)));
-  flags.push_back(std::make_pair(Flags::ShockWave, 
+  flags.push_back(std::make_pair(Flags::ShockWave,
     ((float)shockWaveHit / shockWaveFired)));
-  flags.push_back(std::make_pair(Flags::Thief, 
+  flags.push_back(std::make_pair(Flags::Thief,
     ((float)thiefHit / thiefFired)));
 
   // we don't deal with the case where there are two "equally best"

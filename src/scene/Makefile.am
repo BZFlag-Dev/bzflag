@@ -12,7 +12,7 @@ libSceneDB_a_SOURCES =			\
 	Octree.h			\
 	SceneDatabase.cxx		\
 	ZSceneDatabase.cxx		\
-	BSPSceneDatabase.cxx    
+	BSPSceneDatabase.cxx
 
 EXTRA_DIST = \
 	README

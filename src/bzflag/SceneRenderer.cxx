@@ -11,7 +11,7 @@
  */
 
 /* FIXME -- ugh.. the class header for this file is listed as a public header
- * and is used by other libs, yet this cxx is here.. bad bad bad.  need to 
+ * and is used by other libs, yet this cxx is here.. bad bad bad.  need to
  * decouple this file from the bzflag front-end specific sources so that it
  * may be moved elsewhere.
  */
@@ -416,7 +416,7 @@ void			SceneRenderer::setSceneDatabase(SceneDatabase* db)
 
   // then free database
   delete scene;
-  
+
   scene = db;
   if (scene) {
     sceneIterator = scene->getRenderIterator();
@@ -553,13 +553,13 @@ void			SceneRenderer::render(
 
   lastFrame = _lastFrame;
   sameFrame = _sameFrame;
-  
+
   // make sure there is something to render on
   if (!window) return;
 
   // avoid OpenGL calls as long as possible -- there's a good
   // chance we're waiting on the vertical retrace.
-  
+
   // set the view frustum
   if (sceneIterator) sceneIterator->resetFrustum(&frustum);
 
@@ -731,7 +731,7 @@ void			SceneRenderer::render(
     }
 
     frustum.executeProjection();
-    
+
     if (BZDB.isTrue("zbuffer")) glEnable(GL_DEPTH_TEST);
 
     if (useHiddenLineOn) {
@@ -748,7 +748,7 @@ void			SceneRenderer::render(
     if (sceneIterator && useCollisionTreeOn && (World::getWorld() != NULL)) {
       World::getWorld()->drawCollisionGrid();
     }
-    
+
     doRender();
 
     if (useHiddenLineOn) {

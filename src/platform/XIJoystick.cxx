@@ -10,7 +10,7 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-/* XXX: FIXME: XIJoystick class as it stands is what happens when all the 
+/* XXX: FIXME: XIJoystick class as it stands is what happens when all the
  * XIJoystick stuff is moved from XWindow/XDisplay to here and cleaned up a bit.
  * It won't work until we can get a pointer to the current X display and window
  * as some functions seem to need them.

@@ -39,7 +39,7 @@ class WallObstacle : public Obstacle {
     bool                inMovingBox(const float* oldP, float oldAngle,
                                     const float *newP, float newAngle,
                                     float halfWidth, float halfBreadth, float height) const;
-                                   
+
     bool		getHitNormal(
 				const float* pos1, float azimuth1,
 				const float* pos2, float azimuth2,

@@ -99,13 +99,13 @@ class SceneNode {
 #endif
     static void		setStipple(GLfloat alpha)
 				{ (*stipple)(alpha); }
-				
+
     enum CullState {
       OctreeCulled,
       OctreePartial,
       OctreeVisible
     };
-				
+
     /** This boolean is used by the Octree code.
         Someone else can 'friend'ify it later.
     */

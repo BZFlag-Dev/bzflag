@@ -31,7 +31,7 @@ public:
   ~GUIOptionsMenu();
 
   HUDuiDefaultKey* getDefaultKey()
-  { 
+  {
     return MenuDefaultKey::getInstance();
   }
   void execute();

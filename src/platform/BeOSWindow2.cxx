@@ -378,7 +378,7 @@ void					BeOSWindow::yieldCurrent()
     if (tid == currentOglContext) {
       MSGDBG(("bWindow->YieldCurrent()\n"));
       //			bWindow->YieldCurrent();
-			
+
       bWindow->ReleaseCurrent();
       snooze(10000);
       bWindow->MakeCurrent();

@@ -13,7 +13,7 @@
 
 echo "BZFlag Server Statistics"
 echo "========================"
-echo 
+echo
 echo "Processing BEGINS ..."
 
 
@@ -151,12 +151,12 @@ echo " okay"
 
 echo "... processing COMPLETE"
 
-echo 
+echo
 echo "Server Summary"
 echo "--------------"
 echo "Servers Listed:	$servercount "
 echo "Servers Reached:	$reachcount "
-echo 
+echo
 echo "Versions:"
 seen_versions=""
 for i in $server_versions ; do

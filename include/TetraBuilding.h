@@ -46,7 +46,7 @@ class TetraBuilding : public Obstacle {
     bool                isCrossing(const float* p, float angle,
                                    float halfWidth, float halfBreadth, float height,
                                    float* plane) const;
-                                   
+
     bool		getHitNormal(
 				const float* pos1, float azimuth1,
 				const float* pos2, float azimuth2,
@@ -55,7 +55,7 @@ class TetraBuilding : public Obstacle {
 				float* normal) const;
 
     void		getCorner(int index, float* pos) const;
-    
+
     const float*   getPlane(int plane) const;
     const float*   getVertex(int vertex) const;
     const float  (*getPlanes() const)[4];
@@ -75,9 +75,9 @@ class TetraBuilding : public Obstacle {
     bool visible[4];      // is this plane visible?
     bool colored[4];      // is this plane colored?
     float colors[4][4];   // RGBA color specifications per plane
-    
+
     mutable unsigned char lastPlaneShot;
-};  
+};
 
 
 inline const float *TetraBuilding::getPlane(int plane) const

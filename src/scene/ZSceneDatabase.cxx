@@ -135,14 +135,14 @@ void			ZSceneIterator::makeCuller()
 {
   delete octree;
   octree = new Octree;
-  
+
   TimeKeeper startTime = TimeKeeper::getCurrent();
-  
+
   octree->addNodes (db->staticList, db->staticCount, cullDepth, cullElements);
 
   float elapsed = TimeKeeper::getCurrent() - startTime;
   DEBUG2 ("Octree processed in %.3f seconds.\n", elapsed);
-  
+
   if (culledList != db->staticList) {
     delete culledList;
   }

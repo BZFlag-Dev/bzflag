@@ -213,8 +213,8 @@ void			LocalPlayer::doUpdateMotion(float dt)
       // can't control explosion motion
       newVelocity[2] += BZDB.eval(StateDatabase::BZDB_GRAVITY) * dt;
       newAngVel = 0.0f;	// or oldAngVel to spin while exploding
-    } else if ((location == OnGround) 
-      ||       (location == OnBuilding) 
+    } else if ((location == OnGround)
+      ||       (location == OnBuilding)
       ||       (location == InBuilding && oldPosition[2] == groundLimit)) {
       // full control
       float speed = desiredSpeed;
@@ -390,7 +390,7 @@ void			LocalPlayer::doUpdateMotion(float dt)
     if (!obstacle || !expelled) break;
 
     float obstacleTop = obstacle->getPosition()[2] + obstacle->getHeight();
-    if ((oldLocation != InAir) 
+    if ((oldLocation != InAir)
     &&  (obstacle->getType() != WallObstacle::getClassName())
     &&  (obstacle->getType() != TetraBuilding::getClassName())
     &&  (obstacle->getType() != PyramidBuilding::getClassName())
@@ -537,7 +537,7 @@ void			LocalPlayer::doUpdateMotion(float dt)
     else
       setStatus(getStatus() & ~int(PlayerState::CrossingWall));
   } else if (World::getWorld()->crossingTeleporter( newPos, newAzimuth,
-                      0.5f * BZDB.eval(StateDatabase::BZDB_TANKLENGTH), 
+                      0.5f * BZDB.eval(StateDatabase::BZDB_TANKLENGTH),
                       0.5f * BZDB.eval(StateDatabase::BZDB_TANKWIDTH),
                       BZDBCache::tankHeight, crossingPlane)) {
     setStatus(getStatus() | int(PlayerState::CrossingWall));
@@ -909,7 +909,7 @@ void			LocalPlayer::setDesiredSpeed(float fracOfMaxSpeed)
         fracOfMaxSpeed *= BZDB.eval(StateDatabase::BZDB_AGILITYADVEL);
 	agilityTime = TimeKeeper::getCurrent();
       }
-    }      
+    }
   }
 
   // apply handicap advantage to tank speed
@@ -992,8 +992,8 @@ bool			LocalPlayer::fireShot()
     firingInfo.shot.vel[2] = 0.0f;
   }
   else {
-    // Set _shotsKeepVerticalVelocity on the server if you want shots 
-    // to have the same vertical velocity as the tank when fired.  
+    // Set _shotsKeepVerticalVelocity on the server if you want shots
+    // to have the same vertical velocity as the tank when fired.
     // keeping shots moving horizontally makes the game more playable.
     if (!BZDB.isTrue(StateDatabase::BZDB_SHOTSKEEPVERTICALV)) firingInfo.shot.vel[2] = 0.0f;
   }
@@ -1250,7 +1250,7 @@ bool			LocalPlayer::checkHit(const Player* source,
       } else { // I have PZ
         if (!isFlagActive()) { // not zoned, can't get shot
           continue;
-        } else { 
+        } else {
           // do nothing - I am zoned, I can get shot
         }
       }

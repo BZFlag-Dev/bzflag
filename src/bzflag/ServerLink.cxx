@@ -381,7 +381,7 @@ void			ServerLink::send(uint16_t code, uint16_t len,
 
 #ifndef socklen_t
 	#define socklen_t int
-#endif 
+#endif
 #endif //WIN32
 
 int			ServerLink::read(uint16_t& code, uint16_t& len,
@@ -535,7 +535,7 @@ bool ServerLink::readEnter (std::string& reason,
     reason = "Communication error joining game [No immediate respose].";
     return false;
   }
-  
+
   if (code == MsgSuperKill) {
     reason = "Server forced disconnection.";
     return false;

@@ -18,7 +18,7 @@
 
 class WallSceneNodeGenerator : public ObstacleSceneNodeGenerator {
   friend class SceneDatabaseBuilder;
-  
+
   public:
 			~WallSceneNodeGenerator();
 

@@ -24,9 +24,9 @@
 /** This class is an interface for bzadmin that reads commands from stdin. */
 class StdOutUI : public BZAdminUI {
 public:
-  
+
   StdOutUI(BZAdminClient& c);
-  
+
   virtual void outputMessage(const std::string& msg, ColorCode color);
 
   /** This function returns a pointer to a dynamically allocated

@@ -229,7 +229,7 @@ server to player messages:
 			<== id, type, team, name, email
   MsgRemovePlayer	player has exited the server
 			<== id
-  MsgAdminInfo		update of players' IP addresses and some other 
+  MsgAdminInfo		update of players' IP addresses and some other
                         properties, only sent to players with the PLAYERLIST
                         permission.
 			<-- count, [chunklen, id, bitfield, address]*

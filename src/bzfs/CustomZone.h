@@ -43,13 +43,13 @@ inline float CustomZone::getArea() const
   float x = 1.0f, y = 1.0f, z = 1.0f;
 
   if (size[0] > 1.0f) {
-    x = size[0]; 
+    x = size[0];
   }
   if (size[1] > 1.0f) {
-    y = size[1]; 
+    y = size[1];
   }
   if (size[2] > 1.0f) {
-    z = size[2]; 
+    z = size[2];
   }
 
   return (x * y * z);

@@ -92,7 +92,7 @@ bool EntryZones::getSafetyPoint( const std::string &qualifier,
                                  const float *pos, float *pt ) const
 {
   std::string safetyString = EntryZones::getSafetyPrefix() + qualifier;
-  
+
   QualifierMap::const_iterator mit = qmap.find(safetyString);
   if (mit == qmap.end())
     return false;
@@ -118,9 +118,9 @@ bool EntryZones::getSafetyPoint( const std::string &qualifier,
 
   CustomZone *zone = ((CustomZone *) &zones[closest]);
   zone->getRandomPoint(pt);
-  
+
   return true;
-}                                 
+}
 
 const char * EntryZones::getSafetyPrefix ()
 {
@@ -138,7 +138,7 @@ static int matchTeamColor(const char *teamText)
   return -1;
 }
 
-void EntryZones::makeSplitLists (int zone, 
+void EntryZones::makeSplitLists (int zone,
                                  std::vector<FlagType*> &flags,
                                  std::vector<TeamColor> &teams,
                                  std::vector<TeamColor> &safety) const
@@ -146,7 +146,7 @@ void EntryZones::makeSplitLists (int zone,
   flags.clear();
   teams.clear();
   safety.clear();
-  
+
   QualifierMap::const_iterator mit;
   for (mit = qmap.begin(); mit != qmap.end(); ++mit) {
     const QPairList &qPairList = mit->second;
@@ -157,7 +157,7 @@ void EntryZones::makeSplitLists (int zone,
       if (zoneIndex == zone) {
         int team;
         FlagType *type = Flag::getDescFromAbbreviation(mit->first.c_str());
-        if (type != Flags::Null) { 
+        if (type != Flags::Null) {
           flags.push_back (type);
         }
         else if ((team = matchTeamColor(mit->first.c_str())) != -1) {
@@ -174,7 +174,7 @@ void EntryZones::makeSplitLists (int zone,
     }
   }
 
-  return;    
+  return;
 }
 
 int EntryZones::packSize() const

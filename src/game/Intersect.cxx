@@ -551,7 +551,7 @@ static bool		testOrigRectRect(const float* p, float angle,
   if ((fabsf(sx) < dx1) && (fabsf(sy) < dy1)) {
     return true;
   }
-  
+
   // get corners of first rect and classify according to position with
   // respect to second rect, return true iff any lies inside second.
   for (i = 0; i < 4; i++) {
@@ -687,7 +687,7 @@ IntersectLevel          testAxisBoxInFrustum(const float* boxMins,
 					     const float* boxMaxs,
 					     const Frustum* frustum)
 {
-  // FIXME - use a sphere vs. cone test first? 
+  // FIXME - use a sphere vs. cone test first?
 
   static int s, t;
   static float i[3]; // inside point  (assuming partial)
@@ -700,7 +700,7 @@ IntersectLevel          testAxisBoxInFrustum(const float* boxMins,
   //         OpenGL should easily clip the few items sneak in
 
   for (s = 1 /* NOTE: not 0 */; s < 5; s++) {
-  
+
     p = frustum->getSide(s);
 
     // setup the inside/outside corners
@@ -737,7 +737,7 @@ IntersectLevel          testAxisBoxInFrustum(const float* boxMins,
 // the occluder plane normals point inwards
 IntersectLevel          testAxisBoxOcclusion(const float* boxMins,
                                              const float* boxMaxs,
-                                             const float (*planes)[4],  
+                                             const float (*planes)[4],
                                              int planeCount)
 {
   static int s, t;
@@ -748,7 +748,7 @@ IntersectLevel          testAxisBoxOcclusion(const float* boxMins,
   IntersectLevel result = Contained;
 
   for (s = 0; s < planeCount; s++) {
-  
+
     p = planes[s];
 
     // setup the inside/outside corners

@@ -127,7 +127,7 @@ public:
   void		setDeadReckoning(float timestamp);
 
   void		setUserTexture ( const char *tex ) { if(tex) userTexture = tex;}
-  
+
   void setZpos (float z);
 
 protected:

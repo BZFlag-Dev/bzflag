@@ -527,7 +527,7 @@ static void		parse(int argc, char** argv)
       BZDB.set("filterFilename", argv[i], StateDatabase::ReadOnly);
     } else if (argv[i][0] != '-') {
       if (i == argc-1) {
-	
+
 	// find the beginning of the server name, parse the callsign
 	char* serverName;
 	if ((serverName = strchr(argv[i], '@')) != NULL) {
@@ -541,7 +541,7 @@ static void		parse(int argc, char** argv)
 	} else {
 	  serverName = argv[i];
 	}
-	
+
 	// find the beginning of the port number, parse it
 	char* portNumber;
 	if ((portNumber = strchr(serverName, ':')) != NULL) {
@@ -576,7 +576,7 @@ static void		parseConfigName(int argc, char** argv)
     if (strcmp(argv[i], "-config") == 0) {
       checkArgc(i, argc, argv[i]);
       alternateConfig = getConfigDirName();
-      alternateConfig += argv[i]; 
+      alternateConfig += argv[i];
     }
   }
 }
@@ -677,7 +677,7 @@ static void createCacheSignature ()
   // This file is to be used by archiving and mirroring tools avoid
   // this directory (and any of its sub-directories). Please see:
   //         < http://www.brynosaurus.com/cachedir/ >
-  
+
   const char cacheSignature[] = "Signature: 8a477f597d28d172789f06886806bc55\n";
   std::string cacheTagName =  getCacheDirName();
   cacheTagName += ".IsCacheDirectory";
@@ -688,7 +688,7 @@ static void createCacheSignature ()
   delete cacheTag;
 
   return;
-}  
+}
 
 //
 // main()
@@ -736,7 +736,7 @@ int			main(int argc, char** argv)
 		"Exiting.", timeBombString());
     exit(0);
   }
-  
+
   createCacheSignature();
 
   // initialize global objects and classes
@@ -790,7 +790,7 @@ int			main(int argc, char** argv)
   // the rest of the options are parsed after the config file
   // has been loaded to allow for command line overrides
   parseConfigName(argc, argv);
-  
+
   // read resources
   if (alternateConfig != "") {
     if (CFGMGR.read(alternateConfig)) {
@@ -809,7 +809,7 @@ int			main(int argc, char** argv)
 
   if (startupInfo.hasConfiguration)
     ActionBinding::instance().getFromBindings();
-  else 
+  else
     // bind default keys
     ActionBinding::instance().resetBindings();
 
@@ -960,7 +960,7 @@ int			main(int argc, char** argv)
   if (!anonymous) {
     if (BZDB.isSet("email")) {
       email = BZDB.get("email");
-    } 
+    }
 
     if (email == "default") {
       email = anonymousName;

@@ -75,7 +75,7 @@ teamsName = [
 	'purple' ,
 	'observer' ,
 	'rabbit'
-] 
+]
 
 playerType = [
 	'tank' ,
@@ -233,7 +233,7 @@ def getAndPrintStat( hostname , port ) :
 		if t == None : continue
 		print '%-8s %5d %5d %5d %5d' \
 			% ( team , t[ 'size' ] , t[ 'score' ] , t[ 'won' ] , t[ 'lost' ] )
-	
+
 	print
 	print '--[ PLAYERS ]' + '-' * 37
 	print
@@ -282,7 +282,7 @@ def main() :
 			if option in [ '-h' , '--help' ] :
 				usage()
 				sys.exit( 0 )
-	
+
 		if len( parameters ) > 2 :
 			usage()
 			sys.exit( 0 )

@@ -96,7 +96,7 @@ const Obstacle* ShotStrategy::getFirstBuilding(const Ray& ray,
 					       float min, float& t)
 {
   const Obstacle* closestObstacle = NULL;
-  
+
   // check walls
   const std::vector<WallObstacle> &walls = World::getWorld()->getWalls();
   std::vector<WallObstacle>::const_iterator it = walls.begin();
@@ -117,9 +117,9 @@ const Obstacle* ShotStrategy::getFirstBuilding(const Ray& ray,
   if (colMgr == NULL) {
     return closestObstacle;
   }
-  
+
   const ObsList* olist = colMgr->rayTest (&ray);
-  
+
   for (int i = 0; i < olist->count; i++) {
     const Obstacle* obs = olist->list[i];
     if (!obs->isShootThrough()) {
@@ -127,7 +127,7 @@ const Obstacle* ShotStrategy::getFirstBuilding(const Ray& ray,
       if (obs->getType() == Teleporter::getClassName()) {
         const Teleporter* tele = (const Teleporter*) obs;
         int face;
-	if ((timet > min) && (timet < t) && 
+	if ((timet > min) && (timet < t) &&
             (tele->isTeleported(ray, face) < 0.0f)) {
 	  t = timet;
 	  closestObstacle = obs;
@@ -141,7 +141,7 @@ const Obstacle* ShotStrategy::getFirstBuilding(const Ray& ray,
       }
     }
   }
-        
+
   return closestObstacle;
 }
 

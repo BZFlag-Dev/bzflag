@@ -65,10 +65,10 @@ bool			SDLMedia::openAudio()
   if (SDL_InitSubSystem(SDL_INIT_AUDIO) == -1) {
     printFatalError("Could not initialize SDL-Audio: %s.\n", SDL_GetError());
     exit(-1);
-  }; 
+  };
 
   static SDL_AudioSpec desired;
- 
+
   // what the frequency?
   audioOutputRate = defaultAudioRate;
 

@@ -18,7 +18,7 @@
 
 
 /** Locale will help control the output of strings so that they are
- *  localized to the specified localization. ;)  
+ *  localized to the specified localization. ;)
  */
 class Locale
 {

@@ -23,7 +23,7 @@ class SdlPlatformFactory : public PlatformFactory {
  public:
   SdlPlatformFactory();
   ~SdlPlatformFactory();
-  
+
   BzfDisplay*		createDisplay(const char* name, const char*);
   BzfVisual*		createVisual(const BzfDisplay*);
   BzfWindow*		createWindow(const BzfDisplay*, BzfVisual*);

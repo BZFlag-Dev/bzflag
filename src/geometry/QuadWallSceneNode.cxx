@@ -352,7 +352,7 @@ void                    QuadWallSceneNode::getExtents(float* _mins, float* _maxs
   return;
 }
 
-bool                    QuadWallSceneNode::inAxisBox(const float* mins, 
+bool                    QuadWallSceneNode::inAxisBox(const float* mins,
                                                      const float* maxs) const
 {
   float myMins[3], myMaxs[3];

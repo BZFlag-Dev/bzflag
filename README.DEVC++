@@ -4,7 +4,7 @@ is quite easy.
 1. Open up the corresponding project files, included in the "Dev-C++"
    directory. Note that each project uses an individual project file,
    so no two can be combined.
-   
+
 2. Let the opened project compile
 
 3. The binary should be in each project's corresponding main source
@@ -14,7 +14,7 @@ SDL is needed for the current building style, which is considerably smaller
 than DirectX SDK, and is available from:
 
     www.libsdl.org
-    
+
 It is only a few megabytes, and is cross-platform. Remeber to download the
 one for MinGW32 so it works nicely (however, a VC++ one may also work), if you
 are on Windows, otherwise download the one for GCC on Linux. Place

@@ -17,7 +17,7 @@
 
 #include "Flag.h"
 
-/** ShotStatistics stores and calculates a set of statistics on player's shots 
+/** ShotStatistics stores and calculates a set of statistics on player's shots
  *  and accuracy
  */
 class ShotStatistics {

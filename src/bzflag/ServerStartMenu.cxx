@@ -242,7 +242,7 @@ ServerStartMenu::ServerStartMenu()
   }
 #endif // _WIN32
   scanWorldFiles (searchDir, items);
-  
+
 
   list->update();
   controls.push_back(list);

@@ -19,7 +19,7 @@
 #include "global.h"
 
 
-/** This struct stores information about a player that is relevant to 
+/** This struct stores information about a player that is relevant to
     bzadmin. */
 struct PlayerInfo {
   PlayerInfo() {}

@@ -182,12 +182,12 @@ void broadcastMessage(uint16_t code, int len, const void *msg)
       directMessage(i, code, len, msg);
     }
   }
-  
+
   // record the packet
   if (Record::enabled()) {
     Record::addPacket (code, len, msg);
   }
-  
+
   return;
 }
 
@@ -199,7 +199,7 @@ static void onGlobalChanged(const std::string& msg, void*)
 {
   // This Callback is removed in replay mode. As
   // well, the /set and /reset commands are blocked.
-  
+
   std::string name  = msg;
   std::string value = BZDB.get(msg);
   void *bufStart = getDirectMessageBuffer();
@@ -326,7 +326,7 @@ static void sendPlayerUpdate(GameKeeper::Player *playerData, int index)
 
   void *bufStart = getDirectMessageBuffer();
   void *buf      = playerData->packPlayerUpdate(bufStart);
-  
+
   if (playerData->getIndex() == index) {
     // send all players info about player[playerIndex]
     broadcastMessage(MsgAddPlayer, (char*)buf - (char*)bufStart, bufStart);
@@ -418,9 +418,9 @@ static void publicize()
 
   listServerLinksCount = 0;
 
-  if (listServerLink) 
+  if (listServerLink)
     delete listServerLink;
-  
+
   if (clOptions->publicizeServer) {
     // list server initialization
     listServerLink = new ListServerLink(clOptions->listServerURL, clOptions->publicizedAddress, clOptions->publicizedTitle);
@@ -547,14 +547,14 @@ static void relayPlayerPacket(int index, uint16_t len, const void *rawbuf, uint1
   if (Record::enabled()) {
     Record::addPacket (code, len, (char*)rawbuf + 4);
   }
-    
+
   // relay packet to all players except origin
   for (int i = 0; i < curMaxPlayers; i++) {
     GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(i);
     if (!playerData)
       continue;
     PlayerInfo& pi = playerData->player;
-    
+
     if (i != index && pi.isPlaying()) {
       if (((code == MsgPlayerUpdate) ||(code == MsgPlayerUpdateSmall))
           && pi.haveFlag()
@@ -1003,7 +1003,7 @@ static WorldInfo *defineTeamWorld()
 		     size, size, 0.0f, t, false, false);
     }
   }
-  
+
   world->finishWorld();
 
   return world;
@@ -1135,14 +1135,14 @@ static bool defineWorld()
     return false;
 
   maxWorldHeight = world->getMaxWorldHeight();
-    
+
   // package up world
   if (clOptions->gameStyle & TeamFlagGameStyle) {
     world->packDatabase(&bases);
   } else {
     world->packDatabase(NULL);
   }
-  
+
   // now get world packaged for network transmission
   worldDatabaseSize = 4 + WorldCodeHeaderSize +
       world->getDatabaseSize() + 4 + WorldCodeEndSize;
@@ -1367,7 +1367,7 @@ void sendMessage(int playerIndex, PlayerId targetPlayer, const char *message)
   buf = nboPackString(buf, msg, msglen);
 
   ((char*)bufStart)[MessageLen - 1] = '\0'; // always terminate
-  
+
   int len = 2 + msglen;
   bool broadcast = false;
 
@@ -1396,7 +1396,7 @@ void sendMessage(int playerIndex, PlayerId targetPlayer, const char *message)
     broadcastMessage(MsgMessage, len, bufStart);
     broadcast = true;
   }
-    
+
   if (Record::enabled() && !broadcast) { // don't record twice
     Record::addPacket (MsgMessage, len, bufStart, HiddenPacket);
   }
@@ -1486,7 +1486,7 @@ static TeamColor autoTeamSelect(TeamColor t)
     if (currTeam.max > 0)
       teams.push_back(currTeam);
   }
-  
+
   // Give rogue if that is the only team
   if (teams.size() == 0)
     return RogueTeam;
@@ -1578,7 +1578,7 @@ static void addPlayer(int playerIndex)
     = GameKeeper::Player::getPlayerByIndex(playerIndex);
   if (!playerData)
     return;
-  
+
   // make sure the callsign is not obscene/filtered
   if (clOptions->filterCallsigns) {
     DEBUG2("checking callsign: %s\n",playerData->player.getCallSign());
@@ -1707,10 +1707,10 @@ static void addPlayer(int playerIndex)
 
   // send update of info for team just joined
   sendTeamUpdate(-1, teamIndex);
-  
+
   // send IP update to everyone with PLAYERLIST permission
   sendIPUpdate(-1, playerIndex);
-  
+
   // send rabbit information
   if (clOptions->gameStyle & int(RabbitChaseGameStyle)) {
     void *buf, *bufStart = getDirectMessageBuffer();
@@ -1842,13 +1842,13 @@ void resetFlag(FlagInfo &flag)
       flagPos[1] = (worldSize - baseSize) * ((float)bzfrand() - 0.5f);
       flagPos[2] = 0.0f;
     }
-    
+
     float deadUnder = BZDB.eval(StateDatabase::BZDB_DEADUNDER);
     if (deadUnder >= 0.0f) {
       // precautionary measure
       clOptions->flagsOnBuildings = true;
     }
-    
+
     int topmosttype = world->cylinderInBuilding(&obj, flagPos, r, flagHeight);
 
     while ((topmosttype != NOT_IN_BUILDING) || (flagPos[2] <= deadUnder)) {
@@ -1960,7 +1960,7 @@ static void anointNewRabbit(int killerId = NoPlayer)
     if (killerId != oldRabbit && killerData && killerData->player.isPlaying()
 	&& killerData->player.canBeRabbit())
       rabbitIndex = killerId;
-  
+
   if (rabbitIndex == NoPlayer)
     rabbitIndex = GameKeeper::Player::anointRabbit(oldRabbit);
 
@@ -2096,7 +2096,7 @@ void removePlayer(int playerIndex, const char *reason, bool notify)
     // delete this player before 'fixing' the count
     delete playerData;
     playerData = NULL;
-    
+
     fixTeamCount();
 
     // tell the list server the new number of players
@@ -2238,7 +2238,7 @@ static void playerAlive(int playerIndex)
     removePlayer(playerIndex, "unidentified");
     return;
   }
-  
+
   if (playerData->player.isBot()
       && BZDB.isTrue(StateDatabase::BZDB_DISABLEBOTS)) {
     sendMessage(ServerPlayer, playerIndex, "I'm sorry, we do not allow bots on this server.");
@@ -2251,7 +2251,7 @@ static void playerAlive(int playerIndex)
   dropAssignedFlag(playerIndex);
 
   // send MsgAlive
-  SpawnPosition* spawnPosition = new SpawnPosition(playerIndex, 
+  SpawnPosition* spawnPosition = new SpawnPosition(playerIndex,
       (!clOptions->respawnOnBuildings) || (playerData->player.isBot()),
        clOptions->gameStyle & TeamFlagGameStyle);
   // update last position immediately
@@ -2510,7 +2510,7 @@ static void dropFlag(int playerIndex, float pos[3])
   // okay, go ahead and drop it
   numFlagsInAir++;
 
-  // limited flags that have been fired should be disposed of 
+  // limited flags that have been fired should be disposed of
   bool limited = clOptions->flagLimit[drpFlag.flag.type] != -1;
   if (limited && drpFlag.numShots > 0) drpFlag.grabs = 0;
 
@@ -2566,7 +2566,7 @@ static void dropFlag(int playerIndex, float pos[3])
     vanish = true;
 
   float landingPos[3] = {pos[0], pos[1], obstacleTop};
-  
+
   // With Team Flag, we should absolutely go for finding a landing
   // position, while, for other flags, we could stay with default, or
   // just let them vanish
@@ -2587,7 +2587,7 @@ static void dropFlag(int playerIndex, float pos[3])
 	     BZDB.eval(StateDatabase::BZDB_FLAGHEIGHT));
 	  if ((topmosttype != NOT_IN_BUILDING) || (landingPos[2] <= deadUnder)) {
 	    TeamBases &teamBases = bases[flagTeam];
-	    const TeamBase &base = teamBases.getRandomBase(flagIndex); 
+	    const TeamBase &base = teamBases.getRandomBase(flagIndex);
 	    landingPos[0] = base.position[0];
 	    landingPos[1] = base.position[1];
 	    landingPos[2] = base.position[2] + base.size[2];
@@ -2615,7 +2615,7 @@ static void dropFlag(int playerIndex, float pos[3])
 	  landingPos[2] = 0.0f;
 	} else {// oh well, whatcha gonna do?
 	  TeamBases &teamBases = bases[flagTeam];
-	  const TeamBase &base = teamBases.getRandomBase(flagIndex); 
+	  const TeamBase &base = teamBases.getRandomBase(flagIndex);
 	  landingPos[0] = base.position[0];
 	  landingPos[1] = base.position[1];
 	  landingPos[2] = base.position[2] + base.size[2];
@@ -2914,7 +2914,7 @@ static void parseCommand(const char *message, int t)
 
   if (strncmp(message + 1, "me ", 3) == 0) {
     handleMeCmd(playerData, message);
-    
+
   } else if (strncmp(message + 1, "msg", 3) == 0) {
     handleMsgCmd(playerData, message);
 
@@ -3246,7 +3246,7 @@ static void handleCommand(int t, const void *rawbuf)
 
       if (invalidPlayerAction(playerData->player, t, "grab a flag"))
 	break;
-	
+
       buf = nboUnpackUShort(buf, flag);
       grabFlag(t, int(flag));
       break;
@@ -3268,7 +3268,7 @@ static void handleCommand(int t, const void *rawbuf)
 
       if (invalidPlayerAction(playerData->player, t, "capture a flag"))
 	break;
-	
+
       buf = nboUnpackUShort(buf, team);
       captureFlag(t, TeamColor(team));
       break;
@@ -3344,7 +3344,7 @@ static void handleCommand(int t, const void *rawbuf)
       } else if (targetPlayer == AdminPlayers
 		 && playerData->accessInfo.hasPerm
 		 (PlayerAccessInfo::adminMessages)) {
-	sendMessage (t, AdminPlayers, message);			
+	sendMessage (t, AdminPlayers, message);
       }
       // check if the target player is invalid
       else if (realPlayer(targetPlayer)) {
@@ -3456,7 +3456,7 @@ static void handleCommand(int t, const void *rawbuf)
       if (state.order <= lastState[t].order)
 	break;
 
-      playerData->lagInfo.updateLag(timestamp, 
+      playerData->lagInfo.updateLag(timestamp,
                                     state.order - lastState[t].order > 1);
       playerData->player.updateIdleTime();
 
@@ -3467,7 +3467,7 @@ static void handleCommand(int t, const void *rawbuf)
 
         // see if the player is too high
         static const float heightFudge = 1.10f; /* 10% */
-        
+
 	float wingsGravity = BZDB.eval(StateDatabase::BZDB_WINGSGRAVITY);
 	float normalGravity = BZDB.eval(StateDatabase::BZDB_GRAVITY);
 	if ((wingsGravity < 0.0f) && (normalGravity < 0.0f)) {
@@ -3487,11 +3487,11 @@ static void handleCommand(int t, const void *rawbuf)
           } else {
             maxHeight = normalMaxHeight;
           }
-          
+
           // final adjustments
           maxHeight *= heightFudge;
           maxHeight += maxWorldHeight;
-	  
+
 	  if (state.pos[2] > maxHeight) {
 	    DEBUG1("Kicking Player %s [%d] jumped too high [max: %f height: %f]\n",
 		   playerData->player.getCallSign(), t, maxHeight, state.pos[2]);
@@ -3537,7 +3537,7 @@ static void handleCommand(int t, const void *rawbuf)
 
           // we'll be checking against the player's flag type
           int pFlag = playerData->player.getFlag();
-          
+
 	  // check for highspeed cheat; if inertia is enabled, skip test for now
 	  if (clOptions->linearAcceleration == 0.0f) {
 	    // Doesn't account for going fast backwards, or jumping/falling
@@ -3565,7 +3565,7 @@ static void handleCommand(int t, const void *rawbuf)
 		  *= BZDB.eval(StateDatabase::BZDB_AGILITYADVEL)
 		  * BZDB.eval(StateDatabase::BZDB_AGILITYADVEL);
  	      else if ((FlagInfo::flagList[pFlag].flag.type == Flags::Burrow) &&
-	        (lastState[t].pos[2] == state.pos[2]) && 
+	        (lastState[t].pos[2] == state.pos[2]) &&
 	        (lastState[t].velocity[2] == state.velocity[2]) &&
 	        (state.pos[2] <= BZDB.eval(StateDatabase::BZDB_BURROWDEPTH)))
 	        // if we have burrow and are not actively burrowing
@@ -3575,7 +3575,7 @@ static void handleCommand(int t, const void *rawbuf)
 		  *= BZDB.eval(StateDatabase::BZDB_BURROWSPEEDAD)
 		  * BZDB.eval(StateDatabase::BZDB_BURROWSPEEDAD);
 	    }
-	    
+
 	    // If player is moving vertically, or not alive the speed checks
 	    // seem to be problematic. If this happens, just log it for now,
 	    // but don't actually kick
@@ -3584,7 +3584,7 @@ static void handleCommand(int t, const void *rawbuf)
 	    ||  ((state.status & PlayerState::Alive) == 0)) {
 	      logOnly = true;
 	    }
-	    
+
 	    // allow a 10% tolerance level for speed if -speedtol is not sane
 	    float realtol = 1.1f;
 	    if (speedTolerance > 1.0f)
@@ -3717,7 +3717,7 @@ int main(int argc, char **argv)
 
   setvbuf(stdout, (char *)NULL, _IOLBF, 0);
   setvbuf(stderr, (char *)NULL, _IOLBF, 0);
-  
+
   Record::init();
 
 
@@ -3812,29 +3812,29 @@ int main(int argc, char **argv)
   if (clOptions->replayServer) {
 
     Replay::init();
-    
-    // we don't send flags to a client that isn't expecting them 
+
+    // we don't send flags to a client that isn't expecting them
     numFlags = 0;
 
-    // disable the BZDB callbacks    
+    // disable the BZDB callbacks
     for (unsigned int gi = 0; gi < numGlobalDBItems; ++gi) {
       assert(globalDBItems[gi].name != NULL);
-      BZDB.removeCallback(std::string(globalDBItems[gi].name), 
+      BZDB.removeCallback(std::string(globalDBItems[gi].name),
                           onGlobalChanged, (void*) NULL);
     }
-    
+
     // maxPlayers is sent in the world data to the client.
     // the client then uses this to setup it's players
     // data structure, so we need to send it the largest
     // PlayerId it might see.
     maxPlayers = MaxPlayers + ReplayObservers;
-    
+
     if (clOptions->maxTeam[ObserverTeam] == 0) {
       std::cerr << "replay needs at least 1 observer, set to 1" << std::endl;
       clOptions->maxTeam[ObserverTeam] = 1;
     }
     else if (clOptions->maxTeam[ObserverTeam] > ReplayObservers) {
-      std::cerr << "observer count limited to " << ReplayObservers << 
+      std::cerr << "observer count limited to " << ReplayObservers <<
                    " for replay" << std::endl;
       clOptions->maxTeam[ObserverTeam] = ReplayObservers;
     }
@@ -3855,7 +3855,7 @@ int main(int argc, char **argv)
       DEBUG1("Bad word filter specified without -filterChat or -filterCallsigns\n");
     }
   }
-  
+
 
   /* initialize the poll arbiter for voting if necessary */
   if (clOptions->voteTime > 0) {
@@ -3940,7 +3940,7 @@ int main(int argc, char **argv)
     std::cerr << "ERROR: A world was not specified" << std::endl;
     return 1;
   }
-  
+
   // no original world weapons in replay mode
   if (Replay::enabled()) {
     world->getWorldWeapons().clear();
@@ -3989,7 +3989,7 @@ int main(int argc, char **argv)
     readPassFile(passFile);
   if (userDatabaseFile.size())
     PlayerAccessInfo::readPermsFile(userDatabaseFile);
-    
+
   if (clOptions->startRecording) {
     Record::start (ServerPlayer);
   }
@@ -4006,10 +4006,10 @@ int main(int argc, char **argv)
    **/
   int i;
   while (!done) {
-  
+
     // see if the octree needs to be reloaded
     world->checkCollisionManager();
-  
+
     maxFileDescriptor = 0;
     // prepare select set
     fd_set read_set, write_set;
@@ -4120,12 +4120,12 @@ int main(int argc, char **argv)
         free (data);
       }
     }
-    
+
     // send replay packets
     if (Replay::playing()) {
       Replay::sendPackets ();
     }
-    
+
 
     // kick idle players
     if (clOptions->idlekickthresh > 0) {
@@ -4254,7 +4254,7 @@ int main(int argc, char **argv)
 	      if (action == "ban") {
 		int hours = 0;
 		int minutes = clOptions->banTime % 60;
-		if (clOptions->banTime > 60) { 
+		if (clOptions->banTime > 60) {
 		  hours = clOptions->banTime / 60;
 		}
 		pollAction = std::string("banned for ");
@@ -4287,7 +4287,7 @@ int main(int argc, char **argv)
 	      if (action == "ban") {
 		clOptions->acl.ban(realIP.c_str(), target.c_str(), clOptions->banTime);
 	      }
-	      
+
 	      if ((action == "ban") || (action == "kick")) {
 		// lookup the player id
 		bool foundPlayer = false;
@@ -4503,7 +4503,7 @@ int main(int argc, char **argv)
 	if (listServerLink->isConnected())
 	  if (FD_ISSET(listServerLink->linkSocket, &write_set))
 	    listServerLink->sendQueuedMessages();
-	  else if (FD_ISSET(listServerLink->linkSocket, &read_set)) 
+	  else if (FD_ISSET(listServerLink->linkSocket, &read_set))
 	    listServerLink->read();
 
       // check if we have any UDP packets pending
@@ -4570,7 +4570,7 @@ int main(int argc, char **argv)
 	    }
 	    continue;
 	  }
-	  
+
 	  uint16_t len, code;
 	  void *buf = netPlayer->getTcpBuffer();
 	  buf = nboUnpackUShort(buf, len);
@@ -4651,7 +4651,7 @@ int main(int argc, char **argv)
 
   Record::kill();
   Replay::kill();
-  
+
 #if defined(_WIN32)
   WSACleanup();
 #endif /* defined(_WIN32) */

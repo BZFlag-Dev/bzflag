@@ -1,6 +1,6 @@
 .TH bzfs 6 BUILD_DATE bzfs-BUILD_VERSION BZFlag
 .SH NAME
-bzfs \- BZFlag game server 
+bzfs \- BZFlag game server
 .SH SYNOPSIS
 .sS
 .B bzfs
@@ -126,7 +126,7 @@ and write the banlist back to the file when someone gets banned or unbanned.
 If this option isn't given the banlist will not be saved.
 .TP
 .B -c
-Enables the capture-the-flag style game. By default this allocates one team flag per team. 
+Enables the capture-the-flag style game. By default this allocates one team flag per team.
 This can be modified see +f team. By default, the free-for-all style is used.
 .TP
 \fB\-conf \fIconfigfilename\fR
@@ -154,7 +154,7 @@ Forces the existence of the given flag.  If specified multiple times
 for the same \fIflag-id\fR, then that many flags will appear.  The
 \fIgood\fR argument is equivalent to specifying \fB+f\fR once for
 each kind of good flag. Same goes for the \fIbad\fR argument.  The
-\fIteam\fR argument adds a team flag to each team, 
+\fIteam\fR argument adds a team flag to each team,
 assuming that the game style is capture the flag. The optional
 \fI{count}\fR parameter allows the specification of multiple flags of the
 same type. Note that the curly braces are required.
@@ -173,7 +173,7 @@ give you exactly 40 good flags except genocide and 10 of each bad flag.
 Allow flags on box buildings.
 .TP
 .B -filterCallsigns
-Turn on the filtering of callsigns and email addresses.  Callsigns and 
+Turn on the filtering of callsigns and email addresses.  Callsigns and
 addresses are compared against bad words provided via \fB-badwords\fR.
 .TP
 .B -filterChat
@@ -1089,7 +1089,7 @@ In the following examples, the values are the defaults.
 .br
 \fB  position\fR 0.0 0.0 0.0
 .br
-\fB  size\fR 1.0 1.0 1.0 
+\fB  size\fR 1.0 1.0 1.0
 .br
 \fB  rotation\fR 0.0
 .br

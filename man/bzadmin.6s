@@ -41,8 +41,8 @@ The curses user interface also has a simple menu system where you can edit
 the server variables (if you are an admin) and see a player list. If you are
 an admin you can also see the IP addresses in the player list, if you have
 sent a \fB/playerlist\fR command. The menu shows up when you hit the F2 key.
-It only covers the upper half of the screen, so you can still see what's 
-going on in the game. You can navigate through the menu with the up and 
+It only covers the upper half of the screen, so you can still see what's
+going on in the game. You can navigate through the menu with the up and
 down arrow keys, and use the enter key to select submenus and other menu
 items. If you hit F2 again the command prompt will regain keyboard focus,
 but the menu will still be visible. If you hit F2 a third time the menu will

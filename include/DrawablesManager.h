@@ -58,7 +58,7 @@ private:
   DrawablesManager(const DrawablesManager &dm);
   DrawablesManager& operator=(const DrawablesManager &dm);
   ~DrawablesManager();
-  
+
   drawablesPassList list;
 };
 

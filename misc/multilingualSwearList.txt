@@ -1476,7 +1476,7 @@ omanko                  # ja - Female Privates Extremely Vulgar C**t equivalent
 omanko suru to do		# ja - Female privates...f***  Extroardinarily nasty phrase
 omanko suru to do suru	# ja - Female privates...f***  Extroardinarily nasty phrase
 wakazo					# ja - Young Punk
-yada					# ja - female 
+yada					# ja - female
 
 # Korean (phonetic more or less)
 dong-mogo               # ko - eat shit

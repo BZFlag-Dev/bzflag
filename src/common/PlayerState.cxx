@@ -47,7 +47,7 @@ void*	PlayerState::pack(void* buf, uint16_t& code)
   order++;
   buf = nboPackInt(buf, int32_t(order));
   buf = nboPackShort(buf, int16_t(status));
-  
+
   if ((BZDB.eval(StateDatabase::BZDB_NOSMALLPACKETS) > 0.0f) ||
       (fabsf (pos[0]) >= smallMaxDist)      ||
       (fabsf (pos[1]) >= smallMaxDist)      ||
@@ -58,7 +58,7 @@ void*	PlayerState::pack(void* buf, uint16_t& code)
       (fabsf (angVel) >= smallMaxAngVel)) {
 
     code = MsgPlayerUpdate;
-    
+
     buf = nboPackVector(buf, pos);
     buf = nboPackVector(buf, velocity);
     buf = nboPackFloat(buf, azimuth);
@@ -67,9 +67,9 @@ void*	PlayerState::pack(void* buf, uint16_t& code)
   else {
 
     code = MsgPlayerUpdateSmall;
-    
+
     int16_t posShort[3], velShort[3], aziShort, angVelShort;
-    
+
     for (int i=0; i<3; i++) {
       posShort[i] = (int16_t) ((pos[i] * smallScale) / smallMaxDist);
       velShort[i] = (int16_t) ((velocity[i] * smallScale) / smallMaxVel);
@@ -79,10 +79,10 @@ void*	PlayerState::pack(void* buf, uint16_t& code)
     float angle = fmodf (azimuth, M_PI * 2.0f);
     if (angle > M_PI) {
       angle -= (M_PI * 2.0f);
-    }    
+    }
     else if (angle < -M_PI) {
       angle += (M_PI * 2.0f);
-    }    
+    }
     aziShort = (int16_t) ((angle * smallScale) / M_PI);
     angVelShort = (int16_t) ((angVel * smallScale) / smallMaxAngVel);
 
@@ -124,7 +124,7 @@ void*	PlayerState::unpack(void* buf, uint16_t code)
     buf = nboUnpackShort(buf, velShort[2]);
     buf = nboUnpackShort(buf, aziShort);
     buf = nboUnpackShort(buf, angVelShort);
-    
+
     for (int i=0; i<3; i++) {
       pos[i] = ((float)posShort[i] * smallMaxDist) / smallScale;
       velocity[i] = ((float)velShort[i] * smallMaxVel) / smallScale;

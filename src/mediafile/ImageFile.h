@@ -34,13 +34,13 @@ public:
 
   /** Returns true if the stream was successfully opened as an image file. */
   bool isOpen() const;
-  
+
   /** Get the number of channels in the image file. Channels are 8 bits. */
   int			getNumChannels() const;
-  
+
   /** Get the width of the image file. */
   int			getWidth() const;
-  
+
   /** Get the height of the image file. */
   int			getHeight() const;
 

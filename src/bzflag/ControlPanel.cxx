@@ -141,7 +141,7 @@ void			ControlPanel::render(SceneRenderer& renderer)
   if (!BZDB.isTrue("displayConsoleAndRadar")) {
     return;
   }
-  
+
   if (!resized) resize();
   if (!changedMessage && renderer.getPanelOpacity() == 1.0f)
     return;
@@ -255,14 +255,14 @@ void			ControlPanel::render(SceneRenderer& renderer)
   //
   // It works by first breaking the string into a vector of strings, each
   //  of which will fit the control panel, and tallying the number of lines,
-  //  then moving up the proper number of lines and displaying downward -- 
+  //  then moving up the proper number of lines and displaying downward --
   //  that is, it kinda backtracks for each line that will wrap.
   //
   //  messageAreaPixels[2] = Width of Message Window in Pixels
   //  maxLines             = Max messages lines that can be displayed
   //  maxScrollPages       = This number * maxLines is the total maximum
   //                         lines of messages (and scrollback)
-  // The font is NOT necessarily fixed, so we must use GetWidth on the 
+  // The font is NOT necessarily fixed, so we must use GetWidth on the
   // particular line that is to be broken.
 
   glScissor(x + messageAreaPixels[0],
@@ -305,7 +305,7 @@ void			ControlPanel::render(SceneRenderer& renderer)
       } else {
 	int r = 0;
 	n = 0;
-	while ((n < lineLen) && 
+	while ((n < lineLen) &&
 	       (fm.getStrLength(fontFace, fontSize, std::string(msg).substr(0, n)) <
 	        (messageAreaPixels[2] - 2 * margin))) {
 	  if (msg[n] == ESC_CHAR) {
@@ -375,7 +375,7 @@ void			ControlPanel::render(SceneRenderer& renderer)
   // draw the lines around the console panel
   long xpos;
   long ypos;
-  
+
   // nice border
   glColor3f(teamColor[0], teamColor[1], teamColor[2] );
   glBegin(GL_LINE_LOOP); {
@@ -383,32 +383,32 @@ void			ControlPanel::render(SceneRenderer& renderer)
     xpos = x + messageAreaPixels[0] - 1;
     ypos = y + messageAreaPixels[1] - 1;
     glVertex2f((float) xpos, (float) ypos);
-    
+
     // bottom right
     xpos += messageAreaPixels[2] + 1;
     glVertex2f((float) xpos, (float) ypos);
-    
+
     // top right
     ypos += messageAreaPixels[3] + 1;
     glVertex2f((float) xpos, (float) ypos);
-    
+
     // over to panel on left
     if (!tabsOnRight) {
       xpos = x + messageAreaPixels[0] + totalTabWidth + 1;
       glVertex2f((float) xpos, (float) ypos);
     }
-    
+
     // across the top from right to left
     long int drawnTabWidth = 0;
     for (int tab = (int)tabs->size() - 1; tab >= 0; tab--) {
-      
+
       if (messageMode == MessageModes(tab)) {
 	ypos += ay;
 	glVertex2f((float) xpos, (float) ypos);
-	
+
 	xpos -= long(tabTextWidth[tab]);
 	glVertex2f((float) xpos, (float) ypos);
-	
+
 	ypos -= ay;
 	glVertex2f((float) xpos, (float) ypos);
       } else {
@@ -417,13 +417,13 @@ void			ControlPanel::render(SceneRenderer& renderer)
       }
       drawnTabWidth += long(tabTextWidth[tab]);
     }
-    
+
     // over from panel on right
     if (tabsOnRight) {
       xpos = x + messageAreaPixels[0];
       glVertex2f((float) xpos, (float) ypos);
     }
-    
+
   } glEnd();
 
   // some engines miss the corners

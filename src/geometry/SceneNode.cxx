@@ -223,9 +223,9 @@ bool SceneNode::inAxisBox (const float* mins, const float* maxs) const
   const GLfloat* sphere = getSphere();
   const float radius = sqrtf (sphere[3]);
   for (int i = 0; i < 3; i++) {
-    if (((float)sphere[i] + radius) < mins[i]) 
+    if (((float)sphere[i] + radius) < mins[i])
       return false;
-    if (((float)sphere[i] - radius) > maxs[i]) 
+    if (((float)sphere[i] - radius) > maxs[i])
       return false;
   }
   return true;
@@ -287,7 +287,7 @@ GLfloat3Array&		GLfloat3Array::operator=(const GLfloat3Array& a)
   return *this;
 }
 
-        
+
 // Local Variables: ***
 // mode:C++ ***
 // tab-width: 8 ***

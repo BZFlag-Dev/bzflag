@@ -94,7 +94,7 @@ void CTextToolView::OnDraw(CDC* pDC)
 
 		m_iFontPointSize = -((rLogFont.lfHeight*72)/iLogicalPixelsY);
 	}
-	
+
 	CBrush	brush(RGB(0,0,0));
 
 	pDC->SetBkMode(OPAQUE);
@@ -125,7 +125,7 @@ void CTextToolView::OnDraw(CDC* pDC)
 	LOGFONT			rLogFont;
 
 	m_pFont->GetLogFont(&rLogFont);
-	
+
 	CSize size = pDC->GetTextExtent(szString);
 
 	m_iCharacterHeight = abs(rLogFont.lfHeight);
@@ -150,11 +150,11 @@ void CTextToolView::OnDraw(CDC* pDC)
 			iThisPos = iXPos - m_aWidths[iThisItem].abcA;
 			iEndPos = iXCount + m_iTextureZStep;//m_aWidths[iChar-' '].abcB;
 			iYPos += m_iTextureZStep;
-			
+
 	//		pDC->MoveTo(0,iYPos);
 	//		pDC->LineTo(m_iMaxTextureWidth,iYPos);
 		}
-		
+
 		CString string = (char)iChar;
 
 		pDC->TextOut(iThisPos,iYPos,string);
@@ -227,7 +227,7 @@ CTextToolDoc* CTextToolView::GetDocument() // non-debug version is inline
 /////////////////////////////////////////////////////////////////////////////
 // CTextToolView message handlers
 
-BOOL CTextToolView::OnEraseBkgnd(CDC* pDC) 
+BOOL CTextToolView::OnEraseBkgnd(CDC* pDC)
 {
 	// TODO: Add your message handler code here and/or call default
 	CBrush	brush(RGB(0,0,0));
@@ -239,7 +239,7 @@ BOOL CTextToolView::OnEraseBkgnd(CDC* pDC)
 	return true; //CView::OnEraseBkgnd(pDC);
 }
 
-void CTextToolView::OnFontSetfont() 
+void CTextToolView::OnFontSetfont()
 {
 	LOGFONT			rLogFont;
 
@@ -263,18 +263,18 @@ void CTextToolView::OnFontSetfont()
 
 		i = rLogFont.lfHeight*72;
 		j = iLogicalPixelsY;
-		
+
 		k = (float)i/(float)j;
-		
+
 		k -= 0.5f;
 
 		m_iFontPointSize = -(int)k;
 
-	}	
+	}
 	InvalidateRect(NULL,true);
 }
 
-void CTextToolView::OnFontSavefontfiles() 
+void CTextToolView::OnFontSavefontfiles()
 {
 	LOGFONT			rLogFont;
 
@@ -293,7 +293,7 @@ void CTextToolView::OnFontSavefontfiles()
 
 	switch(rLogFont.lfWeight)
 	{
-		case FW_DONTCARE: 
+		case FW_DONTCARE:
 		case FW_NORMAL:
 			break;
 
@@ -303,19 +303,19 @@ void CTextToolView::OnFontSavefontfiles()
 		case FW_EXTRALIGHT:
 			szType = "ExtraLight";
 			break;
-		case FW_LIGHT: 
+		case FW_LIGHT:
 			szType = "Light";
 			break;
 		case FW_MEDIUM:
 			szType = "Medium";
 			break;
-		case FW_SEMIBOLD: 
+		case FW_SEMIBOLD:
 			szType = "SemiBold";
 			break;
 		case FW_BOLD:
 			szType = "Bold";
 			break;
-		case FW_EXTRABOLD: 
+		case FW_EXTRABOLD:
 			szType = "ExtraBold";
 			break;
 		case FW_BLACK:
@@ -338,7 +338,7 @@ void CTextToolView::OnFontSavefontfiles()
 	szSize.Format("_%d",m_iFontPointSize);
 
 	CString	szFileName = szFaceName + szType + szSize;
- 
+
 	CFileDialog oFile(false,NULL,szFileName);
 
 	if (oFile.DoModal() == IDOK)
@@ -532,10 +532,10 @@ void CTextToolView::OnFontSavefontfiles()
 	Invalidate(true);
 }
 
-void CTextToolView::OnInitialUpdate() 
+void CTextToolView::OnInitialUpdate()
 {
 	CView::OnInitialUpdate();
-	
+
 	Invalidate(true);
 	UpdateWindow();
 }

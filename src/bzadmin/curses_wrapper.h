@@ -142,7 +142,7 @@ inline void use_default_colors() {
 
 
 
-#endif 
+#endif
 // Local Variables: ***
 // mode: C++ ***
 // tab-width: 8 ***

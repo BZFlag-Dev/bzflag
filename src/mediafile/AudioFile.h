@@ -31,7 +31,7 @@ public:
       order for stereo files. Samples are in host byte order.
       Client must not attempt to read past last sample. Returns
       false on error. A frame is one sample for each channel.
-      @c buffer must be @c numFrames * @c getNumChannels() * 
+      @c buffer must be @c numFrames * @c getNumChannels() *
       @c getSampleWidth() bytes at least. */
   virtual bool read(void* buffer, int numFrames) = 0;
 
@@ -41,14 +41,14 @@ public:
   /** Get the frame rate of the audio file. A frame is one sample
       for each channel. */
   int			getFramesPerSecond() const;
-  
+
   /** Get the number of channels in the audio file. */
   int			getNumChannels() const;
-  
+
   /** Get the number of frames in the audio file. A frame is one sample
       for each channel. */
   int			getNumFrames() const;
-  
+
   /** Get the sample width of the audio file, in bytes. */
   int			getSampleWidth() const;
 

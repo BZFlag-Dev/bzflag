@@ -153,7 +153,7 @@ private:
   TimeKeeper pausedSince;
 
   bool notResponding;
-    
+
   // Has the player been sent any replay 'faked' state
   PlayerReplayState replayState;
 
@@ -167,7 +167,7 @@ private:
   // tracker id for position tracking
   unsigned short int tracker;
 
-  // just need one of these for 
+  // just need one of these for
   static WordFilter serverSpoofingFilter;
 };
 

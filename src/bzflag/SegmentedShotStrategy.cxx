@@ -401,7 +401,7 @@ void			SegmentedShotStrategy::makeSegments(ObstacleEffect e)
             tmp = tmp % (2 * World::getWorld()->getTeleporters().size());
             target = tmp;
           }
-      
+
 	  int outFace;
 	  const Teleporter* outTeleporter =
 			World::getWorld()->getTeleporter(target, outFace);

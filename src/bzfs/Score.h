@@ -21,7 +21,7 @@ class Score {
   Score();
   void  dump();
   /** Take into account the quality of player wins/(wins+loss)
-      Try to penalize winning casuality 
+      Try to penalize winning casuality
   */
   float ranking();
   bool  isTK();

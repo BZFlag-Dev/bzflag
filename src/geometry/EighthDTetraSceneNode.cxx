@@ -20,7 +20,7 @@
 const int		TetraPolygons = 20;
 
 
-static void getRandomPoint (const float* center, 
+static void getRandomPoint (const float* center,
                             const float (*out)[3],
                             float* point)
 {
@@ -39,7 +39,7 @@ static void getRandomPoint (const float* center,
     factor = factor * f;
   }
   return;
-}                            
+}
 
 
 EighthDTetraSceneNode::EighthDTetraSceneNode(const float (*vertices)[3],
@@ -68,7 +68,7 @@ EighthDTetraSceneNode::EighthDTetraSceneNode(const float (*vertices)[3],
       out[v][2] = vertices[v][2] - center[2];
     }
   }
-  
+
   // get the maximum radius
   float radiusSquared = 0.0f;
   for (v = 0; v < 4; v++) {

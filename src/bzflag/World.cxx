@@ -34,7 +34,7 @@ BundleMgr*		World::bundleMgr;
 std::string		World::locale("");
 int			World::flagTexture(-1);
 
-World::World() : 
+World::World() :
   gameStyle(PlainGameStyle),
   linearAcceleration(0.0f),
   angularAcceleration(0.0f),
@@ -183,7 +183,7 @@ TeamColor		World::whoseBase(const float* pos) const
   return NoTeam;
 }
 
-const Obstacle*		World::inBuilding(const float* pos, 
+const Obstacle*		World::inBuilding(const float* pos,
                                           float radius, float height) const
 {
   // check everything but walls
@@ -238,7 +238,7 @@ const Obstacle*		World::hitBuilding(const float* oldPos, float oldAngle,
   }
 
   // check everything else
-  const ObsList* olist = 
+  const ObsList* olist =
     collisionManager.movingBoxTest (oldPos, oldAngle, pos, angle, dx, dy, dz);
   for (int i = 0; i < olist->count; i++) {
     const Obstacle* obs = olist->list[i];
@@ -571,16 +571,16 @@ bool			World::writeWorld(std::string filename)
   if (stream == NULL)
     return false;
 
-  // for notational convenience    
+  // for notational convenience
   std::ostream& out = *stream;
-  
+
   time_t nowTime = time (NULL);
   out << "# BZFlag client: saved world on " << ctime(&nowTime) << std::endl;
 
-  // Write the Server Options    
+  // Write the Server Options
   {
     out << "options" << std::endl;
-    
+
     // FIXME - would be nice to get a few other thing
     //         -fb, -sb, rabbit style, a real -mp, etc... (also, flags?)
 
@@ -604,7 +604,7 @@ bool			World::writeWorld(std::string filename)
     if (allowHandicap())
       out << "\t-handicap" << std::endl;
     if (allowInertia()) {
-      out << "\t-a " << getLinearAcceleration() << " " 
+      out << "\t-a " << getLinearAcceleration() << " "
                      << getAngularAcceleration() << std::endl;
     }
     if (allowAntidote()) {
@@ -614,7 +614,7 @@ bool			World::writeWorld(std::string filename)
     }
 
     out << "\t-ms " << getMaxShots() << std::endl;
-    
+
     // Write BZDB server variables that aren't defaults
     BZDB.iterate (writeBZDBvar, &out);
 

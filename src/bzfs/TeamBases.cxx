@@ -138,7 +138,7 @@ float TeamBases::findBaseZ( float x, float y, float z ) const
 	pos[2] <= z)
       return pos[2];
   }
-      
+
   return -1.0f;
 }
 

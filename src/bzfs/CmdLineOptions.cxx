@@ -252,7 +252,7 @@ static void extraUsage(const char *pname)
 
 static void checkArgc(int count, int& i, int argc, const char* option, const char *type = NULL)
 {
-  if ((i+count) == argc) { 
+  if ((i+count) == argc) {
     if (count > 1) {
       std::cerr << count << " argument(s) expected for " << option << '\n';
     } else if (type != NULL) {
@@ -262,7 +262,7 @@ static void checkArgc(int count, int& i, int argc, const char* option, const cha
     }
     usage("bzfs");
   }
-  
+
   i++; // just skip the option argument string
 }
 
@@ -441,7 +441,7 @@ static char **parseWorldOptions (const char *file, int &ac)
       std::cerr << "world file not found\n";
       usage("bzfs");
     }
-     
+
     while (confStrm.good()) {
       std::string line = buffer;
       int startPos = line.find_first_not_of("\t \r\n");
@@ -458,7 +458,7 @@ static char **parseWorldOptions (const char *file, int &ac)
       if (strncmp ("end", line.c_str() + startPos, 3) == 0) {
         break;
       }
-      
+
       while ((startPos >= 0) && (line.at(startPos) != '#')) {
         int endPos;
 	if (line.at(startPos) == '"') {
@@ -481,7 +481,7 @@ static char **parseWorldOptions (const char *file, int &ac)
   ac = 1;
   for (std::vector<std::string>::iterator it = tokens.begin(); it != tokens.end(); ++it)
     av[ac++] = strdup((*it).c_str());
-    
+
   return (char **)av;
 }
 
@@ -640,7 +640,7 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
 	for (FlagSet::iterator it = badFlags.begin(); it != badFlags.end(); it++)
 	  options.flagCount[*it] += rptCnt;
       } else if (strcmp(argv[i], "team") == 0) {
-	for (int t = RedTeam; t <= PurpleTeam; t++) 
+	for (int t = RedTeam; t <= PurpleTeam; t++)
 	  options.numTeamFlags[t] += rptCnt;
       } else {
 	FlagType *fDesc = Flag::getDescFromAbbreviation(argv[i]);
@@ -829,7 +829,7 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
 	std::cerr << "Rabbit Chase assumed" << std::endl;;
       }
       // default selection style
-      options.rabbitSelection = ScoreRabbitSelection; 
+      options.rabbitSelection = ScoreRabbitSelection;
 
       // if there are any arguments following, see if they are a
       // rabbit selection styles.
@@ -1023,7 +1023,7 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
       int ac;
       char **av = parseWorldOptions(argv[i], ac);
       parse(ac, av, options, true); // true - from a world file
-      
+
       for (int i = 0; i < ac; i++)
         free(av[i]);
       delete[] av;

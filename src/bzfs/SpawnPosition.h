@@ -32,16 +32,16 @@ private:
   const float enemyProximityCheck(float &enemyAngle) const;
   const float distanceFrom(const float* farPos) const;
   const bool  isImminentlyDangerous() const;
-  const bool  isFacing(const float *enemyPos, const float enemyAzimuth, 
+  const bool  isFacing(const float *enemyPos, const float enemyAzimuth,
 		       const float deviation) const;
-  
+
   float	      azimuth;
   float       pos[3];
 
   TeamColor   team;
   float       testPos[3];
   int	      curMaxPlayers;
-  
+
   float	      safeSWRadius;
   float	      safeDistance;
 

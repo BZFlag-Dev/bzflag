@@ -193,7 +193,7 @@ void			InputMenu::resize(int width, int height)
   std::vector<std::string> *options = &forceInput->getList();
   for (i = 0; i < (int)options->size(); i++) {
     std::string currentOption = (*options)[i];
-    if (BZDB.get("forceInputDevice") == currentOption) 
+    if (BZDB.get("forceInputDevice") == currentOption)
       forceInput->setIndex(i);
   }
   if (BZDB.isTrue("allowInputChange"))

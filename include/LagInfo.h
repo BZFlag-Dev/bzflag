@@ -20,7 +20,7 @@
 class LagInfo {
 public:
   /** A default constructor.
-      It needs a pointer to the Player basic Info,     
+      It needs a pointer to the Player basic Info,
    */
   LagInfo(PlayerInfo *_info);
 

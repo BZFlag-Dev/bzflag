@@ -38,14 +38,14 @@ void DelayQueue::dequeuePackets ()
 {
   DelayNode *dn = output;
   DelayNode *tmp;
-  
+
   while (dn != NULL) {
     free (dn->data);
     tmp = dn;
     dn = dn->next;
     delete tmp;
   }
-  
+
   input = NULL;
   output = NULL;
 }
@@ -58,22 +58,22 @@ bool DelayQueue::addPacket (int length, const void *data, float delay)
   dn->length = length;
   dn->data = malloc (length);
   memcpy (dn->data, data, length);
-  
+
   dn->sendtime = TimeKeeper::getCurrent();
   dn->sendtime += delay;
-  
+
   dn->next = NULL;
-  
+
   if (output == NULL) {
     output = dn;
   }
-  
+
   if (input != NULL) {
     input->next = dn;
   }
 
   input = dn;
-  
+
   return true;
 };
 
@@ -83,9 +83,9 @@ bool DelayQueue::getPacket (int *length, void **data)
   if (nextPacketTime() > 0.0f) {
     return false;
   }
-  
+
   // output is not NULL (nextPacketTime() checks this)
-  
+
   DelayNode *dn = output;
 
   *length = dn->length;
@@ -97,7 +97,7 @@ bool DelayQueue::getPacket (int *length, void **data)
   output = dn->next;
 
   delete dn;
-    
+
   return true;
 };
 
