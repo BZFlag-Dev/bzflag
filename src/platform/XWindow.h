@@ -26,27 +26,6 @@
 #include <X11/extensions/XInput.h>
 #endif
 
-#ifdef USBJOYSTICK
-#ifdef __cplusplus
-/* Argh! usb.h has a structure with a member "class". We don't use it, so
- * let's just move it out of the way
- */
-#define class CLASS
-extern "C" {
-#endif
-#ifdef __FreeBSD__
-#include <libusb.h>
-#else
-#include <usb.h>
-#endif
-#include <dev/usb/usb.h>
-#include <dev/usb/usbhid.h>
-#ifdef __cplusplus
-#undef class
-}
-#endif
-#endif
-
 class XVisual;
 
 class XWindow : public BzfWindow {
@@ -82,13 +61,6 @@ class XWindow : public BzfWindow {
     void		swapBuffers();
     void		makeContext();
     void		freeContext();
-
-#ifdef USBJOYSTICK
-    void               initJoystick(const char* joystickName);
-    bool               joystick() const;
-    void               getJoy(int& x, int& y) const;
-    unsigned long      getJoyButtons() const;
-#endif
 
 #ifdef XIJOYSTICK
     void		initJoystick(char* joystickName);

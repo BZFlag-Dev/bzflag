@@ -145,6 +145,10 @@ SOURCE=..\..\src\platform\BzfDisplay.cxx
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\src\platform\BzfJoystick.cxx
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\src\platform\BzfMedia.cxx
 # End Source File
 # Begin Source File
@@ -162,6 +166,10 @@ SOURCE=..\..\src\platform\PlatformFactory.cxx
 # Begin Source File
 
 SOURCE=..\..\src\platform\SDLDisplay.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\platform\SDLJoystick.cxx
 # End Source File
 # Begin Source File
 
@@ -217,6 +225,10 @@ SOURCE=..\..\include\bzfio.h
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\include\BzfJoystick.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\include\BzfMedia.h
 # End Source File
 # Begin Source File
@@ -258,6 +270,10 @@ SOURCE=..\..\include\PlatformFactory.h
 # Begin Source File
 
 SOURCE=..\..\src\platform\SDLDisplay.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\platform\SDLJoystick.h
 # End Source File
 # Begin Source File
 

@@ -13,6 +13,7 @@
 #include "SDLPlatformFactory.h"
 #include "SDLMedia.h"
 #include "SDLDisplay.h"
+#include "SDLJoystick.h"
 
 PlatformFactory* PlatformFactory::getInstance()
 {
@@ -57,6 +58,10 @@ BzfMedia* SdlPlatformFactory::createMedia()
   return new SDLMedia;
 }
 
+BzfJoystick* SdlPlatformFactory::createJoystick()
+{
+  return new SDLJoystick;
+}
 // Local Variables: ***
 // mode:C++ ***
 // tab-width: 8 ***

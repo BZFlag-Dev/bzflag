@@ -21,8 +21,9 @@
 // MainWindow
 //
 
-MainWindow::MainWindow(BzfWindow* _window) :
+MainWindow::MainWindow(BzfWindow* _window, BzfJoystick* _joystick) :
 				window(_window),
+				joystick(_joystick),
 				quit(false),
 				quadrant(FullWindow),
 				isFullscreen(false),
@@ -237,31 +238,31 @@ void			MainWindow::iconify()
 }
 
 
-bool			MainWindow::joystick() const
+bool			MainWindow::haveJoystick() const
 {
-  return window->joystick();
+  return joystick->joystick();
 }
 
 void			MainWindow::getJoyPosition(int& mx, int& my) const
 {
-  window->getJoy(mx, my);
-  mx = ((width >> 1)*mx)/(900);
-  my = ((height >> 1)*my)/(900);
+  joystick->getJoy(mx, my);
+  mx = ((width >> 1) * mx) / (900);
+  my = ((height >> 1) * my) / (900);
 }
 
 unsigned long                  MainWindow::getJoyButtonSet() const
 {
-  return window->getJoyButtons();
+  return joystick->getJoyButtons();
 }
 
 void                    MainWindow::getJoyDevices(std::vector<std::string>
 						  &list) const
 {
-  window->getJoyDevices(list);
+  joystick->getJoyDevices(list);
 }
 
 void	                MainWindow::initJoystick(std::string &joystickName) {
-  window->initJoystick(joystickName.c_str());  
+  joystick->initJoystick(joystickName.c_str());  
 };
 
 // Local Variables: ***

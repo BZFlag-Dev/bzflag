@@ -5,4 +5,5 @@ environment variables, signal handling, and more.
 
 BzfDisplay -- event handling, screen size, and video format changing
 BzfVisual -- wraps pixel format selection 
-BzfWindow -- window management, gamma control, mouse & joystick stuff
+BzfWindow -- window management, gamma control, & mouse stuff
+BzfJoystick -- joystick management

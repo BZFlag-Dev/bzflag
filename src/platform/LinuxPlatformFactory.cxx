@@ -55,6 +55,13 @@ BzfWindow*		LinuxPlatformFactory::createWindow(
   return new XWindow((const XDisplay*)display, (XVisual*)visual);
 }
 
+#ifdef USBJOYSTICK
+BzfJoystick*		LinuxPlatformFactory::createJoystick();
+{
+  return new USBJoystick;
+}
+#endif
+
 BzfMedia*		LinuxPlatformFactory::createMedia()
 {
   return new LinuxMedia;

@@ -23,7 +23,6 @@
 
 #include "common.h"
 #include <vector>
-#include "bzfSDL.h"
 
 class BzfDisplay;
 
@@ -74,12 +73,6 @@ class BzfWindow {
     virtual void	makeContext() = 0;
     virtual void	freeContext() = 0;
 
-    virtual void	initJoystick(const char* joystickName);
-    virtual bool	joystick() const;
-    virtual void	getJoy(int& x, int& y) const;
-    virtual unsigned long getJoyButtons() const;
-    virtual void        getJoyDevices(std::vector<std::string> &list) const;
-
     void		callExposeCallbacks() const;
     void		addExposeCallback(void (*cb)(void*), void* data);
     void		removeExposeCallback(void (*cb)(void*), void* data);
@@ -92,10 +85,6 @@ class BzfWindow {
     const BzfDisplay*	display;
     std::vector<BzfWindowCB>	exposeCallbacks;
     std::vector<BzfWindowCB>	resizeCallbacks;
-#ifdef HAVE_SDL
-    SDL_Joystick                *joystickID;
-    int                         joystickButtons;
-#endif
 };
 
 #endif // BZF_WINDOW_H

@@ -18,48 +18,51 @@
  */
 
 #ifdef USBJOYSTICK
-#include "XWindow.h"
-#include <X11/Intrinsic.h>
-#include <fcntl.h>
-#include <unistd.h>
 
-#include <stdio.h>
+// Moved bodily from XWindow.h - hope it still works :)
+#ifdef __cplusplus
+/* Argh! usb.h has a structure with a member "class". We don't use it, so
+ * let's just move it out of the way
+ */
+#define class CLASS
+extern "C" {
+#endif
+#ifdef __FreeBSD__
+#include <libusb.h>
+#else
+#include <usb.h>
+#endif
+#include <dev/usb/usb.h>
+#include <dev/usb/usbhid.h>
+#ifdef __cplusplus
+#undef class
+}
+#endif
 
-#define MAX_AXIS 3
+#include "USBJoystick.h"
 
-class usb_joystick {
-public:
-	usb_joystick(const char *name);
-	~usb_joystick();
-	void poll();
-	int num_axis;
-	int axis[MAX_AXIS];
-	int axis_scale[MAX_AXIS];
-	int axis_const[MAX_AXIS];
-	unsigned long buttons;
-	bool status;
-private:
-	int fd;
-	struct hid_item *hids;
-	char *data_buf;
-	int data_buf_size;
-	int data_buf_offset;
-};
+USBJoystick::USBJoystick()
+{
+    status = false;
+}
+USBJoystick::~USBJoystick()
+{
+    if (status == true)
+    	close(fd);
+}
 
-usb_joystick *stick;
-
-usb_joystick::usb_joystick(const char *name)
+USBJoystick::initJoystick(const char *name)
 {
 	report_desc_t rd;
 	hid_data *d;
 	hid_item h;
 	int report_id;
 
-	status = FALSE;
+	status = false;
 	hids = NULL;
 	num_axis = 0;
 
-	if ((fd = open(name, O_RDONLY | O_NONBLOCK))<0)
+	if ((fd = open(name, O_RDONLY | O_NONBLOCK)) < 0)
 		return;
 
 	if ((rd = hid_get_report_desc(fd)) == 0) {
@@ -123,13 +126,11 @@ usb_joystick::usb_joystick(const char *name)
 	}
 	hid_end_parse(d);
 
-	status = TRUE;
-}
-usb_joystick::~usb_joystick() {
-	close(fd);
+	status = true;
 }
 
-void usb_joystick::poll() {
+void USBJoystick::poll() 
+{
 	int len;
 
 /*
@@ -167,27 +168,35 @@ void usb_joystick::poll() {
 
 }
 
-void XWindow::initJoystick(const char *joystickName)
+bool USBJoystick::joystick() const
 {
-	stick= new usb_joystick(joystickName);
+	return status;
 }
 
-bool XWindow::joystick() const
+void USBJoystick::getJoy(int &x, int &y) const
 {
-	return (stick!=NULL)?stick->status:FALSE;
+    if (status) {
+    	poll();
+	   	x = (axis[0] * axis_scale[0]) / 10000 + axis_const[0];
+	  	y = (axis[1] * axis_scale[1]) / 10000 + axis_const[1];
+    } else {
+        x = y = 0;
+    }
 }
 
-void XWindow::getJoy(int &x, int &y) const
+unsigned long USBJoystick::getJoyButtons() const
 {
-	stick->poll();
-	x = (stick->axis[0]*stick->axis_scale[0])/10000 + stick->axis_const[0];
-	y = (stick->axis[1]*stick->axis_scale[1])/10000 + stick->axis_const[1];
+    if (status) {
+    	poll();
+    	return buttons;
+   	} else {
+   	    return 0;
+    }
 }
 
-unsigned long XWindow::getJoyButtons() const
+unsigned long USBJoystick::getJoyDevices() const
 {
-	stick->poll();
-	return stick->buttons;
+    //FIXME: Not implemented
 }
 
 #endif

@@ -19,6 +19,7 @@
 
 /* common interface headers */
 #include "BzfWindow.h"
+#include "BzfJoystick.h"
 
 #define	USE_GL_STEREO
 
@@ -35,10 +36,11 @@ class MainWindow {
 			LowerHalf
     };
 
-			MainWindow(BzfWindow*);
+			MainWindow(BzfWindow*, BzfJoystick*);
 			~MainWindow();
 
     BzfWindow*		getWindow() const { return window; }
+    BzfJoystick*	getJoystick() const { return joystick; }
 
     int			getOriginX() const;
     int			getOriginY() const;
@@ -70,7 +72,7 @@ class MainWindow {
     void		resize();
 
     // return true iff there's a joystick available (and it's been initialized)
-    bool		joystick() const;
+    bool		haveJoystick() const;
 
     // FIXME -- try to get rid of these.  we'd like to receive
     // events instead because it means no round trip to the server
@@ -90,6 +92,7 @@ class MainWindow {
 
   private:
     BzfWindow*		window;
+    BzfJoystick*	joystick;
     bool		quit;
     Quadrant		quadrant;
     bool		isFullscreen;

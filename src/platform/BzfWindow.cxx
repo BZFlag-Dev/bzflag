@@ -15,20 +15,10 @@
 
 BzfWindow::BzfWindow(const BzfDisplay* _display) : display(_display)
 {
-#ifdef HAVE_SDL
-  if (SDL_InitSubSystem(SDL_INIT_JOYSTICK) == -1) {
-    std::vector<std::string> args;
-    args.push_back(SDL_GetError());
-    printError("Could not initialize SDL Joystick subsystem: %s.\n", &args);
-  };
-#endif
 }
 
 BzfWindow::~BzfWindow()
 {
-#ifdef HAVE_SDL
-  SDL_QuitSubSystem(SDL_INIT_JOYSTICK);
-#endif
 }
 
 void BzfWindow::setFullscreen(bool on) {
@@ -94,101 +84,6 @@ void			BzfWindow::removeResizeCallback(
       break;
     }
   }
-}
-
-void			BzfWindow::initJoystick(const char* joystickName)
-{
-#ifdef HAVE_SDL
-  if (!strcmp(joystickName, "off")) {
-    joystickID = NULL;
-    return;
-  }
-  int numJoystick = SDL_NumJoysticks();
-  if (!numJoystick) {
-    printError("no joystick is supported...");
-    joystickID = NULL;
-    return;
-  }
-  int i;
-  for (i = 0; i < numJoystick; i++)
-    if (strcmp(SDL_JoystickName(i), joystickName) == 0)
-      break;
-  if (i >= numJoystick)
-    i = 0;
-  joystickID = SDL_JoystickOpen(i);
-  if (SDL_JoystickNumAxes(joystickID) < 2) {
-    SDL_JoystickClose(joystickID);
-    printError("joystick has less then 2 axis:\n");
-    joystickID = NULL;
-    return;
-  }
-  joystickButtons = SDL_JoystickNumButtons(joystickID);
-#else
-  if (strcmp(joystickName, "off") && strcmp(joystickName, "")) {
-    std::vector<std::string> args;
-    args.push_back(joystickName);
-    printError("joystick '{1}' not supported...", &args);
-  }
-#endif
-}
-
-bool			BzfWindow::joystick() const
-{
-#ifdef HAVE_SDL
-  return joystickID != NULL;
-#else
-  return false;
-#endif
-}
-
-void			BzfWindow::getJoy(int& x, int& y) const
-{
-#ifdef HAVE_SDL
-  if (!joystickID)
-    return;
-
-  SDL_JoystickUpdate();
-  x = SDL_JoystickGetAxis(joystickID, 0);
-  y = SDL_JoystickGetAxis(joystickID, 1);
-
-  x = x * 1000 / 32768;
-  y = y * 1000 / 32768;
-
-  /* balistic */
-  x = (x * abs(x))/1000;
-  y = (y * abs(y))/1000;
-#else
-  x = 0;
-  y = 0;
-#endif
-}
-
-unsigned long		BzfWindow::getJoyButtons() const
-{
-  unsigned long buttons = 0;
-
-#ifdef HAVE_SDL
-  if (!joystickID)
-    return 0;
-
-  SDL_JoystickUpdate();
-  for (int i = 0; i < joystickButtons; i++)
-    buttons |= SDL_JoystickGetButton(joystickID, i) << i;
-#endif
-  return buttons;
-}
-
-void                    BzfWindow::getJoyDevices(std::vector<std::string>
-						 &list) const {
-#ifdef HAVE_SDL
-  
-  int numJoystick = SDL_NumJoysticks();
-  int i;
-  for (i = 0; i < numJoystick; i++)
-    list.push_back(SDL_JoystickName(i));
-#else
-  list.clear();
-#endif
 }
 
 void			BzfWindow::yieldCurrent(void)

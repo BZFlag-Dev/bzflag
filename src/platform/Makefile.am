@@ -6,6 +6,8 @@ libPlatform_a_SOURCES =				\
 	BzfVisual.cxx				\
 	BzfWindow.cxx				\
 	BzfMedia.cxx				\
+	SDLJoystick.cxx				\
+	SDLJoystick.h				\
 	SDLPlatformFactory.cxx			\
 	SDLPlatformFactory.h			\
 	SDLMedia.cxx				\
@@ -29,7 +31,8 @@ libPlatform_a_SOURCES =				\
 	LinuxDisplay.h				\
 	LinuxMedia.cxx				\
 	LinuxMedia.h				\
-	usbjoy.cxx				\
+	USBJoystick.cxx				\
+	USBJoystick.h				\
 	XDisplay.cxx				\
 	XDisplay.h				\
 	XVisual.cxx				\
@@ -93,6 +96,8 @@ libPlatform_a_SOURCES =				\
 	BzfVisual.cxx				\
 	BzfWindow.cxx				\
 	BzfMedia.cxx				\
+	SDLJoystick.cxx				\
+	SDLJoystick.h				\
 	SDLMedia.cxx				\
 	SDLMedia.h				\
 	SDLDisplay.h				\
@@ -142,6 +147,8 @@ libPlatform_a_SOURCES =				\
 	BzfMedia.cxx				\
 	SDLDisplay.h				\
 	SDLDisplay.cxx				\
+	SDLJoystick.h				\
+	SDLJoystick.cxx				\
 	SDLMedia.cxx				\
 	SDLMedia.h				\
 	wave.cxx				\
@@ -175,7 +182,10 @@ EXTRA_libPlatform_a_SOURCES =		\
 	LinuxDisplay.h			\
 	LinuxMedia.cxx			\
 	LinuxMedia.h			\
-	usbjoy.cxx			\
+	USBJoystick.cxx			\
+	USBJoystick.h			\
+	SDLJoystick.cxx			\
+	SDLJoystick.h			\
 	SDLPlatformFactory.cxx		\
 	SDLPlatformFactory.h		\
 	SDLMedia.cxx			\

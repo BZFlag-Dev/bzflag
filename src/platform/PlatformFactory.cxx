@@ -14,6 +14,7 @@
 #include "bzfSDL.h"
 #include "ErrorHandler.h"
 #include "BzfMedia.h"
+#include "BzfJoystick.h"
 
 PlatformFactory*	PlatformFactory::instance = 0;
 BzfMedia*		PlatformFactory::media = 0;
@@ -39,6 +40,12 @@ PlatformFactory::~PlatformFactory()
     media->closeAudio();
   SDL_Quit();
 #endif
+}
+
+BzfJoystick*		PlatformFactory::createJoystick()
+{
+  // if a platform doesn't have a native joystick impl., bzfjoystick provides defaults.
+  return new BzfJoystick();
 }
 
 BzfMedia*		PlatformFactory::getMedia()

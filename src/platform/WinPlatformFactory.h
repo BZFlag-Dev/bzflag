@@ -34,6 +34,9 @@ class WinPlatformFactory : public PlatformFactory {
 				const char* videoFormat);
     BzfVisual*		createVisual(const BzfDisplay*);
     BzfWindow*		createWindow(const BzfDisplay*, BzfVisual*);
+#ifdef HAVE_SDL
+    BzfJoystick*	createJoystick();
+#endif
 
   private:
 			WinPlatformFactory(const WinPlatformFactory&);

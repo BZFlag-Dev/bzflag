@@ -14,11 +14,13 @@
 #ifdef HAVE_SDL
 #include "SDLMedia.h"
 #include "SDLDisplay.h"
+#include "SDLJoystick.h"
 #else
 #include "WinMedia.h"
 #include "WinDisplay.h"
 #include "WinVisual.h"
 #include "WinWindow.h"
+#include "BzfJoystick.h"  // no native j/s implementation
 #endif
 
 PlatformFactory*	PlatformFactory::getInstance()
@@ -105,6 +107,13 @@ BzfMedia*		WinPlatformFactory::createMedia()
   return new WinMedia(window);
 #endif
 }
+
+#ifdef HAVE_SDL
+BzfJoystick*		WinPlatformFactory::createJoystick()
+{
+  return new SDLJoystick();
+}
+#endif
 
 // Local Variables: ***
 // mode:C++ ***

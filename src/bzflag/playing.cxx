@@ -992,7 +992,7 @@ static void		doMotion()
   // determine if joystick motion should be used instead of mouse motion
   // when the player bumps the mouse, LocalPlayer::getInputMethod return Mouse;
   // make it return Joystick when the user bumps the joystick
-  if (mainWindow->joystick()) {
+  if (mainWindow->haveJoystick()) {
     if (myTank->getInputMethod() == LocalPlayer::Joystick) {
       // if we're using the joystick right now, replace mouse coords with joystick coords
       mainWindow->getJoyPosition(mx, my);
@@ -4335,7 +4335,7 @@ static void		playingLoop()
     while (!CommandsStandard::isQuit() && display->isEventPending())
       doEvent(display);
 
-    if (mainWindow->joystick()) {
+    if (mainWindow->haveJoystick()) {
       static const BzfKeyEvent::Button button_map[] = {
 	BzfKeyEvent::BZ_Button_1,
 	BzfKeyEvent::BZ_Button_2,
@@ -4353,13 +4353,13 @@ static void		playingLoop()
       const int button_count = countof(button_map);
       unsigned long new_buttons = mainWindow->getJoyButtonSet();
       if (old_buttons != new_buttons)
-	for (int j = 0; j<button_count; j++) {
+	for (int j = 0; j < button_count; j++) {
 	  if ((old_buttons & (1<<j)) != (new_buttons & (1<<j))) {
 	    BzfKeyEvent ev;
 	    ev.button = button_map[j];
 	    ev.ascii = 0;
 	    ev.shift = 0;
-	    doKey(ev, (new_buttons&(1<<j)) != 0);
+	    doKey(ev, (new_buttons & (1<<j)) != 0);
 	  }
 	}
       old_buttons = new_buttons;

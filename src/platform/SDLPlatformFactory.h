@@ -28,6 +28,8 @@ class SdlPlatformFactory : public PlatformFactory {
   BzfVisual*		createVisual(const BzfDisplay*);
   BzfWindow*		createWindow(const BzfDisplay*, BzfVisual*);
   BzfMedia*	        createMedia();
+  BzfJoystick*		createJoystick();
+
  private:
   SdlPlatformFactory(const SdlPlatformFactory&);
   SdlPlatformFactory& operator=(const SdlPlatformFactory&);

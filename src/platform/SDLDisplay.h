@@ -11,7 +11,7 @@
  */
 
 /* SDLDisplay:
- *	Encapsulates a windows display
+ *	Encapsulates an SDL display
  */
 
 #ifndef BZF_SDLDISPLAY_H

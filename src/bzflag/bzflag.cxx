@@ -1027,8 +1027,9 @@ int			main(int argc, char** argv)
   }
   window->setTitle("bzflag");
 
-  /* initialize the joystick */
-  window->initJoystick(BZDB.get("joystickname").c_str());
+  // create & initialize the joystick
+  BzfJoystick* joystick = platformFactory->createJoystick();
+  joystick->initJoystick(BZDB.get("joystickname").c_str());
 
   // Change audio driver if requested
   if (BZDB.isSet("audioDriver"))
@@ -1038,10 +1039,9 @@ int			main(int argc, char** argv)
     PlatformFactory::getMedia()->setDevice(BZDB.get("audioDevice"));
 
   // set data directory if user specified
-  if (BZDB.isSet("directory"))
+  if (BZDB.isSet("directory")) {
     PlatformFactory::getMedia()->setMediaDirectory(BZDB.get("directory"));
-  else
-  {
+  } else {
 #if defined(__APPLE__)
     extern char *GetMacOSXDataPath(void);
     PlatformFactory::getMedia()->setMediaDirectory(GetMacOSXDataPath());
@@ -1052,9 +1052,9 @@ int			main(int argc, char** argv)
 #else
     // It's only checking existence of l10n directory
     DIR *localedir = opendir("data/l10n/");
-    if (localedir == NULL)
+    if (localedir == NULL) {
       PlatformFactory::getMedia()->setMediaDirectory(INSTALL_DATA_DIR);
-    else {
+    } else {
       closedir(localedir);
     }
 #endif
@@ -1079,12 +1079,9 @@ int			main(int argc, char** argv)
 
     if (geometry == "default" || (count != 6 && count != 2) || w < 0 || h < 0) {
       BZDB.unset("geometry");
-    }
-    else if (count == 6 && ((xs != '-' && xs != '+') || (ys != '-' && ys != '+'))) {
+    } else if (count == 6 && ((xs != '-' && xs != '+') || (ys != '-' && ys != '+'))) {
       BZDB.unset("geometry");
-    }
-    else
-    {
+    } else {
       setSize = true;
       if (w < 256)
 	w = 256;
@@ -1114,11 +1111,9 @@ int			main(int argc, char** argv)
     // size (which is the display or passthrough size).
     if (setSize)
       window->setSize(w, h);
-  }
-  else if (setSize) {
+  } else if (setSize) {
     window->setSize(w, h);
-  }
-  else {
+  } else {
     window->setSize(640, 480);
   }
   if (setPosition)
@@ -1126,7 +1121,7 @@ int			main(int argc, char** argv)
 
   // now make the main window wrapper.  this'll cause the OpenGL context
   // to be bound for the first time.
-  MainWindow* pmainWindow = new MainWindow(window);
+  MainWindow* pmainWindow = new MainWindow(window, joystick);
   MainWindow& mainWindow = *pmainWindow;
   std::string videoFormat;
   int format = -1;
