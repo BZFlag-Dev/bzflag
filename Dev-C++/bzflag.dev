@@ -46,8 +46,8 @@ Compile=1
 CompileCpp=1
 Link=1
 Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
+OverrideBuildCmd=1
+BuildCmd=$(CPP) -c ../src/bzflag/bzflag.cxx -o ../src/bzflag/bzflag.o -DBZFLAG_CXX=1 $(CXXFLAGS)
 
 [Unit4]
 FileName=..\src\bzflag\callbacks.cxx
