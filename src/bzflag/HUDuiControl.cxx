@@ -188,8 +188,8 @@ void			HUDuiControl::onSetFont()
 {
   if (fontFace >= 0) {
     FontManager &fm = FontManager::instance();
-    fontHeight = fm.getStrHeight(fontFace, fontSize, label);
-    trueLabelWidth = fm.getStrLength(fontFace, fontSize, label + "99");
+    fontHeight = fm.getStrHeight(fontFace, fontSize, getLabel());
+    trueLabelWidth = fm.getStrLength(fontFace, fontSize, getLabel() + "99");
   } else {
     fontHeight = 11.0f;
     trueLabelWidth = 0.0f;
