@@ -549,6 +549,7 @@ class WorldInfo {
     void addTeleporter(float x, float y, float z, float r, float w, float d, float h, float b);
     void addBase(float x, float y, float z, float r, float w, float d, float h);
     void addLink(int from, int to);
+    float getMaxWorldHeight();
     int packDatabase();
     void *getDatabase() const;
     int getDatabaseSize() const;
@@ -591,6 +592,7 @@ class WorldInfo {
     int sizePyramids;
     int sizeTeleporters;
     int sizeBases;
+    float maxHeight;
     ObstacleLocation *walls;
     ObstacleLocation *boxes;
     ObstacleLocation *bases;
@@ -661,6 +663,8 @@ static uint16_t curMaxPlayers = 0;
 // max simulataneous per player
 static int broadcastRadio = InvalidPlayer;
 static bool hasBase[NumTeams] = { false };
+
+static float maxTankHeight = 0.0f;
 
 static char hexDigest[50];
 
@@ -940,7 +944,8 @@ WorldInfo::WorldInfo() :
     bases(NULL),
     pyramids(NULL),
     teleporters(NULL),
-    database(NULL)
+    database(NULL),
+    maxHeight(0)
 {
 }
 
@@ -957,6 +962,9 @@ WorldInfo::~WorldInfo()
 
 void WorldInfo::addWall(float x, float y, float z, float r, float w, float h)
 {
+  if ((z + h) > maxHeight)
+    maxHeight = z+h;
+
   if (numWalls >= sizeWalls) {
     sizeWalls = (sizeWalls == 0) ? 16 : 2 * sizeWalls;
     walls = (ObstacleLocation *)realloc(walls, sizeof(ObstacleLocation) * sizeWalls);
@@ -974,6 +982,9 @@ void WorldInfo::addWall(float x, float y, float z, float r, float w, float h)
 
 void WorldInfo::addBox(float x, float y, float z, float r, float w, float d, float h)
 {
+  if ((z + h) > maxHeight)
+    maxHeight = z+h;
+
   if (numBoxes >= sizeBoxes) {
     sizeBoxes = (sizeBoxes == 0) ? 16 : 2 * sizeBoxes;
     boxes = (ObstacleLocation *)realloc(boxes, sizeof(ObstacleLocation) * sizeBoxes);
@@ -990,6 +1001,9 @@ void WorldInfo::addBox(float x, float y, float z, float r, float w, float d, flo
 
 void WorldInfo::addPyramid(float x, float y, float z, float r, float w, float d, float h)
 {
+  if ((z + h) > maxHeight)
+    maxHeight = z+h;
+
   if (numPyramids >= sizePyramids) {
     sizePyramids = (sizePyramids == 0) ? 16 : 2 * sizePyramids;
     pyramids = (ObstacleLocation *)realloc(pyramids, sizeof(ObstacleLocation) * sizePyramids);
@@ -1006,6 +1020,9 @@ void WorldInfo::addPyramid(float x, float y, float z, float r, float w, float d,
 
 void WorldInfo::addTeleporter(float x, float y, float z, float r, float w, float d, float h, float b)
 {
+  if ((z + h) > maxHeight)
+    maxHeight = z+h;
+
   if (numTeleporters >= sizeTeleporters) {
     sizeTeleporters = (sizeTeleporters == 0) ? 16 : 2 * sizeTeleporters;
     teleporters = (Teleporter *)realloc(teleporters, sizeof(Teleporter) * sizeTeleporters);
@@ -1024,7 +1041,11 @@ void WorldInfo::addTeleporter(float x, float y, float z, float r, float w, float
   numTeleporters++;
 }
 
-void WorldInfo::addBase(float x, float y, float z, float r, float w, float d, float h) {
+void WorldInfo::addBase(float x, float y, float z, float r, float w, float d, float h) 
+{
+  if ((z + h) > maxHeight)
+    maxHeight = z+h;
+
   if(numBases >= sizeBases) {
     sizeBases = (sizeBases == 0) ? 16 : 2 * sizeBases;
     bases = (ObstacleLocation *) realloc(bases, sizeof(ObstacleLocation) * sizeBases);
@@ -1046,6 +1067,11 @@ void WorldInfo::addLink(int from, int to)
     teleporters[from / 2].to[from % 2] = to;
     //printf("addlink %d %d\n",from,to);
   }
+}
+
+float WorldInfo::getMaxWorldHeight()
+{
+  return maxHeight;
 }
 
 bool WorldInfo::rectHitCirc(float dx, float dy, const float *p, float r) const
@@ -3399,7 +3425,9 @@ static bool defineWorld()
       return false;
    }
 
-  // package up world
+   maxTankHeight = world->getMaxWorldHeight() + 1.0 + ((JumpVelocity*JumpVelocity) / (2.0 * -Gravity));
+
+   // package up world
   world->packDatabase();
   // now get world packaged for network transmission
   worldDatabaseSize = 4 + 24 + world->getDatabaseSize() + 2;
@@ -5375,8 +5403,18 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
     }
 
     // player is sending multicast data
-    case MsgPlayerUpdate: // FIXME verify velocity etc.
+    case MsgPlayerUpdate: {// FIXME verify velocity etc.
       player[t].lastupdate = TimeKeeper::getCurrent();
+      float pos[3];
+      nboUnpackVector((char*)buf+PlayerIdPLen+sizeof(int16_t), pos);
+      if (pos[2] > maxTankHeight) {
+	char message[MessageLen];
+	strcpy( message, "Autokick: Out of world bounds, Jump too high, Update your client." );
+        sendMessage(t, player[t].id, player[t].team, message);
+	directMessage(t, MsgSuperKill, 0, getDirectMessageBuffer());
+	break;
+      }
+	}
     case MsgGMUpdate:
     case MsgAudio:
     case MsgVideo:
