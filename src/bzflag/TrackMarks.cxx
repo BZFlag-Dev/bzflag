@@ -357,20 +357,21 @@ static void updateList(std::list<TrackEntry>& list, float dt)
 {
   std::list<TrackEntry>::iterator it = list.begin();
   while (it != list.end()) {
-    TrackEntry& te = *it;
+    // setup the next iterator (handy for deleting)
+    std::list<TrackEntry>::iterator next = it;
+    next++;
 
+    TrackEntry& te = *it;
+    
     // increase the lifeTime
     te.lifeTime += dt;
 
     // see if this mark has expired
-    std::list<TrackEntry>::iterator next = it;
-    next++;
     if (te.lifeTime > TrackFadeTime) {
       list.erase(it);
       it = next;
       continue;
     }
-    it = next;
 
     // update for the Physics Driver
     const PhysicsDriver* phydrv = PHYDRVMGR.getDriver(te.phydrv);
@@ -422,10 +423,14 @@ static void updateList(std::list<TrackEntry>& list, float dt)
         }
         // cull this node
         if (te.sides == 0) {
-          te.lifeTime = MAXFLOAT;
+          list.erase(it);
+          it = next;
+          continue;
         }
       }
     }
+
+    it = next;
   }
 
   return;
