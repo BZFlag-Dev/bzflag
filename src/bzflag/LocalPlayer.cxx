@@ -416,7 +416,6 @@ void			LocalPlayer::doUpdateMotion(float dt)
 	location = OnBuilding;
       newVelocity[2] = 0.0f;
     }
-
     else {
       // get component of velocity in normal direction (in horizontal plane)
       float mag = normal[0] * newVelocity[0] + normal[1] * newVelocity[1];
@@ -519,12 +518,12 @@ void			LocalPlayer::doUpdateMotion(float dt)
   // play landing sound if we weren't on something and now we are
   if (oldLocation == InAir && (location == OnGround || location == OnBuilding))
     playLocalSound(SFX_LAND);
-  else if ((location == OnGround) && (NEAR_ZERO(oldPosition[2], ZERO_TOLERANCE)) && (newPos[2] < 0.0f))
+  else if (location == OnGround && oldPosition[2] == 0.0f && newPos[2] < 0.f)
     playLocalSound(SFX_BURROW);
 
   // set falling status
   if (location == OnGround || location == OnBuilding ||
-	(location == InBuilding && NEAR_ZERO(newPos[2], ZERO_TOLERANCE)))
+	(location == InBuilding && newPos[2] == 0.0f))
     setStatus(getStatus() & ~short(PlayerState::Falling));
   else if (location == InAir || location == InBuilding)
     setStatus(getStatus() | short(PlayerState::Falling));
@@ -613,7 +612,7 @@ const Obstacle*		LocalPlayer::getHitBuilding(const float* p, float a,
     expelled = (obstacle->getType() == WallObstacle::getClassName() ||
 		obstacle->getType() == Teleporter::getClassName() ||
 		(getFlag() == Flags::OscillationOverthruster && desiredSpeed < 0.0f &&
-		NEAR_ZERO(p[2], ZERO_TOLERANCE)));
+		 p[2] == 0.0f));
   return obstacle;
 }
 
