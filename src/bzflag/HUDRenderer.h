@@ -224,7 +224,6 @@ private:
   static const float	altitudeOffset;
   static const GLfloat black[3];
   static std::string	headingLabel[36];
-  static std::string	altitudeLabel[20];
   static std::string	scoreSpacingLabel;
   static std::string	scoreLabel;
   static std::string	killLabel;

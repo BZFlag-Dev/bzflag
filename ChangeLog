@@ -4,6 +4,7 @@
 BZFlag 1.12.0  (was 1.11.x)
 ---------------------------
 
+* Unlimited altimeter height - Steve Krenzel
 * Added /uptime command to print elapsed running time - Angelina Carlton
 * Countdown command now shows players 10 sec countdown - Angelina Carlton
 * Added a flapping sound for the wings flag - Sean Morrison

@@ -43,7 +43,6 @@
 const float		HUDRenderer::altitudeOffset = 20.0f;
 const GLfloat		HUDRenderer::black[3] = { 0.0f, 0.0f, 0.0f };
 std::string		HUDRenderer::headingLabel[36];
-std::string		HUDRenderer::altitudeLabel[20];
 std::string		HUDRenderer::scoreSpacingLabel("88% 888 (888-888)[88]");
 std::string		HUDRenderer::scoreLabel("Score");
 std::string		HUDRenderer::killLabel("Kills");
@@ -101,15 +100,10 @@ HUDRenderer::HUDRenderer(const BzfDisplay* _display,
 
   // initialize heading and altitude labels
   if (headingLabel[0].length() == 0) {
+    char buf[10];
     for (i = 0; i < 36; i++) {
-      char buf[10];
       sprintf(buf, "%d", i * 10);
       headingLabel[i] = std::string(buf);
-    }
-    for (i = 0; i < 20; i++) {
-      char buf[10];
-      sprintf(buf, "%d", i * 5);
-      altitudeLabel[i] = std::string(buf);
     }
   }
 
@@ -265,11 +259,7 @@ void			HUDRenderer::setHeadingFontSize(int, int height)
     headingLabelWidth[i] = 0.5f * fm.getStrLength(headingFontFace, headingFontSize, headingLabel[i]);
 
   // compute maximum width over all altitude labels
-  altitudeLabelMaxWidth = 0.0f;
-  for (i = 0; i < 20; i++) {
-    const float w = fm.getStrLength(headingFontFace, headingFontSize, altitudeLabel[i]);
-    if (w > altitudeLabelMaxWidth) altitudeLabelMaxWidth = w;
-  }
+  altitudeLabelMaxWidth = fm.getStrLength(headingFontFace, headingFontSize, "9999");
 }
 
 void			HUDRenderer::setComposeFontSize(int, int height)
@@ -1239,10 +1229,12 @@ void			HUDRenderer::renderBox(SceneRenderer&)
 
     // figure out which marker is closest to center
     int baseMark = int(altitude) / 5;
+
     // get minimum and maximum visible marks (leave some leeway)
-    int minMark = 0;
+    int minMark = baseMark - int(altitudeOffset / 5.0f) - 1;
+    if (minMark < 0) minMark = 0;
+
     int maxMark = baseMark + int(altitudeOffset / 5.0f) + 1;
-    if (maxMark > 19) maxMark = 19;
 
     // draw tick marks
     glPushMatrix();
@@ -1250,6 +1242,8 @@ void			HUDRenderer::renderBox(SceneRenderer&)
       glEnable(GL_LINE_SMOOTH);
       glEnable(GL_BLEND);
     }
+    // NOTE: before I (Steve Krenzel) made changes, minMark was always 0, which appears
+    // to have made basey always equal 0, maybe I overlooked something 
     GLfloat basey = maxMotionSize * (altitude - 5.0f * float(minMark)) /
 								altitudeOffset;
     if (!smooth) basey = floorf(basey);
@@ -1278,8 +1272,10 @@ void			HUDRenderer::renderBox(SceneRenderer&)
       y -= 0.5f;
       hudColor4f(hudColor[0], hudColor[1], hudColor[2], basey - floorf(basey));
     }
+    char buf[10];
     for (i = minMark; i <= maxMark; i++) {
-      fm.drawString(x, y, 0, headingFontFace, headingFontSize, altitudeLabel[i]);
+      sprintf(buf, "%d", i * 5);
+      fm.drawString(x, y, 0, headingFontFace, headingFontSize, std::string(buf));
       y += altitudeMarkSpacing;
     }
     if (smoothLabel) {
@@ -1288,7 +1284,8 @@ void			HUDRenderer::renderBox(SceneRenderer&)
       basey -= floorf(basey);
       hudColor4f(hudColor[0], hudColor[1], hudColor[2], 1.0f - basey);
       for (i = minMark; i <= maxMark; i++) {
-        fm.drawString(x, y, 0, headingFontFace, headingFontSize, altitudeLabel[i]);
+	sprintf(buf, "%d", i * 5);
+        fm.drawString(x, y, 0, headingFontFace, headingFontSize, std::string(buf));
 	y += altitudeMarkSpacing;
       }
     }
