@@ -64,6 +64,7 @@ static const char copyright[] = "Copyright (c) 1993 - 2002 Tim Riker";
 #include "bzfgl.h"
 #include <iostream>
 
+
 struct ExplosionInfo {
 public:
 	float				duration;
@@ -71,6 +72,8 @@ public:
 	SceneNode*			node;
 };
 typedef std::vector<ExplosionInfo> ExplosionList;
+
+const uint8_t			NoPlayer = 254;
 
 static ServerLink*		serverLink = NULL;
 static World*			world = NULL;
@@ -866,43 +869,19 @@ static void				doEvent(BzfDisplay* display)
 // misc utility routines
 //
 
+boolean					isRemotePlayer(PlayerId id)
+{
+	return (id != NoPlayer) && (id != myTank->getId());
+}
+
 Player*					lookupPlayer(PlayerId id)
 {
 	// check my tank first
 	if (myTank->getId() == id)
 		return myTank;
-
-	// check other players
-	for (int i = 0; i < maxPlayers; i++)
-		if (player[i] && player[i]->getId() == id)
-			return player[i];
-
-	// it's nobody we know about
-	return NULL;
-}
-
-static int				lookupPlayerIndex(const PlayerId& id)
-{
-	// check my tank first
-	if (myTank->getId() == id)
-		return -2;
-
-	// check other players
-	for (int i = 0; i < maxPlayers; i++)
-		if (player[i] && player[i]->getId() == id)
-			return i;
-
-	// it's nobody we know about
-	return -1;
-}
-
-static Player*			getPlayerByIndex(int index)
-{
-	if (index == -2)
-		return myTank;
-	if (index == -1)
+	if (id == NoPlayer)
 		return NULL;
-	return player[index];
+	return player[id];
 }
 
 static BaseLocalPlayer*	getLocalPlayer(const PlayerId& id)
@@ -1045,8 +1024,7 @@ void					notifyBzfKeyMapChanged()
 // server message handling
 //
 
-static Player*			addPlayer(const PlayerId& id, void* msg,
-														int showMessage)
+static Player*			addPlayer(PlayerId id, void* msg, int showMessage)
 {
 	uint16_t team, type, wins, losses;
 	char callsign[CallSignLen];
@@ -1058,22 +1036,17 @@ static Player*			addPlayer(const PlayerId& id, void* msg,
 	msg = nboUnpackString(msg, callsign, CallSignLen);
 	msg = nboUnpackString(msg, email, EmailLen);
 
-	// find empty player slot
-	int i;
-	for (i = 0; i < maxPlayers; i++)
-		if (!player[i])
-			break;
-	if (i == maxPlayers) {
-		// if this happens the server has screwed up
+	if (player[id] != NULL) {
 		printError("Server error when adding player");
 		serverError = true;
 		return NULL;
 	}
 
+
 	// add player
 	if (PlayerType(type) == TankPlayer || PlayerType(type) == ComputerPlayer) {
-		player[i] = new RemotePlayer(id, TeamColor(team), callsign, email);
-		player[i]->changeScore(short(wins), short(losses));
+		player[id] = new RemotePlayer(id, TeamColor(team), callsign, email);
+		player[id]->changeScore(short(wins), short(losses));
 	}
 
 	if (showMessage) {
@@ -1092,19 +1065,19 @@ static Player*			addPlayer(const PlayerId& id, void* msg,
 				message += "n unknown type";
 				break;
 		}
-		if (!player[i]) {
+		if (!player[id]) {
 			BzfString name(callsign);
 			name += ": ";
 			name += message;
 			message = name;
 		}
-		addMessage(player[i], message);
+		addMessage(player[id], message);
 	}
 
 	// restore player's local score if player had been playing earlier
-	world->reviveDeadPlayer(player[i]);
+	world->reviveDeadPlayer(player[id]);
 
-	return player[i];
+	return player[id];
 }
 
 static void				handleServerMessage(bool human, uint16_t code,
@@ -1190,12 +1163,11 @@ static void				handleServerMessage(bool human, uint16_t code,
 		case MsgRemovePlayer: {
 			PlayerId id;
 			msg = nboUnpackUByte(msg, id);
-			int playerIndex = lookupPlayerIndex(id);
-			if (playerIndex >= 0) {
-				addMessage(player[playerIndex], "signing off");
-				world->addDeadPlayer(player[playerIndex]);
-				delete player[playerIndex];
-				player[playerIndex] = NULL;
+			if (isRemotePlayer(id)) {
+				addMessage(player[id], "signing off");
+				world->addDeadPlayer(player[id]);
+				delete player[id];
+				player[id] = NULL;
 				updateNumPlayers();
 				checkScores = true;
 			}
@@ -1225,10 +1197,9 @@ static void				handleServerMessage(bool human, uint16_t code,
 			msg = nboUnpackUByte(msg, id);
 			msg = nboUnpackVector(msg, pos);
 			msg = nboUnpackVector(msg, forward);
-			int playerIndex = lookupPlayerIndex(id);
-			if (playerIndex >= 0) {
+			if (isRemotePlayer(id)) {
 				static const float zero[3] = { 0.0f, 0.0f, 0.0f };
-				Player* tank = getPlayerByIndex(playerIndex);
+				Player* tank = lookupPlayer(id);
 				tank->setStatus(Player::Alive);
 				tank->move(pos, atan2f(forward[1], forward[0]));
 				tank->setVelocity(zero);
@@ -1245,12 +1216,10 @@ static void				handleServerMessage(bool human, uint16_t code,
 			msg = nboUnpackUByte(msg, victim);
 			msg = nboUnpackUByte(msg, killer);
 			msg = nboUnpackShort(msg, shotId);
-			int victimIndex = lookupPlayerIndex(victim);
-			int killerIndex = lookupPlayerIndex(killer);
 			BaseLocalPlayer* victimLocal = getLocalPlayer(victim);
 			BaseLocalPlayer* killerLocal = getLocalPlayer(killer);
-			Player* victimPlayer = getPlayerByIndex(victimIndex);
-			Player* killerPlayer = getPlayerByIndex(killerIndex);
+			Player* victimPlayer = lookupPlayer(victim);
+			Player* killerPlayer = lookupPlayer(killer);
 			if (victimLocal) {
 				// uh oh, local player is dead
 				if (victimLocal->isAlive()) {
