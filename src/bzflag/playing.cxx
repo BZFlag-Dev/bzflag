@@ -1420,7 +1420,6 @@ static void		updateNumPlayers()
       numPlayers[player[i]->getTeam()]++;
   if (myTank)
     numPlayers[myTank->getTeam()]++;
-  controlPanel->setTeamCounts(numPlayers);
 }
 
 static void		updateHighScores()
@@ -3515,7 +3514,6 @@ static void		leaveGame()
   player = NULL;
 
   // update UI
-  controlPanel->resetTeamCounts();
   hud->setPlaying(False);
   hud->setCracks(False);
   hud->setPlayerHasHighScore(False);
@@ -3546,9 +3544,7 @@ static void		leaveGame()
   targetPoint[1] = eyePoint[1] + 0.0f;
   targetPoint[2] = eyePoint[2] + 0.0f;
   sceneRenderer->getViewFrustum().setProjection(60.0f * M_PI / 180.0f,
-			1.1f, 1.5f * WorldSize,
-			mainWindow->getWidth(), mainWindow->getHeight(),
-			mainWindow->getViewHeight() + mainWindow->getPanelHeight());
+      1.1f, 1.5f * WorldSize, mainWindow->getWidth(), mainWindow->getHeight());
   sceneRenderer->getViewFrustum().setView(eyePoint, targetPoint);
 
   // reset some flags
@@ -3843,8 +3839,7 @@ static void		renderDialog()
     const int height = mainWindow->getHeight();
     const int ox = mainWindow->getOriginX();
     const int oy = mainWindow->getOriginY();
-    glScissor(ox, oy + mainWindow->getPanelHeight(),
-		width, mainWindow->getViewHeight());
+    glScissor(ox, oy, width, height);
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     glOrtho(0.0, width, 0.0, height, -1.0, 1.0);
@@ -4171,8 +4166,7 @@ static void		playingLoop()
       sceneRenderer->getViewFrustum().setProjection(fov,
 					1.1f, 1.5f * WorldSize,
 					mainWindow->getWidth(),
-					mainWindow->getHeight(),
-					mainWindow->getViewHeight() + mainWindow->getPanelHeight());
+					mainWindow->getHeight());
       sceneRenderer->getViewFrustum().setView(eyePoint, targetPoint);
 
       // add dynamic nodes
@@ -4394,10 +4388,7 @@ static void		playingLoop()
 	  const int y = mainWindow->getOriginY();
 	  const int w = mainWindow->getWidth();
 	  const int h = mainWindow->getHeight();
-	  const int vh = mainWindow->getViewHeight();
-	  const int ph = mainWindow->getPanelHeight();
-	  sceneRenderer->getViewFrustum().setProjection(fov,
-					1.1f, 1.5f * WorldSize, w, h, vh);
+	  sceneRenderer->getViewFrustum().setProjection(fov, 1.1f, 1.5f * WorldSize, w, h);
 	  sceneRenderer->render();
 
 	  // set entire window
@@ -4413,13 +4404,13 @@ static void		playingLoop()
 	  glMatrixMode(GL_MODELVIEW);
 	  glPushMatrix();
 	  glLoadIdentity();
-	  glRasterPos2i(0, mainWindow->getPanelHeight());
+	  glRasterPos2i(0, 0);
 	  glPopMatrix();
 
 	  // zoom small image to entire window
 	  glDisable(GL_DITHER);
 	  glPixelZoom((float)zoomFactor, (float)zoomFactor);
-	  glCopyPixels(x, y + ph, w, vh, GL_COLOR);
+	  glCopyPixels(x, y, w, h, GL_COLOR);
 	  glPixelZoom(1.0f, 1.0f);
 	  if (sceneRenderer->useDithering()) glEnable(GL_DITHER);
 	}
@@ -4450,14 +4441,12 @@ static void		playingLoop()
 	int mx, my;
 	const int width = mainWindow->getWidth();
 	const int height = mainWindow->getHeight();
-	const int panelHeight = mainWindow->getPanelHeight();
 	const int ox = mainWindow->getOriginX();
 	const int oy = mainWindow->getOriginY();
 	mainWindow->getWindow()->getMouse(mx, my);
 	my = height - my - 1;
-	if (my < panelHeight) my = panelHeight;
 
-	glScissor(ox, oy + panelHeight, width, height - panelHeight);
+	glScissor(ox, oy, width, height);
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	glOrtho(0.0, width, 0.0, height, -1.0, 1.0);
@@ -4751,8 +4740,7 @@ static void		findFastConfiguration()
   sceneRenderer->getViewFrustum().setProjection(45.0f * M_PI / 180.0f,
 					1.1f, 1.5f * WorldSize,
 					mainWindow->getWidth(),
-					mainWindow->getHeight(),
-					mainWindow->getViewHeight() + mainWindow->getPanelHeight());
+					mainWindow->getHeight());
   sceneRenderer->getViewFrustum().setView(eyePoint, targetPoint);
 
   // add a big wall in front of where we're looking.  this is important

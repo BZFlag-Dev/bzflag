@@ -27,11 +27,8 @@ MainWindow::MainWindow(BzfWindow* _window) :
 				allowMouseGrab(True),
 				zoomFactor(1),
 				width(0),
-				panelHeight(0),
-				viewHeight(0),
-				minWidth(300),
-				minPanelHeight(120),
-				minViewHeight(120)
+				minWidth(256),
+				minHeight(192)
 {
   window->addResizeCallback(resizeCB, this);
   resize();
@@ -52,20 +49,12 @@ void			MainWindow::setQuit()
   quit = True;
 }
 
-void			MainWindow::setMinSize(int _minWidth,
-				int _minPanelHeight, int _minViewHeight)
+void			MainWindow::setMinSize(int _minWidth, int _minHeight)
 {
   minWidth = _minWidth;
-  minPanelHeight = _minPanelHeight;
-  minViewHeight = _minViewHeight;
-  window->setMinSize(minWidth, minPanelHeight + minViewHeight);
+  minHeight = _minHeight;
+  window->setMinSize(minWidth, minHeight);
   resize();
-  if (panelHeight < minPanelHeight) {
-    panelHeight = minPanelHeight;
-    viewHeight = trueHeight - panelHeight;
-    if (viewHeight < _minViewHeight)
-      viewHeight = _minViewHeight;
-  }
 }
 
 void			MainWindow::setPosition(int x, int y)
@@ -94,7 +83,7 @@ void			MainWindow::showWindow(boolean on)
 void			MainWindow::warpMouse()
 {
   // move mouse to center of view window (zero motion box)
-  int y = viewHeight >> 1;
+  int y = height >> 1;
   if (quadrant != FullWindow) y += ((trueHeight+1) >> 1) - yOrigin;
   window->warpMouse((width >> 1) + xOrigin, y);
 }
@@ -103,7 +92,7 @@ void			MainWindow::getMousePosition(int& mx, int& my) const
 {
   window->getMouse(mx, my);
   mx -= (width >> 1) + xOrigin;
-  my -= ((viewHeight + panelHeight) >> 1);
+  my -= (height >> 1);
   if (quadrant != FullWindow) my -= ((trueHeight+1) >> 1) - yOrigin;
 }
 
@@ -142,7 +131,6 @@ void			MainWindow::setQuadrant(Quadrant _quadrant)
   if (inHeight < 192) inHeight = 192;
 
   quadrant = _quadrant;
-  int height, minPanelHeight2 = minPanelHeight >> 1;
   switch (quadrant) {
     default:
     case FullWindow:
@@ -150,7 +138,6 @@ void			MainWindow::setQuadrant(Quadrant _quadrant)
       height = inHeight;
       xOrigin = 0;
       yOrigin = 0;
-      minPanelHeight2 = minPanelHeight;
       break;
     case UpperLeft:
       width = inWidth >> 1;
@@ -193,26 +180,15 @@ void			MainWindow::setQuadrant(Quadrant _quadrant)
       height = inHeight;
       xOrigin = 0;
       yOrigin = 0;
-      minPanelHeight2 = minPanelHeight;
       break;
   }
 
-  panelHeight = (int)((float)width * panelRatio + 0.5f);
-  if (panelHeight < minPanelHeight2)
-    panelHeight = minPanelHeight2;
-  else if (panelHeight > (int)(0.333f * height))
-    panelHeight = (int)(0.333f * height);
-  viewHeight = height - panelHeight;
-  if (viewHeight < 0) {
-    panelHeight = height;
-    viewHeight = 0;
-  }
   if (quadrant == ZoomRegion) {
     width = inWidth / zoomFactor + 1;
-    viewHeight = viewHeight / zoomFactor + 1;
+    height = inHeight / zoomFactor + 1;
   }
 
-  glViewport(xOrigin, yOrigin, width, panelHeight + viewHeight);
+  glViewport(xOrigin, yOrigin, width, height);
 }
 
 void			MainWindow::resize()
@@ -238,7 +214,7 @@ void			MainWindow::getJoyPosition(int& mx, int& my) const
 {
   window->getJoy(mx, my);
   mx = ((width >> 1)*mx)/(900);
-  my = ((viewHeight >> 1)*my)/(900);
+  my = ((height >> 1)*my)/(900);
 }
 
 unsigned long                  MainWindow::getJoyButtonSet() const

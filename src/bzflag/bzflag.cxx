@@ -1018,7 +1018,7 @@ int			main(int argc, char** argv)
 
   // set main window's minimum size (arbitrary but should be big enough
   // to see stuff in control panel)
-  mainWindow.setMinSize(256, 64, 128);
+  mainWindow.setMinSize(256, 192);
 
   // initialize graphics state
   mainWindow.getWindow()->makeCurrent();

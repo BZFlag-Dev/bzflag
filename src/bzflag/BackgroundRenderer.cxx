@@ -436,8 +436,8 @@ void			BackgroundRenderer::renderSkyAndGround(
     const int x = window.getOriginX();
     const int y = window.getOriginY();
     const int width = window.getWidth();
-    const int viewHeight = window.getViewHeight() + window.getPanelHeight();
-    const int halfHeight = viewHeight >> 1;
+    const int height = window.getHeight();
+    const int halfHeight = height >> 1;
     const SceneRenderer::ViewType viewType = renderer.getViewType();
 
     // draw sky

@@ -47,8 +47,6 @@ class ControlPanel {
     void		addMessage(const BzfString&, const GLfloat* = NULL);
 	void		setMessagesOffset(int offset, int whence);
     void		setStatus(const char*);
-    void		resetTeamCounts();
-    void		setTeamCounts(const int* counts);
     void		setRadarRenderer(RadarRenderer*);
 
   private:
@@ -69,34 +67,22 @@ class ControlPanel {
     int			numBuffers;
     int			exposed;
     int			changedMessage;
-    int			changedStatus;
-    int			changedCounts;
     RadarRenderer*	radarRenderer;
 
     int			panelWidth;
     int			panelHeight;
 
     OpenGLTexFont	messageFont;
-    OpenGLTexFont	statusFont;
-    OpenGLTexFont	countFont;
     int			width, blanking;
     float		ratio;
     float		du, dv;
     float		radarAreaUV[4];
     float		messageAreaUV[4];
-    float		statusAreaUV[4];
-    float		teamCountAreaUV[NumTeams][2];
-    float		teamCountSizeUV[2];
     int			radarAreaPixels[4];
     int			messageAreaPixels[4];
-    int			statusAreaPixels[4];
-    int			teamCountAreaPixels[NumTeams][2];
-    int			teamCountSizePixels[2];
-    BzfString		status;
-    int			teamCounts[NumTeams];
     ControlPanelMessageList	messages;
-	GLfloat					teamColor[3];
-    static int			messagesOffset;
+    GLfloat		teamColor[3];
+    static int		messagesOffset;
     static const int	maxScrollPages;
     static const int	maxLines;
 };

@@ -44,9 +44,8 @@ class ViewFrustum {
     GLfloat		getAreaFactor() const;
 
     void		setView(const GLfloat* eye, const GLfloat* target);
-    void		setProjection(GLfloat fov, GLfloat m_near,
-					GLfloat m_far, GLint width,
-					GLint height, GLint viewHeight);
+    void		setProjection(GLfloat fov, GLfloat m_near, GLfloat m_far,
+					GLint width, GLint height);
     void		setOffset(GLfloat eyeOffset, GLfloat focalPlane);
 
     void		executeProjection() const;

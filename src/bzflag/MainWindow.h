@@ -46,14 +46,12 @@ class MainWindow {
     int			getOriginY() const;
     int			getWidth() const;
     int			getHeight() const;
-    int			getPanelHeight() const;
-    int			getViewHeight() const;
     boolean		getFullscreen();
 
     void		setQuit();
     void		setPosition(int x, int y);
     void		setSize(int width, int height);
-    void		setMinSize(int width, int panelHeight, int viewHeight);
+    void		setMinSize(int width, int height);
     void		setPanelRatio(float);
     void		setFullscreen();
     void		setNoMouseGrab();
@@ -96,11 +94,9 @@ class MainWindow {
     int			trueWidth, trueHeight;
     int			xOrigin, yOrigin;
     int			width;
-    int			panelHeight;
-    int			viewHeight;
+    int			height;
     int			minWidth;
-    int			minPanelHeight;
-    int			minViewHeight;
+    int			minHeight;
 };
 
 //
@@ -129,17 +125,7 @@ inline int		MainWindow::getWidth() const
 
 inline int		MainWindow::getHeight() const
 {
-  return panelHeight + viewHeight;
-}
-
-inline int		MainWindow::getPanelHeight() const
-{
-  return panelHeight;
-}
-
-inline int		MainWindow::getViewHeight() const
-{
-  return viewHeight;
+  return height;
 }
 
 #endif // BZF_MAIN_WINDOW_H

@@ -88,7 +88,7 @@ const float		HUDRenderer::altitudeOffset = 20.0f;
 const GLfloat		HUDRenderer::black[3] = { 0.0f, 0.0f, 0.0f };
 BzfString		HUDRenderer::headingLabel[36];
 BzfString		HUDRenderer::altitudeLabel[20];
-BzfString		HUDRenderer::scoreSpacingLabel("888 (888-888)");
+BzfString		HUDRenderer::scoreSpacingLabel("888 (888-888) 888");
 BzfString		HUDRenderer::scoreLabel("Score");
 BzfString		HUDRenderer::killLabel("Kills");
 BzfString		HUDRenderer::teamScoreLabel("Team Score");
@@ -247,12 +247,12 @@ void			HUDRenderer::resize(boolean firstTime)
 {
   // get important metrics
   const int w = firstTime ? 1280 : window.getWidth();
-  const int h = firstTime ? 768 : window.getViewHeight();
+  const int h = firstTime ? 1024 : window.getHeight();
 
   // compute good targeting box sizes
   {
     const float xScale = (float)w / 1280.0f;
-    const float yScale = (float)h / 768.0f;
+    const float yScale = (float)h / 1024.0f;
     const float scale = (xScale < yScale) ? xScale : yScale;
     maxMotionSize = (int)((float)MaxMotionSize * scale);
     noMotionSize = NoMotionSize; //(int)((float)NoMotionSize * scale);
@@ -290,7 +290,7 @@ void			HUDRenderer::resize(boolean firstTime)
       const float dx = font.getWidth(composeTypeIn->getLabel()) + 2.0f;
       const float dy = font.getDescent() + 4.0f;
       const float x = dx + dy + 2.0f * font.getSpacing();
-      const float y = dy;
+      const float y = dy + window.getHeight() / 3;
       composeTypeIn->setLabelWidth(dx);
       composeTypeIn->setPosition(x, y);
       composeTypeIn->setSize(w - x - dy, font.getSpacing());
@@ -349,8 +349,8 @@ void			HUDRenderer::setMinorFontSize(int, int height)
   teamScoreLabelWidth = minorFont.getWidth(teamScoreLabel);
   if (scoreLabelWidth > teamScoreLabelWidth)
     teamScoreLabelWidth = scoreLabelWidth;
-  flagHelpY = composeTypeIn->getFont().getSpacing() + 4.0f +
-			minorFont.getDescent();
+  flagHelpY = composeTypeIn->getFont().getSpacing() + 4.0f + minorFont.getDescent() +
+    window.getHeight() / 3;
 
   const float spacing = minorFont.getWidth(" ");
   scoreLabelWidth += spacing;
@@ -679,7 +679,7 @@ void			HUDRenderer::render(SceneRenderer& renderer)
 void			HUDRenderer::renderAlerts(SceneRenderer& renderer)
 {
   const float centerx = 0.5f * (float)renderer.getWindow().getWidth();
-  float y = (float)renderer.getWindow().getViewHeight() + alertY;
+  float y = (float)renderer.getWindow().getHeight() + alertY;
   for (int i = 0; i < MaxAlerts; i++) {
     if (alertClock[i].isOn()) {
       hudColor3fv(alertColor[i]);
@@ -696,7 +696,7 @@ void			HUDRenderer::renderStatus(SceneRenderer& renderer)
 
   char buffer[60];
   const float h = majorFont.getSpacing();
-  float x = 0.25f * h, y = (float)renderer.getWindow().getViewHeight() - h;
+  float x = 0.25f * h, y = (float)renderer.getWindow().getHeight() - h;
   FlagId flag = player->getFlag();
 
   // print flag if player has one in upper right
@@ -803,7 +803,7 @@ void			HUDRenderer::renderScoreboard(SceneRenderer& renderer)
   const float x3 = x2 + scoreLabelWidth;
   const float x5 = (1.0f - 0.01f) * renderer.getWindow().getWidth() -
 							teamScoreLabelWidth;
-  const float y0 = (float)renderer.getWindow().getViewHeight() -
+  const float y0 = (float)renderer.getWindow().getHeight() -
 				2.0f * alertFont.getSpacing();
   hudColor3fv(messageColor);
   headingFont.draw(scoreLabel, x1, y0);
@@ -868,7 +868,7 @@ void			HUDRenderer::renderCracks(SceneRenderer& renderer)
 {
   glPushMatrix();
   glTranslatef(GLfloat(renderer.getWindow().getWidth() >> 1),
-		GLfloat(renderer.getWindow().getViewHeight() >> 1), 0.0f);
+		GLfloat(renderer.getWindow().getHeight() >> 1), 0.0f);
   glLineWidth(3.0);
   hudColor3f(1.0f, 1.0f, 1.0f);
   glBegin(GL_LINES);
@@ -899,7 +899,7 @@ void			HUDRenderer::renderCompose(SceneRenderer&)
 void			HUDRenderer::renderTimes(SceneRenderer& renderer)
 {
   const int centerx = renderer.getWindow().getWidth() >> 1;
-  const int centery = renderer.getWindow().getViewHeight() >> 1;
+  const int centery = renderer.getWindow().getHeight() >> 1;
 
   // draw frames per second
   if (fps > 0.0f) {
@@ -924,12 +924,11 @@ void			HUDRenderer::renderPlaying(SceneRenderer& renderer)
 {
   // get view metrics
   const int width = renderer.getWindow().getWidth();
-  //const int height = renderer.getWindow().getViewHeight();
-  const int height2 = renderer.getWindow().getViewHeight() - renderer.getWindow().getPanelHeight();
+  const int height = renderer.getWindow().getHeight();
   const int ox = renderer.getWindow().getOriginX();
   const int oy = renderer.getWindow().getOriginY();
   const int centerx = width >> 1;
-  const int centery = height2 / 2;
+  const int centery = height >> 1;
   int i;
 
   // use one-to-one pixel projection
@@ -937,10 +936,7 @@ void			HUDRenderer::renderPlaying(SceneRenderer& renderer)
 		width, renderer.getWindow().getHeight());
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
-  glOrtho(0.0, width,
-	-GLdouble(renderer.getWindow().getPanelHeight()),
-	GLdouble(renderer.getWindow().getViewHeight()),
-	-1.0, 1.0);
+  glOrtho(0.0, width, 0.0, height, -1.0, 1.0);
   glMatrixMode(GL_MODELVIEW);
   glPushMatrix();
   glLoadIdentity();
@@ -1000,8 +996,7 @@ void			HUDRenderer::renderPlaying(SceneRenderer& renderer)
   // draw heading strip
   if (True /* always draw heading strip */) {
     // first clip to area
-    glScissor(ox + centerx - maxMotionSize, oy + centery + maxMotionSize - 5 +
-		renderer.getWindow().getPanelHeight(),
+    glScissor(ox + centerx - maxMotionSize, oy + centery + maxMotionSize - 5,
 		2 * maxMotionSize, 15 + (int)(headingFont.getSpacing() + 0.5f));
 
     // draw heading mark
@@ -1072,8 +1067,7 @@ void			HUDRenderer::renderPlaying(SceneRenderer& renderer)
     OpenGLGState::resetState();
 
     // draw markers (give 'em a little more space on the sides)
-    glScissor(ox + centerx - maxMotionSize - 8, oy + centery + maxMotionSize +
-		renderer.getWindow().getPanelHeight(),
+    glScissor(ox + centerx - maxMotionSize - 8, oy + centery + maxMotionSize,
 		2 * maxMotionSize + 16, 10);
     glPushMatrix();
     glTranslatef((float)centerx, (float)(centery + maxMotionSize), 0.0f);
@@ -1114,8 +1108,7 @@ void			HUDRenderer::renderPlaying(SceneRenderer& renderer)
   // draw altitude strip
   if (altitudeTape) {
     // clip to area
-    glScissor(ox + centerx + maxMotionSize - 5, oy +
-		centery - maxMotionSize + renderer.getWindow().getPanelHeight(),
+    glScissor(ox + centerx + maxMotionSize - 5, oy + centery - maxMotionSize,
 		(int)altitudeLabelMaxWidth + 15, 2 * maxMotionSize);
 
     // draw altitude mark
@@ -1192,19 +1185,15 @@ void			HUDRenderer::renderNotPlaying(SceneRenderer& renderer)
 
   // get view metrics
   const int width = renderer.getWindow().getWidth();
-  const int height = renderer.getWindow().getViewHeight();
+  const int height = renderer.getWindow().getHeight();
   const int ox = renderer.getWindow().getOriginX();
   const int oy = renderer.getWindow().getOriginY();
 
   // use one-to-one pixel projection
-  glScissor(ox, oy + renderer.getWindow().getPanelHeight(),
-		width, renderer.getWindow().getHeight());
+  glScissor(ox, oy, width, height);
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
-  glOrtho(0.0, width,
-	-GLdouble(renderer.getWindow().getPanelHeight()),
-	GLdouble(renderer.getWindow().getViewHeight()),
-	-1.0, 1.0);
+  glOrtho(0.0, width, 0.0, height, -1.0, 1.0);
   glMatrixMode(GL_MODELVIEW);
   glPushMatrix();
   glLoadIdentity();
@@ -1260,19 +1249,15 @@ void			HUDRenderer::renderRoaming(SceneRenderer& renderer)
 
   // get view metrics
   const int width = renderer.getWindow().getWidth();
-  const int height = renderer.getWindow().getViewHeight();
+  const int height = renderer.getWindow().getHeight();
   const int ox = renderer.getWindow().getOriginX();
   const int oy = renderer.getWindow().getOriginY();
 
   // use one-to-one pixel projection
-  glScissor(ox, oy + renderer.getWindow().getPanelHeight(),
-		width, renderer.getWindow().getHeight());
+  glScissor(ox, oy, width, height);
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
-  glOrtho(0.0, width,
-	-GLdouble(renderer.getWindow().getPanelHeight()),
-	GLdouble(renderer.getWindow().getViewHeight()),
-	-1.0, 1.0);
+  glOrtho(0.0, width, 0.0, height, -1.0, 1.0);
   glMatrixMode(GL_MODELVIEW);
   glPushMatrix();
   glLoadIdentity();
@@ -1365,12 +1350,11 @@ void			HUDRenderer::drawDeadPlayerScore(const Player* player,
   sDim = False;
 }
 
-void			HUDRenderer::drawTeamScore(int teamIndex,
-					float x1, float y)
+void			HUDRenderer::drawTeamScore(int teamIndex, float x1, float y)
 {
-  char score[40];
+  char score[44];
   Team& team = World::getWorld()->getTeam(teamIndex);
-  sprintf(score, "%d (%d-%d)", team.won - team.lost, team.won, team.lost);
+  sprintf(score, "%d (%d-%d) %d", team.won - team.lost, team.won, team.lost, team.size);
 
   hudColor3fv(Team::getRadarColor((TeamColor)teamIndex));
   headingFont.draw(score, x1, y);

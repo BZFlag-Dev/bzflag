@@ -697,10 +697,7 @@ void			SceneRenderer::render(
   }
 
   // set scissor
-    glScissor(window.getOriginX(),
-	      window.getOriginY(),
-	      window.getWidth(),
-	      window.getViewHeight() + window.getPanelHeight());
+  glScissor(window.getOriginX(), window.getOriginY(), window.getWidth(), window.getHeight());
 
   if (useDepthComplexityOn) {
     glEnable(GL_STENCIL_TEST);
