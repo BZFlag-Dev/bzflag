@@ -156,11 +156,11 @@ bool WordFilter::aggressiveFilter(char *input) const
 	/* !!! need to handle multiple matches */
 	/* make sure we only match on word boundaries */
 	if (!boundaryArray.test(match[0].rm_so)) {
-	  std::cout << "matched non-word start boundary at " << match[0].rm_so << std::endl;
+	  //	  std::cout << "matched non-word start boundary at " << match[0].rm_so << std::endl;
 	  continue;
 	}
 	if (!boundaryArray.test(match[0].rm_eo-1)) {
-	  std::cout << "matched non-word end boundary at " << match[0].rm_eo << std::endl;
+	  //	  std::cout << "matched non-word end boundary at " << match[0].rm_eo << std::endl;
 	  continue;
 	}
 
@@ -338,104 +338,142 @@ WordFilter::WordFilter()
   
   /* SUFFIXES */
 
-#if 0
+#if 1
   // noun
   fix.word = "dom";
+  fix.expression = expressionFromString(fix.word);
   suffixes.insert(fix);
   fix.word = "ity";
+  fix.expression = expressionFromString(fix.word);
   suffixes.insert(fix);
   fix.word = "ment";
+  fix.expression = expressionFromString(fix.word);
   suffixes.insert(fix);
   fix.word = "sion";
+  fix.expression = expressionFromString(fix.word);
   suffixes.insert(fix);
   fix.word = "tion";
+  fix.expression = expressionFromString(fix.word);
   suffixes.insert(fix);
   fix.word = "ness";
+  fix.expression = expressionFromString(fix.word);
   suffixes.insert(fix);
   fix.word = "ance";
+  fix.expression = expressionFromString(fix.word);
   suffixes.insert(fix);
   fix.word = "ence";
+  fix.expression = expressionFromString(fix.word);
   suffixes.insert(fix);
   fix.word = "er";
+  fix.expression = expressionFromString(fix.word);
   suffixes.insert(fix);
   fix.word = "or";
+  fix.expression = expressionFromString(fix.word);
   suffixes.insert(fix);
   fix.word = "ist";  
+  fix.expression = expressionFromString(fix.word);
   suffixes.insert(fix);
   // adjective
   fix.word = "ive";
+  fix.expression = expressionFromString(fix.word);
   suffixes.insert(fix);
   fix.word = "en";
+  fix.expression = expressionFromString(fix.word);
   suffixes.insert(fix);
   fix.word = "ic";
+  fix.expression = expressionFromString(fix.word);
   suffixes.insert(fix);
   fix.word = "al";
+  fix.expression = expressionFromString(fix.word);
   suffixes.insert(fix);
   fix.word = "able";
+  fix.expression = expressionFromString(fix.word);
   suffixes.insert(fix);
   fix.word = "y";
+  fix.expression = expressionFromString(fix.word);
   suffixes.insert(fix);
   fix.word = "ous";
+  fix.expression = expressionFromString(fix.word);
   suffixes.insert(fix);
   fix.word = "ful";
+  fix.expression = expressionFromString(fix.word);
   suffixes.insert(fix);
   fix.word = "less";
+  fix.expression = expressionFromString(fix.word);
   suffixes.insert(fix);
   // verb
   fix.word = "en";
+  fix.expression = expressionFromString(fix.word);
   suffixes.insert(fix);
   fix.word = "ize";
+  fix.expression = expressionFromString(fix.word);
   suffixes.insert(fix);
   fix.word = "ate";
+  fix.expression = expressionFromString(fix.word);
   suffixes.insert(fix);
   fix.word = "ify";
+  fix.expression = expressionFromString(fix.word);
   suffixes.insert(fix);
   fix.word = "fy";
+  fix.expression = expressionFromString(fix.word);
   suffixes.insert(fix);
   fix.word = "ed";  
+  fix.expression = expressionFromString(fix.word);
   suffixes.insert(fix);
   // adverb
   fix.word = "ly";  
+  fix.expression = expressionFromString(fix.word);
   suffixes.insert(fix);
   // slang
   fix.word = "a";
+  fix.expression = expressionFromString(fix.word);
   suffixes.insert(fix);
   fix.word = "z";
+  fix.expression = expressionFromString(fix.word);
   suffixes.insert(fix);
   fix.word = "r";
+  fix.expression = expressionFromString(fix.word);
   suffixes.insert(fix);
   fix.word = "ah";
+  fix.expression = expressionFromString(fix.word);
   suffixes.insert(fix);
   fix.word = "io";
+  fix.expression = expressionFromString(fix.word);
   suffixes.insert(fix);
   fix.word = "rs";
+  fix.expression = expressionFromString(fix.word);
   suffixes.insert(fix);
   fix.word = "rz";
+  fix.expression = expressionFromString(fix.word);
   suffixes.insert(fix);
   fix.word = "in";
+  fix.expression = expressionFromString(fix.word);
   suffixes.insert(fix);
   fix.word = "n";
+  fix.expression = expressionFromString(fix.word);
   suffixes.insert(fix);
   fix.word = "ster";
+  fix.expression = expressionFromString(fix.word);
   suffixes.insert(fix);
   fix.word = "meister";
+  fix.expression = expressionFromString(fix.word);
   suffixes.insert(fix);
   // plurality
   fix.word = "s";
+  fix.expression = expressionFromString(fix.word);
   suffixes.insert(fix);
   fix.word = "es";
+  fix.expression = expressionFromString(fix.word);
   suffixes.insert(fix);
   // imperfect verb
   fix.word = "ing";
+  fix.expression = expressionFromString(fix.word);
   suffixes.insert(fix);
   // diminutive
   fix.word = "let";
+  fix.expression = expressionFromString(fix.word);
   suffixes.insert(fix);
 
-  for (std::set<filter_t, expressionCompare>::iterator i=suffixes.begin(); \
-       i != suffixes.end(); ++i) {
-    i->expression = this->expressionFromString(i->word);
-  }
 #endif
 
   /* PREFIXES */
@@ -447,15 +485,16 @@ WordFilter::WordFilter()
    * and is rather expensive (slow, XN+N extra checks for N words) 
    */
   fix.word = "bz";
+  fix.expression = expressionFromString(fix.word);
   prefixes.insert(fix);
   fix.word = "bez";
+  fix.expression = expressionFromString(fix.word);
   prefixes.insert(fix);
   fix.word = "beze";
+  fix.expression = expressionFromString(fix.word);
   prefixes.insert(fix);
   
-  for (std::set<filter_t, expressionCompare>::iterator i=prefixes.begin(); i != prefixes.end(); ++i) {
-    i->expression = this->expressionFromString(i->word);
-  }
+
 #endif
 
   return;
@@ -489,7 +528,7 @@ bool WordFilter::addToFilter(const std::string &word, const std::string &express
   if (expression.size() == 0) {
     /* make sure to create an expression if it wasn't given */
     std::string expression = expressionFromString(word);
-    addToFilter(word, expression, append);
+    return addToFilter(word, expression, append);
 
   } else if (append) {
     /* add words with all suffixes appended */
@@ -513,7 +552,7 @@ bool WordFilter::addToFilter(const std::string &word, const std::string &express
     }
 
     /* don't forget to add the unadulterated word */
-    addToFilter(word, expression, false);
+    return addToFilter(word, expression, false);
   } else {
     /* base case */
     filter_t newFilter;
@@ -529,9 +568,8 @@ bool WordFilter::addToFilter(const std::string &word, const std::string &express
     } else {
       filters[tolower(word[0])].insert(newFilter);
     }
+    return true;
   }
-
-  return true;
 } // end addToFilter
 bool WordFilter::addToFilter(const std::string &word, const std::string &expression)
 {
