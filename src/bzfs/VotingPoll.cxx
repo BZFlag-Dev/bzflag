@@ -25,7 +25,39 @@
 
 /* public: */
 
-bool VotingPoll::isOpen(void) const{
+inline bool VotingPoll::isOpen(void) const {
+  if (_votingBooth != NULL) {
+    return true;
+  }
+  return false;
+}
+
+inline bool VotingPoll::isClosed(void) const {
+  return (!this->isOpen());
+}
+
+bool VotingPoll::open(void) {
+  if (this->isOpen()) {
+    return true;
+  }
+  _votingBooth = new VotingBooth();
+  return false;
+}
+
+bool VotingPoll::close(void) {
+  if (this->isClosed()) {
+    return true;
+  }
+  delete _votingBooth;
+  _votingBooth=NULL;
+  return true;
+}
+
+bool VotingPoll::setAvailableVoters(unsigned short int count) {
+  if (this->isOpen()) {
+    _maxVotes = count;
+    return true;
+  }
   return false;
 }
 
@@ -34,13 +66,22 @@ bool VotingPoll::allowSuffrage() const{
 }
 
 bool VotingPoll::voteYes() {
-  return false;
-}
-bool VotingPoll::voteNo() {
+  if (this->isClosed()) {
+    return false;
+  }
+
   return false;
 }
 
-bool VotingPoll::isSuccessful(void) const{
+bool VotingPoll::voteNo() {
+  if (this->isClosed()) {
+    return false;
+  }
+
+  return false;
+}
+
+bool VotingPoll::isSuccessful(void) const {
   return false;
 }
 

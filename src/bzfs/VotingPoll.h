@@ -33,6 +33,7 @@ class VotingPoll
   unsigned short int _voteTime;
   unsigned short int _vetoTime;
   unsigned short int _votesRequired;
+  unsigned short int _maxVotes;
   float _votePercentage;
   unsigned short int _voteRepeatTime;
 
@@ -42,14 +43,16 @@ class VotingPoll
  public:
 
   VotingPoll(unsigned short int voteTime=60, unsigned short int vetoTime=20,
-	     unsigned short int votesRequired=3, float votePercentage=50.1,
+	     unsigned short int votesRequired=2, float votePercentage=50.1,
 	     unsigned short int voteRepeatTime=300)
     : _voteTime(voteTime),
       _vetoTime(vetoTime),
       _votesRequired(votesRequired),
+      _maxVotes(votesRequired+1),
       _votePercentage(votePercentage),
       _voteRepeatTime(voteRepeatTime)
   {
+    _votingBooth = NULL;
     return;
   }
 
@@ -64,28 +67,39 @@ class VotingPoll
 
   /** is the poll accepting votes?
    */
-  bool isOpen(void) const;
+  inline bool isOpen(void) const;
+
   /** is the poll not accepting votes?
    */
-  inline bool isClosed(void) const {
-    return (!this->isOpen());
-  };
+  inline bool isClosed(void) const;
 
+  /** open the poll if it is closed
+   */
+  bool open(void);
+
+  /** close the poll if it is open
+   */
+  bool close(void);
+
+  /** set the number of available voters
+    */
+  bool setAvailableVoters(unsigned short int count);
+  
   /** returns whether truthfully whether a certain player is permitted
    * to vote; a player should check their right to vote before voting.
    */
   bool allowSuffrage() const;
 
   /** apply a yes vote; returns true if the vote could be made
-   */
+    */
   bool voteYes();
   /** apply a no vote; returns true if the vote could be made
-   */
+    */
   bool voteNo();
 
   /** returns truthfully if the poll has reached a passable tally.
-   * i.e. enough votes have been received that the vote is successful
-   */
+    * i.e. enough votes have been received that the vote is successful
+    */
   bool isSuccessful(void) const;
 
 };

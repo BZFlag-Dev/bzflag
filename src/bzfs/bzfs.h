@@ -98,6 +98,7 @@ static const char copyright[] = "Copyright (c) 1993 - 2003 Tim Riker";
 #include "Permissions.h"
 #include "WorldWeapons.h"
 #include "FlagInfo.h"
+#include "VotingPoll.h"
 
 
 #endif

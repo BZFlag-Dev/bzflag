@@ -3987,7 +3987,7 @@ static void parseCommand(const char *message, int t)
   char reply[MessageLen];
 
   // /password command allows player to become operator
-  if (strncmp(message + 1, "password", 9) == 0) {
+  if (strncmp(message + 1, "password", 8) == 0) {
     if (player[t].passwordAttempts >=5 ){	// see how many times they have tried, you only get 5
       sendMessage(ServerPlayer, t, "Too many attempts");
     }else{
@@ -5472,6 +5472,8 @@ static std::string cmdSet(const std::string&, const CommandManager::ArgList& arg
  */
 int main(int argc, char **argv)
 {
+  VotingPoll *votingpoll;
+  
   setvbuf(stdout, (char *)NULL, _IOLBF, 0);
   setvbuf(stderr, (char *)NULL, _IOLBF, 0);
 
@@ -5548,7 +5550,6 @@ int main(int argc, char **argv)
     CFGMGR->read(clOptions->bzdbVars);
   }
 
-
   /* load the bad word filter if it was set */
   if (clOptions->filterFilename.length() != 0) {
     if (clOptions->filterChat || clOptions->filterCallsigns) {
@@ -5565,6 +5566,17 @@ int main(int argc, char **argv)
     }
   }
 
+  /* initialize the poll for voting if necessary */
+  if (clOptions->voteTime > 0) {
+    unsigned short int maxplayers = 0;
+    votingpoll = new VotingPoll(clOptions->voteTime, clOptions->vetoTime, clOptions->votesRequired, clOptions->votePercentage);
+    for (int i=0; i < NumTeams; i++) {
+      maxplayers+=clOptions->maxTeam[i];
+    }
+    // override the default voter count
+    votingpoll->setAvailableVoters(maxplayers);
+    BZDB->setPointer("poll", (void *)votingpoll);
+  }
 
   if (clOptions->pingInterface)
     serverAddress = Address::getHostAddress(clOptions->pingInterface);
@@ -5777,8 +5789,7 @@ int main(int argc, char **argv)
     }
 
     // manage voting poll for collective kicks/bans
-//    if (clOptions->voteWindow > 0) {
-    if (0) {
+    if (clOptions->voteTime > 0) {
       static int counter = 0;
       static TimeKeeper lastTick = TimeKeeper::getCurrent();
       // every few seconds, check for an update
@@ -5786,7 +5797,7 @@ int main(int argc, char **argv)
 	char message[256];
 	memset(message, 0, 256);
 	sprintf(message, "DEBUG: Checking voting polls (%d ticks; %f ticks/s)", counter, (float)counter / (float)5.0);
-	sendMessage(ServerPlayer, AllPlayers, message, true);
+//	sendMessage(ServerPlayer, AllPlayers, message, true);
 	counter=0;
 	// 	votingPoll->update();
 	lastTick = TimeKeeper::getCurrent();
@@ -5825,8 +5836,6 @@ int main(int argc, char **argv)
 	lastbroadcast = TimeKeeper::getCurrent();
       }
     }
-
-    // see if there is a poll
 
     // if any flags were in the air, see if they've landed
     if (numFlagsInAir > 0) {
