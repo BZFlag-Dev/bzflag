@@ -2819,7 +2819,7 @@ static void addPlayer(int playerIndex)
 
 static void addFlag(int flagIndex)
 {
-  if (flagIndex == -1) {
+  if (flagIndex < 0) {
     // invalid flag
     return;
   }
@@ -2847,8 +2847,11 @@ static void addFlag(int flagIndex)
 
 static void randomFlag(int flagIndex)
 {
-  // pick a random flag
+  if (flagIndex < 0) {
+    return;
+  }
 
+  // pick a random flag
   flag[flagIndex].flag.desc = allowedFlags[(int)(allowedFlags.size() * (float)bzfrand())];
   addFlag(flagIndex);
 }
@@ -2858,7 +2861,8 @@ void resetFlag(int flagIndex)
 {
   // NOTE -- must not be called until world is defined
   assert(world != NULL);
-  if (flagIndex == -1) {
+
+  if (flagIndex < 0) {
     // invalid flag
     return;
   }
@@ -2933,7 +2937,7 @@ void zapFlag(int flagIndex)
 {
   // called when a flag must just disappear -- doesn't fly
   // into air, just *poof* vanishes.
-  if (flagIndex == -1) {
+  if (flagIndex < 0) {
     // invalid flag
     return;
   }
@@ -3475,7 +3479,7 @@ static void dropFlag(int playerIndex, float pos[3])
   // player wants to drop flag.  we trust that the client won't tell
   // us to drop a sticky flag until the requirements are satisfied.
   const int flagIndex = player[playerIndex].flag;
-  if (flagIndex == -1)
+  if (flagIndex < 0)
     return;
   FlagInfo &drpFlag = flag[flagIndex];
   if (drpFlag.flag.status != FlagOnTank)
