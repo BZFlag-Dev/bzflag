@@ -315,7 +315,7 @@ std::string cmdAutoPilot(const std::string&, const CommandManager::ArgList& args
     } else {
 
       // don't enable the AutoPilot if you have within the last 5 secs
-      static TimeKeeper LastAutoPilotEnable;
+      static TimeKeeper LastAutoPilotEnable = TimeKeeper::getSunGenesisTime();
       if ((TimeKeeper::getCurrent() - LastAutoPilotEnable) > 5) {
 	// reset timer
 	LastAutoPilotEnable = TimeKeeper::getCurrent();
