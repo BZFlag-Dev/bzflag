@@ -59,6 +59,7 @@ WeatherRenderer::WeatherRenderer()
 
 	doPuddles = true;
 	doLineRain = true;
+	doBillBoards = false;
 	spinRain = false;
 
 	rainStartZ = -1;

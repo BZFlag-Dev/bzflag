@@ -59,6 +59,7 @@ LocalPlayer::LocalPlayer(const PlayerId& id,
   right(false),
   up(false),
   down(false),
+  entryDrop(true),
   wantJump(false),
   jumpPressed(false)
 {
