@@ -30,7 +30,7 @@ public:
     };
 
     PlayerState();
-    void*		pack(void*);
+    void*		pack(void*) const;
     void*		unpack(void*);
 
     long		order;			// packet ordering
