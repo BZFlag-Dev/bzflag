@@ -116,13 +116,10 @@ class WordFilter
   /** set of characters used to replace filtered content */
   std::string filterChars;
 
-  /** structure for a single filter word, the expanded
-   * corresponding expression, and a compiled regular
-   * expression
+  /** structure for a single filter word, and a compiled regular expression
    */
   typedef struct filterStruct {
     std::string word;
-    std::string expression;
     regex_t *compiled;
   } filter_t;
 
