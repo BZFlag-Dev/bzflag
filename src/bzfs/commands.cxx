@@ -963,7 +963,10 @@ void handleReloadCmd(int t, const char *)
     sendMessage(ServerPlayer, t, "You do not have permission to run the reload command");
     return;
   }
-
+  
+  // reload the banlist
+  clOptions->acl.load();
+  
   groupAccess.clear();
   userDatabase.clear();
   passwordDatabase.clear();
