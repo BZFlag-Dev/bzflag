@@ -23,11 +23,7 @@ else
 fi
 
 # check for kerberos option
-with_kerberos=no
 AC_ARG_WITH(kerberos, [  --with-kerberos	  with Kerberos support])
-if test "x$with_kerberos" != xno ; then
-   with_kerberos=yes
-fi
 
 # check for regex option (on means build our own)
 AC_ARG_WITH(regex, [  --with-regex		  Use bzflag regex lib])
@@ -539,9 +535,9 @@ else
      AC_DEFINE(NDEBUG, 1, [Debugging disabled])
 fi;
 
-have_krb5=no
-AC_MSG_CHECKING([for Kerberos functionality])
 if test "x$with_kerberos" = "xyes" ; then
+  have_krb5=no
+  AC_MSG_CHECKING([for Kerberos functionality])
   if test "x$KRB5_CONFIG" != "xno" ; then
     have_krb5=yes
   elif test "x$ac_cv_header_krb5_h" = "xyes" ; then
