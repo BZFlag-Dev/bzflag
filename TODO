@@ -43,6 +43,8 @@ to do / idea list for bzflag
 * add ability to change server settings at runtime,
    e.g. switch flags on/off
 
+* add auto-kicking of idle players as a server option
+
 * get rid of hardcoded game parameters, most importantly
    WorldSize, but most others in src/game/global.h should also
    be specified by the server, including flag capabilities, e.g. how
