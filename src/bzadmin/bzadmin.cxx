@@ -158,6 +158,15 @@ int main(int argc, char** argv) {
 	ui->outputMessage(formatMessage(str, me, ui->getTarget(), NoTeam, me));
     }
   }
+  
+  // we need to know that the server has processed all our messages
+  // send a private message to ourself and wait for it to come back
+  // this assumes that the order of messages isn't changed along the way
+  sendMessage(sLink, "bzadminping", me);
+  string expected = formatMessage("bzadminping", me, me, NoTeam, me);
+  do {
+    getServerString(sLink, str, *ui);
+  } while (str != expected);
   delete ui;
 
   return 0;
