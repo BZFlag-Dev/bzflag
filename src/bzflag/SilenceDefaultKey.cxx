@@ -31,12 +31,12 @@ bool			SilenceDefaultKey::keyPress(const BzfKeyEvent& key)
 {
   bool sendIt;
   LocalPlayer *myTank = LocalPlayer::getMyTank();
-  if (KEYMGR.get(key, true) == "jump") {
+  if (myTank && KEYMGR.get(key, true) == "jump") {
     // jump while typing
     myTank->setJump();
   }
 
-  if (myTank->getInputMethod() != LocalPlayer::Keyboard) {
+  if (myTank && myTank->getInputMethod() != LocalPlayer::Keyboard) {
     if ((key.button == BzfKeyEvent::Up) ||
 	(key.button == BzfKeyEvent::Down) ||
 	(key.button == BzfKeyEvent::Left) ||
@@ -68,14 +68,13 @@ bool			SilenceDefaultKey::keyPress(const BzfKeyEvent& key)
     // either by picking through arrow keys or by compose
     const char* name = NULL;
 
-    if (message.size() == 0) {
+    if (myTank && message.size() == 0) {
       // silence just by picking arrowkeys
       const Player * silenceMe = myTank->getRecipient();
       if (silenceMe) {
 	name = silenceMe->getCallSign();
       }
-    }
-    else if (message.size() > 0) {
+    } else if (message.size() > 0) {
       // typed in name
       name = message.c_str();
     }
@@ -148,6 +147,8 @@ bool			SilenceDefaultKey::keyPress(const BzfKeyEvent& key)
 bool			SilenceDefaultKey::keyRelease(const BzfKeyEvent& key)
 {
   LocalPlayer *myTank = LocalPlayer::getMyTank();
+  if (!myTank)
+    return false;
   if (myTank->getInputMethod() != LocalPlayer::Keyboard) {
 
     if (key.button == BzfKeyEvent::Up || key.button==BzfKeyEvent::Down
