@@ -13,8 +13,10 @@
 #ifndef DOWNLOADS_H
 #define DOWNLOADS_H
 
-extern void doDownloads();
-extern bool updateDownloads();
+namespace Downloads {
+  void doDownloads();
+  bool updateDownloads(bool& rebuild);
+}
 
 #endif
 

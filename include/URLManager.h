@@ -1,14 +1,14 @@
 /* bzflag
-* Copyright (c) 1993 - 2005 Tim Riker
-*
-* This package is free software;  you can redistribute it and/or
-* modify it under the terms of the license found in the file
-* named LICENSE that should have accompanied this file.
-*
-* THIS PACKAGE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
-* IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
-* WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
-*/
+ * Copyright (c) 1993 - 2005 Tim Riker
+ *
+ * This package is free software;  you can redistribute it and/or
+ * modify it under the terms of the license found in the file
+ * named LICENSE that should have accompanied this file.
+ *
+ * THIS PACKAGE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
+ * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
+ * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+ */
 
 /*
  * abstracted URL class
@@ -30,35 +30,38 @@
 #include "Singleton.h"
 
 class URLManager : public Singleton<URLManager> {
-public:
-  bool getURL(const std::string& URL, std::string &data);
-  bool getURL(const std::string& URL, void **data, unsigned int& size);
+  public:
+    bool getURL(const std::string& URL, std::string &data);
+    bool getURL(const std::string& URL, void **data, unsigned int& size);
+    bool getURLHeader(const std::string& URL);
+    
+    bool getFileTime(time_t &t);
 
-  bool getFileTime(const std::string& URL, time_t &t);
+    void setProgressFunc(int (*func)(void* clientp, 
+                                     double dltotal, double dlnow,
+                                     double ultotal, double ulnow),
+                                     void* data);
 
-  void setProgressFunc(int (*func)(void* clientp, 
-                                   double dltotal, double dlnow,
-                                   double ultotal, double ulnow),
-                                   void* data);
+    void freeURLData(void *data);
 
-  void freeURLData(void *data);
+    void collectData(char* ptr, int len);
 
-  void collectData(char* ptr, int len);
+  protected:
+    friend class Singleton<URLManager>;
+    URLManager();
+    ~URLManager();
 
-protected:
-  friend class Singleton<URLManager>;
-  URLManager();
-  ~URLManager();
+  private:
+    void clearInternal();
+    bool beginGet(const std::string URL);
 
-private:
-  void clearInternal();
-  bool beginGet(const std::string URL);
+  private:
+    // this is CURL specific
+    void *easyHandle;
 
-  // this is CURL specific
-  void *easyHandle;
-
-  void *theData;
-  unsigned int theLen;
+    bool lastCallFailed;
+    void *theData;
+    unsigned int theLen;
 };
 
 

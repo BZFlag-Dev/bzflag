@@ -27,9 +27,6 @@
 #include "playing.h"
 
 
-#ifdef HAVE_CURL
-
-
 // FIXME - someone write a better explanation
 static const char DownloadContent[] =
   "#\n"
@@ -59,19 +56,234 @@ static const char DownloadContent[] =
 static AccessList DownloadAccessList("DownloadAccess.txt", DownloadContent);
 
 
+/******************************************************************************/
+#ifdef HAVE_CURL
+/******************************************************************************/
+
+
+// Function Prototypes
+static void printAuthNotice();
+static bool getFileTime(const std::string& url, time_t& t);
+static bool getAndCacheURL(const std::string& url);
+static bool authorizedServer(const std::string& url);
+
+
+void Downloads::doDownloads()
+{
+  CACHEMGR.loadIndex();
+  CACHEMGR.limitCacheSize();
+
+  DownloadAccessList.reload();
+
+  BzMaterialManager::TextureSet set;
+  BzMaterialManager::TextureSet::iterator set_it;
+  MATERIALMGR.makeTextureList(set);
+  
+  bool authNotice = false;
+
+  const bool doDownloads =	BZDB.isTrue("doDownloads");
+  const bool updateDownloads =  BZDB.isTrue("updateDownloads");
+
+  for (set_it = set.begin(); set_it != set.end(); set_it++) {
+    const std::string& texUrl = set_it->c_str();
+    if (CACHEMGR.isCacheFileType(texUrl)) {
+
+      // check access authorization
+      if (!authorizedServer(texUrl)) {
+        MATERIALMGR.setTextureLocal(texUrl, "");
+        authNotice = true;
+        continue;
+      }
+
+      // use the cache?
+      CacheManager::CacheRecord oldrec;
+      if (CACHEMGR.findURL(texUrl, oldrec)) {
+        time_t filetime = 0;
+        if (doDownloads && updateDownloads) {
+          getFileTime(texUrl, filetime);
+        }
+        if (filetime <= oldrec.date) {
+          // use the cached file
+          MATERIALMGR.setTextureLocal(texUrl, oldrec.name);
+          continue;
+        }
+      }
+      
+      // bail here if we can't download
+      if (!doDownloads) {
+        MATERIALMGR.setTextureLocal(texUrl, "");
+        std::string msg = ColorStrings[GreyColor];
+        msg += "not downloading: " + texUrl;
+        addMessage(NULL, msg);
+        continue;
+      }
+      
+      // download and cache the URL
+      if (getAndCacheURL(texUrl)) {
+        const std::string localname = CACHEMGR.getLocalName(texUrl);
+        MATERIALMGR.setTextureLocal(texUrl, localname);
+      } else {
+        MATERIALMGR.setTextureLocal(texUrl, "");
+      }
+    }
+  }
+  
+  if (authNotice) {
+    printAuthNotice();
+  }
+
+  CACHEMGR.saveIndex();
+
+  return;
+}
+
+
+bool Downloads::updateDownloads(bool& rebuild)
+{
+  CACHEMGR.loadIndex();
+  CACHEMGR.limitCacheSize();
+  
+  DownloadAccessList.reload();
+  
+  BzMaterialManager::TextureSet set;
+  BzMaterialManager::TextureSet::iterator set_it;
+  MATERIALMGR.makeTextureList(set);
+  
+  TextureManager& TEXMGR = TextureManager::instance();
+
+  rebuild = false;
+  bool updated = false;
+  bool authNotice = false;
+  
+  for (set_it = set.begin(); set_it != set.end(); set_it++) {
+    const std::string& texUrl = set_it->c_str();
+    if (CACHEMGR.isCacheFileType(texUrl)) {
+
+      // check access authorization
+      if (!authorizedServer(texUrl)) {
+        MATERIALMGR.setTextureLocal(texUrl, "");
+        authNotice = true;
+        continue;
+      }
+
+      // use the cache or update?
+      CacheManager::CacheRecord oldrec;
+      if (CACHEMGR.findURL(texUrl, oldrec)) {
+        time_t filetime;
+        getFileTime(texUrl, filetime);
+        if (filetime <= oldrec.date) {
+          // keep using the cached file
+          continue;
+        }
+      }
+
+      const std::string localname = CACHEMGR.getLocalName(texUrl);
+      
+      // download the file and update the cache
+      if (getAndCacheURL(texUrl)) {
+        // if the texture isn't being used, call for a rebuild
+        if (TEXMGR.getTextureID(localname.c_str(), false) < 0) {
+          rebuild = true;
+        }
+        updated = true;
+        TEXMGR.reloadTextureImage(localname); // reload with the new image
+        MATERIALMGR.setTextureLocal(texUrl, localname); // if it wasn't cached
+      }
+    }
+  }
+  
+  if (authNotice) {
+    printAuthNotice();
+  }
+
+  CACHEMGR.saveIndex();
+  
+  return updated;
+}
+
+
+static void printAuthNotice()
+{
+  std::string msg = ColorStrings[WhiteColor];
+  msg += "NOTE: ";
+  msg += ColorStrings[GreyColor];
+  msg += "download access is controlled by ";
+  msg += ColorStrings[YellowColor];
+  msg += DownloadAccessList.getFileName();
+  addMessage(NULL, msg);
+  return;
+}
+
+
+static bool getFileTime(const std::string& url, time_t& t)
+{
+  URLManager& URLMGR = URLManager::instance();
+  if (URLMGR.getURLHeader(url)) {
+    URLMGR.getFileTime(t);
+    return true;
+  } else {
+    t = 0;
+    return false;
+  }
+}
+
+
+static bool getAndCacheURL(const std::string& url)
+{
+  bool result = false;
+  
+  URLManager& URLMGR = URLManager::instance();
+  URLMGR.setProgressFunc(curlProgressFunc, NULL);
+
+  std::string msg = ColorStrings[GreyColor];
+  msg += "downloading: " + url;
+  addMessage(NULL, msg);
+  
+  void* urlData;
+  unsigned int urlSize;
+
+  if (URLMGR.getURL(url, &urlData, urlSize)) {
+    time_t filetime;
+    URLMGR.getFileTime(filetime);
+    // CACHEMGR generates name, usedDate, and key
+    CacheManager::CacheRecord rec;
+    rec.url = url;
+    rec.size = urlSize;
+    rec.date = filetime;
+    CACHEMGR.addFile(rec, urlData);
+    free(urlData);
+    result = true;
+  }
+  else {
+    std::string msg = ColorStrings[RedColor] + "* failure *";
+    addMessage(NULL, msg);
+    result = false;
+  }
+
+  URLMGR.setProgressFunc(NULL, NULL);
+
+  return result;
+}
+
+
 static bool authorizedServer(const std::string& url)
 {
+  // avoid the DNS lookup
+  if (DownloadAccessList.alwaysAuthorized()) {
+    return true;
+  }
+  
   // parse url
   std::string protocol, hostname, path, ip;
-  int port = 80;
+  int port = 1;
   if (BzfNetwork::parseURL(url, protocol, hostname, port, path) &&
       ((protocol == "http") || (protocol == "ftp")) &&
       (port >= 1) && (port <= 65535)) {
-    // get the address
-    Address address(hostname);
+    Address address(hostname); // get the address  (BLOCKING)
     ip = address.getDotNotation();
   }
-  
+
+  // make the list of strings to check  
   std::vector<std::string> nameAndIp;
   if (hostname.size() > 0) {
     nameAndIp.push_back(hostname);
@@ -80,116 +292,54 @@ static bool authorizedServer(const std::string& url)
     nameAndIp.push_back(ip);
   }
 
-  return DownloadAccessList.authorized(nameAndIp);
+  // check and print error if not authorized
+  if (!DownloadAccessList.authorized(nameAndIp)) {
+    std::string msg = ColorStrings[RedColor];
+    msg += "local server denial: ";
+    msg += ColorStrings[GreyColor];
+    msg += url;
+    addMessage(NULL, msg);
+    return false;
+  }
+  
+  return true;
 }
 
 
-void doDownloads()
-{
-  const bool updateDownloads = BZDB.isTrue("updateDownloads");
-  
-  DownloadAccessList.reload();
+/******************************************************************************/
+#else // ! HAVE_CURL
+/******************************************************************************/
 
+
+void Downloads::doDownloads()
+{
+  bool needWarning = false;
   BzMaterialManager::TextureSet set;
   BzMaterialManager::TextureSet::iterator set_it;
   MATERIALMGR.makeTextureList(set);
-  
-  CACHEMGR.loadIndex();
-  CACHEMGR.limitCacheSize();
-
-  URLManager& urlMgr = URLManager::instance();
-  urlMgr.setProgressFunc(curlProgressFunc, NULL);
-  
-  bool authNotice = false;
-
 
   for (set_it = set.begin(); set_it != set.end(); set_it++) {
     const std::string& texUrl = set_it->c_str();
-    if (CACHEMGR.isCacheFile(texUrl)) {
-
-      // check access authorization
-      if (!DownloadAccessList.alwaysAuthorized()) {
-        if (!authorizedServer(texUrl)) {
-          MATERIALMGR.setTextureLocal(texUrl, "");
-          std::string msg = ColorStrings[RedColor];
-          msg += "local server denial: ";
-          msg += ColorStrings[GreyColor];
-          msg += texUrl;
-          addMessage(NULL, msg);
-          authNotice = true;
-          continue;
-        }
-      }
-
-      // get last modification timestamp
-      bool gotFileTime = false;
-      time_t filetime = 0;
-      if (updateDownloads) {
-        gotFileTime = true;
-        urlMgr.setProgressFunc(NULL, NULL);
-        if (!urlMgr.getFileTime(texUrl, filetime)) {
-          filetime = 0;
-        }
-        urlMgr.setProgressFunc(curlProgressFunc, NULL);
-      }
-      
-      // use the cache?
-      CacheManager::CacheRecord oldrec;
-      if (CACHEMGR.findURL(texUrl, oldrec)) {
-        if ((filetime <= oldrec.date) || !updateDownloads) {
-          // use the cached file
-          MATERIALMGR.setTextureLocal(texUrl, oldrec.name);
-          continue;
-        }
-      }
-
-      std::string msg = ColorStrings[YellowColor];
-      msg += "downloading: " + texUrl;
+    if (CACHEMGR.isCacheFileType(texUrl)) {
+      needWarning = true;
+      // one time warning
+      std::string msg = ColorStrings[GreyColor];
+      msg += "not downloading: " + texUrl;
       addMessage(NULL, msg);
-      
-      // download the URL
-      void* urlData;
-      unsigned int urlSize;
-      if (urlMgr.getURL(texUrl, &urlData, urlSize)) {
-        // if we haven't gotten the filetime yet, do it now
-        // FIXME - setup URLManager to get the filetime
-        //         during downloads if it is requested?
-        if (!gotFileTime) {
-          urlMgr.setProgressFunc(NULL, NULL);
-          if (!urlMgr.getFileTime(texUrl, filetime)) {
-            filetime = 0;
-          }
-          urlMgr.setProgressFunc(curlProgressFunc, NULL);
-        }
-        
-        // CACHEMGR generates name, usedDate, and key
-        CacheManager::CacheRecord rec;
-        rec.url = texUrl;
-        rec.size = urlSize;
-        rec.date = filetime;
-        CACHEMGR.addFile(rec, urlData);
-        MATERIALMGR.setTextureLocal(texUrl, rec.name);
-        free(urlData);
-      }
-      else {
-        MATERIALMGR.setTextureLocal(texUrl, "");
-        msg = ColorStrings[RedColor] + "* download failed *";
-        addMessage(NULL, msg);
-      }
+      // avoid future warnings
+      MATERIALMGR.setTextureLocal(texUrl, "");
     }
   }
   
-  urlMgr.setProgressFunc(NULL, NULL);
-  CACHEMGR.saveIndex();
-
-  // print a handy notice  
-  if (authNotice) {
-    std::string msg = ColorStrings[WhiteColor];
-    msg += "NOTE: ";
-    msg += ColorStrings[GreyColor];
-    msg += "download access is controlled by ";
-    msg += ColorStrings[YellowColor];
-    msg += DownloadAccessList.getFileName();
+  if (needWarning && BZDB.isTrue("doDownloads")) {
+    std::string msg = ColorStrings[RedColor];
+    msg += "Downloads are not available for clients without libcurl";
+    addMessage(NULL, msg);
+    msg = ColorStrings[YellowColor];
+    msg += "To disable this message, disable [Automatic Downloads] in";
+    addMessage(NULL, msg);
+    msg = ColorStrings[YellowColor];
+    msg += "Options -> Cache Options, or get a client with libcurl";
     addMessage(NULL, msg);
   }
 
@@ -197,81 +347,18 @@ void doDownloads()
 }
 
 
-bool updateDownloads()
+bool Downloads::updateDownloads()
 {
-  bool updated = false;
-  
-  BzMaterialManager::TextureSet set;
-  MATERIALMGR.makeTextureList(set);
-  
-  CACHEMGR.loadIndex();
-  CACHEMGR.limitCacheSize();
-  
-  std::vector<CacheManager::CacheRecord> records = CACHEMGR.getCacheList();
-  
-  URLManager& urlMgr = URLManager::instance();
-  urlMgr.setProgressFunc(curlProgressFunc, NULL);
-
-  TextureManager& texMgr = TextureManager::instance();
-
-  for (unsigned int i = 0; i < records.size(); i++) {
-    CacheManager::CacheRecord& rec = records[i];
-
-    // only update textures in the current world
-    if (set.find(rec.url) == set.end()) {
-      continue;
-    }
-
-    // get last modification timestamp
-    time_t filetime = 0;
-    urlMgr.setProgressFunc(NULL, NULL);
-    if (!urlMgr.getFileTime(rec.url, filetime)) {
-      continue;
-    }
-    urlMgr.setProgressFunc(curlProgressFunc, NULL);
-    
-    // download the file and update the cache
-    if (filetime > rec.date) {
-      std::string msg = ColorStrings[YellowColor];
-      msg += "downloading: " + rec.url;
-      addMessage(NULL, msg);
-      
-      void* urlData;
-      unsigned int urlSize;
-      if (urlMgr.getURL(rec.url, &urlData, urlSize)) {
-        // CACHEMGR generates name, usedDate, and key
-        rec.size = urlSize;
-        rec.date = filetime;
-        CACHEMGR.addFile(rec, urlData);
-        texMgr.reloadTextureImage(rec.name);
-        updated = true;
-        free(urlData);
-      } else {
-        msg = ColorStrings[RedColor] + "* failure *";
-        addMessage(NULL, msg);
-      }
-    }
-  }
-  
-  urlMgr.setProgressFunc(NULL, NULL);
-  CACHEMGR.saveIndex();
-  
-  return updated;
-}
-
-#else // HAVE_CURL
-
-void doDownloads()
-{
-  return;
-}
-
-bool updateDownloads()
-{
+  std::string msg = ColorStrings[RedColor];
+  msg += "Downloads are not available for clients without libcurl";
+  addMessage(NULL, msg);
   return false;
 }
 
+
+/******************************************************************************/
 #endif // HAVE_CURL
+/******************************************************************************/
 
 
 // Local Variables: ***

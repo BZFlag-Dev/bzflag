@@ -1413,18 +1413,24 @@ int curlProgressFunc(void* /*clientp*/,
   BzfEvent event;
   if (display->isEventPending()) {
     if (display->peekEvent(event)) {
-      if (event.type == BzfEvent::Quit) {
-        return 1; // terminate the curl call
-      }
-      // FIXME - the flushes are cheezy
-      if (event.keyDown.ascii == 27) {
-        if (event.type == BzfEvent::KeyUp) {
+      switch (event.type) {
+        case BzfEvent::Quit:
+          return 1; 		    // terminate the curl call
+        case BzfEvent::KeyDown:
           display->getEvent(event); // flush the event
-        }
-        else if (event.type == BzfEvent::KeyDown) {
+          return 1; 		    // terminate the curl call
+        case BzfEvent::KeyUp:
           display->getEvent(event); // flush the event
-          return 1;                 // terminate the curl call
-        }
+          break;
+        case BzfEvent::MouseMove:
+          display->getEvent(event); // flush the event
+          break;
+        case BzfEvent::Unset:
+        case BzfEvent::Map:
+        case BzfEvent::Unmap:
+        case BzfEvent::Redraw:
+        case BzfEvent::Resize:
+          break;
       }
     }
   }
@@ -1538,9 +1544,7 @@ static void loadCachedWorld()
   worldBuilder = NULL;
 
   // do the downloads
-  if (BZDB.isTrue("doDownloads")) {
-    doDownloads();
-  }
+  Downloads::doDownloads();
 
   HUDDialogStack::get()->setFailedMessage("Entering game...");
   drawFrame(0.0f);

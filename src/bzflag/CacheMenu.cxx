@@ -39,6 +39,7 @@
 
 /* FIXME - from playing.h */
 extern ControlPanel* controlPanel;
+extern void setSceneDatabase();
 
 
 CacheMenu::CacheMenu()
@@ -58,6 +59,7 @@ CacheMenu::CacheMenu()
   // the menu options
   HUDuiList* option;
   std::vector<std::string>* options;
+
 
   // Server List Cache Time
   option = new HUDuiList;
@@ -84,6 +86,7 @@ CacheMenu::CacheMenu()
   label->setLabel("Clear Server List Cache");
   list.push_back(label);
 
+
   // Cache Size (MegaBytes)
   cacheSize = new HUDuiTypeIn;
   cacheSize->setFontFace(MainMenu::getFontFace());
@@ -92,6 +95,13 @@ CacheMenu::CacheMenu()
   cacheSize->setString(BZDB.get("maxCacheMB"));
   list.push_back(cacheSize);
   
+  // Clear Download Cache
+  clearDownloadCache = label = new HUDuiLabel;
+  label->setFontFace(fontFace);
+  label->setLabel("Clear Download Cache");
+  list.push_back(label);
+
+
   // Automatic Downloads
   option = new HUDuiList;
   option->setFontFace(MainMenu::getFontFace());
@@ -114,17 +124,12 @@ CacheMenu::CacheMenu()
   option->update();
   list.push_back(option);
 
-  // Clear Download Cache
-  clearDownloadCache = label = new HUDuiLabel;
-  label->setFontFace(fontFace);
-  label->setLabel("Clear Download Cache");
-  list.push_back(label);
-
   // Update Download Cache
   updateDownloadCache = label = new HUDuiLabel;
   label->setFontFace(fontFace);
   label->setLabel("Update Download Cache");
   list.push_back(label);
+
 
   initNavigation(list, 1, list.size() - 1);
 
@@ -141,6 +146,7 @@ CacheMenu::~CacheMenu()
 void CacheMenu::execute()
 {
   HUDuiControl* focus = HUDui::getFocus();
+
   if (focus == cacheSize) {
     BZDB.set("maxCacheMB", cacheSize->getString().c_str());
     int maxCacheMB = BZDB.evalInt("maxCacheMB");
@@ -149,18 +155,25 @@ void CacheMenu::execute()
       HUDuiTypeIn* inputField = (HUDuiTypeIn*) focus;
       inputField->setString("0");
     }
-    CACHEMGR.loadIndex();
-    CACHEMGR.limitCacheSize();
-    CACHEMGR.saveIndex();
   }
   else if (focus == updateDownloadCache) {
-    controlPanel->addMessage("Updated Download Cache");
-    if (updateDownloads()) {
-      RENDERER.notifyStyleChange(); // FIXME: useless?
+    bool rebuild;
+    if (Downloads::updateDownloads(rebuild)) {
+      if (!rebuild) {
+        controlPanel->addMessage("Updated Download Cache");
+      } else {
+        setSceneDatabase();
+        if (debugLevel > 0) {
+          controlPanel->addMessage("Updated Download Cache  (Rebuilt Scene)");
+        } else {
+          controlPanel->addMessage("Updated Download Cache");
+        }
+      }
+    } else {
+      controlPanel->addMessage("No updates required");
     }
   }
   else if (focus == clearDownloadCache) {
-    // FIXME - cheezy
     const std::string oldSize = BZDB.get("maxCacheMB");
     BZDB.set("maxCacheMB", "0");
     CACHEMGR.loadIndex();
@@ -211,7 +224,7 @@ void CacheMenu::resize(int width, int height)
   for (i = 1; i < count; i++) {
     list[i]->setFontSize(fontSize);
     list[i]->setPosition(x, y);
-    if (i == 2) {
+    if ((i == 2) || (i == 4)) {
       y -= 1.75f * h;
     } else {
       y -= 1.0f * h;
@@ -240,9 +253,10 @@ void CacheMenu::resize(int width, int height)
   i++; // clear cache label
 
   i++; // cache size
+  i++; // clear downloads cache
+  
   ((HUDuiList*)list[i++])->setIndex(BZDB.isTrue("doDownloads") ? 1 : 0);
   ((HUDuiList*)list[i++])->setIndex(BZDB.isTrue("updateDownloads") ? 1 : 0);
-  i++; // clear downloads cache
   i++; // update downloads now
   
   return;  
