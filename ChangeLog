@@ -9,6 +9,7 @@ BZFlag 1.12.0  (was 1.11.x)
 * Added Lag bad flag - Dave Rodgers
 * Poll to reset flags and Poll-cheating prevention - Ian Agar
 * Flag and Tank Entry Zones - Dave Brosius
+* Spawn improvements - Dave Brosius, Daniel Remenak
 * Added MAC's Agility (aka Dodge) flag - Sean Morrison
 * QuickTurn flag symbol changed from A to QT - Sean Morrison
 * Added MAC's handicap game style - Sean Morrison

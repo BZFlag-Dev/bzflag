@@ -46,10 +46,6 @@ THESE ARE LOWER PRIORITY
 * server should track last reported player and shot positions
 
 * Improve server picked spawn locations
-  - server now takes last known position of tanks into accounts
-    - could also look at relative facing of tanks as old client code did
-  - CTF mode: only spawn in big center-region as in 1.7? Maybe never spawn
-    near teamflag or at least not enemy team flag?
   - server needs to track more game state to do this well.
     - shots
     - perform dead reckoning
