@@ -3530,6 +3530,7 @@ static World*		makeWorld(ServerLink* serverLink)
     cacheURL = new char[len];
     nboUnpackString(msg, cacheURL, len);
     url = cacheURL;
+    delete [] cacheURL;
     if (serverLink->read(code, len, msg, 5000) <= 0)
       return NULL;
   }
