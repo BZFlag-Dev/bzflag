@@ -3258,6 +3258,13 @@ static void		handleServerMessage(bool human, uint16_t code,
 	addMessage(rabbit, "is now the rabbit", true);
       }
 
+#ifdef ROBOT
+      for (int i = 0; i < numRobots; i++)
+	if (robots[i]->getId() == id)
+	  robots[i]->changeTeam(RabbitTeam);
+	else
+	  robots[i]->changeTeam(RogueTeam);
+#endif
       break;
     }
 
