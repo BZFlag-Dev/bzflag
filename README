@@ -70,8 +70,8 @@ To build sources checked out directly from CVS you need to start by running
 these commands inside the CVS directory:
 
   % aclocal
-  % autoheader --add-missing
-  % automake
+  % autoheader
+  % automake --add-missing
   % autoconf
 
 These commands are in the autogen.sh file, so you can just run
@@ -109,8 +109,9 @@ system for more information:
   Platform			README file
   --------			-----------
   UNIX, Linux			README.UNIX
-  Solaris				README.SOLARIS
-  Windows 95/98/NT		README.WIN32
+  IRIX				README.IRIX
+  Solaris			README.SOLARIS
+  Windows 95/98/NT		README.WIN32, README.MINGW32
 
 
 You can also build an installable package using:
