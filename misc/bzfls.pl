@@ -82,7 +82,7 @@ if ( not defined $action or $action eq "LIST" ) {
 # does not get dropped due to a timeout...
 elsif ( $action eq "ADD" ) {
   # Filter out badly formatted or buggy versions
-  print "trying ADD $nameport $version $gameinfo $title<br>";
+  print "trying ADD $nameport $version $gameinfo $title\n";
   exit unless (
     $version =~ /^BZFS/
 #        and $version ne "BZFS1906"
@@ -98,7 +98,7 @@ elsif ( $action eq "ADD" ) {
   my $sin = sockaddr_in ($servport, inet_aton ($servname));
   socket(SH, AF_INET, SOCK_STREAM, getprotobyname('tcp')) or die $!;
   if (!connect(SH, $sin)) {
-    print "failed to connect<br>\n";
+    print "failed to connect\n";
     die $!;
   }
   close SH;
@@ -133,7 +133,7 @@ elsif ( $action eq "ADD" ) {
           WHERE nameport = '$nameport'"
     );
   }
-  print "ADD complete<br>\n";
+  print "ADD complete\n";
 }
 #  -- REMOVE --
 # Server requests to be removed from the DB.
