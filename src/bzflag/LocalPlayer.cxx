@@ -84,8 +84,8 @@ void			BaseLocalPlayer::update()
 
   // expand bounding box to include entire tank
   float size = TankRadius;
-  if (getFlag() == ObesityFlag) size *= ObeseFactor;
-  else if (getFlag() == TinyFlag) size *= TinyFactor;
+  if (getFlag() == Flags::Obesity) size *= ObeseFactor;
+  else if (getFlag() == Flags::Tiny) size *= TinyFactor;
   bbox[0][0] -= size;
   bbox[1][0] += size;
   bbox[0][1] -= size;
@@ -201,7 +201,7 @@ void			LocalPlayer::doUpdate(float dt)
 
   // drop bad flag if timeout has expired
   if (!isPaused() && dt > 0.0f && World::getWorld()->allowShakeTimeout() &&
-      getFlag() != NoFlag && Flag::getType(getFlag()) == FlagSticky &&
+      getFlag() != Flags::Null && getFlag()->flagType == FlagSticky &&
       flagShakingTime > 0.0f) {
     flagShakingTime -= dt;
     if (flagShakingTime <= 0.0f) {
@@ -238,8 +238,8 @@ void			LocalPlayer::doUpdateMotion(float dt)
 
   // phased means we can pass through buildings
   const bool phased = (location == Dead || location == Exploding ||
-			(getFlag() == OscOverthrusterFlag) ||
-			(getFlag() == PhantomZoneFlag && isFlagActive()));
+			(getFlag() == Flags::OscillationOverthruster) ||
+			(getFlag() == Flags::PhantomZone && isFlagActive()));
 
   // get linear and angular speed at start of time step
   if (dt != 0.0f) {
@@ -435,7 +435,7 @@ void			LocalPlayer::doUpdateMotion(float dt)
   insideBuilding = (const Obstacle*)(location == InBuilding ? obstacle : NULL);
 
   // see if we're crossing a wall
-  if (location == InBuilding && getFlag() == OscOverthrusterFlag) {
+  if (location == InBuilding && getFlag() == Flags::OscillationOverthruster) {
     if (insideBuilding->isCrossing(newPos, newAzimuth,
 			0.5f * TankLength, 0.5f * TankWidth, NULL))
       setStatus(getStatus() | int(PlayerState::CrossingWall));
@@ -463,7 +463,7 @@ void			LocalPlayer::doUpdateMotion(float dt)
   const Teleporter* teleporter = (const Teleporter*)(!isAlive() ? NULL :
 	World::getWorld()->crossesTeleporter(oldPosition, newPos, face));
   if (teleporter) {
-    if (getFlag() == PhantomZoneFlag) {
+    if (getFlag() == Flags::PhantomZone) {
       // change zoned state
       setStatus(getStatus() ^ PlayerState::FlagActive);
       playLocalSound( SFX_PHANTOM );
@@ -504,10 +504,10 @@ void			LocalPlayer::doUpdateMotion(float dt)
       firingStatus = Deceased;
       break;
     case InBuilding:
-      firingStatus = (getFlag() == PhantomZoneFlag) ? Zoned : Sealed;
+      firingStatus = (getFlag() == Flags::PhantomZone) ? Zoned : Sealed;
       break;
     default:
-      if (getFlag() == PhantomZoneFlag && isFlagActive())
+      if (getFlag() == Flags::PhantomZone && isFlagActive())
 	firingStatus = Zoned;
       else if (getReloadTime() > 0.0f)
 	firingStatus = Loading;
@@ -538,7 +538,7 @@ void			LocalPlayer::doUpdateMotion(float dt)
   if (oldPosition[0] != newPos[0] || oldPosition[1] != newPos[1] ||
 	oldPosition[2] != newPos[2] || oldAzimuth != newAzimuth)
     moveSoundReceiver(newPos[0], newPos[1], newPos[2], newAzimuth,
-	(dt == 0.0f || teleporter != NULL && getFlag() != PhantomZoneFlag));
+	(dt == 0.0f || teleporter != NULL && getFlag() != Flags::PhantomZone));
   if (dt == 0.0f)
     speedSoundReceiver(newVelocity[0], newVelocity[1], newVelocity[2]);
   else
@@ -552,15 +552,15 @@ const Obstacle*		LocalPlayer::getHitBuilding(const float* p, float a,
 {
   float length = 0.5f * TankLength;
   float width = 0.5f * TankWidth;
-  if (getFlag() == ObesityFlag) {
+  if (getFlag() == Flags::Obesity) {
     length *= ObeseFactor;
     width *= 2.0f * ObeseFactor;
   }
-  else if (getFlag() == TinyFlag) {
+  else if (getFlag() == Flags::Tiny) {
     length *= TinyFactor;
     width *= 2.0f * TinyFactor;
   }
-  else if (getFlag() == NarrowFlag) {
+  else if (getFlag() == Flags::Narrow) {
     width = 0.0f;
   }
 
@@ -570,7 +570,7 @@ const Obstacle*		LocalPlayer::getHitBuilding(const float* p, float a,
   if (expelled && phased)
     expelled = (obstacle->getType() == WallObstacle::getClassName() ||
 		obstacle->getType() == Teleporter::getClassName() ||
-		(getFlag() == OscOverthrusterFlag && desiredSpeed < 0.0f &&
+		(getFlag() == Flags::OscillationOverthruster && desiredSpeed < 0.0f &&
 		p[2] == 0.0f));
   return obstacle;
 }
@@ -582,15 +582,15 @@ bool			LocalPlayer::getHitNormal(const Obstacle* o,
 {
   float length = 0.5f * TankLength;
   float width = 0.5f * TankWidth;
-  if (getFlag() == ObesityFlag) {
+  if (getFlag() == Flags::Obesity) {
     length *= ObeseFactor;
     width *= 2.0f * ObeseFactor;
   }
-  else if (getFlag() == TinyFlag) {
+  else if (getFlag() == Flags::Tiny) {
     length *= TinyFactor;
     width *= 2.0f * TinyFactor;
   }
-  else if (getFlag() == NarrowFlag) {
+  else if (getFlag() == Flags::Narrow) {
     width = 0.0f;
   }
 
@@ -644,7 +644,7 @@ void			LocalPlayer::restart(const float* pos, float _azimuth)
   setStatus(short(PlayerState::DeadStatus));
 
   // can't have a flag
-  setFlag(NoFlag);
+  setFlag(Flags::Null);
 
   // get rid of existing shots
   const int numShots = World::getWorld()->getMaxShots();
@@ -691,11 +691,11 @@ void			LocalPlayer::setDesiredSpeed(float fracOfMaxSpeed)
 
   // oscillation overthruster tank in building can't back up
   if (fracOfMaxSpeed < 0.0f && getLocation() == InBuilding &&
-				getFlag() == OscOverthrusterFlag)
+				getFlag() == Flags::OscillationOverthruster)
     fracOfMaxSpeed = 0.0f;
 
   // boost speed for certain flags
-  if (getFlag() == VelocityFlag)
+  if (getFlag() == Flags::Velocity)
     fracOfMaxSpeed *= VelocityAd;
 
   // set desired speed
@@ -709,13 +709,13 @@ void			LocalPlayer::setDesiredAngVel(float fracOfMaxAngVel)
   else if (fracOfMaxAngVel < -1.0f) fracOfMaxAngVel = -1.0f;
 
   // further limit turn speed for certain flags
-  if (fracOfMaxAngVel < 0.0f && getFlag() == LeftTurnOnlyFlag)
+  if (fracOfMaxAngVel < 0.0f && getFlag() == Flags::LeftTurnOnly)
     fracOfMaxAngVel = 0.0f;
-  else if (fracOfMaxAngVel > 0.0f && getFlag() == RightTurnOnlyFlag)
+  else if (fracOfMaxAngVel > 0.0f && getFlag() == Flags::RightTurnOnly)
     fracOfMaxAngVel = 0.0f;
 
   // boost turn speed for other flags
-  if (getFlag() == QuickTurnFlag)
+  if (getFlag() == Flags::QuickTurn)
     fracOfMaxAngVel *= AngularAd;
 
   // set desired turn speed
@@ -746,12 +746,12 @@ bool			LocalPlayer::fireShot()
 
   // make sure we're allowed to shoot
   if (!isAlive() || isPaused() || location == InBuilding ||
-	(getFlag() == PhantomZoneFlag && isFlagActive()))
+	(getFlag() == Flags::PhantomZone && isFlagActive()))
     return false;
 
   // prepare shot
   FiringInfo firingInfo(*this, i + getSalt());
-  if (firingInfo.flag == ShockWaveFlag) {
+  if (firingInfo.flag == Flags::ShockWave) {
     // move shot origin under tank and make it stationary
     const float* pos = getPosition();
     firingInfo.shot.pos[0] = pos[0];
@@ -772,11 +772,11 @@ bool			LocalPlayer::fireShot()
   shots[i] = new LocalShotPath(firingInfo);
 
   ServerLink::getServer()->sendBeginShot(firingInfo);
-  if (firingInfo.flag == ShockWaveFlag)
+  if (firingInfo.flag == Flags::ShockWave)
     playLocalSound(SFX_SHOCK);
-  else if (firingInfo.flag == LaserFlag)
+  else if (firingInfo.flag == Flags::Laser)
     playLocalSound(SFX_LASER);
-  else if (firingInfo.flag == GuidedMissileFlag)
+  else if (firingInfo.flag == Flags::GuidedMissile)
     playLocalSound(SFX_MISSILE);
   else
     playLocalSound(SFX_FIRE);
@@ -830,7 +830,7 @@ void			LocalPlayer::jump()
     return;
 
   // can only jump with a jumping flag or if jumping is allowed for all
-  if (getFlag() != JumpingFlag && !World::getWorld()->allowJumping())
+  if (getFlag() != Flags::Jumping && !World::getWorld()->allowJumping())
     return;
 
   // add jump velocity (actually, set the vertical component since you
@@ -883,9 +883,9 @@ void			LocalPlayer::doMomentum(float dt,
 						float& speed, float& angVel)
 {
   // get maximum linear and angular accelerations
-  const float linearAcc = (getFlag() == MomentumFlag) ? MomentumLinAcc :
+  const float linearAcc = (getFlag() == Flags::Momentum) ? MomentumLinAcc :
 				World::getWorld()->getLinearAcceleration();
-  const float angularAcc = (getFlag() == MomentumFlag) ? MomentumAngAcc :
+  const float angularAcc = (getFlag() == Flags::Momentum) ? MomentumAngAcc :
 				World::getWorld()->getAngularAcceleration();
 
   // limit linear acceleration
@@ -928,16 +928,16 @@ bool			LocalPlayer::checkHit(const Player* source,
     if (!shot || shot->isExpired()) continue;
 
     // my own shock wave cannot kill me
-    if (source == this && shot->getFlag() == ShockWaveFlag) continue;
+    if (source == this && shot->getFlag() == Flags::ShockWave) continue;
 
     // short circuit test if shot can't possibly hit.
     // only superbullet or shockwave can kill zoned dude
-    const FlagId shotFlag = shot->getFlag();
-    if (getFlag() == PhantomZoneFlag && isFlagActive() &&
-		shotFlag != SuperBulletFlag && shotFlag != ShockWaveFlag)
+    const FlagDesc* shotFlag = shot->getFlag();
+    if (getFlag() == Flags::PhantomZone && isFlagActive() &&
+		shotFlag != Flags::SuperBullet && shotFlag != Flags::ShockWave)
       continue;
     // laser can't hit a cloaked tank
-    if (getFlag() == CloakingFlag && shotFlag == LaserFlag)
+    if (getFlag() == Flags::Cloaking && shotFlag == Flags::Laser)
       continue;
 
     // test myself against shot
@@ -960,12 +960,12 @@ bool			LocalPlayer::checkHit(const Player* source,
   return goodHit;
 }
 
-void			LocalPlayer::setFlag(FlagId id)
+void			LocalPlayer::setFlag(FlagDesc* flag)
 {
-  Player::setFlag(id);
+  Player::setFlag(flag);
 
   // if it's bad then reset countdowns and set antidote flag
-  if (getFlag() != NoFlag && Flag::getType(getFlag()) == FlagSticky) {
+  if (getFlag() != Flags::Null && getFlag()->flagType == FlagSticky) {
     if (World::getWorld()->allowShakeTimeout())
       flagShakingTime = World::getWorld()->getFlagShakeTimeout();
     if (World::getWorld()->allowShakeWins())
