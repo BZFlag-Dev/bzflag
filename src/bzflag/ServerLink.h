@@ -70,7 +70,7 @@ class ServerLink {
     void		sendTransferFlag(const PlayerId&, const PlayerId&);
     void		sendNewRabbit();
     void		sendPaused(bool paused);
-    void                sendUDPlinkRequest();
+    void		sendUDPlinkRequest();
     void		enableUDPCon();
 
     static ServerLink*	getServer(); // const
@@ -82,10 +82,9 @@ class ServerLink {
     int			fd;
 
     uint32_t		remoteAddress;
-    int			usendfd;
-    struct sockaddr     usendaddr;
+    struct sockaddr	usendaddr;
     int			urecvfd;
-    struct sockaddr     urecvaddr;
+    struct sockaddr	urecvaddr;
     bool		ulinkup;
 
     PlayerId		id;
