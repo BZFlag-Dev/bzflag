@@ -23,6 +23,8 @@ THESE SHOULD HAPPEN BEFORE THE NEXT RELEASE:
 
 THESE ARE LOWER PRIORITY
 
+* bzadmin should build without GL headers installed
+
 * rework the BZDB->eval() cacheing to support expression
   dependencies - if a variable changes, all the expressions
   that use that variable should be updated as well
