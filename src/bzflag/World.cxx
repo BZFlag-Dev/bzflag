@@ -140,8 +140,7 @@ TeamColor				World::whoseBase(const float* pos) const
 		float ny = pos[1] - bases[i][1];
 		float rx = (float) (cosf(atanf(ny/nx)-bases[i][3]) * sqrt((ny * ny) + (nx * nx)));
 		float ry = (float) (sinf(atanf(ny/nx)-bases[i][3]) * sqrt((ny * ny) + (nx * nx)));
-		if(fabsf(rx) < bases[i][4] &&
-       fabsf(ry) < bases[i][5]) {
+		if(fabsf(rx) < bases[i][4] && fabsf(ry) < bases[i][5]) {
 			float nz = (bases[i][2] > 0) ? (bases[i][2] + 1) : 0;
 			float rz = pos[2] - nz;
 			if(fabsf(rz) < 0.1) { // epsilon kludge
@@ -503,14 +502,12 @@ void					World::updateFlag(int index, float dt)
 
 	// narrow flag on tank turns with tank (so it's almost invisible head-on)
 	if (flag.id == NarrowFlag && flag.status == FlagOnTank) {
-		for (int i = 0; i < maxPlayers; i++)
-			if (players[i] && players[i]->getId() == flag.owner) {
-				const float* dir = players[i]->getForward();
-				flagNodes[index].billboard->turn.set(false);
-				flagNodes[index].xform->rotate.set(3, 180.0f + atan2f(dir[1],
-												dir[0]) * 180.0f / M_PI);
-				break;
-			}
+		if (flag.owner < maxPlayers && players[flag.owner] != NULL) {
+			const float* dir = players[flag.owner]->getForward();
+			flagNodes[index].billboard->turn.set(false);
+			flagNodes[index].xform->rotate.set(3, 180.0f + atan2f(dir[1],
+											dir[0]) * 180.0f / M_PI);
+		}
 	}
 	else {
 		flagNodes[index].billboard->turn.set(true);
@@ -531,24 +528,21 @@ void					World::addFlagsSceneNodes(SceneNodeGroup* group)
 			if (flags[i].id == CloakingFlag)
 				continue;
 
-			int j;
-			for (j = 0; j < maxPlayers; j++)
-				if (players[j] && players[j]->getId() == flags[i].owner)
-					break;
-
-			if (j < maxPlayers && !(players[j]->getStatus() & Player::Alive))
+			int id = flags[i].owner;
+			if (id < maxPlayers && players[id] != NULL &&
+				!(players[id]->getStatus() & Player::Alive))
 				continue;
 		}
 
 		group->pushChild(flagNodes[i].xform);
 
 /* FIXME -- warp unsupported for now.  maybe a switched child of xform.
-    // add warp if coming/going and hovering
-    if ((flags[i].status == FlagComing &&
+	// add warp if coming/going and hovering
+	if ((flags[i].status == FlagComing &&
 		flags[i].flightTime < 0.5 * flags[i].flightEnd) ||
 		(flags[i].status == FlagGoing &&
 		flags[i].flightTime >= 0.5 * flags[i].flightEnd))
-      scene->addDynamicNode(flagWarpNodes[i]);
+		scene->addDynamicNode(flagWarpNodes[i]);
 */
 	}
 }
