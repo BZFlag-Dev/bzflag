@@ -20,6 +20,7 @@
 const GlobalDBItem				globalDBItems[] = {
 	{ "_angleTolerance",		"0.01",				false, StateDatabase::Locked},
 	{ "_angularAd",			"1.5",				false, StateDatabase::Locked},
+	{ "_baseSize",                  "60.0",                         false, StateDatabase::Locked},
 	{ "_boxHeight",			"6.0*_muzzleHeight",		false, StateDatabase::Locked},
 	{ "_burrowAngularAd",		"0.55",				false, StateDatabase::Locked},
 	{ "_burrowDepth",		"-1.32",			false, StateDatabase::Locked},

@@ -184,6 +184,7 @@ public:
   
   static const std::string	BZDB_ANGLETOLERANCE;
   static const std::string	BZDB_ANGULARAD;
+  static const std::string	BZDB_BASESIZE;
   static const std::string	BZDB_BOXHEIGHT;
   static const std::string	BZDB_BURROWDEPTH;
   static const std::string	BZDB_BURROWSPEEDAD;

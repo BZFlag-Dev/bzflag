@@ -33,37 +33,38 @@ TeamBases::TeamBases(TeamColor team, bool initDefault)
 
     float worldSize = BZDB.eval(StateDatabase::BZDB_WORLDSIZE);
     float pyrBase = BZDB.eval(StateDatabase::BZDB_PYRBASE);
+    float baseSize = BZDB.eval(StateDatabase::BZDB_BASESIZE);
 
     teamBases.resize(1);
     TeamBase &teamBase = teamBases[0];
     switch (team)
     {
       case RedTeam:
-        teamBase.position[0] = (-worldSize + BaseSize) / 2.0f;
+        teamBase.position[0] = (-worldSize + baseSize) / 2.0f;
 	teamBase.position[1] = 0.0f;
-        teamBase.safetyZone[0] = teamBase.position[0] + 0.5f * BaseSize + pyrBase;
-        teamBase.safetyZone[1] = teamBase.position[1] + 0.5f * BaseSize + pyrBase;
+        teamBase.safetyZone[0] = teamBase.position[0] + 0.5f * baseSize + pyrBase;
+        teamBase.safetyZone[1] = teamBase.position[1] + 0.5f * baseSize + pyrBase;
       break;
 
       case GreenTeam:
-	teamBase.position[0] = (worldSize - BaseSize) / 2.0f;
+	teamBase.position[0] = (worldSize - baseSize) / 2.0f;
 	teamBase.position[1] = 0.0f;
-        teamBase.safetyZone[0] = teamBase.position[0] - 0.5f * BaseSize - pyrBase;
-        teamBase.safetyZone[1] = teamBase.position[1] - 0.5f * BaseSize - pyrBase;
+        teamBase.safetyZone[0] = teamBase.position[0] - 0.5f * baseSize - pyrBase;
+        teamBase.safetyZone[1] = teamBase.position[1] - 0.5f * baseSize - pyrBase;
       break;
 
       case BlueTeam:
 	teamBase.position[0] = 0.0f;
-	teamBase.position[1] = (-worldSize + BaseSize) / 2.0f;
-        teamBase.safetyZone[0] = teamBase.position[0] - 0.5f * BaseSize - pyrBase;
-        teamBase.safetyZone[1] = teamBase.position[1] + 0.5f * BaseSize + pyrBase;
+	teamBase.position[1] = (-worldSize + baseSize) / 2.0f;
+        teamBase.safetyZone[0] = teamBase.position[0] - 0.5f * baseSize - pyrBase;
+        teamBase.safetyZone[1] = teamBase.position[1] + 0.5f * baseSize + pyrBase;
       break;
 
       case PurpleTeam:
 	teamBase.position[0] = 0.0f;
-	teamBase.position[1] = (worldSize - BaseSize) / 2.0f;
-        teamBase.safetyZone[0] = teamBase.position[0] + 0.5f * BaseSize + pyrBase;
-        teamBase.safetyZone[1] = teamBase.position[1] - 0.5f * BaseSize - pyrBase;
+	teamBase.position[1] = (worldSize - baseSize) / 2.0f;
+        teamBase.safetyZone[0] = teamBase.position[0] + 0.5f * baseSize + pyrBase;
+        teamBase.safetyZone[1] = teamBase.position[1] - 0.5f * baseSize - pyrBase;
       break;
 
       default:
@@ -73,8 +74,8 @@ TeamBases::TeamBases(TeamColor team, bool initDefault)
 
     teamBase.position[2] = 0.0f;
     teamBase.rotation = 0.0f;
-    teamBase.size[0] = BaseSize / 2.0f;
-    teamBase.size[1] = BaseSize / 2.0f;
+    teamBase.size[0] = baseSize / 2.0f;
+    teamBase.size[1] = baseSize / 2.0f;
     teamBase.size[2] = 0.0f;
     teamBase.safetyZone[2] = teamBase.position[2];
 }

@@ -59,9 +59,6 @@ const float		Infinity =	MAXFLOAT;	// arbitrary
 
 #define DEFAULT_WORLD	800
 
-// universe info
-const float		BaseSize =	60.0f;					// meters
-
 // box geometry
 const float		BoxBase =	30.0f;// meters
 

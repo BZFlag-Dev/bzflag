@@ -1419,25 +1419,26 @@ static WorldInfo *defineTeamWorld()
     world->addWall(-0.5f * worldSize, 0.0f, 0.0f, 0.0f, 0.5f * worldSize, wallHeight);
 
     const float pyrHeight = BZDB.eval(StateDatabase::BZDB_PYRHEIGHT);
+    const float baseSize = BZDB.eval(StateDatabase::BZDB_BASESIZE);
     // make pyramids
     if (haveRed) {
       // around red base
       const float *pos = bases[RedTeam].getBasePosition(0);
       world->addPyramid(
-	  pos[0] + 0.5f * BaseSize - pyrBase,
-	  pos[1] - 0.5f * BaseSize - pyrBase, 0.0f, 0.0f,
+	  pos[0] + 0.5f * baseSize - pyrBase,
+	  pos[1] - 0.5f * baseSize - pyrBase, 0.0f, 0.0f,
 	  pyrBase, pyrBase, pyrHeight);
       world->addPyramid(
-	  pos[0] + 0.5f * BaseSize + pyrBase,
-	  pos[1] - 0.5f * BaseSize + pyrBase, 0.0f, 0.0f,
+	  pos[0] + 0.5f * baseSize + pyrBase,
+	  pos[1] - 0.5f * baseSize + pyrBase, 0.0f, 0.0f,
 	  pyrBase, pyrBase, pyrHeight);
       world->addPyramid(
-	  pos[0] + 0.5f * BaseSize + pyrBase,
-	  pos[1] + 0.5f * BaseSize - pyrBase, 0.0f, 0.0f,
+	  pos[0] + 0.5f * baseSize + pyrBase,
+	  pos[1] + 0.5f * baseSize - pyrBase, 0.0f, 0.0f,
 	  pyrBase, pyrBase, pyrHeight);
       world->addPyramid(
-	  pos[0] + 0.5f * BaseSize - pyrBase,
-	  pos[1] + 0.5f * BaseSize + pyrBase, 0.0f, 0.0f,
+	  pos[0] + 0.5f * baseSize - pyrBase,
+	  pos[1] + 0.5f * baseSize + pyrBase, 0.0f, 0.0f,
 	  pyrBase, pyrBase, pyrHeight);
     }
 
@@ -1445,20 +1446,20 @@ static WorldInfo *defineTeamWorld()
       // around green base
       const float *pos = bases[GreenTeam].getBasePosition(0);
       world->addPyramid(
-	  pos[0] - 0.5f * BaseSize + pyrBase,
-	  pos[1] - 0.5f * BaseSize - pyrBase, 0.0f, 0.0f,
+	  pos[0] - 0.5f * baseSize + pyrBase,
+	  pos[1] - 0.5f * baseSize - pyrBase, 0.0f, 0.0f,
 	  pyrBase, pyrBase, pyrHeight);
       world->addPyramid(
-	  pos[0] - 0.5f * BaseSize - pyrBase,
-	  pos[1] - 0.5f * BaseSize + pyrBase, 0.0f, 0.0f,
+	  pos[0] - 0.5f * baseSize - pyrBase,
+	  pos[1] - 0.5f * baseSize + pyrBase, 0.0f, 0.0f,
 	  pyrBase, pyrBase, pyrHeight);
       world->addPyramid(
-	  pos[0] - 0.5f * BaseSize - pyrBase,
-	  pos[1] + 0.5f * BaseSize - pyrBase, 0.0f, 0.0f,
+	  pos[0] - 0.5f * baseSize - pyrBase,
+	  pos[1] + 0.5f * baseSize - pyrBase, 0.0f, 0.0f,
 	  pyrBase, pyrBase, pyrHeight);
       world->addPyramid(
-	  pos[0] - 0.5f * BaseSize + pyrBase,
-	  pos[1] + 0.5f * BaseSize + pyrBase, 0.0f, 0.0f,
+	  pos[0] - 0.5f * baseSize + pyrBase,
+	  pos[1] + 0.5f * baseSize + pyrBase, 0.0f, 0.0f,
 	  pyrBase, pyrBase, pyrHeight);
     }
 
@@ -1466,20 +1467,20 @@ static WorldInfo *defineTeamWorld()
       // around blue base
       const float *pos = bases[BlueTeam].getBasePosition(0);
       world->addPyramid(
-	  pos[0] - 0.5f * BaseSize - pyrBase,
-	  pos[1] + 0.5f * BaseSize - pyrBase, 0.0f, 0.0f,
+	  pos[0] - 0.5f * baseSize - pyrBase,
+	  pos[1] + 0.5f * baseSize - pyrBase, 0.0f, 0.0f,
 	  pyrBase, pyrBase, pyrHeight);
       world->addPyramid(
-	  pos[0] - 0.5f * BaseSize + pyrBase,
-	  pos[1] + 0.5f * BaseSize + pyrBase, 0.0f, 0.0f,
+	  pos[0] - 0.5f * baseSize + pyrBase,
+	  pos[1] + 0.5f * baseSize + pyrBase, 0.0f, 0.0f,
 	  pyrBase, pyrBase, pyrHeight);
       world->addPyramid(
-	  pos[0] + 0.5f * BaseSize - pyrBase,
-	  pos[1] + 0.5f * BaseSize + pyrBase, 0.0f, 0.0f,
+	  pos[0] + 0.5f * baseSize - pyrBase,
+	  pos[1] + 0.5f * baseSize + pyrBase, 0.0f, 0.0f,
 	  pyrBase, pyrBase, pyrHeight);
       world->addPyramid(
-	  pos[0] + 0.5f * BaseSize + pyrBase,
-	  pos[1] + 0.5f * BaseSize - pyrBase, 0.0f, 0.0f,
+	  pos[0] + 0.5f * baseSize + pyrBase,
+	  pos[1] + 0.5f * baseSize - pyrBase, 0.0f, 0.0f,
 	  pyrBase, pyrBase, pyrHeight);
     }
 
@@ -1487,20 +1488,20 @@ static WorldInfo *defineTeamWorld()
       // around purple base
       const float *pos = bases[PurpleTeam].getBasePosition(0);
       world->addPyramid(
-	  pos[0] - 0.5f * BaseSize - pyrBase,
-	  pos[1] - 0.5f * BaseSize + pyrBase, 0.0f, 0.0f,
+	  pos[0] - 0.5f * baseSize - pyrBase,
+	  pos[1] - 0.5f * baseSize + pyrBase, 0.0f, 0.0f,
 	  pyrBase, pyrBase, pyrHeight);
       world->addPyramid(
-	  pos[0] - 0.5f * BaseSize + pyrBase,
-	  pos[1] - 0.5f * BaseSize - pyrBase, 0.0f, 0.0f,
+	  pos[0] - 0.5f * baseSize + pyrBase,
+	  pos[1] - 0.5f * baseSize - pyrBase, 0.0f, 0.0f,
 	  pyrBase, pyrBase, pyrHeight);
       world->addPyramid(
-	  pos[0] + 0.5f * BaseSize - pyrBase,
-	  pos[1] - 0.5f * BaseSize - pyrBase, 0.0f, 0.0f,
+	  pos[0] + 0.5f * baseSize - pyrBase,
+	  pos[1] - 0.5f * baseSize - pyrBase, 0.0f, 0.0f,
 	  pyrBase, pyrBase, pyrHeight);
       world->addPyramid(
-	  pos[0] + 0.5f * BaseSize + pyrBase,
-	  pos[1] - 0.5f * BaseSize + pyrBase, 0.0f, 0.0f,
+	  pos[0] + 0.5f * baseSize + pyrBase,
+	  pos[1] - 0.5f * baseSize + pyrBase, 0.0f, 0.0f,
 	  pyrBase, pyrBase, pyrHeight);
     }
 
@@ -1625,14 +1626,14 @@ static WorldInfo *defineTeamWorld()
 	  // if to close to a base then try again
 	  if ((redGreen &&
 	       (hypotf(fabs(x-redPosition[0]),fabs(y-redPosition[1])) <=
-		BaseSize*4 ||
+		baseSize*4 ||
 		hypotf(fabs(x-greenPosition[0]),fabs(y-greenPosition[1])) <=
-		BaseSize*4)) ||
+		baseSize*4)) ||
 	      (bluePurple &&
 	       (hypotf(fabs(x-bluePosition[0]),fabs(y-bluePosition[1])) <=
-		BaseSize*4 ||
+		baseSize*4 ||
 		hypotf(fabs(x-purplePosition[0]),fabs(y-purplePosition[1])) <=
-		BaseSize*4)))
+		baseSize*4)))
 	    continue;
 
 	  linked[i/teamFactor][0] = linked[i/teamFactor][1] = 0;
@@ -2630,6 +2631,7 @@ void resetFlag(int flagIndex)
     return;
   }
   float flagHeight = BZDB.eval(StateDatabase::BZDB_FLAGHEIGHT);
+  float baseSize = BZDB.eval(StateDatabase::BZDB_BASESIZE);
   FlagInfo *pFlagInfo = &flag[flagIndex];
   // reset a flag's info
   pFlagInfo->player = -1;
@@ -2656,8 +2658,8 @@ void resetFlag(int flagIndex)
       r *= 2.0f * BZDB.eval(StateDatabase::BZDB_OBESEFACTOR);
     ObstacleLocation *obj;
     float worldSize = BZDB.eval(StateDatabase::BZDB_WORLDSIZE);
-    pFlagInfo->flag.position[0] = (worldSize - BaseSize) * ((float)bzfrand() - 0.5f);
-    pFlagInfo->flag.position[1] = (worldSize - BaseSize) * ((float)bzfrand() - 0.5f);
+    pFlagInfo->flag.position[0] = (worldSize - baseSize) * ((float)bzfrand() - 0.5f);
+    pFlagInfo->flag.position[1] = (worldSize - baseSize) * ((float)bzfrand() - 0.5f);
     pFlagInfo->flag.position[2] = 0.0f;
     int topmosttype = world->inBuilding(&obj,
 					pFlagInfo->flag.position[0],
@@ -2676,8 +2678,8 @@ void resetFlag(int flagIndex)
       }
       else
       {
-	pFlagInfo->flag.position[0] = (worldSize - BaseSize) * ((float)bzfrand() - 0.5f);
-	pFlagInfo->flag.position[1] = (worldSize - BaseSize) * ((float)bzfrand() - 0.5f);
+	pFlagInfo->flag.position[0] = (worldSize - baseSize) * ((float)bzfrand() - 0.5f);
+	pFlagInfo->flag.position[1] = (worldSize - baseSize) * ((float)bzfrand() - 0.5f);
 	pFlagInfo->flag.position[2] = 0.0f;
       }
       topmosttype = world->inBuilding(&obj,

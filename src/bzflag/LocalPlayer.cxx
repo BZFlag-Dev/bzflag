@@ -1410,6 +1410,7 @@ void			LocalPlayer::setFlag(FlagType* flag)
       flagShakingWins = World::getWorld()->getFlagShakeWins();
     if (World::getWorld()->allowAntidote()) {
       float tankRadius = BZDBCache::tankRadius;
+      float baseSize = BZDB.eval(StateDatabase::BZDB_BASESIZE);
       do {
 	if (World::getWorld()->allowTeamFlags()) {
 	  flagAntidotePos[0] = 0.5f * worldSize * ((float)bzfrand() - 0.5f);
@@ -1417,8 +1418,8 @@ void			LocalPlayer::setFlag(FlagType* flag)
 	  flagAntidotePos[2] = 0.0f;
 	}
 	else {
-	  flagAntidotePos[0] = (worldSize - BaseSize) * ((float)bzfrand() - 0.5f);
-	  flagAntidotePos[1] = (worldSize - BaseSize) * ((float)bzfrand() - 0.5f);
+	  flagAntidotePos[0] = (worldSize - baseSize) * ((float)bzfrand() - 0.5f);
+	  flagAntidotePos[1] = (worldSize - baseSize) * ((float)bzfrand() - 0.5f);
 	  flagAntidotePos[2] = 0.0f;
 	}
       } while (World::getWorld()->inBuilding(flagAntidotePos, tankRadius));
