@@ -134,6 +134,22 @@
 						d.writeln("-admsg \"" + mainform.advertisement_message.value + "<br/><br/>");
 					}
 	
+					
+					if (mainform.print_score.checked) {
+						d.writeln("#Write score to stdout whenever it changes<br/>");
+						d.writeln("-printscore<br/><br/>");
+					}
+
+					if (mainform.time.value.length > 0) {
+						d.writeln("#Set time limit on each game [s]<br/>");
+						d.writeln("-time " + mainform.time.value + "<br/><br/>");
+					}
+
+					if (mainform.time_manual.checked) {
+						d.writeln("#Countdown for timed games has to be started with /countdown<br/>");
+						d.writeln("-timemanual<br/><br/>");
+					}
+
 					if (mainform.debug_level.value != 0) {
 						d.writeln("#Increase debugging level<br/>");
 						d.write("-");
@@ -386,6 +402,16 @@
 					<tr span="2">
 						<td>Advertisement Message</td>
 						<td colspan="3"><input type="text" name="advertisement_message" size="100"/></td>
+					</tr>
+					<tr>	
+						<td>Print Score</td>
+						<td><input type="checkbox" name="print_score"/></td>
+					</tr>
+					<tr>
+						<td>Time</td>
+						<td><input type="text" name="time" size="30"/></td>
+						<td>Time Manual</td>
+						<td><input type="checkbox" name="time_manual"/></td>
 					</tr>
 					<tr>
 						<td>Debug Level</td>
