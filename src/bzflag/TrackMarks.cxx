@@ -67,7 +67,7 @@ static OpenGLGState treadsState;
 static OpenGLGState puddleState;
 static const std::string puddleTexture = "puddle";
 
-static float TextureHeightOffset = 0.1f;
+static float TextureHeightOffset = 0.05f;
 
 
 // Function Prototypes
@@ -248,13 +248,19 @@ void TrackMarks::render()
     it = next;
     
     if (te.type == treads) {
-      drawTreads(te, timeDiff);
+      // Narrow tanks don't draw tread marks
+      if (te.scale > 0.01f) {
+        drawTreads(te, timeDiff);
+      }
     } else {
       drawPuddle(te, timeDiff);
     }
   }
   
   glEnable(GL_LIGHTING);
+
+  // something is borked in the state management
+  OpenGLGState::resetState();
   
   return;
 }
@@ -270,43 +276,50 @@ static void drawPuddle(const TrackEntry& te, float lifetime)
   glColor4f(1.0f, 1.0f, 1.0f, 1.0f - ratio);
 
   glPushMatrix();
-  glTranslatef(te.pos[0], te.pos[1], te.pos[2]);
-  glRotatef(te.angle, 0.0f, 0.0f, 1.0f);
-  glTranslatef(0.0f, +offset, 0.0f);
-  glScalef(scale, scale, 1.0f);
-  glBegin(GL_QUADS);
   {
-    glTexCoord2f(0.0f, 0.0f);
-    glVertex3f(-1.0f, -1.0f, 0.0f);
-    glTexCoord2f(1.0f, 0.0f);
-    glVertex3f(+1.0f, -1.0f, 0.0f);
-    glTexCoord2f(1.0f, 1.0f);
-    glVertex3f(+1.0f, +1.0f, 0.0f);
-    glTexCoord2f(0.0f, 1.0f);
-    glVertex3f(-1.0f, +1.0f, 0.0f);
-  } 
-  glEnd();
+    glTranslatef(te.pos[0], te.pos[1], te.pos[2]);
+    glRotatef(te.angle, 0.0f, 0.0f, 1.0f);
+    glTranslatef(0.0f, +offset, 0.0f);
+    glScalef(scale, scale, 1.0f);
+    glBegin(GL_QUADS);
+    {
+      glTexCoord2f(0.0f, 0.0f);
+      glVertex3f(-1.0f, -1.0f, 0.0f);
+      glTexCoord2f(1.0f, 0.0f);
+      glVertex3f(+1.0f, -1.0f, 0.0f);
+      glTexCoord2f(1.0f, 1.0f);
+      glVertex3f(+1.0f, +1.0f, 0.0f);
+      glTexCoord2f(0.0f, 1.0f);
+      glVertex3f(-1.0f, +1.0f, 0.0f);
+    } 
+    glEnd();
+  }
   glPopMatrix();
 
-  glPushMatrix();
-  glTranslatef(te.pos[0], te.pos[1], te.pos[2]);
-  glRotatef(te.angle, 0.0f, 0.0f, 1.0f);
-  glTranslatef(0.0f, -offset, 0.0f);
-  glScalef(scale, scale, 1.0f);
+  // Narrow tanks only needs 1 puddle
+  if (offset > 0.01f) {
+    glPushMatrix();
+    {
+      glTranslatef(te.pos[0], te.pos[1], te.pos[2]);
+      glRotatef(te.angle, 0.0f, 0.0f, 1.0f);
+      glTranslatef(0.0f, -offset, 0.0f);
+      glScalef(scale, scale, 1.0f);
 
-  glBegin(GL_QUADS);
-  {
-    glTexCoord2f(0.0f, 0.0f);
-    glVertex3f(-1.0f, -1.0f, 0.0f);
-    glTexCoord2f(1.0f, 0.0f);
-    glVertex3f(+1.0f, -1.0f, 0.0f);
-    glTexCoord2f(1.0f, 1.0f);
-    glVertex3f(+1.0f, +1.0f, 0.0f);
-    glTexCoord2f(0.0f, 1.0f);
-    glVertex3f(-1.0f, +1.0f, 0.0f);
-  } 
-  glEnd();
-  glPopMatrix();
+      glBegin(GL_QUADS);
+      {
+        glTexCoord2f(0.0f, 0.0f);
+        glVertex3f(-1.0f, -1.0f, 0.0f);
+        glTexCoord2f(1.0f, 0.0f);
+        glVertex3f(+1.0f, -1.0f, 0.0f);
+        glTexCoord2f(1.0f, 1.0f);
+        glVertex3f(+1.0f, +1.0f, 0.0f);
+        glTexCoord2f(0.0f, 1.0f);
+        glVertex3f(-1.0f, +1.0f, 0.0f);
+      } 
+      glEnd();
+    }
+    glPopMatrix();
+  }
 
   return;
 }
