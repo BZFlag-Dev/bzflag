@@ -17,21 +17,21 @@
 
 class SGIImageFile : public ImageFile {
 public:
-	SGIImageFile(std::istream*);
-	virtual ~SGIImageFile();
+  SGIImageFile(std::istream*);
+  virtual ~SGIImageFile();
 
-	static std::string	getExtension();
+  static std::string	getExtension();
 
-	// ImageFile overrides
-	virtual bool		read(void* buffer);
+  // ImageFile overrides
+  virtual bool		read(void* buffer);
 
 protected:
-	bool				readVerbatim(void* buffer);
-	bool				readRLE(void* buffer);
+  bool			readVerbatim(void* buffer);
+  bool			readRLE(void* buffer);
 
 private:
-	bool				isVerbatim;
+  bool			isVerbatim;
 };
 
 #endif
-// ex: shiftwidth=4 tabstop=4
+// ex: shiftwidth=2 tabstop=8

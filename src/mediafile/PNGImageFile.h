@@ -92,12 +92,12 @@ public:
 	static int		IEND;
 private:
 	PNGChunk();
-	int				length;
-	int				type;
-	unsigned char	*data;
-	int				crc;
+	int			length;
+	int			type;
+	unsigned char		*data;
+	int			crc;
 
 };
 
 #endif
-// ex: shiftwidth=4 tabstop=4
+// ex: shiftwidth=2 tabstop=8

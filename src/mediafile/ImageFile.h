@@ -17,39 +17,39 @@
 
 class ImageFile : public MediaFile {
 public:
-	// close the image file.  this does *not* destroy the stream.
-	virtual ~ImageFile();
+  // close the image file.  this does *not* destroy the stream.
+  virtual ~ImageFile();
 
-	// note -- all concrete ImageFile types should have a method to
-	// return the default file extension for files in the format:
-	// static std::string getExtension();
+  // note -- all concrete ImageFile types should have a method to
+  // return the default file extension for files in the format:
+  // static std::string getExtension();
 
-	// pixels are stored I, IA, RGB, or RGBA, depending on the number
-	// of channels.  rows are stored left to right, bottom to top.
-	// buffer must be at least getNumChannels() * getWidth() * getHeight()
-	// bytes.
-	virtual bool		read(void* buffer) = 0;
+  // pixels are stored I, IA, RGB, or RGBA, depending on the number
+  // of channels.  rows are stored left to right, bottom to top.
+  // buffer must be at least getNumChannels() * getWidth() * getHeight()
+  // bytes.
+  virtual bool		read(void* buffer) = 0;
 
-	// returns true if the stream was successfully opened as an image file
-	bool				isOpen() const;
+  // returns true if the stream was successfully opened as an image file
+  bool			isOpen() const;
 
-	// get information about the image file.  channels are 8 bits.
-	int					getNumChannels() const;
-	int					getWidth() const;
-	int					getHeight() const;
+  // get information about the image file.  channels are 8 bits.
+  int			getNumChannels() const;
+  int			getWidth() const;
+  int			getHeight() const;
 
 protected:
-	ImageFile(std::istream*);
+  ImageFile(std::istream*);
 
-	// save info about the stream.  called by the derived c'tor.
-	// don't call this if the stream is not an audio file.
-	void				init(int numChannels, int width, int height);
+  // save info about the stream.  called by the derived c'tor.
+  // don't call this if the stream is not an audio file.
+  void			init(int numChannels, int width, int height);
 
 private:
-	bool				open;
-	int					numChannels;
-	int					width, height;
+  bool			open;
+  int			numChannels;
+  int			width, height;
 };
 
 #endif
-// ex: shiftwidth=4 tabstop=4
+// ex: shiftwidth=2 tabstop=8

@@ -17,19 +17,19 @@
 
 class WaveAudioFile : public AudioFile {
 public:
-	WaveAudioFile(std::istream*);
-	virtual ~WaveAudioFile();
+  WaveAudioFile(std::istream*);
+  virtual ~WaveAudioFile();
 
-	static std::string	getExtension();
+  static std::string	getExtension();
 
-	// AudioFile overrides
-	virtual bool		read(void* buffer, int numFrames);
+  // AudioFile overrides
+  virtual bool		read(void* buffer, int numFrames);
 
 protected:
-	bool				readHeader(char* tag, uint32_t* length);
-	bool				findChunk(const char* tag, uint32_t* length);
+  bool			readHeader(char* tag, uint32_t* length);
+  bool			findChunk(const char* tag, uint32_t* length);
 };
 
 #endif
 
-// ex: shiftwidth=4 tabstop=4
+// ex: shiftwidth=2 tabstop=8
