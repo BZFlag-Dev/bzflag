@@ -533,151 +533,59 @@ WordFilter::WordFilter()
 
 #if 1
   // noun
-  fix.word = "dom";
-  fix.compiled = getCompiledExpression(expressionFromString(fix.word));
-  suffixes.insert(fix);
-  fix.word = "ity";
-  fix.compiled = getCompiledExpression(expressionFromString(fix.word));
-  suffixes.insert(fix);
-  fix.word = "ment";
-  fix.compiled = getCompiledExpression(expressionFromString(fix.word));
-  suffixes.insert(fix);
-  fix.word = "sion";
-  fix.compiled = getCompiledExpression(expressionFromString(fix.word));
-  suffixes.insert(fix);
-  fix.word = "tion";
-  fix.compiled = getCompiledExpression(expressionFromString(fix.word));
-  suffixes.insert(fix);
-  fix.word = "ness";
-  fix.compiled = getCompiledExpression(expressionFromString(fix.word));
-  suffixes.insert(fix);
-  fix.word = "ance";
-  fix.compiled = getCompiledExpression(expressionFromString(fix.word));
-  suffixes.insert(fix);
-  fix.word = "ence";
-  fix.compiled = getCompiledExpression(expressionFromString(fix.word));
-  suffixes.insert(fix);
-  fix.word = "er";
-  fix.compiled = getCompiledExpression(expressionFromString(fix.word));
-  suffixes.insert(fix);
-  fix.word = "or";
-  fix.compiled = getCompiledExpression(expressionFromString(fix.word));
-  suffixes.insert(fix);
-  fix.word = "ist";
-  fix.compiled = getCompiledExpression(expressionFromString(fix.word));
-  suffixes.insert(fix);
+  addSuffix("dom");
+  addSuffix("ity");
+  addSuffix("ment");
+  addSuffix("sion");
+  addSuffix("tion");
+  addSuffix("ness");
+  addSuffix("ance");
+  addSuffix("ence");
+  addSuffix("er");
+  addSuffix("or");
+  addSuffix("ist");
   // adjective
-  fix.word = "ive";
-  fix.compiled = getCompiledExpression(expressionFromString(fix.word));
-  suffixes.insert(fix);
-  fix.word = "en";
-  fix.compiled = getCompiledExpression(expressionFromString(fix.word));
-  suffixes.insert(fix);
-  fix.word = "ic";
-  fix.compiled = getCompiledExpression(expressionFromString(fix.word));
-  suffixes.insert(fix);
-  fix.word = "al";
-  fix.compiled = getCompiledExpression(expressionFromString(fix.word));
-  suffixes.insert(fix);
-  fix.word = "able";
-  fix.compiled = getCompiledExpression(expressionFromString(fix.word));
-  suffixes.insert(fix);
-  fix.word = "y";
-  fix.compiled = getCompiledExpression(expressionFromString(fix.word));
-  suffixes.insert(fix);
-  fix.word = "ous";
-  fix.compiled = getCompiledExpression(expressionFromString(fix.word));
-  suffixes.insert(fix);
-  fix.word = "ful";
-  fix.compiled = getCompiledExpression(expressionFromString(fix.word));
-  suffixes.insert(fix);
-  fix.word = "less";
-  fix.compiled = getCompiledExpression(expressionFromString(fix.word));
-  suffixes.insert(fix);
+  addSuffix("ive");
+  addSuffix("en");
+  addSuffix("ic");
+  addSuffix("al");
+  addSuffix("able");
+  addSuffix("y");
+  addSuffix("ous");
+  addSuffix("ful");
+  addSuffix("less");
   // verb
-  fix.word = "en";
-  fix.compiled = getCompiledExpression(expressionFromString(fix.word));
-  suffixes.insert(fix);
-  fix.word = "ize";
-  fix.compiled = getCompiledExpression(expressionFromString(fix.word));
-  suffixes.insert(fix);
-  fix.word = "ate";
-  fix.compiled = getCompiledExpression(expressionFromString(fix.word));
-  suffixes.insert(fix);
-  fix.word = "ify";
-  fix.compiled = getCompiledExpression(expressionFromString(fix.word));
-  suffixes.insert(fix);
-  fix.word = "fy";
-  fix.compiled = getCompiledExpression(expressionFromString(fix.word));
-  suffixes.insert(fix);
-  fix.word = "ed";
-  fix.compiled = getCompiledExpression(expressionFromString(fix.word));
-  suffixes.insert(fix);
+  addSuffix("en");
+  addSuffix("ize");
+  addSuffix("ate");
+  addSuffix("ify");
+  addSuffix("fy");
+  addSuffix("ed");
   // adverb
-  fix.word = "ly";
-  fix.compiled = getCompiledExpression(expressionFromString(fix.word));
-  suffixes.insert(fix);
+  addSuffix("ly");
   // slang
-  fix.word = "a";
-  fix.compiled = getCompiledExpression(expressionFromString(fix.word));
-  suffixes.insert(fix);
-  fix.word = "e";
-  fix.compiled = getCompiledExpression(expressionFromString(fix.word));
-  suffixes.insert(fix);
-  fix.word = "i";
-  fix.compiled = getCompiledExpression(expressionFromString(fix.word));
-  suffixes.insert(fix);
-  fix.word = "o";
-  fix.compiled = getCompiledExpression(expressionFromString(fix.word));
-  suffixes.insert(fix);
-  fix.word = "u";
-  fix.compiled = getCompiledExpression(expressionFromString(fix.word));
-  suffixes.insert(fix);
-  fix.word = "z";
-  fix.compiled = getCompiledExpression(expressionFromString(fix.word));
-  suffixes.insert(fix);
-  fix.word = "r";
-  fix.compiled = getCompiledExpression(expressionFromString(fix.word));
-  suffixes.insert(fix);
-  fix.word = "ah";
-  fix.compiled = getCompiledExpression(expressionFromString(fix.word));
-  suffixes.insert(fix);
-  fix.word = "io";
-  fix.compiled = getCompiledExpression(expressionFromString(fix.word));
-  suffixes.insert(fix);
-  fix.word = "rs";
-  fix.compiled = getCompiledExpression(expressionFromString(fix.word));
-  suffixes.insert(fix);
-  fix.word = "rz";
-  fix.compiled = getCompiledExpression(expressionFromString(fix.word));
-  suffixes.insert(fix);
-  fix.word = "in";
-  fix.compiled = getCompiledExpression(expressionFromString(fix.word));
-  suffixes.insert(fix);
-  fix.word = "n";
-  fix.compiled = getCompiledExpression(expressionFromString(fix.word));
-  suffixes.insert(fix);
-  fix.word = "ster";
-  fix.compiled = getCompiledExpression(expressionFromString(fix.word));
-  suffixes.insert(fix);
-  fix.word = "meister";
-  fix.compiled = getCompiledExpression(expressionFromString(fix.word));
-  suffixes.insert(fix);
+  addSuffix("a");
+  addSuffix("e");
+  addSuffix("i");
+  addSuffix("o");
+  addSuffix("u");
+  addSuffix("z");
+  addSuffix("r");
+  addSuffix("ah");
+  addSuffix("io");
+  addSuffix("rs");
+  addSuffix("rz");
+  addSuffix("in");
+  addSuffix("n");
+  addSuffix("ster");
+  addSuffix("meister");
   // plurality
-  fix.word = "s";
-  fix.compiled = getCompiledExpression(expressionFromString(fix.word));
-  suffixes.insert(fix);
-  fix.word = "es";
-  fix.compiled = getCompiledExpression(expressionFromString(fix.word));
-  suffixes.insert(fix);
+  addSuffix("s");
+  addSuffix("es");
   // imperfect verb
-  fix.word = "ing";
-  fix.compiled = getCompiledExpression(expressionFromString(fix.word));
-  suffixes.insert(fix);
+  addSuffix("ing");
   // diminutive
-  fix.word = "let";
-  fix.compiled = getCompiledExpression(expressionFromString(fix.word));
-  suffixes.insert(fix);
+  addSuffix("let");
 
 #endif
 
@@ -689,25 +597,12 @@ WordFilter::WordFilter()
   /* XXX adding prefixes _significantly_ increases the expression count
    * and is rather expensive (slow, XN+N extra checks for N words)
    */
-  fix.word = "bz"; // bz-specific prefix
-  fix.compiled = getCompiledExpression(expressionFromString(fix.word));
-  prefixes.insert(fix);
-  fix.word = "beze"; // bz-specific prefix
-  fix.compiled = getCompiledExpression(expressionFromString(fix.word));
-  prefixes.insert(fix);
-  fix.word = "u"; // l33t prefix
-  fix.compiled = getCompiledExpression(expressionFromString(fix.word));
-  prefixes.insert(fix);
-  fix.word = "you";
-  fix.compiled = getCompiledExpression(expressionFromString(fix.word));
-  prefixes.insert(fix);
-  fix.word = "ura"; // l33t prefix
-  fix.compiled = getCompiledExpression(expressionFromString(fix.word));
-  prefixes.insert(fix);
-  fix.word = "k"; // common l33t prefix
-  fix.compiled = getCompiledExpression(expressionFromString(fix.word));
-  prefixes.insert(fix);
-
+  addPrefix("bz"); // bz-specific prefix
+  addPrefix("beze"); // bz-specific prefix
+  addPrefix("u"); // l33t prefix
+  addPrefix("you");
+  addPrefix("ura"); // l33t prefix
+  addPrefix("k"); // common l33t prefix
 
 #endif
 
@@ -734,10 +629,10 @@ WordFilter::~WordFilter(void)
   ExpCompareSet::iterator i;
 
   // delete compiled words
-  for (int j = 0; j < MAX_FILTER_SETS; ++j) {
+  for (int j = 0; j < MAX_FILTER_SETS; j++) {
     for (i = filters[j].begin();
 	 i != filters[j].end();
-	 ++i) {
+	 i++) {
       if (i->compiled) {
 	freeCount++;
 	regfree(i->compiled);
@@ -748,7 +643,7 @@ WordFilter::~WordFilter(void)
   // delete compiled prefixes
   for (i = prefixes.begin();
        i != prefixes.end();
-       ++i) {
+       i++) {
     if (i->compiled) {
       freeCount++;
       regfree(i->compiled);
@@ -758,7 +653,7 @@ WordFilter::~WordFilter(void)
   // delete compiled suffixes
   for (i = suffixes.begin();
        i != suffixes.end();
-       ++i) {
+       i++) {
     if (i->compiled) {
       freeCount++;
       regfree(i->compiled);

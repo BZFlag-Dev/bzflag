@@ -149,6 +149,15 @@ class WordFilter
    */
   inline void appendUniqueChar(std::string& string, char c) const;
 
+  /** utility method to add words to the prefix set
+   */
+  inline void addPrefix(const char *word);
+
+  /** utility method to add words to the suffix set
+   */
+  inline void addSuffix(const char *word);
+
+
  protected:
 
   /** This filter does a simple case-insensitive
@@ -274,6 +283,22 @@ inline void WordFilter::appendUniqueChar(std::string& string, char c) const
   }
 }
 
+
+inline void WordFilter::addPrefix(const char *word)
+{
+  filter_t fix;
+  fix.word = std::string(word);
+  fix.compiled = getCompiledExpression(expressionFromString(fix.word));
+  prefixes.insert(fix);
+}
+
+inline void WordFilter::addSuffix(const char *word)
+{
+  filter_t fix;
+  fix.word = std::string(word);
+  fix.compiled = getCompiledExpression(expressionFromString(fix.word));
+  suffixes.insert(fix);
+}
 
 
 #else
