@@ -554,6 +554,12 @@ Write a message to the server administrator. Example:
 .B /viewreports
 View the server's report file.
 .TP
+.B /record
+Record the current game until stopped.
+.TP
+.B /replay [ list | stop | load | play | skip [+- seconds] ]
+Perform certain actions relating to replaying recordings, if the server is in replay mode.
+.TP
 .B /shutdownserver
 Stop serving BZFlag on this server
 .TP
