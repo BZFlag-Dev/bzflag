@@ -35,9 +35,9 @@
 				mainform.random_building_heights.disabled = mainform.world_type.checked;
 				mainform.balanced_ctf_map.disabled = (mainform.world_type.checked) || !ctf || freeForAll || rabbit;
 				mainform.rabbit_selection.disabled = !rabbit;
-				mainform.num_team_flags.disabled = !ctf;
 				mainform.ctf_map_citysize.disabled = !(mainform.balanced_ctf_map.checked) || (mainform.balanced_ctf_map.disabled);
-
+				var el = document.getElementById( "team_flags" );
+				el.style.display = ctf ? "block" : "none";
 				return true;
 			}
 
@@ -253,10 +253,7 @@
 
 					if (mainform.game_style.value == "ctf") {
 						d.writeln("#Capture the flag game style<br/>");
-						if (mainform.num_team_flags.value > 1)
-							d.writeln("-c " + mainform.num_team_flags.value + "<br/><br/>");
-						else
-							d.writeln("-c<br/><br/>");
+						d.writeln("-c<br/><br/>");
 					}
 					else if (mainform.game_style.value == 'rc') {
 						d.writeln("#Rabbit chase game style<br/>");
@@ -381,6 +378,63 @@
 					if (mainform.auto_team.checked) {
 						d.writeln("#Auto Team assignments<br/>");
 						d.writeln("-autoTeam<br/><br/>");
+					}
+
+					if ((mainform.game_style.value == "ctf") || (mainform.ctf_map_citysize.checked)) {
+						commentWritten = false;
+						if (mainform.extra_team_flag.value > 0) {
+							if (!commentWritten) {
+								d.writeln("#Extra Team flags<br/>");
+								commentWritten = true;
+							}
+							d.write("+f team");
+							if (mainform.extra_team_flag.value > 1)
+								d.write("{"+mainform.extra_team_flag.value+"}");
+							d.write(" ");
+						}
+						if (mainform.red_team_flag.value > 0) {
+							if (!commentWritten) {
+								d.writeln("#Extra Team flags<br/>");
+								commentWritten = true;
+							}
+							d.write("+f R*");
+							if (mainform.red_team_flag.value > 1)
+								d.write("{"+mainform.red_team_flag.value+"}");
+							d.write(" ");
+						}
+						if (mainform.green_team_flag.value > 0) {
+							if (!commentWritten) {
+								d.writeln("#Extra Team flags<br/>");
+								commentWritten = true;
+							}
+							d.write("+f G*");
+							if (mainform.green_team_flag.value > 1)
+								d.write("{"+mainform.green_team_flag.value+"}");
+							d.write(" ");
+						}
+						if (mainform.blue_team_flag.value > 0) {
+							if (!commentWritten) {
+								d.writeln("#Extra Team flags<br/>");
+								commentWritten = true;
+							}
+							d.write("+f B*");
+							if (mainform.blue_team_flag.value > 1)
+								d.write("{"+mainform.blue_team_flag.value+"}");
+							d.write(" ");
+						}
+						if (mainform.purple_team_flag.value > 0) {
+							if (!commentWritten) {
+								d.writeln("#Extra Team flags<br/>");
+								commentWritten = true;
+							}
+							d.write("+f P*");
+							if (mainform.purple_team_flag.value > 1)
+								d.write("{"+mainform.purple_team_flag.value+"}");
+							d.write(" ");
+						}
+
+						d.writeln("<br/><br/>");
+
 					}
 
 					commentWritten = false;
@@ -695,12 +749,6 @@
 									<option value="9">9</option>
 								</select> density level
 							</td>
-							<td>Number of Team Flags</td>
-							<td>
-								<input type="text" name="num_team_flags" value="1" size="30" title="Number of team flags per team" disabled/>
-							</td>
-						</tr>
-						<tr>
 							<td>Rabbit Selection</td>
 							<td>
 								<select name="rabbit_selection" value="score" title="Rabbit Selection Algorithm" disabled>
@@ -811,6 +859,22 @@
 			<div id="flag" style="display:none;">
 				<fieldset>
 					<legend>Flag Information</legend>
+					<div id="team_flags" style="display:none">
+						<fieldset>
+							<legend>Extra Team Flags</legend>
+							<table width="100%">
+								<tr>
+									<td align="right">(team)</td><td><input type="text" name="extra_team_flag" value="0" size="3" title="Add extra team flags to all teams"/></td>
+								</tr>
+								<tr>
+									<td align="right">Red</td><td><input type="text" name="red_team_flag" value="0" size="3" title="Add extra team flags to the red team"/></td>
+									<td align="right">Green</td><td><input type="text" name="green_team_flag" value="0" size="3" title="Add extra team flags to the green team"/></td>
+									<td align="right">Blue</td><td><input type="text" name="blue_team_flag" value="0" size="3" title="Add extra team flags to the blue team"/></td>
+									<td align="right">Purple</td><td><input type="text" name="purple_team_flag" value="0" size="3" title="Add extra team flags to the purple team"/></td>
+								</tr>
+							</table>
+						</fieldset>
+					</div>
 					<fieldset>
 						<legend>Mandatory Flags</legend>
 						<table width="100%">
