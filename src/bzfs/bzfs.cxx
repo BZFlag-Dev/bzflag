@@ -3738,7 +3738,7 @@ static void parseCommand(const char *message, int t)
   if (strncmp(message + 1, "password", 8) == 0) {
     handlePasswordCmd(t, message);
 
-  } else if ((hasPerm(t, PlayerAccessInfo::setVar) || hasPerm(t, PlayerAccessInfo::setAll)) && strncmp(message + 1, "set", 3) == 0) {
+  } else if ((hasPerm(t, PlayerAccessInfo::setVar) || hasPerm(t, PlayerAccessInfo::setAll)) && strncmp(message + 1, "set ", 4) == 0) {
     handleSetCmd(t, message);
 
   } else if ((hasPerm(t, PlayerAccessInfo::setVar) || hasPerm(t, PlayerAccessInfo::setAll)) && strncmp(message + 1, "reset", 5) == 0) {
