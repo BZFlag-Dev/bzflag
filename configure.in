@@ -13,6 +13,15 @@ AC_CANONICAL_SYSTEM
 AM_INIT_AUTOMAKE(bzflag, $MAJOR_VERSION.$MINOR_VERSION.$REV.$CONF_DATE)
 AM_CONFIG_HEADER(include/config.h)
 
+# Let the C++ code know about OS and user
+AC_DEFINE_UNQUOTED(BZ_BUILD_OS, "$host_os", [BZFlag System Environment])
+AC_CHECK_PROG(HASWHOAMI, whoami, yes, no)
+if test $HASWHOAMI = yes; then
+  AC_DEFINE_UNQUOTED(BZ_BUILD_USER, "`whoami`", [User who compiled BZFlag])
+else
+  AC_DEFINE_UNQUOTED(BZ_BUILD_USER, "anonymous", [User who compiled BZFlag])
+fi
+
 #Checks for programs.
 AC_PROG_MAKE_SET
 AC_PROG_CC
@@ -49,23 +58,18 @@ MY_CURL
 if test $my_cv_curl_vers != NONE; then
   CURL_CFLAGS=`curl-config --cflags`
   CURL_LIBS=`curl-config --libs`
+  # mac os x curl-config outputs erroneous -arch i386 in libs
+  if test "x$build_vendor" = "xapple" ; then
+    CURL_LIBS="`echo $CURL_LIBS | sed 's/-arch i386//'`"
+  fi
   AC_SUBST(CURL_CFLAGS)
   AC_SUBST(CURL_LIBS)
   AC_DEFINE(HAVE_CURL, 1, [Using Curl])
 fi
 
 # Just for kicks
-echo -n "checking for artificial intelligence for robots..." 1>&6
-echo " warning: not found" 1>&6
-
-# Let the C++ code know about OS and user
-AC_DEFINE_UNQUOTED(BZ_BUILD_OS, "$host_os", [BZFlag System Environment])
-AC_CHECK_PROG(HASWHOAMI, whoami, yes, no)
-if test $HASWHOAMI = yes; then
-  AC_DEFINE_UNQUOTED(BZ_BUILD_USER, "`whoami`", [User who compiled BZFlag])
-else
-  AC_DEFINE_UNQUOTED(BZ_BUILD_USER, "anonymous", [User who compiled BZFlag])
-fi
+AC_MSG_CHECKING([for artificial intelligence for bz's robots])
+AC_MSG_RESULT([not found])
 
 #Checks for headers
 AC_STDC_HEADERS
