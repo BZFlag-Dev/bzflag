@@ -201,6 +201,11 @@ void			RadarRenderer::render(SceneRenderer& renderer,
 
   glScissor(ox + x, oy + y, w, h);
 
+  LocalPlayer *myTank = LocalPlayer::getMyTank();
+  if (myTank && myTank->getFlag() == Flags::Burrow) {
+    glScissor( ox + x + w*0.3f, oy + y + h*0.3f, w*0.4f, h*0.4f);
+  }
+
   if (opacity == 1.0f) {
    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
    glClear(GL_COLOR_BUFFER_BIT);
@@ -291,7 +296,7 @@ void			RadarRenderer::render(SceneRenderer& renderer,
   }
 
   // only draw if there's a local player
-  else if (LocalPlayer::getMyTank()) {
+  else if (myTank) {
     // if decay is sufficiently small then boost it so it's more
     // likely a jammed radar will get a few good frames closely
     // spaced in time.  value of 1 guarantees at least two good
