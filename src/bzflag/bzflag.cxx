@@ -768,10 +768,11 @@ int			main(int argc, char** argv)
       startupInfo.hasConfiguration = true;
 #endif
 
-  // bind default keys
-  ActionBinding::instance().resetBindings();
   if (startupInfo.hasConfiguration)
     ActionBinding::instance().getFromBindings();
+  else 
+    // bind default keys
+    ActionBinding::instance().resetBindings();
 
   ServerListCache::get()->loadCache();
 
