@@ -628,7 +628,7 @@ void			ServerMenu::checkEchos()
 	Address address;
 	if (!BzfNetwork::parseURL(urls[i], protocol, hostname, port, path) ||
 	    protocol != "http" || port < 1 || port > 65535 ||
-	    (address = Address::getHostAddress(hostname).isAny()) {
+	    (address = Address::getHostAddress(hostname)).isAny()) {
 	    std::vector<std::string> args;
 	    args.push_back(urls[i]);
 	    printError("Can't open list server: {1}", &args);
