@@ -135,7 +135,7 @@ class HUDuiList : public HUDuiControl {
     int			getIndex() const;
     void		setIndex(int);
 
-    void		createSlider(const char);
+    void		createSlider(int);
 
     std::vector<std::string>&	getList();
     void		update();

@@ -372,7 +372,7 @@ void			HUDuiList::update()
   setIndex(index);
 }
 
-void			HUDuiList::createSlider(const char numValues)
+void			HUDuiList::createSlider(const int numValues)
 {
   // create a slider with numValues options
   /* createSlider(4) does the equivalent of
@@ -381,41 +381,14 @@ void			HUDuiList::createSlider(const char numValues)
      options->push_back(std::string("[--O-]"));
      options->push_back(std::string("[---O]"));
   */
-  std::vector<std::string>* options = &this->getList();
-  char *pt;
-  int i, j;
+  std::vector<std::string> &options = getList();
 
-  // allocate memory
-  if ((pt = (char *) malloc(numValues + 3)) == NULL) {
-    // this should never happen 
-    // if your computer can't allocate <128 bytes of memory you'll have other issues
-    options->push_back(std::string("Insufficient Memory"));
-  }
-
-  // beginnings, ends...these stay the same for all options
-  pt[0] = '[';
-  pt[numValues + 1] = ']';
-  pt[numValues + 2] = '\0';
-
-  // fill in the middles
-  for (i = 0; i < numValues; i++) {    
-    // left of dot
-    for (j = 0; j < i; j++) {
-      pt[j + 1] = '-';
-    }
-    // dot
-    pt[i + 1] = 'O';
-    // right of dot
-    for (j = i + 1; j < numValues; j++) {
-      pt[j + 1] = '-';
-    }
-    options->push_back(std::string(pt));
-  }
-
-  //free memory
-  if (pt != NULL) {
-    free(pt);
-    pt = NULL;
+  for (int i=0; i< numValues; i++) {
+    std::string line(numValues + 2, '-');
+    line[0] = '[';
+    line[numValues + 1] = ']';
+    line[i + 1] = 'O';
+    options.push_back(line);
   }
 }
 
