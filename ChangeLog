@@ -5,6 +5,7 @@
 BZFlag 1.11
 -----------
 
+* Random teleporter destinations - Dave Rodgers
 * Support for building BZAdmin with PDCurses on Windows - Daniel Remenak
 * Poll to reset flags and Poll-cheating prevention - Ian Agar
 * Flag and Tank Entry Zones - Dave Brosius

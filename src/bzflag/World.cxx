@@ -725,7 +725,12 @@ bool			World::writeWorld(std::string filename)
       int to = *it;
       out << "link" << std::endl;
       out << "\tfrom " << from << std::endl;
-      out << "\tto " << to << std::endl;
+      if (to == randomTeleporter) {
+        out << "\tto random" << std::endl;
+      }
+      else {
+        out << "\tto " << to << std::endl;
+      }
       out << "end" << std::endl;
       out << std::endl;
     }

@@ -26,12 +26,22 @@ CustomLink::CustomLink()
 
 bool CustomLink::read(const char *cmd, std::istream& input)
 {
-  if (strcmp(cmd, "from") == 0)
+  std::string to_string;
+  if (strcmp(cmd, "from") == 0) {
     input >> from;
-  else if (strcmp(cmd, "to") == 0)
-    input >> to;
-  else
+  }
+  else if (strcmp(cmd, "to") == 0) {
+    input >> to_string;
+    if (strcmp (to_string.c_str(), "random") == 0) {
+      to = -1;
+    }
+    else {
+      to = atoi (to_string.c_str());
+    }
+  }
+  else {
     return WorldFileObject::read(cmd, input);
+  }
   return true;
 }
 
