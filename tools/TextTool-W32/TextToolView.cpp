@@ -1,3 +1,15 @@
+/* bzflag
+ * Copyright (c) 1993 - 2005 Tim Riker
+ *
+ * This package is free software;  you can redistribute it and/or
+ * modify it under the terms of the license found in the file
+ * named COPYING that should have accompanied this file.
+ *
+ * THIS PACKAGE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
+ * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
+ * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+ */
+
 // TextToolView.cpp : implementation of the CTextToolView class
 //
 
@@ -85,106 +97,89 @@ BOOL CTextToolView::PreCreateWindow(CREATESTRUCT& cs)
 
 void CTextToolView::OnDraw(CDC* pDC)
 {
-	CTextToolDoc* pDoc = GetDocument();
-	ASSERT_VALID(pDoc);
-	// TODO: add draw code for native data here
+  CTextToolDoc* pDoc = GetDocument();
+  ASSERT_VALID(pDoc);
+  // TODO: add draw code for native data here
 
-	if (iLogicalPixelsY == -1) {
-	  iLogicalPixelsY = pDC->GetDeviceCaps(LOGPIXELSY);
+  if (iLogicalPixelsY == -1) {
+    iLogicalPixelsY = pDC->GetDeviceCaps(LOGPIXELSY);
 
-	  LOGFONT		rLogFont;
-	  m_pFont->GetLogFont(&rLogFont);
+    LOGFONT rLogFont;
+    m_pFont->GetLogFont(&rLogFont);
+    m_iFontPointSize = -((rLogFont.lfHeight*72)/iLogicalPixelsY);
+  }
 
-	  m_iFontPointSize = -((rLogFont.lfHeight*72)/iLogicalPixelsY);
-	}
+  CBrush brush(RGB(0,0,0));
 
-	CBrush	brush(RGB(0,0,0));
+  pDC->SetBkMode(OPAQUE);
+  RECT	rect;
+  GetWindowRect(&rect);
+//pDC->GetBoundsRect(&rect,0);
+  pDC->FillRect(&rect,&brush);
 
-	pDC->SetBkMode(OPAQUE);
-	RECT	rect;
-	GetWindowRect(&rect);
-//	pDC->GetBoundsRect(&rect,0);
-	pDC->FillRect(&rect,&brush);
+  // just in case
+  rect.top = 0;
+  rect.bottom = 1024;
+  rect.left = 0;
+  rect.right = 1024;
+  pDC->FillRect(&rect,&brush);
 
-	// just in case
-	rect.top = 0;
-	rect.bottom = 1024;
-	rect.left = 0;
-	rect.right = 1024;
-	pDC->FillRect(&rect,&brush);
+  pDC->SetBkMode(TRANSPARENT );
+  pDC->SetTextColor(RGB(255,255,255));
+  pDC->SetBkColor(RGB(0,0,0));
+  pDC->SelectObject(m_pFont);
 
-	pDC->SetBkMode(TRANSPARENT );
-	pDC->SetTextColor(RGB(255,255,255));
-	pDC->SetBkColor(RGB(0,0,0));
-	pDC->SelectObject(m_pFont);
+  CPen pen(PS_SOLID,1,RGB(128,128,128));
+  CPen pen2(PS_SOLID,1,RGB(64,64,255));
+  pDC->SelectObject(pen);
 
-	CPen	pen(PS_SOLID,1,RGB(128,128,128));
-	CPen	pen2(PS_SOLID,1,RGB(64,64,255));
-	pDC->SelectObject(pen);
+  CString szString = " !\"#$%'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ{\\]^_`abcdefghijklmnopqrstuvwxyz{|}~";
+  pDC->GetCharABCWidths(' ','~',m_aWidths);
 
-	CString		szString = " !\"#$%'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ{\\]^_`abcdefghijklmnopqrstuvwxyz{|}~";
-	pDC->GetCharABCWidths(' ','~',m_aWidths);
+  LOGFONT rLogFont;
 
-	LOGFONT		rLogFont;
+  m_pFont->GetLogFont(&rLogFont);
 
-	m_pFont->GetLogFont(&rLogFont);
+  CSize size = pDC->GetTextExtent(szString);
 
-	CSize size = pDC->GetTextExtent(szString);
+  m_iCharacterHeight = abs(rLogFont.lfHeight);
+  m_iTextureZStep = size.cy; //-rLogFont.lfHeight+2;
 
-	m_iCharacterHeight = abs(rLogFont.lfHeight);
-	m_iTextureZStep = size.cy; //-rLogFont.lfHeight+2;
+  int iXPos = 0;
+  int iYPos = 0;
 
-	int iXPos = 0;
-	int iYPos = 0;
+  int iXCount = 0;
+  for (int iChar = ' '; iChar <= '~'; iChar++) {
+    int iThisItem = iChar - ' ';
+    int iThisPos = iXPos - m_aWidths[iThisItem].abcA;
+    int iEndPos = iXCount + m_iTextureZStep; //m_aWidths[iChar-' '].abcB;
 
-	int iXCount = 0;
-	for (int iChar = ' '; iChar <= '~'; iChar++)
-	{
-		int iThisItem = iChar-' ';
+    if (iEndPos >= m_iMaxTextureWidth) {
+      iXPos = 0;
+      iXCount = 0;
+      iThisPos = iXPos - m_aWidths[iThisItem].abcA;
+      iEndPos = iXCount + m_iTextureZStep; //m_aWidths[iChar-' '].abcB;
+      iYPos += m_iTextureZStep;
+    }
 
-		int iThisPos = iXPos - m_aWidths[iThisItem].abcA;
+    CString string = (char)iChar;
 
-		int iEndPos = iXCount + m_iTextureZStep;//m_aWidths[iChar-' '].abcB;
+    pDC->TextOut(iThisPos, iYPos, string);
 
-		if (iEndPos >= m_iMaxTextureWidth)
-		{
-			iXPos = 0;
-			iXCount = 0;
-			iThisPos = iXPos - m_aWidths[iThisItem].abcA;
-			iEndPos = iXCount + m_iTextureZStep;//m_aWidths[iChar-' '].abcB;
-			iYPos += m_iTextureZStep;
+    m_arGlyphExtents[iThisItem].iStartX = iXCount;
+    m_arGlyphExtents[iThisItem].iEndX = iXCount + m_aWidths[iThisItem].abcB;
+    m_arGlyphExtents[iThisItem].iStartY = iYPos;
+    m_arGlyphExtents[iThisItem].iEndY = iYPos + m_iTextureZStep;
 
-	//		pDC->MoveTo(0,iYPos);
-	//		pDC->LineTo(m_iMaxTextureWidth,iYPos);
-		}
+    pDC->SelectObject(pen);
 
-		CString string = (char)iChar;
+    iXPos = iEndPos;
+    iXCount += m_iTextureZStep;
+  }
 
-		pDC->TextOut(iThisPos,iYPos,string);
-
-//		pDC->MoveTo(iXCount,iYPos);
-//		pDC->LineTo(iXCount,iYPos+m_iTextureZStep);
-
-//		pDC->SelectObject(pen2);
-//		pDC->MoveTo(iXCount+m_aWidths[iThisItem].abcB,iYPos+2);
-//		pDC->LineTo(iXCount+m_aWidths[iThisItem].abcB,iYPos+m_iTextureZStep-2);
-
-		m_arGlyphExtents[iThisItem].iStartX = iXCount;
-		m_arGlyphExtents[iThisItem].iEndX = iXCount+m_aWidths[iThisItem].abcB;
-		m_arGlyphExtents[iThisItem].iStartY = iYPos;
-		m_arGlyphExtents[iThisItem].iEndY = iYPos+m_iTextureZStep;
-
-		pDC->SelectObject(pen);
-
-		iXPos = iEndPos;
-		iXCount += m_iTextureZStep;
-	}
-//	pDC->MoveTo(0,iYPos+m_iTextureZStep);
-//	pDC->LineTo(m_iMaxTextureWidth,iYPos+m_iTextureZStep);
-
-	m_iMaxY = iYPos +m_iTextureZStep;
-	pDC->SelectStockObject(SYSTEM_FONT);
-	pDC->SelectStockObject(WHITE_PEN);
+  m_iMaxY = iYPos +m_iTextureZStep;
+  pDC->SelectStockObject(SYSTEM_FONT);
+  pDC->SelectStockObject(WHITE_PEN);
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -192,18 +187,18 @@ void CTextToolView::OnDraw(CDC* pDC)
 
 BOOL CTextToolView::OnPreparePrinting(CPrintInfo* pInfo)
 {
-	// default preparation
-	return DoPreparePrinting(pInfo);
+  // default preparation
+  return DoPreparePrinting(pInfo);
 }
 
 void CTextToolView::OnBeginPrinting(CDC* /*pDC*/, CPrintInfo* /*pInfo*/)
 {
-	// TODO: add extra initialization before printing
+  // TODO: add extra initialization before printing
 }
 
 void CTextToolView::OnEndPrinting(CDC* /*pDC*/, CPrintInfo* /*pInfo*/)
 {
-	// TODO: add cleanup after printing
+  // TODO: add cleanup after printing
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -212,18 +207,18 @@ void CTextToolView::OnEndPrinting(CDC* /*pDC*/, CPrintInfo* /*pInfo*/)
 #ifdef _DEBUG
 void CTextToolView::AssertValid() const
 {
-	CView::AssertValid();
+  CView::AssertValid();
 }
 
 void CTextToolView::Dump(CDumpContext& dc) const
 {
-	CView::Dump(dc);
+  CView::Dump(dc);
 }
 
 CTextToolDoc* CTextToolView::GetDocument() // non-debug version is inline
 {
-	ASSERT(m_pDocument->IsKindOf(RUNTIME_CLASS(CTextToolDoc)));
-	return (CTextToolDoc*)m_pDocument;
+  ASSERT(m_pDocument->IsKindOf(RUNTIME_CLASS(CTextToolDoc)));
+  return (CTextToolDoc*)m_pDocument;
 }
 #endif //_DEBUG
 
