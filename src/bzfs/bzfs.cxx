@@ -2477,7 +2477,7 @@ static WorldInfo *defineWorldFromFile(const char *filename)
   }
 
   if (gameStyle & TeamFlagGameStyle) {
-    for (int i = RedTeam; i < PurpleTeam; i++) {
+    for (int i = RedTeam; i <= PurpleTeam; i++) {
 	    if ((maxTeam[i] > 0) && !hasBase[i]) {
 		    cerr << "base was not defined for team " << i << " capture the flag game style removed." << endl;
 		    gameStyle &= (~TeamFlagGameStyle);
