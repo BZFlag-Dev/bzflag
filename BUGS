@@ -30,14 +30,6 @@ recent bugs
 
 - Spawn code sometimes spawns you mid-air
 
-- Robots don't do z collision checks other than to see if z < 0.
-  So if a base.z > 0 hilarity ensues. 
-  A quick fix would make bots always spawn at 0
-  http://bzflag.mebigfatguy.com/robobase.bzw
-  start as bzfs -world c:\robobase.bzw -fb -j -c
-  MAC: Robots now ALWAYS spawn on the ground no matter what
-  Robots still don't check base (side) collisions
-
 - doc/guide/NetworkProtocol.xml is not up to date
 
 - list server includes counts for players running on non-public/mis-configured

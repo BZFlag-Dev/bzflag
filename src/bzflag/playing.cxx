@@ -4674,6 +4674,14 @@ static void		makeObstacleList()
   const int numTeleporters = teleporters.size();
   for (i = 0; i < numTeleporters; i++)
     addObstacle(obstacleList, teleporters[i]);
+  if (World::getWorld()->allowTeamFlags()) {
+    const std::vector<BaseBuilding>& bases = World::getWorld()->getBases();
+    const int numBases = bases.size();
+    for (i = 0; i < numBases; i++) {
+      if ((bases[i].getHeight() != 0.0f) || (bases[i].getPosition()[2] != 0.0f))
+        addObstacle(obstacleList, bases[i]);
+    }
+  }
 }
 
 static void		setRobotTarget(RobotPlayer* robot)
