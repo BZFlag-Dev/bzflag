@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"PO-Revision-Date: 2003-10-18 19:32+0200\n"
+"PO-Revision-Date: 2003-10-31 21:39+0100\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -873,7 +873,7 @@ msgid "Ricochet (+R):  Shots bounce off walls.  Don't shoot yourself!"
 msgstr "Rimbalzo (+R): Gli spari rimbalzano sui muri. Cerca di non spararti addosso!"
 
 msgid "SuperBullet (+SB):  Shoots through buildings.  Can kill Phantom Zone."
-msgstr "Super Proiettile (+SB): Gli spari passano attraversi gli edifici. Può distruggere i tanks nella Zona Fantasma."
+msgstr "Super Proiettile (+SB): Gli spari passano attraversi gli edifici. Puo' distruggere i tanks nella Zona Fantasma."
 
 msgid "Invisible Bullet (+IB):  Your shots don't appear on other radars.  Can still see them out window."
 msgstr "Proiettile Invisibile (+IB): I tuoi colpi non compaiono sugli altri radar. Puoi comunque vederli ad occhio nudo."
