@@ -414,6 +414,10 @@ SOURCE=..\..\src\bzflag\World.cxx
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\src\bzflag\WorldBuilder.cxx
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\src\bzflag\WorldPlayer.cxx
 # End Source File
 # End Group
@@ -967,6 +971,10 @@ SOURCE=..\..\include\WordFilter.h
 # Begin Source File
 
 SOURCE=..\..\src\bzflag\World.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\bzflag\WorldBuilder.h
 # End Source File
 # Begin Source File
 
