@@ -30,6 +30,12 @@
 #include <assert.h>
 #include <stddef.h>
 
+#if defined(_MACOSX_)
+	#include <CoreServices/CoreServices.h>
+        #undef TCP_NODELAY
+        #undef TCP_MAXSEG
+#endif
+
 // Normally, user types are capitalized but X11 already defines Bool
 // _and_ Boolean.  We don't want to include any X header files here
 // so we have to use lowercase.  Way to go, X.

@@ -1,0 +1,98 @@
+# bzflag
+# Copyright (c) 1993 - 2002 Tim Riker
+#
+# This package is free software;  you can redistribute it and/or
+# modify it under the terms of the license found in the file
+# named LICENSE that should have accompanied this file.
+#
+# THIS PACKAGE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
+# IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
+# WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+
+#
+# configuration for Mac OS X
+#
+CONFIG	= macosx
+
+# XXX -- override install locations here (see Make-common)
+
+#
+# tools
+#
+AR	= /usr/bin/ar crus
+CC	= /usr/bin/gcc
+CXX	= /usr/bin/g++
+CD	= cd
+CP	= /bin/cp
+ECHO	= /bin/echo
+LD	= /usr/bin/ld
+MKDIR	= /bin/mkdir
+NROFF	= /usr/bin/nroff
+RM	= /bin/rm
+RMR	= $(RM) -r
+SHELL	= /bin/sh
+RANLIB = /usr/bin/ranlib
+
+#
+# compiler definitions
+#
+PCDEFS   = -DBSD -D__FreeBSD__ -D_MACOSX_ -D_BSD_SOCKLEN_T_=int
+PCXXDEFS = -DBSD -D__FreeBSD__ -D_MACOSX_ -D_BSD_SOCKLEN_T_=int
+
+#
+# compiler options
+#
+FRAMEWORKS = -framework Carbon -framework OpenGL -framework AGL
+PCOPTS   = -Wall -W -ansi $(ACOPTS)
+PCXXOPTS = -Wall -W -fno-exceptions -fno-rtti $(ACXXOPTS)
+COPT     = -DNDEBUG -O2
+CXXOPT   = -DNDEBUG -O2 -ffast-math -fomit-frame-pointer -fexpensive-optimizations
+CDEBUG   = -DDEBUG -g
+CXXDEBUG = -DDEBUG -g
+CWOFF    = # turn off bogus C compiler warnings
+CXXWOFF  = # turn off bogus C++ compiler warnings
+
+#
+# search paths
+#
+PCINCS   = -I/usr/include
+PCXXINCS = -I/usr/include
+
+#
+# linker options
+#
+PLDOPTS  = $(FRAMEWORKS)
+PLDLIBS  = # required libraries
+
+#
+# dirt
+#
+PDIRT    = *.[eou] a.out core ar.tmp.*
+
+#
+# libraries
+#
+# audio libraries
+AUDIO_LIBS =				\
+	$(NULL)
+
+# display resolution change libraries
+DISPLAY_LIBS =				\
+	$(NULL)
+
+# opengl libraries
+GL_LIBS =				\
+	$(NULL)
+
+# libraries for opening image files
+IMAGE_LIBS =				\
+	$(NULL)
+
+# libraries for network stuff
+NETWORK_LIBS =				\
+	$(NULL)
+
+# libraries for windowing
+WINDOW_LIBS =				\
+	$(NULL)
+

@@ -33,6 +33,7 @@ AVAILTARGETS =		\
 	linux-ppc	\
 	solaris-cc	\
 	solaris-gcc	\
+	macosx		\
 	$(NULL)
 
 config-sys:
@@ -45,6 +46,7 @@ config-sys:
 	@echo "  make solaris-cc"
 	@echo "  make solaris-gcc"
 	@echo "  make win32"
+	@echo "  make macosx"
 	@echo "Append -debug for a debug build (e.g. make linux-debug)."
 	@echo "Append -noopt for a non-optimized build (e.g. make linux-noopt)."
 	@exit 1
