@@ -106,9 +106,14 @@ if test "x$enable_curl" = "xyes" ; then
   if test $my_cv_curl_vers != NONE; then
     CURL_CFLAGS=`curl-config --cflags`
     CURL_LIBS=`curl-config --libs`
-    # mac os x curl-config outputs erroneous -arch i386 in libs
     if test "x$build_vendor" = "xapple" ; then
-      CURL_LIBS="`echo $CURL_LIBS | sed 's/-arch i386//'`"
+      if test -f /usr/bin/libcurl.a ; then
+        # prefer to link static
+        CURL_LIBS=/usr/bin/libcurl.a
+      else
+        # mac os x curl-config outputs erroneous -arch i386 in libs
+        CURL_LIBS="`echo $CURL_LIBS | sed 's/-arch i386//'`"
+      fi
     fi
     AC_DEFINE(HAVE_CURL, 1, [Define if using libcurl])
   else
@@ -624,6 +629,19 @@ else
      esac;
      AC_DEFINE(NDEBUG, 1, [Debugging disabled])
 fi;
+
+dnl check for -search_paths_first linker flag when making dynamic libraries
+search_paths_first_flag="-Wl,-search_paths_first -mdynamic-no-pic"
+AC_MSG_CHECKING([if the compiler understands $search_paths_first_flag])
+search_paths_first_flag_works=yes
+PRELDFLAGS="$LDFLAGS"
+LDFLAGS="$LDFLAGS $search_paths_first_flag"
+AC_TRY_LINK( [], [], [], [search_paths_first_flag_works=no])
+AC_MSG_RESULT($search_paths_first_flag_works)
+if test "x$search_paths_first_flag_works" = "xno" ; then
+        LDFLAGS="$PRELDFLAGS"
+fi
+
 
 # Check for functions
 AC_CHECK_FUNCS(\
