@@ -31,32 +31,44 @@
 #define SNAPPING 1
 
 /* On windows, strcasecmp is really stricmp */
+#ifdef _WIN32
 #define HAVE_STRICMP 1
+#endif
 
 /* Define to 1 if you have regex stuff available */
 /* undef HAVE_REGEX_H */
 
 #ifndef DEBUG
   #ifdef _DEBUG
-	  #define DEBUG 1
+    #define DEBUG 1
   #else
-	  #define DEBUG 0
+    #define DEBUG 0
   #endif
 #endif
 
 // define our OS
 #ifndef BZ_BUILD_OS
-  #ifdef DEBUG
-    #define BZ_BUILD_OS			"W32-DevC++Debug_MinGW32"
-  #else
-    #define BZ_BUILD_OS			"W32-DevC++MinGW32"
-  #endif //DEBUG
+  #if defined(__linux)
+    #ifdef DEBUG
+      #define BZ_BUILD_OS			"linux-DevC++-gccD"
+    #else
+      #define BZ_BUILD_OS			"linux-DevC++-gcc"
+    #endif //DEBUG
+  #elseif defined(_WIN32)
+    #ifdef DEBUG
+      #define BZ_BUILD_OS			"W32-DevC++-MinGW32D"
+    #else
+      #define BZ_BUILD_OS			"W32-DevC++-MinGW32"
+    #endif //DEBUG
+  #endif //_WIN32
 #endif
 
-#ifndef WINVER
-#define WINVER 0x0400
-#endif
-#define _WIN32_WINNT 0x0400
-#include <Windows.h>
+#ifdef _WIN32
+  #ifndef WINVER
+    #define WINVER 0x0400
+  #endif
+  #define _WIN32_WINNT 0x0400
+  #include <Windows.h>
+#endif //_WIN32
 
 #endif //_DEVCPP_CONFIG
