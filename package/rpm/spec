@@ -46,9 +46,15 @@ styles are available.
 %setup -q
 
 %build
+%ifarch i386 i486 i586 i686
 CFLAGS="$RPM_OPT_FLAGS" CXXFLAGS="$RPM_OPT_FLAGS"	\
 	./configure --prefix=/usr --enable-robots	\
 	--host=i386-pc-linux-gnu
+%else
+CFLAGS="$RPM_OPT_FLAGS" CXXFLAGS="$RPM_OPT_FLAGS"	\
+	./configure --prefix=/usr --enable-robots
+%endif
+
 make
 
 %install
