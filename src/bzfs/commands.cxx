@@ -696,7 +696,7 @@ void handleHelpCmd(int t, const char *message)
       }
     }
     if (!foundChunk) {
-      sprintf(reply, "help command %s not found", message + 6);
+      snprintf(reply, MessageLen, "Help command %s not found", message + 6);
       sendMessage(ServerPlayer, t, reply, true);
     }
   }
