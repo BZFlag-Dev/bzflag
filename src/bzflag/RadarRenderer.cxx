@@ -449,7 +449,7 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
 
 
     // get size of pixel in model space (assumes radar is square)
-    ps = 2.0f * range / GLfloat(w);
+    ps = BZDBCache::radarTankPixels * (range / GLfloat(w));
 
     float tankWidth = BZDBCache::tankWidth;
     float tankLength = BZDBCache::tankLength;

@@ -33,6 +33,7 @@ public:
 	static int   flagChunks;
 	static bool  animatedTreads;
 	static int   radarStyle;
+	static float radarTankPixels;
 	static bool  leadingShotLine;
 	static int   linedRadarShots;
 	static int   sizedRadarShots;

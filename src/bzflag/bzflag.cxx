@@ -116,6 +116,7 @@ static DefaultDBItem	defaultDBItems[] = {
   { "longitude",		"122",			true,	StateDatabase::ReadWrite,	NULL },
   { "radarSort",		"0",			true,	StateDatabase::ReadWrite,	NULL },
   { "radarStyle",		"2",			true,	StateDatabase::ReadWrite,	NULL },
+  { "radarTankPixels",		"2.25",			true,	StateDatabase::ReadWrite,	NULL },
   { "coloredradarshots",	"1",			true,	StateDatabase::ReadWrite,	NULL },
   { "linedradarshots",		"0",			true,	StateDatabase::ReadWrite,	NULL },
   { "sizedradarshots",		"0",			true,	StateDatabase::ReadWrite,	NULL },
