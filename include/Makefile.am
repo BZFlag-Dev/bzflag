@@ -74,6 +74,7 @@ noinst_HEADERS =		\
 	TracerSceneNode.h	\
 	TriWallSceneNode.h	\
 	udpnetwork.h		\
+	version.h		\
 	ViewFrustum.h		\
 	VotingBooth.h		\
 	WallObstacle.h		\
