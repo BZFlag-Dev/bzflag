@@ -54,6 +54,8 @@ public:
   void drawString(float scale, GLfloat color[3], const char *str, int len);
 
   float getStrLength(float scale, const char *str, int len);
+  
+  int getTextureID() const;
 
   void free(void);
 
@@ -73,5 +75,11 @@ private:
   int	      numberOfCharacters;
   OpenGLGState gstate;
 };
+
+inline int TextureFont::getTextureID() const
+{
+  return textureID;
+}
+
 
 #endif //_TEXTURE_FONT_H_

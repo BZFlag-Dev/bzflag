@@ -18,21 +18,11 @@
 #include "OpenGLTexture.h"
 #include "Singleton.h"
 
-typedef enum {
-	Off,
-	Nearest,
-	Linear,
-	NearestMipmapNearest,
-	LinearMipmapNearest,
-	NearestMipmapLinear,
-	LinearMipmapLinear,
-	Max = LinearMipmapLinear
-} eTextureFilter;
 
 struct FileTextureInit
 {
   std::string		name;
-  eTextureFilter	filter;
+  OpenGLTexture::Filter	filter;
 };
 
 
@@ -52,7 +42,7 @@ struct ProcTextureInit
 {
   std::string		name;
   TextureManager	*manager;
-  eTextureFilter	filter;
+  OpenGLTexture::Filter	filter;
   int			(*proc)(ProcTextureInit &init);
 };
 
@@ -62,6 +52,11 @@ class TextureManager : public Singleton<TextureManager>
 public:
   int getTextureID( const char* name, bool reportFail = true );
   int addTexture( const char*, OpenGLTexture *texture  );
+  
+  void setTextureFilter(int texId, OpenGLTexture::Filter filter);
+  OpenGLTexture::Filter getTextureFilter(int texId);
+  
+  void updateTextureFilters();
 
   bool bind ( int id );
   bool bind ( const char* name );
@@ -69,15 +64,15 @@ public:
   const ImageInfo& getInfo ( int id );
   const ImageInfo& getInfo ( const char* name );
 
-  eTextureFilter getMaxFilter ( void ) { return currentMaxFilter;}
+  OpenGLTexture::Filter getMaxFilter ( void );
   std::string getMaxFilterName ( void );
-  void setMaxFilter ( eTextureFilter filter );
+  void setMaxFilter ( OpenGLTexture::Filter filter );
   void setMaxFilter ( std::string filter );
 
   float GetAspectRatio ( int id );
 
   int newTexture (const char* name, int x, int y, unsigned char* data,
-                  eTextureFilter filter, bool repeat = true, int format = 0);
+                  OpenGLTexture::Filter filter, bool repeat = true, int format = 0);
 protected:
   friend class Singleton<TextureManager>;
 
@@ -96,9 +91,6 @@ private:
   int	    lastBoundID;
   TextureIDMap   textureIDs;
   TextureNameMap textureNames;
-
-  eTextureFilter currentMaxFilter;
-  std::string	 configFilterValues[Max + 1];
 };
 
 #endif //_TEXTURE_MANAGER_H

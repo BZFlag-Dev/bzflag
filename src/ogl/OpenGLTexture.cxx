@@ -39,7 +39,7 @@ const GLenum		OpenGLTexture::magnifyFilter[] = {
 				GL_NEAREST,
 				GL_LINEAR
 			};
-const char*		OpenGLTexture::configFilterValues[] = {
+const char*		OpenGLTexture::configFilterNames[] = {
 				"no",
 				"nearest",
 				"linear",
@@ -54,23 +54,20 @@ const char*		OpenGLTexture::configFilterValues[] = {
 // OpenGLTexture
 //
 
-OpenGLTexture::Filter	OpenGLTexture::filter = LinearMipmapLinear;
+const int OpenGLTexture::filterCount = Max + 1;
+OpenGLTexture::Filter OpenGLTexture::maxFilter = LinearMipmapLinear;
 
 
-OpenGLTexture::OpenGLTexture(int _width, int _height,
-				const GLvoid* pixels,
-				Filter _maxFilter,
-				bool _repeat,
-				int _internalFormat)
-				: alpha(false),
-				width(_width),
-				height(_height),
-				repeat(_repeat),
-				internalFormat(_internalFormat),
-				list(INVALID_GL_TEXTURE_ID),
-				maxFilter(_maxFilter)
+OpenGLTexture::OpenGLTexture(int _width, int _height, const GLvoid* pixels,
+			     Filter _filter, bool _repeat, int _internalFormat) :
+			   width(_width), height(_height)
 {
-
+  alpha = false;
+  repeat = _repeat;
+  internalFormat = _internalFormat;
+  filter = _filter;
+  list = INVALID_GL_TEXTURE_ID;
+  
   // get internal format if not provided
   if (internalFormat == 0)
     internalFormat = getBestFormat(width, height, pixels);
@@ -79,12 +76,12 @@ OpenGLTexture::OpenGLTexture(int _width, int _height,
   image = new GLubyte[4 * width * height];
   ::memcpy(image, pixels, 4 * width * height);
 
-  setFilter(configFilterValues[static_cast<int>(_maxFilter)]);
   initContext();
   // watch for context recreation
   OpenGLGState::registerContextInitializer(static_freeContext,
 					   static_initContext, (void*)this);
 }
+
 
 OpenGLTexture::~OpenGLTexture()
 {
@@ -186,7 +183,7 @@ void OpenGLTexture::initContext()
 
   // now make texture map display list (compute all mipmaps, if requested).
   // compute next mipmap from current mipmap to save time.
-  setFilter(getFilter());
+  setFilter(filter);
   glBindTexture(GL_TEXTURE_2D, list);
   gluBuild2DMipmaps(GL_TEXTURE_2D, internalFormat,
 		    scaledWidth, scaledHeight,
@@ -228,21 +225,6 @@ OpenGLTexture::Filter OpenGLTexture::getFilter()
 }
 
 
-std::string OpenGLTexture::getFilterName()
-{
-  return configFilterValues[static_cast<int>(filter)];
-}
-
-
-void OpenGLTexture::setFilter(std::string name)
-{
-  for (unsigned int i = 0; i < (sizeof(configFilterValues) /
-				sizeof(configFilterValues[0])); i++)
-  if (name == configFilterValues[i])
-    setFilter(static_cast<Filter>(i));
-}
-
-
 void OpenGLTexture::setFilter(Filter _filter)
 {
   filter = _filter;
@@ -272,11 +254,44 @@ void OpenGLTexture::setFilter(Filter _filter)
 }
 
 
+OpenGLTexture::Filter OpenGLTexture::getMaxFilter()
+{
+  return maxFilter;
+}
+
+void OpenGLTexture::setMaxFilter(Filter _filter)
+{
+  maxFilter = _filter;
+}
+
+
 void OpenGLTexture::execute()
 {
   bind();
 }
 
+
+const char* OpenGLTexture::getFilterName(OpenGLTexture::Filter filter)
+{
+  if ((filter < 0) || (filter > Max)) {
+    return configFilterNames[Max];
+  } else {
+    return configFilterNames[filter];
+  }
+}
+
+
+int OpenGLTexture::getFilterCount()
+{
+  return filterCount;
+}
+
+
+const char** OpenGLTexture::getFilterNames()
+{
+  return configFilterNames;
+}
+    
 
 float OpenGLTexture::getAspectRatio() const
 {

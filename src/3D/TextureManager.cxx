@@ -41,20 +41,9 @@ ProcTextureInit procLoader[1];
 
 TextureManager::TextureManager()
 {
-  configFilterValues[Off] = "no";
-  configFilterValues[Nearest] = "nearest";
-  configFilterValues[Linear] = "linear";
-  configFilterValues[NearestMipmapNearest] = "nearestmipmapnearest";
-  configFilterValues[LinearMipmapNearest] = "linearmipmapnearest";
-  configFilterValues[NearestMipmapLinear] = "nearestmipmaplinear";
-  configFilterValues[LinearMipmapLinear] = "linearmipmaplinear";
-
-  // init the default filter methods
-  currentMaxFilter = Max;
-
   // fill out the standard proc textures
   procLoader[0].name = "noise";
-  procLoader[0].filter = Nearest;
+  procLoader[0].filter = OpenGLTexture::Nearest;
   procLoader[0].proc = noiseProc;
 
   lastImageID = -1;
@@ -67,6 +56,8 @@ TextureManager::TextureManager()
     procLoader[i].manager = this;
     procLoader[i].proc(procLoader[i]);
   }
+  
+  setMaxFilter(BZDB.get("texture"));
 }
 
 TextureManager::~TextureManager()
@@ -97,7 +88,7 @@ int TextureManager::getTextureID( const char* name, bool reportFail )
     return it->second.id;
   } else { // we don't have it so try and load it
     FileTextureInit	file;
-    file.filter = LinearMipmapLinear;
+    file.filter = OpenGLTexture::LinearMipmapLinear;
     file.name = texName;
     ImageInfo info;
     OpenGLTexture *image = loadTexture(file, reportFail);
@@ -109,6 +100,7 @@ int TextureManager::getTextureID( const char* name, bool reportFail )
   }
   return -1;
 }
+
 
 bool TextureManager::bind ( int id )
 {
@@ -124,6 +116,7 @@ bool TextureManager::bind ( int id )
   }
   return true;
 }
+
 
 bool TextureManager::bind ( const char* name )
 {
@@ -143,40 +136,51 @@ bool TextureManager::bind ( const char* name )
   return true;
 }
 
-std::string		TextureManager::getMaxFilterName ( void )
+
+OpenGLTexture::Filter TextureManager::getMaxFilter ( void )
 {
-  return configFilterValues[static_cast<int>(currentMaxFilter)];
+  return OpenGLTexture::getMaxFilter();
 }
 
-void TextureManager::setMaxFilter ( std::string filter )
+  
+std::string TextureManager::getMaxFilterName ( void )
 {
-  eTextureFilter realFilter = Max;
+  OpenGLTexture::Filter maxFilter = OpenGLTexture::getMaxFilter();
+  std::string name = OpenGLTexture::getFilterName(maxFilter);
+  return name;
+}
 
-  for (int i = 0; i < (int)Max; i++) {
-    if (filter == configFilterValues[i])
-      realFilter = (eTextureFilter)i;
+
+void TextureManager::setMaxFilter(std::string filter)
+{
+  const char** names = OpenGLTexture::getFilterNames();
+  for (int i = 0; i < OpenGLTexture::getFilterCount(); i++) {
+    if (filter == names[i]) {
+      setMaxFilter((OpenGLTexture::Filter) i);
+      return;
+    }
   }
-  setMaxFilter(realFilter);
+  DEBUG1 ("setMaxFilter(): bad filter = %s\n", filter.c_str());
 }
 
-void TextureManager::setMaxFilter ( eTextureFilter filter )
+
+void TextureManager::setMaxFilter (OpenGLTexture::Filter filter )
 {
-  currentMaxFilter = filter;
+  OpenGLTexture::setMaxFilter(filter);
+  updateTextureFilters();
+  return;
+}
 
+
+void TextureManager::updateTextureFilters()
+{
   // flush all the textures so they get rebuilt on next use
-
   TextureNameMap::iterator	itr = textureNames.begin();
 
   while (itr != textureNames.end()) {
-    FileTextureInit fileInit;
-
-    fileInit.filter = currentMaxFilter;
-    fileInit.name = itr->second.name;
-
-    OpenGLTexture *newTexture = loadTexture(fileInit, false);
-
-    delete(itr->second.texture);
-    itr->second.texture = newTexture;
+    OpenGLTexture* texture = itr->second.texture;
+    OpenGLTexture::Filter current = texture->getFilter();
+    texture->setFilter(current);
     itr++;
   }
 
@@ -186,6 +190,7 @@ void TextureManager::setMaxFilter ( eTextureFilter filter )
     procLoader[i].proc(procLoader[i]);
   }
 }
+
 
 float TextureManager::GetAspectRatio ( int id )
 {
@@ -252,6 +257,7 @@ OpenGLTexture* TextureManager::loadTexture(FileTextureInit &init, bool reportFai
 {
   int width, height;
   unsigned char* image = MediaFile::readImage(init.name, &width, &height);
+
   if (!image) {
     if (reportFail) {
       std::vector<std::string> args;
@@ -260,30 +266,52 @@ OpenGLTexture* TextureManager::loadTexture(FileTextureInit &init, bool reportFai
     }
     return NULL;
   }
-  OpenGLTexture::Filter RealFilter;
 
-  if (init.filter > currentMaxFilter)
-    RealFilter = (OpenGLTexture::Filter)currentMaxFilter;
-  else
-    RealFilter = (OpenGLTexture::Filter)init.filter;
-
-  OpenGLTexture *texture = new OpenGLTexture(width, height, image, RealFilter, true);
+  OpenGLTexture *texture =
+    new OpenGLTexture(width, height, image, init.filter, true);
+    
   delete[] image;
 
   return texture;
 }
 
-int TextureManager::newTexture(const char* name, int x, int y, unsigned char* data, eTextureFilter filter, bool repeat, int format)
+
+int TextureManager::newTexture(const char* name, int x, int y, unsigned char* data,
+                               OpenGLTexture::Filter filter, bool repeat, int format)
 {
-  OpenGLTexture::Filter RealFilter;
-
-  if (filter > currentMaxFilter)
-    RealFilter = (OpenGLTexture::Filter)currentMaxFilter;
-  else
-    RealFilter = (OpenGLTexture::Filter)filter;
-
-  return addTexture(name, new OpenGLTexture(x, y, data, RealFilter, repeat, format));
+  return addTexture(name, new OpenGLTexture(x, y, data, filter, repeat, format));
 }
+
+
+void TextureManager::setTextureFilter(int texId, OpenGLTexture::Filter filter)
+{
+  TextureIDMap::iterator it = textureIDs.find(texId);
+  if (it == textureIDs.end()) {
+    DEBUG1("setTextureFilter() Couldn't find texid: %i\n", texId);
+    return;
+  }
+
+  ImageInfo& image = *(it->second);
+  OpenGLTexture* texture = image.texture;
+  texture->setFilter(filter);
+
+  return;
+}
+  
+
+OpenGLTexture::Filter TextureManager::getTextureFilter(int texId)
+{
+  TextureIDMap::iterator it = textureIDs.find(texId);
+  if (it == textureIDs.end()) {
+    DEBUG1("getTextureFilter() Couldn't find texid: %i\n", texId);
+    return OpenGLTexture::Max;
+  }
+  ImageInfo& image = *(it->second);
+  OpenGLTexture* texture = image.texture;
+
+  return texture->getFilter();
+}
+  
 
 /* --- Procs --- */
 

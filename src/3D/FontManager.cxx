@@ -22,6 +22,8 @@
 #include "StateDatabase.h"
 #include "BZDBCache.h"
 #include "OpenGLGState.h"
+#include "OpenGLTexture.h"
+#include "TextureManager.h"
 #include "TimeKeeper.h"
 #include "TextUtils.h"
 
@@ -239,6 +241,23 @@ void FontManager::drawString(float x, float y, float z, int faceID, float size,
   }
 
   float scale = size / (float)pFont->getSize();
+  
+  // texture filtering is off by default for fonts.
+  // if the font is large enough, and the scaling factor
+  // is not an integer, then turn on the max filtering.
+  bool textureFiltering = false;
+  if ((size > 12.0f) && (fabsf(scale - floorf(scale)) > 0.001f)) {
+    textureFiltering = true;
+    int texID = pFont->getTextureID();
+    TextureManager& tm = TextureManager::instance();
+    tm.setTextureFilter(texID, OpenGLTexture::Max);
+  } else {
+    // no filtering - clamp to aligned coordinates
+    x = floorf(x);
+    y = floorf(y);
+    z = floorf(z);
+  }
+  
 
   /*
    * Colorize text based on ANSI codes embedded in it
@@ -366,6 +385,15 @@ void FontManager::drawString(float x, float y, float z, int faceID, float size,
       doneLastSection = true;
     }
   }
+
+  // revert the texture filtering state  
+  if (textureFiltering) {
+    int texID = pFont->getTextureID();
+    TextureManager& tm = TextureManager::instance();
+    tm.setTextureFilter(texID, OpenGLTexture::Off);
+  }
+
+  return;  
 }
 
 void FontManager::drawString(float x, float y, float z,
@@ -379,11 +407,11 @@ float FontManager::getStrLength(int faceID, float size,	const std::string &text,
 				bool alreadyStripped)
 {
   if (text.size() == 0)
-    return 0;
+    return 0.0f;
 
   if ((faceID < 0) || (faceID > getNumFaces())) {
     DEBUG2("Trying to find length of string for invalid Font Face ID %d\n", faceID);
-    return 0;
+    return 0.0f;
   }
 
   TextureFont* pFont = getClosestRealSize(faceID, size, size);
@@ -391,7 +419,7 @@ float FontManager::getStrLength(int faceID, float size,	const std::string &text,
   if (!pFont) {
     DEBUG2("Could not find applicable font size for sizing; font face ID %d, "
 	   "requested size %f\n", faceID, size);
-    return 0;
+    return 0.0f;
   }
 
   float scale = size / (float)pFont->getSize();
@@ -480,7 +508,7 @@ TextureFont*    FontManager::getClosestRealSize(int faceID, float desiredSize, f
     if (!font) {
       DEBUG2("Could not find applicable font size for sizing; font face ID %d, "
 	     "requested size %f\n", faceID, desiredSize);
-      return 0;
+      return NULL;
     }
     actualSize = (float)font->getSize();
   } else {

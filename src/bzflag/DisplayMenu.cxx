@@ -281,7 +281,7 @@ void			DisplayMenu::resize(int width, int height)
   // load current settings
   SceneRenderer* renderer = getSceneRenderer();
   if (renderer) {
-    HUDuiList* tex;
+    TextureManager& tm = TextureManager::instance();
     ((HUDuiList*)list[i++])->setIndex(BZDB.isTrue("dither"));
     ((HUDuiList*)list[i++])->setIndex(BZDB.isTrue("blend"));
     ((HUDuiList*)list[i++])->setIndex(BZDB.isTrue("smooth"));
@@ -294,7 +294,7 @@ void			DisplayMenu::resize(int width, int height)
     } else {
       ((HUDuiList*)list[i++])->setIndex(0);
     }
-    tex = (HUDuiList*)list[i++];
+    ((HUDuiList*)list[i++])->setIndex(tm.getMaxFilter());
     ((HUDuiList*)list[i++])->setIndex(renderer->useQuality());
     ((HUDuiList*)list[i++])->setIndex(BZDB.isTrue("shadows"));
     ((HUDuiList*)list[i++])->setIndex(BZDBCache::zbuffer);
@@ -305,11 +305,6 @@ void			DisplayMenu::resize(int width, int height)
     ((HUDuiList*)list[i++])->setIndex(BZDBCache::showCullingGrid ? 1 : 0);
     ((HUDuiList*)list[i++])->setIndex(BZDBCache::showCollisionGrid ? 1 : 0);
 #endif
-
-    if (!BZDB.isTrue("texture"))
-      tex->setIndex(0);
-    else
-      tex->setIndex(OpenGLTexture::getFilter());
   }
 
   // brightness
@@ -359,11 +354,13 @@ void			DisplayMenu::callback(HUDuiControl* w, void* data) {
     }
     break;
   }
-  case '5':
-    TextureManager::instance().setMaxFilter((eTextureFilter)list->getIndex());
-    BZDB.set("texture", TextureManager::instance().getMaxFilterName());
+  case '5': {
+    TextureManager& tm = TextureManager::instance();
+    tm.setMaxFilter((OpenGLTexture::Filter)list->getIndex());
+    BZDB.set("texture", tm.getMaxFilterName());
     sceneRenderer->notifyStyleChange();
     break;
+  }
   case '6':
     sceneRenderer->setQuality(list->getIndex());
     if (list->getIndex() > 3) {

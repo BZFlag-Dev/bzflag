@@ -2576,7 +2576,7 @@ static void		handleServerMessage(bool human, uint16_t code,
       }
 
       // print fancy version to be easily found
-      if ((numIPs != 1) || BZDB.isTrue("showIpInfo")) {
+      if ((numIPs != 1) || BZDB.isTrue("showips")) {
         uint8_t playerId;
         uint8_t addrlen;
         Address addr;
@@ -2599,7 +2599,7 @@ static void		handleServerMessage(bool human, uint16_t code,
             if (BZDBCache::colorful) message += ColorStrings[color];
             message += player->getCallSign();
             if (BZDBCache::colorful) message += ColorStrings[CyanColor];
-            message += "\t from ";
+            message += "\t from: ";
             if (BZDBCache::colorful) message += ColorStrings[color];
             message += addr.getDotNotation();
 
@@ -5447,6 +5447,7 @@ static float		timeConfiguration(bool useZBuffer)
 static void		timeConfigurations()
 {
   static const float MaxFrameTime = 0.050f;	// seconds
+  TextureManager& tm = TextureManager::instance();
 
   // ignore results of first test.  OpenGL could be doing lazy setup.
   BZDB.set("blend", "0");
@@ -5457,7 +5458,7 @@ static void		timeConfigurations()
   BZDB.set("dither", "1");
   BZDB.set("shadows", "0");
   BZDB.set("radarStyle", "0");
-  TextureManager::instance().setMaxFilter(Off);
+  tm.setMaxFilter(OpenGLTexture::Off);
   timeConfiguration(true);
 
   // time lowest quality with and without blending.  some systems
@@ -5505,14 +5506,14 @@ static void		timeConfigurations()
 
   // try texturing.  if it's too slow then fall back to
   // lowest quality and return.
-  TextureManager::instance().setMaxFilter(Nearest);
-  BZDB.set("texture", TextureManager::instance().getMaxFilterName());
+  tm.setMaxFilter(OpenGLTexture::Nearest);
+  BZDB.set("texture", tm.getMaxFilterName());
   sceneRenderer->setQuality(1);
   printError("  lowest quality with texture");
   if (timeConfiguration(false) > MaxFrameTime ||
       timeConfiguration(true) > MaxFrameTime) {
     BZDB.set("texture", "0");
-    TextureManager::instance().setMaxFilter(Off);
+    tm.setMaxFilter(OpenGLTexture::Off);
     sceneRenderer->setQuality(0);
     return;
   }
@@ -5522,8 +5523,8 @@ static void		timeConfigurations()
   BZDB.set("blend", "1");
   BZDB.set("smooth", "1");
   BZDB.set("lighting", "1");
-  TextureManager::instance().setMaxFilter(LinearMipmapLinear);
-  BZDB.set("texture", TextureManager::instance().getMaxFilterName());
+  tm.setMaxFilter(OpenGLTexture::LinearMipmapLinear);
+  BZDB.set("texture", tm.getMaxFilterName());
   sceneRenderer->setQuality(2);
   BZDB.set("dither", "1");
   BZDB.set("shadows", "1");
@@ -5548,14 +5549,14 @@ static void		timeConfigurations()
 
   // lower quality texturing
   printError("  nearest texturing");
-  TextureManager::instance().setMaxFilter(Nearest);
+  tm.setMaxFilter(OpenGLTexture::Nearest);
   if (timeConfiguration(true) < MaxFrameTime) return;
   if (timeConfiguration(false) < MaxFrameTime) return;
 
   // no texturing
   printError("  no texturing");
   BZDB.set("texture", "0");
-  TextureManager::instance().setMaxFilter(Off);
+  tm.setMaxFilter(OpenGLTexture::Off);
   if (timeConfiguration(true) < MaxFrameTime) return;
   if (timeConfiguration(false) < MaxFrameTime) return;
 
@@ -5712,7 +5713,7 @@ void			startPlaying(BzfDisplay* _display,
     BZDB.set("dither", "0");
     BZDB.set("shadows", "0");
     BZDB.set("radarStyle", "0");
-    TextureManager::instance().setMaxFilter(Off);
+    TextureManager::instance().setMaxFilter(OpenGLTexture::Off);
   }
 
   // should we grab the mouse?  yes if fullscreen.
