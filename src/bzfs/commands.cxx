@@ -1205,9 +1205,9 @@ void handlePollCmd(int t, const char *message)
 
   /* handle subcommands */
 
-  if ((cmd == "ban") || (cmd == "kick") || (cmd == "set")) {
+  if ((cmd == "ban") || (cmd == "kick") || (cmd == "set") || (cmd == "flagreset")) {
     std::string target;
-    std::string parameter = "";
+    std::string targetIP = "";
 
     arguments = arguments.substr(endPosition);
 
@@ -1243,7 +1243,7 @@ void handlePollCmd(int t, const char *message)
 
     DEBUG2("Target specified to vote upon is [%s]\n", target.c_str());
 
-    if (target.length() == 0) {
+    if ((target.length() == 0) && (cmd != "flagreset")) {
       sprintf(reply,"%s, no target was specified for the [%s] vote", player[t].callSign, cmd.c_str());
       sendMessage(ServerPlayer, t, reply, true);
       sprintf(reply,"Usage: /poll %s target", cmd.c_str());
@@ -1251,14 +1251,14 @@ void handlePollCmd(int t, const char *message)
       return;
     }
 
-    if (cmd != "set") {
-      // all polls that are not set polls take a player name
+    if ((cmd != "set") && (cmd != "flagreset")) {
+      // all polls that are not set or flagreset polls take a player name
 
       /* make sure the requested player is actually here */
       bool foundPlayer = false;
       for (int v = 0; v < curMaxPlayers; v++) {
 	if (strncasecmp(target.c_str(), player[v].callSign, 256) == 0) {
-	  parameter = player[v].peer.getDotNotation().c_str();
+	  targetIP = player[v].peer.getDotNotation().c_str();
 	  foundPlayer = true;
 	  break;
 	}
@@ -1275,11 +1275,13 @@ void handlePollCmd(int t, const char *message)
     /* create and announce the new poll */
     bool canDo = false;
     if (cmd == "ban") {
-      canDo = (arbiter->pollToBan(target, std::string(player[t].callSign), parameter));
+      canDo = (arbiter->pollToBan(target, std::string(player[t].callSign), targetIP));
     } else if (cmd == "kick") {
-      canDo = (arbiter->pollToKick(target, std::string(player[t].callSign)));
+      canDo = (arbiter->pollToKick(target, std::string(player[t].callSign), targetIP));
     } else if (cmd == "set") {
       canDo = (arbiter->pollToSet(target, std::string(player[t].callSign)));
+    } else if (cmd == "flagreset") {
+      canDo = (arbiter->pollToResetFlags(std::string(player[t].callSign)));
     }
 
     if (!canDo) {
@@ -1331,6 +1333,7 @@ void handlePollCmd(int t, const char *message)
     sendMessage(ServerPlayer, t, "Invalid option to the poll command", true);
     sendMessage(ServerPlayer, t, "Usage: /poll ban|kick playername", true);
     sendMessage(ServerPlayer, t, "    or /poll set variable value", true);
+    sendMessage(ServerPlayer, t, "    or /poll flagreset", true);
     sendMessage(ServerPlayer, t, "    or /poll vote yes|no", true);
     sendMessage(ServerPlayer, t, "    or /poll veto", true);
 

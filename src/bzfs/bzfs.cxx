@@ -4750,6 +4750,7 @@ int main(int argc, char **argv)
 
 	std::string target = votingarbiter->getPollTarget();
 	std::string action = votingarbiter->getPollAction();
+	std::string realIP = votingarbiter->getPollTargetIP();
 
 	static unsigned short int voteTime = 0;
 
@@ -4758,19 +4759,10 @@ int main(int argc, char **argv)
 	static bool announcedClosure = false;
 	static bool announcedResults = false;
 
-	std::string targetIP, realIP;
-
 	/* once a poll begins, announce its commencement */
 	if (!announcedOpening) {
 	  voteTime = votingarbiter->getVoteTime();
-	  realIP = votingarbiter->getPollTargetIP();
 	  sprintf(message, "A poll to %s %s has begun.  Players have up to %d seconds to vote.", action.c_str(), target.c_str(), voteTime);
-	  for (int v = 0; v < curMaxPlayers; v++) {
-		 if (strncmp(player[v].callSign, target.c_str(), 256) == 0) {
-		 	targetIP = player[v].peer.getDotNotation().c_str();
-		    break;
-		  }
-	  }
 	  sendMessage(ServerPlayer, AllPlayers, message, true);
 	  announcedOpening = true;
 	}
@@ -4808,7 +4800,7 @@ int main(int argc, char **argv)
 	      	sprintf(message, "The poll is now closed and was successful.  %s is scheduled to be %s.", target.c_str(), pollAction.c_str());
 	      else
 	      	sprintf(message, "The poll is now closed and was successful.  Currently unused flags are scheduled to be reset.");
-   		  sendMessage(ServerPlayer, AllPlayers, message, true);
+   	      sendMessage(ServerPlayer, AllPlayers, message, true);
 	      announcedClosure = true;
 	    }
 	  } else {
@@ -4836,10 +4828,9 @@ int main(int argc, char **argv)
 		pollAction = "kicked.";
 	      else
 		pollAction = action;
-		  if(action != "flagreset")
-	      	sprintf(message, "%s has been %s", target.c_str(),
-		      pollAction.c_str());
-		  else
+	      if (action != "flagreset")
+	      	sprintf(message, "%s has been %s", target.c_str(), pollAction.c_str());
+	      else
 	      	sprintf(message, "All unused flags have now been reset.");
 	      sendMessage(ServerPlayer, AllPlayers, message, true);
 
@@ -4852,25 +4843,24 @@ int main(int argc, char **argv)
 	      
 	      if ((action == "ban") || (action == "kick")) {
 		// lookup the player id
-		bool foundPlayer=false;
+		bool foundPlayer = false;
 		int v;
 		for (v = 0; v < curMaxPlayers; v++) {
 		  if (strncmp(player[v].callSign, target.c_str(), 256) == 0) {
-		    foundPlayer=true;
+		    foundPlayer = true;
 		    break;
 		  }
 		}
-		  //show the delinquent no mercy; make sure he is kicked even if he changed
-		  //his callsign by finding a corresponding IP and matching it to the saved one
-		  if (!foundPlayer && action == "kick")
-		  {
-			for (v = 0; v < curMaxPlayers; v++) {
-		  		if (strcmp(player[v].peer.getDotNotation().c_str(), targetIP.c_str()) == 0) {
-		   	 		foundPlayer=true;
-		    		break;
-		      }
-			}
+		// show the delinquent no mercy; make sure he is kicked even if he changed
+		// his callsign by finding a corresponding IP and matching it to the saved one
+		if (!foundPlayer) {
+		  for (v = 0; v < curMaxPlayers; v++) {
+		    if (strcmp(player[v].peer.getDotNotation().c_str(), realIP.c_str()) == 0) {
+		      foundPlayer = true;
+		      break;
+		    }
 		  }
+		}
 		if (foundPlayer) {
 		  // notify the player
 		  sprintf(message, "You have been %s due to sufficient votes to have you removed", action == "ban" ? "temporarily banned" : "kicked");
@@ -4878,7 +4868,7 @@ int main(int argc, char **argv)
 		  sprintf(message, "/poll %s", action.c_str());
 		  removePlayer(v, message);
 		}
-     		} else if (action == "set") {
+     	      } else if (action == "set") {
 		parseCommand(string_util::format("set %s", target.c_str()).c_str(), ServerPlayer);
 	      } else if (action == "flagreset") {
 		parseCommand(string_util::format("flag reset unused").c_str(), ServerPlayer);
@@ -4896,10 +4886,11 @@ int main(int argc, char **argv)
 	} else {
 	  // the poll may get enough votes early
 	  if (votingarbiter->isPollSuccessful()) {
-	  	if (action != "flagreset")
-	    	sprintf(message, "Enough votes were collected to %s %s early.", action.c_str(), target.c_str());
- 		else
- 			sprintf(message, "Enough votes were collected to reset all unused flags early.");
+	    if (action != "flagreset")
+	      sprintf(message, "Enough votes were collected to %s %s early.", action.c_str(), target.c_str());
+ 	    else
+ 	      sprintf(message, "Enough votes were collected to reset all unused flags early.");
+
 	    sendMessage(ServerPlayer, AllPlayers, message, true);
 
 	    // close the poll since we have enough votes (next loop will kick off notification)

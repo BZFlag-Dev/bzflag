@@ -109,9 +109,9 @@ bool VotingArbiter::poll(std::string &player, std::string &playerRequesting, std
   return true;
 }
 
-bool VotingArbiter::pollToKick(std::string &player, std::string &playerRequesting)
+bool VotingArbiter::pollToKick(std::string &player, std::string &playerRequesting, std::string &playerIP)
 {
-	return (this->poll(player, playerRequesting, std::string("kick")));
+	return (this->poll(player, playerRequesting, std::string("kick"), playerIP));
 }
 
 bool VotingArbiter::pollToBan(std::string &player, std::string &playerRequesting, std::string &playerIP)
