@@ -689,15 +689,19 @@ static boolean scheduleServerTest(Server* server)
   int port = ServerPort;
   if (server->getPort()) {
     port = atoi(server->getPort());
-    if (port < 1 || port > 65535)
+    if (port < 1 || port > 65535) {
+      close(fd);
       return False;
+    }
   }
   struct sockaddr_in addr;
   addr.sin_family = AF_INET;
   addr.sin_port = htons(port);
   addr.sin_addr = Address::getHostAddress(server->getName());
-  if (addr.sin_addr.s_addr == 0)
+  if (addr.sin_addr.s_addr == 0) {
+    close(fd);
     return False;
+  }
   sprintf(server->address, "%s", inet_ntoa(addr.sin_addr)); // FIXME this will bomb on ipv6
   if (connect(fd, (CNCTType*)&addr, sizeof(addr)) < 0) {
 #if defined(_WIN32)
