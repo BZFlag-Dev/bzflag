@@ -17,6 +17,7 @@
 #include "global.h"
 #include "Pack.h"
 #include "Protocol.h"
+#include "Intersect.h"
 
 
 WorldInfo::WorldInfo() :
@@ -251,13 +252,18 @@ InBuildingType WorldInfo::inBuilding(ObstacleLocation **location,
 
 bool WorldInfo::getZonePoint(const std::string &qualifier, float *pt)
 {
-  if (entryZones.getZonePoint(qualifier, pt))
-  {
-    //BUG: modify pt so that it is on a building
-    return true;
-  }
+  ObstacleLocation *loc;
+  InBuildingType type;
 
-  return false;
+  if (!entryZones.getZonePoint(qualifier, pt))
+    return false;
+
+  type = inBuilding(&loc, pt[0], pt[1], 0.0f, 1.0f, pt[2]);
+  if (type == NOT_IN_BUILDING)
+    pt[2] = 0.0f;
+  else
+    pt[2] = loc->pos[2];
+  return true;
 }
 
 void WorldInfo::finishWorld()
