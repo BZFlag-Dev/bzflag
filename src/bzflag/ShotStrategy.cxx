@@ -992,7 +992,7 @@ LaserStrategy::LaserStrategy(ShotPath* path) :
 
   TextureManager &tm = TextureManager::instance();
   std::string imageName = Team::getImagePrefix(tmpTeam);
-  imageName +="laserTexture";
+  imageName += BZDB.get("laserTexture");
   OpenGLTexture *texture = tm.getTexture(imageName.c_str());
 
   for (int i = 0; i < numSegments; i++) {
