@@ -4463,6 +4463,7 @@ int main(int argc, char **argv)
     PlayerAccessInfo info;
     for (int i = 0; i < PlayerAccessInfo::lastPerm; i++)
       info.explicitAllows[i] = true;
+    info.explicitAllows[PlayerAccessInfo::hideAdmin ] = false;
     groupAccess["ADMIN"] = info;
   }
   if (passFile.size())
