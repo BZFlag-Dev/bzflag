@@ -63,24 +63,32 @@ void*			Team::unpack(void* buf)
 const char*		Team::getName(TeamColor team) // const
 {
   switch (team) {
-    case RogueTeam: return "Rogue";
-    case RedTeam: return "Red Team";
-    case GreenTeam: return "Green Team";
-    case BlueTeam: return "Blue Team";
-    case PurpleTeam: return "Purple Team";
-    case ObserverTeam: return "Observer";
-    case RabbitTeam: return "Rabbit";
-    default: return "Invalid team";
+  case AutomaticTeam: return "Automatic";
+  case RogueTeam: return "Rogue";
+  case RedTeam: return "Red Team";
+  case GreenTeam: return "Green Team";
+  case BlueTeam: return "Blue Team";
+  case PurpleTeam: return "Purple Team";
+  case ObserverTeam: return "Observer";
+  case RabbitTeam: return "Rabbit";
+  case NoTeam: return "No Team??";
+  default: return "Invalid team";
   }
 }
 
 const float*		Team::getTankColor(TeamColor team) // const
 {
+  if (int(team) < 0) {
+    return tankColor[0];
+  }
   return tankColor[int(team)];
 }
 
 const float*		Team::getRadarColor(TeamColor team) // const
 {
+  if (int(team) < 0) {
+    return radarColor[0];
+  }
   return radarColor[int(team)];
 }
 
@@ -93,6 +101,10 @@ void			Team::setColors(TeamColor team,
 				const float* tank,
 				const float* radar)
 {
+  if (int(team) < 0) {
+    team = 0;
+  }
+
   tankColor[int(team)][0] = tank[0];
   tankColor[int(team)][1] = tank[1];
   tankColor[int(team)][2] = tank[2];
