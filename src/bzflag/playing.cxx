@@ -3613,7 +3613,8 @@ static void		handleServerMessage(bool human, uint16_t code,
       wordfilter->filter((char *)msg);
     }
 
-    std::string text = BundleMgr::getCurrentBundle()->getLocalString(std::string((char*)msg));
+    std::string origText = std::string((char*)msg);
+    std::string text = BundleMgr::getCurrentBundle()->getLocalString(origText);
 
     if (toAll || srcPlayer == myTank || dstPlayer == myTank ||
 	dstTeam == myTank->getTeam()) {
@@ -3629,7 +3630,8 @@ static void		handleServerMessage(bool human, uint16_t code,
 
       // direct message to or from me
       if (dstPlayer) {
-	if (fromServer && (text == "You are now an administrator!" || text == "Password Accepted, welcome back."))
+	if (fromServer && (origText == "You are now an administrator!"
+			   || origText == "Password Accepted, welcome back."))
 	  admin = true;
 	// talking to myself? that's strange
 	if (dstPlayer==myTank && srcPlayer==myTank) {
