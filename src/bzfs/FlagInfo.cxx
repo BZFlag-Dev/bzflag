@@ -16,7 +16,11 @@
 #pragma warning( 4:4786)
 #endif
 
+/* interface header */
 #include "FlagInfo.h"
+
+/* system headers */
+#include <iostream>
 
 // implementation-specific bzflag headers
 #include "BZDBCache.h"
@@ -59,6 +63,12 @@ FlagInfo::FlagInfo()
 
 void FlagInfo::setSize(int _numFlags)
 {
+  // sanity check
+  if (_numFlags > 1000000) {
+    std::cerr << "WARNING: FlagInfo::setSize was given an insane flag count of " << _numFlags << std::endl;
+    std::cerr << "clamping to 1000000 flags just for kicks" << std::endl;
+  }
+
   numFlags = _numFlags;
   delete[] flagList;
   flagList = NULL;
