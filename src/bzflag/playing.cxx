@@ -2773,6 +2773,7 @@ static void		handleServerMessage(bool human, uint16_t code,
 
   switch (code) {
 
+    // FIXME server should NOT send port number. always the same as tcp port
     case MsgUDPLinkRequest:
       uint16_t portNo;
       msg = nboUnpackUShort(msg, portNo);
@@ -5093,7 +5094,7 @@ static World*		makeWorld(ServerLink* serverLink)
 
   delete[] worldDatabase;
   delete cachedWorld;
-  
+
   // return world
   return worldBuilder.getWorld();
 }
@@ -5393,7 +5394,7 @@ static bool		joinGame(const StartupInfo* info,
     leaveGame();
     return false;
   }
-  
+
   ServerLink::setServer(serverLink);
   World::setWorld(world);
 
@@ -5461,7 +5462,7 @@ static bool		joinGame(const StartupInfo* info,
   restartOnBase = world->allowTeamFlags() && myTank->getTeam() != RogueTeam &&
 		  myTank->getTeam() != ObserverTeam;
 
-  // resize background and adjust time (this is needed even if we 
+  // resize background and adjust time (this is needed even if we
   // don't sync with the server)
   sceneRenderer->getBackground()->resize();
   if (world->allowTimeOfDayAdjust()) {
@@ -5472,7 +5473,7 @@ static bool		joinGame(const StartupInfo* info,
     updateDaylight(epochOffset, *sceneRenderer);
     lastEpochOffset = epochOffset;
   }
-  
+
   // restore the sound
   if (savedVolume != -1) {
     setSoundVolume(savedVolume);
