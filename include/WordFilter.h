@@ -159,7 +159,7 @@ class WordFilter
    * corresponding expression, and a compiled regular
    * expression
    */
-  typedef struct filter {
+  typedef struct filterStruct {
     std::string word;
     std::string expression;
     regex_t *compiled;
