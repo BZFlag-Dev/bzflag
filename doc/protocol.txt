@@ -5,7 +5,8 @@ BZFlag network protocol
 This is a draft of the not-yet-implemented protocol for versions 1.8+
 look for "FIXME" items to see what may still change.
 
-FIXME FIXME FIXME FIXME
+status
+------
 
 Tim Riker <Tim@Rikers.org> is working on this. Some open items:
 
@@ -136,13 +137,19 @@ getting the world
   -->   MsgGetWorld
 	u16 length = 2
 	u16 0x6777
-	u32 offset
   <--   MsgGetWorld
 	u16 length
 	u16 0x6777
-	u32 offset
-	u32 remaining
-	... data
+	u16 style bitmap
+	u16 max players (includes observers)
+	u16 max shots per player
+	u16 max number of flags (includes team flags)
+	u32 linear acceleration
+	u32 angular acceleration
+	u26 bad flag shake time 
+	u32 bad flag shake win count
+	u32 server time
+	... world model name
 
 Client sends MsgGetWorld requests until it has read the world description. This
 will include server settings and a single md5 that refers to the world resource. The client
@@ -165,12 +172,9 @@ only MsgGetWorld or MsgGetResource requests. Note that the transport layer benea
 sending other packets back and forth for packet size and throttling negotiation
 if appropirate
 
-The `data' has the following encoding:
-
-FIXME
-
 getting resources used in the world
 --------------------------------
+
   -->   MsgGetResource
 	u16 length = 2
 	u16 FIXME
@@ -227,7 +231,8 @@ game but may keep the PlayerID and try again.  The reason for rejection
 is included with the MsgReject message:
 
 	RejectBadRequest        -- bogus data in MsgEnter
-	RejectBadCredentials    -- bad password, etc. FIXME
+	RejectNeedUserAuth      -- this username requires authentication FIXME
+	RejectNeedServerAuth    -- this server requires authentication FIXME
 	RejectBadTeam           -- invalid team id
 	RejectBadType           -- invalid client type
 	RejectNoRogues          -- rogue team requested but rogues not allowed
