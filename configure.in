@@ -190,7 +190,7 @@ case $host_os in
 	CFLAGS="$CFLAGS -ansi";
 	CXXFLAGS="$CXXFLAGS -fno-exceptions";;
      solaris*)
-	AC_DEFINE(SUN_OGL_NO_VERTEX_MACRO, 1, [Sun OpenGL No Macro Vertex])
+	AC_DEFINE(SUN_OGL_NO_VERTEX_MACROS, [], [Sun OpenGL No Macro Vertex])
 	if test sun_wspro; then
 	   CPPFLAGS="$CPPFLAGS -KPIC"
 	elif test sun_cc; then
