@@ -4233,6 +4233,9 @@ int main(int argc, char **argv)
 	    }
 	  }
 
+	  /* the poll either terminates by itself or via a veto command */
+	  if (votingarbiter->isPollExpired()) {
+
 	    /* maybe successful, maybe not */
 	    if (votingarbiter->isPollSuccessful()) {
 	      // perform the action of the poll, if any
@@ -4313,6 +4316,8 @@ int main(int argc, char **argv)
 	    announcedClosure = false;
 	    announcedOpening = false;
 	    announcedResults = false;
+
+	  } // the poll expired
 
 	} else {
 	  // the poll may get enough votes early
