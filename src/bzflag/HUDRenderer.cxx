@@ -1464,7 +1464,7 @@ void			HUDRenderer::renderRoaming(SceneRenderer& renderer)
   if (BZDB->isTrue("displayScore")) renderScoreboard();
 
   // show tank labels
-  if (renderer.getLabels()) renderTankLabels(renderer);
+  if (BZDB->isTrue("displayLabels")) renderTankLabels(renderer);
 
   // draw times
   renderTimes();

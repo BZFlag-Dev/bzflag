@@ -272,16 +272,6 @@ bool			SceneRenderer::useWireframe() const
   return useWireframeOn;
 }
 
-bool			SceneRenderer::getLabels() const
-{
-  return showLabels;
-}
-
-void			SceneRenderer::setLabels(bool _showLabels)
-{
-  showLabels = _showLabels;
-}
-
 bool			SceneRenderer::getShowFlagHelp() const
 {
   return showFlagHelp;

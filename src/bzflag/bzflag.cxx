@@ -135,6 +135,7 @@ static const char*	bindingList[] = {
   "bind H down \"toggle displayRadarFlags\"",
   "bind J down \"toggle displayMainFlags\"",
   "bind K down \"silence\"",
+  "bind L down \"toggle displayLabels\""
   "bind \"Left Arrow\" down \"roam rotate left\"",
   "bind \"Left Arrow\" up \"roam rotate stop\"",
   "bind \"Right Arrow\" down \"roam rotate right\"",
@@ -756,7 +757,6 @@ void			dumpResources(BzfDisplay* display,
   }
   BZDB->set("startcode", ServerStartMenu::getSettings());
   BZDB->set("showflaghelp", renderer.getShowFlagHelp() ? "1" : "0");
-  BZDB->set("showlabels", renderer.getLabels() ? "1" : "0");
 
   BZDB->set("panelopacity", string_util::format("%f", renderer.getPanelOpacity()));
 
@@ -1224,8 +1224,6 @@ int			main(int argc, char** argv)
       ServerStartMenu::setSettings(BZDB->get("startcode").c_str());
     if (BZDB->isSet("showflaghelp"))
       renderer.setShowFlagHelp(BZDB->isTrue("showflaghelp"));
-    if (BZDB->isSet("displayScore"))
-      renderer.setLabels(BZDB->isTrue("showlabels"));
 
     if (BZDB->isSet("panelopacity"))
       renderer.setPanelOpacity(BZDB->eval("panelopacity"));

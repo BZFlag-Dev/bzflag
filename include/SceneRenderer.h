@@ -133,8 +133,6 @@ class SceneRenderer {
     void		addShadowNode(RenderNode* node);
     bool		getShowFlagHelp() const;
     void		setShowFlagHelp(bool showFlagHelp);
-    bool		getLabels() const;
-    void		setLabels(bool showLabels);
 
   private:
     // disallowed -- don't want to deal with potential state problems
@@ -189,7 +187,6 @@ class SceneRenderer {
     std::vector<FlareLight>	flareLightList;
     OpenGLGState	flareGState;
     bool		showFlagHelp;
-    bool		showLabels;
 
     static SceneRenderer* instance;
 };
