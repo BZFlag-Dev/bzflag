@@ -23,7 +23,6 @@
 #include <math.h>
 
 // common headers
-#include "common.h"
 #include "global.h"
 #include "Protocol.h"
 #include "Pack.h"
@@ -940,6 +939,7 @@ static MsgStringList handleMsgSuperKill (PacketInfo *pi)
 }
 
 
+static std::string n, v;
 static MsgStringList handleMsgSetVar (PacketInfo *pi)
 {
   MsgStringList list = listMsgBasics (pi);
@@ -948,20 +948,24 @@ static MsgStringList handleMsgSetVar (PacketInfo *pi)
   u16 i;
   u16 count;
   u8 nameLen, valueLen;
-  char name[256], value[256];
   d = nboUnpackUShort(d, count);
   listPush (list, 1, "count: %i", count);
+
+  char name[256] = {0}, value[256] = {0};
   for (i = 0; i < count; i++) {
     d = nboUnpackUByte(d, nameLen);
     d = nboUnpackString(d, name, nameLen);
-    name[nameLen] = '\0';
     d = nboUnpackUByte(d, valueLen);
     d = nboUnpackString(d, value, valueLen);
     value[valueLen] = '\0';
     listPush (list, 2, "%-20s = \"%s\"", name, value);
+
     if (TrackState) {
-      BZDB.set (name, value, StateDatabase::Locked);
+      n = name;
+      v = value;
+      BZDB.set (n, v, StateDatabase::Locked);
     }
+
   }
 
   return list;
