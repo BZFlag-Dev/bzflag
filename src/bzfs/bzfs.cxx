@@ -3710,6 +3710,12 @@ static void addPlayer(int playerIndex)
   // to joining player
   sendPlayerUpdate(playerIndex, playerIndex);
 
+  // if necessary force multicast relaying
+  if (noMulticastRelay) {
+    directMessage(playerIndex, MsgNetworkRelay, 0, getDirectMessageBuffer());
+    player[playerIndex].multicastRelay = True;
+  }
+
   // send update of info for team just joined
   sendTeamUpdate(teamIndex);
 
