@@ -191,6 +191,10 @@ SOURCE=..\..\src\obstacle\TeleporterSceneNodeGenerator.cxx
 
 SOURCE=..\..\src\obstacle\WallObstacle.cxx
 # End Source File
+# Begin Source File
+
+SOURCE=..\..\src\obstacle\WallSceneNodeGenerator.cxx
+# End Source File
 # End Group
 # Begin Group "Header Files"
 
