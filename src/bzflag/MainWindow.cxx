@@ -13,6 +13,7 @@
 #include "global.h"
 #include "MainWindow.h"
 #include "BzfWindow.h"
+#include "SceneRenderer.h"
 #include "bzfgl.h"
 
 //
@@ -139,7 +140,7 @@ void			MainWindow::setQuadrant(Quadrant _quadrant)
       if (isFullView)
         viewHeight = height;
       else
-        viewHeight = inHeight * 3 / 4;
+        viewHeight = inHeight * (46 - SceneRenderer::getInstance()->getRadarSize()) / 60;
       xOrigin = 0;
       yOrigin = 0;
       break;

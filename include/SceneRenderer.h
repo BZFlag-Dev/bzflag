@@ -75,6 +75,7 @@ class SceneRenderer {
     bool		useColoredShots() const;
     int			getRadarShotLength() const;
     float		getPanelOpacity() const;
+    int			getRadarSize() const;
     bool		useBigFont() const;
     bool		isLastFrame() const;
     bool		isSameFrame() const;
@@ -98,6 +99,7 @@ class SceneRenderer {
     void		setColoredShots(bool on);
     void		setRadarShotLength(int l);
     void		setPanelOpacity(float opacity);
+    void		setRadarSize(int size);
     void		setBigFont(bool on);
     void		setDim(bool on);
     void		setViewType(ViewType);
@@ -201,6 +203,7 @@ class SceneRenderer {
     bool		useColoredShotsOn;
     int			radarShotLength;
     float		panelOpacity;
+    int		        radarSize;;
     bool		useBigFontOn;
     bool		useFogHack;
     bool		useZBufferOn;

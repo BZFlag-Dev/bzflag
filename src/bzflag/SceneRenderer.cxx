@@ -89,7 +89,8 @@ SceneRenderer::SceneRenderer(MainWindow& _window) :
 				useColoredShotsOn(true),
 				radarShotLength(0),
 				panelOpacity(0.3f),
-                                useBigFontOn(false),
+				radarSize(4),
+				useBigFontOn(false),
 				useFogHack(false),
 				viewType(Normal),
 				maxLOD(32767),
@@ -453,6 +454,20 @@ float			SceneRenderer::getPanelOpacity() const
 {
   return panelOpacity;
 }
+
+void			SceneRenderer::setRadarSize(int size)
+{
+  radarSize = size;
+  notifyStyleChange();
+  window.setFullView(panelOpacity < 1.0f);
+  window.getWindow()->callResizeCallbacks();
+}
+
+int			SceneRenderer::getRadarSize() const
+{
+  return radarSize;
+}
+
 
 void			SceneRenderer::setColoredShots(bool _setColoredShots)
 {

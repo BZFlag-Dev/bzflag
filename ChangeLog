@@ -3,8 +3,7 @@
 
 * add new updates here without heading until a release
 
-BZFlag 1.7g1
--------------------------------------------------------
+* resize radar/msg area - Frank Thilo
 * Drop team flags where player last was on exit - Dave Brosius
 * tanks driving to fast are kicked - Dave Brosius
 * remove non-printable characters in callsign in server - Frank Thilo

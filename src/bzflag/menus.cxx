@@ -862,6 +862,7 @@ GUIOptionsMenu::GUIOptionsMenu()
   option->update();
   list.push_back(option);
 
+  // toggle coloring of shots on radar
   option = new HUDuiList;
   option->setFont(MainMenu::getFont());
   option->setLabel("Colored shots on radar:");
@@ -882,6 +883,26 @@ GUIOptionsMenu::GUIOptionsMenu()
   options->push_back(std::string("[-O--]"));
   options->push_back(std::string("[--O-]"));
   options->push_back(std::string("[---O]"));
+  option->update();
+  list.push_back(option);
+
+  // set radar size
+  option = new HUDuiList;
+  option->setFont(MainMenu::getFont());
+  option->setLabel("Radar & Panel Size:");
+  option->setCallback(callback, (void*)"R");
+  options = &option->getList();
+  options->push_back(std::string("[O----------]"));
+  options->push_back(std::string("[-O---------]"));
+  options->push_back(std::string("[--O--------]"));
+  options->push_back(std::string("[---O-------]"));
+  options->push_back(std::string("[----O------]"));
+  options->push_back(std::string("[-----O-----]"));
+  options->push_back(std::string("[------O----]"));
+  options->push_back(std::string("[-------O---]"));
+  options->push_back(std::string("[--------O--]"));
+  options->push_back(std::string("[---------O-]"));
+  options->push_back(std::string("[----------O]"));
   option->update();
   list.push_back(option);
 
@@ -933,6 +954,7 @@ void			GUIOptionsMenu::resize(int width, int height)
     ((HUDuiList*)list[i++])->setIndex((int)(10.0f * renderer->getPanelOpacity()));
     ((HUDuiList*)list[i++])->setIndex(renderer->useColoredShots() ? 1 : 0);
     ((HUDuiList*)list[i++])->setIndex(renderer->getRadarShotLength());
+    ((HUDuiList*)list[i++])->setIndex(renderer->getRadarSize());
   }
 }
 
@@ -963,6 +985,12 @@ void			GUIOptionsMenu::callback(HUDuiControl* w, void* data)
     case 'l':
       sceneRenderer->setRadarShotLength(list->getIndex());
       break;
+
+    case 'R':
+    {
+      sceneRenderer->setRadarSize(list->getIndex());
+      break;
+    }
   }
 }
 

@@ -270,7 +270,7 @@ void			ControlPanel::resize()
     radarSpace = 0.0f;
   }
   else {
-    radarSize = h / 4.0f;
+    radarSize = h * (14 + SceneRenderer::getInstance()->getRadarSize()) / 60.0f;
     radarSpace = 3.0f * w / MinY;
   }
 
@@ -286,16 +286,14 @@ void			ControlPanel::resize()
   // if radar connected then resize it
   if (radarRenderer)
     radarRenderer->setShape(radarAreaPixels[0], radarAreaPixels[1],
-				radarAreaPixels[2], radarAreaPixels[3]);
+                            radarAreaPixels[2], radarAreaPixels[3]);
 
-  const float addSize = SceneRenderer::getInstance()->useBigFont() ? 5.0f : 0.0f;
-  const float fontSize = addSize + (float)messageAreaPixels[3] / 12.4444f;
-  if (fontSize > 10.0f)
+  const bool useBigFont = messageAreaPixels[2] / (SceneRenderer::getInstance()->useBigFont() ? 60.0f : 80.0f) > 10.0f;
+  const float fontSize = useBigFont ? 11 : 7;
+  if (useBigFont)
     messageFont = TextureFont::getTextureFont(TextureFont::FixedBold, true);
   else
     messageFont = TextureFont::getTextureFont(TextureFont::Fixed, true);
-  // pick font size, room for 20 lines plus 4/9 line margin
-  //const float fontSize = (float)messageAreaPixels[3] / 9.4444f;
   messageFont.setSize(fontSize, fontSize);
 
   // note that we've been resized at least once
