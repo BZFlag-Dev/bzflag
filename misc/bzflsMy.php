@@ -149,6 +149,8 @@ if (!array_key_exists("action", $_GET) || $action == "LIST" ) {
   if ($_SERVER['REMOTE_ADDR'] != $servip) {
     debug($debugFile, "Requesting address is " . $_SERVER['REMOTE_ADDR']
         . " while server is at " . $servip );
+    print("Requesting address is " . $_SERVER['REMOTE_ADDR']
+        . " while server is at " . $servip );
     die();
   }
 
@@ -207,6 +209,8 @@ if (!array_key_exists("action", $_GET) || $action == "LIST" ) {
   $servip = gethostbyname($servname);
   if ($_SERVER['REMOTE_ADDR'] != $servip) {
     debug($debugFile, "Requesting address is " . $_SERVER['REMOTE_ADDR']
+                      . " while server is at " . $servip );
+    print("Requesting address is " . $_SERVER['REMOTE_ADDR']
                       . " while server is at " . $servip );
     die();
   }
