@@ -139,6 +139,9 @@
 				</FileConfiguration>
 			</File>
 			<File
+				RelativePath="..\..\src\scene\Octree.cxx">
+			</File>
+			<File
 				RelativePath="..\..\src\scene\SceneDatabase.cxx">
 				<FileConfiguration
 					Name="Debug|Win32">
@@ -190,6 +193,9 @@
 			</File>
 			<File
 				RelativePath="..\include\common.h">
+			</File>
+			<File
+				RelativePath="..\..\include\Octree.h">
 			</File>
 			<File
 				RelativePath="..\include\OpenGLGState.h">

@@ -88,7 +88,7 @@ public:
       // push the  part up to 
       tempStream << in.substr(beginPos,endPos-beginPos); 
       tempStream << withMe;
-      beginPos = endPos + replaceMe.size();
+      beginPos = (long int)(endPos + replaceMe.size());
       endPos = (long int)in.find(replaceMe,beginPos);
     } 
     tempStream << in.substr(beginPos);

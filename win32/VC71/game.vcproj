@@ -110,6 +110,12 @@
 				RelativePath="..\..\src\game\DirectoryNames.cxx">
 			</File>
 			<File
+				RelativePath="..\..\src\game\Frustum.cxx">
+			</File>
+			<File
+				RelativePath="..\..\src\game\Intersect.cxx">
+			</File>
+			<File
 				RelativePath="..\..\src\game\LagInfo.cxx">
 			</File>
 			<File
@@ -134,6 +140,12 @@
 			</File>
 			<File
 				RelativePath="..\..\include\DirectoryNames.h">
+			</File>
+			<File
+				RelativePath="..\..\include\Frustum.h">
+			</File>
+			<File
+				RelativePath="..\..\include\Intersect.h">
 			</File>
 			<File
 				RelativePath="..\..\include\LagInfo.h">

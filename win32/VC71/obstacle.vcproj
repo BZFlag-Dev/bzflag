@@ -159,26 +159,6 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\src\obstacle\Intersect.cxx">
-				<FileConfiguration
-					Name="Release|Win32">
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="2"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug|Win32">
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="0"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""
-						BasicRuntimeChecks="3"/>
-				</FileConfiguration>
-			</File>
-			<File
 				RelativePath="..\..\src\obstacle\Obstacle.cxx">
 				<FileConfiguration
 					Name="Release|Win32">
@@ -313,9 +293,6 @@
 			</File>
 			<File
 				RelativePath="..\..\src\obstacle\EmptySceneNodeGenerator.h">
-			</File>
-			<File
-				RelativePath="..\..\include\Intersect.h">
 			</File>
 			<File
 				RelativePath="..\..\include\Obstacle.h">
