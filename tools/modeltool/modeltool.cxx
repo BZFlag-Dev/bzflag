@@ -22,7 +22,7 @@
 
 // globals/
 
-static const char VersionString[] = "modeltool v1.1";
+static const char VersionString[] = "modeltool v1.2";
 
 static bool useMaterials = true;
 static bool useAmbient = true;
@@ -33,6 +33,8 @@ static bool useNormals = true;
 static bool useTexcoords = true;
 static bool flipYZ = false;
 static bool useSmoothBounce = false;
+
+static const float maxShineExponent = 128.0f; // OpenGL minimum shininess
 
 typedef std::vector<int> tvIndexList;
 
@@ -95,10 +97,10 @@ public:
 	void clear ( void )
 	{
 		texture = "";
-		ambient[0] = ambient[1] = ambient[2] = ambient[3] = 1;
-		diffuse[0] = diffuse[1] = diffuse[2] = diffuse[3] = 1;
-		specular[0] = specular[1] = specular[2] = specular[3] = 1;
-		shine = 0;
+		ambient[0] = ambient[1] = ambient[2] = ambient[3] = 1.0f;
+		diffuse[0] = diffuse[1] = diffuse[2] = diffuse[3] = 1.0f;
+		specular[0] = specular[1] = specular[2] = specular[3] = 1.0f;
+		shine = 0.0f;
 	}
 };
 
@@ -246,8 +248,17 @@ static void readMTL ( CModel &model, std::string file )
 				}
 				if (TextUtils::tolower(tag) == "ns")
 				{
-					if (lineParts.size() > 1)
-						model.materials[matName].shine = (float)atof(lineParts[1].c_str());
+					if (lineParts.size() > 1) {
+					  float shine = (float)atof(lineParts[1].c_str());
+					  // convert MTL "Ns" to OpenGL shininess  [0 - 1000] => [0 - 128]
+					  shine = shine / 1000.0f;
+					  if (shine < 0.0f) {
+					    shine = 0.0f;
+						} else if (shine > 1.0f) {
+						  shine = 1.0f;
+						}
+						model.materials[matName].shine = (shine * maxShineExponent);
+					}
 				}
 				if (TextUtils::tolower(tag) == "map_kd")
 				{
@@ -597,7 +608,7 @@ static int  dumpUsage ( char *exeName, const char* reason )
 	printf("       -a  : disable ambient coloring\n");
 	printf("       -d  : disable diffuse coloring\n");
 	printf("       -s  : disable specular coloring\n");
-	printf("       -sh : disable shininess\n");
+	printf("       -sh : disable shininess\n\n");
 	return 1;
 }
 
