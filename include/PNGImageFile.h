@@ -32,6 +32,7 @@ private:
 	unsigned char *getLineBuffer(bool active=true);
 	void switchLineBuffers();
 	bool filter();
+	bool expand();
 
 	static unsigned char			PNGHEADER[8];
 	static const unsigned char		FILTER_NONE;
@@ -48,6 +49,7 @@ private:
 	unsigned char					*lineBuffers[2];
 	int								activeBufferIndex;
 	int								lineBufferSize;
+	int								realBufferSize;
 };
 
 class PNGRGB

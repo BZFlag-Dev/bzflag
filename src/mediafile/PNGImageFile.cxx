@@ -65,40 +65,44 @@ PNGImageFile::PNGImageFile(std::istream* stream) : ImageFile(stream)
 	int channels;
 	switch (colorDepth) {
 		case 0:
-			lineBufferSize = (width * (8/bitDepth))+1;
+			lineBufferSize = ((width * bitDepth)/8)+1;
+			realBufferSize = width + 1;
 			channels = 1;
 		break;
 
 		case 2:
-			lineBufferSize = (width * 3 * (8/bitDepth))+1;
+			lineBufferSize = ((3 * width * bitDepth)/8)+1;
 			channels = 3;
 		break;
 
 		case 3:
-			lineBufferSize = (width * (8/bitDepth))+1;
+			lineBufferSize = ((width * bitDepth)/8)+1;
 			channels = 3;
 		break;
 
 		case 4:
-			lineBufferSize = (width * 2 * (8/bitDepth))+1;
+			lineBufferSize = ((2 * width * bitDepth)/8)+1;
 			channels = 2;
 		break;
 
 		case 6:
-			lineBufferSize = (width * 4 * (8/bitDepth))+1;
+			lineBufferSize = ((4 * width * bitDepth)/8)+1;
 			channels = 4;
 		break;
 	}
 
-	lineBuffers[0] = new unsigned char[lineBufferSize];
-	lineBuffers[1] = new unsigned char[lineBufferSize];
-	memset(lineBuffers[1], 0, lineBufferSize);
+	realBufferSize = channels * width + 1;
+	lineBuffers[0] = new unsigned char[realBufferSize];
+	lineBuffers[1] = new unsigned char[realBufferSize];
+	memset(lineBuffers[1], 0, realBufferSize);
 	activeBufferIndex = 0;
 
 	//Temporary
 	if (colorDepth != 2)
 		return;
 	if (bitDepth != 8)
+		return;
+	if (filterMethod != 0)
 		return;
 
 
@@ -153,6 +157,8 @@ bool					PNGImageFile::read(void* buffer)
 
 		err = inflate(&stream, Z_FINISH);
 		while (err == Z_BUF_ERROR) {
+
+			expand();
 
 			if (!filter()) {
 				delete c;
@@ -209,6 +215,49 @@ void PNGImageFile::switchLineBuffers()
 	activeBufferIndex = 1 - activeBufferIndex;
 }
 
+bool PNGImageFile::expand()
+{
+	if ((bitDepth == 8) && (colorDepth != 3))
+		return true;
+
+	int width = getWidth();
+	switch (bitDepth)
+	{
+		case 1:
+		{
+		}
+		break;
+
+		case 2:
+		{
+		}
+		break;
+
+		case 4:
+		{
+		}
+		break;
+
+		case 8:
+		{
+		}
+		break;
+
+		case 16:
+		{
+		}
+		break;
+
+		default:
+			return false;
+	}
+
+	if (colorDepth == 3) {
+	}
+
+	return true;
+}
+
 bool PNGImageFile::filter()
 {
 	int	len = lineBufferSize;
@@ -220,10 +269,10 @@ bool PNGImageFile::filter()
 
 		case FILTER_SUB:
 		{
-			unsigned char last = 0;
+			unsigned char last[3] = {0, 0, 0};
 			for (int i = 1; i < lineBufferSize; i++) {
-				*(pData+i) += last;
-				last = *(pData+i);
+				*(pData+i) += last[i%3];
+				last[i%3] = *(pData+i);
 			}
 			return true;
 			break;
