@@ -796,6 +796,8 @@ bool WordFilter::addToFilter(const std::string &word, const std::string &express
     /* check if the word is already added */
     if (filters[firstchar].find(newFilter) != \
 	filters[firstchar].end()) {
+      regfree(newFilter.compiled);
+      free(newFilter.compiled);
       return false;
     } else {
       filters[firstchar].insert(newFilter);
