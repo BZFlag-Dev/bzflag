@@ -48,10 +48,12 @@ int main(int argc, char** argv) {
     static const int major = 2, minor = 2;
     WSADATA wsaData;
     if (WSAStartup(MAKEWORD(major, minor), &wsaData)) {
+    	std::cerr << "Could not initialise WinSock.";
       return 1;
     }
     if (LOBYTE(wsaData.wVersion) != major ||
-	HIBYTE(wsaData.wVersion) != minor) {
+				HIBYTE(wsaData.wVersion) != minor) {
+		  std::cerr << "Invalid WinSock version.";
       WSACleanup();
       return 1;
     }
