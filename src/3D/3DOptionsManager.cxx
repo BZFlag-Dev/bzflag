@@ -26,7 +26,7 @@ OptionsManager* Singleton<OptionsManager>::_instance = (OptionsManager*)0;
 
 void  OptionsManager::init ( void )
 {
-  int textureMode = BZDB.eval("texture");
+  int textureMode = BZDB.evalInt("texture");
   if (textureMode == 0)
     options.textures[0] = options.textures[1] = options.textures[2] = false;
   else
@@ -41,7 +41,7 @@ void  OptionsManager::init ( void )
   options.dither = BZDB.isTrue("dither");
   options.smoothing = BZDB.isTrue("smooth");
   options.dethBuffer = BZDB.isTrue("zbuffer");
-  options.quality  = BZDB.isTrue("useQuality");
+  options.quality  = (renderQuality)BZDB.evalInt("useQuality");
   options.shadows  = BZDB.isTrue("shadows");
   options.lighting  = BZDB.isTrue("lighting");
 }
@@ -52,15 +52,15 @@ void  OptionsManager::save ( void )
   if (options.textures)
     textureMode = options.filterMode+1;
 
-  BZDB.set("texture",textureMode);
+  BZDB.setInt("texture",textureMode);
 
-  BZDB.set("blend", options.blending );
-  BZDB.set("dither", options.dither );
-  BZDB.set("smooth", options.smoothing );
-  BZDB.set("zbuffer", options.dethBuffer );
-  BZDB.set("useQuality", options.quality );
-  BZDB.set("shadows", options.shadows );
-  BZDB.set("lighting", options.lighting );
+  BZDB.setBool("blend", options.blending );
+  BZDB.setBool("dither", options.dither );
+  BZDB.setBool("smooth", options.smoothing );
+  BZDB.setBool("zbuffer", options.dethBuffer );
+  BZDB.setInt("useQuality", options.quality );
+  BZDB.setBool("shadows", options.shadows );
+  BZDB.setBool("lighting", options.lighting );
 }
 
 // texture stuff

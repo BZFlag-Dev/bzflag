@@ -356,7 +356,7 @@ float			StateDatabase::eval(const std::string& name)
   return retn;
 }
 
-int			StateDatabase::evalI(const std::string& name)
+int			StateDatabase::evalInt(const std::string& name)
 {
   return (int)eval(name);
 }

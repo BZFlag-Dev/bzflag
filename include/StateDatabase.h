@@ -145,7 +145,7 @@ public:
    * the string as an expression
    */
   float				eval(const std::string& name);
-  int				evalI(const std::string& name);
+  int				evalInt(const std::string& name);
 
   /** return true if the value associated with a name indicates
    * logical true, which is when the value is not empty and not
