@@ -5537,7 +5537,7 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
         // tanks can get faster than allowed, probably due to floating point
         if (curPlanarSpeedSqr > (10.0f + maxPlanarSpeedSqr)) {
           char message[MessageLen];
-          DEBUG1("kicking Player %s [%d]: tank too fast (tank: %f,allowed> %f)\n",
+          DEBUG1("kicking Player %s [%d]: tank too fast (tank: %f, allowed: %f)\n",
                  player[t].callSign, t,
                  sqrt(curPlanarSpeedSqr), sqrt(maxPlanarSpeedSqr));
           strcpy( message, "Autokick: Tank moving too fast, Update your client." );
