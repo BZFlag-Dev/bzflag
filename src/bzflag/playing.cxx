@@ -1810,7 +1810,10 @@ static void		doAutoPilot(float &rotation, float &speed)
 	  for (int s = 0; s < maxShots; s++) {
 	    ShotPath* shot = player[t]->getShot(s);
 	    if (!shot || shot->isExpired())
-	      continue;
+              continue;
+            // ignore invisible bullets completely for now (even when visible)
+            if (shot->getFlag() == Flags::InvisibleBullet)
+              continue;
 	    const float* shotPos = shot->getPosition();
 	    if ((fabs(shotPos[2] - pos[2]) > BZDBCache::tankHeight) && (shot->getFlag() != Flags::GuidedMissile))
 	      continue;
