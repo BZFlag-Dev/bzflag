@@ -152,6 +152,7 @@ int			getErrno();
 class BzfNetwork {
   public:
     static int		setNonBlocking(int fd);
+    static int		setBlocking(int fd);
     static bool	dereferenceURLs(std::vector<std::string>& list,
 				unsigned int max, std::vector<std::string>& failedList);
     static bool	parseURL(const std::string& url,

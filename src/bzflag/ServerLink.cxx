@@ -235,6 +235,13 @@ ServerLink::ServerLink(const Address& serverAddress, int port, int) :
     goto done;
   }
 
+#if !defined(_WIN32)
+  if (BzfNetwork::setBlocking(query) < 0) {
+    close(query);
+    return;
+  }
+#endif // !defined(_WIN32)
+
   fd = query;
 
   // turn on TCP no delay

@@ -85,6 +85,14 @@ int			BzfNetwork::setNonBlocking(int fd)
   return 0;
 }
 
+int			BzfNetwork::setBlocking(int fd)
+{
+  int mode = fcntl(fd, F_GETFL, 0);
+  if (mode == -1 || fcntl(fd, F_SETFL, mode & ~O_NDELAY) < 0)
+    return -1;
+  return 0;
+}
+
 #else /* defined(_WIN32) */
 
 #pragma warning( 4: 4786 )
@@ -209,6 +217,12 @@ int			BzfNetwork::setNonBlocking(int fd)
 {
   int on = 1;
   return ioctl(fd, FIONBIO, &on);
+}
+
+int			BzfNetwork::setBlocking(int fd)
+{
+  int off = 0;
+  return ioctl(fd, FIONBIO, &off);
 }
 
 #endif /* defined(_WIN32) */
