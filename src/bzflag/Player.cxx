@@ -581,6 +581,9 @@ void			Player::doDeadReckoning()
   setVelocity(predictedVel);
 }
 
+// How long does the filter takes to be considered "initialized"
+const int DRStateStable = 10;
+
 void			Player::setDeadReckoning(float timestamp)
 {
   // offset should be the time packet has been delayed above average
@@ -588,20 +591,26 @@ void			Player::setDeadReckoning(float timestamp)
     - deltaTime;
 
   float alpha;
-  if (deadReckoningState < 10) {
+  if (deadReckoningState < DRStateStable) {
     // Initialization
     alpha = 1.0f / float(deadReckoningState + 1);
+  } else if (fabs(offset) > 1.0f) {
+    // Just discard too much untimed measurement
+    return;
+  } else if (offset > 0) {
+    // fast alignment to the packet that take less travel time
+    alpha = 1.0f;
   } else {
     // Stable
     alpha = 0.01f;
   }
   // alpha filtering
   deltaTime = deltaTime + offset * alpha;
-  // this should take into account the initialization of filter so
-  // that average is really smoothed
-  if (deadReckoningState == 0)
+  // when alpha is 1, that really means we are re-initializing deltaTime
+  // so offset should be zero
+  if (alpha == 1.0f)
     offset = 0.0f;
-  if (deadReckoningState < 10)
+  if (deadReckoningState < DRStateStable)
     ++deadReckoningState;
 
   // save stuff for dead reckoning
