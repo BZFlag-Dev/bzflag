@@ -21,12 +21,13 @@ const char*		TetraBuilding::typeName = "TetraBuilding";
 
 static bool makePlane (const float* p1, const float* p2, const float* pc, float* r);
 
+
 TetraBuilding::TetraBuilding(const float (*_vertices)[3], const bool *_visible, 
                              bool drive, bool shoot) :
                              Obstacle(_vertices[0], 0.0f, 50.0f, 50.0f, 50.0f, drive, shoot) //FIXME
 {
   memcpy (vertices, _vertices, 4 * sizeof (float[3]));
-  memcpy (visible, _visible, sizeof (bool[4]));
+  memcpy (visible, _visible, 4 * sizeof (bool));
   
   // make sure the the planes are facing outwards
   float edge[3][3]; // edges from vertex 0
@@ -59,21 +60,25 @@ TetraBuilding::TetraBuilding(const float (*_vertices)[3], const bool *_visible,
   return;
 }                             
 
+
 TetraBuilding::~TetraBuilding()
 {
   // do nothing
   return;
 }
 
+
 const char*		TetraBuilding::getType() const
 {
   return typeName;
 }
 
+
 const char*		TetraBuilding::getClassName() // const
 {
   return typeName;
 }
+
 
 void			TetraBuilding::getCorner(int index,
 						float* pos) const
@@ -129,6 +134,7 @@ float			TetraBuilding::intersect(const Ray& /* FIXME */) const
 //			     getZFlip());
 }
 
+
 void			TetraBuilding::getNormal(const float* p,
 							float* n) const
 {
@@ -138,6 +144,23 @@ void			TetraBuilding::getNormal(const float* p,
   n[2] = +1.0f;
 }
 
+
+bool			TetraBuilding::getHitNormal(
+				const float* pos1, float,
+				const float* pos2, float,
+				float, float, float height,
+				float* normal) const
+{
+  pos1 = pos1;
+  pos2 = pos2;
+  height = height;
+  normal[0] = 0.0f;
+  normal[1] = 0.0f;
+  normal[2] = +1.0f;
+  return false;
+}
+
+
 void			TetraBuilding::get3DNormal(const float* p,
 						     float* n) const
 {
@@ -146,6 +169,7 @@ void			TetraBuilding::get3DNormal(const float* p,
   n[1] = 0.0f;
   n[2] = +1.0f;
 }
+
 
 bool			TetraBuilding::inCylinder(const float* p,
 						float radius, float height) const
@@ -159,6 +183,7 @@ bool			TetraBuilding::inCylinder(const float* p,
   return false;
 }
 
+
 bool			TetraBuilding::inBox(const float* p, float a,
 						float dx, float dy, float height) const
 {
@@ -170,6 +195,7 @@ bool			TetraBuilding::inBox(const float* p, float a,
   }
   return false;
 }
+
 
 bool			TetraBuilding::inMovingBox(const float*, float,
                                              const float* p, float angle,
@@ -184,6 +210,7 @@ bool			TetraBuilding::inMovingBox(const float*, float,
   }
   return false;
 }                                          
+
 
 bool			TetraBuilding::isCrossing(const float* p, float a,
 					float dx, float dy, float height, float* plane) const
@@ -200,21 +227,6 @@ bool			TetraBuilding::isCrossing(const float* p, float a,
     }
     return true;
   }
-  return false;
-}
-
-bool			TetraBuilding::getHitNormal(
-				const float* pos1, float,
-				const float* pos2, float,
-				float, float, float height,
-				float* normal) const
-{
-  pos1 = pos1;
-  pos2 = pos2;
-  height = height;
-  normal[0] = 0.0f;
-  normal[1] = 0.0f;
-  normal[2] = +1.0f;
   return false;
 }
 

@@ -8,7 +8,7 @@ class Occluder {
     Occluder(SceneNode *node);
     ~Occluder();
     bool makePlanes(const Frustum* frustum);
-    bool doCullAxisBox(const float* mins, const float* maxs);
+    IntersectLevel doCullAxisBox(const float* mins, const float* maxs);
     bool doCullSceneNode(SceneNode* node);
     void addScore(unsigned int score);
     void divScore();
@@ -37,13 +37,17 @@ class OccluderManager {
   public:
     OccluderManager();
     ~OccluderManager();
+
     void clear();
     void update(const Frustum* frustum);
-    bool occlude(const float* mins, const float* maxs,
-                 unsigned int score);
-    bool occludePeek(const float* mins, const float* maxs);
-                     
     void select(SceneNode** list, int listCount);
+
+    IntersectLevel occlude(const float* mins, const float* maxs,
+                           unsigned int score);
+    bool occludePeek(const float* mins, const float* maxs);
+
+    int getOccluderCount () const;
+                     
     void draw() const;
 
   private:
@@ -85,4 +89,8 @@ inline int Occluder::getVertexCount() const
   return vertexCount;
 }
 
+inline int OccluderManager::getOccluderCount () const
+{
+  return activeOccluders;
+}
 

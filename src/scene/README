@@ -2,20 +2,33 @@ This directory contains space partitioning.
 
 Notes on the Octree  (trepan)
 -----------------------------
-1. It will be converted to use a flat memory space (less cache thrash)
-2. The occluders will be also be used for scene node culling
-3. The occluder selection algorithm will be improved. The easier (and
-   possibly best way), to do this is to use the GL_ARB_occlusion_query
-   or GL_NV_occlusion_query extensions. If those aren't available, plane
-   area, distance from the eye, and angle towards the eye can all be useful.
-4. The occluders can be improved by merging them into larger convex
-   polygons before using them. Otherwise, the seams between adjacent
-   occluders cause culling leaks.
-5. The testTriPlaneInAxisBox() function is junk. It'll be fixed using a
-   separation axis type test.
-6. Some of the scene node culling might be better done with axis aligned
-   bounding boxes.
-7. All static scene nodes will be tested for culling before being send out
-   of the ZSceneDatabase.
-8. Sort the scene nodes by area before inserting into the octree
-9. Frustum culling could be done using a proximal descent, 1-3-3-1 cube.
+1.  It will be converted to use a flat memory space (less cache thrash)
+2.  The occluders will be also be used for scene node culling
+3.  The occluder selection algorithm will be improved. The easier (and
+    possibly best way), to do this is to use the GL_ARB_occlusion_query
+    or GL_NV_occlusion_query extensions. If those aren't available, plane
+    area, distance from the eye, and angle towards the eye can all be useful.
+4.  The occluders can be improved by merging them into larger convex
+    polygons before using them. Otherwise, the seams between adjacent
+    occluders cause culling leaks.
+5.  The testTriPlaneInAxisBox() function is junk. It'll be fixed using a
+    separation axis type test.
+6.  Some of the scene node culling might be better done with axis aligned
+    bounding boxes.
+7.  All static scene nodes will be tested for culling before being send out
+    of the ZSceneDatabase.
+8.  Sort the scene nodes by area before inserting into the octree
+9.  Frustum culling could be done using a proximal descent, 1-3-3-1 cube.
+10. If a cell is fully frustum visible, but partially occluded, then still
+    still check for occlusions on sub-cell.
+11. Maintain a list of useful occluders at each depth
+12. Have cells keep a record of the last culler that killed them
+    (either the frustum or one of the occluders)
+13. Parent octree cells should swallow 'only-child' cells
+14. Add a limit to the total number of octree nodes? (so that silly map
+    makers don't have their computer eaten alive by the bzflag client)
+15. Shadow nodes are getting clipped because of the odd projection
+    matrix that they use to cast themselves up on the ground. This could
+    be fixed by adding all of the shadow nodes before the Octree culls
+    their sources (the same is done now in SceneNode::getRenderNodes())
+

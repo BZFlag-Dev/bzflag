@@ -41,6 +41,8 @@ class TriWallSceneNode : public WallSceneNode {
     int                 getVertexCount () const;
     const               GLfloat* getVertex (int vertex) const;
 
+    bool		cull(const ViewFrustum&) const;
+
   protected:
     class Geometry : public RenderNode {
       public:

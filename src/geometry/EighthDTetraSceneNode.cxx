@@ -17,7 +17,9 @@
 #include "SceneRenderer.h"
 #include "StateDatabase.h"
 
-const int		TetraPolygons = 20;
+const int		TetraPolygons = 20; //FIXME
+
+// FIXME - this can cause spin loops...
 
 EighthDTetraSceneNode::EighthDTetraSceneNode(const float (*vertices)[3],
                                              const float (*planes)[4]) :

@@ -15,7 +15,7 @@
 #include "Intersect.h"
 #include "Occluder.h"
 
-static const int fullListBreak = 3; // FIXME
+static const int fullListBreak = 33; // FIXME
 
 static int maxDepth = 0;
 static int minElements = 16;
@@ -419,7 +419,7 @@ void OctreeNode::getFrustumList () const
     return;
   }
 
-  if (OcclMgr.occlude (mins, maxs, count)) {
+  if (OcclMgr.occlude (mins, maxs, count) == Contained) {
     return;
   }
   
