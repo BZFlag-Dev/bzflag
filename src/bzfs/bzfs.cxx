@@ -17,10 +17,10 @@ static const char copyright[] = "Copyright (c) 1993 - 2002 Tim Riker";
 #define PRINTSCORE to include code to dump score info to stdout
 
 // Like verbose debug messages?
-#define DEBUG1 if (debug >= 1) printf
-#define DEBUG2 if (debug >= 2) printf
-#define DEBUG3 if (debug >= 3) printf
-#define DEBUG4 if (debug >= 4) printf
+#define DEBUG1 if (clOptions.debug >= 1) printf
+#define DEBUG2 if (clOptions.debug >= 2) printf
+#define DEBUG3 if (clOptions.debug >= 3) printf
+#define DEBUG4 if (clOptions.debug >= 4) printf
 
 #define SERVERLOGINMSG true
 
@@ -106,11 +106,285 @@ static float flagHeight = FlagAltitude;
 
 #define MAX_FLAG_HISTORY (10)
 
-// custom server login message
-static char *servermsg = NULL;
+// FIXME this assumes that 255 is a wildcard
+// it should include a cidr mask with each address
+// it's still useful as is
 
-// custom periodic advertise message
-static char *advertisemsg = NULL;
+typedef struct BanInfo
+{
+    BanInfo( in_addr &banAddr, int period = 0 ) {
+	memcpy( &addr, &banAddr, sizeof( in_addr ));
+	if (period == 0)
+	    banEnd = TimeKeeper::getSunExplodeTime();
+	else {
+	    banEnd = TimeKeeper::getCurrent();
+	    banEnd += period * 60.0f;
+	}
+    }
+
+    in_addr	addr;
+    TimeKeeper	banEnd;
+} BanInfo;
+
+class AccessControlList
+{
+public:
+  void ban(in_addr &ipAddr, int period = 0) {
+
+    banList.push_back(BanInfo(ipAddr, period));
+  }
+
+  bool ban(std::string &ipList, int period = 0) {
+    return ban(ipList.c_str(), period);
+  }
+
+  bool ban(const char *ipList, int period = 0) {
+    char *buf = strdup(ipList);
+    char *pStart = buf;
+    char *pSep;
+    bool added = false;
+
+    in_addr mask;
+    while ((pSep = strchr(pStart, ',')) != NULL) {
+      *pSep = 0;
+      if (convert(pStart, mask)) {
+	ban(mask, period);
+	added = true;
+      }
+      *pSep = ',';
+      pStart = pSep + 1;
+    }
+    if (convert(pStart, mask)) {
+      ban(mask, period);
+      added = true;
+    }
+    free(buf);
+    return added;
+  }
+
+  bool unban(in_addr &ipAddr) {
+    int numBans = banList.size();
+    bool found = false;
+    std::vector<BanInfo>::iterator it = banList.begin();
+    while (it != banList.end()) {
+      if (it->addr.s_addr == ipAddr.s_addr) {
+	banList.erase(it);
+	numBans--;
+	found = true;
+      }
+      it++;
+    }
+    return found;
+  }
+
+  bool unban(std::string &ipList) {
+    return unban(ipList.c_str());
+  }
+
+  bool unban(const char *ipList) {
+    char *buf = strdup(ipList);
+    char *pStart = buf;
+    char *pSep;
+    bool success = false;
+
+    in_addr mask;
+    while ((pSep = strchr(pStart, ',')) != NULL) {
+      *pSep = 0;
+      if (convert(pStart, mask))
+	success|=unban(mask);
+      *pSep = ',';
+      pStart = pSep + 1;
+    }
+    if (convert(pStart, mask))
+      success|=unban(mask);
+    free(buf);
+    return success;
+  }
+
+  bool validate(in_addr &ipAddr) {
+    int numBans = banList.size();
+	TimeKeeper now = TimeKeeper::getCurrent();
+
+    for (int i = 0; i < numBans; i++) {
+      in_addr mask = banList[i].addr;
+      TimeKeeper banEnd = banList[i].banEnd;
+	  if (banEnd <= now) {
+	        std::vector<BanInfo>::iterator it = banList.begin();
+	        for (int j = 0; i != j; j++) it++;
+		banList.erase(it);
+		i--;
+		numBans--;
+		continue;
+	  }
+
+      if ((ntohl(mask.s_addr) & 0x00ffffff) == 0x00ffffff)
+	mask.s_addr = htonl((ntohl(mask.s_addr) & 0xff000000) | (ntohl(ipAddr.s_addr) & 0x00ffffff));
+      else if ((ntohl(mask.s_addr) & 0x0000ffff) == 0x0000ffff)
+	mask.s_addr = htonl((ntohl(mask.s_addr) & 0xffff0000) | (ntohl(ipAddr.s_addr) & 0x0000ffff));
+      else if ((ntohl(mask.s_addr) & 0x000000ff) == 0x000000ff)
+	mask.s_addr = htonl((ntohl(mask.s_addr) & 0xffffff00) | (ntohl(ipAddr.s_addr) & 0x000000ff));
+
+      if (mask.s_addr == ipAddr.s_addr)
+	return false;
+    }
+    return true;
+  }
+
+  void sendBans(int playerIndex, PlayerId id, TeamColor teamColor)
+  {
+    char banlistmessage[MessageLen];
+
+    sendMessage(playerIndex, id, teamColor, "IP Ban List");
+    sendMessage(playerIndex, id, teamColor, "-----------");
+    TimeKeeper now = TimeKeeper::getCurrent();
+    int numBans = banList.size();
+    for (int i = 0; i < numBans; i++) {
+	char *pMsg = banlistmessage;
+	if (banList[i].banEnd <= now) {
+	  std::vector<BanInfo>::iterator it = banList.begin();
+	  for (int j = 0; i != j; j++) it++;
+	  banList.erase(it);
+	  i--;
+	  numBans--;
+	  continue;
+	}
+	in_addr mask = banList[i].addr;
+
+	sprintf( pMsg, "%d.", ((unsigned char)(ntohl(mask.s_addr) >> 24)));
+	pMsg+=strlen(pMsg);
+
+	if ((ntohl(mask.s_addr) & 0x00ffffff) == 0x00ffffff)
+	    strcat( pMsg, "*.*.*" );
+	else {
+	    sprintf( pMsg, "%d.", ((unsigned char)(ntohl(mask.s_addr) >> 16)));
+	    pMsg+=strlen(pMsg);
+	    if ((ntohl(mask.s_addr) & 0x0000ffff) == 0x0000ffff)
+		strcat( pMsg, "*.*" );
+	    else {
+		sprintf( pMsg, "%d.", ((unsigned char)(ntohl(mask.s_addr) >> 8)));
+		pMsg+=strlen(pMsg);
+		if ((ntohl(mask.s_addr) & 0x000000ff) == 0x000000ff)
+		    strcat( pMsg, "*" );
+		else
+		    sprintf( pMsg, "%d", ((unsigned char)ntohl(mask.s_addr)));
+	    }
+	}
+
+	sendMessage(playerIndex, id, teamColor, banlistmessage);
+    }
+  }
+
+private:
+
+  bool convert(char *ip, in_addr &mask) {
+    unsigned char b[4];
+    char *pPeriod;
+
+    for (int i = 0; i < 3; i++) {
+      pPeriod = strchr(ip, '.');
+      if (pPeriod) {
+	*pPeriod = 0;
+	if (strcmp("*", ip) == 0)
+	  b[i] = 255;
+	else
+	  b[i] = atoi(ip);
+	*pPeriod = '.';
+	ip = pPeriod + 1;
+      }
+      else
+	return false;
+    }
+    if (strcmp("*", ip) == 0)
+      b[3] = 255;
+    else
+      b[3] = atoi(ip);
+
+    mask.s_addr= htonl(((unsigned int)b[0] << 24) |
+	((unsigned int)b[1] << 16) | ((unsigned int)b[2] << 8) | (unsigned int)b[3]);
+    return true;
+  }
+
+  std::vector<BanInfo>  banList;
+};
+
+struct CmdLineOptions
+{
+  CmdLineOptions() 
+  : wksPort(ServerPort), reconnectPort(ServerPort+1), gameStyle(PlainGameStyle), servermsg(NULL), 
+    advertisemsg(NULL), worldFile(NULL), pingInterface(NULL), publicizedTitle(NULL), 
+    listServerURL(DefaultListServerURL), password(NULL), maxShots(1), maxTeamScore(0), maxPlayerScore(0), 
+    maxObservers(3), numExtraFlags(0), teamKillerKickRatio(0), numAllowedFlags(0), shakeWins(0), shakeTimeout(0), 
+    pingTTL(DefaultTTL), maxlagwarn(10000), lagwarnthresh(-1.0), idlekickthresh(-1.0), timeLimit(0.0f), 
+    timeElapsed(0.0f), linearAcceleration(0.0f), angularAcceleration(0.0f), useGivenPort(false), 
+    useFallbackPort(false), alsoUDP(true), requireUDP(false), randomBoxes(false), randomCTF(false), 
+    flagsOnBuildings(false), oneGameOnly(false), randomHeights(false), useTeleporters(false), 
+    teamKillerDies(true), printScore(false), publicizeServer(false), publicizedAddressGiven(false), debug(0) 
+  {
+    for (int i = int(FirstFlag); i <= int(LastFlag); i++) {
+	flagCount[i] = 0;
+	flagDisallowed[i] = false;
+    }
+
+    for (i = 0; i < NumTeams; i++)
+      maxTeam[i] = MaxPlayers;
+  }
+
+  int			wksPort;
+  int			reconnectPort;
+  int			gameStyle;
+
+  const char		*servermsg;
+  const char		*advertisemsg;
+  const char		*worldFile;
+  const char		*pingInterface;
+  const char		*publicizedTitle;
+  const char		*listServerURL;
+  char			*password;
+
+
+  std::string		publicizedAddress;
+
+  uint16_t		maxShots;
+  int			maxTeamScore;
+  int			maxPlayerScore;
+  int			maxObservers;
+  int			numExtraFlags;
+  int			teamKillerKickRatio; // if players tk*100/wins > teamKillerKickRatio -> kicked
+  int			numAllowedFlags;
+  uint16_t		shakeWins;
+  uint16_t		shakeTimeout;
+  int			pingTTL;
+  int			maxlagwarn;
+
+  float			lagwarnthresh;
+  float			idlekickthresh;
+  float			timeLimit;
+  float			timeElapsed;
+  float			linearAcceleration;
+  float			angularAcceleration;
+
+  bool			useGivenPort;
+  bool			useFallbackPort;
+  bool			alsoUDP; // true if UDP can be used in parallel to TCP connections
+  bool			requireUDP; // true if only new clients allowed
+  bool			randomBoxes;
+  bool			randomCTF;
+  bool			flagsOnBuildings;
+  bool			oneGameOnly;
+  bool			randomHeights;
+  bool			useTeleporters;
+  bool			teamKillerDies;
+  bool			printScore;
+  bool			publicizeServer;
+  bool			publicizedAddressGiven;
+
+  int			debug;
+  
+  uint16_t		maxTeam[NumTeams];
+  int			flagCount[LastFlag + 1];//
+  bool			flagDisallowed[LastFlag + 1];//
+  AccessControlList	acl;
+};
 
 enum PlayerState {
   PlayerNoExist, // does not exist
@@ -331,220 +605,13 @@ class ListServerLink {
     const char *nextMessage;
 };
 
-// FIXME this assumes that 255 is a wildcard
-// it should include a cidr mask with each address
-// it's still useful as is
-
-typedef struct BanInfo
-{
-    BanInfo( in_addr &banAddr, int period = 0 ) {
-	memcpy( &addr, &banAddr, sizeof( in_addr ));
-	if (period == 0)
-	    banEnd = TimeKeeper::getSunExplodeTime();
-	else {
-	    banEnd = TimeKeeper::getCurrent();
-	    banEnd += period * 60.0f;
-	}
-    }
-
-    in_addr	addr;
-    TimeKeeper	banEnd;
-} BanInfo;
-
-class AccessControlList
-{
-public:
-  void ban(in_addr &ipAddr, int period = 0) {
-
-    banList.push_back(BanInfo(ipAddr, period));
-  }
-
-  bool ban(std::string &ipList, int period = 0) {
-    return ban(ipList.c_str(), period);
-  }
-
-  bool ban(const char *ipList, int period = 0) {
-    char *buf = strdup(ipList);
-    char *pStart = buf;
-    char *pSep;
-    bool added = false;
-
-    in_addr mask;
-    while ((pSep = strchr(pStart, ',')) != NULL) {
-      *pSep = 0;
-      if (convert(pStart, mask)) {
-	ban(mask, period);
-	added = true;
-      }
-      *pSep = ',';
-      pStart = pSep + 1;
-    }
-    if (convert(pStart, mask)) {
-      ban(mask, period);
-      added = true;
-    }
-    free(buf);
-    return added;
-  }
-
-  bool unban(in_addr &ipAddr) {
-    int numBans = banList.size();
-    bool found = false;
-    std::vector<BanInfo>::iterator it = banList.begin();
-    while (it != banList.end()) {
-      if (it->addr.s_addr == ipAddr.s_addr) {
-	banList.erase(it);
-	numBans--;
-	found = true;
-      }
-      it++;
-    }
-    return found;
-  }
-
-  bool unban(std::string &ipList) {
-    return unban(ipList.c_str());
-  }
-
-  bool unban(const char *ipList) {
-    char *buf = strdup(ipList);
-    char *pStart = buf;
-    char *pSep;
-    bool success = false;
-
-    in_addr mask;
-    while ((pSep = strchr(pStart, ',')) != NULL) {
-      *pSep = 0;
-      if (convert(pStart, mask))
-	success|=unban(mask);
-      *pSep = ',';
-      pStart = pSep + 1;
-    }
-    if (convert(pStart, mask))
-      success|=unban(mask);
-    free(buf);
-    return success;
-  }
-
-  bool validate(in_addr &ipAddr) {
-    int numBans = banList.size();
-	TimeKeeper now = TimeKeeper::getCurrent();
-
-    for (int i = 0; i < numBans; i++) {
-      in_addr mask = banList[i].addr;
-      TimeKeeper banEnd = banList[i].banEnd;
-	  if (banEnd <= now) {
-	        std::vector<BanInfo>::iterator it = banList.begin();
-	        for (int j = 0; i != j; j++) it++;
-		banList.erase(it);
-		i--;
-		numBans--;
-		continue;
-	  }
-
-      if ((ntohl(mask.s_addr) & 0x00ffffff) == 0x00ffffff)
-	mask.s_addr = htonl((ntohl(mask.s_addr) & 0xff000000) | (ntohl(ipAddr.s_addr) & 0x00ffffff));
-      else if ((ntohl(mask.s_addr) & 0x0000ffff) == 0x0000ffff)
-	mask.s_addr = htonl((ntohl(mask.s_addr) & 0xffff0000) | (ntohl(ipAddr.s_addr) & 0x0000ffff));
-      else if ((ntohl(mask.s_addr) & 0x000000ff) == 0x000000ff)
-	mask.s_addr = htonl((ntohl(mask.s_addr) & 0xffffff00) | (ntohl(ipAddr.s_addr) & 0x000000ff));
-
-      if (mask.s_addr == ipAddr.s_addr)
-	return false;
-    }
-    return true;
-  }
-
-  void sendBans(int playerIndex, PlayerId id, TeamColor teamColor)
-  {
-    char banlistmessage[MessageLen];
-
-    sendMessage(playerIndex, id, teamColor, "IP Ban List");
-    sendMessage(playerIndex, id, teamColor, "-----------");
-    TimeKeeper now = TimeKeeper::getCurrent();
-    int numBans = banList.size();
-    for (int i = 0; i < numBans; i++) {
-	char *pMsg = banlistmessage;
-	if (banList[i].banEnd <= now) {
-	  std::vector<BanInfo>::iterator it = banList.begin();
-	  for (int j = 0; i != j; j++) it++;
-	  banList.erase(it);
-	  i--;
-	  numBans--;
-	  continue;
-	}
-	in_addr mask = banList[i].addr;
-
-	sprintf( pMsg, "%d.", ((unsigned char)(ntohl(mask.s_addr) >> 24)));
-	pMsg+=strlen(pMsg);
-
-	if ((ntohl(mask.s_addr) & 0x00ffffff) == 0x00ffffff)
-	    strcat( pMsg, "*.*.*" );
-	else {
-	    sprintf( pMsg, "%d.", ((unsigned char)(ntohl(mask.s_addr) >> 16)));
-	    pMsg+=strlen(pMsg);
-	    if ((ntohl(mask.s_addr) & 0x0000ffff) == 0x0000ffff)
-		strcat( pMsg, "*.*" );
-	    else {
-		sprintf( pMsg, "%d.", ((unsigned char)(ntohl(mask.s_addr) >> 8)));
-		pMsg+=strlen(pMsg);
-		if ((ntohl(mask.s_addr) & 0x000000ff) == 0x000000ff)
-		    strcat( pMsg, "*" );
-		else
-		    sprintf( pMsg, "%d", ((unsigned char)ntohl(mask.s_addr)));
-	    }
-	}
-
-	sendMessage(playerIndex, id, teamColor, banlistmessage);
-    }
-  }
-
-private:
-
-  bool convert(char *ip, in_addr &mask) {
-    unsigned char b[4];
-    char *pPeriod;
-
-    for (int i = 0; i < 3; i++) {
-      pPeriod = strchr(ip, '.');
-      if (pPeriod) {
-	*pPeriod = 0;
-	if (strcmp("*", ip) == 0)
-	  b[i] = 255;
-	else
-	  b[i] = atoi(ip);
-	*pPeriod = '.';
-	ip = pPeriod + 1;
-      }
-      else
-	return false;
-    }
-    if (strcmp("*", ip) == 0)
-      b[3] = 255;
-    else
-      b[3] = atoi(ip);
-
-    mask.s_addr= htonl(((unsigned int)b[0] << 24) |
-	((unsigned int)b[1] << 16) | ((unsigned int)b[2] << 8) | (unsigned int)b[3]);
-    return true;
-  }
-
-  std::vector<BanInfo>  banList;
-};
-
-// access control list
-static AccessControlList acl;
+// Command Line Options
+static CmdLineOptions clOptions;
 
 // server address to listen on
 static Address serverAddress;
-// default port
-static int wksPort = ServerPort;
 // well known service socket
 static int wksSocket;
-static bool useGivenPort = false;
-static bool useFallbackPort = false;
-// reconnectSocket should also be on serverAddress
-static int reconnectPort = ServerPort + 1;
 static int reconnectSocket;
 // udpSocket should also be on serverAddress
 static int udpSocket;
@@ -563,8 +630,6 @@ static struct sockaddr_in relayInAddr;
 // relay player packets
 static int relayOutSocket;
 static struct sockaddr_in relayOutAddr;
-static const char *pingInterface = NULL;
-static int pingTTL = DefaultTTL;
 static int playerTTL = DefaultTTL;
 static bool handlePings = true;
 static bool noMulticastRelay = false;
@@ -575,7 +640,6 @@ static int maxFileDescriptor;
 static PlayerInfo player[MaxPlayers];
 // players + observers
 static uint16_t softmaxPlayers = MaxPlayers;
-static int maxObservers = 3;
 // team info
 static TeamInfo team[NumTeams];
 // flags list
@@ -585,66 +649,22 @@ static int numFlags;
 static int numFlagsInAir;
 // types of extra flags allowed
 static FlagId *allowedFlags = NULL;
-static int numAllowedFlags;
-// num randomly generated flags
-static int numExtraFlags;
 static bool done = false;
 // true if hit time/score limit
 static bool gameOver = true;
 static int exitCode = 0;
-// true if -b on cmd line
-static bool randomBoxes;
-// true if -h on cmd line
-static bool randomHeights;
-// true if -cr on cmd line
-static bool randomCTF;
-// true if -t on cmd line
-static bool useTeleporters;
-// false if -tk on cmd line
-static bool teamKillerDies;
-// true if -fb on cmd line
-static bool flagsOnBuildings;
-// if players tk*100/wins > teamKillerKickRatio -> kicked
-static int teamKillerKickRatio;
-// true if -g on cmd line
-static bool oneGameOnly;
-static int gameStyle;
 static uint16_t maxPlayers = MaxPlayers;
 static uint16_t curMaxPlayers = 0;
 // max simulataneous per player
-static uint16_t maxShots;
-static uint16_t maxTeam[NumTeams];
-static uint16_t shakeWins = 0;
-static uint16_t shakeTimeout = 0;
-static float linearAcceleration;
-static float angularAcceleration;
 static int broadcastRadio = InvalidPlayer;
-static int maxPlayerScore = 0;
-static int maxTeamScore = 0;
-static int debug = 0;
 static bool hasBase[NumTeams] = { false };
 
 static char hexDigest[50];
 
-// true if only new clients allowed
-static bool requireUDP;
-// true if UDP can be used in parallel to TCP connections
-static bool alsoUDP;
-
-#ifdef PRINTSCORE
-static bool printScore = false;
-#endif
 #ifdef TIMELIMIT
-static float timeLimit = 0.0f;
-static float timeElapsed = 0.0f;
 static TimeKeeper gameStartTime;
 static bool countdownActive = false;
 #endif
-static bool publicizeServer = false;
-static std::string publicizedAddress;
-static bool publicizedAddressGiven = false;
-static const char *publicizedTitle = NULL;
-static const char *listServerURL = DefaultListServerURL;
 static TimeKeeper listServerLastAddTime;
 static ListServerLink listServerLinks[MaxListServers];
 static int listServerLinksCount = 0;
@@ -656,12 +676,6 @@ static float basePos[NumTeams][3];
 static float baseRotation[NumTeams];
 static float baseSize[NumTeams][3];
 static float safetyBasePos[NumTeams][3];
-static const char *worldFile = NULL;
-
-static float lagwarnthresh = -1.0;
-static int maxlagwarn = 10000;
-static char *password = NULL;
-static float idlekickthresh = -1.0;
 
 static void stopPlayerPacketRelay();
 static void removePlayer(int playerIndex);
@@ -841,7 +855,7 @@ bool CustomBase::read(const char *cmd, istream& input) {
   }
   else {
     WorldFileObstacle::read(cmd, input);
-    if(!flagsOnBuildings && (pos[2] != 0)) {
+    if(!clOptions.flagsOnBuildings && (pos[2] != 0)) {
       printf("Dropping team base down to 0 because -fb not set\n");
       pos[2] = 0;
     }
@@ -1875,8 +1889,8 @@ static void broadcastMessage(uint16_t code, int len, const void *msg)
 static void sendUDPupdate(int playerIndex)
 {
   void *buf, *bufStart = getDirectMessageBuffer();
-  buf = nboPackUShort(bufStart, wksPort);
-  DEBUG4("LOCAL Update to %d port %d\n",playerIndex,wksPort);
+  buf = nboPackUShort(bufStart, clOptions.wksPort);
+  DEBUG4("LOCAL Update to %d port %d\n",playerIndex, clOptions.wksPort);
   // send it
   directMessage(playerIndex, MsgUDPLinkRequest, (char*)buf - (char*)bufStart, bufStart);
 }
@@ -1906,7 +1920,7 @@ static void createUDPcon(int t, int remote_port) {
 
   // show some message on the console
   DEBUG3("UDP link created, remote %d %04x, local %d\n",
-      remote_port,ntohl(addr.sin_addr.s_addr), wksPort);
+      remote_port,ntohl(addr.sin_addr.s_addr), clOptions.wksPort);
 
   // init the queues
   player[t].uqueue = player[t].dqueue = NULL;
@@ -2214,7 +2228,7 @@ static void openListServer(int index)
 static void sendMessageToListServer(const char *msg)
 {
   // ignore if not publicizing
-  if (!publicizeServer)
+  if (!clOptions.publicizeServer)
     return;
 
   // start opening connections if not already doing so
@@ -2266,24 +2280,24 @@ static void sendMessageToListServerForReal(int index)
 
     // send ADD message
     sprintf(msg, "%s %s %d %s %.*s %.256s\n\n", link.nextMessage,
-	publicizedAddress.c_str(),
+	clOptions.publicizedAddress.c_str(),
 	VERSION % 1000,
 	ServerVersion,
 	PingPacketHexPackedSize, gameInfo,
-	publicizedTitle);
+	clOptions.publicizedTitle);
   }
   else if (strcmp(link.nextMessage, "REMOVE") == 0) {
     // send REMOVE
     sprintf(msg, "%s %s\n\n", link.nextMessage,
-	publicizedAddress.c_str());
+	clOptions.publicizedAddress.c_str());
   }
   else if (strcmp(link.nextMessage, "SETNUM") == 0) {
     // pretend there are no players if the game is over
     if (gameOver)
-      sprintf(msg, "%s %s 0 0 0 0 0\n\n", link.nextMessage, publicizedAddress.c_str());
+      sprintf(msg, "%s %s 0 0 0 0 0\n\n", link.nextMessage, clOptions.publicizedAddress.c_str());
     else
       sprintf(msg, "%s %s %d %d %d %d %d\n\n", link.nextMessage,
-	  publicizedAddress.c_str(),
+	  clOptions.publicizedAddress.c_str(),
 	  team[0].team.activeSize,
 	  team[1].team.activeSize,
 	  team[2].team.activeSize,
@@ -2306,11 +2320,11 @@ static void publicize()
   listServerLinksCount  = 0;
 
   // parse the list server URL if we're publicizing ourself
-  if (publicizeServer && publicizedTitle) {
+  if (clOptions.publicizeServer && clOptions.publicizedTitle) {
     // dereference URL, including following redirections.  get no
     // more than MaxListServers urls.
     std::vector<std::string> urls, failedURLs;
-    urls.push_back(listServerURL);
+    urls.push_back(clOptions.listServerURL);
     BzfNetwork::dereferenceURLs(urls, MaxListServers, failedURLs);
 
     for (unsigned int j = 0; j < failedURLs.size(); ++j)
@@ -2368,13 +2382,13 @@ static bool serverStart()
 
   // look up service name and use that port if no port given on
   // command line.  if no service then use default port.
-  if (!useGivenPort) {
+  if (!clOptions.useGivenPort) {
     struct servent *service = getservbyname("bzfs", "tcp");
     if (service) {
-      wksPort = ntohs(service->s_port);
+      clOptions.wksPort = ntohs(service->s_port);
     }
   }
-  pingReply.serverId.port = addr.sin_port = htons(wksPort);
+  pingReply.serverId.port = addr.sin_port = htons(clOptions.wksPort);
 
   // open well known service port
   wksSocket = socket(AF_INET, SOCK_STREAM, 0);
@@ -2392,7 +2406,7 @@ static bool serverStart()
   }
 #endif
   if (bind(wksSocket, (const struct sockaddr*)&addr, sizeof(addr)) == -1) {
-    if (!useFallbackPort) {
+    if (!clOptions.useFallbackPort) {
       nerror("couldn't bind connect socket");
       close(wksSocket);
       return false;
@@ -2412,7 +2426,7 @@ static bool serverStart()
       pingReply.serverId.port = addr.sin_port;
 
     // fixup publicized name will want it here later
-    wksPort = ntohs(addr.sin_port);
+    clOptions.wksPort = ntohs(addr.sin_port);
   }
 
   if (listen(wksSocket, 5) == -1) {
@@ -2423,8 +2437,8 @@ static bool serverStart()
   maxFileDescriptor = wksSocket;
 
   // reconnectPort == 0 if old clients are not supported
-  if (reconnectPort != 0) {
-    addr.sin_port = htons(reconnectPort);
+  if (clOptions.reconnectPort != 0) {
+    addr.sin_port = htons(clOptions.reconnectPort);
     reconnectSocket = socket(AF_INET, SOCK_STREAM, 0);
     if (reconnectSocket == -1) {
       nerror("couldn't make reconnect socket");
@@ -2456,7 +2470,7 @@ static bool serverStart()
   }
 
   // udp socket
-  if (alsoUDP) {
+  if (clOptions.alsoUDP) {
     int n;
     // we open a udp socket on the same port if alsoUDP
     if ((udpSocket = socket(AF_INET, SOCK_DGRAM, 0)) < 0) {
@@ -2490,7 +2504,7 @@ static bool serverStart()
       close(udpSocket);
       return false;
     }
-    addr.sin_port = htons(wksPort);
+    addr.sin_port = htons(clOptions.wksPort);
     if (bind(udpSocket, (struct sockaddr *) &addr, sizeof(addr)) == -1) {
       nerror("couldn't bind udp listen port");
       close(wksSocket);
@@ -2507,9 +2521,9 @@ static bool serverStart()
   // open sockets to receive and reply to pings
   Address multicastAddress(BroadcastAddress);
   pingInSocket = openMulticast(multicastAddress, ServerPort, NULL,
-      pingTTL, pingInterface, "r", &pingInAddr);
+      clOptions.pingTTL, clOptions.pingInterface, "r", &pingInAddr);
   pingOutSocket = openMulticast(multicastAddress, ServerPort, NULL,
-      pingTTL, pingInterface, "w", &pingOutAddr);
+      clOptions.pingTTL, clOptions.pingInterface, "w", &pingOutAddr);
   pingBcastSocket = openBroadcast(BroadcastPort, NULL, &pingBcastAddr);
   if (pingInSocket == -1 || pingOutSocket == -1) {
     closeMulticast(pingInSocket);
@@ -2621,10 +2635,10 @@ static bool startPlayerPacketRelay(int playerIndex)
   Address multicastAddress(BroadcastAddress);
   if (relayInSocket == -1)
     relayInSocket = openMulticast(multicastAddress, BroadcastPort, NULL,
-	pingTTL, pingInterface, "r", &relayInAddr);
+	clOptions.pingTTL, clOptions.pingInterface, "r", &relayInAddr);
   if (relayOutSocket == -1)
     relayOutSocket = openMulticast(multicastAddress, BroadcastPort, NULL,
-	pingTTL, pingInterface, "w", &relayOutAddr);
+	clOptions.pingTTL, clOptions.pingInterface, "w", &relayOutAddr);
   if (relayInSocket == -1 || relayOutSocket == -1) {
     stopPlayerPacketRelay();
 
@@ -2841,11 +2855,11 @@ static WorldInfo *defineWorldFromFile(const char *filename)
     return NULL;
   }
 
-  if (gameStyle & TeamFlagGameStyle) {
+  if (clOptions.gameStyle & TeamFlagGameStyle) {
     for (int i = RedTeam; i <= PurpleTeam; i++) {
-      if ((maxTeam[i] > 0) && !hasBase[i]) {
+      if ((clOptions.maxTeam[i] > 0) && !hasBase[i]) {
 	printf("base was not defined for team %i capture the flag game style removed.\n", i);
-	gameStyle &= (~TeamFlagGameStyle);
+	clOptions.gameStyle &= (~TeamFlagGameStyle);
 	break;
       }
     }
@@ -2870,7 +2884,7 @@ static WorldInfo *defineWorldFromFile(const char *filename)
 
 static WorldInfo *defineTeamWorld()
 {
-  if (!worldFile) {
+  if (!clOptions.worldFile) {
     world = new WorldInfo();
     if (!world)
       return NULL;
@@ -2933,7 +2947,7 @@ static WorldInfo *defineTeamWorld()
     world->addWall(-0.5f * WorldSize, 0.0f, 0.0f, 0.0f, 0.5f * WorldSize, WallHeight);
 
     // make pyramids
-    if (!randomCTF || (maxTeam[1] > 0)) {
+    if (!clOptions.randomCTF || (clOptions.maxTeam[1] > 0)) {
       // around red base
       world->addPyramid(
 	  basePos[1][0] + 0.5f * BaseSize - PyrBase,
@@ -2953,7 +2967,7 @@ static WorldInfo *defineTeamWorld()
 	  PyrBase, PyrBase, PyrHeight);
     }
 
-    if (!randomCTF || (maxTeam[2] > 0)) {
+    if (!clOptions.randomCTF || (clOptions.maxTeam[2] > 0)) {
       // around green base
       world->addPyramid(
 	  basePos[2][0] - 0.5f * BaseSize + PyrBase,
@@ -2973,7 +2987,7 @@ static WorldInfo *defineTeamWorld()
 	  PyrBase, PyrBase, PyrHeight);
     }
 
-    if (!randomCTF || (maxTeam[3] > 0)) {
+    if (!clOptions.randomCTF || (clOptions.maxTeam[3] > 0)) {
       // around blue base
       world->addPyramid(
 	  basePos[3][0] - 0.5f * BaseSize - PyrBase,
@@ -2993,7 +3007,7 @@ static WorldInfo *defineTeamWorld()
 	  PyrBase, PyrBase, PyrHeight);
     }
 
-    if (!randomCTF || (maxTeam[4] > 0)) {
+    if (!clOptions.randomCTF || (clOptions.maxTeam[4] > 0)) {
       // around purple base
       world->addPyramid(
 	  basePos[4][0] - 0.5f * BaseSize - PyrBase,
@@ -3014,17 +3028,17 @@ static WorldInfo *defineTeamWorld()
     }
 
     // create symmetric map of random buildings for random CTF mode
-    if (randomCTF) {
+    if (clOptions.randomCTF) {
       int i;
       float h = BoxHeight;
-      int numTeams = ((maxTeam[1] > 0) ? 1 : 0) + ((maxTeam[2] > 0) ? 1 : 0) + ((maxTeam[3] > 0) ? 1 : 0) + ((maxTeam[4] > 0) ? 1 : 0);
+      int numTeams = ((clOptions.maxTeam[1] > 0) ? 1 : 0) + ((clOptions.maxTeam[2] > 0) ? 1 : 0) + ((clOptions.maxTeam[3] > 0) ? 1 : 0) + ((clOptions.maxTeam[4] > 0) ? 1 : 0);
       if (numTeams == 0) {
 	fprintf(stderr, "need some teams, use -mp");
 	exit(20);
       }
       const int numBoxes = int((0.5 + 0.4 * bzfrand()) * CitySize * CitySize);
       for (i = 0; i < numBoxes;) {
-	if (randomHeights)
+	if (clOptions.randomHeights)
 	  h = BoxHeight * (2.0f * (float)bzfrand() + 0.5f);
 	float x=WorldSize * ((float)bzfrand() - 0.5f);
 	float y=WorldSize * ((float)bzfrand() - 0.5f);
@@ -3050,7 +3064,7 @@ static WorldInfo *defineTeamWorld()
       h = PyrHeight;
       const int numPyrs = int((0.5 + 0.4 * bzfrand()) * CitySize * CitySize * 2);
       for (i = 0; i < numPyrs; i++) {
-	if (randomHeights)
+	if (clOptions.randomHeights)
 	  h = PyrHeight * (2.0f * (float)bzfrand() + 0.5f);
 	float x=WorldSize * ((float)bzfrand() - 0.5f);
 	float y=WorldSize * ((float)bzfrand() - 0.5f);
@@ -3073,7 +3087,7 @@ static WorldInfo *defineTeamWorld()
       }
 
       // make teleporters
-      if (useTeleporters) {
+      if (clOptions.useTeleporters) {
 	int numLinks, teamFactor;
 	int numTeleporters = (8 + int(8 * (float)bzfrand()));
 	if (numTeams > 2)
@@ -3092,32 +3106,32 @@ static WorldInfo *defineTeamWorld()
 	  if (world->inBuilding(NULL, x, y, 0, 1.75f * TeleBreadth))
 	    continue;
 	  // if to close to a base then try again
-	  if (((maxTeam[1] > 0) || (maxTeam[2] > 0)) &&
+	  if (((clOptions.maxTeam[1] > 0) || (clOptions.maxTeam[2] > 0)) &&
 	      (hypotf(fabs(x-basePos[1][0]),fabs(y-basePos[1][1])) <= BaseSize*4 ||
 	      hypotf(fabs(x-basePos[2][0]),fabs(y-basePos[2][1])) <= BaseSize*4))
 	    continue;
-	  if (((maxTeam[3] > 0) || (maxTeam[4] > 0)) &&
+	  if (((clOptions.maxTeam[3] > 0) || (clOptions.maxTeam[4] > 0)) &&
 	      (hypotf(fabs(x-basePos[3][0]),fabs(y-basePos[3][1])) <= BaseSize*4 ||
 	      hypotf(fabs(x-basePos[4][0]),fabs(y-basePos[4][1])) <= BaseSize*4))
 	    continue;
 
 	  linked[i/teamFactor][0] = linked[i/teamFactor][1] = 0;
-	  if ((maxTeam[1] > 0) || (maxTeam[2] > 0)) {
+	  if ((clOptions.maxTeam[1] > 0) || (clOptions.maxTeam[2] > 0)) {
 	    world->addTeleporter(x, y, 0.0f, rotation, 0.5f*TeleWidth,
 		TeleBreadth, 2.0f*TeleHeight, TeleWidth);
 	    i++;
 	  }
-	  if ((maxTeam[3] > 0) || (maxTeam[4] > 0)) {
+	  if ((clOptions.maxTeam[3] > 0) || (clOptions.maxTeam[4] > 0)) {
 	    world->addTeleporter(y, -x, 0.0f, rotation + M_PI / 2, 0.5f*TeleWidth,
 		TeleBreadth, 2.0f*TeleHeight, TeleWidth);
 	    i++;
 	  }
-	  if ((maxTeam[1] > 0) || (maxTeam[2] > 0)) {
+	  if ((clOptions.maxTeam[1] > 0) || (clOptions.maxTeam[2] > 0)) {
 	    world->addTeleporter(-x, -y, 0.0f, rotation + M_PI, 0.5f*TeleWidth,
 		TeleBreadth, 2.0f*TeleHeight, TeleWidth);
 	    i++;
 	  }
-	  if ((maxTeam[3] > 0) || (maxTeam[4] > 0)) {
+	  if ((clOptions.maxTeam[3] > 0) || (clOptions.maxTeam[4] > 0)) {
 	    world->addTeleporter(-y, x, 0.0f, rotation + M_PI * 3 / 2, 0.5f*TeleWidth,
 		TeleBreadth, 2.0f*TeleHeight, TeleWidth);
 	    i++;
@@ -3205,32 +3219,32 @@ static WorldInfo *defineTeamWorld()
 	for (int i = 0; i < CitySize/2; i++)
       if (i != CitySize/2 || j != CitySize/2) {
 	float h = BoxHeight;
-	if (randomHeights)
+	if (clOptions.randomHeights)
 	  h *= 2.0f * (float)bzfrand() + 0.5f;
 	world->addBox(
 	    xmin + float(i) * (2.0f * BoxBase + AvenueSize),
 	    ymin + float(j) * (2.0f * BoxBase + AvenueSize), 0.0f,
-	    randomBoxes ? (0.5f * M_PI * ((float)bzfrand() - 0.5f)) : 0.0f,
+	    clOptions.randomBoxes ? (0.5f * M_PI * ((float)bzfrand() - 0.5f)) : 0.0f,
 	    BoxBase, BoxBase, h);
 	world->addBox(
 	    -1.0f * (xmin + float(i) * (2.0f * BoxBase + AvenueSize)),
 	    -1.0f * (ymin + float(j) * (2.0f * BoxBase + AvenueSize)), 0.0f,
-	    randomBoxes ? (0.5f * M_PI * ((float)bzfrand() - 0.5f)) : 0.0f,
+	    clOptions.randomBoxes ? (0.5f * M_PI * ((float)bzfrand() - 0.5f)) : 0.0f,
 	    BoxBase, BoxBase, h);
 	world->addBox(
 	    -1.0f * (ymin + float(j) * (2.0f * BoxBase + AvenueSize)),
 	    xmin + float(i) * (2.0f * BoxBase + AvenueSize), 0.0f,
-	    randomBoxes ? (0.5f * M_PI * ((float)bzfrand() - 0.5f)) : 0.0f,
+	    clOptions.randomBoxes ? (0.5f * M_PI * ((float)bzfrand() - 0.5f)) : 0.0f,
 	    BoxBase, BoxBase, h);
 	world->addBox(
 	    ymin + float(j) * (2.0f * BoxBase + AvenueSize),
 	    -1.0f * (xmin + float(i) * (2.0f * BoxBase + AvenueSize)), 0.0f,
-	    randomBoxes ? (0.5f * M_PI * ((float)bzfrand() - 0.5f)) : 0.0f,
+	    clOptions.randomBoxes ? (0.5f * M_PI * ((float)bzfrand() - 0.5f)) : 0.0f,
 	    BoxBase, BoxBase, h);
       }
 
       // add teleporters
-      if (useTeleporters) {
+      if (clOptions.useTeleporters) {
 	const float xoff = BoxBase + 0.5f * AvenueSize;
 	const float yoff = BoxBase + 0.5f * AvenueSize;
 	world->addTeleporter( xmin - xoff,  ymin - yoff, 0.0f, 1.25f * M_PI,
@@ -3270,7 +3284,7 @@ static WorldInfo *defineTeamWorld()
     }
     return world;
   } else {
-    return defineWorldFromFile(worldFile);
+    return defineWorldFromFile(clOptions.worldFile);
   }
 }
 
@@ -3291,7 +3305,7 @@ static WorldInfo *defineRandomWorld()
   int i;
   float h = BoxHeight;
   for (i = 0; i < CitySize * CitySize; i++) {
-    if (randomHeights)
+    if (clOptions.randomHeights)
       h = BoxHeight * ( 2.0f * (float)bzfrand() + 0.5f);
       world->addBox(WorldSize * ((float)bzfrand() - 0.5f),
 	  WorldSize * ((float)bzfrand() - 0.5f),
@@ -3302,7 +3316,7 @@ static WorldInfo *defineRandomWorld()
   // make pyramids
   h = PyrHeight;
   for (i = 0; i < CitySize * CitySize; i++) {
-    if (randomHeights)
+    if (clOptions.randomHeights)
       h = PyrHeight * ( 2.0f * (float)bzfrand() + 0.5f);
       world->addPyramid(WorldSize * ((float)bzfrand() - 0.5f),
 	  WorldSize * ((float)bzfrand() - 0.5f),
@@ -3310,7 +3324,7 @@ static WorldInfo *defineRandomWorld()
 	  PyrBase, PyrBase, h);
   }
 
-  if (useTeleporters) {
+  if (clOptions.useTeleporters) {
     // make teleporters
     int (*linked)[2] = (int(*)[2])new int[2 * numTeleporters];
     for (i = 0; i < numTeleporters;) {
@@ -3364,13 +3378,13 @@ static bool defineWorld()
   delete[] worldDatabase;
 
   // make world and add buildings
-   if (gameStyle & TeamFlagGameStyle)
+   if (clOptions.gameStyle & TeamFlagGameStyle)
    {
       world = defineTeamWorld();
    }
-   else if (worldFile)
+   else if (clOptions.worldFile)
    {
-      world = defineWorldFromFile(worldFile);
+      world = defineWorldFromFile(clOptions.worldFile);
    }
    else
    {
@@ -3385,7 +3399,7 @@ static bool defineWorld()
   world->packDatabase();
   // now get world packaged for network transmission
   worldDatabaseSize = 4 + 24 + world->getDatabaseSize() + 2;
-  if (gameStyle & TeamFlagGameStyle)
+  if (clOptions.gameStyle & TeamFlagGameStyle)
     worldDatabaseSize += 4 * (4 + 9 * 4);
   worldDatabase = new char[worldDatabaseSize];
   memset( worldDatabase, 0, worldDatabaseSize );
@@ -3393,19 +3407,19 @@ static bool defineWorld()
   void *buf = worldDatabase;
   buf = nboPackUShort(buf, WorldCodeStyle);
   buf = nboPackUShort(buf, 24);
-  buf = nboPackUShort(buf, gameStyle);
+  buf = nboPackUShort(buf, clOptions.gameStyle);
   buf = nboPackUShort(buf, maxPlayers);
-  buf = nboPackUShort(buf, maxShots);
+  buf = nboPackUShort(buf, clOptions.maxShots);
   buf = nboPackUShort(buf, numFlags);
-  buf = nboPackFloat(buf, linearAcceleration);
-  buf = nboPackFloat(buf, angularAcceleration);
-  buf = nboPackUShort(buf, shakeTimeout);
-  buf = nboPackUShort(buf, shakeWins);
+  buf = nboPackFloat(buf, clOptions.linearAcceleration);
+  buf = nboPackFloat(buf, clOptions.angularAcceleration);
+  buf = nboPackUShort(buf, clOptions.shakeTimeout);
+  buf = nboPackUShort(buf, clOptions.shakeWins);
   // time-of-day will go here
   buf = nboPackUInt(buf, 0);
-  if (gameStyle & TeamFlagGameStyle) {
+  if (clOptions.gameStyle & TeamFlagGameStyle) {
     for (int i = 1; i < NumTeams; i++) {
-      if (!randomCTF || (maxTeam[i] > 0)) {
+      if (!clOptions.randomCTF || (clOptions.maxTeam[i] > 0)) {
 	buf = nboPackUShort(buf, WorldCodeBase);
 	buf = nboPackUShort(buf, uint16_t(i));
 	buf = nboPackVector(buf, basePos[i]);
@@ -3422,7 +3436,7 @@ static bool defineWorld()
   MD5 md5;
   md5.update( (unsigned char *)worldDatabase, worldDatabaseSize );
   md5.finalize();
-  if (worldFile == NULL)
+  if (clOptions.worldFile == NULL)
     strcpy(hexDigest,"t");
   else
     strcpy(hexDigest, "p");
@@ -3449,14 +3463,14 @@ static bool defineWorld()
 
 static TeamColor whoseBase(float x, float y, float z)
 {
-  if (!(gameStyle & TeamFlagGameStyle))
+  if (!(clOptions.gameStyle & TeamFlagGameStyle))
     return NoTeam;
 
   float highest = -1;
   int highestteam = -1;
   //Skip Rogue
   for (int i = 1; i < NumTeams; i++) {
-    if (randomCTF && (maxTeam[i] == 0))
+    if (clOptions.randomCTF && (clOptions.maxTeam[i] == 0))
       continue;
     float nx = x - basePos[i][0];
     float ny = y - basePos[i][1];
@@ -3483,11 +3497,11 @@ static void dumpScore()
 {
   int i;
 
-  if (!printScore)
+  if (!clOptions.printScore)
     return;
 #ifdef TIMELIMIT
-  if (timeLimit > 0.0f)
-    printf("#time %f\n", timeLimit - timeElapsed);
+  if (clOptions.timeLimit > 0.0f)
+    printf("#time %f\n", clOptions.timeLimit - clOptions.timeElapsed);
 #endif
   printf("#teams");
   for (i = int(RedTeam); i < NumTeams; i++)
@@ -3522,9 +3536,9 @@ static void acceptClient()
     maxFileDescriptor = fd;
 
   struct sockaddr_in serverAddr;
-  serverAddr.sin_port = htons(reconnectPort);
+  serverAddr.sin_port = htons(clOptions.reconnectPort);
 
-  if (!acl.validate( clientAddr.sin_addr)) {
+  if (!clOptions.acl.validate( clientAddr.sin_addr)) {
 	  serverAddr.sin_port = htons(0);
   }
 
@@ -3623,8 +3637,8 @@ static void addClient(int acceptSocket)
       gameOver = false;
 #ifdef TIMELIMIT
       gameStartTime = TimeKeeper::getCurrent();
-      if (timeLimit > 0.0f) {
-        timeElapsed = 0.0f;
+      if (clOptions.timeLimit > 0.0f) {
+        clOptions.timeElapsed = 0.0f;
         countdownActive = true;
       }
 #endif
@@ -3680,9 +3694,9 @@ static void respondToPing(bool broadcast = false)
   // boost my reply ttl if ping requests it
   if (minReplyTTL > MaximumTTL)
     minReplyTTL = MaximumTTL;
-  if (pingOutSocket != -1 && minReplyTTL > pingTTL) {
-    pingTTL = minReplyTTL;
-    setMulticastTTL(pingOutSocket, pingTTL);
+  if (pingOutSocket != -1 && minReplyTTL > clOptions.pingTTL) {
+    clOptions.pingTTL = minReplyTTL;
+    setMulticastTTL(pingOutSocket, clOptions.pingTTL);
   }
 
   // reply with current game info on pingOutSocket or pingBcastSocket
@@ -3749,27 +3763,27 @@ static void addPlayer(int playerIndex)
 
   if ((t == NoTeam && (player[playerIndex].type == TankPlayer ||
       player[playerIndex].type == ComputerPlayer)) ||
-      (t == RogueTeam && !(gameStyle & RoguesGameStyle)) ||
+      (t == RogueTeam && !(clOptions.gameStyle & RoguesGameStyle)) ||
       (!player[playerIndex].Observer &&
-       (team[int(t)].team.activeSize >= maxTeam[int(t)] ||
+       (team[int(t)].team.activeSize >= clOptions.maxTeam[int(t)] ||
 	numplayers >= softmaxPlayers)) ||
-      (player[playerIndex].Observer && numobservers >= maxObservers)) {
+      (player[playerIndex].Observer && numobservers >= clOptions.maxObservers)) {
     uint16_t code = RejectBadRequest;
     if (player[playerIndex].type != TankPlayer &&
 	player[playerIndex].type != ComputerPlayer)
       code = RejectBadType;
     else if (t == NoTeam)
       code = RejectBadTeam;
-    else if (t == RogueTeam && !(gameStyle & RoguesGameStyle))
+    else if (t == RogueTeam && !(clOptions.gameStyle & RoguesGameStyle))
       code = RejectNoRogues;
     else if (!player[playerIndex].Observer && numplayers >= softmaxPlayers ||
-	     player[playerIndex].Observer && numobservers >= maxObservers)   
+	     player[playerIndex].Observer && numobservers >= clOptions.maxObservers)   
       code = RejectServerFull;
-    else if (team[int(t)].team.activeSize >= maxTeam[int(t)]) {
+    else if (team[int(t)].team.activeSize >= clOptions.maxTeam[int(t)]) {
       // if team is full then check if server is full
       code = RejectServerFull;
       for (int i = RogueTeam; i < NumTeams; i++)
-	if (team[i].team.activeSize < maxTeam[i]) {
+	if (team[i].team.activeSize < clOptions.maxTeam[i]) {
 	  code = RejectTeamFull;
 	  break;
 	}
@@ -3840,7 +3854,7 @@ static void addPlayer(int playerIndex)
 	++team[teamIndex].team.activeSize == 1) {
     team[teamIndex].team.won = 0;
     team[teamIndex].team.lost = 0;
-    if ((gameStyle & int(TeamFlagGameStyle)) && teamIndex != int(RogueTeam))
+    if ((clOptions.gameStyle & int(TeamFlagGameStyle)) && teamIndex != int(RogueTeam))
       // can't call resetFlag() here cos it'll screw up protocol for
       // player just joining, so do it later
       resetTeamFlag = true;
@@ -3880,8 +3894,8 @@ static void addPlayer(int playerIndex)
 
 #ifdef TIMELIMIT
   // send time update to new player if we're counting down
-  if (countdownActive && timeLimit > 0.0f && player[playerIndex].type != ComputerPlayer) {
-    float timeLeft = timeLimit - (TimeKeeper::getCurrent() - gameStartTime);
+  if (countdownActive && clOptions.timeLimit > 0.0f && player[playerIndex].type != ComputerPlayer) {
+    float timeLeft = clOptions.timeLimit - (TimeKeeper::getCurrent() - gameStartTime);
     if (timeLeft < 0.0f) {
       // oops
       timeLeft = 0.0f;
@@ -3915,8 +3929,8 @@ static void addPlayer(int playerIndex)
       (char)('a' - 1 + (VERSION / 1000) % 100), VERSION % 1000);
   sendMessage(playerIndex, player[playerIndex].id, player[playerIndex].team, message);
 
-  if (servermsg && (strlen(servermsg) > 0)) {
-    sprintf(message,"%s",servermsg);
+  if (clOptions.servermsg && (strlen(clOptions.servermsg) > 0)) {
+    sprintf(message,"%s",clOptions.servermsg);
     sendMessage(playerIndex, player[playerIndex].id, player[playerIndex].team, message);
   }
   if (player[playerIndex].Observer)
@@ -3954,7 +3968,7 @@ static void addFlag(int flagIndex)
 static void randomFlag(int flagIndex)
 {
   // pick a random flag
-  flag[flagIndex].flag.id = allowedFlags[int(numAllowedFlags * (float)bzfrand())];
+  flag[flagIndex].flag.id = allowedFlags[int(clOptions.numAllowedFlags * (float)bzfrand())];
   flag[flagIndex].flag.type = Flag::getType(flag[flagIndex].flag.id);
   addFlag(flagIndex);
 }
@@ -3974,7 +3988,7 @@ static void resetFlag(int flagIndex)
   pFlagInfo->flag.status = FlagNoExist;
 
   // if it's a random flag, reset flag id
-  if (flagIndex >= numFlags - numExtraFlags)
+  if (flagIndex >= numFlags - clOptions.numExtraFlags)
     pFlagInfo->flag.id = NullFlag;
 
   // reposition flag
@@ -4166,7 +4180,7 @@ static void removePlayer(int playerIndex)
 	(player[playerIndex].type == TankPlayer ||
 	player[playerIndex].type == ComputerPlayer) &&
 	team[teamNum].team.activeSize == 0 &&
-	(gameStyle & int(TeamFlagGameStyle)))
+	(clOptions.gameStyle & int(TeamFlagGameStyle)))
       zapFlag(teamNum - 1);
 
     // send team update
@@ -4196,11 +4210,11 @@ static void removePlayer(int playerIndex)
 
   // if everybody left then reset world
   if (i == curMaxPlayers) {
-    if (oneGameOnly) {
+    if (clOptions.oneGameOnly) {
       done = true;
       exitCode = 0;
     }
-    else if ((!worldFile) && (!defineWorld())) {
+    else if ((!clOptions.worldFile) && (!defineWorld())) {
       done = true;
       exitCode = 1;
     }
@@ -4305,8 +4319,8 @@ static void playerAlive(int playerIndex, const float *pos, const float *fwd)
 
 static void checkTeamScore(int playerIndex, int teamIndex)
 {
-  if (maxTeamScore == 0 || teamIndex == (int)RogueTeam) return;
-  if (team[teamIndex].team.won - team[teamIndex].team.lost >= maxTeamScore) {
+  if (clOptions.maxTeamScore == 0 || teamIndex == (int)RogueTeam) return;
+  if (team[teamIndex].team.won - team[teamIndex].team.lost >= clOptions.maxTeamScore) {
     void *buf, *bufStart = getDirectMessageBuffer();
     buf = player[playerIndex].id.pack(bufStart);
     buf = nboPackUShort(buf, uint16_t(teamIndex));
@@ -4330,9 +4344,9 @@ static void playerKilled(int victimIndex, int killerIndex,
       (player[victimIndex].team == player[killerIndex].team) &&
       (player[victimIndex].team != RogueTeam)) {
      player[killerIndex].tks++;
-     if ((player[killerIndex].tks >= 3) && (teamKillerKickRatio > 0) && // arbitrary 3
+     if ((player[killerIndex].tks >= 3) && (clOptions.teamKillerKickRatio > 0) && // arbitrary 3
 	 ((player[killerIndex].wins == 0) || 
-	  ((player[killerIndex].tks * 100) / player[killerIndex].wins) > teamKillerKickRatio)) {
+	  ((player[killerIndex].tks * 100) / player[killerIndex].wins) > clOptions.teamKillerKickRatio)) {
 	 char message[MessageLen];
 	 strcpy( message, "You have been automatically kicked for team killing" );
          sendMessage(killerIndex, player[killerIndex].id, player[killerIndex].team, message);
@@ -4379,7 +4393,7 @@ static void playerKilled(int victimIndex, int killerIndex,
       if (victimIndex != killerIndex) { 
 	if ((player[victimIndex].team != RogueTeam) 
 	    && (player[victimIndex].team == player[killerIndex].team)) {
-	  if (teamKillerDies)
+	  if (clOptions.teamKillerDies)
 	    playerKilled(killerIndex, killerIndex, -1);
 	  else
 	    player[killerIndex].losses++;
@@ -4402,8 +4416,8 @@ static void playerKilled(int victimIndex, int killerIndex,
     broadcastMessage(MsgScore, (char*)buf-(char*)bufStart, bufStart);
 
     // see if the player reached the score limit
-    if ((maxPlayerScore != 0)
-    &&  ((player[killerIndex].wins - player[killerIndex].losses) >= maxPlayerScore)) {
+    if ((clOptions.maxPlayerScore != 0)
+    &&  ((player[killerIndex].wins - player[killerIndex].losses) >= clOptions.maxPlayerScore)) {
 	void *buf, *bufStart = getDirectMessageBuffer();
 	buf = player[killerIndex].id.pack(bufStart);
 	buf = nboPackUShort(buf, uint16_t(NoTeam));
@@ -4416,7 +4430,7 @@ static void playerKilled(int victimIndex, int killerIndex,
   // change team scores for individual player's kills in capture the
   // flag mode.
   int winningTeam = (int)NoTeam;
-  if (!(gameStyle & TeamFlagGameStyle)) {
+  if (!(clOptions.gameStyle & TeamFlagGameStyle)) {
     if (player[victimIndex].team == player[killerIndex].team) {
       if (player[killerIndex].team != RogueTeam)
 	if (killerIndex == victimIndex)
@@ -4523,7 +4537,7 @@ static void dropFlag(int playerIndex, float pos[3])
     pFlagInfo->flag.landingPosition[1] = pos[1];
     pFlagInfo->flag.landingPosition[2] = 0.0f;
   }
-  else if (flagsOnBuildings && (topmosttype == 2 || topmosttype == 1)) {
+  else if (clOptions.flagsOnBuildings && (topmosttype == 2 || topmosttype == 1)) {
     pFlagInfo->flag.landingPosition[0] = pos[0];
     pFlagInfo->flag.landingPosition[1] = pos[1];
     pFlagInfo->flag.landingPosition[2] = topmost->pos[2] + topmost->size[2];
@@ -4654,7 +4668,7 @@ static void calcLag(int playerIndex, float timepassed)
   pl.lagalpha = pl.lagalpha / (0.9f + pl.lagalpha);
   pl.lagcount++;
   // warn players from time to time whose lag is > threshold (-lagwarn)
-  if (lagwarnthresh > 0 && pl.lagavg > lagwarnthresh &&
+  if (clOptions.lagwarnthresh > 0 && pl.lagavg > clOptions.lagwarnthresh &&
       pl.lagcount - pl.laglastwarn > 2 * pl.lagwarncount) {
     char message[MessageLen];
     sprintf(message,"*** Server Warning: your lag is too high (%d ms) ***",
@@ -4662,10 +4676,10 @@ static void calcLag(int playerIndex, float timepassed)
     sendMessage(playerIndex, pl.id, pl.team,message);
     pl.laglastwarn = pl.lagcount;
     pl.lagwarncount++;;
-    if (pl.lagwarncount++ > maxlagwarn) {
+    if (pl.lagwarncount++ > clOptions.maxlagwarn) {
       // drop the player
       sprintf(message,"You have been kicked due to excessive lag (you have been warned %d times).",
-	maxlagwarn);
+	clOptions.maxlagwarn);
       sendMessage(playerIndex, pl.id, pl.team, message);
       DEBUG1("*** Player %s [%d] was lag-kicked\n",
 	      player[playerIndex].callSign, playerIndex);
@@ -4742,7 +4756,7 @@ static void parseCommand(const char *message, int t)
   int i;
   // /password command allows player to become operator
   if (strncmp(message + 1,"password ",9) == 0) {
-    if (password && strncmp(message + 10, password, strlen(password)) == 0) {
+    if (clOptions.password && strncmp(message + 10, clOptions.password, strlen(clOptions.password)) == 0) {
       player[t].Admin = true;
       sendMessage(t, player[t].id, player[t].team, "You are now an administrator!");
     } else {
@@ -4766,14 +4780,14 @@ static void parseCommand(const char *message, int t)
 #ifdef TIMELIMIT
   // /countdown starts timed game
   } else if (player[t].Admin && strncmp(message + 1, "countdown", 9) == 0) {
-    if (timeLimit > 0.0f) {
+    if (clOptions.timeLimit > 0.0f) {
       gameStartTime = TimeKeeper::getCurrent();
-      timeElapsed = 0.0f;
+      clOptions.timeElapsed = 0.0f;
       countdownActive = true;
 
       char msg[2];
       void *buf = msg;
-      nboPackUShort(buf, (uint16_t)(int)timeLimit);
+      nboPackUShort(buf, (uint16_t)(int)clOptions.timeLimit);
       broadcastMessage(MsgTimeUpdate, sizeof(msg), msg);
     }
     // reset team scores
@@ -4785,7 +4799,7 @@ static void parseCommand(const char *message, int t)
     sendMessage(t, player[t].id,player[t].team,reply);
 
     // CTF game -> simulate flag captures to return ppl to base
-    if (gameStyle & int(TeamFlagGameStyle)) {
+    if (clOptions.gameStyle & int(TeamFlagGameStyle)) {
       // get someone to can do virtual capture
       int j;
       for (j=0;j<curMaxPlayers;j++) {
@@ -4888,7 +4902,7 @@ static void parseCommand(const char *message, int t)
   }
   // /banlist command shows ips that are banned
   else if (player[t].Admin && strncmp(message+1, "banlist", 7) == 0) {
-	acl.sendBans(t,player[t].id,player[t].team);
+	clOptions.acl.sendBans(t,player[t].id,player[t].team);
   }
   // /ban command allows operator to ban players based on ip
   else if (player[t].Admin && strncmp(message+1, "ban", 3) == 0) {
@@ -4898,14 +4912,14 @@ static void parseCommand(const char *message, int t)
     int period = 0;
     if (time != NULL)
 	period = atoi(time);
-    if (acl.ban(ips, period))
+    if (clOptions.acl.ban(ips, period))
       strcpy(reply, "IP pattern added to banlist");
     else
       strcpy(reply, "malformed address");
     sendMessage(t, player[t].id, player[t].team, reply);
     char kickmessage[MessageLen];
     for (int i = 0; i < curMaxPlayers; i++) {
-      if ((player[i].fd != NotConnected) && (!acl.validate( player[i].taddr.sin_addr))) {
+      if ((player[i].fd != NotConnected) && (!clOptions.acl.validate( player[i].taddr.sin_addr))) {
 	player[i].toBeKicked = false;
 	sprintf(kickmessage,"Your were banned from this server by %s", player[t].callSign);
 	sendMessage(i, player[i].id, player[i].team, kickmessage);
@@ -4916,7 +4930,7 @@ static void parseCommand(const char *message, int t)
   // /unban command allows operator to remove ips from the banlist
   else if (player[t].Admin && strncmp(message+1, "unban", 5) == 0) {
     char reply[MessageLen];
-    if (acl.unban(message + 7))
+    if (clOptions.acl.unban(message + 7))
       strcpy(reply, "removed IP pattern");
     else
       strcpy(reply, "no pattern removed");
@@ -4927,15 +4941,15 @@ static void parseCommand(const char *message, int t)
     if (message[8] == ' ')
     {
       const char *maxlag = message + 9;
-      lagwarnthresh = (float) (atoi(maxlag) / 1000.0);
+      clOptions.lagwarnthresh = (float) (atoi(maxlag) / 1000.0);
       char reply[MessageLen];
-      sprintf(reply,"lagwarn is now %d ms",int(lagwarnthresh * 1000 + 0.5));
+      sprintf(reply,"lagwarn is now %d ms",int(clOptions.lagwarnthresh * 1000 + 0.5));
       sendMessage(t, player[t].id,player[t].team,reply);
     }
     else
     {
       char reply[MessageLen];
-      sprintf(reply,"lagwarn is set to %d ms",int(lagwarnthresh * 1000 +  0.5));
+      sprintf(reply,"lagwarn is set to %d ms",int(clOptions.lagwarnthresh * 1000 +  0.5));
       sendMessage(t, player[t].id,player[t].team,reply);
     }
   }
@@ -5106,7 +5120,7 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
     case MsgAlive: {
 #ifdef TIMELIMIT
       // player moved before countdown started
-      if (timeLimit>0.0f && !countdownActive)
+      if (clOptions.timeLimit>0.0f && !countdownActive)
 	player[t].playedEarly = true;
 #endif
       // data: position, forward-vector
@@ -5245,7 +5259,7 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
 
     // player is requesting an additional UDP connection, sending its own UDP port
     case MsgUDPLinkRequest: {
-      if (alsoUDP) {
+      if (clOptions.alsoUDP) {
 	uint16_t port;
 	buf = nboUnpackUShort(buf, port);
 	player[t].ulinkup = false;
@@ -5262,7 +5276,7 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
       DEBUG3("STATUS: Up UDP CON received\n");
       // enable the downlink
       //player[t].ulinkup = true;
-      if (!alsoUDP) {
+      if (!clOptions.alsoUDP) {
 	DEBUG2("Clients sent MsgUDPLinkEstablished without MsgUDPLinkRequest!\n");
       }
       break;
@@ -5460,7 +5474,7 @@ static int lookupFlag(const char *code)
   return f;
 }
 
-static bool parsePlayerCount(const char *argv)
+static bool parsePlayerCount(const char *argv, CmdLineOptions &options)
 {
   // either a single number or 5 optional numbers separated by 4
   // (mandatory) commas.
@@ -5481,7 +5495,7 @@ static bool parsePlayerCount(const char *argv)
     int i;
     // no limits by default
     for (i = 0; i < NumTeams; i++)
-      maxTeam[i] = MaxPlayers;
+      options.maxTeam[i] = MaxPlayers;
 
     // now get the new counts
 
@@ -5495,26 +5509,26 @@ static bool parsePlayerCount(const char *argv)
 	// got a number
 	countCount++;
 	if (count < 0)
-	  maxTeam[i] = 0;
+	  options.maxTeam[i] = 0;
 	else
 	  if (count > MaxPlayers)
-	    maxTeam[i] = MaxPlayers;
+	    options.maxTeam[i] = MaxPlayers;
 	else
-	  maxTeam[i] = uint16_t(count);
+	  options.maxTeam[i] = uint16_t(count);
       }
       while (*tail && *tail != ',') tail++;
       scan = tail + 1;
     }
 
     // if rogues not allowed then zero that count
-    if (!(gameStyle & int(RoguesGameStyle)))
-      maxTeam[RogueTeam] = 0;
+    if (!(clOptions.gameStyle & int(RoguesGameStyle)))
+      options.maxTeam[RogueTeam] = 0;
 
     // if all counts explicitly listed then add 'em up and set maxPlayers
     if (countCount == NumTeams) {
       softmaxPlayers = 0;
       for (i = 0; i < NumTeams; i++)
-	softmaxPlayers += maxTeam[i];
+	softmaxPlayers += options.maxTeam[i];
     }
   }
   else {
@@ -5531,7 +5545,7 @@ static bool parsePlayerCount(const char *argv)
 	softmaxPlayers = MaxPlayers;
     else softmaxPlayers = uint16_t(count);
   }
-  maxPlayers = softmaxPlayers + maxObservers;
+  maxPlayers = softmaxPlayers + clOptions.maxObservers;
   if (maxPlayers > MaxPlayers)
     maxPlayers = MaxPlayers;
   return true;
@@ -5545,73 +5559,48 @@ static bool setRequiredFlag(FlagInfo& flag, FlagId id)
   return true;
 }
 
-static void parse(int argc, char **argv)
+static void parse(int argc, char **argv, CmdLineOptions &options)
 {
-  // initialize state
-  gameStyle = PlainGameStyle;
-  randomBoxes = false;
-  randomHeights = false;
-  useTeleporters = false;
-  teamKillerDies = true;
-  flagsOnBuildings = false;
-  teamKillerKickRatio = 0;
-  oneGameOnly = false;
-  numExtraFlags = 0;
-  maxShots = 1;
-  linearAcceleration = 0.0f;
-  angularAcceleration = 0.0f;
-  numAllowedFlags = 0;
-  requireUDP = false;
-  alsoUDP = true;
   delete[] flag;  flag = NULL;
   delete[] allowedFlags;  allowedFlags = NULL;
 
   // prepare flag counts
-  int f, i, flagCount[LastFlag + 1];
-  bool flagDisallowed[LastFlag + 1];
-  for (i = int(FirstFlag); i <= int(LastFlag); i++) {
-    flagCount[i] = 0;
-    flagDisallowed[i] = false;
-  }
+  int f, i;
   bool allFlagsOut = false;
 
-  // prepare team max counts
-  // no limits by default
-  for (i = 0; i < NumTeams; i++)
-    maxTeam[i] = MaxPlayers;
 
   // parse command line
   int playerCountArg = 0,playerCountArg2 = 0;
   for (i = 1; i < argc; i++) {
       if (strcmp(argv[i], "-noudp") == 0) {
 	DEBUG3("Setup: Server will use only TCP for connections\n");
-	alsoUDP = false;
+	options.alsoUDP = false;
       } else
       if (strcmp(argv[i], "-requireudp") == 0) {
 	DEBUG3("Setup: Server requires (UDP) clients!\n");
-	requireUDP = true;
+	options.requireUDP = true;
       } else
       if (strcmp(argv[i], "-srvmsg") == 0) {
 	 if (++i == argc) {
 	   fprintf(stderr, "argument expected for -srvmsg\n");
 	   usage(argv[0]);
 	 }
-	 servermsg = argv[i];
+	 options.servermsg = argv[i];
       } else
       if (strcmp(argv[i], "-admsg") == 0) {
 	 if (++i == argc) {
 	   fprintf(stderr, "argument expected for -admsg\n");
 	   usage(argv[0]);
 	 }
-	 advertisemsg = argv[i];
+	 options.advertisemsg = argv[i];
       } else
       if (strcmp(argv[i], "-world") == 0) {
 	 if (++i == argc) {
 	   fprintf(stderr, "argument expected for -world\n");
 	   usage(argv[0]);
 	 }
-	 worldFile = argv[i];
-	 if (useTeleporters)
+	 options.worldFile = argv[i];
+	 if (options.useTeleporters)
 	   fprintf(stderr, "-t is meaningless when using a custom world, ignoring\n");
 
       }
@@ -5622,49 +5611,49 @@ static void parse(int argc, char **argv)
 	usage(argv[0]);
       }
       if (strcmp(argv[i], "good") == 0) {
-	flagCount[VelocityFlag]++;
-	flagCount[QuickTurnFlag]++;
-	flagCount[OscOverthrusterFlag]++;
-	flagCount[RapidFireFlag]++;
-	flagCount[MachineGunFlag]++;
-	flagCount[GuidedMissileFlag]++;
-	flagCount[LaserFlag]++;
-	flagCount[RicochetFlag]++;
-	flagCount[SuperBulletFlag]++;
-	flagCount[InvisibleBulletFlag]++;
-	flagCount[StealthFlag]++;
-	flagCount[TinyFlag]++;
-	flagCount[NarrowFlag]++;
-	flagCount[ShieldFlag]++;
-	flagCount[SteamrollerFlag]++;
-	flagCount[ShockWaveFlag]++;
-	flagCount[PhantomZoneFlag]++;
-	flagCount[GenocideFlag]++;
-	flagCount[JumpingFlag]++;
-	flagCount[IdentifyFlag]++;
-	flagCount[CloakingFlag]++;
+	options.flagCount[VelocityFlag]++;
+	options.flagCount[QuickTurnFlag]++;
+	options.flagCount[OscOverthrusterFlag]++;
+	options.flagCount[RapidFireFlag]++;
+	options.flagCount[MachineGunFlag]++;
+	options.flagCount[GuidedMissileFlag]++;
+	options.flagCount[LaserFlag]++;
+	options.flagCount[RicochetFlag]++;
+	options.flagCount[SuperBulletFlag]++;
+	options.flagCount[InvisibleBulletFlag]++;
+	options.flagCount[StealthFlag]++;
+	options.flagCount[TinyFlag]++;
+	options.flagCount[NarrowFlag]++;
+	options.flagCount[ShieldFlag]++;
+	options.flagCount[SteamrollerFlag]++;
+	options.flagCount[ShockWaveFlag]++;
+	options.flagCount[PhantomZoneFlag]++;
+	options.flagCount[GenocideFlag]++;
+	options.flagCount[JumpingFlag]++;
+	options.flagCount[IdentifyFlag]++;
+	options.flagCount[CloakingFlag]++;
       }
       else {
 	if ((f = lookupFlag(argv[i])) == int(NoFlag)) {
 	  fprintf(stderr, "invalid flag \"%s\"\n", argv[i]);
 	  usage(argv[0]);
 	}
-	flagCount[f]++;
+	options.flagCount[f]++;
       }
     }
     else if (strcmp(argv[i], "+r") == 0) {
       // all shots ricochet style
-      gameStyle |= int(RicochetGameStyle);
+      options.gameStyle |= int(RicochetGameStyle);
     }
     else if (strcmp(argv[i], "+s") == 0) {
       // set required number of random flags
       if (i+1 < argc && isdigit(argv[i+1][0])) {
 	++i;
-	if ((numExtraFlags = atoi(argv[i])) == 0)
-	  numExtraFlags = 16;
+	if ((options.numExtraFlags = atoi(argv[i])) == 0)
+	  options.numExtraFlags = 16;
       }
       else {
-	numExtraFlags = 16;
+	options.numExtraFlags = 16;
       }
       allFlagsOut = true;
     }
@@ -5674,13 +5663,13 @@ static void parse(int argc, char **argv)
 	fprintf(stderr, "two arguments expected for \"%s\"\n", argv[i]);
 	usage(argv[0]);
       }
-      linearAcceleration = (float)atof(argv[++i]);
-      angularAcceleration = (float)atof(argv[++i]);
-      if (linearAcceleration < 0.0f)
-	linearAcceleration = 0.0f;
-      if (angularAcceleration < 0.0f)
-	angularAcceleration = 0.0f;
-      gameStyle |= int(InertiaGameStyle);
+      options.linearAcceleration = (float)atof(argv[++i]);
+      options.angularAcceleration = (float)atof(argv[++i]);
+      if (options.linearAcceleration < 0.0f)
+	options.linearAcceleration = 0.0f;
+      if (options.angularAcceleration < 0.0f)
+	options.angularAcceleration = 0.0f;
+      options.gameStyle |= int(InertiaGameStyle);
     }
     else if (strcmp(argv[i], "-ban") == 0) {
       if (++i == argc) {
@@ -5688,21 +5677,21 @@ static void parse(int argc, char **argv)
 	usage(argv[0]);
       }
       else
-	acl.ban(argv[i]);
+	options.acl.ban(argv[i]);
     }
     else if (strcmp(argv[i], "-b") == 0) {
       // random rotation to boxes in capture-the-flag game
-      randomBoxes = true;
+      options.randomBoxes = true;
     }
     else if (strcmp(argv[i], "-cr") == 0) {
       // CTF with random world
-      randomCTF = true;
+      options.randomCTF = true;
       // capture the flag style
-      gameStyle |= int(TeamFlagGameStyle);
+      options.gameStyle |= int(TeamFlagGameStyle);
     }
     else if (strcmp(argv[i], "-c") == 0) {
       // capture the flag style
-      gameStyle |= int(TeamFlagGameStyle);
+      options.gameStyle |= int(TeamFlagGameStyle);
     }
     else if (strncmp(argv[i], "-d", 2) == 0) {
       // increase debug level
@@ -5713,11 +5702,11 @@ static void parse(int argc, char **argv)
 	fprintf(stderr, "bad argument \"%s\"\n", argv[i]);
 	usage(argv[0]);
       }
-      debug += count;
+      options.debug += count;
     }
     else if (strcmp(argv[i], "-fb") == 0) {
       // flags on buildings
-      flagsOnBuildings = true;
+      options.flagsOnBuildings = true;
     }
     else if (strcmp(argv[i], "-f") == 0) {
       // disallow given flag
@@ -5726,28 +5715,28 @@ static void parse(int argc, char **argv)
 	usage(argv[0]);
       }
       if (strcmp(argv[i], "bad") == 0) {
-	flagDisallowed[ColorblindnessFlag] = true;
-	flagDisallowed[ObesityFlag] = true;
-	flagDisallowed[LeftTurnOnlyFlag] = true;
-	flagDisallowed[RightTurnOnlyFlag] = true;
-	flagDisallowed[MomentumFlag] = true;
-	flagDisallowed[BlindnessFlag] = true;
-	flagDisallowed[JammingFlag] = true;
-	flagDisallowed[WideAngleFlag] = true;
+	options.flagDisallowed[ColorblindnessFlag] = true;
+	options.flagDisallowed[ObesityFlag] = true;
+	options.flagDisallowed[LeftTurnOnlyFlag] = true;
+	options.flagDisallowed[RightTurnOnlyFlag] = true;
+	options.flagDisallowed[MomentumFlag] = true;
+	options.flagDisallowed[BlindnessFlag] = true;
+	options.flagDisallowed[JammingFlag] = true;
+	options.flagDisallowed[WideAngleFlag] = true;
       }
       else {
 	if ((f = lookupFlag(argv[i])) == int(NoFlag)) {
 	  fprintf(stderr, "invalid flag \"%s\"\n", argv[i]);
 	  usage(argv[0]);
 	}
-	flagDisallowed[f] = true;
+	options.flagDisallowed[f] = true;
       }
     }
     else if (strcmp(argv[i], "-g") == 0) {
-      oneGameOnly = true;
+      options.oneGameOnly = true;
     }
     else if (strcmp(argv[i], "-h") == 0) {
-      randomHeights = true;
+      options.randomHeights = true;
     }
     else if (strcmp(argv[i], "-help") == 0) {
       extraUsage(argv[0]);
@@ -5758,11 +5747,11 @@ static void parse(int argc, char **argv)
 	fprintf(stderr, "argument expected for -i\n");
 	usage(argv[0]);
       }
-      pingInterface = argv[i];
+      options.pingInterface = argv[i];
     }
     else if (strcmp(argv[i], "-j") == 0) {
       // allow jumping
-      gameStyle |= int(JumpingGameStyle);
+      options.gameStyle |= int(JumpingGameStyle);
     }
     else if (strcmp(argv[i], "-mo") == 0) {
       // set maximum number of observers
@@ -5770,10 +5759,10 @@ static void parse(int argc, char **argv)
 	fprintf(stderr, "argument expected for -mo\n");
 	usage(argv[0]);
       }
-      maxObservers = atoi(argv[i]);
-      if (maxObservers < 0) {
+      options.maxObservers = atoi(argv[i]);
+      if (options.maxObservers < 0) {
 	printf("allowing 0 observers\n");
-	maxObservers=0;
+	options.maxObservers=0;
       }
     }
     else if (strcmp(argv[i], "-mp") == 0) {
@@ -5796,13 +5785,13 @@ static void parse(int argc, char **argv)
       int newMaxShots = atoi(argv[i]);
       if (newMaxShots < 1) {
 	fprintf(stderr, "using minimum number of shots of 1\n");
-	maxShots = 1;
+	options.maxShots = 1;
       }
       else if (newMaxShots > MaxShots) {
 	fprintf(stderr, "using maximum number of shots of %d\n", MaxShots);
-	maxShots = uint16_t(MaxShots);
+	options.maxShots = uint16_t(MaxShots);
       }
-      else maxShots = uint16_t(newMaxShots);
+      else options.maxShots = uint16_t(newMaxShots);
     }
     else if (strcmp(argv[i], "-mps") == 0) {
       // set maximum player score
@@ -5810,10 +5799,10 @@ static void parse(int argc, char **argv)
 	fprintf(stderr, "argument expected for -mps\n");
 	usage(argv[0]);
       }
-      maxPlayerScore = atoi(argv[i]);
-      if (maxPlayerScore < 1) {
+      options.maxPlayerScore = atoi(argv[i]);
+      if (options.maxPlayerScore < 1) {
 	fprintf(stderr, "disabling player score limit\n");
-	maxPlayerScore = 0;
+	options.maxPlayerScore = 0;
       }
     }
     else if (strcmp(argv[i], "-mts") == 0) {
@@ -5822,10 +5811,10 @@ static void parse(int argc, char **argv)
 	fprintf(stderr, "argument expected for -mts\n");
 	usage(argv[0]);
       }
-      maxTeamScore = atoi(argv[i]);
-      if (maxTeamScore < 1) {
+      options.maxTeamScore = atoi(argv[i]);
+      if (options.maxTeamScore < 1) {
 	fprintf(stderr, "disabling team score limit\n");
-	maxTeamScore = 0;
+	options.maxTeamScore = 0;
       }
     }
     else if (strcmp(argv[i], "-p") == 0) {
@@ -5834,11 +5823,11 @@ static void parse(int argc, char **argv)
 	fprintf(stderr, "argument expected for -p\n");
 	usage(argv[0]);
       }
-      wksPort = atoi(argv[i]);
-      if (wksPort < 1 || wksPort > 65535)
-	wksPort = ServerPort;
+      options.wksPort = atoi(argv[i]);
+      if (options.wksPort < 1 || options.wksPort > 65535)
+	options.wksPort = ServerPort;
       else
-	useGivenPort = true;
+	options.useGivenPort = true;
     }
     else if (strcmp(argv[i], "-pr") == 0) {
       // use a different port
@@ -5846,19 +5835,19 @@ static void parse(int argc, char **argv)
 	fprintf(stderr, "argument expected for -pr\n");
 	usage(argv[0]);
       }
-      reconnectPort = atoi(argv[i]);
-      if (reconnectPort < 1 || reconnectPort > 65535)
+      options.reconnectPort = atoi(argv[i]);
+      if (options.reconnectPort < 1 || options.reconnectPort > 65535)
 	usage(argv[0]);
     }
     else if (strcmp(argv[i], "-pf") == 0) {
       // try wksPort first and if we can't open that port then
       // let system assign a port for us.
-      useFallbackPort = true;
+      options.useFallbackPort = true;
     }
 #ifdef PRINTSCORE
     else if (strcmp(argv[i], "-printscore") == 0) {
       // dump score whenever it changes
-      printScore = true;
+      options.printScore = true;
     }
 #endif
     else if (strcmp(argv[i], "-public") == 0) {
@@ -5866,9 +5855,9 @@ static void parse(int argc, char **argv)
 	fprintf(stderr, "argument expected for -public\n");
 	usage(argv[0]);
       }
-      publicizeServer = true;
-      publicizedTitle = argv[i];
-      if (strlen(publicizedTitle) > 127) {
+      options.publicizeServer = true;
+      options.publicizedTitle = argv[i];
+      if (strlen(options.publicizedTitle) > 127) {
 	argv[i][127] = '\0';
 	fprintf(stderr, "description too long... truncated\n");
       }
@@ -5878,15 +5867,15 @@ static void parse(int argc, char **argv)
 	fprintf(stderr, "argument expected for -publicaddr\n");
 	usage(argv[0]);
       }
-      publicizedAddress = argv[i];
-      publicizedAddressGiven = true;
+      options.publicizedAddress = argv[i];
+      options.publicizedAddressGiven = true;
     }
     else if (strcmp(argv[i], "-publiclist") == 0) {
       if (++i == argc) {
 	fprintf(stderr, "argument expected for -publiclist\n");
 	usage(argv[0]);
       }
-      listServerURL = argv[i];
+      options.listServerURL = argv[i];
     }
     else if (strcmp(argv[i], "-q") == 0) {
       // don't handle pings
@@ -5894,23 +5883,23 @@ static void parse(int argc, char **argv)
     }
     else if (strcmp(argv[i], "-r") == 0) {
       // allow rogues
-      gameStyle |= int(RoguesGameStyle);
+      options.gameStyle |= int(RoguesGameStyle);
     }
     else if (strcmp(argv[i], "-s") == 0) {
       // allow up to given number of random flags
       if (i+1 < argc && isdigit(argv[i+1][0])) {
 	++i;
-	if ((numExtraFlags = atoi(argv[i])) == 0)
-	  numExtraFlags = 16;
+	if ((options.numExtraFlags = atoi(argv[i])) == 0)
+	  options.numExtraFlags = 16;
       }
       else {
-	numExtraFlags = 16;
+	options.numExtraFlags = 16;
       }
       allFlagsOut = false;
     }
     else if (strcmp(argv[i], "-sa") == 0) {
       // insert antidote flags
-      gameStyle |= int(AntidoteGameStyle);
+      options.gameStyle |= int(AntidoteGameStyle);
     }
     else if (strcmp(argv[i], "-st") == 0) {
       // set shake timeout
@@ -5920,17 +5909,17 @@ static void parse(int argc, char **argv)
       }
       float timeout = (float)atof(argv[i]);
       if (timeout < 0.1f) {
-	shakeTimeout = 1;
-	fprintf(stderr, "using minimum shake timeout of %f\n", 0.1f * (float)shakeTimeout);
+	options.shakeTimeout = 1;
+	fprintf(stderr, "using minimum shake timeout of %f\n", 0.1f * (float)options.shakeTimeout);
       }
       else if (timeout > 300.0f) {
-	shakeTimeout = 3000;
-	fprintf(stderr, "using maximum shake timeout of %f\n", 0.1f * (float)shakeTimeout);
+	options.shakeTimeout = 3000;
+	fprintf(stderr, "using maximum shake timeout of %f\n", 0.1f * (float)options.shakeTimeout);
       }
       else {
-	shakeTimeout = uint16_t(timeout * 10.0f + 0.5f);
+	options.shakeTimeout = uint16_t(timeout * 10.0f + 0.5f);
       }
-      gameStyle |= int(ShakableGameStyle);
+      options.gameStyle |= int(ShakableGameStyle);
     }
     else if (strcmp(argv[i], "-sw") == 0) {
       // set shake win count
@@ -5940,26 +5929,26 @@ static void parse(int argc, char **argv)
       }
       int count = atoi(argv[i]);
       if (count < 1) {
-	shakeWins = 1;
-	fprintf(stderr, "using minimum shake win count of %d\n", shakeWins);
+	options.shakeWins = 1;
+	fprintf(stderr, "using minimum shake win count of %d\n", options.shakeWins);
       }
       else if (count > 20) {
-	shakeWins = 20;
-	fprintf(stderr, "using maximum ttl of %d\n", shakeWins);
+	options.shakeWins = 20;
+	fprintf(stderr, "using maximum ttl of %d\n", options.shakeWins);
       }
       else {
-	shakeWins = uint16_t(count);
+	options.shakeWins = uint16_t(count);
       }
-      gameStyle |= int(ShakableGameStyle);
+      options.gameStyle |= int(ShakableGameStyle);
     }
     else if (strcmp(argv[i], "-synctime") == 0) {
       // client clocks should be synchronized to server clock
-      gameStyle |= int(TimeSyncGameStyle);
+      options.gameStyle |= int(TimeSyncGameStyle);
     }
     else if (strcmp(argv[i], "-t") == 0) {
       // allow teleporters
-      useTeleporters = true;
-      if (worldFile != NULL)
+      options.useTeleporters = true;
+      if (options.worldFile != NULL)
 	fprintf(stderr, "-t is meaningless when using a custom world, ignoring\n");
     }
 #ifdef TIMELIMIT
@@ -5969,26 +5958,26 @@ static void parse(int argc, char **argv)
 	fprintf(stderr, "argument expected for -time\n");
 	usage(argv[0]);
       }
-      timeLimit = (float)atof(argv[i]);
-      if (timeLimit <= 0.0f) {
-	timeLimit = 300.0f;
+      options.timeLimit = (float)atof(argv[i]);
+      if (options.timeLimit <= 0.0f) {
+	options.timeLimit = 300.0f;
       }
-      fprintf(stderr, "using time limit of %i seconds\n", (int)timeLimit);
-      timeElapsed = timeLimit;
+      fprintf(stderr, "using time limit of %i seconds\n", (int)options.timeLimit);
+      options.timeElapsed = options.timeLimit;
     }
 #endif
     else if (strcmp(argv[i], "-tk") == 0) {
       // team killer does not die
-      teamKillerDies = false;
+      options.teamKillerDies = false;
     }
     else if (strcmp(argv[i], "-tkkr") == 0) {
       if (++i == argc) {
 	cerr << "argument expected for -tkkr" << endl;
 	usage(argv[0]);
       }
-      teamKillerKickRatio = atoi(argv[i]);
-      if (teamKillerKickRatio < 0) {
-	 teamKillerKickRatio = 0;
+      options.teamKillerKickRatio = atoi(argv[i]);
+      if (options.teamKillerKickRatio < 0) {
+	 options.teamKillerKickRatio = 0;
 	 cerr << "disabling team killer kick ratio" << endl;
       }
     }
@@ -5998,14 +5987,14 @@ static void parse(int argc, char **argv)
 	fprintf(stderr, "argument expected for -ttl\n");
 	usage(argv[0]);
       }
-      pingTTL = atoi(argv[i]);
-      if (pingTTL < 0) {
-	pingTTL = 0;
-	fprintf(stderr, "using minimum ttl of %i\n", pingTTL);
+      options.pingTTL = atoi(argv[i]);
+      if (options.pingTTL < 0) {
+	options.pingTTL = 0;
+	fprintf(stderr, "using minimum ttl of %i\n", options.pingTTL);
       }
-      else if (pingTTL > MaximumTTL) {
-	pingTTL = MaximumTTL;
-	fprintf(stderr, "using maximum ttl of %i\n", pingTTL);
+      else if (options.pingTTL > MaximumTTL) {
+	options.pingTTL = MaximumTTL;
+	fprintf(stderr, "using maximum ttl of %i\n", options.pingTTL);
       }
     }
     else if (strcmp(argv[i], "-v") == 0 || strcmp(argv[i], "-version") == 0) {
@@ -6017,28 +6006,28 @@ static void parse(int argc, char **argv)
 	fprintf(stderr, "argument expected for \"%s\"\n", argv[i]);
 	usage(argv[0]);
       }
-      password = argv[i];
+      options.password = argv[i];
     }
     else if (strcmp(argv[i], "-lagwarn") == 0) {
       if (++i == argc) {
 	fprintf(stderr, "argument expected for \"%s\"\n", argv[i]);
 	usage(argv[0]);
       }
-      lagwarnthresh = atoi(argv[i])/1000.0f;
+      options.lagwarnthresh = atoi(argv[i])/1000.0f;
     }
     else if (strcmp(argv[i], "-lagdrop") == 0) {
       if (++i == argc) {
 	fprintf(stderr, "argument expected for \"%s\"\n", argv[i]);
 	usage(argv[0]);
       }
-      maxlagwarn = atoi(argv[i]);
+      options.maxlagwarn = atoi(argv[i]);
     }
     else if (strcmp(argv[i], "-maxidle") == 0) {
       if (++i == argc) {
 	fprintf(stderr, "argument expected for \"%s\"\n", argv[i]);
 	usage(argv[0]);
       }
-      idlekickthresh = (float) atoi(argv[i]);
+      options.idlekickthresh = (float) atoi(argv[i]);
     }
     else {
       fprintf(stderr, "bad argument \"%s\"\n", argv[i]);
@@ -6046,64 +6035,64 @@ static void parse(int argc, char **argv)
     }
   }
 
-  if (flagsOnBuildings && !(gameStyle & JumpingGameStyle)) {
+  if (options.flagsOnBuildings && !(options.gameStyle & JumpingGameStyle)) {
     fprintf(stderr, "flags on boxes requires jumping\n");
     usage(argv[0]);
   }
 
   // get player counts.  done after other arguments because we need
   // to ignore counts for rogues if rogues aren't allowed.
-  if (playerCountArg > 0 && (!parsePlayerCount(argv[playerCountArg]) ||
-      playerCountArg2 > 0 && !parsePlayerCount(argv[playerCountArg2])))
+  if (playerCountArg > 0 && (!parsePlayerCount(argv[playerCountArg], options) ||
+      playerCountArg2 > 0 && !parsePlayerCount(argv[playerCountArg2], options)))
     usage(argv[0]);
 
   // first disallow flags inconsistent with game style
-  if (gameStyle & InertiaGameStyle) {
-    flagCount[int(MomentumFlag)] = 0;
-    flagDisallowed[int(MomentumFlag)] = true;
+  if (options.gameStyle & InertiaGameStyle) {
+    options.flagCount[int(MomentumFlag)] = 0;
+    options.flagDisallowed[int(MomentumFlag)] = true;
   }
-  if (gameStyle & JumpingGameStyle) {
-    flagCount[int(JumpingFlag)] = 0;
-    flagDisallowed[int(JumpingFlag)] = true;
+  if (options.gameStyle & JumpingGameStyle) {
+    options.flagCount[int(JumpingFlag)] = 0;
+    options.flagDisallowed[int(JumpingFlag)] = true;
   }
-  if (gameStyle & RicochetGameStyle) {
-    flagCount[int(RicochetFlag)] = 0;
-    flagDisallowed[int(RicochetFlag)] = true;
+  if (options.gameStyle & RicochetGameStyle) {
+    options.flagCount[int(RicochetFlag)] = 0;
+    options.flagDisallowed[int(RicochetFlag)] = true;
   }
-  if (!useTeleporters && !worldFile) {
-    flagCount[int(PhantomZoneFlag)] = 0;
-    flagDisallowed[int(PhantomZoneFlag)] = true;
+  if (!options.useTeleporters && !options.worldFile) {
+    options.flagCount[int(PhantomZoneFlag)] = 0;
+    options.flagDisallowed[int(PhantomZoneFlag)] = true;
   }
 
   // make table of allowed extra flags
-  if (numExtraFlags > 0) {
+  if (options.numExtraFlags > 0) {
     // now count how many aren't disallowed
     for (i = int(FirstSuperFlag); i <= int(LastSuperFlag); i++)
-      if (!flagDisallowed[i])
-	numAllowedFlags++;
+      if (!options.flagDisallowed[i])
+	options.numAllowedFlags++;
 
     // if none allowed then no extra flags either
-    if (numAllowedFlags == 0) {
-      numExtraFlags = 0;
+    if (options.numAllowedFlags == 0) {
+      options.numExtraFlags = 0;
     }
 
     // otherwise make table of allowed flags
     else {
-      allowedFlags = new FlagId[numAllowedFlags];
+      allowedFlags = new FlagId[options.numAllowedFlags];
       int j = 0;
       for (i = int(FirstSuperFlag); i <= int(LastSuperFlag); i++)
-	if (!flagDisallowed[i])
+	if (!options.flagDisallowed[i])
 	  allowedFlags[j++] = FlagId(i);
     }
   }
 
   // allocate space for flags
-  numFlags = numExtraFlags;
+  numFlags = options.numExtraFlags;
   // rogues don't get a flag
-  if (gameStyle & TeamFlagGameStyle)
+  if (options.gameStyle & TeamFlagGameStyle)
     numFlags += NumTeams - 1;
   for (i = int(FirstFlag); i <= int(LastFlag); i++)
-    numFlags += flagCount[i];
+    numFlags += options.flagCount[i];
   flag = new FlagInfo[numFlags];
 
   // prep flags
@@ -6131,7 +6120,7 @@ static void parse(int argc, char **argv)
     flag[i].required = false;
   }
   f = 0;
-  if (gameStyle & TeamFlagGameStyle) {
+  if (options.gameStyle & TeamFlagGameStyle) {
     flag[0].required = true;
     flag[0].flag.id = RedFlag;
     flag[0].flag.type = FlagNormal;
@@ -6148,39 +6137,39 @@ static void parse(int argc, char **argv)
   }
 
   for (i = int(FirstFlag); i <= int(LastFlag); i++) {
-    if (flagCount[i] > 0) {
-	  for (int j = 0; j < flagCount[i]; j++) {
+    if (options.flagCount[i] > 0) {
+	  for (int j = 0; j < options.flagCount[i]; j++) {
 		  if (setRequiredFlag(flag[f], (FlagId)i))
 			f++;
 	  }
-	  gameStyle |= int(SuperFlagGameStyle);
+	  options.gameStyle |= int(SuperFlagGameStyle);
     }
   }
   for (; f < numFlags; f++) {
     flag[f].required = allFlagsOut;
-    gameStyle |= int(SuperFlagGameStyle);
+    options.gameStyle |= int(SuperFlagGameStyle);
   }
 
   // debugging
-  if (debug >= 1) {
+  if (options.debug >= 1) {
     // print style
-    fprintf(stderr, "style: %x\n", gameStyle);
-    if (gameStyle & int(TeamFlagGameStyle))
+    fprintf(stderr, "style: %x\n", options.gameStyle);
+    if (options.gameStyle & int(TeamFlagGameStyle))
       fprintf(stderr, "  capture the flag\n");
-    if (gameStyle & int(SuperFlagGameStyle))
+    if (options.gameStyle & int(SuperFlagGameStyle))
       fprintf(stderr, "  super flags allowed\n");
-    if (gameStyle & int(RoguesGameStyle))
+    if (options.gameStyle & int(RoguesGameStyle))
       fprintf(stderr, "  rogues allowed\n");
-    if (gameStyle & int(JumpingGameStyle))
+    if (options.gameStyle & int(JumpingGameStyle))
       fprintf(stderr, "  jumping allowed\n");
-    if (gameStyle & int(InertiaGameStyle))
-      fprintf(stderr, "  inertia: %f, %f\n", linearAcceleration, angularAcceleration);
-    if (gameStyle & int(RicochetGameStyle))
+    if (options.gameStyle & int(InertiaGameStyle))
+      fprintf(stderr, "  inertia: %f, %f\n", options.linearAcceleration, options.angularAcceleration);
+    if (options.gameStyle & int(RicochetGameStyle))
       fprintf(stderr, "  all shots ricochet\n");
-    if (gameStyle & int(ShakableGameStyle))
+    if (options.gameStyle & int(ShakableGameStyle))
       fprintf(stderr, "  shakable bad flags: timeout=%f, wins=%i\n",
-	  0.1f * float(shakeTimeout), shakeWins);
-    if (gameStyle & int(AntidoteGameStyle))
+	  0.1f * float(options.shakeTimeout), options.shakeWins);
+    if (options.gameStyle & int(AntidoteGameStyle))
       fprintf(stderr, "  antidote flags\n");
   }
 }
@@ -6244,10 +6233,10 @@ int main(int argc, char **argv)
   bzfsrand(time(0));
 
   // parse arguments
-  parse(argc, argv);
+  parse(argc, argv, clOptions);
 
-  if (pingInterface)
-    serverAddress = Address::getHostAddress(pingInterface);
+  if (clOptions.pingInterface)
+    serverAddress = Address::getHostAddress(clOptions.pingInterface);
 // TimR use 0.0.0.0 by default, multicast will need to have a -i specified for now.
 //  if (!pingInterface)
 //    pingInterface = serverAddress.getHostName();
@@ -6257,38 +6246,38 @@ int main(int argc, char **argv)
   // firewalls).  use my official hostname if it appears to be
   // canonicalized, otherwise use my IP in dot notation.
   // set publicized address if not set by arguments
-  if (publicizedAddress.length() == 0) {
-    publicizedAddress = Address::getHostName();
-    if (strchr(publicizedAddress.c_str(), '.') == NULL)
-      publicizedAddress = serverAddress.getDotNotation();
-    if (wksPort != ServerPort) {
+  if (clOptions.publicizedAddress.length() == 0) {
+    clOptions.publicizedAddress = Address::getHostName();
+    if (strchr(clOptions.publicizedAddress.c_str(), '.') == NULL)
+      clOptions.publicizedAddress = serverAddress.getDotNotation();
+    if (clOptions.wksPort != ServerPort) {
       char portString[20];
-      sprintf(portString, ":%d", wksPort);
-      publicizedAddress += portString;
+      sprintf(portString, ":%d", clOptions.wksPort);
+      clOptions.publicizedAddress += portString;
     }
   }
 
   // prep ping reply
   pingReply.serverId.serverHost = serverAddress;
-  pingReply.serverId.port = htons(wksPort);
+  pingReply.serverId.port = htons(clOptions.wksPort);
   pingReply.serverId.number = 0;
-  pingReply.gameStyle = gameStyle;
+  pingReply.gameStyle = clOptions.gameStyle;
   pingReply.maxPlayers = maxPlayers;
-  pingReply.maxShots = maxShots;
-  pingReply.rogueMax = maxTeam[0];
-  pingReply.redMax = maxTeam[1];
-  pingReply.greenMax = maxTeam[2];
-  pingReply.blueMax = maxTeam[3];
-  pingReply.purpleMax = maxTeam[4];
-  pingReply.shakeWins = shakeWins;
-  pingReply.shakeTimeout = shakeTimeout;
+  pingReply.maxShots = clOptions.maxShots;
+  pingReply.rogueMax = clOptions.maxTeam[0];
+  pingReply.redMax = clOptions.maxTeam[1];
+  pingReply.greenMax = clOptions.maxTeam[2];
+  pingReply.blueMax = clOptions.maxTeam[3];
+  pingReply.purpleMax = clOptions.maxTeam[4];
+  pingReply.shakeWins = clOptions.shakeWins;
+  pingReply.shakeTimeout = clOptions.shakeTimeout;
 #ifdef TIMELIMIT
-  pingReply.maxTime = (int)timeLimit;
+  pingReply.maxTime = (int)clOptions.timeLimit;
 #else
   pingReply.maxTime = (int)0.0f;
 #endif
-  pingReply.maxPlayerScore = maxPlayerScore;
-  pingReply.maxTeamScore = maxTeamScore;
+  pingReply.maxPlayerScore = clOptions.maxPlayerScore;
+  pingReply.maxTeamScore = clOptions.maxTeamScore;
 
   // start listening and prepare world database
   if (!defineWorld() || !serverStart()) {
@@ -6297,10 +6286,10 @@ int main(int argc, char **argv)
 #endif /* defined(_WIN32) */
     return 1;
   }
-  if (debug >= 2) {
+  if (clOptions.debug >= 2) {
     // print networking info
     fprintf(stderr, "listening on %s:%i\n",
-	serverAddress.getDotNotation().c_str(), wksPort);
+	serverAddress.getDotNotation().c_str(), clOptions.wksPort);
   }
 
   TimeKeeper lastSuperFlagInsertion = TimeKeeper::getCurrent();
@@ -6323,9 +6312,9 @@ int main(int argc, char **argv)
     }
     // always listen for connections
     FD_SET(wksSocket, &read_set);
-    if (reconnectPort)
+    if (clOptions.reconnectPort)
       FD_SET(reconnectSocket, &read_set);
-    if (alsoUDP)
+    if (clOptions.alsoUDP)
       FD_SET(udpSocket, &read_set);
     // always listen for pings
     if (pingInSocket != -1)
@@ -6346,7 +6335,7 @@ int main(int argc, char **argv)
     // lets start by waiting 3 sec
     float waitTime = 3.0f;
 #ifdef TIMELIMIT
-    if (countdownActive && timeLimit > 0.0f)
+    if (countdownActive && clOptions.timeLimit > 0.0f)
 	waitTime = 1.0f;
 #endif
     if (numFlagsInAir > 0) {
@@ -6383,19 +6372,19 @@ int main(int argc, char **argv)
 
 #ifdef TIMELIMIT
     // see if game time ran out
-    if (!gameOver && countdownActive && timeLimit > 0.0f) {
+    if (!gameOver && countdownActive && clOptions.timeLimit > 0.0f) {
       float newTimeElapsed = tm - gameStartTime;
-      float timeLeft = timeLimit - newTimeElapsed;
+      float timeLeft = clOptions.timeLimit - newTimeElapsed;
       if (timeLeft <= 0.0f) {
 	timeLeft = 0.0f;
 	gameOver = true;
       }
-      if (timeLeft == 0.0f || newTimeElapsed - timeElapsed >= 30.0f) {
+      if (timeLeft == 0.0f || newTimeElapsed - clOptions.timeElapsed >= 30.0f) {
 	void *buf, *bufStart = getDirectMessageBuffer();
 	buf = nboPackUShort(bufStart, (uint16_t)(int)timeLeft);
 	broadcastMessage(MsgTimeUpdate, (char*)buf-(char*)bufStart, bufStart);
-	timeElapsed = newTimeElapsed;
-	if (oneGameOnly && timeLeft == 0.0f) {
+	clOptions.timeElapsed = newTimeElapsed;
+	if (clOptions.oneGameOnly && timeLeft == 0.0f) {
 	  done = true;
 	  exitCode = 0;
 	}
@@ -6404,12 +6393,12 @@ int main(int argc, char **argv)
 #endif
 
     // kick idle players
-    if (idlekickthresh > 0) {
+    if (clOptions.idlekickthresh > 0) {
       for (int i=0;i<curMaxPlayers;i++) {
 	if (!player[i].Observer && player[i].state == PlayerDead &&
 	    (tm - player[i].lastupdate >
-	      (tm - player[i].lastmsg < idlekickthresh ?
-	       3 * idlekickthresh : idlekickthresh))) {
+	      (tm - player[i].lastmsg < clOptions.idlekickthresh ?
+	       3 * clOptions.idlekickthresh : clOptions.idlekickthresh))) {
 	  DEBUG1("kicking idle player %s (%d)\n",player[i].callSign,
 		 int(tm - player[i].lastupdate));
 	  char message[MessageLen]="You were kicked because of idling too long";
@@ -6420,13 +6409,13 @@ int main(int argc, char **argv)
     }
 
     // periodic advertising broadcast
-    if (advertisemsg)
+    if (clOptions.advertisemsg)
     {
       static TimeKeeper lastbroadcast = TimeKeeper::getCurrent();
       if (TimeKeeper::getCurrent() - lastbroadcast > 900) // every 15 minutes
       {
 	char message[MessageLen];
-	strncpy(message, advertisemsg, MessageLen);
+	strncpy(message, clOptions.advertisemsg, MessageLen);
 
 	for (int i=0; i<curMaxPlayers; i++)
 	  if (player[i].state > PlayerInLimbo)
@@ -6459,11 +6448,11 @@ int main(int argc, char **argv)
     }
 
     // maybe add a super flag (only if game isn't over)
-    if (!gameOver && numExtraFlags > 0) {
+    if (!gameOver && clOptions.numExtraFlags > 0) {
       float t = expf(-flagExp * (tm - lastSuperFlagInsertion));
       if ((float)bzfrand() > t) {
 	// find an empty slot for an extra flag
-	for (i = numFlags - numExtraFlags; i < numFlags; i++)
+	for (i = numFlags - clOptions.numExtraFlags; i < numFlags; i++)
 	  if (flag[i].flag.id == NullFlag)
 	    break;
 	if (i != numFlags)
@@ -6500,7 +6489,7 @@ int main(int argc, char **argv)
 
     // occasionally add ourselves to the list again (in case we were
     // dropped for some reason).
-    if (publicizeServer)
+    if (clOptions.publicizeServer)
       if (tm - listServerLastAddTime > ListServerReAddTime) {
 	// if there are no list servers and nobody is playing then
 	// try publicizing again because we probably failed to get
@@ -6526,7 +6515,7 @@ int main(int argc, char **argv)
 
     for (i = 0; i < curMaxPlayers; i++) {
       // kick any clients that don't speak UDP
-      if (requireUDP && player[i].toBeKicked) {
+      if (clOptions.requireUDP && player[i].toBeKicked) {
 	char message[MessageLen];
 	player[i].toBeKicked = false;
 	sprintf(message,"Your end is not using UDP, turn on udp");
@@ -6632,7 +6621,7 @@ int main(int argc, char **argv)
 	  // simple ruleset, if player sends a MsgShotBegin over TCP
 	  // and player is not using multicast
 	  // he/she must not be using the UDP link
-	  if (requireUDP && player[i].multicastRelay && (player[i].type != ComputerPlayer)) {
+	  if (clOptions.requireUDP && player[i].multicastRelay && (player[i].type != ComputerPlayer)) {
 	    if (code == MsgShotBegin) {
 	      player[i].toBeKicked = true;
 	    }
