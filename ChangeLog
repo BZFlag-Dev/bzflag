@@ -3,6 +3,8 @@
 
 * add new updates here without heading until a release
 
+* public release now under LGPL v2.1 - Tim Riker
+* change LICENSE to COPYING - Tim Riker
 * admin-by-keys - Michael Hoffman
 * cygwin/mingw32 fixes - Tupone Alfredo
 * /help messages - Michael Hoffman, David Trowbridge
@@ -12,7 +14,7 @@
 * OSX Fixes - Sean (brlcad | learner)
 * E-mail field fixes - Lars Luthman
 * colorized console - Dave R (Trepan), David Trowbridge
-* automake/autoconf/config.h system - Tupone Alfredo, David Trowbridge
+* automake/autoconf - Tupone Alfredo, David Trowbridge, Tim Riker
 * check for unknown message types - Frank Thilo 
 * check incoming TCP for oversized messages and dump player - Frank Thilo
 * multiline server and ad messages with '\n' - Lars Luthman
@@ -312,7 +314,7 @@ BZFlag 1.7d release 5
 BZFlag 1.7d release 4
 ---------------------
 
-* changed COPYING to the GNU GPL version 2
+* changed LICENSE to the GNU GPL version 2
 * server can now register itself with multiple list servers
 * client can now check multiple list servers at once
 * bzfls can now dump server list to a file (using USR1)
