@@ -12,17 +12,14 @@
 
 #include "MediaFile.h"
 #include <iostream>
+#include <string>
+#include <algorithm>
 
 #ifdef WIN32
 
-void ConvertPath(char *path)
+void ConvertPath(std::string &path)
 {
-  char *p = path;
-  while (*p) {
-    if (*p=='/')
-      *p = '\\';
-    p++;
-  }
+  std::replace(dir.begin(), dir.end(), '/', '\\');
 }
 
 #endif
@@ -148,7 +145,7 @@ unsigned char*		MediaFile::readImage(
 {
 #ifdef WIN32
   // cheat and make sure the file is a windows file path
-  ConvertPath ((char*)filename.c_str());
+  ConvertPath(filename);
 #endif //WIN32
   // try opening file as an image
   std::istream* stream;

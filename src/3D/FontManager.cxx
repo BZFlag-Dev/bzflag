@@ -23,20 +23,11 @@
 #include "BZDBCache.h"
 #include "OpenGLGState.h"
 #include "TimeKeeper.h"
+#include "TextUtils.h"
 
 // initialize the singleton
 template <>
 FontManager* Singleton<FontManager>::_instance = (FontManager*)0;
-
-void GetTypeFaceName(char *data)
-{
-#ifdef	_WIN32
-  strupr(data);
-#else
-  while(*data++)
-    *data = toupper(*data);
-#endif
-}
 
 /*
 typedef std::map<int, TextureFont*> FontSizeMap;
@@ -60,16 +51,16 @@ GLfloat FontManager::underlineColor[3];
 void FontManager::callback(const std::string &, void *)
 {
   // set underline color
-  const char* uColor = BZDB.get("underlineColor").c_str();
-  if (strcasecmp(uColor, "text") == 0) {
+  const std::string uColor = BZDB.get("underlineColor");
+  if (strcasecmp(uColor.c_str(), "text") == 0) {
     underlineColor[0] = -1.0f;
     underlineColor[1] = -1.0f;
     underlineColor[2] = -1.0f;
-  } else if (strcasecmp(uColor, "cyan") == 0) {
+  } else if (strcasecmp(uColor.c_str(), "cyan") == 0) {
     underlineColor[0] = BrightColors[CyanColor][0];
     underlineColor[1] = BrightColors[CyanColor][1];
     underlineColor[2] = BrightColors[CyanColor][2];
-  } else if (strcasecmp(uColor, "grey") == 0) {
+  } else if (strcasecmp(uColor.c_str(), "grey") == 0) {
     underlineColor[0] = BrightColors[GreyColor][0];
     underlineColor[1] = BrightColors[GreyColor][1];
     underlineColor[2] = BrightColors[GreyColor][2];
@@ -148,38 +139,35 @@ void FontManager::loadAll(std::string directory)
 
   OSFile file;
 
-  OSDir dir(directory.c_str());
+  OSDir dir(directory);
 
   while (dir.getNextFile(file, true)) {
-    const char *ext = file.getExtension();
+    std::string ext = file.getExtension();
 
-    if (ext) {
-      if (strcasecmp(ext, "fmt") == 0) {
-	TextureFont *pFont = new TextureFont;
-	if (pFont) {
-	  if (pFont->load(file)) {
-	    std::string	str = pFont->getFaceName();
-	    GetTypeFaceName((char*)str.c_str());
+    if (TextUtils::compare_nocase(ext, "fmt") == 0) {
+      TextureFont *pFont = new TextureFont;
+      if (pFont) {
+        if (pFont->load(file)) {
+          std::string  str = TextUtils::toupper(pFont->getFaceName());
 
-	    FontFaceMap::iterator faceItr = faceNames.find(str);
+          FontFaceMap::iterator faceItr = faceNames.find(str);
 
-	    int faceID = 0;
-	    if (faceItr == faceNames.end()) {
-	      // its new
-	      FontSizeMap faceList;
-	      fontFaces.push_back(faceList);
-	      faceID = (int)fontFaces.size() - 1;
-	      faceNames[str] = faceID;
-	    } else {
-	      faceID = faceItr->second;
-	    }
+          int faceID = 0;
+          if (faceItr == faceNames.end()) {
+            // it's new
+            FontSizeMap faceList;
+            fontFaces.push_back(faceList);
+            faceID = (int)fontFaces.size() - 1;
+            faceNames[str] = faceID;
+          } else {
+            faceID = faceItr->second;
+          }
 
-	    fontFaces[faceID][pFont->getSize()] = pFont;
-	  } else {
-	    DEBUG4("Font Texture load failed: %s\n", file.getOSName());
-	    delete(pFont);
-	  }
-	}
+          fontFaces[faceID][pFont->getSize()] = pFont;
+        } else {
+          DEBUG4("Font Texture load failed: %s\n", file.getOSName());
+          delete(pFont);
+        }
       }
     }
   }
@@ -190,7 +178,7 @@ int FontManager::getFaceID(std::string faceName)
   if (faceName.size() == 0)
     return -1;
 
-  GetTypeFaceName((char*)faceName.c_str());
+  faceName = TextUtils::toupper(faceName);
 
   FontFaceMap::iterator faceItr = faceNames.find(faceName);
 

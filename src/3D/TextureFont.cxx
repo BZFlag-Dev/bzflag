@@ -57,18 +57,39 @@ const char* TextureFont::getFaceName()
   return faceName.c_str();
 }
 
-/* read values in Key: Value form from font metrics (.fmt) files */
-bool TextureFont::fmtRead(OSFile &file, std::string expectedLeft, std::string &retval)
-{
-  static std::string workingFile;
-  static int line = 0;
+// keep a line counter for debugging
+static int line;
 
-  // reset line number if we've switched files
-  if (workingFile != file.getFileName()) {
-    workingFile = file.getFileName();
+/* read values in Key: Value form from font metrics (.fmt) files */
+bool readKeyInt(OSFile &file, std::string expectedLeft, int &retval, bool newfile=false)
+{
+  if (newfile)
     line = 0;
+
+  const int expsize = expectedLeft.size();
+  std::string tmpBuf;
+
+  // allow for blank lines with native or foreign linebreaks, comment lines
+  while (tmpBuf.size() == 0 || tmpBuf[0] == '#' || tmpBuf[0] == 10 || tmpBuf[0] == 13) {
+    tmpBuf = file.readLine();
+    line++;
   }
 
+  if (tmpBuf.compare(0, expsize, expectedLeft) == 0 && tmpBuf[expsize]==':') {
+    retval = atoi(tmpBuf.c_str()+expsize+1);
+    return true;
+  } else {
+    DEBUG2("Unexpected line in font metrics file %s, line %d (expected %s)\n",
+      file.getFileName().c_str(), line, expectedLeft.c_str());
+    return false;
+  }
+}
+
+// read Char: "x" entry
+bool readLetter(OSFile &file, char expected)
+{
+  const std::string expectedLeft = "Char:";
+  const int expsize = expectedLeft.size();
   std::string tmpBuf;
 
   // allow for blank lines with native or foreign linebreaks, comment lines
@@ -78,102 +99,69 @@ bool TextureFont::fmtRead(OSFile &file, std::string expectedLeft, std::string &r
     line++;
   }
 
-  if (tmpBuf.substr(0, tmpBuf.find(":")) == expectedLeft) {
-    retval = tmpBuf.substr(tmpBuf.find(":") + 1, tmpBuf.size());
-    return true;
+  if (tmpBuf.compare(0, expsize, expectedLeft) == 0) {
+    if (int(tmpBuf.size()) >= expsize+4 && tmpBuf[expsize+1]=='"' && tmpBuf[expsize+3]=='"' &&
+        tmpBuf[expsize+2]==expected) {
+      return true;
+    } else {
+      DEBUG2("Unexpected character: %s, in font metrics file %s, line %d (expected \"%c\").\n",
+             tmpBuf.c_str()+expsize, file.getFileName().c_str(), line, expected);
+      return false;
+    }
   } else {
     DEBUG2("Unexpected line in font metrics file %s, line %d (expected %s)\n",
-      file.getFileName(), line, expectedLeft.c_str());
+      file.getFileName().c_str(), line, expectedLeft.c_str());
     return false;
   }
 }
 
 bool TextureFont::load(OSFile &file)
 {
-  const char *extension = file.getExtension();
+  std::string extension = file.getExtension();
 
-  if (!extension)
+  if (extension=="")
     return false;
+
+  texture = file.getFileName();
+  std::string::size_type underscore = texture.rfind('_');
+  if (underscore == std::string::npos) {
+    DEBUG1("Unexpected font file name: %s, no _size found\n", file.getStdName().c_str());
+    return false;
+  }
+  faceName = texture.substr(0, underscore);
+  size = atoi(texture.c_str() + underscore + 1);
 
   if (!file.open("rb"))
     return false;
 
-  std::string tmpBuf;
-
-  if (!fmtRead(file, "NumChars", tmpBuf)) return false;
-  sscanf(tmpBuf.c_str(), " %d", &numberOfCharacters);
-  if (!fmtRead(file, "TextureWidth", tmpBuf)) return false;
-  sscanf(tmpBuf.c_str(), " %d", &textureXSize);
-  if (!fmtRead(file, "TextureHeight", tmpBuf)) return false;
-  sscanf(tmpBuf.c_str(), " %d", &textureYSize);
-  if (!fmtRead(file, "TextZStep", tmpBuf)) return false;
-  sscanf(tmpBuf.c_str(), " %d", &textureZStep);
+  if (!readKeyInt(file, "NumChars", numberOfCharacters, true)) return false;
+  if (!readKeyInt(file, "TextureWidth", textureXSize)) return false;
+  if (!readKeyInt(file, "TextureHeight", textureYSize)) return false;
+  if (!readKeyInt(file, "TextZStep", textureZStep)) return false;
 
   // clamp the maximum char count
   if (numberOfCharacters > MAX_TEXTURE_FONT_CHARS) {
     DEBUG1("Too many characters (%i) in %s.\n",
-	   numberOfCharacters, file.getFileName());
+	   numberOfCharacters, file.getFileName().c_str());
     numberOfCharacters = MAX_TEXTURE_FONT_CHARS;
   }
 
   int i;
   for (i = 0; i < numberOfCharacters; i++) {
     // check character
-    if (!fmtRead(file, "Char", tmpBuf)) return false;
-    if ((tmpBuf.size() < 3) ||
-	(tmpBuf[1] != '\"' || tmpBuf[2] != (i + 32) || tmpBuf[3] != '\"')) {
-      DEBUG2("Unexpected character: %s, in font metrics file %s (expected \"%c\").\n",
-	tmpBuf.c_str(), file.getFileName(), (char)(i + 32));
-      return false;
-    }
+    if (!readLetter(file, i + 32)) return false;
+
     // read metrics
-    if (!fmtRead(file, "InitialDist", tmpBuf)) return false;
-    sscanf(tmpBuf.c_str(), " %d", &fontMetrics[i].initialDist);
-    if (!fmtRead(file, "Width", tmpBuf)) return false;
-    sscanf(tmpBuf.c_str(), " %d", &fontMetrics[i].charWidth);
-    if (!fmtRead(file, "Whitespace", tmpBuf)) return false;
-    sscanf(tmpBuf.c_str(), " %d", &fontMetrics[i].whiteSpaceDist);
-    if (!fmtRead(file, "StartX", tmpBuf)) return false;
-    sscanf(tmpBuf.c_str(), " %d", &fontMetrics[i].startX);
-    if (!fmtRead(file, "EndX", tmpBuf)) return false;
-    sscanf(tmpBuf.c_str(), " %d", &fontMetrics[i].endX);
-    if (!fmtRead(file, "StartY", tmpBuf)) return false;
-    sscanf(tmpBuf.c_str(), " %d", &fontMetrics[i].startY);
-    if (!fmtRead(file, "EndY", tmpBuf)) return false;
-    sscanf(tmpBuf.c_str(), " %d", &fontMetrics[i].endY);
+    if (!readKeyInt(file, "InitialDist", fontMetrics[i].initialDist)) return false;
+    if (!readKeyInt(file, "Width", fontMetrics[i].charWidth)) return false;
+    if (!readKeyInt(file, "Whitespace", fontMetrics[i].whiteSpaceDist)) return false;
+    if (!readKeyInt(file, "StartX", fontMetrics[i].startX)) return false;
+    if (!readKeyInt(file, "EndX", fontMetrics[i].endX)) return false;
+    if (!readKeyInt(file, "StartY", fontMetrics[i].startY)) return false;
+    if (!readKeyInt(file, "EndY", fontMetrics[i].endY)) return false;
   }
 
   file.close();
-
-  // now compute the names
-  std::string fullName = file.getStdName();
-  char *temp;
-
-  // get just the file part
-  temp = strrchr((char*)fullName.c_str(), '/');
-  if (temp)
-    faceName = temp + 1;
-  else
-    faceName = fullName;
-
-  // now get the texture name
-  texture = faceName;
-
-  // now wack off the extension;
-  if (extension)
-    faceName.erase(faceName.size() - (strlen(extension) + 1), faceName.size());
-
-  temp = strrchr((char*)faceName.c_str(), '_');
-
-  if (temp) {
-    size = atoi(temp+1);
-    faceName.resize(temp - faceName.c_str());
-  }
-
-  // faceName.erase(faceName.size()-strlen(temp),faceName.size());
-
-  if (extension)
-    texture.erase(texture.size() - (strlen(extension) + 1), texture.size());
 
   return (numberOfCharacters > 0);
 }

@@ -20,6 +20,7 @@
 // system headers
 #include <vector>
 #include <string> //std::string
+#include <algorithm>
 #include <string.h> //c-style string
 #include <stdio.h>
 #ifndef _MSC_VER
@@ -28,18 +29,7 @@
 
 // local implementation headers
 #include "common.h"
-
-void getUpperName(char *szData)
-{
-#ifdef  _WIN32
-  strupr(szData);
-#else
-  while(*szData) {
-    *szData = toupper(*szData);
-    szData++;
-    }
-#endif
-}
+#include "TextUtils.h"
 
 typedef std::vector<std::string> fileNameList;
 
@@ -49,72 +39,47 @@ typedef std::vector<std::string> fileNameList;
 // this is one place you need to add conversions to/from your OS
 
 // utility functions
-void OSFileStdToOSDir(char *dir)
+void OSFileStdToOSDir(std::string &dir)
 {
-  if (!dir) return;
+  if (dir=="") return;
 #ifndef _WIN32
   return;
 #else
-  char *p = dir;
-
-  while (*p != '\0')
-  {
-    if (*p == '/')
-      *p = '\\';
-
-    p++;
-  }
+  std::replace(dir.begin(), dir.end(), '/', '\\');
 #endif//WIN32
 }
 
-void OSFileOSToStdDir(char *dir)
+void OSFileOSToStdDir(std::string &dir)
 {
-  if (!dir) return;
 //#ifndef _WIN32
 //  return;
 //#else
-  char *p = dir;
-
-  while (*p != '\0')
-  {
-    if (*p == '\\')
-      *p= '/';
-
-    p++;
-  }
+  std::replace(dir.begin(), dir.end(), '\\', '/');
 //#endif//WIN32
 }
 
 // Windows specific make path
 #ifdef _WIN32
-void windowsMakePath(const char * path)
+void windowsMakePath(const std::string &path)
 {
-  // scan the folder path and make it
-  char *pos = strchr (path,'\\');
+  std::string::size_type pos = 0;
+  std::string::size_type delimitpos;
 
-  if (!pos) // Maybe they messed up
+  do 
   {
-    std::string str = "\\";
-    str += path;
-    mkdir(str.c_str());
-    return;
-  }
-
-  while (pos)
-  {
-    std::string str = path;
-    str.resize(pos-path);
-    mkdir(str.c_str());
-    pos = strchr (pos+1,'\\');
-  }
+    delimitpos = path.find('\\', pos);
+    std::string nextdir = path.substr(pos, delimitpos);
+    mkdir(nextdir.c_str());
+    pos = delimitpos + 1;
+  } while (delimitpos != std::string::npos);
 }
 #endif // windows
 
 
 /// global make path
-void osMakePath(const char * path)
+void osMakePath(const std::string &path)
 {
-  if (!path) return;
+  if (path=="") return;
 #ifdef _WIN32
   windowsMakePath(path);
 #endif
@@ -125,16 +90,11 @@ void osMakePath(const char * path)
 std::string  stdBaseDir;
 std::string  osBaseDir;
 
-void setOSFileBaseDir(const char *dir)
+void setOSFileBaseDir(const std::string &dir)
 {
   stdBaseDir = dir;
-  if (!dir)
-    osBaseDir.empty();
-  else
-  {
-    osBaseDir = stdBaseDir;
-    OSFileStdToOSDir((char*)osBaseDir.c_str());
-  }
+  osBaseDir = dir;
+  OSFileStdToOSDir(osBaseDir);
 }
 
 // OSFileClass
@@ -154,9 +114,6 @@ class OSFile::OSFileInfo
 OSFile::OSFileInfo::OSFileInfo()
 {
   fp = NULL;
-  osName = "";
-  stdName = "";
-  title = "";
   useGlobalPath = true;
 }
 
@@ -180,7 +137,7 @@ OSFile::OSFile()
   info = new OSFileInfo;
 }
 
-OSFile::OSFile(const char *name)
+OSFile::OSFile(const std::string &name)
 {
   info = new OSFileInfo;
   stdName(name);
@@ -188,9 +145,6 @@ OSFile::OSFile(const char *name)
 
 OSFile::OSFile(const OSFile &r)
 {
-  if (this == &r)
-    return;
-
   info = new OSFileInfo(*r.info);
 }
 
@@ -206,10 +160,11 @@ OSFile& OSFile::operator = (const OSFile &r)
   return *this;
 }
 
-OSFile::OSFile(const char *name, const char *mode  )
+OSFile::OSFile(const std::string &name, const char *mode)
 {
   info = new OSFileInfo;
-  open(name,mode);
+  stdName(name);
+  open(name.c_str(), mode);
 }
 
 OSFile::~OSFile()
@@ -218,12 +173,10 @@ OSFile::~OSFile()
    delete (info);
 }
 
-bool OSFile::open(const char *name, const char *mode )
+bool OSFile::open(const std::string &name, const char *mode)
 {
   close();
-
   stdName(name);
-
   return open(mode);
 }
 
@@ -234,11 +187,11 @@ bool OSFile::open(const char *mode)
   char  modeToUse[32];
 
   if (!mode)
-    sprintf(modeToUse,"rb");
+    sprintf(modeToUse, "rb");
   else
-    strcpy(modeToUse,mode);
+    strcpy(modeToUse, mode);
 
-  std::string  fileName;
+  std::string fileName;
 
   if (info->useGlobalPath)
     fileName = osBaseDir;
@@ -249,7 +202,7 @@ bool OSFile::open(const char *mode)
   // we may need to make the file path to the file, if we are writing then lets get on with it.
   if (!info->fp && strchr(mode,'w'))
   {
-    osMakePath(fileName.c_str());
+    osMakePath(fileName);
     info->fp = fopen(fileName.c_str(),mode);
   }
 
@@ -271,7 +224,7 @@ int OSFile::read(void* data, int size, int count)
   if (!isOpen())
     return 0;
 
-  return (int)fread(data,size,count,info->fp);
+  return (int)fread(data, size, count, info->fp);
 }
 
 unsigned char OSFile::readChar()
@@ -279,25 +232,26 @@ unsigned char OSFile::readChar()
   if (!isOpen())
     return 0;
 
-  char c = 0;
-
-  if (fscanf(info->fp,"%c",&c) != 1)
+  int c = getc(info->fp);
+  if (c!=EOF)
+    return c;
+  else
     return 0;
-  return c;
 }
 
-const char* OSFile::readLine()
+std::string OSFile::readLine()
 {
-  static std::string line;
+  std::string line;
+  // reserve initial space for about a typical line length to speed up things
+  line.reserve(20);
 
-  line = "";
   char c = readChar();
   while (c != 0 && c != '\n' && c != 10)
   {
     line += c;
     c = readChar();
   }
-  return line.c_str();
+  return line;
 }
 
 int OSFile::scanChar(unsigned char *pChar)
@@ -319,12 +273,12 @@ const char* OSFile::scanStr()
   return temp;
 }
 
-int  OSFile::write(const void* data, int size)
+int OSFile::write(const void* data, int size)
 {
   if (!isOpen())
     return 0;
 
-  return (int)fwrite(data,size,1,info->fp);
+  return (int)fwrite(data,size,1, info->fp);
 }
 
 void OSFile::flush()
@@ -379,80 +333,54 @@ unsigned int OSFile::tell()
 }
 
 
-void OSFile::stdName(const char *name)
+void OSFile::stdName(const std::string &name)
 {
   info->stdName = name;
   info->osName = name;
-  OSFileStdToOSDir((char*)info->osName.c_str());
+  OSFileStdToOSDir(info->osName);
 }
 
-void OSFile::osName(const char *name)
+void OSFile::osName(const std::string &name)
 {
   info->stdName = name;
   info->osName = name;
-  OSFileOSToStdDir((char*)info->stdName.c_str());
+  OSFileOSToStdDir(info->stdName);
 }
 
-const char* OSFile::getFileName()
+std::string OSFile::getFileName()
 {
-  if (info->stdName.size()== 0)
-    return NULL;
+  std::string::size_type lastslash = info->stdName.rfind('/');
+  info->title = lastslash==std::string::npos ?
+    info->stdName : info->stdName.substr(lastslash+1);
 
-  // yes I know this part is horrible, put it in the pimple
-  char  *path = strrchr((char*)info->stdName.c_str(),'/');
+  // strip extension
+  info->title.erase(info->title.rfind('.'));
 
-  if (path)
-    path++;
-  else
-    path = (char*)info->stdName.c_str();
-
-  info->title = path;
-
-  // if no ext then we just give them the raw, as it may not have an extension
-  const char *ext = getExtension();
-  if (ext)
-      info->title.resize(info->title.size() - strlen(ext) - 1);
-
-  return info->title.c_str();
+  return info->title;
 }
 
-// this CAN return null, cus the file may not have an extenstion, if it just happens to end in a '.' then well, your really wierd Mr. File.
-const char* OSFile::getExtension()
+// this CAN return npos, cus the file may not have an extenstion, if it just happens to end in a '.' then well, your really weird Mr. File.
+std::string OSFile::getExtension()
 {
-  if (info->stdName.size()== 0)
-    return NULL;
-
-  char  *pEnd = strrchr((char*)info->stdName.c_str(),'.');
-
-  if (pEnd)
-    pEnd++;
-
-  return pEnd;
+  std::string::size_type dot = info->stdName.rfind('.');
+  return dot==std::string::npos ? "" : info->stdName.substr(dot+1);
 }
 
-const char* OSFile::getOSFileDir()
+std::string OSFile::getOSFileDir()
 {
-  char  *path = strrchr((char*)info->stdName.c_str(),'/');
+  std::string::size_type lastslash = info->stdName.rfind('/');
+  info->osPath = lastslash==std::string::npos ?
+    info->stdName : info->stdName.substr(0, lastslash);
+  OSFileStdToOSDir(info->osPath);
 
-  if (path)
-    path++;
-  else
-    path = (char*)info->stdName.c_str();
-
-  info->osPath = info->stdName;
-  info->osPath.resize(info->osPath.size()-strlen(path));
-  OSFileStdToOSDir((char*)info->osPath.c_str());
-  return info->osPath.c_str();
+  return info->osPath;
 }
 
-const char* OSFile::getFullOSPath()
+std::string OSFile::getFullOSPath()
 {
-  static std::string  szPath;
-
-  szPath.empty();
-  szPath = osBaseDir;
-  szPath += info->osName;
-  return szPath.c_str();
+  std::string path = osBaseDir;
+  path += info->osName;
+  return path;
 }
 
 FILE* OSFile::getFile()
@@ -460,14 +388,14 @@ FILE* OSFile::getFile()
   return info->fp;
 }
 
-const char* OSFile::getStdName()
+std::string OSFile::getStdName()
 {
-  return info->stdName.c_str();
+  return info->stdName;
 }
 
-const char* OSFile::getOSName()
+std::string OSFile::getOSName()
 {
-  return info->osName.c_str();
+  return info->osName;
 }
 
 bool OSFile::isOpen()
@@ -495,9 +423,6 @@ OSDir::OSDirInfo::OSDirInfo()
 
 OSDir::OSDirInfo::OSDirInfo(const OSDir::OSDirInfo &r)
 {
-  if (this == &r)
-    return;
-
   baseStdDir = r.baseStdDir;
   baseOSDir = r.baseOSDir;
   nameList = r.nameList;
@@ -519,19 +444,16 @@ OSDir& OSDir::operator = (const OSDir& r)
   if (this == &r)
     return *this;
 
-
-  if (info)
-    delete(info);
-
+  delete info;
   info = new OSDirInfo(*r.info);
 
   return *this;
 }
 
-OSDir::OSDir(const char* szDirName)
+OSDir::OSDir(const std::string &DirName)
 {
   info = new OSDirInfo;
-  setStdDir(szDirName);
+  setStdDir(DirName);
 }
 
 OSDir::~OSDir()
@@ -541,26 +463,25 @@ OSDir::~OSDir()
     info->nameList.clear();
     delete(info);
   }
-  info = NULL;
 }
 
-void OSDir::setStdDir(const char* szDirName)
+void OSDir::setStdDir(const std::string &DirName)
 {
-  info->baseStdDir = szDirName;
-  info->baseOSDir = szDirName;
-  OSFileStdToOSDir((char*)info->baseOSDir.c_str());
+  info->baseStdDir = DirName;
+  info->baseOSDir = DirName;
+  OSFileStdToOSDir(info->baseOSDir);
 }
 
-void OSDir::setOSDir(const char* szDirName)
+void OSDir::setOSDir(const std::string &DirName)
 {
-  info->baseStdDir = szDirName;
-  info->baseOSDir = szDirName;
-  OSFileOSToStdDir((char*)info->baseStdDir.c_str());
+  info->baseStdDir = DirName;
+  info->baseOSDir = DirName;
+  OSFileOSToStdDir(info->baseStdDir);
 }
 
-void OSDir::makeStdDir(const char* szDirName)
+void OSDir::makeStdDir(const std::string &DirName)
 {
-  setStdDir(szDirName);
+  setStdDir(DirName);
 #ifdef _WIN32
   mkdir(info->baseOSDir.c_str());
 #else
@@ -568,9 +489,9 @@ void OSDir::makeStdDir(const char* szDirName)
 #endif
 }
 
-void OSDir::makeOSDir(const char* szDirName)
+void OSDir::makeOSDir(const std::string &DirName)
 {
-  setOSDir(szDirName);
+  setOSDir(DirName);
 #ifdef _WIN32
   mkdir(info->baseOSDir.c_str());
 #else
@@ -578,25 +499,21 @@ void OSDir::makeOSDir(const char* szDirName)
 #endif
 }
 
-const char* OSDir::getStdName()
+std::string OSDir::getStdName()
 {
-  return info->baseStdDir.c_str();
+  return info->baseStdDir;
 }
 
-const char* OSDir::getOSName()
+std::string  OSDir::getOSName()
 {
   return info->baseOSDir.c_str();
 }
 
-const char* OSDir::getFullOSPath()
+std::string OSDir::getFullOSPath()
 {
-  static std::string  szFilePath;
-
-  szFilePath.empty();
-  szFilePath = osBaseDir;
-
-  szFilePath += info->baseOSDir;
-  return szFilePath.c_str();
+  std::string  FilePath = osBaseDir;
+  FilePath += info->baseOSDir;
+  return FilePath;
 }
 
 bool OSDir::getNextFile(OSFile &oFile, bool bRecursive)
@@ -622,15 +539,15 @@ bool OSDir::getNextFile(OSFile &oFile, const char* fileMask, bool bRecursive)
   if (fileMask)
     realMask = fileMask;
 
-  getUpperName((char*)realMask.c_str());
+  realMask = TextUtils::toupper(realMask);
 
   std::string theFileExt;
   if (info->namePos == -1)
   {
     info->nameList.clear();
   //FIXME -- just do the #ifdef'ing here?
-    windowsAddFileStack(getFullOSPath(),realMask.c_str(),bRecursive);
-    linuxAddFileStack(getFullOSPath(),realMask.c_str(),bRecursive);
+    windowsAddFileStack(getFullOSPath(), realMask, bRecursive);
+    linuxAddFileStack(getFullOSPath(), realMask, bRecursive);
 
     info->namePos = 0;
   }
@@ -642,7 +559,7 @@ bool OSDir::getNextFile(OSFile &oFile, const char* fileMask, bool bRecursive)
     return false;
   }
 
-  std::string  fileName = info->nameList[info->namePos];
+  std::string fileName = info->nameList[info->namePos];
 
   if (osBaseDir.size()>1)
   {
@@ -650,7 +567,7 @@ bool OSDir::getNextFile(OSFile &oFile, const char* fileMask, bool bRecursive)
     fileName = temp;
   }
 
-  oFile.osName(fileName.c_str());
+  oFile.osName(fileName);
   info->namePos++;
 
   return true;
@@ -841,7 +758,7 @@ bool OSDir::linuxAddFileStack(std::string pathName, std::string fileMask, bool b
     {
       FilePath = searchstr;
       FilePath += fileInfo->d_name;
-      getUpperName(fileInfo->d_name);
+      strcpy(fileInfo->d_name, TextUtils::toupper(fileInfo->d_name).c_str());
 
       stat(FilePath.c_str(), &statbuf);
 

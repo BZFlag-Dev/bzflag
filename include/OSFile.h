@@ -44,8 +44,8 @@ typedef enum
   eFileEnd
 }teFilePos;
 
-void setOSFileBaseDir(const char *szDir);
-void OSFileOSToStdDir(char *dir);
+void setOSFileBaseDir(const std::string &dir);
+void OSFileOSToStdDir(std::string &dir);
 
 class OSFile
 {
@@ -54,29 +54,29 @@ public:
   OSFile(const OSFile &r);
   OSFile& operator = (const OSFile &r);
 
-  OSFile(const char *szName);
-  OSFile(const char *szName, const char *szMode);
+  OSFile(const std::string &szName);
+  OSFile(const std::string &szName, const char *szMode);
   ~OSFile();
 
-  bool open(const char *szName, const char *szMode);
+  bool open(const std::string &szName, const char *szMode);
   bool open(const char *szMode);
   bool close();
 
-  void stdName(const char *szName);
-  void osName(const char *szName);
+  void stdName(const std::string &szName);
+  void osName(const std::string &szName);
 
   FILE* getFile();
 
-  const char* getStdName();
-  const char* getOSName();
+  std::string getStdName();
+  std::string getOSName();
 
-  const char* getFileName();
+  std::string getFileName();
 
-  const char* getExtension();
+  std::string getExtension();
 
-  const char* getFullOSPath();
+  std::string getFullOSPath();
 
-  const char* getOSFileDir();
+  std::string getOSFileDir();
 
   bool isOpen();
 
@@ -84,7 +84,7 @@ public:
   unsigned char readChar();
   int scanChar(unsigned char *pChar);
   const char* scanStr();
-  const char* readLine();
+  std::string readLine();
   int write(const void* data, int size);
   void flush();
 
@@ -105,25 +105,25 @@ public:
   OSDir();
   OSDir(const OSDir &r);
   OSDir& operator = (const OSDir &r);
-  OSDir(const char* szDirName);
+  OSDir(const std::string &DirName);
   ~OSDir();
 
-  void setStdDir(const char* szDirName);
-  void setOSDir(const char* szDirName);
+  void setStdDir(const std::string &DirName);
+  void setOSDir(const std::string &DirName);
 
-  void makeStdDir(const char* szDirName);
-  void makeOSDir(const char* szDirName);
+  void makeStdDir(const std::string &DirName);
+  void makeOSDir(const std::string &DirName);
 
   bool getNextFile(OSFile &oFile, bool bRecursive);
   bool getNextFile(OSFile &oFile, const char* fileMask, bool bRecursive);
 
   int getFileScanCount();
 
-  const char* getStdName();
-  const char* getOSName();
-  const char* getFullOSPath();
+  std::string getStdName();
+  std::string getOSName();
+  std::string getFullOSPath();
 
-  const char* getOSFileDir();
+  std::string getOSFileDir();
 
 protected:
   class OSDirInfo;

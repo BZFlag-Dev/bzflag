@@ -49,7 +49,7 @@ public:
 
   void build(void);
 
-  bool isBuilt(void) {return !(textureID == -1);};
+  bool isBuilt(void) {return textureID != -1;}
 
   void drawString(float scale, GLfloat color[3], const char *str, int len);
 
@@ -59,7 +59,6 @@ public:
 
 private:
   void preLoadLists(void);
-  bool fmtRead(OSFile &file, std::string expectedLeft, std::string &retval);
 
   unsigned int	listIDs[MAX_TEXTURE_FONT_CHARS];
   trFontMetrics	fontMetrics[MAX_TEXTURE_FONT_CHARS];

@@ -1077,7 +1077,7 @@ int			main(int argc, char** argv)
   if (BZDB.isSet("directory")) {
     //Convert to unix paths so that escaping isn't an issue
     std::string directory = BZDB.get("directory");
-    OSFileOSToStdDir((char *)directory.c_str()); //ok this is quasi-cheating
+    OSFileOSToStdDir(directory);
     BZDB.set("directory", directory);
   }
 
