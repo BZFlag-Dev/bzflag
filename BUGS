@@ -1,6 +1,9 @@
 recent bugs
 ------------
 
+- Record/Replay does not immediately reassign flags to players after a
+  state reset, you have to wait until the first MsgGrabFlag.
+
 - Jumps can cause the bouncy sound if a delayed packet arrives
   with a Z velocity higher then the predicted value after the
   jump jets have turned off
