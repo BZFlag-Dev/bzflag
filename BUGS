@@ -3,8 +3,6 @@ recent bugs
 
 - doc/guide/NetworkProtocol.xml is not up to date
 
-- After flag capture, members of losing team are nr to other team.
-
 - list server includes counts for players running on non-public servers on
   the same machine on different ports
 
