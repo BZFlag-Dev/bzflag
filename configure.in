@@ -23,6 +23,7 @@ else
 fi
 
 # check for kerberos option
+with_kerberos=no
 AC_ARG_WITH(kerberos, [  --with-kerberos	  with Kerberos support])
 if test "x$with_kerberos" != xno ; then
    with_kerberos=yes
