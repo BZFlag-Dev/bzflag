@@ -18,7 +18,6 @@
 #define	BZF_FRUSTUM_H
 
 #include "common.h"
-#include "bzfgl.h"
 
 // FIXME -- will need a means for off center projections for
 //	looking through teleporters
@@ -45,7 +44,7 @@ class Frustum {
 
     void		setView(const float* eye, const float* target);
     void		setProjection(float fov, float m_near, float m_far,
-					GLint width, GLint height, GLint viewHeight);
+				      int width, int height, int viewHeight);
     void		setOffset(float eyeOffset, float focalPlane);
 
   protected:

@@ -13,7 +13,6 @@
 #include <math.h>
 #include <string.h>
 #include "common.h"
-#include "bzfgl.h"
 #include "Frustum.h"
 
 Frustum::Frustum()
@@ -151,8 +150,8 @@ void			Frustum::setView(const float* _eye,
 }
 
 void			Frustum::setProjection(float fov, float _m_near,
-						float _m_far, GLint width,
-						GLint height, GLint viewHeight)
+						float _m_far, int width,
+						int height, int viewHeight)
 {
   // do easy stuff
   m_near = _m_near;
