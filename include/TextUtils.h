@@ -98,7 +98,7 @@ static std::vector<std::string> tokenize(const std::string& in, const std::strin
 	bool enoughTokens;
 
 	unsigned int pos = 0; 
-	char currentChar;
+	int currentChar;
 	std::ostringstream currentToken;
 	
 	pos = in.find_first_not_of(delims);
@@ -112,7 +112,7 @@ static std::vector<std::string> tokenize(const std::string& in, const std::strin
 		bool foundSlash = false;
 
 		currentChar = (pos < in.size()) ? in[pos] : -1;
-		while (currentChar != -1 && !tokenDone){
+		while ((currentChar != -1) && !tokenDone){
 
 			tokenDone = false;
 
