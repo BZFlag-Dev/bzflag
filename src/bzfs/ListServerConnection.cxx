@@ -168,20 +168,26 @@ void ListServerLink::read()
       DEBUG4("Got line: \"%s\"\n", base);
       // TODO don't do this if we don't want central logins
       if (strncmp(base, tokGoodIdentifier, strlen(tokGoodIdentifier)) == 0) {
-	DEBUG3("Got: %s %d\n", base, getTarget(base));
-        char *callsign, *group;
-        callsign = (char *)(base + strlen(tokGoodIdentifier));
+	DEBUG3("Got: [%d] %s\n", getTarget(base), base);
+	char *callsign, *group;
+	callsign = (char *)(base + strlen(tokGoodIdentifier));
 	group = callsign;
-        while (*group && !isspace(*group)) group++;
-        while (*group && isspace(*group)) *group++ = 0;
-	if (getTarget(callsign) < curMaxPlayers) {
-	  int playerIndex = getTarget(callsign);
+	while (*group && !isspace(*group)) group++;
+	while (*group && isspace(*group)) *group++ = 0;
+	int playerIndex = getTarget(callsign);
+	if (playerIndex < curMaxPlayers) {
 	  GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(playerIndex);
 	  if (!playerData->accessInfo.isRegistered())
 	    playerData->accessInfo.storeInfo(NULL);
 	  playerData->accessInfo.setPermissionRights();
-	  // TODO walk list in *group and add user to the ones we care about
-	  DEBUG3("Got: \"%s\" \"%s\" %d\n", callsign, group, getTarget(callsign));
+	  while (*group) {
+	    char *nextgroup = group;
+	    while (*nextgroup && !isspace(*nextgroup)) nextgroup++;
+	    while (*nextgroup && isspace(*nextgroup)) *nextgroup++ = 0;
+	    playerData->accessInfo.addGroup(group);
+	    //DEBUG3("Got: [%d] \"%s\" \"%s\"\n", playerIndex, callsign, group);
+	    group = nextgroup;
+	  }
 	  sendMessage(ServerPlayer, playerIndex, "Global login approved!");
 	}
       }
