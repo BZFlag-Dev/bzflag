@@ -3046,7 +3046,7 @@ static void playerKilled(int victimIndex, int killerIndex, int reason,
   if (killerIndex == InvalidPlayer ||
 	player[victimIndex].state != PlayerAlive) return;
   if (killerIndex != ServerPlayer) {
-    int si = shotIndex & 0x00FF;
+    int si = (shotIndex == -1 ? -1 : shotIndex & 0x00FF);
     if ((si < -1) || (si >= clOptions->maxShots))
       return;
   }

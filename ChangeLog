@@ -1,5 +1,7 @@
 
 			     BZFlag release notes
+* added kill messages as an option to bzadmin - Lars Luthman
+* let genocided players spawn again - Lars Luthman
 * mrtg script updated - Tim Riker
 
 BZFlag 1.10.0 "Break the world" (was 1.9.x)

@@ -18,6 +18,8 @@ critical bugs
 - Reported that sometimes you get stuck trying to respawn (You don't respawn). 
   It's reported that it happens to a group of players at roughly the same time 
   at a certain time during the game.
+  If this only happened when players were killed with G it has been fixed now,
+  if it happens again there is another bug somewhere.
 
 recent bugs
 ------------
