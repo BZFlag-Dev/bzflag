@@ -10,7 +10,7 @@ Includes=..\include;..\win32;.
 Linker=-lmingw32 -lstdc++ -lsdlmain -lsdl -lws2_32 -ldsound -lwinmm -lglu32 -lopengl32 -lkernel32 -luser32 -lgdi32 -lwinspool -lcomdlg32 -ladvapi32 -lshell32 -lole32 -loleaut32 -luuid -lodbc32 -lodbccp32_@@_
 Libs=
 UnitCount=314
-Folders="Header Files","Header Files/bzip2","Header Files/common","Header Files/net","Header Files/regex","Resource Files","Source Files","Source Files/bzip2","Source Files/common","Source Files/models","Source Files/net","Source Files/regex"
+Folders="Header Files","Header Files/bzip2","Header Files/common","Header Files/net","Header Files/regex","Resource Files","Source Files","Source Files/common","Source Files/models","Source Files/net","Source Files/regex","Source Files/zlib"
 ObjFiles=
 PrivateResource=bzflag_private.rc
 ResourceIncludes=
@@ -1801,7 +1801,7 @@ BuildCmd=
 
 [Unit181]
 FileName=..\src\zlib\uncompr.c
-Folder=Source Files/bzip2
+Folder=Source Files/zlib
 Compile=1
 CompileCpp=0
 Link=1
@@ -1811,7 +1811,7 @@ BuildCmd=$(CC) -c uncompr.c -o ../src/bzflag/uncompr.o $(CFLAGS)
 
 [Unit182]
 FileName=..\src\zlib\zutil.c
-Folder=Source Files/bzip2
+Folder=Source Files/zlib
 Compile=1
 CompileCpp=0
 Link=1
@@ -1821,7 +1821,7 @@ BuildCmd=$(CC) -c zutil.c -o ../src/bzflag/zutil.o $(CFLAGS)
 
 [Unit183]
 FileName=..\src\zlib\adler32.c
-Folder=Source Files/bzip2
+Folder=Source Files/zlib
 Compile=1
 CompileCpp=0
 Link=1
@@ -1831,7 +1831,7 @@ BuildCmd=$(CC) -c adler32.c -o ../src/bzflag/adler32.o $(CFLAGS)
 
 [Unit184]
 FileName=..\src\zlib\compress.c
-Folder=Source Files/bzip2
+Folder=Source Files/zlib
 Compile=1
 CompileCpp=0
 Link=1
@@ -1841,7 +1841,7 @@ BuildCmd=$(CC) -c compress.c -o ../src/bzflag/compress.o $(CFLAGS)
 
 [Unit185]
 FileName=..\src\zlib\crc32.c
-Folder=Source Files/bzip2
+Folder=Source Files/zlib
 Compile=1
 CompileCpp=0
 Link=1
@@ -1851,7 +1851,7 @@ BuildCmd=$(CC) -c crc32.c -o ../src/bzflag/crc32.o $(CFLAGS)
 
 [Unit186]
 FileName=..\src\zlib\deflate.c
-Folder=Source Files/bzip2
+Folder=Source Files/zlib
 Compile=1
 CompileCpp=0
 Link=1
@@ -1861,7 +1861,7 @@ BuildCmd=$(CC) -c deflate.c -o ../src/bzflag/deflate.o $(CFLAGS)
 
 [Unit187]
 FileName=..\src\zlib\gzio.c
-Folder=Source Files/bzip2
+Folder=Source Files/zlib
 Compile=1
 CompileCpp=0
 Link=1
@@ -1871,7 +1871,7 @@ BuildCmd=$(CC) -c gzio.c -o ../src/bzflag/gzio.o $(CFLAGS)
 
 [Unit188]
 FileName=..\src\zlib\infblock.c
-Folder=Source Files/bzip2
+Folder=Source Files/zlib
 Compile=1
 CompileCpp=0
 Link=1
@@ -1881,7 +1881,7 @@ BuildCmd=$(CC) -c infblock.c -o ../src/bzflag/infblock.o $(CFLAGS)
 
 [Unit189]
 FileName=..\src\zlib\infcodes.c
-Folder=Source Files/bzip2
+Folder=Source Files/zlib
 Compile=1
 CompileCpp=0
 Link=1
@@ -1891,7 +1891,7 @@ BuildCmd=$(CC) -c infcodes.c -o ../src/bzflag/infcodes.o $(CFLAGS)
 
 [Unit190]
 FileName=..\src\zlib\inffast.c
-Folder=Source Files/bzip2
+Folder=Source Files/zlib
 Compile=1
 CompileCpp=0
 Link=1
@@ -1901,7 +1901,7 @@ BuildCmd=
 
 [Unit191]
 FileName=..\src\zlib\inflate.c
-Folder=Source Files/bzip2
+Folder=Source Files/zlib
 Compile=1
 CompileCpp=0
 Link=1
@@ -1911,7 +1911,7 @@ BuildCmd=
 
 [Unit192]
 FileName=..\src\zlib\inftrees.c
-Folder=Source Files/bzip2
+Folder=Source Files/zlib
 Compile=1
 CompileCpp=0
 Link=1
@@ -1921,7 +1921,7 @@ BuildCmd=
 
 [Unit193]
 FileName=..\src\zlib\infutil.c
-Folder=Source Files/bzip2
+Folder=Source Files/zlib
 Compile=1
 CompileCpp=0
 Link=1
