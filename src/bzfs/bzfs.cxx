@@ -2967,22 +2967,25 @@ static void shotFired(int playerIndex, void *buf, int len)
   }
 
   // verify position
-  float dx = lastState[playerIndex].pos[0] - shot.pos[0];
-  float dy = lastState[playerIndex].pos[1] - shot.pos[1];
-  float dz = lastState[playerIndex].pos[2] - shot.pos[2];
-
-  float front = BZDB.eval(StateDatabase::BZDB_MUZZLEFRONT);
+  float muzzleFront = BZDB.eval(StateDatabase::BZDB_MUZZLEFRONT);
+  float muzzleHeight = BZDB.eval(StateDatabase::BZDB_MUZZLEHEIGHT);
   if (firingInfo.flagType == Flags::Obesity)
-    front *= BZDB.eval(StateDatabase::BZDB_OBESEFACTOR);
+    muzzleFront *= BZDB.eval(StateDatabase::BZDB_OBESEFACTOR);
+  const PlayerState &last = lastState[playerIndex];
+  float dx = last.pos[0] - shot.pos[0];
+  float dy = last.pos[1] - shot.pos[1];
+  float dz = last.pos[2] + muzzleHeight - shot.pos[2];
 
+  // ignore z error for falling tanks
+  if (last.status & PlayerState::Falling)
+    dz = 0.0f;
   float delta = dx*dx + dy*dy + dz*dz;
-  if (delta > (maxTankSpeed * tankSpeedMult + front)
-      * (maxTankSpeed * tankSpeedMult + front)) {
+  if (delta > (maxTankSpeed * tankSpeedMult + 2.0f * muzzleFront) *
+              (maxTankSpeed * tankSpeedMult + 2.0f * muzzleFront)) {
     DEBUG2("Player %s [%d] shot origination %f %f %f too far from tank %f %f %f: distance=%f\n",
 	    shooter.getCallSign(), playerIndex,
 	    shot.pos[0], shot.pos[1], shot.pos[2],
-	    lastState[playerIndex].pos[0], lastState[playerIndex].pos[1],
-	    lastState[playerIndex].pos[2], sqrt(delta));
+	    last.pos[0], last.pos[1], last.pos[2], sqrt(delta));
     return;
   }
 
