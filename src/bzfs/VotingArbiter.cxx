@@ -194,7 +194,7 @@ bool VotingArbiter::voteYes(std::string player)
     return false;
   }
 
-  return (_votingBooth->vote(player, "1"));
+  return (_votingBooth->vote(player, "yes"));
 }
 
 bool VotingArbiter::voteNo(std::string player) 
@@ -208,7 +208,7 @@ bool VotingArbiter::voteNo(std::string player)
     return false;
   }
 
-  return (_votingBooth->vote(player, "0"));
+  return (_votingBooth->vote(player, "no"));
 }
 
 unsigned long int VotingArbiter::getYesCount(void) const
@@ -216,7 +216,7 @@ unsigned long int VotingArbiter::getYesCount(void) const
   if (!this->knowsPoll()) {
     return 0;
   }
-  return _votingBooth->getVoteCount("1");
+  return _votingBooth->getVoteCount("yes");
 }
 
 unsigned long int VotingArbiter::getNoCount(void) const
@@ -224,7 +224,7 @@ unsigned long int VotingArbiter::getNoCount(void) const
   if (!this->knowsPoll()) {
     return 0;
   }
-  return _votingBooth->getVoteCount("0");
+  return _votingBooth->getVoteCount("no");
 }
 
 unsigned long int VotingArbiter::getAbstentionCount(void) const
