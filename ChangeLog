@@ -9,6 +9,10 @@ BZFlag 1.11
 * No Jumping and Trigger Happy flags - Nils McCarthy
 * server option to disallow autopilot - Nils McCarthy
 * SDL interface to audio/video/input - Tupone Alfredo
+* Correctly read PNG textures with multiple IDAT chunks - Daniel Remenak
+* /clientquery (was CLIENTQUERY) moved to server - Daniel Remenak
+* "Leave Game" menu item to leave a game without quitting - Daniel Remenak
+* Allow user to force input device to that of their choosing - Daniel Remenak
 * Tanks can drive over bumps - Dave Brosius
 * Remove Building scene nodes that are laying on the ground (or lower) - Dave Brosius
 * Bots drive around corners faster - Frank Thilo
