@@ -1,6 +1,11 @@
 recent bugs
 ------------
 
+- SDL issues remaining are 1) pause on key-driving during spawn, 2)
+  mouse-driving while windowed is flipped, 3) window flashes twice
+  when geometry matches current, and 4) secondary display is blacked
+  out when fullscreen :)
+
 - sending bzfs a single byte udp packet sends bzfs into lala land. (trepan)
 
 - bzfrelay is probably broken for current net protocol. Should be just
