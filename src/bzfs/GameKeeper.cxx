@@ -213,6 +213,7 @@ void GameKeeper::Player::signingOn(bool ctf)
   accessInfo.setName(player.getCallSign());
   player.resetPlayer(ctf);
   player.signingOn();
+  lagInfo.reset();
 }
 
 int GameKeeper::Player::getPlayerIDByName(const std::string &name)

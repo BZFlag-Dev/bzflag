@@ -24,6 +24,9 @@ public:
    */
   LagInfo(PlayerInfo *_info);
 
+  /** Resetting lag value
+  */
+  void        reset();
   /** Getting lag value
   */
   int         getLag();

@@ -20,6 +20,10 @@ LagInfo::LagInfo(PlayerInfo *_info)
   : info(_info), lagavg(0), jitteravg(0), lostavg(0), lagalpha(1),
     jitteralpha(1), lostalpha(1), lagcount(0), laglastwarn(0), lagwarncount(0),
     pingpending(false), pingseqno(0), pingssent(0), lasttimestamp(0.0f) {
+}
+
+void LagInfo::reset()
+{
   nextping       = info->now;
   nextping      += 10.0;
   lastupdate     = info->now;
@@ -86,6 +90,8 @@ int LagInfo::updatePingLag(void *buf, bool &warn, bool &kick) {
 }
 
 void LagInfo::updateLag(float timestamp, bool ooo) {
+  if (!info->isPlaying())
+    return;
   if (ooo) {
     lostavg   = lostavg * (1 - lostalpha) + lostalpha;
     lostalpha = lostalpha / (0.99f + lostalpha);
