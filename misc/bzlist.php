@@ -99,7 +99,6 @@ function bzfquery ($hostport) {
    return bzfquery1910($server,$fp);
    break;
   default:
-    # FIXME should be a switch statement and handle other bzfs versions
     echo "incompatible version\n";
     fclose($fp);
     return $server;
