@@ -1254,7 +1254,7 @@ void handlePollCmd(int t, const char *message)
     for (int j = 0; j < curMaxPlayers; j++) {
       // any registered/known users on the server (including observers) are eligible to vote
       if (player[j].isExisting()) {
-	arbiter->grantSuffrage(player[j].getCallsign());
+	arbiter->grantSuffrage(player[j].getCallSign());
       }
     }
 
