@@ -98,15 +98,6 @@
 			Filter="cpp;c;cxx;def;odl;idl;hpj;bat;asm;asmx"
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}">
 			<File
-				RelativePath="..\..\src\c-ares\adig.c">
-			</File>
-			<File
-				RelativePath="..\..\src\c-ares\ahost.c">
-			</File>
-			<File
-				RelativePath="..\..\src\c-ares\ares.h">
-			</File>
-			<File
 				RelativePath="..\..\src\c-ares\ares__close_sockets.c">
 			</File>
 			<File
@@ -120,9 +111,6 @@
 			</File>
 			<File
 				RelativePath="..\..\src\c-ares\ares_destroy.c">
-			</File>
-			<File
-				RelativePath="..\..\src\c-ares\ares_dns.h">
 			</File>
 			<File
 				RelativePath="..\..\src\c-ares\ares_expand_name.c">
@@ -158,9 +146,6 @@
 				RelativePath="..\..\src\c-ares\ares_parse_ptr_reply.c">
 			</File>
 			<File
-				RelativePath="..\..\src\c-ares\ares_private.h">
-			</File>
-			<File
 				RelativePath="..\..\src\c-ares\ares_process.c">
 			</File>
 			<File
@@ -182,12 +167,6 @@
 				RelativePath="..\..\src\c-ares\ares_version.c">
 			</File>
 			<File
-				RelativePath="..\..\src\c-ares\ares_version.h">
-			</File>
-			<File
-				RelativePath="..\..\src\c-ares\nameser.h">
-			</File>
-			<File
 				RelativePath="..\..\src\c-ares\windows_port.c">
 			</File>
 		</Filter>
@@ -195,15 +174,27 @@
 			Name="Header Files"
 			Filter="h;hpp;hxx;hm;inl;inc;xsd"
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}">
+			<File
+				RelativePath="..\..\src\c-ares\ares.h">
+			</File>
+			<File
+				RelativePath="..\..\src\c-ares\ares_dns.h">
+			</File>
+			<File
+				RelativePath="..\..\src\c-ares\ares_private.h">
+			</File>
+			<File
+				RelativePath="..\..\src\c-ares\ares_version.h">
+			</File>
+			<File
+				RelativePath="..\..\src\c-ares\nameser.h">
+			</File>
 		</Filter>
 		<Filter
 			Name="Resource Files"
 			Filter="rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx"
 			UniqueIdentifier="{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}">
 		</Filter>
-		<File
-			RelativePath=".\ReadMe.txt">
-		</File>
 	</Files>
 	<Globals>
 	</Globals>
