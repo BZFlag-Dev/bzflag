@@ -21,7 +21,10 @@
 
 
 /** This class is a client that connects to a BZFlag server and has
-    functions for sending and receiving messages. */
+    functions for sending and receiving messages. If you give it
+    a pointer to a BZAdminUI in the constructor it will use that UI
+    for communication with the user. 
+*/
 class BZAdminClient {
 public:
 
@@ -77,7 +80,9 @@ public:
       do that yourself. */
   void setUI(BZAdminUI* bzInterface);
 
-  /** Waits until we think the server has processed all our input so far. */
+  /** Waits until we think the server has processed all our input so far. 
+      This is done by sending a private message to ourself and waiting until we
+      receive it from the server. */
   void waitForServer();
 
 protected:
