@@ -66,6 +66,7 @@ noinst_HEADERS =			\
 	NetHandler.h			\
 	Obstacle.h			\
 	ObstacleMgr.h			\
+	ObstacleModifier.h		\
 	ObstacleSceneNodeGenerator.h	\
 	OpenGLDisplayList.h		\
 	OpenGLGState.h			\

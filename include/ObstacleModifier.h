@@ -10,39 +10,39 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifndef __CUSTOM_GROUP_H__
-#define __CUSTOM_GROUP_H__
+#ifndef	BZF_OBSTACLE_MODIFIER_H
+#define	BZF_OBSTACLE_MODIFIER_H
 
-#include "common.h"
 
-/* system interface headers */
-#include <string>
-#include <vector>
-#include <iostream>
-
-/* local interface headers */
-#include "WorldInfo.h"
-#include "WorldFileLocation.h"
-
+class Obstacle;
 class GroupInstance;
 
-class CustomGroup : public WorldFileLocation {
+class ObstacleModifier {
   public:
-    CustomGroup(const std::string& groupdef);
-    ~CustomGroup();
-    virtual bool read(const char *cmd, std::istream&);
-    virtual void writeToGroupDef(GroupDefinition*) const;
+    ObstacleModifier();
+    ObstacleModifier(const ObstacleModifier& obsMod,
+                     const GroupInstance& grpinst);
+    ~ObstacleModifier();
+        
+    void execute(Obstacle* obstacle) const;
 
-  protected:
-    mutable GroupInstance* group;
+  private:
+    bool modifyTeam;
+    int team;
+    bool modifyColor;
+    float tint[4];
+    bool modifyPhysicsDriver;
+    int phydrv;
 };
 
-#endif  /* __CUSTOM_GROUP_H__ */
 
-// Local variables: ***
-// mode: C++ ***
+#endif // BZF_OBSTACLE_MODIFIER_H
+
+// Local Variables: ***
+// mode:C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
+

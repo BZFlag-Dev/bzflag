@@ -25,6 +25,7 @@
 // common headers
 #include "Pack.h"
 #include "MeshTransform.h"
+#include "ObstacleModifier.h"
 
 // obstacle headers
 #include "Obstacle.h"
@@ -47,16 +48,12 @@
 //
 
 
-GroupInstance::GroupInstance(const std::string& _groupdef,
-                             const MeshTransform& xform)
+GroupInstance::GroupInstance(const std::string& _groupdef)
 {
   groupdef = _groupdef;
-  transform = xform;
-
   modifyTeam = false;
   modifyColor = false;
   modifyPhysicsDriver = false;
-  
   return;
 }
 
@@ -72,6 +69,13 @@ GroupInstance::GroupInstance()
 
 GroupInstance::~GroupInstance()
 {
+  return;
+}
+
+
+void GroupInstance::setTransform(const MeshTransform& _transform)
+{
+  transform = _transform;
   return;
 }
 
@@ -116,6 +120,24 @@ void* GroupInstance::pack(void* buf)
 {
   buf = nboPackStdString(buf, groupdef);
   buf = transform.pack(buf);
+
+  uint8_t bits = 0;
+  if (modifyTeam) 	   bits |= (1 << 0);
+  if (modifyColor) 	   bits |= (1 << 1);
+  if (modifyPhysicsDriver) bits |= (1 << 2);
+  buf = nboPackUByte(buf, bits);
+
+  if (modifyTeam) {
+    buf = nboPackUShort(buf, team);
+  }
+  if (modifyColor) {
+    buf = nboPackVector(buf, tint);
+    buf = nboPackFloat(buf, tint[3]);
+  }
+  if (modifyPhysicsDriver) {
+    buf = nboPackInt(buf, phydrv);
+  }
+  
   return buf;
 }
 
@@ -124,6 +146,26 @@ void* GroupInstance::unpack(void* buf)
 {
   buf = nboUnpackStdString(buf, groupdef);
   buf = transform.unpack(buf);
+
+  uint8_t bits;
+  buf = nboUnpackUByte(buf, bits);
+  modifyTeam = 		((bits & (1 << 0)) == 0) ? false : true;
+  modifyColor =		((bits & (1 << 1)) == 0) ? false : true;
+  modifyPhysicsDriver = ((bits & (1 << 2)) == 0) ? false : true;
+  
+  if (modifyTeam) {
+    uint16_t tmpTeam;
+    buf = nboUnpackUShort(buf, tmpTeam);
+    team = (int)tmpTeam;
+  }
+  if (modifyColor) {
+    buf = nboUnpackVector(buf, tint);
+    buf = nboUnpackFloat(buf, tint[3]);
+  }
+  if (modifyPhysicsDriver) {
+    buf = nboUnpackInt(buf, phydrv);
+  }
+  
   return buf;
 }
 
@@ -133,6 +175,16 @@ int GroupInstance::packSize()
   int fullSize = 0;
   fullSize += nboStdStringPackSize(groupdef);
   fullSize += transform.packSize();
+  fullSize += sizeof(uint8_t);
+  if (modifyTeam) {
+    fullSize += sizeof(uint16_t);
+  }
+  if (modifyColor) {
+    fullSize += sizeof(float[4]);
+  }
+  if (modifyPhysicsDriver) {
+    fullSize += sizeof(int32_t);
+  }
   return fullSize;
 }
 
@@ -141,6 +193,17 @@ void GroupInstance::print(std::ostream& out, const std::string& indent) const
 {
   out << indent << "group " << groupdef << std::endl;
   transform.printTransforms(out, indent);
+  if (modifyTeam) {
+    out << indent << "  team " << team << std::endl;
+  }
+  if (modifyColor) {
+    out << indent << "  tint " << tint[0] << " " << tint[1] << " "
+                               << tint[2] << " " << tint[3] << " "
+                               << std::endl;
+  }
+  if (modifyPhysicsDriver) {
+    out << indent << "  phydrv " << phydrv << std::endl;
+  }
   out << indent << "end" << std::endl << std::endl;
   return;
 }
@@ -262,6 +325,7 @@ static MeshObstacle* getContainedMesh(int type, Obstacle* obs)
 
 
 void GroupDefinition::makeGroups(const MeshTransform& xform,
+                                 const ObstacleModifier& obsMod,
                                  GroupDefinition* world ) const
 {
   if (active) {
@@ -278,11 +342,14 @@ void GroupDefinition::makeGroups(const MeshTransform& xform,
       if (obs->isValid()) {
         obs->setSource(Obstacle::GroupDefSource);
         world->addObstacle(obs);
+        obsMod.execute(obs);
+        // generate container meshes
         MeshObstacle* mesh = getContainedMesh(type, obs);
         if (mesh != NULL) {
           mesh->setSource(Obstacle::GroupDefSource |
                           Obstacle::ContainerSource);
           world->addObstacle(mesh);
+          obsMod.execute(mesh);
         }
       }
     }
@@ -293,9 +360,10 @@ void GroupDefinition::makeGroups(const MeshTransform& xform,
     const GroupDefinition* groupDef = 
       OBSTACLEMGR.findGroupDef(group->getGroupDef());
     if (groupDef != NULL) {
+      ObstacleModifier newObsMod(obsMod, *group);
       MeshTransform tmpXform = xform;
       tmpXform.append(group->getTransform());
-      groupDef->makeGroups(tmpXform, world);
+      groupDef->makeGroups(tmpXform, newObsMod, world);
     }
   }
 
@@ -536,7 +604,9 @@ void GroupDefinitionMgr::makeWorld()
     const GroupDefinition* groupDef = 
       OBSTACLEMGR.findGroupDef(group->getGroupDef());
     if (groupDef != NULL) {
-      groupDef->makeGroups(group->getTransform(), &world);
+      ObstacleModifier noMods;
+      ObstacleModifier newObsMod(noMods, *group);
+      groupDef->makeGroups(group->getTransform(), newObsMod, &world);
     }
   }
   

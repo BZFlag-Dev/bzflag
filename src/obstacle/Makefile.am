@@ -24,11 +24,12 @@ libObstacle_a_SOURCES =			\
 	MeshFace.cxx			\
 	MeshObstacle.cxx		\
 	MeshUtils.h			\
-	Obstacle.cxx			\
 	PyramidBuilding.cxx		\
 	Teleporter.cxx			\
 	TetraBuilding.cxx		\
 	WallObstacle.cxx		\
+	Obstacle.cxx			\
+	ObstacleModifier.cxx		\
 	ObstacleList.cxx		\
 	ObstacleMgr.cxx
 else
@@ -40,11 +41,12 @@ libObstacle_a_SOURCES =			\
 	BoxBuilding.cxx			\
 	MeshFace.cxx			\
 	MeshObstacle.cxx		\
-	Obstacle.cxx			\
 	PyramidBuilding.cxx		\
 	Teleporter.cxx			\
 	TetraBuilding.cxx		\
 	WallObstacle.cxx		\
+	Obstacle.cxx			\
+	ObstacleModifier.cxx		\
 	ObstacleList.cxx		\
 	ObstacleMgr.cxx
 endif

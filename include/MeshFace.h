@@ -31,6 +31,7 @@
 class MeshFace : public Obstacle {
 
   friend class MeshObstacle;
+  friend class ObstacleModifier;
 
   public:
     MeshFace(class MeshObstacle* mesh);

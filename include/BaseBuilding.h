@@ -22,6 +22,9 @@
 #include "Obstacle.h"
 
 class BaseBuilding : public Obstacle {
+
+  friend class ObstacleModifier;
+
   public:
 			BaseBuilding();
 			BaseBuilding(const float *pos, float rotation,

@@ -23,7 +23,6 @@ class ObstacleList {
     ObstacleList();
     ~ObstacleList();
     
-//    void add(Obstacle* obs);
     void clear();
     void tighten();
     void push_back(Obstacle* obs);

@@ -18,20 +18,65 @@
 #include <string>
 
 /* common headers */
+#include "global.h" // for CtfTeams
 #include "ObstacleMgr.h"
+#include "ParseColor.h"
+#include "PhysicsDriver.h"
 
 
-CustomGroup::CustomGroup(const std::string& _groupdef)
+CustomGroup::CustomGroup(const std::string& groupdef)
 {
-  groupdef = _groupdef;
+  group = new GroupInstance(groupdef);
+  if (groupdef.size() <= 0) {
+    std::cout << "warning: group instance has no group definition" << std::endl;
+  }
+  return;
+}
+
+
+CustomGroup::~CustomGroup()
+{
+  delete group;
   return;
 }
 
 
 bool CustomGroup::read(const char *cmd, std::istream& input) {
-  if (!WorldFileLocation::read(cmd, input)) {
+  
+  if (strcmp(cmd, "team") == 0) {
+    int team;
+    if (!(input >> team) || (team < 0) || (team >= CtfTeams)) {
+      std::cout << "bad team specification" << std::endl;
+      return false;
+    } else {
+      group->setTeam(team);
+    }
+  }
+  else if (strcasecmp(cmd, "tint") == 0) {
+    float tint[4];
+    if (!parseColorStream(input, tint)) {
+      std::cout << "bad " << cmd << " specification" << std::endl;
+    } else {
+      group->setTint(tint);
+    }
+  }
+  else if (strcasecmp(cmd, "phydrv") == 0) {
+    std::string drvname;
+    if (!(input >> drvname)) {
+      std::cout << "missing Physics Driver parameter" << std::endl;
+      return false;
+    }
+    int phydrv = PHYDRVMGR.findDriver(drvname);
+    if ((phydrv == -1) && (drvname != "-1")) {
+      std::cout << "couldn't find PhysicsDriver: " << drvname << std::endl;
+    } else {
+      group->setPhysicsDriver(phydrv);
+    }
+  }
+  else if (!WorldFileLocation::read(cmd, input)) {
     return false;
   }
+  
   return true;
 }
 
@@ -52,13 +97,15 @@ void CustomGroup::writeToGroupDef(GroupDefinition *grpdef) const
   }
   xform.append(transform);
   
+  group->setTransform(xform);
+  
   // make the group instance
-  if (groupdef.size() > 0) {
-    GroupInstance* instance = new GroupInstance(groupdef, xform);
-    grpdef->addGroupInstance(instance);
+  if (group->getGroupDef().size() > 0) {
+    grpdef->addGroupInstance(group);
   } else {
-    std::cout << "warning: group instance has no group definition" << std::endl;
+    delete group;
   }
+  group = NULL;
   
   return;
 }

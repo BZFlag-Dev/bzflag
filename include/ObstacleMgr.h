@@ -35,6 +35,7 @@ class ArcObstacle;
 class ConeObstacle;
 class SphereObstacle;
 class TetraBuilding;
+class ObstacleModifier;
 
 
 //
@@ -43,15 +44,18 @@ class TetraBuilding;
 //
 
 class GroupInstance {
+
+  friend class ObstacleModifier;
+
   public:
-    GroupInstance(const std::string& groupdef,
-                  const MeshTransform& transform);
+    GroupInstance(const std::string& groupdef);
     GroupInstance();
     ~GroupInstance();
     
     void setTeam(int team);
     void setTint(const float tint[4]);
     void setPhysicsDriver(int phydrv);
+    void setTransform(const MeshTransform&);
     
     const std::string& getGroupDef() const;
     const MeshTransform& getTransform() const;
@@ -91,6 +95,7 @@ class GroupDefinition {
     void clear(); // delete the list and the obstacles
     void tighten(); // reduce memory usage
     void makeGroups(const MeshTransform& xform,
+                    const ObstacleModifier& obsMod,
                     GroupDefinition* world) const;
     void replaceBasesWithBoxes();
 
