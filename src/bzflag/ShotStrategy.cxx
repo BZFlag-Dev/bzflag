@@ -470,6 +470,8 @@ float			SegmentedShotStrategy::checkHit(const BaseLocalPlayer* tank,
   const float (*tankBBox)[3] = tank->getLastMotionBBox();
   if (!isOverlapping(bbox, tankBBox)) return minTime;
 
+  float shotRadius = BZDB.eval(StateDatabase::BZDB_SHOTRADIUS);
+
   // check each segment in interval (prevTime,currentTime]
   const float dt = currentTime - prevTime;
   const int numSegments = segments.size();
@@ -502,7 +504,7 @@ float			SegmentedShotStrategy::checkHit(const BaseLocalPlayer* tank,
       static float origin[3] = { 0.0f, 0.0f, 0.0f };
       t = timeRayHitsBlock(relativeRay, origin, tank->getAngle(),
 			0.5f * BZDB.eval(StateDatabase::BZDB_TANKLENGTH),
-			ShotRadius,
+			shotRadius,
 			0.5f * BZDBCache::tankHeight);
     }
     else {
@@ -566,14 +568,16 @@ void			SegmentedShotStrategy::radarRender() const
   const int length = BZDBCache::linedRadarShots;
   const int size   = BZDBCache::sizedRadarShots;
 
+  float shotTailLength = BZDB.eval(StateDatabase::BZDB_SHOTTAILLENGTH);
+
   // Display leading lines
   if (length > 0) {
     const float* vel = getPath().getVelocity();
     const float d = 1.0f / hypotf(vel[0], hypotf(vel[1], vel[2]));
     float dir[3];
-    dir[0] = vel[0] * d * ShotTailLength * length;
-    dir[1] = vel[1] * d * ShotTailLength * length;
-    dir[2] = vel[2] * d * ShotTailLength * length;
+    dir[0] = vel[0] * d * shotTailLength * length;
+    dir[1] = vel[1] * d * shotTailLength * length;
+    dir[2] = vel[2] * d * shotTailLength * length;
     glBegin(GL_LINES);
     glVertex2fv(orig);
     glVertex2f(orig[0] + dir[0], orig[1] + dir[1]);
@@ -1322,6 +1326,8 @@ float			GuidedMissileStrategy::checkHit(const BaseLocalPlayer* tank,
   else if (tank->getFlag() == Flags::Thief) radius *= BZDB.eval(StateDatabase::BZDB_THIEFTINYFACTOR);
   const float radius2 = radius * radius;
 
+  float shotRadius = BZDB.eval(StateDatabase::BZDB_SHOTRADIUS);
+
   // tank is positioned from it's bottom so shift position up by
   // half a tank height.
   Ray tankLastMotionRaw = tank->getLastMotion();
@@ -1361,7 +1367,7 @@ float			GuidedMissileStrategy::checkHit(const BaseLocalPlayer* tank,
       static float origin[3] = { 0.0f, 0.0f, 0.0f };
       t = timeRayHitsBlock(relativeRay, origin, tank->getAngle(),
 		      0.5f * BZDB.eval(StateDatabase::BZDB_TANKLENGTH),
-		      ShotRadius,
+		      shotRadius,
 		      BZDBCache::tankHeight);
     }
     else {
@@ -1467,14 +1473,15 @@ void			GuidedMissileStrategy::radarRender() const
   const int length = BZDBCache::linedRadarShots;
   const int size   = BZDBCache::sizedRadarShots;
 
+  float shotTailLength = BZDB.eval(StateDatabase::BZDB_SHOTTAILLENGTH);
   // Display leading lines
   if (length > 0) {
     const float* vel = getPath().getVelocity();
     const float d = 1.0f / hypotf(vel[0], hypotf(vel[1], vel[2]));
     float dir[3];
-    dir[0] = vel[0] * d * ShotTailLength * length;
-    dir[1] = vel[1] * d * ShotTailLength * length;
-    dir[2] = vel[2] * d * ShotTailLength * length;
+    dir[0] = vel[0] * d * shotTailLength * length;
+    dir[1] = vel[1] * d * shotTailLength * length;
+    dir[2] = vel[2] * d * shotTailLength * length;
     glBegin(GL_LINES);
     glVertex2fv(orig);
     glVertex2f(orig[0] + dir[0], orig[1] + dir[1]);

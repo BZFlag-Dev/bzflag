@@ -57,16 +57,10 @@ enum TeamColor {
 const float		Epsilon =	ZERO_TOLERANCE;	// arbitrary
 const float		Infinity =	MAXFLOAT;	// arbitrary
 
-#define	DEFAULT_GRAVITY	-9.81f
 #define DEFAULT_WORLD	800
 
 // universe info
 const float		BaseSize =	60.0f;					// meters
-
-// rough shot geometry
-const float		ShotRadius =	0.5f;		// meters
-const float		ShotLength =	0.5f;		// meters
-const float		ShotTailLength=	4.0f;		// meters
 
 // box geometry
 const float		BoxBase =	30.0f;// meters
