@@ -17,10 +17,10 @@ static const char copyright[] = "Copyright (c) 1993 - 2003 Tim Riker";
 #define PRINTSCORE to include code to dump score info to stdout
 
 // Like verbose debug messages?
-#define DEBUG1 if (clOptions->debug >= 1) printf
-#define DEBUG2 if (clOptions->debug >= 2) printf
-#define DEBUG3 if (clOptions->debug >= 3) printf
-#define DEBUG4 if (clOptions->debug >= 4) printf
+#define DEBUG1 if (clOptions.debug >= 1) printf
+#define DEBUG2 if (clOptions.debug >= 2) printf
+#define DEBUG3 if (clOptions.debug >= 3) printf
+#define DEBUG4 if (clOptions.debug >= 4) printf
 
 #define SERVERLOGINMSG true
 
@@ -413,7 +413,7 @@ class ListServerLink {
 };
 
 // Command Line Options
-static CmdLineOptions *clOptions;
+static CmdLineOptions clOptions;
 
 // server address to listen on
 static Address serverAddress;
@@ -702,7 +702,7 @@ bool CustomBase::read(const char *cmd, istream& input) {
   else {
     if (!WorldFileObstacle::read(cmd, input))
       return false;
-    if(!clOptions->flagsOnBuildings && (pos[2] != 0)) {
+    if(!clOptions.flagsOnBuildings && (pos[2] != 0)) {
       printf("Dropping team base down to 0 because -fb not set\n");
       pos[2] = 0;
     }
@@ -929,6 +929,7 @@ static void pwrite(int playerIndex, const void *b, int l)
 #ifdef NETWORK_STATS
   countMessage(playerIndex, code, len, 1);
 #endif
+
   // Check if UDP Link is used instead of TCP, if so jump into puwrite
   if (p.ulinkup) {
 
@@ -1037,8 +1038,8 @@ static void broadcastMessage(uint16_t code, int len, const void *msg)
 static void sendUDPupdate(int playerIndex)
 {
   void *buf, *bufStart = getDirectMessageBuffer();
-  buf = nboPackUShort(bufStart, clOptions->wksPort);
-  DEBUG4("LOCAL Update to %d port %d\n",playerIndex, clOptions->wksPort);
+  buf = nboPackUShort(bufStart, clOptions.wksPort);
+  DEBUG4("LOCAL Update to %d port %d\n",playerIndex, clOptions.wksPort);
   // send it
   directMessage(playerIndex, MsgUDPLinkRequest, (char*)buf - (char*)bufStart, bufStart);
 }
@@ -1346,7 +1347,7 @@ static void openListServer(int index)
 static void sendMessageToListServer(const char *msg)
 {
   // ignore if not publicizing
-  if (!clOptions->publicizeServer)
+  if (!clOptions.publicizeServer)
     return;
 
   // start opening connections if not already doing so
@@ -1398,24 +1399,24 @@ static void sendMessageToListServerForReal(int index)
 
     // send ADD message
     sprintf(msg, "%s %s %d %s %.*s %.256s\n\n", link.nextMessage,
-	clOptions->publicizedAddress.c_str(),
+	clOptions.publicizedAddress.c_str(),
 	BZVERSION % 1000,
 	ServerVersion,
 	PingPacketHexPackedSize, gameInfo,
-	clOptions->publicizedTitle);
+	clOptions.publicizedTitle);
   }
   else if (strcmp(link.nextMessage, "REMOVE") == 0) {
     // send REMOVE
     sprintf(msg, "%s %s\n\n", link.nextMessage,
-	clOptions->publicizedAddress.c_str());
+	clOptions.publicizedAddress.c_str());
   }
   else if (strcmp(link.nextMessage, "SETNUM") == 0) {
     // pretend there are no players if the game is over
     if (gameOver)
-      sprintf(msg, "%s %s 0 0 0 0 0\n\n", link.nextMessage, clOptions->publicizedAddress.c_str());
+      sprintf(msg, "%s %s 0 0 0 0 0\n\n", link.nextMessage, clOptions.publicizedAddress.c_str());
     else
       sprintf(msg, "%s %s %d %d %d %d %d\n\n", link.nextMessage,
-	  clOptions->publicizedAddress.c_str(),
+	  clOptions.publicizedAddress.c_str(),
 	  team[0].team.activeSize,
 	  team[1].team.activeSize,
 	  team[2].team.activeSize,
@@ -1438,11 +1439,11 @@ static void publicize()
   listServerLinksCount	= 0;
 
   // parse the list server URL if we're publicizing ourself
-  if (clOptions->publicizeServer && clOptions->publicizedTitle) {
+  if (clOptions.publicizeServer && clOptions.publicizedTitle) {
     // dereference URL, including following redirections.  get no
     // more than MaxListServers urls.
     std::vector<std::string> urls, failedURLs;
-    urls.push_back(clOptions->listServerURL);
+    urls.push_back(clOptions.listServerURL);
     BzfNetwork::dereferenceURLs(urls, MaxListServers, failedURLs);
 
     for (unsigned int j = 0; j < failedURLs.size(); ++j)
@@ -1500,13 +1501,13 @@ static bool serverStart()
 
   // look up service name and use that port if no port given on
   // command line.  if no service then use default port.
-  if (!clOptions->useGivenPort) {
+  if (!clOptions.useGivenPort) {
     struct servent *service = getservbyname("bzfs", "tcp");
     if (service) {
-      clOptions->wksPort = ntohs(service->s_port);
+      clOptions.wksPort = ntohs(service->s_port);
     }
   }
-  pingReply.serverId.port = addr.sin_port = htons(clOptions->wksPort);
+  pingReply.serverId.port = addr.sin_port = htons(clOptions.wksPort);
 
   // open well known service port
   wksSocket = socket(AF_INET, SOCK_STREAM, 0);
@@ -1524,7 +1525,7 @@ static bool serverStart()
   }
 #endif
   if (bind(wksSocket, (const struct sockaddr*)&addr, sizeof(addr)) == -1) {
-    if (!clOptions->useFallbackPort) {
+    if (!clOptions.useFallbackPort) {
       nerror("couldn't bind connect socket");
       close(wksSocket);
       return false;
@@ -1544,7 +1545,7 @@ static bool serverStart()
       pingReply.serverId.port = addr.sin_port;
 
     // fixup publicized name will want it here later
-    clOptions->wksPort = ntohs(addr.sin_port);
+    clOptions.wksPort = ntohs(addr.sin_port);
   }
 
   if (listen(wksSocket, 5) == -1) {
@@ -1555,7 +1556,7 @@ static bool serverStart()
   maxFileDescriptor = wksSocket;
 
   // udp socket
-  if (clOptions->alsoUDP) {
+  if (clOptions.alsoUDP) {
     int n;
     // we open a udp socket on the same port if alsoUDP
     if ((udpSocket = socket(AF_INET, SOCK_DGRAM, 0)) < 0) {
@@ -1587,7 +1588,7 @@ static bool serverStart()
       close(udpSocket);
       return false;
     }
-    addr.sin_port = htons(clOptions->wksPort);
+    addr.sin_port = htons(clOptions.wksPort);
     if (bind(udpSocket, (struct sockaddr *) &addr, sizeof(addr)) == -1) {
       nerror("couldn't bind udp listen port");
       close(wksSocket);
@@ -1603,9 +1604,9 @@ static bool serverStart()
   // open sockets to receive and reply to pings
   Address multicastAddress(BroadcastAddress);
   pingInSocket = openMulticast(multicastAddress, ServerPort, NULL,
-      clOptions->pingTTL, clOptions->pingInterface, "r", &pingInAddr);
+      clOptions.pingTTL, clOptions.pingInterface, "r", &pingInAddr);
   pingOutSocket = openMulticast(multicastAddress, ServerPort, NULL,
-      clOptions->pingTTL, clOptions->pingInterface, "w", &pingOutAddr);
+      clOptions.pingTTL, clOptions.pingInterface, "w", &pingOutAddr);
   pingBcastSocket = openBroadcast(BroadcastPort, NULL, &pingBcastAddr);
   if (pingInSocket == -1 || pingOutSocket == -1) {
     closeMulticast(pingInSocket);
@@ -1717,10 +1718,10 @@ static bool startPlayerPacketRelay(int playerIndex)
   Address multicastAddress(BroadcastAddress);
   if (relayInSocket == -1)
     relayInSocket = openMulticast(multicastAddress, BroadcastPort, NULL,
-	clOptions->pingTTL, clOptions->pingInterface, "r", &relayInAddr);
+	clOptions.pingTTL, clOptions.pingInterface, "r", &relayInAddr);
   if (relayOutSocket == -1)
     relayOutSocket = openMulticast(multicastAddress, BroadcastPort, NULL,
-	clOptions->pingTTL, clOptions->pingInterface, "w", &relayOutAddr);
+	clOptions.pingTTL, clOptions.pingInterface, "w", &relayOutAddr);
   if (relayInSocket == -1 || relayOutSocket == -1) {
     stopPlayerPacketRelay();
 
@@ -1937,11 +1938,11 @@ static WorldInfo *defineWorldFromFile(const char *filename)
     return NULL;
   }
 
-  if (clOptions->gameStyle & TeamFlagGameStyle) {
+  if (clOptions.gameStyle & TeamFlagGameStyle) {
     for (int i = RedTeam; i <= PurpleTeam; i++) {
-      if ((clOptions->maxTeam[i] > 0) && !hasBase[i]) {
+      if ((clOptions.maxTeam[i] > 0) && !hasBase[i]) {
 	printf("base was not defined for team %i capture the flag game style removed.\n", i);
-	clOptions->gameStyle &= (~TeamFlagGameStyle);
+	clOptions.gameStyle &= (~TeamFlagGameStyle);
 	break;
       }
     }
@@ -1965,7 +1966,7 @@ static WorldInfo *defineWorldFromFile(const char *filename)
 
 static WorldInfo *defineTeamWorld()
 {
-  if (!clOptions->worldFile) {
+  if (!clOptions.worldFile) {
     world = new WorldInfo();
     if (!world)
       return NULL;
@@ -2028,7 +2029,7 @@ static WorldInfo *defineTeamWorld()
     world->addWall(-0.5f * WorldSize, 0.0f, 0.0f, 0.0f, 0.5f * WorldSize, WallHeight);
 
     // make pyramids
-    if (!clOptions->randomCTF || (clOptions->maxTeam[1] > 0)) {
+    if (!clOptions.randomCTF || (clOptions.maxTeam[1] > 0)) {
       // around red base
       world->addPyramid(
 	  basePos[1][0] + 0.5f * BaseSize - PyrBase,
@@ -2048,7 +2049,7 @@ static WorldInfo *defineTeamWorld()
 	  PyrBase, PyrBase, PyrHeight);
     }
 
-    if (!clOptions->randomCTF || (clOptions->maxTeam[2] > 0)) {
+    if (!clOptions.randomCTF || (clOptions.maxTeam[2] > 0)) {
       // around green base
       world->addPyramid(
 	  basePos[2][0] - 0.5f * BaseSize + PyrBase,
@@ -2068,7 +2069,7 @@ static WorldInfo *defineTeamWorld()
 	  PyrBase, PyrBase, PyrHeight);
     }
 
-    if (!clOptions->randomCTF || (clOptions->maxTeam[3] > 0)) {
+    if (!clOptions.randomCTF || (clOptions.maxTeam[3] > 0)) {
       // around blue base
       world->addPyramid(
 	  basePos[3][0] - 0.5f * BaseSize - PyrBase,
@@ -2088,7 +2089,7 @@ static WorldInfo *defineTeamWorld()
 	  PyrBase, PyrBase, PyrHeight);
     }
 
-    if (!clOptions->randomCTF || (clOptions->maxTeam[4] > 0)) {
+    if (!clOptions.randomCTF || (clOptions.maxTeam[4] > 0)) {
       // around purple base
       world->addPyramid(
 	  basePos[4][0] - 0.5f * BaseSize - PyrBase,
@@ -2109,18 +2110,18 @@ static WorldInfo *defineTeamWorld()
     }
 
     // create symmetric map of random buildings for random CTF mode
-    if (clOptions->randomCTF) {
+    if (clOptions.randomCTF) {
       int i;
       float h = BoxHeight;
-      bool redGreen = clOptions->maxTeam[1] > 0 || clOptions->maxTeam[2] > 0;
-      bool bluePurple = clOptions->maxTeam[3] > 0 || clOptions->maxTeam[4] > 0;
+      bool redGreen = clOptions.maxTeam[1] > 0 || clOptions.maxTeam[2] > 0;
+      bool bluePurple = clOptions.maxTeam[3] > 0 || clOptions.maxTeam[4] > 0;
       if (!redGreen && !bluePurple) {
 	fprintf(stderr, "need some teams, use -mp");
 	exit(20);
       }
       const int numBoxes = int((0.5 + 0.4 * bzfrand()) * CitySize * CitySize);
       for (i = 0; i < numBoxes;) {
-	if (clOptions->randomHeights)
+	if (clOptions.randomHeights)
 	  h = BoxHeight * (2.0f * (float)bzfrand() + 0.5f);
 	float x=WorldSize * ((float)bzfrand() - 0.5f);
 	float y=WorldSize * ((float)bzfrand() - 0.5f);
@@ -2164,7 +2165,7 @@ static WorldInfo *defineTeamWorld()
       h = PyrHeight;
       const int numPyrs = int((0.5 + 0.4 * bzfrand()) * CitySize * CitySize * 2);
       for (i = 0; i < numPyrs; i++) {
-	if (clOptions->randomHeights)
+	if (clOptions.randomHeights)
 	  h = PyrHeight * (2.0f * (float)bzfrand() + 0.5f);
 	float x=WorldSize * ((float)bzfrand() - 0.5f);
 	float y=WorldSize * ((float)bzfrand() - 0.5f);
@@ -2205,7 +2206,7 @@ static WorldInfo *defineTeamWorld()
       }
 
       // make teleporters
-      if (clOptions->useTeleporters) {
+      if (clOptions.useTeleporters) {
 	const int teamFactor = redGreen && bluePurple ? 4 : 2;
 	const int numTeleporters = (8 + int(8 * (float)bzfrand())) / teamFactor * teamFactor;
 	const int numLinks = 2 * numTeleporters / teamFactor;
@@ -2331,31 +2332,31 @@ static WorldInfo *defineTeamWorld()
 	for (int i = 0; i < CitySize/2; i++)
       if (i != CitySize/2 || j != CitySize/2) {
 	float h = BoxHeight;
-	if (clOptions->randomHeights)
+	if (clOptions.randomHeights)
 	  h *= 2.0f * (float)bzfrand() + 0.5f;
 	world->addBox(
 	    xmin + float(i) * (2.0f * BoxBase + AvenueSize),
 	    ymin + float(j) * (2.0f * BoxBase + AvenueSize), 0.0f,
-	    clOptions->randomBoxes ? (0.5f * M_PI * ((float)bzfrand() - 0.5f)) : 0.0f,
+	    clOptions.randomBoxes ? (0.5f * M_PI * ((float)bzfrand() - 0.5f)) : 0.0f,
 	    BoxBase, BoxBase, h);
 	world->addBox(
 	    -1.0f * (xmin + float(i) * (2.0f * BoxBase + AvenueSize)),
 	    -1.0f * (ymin + float(j) * (2.0f * BoxBase + AvenueSize)), 0.0f,
-	    clOptions->randomBoxes ? (0.5f * M_PI * ((float)bzfrand() - 0.5f)) : 0.0f,
+	    clOptions.randomBoxes ? (0.5f * M_PI * ((float)bzfrand() - 0.5f)) : 0.0f,
 	    BoxBase, BoxBase, h);
 	world->addBox(
 	    -1.0f * (ymin + float(j) * (2.0f * BoxBase + AvenueSize)),
 	    xmin + float(i) * (2.0f * BoxBase + AvenueSize), 0.0f,
-	    clOptions->randomBoxes ? (0.5f * M_PI * ((float)bzfrand() - 0.5f)) : 0.0f,
+	    clOptions.randomBoxes ? (0.5f * M_PI * ((float)bzfrand() - 0.5f)) : 0.0f,
 	    BoxBase, BoxBase, h);
 	world->addBox(
 	    ymin + float(j) * (2.0f * BoxBase + AvenueSize),
 	    -1.0f * (xmin + float(i) * (2.0f * BoxBase + AvenueSize)), 0.0f,
-	    clOptions->randomBoxes ? (0.5f * M_PI * ((float)bzfrand() - 0.5f)) : 0.0f,
+	    clOptions.randomBoxes ? (0.5f * M_PI * ((float)bzfrand() - 0.5f)) : 0.0f,
 	    BoxBase, BoxBase, h);
       }
       // add teleporters
-      if (clOptions->useTeleporters) {
+      if (clOptions.useTeleporters) {
 	const float xoff = BoxBase + 0.5f * AvenueSize;
 	const float yoff = BoxBase + 0.5f * AvenueSize;
 	world->addTeleporter( xmin - xoff,  ymin - yoff, 0.0f, 1.25f * M_PI,
@@ -2396,7 +2397,7 @@ static WorldInfo *defineTeamWorld()
 
     return world;
   } else {
-    return defineWorldFromFile(clOptions->worldFile);
+    return defineWorldFromFile(clOptions.worldFile);
   }
 }
 
@@ -2418,7 +2419,7 @@ static WorldInfo *defineRandomWorld()
   float h = BoxHeight;
   const int numBoxes = int((0.5f + 0.7f * bzfrand()) * CitySize * CitySize);
   for (i = 0; i < numBoxes; i++) {
-    if (clOptions->randomHeights)
+    if (clOptions.randomHeights)
       h = BoxHeight * ( 2.0f * (float)bzfrand() + 0.5f);
       world->addBox(WorldSize * ((float)bzfrand() - 0.5f),
 	  WorldSize * ((float)bzfrand() - 0.5f),
@@ -2430,7 +2431,7 @@ static WorldInfo *defineRandomWorld()
   h = PyrHeight;
   const int numPyrs = int((0.5f + 0.7f * bzfrand()) * CitySize * CitySize);
   for (i = 0; i < numPyrs; i++) {
-    if (clOptions->randomHeights)
+    if (clOptions.randomHeights)
       h = PyrHeight * ( 2.0f * (float)bzfrand() + 0.5f);
       world->addPyramid(WorldSize * ((float)bzfrand() - 0.5f),
 	  WorldSize * ((float)bzfrand() - 0.5f),
@@ -2438,7 +2439,7 @@ static WorldInfo *defineRandomWorld()
 	  PyrBase, PyrBase, h);
   }
 
-  if (clOptions->useTeleporters) {
+  if (clOptions.useTeleporters) {
     // make teleporters
     int (*linked)[2] = new int[numTeleporters][2];
     for (i = 0; i < numTeleporters;) {
@@ -2495,13 +2496,13 @@ static bool defineWorld()
   delete[] worldDatabase;
 
   // make world and add buildings
-   if (clOptions->gameStyle & TeamFlagGameStyle)
+   if (clOptions.gameStyle & TeamFlagGameStyle)
    {
       world = defineTeamWorld();
    }
-   else if (clOptions->worldFile)
+   else if (clOptions.worldFile)
    {
-      world = defineWorldFromFile(clOptions->worldFile);
+      world = defineWorldFromFile(clOptions.worldFile);
    }
    else
    {
@@ -2518,7 +2519,7 @@ static bool defineWorld()
   world->packDatabase();
   // now get world packaged for network transmission
   worldDatabaseSize = 4 + 30 + world->getDatabaseSize() + 2;
-  if (clOptions->gameStyle & TeamFlagGameStyle)
+  if (clOptions.gameStyle & TeamFlagGameStyle)
     worldDatabaseSize += 4 * (4 + 9 * 4);
 
   worldDatabase = new char[worldDatabaseSize];
@@ -2531,19 +2532,19 @@ static bool defineWorld()
   buf = nboPackUShort(buf, 30);// size of the header
   buf = nboPackUShort(buf, mapVersion);
   buf = nboPackFloat(buf, WorldSize);
-  buf = nboPackUShort(buf, clOptions->gameStyle);
+  buf = nboPackUShort(buf, clOptions.gameStyle);
   buf = nboPackUShort(buf, maxPlayers);
-  buf = nboPackUShort(buf, clOptions->maxShots);
+  buf = nboPackUShort(buf, clOptions.maxShots);
   buf = nboPackUShort(buf, numFlags);
-  buf = nboPackFloat(buf, clOptions->linearAcceleration);
-  buf = nboPackFloat(buf, clOptions->angularAcceleration);
-  buf = nboPackUShort(buf, clOptions->shakeTimeout);
-  buf = nboPackUShort(buf, clOptions->shakeWins);
+  buf = nboPackFloat(buf, clOptions.linearAcceleration);
+  buf = nboPackFloat(buf, clOptions.angularAcceleration);
+  buf = nboPackUShort(buf, clOptions.shakeTimeout);
+  buf = nboPackUShort(buf, clOptions.shakeWins);
   // time-of-day will go here
   buf = nboPackUInt(buf, 0);
-  if (clOptions->gameStyle & TeamFlagGameStyle) {
+  if (clOptions.gameStyle & TeamFlagGameStyle) {
     for (int i = 1; i < CtfTeams; i++) {
-      if (!clOptions->randomCTF || (clOptions->maxTeam[i] > 0)) {
+      if (!clOptions.randomCTF || (clOptions.maxTeam[i] > 0)) {
 	buf = nboPackUShort(buf, WorldCodeBase);
 	buf = nboPackUShort(buf, uint16_t(i));
 	buf = nboPackVector(buf, basePos[i]);
@@ -2560,7 +2561,7 @@ static bool defineWorld()
   MD5 md5;
   md5.update( (unsigned char *)worldDatabase, worldDatabaseSize );
   md5.finalize();
-  if (clOptions->worldFile == NULL)
+  if (clOptions.worldFile == NULL)
     strcpy(hexDigest,"t");
   else
     strcpy(hexDigest, "p");
@@ -2584,14 +2585,14 @@ static bool defineWorld()
 
 static TeamColor whoseBase(float x, float y, float z)
 {
-  if (!(clOptions->gameStyle & TeamFlagGameStyle))
+  if (!(clOptions.gameStyle & TeamFlagGameStyle))
     return NoTeam;
 
   float highest = -1;
   int highestteam = -1;
   //Skip Rogue
   for (int i = 1; i < CtfTeams; i++) {
-    if (clOptions->randomCTF && (clOptions->maxTeam[i] == 0))
+    if (clOptions.randomCTF && (clOptions.maxTeam[i] == 0))
       continue;
     float nx = x - basePos[i][0];
     float ny = y - basePos[i][1];
@@ -2618,11 +2619,11 @@ static void dumpScore()
 {
   int i;
 
-  if (!clOptions->printScore)
+  if (!clOptions.printScore)
     return;
 #ifdef TIMELIMIT
-  if (clOptions->timeLimit > 0.0f)
-    printf("#time %f\n", clOptions->timeLimit - clOptions->timeElapsed);
+  if (clOptions.timeLimit > 0.0f)
+    printf("#time %f\n", clOptions.timeLimit - clOptions.timeElapsed);
 #endif
   printf("#teams");
   for (i = int(RedTeam); i < NumTeams; i++)
@@ -2653,7 +2654,7 @@ static void acceptClient()
   if (fd > maxFileDescriptor)
     maxFileDescriptor = fd;
 
-  if (!clOptions->acl.validate( clientAddr.sin_addr)) {
+  if (!clOptions.acl.validate( clientAddr.sin_addr)) {
     close(fd);
   }
 
@@ -2721,8 +2722,8 @@ static void acceptClient()
       gameOver = false;
 #ifdef TIMELIMIT
       gameStartTime = TimeKeeper::getCurrent();
-      if (clOptions->timeLimit > 0.0f && !clOptions->timeManualStart) {
-	clOptions->timeElapsed = 0.0f;
+      if (clOptions.timeLimit > 0.0f && !clOptions.timeManualStart) {
+	clOptions.timeElapsed = 0.0f;
 	countdownActive = true;
       }
 #endif
@@ -2761,9 +2762,9 @@ static void respondToPing(bool broadcast = false)
   // boost my reply ttl if ping requests it
   if (minReplyTTL > MaximumTTL)
     minReplyTTL = MaximumTTL;
-  if (pingOutSocket != -1 && minReplyTTL > clOptions->pingTTL) {
-    clOptions->pingTTL = minReplyTTL;
-    setMulticastTTL(pingOutSocket, clOptions->pingTTL);
+  if (pingOutSocket != -1 && minReplyTTL > clOptions.pingTTL) {
+    clOptions.pingTTL = minReplyTTL;
+    setMulticastTTL(pingOutSocket, clOptions.pingTTL);
   }
 
   // reply with current game info on pingOutSocket or pingBcastSocket
@@ -2867,27 +2868,27 @@ static void addPlayer(int playerIndex)
   // or if the team is full.
   if ((t == NoTeam && (player[playerIndex].type == TankPlayer ||
       player[playerIndex].type == ComputerPlayer)) ||
-      (t == RogueTeam && !(clOptions->gameStyle & RoguesGameStyle)) ||
+      (t == RogueTeam && !(clOptions.gameStyle & RoguesGameStyle)) ||
       (!player[playerIndex].Observer &&
-       (team[int(t)].team.activeSize >= clOptions->maxTeam[int(t)] ||
+       (team[int(t)].team.activeSize >= clOptions.maxTeam[int(t)] ||
 	numplayers >= softmaxPlayers)) ||
-      (player[playerIndex].Observer && numobservers >= clOptions->maxObservers)) {
+      (player[playerIndex].Observer && numobservers >= clOptions.maxObservers)) {
     uint16_t code = RejectBadRequest;
     if (player[playerIndex].type != TankPlayer &&
 	player[playerIndex].type != ComputerPlayer)
       code = RejectBadType;
     else if (t == NoTeam)
       code = RejectBadTeam;
-    else if (t == RogueTeam && !(clOptions->gameStyle & RoguesGameStyle))
+    else if (t == RogueTeam && !(clOptions.gameStyle & RoguesGameStyle))
       code = RejectNoRogues;
     else if (!player[playerIndex].Observer && numplayers >= softmaxPlayers ||
-	     player[playerIndex].Observer && numobservers >= clOptions->maxObservers)
+	     player[playerIndex].Observer && numobservers >= clOptions.maxObservers)
       code = RejectServerFull;
-    else if (team[int(t)].team.activeSize >= clOptions->maxTeam[int(t)]) {
+    else if (team[int(t)].team.activeSize >= clOptions.maxTeam[int(t)]) {
       // if team is full then check if server is full
       code = RejectServerFull;
       for (int i = RogueTeam; i < NumTeams; i++)
-	if (team[i].team.activeSize < clOptions->maxTeam[i]) {
+	if (team[i].team.activeSize < clOptions.maxTeam[i]) {
 	  code = RejectTeamFull;
 	  break;
 	}
@@ -2899,7 +2900,6 @@ static void addPlayer(int playerIndex)
     return;
   }
 
-  player[playerIndex].ulinkup = false;
   player[playerIndex].toBeKicked = false;
   player[playerIndex].Admin = false;
   player[playerIndex].passwordAttempts = 0;
@@ -2969,7 +2969,7 @@ static void addPlayer(int playerIndex)
 	++team[teamIndex].team.activeSize == 1) {
     team[teamIndex].team.won = 0;
     team[teamIndex].team.lost = 0;
-    if ((clOptions->gameStyle & int(TeamFlagGameStyle)) &&
+    if ((clOptions.gameStyle & int(TeamFlagGameStyle)) &&
 	teamIndex != int(RogueTeam) &&
 	flag[teamIndex - 1].flag.status == FlagNoExist)
       // can't call resetFlag() here cos it'll screw up protocol for
@@ -3010,14 +3010,14 @@ static void addPlayer(int playerIndex)
   sendTeamUpdate(teamIndex);
 
   // if there is no rabbit yet we will become rabbit
-  if (rabbitIndex == NoPlayer && (clOptions->gameStyle & int(RabbitChaseGameStyle)) &&
+  if (rabbitIndex == NoPlayer && (clOptions.gameStyle & int(RabbitChaseGameStyle)) &&
        !player[playerIndex].Observer) {
     rabbitIndex = playerIndex;
     player[playerIndex].team = RabbitTeam;
   }
 
   // send rabbit information
-  if (clOptions->gameStyle & int(RabbitChaseGameStyle)) {
+  if (clOptions.gameStyle & int(RabbitChaseGameStyle)) {
     void *buf, *bufStart = getDirectMessageBuffer();
     buf = nboPackUByte(bufStart, rabbitIndex);
     directMessage(playerIndex, MsgNewRabbit, (char*)buf-(char*)bufStart, bufStart);
@@ -3025,8 +3025,8 @@ static void addPlayer(int playerIndex)
 
 #ifdef TIMELIMIT
   // send time update to new player if we're counting down
-  if (countdownActive && clOptions->timeLimit > 0.0f && player[playerIndex].type != ComputerPlayer) {
-    float timeLeft = clOptions->timeLimit - (TimeKeeper::getCurrent() - gameStartTime);
+  if (countdownActive && clOptions.timeLimit > 0.0f && player[playerIndex].type != ComputerPlayer) {
+    float timeLeft = clOptions.timeLimit - (TimeKeeper::getCurrent() - gameStartTime);
     if (timeLeft < 0.0f) {
       // oops
       timeLeft = 0.0f;
@@ -3058,10 +3058,10 @@ static void addPlayer(int playerIndex)
   sprintf(message,"BZFlag server %s, http://BZFlag.org/", VERSION);
   sendMessage(ServerPlayer, playerIndex, message, true);
 
-  if (clOptions->servermsg && (strlen(clOptions->servermsg) > 0)) {
+  if (clOptions.servermsg && (strlen(clOptions.servermsg) > 0)) {
 
     // split the servermsg into several lines if it contains '\n'
-    const char* i = clOptions->servermsg;
+    const char* i = clOptions.servermsg;
     const char* j;
     while ((j = strstr(i, "\\n")) != NULL) {
       unsigned int l = j - i < MessageLen - 1 ? j - i : MessageLen - 1;
@@ -3076,7 +3076,7 @@ static void addPlayer(int playerIndex)
   }
 
   // look for a startup message -- from a file
-  static const std::vector<std::string>* lines = clOptions->textChunker.getTextChunk("srvmsg");
+  static const std::vector<std::string>* lines = clOptions.textChunker.getTextChunk("srvmsg");
   if (lines != NULL){
     for (int i = 0; i < (int)lines->size(); i ++){
       sendMessage(ServerPlayer, playerIndex, (*lines)[i].c_str());
@@ -3144,7 +3144,7 @@ static void resetFlag(int flagIndex)
   pFlagInfo->flag.status = FlagNoExist;
 
   // if it's a random flag, reset flag id
-  if (flagIndex >= numFlags - clOptions->numExtraFlags)
+  if (flagIndex >= numFlags - clOptions.numExtraFlags)
     pFlagInfo->flag.desc = Flags::Null;
 
   // reposition flag
@@ -3168,7 +3168,7 @@ static void resetFlag(int flagIndex)
     int topmosttype = world->inBuilding(&obj, pFlagInfo->flag.position[0],
 					pFlagInfo->flag.position[1],pFlagInfo->flag.position[2], r);
     while (topmosttype != NOT_IN_BUILDING) {
-	if ((clOptions->flagsOnBuildings && (topmosttype == IN_BOX))
+	if ((clOptions.flagsOnBuildings && (topmosttype == IN_BOX))
 		&& (obj->pos[2] < (pFlagInfo->flag.position[2] + flagHeight)) && ((obj->pos[2] + obj->size[2]) > pFlagInfo->flag.position[2])
 		&& (world->inRect(obj->pos, obj->rotation, obj->size, pFlagInfo->flag.position[0], pFlagInfo->flag.position[1], 0.0f)))
 		 {
@@ -3358,7 +3358,7 @@ static void removePlayer(int playerIndex, char *reason, bool notify)
 
   player[playerIndex].state = PlayerNoExist;
 
-  if (clOptions->gameStyle & int(RabbitChaseGameStyle))
+  if (clOptions.gameStyle & int(RabbitChaseGameStyle))
     if (playerIndex == rabbitIndex)
       anointNewRabbit();
 
@@ -3393,7 +3393,7 @@ static void removePlayer(int playerIndex, char *reason, bool notify)
 	(player[playerIndex].type == TankPlayer ||
 	player[playerIndex].type == ComputerPlayer) &&
 	team[teamNum].team.activeSize == 0 &&
-	(clOptions->gameStyle & int(TeamFlagGameStyle))) {
+	(clOptions.gameStyle & int(TeamFlagGameStyle))) {
       if (flag[teamNum - 1].player == -1 ||
 	  player[flag[teamNum - 1].player].team == teamNum)
 	zapFlag(teamNum - 1);
@@ -3426,11 +3426,11 @@ static void removePlayer(int playerIndex, char *reason, bool notify)
 
   // if everybody left then reset world
   if (i == curMaxPlayers) {
-    if (clOptions->oneGameOnly) {
+    if (clOptions.oneGameOnly) {
       done = true;
       exitCode = 0;
     }
-    else if ((!clOptions->worldFile) && (!defineWorld())) {
+    else if ((!clOptions.worldFile) && (!defineWorld())) {
       done = true;
       exitCode = 1;
     }
@@ -3536,8 +3536,8 @@ static void playerAlive(int playerIndex, const float *pos, const float *fwd)
 
 static void checkTeamScore(int playerIndex, int teamIndex)
 {
-  if (clOptions->maxTeamScore == 0 || teamIndex == (int)RogueTeam) return;
-  if (team[teamIndex].team.won - team[teamIndex].team.lost >= clOptions->maxTeamScore) {
+  if (clOptions.maxTeamScore == 0 || teamIndex == (int)RogueTeam) return;
+  if (team[teamIndex].team.won - team[teamIndex].team.lost >= clOptions.maxTeamScore) {
     void *buf, *bufStart = getDirectMessageBuffer();
     buf = nboPackUByte(bufStart, playerIndex);
     buf = nboPackUShort(buf, uint16_t(teamIndex));
@@ -3557,11 +3557,11 @@ static void playerKilled(int victimIndex, int killerIndex, int reason,
   //update tk-score
   if ((victimIndex != killerIndex) &&
       (player[victimIndex].team == player[killerIndex].team) &&
-      ((player[victimIndex].team != RogueTeam) || (clOptions->gameStyle & int(RabbitChaseGameStyle)))) {
+      ((player[victimIndex].team != RogueTeam) || (clOptions.gameStyle & int(RabbitChaseGameStyle)))) {
      player[killerIndex].tks++;
-     if ((player[killerIndex].tks >= 3) && (clOptions->teamKillerKickRatio > 0) && // arbitrary 3
+     if ((player[killerIndex].tks >= 3) && (clOptions.teamKillerKickRatio > 0) && // arbitrary 3
 	 ((player[killerIndex].wins == 0) ||
-	  ((player[killerIndex].tks * 100) / player[killerIndex].wins) > clOptions->teamKillerKickRatio)) {
+	  ((player[killerIndex].tks * 100) / player[killerIndex].wins) > clOptions.teamKillerKickRatio)) {
 	 char message[MessageLen];
 	 strcpy(message, "You have been automatically kicked for team killing" );
 	 sendMessage(ServerPlayer, killerIndex, message, true);
@@ -3597,9 +3597,9 @@ static void playerKilled(int victimIndex, int killerIndex, int reason,
     if (killerIndex != InvalidPlayer) {
       if (victimIndex != killerIndex) {
         if ((player[victimIndex].team != RogueTeam ||
-             (clOptions->gameStyle & int(RabbitChaseGameStyle)))
+             (clOptions.gameStyle & int(RabbitChaseGameStyle)))
 	    && (player[victimIndex].team == player[killerIndex].team)) {
-	  if (clOptions->teamKillerDies)
+	  if (clOptions.teamKillerDies)
 	    playerKilled(killerIndex, killerIndex, reason, -1);
 	  else
 	    player[killerIndex].losses++;
@@ -3624,8 +3624,8 @@ static void playerKilled(int victimIndex, int killerIndex, int reason,
     broadcastMessage(MsgScore, (char*)buf-(char*)bufStart, bufStart);
 
     // see if the player reached the score limit
-    if ((clOptions->maxPlayerScore != 0)
-    &&	((player[killerIndex].wins - player[killerIndex].losses) >= clOptions->maxPlayerScore)) {
+    if ((clOptions.maxPlayerScore != 0)
+    &&	((player[killerIndex].wins - player[killerIndex].losses) >= clOptions.maxPlayerScore)) {
 	void *buf, *bufStart = getDirectMessageBuffer();
 	buf = nboPackUByte(bufStart, killerIndex);
 	buf = nboPackUShort(buf, uint16_t(NoTeam));
@@ -3634,7 +3634,7 @@ static void playerKilled(int victimIndex, int killerIndex, int reason,
     }
   }
 
-  if (clOptions->gameStyle & int(RabbitChaseGameStyle)) {
+  if (clOptions.gameStyle & int(RabbitChaseGameStyle)) {
     if (victimIndex == rabbitIndex)
       anointNewRabbit();
   } else {
@@ -3642,15 +3642,15 @@ static void playerKilled(int victimIndex, int killerIndex, int reason,
     // change team scores for individual player's kills in capture the
     // flag mode.
     int winningTeam = (int)NoTeam;
-    if (!(clOptions->gameStyle & TeamFlagGameStyle)) {
+    if (!(clOptions.gameStyle & TeamFlagGameStyle)) {
       if (player[victimIndex].team == player[killerIndex].team) {
-        if ((player[killerIndex].team != RogueTeam) || (clOptions->gameStyle & int(RabbitChaseGameStyle)))
+        if ((player[killerIndex].team != RogueTeam) || (clOptions.gameStyle & int(RabbitChaseGameStyle)))
           if (killerIndex == victimIndex)
             team[int(player[victimIndex].team)].team.lost += 1;
           else
             team[int(player[victimIndex].team)].team.lost += 2;
       } else {
-	  if ((player[killerIndex].team != RogueTeam) || (clOptions->gameStyle & int(RabbitChaseGameStyle))) {
+	  if ((player[killerIndex].team != RogueTeam) || (clOptions.gameStyle & int(RabbitChaseGameStyle))) {
 		winningTeam = int(player[killerIndex].team);
 		team[winningTeam].team.won++;
 	  }
@@ -3785,7 +3785,7 @@ static void dropFlag(int playerIndex, float pos[3])
     pFlagInfo->flag.landingPosition[1] = pos[1];
     pFlagInfo->flag.landingPosition[2] = 0.0f;
   }
-  else if (clOptions->flagsOnBuildings && (topmosttype == IN_BOX || topmosttype == IN_BASE)) {
+  else if (clOptions.flagsOnBuildings && (topmosttype == IN_BOX || topmosttype == IN_BASE)) {
     pFlagInfo->flag.landingPosition[0] = pos[0];
     pFlagInfo->flag.landingPosition[1] = pos[1];
     pFlagInfo->flag.landingPosition[2] = topmost->pos[2] + topmost->size[2];
@@ -3813,7 +3813,7 @@ static void dropFlag(int playerIndex, float pos[3])
   // if not, start the flag timeout
   if (isTeamFlag && team[flagIndex + 1].team.activeSize == 0) {
     team[flagIndex + 1].flagTimeout = TimeKeeper::getCurrent();
-    team[flagIndex + 1].flagTimeout += (float)clOptions->teamFlagTimeout;
+    team[flagIndex + 1].flagTimeout += (float)clOptions.teamFlagTimeout;
   }
 
   pFlagInfo->flag.position[0] = pFlagInfo->flag.landingPosition[0];
@@ -3920,9 +3920,9 @@ static void shotFired(int playerIndex, void *buf, int len)
   }
 
   // verify shot number
-  if ((shot.id & 0xff) > clOptions->maxShots - 1) {
+  if ((shot.id & 0xff) > clOptions.maxShots - 1) {
     DEBUG2("Player %s [%d] shot id out of range %d %d\n", shooter.callSign,
-	   playerIndex,	shot.id & 0xff, clOptions->maxShots);
+	   playerIndex,	shot.id & 0xff, clOptions.maxShots);
     return;
   }
 
@@ -3993,7 +3993,7 @@ static void shotFired(int playerIndex, void *buf, int len)
     FlagInfo & fInfo = flag[shooter.flag];
     fInfo.numShots++; // increase the # shots fired
 
-    int limit = clOptions->flagLimit[fInfo.flag.desc];
+    int limit = clOptions.flagLimit[fInfo.flag.desc];
     if (limit != -1){ // if there is a limit for players flag
       int shotsLeft = limit -  fInfo.numShots;
       if (shotsLeft > 0) { //still have some shots left
@@ -4041,7 +4041,7 @@ static void calcLag(int playerIndex, float timepassed)
   pl.lagalpha = pl.lagalpha / (0.9f + pl.lagalpha);
   pl.lagcount++;
   // warn players from time to time whose lag is > threshold (-lagwarn)
-  if (clOptions->lagwarnthresh > 0 && pl.lagavg > clOptions->lagwarnthresh &&
+  if (clOptions.lagwarnthresh > 0 && pl.lagavg > clOptions.lagwarnthresh &&
       pl.lagcount - pl.laglastwarn > 2 * pl.lagwarncount) {
     char message[MessageLen];
     sprintf(message,"*** Server Warning: your lag is too high (%d ms) ***",
@@ -4049,10 +4049,10 @@ static void calcLag(int playerIndex, float timepassed)
     sendMessage(ServerPlayer, playerIndex, message, true);
     pl.laglastwarn = pl.lagcount;
     pl.lagwarncount++;;
-    if (pl.lagwarncount++ > clOptions->maxlagwarn) {
+    if (pl.lagwarncount++ > clOptions.maxlagwarn) {
       // drop the player
       sprintf(message,"You have been kicked due to excessive lag (you have been warned %d times).",
-	clOptions->maxlagwarn);
+	clOptions.maxlagwarn);
       sendMessage(ServerPlayer, playerIndex, message, true);
       removePlayer(playerIndex, "lag");
     }
@@ -4078,7 +4078,7 @@ static void parseCommand(const char *message, int t)
       sendMessage(ServerPlayer, t, "Too many attempts");
     }else{
     player[t].passwordAttempts++;
-    if (clOptions->password && strncmp(message + 10, clOptions->password, strlen(clOptions->password)) == 0){
+    if (clOptions.password && strncmp(message + 10, clOptions.password, strlen(clOptions.password)) == 0){
       player[t].passwordAttempts = 0;
       player[t].Admin = true;
       sendMessage(ServerPlayer, t, "You are now an administrator!");
@@ -4104,16 +4104,16 @@ static void parseCommand(const char *message, int t)
     gameOver = true;
 #ifdef TIMELIMIT
   // /countdown starts timed game, if start is manual, everyone is allowed to
-  } else if ((hasPerm(t, countdown) || clOptions->timeManualStart) &&
+  } else if ((hasPerm(t, countdown) || clOptions.timeManualStart) &&
 	    strncmp(message + 1, "countdown", 9) == 0) {
-    if (clOptions->timeLimit > 0.0f) {
+    if (clOptions.timeLimit > 0.0f) {
       gameStartTime = TimeKeeper::getCurrent();
-      clOptions->timeElapsed = 0.0f;
+      clOptions.timeElapsed = 0.0f;
       countdownActive = true;
 
       char msg[2];
       void *buf = msg;
-      nboPackUShort(buf, (uint16_t)(int)clOptions->timeLimit);
+      nboPackUShort(buf, (uint16_t)(int)clOptions.timeLimit);
       broadcastMessage(MsgTimeUpdate, sizeof(msg), msg);
     }
     // reset team scores
@@ -4125,7 +4125,7 @@ static void parseCommand(const char *message, int t)
     sendMessage(ServerPlayer, t, reply, true);
 
     // CTF game -> simulate flag captures to return ppl to base
-    if (clOptions->gameStyle & int(TeamFlagGameStyle)) {
+    if (clOptions.gameStyle & int(TeamFlagGameStyle)) {
       // get someone to can do virtual capture
       int j;
       for (j=0;j<curMaxPlayers;j++) {
@@ -4226,7 +4226,7 @@ static void parseCommand(const char *message, int t)
   // /banlist command shows ips that are banned
   else if (hasPerm(t, banlist) &&
 	  strncmp(message+1, "banlist", 7) == 0) {
-	clOptions->acl.sendBans(t);
+	clOptions.acl.sendBans(t);
   }
   // /ban command allows operator to ban players based on ip
   else if (hasPerm(t, ban) && strncmp(message+1, "ban", 3) == 0) {
@@ -4236,14 +4236,14 @@ static void parseCommand(const char *message, int t)
     int period = 0;
     if (time != NULL)
 	period = atoi(time);
-    if (clOptions->acl.ban(ips, period))
+    if (clOptions.acl.ban(ips, period))
       strcpy(reply, "IP pattern added to banlist");
     else
       strcpy(reply, "malformed address");
     sendMessage(ServerPlayer, t, reply, true);
     char kickmessage[MessageLen];
     for (int i = 0; i < curMaxPlayers; i++) {
-      if ((player[i].fd != NotConnected) && (!clOptions->acl.validate(player[i].taddr.sin_addr))) {
+      if ((player[i].fd != NotConnected) && (!clOptions.acl.validate(player[i].taddr.sin_addr))) {
 	sprintf(kickmessage,"Your were banned from this server by %s", player[t].callSign);
 	sendMessage(ServerPlayer, i, kickmessage, true);
 	removePlayer(i, "/ban");
@@ -4253,7 +4253,7 @@ static void parseCommand(const char *message, int t)
   // /unban command allows operator to remove ips from the banlist
   else if (hasPerm(t, unban) && strncmp(message+1, "unban", 5) == 0) {
     char reply[MessageLen];
-    if (clOptions->acl.unban(message + 7))
+    if (clOptions.acl.unban(message + 7))
       strcpy(reply, "removed IP pattern");
     else
       strcpy(reply, "no pattern removed");
@@ -4263,15 +4263,15 @@ static void parseCommand(const char *message, int t)
   else if (hasPerm(t, lagwarn) && strncmp(message+1, "lagwarn",7) == 0) {
     if (message[8] == ' ') {
       const char *maxlag = message + 9;
-      clOptions->lagwarnthresh = (float) (atoi(maxlag) / 1000.0);
+      clOptions.lagwarnthresh = (float) (atoi(maxlag) / 1000.0);
       char reply[MessageLen];
-      sprintf(reply,"lagwarn is now %d ms",int(clOptions->lagwarnthresh * 1000 + 0.5));
+      sprintf(reply,"lagwarn is now %d ms",int(clOptions.lagwarnthresh * 1000 + 0.5));
       sendMessage(ServerPlayer, t, reply, true);
     }
     else
     {
       char reply[MessageLen];
-      sprintf(reply,"lagwarn is set to %d ms",int(clOptions->lagwarnthresh * 1000 +  0.5));
+      sprintf(reply,"lagwarn is set to %d ms",int(clOptions.lagwarnthresh * 1000 +  0.5));
       sendMessage(ServerPlayer, t, reply, true);
     }
   }
@@ -4346,12 +4346,12 @@ static void parseCommand(const char *message, int t)
       string reportStr;
       reportStr = reportStr + timeStr + "Reported by " +
 	player[t].callSign + ": " + (message + 8);
-      if (clOptions->reportFile.size() > 0) {
-	ofstream ofs(clOptions->reportFile.c_str(), ios::out | ios::app);
+      if (clOptions.reportFile.size() > 0) {
+	ofstream ofs(clOptions.reportFile.c_str(), ios::out | ios::app);
 	ofs<<reportStr<<endl<<endl;
       }
-      if (clOptions->reportPipe.size() > 0) {
-	FILE* pipeWrite = popen(clOptions->reportPipe.c_str(), "w");
+      if (clOptions.reportPipe.size() > 0) {
+	FILE* pipeWrite = popen(clOptions.reportPipe.c_str(), "w");
 	if (pipeWrite != NULL) {
 	  fprintf(pipeWrite, "%s\n\n", reportStr.c_str());
 	} else {
@@ -4359,7 +4359,7 @@ static void parseCommand(const char *message, int t)
 	}
 	pclose(pipeWrite);
       }
-      if (clOptions->reportFile.size() == 0 && clOptions->reportPipe.size() == 0)
+      if (clOptions.reportFile.size() == 0 && clOptions.reportPipe.size() == 0)
 	sprintf(reply, "The /report command is disabled on this server.");
       else
 	sprintf(reply, "Your report has been filed. Thank you.");
@@ -4367,17 +4367,17 @@ static void parseCommand(const char *message, int t)
     sendMessage(ServerPlayer, t, reply, true);
   } else if (strncmp(message+1, "help", 4) == 0) {
     if (strlen(message + 1) == 4) {
-      const std::vector<std::string>& chunks = clOptions->textChunker.getChunkNames();
+      const std::vector<std::string>& chunks = clOptions.textChunker.getChunkNames();
       sendMessage(ServerPlayer, t, "Available help pages (use /help <page>)");
       for (int i = 0; i < (int) chunks.size(); i++) {
 	sendMessage(ServerPlayer, t, chunks[i].c_str());
       }
     } else {
       bool foundChunk = false;
-      const std::vector<std::string>& chunks = clOptions->textChunker.getChunkNames();
+      const std::vector<std::string>& chunks = clOptions.textChunker.getChunkNames();
       for (int i = 0; i < (int)chunks.size() && (!foundChunk); i++) {
 	if (chunks[i] == (message +6)){
-	  const std::vector<std::string>* lines = clOptions->textChunker.getTextChunk((message + 6));
+	  const std::vector<std::string>* lines = clOptions.textChunker.getTextChunk((message + 6));
 	  if (lines != NULL) {
 	    for (int j = 0; j < (int)lines->size(); j++) {
 	      sendMessage(ServerPlayer, t, (*lines)[j].c_str());
@@ -4796,9 +4796,9 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
 	for (it = FlagDesc::getFlagMap().begin();
 	     it != FlagDesc::getFlagMap().end(); ++it) {
 		if (!hasFlag[it->second]) {
-		   if (clOptions->flagCount[it->second] > 0)
+		   if (clOptions.flagCount[it->second] > 0)
 		     missingFlags.insert(it->second);
-		   if ((clOptions->numExtraFlags > 0) && !clOptions->flagDisallowed[it->second])
+		   if ((clOptions.numExtraFlags > 0) && !clOptions.flagDisallowed[it->second])
 		     missingFlags.insert(it->second);
 		}
 	}
@@ -4849,7 +4849,7 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
     case MsgAlive: {
 #ifdef TIMELIMIT
       // player moved before countdown started
-      if (clOptions->timeLimit>0.0f && !countdownActive)
+      if (clOptions.timeLimit>0.0f && !countdownActive)
 	player[t].playedEarly = true;
 #endif
       // data: position, forward-vector
@@ -4946,7 +4946,7 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
 	parseCommand(message, t);
       }
       else {
-	clOptions->bwl.filter(message);
+	clOptions.bwl.filter(message);
 	sendMessage(t, targetPlayer, message, true);
       }
       break;
@@ -4954,7 +4954,7 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
 
     // player is requesting an additional UDP connection, sending its own UDP port
     case MsgUDPLinkRequest: {
-      if (clOptions->alsoUDP) {
+      if (clOptions.alsoUDP) {
 	uint16_t port;
 	buf = nboUnpackUShort(buf, port);
 	player[t].ulinkup = false;
@@ -4966,7 +4966,7 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
     // player is ready to receive data over UDP connection, sending 0
     case MsgUDPLinkEstablished: {
       DEBUG3("Player %s [%d] UDP confirmed\n", player[t].callSign, t);
-      if (!clOptions->alsoUDP) {
+      if (!clOptions.alsoUDP) {
 	DEBUG2("Clients sent MsgUDPLinkEstablished without MsgUDPLinkRequest!\n");
       }
       break;
@@ -5035,7 +5035,7 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
 
 
       // check for highspeed cheat; if inertia is enabled, skip test for now
-      if (clOptions->linearAcceleration == 0.0f) {
+      if (clOptions.linearAcceleration == 0.0f) {
 	// Doesn't account for going fast backwards, or jumping/falling
 	float curPlanarSpeedSqr = state.velocity[0]*state.velocity[0] +
 				  state.velocity[1]*state.velocity[1];
@@ -5316,7 +5316,7 @@ static bool parsePlayerCount(const char *argv, CmdLineOptions &options)
     if (countCount == NumTeams) {
     // if num rogues allowed team > 0, then set Rogues game style
       if (options.maxTeam[RogueTeam] > 0)
-	clOptions->gameStyle |= int(RoguesGameStyle);
+	clOptions.gameStyle |= int(RoguesGameStyle);
       softmaxPlayers = 0;
       for (i = 0; i < NumTeams; i++)
 	softmaxPlayers += options.maxTeam[i];
@@ -5336,7 +5336,7 @@ static bool parsePlayerCount(const char *argv, CmdLineOptions &options)
 	softmaxPlayers = MaxPlayers;
     else softmaxPlayers = uint16_t(count);
   }
-  maxPlayers = softmaxPlayers + clOptions->maxObservers;
+  maxPlayers = softmaxPlayers + clOptions.maxObservers;
   if (maxPlayers > MaxPlayers)
     maxPlayers = MaxPlayers;
   return true;
@@ -6226,13 +6226,11 @@ int main(int argc, char **argv)
 #endif /* defined(_WIN32) */
   bzfsrand(time(0));
 
-  clOptions = new CmdLineOptions();
-
   // parse arguments
-  parse(argc, argv, *clOptions);
+  parse(argc, argv, clOptions);
 
-  if (clOptions->pingInterface)
-    serverAddress = Address::getHostAddress(clOptions->pingInterface);
+  if (clOptions.pingInterface)
+    serverAddress = Address::getHostAddress(clOptions.pingInterface);
 // TimR use 0.0.0.0 by default, multicast will need to have a -i specified for now.
 //  if (!pingInterface)
 //    pingInterface = serverAddress.getHostName();
@@ -6242,41 +6240,41 @@ int main(int argc, char **argv)
   // firewalls).  use my official hostname if it appears to be
   // canonicalized, otherwise use my IP in dot notation.
   // set publicized address if not set by arguments
-  if (clOptions->publicizedAddress.length() == 0) {
+  if (clOptions.publicizedAddress.length() == 0) {
     // FIXME - it is undefined to initialize std::string with a NULL pointer.
     // similar code can be found at other places in bzfs as well
     const char* tmp = Address::getHostName();
-    clOptions->publicizedAddress = (tmp == NULL ? "" : tmp);
-    if (strchr(clOptions->publicizedAddress.c_str(), '.') == NULL)
-      clOptions->publicizedAddress = serverAddress.getDotNotation();
-    if (clOptions->wksPort != ServerPort) {
+    clOptions.publicizedAddress = (tmp == NULL ? "" : tmp);
+    if (strchr(clOptions.publicizedAddress.c_str(), '.') == NULL)
+      clOptions.publicizedAddress = serverAddress.getDotNotation();
+    if (clOptions.wksPort != ServerPort) {
       char portString[20];
-      sprintf(portString, ":%d", clOptions->wksPort);
-      clOptions->publicizedAddress += portString;
+      sprintf(portString, ":%d", clOptions.wksPort);
+      clOptions.publicizedAddress += portString;
     }
   }
 
   // prep ping reply
   pingReply.serverId.serverHost = serverAddress;
-  pingReply.serverId.port = htons(clOptions->wksPort);
+  pingReply.serverId.port = htons(clOptions.wksPort);
   pingReply.serverId.number = 0;
-  pingReply.gameStyle = clOptions->gameStyle;
+  pingReply.gameStyle = clOptions.gameStyle;
   pingReply.maxPlayers = maxPlayers;
-  pingReply.maxShots = clOptions->maxShots;
-  pingReply.rogueMax = clOptions->maxTeam[0];
-  pingReply.redMax = clOptions->maxTeam[1];
-  pingReply.greenMax = clOptions->maxTeam[2];
-  pingReply.blueMax = clOptions->maxTeam[3];
-  pingReply.purpleMax = clOptions->maxTeam[4];
-  pingReply.shakeWins = clOptions->shakeWins;
-  pingReply.shakeTimeout = clOptions->shakeTimeout;
+  pingReply.maxShots = clOptions.maxShots;
+  pingReply.rogueMax = clOptions.maxTeam[0];
+  pingReply.redMax = clOptions.maxTeam[1];
+  pingReply.greenMax = clOptions.maxTeam[2];
+  pingReply.blueMax = clOptions.maxTeam[3];
+  pingReply.purpleMax = clOptions.maxTeam[4];
+  pingReply.shakeWins = clOptions.shakeWins;
+  pingReply.shakeTimeout = clOptions.shakeTimeout;
 #ifdef TIMELIMIT
-  pingReply.maxTime = (int)clOptions->timeLimit;
+  pingReply.maxTime = (int)clOptions.timeLimit;
 #else
   pingReply.maxTime = (int)0.0f;
 #endif
-  pingReply.maxPlayerScore = clOptions->maxPlayerScore;
-  pingReply.maxTeamScore = clOptions->maxTeamScore;
+  pingReply.maxPlayerScore = clOptions.maxPlayerScore;
+  pingReply.maxTeamScore = clOptions.maxTeamScore;
 
   // start listening and prepare world database
   if (!defineWorld() || !serverStart()) {
@@ -6285,10 +6283,10 @@ int main(int argc, char **argv)
 #endif /* defined(_WIN32) */
     return 1;
   }
-  if (clOptions->debug >= 2) {
+  if (clOptions.debug >= 2) {
     // print networking info
     fprintf(stderr, "listening on %s:%i\n",
-	serverAddress.getDotNotation().c_str(), clOptions->wksPort);
+	serverAddress.getDotNotation().c_str(), clOptions.wksPort);
   }
 
   TimeKeeper lastSuperFlagInsertion = TimeKeeper::getCurrent();
@@ -6335,7 +6333,7 @@ int main(int argc, char **argv)
     }
     // always listen for connections
     FD_SET(wksSocket, &read_set);
-    if (clOptions->alsoUDP)
+    if (clOptions.alsoUDP)
       FD_SET(udpSocket, &read_set);
     // always listen for pings
     if (pingInSocket != -1)
@@ -6356,7 +6354,7 @@ int main(int argc, char **argv)
     // lets start by waiting 3 sec
     float waitTime = 3.0f;
 #ifdef TIMELIMIT
-    if (countdownActive && clOptions->timeLimit > 0.0f)
+    if (countdownActive && clOptions.timeLimit > 0.0f)
 	waitTime = 1.0f;
 #endif
     if (numFlagsInAir > 0) {
@@ -6393,20 +6391,20 @@ int main(int argc, char **argv)
 
 #ifdef TIMELIMIT
     // see if game time ran out
-    if (!gameOver && countdownActive && clOptions->timeLimit > 0.0f) {
+    if (!gameOver && countdownActive && clOptions.timeLimit > 0.0f) {
       float newTimeElapsed = tm - gameStartTime;
-      float timeLeft = clOptions->timeLimit - newTimeElapsed;
+      float timeLeft = clOptions.timeLimit - newTimeElapsed;
       if (timeLeft <= 0.0f) {
 	timeLeft = 0.0f;
 	gameOver = true;
 	countdownActive = false;
       }
-      if (timeLeft == 0.0f || newTimeElapsed - clOptions->timeElapsed >= 30.0f) {
+      if (timeLeft == 0.0f || newTimeElapsed - clOptions.timeElapsed >= 30.0f) {
 	void *buf, *bufStart = getDirectMessageBuffer();
 	buf = nboPackUShort(bufStart, (uint16_t)(int)timeLeft);
 	broadcastMessage(MsgTimeUpdate, (char*)buf-(char*)bufStart, bufStart);
-	clOptions->timeElapsed = newTimeElapsed;
-	if (clOptions->oneGameOnly && timeLeft == 0.0f) {
+	clOptions.timeElapsed = newTimeElapsed;
+	if (clOptions.oneGameOnly && timeLeft == 0.0f) {
 	  done = true;
 	  exitCode = 0;
 	}
@@ -6415,12 +6413,12 @@ int main(int argc, char **argv)
 #endif
 
     // kick idle players
-    if (clOptions->idlekickthresh > 0) {
+    if (clOptions.idlekickthresh > 0) {
       for (int i=0;i<curMaxPlayers;i++) {
 	if (!player[i].Observer && player[i].state == PlayerDead &&
 	    (tm - player[i].lastupdate >
-	      (tm - player[i].lastmsg < clOptions->idlekickthresh ?
-	       3 * clOptions->idlekickthresh : clOptions->idlekickthresh))) {
+	      (tm - player[i].lastmsg < clOptions.idlekickthresh ?
+	       3 * clOptions.idlekickthresh : clOptions.idlekickthresh))) {
 	  DEBUG1("kicking Player %s [%d]: idle %d\n", player[i].callSign, i,
 		 int(tm - player[i].lastupdate));
 	  char message[MessageLen] = "You were kicked because of idling too long";
@@ -6431,15 +6429,15 @@ int main(int argc, char **argv)
     }
 
     // periodic advertising broadcast
-    static const std::vector<std::string>* adLines = clOptions->textChunker.getTextChunk("admsg");
-    if (clOptions->advertisemsg || adLines != NULL) {
+    static const std::vector<std::string>* adLines = clOptions.textChunker.getTextChunk("admsg");
+    if (clOptions.advertisemsg || adLines != NULL) {
       static TimeKeeper lastbroadcast = TimeKeeper::getCurrent();
       if (TimeKeeper::getCurrent() - lastbroadcast > 900) {
 	// every 15 minutes
 	char message[MessageLen];
-	if (clOptions->advertisemsg != NULL) {
+	if (clOptions.advertisemsg != NULL) {
 	  // split the admsg into several lines if it contains '\n'
-	  const char* c = clOptions->advertisemsg;
+	  const char* c = clOptions.advertisemsg;
 	  const char* j;
 	  while ((j = strstr(c, "\\n")) != NULL) {
 	    int l = j - c < MessageLen - 1 ? j - c : MessageLen - 1;
@@ -6485,7 +6483,7 @@ int main(int argc, char **argv)
     }
 
     // check team flag timeouts
-    if (clOptions->gameStyle & TeamFlagGameStyle) {
+    if (clOptions.gameStyle & TeamFlagGameStyle) {
       for (i = 0; i < CtfTeams; ++i) {
 	if (team[i].flagTimeout - tm < 0 && team[i].team.activeSize == 0 &&
 	    flag[i - 1].flag.status != FlagNoExist && 
@@ -6497,11 +6495,11 @@ int main(int argc, char **argv)
     }
 
     // maybe add a super flag (only if game isn't over)
-    if (!gameOver && clOptions->numExtraFlags > 0) {
+    if (!gameOver && clOptions.numExtraFlags > 0) {
       float t = expf(-flagExp * (tm - lastSuperFlagInsertion));
       if ((float)bzfrand() > t) {
 	// find an empty slot for an extra flag
-	for (i = numFlags - clOptions->numExtraFlags; i < numFlags; i++)
+	for (i = numFlags - clOptions.numExtraFlags; i < numFlags; i++)
 	  if (flag[i].flag.desc == Flags::Null)
 	    break;
 	if (i != numFlags)
@@ -6532,7 +6530,7 @@ int main(int argc, char **argv)
 
     // occasionally add ourselves to the list again (in case we were
     // dropped for some reason).
-    if (clOptions->publicizeServer)
+    if (clOptions.publicizeServer)
       if (tm - listServerLastAddTime > ListServerReAddTime) {
 	// if there are no list servers and nobody is playing then
 	// try publicizing again because we probably failed to get
@@ -6558,7 +6556,7 @@ int main(int argc, char **argv)
 
     for (i = 0; i < curMaxPlayers; i++) {
       // kick any clients that don't speak UDP
-      if (clOptions->requireUDP && player[i].toBeKicked) {
+      if (clOptions.requireUDP && player[i].toBeKicked) {
 	char message[MessageLen];
 	player[i].toBeKicked = false;
 	sprintf(message,"Your end is not using UDP, turn on udp");
@@ -6655,7 +6653,7 @@ int main(int argc, char **argv)
 	  // simple ruleset, if player sends a MsgShotBegin over TCP
 	  // and player is not using multicast
 	  // he/she must not be using the UDP link
-	  if (clOptions->requireUDP && player[i].multicastRelay && (player[i].type != ComputerPlayer)) {
+	  if (clOptions.requireUDP && player[i].multicastRelay && (player[i].type != ComputerPlayer)) {
 	    if (code == MsgShotBegin) {
 	      player[i].toBeKicked = true;
 	    }
@@ -6675,8 +6673,6 @@ int main(int argc, char **argv)
   }
 
   serverStop();
-
-  delete clOptions;
 
   // free misc stuff
   delete[] flag;  flag = NULL;
