@@ -285,7 +285,7 @@ void handlePasswordCmd(GameKeeper::Player *playerData, const char *message)
 	   playerData->netHandler->getTargetIP());
     sendMessage(ServerPlayer, t, "Too many attempts");
   } else {
-    if ((clOptions->password != "") && strncmp(message + 10, clOptions->password.c_str(), clOptions->password.size()) == 0){
+    if ((clOptions->password != "") && strncmp(message + 10, clOptions->password.c_str(), clOptions->password.size()) == 0 && clOptions->password.length() == strlen(message + 10)) {
       playerData->accessInfo.setAdmin();
       sendIPUpdate(t, -1);
       sendMessage(ServerPlayer, t, "You are now an administrator!");
