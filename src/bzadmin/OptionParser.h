@@ -108,13 +108,13 @@ protected:
   bool& var;
 };
 
-/** This is a specialization for @c std::vector<std::string> variables.
+/** This is a parser for @c std::vector<T> variables.
     It splits the parameter at ',' characters and puts the tokens in the
-    vector. */
+    vector. The type @c T must have a stream operator. */
 template<class T>
-class VariableParser<std::vector<T> > : public Parser {
+class VectorParser : public Parser {
 public:
-  VariableParser(std::vector<T>& variable, 
+  VectorParser(std::vector<T>& variable, 
 		 const std::string& usageText,
 		 const std::string& helpText)
     : Parser(usageText, helpText), var(variable) { }
@@ -173,9 +173,21 @@ public:
   */
   template <class T>
   bool registerVariable(const std::string& option, T& variable,
-			const std::string& usage = "", const std::string& help = "")
+			const std::string& usage = "", 
+			const std::string& help = "")
   { //VC doesn't support out of class definition of template functions
     VariableParser<T>* parser = new VariableParser<T>(variable, usage, help);
+    parsers[option] = parser;
+    return true;
+  }
+  /** Same as above, but for @c vector<T> variables instead. The parameter
+      will be tokenized with ',' as delimiter and the tokens will be parsed
+      and placed in the vector. */
+  template <class T>
+  bool registerVariable(const std::string& option, std::vector<T>& variable,
+			const std::string& usage = "", const std::string& help = "")
+  { //VC doesn't support out of class definition of template functions
+    VectorParser<T>* parser = new VectorParser<T>(variable, usage, help);
     parsers[option] = parser;
     return true;
   }
