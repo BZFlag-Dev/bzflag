@@ -41,7 +41,6 @@ class MainWindow {
 
     BzfWindow*		getWindow() const { return window; }
 
-    bool		getQuit() const;
     int			getOriginX() const;
     int			getOriginY() const;
     int			getWidth() const;
@@ -50,7 +49,6 @@ class MainWindow {
     bool		getFullscreen();
     bool		getFullView() const;
 
-    void		setQuit();
     void		setPosition(int x, int y);
     void		setSize(int width, int height);
     void		setMinSize(int width, int height);
@@ -105,11 +103,6 @@ class MainWindow {
 //
 // MainWindow
 //
-
-inline bool		MainWindow::getQuit() const
-{
-  return quit;
-}
 
 inline int		MainWindow::getOriginX() const
 {

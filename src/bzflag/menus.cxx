@@ -65,6 +65,7 @@
 #include "resources.h"
 #include "ControlPanel.h"
 #include "StateDatabase.h"
+#include "CommandsStandard.h"
 
 #ifdef _WIN32
 #define PATH_MAX MAX_PATH
@@ -95,7 +96,7 @@ bool			MenuDefaultKey::keyPress(const BzfKeyEvent& key)
   }
 
   if (getBzfKeyMap().isMappedTo(BzfKeyMap::Quit, key)) {
-    getMainWindow()->setQuit();
+    CommandsStandard::quit();
     return true;
   }
 
@@ -128,7 +129,7 @@ class QuitMenuDefaultKey : public MenuDefaultKey {
 bool			QuitMenuDefaultKey::keyPress(const BzfKeyEvent& key)
 {
   if (key.ascii == 'Y' || key.ascii == 'y') {
-    getMainWindow()->setQuit();
+    CommandsStandard::quit();
     return true;
   }
   return MenuDefaultKey::keyPress(key);
@@ -147,7 +148,7 @@ class QuitMenu : public HUDDialog {
 			~QuitMenu() { }
 
     HUDuiDefaultKey*	getDefaultKey() { return &defaultKey; }
-    void		execute() { getMainWindow()->setQuit(); }
+    void		execute() { CommandsStandard::quit(); }
     void		resize(int width, int height);
 
     HUDuiControl*	createLabel(const char*, const char* = NULL);

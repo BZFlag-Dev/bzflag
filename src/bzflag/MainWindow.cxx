@@ -47,11 +47,6 @@ void			MainWindow::setZoomFactor(int _zoomFactor)
   zoomFactor = _zoomFactor;
 }
 
-void			MainWindow::setQuit()
-{
-  quit = true;
-}
-
 void			MainWindow::setMinSize(int _minWidth, int _minHeight)
 {
   minWidth = _minWidth;

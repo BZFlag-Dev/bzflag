@@ -96,6 +96,7 @@ static const char copyright[] = "Copyright (c) 1993 - 2003 Tim Riker";
 #include "OpenGLTexture.h"
 #include "BundleMgr.h"
 #include "Bundle.h"
+#include "CommandsStandard.h"
 
 #define MAX_MESSAGE_HISTORY (20)
 
@@ -367,7 +368,7 @@ static void		dying(int sig)
 static void		suicide(int sig)
 {
   bzSignal(sig, SIG_PF(suicide));
-  if (mainWindow) mainWindow->setQuit();
+  CommandsStandard::quit();
 }
 
 //
@@ -1499,9 +1500,6 @@ static bool		doKeyCommon(const BzfKeyEvent& key, bool pressed)
       }
       return true;
     }
-  } else if (keymap.isMappedTo(BzfKeyMap::Quit, key)) {
-    getMainWindow()->setQuit();
-    return true;
   } else if (keymap.isMappedTo(BzfKeyMap::ToggleMainFlags, key)) {
     if (pressed)
       world->toggleFlags();
@@ -2251,7 +2249,7 @@ static void		doEvent(BzfDisplay* display)
 
   switch (event.type) {
     case BzfEvent::Quit:
-      mainWindow->setQuit();
+      CommandsStandard::quit();
       break;
 
     case BzfEvent::Redraw:
@@ -3753,7 +3751,7 @@ void			addShotPuff(const float* pos)
 void                   updateEvents()
 {
   if (mainWindow && display) {
-    while (display->isEventPending() &&!mainWindow->getQuit())
+    while (display->isEventPending() && !CommandsStandard::isQuit())
       doEvent(display);
   }
 }
@@ -5369,7 +5367,7 @@ static void		playingLoop()
   updateDaylight(epochOffset, *sceneRenderer);
 
   // main loop
-  while (!mainWindow->getQuit()) {
+  while (!CommandsStandard::isQuit()) {
     // get delta time
     TimeKeeper prevTime = TimeKeeper::getTick();
     TimeKeeper::setTick();
@@ -5414,7 +5412,7 @@ static void		playingLoop()
 
     // handle events
     clockAdjust = 0.0f;
-    while (!mainWindow->getQuit() && display->isEventPending())
+    while (!CommandsStandard::isQuit() && display->isEventPending())
       doEvent(display);
 
     mainWindow->getWindow()->yieldCurrent();
@@ -5425,7 +5423,7 @@ static void		playingLoop()
     mainWindow->getWindow()->yieldCurrent();
 
     // quick out
-    if (mainWindow->getQuit()) break;
+    if (CommandsStandard::isQuit()) break;
 
     // if server died then leave the game (note that this may cause
     // further server errors but that's okay).
