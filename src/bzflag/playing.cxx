@@ -881,8 +881,10 @@ static void doKey(const BzfKeyEvent& key, bool pressed) {
       worldDatabase = NULL;
     }
     printError("Download stopped by user action");
-    (*joinGameCallback)(false, joinGameUserData);
-    joinGameCallback = NULL;
+    if (joinGameCallback) {
+      (*joinGameCallback)(false, joinGameUserData);
+      joinGameCallback = NULL;
+    }
     joiningGame      = false;
   }
   if (!myTank)
@@ -1460,8 +1462,10 @@ static void loadCachedWorld()
     delete[] worldDatabase;
     printError("Error on md5. Remove offending file.");
     remove(worldCachePath.c_str());
-    (*joinGameCallback)(false, joinGameUserData);
-    joinGameCallback = NULL;
+    if (joinGameCallback) {
+      (*joinGameCallback)(false, joinGameUserData);
+      joinGameCallback = NULL;
+    }
     joiningGame      = false;
     return;
   }
@@ -1474,8 +1478,10 @@ static void loadCachedWorld()
     worldBuilder = NULL;
     delete[] worldDatabase;
     printError("Error downloading world database.");
-    (*joinGameCallback)(false, joinGameUserData);
-    joinGameCallback = NULL;
+    if (joinGameCallback) {
+      (*joinGameCallback)(false, joinGameUserData);
+      joinGameCallback = NULL;
+    }
     joiningGame      = false;
     return;
   }
@@ -1486,7 +1492,11 @@ static void loadCachedWorld()
   if (worldBuilder)
     delete worldBuilder;
   worldBuilder = NULL;
-  (*joinGameCallback)(true, joinGameUserData);
+  connectStatusCB("Preparing to enter server...");
+  if (joinGameCallback) {
+    (*joinGameCallback)(true, joinGameUserData);
+    joinGameCallback = NULL;
+  }
   joinInternetGame2();
   joiningGame = false;
 }
@@ -1512,8 +1522,10 @@ static void dumpMissingFlag(char *buf, uint16_t len)
   std::vector<std::string> args;
   args.push_back(flags);
   printError("Flags not supported by this client: {1}", &args);
-  (*joinGameCallback)(false, joinGameUserData);
-  joinGameCallback = NULL;
+  if (joinGameCallback) {
+    (*joinGameCallback)(false, joinGameUserData);
+    joinGameCallback = NULL;
+  }
 }
 
 static bool processWorldChunk(void *buf, uint16_t len, int bytesLeft)
@@ -3974,8 +3986,10 @@ static void joinInternetGame()
   // open server
   Address serverAddress(startupInfo.serverName);
   if (serverAddress.isAny()) {
-    (*joinGameCallback)(false, joinGameUserData);
-    joinGameCallback = NULL;
+    if (joinGameCallback) {
+      (*joinGameCallback)(false, joinGameUserData);
+      joinGameCallback = NULL;
+    }
     return;
   }
   ServerLink* _serverLink = new ServerLink(serverAddress,
@@ -4005,8 +4019,10 @@ static void joinInternetGame()
 
   if (!serverLink) {
     printError("Memory error");
-    (*joinGameCallback)(false, joinGameUserData);
-    joinGameCallback = NULL;
+    if (joinGameCallback) {
+      (*joinGameCallback)(false, joinGameUserData);
+      joinGameCallback = NULL;
+    }
     return;
   }
 
@@ -4050,8 +4066,10 @@ static void joinInternetGame()
 	break;
     }
 
-    (*joinGameCallback)(false, joinGameUserData);
-    joinGameCallback = NULL;
+    if (joinGameCallback) {
+      (*joinGameCallback)(false, joinGameUserData);
+      joinGameCallback = NULL;
+    }
     return;
   }
 
@@ -4065,8 +4083,6 @@ static void joinInternetGame2()
 {
   ServerLink::setServer(serverLink);
   World::setWorld(world);
-
-  connectStatusCB("Preparing to enter server...");
 
   // prep teams
   teams = world->getTeams();
