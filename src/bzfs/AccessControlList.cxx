@@ -49,11 +49,11 @@ void AccessControlList::expire() {
       ++it;
     }
   }
-  for (hostBanList_t::iterator it = hostBanList.begin(); it != hostBanList.end();) {
-    if (it->banEnd <= now) {
-      it = hostBanList.erase(it);
+  for (hostBanList_t::iterator ith = hostBanList.begin(); ith != hostBanList.end();) {
+    if (ith->banEnd <= now) {
+      ith = hostBanList.erase(ith);
     } else {
-      ++it;
+      ++ith;
     }
   }
 }

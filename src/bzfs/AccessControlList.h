@@ -425,21 +425,21 @@ public:
       os<<"banner: "<<it->bannedBy<<'\n';
       os<<"reason: "<<it->reason<<'\n';
     }
-    for (hostBanList_t::const_iterator it = hostBanList.begin(); it != hostBanList.end(); ++it) {
+    for (hostBanList_t::const_iterator ith = hostBanList.begin(); ith != hostBanList.end(); ++ith) {
       // print address
-      os<<"host: "<<it->hostpat<<'\n';
+      os<<"host: "<<ith->hostpat<<'\n';
 
       // print ban end, banner, and reason
-      if (it->banEnd.getSeconds() ==
+      if (ith->banEnd.getSeconds() ==
 	  TimeKeeper::getSunExplodeTime().getSeconds()) {
 	os<<"end: 0"<<'\n';
       }
       else {
-	os<<"end: "<<(long(it->banEnd.getSeconds() + time(NULL) -
+	os<<"end: "<<(long(ith->banEnd.getSeconds() + time(NULL) -
 			   TimeKeeper::getCurrent().getSeconds()))<<'\n';
       }
-      os<<"banner: "<<it->bannedBy<<'\n';
-      os<<"reason: "<<it->reason<<'\n';
+      os<<"banner: "<<ith->bannedBy<<'\n';
+      os<<"reason: "<<ith->reason<<'\n';
     }
   }
 
