@@ -233,7 +233,8 @@ static void		printl(int level, int priority, const char* msg, ...)
  * signal installing and handlers
  */
 
-static void		setSignal(int sig, void (*fn)())
+typedef void(*Callback)(int);
+static void		setSignal(int sig, Callback fn)
 {
   struct sigaction sa;
   sa.sa_flags     = 0;
