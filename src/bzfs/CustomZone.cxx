@@ -96,9 +96,9 @@ void CustomZone::write(WorldInfo* worldInfo) const
 
 void CustomZone::getRandomPoint(float *pt) const
 {
-  float x = (bzfrand() * (2.0f * size[0])) - size[0];
-  float y = (bzfrand() * (2.0f * size[1])) - size[1];
-  pt[2] = bzfrand() * size[2];
+  float x = (float)((bzfrand() * (2.0f * size[0])) - size[0]);
+  float y = (float)((bzfrand() * (2.0f * size[1])) - size[1]);
+  pt[2] = (float)(bzfrand() * size[2]);
 
   pt[0] = x * cosf(rotation) - y * sinf(rotation);
   pt[1] = x * sinf(rotation) + y * cosf(rotation);

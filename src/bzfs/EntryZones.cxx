@@ -60,7 +60,7 @@ bool EntryZones::getZonePoint(const std::string &qualifier, float *pt) const
 
   const QPairList &qPairList = mit->second;
 
-  float rnd = bzfrand();
+  float rnd = (float)bzfrand();
   float total = 0.0f;
   QPairList::const_iterator vit;
   for (vit = qPairList.begin(); vit != qPairList.end(); ++vit) {

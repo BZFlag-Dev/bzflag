@@ -1077,7 +1077,7 @@ void			LocalPlayer::jump()
   if (getFlag() == Flags::Wings)
 	newVelocity[2] = BZDB.eval(StateDatabase::BZDB_WINGSJUMPVELOCITY);
   else if (getFlag() == Flags::Bouncy)
-	newVelocity[2] = bzfrand() * BZDB.eval(StateDatabase::BZDB_JUMPVELOCITY);
+	newVelocity[2] = (float)(bzfrand() * BZDB.eval(StateDatabase::BZDB_JUMPVELOCITY));
   else
 	newVelocity[2] = BZDB.eval(StateDatabase::BZDB_JUMPVELOCITY);
   setVelocity(newVelocity);
