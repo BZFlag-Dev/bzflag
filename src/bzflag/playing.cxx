@@ -3659,7 +3659,7 @@ static void		restartPlaying()
 	// larger than the actual tank size to give some leeway.
 	const Ray ray(shot->getPosition(), shot->getVelocity());
 	const float t = timeRayHitsBlock(ray, startPoint, startAzimuth,
-				4.0f * BZDB->eval(StateDatabase::BZDB_TANKLENGTH), 4.0f * TankWidth,
+				4.0f * BZDB->eval(StateDatabase::BZDB_TANKLENGTH), 4.0f * BZDB->eval(StateDatabase::BZDB_TANKWIDTH),
 				2.0f * TankHeight);
 	if (t >= 0.0f && t < MinShotImpact) {
 	  located = false;
@@ -4333,8 +4333,8 @@ static void		addObstacle(std::vector<BzfRegion*>& rgnList, const Obstacle& obsta
   //	0.49*TankWidth of a building at any orientation which means they
   //	could penetrate buildings.  it's either this or have robots go
   //	dead when they (or the target) moves within a dead-zone.
-  const float w = obstacle.getWidth() + 0.49f * TankWidth;
-  const float h = obstacle.getBreadth() + 0.49f * TankWidth;
+  const float w = obstacle.getWidth() + 0.49f * BZDB->eval(StateDatabase::BZDB_TANKWIDTH);
+  const float h = obstacle.getBreadth() + 0.49f * BZDB->eval(StateDatabase::BZDB_TANKWIDTH);
   const float xx =  w * cosf(a);
   const float xy =  w * sinf(a);
   const float yx = -h * sinf(a);
@@ -5974,7 +5974,7 @@ static void		playingLoop()
 	// back to center channel
 	mainWindow->setQuadrant(MainWindow::UpperRight);
       } else if (viewType == SceneRenderer::Stacked) {
-       static float EyeDisplacement = 0.25f * TankWidth;
+       static float EyeDisplacement = 0.25f * BZDB->eval(StateDatabase::BZDB_TANKWIDTH);
        static float FocalPlane = BoxBase;
        static bool init = false;
        if (!init) {
@@ -6011,7 +6011,7 @@ static void		playingLoop()
        // back to left channel
        mainWindow->setQuadrant(MainWindow::LowerHalf);
       } else if (viewType == SceneRenderer::Stereo) {
-	static float EyeDisplacement = 0.25f * TankWidth;
+	static float EyeDisplacement = 0.25f * BZDB->eval(StateDatabase::BZDB_TANKWIDTH);
 	static float FocalPlane = BoxBase;
 	static bool init = false;
 	if (!init) {
@@ -6068,7 +6068,7 @@ static void		playingLoop()
 	mainWindow->setQuadrant(MainWindow::UpperRight);
 #endif
       } else if (viewType == SceneRenderer::Anaglyph) {
-	static float EyeDisplacement = 0.25f * TankWidth;
+	static float EyeDisplacement = 0.25f * BZDB->eval(StateDatabase::BZDB_TANKWIDTH);
 	static float FocalPlane = BoxBase;
 	static bool init = false;
 	if (!init) {

@@ -63,7 +63,6 @@ extern float	WorldSize;							// meters
 const float		BaseSize =	60.0f;					// meters
 
 // rough tank geometry
-const float		TankWidth =	2.8f;		// meters
 const float		TankHeight =	2.05f;		// meters
 const float		TankRadius =	4.32f;// meters
 const float		MuzzleHeight =	1.57f;		// meters
@@ -86,7 +85,7 @@ const float		BoxBase =	30.0f;// meters
 const float		BoxHeight =	6.0f*MuzzleHeight;// meters
 
 // teleporter geometry (My God, it's full of stars...)
-const float		TeleUnit =	0.4f * TankWidth;// meters
+const float		TeleUnit =	1.12f;// meters
 const float		TeleWidth =	1.0f * TeleUnit;// meters
 const float		TeleBreadth =	4.0f * TeleUnit;// meters
 const float		TeleHeight =	9.0f * TeleUnit;// meters
@@ -183,7 +182,7 @@ struct GlobalDBItem {
     bool			persistent;
     StateDatabase::Permission	permission;
 };
-extern GlobalDBItem		globalDBItems[2];
+extern GlobalDBItem		globalDBItems[3];
 
 #endif // BZF_GLOBAL_H
 // ex: shiftwidth=2 tabstop=8

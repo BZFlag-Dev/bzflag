@@ -48,7 +48,8 @@ TankSceneNode::TankSceneNode(const GLfloat pos[3], const GLfloat forward[3]) :
   // prepare geometry
   move(pos, forward);
   baseRadius = 0.25f * (BZDB->eval(StateDatabase::BZDB_TANKLENGTH) * BZDB->eval(StateDatabase::BZDB_TANKLENGTH) +
-			TankWidth * TankWidth + TankHeight * TankHeight);
+			BZDB->eval(StateDatabase::BZDB_TANKWIDTH) * BZDB->eval(StateDatabase::BZDB_TANKWIDTH) +
+			TankHeight * TankHeight);
   setRadius(baseRadius);
 
   color[3] = 1.0f;
