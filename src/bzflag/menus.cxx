@@ -1838,7 +1838,7 @@ HUDuiControl*		HelpMenu::createLabel(const char* string,
 {
   HUDuiLabel* control = new HUDuiLabel;
   control->setFont(MainMenu::getFont());
-  control->setString(string);
+  if (string) control->setString(string);
   if (label) control->setLabel(label);
   return control;
 }
@@ -1917,68 +1917,69 @@ Help1Menu::Help1Menu() : HelpMenu("Controls")
 {
   // add controls
   std::vector<HUDuiControl*>& list = getControls();
-  list.push_back(createLabel("controls tank motion", "Mouse Position:"));
-  list.push_back(createLabel("fires shot"));
-  list.push_back(createLabel("drops flag (if not bad)"));
-  list.push_back(createLabel("identifies player (locks on GM)"));
-  list.push_back(createLabel("short radar range"));
-  list.push_back(createLabel("medium radar range"));
-  list.push_back(createLabel("long radar range"));
-  list.push_back(createLabel("send message to everybody"));
-  list.push_back(createLabel("send message to teammates"));
-  list.push_back(createLabel("send message to nemesis"));
-  list.push_back(createLabel("send message to recipient"));
-  list.push_back(createLabel("jump (if allowed)"));
-  list.push_back(createLabel("toggle binoculars"));
-  list.push_back(createLabel("toggle score sheet"));
-  list.push_back(createLabel("toggle tank labels"));
-  list.push_back(createLabel("toggle heads-up flag help"));
-  list.push_back(createLabel("set time of day backward"));
-  list.push_back(createLabel("set time of day forward"));
-  list.push_back(createLabel("pause/resume"));
-  list.push_back(createLabel("self destruct/cancel"));
-  list.push_back(createLabel("quit"));
-  list.push_back(createLabel("scroll message log backward"));
-  list.push_back(createLabel("scroll message log forward"));
-  list.push_back(createLabel("Slow Keyboard Motion"));
-  list.push_back(createLabel("Toggle Radar Flags"));
-  list.push_back(createLabel("Toggle Main Flags"));
-  list.push_back(createLabel("Silience/UnSilence"));
-  list.push_back(createLabel("Server Admin"));
-  list.push_back(createLabel("Hunt"));
-  list.push_back(createLabel("Auto Pilot"));
-  list.push_back(createLabel("show/dismiss menu", "Esc:"));
+  list.push_back(createLabel("Mouse Position", "Controls Tank Position:"));
+  list.push_back(createLabel(NULL, "Fires Shot:"));
+  list.push_back(createLabel(NULL, "Drops Flag (if not bad):"));
+  list.push_back(createLabel(NULL, "Identifies Player (locks on GM):"));
+  list.push_back(createLabel(NULL, "Short Radar Range:"));
+  list.push_back(createLabel(NULL, "Medium Radar Range:"));
+  list.push_back(createLabel(NULL, "Long Radar Range:"));
+  list.push_back(createLabel(NULL, "Send Message to Everybody:"));
+  list.push_back(createLabel(NULL, "Send Message to Teammates:"));
+  list.push_back(createLabel(NULL, "Send Message to Nemesis:"));
+  list.push_back(createLabel(NULL, "Send Message to Recipient:"));
+  list.push_back(createLabel(NULL, "Jump (if allowed):"));
+  list.push_back(createLabel(NULL, "Toggle Binoculars:"));
+  list.push_back(createLabel(NULL, "Toggle Score Sheet:"));
+  list.push_back(createLabel(NULL, "Toggle Tank Labels:"));
+  list.push_back(createLabel(NULL, "Toggle Heads-up Flag Help:"));
+  list.push_back(createLabel(NULL, "Set Time of Day Backward:"));
+  list.push_back(createLabel(NULL, "Set Time of Day Forward:"));
+  list.push_back(createLabel(NULL, "Pause/Resume:"));
+  list.push_back(createLabel(NULL, "Self destruct/Cancel:"));
+  list.push_back(createLabel(NULL, "Quit:"));
+  list.push_back(createLabel(NULL, "Scroll Message Log Backward:"));
+  list.push_back(createLabel(NULL, "Scroll Message Log Forward:"));
+  list.push_back(createLabel(NULL, "Slow Keyboard Motion:"));
+  list.push_back(createLabel(NULL, "Toggle Radar Flags:"));
+  list.push_back(createLabel(NULL, "Toggle Main Flags:"));
+  list.push_back(createLabel(NULL, "Silience/UnSilence:"));
+  list.push_back(createLabel(NULL, "Server Admin:"));
+  list.push_back(createLabel(NULL, "Hunt:"));
+  list.push_back(createLabel(NULL, "Auto Pilot:"));
+  list.push_back(createLabel("Esc", "Show/Dismiss menu:"));
 
-  initKeymap("fire", 2);
-  initKeymap("drop", 3);
-  initKeymap("identify", 4);
-  initKeymap("set displayRadarRange 1.0", 5);
-  initKeymap("set displayRadarRange 0.5", 6);
-  initKeymap("set displayRadarRange 0.25", 7);
-  initKeymap("send all", 8);
-  initKeymap("send team", 9);
-  initKeymap("send nemesis", 10);
-  initKeymap("send recipient", 11);
-  initKeymap("jump", 12);
-  initKeymap("toggle displayBinoculars", 13);
-  initKeymap("toggle displayScore", 14);
-  initKeymap("toggle displayLabels", 15);
-  initKeymap("toggle displayFlagHelp", 16);
-  initKeymap("time backward", 17);
-  initKeymap("time forward", 18);
-  initKeymap("pause", 19);
-  initKeymap("destruct", 20);
-  initKeymap("quit", 21);
-  initKeymap("scrollpanel up", 22);
-  initKeymap("scrollpanel down", 23);
-  initKeymap("toggle slowKeyboard", 24);
-  initKeymap("toggle displayRadarFlags", 25);
-  initKeymap("toggle displayMainFlags", 26);
-  initKeymap("silence", 27);
-  initKeymap("servercommand", 28);
-  initKeymap("hunt", 29);
-  initKeymap("autopilot", 30);
+  initKeymap("fire", 3);
+  initKeymap("drop", 4);
+  initKeymap("identify", 5);
+  initKeymap("set displayRadarRange 1.0", 6);
+  initKeymap("set displayRadarRange 0.5", 7);
+  initKeymap("set displayRadarRange 0.25", 8);
+  initKeymap("send all", 9);
+  initKeymap("send team", 10);
+  initKeymap("send nemesis", 11);
+  initKeymap("send recipient", 12);
+  initKeymap("jump", 13);
+  initKeymap("toggle displayBinoculars", 14);
+  initKeymap("toggle displayScore", 15);
+  initKeymap("toggle displayLabels", 16);
+  initKeymap("toggle displayFlagHelp", 17);
+  initKeymap("time backward", 18);
+  initKeymap("time forward", 19);
+  initKeymap("pause", 20);
+  initKeymap("destruct", 21);
+  initKeymap("quit", 22);
+  initKeymap("scrollpanel up", 23);
+  initKeymap("scrollpanel down", 24);
+  initKeymap("toggle slowKeyboard", 25);
+  initKeymap("toggle displayRadarFlags", 26);
+  initKeymap("toggle displayMainFlags", 27);
+  initKeymap("silence", 28);
+  initKeymap("servercommand", 29);
+  initKeymap("hunt", 30);
+  initKeymap("autopilot", 31);
 }
+
 void			Help1Menu::onScan(const std::string& name, bool press,
 					  const std::string& cmd)
 {
@@ -2014,7 +2015,26 @@ float			Help1Menu::getLeftSide(int width, int height)
 void			Help1Menu::resize(int width, int height)
 {
   // get current key mapping and set strings appropriately
-  // FIXME - need to retrieve key map
+  std::map<std::string, keymap>::iterator it;
+  // clear
+  for (it = mappable.begin(); it != mappable.end(); it++) {
+    it->second.key1 = "";
+    it->second.key2 = "";
+  }
+  // load current settings
+  KEYMGR->iterate(&onScanCB, this);
+  std::vector<HUDuiControl*>& list = getControls();
+  for (it = mappable.begin(); it != mappable.end(); it++) {
+    std::string value = "";
+    if (it->second.key1.empty()) {
+      value = "<not mapped>";
+    } else {
+      value += it->second.key1;
+      if (!it->second.key2.empty())
+	value += " or " + it->second.key2;
+    }
+    ((HUDuiLabel*)list[it->second.index])->setString(value);
+  }
 
   // now do regular resizing
   HelpMenu::resize(width, height);
