@@ -10,22 +10,13 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#include <algorithm>
-#include <functional>
 #include <iostream>
 #include <map>
 #include <string>
-#include <vector>
 
 #include "BZAdminUI.h"
-#if (defined(HAVE_CURSES_H) || defined (HAVE_NCURSES_H))
-#include "CursesUI.h"
-#endif
 #include "OptionParser.h"
 #include "ServerLink.h"
-#include "StdBothUI.h"
-#include "StdInUI.h"
-#include "StdOutUI.h"
 #include "UIMap.h"
 
 // causes persistent rebuilding to obtain build versioning
@@ -33,14 +24,21 @@
 
 using namespace std;
 
+/** @file
+    This is the main file for bzadmin, the bzflag text client.
+*/
+
 
 // function prototypes
 /** Checks for new packets from the server, ignores them or stores a
-    text message in str. Tells ui about new or removed players. Returns
-    false if no interesting packets have arrived. */
+    text message in @c str. Tells @c ui about new or removed players. Returns
+    false if no interesting packets have arrived. 
+    @throws std::string
+*/
 bool getServerString(ServerLink& sLink, string& str, BZAdminUI& ui);
 
-/** Sends the message msg to the server. */
+/** Sends the message @c msg to the server with the player or team @c target
+    as receiver. */
 void sendMessage(ServerLink& sLink, const string& msg, PlayerId target);
 
 /** Formats an incoming message. */
@@ -58,10 +56,9 @@ struct CLOptions {
 } clOptions;
 
 
-// Here we go.
 int main(int argc, char** argv) {
 
-  // no curses, use stdboth instead
+  // no curses, use stdboth as default instead
   const UIMap::map_t& interfaces(UIMap::getInstance().getMap());
   if (interfaces.find("curses") == interfaces.end())
     clOptions.ui = "stdboth";

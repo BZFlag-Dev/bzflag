@@ -11,7 +11,6 @@
  */
 
 #include <algorithm>
-//#include <limits>
 
 #include "AutoCompleter.h"
 
