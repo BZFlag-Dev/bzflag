@@ -40,14 +40,19 @@ teammate scores a loss.  Rogues have no teammates (not even
 other rogues), so they cannot shoot teammates and they do
 not have a team score.
 .PP
-There are two main styles of play:  capture-the-flag and
-free-for-all.  In capture-the-flag, each team (except rogues)
+There are three main styles of play:  capture-the-flag,
+free-for-all, and rabbit-hunt.  In capture-the-flag, each team (except rogues)
 has a team base and each team with at least one player has a team
 flag.  The object is to capture an enemy team's flag by bringing
 it to your team's base.  This destroys every player on the captured
 team, subtracts one from that team's score, and adds one to your
 team's score.  In free-for-all, there are no team flags or team
 bases.  The object is simply to get as high a score as possible.
+In rabbit-hunt, the lead player is chosen as the target for all
+other players. When the rabbit(target) is destroyed, the live player
+with the next highest score becomes the rabbit. The object is to
+remain the rabbit for as long as possible. The rabbit is marked as 
+a white tank.
 .SS Options
 .RS
 .TP 15
@@ -337,7 +342,8 @@ flags captured minus the number of times the team's flag was captured.
 Capturing your own flag (by taking it onto an enemy base) counts as a
 loss.  In the free-for-all style, the team score is sum of the wins of
 all the players on the team minus the sum of the losses of all the
-players on the team.
+players on the team. In the rabbit-hunt style, scoring is similar to
+free-for-all.
 .PP
 The score sheet also lists the number times you have destroyed or been
 destroyed by each other player under the \fIKills\fR heading.  This

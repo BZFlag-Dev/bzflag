@@ -44,6 +44,7 @@ bzfs \- BZFlag game server
 [\fB\-q\fR]
 [\fB\+r\fR]
 [\fB\-r\fR]
+[\fB\-rabbit\fR]
 [\fB\-reportfile \fIfilename\fR]
 [\fB\-reportpipe \fIcommand\fR]
 [\fB\-requireudp\fR]
@@ -253,6 +254,10 @@ Super bullets, shock waves, and guided missiles do not.
 .TP
 .B -r
 Allows rogues to join the game.  By default, no rogue players are allowed.
+.TP
+.B -rabbit
+Enables the rabbit-hunt style game.  By default, the free-for-all
+style is used.
 .TP
 .B -reportfile\fI filename\fR
 Write messages to the server admin written using the \fB/report\fR command to
