@@ -636,7 +636,7 @@ void handleIdentifyCmd(int t, const char *message)
       if (verifyUserPassword(player[t].regName.c_str(), message + 10)) {
 	sendMessage(ServerPlayer, t, "Password Accepted, welcome back.");
 	player[t].accessInfo.verified = true;
-
+	
 	// get their real info
 	PlayerAccessInfo &info = getUserInfo(player[t].regName);
 	player[t].accessInfo.explicitAllows = info.explicitAllows;

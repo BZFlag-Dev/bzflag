@@ -447,6 +447,7 @@ AC_OUTPUT(bzflag.spec
 	src/bzfs/Makefile
 	src/common/Makefile
 	src/date/Makefile
+	src/3D/Makefile
 	src/geometry/Makefile
 	src/geometry/models/Makefile
 	src/geometry/models/tank/Makefile
