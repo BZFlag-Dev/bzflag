@@ -13,35 +13,29 @@
 /* interface header */
 #include "JoinMenu.h"
 
-/* system headers */
-#include <string>
-#include <vector>
-
 /* common implementation headers */
+#include "BzfMedia.h"
 #include "FontManager.h"
+#include "PlatformFactory.h"
+#include "Protocol.h"
+#include "ServerList.h"
+#include "TimeKeeper.h"
 
 /* local implementation headers */
-#include "StartupInfo.h"
-#include "MainMenu.h"
 #include "HUDDialogStack.h"
+#include "MainMenu.h"
 #include "MenuDefaultKey.h"
-#include "ServerStartMenu.h"
 #include "ServerMenu.h"
-#include "Protocol.h"
-#include "HUDuiControl.h"
-#include "HUDuiLabel.h"
-#include "HUDuiTypeIn.h"
-#include "HUDuiList.h"
-#include "TimeKeeper.h"
-#include "ServerList.h"
-#include "PlatformFactory.h"
-#include "BzfMedia.h"
+#include "ServerStartMenu.h"
+#include "StartupInfo.h"
+
 
 /* from playing.h */
 StartupInfo* getStartupInfo();
 void joinGame();
 
 JoinMenu* JoinMenu::activeMenu = NULL;
+
 
 JoinMenu::JoinMenu() : serverStartMenu(NULL), serverMenu(NULL)
 {
