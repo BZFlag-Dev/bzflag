@@ -35,9 +35,6 @@
 
 #define MAX_MESSAGE_HISTORY (20)
 
-
-class SceneRenderer;
-
 typedef void		(*JoinGameCallback)(bool success, void* data);
 typedef void		(*PlayingCallback)(void*);
 struct PlayingCallbackItem {
@@ -69,8 +66,8 @@ bool			addExplosion(const float* pos,
 void			addTankExplosion(const float* pos);
 void			addShotExplosion(const float* pos);
 void			addShotPuff(const float* pos);
-void      warnAboutMainFlags();
-void      warnAboutRadarFlags();
+void			warnAboutMainFlags();
+void			warnAboutRadarFlags();
 void			addPlayingCallback(PlayingCallback, void* data);
 void			removePlayingCallback(PlayingCallback, void* data);
 

@@ -377,8 +377,8 @@ void			addPlayingCallback(PlayingCallback cb, void* data)
 void			removePlayingCallback(PlayingCallback _cb, void* data)
 {
   std::vector<PlayingCallbackItem>::iterator it = playingCallbacks.begin();
-  while(it != playingCallbacks.end()) {
-    if(it->cb == _cb && it->data == data) {
+  while (it != playingCallbacks.end()) {
+    if (it->cb == _cb && it->data == data) {
       playingCallbacks.erase(it);
       break;
     }
@@ -501,9 +501,9 @@ void setRoamingLabel(bool force)
     }
     if (!force && roamTrackWinner == oldWinner)
       return;
-    winner="Winner ";
+    winner = "Winner ";
   } else {
-    winner="";
+    winner = "";
   }
   if (player[roamTrackWinner]) {
     switch (roamView) {
@@ -532,9 +532,9 @@ void setRoamingLabel(bool force)
       hud->setRoamingLabel(std::string("Roaming"));
       break;
     }
-  }
-  else
+  } else {
     hud->setRoamingLabel("Roaming");
+  }
 }
 
 static enum {None, Left, Right, Up, Down} keyboardMovement;
@@ -707,8 +707,8 @@ static void		doKeyPlaying(const BzfKeyEvent& key, bool pressed)
   if (key.ascii == '`' && pressed && !haveBinding) {
     // toggle motion freeze
     motionFreeze = !motionFreeze;
+    return;
   }
-  //  else
 #endif
 
   if (key.ascii == 0 &&
@@ -744,8 +744,8 @@ static void		doKeyPlaying(const BzfKeyEvent& key, bool pressed)
   else if (myTank->isAlive()) {
     if ((myTank->getInputMethod() != LocalPlayer::Keyboard) && pressed) {
       if (keyboardMovement != None)
-	  if (BZDB.isTrue("allowInputChange"))
-	    myTank->setInputMethod(LocalPlayer::Keyboard);
+	if (BZDB.isTrue("allowInputChange"))
+	  myTank->setInputMethod(LocalPlayer::Keyboard);
     } 
   }
 }
@@ -2431,7 +2431,7 @@ void addDeadUnder (SceneDatabase *db, float dt)
   }
   
   float size = BZDB.eval (StateDatabase::BZDB_WORLDSIZE);
-  GLfloat base[3] =  {-size/2.0f, -size/2.0f, deadUnder};
+  GLfloat base[3]  = {-size/2.0f, -size/2.0f, deadUnder};
   GLfloat sEdge[3] = {0.0f, size, 0.0f};
   GLfloat tEdge[3] = {size, 0.0f, 0.0f};
 
@@ -2512,18 +2512,14 @@ void handleFlagDropped(Player* tank)
   if (tank->getFlag() == Flags::Null) return;
 
   if (tank == myTank) {
-
     // make sure the player must reload after theft
     if (tank->getFlag() == Flags::Thief) {
       myTank->forceReload(BZDB.eval(StateDatabase::BZDB_THIEFDROPTIME));
     }
-
     // update display and play sound effects
     playLocalSound(SFX_DROP_FLAG);
     updateFlag(Flags::Null);
-
   }
-
 
   // add message
   std::string message("dropped ");
@@ -2571,14 +2567,14 @@ static bool		gotBlowedUp(BaseLocalPlayer* tank,
     return false;
 
   int shotId = -1;
-  if(hit)
+  if (hit)
     shotId = hit->getShotId();
 
   // you can't take it with you
   const FlagType* flag = tank->getFlag();
   if (flag != Flags::Null) {
-	if (myTank->isAutoPilot())
-	  teachAutoPilot( myTank->getFlag(), -1 );
+    if (myTank->isAutoPilot())
+      teachAutoPilot( myTank->getFlag(), -1 );
 
     // tell other players I've dropped my flag
     lookupServer(tank)->sendDropFlag(tank->getPosition());
@@ -2609,8 +2605,7 @@ static bool		gotBlowedUp(BaseLocalPlayer* tank,
 	playLocalSound(SFX_RUNOVER);
       else
 	playLocalSound(SFX_DIE);
-    }
-    else {
+    } else {
       const float* pos = tank->getPosition();
       if (reason == GotRunOver)
 	playWorldSound(SFX_RUNOVER, pos[0], pos[1], pos[2],
@@ -2640,9 +2635,9 @@ static bool		gotBlowedUp(BaseLocalPlayer* tank,
   if (tank == myTank && blowedUpMessage[reason]) {
     std::string blowedUpNotice = blowedUpMessage[reason];
     // first, check if i'm the culprit
-    if (reason == GotShot && getLocalPlayer(killer) == myTank)
+    if (reason == GotShot && getLocalPlayer(killer) == myTank) {
       blowedUpNotice = "Shot myself";
-    else {
+    } else {
       // 1-4 are messages sent when the player dies because of someone else
       if (reason >= GotShot && reason <= GenocideEffect) {
 	// matching the team-display style of other kill messages
@@ -2652,8 +2647,7 @@ static bool		gotBlowedUp(BaseLocalPlayer* tank,
 	if (myTank->getTeam() == team && team != RogueTeam) {
 	  blowedUpNotice += "teammate " ;
 	  blowedUpNotice += lookupPlayer(killer)->getCallSign();
-	}
-	else {
+	} else {
 	  blowedUpNotice += lookupPlayer(killer)->getCallSign();
 	  blowedUpNotice += " (";
           if (World::getWorld()->allowRabbit() && lookupPlayer(killer)->getTeam() != RabbitTeam)

@@ -822,10 +822,6 @@ SOURCE=..\..\src\bzflag\playing.h
 # End Source File
 # Begin Source File
 
-SOURCE="C:\Program Files\Microsoft SDK\include\PropIdl.h"
-# End Source File
-# Begin Source File
-
 SOURCE=..\..\include\PyramidBuilding.h
 # End Source File
 # Begin Source File
@@ -839,10 +835,6 @@ SOURCE=..\..\src\bzflag\RadarRenderer.h
 # Begin Source File
 
 SOURCE=..\..\include\Ray.h
-# End Source File
-# Begin Source File
-
-SOURCE="C:\Program Files\Microsoft SDK\include\Reason.h"
 # End Source File
 # Begin Source File
 

@@ -39,8 +39,7 @@ void FlashClock::setClock(float _duration, float onTime, float offTime)
   if (onTime <= 0.0f || offTime <= 0.0f) {
     onDuration = 0.0f;
     flashDuration = 0.0f;
-  }
-  else {
+  } else {
     onDuration = onTime;
     flashDuration = onTime + offTime;
   }

@@ -237,8 +237,7 @@ void			Player::updateSparks(float /*dt*/)
   if (flagType == Flags::PhantomZone && isFlagActive()) {
     // almost totally transparent
     color[3] = 0.25f;
-  }
-  else {
+  } else {
     // transparency depends on proximity
     color[3] = 1.0f - 0.75f * teleporterProximity;
   }
@@ -259,8 +258,7 @@ void			Player::setVisualTeam (TeamColor visualTeam)
   if (visualTeam == RabbitTeam) {
     emissive = rabbitEmissive;
     shininess = rabbitShininess;
-  }
-  else {
+  } else {
     emissive = tankEmissive;
     shininess = tankShininess;
   }
@@ -349,26 +347,22 @@ void			Player::addToScene(SceneDatabase* scene,
 	// add clipping plane to tank node
 	tankNode->setClipPlane(plane);
       }
-    }
-    else if ((getFlag() == Flags::Burrow) && (getPosition()[2] < 0.0f)) {
+    } else if ((getFlag() == Flags::Burrow) && (getPosition()[2] < 0.0f)) {
       GLfloat plane[4];
       plane[0] = plane[1] = 0.0f;
       plane[2] = 1.0f;
       plane[3] = 0.0f;
       tankNode->setClipPlane(plane);
-    }
-    else {
+    } else {
       tankNode->setClipPlane(NULL);
     }
-  }
-  else if (isExploding() && state.pos[2] > ZERO_TOLERANCE) {
+  } else if (isExploding() && state.pos[2] > ZERO_TOLERANCE) {
     float t = (TimeKeeper::getTick() - explodeTime) / BZDB.eval(StateDatabase::BZDB_EXPLODETIME);
     if (t > 1.0f) {
       // FIXME
       //      setStatus(DeadStatus);
       t = 1.0f;
-    }
-    else if (t < 0.0f) {
+    } else if (t < 0.0f) {
       // shouldn't happen but why take chances
       t = 0.0f;
     }
@@ -450,8 +444,7 @@ bool			Player::getDeadReckoning(
     predictedVel[1] = fabsf(inputSpeed) * sinf(inputSpeedAzimuth);
     predictedVel[2] = 0.0f;
     *predictedAzimuth = inputAzimuth;
-  }
-  else if (inputStatus & PlayerState::Falling) {
+  } else if (inputStatus & PlayerState::Falling) {
     // no control when falling
     predictedVel[0] = fabsf(inputSpeed) * cosf(inputSpeedAzimuth);
     predictedVel[1] = fabsf(inputSpeed) * sinf(inputSpeedAzimuth);
@@ -469,22 +462,22 @@ bool			Player::getDeadReckoning(
     // update z with Newtownian integration (like LocalPlayer)
     inputZSpeed += BZDB.eval(StateDatabase::BZDB_GRAVITY) * (dt - dt2);
     inputPos[2] += inputZSpeed * (dt - dt2);
-  }
-  else {
+  } else {
     // azimuth changes linearly
     *predictedAzimuth = inputAzimuth + dt * inputAngVel;
 
     // different algorithms for tanks moving in a straight line vs
     // turning in a circle
     if (inputAngVel == 0.0f) {
+
       // straight ahead
       predictedVel[0] = fabsf(inputSpeed) * cosf(inputSpeedAzimuth);
       predictedVel[1] = fabsf(inputSpeed) * sinf(inputSpeedAzimuth);
       predictedPos[0] = inputPos[0] + dt * predictedVel[0];
       predictedPos[1] = inputPos[1] + dt * predictedVel[1];
-    }
 
-    else {
+    } else {
+
       // need dt2 because velocity is based on previous time step
       const float tmpAzimuth = inputAzimuth + dt2 * inputAngVel;
       predictedVel[0] = inputSpeed * cosf(tmpAzimuth);
@@ -499,6 +492,7 @@ bool			Player::getDeadReckoning(
       const float angle = offAzimuth + dt * inputAngVel;
       predictedPos[0] = inputPos[0] + radius * (cosf(angle) - cosf(offAzimuth));
       predictedPos[1] = inputPos[1] + radius * (sinf(angle) - sinf(offAzimuth));
+
     }
 
     // inputZSpeed will be zero when not falling
