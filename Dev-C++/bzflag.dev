@@ -1,15 +1,15 @@
 [Project]
-FileName=bzflag.dev
+FileName=BZFLAG.DEV
 Name=bzflag
 Ver=1
 IsCpp=1
 Type=1
 Compiler=-DHAVE_SDL=1 -DBUILD_REGEX=1 -D__GNUWIN32__ -W -D_WINDOWS -DWIN32 -D_MBCS_@@_
 CppCompiler=-DHAVE_SDL=1 -DBUILD_REGEX=1 -D__GNUWIN32__ -W -D_WINDOWS -DWIN32 -D_MBCS_@@_
-Includes=..\include;..\win32;.\\
+Includes=..\include;..\win32;.
 Linker=-lsdl -lws2_32 -ldsound -lwinmm -lglu32 -lopengl32 -lkernel32 -luser32 -lgdi32 -lwinspool -lcomdlg32 -ladvapi32 -lshell32 -lole32 -loleaut32 -luuid -lodbc32 -lodbccp32_@@_
 Libs=
-UnitCount=310
+UnitCount=316
 Folders="Header Files","Header Files/bzip2","Header Files/common","Header Files/net","Header Files/regex","Resource Files","Source Files","Source Files/bzip2","Source Files/common","Source Files/models","Source Files/net","Source Files/regex"
 ObjFiles=
 PrivateResource=bzflag_private.rc
@@ -3018,9 +3018,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit311]
-FileName=..\src\geometry\PTSceneNode.cxx
+FileName=..\src\bzflag\ShotStatsDefaultKey.h
 CompileCpp=1
-Folder=Source Files
+Folder=Header Files
 Compile=1
 Link=1
 Priority=1000
@@ -3038,7 +3038,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit312]
-FileName=..\src\geometry\QuadWallSceneNode.cxx
+FileName=..\src\bzflag\ShotStats.cxx
 CompileCpp=1
 Folder=Source Files
 Compile=1
@@ -3048,9 +3048,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit313]
-FileName=..\src\geometry\Ray.cxx
+FileName=..\src\bzflag\ShotStats.h
 CompileCpp=1
-Folder=Source Files
+Folder=Header Files
 Compile=1
 Link=1
 Priority=1000
@@ -3058,7 +3058,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit314]
-FileName=..\src\geometry\SceneNode.cxx
+FileName=..\src\bzflag\ShotStatsDefaultKey.cxx
 CompileCpp=1
 Folder=Source Files
 Compile=1
@@ -3108,9 +3108,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit315]
-FileName=..\src\geometry\ShellSceneNode.cxx
+FileName=..\src\bzflag\ShotStatistics.h
 CompileCpp=1
-Folder=Source Files
+Folder=Header Files
 Compile=1
 Link=1
 Priority=1000
@@ -3118,9 +3118,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit316]
-FileName=..\src\geometry\SphereSceneNode.cxx
+FileName=..\include\bzfSDL.h
 CompileCpp=1
-Folder=Source Files
+Folder=Header Files/common
 Compile=1
 Link=1
 Priority=1000
