@@ -1,7 +1,3 @@
-# SUBDIRS mult always be processed
-# so they end up in the dist
-SUBDIRS = MacOSX
-
 if LINUX
 libPlatform_a_SOURCES =				\
 	PlatformFactory.cxx			\
@@ -76,6 +72,12 @@ libPlatform_a_SOURCES =				\
 	BzfMedia.cxx				\
 	wave.cxx				\
 	wave.h
+# SUBDIRS is processed conditionally.
+# automake will prepare a subdist for us including MacOSX
+# In not MacOS system this subdirectory will then not being navigated for 
+#  normal make
+SUBDIRS = MacOSX
+
 else
 if BEOS
 libPlatform_a_SOURCES =				\
