@@ -831,7 +831,7 @@ static void sendMessageToListServerForReal(int index)
     pingReply.packHex(gameInfo);
 
     // send ADD message
-    if (clOptions->http) {
+    {
       sprintf(msg, "GET http://%s%s?action=ADD&nameport=%s&version=%s&gameinfo=%s&title=%s\n", 
 	      link.hostname.c_str(),
 	      link.pathname.c_str(),
@@ -839,31 +839,20 @@ static void sendMessageToListServerForReal(int index)
 	      getServerVersion(),
 	      gameInfo,
 	      url_encode(clOptions->publicizedTitle).c_str());
-    } else {
-      sprintf(msg, "%s %s %s %s %.*s %.256s\n\n", link.nextMessage,
-	      clOptions->publicizedAddress.c_str(),
-	      getAppVersion(),
-	      getServerVersion(),
-	      PingPacketHexPackedSize, gameInfo,
-	      clOptions->publicizedTitle);
     }
   }
   else if (strcmp(link.nextMessage, "REMOVE") == 0) {
     // send REMOVE
-    if (clOptions->http) {
+    {
       sprintf(msg, "GET http://%s%s?action=REMOVE&nameport=%s\n", 
 	      link.hostname.c_str(),
 	      link.pathname.c_str(),
-	      clOptions->publicizedAddress.c_str());
-    } else {
-      sprintf(msg, "%s %s\n\n", link.nextMessage,
 	      clOptions->publicizedAddress.c_str());
     }
   }
   else if (strcmp(link.nextMessage, "SETNUM") == 0) {
     // pretend there are no players if the game is over
-    if (clOptions->http) {
-
+    {
       // update player counts in ping reply.
       pingReply.rogueCount = team[0].team.size;
       pingReply.redCount = team[1].team.size;
@@ -879,17 +868,6 @@ static void sendMessageToListServerForReal(int index)
 	      link.pathname.c_str(),
 	      clOptions->publicizedAddress.c_str(),
 	      gameInfo);
-    } else {
-      if (gameOver)
-	sprintf(msg, "%s %s 0 0 0 0 0\n\n", link.nextMessage, clOptions->publicizedAddress.c_str());
-      else
-	sprintf(msg, "%s %s %d %d %d %d %d\n\n", link.nextMessage,
-		clOptions->publicizedAddress.c_str(),
-		team[0].team.size,
-		team[1].team.size,
-		team[2].team.size,
-		team[3].team.size,
-		team[4].team.size);
     }
   }
   DEBUG3("%s",msg);
@@ -914,21 +892,17 @@ static void publicize()
     // more than MaxListServers urls.
     std::vector<std::string> urls, failedURLs;
     urls.push_back(clOptions->listServerURL);
-    BzfNetwork::dereferenceURLs(urls, MaxListServers, failedURLs);
-
-    for (unsigned int j = 0; j < failedURLs.size(); ++j)
-      DEBUG2("failed: %s\n", failedURLs[j].c_str());
 
     // check url list for validity
     for (unsigned int i = 0; i < urls.size(); ++i) {
       // parse url
       std::string protocol, hostname, pathname;
-      int port = ServerPort + 1;
+      int port = 80;
       if (!BzfNetwork::parseURL(urls[i], protocol, hostname, port, pathname))
 	continue;
 
       // ignore if not right protocol
-      if (protocol != "bzflist")
+      if (protocol != "http")
 	continue;
 
       // ignore if port is bogus

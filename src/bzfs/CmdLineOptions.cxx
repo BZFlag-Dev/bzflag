@@ -57,7 +57,6 @@ const char *usageString =
 "[-groupdb <group file>]"
 "[-h] "
 "[-helpmsg <file> <name>]"
-"[-http]"
 "[-i interface] "
 "[-j] "
 "[-lagdrop <num>] "
@@ -131,7 +130,6 @@ const char *extraUsageString =
 "\t-groupdb: file to read for group permissions\n"
 "\t-h: use random building heights\n"
 "\t-helpmsg: show the lines in <file> on command /help <name>\n"
-"\t-http: use new http based bzfls\n"
 "\t-i: listen on <interface>\n"
 "\t-j: allow jumping\n"
 "\t-lagdrop: drop player after this many lag warnings\n"
@@ -543,8 +541,6 @@ void parse(int argc, char **argv, CmdLineOptions &options)
 	}
 	i++;
       }
-    } else if (strcmp(argv[i], "-http") == 0) {
-      options.http = true;
     } else if (strcmp(argv[i], "-i") == 0) {
       // use a different interface
       if (++i == argc) {
