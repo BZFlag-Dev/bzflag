@@ -80,12 +80,15 @@ protected:
 	GLuint						dropList;
 	GLuint						puddleList;
 
+public:
 	typedef struct {
 		float    pos[3];
 		float	 speed;
 		float    roofTop;
 		int		 texture;
 	} rain;
+
+protected:
 	std::vector<rain>			raindrops;
 
 	typedef struct {
@@ -114,11 +117,13 @@ protected:
 	float				gridSize;
 	float				keyFactor;
 
+public:
 	typedef struct {
 	  float mins[3];
 	  float maxs[3];
 	} copyExtents;
 
+protected:
 	typedef struct  {
 		std::vector<rain>	drops;
 		copyExtents		bbox;
