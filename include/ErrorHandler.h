@@ -17,6 +17,9 @@
 #ifndef BZF_ERROR_HANDLER_H
 #define	BZF_ERROR_HANDLER_H
 
+// common header first
+#include "common.h"
+
 // system headers
 #include <vector>
 #include <string>

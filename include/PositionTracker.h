@@ -13,6 +13,9 @@
 #ifndef __POSITIONTRACKER_H__
 #define __POSTIIONTRACKER_H__
 
+// common header first
+#include "common.h"
+
 /* system interface headers */
 #include <string>
 #include <vector>

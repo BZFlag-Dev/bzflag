@@ -13,13 +13,13 @@
 #ifndef BZF_BUNDLE_H
 #define BZF_BUNDLE_H
 
+// common header first
+#include "common.h"
+
 // system headers
 #include <map>
 #include <vector>
 #include <string>
-
-// local headers
-#include "common.h"
 
 typedef std::map<std::string, std::string> BundleStringMap;
 

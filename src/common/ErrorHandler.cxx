@@ -22,7 +22,6 @@
 
 // local implementation headers
 #include "bzfio.h"
-#include "common.h"
 #include "BundleMgr.h"
 #include "Bundle.h"
 
