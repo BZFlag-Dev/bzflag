@@ -152,7 +152,8 @@ void RadarRenderer::drawFlagOnTank(float x, float y, float)
 void			RadarRenderer::render(SceneRenderer& renderer,
 							bool blank)
 {
-  if (!BZDB.isTrue("displayConsoleAndRadar")) {
+  if (!BZDB.isTrue("displayConsoleAndRadar") ||
+      BZDB.isTrue(StateDatabase::BZDB_NORADAR)) {
     return;
   }
 

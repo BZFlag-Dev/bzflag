@@ -275,11 +275,15 @@ const Obstacle*		World::hitBuilding(const float* oldPos, float oldAngle,
     }
     wallScan++;
   }
+  
+  // FIXME - more hack testing
+//  const float vel[3] =
+//    { pos[0] - oldPos[0], pos[1] - oldPos[1], pos[2] - oldPos[2]};
 
   // get the list of potential hits from the collision manager
   const ObsList* olist =
     collisionManager.movingBoxTest (oldPos, oldAngle, pos, angle, dx, dy, dz);
-
+    
   // make a list of the actual hits, or return
   // immediately if a non-mesh obstacle intersects
   int hitCount = 0;
@@ -290,8 +294,13 @@ const Obstacle*		World::hitBuilding(const float* oldPos, float oldAngle,
       if (obs->getType() != MeshFace::getClassName()) {
         return obs;
       } else {
-        olist->list[hitCount] = (Obstacle*) obs;
-        hitCount++;
+//        const MeshFace* face = (const MeshFace*) obs;
+//        const float* p = face->getPlane();
+//        const float dot = (vel[0] * p[0]) + (vel[1] * p[1]) + (vel[2] * p[2]);
+//        if (dot < 1.0e-6f) {
+          olist->list[hitCount] = (Obstacle*) obs;
+          hitCount++;
+//        }
       }
     }
   }
@@ -441,7 +450,7 @@ void			World::freeInsideNodes()
 
 void		World::makeLinkMaterial()
 {
-  std::string name = "LinkMaterial";
+  const std::string name = "LinkMaterial";
   
   linkMaterial = MATERIALMGR.findMaterial(name);
   if (linkMaterial != NULL) {

@@ -154,10 +154,12 @@ ControlPanel::ControlPanel(MainWindow& _mainWindow, SceneRenderer& renderer) :
 				messageMode(MessageAll)
 {
   setControlColor();
+  
   // make sure we're notified when MainWindow resizes or is exposed
   window.getWindow()->addResizeCallback(resizeCallback, this);
   window.getWindow()->addExposeCallback(exposeCallback, this);
-
+  BZDB.addCallback(StateDatabase::BZDB_NORADAR, bzdbCallback, this);
+  
   // other initialization
   radarAreaPixels[0] = 0;
   radarAreaPixels[1] = 0;
@@ -194,6 +196,8 @@ ControlPanel::~ControlPanel()
   // don't notify me anymore (cos you can't wake the dead!)
   window.getWindow()->removeResizeCallback(resizeCallback, this);
   window.getWindow()->removeExposeCallback(exposeCallback, this);
+  BZDB.removeCallback(StateDatabase::BZDB_NORADAR, bzdbCallback, this);
+  
   extern bool echoToConsole;
   extern bool echoAnsi;
   if (echoToConsole && echoAnsi) {
@@ -205,6 +209,12 @@ ControlPanel::~ControlPanel()
     tabTextWidth.clear();
     totalTabWidth=0;
   }
+}
+
+void ControlPanel::bzdbCallback(const std::string& /*name*/, void* data)
+{
+  ((ControlPanel*)data)->resize();
+  return;
 }
 
 void			ControlPanel::setControlColor(const GLfloat *color)
@@ -474,34 +484,38 @@ void			ControlPanel::render(SceneRenderer& renderer)
   */
 
   // border for radar
-  glScissor(x + radarAreaPixels[0] - 1,
-      y + radarAreaPixels[1] - 1,
-      radarAreaPixels[2] + 2,
-      radarAreaPixels[3] + 2);
-  OpenGLGState::resetState();
+  if (!BZDB.isTrue(StateDatabase::BZDB_NORADAR)) {
+    glScissor(x + radarAreaPixels[0] - 1,
+              y + radarAreaPixels[1] - 1,
+              radarAreaPixels[2] + 2,
+              radarAreaPixels[3] + 2);
 
-  // nice border
-  glColor3f(teamColor[0], teamColor[1], teamColor[2] );
-  glBegin(GL_LINE_LOOP); {
-    glVertex2f((float) (x + radarAreaPixels[0] - 0.9f),
-	(float) (y + radarAreaPixels[1] - 1));
-    glVertex2f((float) (x + radarAreaPixels[0] - 1 + radarAreaPixels[2] + 1.1f),
-	(float) (y + radarAreaPixels[1] - 1));
-    glVertex2f((float) (x + radarAreaPixels[0] - 1 + radarAreaPixels[2] + 1.1f),
-	(float) (y + radarAreaPixels[1] - 1 + radarAreaPixels[3] + 1.1f));
-    glVertex2f((float) (x + radarAreaPixels[0] - 0.9f),
-	(float) (y + radarAreaPixels[1] - 1 + radarAreaPixels[3] + 1.1f));
-  } glEnd();
-  glBegin(GL_POINTS); {
-    glVertex2f((float) (x + radarAreaPixels[0] - 0.9f),
-	(float) (y + radarAreaPixels[1] - 1));
-    glVertex2f((float) (x + radarAreaPixels[0] - 1 + radarAreaPixels[2] + 1.1f),
-	(float) (y + radarAreaPixels[1] - 1));
-    glVertex2f((float) (x + radarAreaPixels[0] - 1 + radarAreaPixels[2] + 1.1f),
-	(float) (y + radarAreaPixels[1] - 1 + radarAreaPixels[3] + 1.1f));
-    glVertex2f((float) (x + radarAreaPixels[0] - 0.9f),
-	(float) (y + radarAreaPixels[1] - 1 + radarAreaPixels[3] + 1.1f));
-  } glEnd();
+    OpenGLGState::resetState();
+
+    // nice border
+    glColor3f(teamColor[0], teamColor[1], teamColor[2] );
+    glBegin(GL_LINE_LOOP); {
+      glVertex2f((float) (x + radarAreaPixels[0] - 0.9f),
+          (float) (y + radarAreaPixels[1] - 1));
+      glVertex2f((float) (x + radarAreaPixels[0] - 1 + radarAreaPixels[2] + 1.1f),
+          (float) (y + radarAreaPixels[1] - 1));
+      glVertex2f((float) (x + radarAreaPixels[0] - 1 + radarAreaPixels[2] + 1.1f),
+          (float) (y + radarAreaPixels[1] - 1 + radarAreaPixels[3] + 1.1f));
+      glVertex2f((float) (x + radarAreaPixels[0] - 0.9f),
+          (float) (y + radarAreaPixels[1] - 1 + radarAreaPixels[3] + 1.1f));
+    } glEnd();
+    glBegin(GL_POINTS); {
+      glVertex2f((float) (x + radarAreaPixels[0] - 0.9f),
+          (float) (y + radarAreaPixels[1] - 1));
+      glVertex2f((float) (x + radarAreaPixels[0] - 1 + radarAreaPixels[2] + 1.1f),
+          (float) (y + radarAreaPixels[1] - 1));
+      glVertex2f((float) (x + radarAreaPixels[0] - 1 + radarAreaPixels[2] + 1.1f),
+          (float) (y + radarAreaPixels[1] - 1 + radarAreaPixels[3] + 1.1f));
+      glVertex2f((float) (x + radarAreaPixels[0] - 0.9f),
+          (float) (y + radarAreaPixels[1] - 1 + radarAreaPixels[3] + 1.1f));
+    } glEnd();
+  }
+
   glPopMatrix();
 }
 
@@ -525,11 +539,15 @@ void			ControlPanel::resize()
   // leave off 1 pixel for the border
   radarAreaPixels[0] = radarAreaPixels[1] = (int)radarSpace + 1;
   radarAreaPixels[2] = radarAreaPixels[3] = (int)(radarSize - (radarSpace * 2.0f)) - 2;
-  messageAreaPixels[0] = (int)radarSize + 1;
-  messageAreaPixels[1] = radarAreaPixels[1];
-  messageAreaPixels[2] = (int)(w - radarSize - radarSpace) - 2;
-  messageAreaPixels[3] = radarAreaPixels[3];
 
+  messageAreaPixels[0] = (int)radarSize + 1;                    // X coord
+  messageAreaPixels[1] = radarAreaPixels[1];                    // Y coord
+  messageAreaPixels[2] = (int)(w - radarSize - radarSpace) - 2; // Width
+  messageAreaPixels[3] = radarAreaPixels[3];                    // Height
+  if (BZDB.isTrue(StateDatabase::BZDB_NORADAR)) {
+    messageAreaPixels[0] = (int)radarSpace + 1;
+    messageAreaPixels[2] = (int)(w - (radarSpace * 2.0f)) - 2;
+  }
 
   // if radar connected then resize it
   if (radarRenderer)

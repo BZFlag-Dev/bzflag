@@ -63,6 +63,7 @@ class ControlPanel {
 
     static void		resizeCallback(void*);
     static void		exposeCallback(void*);
+    static void		bzdbCallback(const std::string& name, void* data);
 
     enum MessageModes {
       MessageAll = 0,

@@ -240,6 +240,7 @@ public:
   static const std::string	BZDB_MGUNADLIFE;
   static const std::string	BZDB_MUZZLEFRONT;
   static const std::string	BZDB_MUZZLEHEIGHT;
+  static const std::string	BZDB_NORADAR;
   static const std::string	BZDB_NOSHADOWS;
   static const std::string	BZDB_NOSMALLPACKETS;
   static const std::string	BZDB_NOTRESPONDINGTIME;

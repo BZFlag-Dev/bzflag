@@ -86,6 +86,7 @@ const char *usageString =
 "[-ms <shots>] "
 "[-mts <score>] "
 "[-noMasterBanlist]"
+"[-noradar]"
 "[-p <port>] "
 "[-passdb <password file>] "
 "[-passwd <password>] "
@@ -172,6 +173,7 @@ const char *extraUsageString =
 "\t-ms: maximum simultaneous shots per player\n"
 "\t-mts: set team score limit on each game\n"
 "\t-noMasterBanlist: has public servers ignore the master ban list\n"
+"\t-noradar: disallow the use of radar\n"
 "\t-p: use alternative port (default is 5154)\n"
 "\t-passdb: file to read for user passwords\n"
 "\t-passwd: specify a <password> for operator commands\n"
@@ -759,6 +761,8 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
       }
     } else if (strcmp(argv[i],"-noMasterBanlist") == 0){
       options.suppressMasterBanList = true;
+    } else if (strcmp(argv[i],"-noradar") == 0){
+      BZDB.setBool(StateDatabase::BZDB_NORADAR, true);
     } else if (strcmp(argv[i],"-masterBanURL") == 0){
       /* if this is the first master ban url, override the default
        * list.  otherwise just keep adding urls. 

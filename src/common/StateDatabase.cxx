@@ -130,6 +130,7 @@ const std::string StateDatabase::BZDB_MGUNADRATE	= std::string("_mGunAdRate");
 const std::string StateDatabase::BZDB_MGUNADLIFE	= std::string("_mGunAdLife");
 const std::string StateDatabase::BZDB_MUZZLEFRONT	= std::string("_muzzleFront");
 const std::string StateDatabase::BZDB_MUZZLEHEIGHT	= std::string("_muzzleHeight");
+const std::string StateDatabase::BZDB_NORADAR           = std::string("_noRadar");
 const std::string StateDatabase::BZDB_NOSHADOWS         = std::string("_noShadows");
 const std::string StateDatabase::BZDB_NOSMALLPACKETS    = std::string("_noSmallPackets");
 const std::string StateDatabase::BZDB_NOTRESPONDINGTIME = std::string("_notRespondingTime");
