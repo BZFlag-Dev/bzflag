@@ -180,12 +180,13 @@ public:
     parsers[option] = parser;
     return true;
   }
-  /** Same as above, but for @c vector<T> variables instead. The parameter
-      will be tokenized with ',' as delimiter and the tokens will be parsed
-      and placed in the vector. */
+  /** Same as registerVariable(), but for @c vector<T> variables instead. 
+      The parameter will be tokenized with ',' as delimiter and the tokens
+      will be parsed and placed in the vector. */
   template <class T>
-  bool registerVariable(const std::string& option, std::vector<T>& variable,
-			const std::string& usage = "", const std::string& help = "")
+  bool registerVector(const std::string& option, std::vector<T>& variable,
+		      const std::string& usage = "", 
+		      const std::string& help = "")
   { //VC doesn't support out of class definition of template functions
     VectorParser<T>* parser = new VectorParser<T>(variable, usage, help);
     parsers[option] = parser;

@@ -78,9 +78,9 @@ int main(int argc, char** argv) {
   const std::string uiOption("ui");
   const std::string uiMsg = "choose a user interface";
   op.registerVariable(uiOption, uiName, uiUsage, uiMsg);
-  op.registerVariable("show", visibleMsgs, "[-show msgtype{,msgtype}*]",
+  op.registerVector("show", visibleMsgs, "[-show msgtype{,msgtype}*]",
 		      "tell bzadmin to show these message types");
-  op.registerVariable("hide", invisibleMsgs, "[-hide msgtype{,msgtype}*]",
+  op.registerVector("hide", invisibleMsgs, "[-hide msgtype{,msgtype}*]",
 		      "tell bzadmin not to show these message types");
   if (!op.parse(argc, argv))
     return 1;
