@@ -993,7 +993,7 @@ int			main(int argc, char** argv)
   BundleMgr *bm = new BundleMgr(PlatformFactory::getMedia()->getMediaDirectory(), "bzflag");
   World::setBundleMgr(bm);
 
-  std::string locale = (BZDB->isSet("locale")) ? BZDB->get("locale") : "default";
+  std::string locale = BZDB->isSet("locale") ? BZDB->get("locale") : "default";
   World::setLocale(locale);
   bm->getBundle(World::getLocale());
 
