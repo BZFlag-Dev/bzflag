@@ -10,8 +10,11 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-/* no header other than VotingArbiter.h should be included here */
+/* interface header */
 #include "VotingArbiter.h"
+
+/* common implementation headers */
+#include "TextUtils.h"
 
 
 /* private */
@@ -137,7 +140,7 @@ bool VotingArbiter::setAvailableVoters(unsigned short int count)
 bool VotingArbiter::grantSuffrage(std::string player)
 {
   for (unsigned int i = 0; i < _suffraged.size(); i++) {
-    if (_suffraged[i] == player) {
+    if (compare_nocase(_suffraged[i], player) == 0) {
       return true;
     }
   }
@@ -155,7 +158,7 @@ bool VotingArbiter::hasSuffrage(std::string player) const
   // was this player granted the right to vote?
   bool foundPlayer = false;
   for (unsigned int i = 0; i < _suffraged.size(); i++) {
-    if (_suffraged[i] == player) {
+    if (compare_nocase(_suffraged[i], player) == 0) {
       foundPlayer = true;
       break;
     }
