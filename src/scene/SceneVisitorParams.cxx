@@ -27,24 +27,24 @@ SceneVisitorParams::~SceneVisitorParams()
 }
 
 void					SceneVisitorParams::setInt(
-								const BzfString& name, int value)
+								const std::string& name, int value)
 {
 	IntParameter& list = intParams[name];
 	list[list.size() - 1] = value;
 }
 
 void					SceneVisitorParams::pushInt(
-								const BzfString& name, int value)
+								const std::string& name, int value)
 {
 	intParams[name].push_back(value);
 }
 
-void					SceneVisitorParams::popInt(const BzfString& name)
+void					SceneVisitorParams::popInt(const std::string& name)
 {
 	intParams[name].pop_back();
 }
 
-int						SceneVisitorParams::getInt(const BzfString& name) const
+int						SceneVisitorParams::getInt(const std::string& name) const
 {
 	IntParamMap::const_iterator index = intParams.find(name);
 	if (index == intParams.end())
@@ -53,31 +53,31 @@ int						SceneVisitorParams::getInt(const BzfString& name) const
 		return index->second.back();
 }
 
-bool					SceneVisitorParams::isInt(const BzfString& name) const
+bool					SceneVisitorParams::isInt(const std::string& name) const
 {
 	return (intParams.find(name) != intParams.end());
 }
 
 void					SceneVisitorParams::setFloat(
-								const BzfString& name, float value)
+								const std::string& name, float value)
 {
 	FloatParameter& list = floatParams[name];
 	list[list.size() - 1] = value;
 }
 
 void					SceneVisitorParams::pushFloat(
-								const BzfString& name, float value)
+								const std::string& name, float value)
 {
 	floatParams[name].push_back(value);
 }
 
-void					SceneVisitorParams::popFloat(const BzfString& name)
+void					SceneVisitorParams::popFloat(const std::string& name)
 {
 	floatParams[name].pop_back();
 }
 
 float					SceneVisitorParams::getFloat(
-								const BzfString& name) const
+								const std::string& name) const
 {
 	FloatParamMap::const_iterator index = floatParams.find(name);
 	if (index == floatParams.end())
@@ -86,7 +86,7 @@ float					SceneVisitorParams::getFloat(
 		return index->second.back();
 }
 
-bool					SceneVisitorParams::isFloat(const BzfString& name) const
+bool					SceneVisitorParams::isFloat(const std::string& name) const
 {
 	return (floatParams.find(name) != floatParams.end());
 }

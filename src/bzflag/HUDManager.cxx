@@ -62,7 +62,7 @@ void					HUDManager::setColor(const float* _color)
 	color[2] = _color[2];
 }
 
-void					HUDManager::addHeadingMarker(const BzfString& id,
+void					HUDManager::addHeadingMarker(const std::string& id,
 								float heading, const float* color)
 {
 	Marker marker;
@@ -74,7 +74,7 @@ void					HUDManager::addHeadingMarker(const BzfString& id,
 	markers.insert(std::make_pair(id, marker));
 }
 
-void					HUDManager::removeHeadingMarker(const BzfString& id)
+void					HUDManager::removeHeadingMarker(const std::string& id)
 {
 	markers.erase(id);
 }

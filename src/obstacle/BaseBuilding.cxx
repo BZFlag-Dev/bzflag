@@ -14,7 +14,7 @@
 #include "BaseBuilding.h"
 #include "Intersect.h"
 
-BzfString				BaseBuilding::typeName("BaseBuilding");
+std::string				BaseBuilding::typeName("BaseBuilding");
 
 BaseBuilding::BaseBuilding(const float *p, float rotation,
 		const float *size, int _team) :
@@ -33,12 +33,12 @@ BaseBuilding::~BaseBuilding()
 	// do nothing
 }
 
-BzfString				BaseBuilding::getType() const
+std::string				BaseBuilding::getType() const
 {
 	return typeName;
 }
 
-BzfString				BaseBuilding::getClassName()
+std::string				BaseBuilding::getClassName()
 {
 	return typeName;
 }

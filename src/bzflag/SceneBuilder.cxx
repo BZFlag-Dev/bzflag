@@ -35,7 +35,7 @@ SceneDatabaseBuilder::~SceneDatabaseBuilder()
 
 SceneNode*				SceneDatabaseBuilder::make(const World* world)
 {
-	BzfString buffer(makeBuffer(world));
+	std::string buffer(makeBuffer(world));
 	istringstream stream(buffer.c_str());
 
 	try {
@@ -56,10 +56,10 @@ SceneNode*				SceneDatabaseBuilder::make(const World* world)
 	}
 }
 
-BzfString				SceneDatabaseBuilder::makeBuffer(const World* world)
+std::string				SceneDatabaseBuilder::makeBuffer(const World* world)
 {
-	BzfString primitives;
-	BzfString unlighted;
+	std::string primitives;
+	std::string unlighted;
 
 	nVertex  = 0;
 	color    = "";
@@ -208,7 +208,7 @@ BzfString				SceneDatabaseBuilder::makeBuffer(const World* world)
 	unlighted +=	  primitives2;
 	unlighted +=	"</gstate>\n";
 
-	BzfString buffer;
+	std::string buffer;
 	buffer +=	"<choice><mask t=\"renderLighting\">1 2</mask>\n"
 				  "<choice><mask t=\"renderTexturing\">1 2</mask>\n"
 				    "<geometry>\n"
@@ -269,7 +269,7 @@ void					SceneDatabaseBuilder::addVertex(
 {
 	float v1[3];
 	m.transform3(v1, v);
-	vertex += BzfString::format("%f %f %f\n", v1[0], v1[1], v1[2]);
+	vertex += string_util::format("%f %f %f\n", v1[0], v1[1], v1[2]);
 	++nVertex;
 }
 
@@ -288,7 +288,7 @@ void					SceneDatabaseBuilder::addNormal(
 {
 	float n1[3];
 	m.transform3(n1, n);
-	normal += BzfString::format("%f %f %f\n", n1[0], n1[1], n1[2]);
+	normal += string_util::format("%f %f %f\n", n1[0], n1[1], n1[2]);
 }
 
 void					SceneDatabaseBuilder::addWall(const WallObstacle& o)
@@ -311,7 +311,7 @@ void					SceneDatabaseBuilder::addWall(const WallObstacle& o)
 	const float dz = o.getHeight();
 
 	color    += "0.5 0.5 0.5 1  0.5 0.5 0.5 1  0.5 0.5 0.5 1  0.5 0.5 0.5 1\n";
-	texcoord += BzfString::format("0 0  0 %f  %f 0  %f %f\n",
+	texcoord += string_util::format("0 0  0 %f  %f 0  %f %f\n",
 								 0.1f * dz, 0.1f * dy, 0.1f * dy, 0.1f * dz);
 
 	Matrix m;
@@ -328,7 +328,7 @@ void					SceneDatabaseBuilder::addWall(const WallObstacle& o)
 	for (i = 0; i < countof(s_normal); ++i)
 		addNormal(x, s_normal[i]);
 
-	primitives1 += BzfString::format("<primitive type=\"tstrip\"><index>"
+	primitives1 += string_util::format("<primitive type=\"tstrip\"><index>"
 								"%d %d %d %d</index></primitive>\n",
 								n, n + 1, n + 2, n + 3);
 }
@@ -406,7 +406,7 @@ void					SceneDatabaseBuilder::addBox(const BoxBuilding& o)
 				"0.275 0.2 0.2 1\n"
 				"0.275 0.2 0.2 1\n";
 
-	texcoord += BzfString::format(
+	texcoord += string_util::format(
 				" %f %f %f %f"
 				" %f %f %f %f"
 				" %f %f %f %f"
@@ -436,16 +436,16 @@ void					SceneDatabaseBuilder::addBox(const BoxBuilding& o)
 	for (i = 0; i < countof(s_normal); ++i)
 		addNormal(x, s_normal[i]);
 
-	primitives1 += BzfString::format("<primitive type=\"tstrip\"><index>"
+	primitives1 += string_util::format("<primitive type=\"tstrip\"><index>"
 								"%d %d %d %d %d %d %d %d %d %d"
 								"</index></primitive>\n",
 								n + 0, n + 1, n + 2, n + 3, n + 6,
 								n + 7, n + 4, n + 5, n + 8, n + 9);
-	primitives2 += BzfString::format("<primitive type=\"tstrip\"><index>"
+	primitives2 += string_util::format("<primitive type=\"tstrip\"><index>"
 								"%d %d %d %d"
 								"</index></primitive>\n",
 								n + 10, n + 11, n + 12, n + 13);
-	primitives3 += BzfString::format("<primitive type=\"tstrip\"><index>"
+	primitives3 += string_util::format("<primitive type=\"tstrip\"><index>"
 								"%d %d %d %d"
 								"</index></primitive>\n",
 								n + 15, n + 14, n + 17, n + 16);
@@ -514,7 +514,7 @@ void					SceneDatabaseBuilder::addPyramid(const PyramidBuilding& o)
 				"0.25 0.25 0.63 1\n"
 				"0.25 0.25 0.63 1\n"
 				"0.25 0.25 0.63 1\n";
-	texcoord += BzfString::format(
+	texcoord += string_util::format(
 				" 0 %f"
 				" %f 0 %f 0"
 				" %f 0 %f 0"
@@ -533,19 +533,19 @@ void					SceneDatabaseBuilder::addPyramid(const PyramidBuilding& o)
 	for (i = 0; i < countof(s_normal); ++i)
 		addNormal(x, s_normal[i]);
 
-	primitives1 += BzfString::format("<geometry><color>0.25 0.25 0.63 1</color>"
+	primitives1 += string_util::format("<geometry><color>0.25 0.25 0.63 1</color>"
 								"<primitive type=\"triangles\"><index>"
 								"%d %d %d %d %d %d %d %d %d %d %d %d"
 								"</index></primitive></geometry>\n",
 								n + 0, n + 1, n + 4, n + 0, n + 3, n + 8,
 								n + 0, n + 7, n + 6, n + 0, n + 5, n + 2);
-	primitives2 += BzfString::format("<geometry><color>0.25 0.25 0.63 1</color>"
+	primitives2 += string_util::format("<geometry><color>0.25 0.25 0.63 1</color>"
 								"<primitive type=\"tstrip\"><index>"
 								"%d %d %d %d"
 								"</index></primitive></geometry>\n",
 								n + 9, n + 10, n + 12, n + 11);
 
-	primitives3 += BzfString::format("<primitive type=\"triangles\"><index>"
+	primitives3 += string_util::format("<primitive type=\"triangles\"><index>"
 								"%d %d %d %d %d %d %d %d %d %d %d %d"
 								"</index></primitive>"
 								"<primitive type=\"tstrip\"><index>"
@@ -584,7 +584,7 @@ void					SceneDatabaseBuilder::addBase(const BaseBuilding& o)
 	m.mult(x);
 	prepNormalMatrix(m, x);
 
-	color += BzfString::format("%f %f %f 1 %f %f %f 1 %f %f %f 1 %f %f %f 1\n",
+	color += string_util::format("%f %f %f 1 %f %f %f 1 %f %f %f 1 %f %f %f 1\n",
 								c[0], c[1], c[2],
 								c[0], c[1], c[2],
 								c[0], c[1], c[2],
@@ -598,13 +598,13 @@ void					SceneDatabaseBuilder::addBase(const BaseBuilding& o)
 	for (i = 0; i < countof(s_normal); ++i)
 		addNormal(x, s_normal[i]);
 
-	primitives1 += BzfString::format("<geometry><color>%f %f %f 1</color>"
+	primitives1 += string_util::format("<geometry><color>%f %f %f 1</color>"
 								"<primitive type=\"tstrip\"><index>"
 								"%d %d %d %d"
 								"</index></primitive></geometry>\n",
 								c[0], c[1], c[2],
 								n + 1, n + 0, n + 3, n + 2);
-	primitives2 += BzfString::format("<primitive type=\"tstrip\"><index>"
+	primitives2 += string_util::format("<primitive type=\"tstrip\"><index>"
 								"%d %d %d %d"
 								"</index></primitive>\n",
 								n + 1, n + 0, n + 3, n + 2);
@@ -796,17 +796,17 @@ void					SceneDatabaseBuilder::addTeleporter(const Teleporter& o)
 	for (i = 0; i < countof(s_normal); ++i)
 		addNormal(x, s_normal[i]);
 
-	primitives1 += BzfString::format("<primitive type=\"tstrip\"><index>"
+	primitives1 += string_util::format("<primitive type=\"tstrip\"><index>"
 								"%d %d %d %d %d %d %d %d %d %d"
 								"</index></primitive>\n",
 								n + 0, n + 1, n + 2, n + 3, n + 4,
 								n + 5, n + 6, n + 7, n + 8, n + 9);
-	primitives1 += BzfString::format("<primitive type=\"tstrip\"><index>"
+	primitives1 += string_util::format("<primitive type=\"tstrip\"><index>"
 								"%d %d %d %d %d %d %d %d %d %d"
 								"</index></primitive>\n",
 								n + 26, n + 27, n + 28, n + 29, n + 30,
 								n + 31, n + 32, n + 33, n + 34, n + 35);
-	primitives1 += BzfString::format("<primitive type=\"triangles\"><index>"
+	primitives1 += string_util::format("<primitive type=\"triangles\"><index>"
 								"%d %d %d %d %d %d "
 								"%d %d %d %d %d %d "
 								"%d %d %d %d %d %d "
@@ -816,7 +816,7 @@ void					SceneDatabaseBuilder::addTeleporter(const Teleporter& o)
 								n + 14, n + 15, n + 16, n + 17, n + 16, n + 15,
 								n + 18, n + 19, n + 20, n + 21, n + 20, n + 19,
 								n + 22, n + 23, n + 24, n + 25, n + 24, n + 23);
-	primitives2 += BzfString::format("<geometry><color>0 0 0 0.5</color>"
+	primitives2 += string_util::format("<geometry><color>0 0 0 0.5</color>"
 								"<primitive type=\"tstrip\"><index>"
 								"%d %d %d %d"
 								"</index></primitive>"
@@ -826,7 +826,7 @@ void					SceneDatabaseBuilder::addTeleporter(const Teleporter& o)
 								"</geometry>\n",
 								n + 36, n + 37, n + 38, n + 39,
 								n + 41, n + 40, n + 43, n + 42);
-	primitives3 += BzfString::format("<primitive type=\"tstrip\"><index>"
+	primitives3 += string_util::format("<primitive type=\"tstrip\"><index>"
 								"%d %d %d %d"
 								"</index></primitive>"
 								"<primitive type=\"tstrip\"><index>"

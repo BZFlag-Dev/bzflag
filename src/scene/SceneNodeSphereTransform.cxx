@@ -51,10 +51,10 @@ void					SceneNodeSphereTransform::get(
 								Matrix& m,
 								const SceneVisitorParams& params)
 {
-	static BzfString emptyName;
+	static std::string emptyName;
 	float t, t0, t1 = 0.0f, t2 = 0.0f;
 	unsigned int index = 0;
-	BzfString tName = emptyName;
+	std::string tName = emptyName;
 
 	// matrix is Translate x Azimuth * Altitude * Twist * Radius.
 	// azimuth about [0,0,1], altitude about [0,1,0], twist about [1,0,0].

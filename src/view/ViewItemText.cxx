@@ -30,7 +30,7 @@ ViewItemText::~ViewItemText()
 	// do nothing
 }
 
-void					ViewItemText::setText(const BzfString& text)
+void					ViewItemText::setText(const std::string& text)
 {
 	// parse line looking for '\n' and "${...}".  the former is a newline
 	// and gets its own plain string entry.  the latter is a database
@@ -39,7 +39,7 @@ void					ViewItemText::setText(const BzfString& text)
 	// second is a plain string.  $$ becomes a plain $.
 	const char* scan = text.c_str();
 	while (*scan != '\0') {
-		BzfString name, plain;
+		std::string name, plain;
 
 		if (*scan == '$') {
 			++scan;
@@ -222,16 +222,16 @@ void					ViewItemText::makeLines(Items& lines)
 		lines.push_back(makeLine(index));
 }
 
-BzfString				ViewItemText::makeLine(
+std::string				ViewItemText::makeLine(
 								Items::const_iterator& index) const
 {
-	BzfString line;
+	std::string line;
 
 	// items is a list of pairs.  the first of each pair is a database
 	// name and the second is a plain string (possibly \n).
 	while (index != items.end()) {
 		// get database name
-		BzfString item = *index;
+		std::string item = *index;
 		++index;
 		assert(index != items.end());
 

@@ -14,7 +14,7 @@
 #define BZF_SCENE_NODE_H
 
 #include "common.h"
-#include "BzfString.h"
+#include <string>
 #include <assert.h>
 #include <vector>
 
@@ -27,8 +27,8 @@ public:
 	int					ref();
 	int					unref();
 
-	void				setID(const BzfString& _id) { id = _id; }
-	BzfString			getID() const { return id; }
+	void				setID(const std::string& _id) { id = _id; }
+	std::string			getID() const { return id; }
 
 	virtual bool		visit(SceneVisitor*) = 0;
 
@@ -37,7 +37,7 @@ protected:
 
 private:
 	int					refCount;
-	BzfString			id;
+	std::string			id;
 };
 
 class SceneNodeField {
@@ -88,7 +88,7 @@ public:
 							{ }
 	~SceneNodeVectorField() { }
 
-	void				setInterpolationParameter(const BzfString& param)
+	void				setInterpolationParameter(const std::string& param)
 							{ interpolationParameter = param; }
 	void				setDirtyFlag(bool* flag)
 							{ *flag = *dirtyPtr; dirtyPtr = flag; }
@@ -136,7 +136,7 @@ public:
 							{ return maxNum; }
 	unsigned int		getMultNum() const
 							{ return multNum; }
-	const BzfString&	getInterpolationParameter() const
+	const std::string&	getInterpolationParameter() const
 							{ return interpolationParameter; }
 
 protected:
@@ -149,7 +149,7 @@ private:
 	unsigned int		minNum;
 	unsigned int		maxNum;
 	unsigned int		multNum;
-	BzfString			interpolationParameter;
+	std::string			interpolationParameter;
 	Values				values;
 };
 
@@ -212,10 +212,10 @@ void					SceneNodeVectorField<T>::swap(Values& v)
 typedef SceneNodeScalarField<float> SceneNodeSFFloat;
 typedef SceneNodeScalarField<bool> SceneNodeSFBool;
 typedef SceneNodeScalarField<unsigned int> SceneNodeSFUInt;
-typedef SceneNodeScalarField<BzfString> SceneNodeSFString;
+typedef SceneNodeScalarField<std::string> SceneNodeSFString;
 typedef SceneNodeVectorField<float> SceneNodeVFFloat;
 typedef SceneNodeVectorField<unsigned int> SceneNodeVFUInt;
-typedef SceneNodeVectorField<BzfString> SceneNodeVFString;
+typedef SceneNodeVectorField<std::string> SceneNodeVFString;
 
 class SceneNodeSFEnum : public SceneNodeScalarField<unsigned int> {
 public:

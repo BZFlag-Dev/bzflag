@@ -33,7 +33,7 @@ bool					SceneNodeSelector::descend(
 								SceneVisitor* visitor,
 								const SceneVisitorParams& params)
 {
-	static const BzfString s_mask("mask");
+	static const std::string s_mask("mask");
 
 	// get number of children and limit to mask size
 	unsigned int n = size();

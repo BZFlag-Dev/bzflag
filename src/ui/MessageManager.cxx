@@ -41,7 +41,7 @@ MessageManager* 	MessageManager::getInstance()
 }
 
 MessageBuffer*			MessageManager::create(
-								const BzfString& bufferName,
+								const std::string& bufferName,
 								unsigned int bufferLength)
 {
 	BufferMap::const_iterator index = buffers.find(bufferName);
@@ -55,7 +55,7 @@ MessageBuffer*			MessageManager::create(
 	}
 }
 
-MessageBuffer*			MessageManager::get(const BzfString& bufferName) const
+MessageBuffer*			MessageManager::get(const std::string& bufferName) const
 {
 	BufferMap::const_iterator index = buffers.find(bufferName);
 	if (index == buffers.end())
@@ -64,8 +64,8 @@ MessageBuffer*			MessageManager::get(const BzfString& bufferName) const
 		return index->second;
 }
 
-void					MessageManager::insert(const BzfString& bufferName,
-								const BzfString& msg, const float* color)
+void					MessageManager::insert(const std::string& bufferName,
+								const std::string& msg, const float* color)
 {
 	MessageBuffer* buffer = get(bufferName);
 	if (buffer != NULL)

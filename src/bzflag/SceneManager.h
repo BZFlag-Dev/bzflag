@@ -13,7 +13,7 @@
 #ifndef BZF_SCENE_MANAGER_H
 #define BZF_SCENE_MANAGER_H
 
-#include "BzfString.h"
+#include <string>
 #include "ViewFrustum.h"
 #include "bzfio.h"
 #include <map>
@@ -35,7 +35,7 @@ public:
 	// models of the same name.  on close(), a few nodes with
 	// special names are found and prepared.
 	void				open();
-	void				read(istream* modelStream, const BzfString& filename);
+	void				read(istream* modelStream, const std::string& filename);
 	void				close();
 
 	// set static scene node
@@ -75,10 +75,10 @@ public:
 
 	// lookup a model by name.  returns NULL if there's no model by
 	// that name.  if found the SceneNode is ref()'d.
-	SceneNode*			find(const BzfString& name) const;
+	SceneNode*			find(const std::string& name) const;
 
 	// just like find but the node is not ref()'d
-	SceneNode*			findNoRef(const BzfString& name) const;
+	SceneNode*			findNoRef(const std::string& name) const;
 
 	// get the single instance
 	static SceneManager* getInstance();
@@ -106,10 +106,10 @@ private:
 
 	// handle changes to time
 	void				onTimeOfDay(double);
-	static void			onTimeOfDayCB(const BzfString&, void*);
+	static void			onTimeOfDayCB(const std::string&, void*);
 
 private:
-	typedef std::map<BzfString, SceneNode*> ModelMap;
+	typedef std::map<std::string, SceneNode*> ModelMap;
 
 	ViewFrustum			view;
 

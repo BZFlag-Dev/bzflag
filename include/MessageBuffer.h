@@ -14,7 +14,7 @@
 #define BZF_MESSAGE_BUFFER_H
 
 #include "common.h"
-#include "BzfString.h"
+#include <string>
 #include "CallbackList.h"
 #include "TimeKeeper.h"
 #include <list>
@@ -30,16 +30,16 @@ public:
 		kEscape			// user pressed escape
 	};
 
-	typedef bool (*Callback)(const BzfString& msg,
+	typedef bool (*Callback)(const std::string& msg,
 								const float* color, void* userData);
-	typedef void (*ComposeCallback)(const BzfString& msg, void* userData);
+	typedef void (*ComposeCallback)(const std::string& msg, void* userData);
 	typedef void (*ComposeStopCallback)(StopReason, void* userData);
 
 	MessageBuffer(unsigned int historySize = 100);
 	virtual ~MessageBuffer();
 
 	// add a message.  color may be NULL to use a default color.
-	void				insert(const BzfString&, const float* color = NULL);
+	void				insert(const std::string&, const float* color = NULL);
 
 	// remove all messages
 	void				clear();
@@ -60,13 +60,13 @@ public:
 
 	// start/cancel interactive message composition.  this object
 	// doesn't display the message being composed, it just composes it.
-	void				startComposing(const BzfString& prompt,
+	void				startComposing(const std::string& prompt,
 							ComposeCallback onRun,
 							ComposeStopCallback onStop, void* userData);
 	void				cancelComposing();
 	bool				isComposing() const;
-	BzfString			getComposePrompt() const;
-	BzfString			getComposeMessage() const;
+	std::string			getComposePrompt() const;
+	std::string			getComposeMessage() const;
 
 	// these return true if composing and the key was used for the
 	// message, otherwise they return false.
@@ -78,7 +78,7 @@ private:
 
 	struct CallbackInfo {
 	public:
-		BzfString		msg;
+		std::string		msg;
 		const float*	color;
 	};
 	static bool			onCallback(Callback, void*, void*);
@@ -87,7 +87,7 @@ private:
 	struct Message {
 	public:
 		TimeKeeper		time;
-		BzfString		msg;
+		std::string		msg;
 		float			color[3];
 	};
 	typedef std::list<Message> Messages;
@@ -98,9 +98,9 @@ private:
 	ComposeCallback		composeCallback;
 	ComposeStopCallback	composeStopCallback;
 	void*				composeUserData;
-	BzfString			composePrompt;
+	std::string			composePrompt;
 	bool				composing;
-	BzfString			composed;
+	std::string			composed;
 };
 
 #endif

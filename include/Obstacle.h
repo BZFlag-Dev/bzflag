@@ -25,7 +25,7 @@
 
 #include "common.h"
 #include "Ray.h"
-#include "BzfString.h"
+#include <string>
 
 class WallSceneNode;
 
@@ -35,7 +35,7 @@ public:
 							float hwidth, float hbreadth, float height);
 	virtual ~Obstacle();
 
-	virtual BzfString	getType() const = 0;
+	virtual std::string	getType() const = 0;
 
 	const float*		getPosition() const;
 	float				getRotation() const;

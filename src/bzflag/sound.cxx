@@ -16,7 +16,7 @@
 #include "StateDatabase.h"
 #include "MediaFile.h"
 #include "PlatformMediaFactory.h"
-#include "BzfString.h"
+#include <string>
 #include <math.h>
 
 const float				SpeedOfSound = 343.0f;				// meters/sec
@@ -63,7 +63,7 @@ public:
  * local functions
  */
 
-static void				onVolumeChange(const BzfString&, void*);
+static void				onVolumeChange(const std::string&, void*);
 static void				sendSound(SoundCommand* s);
 static void				audioLoop(void*);
 static bool				allocAudioSamples();
@@ -372,7 +372,7 @@ int						getSoundVolume()
 	return soundLevel;
 }
 
-static void				onVolumeChange(const BzfString& name, void*)
+static void				onVolumeChange(const std::string& name, void*)
 {
 	if (name == "audioVolume")
 		setSoundVolume(atoi(BZDB->get(name).c_str()));

@@ -33,6 +33,8 @@
 
 #include <assert.h>
 #include <stddef.h>
+#include <string>
+#include <stdarg.h>
 
 // some platforms don't have float versions of the math library
 #if defined(_old_linux_) || defined(sun)
@@ -87,7 +89,6 @@ typedef unsigned char	uint8_t;
 #include <inttypes.h>
 
 // my own strcasecmp, missing in MSL
-// maybe this should be in BzfString.h ?
 #ifdef __MWERKS__
 	#include "strcasecmp.h"
 #endif
@@ -131,5 +132,28 @@ typedef unsigned int	uint32_t;
 #endif
 #define M_PI			3.14159265358979323846f
 #define M_SQRT1_2		0.70710678118654752440f
+
+class string_util
+{
+public:
+	static std::string	format(const char* fmt, ...)
+	{
+		va_list args;
+		va_start(args, fmt);
+		std::string result = vformat(fmt, args);
+		va_end(args);
+		return result;
+	}
+
+	static std::string	vformat(const char* fmt, va_list args)
+	{
+		// FIXME -- should prevent buffer overflow in all cases
+		// not all platforms support vsnprintf so we'll use vsprintf and a
+		// big temporary buffer and hope for the best.
+		char buffer[8192];
+		vsprintf(buffer, fmt, args);
+		return std::string(buffer);
+	}
+};
 
 #endif // BZF_COMMON_H

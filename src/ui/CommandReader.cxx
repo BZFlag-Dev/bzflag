@@ -62,7 +62,7 @@ void					CommandReader::parseCommand(XMLTree::iterator xml)
 			continue;
 
 		// run it
-		BzfString result = CMDMGR->run(scan->value);
+		std::string result = CMDMGR->run(scan->value);
 		if (!result.empty())
 			printError("%s", result.c_str());
 	}

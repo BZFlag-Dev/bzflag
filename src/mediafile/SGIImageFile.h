@@ -20,7 +20,7 @@ public:
 	SGIImageFile(istream*);
 	virtual ~SGIImageFile();
 
-	static BzfString	getExtension();
+	static std::string	getExtension();
 
 	// ImageFile overrides
 	virtual bool		read(void* buffer);

@@ -70,7 +70,7 @@ void					ViewItemPlayerScene::onPostRender(
 	// draw fade rectangle
 	const float* fade = SCENEMGR->getFade();
 	if (fade[3] != 0.0f) {
-		static const BzfString s_renderBlending("renderBlending");
+		static const std::string s_renderBlending("renderBlending");
 		if (BZDB->isTrue(s_renderBlending)) {
 			fadeGState.setState();
 			glColor4fv(fade);

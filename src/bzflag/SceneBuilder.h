@@ -19,7 +19,7 @@
 #define BZF_SCENE_BUILDER_H
 
 #include "common.h"
-#include "BzfString.h"
+#include <string>
 
 class Obstacle;
 class WallObstacle;
@@ -39,7 +39,7 @@ public:
 	SceneNode*			make(const World*);
 
 protected:
-	BzfString			makeBuffer(const World*);
+	std::string			makeBuffer(const World*);
 	void				addWall(const WallObstacle&);
 	void				addBox(const BoxBuilding&);
 	void				addPyramid(const PyramidBuilding&);
@@ -58,14 +58,14 @@ private:
 	SceneDatabaseBuilder& operator=(const SceneDatabaseBuilder&);
 
 private:
-	BzfString			color;
-	BzfString			normal;
-	BzfString			texcoord;
-	BzfString			vertex;
-	BzfString			primitives1;
-	BzfString			primitives2;
-	BzfString			primitives3;
-	BzfString			primitives4;
+	std::string			color;
+	std::string			normal;
+	std::string			texcoord;
+	std::string			vertex;
+	std::string			primitives1;
+	std::string			primitives2;
+	std::string			primitives3;
+	std::string			primitives4;
 	unsigned int		nVertex;
 };
 

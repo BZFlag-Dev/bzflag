@@ -42,10 +42,10 @@ private:
 	void				pop();
 	void				readEnum(XMLTree::iterator, SceneNodeSFEnum& field);
 	void				addReader(SceneNodeFieldReader* reader);
-	void				saveNamedNode(const BzfString& id);
+	void				saveNamedNode(const std::string& id);
 
 private:
-	typedef std::map<BzfString, SceneNodeFieldReader*> FieldReaders;
+	typedef std::map<std::string, SceneNodeFieldReader*> FieldReaders;
 	struct State {
 	public:
 		SceneNode*				node;
@@ -55,7 +55,7 @@ private:
 	};
 
 	typedef std::vector<State> Stack;
-	typedef std::map<BzfString, SceneNode*> NodeMap;
+	typedef std::map<std::string, SceneNode*> NodeMap;
 
 	Stack				stack;
 	SceneNode*			node;

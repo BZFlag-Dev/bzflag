@@ -14,7 +14,7 @@
 #define BZF_MENU_H
 
 #include "common.h"
-#include "BzfString.h"
+#include <string>
 #include "BzfEvent.h"
 #include <vector>
 
@@ -38,10 +38,10 @@ public:
 	void				close();
 
 	// get/set the actions to perform when the menu is opened/closed
-	void				setOpenCommand(const BzfString&);
-	void				setCloseCommand(const BzfString&);
-	BzfString			getOpenCommand() const;
-	BzfString			getCloseCommand() const;
+	void				setOpenCommand(const std::string&);
+	void				setCloseCommand(const std::string&);
+	std::string			getOpenCommand() const;
+	std::string			getCloseCommand() const;
 
 	// change/get active control
 	void				prev();
@@ -81,8 +81,8 @@ private:
 	int					active;
 	int					x, y;
 	int					w, h;
-	BzfString			openCommand;
-	BzfString			closeCommand;
+	std::string			openCommand;
+	std::string			closeCommand;
 
 	static unsigned int	count;
 	static SceneNodeMatrixTransform*	projection;

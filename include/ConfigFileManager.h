@@ -26,12 +26,12 @@ public:
 
 	// add/remove configuration file reader.  the reader is adopted
 	// by add().
-	void				add(const BzfString& tag, ConfigFileReader* adopted);
-	void				remove(const BzfString& tag);
+	void				add(const std::string& tag, ConfigFileReader* adopted);
+	void				remove(const std::string& tag);
 
 	// clone and return a reader for a configuration file type.  returns
 	// NULL if the type isn't known.  the client must delete the reader.
-	ConfigFileReader*	get(const BzfString& tag) const;
+	ConfigFileReader*	get(const std::string& tag) const;
 
 	// parse an XMLTree (i.e. a syntatically parsed config file).
 	// throws XMLIOException if the tree cannot be parsed.  this
@@ -43,7 +43,7 @@ public:
 	// read a configuration file.  read(filename) uses FileManager
 	// to open the stream and returns false if the file cannot be
 	// opened.  they all call parse().
-	bool				read(const BzfString& filename);
+	bool				read(const std::string& filename);
 	void				read(istream&);
 	void				read(istream&, const XMLStreamPosition&);
 
@@ -56,7 +56,7 @@ private:
 	void				topLevelParse(XMLTree::iterator);
 
 private:
-	typedef std::map<BzfString, ConfigFileReader*> Readers;
+	typedef std::map<std::string, ConfigFileReader*> Readers;
 
 	Readers				readers;
 	

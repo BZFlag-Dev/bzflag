@@ -14,7 +14,7 @@
 #define BZF_SCENE_VISITOR_BASE_RENDER_H
 
 #include "SceneVisitor.h"
-#include "BzfString.h"
+#include <string>
 
 class SceneVisitorBaseRender : public SceneVisitor {
 public:
@@ -61,12 +61,12 @@ protected:
 private:
     Instruments			instruments;
 
-	static const BzfString	s_nameArea, s_nameTime, s_nameFrame;
-	static const BzfString	s_nameDebug;
-	static const BzfString	s_renderSmoothing;
-	static const BzfString	s_renderBlending;
-	static const BzfString	s_renderLighting;
-	static const BzfString	s_renderTexturing;
+	static const std::string	s_nameArea, s_nameTime, s_nameFrame;
+	static const std::string	s_nameDebug;
+	static const std::string	s_renderSmoothing;
+	static const std::string	s_renderBlending;
+	static const std::string	s_renderLighting;
+	static const std::string	s_renderTexturing;
 };
 
 #endif

@@ -10,6 +10,10 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
+#if defined(WIN32)
+#pragma warning(4:4503)
+#endif
+
 #include "MessageBuffer.h"
 #include "BzfEvent.h"
 #include <ctype.h>
@@ -33,7 +37,7 @@ MessageBuffer::~MessageBuffer()
 }
 
 void					MessageBuffer::insert(
-								const BzfString& msg, const float* color)
+								const std::string& msg, const float* color)
 {
 	static const float defaultColor[] = { 1.0f, 1.0f, 1.0f };
 
@@ -117,7 +121,7 @@ bool					MessageBuffer::onCallback(
 }
 
 void					MessageBuffer::startComposing(
-								const BzfString& prompt,
+								const std::string& prompt,
 								ComposeCallback callback,
 								ComposeStopCallback stop,
 								void* userData)
@@ -164,12 +168,12 @@ bool					MessageBuffer::isComposing() const
 	return composing;
 }
 
-BzfString				MessageBuffer::getComposePrompt() const
+std::string				MessageBuffer::getComposePrompt() const
 {
 	return composePrompt;
 }
 
-BzfString				MessageBuffer::getComposeMessage() const
+std::string				MessageBuffer::getComposeMessage() const
 {
 	return composed;
 }
@@ -198,7 +202,7 @@ bool					MessageBuffer::keyPress(const BzfKeyEvent& key)
 			goto noRoom;
 
 		// remove last character
-		composed.truncate(composed.size() - 1);
+		composed.resize(composed.size() - 1);
 	}
 
 	// done.  just eat these and let the key release do the work.

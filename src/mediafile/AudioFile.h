@@ -22,7 +22,7 @@ public:
 
 	// note -- all concrete AudioFile types should have a method to
 	// return the default file extension for files in the format:
-	// static BzfString getExtension();
+	// static std::string getExtension();
 
 	// read more sample data into buffer.  samples are in left,right
 	// order for stereo files.  samples are in host byte order.

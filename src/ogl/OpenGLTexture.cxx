@@ -44,7 +44,7 @@ const int				OpenGLTexture::Rep::magnifyFilter[] = {
 								GL_LINEAR
 						};
 
-OpenGLTexture::Rep::Rep(const BzfString& _filename,
+OpenGLTexture::Rep::Rep(const std::string& _filename,
 								int _width, int _height,
 								const void* pixels,
 								int _maxFilter,
@@ -228,7 +228,7 @@ void					OpenGLTexture::Rep::createObject()
 }
 
 OpenGLTexture::Rep*		OpenGLTexture::Rep::find(
-								const BzfString& filename, Rep* prev)
+								const std::string& filename, Rep* prev)
 {
 	// choose first rep to search from
 	Rep* scan;
@@ -278,7 +278,7 @@ OpenGLTexture::OpenGLTexture()
 	rep = NULL;
 }
 
-OpenGLTexture::OpenGLTexture(const BzfString& filename,
+OpenGLTexture::OpenGLTexture(const std::string& filename,
 								int* _width, int* _height,
 								Filter maxFilter,
 								bool repeat,
@@ -437,10 +437,10 @@ bool					OpenGLTexture::isRGB() const
 	return true;
 }
 
-BzfString				OpenGLTexture::getFilename() const
+std::string				OpenGLTexture::getFilename() const
 {
 	if (rep == NULL)
-		return BzfString();
+		return std::string();
 	else
 		return rep->filename;
 }

@@ -191,20 +191,20 @@ const Teleporter*		ShotStrategy::getFirstTeleporter(const Ray& ray,
 }
 
 SceneNode*				ShotStrategy::findShotModel(
-								TeamColor team, const BzfString& flag)
+								TeamColor team, const std::string& flag)
 {
 	static const char* suffix = "yrgbp";
 
 	SceneNode* node = NULL;
 	if (!flag.empty()) {
 		if (node == NULL)
-			node = SCENEMGR->find(BzfString::format("shot-%s-%c",
+			node = SCENEMGR->find(string_util::format("shot-%s-%c",
 								flag.c_str(), suffix[team]));
 		if (node == NULL)
-			node = SCENEMGR->find(BzfString::format("shot-%s", flag.c_str()));
+			node = SCENEMGR->find(string_util::format("shot-%s", flag.c_str()));
 	}
 	if (node == NULL)
-		node = SCENEMGR->find(BzfString::format("shot-%c", suffix[team]));
+		node = SCENEMGR->find(string_util::format("shot-%c", suffix[team]));
 	if (node == NULL)
 		node = SCENEMGR->find("shot");
 	return node;

@@ -14,11 +14,11 @@ double MacMedia::stopwatch (boolean start) { return 0; }
 
 void   MacMedia::sleep     (float   secs ) {}
 
-BzfString MacMedia::makePath (const BzfString &dir, const BzfString &file) const {
+std::string MacMedia::makePath (const std::string &dir, const std::string &file) const {
 
   if (dir.isNull() || file.getString()[0] == ':') return file;
 
-  BzfString path = "";
+  std::string path = "";
   if (dir[0] != ':')
     path += ":";
 

@@ -14,7 +14,7 @@
 #include "BoxBuilding.h"
 #include "Intersect.h"
 
-BzfString				BoxBuilding::typeName("BoxBuilding");
+std::string				BoxBuilding::typeName("BoxBuilding");
 
 BoxBuilding::BoxBuilding(const float* p, float a, float w, float b, float h) :
 								Obstacle(p, a, w, b, h)
@@ -27,12 +27,12 @@ BoxBuilding::~BoxBuilding()
 	// do nothing
 }
 
-BzfString				BoxBuilding::getType() const
+std::string				BoxBuilding::getType() const
 {
 	return typeName;
 }
 
-BzfString				BoxBuilding::getClassName() // const
+std::string				BoxBuilding::getClassName() // const
 {
 	return typeName;
 }

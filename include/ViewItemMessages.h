@@ -40,15 +40,15 @@ private:
 		unsigned int*	numLines;
 		float			x, y, w;
 	};
-	bool				drawLine(const BzfString& msg, float w,
+	bool				drawLine(const std::string& msg, float w,
 								const float* color, CallbackInfo* cbState);
-	static bool			drawLineCB(const BzfString& msg,
+	static bool			drawLineCB(const std::string& msg,
 								const float* color, void* _cbState);
-	static bool			countLine(const BzfString& msg,
+	static bool			countLine(const std::string& msg,
 								const float* color, void* _cbState);
 
-	BzfString			wordBreak(const OpenGLTexFont&, float w,
-								const BzfString& msg, unsigned int* numLines);
+	std::string			wordBreak(const OpenGLTexFont&, float w,
+								const std::string& msg, unsigned int* numLines);
 
 private:
 	MessageBuffer*		msgBuffer;

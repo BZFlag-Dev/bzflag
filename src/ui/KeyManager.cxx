@@ -10,6 +10,10 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
+#if defined(WIN32)
+#pragma warning(4:4503)
+#endif
+
 #include "KeyManager.h"
 #include <assert.h>
 #include <ctype.h>
@@ -89,7 +93,7 @@ KeyManager*				KeyManager::getInstance()
 }
 
 void					KeyManager::bind(const BzfKeyEvent& key,
-								bool press, const BzfString& cmd)
+								bool press, const std::string& cmd)
 {
 	if (press) {
 		pressEventToCommand.erase(key);
@@ -112,7 +116,7 @@ void					KeyManager::unbind(const BzfKeyEvent& key,
 	notify(key, press, "");
 }
 
-BzfString				KeyManager::get(const BzfKeyEvent& key,
+std::string				KeyManager::get(const BzfKeyEvent& key,
 								bool press) const
 {
 	const EventToCommandMap* map = press ? &pressEventToCommand :
@@ -124,10 +128,10 @@ BzfString				KeyManager::get(const BzfKeyEvent& key,
 		return index->second;
 }
 
-BzfString				KeyManager::keyEventToString(
+std::string				KeyManager::keyEventToString(
 								const BzfKeyEvent& key) const
 {
-	BzfString name;
+	std::string name;
 	if (key.shift & BzfKeyEvent::ShiftKey)
 		name += "Shift+";
 	if (key.shift & BzfKeyEvent::ControlKey)
@@ -147,25 +151,25 @@ BzfString				KeyManager::keyEventToString(
 			return name + "Space";
 		default:
 			if (!isspace(key.ascii))
-				return name + BzfString(&key.ascii, 1);
+				return name + std::string(&key.ascii, 1);
 			return name + "???";
 	}
 }
 
 bool					KeyManager::stringToKeyEvent(
-								const BzfString& name, BzfKeyEvent& key) const
+								const std::string& name, BzfKeyEvent& key) const
 {
 	// find last + in name
 	const char* shiftDelimiter = strrchr(name.c_str(), '+');
 
 	// split name into shift part and key name part
-	BzfString shiftPart, keyPart;
+	std::string shiftPart, keyPart;
 	if (shiftDelimiter == NULL) {
 		keyPart = name;
 	}
 	else {
 		shiftPart  = "+";
-		shiftPart += name(0, shiftDelimiter - name.c_str() + 1);
+		shiftPart += name.substr(0, shiftDelimiter - name.c_str() + 1);
 		keyPart    = shiftDelimiter + 1;
 	}
 
@@ -220,7 +224,7 @@ void					KeyManager::removeCallback(
 
 void					KeyManager::notify(
 								const BzfKeyEvent& key,
-								bool press, const BzfString& cmd)
+								bool press, const std::string& cmd)
 {
 	CallbackInfo info;
 	info.name  = keyEventToString(key);

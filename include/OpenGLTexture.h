@@ -42,7 +42,7 @@
 #define BZF_OPENGL_TEXTURE_H
 
 #include "common.h"
-#include "BzfString.h"
+#include <string>
 
 class OpenGLTexture {
 public:
@@ -58,7 +58,7 @@ public:
 	};
 
 	OpenGLTexture();
-	OpenGLTexture(const BzfString& filename,
+	OpenGLTexture(const std::string& filename,
 							int* width, int* height,
 							Filter maxFilter = Linear,
 							bool repeat = true,
@@ -80,7 +80,7 @@ public:
 	bool				hasAlpha() const;
 	bool				isRepeat() const;
 	bool				isRGB() const;
-	BzfString			getFilename() const;
+	std::string			getFilename() const;
 
 	void				execute() const;
 
@@ -91,7 +91,7 @@ public:
 private:
 	class Rep {
 	public:
-		Rep(const BzfString& filename,
+		Rep(const std::string& filename,
 							int width, int height,
 							const void* pixels,
 							int maxFilter,
@@ -102,7 +102,7 @@ private:
 		void			setFilter(int filter);
 		void			createObject();
 
-		static Rep*		find(const BzfString& filename, Rep* prev);
+		static Rep*		find(const std::string& filename, Rep* prev);
 
 	public:
 		int				refCount;
@@ -112,7 +112,7 @@ private:
 		bool			alpha;
 		bool			repeat;
 		int				internalFormat;
-		BzfString		filename;
+		std::string		filename;
 		int				maxFilter;
 		Rep*			next;
 		static Rep*		first;

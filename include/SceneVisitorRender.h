@@ -16,7 +16,7 @@
 #include "SceneVisitorBaseRender.h"
 #include "OpenGLGState.h"
 #include "BoundingBox.h"
-#include "BzfString.h"
+#include <string>
 #include "Matrix.h"
 #include <vector>
 
@@ -101,7 +101,7 @@ private:
 	typedef std::vector<Job>		JobList;
 	enum CullingState { kCullOld, kCullDirty, kCullNo, kCullYes };
 
-	BzfString				nameMask, nameLighting;
+	std::string				nameMask, nameLighting;
 
 	SceneNodeVFFloat			dummyParams;
 	GStateStack				gstateStack;

@@ -13,7 +13,7 @@
 #include "SceneVisitorFind.h"
 #include "SceneNodes.h"
 
-SceneVisitorFind::SceneVisitorFind(const BzfString& _id) :
+SceneVisitorFind::SceneVisitorFind(const std::string& _id) :
 								id(_id), found(NULL)
 {
 	// do nothing

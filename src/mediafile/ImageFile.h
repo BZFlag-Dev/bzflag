@@ -22,7 +22,7 @@ public:
 
 	// note -- all concrete ImageFile types should have a method to
 	// return the default file extension for files in the format:
-	// static BzfString getExtension();
+	// static std::string getExtension();
 
 	// pixels are stored I, IA, RGB, or RGBA, depending on the number
 	// of channels.  rows are stored left to right, bottom to top.

@@ -13,6 +13,7 @@
 #ifndef BZF_MEDIA_FILE_H
 #define BZF_MEDIA_FILE_H
 
+#include <string>
 #include "common.h"
 #include "bzfio.h"
 
@@ -21,7 +22,6 @@
 // demands on the system.
 // #define HALF_RATE_AUDIO
 
-class BzfString;
 
 class MediaFile {
 public:
@@ -31,13 +31,13 @@ public:
 	// read an image file.  use delete[] to release the returned
 	// image.  returns NULL on failure.  images are stored RGBA,
 	// left to right, bottom to top.
-	static unsigned char* readImage(const BzfString& filename,
+	static unsigned char* readImage(const std::string& filename,
 							int* width, int* height);
 
 	// read a sound file.  use delete[] to release the returned
 	// audio.  returns NULL on failure.  sounds are stored
 	// left/right.
-	static float*		readSound(const BzfString& filename,
+	static float*		readSound(const std::string& filename,
 							int* numFrames, int* rate);
 
 protected:

@@ -14,7 +14,7 @@
 #define BZF_MENU_CONTROLS_H
 
 #include "common.h"
-#include "BzfString.h"
+#include <string>
 #include "BzfEvent.h"
 #include "TimeKeeper.h"
 #include "OpenGLTexFont.h"
@@ -37,8 +37,8 @@ public:
 	bool				isHidden() const;
 
 	// get/set control's label, font, and color
-	void				setLabel(const BzfString&);
-	BzfString			getLabel() const;
+	void				setLabel(const std::string&);
+	std::string			getLabel() const;
 	void				setFont(const OpenGLTexFont&);
 	const OpenGLTexFont& getFont() const;
 	void				setColor(float r, float g, float b);
@@ -89,7 +89,7 @@ protected:
 
 private:
 	bool				hidden;
-	BzfString			label;
+	std::string			label;
 	float				hPixels;
 	float				hFraction;
 	OpenGLTexFont		font;
@@ -102,13 +102,13 @@ public:
 	MenuCombo();
 	virtual ~MenuCombo();
 
-	void				setName(const BzfString&);
-	BzfString			getName() const;
-	void				setDefault(const BzfString&);
-	BzfString			getDefault() const;
+	void				setName(const std::string&);
+	std::string			getName() const;
+	void				setDefault(const std::string&);
+	std::string			getDefault() const;
 
-	void				append(const BzfString& label);
-	void				append(const BzfString& label, const BzfString& value);
+	void				append(const std::string& label);
+	void				append(const std::string& label, const std::string& value);
 
 	virtual void		init();
 	virtual void		render(float x, float y, bool isFocus) const;
@@ -122,11 +122,11 @@ protected:
 	void				setActive(int);
 
 private:
-	typedef std::pair<bool, BzfString> Value;
-	typedef std::vector<std::pair<BzfString, Value> > Options;
+	typedef std::pair<bool, std::string> Value;
+	typedef std::vector<std::pair<std::string, Value> > Options;
 
-	BzfString			name;
-	BzfString			defValue;
+	std::string			name;
+	std::string			defValue;
 	Options				options;
 	int					active;
 	float				wLabel;
@@ -137,8 +137,8 @@ public:
 	MenuEdit();
 	virtual ~MenuEdit();
 
-	void				setName(const BzfString&);
-	BzfString			getName() const;
+	void				setName(const std::string&);
+	std::string			getName() const;
 
 	void				setMaxLength(int);
 	void				setNumeric(bool);
@@ -154,11 +154,11 @@ protected:
 
 private:
 	void				onChange();
-	static void			onChangeCB(const BzfString&, void*);
+	static void			onChangeCB(const std::string&, void*);
 
 private:
-	BzfString			name;
-	BzfString			value;
+	std::string			name;
+	std::string			value;
 	int					maxLength;
 	bool				numeric;
 };
@@ -168,7 +168,7 @@ public:
 	MenuButton();
 	virtual ~MenuButton();
 
-	void				setAction(const BzfString& cmd);
+	void				setAction(const std::string& cmd);
 
 	virtual void		render(float x, float y, bool isFocus) const;
 	virtual bool		onKeyPress(const BzfKeyEvent&);
@@ -179,7 +179,7 @@ protected:
 							float& width, float& detail);
 
 private:
-	BzfString			cmd;
+	std::string			cmd;
 };
 
 class MenuKeyBind : public MenuControl {
@@ -187,8 +187,8 @@ public:
 	MenuKeyBind();
 	virtual ~MenuKeyBind();
 
-	void				setBindings(const BzfString& down,
-							const BzfString& up);
+	void				setBindings(const std::string& down,
+							const std::string& up);
 
 	virtual void		render(float x, float y, bool isFocus) const;
 	virtual bool		onKeyPress(const BzfKeyEvent&);
@@ -200,22 +200,22 @@ protected:
 
 private:
 	void				clean();
-	void				onChanged(const BzfString& name, bool press,
-							const BzfString& cmd);
-	void				onScan(const BzfString& name, bool press,
-							const BzfString& cmd);
-	static void			onChangedCB(const BzfString& name, bool press,
-							const BzfString& cmd, void* userData);
-	static void			onScanCB(const BzfString& name, bool press,
-							const BzfString& cmd, void* userData);
+	void				onChanged(const std::string& name, bool press,
+							const std::string& cmd);
+	void				onScan(const std::string& name, bool press,
+							const std::string& cmd);
+	static void			onChangedCB(const std::string& name, bool press,
+							const std::string& cmd, void* userData);
+	static void			onScanCB(const std::string& name, bool press,
+							const std::string& cmd, void* userData);
 
 private:
 	bool				dirty;
-	BzfString			cmdDown;
-	BzfString			cmdUp;
-	BzfString			keys;
-	BzfString			key1;
-	BzfString			key2;
+	std::string			cmdDown;
+	std::string			cmdUp;
+	std::string			keys;
+	std::string			key1;
+	std::string			key2;
 	bool				binding;
 };
 
@@ -224,8 +224,8 @@ public:
 	MenuLabel();
 	virtual ~MenuLabel();
 
-	void				setName(const BzfString&);
-	void				setTexture(const BzfString& filename);
+	void				setName(const std::string&);
+	void				setTexture(const std::string& filename);
 
 	virtual bool		isActive() const;
 	virtual void		render(float x, float y, bool isFocus) const;
@@ -236,11 +236,11 @@ protected:
 
 private:
 	void				onChange();
-	static void			onChangeCB(const BzfString&, void*);
+	static void			onChangeCB(const std::string&, void*);
 
 private:
-	BzfString			name;
-	BzfString			textureFile;
+	std::string			name;
+	std::string			textureFile;
 };
 
 class MenuText : public MenuControl {
@@ -251,10 +251,10 @@ public:
 	void				setLines(int numLines);
 	void				setWidth(float wPixels, float wFraction);
 	void				setScrollSpeed(float linesPerSecond);
-	void				setText(const BzfString&);
+	void				setText(const std::string&);
 
-	BzfString&			getText();
-	BzfString			getText() const;
+	std::string&			getText();
+	std::string			getText() const;
 
 	virtual bool		isFocusHidden() const;
 	virtual float		getHeightMultiplier() const;
@@ -269,23 +269,23 @@ protected:
 
 	void				onReshape();
 	void				onScroll();
-	static BzfString	wordBreak(const OpenGLTexFont& font,
+	static std::string	wordBreak(const OpenGLTexFont& font,
 							float w,
-							const BzfString& msg,
+							const std::string& msg,
 							unsigned int* numLines);
 
 private:
 	float				numLines;
 	float				wPixels;
 	float				wFraction;
-	BzfString			text;
+	std::string			text;
 	float				yOffset;
 	float				speed;
 	TimeKeeper			lastTime;
 
 	// cache
 	float				wOld, hOld, hLines;
-	BzfString			formattedText;
+	std::string			formattedText;
 	float				textHeight;
 };
 
@@ -301,14 +301,14 @@ public:
 	// the new pairs.  the active item is updated to match the value
 	// in the target name's database entry if there is such an item
 	// (if not then the first item is used).
-	void				setSourceName(const BzfString&);
-	BzfString			getSourceName() const;
+	void				setSourceName(const std::string&);
+	std::string			getSourceName() const;
 
 	// get/set the focus name.  when the user sets focus to an item in
 	// the list, the control sets the value of this name in the database
 	// to the value of the item with the focus.
-	void				setFocusName(const BzfString&);
-	BzfString			getFocusName() const;
+	void				setFocusName(const std::string&);
+	std::string			getFocusName() const;
 
 	// get/set the target name(s).  when the user selects an item in the
 	// list, the control sets the value of this name in the database
@@ -324,8 +324,8 @@ public:
 	//
 	// if parsing the item's value doesn't extract enough parts to set
 	// all targets then the remaining targets are unset.
-	void				setTargetName(const BzfString&);
-	BzfString			getTargetName() const;
+	void				setTargetName(const std::string&);
+	std::string			getTargetName() const;
 
 	// get/set the value format.  this describes the format of the
 	// value of each item.  the format is a sequence of characters.
@@ -335,14 +335,14 @@ public:
 	// to (but not including) the non-% are appended onto a list of
 	// strings.  if the last % isn't followed by a non-% then the
 	// remaining characters are appended onto the list.
-	void				setValueFormat(const BzfString&);
-	BzfString			getValueFormat() const;
+	void				setValueFormat(const std::string&);
+	std::string			getValueFormat() const;
 
 	// get/set the select command.  when the user selects an item in
 	// the list and after the target has been set, this command is
 	// run.
-	void				setSelectCommand(const BzfString&);
-	BzfString			getSelectCommand() const;
+	void				setSelectCommand(const std::string&);
+	std::string			getSelectCommand() const;
 
 	// set size
 	void				setLines(unsigned int numLines);
@@ -351,7 +351,7 @@ public:
 
 	// clear the list and append new label/value pairs
 	void				clear();
-	void				append(const BzfString& label, const BzfString& value);
+	void				append(const std::string& label, const std::string& value);
 
 	// MenuControl overrides
 	// note:  a list control doesn't draw the label
@@ -368,19 +368,19 @@ protected:
 private:
 	void				setTarget();
 
-	void				onSourceChanged(const BzfString&);
-	static void			onSourceChangedCB(const BzfString&, void*);
+	void				onSourceChanged(const std::string&);
+	static void			onSourceChangedCB(const std::string&, void*);
 
 private:
-	typedef BzfString Value;
-	typedef std::vector<std::pair<BzfString, Value> > Items;
-	typedef std::vector<BzfString> Names;
+	typedef std::string Value;
+	typedef std::vector<std::pair<std::string, Value> > Items;
+	typedef std::vector<std::string> Names;
 
-	BzfString			sourceName;
-	BzfString			focusName;
-	BzfString			targetName;
-	BzfString			valueFormat;
-	BzfString			selectCommand;
+	std::string			sourceName;
+	std::string			focusName;
+	std::string			targetName;
+	std::string			valueFormat;
+	std::string			selectCommand;
 	Names				targetNames;
 	unsigned int		numLines;
 	unsigned int		numColumns;

@@ -12,8 +12,6 @@
 
 #include "SceneVisitorFindAll.h"
 #include "SceneNodes.h"
-#include "BzfString.h"
-
 SceneVisitorFindAll::SceneVisitorFindAll()
 {
 	// do nothing

@@ -24,7 +24,6 @@
 #include <X11/extensions/XInput.h>
 #endif
 
-class BzfString;
 class BzfKeyEvent;
 class XDisplayMode;
 

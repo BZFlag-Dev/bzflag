@@ -26,8 +26,8 @@ public:
 										float breadth, float height);
 	~WallObstacle();
 
-	BzfString			getType() const;
-	static BzfString	getClassName(); // const
+	std::string			getType() const;
+	static std::string	getClassName(); // const
 
 	float				intersect(const Ray&) const;
 	void				getNormal(const float* p, float* n) const;
@@ -42,7 +42,7 @@ public:
 
 private:
 	float				plane[4];
-	static BzfString	typeName;
+	static std::string	typeName;
 };
 
 typedef std::vector<WallObstacle> WallObstacles;

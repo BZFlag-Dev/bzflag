@@ -34,7 +34,7 @@ MenuManager::~MenuManager()
 	mgr = NULL;
 }
 
-void					MenuManager::insert(const BzfString& name, Menu* menu)
+void					MenuManager::insert(const std::string& name, Menu* menu)
 {
 	Menus::iterator index = menus.find(name);
 	if (index != menus.end()) {
@@ -44,7 +44,7 @@ void					MenuManager::insert(const BzfString& name, Menu* menu)
 	menus.insert(std::make_pair(name, menu));
 }
 
-bool					MenuManager::push(const BzfString& name)
+bool					MenuManager::push(const std::string& name)
 {
 	Menus::const_iterator index = menus.find(name);
 	if (index == menus.end()) {

@@ -22,16 +22,16 @@ public:
 	virtual ~MessageManager();
 
 	// create a message buffer
-	MessageBuffer*		create(const BzfString& bufferName,
+	MessageBuffer*		create(const std::string& bufferName,
 								unsigned int bufferLength);
 
 	// get a message buffer.  returns NULL if no such buffer.
-	MessageBuffer*		get(const BzfString& bufferName) const;
+	MessageBuffer*		get(const std::string& bufferName) const;
 
 	// add a message.  color may be NULL to use a default color.
 	// does nothing if no such buffer.
-	void				insert(const BzfString& bufferName,
-							const BzfString& msg,
+	void				insert(const std::string& bufferName,
+							const std::string& msg,
 							const float* color = NULL);
 
 	// handle key events.  these return true if composing and the
@@ -47,7 +47,7 @@ private:
 	MessageManager();
 
 private:
-	typedef std::map<BzfString, MessageBuffer*> BufferMap;
+	typedef std::map<std::string, MessageBuffer*> BufferMap;
 
 	BufferMap			buffers;
 	static MessageManager* mgr;

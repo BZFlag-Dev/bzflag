@@ -39,8 +39,8 @@ public:
 	// then flows to the left.  an @@ becomes a literal @.
 	//
 	// the title format should not have any field specifiers.
-	void				setTitleFormat(const BzfString& format);
-	void				setFormat(const BzfString& format);
+	void				setTitleFormat(const std::string& format);
+	void				setFormat(const std::string& format);
 	void				setShadow(bool);
 	void				setShowTeams(bool);
 
@@ -72,7 +72,7 @@ public:
 
 		bool			useOffset;
 		Item			item;
-		BzfString		format;
+		std::string		format;
 		ViewSize		offset;
 	};
 
@@ -82,13 +82,13 @@ public:
 		virtual ~Formatter() { }
 
 		virtual const float*	getColor() = 0;
-		virtual BzfString		format(const Part&) = 0;
+		virtual std::string		format(const Part&) = 0;
 	};
 
 private:
 	typedef std::vector<Part> Parts;
 
-	void				makeParts(Parts&, const BzfString&);
+	void				makeParts(Parts&, const std::string&);
 	void				drawLine(const Parts&, Formatter&,
 								float x, float y, float fullWidth,
 								float colorScale);

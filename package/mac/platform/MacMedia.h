@@ -48,7 +48,7 @@ class MacMedia : public BzfMedia {
 
    //unsigned char* doReadImage (const char*, int&, int&, int&) const;
 
-    BzfString makePath (const BzfString &, const BzfString &) const;
+    std::string makePath (const std::string &, const std::string &) const;
     private:
 
     SndCommand     command;

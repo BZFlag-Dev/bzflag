@@ -6,7 +6,7 @@
 #include "BzfDisplay.h"
 #include "BzfEvent.h"
 #include "AList.h"
-#include "BzfString.h"
+#include <string>
 #include "bzfgl.h"
 
 #include <QuickDraw.h>

@@ -14,7 +14,7 @@
 #define BZF_VIEW_H
 
 #include "common.h"
-#include "BzfString.h"
+#include <string>
 #include "XMLTree.h"
 #include "OpenGLTexture.h"
 #include "OpenGLTexFont.h"
@@ -68,7 +68,7 @@ public:
 	Align				hAlign;
 	Align				vAlign;
 	ViewSize			fontSize;
-	BzfString			fontName;
+	std::string			fontName;
 	OpenGLTexFont		font;
 	OpenGLTexture		texture;
 };

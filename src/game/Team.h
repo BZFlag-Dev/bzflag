@@ -20,8 +20,7 @@
 
 #include "common.h"
 #include "global.h"
-
-class BzfString;
+#include <string>
 
 const int				TeamPLen = 10;
 
@@ -31,13 +30,13 @@ public:
 	void*				unpack(void*);
 
 	static void			init();
-	static BzfString	getName(TeamColor);
-	static TeamColor	getEnum(const BzfString& name);
+	static std::string	getName(TeamColor);
+	static TeamColor	getEnum(const std::string& name);
 	static const float*	getTankColor(TeamColor);
 	static const float*	getRadarColor(TeamColor);
 
 private:
-	static void			onColorChange(const BzfString&, void*);
+	static void			onColorChange(const std::string&, void*);
 
 public:
 	unsigned short		size;						// num players on team

@@ -20,7 +20,7 @@
 #define BZF_NETWORK_H
 
 #include "common.h"
-#include "BzfString.h"
+#include <string>
 #include <vector>
 
 #if !defined(_WIN32)
@@ -143,23 +143,23 @@ int						getErrno();
 
 class BzfNetwork {
 public:
-	typedef std::vector<BzfString> URLList;
+	typedef std::vector<std::string> URLList;
 	static int		setNonBlocking(int fd);
 	static bool		dereferenceURLs(URLList& list,
 						unsigned int maxURLsNeeded,
 						URLList& failedList);
-	static bool		parseURL(const BzfString& url,
-						BzfString& protocol,
-						BzfString& hostname,
+	static bool		parseURL(const std::string& url,
+						std::string& protocol,
+						std::string& hostname,
 						int& port,
-						BzfString& pathname);
+						std::string& pathname);
 
 private:
-	static BzfString	dereferenceHTTP(const BzfString& hostname, int port,
-							const BzfString& pathname);
-	static BzfString	dereferenceFile(const BzfString& pathname);
+	static std::string	dereferenceHTTP(const std::string& hostname, int port,
+							const std::string& pathname);
+	static std::string	dereferenceFile(const std::string& pathname);
 	static void			insertLines(URLList& list,
-							int index, const BzfString& data);
+							int index, const std::string& data);
 };
 
 #endif // BZF_NETWORK_H

@@ -13,12 +13,11 @@
 #ifndef BZF_FILE_MANAGER_H
 #define BZF_FILE_MANAGER_H
 
+#include <string>
 #include "common.h"
 #include "bzfio.h"
 
 #define FILEMGR (FileManager::getInstance())
-
-class BzfString;
 
 class FileManager {
 public:
@@ -29,22 +28,22 @@ public:
 	// if filename is an absolute path then only that place is
 	// checked.  if the file cannot be found or isn't readable
 	// then NULL is returned.
-	istream*			createDataInStream(const BzfString& filename,
+	istream*			createDataInStream(const std::string& filename,
 							bool binary = false) const;
 
 	// create an output stream in the data directory (or wherever
 	// indicated if filename is an absolute path).  if the file
 	// can be opened for writing then NULL is returned.
-	ostream*			createDataOutStream(const BzfString& filename,
+	ostream*			createDataOutStream(const std::string& filename,
 							bool binary = false,
 							bool truncate = true) const;
 
 	// returns true if the path is absolute, false if relative
-	bool				isAbsolute(const BzfString& path) const;
+	bool				isAbsolute(const std::string& path) const;
 
 	// concatenate two pathname components with a directory separator
 	// between them.
-	BzfString			catPath(const BzfString& a, const BzfString& b) const;
+	std::string			catPath(const std::string& a, const std::string& b) const;
 
 	// get the singleton instance
 	static FileManager*	getInstance();

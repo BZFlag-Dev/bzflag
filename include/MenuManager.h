@@ -14,7 +14,7 @@
 #define BZF_MENU_MANAGER_H
 
 #include "common.h"
-#include "BzfString.h"
+#include <string>
 #include <map>
 #include <vector>
 
@@ -26,9 +26,9 @@ class MenuManager {
 public:
 	~MenuManager();
 
-	void				insert(const BzfString& name, Menu* menu);
+	void				insert(const std::string& name, Menu* menu);
 
-	bool				push(const BzfString& name);
+	bool				push(const std::string& name);
 	void				pop();
 
 	Menu*				top() const;
@@ -40,7 +40,7 @@ private:
 
 private:
 	typedef std::vector<Menu*> MenuStack;
-	typedef std::map<BzfString, Menu*> Menus;
+	typedef std::map<std::string, Menu*> Menus;
 
 	MenuStack			stack;
 	Menus				menus;

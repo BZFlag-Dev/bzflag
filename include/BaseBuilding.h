@@ -26,8 +26,8 @@ public:
 							const float *size, int _team);
 	~BaseBuilding();
 
-	BzfString			getType() const;
-	BzfString			getClassName(); // const
+	std::string			getType() const;
+	std::string			getClassName(); // const
 	float				intersect(const Ray &) const;
 	void				getNormal(const float *p, float *n) const;
 	bool				isInside(const float *p, float radius) const;
@@ -44,7 +44,7 @@ public:
 	const int			getTeam() const;
 
 private:
-	static BzfString	typeName;
+	static std::string	typeName;
 	int					team;
 };
 

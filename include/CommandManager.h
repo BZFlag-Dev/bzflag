@@ -14,7 +14,7 @@
 #define BZF_COMMAND_MANAGER_H
 
 #include "common.h"
-#include "BzfString.h"
+#include <string>
 #include <map>
 #include <vector>
 
@@ -25,27 +25,27 @@ public:
 	// type of function that implements command.  function should return
 	// a string with the output of the command (or the empty string if
 	// there's no output).
-	typedef std::vector<BzfString> ArgList;
-	typedef BzfString (*CommandFunction)(const BzfString& name, const ArgList&);
-	typedef void (*Callback)(const BzfString& name, void* userData);
+	typedef std::vector<std::string> ArgList;
+	typedef std::string (*CommandFunction)(const std::string& name, const ArgList&);
+	typedef void (*Callback)(const std::string& name, void* userData);
 
 	~CommandManager();
 
 	// add/replace a command handler
-	void				add(const BzfString& name,
-								CommandFunction, const BzfString& help);
+	void				add(const std::string& name,
+								CommandFunction, const std::string& help);
 
 	// remove a command handler
-	void				remove(const BzfString& name);
+	void				remove(const std::string& name);
 
 	// get the help string for a command
-	BzfString			getHelp(const BzfString& name) const;
+	std::string			getHelp(const std::string& name) const;
 
 	// execute a command
-	BzfString			run(const BzfString& name, const ArgList&) const;
+	std::string			run(const std::string& name, const ArgList&) const;
 
 	// parse and execute a command
-	BzfString			run(const BzfString& cmd) const;
+	std::string			run(const std::string& cmd) const;
 
 	// invoke the callback for each registered command
 	void				iterate(Callback, void* userData) const;
@@ -56,18 +56,18 @@ public:
 private:
 	CommandManager();
 
-	static const char*	readValue(const char* string, BzfString* value);
-	static const char*	readUnquoted(const char* string, BzfString* value);
-	static const char*	readQuoted(const char* string, BzfString* value);
+	static const char*	readValue(const char* string, std::string* value);
+	static const char*	readUnquoted(const char* string, std::string* value);
+	static const char*	readQuoted(const char* string, std::string* value);
 	static const char*	skipWhitespace(const char* string);
 
 private:
 	struct CmdInfo {
 	public:
 		CommandFunction	func;
-		BzfString		help;
+		std::string		help;
 	};
-	typedef std::map<BzfString, CmdInfo> Commands;
+	typedef std::map<std::string, CmdInfo> Commands;
 
 	Commands			commands;
 	static CommandManager* mgr;

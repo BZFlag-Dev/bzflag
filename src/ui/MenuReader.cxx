@@ -21,12 +21,12 @@
 //
 
 template <class Object>
-class MenuSetSizeMethod_t : public std::unary_function<BzfString, void> {
+class MenuSetSizeMethod_t : public std::unary_function<std::string, void> {
 public:
 	typedef void (Object::*Member)(float, float);
 	MenuSetSizeMethod_t(Object* object_, Member member_) :
 							object(object_), member(member_) { }
-	void				operator()(const BzfString& arg) const
+	void				operator()(const std::string& arg) const
 	{
 		char type;
 		float value;
@@ -120,11 +120,11 @@ void					MenuReader::parseMenus(XMLTree::iterator xml, void*)
 
 	// must be a menu
 	if (xml->value != "menu")
-		throw XMLIOException(xml->position, BzfString::format(
+		throw XMLIOException(xml->position, string_util::format(
 							"invalid tag `%s'", xml->value.c_str()));
 
 	// get id parameter
-	BzfString id;
+	std::string id;
 	if (!xml->getAttribute("id", id))
 		throw XMLIOException(xml->position, "menu must have an id attribute");
 
@@ -191,7 +191,7 @@ void					MenuReader::parseMenu(
 			xml->getAttribute("name", xmlSetMethod(edit, &MenuEdit::setName));
 			xml->getAttribute("maxlen", xmlStrToInt(xmlCompose(xmlSetMethod(edit,
 										&MenuEdit::setMaxLength), xmlMax(1))));
-			BzfString value;
+			std::string value;
 			if (xml->getAttribute("type", value))
 				if (value == "int")
 					edit->setNumeric(true);
@@ -254,20 +254,20 @@ void					MenuReader::parseMenu(
 			control           = bind;
 
 			// set parameters
-			BzfString down, up;
+			std::string down, up;
 			xml->getAttribute("down", down);
 			xml->getAttribute("up", up);
 			bind->setBindings(down, up);
 		}
 
 		else {
-			throw XMLIOException(xml->position, BzfString::format(
+			throw XMLIOException(xml->position, string_util::format(
 							"invalid tag `%s'", xml->value.c_str()));
 		}
 		assert(control != NULL);
 
 		// get type info for control
-		BzfString type, value;
+		std::string type, value;
 		if (xml->getAttribute("type", value)) {
 			type  = ",";
 			type += value;
@@ -321,11 +321,11 @@ void					MenuReader::parseCombo(
 
 	// must be an item
 	if (xml->value != "item")
-		throw XMLIOException(xml->position, BzfString::format(
+		throw XMLIOException(xml->position, string_util::format(
 							"invalid tag `%s'", xml->value.c_str()));
 
 	// get parameters and add option to open combo
-	BzfString label, value;
+	std::string label, value;
 	xml->getAttribute("label", label);
 	if (xml->getAttribute("value", value))
 		combo->append(label, value);
@@ -346,11 +346,11 @@ void					MenuReader::parseList(
 
 	// must be an item
 	if (xml->value != "item")
-		throw XMLIOException(xml->position, BzfString::format(
+		throw XMLIOException(xml->position, string_util::format(
 							"invalid tag `%s'", xml->value.c_str()));
 
 	// get parameters and add option to open list
-	BzfString label, value;
+	std::string label, value;
 	xml->getAttribute("label", label);
 	xml->getAttribute("value", value);
 	list->append(label, value);
@@ -361,12 +361,12 @@ void					MenuReader::parseText(
 {
 	// must be data
 	if (xml->type != XMLNode::Data)
-		throw XMLIOException(xml->position, BzfString::format(
+		throw XMLIOException(xml->position, string_util::format(
 							"invalid tag `%s'", xml->value.c_str()));
 
 	// if string so far doesn't end in a newline and
 	// isn't empty then append a space.
-	BzfString& data = text->getText();
+	std::string& data = text->getText();
 	if (!data.empty() && data.c_str()[data.size() - 1] != '\n')
 		data += " ";
 
@@ -378,13 +378,13 @@ bool					MenuReader::parseStandardTags(
 							XMLTree::iterator xml)
 {
 	if (xml->value == "if" || xml->value == "unless") {
-		BzfString name, value;
+		std::string name, value;
 		if (!xml->getAttribute("name", name))
-			throw XMLIOException(xml->position, BzfString::format(
+			throw XMLIOException(xml->position, string_util::format(
 							"%s must have `name' attribute",
 							xml->value.c_str()));
 		if (!xml->getAttribute("value", value))
-			throw XMLIOException(xml->position, BzfString::format(
+			throw XMLIOException(xml->position, string_util::format(
 							"%s must have `value' attribute",
 							xml->value.c_str()));
 
@@ -405,7 +405,7 @@ bool					MenuReader::parseStandardTags(
 	}
 
 	else if (xml->value == "space") {
-		BzfString value;
+		std::string value;
 		if (xml->getAttribute("height", value)) {
 			float num;
 			char type;
@@ -423,7 +423,7 @@ bool					MenuReader::parseStandardTags(
 			else {
 				throw XMLIOException(
 							xml->getAttributePosition("height"),
-							BzfString::format(
+							string_util::format(
 								"invalid height `%s'", value.c_str()));
 			}
 		}
@@ -462,12 +462,12 @@ bool					MenuReader::parseGlobalTags(
 	}
 
 	else if (xml->value == "font") {
-		BzfString name;
+		std::string name;
 		if (xml->getAttribute("name", name)) {
 			OpenGLTexFont font(name);
 			if (!font.isValid())
 				throw XMLIOException(xml->getAttributePosition("name"),
-							BzfString::format(
+							string_util::format(
 								"unknown font name `%s'", name.c_str()));
 			stateStack.back().font     = font;
 			stateStack.back().fontName = name;

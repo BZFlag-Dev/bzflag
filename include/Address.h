@@ -24,7 +24,6 @@
 #include <sys/types.h>
 #include "network.h"
 #include "common.h"
-#include "BzfString.h"
 #include "Pack.h"
 
 typedef struct in_addr	InAddr;			// shorthand
@@ -32,7 +31,7 @@ typedef struct in_addr	InAddr;			// shorthand
 class Address {
 public:
 	Address();
-	Address(const BzfString&);
+	Address(const std::string&);
 	Address(const Address&);
 	Address(const InAddr&);		    	// input in nbo
 	Address(const struct sockaddr_in&);	// input in nbo
@@ -43,13 +42,13 @@ public:
 	bool				operator==(const Address&) const;
 	bool				operator!=(const Address&) const;
 	bool				isAny() const;
-	BzfString			getDotNotation() const;
+	std::string			getDotNotation() const;
 
 	void*				pack(void*) const;
 	void*				unpack(void*);
 
 	static Address		getHostAddress(const char* hostname = NULL);
-	static BzfString	getHostByAddress(InAddr);
+	static std::string	getHostByAddress(InAddr);
 	static const char*	getHostName(const char* hostname = NULL);
 
 private:

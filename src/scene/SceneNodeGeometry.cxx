@@ -327,12 +327,12 @@ void					SceneNodeGeometry::compute(
 		return;
 	}
 
-	static BzfString emptyName;
+	static std::string emptyName;
 	float t = 0.0f, t0;
 	const float tMax = static_cast<float>(bundles.size() - 1);
 	bool exact = false;
 	unsigned int index = 0;
-	BzfString tName = emptyName;
+	std::string tName = emptyName;
 
 	// interpolate, checking for special case of interpolating a
 	// field with itself.

@@ -11,11 +11,12 @@
  */
 
 #include "ErrorHandler.h"
-#include "BzfString.h"
 #include <stdio.h>
+#include <string>
 #if defined(_WIN32)
 #include <windows.h>
 #endif
+#include "common.h"
 
 static ErrorCallback		errorCallback = NULL;
 
@@ -31,7 +32,7 @@ void					printError(const char* fmt, ...)
 {
 	va_list args;
 	va_start(args, fmt);
-	BzfString buffer = BzfString::vformat(fmt, args);
+	std::string buffer = string_util::vformat(fmt, args);
 	va_end(args);
 
 	if (errorCallback) {

@@ -30,7 +30,7 @@ public:
 
 protected:
 	virtual void		parseBegin(XMLTree::iterator) { }
-	virtual void		parseData(XMLTree::iterator, const BzfString&) { }
+	virtual void		parseData(XMLTree::iterator, const std::string&) { }
 	virtual void		parseEnd(XMLTree::iterator) { }
 };
 
@@ -64,7 +64,7 @@ public:
 
 protected:
 	virtual void		parseBegin(XMLTree::iterator);
-	virtual void		parseData(XMLTree::iterator, const BzfString&);
+	virtual void		parseData(XMLTree::iterator, const std::string&);
 	virtual void		parseEnd(XMLTree::iterator);
 
 private:
@@ -91,7 +91,7 @@ void					SceneNodeScalarReader<T>::parseBegin(XMLTree::iterator)
 
 template <class T>
 void					SceneNodeScalarReader<T>::parseData(
-								XMLTree::iterator xml, const BzfString& data)
+								XMLTree::iterator xml, const std::string& data)
 {
 	// skip whitespace
 	const char* scan = data.c_str();
@@ -107,12 +107,12 @@ void					SceneNodeScalarReader<T>::parseData(
 		// check for parse errors
 		if (end == scan)
 			throw XMLIOException(xml->position,
-								BzfString::format(
+								string_util::format(
 									"error reading value in `%s' field",
 									field->getName()));
 		if (done)
 			throw XMLIOException(xml->position,
-								BzfString::format(
+								string_util::format(
 									"more than one value in `%s' field",
 									field->getName()));
 
@@ -133,7 +133,7 @@ void					SceneNodeScalarReader<T>::parseEnd(
 {
 	if (!done)
 		throw XMLIOException(xml->position,
-								BzfString::format(
+								string_util::format(
 									"expected a value in `%s' field",
 									field->getName()));
 }
@@ -179,7 +179,7 @@ float					SceneNodeScalarReader<float>::parseValue(
 }
 
 inline
-void					SceneNodeScalarReader<BzfString>::parseBegin(
+void					SceneNodeScalarReader<std::string>::parseBegin(
 								XMLTree::iterator)
 {
 	field->set("");
@@ -187,8 +187,8 @@ void					SceneNodeScalarReader<BzfString>::parseBegin(
 }
 
 inline
-void					SceneNodeScalarReader<BzfString>::parseData(
-								XMLTree::iterator, const BzfString& data)
+void					SceneNodeScalarReader<std::string>::parseData(
+								XMLTree::iterator, const std::string& data)
 {
 	// skip leading whitespace
 	const char* scan = data.c_str();
@@ -196,7 +196,7 @@ void					SceneNodeScalarReader<BzfString>::parseData(
 		++scan;
 
 	// prepend space if not empty
-	BzfString buffer = field->get();
+	std::string buffer = field->get();
 	if (buffer.size() > 0)
 		buffer += " ";
 
@@ -221,7 +221,7 @@ public:
 
 protected:
 	virtual void		parseBegin(XMLTree::iterator);
-	virtual void		parseData(XMLTree::iterator, const BzfString&);
+	virtual void		parseData(XMLTree::iterator, const std::string&);
 	virtual void		parseEnd(XMLTree::iterator);
 
 private:
@@ -254,7 +254,7 @@ void					SceneNodeVectorReader<T>::parseBegin(
 template <class T>
 void					SceneNodeVectorReader<T>::parseData(
 								XMLTree::iterator xml,
-								const BzfString& data)
+								const std::string& data)
 {
 	// skip whitespace
 	const char* scan = data.c_str();
@@ -270,7 +270,7 @@ void					SceneNodeVectorReader<T>::parseData(
 		// check for parse errors
 		if (end == scan)
 			throw XMLIOException(xml->position,
-								BzfString::format(
+								string_util::format(
 									"error reading value in `%s'",
 									field->getName()));
 
@@ -290,19 +290,19 @@ void					SceneNodeVectorReader<T>::parseEnd(
 {
 	// make sure we satisfy field constraints
 	if (buffer.size() < field->getMinNum())
-		throw XMLIOException(xml->position, BzfString::format(
+		throw XMLIOException(xml->position, string_util::format(
 							"not enough values in `%s' (got %u, expected %u)",
 								field->getName(),
 								field->getMinNum(),
 								buffer.size()));
 	if (buffer.size() > field->getMaxNum())
-		throw XMLIOException(xml->position, BzfString::format(
+		throw XMLIOException(xml->position, string_util::format(
 							"too many values in `%s' (got %u, expected %u)",
 								field->getName(),
 								field->getMaxNum(),
 								buffer.size()));
 	if (buffer.size() % field->getMultNum() != 0)
-		throw XMLIOException(xml->position, BzfString::format(
+		throw XMLIOException(xml->position, string_util::format(
 							"wrong multiple of values in `%s' (got %u of %u)",
 								field->getName(),
 								buffer.size() % field->getMultNum(),
@@ -333,9 +333,9 @@ float					SceneNodeVectorReader<float>::parseValue(
 }
 
 inline
-void					SceneNodeVectorReader<BzfString>::parseData(
+void					SceneNodeVectorReader<std::string>::parseData(
 								XMLTree::iterator,
-								const BzfString& data)
+								const std::string& data)
 {
 	// skip leading whitespace
 	const char* scan = data.c_str();
@@ -345,7 +345,7 @@ void					SceneNodeVectorReader<BzfString>::parseData(
 	// values are delimited by (unescaped) commas
 	while (*scan != '\0') {
 		// find the first unescaped comma
-		BzfString value;
+		std::string value;
 		while (*scan != '\0') {
 			if (*scan == '\\') {
 				switch (*++scan) {
@@ -569,7 +569,7 @@ bool					SceneNodeGStateReader::parse(XMLTree::iterator xml)
 		xml->getAttribute("filter", xmlParseEnum(s_enumFilter, xmlSetVar(filter)));
 
 		// get file name and verify that it's there
-		BzfString filename;
+		std::string filename;
 		if (!xml->getAttribute("filename", filename)) {
 			builder.setTexture(OpenGLTexture());
 		}
@@ -673,7 +673,7 @@ bool					SceneNodeGStateReader::parse(XMLTree::iterator xml)
 	// gstate fields must be empty
 	if (xml.begin() != xml.end())
 		throw XMLIOException(xml->position, 
-								BzfString::format(
+								string_util::format(
 								"field `%s' must be empty",
 								xml->value.c_str()));
 	return true;
@@ -777,7 +777,7 @@ bool					SceneNodeGeometryReader::parse(
 			// first bundle must have data
 			if (count == 1)
 				throw XMLIOException(xml->position, 
-								BzfString::format(
+								string_util::format(
 								"missing data in `%s' field",
 								field->getName()));
 
@@ -791,7 +791,7 @@ bool					SceneNodeGeometryReader::parse(
 			node->setBundle(0);
 			const unsigned int numItemsInFirst = getField()->getNum();
 			if (numItems != numItemsInFirst) {
-				throw XMLIOException(xml->position, BzfString::format(
+				throw XMLIOException(xml->position, string_util::format(
 								"item count mismatch between bundles "
 									"(got %u, expected %u)",
 									numItems, numItemsInFirst));
@@ -987,8 +987,8 @@ void					SceneReader::parseNode(XMLTree::iterator xml)
 		SceneNodeAnimate* node = new SceneNodeAnimate;
 		push(xml, node);
 		readEnum(xml, node->type);
-		addReader(new SceneNodeScalarReader<BzfString>(&node->src));
-		addReader(new SceneNodeScalarReader<BzfString>(&node->dst));
+		addReader(new SceneNodeScalarReader<std::string>(&node->src));
+		addReader(new SceneNodeScalarReader<std::string>(&node->dst));
 		addReader(new SceneNodeScalarReader<float>(&node->start));
 		addReader(new SceneNodeScalarReader<float>(&node->end));
 		addReader(new SceneNodeScalarReader<float>(&node->bias));
@@ -1000,8 +1000,8 @@ void					SceneReader::parseNode(XMLTree::iterator xml)
 	else if (xml->value == "parameters") {
 		SceneNodeParameters* node = new SceneNodeParameters;
 		push(xml, node);
-		addReader(new SceneNodeVectorReader<BzfString>(&node->src));
-		addReader(new SceneNodeVectorReader<BzfString>(&node->dst));
+		addReader(new SceneNodeVectorReader<std::string>(&node->src));
+		addReader(new SceneNodeVectorReader<std::string>(&node->dst));
 		addReader(new SceneNodeVectorReader<float>(&node->scale));
 		addReader(new SceneNodeVectorReader<float>(&node->bias));
 	}
@@ -1036,7 +1036,7 @@ void					SceneReader::parseNode(XMLTree::iterator xml)
 	else if (xml->value == "metadata") {
 		SceneNodeMetadata* node = new SceneNodeMetadata;
 		push(xml, node);
-		addReader(new SceneNodeScalarReader<BzfString>(&node->data));
+		addReader(new SceneNodeScalarReader<std::string>(&node->data));
 	}
 
 	else if (xml->value == "particlesystem") {
@@ -1069,7 +1069,7 @@ void					SceneReader::parseNode(XMLTree::iterator xml)
 								"`ref' must be empty");
 
 		// get id
-		BzfString id;
+		std::string id;
 		if (!xml->getAttribute("id", id))
 			throw XMLIOException(xml->position,
 								"`ref' must have an `id' attribute");
@@ -1078,7 +1078,7 @@ void					SceneReader::parseNode(XMLTree::iterator xml)
 		NodeMap::const_iterator index = namedNodes.find(id);
 		if (index == namedNodes.end())
 			throw XMLIOException(xml->position, 
-								BzfString::format(
+								string_util::format(
 								"unknown node `%s'", id.c_str()));
 		SceneNode* refNode = index->second;
 
@@ -1100,7 +1100,7 @@ void					SceneReader::parseNode(XMLTree::iterator xml)
 	else {
 		// unrecognized
 		throw XMLIOException(xml->position,
-							BzfString::format(
+							string_util::format(
 								"unrecognized node `%s'",
 								xml->value.c_str()));
 	}
@@ -1192,7 +1192,7 @@ void					SceneReader::readEnum(
 								SceneNodeSFEnum& field)
 {
 	// see if there's an attribute for the field
-	BzfString value;
+	std::string value;
 	if (!xml->getAttribute(field.getName(), value))
 		return;
 
@@ -1206,7 +1206,7 @@ void					SceneReader::readEnum(
 
 	// not found
 	throw XMLIOException(xml->position, 
-								BzfString::format(
+								string_util::format(
 								"unknown enumerant `%s'", value.c_str()));
 }
 
@@ -1220,7 +1220,7 @@ void					SceneReader::addReader(
 	stack.back().fieldReaders.insert(std::make_pair(reader->getName(), reader));
 }
 
-void					SceneReader::saveNamedNode(const BzfString& id)
+void					SceneReader::saveNamedNode(const std::string& id)
 {
 	assert(!stack.empty());
 	State& state = stack.back();

@@ -158,7 +158,7 @@ void					Player::changeTeam(TeamColor _team)
 
 	// get scene nodes
 	unrefNodes();
-	teamPlayerSceneNode = SCENEMGR->find(BzfString::format(
+	teamPlayerSceneNode = SCENEMGR->find(string_util::format(
 								"player-%c", teamSuffix[team]));
 	roguePlayerSceneNode = SCENEMGR->find("player-y");
 	// FIXME -- error if not found

@@ -44,14 +44,14 @@ ConfigFileManager*		ConfigFileManager::getInstance()
 }
 
 void					ConfigFileManager::add(
-							const BzfString& tag,
+							const std::string& tag,
 							ConfigFileReader* adopted)
 {
 	remove(tag);
 	readers.insert(std::make_pair(tag, adopted));
 }
 
-void					ConfigFileManager::remove(const BzfString& tag)
+void					ConfigFileManager::remove(const std::string& tag)
 {
 	Readers::iterator index = readers.find(tag);
 	if (index != readers.end()) {
@@ -60,7 +60,7 @@ void					ConfigFileManager::remove(const BzfString& tag)
 	}
 }
 
-ConfigFileReader*		ConfigFileManager::get(const BzfString& tag) const
+ConfigFileReader*		ConfigFileManager::get(const std::string& tag) const
 {
 	Readers::const_iterator index = readers.find(tag);
 	if (index != readers.end())
@@ -80,7 +80,7 @@ void					ConfigFileManager::parse(XMLTree::iterator xml)
 			ConfigFileReader* reader = get(scan->value);
 			if (reader == NULL)
 				throw XMLIOException(scan->position,
-							BzfString::format(
+							string_util::format(
 								"invalid tag `%s'",
 								scan->value.c_str()));
 
@@ -97,7 +97,7 @@ void					ConfigFileManager::parse(XMLTree::iterator xml)
 	}
 }
 
-bool					ConfigFileManager::read(const BzfString& filename)
+bool					ConfigFileManager::read(const std::string& filename)
 {
 	// try to open the file
 	istream* stream = FILEMGR->createDataInStream(filename);

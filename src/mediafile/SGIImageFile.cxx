@@ -11,7 +11,7 @@
  */
 
 #include "SGIImageFile.h"
-#include "BzfString.h"
+#include <string>
 #include <iostream>
 
 //
@@ -67,7 +67,7 @@ SGIImageFile::~SGIImageFile()
 	// do nothing
 }
 
-BzfString				SGIImageFile::getExtension()
+std::string				SGIImageFile::getExtension()
 {
 	return ".rgb";
 }

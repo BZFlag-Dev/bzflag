@@ -62,7 +62,7 @@ private:
 		Menu::Align		align;
 		bool			xIsPixels, yIsPixels;
 		float			x, y;
-		BzfString		fontName;
+		std::string		fontName;
 		OpenGLTexFont	font;
 		float			color[3];
 	};

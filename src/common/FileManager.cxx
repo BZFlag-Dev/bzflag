@@ -11,7 +11,7 @@
  */
 
 #include "FileManager.h"
-#include "BzfString.h"
+#include "string"
 #include "StateDatabase.h"
 #include <ctype.h>
 #include <fstream>
@@ -42,7 +42,7 @@ FileManager*			FileManager::getInstance()
 }
 
 istream*				FileManager::createDataInStream(
-								const BzfString& filename,
+								const std::string& filename,
 								bool binary) const
 {
 	// choose open mode
@@ -93,7 +93,7 @@ istream*				FileManager::createDataInStream(
 }
 
 ostream*				FileManager::createDataOutStream(
-								const BzfString& filename,
+								const std::string& filename,
 								bool binary,
 								bool truncate) const
 {
@@ -136,7 +136,7 @@ ostream*				FileManager::createDataOutStream(
 	}
 }
 
-bool					FileManager::isAbsolute(const BzfString& path) const
+bool					FileManager::isAbsolute(const std::string& path) const
 {
 	if (path.empty())
 		return false;
@@ -158,9 +158,9 @@ bool					FileManager::isAbsolute(const BzfString& path) const
 	return false;
 }
 
-BzfString				FileManager::catPath(
-								const BzfString& a,
-								const BzfString& b) const
+std::string				FileManager::catPath(
+								const std::string& a,
+								const std::string& b) const
 {
 	// handle trivial cases
 	if (a.empty())
@@ -169,14 +169,14 @@ BzfString				FileManager::catPath(
 		return a;
 
 #if defined(_WIN32)
-	BzfString c = a;
+	std::string c = a;
 	c += "\\";
 	c += b;
 	return c;
 #elif defined(macintosh)
 #error FIXME -- what is the mac path separator?
 #else
-	BzfString c = a;
+	std::string c = a;
 	c += "/";
 	c += b;
 	return c;

@@ -42,7 +42,7 @@ protected:
 							float heading, const float* color);
 
 private:
-	static void			drawMarkerCB(const BzfString& name,
+	static void			drawMarkerCB(const std::string& name,
 							float heading, const float* color,
 							void* userData);
 

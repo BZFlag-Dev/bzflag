@@ -21,19 +21,17 @@
 #include "OpenGLTexture.h"
 #include "OpenGLGState.h"
 
-class BzfString;
-
 class OpenGLTexFont {
 public:
 	OpenGLTexFont();
-	OpenGLTexFont(const BzfString& name);
+	OpenGLTexFont(const std::string& name);
 	OpenGLTexFont(int width, int height, const unsigned char* pixels);
 	OpenGLTexFont(const OpenGLTexFont&);
 	~OpenGLTexFont();
 	OpenGLTexFont&		operator=(const OpenGLTexFont&);
 
-	static void			mapFont(const BzfString& name,
-							const BzfString& filename);
+	static void			mapFont(const std::string& name,
+							const std::string& filename);
 	static bool			isAnyMappedFontLoaded();
 
 	void				setSize(float width, float height);
@@ -43,16 +41,16 @@ public:
 	float				getDescent() const;
 	float				getWidth() const;
 	float				getHeight() const;
-	float				getWidth(const BzfString&) const;
+	float				getWidth(const std::string&) const;
 	float				getWidth(const char* string) const;
 	float				getWidth(const char* string, int length) const;
-	int					getLengthInWidth(float w, const BzfString&) const;
+	int					getLengthInWidth(float w, const std::string&) const;
 	int					getLengthInWidth(float w, const char* string) const;
 	int					getLengthInWidth(float w,
 							const char* string, int length) const;
 	float				getSpacing() const;
 	float				getBaselineFromCenter() const;
-	void				draw(const BzfString&,
+	void				draw(const std::string&,
 							float x, float y, float z = 0.0f) const;
 	void				draw(const char*,
 							float x, float y, float z = 0.0f) const;

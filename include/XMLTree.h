@@ -4,21 +4,22 @@
 #include "common.h"
 #include "tree.h"
 #include "bzfio.h"
-#include "BzfString.h"
+#include <string>
 #include <map>
 #include <vector>
 #include <stdexcept>
+#include <string>
 
 class XMLStreamPosition {
 public:
 	XMLStreamPosition();
-	XMLStreamPosition(const BzfString& filename,
+	XMLStreamPosition(const std::string& filename,
 							unsigned int line = 1, unsigned int column = 1);
 
 	void				swap(XMLStreamPosition&);
 
 public:
-	BzfString			filename;
+	std::string			filename;
 	unsigned int		line;
 	unsigned int		column;
 };
@@ -26,7 +27,7 @@ public:
 class XMLIOException : public std::runtime_error {
 public:
 	XMLIOException(const XMLStreamPosition&, const char*);
-	XMLIOException(const XMLStreamPosition&, const BzfString&);
+	XMLIOException(const XMLStreamPosition&, const std::string&);
 
 public:
 	XMLStreamPosition	position;
@@ -40,16 +41,16 @@ public:
 	// simple attribute query.  if the attribute with name exists then
 	// saves the value in the second argument and returns true.  otherwise
 	// returns false and the second argument isn't modified.
-	bool				getAttribute(const BzfString& name, BzfString&) const;
+	bool				getAttribute(const std::string& name, std::string&) const;
 
 	// get an attribute's position in the stream
-	XMLStreamPosition	getAttributePosition(const BzfString& name) const;
+	XMLStreamPosition	getAttributePosition(const std::string& name) const;
 
 	// used in function object getAttribute()
 	class AttributeException : public std::runtime_error {
 	public:
 		AttributeException(const char* msg) : std::runtime_error(msg) { }
-		AttributeException(const BzfString& msg):
+		AttributeException(const std::string& msg):
 							std::runtime_error(msg.c_str()) { }
 	};
 
@@ -57,7 +58,7 @@ public:
 	// operation op.  if op throws AttributeException then the
 	// exception is converted to an XMLIOException.
 	template <class Operation>
-	bool				getAttribute(const BzfString& name, Operation op) const
+	bool				getAttribute(const std::string& name, Operation op) const
 	{
 		Attributes::const_iterator index = attributes.find(name);
 		if (index != attributes.end()) {
@@ -67,7 +68,7 @@ public:
 			}
 			catch (AttributeException& e) {
 				throw XMLIOException(index->second.first,
-							BzfString::format(
+							string_util::format(
 								"%s in attribute `%s': %s",
 								e.what(),
 								name.c_str(),
@@ -78,8 +79,8 @@ public:
 	}
 
 public:
-	typedef std::pair<XMLStreamPosition, BzfString> AttributeInfo;
-	typedef std::map<BzfString, AttributeInfo> Attributes;
+	typedef std::pair<XMLStreamPosition, std::string> AttributeInfo;
+	typedef std::map<std::string, AttributeInfo> Attributes;
 
 	// types of nodes
 	enum Type {
@@ -89,7 +90,7 @@ public:
 	};
 
 	Type				type;
-	BzfString			value;
+	std::string			value;
 	Attributes			attributes;
 	XMLStreamPosition	position;
 };
@@ -112,7 +113,7 @@ public:
 
 	// escape a string so it will be correctly read by read() and
 	// operator>>() (assuming it's data or an attribute value).
-	static BzfString	escape(const BzfString& string);
+	static std::string	escape(const std::string& string);
 
 private:
 	enum NodeType {
@@ -161,7 +162,7 @@ private:
 	class XMLTreeIOException : public XMLIOException {
 	public:
 		XMLTreeIOException(const XMLStream&, const char*);
-		XMLTreeIOException(const XMLStream&, const BzfString&);
+		XMLTreeIOException(const XMLStream&, const std::string&);
 	};
 
 	void				read(XMLStream&, XMLTree::iterator);
@@ -171,12 +172,12 @@ private:
 	static void			readComment(XMLStream&);
 	static NodeType		readCDATA(XMLStream&, XMLNode*);
 	static void			readINCLUDE(XMLStream&);
-	static BzfString	readToken(XMLStream&,
+	static std::string	readToken(XMLStream&,
 							CharClass firstCharClass,
 							CharClass otherCharClass,
 							const char* delims,
 							const char* tokenType);
-	static BzfString	readValue(XMLStream&);
+	static std::string	readValue(XMLStream&);
 	static void			readParameters(XMLStream&,
 							XMLNode*, const char* delims);
 	static char			readReference(XMLStream&);
@@ -257,13 +258,13 @@ xmlSetMethod(Object* object, Result (Object::*member)(Arg))
 }
 
 template <class Operation, class Function>
-class XMLStr2Num_t : public std::unary_function<BzfString,
+class XMLStr2Num_t : public std::unary_function<std::string,
 										typename Operation::result_type> {
 public:
 	XMLStr2Num_t(const Operation& op_, Function func_) :
 							op(op_), func(func_) { }
 	typename Operation::result_type
-						operator()(BzfString arg) const
+						operator()(std::string arg) const
 	{
 		return op(func(arg.c_str()));
 	}
@@ -380,13 +381,13 @@ public:
 };
 
 template <class E, class Operation>
-class XMLParseEnum_t : public std::unary_function<BzfString,
+class XMLParseEnum_t : public std::unary_function<std::string,
 										typename Operation::result_type> {
 public:
 	XMLParseEnum_t(const E* enumerants_, const Operation& op) :
 							enumerants(enumerants_), operation(op) { }
 	typename Operation::result_type
-	operator()(const BzfString& enumerant) const
+	operator()(const std::string& enumerant) const
 	{
 		for (const E* scan = enumerants; scan->name != NULL; ++scan)
 			if (enumerant == scan->name)

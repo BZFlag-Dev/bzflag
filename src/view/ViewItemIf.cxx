@@ -28,12 +28,12 @@ ViewItemIf::~ViewItemIf()
 	// do nothing
 }
 
-void					ViewItemIf::setName(const BzfString& _name)
+void					ViewItemIf::setName(const std::string& _name)
 {
 	name = _name;
 }
 
-void					ViewItemIf::setValue(const BzfString& _value)
+void					ViewItemIf::setValue(const std::string& _value)
 {
 	value = _value;
 	truth = false;

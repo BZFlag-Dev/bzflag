@@ -13,7 +13,7 @@
 #ifndef BZF_SCENE_VISITOR_PARAMS_H
 #define BZF_SCENE_VISITOR_PARAMS_H
 
-#include "BzfString.h"
+#include <string>
 #include <map>
 #include <vector>
 
@@ -22,23 +22,23 @@ public:
 	SceneVisitorParams();
 	~SceneVisitorParams();
 
-	void				setInt(const BzfString& name, int value);
-	void				pushInt(const BzfString& name, int value);
-	void				popInt(const BzfString& name);
-	int					getInt(const BzfString& name) const;
-	bool				isInt(const BzfString& name) const;
+	void				setInt(const std::string& name, int value);
+	void				pushInt(const std::string& name, int value);
+	void				popInt(const std::string& name);
+	int					getInt(const std::string& name) const;
+	bool				isInt(const std::string& name) const;
 
-	void				setFloat(const BzfString& name, float value);
-	void				pushFloat(const BzfString& name, float value);
-	void				popFloat(const BzfString& name);
-	float				getFloat(const BzfString& name) const;
-	bool				isFloat(const BzfString& name) const;
+	void				setFloat(const std::string& name, float value);
+	void				pushFloat(const std::string& name, float value);
+	void				popFloat(const std::string& name);
+	float				getFloat(const std::string& name) const;
+	bool				isFloat(const std::string& name) const;
 
 private:
 	typedef std::vector<int> IntParameter;
 	typedef std::vector<float> FloatParameter;
-	typedef std::map<BzfString, IntParameter> IntParamMap;
-	typedef std::map<BzfString, FloatParameter> FloatParamMap;
+	typedef std::map<std::string, IntParameter> IntParamMap;
+	typedef std::map<std::string, FloatParameter> FloatParamMap;
 
 	IntParamMap			intParams;
 	FloatParamMap		floatParams;

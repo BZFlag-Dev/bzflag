@@ -14,11 +14,11 @@
 #define BZF_SCENE_VISITOR_FIND_H
 
 #include "SceneVisitor.h"
-#include "BzfString.h"
+#include <string>
 
 class SceneVisitorFind : public SceneVisitor {
 public:
-	SceneVisitorFind(const BzfString& id);
+	SceneVisitorFind(const std::string& id);
 	virtual ~SceneVisitorFind();
 
 	// get() does *not* ref the node
@@ -29,7 +29,7 @@ public:
 	virtual bool		visit(SceneNodeGroup*);
 
 private:
-	BzfString			id;
+	std::string			id;
 	SceneNode*			found;
 };
 

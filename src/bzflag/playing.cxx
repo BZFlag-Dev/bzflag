@@ -164,7 +164,7 @@ static void				callPlayingCallbacks()
 // mouse grab stuff
 //
 
-static void				onGrabCursorChanged(const BzfString& name, void*)
+static void				onGrabCursorChanged(const std::string& name, void*)
 {
 	if (mainWindow != NULL) {
 		const bool grab = BZDB->isTrue(name);
@@ -224,7 +224,7 @@ static void				hangup(Signal)
 // state database change callbacks
 //
 
-static void				onSendComposedMessage(const BzfString& message, void*)
+static void				onSendComposedMessage(const std::string& message, void*)
 {
 	if (!message.empty()) {
 		char messageBuffer[MessageLen];
@@ -236,14 +236,14 @@ static void				onSendComposedMessage(const BzfString& message, void*)
 	}
 }
 
-static void				onConnectionMessage(const BzfString& name, void*)
+static void				onConnectionMessage(const std::string& name, void*)
 {
 	// report messages
 	if (!BZDB->isEmpty(name))
 		printError(BZDB->get(name).c_str());
 }
 
-static void				onFlagHelp(const BzfString&, void*)
+static void				onFlagHelp(const std::string&, void*)
 {
 	const FlagId id = (myTank != NULL) ? myTank->getFlag() : NoFlag;
 	MSGMGR->insert("flagHelp", Flag::getHelp(id), NULL);
@@ -311,9 +311,9 @@ static bool				doKey(const BzfKeyEvent& key, bool pressed)
 	}
 
 	// lookup and run command bound to key
-	const BzfString cmd = KEYMGR->get(key, pressed);
+	const std::string cmd = KEYMGR->get(key, pressed);
 	if (!cmd.empty()) {
-		BzfString result = CMDMGR->run(cmd);
+		std::string result = CMDMGR->run(cmd);
 		if (!result.empty())
 			printError(result.c_str());
 		return true;
@@ -599,7 +599,7 @@ static void				doMotion()
 }
 
 // ---- commands ----
-static BzfString	cmdFire(const BzfString&,
+static std::string	cmdFire(const std::string&,
 								const CommandManager::ArgList& args)
 {
 	if (args.size() != 0 && (args.size() != 1 || args[0] != "stop"))
@@ -609,10 +609,10 @@ static BzfString	cmdFire(const BzfString&,
 	if (fireButton && myTank != NULL && myTank->isAlive())
 		myTank->fireShot();
 
-	return BzfString();
+	return std::string();
 }
 
-static BzfString	cmdDrop(const BzfString&,
+static std::string	cmdDrop(const std::string&,
 								const CommandManager::ArgList& args)
 {
 	if (args.size() != 0)
@@ -632,10 +632,10 @@ static BzfString	cmdDrop(const BzfString&,
 		}
 	}
 
-	return BzfString();
+	return std::string();
 }
 
-static BzfString	cmdIdentify(const BzfString&,
+static std::string	cmdIdentify(const std::string&,
 								const CommandManager::ArgList& args)
 {
 	if (args.size() != 0)
@@ -648,10 +648,10 @@ static BzfString	cmdIdentify(const BzfString&,
 			setTarget();
 	}
 
-	return BzfString();
+	return std::string();
 }
 
-static BzfString	cmdJump(const BzfString&,
+static std::string	cmdJump(const std::string&,
 								const CommandManager::ArgList& args)
 {
 	if (args.size() != 0)
@@ -660,16 +660,16 @@ static BzfString	cmdJump(const BzfString&,
 	if (myTank != NULL)
 		myTank->jump();
 
-	return BzfString();
+	return std::string();
 }
 
-static BzfString	cmdSend(const BzfString&,
+static std::string	cmdSend(const std::string&,
 								const CommandManager::ArgList& args)
 {
 	if (args.size() != 1)
 		return "usage: send {all|team|nemesis}";
 
-	BzfString composePrompt;
+	std::string composePrompt;
 	if (args[0] == "all") {
 		void* buf = messageMessage;
 		buf = nboPackUInt(buf, 0);
@@ -709,10 +709,10 @@ static BzfString	cmdSend(const BzfString&,
 								&onSendComposedMessage, NULL, NULL);
 	}
 
-	return BzfString();
+	return std::string();
 }
 
-static BzfString	cmdPause(const BzfString&,
+static std::string	cmdPause(const std::string&,
 								const CommandManager::ArgList& args)
 {
 	if (args.size() != 0)
@@ -735,13 +735,13 @@ static BzfString	cmdPause(const BzfString&,
 		}
 		else {
 			pauseCountdown = 3.0f;
-			MSGMGR->insert("alertInfo", BzfString::format("Pausing in %d",
+			MSGMGR->insert("alertInfo", string_util::format("Pausing in %d",
 								static_cast<int>(pauseCountdown + 0.99f)),
 								NULL);
 		}
 	}
 
-	return BzfString();
+	return std::string();
 }
 
 /* XXX -- for testing forced recreation of OpenGL context
@@ -898,10 +898,10 @@ static ServerLink*		lookupServer(const Player* player)
 }
 
 static void				addMessage(const Player* player,
-								const BzfString& msg,
+								const std::string& msg,
 								const GLfloat* color = NULL)
 {
-	BzfString fullMessage;
+	std::string fullMessage;
 	if (player) {
 		fullMessage += player->getCallSign();
 #ifndef BWSUPPORT
@@ -1050,7 +1050,7 @@ static Player*			addPlayer(PlayerId id, void* msg, int showMessage)
 	}
 
 	if (showMessage) {
-		BzfString message("joining as a");
+		std::string message("joining as a");
 		switch (PlayerType(type)) {
 			case TankPlayer:
 				message += " tank";
@@ -1066,7 +1066,7 @@ static Player*			addPlayer(PlayerId id, void* msg, int showMessage)
 				break;
 		}
 		if (!player[id]) {
-			BzfString name(callsign);
+			std::string name(callsign);
 			name += ": ";
 			name += message;
 			message = name;
@@ -1114,7 +1114,7 @@ static void				handleServerMessage(bool human, uint16_t code,
 			Player* player = lookupPlayer(id);
 
 			// make a message
-			BzfString msg;
+			std::string msg;
 			if (team == (uint16_t)NoTeam) {
 				// a player won
 				if (player) {
@@ -1276,12 +1276,12 @@ static void				handleServerMessage(bool human, uint16_t code,
 					addMessage(victimPlayer, "destroyed by <unknown>");
 				else if (killerPlayer->getTeam() == victimPlayer->getTeam() &&
 						killerPlayer->getTeam() != RogueTeam) {
-					BzfString message("destroyed by teammate ");
+					std::string message("destroyed by teammate ");
 					message += killerPlayer->getCallSign();
 					addMessage(victimPlayer, message);
 				}
 				else {
-					BzfString message("destroyed by ");
+					std::string message("destroyed by ");
 					message += killerPlayer->getCallSign();
 					addMessage(victimPlayer, message);
 				}
@@ -1335,7 +1335,7 @@ static void				handleServerMessage(bool human, uint16_t code,
 				playLocalSound(SFX_ALERT);
 			}
 			if (tank) {
-				BzfString message("grabbed ");
+				std::string message("grabbed ");
 				message += Flag::getName(tank->getFlag());
 				message += " flag";
 				addMessage(tank, message);
@@ -1376,13 +1376,13 @@ static void				handleServerMessage(bool human, uint16_t code,
 
 				// add message
 				if (int(capturer->getTeam()) == capturedTeam) {
-					BzfString message("took my flag into ");
+					std::string message("took my flag into ");
 					message += Team::getName(TeamColor(team));
 					message += " territory";
 					addMessage(capturer, message);
 				}
 				else {
-					BzfString message("captured ");
+					std::string message("captured ");
 					message += Team::getName(TeamColor(capturedTeam));
 					message += "'s flag";
 					addMessage(capturer, message);
@@ -1511,7 +1511,7 @@ static void				handleServerMessage(bool human, uint16_t code,
 				(int(team) == int(RogueTeam) ||
 				int(team) == int(myTank->getTeam())))) {
 				// message is for me
-				BzfString fullMsg;
+				std::string fullMsg;
 				if (int(team) != int(RogueTeam)) {
 #ifdef BWSUPPORT
 					fullMsg = "[to ";
@@ -1959,7 +1959,7 @@ static void				handleFlagDropped(Player* tank)
 		return;
 
 	// add message
-	BzfString message("dropped ");
+	std::string message("dropped ");
 	message += Flag::getName(tank->getFlag());
 	message += " flag";
 	addMessage(tank, message);
@@ -2080,7 +2080,7 @@ static void				checkEnvironment()
 	else if (flagId == IdentifyFlag) {
 		// identify closest flag
 		const float* tpos = myTank->getPosition();
-		BzfString message("Closest Flag: ");
+		std::string message("Closest Flag: ");
 		float minDist = IdentityRange * IdentityRange;
 		int closestFlag = -1;
 		for (int i = 0; i < numFlags; i++) {
@@ -2201,7 +2201,7 @@ static void				setTarget()
 		myTank->setTarget(bestTarget);
 		myTank->setNemesis(bestTarget);
 
-		BzfString msg("Locked on ");
+		std::string msg("Locked on ");
 		msg += bestTarget->getCallSign();
 		msg += " (";
 		msg += Team::getName(bestTarget->getTeam());
@@ -2220,7 +2220,7 @@ static void				setTarget()
 		MSGMGR->insert("alertInfo", "Looking at a tank", NULL);
 	}
 	else {
-		BzfString msg("Looking at ");
+		std::string msg("Looking at ");
 		msg += bestTarget->getCallSign();
 		msg += " (";
 		msg += Team::getName(bestTarget->getTeam());
@@ -2420,7 +2420,7 @@ static void				leaveGame()
 		BZDB->setPermission("timeClock", StateDatabase::ReadWrite);
 
 		// reset clock
-		BZDB->set("timeClock", BzfString::format("%f", (double)time(NULL)));
+		BZDB->set("timeClock", string_util::format("%f", (double)time(NULL)));
 	}
 
 	// delete world
@@ -2671,7 +2671,7 @@ static bool				joinGame(ServerLink* _serverLink)
 	// if server constrains time then lock it and adjust it
 	if (!world->allowTimeOfDayAdjust()) {
 		BZDB->setPermission("timeClock", StateDatabase::Locked);
-		BZDB->set("timeClock", BzfString::format("%f",
+		BZDB->set("timeClock", string_util::format("%f",
 								(double)world->getEpochOffset()),
 								StateDatabase::Server);
 	}
@@ -2806,10 +2806,10 @@ static void				playingLoop()
 				player[i]->doDeadReckoning();
 				const bool isNotResponding = player[i]->isNotResponding();
 				if (!wasNotResponding && isNotResponding) {
-					addMessage(player[i], BzfString("not responding"));
+					addMessage(player[i], std::string("not responding"));
 				}
 				else if (wasNotResponding && !isNotResponding) {
-					addMessage(player[i], BzfString("okay"));
+					addMessage(player[i], std::string("okay"));
 				}
 			}
 
@@ -2858,7 +2858,7 @@ static void				playingLoop()
 		if (fabs(clockAdjust) >= 4.0) {
 			double t;
 			if (sscanf(BZDB->get("timeClock").c_str(), "%lf", &t) == 1) {
-			  BZDB->set("timeClock", BzfString::format("%f", t + clockAdjust),
+			  BZDB->set("timeClock", string_util::format("%f", t + clockAdjust),
 									StateDatabase::Server);
 				clockAdjust = 0.0;
 			}
@@ -2945,7 +2945,7 @@ static void				playingLoop()
 			frameCount++;
 			cumTime += float(dt);
 			if (cumTime >= 2.0) {
-				BZDB->set("timeFPS", BzfString::format("% 3d",
+				BZDB->set("timeFPS", string_util::format("% 3d",
 									static_cast<int>(frameCount / cumTime)));
 				cumTime = 0.0;
 				frameCount = 0;
@@ -3113,7 +3113,7 @@ static void				playingLoop()
 			double stopwatch = PLATFORM->getClock();
 
 			// normal rendering
-			BzfString viewName = BZDB->get("displayView");
+			std::string viewName = BZDB->get("displayView");
 			View* view = VIEWMGR->get(viewName);
 			if (view == NULL && viewName != "normal")
 				view = VIEWMGR->get("normal");
@@ -3129,7 +3129,7 @@ static void				playingLoop()
 			if (BZDB->isTrue("displayDebug"))
 				glFinish();
 			stopwatch = PLATFORM->getClock() - stopwatch;
-			BZDB->set("timeFrame", BzfString::format("% 8d",
+			BZDB->set("timeFrame", string_util::format("% 8d",
 								static_cast<int>(1000000.0 * stopwatch)));
 
 			// restore the static scene
@@ -3232,7 +3232,7 @@ static void				playingLoop()
 
 		// update transient data
 		if (myTank) {
-			BZDB->set("outputScore", BzfString::format("%d", myTank->getScore()));
+			BZDB->set("outputScore", string_util::format("%d", myTank->getScore()));
 
 			switch (myTank->getFiringStatus()) {
 				case LocalPlayer::Deceased:
@@ -3244,7 +3244,7 @@ static void				playingLoop()
 						Flag::getType(myTank->getFlag()) == FlagSticky &&
 						world->allowShakeTimeout()) {
 					  /* have a bad flag -- show time left 'til we shake it */
-					  MSGMGR->insert("alertStatus", BzfString::format("%.1f",
+					  MSGMGR->insert("alertStatus", string_util::format("%.1f",
 									myTank->getFlagShakingTime()), yellowColor);
 					}
 					else {
@@ -3254,7 +3254,7 @@ static void				playingLoop()
 
 				case LocalPlayer::Loading:
 					MSGMGR->insert("alertStatus",
-									BzfString::format("Reloaded in %.1f",
+									string_util::format("Reloaded in %.1f",
 									myTank->getReloadTime()), redColor);
 					break;
 
@@ -3379,14 +3379,14 @@ void					startPlaying(BzfDisplay* _display,
 
 	// print version
 	MSGMGR->insert("messages", " ");
-	MSGMGR->insert("messages", BzfString::format(
+	MSGMGR->insert("messages", string_util::format(
 				"BZFlag version %d.%d%c%d",
 				(VERSION / 10000000) % 100, (VERSION / 100000) % 100,
 				(char)('a' - 1 + (VERSION / 1000) % 100), VERSION % 1000));
 
 	// print expiration
 	if (timeBombString())
-		MSGMGR->insert("messages", BzfString::format(
+		MSGMGR->insert("messages", string_util::format(
 				"This release will expire on %s", timeBombString()));
 
 	// print copyright
@@ -3395,7 +3395,7 @@ void					startPlaying(BzfDisplay* _display,
 	MSGMGR->insert("messages", "Maintainer: Tim Riker <Tim@Rikers.org>");
 
 	// print OpenGL renderer
-	MSGMGR->insert("messages", BzfString::format("Renderer: %s",
+	MSGMGR->insert("messages", string_util::format("Renderer: %s",
 								(const char*)glGetString(GL_RENDERER)));
 
 	// install database callbacks

@@ -14,7 +14,7 @@
 #include "PyramidBuilding.h"
 #include "Intersect.h"
 
-BzfString				PyramidBuilding::typeName("PyramidBuilding");
+std::string				PyramidBuilding::typeName("PyramidBuilding");
 
 PyramidBuilding::PyramidBuilding(const float* p, float a,
 								float w, float b, float h) :
@@ -28,12 +28,12 @@ PyramidBuilding::~PyramidBuilding()
 	// do nothing
 }
 
-BzfString				PyramidBuilding::getType() const
+std::string				PyramidBuilding::getType() const
 {
 	return typeName;
 }
 
-BzfString				PyramidBuilding::getClassName() // const
+std::string				PyramidBuilding::getClassName() // const
 {
 	return typeName;
 }

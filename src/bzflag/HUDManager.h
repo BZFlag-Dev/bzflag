@@ -14,14 +14,14 @@
 #define BZF_HUD_MANAGER_H
 
 #include "common.h"
-#include "BzfString.h"
+#include <string>
 #include <map>
 
 #define HUDMGR (HUDManager::getInstance())
 
 class HUDManager {
 public:
-	typedef void (*Callback)(const BzfString& name,
+	typedef void (*Callback)(const std::string& name,
 							float heading, const float* color,
 							void* userData);
 
@@ -38,9 +38,9 @@ public:
 
 	// add/remove markers.  adding an existing marker overwrites the
 	// current values.
-	void				addHeadingMarker(const BzfString&,
+	void				addHeadingMarker(const std::string&,
 							float heading, const float* color);
-	void				removeHeadingMarker(const BzfString&);
+	void				removeHeadingMarker(const std::string&);
 
 	// get the motion box shapes
 	void				getCenter(int& x, int& y) const;
@@ -64,7 +64,7 @@ private:
 		float			heading;
 		float			color[3];
 	};
-	typedef std::map<BzfString, Marker> Markers;
+	typedef std::map<std::string, Marker> Markers;
 
 	int					x, y;
 	int					wMin, hMin;

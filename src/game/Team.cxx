@@ -12,7 +12,7 @@
 
 #include "Team.h"
 #include "Pack.h"
-#include "BzfString.h"
+#include <string>
 #include "StateDatabase.h"
 #include <stdio.h>
 
@@ -83,7 +83,7 @@ void					Team::init()
 	BZDB->addCallback("colorRadarPurple", onColorChange, NULL);
 }
 
-BzfString				Team::getName(TeamColor team) // const
+std::string				Team::getName(TeamColor team) // const
 {
 	switch (team) {
 		case RogueTeam: return "Rogue";
@@ -95,7 +95,7 @@ BzfString				Team::getName(TeamColor team) // const
 	}
 }
 
-TeamColor				Team::getEnum(const BzfString& name)
+TeamColor				Team::getEnum(const std::string& name)
 {
 	if (name == "rogue")
 		return RogueTeam;
@@ -121,7 +121,7 @@ const float*				Team::getRadarColor(TeamColor team) // const
 	return radarColor[int(team)];
 }
 
-void					Team::onColorChange(const BzfString& name, void*)
+void					Team::onColorChange(const std::string& name, void*)
 {
 	// choose color
 	float* color;

@@ -26,8 +26,8 @@ public:
 							float width, float breadth, float height);
 	~PyramidBuilding();
 
-	BzfString			getType() const;
-	static BzfString	getClassName(); // const
+	std::string			getType() const;
+	static std::string	getClassName(); // const
 
 	float				intersect(const Ray&) const;
 	void				getNormal(const float* p, float* n) const;
@@ -49,7 +49,7 @@ protected:
 	float				shrinkFactor(float z) const;
 
 private:
-	static BzfString	typeName;
+	static std::string	typeName;
 };
 
 typedef std::vector<PyramidBuilding> PyramidBuildings;

@@ -30,9 +30,9 @@ public:
 	~ViewReader();
 
 	// add/remove ViewItem readers, used by read()
-	void				insert(const BzfString& tag,
+	void				insert(const std::string& tag,
 							ViewTagReader* adoptedReader);
-	void				remove(const BzfString& tag);
+	void				remove(const std::string& tag);
 
 	// ConfigFileReader overrides.  views go to VIEWMGR.
 	ConfigFileReader*	clone();
@@ -49,10 +49,10 @@ private:
 	void				parseView(XMLTree::iterator xml, View* view);
 
 	bool				parseStandardTags(XMLTree::iterator xml);
-	void				saveNamedItem(const BzfString& id, View* item);
+	void				saveNamedItem(const std::string& id, View* item);
 
 	static void			onTagReaderCB(const ViewTagReader*,
-							const BzfString&, void*);
+							const std::string&, void*);
 
 private:
 	struct State {
@@ -61,8 +61,8 @@ private:
 		int				levels;
 	};
 	typedef std::vector<State> Stack;
-	typedef std::map<BzfString, ViewTagReader*> ItemReaders;
-	typedef std::map<BzfString, View*> NamedItems;
+	typedef std::map<std::string, ViewTagReader*> ItemReaders;
+	typedef std::map<std::string, View*> NamedItems;
 
 	ItemReaders			itemReaders;
 	Stack				stack;
@@ -73,11 +73,11 @@ private:
 // handy function objects
 //
 
-class ViewSetSize_t : public std::unary_function<BzfString, ViewSize&> {
+class ViewSetSize_t : public std::unary_function<std::string, ViewSize&> {
 public:
 	ViewSetSize_t(ViewSize& size_, bool* scaled_) :
 							size(size_), scaled(scaled_) { }
-	ViewSize&			operator()(const BzfString& arg) const
+	ViewSize&			operator()(const std::string& arg) const
 	{
 		float num;
 		char type;

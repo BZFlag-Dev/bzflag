@@ -11,7 +11,6 @@
  */
 
 #include "MediaFile.h"
-#include "BzfString.h"
 #include <iostream>
 
 //
@@ -132,7 +131,7 @@ do {																\
 } while (0)
 
 unsigned char*			MediaFile::readImage(
-								const BzfString& filename,
+								const std::string& filename,
 								int* width, int* height)
 {
 	// try opening file as an image
@@ -216,7 +215,7 @@ unsigned char*			MediaFile::readImage(
 }
 
 float*					MediaFile::readSound(
-								const BzfString& filename,
+								const std::string& filename,
 								int* _numFrames, int* rate)
 {
 	// try opening as an audio file

@@ -139,22 +139,22 @@ void					Menu::close()
 	// do nothing
 }
 
-void					Menu::setOpenCommand(const BzfString& cmd)
+void					Menu::setOpenCommand(const std::string& cmd)
 {
 	openCommand = cmd;
 }
 
-void					Menu::setCloseCommand(const BzfString& cmd)
+void					Menu::setCloseCommand(const std::string& cmd)
 {
 	closeCommand = cmd;
 }
 
-BzfString				Menu::getOpenCommand() const
+std::string				Menu::getOpenCommand() const
 {
 	return openCommand;
 }
 
-BzfString				Menu::getCloseCommand() const
+std::string				Menu::getCloseCommand() const
 {
 	return closeCommand;
 }

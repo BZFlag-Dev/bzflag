@@ -21,8 +21,8 @@ class ViewItemIf : public View {
 public:
 	ViewItemIf(bool negate);
 
-	void				setName(const BzfString& name);
-	void				setValue(const BzfString& value);
+	void				setName(const std::string& name);
+	void				setValue(const std::string& value);
 
 protected:
 	virtual ~ViewItemIf();
@@ -34,8 +34,8 @@ protected:
 private:
 	bool				negate;
 	bool				truth;
-	BzfString			name;
-	BzfString			value;
+	std::string			name;
+	std::string			value;
 };
 
 class ViewItemIfReader : public ViewTagReader {

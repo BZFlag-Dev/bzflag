@@ -27,9 +27,9 @@ CommandManager::~CommandManager()
 }
 
 void					CommandManager::add(
-								const BzfString& name,
+								const std::string& name,
 								CommandFunction func,
-								const BzfString& help)
+								const std::string& help)
 {
 	commands.erase(name);
 	CmdInfo info;
@@ -38,12 +38,12 @@ void					CommandManager::add(
 	commands.insert(std::make_pair(name, info));
 }
 
-void					CommandManager::remove(const BzfString& name)
+void					CommandManager::remove(const std::string& name)
 {
 	commands.erase(name);
 }
 
-BzfString				CommandManager::getHelp(const BzfString& name) const
+std::string				CommandManager::getHelp(const std::string& name) const
 {
 	// look up command
 	Commands::const_iterator index = commands.find(name);
@@ -54,27 +54,27 @@ BzfString				CommandManager::getHelp(const BzfString& name) const
 	return index->second.help;
 }
 
-BzfString				CommandManager::run(
-								const BzfString& name,
+std::string				CommandManager::run(
+								const std::string& name,
 								const ArgList& args) const
 {
 	// look up command
 	Commands::const_iterator index = commands.find(name);
 	if (index == commands.end())
-		return BzfString::format("Command %s not found", name.c_str());
+		return string_util::format("Command %s not found", name.c_str());
 
 	// run it
 	return (*index->second.func)(name, args);
 }
 
-BzfString				CommandManager::run(const BzfString& cmd) const
+std::string				CommandManager::run(const std::string& cmd) const
 {
-	BzfString result;
+	std::string result;
 	const char* scan = cmd.c_str();
 
 	scan = skipWhitespace(scan);
 	while (scan != NULL && *scan != '\0') {
-		BzfString name;
+		std::string name;
 		ArgList args;
 
 		// parse command name
@@ -85,7 +85,7 @@ BzfString				CommandManager::run(const BzfString& cmd) const
 
 		// parse arguments
 		while (scan != NULL && *scan != '\0' && *scan != ';') {
-			BzfString value;
+			std::string value;
 			scan = readValue(scan, &value);
 			if (scan != NULL) {
 				scan = skipWhitespace(scan);
@@ -95,7 +95,7 @@ BzfString				CommandManager::run(const BzfString& cmd) const
 
 		// run it or report error
 		if (scan == NULL)
-			return BzfString("Error parsing command");
+			return std::string("Error parsing command");
 		else
 			result = run(name, args);
 
@@ -128,7 +128,7 @@ CommandManager*			CommandManager::getInstance()
 }
 
 const char*				CommandManager::readValue(
-								const char* string, BzfString* value)
+								const char* string, std::string* value)
 {
 	if (*string == '\"')
 		return readQuoted(string + 1, value);
@@ -139,18 +139,18 @@ const char*				CommandManager::readValue(
 }
 
 const char*				CommandManager::readUnquoted(
-								const char* string, BzfString* value)
+								const char* string, std::string* value)
 {
 	// read up to next whitespace.  escapes are not interpreted.
 	const char* start = string;
 	while (*string != '\0' && !isspace(*string) && *string != ';')
 		++string;
-	*value = BzfString(start, string - start);
+	*value = std::string(start, string - start);
 	return string;
 }
 
 const char*				CommandManager::readQuoted(
-								const char* string, BzfString* value)
+								const char* string, std::string* value)
 {
 	*value = "";
 	bool escaped = false;

@@ -68,7 +68,7 @@ protected:
 							const Ray&, float min, float& t, int& f) const;
 
 	static SceneNode*	findShotModel(TeamColor team,
-								const BzfString& flagAbbrv);
+								const std::string& flagAbbrv);
 
 private:
 	ShotPath*			path;

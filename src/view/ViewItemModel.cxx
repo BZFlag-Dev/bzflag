@@ -120,12 +120,12 @@ View*					ViewItemModelReader::open(XMLTree::iterator xml)
 	item = new ViewItemModel;
 
 	// parse
-	BzfString filename;
+	std::string filename;
 	if (xml->getAttribute("filename", filename)) {
 		istream* stream = FILEMGR->createDataInStream(filename);
 		if (stream == NULL)
 			throw XMLIOException(xml->position,
-							BzfString::format(
+							string_util::format(
 								"cannot open model `%s'", filename.c_str()));
 
 		try {

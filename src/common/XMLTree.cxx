@@ -41,7 +41,7 @@ XMLStreamPosition::XMLStreamPosition() :
 	// do nothing
 }
 
-XMLStreamPosition::XMLStreamPosition(const BzfString& filename_,
+XMLStreamPosition::XMLStreamPosition(const std::string& filename_,
 								unsigned int line_, unsigned int column_) :
 								filename(filename_),
 								line(line_),
@@ -76,7 +76,7 @@ XMLIOException::XMLIOException(const XMLStreamPosition& p,
 }
 
 XMLIOException::XMLIOException(const XMLStreamPosition& p,
-								const BzfString& msg) :
+								const std::string& msg) :
 								runtime_error(msg.c_str()),
 								position(p)
 {
@@ -99,8 +99,8 @@ void					XMLNode::swap(XMLNode& n)
 }
 
 bool					XMLNode::getAttribute(
-							const BzfString& name,
-							BzfString& value) const
+							const std::string& name,
+							std::string& value) const
 {
 	Attributes::const_iterator index = attributes.find(name);
 	if (index == attributes.end())
@@ -110,7 +110,7 @@ bool					XMLNode::getAttribute(
 }
 
 XMLStreamPosition		XMLNode::getAttributePosition(
-							const BzfString& name) const
+							const std::string& name) const
 {
 	Attributes::const_iterator index = attributes.find(name);
 	if (index == attributes.end())
@@ -249,7 +249,7 @@ XMLTree::XMLTreeIOException::XMLTreeIOException(
 }
 
 XMLTree::XMLTreeIOException::XMLTreeIOException(
-								const XMLStream& s, const BzfString& msg) :
+								const XMLStream& s, const std::string& msg) :
 								XMLIOException(s.position, msg)
 {
 	// do nothing
@@ -311,7 +311,7 @@ void					XMLTree::read(XMLStream& stream, XMLTree::iterator root)
 				if (tagStack.size() <= 1) {
 					stream.setFail();
 					throw XMLTreeIOException(stream,
-							BzfString::format(
+							string_util::format(
 								"</%s> without matching <%s>",
 								node.value.c_str(),
 								node.value.c_str()));
@@ -319,7 +319,7 @@ void					XMLTree::read(XMLStream& stream, XMLTree::iterator root)
 				if (node.value != tagStack.top()->value) {
 					stream.setFail();
 					throw XMLTreeIOException(stream,
-							BzfString::format(
+							string_util::format(
 								"unexpected tag </%s>, expected </%s>",
 								node.value.c_str(),
 								tagStack.top()->value.c_str()));
@@ -411,7 +411,7 @@ retry:
 				skipWhitespace(stream);
 
 				// read instruction up to ?>
-				BzfString data;
+				std::string data;
 				int match = 0;
 				while (stream && match != 2) {
 					c = stream.get();
@@ -546,7 +546,7 @@ XMLTree::NodeType		XMLTree::readCDATA(XMLStream& stream,
 	eat(stream, "CDATA[", "malformed CDATA section");
 
 	// accumulate data up to but not including first `]]>'
-	BzfString data;
+	std::string data;
 	int match = 0;
 	while (match != 3) {
 		char c = stream.get();
@@ -564,7 +564,7 @@ XMLTree::NodeType		XMLTree::readCDATA(XMLStream& stream,
 
 	// save data without the ]]> suffix
 	node->type  = XMLNode::PI;
-	node->value = data(0, data.size() - 3);
+	node->value = data.substr(0, data.size() - 3);
 	return Data;
 }
 
@@ -574,7 +574,7 @@ void					XMLTree::readINCLUDE(XMLStream& stream)
 
 	// read filename
 	skipWhitespace(stream);
-	BzfString filename = readValue(stream);
+	std::string filename = readValue(stream);
 
 	// eat tag close
 	skipWhitespace(stream);
@@ -584,7 +584,7 @@ void					XMLTree::readINCLUDE(XMLStream& stream)
 	istream* included = FILEMGR->createDataInStream(filename);
 	if (included == NULL)
 		throw XMLTreeIOException(stream,
-							BzfString::format(
+							string_util::format(
 								"cannot open INCLUDE file `%s'",
 								filename.c_str()));
 
@@ -592,20 +592,20 @@ void					XMLTree::readINCLUDE(XMLStream& stream)
 	stream.push(included, XMLStreamPosition(filename));
 }
 
-BzfString				XMLTree::readToken(XMLStream& stream,
+std::string				XMLTree::readToken(XMLStream& stream,
 							CharClass firstCharClass,
 							CharClass otherCharClass,
 							const char* delimCharClass,
 							const char* tokenType)
 {
 	char c;
-	BzfString token;
+	std::string token;
 
 	// first character is special
 	c = stream.get();
 	if (!firstCharClass(c))
 		throw XMLTreeIOException(stream,
-							BzfString::format("invalid %s", tokenType));
+							string_util::format("invalid %s", tokenType));
 	token += c;
 
 	// remaining characters
@@ -617,13 +617,13 @@ BzfString				XMLTree::readToken(XMLStream& stream,
 			break;
 		else
 			throw XMLTreeIOException(stream,
-							BzfString::format("invalid %s", tokenType));
+							string_util::format("invalid %s", tokenType));
 	}
 
 	return token;
 }
 
-BzfString				XMLTree::readValue(XMLStream& stream)
+std::string				XMLTree::readValue(XMLStream& stream)
 {
 	// get quote
 	char delim = stream.get();
@@ -631,7 +631,7 @@ BzfString				XMLTree::readValue(XMLStream& stream)
 		throw XMLTreeIOException(stream, "attribute value needs quotes");
 
 	// read until we find a matching quote or an invalid character
-	BzfString value;
+	std::string value;
 	while (stream) {
 		char c = stream.get();
 		if (c == delim) {
@@ -668,7 +668,7 @@ void					XMLTree::readParameters(
 
 		// read name up to =
 		XMLStreamPosition position(stream.position);
-		BzfString name = readToken(stream,
+		std::string name = readToken(stream,
 								isNameFirstChar, isNameChar,
 								"=", "attribute name");
 
@@ -678,7 +678,7 @@ void					XMLTree::readParameters(
 							"syntax error -- expected = in attribute");
 
 		// read value
-		BzfString value = readValue(stream);
+		std::string value = readValue(stream);
 
 		// save it
 		node->attributes[name] = std::make_pair(position, value);
@@ -695,14 +695,14 @@ char					XMLTree::readReference(XMLStream& stream)
 	}
 
 	// read up to a semicolon
-	BzfString name = readToken(stream,
+	std::string name = readToken(stream,
 							isNameFirstChar, isNameChar,
 							";", "reference");
 
 	// verify delimiter
 	if (stream.get() != ';')
 		throw XMLTreeIOException(stream,
-							BzfString::format(
+							string_util::format(
 								"reference `%s' missing delimiter",
 								name.c_str()));
 
@@ -720,7 +720,7 @@ char					XMLTree::readReference(XMLStream& stream)
 
 	// unknown reference
 	throw XMLTreeIOException(stream,
-							BzfString::format(
+							string_util::format(
 								"unknown reference &%s;", name.c_str()));
 }
 
@@ -728,7 +728,7 @@ char					XMLTree::readCharReference(XMLStream& stream)
 {
 	// slurp up characters
 	int base;
-	BzfString number;
+	std::string number;
 	char c = stream.peek();
 	if (c == 'x') {
 		stream.skip();
@@ -743,7 +743,7 @@ char					XMLTree::readCharReference(XMLStream& stream)
 	// verify delimiter
 	if (stream.get() != ';')
 		throw XMLTreeIOException(stream,
-							BzfString::format(
+							string_util::format(
 								"reference `%s' missing delimiter",
 								number.c_str()));
 
@@ -753,7 +753,7 @@ char					XMLTree::readCharReference(XMLStream& stream)
 	// check range
 	if (value > 255)
 		throw XMLTreeIOException(stream,
-							BzfString::format(
+							string_util::format(
 								"character reference `%s' out of range",
 								number.c_str()));
 
@@ -854,7 +854,7 @@ ostream& operator<<(ostream& os, const XMLTree& tree)
 }
 */
 
-BzfString				XMLTree::escape(const BzfString& string)
+std::string				XMLTree::escape(const std::string& string)
 {
 	static const char* hex = "0123456789abcdef";
 
@@ -877,7 +877,7 @@ BzfString				XMLTree::escape(const BzfString& string)
 		return string;
 
 	// construct new string with escapes
-	BzfString output;
+	std::string output;
 	for (cstr = string.c_str(); *cstr; ++cstr) {
 		switch (*cstr) {
 			case '\n':

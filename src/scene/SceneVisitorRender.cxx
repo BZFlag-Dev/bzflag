@@ -420,7 +420,7 @@ void					SceneVisitorRender::draw()
 
 bool					SceneVisitorRender::visit(SceneNodeAnimate* n)
 {
-	const BzfString& dst = n->dst.get();
+	const std::string& dst = n->dst.get();
 	getParams().pushFloat(dst, n->get(getParams()));
 	const bool result = descend(n);
 	getParams().popFloat(dst);

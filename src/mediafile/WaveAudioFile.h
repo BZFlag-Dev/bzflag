@@ -20,7 +20,7 @@ public:
 	WaveAudioFile(istream*);
 	virtual ~WaveAudioFile();
 
-	static BzfString	getExtension();
+	static std::string	getExtension();
 
 	// AudioFile overrides
 	virtual bool		read(void* buffer, int numFrames);

@@ -11,7 +11,6 @@
  */
 
 #include "WaveAudioFile.h"
-#include "BzfString.h"
 #include <string.h>
 
 #define	WAV_FORMAT_UNKNOWN		(0x0000)
@@ -105,7 +104,7 @@ WaveAudioFile::~WaveAudioFile()
 	// do nothing
 }
 
-BzfString				WaveAudioFile::getExtension()
+std::string				WaveAudioFile::getExtension()
 {
 	return ".wav";
 }

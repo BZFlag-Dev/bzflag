@@ -67,10 +67,10 @@ SceneNodeLight::~SceneNodeLight()
 void					SceneNodeLight::compute(
 								const SceneVisitorParams& params)
 {
-	static BzfString emptyName;
+	static std::string emptyName;
 	float t = 0.0f, t0;
 	unsigned int index = 0;
-	BzfString tName = emptyName;
+	std::string tName = emptyName;
 
 	// interpolate
 	GET_T(ambient.getInterpolationParameter());

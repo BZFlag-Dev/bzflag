@@ -14,7 +14,7 @@
 #define BZF_SCENE_VISITOR_WRITE_H
 
 #include "SceneVisitor.h"
-#include "BzfString.h"
+#include <string>
 #include "bzfio.h"
 
 class SceneVisitorWrite : public SceneVisitor {
@@ -45,7 +45,7 @@ protected:
 
 private:
 	ostream*			stream;
-	BzfString			indentation;
+	std::string			indentation;
 };
 
 #endif

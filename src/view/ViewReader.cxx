@@ -19,10 +19,10 @@
 // function objects for parsing view
 //
 
-class ViewSetColor_t : public std::unary_function<BzfString, float*> {
+class ViewSetColor_t : public std::unary_function<std::string, float*> {
 public:
 	ViewSetColor_t(float* color_) : color(color_) { }
-	float*				operator()(const BzfString& arg) const
+	float*				operator()(const std::string& arg) const
 	{
 		float tmp[3];
 		if (sscanf(arg.c_str(), "%f %f %f", tmp+0, tmp+1, tmp+2) != 3)
@@ -71,19 +71,19 @@ ViewReader::~ViewReader()
 
 void					ViewReader::onTagReaderCB(
 								const ViewTagReader* reader,
-								const BzfString& tag, void* self)
+								const std::string& tag, void* self)
 {
 	reinterpret_cast<ViewReader*>(self)->insert(tag, reader->clone());
 }
 
-void					ViewReader::insert(const BzfString& tag,
+void					ViewReader::insert(const std::string& tag,
 								ViewTagReader* reader)
 {
 	remove(tag);
 	itemReaders.insert(std::make_pair(tag, reader));
 }
 
-void					ViewReader::remove(const BzfString& tag)
+void					ViewReader::remove(const std::string& tag)
 {
 	ItemReaders::iterator index = itemReaders.find(tag);
 	if (index != itemReaders.end()) {
@@ -137,11 +137,11 @@ void					ViewReader::parseViews(XMLTree::iterator xml, void*)
 
 	// must be a view
 	if (xml->value != "view")
-		throw XMLIOException(xml->position, BzfString::format(
+		throw XMLIOException(xml->position, string_util::format(
 							"invalid tag `%s'", xml->value.c_str()));
 
 	// get id parameter
-	BzfString id;
+	std::string id;
 	if (!xml->getAttribute("id", id))
 		throw XMLIOException(xml->position, "view must have an id attribute");
 
@@ -190,7 +190,7 @@ void					ViewReader::parseView(
 			throw XMLIOException(xml->position, "`ref' must be empty");
 
 		// get id
-		BzfString id;
+		std::string id;
 		if (!xml->getAttribute("id", id))
 			throw XMLIOException(xml->position,
 								"`ref' must have an `id' attribute");
@@ -198,7 +198,7 @@ void					ViewReader::parseView(
 		// find the named item
 		NamedItems::const_iterator index = namedItems.find(id);
 		if (index == namedItems.end())
-			throw XMLIOException(xml->position, BzfString::format(
+			throw XMLIOException(xml->position, string_util::format(
 								"unknown item `%s'", id.c_str()));
 
 		// add named item as a child
@@ -210,7 +210,7 @@ void					ViewReader::parseView(
 	ItemReaders::const_iterator index = itemReaders.find(xml->value);
 	if (index == itemReaders.end())
 		throw XMLIOException(xml->position,
-								BzfString::format(
+								string_util::format(
 									"invalid view type `%s'",
 									xml->value.c_str()));
 
@@ -241,7 +241,7 @@ void					ViewReader::parseView(
 		view->pushChild(child);
 
 		// save view if named
-		BzfString id;
+		std::string id;
 		if (xml->getAttribute("id", id))
 			saveNamedItem(id, child);
 
@@ -287,12 +287,12 @@ bool					ViewReader::parseStandardTags(
 	State& state         = stack.back();
 	ViewState& viewState = state.state;
 	if (xml->value == "font") {
-		BzfString name;
+		std::string name;
 		if (xml->getAttribute("name", name)) {
 			OpenGLTexFont font(name);
 			if (!font.isValid())
 				throw XMLIOException(xml->getAttributePosition("name"),
-							BzfString::format(
+							string_util::format(
 								"unknown font name `%s'", name.c_str()));
 			viewState.font     = font;
 			viewState.fontName = name;
@@ -308,7 +308,7 @@ bool					ViewReader::parseStandardTags(
 	}
 
 	else if (xml->value == "color") {
-		BzfString value;
+		std::string value;
 		xml->getAttribute("scale", viewSetColor(viewState.color.scale));
 		xml->getAttribute("shift", viewSetColor(viewState.color.shift));
 		xml->getAttribute("alpha", xmlStrToFloat(xmlCompose(xmlCompose(
@@ -319,7 +319,7 @@ bool					ViewReader::parseStandardTags(
 	}
 
 	else if (xml->value == "texture") {
-		BzfString filename;
+		std::string filename;
 		if (xml->getAttribute("filename", filename))
 			viewState.texture = OpenGLTexture(filename, NULL,
 										NULL, OpenGLTexture::Max);
@@ -333,14 +333,14 @@ bool					ViewReader::parseStandardTags(
 	// all standard tags expect to be empty
 	// (this isn't a general requirement, it just happens to be true)
 	if (xml.begin() != xml.end())
-		throw XMLIOException(xml->position, BzfString::format(
+		throw XMLIOException(xml->position, string_util::format(
 							"`%s' must be empty", xml->value.c_str()));
 
 	return true;
 }
 
 void					ViewReader::saveNamedItem(
-							const BzfString& id, View* item)
+							const std::string& id, View* item)
 {
 	assert(item != NULL);
 

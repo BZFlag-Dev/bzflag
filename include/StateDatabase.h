@@ -14,7 +14,7 @@
 #define BZF_STATE_DATABASE_H
 
 #include "common.h"
-#include "BzfString.h"
+#include <string>
 #include "CallbackList.h"
 #include "bzfio.h"
 
@@ -22,7 +22,7 @@
 
 class StateDatabase {
 public:
-	typedef void (*Callback)(const BzfString& name, void* userData);
+	typedef void (*Callback)(const std::string& name, void* userData);
 	enum Permission {
 		// permission levels
 		ReadWrite,
@@ -39,16 +39,16 @@ public:
 
 	// set a name/value pair.  if access is less than the permission
 	// level of the name then this has no effect.
-	void				set(const BzfString& name, const BzfString& value,
+	void				set(const std::string& name, const std::string& value,
 							Permission access = Client);
 
 	// unset a name if access is not less than the permission level
 	// of the name.
-	void				unset(const BzfString& name,
+	void				unset(const std::string& name,
 							Permission access = Client);
 
 	// simulate a change to a value (i.e. invoke the callbacks on it)
-	void				touch(const BzfString& name,
+	void				touch(const std::string& name,
 							Permission access = Client);
 
 	// mark a value as persistent (i.e. to be saved) or volatile.
@@ -56,49 +56,49 @@ public:
 	// with the given name.  that is, adding or removing the name
 	// will not affect persistence of the name.  the default is
 	// volatile.
-	void				setPersistent(const BzfString& name, bool = true);
+	void				setPersistent(const std::string& name, bool = true);
 
 	// set the default value for a name.  if the default value is set
 	// then the value will not be written by write() if the current
 	// value is equal to the default value.
-	void				setDefault(const BzfString& name,
-							const BzfString& value);
+	void				setDefault(const std::string& name,
+							const std::string& value);
 
 	// set the permission level of a name.  like persistence, this is
 	// stored independently of a value with the name.  the default
 	// permission is ReadWrite (i.e. full access).
-	void				setPermission(const BzfString& name, Permission);
+	void				setPermission(const std::string& name, Permission);
 
 	// add/remove a callback to/from a name.  all callbacks on a name are
 	// invoked when the value changes (either by being set or unset).
 	// each name can have any number of callbacks but any given callback
 	// function/userData pair on a name can only be registered once (i.e.
 	// multiple adds have the same effect as a single add).
-	void				addCallback(const BzfString& name,
+	void				addCallback(const std::string& name,
 							Callback, void* userData);
-	void				removeCallback(const BzfString& name,
+	void				removeCallback(const std::string& name,
 							Callback, void* userData);
 
 	// test if a name is set or not
-	bool				isSet(const BzfString& name) const;
+	bool				isSet(const std::string& name) const;
 
 	// get the value associated with a name.  returns the empty string
 	// if the name isn't set.
-	BzfString			get(const BzfString& name) const;
+	std::string			get(const std::string& name) const;
 
 	// return true if the value associated with a name indicates
 	// logical true, which is when the value is not empty and not
 	// "0" and not "false" and not "no".
-	bool				isTrue(const BzfString& name) const;
+	bool				isTrue(const std::string& name) const;
 
 	// test if a name is empty or not.  a name is empty if it's
 	// not set or it's set to the empty string.
-	bool				isEmpty(const BzfString& name) const;
+	bool				isEmpty(const std::string& name) const;
 
 	// get the persistence, permission, and default for an entry
-	bool				isPersistent(const BzfString& name) const;
-	BzfString			getDefault(const BzfString& name) const;
-	Permission			getPermission(const BzfString& name) const;
+	bool				isPersistent(const std::string& name) const;
+	std::string			getDefault(const std::string& name) const;
+	Permission			getPermission(const std::string& name) const;
 
 	// invoke the callback for each entry
 	void				iterate(Callback, void* userData) const;
@@ -120,17 +120,17 @@ private:
 		Item();
 
 	public:
-		BzfString		value;
-		BzfString		defValue;
+		std::string		value;
+		std::string		defValue;
 		bool			isSet;
 		bool			isTrue;
 		bool			save;
 		Permission		permission;
 		CallbackList<Callback>	callbacks;
 	};
-	typedef std::map<BzfString, Item> Map;
+	typedef std::map<std::string, Item> Map;
 
-	Map::iterator		lookup(const BzfString&);
+	Map::iterator		lookup(const std::string&);
 	void				notify(Map::iterator);
 
 private:

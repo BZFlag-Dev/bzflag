@@ -139,32 +139,32 @@ void					WinPlatformFactory::sleep(double t) const
 	Sleep((DWORD)(1000.0 * t));
 }
 
-BzfString				WinPlatformFactory::getUserName() const
+std::string				WinPlatformFactory::getUserName() const
 {
 	char username[256];
 	DWORD usernameLen = sizeof(username);
 	GetUserName(username, &usernameLen);
 	if (*username)
-		return BzfString(username);
+		return std::string(username);
 	else
 		return "windows_user";
 }
 
 void					WinPlatformFactory::setEnv(
-								const BzfString& name, const BzfString& value)
+								const std::string& name, const std::string& value)
 {
-	putenv(BzfString::format("%s=%s", name.c_str(), value.c_str()).c_str());
+	putenv(string_util::format("%s=%s", name.c_str(), value.c_str()).c_str());
 }
 
-void					WinPlatformFactory::unsetEnv(const BzfString& name)
+void					WinPlatformFactory::unsetEnv(const std::string& name)
 {
 	putenv(name.c_str());
 }
 
-BzfString				WinPlatformFactory::getEnv(const BzfString& name) const
+std::string				WinPlatformFactory::getEnv(const std::string& name) const
 {
 	const char* value = getenv(name.c_str());
-	return BzfString(value != NULL ? value : "");
+	return std::string(value != NULL ? value : "");
 }
 
 void					WinPlatformFactory::signalRaise(Signal sig)
@@ -271,13 +271,13 @@ Signal					WinPlatformFactory::fromSigno(int signo)
 	}
 }
 
-BzfString				WinPlatformFactory::getConfigFileName() const
+std::string				WinPlatformFactory::getConfigFileName() const
 {
 	// get location of personal files from system.  this appears to be
 	// the closest thing to a home directory on windows.  use root of
 	// C drive as a default in case we can't get the path or it doesn't
 	// exist.
-	BzfString name("C:");
+	std::string name("C:");
 	char dir[MAX_PATH];
 	ITEMIDLIST* idl;
 	if (SUCCEEDED(SHGetSpecialFolderLocation(NULL, CSIDL_PERSONAL, &idl))) {

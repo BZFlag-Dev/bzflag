@@ -18,7 +18,7 @@
 #define BZF_PLATFORM_FACTORY_H
 
 #include "common.h"
-#include "BzfString.h"
+#include <string>
 #include "bzfio.h"
 
 #define PLATFORM (PlatformFactory::getInstance())
@@ -74,12 +74,12 @@ public:
 	virtual void		sleep(double timeInSeconds) const = 0;
 
 	// get the current user name (if possible)
-	virtual BzfString	getUserName() const = 0;
+	virtual std::string	getUserName() const = 0;
 
 	// get/set/unset environment variables
-	virtual void		setEnv(const BzfString&, const BzfString&) = 0;
-	virtual void		unsetEnv(const BzfString&) = 0;
-	virtual BzfString	getEnv(const BzfString&) const = 0;
+	virtual void		setEnv(const std::string&, const std::string&) = 0;
+	virtual void		unsetEnv(const std::string&) = 0;
+	virtual std::string	getEnv(const std::string&) const = 0;
 
 	// add/remove handlers for signals.  note that some platforms have
 	// severe restrictions on what signal handlers can do so take care.

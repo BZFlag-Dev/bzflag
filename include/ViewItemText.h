@@ -19,7 +19,7 @@ class ViewItemText : public View {
 public:
 	ViewItemText();
 
-	void				setText(const BzfString&);
+	void				setText(const std::string&);
 	void				setPosition(const ViewSize& x, const ViewSize& y);
 	void				setShadow(bool);
 
@@ -31,10 +31,10 @@ protected:
 	virtual void		onPostRender(float x, float y, float w, float h);
 
 private:
-	typedef std::vector<BzfString> Items;
+	typedef std::vector<std::string> Items;
 
 	void				makeLines(Items& lines);
-	BzfString			makeLine(Items::const_iterator&) const;
+	std::string			makeLine(Items::const_iterator&) const;
 
 private:
 	Items				items;
@@ -54,7 +54,7 @@ public:
 	virtual void		close();
 
 private:
-	BzfString			msg;
+	std::string			msg;
 	ViewItemText*		item;
 };
 

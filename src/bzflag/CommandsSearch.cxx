@@ -28,13 +28,13 @@
 // command name to function mapping
 //
 
-static BzfString	cmdSearch(const BzfString&,
+static std::string	cmdSearch(const std::string&,
 								const CommandManager::ArgList& args)
 {
 	if (args.size() != 0)
 		return "usage: search";
 	CommandsSearch::search();
-	return BzfString();
+	return std::string();
 }
 
 struct CommandListItem {
@@ -148,13 +148,13 @@ void					CommandsSearch::onFrameCB(void* self)
 }
 
 void					CommandsSearch::onServerNameCB(
-								const BzfString& name, void* self)
+								const std::string& name, void* self)
 {
 	reinterpret_cast<CommandsSearch*>(self)->onServerName(BZDB->get(name));
 }
 
 void					CommandsSearch::onServerName(
-								const BzfString& serverName)
+								const std::string& serverName)
 {
 	// find the server
 	GameServerList::const_iterator index;
@@ -170,39 +170,39 @@ void					CommandsSearch::onServerName(
 	if (index != gameServers.end()) {
 		// player counts
 		const PingPacket& ping = index->ping;
-		BZDB->set("_serverNumTotal", BzfString::format("%d/%d",
+		BZDB->set("_serverNumTotal", string_util::format("%d/%d",
 								ping.rogueCount + ping.redCount +
 								ping.greenCount + ping.blueCount +
 								ping.purpleCount, ping.maxPlayers));
 		if (ping.redMax >= ping.maxPlayers)
-			BZDB->set("_serverNumRed", BzfString::format("%d", ping.redCount));
+			BZDB->set("_serverNumRed", string_util::format("%d", ping.redCount));
 		else
-			BZDB->set("_serverNumRed", BzfString::format("%d/%d",
+			BZDB->set("_serverNumRed", string_util::format("%d/%d",
 								ping.redCount, ping.redMax));
 		if (ping.greenMax >= ping.maxPlayers)
-			BZDB->set("_serverNumGreen", BzfString::format("%d", ping.greenCount));
+			BZDB->set("_serverNumGreen", string_util::format("%d", ping.greenCount));
 		else
-			BZDB->set("_serverNumGreen", BzfString::format("%d/%d",
+			BZDB->set("_serverNumGreen", string_util::format("%d/%d",
 								ping.greenCount, ping.greenMax));
 		if (ping.blueMax >= ping.maxPlayers)
-			BZDB->set("_serverNumBlue", BzfString::format("%d", ping.blueCount));
+			BZDB->set("_serverNumBlue", string_util::format("%d", ping.blueCount));
 		else
-			BZDB->set("_serverNumBlue", BzfString::format("%d/%d",
+			BZDB->set("_serverNumBlue", string_util::format("%d/%d",
 								ping.blueCount, ping.blueMax));
 		if (ping.purpleMax >= ping.maxPlayers)
-			BZDB->set("_serverNumPurple", BzfString::format("%d", ping.purpleCount));
+			BZDB->set("_serverNumPurple", string_util::format("%d", ping.purpleCount));
 		else
-			BZDB->set("_serverNumPurple", BzfString::format("%d/%d",
+			BZDB->set("_serverNumPurple", string_util::format("%d/%d",
 								ping.purpleCount, ping.purpleMax));
 		if (ping.gameStyle & RoguesGameStyle)
 			if (ping.rogueMax >= ping.maxPlayers)
-				BZDB->set("_serverNumRogue", BzfString::format("%d", ping.rogueCount));
+				BZDB->set("_serverNumRogue", string_util::format("%d", ping.rogueCount));
 			else
-				BZDB->set("_serverNumRogue", BzfString::format("%d/%d",
+				BZDB->set("_serverNumRogue", string_util::format("%d/%d",
 								ping.rogueCount, ping.rogueMax));
 
 		// shots
-		BZDB->set("_serverNumShots", BzfString::format("%d Shot%s",
+		BZDB->set("_serverNumShots", string_util::format("%d Shot%s",
 								ping.maxShots,
 								(ping.maxShots == 1) ? "" : "s"));
 
@@ -225,38 +225,38 @@ void					CommandsSearch::onServerName(
 			BZDB->set("_serverShakeAntidote", "Antidote Flags");
 		if (ping.gameStyle & ShakableGameStyle)
 			BZDB->set("_serverShakeTime",
-								BzfString::format("%.1fsec To Drop Bad Flag",
+								string_util::format("%.1fsec To Drop Bad Flag",
 								0.1f * float(ping.shakeTimeout)));
 		if (ping.gameStyle & ShakableGameStyle)
 			BZDB->set("_serverShakeWins",
-								BzfString::format("%d Win%s Drops Bad Flag",
+								string_util::format("%d Win%s Drops Bad Flag",
 								ping.shakeWins,
 								(ping.shakeWins == 1) ? "" : "s"));
 
 		// game over conditions
 		if (ping.maxTime != 0) {
-			BzfString msg;
+			std::string msg;
 			if (ping.maxTime >= 3600)
-				msg = BzfString::format("Time limit: %d:%02d:%02d",
+				msg = string_util::format("Time limit: %d:%02d:%02d",
 								ping.maxTime / 3600,
 								(ping.maxTime / 60) % 60,
 								ping.maxTime % 60);
 			else if (ping.maxTime >= 60)
-				msg = BzfString::format("Time limit: %d:%02d",
+				msg = string_util::format("Time limit: %d:%02d",
 								ping.maxTime / 60,
 								ping.maxTime % 60);
 			else
-				msg = BzfString::format("Time limit: 0:%02d",
+				msg = string_util::format("Time limit: 0:%02d",
 								ping.maxTime);
 			BZDB->set("_serverLimitTime", msg);
 		}
 		if (ping.maxTeamScore != 0)
 			BZDB->set("_serverLimitTeamScore",
-								BzfString::format("Max team score: %d",
+								string_util::format("Max team score: %d",
 								ping.maxTeamScore));
 		if (ping.maxPlayerScore != 0)
 			BZDB->set("_serverLimitPlayerScore",
-								BzfString::format("Max player score: %d",
+								string_util::format("Max player score: %d",
 								ping.maxPlayerScore));
 	}
 }
@@ -271,7 +271,7 @@ void					CommandsSearch::onSearch()
 	BZDB->unset("_serverList");
 
 	// get list server URL.  we're done if it's not set.
-	BzfString url = BZDB->get("infoListServerURL");
+	std::string url = BZDB->get("infoListServerURL");
 	if (url.empty())
 		phase = Idle;
 	else
@@ -326,7 +326,7 @@ void					CommandsSearch::lookupListServers()
 	// check urls for validity
 	for (index = urls.begin(); index != urls.end(); ++index) {
 		// parse url
-		BzfString protocol, hostname, path;
+		std::string protocol, hostname, path;
 		int port = ServerPort + 1;
 		Address address;
 		if (!BzfNetwork::parseURL(*index, protocol, hostname, port, path) ||
@@ -557,7 +557,7 @@ void					CommandsSearch::parseListServerResponse(
 			}
 			serverInfo.ping.serverId.port = htons((int16_t)port);
 			serverInfo.name  = name;
-			serverInfo.name += BzfString::format(":%d", port);
+			serverInfo.name += string_util::format(":%d", port);
 
 			// construct description
 			serverInfo.description = serverInfo.name;
@@ -587,7 +587,7 @@ void					CommandsSearch::addGameServerWithLookup(
 	int port = (int)ntohs(info.ping.serverId.port);
 	if (port == 0)
 		port = ServerPort;
-	info.name += BzfString::format(":%d", port);
+	info.name += string_util::format(":%d", port);
 
 	// the description is the name
 	info.description = info.name;
@@ -622,7 +622,7 @@ void					CommandsSearch::addGameServer(GameServer& info)
 	// add server if we don't already have it
 	if (index == gameServers.end()) {
 		gameServers.push_back(info);
-		BZDB->set("_serverCount", BzfString::format("%u", gameServers.size()));
+		BZDB->set("_serverCount", string_util::format("%u", gameServers.size()));
 	}
 
 	// sort by number of players
@@ -642,7 +642,7 @@ void					CommandsSearch::addGameServer(GameServer& info)
 	}
 
 	// set server list
-	BzfString servers;
+	std::string servers;
 	for (index = gameServers.begin(); index != gameServers.end(); ++index) {
 		GameServer& server = *index;
 		servers += server.description;

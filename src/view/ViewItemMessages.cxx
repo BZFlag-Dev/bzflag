@@ -98,7 +98,7 @@ void					ViewItemMessages::onPostRender(
 	// draw
 	OpenGLGState::resetState();
 	if (input && msgBuffer->isComposing()) {
-		BzfString msg = msgBuffer->getComposePrompt();
+		std::string msg = msgBuffer->getComposePrompt();
 		msg += msgBuffer->getComposeMessage();
 		msg += "_";
 		drawLine(msg, w, getState().color.color, &cbState);
@@ -108,14 +108,14 @@ void					ViewItemMessages::onPostRender(
 }
 
 bool					ViewItemMessages::countLine(
-								const BzfString& msg,
+								const std::string& msg,
 								const float*, void* _cbState)
 {
 	CallbackInfo* cbState = reinterpret_cast<CallbackInfo*>(_cbState);
 
 	// count lines after word breaking
 	unsigned int numLines;
-	BzfString buffer = cbState->self->wordBreak(
+	std::string buffer = cbState->self->wordBreak(
 								cbState->self->getState().font,
 								cbState->w, msg, &numLines);
 
@@ -131,7 +131,7 @@ bool					ViewItemMessages::countLine(
 }
 
 bool					ViewItemMessages::drawLine(
-								const BzfString& msg,
+								const std::string& msg,
 								float w,
 								const float* color,
 								CallbackInfo* cbState)
@@ -140,7 +140,7 @@ bool					ViewItemMessages::drawLine(
 
 	// do word breaking and count lines
 	unsigned int numLines;
-	BzfString buffer = wordBreak(font, w, msg, &numLines);
+	std::string buffer = wordBreak(font, w, msg, &numLines);
 
 	float x = cbState->x;
 	switch (getState().hAlign) {
@@ -184,20 +184,20 @@ bool					ViewItemMessages::drawLine(
 }
 
 bool					ViewItemMessages::drawLineCB(
-								const BzfString& msg,
+								const std::string& msg,
 								const float* color, void* _cbState)
 {
 	CallbackInfo* cbState = reinterpret_cast<CallbackInfo*>(_cbState);
 	return cbState->self->drawLine(msg, cbState->w, color, cbState);
 }
 
-BzfString				ViewItemMessages::wordBreak(
+std::string				ViewItemMessages::wordBreak(
 								const OpenGLTexFont& font,
 								float w,
-								const BzfString& msg,
+								const std::string& msg,
 								unsigned int* numLines)
 {
-	BzfString split;
+	std::string split;
 	*numLines = 0;
 	const char* begin = msg.c_str();
 	const char* end = begin + msg.size();
@@ -280,13 +280,13 @@ ViewTagReader* 			ViewItemMessagesReader::clone() const
 View*					ViewItemMessagesReader::open(XMLTree::iterator xml)
 {
 	// get the buffer
-	BzfString name;
+	std::string name;
 	if (!xml->getAttribute("buffer", name))
 		throw XMLIOException(xml->position, "must have `buffer' attribute");
 	MessageBuffer* buffer = MSGMGR->get(name);
 	if (buffer == NULL)
 		throw XMLIOException(xml->position,
-							BzfString::format(
+							string_util::format(
 								"unknown buffer `%s'", name.c_str()));
 
 	// create item

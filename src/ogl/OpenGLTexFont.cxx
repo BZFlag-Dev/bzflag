@@ -12,13 +12,12 @@
 
 #include "OpenGLTexFont.h"
 #include "MediaFile.h"
-#include "BzfString.h"
 #include "bzfgl.h"
 #include <string.h>
 #include <math.h>
 #include <map>
 
-typedef std::map<BzfString, OpenGLTexFont::Rep*> TexFontMap;
+typedef std::map<std::string, OpenGLTexFont::Rep*> TexFontMap;
 static TexFontMap		texFontMap;
 static bool				anyFontLoaded = false;
 
@@ -313,7 +312,7 @@ OpenGLTexFont::OpenGLTexFont() : bitmapRep(NULL), width(1.0f), height(1.0f)
 	rep = new Rep;
 }
 
-OpenGLTexFont::OpenGLTexFont(const BzfString& name) :
+OpenGLTexFont::OpenGLTexFont(const std::string& name) :
 								bitmapRep(NULL), width(1.0f), height(1.0f)
 {
 	TexFontMap::iterator index = texFontMap.find(name);
@@ -366,8 +365,8 @@ OpenGLTexFont&			OpenGLTexFont::operator=(const OpenGLTexFont& f)
 }
 
 void					OpenGLTexFont::mapFont(
-								const BzfString& name,
-								const BzfString& filename)
+								const std::string& name,
+								const std::string& filename)
 {
 	// load file and create rep
 	int dx, dy;
@@ -440,7 +439,7 @@ float					OpenGLTexFont::getHeight() const
 	return height;
 }
 
-float					OpenGLTexFont::getWidth(const BzfString& s) const
+float					OpenGLTexFont::getWidth(const std::string& s) const
 {
 	return getWidth(s.c_str(), s.size());
 }
@@ -471,7 +470,7 @@ float					OpenGLTexFont::getWidth(const char* s, int length) const
 
 int						OpenGLTexFont::getLengthInWidth(
 								float w,
-								const BzfString& s) const
+								const std::string& s) const
 {
 	return getLengthInWidth(w, s.c_str(), s.size());
 }
@@ -514,7 +513,7 @@ float					OpenGLTexFont::getBaselineFromCenter() const
 	return 0.5f * (getDescent() - getAscent());
 }
 
-void					OpenGLTexFont::draw(const BzfString& s,
+void					OpenGLTexFont::draw(const std::string& s,
 								float x, float y, float z) const
 {
 	draw(s.c_str(), s.size(), x, y, z);

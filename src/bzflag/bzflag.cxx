@@ -80,7 +80,7 @@ static void				fatalErrorCallback(const char* msg)
 // (external) console echo
 //
 
-static bool				onConsoleEcho(const BzfString& msg,
+static bool				onConsoleEcho(const std::string& msg,
 								const float*, void*)
 {
 	PLATFORM->writeConsole(msg.c_str());
@@ -93,7 +93,7 @@ static bool				onConsoleEcho(const BzfString& msg,
 // message buffer callbacks
 //
 
-static bool				onMessageCB(const BzfString& msg,
+static bool				onMessageCB(const std::string& msg,
 								const float* /*color*/, void* dst)
 {
 	// discard color
@@ -108,14 +108,14 @@ static bool				onMessageCB(const BzfString& msg,
 
 static void				startComposing();
 
-static void				onRunCommand(const BzfString& cmd, void*)
+static void				onRunCommand(const std::string& cmd, void*)
 {
 	// echo command with prompt
 	printError("%s%s", commandPrompt, cmd.c_str());
 
 	// handle command
 	if (!cmd.empty()) {
-		BzfString result = CMDMGR->run(cmd);
+		std::string result = CMDMGR->run(cmd);
 		if (!result.empty())
 			printError(result.c_str());
 	}
@@ -143,20 +143,20 @@ static void				startComposing()
 // state database change handlers
 //
 
-static void				onConsole(const BzfString& name, void*)
+static void				onConsole(const std::string& name, void*)
 {
 	// always enter compose mode when showing the console
 	if (BZDB->isTrue(name))
 		startComposing();
 }
 
-static void				onGammaChanged(const BzfString& name, void*)
+static void				onGammaChanged(const std::string& name, void*)
 {
 	if (window != NULL && BZDB->isTrue("featuresGamma") && !BZDB->isEmpty(name))
 		window->setGamma((float)atof(BZDB->get(name).c_str()));
 }
 
-static void				onResolutionChanged(const BzfString& name, void*)
+static void				onResolutionChanged(const std::string& name, void*)
 {
 	if (display != NULL &&
 		display->getNumResolutions() > 1 &&
@@ -174,7 +174,7 @@ static void				onResolutionChanged(const BzfString& name, void*)
 	}
 }
 
-static void				onCursorChanged(const BzfString& name, void*)
+static void				onCursorChanged(const std::string& name, void*)
 {
 	if (window != NULL) {
 		if (BZDB->isTrue(name))
@@ -184,10 +184,10 @@ static void				onCursorChanged(const BzfString& name, void*)
 	}
 }
 
-static void				onTexturingChanged(const BzfString& name, void*)
+static void				onTexturingChanged(const std::string& name, void*)
 {
 	OpenGLTexture::Filter filter;
-	const BzfString& value = BZDB->get(name);
+	const std::string& value = BZDB->get(name);
 	if (value == "nearest")
 		filter = OpenGLTexture::Nearest;
 	else if (value == "linear")
@@ -206,22 +206,22 @@ static void				onTexturingChanged(const BzfString& name, void*)
 	OpenGLGState::enableTexture(filter != OpenGLTexture::Off);
 }
 
-static void				onBlendingChanged(const BzfString& name, void*)
+static void				onBlendingChanged(const std::string& name, void*)
 {
 	OpenGLGState::enableBlending(BZDB->isTrue(name));
 }
 
-static void				onSmoothingChanged(const BzfString& name, void*)
+static void				onSmoothingChanged(const std::string& name, void*)
 {
 	OpenGLGState::enableSmoothing(BZDB->isTrue(name));
 }
 
-static void				onDitheringChanged(const BzfString& name, void*)
+static void				onDitheringChanged(const std::string& name, void*)
 {
 	OpenGLGState::enableDithering(BZDB->isTrue(name));
 }
 
-static void				onColorChangeCB(const BzfString&, void*)
+static void				onColorChangeCB(const std::string&, void*)
 {
 	// update view colors
 	ViewColor::setColor(ViewColor::Red,    Team::getRadarColor(RedTeam));
@@ -469,7 +469,7 @@ static void				parse(int argc, char** argv)
     		if (t == (time_t)-1)
 				printError("Cannot convert date;  ignoring.");
     		else
-				BZDB->set("timeClock", BzfString::format("%f", (double)t));
+				BZDB->set("timeClock", string_util::format("%f", (double)t));
     	}
     	else if (strcmp(argv[i], "-view") == 0) {
     		if (++i == argc) {
@@ -492,7 +492,7 @@ static void				parse(int argc, char** argv)
 // config file read callbacks
 //
 
-static void				readConfig(istream* stream, const BzfString& filename)
+static void				readConfig(istream* stream, const std::string& filename)
 {
 	if (stream != NULL) {
 		try {
@@ -513,7 +513,7 @@ static void				readConfig(istream* stream, const BzfString& filename)
 // config file write callbacks
 //
 
-static void				writeDBEntry(const BzfString& name, void* _stream)
+static void				writeDBEntry(const std::string& name, void* _stream)
 {
 	// write it
 	ostream* stream = reinterpret_cast<ostream*>(_stream);
@@ -523,8 +523,8 @@ static void				writeDBEntry(const BzfString& name, void* _stream)
 					"</command>" << std::endl;
 }
 
-static void				writeKeys(const BzfString& name, bool press,
-								const BzfString& cmd, void* _stream)
+static void				writeKeys(const std::string& name, bool press,
+								const std::string& cmd, void* _stream)
 {
 	ostream* stream = reinterpret_cast<ostream*>(_stream);
 	(*stream) << "\t<command>bind " <<
@@ -722,17 +722,17 @@ int						main(int argc, char** argv)
 	}
 
 	// other default DB entries
-	BZDB->set("timeClock", BzfString::format("%f", (double)time(NULL)));
-	BzfString callsign = PLATFORM->getEnv("BZFLAGID");
+	BZDB->set("timeClock", string_util::format("%f", (double)time(NULL)));
+	std::string callsign = PLATFORM->getEnv("BZFLAGID");
 	if (callsign.empty())
 		callsign = PLATFORM->getEnv("BZID");
 	if (!callsign.empty())
 		BZDB->set("infoCallsign", callsign);
 	{
 		const char* hostname = Address::getHostName();
-		BzfString username = PLATFORM->getUserName();
+		std::string username = PLATFORM->getUserName();
 		if (!username.empty() && hostname != NULL) {
-			BzfString email = username;
+			std::string email = username;
 			email = username;
 			email += "@";
 			email += hostname;
@@ -825,7 +825,7 @@ int						main(int argc, char** argv)
 	else {
 		int x, y, w, h;
 		bool setSize = false, setPosition = false;
-		BzfString geometry = BZDB->get("windowGeometry");
+		std::string geometry = BZDB->get("windowGeometry");
 		if (geometry != "fullscreen") {
 			// parse geometry specification.  on error use fullscreen.
 			char xs, ys;
@@ -921,7 +921,7 @@ int						main(int argc, char** argv)
 	BZDB->addCallback("colorRadarGreen",  onColorChangeCB, NULL);
 	BZDB->addCallback("colorRadarBlue",   onColorChangeCB, NULL);
 	BZDB->addCallback("colorRadarPurple", onColorChangeCB, NULL);
-	onColorChangeCB(BzfString(), NULL);
+	onColorChangeCB(std::string(), NULL);
 
 	// start playing
 	startPlaying(display, window);

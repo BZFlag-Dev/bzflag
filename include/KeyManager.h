@@ -19,7 +19,7 @@
 
 #include "common.h"
 #include "BzfEvent.h"
-#include "BzfString.h"
+#include <string>
 #include "CallbackList.h"
 #include <map>
 
@@ -27,8 +27,8 @@
 
 class KeyManager {
 public:
-	typedef void (*IterateCallback)(const BzfString& name, bool press,
-							const BzfString& cmd, void* userData);
+	typedef void (*IterateCallback)(const std::string& name, bool press,
+							const std::string& cmd, void* userData);
 	typedef IterateCallback ChangeCallback;
 
 						KeyManager();
@@ -36,15 +36,15 @@ public:
 
 	// bind/unbind a command to/from a key event press or release
 	void				bind(const BzfKeyEvent&,
-								bool press, const BzfString& cmd);
+								bool press, const std::string& cmd);
 	void				unbind(const BzfKeyEvent&, bool press);
 
 	// get the command for a key event press or release
-	BzfString			get(const BzfKeyEvent&, bool press) const;
+	std::string			get(const BzfKeyEvent&, bool press) const;
 
 	// convert a key event to/from a string
-	BzfString			keyEventToString(const BzfKeyEvent&) const;
-	bool				stringToKeyEvent(const BzfString&, BzfKeyEvent&) const;
+	std::string			keyEventToString(const BzfKeyEvent&) const;
+	bool				stringToKeyEvent(const std::string&, BzfKeyEvent&) const;
 
 	// invoke callback for each bound key
 	void				iterate(IterateCallback callback, void* userData);
@@ -58,13 +58,13 @@ public:
 
 private:
 	void				notify(const BzfKeyEvent&,
-							bool press, const BzfString& cmd);
+							bool press, const std::string& cmd);
 
 	struct CallbackInfo {
 	public:
-		BzfString		name;
+		std::string		name;
 		bool			press;
-		BzfString		cmd;
+		std::string		cmd;
 	};
 	static bool			onCallback(ChangeCallback, void*, void*);
 
@@ -75,8 +75,8 @@ private:
 							const BzfKeyEvent&) const;
 	};
 
-	typedef std::map<BzfKeyEvent, BzfString, KeyEventLess> EventToCommandMap;
-	typedef std::map<BzfString, BzfKeyEvent> StringToEventMap;
+	typedef std::map<BzfKeyEvent, std::string, KeyEventLess> EventToCommandMap;
+	typedef std::map<std::string, BzfKeyEvent> StringToEventMap;
 
 	EventToCommandMap	pressEventToCommand;
 	EventToCommandMap	releaseEventToCommand;

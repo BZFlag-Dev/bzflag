@@ -27,19 +27,19 @@
 static const double UnixEpoch    = 2440587.5; // julian day of 12am 1/1/1970
 static const double SecondsInDay = 86400.0;
 
-static const BzfString s_timeClock("timeClock");
-static const BzfString s_infoLatitude("infoLatitude");
-static const BzfString s_infoLongitude("infoLongitude");
-static const BzfString s_universe("universe");
-static const BzfString s_world("world");
-static const BzfString s_starTransform("starTransform");
-static const BzfString s_time("time");
-static const BzfString s_sunAzimuth("sunAzimuth");
-static const BzfString s_sunAltitude("sunAltitude");
-static const BzfString s_moonAzimuth("moonAzimuth");
-static const BzfString s_moonAltitude("moonAltitude");
-static const BzfString s_moonTwist("moonTwist");
-static const BzfString s_moonPhase("moonPhase");
+static const std::string s_timeClock("timeClock");
+static const std::string s_infoLatitude("infoLatitude");
+static const std::string s_infoLongitude("infoLongitude");
+static const std::string s_universe("universe");
+static const std::string s_world("world");
+static const std::string s_starTransform("starTransform");
+static const std::string s_time("time");
+static const std::string s_sunAzimuth("sunAzimuth");
+static const std::string s_sunAltitude("sunAltitude");
+static const std::string s_moonAzimuth("moonAzimuth");
+static const std::string s_moonAltitude("moonAltitude");
+static const std::string s_moonTwist("moonTwist");
+static const std::string s_moonPhase("moonPhase");
 
 //
 // SceneManager
@@ -113,7 +113,7 @@ void					SceneManager::onTimeOfDay(double time)
 }
 
 void					SceneManager::onTimeOfDayCB(
-								const BzfString& name, void* _self)
+								const std::string& name, void* _self)
 {
 	SceneManager* self = reinterpret_cast<SceneManager*>(_self);
 	if (name == s_timeClock) {
@@ -134,7 +134,7 @@ void					SceneManager::open()
 }
 
 void					SceneManager::read(istream* stream,
-								 const BzfString& filename)
+								 const std::string& filename)
 {
 	// ignore streams we can't read
 	if (stream == NULL || !*stream)
@@ -308,7 +308,7 @@ const float*				SceneManager::getFade() const
 	return fade;
 }
 
-SceneNode*				SceneManager::find(const BzfString& name) const
+SceneNode*				SceneManager::find(const std::string& name) const
 {
 	SceneNode* node = findNoRef(name);
 	if (node != NULL)
@@ -316,7 +316,7 @@ SceneNode*				SceneManager::find(const BzfString& name) const
 	return node;
 }
 
-SceneNode*				SceneManager::findNoRef(const BzfString& name) const
+SceneNode*				SceneManager::findNoRef(const std::string& name) const
 {
 	ModelMap::const_iterator index = models.find(name);
 	if (index == models.end())

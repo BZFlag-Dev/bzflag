@@ -152,7 +152,7 @@ void					ViewItemHUD::drawHeading(int x0, int y0,
 	tx = x + closestTick - (numMajorTicksPerSide - 1) * majorTickSpacing;
 	float ty = y + 8.0f + floorf(getState().font.getDescent());
 	for (i = -numMajorTicksPerSide + 1; i <= numMajorTicksPerSide + 1; i++) {
-		BzfString label = BzfString::format("%d",
+		std::string label = string_util::format("%d",
 								majorTickDiff * ((i + base) % max));
 		float tw = getState().font.getWidth(label);
 		getState().font.draw(label, tx - 0.5f * tw, ty);
@@ -238,7 +238,7 @@ void					ViewItemHUD::drawAltitude(int x0, int y0,
   								floorf(getState().font.getBaselineFromCenter());
 	for (i = -numMajorTicksPerSide + 1; i <= numMajorTicksPerSide + 1; i++) {
 		if (i + base >= 0) {
-			BzfString label = BzfString::format("%d", mult * (i + base));
+			std::string label = string_util::format("%d", mult * (i + base));
 			getState().font.draw(label, tx, ty);
 		}
 		ty += majorTickSpacing;
@@ -288,7 +288,7 @@ void					ViewItemHUD::drawMarker(const MarkerCBInfo* info,
 	}
 }
 
-void					ViewItemHUD::drawMarkerCB(const BzfString&,
+void					ViewItemHUD::drawMarkerCB(const std::string&,
 								float heading, const float* color,
 								void* userData)
 {

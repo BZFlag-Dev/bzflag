@@ -44,12 +44,12 @@ UnixPlatformFactory::~UnixPlatformFactory()
 istream*				UnixPlatformFactory::createConfigInStream() const
 {
 	istream* stream   = NULL;
-	BzfString filename = getConfigFileName();
+	std::string filename = getConfigFileName();
 
 	// try host specific name first
 	if (stream == NULL && getenv("HOST")) {
 		// construct host specific name
-		BzfString filename2 = filename;
+		std::string filename2 = filename;
 		filename2 += ".";
 		filename2 += getenv("HOST");
 
@@ -66,12 +66,12 @@ istream*				UnixPlatformFactory::createConfigInStream() const
 ostream*				UnixPlatformFactory::createConfigOutStream() const
 {
 	ostream* stream   = NULL;
-	BzfString filename = getConfigFileName();
+	std::string filename = getConfigFileName();
 
 	// try host specific name first
 	if (stream == NULL && getenv("HOST")) {
 		// construct host specific name
-		BzfString filename2 = filename;
+		std::string filename2 = filename;
 		filename2 += ".";
 		filename2 += getenv("HOST");
 
@@ -118,23 +118,23 @@ void					UnixPlatformFactory::sleep(double t) const
 	select(0, NULL, NULL, NULL, &tv);
 }
 
-BzfString				UnixPlatformFactory::getUserName() const
+std::string				UnixPlatformFactory::getUserName() const
 {
 	struct passwd* pwent = getpwuid(getuid());
-	return BzfString((pwent != NULL) ? pwent->pw_name : "unix_user");
+	return std::string((pwent != NULL) ? pwent->pw_name : "unix_user");
 }
 
 void					UnixPlatformFactory::setEnv(
-								const BzfString& name, const BzfString& value)
+								const std::string& name, const std::string& value)
 {
 #if !defined(__linux__)
-	putenv(BzfString::format("%s=%s", name.c_str(), value.c_str()).c_str());
+	putenv(std::string::format("%s=%s", name.c_str(), value.c_str()).c_str());
 #else
 	setenv(name.c_str(), value.c_str(), 1);
 #endif
 }
 
-void					UnixPlatformFactory::unsetEnv(const BzfString& name)
+void					UnixPlatformFactory::unsetEnv(const std::string& name)
 {
 #if !defined(__linux__)
 	putenv(name.c_str());
@@ -143,10 +143,10 @@ void					UnixPlatformFactory::unsetEnv(const BzfString& name)
 #endif
 }
 
-BzfString				UnixPlatformFactory::getEnv(const BzfString& name) const
+std::string				UnixPlatformFactory::getEnv(const std::string& name) const
 {
 	const char* value = getenv(name.c_str());
-	return BzfString(value != NULL ? value : "");
+	return std::string(value != NULL ? value : "");
 }
 
 void					UnixPlatformFactory::signalRaise(Signal sig)
@@ -236,10 +236,10 @@ Signal					UnixPlatformFactory::fromSigno(int signo)
 	return static_cast<Signal>(signo);
 }
 
-BzfString				UnixPlatformFactory::getConfigFileName() const
+std::string				UnixPlatformFactory::getConfigFileName() const
 {
 	struct passwd* pwent = getpwuid(getuid());
-	BzfString homeDir((pwent != NULL && pwent->pw_dir != NULL) ?
+	std::string homeDir((pwent != NULL && pwent->pw_dir != NULL) ?
 								pwent->pw_dir : "");
 	return FILEMGR->catPath(homeDir, ".bzflag18");
 }

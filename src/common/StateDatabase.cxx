@@ -10,6 +10,10 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
+#if defined(WIN32)
+#pragma warning(4:4503)
+#endif
+
 #include "StateDatabase.h"
 #include "ErrorHandler.h"
 #include <assert.h>
@@ -46,8 +50,8 @@ StateDatabase::~StateDatabase()
 	s_instance = NULL;
 }
 
-void					StateDatabase::set(const BzfString& name,
-								const BzfString& value,
+void					StateDatabase::set(const std::string& name,
+								const std::string& value,
 								Permission access)
 {
 	Map::iterator index = lookup(name);
@@ -65,7 +69,7 @@ void					StateDatabase::set(const BzfString& name,
 	}
 }
 
-void					StateDatabase::unset(const BzfString& name,
+void					StateDatabase::unset(const std::string& name,
 								Permission access)
 {
 	Map::iterator index = lookup(name);
@@ -77,7 +81,7 @@ void					StateDatabase::unset(const BzfString& name,
 	}
 }
 
-void					StateDatabase::touch(const BzfString& name,
+void					StateDatabase::touch(const std::string& name,
 								Permission access)
 {
 	Map::iterator index = lookup(name);
@@ -86,21 +90,21 @@ void					StateDatabase::touch(const BzfString& name,
 }
 
 void					StateDatabase::setPersistent(
-								const BzfString& name, bool save)
+								const std::string& name, bool save)
 {
 	Map::iterator index = lookup(name);
 	index->second.save = save;
 }
 
 void					StateDatabase::setDefault(
-								const BzfString& name, const BzfString& value)
+								const std::string& name, const std::string& value)
 {
 	Map::iterator index = lookup(name);
 	index->second.defValue = value;
 }
 
 void					StateDatabase::setPermission(
-								const BzfString& name,
+								const std::string& name,
 								Permission permission)
 {
 	Map::iterator index = lookup(name);
@@ -108,7 +112,7 @@ void					StateDatabase::setPermission(
 }
 
 void					StateDatabase::addCallback(
-								const BzfString& name,
+								const std::string& name,
 								Callback callback,
 								void* userData)
 {
@@ -117,7 +121,7 @@ void					StateDatabase::addCallback(
 }
 
 void					StateDatabase::removeCallback(
-								const BzfString& name,
+								const std::string& name,
 								Callback callback,
 								void* userData)
 {
@@ -125,41 +129,41 @@ void					StateDatabase::removeCallback(
 	index->second.callbacks.remove(callback, userData);
 }
 
-bool					StateDatabase::isSet(const BzfString& name) const
+bool					StateDatabase::isSet(const std::string& name) const
 {
 	Map::const_iterator index = items.find(name);
 	return !(index == items.end() || !index->second.isSet);
 }
 
-BzfString				StateDatabase::get(const BzfString& name) const
+std::string				StateDatabase::get(const std::string& name) const
 {
 	Map::const_iterator index = items.find(name);
 	if (index == items.end() || !index->second.isSet)
-		return BzfString();
+		return std::string();
 	else
 		return index->second.value;
 }
 
-bool					StateDatabase::isTrue(const BzfString& name) const
+bool					StateDatabase::isTrue(const std::string& name) const
 {
 	Map::const_iterator index = items.find(name);
 	return !(index == items.end() || !index->second.isTrue);
 }
 
-bool					StateDatabase::isEmpty(const BzfString& name) const
+bool					StateDatabase::isEmpty(const std::string& name) const
 {
 	Map::const_iterator index = items.find(name);
 	return (index == items.end() || !index->second.isSet ||
 								index->second.value.empty());
 }
 
-bool					StateDatabase::isPersistent(const BzfString& name) const
+bool					StateDatabase::isPersistent(const std::string& name) const
 {
 	Map::const_iterator index = items.find(name);
 	return (index != items.end() && index->second.save);
 }
 
-BzfString				StateDatabase::getDefault(const BzfString& name) const
+std::string				StateDatabase::getDefault(const std::string& name) const
 {
 	Map::const_iterator index = items.find(name);
 	if (index != items.end())
@@ -169,7 +173,7 @@ BzfString				StateDatabase::getDefault(const BzfString& name) const
 }
 
 StateDatabase::Permission
-						StateDatabase::getPermission(const BzfString& name) const
+						StateDatabase::getPermission(const std::string& name) const
 {
 	Map::const_iterator index = items.find(name);
 	if (index != items.end())
@@ -179,7 +183,7 @@ StateDatabase::Permission
 }
 
 StateDatabase::Map::iterator
-						StateDatabase::lookup(const BzfString& name)
+						StateDatabase::lookup(const std::string& name)
 {
 	Map::iterator index = items.find(name);
 	if (index == items.end()) {
@@ -203,7 +207,7 @@ bool					StateDatabase::onCallback(
 								void* userData,
 								void* iterateData)
 {
-	callback(*reinterpret_cast<BzfString*>(iterateData), userData);
+	callback(*reinterpret_cast<std::string*>(iterateData), userData);
 	return true;
 }
 

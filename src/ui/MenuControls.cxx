@@ -72,12 +72,12 @@ void					MenuControl::getColor(
 	b = color[2];
 }
 
-void					MenuControl::setLabel(const BzfString& _label)
+void					MenuControl::setLabel(const std::string& _label)
 {
 	label = _label;
 }
 
-BzfString				MenuControl::getLabel() const
+std::string				MenuControl::getLabel() const
 {
 	return label;
 }
@@ -184,33 +184,33 @@ MenuCombo::~MenuCombo()
 	// do nothing
 }
 
-void					MenuCombo::setName(const BzfString& _name)
+void					MenuCombo::setName(const std::string& _name)
 {
 	name = _name;
 }
 
-BzfString				MenuCombo::getName() const
+std::string				MenuCombo::getName() const
 {
 	return name;
 }
 
-void					MenuCombo::setDefault(const BzfString& _defValue)
+void					MenuCombo::setDefault(const std::string& _defValue)
 {
 	defValue = _defValue;
 }
 
-BzfString				MenuCombo::getDefault() const
+std::string				MenuCombo::getDefault() const
 {
 	return defValue;
 }
 
-void					MenuCombo::append(const BzfString& label)
+void					MenuCombo::append(const std::string& label)
 {
-	options.push_back(std::make_pair(label, std::make_pair(false, BzfString())));
+	options.push_back(std::make_pair(label, std::make_pair(false, std::string())));
 }
 
-void					MenuCombo::append(const BzfString& label,
-								const BzfString& value)
+void					MenuCombo::append(const std::string& label,
+								const std::string& value)
 {
 	options.push_back(std::make_pair(label, std::make_pair(true, value)));
 }
@@ -221,7 +221,7 @@ void					MenuCombo::init()
 
 	// look up the current value for name, if any, and pick active item
 	if (BZDB->isSet(name)) {
-		BzfString value = BZDB->get(name);
+		std::string value = BZDB->get(name);
 		for (Options::const_iterator index = options.begin();
 								index != options.end(); ++index)
 			if (index->second.first && index->second.second == value) {
@@ -341,7 +341,7 @@ MenuEdit::~MenuEdit()
 		BZDB->removeCallback(name, &onChangeCB, this);
 }
 
-void					MenuEdit::setName(const BzfString& _name)
+void					MenuEdit::setName(const std::string& _name)
 {
 	if (!name.empty())
 		BZDB->removeCallback(name, &onChangeCB, this);
@@ -352,7 +352,7 @@ void					MenuEdit::setName(const BzfString& _name)
 	}
 }
 
-BzfString				MenuEdit::getName() const
+std::string				MenuEdit::getName() const
 {
 	return name;
 }
@@ -418,7 +418,7 @@ bool					MenuEdit::onKeyPress(const BzfKeyEvent& key)
 				goto noRoom;
 
 			// remove last character
-			value.truncate(value.size() - 1);
+			value.resize(value.size() - 1);
 		}
 		else {
 			// convert all whitespace to space
@@ -426,7 +426,7 @@ bool					MenuEdit::onKeyPress(const BzfKeyEvent& key)
 				c = ' ';
 
 			// do nothing if at maximum length
-			if (maxLength > 0 && value.size() >= (BzfString::size_type)maxLength)
+			if (maxLength > 0 && value.size() >= (std::string::size_type)maxLength)
 				goto noRoom;
 
 			// do nothing if requiring numeric input and character isn't a digit
@@ -483,7 +483,7 @@ void					MenuEdit::onChange()
 		value = BZDB->get(name);
 }
 
-void					MenuEdit::onChangeCB(const BzfString&, void* self)
+void					MenuEdit::onChangeCB(const std::string&, void* self)
 {
 	reinterpret_cast<MenuEdit*>(self)->onChange();
 }
@@ -503,7 +503,7 @@ MenuButton::~MenuButton()
 	// do nothing
 }
 
-void					MenuButton::setAction(const BzfString& _cmd)
+void					MenuButton::setAction(const std::string& _cmd)
 {
 	cmd = _cmd;
 }
@@ -568,8 +568,8 @@ MenuKeyBind::~MenuKeyBind()
 }
 
 void					MenuKeyBind::setBindings(
-								const BzfString& down,
-								const BzfString& up)
+								const std::string& down,
+								const std::string& up)
 {
 	cmdDown = down;
 	cmdUp   = up;
@@ -680,16 +680,16 @@ void					MenuKeyBind::clean()
 }
 
 void					MenuKeyBind::onChanged(
-								const BzfString& name, bool,
-								const BzfString&)
+								const std::string& name, bool,
+								const std::string&)
 {
 	if (name == key1 || name == key2)
 		dirty = true;
 }
 
 void					MenuKeyBind::onScan(
-								const BzfString& name, bool press,
-								const BzfString& cmd)
+								const std::string& name, bool press,
+								const std::string& cmd)
 {
 	if (press && cmd == cmdDown) {
 		if (key1.empty())
@@ -700,15 +700,15 @@ void					MenuKeyBind::onScan(
 }
 
 void					MenuKeyBind::onChangedCB(
-								const BzfString& name, bool press,
-								const BzfString& cmd, void* userData)
+								const std::string& name, bool press,
+								const std::string& cmd, void* userData)
 {
 	reinterpret_cast<MenuKeyBind*>(userData)->onChanged(name, press, cmd);
 }
 
 void					MenuKeyBind::onScanCB(
-								const BzfString& name, bool press,
-								const BzfString& cmd, void* userData)
+								const std::string& name, bool press,
+								const std::string& cmd, void* userData)
 {
 	reinterpret_cast<MenuKeyBind*>(userData)->onScan(name, press, cmd);
 }
@@ -734,7 +734,7 @@ bool					MenuLabel::isActive() const
 	return false;
 }
 
-void					MenuLabel::setName(const BzfString& _name)
+void					MenuLabel::setName(const std::string& _name)
 {
 	if (!name.empty())
 		BZDB->removeCallback(name, &onChangeCB, this);
@@ -745,7 +745,7 @@ void					MenuLabel::setName(const BzfString& _name)
 	}
 }
 
-void					MenuLabel::setTexture(const BzfString& filename)
+void					MenuLabel::setTexture(const std::string& filename)
 {
 	textureFile = filename;
 	// FIXME -- maybe load texture immediately
@@ -785,7 +785,7 @@ void					MenuLabel::onChange()
 	// do nothing.  we could cache the value here but we don't bother.
 }
 
-void					MenuLabel::onChangeCB(const BzfString&, void* self)
+void					MenuLabel::onChangeCB(const std::string&, void* self)
 {
 	reinterpret_cast<MenuLabel*>(self)->onChange();
 }
@@ -821,17 +821,17 @@ void					MenuText::setWidth(float _wPixels, float _wFraction)
 	wFraction = _wFraction;
 }
 
-void					MenuText::setText(const BzfString& _text)
+void					MenuText::setText(const std::string& _text)
 {
 	text = _text;
 }
 
-BzfString&				MenuText::getText()
+std::string&				MenuText::getText()
 {
 	return text;
 }
 
-BzfString				MenuText::getText() const
+std::string				MenuText::getText() const
 {
 	return text;
 }
@@ -1009,12 +1009,12 @@ void					MenuText::onScroll()
 	}
 }
 
-BzfString				MenuText::wordBreak(const OpenGLTexFont& font,
+std::string				MenuText::wordBreak(const OpenGLTexFont& font,
 								float w,
-								const BzfString& msg,
+								const std::string& msg,
 								unsigned int* numLines)
 {
-	BzfString split;
+	std::string split;
 	*numLines = 0;
 	const char* begin = msg.c_str();
 	const char* end = begin + msg.size();
@@ -1090,7 +1090,7 @@ MenuList::~MenuList()
 	setSourceName("");
 }
 
-void					MenuList::setSourceName(const BzfString& name)
+void					MenuList::setSourceName(const std::string& name)
 {
 	if (sourceName != name) {
 		if (!sourceName.empty())
@@ -1102,12 +1102,12 @@ void					MenuList::setSourceName(const BzfString& name)
 	}
 }
 
-BzfString				MenuList::getSourceName() const
+std::string				MenuList::getSourceName() const
 {
 	return sourceName;
 }
 
-void					MenuList::setFocusName(const BzfString& name)
+void					MenuList::setFocusName(const std::string& name)
 {
 	// discard old value, if any
 	if (!focusName.empty())
@@ -1128,12 +1128,12 @@ void					MenuList::setFocusName(const BzfString& name)
 	}
 }
 
-BzfString				MenuList::getFocusName() const
+std::string				MenuList::getFocusName() const
 {
 	return focusName;
 }
 
-void					MenuList::setTargetName(const BzfString& name)
+void					MenuList::setTargetName(const std::string& name)
 {
 	targetName = name;
 	targetNames.clear();
@@ -1143,7 +1143,7 @@ void					MenuList::setTargetName(const BzfString& name)
 	const char* next = strchr(scan, ',');
 	while (next != NULL) {
 		// append name to list
-		targetNames.push_back(BzfString(scan, next - scan));
+		targetNames.push_back(std::string(scan, next - scan));
 
 		// prepare for next name
 		scan = next + 1;
@@ -1159,27 +1159,27 @@ void					MenuList::setTargetName(const BzfString& name)
 		targetNames.push_back(scan);
 }
 
-BzfString				MenuList::getTargetName() const
+std::string				MenuList::getTargetName() const
 {
 	return targetName;
 }
 
-void					MenuList::setValueFormat(const BzfString& format)
+void					MenuList::setValueFormat(const std::string& format)
 {
 	valueFormat = format;
 }
 
-BzfString				MenuList::getValueFormat() const
+std::string				MenuList::getValueFormat() const
 {
 	return valueFormat;
 }
 
-void					MenuList::setSelectCommand(const BzfString& name)
+void					MenuList::setSelectCommand(const std::string& name)
 {
 	selectCommand = name;
 }
 
-BzfString				MenuList::getSelectCommand() const
+std::string				MenuList::getSelectCommand() const
 {
 	return selectCommand;
 }
@@ -1209,8 +1209,8 @@ void					MenuList::clear()
 }
 
 void					MenuList::append(
-								const BzfString& label,
-								const BzfString& value)
+								const std::string& label,
+								const std::string& value)
 {
 	// append item
 	items.push_back(std::make_pair(label, value));
@@ -1230,7 +1230,7 @@ void					MenuList::init()
 	active = 0;
 
 	// construct current value
-	BzfString current;
+	std::string current;
 	if (targetNames.size() <= 1 || valueFormat.empty()) {
 		// just one target and/or no value format.  use single target value.
 		current = BZDB->get(targetName);
@@ -1421,10 +1421,10 @@ void					MenuList::onCalcSize(float wWindow, float,
 	detail = 0.0f;
 }
 
-void					MenuList::onSourceChanged(const BzfString& name)
+void					MenuList::onSourceChanged(const std::string& name)
 {
 	// get values
-	BzfString values(BZDB->get(name));
+	std::string values(BZDB->get(name));
 	const char* scan = values.c_str();
 
 	// clear current list
@@ -1449,8 +1449,8 @@ void					MenuList::onSourceChanged(const BzfString& name)
 		const char* valueEnd = scan++;
 
 		// add item
-		append(BzfString(label, labelEnd - label),
-				BzfString(value, valueEnd - value));
+		append(std::string(label, labelEnd - label),
+				std::string(value, valueEnd - value));
 	}
 
 	// update active item
@@ -1458,14 +1458,14 @@ void					MenuList::onSourceChanged(const BzfString& name)
 }
 
 void					MenuList::onSourceChangedCB(
-								const BzfString& name, void* self)
+								const std::string& name, void* self)
 {
 	reinterpret_cast<MenuList*>(self)->onSourceChanged(name);
 }
 
 void					MenuList::setTarget()
 {
-	BzfString value = items[active].second;
+	std::string value = items[active].second;
 
 	if (targetNames.size() <= 1 || valueFormat.empty()) {
 		// just one target and/or no value format.  set single target value.
@@ -1487,7 +1487,7 @@ void					MenuList::setTarget()
 				// set next target value for % in value format.
 				// if we've run out of targets then do nothing.
 				if (index != targetNames.end()) {
-					BZDB->set(*index, BzfString(valueScan, valueEnd - valueScan));
+					BZDB->set(*index, std::string(valueScan, valueEnd - valueScan));
 					++index;
 				}
 

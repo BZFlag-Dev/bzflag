@@ -34,10 +34,10 @@ public:
 	double				getTime() const;
 	double				getClock() const;
 	void				sleep(double timeInSeconds) const;
-	BzfString			getUserName() const;
-	void				setEnv(const BzfString&, const BzfString&);
-	void				unsetEnv(const BzfString&);
-	BzfString			getEnv(const BzfString&) const;
+	std::string			getUserName() const;
+	void				setEnv(const std::string&, const std::string&);
+	void				unsetEnv(const std::string&);
+	std::string			getEnv(const std::string&) const;
 	void				signalRaise(Signal);
 
 protected:
@@ -49,7 +49,7 @@ private:
 	WinPlatformFactory(const WinPlatformFactory&);
 	WinPlatformFactory&	operator=(const WinPlatformFactory&);
 
-	BzfString			getConfigFileName() const;
+	std::string			getConfigFileName() const;
 	SigType				doSignalInstall(Signal, SIG_PF);
 	static void			onSignal(int);
 	static int			toSigno(Signal);

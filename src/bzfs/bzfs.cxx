@@ -331,7 +331,7 @@ static float timeElapsed = 0.0f;
 static TimeKeeper gameStartTime;
 #endif
 static bool publicizeServer = false;
-static BzfString publicizedAddress;
+static std::string publicizedAddress;
 static bool publicizedAddressGiven = false;
 static const char *publicizedTitle = NULL;
 static const char *listServerURL = DefaultListServerURL;
@@ -1773,7 +1773,7 @@ static void publicize()
 		// check url list for validity
 		for (unsigned int i = 0; i < urls.size(); ++i) {
 			// parse url
-			BzfString protocol, hostname, pathname;
+			std::string protocol, hostname, pathname;
 			int port = ServerPort + 1;
 			if (!BzfNetwork::parseURL(urls[i], protocol, hostname, port, pathname))
 				continue;

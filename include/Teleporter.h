@@ -27,8 +27,8 @@ public:
 							float borderSize);
 	~Teleporter();
 
-	BzfString			getType() const;
-	static BzfString	getClassName(); // const
+	std::string			getType() const;
+	static std::string	getClassName(); // const
 
 	float				getBorder() const;
 
@@ -56,7 +56,7 @@ public:
 
 private:
 	float				border;
-	static BzfString	typeName;
+	static std::string	typeName;
 };
 
 typedef std::vector<Teleporter> Teleporters;

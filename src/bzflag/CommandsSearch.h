@@ -14,7 +14,7 @@
 #define BZF_COMMANDS_SEARCH_H
 
 #include "common.h"
-#include "BzfString.h"
+#include <string>
 #include "Address.h"
 #include "Ping.h"
 #include <vector>
@@ -35,8 +35,8 @@ private:
 	};
 	struct GameServer {
 	public:
-		BzfString		name;
-		BzfString		description;
+		std::string		name;
+		std::string		description;
 		PingPacket		ping;
 	};
 	struct ListServer {
@@ -45,7 +45,7 @@ private:
 		int				port;
 		int				socket;
 		Phase			phase;
-		BzfString		buffer;
+		std::string		buffer;
 	};
 
 	CommandsSearch();
@@ -73,8 +73,8 @@ private:
 	void				onFrame();
 	static void			onFrameCB(void*);
 
-	void				onServerName(const BzfString&);
-	static void			onServerNameCB(const BzfString&, void*);
+	void				onServerName(const std::string&);
+	static void			onServerNameCB(const std::string&, void*);
 
 private:
 	typedef std::vector<GameServer> GameServerList;

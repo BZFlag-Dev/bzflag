@@ -21,14 +21,14 @@
 // SceneVisitorBaseRender
 //
 
-const BzfString SceneVisitorBaseRender::s_nameArea("area");
-const BzfString SceneVisitorBaseRender::s_nameTime("time");
-const BzfString SceneVisitorBaseRender::s_nameFrame("frame");
-const BzfString SceneVisitorBaseRender::s_nameDebug("displayDebug");
-const BzfString SceneVisitorBaseRender::s_renderSmoothing("renderSmoothing");
-const BzfString SceneVisitorBaseRender::s_renderBlending("renderBlending");
-const BzfString SceneVisitorBaseRender::s_renderLighting("renderLighting");
-const BzfString SceneVisitorBaseRender::s_renderTexturing("renderTexturing");
+const std::string SceneVisitorBaseRender::s_nameArea("area");
+const std::string SceneVisitorBaseRender::s_nameTime("time");
+const std::string SceneVisitorBaseRender::s_nameFrame("frame");
+const std::string SceneVisitorBaseRender::s_nameDebug("displayDebug");
+const std::string SceneVisitorBaseRender::s_renderSmoothing("renderSmoothing");
+const std::string SceneVisitorBaseRender::s_renderBlending("renderBlending");
+const std::string SceneVisitorBaseRender::s_renderLighting("renderLighting");
+const std::string SceneVisitorBaseRender::s_renderTexturing("renderTexturing");
 
 SceneVisitorBaseRender::SceneVisitorBaseRender()
 {

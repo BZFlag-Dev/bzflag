@@ -13,7 +13,7 @@
 #include <math.h>
 #include "WallObstacle.h"
 
-BzfString				WallObstacle::typeName("WallObstacle");
+std::string				WallObstacle::typeName("WallObstacle");
 
 WallObstacle::WallObstacle(const float* p, float a, float b, float h) :
 								Obstacle(p, a, 0.0, b, h)
@@ -30,12 +30,12 @@ WallObstacle::~WallObstacle()
 	// do nothing
 }
 
-BzfString				WallObstacle::getType() const
+std::string				WallObstacle::getType() const
 {
 	return typeName;
 }
 
-BzfString				WallObstacle::getClassName() // const
+std::string				WallObstacle::getClassName() // const
 {
 	return typeName;
 }

@@ -56,7 +56,7 @@ ViewManager::~ViewManager()
 	mgr = NULL;
 }
 
-void					ViewManager::add(const BzfString& name, View* view)
+void					ViewManager::add(const std::string& name, View* view)
 {
 	remove(name);
 	if (view != NULL) {
@@ -65,7 +65,7 @@ void					ViewManager::add(const BzfString& name, View* view)
 	}
 }
 
-void					ViewManager::remove(const BzfString& name)
+void					ViewManager::remove(const std::string& name)
 {
 	Views::iterator index = views.find(name);
 	if (index != views.end()) {
@@ -74,7 +74,7 @@ void					ViewManager::remove(const BzfString& name)
 	}
 }
 
-View*					ViewManager::get(const BzfString& name) const
+View*					ViewManager::get(const std::string& name) const
 {
 	Views::const_iterator index = views.find(name);
 	if (index == views.end())
@@ -92,14 +92,14 @@ void					ViewManager::iterate(
 }
 
 void					ViewManager::addReader(
-								const BzfString& name, ViewTagReader* reader)
+								const std::string& name, ViewTagReader* reader)
 {
 	removeReader(name);
 	if (reader != NULL)
 		readers.insert(std::make_pair(name, reader));
 }
 
-void					ViewManager::removeReader(const BzfString& name)
+void					ViewManager::removeReader(const std::string& name)
 {
 	Readers::iterator index = readers.find(name);
 	if (index != readers.end()) {
@@ -108,7 +108,7 @@ void					ViewManager::removeReader(const BzfString& name)
 	}
 }
 
-const ViewTagReader*		ViewManager::getReader(const BzfString& name) const
+const ViewTagReader*		ViewManager::getReader(const std::string& name) const
 {
 	Readers::const_iterator index = readers.find(name);
 	if (index == readers.end())

@@ -57,7 +57,7 @@ class ViewItemScoreboardPlayerFormatter : public ViewItemScoreboard::Formatter {
 
 		// Formatter overrides
 		virtual const float*		getColor();
-		virtual BzfString				format(const ViewItemScoreboard::Part&);
+		virtual std::string				format(const ViewItemScoreboard::Part&);
 
 	private:
 		const Player*	player;
@@ -68,7 +68,7 @@ const float*				ViewItemScoreboardPlayerFormatter::getColor()
 	return Team::getRadarColor(player->getTeam());
 }
 
-BzfString				ViewItemScoreboardPlayerFormatter::format(
+std::string				ViewItemScoreboardPlayerFormatter::format(
 								const ViewItemScoreboard::Part& part)
 {
 	switch (part.item) {
@@ -77,45 +77,45 @@ BzfString				ViewItemScoreboardPlayerFormatter::format(
 			return part.format;
 
 		case ViewItemScoreboard::Part::Callsign:
-			return BzfString::format(part.format.c_str(), player->getCallSign());
+			return string_util::format(part.format.c_str(), player->getCallSign());
 
 		case ViewItemScoreboard::Part::EMail:
-			return BzfString::format(part.format.c_str(), player->getEmailAddress());
+			return string_util::format(part.format.c_str(), player->getEmailAddress());
 
 		case ViewItemScoreboard::Part::ID:
-			return BzfString::format(part.format.c_str(), player->getId());
+			return string_util::format(part.format.c_str(), player->getId());
 
 		case ViewItemScoreboard::Part::Flag:
 			if (player->getFlag() == NoFlag)
-				return BzfString::format(part.format.c_str(), "");
+				return string_util::format(part.format.c_str(), "");
 			else
-				return BzfString::format(part.format.c_str(),
+				return string_util::format(part.format.c_str(),
 								Flag::getName(player->getFlag()));
 
 		case ViewItemScoreboard::Part::FlagAbbr:
 			if (player->getFlag() == NoFlag)
-				return BzfString::format(part.format.c_str(), "");
+				return string_util::format(part.format.c_str(), "");
 			else
-				return BzfString::format(part.format.c_str(),
+				return string_util::format(part.format.c_str(),
 								Flag::getAbbreviation(player->getFlag()));
 
 		case ViewItemScoreboard::Part::Score:
-			return BzfString::format(part.format.c_str(), player->getScore());
+			return string_util::format(part.format.c_str(), player->getScore());
 
 		case ViewItemScoreboard::Part::Wins:
-			return BzfString::format(part.format.c_str(), player->getWins());
+			return string_util::format(part.format.c_str(), player->getWins());
 
 		case ViewItemScoreboard::Part::Losses:
-			return BzfString::format(part.format.c_str(), player->getLosses());
+			return string_util::format(part.format.c_str(), player->getLosses());
 
 		case ViewItemScoreboard::Part::LocalWins:
-			return BzfString::format(part.format.c_str(), player->getLocalWins());
+			return string_util::format(part.format.c_str(), player->getLocalWins());
 
 		case ViewItemScoreboard::Part::LocalLosses:
-			return BzfString::format(part.format.c_str(), player->getLocalLosses());
+			return string_util::format(part.format.c_str(), player->getLocalLosses());
 
 		case ViewItemScoreboard::Part::Status:
-			return BzfString::format(part.format.c_str(), 
+			return string_util::format(part.format.c_str(), 
 								player->isNotResponding() ? "[not responding]" :
 								player->isPaused() ? "[Paused]" : "");
 	}
@@ -134,7 +134,7 @@ class ViewItemScoreboardTeamFormatter : public ViewItemScoreboard::Formatter {
 
 		// Formatter overrides
 		virtual const float*		getColor();
-		virtual BzfString				format(const ViewItemScoreboard::Part&);
+		virtual std::string				format(const ViewItemScoreboard::Part&);
 
 	private:
 		TeamColor				teamColor;
@@ -145,7 +145,7 @@ const float*				ViewItemScoreboardTeamFormatter::getColor()
 	return Team::getRadarColor(teamColor);
 }
 
-BzfString				ViewItemScoreboardTeamFormatter::format(
+std::string				ViewItemScoreboardTeamFormatter::format(
 								const ViewItemScoreboard::Part& part)
 {
 	switch (part.item) {
@@ -153,27 +153,27 @@ BzfString				ViewItemScoreboardTeamFormatter::format(
 			return part.format;
 
 		case ViewItemScoreboard::Part::Callsign:
-			return BzfString::format(part.format.c_str(),
+			return string_util::format(part.format.c_str(),
 								Team::getName(teamColor).c_str());
 
 		case ViewItemScoreboard::Part::Score: {
 			const Team& team = World::getWorld()->getTeam(teamColor);
-			return BzfString::format(part.format.c_str(), team.won - team.lost);
+			return string_util::format(part.format.c_str(), team.won - team.lost);
 		}
 
 		case ViewItemScoreboard::Part::Wins: {
 			const Team& team = World::getWorld()->getTeam(teamColor);
-			return BzfString::format(part.format.c_str(), team.won);
+			return string_util::format(part.format.c_str(), team.won);
 		}
 
 		case ViewItemScoreboard::Part::Losses: {
 			const Team& team = World::getWorld()->getTeam(teamColor);
-			return BzfString::format(part.format.c_str(), team.lost);
+			return string_util::format(part.format.c_str(), team.lost);
 		}
 
 		case ViewItemScoreboard::Part::Number: {
 			const Team& team = World::getWorld()->getTeam(teamColor);
-			return BzfString::format(part.format.c_str(), team.activeSize);
+			return string_util::format(part.format.c_str(), team.activeSize);
 		}
 	}
 }
@@ -191,7 +191,7 @@ class ViewItemScoreboardTitleFormatter : public ViewItemScoreboard::Formatter {
 
 		// Formatter overrides
 		virtual const float*		getColor();
-		virtual BzfString				format(const ViewItemScoreboard::Part&);
+		virtual std::string				format(const ViewItemScoreboard::Part&);
 
 	private:
 		const float*		color;
@@ -202,7 +202,7 @@ const float*				ViewItemScoreboardTitleFormatter::getColor()
 	return color;
 }
 
-BzfString				ViewItemScoreboardTitleFormatter::format(
+std::string				ViewItemScoreboardTitleFormatter::format(
 								const ViewItemScoreboard::Part& part)
 {
 	return part.format;
@@ -226,12 +226,12 @@ ViewItemScoreboard::~ViewItemScoreboard()
 }
 
 void					ViewItemScoreboard::setTitleFormat(
-								const BzfString& format)
+								const std::string& format)
 {
 	makeParts(titleParts, format);
 }
 
-void					ViewItemScoreboard::setFormat(const BzfString& format)
+void					ViewItemScoreboard::setFormat(const std::string& format)
 {
 	makeParts(lineParts, format);
 }
@@ -348,7 +348,7 @@ void					ViewItemScoreboard::drawLine(
 		const Part& part = parts[i];
 
 		// format field string
-		BzfString msg = formatter.format(part);
+		std::string msg = formatter.format(part);
 
 		// get field width
 		float w = font.getWidth(msg);
@@ -378,7 +378,7 @@ void					ViewItemScoreboard::drawLine(
 
 void					ViewItemScoreboard::makeParts(
 								Parts& parts,
-								const BzfString& fmt)
+								const std::string& fmt)
 {
 	parts.clear();
 
@@ -537,7 +537,7 @@ void					ViewItemScoreboard::makeParts(
 				case Part::FlagAbbr:
 				case Part::Status:
 					if (width > 0)
-						part.format += BzfString::format("%%%s%ds",
+						part.format += string_util::format("%%%s%ds",
 								alignRight ? " " : "", width);
 					else
 						part.format += "%s";
@@ -552,7 +552,7 @@ void					ViewItemScoreboard::makeParts(
 				case Part::Number:
 				case Part::ID:
 					if (width > 0)
-						part.format += BzfString::format("%%%s%dd",
+						part.format += string_util::format("%%%s%dd",
 								alignRight ? " " : "", width);
 					else
 						part.format += "%d";

@@ -145,10 +145,10 @@ void					ViewItemScene::onPostRender(
 // parsing function objects
 //
 
-class ViewSetRotation_t : public std::unary_function<BzfString, ViewSize&> {
+class ViewSetRotation_t : public std::unary_function<std::string, ViewSize&> {
 public:
 	ViewSetRotation_t(ViewSize& size_) : size(size_) { }
-	ViewSize&			operator()(const BzfString& arg) const
+	ViewSize&			operator()(const std::string& arg) const
 	{
 		float num;
 		char type;

@@ -173,7 +173,7 @@ void					BzfDisplay::initResolutions(ResInfo** _resolutions,
 		BZDB->unset("featuresResolutions");
 	}
 	else {
-		BzfString formats;
+		std::string formats;
 		for (int i = 0; i < numResolutions; ++i) {
 			formats += resolutions[i]->name;
 			formats += "\n";

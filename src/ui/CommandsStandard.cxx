@@ -25,27 +25,27 @@ static bool				quitFlag = false;
 // command handlers
 //
 
-static BzfString		cmdQuit(const BzfString&,
+static std::string		cmdQuit(const std::string&,
 								const CommandManager::ArgList&)
 {
 	CommandsStandard::quit();
-	return BzfString();
+	return std::string();
 }
 
-static void				onHelpCB(const BzfString& name,
+static void				onHelpCB(const std::string& name,
 								void* userData)
 {
-	BzfString& result = *reinterpret_cast<BzfString*>(userData);
+	std::string& result = *reinterpret_cast<std::string*>(userData);
 	result += name;
 	result += "\n";
 }
 
-static BzfString		cmdHelp(const BzfString&,
+static std::string		cmdHelp(const std::string&,
 								const CommandManager::ArgList& args)
 {
 	switch (args.size()) {
 		case 0: {
-			BzfString result;
+			std::string result;
 			CMDMGR->iterate(&onHelpCB, &result);
 			return result;
 		}
@@ -58,11 +58,11 @@ static BzfString		cmdHelp(const BzfString&,
 	}
 }
 
-static BzfString		cmdPrint(const BzfString&,
+static std::string		cmdPrint(const std::string&,
 								const CommandManager::ArgList& args)
 {
 	// merge all arguments into one string
-	BzfString arg;
+	std::string arg;
 	const unsigned int n = args.size();
 	if (n > 0)
 		arg = args[0];
@@ -72,7 +72,7 @@ static BzfString		cmdPrint(const BzfString&,
 	}
 
 	// interpolate variables
-	BzfString result;
+	std::string result;
 	const char* scan = arg.c_str();
 	while (*scan != '\0') {
 		if (*scan != '$') {
@@ -94,7 +94,7 @@ static BzfString		cmdPrint(const BzfString&,
 					++scan;
 
 				// look up variable
-				result += BZDB->get(BzfString(name, scan - name));
+				result += BZDB->get(std::string(name, scan - name));
 			}
 			else {
 				// parse "quoted" variable name
@@ -104,7 +104,7 @@ static BzfString		cmdPrint(const BzfString&,
 
 				if (*scan != '\0') {
 					// look up variable
-					result += BZDB->get(BzfString(name, scan - name));
+					result += BZDB->get(std::string(name, scan - name));
 
 					// skip }
 					++scan;
@@ -116,11 +116,11 @@ static BzfString		cmdPrint(const BzfString&,
 	return result;
 }
 
-static void				onSetCB(const BzfString& name,
+static void				onSetCB(const std::string& name,
 								void* userData)
 {
 	// don't show names starting with _
-	BzfString& result = *reinterpret_cast<BzfString*>(userData);
+	std::string& result = *reinterpret_cast<std::string*>(userData);
 	if (!name.empty() && name.c_str()[0] != '_') {
 		result += name;
 		result += " = ";
@@ -129,48 +129,48 @@ static void				onSetCB(const BzfString& name,
 	}
 }
 
-static BzfString		cmdSet(const BzfString&,
+static std::string		cmdSet(const std::string&,
 								const CommandManager::ArgList& args)
 {
 	switch (args.size()) {
 		case 0: {
-			BzfString result;
+			std::string result;
 			BZDB->iterate(&onSetCB, &result);
 			return result;
 		}
 
 		case 2:
 			BZDB->set(args[0], args[1], StateDatabase::User);
-			return BzfString();
+			return std::string();
 
 		default:
 			return "usage: set <name> <value>";
 	}
 }
 
-static BzfString		cmdUnset(const BzfString&,
+static std::string		cmdUnset(const std::string&,
 								const CommandManager::ArgList& args)
 {
 	if (args.size() != 1)
 		return "usage: unset <name>";
 	BZDB->unset(args[0], StateDatabase::User);
-	return BzfString();
+	return std::string();
 }
 
-static BzfString		cmdToggle(const BzfString&,
+static std::string		cmdToggle(const std::string&,
 								const CommandManager::ArgList& args)
 {
 	if (args.size() != 1)
 		return "usage: toggle <name>";
-	const BzfString& name = args[0];
+	const std::string& name = args[0];
 	if (BZDB->isTrue(name))
 		BZDB->set(name, "0", StateDatabase::User);
 	else
 		BZDB->set(name, "1", StateDatabase::User);
-	return BzfString();
+	return std::string();
 }
 
-static BzfString		cmdAdd(const BzfString&,
+static std::string		cmdAdd(const std::string&,
 								const CommandManager::ArgList& args)
 {
 	if (args.size() != 2)
@@ -188,26 +188,26 @@ static BzfString		cmdAdd(const BzfString&,
 	value += amount;
 
 	// set new value
-	BZDB->set(args[0], BzfString::format("%f", value), StateDatabase::User);
+	BZDB->set(args[0], string_util::format("%f", value), StateDatabase::User);
 
-	return BzfString();
+	return std::string();
 }
 
-static void				onBindCB(const BzfString& name, bool press,
-								const BzfString& cmd, void* userData)
+static void				onBindCB(const std::string& name, bool press,
+								const std::string& cmd, void* userData)
 {
-	BzfString& result = *reinterpret_cast<BzfString*>(userData);
+	std::string& result = *reinterpret_cast<std::string*>(userData);
 	result += name;
 	result += (press ? " down " : " up ");
 	result += cmd;
 	result += "\n";
 }
 
-static BzfString		cmdBind(const BzfString&,
+static std::string		cmdBind(const std::string&,
 								const CommandManager::ArgList& args)
 {
 	if (args.size() == 0) {
-		BzfString result;
+		std::string result;
 		KEYMGR->iterate(&onBindCB, &result);
 		return result;
 	}
@@ -218,7 +218,7 @@ static BzfString		cmdBind(const BzfString&,
 	// lookup key/button by name
 	BzfKeyEvent key;
 	if (!KEYMGR->stringToKeyEvent(args[0], key))
-		return BzfString::format("bind error:  unknown button name \"%s\"",
+		return string_util::format("bind error:  unknown button name \"%s\"",
 								args[0].c_str());
 
 	// get up/down
@@ -228,11 +228,11 @@ static BzfString		cmdBind(const BzfString&,
 	else if (args[1] == "down")
 		down = true;
 	else
-		return BzfString::format("bind error:  illegal state \"%s\"",
+		return string_util::format("bind error:  illegal state \"%s\"",
 								args[1].c_str());
 
 	// assemble command
-	BzfString cmd = args[2];
+	std::string cmd = args[2];
 	for (unsigned int i = 3; i < args.size(); ++i) {
 		cmd += " ";
 		cmd += args[i];
@@ -240,15 +240,15 @@ static BzfString		cmdBind(const BzfString&,
 
 	// ignore attempts to modify Esc.  we reserve that for the menu.
 	if (key.ascii == 27)
-		return BzfString();
+		return std::string();
 
 	// bind key
 	KEYMGR->bind(key, down, cmd);
 
-	return BzfString();
+	return std::string();
 }
 
-static BzfString		cmdUnbind(const BzfString&,
+static std::string		cmdUnbind(const std::string&,
 								const CommandManager::ArgList& args)
 {
 	if (args.size() != 2)
@@ -257,7 +257,7 @@ static BzfString		cmdUnbind(const BzfString&,
 	// lookup key/button by name
 	BzfKeyEvent key;
 	if (!KEYMGR->stringToKeyEvent(args[0], key))
-		return BzfString::format("bind error:  unknown button name \"%s\"",
+		return string_util::format("bind error:  unknown button name \"%s\"",
 								args[0].c_str());
 
 	// get up/down
@@ -267,20 +267,20 @@ static BzfString		cmdUnbind(const BzfString&,
 	else if (args[1] == "down")
 		down = true;
 	else
-		return BzfString::format("bind error:  illegal state \"%s\"",
+		return string_util::format("bind error:  illegal state \"%s\"",
 								args[1].c_str());
 
 	// ignore attempts to modify Esc.  we reserve that for the menu.
 	if (key.ascii == 27)
-		return BzfString();
+		return std::string();
 
 	// unbind key
 	KEYMGR->unbind(key, down);
 
-	return BzfString();
+	return std::string();
 }
 
-static BzfString		cmdMenu(const BzfString&,
+static std::string		cmdMenu(const std::string&,
 								const CommandManager::ArgList& args)
 {
 	switch (args.size()) {
@@ -288,22 +288,22 @@ static BzfString		cmdMenu(const BzfString&,
 			if (args[0] != "push")
 				break;
 			if (!MENUMGR->push(args[1]))
-				return BzfString::format("unknown menu: %s", args[1].c_str());
+				return string_util::format("unknown menu: %s", args[1].c_str());
 			else
-				return BzfString();
+				return std::string();
 
 		case 1:
 			if (args[0] != "pop")
 				break;
 			if (MENUMGR->top() != NULL)
 				MENUMGR->pop();
-			return BzfString();
+			return std::string();
 	}
 
 	return "usage: menu {push <name>|pop}";
 }
 
-static BzfString		cmdConfig(const BzfString&,
+static std::string		cmdConfig(const std::string&,
 								const CommandManager::ArgList& args)
 {
 	if (args.size() != 1)
@@ -311,11 +311,11 @@ static BzfString		cmdConfig(const BzfString&,
 
 	try {
 		if (!CFGMGR->read(args[0]))
-			return BzfString::format("cannot open file `%s'", args[0].c_str());
-		return BzfString();
+			return string_util::format("cannot open file `%s'", args[0].c_str());
+		return std::string();
 	}
 	catch (XMLIOException& e) {
-		return BzfString::format("%s (%d,%d): %s",
+		return string_util::format("%s (%d,%d): %s",
 							e.position.filename.c_str(),
 							e.position.line,
 							e.position.column,
