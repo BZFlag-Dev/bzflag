@@ -197,6 +197,14 @@ BzfString		BzfNetwork::dereferenceHTTP(
 				const BzfString& hostname, int port,
 				const BzfString& pathname)
 {
+  // we need to getenv("HTTP_PROXY") here and use if if it exists
+  // note that a complete implementation may have:
+  // HTTP_PROXY=http://user@zone:password@www.example.com:port
+  // HTTP_NO_PROXY=example.com,example.org:8088
+
+  // the username/password should be sent in reply to a
+  // 401 auth required challenge
+
   // lookup server address
   Address address = Address::getHostAddress(hostname);
   if (address.isAny())
