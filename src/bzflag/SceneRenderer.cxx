@@ -676,7 +676,7 @@ void SceneRenderer::render(bool _lastFrame, bool _sameFrame,
   }
 
 
-  const bool mirror = (BZDB.get(StateDatabase::BZDB_MIRROR) != "none");
+  mirror = (BZDB.get(StateDatabase::BZDB_MIRROR) != "none");
 
   clearZbuffer = true;
   drawGround = true;
@@ -817,7 +817,7 @@ void SceneRenderer::renderScene(bool /*_lastFrame*/, bool /*_sameFrame*/,
   if (background) {
     background->setBlank(blank);
     background->setInvert(invert);
-    background->renderSky(*this, fullWindow, mirror, !clearZbuffer);
+    background->renderSky(*this, fullWindow, mirror);
     if (drawGround) {
       background->renderGround(*this, fullWindow);
     }
@@ -832,7 +832,7 @@ void SceneRenderer::renderScene(bool /*_lastFrame*/, bool /*_sameFrame*/,
   }
 
   // draw rest of background
-  // (ground grid, shadows, fake shot lights, clouds)
+  // (ground grid, shadows, fake shot lights, mountains, clouds)
   if (background) {
     background->renderGroundEffects(*this);
   }

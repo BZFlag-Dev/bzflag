@@ -436,10 +436,10 @@ void			BackgroundRenderer::addCloudDrift(GLfloat uDrift,
 }
 
 void BackgroundRenderer::renderSky(SceneRenderer& renderer, bool fullWindow,
-                                   bool mirror, bool reflection)
+                                   bool mirror)
 {
   if (renderer.useQuality() > 0) {
-    drawSky(renderer, mirror, reflection);
+    drawSky(renderer, mirror);
   } else {
     // low detail -- draw as damn fast as ya can, ie cheat.  use glClear()
     // to draw solid color sky and ground.
@@ -583,7 +583,8 @@ void BackgroundRenderer::renderEnvironment(SceneRenderer& renderer)
 
 void BackgroundRenderer::resizeSky() {
   // sky pyramid must fit inside far clipping plane
-  const GLfloat skySize = 1.3f * BZDBCache::worldSize;
+  // (adjusted for the deepProjection matrix)
+  const GLfloat skySize = 3.0f * BZDBCache::worldSize;
   for (int i = 0; i < 4; i++) {
     skyPyramid[i][0] = skySize * squareShape[i][0];
     skyPyramid[i][1] = skySize * squareShape[i][1];
@@ -595,7 +596,7 @@ void BackgroundRenderer::resizeSky() {
 }
 
 
-void BackgroundRenderer::drawSky(SceneRenderer& renderer, bool mirror, bool reflection)
+void BackgroundRenderer::drawSky(SceneRenderer& renderer, bool mirror)
 {
   // rotate sky so that horizon-point-toward-sun-color is actually
   // toward the sun
@@ -679,13 +680,8 @@ void BackgroundRenderer::drawSky(SceneRenderer& renderer, bool mirror, bool refl
   if (doStars) {
     if (mirror) {
       glEnable(GL_CLIP_PLANE0);
-      if (!reflection) {
-        const GLdouble plane[4] = {0.0, 0.0, +1.0, 0.0};
-        glClipPlane(GL_CLIP_PLANE0, plane);
-      } else {
-        const GLdouble plane[4] = {0.0, 0.0, -1.0, 0.0};
-        glClipPlane(GL_CLIP_PLANE0, plane);
-      }
+      const GLdouble plane[4] = {0.0, 0.0, +1.0, 0.0};
+      glClipPlane(GL_CLIP_PLANE0, plane);
     }
     starGState[starGStateIndex].setState();
     starXFormList.execute();
