@@ -149,6 +149,11 @@ source code serves for examples but some rules:
         private:
             int         y;
         };
+  11) put spaces after statements followed by expressions and
+      spaces around operators.  for example:
+        if (a == b)
+      not
+        if(a==b)
 
 Violations of these rules in the existing code are not excuses to 
 follow suit.  Non-conformant code may be fixed.  Patches to non-
