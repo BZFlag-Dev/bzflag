@@ -418,6 +418,7 @@ void			BackgroundRenderer::setCelestial(
 
   // rain stuff
   rainDensity = 0;
+  doBillboards = false;
 
   if (BZDB.isSet("RAIN_TYPE"))
   {
@@ -475,6 +476,7 @@ void			BackgroundRenderer::setCelestial(
 				rainSpeed = 100.0f;
 				rainSpeedMod = 5.0f;
 				rainSize[0] = 2.0f; rainSize[1] = 2.0f;
+				doBillboards = true;
 				doPuddles = true;
 			}
 			else if (rainType == "bubble")
@@ -482,6 +484,7 @@ void			BackgroundRenderer::setCelestial(
 				gstate.setTexture(tm.getTextureID("bubble"));
 				rainSpeed = 20.0f;
 				rainSpeedMod = 1.0f;
+				doBillboards = true;
 				doPuddles = false;
 			}
 			else
@@ -726,7 +729,7 @@ void			BackgroundRenderer::renderEnvironment(SceneRenderer& renderer)
 		else // 3d rain
 		{
 			texturedRainState.setState();
-			glDisable(GL_CULL_FACE);
+		//	glDisable(GL_CULL_FACE);
 			glMatrixMode(GL_MODELVIEW);
 
 			std::vector<rain>::iterator itr = raindrops.begin();
@@ -740,54 +743,74 @@ void			BackgroundRenderer::renderEnvironment(SceneRenderer& renderer)
 				glColor4f(1,1,1,1.0f - alphaMod);
 				glPushMatrix();
 				glTranslatef(itr->pos[0],itr->pos[1],itr->pos[2]);
-				glRotatef(lastRainTime*10.0f * rainSpeed,0,0,1);
 				
-				glBegin(GL_QUADS);
-				glTexCoord2f(0,0);
-				glVertex3f(-rainSize[0],0,-rainSize[1]);
+				if (doBillboards)
+				{
+					renderer.getViewFrustum().executeBillboard();
+					glRotatef(lastRainTime*10.0f * rainSpeed * itr->speed,0,0,1);
+					glBegin(GL_QUADS);
+					glTexCoord2f(0,0);
+					glVertex3f(-rainSize[0],-rainSize[1],0);
 
-				glTexCoord2f(1,0);
-				glVertex3f(rainSize[0],0,-rainSize[1]);
+					glTexCoord2f(1,0);
+					glVertex3f(rainSize[0],-rainSize[1],0);
 
-				glTexCoord2f(1,1);
-				glVertex3f(rainSize[0],0,rainSize[1]);
+					glTexCoord2f(1,1);
+					glVertex3f(rainSize[0],rainSize[1],0);
 
-				glTexCoord2f(0,1);
-				glVertex3f(-rainSize[0],0,rainSize[1]);
-				glEnd();
+					glTexCoord2f(0,1);
+					glVertex3f(-rainSize[0],rainSize[1],0);
+					glEnd();
+				}
+				else
+				{
+					glRotatef(lastRainTime*10.0f * rainSpeed,0,0,1);
+					glBegin(GL_QUADS);
+					glTexCoord2f(0,0);
+					glVertex3f(-rainSize[0],0,-rainSize[1]);
 
-				glRotatef(120,0,0,1);
+					glTexCoord2f(1,0);
+					glVertex3f(rainSize[0],0,-rainSize[1]);
 
-				glBegin(GL_QUADS);
-				glTexCoord2f(0,0);
-				glVertex3f(-rainSize[0],0,-rainSize[1]);
+					glTexCoord2f(1,1);
+					glVertex3f(rainSize[0],0,rainSize[1]);
 
-				glTexCoord2f(1,0);
-				glVertex3f(rainSize[0],0,-rainSize[1]);
+					glTexCoord2f(0,1);
+					glVertex3f(-rainSize[0],0,rainSize[1]);
+					glEnd();
 
-				glTexCoord2f(1,1);
-				glVertex3f(rainSize[0],0,rainSize[1]);
+					glRotatef(120,0,0,1);
 
-				glTexCoord2f(0,1);
-				glVertex3f(-rainSize[0],0,rainSize[1]);
-				glEnd();
+					glBegin(GL_QUADS);
+					glTexCoord2f(0,0);
+					glVertex3f(-rainSize[0],0,-rainSize[1]);
 
-				glRotatef(120,0,0,1);
+					glTexCoord2f(1,0);
+					glVertex3f(rainSize[0],0,-rainSize[1]);
 
-				glBegin(GL_QUADS);
-				glTexCoord2f(0,0);
-				glVertex3f(-rainSize[0],0,-rainSize[1]);
+					glTexCoord2f(1,1);
+					glVertex3f(rainSize[0],0,rainSize[1]);
 
-				glTexCoord2f(1,0);
-				glVertex3f(rainSize[0],0,-rainSize[1]);
+					glTexCoord2f(0,1);
+					glVertex3f(-rainSize[0],0,rainSize[1]);
+					glEnd();
 
-				glTexCoord2f(1,1);
-				glVertex3f(rainSize[0],0,rainSize[1]);
+					glRotatef(120,0,0,1);
 
-				glTexCoord2f(0,1);
-				glVertex3f(-rainSize[0],0,rainSize[1]);
-				glEnd();
+					glBegin(GL_QUADS);
+					glTexCoord2f(0,0);
+					glVertex3f(-rainSize[0],0,-rainSize[1]);
 
+					glTexCoord2f(1,0);
+					glVertex3f(rainSize[0],0,-rainSize[1]);
+
+					glTexCoord2f(1,1);
+					glVertex3f(rainSize[0],0,rainSize[1]);
+
+					glTexCoord2f(0,1);
+					glVertex3f(-rainSize[0],0,rainSize[1]);
+					glEnd();
+				}
 
 				glPopMatrix();
 				itr->pos[2] -= itr->speed * frameTime;

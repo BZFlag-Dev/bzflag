@@ -188,6 +188,7 @@ class BackgroundRenderer {
 	float						rainSpeed;
 	float						rainSpeedMod;
 	float						rainSpread;
+	bool						doBillboards;
 	typedef struct {
 		float    pos[3];
 		float	 speed;
