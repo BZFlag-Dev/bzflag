@@ -970,15 +970,19 @@ static void		addMessage(const Player* player,
   BzfString fullMessage;
   if (player) {
     fullMessage += player->getCallSign();
-#ifdef BWSUPPORT
-    fullMessage += " (";
-    fullMessage += Team::getName(player->getTeam());
-    fullMessage += ")";
+#ifndef BWSUPPORT
+    if (color == NULL) {
+#endif
+      fullMessage += " (";
+      fullMessage += Team::getName(player->getTeam());
+      fullMessage += ")";
+#ifndef BWSUPPORT
+    }
 #endif
     fullMessage += ": ";
   }
   fullMessage += msg;
-#ifndef BWSUPPORT
+#if 0
   if (player && color == NULL)
     color = Team::getRadarColor(player->getTeam());
 #endif
