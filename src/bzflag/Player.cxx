@@ -442,24 +442,17 @@ void			Player::setVisualTeam (TeamColor visualTeam)
   if (tankTexture < 0)
     tankTexture = tm.getTextureID(texName.c_str(),false);
 
-  // change color of tank
-  const float* _color = Team::getTankColor(visualTeam);
-  if (BZDBCache::texture && tankTexture >= 0) {  // color is in the image
+  // we are the hunter, we are orange..
+  // TODO this is cheap, just untill a "hunter" team is made
+  if (hunter) {
     color[0] = 1.0f;
-    color[1] = 1.0f;
-    color[2] = 1.0f;
+    color[1] = 0.5f;
+    color[2] = 0.0f;
   } else {
-    // we are the hunter, we are orange..
-    // TODO this is cheap, just untill a "hunter" team is made
-    if (hunter) {
-      color[0] = 1.0f;
-      color[1] = 0.5f;
-      color[2] = 0.0f;
-    } else {
-      color[0] = _color[0];
-      color[1] = _color[1];
-      color[2] = _color[2];
-    }
+    const float* _color = Team::getTankColor(visualTeam);
+    color[0] = _color[0];
+    color[1] = _color[1];
+    color[2] = _color[2];
   }
   color[3] = (getFlag() == Flags::PhantomZone) && isFlagActive() ? 0.5f : 1.0f;
   tankNode->setColor(color);

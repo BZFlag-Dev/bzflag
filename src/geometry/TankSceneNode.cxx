@@ -873,9 +873,17 @@ void TankSceneNode::TankRenderNode::renderPart(TankPart part)
 
 void TankSceneNode::TankRenderNode::setupPartColor(TankPart part)
 {
+  const GLfloat white[4] = {1.0f, 1.0f, 1.0f, 1.0f};
+  const GLfloat* clr = color;
+  
+  // do not use color modulation with tank textures
+  if (BZDBCache::texture) {
+    clr = white;
+  }
+  
   switch (part) {
     case Body: {
-      myColor4f(color[0], color[1], color[2], alpha);
+      myColor4f(clr[0], clr[1], clr[2], alpha);
       break;
     }
     case Barrel: {
@@ -883,17 +891,17 @@ void TankSceneNode::TankRenderNode::setupPartColor(TankPart part)
       break;
     }
     case Turret: {
-      myColor4f(0.9f * color[0], 0.9f * color[1], 0.9f * color[2], alpha);
+      myColor4f(0.9f * clr[0], 0.9f * clr[1], 0.9f * clr[2], alpha);
       break;
     }
     case LeftCasing:
     case RightCasing: {
-      myColor4f(0.7f * color[0], 0.7f * color[1], 0.7f * color[2], alpha);
+      myColor4f(0.7f * clr[0], 0.7f * clr[1], 0.7f * clr[2], alpha);
       break;
     }
     case LeftTread:
     case RightTread: {
-      myColor4f(0.3f * color[0], 0.3f * color[1], 0.3f * color[2], alpha);
+      myColor4f(0.3f * clr[0], 0.3f * clr[1], 0.3f * clr[2], alpha);
       break;
     }
     case LeftWheel0:
@@ -904,7 +912,7 @@ void TankSceneNode::TankRenderNode::setupPartColor(TankPart part)
     case RightWheel1:
     case RightWheel2:
     case RightWheel3: {
-      myColor4f(0.4f * color[0], 0.4f * color[1], 0.4f * color[2], alpha);
+      myColor4f(0.4f * clr[0], 0.4f * clr[1], 0.4f * clr[2], alpha);
       break;
     }
     case LastTankPart: { // avoid warnings about unused enumerated values
