@@ -4199,7 +4199,7 @@ static void removePlayer(int playerIndex, char *reason)
   player[playerIndex].lastSendPacketNo = 0;
 
   // shutdown the UDP socket
-  memset(&player[playerIndex].uaddr,0,sizeof(player[playerIndex].uaddr));
+  memset(&player[playerIndex].uaddr, 0, sizeof(player[playerIndex].uaddr));
 
   // no UDP connection anymore
   player[playerIndex].ulinkup = false;
