@@ -6497,12 +6497,12 @@ static void		playingLoop()
       const float* myPos = myTank->getPosition();
       hud->setHeading(myTank->getAngle());
       hud->setAltitude(myPos[2]);
-      if (world->allowTeamFlags() &&
-	  int(myTank->getFlag()) != int(myTank->getTeam())) {
+      if (world->allowTeamFlags()) {
 	// marker for my team flag
 	for (i = 0; i < numFlags; i++) {
 	  Flag& flag = world->getFlag(i);
-	  if (flag.type->flagTeam == myTank->getTeam()) {
+	  if ((flag.type->flagTeam == myTank->getTeam())
+	  &&  (flag.owner != myTank->getId())) {
 	    const float* flagPos = flag.position;
 	    hud->setMarkerHeading(0, atan2f(flagPos[1] - myPos[1],
 					    flagPos[0] - myPos[0]));
