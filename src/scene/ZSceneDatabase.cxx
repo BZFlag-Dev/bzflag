@@ -139,7 +139,7 @@ void			ZSceneIterator::makeCuller()
     delete culledList;
   }
   // make scratch pad for the culler
-  culledList = new (SceneNode*)[db->staticCount];
+  culledList = new SceneNode*[db->staticCount];
 }
 
 void			ZSceneIterator::resetFrustum(const ViewFrustum* frustum)
