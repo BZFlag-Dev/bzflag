@@ -13,6 +13,10 @@ Configure your executables in the Tools/Options/Directory menu.
 Click the Executables tab, and add the directory where the nsis
 installer builder is found.
 
+Choose the Lib tab, and add SDLMain.lib and SDL.lib. These can be
+downloaded from libsdl.org. Next copy SDL.dll to the directory 
+that bzflag is running from src/bzflag or src/bzflag/debug.
+
 Then each time you want to build an installer
 
   * open win32\bzflag.dsw
