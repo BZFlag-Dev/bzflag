@@ -110,6 +110,7 @@ const char *usageString =
 "[-st <time>] "
 "[-sw <num>] "
 "[-synctime] "
+"[-synclocation] "
 "[-t] "
 "[-tftimeout <seconds>] "
 "[-time <seconds>] "
@@ -120,7 +121,7 @@ const char *usageString =
 "[-vars <filename>] "
 "[-version] "
 "[-world <filename>] "
-"[-worldsize < world size>] ";
+"[-worldsize <world size>] ";
 
 const char *extraUsageString =
 "\n"
@@ -194,6 +195,7 @@ const char *extraUsageString =
 "\t-st: shake bad flags in <time> seconds\n"
 "\t-sw: shake bad flags after <num> wins\n"
 "\t-synctime: synchronize time of day on all clients\n"
+"\t-synclocation: synchronize latitude and longitude on all clients\n"
 "\t-t: allow teleporters\n"
 "\t-tftimeout: set timeout for team flag zapping (default=30)\n"
 "\t-time: set time limit on each game\n"
@@ -986,6 +988,9 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
     } else if (strcmp(argv[i], "-synctime") == 0) {
       // client clocks should be synchronized to server clock
       BZDB.set(StateDatabase::BZDB_SYNCTIME, "true");
+    } else if (strcmp(argv[i], "-synclocation") == 0) {
+      // client coordinates should be set to server coordinates
+      BZDB.set(StateDatabase::BZDB_SYNCLOCATION, "true");
     } else if (strcmp(argv[i], "-t") == 0) {
       // allow teleporters
       options.useTeleporters = true;

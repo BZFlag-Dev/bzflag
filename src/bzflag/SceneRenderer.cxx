@@ -479,8 +479,17 @@ void			SceneRenderer::setTimeOfDay(double julianDay)
 
   // get position of sun and moon at 0,0 lat/long
   float sunDir[3], moonDir[3];
-  float latitude = BZDB.eval("latitude");
-  float longitude = BZDB.eval("longitude");
+  float latitude, longitude;
+  if (!BZDB.isTrue(StateDatabase::BZDB_SYNCLOCATION)) {
+    // use local (client) settings
+    latitude = BZDB.eval("longitude");
+    longitude = BZDB.eval("latitude");
+  } else {
+    // server settings
+    latitude = BZDB.eval(StateDatabase::BZDB_LATITUDE);
+    longitude = BZDB.eval(StateDatabase::BZDB_LONGITUDE);
+  }
+
   getSunPosition(julianDay, latitude, longitude, sunDir);
   getMoonPosition(julianDay, latitude, longitude, moonDir);
   ::getCelestialTransform(julianDay, latitude, longitude,

@@ -225,7 +225,9 @@ public:
   static const std::string	BZDB_LASERADVEL;
   static const std::string	BZDB_LASERADRATE;
   static const std::string	BZDB_LASERADLIFE;
+  static const std::string	BZDB_LATITUDE;
   static const std::string	BZDB_LOCKONANGLE;
+  static const std::string	BZDB_LONGITUDE;
   static const std::string	BZDB_LRADRATE;
   static const std::string	BZDB_MAXBUMPHEIGHT;
   static const std::string	BZDB_MAXFLAGGRABS;
@@ -244,8 +246,8 @@ public:
   static const std::string	BZDB_OBESEFACTOR;
   static const std::string	BZDB_PAUSEDROPTIME;
   static const std::string	BZDB_POSITIONTOLERANCE;
-  static const std::string      BZDB_PYRBASE;
-  static const std::string      BZDB_PYRHEIGHT;
+  static const std::string	BZDB_PYRBASE;
+  static const std::string	BZDB_PYRHEIGHT;
   static const std::string	BZDB_REJOINTIME;
   static const std::string	BZDB_RELOADTIME;
   static const std::string	BZDB_RFIREADVEL;
@@ -262,6 +264,7 @@ public:
   static const std::string	BZDB_SHOTSKEEPVERTICALV;
   static const std::string	BZDB_SQUISHFACTOR;
   static const std::string	BZDB_SRRADIUSMULT;
+  static const std::string	BZDB_SYNCLOCATION;
   static const std::string	BZDB_SYNCTIME;
   static const std::string	BZDB_TANKANGVEL;
   static const std::string	BZDB_TANKEXPLOSIONSIZE;
