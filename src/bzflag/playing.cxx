@@ -814,7 +814,7 @@ class ServerCommandKey : public HUDuiDefaultKey {
 
 };
 
-const ServerCommandKey::Mode ServerCommandKey::nonAdminModes [7]= {LagStats, IdleStats, FlagHistory, Report, Password, Register,Identify};
+const ServerCommandKey::Mode ServerCommandKey::nonAdminModes [7]= {LagStats, IdleStats, FlagHistory, Report, Password, Register, Identify};
 
 // note the important numModes and numNonAdminModes values inited here
 ServerCommandKey::ServerCommandKey(): mode(Kick), startIndex(-1), numModes(30), numNonAdminModes(7)
