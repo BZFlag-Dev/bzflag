@@ -3082,7 +3082,10 @@ static void		handleServerMessage(bool human, uint16_t code,
 	  hud->setHunting(true);
 
 	}
+
+	addMessage(rabbit, "is now the rabbit", true);
       }
+      
       break;
     }
 
