@@ -55,8 +55,8 @@ class RadarRenderer {
     void		drawFlag(float x, float y, float z);
     void		drawFlagOnTank(float x, float y, float z);
 
-    static float	colorScale(const float z, const float h, bool enhanced);
-    static float	transScale(const Obstacle& o);
+    static float	colorScale(const float z, const float h);
+    static float	transScale(const float z, const float h);
 
   private:
     const World&	world;
