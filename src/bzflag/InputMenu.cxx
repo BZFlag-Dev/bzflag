@@ -84,6 +84,21 @@ InputMenu::InputMenu() : keyboardMapMenu(NULL)
   forceInput->update();
   list.push_back(forceInput);
 
+  option = new HUDuiList;
+  // set joystick Device
+  option->setFont(MainMenu::getFont());
+  option->setLabel("Confine mouse:");
+  option->setCallback(callback, (void*)"G");
+  options = &option->getList();
+  options->push_back(std::string("yes"));
+  options->push_back(std::string("no"));
+  if (getMainWindow()->isGrabEnabled())
+    option->setIndex(0);
+  else
+    option->setIndex(1);
+  option->update();
+  list.push_back(option);
+
   initNavigation(list, 1,list.size()-1);
 }
 
@@ -127,6 +142,14 @@ void			InputMenu::callback(HUDuiControl* w, void* data) {
 	  myTank->setInputMethod(BZDB.get("forceInputDevice"));
 	}
       }
+      break;
+    case 'G':
+      bool grabbing = (selectedOption == "yes");
+      if (grabbing)
+	BZDB.set("mousegrab", "true");
+      else
+	BZDB.set("mousegrab", "false");
+      getMainWindow()->enableGrabMouse(grabbing);
       break;
   }
 }

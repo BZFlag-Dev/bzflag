@@ -64,6 +64,7 @@ class MainWindow {
     void		warpMouse();
     void		grabMouse();
     void		enableGrabMouse(bool on);
+    bool		isGrabEnabled(void);
     void		ungrabMouse();
 
     void		resize();
@@ -94,6 +95,7 @@ class MainWindow {
     bool		isFullscreen;
     bool		isFullView;
     bool		allowMouseGrab;
+    bool                grabEnabled;
     int			zoomFactor;
     int			trueWidth, trueHeight;
     int			xOrigin, yOrigin;

@@ -28,6 +28,7 @@ MainWindow::MainWindow(BzfWindow* _window) :
 				isFullscreen(false),
 				isFullView(true),
 				allowMouseGrab(true),
+				grabEnabled(true),
 				zoomFactor(1),
 				width(0),
 				minWidth(MinX),
@@ -101,6 +102,12 @@ void			MainWindow::ungrabMouse()
 void			MainWindow::enableGrabMouse(bool on)
 {
   window->enableGrabMouse(on);
+  grabEnabled = on;
+}
+
+bool			MainWindow::isGrabEnabled(void)
+{
+  return grabEnabled;
 }
 
 bool			MainWindow::getFullscreen()

@@ -421,12 +421,6 @@ void SDLDisplay::createWindow() {
   if ((width == oldWidth) && (height == oldHeight)
       && (fullScreen == oldFullScreen))
     return;
-  // Let SDL decide grabbing or not on fullscreen
-  if (!fullScreen)
-    if (canGrabMouse)
-      SDL_WM_GrabInput(SDL_GRAB_ON);
-    else
-      SDL_WM_GrabInput(SDL_GRAB_OFF);
   // save the values for the next
   oldWidth      = width;
   oldHeight     = height;
@@ -457,6 +451,10 @@ void SDLDisplay::getWindowSize(int& width, int& height) const {
 
 void SDLDisplay::enableGrabMouse(bool on) {
   canGrabMouse = on;
+  if (canGrabMouse)
+    SDL_WM_GrabInput(SDL_GRAB_ON);
+  else
+    SDL_WM_GrabInput(SDL_GRAB_OFF);
 }
 
 void SDLVisual::setDoubleBuffer(bool on) {
