@@ -15,10 +15,9 @@
 #include "XVisual.h"
 #include "XWindow.h"
 #include "LinuxMedia.h"
+#include "BzfJoystick.h"
 #ifdef USBJOYSTICK
-  #include "USBJoystick.h"
-#else
-#include "LinuxJoystick.h"
+#include "USBJoystick.h"
 #endif
 
 PlatformFactory*	PlatformFactory::getInstance()
