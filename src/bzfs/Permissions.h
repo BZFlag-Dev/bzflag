@@ -97,6 +97,7 @@ public:
   void	setLoginFail();
   bool	passwordAttemptsMax();
   bool	isPasswordMatching(const char* pwd);
+  bool	hasRealPassword();
   void	setPasswd(const std::string& pwd);
   void	setAdmin();
   bool	isAdmin() const;
@@ -154,6 +155,7 @@ inline void makeupper(std::string& str)
 }
 
 bool userExists(const std::string &nick);
+bool checkPasswordExistence(const std::string &nick);
 bool verifyUserPassword(const std::string &nick, const std::string &pass);
 std::string nameFromPerm(PlayerAccessInfo::AccessPerm perm);
 PlayerAccessInfo::AccessPerm permFromName(const std::string &name);

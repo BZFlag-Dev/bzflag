@@ -107,6 +107,10 @@ std::string PlayerAccessInfo::getName() {
   return regName;
 }
 
+bool PlayerAccessInfo::hasRealPassword() {
+  return checkPasswordExistence(regName.c_str());
+}
+
 bool PlayerAccessInfo::isPasswordMatching(const char* pwd) {
   return verifyUserPassword(regName.c_str(), pwd);
 }
@@ -239,6 +243,18 @@ PlayerAccessInfo &PlayerAccessInfo::getUserInfo(const std::string &nick)
   //  if (itr == userDatabase.end())
   //    return false;
   return itr->second;
+}
+
+bool checkPasswordExistence(const std::string &nick)
+{
+  std::string str1 = nick;
+  makeupper(str1);
+  PasswordMap::iterator itr = passwordDatabase.find(str1);
+  if (itr == passwordDatabase.end())
+    return false;
+  if (itr->second == "*" || itr->second == "")
+    return false;
+  return true;
 }
 
 bool verifyUserPassword(const std::string &nick, const std::string &pass)

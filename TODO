@@ -12,8 +12,6 @@ THESE ARE LOWER PRIORITY
   - add option for non-public servers to use global logins? (match servers)
   - add option for public-servers to not use global logins? or only
     use global logins (no /register)?
-  - what should happen, when local user with password exists (/register),
-    then globla login with same callsign happens later?
 
 * fix the misalignment between the selected server and the one that
   is joined when the Server List Cache is enabled.

@@ -184,20 +184,28 @@ void ListServerLink::read()
 	int playerIndex = getTarget(callsign);
 	if (playerIndex < curMaxPlayers) {
 	  GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(playerIndex);
-	  if (!playerData->accessInfo.isRegistered())
-	    playerData->accessInfo.storeInfo(NULL);
-	  playerData->accessInfo.setPermissionRights();
-	  while (*group) {
-	    char *nextgroup = group;
-	    while (*nextgroup && (*nextgroup != ':')) nextgroup++;
-	    while (*nextgroup && (*nextgroup == ':')) *nextgroup++ = 0;
-	    playerData->accessInfo.addGroup(group);
-	    //DEBUG3("Got: [%d] \"%s\" \"%s\"\n", playerIndex, callsign, group);
-	    group = nextgroup;
+	  if (!playerData->accessInfo.hasRealPassword()) {
+	    if (!playerData->accessInfo.isRegistered())
+	      playerData->accessInfo.storeInfo(NULL);
+	    playerData->accessInfo.setPermissionRights();
+	    while (*group) {
+	      char *nextgroup = group;
+	      while (*nextgroup && (*nextgroup != ':')) nextgroup++;
+	      while (*nextgroup && (*nextgroup == ':')) *nextgroup++ = 0;
+	      playerData->accessInfo.addGroup(group);
+	      //DEBUG3("Got: [%d] \"%s\" \"%s\"\n", playerIndex, callsign, group);
+	      group = nextgroup;
+	    }
+	    sendMessage(ServerPlayer, playerIndex, "Global login approved!");
+	    sendIPUpdate(playerIndex, -1);
+	    sendPlayerInfo();
+	  } else {
+	    // if a player by this name has already /registered locally on this server
+	    // then don't set any permissions for them
+	    sendMessage(ServerPlayer, playerIndex, "Global login rejected. "
+			"This callsign is registered locally on this server, please ask "
+			"an admin to deregister it.");
 	  }
-	  sendMessage(ServerPlayer, playerIndex, "Global login approved!");
-	  sendIPUpdate(playerIndex, -1);
-	  sendPlayerInfo();
 	  playerData->player.clearToken();
 	}
       } else if (strncmp(base, tokBadIdentifier, strlen(tokBadIdentifier)) == 0) {
