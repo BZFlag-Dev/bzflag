@@ -14,6 +14,7 @@
 #define BZF_FILE_MANAGER_H
 
 #include "common.h"
+#include <string>
 #include "bzfio.h"
 #include "Singleton.h"
 
