@@ -636,18 +636,16 @@ void			RadarRenderer::makeList(bool smoothingOn, SceneRenderer& renderer)
       const float *base = world.getBase(i);
       glColor3fv(Team::getRadarColor(TeamColor(i)));
       glBegin(GL_LINE_LOOP);
-      glVertex2f(base[0] + hypotf(base[4], base[5]) * cosf(M_PI / 2.0f -
-		 base[3] + 5.0f / 4.0f * M_PI), base[1] + hypotf(base[4], base[5]) *
-		 sinf(M_PI / 2.0f - base[3] + 5.0f / 4.0f * M_PI));
-      glVertex2f(base[0] + hypotf(base[4], base[5]) * cosf(M_PI / 2.0f -
-		 base[3] + 3.0f / 4.0f * M_PI), base[1] + hypotf(base[4], base[5]) *
-		 sinf(M_PI / 2.0f - base[3] + 3.0f / 4.0f * M_PI));
-      glVertex2f(base[0] + hypotf(base[4], base[5]) * cosf(M_PI / 2.0f -
-		 base[3] + 1.0f / 4.0f * M_PI), base[1] + hypotf(base[4], base[5]) *
-		 sinf(M_PI / 2.0f - base[3] + 1.0f / 4.0f * M_PI));
-      glVertex2f(base[0] + hypotf(base[4], base[5]) * cosf(M_PI / 2.0f -
-		 base[3] + 7.0f / 4.0f * M_PI), base[1] + hypotf(base[4], base[5]) *
-		 sinf(M_PI / 2.0f - base[3] + 7.0f / 4.0f * M_PI));
+      const float beta = atan2f(base[5], base[4]);
+      const float r = hypotf(base[4], base[5]);
+      glVertex2f(base[0] + r * cosf(base[3] + beta),
+                 base[1] + r * sinf(base[3] + beta));
+      glVertex2f(base[0] + r * cosf(base[3] - beta + M_PI),
+                 base[1] + r * sinf(base[3] - beta + M_PI));
+      glVertex2f(base[0] + r * cosf(base[3] + beta + M_PI),
+                 base[1] + r * sinf(base[3] + beta + M_PI));
+      glVertex2f(base[0] + r * cosf(base[3] - beta),
+                 base[1] + r * sinf(base[3] - beta));
       glEnd();
     }
   }
