@@ -908,7 +908,7 @@ static void handleBanCmd(GameKeeper::Player *playerData, const char *message)
   }
 
   std::string msg = message;
-  std::vector<std::string> argv = TextUtils::tokenize(msg, " \t", 4);
+  std::vector<std::string> argv = TextUtils::tokenize(msg, " \t", 4, true);
 
   if (argv.size() < 4) {
     sendMessage(ServerPlayer, t, "Syntax: /ban <#slot | PlayerName | \"Player Name\" | ip> <duration> <reason>");
