@@ -9,7 +9,7 @@ CppCompiler=-DBUILD_REGEX=1 -D__GNUWIN32__ -W -D_CONSOLE -DWIN32 -D_MBCS_@@_
 Includes=..\include;..\win32;.
 Linker=-lws2_32 -lwinmm -lkernel32 -luser32 -lgdi32 -lwinspool -lcomdlg32 -ladvapi32 -lshell32 -lole32 -loleaut32 -luuid_@@_
 Libs=
-UnitCount=164
+UnitCount=166
 Folders="Header Files","Header Files/bzfs","Header Files/common","Header Files/game","Header Files/net","Header Files/regex","Resource Files","Source Files","Source Files/bzfs","Source Files/common","Source Files/date","Source Files/game","Source Files/Net","Source Files/regex"
 ObjFiles=
 PrivateResource=
@@ -1388,19 +1388,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit165]
-FileName=..\src\geometry\models\tank\medium_ltread.cxx
+FileName=..\src\obstacle\TetraBuilding.cxx
 CompileCpp=1
-Folder=Source Files
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit166]
-FileName=..\src\geometry\models\tank\medium_rtread.cxx
-CompileCpp=1
-Folder=Source Files
+Folder=Source Files/common
 Compile=1
 Link=1
 Priority=1000
@@ -1731,6 +1721,16 @@ BuildCmd=
 FileName=..\src\obstacle\WallObstacle.cxx
 CompileCpp=1
 Folder=Header Files/common
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit166]
+FileName=..\src\bzfs\CustomTetra.cxx
+CompileCpp=1
+Folder=Source Files/bzfs
 Compile=1
 Link=1
 Priority=1000
