@@ -787,10 +787,9 @@ static void sendMessageToListServer(const char *msg)
     openListServer(i);
 
     // record next message to send.  note that each message overrides
-    // any other message, except SETNUM doesn't override ADD (cos ADD
-    // sends SETNUM data anyway).
+    // any other message.
     ListServerLink& link = listServerLinks[i];
-    if (strcmp(msg, "SETNUM") != 0 || strcmp(link.nextMessage, "ADD") != 0)
+    if (strcmp(link.nextMessage, "ADD") != 0)
       link.nextMessage = msg;
   }
 }
@@ -809,51 +808,15 @@ static void sendMessageToListServerForReal(int index)
 
   char msg[2048];
   if (strcmp(link.nextMessage, "ADD") == 0) {
-    // update player counts in ping reply.  pretend there are no players
-    // if the game is over.
     if (gameOver) {
-      pingReply.rogueCount = (uint8_t)team[0].team.size;
-      pingReply.redCount = (uint8_t)team[1].team.size;
-      pingReply.greenCount = (uint8_t)team[2].team.size;
-      pingReply.blueCount = (uint8_t)team[3].team.size;
-      pingReply.purpleCount = (uint8_t)team[4].team.size;
-      pingReply.observerCount = (uint8_t)team[5].team.size;
-    }
-    else {
+      // pretend there are no players if the game is over.
       pingReply.rogueCount = 0;
       pingReply.redCount = 0;
       pingReply.greenCount = 0;
       pingReply.blueCount = 0;
       pingReply.purpleCount = 0;
       pingReply.observerCount = 0;
-    }
-
-    // encode ping reply as ascii hex digits plus NULL
-    char gameInfo[PingPacketHexPackedSize + 1];
-    pingReply.packHex(gameInfo);
-
-    // send ADD message
-    {
-      sprintf(msg, "GET %s?action=ADD&nameport=%s&version=%s&gameinfo=%s&title=%s HTTP/1.1\r\n"
-              "Host: %s\r\n",
-              link.pathname.c_str(), clOptions->publicizedAddress.c_str(),
-	      getServerVersion(), gameInfo,
-              url_encode(clOptions->publicizedTitle).c_str(),
-              link.hostname.c_str());
-    }
-  }
-  else if (strcmp(link.nextMessage, "REMOVE") == 0) {
-    // send REMOVE
-    {
-      sprintf(msg, "GET %s?action=REMOVE&nameport=%s HTTP/1.1\r\nHost: %s\r\n",
-	      link.pathname.c_str(),
-              clOptions->publicizedAddress.c_str(),
-              link.hostname.c_str());
-    }
-  }
-  else if (strcmp(link.nextMessage, "SETNUM") == 0) {
-    // pretend there are no players if the game is over
-    {
+    } else {
       // update player counts in ping reply.
       pingReply.rogueCount = (uint8_t)team[0].team.size;
       pingReply.redCount = (uint8_t)team[1].team.size;
@@ -861,18 +824,26 @@ static void sendMessageToListServerForReal(int index)
       pingReply.blueCount = (uint8_t)team[3].team.size;
       pingReply.purpleCount = (uint8_t)team[4].team.size;
       pingReply.observerCount = (uint8_t)team[5].team.size;
-
-      // encode ping reply as ascii hex digits
-      char gameInfo[PingPacketHexPackedSize];
-      pingReply.packHex(gameInfo);
-      sprintf(msg, "GET http://%s%s?action=ADD&nameport=%s&version=%s&gameinfo=%s&title=%s\n",
-	      link.hostname.c_str(),
-	      link.pathname.c_str(),
-	      clOptions->publicizedAddress.c_str(),
-	      getServerVersion(),
-	      gameInfo,
-	      url_encode(clOptions->publicizedTitle).c_str());
     }
+
+    // encode ping reply as ascii hex digits plus NULL
+    char gameInfo[PingPacketHexPackedSize + 1];
+    pingReply.packHex(gameInfo);
+
+    // send ADD message
+    sprintf(msg, "GET %s?action=ADD&nameport=%s&version=%s&gameinfo=%s&title=%s HTTP/1.1\r\n"
+      "Host: %s\r\n",
+      link.pathname.c_str(), clOptions->publicizedAddress.c_str(),
+      getServerVersion(), gameInfo,
+      url_encode(clOptions->publicizedTitle).c_str(),
+      link.hostname.c_str());
+  }
+  else if (strcmp(link.nextMessage, "REMOVE") == 0) {
+    // send REMOVE
+    sprintf(msg, "GET %s?action=REMOVE&nameport=%s HTTP/1.1\r\nHost: %s\r\n",
+      link.pathname.c_str(),
+      clOptions->publicizedAddress.c_str(),
+      link.hostname.c_str());
   }
   DEBUG3("%s\n",msg);
   send(link.socket, msg, strlen(msg), 0);
@@ -2450,7 +2421,7 @@ static void addPlayer(int playerIndex)
     resetFlag(teamIndex-1);
 
   // tell the list server the new number of players
-  sendMessageToListServer("SETNUM");
+  sendMessageToListServer("ADD");
 
 #ifdef PRINTSCORE
   dumpScore();
@@ -2848,7 +2819,7 @@ void removePlayer(int playerIndex, const char *reason, bool notify)
   dumpPlayerMessageStats(playerIndex);
 #endif
   // tell the list server the new number of players
-  sendMessageToListServer("SETNUM");
+  sendMessageToListServer("ADD");
 
   while ((playerIndex >= 0)
       && (playerIndex+1 == curMaxPlayers)
