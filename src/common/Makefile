@@ -24,6 +24,7 @@ CXXFILES =				\
 	Team.cxx			\
 	TimeBomb.cxx			\
 	TimeKeeper.cxx			\
+	PlayerState.cxx			\
 	$(NULL)
 
 CFILES =				\

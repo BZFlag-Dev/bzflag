@@ -110,6 +110,10 @@ SOURCE=..\src\common\md5.cxx
 # End Source File
 # Begin Source File
 
+SOURCE=..\src\common\PlayerState.cxx
+# End Source File
+# Begin Source File
+
 SOURCE=..\src\common\ShotUpdate.cxx
 # End Source File
 # Begin Source File
@@ -179,6 +183,10 @@ SOURCE=..\include\md5.h
 # Begin Source File
 
 SOURCE=..\include\Pack.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\include\PlayerState.h
 # End Source File
 # Begin Source File
 
