@@ -4229,21 +4229,23 @@ void			drawFrame(const float dt)
       // add flags
       world->addFlags(scene);
 
-      TeamColor overrideTeam = RogueTeam;
-      const bool colorblind = (myTank->getFlag() == Flags::Colorblindness);
 
       // add other tanks and shells
       for (i = 0; i < curMaxPlayers; i++) {
 	if (player[i]) {
+          const bool colorblind = (myTank->getFlag() == Flags::Colorblindness);
 	  player[i]->addShots(scene, colorblind);
-	  overrideTeam = RogueTeam;
+
+	  TeamColor effectiveTeam = RogueTeam;
 	  if (!colorblind){
 	    if ((player[i]->getFlag() == Flags::Masquerade)
 		&& (myTank->getFlag() != Flags::Seer)
-		&& (myTank->getTeam() != ObserverTeam))
-	      overrideTeam = myTank->getTeam();
-	    else
-	      overrideTeam = player[i]->getTeam();
+		&& (myTank->getTeam() != ObserverTeam)) {
+	      effectiveTeam = myTank->getTeam();
+            }
+	    else {
+	      effectiveTeam = player[i]->getTeam();
+            }
 	  }
 
           const bool cloaked = (player[i]->getFlag() == Flags::Cloaking) &&
@@ -4254,7 +4256,7 @@ void			drawFrame(const float dt)
                                
           // add player tank if required
           if (player[i]->needsToBeRendered(cloaked, showPlayer)) {
-            player[i]->addToScene(scene, player[i]->getTeam(), false);
+            player[i]->addToScene(scene, effectiveTeam, false);
           }
         }
       }
