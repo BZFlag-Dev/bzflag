@@ -2950,7 +2950,7 @@ BuildCmd=
 [Unit303]
 FileName=..\src\scene\Occluder.cxx
 CompileCpp=1
-Folder=Source Files
+Folder=Source Files/common
 Compile=1
 Link=1
 Priority=1000
@@ -3000,7 +3000,7 @@ BuildCmd=
 [Unit308]
 FileName=..\src\obstacle\TetraBuilding.cxx
 CompileCpp=1
-Folder=Source Files
+Folder=Source Files/common
 Compile=1
 Link=1
 Priority=1000
@@ -3030,7 +3030,7 @@ BuildCmd=
 [Unit309]
 FileName=..\src\obstacle\TetraSceneNodeGenerator.cxx
 CompileCpp=1
-Folder=Source Files
+Folder=Source Files/common
 Compile=1
 Link=1
 Priority=1000
