@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN" "http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd" [
+<!--
+ Copyright (c) 1993 - 2003 Tim Riker
+
+ This package is free software;  you can redistribute it and/or
+ modify it under the terms of the license found in the file
+ named COPYING that should have accompanied this file.
+
+ THIS PACKAGE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
+ IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
+ WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+-->
+
+<!ENTITY cheating SYSTEM "Cheating.xml">
+<!ENTITY e-mail SYSTEM "E-Mail.xml">
+<!ENTITY irc SYSTEM "IRC.xml">
+<!ENTITY lag SYSTEM "Lag.xml">
+
+]>
+
+<book>
+  <bookinfo>
+    <title>BZFlag FAQ</title>
+    <subtitle>Answers to most people's questions</subtitle>
+    <pubdate>2003-12-04</pubdate>
+
+    <author>
+      <firstname>Christopher</firstname>
+      <othername>Sean</othername>
+      <surname>Morrison</surname>
+      <affiliation>
+	<address><email>learner AT brlcad DOT org</email></address>
+      </affiliation>
+    </author>
+
+    <abstract>
+      <para>Answers to many of the Frequently Asked Questions about BZFlag.</para>
+    </abstract>
+  </bookinfo>
+
+  <!-- network connectivity issues during gameplay -->
+  &lag;
+
+  <!-- cheating on servers -->
+  &cheating;
+
+  <!-- e-mail displayed during gameplay -->
+  &e-mail;
+
+  <!-- how to get in touch with developers and other players -->
+  &irc;
+</book>
+
+<!-- Local Variables: -->
+<!-- mode: SGML -->
+<!-- tab-width: 8 -->
+<!-- c-basic-offset: 2 -->
+<!-- indent-tabs-mode: t -->
+<!-- End: -->
+<!-- ex: shiftwidth=2 tabstop=8 -->
