@@ -181,7 +181,7 @@ boolean			ShotPath::isStoppedByHit() const
   return strategy->isStoppedByHit();
 }
 
-void			ShotPath::addShot(SceneDatabase* scene, 
+void			ShotPath::addShot(SceneDatabase* scene,
 						boolean colorblind)
 {
   strategy->addShot(scene, colorblind);

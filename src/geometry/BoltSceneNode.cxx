@@ -325,7 +325,7 @@ void			BoltSceneNode::BoltRenderNode::render()
       myColor4fv(outerColor);
       glVertex2fv(corona[0]);
       glEnd();
-  
+
       // draw core
       glBegin(GL_TRIANGLE_FAN);
       myColor3fv(innerColor);
@@ -367,7 +367,7 @@ void			BoltSceneNode::BoltRenderNode::render()
       glVertex2fv(core[1]);
       glVertex2fv(corona[0]);
       glEnd();
-  
+
       // draw core
       myStipple(1.0f);
       glBegin(GL_TRIANGLE_FAN);

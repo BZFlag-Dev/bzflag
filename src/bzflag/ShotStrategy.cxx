@@ -827,7 +827,7 @@ void			LaserStrategy::radarRender() const
       const float* direction = segment.ray.getDirection();
       const float dt = segment.end - segment.start;
       glVertex2fv(origin);
-      glVertex2f(origin[0] + dt * direction[0], origin[1] + dt * direction[1]);  
+      glVertex2f(origin[0] + dt * direction[0], origin[1] + dt * direction[1]);
     }
   glEnd();
 }

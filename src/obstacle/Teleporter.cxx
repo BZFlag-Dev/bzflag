@@ -73,7 +73,7 @@ boolean			Teleporter::isInside(const float* p,
 boolean			Teleporter::isInside(const float* p, float a,
 						float dx, float dy) const
 {
-  if ((p[2] < getHeight() + getPosition()[2] - getBorder()) 
+  if ((p[2] < getHeight() + getPosition()[2] - getBorder())
 	  && p[2] >= getPosition()[2]) {
     // test individual border columns
     const float c = cosf(getRotation()), s = sinf(getRotation());
@@ -258,16 +258,16 @@ void			Teleporter::getPointWRT(const Teleporter& t2,
   We are looking for T2, and simple algebra tells us that T2 = (W2 * T1) / W1
 
   Now, we can correctly position the tank.
-  
+
   Note that this is only the position relative to the transporter, to get the real position,
   it is added to the rest.  Since I'm not 100% sure of my work, I am leaving the old code
   commented above.
   */
-  
+
   //T1 = x2 and y2
   //W2 = t2.getWidth()
   //W1 = getWidth()
-  
+
   //pOut[0] = x2 + t2.getPosition()[0];
   //pOut[1] = y2 + t2.getPosition()[1];
   pOut[0] = t2.getPosition()[0] + (x2 * (t2.getBreadth() - t2.getBorder())) / getBreadth();
@@ -275,10 +275,10 @@ void			Teleporter::getPointWRT(const Teleporter& t2,
   //T1 = pIn[2] - getPosition()[2]
   //W2 = t2.getHeight()
   //W1 = getHeight
-  
+
   //(t2.getPosition()[2] - getPosition()[2]) adds the height differences between the
   //teleporters so that teleporters can be off of the ground at different heights.
-  
+
   //pOut[2] = pIn[2] + t2.getPosition()[2] - getPosition()[2];
   pOut[2] = pIn[2] + t2.getPosition()[2] - getPosition()[2]
 	  + ((pIn[2] - getPosition()[2]) * (t2.getHeight() - t2.getBorder()))/getHeight();

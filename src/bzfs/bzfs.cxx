@@ -1097,7 +1097,7 @@ static void		sendMessageToListServerForReal(int index)
 				team[3].team.activeSize,
 				team[4].team.activeSize);
 
-  } 
+  }
   if (debug >= 3) {
       cerr << msg;
   }
@@ -1575,7 +1575,7 @@ static WorldInfo*      defineWorldFromFile(const char* filename)
   return world;
 }
 
- 
+
 static WorldInfo*	defineTeamWorld()
 {
   world = new WorldInfo();
@@ -1888,7 +1888,7 @@ static boolean		defineWorld()
    {
       return False;
    }
- 
+
   // package up world
   world->packDatabase();
   // now get world packaged for network transmission
@@ -2606,7 +2606,7 @@ static void		checkTeamScore(int playerIndex, int teamIndex)
     char msg[PlayerIdPLen + 2];
     void* buf = msg;
     buf = player[playerIndex].id.pack(buf);
-    buf = nboPackUShort(buf, uint16_t(teamIndex));    
+    buf = nboPackUShort(buf, uint16_t(teamIndex));
     broadcastMessage(MsgScoreOver, sizeof(msg), msg);
     gameOver = True;
   }
@@ -2874,7 +2874,7 @@ static void		scoreChanged(int playerIndex,
     char msg[PlayerIdPLen + 2];
     void* buf = msg;
     buf = player[playerIndex].id.pack(buf);
-    buf = nboPackUShort(buf, uint16_t(NoTeam));    
+    buf = nboPackUShort(buf, uint16_t(NoTeam));
     broadcastMessage(MsgScoreOver, sizeof(msg), msg);
     gameOver = True;
   }

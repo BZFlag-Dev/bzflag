@@ -475,7 +475,7 @@ static BOOL		addDesktopLink(const char* linkname,
 	shellLink->SetPath(name);
 	shellLink->SetArguments(args);
 	shellLink->SetWorkingDirectory(workdir);
-  
+
 	IPersistFile* persistFile;
 	hres = shellLink->QueryInterface(IID_IPersistFile,
 				      (LPVOID*)&persistFile);
@@ -696,7 +696,7 @@ int			install(const char* instDir,
 		strcpy(cwd, instDir);
 	    else if (cmd == INST_SETSYSDIR)
 		strcpy(cwd, sysDir);
-	    else 
+	    else
 		strcpy(cwd, winDir);
 	    dirStack = 0;
 	    if (!setDirectory(cwd, errorCB)) {

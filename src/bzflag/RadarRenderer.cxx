@@ -109,7 +109,7 @@ void			RadarRenderer::makeNoise()
 
 void			RadarRenderer::drawShot(const ShotPath* shot)
 {
-  
+
   glBegin(GL_POINTS);
   glVertex2fv(shot->getPosition());
   glEnd();
@@ -482,28 +482,28 @@ void			RadarRenderer::makeList(boolean smoothingOn)
       glEnd();
     }
 
-  // draw teleporters.  teleporters are pretty thin so use lines
-  // (which, if longer than a pixel, are guaranteed to draw something;
-  // not so for a polygon).  just in case the system doesn't correctly
-  // filter the ends of line segments, we'll draw the line in each
-  // direction (which degrades the antialiasing).  Newport graphics
-  // is one system that doesn't do correct filtering.
-  const Teleporters& teleporters = world.getTeleporters();
-  count = teleporters.getLength();
-  glColor3f(1.0f, 1.0f, 0.25f);
-  glBegin(GL_LINES);
-  for (i = 0; i < count; i++) {
-    const Teleporter& tele = teleporters[i];
-    const float w = tele.getBreadth();
-    const float c = w * cosf(tele.getRotation());
-    const float s = w * sinf(tele.getRotation());
-    const float* pos = tele.getPosition();
-    glVertex2f(pos[0] - s, pos[1] + c);
-    glVertex2f(pos[0] + s, pos[1] - c);
-    glVertex2f(pos[0] + s, pos[1] - c);
-    glVertex2f(pos[0] - s, pos[1] + c);
-  }
-  glEnd();
+    // draw teleporters.  teleporters are pretty thin so use lines
+    // (which, if longer than a pixel, are guaranteed to draw something;
+    // not so for a polygon).  just in case the system doesn't correctly
+    // filter the ends of line segments, we'll draw the line in each
+    // direction (which degrades the antialiasing).  Newport graphics
+    // is one system that doesn't do correct filtering.
+    const Teleporters& teleporters = world.getTeleporters();
+    count = teleporters.getLength();
+    glColor3f(1.0f, 1.0f, 0.25f);
+    glBegin(GL_LINES);
+    for (i = 0; i < count; i++) {
+      const Teleporter& tele = teleporters[i];
+      const float w = tele.getBreadth();
+      const float c = w * cosf(tele.getRotation());
+      const float s = w * sinf(tele.getRotation());
+      const float* pos = tele.getPosition();
+      glVertex2f(pos[0] - s, pos[1] + c);
+      glVertex2f(pos[0] + s, pos[1] - c);
+      glVertex2f(pos[0] + s, pos[1] - c);
+      glVertex2f(pos[0] - s, pos[1] + c);
+    }
+    glEnd();
 
     glDisable(GL_BLEND);
     glDisable(GL_LINE_SMOOTH);

@@ -248,7 +248,7 @@ WallSceneNode*		PyramidSceneNodeGenerator::getNextNode(
   tEdge[0] = tCorner[0] - base[0];
   tEdge[1] = tCorner[1] - base[1];
   tEdge[2] = tCorner[2] - base[2];
-  
+
   if(isSquare != true)
 	return new TriWallSceneNode(base, sEdge, tEdge, uRepeats, vRepeats, lod);
   else

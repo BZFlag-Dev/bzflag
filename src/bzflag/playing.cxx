@@ -515,7 +515,7 @@ static boolean		doKeyCommon(const BzfKeyEvent& key, boolean pressed)
 	  return True;
 	}
 	break;
-  
+
       case '[':
       case '{':
 	// minus 30 seconds
@@ -1794,7 +1794,7 @@ static void		restartPlaying()
   float startAzimuth;
   boolean located = False;
   int locateCount = 0;
-  
+
   // check for valid starting (no unfair advantage to player or enemies)
   // should find a good location in a few tries... locateCount is a safety
   // check that will probably be invoked when restarting on the team base
@@ -1891,7 +1891,7 @@ static void		restartPlaying()
       const float myDist = hypotf(myX, myY);
       const float myCos = myX / myDist;
 
-      // don't allow tank placement if my tank is +/- 30 degrees of 
+      // don't allow tank placement if my tank is +/- 30 degrees of
       // the enemy's boresight and in firing range (enemy's unfair advantage)
       if (myDist < minSafeRange(myCos)) {
         located = False;
@@ -2126,7 +2126,7 @@ static void		checkEnvironment()
 		(tpos[1] - fpos[1]) * (tpos[1] - fpos[1]) < radius2) {
 	serverLink->sendGrabFlag(i);
       }
-    } 
+    }
   }
   else if (flagId == IdentifyFlag) {
     // identify closest flag
@@ -2138,13 +2138,13 @@ static void		checkEnvironment()
       if (world->getFlag(i).id == NoFlag ||
 	  world->getFlag(i).status != FlagOnGround) continue;
       const float* fpos = world->getFlag(i).position;
-      const float dist = (tpos[0] - fpos[0]) * (tpos[0] - fpos[0]) + 
+      const float dist = (tpos[0] - fpos[0]) * (tpos[0] - fpos[0]) +
                          (tpos[1] - fpos[1]) * (tpos[1] - fpos[1]);
       if (dist < minDist) {
 	minDist = dist;
 	closestFlag = i;
       }
-    } 
+    }
     if (closestFlag != -1) {
       // Set HUD alert about what the flag is
       message += Flag::getName(world->getFlag(closestFlag).id);
@@ -3470,7 +3470,7 @@ static void		playingLoop()
          if (resources->hasValue("focal"))
            FocalPlane = (float)atof(resources->getValue("focal"));
        }
-      
+
        // setup view for left eye
        sceneRenderer->getViewFrustum().setOffset(EyeDisplacement, FocalPlane);
 
@@ -3508,7 +3508,7 @@ static void		playingLoop()
 	  if (resources->hasValue("focal"))
 	    FocalPlane = (float)atof(resources->getValue("focal"));
 	}
-      
+
 	// setup view for left eye
 #ifdef USE_GL_STEREO
 	glDrawBuffer(GL_BACK_LEFT);
@@ -4184,7 +4184,7 @@ void			startPlaying(BzfDisplay* _display,
     controlPanel->addMessage(bombMessage);
   }
 
-  // print copyright  
+  // print copyright
   controlPanel->addMessage(copyright);
   controlPanel->addMessage("Maintainer: Tim Riker <Tim@Rikers.org>");
 

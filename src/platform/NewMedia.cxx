@@ -122,7 +122,7 @@ int			NewMedia::getAudioBufferChunkSize() const
   // be affected by changes to the audio filter (which can change
   // at any time) and we wouldn't be able to mix in new sounds that
   // start while the old sound is playing.
-  // 
+  //
   // so we break the audio buffer into several equal sized chunks.
   // at any time, the audio subsystem is playing one chunk, another
   // chunk is ready and waiting to be played, and other chunks are

@@ -235,7 +235,7 @@ boolean			LinuxMedia::openAudioHardware()
     if (!openIoctl(SNDCTL_DSP_GETOSPACE, &info, False)) {
       getospaceBroken = True;
       chunksPending = 0;
-      chunksPerSecond = (double)getAudioOutputRate() / 
+      chunksPerSecond = (double)getAudioOutputRate() /
 				(double)getAudioBufferChunkSize();
     }
   }

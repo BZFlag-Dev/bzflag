@@ -305,11 +305,11 @@ void			SceneRenderer::setZBufferSplit(boolean on)
     if (bits > 18) {
       // number of independent slices to split depth buffer into
       numDepthRanges = 1 << (bits - 18);
-  
+
       // size of a single range
       depthRangeSize = 1.0 / (double)numDepthRanges;
     }
-    else { 
+    else {
       numDepthRanges = 1;
       depthRangeSize = 1.0;
     }
@@ -699,7 +699,7 @@ void			SceneRenderer::render(
     glEnable(GL_STENCIL_TEST);
     glClear(GL_STENCIL_BUFFER_BIT);
     glStencilFunc(GL_ALWAYS, 0, 0xf);
-    glStencilOp(GL_KEEP, GL_INCR, GL_INCR); 
+    glStencilOp(GL_KEEP, GL_INCR, GL_INCR);
   }
   if (useHiddenLineOn) {
     glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
@@ -856,7 +856,7 @@ void			SceneRenderer::render(
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     glMatrixMode(GL_MODELVIEW);
-    glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP); 
+    glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
     for (i = 0; i < numColors; i++) {
       glStencilFunc(i == numColors - 1 ? GL_LEQUAL : GL_EQUAL, i, 0xf);
       glColor3fv(depthColors[i]);

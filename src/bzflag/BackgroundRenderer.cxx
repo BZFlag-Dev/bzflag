@@ -641,7 +641,7 @@ void			BackgroundRenderer::drawGround(SceneRenderer&)
 
 #ifdef LOST
   if (simpleGround) {
-    simpleGroundList[styleIndex].execute();    
+    simpleGroundList[styleIndex].execute();
   }
   else {
     groundList[styleIndex].execute();
@@ -655,7 +655,7 @@ void			BackgroundRenderer::drawGround(SceneRenderer&)
     delete groundIterator;
   }
 #else
-  simpleGroundList[styleIndex].execute();    
+  simpleGroundList[styleIndex].execute();
 #endif
 }
 
@@ -902,7 +902,7 @@ void			BackgroundRenderer::doInitDisplayLists()
   // ground
   //
 
-  // RIVA 128 can't repeat texture uv's too much.  if we're using one 
+  // RIVA 128 can't repeat texture uv's too much.  if we're using one
   // of those, only texture the ground inside the game area.
   float uv[2];
   const GLfloat groundSize = 10.0f * WorldSize;

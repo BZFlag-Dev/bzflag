@@ -151,7 +151,7 @@ LONG WINAPI		WinDisplay::Rep::windowProc(HWND hwnd, UINT msg,
       break;
   }
 
-  return DefWindowProc(hwnd, msg, wparam, lparam); 
+  return DefWindowProc(hwnd, msg, wparam, lparam);
 }
 
 //

@@ -297,10 +297,10 @@ void			WallSceneNode::notifyStyleChange(
 void			WallSceneNode::copyStyle(WallSceneNode* node)
 {
   gstate = node->gstate;
-  setColor(node->color);  
-  setModulateColor(node->modulateColor);  
-  setLightedColor(node->lightedColor);  
-  setLightedModulateColor(node->lightedModulateColor);  
+  setColor(node->color);
+  setModulateColor(node->modulateColor);
+  setLightedColor(node->lightedColor);
+  setLightedModulateColor(node->lightedModulateColor);
   forceNotifyStyleChange();
 }
 
@@ -308,9 +308,9 @@ void			WallSceneNode::setColor()
 {
   switch (style) {
     case 0: myColor4fv(color); break;
-    case 1: myColor4fv(lightedColor); break; 
-    case 2: myColor4fv(modulateColor); break; 
-    case 3: myColor4fv(lightedModulateColor); break; 
+    case 1: myColor4fv(lightedColor); break;
+    case 2: myColor4fv(modulateColor); break;
+    case 3: myColor4fv(lightedModulateColor); break;
   }
 }
 

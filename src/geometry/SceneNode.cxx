@@ -39,7 +39,7 @@ SceneNode::~SceneNode()
 
 #if defined(sun)
 static void __stdcall	oglColor3f(GLfloat r, GLfloat g, GLfloat b)
-				{ glColor3f(r, g, b); } 
+				{ glColor3f(r, g, b); }
 static void __stdcall	oglColor4f(GLfloat r, GLfloat g, GLfloat b, GLfloat a)
 				{ glColor4f(r, g, b, a); }
 static void __stdcall	oglColor3fv(const GLfloat* v)

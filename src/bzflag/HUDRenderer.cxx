@@ -365,7 +365,7 @@ void			HUDRenderer::setHeadingFontSize(int, int height)
   int i;
   for (i = 0; i < 36; i++)
     headingLabelWidth[i] = 0.5f * headingFont.getWidth(headingLabel[i]);
-  
+
   // compute maximum width over all altitude labels
   altitudeLabelMaxWidth = 0.0f;
   for (i = 0; i < 20; i++) {
@@ -844,7 +844,7 @@ void			HUDRenderer::renderTimes(SceneRenderer& renderer)
     hudColor3f(1.0f, 1.0f, 1.0f);
     headingFont.draw(buf, (float)(centerx - maxMotionSize),
 		(float)centery - (float)maxMotionSize -
-		headingFont.getSpacing() + headingFont.getDescent());    
+		headingFont.getSpacing() + headingFont.getDescent());
   }
   if (drawTime > 0.0f) {
     char buf[20];
@@ -852,7 +852,7 @@ void			HUDRenderer::renderTimes(SceneRenderer& renderer)
     hudColor3f(1.0f, 1.0f, 1.0f);
     headingFont.draw(buf, (float)centerx,
 		(float)centery - (float)maxMotionSize -
-		headingFont.getSpacing() + headingFont.getDescent());    
+		headingFont.getSpacing() + headingFont.getDescent());
   }
 }
 
@@ -1005,7 +1005,7 @@ void			HUDRenderer::renderPlaying(SceneRenderer& renderer)
       }
     }
     OpenGLGState::resetState();
- 
+
     // draw markers (give 'em a little more space on the sides)
     glScissor(ox + centerx - maxMotionSize - 8, oy + centery + maxMotionSize +
 		renderer.getWindow().getPanelHeight(),

@@ -572,7 +572,7 @@ void			XWindow::loadColormap()
   else if (visual.c_class == PseudoColor && visual.depth == 8) {
     // assume a 3:3:2 (RGB) colormap for an 8 bit deep PseudoColor,
     // with red in the low bits, then green, then blue.
-    
+
     // create colors
     for (int i = 0; i < visual.colormap_size; i++) {
       colors[i].pixel = colormapPixels[i];

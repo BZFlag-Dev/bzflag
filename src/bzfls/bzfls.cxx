@@ -525,7 +525,7 @@ static void removeClient(int index)
   client[index].fd = NotConnected;
 }
 
-// start the server 
+// start the server
 static boolean serverStart()
 {
   maxFileDescriptor = 0;
@@ -761,7 +761,7 @@ static int findMsgEnd(const char* buffer, int, int start)
   return ptr - buffer;
 }
 
-// parse a whitespace separated string into tokens (modifying input string). 
+// parse a whitespace separated string into tokens (modifying input string).
 // parse up to argc-1 tokens and remaining tokens go into last argument.
 // return False if insufficient tokens found (last argument can be empty),
 // else return True.
@@ -1010,7 +1010,7 @@ static void readClient(int index, const TimeKeeper& tm)
   int length = recv(client[index].fd,
 				client[index].buffer + client[index].offset,
 				client[index].length - client[index].offset, 0);
-  
+
 
   // read successful;  check for buffer full or end of message
   if (length > 0) {

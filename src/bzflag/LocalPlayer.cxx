@@ -386,7 +386,7 @@ void			LocalPlayer::doUpdateMotion(float dt)
       // handle upward normal component to prevent an upward force
       if (normal[2] != 0.0f) {
 	// if going down then stop falling
-	if (newVelocity[2] < 0.0f && newVelocity[2] - 
+	if (newVelocity[2] < 0.0f && newVelocity[2] -
 		(mag + normal[2] * newVelocity[2]) * normal[2] > 0.0f)
 	  newVelocity[2] = 0.0f;
 

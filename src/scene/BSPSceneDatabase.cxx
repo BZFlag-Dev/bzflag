@@ -160,7 +160,7 @@ void			BSPSceneDatabase::insertStatic(int level,
       back = node;
       break;
   }
-  
+
   // add nodes
   if (front) {
     if (root->front) insertStatic(level+1, root->front, front);

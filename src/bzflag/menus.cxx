@@ -412,7 +412,7 @@ void			FormatMenu::setSelected(int index)
     // change page label
     if (numFormats > NumItems) {
       char msg[50];
-      sprintf(msg, "Page %d of %d\n", newPage + 1, (numFormats + 
+      sprintf(msg, "Page %d of %d\n", newPage + 1, (numFormats +
 						NumItems - 1) / NumItems);
       pageLabel->setString(msg);
     }
@@ -2142,7 +2142,7 @@ void			ServerMenu::setSelected(int index)
     // change page label
     if (servers.getLength() > NumItems) {
       char msg[50];
-      sprintf(msg, "Page %d of %d\n", newPage + 1, (servers.getLength() + 
+      sprintf(msg, "Page %d of %d\n", newPage + 1, (servers.getLength() +
 						NumItems - 1) / NumItems);
       pageLabel->setString(msg);
     }

@@ -52,7 +52,7 @@ double			SolarisMedia::stopwatch(boolean start)
 {
 	struct timeval tv;
 	gettimeofday(&tv, 0);
-	if (start) 
+	if (start)
 	{
 		stopwatchTime = (double)tv.tv_sec + 1.0e-6 * (double)tv.tv_usec;
 		return 0.0;
@@ -162,7 +162,7 @@ boolean			SolarisMedia::openAudio()
 
   // ready to go
   audio_ready = True;
- 
+
   if(DEBUG_SOLARIS)
     fprintf(stderr, "Audio ready.\n");
 

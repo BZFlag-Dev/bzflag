@@ -162,14 +162,14 @@ void			TankSceneNode::addRenderNodes(
     node->sortOrder(above, towards);
   }
 
-  renderer.addRenderNode(node, &gstate);  
+  renderer.addRenderNode(node, &gstate);
 }
 
 void			TankSceneNode::addShadowNodes(
 				SceneRenderer& renderer)
 {
   if (invisible) return;
-  renderer.addShadowNode(&shadowRenderNode);  
+  renderer.addShadowNode(&shadowRenderNode);
 }
 
 void			TankSceneNode::setColorblind(boolean on)
@@ -747,7 +747,7 @@ GLuint			TankSceneNode::LowTankRenderNode::
 {
   if (parts[style] == 0) {
     prepStyle(style);
-    
+
     parts[style] = glGenLists(5);
     glNewList(parts[style] + Body, GL_COMPILE);
       makeBody();
@@ -804,7 +804,7 @@ GLuint			TankSceneNode::MedTankRenderNode::
 {
   if (parts[style] == 0) {
     prepStyle(style);
-    
+
     parts[style] = glGenLists(5);
     glNewList(parts[style] + Body, GL_COMPILE);
       makeBody();
@@ -861,7 +861,7 @@ GLuint			TankSceneNode::HighTankRenderNode::
 {
   if (parts[style] == 0) {
     prepStyle(style);
-    
+
     parts[style] = glGenLists(5);
     glNewList(parts[style] + Body, GL_COMPILE);
       makeBody();

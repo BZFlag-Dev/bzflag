@@ -258,7 +258,7 @@ int main(int argc, char *argv[]) {
   sndformat=AFMT_S16_LE;
 #endif
   int oldFormat = sndformat;
-  if ((ioctl(fd, SNDCTL_DSP_SETFMT, &sndformat)==-1) || 
+  if ((ioctl(fd, SNDCTL_DSP_SETFMT, &sndformat)==-1) ||
       sndformat!=oldFormat) {
     fprintf(stderr, "Format now %d\n", sndformat);
     close(fd);

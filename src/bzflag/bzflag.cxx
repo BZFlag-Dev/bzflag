@@ -1140,7 +1140,7 @@ int WINAPI		WinMain(HINSTANCE, HINSTANCE, LPSTR _cmdLine, int)
   while (isspace(*scan) && *scan != 0) scan++;
   while (*scan) {
     argc++;
-    while (!isspace(*scan) && *scan != 0) scan++;    
+    while (!isspace(*scan) && *scan != 0) scan++;
     while (isspace(*scan) && *scan != 0) scan++;
   }
 
@@ -1177,7 +1177,7 @@ int WINAPI		WinMain(HINSTANCE, HINSTANCE, LPSTR _cmdLine, int)
   while (isspace(*scan) && *scan != 0) scan++;
   while (*scan) {
     argv[argc++] = scan;
-    while (!isspace(*scan) && *scan != 0) scan++;  
+    while (!isspace(*scan) && *scan != 0) scan++;
     if (*scan) *scan++ = 0;
     while (isspace(*scan) && *scan != 0) scan++;
   }
