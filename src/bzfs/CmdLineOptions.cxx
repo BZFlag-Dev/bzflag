@@ -885,7 +885,7 @@ void parse(int argc, char **argv, CmdLineOptions &options)
       options.gameStyle |= int(ShakableGameStyle);
     } else if (strcmp(argv[i], "-synctime") == 0) {
       // client clocks should be synchronized to server clock
-      options.gameStyle |= int(TimeSyncGameStyle);
+      BZDB.set(StateDatabase::BZDB_SYNCTIME, "true");
     } else if (strcmp(argv[i], "-t") == 0) {
       // allow teleporters
       options.useTeleporters = true;

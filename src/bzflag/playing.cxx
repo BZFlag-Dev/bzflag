@@ -4554,7 +4554,7 @@ static void		leaveGame()
   myTank = NULL;
 
   // time goes back to current time if previously constrained by server
-  if (world && !world->allowTimeOfDayAdjust()) {
+  if (BZDB.isTrue(StateDatabase::BZDB_SYNCTIME)) {
     epochOffset = userTimeEpochOffset;
     updateDaylight(epochOffset, *sceneRenderer);
     lastEpochOffset = epochOffset;
@@ -4730,7 +4730,7 @@ static bool		joinGame(const StartupInfo* info,
   // resize background and adjust time (this is needed even if we
   // don't sync with the server)
   sceneRenderer->getBackground()->resize();
-  if (world->allowTimeOfDayAdjust()) {
+  if (!BZDB.isTrue(StateDatabase::BZDB_SYNCTIME)) {
     updateDaylight(epochOffset, *sceneRenderer);
   }
   else {
@@ -4968,9 +4968,9 @@ static void		playingLoop()
     }
 
     // update time of day -- update sun and sky every few seconds
-    if (!BZDB.isSet("fixedTime") || (world && !world->allowTimeOfDayAdjust()))
+    if (!BZDB.isSet("fixedTime") || BZDB.isTrue(StateDatabase::BZDB_SYNCTIME))
       epochOffset += (double)dt;
-    if (!world || world->allowTimeOfDayAdjust())
+    if (!world || !BZDB.isTrue(StateDatabase::BZDB_SYNCTIME))
       epochOffset += (double)(50.0f * dt * clockAdjust);
     if (fabs(epochOffset - lastEpochOffset) >= 4.0) {
       updateDaylight(epochOffset, *sceneRenderer);

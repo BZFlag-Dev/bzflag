@@ -53,7 +53,6 @@ class World {
     bool		allowAntidote() const;
     bool		allowShakeTimeout() const;
     bool		allowShakeWins() const;
-    bool		allowTimeOfDayAdjust() const;
     bool		allowRabbit() const;
     float		getLinearAcceleration() const;
     float		getAngularAcceleration() const;
@@ -243,11 +242,6 @@ inline bool		World::allowShakeTimeout() const
 inline bool		World::allowShakeWins() const
 {
   return (gameStyle & short(ShakableGameStyle)) != 0 && shakeWins != 0;
-}
-
-inline bool		World::allowTimeOfDayAdjust() const
-{
-  return (gameStyle & short(TimeSyncGameStyle)) == 0;
 }
 
 inline bool		World::allowRabbit() const

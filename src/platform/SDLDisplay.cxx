@@ -16,13 +16,31 @@
 #include <stdio.h>
 #include "SDLDisplay.h"
 
+// Cheap hack to write the list of resolutions into a file to aid debugging
+//#define WRITE_RESLIST_TO_FILE
+
+#ifdef WRITE_RESLIST_TO_FILE
+#include <fstream>
+#include "TextUtils.h"
+#endif
+
 static int mx = 0;
 static int my = 0;
 
 SDLDisplay::SDLDisplay()
 {
+#ifdef WRITE_RESLIST_TO_FILE
+  std::fstream f;
+  f.open("bzfres.txt", std::ios::out | std::ios::binary);
+  if (!f.is_open()) //since this is a cheap hack, just bail if it doesn't work
+    exit (-1);
+#endif
   if (SDL_InitSubSystem(SDL_INIT_VIDEO) == -1) {
     printf("Could not initialize SDL Video subsystem: %s.\n", SDL_GetError());
+#ifdef WRITE_RESLIST_TO_FILE
+    f << string_util::format("Could not initialize SDL Video subsystem: %s.\n", SDL_GetError());
+    f.flush();
+#endif
     exit (-1);
   };
   SDL_Rect **modeList
@@ -40,6 +58,9 @@ SDLDisplay::SDLDisplay()
 	  numResolutions++;
   };
   resolutions = new ResInfo*[numResolutions];
+#ifdef WRITE_RESLIST_TO_FILE
+  f << string_util::format("%d", numResolutions) << "\n";
+#endif
 
   if ((modeList != (SDL_Rect **) 0) && (modeList != (SDL_Rect **) -1)) {
     char name[80];
@@ -58,12 +79,19 @@ SDLDisplay::SDLDisplay()
       if (w == 640 && h == 480)
 	defaultResolutionIndex = j;
       j++;
+#ifdef WRITE_RESLIST_TO_FILE
+  f << name << "\n";
+#endif
     }
   } else {
     // if no modes then make default
     resolutions[0] = new ResInfo ("default", 640, 480, 0);
   }
   
+#ifdef WRITE_RESLIST_TO_FILE
+  f.flush();
+  f.close();
+#endif
   // register modes
   initResolutions(resolutions, numResolutions, defaultResolutionIndex);
 
