@@ -72,7 +72,6 @@ bool VotingArbiter::poll(std::string player, std::string playerRequesting, pollA
   
   // you have to forget the current poll before another can be spawned
   if (this->isPollOpen()) {
-    std::cout << "/poll was called and a poll is already open?" << std::endl;
     return false;
   }
 
@@ -82,7 +81,6 @@ bool VotingArbiter::poll(std::string player, std::string playerRequesting, pollA
   // see if the poller is in the list
   tooSoon = isPollerWaiting(playerRequesting);
   if (tooSoon) {
-    std::cout << "/poll was called and the requesting poller already asked?? [" << playerRequesting << "]" << std::endl;
     return false;
   }
   
@@ -127,7 +125,10 @@ bool VotingArbiter::closePoll(void)
   if (this->isPollClosed()) {
     return true;
   }
-  _startTime = TimeKeeper::getSunExplodeTime();
+  // set starting time to exactly current time minus necessary vote time
+  _startTime = TimeKeeper::getCurrent();
+  _startTime += -(_voteTime);
+
   return true;
 }
       
@@ -193,6 +194,8 @@ bool VotingArbiter::isPollSuccessful(void) const
   if (votes < _votesRequired) {
     return false;
   }
+
+  //  std::cout << "Percentage successful is " << ((double)votes * (double)100.0 / (double)_maxVotes) << " with " << votes << " votes and " << _maxVotes << "max votes required" << std::endl;
 
   // were there enough votes?
   if (((double)votes * (double)100.0 / (double)_maxVotes) > (double)_votePercentage) {
