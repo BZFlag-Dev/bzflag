@@ -35,6 +35,9 @@ usage ( ) {
 [ ! "x$3" = "x" ] && cvsweb="$3" || cvsweb="."
 [ ! "x$4" = "x" ] && cvsmeth="$4" || cvsmeth="checkout"
 
+# set umask
+umask 002
+
 # make sure to set CVSROOT if unset
 CVSROOT="${CVSROOT:-$USER@cvs1:/cvsroot/$project}"
 
