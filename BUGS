@@ -1,6 +1,9 @@
 recent bugs
 ------------
 
+- On a Team Flag Capture, got explosion, without any jump, at xmission.
+  Same thing happens to others at same time.
+
 - list server includes counts for players running on non-public servers on
   the same machine on different ports
 
