@@ -3002,7 +3002,15 @@ static void		handleServerMessage(bool human, uint16_t code,
         firstLife = false;
         mainWindow->warpMouse();
         hud->setAltitudeTape(World::getWorld()->allowJumping());
+      } else if (tank->getPlayerType() == ComputerPlayer) {
+        for (int r = 0; r < numRobots; r++) {
+	  if (robots[r]->getId() == playerIndex) {
+	    robots[r]->restart(pos,forward);
+	    break;
+	  }
+	}
       }
+
       tank->setStatus(PlayerState::Alive);
       tank->move(pos, forward);
       tank->setVelocity(zero);
