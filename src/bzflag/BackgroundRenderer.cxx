@@ -427,7 +427,7 @@ void			BackgroundRenderer::renderSkyAndGround(
 
   if (renderer.useQuality() > 0) {
     drawSky(renderer);
-    drawGround(renderer);
+    drawGround();
   }
   else {
     // low detail -- draw as damn fast as ya can, ie cheat.  use glClear()
@@ -478,7 +478,7 @@ void			BackgroundRenderer::render(SceneRenderer& renderer)
   drawGroundGrid(renderer);
 
   if (!blank) {
-    if (doTeamBases) drawTeamBases(renderer);
+    if (doTeamBases) drawTeamBases();
 
     if (doShadows && shadowsVisible) drawGroundShadows(renderer);
 
@@ -493,7 +493,7 @@ void			BackgroundRenderer::render(SceneRenderer& renderer)
       // light the mountains (so that they get dark when the sun goes down).
       // don't do zbuffer test since they occlude all drawn before them and
       // are occluded by all drawn after.
-      if (mountainsVisible) drawMountains(renderer);
+      if (mountainsVisible) drawMountains();
 
       // draw clouds
       if (cloudsVisible) {
@@ -605,7 +605,7 @@ void			BackgroundRenderer::drawSky(SceneRenderer& renderer)
   glPopMatrix();
 }
 
-void			BackgroundRenderer::drawGround(SceneRenderer&)
+void			BackgroundRenderer::drawGround()
 {
   // draw ground
   if (invert) glColor3fv(groundColorInv[styleIndex]);
@@ -666,7 +666,7 @@ void			BackgroundRenderer::drawGroundGrid(
   glEnd();
 }
 
-void			BackgroundRenderer::drawTeamBases(SceneRenderer&)
+void			BackgroundRenderer::drawTeamBases(void)
 {
   teamBasesGState.setState();
   teamBasesList.execute();
@@ -820,7 +820,7 @@ void			BackgroundRenderer::drawGroundReceivers(
   glPopMatrix();
 }
 
-void			BackgroundRenderer::drawMountains(SceneRenderer&)
+void			BackgroundRenderer::drawMountains(void)
 {
   glColor3f(1.0f, 1.0f, 1.0f);
   for (int i = 0; i < numMountainTextures; i++) {

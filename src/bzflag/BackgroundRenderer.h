@@ -48,12 +48,12 @@ class BackgroundRenderer {
 
   protected:
     void		drawSky(SceneRenderer&);
-    void		drawGround(SceneRenderer&);
+    void		drawGround(void);
     void		drawGroundGrid(SceneRenderer&);
-    void		drawTeamBases(SceneRenderer&);
+    void		drawTeamBases(void);
     void		drawGroundShadows(SceneRenderer&);
     void		drawGroundReceivers(SceneRenderer&);
-    void		drawMountains(SceneRenderer&);
+    void		drawMountains(void);
 
     void		notifyStyleChange(SceneRenderer&);
 
