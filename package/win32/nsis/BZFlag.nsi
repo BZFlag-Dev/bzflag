@@ -11,21 +11,21 @@
 
 ; Main Installer Options
 Name "BZFlag"
-Icon ..\..\src\bzflag\bzflag.ico
+Icon ..\..\..\src\bzflag\bzflag.ico
 WindowIcon On
 EnabledBitmap "EnableCheck.bmp"
 DisabledBitmap "DisableCheck.bmp"
 Caption "BZFlag ${VER_MAJOR}${VER_MINOR}: Fighting Crush Vallkilry - Setup"
 
 ; The file to write
-OutFile "..\..\bin\BZFlag_${VER_MAJOR}${VER_MINOR}.exe"
+OutFile "..\..\..\bin\BZFlag_${VER_MAJOR}${VER_MINOR}.exe"
 
 ; The default installation directory
 InstallDir $PROGRAMFILES\BZFlag${VER_MAJOR}${VER_MINOR}
 
 ; Show the lisense
 LicenseText "Please read our following license before installing:"
-LicenseData ..\..\LICENSE
+LicenseData ..\..\..\LICENSE
 
 ; Registry key to check for directory (so if you install again, it will 
 ; overwrite the old one automatically)
@@ -44,18 +44,18 @@ Section "BZFlag (required)"
 	; Set output path to the installation directory.
 	SetOutPath $INSTDIR
 	; Put file there
-	File ..\..\bin\bzflag.exe
-	File ..\..\bin\bzfls.exe
-	File ..\..\bin\bzfs.exe
+	File ..\..\..\bin\bzflag.exe
+	File ..\..\..\bin\bzfls.exe
+	File ..\..\..\bin\bzfs.exe
 
 	; make the data dir
 	SetOutPath $INSTDIR\data
-	File ..\..\data\*.*	
-	File ..\..\misc\hix.bzw	
+	File ..\..\..\data\*.*	
+	File ..\..\..\misc\hix.bzw	
 
 	; make the doc dir
 	SetOutPath $INSTDIR\doc
-	File ..\..\doc\*.*
+	File ..\..\..\doc\*.*
 	File ReadMe.win32.html
 	File license.txt
 
