@@ -278,8 +278,8 @@ void FontManager::drawString(float x, float y, float z, int faceID, float size,
       getPulseColor(color, color);
     // render text
     if (endSend - startSend > 0) {
-      const char* tmpText
-	= text.substr(startSend, (endSend - startSend)).c_str();
+			std::string testStr = text.substr(startSend, (endSend - startSend));
+      const char* tmpText = testStr.c_str();//text.substr(startSend, (endSend - startSend)).c_str();
       // get substr width, we may need it a couple times
       width = pFont->getStrLength(scale, tmpText);
       glPushMatrix();
@@ -313,8 +313,7 @@ void FontManager::drawString(float x, float y, float z, int faceID, float size,
     // and do something about it
     if (endSend != (int)text.size()) {
       tookCareOfANSICode = false;
-      std::string tmpText
-	= text.substr(endSend, (text.find("m", endSend) - endSend) + 1);
+      std::string tmpText = text.substr(endSend, (text.find("m", endSend) - endSend) + 1);
       // colors
       for (int i = 0; i < 8; i++) {
 	if (tmpText == ColorStrings[i]) {
