@@ -208,20 +208,20 @@ bool CacheManager::loadIndex()
 bool CacheManager::saveIndex()
 {
   std::sort(records.begin(), records.end(), compareUsedDate);
-  
+
   std::string tmpIndexName = indexName + ".tmp";
-  
+
   FILE* file = fopen(tmpIndexName.c_str(), "w");
   if (file == NULL) {
     return false;
   }
-  
+
   for (unsigned int i = 0; i < records.size(); i++) {
     const CacheRecord& rec = records[i];
-    fprintf(file, "%s\n%u %u %u %s\n\n", rec.url.c_str(),
+    fprintf(file, "%s\n%u %lu %lu %s\n\n", rec.url.c_str(),
             rec.size, rec.date, rec.usedDate, rec.key.c_str());
   }
-  
+
   fclose(file);
 
   return (rename(tmpIndexName.c_str(), indexName.c_str()) == 0);
