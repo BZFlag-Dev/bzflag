@@ -90,6 +90,10 @@ SOURCE=..\src\game\Flag.cxx
 # End Source File
 # Begin Source File
 
+SOURCE=..\src\game\global.cxx
+# End Source File
+# Begin Source File
+
 SOURCE=..\src\game\Ping.cxx
 # End Source File
 # Begin Source File
