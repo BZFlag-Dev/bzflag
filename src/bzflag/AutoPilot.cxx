@@ -134,8 +134,9 @@ bool	avoidBullet(float &rotation, float &speed)
       else
         speed = 0.5f;
     }
+    return true;
   }
-  return true;
+  return false;
 }
 
 bool	stuckOnWall(float &rotation, float &speed)
