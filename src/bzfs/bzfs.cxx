@@ -138,6 +138,10 @@ struct PlayerInfo {
     PlayerState state;
     // player's id
     PlayerId id;
+    // have we gotten our real id?
+    int knowId;
+    // what an old client thinks its id is
+    PlayerId perceivedId;
     // type of player
     PlayerType type;
     // player's pseudonym
@@ -1498,18 +1502,24 @@ static void pwrite(int playerIndex, const void* b, int l)
   }
 }
 
-static void broadcastMessage(uint16_t code,
-					int len, const void* msg)
+// a hack to handle old clients
+// old clients use <serverip><serverport><number> as id
+// where serverip etc is as seen from the client
+// new clients use <clientip><clientport><number> as id
+// where clientip etc is as seen from the server
+// here we patch up the msg to what the old client wants to see
+static void patchPlayerId(int playerIndex, void *msg)
 {
-  // send message to everyone
-  char msgbuf[MaxPacketLen];
-  void* buf = msgbuf;
-  buf = nboPackUShort(buf, uint16_t(len));
-  buf = nboPackUShort(buf, code);
-  buf = nboPackString(buf, msg, len);
-  for (int i = 0; i < maxPlayers; i++)
-    if (player[i].state != PlayerInLimbo)
-      pwrite(i, msgbuf, len + 4);
+  PlayerId id;
+  
+  fprintf(stderr, "patchPlayerId fixup: %08x:%04x:%04x -> ",
+      ntohl(*(int *)msg), ntohs(*((short *)msg + 2)), ntohs(*((short *)msg + 3)));
+  id.unpack(msg);
+  if (id == player[playerIndex].id) {
+    player[playerIndex].perceivedId.pack(msg);
+  }
+  fprintf(stderr, "%08x:%04x:%04x\n",
+      ntohl(*(int *)msg), ntohs(*((short *)msg + 2)), ntohs(*((short *)msg + 3)));
 }
 
 static void directMessage(int playerIndex, uint16_t code,
@@ -1524,7 +1534,39 @@ static void directMessage(int playerIndex, uint16_t code,
   buf = nboPackUShort(buf, uint16_t(len));
   buf = nboPackUShort(buf, code);
   buf = nboPackString(buf, msg, len);
+  switch (code) {
+    case MsgScoreOver:
+    case MsgAddPlayer:
+    case MsgRemovePlayer:
+    case MsgGrabFlag:
+    case MsgDropFlag:
+    case MsgCaptureFlag:
+    case MsgShotBegin:
+    case MsgShotEnd:
+    case MsgScore:
+    case MsgAlive:
+    case MsgTeleport:
+    case MsgPlayerUpdate:
+    case MsgGMUpdate:
+      patchPlayerId(playerIndex, &msgbuf[4]);
+      ;;
+    case MsgFlagUpdate:
+      patchPlayerId(playerIndex, &msgbuf[12]);
+      ;;
+    case MsgMessage:
+      patchPlayerId(playerIndex, &msgbuf[4]);
+      patchPlayerId(playerIndex, &msgbuf[12]);
+      ;;
+  }
   pwrite(playerIndex, msgbuf, len + 4);
+}
+
+static void broadcastMessage(uint16_t code, int len, const void *msg)
+{
+  // send message to everyone
+  for (int i = 0; i < maxPlayers; i++)
+    if (player[i].state != PlayerInLimbo)
+      directMessage(i, code, len, msg);
 }
 
 static void sendFlagUpdate(int flagIndex, int index = -1)
@@ -1893,6 +1935,7 @@ static boolean serverStart()
     player[i].outmsgSize = 0;
     player[i].outmsgOffset = 0;
     player[i].outmsgCapacity = 0;
+    player[i].knowId = False;
     reconnect[i].waiting = False;
     memset((char *)&reconnect[i].addr, 0, sizeof(reconnect[i].addr)); 
   }
@@ -3639,7 +3682,10 @@ static void handleCommand(int t, uint16_t code,
     case MsgEnter: {		// player joining
       // data: id, type, team, name, email
       uint16_t type, team;
-      buf = player[t].id.unpack(buf);
+      buf = player[t].perceivedId.unpack(buf);
+      player[t].id.number = player[t].perceivedId.number;
+      player[t].id.port = reconnect[t].addr.sin_port;
+      memcpy(&player[t].id.serverHost, &reconnect[t].addr.sin_addr.s_addr, sizeof(player[t].id.serverHost));
       buf = nboUnpackUShort(buf, type);
       buf = nboUnpackUShort(buf, team);
       player[t].type = PlayerType(type);
@@ -3647,7 +3693,8 @@ static void handleCommand(int t, uint16_t code,
       buf = nboUnpackString(buf, player[t].callSign, CallSignLen);
       buf = nboUnpackString(buf, player[t].email, EmailLen);
       addPlayer(t);
-      UMDEBUG("Player %s [%d] has joined\n", player[t].callSign, t);
+      UMDEBUG("Player %s [%d] has joined (%8lx:%d:%d)\n",
+	  player[t].callSign, t, ntohl(*(int *)&player[t].id.serverHost), ntohs(player[t].id.port), ntohs(player[t].id.number));
       break;
     }
 
@@ -4703,7 +4750,7 @@ int main(int argc, char** argv)
     FD_ZERO(&write_set);
     for (i = 0; i < maxPlayers; i++) {
       if (player[i].fd != NotConnected) {
-	fprintf(stderr,"fdset fd,read %i %lx\n",player[i].fd,read_set);
+	//fprintf(stderr,"fdset fd,read %i %lx\n",player[i].fd,read_set);
 	FD_SET(player[i].fd, &read_set);
 
 	if (player[i].outmsgSize > 0)
