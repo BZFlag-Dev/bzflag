@@ -91,8 +91,8 @@ public:
 
   void		render(SceneRenderer&);
 
-  void    setTabCompletionRotation(int);
-  int     getTabCompletionRotation();
+  void		setTabCompletionRotation(int);
+  int		getTabCompletionRotation() const;
 
   void		setHunting(bool _hunting);
   bool		getHunting() const;

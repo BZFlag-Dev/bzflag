@@ -365,12 +365,12 @@ void			HUDRenderer::setAlert(int index, const char* string,
   }
 }
 
-int			HUDRenderer::getTabCompletionRotation()
+int			HUDRenderer::getTabCompletionRotation() const
 {
   return tabCompletion;
 }
 
-void      HUDRenderer::setTabCompletionRotation(int what)
+void			HUDRenderer::setTabCompletionRotation(int what)
 {
   tabCompletion = what;
 }
