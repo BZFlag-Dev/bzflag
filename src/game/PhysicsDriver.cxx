@@ -353,7 +353,7 @@ void PhysicsDriver::print(std::ostream& out, int /*level*/)
 
   if (angularVel != 0.0f) {
     const float* ap = angularPos;
-    out << "  angular " << angularVel << " "
+    out << "  angular " << (angularVel / (M_PI * 2.0f)) << " "
 			<< ap[0] << " " << ap[1] << std::endl;
   }
 
