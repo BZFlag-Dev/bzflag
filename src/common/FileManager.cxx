@@ -131,6 +131,7 @@ std::ostream*			FileManager::createDataOutStream(
     }
   } else {
     // try absolute path
+    int successMkdir = 0;
     int i = 0;
 #ifndef _WIN32
     // create all directories above the file
@@ -138,7 +139,11 @@ std::ostream*			FileManager::createDataOutStream(
       struct stat statbuf;
       if (!(stat(filename.substr(0, i).c_str(), &statbuf) == 0 &&
 	    (S_ISDIR(statbuf.st_mode)))) {
-	mkdir(filename.substr(0, i).c_str(), 0777);
+	successMkdir = mkdir(filename.substr(0, i).c_str(), 0777);
+	if (successMkdir != 0) {
+	  perror("Unable to make directory");
+	  return NULL;
+	}
       }
     }
 #else
@@ -147,7 +152,11 @@ std::ostream*			FileManager::createDataOutStream(
       struct stat statbuf;
       if (!(stat(filename.substr(0, i).c_str(), &statbuf) == 0 &&
 	    (_S_IFDIR & statbuf.st_mode))) {
-		_mkdir(filename.substr(0, i).c_str());
+	successMkdir = _mkdir(filename.substr(0, i).c_str());
+	if (successMkdir != 0) {
+	  perror("Unable to make directory");
+	  return NULL;
+	}
       }
     }
 
