@@ -73,7 +73,6 @@ endif
 
 if MACOS
 LDADD =	\
-	../date/buildDate.o		\
 	../net/libNet.a			\
 	../common/libCommon.a		\
 	../obstacle/libObstacle.a	\
@@ -90,7 +89,6 @@ LDADD =	\
 #	$(ALIBS)
 else
 LDADD =	\
-	../date/buildDate.o		\
 	../net/libNet.a			\
 	../common/libCommon.a		\
 	../obstacle/libObstacle.a	\
@@ -107,6 +105,8 @@ LDADD =	\
 endif
 
 AM_CPPFLAGS = $(X_CFLAGS)
+
+bzflag_LDFLAGS = ../date/buildDate.o
 
 bzflag.res: bzflag.rc bzflag.ico
 	windres -i bzflag.rc -o bzflag.res -O coff

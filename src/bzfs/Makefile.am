@@ -24,7 +24,7 @@ bzfs_SOURCES = \
 	bzfs.h
 
 LDADD = \
-	../date/buildDate.o	\
 	../net/libNet.a		\
 	../common/libCommon.a
 
+bzfs_LDFLAGS = ../date/buildDate.o

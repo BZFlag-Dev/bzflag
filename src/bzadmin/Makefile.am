@@ -41,7 +41,8 @@ ServerLink.cxx: @top_srcdir@/src/bzflag/ServerLink.cxx
 	cp -a @top_srcdir@/src/bzflag/ServerLink.cxx .
 
 LDADD = \
-	../date/buildDate.o		\
 	../net/libNet.a			\
 	../common/libCommon.a		\
 	@CURSES_LIB@
+
+bzadmin_LDFLAGS = ../date/buildDate.o
