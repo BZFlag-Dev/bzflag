@@ -10,5 +10,5 @@ libSceneDB_a_SOURCES =			\
 	ZSceneDatabase.cxx		\
 	BSPSceneDatabase.cxx    
 
-EXTRA_DIST = /
+EXTRA_DIST = \
 	README
