@@ -1,6 +1,18 @@
 recent bugs
 ------------
 
+- bump code, in LocalPlayer, seem to cause problem while travelling on hix
+  lateral highway. Whenever you go off the world limit (possibly intersecting
+  the wall), you will immediately moved at the wall height, without checking
+  if there is an obstacle behind you and the moved position or if the
+  destination point is safe from collision point of view. It actually happens
+  on hix.
+  You should not be moved inside a building. My impression is that the written
+  code is now too simple for handling all of the cases. Lets for instance have
+  a little gallery, with its height just allowing the tank to passing. If you
+  collide with a little elevated box, the tank head will go into the gallery
+  top. Better to remove IMHO, until someone get a better idea. 
+
 - bzfrelay is probably broken for current net protocol. Should be just
   forwarding TCP and UDP packets on a single port.
 
