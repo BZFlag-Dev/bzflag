@@ -4069,7 +4069,7 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
       player[t].lasttimestamp = timestamp;
       player[t].lastupdate = now;
 
-      //Don't kick players up to 10 seconds after a world parm has changed, 5-> BZBB var?
+      //Don't kick players up to 10 seconds after a world parm has changed,
       static const float heightFudge = 1.1f; /* 10% */
       if (now - lastWorldParmChange > 10.0f) {
 	float gravity = BZDB.eval(StateDatabase::BZDB_GRAVITY);
@@ -4112,9 +4112,9 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
 	}
 
 	// Speed problems occur around flag drops, so don't check for a short period of time
-	// after player drops a flag. Currently 1/4 second, adjust as needed. Maybe BZDB?
+	// after player drops a flag. Currently 2 second, adjust as needed.
 
-	if (TimeKeeper::getCurrent() - player[t].lastFlagDropTime >= 0.25f) {
+	if (TimeKeeper::getCurrent() - player[t].lastFlagDropTime >= 2.0f) {
 	  // check for highspeed cheat; if inertia is enabled, skip test for now
 	  if (clOptions->linearAcceleration == 0.0f) {
 	    // Doesn't account for going fast backwards, or jumping/falling
