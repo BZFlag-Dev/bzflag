@@ -3677,7 +3677,7 @@ static void parseCommand(const char *message, int t)
 
   } else {
     char reply[MessageLen];
-    sprintf(reply, "Unknown command [%s]", message+1);
+    snprintf(reply, MessageLen, "Unknown command [%s]", message + 1);
     sendMessage(ServerPlayer, t, reply, true);
   }
 }
