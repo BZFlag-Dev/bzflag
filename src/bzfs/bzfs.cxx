@@ -3532,7 +3532,7 @@ static void dropFlag(int playerIndex, float pos[3])
   if (pos[1] < -size || pos[1] > size)
     pos[1] = 0.0;
   if (pos[2] > maxWorldHeight)
-    pos[2] = 0.0;
+    pos[2] = maxWorldHeight;
 
   assert(world != NULL);
   WorldInfo::ObstacleLocation* container;
