@@ -586,8 +586,6 @@ object. An example would be:
 .br
 \fB  spin\fR angle nx ny nz    # (\fBrepeatable\fR)
 .br
-\fB  phydrv\fR example_phydrv  # assign a physics driver
-.br
 \fBend\fR
 .br
 
