@@ -23,6 +23,7 @@
 #include <iostream>
 #include <math.h>
 
+const std::string StateDatabase::BZDB_ANGLETOLERANCE    = std::string("_angleTolerance");
 const std::string StateDatabase::BZDB_ANGULARAD         = std::string("_angularAd");
 const std::string StateDatabase::BZDB_BOXHEIGHT         = std::string("_boxHeight");
 const std::string StateDatabase::BZDB_BURROWDEPTH       = std::string("_burrowDepth");
@@ -50,6 +51,7 @@ const std::string StateDatabase::BZDB_MGUNADLIFE 	= std::string("_mGunAdLife");
 const std::string StateDatabase::BZDB_MUZZLEFRONT	= std::string("_muzzleFront");
 const std::string StateDatabase::BZDB_MUZZLEHEIGHT	= std::string("_muzzleHeight");
 const std::string StateDatabase::BZDB_OBESEFACTOR       = std::string("_obeseFactor");
+const std::string StateDatabase::BZDB_POSITIONTOLERANCE = std::string("_positionTolerance");
 const std::string StateDatabase::BZDB_PYRBASE           = std::string("_pyrBase");
 const std::string StateDatabase::BZDB_PYRHEIGHT         = std::string("_pyrHeight");
 const std::string StateDatabase::BZDB_RELOADTIME        = std::string("_reloadTime");
@@ -80,6 +82,7 @@ const std::string StateDatabase::BZDB_THIEFADSHOTVEL    = std::string("_thiefAdS
 const std::string StateDatabase::BZDB_THIEFTINYFACTOR   = std::string("_thiefTinyFactor");
 const std::string StateDatabase::BZDB_THIEFVELAD        = std::string("_thiefVelAd");
 const std::string StateDatabase::BZDB_TINYFACTOR        = std::string("_tinyFactor");
+const std::string StateDatabase::BZDB_UPDATETHROTTLERATE= std::string("_updateThrottleRate");
 const std::string StateDatabase::BZDB_VELOCITYAD        = std::string("_velocityAd");
 const std::string StateDatabase::BZDB_WALLHEIGHT        = std::string("_wallHeight");
 const std::string StateDatabase::BZDB_WIDEANGLEANG      = std::string("_wideAngleAng");

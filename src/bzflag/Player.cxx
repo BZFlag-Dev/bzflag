@@ -21,8 +21,6 @@
 #include "playing.h"
 
 // for dead reckoning
-static const float	PositionTolerance = 0.01f;	// meters
-static const float	AngleTolerance = 0.01f;		// radians
 static const float	MaxUpdateTime = 1.0f;		// seconds
 
 //
@@ -461,15 +459,18 @@ bool			Player::isDeadReckoningWrong() const
   if (predictedPos[2] < groundLimit) return true;
 
   // client side throttling
-  const int throttleRate = 30; // should be configurable
+  const int throttleRate = BZDB->eval(StateDatabase::BZDB_UPDATETHROTTLERATE);
   const float minUpdateTime = throttleRate > 0 ? 1.0f / throttleRate : 0.0f;
   if (TimeKeeper::getTick() - inputTime < minUpdateTime) return false;
 
   // see if position and azimuth are close enough
-  if (fabsf(state.pos[0] - predictedPos[0]) > PositionTolerance) return true;
-  if (fabsf(state.pos[1] - predictedPos[1]) > PositionTolerance) return true;
-  if (fabsf(state.pos[2] - predictedPos[2]) > PositionTolerance) return true;
-  if (fabsf(state.azimuth - predictedAzimuth) > AngleTolerance) return true;
+  float positionTolerance = BZDB->eval(StateDatabase::BZDB_POSITIONTOLERANCE);
+  if (fabsf(state.pos[0] - predictedPos[0]) > positionTolerance) return true;
+  if (fabsf(state.pos[1] - predictedPos[1]) > positionTolerance) return true;
+  if (fabsf(state.pos[2] - predictedPos[2]) > positionTolerance) return true;
+
+  float angleTolerance = BZDB->eval(StateDatabase::BZDB_ANGLETOLERANCE);
+  if (fabsf(state.azimuth - predictedAzimuth) > angleTolerance) return true;
 
   // prediction is good enough
   return false;

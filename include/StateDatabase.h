@@ -164,6 +164,7 @@ public:
    */
   static StateDatabase* getInstance();
 
+  static const std::string	BZDB_ANGLETOLERANCE;
   static const std::string	BZDB_ANGULARAD;
   static const std::string	BZDB_BOXHEIGHT;
   static const std::string	BZDB_BURROWDEPTH;
@@ -191,6 +192,7 @@ public:
   static const std::string	BZDB_MUZZLEFRONT;
   static const std::string	BZDB_MUZZLEHEIGHT;
   static const std::string	BZDB_OBESEFACTOR;
+  static const std::string	BZDB_POSITIONTOLERANCE;
   static const std::string      BZDB_PYRBASE;
   static const std::string      BZDB_PYRHEIGHT;
   static const std::string	BZDB_RELOADTIME;
@@ -221,6 +223,7 @@ public:
   static const std::string	BZDB_THIEFADRATE;
   static const std::string	BZDB_THIEFADLIFE;
   static const std::string	BZDB_TINYFACTOR;
+  static const std::string	BZDB_UPDATETHROTTLERATE;
   static const std::string	BZDB_VELOCITYAD;
   static const std::string	BZDB_WALLHEIGHT;
   static const std::string	BZDB_WIDEANGLEANG;

@@ -15,6 +15,7 @@
 
 
 GlobalDBItem				globalDBItems[] = {
+	{ "_angleTolerance",		"0.01",				false, StateDatabase::Locked},
 	{ "_angularAd",			"1.5",				false, StateDatabase::Locked},
 	{ "_boxHeight",			"6.0*_muzzleHeight",		false, StateDatabase::Locked},
 	{ "_burrowAngularAd",		"0.55",				false, StateDatabase::Locked},
@@ -42,6 +43,7 @@ GlobalDBItem				globalDBItems[] = {
 	{ "_muzzleFront",		"_tankRadius + 0.1",		false, StateDatabase::Locked},
 	{ "_muzzleHeight",		"1.57",				false, StateDatabase::Locked},
 	{ "_obeseFactor",		"2.5",				false, StateDatabase::Locked},
+	{ "_positionTolerance",         "0.01",				false, StateDatabase::Locked},
 	{ "_pyrBase",			"4.0*_tankHeight",		false, StateDatabase::Locked},
 	{ "_pyrHeight",                 "5.0*_tankHeight",		false, StateDatabase::Locked},
 	{ "_reloadTime",		"_shotRange / _shotSpeed",	false, StateDatabase::Locked},
@@ -69,6 +71,7 @@ GlobalDBItem				globalDBItems[] = {
 	{ "_thiefTinyFactor",		"0.5",				false, StateDatabase::Locked},
 	{ "_thiefVelAd",		"1.67",				false, StateDatabase::Locked},
 	{ "_tinyFactor",		"0.4",				false, StateDatabase::Locked},
+	{ "_updateThrottleRate",        "30.0",                         false, StateDatabase::Locked},
 	{ "_velocityAd",		"1.5",				false, StateDatabase::Locked},
 	{ "_wallHeight",		"3.0*_tankHeight",              false, StateDatabase::Locked},
 	{ "_wideAngleAng",		"1.745329", 			false, StateDatabase::Locked},
