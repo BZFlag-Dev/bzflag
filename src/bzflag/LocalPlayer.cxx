@@ -308,6 +308,7 @@ LocalPlayer::LocalPlayer(const PlayerId& id,
 			 const char* name, const char* email) :
   BaseLocalPlayer(id, name, email),
   gettingSound(true),
+  server(ServerLink::getServer()),
   location(Dead),
   firingStatus(Deceased),
   flagShakingTime(0.0f),
@@ -378,7 +379,7 @@ void			LocalPlayer::doUpdate(float dt)
       wasPaused = true;
     }
     if (TimeKeeper::getCurrent() -  pauseTime > BZDB.eval(StateDatabase::BZDB_PAUSEDROPTIME)) {
-      ServerLink::getServer()->sendDropFlag(getPosition());
+      server->sendDropFlag(getPosition());
       pauseTime = TimeKeeper::getSunExplodeTime();
     }
 
@@ -415,7 +416,7 @@ void			LocalPlayer::doUpdate(float dt)
     flagShakingTime -= dt;
     if (flagShakingTime <= 0.0f) {
       flagShakingTime = 0.0f;
-      ServerLink::getServer()->sendDropFlag(getPosition());
+      server->sendDropFlag(getPosition());
     }
   }
 }
@@ -785,7 +786,7 @@ void			LocalPlayer::doUpdateMotion(float dt)
 
       // save teleport info
       setTeleport(lastTime, source, target);
-      ServerLink::getServer()->sendTeleport(source, target);
+      server->sendTeleport(source, target);
       playLocalSound(SFX_TELEPORT);
     }
   }
@@ -837,7 +838,7 @@ void			LocalPlayer::doUpdateMotion(float dt)
       (flagAntidotePos[1] - newPos[1]) *
       (flagAntidotePos[1] - newPos[1]);
     if (dist < (getRadius() + BZDBCache::flagRadius) * (getRadius() + BZDBCache::flagRadius))
-      ServerLink::getServer()->sendDropFlag(getPosition());
+      server->sendDropFlag(getPosition());
   }
   // don't forget to wave
   if (antidoteFlag)
@@ -1110,11 +1111,11 @@ void			LocalPlayer::setPause(bool pause)
   if (isAlive()) {
     if (pause && !isPaused()) {
       setStatus(getStatus() | short(PlayerState::Paused));
-      ServerLink::getServer()->sendPaused(true);
+      server->sendPaused(true);
     }
     else if (!pause && isPaused()) {
       setStatus(getStatus() & ~short(PlayerState::Paused));
-      ServerLink::getServer()->sendPaused(false);
+      server->sendPaused(false);
     }
   }
 }
@@ -1162,7 +1163,7 @@ bool			LocalPlayer::fireShot()
   // make shot and put it in the table
   shots[i] = new LocalShotPath(firingInfo);
 
-  ServerLink::getServer()->sendBeginShot(firingInfo);
+  server->sendBeginShot(firingInfo);
   if (firingInfo.flagType == Flags::ShockWave)
     playLocalSound(SFX_SHOCK);
   else if (firingInfo.flagType == Flags::Laser)
@@ -1424,7 +1425,7 @@ void			LocalPlayer::changeScore(short deltaWins,
     flagShakingWins -= deltaWins;
     if (flagShakingWins <= 0) {
       flagShakingWins = 0;
-      ServerLink::getServer()->sendDropFlag(getPosition());
+      server->sendDropFlag(getPosition());
     }
   }
 }

@@ -20,6 +20,7 @@
 #include "Ray.h"
 #include "BzfEvent.h"
 #include "World.h"
+#include "ServerLink.h"
 
 class Obstacle;
 
@@ -146,6 +147,7 @@ protected:
   void		doForces(float dt, float* velocity, float& angVel);
   LocalShotPath**	shots;
   bool          gettingSound;
+  ServerLink*	server;
 
 private:
   Location		location;
