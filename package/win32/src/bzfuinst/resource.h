@@ -13,4 +13,13 @@
 #define IDD_MAIN                        101
 #define IDC_TOTAL_METER                 1000
 
-// ex: shiftwidth=2 tabstop=8
+
+/* ex: shiftwidth=2 tabstop=8
+ * Local Variables: ***
+ * mode:C++ ***
+ * tab-width: 8 ***
+ * c-basic-offset: 2 ***
+ * indent-tabs-mode: t ***
+ * End: ***
+ */
+

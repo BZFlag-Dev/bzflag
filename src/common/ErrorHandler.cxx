@@ -49,4 +49,13 @@ void			printError(const std::string &fmt, const std::vector<std::string> *parms)
   else fprintf(stderr, "%s\n", msg.c_str());
 #endif
 }
-// ex: shiftwidth=2 tabstop=8
+
+/* ex: shiftwidth=2 tabstop=8
+ * Local Variables: ***
+ * mode:C++ ***
+ * tab-width: 8 ***
+ * c-basic-offset: 2 ***
+ * indent-tabs-mode: t ***
+ * End: ***
+ */
+

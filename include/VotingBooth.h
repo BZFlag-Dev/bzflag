@@ -37,11 +37,11 @@
  * two default results of any poll if unspecified.
  */
 class VotingBooth
-{
- private:
-
+{	
+private:
+  
   static const short int RETRACTED_VOTE;
-
+  
   /** question that is voted upon (optionally provided)
    */
   std::string _question;
@@ -55,7 +55,7 @@ class VotingBooth
    */
   std::map<std::string, short int> _vote;
 
- protected:
+protected:
 
  public:
 
@@ -116,4 +116,12 @@ VotingBooth *YesNoVotingBooth(std::string question = "");
 #else
 class VotingBooth;
 #endif
-// ex: shiftwidth=2 tabstop=8
+
+/* ex: shiftwidth=2 tabstop=8
+ * Local Variables: ***
+ * mode:C++ ***
+ * tab-width: 8 ***
+ * c-basic-offset: 2 ***
+ * indent-tabs-mode: t ***
+ * End: ***
+ */

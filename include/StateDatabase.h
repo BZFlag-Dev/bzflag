@@ -308,4 +308,13 @@ std::string& operator >> (std::string& src, StateDatabase::Expression& dst);
 std::ostream& operator << (std::ostream& dst, const StateDatabase::Expression& src);
 
 #endif // BZF_STATE_DATABASE_H
-// ex: shiftwidth=2 tabstop=8
+
+/* ex: shiftwidth=2 tabstop=8
+ * Local Variables: ***
+ * mode:C++ ***
+ * tab-width: 8 ***
+ * c-basic-offset: 2 ***
+ * indent-tabs-mode: t ***
+ * End: ***
+ */
+

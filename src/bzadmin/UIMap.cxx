@@ -27,3 +27,12 @@ UIMap& UIMap::getInstance() {
 UIAdder::UIAdder(const string& name, UICreator creator) {
   UIMap::getInstance()[name] = creator;
 }
+
+/* ex: shiftwidth=2 tabstop=8
+ * Local Variables: ***
+ * mode:C++ ***
+ * tab-width: 8 ***
+ * c-basic-offset: 2 ***
+ * indent-tabs-mode: t ***
+ * End: ***
+ */

@@ -1318,4 +1318,13 @@ const int		WinDisplay::buttonMap[] = {
 	BzfKeyEvent::NoButton,	// VK_OEM_CLEAR
 	BzfKeyEvent::NoButton	// no VK_ code
 };
-// ex: shiftwidth=2 tabstop=8
+
+/* ex: shiftwidth=2 tabstop=8
+ * Local Variables: ***
+ * mode:C++ ***
+ * tab-width: 8 ***
+ * c-basic-offset: 2 ***
+ * indent-tabs-mode: t ***
+ * End: ***
+ */
+

@@ -417,4 +417,13 @@ static const GLfloat	stars[][6] = {
 			{ 0.37f, 0.37f, 0.37f, 0.19701055f, -0.56322998f, 0.80247045f },
 			{ 0.37f, 0.37f, 0.37f, 0.17973220f, -0.12412395f, -0.97585326f }
 			};
-// ex: shiftwidth=2 tabstop=8
+
+/* ex: shiftwidth=2 tabstop=8
+ * Local Variables: ***
+ * mode:C++ ***
+ * tab-width: 8 ***
+ * c-basic-offset: 2 ***
+ * indent-tabs-mode: t ***
+ * End: ***
+ */
+

@@ -52,4 +52,13 @@ void			Ray::getPoint(float t, float p[3]) const
   p[1] = o[1] + t * d[1];
   p[2] = o[2] + t * d[2];
 }
-// ex: shiftwidth=2 tabstop=8
+
+/* ex: shiftwidth=2 tabstop=8
+ * Local Variables: ***
+ * mode:C++ ***
+ * tab-width: 8 ***
+ * c-basic-offset: 2 ***
+ * indent-tabs-mode: t ***
+ * End: ***
+ */
+

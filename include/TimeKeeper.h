@@ -114,4 +114,13 @@ inline float		TimeKeeper::getSeconds(void) const
 }
 
 #endif // BZF_TIME_KEEPER_H
-// ex: shiftwidth=2 tabstop=8
+
+/* ex: shiftwidth=2 tabstop=8
+ * Local Variables: ***
+ * mode:C++ ***
+ * tab-width: 8 ***
+ * c-basic-offset: 2 ***
+ * indent-tabs-mode: t ***
+ * End: ***
+ */
+

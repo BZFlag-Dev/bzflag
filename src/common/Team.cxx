@@ -99,4 +99,13 @@ void			Team::setColors(TeamColor team,
   radarColor[int(team)][1] = radar[1];
   radarColor[int(team)][2] = radar[2];
 }
-// ex: shiftwidth=2 tabstop=8
+
+/* ex: shiftwidth=2 tabstop=8
+ * Local Variables: ***
+ * mode:C++ ***
+ * tab-width: 8 ***
+ * c-basic-offset: 2 ***
+ * indent-tabs-mode: t ***
+ * End: ***
+ */
+

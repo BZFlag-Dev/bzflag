@@ -758,4 +758,13 @@ void			RadarRenderer::initContext(void* self)
 {
   ((RadarRenderer*)self)->doInitContext();
 }
-// ex: shiftwidth=2 tabstop=8
+
+/* ex: shiftwidth=2 tabstop=8
+ * Local Variables: ***
+ * mode:C++ ***
+ * tab-width: 8 ***
+ * c-basic-offset: 2 ***
+ * indent-tabs-mode: t ***
+ * End: ***
+ */
+

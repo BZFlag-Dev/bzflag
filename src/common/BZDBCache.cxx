@@ -49,3 +49,11 @@ void BZDBCache::serverCallback(const std::string& name, void *)
     tankHeight = BZDB->eval(StateDatabase::BZDB_TANKHEIGHT);
 }
 
+/* ex: shiftwidth=2 tabstop=8
+ * Local Variables: ***
+ * mode:C++ ***
+ * tab-width: 8 ***
+ * c-basic-offset: 2 ***
+ * indent-tabs-mode: t ***
+ * End: ***
+ */

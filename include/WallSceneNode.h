@@ -116,4 +116,13 @@ inline const GLfloat*	WallSceneNode::getPlane() const
 }
 
 #endif // BZF_WALL_SCENE_NODE_H
-// ex: shiftwidth=2 tabstop=8
+
+/* ex: shiftwidth=2 tabstop=8
+ * Local Variables: ***
+ * mode:C++ ***
+ * tab-width: 8 ***
+ * c-basic-offset: 2 ***
+ * indent-tabs-mode: t ***
+ * End: ***
+ */
+

@@ -350,3 +350,12 @@ std::ostream& operator<<(std::ostream& out, MD5 md5)
 {
   return out << md5.hexdigest();
 }
+
+/* ex: shiftwidth=2 tabstop=8
+ * Local Variables: ***
+ * mode:C++ ***
+ * tab-width: 8 ***
+ * c-basic-offset: 2 ***
+ * indent-tabs-mode: t ***
+ * End: ***
+ */

@@ -155,4 +155,13 @@ void			BzfDisplay::initResolutions(ResInfo** _resolutions,
   currentResolution = _currentResolution;
   defaultResolution = currentResolution;
 }
-// ex: shiftwidth=2 tabstop=8
+
+/* ex: shiftwidth=2 tabstop=8
+ * Local Variables: ***
+ * mode:C++ ***
+ * tab-width: 8 ***
+ * c-basic-offset: 2 ***
+ * indent-tabs-mode: t ***
+ * End: ***
+ */
+

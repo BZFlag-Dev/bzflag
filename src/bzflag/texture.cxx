@@ -143,4 +143,13 @@ OpenGLTexFont		TextureFont::getTextureFont(Font index, bool required)
 
   return font[index] ? *(font[index]) : OpenGLTexFont();
 }
-// ex: shiftwidth=2 tabstop=8
+
+/* ex: shiftwidth=2 tabstop=8
+ * Local Variables: ***
+ * mode:C++ ***
+ * tab-width: 8 ***
+ * c-basic-offset: 2 ***
+ * indent-tabs-mode: t ***
+ * End: ***
+ */
+

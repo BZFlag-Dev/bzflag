@@ -238,4 +238,13 @@ GLfloat3Array&		GLfloat3Array::operator=(const GLfloat3Array& a)
   }
   return *this;
 }
-// ex: shiftwidth=2 tabstop=8
+
+/* ex: shiftwidth=2 tabstop=8
+ * Local Variables: ***
+ * mode:C++ ***
+ * tab-width: 8 ***
+ * c-basic-offset: 2 ***
+ * indent-tabs-mode: t ***
+ * End: ***
+ */
+

@@ -339,4 +339,13 @@ void			SGIMedia::audioSleep(
   select(maxFd, &commandSelectSet, checkLowWater ? &audioSelectSet : NULL,
 			NULL, (struct timeval*)(endTime >= 0.0 ? &tv : NULL));
 }
-// ex: shiftwidth=2 tabstop=8
+
+/* ex: shiftwidth=2 tabstop=8
+ * Local Variables: ***
+ * mode:C++ ***
+ * tab-width: 8 ***
+ * c-basic-offset: 2 ***
+ * indent-tabs-mode: t ***
+ * End: ***
+ */
+

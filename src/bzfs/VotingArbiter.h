@@ -348,4 +348,13 @@ inline TimeKeeper VotingArbiter::getStartTime(void) const
 #else
 class VotingArbiter;
 #endif
-// ex: shiftwidth=2 tabstop=8
+
+/* ex: shiftwidth=2 tabstop=8
+ * Local Variables: ***
+ * mode:C++ ***
+ * tab-width: 8 ***
+ * c-basic-offset: 2 ***
+ * indent-tabs-mode: t ***
+ * End: ***
+ */
+

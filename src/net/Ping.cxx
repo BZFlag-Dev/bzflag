@@ -345,7 +345,16 @@ char*			PingPacket::unpackHex16(char* buf, uint16_t& v)
   v = d;
   return buf;
 }
-// ex: shiftwidth=2 tabstop=8
+
+/* ex: shiftwidth=2 tabstop=8
+ * Local Variables: ***
+ * mode:C++ ***
+ * tab-width: 8 ***
+ * c-basic-offset: 2 ***
+ * indent-tabs-mode: t ***
+ * End: ***
+ */
+
 
 void			 PingPacket::zeroPlayerCounts()
 {

@@ -84,3 +84,12 @@ void OptionParser::printUsage(ostream& os, const string& progName) const {
     os<<iter->second->usage<<" ";
   os<<usageSuf;
 }
+
+/* ex: shiftwidth=2 tabstop=8
+ * Local Variables: ***
+ * mode:C++ ***
+ * tab-width: 8 ***
+ * c-basic-offset: 2 ***
+ * indent-tabs-mode: t ***
+ * End: ***
+ */

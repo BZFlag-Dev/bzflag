@@ -36,4 +36,13 @@
 	glVertex3f(4.940f, 0.0f, 1.660f);
 	glVertex3f(4.940f, -0.126f, 1.530f);
       glEnd();
-// ex: shiftwidth=2 tabstop=8
+
+/* ex: shiftwidth=2 tabstop=8
+ * Local Variables: ***
+ * mode:C++ ***
+ * tab-width: 8 ***
+ * c-basic-offset: 2 ***
+ * indent-tabs-mode: t ***
+ * End: ***
+ */
+

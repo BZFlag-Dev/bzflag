@@ -82,3 +82,12 @@ GlobalDBItem				globalDBItems[] = {
 	{ "_wideAngleAng",		"1.745329", 			false, StateDatabase::Locked},
 	{ "_worldSize",			"800.0",			false, StateDatabase::Locked},
 };
+
+/* ex: shiftwidth=2 tabstop=8
+ * Local Variables: ***
+ * mode:C++ ***
+ * tab-width: 8 ***
+ * c-basic-offset: 2 ***
+ * indent-tabs-mode: t ***
+ * End: ***
+ */
