@@ -290,8 +290,9 @@ int OpenGLTexture::getBestFormat(int width, int height, const GLvoid* pixels)
   // SGI IMPACT and 3Dfx systems don't support GL_INTENSITY.
   const char* const glRenderer = (const char*)glGetString(GL_RENDERER);
   static bool noIntensity =
-	(strncmp(glRenderer, "IMPACT", 6) == 0) ||
-	(strncmp(glRenderer, "3Dfx", 4) == 0);
+    ((glRenderer == NULL) ||
+     (strncmp(glRenderer, "IMPACT", 6) == 0) ||
+     (strncmp(glRenderer, "3Dfx", 4) == 0));
   if (!noIntensity) {
     bool useIntensity = false;
     if (hasTextureExt && useLuminance) {
