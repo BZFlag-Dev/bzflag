@@ -891,19 +891,27 @@ private:
 const ServerCommandKey::Mode ServerCommandKey::nonAdminModes [7]= {LagStats, IdleStats, FlagHistory, Report, Password, Register, Identify};
 
 // note the important numModes and numNonAdminModes values inited here
-ServerCommandKey::ServerCommandKey(): mode(Kick), startIndex(-1), numModes(30), numNonAdminModes(7)
+ServerCommandKey::ServerCommandKey(): mode(Kick), startIndex(-1), numModes(34), numNonAdminModes(7)
 {
   if (!admin) mode = nonAdminModes[0];
 }
 
 void			ServerCommandKey::nonAdminInit()
 {
-  mode = nonAdminModes[0];
-  updatePrompt();
+  // if we are in a non admin mode stay there 
+	bool inNonAdminCommand = false;
+  for (int i = 0; i < numNonAdminModes; i ++){
+	  if (nonAdminModes[i] == mode){
+		  inNonAdminCommand = true;
+		  break;
+	  }
+  }
+  if (!inNonAdminCommand) 
+		mode = nonAdminModes[0];
+	updatePrompt();
 }
 void			ServerCommandKey::adminInit()
 {
-  mode = Kick;
   updatePrompt();
 }
 
@@ -1010,8 +1018,8 @@ void			ServerCommandKey::updatePrompt()
     case Setpass: hud->setComposing("Set your password [enter pass]:", true); break;
     case Grouplist :  hud->setComposing("List Groups", false); break;
     case Groupperms :  hud->setComposing("List Permissions", false); break;
-    case Vote : hud->setComposing("Vote", false); break;
-    case Poll : hud->setComposing("Call a Poll", false); break;
+    case Vote : hud->setComposing("Vote:", true); break;
+    case Poll : hud->setComposing("Call a Poll:", true); break;
     case Veto : hud->setComposing("Cancel a Poll", false); break;
 
     default: /* shouldn't happen */ break;
