@@ -534,7 +534,7 @@ int Record::getSize ()
 
 int Record::getRate ()
 {
-  return (RecordUpdateRate / (RRtime)1000000);
+  return (int)(RecordUpdateRate / (RRtime)1000000);
 }
 
 

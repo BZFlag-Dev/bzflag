@@ -202,9 +202,6 @@ copy ..\..\src\bzfs\debug\*.exe ..\..\*.exe
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\src\bzfs\CaptureReplay.cxx">
-			</File>
-			<File
 				RelativePath="..\..\src\bzfs\CmdLineOptions.cxx">
 				<FileConfiguration
 					Name="Release|Win32">
@@ -474,6 +471,9 @@ copy ..\..\src\bzfs\debug\*.exe ..\..\*.exe
 				RelativePath="..\..\src\bzfs\PlayerInfo.cxx">
 			</File>
 			<File
+				RelativePath="..\..\src\bzfs\RecordReplay.cxx">
+			</File>
+			<File
 				RelativePath="..\..\src\bzfs\SpawnPosition.cxx">
 			</File>
 			<File
@@ -612,9 +612,6 @@ copy ..\..\src\bzfs\debug\*.exe ..\..\*.exe
 				RelativePath="..\include\CallbackList.h">
 			</File>
 			<File
-				RelativePath="..\..\src\bzfs\CaptureReplay.h">
-			</File>
-			<File
 				RelativePath="..\..\src\bzfs\CmdLineOptions.h">
 			</File>
 			<File
@@ -691,6 +688,9 @@ copy ..\..\src\bzfs\debug\*.exe ..\..\*.exe
 			</File>
 			<File
 				RelativePath="..\include\Protocol.h">
+			</File>
+			<File
+				RelativePath="..\..\src\bzfs\RecordReplay.h">
 			</File>
 			<File
 				RelativePath="..\include\ShotUpdate.h">

@@ -104,7 +104,7 @@
 				RelativePath="..\..\src\game\CommandsStandard.cxx">
 			</File>
 			<File
-				RelativePath="..\..\src\game\GetCacheDir.cxx">
+				RelativePath="..\..\src\game\DirectoryNames.cxx">
 			</File>
 			<File
 				RelativePath="..\..\src\game\NetHandler.cxx">
@@ -121,7 +121,7 @@
 				RelativePath="..\..\include\CommandsStandard.h">
 			</File>
 			<File
-				RelativePath="..\..\include\GetCacheDir.h">
+				RelativePath="..\..\include\DirectoryNames.h">
 			</File>
 			<File
 				RelativePath="..\..\include\NetHandler.h">
