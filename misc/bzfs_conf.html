@@ -26,14 +26,16 @@
 			function ableControls()
 			{
 				var mainform = document.forms["main"];
+				var ctf = (mainform.game_style.value == "ctf") || (mainform.ctf_map_citysize.checked);
 				var freeForAll = (mainform.game_style.value == "ffa");
 				var rabbit = (mainform.game_style.value == "rc");
 				mainform.allow_teleporters.disabled = mainform.world_type.checked;
 				mainform.world_file.disabled = !mainform.world_type.checked;
 				mainform.randomly_orient_buildings.disabled = mainform.world_type.checked;
 				mainform.random_building_heights.disabled = mainform.world_type.checked;
-				mainform.balanced_ctf_map.disabled = (mainform.world_type.checked) || freeForAll || rabbit;
+				mainform.balanced_ctf_map.disabled = (mainform.world_type.checked) || !ctf || freeForAll || rabbit;
 				mainform.rabbit_selection.disabled = !rabbit;
+				mainform.ctf_map_citysize.disabled = !(mainform.balanced_ctf_map.checked) || (mainform.balanced_ctf_map.disabled);
 
 				return true;
 			}
@@ -284,7 +286,7 @@
 
 					if ((!mainform.balanced_ctf_map.disabled) && mainform.balanced_ctf_map.checked) {
 						d.writeln("#Balanced capture the flag world<br/>");
-						d.writeln("-cr<br/><br/>");
+						d.writeln("-cr" + mainform.ctf_map_citysize + "<br/><br/>");
 					}
 
 					if (mainform.world_size.value != 400) {
@@ -694,7 +696,21 @@
 							</td>
 							<td>Balanced CTF Map</td>
 							<td>
-								<input type="checkbox" name="balanced_ctf_map" title="Whether or not buildings are generated in a balanced fashion"/>
+								<input type="checkbox" name="balanced_ctf_map" title="Whether or not buildings are generated in a balanced fashion" onClick="return ableControls()" disabled />
+								<select name="ctf_map_citysize" value="5" title="Building Density" onClick="return ableControls()" disabled>
+									<option value="5">5 (default)</option>
+									<option value="0">0</option>
+									<option value="1">1</option>
+									<option value="2">2</option>
+									<option value="3">3</option>
+									<option value="4">4</option>
+									<option value="5">5</option>
+									<option value="6">6</option>
+									<option value="7">7</option>
+									<option value="8">8</option>
+									<option value="9">9</option>
+								</select> density level
+
 							</td>
 						</tr>
 						<tr>
