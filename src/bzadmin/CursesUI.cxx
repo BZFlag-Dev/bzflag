@@ -161,22 +161,6 @@ bool CursesUI::checkCommand(string& str) {
     }
     return false;
 
-    // we don't have the IP in 1.9
-#ifdef V17
-
-    // ban target
-  case KEY_F(6):
-    if (targetIter != players.end()) {
-      cmd = "/ban ";
-      cmd += inet_ntoa(targetIter->first.serverHost);
-      targetIter = players.find(me);
-      updateCmdWin();
-      updateTargetWin();
-    }
-    return false;
-
-#endif
-
     // tab - autocomplete
   case '\t':
     i = cmd.find_last_of(" \t");
