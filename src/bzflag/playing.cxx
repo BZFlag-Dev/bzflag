@@ -96,6 +96,7 @@ static const char copyright[] = "Copyright (c) 1993 - 2004 Tim Riker";
 #include "ForceFeedback.h"
 #include "TankGeometryMgr.h"
 #include "motd.h"
+#include "URLManager.h"
 
 // versioning that makes us recompile every time
 #include "version.h"
@@ -3508,28 +3509,57 @@ static World*		makeWorld(ServerLink* serverLink)
   char msg[MaxPacketLen];
   std::string worldPath;
   bool isTemp = false;
+  char *cacheURL = NULL;
+  std::string url;
 
   connectStatusCB("Requesting World Hash...");
 
   // ask for the hash of the world (ignoring all other messages)
   serverLink->send(MsgWantWHash, 0, NULL);
-  if (serverLink->read(code, len, msg, 5000) > 0) {
-    if (code != MsgWantWHash) return NULL;
-
-    char *hexDigest = new char[len];
-    nboUnpackString(msg, hexDigest, len);
-    isTemp = hexDigest[0] == 't';
-
-    worldPath = getCacheDirName();
-    worldPath += hexDigest;
-    worldPath += ".bwc";
-    cachedWorld = FILEMGR.createDataInStream(worldPath, true);
-    delete[] hexDigest;
+  if (serverLink->read(code, len, msg, 5000) <= 0)
+    return NULL;
+  if (code == MsgCacheURL) {
+    cacheURL = new char[len];
+    nboUnpackString(msg, cacheURL, len);
+    url = cacheURL;
+    if (serverLink->read(code, len, msg, 5000) <= 0)
+      return NULL;
   }
+
+  if (code != MsgWantWHash) return NULL;
+
+  char *hexDigest = new char[len];
+  nboUnpackString(msg, hexDigest, len);
+  url += hexDigest;
+  url += ".bwc";
+  isTemp = hexDigest[0] == 't';
+
+  worldPath = getCacheDirName();
+  worldPath += hexDigest;
+  worldPath += ".bwc";
+  cachedWorld = FILEMGR.createDataInStream(worldPath, true);
+  delete[] hexDigest;
 
   connectStatusCB("Downloading World...");
 
   char* worldDatabase;
+  bool  gotFromURL = false;
+  if ((cachedWorld == NULL) && cacheURL && !isTemp) {
+    unsigned int readSize;
+    gotFromURL = URLManager::instance().getURL(url, (void **) &worldDatabase,
+					       readSize);
+    if (gotFromURL) {
+      cleanWorldCache();
+      std::ostream* cacheOut
+	= FILEMGR.createDataOutStream(worldPath, true, true);
+      if (cacheOut != NULL) {
+	cacheOut->write(worldDatabase, readSize);
+	delete cacheOut;
+      }
+      cachedWorld = FILEMGR.createDataInStream(worldPath, true);
+      URLManager::instance().freeURLData((void *)worldDatabase);
+    }
+  }
   if (cachedWorld == NULL) {
     // ask for world and wait for it (ignoring all other messages)
     nboPackUInt(msg, 0);
@@ -3856,13 +3886,13 @@ static bool		joinGame(const StartupInfo* info,
 	break;
       }
 
-			// you got banned
-			case ServerLink::Refused:{
-				std::string banMessage = "Server Refused connection due to ban: ";
-				banMessage += serverLink->getRejectionMessage();
-			printError(banMessage);
-		break;
-				}
+	// you got banned
+      case ServerLink::Refused:{
+	std::string banMessage = "Server Refused connection due to ban: ";
+	banMessage += serverLink->getRejectionMessage();
+	printError(banMessage);
+	break;
+      }
 
       case ServerLink::Rejected:
 	// the server is probably full or the game is over.  if not then

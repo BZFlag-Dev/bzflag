@@ -3243,6 +3243,11 @@ static void handleCommand(int t, const void *rawbuf)
 
     case MsgWantWHash: {
       void *buf, *bufStart = getDirectMessageBuffer();
+      if (clOptions->cacheURL.size() > 0) {
+	buf = nboPackString(bufStart, clOptions->cacheURL.c_str(),
+			    clOptions->cacheURL.size() + 1);
+	directMessage(t, MsgCacheURL, (char*)buf-(char*)bufStart, bufStart);
+      }
       buf = nboPackString(bufStart, hexDigest, strlen(hexDigest)+1);
       directMessage(t, MsgWantWHash, (char*)buf-(char*)bufStart, bufStart);
       break;

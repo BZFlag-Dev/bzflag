@@ -187,6 +187,8 @@ struct CmdLineOptions
   /* city options */
   int			citySize;
   int			numTeamFlags[NumTeams];
+
+  std::string           cacheURL;
 };
 
 

@@ -52,6 +52,7 @@ const char *usageString =
 "[-ban ip{,ip}*] "
 "[-banfile <filename>] "
 "[-c] "
+"[-cache <url prefix>] "
 "[-conf <filename>] "
 "[-cr] "
 "[-d] "
@@ -136,6 +137,7 @@ const char *extraUsageString =
 "\t-ban ip{,ip}*: ban players based on ip address\n"
 "\t-banfile: specify a file to load and store the banlist in\n"
 "\t-c: capture-the-flag style game,\n"
+"\t-cache: url to get binary formatted world,\n"
 "\t-conf: configuration file\n"
 "\t-cr: capture-the-flag style game with random world\n"
 "\t-d: increase debugging level\n"
@@ -553,6 +555,9 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
           options.numTeamFlags[t] += 1;
 	teamFlagsAdded = true;
       }
+    } else if (strcmp(argv[i], "-cache") == 0) {
+      checkArgc(1, i, argc, argv[i]);
+      options.cacheURL = argv[i];
     } else if (strcmp(argv[i], "-conf") == 0) {
       checkFromWorldFile(argv[i], fromWorldFile);
       checkArgc(1, i, argc, argv[i]);
