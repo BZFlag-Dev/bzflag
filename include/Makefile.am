@@ -87,4 +87,4 @@ MAINTAINERCLEANFILES = \
 	Makefile.in
 
 all-local:
-	touch version.h
+	touch ${srcdir}/version.h
