@@ -504,6 +504,15 @@ bool			HUDuiTypeIn::doKeyPress(const BzfKeyEvent& key)
 	cursorPos++;
       return true;
 
+    case BzfKeyEvent::Home:
+      cursorPos=0;
+      return true;
+
+    case BzfKeyEvent::End:
+      cursorPos = string.length();
+      return true;
+
+
     case BzfKeyEvent::Delete:
       if (cursorPos < (int)string.length()) {
 	cursorPos++;
