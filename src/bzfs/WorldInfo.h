@@ -74,7 +74,8 @@ public:
 
   void addZone(const CustomZone *zone);
   void addEntryZone( QualifierList &qualifiers, WorldFileLocation *zone );
-  void addWeapon(const FlagType *type, const float *origin, float direction,
+  void addWeapon(const FlagType *type, const float *origin,
+                 float direction, float tilt,
 		 float initdelay, const std::vector<float> &delay, TimeKeeper &sync);
   void addWaterLevel (float level, const BzMaterial* matref);
 

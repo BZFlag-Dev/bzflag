@@ -16,6 +16,7 @@
 /* system headers */
 #include <sstream>
 #include <string>
+#include <math.h>
 
 /* local implementation headers */
 #include "WorldWeapons.h"
@@ -29,6 +30,7 @@ CustomWeapon::CustomWeapon()
   pos[0] = pos[1] = pos[2] = 0.0f;
   rotation = 0.0f;
   size[0] = size[1] = size[2] = 1.0f;
+  tilt = 0.0f;
   initdelay = 10.0f;
   delay.push_back(10.0f);
   type = Flags::Null;
@@ -67,16 +69,26 @@ bool CustomWeapon::read(const char *cmd, std::istream& input) {
     if (type == NULL)
       return false;
   }
-  else if (!WorldFileLocation::read(cmd, input))
-      return false;
+  else if (strcmp(cmd, "tilt") == 0) {
+    if (!(input >> tilt)) {
+      std::cout << "weapon tilt requires a value" << std::endl;
+    }
+    // convert to radians
+    tilt = (float)(tilt * (M_PI / 180.0));
+  }
+  else if (!WorldFileLocation::read(cmd, input)) {
+    return false;
+  }
 
   return true;
 }
 
 
-void CustomWeapon::writeToWorld(WorldInfo* world) const {
-  world->addWeapon(type, pos, rotation, initdelay, delay, sync);
+void CustomWeapon::writeToWorld(WorldInfo* world) const
+{
+  world->addWeapon(type, pos, rotation, tilt, initdelay, delay, sync);
 }
+
 
 // Local variables: ***
 // mode:C++ ***

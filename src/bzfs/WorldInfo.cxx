@@ -92,10 +92,11 @@ void WorldInfo::addZone(const CustomZone *zone)
   entryZones.addZone( zone );
 }
 
-void WorldInfo::addWeapon(const FlagType *type, const float *origin, float direction,
+void WorldInfo::addWeapon(const FlagType *type, const float *origin,
+                          float direction, float tilt,
 			  float initdelay, const std::vector<float> &delay, TimeKeeper &sync)
 {
-  worldWeapons.add(type, origin, direction, initdelay, delay, sync);
+  worldWeapons.add(type, origin, direction, tilt, initdelay, delay, sync);
 }
 
 void WorldInfo::addWaterLevel (float level, const BzMaterial* matref)

@@ -85,9 +85,10 @@ void WorldWeapons::fire()
       firingInfo.shot.player = ServerPlayer;
       memmove(firingInfo.shot.pos, w->origin, 3 * sizeof(float));
       float shotSpeed = BZDB.eval(StateDatabase::BZDB_SHOTSPEED);
-      firingInfo.shot.vel[0] = shotSpeed * cosf(w->direction);
-      firingInfo.shot.vel[1] = shotSpeed * sinf(w->direction);
-      firingInfo.shot.vel[2] = 0.0f;
+      const float tiltFactor = cosf(w->tilt);
+      firingInfo.shot.vel[0] = shotSpeed * tiltFactor * cosf(w->direction);
+      firingInfo.shot.vel[1] = shotSpeed * tiltFactor * sinf(w->direction);
+      firingInfo.shot.vel[2] = shotSpeed * sinf(w->tilt);
       firingInfo.shot.id = worldShotId++;
       if (worldShotId > 30) { // Maximum of 30 world shots
 	    worldShotId = 0;
@@ -112,7 +113,8 @@ void WorldWeapons::fire()
 }
 
 
-void WorldWeapons::add(const FlagType *type, const float *origin, float direction,
+void WorldWeapons::add(const FlagType *type, const float *origin,
+                       float direction, float tilt,
 		       float initdelay, const std::vector<float> &delay,
 		       TimeKeeper &sync)
 {
@@ -120,6 +122,7 @@ void WorldWeapons::add(const FlagType *type, const float *origin, float directio
   w->type = type;
   memmove(&w->origin, origin, 3*sizeof(float));
   w->direction = direction;
+  w->tilt = tilt;
   w->nextTime = sync;
   w->nextTime += initdelay;
   w->initDelay = initdelay;

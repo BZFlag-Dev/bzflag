@@ -41,6 +41,7 @@ class CustomWeapon : public WorldFileLocation {
     float initdelay;
     std::vector<float> delay;
     FlagType *type;
+    float tilt;
     static TimeKeeper sync;
 };
 

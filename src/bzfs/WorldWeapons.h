@@ -35,7 +35,10 @@ public:
   WorldWeapons();
   ~WorldWeapons();
   void fire();
-  void add( const FlagType *type, const float *origin, float direction, float initdelay, const std::vector<float> &delay, TimeKeeper &sync);
+  void add(const FlagType *type, const float *origin,
+           float direction, float tilt,
+           float initdelay, const std::vector<float> &delay,
+           TimeKeeper &sync);
   float nextTime();
   void clear();
   unsigned int count(); // returns the number of world weapons
@@ -48,7 +51,8 @@ private:
     const FlagType	*type;
     float		origin[3];
     float		direction;
-    float       initDelay;
+    float		tilt;
+    float       	initDelay;
     std::vector<float>  delay;
     TimeKeeper		nextTime;
     int			nextDelay;
