@@ -1,13 +1,13 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_INIT(src/bzflag/bzflag.cxx)
-AM_INIT_AUTOMAKE(bzflag, 1.9a0)
+AM_INIT_AUTOMAKE(bzflag, 1.7g3)
 AM_CONFIG_HEADER(include/config.h)
 
 # version number: aabbccddd, aa=major, bb=minor, cc=revision, ddd=build.
 # increase build number for every potentially released build.
 # must change this in AM_INIT_AUTOMAKE and MSDev project too.
-VERSIONNUM=10900000
+VERSIONNUM=10707003
 AC_SUBST(VERSIONNUM)
 
 #Checks for programs.
