@@ -74,6 +74,7 @@ noinst_HEADERS =		\
 	TriWallSceneNode.h	\
 	udpnetwork.h		\
 	ViewFrustum.h		\
+	VotingBooth.h		\
 	WallObstacle.h		\
 	WallSceneNode.h		\
 	WordFilter.h		\

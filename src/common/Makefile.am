@@ -17,6 +17,7 @@ libCommon_a_SOURCES  =			\
 	PlayerState.cxx			\
 	StateDatabase.cxx		\
 	WordFilter.cxx			\
+	VotingBooth.cxx			\
 	bzsignal.c			\
 	global.cxx
 

@@ -129,29 +129,24 @@ class VotingBooth
 
   /** returns the number of voters
    */
-  inline unsigned long int getVoterCount(void) {
+  inline unsigned long int getVoterCount(void) const {
     return _voterCount;
   }
 
   /** returns the number of responses available
    */
-  inline unsigned long int getResponseCount(void) {
+  inline unsigned long int getResponseCount(void) const {
     return _responseCount;
   }
 
+  inline const std::string getPollName(void) const {
+    return _question;
+  }
 
 };
 
-
-VotingBooth *getYesNoVotingBooth(std::string question = "")
-{
-  VotingBooth *poll = new VotingBooth(question);
-
-  poll->addResponse("no");
-  poll->addResponse("yes");
-
-  return poll;
-}
+/* convenience func that sets up and returns a default poll */
+VotingBooth *YesNoVotingBooth(std::string question = "");
 
 #else
 class VotingBooth;

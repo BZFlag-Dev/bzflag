@@ -39,6 +39,19 @@ VotingBooth::~VotingBooth(void)
   return;
 }
 
+
+/* convenience func that sets up and returns a default poll */
+VotingBooth *YesNoVotingBooth(std::string question)
+{
+  VotingBooth *poll = new VotingBooth(question);
+
+  poll->addResponse("no");
+  poll->addResponse("yes");
+
+  return poll;
+}
+
+
 vote_t VotingBooth::addResponse(const std::string response)
 {
   if (response.size() == 0) {
@@ -141,7 +154,7 @@ unsigned long int VotingBooth::getTotalVotes(void) const {
 #if UNIT_TEST
 int main (int argc, char *argv[])
 {
-  VotingBooth *poll = getYesNoVotingBooth();
+  VotingBooth *poll = YesNoVotingBooth();
 
   poll->vote("blah1", 0);
   poll->vote("blah2", 0);
