@@ -1,6 +1,8 @@
 recent bugs
 ------------
 
+- client does not check that loading config was successful, assumes true
+
 - resetting key map is not implemented
 
 - first help page does not grab keybindings
