@@ -138,6 +138,9 @@ msgstr "Radar Shot Len'th:"
 #msgid "Radar & Panel Size:"
 #msgstr ""
 
+#msgid "Mouse Box Size:"
+#msgstr ""
+
 msgid "Page Down for next page" 
 msgstr "Page Down fo' next page"
 

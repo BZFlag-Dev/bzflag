@@ -138,6 +138,9 @@ msgstr "Longueur des tirs sur le radar"
 #msgid "Radar & Panel Size:"
 #msgstr ""
 
+#msgid "Mouse Box Size:"
+#msgstr ""
+
 msgid "Page Down for next page"
 msgstr "Page Suiv pour la page suivante"
 

@@ -137,6 +137,9 @@ msgstr "r@d4r Sh0T L3nGTh:"
 msgid "Radar & Panel Size:"
 msgstr "r@d4r & p@n31 51z3:"
 
+#msgid "Mouse Box Size:"
+#msgstr "m0u53 80x 51z3:"
+
 msgid "Page Down for next page" 
 msgstr "P493 DOWN Phor nexT P493"
 
