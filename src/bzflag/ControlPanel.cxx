@@ -322,13 +322,13 @@ void			ControlPanel::render(SceneRenderer& renderer)
       }
 
       if (tabsOnRight) {
-	// draw the tabs on the right side
-	fm.drawString(messageAreaPixels[0] + messageAreaPixels[2] - totalTabWidth + drawnTabWidth + floorf(fontSize * 2.0f),
+	// draw the tabs on the right side (with one letter padding)
+	fm.drawString(messageAreaPixels[0] + messageAreaPixels[2] - totalTabWidth + drawnTabWidth + floorf(fontSize),
 		      messageAreaPixels[1] + messageAreaPixels[3] - floorf(lineHeight + 2.0f) + ay,
 		      0.0f, fontFace, (float)fontSize, (*tabs)[tab]);
       } else {
-	// draw the tabs on the left side
-	fm.drawString(messageAreaPixels[0] + drawnTabWidth + floorf(fontSize * 2.0f),
+	// draw the tabs on the left side (with one letter padding)
+	fm.drawString(messageAreaPixels[0] + drawnTabWidth + floorf(fontSize),
 		      messageAreaPixels[1] + messageAreaPixels[3] - floorf(lineHeight + 2.0f) + ay,
 		      0.0f, fontFace, (float)fontSize, (*tabs)[tab]);
       }
