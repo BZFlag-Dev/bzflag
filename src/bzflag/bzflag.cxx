@@ -738,7 +738,6 @@ int			main(int argc, char** argv)
   }
 #endif
 
-  BZDB.setDebug(true);
   WordFilter *filter = (WordFilter *)NULL;
 
   argv0 = argv[0];
