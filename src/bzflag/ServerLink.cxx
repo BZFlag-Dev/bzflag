@@ -10,6 +10,11 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
+#ifdef _WIN32
+#pragma warning( disable : 4786 )  // Disable stupd VC6 warning message
+#endif
+
+
 #include <string.h>
 #include <sys/types.h>
 #include <ctype.h>

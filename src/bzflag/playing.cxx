@@ -12,6 +12,10 @@
 
 static const char copyright[] = "Copyright (c) 1993 - 2002 Tim Riker";
 
+#ifdef _WIN32
+#pragma warning( disable : 4786 )  // Disable stupd VC6 warning message
+#endif
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>

@@ -9,6 +9,9 @@
  * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
+#ifdef _WIN32
+#pragma warning( disable : 4786 )  // Disable stupd VC6 warning message
+#endif
 
 #include "LocalPlayer.h"
 #include "World.h"
