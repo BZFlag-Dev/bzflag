@@ -52,34 +52,12 @@ void* WorldBuilder::unpack(void* buf)
   if (code != WorldCodeHeader) return NULL;
 
   // read style
-  uint16_t gameStyle, maxPlayers, maxShots, maxFlags,serverMapVersion;
+  uint16_t serverMapVersion;
   buf = nboUnpackUShort(buf, serverMapVersion);
   if (serverMapVersion != mapVersion) {
     DEBUG1 ("WorldBuilder::unpack() bad map version\n");
     return NULL;
   }
-
-  float worldSize;
-  buf = nboUnpackFloat(buf, worldSize);
-  BZDB.set(StateDatabase::BZDB_WORLDSIZE, TextUtils::format("%f", worldSize));
-  buf = nboUnpackUShort(buf, gameStyle);
-  setGameStyle(short(gameStyle));
-  buf = nboUnpackUShort(buf, maxPlayers);
-  setMaxPlayers(int(maxPlayers));
-  buf = nboUnpackUShort(buf, maxShots);
-  setMaxShots(int(maxShots));
-  buf = nboUnpackUShort(buf, maxFlags);
-  setMaxFlags(int(maxFlags));
-  buf = nboUnpackFloat(buf, world->linearAcceleration);
-  buf = nboUnpackFloat(buf, world->angularAcceleration);
-  uint16_t shakeTimeout = 0, shakeWins;
-  buf = nboUnpackUShort(buf, shakeTimeout);
-  setShakeTimeout(0.1f * float(shakeTimeout));
-  buf = nboUnpackUShort(buf, shakeWins);
-  setShakeWins(shakeWins);
-  uint32_t epochOffset;
-  buf = nboUnpackUInt(buf, epochOffset);
-  setEpochOffset(epochOffset);
 
   // decompress
   uint32_t compressedSize, uncompressedSize;
@@ -306,7 +284,7 @@ void* WorldBuilder::unpack(void* buf)
 	buf = nboUnpackFloat(buf, data[7]);
 	buf = nboUnpackFloat(buf, data[8]);
 	buf = nboUnpackFloat(buf, data[9]);
-	if (gameStyle & TeamFlagGameStyle) {
+	if (world->gameStyle & TeamFlagGameStyle) {
 	  BaseBuilding* base = new BaseBuilding(data, data[3], data +4, team);
 	  if (base->isValid()) {
 	    world->basesR.push_back(base);
@@ -416,6 +394,36 @@ void* WorldBuilder::unpack(void* buf)
   delete[] uncompressedWorld;
 
   world->loadCollisionManager();
+
+  return buf;
+}
+
+void* WorldBuilder::gameSetting(void* buf)
+{
+  // read style
+  uint16_t gameStyle, maxPlayers, maxShots, maxFlags;
+
+  float worldSize;
+  buf = nboUnpackFloat(buf, worldSize);
+  BZDB.set(StateDatabase::BZDB_WORLDSIZE, TextUtils::format("%f", worldSize));
+  buf = nboUnpackUShort(buf, gameStyle);
+  setGameStyle(short(gameStyle));
+  buf = nboUnpackUShort(buf, maxPlayers);
+  setMaxPlayers(int(maxPlayers));
+  buf = nboUnpackUShort(buf, maxShots);
+  setMaxShots(int(maxShots));
+  buf = nboUnpackUShort(buf, maxFlags);
+  setMaxFlags(int(maxFlags));
+  buf = nboUnpackFloat(buf, world->linearAcceleration);
+  buf = nboUnpackFloat(buf, world->angularAcceleration);
+  uint16_t shakeTimeout = 0, shakeWins;
+  buf = nboUnpackUShort(buf, shakeTimeout);
+  setShakeTimeout(0.1f * float(shakeTimeout));
+  buf = nboUnpackUShort(buf, shakeWins);
+  setShakeWins(shakeWins);
+  uint32_t epochOffset;
+  buf = nboUnpackUInt(buf, epochOffset);
+  setEpochOffset(epochOffset);
 
   return buf;
 }

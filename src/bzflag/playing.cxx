@@ -3511,10 +3511,18 @@ static World*		makeWorld(ServerLink* serverLink)
   bool isTemp = false;
   char *cacheURL = NULL;
   std::string url;
+  WorldBuilder worldBuilder;
 
   connectStatusCB("Requesting World Hash...");
 
   // ask for the hash of the world (ignoring all other messages)
+  serverLink->send(MsgWantSetting, 0, NULL);
+  if (serverLink->read(code, len, msg, 5000) <= 0)
+    return NULL;
+  if (code != MsgGameSetting)
+    return NULL;
+  worldBuilder.gameSetting(msg);
+
   serverLink->send(MsgWantWHash, 0, NULL);
   if (serverLink->read(code, len, msg, 5000) <= 0)
     return NULL;
@@ -3622,7 +3630,6 @@ static World*		makeWorld(ServerLink* serverLink)
   }
 
   // make world
-  WorldBuilder worldBuilder;
   if (!worldBuilder.unpack(worldDatabase)) {	// world didn't make for some reason
     delete[] worldDatabase;
     return NULL;

@@ -1188,16 +1188,6 @@ static bool defineWorld()
   buf = nboPackUShort(buf, WorldCodeHeaderSize);
   buf = nboPackUShort(buf, WorldCodeHeader);
   buf = nboPackUShort(buf, mapVersion);
-  buf = nboPackFloat(buf, BZDBCache::worldSize);
-  buf = nboPackUShort(buf, clOptions->gameStyle);
-  buf = nboPackUShort(buf, maxPlayers);
-  buf = nboPackUShort(buf, clOptions->maxShots);
-  buf = nboPackUShort(buf, numFlags);
-  buf = nboPackFloat(buf, clOptions->linearAcceleration);
-  buf = nboPackFloat(buf, clOptions->angularAcceleration);
-  buf = nboPackUShort(buf, clOptions->shakeTimeout);
-  buf = nboPackUShort(buf, clOptions->shakeWins);
-  buf = nboPackUInt(buf, 0); // time-of-day will go here
   buf = nboPackUInt(buf, world->getUncompressedSize());
   buf = nboPackUInt(buf, world->getDatabaseSize());
   buf = nboPackString(buf, world->getDatabase(), world->getDatabaseSize());
@@ -2233,6 +2223,27 @@ static void sendWorld(int playerIndex, uint32_t ptr)
   directMessage(playerIndex, MsgGetWorld, (char*)buf-(char*)bufStart, bufStart);
 }
 
+static void sendGameSetting(int playerIndex)
+{
+  void *buf, *bufStart = getDirectMessageBuffer();
+  buf = nboPackFloat(bufStart, BZDBCache::worldSize);
+  buf = nboPackUShort(buf, clOptions->gameStyle);
+  buf = nboPackUShort(buf, maxPlayers);
+  buf = nboPackUShort(buf, clOptions->maxShots);
+  buf = nboPackUShort(buf, numFlags);
+  buf = nboPackFloat(buf, clOptions->linearAcceleration);
+  buf = nboPackFloat(buf, clOptions->angularAcceleration);
+  buf = nboPackUShort(buf, clOptions->shakeTimeout);
+  buf = nboPackUShort(buf, clOptions->shakeWins);
+  // update time of day in world database
+  const uint32_t epochOffset = (uint32_t)time(NULL);
+  buf = nboPackUInt(buf, epochOffset);
+
+  // send it
+  directMessage(playerIndex, MsgGameSetting, (char*)buf-(char*)bufStart,
+		bufStart);
+}
+
 static void sendQueryGame(int playerIndex)
 {
   // much like a ping packet but leave out useless stuff (like
@@ -3231,13 +3242,12 @@ static void handleCommand(int t, const void *rawbuf)
       // data: count (bytes read so far)
       uint32_t ptr;
       buf = nboUnpackUInt(buf, ptr);
-      if (ptr == 0) {
-	// update time of day in world database
-	const uint32_t epochOffset = (uint32_t)time(NULL);
-	void *epochPtr = ((char*)worldDatabase) + WorldCodeEpochOffset;
-	nboPackUInt(epochPtr, epochOffset);
-      }
       sendWorld(t, ptr);
+      break;
+    }
+
+    case MsgWantSetting: {
+      sendGameSetting(t);
       break;
     }
 

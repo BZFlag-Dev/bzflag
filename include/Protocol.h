@@ -76,6 +76,7 @@ const uint16_t		MsgFlagUpdate = 0x6675;			// 'fu'
 const uint16_t		MsgGrabFlag = 0x6766;			// 'gf'
 const uint16_t		MsgGMUpdate = 0x676d;			// 'gm'
 const uint16_t		MsgGetWorld = 0x6777;			// 'gw'
+const uint16_t		MsgGameSetting = 0x6773;		// 'gs'
 const uint16_t		MsgKilled = 0x6b6c;			// 'kl'
 const uint16_t		MsgKrbPrincipal = 0x6b70;		// 'kp'
 const uint16_t		MsgKrbTicket    = 0x6b74;		// 'kt'
@@ -103,6 +104,7 @@ const uint16_t		MsgTeamUpdate = 0x7475;			// 'tu'
 const uint16_t		MsgVersion = 0x7672;			// 've'
 const uint16_t		MsgVideo = 0x7669;			// 'vi'
 const uint16_t		MsgWantWHash = 0x7768;			// 'wh'
+const uint16_t		MsgWantSetting = 0x7773;		// 'ws'
 
 // world database codes
 const uint16_t		WorldCodeHeader = 0x6865;		// 'he'
@@ -119,8 +121,7 @@ const uint16_t		WorldCodeWeapon = 0x7765;		// 'we'
 const uint16_t		WorldCodeZone = 0x7A6e;			// 'zn'
 
 // world database sizes
-const uint16_t		WorldCodeHeaderSize = 38;
-const uint16_t		WorldCodeEpochOffset = 4+26; // huge hack, someone fix!!
+const uint16_t		WorldCodeHeaderSize = 10;
 const uint16_t		WorldCodeBaseSize = 42;
 const uint16_t		WorldCodeWallSize = 24;
 const uint16_t		WorldCodeBoxSize = 29;
