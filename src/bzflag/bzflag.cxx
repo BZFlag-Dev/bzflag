@@ -640,7 +640,6 @@ void			dumpResources(BzfDisplay* display,
 
   if (renderer.getWindow().getWindow()->hasGammaControl()) {
     BZDB->set("gamma", string_util::format("%f", renderer.getWindow().getWindow()->getGamma()));
-    db.addValue("gamma", string_util::format("%f", renderer.getWindow().getWindow()->getGamma()));
   }
 
   BZDB->set("quality", configQualityValues[renderer.useQuality()]);
@@ -1100,9 +1099,9 @@ int			main(int argc, char** argv)
   }
 
   // set gamma if set in resources and we have gamma control
-  if (db.hasValue("gamma")) {
+  if (BZDB->isSet("gamma")) {
     if (mainWindow.getWindow()->hasGammaControl())
-      mainWindow.getWindow()->setGamma((float)atof(db.getValue("gamma").c_str()));
+      mainWindow.getWindow()->setGamma((float)atof(BZDB->get("gamma").c_str()));
   }
 
   // make scene renderer
