@@ -11,7 +11,7 @@ solaris*)
 	AC_DEFINE(ETC_INET)
 	;;
 mingw32*)
-	WINPORT=windows_port.c
+	WINPORT=windows_port.o
 	AC_SUBST(WINPORT)
 	;;
 esac
