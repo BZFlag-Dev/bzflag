@@ -34,6 +34,7 @@
 #include <stdio.h>
 #include <stdlib.h> //needed for bzfrand
 #include <math.h>
+#include <xutility>
 
 extern int debugLevel;
 // Like verbose debug messages? level 0 for development only
@@ -191,6 +192,11 @@ typedef unsigned char	uint8_t;
 #endif
 #define countof(__x)   (sizeof(__x) / sizeof(__x[0]))
 
+#ifdef _WIN32
+#define std_max(a,b) max(a,b)
+#else
+#define std_max(a,b) std::max(a,b)
+#endif
 
 #endif // BZF_COMMON_H
 
