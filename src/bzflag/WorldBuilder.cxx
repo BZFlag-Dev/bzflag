@@ -21,7 +21,6 @@
 #include "EighthDBoxSceneNode.h"
 #include "EighthDPyrSceneNode.h"
 #include "EighthDBaseSceneNode.h"
-#include "EighthDTetraSceneNode.h"
 #include "DynamicColor.h"
 #include "TextureMatrix.h"
 #include "BzMaterial.h"
