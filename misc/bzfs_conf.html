@@ -29,7 +29,6 @@
 				var mainform = document.forms["main"];
 				var ctf = (mainform.game_style.value == "ctf") || (mainform.game_style.value == 'bc');
 				var freeForAll = (mainform.game_style.value == "ffa");	
-				var htf = (mainform.game_style.value == "htf");
 
 				var rabbit = (mainform.game_style.value == "rc");
 				mainform.world_type.disabled = mainform.game_style.value == "bc";
@@ -269,10 +268,6 @@
 						d.writeln("#Balanced world Capture the flag game style<br/>");
 						d.writeln("-cr<br/><br/>");
 					}
-					if (mainform.game_style.value == "htf") {
-						d.writeln("#Hold the flag game style<br/>");
-						d.writeln("-htf<br/><br/>");
-					}
 					else if (mainform.game_style.value == 'rc') {
 						d.writeln("#Rabbit chase game style<br/>");
 						d.writeln("-rabbit " + mainform.rabbit_selection.value + "<br/><br/>");
@@ -457,10 +452,6 @@
 						}
 
 						d.writeln("<br/><br/>");
-
-					}
-
-					if (mainform.game_style.value == "htf") {
 
 					}
 
@@ -753,7 +744,6 @@
 									<option value="ctf">Capture the Flag</option>
 									<option value="bc">Uniform world Capture the Flag</option>
 									<option value="rc">Rabbit Chase</option>
-									<option value="htf">Hold the Flag</option>
 								</select>
 							</td>
 							<td>World File</td>
