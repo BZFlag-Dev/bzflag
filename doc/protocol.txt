@@ -9,7 +9,10 @@ FIXME FIXME FIXME FIXME
 
 Tim Riker <Tim@Rikers.org> is working on this. Some open items:
 
-1) position, velocity, azimuth, time were all floats, they have been changed to ints. Bounds will have to be considered, times for flag motion etc will likely be milliseconds where as remaining game time would likely be seconds? 16 byte values would be preferred.
+1) position, velocity, azimuth, time were all floats, they have been changed to
+ints. Bounds will have to be considered, times for flag motion etc will likely
+be milliseconds where as remaining game time would likely be seconds? 16 bit
+values would be preferred.
 
 2) world format has been removed. an XML model format should be devised.
 
@@ -42,7 +45,8 @@ Multibyte values are *not* necessarily aligned on 2 or 4 byte boundaries.
 A client normally follows the following sequence during game play:
 
   connect to server
-  get the world database
+  get the world description including world md5 tag
+  recursively get all models by md5 in the world that we do not already have
   join the game
   send/receive game messages
   leave game
