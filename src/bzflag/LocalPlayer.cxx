@@ -858,7 +858,7 @@ void			LocalPlayer::jump()
   if (location != OnGround && location != OnBuilding)
     return;
 
-  if (getFlag() == Flags::Burrow)
+  if ((getFlag() == Flags::Burrow) && (getPosition()[2] < 0.0f))
     return;
 
   // can only jump with a jumping flag or if jumping is allowed for all
