@@ -1,6 +1,8 @@
 recent bugs
 ------------
 
+- player counts do not seem to get updated on list server
+
 - tabbed msg area does not properly fill in corners and bottom outline
 
 - player score doesn't seem to match the server's score when relaying to
