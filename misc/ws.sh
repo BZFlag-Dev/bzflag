@@ -1,4 +1,10 @@
 #!/bin/sh
+
+echo "Please don't blindy convert without insuring that"
+echo "the resultant visual whitespace remains the same."
+echo "It's already messed up quite a few files."
+exit
+
 # cleanup whitespace issues
 # could use new sed, but not everybody has that yet
 # sed -i -e 's/search/replace/g' filename1 ...
