@@ -295,8 +295,7 @@ void handleFlagCmd(GameKeeper::Player *playerData, const char *message)
 
 	void *buf, *bufStart = getDirectMessageBuffer();
 	buf = nboPackUByte(bufStart, playerIndex);
-	buf = nboPackUShort(buf, uint16_t(i));
-	buf = FlagInfo::flagList[i].flag.pack(buf);
+	buf = FlagInfo::flagList[i].pack(buf);
 	broadcastMessage(MsgDropFlag, (char*)buf - (char*)bufStart, bufStart);
 
       }
@@ -317,8 +316,7 @@ void handleFlagCmd(GameKeeper::Player *playerData, const char *message)
 
 	  void *buf, *bufStart = getDirectMessageBuffer();
 	  buf = nboPackUByte(bufStart, playerIndex);
-	  buf = nboPackUShort(buf, uint16_t(i));
-	  buf = FlagInfo::flagList[i].flag.pack(buf);
+	  buf = FlagInfo::flagList[i].pack(buf);
 	  broadcastMessage(MsgDropFlag, (char*)buf - (char*)bufStart, bufStart);
 	}
 	FlagInfo::flagList[i].flag.status = FlagGoing;

@@ -1343,8 +1343,7 @@ saveFlagsState () // look at sendFlagUpdate() in bzfs.cxx ... very similar
         buf = nboPackUShort(bufStart,0); //placeholder
       }
 
-      buf = nboPackUShort(buf, flagIndex);
-      buf = FlagInfo::flagList[flagIndex].flag.pack(buf);
+      buf = FlagInfo::flagList[flagIndex].pack(buf);
       length += sizeof(u16)+FlagPLen;
       cnt++;
     }
