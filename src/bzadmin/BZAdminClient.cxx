@@ -16,8 +16,9 @@
 
 #include <iostream>
 
-#include "StateDatabase.h"
 #include "BZAdminClient.h"
+#include "StateDatabase.h"
+#include "TextUtils.h"
 #include "version.h"
 
 
@@ -185,11 +186,17 @@ BZAdminClient::getServerString(std::string& str, ColorCode& colorCode) {
       if (src == ServerPlayer && returnString[0] == '[') {
 	char* ipHere;
 	p = PlayerId(std::strtol(returnString.c_str() + 1, &ipHere, 10));
-	if (ipHere - returnString.c_str() >= 2 && ipHere[0] == ']' && 
-	    std::strlen(ipHere) >= 19 && ipHere[17] == ':') {
-	  std::string& ip = players[p].ip; 
-	  ip = &ipHere[19];
-	  ip = ip.substr(0, ip.find(' '));
+	if (ipHere[0] == ']') {
+	  std::vector<std::string> tokens;
+	  tokens = string_util::tokenize(ipHere + 1, " ");
+	  if (*tokens.rbegin() == "udp" || *tokens.rbegin() == "udp+")
+	    tokens.pop_back();
+	  if (tokens.size() >= 2) {
+	    std::string callsign = *(++tokens.rbegin());
+	    if (*callsign.rbegin() == ':') {
+	      players[p].ip = *tokens.rbegin();
+	    }
+	  }
 	}
       }
       
