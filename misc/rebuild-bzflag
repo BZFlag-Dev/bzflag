@@ -1,0 +1,21 @@
+#!/bin/sh
+pid=rebuild-bzflag.pid
+cvsroot=:ext:bzflag@cvs.bzflag.org:/cvsroot/bzflag
+where=$HOME/bzflag-cvs
+cd $where
+if [ -e $pid ] ; then
+ exit
+fi
+echo $$ > $pid
+if CVSROOT=$cvsroot cvs -q up -PdA | grep ^[PU] ; then
+ # we have new code, rebuild
+ ./autogen.sh --quiet --enable-debug --enable-bzadmin \
+   | grep -v "^creating.*Makefile$" \
+   | grep -v "^make"
+ # [s] keeps us from finding ourselves
+ bzfspid=`ps xo pid,command | grep "$where/[s]rc/bzfs/bzfs" | awk '{ print $1 }'`
+ if [ -n "$bzfspid" ] ; then
+  kill $bzfspid
+ fi
+fi
+rm $pid
