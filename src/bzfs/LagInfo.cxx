@@ -27,6 +27,9 @@ LagInfo::LagInfo(PlayerInfo *_info)
 }
 
 void LagInfo::getLagStats(char* msg) {
+  msg[0] = 0;
+  if (!info->isPlaying() || !info->isHuman())
+    return;
   sprintf(msg,"%-16s : %3d +- %2dms", info->getCallSign(),
 	  int(lagavg * 1000),
 	  int(jitteravg * 1000));

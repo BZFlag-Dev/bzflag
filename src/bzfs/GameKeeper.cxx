@@ -15,7 +15,6 @@
 
 extern PlayerInfo       player[PlayerSlot];
 // player lag info
-LagInfo                *lagInfo[PlayerSlot] = {NULL};
 extern PlayerAccessInfo accessInfo[PlayerSlot];
 extern PlayerState      lastState[PlayerSlot];
 extern DelayQueue       delayq[PlayerSlot];
@@ -35,7 +34,6 @@ GameKeeper::Player::Player(int _playerIndex):
   player->initPlayer(playerIndex);
   lastState->order       = 0;
   lagInfo                = new LagInfo(player);
-  ::lagInfo[playerIndex] = lagInfo;
   score                  = new Score();
   ::score[playerIndex]   = score;
 }
@@ -48,7 +46,6 @@ GameKeeper::Player::~Player()
   flagHistory->clear();
   delete lagInfo;
   delete score;
-  ::lagInfo[playerIndex] = NULL;
   ::score[playerIndex]   = NULL;
   playerList[playerIndex] = NULL;
 }

@@ -43,13 +43,13 @@
 #include "RecordReplay.h"
 #include "LagInfo.h"
 #include "FlagHistory.h"
+#include "GameKeeper.h"
 
 // FIXME -- need to pull communication out of bzfs.cxx...
 
 // externs that poll, veto, vote, and clientquery require
 extern void sendMessage(int playerIndex, PlayerId targetPlayer, const char *message, bool fullBuffer=false);
 extern PlayerInfo player[MaxPlayers + ReplayObservers];
-extern LagInfo *lagInfo[MaxPlayers + ReplayObservers];
 extern PlayerAccessInfo accessInfo[MaxPlayers + ReplayObservers];
 extern FlagHistory flagHistory[MaxPlayers  + ReplayObservers];
 extern CmdLineOptions *clOptions;
@@ -568,17 +568,18 @@ void handleLagstatsCmd(int t, const char *)
     return;
   }
 
-  char reply[MessageLen] = {0};
-  for (int i = 0; i < curMaxPlayers; i++)
-    if (player[i].isPlaying() && player[i].isHuman()) {
-      lagInfo[i]->getLagStats(reply);
+  char reply[MessageLen];
+  for (int i = 0; i < curMaxPlayers; i++) {
+    GameKeeper::Player *p = GameKeeper::Player::getPlayerByIndex(i);
+    if (p != NULL) {
+      p->lagInfo->getLagStats(reply);
       if (strlen(reply)) {
 	if (accessInfo[i].isAccessVerified())
 	  strcat(reply, " (R)");
 	sendMessage(ServerPlayer, t, reply, true);
       }
     }
-  return;
+  }
 }
 
 
