@@ -650,7 +650,7 @@ static void handleCountdownCmd(GameKeeper::Player *playerData, const char *messa
   // if the timelimit is not set .. don't countdown
   if (clOptions->timeLimit > 1.0f) {
 		std::vector<std::string> parts = TextUtils::tokenize(message, " \t",2);
-		if (parts[1] != "") {
+		if (parts.size() > 1) {
 			if (parts[1] == "pause") {
 				if (clOptions->countdownPaused) {
 					sendMessage(ServerPlayer, t, "The game is already paused");
