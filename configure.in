@@ -47,11 +47,9 @@ AC_PROG_CXX
 
 dnl Objective-C compiler (Mac OS X SDL framework build)
 AC_CHECK_PROGS(OBJC, gcc, gcc)
-OBJCLIBS="-lobjc"
-OBJCFLAGS=""
 AC_SUBST(OBJC)
-AC_SUBST(OBJCLIBS)
-AC_SUBST(OBJCFLAGS)
+AM_CONDITIONAL([am__fastdepOBJC], 
+	       [test "x$enable_dependency_tracking" != xno])
 
 AC_PATH_PROG(CCACHE, ccache)
 if test "$CCACHE"
