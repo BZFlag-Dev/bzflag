@@ -405,7 +405,17 @@ bool fireAtTank()
 	    !player[t]->isNotResponding()) {
 
 	  const float *tp = player[t]->getPosition();
-          float dist = TargetingUtils::getTargetDistance( pos, tp );
+	  float enemyPos[3];
+          //toss in some lag adjustment/future prediction - 300 millis
+          memcpy(enemyPos,tp,sizeof(enemyPos));
+          const float *tv = player[t]->getVelocity();
+          enemyPos[0] += 0.3f * tv[0];
+          enemyPos[1] += 0.3f * tv[1];
+          enemyPos[2] += 0.3f * tv[2];
+	  if (enemyPos[2] < 0.0f)
+	    enemyPos[2] = 0.0f;
+
+          float dist = TargetingUtils::getTargetDistance( pos, enemyPos );
           if (dist <= BZDB.eval(StateDatabase::BZDB_SHOCKOUTRADIUS)) {
             if (!myTank->validTeamTarget(player[t])) {
               hasSWTarget = false;
@@ -437,17 +447,27 @@ bool fireAtTank()
 	    myTank->validTeamTarget(player[t])) {
 
 	  const float *tp = player[t]->getPosition();
-	  float dist = TargetingUtils::getTargetDistance( pos, tp );
+	  float enemyPos[3];
+          //toss in some lag adjustment/future prediction - 300 millis
+          memcpy(enemyPos,tp,sizeof(enemyPos));
+          const float *tv = player[t]->getVelocity();
+          enemyPos[0] += 0.3f * tv[0];
+          enemyPos[1] += 0.3f * tv[1];
+          enemyPos[2] += 0.3f * tv[2];
+	  if (enemyPos[2] < 0.0f)
+	    enemyPos[2] = 0.0f;
 
-	  if ((myTank->getFlag() == Flags::GuidedMissile) || (fabs(pos[2] - tp[2]) < 2.0f * BZDBCache::tankHeight)) {
+	  float dist = TargetingUtils::getTargetDistance( pos, enemyPos );
 
-	    float targetDiff = TargetingUtils::getTargetAngleDifference(pos, myAzimuth, tp );
+	  if ((myTank->getFlag() == Flags::GuidedMissile) || (fabs(pos[2] - enemyPos[2]) < 2.0f * BZDBCache::tankHeight)) {
+
+	    float targetDiff = TargetingUtils::getTargetAngleDifference(pos, myAzimuth, enemyPos );
 
 	    if ((targetDiff < errorLimit)
 	    ||  ((dist < (2.0f * BZDB.eval(StateDatabase::BZDB_SHOTSPEED))) && (targetDiff < closeErrorLimit))) {
 	      bool isTargetObscured;
 	      if (myTank->getFlag() != Flags::SuperBullet)
-	        isTargetObscured = TargetingUtils::isLocationObscured( pos, tp );
+	        isTargetObscured = TargetingUtils::isLocationObscured( pos, enemyPos );
 	      else
 	        isTargetObscured = false;
 
