@@ -2554,43 +2554,47 @@ static void playerKilled(int victimIndex, int killerIndex, int reason,
   zapFlagByPlayer(victimIndex);
 
   victimData = GameKeeper::Player::getPlayerByIndex(victimIndex);
-  // change the player score
-  bufStart = getDirectMessageBuffer();
-  victimData->score.killedBy();
-  if (killer) {
-    if (victimIndex != killerIndex) {
-      if (teamkill) {
-	if (clOptions->teamKillerDies)
-	  playerKilled(killerIndex, killerIndex, reason, -1, Flags::Null, -1);
-	else
-	  killerData->score.killedBy();
-      } else {
-	killerData->score.kill();
+  // victimData will be NULL if the player has been kicked for TK'ing
+  // so don't bother doing any score stuff for him
+  if (victimData != NULL) {
+    // change the player score
+    bufStart = getDirectMessageBuffer();
+    victimData->score.killedBy();
+    if (killer) {
+      if (victimIndex != killerIndex) {
+	if (teamkill) {
+	  if (clOptions->teamKillerDies)
+	    playerKilled(killerIndex, killerIndex, reason, -1, Flags::Null, -1);
+	  else
+	    killerData->score.killedBy();
+	} else {
+	  killerData->score.kill();
+	}
       }
+
+      buf = nboPackUByte(bufStart, 2);
+      buf = nboPackUByte(buf, killerIndex);
+      buf = killerData->score.pack(buf);
+    }
+    else {
+      buf = nboPackUByte(bufStart, 1);
     }
 
-    buf = nboPackUByte(bufStart, 2);
-    buf = nboPackUByte(buf, killerIndex);
-    buf = killerData->score.pack(buf);
-  }
-  else {
-    buf = nboPackUByte(bufStart, 1);
-  }
+    buf = nboPackUByte(buf, victimIndex);
+    buf = victimData->score.pack(buf);
+    broadcastMessage(MsgScore, (char*)buf-(char*)bufStart, bufStart);
 
-  buf = nboPackUByte(buf, victimIndex);
-  buf = victimData->score.pack(buf);
-  broadcastMessage(MsgScore, (char*)buf-(char*)bufStart, bufStart);
-
-  // see if the player reached the score limit
-  if (clOptions->maxPlayerScore != 0
-      && killerIndex != InvalidPlayer
-      && killerIndex != ServerPlayer
-      && killerData->score.reached()) {
-    void *buf, *bufStart = getDirectMessageBuffer();
-    buf = nboPackUByte(bufStart, killerIndex);
-    buf = nboPackUShort(buf, uint16_t(NoTeam));
-    broadcastMessage(MsgScoreOver, (char*)buf-(char*)bufStart, bufStart);
-    gameOver = true;
+    // see if the player reached the score limit
+    if (clOptions->maxPlayerScore != 0
+	&& killerIndex != InvalidPlayer
+	&& killerIndex != ServerPlayer
+	&& killerData->score.reached()) {
+      void *buf, *bufStart = getDirectMessageBuffer();
+      buf = nboPackUByte(bufStart, killerIndex);
+      buf = nboPackUShort(buf, uint16_t(NoTeam));
+      broadcastMessage(MsgScoreOver, (char*)buf-(char*)bufStart, bufStart);
+      gameOver = true;
+    }
   }
 
   if (clOptions->gameStyle & int(RabbitChaseGameStyle)) {
