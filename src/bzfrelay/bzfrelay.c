@@ -16,6 +16,7 @@
  * note that this program does not depend on any other bzflag files.
  */
 
+#include <config.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdarg.h>
