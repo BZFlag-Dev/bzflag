@@ -1,4 +1,4 @@
-bzflag (@VERSION@) unstable frozen; urgency=low
+bzflag (@VERSION@) unstable; urgency=low
 
   * CVS Build
 

@@ -12,10 +12,11 @@
 
 static const char copyright[] = "Copyright (c) 1993 - 2001 Tim Riker";
 
-// define TIMELIMIT to include code to enforce a game time limit
-// define PRINTSCORE to include code to dump score info to stdout
-
+// to enforce a game time limit
 #define TIMELIMIT
+// to dump score info to stdout
+//#define PRINTSCORE to include code to dump score info to stdout
+
 
 // Like verbose debug messages?
 #define UDEBUG if (debug > 2) printf
@@ -135,7 +136,7 @@ struct PlayerInfo {
     PlayerState state;
     // player's id
     PlayerId id;
-    // have we gotten our real id?
+    // does player know his real id?
     int knowId;
     // what an old client thinks its id is
     PlayerId perceivedId;
@@ -269,11 +270,12 @@ class ListServerLink {
     const char *nextMessage;
 };
 
-static Address serverAddress;
 // default port
 static int wksPort = ServerPort;
 // well known service socket
 static int wksSocket;
+static Address serverAddress;
+// udpSocket should also be on serverAddress
 static int udpSocket;
 static boolean useGivenPort = False;
 static boolean useFallbackPort = False;
@@ -302,12 +304,12 @@ static PingPacket pingReply;
 static int maxFileDescriptor;
 // players list
 static PlayerInfo player[MaxPlayers];
-// network  reconnection list
+// network reconnection list
 static ConnectInfo reconnect[MaxPlayers+1];
-// flags list
-static FlagInfo *flag = NULL;
 // team info
 static TeamInfo team[NumTeams];
+// flags list
+static FlagInfo *flag = NULL;
 // num flags in flag list
 static int numFlags;
 static int numFlagsInAir;
@@ -371,8 +373,8 @@ static float basePos[NumTeams][3];
 static float safetyBasePos[NumTeams][3];
 static const char *worldFile = NULL;
 
-static float lagwarnthresh=-1.0;
-static char *password=NULL;
+static float lagwarnthresh = -1.0;
+static char *password = NULL;
 
 static void stopPlayerPacketRelay();
 static void removePlayer(int playerIndex);
@@ -439,14 +441,14 @@ class CustomBox : public WorldFileObstacle {
 
 CustomBox::CustomBox()
 {
-   sizeX = BoxBase;
-   sizeY = BoxBase;
-   sizeZ = BoxHeight;
+  sizeX = BoxBase;
+  sizeY = BoxBase;
+  sizeZ = BoxHeight;
 }
 
 void CustomBox::write(WorldInfo *world) const
 {
-    world->addBox(posX, posY, posZ, rotation, sizeX, sizeY, sizeZ);
+  world->addBox(posX, posY, posZ, rotation, sizeX, sizeY, sizeZ);
 }
 
 class CustomPyramid : public WorldFileObstacle {
@@ -457,14 +459,14 @@ class CustomPyramid : public WorldFileObstacle {
 
 CustomPyramid::CustomPyramid()
 {
-   sizeX = PyrBase;
-   sizeY = PyrBase;
-   sizeZ = PyrHeight;
+  sizeX = PyrBase;
+  sizeY = PyrBase;
+  sizeZ = PyrHeight;
 }
 
 void CustomPyramid::write(WorldInfo *world) const
 {
-    world->addPyramid(posX, posY, posZ, rotation, sizeX, sizeY, sizeZ);
+  world->addPyramid(posX, posY, posZ, rotation, sizeX, sizeY, sizeZ);
 }
 
 class CustomGate : public WorldFileObstacle {
@@ -479,10 +481,10 @@ class CustomGate : public WorldFileObstacle {
 
 CustomGate::CustomGate()
 {
-   sizeX = 0.5f * TeleWidth;
-   sizeY = TeleBreadth;
-   sizeZ = 2.0f * TeleHeight;
-   border = TeleWidth;
+  sizeX = 0.5f * TeleWidth;
+  sizeY = TeleBreadth;
+  sizeZ = 2.0f * TeleHeight;
+  border = TeleWidth;
 }
 
 bool CustomGate::read(const char *cmd, istream& input)
@@ -529,7 +531,7 @@ bool CustomLink::read(const char *cmd, istream& input)
 
 void CustomLink::write(WorldInfo *world) const
 {
-    world->addLink(from, to);
+  world->addLink(from, to);
 }
 
 class CustomWorld : public WorldFileObject {
@@ -832,8 +834,8 @@ int WorldInfo::getDatabaseSize() const
 
 void *getPacketFromClient(int playerIndex, uint16_t *length, uint16_t *rseqno)
 {
-  struct PacketQueue *moving=player[playerIndex].dqueue;
-  struct PacketQueue *remindme= NULL;
+  struct PacketQueue *moving = player[playerIndex].dqueue;
+  struct PacketQueue *remindme = NULL;
   while (moving != NULL) {
     if (moving->next == NULL) {
       void *remember = moving->data;
@@ -843,7 +845,7 @@ void *getPacketFromClient(int playerIndex, uint16_t *length, uint16_t *rseqno)
       if (remindme)
 	remindme->next = NULL;
       else
-	player[playerIndex].dqueue=NULL;
+	player[playerIndex].dqueue = NULL;
       free(moving);
       return remember;
     }
@@ -933,7 +935,7 @@ void *assembleSendPacket(int playerIndex, int *len)
 {
   struct PacketQueue *moving = player[playerIndex].uqueue;
   unsigned char *assemblybuffer;
-  int n=MaxPacketLen, packets=0, startseq=(-1), endseq, noinqueue;
+  int n = MaxPacketLen, packets = 0, startseq = (-1), endseq, noinqueue;
   unsigned char *buf;
 
   assemblybuffer = (unsigned char *)malloc(n);
@@ -947,9 +949,9 @@ void *assembleSendPacket(int playerIndex, int *len)
   noinqueue = 0;
   while (moving) {
     noinqueue++;
-    moving=moving->next;
+    moving = moving->next;
     if (moving)
-      startseq=moving->seqno;
+      startseq = moving->seqno;
   }
 
   // lets see if it is too large (CAN'T BE, Queue is always 1 length)
@@ -977,8 +979,8 @@ void *assembleSendPacket(int playerIndex, int *len)
     packets++;
     if (packets > noinqueue) {
       if (startseq < 0)
-	startseq=moving->seqno;
-      endseq=moving->seqno;
+	startseq = moving->seqno;
+      endseq = moving->seqno;
       n -= 2;
       if (n <= 2)
 	break;
@@ -1020,7 +1022,7 @@ void disassemblePacket(int playerIndex, void *msg, int *nopackets)
   UDEBUG("::: Disassemble Packet\n");
 
   buf = (unsigned char *)nboUnpackUShort(buf, marker);
-  if (marker!=0xfeed) {
+  if (marker!= 0xfeed) {
     UDEBUG("Reject UPacket because invalid header %04x\n", marker);
     return;
   }
@@ -1034,7 +1036,7 @@ void disassemblePacket(int playerIndex, void *msg, int *nopackets)
     int ilength;
 
     buf = (unsigned char *)nboUnpackUShort(buf, length);
-    ilength=length;
+    ilength = length;
     if (length == 0xffff)
       break;
     else
@@ -1046,7 +1048,7 @@ void disassemblePacket(int playerIndex, void *msg, int *nopackets)
     buf = (unsigned char *)nboUnpackUShort(buf, seqno);
     UDEBUG("SEQ RECV %d Enqueing now...\n",seqno);
     enqueuePacket(playerIndex, RECEIVE, seqno, buf, length);
-    buf+=length;
+    buf+= length;
     npackets++;
   }
   UMDEBUG("%d: Got %d packets\n",(int)time(0),npackets);
@@ -2876,14 +2878,14 @@ static void addPlayer(int playerIndex)
 
   // look if there is as name clash, we won't allow this
   int i;
-  for (i=0;i<maxPlayers;i++)
+  for (i = 0; i < maxPlayers; i++)
   {
-    if (i==playerIndex)
+    if (i == playerIndex)
       continue;
-    if (strcasecmp(player[i].callSign,player[playerIndex].callSign)==0)
+    if (strcasecmp(player[i].callSign,player[playerIndex].callSign) == 0)
       break;
   }
-  if (i<maxPlayers)
+  if (i < maxPlayers)
   {
     // this is a hack; would better add a new reject type
     player[playerIndex].team = NoTeam;
@@ -2891,7 +2893,7 @@ static void addPlayer(int playerIndex)
 
   TeamColor t = player[playerIndex].team;
   if ((t == NoTeam && (player[playerIndex].type == TankPlayer ||
-			player[playerIndex].type == ComputerPlayer)) ||
+	player[playerIndex].type == ComputerPlayer)) ||
 	(t == RogueTeam && !(gameStyle & RoguesGameStyle)) ||
 	(team[int(t)].team.activeSize >= maxTeam[int(t)])) {
     uint16_t code = RejectBadRequest;
@@ -2921,11 +2923,11 @@ static void addPlayer(int playerIndex)
   player[playerIndex].ulinkup = false;
   player[playerIndex].toBeKicked = false;
 
-  player[playerIndex].lastRecvPacketNo=0;
-  player[playerIndex].lastSendPacketNo=0;
+  player[playerIndex].lastRecvPacketNo = 0;
+  player[playerIndex].lastSendPacketNo = 0;
 
-  player[playerIndex].uqueue=NULL;
-  player[playerIndex].dqueue=NULL;
+  player[playerIndex].uqueue = NULL;
+  player[playerIndex].dqueue = NULL;
 
   player[playerIndex].lagkillerpending = false;
   player[playerIndex].lagavg = 0;
@@ -3431,8 +3433,8 @@ static void playerKilled(int victimIndex, int killerIndex,
   //  of the killer's round trip time
   if (victimIndex != killerIndex &&            // suicide doesn't change score twice
       !player[killerIndex].lagkillerpending) { // two rapid kills
-    player[killerIndex].lagkillerpending=true;
-    player[killerIndex].lagkillertime=TimeKeeper::getCurrent();
+    player[killerIndex].lagkillerpending = true;
+    player[killerIndex].lagkillertime = TimeKeeper::getCurrent();
   }
 
   // zap flag player was carrying.  clients should send a drop flag
@@ -3657,25 +3659,27 @@ static void shotEnded(const PlayerId& id, int16_t shotIndex, uint16_t reason)
 static void scoreChanged(int playerIndex, uint16_t wins, uint16_t losses)
 {
   // lag measurement
-  if (player[playerIndex].lagkillerpending) { // got reference time?
-    PlayerInfo &killer=player[playerIndex];
-    TimeKeeper now=TimeKeeper::getCurrent(),&then=killer.lagkillertime;
-    float timepassed=now-then;
-    killer.lagkillerpending=false;
-    if (timepassed<10.0) { // huge lags might be error!?
+  // got reference time?
+  if (player[playerIndex].lagkillerpending) {
+    PlayerInfo &killer = player[playerIndex];
+    TimeKeeper now = TimeKeeper::getCurrent(),&then = killer.lagkillertime;
+    float timepassed = now-then;
+    killer.lagkillerpending = false;
+    // huge lags might be error!?
+    if (timepassed < 10.0) {
       // time is smoothed exponentially using a dynamic smoothing factor
-      killer.lagavg=killer.lagavg*(1-killer.lagalpha)+killer.lagalpha*timepassed;
-      killer.lagalpha=killer.lagalpha/(0.9+killer.lagalpha);
+      killer.lagavg = killer.lagavg*(1-killer.lagalpha)+killer.lagalpha*timepassed;
+      killer.lagalpha = killer.lagalpha/(0.9+killer.lagalpha);
       killer.lagcount++;
       // warn players from time to time whose lag is > threshold (-lagwarn)
-      if (lagwarnthresh>0 && killer.lagavg>lagwarnthresh &&
-          killer.lagcount-killer.laglastwarn>5+2*killer.lagwarncount) {
+      if (lagwarnthresh > 0 && killer.lagavg > lagwarnthresh &&
+          killer.lagcount-killer.laglastwarn > 5 + 2 * killer.lagwarncount) {
         char message[MessageLen];
         sprintf(message,"*** Server Warning: your lag is too high (%d ms) ***",
-                int(killer.lagavg*1000));
+            int(killer.lagavg * 1000));
         sendMessage(playerIndex, player[playerIndex].id,
-                    player[playerIndex].team,message);
-        killer.laglastwarn=killer.lagcount;
+            player[playerIndex].team,message);
+        killer.laglastwarn = killer.lagcount;
         killer.lagwarncount++;;
       }
     }
@@ -3756,12 +3760,12 @@ static void releaseRadio(int playerIndex)
 static void parseCommand(const char *message, int t)
 {
   // /kick command allows operator to remove players (-passwd)
-  if (strncmp(message+1,"kick ",5)==0) {
-    if (password && strncmp(message+6, password, strlen(password))==0) {
+  if (strncmp(message+1,"kick ",5) == 0) {
+    if (password && strncmp(message + 6, password, strlen(password)) == 0) {
       int i;
       const char *victimname = message + 6 + strlen(password) + 1;
       for (i = 0; i < maxPlayers; i++)
-        if (player[i].fd != NotConnected && strcmp(player[i].callSign, victimname)==0)
+        if (player[i].fd != NotConnected && strcmp(player[i].callSign, victimname) == 0)
           break;
       if (i < maxPlayers) {
         char kickmessage[MessageLen];
@@ -3785,7 +3789,7 @@ static void parseCommand(const char *message, int t)
     }
   }
   // /lagstats gives simpel statistics about players' lags
-  else if (strncmp(message+1,"lagstats",8)==0) {
+  else if (strncmp(message+1,"lagstats",8) == 0) {
     for (int i = 0; i < maxPlayers; i++)
       if (player[i].fd != NotConnected) {
         char reply[MessageLen];
@@ -4057,12 +4061,14 @@ static const char *usageString =
 "[-h] "
 "[-i interface] "
 "[-j] "
+"[-lagwarn <time/ms>] "
 "[-mp {<count>|[<count>],[<count>],[<count>],[<count>],[<count>]}] "
 "[-mps <score>] "
 "[-ms <shots>] "
 "[-mts <score>] "
 "[-p <port>] "
 "[-noudp] "
+"[-passwd <password>] "
 #ifdef PRINTSCORE
 "[-printscore] "
 #endif
@@ -4081,16 +4087,14 @@ static const char *usageString =
 #endif
 "[-ttl <ttl>] "
 "[-srvmsg <text>] "
-"[-world <filename>] "
-"[-passwd <password>] "
-"[-lagwarn <time/ms>]";
+"[-world <filename>]";
 
 
 static void printVersion(ostream& out)
 {
   out << copyright << endl;
 
-  out << "BZFLAG server, version " <<
+  out << "BZFlag server, version " <<
       (VERSION / 10000000) % 100 << "." <<
       (VERSION / 100000) % 100 <<
       (char)('a' - 1 + (VERSION / 1000) % 100) <<
@@ -4658,14 +4662,14 @@ static void parse(int argc, char **argv)
 	cerr << "argument expected for " << argv[i] << endl;
 	usage(argv[0]);
       }
-      password=argv[i];
+      password = argv[i];
     }
     else if (strcmp(argv[i], "-lagwarn") == 0) {
       if (++i == argc) {
 	cerr << "argument expected for " << argv[i] << endl;
 	usage(argv[0]);
       }
-      lagwarnthresh=atoi(argv[i])/1000.0;
+      lagwarnthresh = atoi(argv[i])/1000.0;
     }
     else {
       cerr << "bad argument " << argv[i] << endl;
@@ -5019,39 +5023,19 @@ int main(int argc, char **argv)
     if (waitTime > 0.25f)
       waitTime = 0.15f;
 
-    // if any UDP link is established don't wait
-//    if (waitTime > 0.005f)
-//      for (i = 0; i < maxPlayers; i++) {
-//	// printQueueDepth(i);
-//	if (player[i].ulinkup) {
-//	  if ((pupeek(i) > 0) || player[i].dqueue) {
-//	    waitTime=0.005f;
-//	    break;
-//	  } else waitTime=0.01f;
-//	}
-//      }
-
     // wait for communication or for a flag to hit the ground
 
     // we have no pending packets
     nfound = 0;
 
     do {
-	float localWaitTime=0.004f;
+	float localWaitTime = 0.004f;
 	struct timeval timeout;
 	timeout.tv_sec = long(floorf(localWaitTime));
 	timeout.tv_usec = long(1.0e+6f * (localWaitTime - floorf(localWaitTime)));
 	nfound = select(maxFileDescriptor+1, (fd_set*)&read_set, (fd_set*)&write_set, 0, &timeout);
 	//if (nfound)
 	//  fprintf(stderr, "nfound,read,write %i,%08lx,%08lx\n", nfound, read_set, write_set);
-
-//	if ((nfound > 0) || ((pupeek(i) > 0) || player[i].dqueue)) {
-//	  // possible for only UDP players, so declare work tbd
-//	  if (nfound == 0)
-//	    nfound = 1;
-//	  break;
-//	}
-
 	waitTime = waitTime - localWaitTime;
 
     } while (waitTime > 0.0f);
@@ -5158,10 +5142,6 @@ int main(int argc, char **argv)
 	fprintf(stderr, "*** Kicking Player - no UDP [%d]\n",i);
 	removePlayer(i);
       }
-//      if (player[i].ulinkup && pupeek(i)) {
-//	nfound = 1;
-//	break;
-//      }
     }
     // check messages
     if (nfound > 0) {
@@ -5267,7 +5247,8 @@ int main(int argc, char **argv)
     }
     else if (nfound < 0) {
       if (getErrno() != EINTR) {
-	// sleep(1);   // test code - do not uncomment, will cause big stuttering
+	// test code - do not uncomment, will cause big stuttering
+	// sleep(1);
       }
     }
   }

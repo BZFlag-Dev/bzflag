@@ -9,5 +9,4 @@ date=`date --rfc-822`
 sed -e "s/@VERSION@/$version/g" -e "s/@DATE@/$date/g" < debian/changelog.in > debian/changelog
 
 # cvs/non-cvs builds should conflict and replace each other.
-#dpkg-buildpackage -us -uc -rfakeroot
-dpkg-buildpackage -i -rfakeroot
+dpkg-buildpackage -us -uc -rfakeroot

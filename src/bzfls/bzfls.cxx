@@ -1288,7 +1288,7 @@ static void printVersion(FILE* out)
 {
   fprintf(out, "%s\n", copyright);
 
-  fprintf(out, "BZFLAG server, version %d.%d%c%d\n",
+  fprintf(out, "BZFlag server, version %d.%d%c%d\n",
 		(VERSION / 10000000) % 100,
 		(VERSION / 100000) % 100,
 		(char)('a' - 1 + (VERSION / 1000) % 100),

@@ -14,12 +14,14 @@ bzfs \- BZFlag game server
 [\fB\-help\fR]
 [\fB\-i \fIinterface\fR]
 [\fB\-j\fR]
+[\fB\-lagwarn \fR{\fItime/ms\fR}]
 [\fB\-mp \fR{\fIcount\fR|[\fIrogue-count\fR]\fB,\fR[\fIred-count\fR]\fB,\fR[\fIgreen-count\fR]\fB,\fR[\fIblue-count\fR]\fB,\fR[\fIpurple-count\fR]}]
 [\fB\-mps \fR{\fImax-score\fR}]
 [\fB\-ms \fIshots\fR]
 [\fB\-mts \fR{\fImax-score\fR}]
 [\fB\-p \fIport\fR]
 [\fB\-noudp\fR]
+[\fB\-passwd \fIpassword\fR]
 [\fB\-public \fIdescription\fR]
 [\fB\-publicaddr \fIaddress\fR[\fI:port\fR]]
 [\fB\-publiclist \fIurl\fR]
@@ -87,6 +89,9 @@ network. This is also the TCP/UDP/IP address the server will listen on.
 .B -j
 Allows jumping.
 .TP
+\fB-lagwarn\fI time/ms\fR
+Send warnings to players that lag more than time.
+.TP
 \fB-mp\fR {\fIcount\fR|[\fIrogue\fR]\fB,\fR[\fIred\fR]\fB,\fR[\fIgreen\fR]\fB,\fR[\fIblue\fR]\fB,\fR[\fIpurple\fR]}
 Sets the maximum number of players, total or per team.  A single value sets
 the total number of players allowed.  Five comma separated values set the
@@ -112,6 +117,10 @@ Use \fB-help\fR to print the default port.
 .TP
 .B -noudp
 Do not use a parallel UDP channel for player communication.
+.TP
+\fB-passwd\fI password\fR
+Specify a server administrator password for use in remote administration
+such as /kick messages.
 .TP
 \fB-public\fI description\fR
 Advertise this server on the internet with the given \fIdescription\fR.
@@ -256,7 +265,7 @@ packets may be routed differently.  If other players can see your tank in
 the game but it never appears to move and shots go through it, chances
 are high that your multicast packets are not getting routed correctly.
 .PP
-Bzflag will, upon connecting to a server, attempt to contact the server
+BZFlag will, upon connecting to a server, attempt to contact the server
 via multicast.  If it gets a reply then multicasting is used for the
 duration of the game.  If it receives no reply then it falls back to
 using the TCP server connection to transmit player-to-player packets.
