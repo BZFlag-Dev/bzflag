@@ -276,8 +276,8 @@ int eflags;
 
 	/* fill in the details if requested */
 	if (nmatch > 0) {
-		pmatch[0].rm_so = m->coldp - m->offp;
-		pmatch[0].rm_eo = endp - m->offp;
+		pmatch[0].rm_so = (regoff_t)(m->coldp - m->offp);
+		pmatch[0].rm_eo = (regoff_t)(endp - m->offp);
 	}
 	if (nmatch > 1) {
 		assert(m->pmatch != NULL);
@@ -469,12 +469,12 @@ sopno stopst;
 		case OLPAREN:
 			i = OPND(m->g->strip[ss]);
 			assert(0 < i && i <= (int)m->g->nsub);
-			m->pmatch[i].rm_so = sp - m->offp;
+			m->pmatch[i].rm_so = (regoff_t)(sp - m->offp);
 			break;
 		case ORPAREN:
 			i = OPND(m->g->strip[ss]);
 			assert(0 < i && i <= (int)m->g->nsub);
-			m->pmatch[i].rm_eo = sp - m->offp;
+			m->pmatch[i].rm_eo = (regoff_t)(sp - m->offp);
 			break;
 		default:		/* uh oh */
 			assert(nope);
@@ -657,7 +657,7 @@ sopno lev;			/* PLUS nesting level */
 		i = OPND(s);
 		assert(0 < i && i <= (int)m->g->nsub);
 		offsave = m->pmatch[i].rm_so;
-		m->pmatch[i].rm_so = sp - m->offp;
+		m->pmatch[i].rm_so = (regoff_t)(sp - m->offp);
 		dp = backref(m, sp, stop, ss+1, stopst, lev);
 		if (dp != NULL)
 			return(dp);
@@ -667,7 +667,7 @@ sopno lev;			/* PLUS nesting level */
 		i = OPND(s);
 		assert(0 < i && i <= (int)m->g->nsub);
 		offsave = m->pmatch[i].rm_eo;
-		m->pmatch[i].rm_eo = sp - m->offp;
+		m->pmatch[i].rm_eo = (regoff_t)(sp - m->offp);
 		dp = backref(m, sp, stop, ss+1, stopst, lev);
 		if (dp != NULL)
 			return(dp);
