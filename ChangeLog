@@ -7,6 +7,9 @@ BZFlag 1.7e5
 * added temporary bans (minutes) - Dave Brosius
 * Can now build entire win32 installer from VC Workspace - Dave Brosius
 * non-listserver connection gave 0.0.0.0 as host: fixed - Dave Brosius
+* added private messages - Frank Thilo
+* modified / added roaming support for observers - Frank Thilo
+* added /idlekick server option - Frank Thilo
 * fix /ban and add /unban - Frank Thilo
 * allow both -mp # and -mp #,#,#,#,# - Frank Thilo
 * CTF flag returning to base fixes - Frank Thilo
