@@ -3259,7 +3259,7 @@ static void handleCommand(int t, const void *rawbuf)
 	break;
 
       // Sanity check
-      if (len == 39) //wow thats bad
+      if (len == FiringInfoPLen)
 	shotFired(t, buf, int(len));
       break;
 
