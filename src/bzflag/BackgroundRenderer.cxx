@@ -10,38 +10,23 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-/* system headers */
-#include <string.h>
+#ifdef _WIN32
+#include "win32.h"
+#endif
 
-/* common headers */
 #include "common.h"
 #include "global.h"
-#include "SceneDatabase.h"
-#include "SceneNode.h"
-#include "World.h"
-#include "Team.h"
-#include "texture.h"
-#include "daylight.h"
 #include "OpenGLMaterial.h"
 #include "OpenGLTexture.h"
-#include "ViewFrustum.h"
-#include "StateDatabase.h"
-#include "BZDBCache.h"
-#include "MediaFile.h"
-
-/* interface header */
 #include "BackgroundRenderer.h"
-
-/* client-specific headers */
-#include "SceneRenderer.h"
-#include "MainWindow.h"
-#include "TextureManager.h"
-
-#include "MediaFile.h"
-#include <string.h>
-#include "common.h"
-
 #include "stars.h"
+#include "TextureManager.h"
+#include "StateDatabase.h"
+#include "SceneRenderer.h"
+#include "BZDBCache.h"
+#include "daylight.h"
+#include "MainWindow.h"
+#include "SceneNode.h"
 
 //static     bool         useMoonTexture = false;
 
