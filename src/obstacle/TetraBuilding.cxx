@@ -402,7 +402,7 @@ bool TetraBuilding::isCrossing(const float* p, float angle,
   // see if any tetra planes separate the box vertices
   bool done = false;
   for (tp = 0; tp < 4; tp++) {
-    int splitdir;
+    int splitdir = 0;
     for (bv = 0; bv < 8; bv++) {
       const float d = (corner[bv][0] * planes[tp][0]) +
                       (corner[bv][1] * planes[tp][1]) +
