@@ -41,7 +41,7 @@ bzfs \- BZFlag game server
 [\fB\-passdb \fIfile\fR]
 [\fB\-passwd \fIpassword\fR]
 [\fB\-printscore\fR]
-[\fN\-prohibitBots\fR]
+[\fN\-disableBots\fR]
 [\fB\-public \fIdescription\fR]
 [\fB\-publicaddr \fIaddress\fR[\fI:port\fR]
 [\fB\-publiclist \fIurl\fR]
@@ -145,6 +145,9 @@ Increase debugging level. More -d are used, more debugging info are obtained.
 \fB-density \fR\fInum\fR
 Specify density for buildings, i.e. the higher the integer number, the more
 buildings you will get. This applies to automatically generated maps only.
+.TP
+.B -disableBots
+Disallow clients from using the ROGER autopilot or from using robots.
 .TP
 \fB+f\fR {\fIgood\fR|\fIbad\fR|\fIteam\fR\fIflag-id\fR}[\fI{count}\fR]
 Forces the existence of the given flag.  If specified multiple times
@@ -258,9 +261,6 @@ such as /kick messages.
 .TP
 .B -printscore
 Write score to stdout whenever it changes
-.TP
-.B -disableBots
-Disallow clients from using the ROGER autopilot or from using robots.
 .TP
 \fB-public\fI description\fR
 Advertise this server on the internet with the given \fIdescription\fR.
