@@ -3,9 +3,6 @@ to do list for BZFlag
 
 THESE SHOULD HAPPEN BEFORE THE NEXT RELEASE:
 
-* 1/2 the board split diagonally does not draw the ground for TimRiker
-  Debian unstable powerpc with a Radeon 9200. Worked fine a few days ago
-
 * need to verify that the anti permissions (e.g. antiban) really do
   prevent the action properly (e.g. you cannot get banned if you have
   antiban -- even from master ban list).
@@ -13,8 +10,14 @@ THESE SHOULD HAPPEN BEFORE THE NEXT RELEASE:
 * integrate motd.php into mysql on db and make it use version= so next
   version can have it's own MOTD
 
+* need standard Msg's for approved global login
+
+* need an indicator in the scoreboard as to login and perhaps admin status
 
 THESE ARE LOWER PRIORITY
+
+* 1/2 the board split diagonally does not draw the ground for TimRiker
+  Debian unstable powerpc with a Radeon 9200. likely a driver bug
 
 * Add a -lib <file> option to bzfs, or "include" statements in map
   files to allow the use of object libraries. Should also get ObstatlceMgr
