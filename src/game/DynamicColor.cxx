@@ -453,7 +453,7 @@ void * DynamicColor::pack(void *buf) const
       buf = nboPackFloat (buf, p.clampDowns[i].width);
     }
     // sequence
-    const unsigned int seqSize = p.sequence.list.size();
+    const unsigned int seqSize = (const unsigned int)p.sequence.list.size();
     buf = nboPackUInt (buf, seqSize);
     if (seqSize > 0) {
       buf = nboPackFloat (buf, p.sequence.period);

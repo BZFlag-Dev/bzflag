@@ -32,8 +32,8 @@ void addShotPuff(const float* pos);
 
 static float limitAngle(float a)
 {
-  if (a < -M_PI) a += 2.0f * M_PI;
-  else if (a >= M_PI) a -= 2.0f * M_PI;
+  if (a < -M_PI) a += (float)(2.0 * M_PI);
+  else if (a >= M_PI) a -= (float)(2.0 * M_PI);
   return a;
 }
 
