@@ -40,7 +40,7 @@
 #include <netinet/tcp.h>
 #include <arpa/inet.h>
 #include <netdb.h>
-#if defined(_old_linux_) || (!defined(__linux__) && !defined(sun) && !defined(__FreeBSD__) && !defined(__APPLE__) && !defined(macintosh) && !defined(__BEOS__))
+#if defined(_old_linux_) || (!defined(__linux__) && !defined(sun) && !defined(BSD) && !defined(__APPLE__) && !defined(macintosh) && !defined(__BEOS__))
 #include <bstring.h>
 #endif
 
@@ -66,7 +66,7 @@
 #define SSOType		void*
 #endif
 
-#if defined(__FreeBSD__) || defined(sun)
+#if defined(BSD) || defined(sun)
 #define AddrLen		socklen_t
 #endif
 
