@@ -915,8 +915,10 @@ static int		lookupPlayerIndex(const PlayerId& id)
 
 static Player*		getPlayerByIndex(int index)
 {
-  if (index == -2) return myTank;
-  if (index == -1) return NULL;
+  if (index == -2)
+    return myTank;
+  if (index == -1)
+    return NULL;
   return player[index];
 }
 
