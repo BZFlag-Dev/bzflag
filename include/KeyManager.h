@@ -42,7 +42,7 @@ public:
   // bind/unbind a command to/from a key event press or release
   void			bind(const BzfKeyEvent&,
 			     bool press, const std::string& cmd);
-	void unbind(const BzfKeyEvent&, bool press);
+  void			unbind(const BzfKeyEvent&, bool press);
 
   // unbind all keys bound to a specific command
   void			unbindCommand(const char* command);
@@ -91,7 +91,7 @@ private:
 			const BzfKeyEvent&) const;
 	};
 
-	typedef std::map<BzfKeyEvent, std::string, KeyEventLess> EventToCommandMap;
+  typedef std::map<BzfKeyEvent, std::string, KeyEventLess> EventToCommandMap;
   typedef std::map<std::string, BzfKeyEvent> StringToEventMap;
 
   EventToCommandMap	pressEventToCommand;
