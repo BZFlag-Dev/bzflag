@@ -92,5 +92,9 @@ InputPath=..\package\win32\nsis\BZFlag.nsi
 !ENDIF 
 
 # End Source File
+# Begin Source File
+
+SOURCE=.\NudgeDate.txt
+# End Source File
 # End Target
 # End Project

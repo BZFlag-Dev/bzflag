@@ -108,10 +108,6 @@ SOURCE=..\src\bzflag\BackgroundRenderer.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\src\bzflag\buildDate.cxx
-# End Source File
-# Begin Source File
-
 SOURCE=..\src\bzflag\bzflag.cxx
 # End Source File
 # Begin Source File

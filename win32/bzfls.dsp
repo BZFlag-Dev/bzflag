@@ -99,10 +99,6 @@ PostBuild_Cmds=copy ..\src\bzfls\debug\*.exe ..\*.exe	copy ..\src\bzfls\debug\*.
 # PROP Default_Filter "cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
 # Begin Source File
 
-SOURCE=..\src\bzfls\buildDate.cxx
-# End Source File
-# Begin Source File
-
 SOURCE=..\src\bzfls\bzfls.cxx
 # End Source File
 # End Group

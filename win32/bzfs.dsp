@@ -103,10 +103,6 @@ SOURCE=..\src\bzfs\AccessControlList.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\src\bzfs\buildDate.cxx
-# End Source File
-# Begin Source File
-
 SOURCE=..\src\bzfs\bzfs.cxx
 # End Source File
 # Begin Source File
