@@ -4,6 +4,7 @@
 BZFlag 1.7e5
 ------------
 
+* patchid optimization for new clients - Dave Brosius
 * udp request fix for later clients - Tim Riker
 * MsgEnter should not be patched for ID - Frank Thilo
 * Removed superfluous buffer copies in bzfs buffer sends - Dave Brosius

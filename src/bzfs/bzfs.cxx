@@ -1395,7 +1395,8 @@ static void pwrite(int playerIndex, const void *b, int l)
   if (p.fd == NotConnected || l == 0)
     return;
 
-  patchMessage(player[playerIndex].id, player[playerIndex].oldId, b);
+  if (!player[playerIndex].knowId)
+     patchMessage(player[playerIndex].id, player[playerIndex].oldId, b);
   // Check if UDP Link is used instead of TCP, if so jump into puwrite
   if (p.ulinkup) {
     uint16_t len, code;
@@ -2989,6 +2990,7 @@ static void acceptClient()
   player[playerIndex].time = TimeKeeper::getCurrent();
   player[playerIndex].fd = fd;
   player[playerIndex].state = PlayerAccept;
+  player[playerIndex].knowId = false;
 
   // send server version and which port to reconnect to
   char buffer[8 + sizeof(serverAddr.sin_port)];
@@ -4135,7 +4137,8 @@ static void parseCommand(const char *message, int t)
 static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
 {
   void *buf = (void*)((char*)rawbuf + 4);
-  patchMessage(player[t].oldId, player[t].id, rawbuf);
+  if (!player[t].knowId)
+    patchMessage(player[t].oldId, player[t].id, rawbuf);
   switch (code) {
     // player joining
     case MsgEnter: {
@@ -4161,6 +4164,7 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
       player[t].oldId.serverHost = player[t].id.serverHost;
       player[t].oldId.port = player[t].id.port;
       player[t].oldId.number = player[t].id.number;
+      player[t].knowId = true;
       break;
 
     // player closing connection
