@@ -1164,6 +1164,7 @@ bool			LocalPlayer::fireShot()
   shots[i] = new LocalShotPath(firingInfo);
 
   server->sendBeginShot(firingInfo);
+  if (gettingSound) {
   if (firingInfo.flagType == Flags::ShockWave)
     playLocalSound(SFX_SHOCK);
   else if (firingInfo.flagType == Flags::Laser)
@@ -1174,7 +1175,7 @@ bool			LocalPlayer::fireShot()
     playLocalSound(SFX_THIEF);
   else
     playLocalSound(SFX_FIRE);
-
+  }
   return true;
 }
 

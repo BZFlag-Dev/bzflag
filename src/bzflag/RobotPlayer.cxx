@@ -43,21 +43,12 @@ void			RobotPlayer::doUpdate(float dt)
 {
   LocalPlayer::doUpdate(dt);
 
-  const int numShots = World::getWorld()->getMaxShots();
-  int i;
-  // fire shot if any available
-  timeSinceShot += dt;
   float tankRadius = BZDBCache::tankRadius;
   float shotRange  = BZDB.eval(StateDatabase::BZDB_SHOTRANGE);
-  float reloadTime = BZDB.eval(StateDatabase::BZDB_RELOADTIME);
-#if !defined(SHOOTING_FIX)
-  timeSinceShot += reloadTime / numShots;
-#endif
   // separate shot by at least 0.4 sec
   timerForShot  -= dt;
   if (timerForShot < 0.0f)
     timerForShot = 0.0f;
-  bool        shoot   = false;
   const float azimuth = getAngle();
   // Allow shooting only if angle is near and timer has elapsed
   if ((int)path.size() != 0 && timerForShot <= 0.0f) {
@@ -76,33 +67,9 @@ void			RobotPlayer::doUpdate(float dt)
     if ((shootingRange < tankRadius)
 	|| (shootingRange <= shotRange
 	    && fabs(azimuthDiff) < tankRadius / shootingRange))
-      shoot = true;
-    // Sometimes, after respawn, bots can go inside building
-    // at least not shoot from that
-    if (shoot) {
-      shoot = false;
-      unsigned int o;
-      if (obstacleList)
-	for (o = 0; o < obstacleList->size(); o++)
-	  if ((*obstacleList)[o]->isInside(p2)) {
-	    shoot = true;
-	    break;
-	  }
-    }
-  }
-  if (isAlive() && timeSinceShot > reloadTime / numShots && shoot) {
-    timeSinceShot -= reloadTime / numShots;
-    for (i = 0; i < numShots; i++)
-      if (!shots[i]) {
+      if (fireShot())
 	// separate shot by 0.4 sec (experimental value)
 	timerForShot = 0.4f;
-	FiringInfo firingInfo(*this, i + getSalt());
-	firingInfo.shot.team = getTeam();
-	firingInfo.shot.vel[2] = 0.0f;
-	shots[i] = new LocalShotPath(firingInfo);
-	server->sendBeginShot(firingInfo);
-	break;
-      }
   }
 }
 
