@@ -18,6 +18,7 @@
 
 float Score::tkKickRatio = 3.0;
 int   Score::score       = 999;
+bool  Score::randomRanking = false;
 
 Score::Score(): wins(0), losses(0), tks(0) {
 }
@@ -27,6 +28,10 @@ void Score::dump() {
 }
 
 float Score::ranking() {
+  if (randomRanking)
+    return (float)bzfrand();
+    
+  // otherwise do score-based ranking
   int sum = wins + losses;
   if (sum == 0)
     return 0.5;
@@ -71,6 +76,10 @@ void Score::setTeamKillRatio(int _tkKickRatio) {
 
 void Score::setWinLimit(int _score) {
   score = _score;
+}
+
+void Score::setRandomRanking() {
+  randomRanking = true;
 }
 
 // Local Variables: ***

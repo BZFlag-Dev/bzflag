@@ -20,6 +20,9 @@ class Score {
  public:
   Score();
   void  dump();
+  /** Take into account the quality of player wins/(wins+loss)
+      Try to penalize winning casuality 
+  */
   float ranking();
   bool  isTK();
   void  tK();
@@ -30,12 +33,14 @@ class Score {
 
   static void setTeamKillRatio(int _tkKickRatio);
   static void setWinLimit(int _score);
+  static void setRandomRanking();
  private:
   // player's score
   int wins, losses, tks;
   // Tk index
   static float tkKickRatio;
   static int   score;
+  static bool  randomRanking;
 };
 
 #endif

@@ -1969,16 +1969,6 @@ static void dropAssignedFlag(int playerIndex) {
       resetFlag(flagIndex);
 } // dropAssignedFlag
 
-// Take into account the quality of player wins/(wins+loss)
-// Try to penalize winning casuality 
-static float rabbitRank (Score *score) {
-  if (clOptions->rabbitSelection == RandomRabbitSelection)
-    return (float)bzfrand();
-  
-  // otherwise do score-based ranking
-  return score->ranking();
-}
-
 static void anointNewRabbit(int killerId = NoPlayer)
 {
   float topRatio = -100000.0f;
@@ -1995,7 +1985,7 @@ static void anointNewRabbit(int killerId = NoPlayer)
   if (rabbitIndex == NoPlayer) {
     for (i = 0; i < curMaxPlayers; i++) {
       if (i != oldRabbit && player[i].canBeRabbit()) {
-	float ratio = rabbitRank(score[i]);
+	float ratio = score[i]->ranking();
 	if (ratio > topRatio) {
 	  topRatio = ratio;
 	  rabbitIndex = i;
@@ -2007,7 +1997,7 @@ static void anointNewRabbit(int killerId = NoPlayer)
   if (rabbitIndex == NoPlayer) {
     for (i = 0; i < curMaxPlayers; i++) {
       if (player[i].canBeRabbit(true)) {
-	float ratio = rabbitRank(score[i]);
+	float ratio = score[i]->ranking();
 	if (ratio > topRatio) {
 	  topRatio = ratio;
 	  rabbitIndex = i;
@@ -3823,6 +3813,9 @@ int main(int argc, char **argv)
     DEBUG1("Running a private server with the following settings:\n");
   }
   Score::setTeamKillRatio(clOptions->teamKillerKickRatio);
+  Score::setWinLimit(clOptions->maxPlayerScore);
+  if (clOptions->rabbitSelection == RandomRabbitSelection)
+    Score::setRandomRanking();
   // print networking info
   DEBUG1("\tlistening on %s:%i\n",
       serverAddress.getDotNotation().c_str(), clOptions->wksPort);
