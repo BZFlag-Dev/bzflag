@@ -98,6 +98,10 @@ SOURCE=..\..\src\common\BZDBCache.cxx
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\src\common\bzfio.cxx
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\src\common\bzsignal.c
 # End Source File
 # Begin Source File
