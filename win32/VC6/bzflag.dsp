@@ -350,6 +350,10 @@ SOURCE=..\..\src\bzflag\ServerListCache.cxx
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\src\bzflag\SegmentedShotStrategy.cxx
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\src\bzflag\ShotPath.cxx
 # End Source File
 # Begin Source File
@@ -783,6 +787,10 @@ SOURCE=..\..\include\SceneNode.h
 # Begin Source File
 
 SOURCE=..\..\include\SceneRenderer.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\bzflag\SegmentedShotStrategy.h
 # End Source File
 # Begin Source File
 
