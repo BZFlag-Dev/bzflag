@@ -49,7 +49,7 @@ void OSFileStdToOSDir ( char *dir )
 #else
 	char *p = dir;
 
-	while ( *p != NULL )
+	while ( *p != '\0' )
 	{
 		if (*p == '/')
 			*p = '\\';
@@ -67,7 +67,7 @@ void OSFileOSToStdDir ( char *dir )
 #else
 	char *p = dir;
 
-	while ( *p != NULL )
+	while ( *p != '\0' )
 	{
 		if (*p == '\\')
 			*p= '/';
@@ -807,7 +807,12 @@ static int match_mask (const char *mask, const char *string)
 bool OSDir::linuxAddFileStack (std::string pathName, std::string fileMask, bool bRecursive)
 {
 #ifdef _WIN32
-	return false;//WIN32
+	// quell warnings
+	if (!bRecursive) {
+		fileMask.size();
+		pathName.size();
+	}
+	return false;
 #else
 	DIR	*directory;
 	dirent	*fileInfo;
