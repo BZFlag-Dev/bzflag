@@ -33,6 +33,11 @@
 #include "common.h"
 #include "bzsignal.h"
 #if defined(_WIN32)
+#define _WINSOCKAPI_
+#include <shlobj.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <direct.h>
 #  define _POSIX_
 #  include <limits.h>
 #  undef _POSIX_
@@ -4021,8 +4026,7 @@ ServerStartMenu::ServerStartMenu()
   // yes it seems silly but the windows way is to have "my" in front of any folder you make in the my docs dir
   // todo: make this stuff go into the application data dir.
   pattern += "\\My BZFlag Files\\";
-  WIN32_FIND_DATA findData;
-  HANDLE h = FindFirstFile(pattern.c_str(), &findData);
+  h = FindFirstFile(pattern.c_str(), &findData);
   if (h != INVALID_HANDLE_VALUE) {
     std::string file;
     std::string suffix;
