@@ -3483,9 +3483,6 @@ static void cleanWorldCache()
 	totalSize += findData.nFileSizeLow;
     }
     FindClose(h);
-
-    if (totalSize < cacheLimit)
-	oldestFile = NULL;
   }
 #else
   DIR *directory = opendir(worldPath);
