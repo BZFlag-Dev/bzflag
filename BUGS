@@ -8,6 +8,9 @@ recent bugs
   Windows people when using ALT-TAB and/or the shiny rabbit bug below.
 
 - saveworld does not save world weapons
+  MAC: Unfortunately world weapons aren't sent to the client, so
+  there's no way for the client to write them. I suppose they could 
+  be packed in the database, for only the purpose of 'saveworld'.
 
 - Something is wrong with the shininess I think. When I play on rabbit
   server with only one other player which is rabbit. When I set the time of
