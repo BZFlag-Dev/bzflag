@@ -22,6 +22,3 @@ the .a files in your "/lib/" directory of Dev-C++, and the headers in "/include/
 Also, make sure you put the dynamic library for SDL (i.e., "SDL.dll" on Windows)
 somewhere in your PATH environment variable (on Windows), such as "c:\WINDOWS\".
 On Linux, place it in a directory that it knows to look in.
-
-The outputed executables should be stripped already by "ld" (command line option "-s"),
-so there is no need to use "strip" or take away any further symbol/debug tables.
