@@ -37,6 +37,7 @@
 /* constants provided for general consumption */
 const int MaxPlayers = 200;
 const int MaxShots = 10;
+const int ReplayObservers = 10;
 
 extern const char *usageString;
 extern const char *extraUsageString;

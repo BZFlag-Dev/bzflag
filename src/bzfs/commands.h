@@ -249,6 +249,29 @@ void handleViewReportsCmd(int t, const char *message);
  */
 void handleClientqueryCmd(int t, const char *);
 
+
+/** /capture command hook function
+ *
+ *  /capture start                    # start buffering
+ *  /capture stop                     # stop buffering (or saving to file)
+ *  /capture size <Mbytes>            # set the buffer size, and truncate
+ *  /capture rate <secs>              # set the state capture rate
+ *  /capture stats                    # display buffer time and memory information
+ *  /capture file [filename]          # begin capturing straight to file, flush buffer
+ *  /capture save [filename]          # save buffer to file (or default filename)
+ */
+void handleCaptureCmd(int t, const char *);
+
+/** /replay command hook function
+ *
+ *  /replay listfiles                 # list available replay file (*.bzr)
+ *  /replay load [filename]           # set the replay file (or load the default)
+ *  /replay play                      # began playing
+ *  /replay skip <secs>               # fast foward or rewind in time
+ */
+void handleReplayCmd(int t, const char *);
+
+
 #endif
 
 // Local Variables: ***

@@ -11,6 +11,7 @@
  */
 #include "bzfs.h"
 #include "NetHandler.h"
+#include "CaptureReplay.h" // FIXME - move into bzfs.h later?
 
 const int udpBufSize = 128000;
 
@@ -38,7 +39,7 @@ static PingPacket pingReply;
 // highest fd used
 static int maxFileDescriptor;
 // players list FIXME should be resized based on maxPlayers
-PlayerInfo player[MaxPlayers];
+PlayerInfo player[MaxPlayers + ReplayObservers];
 // player access
 PlayerAccessInfo accessInfo[MaxPlayers];
 // Last known position, vel, etc
@@ -137,10 +138,22 @@ void directMessage(int playerIndex, uint16_t code, int len, const void *msg)
 
 void broadcastMessage(uint16_t code, int len, const void *msg)
 {
+  bool sent = false;
+  
   // send message to everyone
-  for (int i = 0; i < curMaxPlayers; i++)
-    if (player[i].isPlaying())
+  for (int i = 0; i < curMaxPlayers; i++) {
+    if (player[i].isPlaying()) {
       directMessage(i, code, len, msg);
+      sent = true;
+    }
+  }
+  
+  // capture the packet
+  if (sent && Capture::enabled()) {
+    Capture::addPacket (code, len, msg);
+  }
+  
+  return;
 }
 
 
@@ -2895,6 +2908,12 @@ static void parseCommand(const char *message, int t)
   } else if (strncmp(message + 1, "clientquery", 11) == 0) {
     handleClientqueryCmd(t, message);
 
+  } else if (strncmp(message + 1, "capture", 7) == 0) {
+    handleCaptureCmd(t, message);
+
+  } else if (strncmp(message + 1, "replay", 6) == 0) {
+    handleReplayCmd(t, message);
+
   } else {
     char reply[MessageLen];
     snprintf(reply, MessageLen, "Unknown command [%s]", message + 1);
@@ -3464,12 +3483,14 @@ static std::string cmdReset(const std::string&, const CommandManager::ArgList& a
  */
 int main(int argc, char **argv)
 {
+  int nfound;
   VotingArbiter *votingarbiter = (VotingArbiter *)NULL;
 
   setvbuf(stdout, (char *)NULL, _IOLBF, 0);
   setvbuf(stderr, (char *)NULL, _IOLBF, 0);
+  
+  Capture::init();
 
-  int nfound;
 
   // check time bomb
   if (timeBombBoom()) {
@@ -4268,6 +4289,9 @@ int main(int argc, char **argv)
   delete world; world = NULL;
   delete[] worldDatabase; worldDatabase = NULL;
   delete votingarbiter; votingarbiter = NULL;
+  Replay::kill();
+  Capture::kill();
+  
 #if defined(_WIN32)
   WSACleanup();
 #endif /* defined(_WIN32) */

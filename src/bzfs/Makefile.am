@@ -8,6 +8,8 @@ bzfs_SOURCES = \
 	AccessControlList.h \
 	BZWReader.cxx \
 	BZWReader.h \
+	CaptureReplay.cxx \
+	CaptureReplay.h \
 	CmdLineOptions.cxx \
 	CmdLineOptions.h \
 	CustomBase.cxx \

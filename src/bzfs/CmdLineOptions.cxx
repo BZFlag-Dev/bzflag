@@ -18,6 +18,7 @@
  * to the class implementation (such as version.h)
  */
 #include "CmdLineOptions.h"
+#include "CaptureReplay.h"
 
 // invoke persistent recompilation of this for build versioning
 #include "version.h"
@@ -86,6 +87,7 @@ const char *usageString =
 "[-reportfile <filename>] "
 "[-reportpipe <filename>] "
 "[-requireudp] "
+"[-replay] "
 "[+s <flag-count>] "
 "[-s <flag-count>] "
 "[-sa] "
@@ -794,6 +796,8 @@ void parse(int argc, char **argv, CmdLineOptions &options)
     } else if (strcmp(argv[i], "-requireudp") == 0) {
       std::cerr << "require UDP clients!\n";
       options.requireUDP = true;
+    } else if (strcmp(argv[i], "-replay") == 0) {
+      Replay::init ();
     } else if (strcmp(argv[i], "+s") == 0) {
       // set required number of random flags
       if (i+1 < argc && isdigit(argv[i+1][0])) {
