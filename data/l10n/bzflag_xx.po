@@ -15,6 +15,14 @@
 
 # name your resultant file: bzflag_<locale>.po
 
+# When run, pick a locale like bzflag en_US_l33t
+
+# locale files are cummulative. That is, if you specify a locale that contains a country and dialect, 
+# the base language file is first loaded, and any strings found in the country file replace the base ones, and then
+# strings found in the dialect file replace the country one. So if you have two or three language files based
+# on one language, you only need to put the changes in the country and dialect one. The two (or three) files are merged
+# at runtime.
+
 msgid "Join Game"
 msgstr ""
 
