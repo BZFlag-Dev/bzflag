@@ -52,11 +52,31 @@ float			PyramidBuilding::intersect(const Ray& r) const
 void			PyramidBuilding::getNormal(const float* p,
 							float* n) const
 {
-
   // get normal in z = const plane
   const float s = shrinkFactor(p[2]);
   getNormalRect(p, getPosition(), getRotation(),
 			s * getWidth(), s * getBreadth(), n);
+
+  // make sure we are not way above or way below it
+  // above is good so we can drive on it when it's fliped
+  float top =  getPosition()[2]+getHeight();
+  float bottom = getPosition()[2];
+
+  if (s ==0){
+	  if (this->getZFlip()){
+		  if (p[2] >= top){
+			  n[0] = n[1] = 0;
+			  n[2] = 1;
+			  return;
+		  }
+	  }else{
+		  if (p[2] <= bottom){
+			  n[0] = n[1] = 0;
+			  n[2] = -1;
+			  return;
+		  }
+	  }
+  }
 
   // now angle it due to slope of wall
   // FIXME -- this assumes the pyramid has a square base!
