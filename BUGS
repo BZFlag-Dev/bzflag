@@ -1,6 +1,12 @@
 recent bugs
 ------------
 
+- trouble remapping the "Identify/Respawn" key from "right mouse or i" to 
+  something else.  tried remapping to "w" during gameplay and it fails for
+  windows and os x.  also fails to respawn with right mouse if you try to 
+  change the setting during game.  the values do not appear to be persistent
+  properly either (quit and return and it's displayed wrong).
+
 - Observer controls get confused sometimes. To see, push control and arrows
   to spin. While keys are down, push alt. Now release all. You continue spinning
   un aided. Now stop yourself. Now alt doesn't work. Bagheera reports he gets
