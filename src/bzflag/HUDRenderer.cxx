@@ -707,6 +707,16 @@ void			HUDRenderer::renderStatus(void)
     fm.drawString(x, y, 0, majorFontFace, majorFontSize, buffer);
   }
 
+  // print current position of tank
+  if (BZDB.isTrue("showCoordinates")) {
+    y -= 1.5*h;
+    sprintf(buffer, "[%d %d %d]", (int)player->getPosition()[0], 
+     	    (int)player->getPosition()[1], (int)player->getPosition()[2]);
+    x = (float)window.getWidth() - 0.25f * h - fm.getStrLength(majorFontFace, majorFontSize, buffer);
+    fm.drawString(x, y, 0, majorFontFace, majorFontSize, buffer);
+    y += 1.5*h;
+  }
+
   // print status top-center
   static const GLfloat redColor[3] = { 1.0f, 0.0f, 0.0f };
   static const GLfloat yellowColor[3] = { 1.0f, 1.0f, 0.0f };

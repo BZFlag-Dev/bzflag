@@ -165,6 +165,7 @@ static DefaultDBItem	defaultDBItems[] = {
   { "saveIdentity",		"2",			true,	StateDatabase::ReadWrite,	NULL },
   { "showCollisionGrid",	"0",			true,	StateDatabase::ReadWrite,	NULL },
   { "showCullingGrid",		"0",			true,	StateDatabase::ReadWrite,	NULL },
+  { "showCoordinates",		"0",			true,	StateDatabase::ReadWrite,	NULL },
   { "jumpTyping",		"1",			true,	StateDatabase::ReadWrite,	NULL },
 
   // default texture names
