@@ -24,7 +24,6 @@ $ua->timeout(5);
 
 my $req = HTTP::Request->new('GET', 'http://list.bzflag.org:5156/');
 my $res = $ua->request($req);
-my %servers;
 my $totalServers = 0;
 my $totalPlayers = 0;
 for my $line (split("\n",$res->content)) {
@@ -38,16 +37,17 @@ for my $line (split("\n",$res->content)) {
       unpack("A4A4A4A4A4A4A4A4A4A4A4A4A4A4A4A4A4A4", $flags);
   my $playerSize = hex($rogueSize) + hex($redSize) + hex($greenSize)
       + hex($blueSize) + hex($purpleSize);
-  $servers{$serverport} = $playerSize;
+  my $playerMax = hex($rogueMax) + hex($redMax) + hex($greenMax)
+      + hex($blueMax) + hex($purpleMax);
+  if (($#ARGV == 0) && ($serverport eq $ARGV[0])) {
+    print("$playerSize\n$playerMax\nunknown uptime\nplayers on $ARGV[0]\n");
+    exit(0);
+  }
   $totalServers += 1;
   $totalPlayers += $playerSize;
 }
 if ($#ARGV == 0) {
-  if (defined($servers{$ARGV[0]})) {
-    print("$servers{$ARGV[0]}\n0\nunknown uptime\nplayers on $ARGV[0]\n");
-  } else {
-    print("$ARGV[0] not found in server list\n");
-  }
+  print("$ARGV[0] not found in server list\n");
 } else {
   print("$totalPlayers\n$totalServers\nunknown uptime\nBZFlag players/servers\n");
 }
