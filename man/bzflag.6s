@@ -9,7 +9,7 @@ BZFlag \- a tank battle game
 [\fB\-anonymous\fR]
 [\fB\-directory \fIdirectory\fR]
 [\fB\-echo\fR]
-[\fB\-echoClean\fR]
+[\fB\-echoAnsi\fR]
 [\fB\-geometry \fIwidth\fR\fBx\fR\fIheight\fR[{\fB+\fR|\fB-\fR}x{\fB+\fR|\fB-\fR}y]]
 [\fB\-latitude \fIlatitude\fR]
 [\fB\-list \fIurl\fR]
@@ -80,8 +80,9 @@ in the default installation location \fIINSTALL_DATA_DIR\fR.
 .B -echo
 Copies all message window output to the shell.
 .TP
-.B -echoClean
-Copies all message window output to the shell, but without the color coding.
+.B -echoAnsi
+Copies all message window output to the shell preserving the ANSI
+color coding.
 .TP
 \fB\-geometry\fI width\fR\fBx\fR\fIheight\fR[{\fB+\fR|\fB-\fR}x{\fB+\fR|\fB-\fR}y]
 This specifies the size and, optionally, the position of the window. It

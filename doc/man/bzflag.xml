@@ -21,7 +21,7 @@
     <arg choice='opt'>-anonymous </arg>
     <arg choice='opt'>-directory <replaceable>directory</replaceable></arg>
     <arg choice='opt'>-echo </arg>
-    <arg choice='opt'>-echoClean </arg>
+    <arg choice='opt'>-echoAnsi </arg>
     <arg choice='opt'><arg choice='plain'>-geometry <replaceable>widthxheight</replaceable></arg><arg choice='req'><group choice='opt'><arg choice='plain'>+ </arg><arg choice='plain'>- </arg></group><arg choice='plain'><replaceable>x</replaceable></arg><group choice='opt'><arg choice='plain'>+ </arg><arg choice='plain'>- </arg></group><arg choice='plain'><replaceable>y</replaceable></arg></arg></arg>
     <arg choice='opt'>-latitude <replaceable>latitude</replaceable></arg>
     <arg choice='opt'>-list <replaceable>url</replaceable></arg>
@@ -113,9 +113,9 @@ in the default installation location <filename>/usr/local/share/bzflag</filename
 </listitem>
 </varlistentry>
 <varlistentry>
-<term><option>-echoClean</option></term>
+<term><option>-echoAnsi</option></term>
 <listitem>
-<para>Copies all message window output to the shell, but without the color coding.</para>
+<para>Copies all message window output to the shell with the color coding added.</para>
 </listitem>
 </varlistentry>
 <varlistentry>

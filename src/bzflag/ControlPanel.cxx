@@ -80,8 +80,8 @@ ControlPanel::~ControlPanel()
   window.getWindow()->removeResizeCallback(resizeCallback, this);
   window.getWindow()->removeExposeCallback(exposeCallback, this);
   extern bool echoToConsole;
-  extern bool echoClean;
-  if (echoToConsole && !echoClean) {
+  extern bool echoAnsi;
+  if (echoToConsole && echoAnsi) {
     fprintf(stdout, ColorStrings[FinalResetColor]);
     fflush(stdout);
   }
@@ -412,18 +412,17 @@ void			ControlPanel::addMessage(const std::string& line)
 
   // this stuff has no effect on win32 (there's no console)
   extern bool echoToConsole;
-  extern bool echoClean;
+  extern bool echoAnsi;
   if (echoToConsole) {
-    if (echoClean) {
+    if (echoAnsi) {
+      fprintf(stdout, "%s%s\n", line.c_str(), ColorStrings[ResetColor]);
+    } else {
       char *tmpstr;
 
       tmpstr = strdup(line.c_str());
       OpenGLTexFont::stripAnsiCodes(tmpstr, strlen(tmpstr));
       fprintf(stdout, "%s\n", tmpstr);
       delete [] tmpstr;
-    }
-    else {
-      fprintf(stdout, "%s%s\n", line.c_str(), ColorStrings[ResetColor]);
     }
     fflush(stdout);
   }

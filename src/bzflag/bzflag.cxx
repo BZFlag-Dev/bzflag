@@ -77,7 +77,7 @@ static bool		noAudio = false;
 struct tm		userTime;
 static StartupInfo	startupInfo;
 bool			echoToConsole = false;
-bool			echoClean = false;
+bool			echoAnsi = false;
 
 static BzfDisplay*	display = NULL;
 
@@ -273,7 +273,7 @@ static void		usage()
 	" [-badwords <filterfile>]"
 	" [-directory <data-directory>]"
 	" [-echo]"
-	" [-echoClean]"
+	" [-echoAnsi]"
 	" [-geometry <geometry-spec>]"
 	" [-joystick {1|0}]"
 	" [-joystickname <name>]"
@@ -316,9 +316,9 @@ static void		parse(int argc, char** argv)
 	BZDB.set("directory", argv[i]);
     } else if (strcmp(argv[i], "-e") == 0 || strcmp(argv[i], "-echo") == 0) {
       echoToConsole = true;
-    } else if (strcmp(argv[i], "-ec") == 0 || strcmp(argv[i], "-echoClean") == 0) {
+    } else if (strcmp(argv[i], "-ea") == 0 || strcmp(argv[i], "-echoAnsi") == 0) {
       echoToConsole = true;
-      echoClean = true;
+      echoAnsi = true;
     } else if (strcmp(argv[i], "-h") == 0 ||
 	     strcmp(argv[i], "-help") == 0 ||
 	     strcmp(argv[i], "--help") == 0) {
