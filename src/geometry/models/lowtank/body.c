@@ -23,14 +23,14 @@
 	glVertex3f(-2.835f, 0.877f, 1.238f);
 	glNormal3f(-0.898134f, 0.000000f, -0.439723f);
 	glTexCoord2f(1.840f, 0.932f);
-	glVertex3f(-2.229f, -0.877f, 0.000f);
+	glVertex3f(-2.229f, -0.877f, 0.200f);
 	glTexCoord2f(1.310f, 0.680f);
-	glVertex3f(-2.229f, 0.877f, 0.000f);
+	glVertex3f(-2.229f, 0.877f, 0.200f);
 	glNormal3f(0.000000f, 0.000000f, -1.000000f);
 	glTexCoord2f(1.350f, 1.980f);
-	glVertex3f(2.430f, -0.877f, 0.000f);
+	glVertex3f(2.430f, -0.877f, 0.200f);
 	glTexCoord2f(0.815f, 1.730f);
-	glVertex3f(2.430f, 0.877f, 0.000f);
+	glVertex3f(2.430f, 0.877f, 0.200f);
 	glNormal3f(0.991585f, 0.000000f, -0.129459f);
 	glTexCoord2f(1.360f, 1.970f);
 	glVertex3f(2.575f, -0.877f, 1.111f);
