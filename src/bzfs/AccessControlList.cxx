@@ -29,6 +29,7 @@
 #include "network.h"
 #include "Address.h"
 #include "TimeKeeper.h"
+#include "TextUtils.h"
 
 /* FIXME - needs to come from a public header */
 extern void sendMessage(int playerIndex, PlayerId targetPlayer, const char *message);
@@ -454,6 +455,29 @@ void AccessControlList::purgeMasters(void) {
   }
 }
   
+
+std::vector<std::pair<std::string, std::string> > AccessControlList::listMasterBans(void) const {
+  std::vector<std::pair<std::string, std::string> >bans;
+  std::string explain;
+
+  for (banList_t::const_iterator bItr = banList.begin(); bItr != banList.end(); bItr++) {
+    if (bItr->fromMaster) {
+      explain = string_util::format("%s (banned by %s)", bItr->reason.c_str(), bItr->bannedBy.c_str());
+      bans.push_back(std::make_pair(inet_ntoa(bItr->addr), explain));
+    }
+  }
+
+  for (hostBanList_t::const_iterator hItr = hostBanList.begin(); hItr != hostBanList.end(); hItr++) {
+    if (hItr->fromMaster) {
+      explain = string_util::format("%s (banned by %s)", hItr->reason.c_str(), hItr->bannedBy.c_str());
+      bans.push_back(std::make_pair(hItr->hostpat, explain));
+    }
+  }
+
+  return bans;
+}
+
+
 bool AccessControlList::convert(char *ip, in_addr &mask) {
   unsigned char b[4];
   char *pPeriod;

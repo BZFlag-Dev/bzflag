@@ -190,6 +190,8 @@ public:
       presumably so it can be remerged */
   void purgeMasters(void);
 
+  std::vector<std::pair<std::string, std::string> > listMasterBans(void) const;
+
 private:
   /** This function converts a <code>char*</code> containing an IP mask to an
       @c in_addr. */
