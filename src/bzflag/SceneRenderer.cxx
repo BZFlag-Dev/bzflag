@@ -399,6 +399,8 @@ void			SceneRenderer::setExposed()
 
 void			SceneRenderer::setSceneDatabase(SceneDatabase* db)
 {
+  if (scene)
+    delete scene;
   scene = db;
   delete sceneIterator;
   if (scene) {

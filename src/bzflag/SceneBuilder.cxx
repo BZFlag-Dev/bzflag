@@ -226,6 +226,8 @@ SceneDatabase*		SceneDatabaseBuilder::make(const World* world)
     db = new BSPSceneDatabase;
   // FIXME -- when making BSP tree, try several shuffles for best tree
 
+  if (!world) return db;
+
   // add nodes to database
   const std::vector<WallObstacle> &walls = world->getWalls();
   std::vector<WallObstacle>::const_iterator wallScan = walls.begin();
