@@ -2449,6 +2449,27 @@ static void				setTarget()
 	}
 }
 
+static bool				negotiateFlags(ServerLink* serverLink)
+{
+	uint16_t code, len;
+	char msg[MaxPacketLen];
+	char *buf = msg;
+	buf = (char *) nboPackUShort(buf, LastFlag - FirstFlag + 1);
+	for (int i = FirstFlag; i <= LastFlag; i++) {
+		const char *abbv = Flag::getAbbreviation((FlagId)i);
+		buf = (char *) nboPackString( buf, abbv, 2);
+	}
+	serverLink->send( MsgNegotiateFlags, buf - msg, msg );
+
+	if (serverLink->read(code, len, msg, 5000) <= 0) return false;
+	if (code == MsgNull || code == MsgSuperKill) return false;
+	if (code != MsgNegotiateFlags) return false;
+
+	// TODO: Map flag ids that come back somehow
+
+	return true;
+}
+
 //
 // join/leave a game
 //
@@ -2786,6 +2807,12 @@ static bool				joinGame(ServerLink* _serverLink)
 			SCENEMGR->read(stream, "models.bzg");
 			delete stream;
 		}
+	}
+
+	if (!negotiateFlags(serverLink)) {
+		leaveGame();
+		BZDB->set("connectError",  "Your tank is not capable of carrying flags found in this world");
+		return false;
 	}
 
 	// create world

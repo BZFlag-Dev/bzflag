@@ -53,11 +53,11 @@ const char*				Flag::flagName[] = {
 						};
 
 const char*				Flag::flagAbbv[] = {
-								"",						// rogue team
-								"",						// red team
-								"",						// green team
-								"",						// blue team
-								"",						// purple team
+								"B*",						// rogue team
+								"R*",						// red team
+								"G*",						// green team
+								"B*",						// blue team
+								"P*",						// purple team
 								"V",						// high speed
 								"A",						// quick turn
 								"OO",						// oscillation over...
@@ -227,7 +227,7 @@ const float*			Flag::getColor(FlagId id)
 FlagId					Flag::getIDFromName(const char* name)
 {
 	// start at 1 because "Rogue" isn't a valid flag name
-	for (unsigned int i = 1; i < countof(flagName); ++i)
+	for (unsigned int i = FirstFlag; i < countof(flagName); ++i)
 		if (strnocasecmp(flagName[i], name) == 0)
 			return static_cast<FlagId>(i);
 	return NullFlag;
@@ -236,7 +236,7 @@ FlagId					Flag::getIDFromName(const char* name)
 FlagId					Flag::getIDFromAbbreviation(const char* abbv)
 {
 	// start after teams because team flags don't have abbreviations
-	for (unsigned int i = FirstSuperFlag; i < countof(flagAbbv); ++i)
+	for (unsigned int i = FirstFlag; i < countof(flagAbbv); ++i)
 		if (strnocasecmp(flagAbbv[i], abbv) == 0)
 			return static_cast<FlagId>(i);
 	return NullFlag;
