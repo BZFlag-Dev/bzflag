@@ -25,6 +25,7 @@ typedef std::map<FlagType*, std::pair<int,int> > FlagSuccessMap;
 static FlagSuccessMap flagSuccess;
 static int			  totalSum = 0;
 static int			  totalCnt = 0;
+static bool                       wantJump = false;
 
 static PlanStack planStack;
 
@@ -220,7 +221,7 @@ bool	avoidBullet(float &rotation, float &speed)
    && (minDistance < (std::max(dotProd,0.5f) * BZDBCache::tankLength * 2.25f))
    && (myTank->getFlag() != Flags::NoJumping)) {
 #endif
-    myTank->setJump();
+    wantJump = true;
     return (myTank->getFlag() != Flags::Wings);
   } else if (dotProd > 0.96f) {
     speed = 1.0;
@@ -418,8 +419,8 @@ bool chasePlayer(float &rotation, float &speed)
 	float maxJump = (jumpVel * jumpVel) / (2 * -BZDBCache::gravity);
 
 	if (((building->getPosition()[2] - pos[2] + building->getHeight())) < maxJump) {
-	  speed = d / 50.0f;
-	  myTank->setJump();
+          speed = d / 50.0f;
+          wantJump = true;
 	  return true;
 	}
       }
@@ -568,7 +569,8 @@ bool navigate(float &rotation, float &speed)
   }
   if (myTank->getLocation() == LocalPlayer::InAir
       && myTank->getFlag() == Flags::Wings)
-    myTank->setJump();
+    wantJump = true;
+
   navRot = rotation;
   navSpeed = speed;
   lastNavChange = TimeKeeper::getCurrent();
@@ -698,20 +700,26 @@ void    dropHardFlags()
 
 void	doAutoPilot(float &rotation, float &speed)
 {
-    dropHardFlags(); //Perhaps we should remove this and let learning do it's work
-    if (!avoidBullet(rotation, speed)) {
-      if (!stuckOnWall(rotation, speed)) {
-	if (!chasePlayer(rotation, speed)) {
-	  if (!lookForFlag(rotation, speed)) {
-	    navigate(rotation, speed);
-	  }
-	}
+  wantJump = false;
+
+  dropHardFlags(); //Perhaps we should remove this and let learning do it's work
+  if (!avoidBullet(rotation, speed)) {
+    if (!stuckOnWall(rotation, speed)) {
+      if (!chasePlayer(rotation, speed)) {
+        if (!lookForFlag(rotation, speed)) {
+          navigate(rotation, speed);
+        }
       }
     }
+  }
 
-    avoidDeathFall(rotation, speed);
+  avoidDeathFall(rotation, speed);
 
-    fireAtTank();
+  LocalPlayer *myTank = LocalPlayer::getMyTank();
+  myTank->setJumpPressed(wantJump);
+  myTank->setJump();
+
+  fireAtTank();
 }
 
 

@@ -1067,6 +1067,7 @@ void			LocalPlayer::restart(const float* pos, float _azimuth)
   right = false;
   up    = false;
   down  = false;
+  wantJump = false;
   doUpdateMotion(0.0f);
   updateHandicap();
   entryDrop = true;
