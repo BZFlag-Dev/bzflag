@@ -77,7 +77,11 @@ void			ServerListCache::saveCache()
   std::string fileName = getCacheDirectoryName();
   if (fileName == "") return;
   std::string verString = getServerVersion();
+#ifdef _WIN32
+  fileName = fileName + "\\" + verString + "Servers.bzs";
+#else
   fileName = fileName + "/" + verString + "Servers.bzs";
+#endif
 
   char buffer[MAX_STRING+1];
 
@@ -117,7 +121,11 @@ void			ServerListCache::loadCache()
   std::string fileName = getCacheDirectoryName();
   if (fileName == "") return;
   std::string verString = getServerVersion();
+#ifdef _WIN32
+  fileName = fileName + "\\" + verString + "Servers.bzs";
+#else
   fileName = fileName + "/" + verString + "Servers.bzs";
+#endif
 
   char buffer[MAX_STRING+1];
 
