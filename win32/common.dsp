@@ -41,7 +41,7 @@ RSC=rc.exe
 # PROP Intermediate_Dir "Release"
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /YX /FD /c
-# ADD CPP /nologo /MT /Ze /W3 /O2 /I "..\include" /D "WIN32" /D "NDEBUG" /D "_MBCS" /D "_LIB" /FD /c
+# ADD CPP /nologo /MT /W3 /O2 /I "..\include" /D "WIN32" /D "NDEBUG" /D "_MBCS" /D "_LIB" /FD /c
 # SUBTRACT CPP /YX
 # ADD BASE RSC /l 0x409
 # ADD RSC /l 0x409
@@ -90,11 +90,11 @@ SOURCE=..\src\common\AList.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\src\common\bzsignal.c
+SOURCE=..\src\common\BzfString.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\src\common\BzfString.cxx
+SOURCE=..\src\common\bzsignal.c
 # End Source File
 # Begin Source File
 
@@ -122,6 +122,10 @@ SOURCE=..\src\common\TimeKeeper.cxx
 # PROP Default_Filter "h"
 # Begin Source File
 
+SOURCE=..\include\Address.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\include\AList.h
 # End Source File
 # Begin Source File
@@ -131,6 +135,10 @@ SOURCE=..\include\bzfio.h
 # Begin Source File
 
 SOURCE=..\include\BzfString.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\include\bzsignal.h
 # End Source File
 # Begin Source File
 
@@ -147,6 +155,10 @@ SOURCE=..\include\Flag.h
 # Begin Source File
 
 SOURCE=..\include\global.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\include\Pack.h
 # End Source File
 # Begin Source File
 

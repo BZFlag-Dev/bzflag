@@ -103,11 +103,47 @@ SOURCE=..\src\scene\ZSceneDatabase.cxx
 # PROP Default_Filter "h;hpp;hxx;hm;inl"
 # Begin Source File
 
+SOURCE=..\include\AList.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\include\BSPSceneDatabase.h
 # End Source File
 # Begin Source File
 
+SOURCE=..\include\bzfgl.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\include\common.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\include\OpenGLGState.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\include\RenderNode.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\include\SceneDatabase.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\include\SceneNode.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\include\SphereSceneNode.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\include\ViewFrustum.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\include\WallSceneNode.h
 # End Source File
 # Begin Source File
 

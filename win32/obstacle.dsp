@@ -119,11 +119,31 @@ SOURCE=..\src\obstacle\WallObstacle.cxx
 # PROP Default_Filter "h;hpp;hxx;hm;inl"
 # Begin Source File
 
+SOURCE=..\include\AList.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\include\BaseBuilding.h
 # End Source File
 # Begin Source File
 
 SOURCE=..\include\BoxBuilding.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\include\bzfgl.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\include\bzfio.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\include\BzfString.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\include\common.h
 # End Source File
 # Begin Source File
 
@@ -135,7 +155,27 @@ SOURCE=..\include\Obstacle.h
 # End Source File
 # Begin Source File
 
+SOURCE=..\include\OpenGLGState.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\include\PyramidBuilding.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\include\QuadWallSceneNode.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\include\Ray.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\include\RenderNode.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\include\SceneNode.h
 # End Source File
 # Begin Source File
 
@@ -143,7 +183,15 @@ SOURCE=..\include\Teleporter.h
 # End Source File
 # Begin Source File
 
+SOURCE=..\include\TriWallSceneNode.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\include\WallObstacle.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\include\WallSceneNode.h
 # End Source File
 # End Group
 # End Target

@@ -262,11 +262,23 @@ SOURCE=..\src\geometry\WallSceneNode.cxx
 # PROP Default_Filter "h;hpp;hxx;hm;inl"
 # Begin Source File
 
+SOURCE=..\include\AList.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\include\BillboardSceneNode.h
 # End Source File
 # Begin Source File
 
 SOURCE=..\include\BoltSceneNode.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\include\bzfgl.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\include\common.h
 # End Source File
 # Begin Source File
 
@@ -294,7 +306,27 @@ SOURCE=..\include\FlagWarpSceneNode.h
 # End Source File
 # Begin Source File
 
+SOURCE=..\include\global.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\include\LaserSceneNode.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\include\OpenGLGState.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\include\OpenGLLight.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\include\OpenGLMaterial.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\include\OpenGLTexture.h
 # End Source File
 # Begin Source File
 
@@ -314,7 +346,15 @@ SOURCE=..\include\Ray.h
 # End Source File
 # Begin Source File
 
+SOURCE=..\include\RenderNode.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\include\SceneNode.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\include\SceneRenderer.h
 # End Source File
 # Begin Source File
 
