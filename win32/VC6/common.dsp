@@ -67,7 +67,7 @@ LIB32=link.exe -lib
 # PROP Intermediate_Dir "..\..\src\common\Debug"
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /GX /Z7 /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /YX /FD /c
-# ADD CPP /nologo /MDd /W3 /Gm /GX /ZI /Od /I "..\..\include" /I "..\..\win32" /I ".\\" /D "WIN32" /D "_DEBUG" /D "_MBCS" /D "_LIB" /FD /GZ /c
+# ADD CPP /nologo /MDd /W3 /Gm /GX /Zi /Od /I "..\..\include" /I "..\..\win32" /I ".\\" /D "WIN32" /D "_DEBUG" /D "_MBCS" /D "_LIB" /FD /GZ /c
 # ADD BASE RSC /l 0x409
 # ADD RSC /l 0x409
 BSC32=bscmake.exe
@@ -114,8 +114,8 @@ LIB32=link.exe -lib
 # PROP Output_Dir "..\..\src\common\SDL_Debug"
 # PROP Intermediate_Dir "..\..\src\common\SDL_Debug"
 # PROP Target_Dir ""
-# ADD BASE CPP /nologo /MDd /W3 /Gm /GX /ZI /Od /I "..\..\include" /I "..\..\win32" /I ".\\" /D "WIN32" /D "_DEBUG" /D "_MBCS" /D "_LIB" /FD /GZ /c
-# ADD CPP /nologo /MDd /W3 /Gm /GX /ZI /Od /I "..\..\include" /I "..\..\win32" /I ".\\" /D "WIN32" /D "_DEBUG" /D "_MBCS" /D "_LIB" /D "HAVE_SDL" /FD /GZ /c
+# ADD BASE CPP /nologo /MDd /W3 /Gm /GX /Zi /Od /I "..\..\include" /I "..\..\win32" /I ".\\" /D "WIN32" /D "_DEBUG" /D "_MBCS" /D "_LIB" /FD /c
+# ADD CPP /nologo /MDd /W3 /Gm /GX /Zi /Od /I "..\..\include" /I "..\..\win32" /I ".\\" /D "WIN32" /D "_DEBUG" /D "_MBCS" /D "_LIB" /D "HAVE_SDL" /FD /GZ /c
 # ADD BASE RSC /l 0x409
 # ADD RSC /l 0x409
 BSC32=bscmake.exe
@@ -203,6 +203,10 @@ SOURCE=..\..\src\common\md5.cxx
 # Begin Source File
 
 SOURCE=..\..\src\common\PlayerState.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\common\PositionTracker.cxx
 # End Source File
 # Begin Source File
 
@@ -318,6 +322,10 @@ SOURCE=..\..\include\Language.h
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\include\MathUtils.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\include\md5.h
 # End Source File
 # Begin Source File
@@ -327,6 +335,10 @@ SOURCE=..\..\include\Pack.h
 # Begin Source File
 
 SOURCE=..\..\include\PlayerState.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\include\PositionTracker.h
 # End Source File
 # Begin Source File
 
