@@ -82,7 +82,7 @@ public:
 		RoamViewFlag,				// tracking a specific flag
 		RoamViewFree				// free roaming
 	} RoamView;
-	static const int		roamViewCount = 5;
+	static const int		roamViewCount;
 
 	LocalPlayer(PlayerId, const char* name, const char* email);
 	~LocalPlayer();

@@ -121,6 +121,8 @@ Ray						BaseLocalPlayer::getLastMotion() const
 //
 
 LocalPlayer*			LocalPlayer::mainPlayer = NULL;
+const int				LocalPlayer::roamViewCount = 5;
+
 
 LocalPlayer::LocalPlayer(PlayerId id,
 								const char* name, const char* email) :
