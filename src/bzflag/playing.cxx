@@ -1661,6 +1661,7 @@ static void		doMotion()
 
   if (myTank->isAutoPilot()) {
 	//FIXME bot motion
+	static TimeKeeper lastShot;
 	PlayerId t;
 	PlayerId target = maxPlayers;
 	const float *mp = myTank->getPosition();
@@ -1705,7 +1706,11 @@ static void		doMotion()
 			speed = 1.0f - fabs(rotation);
 
 		//fire too, why not?
-		myTank->fireShot();
+		TimeKeeper now = TimeKeeper::getCurrent();
+		if (now - lastShot >= 0.5f) {
+		  myTank->fireShot();
+		  lastShot = now;
+		}
 
 #ifdef DEBUG_ROBOT
 		// FIXME speed should drop as distance goes from say 40 to 0?
