@@ -68,7 +68,7 @@ class CollisionGrid {
 
     typedef std::vector<const GridCell *> CellList;
 
-    CellList CollisionGrid::getCells (const float *pos, float radius) const;    
+    CellList getCells (const float *pos, float radius) const;    
 
     GridCell Cells[GridSizeX][GridSizeY];
     
