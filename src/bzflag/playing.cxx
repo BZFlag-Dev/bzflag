@@ -1815,7 +1815,7 @@ static void		handleServerMessage(bool human, uint16_t code,
     case MsgKilled: {
       PlayerId victim, killer;
       int16_t shotId, reason;
-      int phydrv;
+      int phydrv = -1;
       msg = nboUnpackUByte(msg, victim);
       msg = nboUnpackUByte(msg, killer);
       msg = nboUnpackShort(msg, reason);

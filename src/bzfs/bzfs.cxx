@@ -3477,7 +3477,7 @@ possible attack from %s\n",
       // data: id of killer, shot id of killer
       PlayerId killer;
       int16_t shot, reason;
-      int phydrv;
+      int phydrv = -1;
       buf = nboUnpackUByte(buf, killer);
       buf = nboUnpackShort(buf, reason);
       buf = nboUnpackShort(buf, shot);
