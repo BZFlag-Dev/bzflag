@@ -33,6 +33,7 @@ void Bundle::load(const std::string &path)
 		if (type == tMSGID) {
 			if (untranslated.length() > 0) {
 				mappings.erase(untranslated);
+				ensureNormalText(translated);
 				mappings.insert(std::pair<std::string,std::string>(untranslated, translated));
 			}
 			untranslated = data;
@@ -56,10 +57,9 @@ void Bundle::load(const std::string &path)
 
 	if ((untranslated.length() > 0) && (translated.length() > 0)) {
 		mappings.erase(untranslated);
+		ensureNormalText(translated);
 		mappings.insert(std::pair<std::string,std::string>(untranslated, translated));
 	}
-
-
 }
 
 Bundle::TLineType Bundle::parseLine(const std::string &line, std::string &data)
@@ -112,6 +112,32 @@ std::string Bundle::getLocalString(const std::string &key)
 	else
 		return key;
 }
+
+void Bundle::ensureNormalText(std::string &msg)
+{
+// This is an ugly hack. If you don't like it fix it.
+// BZFlag's font bitmaps don't contain letters with accents, so strip them here
+// Would be nice if some kind sole added them.
+
+  int length = msg.length();
+  for (int i = 0; i < length; i++) {
+    char c = msg.at(i);
+    switch (c) {
+      case 'é':
+      case 'è':
+	msg[i] = 'e';
+      break;
+      case 'ô':
+	msg[i] = 'o';
+      break;
+      case 'à':
+	msg[i] = 'a';
+      break;
+    }
+  }
+  
+}
+
 
 std::string Bundle::formatMessage(const std::string &key, int parmCnt, const std::string *parms)
 {
