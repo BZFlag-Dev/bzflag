@@ -729,8 +729,8 @@ static void		setNoDelay(int fd)
   int mode = fcntl(fd, F_GETFL, 0);
   if (mode == -1 || fcntl(fd, F_SETFL, mode | O_NDELAY) < 0)
     nerror("enabling O_NDELAY");
-  }
 #endif
+  }
 }
 
 static int		pread(int playerIndex, int l)
