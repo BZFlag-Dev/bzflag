@@ -25,7 +25,7 @@ using namespace std;
 /** This class handles all the command line parsing for bzadmin. */
 class OptionParser {
 public:
-  
+
   /** @c helpPrefix is a line (or several lines) of text that is written
       before the usage description in the help message. It could for example
       be the program name and version. @c usageSuffix is a line (no linebreaks)
@@ -56,7 +56,7 @@ public:
       the variable @c myName will get the value <code>"Lars Luthman"</code>
       when the command line is parsed. */
   template <class T>
-  bool registerVariable(const string& option, T& variable, 
+  bool registerVariable(const string& option, T& variable,
 			const string& usage = "", const string& help = "");
 
 protected:
@@ -78,8 +78,8 @@ protected:
   template <class T>
   class VariableParser : public Parser {
   public:
-    VariableParser(T& variable, const string& usageText, 
-		   const string& helpText) 
+    VariableParser(T& variable, const string& usageText,
+		   const string& helpText)
       : Parser(usageText, helpText), var(variable) { }
     virtual int parse(char** argv) {
       istringstream iss(argv[0]);
@@ -89,14 +89,14 @@ protected:
   protected:
     T& var;
   };
-  
-  /** This is a specialization for @c string variables. It copies the 
+
+  /** This is a specialization for @c string variables. It copies the
       entire parameter instead of just the first word (which the
       stream operator would have done). */
   class VariableParser<string> : public Parser {
   public:
-    VariableParser(string& variable, const string& usageText, 
-		   const string& helpText) 
+    VariableParser(string& variable, const string& usageText,
+		   const string& helpText)
       : Parser(usageText, helpText), var(variable) { }
     virtual int parse(char** argv) {
       var = argv[0];
@@ -105,13 +105,13 @@ protected:
   protected:
     string& var;
   };
-  
+
   /** This is a specialization for @c bool variables. It does not
       take a parameter, but just sets the variable to @c true. */
   class VariableParser<bool> : public Parser {
   public:
-    VariableParser(bool& variable, const string& usageText, 
-		   const string& helpText) 
+    VariableParser(bool& variable, const string& usageText,
+		   const string& helpText)
       : Parser(usageText, helpText), var(variable) { }
     virtual int parse(char**) {
       var = true;

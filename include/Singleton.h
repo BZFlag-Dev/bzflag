@@ -104,10 +104,10 @@ class SingleThreaded {
   class LockThread {
 
    private:
-    
+
     static void Lock() { }
     static void UnLock() { }
-    
+
    public:
 
     LockThread() {
@@ -139,7 +139,7 @@ class Singleton : public CreationPolicy, public ThreadingModel<T> {
 
   Singleton(const Singleton &) { } // do not use
   Singleton& operator=(const Singleton&) { return *this; } // do not use
-  
+
   static void destroy() {
     if ( _instance != 0 ) {
       //      ThreadingModel::LockThread lock;
@@ -151,7 +151,7 @@ class Singleton : public CreationPolicy, public ThreadingModel<T> {
   }
 
  protected:
-  
+
   // protection from instantiating a non-singleton Singleton
   Singleton() { }
   ~Singleton() { _instance = 0; } // do not delete

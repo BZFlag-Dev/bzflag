@@ -40,22 +40,22 @@ int main(int argc, char** argv) {
   const UIMap& interfaces(UIMap::getInstance());
   if (interfaces.find("curses") == interfaces.end())
     uiName = "stdboth";
-  
+
   // build a usage string with all interfaces
   UIMap::const_iterator uiIter;
   string uiUsage;
   for (uiIter = interfaces.begin(); uiIter != interfaces.end(); ++uiIter)
     uiUsage += uiIter->first + '|';
   uiUsage = string("[-ui ") + uiUsage.substr(0, uiUsage.size() - 1) + ']';
-  
+
   // register and parse command line arguments
-  OptionParser op(string("bzadmin ") + getAppVersion(), 
+  OptionParser op(string("bzadmin ") + getAppVersion(),
 		  "CALLSIGN@HOST[:PORT] [COMMAND] [COMMAND] ...");
   op.registerVariable("ui", uiName, uiUsage,
 		      "choose a user interface");
   if (!op.parse(argc, argv))
     return 1;
-  
+
   // check that we have callsign and host in the right format and extract them
   if (op.getParameters().size() == 0) {
     cerr<<"You have to specify callsign@host."<<endl;
@@ -82,12 +82,12 @@ int main(int argc, char** argv) {
     cerr<<"There is no interface called \""<<uiName<<"\"."<<endl;
     return 1;
   }
-  
+
   // try to connect
   BZAdminClient client(name, host, port);
   if (!client.isValid())
     return 1;
-  
+
   // if we got commands as arguments, send them and exit
   if (op.getParameters().size() > 1) {
     for (unsigned int i = 1; i < op.getParameters().size(); ++i)

@@ -992,7 +992,7 @@ int			main(int argc, char** argv)
       std::cout << "Loaded " << count << " words from \"" << name << "\"" << std::endl;
     }
   }
-	  
+
   // load the bad word filter, regardless of a default, if it was set
   if (BZDB->isSet("filterFilename")) {
     std::string filterFilename = BZDB->get("filterFilename");

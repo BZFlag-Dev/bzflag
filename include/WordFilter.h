@@ -156,7 +156,7 @@ class WordFilter
    * already in the string
    */
   inline void appendUniqueChar(std::string& string, char c) const;
-  
+
  protected:
 
   /** This filter does a simple case-insensitive
@@ -196,7 +196,7 @@ class WordFilter
    * corresponds to (e.g. 3 => e, | => il)
    */
   std::string alphabeticSetFromCharacter(const char c) const;
-  
+
   /** expands a word into an uncompiled regular
    *  expression.
    */

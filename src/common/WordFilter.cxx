@@ -38,7 +38,7 @@ bool WordFilter::simpleFilter(char *input) const
   int endPosition;
   std::string word;
   unsigned int firstchar;
-  
+
   /* here we iterate over all of the words in the input and replace
    * exact matches with asterisks
    */
@@ -77,7 +77,7 @@ bool WordFilter::aggressiveFilter(char *input) const
 
   // a buffer to destroy during matching (includes terminating null)
   std::string sInput = input;
-  
+
   /* maintain an array of match indices of the input; values are in
    * pairs.  the first number is the start position, the second is
    * a length.  array has initial size of 256 (128 words).
@@ -137,13 +137,13 @@ bool WordFilter::aggressiveFilter(char *input) const
     }
   }
 
-  
+
 //std::cout << "WordIndexLetters are [" << wordIndices << "]" << std::endl;
   // now we have a record of all potential word boundary positions
 
-  
+
   /* iterate over the filter words for each unique initial word character */
-  int regCode;  
+  int regCode;
   for (unsigned int j = 0; j < wordIndices.size(); j++) {
 
     /* look at all of the filters that start with the letter wordIndices[j]
@@ -215,7 +215,7 @@ bool WordFilter::aggressiveFilter(char *input) const
 
 	      if (regexec(j->compiled, sInput.c_str() + endOffset, 1, match, 0) == 0) {
 
-//std::cout << "is " << match[0].rm_eo << " less than " << inputLength - endOffset << std::endl;	      
+//std::cout << "is " << match[0].rm_eo << " less than " << inputLength - endOffset << std::endl;
 //std::cout << "is alpha =?= " << input[endOffset + match[0].rm_eo + 1] << std::endl;
 
 		/* again, make sure we are now at a word end */
@@ -256,7 +256,7 @@ bool WordFilter::aggressiveFilter(char *input) const
           std::string filler;
 	  filler.assign(endOffset - startOffset, 'W');
 	  sInput.replace(startOffset, endOffset - startOffset, filler);
-	  
+
 	} else if ( regCode == REG_NOMATCH ) {
 	  // do nothing
 	  continue;
@@ -282,7 +282,7 @@ bool WordFilter::aggressiveFilter(char *input) const
     strncpy(tmp, input + matchPair[i*2], matchPair[(i*2)+1]);
     std::cout << "Matched: [" << tmp << "]" << std::endl;
 #endif
-    
+
     if (filterCharacters(input, matchPair[i*2], matchPair[(i*2)+1]) <= 0) {
       // XXX with multiple matching, we will be unable to filter overlapping matches
       //      std::cerr << "Unable to filter characters" << std::endl;
@@ -439,7 +439,7 @@ std::string WordFilter::alphabeticSetFromCharacter(const char c) const
       set[0] = c;
       break;
   }
-  
+
   return set;
 }
 
@@ -451,13 +451,13 @@ std::string WordFilter::expressionFromString(const std::string &word) const
   std::string expression;
   unsigned int length = word.length();
   std::string charSet;
-  
+
   /* individual characters expand into a potential set of matchable characters */
   for (unsigned int i = 0; i < length; i++) {
 
     // convert to lowercase for simplicity and speed
     charSet = l33tspeakSetFromCharacter(tolower(word[i]));
-    
+
     /* we specifically will create a regular expression that should at least
      * match exactly the given input, including any spaces or special
      * characters.  including spaces or other characters in the input will
@@ -693,7 +693,7 @@ WordFilter::WordFilter()
   prefixes.insert(fix);
   fix.word = "ura";
   fix.compiled = getCompiledExpression(expressionFromString(fix.word));
-  prefixes.insert(fix);  
+  prefixes.insert(fix);
 
 #endif
 
@@ -718,7 +718,7 @@ WordFilter::WordFilter(const WordFilter& filter)
 WordFilter::~WordFilter(void)
 {
   std::set<filter_t, expressionCompare>::iterator i;
-  
+
   // delete compiled words
   for (int j = 0; j < MAX_FILTER_SETS; ++j) {
     for (i = filters[j].begin();
@@ -745,7 +745,7 @@ WordFilter::~WordFilter(void)
       free(i->compiled);
     }
   }
-  
+
   return;
 }
 // consider calling regfree()

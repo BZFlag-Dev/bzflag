@@ -812,7 +812,7 @@ bool			SilenceDefaultKey::keyRelease(const BzfKeyEvent& key)
 
     if (key.button == BzfKeyEvent::Up || key.button==BzfKeyEvent::Down
 		||key.button==BzfKeyEvent::Left||key.button==BzfKeyEvent::Right) {
-      // exclude robots from silence recipient list they don't talk 
+      // exclude robots from silence recipient list they don't talk
       selectNextRecipient(key.button == BzfKeyEvent::Up ||
 			  key.button == BzfKeyEvent::Right, false);
       const Player *recipient = myTank->getRecipient();
@@ -1454,7 +1454,7 @@ static bool		doKeyCommon(const BzfKeyEvent& key, bool pressed)
 	// minus 30 seconds
 	if (pressed) clockAdjust -= 30.0f;
 	return true;
-        
+
       default:
 	break;
     }
@@ -1617,7 +1617,7 @@ static void		doAutoPilot(float &rotation, float &speed)
 	    if (t != myTank->getId() && player[t] &&
 	      player[t]->isAlive() && !player[t]->isPaused() &&
 	      !player[t]->isNotResponding()) {
-	      
+
 	      const float *tp = player[t]->getPosition();
 	      float dist = hypotf(tp[0] - pos[0], tp[1] - pos[1]);
 	      if (dist <= BZDB->eval(StateDatabase::BZDB_SHOCKOUTRADIUS)) {
@@ -1640,7 +1640,7 @@ static void		doAutoPilot(float &rotation, float &speed)
       else {
         TimeKeeper now = TimeKeeper::getCurrent();
         if (now - lastShot >= (1.0f / World::getWorld()->getMaxShots())) {
-         
+
 	  float errorLimit = World::getWorld()->getMaxShots() * BZDB->eval(StateDatabase::BZDB_LOCKONANGLE) / 8.0f;
 	  float closeErrorLimit = errorLimit * 2.0f;
 
@@ -1670,7 +1670,7 @@ static void		doAutoPilot(float &rotation, float &speed)
 		    lastShot = now;
 		    shotFired = true;
 		    t = curMaxPlayers;
-		  }	
+		  }
 		}
 	      }
 	    }
@@ -1785,7 +1785,7 @@ static void		doAutoPilot(float &rotation, float &speed)
 	      if (dotProd <= 0.1f) //pretty wide angle, if it hits me, jumping wouldn't have helped
 	        continue;
 
-	      if (((World::getWorld()->allowJumping() || (myTank->getFlag()) == Flags::Jumping)) 
+	      if (((World::getWorld()->allowJumping() || (myTank->getFlag()) == Flags::Jumping))
 	      && (dist < (max(dotProd,0.5f) * BZDB->eval(StateDatabase::BZDB_TANKLENGTH) * 2.5f))) {
 	        myTank->jump();
 	        s = maxShots;
@@ -2526,7 +2526,7 @@ static void		doEvent(BzfDisplay* display)
 	showKeyboardStatus();
       }
       break;
-      
+
     default:
       /* unset */
       break;
@@ -3487,7 +3487,7 @@ static void		handleServerMessage(bool human, uint16_t code,
       if (wordfilter != NULL) {
 	wordfilter->filter((char *)msg);
       }
-      
+
       std::string text = BundleMgr::getCurrentBundle()->getLocalString(std::string((char*)msg));
 
       if (toAll || srcPlayer == myTank || dstPlayer == myTank ||
@@ -5008,11 +5008,11 @@ static World*		makeWorld(ServerLink* serverLink)
   serverLink->send( MsgWantWHash, 0, NULL );
   if (serverLink->read(code, len, msg, 5000) > 0) {
     if (code != MsgWantWHash) return NULL;
-  
+
     char *hexDigest = new char[len];
     nboUnpackString( msg, hexDigest, len );
     isTemp = hexDigest[0] == 't';
-  
+
     worldPath = getCacheDirectoryName();
     worldPath += "/";
     worldPath += hexDigest;
@@ -5028,19 +5028,19 @@ static World*		makeWorld(ServerLink* serverLink)
     if (serverLink->read(code, len, msg, 5000) <= 0) return NULL;
     if (code == MsgNull || code == MsgSuperKill) return NULL;
     if (code != MsgGetWorld) return NULL;
-  
+
     // get size of entire world database and make space
     uint32_t bytesLeft;
     void *buf = nboUnpackUInt(msg, bytesLeft);
     size = bytesLeft + len - 4;
     worldDatabase = new char[size];
-  
+
     // get world database
     uint32_t ptr = 0;
     while (bytesLeft != 0) {
       // add chunk to database so far
       ::memcpy(worldDatabase + int(ptr), buf, len - sizeof(uint32_t));
-  
+
       // increment pointer
       ptr += len - sizeof(uint32_t);
       // ask and wait for next chunk
@@ -5056,7 +5056,7 @@ static World*		makeWorld(ServerLink* serverLink)
     }
     //add final chunk
     ::memcpy(worldDatabase + int(ptr), buf, len - sizeof(uint32_t));
-    
+
     if (worldPath.length() > 0) {
       cleanWorldCache();
       ostream* cacheOut = FILEMGR->

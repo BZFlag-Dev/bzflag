@@ -22,7 +22,7 @@ using namespace std;
 
 
 /** The function type that creates interface objects. */
-typedef BZAdminUI* (*UICreator)(const map<PlayerId, string>& players, 
+typedef BZAdminUI* (*UICreator)(const map<PlayerId, string>& players,
 				PlayerId me);
 
 
@@ -33,9 +33,9 @@ class UIMap : public map<string, UICreator> {
 private:
   /** The constructor is private, this is a singleton. */
   UIMap();
-  
+
 public:
-  
+
   /** This function returns the single instance of this class. */
   static UIMap& getInstance();
 

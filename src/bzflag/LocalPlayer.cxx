@@ -284,7 +284,7 @@ void			LocalPlayer::doUpdateMotion(float dt)
          * one for a linear convergence rate.
          */
         newAngVel = oldAngVel*0.8f + desiredAngVel*0.2f;
-  
+
         // instant stop
         if ((oldAngVel * desiredAngVel < 0.0f) || (NEAR_ZERO(desiredAngVel, ZERO_TOLERANCE))) {
           newAngVel = desiredAngVel;
@@ -406,7 +406,7 @@ void			LocalPlayer::doUpdateMotion(float dt)
     newPos[0] = tmpPos[0] + searchTime * newVelocity[0];
     newPos[1] = tmpPos[1] + searchTime * newVelocity[1];
     newPos[2] = tmpPos[2] + searchTime * newVelocity[2];
-    if (oldPosition[2] < groundLimit) 
+    if (oldPosition[2] < groundLimit)
       newVelocity[2] = max(newVelocity[2], -oldPosition[2] / 2.0f + 0.5f);
 
 

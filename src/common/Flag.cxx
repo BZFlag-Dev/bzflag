@@ -66,7 +66,7 @@ namespace Flags {
   FlagDesc *Blindness;
   FlagDesc *Jamming;
   FlagDesc *WideAngle;
-  
+
   void init()
   {
     Null		    = new FlagDesc( "", "", FlagNormal, NormalShot, FlagGood, NoTeam, NULL );

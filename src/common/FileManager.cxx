@@ -132,11 +132,11 @@ std::ostream*			FileManager::createDataOutStream(
   } else {
     // try absolute path
     int i = 0;
-#ifndef _WIN32    
+#ifndef _WIN32
     // create all directories above the file
     while ((i = filename.find('/', i+1)) != -1) {
       struct stat statbuf;
-      if (!(stat(filename.substr(0, i).c_str(), &statbuf) == 0 && 
+      if (!(stat(filename.substr(0, i).c_str(), &statbuf) == 0 &&
 	    (S_ISDIR(statbuf.st_mode)))) {
 	mkdir(filename.substr(0, i).c_str(), 0777);
       }
@@ -145,7 +145,7 @@ std::ostream*			FileManager::createDataOutStream(
     // create all directories above the file
     while ((i = filename.find('\\', i+1)) != -1) {
       struct stat statbuf;
-      if (!(stat(filename.substr(0, i).c_str(), &statbuf) == 0 && 
+      if (!(stat(filename.substr(0, i).c_str(), &statbuf) == 0 &&
 	    (_S_IFDIR & statbuf.st_mode))) {
 		_mkdir(filename.substr(0, i).c_str());
       }

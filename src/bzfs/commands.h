@@ -89,7 +89,7 @@ void handleBanlistCmd(int t, const char *);
  * any text after duration is considered as the reason for banning.
  */
 void handleBanCmd(int t, const char *message);
-    
+
 
 /** unban command hook function
  *
@@ -135,7 +135,7 @@ void handlePlayerlistCmd(int t, const char *message);
 
 /** report command hook function
  *
- * /report sends a message to the admin and/or stores it in a file 
+ * /report sends a message to the admin and/or stores it in a file
  */
 void handleReportCmd(int t, const char *message);
 

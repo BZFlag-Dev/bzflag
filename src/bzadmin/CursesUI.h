@@ -69,8 +69,8 @@ public:
   /** Get the current target (the player that messages should be sent to,
       or 0 for public messages). */
   virtual PlayerId getTarget() const;
-  
-  /** This function returns a pointer to a dynamically allocated 
+
+  /** This function returns a pointer to a dynamically allocated
       CursesUI object. */
   static BZAdminUI* creator(const map<PlayerId, string>& players, PlayerId me);
 
@@ -90,7 +90,7 @@ protected:
   vector<string> history;
   unsigned int maxHistory;
   unsigned int currentHistory;
-  
+
   static UIAdder uiAdder;
 };
 

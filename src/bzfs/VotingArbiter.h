@@ -39,12 +39,12 @@ class VotingArbiter
     TimeKeeper lastRequest;
   } poller_t;
 
-  
+
 private:
   VotingBooth *_votingBooth;
 
   TimeKeeper _startTime;
-  
+
   // this is the number of players capable of participating in the poll.
   // it is a dynamic count of how many players are allowed to vote.
   unsigned short int _maxVotes;
@@ -69,9 +69,9 @@ private:
 
   /* names of players who are allowed to vote */
   std::deque<std::string> _suffraged;
-  
+
  protected:
-    
+
   /** remove people in the pollers vector that are able to poll again
     */
   void updatePollers(void);
@@ -81,7 +81,7 @@ private:
     */
   bool isPollerWaiting(std::string name) const;
 
-  
+
  public:
 
   /* default constructor */
@@ -145,7 +145,7 @@ private:
    */
   bool closePoll(void);
 
-  
+
   /** set the number of available voters
     */
   bool setAvailableVoters(unsigned short int count);
@@ -153,7 +153,7 @@ private:
   /** grant a player the right to vote
     */
   bool grantSuffrage(std::string player);
-  
+
   /** returns whether truthfully whether a certain player is permitted
    * to vote; a player should check their right to vote before voting.
    */
@@ -196,7 +196,7 @@ private:
    */
   bool isPollSuccessful(void) const;
 
-  /** returns truthfully if the poll is bound to fail given the 
+  /** returns truthfully if the poll is bound to fail given the
    * known votes and required vote percentage
    */
   bool isPollSureToFail(void) const;
@@ -280,7 +280,7 @@ inline bool VotingArbiter::isPollClosed(void) const
   return false;
 }
 
-inline bool VotingArbiter::isPollOpen(void) const 
+inline bool VotingArbiter::isPollOpen(void) const
 {
   if (!this->knowsPoll()) {
     return false;

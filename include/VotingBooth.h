@@ -81,7 +81,7 @@ class VotingBooth
    * was possible.
    */
   bool retractVote(const std::string voterName);
-  
+
   /** return how many votes have been placed for a particular response.
    */
   unsigned long int getVoteCount(const std::string response) const;

@@ -17,12 +17,12 @@
 
 using namespace std;
 
- 
-BZAdminClient::BZAdminClient(string callsign, string host, 
-			     int port, BZAdminUI* interface) 
-  : myTeam(ObserverTeam), sLink(Address(host), port), valid(false), 
+
+BZAdminClient::BZAdminClient(string callsign, string host,
+			     int port, BZAdminUI* interface)
+  : myTeam(ObserverTeam), sLink(Address(host), port), valid(false),
     ui(interface) {
-  
+
   if (sLink.getState() != ServerLink::Okay) {
     cerr<<"Could not connect to "<<host<<':'<<port<<'.'<<endl;
     return;
@@ -47,7 +47,7 @@ BZAdminClient::ServerCode BZAdminClient::getServerString(string& str) {
   int e;
   std::string dstName, srcName;
   str = "";
-  
+
   /* read until we have a package that we want, or until there are no more
      packages for 100 ms */
   while ((e = sLink.read(code, len, inbuf, 100)) == 1) {
@@ -112,15 +112,15 @@ BZAdminClient::ServerCode BZAdminClient::getServerString(string& str) {
       }
     }
   }
-  
+
   if (e == -1) {
     return CommError;
   }
-  
+
   return NoMessage;
 }
 
-  
+
 map<PlayerId, string>& BZAdminClient::getPlayers() {
   return players;
 }
@@ -147,7 +147,7 @@ void BZAdminClient::runLoop() {
       sendMessage(str, ui->getTarget());
     }
   }
-  
+
   // why did we leave the loop?
   switch (what) {
   case Superkilled:
@@ -160,11 +160,11 @@ void BZAdminClient::runLoop() {
     break;
   default:
     waitForServer();
-  }  
+  }
 }
 
 
-void BZAdminClient::sendMessage(const string& msg, 
+void BZAdminClient::sendMessage(const string& msg,
 				PlayerId target) {
   char buffer[MessageLen];
   char buffer2[1 + MessageLen];
@@ -179,7 +179,7 @@ void BZAdminClient::sendMessage(const string& msg,
 
 
 string BZAdminClient::formatMessage(const string& msg, PlayerId src,
-				    PlayerId dst, TeamColor dstTeam, 
+				    PlayerId dst, TeamColor dstTeam,
 				    PlayerId me) {
   string formatted = "    ";
 
@@ -216,7 +216,7 @@ string BZAdminClient::formatMessage(const string& msg, PlayerId src,
 
   return formatted;
 }
-  
+
 
 void BZAdminClient::setUI(BZAdminUI* interface) {
   ui = interface;
