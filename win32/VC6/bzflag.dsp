@@ -262,6 +262,10 @@ SOURCE=..\..\src\bzflag\ActionBinding.cxx
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\src\bzflag\AutoPilot.cxx
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\src\bzflag\BackgroundRenderer.cxx
 # End Source File
 # Begin Source File

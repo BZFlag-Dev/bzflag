@@ -10,6 +10,7 @@ bzflag_SOURCES =			\
 	ActionBinding.h			\
 	AudioMenu.cxx			\
 	AudioMenu.h			\
+	AutoPilot.cxx			\
 	BackgroundRenderer.cxx		\
 	BackgroundRenderer.h		\
 	BaseLocalPlayer.cxx		\
