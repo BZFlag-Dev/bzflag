@@ -3033,6 +3033,9 @@ static void parseCommand(const char *message, int t)
   } else if (strncmp(message + 1, "clientquery", 11) == 0) {
     handleClientqueryCmd(playerData, message);
 
+  } else if (strncmp(message+1, "date",4) == 0 || strncmp(message+1, "time",4) == 0) {
+    handleDateCmd(playerData, message);
+
   } else if (strncmp(message + 1, "record", 6) == 0) {
     handleRecordCmd(playerData, message);
 
@@ -4065,6 +4068,7 @@ int main(int argc, char **argv)
     PlayerAccessInfo info;
     info.explicitAllows[PlayerAccessInfo::idleStats] = true;
     info.explicitAllows[PlayerAccessInfo::lagStats] = true;
+    info.explicitAllows[PlayerAccessInfo::date] = true;
     info.explicitAllows[PlayerAccessInfo::flagHistory] = true;
     info.explicitAllows[PlayerAccessInfo::actionMessage] = true;
     info.explicitAllows[PlayerAccessInfo::privateMessage] = true;

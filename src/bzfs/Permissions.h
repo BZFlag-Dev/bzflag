@@ -53,6 +53,7 @@ public:
       countdown,
       endGame,
       flagHistory,
+      date,
       flagMod,
       idleStats,
       info,

@@ -289,6 +289,7 @@ std::string nameFromPerm(PlayerAccessInfo::AccessPerm perm)
     case PlayerAccessInfo::unban: return "unban";
     case PlayerAccessInfo::veto: return "veto";
     case PlayerAccessInfo::viewReports: return "viewReports";
+    case PlayerAccessInfo::date: return "date";
     case PlayerAccessInfo::vote: return "vote";
     default: return "";
   };
@@ -313,6 +314,7 @@ PlayerAccessInfo::AccessPerm permFromName(const std::string &name)
   if (name == "IDLESTATS") return PlayerAccessInfo::idleStats;
   if (name == "INFO") return PlayerAccessInfo::info;
   if (name == "KICK") return PlayerAccessInfo::kick;
+  if (name == "DATE") return PlayerAccessInfo::date;
   if (name == "LAGSTATS") return PlayerAccessInfo::lagStats;
   if (name == "LAGWARN") return PlayerAccessInfo::lagwarn;
   if (name == "LISTPERMS") return PlayerAccessInfo::listPerms;

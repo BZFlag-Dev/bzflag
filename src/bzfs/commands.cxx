@@ -2108,6 +2108,19 @@ void handleReplayCmd(GameKeeper::Player *playerData, const char * message)
 }
 
 
+void handleDateCmd(GameKeeper::Player *playerData, const char * /*message*/)
+{
+  int t = playerData->getIndex();
+  if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::date)) {
+    sendMessage(ServerPlayer, t, "You do not have permission to run the /replay command");
+    return;
+  }
+  time_t now = time(NULL);
+  char* timeStr = ctime(&now);
+  timeStr[24] = '\0';
+  sendMessage(ServerPlayer, t, timeStr);
+}
+
 // Local Variables: ***
 // mode: C++ ***
 // tab-width: 8 ***
