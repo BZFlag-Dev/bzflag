@@ -518,7 +518,7 @@ void			HUDRenderer::setCracks(bool _showCracks)
 void			HUDRenderer::addMarker(float _heading, const float *_color )
 {
   markers.resize( markers.size() + 1 );
-  Marker &m = markers[markers.size() - 1];
+  HUDMarker &m = markers[markers.size() - 1];
 
   _heading = 90.0f - 180.0f * _heading / M_PI;
   while (_heading < 0.0f) _heading += 360.0f;
@@ -1224,7 +1224,7 @@ void			HUDRenderer::renderBox(SceneRenderer&)
     glPushMatrix();
     glTranslatef((float)centerx, (float)(centery + maxMotionSize), 0.0f);
     for (MarkerList::const_iterator it = markers.begin(); it != markers.end(); ++it) {
-      const Marker &m = *it;
+      const HUDMarker &m = *it;
       const float relAngle = fmodf(360.0f + m.heading - heading, 360.0f);
       hudColor3fv(m.color);
       if (relAngle <= headingOffset || relAngle >= 360.0f - headingOffset) {

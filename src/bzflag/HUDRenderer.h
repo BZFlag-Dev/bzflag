@@ -52,12 +52,12 @@ class FlashClock {
     float		flashDuration;
 };
 
-class Marker {
+class HUDMarker {
 public:
 	float		heading;
 	GLfloat		color[3];
 };
-typedef std::vector<Marker> MarkerList;
+typedef std::vector<HUDMarker> MarkerList;
 
 class HUDRenderer {
   public:
