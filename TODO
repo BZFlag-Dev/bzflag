@@ -11,6 +11,8 @@ THESE SHOULD HAPPEN BEFORE THE NEXT RELEASE:
 
 THESE ARE LOWER PRIORITY
 
+* reject ADDs on list server where players > maxplayers ditto for each team.
+
 * /identify reply should list groups you are in
 
 * Fix the Windows version of bzadmin so that EOF quits the program, like
