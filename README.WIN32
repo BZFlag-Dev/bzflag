@@ -19,7 +19,7 @@ Then each time you want to build an installer
   * select `Installer Release' as the active configuration
   * build
 
-The installer is dist/bzflag1.10.0.exe
+The installer is dist/bzflag1.10.2.exe
 
 (or whatever the version number is)
 
