@@ -40,6 +40,9 @@ BZFlag 1.10.4
 * Bases search for colored team textures and use them if found - Jeff Myers
 * Added object-specified texture support for tanks & maps - Jeff Myers
 * Menu Arrow supports animations - Jeff Myers
+* Base wall and top textures - Jeff Myers
+* Hunter name used for kill, lock, and info messages - Jeff Myers
+* Increase resolution of textures to look better - Jeff Myers
 
 
 BZFlag 1.10.2
