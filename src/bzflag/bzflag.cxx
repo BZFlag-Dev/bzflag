@@ -623,7 +623,7 @@ static void		parse(int argc, char** argv)
       printFatalError("BZFlag client %s (protocol %s) http://BZFlag.org/\n%s",
 		getAppVersion(),
 		getProtocolVersion(),
-		copyright);
+		bzfcopyright);
       exit(0);
     } else if (strcmp(argv[i], "-window") == 0) {
       BZDB.set("_window", "1");

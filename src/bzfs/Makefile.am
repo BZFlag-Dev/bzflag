@@ -118,9 +118,8 @@ ZLIB = -lz
 endif
 
 LDADD = \
-	../date/libDate.a	\
 	../obstacle/libObstacle.a	\
 	../game/libGame.a	\
 	../net/libNet.a		\
 	../common/libCommon.a	\
-	$(REGEX) $(ZLIB) $(CURL_LIBS) $(KRB5_LIBS)
+	$(REGEX) $(ZLIB) $(CURL_LIBS) $(KRB5_LIBS) ../date/libDate.a

@@ -194,7 +194,6 @@ REGEX = \
 endif
 
 LDADD =	\
-	../date/libDate.a	\
 	../3D/lib3D.a			\
 	../net/libNet.a			\
 	../common/libCommon.a		\
@@ -212,7 +211,8 @@ LDADD =	\
 	$(RESOURCE)			\
 	$(SDL_LIBS)			\
 	$(CURL_LIBS)			\
-	$(GLIBS)
+	$(GLIBS)			\
+	../date/libDate.a
 # This is required to hook in ogg/vorbis libraries
 #	$(ALIBS)
 

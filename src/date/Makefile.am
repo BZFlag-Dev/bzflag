@@ -1,7 +1,5 @@
 noinst_LIBRARIES = libDate.a
 
-AM_CXXFLAGS = -DBZ_BUILD_DATE=$$(date +%Y%m%d)
-
 MAINTAINERCLEANFILES = \
 	Makefile.in
 

@@ -16,7 +16,6 @@
 #include <stdio.h>
 #include <string.h>
 #include "config.h"
-#include "version.h"
 
 // opaque version number increments on protocol incompatibility
 #ifndef BZ_PROTO_VERSION
@@ -40,7 +39,7 @@
 #define BZ_BUILD_TYPE		"DEVEL"
 #endif
 
-const char copyright[] = "Copyright (c) 1993 - 2004 Tim Riker";
+const char *bzfcopyright = "Copyright (c) 1993 - 2004 Tim Riker";
 
 #ifndef BZ_BUILD_DATE
 /* to get the version in the right format YYYYMMDD */

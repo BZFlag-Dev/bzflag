@@ -5776,7 +5776,7 @@ void			startPlaying(BzfDisplay* _display,
   }
 
   // print copyright
-  tmpString = ColorStrings[RogueColor] + copyright;
+  tmpString = ColorStrings[RogueColor] + bzfcopyright;
   controlPanel->addMessage(tmpString);
   // print author
   tmpString = ColorStrings[GreenColor] + "Author: Chris Schoeneman <crs23@bigfoot.com>";

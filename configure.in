@@ -520,6 +520,8 @@ case $host_os in
 	;;
 esac
 
+CXXFLAGS="$CXXFLAGS -DBZ_BUILD_DATE=$(date +%Y%m%d)"
+
 if test x$enable_debug = xyes; then
    CFLAGS="$CFLAGS -O0";
    CXXFLAGS="$CXXFLAGS -O0";
