@@ -329,7 +329,8 @@ int			openMulticast(const Address& address, int port,
       close(fd);
       return -1;
     }
-#else if defined(SO_REUSEADDR)
+#endif
+#if defined(SO_REUSEADDR)
     /* set reuse address */
 #if defined(_WIN32)
     BOOL opt = TRUE;
