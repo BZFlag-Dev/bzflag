@@ -29,6 +29,7 @@
 #include <string>
 #include <sstream>
 #include <vector>
+#include <stdio.h>
 #include <stdarg.h>
 
 /** The string utility class provides basic functionality to parse and
