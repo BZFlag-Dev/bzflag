@@ -16,9 +16,7 @@ AM_CONFIG_HEADER(include/config.h)
 #Checks for programs.
 AC_PROG_MAKE_SET
 AC_PROG_CC
-CFLAGS=
 AC_PROG_CXX
-CXXFLAGS=
 dnl On SGI systems, figure out if we are using MIPSPro compiler
 using_mipspro=no
 if test "$build_vendor" = "sgi" ; then
@@ -381,7 +379,7 @@ case $host_os in
 	#AC_DEFINE(XIJOYSTICK, 1, [XInput Joystick Handling])
 	#fi
 	CPPFLAGS="$CPPFLAGS -Wall -W"
-	CFLAGS="$CFLAGS -ansi -fno-exceptions";
+	CFLAGS="$CFLAGS -ansi";
 	case $host_vendor in
 	     pc)  CPPFLAGS="$CPPFLAGS -mcpu=$host_cpu";;
 	     ppc) CPPFLAGS="$CPPFLAGS -mcpu=$host_cpu";;
@@ -393,11 +391,11 @@ case $host_os in
 	#AC_DEFINE(XIJOYSTICK, 1, [XInput Joystick Handling])
 	#fi
 	CPPFLAGS="$CPPFLAGS -Wall -W -mcpu=$host_cpu"
-	CFLAGS="$CFLAGS -ansi -fno-exceptions";;
+	CFLAGS="$CFLAGS -ansi";;
      mingw32)
 	AC_DEFINE(HALF_RATE_AUDIO, 1, [Half rate Audio])
 	CPPFLAGS="$CPPFLAGS -Wall -W -mcpu=$host_cpu";
-	CFLAGS="$CFLAGS -ansi -fno-exceptions";;
+	CFLAGS="$CFLAGS -ansi";;
      solaris*)
 	AC_DEFINE(SUN_OGL_NO_VERTEX_MACROS, [], [Sun OpenGL No Macro Vertex])
 	if $sun_wspro; then
@@ -418,8 +416,8 @@ case $host_os in
 esac
 
 if test x$enable_debug = xyes; then
-   CFLAGS="$CFLAGS -g";
-   CXXFLAGS="$CXXFLAGS -g";
+   CFLAGS="$CFLAGS -O0";
+   CXXFLAGS="$CXXFLAGS -O0";
    case $host_os in
      linux-gnu|cygwin|mingw32)
 	CPPFLAGS="$CPPFLAGS -Werror";
@@ -440,8 +438,6 @@ if test x$enable_debug = xyes; then
 else
     case $host_os in
 	linux-gnu|cygwin|mingw32)
-		CFLAGS="$CFLAGS -O2";
-		CXXFLAGS="$CXXFLAGS -O2";
 		CXXFLAGS="$CXXFLAGS -ffast-math -fomit-frame-pointer";
 		CXXFLAGS="$CXXFLAGS -fexpensive-optimizations -fno-exceptions";;
 	 solaris*)
