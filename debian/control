@@ -28,7 +28,6 @@ Description: a 3D first person tank battle game
  from that team's score, and adds one to your team's score.
  In free-for-all, there are no team flags or team bases.
  The object is simply to get as high a score as possible.
- .
 
 Package: bzflag-server
 Architecture: any
@@ -42,4 +41,3 @@ Description: bzfs - BZFlag game server and proxy
  bzrelay is a firewall tunnel for bzfs. It uses TCP and
  allows you and your firewalled company of friends to beat
  into submission other BZFlag players.
- .
