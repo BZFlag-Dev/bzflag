@@ -1266,15 +1266,35 @@ static void sendFlagUpdate(int flagIndex, int index = -1)
     directMessage(index, MsgFlagUpdate, (char*)buf - (char*)bufStart, bufStart);
 }
 
-static void sendTeamUpdate(int teamIndex, int index = -1)
+static void sendTeamUpdate(int playerIndex = -1, int teamIndex1 = -1, int teamIndex2 = -1)
 {
+  // If teamIndex1 is -1, send all teams
+  // If teamIndex2 is -1, just send teamIndex1 team
+  // else send both teamIndex1 and teamIndex2 teams
+
   void *buf, *bufStart = getDirectMessageBuffer();
-  buf = nboPackUShort(bufStart, teamIndex);
-  buf = team[teamIndex].team.pack(buf);
-  if (index == -1)
+  if (teamIndex1 == -1) {
+    buf = nboPackUByte(bufStart, CtfTeams);
+    for (int t = 0; t < CtfTeams; t++) {
+      buf = nboPackUShort(buf, t);
+      buf = team[t].team.pack(buf);
+    }
+  } else if (teamIndex2 == -1) {
+    buf = nboPackUByte(bufStart, 1);
+    buf = nboPackUShort(buf, teamIndex1);
+    buf = team[teamIndex1].team.pack(buf);
+  } else {
+    buf = nboPackUByte(bufStart, 2);
+    buf = nboPackUShort(buf, teamIndex1);
+    buf = team[teamIndex1].team.pack(buf);
+    buf = nboPackUShort(buf, teamIndex2);
+    buf = team[teamIndex2].team.pack(buf);
+  }
+
+  if (playerIndex == -1)
     broadcastMessage(MsgTeamUpdate, (char*)buf - (char*)bufStart, bufStart);
   else
-    directMessage(index, MsgTeamUpdate, (char*)buf - (char*)bufStart, bufStart);
+    directMessage(playerIndex, MsgTeamUpdate, (char*)buf - (char*)bufStart, bufStart);
 }
 
 static void sendPlayerUpdate(int playerIndex, int index)
@@ -2998,8 +3018,8 @@ static void addPlayer(int playerIndex)
   // because of an error.
   if (player[playerIndex].type != ComputerPlayer) {
     int i;
-    for (i = 0; i < NumTeams && player[playerIndex].fd != NotConnected; i++)
-      sendTeamUpdate(i, playerIndex);
+    if (player[playerIndex].fd != NotConnected) 
+      sendTeamUpdate(playerIndex);
     for (i = 0; i < numFlags && player[playerIndex].fd != NotConnected; i++)
       if (flag[i].flag.status != FlagNoExist)
 	sendFlagUpdate(i, playerIndex);
@@ -3023,7 +3043,7 @@ static void addPlayer(int playerIndex)
   }
 
   // send update of info for team just joined
-  sendTeamUpdate(teamIndex);
+  sendTeamUpdate(-1, teamIndex);
 
   // send rabbit information
   if (clOptions->gameStyle & int(RabbitChaseGameStyle)) {
@@ -3428,7 +3448,7 @@ static void removePlayer(int playerIndex, char *reason, bool notify)
     }
 
     // send team update
-    sendTeamUpdate(teamNum);
+    sendTeamUpdate(-1, teamNum);
   }
 
 #ifdef NETWORK_STATS
@@ -3535,8 +3555,8 @@ static void sendQueryPlayers(int playerIndex)
   directMessage(playerIndex, MsgQueryPlayers, (char*)buf-(char*)bufStart, bufStart);
 
   // now send the teams and players
-  for (i = 0; i < NumTeams && player[playerIndex].fd != NotConnected; i++)
-    sendTeamUpdate(i, playerIndex);
+  if (player[playerIndex].fd != NotConnected)
+    sendTeamUpdate(playerIndex);
   for (i = 0; i < curMaxPlayers && player[playerIndex].fd != NotConnected; i++)
     if (player[i].state > PlayerInLimbo)
       sendPlayerUpdate(i, playerIndex);
@@ -3676,6 +3696,8 @@ static void playerKilled(int victimIndex, int killerIndex, int reason,
     // change the team scores -- rogues don't have team scores.  don't
     // change team scores for individual player's kills in capture the
     // flag mode.
+
+    int killerTeam = -1;
     int winningTeam = (int)NoTeam;
     if (!(clOptions->gameStyle & TeamFlagGameStyle)) {
       if (player[victimIndex].team == player[killerIndex].team) {
@@ -3691,9 +3713,9 @@ static void playerKilled(int victimIndex, int killerIndex, int reason,
 	  }
 	  if (player[victimIndex].team != RogueTeam)
 		team[int(player[victimIndex].team)].team.lost++;
-	  sendTeamUpdate(int(player[killerIndex].team));
+	  killerTeam = player[killerIndex].team;
       }
-      sendTeamUpdate(int(player[victimIndex].team));
+      sendTeamUpdate(-1,int(player[victimIndex].team), killerTeam);
     }
 #ifdef PRINTSCORE
     dumpScore();
@@ -3919,10 +3941,9 @@ static void captureFlag(int playerIndex, TeamColor teamCaptured)
     // player captured enemy flag
     winningTeam = int(player[playerIndex].team);
     team[winningTeam].team.won++;
-    sendTeamUpdate(winningTeam);
   }
   team[int(flag[flagIndex].flag.desc->flagTeam)].team.lost++;
-  sendTeamUpdate(int(flag[flagIndex].flag.desc->flagTeam));
+  sendTeamUpdate(-1, winningTeam, int(flag[flagIndex].flag.desc->flagTeam));
 #ifdef PRINTSCORE
   dumpScore();
 #endif
@@ -4160,8 +4181,9 @@ static void parseCommand(const char *message, int t)
     // reset team scores
     for (i=RedTeam;i<=PurpleTeam;i++) {
       team[i].team.lost = team[i].team.won=0;
-      sendTeamUpdate(i);
     }
+    sendTeamUpdate();
+
     char reply[MessageLen] = "Countdown started.";
     sendMessage(ServerPlayer, t, reply, true);
 

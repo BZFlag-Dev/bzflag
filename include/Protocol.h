@@ -213,7 +213,7 @@ server to player messages:
   MsgFlagUpdate		update of flag info
 			<== flag, flag-info
   MsgTeamUpdate		update of team info
-			<== team, team-info
+			<== teamcount, [team, team-info]
   MsgGetWorld		chunk of world database
 			<-- bytes left, next 256 byte chunk of world database
   MsgAlive		player is alive

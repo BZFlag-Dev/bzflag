@@ -2815,9 +2815,14 @@ static void		handleServerMessage(bool human, uint16_t code,
     }
 
     case MsgTeamUpdate: {
+      uint8_t  numTeams;
       uint16_t team;
-      msg = nboUnpackUShort(msg, team);
-      msg = teams[int(team)].unpack(msg);
+
+      msg = nboUnpackUByte(msg,numTeams);
+      for (int i = 0; i < numTeams; i++) {
+        msg = nboUnpackUShort(msg, team);
+        msg = teams[int(team)].unpack(msg);
+      }
       updateNumPlayers();
       checkScores = true;
       break;
@@ -5053,9 +5058,13 @@ static bool		enterServer(ServerLink* serverLink, World* world,
 	break;
       }
       case MsgTeamUpdate: {
+	uint8_t  numTeams;
 	uint16_t team;
-	buf = nboUnpackUShort(buf, team);
-	buf = teams[int(team)].unpack(buf);
+	buf = nboUnpackUByte(buf,numTeams);
+	for (int i = 0; i < numTeams; i++) {
+	  buf = nboUnpackUShort(buf, team);
+	  buf = teams[int(team)].unpack(buf);
+	}
 	break;
       }
       case MsgFlagUpdate: {
