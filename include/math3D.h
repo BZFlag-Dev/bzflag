@@ -49,7 +49,6 @@ public:
 	Vec3&				operator-=(const Vec3&);
 	Vec3&				operator%=(const Vec3&);		// cross product
 	Vec3&				operator*=(Real);
-	Real				operator*(const Vec3&);			// dot product
 
 #if defined(BZF_MTE)
 	template<class A>
@@ -324,12 +323,6 @@ Vec3&					Vec3::operator*=(Real a)
     v[1] *= a;
     v[2] *= a;
     return *this;
-}
-
-inline
-Real					Vec3::operator*(const Vec3& v_)
-{
-	return ((v[0] * v_[0]) + (v[1] * v_[1]) + (v[2] * v_[2]));
 }
 
 #if defined(BZF_MTE)
