@@ -73,6 +73,8 @@ extern bool roamButton;
 extern World* world;
 void setRoamingLabel(bool force);
 extern bool admin;
+extern void warnAboutMainFlags();
+extern void warnAboutRadarFlags();
 
 
 const struct CommandListItem commandList[] = {
@@ -95,7 +97,8 @@ const struct CommandListItem commandList[] = {
   { "hunt",	&cmdHunt,	"hunt:  hunt a specific player" },
   { "iconify",  &cmdIconify,	"iconify: iconify & pause bzflag" },
   { "fullscreen", &cmdToggleFS, "fullscreen: toggle fullscreen mode" },
-  { "autopilot",&cmdAutoPilot,	"autopilot:  set/unset autopilot bot code" }
+  { "autopilot",&cmdAutoPilot,	"autopilot:  set/unset autopilot bot code" },
+  { "toggleFlags", &cmdToggleFlags, "toggleFlags {main|radar}:  turn off on field radar flags"}
 };
 
 
@@ -125,6 +128,26 @@ std::string cmdJump(const std::string&, const CommandManager::ArgList& args)
     myTank->jump();
   return std::string();
 }
+
+std::string cmdToggleFlags (const std::string&, const
+CommandManager::ArgList& args)
+{
+  if (args.size() != 1)
+    return "usage: main|radar";
+  if (args[0] == "main") {
+    CMDMGR.run("toggle displayMainFlags");
+    warnAboutMainFlags();
+  } else if (args[0] == "radar") {
+    CMDMGR.run("toggle displayRadarFlags");
+    warnAboutRadarFlags();
+  } else {
+     return "usage: main|radar";
+  }
+
+  return std::string();
+}
+
+
 
 std::string cmdFire(const std::string&, const CommandManager::ArgList& args)
 {

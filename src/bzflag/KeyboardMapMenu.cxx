@@ -129,8 +129,8 @@ KeyboardMapMenu::KeyboardMapMenu() : defaultKey(this), editing(-1), quickKeysMen
   initkeymap("scrollpanel up", 23);
   initkeymap("scrollpanel down", 24);
   initkeymap("toggle slowKeyboard", 25);
-  initkeymap("toggle displayRadarFlags", 26);
-  initkeymap("toggle displayMainFlags", 27);
+  initkeymap("toggleFlags radar", 26);
+  initkeymap("toggleFlags main", 27);
   initkeymap("silence", 28);
   initkeymap("servercommand", 29);
   initkeymap("hunt", 30);

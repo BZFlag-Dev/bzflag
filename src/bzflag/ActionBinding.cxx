@@ -45,8 +45,8 @@ ActionBinding::ActionBinding() {
 #endif
   wayToBindActions.insert(std::make_pair(std::string("time backward"), press));
   wayToBindActions.insert(std::make_pair(std::string("time forward"), press));
-  wayToBindActions.insert(std::make_pair(std::string("toggle displayRadarFlags"), press));
-  wayToBindActions.insert(std::make_pair(std::string("toggle displayMainFlags"), press));
+  wayToBindActions.insert(std::make_pair(std::string("toggleFlags radar"), press));
+  wayToBindActions.insert(std::make_pair(std::string("toggleFlags main"), press));
   wayToBindActions.insert(std::make_pair(std::string("silence"), press));
   wayToBindActions.insert(std::make_pair(std::string("toggle displayLabels"), press));
   wayToBindActions.insert(std::make_pair(std::string("destruct"), press));
@@ -107,8 +107,8 @@ ActionBinding::ActionBinding() {
 #endif
   defaultBinding.insert(std::make_pair(std::string("-"), std::string("time backward")));
   defaultBinding.insert(std::make_pair(std::string("="), std::string("time forward")));
-  defaultBinding.insert(std::make_pair(std::string("H"), std::string("toggle displayRadarFlags")));
-  defaultBinding.insert(std::make_pair(std::string("J"), std::string("toggle displayMainFlags")));
+  defaultBinding.insert(std::make_pair(std::string("H"), std::string("toggleFlags radar")));
+  defaultBinding.insert(std::make_pair(std::string("J"), std::string("toggleFlags main")));
   defaultBinding.insert(std::make_pair(std::string("K"), std::string("silence")));
   defaultBinding.insert(std::make_pair(std::string("L"), std::string("toggle displayLabels")));
   defaultBinding.insert(std::make_pair(std::string("Delete"), std::string("destruct")));

@@ -263,6 +263,47 @@ bool		shouldGrabMouse()
 // some simple global functions
 //
 
+void        warnAboutMainFlags()
+{
+  // warning message for hidden flags 
+	if (!BZDBCache::displayMainFlags){
+		std::string showFlagsMsg = ColorStrings[YellowColor];
+    showFlagsMsg += "Flags on field hidden, to show them ";
+		std::vector<std::string> keys = KEYMGR.getKeysFromCommand("toggleFlags main", true);
+
+		if (keys.size() != 0) {
+  			showFlagsMsg += "hit \"";
+        showFlagsMsg += ColorStrings[WhiteColor];
+				showFlagsMsg += tolower(keys[0][0]);
+        showFlagsMsg += ColorStrings[YellowColor];
+				showFlagsMsg += "\"";
+		} else {
+			showFlagsMsg += " bind a key to Toggle Flags on Field";
+		}
+		addMessage(NULL, showFlagsMsg);
+	}
+}
+
+void        warnAboutRadarFlags()
+{
+	if (!BZDB.isTrue("displayRadarFlags")){
+    std::string showFlagsMsg = ColorStrings[YellowColor];
+		showFlagsMsg += "Flags on radar hidden, to show them ";
+		std::vector<std::string> keys = KEYMGR.getKeysFromCommand("toggleFlags radar", true);
+
+		if (keys.size() != 0) {
+  			showFlagsMsg += "hit \"";
+        showFlagsMsg += ColorStrings[WhiteColor];
+				showFlagsMsg += tolower(keys[0][0]);
+        showFlagsMsg += ColorStrings[YellowColor];
+				showFlagsMsg += "\"";
+		} else {
+			showFlagsMsg += " bind a key to Toggle Flags on Radar";
+		}
+		addMessage(NULL, showFlagsMsg);
+	}
+}
+
 BzfDisplay*		getDisplay()
 {
   return display;
@@ -4234,33 +4275,9 @@ static bool		joinGame(const StartupInfo* info,
   hud->setTimeLeft(-1);
   fireButton = false;
   firstLife = true;
-
-	if (!BZDBCache::displayMainFlags){
-		std::string showFlagsMsg = "Flags on field hidden, to show them ";
-		std::vector<std::string> keys = KEYMGR.getKeysFromCommand("toggle displayMainFlags", true);
-
-		if (keys.size() != 0) {
-  			showFlagsMsg += "hit \"";
-				showFlagsMsg += tolower(keys[0][0]);
-				showFlagsMsg += "\"";
-		} else {
-			showFlagsMsg += " bind a key to Toggle Flags on Field";
-		}
-		addMessage(NULL, showFlagsMsg);
-	}
-	if (!BZDB.isTrue("displayRadarFlags")){
-		std::string showFlagsMsg = "Flags on radar hidden, to show them ";
-		std::vector<std::string> keys = KEYMGR.getKeysFromCommand("toggle displayRadarFlags", true);
-
-		if (keys.size() != 0) {
-  			showFlagsMsg += "hit \"";
-				showFlagsMsg += tolower(keys[0][0]);
-				showFlagsMsg += "\"";
-		} else {
-			showFlagsMsg += " bind a key to Toggle Flags on Radar";
-		}
-		addMessage(NULL, showFlagsMsg);
-	}
+  
+  warnAboutMainFlags();
+  warnAboutRadarFlags();
   
   return true;
 }
