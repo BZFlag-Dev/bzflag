@@ -822,8 +822,9 @@ bool CustomWorld::read(const char *cmd, istream& input)
 
 void CustomWorld::write(WorldInfo* /* world*/) const
 {
-  flagHeight = (float) fHeight;
-  //world->addLink(from, to);
+  char buffer[50];
+  sprintf(buffer, "set %s %f", StateDatabase::BZDB_FLAGHEIGHT, fHeight);
+  CMDMGR->run(buffer);
 }
 
 static void emptyWorldFileObjectList(std::vector<WorldFileObject*>& wlist)
@@ -3179,7 +3180,7 @@ static void addFlag(int flagIndex)
   numFlagsInAir++;
 
   // compute drop time
-  const float flightTime = 2.0f * sqrtf(-2.0f * FlagAltitude / BZDB->eval(StateDatabase::BZDB_GRAVITY));
+  const float flightTime = 2.0f * sqrtf(-2.0f * BZDB->eval(StateDatabase::BZDB_FLAGALTITUDE) / BZDB->eval(StateDatabase::BZDB_GRAVITY));
   flag[flagIndex].flag.flightTime = 0.0f;
   flag[flagIndex].flag.flightEnd = flightTime;
   flag[flagIndex].flag.initialVelocity = -0.5f * BZDB->eval(StateDatabase::BZDB_GRAVITY) * flightTime;
@@ -3242,7 +3243,7 @@ static void resetFlag(int flagIndex)
 					pFlagInfo->flag.position[1],pFlagInfo->flag.position[2], r);
     while (topmosttype != NOT_IN_BUILDING) {
       if ((clOptions->flagsOnBuildings && (topmosttype == IN_BOX))
-           && (obj->pos[2] < (pFlagInfo->flag.position[2] + flagHeight)) && ((obj->pos[2] + obj->size[2]) > pFlagInfo->flag.position[2])
+	  && (obj->pos[2] < (pFlagInfo->flag.position[2] + BZDB->eval(StateDatabase::BZDB_FLAGHEIGHT))) && ((obj->pos[2] + obj->size[2]) > pFlagInfo->flag.position[2])
           && (world->inRect(obj->pos, obj->rotation, obj->size, pFlagInfo->flag.position[0], pFlagInfo->flag.position[1], 0.0f)))
       {
         pFlagInfo->flag.position[2] = obj->pos[2] + obj->size[2];
@@ -3766,7 +3767,8 @@ static void grabFlag(int playerIndex, int flagIndex)
     return;
 
   //last Pos might be lagged by TankSpeed so include in calculation
-  const float radius2 = (BZDB->eval(StateDatabase::BZDB_TANKSPEED) + TankRadius + FlagRadius) * (BZDB->eval(StateDatabase::BZDB_TANKSPEED) + TankRadius + FlagRadius);
+  const float flagRadius = BZDB->eval(StateDatabase::BZDB_FLAGRADIUS);
+  const float radius2 = (BZDB->eval(StateDatabase::BZDB_TANKSPEED) + TankRadius + flagRadius) * (BZDB->eval(StateDatabase::BZDB_TANKSPEED) + TankRadius + flagRadius);
   const float* tpos = player[playerIndex].lastState.pos;
   const float* fpos = flag[flagIndex].flag.position;
   const float delta = (tpos[0] - fpos[0]) * (tpos[0] - fpos[0]) +
@@ -3914,9 +3916,10 @@ static void dropFlag(int playerIndex, float pos[3])
   drpFlag.flag.launchPosition[2] = pos[2] + TankHeight;
 
   // compute flight info -- flight time depends depends on start and end
-  // altitudes and desired height above start altitude.
+  // altitudes and desired height above start altitude
+  const float flagAltitude = BZDB->eval(StateDatabase::BZDB_FLAGALTITUDE);
   const float thrownAltitude = (drpFlag.flag.desc == Flags::Shield) ?
-     BZDB->eval(StateDatabase::BZDB_SHIELDFLIGHT) * FlagAltitude : FlagAltitude;
+     BZDB->eval(StateDatabase::BZDB_SHIELDFLIGHT) * flagAltitude : flagAltitude;
   const float maxAltitude = pos[2] + thrownAltitude;
   const float upTime = sqrtf(-2.0f * thrownAltitude / BZDB->eval(StateDatabase::BZDB_GRAVITY));
   const float downTime = sqrtf(-2.0f * (maxAltitude - pos[2]) / BZDB->eval(StateDatabase::BZDB_GRAVITY));

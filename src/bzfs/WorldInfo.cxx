@@ -12,13 +12,6 @@
 
 #include "WorldInfo.h"
 
-//The minimum height above ground an object must be in order
-//to have a flag appear beneath it
-float flagHeight = FlagAltitude;
-// meters
-//float WorldSize = 800.0f;
-
-
 WorldInfo::WorldInfo() :
   numWalls(0),
   numBases(0),
@@ -227,8 +220,9 @@ bool WorldInfo::inRect(const float *p1, float angle, const float *size, float x,
 InBuildingType WorldInfo::inBuilding(WorldInfo::ObstacleLocation **location, float x, float y, float z, float r) const
 {
   int i;
+  const float flagHeight = BZDB->eval(StateDatabase::BZDB_FLAGHEIGHT);
   for (i = 0; i < numBases; i++) {
-    if ((bases[i].pos[2] < (z + flagHeight)) && ((bases[i].pos[2] + bases[i].size[2]) > z)
+	  if ((bases[i].pos[2] < (z + flagHeight)) && ((bases[i].pos[2] + bases[i].size[2]) > z)
 	&&	(inRect(bases[i].pos, bases[i].rotation, bases[i].size, x, y, r))) {
       if(location != NULL)
 	*location = &bases[i];

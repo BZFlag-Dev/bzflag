@@ -66,5 +66,6 @@ GlobalDBItem				globalDBItems[] = {
 	{ "_burrowAngularAd",		"0.33",				false, StateDatabase::Locked},
 	{ "_lRAdRate",			"0.5",				false, StateDatabase::Locked},
 	{ "_lockOnAngle",		"0.15",				false, StateDatabase::Locked},
-	{ "_targetingAngle",		"0.3",				false, StateDatabase::Locked}
+	{ "_targetingAngle",		"0.3",				false, StateDatabase::Locked},
+	{ "_flagHeight",                "10.0",                         false, StateDatabase::Locked}
 };

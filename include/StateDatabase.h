@@ -170,6 +170,7 @@ public:
   static const std::string	BZDB_BURROWANGULARAD;
   static const std::string	BZDB_EXPLODETIME;
   static const std::string	BZDB_FLAGALTITUDE;
+  static const std::string	BZDB_FLAGHEIGHT;
   static const std::string	BZDB_FLAGRADIUS;
   static const std::string	BZDB_GMISSILEANG;
   static const std::string	BZDB_GRAVITY;

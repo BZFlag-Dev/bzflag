@@ -4067,7 +4067,8 @@ static void		checkEnvironment()
       // grab any and all flags i'm driving over
       const float* tpos = myTank->getPosition();
       const float radius = myTank->getRadius();
-      const float radius2 = (radius + FlagRadius) * (radius + FlagRadius);
+      const float flagRadius = BZDB->eval(StateDatabase::BZDB_FLAGRADIUS);
+      const float radius2 = (radius + flagRadius) * (radius + flagRadius);
       for (int i = 0; i < numFlags; i++) {
 	if (world->getFlag(i).desc == Flags::Null || world->getFlag(i).status != FlagOnGround)
 	  continue;

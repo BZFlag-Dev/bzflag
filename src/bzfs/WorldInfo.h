@@ -24,8 +24,6 @@
 
 typedef enum { NOT_IN_BUILDING, IN_BASE, IN_BOX, IN_PYRAMID, IN_TELEPORTER } InBuildingType;
 
-extern float flagHeight;
-
 class WorldInfo {
 
  public:

@@ -96,10 +96,6 @@ const float		TankAngVel =	M_PI / 4.0f;	// radians/sec
 const int		CitySize =	5;
 const float		AvenueSize =	2.0f * BoxBase;	// meters
 
-// other game info
-const float		FlagAltitude =	11.0f;		// meters
-const float		FlagRadius =	2.5f;		// meters
-
 // readout stuff
 const int		MaxMessages =	20;		// msg. history length
 const float		FlashOnTime =	1.0f;		// seconds
@@ -141,7 +137,7 @@ struct GlobalDBItem {
     bool			persistent;
     StateDatabase::Permission	permission;
 };
-extern GlobalDBItem		globalDBItems[52];
+extern GlobalDBItem		globalDBItems[53];
 
 #endif // BZF_GLOBAL_H
 // ex: shiftwidth=2 tabstop=8
