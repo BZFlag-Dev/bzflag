@@ -274,12 +274,14 @@ void			LocalPlayer::doUpdateMotion(float dt)
 		(location == InBuilding && oldPosition[2] == 0.0f)) {
 	newVelocity[0] = speed * cosf(oldAzimuth + 0.5f * dt * newAngVel);
 	newVelocity[1] = speed * sinf(oldAzimuth + 0.5f * dt * newAngVel);
-	newVelocity[2] = 0.0f;
-	if (oldPosition[2] != 0.0f) newVelocity[2] += Gravity * dt;
+	if (oldVelocity[2] == 0.0f)
+	  newVelocity[2] = 0.0f;
+	else
+	  newVelocity[2] += Gravity * dt;
       }
       else {
 	// can't control motion in air
-	newVelocity[2] += Gravity * dt;
+	newVelocity[2] += Gravity * (dt > 0.1f ? 0.1f : dt);
 	newAngVel = oldAngVel;
       }
 
