@@ -130,8 +130,10 @@ int main(int argc, char** argv) {
 
   // try to connect
   BZAdminClient client(name, host, port);
-  if (!client.isValid())
+  if (!client.isValid()) {
+    std::cerr << "Could not connect to " << host << ':' << port << std::endl;
     return 1;
+	}
   unsigned int i;
   for (i = 0; i < visibleMsgs.size(); ++i)
     client.showMessageType(visibleMsgs[i]);
