@@ -173,11 +173,12 @@ float			SegmentedShotStrategy::checkHit(const BaseLocalPlayer* tank,
 
   // tank is positioned from it's bottom so shift position up by
   // half a tank height.
+  const float tankHeight = tank->getDimensions()[2];
   Ray tankLastMotionRaw = tank->getLastMotion();
   float lastTankPositionRaw[3];
   lastTankPositionRaw[0] = tankLastMotionRaw.getOrigin()[0];
   lastTankPositionRaw[1] = tankLastMotionRaw.getOrigin()[1];
-  lastTankPositionRaw[2] = tankLastMotionRaw.getOrigin()[2] + 0.5f * tank->getDimensions()[2];
+  lastTankPositionRaw[2] = tankLastMotionRaw.getOrigin()[2] + 0.5f * tankHeight;
   Ray tankLastMotion(lastTankPositionRaw, tankLastMotionRaw.getDirection());
 
   // if bounding box of tank and entire shot doesn't overlap then no hit
@@ -214,11 +215,9 @@ float			SegmentedShotStrategy::checkHit(const BaseLocalPlayer* tank,
     if (tank->getFlag() == Flags::Narrow) {
       // find closest approach to narrow box around tank.  width of box
       // is shell radius so you can actually hit narrow tank head on.
-      static float origin[3] = { 0.0f, 0.0f, 0.0f };
+      static float origin[3] = { 0.0f, 0.0f, -0.5 * tankHeight };
       t = timeRayHitsBlock(relativeRay, origin, tank->getAngle(),
-			0.5f * BZDBCache::tankLength,
-			shotRadius,
-			0.5f * BZDBCache::tankHeight);
+			0.5f * BZDBCache::tankLength, shotRadius, tankHeight);
     }
     else {
       // find time when shot hits sphere around tank
