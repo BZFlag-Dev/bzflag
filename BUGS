@@ -19,22 +19,6 @@ recent bugs
 - Mac OS X client sometimes (50/50) seems to now start to a black
   screen (only the console tab tabs render).  must be recent..
 
-- Font texture filtering is inconsistent, might be driver problems, a bug
-  in bz code, or just wrong expectations. The following screenhots show the
-  problem:
-  
-  Small fonts (scoreboard, control panel) with linear and nearest filtering.
-  They are not scaled, so we would hope for no change by each filter mode?
-  
-  Software rendering with Mesa:
-    http://www.home.unix-ag.org/thilo/files/fontlinear.png
-    http://www.home.unix-ag.org/thilo/files/fontnearest.png
-  
-  Hardware rendering with geforce fx 5600 on Windows:
-    http://www.home.unix-ag.org/thilo/files/fontlinear2.png
-    http://www.home.unix-ag.org/thilo/files/fontnearest2.png
-    (note that in linear2, scoreboard is smoothed, control panel is not)
-
 - teleporters ricochet on the frame seems incorrect
 
 - GM and SW flags occasionally do not show in the scoreboard:
