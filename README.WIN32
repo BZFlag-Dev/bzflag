@@ -28,6 +28,9 @@ instead of the normal Win32 Release/Debug targets.
 
 You also need to have libCurl installed.
 Download it from http://curl.haxx.se/libcurl/
+It is best if you do not get the SSL versions. Bzflag does not
+need or use SSL. The SSL versions of libCurl have aditional
+library dependencys that need to be meet.
 Add the include directory and the lib as per the SDL instructions.
 
 Then each time you want to build an installer
