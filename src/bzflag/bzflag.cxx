@@ -384,15 +384,19 @@ void updateConfigFile(void)
     KEYMGR.unbindCommand("roam rotate down");
 
     // add new default keybindings if there's no conflict
+    
     // iconify
     BzfKeyEvent key;
     if (KEYMGR.stringToKeyEvent("F4", key)
 	&& (KEYMGR.get(key, true) == ""))
       KEYMGR.bind(key, true, "iconify");
     // toggle console & radar
-    if (KEYMGR.stringToKeyEvent("F3", key)
+    if (KEYMGR.stringToKeyEvent("Q", key)
 	&& (KEYMGR.get(key, true) == ""))
-      KEYMGR.bind(key, true, "toggleConsoleAndRadar");
+      KEYMGR.bind(key, true, "toggleRadar");
+    if (KEYMGR.stringToKeyEvent("W", key)
+	&& (KEYMGR.get(key, true) == ""))
+      KEYMGR.bind(key, true, "toggleConsole");
     // controlpanel tabs - all or nothing
     if (KEYMGR.stringToKeyEvent("Shift+F1", key)
 	&& (KEYMGR.get(key, true) == "")

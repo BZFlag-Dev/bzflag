@@ -87,6 +87,8 @@ KeyboardMapMenu::KeyboardMapMenu() : defaultKey(this), editing(-1), quickKeysMen
   controls.push_back(createLabel(NULL, "Jump:"));
   controls.push_back(createLabel(NULL, "Binoculars:"));
   controls.push_back(createLabel(NULL, "Toggle Score:"));
+  controls.push_back(createLabel(NULL, "Toggle Radar:"));
+  controls.push_back(createLabel(NULL, "Toggle Console:"));
   controls.push_back(createLabel(NULL, "Tank Labels:"));
   controls.push_back(createLabel(NULL, "Flag Help:"));
   controls.push_back(createLabel(NULL, "Time Forward:"));
@@ -133,6 +135,8 @@ KeyboardMapMenu::KeyboardMapMenu() : defaultKey(this), editing(-1), quickKeysMen
   initkeymap("jump", ++i);
   initkeymap("viewZoom toggle", ++i);
   initkeymap("toggle displayScore", ++i);
+  initkeymap("toggleRadar", ++i);
+  initkeymap("toggleConsole", ++i);
   initkeymap("toggle displayLabels", ++i);
   initkeymap("toggle displayFlagHelp", ++i);
   initkeymap("time forward", ++i);

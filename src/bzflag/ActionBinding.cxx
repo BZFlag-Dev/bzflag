@@ -49,7 +49,8 @@ ActionBinding::ActionBinding() {
 #endif
   wayToBindActions.insert(std::make_pair(std::string("time backward"), press));
   wayToBindActions.insert(std::make_pair(std::string("time forward"), press));
-  wayToBindActions.insert(std::make_pair(std::string("toggleConsoleAndRadar"), press));
+  wayToBindActions.insert(std::make_pair(std::string("toggleRadar"), press));
+  wayToBindActions.insert(std::make_pair(std::string("toggleConsole"), press));
   wayToBindActions.insert(std::make_pair(std::string("toggleFlags radar"), press));
   wayToBindActions.insert(std::make_pair(std::string("toggleFlags main"), press));
   wayToBindActions.insert(std::make_pair(std::string("silence"), press));
