@@ -20,10 +20,10 @@
 
 CustomGate::CustomGate()
 {
-  size[0] = 0.5f * TeleWidth;
-  size[1] = TeleBreadth;
-  size[2] = 2.0f * TeleHeight;
-  border = TeleWidth;
+  size[0] = 0.5f * BZDB.eval(StateDatabase::BZDB_TELEWIDTH);
+  size[1] = BZDB.eval(StateDatabase::BZDB_TELEBREADTH);
+  size[2] = 2.0f * BZDB.eval(StateDatabase::BZDB_TELEHEIGHT);
+  border = size[0] * 2.0f;
 }
 
 

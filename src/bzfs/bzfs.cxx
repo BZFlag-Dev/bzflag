@@ -1610,15 +1610,18 @@ static WorldInfo *defineTeamWorld()
 	const int teamFactor = redGreen && bluePurple ? 4 : 2;
 	const int numTeleporters = (8 + int(8 * (float)bzfrand())) / teamFactor * teamFactor;
 	const int numLinks = 2 * numTeleporters / teamFactor;
+	float teleBreadth = BZDB.eval(StateDatabase::BZDB_TELEBREADTH);
+	float teleWidth = BZDB.eval(StateDatabase::BZDB_TELEWIDTH);
+	float teleHeight = BZDB.eval(StateDatabase::BZDB_TELEHEIGHT);
 	int (*linked)[2] = new int[numLinks][2];
 	for (i = 0; i < numTeleporters;) {
-	  const float x = (worldSize - 4.0f * TeleBreadth) * ((float)bzfrand() - 0.5f);
-	  const float y = (worldSize - 4.0f * TeleBreadth) * ((float)bzfrand() - 0.5f);
+	  const float x = (worldSize - 4.0f * teleBreadth) * ((float)bzfrand() - 0.5f);
+	  const float y = (worldSize - 4.0f * teleBreadth) * ((float)bzfrand() - 0.5f);
 	  const float rotation = 2.0f * M_PI * (float)bzfrand();
 
 	  // if too close to building then try again
 	  if (NOT_IN_BUILDING != world->inBuilding(NULL, x, y, 0,
-						   1.75f * TeleBreadth,
+						   1.75f * teleBreadth,
 						   1.0f))
 	    continue;
 	  // if to close to a base then try again
@@ -1636,19 +1639,19 @@ static WorldInfo *defineTeamWorld()
 
 	  linked[i/teamFactor][0] = linked[i/teamFactor][1] = 0;
 	  if (redGreen) {
-	    world->addTeleporter(x, y, 0.0f, rotation, 0.5f*TeleWidth,
-		TeleBreadth, 2.0f*TeleHeight, TeleWidth);
-	    world->addTeleporter(-x, -y, 0.0f, rotation + M_PI, 0.5f*TeleWidth,
-		TeleBreadth, 2.0f*TeleHeight, TeleWidth);
+	    world->addTeleporter(x, y, 0.0f, rotation, 0.5f*teleWidth,
+		teleBreadth, 2.0f*teleHeight, teleWidth);
+	    world->addTeleporter(-x, -y, 0.0f, rotation + M_PI, 0.5f*teleWidth,
+		teleBreadth, 2.0f*teleHeight, teleWidth);
 	    i+=2;
 	  }
 	  if (bluePurple) {
 	    world->addTeleporter(y, -x, 0.0f, rotation + M_PI / 2,
-				 0.5f*TeleWidth, TeleBreadth, 2.0f*TeleHeight,
-				 TeleWidth);
+				 0.5f*teleWidth, teleBreadth, 2.0f*teleWidth,
+				 teleWidth);
 	    world->addTeleporter(-y, x, 0.0f, rotation + M_PI * 3 / 2,
-				 0.5f*TeleWidth, TeleBreadth, 2.0f*TeleHeight,
-				 TeleWidth);
+				 0.5f*teleWidth, teleBreadth, 2.0f*teleWidth,
+				 teleWidth);
 	    i+=2;
 	  }
 	}
@@ -1762,24 +1765,27 @@ static WorldInfo *defineTeamWorld()
       }
       // add teleporters
       if (clOptions->useTeleporters) {
+	float teleWidth = BZDB.eval(StateDatabase::BZDB_TELEWIDTH);
+	float teleBreadth = BZDB.eval(StateDatabase::BZDB_TELEBREADTH);
+	float teleHeight = BZDB.eval(StateDatabase::BZDB_TELEHEIGHT);
 	const float xoff = boxBase + 0.5f * avenueSize;
 	const float yoff = boxBase + 0.5f * avenueSize;
 	world->addTeleporter( xmin - xoff,  ymin - yoff, 0.0f, 1.25f * M_PI,
-			     0.5f * TeleWidth, TeleBreadth, 2.0f * TeleHeight, TeleWidth);
+			     0.5f * teleWidth, teleBreadth, 2.0f * teleHeight, teleWidth);
 	world->addTeleporter( xmin - xoff, -ymin + yoff, 0.0f, 0.75f * M_PI,
-			     0.5f * TeleWidth, TeleBreadth, 2.0f * TeleHeight, TeleWidth);
+			     0.5f * teleWidth, teleBreadth, 2.0f * teleHeight, teleWidth);
 	world->addTeleporter(-xmin + xoff,  ymin - yoff, 0.0f, 1.75f * M_PI,
-			     0.5f * TeleWidth, TeleBreadth, 2.0f * TeleHeight, TeleWidth);
+			     0.5f * teleWidth, teleBreadth, 2.0f * teleHeight, teleWidth);
 	world->addTeleporter(-xmin + xoff, -ymin + yoff, 0.0f, 0.25f * M_PI,
-			     0.5f * TeleWidth, TeleBreadth, 2.0f * TeleHeight, TeleWidth);
-	world->addTeleporter(-3.5f * TeleBreadth, -3.5f * TeleBreadth, 0.0f, 1.25f * M_PI,
-			     0.5f * TeleWidth, TeleBreadth, 2.0f * TeleHeight, TeleWidth);
-	world->addTeleporter(-3.5f * TeleBreadth,  3.5f * TeleBreadth, 0.0f, 0.75f * M_PI,
-			     0.5f * TeleWidth, TeleBreadth, 2.0f * TeleHeight, TeleWidth);
-	world->addTeleporter( 3.5f * TeleBreadth, -3.5f * TeleBreadth, 0.0f, 1.75f * M_PI,
-			     0.5f * TeleWidth, TeleBreadth, 2.0f * TeleHeight, TeleWidth);
-	world->addTeleporter( 3.5f * TeleBreadth,  3.5f * TeleBreadth, 0.0f, 0.25f * M_PI,
-			     0.5f * TeleWidth, TeleBreadth, 2.0f * TeleHeight, TeleWidth);
+			     0.5f * teleWidth, teleBreadth, 2.0f * teleHeight, teleWidth);
+	world->addTeleporter(-3.5f * teleBreadth, -3.5f * teleBreadth, 0.0f, 1.25f * M_PI,
+			     0.5f * teleWidth, teleBreadth, 2.0f * teleHeight, teleWidth);
+	world->addTeleporter(-3.5f * teleBreadth,  3.5f * teleBreadth, 0.0f, 0.75f * M_PI,
+			     0.5f * teleWidth, teleBreadth, 2.0f * teleHeight, teleWidth);
+	world->addTeleporter( 3.5f * teleBreadth, -3.5f * teleBreadth, 0.0f, 1.75f * M_PI,
+			     0.5f * teleWidth, teleBreadth, 2.0f * teleHeight, teleWidth);
+	world->addTeleporter( 3.5f * teleBreadth,  3.5f * teleBreadth, 0.0f, 0.25f * M_PI,
+			     0.5f * teleWidth, teleBreadth, 2.0f * teleHeight, teleWidth);
 
 	world->addLink(0, 14);
 	world->addLink(1, 7);
@@ -1862,19 +1868,22 @@ static WorldInfo *defineRandomWorld()
 
   if (clOptions->useTeleporters) {
     // make teleporters
+    float teleBreadth = BZDB.eval(StateDatabase::BZDB_TELEBREADTH);
+    float teleWidth = BZDB.eval(StateDatabase::BZDB_TELEWIDTH);
+    float teleHeight = BZDB.eval(StateDatabase::BZDB_TELEHEIGHT);
     int (*linked)[2] = new int[numTeleporters][2];
     for (i = 0; i < numTeleporters;) {
-      const float x = (worldSize - 4.0f * TeleBreadth) * ((float)bzfrand() - 0.5f);
-      const float y = (worldSize - 4.0f * TeleBreadth) * ((float)bzfrand() - 0.5f);
+      const float x = (worldSize - 4.0f * teleBreadth) * ((float)bzfrand() - 0.5f);
+      const float y = (worldSize - 4.0f * teleBreadth) * ((float)bzfrand() - 0.5f);
       const float rotation = 2.0f * M_PI * (float)bzfrand();
 
       // if too close to building then try again
       if (NOT_IN_BUILDING != world->inBuilding(NULL, x, y, 0,
-					       1.75f * TeleBreadth, 1.0f))
+					       1.75f * teleBreadth, 1.0f))
 	continue;
 
       world->addTeleporter(x, y, 0.0f, rotation,
-	  0.5f*TeleWidth, TeleBreadth, 2.0f*TeleHeight, TeleWidth);
+	  0.5f*teleWidth, teleBreadth, 2.0f*teleHeight, teleWidth);
       linked[i][0] = linked[i][1] = 0;
       i++;
     }

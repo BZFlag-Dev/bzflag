@@ -246,7 +246,10 @@ public:
   static const std::string	BZDB_TANKSPEED;
   static const std::string	BZDB_TANKRADIUS;
   static const std::string	BZDB_TARGETINGANGLE;
+  static const std::string	BZDB_TELEBREADTH;
+  static const std::string	BZDB_TELEHEIGHT;
   static const std::string	BZDB_TELEPORTTIME;
+  static const std::string	BZDB_TELEWIDTH;
   static const std::string	BZDB_THIEFVELAD;
   static const std::string	BZDB_THIEFTINYFACTOR;
   static const std::string	BZDB_THIEFADSHOTVEL;

@@ -59,12 +59,6 @@ const float		Infinity =	MAXFLOAT;	// arbitrary
 
 #define DEFAULT_WORLD	800
 
-// teleporter geometry (My God, it's full of stars...)
-const float		TeleUnit =	1.12f;// meters
-const float		TeleWidth =	1.0f * TeleUnit;// meters
-const float		TeleBreadth =	4.0f * TeleUnit;// meters
-const float		TeleHeight =	9.0f * TeleUnit;// meters
-
 // readout stuff
 const int		MaxMessages =	20;		// msg. history length
 const int		MinX = 256;
