@@ -210,6 +210,7 @@ void			Player::setExplode(const TimeKeeper& t)
   explodeTime = t;
   setStatus((getStatus() | short(PlayerState::Exploding) | short(PlayerState::Falling)) &
 	    ~(short(PlayerState::Alive) | short(PlayerState::Paused)));
+  tankNode->rebuildExplosion();
 }
 
 void			Player::setTeleport(const TimeKeeper& t,

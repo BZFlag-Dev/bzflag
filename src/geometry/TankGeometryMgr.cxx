@@ -140,8 +140,8 @@ void TankGeometryMgr::deleteLists()
                      "tried to delete an invalid list (%i)\n", list);
             } else {
               glDeleteLists(list, 1);
-              list = InvalidList;
             }
+            list = InvalidList;
           }
         }
       }

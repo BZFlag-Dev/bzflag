@@ -92,9 +92,10 @@ class TankSceneNode : public SceneNode {
     void		setTiny();
     void		setNarrow();
     void		setThief();
-    void		setExplodeFraction(float t);
     void		setClipPlane(const GLfloat* plane);
     void		setDrawClose(bool close);
+    void		setExplodeFraction(float t);
+    void		rebuildExplosion();
     
     void		addTreadOffsets(float left, float right);
 
@@ -136,8 +137,6 @@ class TankSceneNode : public SceneNode {
 	bool		towards;
 	bool		isExploding;
 	GLfloat		explodeFraction;
-	GLfloat		vel[TankGeometryEnums::LastTankPart][2];
-	GLfloat		spin[TankGeometryEnums::LastTankPart][4];
 	static const GLfloat centerOfGravity[TankGeometryEnums::LastTankPart][3];
     };
     friend class TankRenderNode;
@@ -164,6 +163,8 @@ class TankSceneNode : public SceneNode {
     TankRenderNode	tankRenderNode;
     TankRenderNode	shadowRenderNode;
     TankGeometryEnums::TankSize tankSize;
+	GLfloat vel[TankGeometryEnums::LastTankPart][2];
+	GLfloat spin[TankGeometryEnums::LastTankPart][4];
 
     static int			maxLevel;
     static const int		numLOD;

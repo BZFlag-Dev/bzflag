@@ -58,6 +58,8 @@ TankSceneNode::TankSceneNode(const GLfloat pos[3], const GLfloat forward[3]) :
   color[3] = 1.0f;
   setColor(1.0f, 1.0f, 1.0f);
   setExplodeFraction(0.0f);
+  
+  rebuildExplosion();
 
   shadowRenderNode.setShadow();
   shadowRenderNode.setTankLOD(LowTankLOD);
@@ -327,6 +329,33 @@ void TankSceneNode::setCloaked(bool _cloaked)
 void TankSceneNode::setMaxLOD(int _maxLevel)
 {
   maxLevel = _maxLevel;
+}
+
+
+void TankSceneNode::rebuildExplosion()
+{
+  // prepare explosion rotations and translations
+  for (int i = 0; i < LastTankPart; i++) {
+    // pick an unbiased rotation vector
+    GLfloat d;
+    do {
+      spin[i][0] = (float)bzfrand() - 0.5f;
+      spin[i][1] = (float)bzfrand() - 0.5f;
+      spin[i][2] = (float)bzfrand() - 0.5f;
+      d = hypotf(spin[i][0], hypotf(spin[i][1], spin[i][2]));
+    } while (d < 0.001f || d > 0.5f);
+    spin[i][0] /= d;
+    spin[i][1] /= d;
+    spin[i][2] /= d;
+
+    // now an angular velocity -- make sure we get at least 2 complete turns
+    spin[i][3] = 360.0f * (5.0f * (float)bzfrand() + 2.0f);
+
+    // make arbitrary 2d translation
+    vel[i][0] = 80.0f * ((float)bzfrand() - 0.5f);
+    vel[i][1] = 80.0f * ((float)bzfrand() - 0.5f);
+  }
+  return;
 }
 
 
@@ -608,28 +637,6 @@ TankSceneNode::TankRenderNode::TankRenderNode(const TankSceneNode* _sceneNode) :
 				sceneNode(_sceneNode), isShadow(false),
 				above(false), towards(false)
 {
-  // prepare explosion rotations and translations
-  for (int i = 0; i < LastTankPart; i++) {
-    // pick an unbiased rotation vector
-    GLfloat d;
-    do {
-      spin[i][0] = (float)bzfrand() - 0.5f;
-      spin[i][1] = (float)bzfrand() - 0.5f;
-      spin[i][2] = (float)bzfrand() - 0.5f;
-      d = hypotf(spin[i][0], hypotf(spin[i][1], spin[i][2]));
-    } while (d < 0.001f || d > 0.5f);
-    spin[i][0] /= d;
-    spin[i][1] /= d;
-    spin[i][2] /= d;
-
-    // now an angular velocity -- make sure we get at least 2 complete turns
-    spin[i][3] = 360.0f * (5.0f * (float)bzfrand() + 2.0f);
-
-    // make arbitrary 2d translation
-    vel[i][0] = 80.0f * ((float)bzfrand() - 0.5f);
-    vel[i][1] = 80.0f * ((float)bzfrand() - 0.5f);
-  }
-  
   drawLOD = LowTankLOD;
   drawSize = Normal;
 }
@@ -824,14 +831,14 @@ void TankSceneNode::TankRenderNode::renderPart(TankPart part)
   // apply explosion transform
   if (isExploding) {
     glPushMatrix();
-    glTranslatef(centerOfGravity[part][0] + explodeFraction * vel[part][0],
-		 centerOfGravity[part][1] + explodeFraction * vel[part][1],
-		 centerOfGravity[part][2]);
-    glRotatef(spin[part][3] * explodeFraction,
-		 spin[part][0], spin[part][1], spin[part][2]);
-    glTranslatef(-centerOfGravity[part][0],
-		 -centerOfGravity[part][1],
-		 -centerOfGravity[part][2]);
+    const float* vel = sceneNode->vel[part];
+    const float* spin = sceneNode->spin[part];
+    const float* cog = centerOfGravity[part];
+    glTranslatef(cog[0] + (explodeFraction * vel[0]),
+		 cog[1] + (explodeFraction * vel[1]),
+		 cog[2]);
+    glRotatef(spin[3] * explodeFraction, spin[0], spin[1], spin[2]);
+    glTranslatef(-cog[0], -cog[1], -cog[2]);
   }
   
   // setup the animation texture matrix
