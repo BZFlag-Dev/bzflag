@@ -2844,6 +2844,10 @@ static void randomFlag(int flagIndex)
 
   // pick a random flag
   flag[flagIndex].flag.type = allowedFlags[(int)(allowedFlags.size() * (float)bzfrand())];
+  if (flag[flagIndex].flag.type->flagQuality == FlagBad)
+    flag[flagIndex].flag.endurance = FlagSticky;
+  else
+    flag[flagIndex].flag.endurance = FlagNormal;
   addFlag(flagIndex);
 }
 
@@ -3479,14 +3483,12 @@ static void dropFlag(int playerIndex, float pos[3])
   // okay, go ahead and drop it
   drpFlag.player = -1;
   drpFlag.numShots = 0;
-  if (drpFlag.flag.endurance == FlagNormal) {
+  if ((drpFlag.flag.endurance == FlagNormal) || (drpFlag.flag.endurance == FlagSticky)) {
+    // note: sticky/bad flags should always have grabs=1
     if (--drpFlag.grabs > 0)
       drpFlag.flag.status = FlagInAir;
     else
       drpFlag.flag.status = FlagGoing;
-    numFlagsInAir++;
-  } else if (drpFlag.flag.endurance == FlagSticky) {
-    drpFlag.flag.status = FlagGoing;
     numFlagsInAir++;
   }
 
