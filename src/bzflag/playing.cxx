@@ -102,7 +102,6 @@ static const char copyright[] = "Copyright (c) 1993 - 2003 Tim Riker";
 
 
 static const float	FlagHelpDuration = 60.0f;
-ServerItem x;
 static StartupInfo	startupInfo;
 static MainMenu*	mainMenu;
 static ServerLink*	serverLink = NULL;
@@ -201,7 +200,7 @@ static double		userTimeEpochOffset;
 StartupInfo::StartupInfo() : hasConfiguration(false),
 			     autoConnect(false),
 			     serverPort(ServerPort),
-			     team(RogueTeam),
+			     team(AutomaticTeam),
 			     listServerURL(DefaultListServerURL),
 			     listServerPort(ServerPort + 1)
 {
@@ -5022,10 +5021,6 @@ static bool		enterServer(ServerLink* serverLink, World* world,
 
   roaming = (myTank->getTeam() == ObserverTeam);
 
-
-  controlPanel->setControlColor(Team::getRadarColor(myTank->getTeam()));
-  radar->setControlColor(Team::getRadarColor(myTank->getTeam()));
-
   // wait for response
   uint16_t code, len;
   char msg[MaxPacketLen];
@@ -5085,6 +5080,16 @@ static bool		enterServer(ServerLink* serverLink, World* world,
       buf = nboUnpackUByte(buf, id);
       if (id == myTank->getId()) {
 	// it's me!  end of updates
+
+	// the server may dictate a team different than we asked for
+	void *tmpbuf = buf;
+	uint16_t team, type;
+	tmpbuf = nboUnpackUShort(tmpbuf, type);
+	tmpbuf = nboUnpackUShort(tmpbuf, team);
+	myTank->setTeam((TeamColor)team);
+	controlPanel->setControlColor(Team::getRadarColor(myTank->getTeam()));
+	radar->setControlColor(Team::getRadarColor(myTank->getTeam()));
+
 	// scan through flags and, for flags on
 	// tanks, tell the tank about its flag.
 	const int maxFlags = world->getMaxFlags();
@@ -5335,13 +5340,117 @@ static bool		joinGame(const StartupInfo* info,
   controlPanel->setRadarRenderer(radar);
   controlPanel->resize();
 
+  // determine which team to join
+  std::vector<TeamColor> minIndex;
+  int mostEmpty=0;
+  if (info->team - 1 == -1) {
+    // AutomaticTeam was selected
+
+    PingPacket ping = PingPacket();
+    // FIXME -- need to get a real pingpacket from the server here
+
+    int newMost;
+    if ((newMost = ping.redMax - ping.redCount) >= mostEmpty) {
+      if (newMost > mostEmpty) {
+	while (minIndex.size() > 0) {
+	  minIndex.pop_back();
+	}
+	mostEmpty = newMost;
+      }
+      minIndex.push_back(RedTeam);
+
+    }
+    if ((newMost = ping.greenMax - ping.greenCount) >= mostEmpty) {
+      if (newMost > mostEmpty) {
+	while (minIndex.size() > 0) {
+	  minIndex.pop_back();
+	}
+	mostEmpty = newMost;
+      }
+      minIndex.push_back(GreenTeam);
+
+    }
+    if ((newMost = ping.blueMax - ping.blueCount) >= mostEmpty) {
+      if (newMost > mostEmpty) {
+	while (minIndex.size() > 0) {
+	  minIndex.pop_back();
+	}
+	mostEmpty = newMost;
+      }
+      minIndex.push_back(BlueTeam);
+
+    }
+    if ((newMost = ping.purpleMax - ping.purpleCount) >= mostEmpty) {
+      if (newMost > mostEmpty) {
+	while (minIndex.size() > 0) {
+	  minIndex.pop_back();
+	}
+	mostEmpty = newMost;
+      }
+      minIndex.push_back(PurpleTeam);
+
+    }
+    if ((newMost = ping.rogueMax - ping.rogueCount) >= mostEmpty) {
+      if (newMost > mostEmpty) {
+	while (minIndex.size() > 0) {
+	  minIndex.pop_back();
+	}
+	mostEmpty = newMost;
+      }
+      minIndex.push_back(RogueTeam);
+
+    }
+    //    std::cout << "Most empty count is " << mostEmpty << " with " << minIndex.size() << " matching teams" << std::endl;
+    //    std::cout << "Maximum count is " << world->getMaxPlayers() << std::endl;
+
+  }
+
   // make local player
   myTank = new LocalPlayer(serverLink->getId(), info->callsign, info->email);
-  myTank->setTeam(info->team);
+
+  // if there is more than one team that tied for most empty,
+  // pick the one doing the worst
+  if (minIndex.size() == 0) {
+    myTank->setTeam(ObserverTeam);
+
+  } else if (minIndex.size() == 1) {
+    myTank->setTeam(minIndex[0]);
+
+  } else {
+    // there were several equally unfilled teams, pick one
+    /* FIXME -- eventually would be good to pick the team
+     * with the lowest cumulative player score
+     */
+    // for now, pick a random team
+    myTank->setTeam(minIndex[rand() % minIndex.size()]);    
+  }
+
   LocalPlayer::setMyTank(myTank);
 
   // enter server
-  if (!enterServer(serverLink, world, myTank)) {
+  bool enteredServer = false;
+  if (!enterServer(serverLink, world, myTank) && (minIndex.size() > 1)) {
+    // we failed for some reason, so try them all
+    for (unsigned int i = 0; i < minIndex.size(); i++) {
+      myTank->setTeam(minIndex[i]);
+      if (enterServer(serverLink, world, myTank)) {
+	enteredServer = true;
+	break;
+      }
+    }
+    if (!enteredServer) {
+      // try observer as a last resort
+      myTank->setTeam(ObserverTeam);
+      if (enterServer(serverLink, world, myTank)) {
+	enteredServer = true;
+      }
+    }
+  } else {
+    enteredServer = true;
+  }
+
+  // no luck joining
+  if (!enteredServer) {
     delete myTank;
     myTank = NULL;
     leaveGame();
