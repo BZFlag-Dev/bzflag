@@ -114,7 +114,11 @@ class ServerLink {
     static ServerLink*	server;
     int			server_abilities;
 
-		std::string	rejectionMessage;
+    std::string         rejectionMessage;
+
+    int                 udpLength;
+    char               *udpBufferPtr;                 
+    char                ubuf[MaxPacketLen];
 };
 
 #define SEND 1

@@ -91,7 +91,8 @@ ServerLink*		ServerLink::server = NULL;
 
 ServerLink::ServerLink(const Address& serverAddress, int port, int) :
 				state(SocketError),	// assume failure
-				fd(-1)			// assume failure
+				fd(-1),			// assume failure
+				udpLength(0)
 {
   int i;
   char cServerVersion[128];
@@ -409,18 +410,32 @@ int			ServerLink::read(uint16_t& code, uint16_t& len,
   if ((urecvfd >= 0) /* && ulinkup */) {
     int n;
 
-    AddrLen recvlen = sizeof(urecvaddr);
-    unsigned char ubuf[MaxPacketLen];
-    n = recvfrom(urecvfd, (char *)ubuf, MaxPacketLen, 0, &urecvaddr, (socklen_t*) &recvlen);
-    if (n>0) {
+    if (!udpLength) {
+      AddrLen recvlen = sizeof(urecvaddr);
+      n = recvfrom(urecvfd, ubuf, MaxPacketLen, 0, &urecvaddr,
+		   (socklen_t*) &recvlen);
+      if (n > 0) {
+	udpLength    = n;
+	udpBufferPtr = ubuf;
+      }
+    }
+    if (udpLength) {
       // unpack header and get message
-      void* buf = ubuf;
-      buf = nboUnpackUShort(buf, len);
-      buf = nboUnpackUShort(buf, code);
-      UDEBUG("<** UDP Packet Code %x Len %x\n",code, len);
-      if (len > MaxPacketLen)
+      udpLength -= 4;
+      if (udpLength < 0) {
+	udpLength = 0;
 	return -1;
-      memcpy((char *)msg,(char *)buf, len);
+      }
+      udpBufferPtr = (char *)nboUnpackUShort(udpBufferPtr, len);
+      udpBufferPtr = (char *)nboUnpackUShort(udpBufferPtr, code);
+      UDEBUG("<** UDP Packet Code %x Len %x\n",code, len);
+      if (len > udpLength) {
+	udpLength = 0;
+	return -1;
+      }
+      memcpy((char *)msg, udpBufferPtr, len);
+      udpBufferPtr += len;
+      udpLength    -= len;
       return 1;
     }
     if (UDEBUGMSG) printError("Fallback to normal TCP receive");

@@ -18,6 +18,7 @@
 
 const int udpBufSize = 128000;
 
+bool NetHandler::pendingUDP = false;
 bool NetHandler::initHandlers(struct sockaddr_in addr) {
   // udp socket
   int n;
@@ -190,7 +191,7 @@ NetHandler::NetHandler(PlayerInfo* _info, const struct sockaddr_in &clientAddr,
 		       int _playerIndex, int _fd)
   : info(_info), playerIndex(_playerIndex), fd(_fd), tcplen(0), closed(false),
     outmsgOffset(0), outmsgSize(0), outmsgCapacity(0), outmsg(NULL),
-    udpin(false), udpout(false), toBeKicked(false) {
+    udpOutputLen(0), udpin(false), udpout(false), toBeKicked(false) {
   // store address information for player
   AddrLen addr_len = sizeof(clientAddr);
   memcpy(&uaddr, &clientAddr, addr_len);
@@ -478,6 +479,23 @@ void *NetHandler::getTcpBuffer() {
   return tcpmsg;
 };
 
+void NetHandler::flushUDP()
+{
+  if (udpOutputLen) {
+    sendto(udpSocket, udpOutputBuffer, udpOutputLen, 0,
+	   (struct sockaddr*)&uaddr, sizeof(uaddr));
+    udpOutputLen = 0;
+  }
+}
+
+void NetHandler::flushAllUDP() {
+  for (int i = 0; i < maxHandlers; i++) {
+    if (netPlayer[i])
+      netPlayer[i]->flushUDP();
+  }
+  pendingUDP = false;
+}
+
 std::string NetHandler::reasonToKick() {
   std::string reason;
   if (toBeKicked) {
@@ -560,8 +578,34 @@ void NetHandler::udpSend(const void *b, size_t l) {
     return;
   }
 #endif
-  sendto(udpSocket, (const char *)b, (int)l, 0, (struct sockaddr*)&uaddr,
-	 sizeof(uaddr));
+
+  // setting sizeLimit to -1 will disable udp-buffering
+  const int sizeLimit = (int)MaxPacketLen - 4;
+
+  // If the new data does not fit into the buffer, send the buffer
+  if (udpOutputLen && (udpOutputLen + l > (int)MaxPacketLen)) {
+    sendto(udpSocket, udpOutputBuffer, udpOutputLen, 0,
+	   (struct sockaddr*)&uaddr, sizeof(uaddr));
+    udpOutputLen = 0;
+  }
+  // If nothing is buffered and new data will mostly fill it, send
+  // without copying
+  if (!udpOutputLen && ((int)l > sizeLimit)) {
+    sendto(udpSocket, (const char *)b, (int)l, 0, (struct sockaddr*)&uaddr,
+	   sizeof(uaddr));
+  } else {
+    // Buffer new data
+    memcpy(&udpOutputBuffer[udpOutputLen], (const char *)b, l);
+    udpOutputLen += l;
+    // Send buffer if is almost full
+    if (udpOutputLen > sizeLimit) {
+      sendto(udpSocket, udpOutputBuffer, udpOutputLen, 0,
+	     (struct sockaddr*)&uaddr, sizeof(uaddr));
+      udpOutputLen = 0;
+    }
+  }
+  if (udpOutputLen)
+    pendingUDP = true;
 }
 
 bool NetHandler::isMyUdpAddrPort(struct sockaddr_in _uaddr) {

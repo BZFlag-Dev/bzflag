@@ -114,6 +114,17 @@ public:
   */
   RxStatus    tcpReceive();
   void       *getTcpBuffer();
+  
+  /**
+     Request if there is any buffered udp messages waiting to be sent
+  */
+  static bool anyUDPPending() {return pendingUDP;};
+
+  /**
+     Send all buffered UDP messages, if any
+  */
+  void        flushUDP();
+  static void flushAllUDP();
 
   int         pwrite(const void *b, int l);
   int         pflush(fd_set *set);
@@ -173,6 +184,10 @@ private:
   int outmsgSize;
   int outmsgCapacity;
   char *outmsg;
+
+  char        udpOutputBuffer[MaxPacketLen];
+  int         udpOutputLen;
+  static bool pendingUDP;
 
   // UDP connection
   bool udpin; // udp inbound up, player is sending us udp

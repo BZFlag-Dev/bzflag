@@ -4265,6 +4265,10 @@ int main(int argc, char **argv)
       waitTime = 0.0f;
     }
 
+    // if there are buffered UDP, no wait at all
+    if (NetHandler::anyUDPPending())
+      waitTime = 0.0f;
+
     // we have no pending packets
     nfound = 0;
 
@@ -4715,6 +4719,9 @@ int main(int argc, char **argv)
 	// test code - do not uncomment, will cause big stuttering
 	// sleep(1);
       }
+    } else {
+      if (NetHandler::anyUDPPending())
+	NetHandler::flushAllUDP();
     }
 
     // Fire world weapons
