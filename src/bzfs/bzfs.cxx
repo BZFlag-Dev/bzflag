@@ -463,7 +463,7 @@ static FlagInfo *flag = NULL;
 static int numFlags;
 static int numFlagsInAir;
 // types of extra flags allowed
-static std::set<FlagDesc*> allowedFlags;
+static std::vector<FlagDesc*> allowedFlags;
 static bool done = false;
 // true if hit time/score limit
 static bool gameOver = true;
@@ -3444,35 +3444,10 @@ static void addFlag(int flagIndex)
 static void randomFlag(int flagIndex)
 {
   // pick a random flag
-  //FIXME for now just save an iterator that loops over all flags in order
-  //      but skips team flags
-  static std::set<FlagDesc*>::iterator randomIt = allowedFlags.end();
 
-  if (randomIt == allowedFlags.end()) {
-    randomIt = allowedFlags.begin();
-  }
-  else {
-    randomIt++;
-    if (randomIt == allowedFlags.end()) {
-      randomIt = allowedFlags.begin();
-    }
-  }
-  std::set<FlagDesc*>::iterator startIt = randomIt;
-  do {
-    if (randomIt == allowedFlags.end())
-      randomIt = allowedFlags.begin();
-    if ((*randomIt)->flagTeam != NoTeam)
-      randomIt++;
-    else
-      break;
-    if (randomIt == startIt) {
-      fprintf(stderr, 
-	      "can't use random flags when only team flags are allowed\n");
-      exit(20);
-    }
-  } while (true);
+  int i = allowedFlags.size() * (float)bzfrand();
 
-  flag[flagIndex].flag.desc = *randomIt;
+  flag[flagIndex].flag.desc = allowedFlags[i];
   addFlag(flagIndex);
 }
 
@@ -6423,9 +6398,13 @@ static void parse(int argc, char **argv, CmdLineOptions &options)
     // otherwise make table of allowed flags
     else {
       allowedFlags.clear();
-      for (std::map<std::string,FlagDesc*>::iterator it = FlagDesc::getFlagMap().begin(); it != FlagDesc::getFlagMap().end(); ++it)
+      for (std::map<std::string,FlagDesc*>::iterator it = FlagDesc::getFlagMap().begin(); it != FlagDesc::getFlagMap().end(); ++it) {
+	FlagDesc *fDesc = it->second;
+	if ((fDesc == Flags::Null) || (fDesc->flagTeam != ::NoTeam))
+	  continue;
 	if (!options.flagDisallowed[it->second])
-	  allowedFlags.insert(it->second);
+	  allowedFlags.push_back(it->second);
+      }
     }
   }
 
