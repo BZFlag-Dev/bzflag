@@ -10,6 +10,10 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
+#ifdef _WIN32
+#include "ATLbase.h"
+#endif
+
 #include "bzfio.h"
 #include "common.h"
 
