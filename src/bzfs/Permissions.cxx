@@ -311,9 +311,11 @@ std::string nameFromPerm(PlayerAccessInfo::AccessPerm perm)
     case PlayerAccessInfo::poll: return "poll";
     case PlayerAccessInfo::privateMessage: return "privateMessage";
     case PlayerAccessInfo::record: return "record";
+    case PlayerAccessInfo::rejoin: return "rejoin";
     case PlayerAccessInfo::removePerms: return "removePerms";
     case PlayerAccessInfo::replay: return "replay";
     case PlayerAccessInfo::requireIdentify: return "requireIdentify";
+    case PlayerAccessInfo::say: return "say";
     case PlayerAccessInfo::setAll: return "setAll";
     case PlayerAccessInfo::setPassword: return "setPassword";
     case PlayerAccessInfo::setPerms: return "setPerms";
@@ -361,9 +363,11 @@ PlayerAccessInfo::AccessPerm permFromName(const std::string &name)
   if (name == "POLL") return PlayerAccessInfo::poll;
   if (name == "PRIVATEMESSAGE") return PlayerAccessInfo::privateMessage;
   if (name == "RECORD") return PlayerAccessInfo::record;
+  if (name == "REJOIN") return PlayerAccessInfo::rejoin;
   if (name == "REMOVEPERMS") return PlayerAccessInfo::removePerms;
   if (name == "REPLAY") return PlayerAccessInfo::replay;
   if (name == "REQUIREIDENTIFY") return PlayerAccessInfo::requireIdentify;
+  if (name == "SAY") return PlayerAccessInfo::say;
   if (name == "SETALL") return PlayerAccessInfo::setAll;
   if (name == "SETPASSWORD") return PlayerAccessInfo::setPassword;
   if (name == "SETPERMS") return PlayerAccessInfo::setPerms;

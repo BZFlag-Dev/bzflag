@@ -2263,7 +2263,8 @@ void removePlayer(int playerIndex, const char *reason, bool notify)
     // make them wait from the time they left, but only if they are
     // not already waiting, and they are not currently an observer.
     if ((playerData->player.getTeam() != ObserverTeam) &&
-	(rejoinList.waitTime (playerIndex) <= 0.0f)) {
+	(rejoinList.waitTime (playerIndex) <= 0.0f) &&
+	!playerData->accessInfo.hasPerm(PlayerAccessInfo::rejoin)) {
       rejoinList.add (playerIndex);
     }
 

@@ -2122,6 +2122,39 @@ static void handleReplayCmd(GameKeeper::Player *playerData, const char * message
   return;
 }
 
+static void handleSayCmd(GameKeeper::Player *playerData, const char * message)
+{
+  size_t messageStart = 0;
+  int t = playerData->getIndex();
+  
+  if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::say)) {
+    char reply[MessageLen] = {0};
+    sprintf(reply,"%s, you do not have permission to run the /say command", playerData->player.getCallSign());
+    sendMessage(ServerPlayer, t, reply);
+    return;
+  }
+  
+  std::string messageText = &message[4];
+  
+  // skip any leading whitespace
+  while ((messageStart < messageText.size()) &&
+	 (isspace(messageText[messageStart]))) {
+    messageStart++;
+  }
+
+  // make sure there was _some_ whitespace after /say
+  if (messageStart == 0) {
+    sendMessage(ServerPlayer, t, "Usage: /say some message");
+    return;
+  }
+  
+  
+  // send the message
+  sendMessage(ServerPlayer, AllPlayers, messageText.c_str() + messageStart );
+  return;
+}
+
+
 
 static void handleDateCmd(GameKeeper::Player *playerData, const char * /*message*/)
 {
@@ -2404,6 +2437,9 @@ void parseServerCommand(const char *message, int t)
 
   } else if (strncasecmp(message + 1, "replay", 6) == 0) {
     handleReplayCmd(playerData, message);
+
+  } else if (strncasecmp(message + 1, "say", 3) == 0) {
+    handleSayCmd(playerData, message);
 
   } else if (strncasecmp(message + 1, "masterban", 9) == 0) {
     handleMasterBanCmd(playerData, message);

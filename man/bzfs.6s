@@ -796,6 +796,16 @@ Note: Bzfs must be compiled to use the ADNS asynchronous resolver library in ord
 .B /hostbanlist
 List all of the host patterns currently banned from this server.
 .TP
+.B /say {message}
+Generate a public message sent by the server. Example:
+
+.ft CW
+.nf
+.ne 4
+/say This is a servermessage
+.ft R
+
+.TP
 .B /countdown [seconds]
 Starts the countdown sequence for a timed game.  The countdown
 sequence length can optionally be specified in seconds.  Examples:
@@ -905,7 +915,11 @@ LISTPERMS	not implemented
 .br
 SHOWOTHERS	not implemented
 .br
+REJOIN	allows instant rejoin, regardless of _rejoinTime
+.br
 REMOVEPERMS	/removegroup
+.br
+SAY	/say
 .br
 SETPERMS	/setgroup
 .br
