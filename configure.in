@@ -339,7 +339,7 @@ if test x$enable_debug = xyes; then
 	CPPFLAGS="$CPPFLAGS -Werror";
 	CXXFLAGS="$CXXFLAGS -g -Wno-deprecated";
 	if test x$enable_profiling = xyes; then
-	  CPPFLAGS="$CPPFLAGS -pg";
+	  CFLAGS="$CFLAGS -pg";
 	  CXXFLAGS="$CXXFLAGS -pg";
 	fi;;
      solaris*)
@@ -349,7 +349,7 @@ if test x$enable_debug = xyes; then
 	CFLAGS="$CFLAGS -g";
 	CXXFLAGS="$CXXFLAGS -g";
 	if test x$enable_profiling = xyes; then
-	  CPPFLAGS="$CPPFLAGS -pg";
+	  CFLAGS="$CFLAGS -pg";
 	  CXXFLAGS="$CXXFLAGS -pg";
 	fi;;
      windows**)
@@ -379,7 +379,7 @@ else
 		CXXFLAGS="$CXXFLAGS -ffast-math -fomit-frame-pointer";
 		CXXFLAGS="$CXXFLAGS -fexpensive-optimizations -fno-exceptions";
 		if test x$enable_profiling = xyes; then
-			CPPFLAGS="$CPPFLAGS -pg";
+			CFLAGS="$CFLAGS -pg";
 			CXXFLAGS="$CXXFLAGS -pg";
 		fi;;
 	 windows**)
