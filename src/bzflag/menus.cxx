@@ -65,6 +65,7 @@
 #include "StateDatabase.h"
 #include "CommandsStandard.h"
 #include "KeyManager.h"
+#include "ServerListCache.h"
 
 #ifdef _WIN32
 #define PATH_MAX MAX_PATH
@@ -1527,7 +1528,11 @@ void			OptionsMenu::execute()
     HUDDialogStack::get()->push(guiOptionsMenu);
   }
   else if (focus == clearCache) {
-     ServerMenu::clearCache();
+    if ((ServerListCache::get())->clearCache()){
+       controlPanel->addMessage("Cache Cleared");
+    } else {
+      // already cleared -- do nothing
+    }
   }
 }
 
@@ -1618,7 +1623,7 @@ void			OptionsMenu::resize(int width, int height)
 
     // server cache age
     int index = 0;
-    switch (ServerMenu::getMaxCacheAge()){
+    switch ((ServerListCache::get())->getMaxCacheAge()){
       case 0: index = 0; break;
       case 5: index = 1; break;
       case 15: index = 2; break;
@@ -1718,7 +1723,7 @@ void			OptionsMenu::callback(HUDuiControl* w, void* data)
         case 8: minutes = 60*24*15; break;
         case 9: minutes = 60*24*30; break;
       }
-      ServerMenu::setMaxCacheAge(minutes);
+      (ServerListCache::get())->setMaxCacheAge(minutes);
       break;
     }
 
@@ -2406,11 +2411,9 @@ void			HelpMenu::done()
 // ServerMenu
 //
 
-static const size_t MAX_STRING = 200; // size of description/name
-
 void			ServerItem::writeToFile(ofstream& out) const
 {
-  char buffer[MAX_STRING+1];
+  char buffer[MAX_STRING+1]; // MAX_STRING is inherited from ServerListCache.h
 
   // write out desc.
   memset(buffer,0,sizeof(buffer));
@@ -2630,15 +2633,13 @@ bool			ServerMenuDefaultKey::keyRelease(const BzfKeyEvent& key)
 
 const int		ServerMenu::NumReadouts = 23;
 const int		ServerMenu::NumItems = 10;
-time_t			ServerMenu::maxCacheAge = 0;
-SRV_STR_MAP		ServerMenu::serverCache;
-int			ServerMenu::cacheAddedNum = 0;
 
 ServerMenu::ServerMenu() : defaultKey(this),
 				pingInSocket(-1),
 				pingBcastSocket(-1),
 				selectedIndex(0),
-				numListServers(0)
+				numListServers(0),
+				serverCache(ServerListCache::get())
 {
   // add controls
   addLabel("Servers", "");
@@ -2675,92 +2676,7 @@ ServerMenu::ServerMenu() : defaultKey(this),
   setFocus(status);
 }
 
-// load the server cache from the file fileName
-void			ServerMenu::saveCache()
-{
-  // get a file named e.g. BZFS107Server.bzs in the cache dir
-  // allows separation of server caches by version
-  std::string fileName = getCacheDirectoryName();
-  if (fileName == "") return;
-  std::string verString = ServerVersion;
-  verString = verString.substr(0,7);
-  fileName = fileName + "/" + verString + "Servers.bzs";
 
-  char buffer[MAX_STRING+1];
-
-  ofstream outFile (fileName.c_str(), ios::out|ios::binary);
-  int lenCpy = MAX_STRING;
-  bool doWeed = (cacheAddedNum >0); // weed out as many items as were added
-
-  if (outFile){
-    for (SRV_STR_MAP::iterator iter = serverCache.begin(); iter != serverCache.end(); iter++){
-      // weed out after 30 days *if* if we should
-      if (doWeed && iter->second.getAgeMinutes() > 60*24*30) {
-       cacheAddedNum --;
-       doWeed = (cacheAddedNum >0);
-       continue;
-      }
-
-      // write out the index of the map
-      memset(&buffer,0, sizeof(buffer));
-      lenCpy = (iter->first).size() < MAX_STRING ? (iter->first).size() : MAX_STRING;
-      strncpy(&buffer[0],(iter->first.c_str()),lenCpy);
-      outFile.write(buffer,sizeof(buffer));
-
-      // write out the serverinfo -- which is mapped by index
-      (iter->second).writeToFile(outFile);
-    }
-    outFile.close();
-  }
-}
-
-// load the server cache
-void			ServerMenu::loadCache()
-{
-  // get a file named BZFS107Server.bzs in the cache dir
-  // allows separation of server caches by version
-  std::string fileName = getCacheDirectoryName();
-  if (fileName == "") return;
-  std::string verString = ServerVersion;
-  verString = verString.substr(0,7);
-  fileName = fileName + "/" + verString + "Servers.bzs";
-
-  char buffer[MAX_STRING+1];
-
-  ifstream inFile (fileName.c_str(),ios::in|ios::binary);
-  bool infoWorked;
-
-  if (inFile) {
-    while(inFile) {
-      std::string serverIndex;
-      ServerItem info;
-
-      inFile.read(buffer,sizeof(buffer)); //read the index of the map
-      if ((size_t)inFile.gcount() < sizeof(buffer)) break; // failed to read entire string
-      serverIndex = buffer;
-
-      infoWorked = info.readFromFile(inFile);
-      // after a while it is doubtful that player counts are accurate
-      if (info.getAgeMinutes() > (time_t)30) info.ping.zeroPlayerCounts();
-      if (!infoWorked) break;
-
-      serverCache.insert(SRV_STR_MAP::value_type(serverIndex,info));
-    }
-    inFile.close();
-  }
-}
-
-// clear the server list cache
-void			ServerMenu::clearCache()
-{
-  if (serverCache.size() > 0){
-    serverCache.clear();
-    controlPanel->addMessage("Cleared Cache");
-  } else {
-    controlPanel->addMessage("Cache Already empty");
-  }
-
-}
 
 void			ServerMenu::addLabel(
 				const char* msg, const char* _label)
@@ -3060,12 +2976,13 @@ void			ServerMenu::show()
 
   // add cache items w/o re-caching them
   int numItemsAdded = 0;
-  for (SRV_STR_MAP::iterator iter = serverCache.begin();
-       iter != serverCache.end(); iter++) {
+  for (SRV_STR_MAP::const_iterator iter = serverCache->begin();
+       iter != serverCache->end(); iter++) {
     // if maxCacheAge is 0 we add nothing
     // if the item is young enough we add it
-    if (maxCacheAge != 0 && iter->second.getAgeMinutes() < maxCacheAge) {
-      addToList(iter->second);
+    if (serverCache->getMaxCacheAge() != 0 && iter->second.getAgeMinutes() < serverCache->getMaxCacheAge()) {
+      ServerItem aCopy = iter->second;
+      addToList(aCopy);
       numItemsAdded ++;
     }
   }
@@ -3623,7 +3540,7 @@ void			ServerMenu::addToList(ServerItem& info, bool doCache)
     // on save we delete at most as many items as we added
     // if the added list is normal, we weed most out, if we
     // get few items, we weed few items out
-    cacheAddedNum ++;
+    serverCache->incAddedNum(); 
 
     // make string like "sdfsd.dmsd.com:123"
     char buffer [100];
@@ -3635,13 +3552,13 @@ void			ServerMenu::addToList(ServerItem& info, bool doCache)
     info.setUpdateTime();
 
     SRV_STR_MAP::iterator iter;
-    iter = serverCache.find(serverAddress);  // erase entry to allow update
-    if (iter != serverCache.end()){ // if we find it, update it
+    iter = serverCache->find(serverAddress);  // erase entry to allow update
+    if (iter != serverCache->end()){ // if we find it, update it
       iter->second = info;
     }
     else {
       // insert into cache -- wasn't found
-      serverCache.insert(SRV_STR_MAP::value_type(serverAddress,info));
+      serverCache->insert(serverAddress,info);
     }
   }
 }
@@ -3649,8 +3566,8 @@ void			ServerMenu::addToList(ServerItem& info, bool doCache)
 // add the entire cache to the server list
 void			ServerMenu::addCacheToList()
 {
-  for (SRV_STR_MAP::iterator iter = serverCache.begin();
-       iter != serverCache.end(); iter++){
+  for (SRV_STR_MAP::iterator iter = serverCache->begin();
+       iter != serverCache->end(); iter++){
     addToList(iter->second);
   }
 }
@@ -3658,18 +3575,6 @@ void			ServerMenu::addCacheToList()
 void			ServerMenu::playingCB(void* _self)
 {
   ((ServerMenu*)_self)->checkEchos();
-}
-
-// set the max age to # of minutes after which items in cache
-// are this old they are no longer shown -- 0 disables
-void			ServerMenu::setMaxCacheAge(time_t time)
-{
-  maxCacheAge = time;
-}
-
-time_t			ServerMenu::getMaxCacheAge()
-{
-  return maxCacheAge;
 }
 
 //

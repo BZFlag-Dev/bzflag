@@ -99,7 +99,7 @@ static const char copyright[] = "Copyright (c) 1993 - 2003 Tim Riker";
 #define MAX_MESSAGE_HISTORY (20)
 
 static const float	FlagHelpDuration = 60.0f;
-
+ServerItem x;
 static StartupInfo	startupInfo;
 static MainMenu*	mainMenu;
 static ServerLink*	serverLink = NULL;

@@ -27,10 +27,13 @@
 #include "HUDDialog.h"
 #include "OpenGLTexFont.h"
 #include "Ping.h"
+//#include "playing.h" // delete me
+//#include "Protocol.h" // delete me
 
 class JoinMenu;
 class OptionsMenu;
 class QuitMenu;
+class ServerListCache;
 
 class MenuDefaultKey : public HUDuiDefaultKey {
   public:
@@ -139,8 +142,6 @@ class ServerMenuDefaultKey : public MenuDefaultKey {
     ServerMenu*		menu;
 };
 
-typedef std::map<std::string, ServerItem> SRV_STR_MAP;
-
 class ServerMenu : public HUDDialog {
   public:
 			ServerMenu();
@@ -153,11 +154,7 @@ class ServerMenu : public HUDDialog {
     void		execute();
     void		dismiss();
     void		resize(int width, int height);
-    static void		saveCache();
-    static void		loadCache();
-    static void		setMaxCacheAge(time_t time);
-    static time_t	getMaxCacheAge();
-    static void		clearCache();
+
 
 
   public:
@@ -190,12 +187,10 @@ class ServerMenu : public HUDDialog {
     int				phase;
     ListServer			listServers[MaxListServers];
     int				numListServers;
+    ServerListCache*		serverCache;
+    bool			addedCacheToList;
 
     static const int	NumReadouts;
-    static SRV_STR_MAP	serverCache;
-    static time_t	maxCacheAge; // age after we don't show servers in cache
-    bool		addedCacheToList; // have we already added cache to list
-    static int		cacheAddedNum; // how many items were added to cache
 };
 
 #endif /* BZF_MENUS_H */

@@ -57,6 +57,7 @@
 #include "FileManager.h"
 #include "CommandManager.h"
 #include "callbacks.h"
+#include "ServerListCache.h"
 
 extern std::vector<std::string>& getSilenceList();
 const char*		argv0;
@@ -780,9 +781,9 @@ void			dumpResources(BzfDisplay* display,
     BZDB->set(string_util::format("silencedPerson%d", i), list[i]);
   }
 
-  BZDB->set("serverCacheAge", string_util::format("%1d", (long)ServerMenu::getMaxCacheAge()));
+  BZDB->set("serverCacheAge", string_util::format("%1d", (long)(ServerListCache::get())->getMaxCacheAge()));
 
-  ServerMenu::saveCache();
+  (ServerListCache::get())->saveCache();
 }
 
 static bool		needsFullscreen()
@@ -880,7 +881,7 @@ int			main(int argc, char** argv)
 #endif
   }
 
-  ServerMenu::loadCache();
+  (ServerListCache::get())->loadCache();
 
   // restore some configuration (command line overrides these)
   if (startupInfo.hasConfiguration) {
@@ -1228,7 +1229,7 @@ int			main(int argc, char** argv)
   }
 
   if (BZDB->isSet("serverCacheAge")) {
-    ServerMenu::setMaxCacheAge(atoi(BZDB->get("serverCacheAge").c_str()));
+    (ServerListCache::get())->setMaxCacheAge(atoi(BZDB->get("serverCacheAge").c_str()));
   }
 
   // start playing

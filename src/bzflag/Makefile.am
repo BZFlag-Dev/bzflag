@@ -58,6 +58,8 @@ bzflag_SOURCES =			\
 	HUDDialog.h			\
 	menus.cxx			\
 	menus.h				\
+	ServerListCache.cxx		\
+	ServerListCache.h		\
 	bzflag.rc			\
 	bzflag.ico
 
