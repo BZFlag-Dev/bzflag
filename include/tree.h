@@ -83,11 +83,18 @@ public:
 	void construct(pointer __p, const T& __val) { new(__p) T(__val); }
 	void destroy(pointer __p) { __p->~T(); }
 };
+
+#else
+
+// egcs doesn't support std::unary_function<>.  We need that so use
+// use unary_function and a #define.
+#define unary_function std::unary_function
+
 #endif
 
 #if defined(_MSC_VER) || defined(__BCPLUSPLUS__) // these do not have HP style construct/destroy 
 template <class T1, class T2>
-inline void constructor(T1* p, const T2& val) 
+inline void constructor(T1* p, const T2& val) // crs -- added const
 	{
 	new ((void *) p) T1(val);
 	}

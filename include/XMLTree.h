@@ -10,19 +10,6 @@
 #include <stdexcept>
 #include <string>
 
-#ifndef OLD_SGI_STL
-// egcs doesn't support std::foo<> (i.e. std namespace on a template).  We need
-// std::unary_function<> so use unary_function and a typedef.  This requires
-// coding for the broken systems and emulating the broken behavior on the good
-// ones with the typedef.
-#ifdef WIN32
-using std::unary_function;
-#else
-typedef std::unary_function unary_function;
-#endif
-#endif
-
-
 class XMLStreamPosition {
 public:
 	XMLStreamPosition();
