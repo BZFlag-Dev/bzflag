@@ -55,6 +55,7 @@ class ZSceneIterator : public SceneIterator {
     void	resetFrustum(const ViewFrustum*);
     void	reset();
     SceneNode*	getNext();
+    SceneNode*	getNextLight();
     void		drawCuller();
 
   private:

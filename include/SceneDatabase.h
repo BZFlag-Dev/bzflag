@@ -36,6 +36,7 @@ class SceneIterator {
     virtual void	resetFrustum(const ViewFrustum*) = 0;
     virtual void	reset() = 0;
     virtual SceneNode*	getNext() = 0;
+    virtual SceneNode*	getNextLight() {return getNext();};
     virtual void	drawCuller() = 0;
 };
 

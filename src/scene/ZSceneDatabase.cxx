@@ -217,7 +217,16 @@ SceneNode*		ZSceneIterator::getNext()
   return NULL;
 }
 
-
+SceneNode* ZSceneIterator::getNextLight()
+{
+  // Currently static nodes does not own light
+  if (!dynamicDone) {
+    SceneNode* node = db->dynamicList[dynamicIndex++];
+    dynamicDone     = (db->dynamicCount == dynamicIndex);
+    return node;
+  }
+  return NULL;
+}
 
 void     		ZSceneIterator::drawCuller()
 {

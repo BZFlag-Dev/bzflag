@@ -580,7 +580,7 @@ void			SceneRenderer::render(
       // add lights
       sceneIterator->reset();
       SceneNode* node;
-      while ((node = sceneIterator->getNext()) != NULL)
+      while ((node = sceneIterator->getNextLight()) != NULL)
 	node->addLight(*this);
       numLights = lights.size();
 
