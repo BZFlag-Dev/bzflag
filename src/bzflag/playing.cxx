@@ -4572,8 +4572,8 @@ static void		updateRobots(float dt)
       robotServer[i]->sendAlive(robots[i]->getPosition(), robots[i]->getForward());
       setRobotTarget(robots[i]);
     }
-    else if (pickTarget || (robots[i]->getTarget() &&
-				!robots[i]->getTarget()->isAlive())) {
+    else if (pickTarget || !robots[i]->getTarget()
+	     || !robots[i]->getTarget()->isAlive()) {
       setRobotTarget(robots[i]);
     }
 
