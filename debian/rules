@@ -64,7 +64,7 @@ bzflag: build
 	dh_clean -k
 	dh_installdirs -p$@ usr/games usr/share/bzflag/l10n usr/share/man/man6
 	# copy files into debian/$@/ here
-	cp -p data/[^CM]* debian/$@/usr/share/bzflag/
+	-cp -p data/[^CM]* debian/$@/usr/share/bzflag/
 	cp -p data/l10n/[^CM]* debian/$@/usr/share/bzflag/l10n/
 	cp -p man/bzflag.6 debian/$@/usr/share/man/man6/
 	cp -p src/bzflag/bzflag debian/$@/usr/games/
