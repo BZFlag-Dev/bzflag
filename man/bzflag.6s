@@ -21,7 +21,7 @@ BZFlag \- a tank battle game
 [\fB\-nolist\fR]
 [\fB\-port \fIport\fR]
 [\fB\-solo \fInumber-of-robots\fR]
-[\fB\-team \fR{\fIred\fR | \fIgreen\fR | \fIblue\fR | \fIpurple\fR | \fIrogue\fR}]
+[\fB\-team \fR{\fIautomatic\fR | \fIred\fR | \fIgreen\fR | \fIblue\fR | \fIpurple\fR | \fIrogue\fR}]
 [\fB\-version\fR]
 [\fB\-view \fR{\fInormal\fR | \fIstereo\fR | \fIthree\fR}]
 [\fB\-window\fR]
@@ -138,7 +138,9 @@ to join too.  This is an experimental option and the robots are
 extremely stupid players.  Robots are added to teams at random.
 .TP
 \fB-team\fI team-name\fR
-Chooses the player's team.
+Chooses the player's team.  If there are no team positions available
+and the team-name is set to be automatic, the player will try to
+join as an observer.
 .TP
 .B -version
 Prints the version number of the executable.
