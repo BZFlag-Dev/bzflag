@@ -2,7 +2,7 @@
 	
 			     BZFlag release notes
 
-* Add back PNG support from 1.8 - Dave Brosius, Sean
+* Add back PNG support from 1.8 - Dave Brosius, Sean Morrison
 * Add back BZDB from 1.8 - David Trowbridge
 * Don't broadcast single player messages - Dave Brosius
 * Customizable map size in maps - Jeff Myers
@@ -31,7 +31,7 @@ BZFlag 1.7g2 "Steely Eyed Banana" (was 1.7g1)
 * IRIX fixes - David Trowbridge
 * cygwin/mingw32 fixes - Tupone Alfredo
 * Solaris fixes - David Trowbridge
-* OSX Fixes - Sean, David Wollner
+* OSX Fixes - Sean Morrison, David Wollner
 * server list cache - Michael Hoffman
 * E-mail field fixes - Lars Luthman
 * colorized console - Dave R (Trepan), David Trowbridge
