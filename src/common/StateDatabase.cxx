@@ -25,13 +25,12 @@
 #include <iostream>
 #include <math.h>
 
-#include <TimeKeeper.h> // only for debugEval()
+#include <TimeKeeper.h> // only for _debugLookups()
 
-void	debugLookups(const std::string &name)
+void	_debugLookups(const std::string &name)
 {
-#ifndef DEBUG
-  return;
-#endif
+  static const float interval = 20.0f;
+
   /* This bit of nastyness help debug BDZB->eval accesses sorted from worst to best*/
   static std::map<std::string,int> cnts;
   static TimeKeeper last = TimeKeeper::getCurrent();
@@ -43,7 +42,7 @@ void	debugLookups(const std::string &name)
     it->second++;
 
   TimeKeeper now = TimeKeeper::getCurrent();
-  if (now - last > 20.0f) {
+  if (now - last > interval) {
     std::multimap<int,std::string> order;
     for (it = cnts.begin(); it != cnts.end(); it++) {
       order.insert(pair<int,std::string>(-it->second, it->first));
@@ -52,12 +51,19 @@ void	debugLookups(const std::string &name)
 
     for (std::multimap<int,std::string>::iterator it2 = order.begin(); it2 != order.end(); ++it2) {
       char data[100];
-      sprintf(data, "%s = %d", it2->second.c_str(), -it2->first);
+      sprintf(data, "%s = %f accesses/sec", it2->second.c_str(), -it2->first / interval);
       std::cout << data << std::endl;
     }
     last = now;
   }
 }
+
+#ifdef DEBUG
+  #define debugLookups(name) _debugLookups(name)
+#else
+  #define debugLookups(name)
+#endif
+
 
 const std::string StateDatabase::BZDB_ANGLETOLERANCE    = std::string("_angleTolerance");
 const std::string StateDatabase::BZDB_ANGULARAD         = std::string("_angularAd");
