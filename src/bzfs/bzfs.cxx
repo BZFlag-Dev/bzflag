@@ -849,8 +849,11 @@ static void sendMessageToListServerForReal(int index)
       link.hostname.c_str());
   }
   DEBUG3("%s\n",msg);
-  send(link.socket, msg, strlen(msg), 0);
-  
+  if (send(link.socket, msg, strlen(msg), 0) == -1) {
+    perror("List server send failed");
+    DEBUG3("Unable to send to the list server!\n");
+  }
+
   // hangup (we don't care about replies)
   closeListServer(index);
 }
