@@ -668,11 +668,8 @@ void			dumpResources(BzfDisplay* display,
     }
   }
   BZDB->set("startcode", ServerStartMenu::getSettings());
-  db.addValue("startcode", ServerStartMenu::getSettings());
   BZDB->set("showflaghelp", renderer.getShowFlagHelp() ? "yes" : "no");
-  db.addValue("showflaghelp", renderer.getShowFlagHelp() ? "yes" : "no");
   BZDB->set("showlabels", renderer.getLabels() ? "yes" : "no");
-  db.addValue("showlabels", renderer.getLabels() ? "yes" : "no");
 
   BZDB->set("panelopacity", string_util::format("%f", renderer.getPanelOpacity()));
   db.addValue("panelopacity", string_util::format("%f", renderer.getPanelOpacity()));
@@ -1125,12 +1122,12 @@ int			main(int argc, char** argv)
 	}
     }
 
-    if (db.hasValue("startcode"))
-      ServerStartMenu::setSettings(db.getValue("startcode").c_str());
-    if (db.hasValue("showflaghelp"))
-      renderer.setShowFlagHelp(db.getValue("showflaghelp") == "yes");
-    if (db.hasValue("showscore"))
-      renderer.setLabels(db.getValue("showlabels") == "yes");
+    if (BZDB->isSet("startcode"))
+      ServerStartMenu::setSettings(BZDB->get("startcode").c_str());
+    if (BZDB->isSet("showflaghelp"))
+      renderer.setShowFlagHelp(BZDB->isTrue("showflaghelp"));
+    if (BZDB->isSet("showscore"))
+      renderer.setLabels(BZDB->isTrue("showlabels"));
 
     if (db.hasValue("panelopacity"))
       renderer.setPanelOpacity((float)atof(db.getValue("panelopacity").c_str()));
