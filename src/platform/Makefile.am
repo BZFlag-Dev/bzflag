@@ -77,9 +77,8 @@ libPlatform_a_SOURCES =				\
 	BzfMedia.cxx				\
 	wave.cxx				\
 	wave.h
-else
-DIST_SUBDIRS = MacOSX
 endif
+DIST_SUBDIRS = MacOSX
 
 if BEOS
 libPlatform_a_SOURCES =				\
