@@ -770,7 +770,7 @@ static void		doKeyPlaying(const BzfKeyEvent& key, bool pressed)
     if (found) {
       hud->setTabCompletionRotation(c);
       std::string line = std::string("");
-      for (int d = 0;d <= tokens.size() - 2;d++) //reassemble the string
+      for (int d = 0;d <= (int)tokens.size() - 2;d++) //reassemble the string
         line += tokens[d] + " ";
       hud->setComposeString((line + player[c]->getCallSign()));
     }

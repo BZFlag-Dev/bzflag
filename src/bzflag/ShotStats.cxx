@@ -178,9 +178,9 @@ void			ShotStats::resize(int width, int height)
   float y = titleY;
   title->setPosition(x, y);
 
-  for (int i = 1; i < list.size(); ++i) {
+  for (int i = 1; i < (int)list.size(); ++i) {
     // determine row & column (i - 1 to account for title)
-    int row = floor((i - 1) / columns);
+    int row = (int)floor((i - 1) / columns);
     int column = (i - 1) - (columns * row) + 1;
     // account for 3 extra columns in player name
     if (column > 1)
