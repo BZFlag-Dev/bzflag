@@ -4040,8 +4040,12 @@ static void parseCommand(const char *message, int t)
     } else if (strncmp(message + 6, "show", 4) == 0) {
       for (int i = 0; i < numFlags; i++) {
 	char message[MessageLen]; // FIXME
-	sprintf(message, "%d p:%d r:%d g:%d i:%s", i, flag[i].player,
-	    flag[i].required, flag[i].grabs, Flag::getAbbreviation(flag[i].flag.id));
+	sprintf(message, "%d p:%d r:%d g:%d i:%s s:%d p:%fx%fx%f", i, flag[i].player,
+	    flag[i].required, flag[i].grabs, Flag::getAbbreviation(flag[i].flag.id),
+	    flag[i].flag.status,
+	    flag[i].flag.position[0],
+	    flag[i].flag.position[1],
+	    flag[i].flag.position[2]);
 	sendMessage(t, player[t].id, player[t].team, message);
       }
     }
