@@ -111,7 +111,7 @@ static const int ReplayHeaderSize = sizeof(ReplayHeader) - (2 * sizeof(char*));
 
 static const u32 ReplayMagic       = 0x7272425A; // "rrBZ"
 static const u32 ReplayVersion     = 0x0001;
-static const u32 DefaultMaxBytes   = (16 * 1024);//FIXME * 1024); // 16 Mbytes
+static const u32 DefaultMaxBytes   = (16 * 1024 * 1024); // 16 Mbytes
 static const u32 DefaultUpdateRate = (10 * 1000000); // seconds
 
 static std::string RecordDir = getRecordDirName();
@@ -338,6 +338,9 @@ bool Record::setRate (int playerIndex, int seconds)
   char buffer[MessageLen];
   if (seconds <= 0) {
     seconds = 1;
+  }
+  else if (seconds > 30) {
+    seconds = 30;
   }
   RecordUpdateRate = seconds * 1000000;
   snprintf (buffer, MessageLen, "Record rate set to %i", seconds);
@@ -1807,8 +1810,7 @@ loadHeader (ReplayHeader *h, FILE *f)
     sendMessage (ServerPlayer, AllPlayers,
                  "Please rejoin or face the consequences (client crashes)");
   }
-  /* 
-   * FIXME
+  /* FIXME
    *
    * Ok, this is where it gets a bit borked. The bzflag client
    * has dynamic arrays for some of its objects (players, flags, 
