@@ -61,14 +61,14 @@ MTL=midl.exe
 # Name "installer - Win32 Debug"
 # Begin Source File
 
-SOURCE=..\package\win32\nsis\BZFlag.nsi
+SOURCE=..\..\package\win32\nsis\BZFlag.nsi
 
 !IF  "$(CFG)" == "installer - Win32 Release"
 
 # PROP Ignore_Default_Tool 1
 USERDEP__BZFLA="..\..\src\bzfs\bzfs.exe"	"..\..\src\bzflag\bzflag.exe"	"..\..\src\bzadmin\bzadmin.exe"	
 # Begin Custom Build - Building installer using $(InputPath)
-InputPath=..\package\win32\nsis\BZFlag.nsi
+InputPath=..\..\package\win32\nsis\BZFlag.nsi
 
 "..\..\dist\BZFlag1.9a0.exe" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
 	cd ..\..\package\win32\nsis 
@@ -81,7 +81,7 @@ InputPath=..\package\win32\nsis\BZFlag.nsi
 # PROP Ignore_Default_Tool 1
 USERDEP__BZFLA="..\..\src\bzfs\debug\bzfs.exe"	"..\..\src\bzflag\debug\bzflag.exe"	"..\..\src\bzadmin\debug\bzadmin.exe"	
 # Begin Custom Build - Building installer using $(InputPath)
-InputPath=..\package\win32\nsis\BZFlag.nsi
+InputPath=..\..\package\win32\nsis\BZFlag.nsi
 
 "..\..\dist\BZFlag1.9a0.exe" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
 	cd ..\..\package\win32\nsis 

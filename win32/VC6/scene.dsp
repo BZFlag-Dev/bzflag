@@ -61,8 +61,8 @@ LIB32=link.exe -lib
 # PROP BASE Target_Dir ""
 # PROP Use_MFC 0
 # PROP Use_Debug_Libraries 1
-# PROP Output_Dir "..\lib\Debug"
-# PROP Intermediate_Dir "Debug"
+# PROP Output_Dir "..\..\src\scene\debug"
+# PROP Intermediate_Dir "..\..\src\scene\debug"
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_MBCS" /D "_LIB" /YX /FD /GZ /c
 # ADD CPP /nologo /MDd /W3 /Gm /GX /ZI /Od /I "..\..\include" /I "..\..\win32" /D "WIN32" /D "_DEBUG" /D "_MBCS" /D "_LIB" /FD /GZ /c
@@ -71,10 +71,10 @@ LIB32=link.exe -lib
 # ADD RSC /l 0x409 /d "_DEBUG"
 BSC32=bscmake.exe
 # ADD BASE BSC32 /nologo
-# ADD BSC32 /nologo /o"../../src/scene/Debug/scene.bsc"
+# ADD BSC32 /nologo
 LIB32=link.exe -lib
 # ADD BASE LIB32 /nologo
-# ADD LIB32 /nologo /out:"..\..\src\scene\Debug\scene.lib"
+# ADD LIB32 /nologo
 
 !ENDIF 
 
