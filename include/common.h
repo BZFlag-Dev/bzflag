@@ -17,14 +17,11 @@
 #ifndef BZF_COMMON_H
 #define	BZF_COMMON_H
 
-#if defined(_WIN32)
+#if (_WIN32)
 	#pragma warning(disable: 4786)
 #endif
 
-#ifndef _WIN32
-// use <> instead of "" cause autoconf recommends it
 #include <config.h>
-#endif
 
 #include <string>
 #include <sstream>
@@ -64,16 +61,6 @@
 #define	sinf		(float)sin
 #define	sqrtf		(float)sqrt
 #define	tanf		(float)tan
-#endif
-
-#ifdef _WIN32
-#ifndef socklen_t
-typedef int socklen_t;
-#endif
-#else
-#ifndef HAVE_SOCKLEN_T
-#define socklen_t int
-#endif
 #endif
 
 // random number stuff
