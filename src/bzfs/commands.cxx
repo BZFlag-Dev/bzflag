@@ -85,6 +85,7 @@ extern int numFlags;
 extern void zapFlag(FlagInfo & flag);
 extern void sendFlagUpdate(FlagInfo &flag);
 extern void resetFlag(FlagInfo &flag);
+extern void sendDrop(FlagInfo &flag);
 
 // externs that countdown requires
 extern bool countdownActive;
@@ -527,7 +528,6 @@ void handleFlagCmd(GameKeeper::Player *playerData, const char *message)
     sendMessage(ServerPlayer, t, "You do not have permission to run the flag command");
     return;
   }
-  GameKeeper::Player *otherData;
   if (strncmp(message + 6, "reset", 5) == 0) {
     bool onlyUnused = strncmp(message + 11, " unused", 7) == 0;
     if (onlyUnused)
@@ -545,20 +545,7 @@ void handleFlagCmd(GameKeeper::Player *playerData, const char *message)
     for (int i = 0; i < numFlags; i++) {
       if (FlagInfo::flagList[i].flag.type->flagTeam != ::NoTeam) {
 	FlagInfo &flag = FlagInfo::flagList[i];
-	// see if someone had grabbed flag.  tell 'em to drop it.
-	const int playerIndex = flag.player;
-	otherData	= GameKeeper::Player::getPlayerByIndex(playerIndex);
-	if (otherData) {
-	  flag.player = -1;
-	  flag.flag.status = FlagNoExist;
-	  otherData->player.resetFlag();
-
-	  void *buf, *bufStart = getDirectMessageBuffer();
-	  buf = nboPackUByte(bufStart, playerIndex);
-	  buf = flag.pack(buf);
-	  broadcastMessage(MsgDropFlag, (char*)buf - (char*)bufStart,
-			   bufStart);
-	}
+	sendDrop(flag);
 	flag.flag.status = FlagGoing;
 	if (!flag.required)
 	  flag.flag.type = Flags::Null;

@@ -1899,28 +1899,36 @@ void resetFlag(FlagInfo &flag)
 }
 
 
+void sendDrop(FlagInfo &flag)
+{
+  // see if someone had grabbed flag.  tell 'em to drop it.
+  const int playerIndex = flag.player;
+
+  GameKeeper::Player *playerData
+    = GameKeeper::Player::getPlayerByIndex(playerIndex);
+  if (!playerData)
+    return;
+
+  flag.player      = -1;
+  playerData->player.resetFlag();
+
+  void *bufStart = getDirectMessageBuffer();
+  void *buf      = nboPackUByte(bufStart, playerIndex);
+  buf            = flag.pack(buf);
+  broadcastMessage(MsgDropFlag, (char*)buf-(char*)bufStart, bufStart);
+}
+
 void zapFlag(FlagInfo &flag)
 {
   // called when a flag must just disappear -- doesn't fly
   // into air, just *poof* vanishes.
 
-  // see if someone had grabbed flag.  tell 'em to drop it.
-  const int playerIndex = flag.player;
-  if (playerIndex != -1) {
-    GameKeeper::Player *playerData
-      = GameKeeper::Player::getPlayerByIndex(playerIndex);
-    flag.player      = -1;
-    flag.flag.status = FlagNoExist;
-    playerData->player.resetFlag();
-
-    void *bufStart = getDirectMessageBuffer();
-    void *buf      = nboPackUByte(bufStart, playerIndex);
-    buf            = flag.pack(buf);
-    broadcastMessage(MsgDropFlag, (char*)buf-(char*)bufStart, bufStart);
-  }
+  sendDrop(flag);
 
   // if flag was flying then it flies no more
   flag.landing(TimeKeeper::getSunExplodeTime());
+
+  flag.flag.status = FlagNoExist;
 
   // reset flag status
   resetFlag(flag);
@@ -2623,12 +2631,7 @@ static void dropFlag(int playerIndex, float pos[3])
   playerData->delayq.dequeuePackets();
 
   // player no longer has flag -- send MsgDropFlag
-  playerData->player.resetFlag();
-
-  void *buf, *bufStart = getDirectMessageBuffer();
-  buf = nboPackUByte(bufStart, playerIndex);
-  buf = drpFlag.pack(buf);
-  broadcastMessage(MsgDropFlag, (char*)buf-(char*)bufStart, bufStart);
+  sendDrop(drpFlag);
 
   // notify of new flag state
   sendFlagUpdate(drpFlag);
