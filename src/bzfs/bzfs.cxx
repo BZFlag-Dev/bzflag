@@ -6236,22 +6236,21 @@ static void parse(int argc, char **argv, CmdLineOptions &options)
 		usage(argv[0]);
       }
       else {
-		int ac;
-		char **av;
-		av = parseConfFile(argv[i], ac);
-		// Theoretically we could merge the options specified in the conf file after parsing
-		// the cmd line options. But for now just override them on the spot
-		//	parse(ac, av, confOptions);
-		parse(ac, av, options);
+	int ac;
+	char **av;
+	av = parseConfFile(argv[i], ac);
+	// Theoretically we could merge the options specified in the conf file after parsing
+	// the cmd line options. But for now just override them on the spot
+	//	parse(ac, av, confOptions);
+	parse(ac, av, options);
 
-		options.numAllowedFlags = 0;
+	options.numAllowedFlags = 0;
 
-		// These strings need to stick around for -world, -servermsg, etc
-		//for (int i = 0; i < ac; i++)
-		//  delete[] av[i];
-		delete[] av;
-
-	  }
+	// These strings need to stick around for -world, -servermsg, etc
+	//for (int i = 0; i < ac; i++)
+	//  delete[] av[i];
+	delete[] av;
+      }
     }
     else if (strcmp(argv[i], "-cr") == 0) {
       // CTF with random world
