@@ -184,15 +184,16 @@ namespace TankGeometryUtils {
   void buildHighBody (void);
   void buildHighBarrel (void);
   void buildHighTurret (void);
-  void buildHighLCasing (void);
-  void buildHighRCasing (void);
+  void buildHighLCasing (int divs);
+  void buildHighRCasing (int divs);
   
-  void buildHighLCasingAnim (void);
-  void buildHighRCasingAnim (void);
   void buildHighLTread (int divs);
   void buildHighRTread (int divs);
   void buildHighLWheel (int wheel, float angle, int divs);
   void buildHighRWheel (int wheel, float angle, int divs);
+
+  void buildHighLCasingOld (void);
+  void buildHighRCasingOld (void);
 }
 
 

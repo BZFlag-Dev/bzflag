@@ -23,10 +23,10 @@ static const int treadCount = 64;
 
 static const float fullLength = 6.0f;
 
-static const float treadHeight = 1.4f;
+static const float treadHeight = 1.2f;
 static const float treadInside = 0.875f;
 static const float treadOutside = 1.4f;
-static const float treadThickness = 0.2f;
+static const float treadThickness = 0.15f;
 static const float treadWidth = treadOutside - treadInside;
 static const float treadRadius = 0.5f * treadHeight;
 static const float treadYCenter = treadInside + (0.5f * treadWidth);
@@ -35,19 +35,57 @@ static const float treadLength = ((fullLength - (2.0f * treadRadius)) * 2.0f) +
 static const float treadTexCoordLen = (float)treadCount;
 static const float treadTexCoordScale = treadLength / treadTexCoordLen;
 
-static const float wheelRadius = 0.45f;
+static const float wheelRadius = treadRadius - (0.7f * treadThickness);
 static const float wheelWidth = treadWidth * 0.9f;
 static const float wheelSpacing = (fullLength - treadHeight) / 3.0f;
 static const float wheelTexCoordLen = 1.0f;
+
+static const float casingWidth = treadWidth * 0.6f;
 
 static const float wheelInsideTexRad = 0.4f;
 static const float wheelOutsideTexRad = 0.5f;
 
 
 
-static void buildCasing(float Yoffset)
+static void buildCasing(float Yoffset, int /*divisions*/)
 {
-  Yoffset = Yoffset;
+  const float yLeft = Yoffset + (0.5f * casingWidth);
+  const float yRight = Yoffset - (0.5f * casingWidth);
+  
+  glShadeModel(GL_FLAT);
+  {  
+    const float xc = wheelSpacing * 1.5f;
+    const float zb = treadThickness;
+    const float zt = treadHeight - treadThickness;
+    const float ty = 0.25f; // effective, the texture scale factor
+    const float tx = (2.0f * ty) * (xc / (zt - zb));
+    
+    // the left and right quad surface
+    glBegin(GL_QUADS);
+    {
+      // the right side
+      doTexCoord2f(-tx, -ty);
+      doVertex3f(-xc, yRight, zb);
+      doTexCoord2f(+tx, -ty);
+      doVertex3f(+xc, yRight, zb);
+      doTexCoord2f(+tx, +ty);
+      doVertex3f(+xc, yRight, zt);
+      doTexCoord2f(-tx, +ty);
+      doVertex3f(-xc, yRight, zt);
+      // the left side
+      doTexCoord2f(-tx, -ty);
+      doVertex3f(+xc, yLeft, zb);
+      doTexCoord2f(+tx, -ty);
+      doVertex3f(-xc, yLeft, zb);
+      doTexCoord2f(+tx, +ty);
+      doVertex3f(-xc, yLeft, zt);
+      doTexCoord2f(-tx, +ty);
+      doVertex3f(+xc, yLeft, zt);
+    }
+    glEnd();
+  }
+  glShadeModel(GL_SMOOTH);
+  
   return;
 }
 
@@ -234,21 +272,21 @@ static void buildTread(float Yoffset, int divisions)
         const float cos_val = cos(-ang);
         const float sin_val = sin(-ang);
         tx = (float)i / divs;
-        doTexCoord2f(tx, 1.0f);
+        doTexCoord2f(-tx, 1.0f);
         x = (cos_val * (treadRadius - treadThickness)) + (wheelSpacing * 1.5f);
         z = (sin_val * (treadRadius - treadThickness)) + treadRadius;
         doVertex3f(x, yLeft, z);
-        doTexCoord2f(tx, 0.0f);
+        doTexCoord2f(-tx, 0.0f);
         x = (cos_val * treadRadius) + (wheelSpacing * 1.5f);
         z = (sin_val * treadRadius) + treadRadius;
         doVertex3f(x, yLeft, z);
       }
       // bottom edge
-      doTexCoord2f(2.0f, 1.0f);
+      doTexCoord2f(-2.0f, 1.0f);
       x = -wheelSpacing * 1.5f;
       z = treadThickness;
       doVertex3f(x, yLeft, z);
-      doTexCoord2f(2.0f, 0.0f);
+      doTexCoord2f(-2.0f, 0.0f);
       z = 0.0f;
       doVertex3f(x, yLeft, z);
       // second outside curve
@@ -257,21 +295,21 @@ static void buildTread(float Yoffset, int divisions)
         const float cos_val = cos(-ang);
         const float sin_val = sin(-ang);
         tx = (float)i / divs;
-        doTexCoord2f(tx, 1.0f);
+        doTexCoord2f(-tx, 1.0f);
         x = (cos_val * (treadRadius - treadThickness)) - (wheelSpacing * 1.5f);
         z = (sin_val * (treadRadius - treadThickness)) + treadRadius;
         doVertex3f(x, yLeft, z);
-        doTexCoord2f(tx, 0.0f);
+        doTexCoord2f(-tx, 0.0f);
         x = (cos_val * treadRadius) - (wheelSpacing * 1.5f);
         z = (sin_val * treadRadius) + treadRadius;
         doVertex3f(x, yLeft, z);
       }
       // top edge
-      doTexCoord2f(2.0f, 1.0f);
+      doTexCoord2f(-2.0f, 1.0f);
       x = wheelSpacing * 1.5f;
       z = treadHeight - treadThickness;
       doVertex3f(x, yLeft, z);
-      doTexCoord2f(2.0f, 0.0f);
+      doTexCoord2f(-2.0f, 0.0f);
       z = treadHeight;
       doVertex3f(x, yLeft, z);
     }  
@@ -353,15 +391,15 @@ static void buildWheel(const float pos[3], float angle, int divisions)
 }
 
 
-void TankGeometryUtils::buildHighRCasingAnim()
+void TankGeometryUtils::buildHighLCasing(int divs)
 {
-  buildCasing(-treadYCenter);
+  buildCasing(+treadYCenter, divs);
   return;
 }
 
-void TankGeometryUtils::buildHighLCasingAnim()
+void TankGeometryUtils::buildHighRCasing(int divs)
 {
-  buildCasing(+treadYCenter);
+  buildCasing(-treadYCenter, divs);
   return;
 }
 

@@ -63,8 +63,8 @@ const TankGeometryMgr::PartFunction
   { buildHighBody,
     buildHighBarrel,
     buildHighTurret,
-    buildHighLCasing,
-    buildHighRCasing
+    buildHighLCasingOld,
+    buildHighRCasingOld
   }
 };
     
@@ -212,7 +212,19 @@ void TankGeometryMgr::rebuildLists()
           
           if (part < MedTankParts) {
             // the basic parts
-            partFunctions[lod][part]();
+            if (!(lod == HighTankLOD)) {
+              partFunctions[lod][part]();
+            } else {
+              if (part == LeftCasing) {
+                buildHighLCasing(30);
+              }
+              else if (part == RightCasing) {
+                buildHighRCasing(30);
+              }
+              else {
+                partFunctions[lod][part]();
+              }
+            }
           } 
           else {
             // the animated parts

@@ -25,6 +25,8 @@
 
 using namespace TankGeometryEnums;
 
+const float MuzzleMaxX = 4.94f;
+
 
 // parts: body, turret, barrel, left tread, right tread
 
@@ -45,11 +47,12 @@ TankSceneNode::TankSceneNode(const GLfloat pos[3], const GLfloat forward[3]) :
 
 			// prepare geometry
   move(pos, forward);
-  const float length = BZDB.eval(StateDatabase::BZDB_TANKLENGTH);
+  float length = BZDB.eval(StateDatabase::BZDB_TANKLENGTH);
+  length = 0.5f * (length + MuzzleMaxX);
   const float width = BZDB.eval(StateDatabase::BZDB_TANKWIDTH);
+  const float height = 0.5f * BZDBCache::tankHeight;
 
-  baseRadius = 0.25f * ((length * length) + (width * width) +
-                        (BZDBCache::tankHeight * BZDBCache::tankHeight));
+  baseRadius = (length * length) + (width * width) + (height * height);
   setRadius(baseRadius);
 
   color[3] = 1.0f;
@@ -118,11 +121,11 @@ void TankSceneNode::setTexture(const int texture)
 }
 
 
-void TankSceneNode::move(const GLfloat pos[3],
-					const GLfloat forward[3])
+void TankSceneNode::move(const GLfloat pos[3], const GLfloat forward[3])
 {
-  azimuth = 180.0f / M_PI*atan2f(forward[1], forward[0]);
-  elevation = -180.0f / M_PI*atan2f(forward[2], hypotf(forward[0],forward[1]));
+  const float rad2deg = (180.0f / M_PI);
+  azimuth = rad2deg * atan2f(forward[1], forward[0]);
+  elevation = -rad2deg * atan2f(forward[2], hypotf(forward[0], forward[1]));
   setCenter(pos);
 }
 
@@ -223,6 +226,7 @@ void TankSceneNode::addShadowNodes(SceneRenderer& renderer)
     return;
   }
 
+  // use HighTankLOD in experimental mode
   if (TankSceneNode::maxLevel == -1) {
     shadowRenderNode.setTankLOD (HighTankLOD);
   } else {
@@ -710,7 +714,7 @@ void TankSceneNode::TankRenderNode::render()
     renderPart(Body);
     renderPart(Turret);
     renderPart(Barrel);
-    if (BZDBCache::zbuffer && (TankSceneNode::maxLevel == -1)) {
+    if (BZDBCache::zbuffer && (drawLOD == HighTankLOD)) {
       for (int i = 0; i < 4; i++) {
         renderPart((TankPart)(LeftWheel0 + i));
         renderPart((TankPart)(RightWheel0 + i));
@@ -718,10 +722,8 @@ void TankSceneNode::TankRenderNode::render()
       renderPart(LeftTread);
       renderPart(RightTread);
     }
-    else {
-      renderPart(LeftCasing);
-      renderPart(RightCasing);
-    }
+    renderPart(LeftCasing);
+    renderPart(RightCasing);
     if (isExploding) {
       glEnable(GL_CULL_FACE);
     }
@@ -749,7 +751,7 @@ void TankSceneNode::TankRenderNode::renderParts()
 {
   // draw parts in back to front order
   if (!above) {
-    if (BZDBCache::zbuffer && (TankSceneNode::maxLevel == -1)) {
+    if (BZDBCache::zbuffer && (drawLOD = HighTankLOD)) {
       renderPart(LeftTread);
       renderPart(RightTread);
       for (int i = 0; i < 4; i++) {
@@ -757,10 +759,8 @@ void TankSceneNode::TankRenderNode::renderParts()
         renderPart((TankPart)(RightWheel0 + i));
       }
     }
-    else {
-      renderPart(LeftCasing);
-      renderPart(RightCasing);
-    }
+    renderPart(LeftCasing);
+    renderPart(RightCasing);
     renderPart(Body);
     if (towards) {
       renderPart(Turret);
@@ -781,7 +781,7 @@ void TankSceneNode::TankRenderNode::renderParts()
       renderPart(Turret);
     }
     renderPart(Body);
-    if (BZDBCache::zbuffer && (TankSceneNode::maxLevel == -1)) {
+    if (BZDBCache::zbuffer && (drawLOD = HighTankLOD)) {
       renderPart(LeftTread);
       renderPart(RightTread);
       for (int i = 0; i < 4; i++) {
@@ -789,10 +789,8 @@ void TankSceneNode::TankRenderNode::renderParts()
         renderPart((TankPart)(RightWheel0 + i));
       }
     }
-    else {
-      renderPart(LeftCasing);
-      renderPart(RightCasing);
-    }
+    renderPart(LeftCasing);
+    renderPart(RightCasing);
   }
 }
 
@@ -814,7 +812,7 @@ void TankSceneNode::TankRenderNode::renderPart(TankPart part)
   
   // setup the animation texture matrix
   bool usingTexMat = false;
-  if (!isShadow && BZDBCache::zbuffer && (TankSceneNode::maxLevel == -1) &&
+  if (!isShadow && BZDBCache::zbuffer && (drawLOD = HighTankLOD) &&
       (part >= BasicTankParts)) {
     usingTexMat = setupTextureMatrix(part);
   }
@@ -836,7 +834,7 @@ void TankSceneNode::TankRenderNode::renderPart(TankPart part)
       }
       case LeftCasing:
       case RightCasing: {
-        myColor4f(0.75f * color[0], 0.75f * color[1], 0.75f * color[2], alpha);
+        myColor4f(0.9f * color[0], 0.9f * color[1], 0.9f * color[2], alpha);
         break;
       }
       case LeftTread:
@@ -852,7 +850,7 @@ void TankSceneNode::TankRenderNode::renderPart(TankPart part)
       case RightWheel1:
       case RightWheel2:
       case RightWheel3: {
-        myColor4f(0.6f * color[0], 0.6f * color[1], 0.6f * color[2], alpha);
+        myColor4f(0.4f * color[0], 0.4f * color[1], 0.4f * color[2], alpha);
         break;
       }
       case LastTankPart: { // avoid warnings about unused enumerated values

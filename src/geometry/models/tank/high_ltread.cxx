@@ -12,7 +12,7 @@
 #include "TankGeometryMgr.h"
 using namespace TankGeometryUtils;
 
-void TankGeometryUtils::buildHighLCasing( void )
+void TankGeometryUtils::buildHighLCasingOld( void )
 {
   glShadeModel(GL_FLAT);
   glBegin(GL_TRIANGLE_STRIP);
