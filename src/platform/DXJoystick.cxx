@@ -72,8 +72,7 @@ void	      DXJoystick::initJoystick(const char* joystickName)
    */
   GUID thisDevice;
   for (unsigned int i = 0; i < devices.size(); i++) {
-    if (joystickName = devices[i].tszProductName)
-		{
+    if (joystickName = devices[i].tszProductName) {
       thisDevice = devices[i].guidInstance;
       break;
     }
