@@ -10,7 +10,7 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-static const char	copyright[] = "Copyright (c) 1993 - 2001 Tim Riker";
+static const char copyright[] = "Copyright (c) 1993 - 2001 Tim Riker";
 
 // define TIMELIMIT to include code to enforce a game time limit
 // define PRINTSCORE to include code to dump score info to stdout
@@ -18,20 +18,18 @@ static const char	copyright[] = "Copyright (c) 1993 - 2001 Tim Riker";
 #define TIMELIMIT
 
 // Like verbose debug messages?
-#define UDEBUG if (UDEBUGMSG) printf
-#define UDEBUGMSG false
+#define UDEBUG if (debug > 2) printf
 
 // Like version status messages?
-#define UMDEBUG if (UMDEBUGMSG) printf
-#define UMDEBUGMSG false
+#define UMDEBUG if (debug > 3) printf
 
 #define SERVERLOGINMSG true
 
-const int		MaxPlayers = 40;
-const int		MaxShots = 10;
+const int MaxPlayers = 40;
+const int MaxShots = 10;
 
 #if defined(__sgi)
-#define	FD_SETSIZE	(MaxPlayers + 10)
+#define FD_SETSIZE (MaxPlayers + 10)
 #endif /* defined(__sgi) */
 
 // must be before network.h because that defines a close() macro which
@@ -46,8 +44,8 @@ const int		MaxShots = 10;
 
 #if defined(_WIN32)
 #include <windows.h>
-#define	strcasecmp	_stricmp
-#define sleep(_x)	Sleep(1000 * (_x))
+#define strcasecmp _stricmp
+#define sleep(_x) Sleep(1000 * (_x))
 #endif /* defined(_WIN32) */
 
 #include <stdio.h>
@@ -75,95 +73,112 @@ const int		MaxShots = 10;
 #include "TimeBomb.h"
 
 // forward ref
-static void             sendMessage(int playerIndex,
-                                        const PlayerId& targetPlayer,
-                                        TeamColor targetTeam,
-                                        const char* message);
+static void sendMessage(int playerIndex, const PlayerId& targetPlayer, TeamColor targetTeam, const char* message);
 
 // DisconnectTimeout is how long to wait for a reconnect before
 // giving up.  this should be pretty short to avoid bad clients
 // from using up our resources, but long enough to allow for
 // even a slow client/connection.
-static const float	DisconnectTimeout = 10.0f;
+static const float DisconnectTimeout = 10.0f;
 
 // every ListServerReAddTime server add ourself to the list
 // server again.  this is in case the list server has reset
 // or dropped us for some reason.
-static const float	ListServerReAddTime = 30.0f * 60.0f;
+static const float ListServerReAddTime = 30.0f * 60.0f;
 
 // maximum number of list servers to advertise ourself to
-static const int	MaxListServers = 5;
+static const int MaxListServers = 5;
 
-static const float	FlagHalfLife = 45.0f;
-static int		NotConnected = -1;	// do NOT change
-static int		InvalidPlayer = -1;
+static const float FlagHalfLife = 45.0f;
+// do NOT change
+static int NotConnected = -1;
+static int InvalidPlayer = -1;
 
 //The minimum height above ground an object must be in order
 //to have a flag appear beneath it
-static int flagHeight = FlagAltitude;
-//float		WorldSize =	800.0f;		// meters
+static float flagHeight = FlagAltitude;
+// meters
+//float WorldSize = 800.0f;
 
-static char *		servermsg = NULL;	// custom server login message
+// custom server login message
+static char *servermsg = NULL;
 
 enum PlayerState {
-			PlayerInLimbo,		// unconnected or entered
-			PlayerOnTeamDead,
-			PlayerOnTeamAlive
+  // unconnected or entered
+  PlayerInLimbo,
+  PlayerOnTeamDead,
+  PlayerOnTeamAlive
 };
 
 struct ConnectInfo {
   public:
-    int			accept;			// what fd we accepted on
-    int			listen;			// what fd we're listening on
-    TimeKeeper		time;			// time accepted
+    // addr/port of initial connection
+    struct sockaddr_in addr;
+    // time accepted
+    TimeKeeper time;
+    // are we still waiting?
+    int waiting;
 };
 
 struct PacketQueue {
   public:
-	unsigned short seqno;
-	void *data;
-	int length;
-	struct PacketQueue *next;
+    unsigned short seqno;
+    void *data;
+    int length;
+    struct PacketQueue *next;
 };
 
 struct PlayerInfo {
   public:
-    int			fd;			// socket file descriptor
-    Address		peer;			// peer's network address
-    PlayerState		state;			// current state of player
-    PlayerId		id;			// player's id
-    PlayerType		type;			// type of player
-    char		callSign[CallSignLen];	// player's pseudonym
-    char		email[EmailLen];	// player's email address
-    TeamColor		team;			// player's team
-    int			flag;			// flag index player has
-    int			wins, losses;		// player's score
-    boolean		multicastRelay;		// if player can't multicast
+    // socket file descriptor
+    int fd;
+    // peer's network address
+    Address peer;
+    // current state of player
+    PlayerState state;
+    // player's id
+    PlayerId id;
+    // type of player
+    PlayerType type;
+    // player's pseudonym
+    char callSign[CallSignLen];
+    // player's email address
+    char email[EmailLen];
+    // player's team
+    TeamColor team;
+    // flag index player has
+    int flag;
+    // player's score
+    int wins, losses;
+    // if player can't multicast
+    boolean multicastRelay;
 
     // input buffer
-    int			len;			// bytes read in current msg
-    char		msg[8192];		// current msg
+    // bytes read in current msg
+    int len;
+    // current msg
+    char msg[8192];
 
     // output buffer
-    int			outmsgOffset;
-    int			outmsgSize;
-    int			outmsgCapacity;
-    char*		outmsg;
+    int outmsgOffset;
+    int outmsgSize;
+    int outmsgCapacity;
+    char *outmsg;
 
     // UDP connection
-    boolean 		ulinkup;
-    int                 urecvfd;
-    struct sockaddr     urecvaddr;
-    unsigned short      urecport;
-    struct sockaddr     usendaddr;
+    boolean ulinkup;
+    int urecvfd;
+    struct sockaddr urecvaddr;
+    unsigned short urecport;
+    struct sockaddr usendaddr;
 
     // UDP message queue
-    struct PacketQueue  *uqueue;
-    struct PacketQueue  *dqueue;
-    unsigned short      lastRecvPacketNo;
-    unsigned short 	lastSendPacketNo;
+    struct PacketQueue *uqueue;
+    struct PacketQueue *dqueue;
+    unsigned short lastRecvPacketNo;
+    unsigned short lastSendPacketNo;
 
-    boolean 		toBeKicked;
+    boolean toBeKicked;
 };
 
 #define SEND 1
@@ -171,166 +186,166 @@ struct PlayerInfo {
 
 struct FlagInfo {
   public:
-    Flag		flag;			// flag info
-    int			player;			// player index who has flag
-    int			grabs;			// how many grabs before removed
-    boolean		required;		// True if flag must be in game
-    TimeKeeper		dropDone;		// time flag will land
+    // flag info
+    Flag flag;
+    // player index who has flag
+    int player;
+    // how many grabs before removed
+    int grabs;
+    // True if flag must be in game
+    boolean required;
+    // time flag will land
+    TimeKeeper dropDone;
 };
 
 struct TeamInfo {
   public:
-    Team		team;
-    int			radio;			// player index with radio
+    Team team;
+    // player index with radio
+    int radio;
 };
 
 class WorldInfo {
   public:
-			WorldInfo();
-			~WorldInfo();
+    WorldInfo();
+    ~WorldInfo();
 
-    void		addWall(float x, float y, float z, float r,
-				float w, float h);
-    void		addBox(float x, float y, float z, float r,
-				float w, float d, float h);
-    void		addPyramid(float x, float y, float z, float r,
-				float w, float d, float h);
-    void		addTeleporter(float x, float y, float z, float r,
-				float w, float d, float h, float b);
-    void		addLink(int from, int to);
-    boolean		inBuilding(float x, float y, float radius) const;
-    int			packDatabase();
-    void*		getDatabase() const;
-    int			getDatabaseSize() const;
+    void addWall(float x, float y, float z, float r, float w, float h);
+    void addBox(float x, float y, float z, float r, float w, float d, float h);
+    void addPyramid(float x, float y, float z, float r, float w, float d, float h);
+    void addTeleporter(float x, float y, float z, float r, float w, float d, float h, float b);
+    void addLink(int from, int to);
+    boolean inBuilding(float x, float y, float radius) const;
+    int packDatabase();
+    void* getDatabase() const;
+    int getDatabaseSize() const;
 
   private:
-    boolean		inRect(const float* p1, float angle, const float* size,
-					float x, float y, float radius) const;
-    boolean		rectHitCirc(float dx, float dy,
-					const float* p, float r) const;
+    boolean inRect(const float* p1, float angle, const float* size, float x, float y, float radius) const;
+    boolean rectHitCirc(float dx, float dy, const float* p, float r) const;
 
     struct Obstacle {
       public:
-	float		pos[3];
-	float		rotation;
-	float		size[3];
+	float pos[3];
+	float rotation;
+	float size[3];
     };
 
     struct Teleporter {
       public:
-	float		pos[3];
-	float		rotation;
-	float		size[3];
-	float		border;
-	int		to[2];
+	float pos[3];
+	float rotation;
+	float size[3];
+	float border;
+	int to[2];
     };
 
   private:
-    int			numWalls;
-    int			numBoxes;
-    int			numPyramids;
-    int			numTeleporters;
-    int         sizeWalls;
-    int         sizeBoxes;
-    int         sizePyramids;
-    int         sizeTeleporters;
-    Obstacle*		walls;
-    Obstacle*		boxes;
-    Obstacle*		pyramids;
-    Teleporter*		teleporters;
-    char*		database;
-    int			databaseSize;
+    int numWalls;
+    int numBoxes;
+    int numPyramids;
+    int numTeleporters;
+    int sizeWalls;
+    int sizeBoxes;
+    int sizePyramids;
+    int sizeTeleporters;
+    Obstacle *walls;
+    Obstacle *boxes;
+    Obstacle *pyramids;
+    Teleporter *teleporters;
+    char *database;
+    int databaseSize;
 };
 
 class ListServerLink {
   public:
-    Address		address;
-    int			port;
-    int			socket;
-    const char*		nextMessage;
+    Address address;
+    int port;
+    int socket;
+    const char *nextMessage;
 };
 
-static Address		serverAddress;
-static int		wksPort = ServerPort;	// default port
-static int		wksSocket;		// well known service socket
-static boolean		useGivenPort = False;
-static boolean		useFallbackPort = False;
-static int		pingInSocket;		// listen for pings here
+static Address serverAddress;
+static int wksPort = ServerPort;	// default port
+static int wksSocket; // well known service socket
+static boolean useGivenPort = False;
+static boolean useFallbackPort = False;
+static int pingInSocket; // listen for pings here
 static struct sockaddr_in pingInAddr;
-static int		pingOutSocket;		// reply to pings here
+static int pingOutSocket; // reply to pings here
 static struct sockaddr_in pingOutAddr;
-static int		pingBcastSocket;	// broadcast pings in/out here
+static int pingBcastSocket;	// broadcast pings in/out here
 static struct sockaddr_in pingBcastAddr;
-static int		relayInSocket;		// listen for player packets
+static int relayInSocket; // listen for player packets
 static struct sockaddr_in relayInAddr;
-static int		relayOutSocket;		// relay player packets
+static int relayOutSocket; // relay player packets
 static struct sockaddr_in relayOutAddr;
 static const char*	pingInterface = NULL;
-static int		pingTTL = DefaultTTL;
-static int		playerTTL = DefaultTTL;
-static boolean		handlePings = True;
-static boolean		noMulticastRelay = False;
+static int pingTTL = DefaultTTL;
+static int playerTTL = DefaultTTL;
+static boolean handlePings = True;
+static boolean noMulticastRelay = False;
 static PingPacket	pingReply;
-static int		maxFileDescriptor;	// highest fd used
+static int maxFileDescriptor;	// highest fd used
 static PlayerInfo	player[MaxPlayers];	// players list
 static ConnectInfo	reconnect[MaxPlayers+1];// network  reconnection list
-static FlagInfo*	flag = NULL;		// flags list
-static TeamInfo		team[NumTeams];		// team info
-static int		numFlags;		// num flags in flag list
-static int		numFlagsInAir;
-static FlagId*		allowedFlags = NULL;	// types of extra flags allowed
-static int		numAllowedFlags;
-static int		numExtraFlags;		// num randomly generated flags
-static boolean		done = False;
-static boolean		gameOver = True;	// True if hit time/score limit
-static int		exitCode = 0;
-static boolean		randomBoxes;		// True if -b on cmd line
-static boolean		randomHeights;		// True if -h on cmd line
-static boolean		useTeleporters;		// True if -t on cmd line
-static boolean		oneGameOnly;		// True if -g on cmd line
-static int		gameStyle;
-static uint16_t		maxPlayers = MaxPlayers;
-static uint16_t		maxShots;		// max simulataneous per player
-static uint16_t		maxTeam[NumTeams];
-static uint16_t		shakeWins = 0;
-static uint16_t		shakeTimeout = 0;
-static float		linearAcceleration;
-static float		angularAcceleration;
-static int		broadcastRadio = InvalidPlayer;
-static int		maxPlayerScore = 0;
-static int		maxTeamScore = 0;
-static int		debug = 0;
+static FlagInfo*	flag = NULL; // flags list
+static TeamInfo team[NumTeams]; // team info
+static int numFlags; // num flags in flag list
+static int numFlagsInAir;
+static FlagId* allowedFlags = NULL;	// types of extra flags allowed
+static int numAllowedFlags;
+static int numExtraFlags; // num randomly generated flags
+static boolean done = False;
+static boolean gameOver = True;	// True if hit time/score limit
+static int exitCode = 0;
+static boolean randomBoxes; // True if -b on cmd line
+static boolean randomHeights; // True if -h on cmd line
+static boolean useTeleporters; // True if -t on cmd line
+static boolean oneGameOnly; // True if -g on cmd line
+static int gameStyle;
+static uint16_t maxPlayers = MaxPlayers;
+static uint16_t maxShots; // max simulataneous per player
+static uint16_t maxTeam[NumTeams];
+static uint16_t shakeWins = 0;
+static uint16_t shakeTimeout = 0;
+static float linearAcceleration;
+static float angularAcceleration;
+static int broadcastRadio = InvalidPlayer;
+static int maxPlayerScore = 0;
+static int maxTeamScore = 0;
+static int debug = 0;
 
-static boolean		udpOnly;		// True if only new clients allowed
-static boolean 		neverUdp;		// True if no UDP is used at all
+static boolean udpOnly; // True if only new clients allowed
+static boolean  neverUdp; // True if no UDP is used at all
 
 #ifdef PRINTSCORE
-static boolean		printScore = False;
+static boolean printScore = False;
 #endif
 #ifdef TIMELIMIT
-static float		timeLimit = 0.0f, timeElapsed = 0.0f;
+static float timeLimit = 0.0f, timeElapsed = 0.0f;
 static TimeKeeper	gameStartTime;
 #endif
-static boolean		publicizeServer = False;
+static boolean publicizeServer = False;
 static BzfString	publicizedAddress;
-static boolean		publicizedAddressGiven = False;
+static boolean publicizedAddressGiven = False;
 static const char*	publicizedTitle = NULL;
 static const char*	listServerURL = DefaultListServerURL;
 static TimeKeeper	listServerLastAddTime;
 static ListServerLink	listServerLinks[MaxListServers];
-static int		listServerLinksCount = 0;
+static int listServerLinksCount = 0;
 
 static WorldInfo*	world = NULL;
-static char*		worldDatabase = NULL;
-static int		worldDatabaseSize = 0;
-static float		basePos[NumTeams][3];
-static float		safetyBasePos[NumTeams][3];
+static char* worldDatabase = NULL;
+static int worldDatabaseSize = 0;
+static float basePos[NumTeams][3];
+static float safetyBasePos[NumTeams][3];
 static const char*     worldFile = NULL;
 
-static void		stopPlayerPacketRelay();
-static void		removePlayer(int playerIndex);
-static void		resetFlag(int flagIndex);
-static void		releaseRadio(int playerIndex);
+static void stopPlayerPacketRelay();
+static void removePlayer(int playerIndex);
+static void resetFlag(int flagIndex);
+static void releaseRadio(int playerIndex);
 
 //
 // types for reading world files
@@ -371,8 +386,7 @@ WorldFileObstacle::WorldFileObstacle()
    sizeZ = 1.0f;
 }
 
-bool                   WorldFileObstacle::read(
-                               const char* cmd, istream& input)
+bool WorldFileObstacle::read(const char* cmd, istream& input)
 {
   if (strcmp(cmd, "position") == 0)
     input >> posX >> posY >> posZ;
@@ -542,19 +556,19 @@ static void            emptyWorldFileObjectList(WorldFileObjectList& list)
 //
 
 WorldInfo::WorldInfo() :
-				numWalls(0),
-				numBoxes(0),
-				numPyramids(0),
-				numTeleporters(0),
-                sizeWalls(0),
-                sizeBoxes(0),
-                sizePyramids(0),
-                sizeTeleporters(0),
-				walls(NULL),
-				boxes(NULL),
-				pyramids(NULL),
-				teleporters(NULL),
-				database(NULL)
+    numWalls(0),
+    numBoxes(0),
+    numPyramids(0),
+    numTeleporters(0),
+    sizeWalls(0),
+    sizeBoxes(0),
+    sizePyramids(0),
+    sizeTeleporters(0),
+    walls(NULL),
+    boxes(NULL),
+    pyramids(NULL),
+    teleporters(NULL),
+    database(NULL)
 {
 }
 
@@ -567,8 +581,7 @@ WorldInfo::~WorldInfo()
   delete[] database;
 }
 
-void			WorldInfo::addWall(float x, float y, float z,
-						float r, float w, float h)
+void WorldInfo::addWall(float x, float y, float z, float r, float w, float h)
 {
   if (numWalls >= sizeWalls) {
     sizeWalls = (sizeWalls == 0) ? 16 : 2 * sizeWalls;
@@ -584,8 +597,7 @@ void			WorldInfo::addWall(float x, float y, float z,
   numWalls++;
 }
 
-void			WorldInfo::addBox(float x, float y, float z, float r,
-					float w, float d, float h)
+void WorldInfo::addBox(float x, float y, float z, float r, float w, float d, float h)
 {
   if (numBoxes >= sizeBoxes) {
     sizeBoxes = (sizeBoxes == 0) ? 16 : 2 * sizeBoxes;
@@ -601,8 +613,7 @@ void			WorldInfo::addBox(float x, float y, float z, float r,
   numBoxes++;
 }
 
-void			WorldInfo::addPyramid(float x, float y, float z,
-					float r, float w, float d, float h)
+void WorldInfo::addPyramid(float x, float y, float z, float r, float w, float d, float h)
 {
   if (numPyramids >= sizePyramids) {
     sizePyramids = (sizePyramids == 0) ? 16 : 2 * sizePyramids;
@@ -618,8 +629,7 @@ void			WorldInfo::addPyramid(float x, float y, float z,
   numPyramids++;
 }
 
-void			WorldInfo::addTeleporter(float x, float y, float z,
-				float r, float w, float d, float h, float b)
+void WorldInfo::addTeleporter(float x, float y, float z, float r, float w, float d, float h, float b)
 {
   if (numTeleporters >= sizeTeleporters) {
     sizeTeleporters = (sizeTeleporters == 0) ? 16 : 2 * sizeTeleporters;
@@ -639,7 +649,7 @@ void			WorldInfo::addTeleporter(float x, float y, float z,
   numTeleporters++;
 }
 
-void			WorldInfo::addLink(int from, int to)
+void WorldInfo::addLink(int from, int to)
 {
   // silently discard links from teleporters that don't exist
   if (from <= numTeleporters * 2 + 1) {
@@ -647,39 +657,36 @@ void			WorldInfo::addLink(int from, int to)
   }
 }
 
-boolean			WorldInfo::rectHitCirc(float dx, float dy,
-					const float* p, float r) const
+boolean WorldInfo::rectHitCirc(float dx, float dy, const float* p, float r) const
 {
   // Algorithm from Graphics Gems, pp51-53.
   const float rr = r * r, rx = -p[0], ry = -p[1];
-  if (rx + dx < 0.0f)					// west of rect
-    if (ry + dy < 0.0f)					//  sw corner
+  if (rx + dx < 0.0f) // west of rect
+    if (ry + dy < 0.0f) //  sw corner
       return (rx + dx) * (rx + dx) + (ry + dy) * (ry + dy) < rr;
-    else if (ry - dy > 0.0f)				//  nw corner
+    else if (ry - dy > 0.0f) //  nw corner
       return (rx + dx) * (rx + dx) + (ry - dy) * (ry - dy) < rr;
-    else						//  due west
+    else //  due west
       return rx + dx > -r;
 
-  else if (rx - dx > 0.0f)				// east of rect
-    if (ry + dy < 0.0f)					//  se corner
+  else if (rx - dx > 0.0f) // east of rect
+    if (ry + dy < 0.0f) //  se corner
       return (rx - dx) * (rx - dx) + (ry + dy) * (ry + dy) < rr;
-    else if (ry - dy > 0.0f)				//  ne corner
+    else if (ry - dy > 0.0f) //  ne corner
       return (rx - dx) * (rx - dx) + (ry - dy) * (ry - dy) < rr;
-    else						//  due east
+    else //  due east
       return rx - dx < r;
 
-  else if (ry + dy < 0.0f)				// due south
+  else if (ry + dy < 0.0f) // due south
     return ry + dy > -r;
 
-  else if (ry - dy > 0.0f)				// due north
+  else if (ry - dy > 0.0f) // due north
     return ry - dy < r;
 
-  return True;						// circle origin in rect
+  return True; // circle origin in rect
 }
 
-boolean			WorldInfo::inRect(const float* p1, float angle,
-					const float* size,
-					float x, float y, float r) const
+boolean WorldInfo::inRect(const float* p1, float angle, const float* size, float x, float y, float r) const
 {
   // translate origin
   float pa[2];
@@ -696,7 +703,7 @@ boolean			WorldInfo::inRect(const float* p1, float angle,
   return rectHitCirc(size[0], size[1], pb, r);
 }
 
-boolean			WorldInfo::inBuilding(float x, float y, float r) const
+boolean WorldInfo::inBuilding(float x, float y, float r) const
 {
   int i;
   for (i = 0; i < numPyramids; i++)
@@ -712,7 +719,7 @@ boolean			WorldInfo::inBuilding(float x, float y, float r) const
   return False;
 }
 
-int			WorldInfo::packDatabase()
+int WorldInfo::packDatabase()
 {
   databaseSize = (2 + 6 * 4) * numWalls +
 		(2 + 7 * 4) * numBoxes +
@@ -782,12 +789,12 @@ int			WorldInfo::packDatabase()
   return 1;
 }
 
-void*			WorldInfo::getDatabase() const
+void* WorldInfo::getDatabase() const
 {
   return database;
 }
 
-int			WorldInfo::getDatabaseSize() const
+int WorldInfo::getDatabaseSize() const
 {
   return databaseSize;
 }
@@ -796,11 +803,10 @@ int			WorldInfo::getDatabaseSize() const
 // rest of server (no more classes, just functions)
 //
 
-static void		directMessage(int playerIndex, uint16_t code,
-					int len, const void* msg);
+static void directMessage(int playerIndex, uint16_t code, int len, const void* msg);
 
 
-void*			getPacketFromClient(int playerIndex, uint16_t* length, uint16_t* rseqno)
+void* getPacketFromClient(int playerIndex, uint16_t* length, uint16_t* rseqno)
 {
 	struct PacketQueue *moving=player[playerIndex].dqueue;
 	struct PacketQueue *remindme= NULL;
@@ -822,7 +828,7 @@ void*			getPacketFromClient(int playerIndex, uint16_t* length, uint16_t* rseqno)
 }
 
 
-void			printQueueDepth(int playerIndex)
+void printQueueDepth(int playerIndex)
 {
 	int d,u;
 	struct PacketQueue *moving;
@@ -844,7 +850,7 @@ void			printQueueDepth(int playerIndex)
 }
 
 
-boolean			enqueuePacket(int playerIndex, int op, int rseqno, void *msg, int n)
+boolean enqueuePacket(int playerIndex, int op, int rseqno, void *msg, int n)
 {
 	struct PacketQueue *oldpacket;
 	struct PacketQueue *newpacket;
@@ -874,7 +880,7 @@ boolean			enqueuePacket(int playerIndex, int op, int rseqno, void *msg, int n)
 }
 
 
-void			disqueuePacket(int playerIndex, int op, int rseqno)
+void disqueuePacket(int playerIndex, int op, int rseqno)
 {
         struct PacketQueue *oldpacket;
 
@@ -894,7 +900,7 @@ void			disqueuePacket(int playerIndex, int op, int rseqno)
 }
 
 
-void* 			assembleSendPacket(int playerIndex, int* len) 
+void*  assembleSendPacket(int playerIndex, int* len) 
 {
 	struct PacketQueue *moving = player[playerIndex].uqueue;
 	unsigned char *assemblybuffer;
@@ -912,7 +918,7 @@ void* 			assembleSendPacket(int playerIndex, int* len)
 	while (moving) {
 		noinqueue++;
 		moving=moving->next;
-		startseq=moving->seqno;
+		if (moving) startseq=moving->seqno;
 	}
 
 	// lets see if it is too large (CAN'T BE, Queue is always 1 length)
@@ -965,7 +971,7 @@ void* 			assembleSendPacket(int playerIndex, int* len)
 }
 
 
-void 			disassemblePacket(int playerIndex, void *msg, int *nopackets) 
+void disassemblePacket(int playerIndex, void *msg, int *nopackets) 
 {
 	unsigned short marker;
 	unsigned short usdata;
@@ -1009,7 +1015,7 @@ void 			disassemblePacket(int playerIndex, void *msg, int *nopackets)
 }
 
 
-const void*			assembleUDPPacket(int playerIndex, const void* b, int* l)
+const void *assembleUDPPacket(int playerIndex, const void* b, int* l)
 {
 	int length = *l;
 
@@ -1027,12 +1033,12 @@ const void*			assembleUDPPacket(int playerIndex, const void* b, int* l)
 // so this code is using a queuing mechanism. As it turns out the queue is not strictly
 // needed if we only use the Multicast messages...
 
-static int			puwrite(int playerIndex, const void* b, int l)
+static int puwrite(int playerIndex, const void* b, int l)
 {
   PlayerInfo& p = player[playerIndex];
   const void* tobesend = b;
 
-  UDEBUG("INTO PUWRITE\n");
+  //UDEBUG("INTO PUWRITE\n");
 
   assert(p.urecvfd != 0 && l >= 0);
 
@@ -1088,7 +1094,7 @@ static int			puwrite(int playerIndex, const void* b, int l)
   return n;
 }
 
-static void		sendUDPupdate(int playerIndex)
+static void sendUDPupdate(int playerIndex)
 {
   char  buffer[2];
   unsigned short local_port = player[playerIndex].urecport;
@@ -1099,7 +1105,7 @@ static void		sendUDPupdate(int playerIndex)
   directMessage(playerIndex, MsgUDPLinkRequest, sizeof(buffer), buffer);
 }
 
-static void		sendUDPseqno(int playerIndex)
+static void sendUDPseqno(int playerIndex)
 {
   char  buffer[2];
   unsigned short seqno = player[playerIndex].lastRecvPacketNo;
@@ -1110,7 +1116,7 @@ static void		sendUDPseqno(int playerIndex)
   directMessage(playerIndex, MsgUDPLinkUpdate, sizeof(buffer), buffer);
 }
 
-static void 		createUDPcon(int t, int remote_port) {
+static void createUDPcon(int t, int remote_port) {
 	int local_port, n, sndbufsize, recbufsize;
 	unsigned short s_remote = remote_port;
 
@@ -1204,7 +1210,7 @@ static void 		createUDPcon(int t, int remote_port) {
 }
 
 // called as the last stage of the UDP link establishment
-void 			upUDPcon(int t) {
+void upUDPcon(int t) {
         UDEBUG("STATUS: Up UDP CON received\n");
 	
 	// now simply enable the downlink
@@ -1213,12 +1219,12 @@ void 			upUDPcon(int t) {
 }
 
 // obsolete now
-void 			OOBQueueUpdate(int t, uint32_t rseqno) {
+void OOBQueueUpdate(int t, uint32_t rseqno) {
 	if (rseqno > 0)
 		disqueuePacket(t, SEND, rseqno);
 }
 
-static int		lookupPlayer(const PlayerId& id)
+static int lookupPlayer(const PlayerId& id)
 {
   for (int i = 0; i < maxPlayers; i++)
     if (player[i].fd != NotConnected && player[i].id == id)
@@ -1226,7 +1232,7 @@ static int		lookupPlayer(const PlayerId& id)
   return InvalidPlayer;
 }
 
-static void		setNoDelay(int fd)
+static void setNoDelay(int fd)
 {
   // turn off TCP delay (collection).  we want packets sent immediately.
 #if defined(_WIN32)
@@ -1246,12 +1252,12 @@ static void		setNoDelay(int fd)
 }
 
 // pupeek - checks if a message is available in the UDP receive buffers
-static int		pupeek(int playerIndex)
+static int pupeek(int playerIndex)
 {
   PlayerInfo& p = player[playerIndex];
   if (p.fd == NotConnected) return 0;
 
-  UDEBUG("Into PUPEEK\n");
+  //UDEBUG("Into PUPEEK\n");
 
   if (p.urecvfd > 0) {
     int n = 0;
@@ -1265,12 +1271,12 @@ static int		pupeek(int playerIndex)
 }
 
 // puread - interface to the UDP Receive routines
-static int		puread(int playerIndex, int *nopackets)
+static int puread(int playerIndex, int *nopackets)
 {
   PlayerInfo& p = player[playerIndex];
   if (p.fd == NotConnected) return 0;
 
-  UDEBUG("Into PUREAD\n");
+  //UDEBUG("Into PUREAD\n");
 
   *nopackets = 0;
 
@@ -1311,9 +1317,10 @@ static int		puread(int playerIndex, int *nopackets)
   return 0;
 }
 
-static int		pread(int playerIndex, int l)
+static int pread(int playerIndex, int l)
 {
   PlayerInfo& p = player[playerIndex];
+  //fprintf(stderr,"pread,playerIndex,l %i %i\n",playerIndex,l);
   if (p.fd == NotConnected || l == 0) return 0;
 
   // read more data into player's message buffer
@@ -1358,7 +1365,7 @@ static int		pread(int playerIndex, int l)
   return e;
 }
 
-static int		prealwrite(int playerIndex, const void* b, int l)
+static int prealwrite(int playerIndex, const void* b, int l)
 {
   PlayerInfo& p = player[playerIndex];
   assert(p.fd != NotConnected && l > 0);
@@ -1394,7 +1401,7 @@ static int		prealwrite(int playerIndex, const void* b, int l)
 }
 
 // try to write stuff from the output buffer
-static void		pflush(int playerIndex)
+static void pflush(int playerIndex)
 {
   PlayerInfo& p = player[playerIndex];
   if (p.fd == NotConnected || p.outmsgSize == 0) return;
@@ -1407,7 +1414,7 @@ static void		pflush(int playerIndex)
   }
 }
 
-static void		pwrite(int playerIndex, const void* b, int l)
+static void pwrite(int playerIndex, const void* b, int l)
 {
   PlayerInfo& p = player[playerIndex];
   if (p.fd == NotConnected || l == 0) return;
@@ -1433,7 +1440,7 @@ static void		pwrite(int playerIndex, const void* b, int l)
   // try flushing buffered data
   pflush(playerIndex);
 
-  UDEBUG("TCP write\n");
+  //UDEBUG("TCP write\n");
   // if the buffer is empty try writing the data immediately
   if (p.fd != NotConnected && p.outmsgSize == 0) {
     const int n = prealwrite(playerIndex, b, l);
@@ -1491,7 +1498,7 @@ static void		pwrite(int playerIndex, const void* b, int l)
   }
 }
 
-static void		broadcastMessage(uint16_t code,
+static void broadcastMessage(uint16_t code,
 					int len, const void* msg)
 {
   // send message to everyone
@@ -1505,7 +1512,7 @@ static void		broadcastMessage(uint16_t code,
       pwrite(i, msgbuf, len + 4);
 }
 
-static void		directMessage(int playerIndex, uint16_t code,
+static void directMessage(int playerIndex, uint16_t code,
 					int len, const void* msg)
 {
   if (player[playerIndex].fd == NotConnected)
@@ -1520,7 +1527,7 @@ static void		directMessage(int playerIndex, uint16_t code,
   pwrite(playerIndex, msgbuf, len + 4);
 }
 
-static void		sendFlagUpdate(int flagIndex, int index = -1)
+static void sendFlagUpdate(int flagIndex, int index = -1)
 {
   char msg[2 + FlagPLen];
   void* buf = msg;
@@ -1532,7 +1539,7 @@ static void		sendFlagUpdate(int flagIndex, int index = -1)
     directMessage(index, MsgFlagUpdate, sizeof(msg), msg);
 }
 
-static void		sendTeamUpdate(int teamIndex, int index = -1)
+static void sendTeamUpdate(int teamIndex, int index = -1)
 {
   char msg[TeamPLen];
   void* buf = msg;
@@ -1544,7 +1551,7 @@ static void		sendTeamUpdate(int teamIndex, int index = -1)
     directMessage(index, MsgTeamUpdate, sizeof(msg), msg);
 }
 
-static void		sendPlayerUpdate(int playerIndex, int index = -1)
+static void sendPlayerUpdate(int playerIndex, int index = -1)
 {
   char msg[PlayerIdPLen + 8 + CallSignLen + EmailLen];
   void* buf = msg;
@@ -1561,7 +1568,7 @@ static void		sendPlayerUpdate(int playerIndex, int index = -1)
     directMessage(index, MsgAddPlayer, sizeof(msg), msg);
 }
 
-static void		closeListServer(int index)
+static void closeListServer(int index)
 {
   assert(index >= 0 && index < MaxListServers);
   if (index >= listServerLinksCount)
@@ -1577,13 +1584,13 @@ static void		closeListServer(int index)
   }
 }
 
-static void		closeListServers()
+static void closeListServers()
 {
   for (int i = 0; i < listServerLinksCount; ++i)
     closeListServer(i);
 }
 
-static void		openListServer(int index)
+static void openListServer(int index)
 {
   assert(index >= 0 && index < MaxListServers);
   if (index >= listServerLinksCount)
@@ -1630,7 +1637,7 @@ static void		openListServer(int index)
   }
 }
 
-static void		sendMessageToListServer(const char* msg)
+static void sendMessageToListServer(const char* msg)
 {
   // ignore if not publicizing
   if (!publicizeServer)
@@ -1651,7 +1658,7 @@ static void		sendMessageToListServer(const char* msg)
   }
 }
 
-static void		sendMessageToListServerForReal(int index)
+static void sendMessageToListServerForReal(int index)
 {
   assert(index >= 0 && index < MaxListServers);
   if (index >= listServerLinksCount)
@@ -1722,7 +1729,7 @@ static void		sendMessageToListServerForReal(int index)
   closeListServer(index);
 }
 
-static void		publicize()
+static void publicize()
 {
   // hangup any previous list server sockets
   closeListServers();
@@ -1774,7 +1781,7 @@ static void		publicize()
   }
 }
 
-static boolean		serverStart()
+static boolean serverStart()
 {
 #if defined(_WIN32)
   const BOOL optOn = TRUE;
@@ -1793,14 +1800,13 @@ static boolean		serverStart()
 
   // look up service name and use that port if no port given on
   // command line.  if no service then use default port.
-  addr.sin_port = htons(wksPort);
   if (!useGivenPort) {
     struct servent* service = getservbyname("bzfs", "tcp");
     if (service) {
-      addr.sin_port = service->s_port;
-      pingReply.serverId.port = service->s_port;
+      wksPort = ntohs(service->s_port);
     }
   }
+  pingReply.serverId.port = addr.sin_port = htons(wksPort);
 
   // open well known service port
   wksSocket = socket(AF_INET, SOCK_STREAM, 0);
@@ -1887,8 +1893,8 @@ static boolean		serverStart()
     player[i].outmsgSize = 0;
     player[i].outmsgOffset = 0;
     player[i].outmsgCapacity = 0;
-    reconnect[i].accept = NotConnected;
-    reconnect[i].listen = NotConnected;
+    reconnect[i].waiting = False;
+    memset((char *)&reconnect[i].addr, 0, sizeof(reconnect[i].addr)); 
   }
 
   listServerLinksCount = 0;
@@ -1896,7 +1902,7 @@ static boolean		serverStart()
   return True;
 }
 
-static void		serverStop()
+static void serverStop()
 {
   // shut down server
   // first ignore further attempts to kill me
@@ -1965,7 +1971,7 @@ static void		serverStop()
   closeListServers();
 }
 
-static boolean		startPlayerPacketRelay(int playerIndex)
+static boolean startPlayerPacketRelay(int playerIndex)
 {
   // return true if already started
   if (noMulticastRelay || (relayInSocket != -1 && relayOutSocket != -1))
@@ -2003,7 +2009,7 @@ static boolean		startPlayerPacketRelay(int playerIndex)
   return True;
 }
 
-static void		stopPlayerPacketRelay()
+static void stopPlayerPacketRelay()
 {
   closeMulticast(relayInSocket);
   closeMulticast(relayOutSocket);
@@ -2012,7 +2018,7 @@ static void		stopPlayerPacketRelay()
   noMulticastRelay = False;
 }
 
-static void		relayPlayerPacket()
+static void relayPlayerPacket()
 {
 // XXX -- accumulate data until we've received all data in message
   // get packet from multicast port and multiplex to player's needing a relay.
@@ -2038,7 +2044,7 @@ static void		relayPlayerPacket()
       pwrite(i, buffer, msglen);
 }
 
-static void		relayPlayerPacket(int index,
+static void relayPlayerPacket(int index,
 				uint16_t len, const void* rawbuf)
 {
   // broadcast it
@@ -2211,7 +2217,7 @@ static WorldInfo*      defineWorldFromFile(const char* filename)
 }
 
 
-static WorldInfo*	defineTeamWorld()
+static WorldInfo* defineTeamWorld()
 {
   world = new WorldInfo();
   if (!world) return NULL;
@@ -2439,7 +2445,7 @@ static WorldInfo*	defineTeamWorld()
   return world;
 }
 
-static WorldInfo*	defineRandomWorld()
+static WorldInfo *defineRandomWorld()
 {
   const int numTeleporters = 8 + int(8 * (float)bzfrand());
   world = new WorldInfo();
@@ -2518,7 +2524,7 @@ static WorldInfo*	defineRandomWorld()
   return world;
 }
 
-static boolean		defineWorld()
+static boolean defineWorld()
 {
   // clean up old database
   delete world;
@@ -2595,7 +2601,7 @@ static boolean		defineWorld()
   return True;
 }
 
-static TeamColor	whoseBase(float x, float y)
+static TeamColor whoseBase(float x, float y)
 {
   if (!(gameStyle & TeamFlagGameStyle))
     return NoTeam;
@@ -2609,7 +2615,7 @@ static TeamColor	whoseBase(float x, float y)
 }
 
 #ifdef PRINTSCORE
-static void		dumpScore()
+static void dumpScore()
 {
   int i;
 
@@ -2638,10 +2644,13 @@ static void		dumpScore()
 }
 #endif
 
-static void		acceptClient()
+static void acceptClient()
 {
   // client (not a player yet) is requesting service.
   // accept incoming connection on our well known port
+  // may be new player or an old client reconnecting
+  int playerIndex;
+  int wantPlayer = False;
   struct sockaddr_in addr;
   AddrLen addr_len = sizeof(addr);
   int fd = accept(wksSocket, (struct sockaddr*)&addr, &addr_len);
@@ -2650,88 +2659,68 @@ static void		acceptClient()
     return;
   }
 
-  // find open slot in players list
-  int playerIndex;
-  for (playerIndex = 0; playerIndex < maxPlayers; playerIndex++)
-    if (player[playerIndex].fd == NotConnected &&
-	reconnect[playerIndex].accept == NotConnected &&
-	reconnect[playerIndex].listen == NotConnected)
-      break;
+  fprintf(stderr, "accept() from %s:%d on %i\n", inet_ntoa(addr.sin_addr), ntohs(addr.sin_port), fd);
 
-  int gameListen = NotConnected;
+  // don't buffer info, send it immediately
+//  setNoDelay(fd);
+//  BzfNetwork::setNonBlocking(fd);
+
+  // look for reconnecting player
+  for (playerIndex = 0; playerIndex < maxPlayers; playerIndex++) {
+    if (reconnect[playerIndex].waiting &&
+        reconnect[playerIndex].addr.sin_addr.s_addr == addr.sin_addr.s_addr ) {
+      if (debug > 2)
+        fprintf(stderr, "old client reconnect from %s:%d\n", inet_ntoa(addr.sin_addr), ntohs(addr.sin_port));
+      reconnect[playerIndex].waiting = False;
+      if (player[playerIndex].fd != NotConnected)
+	close(player[playerIndex].fd);
+      player[playerIndex].fd = fd;
+      return;
+    }
+  }
+
+  // game is over;  no new players until everyone quits
+  playerIndex = 0;
   if (gameOver) {
-    // game is over;  no new players until everyone quits
     for (int i = 0; i < maxPlayers; i++)
       if (player[i].fd != NotConnected) {
 	playerIndex = maxPlayers;
 	break;
       }
   }
-  if (playerIndex < maxPlayers) {
-    // create a new socket to listen for reconnection
-    addr.sin_family = AF_INET;
-    addr.sin_port = 0;			/* any open port */
-    addr.sin_addr.s_addr = htonl(INADDR_ANY);
-    addr_len = sizeof(addr);
-    if ((gameListen = socket(AF_INET, SOCK_STREAM, 0)) == -1 ||
-	bind(gameListen, (const struct sockaddr*)&addr, sizeof(addr)) == -1 ||
-	getsockname(gameListen, (struct sockaddr*)&addr, &addr_len) == -1 ||
-	listen(gameListen, 1) == -1) {
-      nerror("creating client listen socket");
-      if (gameListen != -1) close(gameListen);
-      gameListen = NotConnected;
-    }
-  }
-
-  // record what port we accepted on and are now listening on.
-  reconnect[playerIndex].time = TimeKeeper::getCurrent();
-  reconnect[playerIndex].listen = gameListen;
-  reconnect[playerIndex].accept = fd;
-  if (reconnect[playerIndex].listen > maxFileDescriptor)
-    maxFileDescriptor = reconnect[playerIndex].listen;
-  if (reconnect[playerIndex].accept > maxFileDescriptor)
-    maxFileDescriptor = reconnect[playerIndex].accept;
 
   // if don't want another player or couldn't make socket then refuse
   // connection by returning an obviously bogus port (port zero).
-  if (reconnect[playerIndex].listen == NotConnected)
-    addr.sin_port = htons(0);
-
-  // don't buffer info, send it immediately
-  setNoDelay(fd);
+  if (playerIndex == 0)
+    wantPlayer=True;
 
   // send server version and which port to reconnect to
   char buffer[8 + sizeof(addr.sin_port)];
   memcpy(buffer, ServerVersion, 8);
-  memcpy(buffer + 8, &addr.sin_port, sizeof(addr.sin_port));
+  if (wantPlayer) {
+    unsigned short int port;
+    port = htons(wksPort);
+    memcpy(buffer + 8, &port, sizeof(port));
+  } else
+    memset(buffer + 8, 0, sizeof(addr.sin_port));
   send(fd, (const char*)buffer, sizeof(buffer), 0);
 
   // don't wait for client to reconnect here in case the client
   // is badly behaved and would cause us to hang on accept().
   // this also goes even if we're rejecting the connection.
-}
 
-static void		addClient(int playerIndex)
-{
-  // accept game connection
-  struct sockaddr_in addr;
-  AddrLen addr_len = sizeof(addr);
-  player[playerIndex].fd = accept(reconnect[playerIndex].listen,
-				(struct sockaddr*)&addr, &addr_len);
-  if (player[playerIndex].fd == NotConnected)
-    nerror("accepting client connection");
+  // find open slot in players list
+  for (playerIndex = 0; playerIndex < maxPlayers; playerIndex++)
+   if (player[playerIndex].fd == NotConnected &&
+       reconnect[playerIndex].waiting == False)
+     break;
 
-  // done with listen socket
-  close(reconnect[playerIndex].listen);
-  reconnect[playerIndex].listen = NotConnected;
+  // record time and address for reconnects
+  reconnect[playerIndex].time = TimeKeeper::getCurrent();
+  reconnect[playerIndex].waiting = True;
+  memcpy(&reconnect[playerIndex].addr, &addr, sizeof(addr));
 
-  // see if accept worked
-  if (player[playerIndex].fd == NotConnected)
-    return;
-
-  // turn off packet buffering and set socket non-blocking
-  setNoDelay(player[playerIndex].fd);
-  BzfNetwork::setNonBlocking(player[playerIndex].fd);
+  player[playerIndex].fd = fd;
 
   // now add client
   player[playerIndex].state = PlayerInLimbo;
@@ -2761,20 +2750,12 @@ static void		addClient(int playerIndex)
   }
 }
 
-static void		shutdownAcceptClient(int playerIndex)
+static void shutdownAcceptClient(int playerIndex)
 {
-  // close socket that client initially contacted us on
-  close(reconnect[playerIndex].accept);
-  reconnect[playerIndex].accept = NotConnected;
-
-  // if we're still listening on reconnect port then give up
-  if (reconnect[playerIndex].listen != NotConnected) {
-    close(reconnect[playerIndex].listen);
-    reconnect[playerIndex].listen = NotConnected;
-  }
+  // FIXME
 }
 
-static void		respondToPing(boolean broadcast = False)
+static void respondToPing(boolean broadcast = False)
 {
   // get and discard ping packet
   int minReplyTTL;
@@ -2821,7 +2802,7 @@ static void		respondToPing(boolean broadcast = False)
     pingReply.write(pingOutSocket, &pingOutAddr);
 }
 
-static void		addPlayer(int playerIndex)
+static void addPlayer(int playerIndex)
 {
   // reject player if asks for bogus team or rogue and rogues aren't allowed
   // or if the team is full.
@@ -2968,7 +2949,7 @@ static void		addPlayer(int playerIndex)
 
 }
 
-static void		addFlag(int flagIndex)
+static void addFlag(int flagIndex)
 {
   if (flagIndex == -1) return;		// invalid flag
 
@@ -2992,7 +2973,7 @@ static void		addFlag(int flagIndex)
   sendFlagUpdate(flagIndex);
 }
 
-static void		randomFlag(int flagIndex)
+static void randomFlag(int flagIndex)
 {
   // pick a random flag
   flag[flagIndex].flag.id = allowedFlags[int(numAllowedFlags * (float)bzfrand())];
@@ -3000,7 +2981,7 @@ static void		randomFlag(int flagIndex)
   addFlag(flagIndex);
 }
 
-static void		resetFlag(int flagIndex)
+static void resetFlag(int flagIndex)
 {
 // NOTE -- must not be called until world is defined
   assert(world != NULL);
@@ -3062,7 +3043,7 @@ static void		resetFlag(int flagIndex)
   sendFlagUpdate(flagIndex);
 }
 
-static void		zapFlag(int flagIndex)
+static void zapFlag(int flagIndex)
 {
   // called when a flag must just disappear -- doesn't fly
   // into air, just *poof* vanishes.
@@ -3093,7 +3074,7 @@ static void		zapFlag(int flagIndex)
   resetFlag(flagIndex);
 }
 
-static void		removePlayer(int playerIndex)
+static void removePlayer(int playerIndex)
 {
   // player is signing off or sent a bad packet.  since the
   // bad packet can come before MsgEnter, we must be careful
@@ -3222,7 +3203,7 @@ static void		removePlayer(int playerIndex)
   }
 }
 
-static void		sendWorld(int playerIndex, int ptr)
+static void sendWorld(int playerIndex, int ptr)
 {
   // send another small chunk of the world database
   assert(world != NULL && worldDatabase != NULL);
@@ -3236,7 +3217,7 @@ static void		sendWorld(int playerIndex, int ptr)
   directMessage(playerIndex, MsgGetWorld, size + 2, buffer);
 }
 
-static void		sendQueryGame(int playerIndex)
+static void sendQueryGame(int playerIndex)
 {
   // much like a ping packet but leave out useless stuff (like
   // the server address, which must already be known, and the
@@ -3266,7 +3247,7 @@ static void		sendQueryGame(int playerIndex)
   directMessage(playerIndex, MsgQueryGame, sizeof(buffer), buffer);
 }
 
-static void		sendQueryPlayers(int playerIndex)
+static void sendQueryPlayers(int playerIndex)
 {
   int i, numPlayers = 0;
 
@@ -3290,8 +3271,7 @@ static void		sendQueryPlayers(int playerIndex)
       sendPlayerUpdate(i, playerIndex);
 }
 
-static void		playerAlive(int playerIndex, const float* pos,
-							const float* fwd)
+static void playerAlive(int playerIndex, const float* pos, const float* fwd)
 {
   // player is coming alive.  strictly speaking, this can be inferred
   // from the multicast info, but it's nice to have a clear statement.
@@ -3313,7 +3293,7 @@ static void		playerAlive(int playerIndex, const float* pos,
   broadcastMessage(MsgAlive, sizeof(msg), msg);
 }
 
-static void		checkTeamScore(int playerIndex, int teamIndex)
+static void checkTeamScore(int playerIndex, int teamIndex)
 {
   if (maxTeamScore == 0 || teamIndex == (int)RogueTeam) return;
   if (team[teamIndex].team.won - team[teamIndex].team.lost >= maxTeamScore) {
@@ -3326,7 +3306,7 @@ static void		checkTeamScore(int playerIndex, int teamIndex)
   }
 }
 
-static void		playerKilled(int victimIndex, int killerIndex,
+static void playerKilled(int victimIndex, int killerIndex,
 							int16_t shotIndex)
 {
   // victim has been destroyed.  keep score.
@@ -3378,7 +3358,7 @@ static void		playerKilled(int victimIndex, int killerIndex,
     checkTeamScore(killerIndex, winningTeam);
 }
 
-static void		grabFlag(int playerIndex, int flagIndex)
+static void grabFlag(int playerIndex, int flagIndex)
 {
   // player wants to take possession of flag
   if (player[playerIndex].state != PlayerOnTeamAlive ||
@@ -3400,7 +3380,7 @@ static void		grabFlag(int playerIndex, int flagIndex)
   broadcastMessage(MsgGrabFlag, sizeof(msg), msg);
 }
 
-static void		dropFlag(int playerIndex, float pos[3])
+static void dropFlag(int playerIndex, float pos[3])
 {
   assert(world != NULL);
 
@@ -3499,7 +3479,7 @@ static void		dropFlag(int playerIndex, float pos[3])
   sendFlagUpdate(flagIndex);
 }
 
-static void		captureFlag(int playerIndex, TeamColor teamCaptured)
+static void captureFlag(int playerIndex, TeamColor teamCaptured)
 {
   // player captured a flag.  can either be enemy flag in player's own
   // team base, or player's own flag in enemy base.
@@ -3548,13 +3528,13 @@ static void		captureFlag(int playerIndex, TeamColor teamCaptured)
     checkTeamScore(playerIndex, winningTeam);
 }
 
-static void		shotFired(int /*playerIndex*/, const void* buf, int len)
+static void shotFired(int /*playerIndex*/, const void* buf, int len)
 {
   // player has fired shot -- send MsgShotBegin
   broadcastMessage(MsgShotBegin, len, buf);
 }
 
-static void		shotEnded(const PlayerId& id, int16_t shotIndex,
+static void shotEnded(const PlayerId& id, int16_t shotIndex,
 							uint16_t reason)
 {
   // shot has ended prematurely -- send MsgShotEnd
@@ -3566,7 +3546,7 @@ static void		shotEnded(const PlayerId& id, int16_t shotIndex,
   broadcastMessage(MsgShotEnd, sizeof(msg), msg);
 }
 
-static void		scoreChanged(int playerIndex,
+static void scoreChanged(int playerIndex,
 					uint16_t wins, uint16_t losses)
 {
   char msg[PlayerIdPLen + 4];
@@ -3593,8 +3573,7 @@ static void		scoreChanged(int playerIndex,
   }
 }
 
-static void		sendTeleport(int playerIndex,
-					uint16_t from, uint16_t to)
+static void sendTeleport(int playerIndex, uint16_t from, uint16_t to)
 {
   char msg[PlayerIdPLen + 4];
   void* buf = msg;
@@ -3604,10 +3583,7 @@ static void		sendTeleport(int playerIndex,
   broadcastMessage(MsgTeleport, sizeof(msg), msg);
 }
 
-static void		sendMessage(int playerIndex,
-					const PlayerId& targetPlayer,
-					TeamColor targetTeam,
-					const char* message)
+static void sendMessage(int playerIndex, const PlayerId& targetPlayer, TeamColor targetTeam, const char* message)
 {
   // player is sending a message to a particular player, a team, or all.
   // send MsgMessage
@@ -3620,7 +3596,7 @@ static void		sendMessage(int playerIndex,
   broadcastMessage(MsgMessage, sizeof(msg), msg);
 }
 
-static void		acquireRadio(int playerIndex, uint16_t flags)
+static void acquireRadio(int playerIndex, uint16_t flags)
 {
   // player wants to grab the radio (only one person per team can have it)
   // ignore request if player wants a radio already in use, or if a rogue
@@ -3641,7 +3617,7 @@ static void		acquireRadio(int playerIndex, uint16_t flags)
   broadcastMessage(MsgAcquireRadio, sizeof(msg), msg);
 }
 
-static void		releaseRadio(int playerIndex)
+static void releaseRadio(int playerIndex)
 {
   // player is releasing the radio (allowing a teammate to grab it)
   if (team[int(player[playerIndex].team)].radio != playerIndex)
@@ -3655,7 +3631,7 @@ static void		releaseRadio(int playerIndex)
   broadcastMessage(MsgReleaseRadio, sizeof(msg), msg);
 }
 
-static void		handleCommand(int t, uint16_t code,
+static void handleCommand(int t, uint16_t code,
 					uint16_t len, void* rawbuf)
 {
   void* buf = (void*)((char*)rawbuf + 4);
@@ -3873,7 +3849,7 @@ static void		handleCommand(int t, uint16_t code,
   }
 }
 
-static void		terminateServer(int /*sig*/)
+static void terminateServer(int /*sig*/)
 {
   signal(SIGINT, SIG_PF(terminateServer));
   signal(SIGTERM, SIG_PF(terminateServer));
@@ -3881,7 +3857,7 @@ static void		terminateServer(int /*sig*/)
   done = True;
 }
 
-static const char*	usageString =
+static const char *usageString =
 "[-a <vel> <rot>] [-b] [-c] [+f {good|<id>}] [-f {bad|<id>}] [-g] "
 "[-h] "
 "[-i interface] "
@@ -3908,7 +3884,7 @@ static const char*	usageString =
 "[-srvmsg <text>]"
 "[-world <filename>]";
 
-static void		printVersion(ostream& out)
+static void printVersion(ostream& out)
 {
   out << copyright << endl;
 
@@ -3924,7 +3900,7 @@ static void		printVersion(ostream& out)
   out << ServerVersion[6] << (char)tolower(ServerVersion[7]) << endl;
 }
 
-static void		usage(const char* pname)
+static void usage(const char* pname)
 {
   printVersion(cerr);
   cerr << "usage: " << pname << " " << usageString << endl;
@@ -3932,7 +3908,7 @@ static void		usage(const char* pname)
   exit(1);
 }
 
-static void		extraUsage(const char* pname)
+static void extraUsage(const char* pname)
 {
   printVersion(cout);
   cout << "usage: " << pname << " " << usageString << endl;
@@ -3983,7 +3959,7 @@ static void		extraUsage(const char* pname)
   exit(0);
 }
 
-static int		lookupFlag(const char* code)
+static int lookupFlag(const char* code)
 {
   int f = atoi(code);
 
@@ -3996,7 +3972,7 @@ static int		lookupFlag(const char* code)
   return f;
 }
 
-static boolean		parsePlayerCount(const char* argv)
+static boolean parsePlayerCount(const char* argv)
 {
   // either a single number or 5 optional numbers separated by 4
   // (mandatory) commas.
@@ -4058,7 +4034,7 @@ static boolean		parsePlayerCount(const char* argv)
   return True;
 }
 
-static boolean		setRequiredFlag(FlagInfo& flag, FlagId id)
+static boolean setRequiredFlag(FlagInfo& flag, FlagId id)
 {
   flag.required = True;
   flag.flag.id = id;
@@ -4066,7 +4042,7 @@ static boolean		setRequiredFlag(FlagInfo& flag, FlagId id)
   return True;
 }
 
-static void		parse(int argc, char** argv)
+static void parse(int argc, char** argv)
 {
   // initialize state
   gameStyle = PlainGameStyle;
@@ -4619,7 +4595,7 @@ static void		parse(int argc, char** argv)
   }
 }
 
-int			main(int argc, char** argv)
+int main(int argc, char** argv)
 {
   int nfound;
 
@@ -4727,15 +4703,12 @@ int			main(int argc, char** argv)
     FD_ZERO(&write_set);
     for (i = 0; i < maxPlayers; i++) {
       if (player[i].fd != NotConnected) {
+	fprintf(stderr,"fdset fd,read %i %lx\n",player[i].fd,read_set);
 	FD_SET(player[i].fd, &read_set);
 
 	if (player[i].outmsgSize > 0)
 	  FD_SET(player[i].fd, &write_set);
       }
-      if (reconnect[i].accept != NotConnected)
-	FD_SET(reconnect[i].accept, &read_set);
-      if (reconnect[i].listen != NotConnected)
-	FD_SET(reconnect[i].listen, &read_set);
     }
     FD_SET(wksSocket, &read_set);	// always listen for connections
     if (pingInSocket != -1)
@@ -4768,7 +4741,7 @@ int			main(int argc, char** argv)
     if (waitTime < 0.0f) waitTime = 0.005f;  // minmal waitTime
     if (waitTime > 0.25f) waitTime = 0.15f; // maximal waitTime
 
-    // in case any UDP link is established don't wait
+    // if any UDP link is established don't wait
     if (waitTime > 0.005f)
     for (i = 0; i < maxPlayers; i++) {
 	// printQueueDepth(i);
@@ -4786,22 +4759,25 @@ int			main(int argc, char** argv)
 
     do {
 	float localWaitTime=0.004f;
-    struct timeval timeout;
+        struct timeval timeout;
     	timeout.tv_sec = long(floorf(localWaitTime));
     	timeout.tv_usec = long(1.0e+6f * (localWaitTime - floorf(localWaitTime)));
-    	nfound = select(maxFileDescriptor+1,
-			(fd_set*)&read_set, (fd_set*)&write_set, 0, &timeout);
+    	nfound = select(maxFileDescriptor+1, (fd_set*)&read_set, (fd_set*)&write_set, 0, &timeout);
+	//if (nfound)
+	//  fprintf(stderr, "nfound,read,write %i,%08lx,%08lx\n", nfound, read_set, write_set);
 
 	if ((nfound > 0) || ((pupeek(i) > 0) || player[i].dqueue)) {
-		nfound = 1;  // possible for only UDP players, so declare work tbd
-		break;
+	  // possible for only UDP players, so declare work tbd
+	  if (nfound == 0)
+	    nfound = 1;
+	  break;
 	}
 
 	waitTime = waitTime - localWaitTime;
 
-    } while (waitTime>0.0f);
+    } while (waitTime > 0.0f);
 
-    waitTime=0.05f;
+    waitTime = 0.05f;
 
     tm = TimeKeeper::getCurrent();
 
@@ -4887,30 +4863,36 @@ int			main(int argc, char** argv)
       }
 
     for (i = 0; i < maxPlayers; i++) {
-	// kick any clients that don't speak UDP
-	if (udpOnly && player[i].toBeKicked) {
-		char message[MessageLen];
-		player[i].toBeKicked = false;
-                sprintf(message,"Your end does not support UDP");
-                sendMessage(i, player[i].id, player[i].team, message);
+      // kick any clients that don't speak UDP
+      if (udpOnly && player[i].toBeKicked) {
+	char message[MessageLen];
+	player[i].toBeKicked = false;
+        sprintf(message,"Your end does not support UDP");
+        sendMessage(i, player[i].id, player[i].team, message);
 
-                sprintf(message,"Try another server, Bye!");
-                sendMessage(i, player[i].id, player[i].team, message);
+        sprintf(message,"Try another server, Bye!");
+        sendMessage(i, player[i].id, player[i].team, message);
 
-		fprintf(stderr, "*** Kicking Player - no UDP [%d]\n",i);
-		removePlayer(i);
-	}
-	if (player[i].ulinkup && pupeek(i)) {
-		nfound = 1;
-		break;
-	}
+	fprintf(stderr, "*** Kicking Player - no UDP [%d]\n",i);
+	removePlayer(i);
+      }
+      if (player[i].ulinkup && pupeek(i)) {
+	nfound = 1;
+	break;
+      }
     }
     // check messages
     if (nfound > 0) {
-
+      //fprintf(stderr, "chkmsg nfound,read,write %i,%08lx,%08lx\n", nfound, read_set, write_set);
       // first check initial contacts
-      if (FD_ISSET(wksSocket, &read_set))
+      if (FD_ISSET(wksSocket, &read_set)) {
 	acceptClient();
+	// FIXME ugly hack, for some reason we are losing the first read! TimR
+        for (i = 0; i < maxPlayers; i++)
+	  if (player[i].fd != NotConnected)
+            FD_SET(player[i].fd, &read_set);
+      }
+	
 
       // now check pings
       if (pingInSocket != -1 && FD_ISSET(pingInSocket, &read_set))
@@ -4922,32 +4904,26 @@ int			main(int argc, char** argv)
       if (relayInSocket != -1 && FD_ISSET(relayInSocket, &read_set))
 	relayPlayerPacket();
 
-      // check for players that were accepted
+      // check the initial contact.  if any activity or
+      // we've waited a while, then shut it down
       for (i = 0; i < maxPlayers; i++) {
-	// first check for clients that are reconnecting
-	if (reconnect[i].listen != NotConnected &&
-		FD_ISSET(reconnect[i].listen, &read_set))
-	  addClient(i);
-
-	// now check the initial contact port.  if any activity or
-	// we've waited a while, then shut it down
-	if (reconnect[i].accept != NotConnected &&
-	 	(FD_ISSET(reconnect[i].accept, &read_set) ||
-		tm - reconnect[i].time > DisconnectTimeout))
+        if (reconnect[i].waiting &&
+	    player[i].fd != NotConnected &&
+	    tm - reconnect[i].time > DisconnectTimeout)
 	  shutdownAcceptClient(i);
       }
 
       // check for connection to list server
       for (i = 0; i < listServerLinksCount; ++i)
 	if (listServerLinks[i].socket != NotConnected &&
-		FD_ISSET(listServerLinks[i].socket, &write_set))
+	    FD_ISSET(listServerLinks[i].socket, &write_set))
 	  sendMessageToListServerForReal(i);
 
       // now check messages from connected players and send queued messages
       for (i = 0; i < maxPlayers; i++) {
 	int numpackets;
 
-	// check first if we have any UDP packets pending
+	// check if we have any UDP packets pending
 	if (puread(i, &numpackets) > 0) {
 	  // read head
 	  uint16_t len, code;
@@ -4960,7 +4936,6 @@ int			main(int argc, char** argv)
 
 	  // handle the command for UDP
 	  handleCommand(i, code, len, player[i].msg);
-
         } 
 
 	if (player[i].fd != NotConnected && FD_ISSET(player[i].fd, &write_set)) {
@@ -4996,9 +4971,9 @@ int			main(int argc, char** argv)
 	  // simple ruleset, if player sends a MsgShotBegin over TCP
  	  // he/she must not be using the UDP link 
 	  if (udpOnly) {
-        	if (code == MsgShotBegin) {
-                	player[i].toBeKicked = true;
-        	}
+            if (code == MsgShotBegin) {
+              player[i].toBeKicked = true;
+            }
   	  }
 
 	  // handle the command
@@ -5027,4 +5002,3 @@ int			main(int argc, char** argv)
   // done
   return exitCode;
 }
-
