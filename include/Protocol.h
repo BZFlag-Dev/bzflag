@@ -155,6 +155,8 @@ const uint16_t		RejectServerFull = 0x0005;
 const uint16_t		RejectBadCallsign = 0x0006;
 const uint16_t		RejectRepeatCallsign = 0x0007;
 const uint16_t		RejectRejoinWaitTime = 0x0008;
+const uint16_t		RejectIPBanned = 0x0009;
+const uint16_t		RejectHostBanned = 0x000A;
 
 // death by obstacle
 // FIXME: really a killed reason, NOT a message type.
