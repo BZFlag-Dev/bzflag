@@ -47,6 +47,8 @@
 #endif //BZ_BUILD_OS
 
 #include <stdio.h>
+#include <Windows.h>
+
 #ifndef DEBUG_TRACE
 #define DEBUG_TRACE
 inline void W32_DEBUG_TRACE (const char* buffer ) {printf("%s",buffer);}
