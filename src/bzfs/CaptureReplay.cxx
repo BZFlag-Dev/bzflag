@@ -9,10 +9,14 @@
  * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
-
+ 
 #include "bzfs.h"
 #include "CaptureReplay.h"
-#include "OSFile.h"
+
+#ifndef _WIN32
+# include <dirent.h>
+#endif  // _WIN32
+
 
 // Type Definitions
 // ----------------
@@ -269,9 +273,6 @@ bool Capture::saveFile (int playerIndex, const char *filename)
   Capturing = true;
   CaptureMode = StraightToFile;
 
-  sprintf (buffer, "Caturing to %s", filename);
-  sendMessage (ServerPlayer, playerIndex, buffer);
-  
   CaptureFile = fopen (filename, "wb");
   if (CaptureFile == NULL) {
     Capture::init();
@@ -365,7 +366,7 @@ routePacket (u16 code, int len, const void * data, bool fake)
 
     if (CaptureBuf.byteCount > CaptureMaxBytes) {
       CRpacket *p;
-      DEBUG3 ("routePacket: deleting until update\n");
+      DEBUG3 ("routePacket: deleting until State Update\n");
       while (((p = delCRpacket (&CaptureBuf)) != NULL) &&
              !(p->fake && (p->code == MsgTeamUpdate))) {
         free (p->data);
@@ -913,7 +914,7 @@ newCRpacket (u16 fake, u16 code, int len, const void *data)
   if (data != NULL) {
     memcpy (p->data, data, len);
   }
-  initCRpacket (fake, code, len, data, p);
+  initCRpacket (fake, code, len, p->data, p);
 
   return p;
 }
