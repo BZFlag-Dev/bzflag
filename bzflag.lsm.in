@@ -1,0 +1,15 @@
+Begin4
+Title:		BZFlag
+Version:	@VERSION@
+Entered-date:	2003-06-06
+Description:	OpenSource OpenGL Multiplayer MultiPlatform
+		Battle Zone Capture the Flag Game
+Keywords:	game OpenGL multiplayer
+Author:		Chris Schoeneman <crs23@bigfoot.com>
+Maintained-by:	Tim Riker <Tim@Rikers.org>
+Primary-site:	http://BZFlag.org/
+Alternate-site: http://prdownloads.sourceforge.net/bzflag/
+Original-site:
+Platforms:	OpenGL on Linux, Windows, Mac OX, other Unices
+Copying-policy:	GNU Lesser General Public License
+End
