@@ -263,37 +263,34 @@
 			Name="Header Files"
 			Filter="h;hpp;hxx;hm;inl">
 			<File
-				RelativePath="..\include\bzfgl.h">
+				RelativePath="..\..\include\bzfgl.h">
 			</File>
 			<File
-				RelativePath="..\include\bzfio.h">
+				RelativePath="..\..\include\bzfio.h">
 			</File>
 			<File
-				RelativePath="..\include\common.h">
+				RelativePath="..\..\include\common.h">
 			</File>
 			<File
-				RelativePath="..\include\OpenGLDisplayList.h">
+				RelativePath="..\..\include\OpenGLDisplayList.h">
 			</File>
 			<File
-				RelativePath="..\include\OpenGLGState.h">
+				RelativePath="..\..\include\OpenGLGState.h">
 			</File>
 			<File
-				RelativePath="..\include\OpenGLLight.h">
+				RelativePath="..\..\include\OpenGLLight.h">
 			</File>
 			<File
-				RelativePath="..\include\OpenGLMaterial.h">
+				RelativePath="..\..\include\OpenGLMaterial.h">
 			</File>
 			<File
-				RelativePath="..\include\OpenGLTexFont.h">
+				RelativePath="..\..\include\OpenGLTexFont.h">
 			</File>
 			<File
-				RelativePath="..\include\OpenGLTexture.h">
+				RelativePath="..\..\include\OpenGLTexture.h">
 			</File>
 			<File
-				RelativePath="..\include\RenderNode.h">
-			</File>
-			<File
-				RelativePath="..\..\include\TextureManager.h">
+				RelativePath="..\..\include\RenderNode.h">
 			</File>
 		</Filter>
 	</Files>
