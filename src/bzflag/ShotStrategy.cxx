@@ -570,7 +570,7 @@ void			SegmentedShotStrategy::makeSegments(ObstacleEffect e)
 
   segments.removeAll();
   ShotPathSegment::Reason reason = ShotPathSegment::Initial;
-  while (timeLeft > Epsilon) {
+  while ((timeLeft > Epsilon) && (segments.getLength() == 0)) {
     // construct ray and find the first building, teleporter, or outer wall
     float o2[3];
     o2[0] = o[0] - minTime * d[0];
