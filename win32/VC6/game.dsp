@@ -142,6 +142,10 @@ SOURCE=..\..\src\game\CommandsStandard.cxx
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\src\game\CollisionManager.cxx
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\src\game\DelayQueue.cxx
 # End Source File
 # Begin Source File
@@ -159,6 +163,10 @@ SOURCE=..\..\src\game\NetHandler.cxx
 # Begin Source File
 
 SOURCE=..\..\src\game\PlayerInfo.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\game\Ray.cxx
 # End Source File
 # Begin Source File
 

@@ -310,10 +310,6 @@ SOURCE=..\..\src\bzflag\ComposeDefaultKey.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\src\bzflag\CollisionGrid.cxx
-# End Source File
-# Begin Source File
-
 SOURCE=..\..\src\bzflag\ControlPanel.cxx
 # End Source File
 # Begin Source File
@@ -679,10 +675,6 @@ SOURCE=..\..\include\ConfigFileManager.h
 # Begin Source File
 
 SOURCE=..\..\src\bzflag\ControlPanel.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\src\bzflag\CollisionGrid.h
 # End Source File
 # Begin Source File
 

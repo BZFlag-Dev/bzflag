@@ -213,7 +213,7 @@ SOURCE=..\..\include\BoxBuilding.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\src\obstacle\BoxSceneNodeGenerator.h
+SOURCE=..\..\include\BoxSceneNodeGenerator.h
 # End Source File
 # Begin Source File
 
@@ -241,7 +241,7 @@ SOURCE=.\config.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\src\obstacle\EmptySceneNodeGenerator.h
+SOURCE=..\..\include\EmptySceneNodeGenerator.h
 # End Source File
 # Begin Source File
 
@@ -269,7 +269,7 @@ SOURCE=..\..\include\PyramidBuilding.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\src\obstacle\PyramidSceneNodeGenerator.h
+SOURCE=..\..\include\PyramidSceneNodeGenerator.h
 # End Source File
 # Begin Source File
 
@@ -301,7 +301,7 @@ SOURCE=..\..\include\Teleporter.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\src\obstacle\TeleporterSceneNodeGenerator.h
+SOURCE=..\..\include\TeleporterSceneNodeGenerator.h
 # End Source File
 # Begin Source File
 
@@ -317,7 +317,7 @@ SOURCE=..\..\include\WallSceneNode.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\src\obstacle\WallSceneNodeGenerator.h
+SOURCE=..\..\include\WallSceneNodeGenerator.h
 # End Source File
 # Begin Source File
 

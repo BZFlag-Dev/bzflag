@@ -253,10 +253,6 @@ SOURCE=..\..\src\geometry\QuadWallSceneNode.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\src\geometry\Ray.cxx
-# End Source File
-# Begin Source File
-
 SOURCE=..\..\src\geometry\SceneNode.cxx
 # End Source File
 # Begin Source File
@@ -386,10 +382,6 @@ SOURCE=..\..\include\QuadWallSceneNode.h
 # Begin Source File
 
 SOURCE=..\..\include\Ray.h
-# End Source File
-# Begin Source File
-
-SOURCE="C:\Program Files\Microsoft SDK\include\Reason.h"
 # End Source File
 # Begin Source File
 
