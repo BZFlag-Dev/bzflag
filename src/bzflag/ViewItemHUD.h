@@ -66,8 +66,7 @@ public:
 
 	// ViewItemReader overrides
 	virtual ViewTagReader* clone() const;
-	virtual View*		open(const ConfigReader::Values&);
-	virtual void		close();
+	virtual View*		open(XMLTree::iterator);
 
 private:
 	ViewItemHUD*		item;

@@ -14,7 +14,7 @@
 <choice>
 	<mask t="renderBlending">1 2</mask>
 
-	# stippled
+	<!-- stippled -->
 	<geometry>
 		<stipple>
 			0.75
@@ -30,8 +30,8 @@
 		</vertex>
 		<gstate>
 			<shading model="flat" />
-			<depth func="1" write="off" />
-			<stipple mask="on" />
+			<depth func="1" write="false" />
+			<stipple mask="true" />
 			<primitive type="tstrip">
 				<index>
 					0 1 2 3
@@ -40,7 +40,7 @@
 		</gstate>
 	</geometry>
 
-	# blended
+	<!-- blended -->
 	<geometry>
 		<color>
 			0 0 0 0.75
@@ -54,7 +54,7 @@
 		<gstate>
 			<shading model="flat" />
 			<blending src="sa" dst="1-sa" />
-			<depth func="1" write="off" />
+			<depth func="1" write="false" />
 			<primitive type="tstrip">
 				<index>
 					0 1 2 3

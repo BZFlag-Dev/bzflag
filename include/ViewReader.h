@@ -13,8 +13,10 @@
 #ifndef BZF_VIEW_READER_H
 #define BZF_VIEW_READER_H
 
-#include "ConfigIO.h"
 #include "View.h"
+#include "XMLTree.h"
+#include "ConfigFileReader.h"
+#include <stdio.h>
 #include <map>
 #include <vector>
 
@@ -22,7 +24,7 @@
 // object to parse a view configuration
 //
 
-class ViewReader {
+class ViewReader : public ConfigFileReader {
 public:
 	ViewReader();
 	~ViewReader();
@@ -32,43 +34,30 @@ public:
 							ViewTagReader* adoptedReader);
 	void				remove(const BzfString& tag);
 
-	// read a view configuration, saving results to the VIEWMGR
-	bool				read(istream&);
-
-	static bool			parseColor(ViewColor&,
-							const ConfigReader::Values&);
-	static bool			readSize(const ConfigReader::Values& values,
-							const BzfString& name,
-							ViewSize& value,
-							float pixel,
-							float fraction);
+	// ConfigFileReader overrides.  views go to VIEWMGR.
+	ConfigFileReader*	clone();
+	void				parse(XMLTree::iterator);
 
 private:
-	bool				openTop(ConfigReader*, const BzfString&,
-							const ConfigReader::Values&);
-	bool				openView(ConfigReader*, const BzfString&,
-							const ConfigReader::Values&);
-	bool				closeTop(const BzfString&);
-	bool				closeView(const BzfString&);
-	bool				dataView(ConfigReader*, const BzfString&);
+	// crs -- must have arg names here to work around bug in VC++ 6.0
+	template <class T>
+	void				parseChildren(XMLTree::iterator xml,
+							void (ViewReader::*method)(XMLTree::iterator, T*),
+							T* data);
+
+	void				parseViews(XMLTree::iterator xml, void*);
+	void				parseView(XMLTree::iterator xml, View* view);
+
+	bool				parseStandardTags(XMLTree::iterator xml);
+	void				saveNamedItem(const BzfString& id, View* item);
 
 	static void			onTagReaderCB(const ViewTagReader*,
 							const BzfString&, void*);
-
-	static bool			parseColor(const BzfString& value, float* color);
-
-	static bool			openTopCB(ConfigReader*, const BzfString&, const ConfigReader::Values&, void*);
-	static bool			openViewCB(ConfigReader*, const BzfString&, const ConfigReader::Values&, void*);
-	static bool			closeTopCB(ConfigReader*, const BzfString&, void*);
-	static bool			closeViewCB(ConfigReader*, const BzfString&, void*);
-	static bool			dataViewCB(ConfigReader*, const BzfString&, void*);
 
 private:
 	struct State {
 	public:
 		ViewState		state;
-		View*			view;
-		ViewTagReader*	reader;
 		int				levels;
 	};
 	typedef std::vector<State> Stack;
@@ -77,8 +66,56 @@ private:
 
 	ItemReaders			itemReaders;
 	Stack				stack;
-	BzfString			viewName;
 	NamedItems			namedItems;
 };
+
+//
+// handy function objects
+//
+
+class ViewSetSize_t : public std::unary_function<BzfString, ViewSize&> {
+public:
+	ViewSetSize_t(ViewSize& size_, bool* scaled_) :
+							size(size_), scaled(scaled_) { }
+	ViewSize&			operator()(const BzfString& arg) const
+	{
+		float num;
+		char type;
+		if (sscanf(arg.c_str(), "%f%c", &num, &type) == 2) {
+			if (type == 'p') {
+				size.pixel    = num;
+				size.fraction = 0.0f;
+				if (scaled)
+					*scaled = false;
+			}
+			else if (type == '%') {
+				size.pixel    = 0.0f;
+				size.fraction = 0.01f * num;
+				if (scaled)
+					*scaled = false;
+			}
+			else if (type == 'x') {
+				size.pixel    = 0.0f;
+				size.fraction = num;
+				if (scaled)
+					*scaled = true;
+			}
+			return size;
+		}
+		else {
+			throw XMLNode::AttributeException("invalid size");
+		}
+	}
+
+private:
+	ViewSize&			size;
+	bool*				scaled;
+};
+
+inline ViewSetSize_t
+viewSetSize(ViewSize& size, bool* scaled = 0)
+{
+	return ViewSetSize_t(size, scaled);
+}
 
 #endif

@@ -77,36 +77,18 @@ ViewTagReader* 			ViewItemIfReader::clone() const
 	return new ViewItemIfReader(negate);
 }
 
-View*					ViewItemIfReader::open(
-								const ConfigReader::Values& values)
+View*					ViewItemIfReader::open(XMLTree::iterator xml)
 {
 	assert(item == NULL);
 
-	// get parameters
-	bool truth = true;
-	BzfString name, value;
-	ConfigReader::Values::const_iterator index = values.find("name");
-	if (index != values.end())
-		name = index->second;
-	index = values.find("value");
-	if (index != values.end()) {
-		truth = false;
-		value = index->second;
-	}
-
 	// create item
-	if (!name.empty()) {
-		item = new ViewItemIf(negate);
-		item->setName(name);
-		if (!truth)
-			item->setValue(value);
-	}
+	item = new ViewItemIf(negate);
+
+	// parse
+	if (!xml->getAttribute("name", xmlSetMethod(item, &ViewItemIf::setName)))
+		throw XMLIOException(xml->position,
+							"view must have a `name' attribute");
+	xml->getAttribute("value", xmlSetMethod(item, &ViewItemIf::setValue));
 
 	return item;
-}
-
-void					ViewItemIfReader::close()
-{
-	assert(item != NULL);
-	item = NULL;
 }

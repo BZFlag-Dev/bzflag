@@ -113,37 +113,42 @@ ViewTagReader* 	ViewItemModelReader::clone() const
 	return new ViewItemModelReader;
 }
 
-View*					ViewItemModelReader::open(
-								const ConfigReader::Values& values)
+View*					ViewItemModelReader::open(XMLTree::iterator xml)
 {
+	// create item
 	assert(item == NULL);
-
 	item = new ViewItemModel;
 
-	ConfigReader::Values::const_iterator index;
-	index = values.find("filename");
-	if (index != values.end()) {
-		istream* stream = FILEMGR->createDataInStream(index->second);
-		if (stream == NULL) {
-			printError("cannot open view model: %s", index->second.c_str());
-		}
-		else {
+	// parse
+	BzfString filename;
+	if (xml->getAttribute("filename", filename)) {
+		istream* stream = FILEMGR->createDataInStream(filename);
+		if (stream == NULL)
+			throw XMLIOException(xml->position,
+							BzfString::format(
+								"cannot open model `%s'", filename.c_str()));
+
+		try {
+			// read XML
+			XMLTree xmlTree;
+			xmlTree.read(*stream, XMLStreamPosition(filename));
+
+			// parse scene
 			SceneReader reader;
-			SceneNode* scene = reader.read(*stream);
+			SceneNode* node = reader.parse(xmlTree.begin());
+			if (node != NULL) {
+				item->setSceneNode(node);
+				node->unref();
+			}
+		}
+		catch (XMLIOException&) {
 			delete stream;
-			item->setSceneNode(scene);
+			throw;
 		}
 	}
-	index = values.find("pixel");
-	if (index != values.end()) {
-		item->setPixelProjection(index->second == "yes");
-	}
+	xml->getAttribute("pixel", xmlParseEnum(s_xmlEnumBool,
+							xmlSetMethod(item,
+								&ViewItemModel::setPixelProjection)));
 
 	return item;
-}
-
-void					ViewItemModelReader::close()
-{
-	assert(item != NULL);
-	item = NULL;
 }

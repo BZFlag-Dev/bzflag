@@ -552,16 +552,9 @@ ViewTagReader* 			ViewItemRadarReader::clone() const
 	return new ViewItemRadarReader;
 }
 
-View*					ViewItemRadarReader::open(
-								const ConfigReader::Values&)
+View*					ViewItemRadarReader::open(XMLTree::iterator)
 {
 	assert(item == NULL);
 	item = new ViewItemRadar;
 	return item;
-}
-
-void					ViewItemRadarReader::close()
-{
-	assert(item != NULL);
-	item = NULL;
 }

@@ -253,6 +253,9 @@ public:
 	void				setScrollSpeed(float linesPerSecond);
 	void				setText(const BzfString&);
 
+	BzfString&			getText();
+	BzfString			getText() const;
+
 	virtual bool		isFocusHidden() const;
 	virtual float		getHeightMultiplier() const;
 	virtual void		init();

@@ -10,26 +10,23 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#include "SceneNode.h"
-#include <assert.h>
+#ifndef BZF_COMMAND_READER_H
+#define BZF_COMMAND_READER_H
 
-//
-// SceneNode
-//
+#include "ConfigFileReader.h"
 
-int						SceneNode::ref()
-{
-	assert(refCount >= 1);
-	return ++refCount;
-}
+class CommandReader : public ConfigFileReader {
+public:
+	CommandReader();
+	~CommandReader();
 
-int						SceneNode::unref()
-{
-	assert(refCount >= 1);
-	int n = --refCount;
-	if (n == 0) {
-		refCount = 0xdeadbeef;
-		delete this;
-	}
-	return n;
-}
+	// ConfigFileReader overrides.  commands are executed, results to
+	// printError().
+	ConfigFileReader*	clone();
+	void				parse(XMLTree::iterator);
+
+private:
+	void				parseCommand(XMLTree::iterator);
+};
+
+#endif

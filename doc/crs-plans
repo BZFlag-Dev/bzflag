@@ -10,11 +10,9 @@ are formats for describing 3D models for display, display layout
 (views), and the menus.  the user's configuration file is a 4th
 format but it's trivial.
 
-each format file uses XML (actually, it's only like XML right now
-but should become proper XML).  new formats should use XML too so
-we can reuse the parser and possibly merge formats later.  the
-client/server protocol will not use XML to keep messages small
-but it will include a means for transferring XML data.
+each format file uses XML and ConfigFileManager reads all registered
+formats.  the client/server protocol will not use XML to keep messages
+small but it will include a means for transferring XML data.
 
 i encourage everyone to play around with models and views.  if
 you've got some cool stuff then share it.  at the very least we'll
@@ -261,10 +259,6 @@ newly wrong things:
   seam in mountains due west
   crashing when loading a model with invalid syntax
   billboard is too specific, make it general purpose
-  not XML:
-    must have space before />
-    all attributes must be in double quotes
-    # is not a comment (use <!-- and -->)
   must prevent buffer overflow in BzfString::vformat!
   team bases are now lighted
 
@@ -286,10 +280,6 @@ dynamic change of views works but:
 OpenGL context stuff only works with one context.  clean it up.
   context should probably be shared if possible
 
-should merge readers?
-  put menu and view in same file
-  maybe models too
-
 views and menus should be able to map font names to files
 
 need a text primitive
@@ -300,13 +290,7 @@ need a text primitive
   that should get everything setup right.  may want text alignment
   options in gstates.
 
-pull robot stuff out of app?
-  put files into a separate place for now
-  put functions into new files in the separate place
-
 switch everything (except model files) to radians?
-
-check teleporter dimensions
 
 ViewItemMessages:
   cache word breaks

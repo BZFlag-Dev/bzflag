@@ -55,8 +55,7 @@ public:
 
 	// ViewTagReader overrides
 	virtual ViewTagReader* clone() const;
-	virtual View*		open(const ConfigReader::Values& values);
-	virtual void		close();
+	virtual View*		open(XMLTree::iterator);
 
 protected:
 	virtual ViewItemViewport* create() const;

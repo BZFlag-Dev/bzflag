@@ -9,9 +9,7 @@
 # THIS PACKAGE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
 # IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
 # WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
-
 -->
-
 
 <billboard id="shot-GM_textured">
   <axis>0 0 0</axis>
@@ -118,8 +116,8 @@
 	</color>
     <gstate>
       <shading model="smooth" />
-      <culling cull="off" />
-      # note -- we depend on shot.bzg having been included
+      <culling cull="false" />
+      <!--  note - we depend on shot.bzg having been included -->
       <ref id="shot_simple" />
     </gstate>
   </geometry>
@@ -127,10 +125,10 @@
     <mask t="renderTexturing">1 2</mask>
     <ref id="shot-GM_simple" />
     <gstate>
-      <texture repeat="off" rgba="on" filename="missile.rgb" />
+      <texture repeat="false" rgba="true" filename="missile.rgb" />
       <blending src="sa" dst="1-sa" />
       <alpha func=">=" ref="0.1" />
-      <culling cull="off" />
+      <culling cull="false" />
       <ref id="shot-GM_textured" />
     </gstate>
   </choice>

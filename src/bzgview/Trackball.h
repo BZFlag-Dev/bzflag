@@ -1,8 +1,7 @@
 #ifndef TRACKBALL_H
 #define TRACKBALL_H
 
-#include <sys/types.h>
-#include <sys/time.h>
+#include "TimeKeeper.h"
 
 class BzfEvent;
 
@@ -18,7 +17,9 @@ public:
 	bool				onEvent(const BzfEvent&, bool& redraw);
 	void				spin();
 
+#if !defined(_MSC_VER) // crs -- work around VC++ 6.0 bug
 private:
+#endif
 	class Quaternion {
 	public:
 		Quaternion();
@@ -40,6 +41,7 @@ private:
 		float			a[4];
 	};
 
+private:
 	float				projectToSphere(float r, float x, float y) const;
 	void				trackball(float p1x, float p1y,
 							float p2x, float p2y, float delta[4]) const;
@@ -47,7 +49,7 @@ private:
 
 private:
 	float				history[20][2];
-	struct timeval		hTime[20];
+	TimeKeeper			hTime[20];
 	unsigned int		pHistory;
 	float				x0, y0, x, y;
 	long				wx, wy, wdx, wdy;
@@ -57,7 +59,7 @@ private:
 	float				delta[4];
 	float				xlate[3];
 	float				xlate0[3];
-	struct timeval		lastMove;
+	TimeKeeper			lastMove;
 };
 
 #endif

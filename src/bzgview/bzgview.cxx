@@ -7,7 +7,6 @@
 #include "BzfWindow.h"
 #include "BzfEvent.h"
 #include "PlatformMediaFactory.h"
-#include "ConfigIO.h"
 #include "TimeKeeper.h"
 #include "StateDatabase.h"
 #include <stdarg.h>
@@ -199,14 +198,29 @@ static bool handleEvent(const BzfEvent& event, bool& redraw)
 
 static SceneNode* readScene(const char* pathname)
 {
-	ifstream stream(pathname);
+	std::ifstream stream(pathname);
 	if (!stream) {
 		fprintf(stderr, "can't read file %s\n", pathname);
 		return NULL;
 	}
 
-	SceneReader reader;
-	return reader.read(stream);
+	try {
+		// read XML
+		XMLTree xmlTree;
+		xmlTree.read(stream, XMLStreamPosition(pathname));
+
+		// parse scene
+		SceneReader reader;
+		return reader.parse(xmlTree.begin());
+	}
+	catch (XMLIOException& e) {
+		fprintf(stderr, "%s (%d,%d): %s",
+						pathname,
+						e.position.line,
+						e.position.column,
+						e.what());
+		return NULL;
+	}
 }
 
 static SceneNode* wrapScene(SceneNode* world)
@@ -260,7 +274,11 @@ void printFatalError(const char* fmt, ...)
 	fprintf(stderr, "%s", buffer);
 }
 
+#if defined(_WIN32)
+int myMain(int argc, char** argv)
+#else
 int main(int argc, char** argv)
+#endif
 {
 	if (argc < 2) {
 		fprintf(stderr, "usage: %s [-d] [-l] <scene-file>\n", argv[0]);
@@ -382,3 +400,14 @@ int main(int argc, char** argv)
 
 	return 0;
 }
+
+#if defined(_WIN32)
+
+#include <stdlib.h>
+
+int WINAPI				WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
+{
+	return myMain(__argc, __argv);
+}
+
+#endif

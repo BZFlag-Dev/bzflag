@@ -9,7 +9,6 @@
 # THIS PACKAGE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
 # IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
 # WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
-
 -->
 
 <geometry>
@@ -817,7 +816,7 @@
      0.19701055 -0.56322998 0.80247045
      0.17973220 -0.12412395 -0.97585326
   </vertex>
-  <primitive type=points>
+  <primitive type="points">
     <index>
         0   1   2   3   4   5   6   7   8   9
        10  11  12  13  14  15  16  17  18  19

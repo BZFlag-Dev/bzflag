@@ -259,6 +259,9 @@ bool					WinDisplay::getEvent(BzfEvent& event) const
 				case WM_RBUTTONDOWN:		event.keyDown.button = BzfKeyEvent::RightMouse; break;
 				default:				return false;
 			}
+			if (GetKeyState(VK_SHIFT)   < 0) event.keyDown.shift |= BzfKeyEvent::ShiftKey;
+			if (GetKeyState(VK_CONTROL) < 0) event.keyDown.shift |= BzfKeyEvent::ControlKey;
+			if (GetKeyState(VK_MENU)    < 0) event.keyDown.shift |= BzfKeyEvent::AltKey;
 			break;
 
 		case WM_LBUTTONUP:
@@ -273,6 +276,9 @@ bool					WinDisplay::getEvent(BzfEvent& event) const
 				case WM_RBUTTONUP:		event.keyUp.button = BzfKeyEvent::RightMouse; break;
 				default:				return false;
 			}
+			if (GetKeyState(VK_SHIFT)   < 0) event.keyDown.shift |= BzfKeyEvent::ShiftKey;
+			if (GetKeyState(VK_CONTROL) < 0) event.keyDown.shift |= BzfKeyEvent::ControlKey;
+			if (GetKeyState(VK_MENU)    < 0) event.keyDown.shift |= BzfKeyEvent::AltKey;
 			break;
 
 		case WM_KEYDOWN:

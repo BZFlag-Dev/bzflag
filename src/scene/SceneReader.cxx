@@ -13,27 +13,42 @@
 #include "SceneReader.h"
 #include "SceneNodes.h"
 #include "OpenGLTexture.h"
-#include "ErrorHandler.h"
+#include <string.h>
 #include <ctype.h>
-#include <stdlib.h>
-
 
 //
 // SceneNodeFieldReader
 //
 
 class SceneNodeFieldReader {
-	public:
-		SceneNodeFieldReader() { }
-		virtual ~SceneNodeFieldReader() { }
+public:
+	SceneNodeFieldReader() { }
+	virtual ~SceneNodeFieldReader() { }
 
-		virtual bool		open(ConfigReader* reader,
-								const BzfString& tag,
-								const ConfigReader::Values& values) = 0;
-		virtual bool		close(ConfigReader* reader) = 0;
-		virtual bool		read(ConfigReader* reader, const BzfString& data) = 0;
-		virtual const char*	getName() const = 0;
+	virtual bool		parse(XMLTree::iterator);
+	virtual const char*	getName() const = 0;
+
+protected:
+	virtual void		parseBegin(XMLTree::iterator) { }
+	virtual void		parseData(XMLTree::iterator, const BzfString&) { }
+	virtual void		parseEnd(XMLTree::iterator) { }
 };
+
+bool					SceneNodeFieldReader::parse(XMLTree::iterator xml)
+{
+	parseBegin(xml);
+	XMLTree::sibling_iterator scan = xml.begin();
+	XMLTree::sibling_iterator end  = xml.end();
+	for (; scan != end; ++scan) {
+		if (scan->type != XMLNode::Data)
+			throw XMLIOException(scan->position,
+								"fields may not have children");
+		parseData(scan, scan->value);
+	}
+	parseEnd(xml);
+	return true;
+}
+
 
 //
 // SceneNodeScalarReader<T>
@@ -41,23 +56,23 @@ class SceneNodeFieldReader {
 
 template <class T>
 class SceneNodeScalarReader : public SceneNodeFieldReader {
-	public:
-		SceneNodeScalarReader(SceneNodeScalarField<T>*);
-		virtual ~SceneNodeScalarReader() { }
+public:
+	SceneNodeScalarReader(SceneNodeScalarField<T>*);
+	virtual ~SceneNodeScalarReader() { }
 
-		virtual bool		open(ConfigReader* reader,
-								const BzfString& tag,
-								const ConfigReader::Values& values);
-		virtual bool		close(ConfigReader* reader);
-		virtual bool		read(ConfigReader* reader, const BzfString& data);
-		virtual const char*	getName() const;
+	virtual const char*	getName() const;
 
-	private:
-		T					parse(const char*, char**) const;
+protected:
+	virtual void		parseBegin(XMLTree::iterator);
+	virtual void		parseData(XMLTree::iterator, const BzfString&);
+	virtual void		parseEnd(XMLTree::iterator);
 
-	private:
-		bool				done;
-		SceneNodeScalarField<T>*	field;
+private:
+	T					parseValue(const char*, char**) const;
+
+private:
+	bool				done;
+	SceneNodeScalarField<T>*	field;
 };
 
 template <class T>
@@ -69,32 +84,14 @@ SceneNodeScalarReader<T>::SceneNodeScalarReader(
 }
 
 template <class T>
-bool					SceneNodeScalarReader<T>::open(ConfigReader*,
-								const BzfString&,
-								const ConfigReader::Values&)
+void					SceneNodeScalarReader<T>::parseBegin(XMLTree::iterator)
 {
 	done = false;
-	return true;
 }
 
 template <class T>
-bool					SceneNodeScalarReader<T>::close(ConfigReader* reader)
-{
-	// make sure we satisfy field constraints
-	if (!done) {
-		printError("%s: expected a value in %s",
-								reader->getPosition().c_str(),
-								field->getName());
-		return false;
-	}
-
-	return true;
-}
-
-template <class T>
-bool					SceneNodeScalarReader<T>::read(
-								ConfigReader* reader,
-								const BzfString& data)
+void					SceneNodeScalarReader<T>::parseData(
+								XMLTree::iterator xml, const BzfString& data)
 {
 	// skip whitespace
 	const char* scan = data.c_str();
@@ -105,33 +102,40 @@ bool					SceneNodeScalarReader<T>::read(
 	while (*scan != '\0') {
 		// parse
 		char* end;
-		T value = parse(scan, &end);
+		T value = parseValue(scan, &end);
 
 		// check for parse errors
-		if (end == scan) {
-			printError("%s: error reading value in %s",
-								reader->getPosition().c_str(),
-								field->getName());
-			return false;
-		}
-		if (done) {
-			printError("%s: more than one value in %s",
-								reader->getPosition().c_str(),
-								field->getName());
-			return false;
-		}
+		if (end == scan)
+			throw XMLIOException(xml->position,
+								BzfString::format(
+									"error reading value in `%s' field",
+									field->getName()));
+		if (done)
+			throw XMLIOException(xml->position,
+								BzfString::format(
+									"more than one value in `%s' field",
+									field->getName()));
 
 		// append index
 		field->set(value);
 		done = true;
 
 		// prep for next token
-		scan  = end;
+		scan = end;
 		while (*scan != '\0' && isspace(*scan))
 			++scan;
 	}
+}
 
-	return true;
+template <class T>
+void					SceneNodeScalarReader<T>::parseEnd(
+								XMLTree::iterator xml)
+{
+	if (!done)
+		throw XMLIOException(xml->position,
+								BzfString::format(
+									"expected a value in `%s' field",
+									field->getName()));
 }
 
 template <class T>
@@ -141,14 +145,14 @@ const char*				SceneNodeScalarReader<T>::getName() const
 }
 
 inline
-unsigned int			SceneNodeScalarReader<unsigned int>::parse(
+unsigned int			SceneNodeScalarReader<unsigned int>::parseValue(
 								const char* src, char** end) const
 {
 	return static_cast<unsigned int>(strtoul(src, end, 10));
 }
 
 inline
-bool					SceneNodeScalarReader<bool>::parse(
+bool					SceneNodeScalarReader<bool>::parseValue(
 								const char* src, char** end) const
 {
 	if (strcmp(src, "true") == 0) {
@@ -168,44 +172,38 @@ bool					SceneNodeScalarReader<bool>::parse(
 }
 
 inline
-float					SceneNodeScalarReader<float>::parse(
+float					SceneNodeScalarReader<float>::parseValue(
 								const char* src, char** end) const
 {
 	return static_cast<float>(strtod(src, end));
 }
 
 inline
-bool					SceneNodeScalarReader<BzfString>::open(
-								ConfigReader*,
-								const BzfString&,
-								const ConfigReader::Values&)
+void					SceneNodeScalarReader<BzfString>::parseBegin(
+								XMLTree::iterator)
 {
 	field->set("");
 	done = false;
-	return true;
 }
 
 inline
-bool					SceneNodeScalarReader<BzfString>::read(
-								ConfigReader*,
-								const BzfString& data)
+void					SceneNodeScalarReader<BzfString>::parseData(
+								XMLTree::iterator, const BzfString& data)
 {
 	// skip leading whitespace
 	const char* scan = data.c_str();
 	while (*scan != '\0' && isspace(*scan))
 		++scan;
 
-	// prepend newline if not empty
+	// prepend space if not empty
 	BzfString buffer = field->get();
 	if (buffer.size() > 0)
-		buffer += "\n";
+		buffer += " ";
 
 	// append data
 	buffer += scan;
 	field->set(buffer);
 	done = true;
-
-	return true;
 }
 
 
@@ -215,24 +213,24 @@ bool					SceneNodeScalarReader<BzfString>::read(
 
 template <class T>
 class SceneNodeVectorReader : public SceneNodeFieldReader {
-	public:
-		SceneNodeVectorReader(SceneNodeVectorField<T>*);
-		virtual ~SceneNodeVectorReader() { }
+public:
+	SceneNodeVectorReader(SceneNodeVectorField<T>*);
+	virtual ~SceneNodeVectorReader() { }
 
-		virtual bool		open(ConfigReader* reader,
-								const BzfString& tag,
-								const ConfigReader::Values& values);
-		virtual bool		close(ConfigReader* reader);
-		virtual bool		read(ConfigReader* reader, const BzfString& data);
-		virtual const char*	getName() const;
+	virtual const char*	getName() const;
 
-	private:
-		T					parse(const char*, char**) const;
+protected:
+	virtual void		parseBegin(XMLTree::iterator);
+	virtual void		parseData(XMLTree::iterator, const BzfString&);
+	virtual void		parseEnd(XMLTree::iterator);
 
-	private:
-		typedef std::vector<T> Buffer;
-		Buffer				buffer;
-		SceneNodeVectorField<T>*	field;
+private:
+	T					parseValue(const char*, char**) const;
+
+private:
+	typedef std::vector<T> Buffer;
+	Buffer				buffer;
+	SceneNodeVectorField<T>*	field;
 };
 
 template <class T>
@@ -245,57 +243,17 @@ SceneNodeVectorReader<T>::SceneNodeVectorReader(
 }
 
 template <class T>
-bool					SceneNodeVectorReader<T>::open(ConfigReader*,
-								const BzfString&,
-								const ConfigReader::Values& values)
+void					SceneNodeVectorReader<T>::parseBegin(
+								XMLTree::iterator xml)
 {
 	buffer.clear();
-
-	ConfigReader::Values::const_iterator index = values.find("t");
-	if (index != values.end())
-		field->setInterpolationParameter(index->second);
-
-	return true;
+	xml->getAttribute("t", xmlSetMethod(field, &SceneNodeVectorField<T>::
+											setInterpolationParameter));
 }
 
 template <class T>
-bool					SceneNodeVectorReader<T>::close(ConfigReader* reader)
-{
-	// make sure we satisfy field constraints
-	if (buffer.size() < field->getMinNum()) {
-		printError("%s: not enough values in %s (got %u, expected %u)",
-								reader->getPosition().c_str(),
-								field->getName(),
-								field->getMinNum(),
-								buffer.size());
-		return false;
-	}
-	if (buffer.size() > field->getMaxNum()) {
-		printError("%s: too many values in %s (got %u, expected %u)",
-								reader->getPosition().c_str(),
-								field->getName(),
-								field->getMaxNum(),
-								buffer.size());
-		return false;
-	}
-	if (buffer.size() % field->getMultNum() != 0) {
-		printError("%s: wrong multiple of values in %s (got %u of %u)",
-								reader->getPosition().c_str(),
-								field->getName(),
-								buffer.size() % field->getMultNum(),
-								field->getMultNum());
-		return false;
-	}
-
-	// swap
-	field->swap(buffer);
-
-	return true;
-}
-
-template <class T>
-bool					SceneNodeVectorReader<T>::read(
-								ConfigReader* reader,
+void					SceneNodeVectorReader<T>::parseData(
+								XMLTree::iterator xml,
 								const BzfString& data)
 {
 	// skip whitespace
@@ -307,15 +265,14 @@ bool					SceneNodeVectorReader<T>::read(
 	while (*scan != '\0') {
 		// parse
 		char* end;
-		T value = parse(scan, &end);
+		T value = parseValue(scan, &end);
 
 		// check for parse errors
-		if (end == scan) {
-			printError("%s: error reading value in %s",
-								reader->getPosition().c_str(),
-								field->getName());
-			return false;
-		}
+		if (end == scan)
+			throw XMLIOException(xml->position,
+								BzfString::format(
+									"error reading value in `%s'",
+									field->getName()));
 
 		// append index
 		buffer.push_back(value);
@@ -325,8 +282,34 @@ bool					SceneNodeVectorReader<T>::read(
 		while (*scan != '\0' && isspace(*scan))
 			++scan;
 	}
+}
 
-	return true;
+template <class T>
+void					SceneNodeVectorReader<T>::parseEnd(
+								XMLTree::iterator xml)
+{
+	// make sure we satisfy field constraints
+	if (buffer.size() < field->getMinNum())
+		throw XMLIOException(xml->position, BzfString::format(
+							"not enough values in `%s' (got %u, expected %u)",
+								field->getName(),
+								field->getMinNum(),
+								buffer.size()));
+	if (buffer.size() > field->getMaxNum())
+		throw XMLIOException(xml->position, BzfString::format(
+							"too many values in `%s' (got %u, expected %u)",
+								field->getName(),
+								field->getMaxNum(),
+								buffer.size()));
+	if (buffer.size() % field->getMultNum() != 0)
+		throw XMLIOException(xml->position, BzfString::format(
+							"wrong multiple of values in `%s' (got %u of %u)",
+								field->getName(),
+								buffer.size() % field->getMultNum(),
+								field->getMultNum()));
+
+	// swap
+	field->swap(buffer);
 }
 
 template <class T>
@@ -336,31 +319,32 @@ const char*				SceneNodeVectorReader<T>::getName() const
 }
 
 inline
-unsigned int			SceneNodeVectorReader<unsigned int>::parse(
+unsigned int			SceneNodeVectorReader<unsigned int>::parseValue(
 								const char* src, char** end) const
 {
 	return static_cast<unsigned int>(strtoul(src, end, 10));
 }
 
 inline
-float					SceneNodeVectorReader<float>::parse(
+float					SceneNodeVectorReader<float>::parseValue(
 								const char* src, char** end) const
 {
 	return static_cast<float>(strtod(src, end));
 }
 
 inline
-bool					SceneNodeVectorReader<BzfString>::read(
-								ConfigReader*,
+void					SceneNodeVectorReader<BzfString>::parseData(
+								XMLTree::iterator,
 								const BzfString& data)
 {
+	// FIXME -- no reasonable way to make multiple string values
+
 	// skip leading whitespace
 	const char* scan = data.c_str();
 	while (*scan != '\0' && isspace(*scan))
 		++scan;
 
 	buffer.push_back(scan);
-	return true;
 }
 
 
@@ -369,21 +353,17 @@ bool					SceneNodeVectorReader<BzfString>::read(
 //
 
 class SceneNodeGStateReader : public SceneNodeFieldReader {
-	public:
-		SceneNodeGStateReader(SceneNodeGState* _node);
-		virtual ~SceneNodeGStateReader();
+public:
+	SceneNodeGStateReader(SceneNodeGState* _node);
+	virtual ~SceneNodeGStateReader();
 
-		virtual bool		open(ConfigReader* reader,
-								const BzfString& tag,
-								const ConfigReader::Values& values);
-		virtual bool		close(ConfigReader* reader);
-		virtual bool		read(ConfigReader* reader, const BzfString& data);
-		virtual const char*	getName() const;
+	virtual bool		parse(XMLTree::iterator);
+	virtual const char*	getName() const;
 
-	private:
-		SceneNodeGState*	node;
-		OpenGLGStateBuilder	builder;
-		BzfString			active;
+private:
+	SceneNodeGState*	node;
+	OpenGLGStateBuilder	builder;
+	BzfString			active;
 };
 
 SceneNodeGStateReader::SceneNodeGStateReader(SceneNodeGState* _node) :
@@ -398,53 +378,80 @@ SceneNodeGStateReader::~SceneNodeGStateReader()
 	node->set(builder.getState());
 }
 
-bool					SceneNodeGStateReader::open(
-								ConfigReader*,
-								const BzfString& tag,
-								const ConfigReader::Values& values)
+bool					SceneNodeGStateReader::parse(XMLTree::iterator xml)
 {
-	SceneReader::Values::const_iterator index;
-	if (tag == "texture") {
+	static const XMLParseEnumList<GState::BlendFactor> s_enumBlendSrc[] = {
+		{ "0",    GState::kZero },
+		{ "1",    GState::kOne },
+		{ "sa",   GState::kSrcAlpha },
+		{ "1-sa", GState::kOneMinusSrcAlpha },
+		{ "da",   GState::kDstAlpha },
+		{ "1-da", GState::kOneMinusDstAlpha },
+		{ "dc",   GState::kDstColor },
+		{ "1-dc", GState::kOneMinusDstColor },
+		{ NULL, GState::kZero }
+	};
+	static const XMLParseEnumList<GState::BlendFactor> s_enumBlendDst[] = {
+		{ "0",    GState::kZero },
+		{ "1",    GState::kOne },
+		{ "sa",   GState::kSrcAlpha },
+		{ "1-sa", GState::kOneMinusSrcAlpha },
+		{ "da",   GState::kDstAlpha },
+		{ "1-da", GState::kOneMinusDstAlpha },
+		{ "sc",   GState::kSrcColor },
+		{ "1-sc", GState::kOneMinusSrcColor },
+		{ NULL, GState::kZero }
+	};
+	static const XMLParseEnumList<OpenGLTexture::Filter> s_enumFilter[] = {
+		{ "nearest",              OpenGLTexture::Nearest },
+		{ "linear",               OpenGLTexture::Linear },
+		{ "nearestmipmapnearest", OpenGLTexture::NearestMipmapNearest },
+		{ "linearmipmapnearest",  OpenGLTexture::LinearMipmapNearest },
+		{ "nearestmipmaplinear",  OpenGLTexture::NearestMipmapLinear },
+		{ "linearmipmaplinear",   OpenGLTexture::LinearMipmapLinear },
+		{ NULL, OpenGLTexture::Nearest }
+	};
+	static const XMLParseEnumList<GState::TexEnv> s_enumTexEnvMode[] = {
+		{ "modulate", GState::kModulate },
+		{ "decal",    GState::kDecal },
+		{ "replace",  GState::kReplace },
+		{ NULL, GState::kModulate }
+	};
+	static const XMLParseEnumList<GState::Shading> s_enumShadingModel[] = {
+		{ "flat",   GState::kConstant },
+		{ "smooth", GState::kLinear },
+		{ NULL, GState::kConstant }
+	};
+	static const XMLParseEnumList<GState::Func> s_enumFunction[] = {
+		{ "0",  GState::kNever },
+		{ "1",  GState::kAlways },
+		{ "==", GState::kEqual },
+		{ "!=", GState::kNotEqual },
+		{ "<",  GState::kLess },
+		{ "<=", GState::kLEqual },
+		{ ">",  GState::kGreater },
+		{ ">=", GState::kGEqual },
+		{ NULL, GState::kNever }
+	};
+
+	if (xml->value == "texture") {
 		bool repeat = true;
 		bool forceRGBA = false;
+		OpenGLTexture::Filter filter = OpenGLTexture::Max;
 
 		// get texture parameters
-		index = values.find("repeat");
-		if (index != values.end())
-			repeat = (index->second != "off");
-		index = values.find("rgba");
-		if (index != values.end())
-			forceRGBA = (index->second != "off");
-		index = values.find("force");
-		if (index != values.end())
-			builder.setForceTexture(index->second != "off");
+		xml->getAttribute("repeat", xmlParseEnum(s_xmlEnumBool, xmlSetVar(repeat)));
+		xml->getAttribute("rgba", xmlParseEnum(s_xmlEnumBool, xmlSetVar(forceRGBA)));
+		xml->getAttribute("force", xmlParseEnum(s_xmlEnumBool, xmlSetMethod(&builder,
+								&OpenGLGStateBuilder::setForceTexture)));
+		xml->getAttribute("filter", xmlParseEnum(s_enumFilter, xmlSetVar(filter)));
 
 		// get file name and verify that it's there
-		index = values.find("filename");
-		if (index == values.end()) {
+		BzfString filename;
+		if (!xml->getAttribute("filename", filename)) {
 			builder.setTexture(OpenGLTexture());
 		}
 		else {
-			const BzfString filename(index->second);
-
-			// get the filter
-			OpenGLTexture::Filter filter = OpenGLTexture::Max;
-			index = values.find("filter");
-			if (index != values.end()) {
-				if (index->second == "nearest")
-					filter = OpenGLTexture::Nearest;
-				else if (index->second == "linear")
-					filter = OpenGLTexture::Linear;
-				else if (index->second == "nearestmipmapnearest")
-					filter = OpenGLTexture::NearestMipmapNearest;
-				else if (index->second == "linearmipmapnearest")
-					filter = OpenGLTexture::LinearMipmapNearest;
-				else if (index->second == "nearestmipmaplinear")
-					filter = OpenGLTexture::NearestMipmapLinear;
-				else if (index->second == "linearmipmaplinear")
-					filter = OpenGLTexture::LinearMipmapLinear;
-			}
-
 			// load the texture
 			int w, h;
 			builder.setTexture(OpenGLTexture(filename, &w, &h,
@@ -454,224 +461,99 @@ bool					SceneNodeGStateReader::open(
 		}
 	}
 
-	else if (tag == "texenv") {
-		index = values.find("mode");
-		if (index != values.end()) {
-			if (index->second == "modulate")
-				builder.setTexEnv(GState::kModulate);
-			else if (index->second == "decal")
-				builder.setTexEnv(GState::kDecal);
-			else if (index->second == "replace")
-				builder.setTexEnv(GState::kReplace);
-		}
+	else if (xml->value == "texenv") {
+		xml->getAttribute("mode", xmlParseEnum(s_enumTexEnvMode,
+							xmlSetMethod(&builder,
+								&OpenGLGStateBuilder::setTexEnv)));
 	}
 
-	else if (tag == "shading") {
-		index = values.find("model");
-		if (index != values.end()) {
-			if (index->second == "flat")
-				builder.setShading(GState::kConstant);
-			else if (index->second == "smooth")
-				builder.setShading(GState::kLinear);
-		}
+	else if (xml->value == "shading") {
+		xml->getAttribute("model", xmlParseEnum(s_enumShadingModel,
+							xmlSetMethod(&builder,
+								&OpenGLGStateBuilder::setShading)));
 	}
 
-	else if (tag == "blending") {
+	else if (xml->value == "blending") {
 		GState::BlendFactor src = GState::kOne;
 		GState::BlendFactor dst = GState::kZero;
-		index = values.find("src");
-		if (index != values.end()) {
-			if (index->second == "0")
-				src = GState::kZero;
-			else if (index->second == "1")
-				src = GState::kOne;
-			else if (index->second == "sa")
-				src = GState::kSrcAlpha;
-			else if (index->second == "1-sa")
-				src = GState::kOneMinusSrcAlpha;
-			else if (index->second == "da")
-				src = GState::kDstAlpha;
-			else if (index->second == "1-da")
-				src = GState::kOneMinusDstAlpha;
-			else if (index->second == "dc")
-				src = GState::kDstColor;
-			else if (index->second == "1-dc")
-				src = GState::kOneMinusDstColor;
-		}
-		index = values.find("dst");
-		if (index != values.end()) {
-			if (index->second == "0")
-				dst = GState::kZero;
-			else if (index->second == "1")
-				dst = GState::kOne;
-			else if (index->second == "sa")
-				dst = GState::kSrcAlpha;
-			else if (index->second == "1-sa")
-				dst = GState::kOneMinusSrcAlpha;
-			else if (index->second == "da")
-				dst = GState::kDstAlpha;
-			else if (index->second == "1-da")
-				dst = GState::kOneMinusDstAlpha;
-			else if (index->second == "sc")
-				dst = GState::kSrcColor;
-			else if (index->second == "1-sc")
-				dst = GState::kOneMinusSrcColor;
-		}
+		xml->getAttribute("src", xmlParseEnum(s_enumBlendSrc, xmlSetVar(src)));
+		xml->getAttribute("dst", xmlParseEnum(s_enumBlendDst, xmlSetVar(dst)));
 		builder.setBlending(src, dst);
-		index = values.find("force");
-		if (index != values.end())
-			builder.setForceBlending(index->second != "off");
+		xml->getAttribute("force", xmlParseEnum(s_xmlEnumBool,
+							xmlSetMethod(&builder,
+								&OpenGLGStateBuilder::setForceBlending)));
 	}
 
-	else if (tag == "smoothing") {
-		index = values.find("smooth");
-		if (index != values.end()) {
-			if (index->second == "on")
-				builder.setSmoothing(true);
-			else if (index->second == "off")
-				builder.setSmoothing(false);
-		}
-		index = values.find("force");
-		if (index != values.end())
-			builder.setForceSmoothing(index->second != "off");
+	else if (xml->value == "smoothing") {
+		xml->getAttribute("smooth", xmlParseEnum(s_xmlEnumBool,
+							xmlSetMethod(&builder,
+								&OpenGLGStateBuilder::setSmoothing)));
+		xml->getAttribute("force", xmlParseEnum(s_xmlEnumBool,
+							xmlSetMethod(&builder,
+								&OpenGLGStateBuilder::setForceSmoothing)));
 	}
 
-	else if (tag == "culling") {
-		index = values.find("cull");
-		if (index != values.end()) {
-			if (index->second == "on")
-				builder.setCulling(true);
-			else if (index->second == "off")
-				builder.setCulling(false);
-		}
+	else if (xml->value == "culling") {
+		xml->getAttribute("cull", xmlParseEnum(s_xmlEnumBool,
+							xmlSetMethod(&builder,
+								&OpenGLGStateBuilder::setCulling)));
 	}
 
-	else if (tag == "dithering") {
-		index = values.find("dither");
-		if (index != values.end()) {
-			if (index->second == "on")
-				builder.setDithering(true);
-			else if (index->second == "off")
-				builder.setDithering(false);
-		}
+	else if (xml->value == "dithering") {
+		xml->getAttribute("dither", xmlParseEnum(s_xmlEnumBool,
+							xmlSetMethod(&builder,
+								&OpenGLGStateBuilder::setDithering)));
 	}
 
-	else if (tag == "alpha") {
+	else if (xml->value == "alpha") {
 		GState::Func func = GState::kAlways;
 		float ref = 0.0f;
-		index = values.find("func");
-		if (index != values.end()) {
-			if (index->second == "0")
-				func = GState::kNever;
-			else if (index->second == "1")
-				func = GState::kAlways;
-			else if (index->second == "==")
-				func = GState::kEqual;
-			else if (index->second == "!=")
-				func = GState::kNotEqual;
-			else if (index->second == "<")
-				func = GState::kLess;
-			else if (index->second == "<=")
-				func = GState::kLEqual;
-			else if (index->second == ">")
-				func = GState::kGreater;
-			else if (index->second == ">=")
-				func = GState::kGEqual;
-		}
-		index = values.find("ref");
-		if (index != values.end()) {
-			ref = static_cast<float>(atof(index->second.c_str()));
-			if (ref < 0.0f)
-				ref = 0.0f;
-			else if (ref > 1.0f)
-				ref = 1.0f;
-		}
+		xml->getAttribute("func", xmlParseEnum(s_enumFunction, xmlSetVar(func)));
+		xml->getAttribute("ref", xmlStrToFloat(
+							xmlCompose(
+								xmlCompose(xmlSetVar(ref), xmlMax(0.0f)),
+								xmlMin(1.0f))));
 		builder.setAlphaFunc(func, ref);
 	}
 
-	else if (tag == "depth") {
-		GState::Func func = GState::kLess;
-		bool write = true;
-		index = values.find("func");
-		if (index != values.end()) {
-			if (index->second == "0")
-				func = GState::kNever;
-			else if (index->second == "1")
-				func = GState::kAlways;
-			else if (index->second == "==")
-				func = GState::kEqual;
-			else if (index->second == "!=")
-				func = GState::kNotEqual;
-			else if (index->second == "<")
-				func = GState::kLess;
-			else if (index->second == "<=")
-				func = GState::kLEqual;
-			else if (index->second == ">")
-				func = GState::kGreater;
-			else if (index->second == ">=")
-				func = GState::kGEqual;
-		}
-		index = values.find("write");
-		if (index != values.end()) {
-			if (index->second == "on")
-				write = true;
-			else if (index->second == "off")
-				write = false;
-		}
-		builder.setDepthFunc(func);
-		builder.setDepthMask(write);
+	else if (xml->value == "depth") {
+		xml->getAttribute("func", xmlParseEnum(s_enumFunction,
+							xmlSetMethod(&builder,
+								&OpenGLGStateBuilder::setDepthFunc)));
+		xml->getAttribute("write", xmlParseEnum(s_xmlEnumBool,
+							xmlSetMethod(&builder,
+								&OpenGLGStateBuilder::setDepthMask)));
 	}
 
-	else if (tag == "point") {
+	else if (xml->value == "point") {
 		float size = 1.0f;
-		index = values.find("size");
-		if (index != values.end()) {
-			size = (float)atof(index->second.c_str());
-			if (size <= 0.0f)
-				size = 1.0f;
-		}
+		xml->getAttribute("size", xmlStrToFloat(xmlSetVar(size)));
+		if (size <= 0.0f)
+			size = 1.0f;
 		builder.setPointSize(size);
 	}
 
-	else if (tag == "stipple") {
-		bool mask = false;
-		index = values.find("mask");
-		if (index != values.end()) {
-			if (index->second == "on")
-				mask = true;
-			else if (index->second == "off")
-				mask = false;
-		}
-		builder.setStipple(mask);
+	else if (xml->value == "stipple") {
+		xml->getAttribute("mask", xmlParseEnum(s_xmlEnumBool,
+							xmlSetMethod(&builder,
+								&OpenGLGStateBuilder::setStipple)));
 	}
 
-	else if (tag == "pass") {
-		int n = 0;
-		index = values.find("number");
-		if (index != values.end()) {
-			n = atoi(index->second.c_str());
-		}
-		builder.setPass(n);
+	else if (xml->value == "pass") {
+		xml->getAttribute("number", xmlStrToInt(xmlSetMethod(&builder,
+								&OpenGLGStateBuilder::setPass)));
 	}
 
 	else {
 		return false;
 	}
 
-	active = tag;
-	return true;
-}
+	// gstate fields must be empty
+	if (xml.begin() != xml.end())
+		throw XMLIOException(xml->position, BzfString::format(
+								"field `%s' must be empty",
+								xml->value.c_str()));
 
-bool					SceneNodeGStateReader::close(ConfigReader*)
-{
-	return true;
-}
-
-bool					SceneNodeGStateReader::read(
-								ConfigReader*,
-								const BzfString&)
-{
-	// ignore data
 	return true;
 }
 
@@ -686,26 +568,22 @@ const char*				SceneNodeGStateReader::getName() const
 //
 
 class SceneNodeGeometryReader : public SceneNodeFieldReader {
-	public:
-		SceneNodeGeometryReader(SceneNodeGeometry* _node,
-								SceneNodeGeometry::Property _property);
-		virtual ~SceneNodeGeometryReader();
+public:
+	SceneNodeGeometryReader(SceneNodeGeometry* _node,
+							SceneNodeGeometry::Property _property);
+	virtual ~SceneNodeGeometryReader();
 
-		virtual bool		open(ConfigReader* reader,
-								const BzfString& tag,
-								const ConfigReader::Values& values);
-		virtual bool		close(ConfigReader* reader);
-		virtual bool		read(ConfigReader* reader, const BzfString& data);
-		virtual const char*	getName() const;
+	virtual bool		parse(XMLTree::iterator);
+	virtual const char*	getName() const;
 
-	private:
-		SceneNodeVFFloat*	getField() const;
+private:
+	SceneNodeVFFloat*	getField() const;
 
-	private:
-		SceneNodeGeometry*	node;
-		SceneNodeGeometry::Property	property;
-		SceneNodeFieldReader*	fieldReader;
-		unsigned int		count;
+private:
+	SceneNodeGeometry*	node;
+	SceneNodeGeometry::Property	property;
+	SceneNodeFieldReader*	fieldReader;
+	unsigned int		count;
 };
 
 SceneNodeGeometryReader::SceneNodeGeometryReader(
@@ -724,10 +602,8 @@ SceneNodeGeometryReader::~SceneNodeGeometryReader()
 	assert(fieldReader == NULL);
 }
 
-bool					SceneNodeGeometryReader::open(
-								ConfigReader* reader,
-								const BzfString& tag,
-								const ConfigReader::Values& values)
+bool					SceneNodeGeometryReader::parse(
+								XMLTree::iterator xml)
 {
 	// increment bundle count
 	++count;
@@ -755,95 +631,51 @@ bool					SceneNodeGeometryReader::open(
 	}
 
 	// see if there's a reference
-	ConfigReader::Values::const_iterator index = values.find("ref");
-	if (index != values.end()) {
-		// get ref index
-		const char* start = index->second.c_str();
-		char* end;
-		unsigned int refIndex = static_cast<unsigned int>(
-								strtoul(start, &end, 10));
-		if (end != start + index->second.size()) {
-			printError("%s: error reading value in ref",
-								reader->getPosition().c_str());
-			return false;
-		}
-		if (refIndex >= count) {
-			printError("%s: ignoring forward reference",
-								reader->getPosition().c_str());
-			return false;
-		}
+	unsigned int refIndex;
+	if (xml->getAttribute("ref", xmlStrToInt(xmlSetVar(refIndex)))) {
+		// field must be empty
+		if (xml.begin() != xml.end())
+			throw XMLIOException(xml->position, "`ref' must be empty");
+		if (refIndex >= count)
+			throw XMLIOException(xml->position,
+								"forward reference not allowed in `ref' field");
 		node->refBundle(property, refIndex);
 	}
 
 	else {
 		// create vector field reader
 		node->refBundle(property, count - 1);
-		fieldReader = new SceneNodeVectorReader<float>(getField());
-		if (!fieldReader->open(reader, tag, values)) {
-			delete fieldReader;
-			fieldReader = NULL;
-			return false;
+		SceneNodeVFFloat* field = getField();
+		SceneNodeVectorReader<float> fieldReader(field);
+		fieldReader.parse(xml);
+
+		// if values weren't read then reference the previous bundle
+		const unsigned int numItems = field->getNum();
+		if (numItems == 0) {
+			// first bundle must have data
+			if (count == 1)
+				throw XMLIOException(xml->position, BzfString::format(
+								"missing data in `%s' field",
+								field->getName()));
+
+			// refer to previous bundle's field
+			node->refBundle(property, count - 2);
+		}
+
+		// make sure there are exactly the right number of items for
+		// any bundle but the first
+		if (count > 1) {
+			node->setBundle(0);
+			const unsigned int numItemsInFirst = getField()->getNum();
+			if (numItems != numItemsInFirst)
+				throw XMLIOException(xml->position, BzfString::format(
+								"item count mismatch between bundles "
+									"(got %u, expected %u)",
+									numItems, numItemsInFirst));
 		}
 	}
 
 	return true;
-}
-
-bool					SceneNodeGeometryReader::close(ConfigReader* reader)
-{
-	// if not reading a field (which should be because of a reference)
-	// then do nothing
-	if (fieldReader == NULL)
-		return true;
-
-	// close field reader
-	const bool result = fieldReader->close(reader);
-
-	// clean up
-	delete fieldReader;
-	fieldReader = NULL;
-
-	if (!result)
-		return false;
-
-	// if values weren't read then reference the previous bundle
-	const unsigned int numItems = getField()->getNum();
-	if (numItems == 0) {
-		// check for errors
-		if (count == 1) {
-			printError("%s: missing data", reader->getPosition().c_str());
-			return false;
-		}
-
-		// refer to previous bundle's field
-		node->refBundle(property, count - 2);
-	}
-
-	// make sure there are exactly the right number of items for
-	// any bundle but the first
-	if (count > 1) {
-		node->setBundle(0);
-		const unsigned int numItemsInFirst = getField()->getNum();
-		if (numItems != numItemsInFirst) {
-			printError("%s: item count mismatch between bundles "
-								"(got %u, expected %u)",
-								reader->getPosition().c_str(),
-								numItems, numItemsInFirst);
-			return false;
-		}
-	}
-
-	return true;
-}
-
-bool					SceneNodeGeometryReader::read(
-								ConfigReader* reader,
-								const BzfString& data)
-{
-	if (fieldReader == NULL)
-		return true;
-	else
-		return fieldReader->read(reader, data);
 }
 
 const char*				SceneNodeGeometryReader::getName() const
@@ -893,54 +725,78 @@ SceneReader::~SceneReader()
 	// do nothing
 }
 
-SceneNode*				SceneReader::read(istream& s)
+SceneNode*				SceneReader::parse(XMLTree::iterator xml)
 {
 	// set initial state
-	if (node != NULL) {
-		node->unref();
-		node = NULL;
+	node = NULL;
+	assert(stack.empty());
+
+	try {
+		// parse (skip dummy top-level node)
+		XMLTree::sibling_iterator scan = xml.begin();
+		XMLTree::sibling_iterator end  = xml.end();
+		for (; scan != end; ++scan)
+			parseNode(scan);
+
+		// stack should be empty
+		assert(stack.empty());
+
+		// done with named nodes
+		namedNodes.clear();
+
+		// return top-level node
+		return node;
 	}
-
-	// prep config reader
-	ConfigReader reader;
-	reader.push(&openCB, &closeCB, NULL);
-
-	// read stream
-	assert(stack.size() == 0);
-	configReader = &reader;
-	const bool result = reader.read(s, this);
-	configReader = NULL;
-
-	// clean up
-	stack.clear();
-	if (!result && node != NULL) {
-		node->unref();
+	catch (...) {
+		// clean up
 		node = NULL;
+		namedNodes.clear();
+		while (!stack.empty())
+			pop();
+		throw;
 	}
-	namedNodes.clear();
-
-	return node;
 }
 
-BzfString				SceneReader::getPosition() const
+void					SceneReader::parseNode(XMLTree::iterator xml)
 {
-	return configReader->getPosition();
-}
+	// data is unexpected
+	if (xml->type != XMLNode::Tag)
+		throw XMLIOException(xml->position,
+							"unexpected data outside field");
 
-bool					SceneReader::open(ConfigReader* reader,
-								const BzfString& tag,
-								const ConfigReader::Values& values)
-{
-	if (tag == "group") {
-		return push(reader, values, new SceneNodeGroup);
+	// check if tag opens a field
+	if (!stack.empty()) {
+		State& state = stack.back();
+
+		// see if we've got a field reader for the tag.  if not then
+		// try a catch-all reader.
+		bool isGeneric = false;
+		FieldReaders::iterator index = state.fieldReaders.find(xml->value);
+		if (index == state.fieldReaders.end()) {
+			index = state.fieldReaders.find("");
+			if (index != state.fieldReaders.end())
+				isGeneric = true;
+		}
+
+		// if we found a reader then let it parse.  if we're using
+		// the catch-all reader (i.e. isGeneric) and it fails then
+		// fall through to opening as a node.
+		if (index != state.fieldReaders.end()) {
+			SceneNodeFieldReader* fieldReader = index->second;
+			if (fieldReader->parse(xml))
+				return;
+			assert(isGeneric);
+		}
 	}
 
-	else if (tag == "transform") {
+	if (xml->value == "group") {
+		push(xml, new SceneNodeGroup);
+	}
+
+	else if (xml->value == "transform") {
 		SceneNodeTransform* node = new SceneNodeTransform;
-		if (!push(reader, values, node))
-			return false;
-
-		readEnum(reader, values, node->type);
+		push(xml, node);
+		readEnum(xml, node->type);
 		addReader(new SceneNodeScalarReader<unsigned int>(&node->up));
 		addReader(new SceneNodeVectorReader<float>(&node->center));
 		addReader(new SceneNodeVectorReader<float>(&node->rotate));
@@ -949,22 +805,18 @@ bool					SceneReader::open(ConfigReader* reader,
 		addReader(new SceneNodeVectorReader<float>(&node->translate));
 	}
 
-	else if (tag == "matrix") {
+	else if (xml->value == "matrix") {
 		SceneNodeMatrixTransform* node = new SceneNodeMatrixTransform;
-		if (!push(reader, values, node))
-			return false;
-
-		readEnum(reader, values, node->type);
+		push(xml, node);
+		readEnum(xml, node->type);
 		addReader(new SceneNodeScalarReader<unsigned int>(&node->up));
 		addReader(new SceneNodeVectorReader<float>(&node->matrix));
 	}
 
-	else if (tag == "spherical") {
+	else if (xml->value == "spherical") {
 		SceneNodeSphereTransform* node = new SceneNodeSphereTransform;
-		if (!push(reader, values, node))
-			return false;
-
-		readEnum(reader, values, node->type);
+		push(xml, node);
+		readEnum(xml, node->type);
 		addReader(new SceneNodeScalarReader<unsigned int>(&node->up));
 		addReader(new SceneNodeVectorReader<float>(&node->azimuth));
 		addReader(new SceneNodeVectorReader<float>(&node->altitude));
@@ -973,32 +825,26 @@ bool					SceneReader::open(ConfigReader* reader,
 		addReader(new SceneNodeVectorReader<float>(&node->translate));
 	}
 
-	else if (tag == "billboard") {
+	else if (xml->value == "billboard") {
 		SceneNodeBillboard* node = new SceneNodeBillboard;
-		if (!push(reader, values, node))
-			return false;
-
-		readEnum(reader, values, node->type);
+		push(xml, node);
+		readEnum(xml, node->type);
 		addReader(new SceneNodeScalarReader<unsigned int>(&node->up));
 		addReader(new SceneNodeVectorReader<float>(&node->axis));
 		addReader(new SceneNodeScalarReader<bool>(&node->turn));
 		addReader(new SceneNodeScalarReader<bool>(&node->center));
 	}
 
-	else if (tag == "primitive") {
+	else if (xml->value == "primitive") {
 		SceneNodePrimitive* node = new SceneNodePrimitive;
-		if (!push(reader, values, node))
-			return false;
-
-		readEnum(reader, values, node->type);
+		push(xml, node);
+		readEnum(xml, node->type);
 		addReader(new SceneNodeVectorReader<unsigned int>(&node->index));
 	}
 
-	else if (tag == "geometry") {
+	else if (xml->value == "geometry") {
 		SceneNodeGeometry* node = new SceneNodeGeometry;
-		if (!push(reader, values, node))
-			return false;
-
+		push(xml, node);
 		addReader(new SceneNodeGeometryReader(node, SceneNodeGeometry::Stipple));
 		addReader(new SceneNodeGeometryReader(node, SceneNodeGeometry::Color));
 		addReader(new SceneNodeGeometryReader(node, SceneNodeGeometry::TexCoord));
@@ -1006,20 +852,16 @@ bool					SceneReader::open(ConfigReader* reader,
 		addReader(new SceneNodeGeometryReader(node, SceneNodeGeometry::Vertex));
 	}
 
-	else if (tag == "gstate") {
+	else if (xml->value == "gstate") {
 		SceneNodeGState* node = new SceneNodeGState;
-		if (!push(reader, values, node))
-			return false;
-
+		push(xml, node);
 		addReader(new SceneNodeGStateReader(node));
 	}
 
-	else if (tag == "animate") {
+	else if (xml->value == "animate") {
 		SceneNodeAnimate* node = new SceneNodeAnimate;
-		if (!push(reader, values, node))
-			return false;
-
-		readEnum(reader, values, node->type);
+		push(xml, node);
+		readEnum(xml, node->type);
 		addReader(new SceneNodeScalarReader<BzfString>(&node->src));
 		addReader(new SceneNodeScalarReader<BzfString>(&node->dst));
 		addReader(new SceneNodeScalarReader<float>(&node->start));
@@ -1030,40 +872,32 @@ bool					SceneReader::open(ConfigReader* reader,
 		addReader(new SceneNodeScalarReader<float>(&node->cycles));
 	}
 
-	else if (tag == "parameters") {
+	else if (xml->value == "parameters") {
 		SceneNodeParameters* node = new SceneNodeParameters;
-		if (!push(reader, values, node))
-			return false;
-
+		push(xml, node);
 		addReader(new SceneNodeVectorReader<BzfString>(&node->src));
 		addReader(new SceneNodeVectorReader<BzfString>(&node->dst));
 		addReader(new SceneNodeVectorReader<float>(&node->scale));
 		addReader(new SceneNodeVectorReader<float>(&node->bias));
 	}
 
-	else if (tag == "choice") {
+	else if (xml->value == "choice") {
 		SceneNodeChoice* node = new SceneNodeChoice;
-		if (!push(reader, values, node))
-			return false;
-
+		push(xml, node);
 		addReader(new SceneNodeVectorReader<unsigned int>(&node->mask));
 	}
 
-	else if (tag == "lod") {
+	else if (xml->value == "lod") {
 		SceneNodeLOD* node = new SceneNodeLOD;
-		if (!push(reader, values, node))
-			return false;
-
-		readEnum(reader, values, node->type);
+		push(xml, node);
+		readEnum(xml, node->type);
 		addReader(new SceneNodeVectorReader<float>(&node->sphere));
 		addReader(new SceneNodeVectorReader<float>(&node->range));
 	}
 
-	else if (tag == "light") {
+	else if (xml->value == "light") {
 		SceneNodeLight* node = new SceneNodeLight;
-		if (!push(reader, values, node))
-			return false;
-
+		push(xml, node);
 		addReader(new SceneNodeVectorReader<float>(&node->ambient));
 		addReader(new SceneNodeVectorReader<float>(&node->diffuse));
 		addReader(new SceneNodeVectorReader<float>(&node->specular));
@@ -1074,227 +908,99 @@ bool					SceneReader::open(ConfigReader* reader,
 		addReader(new SceneNodeVectorReader<float>(&node->attenuation));
 	}
 
-	else if (tag == "metadata") {
+	else if (xml->value == "metadata") {
 		SceneNodeMetadata* node = new SceneNodeMetadata;
-		if (!push(reader, values, node))
-			return false;
-
+		push(xml, node);
 		addReader(new SceneNodeScalarReader<BzfString>(&node->data));
 	}
 
 	// see if it's a reference
-	else if (tag == "ref") {
+	else if (xml->value == "ref") {
+		// ref node must be empty
+		if (xml.begin() != xml.end())
+			throw XMLIOException(xml->position,
+								"`ref' must be empty");
+
 		// get id
-		ConfigReader::Values::const_iterator index = values.find("id");
-		if (index == values.end()) {
-			printError("%s: missing id in ref",
-								reader->getPosition().c_str());
-			return false;
-		}
+		BzfString id;
+		if (!xml->getAttribute("id", id))
+			throw XMLIOException(xml->position,
+								"`ref' must have an `id' attribute");
 
 		// find the named node
-		SceneNode* refNode = NULL;
-		NodeMap::iterator nameIndex = namedNodes.find(index->second);
-		if (nameIndex != namedNodes.end()) {
-			refNode = nameIndex->second;
-		}
-
-		// error if node not found
-		if (refNode == NULL) {
-			printError("%s: cannot find ref'd node %s",
-								reader->getPosition().c_str(),
-								index->second.c_str());
-			return false;
-		}
-
-		// couldn't have found node if we haven't read any nodes yet
-		assert(node != NULL);
+		NodeMap::const_iterator index = namedNodes.find(id);
+		if (index == namedNodes.end())
+			throw XMLIOException(xml->position, BzfString::format(
+								"unknown node `%s'", id.c_str()));
+		SceneNode* refNode = index->second;
 
 		// check for multiple top level nodes
-		if (stack.empty()) {
-			printError("%s: multiple top level nodes found",
-								reader->getPosition().c_str());
-			return false;
-		}
+		if (stack.empty())
+			throw XMLIOException(xml->position,
+								"only one top-level node allowed");
 
 		// check for child of a leaf
-		if (stack.back().group == NULL) {
-			printError("%s: child of a leaf node found",
-								reader->getPosition().c_str());
-			return false;
-		}
+		if (stack.back().group == NULL)
+			throw XMLIOException(xml->position,
+								"leaf node cannot have children");
 
 		// add node as child of current group
 		stack.back().group->pushChild(refNode);
-
-		// ignore everything inside the ref
-		reader->push(NULL, NULL, NULL);
-
-		return true;
+		return;
 	}
 
 	else {
 		// unrecognized
-		printError("%s: ignoring invalid tag: %s",
-								reader->getPosition().c_str(),
-								tag.c_str());
-		return false;
+		throw XMLIOException(xml->position,
+							BzfString::format(
+								"unrecognized node `%s'",
+								xml->value.c_str()));
 	}
 
-	return true;
+	// descend
+	XMLTree::sibling_iterator scan = xml.begin();
+	XMLTree::sibling_iterator end  = xml.end();
+	for (; scan != end; ++scan)
+		parseNode(scan);
+
+	// clean up
+	pop();
 }
 
-bool					SceneReader::close(
-								ConfigReader* reader,
-								const BzfString& tag)
-{
-	if (tag == "ref") {
-		// closing a ref
-		return true;
-	}
-
-	else {
-		// closing a node
-		return pop(reader);
-	}
-}
-
-bool					SceneReader::openField(
-								ConfigReader* reader,
-								const BzfString& tag,
-								const ConfigReader::Values& values)
-{
-	assert(!stack.empty());
-
-	State& state = stack.back();
-
-	// we should not get nested parameters
-	if (state.activeField != NULL) {
-		printError("%s: nested parameter %s not allowed",
-								reader->getPosition().c_str(),
-								tag.c_str());
-		return false;
-	}
-
-	// see if we've got a parameter reader for the tag.  if not then
-	// try a catch-all reader.  if not that then try it as a regular node.
-	bool isGeneric = false;
-	FieldReaders::iterator index = state.fieldReaders.find(tag);
-	if (index == state.fieldReaders.end()) {
-		index = state.fieldReaders.find("");
-		if (index == state.fieldReaders.end())
-			return open(reader, tag, values);
-		isGeneric = true;
-	}
-
-	// found it.  let it do its thing.  if we're using the catch-all
-	// reader (i.e. isGeneric) and it fails to open then assume the
-	// tag wasn't recognized and try opening as a regular node.
-	SceneNodeFieldReader* activeField = index->second;
-	if (!activeField->open(reader, tag, values))
-		if (isGeneric)
-			return open(reader, tag, values);
-		else
-			return false;
-
-	// make it active
-	state.activeField = activeField;
-	return true;
-}
-
-bool					SceneReader::closeField(
-								ConfigReader* reader,
-								const BzfString& tag)
-{
-	assert(!stack.empty());
-
-	bool result;
-	State& state = stack.back();
-	if (state.activeField != NULL) {
-		result = state.activeField->close(reader);
-		state.activeField = NULL;
-	}
-	else {
-		result = close(reader, tag);
-	}
-
-	return result;
-}
-
-bool					SceneReader::dataField(
-								ConfigReader* reader,
-								const BzfString& data)
-{
-	assert(!stack.empty());
-
-	// ignore data outside of a field
-	if (stack.back().activeField == NULL)
-		return true;
-
-	// pass on to the field reader
-	return stack.back().activeField->read(reader, data);
-}
-
-bool					SceneReader::pushCommon(ConfigReader* reader,
-								const ConfigReader::Values& values,
+void					SceneReader::pushCommon(
+								XMLTree::iterator xml,
 								SceneNode* newNode)
 {
 	// push item onto stack
 	State state;
 	state.node        = newNode;
 	state.group       = NULL;
-	state.activeField = NULL;
+	state.activeField = NULL;	// FIXME -- obsolete?
 	stack.push_back(state);
 
 	// saved named nodes
-	ConfigReader::Values::const_iterator index = values.find("id");
-	if (index != values.end()) {
-		const BzfString& id = index->second;
-		NodeMap::iterator oldIndex = namedNodes.find(id);
-		if (oldIndex != namedNodes.end()) {
-			// replace previous with same name
-			oldIndex->second = newNode;
-		}
-		else {
-			// new name
-			namedNodes.insert(std::make_pair(id, newNode));
-		}
-
-		// save id in node
-		newNode->setID(id);
-	}
-
-	reader->push(openFieldCB, closeFieldCB, dataFieldCB);
-
-	return true;
+	xml->getAttribute("id", xmlSetMethod(this, &SceneReader::saveNamedNode));
 }
 
-bool					SceneReader::push(ConfigReader* reader,
-								const ConfigReader::Values& values,
+void					SceneReader::push(XMLTree::iterator xml,
 								SceneNode* newNode)
 {
 	// if top level node then save it
 	if (node == NULL) {
 		assert(stack.empty());
-
-		// save top node
 		node = newNode;
 	}
 
 	// check for multiple top level nodes
 	else if (stack.empty()) {
-		printError("%s: multiple top level nodes found",
-								reader->getPosition().c_str());
 		newNode->unref();
-		return false;
+		throw XMLIOException(xml->position, "only one top-level node allowed");
 	}
 
 	// check for child of a leaf
 	else if (stack.back().group == NULL) {
-		printError("%s: child of a leaf node found",
-								reader->getPosition().c_str());
 		newNode->unref();
-		return false;
+		throw XMLIOException(xml->position, "leaf node cannot have children");
 	}
 
 	// add node as child of current group
@@ -1306,34 +1012,23 @@ bool					SceneReader::push(ConfigReader* reader,
 		newNode->unref();
 	}
 
-	return pushCommon(reader, values, newNode);
+	pushCommon(xml, newNode);
 }
 
-bool					SceneReader::push(ConfigReader* reader,
-								const ConfigReader::Values& values,
+void					SceneReader::push(XMLTree::iterator xml,
 								SceneNodeGroup* newGroupNode)
 {
 	// do regular node stuff
-	if (!push(reader, values, static_cast<SceneNode*>(newGroupNode)))
-		return false;
+	push(xml, static_cast<SceneNode*>(newGroupNode));
 
 	// save group node
 	stack.back().group = newGroupNode;
-
-	return true;
 }
 
-bool					SceneReader::pop(ConfigReader* reader)
+void					SceneReader::pop()
 {
+	assert(!stack.empty());
 	State& state = stack.back();
-
-	// make sure we're in a state to close
-	if (state.activeField != NULL) {
-		printError("%s: parameter %s not closed",
-								reader->getPosition().c_str(),
-								state.activeField->getName());
-		return false;
-	}
 
 	// clean up
 	for (FieldReaders::iterator index = state.fieldReaders.begin();
@@ -1342,22 +1037,18 @@ bool					SceneReader::pop(ConfigReader* reader)
 
 	// close
 	stack.pop_back();
-
-	return true;
 }
 
 void					SceneReader::readEnum(
-								ConfigReader* reader,
-								const ConfigReader::Values& values,
+								XMLTree::iterator xml,
 								SceneNodeSFEnum& field)
 {
-	// see if values contains a value for the field
-	ConfigReader::Values::const_iterator index = values.find(field.getName());
-	if (index == values.end())
+	// see if there's an attribute for the field
+	BzfString value;
+	if (!xml->getAttribute(field.getName(), value))
 		return;
 
 	// match the value to one of the enumerations
-	const BzfString& value = index->second;
 	unsigned int num = field.getNumEnums();
 	for (unsigned int i = 0; i < num; ++i)
 		if (value == field.getEnum(i)) {
@@ -1366,50 +1057,32 @@ void					SceneReader::readEnum(
 		}
 
 	// not found
-	printError("%s: ignoring unknown enumerant %s",
-								reader->getPosition().c_str(),
-								value.c_str());
+	throw XMLIOException(xml->position, BzfString::format(
+								"unknown enumerant `%s'", value.c_str()));
 }
 
 void					SceneReader::addReader(
 								SceneNodeFieldReader* reader)
 {
+	assert(reader != NULL);
+	assert(!stack.empty());
+	assert(stack.back().fieldReaders.count(reader->getName()) == 0);
+
 	stack.back().fieldReaders.insert(std::make_pair(reader->getName(), reader));
 }
 
-bool					SceneReader::openCB(ConfigReader* reader,
-								const BzfString& tag,
-								const ConfigReader::Values& values,
-								void* self)
+void					SceneReader::saveNamedNode(const BzfString& id)
 {
-	return reinterpret_cast<SceneReader*>(self)->open(reader, tag, values);
-}
+	assert(!stack.empty());
+	State& state = stack.back();
 
-bool					SceneReader::closeCB(ConfigReader* reader,
-								const BzfString& tag,
-								void* self)
-{
-	return reinterpret_cast<SceneReader*>(self)->close(reader, tag);
-}
+	// replace existing name or add new name
+	NodeMap::iterator index = namedNodes.find(id);
+	if (index != namedNodes.end())
+		index->second = state.node;
+	else
+		namedNodes.insert(std::make_pair(id, state.node));
 
-bool					SceneReader::openFieldCB(ConfigReader* reader,
-								const BzfString& tag,
-								const ConfigReader::Values& values,
-								void* self)
-{
-	return reinterpret_cast<SceneReader*>(self)->openField(reader, tag, values);
-}
-
-bool					SceneReader::closeFieldCB(ConfigReader* reader,
-								const BzfString& tag,
-								void* self)
-{
-	return reinterpret_cast<SceneReader*>(self)->closeField(reader, tag);
-}
-
-bool					SceneReader::dataFieldCB(ConfigReader* reader,
-								const BzfString& data,
-								void* self)
-{
-	return reinterpret_cast<SceneReader*>(self)->dataField(reader, data);
+	// save id in node
+	state.node->setID(id);
 }

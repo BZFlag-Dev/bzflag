@@ -16,6 +16,7 @@ TARGETS  = $(LIBDIR)/libUI.a
 
 CXXFILES =				\
 	CommandManager.cxx		\
+	CommandReader.cxx		\
 	CommandsStandard.cxx		\
 					\
 	KeyManager.cxx			\

@@ -15,7 +15,7 @@
 
 #include "common.h"
 #include "BzfString.h"
-#include "ConfigIO.h"
+#include "XMLTree.h"
 #include "OpenGLTexture.h"
 #include "OpenGLTexFont.h"
 #include <vector>
@@ -23,6 +23,7 @@
 class ViewSize {
 public:
 	ViewSize();
+	ViewSize(float pixel, float fraction);
 
 	float				get(float fullSize) const;
 
@@ -125,41 +126,24 @@ private:
 
 class ViewTagReader {
 public:
-	ViewTagReader() : state(NULL) { }
+	ViewTagReader() { }
 	virtual ~ViewTagReader() { }
 
 	// create a copy of this tag reader
 	virtual ViewTagReader* clone() const = 0;
 
-	// called to open item.  return new item on success, NULL on failure.
-	// the returned view is already ref'd.
-	virtual View*		open(const ConfigReader::Values& values) = 0;
+	// called to initialize the view item.  return NULL on failure, the
+	// ref()'d view on success.  readers are expected to keep a view
+	// around for parse().  clone() should create a reader with a new
+	// view.
+	virtual View*		open(XMLTree::iterator) = 0;
 
-	// called to finish item
-	virtual void		close() = 0;
+	// called to parse a child XMLNode.  return true if the node was
+	// recognized and handled, false otherwise.
+	virtual bool		parse(XMLTree::iterator) { return false; }
 
-	// called when the reader encounters an open or close tag in
-	// the stream.  return false from push() on error.
-	virtual bool		push(const BzfString& /*tag*/,
-							const ConfigReader::Values&)
-							{ return false; }
-	virtual void		pop(const BzfString& /*tag*/) { }
-
-	// called when data is encountered in the stream within the
-	// item's tags (or any nested tags).
-	virtual bool		data(const BzfString& /*data*/)
-							{ return true; }
-
-	// set the view state
-	void				setState(const ViewState* _state)
-							{ state = _state; }
-
-	// get the view state
-	const ViewState&	getState() const
-							{ return *state; }
-
-private:
-	const ViewState*	state;
+	// called to do any clean up after parsing
+	virtual void		close() { }
 };
 
 #endif

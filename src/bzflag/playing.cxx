@@ -2598,7 +2598,7 @@ static bool				joinGame(ServerLink* _serverLink)
 	{
 		istream* stream = FILEMGR->createDataInStream("models.bzg");
 		if (stream != NULL) {
-			SCENEMGR->read(stream);
+			SCENEMGR->read(stream, "models.bzg");
 			delete stream;
 		}
 	}

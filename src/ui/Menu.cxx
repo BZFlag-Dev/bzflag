@@ -13,6 +13,7 @@
 #include "Menu.h"
 #include "MenuControls.h"
 #include "MenuManager.h"
+#include "ErrorHandler.h"
 #include "FileManager.h"
 #include "SceneReader.h"
 #include "SceneNodeMatrixTransform.h"
@@ -55,12 +56,31 @@ Menu::Menu() : active(0), x(0), y(0)
 		projection = new SceneNodeMatrixTransform;
 		projection->type.set(SceneNodeTransform::Projection);
 
+		// FIXME -- fall back to built-in if error reading external model
 		istream* stream = FILEMGR->createDataInStream("menuptr.bzg");
 		if (stream == NULL)
 			stream = new istringstream(menuptr);
 		if (stream != NULL) {
-			SceneReader reader;
-			projection->pushChild(reader.read(*stream));
+			try {
+				// read XML
+				XMLTree xmlTree;
+				xmlTree.read(*stream, XMLStreamPosition("menuptr.bzg"));
+
+				// parse scene
+				SceneReader reader;
+				SceneNode* node = reader.parse(xmlTree.begin());
+				if (node != NULL) {
+					projection->pushChild(node);
+					node->unref();
+				}
+			}
+			catch (XMLIOException& e) {
+				printError("%s (%d,%d): %s",
+								e.position.filename.c_str(),
+								e.position.line,
+								e.position.column,
+								e.what());
+			}
 			delete stream;
 		}
 

@@ -1,9 +1,11 @@
+#include "common.h"
 #include "Trackball.h"
 #include "BzfEvent.h"
-#include "common.h"
 #include <math.h>
 
-typedef struct timeval	timeval;
+#ifndef M_SQRT2
+#define M_SQRT2 1.414214f
+#endif
 
 //
 // Trackball::Quaternion
@@ -11,8 +13,8 @@ typedef struct timeval	timeval;
 
 Trackball::Quaternion::Quaternion()
 {
-	a[0] = 1.0;
-	a[1] = a[2] = a[3] = 0.0;
+	a[0] = 1.0f;
+	a[1] = a[2] = a[3] = 0.0f;
 }
 
 Trackball::Quaternion::Quaternion(float c, float i, float j, float k)
@@ -33,9 +35,9 @@ Trackball::Quaternion::Quaternion(float b[4])
 
 Trackball::Quaternion::Quaternion(float axis[3], float angle)
 {
-	float l = 1.0 / hypot(axis[0], hypot(axis[1], axis[2]));
-	l *= sin(angle/2.0);
-	a[0] = cos(angle/2.0);
+	float l = 1.0f / hypotf(axis[0], hypotf(axis[1], axis[2]));
+	l *= sinf(0.5f * angle);
+	a[0] = cosf(0.5f * angle);
 	a[1] = l * axis[0];
 	a[2] = l * axis[1];
 	a[3] = l * axis[2];
@@ -71,7 +73,7 @@ float					Trackball::Quaternion::operator [] (int i) const
 
 void					Trackball::Quaternion::normalize()
 {
-	float d = 1.0 / hypot(a[0], hypot(a[1], hypot(a[2], a[3])));
+	float d = 1.0f / hypotf(a[0], hypotf(a[1], hypotf(a[2], a[3])));
 	a[0] *= d;
 	a[1] *= d;
 	a[2] *= d;
@@ -80,22 +82,22 @@ void					Trackball::Quaternion::normalize()
 
 float					Trackball::Quaternion::length() const
 {
-	return hypot(a[0], hypot(a[1], hypot(a[2], a[3])));
+	return hypotf(a[0], hypotf(a[1], hypotf(a[2], a[3])));
 }
 
 void					Trackball::Quaternion::matrix(float m[4][4]) const
 {
-	m[0][0] = 1.0 - 2.0 * (a[2] * a[2] + a[3] * a[3]);
-	m[0][1] = 2.0 * (a[1] * a[2] - a[3] * a[0]);
-	m[0][2] = 2.0 * (a[3] * a[1] + a[2] * a[0]);
-	m[1][0] = 2.0 * (a[1] * a[2] + a[3] * a[0]);
-	m[1][1] = 1.0 - 2.0 * (a[3] * a[3] + a[1] * a[1]);
-	m[1][2] = 2.0 * (a[2] * a[3] - a[1] * a[0]);
-	m[2][0] = 2.0 * (a[3] * a[1] - a[2] * a[0]);
-	m[2][1] = 2.0 * (a[2] * a[3] + a[1] * a[0]);
-	m[2][2] = 1.0 - 2.0 * (a[1] * a[1] + a[2] * a[2]);
-	m[0][3] = m[1][3] = m[2][3] = m[3][0] = m[3][1] = m[3][2] = 0.0;
-	m[3][3] = 1.0;
+	m[0][0] = 1.0f - 2.0f * (a[2] * a[2] + a[3] * a[3]);
+	m[0][1] = 2.0f * (a[1] * a[2] - a[3] * a[0]);
+	m[0][2] = 2.0f * (a[3] * a[1] + a[2] * a[0]);
+	m[1][0] = 2.0f * (a[1] * a[2] + a[3] * a[0]);
+	m[1][1] = 1.0f - 2.0f * (a[3] * a[3] + a[1] * a[1]);
+	m[1][2] = 2.0f * (a[2] * a[3] - a[1] * a[0]);
+	m[2][0] = 2.0f * (a[3] * a[1] - a[2] * a[0]);
+	m[2][1] = 2.0f * (a[2] * a[3] + a[1] * a[0]);
+	m[2][2] = 1.0f - 2.0f * (a[1] * a[1] + a[2] * a[2]);
+	m[0][3] = m[1][3] = m[2][3] = m[3][0] = m[3][1] = m[3][2] = 0.0f;
+	m[3][3] = 1.0f;
 }
 
 Trackball::Quaternion&	Trackball::Quaternion::operator *= (const Quaternion& q)
@@ -117,7 +119,7 @@ Trackball::Quaternion&	Trackball::Quaternion::operator *= (const Quaternion& q)
 // Trackball
 //
 
-#define TRACKBALLSIZE  (0.8)
+#define TRACKBALLSIZE  (0.8f)
 
 Trackball::Trackball()
 {
@@ -127,6 +129,7 @@ Trackball::Trackball()
 
 Trackball::~Trackball()
 {
+	// do nothing
 }
 
 float					Trackball::projectToSphere(
@@ -134,12 +137,12 @@ float					Trackball::projectToSphere(
 {
 	float d, t, z;
 
-	d = hypot(x, y);
-	if (d < r*M_SQRT1_2)  		// Inside sphere
-		z = sqrt(r*r - d*d);
-	else { 					// On hyperbola
+	d = hypotf(x, y);
+	if (d < r * M_SQRT1_2)  		// Inside sphere
+		z = sqrtf(r * r - d * d);
+	else { 							// On hyperbola
 		t = r / M_SQRT2;
-		z = t*t / d;
+		z = t * t / d;
 	}
 	return z;
 }
@@ -150,8 +153,8 @@ void					Trackball::trackball(float p1x, float p1y,
 	float p1[3], p2[3], d[3];
 
 	if (p1x == p2x && p1y == p2y) {
-		delta[0] = 1.0;
-		delta[1] = delta[2] = delta[3] = 0.0;
+		delta[0] = 1.0f;
+		delta[1] = delta[2] = delta[3] = 0.0f;
 		return;
 	}
 
@@ -172,7 +175,7 @@ void					Trackball::trackball(float p1x, float p1y,
 	d[0] = p1[0] - p2[0];
 	d[1] = p1[1] - p2[1];
 	d[2] = p1[2] - p2[2];
-	delta[3] = hypot(d[0], hypot(d[1], d[2])) / (2.0 * TRACKBALLSIZE);
+	delta[3] = hypotf(d[0], hypotf(d[1], d[2])) / (2.0f * TRACKBALLSIZE);
 }
 
 void					Trackball::doFlip(Quaternion& q, float dt)
@@ -180,12 +183,12 @@ void					Trackball::doFlip(Quaternion& q, float dt)
 	float t = dt * delta[3];
 
 	// watch out for values out of range
-	if (t > 1.0) t = 1.0;
-	if (t < -1.0) t = -1.0;
-	float phi = 2.0 * asin(t);
+	if (t > 1.0f) t = 1.0f;
+	if (t < -1.0f) t = -1.0f;
+	float phi = 2.0f * asinf(t);
 
 	// convert to quaternion
-	Quaternion d(delta, phi * 0.66);
+	Quaternion d(delta, phi * 0.66f);
 
 	// turn
 	q *= d;
@@ -195,9 +198,9 @@ void					Trackball::reset()
 {
 	rot = Quaternion();
 	base = Quaternion();
-	delta[0] = 1.0;
-	delta[1] = delta[2] = delta[3] = 0.0;
-	xlate[0] = xlate[1] = xlate[2] = 0.0;
+	delta[0] = 1.0f;
+	delta[1] = delta[2] = delta[3] = 0.0f;
+	xlate[0] = xlate[1] = xlate[2] = 0.0f;
 	spinning = false;
 	turning = false;
 	panning = false;
@@ -218,12 +221,6 @@ void					Trackball::getMatrix(float* m) const
 	m[12] = xlate[0];
 	m[13] = xlate[1];
 	m[14] = xlate[2];
-}
-
-static float				timediff(timeval& t1, timeval& t2)
-{
-	return float(t2.tv_sec - t1.tv_sec) +
-		float(t2.tv_usec - t1.tv_usec) / 1000000.0;
 }
 
 #define MAXHISTORY countof(history)
@@ -250,7 +247,7 @@ bool					Trackball::onEvent(const BzfEvent& event, bool& redraw)
 					// turn
 					spinning = false;
 					turning = true;
-					gettimeofday(&lastMove, NULL);
+					lastMove = TimeKeeper::getCurrent();
 					for (pHistory = 0; pHistory < MAXHISTORY; pHistory++) {
 						history[pHistory][0] = x;
 						history[pHistory][1] = y;
@@ -267,17 +264,16 @@ bool					Trackball::onEvent(const BzfEvent& event, bool& redraw)
 				if (turning) {
 					base = rot;
 					unsigned int i = 1;
-					timeval t1;
-					gettimeofday(&t1, NULL);
+					TimeKeeper t1(TimeKeeper::getCurrent());
 					unsigned int h = (pHistory + MAXHISTORY - 1) % MAXHISTORY;
-					while (++i < MAXHISTORY && timediff(hTime[h], t1) < 0.1)
+					while (++i < MAXHISTORY && (t1 - hTime[h]) < 0.1f)
 						h = (pHistory + MAXHISTORY - 1) % MAXHISTORY;
 					if (i != MAXHISTORY)
 						h = (h + 1) % MAXHISTORY;
 					if (h != pHistory) {
 						spinning = true;
 						trackball(history[h][0], history[h][1], x, y, delta);
-						delta[3] /= timediff(hTime[h], t1);
+						delta[3] /= t1 - hTime[h];
 						normcount = 0;
 						redraw = true;
 					}
@@ -295,10 +291,9 @@ bool					Trackball::onEvent(const BzfEvent& event, bool& redraw)
 			x = (float)(event.mouseMove.x - wx) / wdx;
 			y = -(float)(event.mouseMove.y - wy) / wdy;
 			if (turning) {
-				timeval t1;
-				gettimeofday(&t1, NULL);
-				float dt = timediff(lastMove, t1);
-				if (dt > 0.01) {
+				TimeKeeper t1(TimeKeeper::getCurrent());
+				float dt = t1 - lastMove;
+				if (dt > 0.01f) {
 					lastMove = t1;
 					pHistory = (pHistory + 1) % MAXHISTORY;
 				}
@@ -307,15 +302,15 @@ bool					Trackball::onEvent(const BzfEvent& event, bool& redraw)
 				hTime[pHistory]      = t1;
 				trackball(x0, y0, x, y, delta);
 				rot = base;
-				doFlip(rot, 1.0);
+				doFlip(rot, 1.0f);
 				redraw = true;
 			}
 			else if (panning) {
-				xlate[0] = xlate0[0] + 4.0 * (x - x0);
-				xlate[1] = xlate0[1] + 4.0 * (y - y0);
+				xlate[0] = xlate0[0] + 4.0f * (x - x0);
+				xlate[1] = xlate0[1] + 4.0f * (y - y0);
 			}
 			else if (trucking) {
-				xlate[2] = xlate0[2] - 4.0 * (y - y0);
+				xlate[2] = xlate0[2] - 4.0f * (y - y0);
 			}
 			return true;
 
@@ -334,9 +329,8 @@ bool					Trackball::isSpinning() const
 void					Trackball::spin()
 {
 	if (spinning) {
-		timeval t1;
-		gettimeofday(&t1, NULL);
-		float dt = timediff(lastMove, t1);
+		TimeKeeper t1(TimeKeeper::getCurrent());
+		float dt = t1 - lastMove;
 		lastMove = t1;
 		doFlip(base, dt);
 		if (++normcount > 50) {

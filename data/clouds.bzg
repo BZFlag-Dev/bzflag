@@ -9,10 +9,9 @@
 # THIS PACKAGE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
 # IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
 # WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
-
-# clouds.  only show if blending and texturing.
 -->
 
+<!--  clouds.  only show if blending and texturing. -->
 <choice>
 	<mask t="renderBlending">0 1</mask>
 	<choice>
@@ -48,9 +47,9 @@
 						<gstate>
 							<texture filename="clouds" />
 							<blending src="sa" dst="1-sa" />
-							<culling cull="off" />
+							<culling cull="false" />
 							<shading model="smooth" />
-							<depth write="off" />
+							<depth write="false" />
 							<primitive type="tstrip">
 								<index>
 									0 1 2 3

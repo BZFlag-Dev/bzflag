@@ -277,49 +277,30 @@ ViewTagReader* 			ViewItemMessagesReader::clone() const
 	return new ViewItemMessagesReader;
 }
 
-View*					ViewItemMessagesReader::open(
-								const ConfigReader::Values& values)
+View*					ViewItemMessagesReader::open(XMLTree::iterator xml)
 {
-	assert(item == NULL);
-
-	// get name parameter
-	ConfigReader::Values::const_iterator index = values.find("buffer");
-	if (index == values.end()) {
-		// must have a name
-		return NULL;
-	}
-	BzfString name = index->second;
+	// get the buffer
+	BzfString name;
+	if (!xml->getAttribute("buffer", name))
+		throw XMLIOException(xml->position, "must have `buffer' attribute");
 	MessageBuffer* buffer = MSGMGR->get(name);
-	if (buffer == NULL) {
-		// unknown buffer
-		return NULL;
-	}
-
-	// other parameters
-	float timeout = 0.0;
-	bool input = false, shadow = false;
-	index = values.find("timeout");
-	if (index != values.end())
-		sscanf(index->second.c_str(), "%f", &timeout);
-	index = values.find("input");
-	if (index != values.end())
-		input = (index->second == "yes");
-	index = values.find("shadow");
-	if (index != values.end())
-		shadow = (index->second == "yes");
+	if (buffer == NULL)
+		throw XMLIOException(xml->position,
+							BzfString::format(
+								"unknown buffer `%s'", name.c_str()));
 
 	// create item
+	assert(item == NULL);
 	item = new ViewItemMessages(buffer);
-	if (timeout >= 0.0f)
-		item->setTimeout(timeout);
-	item->showInput(input);
-	item->setShadow(shadow);
+
+	// parse
+	xml->getAttribute("timeout", xmlStrToFloat(xmlCompose(
+							xmlSetMethod(item, &ViewItemMessages::setTimeout),
+							xmlMax(0.0f))));
+	xml->getAttribute("input", xmlParseEnum(s_xmlEnumBool,
+							xmlSetMethod(item, &ViewItemMessages::showInput)));
+	xml->getAttribute("shadow", xmlParseEnum(s_xmlEnumBool,
+							xmlSetMethod(item, &ViewItemMessages::setShadow)));
 
 	return item;
-}
-
-void					ViewItemMessagesReader::close()
-{
-	assert(item != NULL);
-	item = NULL;
 }

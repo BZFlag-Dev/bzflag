@@ -13,6 +13,7 @@
 #include "SceneBuilder.h"
 #include "World.h"
 #include "Matrix.h"
+#include "ErrorHandler.h"
 #include "SceneNodes.h"
 #include "SceneReader.h"
 #include <sstream>
@@ -37,8 +38,22 @@ SceneNode*				SceneDatabaseBuilder::make(const World* world)
 	BzfString buffer(makeBuffer(world));
 	istringstream stream(buffer.c_str());
 
-	SceneReader reader;
-	return reader.read(stream);
+	try {
+		// read XML
+		XMLTree xmlTree;
+		xmlTree.read(stream, XMLStreamPosition());
+
+		// parse scene
+		SceneReader reader;
+		return reader.parse(xmlTree.begin());
+	}
+	catch (XMLIOException& e) {
+		printError("<world-file> (%d,%d): %s",
+						e.position.line,
+						e.position.column,
+						e.what());
+		return NULL;
+	}
 }
 
 BzfString				SceneDatabaseBuilder::makeBuffer(const World* world)
@@ -121,7 +136,7 @@ BzfString				SceneDatabaseBuilder::makeBuffer(const World* world)
 	primitives +=	"<choice><mask t=\"renderBlending\">1 2</mask>\n"
 					  "<gstate>\n"
 					    "<shading model=\"flat\" />\n"
-					    "<stipple mask=\"on\" />\n"
+					    "<stipple mask=\"true\" />\n"
 					    "<geometry><stipple>0.5</stipple>\n";
 	primitives +=	      primitives2;
 	primitives +=	    "</geometry>\n"
@@ -129,7 +144,7 @@ BzfString				SceneDatabaseBuilder::makeBuffer(const World* world)
 					  "<gstate>\n"
 					    "<shading model=\"flat\" />\n"
 					    "<blending src=\"sa\" dst=\"1-sa\" />\n"
-					    "<depth write=\"off\" />\n";
+					    "<depth write=\"false\" />\n";
 	primitives +=	    primitives2;
 	primitives +=	  "</gstate>\n"
 					"</choice>\n";
@@ -140,7 +155,7 @@ BzfString				SceneDatabaseBuilder::makeBuffer(const World* world)
 	unlighted +=	"<choice><mask t=\"renderBlending\">1 2</mask>\n"
 					  "<gstate>\n"
 					    "<shading model=\"flat\" />\n"
-					    "<stipple mask=\"on\" />\n"
+					    "<stipple mask=\"true\" />\n"
 					    "<geometry><stipple>0.5</stipple>\n";
 	unlighted +=	      primitives3;
 	unlighted +=	    "</geometry>\n"
@@ -148,7 +163,7 @@ BzfString				SceneDatabaseBuilder::makeBuffer(const World* world)
 					  "<gstate>\n"
 					    "<shading model=\"flat\" />\n"
 					    "<blending src=\"sa\" dst=\"1-sa\" />\n"
-					    "<depth write=\"off\" />\n";
+					    "<depth write=\"false\" />\n";
 	unlighted +=	    primitives3;
 	unlighted +=	  "</gstate>\n"
 					"</choice>\n";
@@ -184,12 +199,12 @@ BzfString				SceneDatabaseBuilder::makeBuffer(const World* world)
 		addBase(*baseScan);
 	primitives +=	"<gstate>\n"
 					  "<shading model=\"flat\" />\n"
-					  "<culling cull=\"off\" />\n";
+					  "<culling cull=\"false\" />\n";
 	primitives +=	  primitives1;
 	primitives +=	"</gstate>\n";
 	unlighted +=	"<gstate>\n"
 					  "<shading model=\"flat\" />\n"
-					  "<culling cull=\"off\" />\n";
+					  "<culling cull=\"false\" />\n";
 	unlighted +=	  primitives2;
 	unlighted +=	"</gstate>\n";
 

@@ -75,6 +75,39 @@ Package=<4>
 
 ###############################################################################
 
+Project: "bzgview"=.\bzgview.dsp - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+    Begin Project Dependency
+    Project_Dep_Name common
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name ogl
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name scene
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name geometry
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name platform
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name mediafile
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name mplatform
+    End Project Dependency
+}}}
+
+###############################################################################
+
 Project: "common"=.\common.dsp - Package Owner=<4>
 
 Package=<5>

@@ -1,12 +1,14 @@
-# the usual stuff shown overlayed on the out-the-window scene
+<views>
+
+<!-- the usual stuff shown overlayed on the out-the-window scene -->
 <view id="normalOverlay">
-	# FIXME -- show indication of being dead (like cracks in windscreen)
+	<!-- FIXME - show indication of being dead (like cracks in windscreen) -->
 
-	# heads up display
+	<!--  heads up display -->
 	<font name="fixed" size="7p" />
-	<hud primary="yes" />
+	<hud primary="true" />
 
-	# status info (callsign, score, flag, status)
+	<!--  status info (callsign, score, flag, status) -->
 	<font name="helveticaBold" size="24p" />
 	<align h="left" v="top" />
 	<color value="team" />
@@ -20,57 +22,56 @@
 		<message buffer="alertStatus" timeout="10" />
 	</viewport>
 
-	# and a rear view window ;-)
+	<!--  and a rear view window ;-) -->
 	<if name="displayRear">
 		<viewport x="60%" y="0%" w="40%" h="25%">
 			<scene x="0.0" y="0.0" z="0.0" fov="-1.6" fovy="-1.0" theta="180" phi="0"/>
 		</viewport>
 	</if>
 
-	# FIXME -- missing time left countdown
+	<!--  FIXME - missing time left countdown -->
 
-	# frame rate (can be switched on/off)
+	<!--  frame rate (can be switched on/off) -->
 	<if name="displayFPS">
 		<font name="fixed" size="7p" />
 		<color value="white" />
 		<align h="right" v="bottom" />
-		<text x="-4p" y="4p" shadow="yes">FPS: ${timeFPS} (${timeFrame}us)</text>
+		<text x="-4p" y="4p" shadow="true">FPS: ${timeFPS} (${timeFrame}us)</text>
 	</if>
 
-	# scoreboard (can be switched on/off)
+	<!--  scoreboard (can be switched on/off) -->
 	<if name="displayScore">
 		<font name="fixed" size="7p" />
 		<color value="white" />
 		<viewport x="5%" y="-36p" w="60%" h="70%">
-			<score shadow=yes title="Score@34%Callsign"
-					format="%s (%w-%l) (%W-%L)@34%%c:%i(%F)%S %e"></score>
+			<score shadow="true" title="Score@34%Callsign" format="%s (%w-%l) (%W-%L)@34%%c:%i(%F)%S %e"/>
 		</viewport>
 		<viewport x="72%" y="-36p" w="25%" h="70%">
-			<score team=yes shadow=yes title="" format="%n % 11c %s (%w-%l)" />
+			<score team="true" shadow="true" title="" format="%n % 11c %s (%w-%l)" />
 		</viewport>
 	</if>
 
-	# FIXME -- missing restart instructions (probably should be an alert)
+	<!--  FIXME - missing restart instructions (probably should be an alert) -->
 
-	# radar (can be switched on/off though i don't know why you'd want it off)
+	<!--  radar (can be switched on/off though i don't know why you'd want it off) -->
 	<if name="displayRadar">
 		<viewport x="4%" y="4%" w="15%" h="1x">
 			<radar>
-				# draw radar background
+				<!--  draw radar background -->
 				<model filename="radar.bzg" />
 			</radar>
 		</viewport>
 	</if>
 
-	# messages.  timeout is 5 seconds;  each line is shown that long.
+	<!--  messages.  timeout is 5 seconds;  each line is shown that long. -->
 	<viewport x="4p" y="-80p" w="50%" h="50%">
 		<align h="left" v="top" />
 		<font name="fixed" size="7p" />
-		<color value=black shift="1.0 0.5 0.0" />
-		<message buffer="messages" timeout="10" input="yes" shadow="yes" />
+		<color value="black" shift="1.0 0.5 0.0" />
+		<message buffer="messages" timeout="10" input="true" shadow="true" />
 	</viewport>
 
-	# alerts
+	<!--  alerts -->
 	<font name="helveticaBold" />
 	<align h="center" v="top" />
 	<color value="white" />
@@ -87,7 +88,7 @@
 		<message buffer="alertFlag" timeout="3" />
 	</viewport>
 
-	# flag help
+	<!--  flag help -->
 	<if name="displayFlagHelp">
 		<viewport x="25%" y="20%" w="50%" h="72p">
 			<font name="helveticaBold" size="18p" />
@@ -95,7 +96,7 @@
 		</viewport>
 	</if>
 
-	# console
+	<!--  console -->
 	<if name="displayConsole">
 		<viewport x="0%" y="40%" w="100%" h="60%">
 			<model filename="console.bzg" />
@@ -105,29 +106,29 @@
 			<viewport x="-1p" y="-1p" w="220p" h="48p">
 				<model filename="logo.bzg" />
 			</viewport>
-			<message buffer="console" input="yes" shadow="yes" />
+			<message buffer="console" input="true" shadow="true" />
 		</viewport>
 	</if>
 
-	# basic console - this was the original grey console
+	<!--  basic console - this was the original grey console -->
 	<if name="displayBasicConsole">
 		<viewport x="0%" y="40%" w="100%" h="60%">
 			<model filename="basicconsole.bzg" />
 			<align h="left" v="top" />
 			<font name="fixed" size="7p" />
 			<color value="black" shift="1.0 0.5 0.0" />
-			<message buffer="console" input="yes" shadow="yes" />
+			<message buffer="console" input="true" shadow="true" />
 		</viewport>
 	</if>
 
-	# menu
+	<!--  menu -->
 	<menu>
-		# draw menu background
+		<!--  draw menu background -->
 		<model filename="menu.bzg" />
 	</menu>
 </view>
 
-# draws the out-the-window scene and overlays the usual suspects
+<!--  draws the out-the-window scene and overlays the usual suspects -->
 <view id="normal">
 	<viewport x="0%" y="0%" w="100%" h="100%">
 		<scene x="0.0" y="0.0" z="0.0" fov="1.0" theta="0" phi="0"/>
@@ -135,20 +136,24 @@
 	</viewport>
 </view>
 
-# test -- draws scene with no overlays
-# tests for:
-#   performance (although no performance statistics are output)
+<!--
+test - draws scene with no overlays
+tests for:
+  performance (although no performance statistics are output)
+-->
 <view id="scene-only">
 	<viewport x="0%" y="0%" w="100%" h="100%">
 		<scene x="0.0" y="0.0" z="0.0" fov="1.0" theta="0" phi="0" />
 	</viewport>
 </view>
 
-# test -- draws stereo pair of scene side by side (cross-eye)
-# tests for:
-#   scene parameters
-#   correct projection skewing for stereo
-#   HUD element stereo depth
+<!--
+test - draws stereo pair of scene side by side (cross-eye)
+tests for:
+  scene parameters
+  correct projection skewing for stereo
+  HUD element stereo depth
+-->
 <view id="free-fuse-stereo">
 	<viewport x="0%" y="0%" w="50%" h="100%">
 		<scene x="-0.7" y="0.0" z="30.0" fov="1.0" theta="0" phi="0" />
@@ -160,12 +165,14 @@
 	</viewport>
 </view>
 
-# test -- splits view into several vertical strips.
-# tests for:
-#   scene parameters
-#   correct positioning of viewports
-#   correct rendering of multiple scenes
-#   performance
+<!--
+test - splits view into several vertical strips.
+tests for:
+  scene parameters
+  correct positioning of viewports
+  correct rendering of multiple scenes
+  performance
+-->
 <view id="split-test">
 	<viewport x="0%" y="0%" w="10%" h="100%">
 		<scene fov="0.1" theta="-45%" />
@@ -201,3 +208,5 @@
 		<ref id="normalOverlay" />
 	</viewport>
 </view>
+
+</views>

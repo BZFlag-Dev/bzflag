@@ -90,7 +90,7 @@ SOURCE=..\src\common\BzfString.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\src\common\ConfigIO.cxx
+SOURCE=..\src\common\ConfigFileManager.cxx
 # End Source File
 # Begin Source File
 
@@ -107,6 +107,10 @@ SOURCE=..\src\common\StateDatabase.cxx
 # Begin Source File
 
 SOURCE=..\src\common\TimeBomb.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\src\common\XMLTree.cxx
 # End Source File
 # End Group
 # Begin Group "Header Files"
@@ -130,7 +134,11 @@ SOURCE=..\include\common.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\include\ConfigIO.h
+SOURCE=..\include\ConfigFileManager.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\include\ConfigFileReader.h
 # End Source File
 # Begin Source File
 
@@ -147,6 +155,14 @@ SOURCE=..\include\StateDatabase.h
 # Begin Source File
 
 SOURCE=..\include\TimeBomb.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\include\tree.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\include\XMLTree.h
 # End Source File
 # End Group
 # End Target

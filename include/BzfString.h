@@ -52,11 +52,13 @@ public:
 	size_type			size() const;
 	const char*			c_str() const;
 	void				compact();
+	void				swap(BzfString&);
 
 	BzfString			operator+(const BzfString&) const;
 	BzfString			operator+(const char*) const;
 	BzfString&			operator+=(const BzfString&);
 	BzfString&			operator+=(const char*);
+	BzfString&			operator+=(char);
 	BzfString&			operator<<(const BzfString&);
 	BzfString&			operator<<(const char*);
 

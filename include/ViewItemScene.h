@@ -63,8 +63,7 @@ public:
 
 	// ViewItemReader overrides
 	virtual ViewTagReader* clone() const = 0;
-	virtual View*		open(const ConfigReader::Values&);
-	virtual void		close();
+	virtual View*		open(XMLTree::iterator);
 
 protected:
 	// override to return a new ViewItemScene subclass

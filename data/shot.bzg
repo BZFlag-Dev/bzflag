@@ -9,7 +9,6 @@
 # THIS PACKAGE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
 # IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
 # WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
-
 -->
 
 <billboard id="shot_simple">
@@ -68,7 +67,7 @@
   </geometry>
 </billboard>
 
-# red team shot
+<!--  red team shot -->
 <choice id="shot-r">
   <mask t="renderBlending">1 2</mask>
   <geometry id="shot-r-simple">
@@ -93,7 +92,7 @@
 	</color>
     <gstate>
       <shading model="smooth" />
-      <culling cull="off" />
+      <culling cull="false" />
       <ref id="shot_simple" />
     </gstate>
   </geometry>
@@ -101,15 +100,15 @@
     <mask t="renderTexturing">1 2</mask>
     <ref id="shot-r-simple" />
     <gstate>
-      <texture repeat="off" rgba="on" filename="rbolt.rgb" />
+      <texture repeat="false" rgba="true" filename="rbolt.rgb" />
       <blending src="sa" dst="1-sa" />
-      <culling cull="off" />
+      <culling cull="false" />
       <ref id="shot_textured" />
     </gstate>
   </choice>
 </choice>
 
-# green team shot
+<!--  green team shot -->
 <choice id="shot-g">
   <mask t="renderBlending">1 2</mask>
   <geometry id="shot-g-simple">
@@ -134,7 +133,7 @@
 	</color>
     <gstate>
       <shading model="smooth" />
-      <culling cull="off" />
+      <culling cull="false" />
       <ref id="shot_simple" />
     </gstate>
   </geometry>
@@ -142,15 +141,15 @@
     <mask t="renderTexturing">1 2</mask>
     <ref id="shot-g-simple" />
     <gstate>
-      <texture repeat="off" rgba="on" filename="gbolt.rgb" />
+      <texture repeat="false" rgba="true" filename="gbolt.rgb" />
       <blending src="sa" dst="1-sa" />
-      <culling cull="off" />
+      <culling cull="false" />
       <ref id="shot_textured" />
     </gstate>
   </choice>
 </choice>
 
-# blue team shot
+<!--  blue team shot -->
 <choice id="shot-b">
   <mask t="renderBlending">1 2</mask>
   <geometry id="shot-b-simple">
@@ -175,7 +174,7 @@
 	</color>
     <gstate>
       <shading model="smooth" />
-      <culling cull="off" />
+      <culling cull="false" />
       <ref id="shot_simple" />
     </gstate>
   </geometry>
@@ -183,15 +182,15 @@
     <mask t="renderTexturing">1 2</mask>
     <ref id="shot-b-simple" />
     <gstate>
-      <texture repeat="off" rgba="on" filename="bbolt.rgb" />
+      <texture repeat="false" rgba="true" filename="bbolt.rgb" />
       <blending src="sa" dst="1-sa" />
-      <culling cull="off" />
+      <culling cull="false" />
       <ref id="shot_textured" />
     </gstate>
   </choice>
 </choice>
 
-# purple team shot
+<!--  purple team shot -->
 <choice id="shot-p">
   <mask t="renderBlending">1 2</mask>
   <geometry id="shot-p-simple">
@@ -216,7 +215,7 @@
 	</color>
     <gstate>
       <shading model="smooth" />
-      <culling cull="off" />
+      <culling cull="false" />
       <ref id="shot_simple" />
     </gstate>
   </geometry>
@@ -224,15 +223,15 @@
     <mask t="renderTexturing">1 2</mask>
     <ref id="shot-p-simple" />
     <gstate>
-      <texture repeat="off" rgba="on" filename="pbolt.rgb" />
+      <texture repeat="false" rgba="true" filename="pbolt.rgb" />
       <blending src="sa" dst="1-sa" />
-      <culling cull="off" />
+      <culling cull="false" />
       <ref id="shot_textured" />
     </gstate>
   </choice>
 </choice>
 
-# rogue shot
+<!--  rogue shot -->
 <choice id="shot-y">
   <mask t="renderBlending">1 2</mask>
   <geometry id="shot-y-simple">
@@ -257,7 +256,7 @@
 	</color>
     <gstate>
       <shading model="smooth" />
-      <culling cull="off" />
+      <culling cull="false" />
       <ref id="shot_simple" />
     </gstate>
   </geometry>
@@ -265,9 +264,9 @@
     <mask t="renderTexturing">1 2</mask>
     <ref id="shot-y-simple" />
     <gstate>
-      <texture repeat="off" rgba="on" filename="ybolt.rgb" />
+      <texture repeat="false" rgba="true" filename="ybolt.rgb" />
       <blending src="sa" dst="1-sa" />
-      <culling cull="off" />
+      <culling cull="false" />
       <ref id="shot_textured" />
     </gstate>
   </choice>

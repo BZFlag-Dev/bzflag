@@ -63,16 +63,9 @@ ViewTagReader* 			ViewItemMenuReader::clone() const
 	return new ViewItemMenuReader;
 }
 
-View*					ViewItemMenuReader::open(
-								const ConfigReader::Values&)
+View*					ViewItemMenuReader::open(XMLTree::iterator)
 {
 	assert(item == NULL);
 	item = new ViewItemMenu;
 	return item;
-}
-
-void					ViewItemMenuReader::close()
-{
-	assert(item != NULL);
-	item = NULL;
 }

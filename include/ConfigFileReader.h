@@ -10,26 +10,22 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#include "SceneNode.h"
-#include <assert.h>
+#ifndef BZF_CONFIG_FILE_READER_H
+#define BZF_CONFIG_FILE_READER_H
 
-//
-// SceneNode
-//
+#include "XMLTree.h"
 
-int						SceneNode::ref()
-{
-	assert(refCount >= 1);
-	return ++refCount;
-}
+class ConfigFileReader {
+public:
+	ConfigFileReader() { }
+	virtual ~ConfigFileReader() { }
 
-int						SceneNode::unref()
-{
-	assert(refCount >= 1);
-	int n = --refCount;
-	if (n == 0) {
-		refCount = 0xdeadbeef;
-		delete this;
-	}
-	return n;
-}
+	// create a copy of this reader
+	virtual ConfigFileReader*
+						clone() = 0;
+
+	// parse an XMLTree
+	virtual void		parse(XMLTree::iterator) = 0;
+};
+
+#endif

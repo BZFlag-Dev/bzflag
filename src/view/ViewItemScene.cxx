@@ -142,6 +142,45 @@ void					ViewItemScene::onPostRender(
 
 
 //
+// parsing function objects
+//
+
+class ViewSetRotation_t : public std::unary_function<BzfString, ViewSize&> {
+public:
+	ViewSetRotation_t(ViewSize& size_) : size(size_) { }
+	ViewSize&			operator()(const BzfString& arg) const
+	{
+		float num;
+		char type;
+		switch (sscanf(arg.c_str(), "%f%c", &num, &type)) {
+			case 1:
+				size.pixel    = num;
+				size.fraction = 0.0f;
+				return size;
+
+			case 2:
+				if (type == '%') {
+					size.pixel    = 0.0f;
+					size.fraction = 0.01f * num;
+					return size;
+				}
+				break;
+		}
+		throw XMLNode::AttributeException("invalid rotation");
+	}
+
+private:
+	ViewSize&			size;
+};
+
+inline ViewSetRotation_t
+viewSetRotation(ViewSize& size)
+{
+	return ViewSetRotation_t(size);
+}
+
+
+//
 // ViewItemSceneReader
 //
 
@@ -156,75 +195,30 @@ ViewItemSceneReader::~ViewItemSceneReader()
 		item->unref();
 }
 
-View*					ViewItemSceneReader::open(
-								const ConfigReader::Values& values)
+View*					ViewItemSceneReader::open(XMLTree::iterator xml)
 {
-	assert(item == NULL);
-
+	// parse
 	float x = 0.0f, y = 0.0f, z = 0.0f;
-	float yFixed = 0.0f, yScaled = 0.0f;
-	float zFixed = 0.0f, zScaled = 0.0f;
-	float fovx = 1.0f, fovy = 1.0f;
+	float fov = 1.0f, fovy = 1.0f;
+	ViewSize yRotate, zRotate;
+	xml->getAttribute("x", xmlStrToFloat(xmlSetVar(x)));
+	xml->getAttribute("y", xmlStrToFloat(xmlSetVar(y)));
+	xml->getAttribute("z", xmlStrToFloat(xmlSetVar(z)));
+	xml->getAttribute("fov", xmlStrToFloat(xmlSetVar(fov)));
+	xml->getAttribute("fovy", xmlStrToFloat(xmlSetVar(fovy)));
+	xml->getAttribute("theta", viewSetRotation(zRotate));
+	xml->getAttribute("phi", viewSetRotation(yRotate));
+	if (z < 0.0f)
+		throw XMLIOException(xml->getAttributePosition("z"),
+							"invalid focal plane distance");
 
-	ConfigReader::Values::const_iterator index;
-	index = values.find("x");
-	if (index != values.end())
-		x = atof(index->second.c_str());
-	index = values.find("y");
-	if (index != values.end())
-		y = atof(index->second.c_str());
-	index = values.find("z");
-	if (index != values.end())
-		z = atof(index->second.c_str());
-	index = values.find("fov");
-	if (index != values.end())
-		fovx = atof(index->second.c_str());
-	index = values.find("fovy");
-	if (index != values.end())
-		fovy = atof(index->second.c_str());
-	index = values.find("theta");
-	if (index != values.end()) {
-		float value;
-		char type;
-		switch (sscanf(index->second.c_str(), "%f%c", &value, &type)) {
-			case 1:
-				zFixed = value;
-				break;
-
-			case 2:
-				if (type == '%')
-					zScaled = 0.01f * value;
-				break;
-		}
-	}
-	index = values.find("phi");
-	if (index != values.end()) {
-		float value;
-		char type;
-		switch (sscanf(index->second.c_str(), "%f%c", &value, &type)) {
-			case 1:
-				yFixed = value;
-				break;
-
-			case 2:
-				if (type == '%')
-					yScaled = 0.01f * value;
-				break;
-		}
-	}
-
+	// create item
+	assert(item == NULL);
 	item = createItem();
-	if (z > 0.0f)
-		item->setOffset(x, y, z);
-	item->setTurn(zFixed, zScaled);
-	item->setTilt(yFixed, yScaled);
-	item->setFOVScale(fovx, fovy);
+	item->setOffset(x, y, z);
+	item->setTurn(zRotate.pixel, zRotate.fraction);
+	item->setTilt(yRotate.pixel, yRotate.fraction);
+	item->setFOVScale(fov, fovy);
 
 	return item;
-}
-
-void					ViewItemSceneReader::close()
-{
-	assert(item != NULL);
-	item = NULL;
 }

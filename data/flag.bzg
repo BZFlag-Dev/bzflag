@@ -9,11 +9,11 @@
 # THIS PACKAGE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
 # IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
 # WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
-
-# flag.  don't blend if blending or texturing are off.
 -->
+
+<!--  flag.  don't blend if blending or texturing are off. -->
 <geometry id="flag">
-	# color is inherited
+	<!--  color is inherited -->
 	<texcoord>
 		0 0
 		0 0
@@ -31,7 +31,7 @@
 	<choice>
 		<mask t="renderBlending">1 2</mask>
 		<gstate>
-			<culling cull="off" />
+			<culling cull="false" />
 			<primitive type="tstrip">
 				<index>
 					2 1 4 3
@@ -41,7 +41,7 @@
 		<choice>
 			<mask t="renderTexturing">1 2</mask>
 			<gstate>
-				<culling cull="off" />
+				<culling cull="false" />
 				<primitive type="tstrip">
 					<index>
 						2 1 4 3
@@ -49,8 +49,8 @@
 				</primitive>
 			</gstate>
 			<gstate>
-				<texture repeat="off" rgba="on" filename="flag.rgb" />
-				<culling cull="off" />
+				<texture repeat="false" rgba="true" filename="flag.rgb" />
+				<culling cull="false" />
 				<blending src="sa" dst="1-sa" />
 				<primitive type="tstrip">
 					<index>

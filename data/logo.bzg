@@ -30,8 +30,8 @@
 	<gstate>
 		<blending src="sa" dst="1-sa" />
 		<texture filename="logo" rgba="true" />
-		<shading model="flag" />
-		<depth func="1" write="off" />
+		<shading model="flat" />
+		<depth func="1" write="false" />
 		<primitive type="tfan">
 			<index>
 				0 1 2 3

@@ -13,11 +13,11 @@
 
 <group>
 
-  # the universe model (all permanent objects in the game)
+  <!--  the universe model (all permanent objects in the game) -->
   <billboard id="universe">
     <center>true</center>
 
-    # sky
+    <!--  sky -->
     <spherical>
       <azimuth t="sunAzimuth">0 360</azimuth>
       <radius>800</radius>
@@ -29,11 +29,11 @@
         <gstate>
           <pass number="-10" />
           <shading model="smooth" />
-          <culling cull="off" />
-          <depth write="off" func="1" />
+          <culling cull="false" />
+          <depth write="false" func="1" />
           <geometry>
             <color t="sunAltitude">
-              # night
+              <!--  night -->
               0.04  0.04  0.08  1
               0.04  0.04  0.08  1
               0.04  0.04  0.08  1
@@ -42,7 +42,7 @@
               0.04  0.04  0.08  1
             </color>
             <color>
-              # twilight
+              <!--  twilight -->
               0.04  0.04  0.08  1
               0.04  0.04  0.08  1
               0.04  0.04  0.08  1
@@ -51,7 +51,7 @@
               0.04  0.04  0.08  1
             </color>
             <color>
-              # sunrise/sunset
+              <!--  sunrise/sunset -->
               0.04  0.04  0.08  1
               0.04  0.04  0.08  1
               0.04  0.04  0.08  1
@@ -60,7 +60,7 @@
               0.04  0.04  0.08  1
             </color>
             <color>
-              # early morning/late evening
+              <!--  early morning/late evening -->
               0.25  0.55  0.86  1
               0.43  0.75  0.95  1
               0.43  0.75  0.95  1
@@ -124,7 +124,7 @@
       </parameters>
     </spherical>
 
-    # stars
+    <!--  stars -->
     <parameters>
       <src>sunAltitude</src>
       <dst>tSun</dst>
@@ -132,27 +132,27 @@
       <bias>0</bias>
       <choice>
         <mask t="tSun">
-          1 # stars are visible
-          0 # stars are not visible
+          1 <!--  stars are visible -->
+          0 <!--  stars are not visible -->
         </mask>
         <transform>
           <scale>800 800 800</scale>
-          <matrix id="starTransform">        # scene mgr hooks in here
+          <matrix id="starTransform">        <!--  scene mgr hooks in here -->
             <gstate>
               <pass number="-9" />
-              <smoothing smooth="on" />
+              <smoothing smooth="true" />
               <blending src="sa" dst="1-sa" />
               <alpha func=">=" ref="0.2" />
-              <depth write="off" func="1" />
+              <depth write="false" func="1" />
               <point size="2" />
-              <include filename="stars.bzg" />
+              <!INCLUDE "stars.bzg" />
             </gstate>
           </matrix>
         </transform>
       </choice>
     </parameters>
 
-    # sun
+    <!--  sun -->
     <spherical>
       <azimuth t="sunAzimuth">0 360</azimuth>
       <altitude t="sunAltitude">-90 90</altitude>
@@ -165,15 +165,15 @@
         <gstate>
           <pass number="-8" />
           <shading model="smooth" />
-          <culling cull="off" />
-          <depth write="off" func="1" />
+          <culling cull="false" />
+          <depth write="false" func="1" />
           <geometry>
             <color t="sunAltitude">
-              # rising/setting color
+              <!--  rising/setting color -->
               0.75  0.27  0.00  1
             </color>
             <color>
-              # daytime color
+              <!--  daytime color -->
               1.00  1.00  0.80  1
             </color>
             <vertex t="sunAltitude">
@@ -209,7 +209,7 @@
       </parameters>
     </spherical>
 
-    # moon
+    <!--  moon -->
     <spherical>
       <azimuth t="moonAzimuth">0 360</azimuth>
       <altitude t="moonAltitude">-90 90</altitude>
@@ -218,14 +218,14 @@
       <gstate>
         <pass number="-7" />
         <shading model="smooth" />
-        <culling cull="off" />
-        <depth write="off" func="1" />
+        <culling cull="false" />
+        <depth write="false" func="1" />
         <geometry>
           <color>
             1 1 1 1
           </color>
           <vertex t="moonPhase">
-             # -1 to 1 should map to 1 to 0
+             <!--  -1 to 1 should map to 1 to 0 -->
              1.000000  0.000000 -0.013091
              1.000000  0.003388 -0.012645  1.000000  0.003388 -0.012645
              1.000000  0.006545 -0.011337  1.000000  0.006545 -0.011337
@@ -264,7 +264,7 @@
       </gstate>
     </spherical>
 
-    # sun/moon light sources
+    <!--  sun/moon light sources -->
     <choice>
       <mask t="renderLighting">1 2</mask>
       <transform>
@@ -272,12 +272,12 @@
         <group id="scene">
           <transform>
             <scale>800.0 800.0 800.0</scale>
-            <include filename="background.bzg" />
-            <include filename="clouds.bzg" />
-            <include filename="ground.bzg" />
+            <!INCLUDE "background.bzg" />
+            <!INCLUDE "clouds.bzg" />
+            <!INCLUDE "ground.bzg" />
           </transform>
           <group id="world">
-            # scene mgr hooks in here
+            <!--  scene mgr hooks in here -->
           </group>
         </group>
       </transform>
@@ -300,13 +300,13 @@
     	</bias>
     	<choice>
           <mask t="tSun">
-        	4 # sun is down
-        	2 # sun is rising/setting (interpolate between sunset and night)
-        	2 # sun is rising/setting (interpolate between sunset and day)
-        	1 # sun is up
+        	4 <!--  sun is down -->
+        	2 <!--  sun is rising/setting (interpolate between sunset and night) -->
+        	2 <!--  sun is rising/setting (interpolate between sunset and day) -->
+        	1 <!--  sun is up -->
           </mask>
 
-          # sun is up, moon is irrelevant
+          <!--  sun is up, moon is irrelevant -->
           <spherical>
         	<azimuth t="sunAzimuth">0 360</azimuth>
         	<altitude t="sunAltitude">-90 90</altitude>
@@ -322,7 +322,7 @@
         	</light>
           </spherical>
 
-          # sun is rising/setting.  ignore moon contribution.
+          <!--  sun is rising/setting.  ignore moon contribution. -->
           <spherical>
         	<azimuth t="sunAzimuth">0 360</azimuth>
         	<altitude t="sunAltitude">-90 90</altitude>
@@ -338,16 +338,16 @@
         	</light>
           </spherical>
 
-          # sun is down.  FIXME -- should use moonPhase to scale moonlight.
+          <!--  sun is down.  FIXME - should use moonPhase to scale moonlight. -->
           <choice>
         	<mask t="tMoon">
-              4 # sun and moon are down
-              2 # sun is down, moon is rising/setting
-              2 # sun is down, moon is rising/setting
-              1 # sun is down, moon is up
+              4 <!--  sun and moon are down -->
+              2 <!--  sun is down, moon is rising/setting -->
+              2 <!--  sun is down, moon is rising/setting -->
+              1 <!--  sun is down, moon is up -->
         	</mask>
 
-        	# sun is down, moon is up
+        	<!--  sun is down, moon is up -->
         	<spherical>
               <azimuth t="moonAzimuth">0 360</azimuth>
               <altitude t="moonAltitude">-90 90</altitude>
@@ -363,7 +363,7 @@
               </light>
         	</spherical>
 
-        	# sun is down, moon is rising
+        	<!--  sun is down, moon is rising -->
         	<spherical>
               <azimuth t="moonAzimuth">0 360</azimuth>
               <altitude t="moonAltitude">-90 90</altitude>
@@ -379,7 +379,7 @@
               </light>
         	</spherical>
 
-        	# sun and moon are down
+        	<!--  sun and moon are down -->
         	<light>
               <ambient>0.3 0.3 0.3</ambient>
               <diffuse>0.0 0.0 0.0</diffuse>
@@ -396,58 +396,58 @@
     </choice>
   </billboard>
 
-  # tank models, a generic model then one per team
+  <!--  tank models, a generic model then one per team -->
   <group id="player">
-    # FIXME -- need level of detail
-    <include filename="tank1.bzg" />
+    <!--  FIXME - need level of detail -->
+    <!INCLUDE "tank1.bzg" />
   </group>
 
-  # red player
+  <!--  red player -->
   <geometry id="player-r">
     <color>1 0.25 0.25 1</color>
     <ref id="player" />
   </geometry>
 
-  # green player
+  <!--  green player -->
   <geometry id="player-g">
     <color>0.25 1 0.25 1</color>
     <ref id="player" />
   </geometry>
 
-  # blue player
+  <!--  blue player -->
   <geometry id="player-b">
     <color>0.25 0.25 1 1</color>
     <ref id="player" />
   </geometry>
 
-  # purple player
+  <!--  purple player -->
   <geometry id="player-p">
     <color>1 0.25 1 1</color>
     <ref id="player" />
   </geometry>
 
-  # rogue player
+  <!--  rogue player -->
   <geometry id="player-y">
     <color>0.5 0.5 0.5 1</color>
     <ref id="player" />
   </geometry>
 
-  # get flag
-  <include filename="flag.bzg" />
+  <!--  get flag -->
+  <!INCLUDE "flag.bzg" />
 
-  # get explosions
-  <include filename="explosion.bzg" />
+  <!--  get explosions -->
+  <!INCLUDE "explosion.bzg" />
 
-  # get normal shots
-  <include filename="shot.bzg" />
+  <!--  get normal shots -->
+  <!INCLUDE "shot.bzg" />
 
-  # laser shots
-  <include filename="shot-L.bzg" />
+  <!--  laser shots -->
+  <!INCLUDE "shot-L.bzg" />
 
-  # guided missile shots
-  <include filename="shot-GM.bzg" />
+  <!--  guided missile shots -->
+  <!INCLUDE "shot-GM.bzg" />
 
-  # shock wave shots
-  <include filename="shot-SW.bzg" />
+  <!--  shock wave shots -->
+  <!INCLUDE "shot-SW.bzg" />
 
 </group>

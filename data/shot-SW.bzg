@@ -9,7 +9,6 @@
 # THIS PACKAGE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
 # IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
 # WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
-
 -->
 
 <transform id="shot-SW-plain">
@@ -495,8 +494,8 @@
 <choice id="shot-SW">
   <mask t="renderBlending">1 2</mask>
   <gstate>
-	<stipple mask="on" />
-	<culling cull="off" />
+	<stipple mask="true" />
+	<culling cull="false" />
     <geometry>
       <stipple>0.75</stipple>
       <stipple>0.25</stipple>
@@ -505,7 +504,7 @@
   </gstate>
   <gstate>
 	<blending src="sa" dst="1-sa" />
-	<culling cull="off" />
+	<culling cull="false" />
 	<ref id="shot-SW-plain" />
   </gstate>
 </choice>

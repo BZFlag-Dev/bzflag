@@ -9,15 +9,13 @@
 # THIS PACKAGE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
 # IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
 # WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
-
-# low detail tank model
-
 -->
 
+<!--  low detail tank model -->
 <group>
   <gstate>
   <texture filename="flage.rgb" />
-    # body
+    <!--  body -->
     <geometry>
       <texcoord>
         1.360 1.970
@@ -62,9 +60,9 @@
       </primitive>
     </geometry>
 
-    # left tread
+    <!--  left tread -->
     <group>
-      # edge
+      <!--  edge -->
       <geometry>
         <texcoord>
           0.033 0.684
@@ -109,7 +107,7 @@
         </primitive>
       </geometry>
 
-      # inner face
+      <!--  inner face -->
       <geometry>
         <texcoord>
           0.375 1.300
@@ -133,7 +131,7 @@
         </primitive>
       </geometry>
 
-      # outer face
+      <!--  outer face -->
       <geometry>
         <texcoord>
           0.800 0.523
@@ -158,9 +156,9 @@
       </geometry>
     </group>
 
-    # right tread
+    <!--  right tread -->
     <group>
-      # edge
+      <!--  edge -->
       <geometry>
         <texcoord>
           -0.072 0.099
@@ -205,7 +203,7 @@
         </primitive>
       </geometry>
 
-      # inner face
+      <!--  inner face -->
       <geometry>
         <texcoord>
           0.690 0.279
@@ -229,7 +227,7 @@
         </primitive>
       </geometry>
 
-      # outer face
+      <!--  outer face -->
       <geometry>
         <texcoord>
           -0.026 0.803
@@ -254,7 +252,7 @@
       </geometry>
     </group>
 
-    # turret
+    <!--  turret -->
     <geometry>
       <texcoord>
         0.107 -0.009
@@ -316,25 +314,25 @@
         1.580 0.435 1.790
         1.480 0.516 1.040
       </vertex>
-      # front, top, back
+      <!--  front, top, back -->
       <primitive type="tstrip">
         <index>
           0 1 2 3 4 5 6 7
         </index>
       </primitive>
 
-      # now smooth
+      <!--  now smooth -->
       <gstate>
         <texture filename="flage.rgb" />
         <shading model="smooth" />
-        # right side
+        <!--  right side -->
         <primitive type="tfan">
           <index>
             8 9 10 11
           </index>
         </primitive>
 
-        # left side
+        <!--  left side -->
         <primitive type="tfan">
           <index>
             12 13 14 15
@@ -344,7 +342,7 @@
     </geometry>
   </gstate>
 
-  # barrel
+  <!--  barrel -->
   <geometry>
     <color>0.1 0.1 0.1 1.0</color>
     <normal>

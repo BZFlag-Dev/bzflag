@@ -16,11 +16,12 @@ TARGETS  = $(LIBDIR)/libCommon.a
 
 CXXFILES =				\
 	BzfString.cxx			\
-	ConfigIO.cxx			\
+	ConfigFileManager.cxx		\
 	ErrorHandler.cxx		\
 	FileManager.cxx			\
 	StateDatabase.cxx		\
 	TimeBomb.cxx			\
+	XMLTree.cxx			\
 	$(NULL)
 
 targets: $(TARGETS)

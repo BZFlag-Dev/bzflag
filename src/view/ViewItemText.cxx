@@ -275,40 +275,38 @@ ViewTagReader* 			ViewItemTextReader::clone() const
 	return new ViewItemTextReader;
 }
 
-View*					ViewItemTextReader::open(
-								const ConfigReader::Values& values)
+View*					ViewItemTextReader::open(XMLTree::iterator xml)
 {
-	assert(item == NULL);
-
-	// get parameters
-	ViewSize x, y;
-	bool shadow = false;
-	ViewReader::readSize(values, "x", x, 0.0f, 0.0f);
-	ViewReader::readSize(values, "y", y, 0.0f, 0.0f);
-	ConfigReader::Values::const_iterator index = values.find("shadow");
-	if (index != values.end())
-		shadow = (index->second == "yes");
-
 	// create item
+	assert(item == NULL);
 	item = new ViewItemText;
+
+	// parse
+	ViewSize x, y;
+	xml->getAttribute("x", viewSetSize(x));
+	xml->getAttribute("y", viewSetSize(y));
+	xml->getAttribute("shadow", xmlParseEnum(s_xmlEnumBool,
+							xmlSetMethod(item, &ViewItemText::setShadow)));
+
+	// set parameters
 	item->setPosition(x, y);
-	item->setShadow(shadow);
-	msg = "";
 
 	return item;
+}
+
+bool					ViewItemTextReader::parse(XMLTree::iterator xml)
+{
+	if (xml->type == XMLNode::Data) {
+		if (!msg.empty())
+			msg += " ";
+		msg += xml->value;
+		return true;
+	}
+	return false;
 }
 
 void					ViewItemTextReader::close()
 {
 	assert(item != NULL);
 	item->setText(msg);
-	item = NULL;
-}
-
-bool					ViewItemTextReader::data(const BzfString& line)
-{
-	if (!msg.empty())
-		msg += " ";
-	msg += line;
-	return true;
 }

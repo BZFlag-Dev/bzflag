@@ -49,9 +49,9 @@ public:
 
 	// ViewItemReader overrides
 	virtual ViewTagReader* clone() const;
-	virtual View*		open(const ConfigReader::Values&);
+	virtual View*		open(XMLTree::iterator);
+	virtual bool		parse(XMLTree::iterator);
 	virtual void		close();
-	virtual bool		data(const BzfString&);
 
 private:
 	BzfString			msg;

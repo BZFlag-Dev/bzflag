@@ -13,7 +13,7 @@
 #ifndef BZF_SCENE_READER_H
 #define BZF_SCENE_READER_H
 
-#include "ConfigIO.h"
+#include "XMLTree.h"
 #include <map>
 #include <vector>
 
@@ -28,48 +28,21 @@ class SceneNodeSFEnum;
 
 class SceneReader {
 public:
-	typedef ConfigReader::Values Values;
-
 	SceneReader();
 	~SceneReader();
 
-	// read a scene
-	SceneNode*			read(istream&);
-
-	// get the position in the stream (usually for error reporting)
-	BzfString			getPosition() const;
+	// read a scene.  returned node is ref()'d.
+	SceneNode*			parse(XMLTree::iterator node);
 
 private:
-	bool				open(ConfigReader*, const BzfString&,
-							const ConfigReader::Values&);
-	bool				close(ConfigReader*, const BzfString&);
-
-	bool				openField(ConfigReader*, const BzfString&,
-							const ConfigReader::Values&);
-	bool				closeField(ConfigReader*, const BzfString&);
-	bool				dataField(ConfigReader*, const BzfString&);
-
-	bool				pushCommon(ConfigReader* reader,
-							const ConfigReader::Values& values,
-							SceneNode* newNode);
-	bool				push(ConfigReader* reader,
-							const ConfigReader::Values& values,
-							SceneNode* newNode);
-	bool				push(ConfigReader* reader,
-							const ConfigReader::Values& values,
-							SceneNodeGroup* newNode);
-	bool				pop(ConfigReader* reader);
-	void				readEnum(ConfigReader* reader,
-							const ConfigReader::Values& values,
-							SceneNodeSFEnum& field);
+	void				parseNode(XMLTree::iterator xml);
+	void				pushCommon(XMLTree::iterator, SceneNode* newNode);
+	void				push(XMLTree::iterator, SceneNode* newNode);
+	void				push(XMLTree::iterator, SceneNodeGroup* newNode);
+	void				pop();
+	void				readEnum(XMLTree::iterator, SceneNodeSFEnum& field);
 	void				addReader(SceneNodeFieldReader* reader);
-
-	static bool			openCB(ConfigReader*, const BzfString&, const ConfigReader::Values&, void*);
-	static bool			closeCB(ConfigReader*, const BzfString&, void*);
-
-	static bool			openFieldCB(ConfigReader*, const BzfString&, const ConfigReader::Values&, void*);
-	static bool			closeFieldCB(ConfigReader*, const BzfString&, void*);
-	static bool			dataFieldCB(ConfigReader*, const BzfString&, void*);
+	void				saveNamedNode(const BzfString& id);
 
 private:
 	typedef std::map<BzfString, SceneNodeFieldReader*> FieldReaders;
@@ -84,7 +57,6 @@ private:
 	typedef std::vector<State> Stack;
 	typedef std::map<BzfString, SceneNode*> NodeMap;
 
-	ConfigReader*		configReader;
 	Stack				stack;
 	SceneNode*			node;
 	NodeMap				namedNodes;

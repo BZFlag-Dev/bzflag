@@ -68,17 +68,21 @@ have matured enough to be widely and well supported.  These
 features are now permitted and encouraged:
   bool			-- the boolean type and True and False are gone
   templates		-- use where appropriate
+  exceptions		-- use where appropriate
   standard C++ library	-- use where appropriate (AList is gone)
 
 The BzfString class still exists and, for now, it should be used
 instead of std::string.  Contributions using std::string directly
-will not be accepted.
+will not be accepted (unless your contribution is to completely
+replace all uses of BzfString with std::string;  it would be
+easiest to typedef std::string BzfString and fix the necessary
+code).
 
-Exception handling is not currently used in BZFlag but it is
-permissible.  However, do not use exception specifications on
-function/method declarations.  And be sure you don't leak any
-memory if exceptions are thrown;  that's the biggest impediment
-to using exceptions since the existing code is not safe.
+Exception handling is used in BZFlag in some places.  However,
+do not use exception specifications on function/method declarations.
+And be sure you don't leak any memory if exceptions are thrown.
+Using std::auto_ptr<> is discouraged because older VC++ compilers
+have a broken implementation.
 
 Run-time typing is strongly discouraged.  It's typically not
 necessary and shouldn't be introduced unless you've got a *really*
@@ -161,6 +165,57 @@ conformant code should follow the non-conformant code's style if
 following the rules would cause an ugly mess.
 
 
+Configuration Files
+===================
+Configuration files are now XML with minor extensions.  Scene graphs
+are also XML.  All XML file processing is performed using the same
+class:  XMLTree.  XMLTree syntatically parses XML files and stores
+the result in a tree data structure.  That tree is then passed to
+the appropriate semantic parser, which may pass off sub-trees to
+other semantic parsers.
+
+Configuration files use the suffix `bzc' (and scene graph files use
+`bzg').  During startup, bzflag does the following initialization:
+
+  * sets default configuration
+  * loads $(HOME)/.bzflag (the pathname depends on the user and platform)
+  * parses command line arguments
+  * creates the window, initializes audio, etc
+  * loads user.bzc if it exists, otherwise load config.bzc
+
+On exit, the configuration is written to $(HOME)/.bzflag to provide
+some persistence.  The initialization order allows the command line
+to override old configuration and old configuration to override
+defaults.  It also allows the user to hook in a replacement
+configuration file (user.bzc) for local changes that shouldn't be
+overwritten everytime bzflag exits.
+
+XMLTree supports:
+  nested tags
+  comments
+  CDATA sections
+  character references
+  processing instructions (which are just parsed and stored)
+
+XMLTree doesn't support:
+  prolog
+  DTD's (and related stuff)
+  any character encoding but ASCII
+
+XMLTree adds the following extensions:
+  <!INCLUDE "<filename>"/>
+    causes the named file to be included inline, replacing the
+    !INCLUDE tag.
+  multiple top-level tags
+    forcing a single top-level tag is rather annoying for the
+    configuration files, so this restriction is relaxed.
+
+ConfigFileManager stores configuration file readers along with the
+tag each handles.  It can parse files (or parsed XMLTree's) that
+contain those tags, automatically switching between readers as
+necessary.
+
+
 The State Database
 ==================
 BZFlag now uses a centralized database for storing many (most?)
@@ -236,11 +291,12 @@ Details -- common
 common.h	-- basic types and function declarations
 BzfString	-- a simple ref counted string class (don't use std::string)
 CallbackList	-- template for lists of callback functions
-ConfigIO	-- an XML(-ish) parser for reading configuration files
+ConfigFileManager -- stores configuration file parsers and parses config files
 ErrorHandler	-- a central place for printing errors (using printError())
 FileManager	-- creates streams for I/O in the data directory
 StateDatabase	-- a name/value pair database
 TimeBomb	-- used for expiring development releases
+XMLTree		-- an XML parser for reading configuration files
 
 Details -- game
 ===============
@@ -461,7 +517,7 @@ The SceneNodeGState deserves a short description.  It controls how a
 primitive is drawn and there should be a gstate somewhere in the graph
 above every primitive.  A gstate node's parameters map directly to the
 methods in an OpenGLGStateBuilder.  In summary:
-  <texture filename="<filename>" rgba="on|off" repeat="on|off"
+  <texture filename="<filename>" rgba="true|false" repeat="true|false"
 	   filter="nearest|linear|
                    nearestmipmapnearest|linearmipmapnearest|
                    nearestmipmaplinear|linearmipmaplinear" />
@@ -471,19 +527,19 @@ methods in an OpenGLGStateBuilder.  In summary:
   <blending src="0|1|sa|1-sa|da|1-da|dc|1-dc"
             dst="0|1|sa|1-sa|da|1-da|sc|1-sc" /> use blending function
   <alpha func="0|==|!=|<|<=|>|>=|1" ref={ref} /> use alpha function
-  <depth write="on|off" func="0|==|!=|<|<=|>|>=|1" />
+  <depth write="true|false" func="0|==|!=|<|<=|>|>=|1" />
 						use depth function
-  <smoothing smooth="on|off" />			use line/point smoothing or not
-  <culling cull="on|off" />			enable/disable culling
-  <dithering dither="on|off" />			enable/disable dithering
+  <smoothing smooth="true|false" />		use line/point smoothing or not
+  <culling cull="true|false" />			enable/disable culling
+  <dithering dither="true|false" />		enable/disable dithering
   <point size="{s}" />				draw points of size s
   <stipple alpha="{a}" />			set stipple with given opacity
   <pass number="{n}" />				draw on pass n
-You can also add `force="on|off"' to texture, blending, and smoothing.
-Using "on" forces the gstate to override globally disabled rendering
+You can also add `force="true|false"' to texture, blending, and smoothing.
+Using "true" forces the gstate to override globally disabled rendering
 state.  So, for example, if you absolutely have to have smoothing on
 your lines and points even if the user wants those turned off then
-use `<smoothing smooth="on" force="on" />'.  However, usually you
+use `<smoothing smooth="true" force="true" />'.  However, usually you
 should use a choice node to make separate models for each case.
 
 Details -- ui

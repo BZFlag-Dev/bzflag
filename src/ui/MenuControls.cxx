@@ -826,6 +826,16 @@ void					MenuText::setText(const BzfString& _text)
 	text = _text;
 }
 
+BzfString&				MenuText::getText()
+{
+	return text;
+}
+
+BzfString				MenuText::getText() const
+{
+	return text;
+}
+
 void					MenuText::setScrollSpeed(float _speed)
 {
 	speed = _speed;

@@ -40,7 +40,7 @@
 		<scale>10 10 10</scale>
 		<rotate>0 0 1 0</rotate>
 		<gstate>
-			<texture filename="ground" repeat="on" />
+			<texture filename="ground" repeat="true" />
 			<primitive type="tfan">
 				<index>
 					0 1 2 3 4 5 6 1

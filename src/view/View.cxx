@@ -22,6 +22,12 @@ ViewSize::ViewSize() : pixel(0.0f), fraction(0.0f)
 	// do nothing
 }
 
+ViewSize::ViewSize(float pixel_, float fraction_) :
+							pixel(pixel_), fraction(fraction_)
+{
+	// do nothing
+}
+
 float					ViewSize::get(float fullSize) const
 {
 	return pixel + fullSize * fraction;
@@ -136,7 +142,7 @@ int						View::unref()
 	assert(refCount >= 1);
 	int n = --refCount;
 	if (n == 0) {
-		n = 0xdeadbeef;
+		refCount = 0xdeadbeef;
 		delete this;
 	}
 	return n;

@@ -271,12 +271,12 @@ bool					SceneVisitorWrite::visit(SceneNodeMetadata* n)
 {
 	// open
 	*stream << getIndent() << "<metadata id=\"" <<
-								ConfigReader::escape(n->getID()).c_str() <<
+								XMLTree::escape(n->getID()).c_str() <<
 								"\">" << endl;
 	indent();
 
 	// write parameters
-	*stream << ConfigReader::escape(n->getData()).c_str() << endl;
+	*stream << XMLTree::escape(n->getData()).c_str() << endl;
 
 	// descend
 	const bool result = n->descend(this);

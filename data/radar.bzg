@@ -9,7 +9,6 @@
 # THIS PACKAGE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
 # IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
 # WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
-
 -->
 
 <geometry>
@@ -25,7 +24,7 @@
 	<gstate>
 		<shading model="flat" />
 		<blending src="sa" dst="1-sa" />
-		<depth func="1" write="off" />
+		<depth func="1" write="false" />
 		<primitive type="tstrip">
 			<index>
 				0 1 2 3

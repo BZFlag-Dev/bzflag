@@ -9,10 +9,9 @@
 # THIS PACKAGE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
 # IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
 # WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
-
-# menu cursor
 -->
 
+<!-- menu cursor -->
 <light>
   <animate type="cycle">
     <src>time</src>
@@ -27,7 +26,7 @@
           <rotate>1 0 0 -90</rotate>
           <translate>0 -0.5 0</translate>
           <scale>0.3 0.3 0.3</scale>
-          <include filename="tank2.bzg" />
+          <!INCLUDE "tank2.bzg" />
         </transform>
       </geometry>
     </transform>

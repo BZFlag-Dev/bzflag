@@ -133,21 +133,35 @@ void					SceneManager::open()
 	clear();
 }
 
-void					SceneManager::read(istream* stream)
+void					SceneManager::read(istream* stream,
+								 const BzfString& filename)
 {
 	// ignore streams we can't read
 	if (stream == NULL || !*stream)
 		return;
 
 	SceneVisitorFindAll finder;
-	{
-		// now read the file
+	try {
+		// read XML
+		XMLTree xmlTree;
+		xmlTree.read(*stream, XMLStreamPosition(filename));
+
+		// parse scene
 		SceneReader reader;
-		SceneNode* tmpScene = reader.read(*stream);
+		SceneNode* node = reader.parse(xmlTree.begin());
 
 		// now find all the named nodes
-		finder.traverse(tmpScene);
-		tmpScene->unref();
+		if (node != NULL) {
+			finder.traverse(node);
+			node->unref();
+		}
+	}
+	catch (XMLIOException& e) {
+		printError("%s (%d,%d): %s",
+							e.position.filename.c_str(),
+							e.position.line,
+							e.position.column,
+							e.what());
 	}
 
 	// and transfer them to our map

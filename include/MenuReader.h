@@ -13,9 +13,10 @@
 #ifndef BZF_MENU_READER_H
 #define BZF_MENU_READER_H
 
-#include "ConfigIO.h"
 #include "Menu.h"
 #include "OpenGLTexFont.h"
+#include "XMLTree.h"
+#include "ConfigFileReader.h"
 
 class MenuCombo;
 class MenuList;
@@ -25,32 +26,39 @@ class MenuText;
 // object to parse a menu configuration file
 //
 
-class MenuReader {
+class MenuReader : public ConfigFileReader {
 public:
 	MenuReader();
 	~MenuReader();
 
-	bool				read(istream&);
+	// ConfigFileReader overrides.  menus go to MENUMGR.
+	ConfigFileReader*	clone();
+	void				parse(XMLTree::iterator);
 
 private:
-	bool				open(ConfigReader*, const BzfString&,
-							const ConfigReader::Values&);
-	bool				close(const BzfString&);
-	bool				data(const BzfString&);
+	// crs -- must have arg names here to work around bug in VC++ 6.0
+	template <class T>
+	void				parseChildren(XMLTree::iterator xml,
+							void (MenuReader::*method)(XMLTree::iterator, T*),
+							T* data);
 
-	static bool			openCB(ConfigReader*, const BzfString&,
-							const ConfigReader::Values&, void*);
-	static bool			closeCB(ConfigReader*,
-							const BzfString&, void*);
-	static bool			dataCB(ConfigReader*,
-							const BzfString&, void*);
+	void				parseMenus(XMLTree::iterator, void*);
+	void				parseMenu(XMLTree::iterator, void*);
+	void				parseCombo(XMLTree::iterator, MenuCombo*);
+	void				parseList(XMLTree::iterator, MenuList*);
+	void				parseText(XMLTree::iterator, MenuText*);
 
-	bool				parseSize(const BzfString&,
-							float& value, bool& inPixels) const;
+	bool				parseConditionalTags(XMLTree::iterator);
+	bool				parseStandardTags(XMLTree::iterator);
+	bool				parseGlobalTags(XMLTree::iterator);
+
+	void				setPos(float pixels, float fraction);
+	void				setSize(float pixels, float fraction);
 
 private:
 	struct State {
 	public:
+		Menu*			menu;
 		Menu::Align		align;
 		bool			xIsPixels, yIsPixels;
 		float			x, y;
@@ -61,11 +69,6 @@ private:
 	typedef std::vector<State> StateStack;
 
 	StateStack			stateStack;
-	Menu*				openMenu;
-	MenuCombo*			openCombo;
-	MenuList*			openList;
-	MenuText*			openText;
-	BzfString			textString;
 	float				yPixel, yFraction;
 	float				yMarkPixel, yMarkFraction;
 };

@@ -34,7 +34,7 @@
 		<texture filename="bmetal" />
 		<texenv mode="modulate" />
 		<shading model="smooth" />
-		<depth func="1" write="off" />
+		<depth func="1" write="false" />
 		<primitive type="tfan">
 			<index>
 				0 1 2 3

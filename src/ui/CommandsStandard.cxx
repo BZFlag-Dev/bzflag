@@ -15,6 +15,7 @@
 #include "KeyManager.h"
 #include "MenuManager.h"
 #include "StateDatabase.h"
+#include "ConfigFileManager.h"
 #include <stdio.h>
 #include <ctype.h>
 
@@ -302,6 +303,26 @@ static BzfString		cmdMenu(const BzfString&,
 	return "usage: menu {push <name>|pop}";
 }
 
+static BzfString		cmdConfig(const BzfString&,
+								const CommandManager::ArgList& args)
+{
+	if (args.size() != 1)
+		return "usage: config <filename>";
+
+	try {
+		if (!CFGMGR->read(args[0]))
+			return BzfString::format("cannot open file `%s'", args[0].c_str());
+		return BzfString();
+	}
+	catch (XMLIOException& e) {
+		return BzfString::format("%s (%d,%d): %s",
+							e.position.filename.c_str(),
+							e.position.line,
+							e.position.column,
+							e.what());
+	}
+}
+
 
 //
 // command name to function mapping
@@ -323,7 +344,8 @@ static const CommandListItem commandList[] = {
 	{ "add",	&cmdAdd,	"add <name> <value>:  add an amount to a variable" },
 	{ "bind",	&cmdBind,	"bind [<button-name> {up|down} <command> <args>...]:  bind a key/button to a command or print all bindings" },
 	{ "unbind",	&cmdUnbind,	"unbind <button-name> {up|down}:  unbind a key/button from a command" },
-	{ "menu",	&cmdMenu,	"menu {push <name>|pop}:  push a menu onto the menu stack or pop the top menu" }
+	{ "menu",	&cmdMenu,	"menu {push <name>|pop}:  push a menu onto the menu stack or pop the top menu" },
+	{ "config",	&cmdConfig,	"config <filename>:  load the named configuration file" }
 };
 // FIXME -- may want a cmd to cycle through a list
 

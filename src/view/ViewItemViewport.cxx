@@ -130,18 +130,20 @@ ViewTagReader*			ViewItemViewportReader::clone() const
 	return new ViewItemViewportReader;
 }
 
-View*					ViewItemViewportReader::open(
-								const ConfigReader::Values& values)
+View*					ViewItemViewportReader::open(XMLTree::iterator xml)
 {
 	assert(item == NULL);
 
-	// get region
-	ViewSize x, y, w, h;
+	// parse
+	bool wRelative, hRelative;
+	ViewSize x, y, w(0.0f, 1.0f), h(0.0f, 1.0f);
+	xml->getAttribute("x", viewSetSize(x));
+	xml->getAttribute("y", viewSetSize(y));
+	xml->getAttribute("w", viewSetSize(w, &wRelative));
+	xml->getAttribute("h", viewSetSize(h, &hRelative));
+
+	// handle aspect ratios
 	ViewItemViewport::Aspect aspect = ViewItemViewport::Free;
-	ViewReader::readSize(values, "x", x, 0.0f, 0.0f);
-	ViewReader::readSize(values, "y", y, 0.0f, 0.0f);
-	const bool wRelative = ViewReader::readSize(values, "w", w, 0.0f, 1.0f);
-	const bool hRelative = ViewReader::readSize(values, "h", h, 0.0f, 1.0f);
 	if (wRelative && hRelative) {
 		w.pixel    = 0.0;
 		w.fraction = 1.0;
@@ -160,12 +162,6 @@ View*					ViewItemViewportReader::open(
 	item->setRegion(x, y, w, h, aspect);
 
 	return item;
-}
-
-void					ViewItemViewportReader::close()
-{
-	assert(item != NULL);
-	item = NULL;
 }
 
 ViewItemViewport*				ViewItemViewportReader::create() const

@@ -31,7 +31,7 @@
 		<gstate>
 			<texture filename="bmetal"/>
 			<shading model="flat"/>
-			<depth func="1" write="off"/>
+			<depth func="1" write="false"/>
 			<primitive type="tstrip">
 				<index>
 					0 1 2 3

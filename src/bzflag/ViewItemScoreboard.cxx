@@ -590,40 +590,21 @@ ViewTagReader* 			ViewItemScoreboardReader::clone() const
 	return new ViewItemScoreboardReader;
 }
 
-View*					ViewItemScoreboardReader::open(
-								const ConfigReader::Values& values)
+View*					ViewItemScoreboardReader::open(XMLTree::iterator xml)
 {
-	assert(item == NULL);
-
-	// get parameters
-	bool team = false, shadow = false;
-	BzfString title, line;
-	ConfigReader::Values::const_iterator index;
-	index = values.find("team");
-	if (index != values.end())
-		team = (index->second == "yes");
-	index = values.find("shadow");
-	if (index != values.end())
-		shadow = (index->second == "yes");
-	index = values.find("title");
-	if (index != values.end())
-		title = index->second;
-	index = values.find("format");
-	if (index != values.end())
-		line = index->second;
-
 	// create item
+	assert(item == NULL);
 	item = new ViewItemScoreboard;
-	item->setTitleFormat(title);
-	item->setFormat(line);
-	item->setShadow(shadow);
-	item->setShowTeams(team);
+
+	// parse
+	xml->getAttribute("team", xmlParseEnum(s_xmlEnumBool,
+							xmlSetMethod(item, &ViewItemScoreboard::setShowTeams)));
+	xml->getAttribute("shadow", xmlParseEnum(s_xmlEnumBool,
+							xmlSetMethod(item, &ViewItemScoreboard::setShadow)));
+	xml->getAttribute("title", xmlSetMethod(item,
+							&ViewItemScoreboard::setTitleFormat));
+	xml->getAttribute("format", xmlSetMethod(item,
+							&ViewItemScoreboard::setFormat));
 
 	return item;
-}
-
-void					ViewItemScoreboardReader::close()
-{
-	assert(item != NULL);
-	item = NULL;
 }

@@ -35,7 +35,7 @@ public:
 	// models of the same name.  on close(), a few nodes with
 	// special names are found and prepared.
 	void				open();
-	void				read(istream* modelStream);
+	void				read(istream* modelStream, const BzfString& filename);
 	void				close();
 
 	// set static scene node

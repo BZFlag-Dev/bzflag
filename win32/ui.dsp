@@ -90,6 +90,10 @@ SOURCE=..\src\ui\CommandManager.cxx
 # End Source File
 # Begin Source File
 
+SOURCE=..\src\ui\CommandReader.cxx
+# End Source File
+# Begin Source File
+
 SOURCE=..\src\ui\CommandsStandard.cxx
 # End Source File
 # Begin Source File
@@ -126,39 +130,43 @@ SOURCE=..\src\ui\MessageManager.cxx
 # PROP Default_Filter "h;hpp;hxx;hm;inl"
 # Begin Source File
 
-SOURCE=..\src\bzflag\CommandManager.h
+SOURCE=..\include\CommandManager.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\src\bzflag\CommandsStandard.h
+SOURCE=..\include\CommandReader.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\src\bzflag\KeyManager.h
+SOURCE=..\include\CommandsStandard.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\src\bzflag\Menu.h
+SOURCE=..\include\KeyManager.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\src\bzflag\MenuControls.h
+SOURCE=..\include\Menu.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\src\bzflag\MenuManager.h
+SOURCE=..\include\MenuControls.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\src\bzflag\MenuReader.h
+SOURCE=..\include\MenuManager.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\src\bzflag\MessageBuffer.h
+SOURCE=..\include\MenuReader.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\src\bzflag\MessageManager.h
+SOURCE=..\include\MessageBuffer.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\include\MessageManager.h
 # End Source File
 # End Group
 # End Target

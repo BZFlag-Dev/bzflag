@@ -78,35 +78,23 @@ ViewTagReader*			ViewItemBufferReader::clone() const
 	return new ViewItemBufferReader;
 }
 
-View*					ViewItemBufferReader::open(
-								const ConfigReader::Values& values)
+View*					ViewItemBufferReader::open(XMLTree::iterator xml)
 {
-	assert(item == NULL);
+	static const XMLParseEnumList<ViewItemBuffer::Buffer> s_enumBuffer[] = {
+		{ "both",  ViewItemBuffer::Both },
+		{ "left",  ViewItemBuffer::Left },
+		{ "right", ViewItemBuffer::Right },
+		{ NULL, ViewItemBuffer::Both }
+	};
 
-	// get buffer
-	ViewItemBuffer::Buffer buffer = ViewItemBuffer::Both;
-	ConfigReader::Values::const_iterator index;
-	index = values.find("buffer");
-	if (index != values.end()) {
-		if (index->second == "left")
-			buffer = ViewItemBuffer::Left;
-		else if (index->second == "right")
-			buffer = ViewItemBuffer::Right;
-		else if (index->second == "both")
-			buffer = ViewItemBuffer::Both;
-		else
-			return NULL;
-	}
+	assert(item == NULL);
 
 	// create item
 	item = new ViewItemBuffer;
-	item->setBuffer(buffer);
+
+	// parse
+	xml->getAttribute("buffer", xmlParseEnum(s_enumBuffer,
+							xmlSetMethod(item, &ViewItemBuffer::setBuffer)));
 
 	return item;
-}
-
-void					ViewItemBufferReader::close()
-{
-	assert(item != NULL);
-	item = NULL;
 }

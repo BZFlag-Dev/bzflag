@@ -123,6 +123,13 @@ void					BzfString::compact()
 	rep = newRep;
 }
 
+void					BzfString::swap(BzfString& s)
+{
+	Rep* tmp = rep;
+	rep      = s.rep;
+	s.rep    = tmp;
+}
+
 BzfString				BzfString::operator+(const BzfString& tail) const
 {
 	BzfString s(*this);
@@ -144,6 +151,12 @@ BzfString&				BzfString::operator+=(const BzfString& tail)
 BzfString&				BzfString::operator+=(const char* tail)
 {
 	if (tail) append(tail, ::strlen(tail));
+	return *this;
+}
+
+BzfString&				BzfString::operator+=(char tail)
+{
+	append(&tail, 1);
 	return *this;
 }
 

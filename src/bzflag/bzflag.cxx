@@ -41,7 +41,8 @@
 #include "FileManager.h"
 #include "ViewItems.h"
 #include "ViewReader.h"
-#include "ConfigIO.h"
+#include "CommandReader.h"
+#include "ConfigFileManager.h"
 #include <iostream>
 
 static const char*		argv0;
@@ -491,43 +492,19 @@ static void				parse(int argc, char** argv)
 // config file read callbacks
 //
 
-static bool				readDBOpenCommand(ConfigReader* reader,
-								const BzfString&,
-								const ConfigReader::Values&,
-								void*)
+static void				readConfig(istream* stream, const BzfString& filename)
 {
-	// ignore tags in the command section
-	reader->push(NULL, NULL, NULL);
-	return true;
-}
-
-static bool				readDBDataCommand(ConfigReader*,
-								const BzfString& cmd,
-								void*)
-{
-	// if there's nothing but whitespace then skip it
-	if (strspn(cmd.c_str(), " \t\r\n") != cmd.size()) {
-		BzfString result = CMDMGR->run(cmd);
-		if (!result.empty())
-			printError(result.c_str());
-	}
-	return true;
-}
-
-static bool				readDBOpenTop(ConfigReader* reader,
-								const BzfString& tag,
-								const ConfigReader::Values&,
-								void*)
-{
-	if (tag == "command") {
-		// start reading commands
-		reader->push(readDBOpenCommand, NULL, readDBDataCommand);
-		return true;
-	}
-	else {
-		// other sections aren't valid
-		printError("unexpected configuration section %s", tag.c_str());
-		return false;
+	if (stream != NULL) {
+		try {
+			CFGMGR->read(*stream, XMLStreamPosition(filename));
+		}
+		catch (XMLIOException& e) {
+			printError("%s (%d,%d): %s",
+							e.position.filename.c_str(),
+							e.position.line,
+							e.position.column,
+							e.what());
+		}
 	}
 }
 
@@ -538,21 +515,23 @@ static bool				readDBOpenTop(ConfigReader* reader,
 
 static void				writeDBEntry(const BzfString& name, void* _stream)
 {
-	// get the value, escaped for quoting
-	BzfString value = ConfigReader::escape(BZDB->get(name));
-
 	// write it
 	ostream* stream = reinterpret_cast<ostream*>(_stream);
-	(*stream) << "  set " << name << " \"" << value << "\"" << std::endl;
+	(*stream) << "\t<command>set " <<
+						XMLTree::escape(name) <<
+						" \"" << XMLTree::escape(BZDB->get(name)) << "\"" <<
+					"</command>" << std::endl;
 }
 
 static void				writeKeys(const BzfString& name, bool press,
 								const BzfString& cmd, void* _stream)
 {
 	ostream* stream = reinterpret_cast<ostream*>(_stream);
-	(*stream) << "  bind \"" << name << "\" " <<
-								(press ? "down" : "up") << " \"" <<
-								ConfigReader::escape(cmd) << "\"" << std::endl;
+	(*stream) << "\t<command>bind " <<
+						"\"" << XMLTree::escape(name) << "\" " <<
+						(press ? "down" : "up") <<
+						" \"" << XMLTree::escape(cmd) << "\"" <<
+					"</command>" << std::endl;
 }
 
 
@@ -698,6 +677,14 @@ int						main(int argc, char** argv)
 	// initialize some classes
 	Team::init();
 
+	// add custom view items
+	ViewItems::init();
+
+	// load the configuration file parsers
+	CFGMGR->add("views", new ViewReader);
+	CFGMGR->add("menus", new MenuReader);
+	CFGMGR->add("commands", new CommandReader);
+
 	// prepare message buffers
 	MSGMGR->create("console", 100);
 	MSGMGR->create("messages", 100);
@@ -753,17 +740,13 @@ int						main(int argc, char** argv)
 		}
 	}
 
-	// read resources
+	// read the user configuration file
 	{
+		setErrorCallback(initializingErrorCallback);
 		istream* stream = PLATFORM->createConfigInStream();
-		if (stream != NULL) {
-			setErrorCallback(initializingErrorCallback);
-			ConfigReader reader;
-			reader.push(readDBOpenTop, NULL, NULL);
-			reader.read(*stream, NULL);
-			delete stream;
-			setErrorCallback(fatalErrorCallback);
-		}
+		readConfig(stream, "<config-file>");
+		delete stream;
+		setErrorCallback(fatalErrorCallback);
 	}
 
 	// parse arguments
@@ -918,25 +901,16 @@ int						main(int argc, char** argv)
 	for (i = 0; i < countof(fontMap); ++i)
 		OpenGLTexFont::mapFont(fontMap[i].name, fontMap[i].filename);
 
-	// prepare menus
+	// read the configuration files (user.bzc if it exists, else config.bzc)
 	{
-		istream* stream = FILEMGR->createDataInStream("menu.bzc");
-		if (stream) {
-			MenuReader reader;
-			reader.read(*stream);
+		istream* stream = FILEMGR->createDataInStream("user.bzc");
+		if (stream != NULL) {
+			readConfig(stream, "user.bzc");
 			delete stream;
 		}
-	}
-
-	// add custom view items
-	ViewItems::init();
-
-	// prepare views
-	{
-		istream* stream = FILEMGR->createDataInStream("view.bzc");
-		if (stream) {
-			ViewReader reader;
-			reader.read(*stream);
+		else {
+			stream = FILEMGR->createDataInStream("config.bzc");
+			readConfig(stream, "config.bzc");
 			delete stream;
 		}
 	}
@@ -955,9 +929,9 @@ int						main(int argc, char** argv)
 	// save resources
 	{
 		ostream* resourceStream = PLATFORM->createConfigOutStream();
-		if (resourceStream) {
+		if (resourceStream != NULL) {
 			// open command section
-			(*resourceStream) << "<command>" << std::endl;
+			(*resourceStream) << "<commands>" << std::endl;
 
 			// write state database
 			BZDB->write(writeDBEntry, resourceStream);
@@ -966,7 +940,7 @@ int						main(int argc, char** argv)
 			KEYMGR->iterate(writeKeys, resourceStream);
 
 			// close command section
-			(*resourceStream) << "</command>" << std::endl;
+			(*resourceStream) << "</commands>" << std::endl;
 
 			// done
 			delete resourceStream;

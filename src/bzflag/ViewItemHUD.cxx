@@ -317,21 +317,14 @@ ViewTagReader* 			ViewItemHUDReader::clone() const
 	return new ViewItemHUDReader;
 }
 
-View*					ViewItemHUDReader::open(
-								const ConfigReader::Values& values)
+View*					ViewItemHUDReader::open(XMLTree::iterator xml)
 {
-	assert(item == NULL);
-
+	// parse
 	bool primary = false;
-	ConfigReader::Values::const_iterator index = values.find("primary");
-	primary = (index != values.end() && index->second == "yes");
+	xml->getAttribute("primary", xmlParseEnum(s_xmlEnumBool, xmlSetVar(primary)));
 
+	// create item
+	assert(item == NULL);
 	item = new ViewItemHUD(primary);
 	return item;
-}
-
-void					ViewItemHUDReader::close()
-{
-	assert(item != NULL);
-	item = NULL;
 }
