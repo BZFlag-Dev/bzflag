@@ -4190,15 +4190,12 @@ static void removePlayer(int playerIndex)
   player[playerIndex].state = PlayerNoExist;
 
   if (player[playerIndex].team != NoTeam) {
-    // if player had flag then flag just disappears.  it'd be nice
-    // to have it fly as if dropped, but we've no idea what the
-    // player's position is.
     int flagid = player[playerIndex].flag;
     if (flagid >= 0) {
       // do not simply zap team flag
       Flag &carriedflag = flag[flagid].flag;
       if (carriedflag.id >= FirstTeamFlag && carriedflag.id <= LastTeamFlag) {
-	dropFlag(playerIndex, carriedflag.position);
+	dropFlag(playerIndex, player[playerIndex].lastState.pos);
       }
       else {
 	zapFlag(flagid);
