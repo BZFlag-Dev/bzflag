@@ -3394,6 +3394,30 @@ void			ServerMenu::setStatus(const char* msg, const std::vector<std::string> *pa
 
 void			ServerMenu::checkEchos()
 {
+
+  // counter used to print a status spinner
+  static int counter=0;
+  // how frequent to update spinner
+  const float STATUS_UPDATE_FREQUENCY = 0.5; 
+  // timer used to track the spinner update frequency
+  static TimeKeeper lastUpdate = TimeKeeper::getSunGenesisTime();
+
+  // print a spinning status message that updates periodically until we are 
+  // actually receiving data from a list server (phase 3).  the loop below
+  // is not entered until later -- so update the spinning status here too
+  if (phase < 2) {
+    if (TimeKeeper::getCurrent() - lastUpdate > STATUS_UPDATE_FREQUENCY) {
+      /* a space trailing the spinning status icon adjusts for the
+       * variable width font -- would be better to actually print
+       * a status icon elsewhere or print spinning icon separate
+       * from the text (and as a cool graphic).
+       */
+      setStatus(string_util::format("%s Searching", (counter%4==0)?"-":(counter%4==1)?" \\":(counter%4==2)?" |":" /").c_str());
+      counter++;
+      lastUpdate = TimeKeeper::getCurrent();
+    }
+  }
+
   // lookup server list in phase 0
   if (phase == 0) {
     int i;
@@ -3499,9 +3523,24 @@ void			ServerMenu::checkEchos()
   while (1) {
     int i;
 
+    // print a spinning status message that updates periodically until we are 
+    // actually receiving data from a list server (phase 3).
+    if (phase < 2) {
+      if (TimeKeeper::getCurrent() - lastUpdate > STATUS_UPDATE_FREQUENCY) {
+	/* a space trailing the spinning status icon adjusts for the
+	 * variable width font -- would be better to actually print
+	 * a status icon elsewhere or print spinning icon separate
+	 * from the text. (and as a cool graphic)
+	 */
+	setStatus(string_util::format("%s Searching", (counter%4==0)?"-":(counter%4==1)?" \\":(counter%4==2)?" |":" /").c_str());
+	counter++;
+	lastUpdate = TimeKeeper::getCurrent();
+      }
+    }
+
     struct timeval timeout;
     timeout.tv_sec = 0;
-    timeout.tv_usec = 0;
+    timeout.tv_usec = 250;
 
     fd_set read_set, write_set;
     FD_ZERO(&read_set);
@@ -3513,23 +3552,27 @@ void			ServerMenu::checkEchos()
     for (i = 0; i < numListServers; i++) {
       ListServer& listServer = listServers[i];
       if (listServer.socket != -1) {
-	if (listServer.phase == 2)
+	if (listServer.phase == 2) {
 	  FD_SET(listServer.socket, &write_set);
-	else if (listServer.phase == 3)
+	} else if (listServer.phase == 3) {
 	  FD_SET(listServer.socket, &read_set);
-	if (listServer.socket > fdMax)
+	}
+	if (listServer.socket > fdMax) {
 	  fdMax = listServer.socket;
+	}
       }
     }
 
     const int nfound = select(fdMax+1, (fd_set*)&read_set,
 					(fd_set*)&write_set, 0, &timeout);
-    if (nfound <= 0) break;
-
+    if (nfound <= 0) {
+      break;
+    }
+    
     // check broadcast sockets
     ServerItem serverInfo;
     sockaddr_in addr;
-
+    
     if (pingBcastSocket != -1 && FD_ISSET(pingBcastSocket, &read_set)) {
       if (serverInfo.ping.read(pingBcastSocket, &addr)) {
 	serverInfo.ping.serverId.serverHost = addr.sin_addr;
