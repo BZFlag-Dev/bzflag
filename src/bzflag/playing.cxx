@@ -418,14 +418,14 @@ bool			ComposeDefaultKey::keyPress(const BzfKeyEvent& key)
 	if (loudmouth) {
 	  std::vector<std::string>::iterator it = silencePlayers.begin();
 	  for (; it != silencePlayers.end(); it++) {
-            if (*it == silence + 10) {
-            silencePlayers.erase(it);
-            std::string message = "Unsilenced ";
-            message += (silence + 10);
-            addMessage(NULL, message);
-            break;
-            }
-          }
+	    if (*it == silence + 10) {
+	    silencePlayers.erase(it);
+	    std::string message = "Unsilenced ";
+	    message += (silence + 10);
+	    addMessage(NULL, message);
+	    break;
+	    }
+	  }
 	}
       }
       else {
@@ -484,7 +484,7 @@ bool			ComposeDefaultKey::keyRelease(const BzfKeyEvent& key)
       return true;
     }
     else if ((key.shift == BzfKeyEvent::ShiftKey || (hud->getComposeString().length() == 0)) &&
-             (key.button == BzfKeyEvent::Left || key.button == BzfKeyEvent::Right)) {
+	     (key.button == BzfKeyEvent::Left || key.button == BzfKeyEvent::Right)) {
       const Player *recipient = myTank->getRecipient();
       if(!recipient) {
 	for (int i = 0; i < curMaxPlayers; i++) {
@@ -2066,7 +2066,7 @@ static void		handleServerMessage(bool human, uint16_t code,
 	tmpbuf = nboUnpackUShort(tmpbuf, losses);
 	tmpbuf = nboUnpackString(tmpbuf, callsign, CallSignLen);
 	tmpbuf = nboUnpackString(tmpbuf, email, EmailLen);
-        fprintf(stderr, "id %d:%u:%s %d:%u:%s\n",
+	fprintf(stderr, "id %d:%u:%s %d:%u:%s\n",
 	    id.port,
 	    id.number,
 	    callsign,
@@ -3772,13 +3772,13 @@ static std::string	getCacheDirectoryName()
       std::strcat(buff, "/BZFlag");
       struct stat statbuf;
       if (!(stat(buff, &statbuf) == 0 && (S_ISDIR(statbuf.st_mode)))) {
-        if(mkdir(buff, 0777) != 0) {
+	if(mkdir(buff, 0777) != 0) {
 	  return NULL;
 	}
       }
       std::strcat(buff, "/cache");
       if (!(stat(buff, &statbuf) == 0 && (S_ISDIR(statbuf.st_mode)))) {
-        if(mkdir(buff, 0777) != 0) {
+	if(mkdir(buff, 0777) != 0) {
 	  return NULL;
 	}
       }
@@ -4817,7 +4817,7 @@ static void		playingLoop()
       targetPoint[1] = eyePoint[1] + myTankDir[1];
       targetPoint[2] = eyePoint[2] + myTankDir[2];
       if (roaming) {
-        hud->setAltitude(-1.0f);
+	hud->setAltitude(-1.0f);
 	float roamViewAngle;
 #ifdef FOLLOWTANK
 	eyePoint[0] = myTankPos[0] - myTankDir[0] * 20;
