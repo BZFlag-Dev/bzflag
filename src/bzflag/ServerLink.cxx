@@ -771,7 +771,7 @@ void			ServerLink::sendUDPlinkRequest()
   	}
   }
 #if !defined(_WIN32)
-  AddrLen addr_len;
+  AddrLen addr_len = sizeof(serv_addr);
   if (getsockname(urecvfd, (struct sockaddr*)&serv_addr, &addr_len) < 0) {
 	close(urecvfd);
 	urecvfd = 0;
