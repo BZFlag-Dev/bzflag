@@ -3832,6 +3832,8 @@ static void parseCommand(const char *message, int t)
   // /set sets a world configuration variable that gets sent to all clients
   } else if ((hasPerm(t, PlayerAccessInfo::setVar) || hasPerm(t, PlayerAccessInfo::setAll)) && strncmp(message + 1, "set", 3) == 0) {
     sendMessage(ServerPlayer, t, CMDMGR->run(message+1).c_str());
+  } else if ((hasPerm(t, PlayerAccessInfo::setVar) || hasPerm(t, PlayerAccessInfo::setAll)) && strncmp(message + 1, "reset", 5) == 0) {
+    sendMessage(ServerPlayer, t, CMDMGR->run(message+1).c_str());
   // /shutdownserver terminates the server
   } else if (hasPerm(t, PlayerAccessInfo::shutdownServer) &&
 	    strncmp(message + 1, "shutdownserver", 8) == 0) {
@@ -4987,6 +4989,24 @@ static std::string cmdSet(const std::string&, const CommandManager::ArgList& arg
   }
 }
 
+static std::string cmdReset(const std::string&, const CommandManager::ArgList& args)
+{
+  if (args.size() == 1) {
+    if (BZDB->isSet(args[0])) {
+      StateDatabase::Permission permission=BZDB->getPermission(args[0]);
+      if ((permission == StateDatabase::ReadWrite) || (permission == StateDatabase::Locked)) {
+	BZDB->set(args[0], BZDB->getDefault(args[0]), StateDatabase::Server);
+	return args[0] + " reset";
+      }
+      return "variable " + args[0] + " is not writeable";
+    }
+    else
+      return "variable " + args[0] + " does not exist";
+  }
+  else
+    return "usage: reset <name>";
+}
+
 
 /** main parses command line options and then enters an event and activity
  * dependant main loop.  once inside the main loop, the server is up and
@@ -5067,6 +5087,7 @@ int main(int argc, char **argv)
     BZDB->addCallback(std::string(globalDBItems[gi].name), onGlobalChanged, (void*) NULL);
   }
   CMDMGR->add("set", cmdSet, "set <name> [<value>]");
+  CMDMGR->add("reset", cmdReset, "reset <name>");
 
   BZDBCache::init();
 
