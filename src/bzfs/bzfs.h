@@ -88,7 +88,6 @@ static const char copyright[] = "Copyright (c) 1993 - 2003 Tim Riker";
 #include "TimeBomb.h"
 #include "md5.h"
 #include "ShotUpdate.h"
-#include "WordFilter.h"
 #include "ConfigFileManager.h"
 #include "CommandManager.h"
 #include "BZDBCache.h"
