@@ -131,10 +131,6 @@ bool PlayerInfo::isNotResponding() {
   return notResponding;
 };
 
-bool PlayerInfo::isNotPlaying() {
-  return (isPaused() || isNotResponding() || isObserver());
-};
-
 bool PlayerInfo::isBot() {
   return type == ComputerPlayer;
 };

@@ -83,7 +83,6 @@ public:
   void        setDead();
   bool        isPaused();
   bool        isNotResponding();
-  bool        isNotPlaying();
   bool        isBot();
   bool        isHuman();
   void       *packUpdate(void *buf);
