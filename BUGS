@@ -1,5 +1,8 @@
 recent bugs
 ------------
+
+- On a FFA game, where no purple was allowed a Team size of 65535 was displayed for Purple. 
+
 - Thief delays shooting on theft by firing shots in the ether, this causes display
   problems. Should rely on a simple TimeKeeper timer instead.
 
