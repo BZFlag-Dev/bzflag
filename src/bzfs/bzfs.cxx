@@ -4777,12 +4777,14 @@ int main(int argc, char **argv)
   // canonicalized, otherwise use my IP in dot notation.
   // set publicized address if not set by arguments
   if (clOptions->publicizedAddress.length() == 0) {
-    clOptions->publicizedAddress = Address::getHostName();
+    const char *hostname = Address::getHostName();
+    if (hostname == NULL)
+      clOptions->publicizedAddress = "0.0.0.0";
+    else
+      clOptions->publicizedAddress = hostname;
     if (clOptions->publicizedAddress.find('.') == std::string::npos)
       clOptions->publicizedAddress = serverAddress.getDotNotation();
-    if (clOptions->wksPort != ServerPort) {
-      clOptions->publicizedAddress += string_util::format(":%d", clOptions->wksPort);
-    }
+    clOptions->publicizedAddress += string_util::format(":%d", clOptions->wksPort);
   }
 
   /* print debug information about how the server is running */
