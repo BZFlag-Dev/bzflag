@@ -1237,7 +1237,8 @@ void handleShowgroupCmd(GameKeeper::Player *playerData, const char *message)
     // once for global groups
     if (playerIndex < curMaxPlayers) {
       PlayerAccessInfo &info = GameKeeper::Player::getPlayerByIndex(playerIndex)->accessInfo;
-      std::string line = "Global Groups for ";
+      // FIXME remove local groups from this list. better yet unify the two.
+      std::string line = "Global Groups (only extras) for ";
       line += settie;
       line += ": ";
       std::vector<std::string>::iterator itr = info.groups.begin();
