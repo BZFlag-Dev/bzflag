@@ -656,7 +656,8 @@ void handleHostBanlistCmd(GameKeeper::Player *playerData, const char *)
 void handleBanCmd(GameKeeper::Player *playerData, const char *message)
 {
   int t = playerData->getIndex();
-  if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::ban)) {
+  if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::ban) &&
+      !playerData->accessInfo.hasPerm(PlayerAccessInfo::longBan)) {
     sendMessage(ServerPlayer, t, "You do not have permission to run the ban command");
     return;
   }
@@ -668,15 +669,27 @@ void handleBanCmd(GameKeeper::Player *playerData, const char *message)
     sendMessage(ServerPlayer, t, "Syntax: /ban <ip> [duration] [reason]");
     sendMessage(ServerPlayer, t, "        Please keep in mind that reason is displayed to the user.");
   } else {
-    int durationInt = 0;
     std::string ip = argv[1];
     std::string reason;
+    int durationInt = clOptions->banTime;
 
-    if (argv.size() >= 3)
-      durationInt = string_util::parseDuration(argv[2]);
+    // set the ban time
+    if (argv.size() >= 3) {
+      int specifiedDuration = string_util::parseDuration(argv[2]);
+      if ((durationInt > 0) && 
+          ((specifiedDuration > durationInt) || (specifiedDuration <= 0)) &&
+          !playerData->accessInfo.hasPerm(PlayerAccessInfo::longBan)) {
+        sendMessage (ServerPlayer, t, "You do not have LONGBAN privileges,"\
+                                      " using default ban time");
+      } else {
+        durationInt = specifiedDuration;
+      }
+    }
 
-    if (argv.size() == 4)
+    // set the ban reason
+    if (argv.size() == 4) {
       reason = argv[3];
+    }
 
     if (clOptions->acl.ban(ip, playerData->player.getCallSign(), durationInt,
 			   reason.c_str())) {
