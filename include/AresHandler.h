@@ -25,8 +25,19 @@ class AresHandler {
   AresHandler(int index);
   ~AresHandler();
 
+  enum ResolutionStatus {
+    None = 0,
+    Failed,
+    HbAPending,
+    HbASucceeded,
+    HbNPending,
+    HbNSucceeded
+  };
+
   void        queryHostname(struct sockaddr *clientAddr);
+  void        queryHost(char *hostName);
   const char *getHostname();
+  ResolutionStatus getHostAddress(struct in_addr *clientAddr);
   void        setFd(fd_set *read_set, fd_set *write_set, int &maxFile);
   void        process(fd_set *read_set, fd_set *write_set);
  private:
@@ -36,13 +47,8 @@ class AresHandler {
   int	       index;
   // peer's network hostname (malloc/free'd)
   char	      *hostname;
+  in_addr      hostAddress;
   ares_channel aresChannel;
-  enum ResolutionStatus {
-    None = 0,
-    Pending,
-    Failed,
-    Succeeded
-  };
   ResolutionStatus status;
 };
 

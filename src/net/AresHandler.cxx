@@ -20,8 +20,9 @@
 #include "network.h"
 
 AresHandler::AresHandler(int _index)
-  : index(_index), hostname(NULL)
+  : index(_index), hostname(NULL), status(None)
 {
+  memset(&hostAddress, 0, sizeof(hostAddress));
   /* start up our resolver */
   if (ares_init(&aresChannel) != ARES_SUCCESS) {
     perror("ARES init failed");
@@ -40,11 +41,38 @@ AresHandler::~AresHandler()
 
 void AresHandler::queryHostname(struct sockaddr *clientAddr)
 {
-  status = Pending;
+  status = HbAPending;
   // launch the asynchronous query to look up this hostname
   ares_gethostbyaddr(aresChannel, &((sockaddr_in *)clientAddr)->sin_addr,
 		     sizeof(in_addr), AF_INET, staticCallback, (void *)this);
   DEBUG2("Player [%d] submitted reverse resolve query\n", index);
+}
+
+void AresHandler::queryHost(char *hostName)
+{
+  ares_cancel(aresChannel);
+
+  if (inet_aton(hostName, &hostAddress) != 0) {
+    status = HbNSucceeded;
+    return;
+  }
+
+  char *queryHostName = hostName;
+
+  char myHost[MAXHOSTNAMELEN+1];
+  if (hostName == NULL or *hostName == '\0') {
+    // local address
+    if (gethostname(hostname, sizeof(hostname)) < 0) {
+      status = Failed;
+      return;
+    }
+    queryHostName = myHost;
+  }
+
+  // launch the asynchronous query to look up this hostname
+  ares_gethostbyname(aresChannel, queryHostName, AF_INET, staticCallback,
+		     (void *)this);
+  status = HbNPending;
 }
 
 void AresHandler::staticCallback(void *arg, int callbackStatus,
@@ -61,18 +89,29 @@ void AresHandler::callback(int callbackStatus, struct hostent *hostent)
       DEBUG1("Player [%d] failed to resolve: error %d\n", index,
 	     callbackStatus);
       status = Failed;
-  } else {
+  } else if (status == HbAPending) {
     if (hostname)
       free(hostname); // shouldn't happen, but just in case
     hostname = strdup(hostent->h_name);
-    status = Succeeded;
+    status = HbASucceeded;
     DEBUG2("Player [%d] resolved to %s\n", index, hostname);
+  } else if (status == HbNPending) {
+    memcpy(&hostAddress, hostent->h_addr_list[0], sizeof(hostAddress));
+    status = HbNSucceeded;
   }
 }
 
 const char *AresHandler::getHostname()
 {
   return hostname;
+}
+
+AresHandler::ResolutionStatus AresHandler::getHostAddress(struct in_addr
+							  *clientAddr)
+{
+  if (status == HbNSucceeded)
+    memcpy(clientAddr, &hostAddress, sizeof(hostAddress));
+  return status;
 }
 
 void AresHandler::setFd(fd_set *read_set, fd_set *write_set, int &maxFile)

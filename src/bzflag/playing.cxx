@@ -101,6 +101,7 @@
 #include "PhysicsDriver.h"
 #include "FlagSceneNode.h"
 #include "ObstacleMgr.h"
+#include "AresHandler.h"
 
 // versioning that makes us recompile every time
 #include "version.h"
@@ -128,6 +129,7 @@ static SceneDatabaseBuilder* sceneBuilder = NULL;
 static Team*		teams = NULL;
 int			numFlags = 0;
 static bool		joinRequested = false;
+static bool		waitingDNS    = false;
 static bool		serverError = false;
 static bool		serverDied = false;
 bool			fireButton = false;
@@ -228,6 +230,8 @@ static uint32_t		worldPtr = 0;
 static char		*worldDatabase = NULL;
 static bool		isCacheTemp;
 static std::ostream	*cacheOut = NULL;
+
+static AresHandler      ares(0);
 
 static AccessList	ServerAccessList("ServerAccess.txt", NULL);
 
@@ -4234,10 +4238,10 @@ void		leaveGame()
 }
 
 
-static void joinInternetGame()
+static void joinInternetGame(const struct in_addr *inAddress)
 {
   // get server address
-  Address serverAddress(startupInfo.serverName);
+  Address serverAddress(*inAddress);
   if (serverAddress.isAny()) {
     HUDDialogStack::get()->setFailedMessage("Server not found");
     return;
@@ -5349,13 +5353,37 @@ static void		playingLoop()
       // if already connected to a game then first sign off
       if (myTank) leaveGame();
 
-      // now try connecting
-      joinInternetGame();
+      ares.queryHost(startupInfo.serverName);
+      waitingDNS = true;
 
       // don't try again
       joinRequested = false;
     }
 
+    if (waitingDNS) {
+      fd_set readers, writers;
+      int nfds;
+      struct timeval timeout;
+      timeout.tv_sec  = 0;
+      timeout.tv_usec = 0;
+      FD_ZERO(&readers);
+      FD_ZERO(&writers);
+      ares.setFd(&readers, &writers, nfds);
+      nfds = select(nfds + 1, (fd_set*)&readers, (fd_set*)&writers, 0,
+		    &timeout);
+      ares.process(&readers, &writers);
+
+      struct in_addr inAddress;
+      AresHandler::ResolutionStatus status = ares.getHostAddress(&inAddress);
+      if (status == AresHandler::Failed) {
+	HUDDialogStack::get()->setFailedMessage("Server not found");
+	waitingDNS = false;
+      } else if (status == AresHandler::HbNSucceeded) {
+	// now try connecting
+	joinInternetGame(&inAddress);
+	waitingDNS = false;
+      }
+    }
     mainWindow->getWindow()->yieldCurrent();
 
     // handle events

@@ -209,6 +209,7 @@ LDADD =	\
 	../geometry/libGeometry.a	\
 	../mediafile/libMediaFile.a	\
 	../common/libCommon.a		\
+	../c-ares/libcares.a		\
 	$(REGEX)			\
 	$(ZLIB)				\
 	$(KRB5_LIBS)			\
