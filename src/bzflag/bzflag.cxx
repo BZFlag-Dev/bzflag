@@ -1104,15 +1104,8 @@ int			main(int argc, char** argv)
   // see if there is a _default_ badwords file
   if (!BZDB.isSet("filterFilename")) {
     std::string name;
-#if !defined(_WIN32)
     name = getConfigDirName();
     name += "badwords.txt";
-#elif defined(_WIN32) /* !defined(_WIN32) */
-    name = getConfigDirName();
-    name += "badwords.txt";
-#else
-    name = "badwords.txt"; // FIXME - use getConfigDirName() ?
-#endif /* !defined(_WIN32) */
 
     // get a handle on a filter object to attempt a load
     if (BZDB.isSet("filter")) {
