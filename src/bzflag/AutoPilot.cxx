@@ -184,6 +184,8 @@ bool	avoidDeathFall(float &/*rotation*/, float &speed)
 		  speed = 0.0f;
 		  return true;
 	  }
+  } else if (collisionPt[2] < (pos2[2] - 1.0f)) {
+	  speed *= 0.5f;
   }
 
   return false;
