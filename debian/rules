@@ -100,7 +100,7 @@ bzflag-server: build
 	dh_installcron -p$@
 #	dh_installmanpages -p$@
 	dh_installinfo -p$@
-#	dh_undocumented -p$@
+#	dh_undocumented -p$@ bzfquery.pl.6
 	dh_installchangelogs -p$@ 
 	dh_strip -p$@
 	dh_link -p$@
