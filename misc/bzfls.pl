@@ -60,7 +60,7 @@ if ( not $dbexist ) {
 }
 # If the table already exists, then remove all inactive servers from the table
 else {
-  my $timeout = 30;    # timeout in seconds
+  my $timeout = 300;    # timeout in seconds
   my $staletime = time - $timeout;
   $servdb->do("DELETE FROM servers WHERE lastmod < $staletime");
 }
