@@ -46,7 +46,11 @@
 #include "World.h"
 
 
-const GLint		SceneRenderer::SunLight = 0;	// also for the moon
+const GLint   SceneRenderer::SunLight = 0;		// also for the moon
+const float   SceneRenderer::dimDensity = 0.75f;
+const GLfloat SceneRenderer::dimnessColor[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
+const GLfloat SceneRenderer::blindnessColor[4] = { 1.0f, 1.0f, 0.0f, 1.0f };
+
 
 #ifdef GL_ABGR_EXT
 static int		strrncmp(const char* s1, const char* s2, int num)
@@ -684,79 +688,16 @@ void SceneRenderer::renderScene(bool /*_lastFrame*/, bool /*_sameFrame*/,
                                 bool fullWindow)
 {
   int i;
-  static const GLfloat blindnessColor[4] = { 1.0f, 1.0f, 0.0f, 1.0f };
-  static const GLfloat dimnessColor[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
-  static const float dimDensity = 0.75f;
-  const bool lighting = BZDBCache::lighting;
 
   // avoid OpenGL calls as long as possible -- there's a good
   // chance we're waiting on the vertical retrace.
 
-  // get the important lights in the scene
-  if (!sameFrame) {
-
-    lightsCount = 0;
-    dynamicLights = 0;
-    
-    if (scene && !blank && lighting) {
-      // get the potential dynamic lights
-      scene->addLights(*this);
-      
-      // calculate the light importances
-      for (i = 0; i < lightsCount; i++) {
-        lights[i]->setImportance(frustum);
-      }
-
-      // sort by cull state, grounded state, and importance
-      qsort (lights, lightsCount, sizeof(OpenGLLight*), sortLights);
-
-      // count the unculled valid lights and potential dynamic lights
-      // (negative values indicate culled lights)
-      int unculledCount = 0;
-      for (i = 0; i < lightsCount; i++) {
-        // any value below 0.0f is culled
-        if (lights[i]->getImportance() >= 0.0f) {
-          unculledCount++;
-          if (!lights[i]->getOnlyGround()) {
-            dynamicLights++;
-          }
-        }
-      }
-      
-      // set the total light count to the number of unculled lights
-      lightsCount = unculledCount;
-
-      // limit the dynamic OpenGL light count      
-      if (dynamicLights > maxLights) {
-        dynamicLights = maxLights;
-      }
-    }
-  }
-
-  // get the nodes to draw
-  if (!blank) {
-    // empty the render node lists in preparation for the next frame
-    OpenGLGState::clearLists();
-    orderedList.clear();
-    shadowList.clear();
-    flareLightList.clear();
-
-    // make the lists of render nodes sorted in optimal rendering order
-    if (scene) {
-      scene->addRenderNodes(*this);
-    }
-
-    // sort ordered list in reverse depth order
-    if (!inOrder) {
-      orderedList.sort(frustum.getEye());
-    }
-
-    // add the shadow rendering nodes
-    if (scene && BZDBCache::shadows && !BZDB.isTrue(StateDatabase::BZDB_NOSHADOWS)) {
-      scene->addShadowNodes(*this);
-    }
-  }
-
+  // get a list of the dynamic lights
+  getLights();
+  
+  // get the obstacle sceneNodes and shadowNodes
+  getObstacles();
+  
 
   // prepare transforms
   // note -- lights should not be positioned before view is set
@@ -765,39 +706,22 @@ void SceneRenderer::renderScene(bool /*_lastFrame*/, bool /*_sameFrame*/,
   frustum.executeView();
 
   // turn sunlight on -- the ground needs it
-  if (lighting && sunOrMoonUp) {
+  if (BZDBCache::lighting && sunOrMoonUp) {
     theSun.execute(SunLight);
     theSun.enableLight(SunLight);
   }
 
   // turn on fog for teleporter blindness if close to a teleporter
-  float teleporterProximity = 0.0f;
+  teleporterProximity = 0.0f;
   if (!blank && LocalPlayer::getMyTank() && 
       (LocalPlayer::getMyTank()->getTeam() != ObserverTeam)) {
     teleporterProximity = LocalPlayer::getMyTank()->getTeleporterProximity();
   }
 
-  float worldSize = BZDBCache::worldSize;
   bool reallyUseFogHack = useFogHack && (useQualityValue >= 2);
        
   if (reallyUseFogHack) {
-    if (useDimming) {
-      const float density = dimDensity;
-      glFogi(GL_FOG_MODE, GL_LINEAR);
-      glFogf(GL_FOG_START, -density * 1000.0f * worldSize);
-      glFogf(GL_FOG_END, (1.0f - density) * 1000.0f * worldSize);
-      glFogfv(GL_FOG_COLOR, dimnessColor);
-      glEnable(GL_FOG);
-    }
-    else if (teleporterProximity > 0.0f && useFogHack) {
-      const float density = (teleporterProximity > 0.75f) ? 1.0f 
-                            : (teleporterProximity / 0.75f);
-      glFogi(GL_FOG_MODE, GL_LINEAR);
-      glFogf(GL_FOG_START, -density * 1000.0f * worldSize);
-      glFogf(GL_FOG_END, (1.0f - density) * 1000.0f * worldSize);
-      glFogfv(GL_FOG_COLOR, blindnessColor);
-      glEnable(GL_FOG);
-    }
+    renderPreDimming();
   }
 
   // set scissor
@@ -856,7 +780,7 @@ void SceneRenderer::renderScene(bool /*_lastFrame*/, bool /*_sameFrame*/,
 
   // prepare the other lights but don't turn them on yet --
   // we may need to turn them on when drawing the background.
-  if (lighting) {
+  if (BZDBCache::lighting) {
     for (i = 0; i < dynamicLights; i++) {
       lights[i]->execute(i + reservedLights);
     }
@@ -869,7 +793,7 @@ void SceneRenderer::renderScene(bool /*_lastFrame*/, bool /*_sameFrame*/,
   }
 
   if (!blank) {
-    if (lighting) {
+    if (BZDBCache::lighting) {
       // now turn on the remaining lights
       for (i = 0; i < dynamicLights; i++) {
 	OpenGLLight::enableLight(i + reservedLights);
@@ -897,7 +821,7 @@ void SceneRenderer::renderScene(bool /*_lastFrame*/, bool /*_sameFrame*/,
       World::getWorld()->drawCollisionGrid();
     }
 
-	///////////////////////
+    ///////////////////////
     // THE BIG RENDERING //
     ///////////////////////
     doRender();
@@ -917,7 +841,7 @@ void SceneRenderer::renderScene(bool /*_lastFrame*/, bool /*_sameFrame*/,
     OpenGLGState::resetState();
 
     // shut off lights
-    if (lighting) {
+    if (BZDBCache::lighting) {
       theSun.enableLight(SunLight, false);
       for (i = 0; i < dynamicLights; i++) {
 	OpenGLLight::enableLight(i + reservedLights, false);
@@ -941,81 +865,23 @@ void SceneRenderer::renderScene(bool /*_lastFrame*/, bool /*_sameFrame*/,
   }
   glPopMatrix();
 
-  if ((reallyUseFogHack && (teleporterProximity > 0.0f || useDimming))) {
-    glDisable(GL_FOG);
-  }
-
-  if (!reallyUseFogHack) {
-    float density = 0.0f;
-    const GLfloat* color = NULL;
-    if (useDimming) {
-      density = dimDensity;
-      color = dimnessColor;
+  if (reallyUseFogHack) {
+    if ((teleporterProximity > 0.0f) || useDimming) {
+      glDisable(GL_FOG);
     }
-    else if (teleporterProximity > 0.0f) {
-      density = (teleporterProximity > 0.75f) ?
-			1.0f : teleporterProximity / 0.75f;
-      color = blindnessColor;
-    }
-    if (density > 0.0f && color != NULL) {
-      glMatrixMode(GL_PROJECTION);
-      glLoadIdentity();
-      glMatrixMode(GL_MODELVIEW);
-      glColor4f(color[0], color[1], color[2], density);
-
-      // if low quality then use stipple -- it's probably much faster
-      if (BZDBCache::blend && (useQualityValue >= 2)) {
-	glEnable(GL_BLEND);
-	glRectf(-1.0f, -1.0f, 1.0f, 1.0f);
-	glDisable(GL_BLEND);
-      }
-      else {
-	OpenGLGState::setStipple(density);
-	glEnable(GL_POLYGON_STIPPLE);
-	glRectf(-1.0f, -1.0f, 1.0f, 1.0f);
-	glDisable(GL_POLYGON_STIPPLE);
-      }
-    }
+  } else {
+    renderPostDimming();
   }
 
   if (useDepthComplexityOn) {
-    static const GLfloat depthColors[][3] = {
-				{ 0.0f, 0.0f, 0.0f },	// black -- 0 times
-				{ 0.5f, 0.0f, 1.0f },	// purple -- 1 time
-				{ 0.0f, 0.0f, 1.0f },	// blue -- 2 times
-				{ 0.0f, 1.0f, 1.0f },	// cyan -- 3 times
-				{ 0.0f, 1.0f, 0.0f },	// green -- 4 times
-				{ 1.0f, 1.0f, 0.0f },	// yellow -- 5 times
-				{ 1.0f, 0.5f, 0.0f },	// orange -- 6 times
-				{ 1.0f, 0.0f, 0.0f }	// red -- 7 or more
-			};
-    static const int numColors = countof(depthColors);
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-    glMatrixMode(GL_MODELVIEW);
-    glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
-    for (i = 0; i < numColors; i++) {
-      glStencilFunc(i == numColors - 1 ? GL_LEQUAL : GL_EQUAL, i, 0xf);
-      glColor3fv(depthColors[i]);
-      glRectf(-1.0f, -1.0f, 1.0f, 1.0f);
-    }
-    glDisable(GL_STENCIL_TEST);
+    renderDepthComplexity();
   }
-}
-
-
-void			SceneRenderer::notifyStyleChange()
-{
-  needStyleUpdate = true;
+  
   return;
 }
 
-const RenderNodeList&	SceneRenderer::getShadowList() const
-{
-  return shadowList;
-}
 
-void			SceneRenderer::doRender()
+void SceneRenderer::doRender()
 {
   // NOTE -- this should go into a separate thread
   // now draw each render node list
@@ -1033,13 +899,170 @@ void			SceneRenderer::doRender()
   glDepthMask(GL_TRUE);
 }
 
-const GLfloat* 		SceneRenderer::getSunDirection() const
+
+void SceneRenderer::renderPreDimming()
 {
-  if (background) {
-    return background->getSunDirection();
-  } else {
-    return NULL;
+  float worldSize = BZDBCache::worldSize;
+  
+  if (useDimming) {
+    const float density = dimDensity;
+    glFogi(GL_FOG_MODE, GL_LINEAR);
+    glFogf(GL_FOG_START, -density * 1000.0f * worldSize);
+    glFogf(GL_FOG_END, (1.0f - density) * 1000.0f * worldSize);
+    glFogfv(GL_FOG_COLOR, dimnessColor);
+    glEnable(GL_FOG);
   }
+  else if (teleporterProximity > 0.0f && useFogHack) {
+    const float density = (teleporterProximity > 0.75f) ? 1.0f 
+                          : (teleporterProximity / 0.75f);
+    glFogi(GL_FOG_MODE, GL_LINEAR);
+    glFogf(GL_FOG_START, -density * 1000.0f * worldSize);
+    glFogf(GL_FOG_END, (1.0f - density) * 1000.0f * worldSize);
+    glFogfv(GL_FOG_COLOR, blindnessColor);
+    glEnable(GL_FOG);
+  }
+  return;
+}
+
+
+void SceneRenderer::renderPostDimming()
+{
+  float density = 0.0f;
+  const GLfloat* color = NULL;
+  if (useDimming) {
+    density = dimDensity;
+    color = dimnessColor;
+  }
+  else if (teleporterProximity > 0.0f) {
+    density = (teleporterProximity > 0.75f) ?
+                      1.0f : teleporterProximity / 0.75f;
+    color = blindnessColor;
+  }
+  if (density > 0.0f && color != NULL) {
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    glMatrixMode(GL_MODELVIEW);
+    glColor4f(color[0], color[1], color[2], density);
+
+    // if low quality then use stipple -- it's probably much faster
+    if (BZDBCache::blend && (useQualityValue >= 2)) {
+      glEnable(GL_BLEND);
+      glRectf(-1.0f, -1.0f, 1.0f, 1.0f);
+      glDisable(GL_BLEND);
+    }
+    else {
+      OpenGLGState::setStipple(density);
+      glEnable(GL_POLYGON_STIPPLE);
+      glRectf(-1.0f, -1.0f, 1.0f, 1.0f);
+      glDisable(GL_POLYGON_STIPPLE);
+    }
+  }
+  return;
+}
+
+
+void SceneRenderer::renderDepthComplexity()
+{
+  static const GLfloat depthColors[][3] = {
+    { 0.0f, 0.0f, 0.0f },	// black -- 0 times
+    { 0.5f, 0.0f, 1.0f },	// purple -- 1 time
+    { 0.0f, 0.0f, 1.0f },	// blue -- 2 times
+    { 0.0f, 1.0f, 1.0f },	// cyan -- 3 times
+    { 0.0f, 1.0f, 0.0f },	// green -- 4 times
+    { 1.0f, 1.0f, 0.0f },	// yellow -- 5 times
+    { 1.0f, 0.5f, 0.0f },	// orange -- 6 times
+    { 1.0f, 0.0f, 0.0f }	// red -- 7 or more
+  };
+  static const int numColors = countof(depthColors);
+  
+  glMatrixMode(GL_PROJECTION);
+  glLoadIdentity();
+  glMatrixMode(GL_MODELVIEW);
+  glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
+  for (int i = 0; i < numColors; i++) {
+    glStencilFunc(i == numColors - 1 ? GL_LEQUAL : GL_EQUAL, i, 0xf);
+    glColor3fv(depthColors[i]);
+    glRectf(-1.0f, -1.0f, 1.0f, 1.0f);
+  }
+  glDisable(GL_STENCIL_TEST);
+  
+  return;
+}
+
+
+void SceneRenderer::getObstacles()
+{
+  // get the nodes to draw
+  if (!blank) {
+    // empty the render node lists in preparation for the next frame
+    OpenGLGState::clearLists();
+    orderedList.clear();
+    shadowList.clear();
+    flareLightList.clear();
+
+    // make the lists of render nodes sorted in optimal rendering order
+    if (scene) {
+      scene->addRenderNodes(*this);
+    }
+
+    // sort ordered list in reverse depth order
+    if (!inOrder) {
+      orderedList.sort(frustum.getEye());
+    }
+
+    // add the shadow rendering nodes
+    if (scene && BZDBCache::shadows && !BZDB.isTrue(StateDatabase::BZDB_NOSHADOWS)) {
+      scene->addShadowNodes(*this);
+    }
+  }
+  return;
+}
+
+
+void SceneRenderer::getLights()
+{
+  // get the important lights in the scene
+  if (!sameFrame) {
+
+    lightsCount = 0;
+    dynamicLights = 0;
+    
+    if (scene && !blank && BZDBCache::lighting) {
+      // get the potential dynamic lights
+      scene->addLights(*this);
+      
+      // calculate the light importances
+      int i;
+      for (i = 0; i < lightsCount; i++) {
+        lights[i]->setImportance(frustum);
+      }
+
+      // sort by cull state, grounded state, and importance
+      qsort (lights, lightsCount, sizeof(OpenGLLight*), sortLights);
+
+      // count the unculled valid lights and potential dynamic lights
+      // (negative values indicate culled lights)
+      int unculledCount = 0;
+      for (i = 0; i < lightsCount; i++) {
+        // any value below 0.0f is culled
+        if (lights[i]->getImportance() >= 0.0f) {
+          unculledCount++;
+          if (!lights[i]->getOnlyGround()) {
+            dynamicLights++;
+          }
+        }
+      }
+      
+      // set the total light count to the number of unculled lights
+      lightsCount = unculledCount;
+
+      // limit the dynamic OpenGL light count      
+      if (dynamicLights > maxLights) {
+        dynamicLights = maxLights;
+      }
+    }
+  }
+  return;
 }
 
 
@@ -1058,6 +1081,7 @@ void SceneRenderer::disableLights(const float mins[3], const float maxs[3])
   return;
 }
 
+
 void SceneRenderer::reenableLights()
 {
   // reenable the temporarily disabled lights
@@ -1066,6 +1090,31 @@ void SceneRenderer::reenableLights()
   }
   return;
 }
+
+
+void SceneRenderer::notifyStyleChange()
+{
+  needStyleUpdate = true;
+  return;
+}
+
+
+const RenderNodeList& SceneRenderer::getShadowList() const
+{
+  return shadowList;
+}
+
+
+const GLfloat* 		SceneRenderer::getSunDirection() const
+{
+  if (background) {
+    return background->getSunDirection();
+  } else {
+    return NULL;
+  }
+}
+
+
 
 // Local Variables: ***
 // mode: C++ ***

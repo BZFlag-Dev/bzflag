@@ -161,7 +161,13 @@ private:
   SceneRenderer(const SceneRenderer&);
   SceneRenderer&	operator=(const SceneRenderer&);
 
+  void		getLights();
+  void		getObstacles();
+  
   void		doRender();
+  void		renderDepthComplexity();
+  void		renderPreDimming();
+  void		renderPostDimming();
 
   MainWindow*		window;
   bool		blank;
@@ -183,6 +189,11 @@ private:
   SceneDatabase*	scene;
   BackgroundRenderer*	background;
   static const GLint	SunLight;
+  
+  static const float dimDensity;
+  static const GLfloat dimnessColor[4];
+  static const GLfloat blindnessColor[4];
+  float teleporterProximity;
 
   bool		abgr;
   int			useQualityValue;
