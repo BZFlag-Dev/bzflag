@@ -1006,8 +1006,7 @@ struct PlayerInfo {
     // lag measurement
     float lagavg,lagalpha;
     int lagcount,laglastwarn,lagwarncount;
-    // new method (ping)
-    bool trypings,doespings,pingpending;
+    bool pingpending;
     TimeKeeper nextping,lastping;
     int pingseqno,pingslost,pingssent;
 
@@ -4233,8 +4232,6 @@ static void addPlayer(int playerIndex)
   player[playerIndex].nextping = TimeKeeper::getCurrent();
   player[playerIndex].nextping += 10.0;
   player[playerIndex].pingpending = false;
-  player[playerIndex].doespings = false;
-  player[playerIndex].trypings = true;
   player[playerIndex].pingseqno = 0;
   player[playerIndex].pingslost = 0;
   player[playerIndex].pingssent = 0;
@@ -5577,11 +5574,10 @@ static void parseCommand(const char *message, int t)
     for (int i = 0; i < curMaxPlayers; i++) {
       if (player[i].state > PlayerInLimbo && !player[i].Observer) {
 	char reply[MessageLen];
-	sprintf(reply,"%-16s : %4dms (%d)%s %s", player[i].callSign,
+	sprintf(reply,"%-16s : %4dms (%d) %s", player[i].callSign,
 	    int(player[i].lagavg*1000), player[i].lagcount,
-            player[i].doespings ? "" : " (old)",
             player[i].accessInfo.verified ? "(R)" : "");
-	if (player[i].doespings && player[i].pingslost>0)
+	if (player[i].pingslost>0)
 	  sprintf(reply+strlen(reply), " %d lost", player[i].pingslost);
 	    sendMessage(t, t, player[t].team, reply, true);
       }
@@ -6262,7 +6258,6 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
     {
       uint16_t pingseqno;
       buf = nboUnpackUShort(buf, pingseqno);
-      player[t].doespings = true;
       if (pingseqno == player[t].pingseqno)
       {
 	float dt = TimeKeeper::getCurrent() - player[t].lastping;
@@ -7635,7 +7630,7 @@ int main(int argc, char **argv)
     for (int p=0;p<curMaxPlayers;p++)
     {
       if (player[p].state == PlayerAlive &&
-	  player[p].trypings && player[p].nextping - tm < waitTime)
+	  player[p].nextping - tm < waitTime)
 	waitTime = player[p].nextping - tm;
     }
 
@@ -7784,17 +7779,12 @@ int main(int argc, char **argv)
     // send lag pings
     for (int j=0;j<curMaxPlayers;j++)
     {
-      if (player[j].trypings &&
-	  player[j].state == PlayerAlive && player[j].nextping-tm < 0)
+      if (player[j].state == PlayerAlive && player[j].nextping-tm < 0)
       {
 	player[j].pingseqno = (player[j].pingseqno + 1) % 10000;
 	if (player[j].pingpending) // ping lost
-	{
-	  player[j].pingslost++;
-	  // got no response to first 3 pings? give up forever
-	  if (player[j].pingssent >= 3 && !player[j].doespings)
-	    player[j].trypings = false;
-	}
+          player[j].pingslost++;
+
 	void *buf, *bufStart = getDirectMessageBuffer();
 	buf = nboPackUShort(bufStart, player[j].pingseqno);
 	directMessage(j, MsgLagPing, (char*)buf - (char*)bufStart, bufStart);
