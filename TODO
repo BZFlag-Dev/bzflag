@@ -10,14 +10,20 @@ THESE SHOULD HAPPEN BEFORE THE NEXT RELEASE:
 * integrate motd.php into mysql on db and make it use version= so next
   version can have it's own MOTD
 
-* need standard Msg's for approved global login
-
-* need an indicator in the scoreboard as to login and perhaps admin status
-
 THESE ARE LOWER PRIORITY
 
+* bzflag should support command line central passwords:
+  "User:Password@bzflag.example.com:1234"
+
+* add language translations for the new flags
+
+* fix the corners and edges on the tabbed panels (corner pixels are
+  missing)
+
+* configure should test and enable the fudged acosf atanf asinf
+
 * 1/2 the board split diagonally does not draw the ground for TimRiker
-  Debian unstable powerpc with a Radeon 9200. likely a driver bug
+  Debian unstable powerpc with a Radeon 9200. a driver bug
 
 * Add a -lib <file> option to bzfs, or "include" statements in map
   files to allow the use of object libraries. Should also get ObstatlceMgr
@@ -44,17 +50,7 @@ THESE ARE LOWER PRIORITY
 
 * fix the menu font garbage above some letters on some fonts
 
-* fix the corners and edges on the tabbed panels (corner pixels are
-  missing)
-
-* configure should test and enable the fudged acosf atanf asinf
-
-* add language translations for the new flags
-
 * improve the mesh collision code (edging)
-
-* bzflag and bzadmin should support command line central passwords:
-  "User:Password@bzflag.example.com:1234"
 
 * incorporate the player's handicap value into the check calculations.
 
@@ -123,7 +119,7 @@ THESE ARE LOWER PRIORITY
 * split -public <desc> into -public, -description <desc>, and -email <contact>
 
 * require an email contact name for public servers. Perhaps
-  unpublished by default
+  unpublished by default. Perhaps a central username, probably without password
 
 * support gameinfo requests as one time udp packets and include all the
   same information that bzfls tracks.  We should allow server info, player and
@@ -191,8 +187,6 @@ THESE ARE LOWER PRIORITY
 * document headers with JavaDoc-style comments (for doxygen)
 
 * update doc/guide/NetworkProtocol.xml all descriptors to new format
-
-* support gameinfo requests as one time udp packets (if udp)
 
 * bzadmin should build without GL headers installed fails with:
   ../../include/bzfgl.h:35: GL/gl.h: No such file or directory
