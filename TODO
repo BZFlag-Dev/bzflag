@@ -21,8 +21,6 @@ THESE SHOULD HAPPEN BEFORE THE NEXT RELEASE:
 * fix the misalignment between the selected server and the one that
   is joined when the Server List Cache is enabled.
 
-* inform clients that they have been banned, instead of just disconnecting
-
 * better user authentication mechanism
 
 

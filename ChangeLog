@@ -4,6 +4,8 @@
 BZFlag 1.12.0  (was 1.11.x)
 ---------------------------
 
+* Inform users when they are baned on login, and send the ban reason,
+	ban origonator, and source of the ban to the client - Jeff Myers
 * Added the LONGBAN bzfs priviledge - Dave Rodgers, Daniel Leeds
 * Added /date and /time to request server date and time - Ian Agar
 * Added arc, cone, and sphere map objects - Dave Rodgers
