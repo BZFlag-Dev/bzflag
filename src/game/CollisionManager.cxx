@@ -98,8 +98,11 @@ static void squeezeChildren (ColDetNode** children)
 }
 
 
-static int compareHeights (const Extents& eA, const Extents& eB)
+static inline int compareHeights (const Obstacle* obsA, const Obstacle* obsB)
 {
+  const Extents& eA = obsA->getExtents();
+  const Extents& eB = obsB->getExtents();
+  
   if (eA.maxs[2] > eB.maxs[2]) {
     return -1;
   } else {
@@ -107,8 +110,11 @@ static int compareHeights (const Extents& eA, const Extents& eB)
   }
 }
 
-static int compareFaceHeights (const Extents& eA, const Extents& eB)
+static inline int compareFaceHeights (const Obstacle* obsA, const Obstacle* obsB)
 {
+  const Extents& eA = obsA->getExtents();
+  const Extents& eB = obsB->getExtents();
+  
   if (fabsf(eA.maxs[2] - eB.maxs[2]) < 1.0e-3) {
     if (eA.mins[2] > eB.mins[2]) {
       return -1;
@@ -131,18 +137,15 @@ static int compareObstacles (const void* a, const void* b)
   // - and finally, the mesh objects (checkpoints really)
   const Obstacle* obsA = *((const Obstacle**)a);
   const Obstacle* obsB = *((const Obstacle**)b);
-  bool isFaceA = (obsA->getType() == MeshFace::getClassName());
-  bool isFaceB = (obsB->getType() == MeshFace::getClassName());
+  
   bool isMeshA = (obsA->getType() == MeshObstacle::getClassName());
   bool isMeshB = (obsB->getType() == MeshObstacle::getClassName());
-  const Extents& eA = obsA->getExtents();
-  const Extents& eB = obsB->getExtents();
   
   if (isMeshA) {
     if (!isMeshB) {
       return +1;
     } else {
-      return compareHeights(eA, eB);
+      return compareHeights(obsA, obsB);
     }
   }
   
@@ -150,15 +153,18 @@ static int compareObstacles (const void* a, const void* b)
     if (!isMeshA) {
       return -1;
     } else {
-      return compareHeights(eA, eB);
+      return compareHeights(obsA, obsB);
     }
   }
+  
+  bool isFaceA = (obsA->getType() == MeshFace::getClassName());
+  bool isFaceB = (obsB->getType() == MeshFace::getClassName());
   
   if (isFaceA) {
     if (!isFaceB) {
       return +1;
     } else {
-      return compareFaceHeights(eA, eB);
+      return compareFaceHeights(obsA, obsB);
     }
   }
     
@@ -166,11 +172,11 @@ static int compareObstacles (const void* a, const void* b)
     if (!isFaceA) {
       return -1;
     } else {
-      return compareFaceHeights(eA, eB);
+      return compareFaceHeights(obsA, obsB);
     }
   }
     
-  return compareHeights(eB, eA); // reversed
+  return compareHeights(obsB, obsA); // reversed
 }
 
 

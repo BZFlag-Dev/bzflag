@@ -298,7 +298,7 @@ void MeshObstacle::finalize()
     const Extents& exts = faces[f]->getExtents();
     extents.expandToBox(exts);
   }
-
+  
   // setup fake obstacle parameters
   pos[0] = (extents.maxs[0] + extents.mins[0]) / 2.0f;
   pos[1] = (extents.maxs[1] + extents.mins[1]) / 2.0f;

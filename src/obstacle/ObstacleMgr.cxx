@@ -644,6 +644,7 @@ void GroupDefinition::deleteInvalidObstacles()
         DEBUG1("Deleted invalid %s obstacle\n", obs->getType());
         delete obs;
         list.remove(i);
+        i--; // don't miss the substitute
       }
     }
   }

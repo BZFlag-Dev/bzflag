@@ -125,8 +125,6 @@ class MeshObstacle : public Obstacle {
     bool inverted; // used during building. can be ditched if
 		   // edge tables are setup with bi-directional
 		   // ray-vs-face tests and parity counts.
-
-    Extents extents;
 };
 
 inline const char *MeshObstacle::getCheckTypes() const

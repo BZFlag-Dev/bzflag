@@ -275,7 +275,7 @@ int LinkManager::getTeleportTarget(int source) const
   }
   else {
     assert(false);
-	return 0;
+    return 0;
   }
 }
 
@@ -297,7 +297,7 @@ int LinkManager::getTeleportTarget(int source, unsigned int seed) const
   }
   else {
     assert(false);
-	return 0;
+    return 0;
   }
 }
 
