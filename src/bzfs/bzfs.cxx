@@ -35,6 +35,7 @@ struct ListServerLink {
     enum MessageType {NONE,ADD,REMOVE} nextMessageType;
     std::string hostname;
     std::string pathname;
+    enum Phase {CONNECTING, WRITTEN} phase;
 };
 
 // Command Line Options
@@ -706,11 +707,9 @@ static void closeListServer()
 {
   ListServerLink& link = listServerLink;
   if (link.socket != NotConnected) {
-    shutdown(link.socket, 2);
     close(link.socket);
     DEBUG4("Closing List server\n");
     link.socket = NotConnected;
-    link.nextMessageType = ListServerLink::NONE;
   }
 }
 
@@ -751,9 +750,11 @@ static void openListServer()
 	closeListServer();
       }
       else {
-	if (maxFileDescriptor < link.socket)
-	  maxFileDescriptor = link.socket;
+	listServerLink.phase = ListServerLink::CONNECTING;
       }
+    } else {
+      // shouldn't arrive here. Just in case, clean
+      closeListServer();
     }
   }
 }
@@ -830,25 +831,16 @@ static void sendMessageToListServerForReal()
     if (send(link.socket, msg, strlen(msg), 0) == -1) {
       perror("List server send failed");
       DEBUG3("Unable to send to the list server!\n");
+      closeListServer();
     } else {
-      /* listen for a reply - this is necessary for extremely laggy
-       * interconnects or proxy servers where the socket is closed
-       * before the server has a chance to begin sending back a response,
-       * resulting in the request never being fully delivered.
-       */
-      TimeKeeper timer=TimeKeeper::getCurrent();
-      float elapsed=0.0f;
-      const float MAX_ELAPSE = 0.1f; // wait up to this many seconds for the
-                                     // list server to respond.
-      while ((recv(link.socket, msg, strlen(msg), 0) == -1) && ((elapsed = (TimeKeeper::getCurrent() - timer)) < MAX_ELAPSE))
-	;;
-      DEBUG3("received a reply from list server after %.3f seconds (max wait is %.3f seconds)\n", elapsed, MAX_ELAPSE);
-      DEBUG4("BEGIN list server reply\n%s\nEND list server reply\n", msg);
+      // hangup
+      shutdown(link.socket, SHUT_WR);
+      link.nextMessageType = ListServerLink::NONE;
+      link.phase           = ListServerLink::WRITTEN;
     }
+  } else {
+    closeListServer();
   }
-
-  // hangup
-  closeListServer();
 }
 
 
@@ -971,8 +963,6 @@ static bool serverStart()
     close(wksSocket);
     return false;
   }
-  maxFileDescriptor = wksSocket;
-
   // udp socket
   int n;
   // we open a udp socket on the same port if alsoUDP
@@ -1014,8 +1004,6 @@ static bool serverStart()
   }
   // don't buffer info, send it immediately
   BzfNetwork::setNonBlocking(udpSocket);
-
-  maxFileDescriptor = udpSocket;
 
   for (int i = 0; i < MaxPlayers; i++) {	// no connections
     player[i].fd = NotConnected;
@@ -1062,6 +1050,8 @@ static void serverStop()
   // total.
   sendMessageToListServer(ListServerLink::REMOVE);
   TimeKeeper start = TimeKeeper::getCurrent();
+  if (!listServerLinksCount || listServerLink.socket == NotConnected)
+    return;
   do {
     // compute timeout
     float waitTime = 3.0f - (TimeKeeper::getCurrent() - start);
@@ -1071,31 +1061,33 @@ static void serverStop()
     // check for list server socket connection
     int fdMax = -1;
     fd_set write_set;
+    fd_set read_set;
     FD_ZERO(&write_set);
-    if (listServerLinksCount)
-      if (listServerLink.socket != NotConnected) {
-	FD_SET(listServerLink.socket, &write_set);
-	fdMax = listServerLink.socket;
-      }
-    if (fdMax == -1)
-      break;
+    FD_ZERO(&read_set);
+    if (listServerLink.phase == ListServerLink::CONNECTING)
+      FD_SET(listServerLink.socket, &write_set);
+    else
+      FD_SET(listServerLink.socket, &read_set);
+    fdMax = listServerLink.socket;
 
     // wait for socket to connect or timeout
     struct timeval timeout;
     timeout.tv_sec = long(floorf(waitTime));
     timeout.tv_usec = long(1.0e+6f * (waitTime - floorf(waitTime)));
-    int nfound = select(fdMax + 1, NULL, (fd_set*)&write_set, 0, &timeout);
+    int nfound = select(fdMax + 1, (fd_set*)&read_set, (fd_set*)&write_set,
+			0, &timeout);
+    if (nfound == 0)
+      // Time has gone, close and go
+      break;
     // check for connection to list server
-    if (nfound > 0)
-      if (listServerLinksCount)
-	if (listServerLink.socket != NotConnected &&
-	    FD_ISSET(listServerLink.socket, &write_set))
-	  sendMessageToListServerForReal();
+    if (FD_ISSET(listServerLink.socket, &write_set))
+      sendMessageToListServerForReal();
+    else if (FD_ISSET(listServerLink.socket, &read_set))
+      break;
   } while (true);
 
   // stop list server communication
-  if (listServerLinksCount)
-    closeListServer();
+  closeListServer();
 }
 
 
@@ -1994,9 +1986,6 @@ static void acceptClient()
   // don't buffer info, send it immediately
   setNoDelay(fd);
   BzfNetwork::setNonBlocking(fd);
-
-  if (fd > maxFileDescriptor)
-    maxFileDescriptor = fd;
 
   if (!clOptions->acl.validate( clientAddr.sin_addr)) {
     close(fd);
@@ -4515,6 +4504,7 @@ int main(int argc, char **argv)
    **/
   int i;
   while (!done) {
+    maxFileDescriptor = 0;
     // prepare select set
     fd_set read_set, write_set;
     FD_ZERO(&read_set);
@@ -4526,16 +4516,28 @@ int main(int argc, char **argv)
 
 	if (player[i].outmsgSize > 0)
 	  FD_SET(player[i].fd, &write_set);
+	if (player[i].fd > maxFileDescriptor)
+	  maxFileDescriptor = player[i].fd;
       }
     }
     // always listen for connections
     FD_SET(wksSocket, &read_set);
+    if (wksSocket > maxFileDescriptor)
+      maxFileDescriptor = wksSocket;
     FD_SET(udpSocket, &read_set);
+    if (udpSocket > maxFileDescriptor)
+      maxFileDescriptor = udpSocket;
 
     // check for list server socket connected
     if (listServerLinksCount)
-      if (listServerLink.socket != NotConnected)
-	FD_SET(listServerLink.socket, &write_set);
+      if (listServerLink.socket != NotConnected) {
+	if (listServerLink.phase == ListServerLink::CONNECTING)
+	  FD_SET(listServerLink.socket, &write_set);
+	else
+	  FD_SET(listServerLink.socket, &read_set);
+	if (listServerLink.socket > maxFileDescriptor)
+	  maxFileDescriptor = listServerLink.socket;
+      }
 
     // find timeout when next flag would hit ground
     TimeKeeper tm = TimeKeeper::getCurrent();
@@ -4920,9 +4922,11 @@ int main(int argc, char **argv)
 
       // check for connection to list server
       if (listServerLinksCount)
-	if (listServerLink.socket != NotConnected &&
-	    FD_ISSET(listServerLink.socket, &write_set))
-	  sendMessageToListServerForReal();
+	if (listServerLink.socket != NotConnected)
+	  if (FD_ISSET(listServerLink.socket, &write_set))
+	    sendMessageToListServerForReal();
+	  else if (FD_ISSET(listServerLink.socket, &read_set)) 
+	    closeListServer();
 
       // check if we have any UDP packets pending
       if (FD_ISSET(udpSocket, &read_set)) {
