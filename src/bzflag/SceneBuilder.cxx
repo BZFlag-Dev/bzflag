@@ -289,7 +289,7 @@ void			SceneDatabaseBuilder::addBox(SceneDatabase* db,
   if (BZDB.eval("useQuality")>=3)
     texutureFactor = BZDB.eval("boxWallHighResTexRepeat");
 
-  while ((node = ((part != 5) ? nodeGen->getNextNode(
+  while ((node = ((part < 4) ? nodeGen->getNextNode(
 				-texutureFactor*boxTexWidth,
 				-texutureFactor*boxTexWidth, boxLOD) :
     // I'm using boxTexHeight for roof since textures are same
