@@ -1,7 +1,18 @@
 #!/bin/sh
 
+# thanx!
+#
+# removed a trailing space from your post. ;-)
+# unexpand works for leading space but not later in the lines.
+# adding --all will convert 2 spaces to a tab inside a string
+# if they are aligned correctly. That's a Bad Thing.
+# GNU "indent" screws up all kinds of stuff including
+# *foo and &foo references. It has no knowledge of c++
+#
+# other thoughts?
+
 # Welcome to the whitespace posting board.
-# 
+#
 # "man unexpand"
 #
 # unexpand -t 8 -a file > file2  (then do some moving)
@@ -33,11 +44,14 @@
 # those two line up before the script and won't afterwards
 # timr will look into fixing that.
 
+
 # cleanup whitespace issues
 # could use new sed, but not everybody has that yet
 # sed -i -e 's/search/replace/g' filename1 ...
 # perl -pi -e 's/search/replace/g;' filename1 ...
 # grep them first to not touch the file date/time
+
+#temp=$$.tmp
 files=`find . -name \*.cxx -o -name \*.h -o -name \*.cpp -o -name \*.c -o -name Makefile.am | sort`
 # convert 8 spaces to tab
 for file in $files ; do
@@ -46,8 +60,11 @@ for file in $files ; do
  if grep -q '[ ]       ' $file ; then
   #sed -i -e 's/[ ]       /\t/g' $file
   perl -pi -e 's/[ ]       /\t/g' $file
+  #unexpand --all --tabs=8 < $file > $tmp
+  #cat $tmp > $file
  fi
 done
+
 files=`find . -name \*.cxx -o -name \*.h -o -name \*.cpp -o -name \*.c -o -name Makefile.am -o -name README\* -o -name \*.dsp -o -name \*.fmt | sort`
 # remove trailing whitespace and convert spacetab to tab
 for file in $files ; do
@@ -61,5 +78,7 @@ for file in $files ; do
   perl -pi -e 's/\s*$/\n/' $file
  fi
 done
+
+# show any that remain for potential hand edits
 echo files with trailing whitespace:
 grep -Irsl '[[:space:]][[:space:]]*$' . | grep -v Makefile$
