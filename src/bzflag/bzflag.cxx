@@ -119,7 +119,7 @@ static DefaultDBItem	defaultDBItems[] = {
 };
 
 // default key bindings
-const char*	defaultBindings[NUM_DEFAULT_BINDINGS] = {
+const char*	defaultBindings[] = {
   "bind F12 down quit",
   "bind \"Left Mouse\" down fire",
   "bind \"Left Mouse\" up fire",
@@ -189,6 +189,7 @@ const char*	defaultBindings[NUM_DEFAULT_BINDINGS] = {
   "bind I up restart",
   "bind 9 down autopilot"
 };
+const unsigned int numDefaultBindings = sizeof(defaultBindings)/sizeof(defaultBindings[0]);
 
 #ifdef ROBOT
 // ROBOT -- tidy up
@@ -818,7 +819,7 @@ int			main(int argc, char** argv)
   unsigned int i;
 
   // bind default keys
-  for (i = 0; i < NUM_DEFAULT_BINDINGS; ++i) {
+  for (i = 0; i < numDefaultBindings; ++i) {
     CMDMGR.run(defaultBindings[i]);
   }
 

@@ -768,7 +768,7 @@ void			KeyboardMapMenu::execute()
   if (focus == reset) {
     // FIXME - need to reset keymap to default values
     KEYMGR.iterate(onResetCB, this);
-    for (int i = 0; i < NUM_DEFAULT_BINDINGS; ++i) {
+    for (unsigned int i = 0; i < numDefaultBindings; ++i) {
       CMDMGR.run(defaultBindings[i]);
     }
     update();
