@@ -2,8 +2,8 @@
 /* this config is just for visual C++ since it donsn't use automake*/
 
 /* see if our headers have the socketlen thing some do some don't*/
-#if defined _WIN32 && !defined socklen_t
-	typedef int socklen_t;
+#if !defined socklen_t
+#define HAVE_SOCKELEN_T
 #endif
 
 /* Version number of package */

@@ -40,6 +40,10 @@
 #pragma warning( 4 : 4786 )
 #endif /* defined(_WIN32) */
 
+#if !defined HAVE_SOCKELEN_T
+typedef int socketlen_t;
+#endif
+
 #include <assert.h>
 #include <stddef.h>
 
