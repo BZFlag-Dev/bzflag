@@ -4,6 +4,7 @@
 -file bin/bzfuinst.exe bzfuinst.exe
 -pushdir data
 -file ../../data/bbolt.rgb bbolt.rgb
+-file ../../data/blaser.rgb blaser.rgb
 -file ../../data/boxwall.rgb boxwall.rgb
 -file ../../data/caution.rgb caution.rgb
 -file ../../data/clouds.rgb clouds.rgb
@@ -13,22 +14,25 @@
 -file ../../data/flag.rgb flag.rgb
 -file ../../data/flage.rgb flage.rgb
 -file ../../data/gbolt.rgb gbolt.rgb
+-file ../../data/glaser.rgb glaser.rgb
 -file ../../data/ground.rgb ground.rgb
 -file ../../data/helvbi.rgb helvbi.rgb
 -file ../../data/helvbr.rgb helvbr.rgb
--file ../../data/laser.rgb laser.rgb
 -file ../../data/missile.rgb missile.rgb
 -file ../../data/mountain.rgb mountain.rgb
 -file ../../data/panel.rgb panel.rgb
 -file ../../data/pbolt.rgb pbolt.rgb
+-file ../../data/plaser.rgb plaser.rgb
 -file ../../data/pyrwall.rgb pyrwall.rgb
 -file ../../data/rbolt.rgb rbolt.rgb
+-file ../../data/rlaser.rgb rlaser.rgb
 -file ../../data/roof.rgb roof.rgb
 -file ../../data/timesbi.rgb timesbi.rgb
 -file ../../data/timesbr.rgb timesbr.rgb
 -file ../../data/title.rgb title.rgb
 -file ../../data/wall.rgb wall.rgb
 -file ../../data/ybolt.rgb ybolt.rgb
+-file ../../data/ylaser.rgb ylaser.rgb
 -file ../../data/boom.wav boom.wav
 -file ../../data/explosion.wav explosion.wav
 -file ../../data/fire.wav fire.wav
