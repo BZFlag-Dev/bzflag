@@ -24,6 +24,8 @@ enum RxStatus {
   ReadDiscon
 };
 
+const int maxHandlers = 200;
+
 #ifdef DEBUG
 #define NETWORK_STATS
 #endif
@@ -37,22 +39,66 @@ struct MessageCount {
 #define MessageTypes 38
 #endif
 
+/** This class is a client that connects to a BZFlag client and has
+    functions for sending and receiving messages.
+*/
 class NetHandler {
 public:
+  /** A default constructor.
+      It needs a pointer to the Player basic Info,
+      a socket address to address subsequent message at user,
+      a player Index, a unique pointer to a player
+      the file descriptor for the TCP connection with the user.
+  */
   NetHandler(PlayerInfo *_info, const struct sockaddr_in &_clientAddr,
-	  int _playerIndex, int _fd);
+	     int _playerIndex, int _fd);
+  /** The default destructor
+      free all internal resources, and close the tcp connection
+  */
   ~NetHandler();
 
-  static bool initNetwork(struct sockaddr_in addr);
-  static int  getUdpSocket();
-  static int  udpReceive(char *buffer, struct sockaddr *uaddr);
-  static void fdSetUdp(fd_set *read_set, int &maxFile);
-  static int  isUdpFdSet(fd_set *read_set);
+  /** General purpose function to get the Handler given the index, or
+      test its existence
+  */
+  static bool exists(int _playerIndex);
+  static NetHandler *getHandler(int _playerIndex);
 
-  void        fdSet(fd_set *read_set, fd_set *write_set, int &maxFile);
+  /** Class-Wide initialization and destruction
+      Should be called before any other operation on any clas instance
+      InitHandlers needs the addr structure filled to point to the local port
+      needed for udp communications
+  */
+  static bool initHandlers(struct sockaddr_in addr);
+  static void destroyHandlers();
+
+  /** General function to support the select statement
+   */
+  static void fdSet(fd_set *read_set, fd_set *write_set, int &maxFile);
+  static int  isUdpFdSet(fd_set *read_set);
   int         fdIsSet(fd_set *set);
+
+  /**
+     return the opened socket, usable from all other network internal client
+  */
+  static int  getUdpSocket();
+
+  /** 
+      udpReceive will try to get the next udp message received
+
+      return the playerIndex if found, -1 when no player had an open udp
+      connection or -2 when a Ping Code Request has been detected.
+
+      buffer is the received message
+
+      uaddr is the identifier of the remote address
+
+      udpLinkRequest report if the received message is a valid udpLinkRequest
+  */
+  static int  udpReceive(char *buffer, struct sockaddr_in *uaddr,
+			 bool &udpLinkRequest);
+
   void        setUdpOut();
-  bool        setUdpIn(struct sockaddr_in &_uaddr);
+
   int         pwrite(const void *b, int l);
   RxStatus    receive(size_t length);
   void       *getTcpBuffer();
@@ -63,15 +109,15 @@ public:
   void        countMessage(uint16_t code, int len, int direction);
   void        dumpMessageStats();
 #endif
-  bool        isMyUdpAddrPort(struct sockaddr_in &uaddr);
-  void        UdpInfo();
-  void        debugUdpRead(int n, struct sockaddr_in &_uaddr);
   void        getPlayerList(char *list); 
 private:
   int  send(const void *buffer, size_t length);
   void udpSend(const void *b, size_t l);
   int  bufferedSend(const void *buffer, size_t length);
+  bool isMyUdpAddrPort(struct sockaddr_in uaddr);
+
   static int                udpSocket;
+  static NetHandler        *netPlayer[maxHandlers];
   PlayerInfo               *info;
   struct sockaddr_in        uaddr;
   int                       playerIndex;

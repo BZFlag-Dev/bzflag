@@ -540,16 +540,6 @@ bool PlayerInfo::isFlagTransitSafe() {
   return TimeKeeper::getCurrent() - lastFlagDropTime >= 2.0f;
 };
 
-void PlayerInfo::udpFillRead(void *buf, int len) {
-  if (len >= 1024)
-    len = 1023;
-  memcpy(udpmsg, buf, len);
-};
-
-void *PlayerInfo::getUdpBuffer() {
-  return udpmsg;
-};
-
 in_addr PlayerInfo::getIPAddress() {
   return taddr.sin_addr;
 };

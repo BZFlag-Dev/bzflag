@@ -39,7 +39,6 @@ static PingPacket pingReply;
 static int maxFileDescriptor;
 // players list FIXME should be resized based on maxPlayers
 PlayerInfo player[MaxPlayers];
-NetHandler *netPlayer[MaxPlayers] = {};
 // Last known position, vel, etc
 PlayerState lastState[MaxPlayers];
 // team info
@@ -118,9 +117,9 @@ bool hasPerm(int playerIndex, PlayerAccessInfo::AccessPerm right)
 
 static void pwrite(int playerIndex, const void *b, int l)
 {
-  if (!netPlayer[playerIndex])
+  if (!NetHandler::exists(playerIndex))
     return;
-  int result = netPlayer[playerIndex]->pwrite(b, l);
+  int result = NetHandler::getHandler(playerIndex)->pwrite(b, l);
   if (result == -1)
     removePlayer(playerIndex, "ECONNRESET/EPIPE", false);
 }
@@ -138,9 +137,6 @@ char *getDirectMessageBuffer()
 // for MsgShotBegin the receiving buffer gets used directly
 void directMessage(int playerIndex, uint16_t code, int len, const void *msg)
 {
-  if (!netPlayer[playerIndex])
-    return;
-
   // send message to one player
   void *bufStart = (char *)msg - 2*sizeof(short);
 
@@ -226,77 +222,13 @@ static void setNoDelay(int fd)
 }
 
 
-// uread - interface to the UDP Receive routines
-static int uread(int *playerIndex, int *nopackets, int& n,
-		 unsigned char *ubuf, struct sockaddr_in &uaddr)
-{
-  //DEBUG4("Into UREAD\n");
-
-  *nopackets = 0;
-
-  PlayerId pi;
-  for (pi = 0; pi < curMaxPlayers; pi++) {
-    if (netPlayer[pi] && netPlayer[pi]->isMyUdpAddrPort(uaddr)) {
-      break;
-    }
-  }
-  if (pi == curMaxPlayers) {
-    unsigned short len, code;
-    void *tmpbuf;
-    tmpbuf = nboUnpackUShort(ubuf, len);
-    tmpbuf = nboUnpackUShort(tmpbuf, code);
-    if ((len == 1) && (code == MsgUDPLinkRequest)) {
-      tmpbuf = nboUnpackUByte(tmpbuf, pi);
-      if ((pi <= curMaxPlayers)
-	  && (netPlayer[pi] && netPlayer[pi]->setUdpIn(uaddr))) {
-	if (uaddr.sin_port)
-	  // send client the message that we are ready for him
-	  sendUDPupdate(pi);
-      } else {
-	pi = (PlayerId)curMaxPlayers;
-      }
-    }
-  }
-
-  if (pi == curMaxPlayers) {
-    // no match, discard packet
-    DEBUG2("uread() discard packet! %s:%d choices p(l) h:p", inet_ntoa(uaddr.sin_addr), ntohs(uaddr.sin_port));
-    for (pi = 0; pi < curMaxPlayers; pi++) {
-      if (netPlayer[pi])
-	netPlayer[pi]->UdpInfo();
-    }
-    DEBUG2("\n");
-    *playerIndex = 0;
-    return 0;
-  }
-
-  *playerIndex = pi;
-
-  if (!netPlayer[pi]) {
-    *playerIndex = 0;
-    return 0;
-  }
-
-  netPlayer[pi]->debugUdpRead(n, uaddr);
-
-  if (n > 0) {
-    *nopackets = 1;
-    player[pi].udpFillRead(ubuf, n);
-    return n;
-  }
-  return 0;
-}
-
-
 static bool pread(int playerIndex, int l)
 {
-  NetHandler *p = netPlayer[playerIndex];
-
-  if (!p)
+  if (!NetHandler::exists(playerIndex))
     return false;
 
   // read more data into player's message buffer
-  const RxStatus e = p->receive(l);
+  const RxStatus e = NetHandler::getHandler(playerIndex)->receive(l);
 
   if (e == ReadAll) {
     return true;
@@ -578,7 +510,7 @@ static bool serverStart()
   }
 
   addr.sin_port = htons(clOptions->wksPort);
-  if (!NetHandler::initNetwork(addr)) {
+  if (!NetHandler::initHandlers(addr)) {
     close(wksSocket);
     return false;
   }
@@ -609,10 +541,7 @@ static void serverStop()
     directMessage(i, MsgSuperKill, 0, getDirectMessageBuffer());
 
   // close connections
-  for (i = 0; i < MaxPlayers; i++) {
-    if (netPlayer[i])
-      delete netPlayer[i];
-  }
+  NetHandler::destroyHandlers();
 
   // remove from list server and disconnect
   // this destructor must be explicitly called
@@ -1370,8 +1299,8 @@ static void acceptClient()
 
   // FIXME add new client server welcome packet here when client code is ready
   player[playerIndex].initPlayer(clientAddr, playerIndex);
-  netPlayer[playerIndex] = new NetHandler(& player[playerIndex], clientAddr,
-					  playerIndex, fd);
+
+  new NetHandler(&player[playerIndex], clientAddr, playerIndex, fd);
   lastState[playerIndex].order = 0;
 
   // if game was over and this is the first player then game is on
@@ -1633,7 +1562,7 @@ static void addPlayer(int playerIndex)
   }
 
   // abort if we hung up on the client
-  if (!netPlayer[playerIndex])
+  if (!NetHandler::exists(playerIndex))
     return;
 
   // player is signing on (has already connected via addClient).
@@ -1662,17 +1591,17 @@ static void addPlayer(int playerIndex)
   // because of an error.
   if (!player[playerIndex].isBot()) {
     int i;
-    if (netPlayer[playerIndex]) {
+    if (NetHandler::exists(playerIndex)) {
       sendTeamUpdate(playerIndex);
       sendFlagUpdate(-1, playerIndex);
     }
-    for (i = 0; i < curMaxPlayers && netPlayer[playerIndex]; i++)
+    for (i = 0; i < curMaxPlayers && NetHandler::exists(playerIndex); i++)
       if (player[i].isPlaying() && i != playerIndex)
 	sendPlayerUpdate(i, playerIndex);
   }
 
   // if new player connection was closed (because of an error) then stop here
-  if (!netPlayer[playerIndex])
+  if (!NetHandler::exists(playerIndex))
     return;
 
   // send MsgAddPlayer to everybody -- this concludes MsgEnter response
@@ -1709,7 +1638,7 @@ static void addPlayer(int playerIndex)
 #endif
 
   // again check if player was disconnected
-  if (!netPlayer[playerIndex])
+  if (!NetHandler::exists(playerIndex))
     return;
 
   // reset that flag
@@ -2062,17 +1991,17 @@ void removePlayer(int playerIndex, const char *reason, bool notify)
 
   bool wasPlaying = false;
   // check if we are called again for a dropped player!
-  if (netPlayer[playerIndex]) {
+  if (NetHandler::exists(playerIndex)) {
     // status message
     DEBUG1("Player %s [%d] removed: %s\n",
 	   player[playerIndex].getCallSign(), playerIndex, reason);
     wasPlaying = player[playerIndex].removePlayer();
+    NetHandler *netPlayer = NetHandler::getHandler(playerIndex);
 #ifdef NETWORK_STATS
     if (wasPlaying)
-      netPlayer[playerIndex]->dumpMessageStats();
+      netPlayer->dumpMessageStats();
 #endif
-    delete netPlayer[playerIndex];
-    netPlayer[playerIndex] = NULL;
+    delete netPlayer;
   }
 
   // player is outta here.  if player never joined a team then
@@ -2134,7 +2063,7 @@ void removePlayer(int playerIndex, const char *reason, bool notify)
   while ((playerIndex >= 0)
 	 && (playerIndex+1 == curMaxPlayers)
 	 && !player[playerIndex].exist()
-	 && !netPlayer[playerIndex])
+	 && !NetHandler::exists(playerIndex))
     {
       playerIndex--;
       curMaxPlayers--;
@@ -2382,9 +2311,9 @@ static void sendQueryPlayers(int playerIndex)
   directMessage(playerIndex, MsgQueryPlayers, (char*)buf-(char*)bufStart, bufStart);
 
   // now send the teams and players
-  if (netPlayer[playerIndex])
+  if (NetHandler::exists(playerIndex))
     sendTeamUpdate(playerIndex);
-  for (i = 0; i < curMaxPlayers && netPlayer[playerIndex]; i++)
+  for (i = 0; i < curMaxPlayers && NetHandler::exists(playerIndex); i++)
     if (player[i].isPlaying())
       sendPlayerUpdate(i, playerIndex);
 }
@@ -2825,7 +2754,7 @@ static void captureFlag(int playerIndex, TeamColor teamCaptured)
 
   // everyone on losing team is dead
   for (int i = 0; i < curMaxPlayers; i++)
-    if (netPlayer[i] &&
+    if (NetHandler::exists(i) &&
 	flag[flagIndex].flag.type->flagTeam == int(player[i].getTeam()) &&
 	player[i].isAlive()) {
       player[i].setDead();
@@ -3144,10 +3073,8 @@ static void parseCommand(const char *message, int t)
 static void handleCommand(int t, uint16_t code, uint16_t len,
 			  const void *rawbuf)
 {
+  NetHandler *netPlayer = NetHandler::getHandler(t);
   void *buf = (void*)((char*)rawbuf + 4);
-#ifdef NETWORK_STATS
-  netPlayer[t]->countMessage(code, len, 0);
-#endif
   switch (code) {
     // player joining
     case MsgEnter: {
@@ -3409,7 +3336,7 @@ static void handleCommand(int t, uint16_t code, uint16_t len,
     }
 
     case MsgUDPLinkEstablished:
-      netPlayer[t]->setUdpOut();
+      netPlayer->setUdpOut();
       break;
 
     case MsgNewRabbit: {
@@ -3948,15 +3875,11 @@ int main(int argc, char **argv)
     fd_set read_set, write_set;
     FD_ZERO(&read_set);
     FD_ZERO(&write_set);
-    for (i = 0; i < curMaxPlayers; i++) {
-      if (netPlayer[i])
-	netPlayer[i]->fdSet(&read_set, &write_set, maxFileDescriptor);
-    }
+    NetHandler::fdSet(&read_set, &write_set, maxFileDescriptor);
     // always listen for connections
     _FD_SET(wksSocket, &read_set);
     if (wksSocket > maxFileDescriptor)
       maxFileDescriptor = wksSocket;
-    NetHandler::fdSetUdp(&read_set, maxFileDescriptor);
 
     // check for list server socket connected
     if (listServerLinksCount)
@@ -4376,9 +4299,9 @@ int main(int argc, char **argv)
       }
 
     for (i = 0; i < curMaxPlayers; i++) {
-      if (netPlayer[i]) {
+      if (NetHandler::exists(i)) {
 	// kick any clients that need to be
-	std::string reasonToKick = netPlayer[i]->reasonToKick();
+	std::string reasonToKick = NetHandler::getHandler(i)->reasonToKick();
 	if (reasonToKick != "")
 	  removePlayer(i, reasonToKick.c_str(), false);
       }
@@ -4404,38 +4327,38 @@ int main(int argc, char **argv)
 	while (true) {
 	  struct sockaddr_in uaddr;
 	  unsigned char ubuf[MaxPacketLen];
-	  int n = NetHandler::udpReceive((char *) ubuf,
-					 (struct sockaddr *) &uaddr);
-	  if (n < 0)
+	  bool     udpLinkRequest;
+	  // interface to the UDP Receive routines
+	  int id = NetHandler::udpReceive((char *) ubuf, &uaddr,
+					  udpLinkRequest);
+	  if (id == -1) {
 	    break;
-
-	  // read head
-	  uint16_t len, code;
-	  void *buf = ubuf;
-	  buf = nboUnpackUShort(buf, len);
-	  buf = nboUnpackUShort(buf, code);
-	  if (n == 6 && len == 2 && code == MsgPingCodeRequest) {
-	    // if I'm ignoring pings and the ping is not from a connected host
+	  } else if (id == -2) {
+	    // if I'm ignoring pings
 	    // then ignore the ping.
 	    if (handlePings) {
 	      respondToPing(Address(uaddr));
 	      pingReply.write(NetHandler::getUdpSocket(), &uaddr);
 	    }
 	    continue;
-	  }
+	  } else {
+	    if (udpLinkRequest)
+	      // send client the message that we are ready for him
+	      sendUDPupdate(id);
 
-	  int numpackets;
-	  int result = uread(&i, &numpackets, n, ubuf, uaddr);
-	  if (result <= 0)
-	    break;
+	    uint16_t len, code;
+	    void *buf = ubuf;
+	    buf = nboUnpackUShort(buf, len);
+	    buf = nboUnpackUShort(buf, code);
 
-	  // handle the command for UDP
-	  handleCommand(i, code, len, player[i].getUdpBuffer());
+	    // handle the command for UDP
+	    handleCommand(id, code, len, ubuf);
 
-	  // don't spend more than 250ms receiving udp
-	  if (TimeKeeper::getCurrent() - receiveTime > 0.25f) {
-	    DEBUG2("Too much UDP traffic, will hope to catch up later\n");
-	    break;
+	    // don't spend more than 250ms receiving udp
+	    if (TimeKeeper::getCurrent() - receiveTime > 0.25f) {
+	      DEBUG2("Too much UDP traffic, will hope to catch up later\n");
+	      break;
+	    }
 	  }
 	}
       }
@@ -4443,11 +4366,13 @@ int main(int argc, char **argv)
       // now check messages from connected players and send queued messages
       for (i = 0; i < curMaxPlayers; i++) {
 	// send whatever we have ... if any
-	if (netPlayer[i] && netPlayer[i]->pflush(&write_set) == -1) {
+	NetHandler *netPlayer = NetHandler::getHandler(i);
+	if (netPlayer && netPlayer->pflush(&write_set) == -1) {
 	  removePlayer(i, "ECONNRESET/EPIPE", false);
 	}
 
-	if (netPlayer[i] && netPlayer[i]->fdIsSet(&read_set)) {
+	netPlayer = NetHandler::getHandler(i);
+	if (netPlayer && netPlayer->fdIsSet(&read_set)) {
 	  // read header if we don't have it yet
 	  if (!pread(i, 4))
 	    // if header not ready yet then skip the read of the body
@@ -4455,7 +4380,7 @@ int main(int argc, char **argv)
 
 	  // read body if we don't have it yet
 	  uint16_t len, code;
-	  void *buf = netPlayer[i]->getTcpBuffer();
+	  void *buf = NetHandler::getHandler(i)->getTcpBuffer();
 	  buf = nboUnpackUShort(buf, len);
 	  buf = nboUnpackUShort(buf, code);
 	  if (len>MaxPacketLen) {
@@ -4468,7 +4393,7 @@ int main(int argc, char **argv)
 	    continue;
 
 	  // clear out message
-	  netPlayer[i]->cleanTcp();
+	  NetHandler::getHandler(i)->cleanTcp();
 
 	  // simple ruleset, if player sends a MsgShotBegin over TCP
 	  // he/she must not be using the UDP link
@@ -4489,7 +4414,11 @@ int main(int argc, char **argv)
 	  }
 
 	  // handle the command
-	  handleCommand(i, code, len, netPlayer[i]->getTcpBuffer());
+#ifdef NETWORK_STATS
+	  NetHandler::getHandler(i)->countMessage(code, len, 0);
+#endif
+	  handleCommand(i, code, len,
+			NetHandler::getHandler(i)->getTcpBuffer());
 	}
       }
     } else if (nfound < 0) {

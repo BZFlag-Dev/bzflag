@@ -134,8 +134,6 @@ public:
   void       *packScore(void *buf);
   bool        scoreReached(int score);
   bool        isFlagTransitSafe();
-  void        udpFillRead(void *buf, int len);
-  void       *getUdpBuffer();
   in_addr     getIPAddress();
   void        delayQueueAddPacket(int length, const void *data, float time);
   bool        delayQueueGetPacket(int *length, void **data);
@@ -206,9 +204,6 @@ private:
     int wins, losses, tks;
 
     TimeKeeper lastFlagDropTime;
-
-    // current UDP msg
-    char udpmsg[MaxPacketLen];
 
     // TCP connection
     struct sockaddr_in taddr;

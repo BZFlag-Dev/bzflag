@@ -47,7 +47,6 @@
 extern void sendMessage(int playerIndex, PlayerId targetPlayer, const char *message, bool fullBuffer=false);
 extern bool hasPerm(int playerIndex, PlayerAccessInfo::AccessPerm right);
 extern PlayerInfo player[MaxPlayers];
-extern NetHandler *netPlayer[MaxPlayers];
 extern CmdLineOptions *clOptions;
 extern uint16_t curMaxPlayers;
 extern int NotConnected;
@@ -313,7 +312,8 @@ void handleKickCmd(int t, const char *message)
   const char *victimname = argv[1].c_str();
 
   for (i = 0; i < curMaxPlayers; i++) {
-    if (netPlayer[i] && strcasecmp(player[i].getCallSign(), victimname) == 0) {
+    if (NetHandler::exists(i)
+	&& strcasecmp(player[i].getCallSign(), victimname) == 0) {
       break;
     }
   }
@@ -392,7 +392,7 @@ void handleBanCmd(int t, const char *message)
       strcpy(reply, "IP pattern added to banlist");
       char kickmessage[MessageLen];
       for (int i = 0; i < curMaxPlayers; i++) {
-	if (netPlayer[i]
+	if (NetHandler::exists(i)
 	    && !clOptions->acl.validate(player[i].getIPAddress())) {
 	  sprintf(kickmessage,"You were banned from this server by %s",
 		  player[t].getCallSign());
@@ -448,7 +448,7 @@ void handleHostBanCmd(int t, const char *message)
     strcpy(reply, "Host pattern added to banlist");
     char kickmessage[MessageLen];
     for (int i = 0; i < curMaxPlayers; i++) {
-      if (netPlayer[i] && player[i].getHostname()
+      if (NetHandler::exists(i) && player[i].getHostname()
 	  && (!clOptions->acl.hostValidate(player[i].getHostname()))) {
 	sprintf(kickmessage,"You were banned from this server by %s",
 		player[t].getCallSign());
@@ -591,7 +591,7 @@ void handlePlayerlistCmd(int t, const char *)
 
   for (int i = 0; i < curMaxPlayers; i++) {
     if (player[i].isPlaying()) {
-      netPlayer[i]->getPlayerList(reply);
+      NetHandler::getHandler(i)->getPlayerList(reply);
       sendMessage(ServerPlayer, t, reply, true);
     }
   }
