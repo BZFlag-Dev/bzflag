@@ -77,8 +77,6 @@ const float		AvenueSize =	2.0f * BoxBase;	// meters
 
 // readout stuff
 const int		MaxMessages =	20;		// msg. history length
-const float		FlashOnTime =	1.0f;		// seconds
-const float		FlashOffTime =	0.2f;		// seconds
 const int		MinX = 256;
 const int		MinY = 192;
 const int		NoMotionSize =	10;		// no motion zone size
