@@ -4,6 +4,7 @@
 BZFlag 1.10.4
 -------------
 
+* Added optional building density to random ctf map - Sean Morrison
 * Add pause time to /idlestats - Sean Morrison
 * Notify players when reassigned to a different team on join - Sean Morrison
 * Allow multiple bases per team - Dave Brosius
