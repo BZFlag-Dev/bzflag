@@ -1566,10 +1566,6 @@
 			isa = PBXTargetDependency;
 			target = 4E030DCF048EAE490009E055;
 		};
-		14195AC4049C22660021A0FD = {
-			isa = PBXTargetDependency;
-			target = 4E030DD8048EB3820009E055;
-		};
 		14667DD0051A5AE500A80164 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
@@ -2068,12 +2064,6 @@
 			};
 		};
 		14953631049CEC6100A80164 = {
-			fileRef = 14953627049CCA4100A80164;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		14953632049CEC6400A80164 = {
 			fileRef = 14953627049CCA4100A80164;
 			isa = PBXBuildFile;
 			settings = {
@@ -2869,12 +2859,6 @@
 			path = bzflag_cs_CZ.po;
 			refType = 4;
 		};
-		14CC68AB055D304000A80164 = {
-			fileRef = 14CC68AA055D304000A80164;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
 		14CC68AC055D305300A80164 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
@@ -2949,7 +2933,6 @@
 				4E030D72048E84000009E055,
 				4E030D85048E8A8D0009E055,
 				4E030DD0048EAE490009E055,
-				4E030DD9048EB3820009E055,
 				149184D5051575A100A80164,
 				17587328FF379C6511CA2CBB,
 				7BE2CA4E051D096C00FEBA07,
@@ -2992,7 +2975,6 @@
 				4E030D6A048E83F10009E055,
 				4E030D84048E8A8D0009E055,
 				4E030DCF048EAE490009E055,
-				4E030DD8048EB3820009E055,
 				149184D4051575A100A80164,
 				29B97326FDCFA39411CA2CEA,
 				7BE2CA4D051D096C00FEBA07,
@@ -3119,7 +3101,6 @@
 				1401FCC404B5651500A80164,
 				14195AC2049C22630021A0FD,
 				14195AC3049C22650021A0FD,
-				14195AC4049C22660021A0FD,
 				4ED19004049533C8000CE899,
 				4ED18FFE04953171000CE899,
 				4ED18FFF04953174000CE899,
@@ -3250,7 +3231,6 @@
 				14B9935104E1D81500A80164,
 				14B9935204E1D81500A80164,
 				14B9935304E1D81500A80164,
-				14CC68AB055D304000A80164,
 			);
 			isa = PBXResourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -7837,7 +7817,6 @@
 				14918C830515809900A80164,
 				4E030E5E048EDB580009E055,
 				4E030E5F048EDB580009E055,
-				4E030E60048EDB580009E055,
 				4E030D7C048E84560009E055,
 			);
 			isa = PBXAggregateTarget;
@@ -8284,85 +8263,11 @@
 			settings = {
 			};
 		};
-		4E030DD4048EB3820009E055 = {
-			buildActionMask = 2147483647;
-			files = (
-				14953632049CEC6400A80164,
-			);
-			isa = PBXHeadersBuildPhase;
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		4E030DD5048EB3820009E055 = {
-			buildActionMask = 2147483647;
-			files = (
-				7BADDCC3051FCEE500FEBA07,
-			);
-			isa = PBXSourcesBuildPhase;
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		4E030DD6048EB3820009E055 = {
-			buildActionMask = 2147483647;
-			files = (
-				4E030DDB048EB38C0009E055,
-			);
-			isa = PBXFrameworksBuildPhase;
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		4E030DD7048EB3820009E055 = {
-			buildActionMask = 2147483647;
-			files = (
-			);
-			isa = PBXRezBuildPhase;
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		4E030DD8048EB3820009E055 = {
-			buildPhases = (
-				4E030DD4048EB3820009E055,
-				4E030DD5048EB3820009E055,
-				4E030DD6048EB3820009E055,
-				4E030DD7048EB3820009E055,
-			);
-			buildSettings = {
-				OTHER_CFLAGS = "";
-				OTHER_LDFLAGS = "";
-				OTHER_REZFLAGS = "";
-				PREBINDING = NO;
-				PREFIX_HEADER = BZFlag_Prefix.h;
-				PRODUCT_NAME = bzfls;
-				REZ_EXECUTABLE = YES;
-				SECTORDER_FLAGS = "";
-				USE_GCC3_PFE_SUPPORT = NO;
-				WARNING_CFLAGS = "-Wmost -Wno-four-char-constants -Wno-unknown-pragmas";
-			};
-			dependencies = (
-				4E030DE4048ECCF70009E055,
-			);
-			isa = PBXToolTarget;
-			name = bzfls;
-			productInstallPath = /usr/local/bin;
-			productName = bzfls;
-			productReference = 4E030DD9048EB3820009E055;
-		};
-		4E030DD9048EB3820009E055 = {
-			isa = PBXExecutableFileReference;
-			path = bzfls;
-			refType = 3;
-		};
-		4E030DDB048EB38C0009E055 = {
-			fileRef = 4E030D41048E83840009E055;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
 		4E030DE2048ECCEF0009E055 = {
 			isa = PBXTargetDependency;
 			target = 4E030D40048E83840009E055;
 		};
 		4E030DE3048ECCF10009E055 = {
-			isa = PBXTargetDependency;
-			target = 4E030D40048E83840009E055;
-		};
-		4E030DE4048ECCF70009E055 = {
 			isa = PBXTargetDependency;
 			target = 4E030D40048E83840009E055;
 		};
@@ -8877,10 +8782,6 @@
 		4E030E5F048EDB580009E055 = {
 			isa = PBXTargetDependency;
 			target = 4E030DCF048EAE490009E055;
-		};
-		4E030E60048EDB580009E055 = {
-			isa = PBXTargetDependency;
-			target = 4E030DD8048EB3820009E055;
 		};
 		4E030E61048EDC3C0009E055 = {
 			fileRef = 4E030C0F048E70E70009E055;
@@ -9547,12 +9448,6 @@
 			refType = 4;
 		};
 		7BADDCC2051FCEE500FEBA07 = {
-			fileRef = 7BADDCC1051FCEE500FEBA07;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		7BADDCC3051FCEE500FEBA07 = {
 			fileRef = 7BADDCC1051FCEE500FEBA07;
 			isa = PBXBuildFile;
 			settings = {
