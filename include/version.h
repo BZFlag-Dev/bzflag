@@ -34,11 +34,11 @@
 #endif
 
 #ifndef BZ_REV
-#define BZ_REV			3
+#define BZ_REV			4
 #endif
 
 #ifndef BZ_BUILD_TYPE
-#define BZ_BUILD_TYPE		"ALPHA"
+#define BZ_BUILD_TYPE		"BETA"
 #endif
 
 // Build Date will be defined at link time, can be different for each exe
