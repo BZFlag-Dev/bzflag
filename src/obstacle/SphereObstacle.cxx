@@ -576,7 +576,7 @@ void SphereObstacle::print(std::ostream& out, int /*level*/)
   }
 
   if (phydrv >= 0) {
-    out << "    phydrv ";
+    out << "  phydrv ";
     const PhysicsDriver* driver = PHYDRVMGR.getDriver(phydrv);
     if ((driver != NULL) && (driver->getName().size() > 0)) {
       out << driver->getName();
