@@ -137,6 +137,9 @@ THESE ARE LOWER PRIORITY
 * remove shoothrough/drivethrough and replace with one flag
   meaning passable
 
+* bzadmin should build without GL headers installed fails with:
+  ../../include/bzfgl.h:35: GL/gl.h: No such file or directory
+
 * build a prototype(4) for bsd, solaris
 
 * fix up irix idb
