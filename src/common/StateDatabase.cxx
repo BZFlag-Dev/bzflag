@@ -482,10 +482,7 @@ StateDatabase::Map::iterator
 
 void			StateDatabase::notify(Map::iterator index)
 {
-  EvalMap::iterator cit = evalCache.find(index->first);
-  if (cit != evalCache.end())
-    evalCache.erase(cit);
-
+  evalCache.erase(index->first);
   index->second.callbacks.iterate(&onCallback, const_cast<void*>(reinterpret_cast<const void*>(&index->first)));
 }
 

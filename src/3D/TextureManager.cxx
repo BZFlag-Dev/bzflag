@@ -236,7 +236,7 @@ int TextureManager::addTexture( const char* name, OpenGLTexture *texture )
   TextureNameMap::iterator it = textureNames.find(name);
   if (it != textureNames.end()) {
    DEBUG3("Texture %s already exists, overwriting\n", name);
-   textureIDs.erase(textureIDs.find(it->second.id));
+   textureIDs.erase(it->second.id);
    delete it->second.texture;
   }
   ImageInfo info;
