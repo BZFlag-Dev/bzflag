@@ -210,48 +210,22 @@ void LinkManager::findTelesByName(const std::string& name,
     glob.erase(0, 1); // erase 1 char from position 0
   }
 
-  // setup for the faces types
-  bool front = false;
-  bool back = false;
-  int lastchar = tolower(glob[glob.size() - 1]);
-  if (lastchar == '*') {
-    front = true;
-    back = true;
-  } else if (glob.size() > 1) {
-    int secondlast = tolower(glob[glob.size() - 2]);
-    if ((secondlast == ':') || (secondlast == '?') || (secondlast == '*')) {
-      if (lastchar == '?') {
-	front = true;
-	back = true;
-      }else if (lastchar == 'f') {
-	front = true;
-      } else if (lastchar == 'b') {
-	back = true;
-      }
-      // clip the end
-      if (secondlast == '*') {
-	glob.resize(glob.size() - 1);
-      } else {
-	glob.resize(glob.size() - 2);
-      }
-    }
-  }
-
-  if (!front && !back) {
-    return; // no possible matches
-  }
-
   // add all teleporters that have matching names
   const ObstacleList& teles = OBSTACLEMGR.getTeles();
   for (unsigned int i = 0; i < teles.size(); i++) {
     Teleporter* tele = (Teleporter*) teles[i];
-    if (match_object_name(glob.c_str(), tele->getName().c_str())) {
-      if (front) {
-	list.push_back((int)(i * 2) + 0);
-      }
-      if (back) {
-	list.push_back((int)(i * 2) + 1);
-      }
+    const std::string teleName = tele->getName();
+
+    std::string front = teleName;
+    front += ":f";
+    if (match_object_name(glob.c_str(), front.c_str())) {
+      list.push_back((int)(i * 2) + 0);
+    }
+
+    std::string back = teleName;
+    back += ":b";
+    if (match_object_name(glob.c_str(), back.c_str())) {
+      list.push_back((int)(i * 2) + 1);
     }
   }
 
