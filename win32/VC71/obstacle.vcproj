@@ -270,9 +270,6 @@
 				RelativePath="..\..\src\obstacle\MeshObstacle.cxx">
 			</File>
 			<File
-				RelativePath="..\..\src\obstacle\MeshSceneNodeGenerator.cxx">
-			</File>
-			<File
 				RelativePath="..\..\src\obstacle\Obstacle.cxx">
 				<FileConfiguration
 					Name="Release|Win32">
@@ -366,9 +363,6 @@
 				RelativePath="..\..\src\obstacle\TetraBuilding.cxx">
 			</File>
 			<File
-				RelativePath="..\..\src\obstacle\TetraSceneNodeGenerator.cxx">
-			</File>
-			<File
 				RelativePath="..\..\src\obstacle\WallObstacle.cxx">
 				<FileConfiguration
 					Name="Release|Win32">
@@ -408,6 +402,9 @@
 				</File>
 				<File
 					RelativePath="..\..\src\obstacle\EmptySceneNodeGenerator.cxx">
+				</File>
+				<File
+					RelativePath="..\..\src\obstacle\MeshSceneNodeGenerator.cxx">
 				</File>
 				<File
 					RelativePath="..\..\src\obstacle\ObstacleSceneNodeGenerator.cxx">
@@ -497,9 +494,6 @@
 			</File>
 			<File
 				RelativePath="..\..\include\TetraBuilding.h">
-			</File>
-			<File
-				RelativePath="..\..\include\TetraSceneNodeGenerator.h">
 			</File>
 			<File
 				RelativePath="..\..\include\TriWallSceneNode.h">

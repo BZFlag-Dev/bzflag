@@ -377,9 +377,6 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\src\geometry\EighthDTetraSceneNode.cxx">
-			</File>
-			<File
 				RelativePath="..\..\src\geometry\FlagSceneNode.cxx">
 				<FileConfiguration
 					Name="Release|Win32">
@@ -870,9 +867,6 @@
 			</File>
 			<File
 				RelativePath="..\..\include\EighthDPyrSceneNode.h">
-			</File>
-			<File
-				RelativePath="..\..\include\EighthDTetraSceneNode.h">
 			</File>
 			<File
 				RelativePath="..\..\include\FlagSceneNode.h">
