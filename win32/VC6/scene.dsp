@@ -145,6 +145,10 @@ SOURCE=..\..\src\scene\BSPSceneDatabase.cxx
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\src\scene\Occluder.cxx
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\src\scene\Octree.cxx
 # End Source File
 # Begin Source File
@@ -170,6 +174,10 @@ SOURCE=..\..\include\common.h
 # Begin Source File
 
 SOURCE=.\config.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\scene\Occluder.h
 # End Source File
 # Begin Source File
 
