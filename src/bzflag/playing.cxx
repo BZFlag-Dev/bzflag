@@ -902,6 +902,9 @@ class ServerCommandKey : public HUDuiDefaultKey {
       Setpass,
       Grouplist,
       Groupperms,
+      Vote,
+      Poll,
+      Veto,
       Password, // leave this as the last item
     };
 
@@ -1036,8 +1039,9 @@ void			ServerCommandKey::updatePrompt()
     case Setpass: hud->setComposing("Set your password [enter pass]:", true); break;
     case Grouplist :  hud->setComposing("List Groups", false); break;
     case Groupperms :  hud->setComposing("List Permissions", false); break;
-
-
+    case Vote : hud->setComposing("Vote", false); break;
+    case Poll : hud->setComposing("Call a Poll", false); break;
+    case Veto : hud->setComposing("Cancel a Poll", false); break;
 
     default: /* shouldn't happen */ break;
     }
@@ -1195,7 +1199,9 @@ bool			ServerCommandKey::keyPress(const BzfKeyEvent& key)
 	case Setpass: sendMsg = "/setpass "+ message; break;
 	case Grouplist: sendMsg = "/grouplist"; break;
 	case Groupperms: sendMsg = "/groupperms"; break;
-
+        case Vote: sendMsg = "/vote "+ message; break;
+        case Poll: sendMsg = "/poll "+ message; break;
+        case Veto: sendMsg = "/veto "+ message; break;
 	default: /* shouldn't happen */ break;
       }
 
