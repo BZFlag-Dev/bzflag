@@ -29,7 +29,7 @@
  */
 static const unsigned short int STORED_COLORS = 16;
 
-typedef enum ColorCodes {
+typedef enum {
   // the first 5 codes line up with the TeamColor enum from global.h
   RogueColor		= 0,	// team (yellow)
   RedColor		= 1,	// team
@@ -48,7 +48,7 @@ typedef enum ColorCodes {
 
   YellowColor		= 0,
   DefaultColor		= 6	// default to grey
-};
+} ColorCodes;
 
 extern const char * ColorStrings[FONT_CODES];
 
