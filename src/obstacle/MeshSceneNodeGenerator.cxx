@@ -117,7 +117,7 @@ void MeshSceneNodeGenerator::setupNodeMaterial(MeshPolySceneNode* node,
     if (faceTexture >= 0) {
       gotSpecifiedTexture = true;
     } else {
-      faceTexture = tm.getTextureID("mesh", false /* no failaure reports*/);
+      faceTexture = tm.getTextureID("mesh", false /* no failure reports */);
     }
   }
 
