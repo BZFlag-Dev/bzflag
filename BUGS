@@ -1,6 +1,10 @@
 recent bugs
 ------------
 
+- dropping burrow flag sometimes launches the player way up into the sky
+
+- votingarbiter is confused by a player name with an embedded space
+
 - thief gets kicked for speeding sometimes after stealing flag
 
 - Shots that bounce off the ground occasionally reflect in the wrong
