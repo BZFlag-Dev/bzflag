@@ -3832,11 +3832,14 @@ static void		handleServerMessage(bool human, uint16_t code,
 	    if (srcPlayer)
 	      myTank->setRecipient(srcPlayer);
 	    
-	    // play a sound on a private message not from self
-	    static TimeKeeper lastMsg = TimeKeeper::getSunGenesisTime();
-	    if (TimeKeeper::getTick() - lastMsg > 2.0f)
-	      playLocalSound( SFX_MESSAGE_PRIVATE );
-	    lastMsg = TimeKeeper::getTick();
+	    // play a sound on a private message not from self or server
+	    if (!fromServer) {
+	      static TimeKeeper lastMsg = TimeKeeper::getSunGenesisTime();
+	      if (TimeKeeper::getTick() - lastMsg > 2.0f)
+		playLocalSound( SFX_MESSAGE_PRIVATE );
+	      lastMsg = TimeKeeper::getTick();
+	    }
+
 	  }
 	  fullMsg += "]";
 	  fullMsg += ColorStrings[ResetColor];
