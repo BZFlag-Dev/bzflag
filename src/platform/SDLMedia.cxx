@@ -10,6 +10,8 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
+#ifdef HAVE_SDL
+
 #include "SDLMedia.h"
 #include "ErrorHandler.h"
 
@@ -362,6 +364,7 @@ void			SDLMedia::audioSleep(bool, double endTime)
   }
 }
 
+#endif //HAVE_SDL
 // Local Variables: ***
 // mode:C++ ***
 // tab-width: 8 ***

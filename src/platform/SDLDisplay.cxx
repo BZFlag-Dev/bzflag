@@ -10,10 +10,10 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#include "SDLDisplay.h"
 
 #ifdef HAVE_SDL
 #include <stdio.h>
+#include "SDLDisplay.h"
 
 static int mx = 0;
 static int my = 0;
