@@ -92,7 +92,7 @@ void TextToolBatch::loadFile(std::string file)
       flags = std::string(buffer + 6);
     } else if (strncmp(buffer, "sizes", 5) == 0) {
       std::string tmp = std::string(buffer + 6);
-      unsigned int x = tmp.find(" ", 0);
+      unsigned int x = 0;
       unsigned int y = tmp.size();
       while (x < tmp.size()) {
         y = tmp.find(" ", x + 1);
