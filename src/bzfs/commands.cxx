@@ -1601,6 +1601,28 @@ void handlePollCmd(GameKeeper::Player *playerData, const char *message)
       sendMessage(ServerPlayer, t, reply);
       return;
     }
+      // Make sure the specific poll type is allowed
+
+    if ((cmd =="set") && (clOptions->disableSet)) {
+	sprintf(reply,"%s, /poll set is not available on this server", callsign.c_str());
+      	sendMessage(ServerPlayer, t, reply);
+	return;
+	}
+    if ((cmd =="flagreset") && (clOptions->disableFlagReset)) {
+        sprintf(reply,"%s, /poll flagreset is not available on this server", callsign.c_str());
+        sendMessage(ServerPlayer, t, reply);
+ return;
+        }
+    if ((cmd =="ban") && (clOptions->disableBan)) {
+        sprintf(reply,"%s, /poll ban is not available on this server", callsign.c_str());
+        sendMessage(ServerPlayer, t, reply);
+	return;
+        }
+    if ((cmd =="kick") && (clOptions->disableKick)) {
+        sprintf(reply,"%s, /poll kick is not available on this server", callsign.c_str());
+        sendMessage(ServerPlayer, t, reply);
+	return;
+        }
 
     if ((cmd != "set") && (cmd != "flagreset")) {
       // all polls that are not set or flagreset polls take a player name
@@ -1705,11 +1727,15 @@ void handlePollCmd(GameKeeper::Player *playerData, const char *message)
 
   } else {
     sendMessage(ServerPlayer, t, "Invalid option to the poll command");
-    sendMessage(ServerPlayer, t, "Usage: /poll ban|kick playername");
-    sendMessage(ServerPlayer, t, "    or /poll set variable value");
-    sendMessage(ServerPlayer, t, "    or /poll flagreset");
-    sendMessage(ServerPlayer, t, "    or /poll vote yes|no");
-    sendMessage(ServerPlayer, t, "    or /poll veto");
+    sendMessage(ServerPlayer, t, "Usage: /poll vote yes|no");
+    if (!clOptions->disableBan)
+      sendMessage(ServerPlayer, t, "    or /poll ban playername");
+    if (!clOptions->disableKick)
+      sendMessage(ServerPlayer, t, "    or /poll kick playername");
+    if (!clOptions->disableSet) {
+  		sendMessage(ServerPlayer, t, "    or /poll set variable value");
+    if (!clOptions->disableFlagReset) {
+      sendMessage(ServerPlayer, t, "    or /poll flagreset");
 
   } /* end handling of poll subcommands */
 

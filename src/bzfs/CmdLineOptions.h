@@ -68,7 +68,9 @@ struct CmdLineOptions
     publicizeServer(false), replayServer(false), startRecording(false),
     filterFilename(""), filterCallsigns(false), filterChat(false), filterSimple(false), 
     banTime(300), voteTime(60), vetoTime(10), votesRequired(2),
-    votePercentage(50.1f), voteRepeatTime(300), autoTeam(false), citySize(5)
+    votePercentage(50.1f), voteRepeatTime(300), disableSet(false),
+    disableFlagReset(false), disableBan(false), disableKick(false),
+    autoTeam(false), citySize(5)
   {
     int i;
     for (FlagTypeMap::iterator it = FlagType::getFlagMap().begin();
@@ -157,6 +159,11 @@ struct CmdLineOptions
   unsigned short int votesRequired;
   float votePercentage;
   unsigned short int voteRepeatTime;
+
+  bool disableSet;
+  bool disableFlagReset;
+  bool disableBan;
+  bool disableKick;
 
   std::string		reportFile;
   std::string		reportPipe;

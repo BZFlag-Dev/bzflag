@@ -4,6 +4,7 @@
 BZFlag 1.12.0  (was 1.11.x)
 ---------------------------
 
+* Options to disable certain /poll's entirely on a server - Simon Richard Grint
 * Lighting menu option now has "None / Fast / Best" - Dave Rodgers
 * Dev-C++ project files - Ian Agar, Daniel Remenak, Jeff Myers
 * Shot accuracy statistics dialog - Daniel Remenak
