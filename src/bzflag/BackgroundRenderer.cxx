@@ -104,10 +104,6 @@ BackgroundRenderer::BackgroundRenderer(const SceneRenderer&) :
     if (userTextures[0].size())
       groundTextureID = tm.getTextureID( userTextures[0].c_str(), false );
 
-	if (groundTextureID < 0)
-		groundTextureID = tm.getTextureID( "weather/snowground", true );
-
-
     if (groundTextureID < 0)
       groundTextureID = tm.getTextureID( BZDB.get("stdGroundTexture").c_str(), true );
 
