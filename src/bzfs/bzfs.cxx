@@ -743,7 +743,7 @@ bool CustomWeapon::read(const char *cmd, istream& input) {
   return true;
 }
 
-void CustomWeapon::write(WorldInfo* world) const {
+void CustomWeapon::write(WorldInfo*) const {
   wWeapons.add(type, pos, rotation, initdelay, delay, sync);
 }
 

@@ -62,7 +62,7 @@ void WorldWeapons::fire()
       //Set up timer for next shot
       w->nextTime += w->delay[w->nextDelay];
       w->nextDelay++;
-      if (w->nextDelay == w->delay.size())
+      if (w->nextDelay == (int)w->delay.size())
         w->nextDelay = 0;
     }
   }

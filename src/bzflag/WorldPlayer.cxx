@@ -33,7 +33,7 @@ void			WorldPlayer::addShot(const FiringInfo& info)
 {
   RemoteShotPath* newShot = new RemoteShotPath(info);
   int shotNum = int(newShot->getShotId() & 255);
-  if (shotNum >= shots.size()) {
+  if (shotNum >= (int)shots.size()) {
     shots.resize(shotNum+1);
   }
   else {
@@ -59,7 +59,7 @@ bool			WorldPlayer::doEndShot(
     return false;
 
   // ignore bogus shots (those with a bad index or for shots that don't exist)
-  if (index < 0 || index >= shots.size() || !shots[index])
+  if (index < 0 || index >= (int)shots.size() || !shots[index])
     return false;
 
   // ignore shots that already ending
@@ -89,7 +89,7 @@ bool			WorldPlayer::doEndShot(
 
 void			WorldPlayer::updateShots(float dt)
 {
-  for (int i = 0; i < shots.size(); i++)
+  for (int i = 0; i < (int)shots.size(); i++)
     if (shots[i])
       shots[i]->update(dt);
 }
