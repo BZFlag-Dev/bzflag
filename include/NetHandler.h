@@ -129,6 +129,8 @@ private:
   void        countMessage(uint16_t code, int len, int direction);
 #endif
 
+//On win32, a socket is typedef UINT_PTR SOCKET;
+//Hopefully int will be ok
   static int                udpSocket;
   static NetHandler        *netPlayer[maxHandlers];
   PlayerInfo               *info;

@@ -22,7 +22,7 @@ bool NetHandler::initHandlers(struct sockaddr_in addr) {
   // udp socket
   int n;
   // we open a udp socket on the same port if alsoUDP
-  if ((udpSocket = socket(AF_INET, SOCK_DGRAM, 0)) < 0) {
+  if ((udpSocket = (int) socket(AF_INET, SOCK_DGRAM, 0)) < 0) {
       nerror("couldn't make udp connect socket");
       return false;
   }
