@@ -1664,8 +1664,6 @@ static void		doMotion()
     memcpy(pos, myTank->getPosition(), sizeof(pos));
     memcpy(hitPos, pos, sizeof(hitPos));
 
-    // For some reason Roger likes to drive to NAN, NAN .. not sure why
-
     const bool phased = myTank->getFlag() == Flags::OscillationOverthruster ||
                         myTank->getFlag() == Flags::PhantomZone;
     bool expelled;
@@ -1675,7 +1673,8 @@ static void		doMotion()
     if (obstacle && !phased) {
       const float hitAzimuth = myTank->getAngle();
       float normal[3];
-      myTank->getHitNormal(obstacle, pos, myTank->getAngle(), hitPos, hitAzimuth, normal);
+      if (!myTank->getHitNormal(obstacle, pos, myTank->getAngle(), hitPos, hitAzimuth, normal))
+	obstacle->getNormal(pos,normal);
 
       rotation = normal[1] - normal[0];
       speed = -0.5f;
