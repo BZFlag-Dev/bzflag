@@ -220,7 +220,11 @@ void			RadarRenderer::render(SceneRenderer& renderer,
   // when burrowed, limit radar range
   if (myTank && (myTank->getFlag() == Flags::Burrow) &&
       (myTank->getPosition()[2] < 0.0f)) {
+#ifdef _WIN32
+    range = min(range, worldSize / 4.0f);
+#else
     range = std::min(range, worldSize / 4.0f);
+#endif
   }
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();

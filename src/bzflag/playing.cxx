@@ -1791,9 +1791,14 @@ static void		doAutoPilot(float &rotation, float &speed)
 	      if (dotProd <= 0.1f) //pretty wide angle, if it hits me, jumping wouldn't have helped
 	        continue;
 
+#ifdef _WIN32
+	      if (((World::getWorld()->allowJumping() || (myTank->getFlag()) == Flags::Jumping))
+		  && (dist < (max(dotProd,0.5f) * BZDB->eval(StateDatabase::BZDB_TANKLENGTH) * 2.5f))) {
+#else
 	      if (((World::getWorld()->allowJumping() || (myTank->getFlag()) == Flags::Jumping))
 		  && (dist < (std::max(dotProd,0.5f) * BZDB->eval(StateDatabase::BZDB_TANKLENGTH) * 2.5f))) {
-	        myTank->jump();
+#endif
+		myTank->jump();
 	        s = maxShots;
 	        t = curMaxPlayers;
 	      }
