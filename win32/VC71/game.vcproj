@@ -217,6 +217,9 @@
 				RelativePath="..\..\src\game\Ray.cxx">
 			</File>
 			<File
+				RelativePath="..\..\src\game\ServerItem.cxx">
+			</File>
+			<File
 				RelativePath="..\..\src\game\ServerList.cxx">
 			</File>
 			<File
@@ -265,6 +268,9 @@
 			</File>
 			<File
 				RelativePath="..\..\include\Ray.h">
+			</File>
+			<File
+				RelativePath="..\..\include\ServerItem.h">
 			</File>
 			<File
 				RelativePath="..\..\include\ServerList.h">

@@ -1325,9 +1325,6 @@ copy debug\*.pdb ..\..\*.pdb
 					RelativePath="..\..\src\bzflag\SaveWorldMenu.cxx">
 				</File>
 				<File
-					RelativePath="..\..\src\bzflag\ServerItem.cxx">
-				</File>
-				<File
 					RelativePath="..\..\src\bzflag\ServerMenu.cxx">
 				</File>
 				<File
@@ -1505,9 +1502,6 @@ copy debug\*.pdb ..\..\*.pdb
 			</File>
 			<File
 				RelativePath="..\..\src\bzflag\ServerCommandKey.h">
-			</File>
-			<File
-				RelativePath="..\..\src\bzflag\ServerItem.h">
 			</File>
 			<File
 				RelativePath="..\..\src\bzflag\ServerLink.h">
