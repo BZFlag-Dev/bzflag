@@ -498,11 +498,15 @@ float			SegmentedShotStrategy::checkHit(const BaseLocalPlayer* tank,
   // expired shot can't hit anything
   if (getPath().isExpired()) return minTime;
 
+  float scaleFactor = 1.0f;
+
+
+  if (tank->getFlag() == Flags::Obesity)   scaleFactor = BZDB->eval(StateDatabase::BZDB_OBESEFACTOR);
+  else if (tank->getFlag() == Flags::Tiny) scaleFactor = BZDB->eval(StateDatabase::BZDB_TINYFACTOR);
+  else if (tank->getFlag() == Flags::Thief) scaleFactor = BZDB->eval(StateDatabase::BZDB_THIEFTINYFACTOR);
+  
   // get tank radius
-  float radius = BZDB->eval(StateDatabase::BZDB_TANKRADIUS);
-  if (tank->getFlag() == Flags::Obesity)   radius *= BZDB->eval(StateDatabase::BZDB_OBESEFACTOR);
-  else if (tank->getFlag() == Flags::Tiny) radius *= BZDB->eval(StateDatabase::BZDB_TINYFACTOR);
-  else if (tank->getFlag() == Flags::Thief) radius *= BZDB->eval(StateDatabase::BZDB_THIEFTINYFACTOR);
+  float radius = BZDB->eval(StateDatabase::BZDB_TANKRADIUS) * scaleFactor;
   const float radius2 = radius * radius;
 
   // tank is positioned from it's bottom so shift position up by
@@ -511,7 +515,7 @@ float			SegmentedShotStrategy::checkHit(const BaseLocalPlayer* tank,
   float lastTankPositionRaw[3];
   lastTankPositionRaw[0] = tankLastMotionRaw.getOrigin()[0];
   lastTankPositionRaw[1] = tankLastMotionRaw.getOrigin()[1];
-  lastTankPositionRaw[2] = tankLastMotionRaw.getOrigin()[2] + 0.5f * BZDBCache::tankHeight;
+  lastTankPositionRaw[2] = tankLastMotionRaw.getOrigin()[2] + 0.5f * BZDBCache::tankHeight * scaleFactor;
   Ray tankLastMotion(lastTankPositionRaw, tankLastMotionRaw.getDirection());
 
   // if bounding box of tank and entire shot doesn't overlap then no hit
@@ -544,7 +548,7 @@ float			SegmentedShotStrategy::checkHit(const BaseLocalPlayer* tank,
 
     // get hit time
     float t;
-    if ((tank->getFlag() == Flags::Narrow) || (tank->getFlag() == Flags::Thief)) {
+    if (tank->getFlag() == Flags::Narrow) {
       // find closest approach to narrow box around tank.  width of box
       // is shell radius so you can actually hit narrow tank head on.
       static float origin[3] = { 0.0f, 0.0f, 0.0f };
