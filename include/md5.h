@@ -63,7 +63,7 @@ private:
   void init();
   typedef unsigned char uint1; //  8bit
   typedef unsigned int uint4;  // 32bit
-  static const int blocksize = 64;
+  enum {blocksize = 64};
 
   void transform(const uint1 block[blocksize]);
   static void decode(uint4 output[], const uint1 input[], size_type len);
