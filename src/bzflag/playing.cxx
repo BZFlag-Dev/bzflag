@@ -728,10 +728,14 @@ static void		doAutoPilot(float &rotation, float &speed)
           continue;
 
 	float d = TargetingUtils::getTargetDistance( pos, player[t]->getPosition());
+	bool isObscured = TargetingUtils::isLocationObscured( pos, player[t]->getPosition());
+	if (isObscured) //demote the priority of obscured enemies
+	  d += 150.0f;
+
 	if (d < distance) {
 	  if ((player[t]->getFlag() != Flags::Stealth)
 	  ||  (myTank->getFlag() == Flags::Seer)
-          ||  ((!TargetingUtils::isLocationObscured( pos, player[t]->getPosition())) &&  
+          ||  ((!isObscured) &&  
 	      (TargetingUtils::getTargetAngleDifference(pos, myAzimuth, player[t]->getPosition()) <= 30.0f)))
 	  target = t;
 	  distance = d;
@@ -830,7 +834,7 @@ static void		doAutoPilot(float &rotation, float &speed)
 	  const float* fpos = world->getFlag(i).position;
 	  if (fpos[2] == pos[2]) {
 	    float dist = TargetingUtils::getTargetDistance( pos, fpos );
-	    if ((dist < (5.0f * BZDBCache::flagRadius)) && (dist < minDist)) {
+	    if ((dist < 100.0f) && (dist < minDist)) {
 	      minDist = dist;
 	      closestFlag = i;
 	    }
@@ -851,12 +855,12 @@ static void		doAutoPilot(float &rotation, float &speed)
       else { //figure out my rotation to my target
 	const float *tp = player[target]->getPosition();
 	float enemyPos[3];
-	//toss in some lag adjustment - 100 millis
+	//toss in some lag adjustment/future prediction - 300 millis
 	memcpy(enemyPos,tp,sizeof(enemyPos));
 	const float *tv = player[target]->getVelocity();
-	enemyPos[0] += 0.1f * tv[0];
-	enemyPos[1] += 0.1f * tv[1];
-	enemyPos[2] += 0.1f * tv[2];
+	enemyPos[0] += 0.3f * tv[0];
+	enemyPos[1] += 0.3f * tv[1];
+	enemyPos[2] += 0.3f * tv[2];
 	if (enemyPos[2] < 0.0f) //Roger doesn't worry about burrow
 	  enemyPos[2] = 0.0;
 
@@ -957,7 +961,7 @@ static void		doAutoPilot(float &rotation, float &speed)
 		s = maxShots;
 		t = curMaxPlayers;
 	      }
-	      else if (dotProd > 0.97f) {
+	      else if (dotProd > 0.96f) {
 		speed = 1.0;
 		float rotation1 = (shotAngle + M_PI/2.0f) - myAzimuth;
 		if (rotation1 < -1.0f * M_PI) rotation1 += 2.0f * M_PI;
@@ -967,10 +971,22 @@ static void		doAutoPilot(float &rotation, float &speed)
 		if (rotation2 < -1.0f * M_PI) rotation2 += 2.0f * M_PI;
 		if (rotation2 > 1.0f * M_PI) rotation2 -= 2.0f * M_PI;
 
-		if (fabs(rotation1) < fabs(rotation2))
-		  rotation = rotation1;
-		else
-		  rotation = rotation2;
+		float zCross = shotUnitVec[0]*trueVec[1] - shotUnitVec[1]*trueVec[0];
+
+		if (fabs(rotation1) < fabs(rotation2)) {
+		  rotation = rotation1; //i'm rotating to the left of the shot from shooter pov
+		  if (zCross > 0.0f) // am i to the left of the shot from shooter pov
+		    speed = 1.0f; // yes, so keep going
+	          else
+		    speed = -0.5f;//no so backup
+		}
+		else {
+		  rotation = rotation2; //i'm rotating to the right of the shot from shooter pov
+		  if (zCross < 0.0f) // i'm to the right of the shot from shooter pov
+		    speed = 1.0f; // yes, so keep going
+	          else
+		    speed = -0.5f;// no, so back up
+		}
 	      }
 	    }
 	  }
