@@ -186,29 +186,35 @@ const char *extraUsageString =
 "\t-world: world file to load\n"
 "\t-worldsize: numeric value for the size of the world ( def 400 )\n";
 
+
 /* private */
 static bool parsePlayerCount(const char *argv, CmdLineOptions &options)
 {
-  // either a single number or 5 optional numbers separated by 4
-  // (mandatory) commas.
+  /* either a single number or 5 optional numbers separated by 4
+   * (mandatory) commas.
+   */
   const char *scan = argv;
   while (*scan && *scan != ',') scan++;
+
   if (*scan == ',') {
     // okay, it's the comma separated list.  count commas
     int commaCount = 1;
-    while (*++scan)
-      if (*scan == ',')
+    while (*++scan) {
+      if (*scan == ',') {
 	commaCount++;
+      }
+    }
     if (commaCount != 4) {
       printf("improper player count list\n");
       return false;
     }
 
     // reset the counts
+    // no players by default if teams are specified
     int i;
-    // no limits by default
-    for (i = 0; i < CtfTeams; i++)
-      options.maxTeam[i] = MaxPlayers;
+    for (i = 0; i < CtfTeams; i++) {
+      options.maxTeam[i] = 0;
+    }
 
     // now get the new counts
 
@@ -221,46 +227,69 @@ static bool parsePlayerCount(const char *argv, CmdLineOptions &options)
       if (tail != scan) {
 	// got a number
 	countCount++;
-	if (count < 0)
+	if (count < 0) {
 	  options.maxTeam[i] = 0;
-	else
-	  if (count > MaxPlayers)
+	} else {
+	  if (count > MaxPlayers) {
 	    options.maxTeam[i] = MaxPlayers;
-	else
-	  options.maxTeam[i] = uint16_t(count);
-      }
+	  } else {
+	    options.maxTeam[i] = uint16_t(count);
+	  }
+	}
+      } // end if tail != scan
+
       while (*tail && *tail != ',') tail++;
       scan = tail + 1;
-    }
+    } // end iteration over teams
 
+    // if no/zero players were specified, allow a bunch of rogues
+    bool allZero = true;
+    for (i = 0; i < CtfTeams; i++) {
+      if (options.maxTeam[i] != 0) {
+	allZero = false;
+      }
+    }
+    if (allZero) {
+      options.maxTeam[RogueTeam] = MaxPlayers;
+    }
 
     // if all counts explicitly listed then add 'em up and set maxPlayers
     if (countCount == CtfTeams) {
-    // if num rogues allowed team > 0, then set Rogues game style
-      if (options.maxTeam[RogueTeam] > 0)
+      // if num rogues allowed team > 0, then set Rogues game style
+      if (options.maxTeam[RogueTeam] > 0) {
 	options.gameStyle |= int(RoguesGameStyle);
+      }
       softmaxPlayers = 0;
-      for (i = 0; i < CtfTeams; i++)
+      for (i = 0; i < CtfTeams; i++) {
 	softmaxPlayers += options.maxTeam[i];
+      }
     }
-  }
-  else {
+
+  } else {
+
+    /* single number was provided instead of comma-separated */
     char *tail;
     long count = strtol(argv, &tail, 10);
     if (argv == tail) {
       printf("improper player count\n");
       return false;
     }
-    if (count < 1)
+    if (count < 1) {
       softmaxPlayers = 1;
-    else
-      if (count > MaxPlayers)
+    } else {
+      if (count > MaxPlayers) {
 	softmaxPlayers = MaxPlayers;
-    else softmaxPlayers = uint16_t(count);
-  }
+      } else {
+       softmaxPlayers = uint16_t(count);
+      }
+    }
+  } // end check if comm-separated list
+
   maxPlayers = softmaxPlayers + options.maxObservers;
-  if (maxPlayers > MaxPlayers)
+  if (maxPlayers > MaxPlayers) {
     maxPlayers = MaxPlayers;
+  }
+
   return true;
 }
 
