@@ -115,7 +115,7 @@ static void* unpack4Float(void *buf, float values[4])
 
 void* MeshMaterial::pack(void* buf)
 {
-  unsigned char len = texture.size();
+	unsigned char len = (unsigned char)texture.size();
   buf = nboPackUByte(buf, len);
   buf = nboPackString(buf, texture.c_str(), len);
   buf = nboPackInt(buf, textureMatrix);
@@ -152,7 +152,7 @@ int MeshMaterial::packSize()
 {
   const int basicSize = sizeof(unsigned char) + sizeof(int) + sizeof(int) +
                         (4 * sizeof(float[4])) + sizeof(float);
-  unsigned char len = texture.size();
+  unsigned char len = (unsigned char)texture.size();
   return basicSize + len;
 }
 

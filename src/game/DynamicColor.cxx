@@ -67,7 +67,7 @@ void DynamicColorManager::update()
 int DynamicColorManager::addColor(DynamicColor* color)
 {
   colors.push_back (color);
-  return (colors.size() - 1);
+  return ((int)colors.size() - 1);
 }
 
 
@@ -84,7 +84,7 @@ DynamicColor* DynamicColorManager::getColor(int id)
 void * DynamicColorManager::pack(void *buf)
 {
   std::vector<DynamicColor*>::iterator it;
-  buf = nboPackUInt(buf, colors.size());
+  buf = nboPackUInt(buf, (int)colors.size());
   for (it = colors.begin(); it != colors.end(); it++) {
     DynamicColor* color = *it;
     buf = color->pack(buf);

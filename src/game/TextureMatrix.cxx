@@ -67,7 +67,7 @@ void TextureMatrixManager::update()
 int TextureMatrixManager::addMatrix(TextureMatrix* texmat)
 {
   matrices.push_back (texmat);
-  return (matrices.size() - 1);
+  return ((int)matrices.size() - 1);
 }
 
 
@@ -84,7 +84,7 @@ TextureMatrix* TextureMatrixManager::getMatrix(int id)
 void * TextureMatrixManager::pack(void *buf)
 {
   std::vector<TextureMatrix*>::iterator it;
-  buf = nboPackUInt(buf, matrices.size());
+  buf = nboPackUInt(buf, (unsigned int)matrices.size());
   for (it = matrices.begin(); it != matrices.end(); it++) {
     TextureMatrix* texmat = *it;
     buf = texmat->pack(buf);

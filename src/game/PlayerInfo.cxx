@@ -207,7 +207,7 @@ bool PlayerInfo::isCallSignReadable() {
       alnumCount++;
     }
   } while (*++sp);
-  int callsignlen = strlen(callSign);
+  int callsignlen = (int)strlen(callSign);
   return (callsignlen <= 4) || ((float)alnumCount / (float)callsignlen > 0.5f);
 };
 
@@ -246,7 +246,7 @@ bool PlayerInfo::isEMailReadable() {
       emailAlnumCount++;
     }
   } while (*++sp);
-  int emaillen = strlen(email);
+  int emaillen = (int)strlen(email);
   return (emaillen <= 4) || (((float)emailAlnumCount / (float)emaillen) > 0.5);
 };
 
@@ -304,7 +304,7 @@ const char *PlayerInfo::getClientVersion() {
 
 void *PlayerInfo::setClientVersion(size_t length, void *buf) {
   char *versionString = new char[length];
-  buf = nboUnpackString(buf, versionString, length);
+  buf = nboUnpackString(buf, versionString, (int)length);
   clientVersion = std::string(versionString);
   delete[] versionString;
   DEBUG2("Player %s [%d] sent version string: %s\n",
