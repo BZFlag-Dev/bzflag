@@ -13,5 +13,6 @@ libMediaFile_a_SOURCES =	\
 	PNGImageFile.h		\
 	SGIImageFile.cxx	\
 	SGIImageFile.h		\
+	AudioFile.h		\
 	WaveAudioFile.h		\
 	WaveAudioFile.cxx
