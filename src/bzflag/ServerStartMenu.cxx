@@ -277,7 +277,6 @@ void ServerStartMenu::scanWorldFiles (const std::string& searchDir,
   HANDLE h = FindFirstFile(pattern.c_str(), &findData);
   if (h != INVALID_HANDLE_VALUE) {
     std::string file;
-    std::string suffix;
     while (FindNextFile(h, &findData)) {
       file = findData.cFileName;
       worldFiles[file] = searchDir + file;
