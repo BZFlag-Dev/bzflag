@@ -67,7 +67,7 @@ libPlatform_a_SOURCES =				\
 endif
 
 if MACOS
-SUBDIRS += MacOSX
+SUBDIRS = MacOSX
 
 libPlatform_a_SOURCES =				\
 	PlatformFactory.cxx			\
@@ -78,7 +78,7 @@ libPlatform_a_SOURCES =				\
 	wave.cxx				\
 	wave.h
 else
-DIST_SUBDIRS += MacOSX
+DIST_SUBDIRS = MacOSX
 endif
 
 if BEOS
