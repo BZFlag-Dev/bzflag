@@ -20,6 +20,8 @@
 
 
 /* private */
+int callocCount=0;
+int freeCount=0;
 
 /* protected */
 
@@ -318,6 +320,7 @@ regex_t *WordFilter::getCompiledExpression(const std::string &word) const
     return (regex_t *)NULL;
 
   }
+  callocCount++;
 
   if ( regcomp(compiledReg, word.c_str(), REG_EXTENDED | REG_ICASE) != 0 ) {
     std::cerr << "Warning: unable to compile regular expression for [" << word << "]" << std::endl;
@@ -734,6 +737,7 @@ WordFilter::~WordFilter(void)
     for (i = filters[j].begin();
 	 i != filters[j].end();
 	 ++i) {
+	freeCount++;
       if (i->compiled) {
 	regfree(i->compiled);
 	free(i->compiled);
@@ -744,6 +748,7 @@ WordFilter::~WordFilter(void)
   for (i = prefixes.begin();
        i != prefixes.end();
        ++i) {
+      freeCount++;
     if (i->compiled) {
       regfree(i->compiled);
       free(i->compiled);
@@ -753,11 +758,14 @@ WordFilter::~WordFilter(void)
   for (i = suffixes.begin();
        i != suffixes.end();
        ++i) {
+      freeCount++;
     if (i->compiled) {
       regfree(i->compiled);
       free(i->compiled);
     }
   }
+
+  std::cout << "Allocated " << callocCount << " blocks, free of " << freeCount << " blocks" << std::endl;
 
   return;
 }
@@ -774,8 +782,8 @@ bool WordFilter::addToFilter(const std::string &word, const std::string &express
 
   if (expression.size() == 0) {
     /* make sure to create an expression if it wasn't given */
-    std::string expression = expressionFromString(word);
-    return addToFilter(word, expression);
+    std::string expr = expressionFromString(word);
+    return addToFilter(word, expr);
 
   } else {
     /* base case */
