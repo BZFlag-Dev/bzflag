@@ -5537,11 +5537,11 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
 	  }
 	}
   
-	if (curPlanarSpeedSqr > (1.0f + maxPlanarSpeedSqr)) {
+	if (curPlanarSpeedSqr > (4.0f + maxPlanarSpeedSqr)) {
 	  if (logOnly) {
 		DEBUG1("Logging Player %s [%d]: tank too fast (tank: %f, allowed: %f){Dead or v[z] != 0}\n",
 		 player[t].callSign, t,
-		 sqrt(curPlanarSpeedSqr), sqrt(maxPlanarSpeedSqr));
+		 sqrt(curPlanarSpeedSqr), sqrt(4.0f + maxPlanarSpeedSqr));
 	  }
 	  else {
 		char message[MessageLen];
