@@ -1,6 +1,8 @@
 recent bugs
 ------------
 
+- can send private messages to robots
+
 - colored console does not seem to work (no extra color)
 
 - private messages are no longer echoed in console; this is probaby because
