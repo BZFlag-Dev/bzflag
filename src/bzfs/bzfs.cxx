@@ -3030,13 +3030,13 @@ static void addPlayer(int playerIndex)
   char message[MessageLen];
 
 #ifdef SERVERLOGINMSG
-  sprintf(message,"BZFlag server %d.%d%c%d, http://BZFlag.org/\n",
+  sprintf(message,"BZFlag server %d.%d%c%d, http://BZFlag.org/",
       (VERSION / 10000000) % 100, (VERSION / 100000) % 100,
       (char)('a' - 1 + (VERSION / 1000) % 100), VERSION % 1000);
   sendMessage(playerIndex, player[playerIndex].id, player[playerIndex].team, message);
 
   if (servermsg && (strlen(servermsg) > 0)) {
-    sprintf(message,"%s\n",servermsg);
+    sprintf(message,"%s",servermsg);
     sendMessage(playerIndex, player[playerIndex].id, player[playerIndex].team, message);
   }
 #endif
