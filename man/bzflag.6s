@@ -546,8 +546,9 @@ full server.
 When in observer mode, you can freely roam the world. Using the
 arrow keys you can rotate the camera in every direction. Holding shift and
 usign the arrow keys moves the camera left, right, forward or back. Pressing
-the up or down arrow while holding the the ALT key will change the camera's
-altitude. The
+the up or down arrow while holding the the
+.IR ALT
+key will change the camera's altitude. The
 .IR F9
 and
 .IR F10
@@ -558,7 +559,7 @@ key will reset the zoom.
 Repeatedly pressing
 .IR F8
 cycles through different roaming modes: \fIfree\fR, \fItracking\fR,
-\ffollowing\fR, \fIfirst person\fR and \fItracking team flag\fR. The default 
+\fIfollowing\fR, \fIfirst person\fR and \fItracking team flag\fR. The default 
 is \fIfree\fR mode where you can move your camera around. In \fItracking\fR
 mode, the camera will automatically look at a tank. You can cycle through
 available tanks with the
