@@ -570,7 +570,10 @@ void			SceneRenderer::render(
     theSun.enableLight(SunLight);
   }
 
-  bool doFog = LocalPlayer::getMyTank() && (LocalPlayer::getMyTank()->getTeam() != ObserverTeam);
+  bool doFog = true;
+  
+  if (LocalPlayer::getMyTank() && (LocalPlayer::getMyTank()->getTeam() != ObserverTeam))
+    doFog = false;
 
     // turn on fog for teleporter blindness if close to a teleporter
     float teleporterProximity = 0.0f;
