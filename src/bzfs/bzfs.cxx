@@ -5049,7 +5049,6 @@ static std::string cmdReset(const std::string&, const CommandManager::ArgList& a
 int main(int argc, char **argv)
 {
   VotingArbiter *votingarbiter = (VotingArbiter *)NULL;
-  bool announcedClosure = false;
 
   setvbuf(stdout, (char *)NULL, _IOLBF, 0);
   setvbuf(stderr, (char *)NULL, _IOLBF, 0);
@@ -5403,15 +5402,19 @@ int main(int argc, char **argv)
 	std::string action = votingarbiter->getPollAction();
 
 	static unsigned short int voteTime = 0;
-	static bool initialAnnounce = true;
+
+	/* flags to only blather once */
+	static bool announcedOpening = false;
+	static bool announcedClosure = false;
+	static bool announcedResults = false;
 
 	/* once a poll begins, announce its commencement */
-	if (initialAnnounce) {
+	if (!announcedOpening) {
 	  voteTime = votingarbiter->getVoteTime();
 
 	  sprintf(message, "A poll to %s %s has begun.  Players have up to %d seconds to vote.", action.c_str(), person.c_str(), voteTime);
 	  sendMessage(ServerPlayer, AllPlayers, message, true);
-	  initialAnnounce = false;
+	  announcedOpening = true;
 	}
 
 	static TimeKeeper lastAnnounce = TimeKeeper::getNullTime();
@@ -5427,8 +5430,11 @@ int main(int argc, char **argv)
 
 	if (votingarbiter->isPollClosed()) {
 
-	  sprintf(message, "Poll Results: %ld in favor, %ld oppose, %ld abstain", votingarbiter->getYesCount(), votingarbiter->getNoCount(), votingarbiter->getAbstentionCount());
-	  sendMessage(ServerPlayer, AllPlayers, message, true);
+	  if (!announcedResults) {
+	    sprintf(message, "Poll Results: %ld in favor, %ld oppose, %ld abstain", votingarbiter->getYesCount(), votingarbiter->getNoCount(), votingarbiter->getAbstentionCount());
+	    sendMessage(ServerPlayer, AllPlayers, message, true);
+	    announcedResults = true;
+	  }
 
 	  if (votingarbiter->isPollSuccessful()) {
 	    if (!announcedClosure) {
@@ -5485,9 +5491,10 @@ int main(int argc, char **argv)
 
 	    // get ready for the next poll
 	    votingarbiter->forgetPoll();
+
 	    announcedClosure = false;
-	    // make an announcement when the next poll becomes active
-	    initialAnnounce = true;
+	    announcedOpening = false;
+	    announcedResults = false;
 	  }
 
 	} else {
@@ -5498,8 +5505,7 @@ int main(int argc, char **argv)
 
 	    // close the poll since we have enough votes (next loop will kick off notification)
 	    votingarbiter->closePoll();
-	    // make an announcement when the next poll becomes active
-	    initialAnnounce = true;
+
 	  } // the poll is over
 	} // is the poll closed
       } // knows of a poll
