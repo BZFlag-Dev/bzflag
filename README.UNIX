@@ -5,16 +5,4 @@ Unix is the native OS of bzflag so the build works best on Unix
 and Linux.  The instructions in README are correct for building
 on Unix.
 
-  % make <platform>
-  % make
-
-or, if you want to build an installable package:
-
-  % make <platform>
-  % make package
-
-If you're building Mesa 3 on Linux PPC, there's one file that
-causes an internal compiler error at the optimization levels
-O2 and above (the default is O5) on some versions of Mesa and
-the compiler.  Just build that file at optimization level O1.
-
+See the generic install instructions in README
