@@ -3113,16 +3113,29 @@ static void		makeObstacleList()
 
   const std::vector<BoxBuilding>& boxes = World::getWorld()->getBoxes();
   const int numBoxes = boxes.size();
-  for (i = 0; i < numBoxes; i++)
+  for (i = 0; i < numBoxes; i++) {
     addObstacle(obstacleList, boxes[i]);
+  }
   const std::vector<PyramidBuilding>& pyramids = World::getWorld()->getPyramids();
   const int numPyramids = pyramids.size();
-  for (i = 0; i < numPyramids; i++)
+  for (i = 0; i < numPyramids; i++) {
     addObstacle(obstacleList, pyramids[i]);
+  }
   const std::vector<Teleporter>& teleporters = World::getWorld()->getTeleporters();
   const int numTeleporters = teleporters.size();
-  for (i = 0; i < numTeleporters; i++)
+  for (i = 0; i < numTeleporters; i++) {
     addObstacle(obstacleList, teleporters[i]);
+  }
+  const std::vector<TetraBuilding>& tetras = World::getWorld()->getTetras();
+  const int numTetras = tetras.size();
+  for (i = 0; i < numTetras; i++) {
+    addObstacle(obstacleList, tetras[i]);
+  }
+  const std::vector<MeshObstacle*>& meshes = World::getWorld()->getMeshes();
+  const int numMeshes = meshes.size();
+  for (i = 0; i < numMeshes; i++) {
+    addObstacle(obstacleList, *meshes[i]);
+  }
   if (World::getWorld()->allowTeamFlags()) {
     const std::vector<BaseBuilding>& bases = World::getWorld()->getBases();
     const int numBases = bases.size();
