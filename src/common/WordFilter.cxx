@@ -20,6 +20,7 @@
 #include "WordFilter.h"
 
 // implementation-specific headers
+#include <algorithm>
 #include "TimeKeeper.h"
 
 /* protected */
@@ -66,13 +67,7 @@ bool WordFilter::simpleFilter(char *input) const
 
 static inline int characterCount(const std::string &s, char c)
 {
-  std::string::const_iterator i = find(s.begin(), s.end(), c);
-  int n = 0;
-  while (i != s.end()) {
-    ++n;
-    i = find(i+1, s.end(), c);
-  }
-  return n;
+  return count(s.begin(), s.end(), c);
 }
 
 bool WordFilter::aggressiveFilter(char *input) const
