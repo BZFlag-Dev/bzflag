@@ -47,17 +47,9 @@ bzfs_SOURCES = \
 	bzfs.cxx \
 	bzfs.h
 
-if WIN32
-LDADD = \
-	../net/libNet.a		\
-	../game/libGame.a	\
-	../common/libCommon.a	\
-	-lws2_32
-else
 LDADD = \
 	../net/libNet.a		\
 	../game/libGame.a	\
 	../common/libCommon.a
-endif
 
 bzfs_LDFLAGS = ../date/buildDate.o
