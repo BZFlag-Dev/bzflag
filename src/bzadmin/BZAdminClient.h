@@ -108,6 +108,20 @@ public:
       it - for example, player position updates won't be shown. */
   void showMessageType(uint16_t type);
 
+  /** This function tells the client to ignore messages of this type. If
+      getServerString() is called and a message of this type is received,
+      the function will just ignore that message and wait for the next one.
+      Warning: Ignoring some types of messages may cause unexpected behaviour!
+      For example, if you ignore MsgSuperKill bzadmin won't know when it has
+      been kicked off the server. */
+  void ignoreMessageType(std::string type);
+
+  /** This function tells the client to show messages of this type
+      (return them as strings from getServerString()). Note that the
+      message still won't be shown if bzadmin does not know how to handle
+      it - for example, player position updates won't be shown. */
+  void showMessageType(std::string type);
+
 protected:
 
   /** This function prints a /set command for the BZDB variable with name 
@@ -122,6 +136,7 @@ protected:
   bool valid;
   std::map<uint16_t, bool> messageMask;
   std::map<TeamColor, ColorCode> colorMap;
+  std::map<std::string, uint16_t> msgTypeMap;
   BZAdminUI* ui;
 };
 

@@ -57,7 +57,8 @@ int main(int argc, char** argv) {
 #endif
   // command line options
   std::string uiName("curses");
-  bool showKills(false);
+  std::vector<std::string> visibleMsgs;
+  std::vector<std::string> invisibleMsgs;
   
   // no curses, use stdboth as default instead
   const UIMap& interfaces = UIMap::instance();
@@ -77,8 +78,10 @@ int main(int argc, char** argv) {
   const std::string uiOption("ui");
   const std::string uiMsg = "choose a user interface";
   op.registerVariable(uiOption, uiName, uiUsage, uiMsg);
-  op.registerVariable("showkills", showKills, "[-showkills]",
-		      "show a message when a player is killed");
+  op.registerVariable("show", visibleMsgs, "[-show msgtype{,msgtype}*]",
+		      "tell bzadmin to show these message types");
+  op.registerVariable("hide", invisibleMsgs, "[-hide msgtype{,msgtype}*]",
+		      "tell bzadmin not to show these message types");
   if (!op.parse(argc, argv))
     return 1;
   
@@ -109,8 +112,10 @@ int main(int argc, char** argv) {
   BZAdminClient client(name, host, port);
   if (!client.isValid())
     return 1;
-  if (showKills)
-    client.showMessageType(MsgKilled);
+  for (unsigned i = 0; i < visibleMsgs.size(); ++i)
+    client.showMessageType(visibleMsgs[i]);
+  for (unsigned i = 0; i < invisibleMsgs.size(); ++i)
+    client.ignoreMessageType(invisibleMsgs[i]);
 
   // if we got commands as arguments, send them and exit
   if (op.getParameters().size() > 1) {

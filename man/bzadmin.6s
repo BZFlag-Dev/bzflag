@@ -5,7 +5,8 @@ bzadmin \- a text based client for BZFlag
 .sS
 .B bzadmin
 [\fB\-help\fR]
-[\fB\-showkills\fR]
+[\fB\-hide \fR\fImsgtype\fR{\fI,msgtype\fR}*\fR]
+[\fB\-show \fR\fImsgtype\fR{\fI,msgtype\fR}*\fR]
 [\fB\-ui \fR{\fIcurses\fR | \fIstdboth\fR | \fIstdin\fR | \fIstdout\fR}]
 \fIcallsign@hostname\fR:[\fIport\fR] [\fIcommand\fR] [\fIcommand\fR] ...
 .SH DESCRIPTION
@@ -39,9 +40,15 @@ is a player).
 .B -help
 Show a simple help text.
 .TP
-.B -showkills
-Show a message whenever a player is killed, like in the message box in
-BZFlag. This is not done by default.
+\fB-hide \fR\fImsgtype\fR{\fI,msgtype\fR}*
+Tell bzadmin not to show these message types. The available message types are
+chat, join, kill, leave, pause, ping, rabbit, and spawn. By default chat,
+join, kill, leave, pause, and rabbit are shown.
+.TP
+\fB-show \fR\fImsgtype\fR{\fI,msgtype\fR}*
+Tell bzadmin to show these message types. See \fB-hide\fR for a list of
+available message types. If a message type is listed both in \fB-show\fR
+and \fB-hide\fR it will not be shown.
 .TP
 \fB\-ui \fR{\fIcurses\fR | \fIstdboth\fR | \fIstdin\fR | \fIstdout\fR}
 Select the user interface that you want. The curses interface is the default,

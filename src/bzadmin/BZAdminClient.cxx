@@ -60,6 +60,16 @@ BZAdminClient::BZAdminClient(std::string callsign, std::string host,
   colorMap[BlueTeam] = Blue;
   colorMap[PurpleTeam] = Purple;
   colorMap[ObserverTeam] = Cyan;
+  
+  // initialise the msg type map
+  msgTypeMap["chat"] = MsgMessage;
+  msgTypeMap["join"] = MsgAddPlayer;
+  msgTypeMap["kill"] = MsgKilled;
+  msgTypeMap["leave"] = MsgRemovePlayer;
+  msgTypeMap["pause"] = MsgPause;
+  msgTypeMap["ping"] = MsgLagPing;
+  msgTypeMap["rabbit"] = MsgNewRabbit;
+  msgTypeMap["spawn"] = MsgAlive;
 }
 
 
@@ -74,15 +84,15 @@ BZAdminClient::getServerString(std::string& str, ColorCode& colorCode) {
   char inbuf[MaxPacketLen];
   int e;
   std::string dstName, srcName;
-  std::string returnString = "";
   int i;
-  colorCode = Default;
   PlayerIdMap::iterator iter;
+  std::string returnString = "";
 
   /* read until we have a package that we want, or until there are no more
      packages for 100 ms */
   while ((e = sLink.read(code, len, inbuf, 100)) == 1) {
 
+    colorCode = Default;
     void* vbuf = inbuf;
     PlayerId p;
     PlayerIdMap::const_iterator it;
@@ -398,6 +408,8 @@ void BZAdminClient::waitForServer() {
   // we need to know that the server has processed all our messages
   // send a private message to ourself and wait for it to come back
   // this assumes that the order of messages isn't changed along the way
+  bool tmp = messageMask[MsgMessage];
+  messageMask[MsgMessage] = true;
   PlayerId me = sLink.getId();
   if (sLink.getState() == ServerLink::Okay) {
     sendMessage("bzadminping", me);
@@ -407,6 +419,7 @@ void BZAdminClient::waitForServer() {
       getServerString(str);
     } while (str != expected);
   }
+  messageMask[MsgMessage] = tmp;
 }
 
 
@@ -417,6 +430,16 @@ void BZAdminClient::ignoreMessageType(uint16_t type) {
 
 void BZAdminClient::showMessageType(uint16_t type) {
   messageMask[type] = true;
+}
+
+
+void BZAdminClient::ignoreMessageType(std::string type) {
+  ignoreMessageType(msgTypeMap[type]);
+}
+
+
+void BZAdminClient::showMessageType(std::string type) {
+  showMessageType(msgTypeMap[type]);
 }
 
 
