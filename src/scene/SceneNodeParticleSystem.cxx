@@ -292,7 +292,7 @@ bool SceneNodeParticleSystem::update(float time, ParticleSystemUpdate flag, floa
 	texcoords.clear();
 	index.clear();
 
-	const float* m = matrix;
+	const float* m = matrix.get();
 	for(unsigned int i = 0; i < particles.size(); i++) {
 		const float* p = particles[i].location;
 		size = particles[i].size / 4;

@@ -765,8 +765,9 @@ bool					SceneVisitorRender::visit(SceneNodeParticleSystem* n)
 	}
 
 	// update our particle system
-	Matrix matrix = ViewFrustum::getTransform();
-	matrix *= modelXFormStack.back();
+	Matrix matrix;
+	matrix.set(ViewFrustum::getTransform());
+	matrix.mult(modelXFormStack.back());
 	matrix.inverse();
 	n->update(getParams().getFloat("time"), matrix);
 
