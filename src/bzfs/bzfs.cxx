@@ -2237,7 +2237,7 @@ static void addPlayer(int playerIndex)
   }
 
   // automatically assign the player's team
-  if (clOptions->autoTeam) {
+  if ((clOptions->autoTeam) || (t == AutomaticTeam)) {
     std::vector<TeamColor> minIndex;
     int mostEmpty = 0;
 
