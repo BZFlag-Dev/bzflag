@@ -9,6 +9,8 @@ libPlatform_a_SOURCES =				\
 	BzfMedia.cxx				\
 	SDLJoystick.cxx				\
 	SDLJoystick.h				\
+	EvdevJoystick.cxx			\
+	EvdevJoystick.h				\
 	SDLPlatformFactory.cxx			\
 	SDLPlatformFactory.h			\
 	SDLMedia.cxx				\
@@ -33,6 +35,8 @@ libPlatform_a_SOURCES =				\
 	LinuxDisplay.h				\
 	LinuxMedia.cxx				\
 	LinuxMedia.h				\
+	EvdevJoystick.cxx			\
+	EvdevJoystick.h				\
 	USBJoystick.cxx				\
 	USBJoystick.h				\
 	XIJoystick.cxx				\
@@ -201,6 +205,8 @@ EXTRA_libPlatform_a_SOURCES =		\
 	LinuxMedia.h			\
 	SDLJoystick.cxx			\
 	SDLJoystick.h			\
+	EvdevJoystick.cxx		\
+	EvdevJoystick.h			\
 	SDLPlatformFactory.cxx		\
 	SDLPlatformFactory.h		\
 	SDLMedia.cxx			\
