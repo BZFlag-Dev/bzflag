@@ -3246,9 +3246,8 @@ static void parse(int argc, char **argv)
 			// capture the flag style
 			gameStyle |= int(TeamFlagGameStyle);
 			if (gameStyle | int(KingoftheHillGameStyle)) {
-				gameStyle &= ~int(KingoftheHillGameStyle);
 				std::cerr << "Capture the flag incompatible with King of the Hill" << std::endl;
-				std::cerr << "Capture the flag assumed" << std::endl;
+				usage(argv[0]);
 			}
 		}
 		else if (strncmp(argv[i], "-d", 2) == 0) {
@@ -3311,9 +3310,8 @@ static void parse(int argc, char **argv)
 			// king of the hill style
 			gameStyle |= int(KingoftheHillGameStyle)|int(RoguesGameStyle);
 			if (gameStyle & int(TeamFlagGameStyle)) {
-				gameStyle &= ~int(TeamFlagGameStyle);
 				std::cerr << "King of the Hill incompatible with Capture the flag" << std::endl;
-				std::cerr << "King of the Hill assumed" << std::endl;
+				usage(argv[0]);
 			}
 		}		
 		else if (strcmp(argv[i], "-mp") == 0) {
