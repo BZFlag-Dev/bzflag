@@ -527,12 +527,13 @@ enum roamingView {
   roamViewFlag,
   roamViewCount
 } roamView = roamViewFP;
-int		roamTrackTank = -1, roamTrackWinner = -1, roamTrackFlag = 0;
-float		roamPos[3] = { 0.0f, 0.0f, 1.57f },  /* MuzzleHeight */
-  roamDPos[3] = {0.0f, 0.0f, 0.0f};
-float		roamTheta = 0.0f, roamDTheta = 0.0f;
-float		roamPhi = 0.0f, roamDPhi = 0.0f;
-float		roamZoom = 60.0f, roamDZoom = 0.0f;
+
+int roamTrackTank = -1, roamTrackWinner = -1, roamTrackFlag = 0;
+float roamPos[3] = {0.0f, 0.0f, 1.57f};  /* MuzzleHeight */
+float roamDPos[3] = {0.0f, 0.0f, 0.0f};
+float roamTheta = 0.0f, roamDTheta = 0.0f;
+float roamPhi = 0.0f, roamDPhi = 0.0f;
+float roamZoom = 60.0f, roamDZoom = 0.0f;
 
 void setRoamingLabel(bool force)
 {
@@ -4219,7 +4220,7 @@ void			drawFrame(const float dt)
       const bool showTreads = BZDB.isTrue("showTreads");
       const bool cloaked = myTank->getFlag() == Flags::Cloaking;
       if (myTank->needsToBeRendered(cloaked, showTreads)) {
-        myTank->addToScene(scene, myTank->getTeam(), false);
+        myTank->addToScene(scene, myTank->getTeam(), showTreads);
       }
 
       // add my shells
@@ -4262,7 +4263,7 @@ void			drawFrame(const float dt)
                                
           // add player tank if required
           if (player[i]->needsToBeRendered(cloaked, showPlayer)) {
-            player[i]->addToScene(scene, effectiveTeam, false);
+            player[i]->addToScene(scene, effectiveTeam, showPlayer);
           }
         }
       }
