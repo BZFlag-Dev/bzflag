@@ -118,6 +118,10 @@ SOURCE=..\src\common\Flag.cxx
 # End Source File
 # Begin Source File
 
+SOURCE=..\src\common\global.cxx
+# End Source File
+# Begin Source File
+
 SOURCE=..\src\common\KeyManager.cxx
 # End Source File
 # Begin Source File
