@@ -3,12 +3,7 @@ to do list for bzflag
 
 THESE SHOULD HAPPEN BEFORE THE NEXT RELEASE:
 
-* Make world filter work on client side as well as server side
-  using a local world filter, search user dir for word filter first.
-  then search app dir for global filter. This will help people who
-  want stricter lists then some servers have, and parents who can not
-  monitor what server there children log into.
-  ( learner is looking at this )
+	* none
 
 THESE SHOULD HAPPEN BEFORE THE NEXT RELEASE BUT NOONE WILL STEP UP FOR THEM
 
