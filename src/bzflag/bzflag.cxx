@@ -44,6 +44,7 @@
 #include "Team.h"
 #include "sound.h"
 #include "ConfigFileManager.h"
+#include "GetCacheDir.h"
 #include "CommandsStandard.h"
 #include "BzfDisplay.h"
 #include "BzfVisual.h"
@@ -189,13 +190,8 @@ static std::string	getConfigFileName()
 {
 #if !defined(_WIN32) & !defined(macintosh)
 
-  std::string name;
-  struct passwd* pwent = getpwuid(getuid());
-  if (pwent && pwent->pw_dir) {
-    name += std::string(pwent->pw_dir);
-    name += "/";
-  }
-  name += ".bzf/config";
+  std::string name = getConfigDirName();
+  name += "config";
 
   // add in hostname on UNIX
   if (getenv("HOST")) {
@@ -211,44 +207,22 @@ static std::string	getConfigFileName()
   // the closest thing to a home directory on windows.  use root of
   // C drive as a default in case we can't get the path or it doesn't
   // exist.
-  std::string name("C:");
-  char dir[MAX_PATH];
-  ITEMIDLIST* idl;
-  if (SUCCEEDED(SHGetSpecialFolderLocation(NULL, CSIDL_PERSONAL, &idl))) {
-    if (SHGetPathFromIDList(idl, dir)) {
-      struct stat statbuf;
-      if (stat(dir, &statbuf) == 0 && (statbuf.st_mode & _S_IFDIR) != 0)
-	name = dir;
-    }
-
-    IMalloc* shalloc;
-    if (SUCCEEDED(SHGetMalloc(&shalloc))) {
-      shalloc->Free(idl);
-      shalloc->Release();
-    }
-  }
-
-  // append the config file name
-  // yes it seems silly but the windows way is to have "my" in front of any folder you make in the my docs dir
-  // todo: make this stuff go into the application data dir.
-  name += "\\My BZFlag Files\\bzflag19.bzc";
+  std::string name = getConfigDirName();
+  name += "bzflag19.bzc";
   return name;
 
 #elif defined(macintosh)
-  return "bzflag19.bzc";
+
+  return "bzflag19.bzc"; // FIXME - use getConfigDirName() ?
+
 #endif /* !defined(_WIN32) & !defined(macintosh) */
 }
 
 #if !defined(_WIN32) & !defined(macintosh)
 static std::string	getConfigFileName2()
 {
-  std::string name;
-  struct passwd* pwent = getpwuid(getuid());
-  if (pwent && pwent->pw_dir) {
-    name += std::string(pwent->pw_dir);
-    name += "/";
-  }
-  name += ".bzf/config";
+  std::string name = getConfigDirName();
+  name += "config";
   return name;
 }
 #endif
@@ -906,35 +880,13 @@ int			main(int argc, char** argv)
   if (!BZDB.isSet("filterFilename")) {
     std::string name = "";
 #if !defined(_WIN32) & !defined(macintosh)
-    struct passwd* pwent = getpwuid(getuid());
-    if (pwent && pwent->pw_dir) {
-      name += std::string(pwent->pw_dir);
-      name += "/";
-    }
-    name += ".bzf/badwords.txt";
+    name = getConfigDirName();
+    name += "badwords.txt";
 #elif defined(_WIN32) /* !defined(_WIN32) */
-    name = "C:";
-    char dir[MAX_PATH];
-    ITEMIDLIST* idl;
-    if (SUCCEEDED(SHGetSpecialFolderLocation(NULL, CSIDL_PERSONAL, &idl))) {
-      if (SHGetPathFromIDList(idl, dir)) {
-	struct stat statbuf;
-	if (stat(dir, &statbuf) == 0 && (statbuf.st_mode & _S_IFDIR) != 0)
-	  name = dir;
-      }
-      IMalloc* shalloc;
-      if (SUCCEEDED(SHGetMalloc(&shalloc))) {
-	shalloc->Free(idl);
-	shalloc->Release();
-      }
-    }
-    /* XXX -- the windows resource dir needs to be a setting; this code
-      * will need to match the path in getConfigFileName().
-      */
-    name += "\\My BZFlag Files\\badwords.txt";
-
+    name = getConfigDirName();
+    name += "badwords.txt";
 #else
-    name = "badwords.txt";
+    name = "badwords.txt"; // FIXME - use getConfigDirName() ?
 #endif /* !defined(_WIN32) & !defined(macintosh) */
 
     // get a handle on a filter object to attempt a load

@@ -18,7 +18,13 @@
 /* interface system headers */
 #include <string>
 
-extern std::string		getCacheDirectoryName();
+// FIXME - need to rename this file, and src/game/GetCacheDir.cxx
+//         to DirectoryNames.<c|h>[xx] or something
+
+extern std::string		getConfigDirName();
+extern std::string		getCacheDirName();
+extern std::string		getCaptureDirName();
+extern std::string		getScreenShotDirName();
 
 #endif  // __GET_CACHE_DIR_H__
 

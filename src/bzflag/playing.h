@@ -75,7 +75,6 @@ void			addPlayingCallback(PlayingCallback, void* data);
 void			removePlayingCallback(PlayingCallback, void* data);
 
 void			joinGame(JoinGameCallback, void* userData);
-std::string		getCacheDirectoryName();
 std::vector<std::string>& getSilenceList();
 void			updateEvents();
 void			addMessage(const Player* player, const std::string& msg,

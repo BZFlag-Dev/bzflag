@@ -12,6 +12,7 @@
  
 #include "bzfs.h"
 #include "CaptureReplay.h"
+#include "GetCacheDir.h"
 
 #ifndef _MSC_VER
 # include <dirent.h>
@@ -21,33 +22,31 @@
 // Type Definitions
 // ----------------
 
-typedef uint16_t u16;
 
 #ifndef _WIN32
 #  include <sys/types.h>
 #  include <sys/stat.h>
-typedef int64_t CRtime;
+typedef int64_t s64;
 #else
 #  include <time.h>
 #  include <sys/types.h>
 #  include <sys/stat.h>
 #  include <stdio.h>
 #  include <direct.h>
-typedef __int64 CRtime;
+typedef __int64 s64;
 #  ifndef S_ISDIR // for _WIN32
 #    define S_ISDIR(m) ((m) & _S_IFDIR)
 #  endif
 #endif
 
-typedef enum {
-  NormalPacket = 0,
-  FakedPacket  = 1
-} RCPacketType;
+typedef uint16_t u16;
+typedef s64 CRtime;
 
-typedef enum {
-  StraightToFile    = 0,
-  BufferedCapture   = 1
-} CaptureType;
+
+enum CaptureType {
+  StraightToFile  = 0,
+  BufferedCapture = 1
+};
 
 typedef struct CRpacket {
   struct CRpacket *next;
@@ -61,7 +60,6 @@ typedef struct CRpacket {
 } CRpacket;
 static const int CRpacketHdrLen = sizeof (CRpacket) - 
                                   (2 * sizeof (CRpacket*) - sizeof (void *));
-
 typedef struct {
   int byteCount;
   int packetCount;
@@ -74,27 +72,29 @@ typedef struct {
 typedef struct {
   unsigned int magic;           // capture file type identifier
   unsigned int version;         // capture file version
-  unsigned int offset;          // length of the header
+  unsigned int offset;          // length of the full header
   unsigned int seconds;         // number of seconds in the file
-  unsigned int player;          // player that saved this log
+  unsigned int player;          // player that saved this capture file
   char callSign[CallSignLen];   // player's callsign
   char email[EmailLen];         // player's email
-  char serverVersion[8];        // BZFS server version
-  char appVersion[MessageLen];  // application version
+  char serverVersion[8];        // BZFS protocol version
+  char appVersion[MessageLen];  // BZFS application version
   char realHash[64];            // hash of worldDatabase
   char fakeHash[64];            // hash of worldDatabase, maxPlayers adjusted
   unsigned int worldSize;       // size of world database 
   char *world;                  // the world
 } ReplayHeader;
 
+
 // Local Variables
 // ---------------
 
 static const unsigned int ReplayMagic = 0x425A6372; // "BZcr"
 static const unsigned int ReplayVersion = 0x0001;
-static const char *ReplayDir = "bzreplay";
 static const int DefaultMaxBytes = (16 * 1024 * 1024); // 16 Mbytes
 static const unsigned int DefaultUpdateRate = 10 * 1000000; // seconds
+
+static std::string CaptureDir;
 
 static bool Capturing = false;
 static CaptureType CaptureMode = BufferedCapture;
@@ -110,8 +110,6 @@ static CRtime ReplayOffset = 0;
 static CRpacket *ReplayPos = NULL;
 
 static unsigned int UpdateRate = DefaultUpdateRate;
-
-static char *FileName = NULL;
 
 
 static TimeKeeper StartTime;
@@ -133,9 +131,9 @@ static bool savePlayerStates ();
 static bool resetStates ();
 
 static CRpacket *newCRpacket (u16 mode, u16 code, int len, const void *data);
-static CRpacket *delCRpacket (CRbuffer *b); // delete from the tail
+static CRpacket *delCRpacket (CRbuffer *b);         // delete from the tail
 static void addCRpacket (CRbuffer *b, CRpacket *p); // add to head
-static void freeCRbuffer (CRbuffer *buf); // clean it out
+static void freeCRbuffer (CRbuffer *buf);           // clean it out
 static void initCRpacket (u16 mode, u16 code, int len, const void *data,
                           CRpacket *p);
 
@@ -177,15 +175,11 @@ extern void sendMessage(int playerIndex, PlayerId targetPlayer,
 
 // Capture Functions
 
-bool Capture::init ()
+static bool captureReset ()
 {
   if (CaptureFile != NULL) {
     fclose (CaptureFile);
     CaptureFile = NULL;
-  }
-  if (FileName != NULL) {
-    free (FileName);
-    FileName = NULL;
   }
   freeCRbuffer (&CaptureBuf);
 
@@ -202,9 +196,17 @@ bool Capture::init ()
 }
 
 
+bool Capture::init ()
+{
+  CaptureDir = getCaptureDirName();
+  captureReset();
+  return true;
+}
+
+
 bool Capture::kill ()
 {
-  Capture::init();  
+  captureReset();
   return true;
 }
 
@@ -235,6 +237,17 @@ bool Capture::stop (int playerIndex)
     Capture::init();
   }
   sendMessage(ServerPlayer, playerIndex, "Capture stopped");
+
+  return true;
+}
+
+
+bool Capture::setCaptureDir (const char *dirname)
+{
+  if (dirname == NULL) {
+  }
+  else {
+  }
 
   return true;
 }
@@ -399,12 +412,12 @@ routePacket (u16 code, int len, const void * data, u16 mode)
     CRpacket *p = newCRpacket (mode, code, len, data);
     p->timestamp = getCRtime();
     addCRpacket (&CaptureBuf, p);
-    DEBUG3 ("routeCRpacket(): mode = %i, len = %4i, code = %s, data = %p\n",
+    DEBUG4 ("routeCRpacket(): mode = %i, len = %4i, code = %s, data = %p\n",
             (int)p->mode, p->len, print_msg_code (p->code), p->data);
 
     if (CaptureBuf.byteCount > CaptureMaxBytes) {
       CRpacket *p;
-      DEBUG3 ("routePacket: deleting until State Update\n");
+      DEBUG4 ("routePacket: deleting until State Update\n");
       while (((p = delCRpacket (&CaptureBuf)) != NULL) &&
              !(p->mode && (p->code == MsgTeamUpdate))) {
         free (p->data);
@@ -417,7 +430,7 @@ routePacket (u16 code, int len, const void * data, u16 mode)
     p.timestamp = getCRtime();
     initCRpacket (mode, code, len, data, &p);
     saveCRpacket (&p, CaptureFile);
-    DEBUG3 ("routeCRpacket(): mode = %i, len = %4i, code = %s, data = %p\n",
+    DEBUG4 ("routeCRpacket(): mode = %i, len = %4i, code = %s, data = %p\n",
             (int)p.mode, p.len, print_msg_code (p.code), p.data);
   }
   
@@ -474,11 +487,6 @@ int Capture::getRate ()
 }
 
 
-const char * Capture::getFileName ()
-{
-  return FileName;
-}
-
 void Capture::sendHelp (int playerIndex)
 {
   sendMessage(ServerPlayer, playerIndex, "usage:");
@@ -496,19 +504,11 @@ void Capture::sendHelp (int playerIndex)
 
 // Replay Functions
 
-bool Replay::init()
+static bool replayReset()
 {
-  if (Capturing) {
-    return false;
-  }
-
   if (ReplayFile != NULL) {
     fclose (ReplayFile);
     ReplayFile = NULL;
-  }
-  if (FileName != NULL) {
-    free (FileName);
-    FileName = NULL;
   }
   freeCRbuffer (&ReplayBuf);
   
@@ -521,10 +521,20 @@ bool Replay::init()
 }
 
 
+bool Replay::init()
+{
+  if (Capturing) {
+    return false;
+  }
+  replayReset();
+
+  return true;
+}
+
+
 bool Replay::kill()
 {
-  Replay::init();
-  ReplayMode = false;
+  replayReset();
   return true;
 }
 
@@ -577,8 +587,9 @@ bool Replay::loadFile(int playerIndex, const char *filename)
                  "Warning: replay file contains different map");
   }
 
-  // preload the buffer
-  while (ReplayBuf.byteCount < CaptureMaxBytes) { // FIXME CaptureMaxBytes?
+  // preload the buffer 
+  // FIXME - this needs to be a moving window
+  while (ReplayBuf.byteCount < CaptureMaxBytes) {
     p = loadCRpacket (ReplayFile);
     if (p == NULL) {
       break;
@@ -613,7 +624,7 @@ bool Replay::sendFileList(int playerIndex)
     return false;
   }
   
-  dir = opendir (ReplayDir);
+  dir = opendir (CaptureDir.c_str());
   if (dir == NULL) {
     return false;
   }
@@ -747,7 +758,7 @@ bool Replay::sendPackets () {
     
     p = ReplayPos;
 
-    if (p == NULL) {
+    if (p == NULL) { // FIXME - internal error here?
       resetStates ();
       Replaying = false;
       ReplayPos = ReplayBuf.tail;
@@ -755,7 +766,7 @@ bool Replay::sendPackets () {
       return false;
     }
     
-    DEBUG3 ("sendPackets(): mode = %i, len = %4i, code = %s, data = %p\n",
+    DEBUG4 ("sendPackets(): mode = %i, len = %4i, code = %s, data = %p\n",
             (int)p->mode, p->len, print_msg_code (p->code), p->data);
 
     if (p->mode != HiddenPacket) {
@@ -799,7 +810,7 @@ bool Replay::sendPackets () {
       } // for loop
     } // if (p->mode != HiddenPacket)
     else {
-      DEBUG3 ("  skipping hidden packet\n");
+      DEBUG4 ("  skipping hidden packet\n");
     }
     
     ReplayPos = ReplayPos->next;
@@ -1071,7 +1082,7 @@ loadCRpacket (FILE *f)
     return NULL;
   }
   
-  DEBUG3 ("loadCRpacket(): mode = %i, len = %4i, code = %s, data = %p\n",
+  DEBUG4 ("loadCRpacket(): mode = %i, len = %4i, code = %s, data = %p\n",
           (int)p->mode, p->len, print_msg_code (p->code), p->data);
 
   return p;  
@@ -1166,7 +1177,7 @@ loadHeader (ReplayHeader *h, FILE *f)
 static FILE *
 openFile (const char *filename, const char *mode)
 {
-  std::string name = ReplayDir;
+  std::string name = CaptureDir.c_str();
 #ifndef _WIN32  
   name += "/";
 #else
@@ -1211,9 +1222,9 @@ makeDirExist (int playerIndex)
 {
   struct stat statbuf;
 
-  if (osStat (ReplayDir, &statbuf) < 0) {
+  if (osStat (CaptureDir.c_str(), &statbuf) < 0) {
     // try to make the directory
-    if (osMkDir (ReplayDir, 0755) < 0) {
+    if (osMkDir (CaptureDir.c_str(), 0755) < 0) {
       sendMessage (ServerPlayer, playerIndex, 
                    "Could not create default directory");
       return false;

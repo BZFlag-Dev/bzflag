@@ -37,6 +37,7 @@
 
 /* common implementation headers */
 #include "TextUtils.h"
+#include "GetCacheDir.h"
 
 /* local implementation headers */
 #include "MenuDefaultKey.h"
@@ -233,24 +234,7 @@ ServerStartMenu::ServerStartMenu()
   }
 
   /* add a list of .bzw files found in the config file dir */
-  searchDir = "C:";
-  char dir[MAX_PATH];
-  ITEMIDLIST* idl;
-  if (SUCCEEDED(SHGetSpecialFolderLocation(NULL, CSIDL_PERSONAL, &idl))) {
-    if (SHGetPathFromIDList(idl, dir)) {
-      struct stat statbuf;
-      if (stat(dir, &statbuf) == 0 && (statbuf.st_mode & _S_IFDIR) != 0)
-	searchDir = dir;
-    }
-    IMalloc* shalloc;
-    if (SUCCEEDED(SHGetMalloc(&shalloc))) {
-      shalloc->Free(idl);
-      shalloc->Release();
-    }
-  }
-  // yes it seems silly but the windows way is to have "my" in front of any folder you make in the my docs dir
-  // todo: make this stuff go into the application data dir.
-  searchDir += "\\My BZFlag Files\\";
+  searchDir = getConfigDirName();
   pattern = searchDir + "*.bzw";
   h = FindFirstFile(pattern.c_str(), &findData);
   if (h != INVALID_HANDLE_VALUE) {

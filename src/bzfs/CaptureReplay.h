@@ -23,11 +23,11 @@ enum ReplayPacketMode {
   HiddenPacket = 2
 };
 
-extern bool setReplayDir (const char *dirname);
-
 namespace Capture {
   extern bool init ();
   extern bool kill ();
+
+  extern bool setCaptureDir (const char *dirname);
 
   extern bool start (int playerIndex);
   extern bool stop (int playerIndex); 
@@ -41,7 +41,6 @@ namespace Capture {
 
   extern int getSize (); // returned in bytes, _not_ Mbytes
   extern int getRate ();
-  extern const char * getFileName ();
 
   extern bool addPacket (uint16_t code, int len, const void * data,
                          uint16_t mode = RealPacket);

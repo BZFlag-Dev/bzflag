@@ -31,7 +31,10 @@
 #endif
 
 
-std::string		getCacheDirectoryName()
+// NOTE: terminate all strings with either '/' or '\\'
+
+
+std::string		getConfigDirName()
 {
 #if defined(_WIN32)
   std::string name("C:");
@@ -52,11 +55,12 @@ std::string		getCacheDirectoryName()
   }
 
   // yes your suposed to have the "my" in front of it. I know it's silly, but it's the MS way.
-  name += "\\My BZFlag Files\\cache";
+  name += "\\My BZFlag Files\\";
+  
   return name;
 
 #elif defined(__APPLE__)
-  std::string cacheName;
+  std::string name;
   ::FSRef libraryFolder;
   ::OSErr err;
   err = ::FSFindFolder(::kUserDomain, ::kApplicationSupportFolderType, true, &libraryFolder);
@@ -64,12 +68,11 @@ std::string		getCacheDirectoryName()
     char buff[1024];
     err = ::FSRefMakePath(&libraryFolder, (UInt8*)buff, sizeof(buff));
     if(err == ::noErr) {
-      std::strcat(buff, "/BZFlag");
-      std::strcat(buff, "/cache");
-      cacheName = buff;
+      std::strcat(buff, "/BZFlag/");
+      name = buff;
     }
   }
-  return cacheName;
+  return name;
 #else
   std::string name;
   struct passwd *pwent = getpwuid(getuid());
@@ -77,17 +80,44 @@ std::string		getCacheDirectoryName()
     name += std::string(pwent->pw_dir);
     name += "/";
   }
-  name += ".bzf/cache";
-
-  // add in hostname on UNIX
-  if (getenv("HOST")) {
-    name += ".";
-    name += getenv("HOST");
-  }
+  name += ".bzf/";
 
   return name;
 #endif
 }
+
+
+extern std::string		getCacheDirName()
+{
+  std::string name = getConfigDirName();
+  name += "cache";
+#if !defined (_WIN32) && !defined (__APPLE__)
+  // add in hostname on UNIX
+  if (getenv("HOST")) {
+    name += ".";
+    name += getenv("HOST");
+    name += "/";
+  }
+#endif
+  return name;
+}
+
+
+extern std::string		getCaptureDirName()
+{
+  std::string name = getConfigDirName();
+  name += "captured";
+  return name;
+}
+
+
+extern std::string		getScreenShotDirName()
+{
+  std::string name = getConfigDirName();
+  name += "screenshots";
+  return name;
+}
+
 
 
 // Local Variables: ***

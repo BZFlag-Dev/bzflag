@@ -3280,7 +3280,7 @@ static void cleanWorldCache()
     BZDB.set("worldCacheLimit", buffer);
   }
 
-  std::string worldPath = getCacheDirectoryName();
+  std::string worldPath = getCacheDirName();
 
   char *oldestFile = NULL;
   int oldestSize = 0;
@@ -3452,12 +3452,7 @@ static World*		makeWorld(ServerLink* serverLink)
     nboUnpackString( msg, hexDigest, len );
     isTemp = hexDigest[0] == 't';
 
-    worldPath = getCacheDirectoryName();
-#ifdef _WIN32
-    worldPath += "\\";
-#else
-    worldPath += "/";
-#endif
+    worldPath = getCacheDirName();
     worldPath += hexDigest;
     worldPath += ".bwc";
     cachedWorld = FILEMGR.createDataInStream(worldPath, true);

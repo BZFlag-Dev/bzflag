@@ -15,6 +15,7 @@
 #include "FileManager.h"
 #include "playing.h"
 #include "Protocol.h"
+#include "GetCacheDir.h"
 
 // invoke persistent rebuilding for build versioning
 #include "version.h"
@@ -74,7 +75,7 @@ void			ServerListCache::saveCache()
 {
   // get a file named e.g. BZFS1910Server.bzs in the cache dir
   // allows separation of server caches by protocol version
-  std::string fileName = getCacheDirectoryName();
+  std::string fileName = getCacheDirName();
   if (fileName == "") return;
   std::string verString = getServerVersion();
 #ifdef _WIN32
@@ -118,7 +119,7 @@ void			ServerListCache::loadCache()
 {
   // get a file named BZFS1910Server.bzs in the cache dir
   // allows separation of server caches by protocol version
-  std::string fileName = getCacheDirectoryName();
+  std::string fileName = getCacheDirName();
   if (fileName == "") return;
   std::string verString = getServerVersion();
 #ifdef _WIN32
