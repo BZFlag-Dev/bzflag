@@ -28,7 +28,7 @@ BZAdminClient::BZAdminClient(std::string callsign, std::string host,
 			     int port, BZAdminUI* bzInterface)
   : myTeam(ObserverTeam), sLink(Address(host), port), valid(false),
     ui(bzInterface) {
-
+    
   if (sLink.getState() != ServerLink::Okay) {
     std::cerr<<"Could not connect to "<<host<<':'<<port<<'.'<<std::endl;
     return;
@@ -39,7 +39,10 @@ BZAdminClient::BZAdminClient(std::string callsign, std::string host,
     return;
   }
   valid = true;
-
+  
+  // tell BZDB to shut up, we can't have debug data printed to stdout
+  BZDB.setDebug(false);
+  
   // set a default message mask
   showMessageType(MsgAddPlayer);
   showMessageType(MsgRemovePlayer);
