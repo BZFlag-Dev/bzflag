@@ -23,6 +23,11 @@
 #endif
 #define NULL 0
 
+/* insert any other broken OS conditionals here */
+#if !defined(_WIN32)
+using namespace std;
+#endif
+
 #include <iostream.h>
 
 #endif
