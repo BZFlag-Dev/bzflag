@@ -1524,12 +1524,8 @@ void			HUDRenderer::renderRoaming(SceneRenderer& renderer)
 void			HUDRenderer::drawPlayerScore(const Player* player,
 					float x1, float x2, float x3, float y)
 {
+  // score
   char score[40], kills[40];
-  char email[EmailLen + 5];
-  if (player->getEmailAddress()[0] != '\0')
-    sprintf(email, " (%s)", player->getEmailAddress());
-  else
-    email[0] = '\0';
   if (World::getWorld()->allowRabbit())
     sprintf(score, "%2d%% %d(%d-%d)[%d]",
 	    player->getRabbitScore(),
@@ -1543,58 +1539,58 @@ void			HUDRenderer::drawPlayerScore(const Player* player,
   else
     strcpy(kills, "");
 
-  // "Purple Team" is longest possible string for flag indicator
-  std::string flag;
+  // callsign
+  std::string playerInfo = ColorStrings[player->getTeam()] + player->getCallSign();
+  // email in parenthesis
+  if (player->getEmailAddress()[0] != '\0')
+    playerInfo += (std::string(" (") + player->getEmailAddress()) + ")";
+  // carried flag
+  bool coloredFlag = false;
   FlagType* flagd = player->getFlag();
   if (flagd != Flags::Null) {
-    flag = "/";
-    flag += flagd->endurance == FlagNormal ? flagd->flagName : flagd->flagAbbv;
+    // color special flags
+    if (BZDBCache::colorful) {
+      if ((flagd == Flags::ShockWave)   ||
+	  (flagd == Flags::Genocide)    ||
+	  (flagd == Flags::Laser)       ||
+	  (flagd == Flags::GuidedMissile)) {
+	playerInfo += ColorStrings[WhiteColor];
+	coloredFlag = true;
+      } else if (flagd->flagTeam != NoTeam) {
+	// use team color for team flags
+	playerInfo += ColorStrings[flagd->flagTeam];
+	coloredFlag = true;
+      }
+    }
+    playerInfo += std::string("/")
+	       + (flagd->endurance == FlagNormal ? flagd->flagName : flagd->flagAbbv);
+    // back to original color
+    if (coloredFlag) {
+      playerInfo += ColorStrings[player->getTeam()];
+    }
   }
-
-  // indicate tanks which are paused or not responding
-  char status[5]="";
-  if (player->isNotResponding())
-    strcpy(status,"[nr]");
+  // status
   if (player->isPaused())
-    strcpy(status,"[p]");
+    playerInfo += "[p]";
+  else if (player->isNotResponding())
+    playerInfo += "[nr]";
 
   FontManager &fm = FontManager::instance();
 
-  const float x4 = x2 + (scoreLabelWidth - huntArrowWidth);
-  const float x5 = x2 + (scoreLabelWidth - huntedArrowWidth);
-  const float callSignWidth = fm.getStrLength(minorFontFace, minorFontSize, player->getCallSign());
-  const float emailWidth = fm.getStrLength(minorFontFace, minorFontSize, email);
-  const float flagWidth = fm.getStrLength(minorFontFace, minorFontSize, flag.c_str());
-  hudSColor3fv(Team::getRadarColor(player->getTeam()));
+  // draw
   if (player->getTeam() != ObserverTeam) {
     fm.drawString(x1, y, 0, minorFontFace, minorFontSize, score);
     fm.drawString(x2, y, 0, minorFontFace, minorFontSize, kills);
   }
-  fm.drawString(x3, y, 0, minorFontFace, minorFontSize, player->getCallSign());
-  fm.drawString(x3 + callSignWidth, y, 0, minorFontFace, minorFontSize, email);
-  if (BZDBCache::colorful) {
-    if ((flagd == Flags::ShockWave)   ||
-	(flagd == Flags::Genocide)    ||
-	(flagd == Flags::Laser)       ||
-	(flagd == Flags::GuidedMissile)) {
-      GLfloat white_color[3] = {1.0f, 1.0f, 1.0f};
-      hudSColor3fv(white_color);
-    } else if (flagd->flagTeam != NoTeam) { // use team color for team flags
-      hudSColor3fv(Team::getRadarColor(flagd->flagTeam));
-    }
-    fm.drawString(x3 + callSignWidth + emailWidth, y, 0, minorFontFace, minorFontSize, flag);
-    hudSColor3fv(Team::getRadarColor(player->getTeam()));
-  } else {
-    fm.drawString(x3 + callSignWidth + emailWidth, y, 0, minorFontFace, minorFontSize, flag);
-  }
-  fm.drawString(x3 + callSignWidth + emailWidth + flagWidth, y, 0, minorFontFace, minorFontSize, status);
+  fm.drawString(x3, y, 0, minorFontFace, minorFontSize, playerInfo);
+
+  // draw hunting status
+  const float x4 = x2 + (scoreLabelWidth - huntArrowWidth);
+  const float x5 = x2 + (scoreLabelWidth - huntedArrowWidth);
   if (player->isHunted()) {
     fm.drawString(x5, y, 0, minorFontFace, minorFontSize, "Hunt->");
   } else if (getHuntIndicator()) {
     fm.drawString(x4, y, 0, minorFontFace, minorFontSize, "->");
-    setHuntIndicator(false);
-  } else {
-    fm.drawString(x5, y, 0, minorFontFace, minorFontSize, "      ");
   }
 }
 
