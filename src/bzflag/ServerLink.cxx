@@ -640,7 +640,9 @@ void			ServerLink::sendKilled(const PlayerId& killer,
 void			ServerLink::sendPlayerUpdate(Player* player)
 {
   char msg[PlayerUpdatePLen + 3 * sizeof(short) + sizeof(int)];
-  const float timeStamp = TimeKeeper::getCurrent() - TimeKeeper::getNullTime();
+  // Send the time frozen at each start of scene iteration, as all
+  // dead reckoning use that
+  const float timeStamp = TimeKeeper::getTick() - TimeKeeper::getNullTime();
   void* buf = msg;
   uint16_t code;
   buf = nboPackFloat(buf, timeStamp);
