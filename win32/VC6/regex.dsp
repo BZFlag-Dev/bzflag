@@ -141,7 +141,23 @@ LIB32=link.exe -lib
 # PROP Default_Filter "cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
 # Begin Source File
 
-SOURCE=..\..\src\regex\something.cxx
+SOURCE=..\..\src\regex\engine.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\regex\regcomp.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\regex\regerror.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\regex\regexec.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\regex\regfree.c
 # End Source File
 # End Group
 # Begin Group "Header Files"
@@ -149,11 +165,27 @@ SOURCE=..\..\src\regex\something.cxx
 # PROP Default_Filter "h;hpp;hxx;hm;inl"
 # Begin Source File
 
+SOURCE=..\..\src\regex\cclass.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\regex\cname.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\config.h
 # End Source File
 # Begin Source File
 
 SOURCE=..\..\include\regex.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\regex\regex2.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\regex\utils.h
 # End Source File
 # End Group
 # End Target
