@@ -24,6 +24,9 @@ public:
    */
   LagInfo(PlayerInfo *_info);
 
+  /** Getting lag value
+  */
+  int         getLag();
   /** Get a printable version of lag statistics
   */
   void        getLagStats(char* msg);

@@ -626,6 +626,12 @@ void handleLagwarnCmd(GameKeeper::Player *playerData, const char *message)
 }
 
 
+int lagCompare(const void* _a, const void* _b)
+{
+  return (*(GameKeeper::Player **)_a)->lagInfo.getLag()
+    - (*(GameKeeper::Player **)_b)->lagInfo.getLag();
+}
+
 void handleLagstatsCmd(GameKeeper::Player *playerData, const char *)
 {
   int t = playerData->getIndex();
@@ -633,17 +639,24 @@ void handleLagstatsCmd(GameKeeper::Player *playerData, const char *)
     sendMessage(ServerPlayer, t, "You do not have permission to run the lagstats command");
     return;
   }
-
-  char reply[MessageLen];
+  GameKeeper::Player *sortedPlayer[curMaxPlayers];
+  int j = 0;
   for (int i = 0; i < curMaxPlayers; i++) {
     GameKeeper::Player *p = GameKeeper::Player::getPlayerByIndex(i);
     if (p != NULL) {
-      p->lagInfo.getLagStats(reply);
-      if (strlen(reply)) {
-	if (p->accessInfo.isAccessVerified())
-	  strcat(reply, " (R)");
-	sendMessage(ServerPlayer, t, reply);
-      }
+      sortedPlayer[j++] = p;
+    }
+  }
+  qsort(sortedPlayer, j, sizeof(GameKeeper::Player *), lagCompare);
+
+  char reply[MessageLen];
+  for (int i = 0; i < j; i++) {
+    GameKeeper::Player *p = sortedPlayer[i];
+    p->lagInfo.getLagStats(reply);
+    if (strlen(reply)) {
+      if (p->accessInfo.isAccessVerified())
+	strcat(reply, " (R)");
+      sendMessage(ServerPlayer, t, reply);
     }
   }
 }
