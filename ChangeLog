@@ -3,7 +3,7 @@
 
 * add new updates here without heading until a release
 
-* integrated atupone's automake/autoconf build system - David Trowbridge
+* automake/autoconf build system - Tupone Alfredo, David Trowbridge
 * check for unknown message types - Frank Thilo 
 * check incoming TCP for oversized messages and dump player - Frank Thilo
 * multiline server and ad messages with '\n' - Lars Luthman
