@@ -105,11 +105,6 @@ recent bugs
 - Mac OS X client outputs an Info.plist file with the permissions set
   incorrectly if building an application bundle via XCode.
 
-- saveworld does not save world weapons
-  MAC: Unfortunately world weapons aren't sent to the client, so
-  there's no way for the client to write them. I suppose they could 
-  be packed in the database, for only the purpose of 'saveworld'.
-
 - Spawn code sometimes spawns you mid-air
 
 - doc/guide/NetworkProtocol.xml is not up to date
@@ -138,8 +133,6 @@ recent bugs
   removed it the queue went up to at least 64kB)
 
 - os x client audio is very choppy when the user has a sound card installed
-
-- bzfs should re-resolve the list server IP if it can't reach it for an update
 
 - make distcheck does not work unless bzflag is configured the same day you
   do make distcheck. Cause is the different version of the two, for the date
