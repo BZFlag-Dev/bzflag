@@ -286,7 +286,7 @@ float GuidedMissileStrategy::checkHit(const BaseLocalPlayer* tank, float positio
   if (getPath().isExpired()) return minTime;
 
   // GM is not active until activation time passes (for any tank)
-  if ((TimeKeeper::getCurrent() - getPath().getStartTime()) < BZDB.eval(StateDatabase::BZDB_GMACTIONATIONTIME)) {
+  if ((TimeKeeper::getTick() - getPath().getStartTime()) < BZDB.eval(StateDatabase::BZDB_GMACTIVATIONTIME)) {
     return minTime;
   }
 
