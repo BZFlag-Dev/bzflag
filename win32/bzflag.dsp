@@ -337,6 +337,10 @@ SOURCE=..\include\TextUtils.h
 # End Source File
 # Begin Source File
 
+SOURCE=..\include\version.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\src\bzflag\World.h
 # End Source File
 # Begin Source File

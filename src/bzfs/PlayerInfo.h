@@ -69,6 +69,7 @@ struct PlayerInfo {
     // player access
     PlayerAccessInfo accessInfo;
     bool Admin;
+    bool restartOnBase;
 
   // player's registration name
     std::string regName;

@@ -8,13 +8,6 @@ THESE SHOULD HAPPEN BEFORE THE NEXT RELEASE:
   - see http://db.bzflag.org/ for example URLs
   - kill SETNUM and use action=ADD all the time
 
-* server should pick client enter position. (done?)
-  - Server has no idea about players shots, this is a key to picking a safe
-    entry location.
-  - However, fixing the effectiveness can be done later without changing the clients
-  - We just pick a location without regard to other tanks.
-  - Test that first team spawns are on base
-
 * Test, Test, Test
 
 * Name the version

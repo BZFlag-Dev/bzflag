@@ -37,15 +37,10 @@ public:
 #else
   const float		(*getLastMotionBBox() const)[3];
 #endif
-  void                startingLocation(float bestStartPoint[3],
-				       float &startAzimuth,
-				       World *world,
-				       Player *player[],
-				       int curMaxPlayers);
+
   virtual void	explodeTank() = 0;
   virtual bool	checkHit(const Player* source,
 			 const ShotPath*& hit, float& minTime) const = 0;
-  bool                restartOnBase;
 protected:
   int			getSalt();
   virtual void	doUpdate(float dt) = 0;

@@ -315,6 +315,10 @@ SOURCE=..\include\TimeKeeper.h
 # End Source File
 # Begin Source File
 
+SOURCE=..\include\version.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\src\bzfs\VotingArbiter.h
 # End Source File
 # Begin Source File

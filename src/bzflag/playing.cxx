@@ -3302,14 +3302,12 @@ static void		handleServerMessage(bool human, uint16_t code,
     // blow up if my team flag captured
     if (capturedTeam == int(myTank->getTeam())) {
       gotBlowedUp(myTank, GotCaptured, id);
-      myTank->restartOnBase = true;
     }
 
     //kill all my robots if they are on the captured team
     for (int r = 0; r < numRobots; r++) {
       if (robots[r]->getTeam() == capturedTeam) {
 	gotBlowedUp(robots[r], GotCaptured, robots[r]->getId());
-	robots[r]->restartOnBase = true;
       }
     }
 
@@ -4516,12 +4514,7 @@ static void		updateRobots(float dt)
   // start dead robots and retarget
   for (i = 0; i < numRobots; i++)
     if (!gameOver && !robots[i]->isAlive() && !robots[i]->isExploding()) {
-      float startAzimuth;
-      float bestStartPoint[3];
-      robots[i]->startingLocation(bestStartPoint, startAzimuth, world,
-				  (Player**) player, curMaxPlayers);
 
-      robots[i]->restart(bestStartPoint, startAzimuth);
       robotServer[i]->sendAlive();
       setRobotTarget(robots[i]);
     }
@@ -4642,10 +4635,6 @@ static void		addRobots()
     else
       robots[j]->setTeam((TeamColor)((int)RedTeam + (int)(bzfrand() *
 							  (int)(PurpleTeam - RedTeam + 1))));
-
-    // decide how start for first time
-    robots[j]->restartOnBase = world->allowTeamFlags()
-      && Team::isColorTeam(robots[j]->getTeam());
 
     robotServer[j]->sendEnter(ComputerPlayer, robots[j]->getTeam(),
 			      robots[j]->getCallSign(), robots[j]->getEmailAddress());
@@ -5443,10 +5432,6 @@ static bool		joinGame(const StartupInfo* info,
 #if defined(ROBOT)
   addRobots();
 #endif
-
-  // decide how start for first time
-  myTank->restartOnBase = world->allowTeamFlags()
-    && Team::isColorTeam(myTank->getTeam());
 
   // resize background and adjust time (this is needed even if we
   // don't sync with the server)

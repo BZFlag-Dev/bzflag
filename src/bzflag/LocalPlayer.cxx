@@ -34,7 +34,6 @@
 BaseLocalPlayer::BaseLocalPlayer(const PlayerId& id,
 				 const char* name, const char* email) :
   Player(id, RogueTeam, name, email, TankPlayer),
-  restartOnBase(false),
   lastTime(TimeKeeper::getTick()),
   salt(0)
 {
@@ -143,6 +142,7 @@ static float		minSafeRange(float angleCosOffBoresight)
   return (float)(MinRange + f * (MaxRange - MinRange));
 }
 
+/*
 void			BaseLocalPlayer::startingLocation
 (float bestStartPoint[3],
  float &startAzimuth,
@@ -296,6 +296,7 @@ void			BaseLocalPlayer::startingLocation
   } while (!located && ++locateCount <= MaxTries);
 }
 
+ */
 //
 // LocalPlayer
 //
@@ -952,9 +953,6 @@ void			LocalPlayer::restart(const float* pos, float _azimuth)
 
   // make me alive now
   setStatus(getStatus() | short(PlayerState::Alive));
-  if (restartOnBase)
-    location = OnBuilding;
-  restartOnBase = false;
 }
 
 void			LocalPlayer::setTeam(TeamColor team)

@@ -104,7 +104,7 @@ static TimeKeeper lastWorldParmChange;
 
 void sendMessage(int playerIndex, PlayerId targetPlayer, const char *message, bool fullBuffer=false);
 
-static void getSpawnLocation( int team, float* pos, float *azimuth);
+static void getSpawnLocation( int playerId, float* pos, float *azimuth);
 
 void removePlayer(int playerIndex, const char *reason, bool notify=true);
 void resetFlag(int flagIndex);
@@ -2289,6 +2289,7 @@ static void addPlayer(int playerIndex)
 
   player[playerIndex].toBeKicked = false;
   player[playerIndex].Admin = false;
+  player[playerIndex].restartOnBase = (clOptions->gameStyle & TeamFlagGameStyle) != 0;
   player[playerIndex].passwordAttempts = 0;
 
   player[playerIndex].regName = player[playerIndex].callSign;
@@ -2848,31 +2849,40 @@ void removePlayer(int playerIndex, const char *reason, bool notify)
   }
 }
 
-static void getSpawnLocation( int team, float* pos, float *azimuth)
+static void getSpawnLocation( int playerId, float* pos, float *azimuth)
 {
-  team = 0; //team isn't used presently, just quell the warnings
+  float tankRadius = BZDB->eval(StateDatabase::BZDB_TANKRADIUS);
+  if (player[playerId].restartOnBase) {
+    int team = player[playerId].team;
+    float x = (baseSize[team][0] - 2.0f * tankRadius) * ((float)bzfrand() - 0.5f);
+    float y = (baseSize[team][1] - 2.0f * tankRadius) * ((float)bzfrand() - 0.5f);
+    pos[0] = basePos[team][0] + x * cosf(baseRotation[team]) - y * sinf(baseRotation[team]);
+    pos[1] = basePos[team][1] + x * sinf(baseRotation[team]) + y * cosf(baseRotation[team]);
+    pos[2] = basePos[team][2];
+    player[playerId].restartOnBase = false;
+  }
+  else {
+    float size = BZDB->eval( StateDatabase::BZDB_WORLDSIZE);
+    WorldInfo::ObstacleLocation *building;
 
-  float size = BZDB->eval( StateDatabase::BZDB_WORLDSIZE);
-  WorldInfo::ObstacleLocation *building;
-  float radius = 2.0f * BZDB->eval(StateDatabase::BZDB_TANKLENGTH);
+    int lastType = IN_PYRAMID;
+    while ((lastType == IN_PYRAMID) || (lastType == IN_TELEPORTER)) {
+      pos[0] = (bzfrand() * size) - (size/2.0f);
+      pos[1] = (bzfrand() * size) - (size/2.0f);
+      pos[2] = (bzfrand() * maxWorldHeight);
 
-  int lastType = IN_PYRAMID;
-  while ((lastType == IN_PYRAMID) || (lastType == IN_TELEPORTER)) {
-    pos[0] = (bzfrand() * size) - (size/2.0f);
-    pos[1] = (bzfrand() * size) - (size/2.0f);
-    pos[2] = (bzfrand() * maxWorldHeight);
+      int type = world->inBuilding(&building, pos[0], pos[1], pos[2], tankRadius);
+      if ((type == NOT_IN_BUILDING) && (pos[2] > 0.0f)) {
+        pos[2] = 0.0f;
+        type = world->inBuilding(&building, pos[0], pos[1], pos[2], tankRadius);
+      }
 
-    int type = world->inBuilding(&building, pos[0], pos[1], pos[2], radius);
-    if ((type == NOT_IN_BUILDING) && (pos[2] > 0.0f)) {
-      pos[2] = 0.0f;
-      type = world->inBuilding(&building, pos[0], pos[1], pos[2], radius);
-    }
-
-    lastType = NOT_IN_BUILDING;
-    while (type != NOT_IN_BUILDING) {
-      pos[2] = building->pos[2] + building->size[2] + 0.25f;
-      lastType = type;
-      type = world->inBuilding(&building, pos[0], pos[1], pos[2], radius);
+      lastType = NOT_IN_BUILDING;
+      while (type != NOT_IN_BUILDING) {
+        pos[2] = building->pos[2] + building->size[2] + 0.25f;
+        lastType = type;
+        type = world->inBuilding(&building, pos[0], pos[1], pos[2], tankRadius);
+      }
     }
   }
 
@@ -2962,7 +2972,7 @@ static void playerAlive(int playerIndex)
 
   // send MsgAlive
   float pos[3], fwd;
-  getSpawnLocation(player[playerIndex].team, pos, &fwd);
+  getSpawnLocation(playerIndex, pos, &fwd);
   void *buf, *bufStart = getDirectMessageBuffer();
   buf = nboPackUByte(bufStart, playerIndex);
   buf = nboPackVector(buf,pos);
@@ -3329,6 +3339,7 @@ static void captureFlag(int playerIndex, TeamColor teamCaptured)
 	flag[flagIndex].flag.type->flagTeam == int(player[i].team) &&
 	player[i].state == PlayerAlive) {
       player[i].state = PlayerDead;
+      player[i].restartOnBase = true;
     }
 
   // update score (rogues can't capture flags)
