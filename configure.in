@@ -345,6 +345,7 @@ AC_DEFINE_UNQUOTED(INSTALL_DATA_DIR, "$INSTALL_DATA_DIR",
 CPPFLAGS="$CPPFLAGS -I\$(top_srcdir)/include"
 case $host_os in
      linux-gnu)
+	CPPFLAGS="$CPPFLAGS -D_BSD_SOURCE -D_POSIX_SOURCE";
 	AC_DEFINE(HALF_RATE_AUDIO, 1, [Half rate Audio])
 	AC_DEFINE(XF86VIDMODE_EXT, 1, [XFree86 Video Mode Extension])
 	if test x$no_sdl = xyes; then
