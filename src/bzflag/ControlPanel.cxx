@@ -171,8 +171,6 @@ void			ControlPanel::render(SceneRenderer& renderer)
 
   FontManager &fm = FontManager::instance();
   const float lineHeight = fm.getStrHeight(fontFace, fontSize, " ");
-  const float charWidth = fm.getStrLength(fontFace, fontSize, "-");
-  const int lineCharWidth = (int)(messageAreaPixels[2] / charWidth);
   const float margin = lineHeight / 4.0f;
 
   if (changedMessage > 0) {
@@ -211,7 +209,6 @@ void			ControlPanel::render(SceneRenderer& renderer)
 	  glColor4f(0.10f, 0.10f, 0.10f, renderer.getPanelOpacity());
 	}
 
-	// FIXME: need a menu config option to toggle which side
 	if (tabsOnRight) {
 	  // draw the tabs on the right side
 	  glRecti(messageAreaPixels[0] + messageAreaPixels[2] - totalTabWidth + drawnTabWidth,
@@ -247,12 +244,12 @@ void			ControlPanel::render(SceneRenderer& renderer)
       // FIXME: need a menu config option to toggle which side
       if (tabsOnRight) {
 	// draw the tabs on the right side
-	fm.drawString(messageAreaPixels[0] + messageAreaPixels[2] - totalTabWidth + drawnTabWidth + floorf(charWidth * 2.0f),
+	fm.drawString(messageAreaPixels[0] + messageAreaPixels[2] - totalTabWidth + drawnTabWidth + floorf(fontSize * 2.0f),
 		      messageAreaPixels[1] + messageAreaPixels[3] - floorf(lineHeight + 2.0f) + ay,
 		      0.0f, fontFace, (float)fontSize, (*tabs)[tab]);
       } else {
 	// draw the tabs on the left side
-	fm.drawString(messageAreaPixels[0] + drawnTabWidth + floorf(charWidth * 2.0f),
+	fm.drawString(messageAreaPixels[0] + drawnTabWidth + floorf(fontSize * 2.0f),
 		      messageAreaPixels[1] + messageAreaPixels[3] - floorf(lineHeight + 2.0f) + ay,
 		      0.0f, fontFace, (float)fontSize, (*tabs)[tab]);
       }
@@ -264,16 +261,17 @@ void			ControlPanel::render(SceneRenderer& renderer)
   // Code added to allow line-wrap -- just the basics so please modify
   //  for +'s at the beginning of wrapped lines, etc.
   //
-  // It works by calculating the chars in the current mode's message
-  //  area, calculating the number of lines the message will use, then
-  //  moving up the proper number of lines and displaying downward -- that
-  //  is, it kinda backtracks for each line that will wrap.
+  // It works by first breaking the string into a vector of strings, each
+  //  of which will fit the control panel, and tallying the number of lines,
+  //  then moving up the proper number of lines and displaying downward -- 
+  //  that is, it kinda backtracks for each line that will wrap.
   //
   //  messageAreaPixels[2] = Width of Message Window in Pixels
   //  maxLines             = Max messages lines that can be displayed
   //  maxScrollPages       = This number * maxLines is the total maximum
   //                         lines of messages (and scrollback)
-  // The font is fixed, so getWidth() returns the same for any char.
+  // The font is NOT necessarily fixed, so we must use GetWidth on the 
+  // particular line that is to be broken.
 
   glScissor(x + messageAreaPixels[0],
 	    y + messageAreaPixels[1],
@@ -295,24 +293,23 @@ void			ControlPanel::render(SceneRenderer& renderer)
     const char* msg = messages[messageMode][i].string.c_str();
     int lineLen     = messages[messageMode][i].string.length();
 
-    // compute lines in message
-    const int numLines = (messages[messageMode][i].rawLength + lineCharWidth
-			  - 1) / lineCharWidth;
+    std::vector<std::string> lines;
+    int numLines = 0;
 
-    // draw each line
-    int msgy = numLines - 1;
+    // break lines
     while (lineLen > 0) {
       int n;
-      assert(msgy >= 0);
 
       // how many characters will fit?
       // the unprinted ANSI codes don't count
-      if (lineLen <= lineCharWidth) {
+      if (fm.getStrLength(fontFace, fontSize, msg) <= (messageAreaPixels[2] - 2 * margin)) {
 	n = lineLen;
       } else {
 	int r = 0;
 	n = 0;
-	while ((n < lineLen) && (r < lineCharWidth)) {
+	while ((n < lineLen) && 
+	       (fm.getStrLength(fontFace, fontSize, std::string(msg).substr(0, n)) <
+	        (messageAreaPixels[2] - 2 * margin))) {
 	  if (msg[n] == ESC_CHAR) {
 	    n++;
 	    if ((n < lineLen) && (msg[n] == '[')) {
@@ -334,19 +331,31 @@ void			ControlPanel::render(SceneRenderer& renderer)
 	}
       }
 
-      // only draw message if inside message area
-      if (j + msgy < maxLines)
-	fm.drawString(fx, fy + msgy * lineHeight, 0, fontFace, fontSize, msg);
+      // message
+      lines.push_back(std::string(msg).substr(0, n));
+      numLines++;
 
       // account for portion drawn (or skipped)
       msg += n;
       lineLen -= n;
+
+    }
+
+    // draw each line of text
+    int msgy = numLines - 1;
+    for (int l = 0; l < lines.size(); l++)  {
+      assert(msgy >= 0);
+
+      // only draw message if inside message area
+      if (j + msgy < maxLines)
+	fm.drawString(fx, fy + msgy * lineHeight, 0, fontFace, fontSize, lines[l]);
 
       // next line
       msgy--;
     }
     j += numLines;
     fy += int(lineHeight * numLines);
+
   }
   glScissor(x + messageAreaPixels[0] - 1,
 	    y + messageAreaPixels[1] - 1,
