@@ -9,9 +9,6 @@ recent bugs
 
 - bzfs should re-resolve the list server IP if it can't reach it for an update
 
-- OS X client gamma on a secondary display set as main display uses the wrong
-  gamma (very very dark); brightness is set incorrectly.
-
 - Shots that bounce off the ground occasionally reflect in the wrong
   direction - x/y flipped
 
