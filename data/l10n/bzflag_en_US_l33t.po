@@ -107,6 +107,12 @@ msgstr "5OUnD VOlUmE:"
 msgid "UDP network connection:"
 msgstr "uDP nEtw0rK cOnNect1on:"
 
+msgid "Server List Cache:"
+msgstr "53rV3R li5T CaCh3:"
+
+msgid "Clear Server List Cache"
+msgstr "clE@r sERVEr l15+ C4CHe"
+
 msgid "Change Key Mapping" 
 msgstr "Ch4n9e KEY M4PP1N9"
 
@@ -128,6 +134,9 @@ msgstr "b1Gg3R"
 msgid "Radar & Panel Opacity:" 
 msgstr "R@dAR & P@N3l 0P@CitY:"
 
+msgid "Mouse Box Size:"
+msgstr "M0uS3 B0Xor 51ZE:"
+
 msgid "Colored shots on radar:" 
 msgstr "c0LORed sHO+S On R@d4R:"
 
@@ -137,8 +146,14 @@ msgstr "r@d4r Sh0T L3nGTh:"
 msgid "Radar & Panel Size:"
 msgstr "r@d4r & p@n31 51z3:"
 
-#msgid "Mouse Box Size:"
-#msgstr "m0u53 80x 51z3:"
+msgid "Control panel coloring:"
+msgstr "c0n+r0L p4N3l COLOriNG:"
+
+msgid "Underline color:"
+msgstr "Und3Rl1N3 COlOR:"
+
+msgid "Killer Highlight:"
+msgstr "K1LL3R HI9hLI9H+:"
 
 msgid "Page Down for next page" 
 msgstr "P493 DOWN Phor nexT P493"
