@@ -102,7 +102,8 @@ static const char*	soundFiles[] = {
 				"thief",
 				"burrow",
 				"message_private",
-				"message_team"
+				"message_team",
+				"message_admin"
 			};
 #define	SFX_COUNT	((int)(countof(soundFiles)))
 
