@@ -439,13 +439,13 @@
 				RelativePath="..\..\include\BaseBuilding.h">
 			</File>
 			<File
-				RelativePath="..\..\src\obstacle\BaseSceneNodeGenerator.h">
+				RelativePath="..\..\include\BaseSceneNodeGenerator.h">
 			</File>
 			<File
 				RelativePath="..\..\include\BoxBuilding.h">
 			</File>
 			<File
-				RelativePath="..\..\src\obstacle\BoxSceneNodeGenerator.h">
+				RelativePath="..\..\include\BoxSceneNodeGenerator.h">
 			</File>
 			<File
 				RelativePath="..\..\include\bzfgl.h">
@@ -463,13 +463,16 @@
 				RelativePath="..\..\include\ConeObstacle.h">
 			</File>
 			<File
-				RelativePath="..\..\src\obstacle\EmptySceneNodeGenerator.h">
+				RelativePath="..\..\include\EmptySceneNodeGenerator.h">
 			</File>
 			<File
 				RelativePath="..\..\include\MeshFace.h">
 			</File>
 			<File
 				RelativePath="..\..\include\MeshObstacle.h">
+			</File>
+			<File
+				RelativePath="..\..\include\MeshSceneNodeGenerator.h">
 			</File>
 			<File
 				RelativePath="..\..\src\obstacle\MeshUtils.h">
@@ -487,13 +490,16 @@
 				RelativePath="..\..\include\ObstacleModifier.h">
 			</File>
 			<File
+				RelativePath="..\..\include\ObstacleSceneNodeGenerator.h">
+			</File>
+			<File
 				RelativePath="..\..\include\OpenGLGState.h">
 			</File>
 			<File
 				RelativePath="..\..\include\PyramidBuilding.h">
 			</File>
 			<File
-				RelativePath="..\..\src\obstacle\PyramidSceneNodeGenerator.h">
+				RelativePath="..\..\include\PyramidSceneNodeGenerator.h">
 			</File>
 			<File
 				RelativePath="..\..\include\QuadWallSceneNode.h">
@@ -514,7 +520,7 @@
 				RelativePath="..\..\include\Teleporter.h">
 			</File>
 			<File
-				RelativePath="..\..\src\obstacle\TeleporterSceneNodeGenerator.h">
+				RelativePath="..\..\include\TeleporterSceneNodeGenerator.h">
 			</File>
 			<File
 				RelativePath="..\..\include\TetraBuilding.h">
@@ -529,7 +535,7 @@
 				RelativePath="..\..\include\WallSceneNode.h">
 			</File>
 			<File
-				RelativePath="..\..\src\obstacle\WallSceneNodeGenerator.h">
+				RelativePath="..\..\include\WallSceneNodeGenerator.h">
 			</File>
 		</Filter>
 	</Files>
