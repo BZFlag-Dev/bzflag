@@ -159,7 +159,7 @@ ShotPath *findWorstBullet(float &minDistance)
   return minPath;
 }
 
-bool	avoidDeathFall(float &rotation, float &speed)
+bool	avoidDeathFall(float &/*rotation*/, float &speed)
 {
   LocalPlayer *myTank = LocalPlayer::getMyTank();
   float pos1[3], pos2[3];
