@@ -2619,7 +2619,13 @@ static void		addRobots(boolean useMulticastRelay)
   char callsign[CallSignLen];
 
   for (int j = 0; j < numRobots;) {
-    snprintf(callsign, CallSignLen, "%s%d", myTank->getCallSign(), j);
+
+#if !defined(_WIN32)
+	snprintf(callsign, CallSignLen, "%s%d", myTank->getCallSign(), j);
+#else
+	sprintf(callsign, "%s%d", myTank->getCallSign(), j);
+#endif
+
     robots[j] = new RobotPlayer(robotServer[j]->getId(), callsign, robotServer[j], myTank->getEmailAddress());
     if (world->allowRogues())
       robots[j]->setTeam((TeamColor)((int)RogueTeam + (int)(bzfrand() *
