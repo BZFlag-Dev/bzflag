@@ -1469,7 +1469,7 @@ void handlePollCmd(GameKeeper::Player *playerData, const char *message)
   // only need to do this once
   static VotingArbiter *arbiter = (VotingArbiter *)BZDB.getPointer("poll");
 
-  DEBUG3("Arbiter was acquired with address 0x%x\n", (unsigned int)arbiter);
+  DEBUG3("Arbiter was acquired with address 0x%p\n", arbiter);
 
   /* make sure that there is not a poll active already */
   if (arbiter->knowsPoll()) {
