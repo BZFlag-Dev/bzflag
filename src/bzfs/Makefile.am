@@ -31,6 +31,8 @@ bzfs_SOURCES = \
 	EntryZones.h \
 	FlagInfo.cxx \
 	FlagInfo.h \
+	LagInfo.h	\
+	LagInfo.cxx	\
 	ListServerConnection.cxx \
 	ListServerConnection.h \
 	PackVars.h \

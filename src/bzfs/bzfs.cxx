@@ -11,6 +11,7 @@
  */
 #include "bzfs.h"
 #include "NetHandler.h"
+#include "LagInfo.h"
 
 const int udpBufSize = 128000;
 
@@ -39,6 +40,8 @@ static PingPacket pingReply;
 static int maxFileDescriptor;
 // players list FIXME should be resized based on maxPlayers
 PlayerInfo player[MaxPlayers + ReplayObservers];
+// player lag info
+LagInfo *lagInfo[MaxPlayers + ReplayObservers] = {NULL};
 // player access
 PlayerAccessInfo accessInfo[MaxPlayers + ReplayObservers];
 // Last known position, vel, etc
@@ -1566,6 +1569,7 @@ static void addPlayer(int playerIndex)
   accessInfo[playerIndex].reset(player[playerIndex].getCallSign());
   player[playerIndex].resetPlayer
     ((clOptions->gameStyle & TeamFlagGameStyle) != 0);
+  lagInfo[playerIndex] = new LagInfo(&player[playerIndex]);
 
   // accept player
   void *buf, *bufStart = getDirectMessageBuffer();
@@ -2020,6 +2024,7 @@ void removePlayer(int playerIndex, const char *reason, bool notify)
       netPlayer->dumpMessageStats();
 #endif
     delete netPlayer;
+    delete lagInfo[playerIndex];
   }
 
   // player is outta here.  if player never joined a team then
@@ -3254,8 +3259,10 @@ static void handleCommand(int t, const void *rawbuf)
     case MsgLagPing: {
       bool warn;
       bool kick;
-      int lag = player[t].updatePingLag(buf, clOptions->lagwarnthresh,
-					(float)clOptions->maxlagwarn, warn, kick);
+      LagInfo *info = lagInfo[t];
+      if (!info)
+	return;
+      int lag = info->updatePingLag(buf, warn, kick);
       if (warn) {
 	char message[MessageLen];
 	sprintf(message,"*** Server Warning: your lag is too high (%d ms) ***",
@@ -3303,8 +3310,9 @@ static void handleCommand(int t, const void *rawbuf)
       if (state.order <= lastState[t].order)
 	break;
 
-      player[t].updateLagPlayerUpdate(timestamp,
-				      state.order - lastState[t].order > 1);
+      if (lagInfo[t])
+	lagInfo[t]->updateLag(timestamp, state.order - lastState[t].order > 1);
+      player[t].updateIdleTime();
 
       TimeKeeper now = TimeKeeper::getCurrent();
       //Don't kick players up to 10 seconds after a world parm has changed,
@@ -3614,7 +3622,9 @@ int main(int argc, char **argv)
       DEBUG1("WARNING: unable to load the variable file\n");
     }
   }
-  
+
+  // Loading lag thresholds
+  LagInfo::setThreshold(clOptions->lagwarnthresh,(float)clOptions->maxlagwarn);
   // enable replay server mode
   if (clOptions->replayServer) {
 
@@ -3846,7 +3856,8 @@ int main(int argc, char **argv)
     // get time for next lagping
     bool someoneIsConnected = false;
     for (p = 0; p < curMaxPlayers; p++) {
-      if (player[p].nextPing(waitTime)) {
+      if (player[p].isPlaying() && player[p].isHuman()
+	  && lagInfo[p]->updateLatency(waitTime)) {
 	someoneIsConnected = true;
       }
     }
@@ -4214,11 +4225,13 @@ int main(int argc, char **argv)
 
     // send lag pings
     for (int j=0;j<curMaxPlayers;j++) {
-      int nextPingSeqno = player[j].getNextPingSeqno();
-      if (nextPingSeqno > 0) {
-	void *buf, *bufStart = getDirectMessageBuffer();
-	buf = nboPackUShort(bufStart, nextPingSeqno);
-	directMessage(j, MsgLagPing, (char*)buf - (char*)bufStart, bufStart);
+      if (player[j].isPlaying() && player[j].isHuman()) {
+	int nextPingSeqno = lagInfo[j]->getNextPingSeqno();
+	if (nextPingSeqno > 0) {
+	  void *buf, *bufStart = getDirectMessageBuffer();
+	  buf = nboPackUShort(bufStart, nextPingSeqno);
+	  directMessage(j, MsgLagPing, (char*)buf - (char*)bufStart, bufStart);
+	}
       }
     }
 

@@ -84,7 +84,6 @@ public:
   bool        isHuman();
   void       *packUpdate(void *buf);
   void        unpackEnter(void *buf);
-  void        getLagStats(char* msg);
   const char *getCallSign() const;
   bool        isCallSignReadable();
   const char *getEMail() const;
@@ -120,11 +119,6 @@ public:
   void        setPaused(bool pauses);
   bool        isTooMuchIdling(TimeKeeper tm, float kickThresh);
   bool        hasStartedToNotRespond();
-  int         updatePingLag(void *buf, float threshold, float max,
-			    bool &warn, bool &kick);
-  void        updateLagPlayerUpdate(float timestamp, bool ooo);
-  bool        nextPing(float &waitTime);
-  int         getNextPingSeqno();
   void        hasSent(char message[]);
   void        addFlagToHistory();
   void        handleFlagHistory(char message[]);
@@ -132,8 +126,10 @@ public:
   bool        hasPlayedEarly();
   void        setPlayedEarly();
   void        setReplayState(PlayerReplayState state);
+  void        updateIdleTime();
   PlayerReplayState getReplayState();
   
+  TimeKeeper lastupdate;
 private:
   void        cleanCallSign();
   void        cleanEMail();
@@ -179,16 +175,7 @@ private:
     // Has the player been sent any replay 'faked' state
     PlayerReplayState replayState;
 
-    // lag measurement
-    float lagavg, jitteravg, lostavg, lagalpha, jitteralpha, lostalpha;
-    int lagcount, laglastwarn, lagwarncount;
-    bool pingpending;
-    TimeKeeper nextping, lastping;
-    int pingseqno, pingssent;
-
-    // idle kick + jitter measurement
-    float lasttimestamp;
-    TimeKeeper lastupdate;
+    // idle kick
     TimeKeeper lastmsg;
 
     std::vector<FlagType*> flagHistory;
