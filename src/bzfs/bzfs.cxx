@@ -5408,7 +5408,8 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
       buf = id.unpack(buf);
       buf = state.unpack(buf);
       if (state.pos[2] > maxTankHeight) {
-	char message[MessageLen];
+        char message[MessageLen];
+        DEBUG1("kicking Player %s [%d]: jump too high\n", player[t].callsign, t);
 	strcpy( message, "Autokick: Out of world bounds, Jump too high, Update your client." );
         sendMessage(t, player[t].id, player[t].team, message);
 	directMessage(t, MsgSuperKill, 0, getDirectMessageBuffer());
@@ -5425,7 +5426,8 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
 	maxPlanarSpeedSqr *= VelocityAd*VelocityAd;
       
       if (curPlanarSpeedSqr > (1.0 + maxPlanarSpeedSqr)) {
-	char message[MessageLen];
+        char message[MessageLen];
+        DEBUG1("kicking Player %s [%d]: tank too fast\n", player[t].callsign, t);
 	strcpy( message, "Autokick: Tank moving too fast, Update your client." );
         sendMessage(t, player[t].id, player[t].team, message);
 	directMessage(t, MsgSuperKill, 0, getDirectMessageBuffer());
