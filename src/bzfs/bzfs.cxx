@@ -1245,90 +1245,6 @@ static void pflush(int playerIndex)
   }
 }
 
-static void pwrite(int playerIndex, const void *b, int l)
-{
-  PlayerInfo& p = player[playerIndex];
-  if (p.fd == NotConnected || l == 0)
-    return;
-
-  // Check if UDP Link is used instead of TCP, if so jump into puwrite
-  if (p.ulinkup) {
-    uint16_t len, code;
-    void *buf = (void *)b;
-    buf = nboUnpackUShort(buf, len);
-    buf = nboUnpackUShort(buf, code);
-
-    // only send bulk messages by UDP
-    switch (code) {
-	case MsgShotBegin:
-	case MsgShotEnd:
-	case MsgPlayerUpdate:
-	case MsgGMUpdate:
-	  puwrite(playerIndex,b,l);
-	  return;
-    }
-  }
-
-  // try flushing buffered data
-  pflush(playerIndex);
-
-  //UDEBUG("TCP write\n");
-  // if the buffer is empty try writing the data immediately
-  if (p.fd != NotConnected && p.outmsgSize == 0) {
-    const int n = prealwrite(playerIndex, b, l);
-    if (n > 0) {
-      b  = (const void*)(((const char*)b) + n);
-      l -= n;
-    }
-  }
-
-  // write leftover data to the buffer
-  if (p.fd != NotConnected && l > 0) {
-    // is there enough room in buffer?
-    if (p.outmsgCapacity < p.outmsgSize + l) {
-      // double capacity until it's big enough
-      int newCapacity = (p.outmsgCapacity == 0) ? 512 : p.outmsgCapacity;
-      while (newCapacity < p.outmsgSize + l)
-	newCapacity <<= 1;
-
-      // if the buffer is getting too big then drop the player.  chances
-      // are the network is down or too unreliable to that player.
-      // FIXME -- is 20kB to big?  to small?
-      if (newCapacity >= 20 * 1024) {
-	fprintf(stderr, "dropping unresponsive player %d (%s) with %d bytes queued\n",
-	    playerIndex, p.callSign, p.outmsgSize + l);
-        UMDEBUG("REMOVE: CAPACITY\n");
-	removePlayer(playerIndex);
-	return;
-      }
-
-      // allocate memory
-      char *newbuf = new char[newCapacity];
-
-      // copy old data over
-      memmove(newbuf, p.outmsg + p.outmsgOffset, p.outmsgSize);
-
-      // cutover
-      delete[] p.outmsg;
-      p.outmsg         = newbuf;
-      p.outmsgOffset   = 0;
-      p.outmsgCapacity = newCapacity;
-    }
-
-    // if we can't fit new data at the end of the buffer then move existing
-    // data to head of buffer
-    // FIXME -- use a ring buffer to avoid moving memory
-    if (p.outmsgOffset + p.outmsgSize + l > p.outmsgCapacity) {
-      memmove(p.outmsg, p.outmsg + p.outmsgOffset, p.outmsgSize);
-      p.outmsgOffset = 0;
-    }
-
-    // append data
-    memmove(p.outmsg + p.outmsgOffset + p.outmsgSize, b, l);
-    p.outmsgSize += l;
-  }
-}
-
 // a hack to handle old clients
 // old clients use <serverip><serverport><number> as id
 // where serverip etc is as seen from the client
@@ -1444,6 +1360,91 @@ static void patchMessage(PlayerId fromId, PlayerId toId, const void *msg)
   }
 }
 
+static void pwrite(int playerIndex, const void *b, int l)
+{
+  PlayerInfo& p = player[playerIndex];
+  if (p.fd == NotConnected || l == 0)
+    return;
+
+  patchMessage(player[playerIndex].id, player[playerIndex].oldId, b);
+  // Check if UDP Link is used instead of TCP, if so jump into puwrite
+  if (p.ulinkup) {
+    uint16_t len, code;
+    void *buf = (void *)b;
+    buf = nboUnpackUShort(buf, len);
+    buf = nboUnpackUShort(buf, code);
+
+    // only send bulk messages by UDP
+    switch (code) {
+	case MsgShotBegin:
+	case MsgShotEnd:
+	case MsgPlayerUpdate:
+	case MsgGMUpdate:
+	  puwrite(playerIndex,b,l);
+	  return;
+    }
+  }
+
+  // try flushing buffered data
+  pflush(playerIndex);
+
+  //UDEBUG("TCP write\n");
+  // if the buffer is empty try writing the data immediately
+  if (p.fd != NotConnected && p.outmsgSize == 0) {
+    const int n = prealwrite(playerIndex, b, l);
+    if (n > 0) {
+      b  = (const void*)(((const char*)b) + n);
+      l -= n;
+    }
+  }
+
+  // write leftover data to the buffer
+  if (p.fd != NotConnected && l > 0) {
+    // is there enough room in buffer?
+    if (p.outmsgCapacity < p.outmsgSize + l) {
+      // double capacity until it's big enough
+      int newCapacity = (p.outmsgCapacity == 0) ? 512 : p.outmsgCapacity;
+      while (newCapacity < p.outmsgSize + l)
+	newCapacity <<= 1;
+
+      // if the buffer is getting too big then drop the player.  chances
+      // are the network is down or too unreliable to that player.
+      // FIXME -- is 20kB to big?  to small?
+      if (newCapacity >= 20 * 1024) {
+	fprintf(stderr, "dropping unresponsive player %d (%s) with %d bytes queued\n",
+	    playerIndex, p.callSign, p.outmsgSize + l);
+        UMDEBUG("REMOVE: CAPACITY\n");
+	removePlayer(playerIndex);
+	return;
+      }
+
+      // allocate memory
+      char *newbuf = new char[newCapacity];
+
+      // copy old data over
+      memmove(newbuf, p.outmsg + p.outmsgOffset, p.outmsgSize);
+
+      // cutover
+      delete[] p.outmsg;
+      p.outmsg         = newbuf;
+      p.outmsgOffset   = 0;
+      p.outmsgCapacity = newCapacity;
+    }
+
+    // if we can't fit new data at the end of the buffer then move existing
+    // data to head of buffer
+    // FIXME -- use a ring buffer to avoid moving memory
+    if (p.outmsgOffset + p.outmsgSize + l > p.outmsgCapacity) {
+      memmove(p.outmsg, p.outmsg + p.outmsgOffset, p.outmsgSize);
+      p.outmsgOffset = 0;
+    }
+
+    // append data
+    memmove(p.outmsg + p.outmsgOffset + p.outmsgSize, b, l);
+    p.outmsgSize += l;
+  }
+}
+
 static void directMessage(int playerIndex, uint16_t code, int len, const void *msg)
 {
   if (player[playerIndex].fd == NotConnected)
@@ -1455,7 +1456,6 @@ static void directMessage(int playerIndex, uint16_t code, int len, const void *m
   buf = nboPackUShort(buf, uint16_t(len));
   buf = nboPackUShort(buf, code);
   buf = nboPackString(buf, msg, len);
-  patchMessage(player[playerIndex].id, player[playerIndex].oldId, msgbuf);
   pwrite(playerIndex, msgbuf, len + 4);
 }
 
