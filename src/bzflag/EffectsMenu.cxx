@@ -26,8 +26,6 @@
 /* local implementation headers */
 #include "MainMenu.h"
 #include "MainWindow.h"
-#include "World.h"
-#include "SceneRenderer.h"
 #include "TrackMarks.h"
 #include "HUDDialogStack.h"
 #include "HUDuiControl.h"
@@ -46,7 +44,7 @@ EffectsMenu::EffectsMenu()
   // the menu label
   HUDuiLabel* label = new HUDuiLabel;
   label->setFontFace(fontFace);
-  label->setString("Effects Options");
+  label->setString("Effects Settings");
   list.push_back(label);
 
   // the menu options

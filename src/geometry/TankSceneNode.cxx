@@ -23,13 +23,11 @@
 
 // common implementation headers
 #include "StateDatabase.h"
+#include "SceneRenderer.h"
 #include "BZDBCache.h"
 
 // local implementation headers
 #include "ViewFrustum.h"
-
-// FIXME (SceneRenderer.cxx is in src/bzflag)
-#include "SceneRenderer.h"
 
 using namespace TankGeometryEnums;
 
@@ -381,8 +379,7 @@ void TankSceneNode::setExplodeFraction(float t)
 void TankSceneNode::setJumpJets(float scale)
 {
   jumpJetsOn = false;
-  if ((maxLevel == -1) && (scale > 0.0f) &&
-      BZDBCache::zbuffer && BZDBCache::texture) {
+  if ((scale > 0.0f) && BZDBCache::zbuffer && BZDBCache::texture) {
     jumpJetsOn = true;
     jumpJetsScale = scale;
 

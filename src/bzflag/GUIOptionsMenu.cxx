@@ -48,7 +48,7 @@ GUIOptionsMenu::GUIOptionsMenu()
 
   HUDuiLabel* label = new HUDuiLabel;
   label->setFontFace(fontFace);
-  label->setString("GUI Options");
+  label->setString("GUI Settings");
   list.push_back(label);
 
   HUDuiList* option = new HUDuiList;

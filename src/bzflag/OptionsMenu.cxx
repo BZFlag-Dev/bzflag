@@ -74,12 +74,12 @@ OptionsMenu::OptionsMenu() : guiOptionsMenu(NULL), effectsMenu(NULL),
 
   effectsOptions = label = new HUDuiLabel;
   label->setFontFace(fontFace);
-  label->setLabel("Effects Options");
+  label->setLabel("Effects Settings");
   list.push_back(label);
 
   guiOptions = label = new HUDuiLabel;
   label->setFontFace(fontFace);
-  label->setLabel("GUI Options");
+  label->setLabel("GUI Settings");
   list.push_back(label);
 
   label = new HUDuiLabel;
