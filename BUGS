@@ -5,12 +5,6 @@ recent bugs
   There's no way to tell whether a RemotePlayer is a Robot.
   We could use dynamic_cast, but we haven't used RTTI as of yet
 
-- colored console does not seem to work (no extra color);
-  reason for this is that OpenGLTexFont has an array storedColor
-  which gets default initizialized with all white and is supposed to be
-  set to appropriate (team?) colors. I guess tha tthis was introduced when
-  the libs were decoupled, but the colors are never set.
-
 - private messages are no longer echoed in console; this is probaby because
   priv. msgs are no longer broadcast
 
