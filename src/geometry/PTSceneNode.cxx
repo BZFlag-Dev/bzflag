@@ -17,6 +17,7 @@
 #include "ViewFrustum.h"
 #include "SceneRenderer.h"
 #include "StateDatabase.h"
+#include "BZDBCache.h"
 
 const GLfloat		PhotonTorpedoSceneNode::CoreSize = 0.125f;
 const GLfloat		PhotonTorpedoSceneNode::CoronaSize = 1.0f;
@@ -24,7 +25,6 @@ const GLfloat		PhotonTorpedoSceneNode::FlareSize = 1.0f;
 const GLfloat		PhotonTorpedoSceneNode::FlareSpread = 0.08f;
 
 PhotonTorpedoSceneNode::PhotonTorpedoSceneNode(const GLfloat pos[3]) :
-				blending(false),
 				renderNode(this)
 {
   OpenGLGStateBuilder builder(gstate);
@@ -63,9 +63,8 @@ void			PhotonTorpedoSceneNode::addLight(
 void			PhotonTorpedoSceneNode::notifyStyleChange(
 				const SceneRenderer&)
 {
-  blending = BZDB.isTrue("blend");
   OpenGLGStateBuilder builder(gstate);
-  if (blending) {
+  if (BZDBCache::blend) {
     builder.setBlending(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     builder.setStipple(1.0f);
   }
@@ -148,7 +147,7 @@ void			PhotonTorpedoSceneNode::PTRenderNode::render()
 
     // draw some flares
     myColor4fv(flareColor);
-    if (!sceneNode->blending) myStipple(flareColor[3]);
+    if (!BZDBCache::blend) myStipple(flareColor[3]);
     glBegin(GL_QUADS);
     for (int i = 0; i < numFlares; i++) {
       // pick random direction in 3-space.  picking a random theta with
@@ -166,7 +165,7 @@ void			PhotonTorpedoSceneNode::PTRenderNode::render()
     }
     glEnd();
 
-    if (sceneNode->blending) {
+    if (BZDBCache::blend) {
       // draw corona
       glBegin(GL_QUAD_STRIP);
       myColor3fv(mainColor);

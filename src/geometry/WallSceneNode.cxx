@@ -287,7 +287,7 @@ void			WallSceneNode::notifyStyleChange(
   }
   builder.enableTextureReplace(BZDB.isTrue("_texturereplace"));
   builder.enableMaterial(lighted);
-  if (BZDB.isTrue("blend") && alpha != 1.0f) {
+  if (BZDBCache::blend && alpha != 1.0f) {
     builder.setBlending(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     builder.setStipple(1.0f);
   }

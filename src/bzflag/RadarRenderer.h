@@ -63,7 +63,6 @@ class RadarRenderer {
     int			w, h;
     float		ps;
     float		range;
-    bool		blend;
     bool		smooth;
     bool		jammed;
     double		decay;

@@ -48,7 +48,6 @@ RadarRenderer::RadarRenderer(const SceneRenderer&,
 {
   setControlColor();
 
-  blend = BZDB.isTrue("blend");
   smooth = true;
 #if defined(GLX_SAMPLES_SGIS) && defined(GLX_SGIS_multisample)
   GLint bits;
@@ -153,11 +152,11 @@ void			RadarRenderer::render(SceneRenderer& renderer,
     glScissor(ox + x - 2, oy + y - 2, w + 4, h + 4);
 
     // draw nice blended background
-    if (BZDB.isTrue("blend") && opacity < 1.0f)
+    if (BZDBCache::blend && opacity < 1.0f)
       glEnable(GL_BLEND);
     glColor4f(0.0f, 0.0f, 0.0f, opacity);
     glRectf((float) x, (float) y, (float)(x + w), (float)(y + h));
-    if (BZDB.isTrue("blend") && opacity < 1.0f)
+    if (BZDBCache::blend && opacity < 1.0f)
       glDisable(GL_BLEND);
   }
 

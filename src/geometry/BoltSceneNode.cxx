@@ -18,10 +18,10 @@
 #include "SceneRenderer.h"
 #include "OpenGLTexture.h"
 #include "StateDatabase.h"
+#include "BZDBCache.h"
 
 BoltSceneNode::BoltSceneNode(const GLfloat pos[3]) :
 				drawFlares(false),
-				blending(false),
 				texturing(false),
 				colorblind(false),
 				size(1.0f),
@@ -114,11 +114,10 @@ void			BoltSceneNode::addLight(
 void			BoltSceneNode::notifyStyleChange(
 				const SceneRenderer&)
 {
-  blending = BZDB.isTrue("blend");
-  texturing = BZDB.isTrue("texture") && blending;
+  texturing = BZDB.isTrue("texture") && BZDBCache::blend;
   OpenGLGStateBuilder builder(gstate);
   builder.enableTexture(texturing);
-  if (blending) {
+  if (BZDBCache::blend) {
     builder.setBlending(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     builder.setStipple(1.0f);
     builder.setAlphaFunc();
@@ -252,7 +251,7 @@ void			BoltSceneNode::BoltRenderNode::render()
 
       if (sceneNode->texturing) glDisable(GL_TEXTURE_2D);
       myColor4fv(flareColor);
-      if (!sceneNode->blending) myStipple(flareColor[3]);
+      if (!BZDBCache::blend) myStipple(flareColor[3]);
       glBegin(GL_QUADS);
       for (int i = 0; i < numFlares; i++) {
 	// pick random direction in 3-space.  picking a random theta with
@@ -287,7 +286,7 @@ void			BoltSceneNode::BoltRenderNode::render()
       glEnd();
     }
 
-    else if (sceneNode->blending) {
+    else if (BZDBCache::blend) {
       // draw corona
       glBegin(GL_QUAD_STRIP);
       myColor3fv(mainColor);

@@ -22,6 +22,7 @@
 #include "SceneRenderer.h"
 #include "OpenGLTexture.h"
 #include "StateDatabase.h"
+#include "BZDBCache.h"
 
 int	                flagChunks = 8;		// draw flag as 8 quads
 bool                    geoPole = false;        // draw the pole as quads
@@ -38,7 +39,6 @@ FlagSceneNode::FlagSceneNode(const GLfloat pos[3]) :
 				billboard(true),
 				angle(0.0f),
 				transparent(false),
-				blending(false),
 				texturing(false),
 				renderNode(this)
 {
@@ -115,11 +115,10 @@ void			FlagSceneNode::setTexture(const OpenGLTexture& texture)
 void			FlagSceneNode::notifyStyleChange(
 				const SceneRenderer&)
 {
-  blending = BZDB.isTrue("blend");
-  texturing = BZDB.isTrue("texture") && blending;
+  texturing = BZDB.isTrue("texture") && BZDBCache::blend;
   OpenGLGStateBuilder builder(gstate);
   builder.enableTexture(texturing);
-  if (blending && (transparent || texturing)) {
+  if (BZDBCache::blend && (transparent || texturing)) {
     builder.setBlending(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     builder.setStipple(1.0f);
   }
@@ -177,7 +176,7 @@ void			FlagSceneNode::FlagRenderNode::render()
     glTranslatef(sphere[0], sphere[1], sphere[2]);
 
     myColor4fv(sceneNode->color);
-    if (!sceneNode->blending &&
+    if (!BZDBCache::blend &&
 			(sceneNode->transparent || sceneNode->texturing))
       myStipple(sceneNode->color[3]);
     if (sceneNode->billboard) {
@@ -237,7 +236,7 @@ void			FlagSceneNode::FlagRenderNode::render()
     }
     if (sceneNode->texturing) glEnable(GL_TEXTURE_2D);
 
-    if (!sceneNode->blending && sceneNode->transparent)
+    if (!BZDBCache::blend && sceneNode->transparent)
       myStipple(0.5f);
 
   glPopMatrix();

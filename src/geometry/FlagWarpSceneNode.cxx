@@ -17,6 +17,7 @@
 #include "SceneRenderer.h"
 #include "ViewFrustum.h"
 #include "StateDatabase.h"
+#include "BZDBCache.h"
 
 const float		FlagWarpSize =	7.5;		// meters
 const GLfloat		FlagWarpAlpha = 0.5f;
@@ -68,7 +69,7 @@ void			FlagWarpSceneNode::notifyStyleChange(
 				const SceneRenderer&)
 {
   OpenGLGStateBuilder builder(gstate);
-  if (BZDB.isTrue("blend")) {
+  if (BZDBCache::blend) {
     builder.setBlending(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     builder.setStipple(1.0f);
   }

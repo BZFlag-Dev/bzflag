@@ -227,7 +227,7 @@ class TankSceneNode : public SceneNode {
     GLfloat		azimuth, elevation;
     GLfloat		baseRadius;
     bool		useOverride, hidden, invisible;
-    bool		transparent, sort, blending;
+    bool		transparent, sort;
     float		explodeFraction;
     bool		clip;
     GLfloat		colorOverride[4];

@@ -114,7 +114,6 @@ class SphereSceneNode : public SceneNode {
     GLfloat		radius;
     GLfloat		color[4];
     bool		transparent;
-    bool		blending;
     bool		lighting;
     OpenGLGState	gstate;
     SphereRenderNode	renderNode;

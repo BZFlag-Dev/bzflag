@@ -58,7 +58,6 @@ class FlagSceneNode : public SceneNode {
     float		ripple1, ripple2;
     GLfloat		color[4];
     bool		transparent;
-    bool		blending;
     bool		texturing;
     OpenGLGState	gstate;
     FlagRenderNode	renderNode;

@@ -17,6 +17,7 @@
 #include "EighthDimSceneNode.h"
 #include "SceneRenderer.h"
 #include "StateDatabase.h"
+#include "BZDBCache.h"
 
 EighthDimSceneNode::EighthDimSceneNode(int numPolygons) :
 				renderNode(this, numPolygons)
@@ -40,7 +41,7 @@ void			EighthDimSceneNode::notifyStyleChange(
 {
   OpenGLGStateBuilder builder(gstate);
   builder.setCulling(GL_NONE);
-  if (BZDB.isTrue("blend")) {
+  if (BZDBCache::blend) {
     builder.setBlending(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
   }
   else {

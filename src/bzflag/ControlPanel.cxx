@@ -26,6 +26,7 @@
 #include "Team.h"
 #include "OpenGLGState.h"
 #include "StateDatabase.h"
+#include "BZDBCache.h"
 
 void			printFatalError(const char* fmt, ...);
 
@@ -57,8 +58,6 @@ ControlPanel::ControlPanel(MainWindow& _mainWindow, SceneRenderer& renderer) :
   // make sure we're notified when MainWindow resizes or is exposed
   window.getWindow()->addResizeCallback(resizeCallback, this);
   window.getWindow()->addExposeCallback(exposeCallback, this);
-
-  blend = BZDB.isTrue("blend");
 
   // other initialization
   radarAreaPixels[0] = 0;
@@ -130,14 +129,14 @@ void			ControlPanel::render(SceneRenderer& renderer)
   OpenGLGState::resetState();
   if (renderer.getPanelOpacity() > 0.0f) {
   // nice blended messages background
-    if (BZDB.isTrue("blend") && renderer.getPanelOpacity() < 1.0f)
+    if (BZDBCache::blend && renderer.getPanelOpacity() < 1.0f)
       glEnable(GL_BLEND);
     glColor4f(0.0f, 0.0f, 0.0f, renderer.getPanelOpacity());
     glRecti(messageAreaPixels[0],
     messageAreaPixels[1],
     messageAreaPixels[0] + messageAreaPixels[2],
     messageAreaPixels[1] + messageAreaPixels[3]);
-    if (BZDB.isTrue("blend") && renderer.getPanelOpacity() < 1.0f)
+    if (BZDBCache::blend && renderer.getPanelOpacity() < 1.0f)
       glDisable(GL_BLEND);
   }
 

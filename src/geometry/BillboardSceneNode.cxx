@@ -18,6 +18,7 @@
 #include "SceneRenderer.h"
 #include "OpenGLTexture.h"
 #include "StateDatabase.h"
+#include "BZDBCache.h"
 
 BillboardSceneNode::BillboardSceneNode(const GLfloat pos[3]) :
 				show(false),
@@ -271,7 +272,7 @@ void			BillboardSceneNode::notifyStyleChange(
 				const SceneRenderer&)
 {
   show = hasTexture && BZDB.isTrue("texture") &&
-	(!hasAlpha || BZDB.isTrue("blend"));
+	(!hasAlpha || BZDBCache::blend);
   if (show) {
     OpenGLGStateBuilder builder(gstate);
     if (hasAlpha) {

@@ -53,7 +53,6 @@ class PhotonTorpedoSceneNode : public ShotSceneNode {
     friend class PTRenderNode;
 
   private:
-    bool		blending;
     OpenGLLight		light;
     OpenGLGState	gstate;
     PTRenderNode	renderNode;

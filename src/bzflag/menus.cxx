@@ -1688,7 +1688,7 @@ void			OptionsMenu::resize(int width, int height)
     HUDuiList* tex;
     int i = 1;
     ((HUDuiList*)list[i++])->setIndex(BZDB.isTrue("dither"));
-    ((HUDuiList*)list[i++])->setIndex(BZDB.isTrue("blend"));
+    ((HUDuiList*)list[i++])->setIndex(BZDBCache::blend);
     ((HUDuiList*)list[i++])->setIndex(BZDB.isTrue("smooth"));
     ((HUDuiList*)list[i++])->setIndex(BZDB.isTrue("lighting"));
     tex = (HUDuiList*)list[i++];

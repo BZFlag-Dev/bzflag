@@ -67,7 +67,6 @@ class ControlPanel {
   private:
     MainWindow&		window;
     bool		resized;
-    bool		blend;
     int			numBuffers;
     int			exposed;
     int			changedMessage;

@@ -16,6 +16,7 @@
 #include "SceneRenderer.h"
 #include "OpenGLTexture.h"
 #include "StateDatabase.h"
+#include "BZDBCache.h"
 
 const GLfloat		LaserRadius = 0.1f;
 
@@ -60,10 +61,10 @@ bool			LaserSceneNode::cull(const ViewFrustum&) const
 void			LaserSceneNode::notifyStyleChange(
 				const SceneRenderer&)
 {
-  texturing = BZDB.isTrue("texture") && BZDB.isTrue("blend");
+  texturing = BZDB.isTrue("texture") && BZDBCache::blend;
   OpenGLGStateBuilder builder(gstate);
   builder.enableTexture(texturing);
-  if (BZDB.isTrue("blend")) {
+  if (BZDBCache::blend) {
     // add in contribution from laser
     builder.setBlending(GL_SRC_ALPHA, GL_ONE);
     builder.setSmoothing(BZDB.isTrue("smooth"));

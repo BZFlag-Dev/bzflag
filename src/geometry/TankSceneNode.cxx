@@ -176,12 +176,11 @@ void			TankSceneNode::notifyStyleChange(
 				const SceneRenderer&)
 {
   sort = !BZDB.isTrue("zbuffer");
-  blending = BZDB.isTrue("blend");
   OpenGLGStateBuilder builder(gstate);
   builder.enableTexture(BZDB.isTrue("texture"));
   builder.enableMaterial(BZDB.isTrue("lighting"));
   builder.setSmoothing(BZDB.isTrue("smooth"));
-  if (blending && transparent) {
+  if (BZDBCache::blend && transparent) {
     builder.setBlending(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     builder.setStipple(1.0f);
   }
@@ -360,7 +359,7 @@ void			TankIDLSceneNode::notifyStyleChange(
 				const SceneRenderer&)
 {
   OpenGLGStateBuilder builder(gstate);
-  if (BZDB.isTrue("blend")) {
+  if (BZDBCache::blend) {
     builder.setBlending(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     builder.setStipple(1.0f);
   }
@@ -631,7 +630,7 @@ void			TankSceneNode::TankRenderNode::render()
   color = sceneNode->color;
   alpha = sceneNode->color[3];
 
-  if (!sceneNode->blending && sceneNode->transparent) myStipple(alpha);
+  if (!BZDBCache::blend && sceneNode->transparent) myStipple(alpha);
   if (sceneNode->clip) {
     glClipPlane(GL_CLIP_PLANE0, sceneNode->clipPlane);
     glEnable(GL_CLIP_PLANE0);
@@ -676,7 +675,7 @@ void			TankSceneNode::TankRenderNode::render()
   }
 
   glShadeModel(GL_FLAT);
-  if (!sceneNode->blending && sceneNode->transparent) myStipple(0.5f);
+  if (!BZDBCache::blend && sceneNode->transparent) myStipple(0.5f);
   if (sceneNode->clip) glDisable(GL_CLIP_PLANE0);
 }
 

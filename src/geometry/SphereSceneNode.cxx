@@ -16,6 +16,7 @@
 #include "ViewFrustum.h"
 #include "SceneRenderer.h"
 #include "StateDatabase.h"
+#include "BZDBCache.h"
 
 //
 // SphereSceneNode
@@ -26,7 +27,6 @@ const int		NumParts = SphereLowRes * SphereLowRes;
 
 SphereSceneNode::SphereSceneNode(const GLfloat pos[3], GLfloat _radius) :
 				transparent(false),
-				blending(false),
 				lighting(false),
 				renderNode(this),
 				parts(NULL)
@@ -106,10 +106,9 @@ SceneNode**		SphereSceneNode::getParts(int& numParts)
 void			SphereSceneNode::notifyStyleChange(
 				const SceneRenderer&)
 {
-  blending = BZDB.isTrue("blend");
   lighting = BZDB.isTrue("lighting");
   OpenGLGStateBuilder builder(gstate);
-  if (blending && transparent) {
+  if (BZDBCache::blend && transparent) {
     builder.setBlending(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     builder.setStipple(1.0f);
   }
@@ -135,7 +134,7 @@ void			SphereSceneNode::addRenderNodes(
 
   renderNode.setHighResolution(lod != 0);
 
-  if (blending) {
+  if (BZDBCache::blend) {
     const GLfloat* eye = view.getEye();
     const float azimuth = atan2f(sphere[1] - eye[1], eye[0] - sphere[0]);
     const int numSlices = (lod == 1) ? NumSlices : SphereLowRes;
@@ -232,7 +231,7 @@ void			SphereSceneNode::SphereRenderNode::render()
     glScalef(radius, radius, radius);
 
     myColor4fv(sceneNode->color);
-    if (!sceneNode->blending && sceneNode->transparent)
+    if (!BZDBCache::blend && sceneNode->transparent)
       myStipple(sceneNode->color[3]);
     if (sceneNode->lighting) {
       // draw with normals (normal is same as vertex!
@@ -306,7 +305,7 @@ void			SphereSceneNode::SphereRenderNode::render()
       }
     }
 
-    if (!sceneNode->blending && sceneNode->transparent)
+    if (!BZDBCache::blend && sceneNode->transparent)
       myStipple(0.5f);
 
   glPopMatrix();
@@ -399,7 +398,7 @@ void			SphereFragmentSceneNode::FragmentRenderNode::render()
     glScalef(pRadius, pRadius, pRadius);
 
     myColor4fv(sceneNode->color);
-    if (!sceneNode->blending && sceneNode->transparent)
+    if (!BZDBCache::blend && sceneNode->transparent)
       myStipple(sceneNode->color[3]);
     glBegin(GL_QUADS);
       if (sceneNode->lighting) {

@@ -28,6 +28,7 @@
 #include "texture.h"
 #include <string.h>
 #include "TextUtils.h"
+#include "BZDBCache.h"
 
 const GLint		SceneRenderer::SunLight = 0;	// also for the moon
 
@@ -733,7 +734,7 @@ void			SceneRenderer::render(
       glColor4f(color[0], color[1], color[2], density);
 
       // if low quality then use stipple -- it's probably much faster
-      if (BZDB.isTrue("blend") && (useQualityValue >= 2)) {
+      if (BZDBCache::blend && (useQualityValue >= 2)) {
 	glEnable(GL_BLEND);
 	glRectf(-1.0f, -1.0f, 1.0f, 1.0f);
 	glDisable(GL_BLEND);

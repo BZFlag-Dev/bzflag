@@ -78,7 +78,6 @@ class BoltSceneNode : public ShotSceneNode {
 
   private:
     bool		drawFlares;
-    bool		blending;
     bool		texturing;
     bool		colorblind;
     float		size;
