@@ -73,6 +73,7 @@ void	      DXJoystick::initJoystick(const char* joystickName)
   GUID thisDevice;
   for (unsigned int i = 0; i < devices.size(); i++) {
     if (joystickName = devices[i].tszProductName)
+		{
       thisDevice = devices[i].guidInstance;
       break;
     }
@@ -269,7 +270,7 @@ void	      DXJoystick::ffRumble(int count, float delay, float duration,
    * probably just feel like a constant pressure.
    */
   DICONSTANTFORCE constantForce;
-  constantForce.lMagnitude = DI_FFNOMINALMAX * ((strong_motor + weak_motor) / 2);
+  constantForce.lMagnitude = (LONG)(DI_FFNOMINALMAX * ((strong_motor + weak_motor) / 2.0f));
 
   /*
    * Build the actual effect
@@ -284,7 +285,7 @@ void	      DXJoystick::ffRumble(int count, float delay, float duration,
   // coordinate system really doesn't matter for rumbles but we need to specify it.
   effect.dwFlags = DIEFF_OBJECTOFFSETS | DIEFF_CARTESIAN;
   // duration
-  effect.dwDuration = duration * DI_SECONDS;
+  effect.dwDuration = (DWORD)(duration * DI_SECONDS);
   // defaults
   effect.dwSamplePeriod = 0;
   effect.dwGain = DI_FFNOMINALMAX;
@@ -301,7 +302,7 @@ void	      DXJoystick::ffRumble(int count, float delay, float duration,
   effect.cbTypeSpecificParams = sizeof(DICONSTANTFORCE);
   effect.lpvTypeSpecificParams = &constantForce;
   // start delay
-  effect.dwStartDelay = delay * DI_SECONDS;
+  effect.dwStartDelay = (DWORD)(delay * DI_SECONDS);
 
   // create the effect
   HRESULT success = device->CreateEffect(GUID_ConstantForce, &effect, &createdEffect, NULL);
