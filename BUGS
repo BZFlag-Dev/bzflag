@@ -3,9 +3,6 @@ recent bugs
 
 - Spawn code sometimes spawns you mid-air
 
-- Performing a saveworld of a map with a size set in the bzw doesn't save the
-  size
-
 - Robots that spawn on rooftop in MrAC's playground sometimes conveniently
   fall through to the bottom when their selected target is down below.
 
