@@ -2922,6 +2922,7 @@ static const char *usageString =
 "[-h] "
 "[-i interface] "
 "[-j] "
+"[-king] "
 "[-lagdrop <num>] "
 "[-lagwarn <time/ms>] "
 "[-mp {<count>|[<count>],[<count>],[<count>],[<count>],[<count>]}] "
