@@ -153,7 +153,7 @@ bool TextureFont::load(OSFile &file)
 
   // now wack off the extension;
   if (extension)
-    faceName.erase(faceName.size() - strlen(extension), faceName.size());
+    faceName.erase(faceName.size() - (strlen(extension) + 1), faceName.size());
 
   temp = strrchr(faceName.c_str(), '_');
 
@@ -165,7 +165,7 @@ bool TextureFont::load(OSFile &file)
   // faceName.erase(faceName.size()-strlen(temp),faceName.size());
 
   if (extension)
-    texture.erase(texture.size() - strlen(extension), texture.size());
+    texture.erase(texture.size() - (strlen(extension) + 1), texture.size());
 
   return (numberOfCharacters > 0);
 }
