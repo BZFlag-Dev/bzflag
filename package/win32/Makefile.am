@@ -1,4 +1,4 @@
-SUBDIRS = include nsis
+SUBDIRS = nsis
 
 EXTRA_DIST =	\
 	README.win32.html
