@@ -13,9 +13,9 @@
 #include "bzfs.h"
 #include "CaptureReplay.h"
 
-#ifndef _WIN32
+#ifndef _MSC_VER
 # include <dirent.h>
-#endif  // _WIN32
+#endif  // _MSC_VER
 
 
 // Type Definitions
@@ -23,7 +23,7 @@
 
 typedef uint16_t u16;
 
-#ifndef _MSC_VER
+#ifndef _WIN32
 typedef int64_t CRtime;
 #else
 typedef __int64 CRtime;
@@ -541,7 +541,7 @@ bool Replay::loadFile(int playerIndex, const char * filename)
 
 bool Replay::sendFileList(int playerIndex)
 {
-#ifndef _WIN32 //FIXME
+#ifndef _MSC_VER //FIXME
   DIR *dir;
   struct dirent *de;
   
@@ -556,8 +556,8 @@ bool Replay::sendFileList(int playerIndex)
   
   closedir (dir);
 #else
-  sendMessage (ServerPlayer, playerIndex, "/replay listfiles doesn't work on Windows yet");
-#endif // _WIN32
+  sendMessage (ServerPlayer, playerIndex, "/replay listfiles doesn't work on Windows VC builds yet");
+#endif // _MSC_VER
     
   return true;
 }
@@ -1147,8 +1147,7 @@ getCRtime ()
   now = (CRtime)tv.tv_sec * (CRtime)1000000;
   now = now + (CRtime)tv.tv_usec;
 #else //_WIN32
-  now = (CRtime)time(NULL) * (CRtime)1000000;
-  now = now + (CRtime)time(NULL);
+  now = (CRtime)timeGetTime() * (CRtime)1000;
 #endif //_WIN32
   return now;
 }
