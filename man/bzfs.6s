@@ -1317,11 +1317,11 @@ the object. An example would be:
 .br
     # faces must be convex polygons
 .br
-\fB    vertices\fR 1 2 4 3 5    # list of vertices
+\fB    vertices\fR 1 4 0 3 5   # list of vertices
 .br
-\fB    normals\fR 3 5 4 6 7     # list of normals
+\fB    normals\fR 2 6 0 4 7    # list of normals              (optional)
 .br
-\fB    texcoords\fR 10 3 2 4 9  # list of texture coordinates
+\fB    texcoords\fR 0 3 2 4 9  # list of texture coordinates  (optional)
 .br
 \fB    phydrv\fR example_phydrv  # assign a physics driver
 .br
