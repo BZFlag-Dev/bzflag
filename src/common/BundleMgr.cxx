@@ -116,22 +116,23 @@ bool BundleMgr::getLocaleList(std::vector<std::string> *list) {
     struct dirent 	*dirinfo = NULL;
     while ((dirinfo = readdir(localedir)) != NULL) {
       // dirinfo points to an item in the directory
-      if (dirinfo->d_namlen < 11) continue;	// Name is to short to contain bzflag_...po
+      const int length = strlen(dirinfo->d_name);
+      if (length < 11) continue;  // Name is to short to contain bzflag_...po
       if (strncmp(dirinfo->d_name, "bzflag_", 7) ||
-			strncmp(&(dirinfo->d_name[dirinfo->d_namlen - 3]), ".po", 3))
-		continue;	// The name doesnt start with bzflag_ or end with .po
+          strncmp(dirinfo->d_name + length - 3, ".po", 3))
+        continue;  // The name doesnt start with bzflag_ or end with .po
 
       // This is a (hopefully) valid bzflag locale file
       // Copy the filename and strip out the trailing .po
-      strncpy(fileName, &(dirinfo->d_name[7]), dirinfo->d_namlen - 7);
-      fileName[dirinfo->d_namlen - 7] = '\0';
+      strncpy(fileName, &(dirinfo->d_name[7]), length - 7);
+      fileName[length - 7] = '\0';
       end = strrchr(fileName, '.');
       if (end == NULL) continue;	// This should not be able to happen
       *end = '\0';
       
       // fileName should now contain our locale name
-	  if (strcmp(fileName, "xx") != 0)	// Dont add the xx locale
-		  list->push_back(fileName);
+      if (strcmp(fileName, "xx") != 0)	// Dont add the xx locale
+        list->push_back(fileName);
     }
 
     closedir(localedir);
