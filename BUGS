@@ -3,6 +3,9 @@ must fix for 1.10.4 patch release
 
 - No blocking bug
 
+- MQ changes color not texture, when using a color texture, blends both color and texture (JM).
+
+
 recent bugs
 ------------
 
