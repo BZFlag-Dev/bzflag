@@ -49,10 +49,6 @@
 #include <sys/param.h>
 #endif
 
-#if !defined HAVE_SOCKLEN_T
-typedef int socklen_t;
-#endif
-
 #if defined HAVE_STRICMP
 #define strcasecmp _stricmp
 #define strncasecmp _strnicmp
