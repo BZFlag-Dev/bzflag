@@ -104,7 +104,7 @@ This option can be used multiple times to define a multiline message.
 .B -autoTeam
 Automatically assign players to teams when they connect so that there
 are an equal number of players on all available teams.  Players are
-placed on teams that have the fewest players, otherrwise they will be
+placed on teams that have the fewest players, otherwise they will be
 placed on the weakest team.  Weakest team is the team with the lowest
 combined kill ratio.
 .TP
@@ -399,7 +399,7 @@ joins. With \fB-timemanual\fR, the countdown has to be started manually
 using the \fI/countdown\fR command. This is useful for matches.
 .TP
 .B -tk
-Changes the default behaviour where a player dies when he kills a teammate.
+Changes the default behavior where a player dies when he kills a teammate.
 When using this option, he will just get a -1 score penalty for the kill but
 stay alive.
 .TP
@@ -413,7 +413,7 @@ Load group associations from file
 \fB-vars\fI file\fR
 Loads values for game configurable variables from \fIfile\fR. Entries are
 one per line in the form: \fBset variable value\fR. For a list of variables
-that are configurable, in the the BZFlag client, send a message with
+that are configurable, in the BZFlag client, send a message with
 \fI/set\fR as the text.
 .TP
 .B -version
