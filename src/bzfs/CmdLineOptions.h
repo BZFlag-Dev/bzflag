@@ -58,7 +58,7 @@ struct CmdLineOptions
     flagsOnBuildings(false), oneGameOnly(false), timeManualStart(false), randomHeights(false), useTeleporters(false),
     teamKillerDies(true), printScore(false), publicizeServer(false), publicizedAddressGiven(false),
     filterFilename(""), filterCallsigns(false), filterChat(false), filterSimple(false),
-    voteTime(60), vetoTime(20), votesRequired(3), votePercentage(50.1), voteRepeatTime(300),
+    voteTime(60), vetoTime(20), votesRequired(3), votePercentage(50.1f), voteRepeatTime(300),
     debug(0)
   {
     int i;

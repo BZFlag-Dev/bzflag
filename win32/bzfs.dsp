@@ -107,11 +107,23 @@ SOURCE=..\src\bzfs\bzfs.cxx
 # End Source File
 # Begin Source File
 
+SOURCE=..\src\bzfs\CmdLineOptions.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\src\bzfs\FlagInfo.cxx
+# End Source File
+# Begin Source File
+
 SOURCE=..\src\bzfs\Permissions.cxx
 # End Source File
 # Begin Source File
 
 SOURCE=..\src\bzfs\TextChunkManager.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\src\bzfs\VotingPoll.cxx
 # End Source File
 # Begin Source File
 
@@ -147,11 +159,19 @@ SOURCE=..\include\CallbackList.h
 # End Source File
 # Begin Source File
 
+SOURCE=..\src\bzfs\CmdLineOptions.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\include\common.h
 # End Source File
 # Begin Source File
 
 SOURCE=..\include\Flag.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\src\bzfs\FlagInfo.h
 # End Source File
 # Begin Source File
 
@@ -208,6 +228,10 @@ SOURCE=..\include\TimeBomb.h
 # Begin Source File
 
 SOURCE=..\include\TimeKeeper.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\src\bzfs\VotingPoll.h
 # End Source File
 # Begin Source File
 

@@ -154,6 +154,10 @@ SOURCE=..\src\common\TimeKeeper.cxx
 # End Source File
 # Begin Source File
 
+SOURCE=..\src\common\VotingBooth.cxx
+# End Source File
+# Begin Source File
+
 SOURCE=..\src\common\WordFilter.cxx
 # End Source File
 # End Group
@@ -259,6 +263,10 @@ SOURCE=..\include\TimeBomb.h
 # Begin Source File
 
 SOURCE=..\include\TimeKeeper.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\include\VotingBooth.h
 # End Source File
 # Begin Source File
 

@@ -4868,9 +4868,9 @@ static void parseCommand(const char *message, int t)
 	for (unsigned int i=0; (i < messageLength - 5 - nextChar) && (i < 31); i++) {
 	  answer[i] = tolower(*(message + 5 + nextChar + i));
 	}
-	for (int i=strlen(answer)-1; i >= 0; i--) {
-	  if (!isAlphanumeric(answer[i])) {
-	    answer[i] = '\0';
+	for (int a=strlen(answer)-1; a >= 0; a--) {
+	  if (!isAlphanumeric(answer[a])) {
+	    answer[a] = '\0';
 	  }
 	}
 	
