@@ -643,12 +643,13 @@ float StateDatabase::evaluate(Expression e) const
 			if (evaluationStack.size() == 0) {
 				// syntax error
 			}
-			lvalue = evaluationStack.top(); evaluationStack.pop();
+			// rvalue and lvalue are switched, since we're reversed
+			rvalue = evaluationStack.top(); evaluationStack.pop();
 			if (evaluationStack.size() == 0) {
 				unary = true; // syntax error or unary operator
 			}
 			if (!unary) {
-				rvalue = evaluationStack.top(); evaluationStack.pop();
+				lvalue = evaluationStack.top(); evaluationStack.pop();
 			}
 			switch(i->getOperator()) {
 			case ExpressionToken::add:
@@ -657,7 +658,7 @@ float StateDatabase::evaluate(Expression e) const
 				break;
 			case ExpressionToken::subtract:
 				if (unary)
-					tok.setNumber(-lvalue.getNumber());
+					tok.setNumber(-rvalue.getNumber());
 				else
 					tok.setNumber(lvalue.getNumber() - rvalue.getNumber());
 				evaluationStack.push(tok);
