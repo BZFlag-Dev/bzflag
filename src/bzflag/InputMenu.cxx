@@ -53,11 +53,12 @@ InputMenu::InputMenu()
   options->push_back(std::string("off"));
   std::vector<std::string> joystickDevices;
   getMainWindow()->getJoyDevices(joystickDevices);
-  for (int i = 0; i < (int)joystickDevices.size(); i++) {
+  int i;
+  for (i = 0; i < (int)joystickDevices.size(); i++) {
     options->push_back(joystickDevices[i]);
   }
   joystickDevices.erase(joystickDevices.begin(), joystickDevices.end());
-  for (int i = 0; i < (int)options->size(); i++) {
+  for (i = 0; i < (int)options->size(); i++) {
     if ((*options)[i].compare(currentJoystickDevice) == 0) {
       option->setIndex(i);
       break;

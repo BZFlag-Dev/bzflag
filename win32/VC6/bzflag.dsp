@@ -193,6 +193,10 @@ SOURCE=..\..\src\bzflag\HelpMenu.cxx
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\src\bzflag\InputMenu.cxx
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\src\bzflag\HUDDialog.cxx
 # End Source File
 # Begin Source File
@@ -398,6 +402,10 @@ SOURCE=..\..\src\bzflag\HelpMenu.h
 # Begin Source File
 
 SOURCE=..\..\src\bzflag\HUDDialog.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\bzflag\InputMenu.h
 # End Source File
 # Begin Source File
 
