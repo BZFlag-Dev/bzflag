@@ -542,6 +542,9 @@ msgstr "t3@m $c0r3"
 msgid "Player"
 msgstr "p1@y3r"
 
+msgid "Locale:"
+msgstr "10c@13:"
+
 # Super Flags
 
 msgid "High Speed"

@@ -565,6 +565,9 @@ msgstr ""
 #msgid "Player"
 #msgstr ""
 
+#msgid "Locale:"
+#msgstr ""
+
 # Super Flags
 
 msgid "High Speed"
