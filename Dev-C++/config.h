@@ -42,10 +42,10 @@
 /* #undef DEBUG_RENDERING */
 
 /* Uses Kerberos for authentication */
-#define HAVE_KRB5 1
+//#define HAVE_KRB5 1 //define if you have this library; it is not pre-packaged with mingw32
 
 /* Use libcurl for the MOTD */
-#define HAVE_CURL 1
+//#define HAVE_CURL 1 //define if you have this library; it is not pre-packaged with mingw32
 
 /* Enabling Robots */
 #define ROBOT 1
