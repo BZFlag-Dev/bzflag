@@ -375,6 +375,30 @@ inline int firstNonalphabetic(const std::string &input, unsigned short int max=4
 }
 
 
+/** url-encodes a string
+ */
+std::string url_encode(std::string text)
+{
+  char c;
+  char hex[5];
+  int i,j;
+  std::string destination;
+  for (i=0;  i < text.size(); i++) {
+    c = text[i];
+    if (isAlphanumeric(c)) {
+      destination+=c;
+    } else if (isSpace(c)) {
+      destination+='+';
+    } else {
+      destination+='%';
+      sprintf(hex, "%-2.2X", c);
+      destination.append(hex);
+    }
+  }
+  return destination;
+}
+
+
 #endif // __TEXTUTILS_H__
 
 
