@@ -99,7 +99,8 @@ void FontManager::rebuild(void)	// rebuild all the lists
   while (faceItr != fontFaces.end()) {
     FontSizeMap::iterator itr = faceItr->begin();
     while (itr != faceItr->end()) {
-      itr->second->build();
+      if (itr->second->isBuilt())
+	itr->second->build();
       itr++;
     }
     faceItr++;

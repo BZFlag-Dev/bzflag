@@ -43,9 +43,11 @@ public:
   int getSize(void);
   const char* getFaceName(void);
 
-  bool load(OSFile &ile);
+  bool load(OSFile &file);
 
   void build(void);
+
+  bool isBuilt(void) {return !(textureID == -1);};
 
   void drawString(float scale, GLfloat color[3], const char *str);
 
