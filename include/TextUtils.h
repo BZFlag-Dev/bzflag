@@ -20,6 +20,7 @@
 #include <algorithm>
 #include <common.h>
 #include <string>
+#include <sstream>
 #include <vector>
 
 /** The string utility class provides basic functionality to parse and

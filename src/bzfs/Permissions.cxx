@@ -20,6 +20,7 @@
 /* system implementation headers */
 #include <string>
 #include <fstream>
+#include <sstream>
 #include <stdlib.h>
 
 /* common implementation headers */
