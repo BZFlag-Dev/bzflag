@@ -2836,14 +2836,36 @@ static void shotFired(int playerIndex, void *buf, int len)
   // verify player flag
   if ((firingInfo.flagType != Flags::Null)
       && (firingInfo.flagType != fInfo.flag.type)) {
-    DEBUG2("Player %s [%d] shot flag mismatch %s %s\n", shooter.getCallSign(),
-	   playerIndex, firingInfo.flagType->flagAbbv,
-	   fInfo.flag.type->flagAbbv);
-    firingInfo.flagType = Flags::Null;
-    firingInfo.shot.vel[0] = shotSpeed * cos(lastState[playerIndex].azimuth);
-    firingInfo.shot.vel[1] = shotSpeed * sin(lastState[playerIndex].azimuth);
-    firingInfo.shot.vel[2] = 0.0f;
-    repack = true;
+    std::string fireFlag = "unknown";
+    std::string holdFlag = "unknown";
+    if (firingInfo.flagType) {
+      fireFlag = firingInfo.flagType->flagAbbv;
+    }
+    if (fInfo.flag.type) {
+      if (fInfo.flag.type == Flags::Null) {
+	holdFlag = "none";
+      } else {
+	holdFlag = fInfo.flag.type->flagAbbv;
+      }
+    }
+
+    // probably a cheater using wrong shots.. exception for thief since they steal someone elses
+    if (firingInfo.flagType != Flags::Thief) {
+
+      DEBUG2("Player %s [%d] shot flag mismatch %s %s\n", shooter.getCallSign(),
+	     playerIndex, fireFlag.c_str(), holdFlag.c_str());
+      firingInfo.flagType = Flags::Null;
+      firingInfo.shot.vel[0] = shotSpeed * cos(lastState[playerIndex].azimuth);
+      firingInfo.shot.vel[1] = shotSpeed * sin(lastState[playerIndex].azimuth);
+      firingInfo.shot.vel[2] = 0.0f;
+      repack = true;
+
+      // bye bye supposed cheater
+      DEBUG1("Kicking Player %s [%d] Player using wrong shots\n", shooter.getCallSign(), playerIndex);
+      sendMessage(ServerPlayer, playerIndex, "Autokick: Your shots do not to match the expected shot type.");
+      removePlayer(playerIndex, "Player shot mismatch");
+      return;
+    }
   }
 
   // verify shot number

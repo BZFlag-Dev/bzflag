@@ -4,6 +4,7 @@
 BZFlag 1.12.0  (was 1.11.x)
 ---------------------------
 
+* Added shot mismatch cheat auto-kicking - Julio Jimenez
 * Improved double-jump response - Dave Rodgers
 * Added physics drivers - Dave Rodgers
 * Unlimited altimeter height - Steve Krenzel
