@@ -70,9 +70,9 @@ f 444 demos demos usr/freeware/share/bzflag/wall.rgb ./data/wall.rgb TEXTURES
 f 444 demos demos usr/freeware/share/bzflag/ybolt.rgb ./data/ybolt.rgb TEXTURES
 f 444 demos demos usr/freeware/share/bzflag/ylaser.rgb ./data/ylaser.rgb TEXTURES
 f 444 demos demos usr/freeware/share/bzflag/ytbolt.rgb ./data/ytbolt.rgb TEXTURES
-f 444 root sys usr/lib/filetype/install/Bzflag.ftr ./data/Bzflag.ftr DESKTOP exitop("cd /usr/lib/filetype; make")
-f 444 root sys usr/lib/filetype/install/iconlib/Bzflag.fti ./data/Bzflag.fti DESKTOP
-f 444 root sys usr/lib/filetype/install/iconlib/Bzfs.fti ./data/Bzfs.fti DESKTOP
+f 444 root sys usr/lib/filetype/install/bzflag.ftr ./package/irix/bzflag.ftr DESKTOP exitop("cd /usr/lib/filetype; make")
+f 444 root sys usr/lib/filetype/install/iconlib/bzflag.fti ./package/irix/bzflag.fti DESKTOP
+f 444 root sys usr/lib/filetype/install/iconlib/bzfs.fti ./package/irix/bzfs.fti DESKTOP
 f 444 root sys usr/share/catman/local/cat6/bzflag.z ./man/bzflag.z MAN
 f 444 root sys usr/share/catman/local/cat6/bzfls.z ./man/bzfls.z MAN
 f 444 root sys usr/share/catman/local/cat6/bzfrelay.z ./man/bzfrelay.z MAN

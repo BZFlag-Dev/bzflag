@@ -16,11 +16,11 @@ build-stamp:
 	# compile for i486 cause GL on i386 is hopeless
 	echo DEB_BUILD_OPTIONS=$(DEB_BUILD_OPTIONS)
 ifneq (,$(findstring debug,$(DEB_BUILD_OPTIONS)))
-	./configure --enable-debug --prefix=/usr
+	./configure --quiet --prefix=/usr --enable-debug
 else
 	case $(DEB_BUILD_ARCH) in \
-		i386) ./configure --prefix=/usr --host=i486-pc-linux-gnu ;; \
-		*) ./configure --prefix=/usr ;; \
+		i386) ./configure --quiet --prefix=/usr --host=i486-pc-linux-gnu ;; \
+		*) ./configure --quiet --prefix=/usr ;; \
 	esac
 endif
 
@@ -34,7 +34,7 @@ clean:
 	rm -f build-stamp
 
 	# Add here commands to clean up after the build process.
-	-$(MAKE) distclean
+	-$(MAKE) clean
 
 	dh_clean
 
@@ -95,8 +95,8 @@ bzflag-server: build
 	dh_clean -k
 	dh_installdirs -p$@
 	# copy files into debian/$@/ here
-	cp -p man/bzfs.6 man/bzfrelay.6 man/bzfls.6 debian/$@/usr/share/man/man6
-	cp -p src/bzfs/bzfs src/bzfrelay/bzfrelay src/bzfls/bzfls misc/bzfquery.pl debian/$@/usr/games
+	cp -p man/bzfs.6 man/bzadmin.6 debian/$@/usr/share/man/man6
+	cp -p src/bzfs/bzfs src/bzadmin/bzadmin misc/bzfquery.pl debian/$@/usr/games
 	chmod a+rx debian/$@/usr/games/bzfquery.pl
 #	dh_installdebconf -p$@
 	dh_installdocs -p$@

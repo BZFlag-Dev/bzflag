@@ -11,7 +11,7 @@ TYPE Bzflag
 	} else {
 	    include("../iconlib/generic.exec.closed.fti");
 	}
-	include("iconlib/Bzflag.fti");
+	include("iconlib/bzflag.fti");
     }
 
 TYPE Bzfs
@@ -28,5 +28,5 @@ TYPE Bzfs
 	} else {
 	    include("../iconlib/generic.exec.closed.fti");
 	}
-	include("iconlib/Bzfs.fti");
+	include("iconlib/bzfs.fti");
     }
