@@ -90,6 +90,11 @@
 						<xsl:value-of select="."/>
 					</td></tr>
 				</xsl:for-each>
+				<xsl:for-each select="screen">
+					<tr><td><pre>
+						<xsl:value-of select="."/>
+					</pre></td></tr>
+				</xsl:for-each>
 			</table>
 		</xsl:element>
 	</xsl:for-each>
