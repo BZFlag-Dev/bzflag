@@ -1,6 +1,9 @@
 recent bugs
 ------------
 
+- pressing SHIFT+F[1-4] results in Console text collapsing into a
+  single line.
+
 - CTF team capture results in dead players respawning mid-map instead
   of on the base.
 
