@@ -7,8 +7,8 @@
 #         <fj@tuxee.net>
 #         <fred@jolliton.com>
 #
-# This script can be used either as module,
-# or directly from the command line.
+# This script can be used either as a module,
+# a CGI or directly from the command line.
 #
 # Example of use:
 #
@@ -28,8 +28,27 @@
 #
 
 import sys
+import cgi
+import os
 import struct
 import socket
+
+#
+# If true, display detailled HTML output when exception occur
+#
+enableCgiTb = True
+
+#
+# If true, then allow ?host=<hostname>&port=<port> on URL
+# instead of using only defaultHostname and defaultPort.
+#
+allowCgiParameters = True
+
+#
+# IMPORTANT: Change value here for CGI
+#
+defaultHostname = 'localhost'
+defaultPort = 5154
 
 def s2n( s ) :
 
@@ -173,35 +192,17 @@ class Server :
 			playersInfo.append( playerInfo )
 		return teamsInfo , playersInfo
 
-def usage() :
-
-	print '''Usage: bzfquery.py [OPTIONS] [hostname [port]]
-
- -h, --help  Display this help.
-
-Report bugs to <bzflag@tuxee.net>.'''
-
-def main() :
-
-	import getopt
-	options , parameters = getopt.getopt( sys.argv[ 1 : ] , 'h' , ( 'help' , ) )
-	hostname , port = 'localhost' , 5154
-
-	if len( parameters ) > 2 :
-		usage()
-		sys.exit( 0 )
-	if 1 <= len( parameters ) <= 2 :
-		hostname = parameters[ 0 ]
-	if len( parameters ) == 2 :
-		port = int( parameters[ 1 ] )
+def getAndPrintStat( hostname , port ) :
 
 	s = Server( hostname , port )
+	game = s.queryGame()
 
+	if os.environ.has_key( 'QUERY_STRING' ) :
+		print 'Content-Type: text/plain\n'
 	print 'Statistics of the BZFlag server %s (port %s)' % ( hostname , port )
 	print
 	print '--[ GAME ]' + '-' * 40
 	print
-	game = s.queryGame()
 	print 'Style:' , ' '.join( game[ 'style' ] )
 	print
 	print 'Max players: %s   Max shots: %s' % ( game[ 'maxPlayers' ] , game[ 'maxShots' ] )
@@ -244,10 +245,53 @@ def main() :
 			player[ 'sign' ] , player[ 'team' ] , \
 			player[ 'score' ] , player[ 'won' ] , player[ 'lost' ] , \
 			player[ 'email' ]
-		type = playerType[ player[ 'tks' ] ]
+		try :
+			type = playerType[ player[ 'tks' ] ]
+		except :
+			type = 'Unknown player type %s' % player.get( 'tks' )
 		name = sign
 		if email : name = name + ' <%s>' % email
 		print '%-8s %5d %5d %5d %-10s %s' % ( team , score , won , lost , type , name )
+
+def usage() :
+
+	print '''Usage: bzfquery.py [OPTIONS] [hostname [port]]
+
+ -h, --help  Display this help.
+
+Report bugs to <bzflag@tuxee.net>.'''
+
+def main() :
+
+	hostname , port = defaultHostname , defaultPort
+	if os.environ.has_key( 'QUERY_STRING' ) :
+		if enableCgiTb : import cgitb; cgitb.enable()
+
+		if allowCgiParameters :
+			form = cgi.FormContentDict()
+			hostname = form.get( 'host' , [ defaultHostname ] )[ 0 ]
+			try :
+				port = int( form.get( 'port' , [ defaultPort ] )[ 0 ] )
+			except :
+				pass
+	else :
+		import getopt
+		options , parameters = getopt.getopt( sys.argv[ 1 : ] , 'h' , ( 'help' , ) )
+
+		for option , argument in options :
+			if option in [ '-h' , '--help' ] :
+				usage()
+				sys.exit( 0 )
+	
+		if len( parameters ) > 2 :
+			usage()
+			sys.exit( 0 )
+		if 1 <= len( parameters ) <= 2 :
+			hostname = parameters[ 0 ]
+		if len( parameters ) == 2 :
+			port = int( parameters[ 1 ] )
+
+	getAndPrintStat( hostname , port )
 
 if __name__ == '__main__' :
 	main()
