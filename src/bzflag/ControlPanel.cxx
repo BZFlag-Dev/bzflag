@@ -358,11 +358,15 @@ void			ControlPanel::render(SceneRenderer& renderer)
     if (lines > 0) {
       const float size = std::max(float(maxLines) / lines, 0.02f);
       const float offset = float(messagesOffset) / lines;
+      const int maxTop = messageAreaPixels[1] + messageAreaPixels[3];
+      int top = messageAreaPixels[1] + int((offset + size) * (float)messageAreaPixels[3]);
+      if (top > maxTop) {
+        top = maxTop;
+      }
       glColor3f(0.7f, 0.7f, 0.7f);
       glRecti(messageAreaPixels[0],
-              messageAreaPixels[1] + int(offset * messageAreaPixels[3]),
-              messageAreaPixels[0] + 2,
-              messageAreaPixels[1] + int((offset + size) * messageAreaPixels[3]));
+              messageAreaPixels[1] + int(offset * (float)messageAreaPixels[3]),
+              messageAreaPixels[0] + 2, top);
     }
   }
 
