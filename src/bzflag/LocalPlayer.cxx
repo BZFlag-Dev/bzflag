@@ -825,8 +825,8 @@ bool			LocalPlayer::doEndShot(
 void			LocalPlayer::jump()
 {
   // can't jump unless on the ground or a building
-//  if (location != OnGround && location != OnBuilding)
- //   return;
+  if (location != OnGround && location != OnBuilding)
+    return;
 
   // can only jump with a jumping flag or if jumping is allowed for all
   if (getFlag() != JumpingFlag && !World::getWorld()->allowJumping())
