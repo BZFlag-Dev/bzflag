@@ -68,6 +68,7 @@ private:
 
   /* who and what are being voted on, and who asked for the poll */
   std::string _pollee;
+  std::string _polleeIP;
   pollAction_t _action;
   std::string _pollRequestor;
   
@@ -121,6 +122,11 @@ private:
     */
   inline std::string getPollPlayer(void) const;
 
+  /** return a string representing the IP of the player being voted
+    * upon, this is mostly useful for placing a ban.
+    */
+  inline std::string getPollPlayerIP(void) const;
+
   /** return a string representing the player who requested the poll
     */
   inline std::string getPollRequestor(void) const;
@@ -128,13 +134,13 @@ private:
 
   /** attempt to activate/open a poll
    */
-  bool poll(std::string player, std::string playerRequesting, pollAction_t action=POLL_BAN_PLAYER);
+  bool poll(std::string player, std::string playerRequesting, pollAction_t action=POLL_BAN_PLAYER, std::string playerIP="");
   /** convenience method to attempt to start a kick poll
     */
   bool pollToKick(std::string player, std::string playerRequesting);
   /** convenience method to attempt to start a ban poll
     */
-  bool pollToBan(std::string player, std::string playerRequesting);
+  bool pollToBan(std::string player, std::string playerRequesting, std::string playerIP);
   
   /** halt/close the poll if it is open
    */
@@ -185,6 +191,7 @@ inline VotingArbiter::VotingArbiter(unsigned short int voteTime=60,
 {
   _startTime = TimeKeeper::getNullTime();
   _pollee = "nobody";
+  _polleeIP = "";
   _action = UNDEFINED;
   _pollRequestor = "nobody";
   return;
@@ -200,6 +207,7 @@ inline VotingArbiter::VotingArbiter(const VotingArbiter& arbiter)
     _votePercentage(arbiter._votePercentage),
     _voteRepeatTime(arbiter._voteRepeatTime),
     _pollee(arbiter._pollee),
+    _polleeIP(arbiter._polleeIP),
     _action(arbiter._action),
     _pollRequestor(arbiter._pollRequestor)
 {
@@ -271,6 +279,11 @@ inline std::string VotingArbiter::getPollAction(void) const
 inline std::string VotingArbiter::getPollPlayer(void) const
 {
   return _pollee.size() == 0 ? "nobody" : _pollee;
+}
+
+inline std::string VotingArbiter::getPollPlayerIP(void) const
+{
+  return _polleeIP.size() == 0 ? "" : _polleeIP;
 }
 
 inline std::string VotingArbiter::getPollRequestor(void) const

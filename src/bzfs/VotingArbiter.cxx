@@ -58,12 +58,13 @@ bool VotingArbiter::forgetPoll(void)
   }
   _startTime = TimeKeeper::getNullTime();
   _pollee = "nobody";
+  _polleeIP = "";
   _action = UNDEFINED;
   _pollRequestor = "nobody";
   return true;
 }
 
-bool VotingArbiter::poll(std::string player, std::string playerRequesting, pollAction_t action) 
+bool VotingArbiter::poll(std::string player, std::string playerRequesting, pollAction_t action, std::string playerIP) 
 {
   poller_t p;
   char message[256];
@@ -101,6 +102,7 @@ bool VotingArbiter::poll(std::string player, std::string playerRequesting, pollA
   }
   _votingBooth = YesNoVotingBooth(message);
   _pollee = player;
+  _polleeIP = playerIP;
   _action = action;
   _pollRequestor = playerRequesting;
 
@@ -115,9 +117,9 @@ bool VotingArbiter::pollToKick(std::string player, std::string playerRequesting)
   return (this->poll(player, playerRequesting, POLL_KICK_PLAYER));
 }
 
-bool VotingArbiter::pollToBan(std::string player, std::string playerRequesting)
+bool VotingArbiter::pollToBan(std::string player, std::string playerRequesting, std::string playerIP)
 {
-  return (this->poll(player, playerRequesting, POLL_BAN_PLAYER));
+  return (this->poll(player, playerRequesting, POLL_BAN_PLAYER, playerIP));
 }
 
 bool VotingArbiter::closePoll(void)
