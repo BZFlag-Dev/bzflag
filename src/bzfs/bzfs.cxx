@@ -24,6 +24,7 @@ static const char copyright[] = "Copyright (c) 1993 - 2003 Tim Riker";
 
 #define SERVERLOGINMSG true
 
+const int FakeRogueCount = 1;
 const int MaxPlayers = 200;
 const int MaxShots = 10;
 const int udpBufSize = 128000;
@@ -2819,14 +2820,14 @@ static void sendMessageToListServerForReal(int index)
     // update player counts in ping reply.  pretend there are no players
     // if the game is over.
     if (gameOver) {
-      pingReply.rogueCount = team[0].team.activeSize;
+      pingReply.rogueCount = team[0].team.activeSize + FakeRogueCount;
       pingReply.redCount = team[1].team.activeSize;
       pingReply.greenCount = team[2].team.activeSize;
       pingReply.blueCount = team[3].team.activeSize;
       pingReply.purpleCount = team[4].team.activeSize;
     }
     else {
-      pingReply.rogueCount = 0;
+      pingReply.rogueCount = FakeRogueCount;
       pingReply.redCount = 0;
       pingReply.greenCount = 0;
       pingReply.blueCount = 0;
@@ -2853,11 +2854,13 @@ static void sendMessageToListServerForReal(int index)
   else if (strcmp(link.nextMessage, "SETNUM") == 0) {
     // pretend there are no players if the game is over
     if (gameOver)
-      sprintf(msg, "%s %s 0 0 0 0 0\n\n", link.nextMessage, clOptions.publicizedAddress.c_str());
+      sprintf(msg, "%s %s %d 0 0 0 0\n\n", link.nextMessage,
+	  clOptions.publicizedAddress.c_str(),
+	  FakeRogueCount);
     else
       sprintf(msg, "%s %s %d %d %d %d %d\n\n", link.nextMessage,
 	  clOptions.publicizedAddress.c_str(),
-	  team[0].team.activeSize,
+	  team[0].team.activeSize + FakeRogueCount,
 	  team[1].team.activeSize,
 	  team[2].team.activeSize,
 	  team[3].team.activeSize,
@@ -4311,7 +4314,7 @@ static void respondToPing(bool broadcast = false)
 
   // reply with current game info on pingOutSocket or pingBcastSocket
   pingReply.sourceAddr = Address(addr);
-  pingReply.rogueCount = team[0].team.activeSize;
+  pingReply.rogueCount = team[0].team.activeSize + FakeRogueCount;
   pingReply.redCount = team[1].team.activeSize;
   pingReply.greenCount = team[2].team.activeSize;
   pingReply.blueCount = team[3].team.activeSize;
@@ -4967,7 +4970,7 @@ static void sendQueryGame(int playerIndex)
   buf = nboPackUShort(bufStart, pingReply.gameStyle);
   buf = nboPackUShort(buf, pingReply.maxPlayers);
   buf = nboPackUShort(buf, pingReply.maxShots);
-  buf = nboPackUShort(buf, team[0].team.activeSize);
+  buf = nboPackUShort(buf, team[0].team.activeSize + FakeRogueCount);
   buf = nboPackUShort(buf, team[1].team.activeSize);
   buf = nboPackUShort(buf, team[2].team.activeSize);
   buf = nboPackUShort(buf, team[3].team.activeSize);
