@@ -24,12 +24,12 @@
 
 class MediaFile {
 public:
-  // close the media file.  this does *not* destroy the stream.
+  /** Close the media file.  This does *not* destroy the stream. */
   virtual ~MediaFile();
 
-  // read an image file.  use delete[] to release the returned
-  // image.  returns NULL on failure.  images are stored RGBA,
-  // left to right, bottom to top.
+  /** Read an image file.  use delete[] to release the returned
+      image.  Returns NULL on failure.  Images are stored RGBA,
+      left to right, bottom to top. */
   static unsigned char* readImage(const std::string& filename,
 				  int* width, int* height);
 
@@ -42,30 +42,46 @@ public:
 protected:
   MediaFile(std::istream*);
 
-  // get the stream
-  std::istream*			getStream() const { return stream; }
+  /** Get the stream. */
+  std::istream* getStream() const { return stream; }
 
-  // return true if the stream is in a readable state
-  bool				isOkay() const;
+  /** Return true if the stream is in a readable state. */
+  bool isOkay() const;
 
-  // utility method to read raw data
-  void				readRaw(void* buffer, uint32_t bytes);
+  /** Utility method to read raw data. */
+  void readRaw(void* buffer, uint32_t bytes);
 
-  // utility method to skip data
-  void				skip(uint32_t bytes);
+  /** Utility method to skip data. */
+  void skip(uint32_t bytes);
 
-  // utility methods to read 2 and 4 byte number into host byte order
-  uint16_t			read16LE();
-  uint16_t			read16BE();
-  uint32_t			read32LE();
-  uint32_t			read32BE();
+  /** Utility method to read a 2 byte little-endian number into host byte 
+      order. */
+  uint16_t read16LE();
+  /** Utility method to read a 2 byte big-endian number into host byte 
+      order. */
+  uint16_t read16BE();
+  /** Utility method to read a 4 byte little-endian number into host byte
+      order. */
+  uint32_t read32LE();
+  /** Utility method to read a 4 byte big-endian number into host byte 
+      order. */
+  uint32_t read32BE();
 
-  // utility methods to byte swap in place into host byte order.  all
-  // return the byte swapped data.
-  static uint16_t		swap16LE(uint16_t*);
-  static uint16_t		swap16BE(uint16_t*);
-  static uint32_t		swap32LE(uint32_t*);
-  static uint32_t		swap32BE(uint32_t*);
+  /** Utility method to byte swap a little-endian 2 byte number in place 
+      into host byte order. Returns the byte swapped data. */
+  static uint16_t swap16LE(uint16_t*);
+  
+  /** Utility method to byte swap a big-endian 2 byte number in place into
+      host byte order. Returns the byte swapped data. */
+  static uint16_t swap16BE(uint16_t*);
+  
+  /** Utility method to byte swap a little-endian 4 byte number in place 
+      into host byte order. Returns the byte swapped data. */
+  static uint32_t swap32LE(uint32_t*);
+  
+  /** Utility method to byte swap a big-endian 4 byte number in place into 
+      host byte order. Returns the byte swapped data. */
+  static uint32_t swap32BE(uint32_t*);
 
 private:
   std::istream*			stream;
