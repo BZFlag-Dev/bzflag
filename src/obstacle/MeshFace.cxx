@@ -205,6 +205,11 @@ void MeshFace::finalize()
     planeBits |= WallPlane;
   }
 
+  // why bother?
+  phydrv = -1;
+  driveThrough = true;
+  shootThrough = true;
+  
   return;
 }
 

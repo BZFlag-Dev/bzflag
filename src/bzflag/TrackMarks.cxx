@@ -238,6 +238,8 @@ void TrackMarks::render()
 
   std::list<TrackEntry>::iterator it;
 
+  // draw treads
+  treadsState.setState();
   it = TreadsList.begin();
   while (it != TreadsList.end()) {  
     std::list<TrackEntry>::iterator next = it;
@@ -253,6 +255,8 @@ void TrackMarks::render()
     drawTreads(te, timeDiff);
   }
     
+  // draw puddles
+  puddleState.setState();
   it = PuddleList.begin();
   while (it != PuddleList.end()) {  
     std::list<TrackEntry>::iterator next = it;
@@ -278,7 +282,6 @@ static void drawPuddle(const TrackEntry& te, float lifetime)
   const float scale = 2.0f * ratio;
   const float offset = te.scale * TreadMiddle;
     
-  puddleState.setState();
   glColor4f(1.0f, 1.0f, 1.0f, 1.0f - ratio);
 
   glPushMatrix();
@@ -335,31 +338,30 @@ static void drawTreads(const TrackEntry& te, float lifetime)
 {
   const float ratio = (lifetime / TrackFadeTime);
   
-  treadsState.setState();
   glColor4f(0.0f, 0.0f, 0.0f, 1.0f - ratio);
   
   glPushMatrix();
-  
-  glTranslatef(te.pos[0], te.pos[1], te.pos[2]);
-  glRotatef(te.angle, 0.0f, 0.0f, 1.0f);
-  glScalef(1.0f, te.scale, 1.0f);
-  
-  const float halfWidth = 0.5f * TreadMarkWidth;
-
-  glBegin(GL_QUADS);
   {
-    // glRectf() if no texturing ...
-    glVertex3f(-halfWidth, +TreadOutside, 0.0f);
-    glVertex3f(-halfWidth, +TreadInside, 0.0f);
-    glVertex3f(+halfWidth, +TreadInside, 0.0f);
-    glVertex3f(+halfWidth, +TreadOutside, 0.0f);
-    glVertex3f(-halfWidth, -TreadInside, 0.0f);
-    glVertex3f(-halfWidth, -TreadOutside, 0.0f);
-    glVertex3f(+halfWidth, -TreadOutside, 0.0f);
-    glVertex3f(+halfWidth, -TreadInside, 0.0f);
-  } 
-  glEnd();
-  
+    glTranslatef(te.pos[0], te.pos[1], te.pos[2]);
+    glRotatef(te.angle, 0.0f, 0.0f, 1.0f);
+    glScalef(1.0f, te.scale, 1.0f);
+    
+    const float halfWidth = 0.5f * TreadMarkWidth;
+
+    glBegin(GL_QUADS);
+    {
+      // glRectf() if no texturing ...
+      glVertex3f(-halfWidth, +TreadOutside, 0.0f);
+      glVertex3f(-halfWidth, +TreadInside, 0.0f);
+      glVertex3f(+halfWidth, +TreadInside, 0.0f);
+      glVertex3f(+halfWidth, +TreadOutside, 0.0f);
+      glVertex3f(-halfWidth, -TreadInside, 0.0f);
+      glVertex3f(-halfWidth, -TreadOutside, 0.0f);
+      glVertex3f(+halfWidth, -TreadOutside, 0.0f);
+      glVertex3f(+halfWidth, -TreadInside, 0.0f);
+    } 
+    glEnd();
+  }
   glPopMatrix();
   
   return;

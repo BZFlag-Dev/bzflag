@@ -755,6 +755,7 @@ void Player::setLandingSpeed(float velocity)
 
 void Player::spawnEffect()
 {
+  return; // would need bzfs spawn algo adjustment
   const float squishiness = BZDB.eval(StateDatabase::BZDB_SQUISHFACTOR);
   if (squishiness > 0.0f) {
     const float effectTime = BZDB.eval(StateDatabase::BZDB_FLAGEFFECTTIME);
