@@ -220,6 +220,8 @@ THESE NEED TO WAIT FOR THE NEXT PROTOCOL BREAKAGE
 
 * allow user specified textures for world.
 
+* allow user specified textures for tanks that get distributed to all players.
+
 * allow user specified meshes as "tanks" ( this has LOTS of issues ).
 
 * supply tank meshes and textures from the server if client does not have.
