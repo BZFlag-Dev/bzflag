@@ -1609,9 +1609,18 @@ static void		handleServerMessage(boolean human, uint16_t code,
       if (human && victimPlayer) {
 	if (killerPlayer == victimPlayer)
 	  addMessage(victimPlayer, "blew myself up");
-	else if (!killerPlayer)
+	else if (!killerPlayer) {
+#ifdef DEBUG
+	  char message[41];
+	  sprintf(message, "destroyed by <%s:%d-%1x>", 
+	      inet_ntoa(killer.serverHost),
+	      ntohs(killer.port),
+	      ntohs(killer.number));
+	  addMessage(victimPlayer, message);
+#else
 	  addMessage(victimPlayer, "destroyed by <unknown>");
-	else if ((shotId == -1) || (killerPlayer->getShot(int(shotId)) == NULL)) {
+#endif
+	} else if ((shotId == -1) || (killerPlayer->getShot(int(shotId)) == NULL)) {
 	  BzfString message("destroyed by ");
 	  if (killerPlayer->getTeam() == victimPlayer->getTeam() &&
 	      killerPlayer->getTeam() != RogueTeam)
@@ -1903,9 +1912,38 @@ static void		handleServerMessage(boolean human, uint16_t code,
       msg = nboUnpackUShort(msg, team);
       Player* srcPlayer = lookupPlayer(src);
       Player* dstPlayer = lookupPlayer(dst);
+      BzfString srcName;
+      BzfString dstName;
 
-      BzfString srcName=srcPlayer ? srcPlayer->getCallSign() : "(UNKNOWN)";
-      BzfString dstName=dstPlayer ? dstPlayer->getCallSign() : "(UNKNOWN)";
+#ifdef DEBUG
+      char srcNameText[26], dstNameText[26];
+#endif
+
+      if (srcPlayer == NULL) {
+#ifdef DEBUG
+	sprintf(srcNameText, "<%s:%d-%1x>", 
+	    inet_ntoa(src.serverHost),
+	    ntohs(src.port),
+	    ntohs(src.number));
+	srcName = srcNameText;
+#else
+	srcName = "(UNKNOWN)";
+#endif
+      } else
+	srcPlayer->getCallSign();
+
+      if (dstPlayer == NULL) {
+#ifdef DEBUG
+	sprintf(dstNameText, "<%s:%d-%1x>", 
+	    inet_ntoa(dst.serverHost),
+	    ntohs(dst.port),
+	    ntohs(dst.number));
+	dstName = dstNameText;
+#else
+	dstName = "(UNKNOWN)";
+#endif
+      } else
+	dstPlayer->getCallSign();
 
       // CLIENTQUERY hack
       if (!strncmp((char *)msg,"CLIENTQUERY",strlen("CLIENTQUERY"))) {
