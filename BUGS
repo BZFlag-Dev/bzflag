@@ -1,6 +1,11 @@
 recent bugs
 ------------
 
+- bzadmin seems to be less responsive over the network than bzflag - a 
+  bzadmin client can get kicked from a very active game by the server 
+  for causing it to queue too many packages (there's a limit at 20kB, when I
+  removed it the queue went up to at least 64kB)
+
 - Player continues to see the locked on me message after death until 
   shooter locked onto a different target. (Nidhoggr reported this)
 
