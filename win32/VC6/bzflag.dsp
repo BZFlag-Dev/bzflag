@@ -185,6 +185,10 @@ SOURCE=..\..\src\bzflag\AudioMenu.cxx
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\src\bzflag\DisplayMenu.cxx
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\src\bzflag\FormatMenu.cxx
 # End Source File
 # Begin Source File
@@ -627,6 +631,10 @@ SOURCE=..\..\src\bzflag\daylight.h
 # Begin Source File
 
 SOURCE=..\..\include\DisplayListManager.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\bzflag\DisplayMenu.h
 # End Source File
 # Begin Source File
 
