@@ -3,7 +3,7 @@ bin_PROGRAMS = bzfs
 MAINTAINERCLEANFILES = \
 	Makefile.in
 
-AM_CPPFLAGS = -I$(top_srcdir)/include
+AM_CPPFLAGS = -I$(top_srcdir)/include $(CURL_CFLAGS)
 
 bzfs_SOURCES = \
 	AccessControlList.cxx \
@@ -109,6 +109,6 @@ LDADD = \
 	../game/libGame.a	\
 	../net/libNet.a		\
 	../common/libCommon.a	\
-	$(REGEX) $(ZLIB)
+	$(REGEX) $(ZLIB) $(CURL_LIBS)
 
 bzfs_LDFLAGS = ../date/buildDate.o

@@ -44,6 +44,16 @@ AC_SUBST(AR_FLAGS)
 AC_CHECK_LIB(z, compress, BUILDZLIB=no, BUILDZLIB=yes)
 AM_CONDITIONAL(BUILDZLIB, test $BUILDZLIB = yes)
 
+#checking for libcurl library
+MY_CURL
+if test $my_cv_curl_vers != NONE; then
+  CURL_CFLAGS=`curl-config --cflags`
+  CURL_LIBS=`curl-config --libs`
+  AC_SUBST(CURL_CFLAGS)
+  AC_SUBST(CURL_LIBS)
+  AC_DEFINE(HAVE_CURL, 1, [Using Curl])
+fi
+
 # Just for kicks
 echo -n "checking for artificial intelligence for robots..." 1>&6
 echo " warning: not found" 1>&6
