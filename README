@@ -31,7 +31,7 @@ bzflag development.
 BZFlag Home Page
 ================
 
-The bzflag home page is at:  http://BZFlag.SourceForge.net/
+The BZFlag home page is at:  http://BZFlag.org/
 
 
 Getting BZFlag
@@ -150,16 +150,15 @@ developer's list.  The former is for general BZFlag
 discussion and annoucements.  The latter is for coding and
 development discussion only.
 
-To join a mailing list, go to http://BZFlag.SourceForge.net/, and click
-on the link on the left that says "SourceForge."  On the web page this 
-takes you to there is a link called "Mailing Lists,"  click on this.  You
-are now at a page listing the two lists.  Click on the "subscribe/unsubscribe/
-preferences" button to subscribe to that mailing list.
+To join a mailing list, go to http://BZFlag.org/email-list.html/ and
+follow the info there.
 
 Contributions
 =============
 
-Send mail to either the BZFlag development mailing list, or
+Patched should be entered into the patch tracking system on
+http://sourceforge.net/projects/bzflag/  If you like you may also
+send mail to either the BZFlag development mailing list, or
 Tim@Rikers.org (the development mailing list is prefered) to discuess 
 contributions to the official BZFlag source code.  Small changes can be 
 attached to the mail in 'cvs diff' format.
@@ -168,13 +167,10 @@ attached to the mail in 'cvs diff' format.
 Bug Reports
 ===========
 
-For bug reports please go to http://BZFlag.SourceForge.net/, and click on the 
-link on the left that says "SourceForge. On the web page this takes
-you to there is a link called "Bug Tracking," click on this. You are now
-at a page that lists current bugs, and near the top there is a list of things
-you can do.  The first option is "Submit."  Select this to submit a bug to
-BZFlag. Alternatively, you can email bug reports to Tim@Rikers.org but the web
-based method is the prefered way to submit bugs.
+For bug reports please go to bug tracking system on
+http://sourceforge.net/projects/bzflag/ Alternatively, you can email
+bug reports to Tim@Rikers.org but the web based method is the prefered
+way to submit bugs.
 
 
 Known Bugs
@@ -186,8 +182,9 @@ See BUGS.
 Contributors
 ============
 
-BZFlag was written mainly by Chris Schoeneman.  Several others
-deserve mention for their contributions:
+BZFlag was written mainly by Chris Schoeneman.  It is now
+maintained by Tim Riker.  Several others deserve mention
+for their contributions:
 
   Bjorn Augustsson
   Tamar Cohen
