@@ -15,6 +15,7 @@
 #include "CollisionDetectorGJK.h"
 #include "Body.h"
 #include "math3D.h"
+#include "ms_minmax.h"
 
 //
 // CollisionDetectorGJK
