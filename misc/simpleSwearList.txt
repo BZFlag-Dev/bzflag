@@ -291,13 +291,17 @@ pule                    # no - fuck
 
 
 # Polish
-coor-va                 # pl - fuck
+coorva                  # pl - fuck
 dupek                   # pl - asshole
 gowno                   # pl - shit
+huj                     # pl - dick
 pierdol	      	      	# pl - fuck
 pierdolec               # pl - fucker
 pojebany                # pl - fucked up
 spierdalaj              # pl - fuck off
+zajebiste               # pl - "fucking awesome"
+zapierdol	      	# pl - fuck
+zapierdole	      	# pl - fuck
 
 
 # Portuguese

@@ -1557,23 +1557,26 @@ pedar sag               # fa - (lit.) your father is a dog
 
 
 # Polish
-coor-va                 # pl - fuck
+coorva                  # pl - fuck
 # chuj			# pl - ??
 # dupa			# pl - ?? ass
 dupek                   # pl - asshole
 dziwka                  # pl - whore (light)
 gowno                   # pl - shit
 huj                     # pl - dick
+huju			# pl - ??
+kurva                   # pl - ??
 kurwa                   # pl - whore (hard), fig. "oh shit!"
-odpierdol sie huju bo tobie zapierdole   # pl - get out of here you faggot or i'll fuckin mess u up
+odpierdol		# pl - ??
 pierdol	      	      	# pl - fuck
-pierdol mnie ty kurva   # pl - get outta here bitch
 pierdolec               # pl - fucker
 pojebany                # pl - fucked up
 spieprzaj               # pl - piss off
 spierdalaj              # pl - fuck off
 # supa			# pl - ??
 zajebiste               # pl - "fucking awesome"
+zapierdol	      	# pl - fuck
+zapierdole	      	# pl - fuck
 
 
 # Portuguese
