@@ -863,21 +863,22 @@ static void sendMessageToListServerForReal(int index)
   else if (strcmp(link.nextMessage, "SETNUM") == 0) {
     // pretend there are no players if the game is over
     if (clOptions->http) {
-      if (gameOver)
-	sprintf(msg, "GET http://%s%s?action=SETNUM&nameport=%s&players=0:0:0:0:0\n", 
-		link.hostname.c_str(),
-		link.pathname.c_str(),
-		clOptions->publicizedAddress.c_str());
-      else
-	sprintf(msg, "GET http://%s%s?action=SETNUM&nameport=%s&players=%d:%d:%d:%d:%d\n", 
-		link.hostname.c_str(),
-		link.pathname.c_str(),
-		clOptions->publicizedAddress.c_str(),
-		team[0].team.size,
-		team[1].team.size,
-		team[2].team.size,
-		team[3].team.size,
-		team[4].team.size);
+
+      // update player counts in ping reply.
+      pingReply.rogueCount = team[0].team.size;
+      pingReply.redCount = team[1].team.size;
+      pingReply.greenCount = team[2].team.size;
+      pingReply.blueCount = team[3].team.size;
+      pingReply.purpleCount = team[4].team.size;
+
+      // encode ping reply as ascii hex digits
+      char gameInfo[PingPacketHexPackedSize];
+      pingReply.packHex(gameInfo);
+      sprintf(msg, "GET http://%s%s?action=SETNUM&nameport=%s&gameinfo=%s\n", 
+	      link.hostname.c_str(),
+	      link.pathname.c_str(),
+	      clOptions->publicizedAddress.c_str(),
+	      gameInfo);
     } else {
       if (gameOver)
 	sprintf(msg, "%s %s 0 0 0 0 0\n\n", link.nextMessage, clOptions->publicizedAddress.c_str());
