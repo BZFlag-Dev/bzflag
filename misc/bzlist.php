@@ -1,6 +1,8 @@
-<?
+<?php
 
-// bzlist.php D. John < g33k@despammed.com >
+// bzlist.php
+//
+// original by D. John <g33k@despammed.com>
 //
 // Copyright (c) 1993 - 2004 Tim Riker
 //
@@ -15,56 +17,65 @@
 // This is a simple script that reports current public servers
 // and creates links to server stats via bzfquery.pl.
 
-$listserver  = 'http://list.bzflag.org:5156';
-$bzfquery    = '/usr/X11R6/bin/bzfquery.pl';
+$listserver = 'http://db.bzflag.org/db/?action=LIST';
+$bzfquery = './bzfquery.pl';
 
 $fp = fopen("$listserver", "r");
 if ($fp) {
-	?>
-	<PRE><TABLE BORDER=0 CELLPADDING=0 CELLSPACING=0>
-	  <TR>
-	    <TD WIDTH=300>Server Name</TD>
-	    <TD WIDTH=125>Server Address</TD>
-	    <TD>Server Description (short)</TD>
-	  </TR>
-	  <TR><TD COLSPAN=3>&nbsp;</TD></TR>
-	<?
-	while (!feof($fp)) {
-		$buffer = fgets($fp, 1024);
-		$array  = preg_split('/\s+/', $buffer);
-		$count  = count($array);
-		list($bzhost, $bzport) = split(":", $array[0], 2);
-		$LINK   = "<A HREF=$_SERVER[PHP_SELF]?bzhost=$bzhost&bzport=$bzport>$bzhost:$bzport</A>";
-		if(($bzhost)|($bzport)) {
-			print "<TR>";
-			print "<TD>$LINK</TD>";
-			print "<TD>$array[3]</TD>";
-			unset($array[0], $array[1], $array[2], $array[3]);
-			foreach ( $array as $line ) {
-				$description .= "$line ";
-			}
-			$bzdesc = substr("$description", 0, 50);
-			unset($description);
-			print "<TD>$bzdesc</TD>";
-			print "</TR>";
-		}
-	}
-	?></TABLE></PRE><BR><?
-	fclose ($fp);
+?>
+<pre><table border=0 cellpadding=0 cellspacing=0>
+  <tr>
+    <td width=300>Server Name</td>
+    <td width=125>Server Address</td>
+    <td>Server Description (short)</td>
+  </tr>
+  <tr><td colspan=3>&nbsp;</td></tr>
+<?
+  while (!feof($fp)) {
+    $buffer = fgets($fp, 1024);
+    $array = preg_split('/\s+/', $buffer);
+    $count = count($array);
+    list($bzhost, $bzport) = split(":", $array[0], 2);
+    $LINK = "<a href=$_SERVER[PHP_SELF]?bzhost=$bzhost&bzport=$bzport>$bzhost:$bzport</a>";
+    if (($bzhost)|($bzport)) {
+      print "<tr>";
+      print "<td>$LINK</td>";
+      print "<td>$array[3]</td>";
+      unset($array[0], $array[1], $array[2], $array[3]);
+      foreach ( $array as $line ) {
+	$description .= "$line ";
+      }
+      //$bzdesc = substr("$description", 0, 50);
+      //print "<td>$bzdesc</td>";
+      print "<td>$description</td>";
+      unset($description);
+      print "</tr>\n";
+    }
+  }
+  print "</table></pre><br>";
+  fclose ($fp);
 }
 
 if(($_GET["bzhost"])&&($_GET["bzport"])) {
-	?>
-	<BR><TABLE BORDER=0 CELLPADDING=0 CELLSPACING=0>
-	  <TR>
-	    <TD><? print "$_GET[bzhost]:$_GET[bzport] Stats:"; ?></TD>
-	  </TR>
-	    <TR><TD>&nbsp;</TD></TR>
-	  <TR>
-	    <TD><PRE><? system("$bzfquery $_GET[bzhost] $_GET[bzport]"); ?></PRE></TD>
-	  </TR>
-	</TABLE>
-	<?
+  ?>
+  <br><table border=0 cellpadding=0 cellspacing=0>
+    <tr>
+      <td><? print "$_GET[bzhost]:$_GET[bzport] Stats:"; ?></td>
+    </tr>
+    <tr><td>&nbsp;</td></tr>
+    <tr>
+      <td><pre><? system("$bzfquery $_GET[bzhost] $_GET[bzport]"); ?></pre></td>
+    </tr>
+  </table>
+  <?
 }
+
+# Local Variables: ***
+# mode:php ***
+# tab-width: 8 ***
+# c-basic-offset: 2 ***
+# indent-tabs-mode: t ***
+# End: ***
+# ex: shiftwidth=2 tabstop=8
 
 ?>
