@@ -11,7 +11,9 @@
  */
 
 #include <string.h>
+#ifdef __sun
 #include <strings.h>
+#endif
 #include <sys/types.h>
 #include <ctype.h>
 #include <time.h>
