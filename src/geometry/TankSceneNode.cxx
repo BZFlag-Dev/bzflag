@@ -153,7 +153,7 @@ void TankSceneNode::setJumpJetsTexture(const int texture)
 
 void TankSceneNode::move(const GLfloat pos[3], const GLfloat forward[3])
 {
-  const float rad2deg = (180.0f / M_PI);
+  const float rad2deg = (float)(180.0 / M_PI);
   azimuth = rad2deg * atan2f(forward[1], forward[0]);
   elevation = -rad2deg * atan2f(forward[2], hypotf(forward[0], forward[1]));
   setCenter(pos);
@@ -263,7 +263,7 @@ void TankSceneNode::addRenderNodes(SceneRenderer& renderer)
     const GLfloat* eye = view.getEye();
     GLfloat dx = eye[0] - sphere[0];
     GLfloat dy = eye[1] - sphere[1];
-    const float radians = azimuth * M_PI / 180.0f;
+    const float radians = (float)(azimuth * M_PI / 180.0);
     const float cos_val = cosf(radians);
     const float sin_val = sinf(radians);
 
@@ -379,7 +379,7 @@ void TankSceneNode::setJumpJets(float scale)
 
     // set the jet ground-light and model positions
     for (int i = 0; i < 4; i++) {
-      const float radians = azimuth * (M_PI / 180.0f);
+      const float radians = (float)(azimuth * (M_PI / 180.0));
       const float cos_val = cosf(radians);
       const float sin_val = sinf(radians);
       const float* scale = TankGeometryMgr::getScaleFactor(tankSize);
@@ -653,8 +653,8 @@ void TankIDLSceneNode::IDLRenderNode::render()
   const GLfloat* sphere = sceneNode->tank->getSphere();
   const GLfloat* _plane = sceneNode->plane;
   const GLfloat azimuth = sceneNode->tank->azimuth;
-  const GLfloat ca = cosf(-azimuth * M_PI / 180.0f);
-  const GLfloat sa = sinf(-azimuth * M_PI / 180.0f);
+  const GLfloat ca = cosf(-azimuth * (float)M_PI / 180.0f);
+  const GLfloat sa = sinf(-azimuth * (float)M_PI / 180.0f);
   GLfloat plane[4];
   plane[0] = ca * _plane[0] - sa * _plane[1];
   plane[1] = sa * _plane[0] + ca * _plane[1];

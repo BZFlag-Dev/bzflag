@@ -119,8 +119,8 @@ void SphereObstacle::finalize()
     // unless you want to do elliptic integrals, here's
     // the Ramanujan approximation for the circumference
     // of an ellipse  (it will be rounded anyways)
-    const float circ =
-      M_PI * ((3.0f * (sz[0] + sz[1])) -
+    const float circ = 
+      (float)M_PI * ((3.0f * (sz[0] + sz[1])) -
 	      sqrtf ((sz[0] + (3.0f * sz[1])) * (sz[1] + (3.0f * sz[0]))));
     // make sure it's an integral number so that the edges line up
     texsz[0] = -floorf(circ / texsz[0]);
@@ -185,10 +185,10 @@ void SphereObstacle::finalize()
   // the rest of the vertices
   for (i = 0; i < divisions; i++) {
     for (j = 0; j < (4 * (i + 1)); j++) {
-      float h_angle = ((M_PI * 2.0f) * (float)j / (float)(4 * (i + 1)));
+      float h_angle = (float)((M_PI * 2.0) * j / (4 * (i + 1)));
       h_angle = h_angle + getRotation();
-      float v_angle = ((M_PI / 2.0f) *
-		       (float)(divisions - i - 1) / (float)(divisions));
+      float v_angle = (float)((M_PI / 2.0) *
+		       (divisions - i - 1) / (divisions));
       float unit[3];
       unit[0] = cosf(h_angle) * cosf(v_angle);
       unit[1] = sinf(h_angle) * cosf(v_angle);
@@ -267,7 +267,7 @@ void SphereObstacle::finalize()
   // the bottom texcoords for hemispheres
   const int bottomTexOffset = texcoords.size();
   if (hemisphere) {
-    const float astep = (M_PI * 2.0f) / (float) (divisions * 4);
+    const float astep = (float)((M_PI * 2.0) / (float) (divisions * 4));
     for (i = 0; i < (divisions * 4); i++) {
       float ang = astep * (float)i;
       t[0] = texsz[0] * (0.5f + (0.5f * cosf(ang)));

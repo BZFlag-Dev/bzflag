@@ -140,7 +140,7 @@ void			PyramidBuilding::get3DNormal(const float* p,
   // FIXME -- fugly beyond belief
   float baseLength = getWidth();
   const float normalAngle = atan2f(n[1], n[0]);
-  const float rightAngle = fabsf(fmodf(normalAngle - getRotation() + M_PI/2.0f, M_PI));
+  const float rightAngle = fabsf(fmodf(normalAngle - getRotation() + (float)(M_PI/2.0), (float)M_PI));
   if ((rightAngle < 0.1) || (rightAngle > (M_PI - 0.1))) {
     baseLength = getBreadth();
   }

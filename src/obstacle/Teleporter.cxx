@@ -288,7 +288,7 @@ bool Teleporter::inMovingBox(const float* oldP, float /*oldAngle */,
 
 
 bool Teleporter::isCrossing(const float* p, float a,
-			    float dx, float dy, float /* dz */, float* plane) const
+			    float dx, float dy, float dz, float* plane) const
 {
   // if not inside or contained then not crossing
   const float* p2 = getPosition();
@@ -379,7 +379,7 @@ float Teleporter::getProximity(const float* p, float radius) const
 
   // if along side then trail off as point moves away from faces
   if (y > getBreadth() - getBorder()) {
-    float f = (2.0f / M_PI) * atan2f(x, y - getBreadth() + getBorder());
+    float f = (float)(2.0 / M_PI) * atan2f(x, y - getBreadth() + getBorder());
     t *= f * f;
   }
   else if (pa[2] < 0.0f) {
@@ -423,7 +423,7 @@ void Teleporter::getPointWRT(const Teleporter& t2, int face1, int face2,
   const float x1 = pIn[0] - getPosition()[0];
   const float y1 = pIn[1] - getPosition()[1];
   const float a = t2.getRotation() - getRotation() +
-			(face1 == face2 ? M_PI : 0.0f);
+			(face1 == face2 ? (float)M_PI : 0.0f);
   const float c = cosf(a), s = sinf(a);
   const float x2 = c * x1 - s * y1;
   const float y2 = c * y1 + s * x1;

@@ -1062,9 +1062,9 @@ static WorldInfo *defineRandomWorld()
   // make walls
   float worldSize = BZDBCache::worldSize;
   float wallHeight = BZDB.eval(StateDatabase::BZDB_WALLHEIGHT);
-  world->addWall(0.0f, 0.5f * worldSize, 0.0f, 1.5f * M_PI, 0.5f * worldSize, wallHeight);
-  world->addWall(0.5f * worldSize, 0.0f, 0.0f, M_PI, 0.5f * worldSize, wallHeight);
-  world->addWall(0.0f, -0.5f * worldSize, 0.0f, 0.5f * M_PI, 0.5f * worldSize, wallHeight);
+  world->addWall(0.0f, 0.5f * worldSize, 0.0f, (float)(1.5 * M_PI), 0.5f * worldSize, wallHeight);
+  world->addWall(0.5f * worldSize, 0.0f, 0.0f, (float)M_PI, 0.5f * worldSize, wallHeight);
+  world->addWall(0.0f, -0.5f * worldSize, 0.0f, (float)(0.5 * M_PI), 0.5f * worldSize, wallHeight);
   world->addWall(-0.5f * worldSize, 0.0f, 0.0f, 0.0f, 0.5f * worldSize, wallHeight);
 
   float worldfactor = worldSize / (float)DEFAULT_WORLD;
@@ -1081,7 +1081,7 @@ static WorldInfo *defineRandomWorld()
       h = boxHeight * ( 2.0f * (float)bzfrand() + 0.5f);
     world->addBox(worldSize * ((float)bzfrand() - 0.5f),
 	worldSize * ((float)bzfrand() - 0.5f),
-	0.0f, 2.0f * M_PI * (float)bzfrand(),
+	0.0f, (float)(2.0 * M_PI * bzfrand()),
 	boxBase, boxBase, h);
   }
 
@@ -1095,7 +1095,7 @@ static WorldInfo *defineRandomWorld()
       h = pyrHeight * ( 2.0f * (float)bzfrand() + 0.5f);
     world->addPyramid(worldSize * ((float)bzfrand() - 0.5f),
 	worldSize * ((float)bzfrand() - 0.5f),
-	0.0f, 2.0f * M_PI * (float)bzfrand(),
+	0.0f, (float)(2.0 * M_PI * bzfrand()),
 	pyrBase, pyrBase, h);
   }
 
@@ -1108,7 +1108,7 @@ static WorldInfo *defineRandomWorld()
     for (i = 0; i < numTeleporters;) {
       const float x = (worldSize - 4.0f * teleBreadth) * ((float)bzfrand() - 0.5f);
       const float y = (worldSize - 4.0f * teleBreadth) * ((float)bzfrand() - 0.5f);
-      const float rotation = 2.0f * M_PI * (float)bzfrand();
+      const float rotation = (float)(2.0 * M_PI * bzfrand());
 
       // if too close to building then try again
 	  Obstacle* obs;

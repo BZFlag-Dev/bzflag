@@ -32,13 +32,13 @@ static float getNormalOrigRect(const float* p, float dx, float dy)
     else if (p[1] < -dy)				//  sw corner
       return atan2f(p[1] + dy, p[0] + dx);
     else						//  west side
-      return M_PI;
+      return (float)M_PI;
 
   if (p[1] > dy)					// north of box
-    return 0.5f * M_PI;
+    return (float)(0.5 * M_PI);
 
   if (p[1] < -dy)					// south of box
-    return 1.5f * M_PI;
+    return (float)(1.5 * M_PI);
 
   // inside box
   if (p[0] > 0.0f)					// inside east
@@ -46,24 +46,24 @@ static float getNormalOrigRect(const float* p, float dx, float dy)
       if (dy * p[0] > dx * p[1])			//   east wall
 	return 0.0f;
       else						//   north wall
-	return 0.5f * M_PI;
+	return (float)(0.5 * M_PI);
     else						//  inside se quadrant
       if (dy * p[0] > -dx * p[1])			//   east wall
 	return 0.0f;
       else						//   south wall
-	return 1.5f * M_PI;
+	return (float)(1.5 * M_PI);
 
   else							// inside west
     if (p[1] > 0.0f)					//  inside nw quadrant
       if (dy * p[0] < -dx * p[1])			//   west wall
-	return M_PI;
+	return (float)M_PI;
       else						//   north wall
-	return 0.5f * M_PI;
+	return (float)(0.5 * M_PI);
     else						//  inside sw quadrant
       if (dy * p[0] < dx * p[1])			//   west wall
-	return M_PI;
+	return (float)M_PI;
       else						//   south wall
-	return 1.5f * M_PI;
+	return (float)(1.5 * M_PI);
 }
 
 

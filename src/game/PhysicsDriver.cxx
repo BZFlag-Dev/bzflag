@@ -222,7 +222,7 @@ void PhysicsDriver::setLinear(const float vel[3])
 void PhysicsDriver::setAngular(float vel, const float pos[2])
 {
   // convert from (rotations/second) to (radians/second)
-  angularVel = vel * (2.0f * M_PI);
+  angularVel = (float)(vel * (2.0 * M_PI));
   angularPos[0] = pos[0];
   angularPos[1] = pos[1];
   return;

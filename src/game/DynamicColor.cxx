@@ -348,7 +348,7 @@ void DynamicColor::update (float t)
       float value = 0.0f;
       for (i = 0; i < channel.sinusoids.size(); i++) {
 	const sinusoidParams& s = channel.sinusoids[i];
-	value += s.weight * cosf (((t - s.offset) / s.period) * (M_PI * 2.0f));
+	value += s.weight * cosf (((t - s.offset) / s.period) * (float)(M_PI * 2.0));
       }
       // center the factor
       factor = 0.5f + (0.5f * value);

@@ -506,7 +506,7 @@ void MeshTransform::addShear(const float shear[3])
 
 void MeshTransform::addSpin(const float degrees, const float normal[3])
 {
-  const float radians = degrees * (M_PI / 180.0f);
+  const float radians = (float)(degrees * (M_PI / 180.0));
   TransformData transform;
   memcpy(transform.data, normal, sizeof(float[3]));
   transform.data[3] = radians;
@@ -531,7 +531,7 @@ void * MeshTransform::pack(void *buf) const
 {
   buf = nboPackStdString(buf, name);
 
-  buf = nboPackUInt(buf, transforms.size());
+  buf = nboPackUInt(buf, (uint32_t)transforms.size());
   
   for (unsigned int i = 0; i < transforms.size(); i++) {
     const TransformData& transform = transforms[i];
@@ -642,7 +642,7 @@ void MeshTransform::printTransforms(std::ostream& out,
         break;
       }
       case SpinTransform: {
-        const float degrees = d[3] * (180.0f / M_PI);
+        const float degrees = (float)(d[3] * (180.0 / M_PI));
         out << "  spin " << degrees << " "
                          << d[0] << " " << d[1] << " " << d[2] << std::endl;
         break;

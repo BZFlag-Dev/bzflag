@@ -30,7 +30,7 @@ Frustum::Frustum()
   ::memcpy(projectionMatrix, identity, sizeof(projectionMatrix));
   ::memcpy(deepProjectionMatrix, identity, sizeof(deepProjectionMatrix));
 
-  setProjection(M_PI/4.0, 1.0, 100.0, 1, 1, 1);
+  setProjection((float)(M_PI/4.0), 1.0f, 100.0f, 1, 1, 1);
   setView(defaultEye, defaultTarget);
 }
 
@@ -189,7 +189,7 @@ void			Frustum::setProjection(float fov, float _m_near,
 
   // compute areaFactor
   areaFactor = 0.25f * s * float(height);
-  areaFactor = M_PI * areaFactor * areaFactor;
+  areaFactor = (float)(M_PI * areaFactor * areaFactor);
 }
 
 void			Frustum::setOffset(

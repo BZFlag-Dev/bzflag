@@ -206,14 +206,14 @@ float			Obstacle::getHitNormal(
     normal[2] = 1.0f;
   }
   else if (!isObstacle) {
-    const float angle = 0.5f * M_PI * (float)bestSide + oAzimuth;
+    const float angle = (float)(0.5 * M_PI * (float)bestSide + oAzimuth);
     normal[0] = cosf(angle);
     normal[1] = sinf(angle);
     normal[2] = 0.0f;
   }
   else {
-    const float angle = 0.5f * M_PI * (float)bestSide +
-			minTime * (azimuth2 - azimuth1) + azimuth1;
+    const float angle = (float)(0.5 * M_PI * (float)bestSide +
+			minTime * (azimuth2 - azimuth1) + azimuth1);
     normal[0] = -cosf(angle);
     normal[1] = -sinf(angle);
     normal[2] = 0.0f;

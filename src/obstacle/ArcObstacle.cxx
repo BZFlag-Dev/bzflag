@@ -131,7 +131,7 @@ void ArcObstacle::finalize()
     // the Ramanujan approximation for the circumference
     // of an ellipse  (it will be rounded anyways)
     const float circ =
-      M_PI * ((3.0f * (sz[0] + sz[1])) -
+      (float)M_PI * ((3.0f * (sz[0] + sz[1])) -
 	      sqrtf ((sz[0] + (3.0f * sz[1])) * (sz[1] + (3.0f * sz[0]))));
     // make sure it's an integral number so that the edges line up
     texsz[0] = -floorf(circ / texsz[0]);
@@ -149,7 +149,7 @@ void ArcObstacle::finalize()
   if (a < -360.0f) {
     a = -360.0f;
   }
-  a = a * (M_PI / 180.0f); // convert to radians
+  a = a * (float)(M_PI / 180.0); // convert to radians
   if (a < 0.0f) {
     r = r + a;
     a = -a;
@@ -160,7 +160,7 @@ void ArcObstacle::finalize()
     return;
   }
 
-  if (fabsf (M_PI - fmodf (a + M_PI, M_PI * 2.0f)) < minSize) {
+  if (fabsf ((float)M_PI - fmodf (a + (float)M_PI, (float)M_PI * 2.0f)) < minSize) {
     isCircle = true;
   }
 

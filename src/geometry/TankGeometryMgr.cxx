@@ -232,11 +232,11 @@ void TankGeometryMgr::buildLists()
             }
             else if ((part >= LeftWheel0) && (part <= LeftWheel3)) {
               int wheel = part - LeftWheel0;
-              buildHighLWheel(wheel, (float)wheel * (M_PI / 2.0f), wheelDivs);
+              buildHighLWheel(wheel, (float)wheel * (float)(M_PI / 2.0), wheelDivs);
             }
             else if ((part >= RightWheel0) && (part <= RightWheel3)) {
               int wheel = part - RightWheel0;
-              buildHighRWheel(wheel, (float)wheel * (M_PI / 2.0f), wheelDivs);
+              buildHighRWheel(wheel, (float)wheel * (float)(M_PI / 2.0), wheelDivs);
             }
 	  }
 

@@ -2683,7 +2683,7 @@ bool			addExplosion(const float* _pos,
   newExplosion->move(pos);
   newExplosion->setSize(size);
   newExplosion->setDuration(duration);
-  newExplosion->setAngle(2.0f * M_PI * (float)bzfrand());
+  newExplosion->setAngle((float)(2.0 * M_PI * bzfrand()));
   newExplosion->setLightScaling(size / BZDBCache::tankLength);
   newExplosion->setLightFadeStartTime(0.7f * duration);
   if (grounded) {
@@ -2709,7 +2709,7 @@ bool			addExplosion(const float* _pos,
     newExplosion->move(pos);
     newExplosion->setSize(size);
     newExplosion->setDuration(duration);
-    newExplosion->setAngle(2.0f * M_PI * (float)bzfrand());
+    newExplosion->setAngle((float)(2.0 * M_PI * bzfrand()));
     newExplosion->setLightScaling(size / BZDBCache::tankLength);
     newExplosion->setLightFadeStartTime(0.7f * duration);
     if (grounded) {
@@ -4032,7 +4032,7 @@ void		leaveGame()
   targetPoint[0] = eyePoint[0] - 1.0f;
   targetPoint[1] = eyePoint[1] + 0.0f;
   targetPoint[2] = eyePoint[2] + 0.0f;
-  sceneRenderer->getViewFrustum().setProjection(60.0f * M_PI / 180.0f,
+  sceneRenderer->getViewFrustum().setProjection((float)(60.0 * M_PI / 180.0),
 						NearPlaneNormal,
 						FarPlaneScale * worldSize,
 						mainWindow->getWidth(),
@@ -4348,7 +4348,7 @@ void drawFrame(const float dt)
 	fov *= 0.75f;
       }
     }
-    fov *= M_PI / 180.0f;
+    fov *= (float)(M_PI / 180.0);
 
     // set projection and view
     eyePoint[0] = myTankPos[0];
@@ -4415,9 +4415,9 @@ void drawFrame(const float dt)
       // free Roaming
       else {
 	float dir[3];
-	dir[0] = cosf(roamPhi * M_PI / 180.0f) * cosf(roamTheta * M_PI / 180.0f);
-	dir[1] = cosf(roamPhi * M_PI / 180.0f) * sinf(roamTheta * M_PI / 180.0f);
-	dir[2] = sinf(roamPhi * M_PI / 180.0f);
+	dir[0] = cosf((float)(roamPhi * M_PI / 180.0)) * cosf((float)(roamTheta * M_PI / 180.0));
+	dir[1] = cosf((float)(roamPhi * M_PI / 180.0)) * sinf((float)(roamTheta * M_PI / 180.0));
+	dir[2] = sinf((float)(roamPhi * M_PI / 180.0));
 	eyePoint[0] = roamPos[0];
 	eyePoint[1] = roamPos[1];
 	eyePoint[2] = roamPos[2];
@@ -4429,10 +4429,10 @@ void drawFrame(const float dt)
       if (!devDriving) {
 	float virtPos[]={eyePoint[0], eyePoint[1], 0};
 	if (myTank) {
-	  myTank->move(virtPos, roamViewAngle * M_PI / 180.0f);
+	  myTank->move(virtPos, (float)(roamViewAngle * M_PI / 180.0));
 	}
       }
-      fov = roamZoom * M_PI / 180.0f;
+      fov = (float)(roamZoom * M_PI / 180.0);
       moveSoundReceiver(eyePoint[0], eyePoint[1], eyePoint[2], 0.0, false);
     }
 
@@ -4859,8 +4859,8 @@ static void		setupRoamingCamera(float dt)
     }
   }
   float c, s;
-  c = cosf(roamTheta * M_PI / 180.0f);
-  s = sinf(roamTheta * M_PI / 180.0f);
+  c = cosf((float)(roamTheta * M_PI / 180.0));
+  s = sinf((float)(roamTheta * M_PI / 180.0));
   roamPos[0] += dt * (c * roamDPos[0] - s * roamDPos[1]);
   roamPos[1] += dt * (c * roamDPos[1] + s * roamDPos[0]);
   roamPos[2] += dt * roamDPos[2];
@@ -5468,7 +5468,7 @@ static void		findFastConfiguration()
   static const GLfloat eyePoint[3] = { 0.0f, 0.0f, muzzleHeight };
   static const GLfloat targetPoint[3] = { 0.0f, 10.0f, muzzleHeight };
   float worldSize = BZDBCache::worldSize;
-  sceneRenderer->getViewFrustum().setProjection(45.0f * M_PI / 180.0f,
+  sceneRenderer->getViewFrustum().setProjection((float)(45.0 * M_PI / 180.0),
 						NearPlane,
 						FarPlaneScale * worldSize,
 						mainWindow->getWidth(),
