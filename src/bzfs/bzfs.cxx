@@ -3238,19 +3238,20 @@ static void resetFlag(int flagIndex)
     int topmosttype = world->inBuilding(&obj, pFlagInfo->flag.position[0],
 					pFlagInfo->flag.position[1],pFlagInfo->flag.position[2], r);
     while (topmosttype != NOT_IN_BUILDING) {
-	if ((clOptions->flagsOnBuildings && (topmosttype == IN_BOX))
-		&& (obj->pos[2] < (pFlagInfo->flag.position[2] + flagHeight)) && ((obj->pos[2] + obj->size[2]) > pFlagInfo->flag.position[2])
-		&& (world->inRect(obj->pos, obj->rotation, obj->size, pFlagInfo->flag.position[0], pFlagInfo->flag.position[1], 0.0f)))
-		 {
-	  pFlagInfo->flag.position[2] = obj->pos[2] + obj->size[2];
-	}
-	else {
-	  pFlagInfo->flag.position[0] = (WorldSize - BaseSize) * ((float)bzfrand() - 0.5f);
-	  pFlagInfo->flag.position[1] = (WorldSize - BaseSize) * ((float)bzfrand() - 0.5f);
-	  pFlagInfo->flag.position[2] = 0.0f;
-	}
-	topmosttype = world->inBuilding(&obj, pFlagInfo->flag.position[0],
-					     pFlagInfo->flag.position[1],pFlagInfo->flag.position[2], r);
+      if ((clOptions->flagsOnBuildings && (topmosttype == IN_BOX))
+           && (obj->pos[2] < (pFlagInfo->flag.position[2] + flagHeight)) && ((obj->pos[2] + obj->size[2]) > pFlagInfo->flag.position[2])
+          && (world->inRect(obj->pos, obj->rotation, obj->size, pFlagInfo->flag.position[0], pFlagInfo->flag.position[1], 0.0f)))
+      {
+        pFlagInfo->flag.position[2] = obj->pos[2] + obj->size[2];
+      }
+      else
+      {
+        pFlagInfo->flag.position[0] = (WorldSize - BaseSize) * ((float)bzfrand() - 0.5f);
+        pFlagInfo->flag.position[1] = (WorldSize - BaseSize) * ((float)bzfrand() - 0.5f);
+        pFlagInfo->flag.position[2] = 0.0f;
+      }
+      topmosttype = world->inBuilding(&obj, pFlagInfo->flag.position[0],
+                                           pFlagInfo->flag.position[1],pFlagInfo->flag.position[2], r);
     }
   }
 
@@ -3428,8 +3429,8 @@ static void removePlayer(int playerIndex, const char *reason, bool notify)
 	&& (player[playerIndex].state == PlayerNoExist)
 	&& (player[playerIndex].fd == NotConnected))
     {
-	playerIndex--;
-	curMaxPlayers--;
+      playerIndex--;
+      curMaxPlayers--;
     }
     return;
   }
@@ -3643,10 +3644,10 @@ static void playerKilled(int victimIndex, int killerIndex, int reason,
      if ((player[killerIndex].tks >= 3) && (clOptions->teamKillerKickRatio > 0) && // arbitrary 3
 	 ((player[killerIndex].wins == 0) ||
 	  ((player[killerIndex].tks * 100) / player[killerIndex].wins) > clOptions->teamKillerKickRatio)) {
-	 char message[MessageLen];
-	 strcpy(message, "You have been automatically kicked for team killing" );
-	 sendMessage(ServerPlayer, killerIndex, message, true);
-	 removePlayer(killerIndex, "teamkilling");
+       char message[MessageLen];
+       strcpy(message, "You have been automatically kicked for team killing" );
+       sendMessage(ServerPlayer, killerIndex, message, true);
+       removePlayer(killerIndex, "teamkilling");
      }
   }
 
@@ -3706,13 +3707,13 @@ static void playerKilled(int victimIndex, int killerIndex, int reason,
     broadcastMessage(MsgScore, (char*)buf-(char*)bufStart, bufStart);
 
     // see if the player reached the score limit
-    if ((clOptions->maxPlayerScore != 0)
-    &&	((player[killerIndex].wins - player[killerIndex].losses) >= clOptions->maxPlayerScore)) {
-	void *buf, *bufStart = getDirectMessageBuffer();
-	buf = nboPackUByte(bufStart, killerIndex);
-	buf = nboPackUShort(buf, uint16_t(NoTeam));
-	broadcastMessage(MsgScoreOver, (char*)buf-(char*)bufStart, bufStart);
-	gameOver = true;
+    if (clOptions->maxPlayerScore != 0
+	&& player[killerIndex].wins - player[killerIndex].losses >= clOptions->maxPlayerScore) {
+      void *buf, *bufStart = getDirectMessageBuffer();
+      buf = nboPackUByte(bufStart, killerIndex);
+      buf = nboPackUShort(buf, uint16_t(NoTeam));
+      broadcastMessage(MsgScoreOver, (char*)buf-(char*)bufStart, bufStart);
+      gameOver = true;
     }
   }
 
@@ -3728,19 +3729,19 @@ static void playerKilled(int victimIndex, int killerIndex, int reason,
     int winningTeam = (int)NoTeam;
     if (!(clOptions->gameStyle & TeamFlagGameStyle)) {
       if (player[victimIndex].team == player[killerIndex].team) {
-        if ((player[killerIndex].team != RogueTeam) || (clOptions->gameStyle & int(RabbitChaseGameStyle)))
-          if (killerIndex == victimIndex)
-            team[int(player[victimIndex].team)].team.lost += 1;
-          else
-            team[int(player[victimIndex].team)].team.lost += 2;
+	if ((player[killerIndex].team != RogueTeam) || (clOptions->gameStyle & int(RabbitChaseGameStyle)))
+	  if (killerIndex == victimIndex)
+	    team[int(player[victimIndex].team)].team.lost += 1;
+	  else
+	    team[int(player[victimIndex].team)].team.lost += 2;
       } else {
-	  if ((player[killerIndex].team != RogueTeam) || (clOptions->gameStyle & int(RabbitChaseGameStyle))) {
-		winningTeam = int(player[killerIndex].team);
-		team[winningTeam].team.won++;
-	  }
-	  if (player[victimIndex].team != RogueTeam)
-		team[int(player[victimIndex].team)].team.lost++;
-	  killerTeam = player[killerIndex].team;
+	if ((player[killerIndex].team != RogueTeam) || (clOptions->gameStyle & int(RabbitChaseGameStyle))) {
+	  winningTeam = int(player[killerIndex].team);
+	  team[winningTeam].team.won++;
+	}
+	if (player[victimIndex].team != RogueTeam)
+	  team[int(player[victimIndex].team)].team.lost++;
+	killerTeam = player[killerIndex].team;
       }
       sendTeamUpdate(-1,int(player[victimIndex].team), killerTeam);
     }
@@ -3769,9 +3770,9 @@ static void grabFlag(int playerIndex, int flagIndex)
 		      (tpos[1] - fpos[1]) * (tpos[1] - fpos[1]);
 
   if ((fabs(tpos[2] - fpos[2]) < 0.1f) && (delta > radius2)) {
-    DEBUG2("Player %s [%d] %f %f %f tried to grab distant flag %f %f %f: distance=%f\n",
-	player[playerIndex].callSign, playerIndex,
-	tpos[0], tpos[1], tpos[2], fpos[0], fpos[1], fpos[2], sqrt(delta));
+       DEBUG2("Player %s [%d] %f %f %f tried to grab distant flag %f %f %f: distance=%f\n",
+    player[playerIndex].callSign, playerIndex,
+    tpos[0], tpos[1], tpos[2], fpos[0], fpos[1], fpos[2], sqrt(delta));
     return;
   }
 
@@ -3791,7 +3792,7 @@ static void grabFlag(int playerIndex, int flagIndex)
 
   std::vector<FlagDesc*> *pFH = &player[playerIndex].flagHistory;
   if (pFH->size() >= MAX_FLAG_HISTORY)
-	  pFH->erase(pFH->begin());
+    pFH->erase(pFH->begin());
   pFH->push_back( flag[flagIndex].flag.desc );
 }
 
