@@ -73,6 +73,8 @@ bool			SDLJoystick::joystick() const
 
 void			SDLJoystick::getJoy(int& x, int& y) const
 {
+  x = y = 0;
+
   if (!joystickID)
     return;
 
