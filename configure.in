@@ -323,4 +323,5 @@ AC_OUTPUT(Makefile
 	package/win32/src/Makefile
 	package/win32/src/bzfinst/Makefile
 	package/win32/src/bzfuinst/Makefile
-	package/win32/src/makedb/Makefile)
+	package/win32/src/makedb/Makefile
+	win32/Makefile)
