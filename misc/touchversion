@@ -16,7 +16,11 @@ BZVERSION=`grep ^AM_INIT_AUTOMAKE configure.in | sed -e 's/.* //g' -e 's/)//g'`
 eval `grep "^VERSIONNUM *= *" $root/configure.in | sed -e 's/ *//g'`
 
 # config.h files
-for file in $root/win32/config.h; do
+for file in \
+	$root/win32/config.h \
+	$root/src/platform/MacBZFlag-prefix.h \
+	$root/src/platform/MacOSX/MacBZFlag-prefix.h \
+	; do
   if [ ! -w $file ]; then
     echo "$file not found or not writable."
   else
@@ -96,6 +100,3 @@ for file in  \
 done
 
 rm $tmp
-exit
-./src/platform/MacBZFlag-prefix.h:#define VERSION	10900000
-./src/platform/MacOSX/MacBZFlag-prefix.h:#define VERSION	10900000
