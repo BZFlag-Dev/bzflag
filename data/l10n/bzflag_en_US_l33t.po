@@ -24,10 +24,10 @@ msgid "Start Server"
 msgstr "s+ar+ $3Rv3r"
 
 msgid "Up/Down arrows to move, Enter to select, Esc to dismiss" 
-msgstr "up/down 4rrOW5 t0 mOVe, 3NtER To $3lEc+, e$c t0 d15mI$$
+msgstr "up/down 4rrOW5 t0 mOVe, 3NtER To $3lEc+, e$c t0 d15mI$$"
 
 msgid "Options" 
-msgstr "0P+Ions
+msgstr "0P+Ions"
 
 msgid "Help" 
 msgstr "H31P"
@@ -411,13 +411,13 @@ msgid "Dead"
 msgstr "d34d"
 
 msgid "%.1f"
-msgstr ""
+msgstr "%.1f"
 
 msgid "Ready"
 msgstr "Re4Dy"
 
 msgid "Reloaded in %.1f"
-msgstr ""
+msgstr "r310@d3d 1n %.1f"
 
 msgid "Sealed"
 msgstr "$EaL3d"
@@ -455,7 +455,7 @@ msgid "Super Bullet"
 msgstr "5UpER BuLl3T"
 
 msgid "Invisible Bullet"
-msgstr ""
+msgstr "InVi$I8L3 Bulle+"
 
 msgid "Stealth"
 msgstr "InV1$I8lE 8UlLET"
@@ -616,105 +616,155 @@ msgstr "W1D3 4n9l3 (-WA): Phi$H-eY3 l3nS dI5+0Rt$ Vi3w. "
 
 msgid "BZFlag is a multi-player networked tank battle game.  There are five teams:"
 msgstr "BzFlag i$ @ mUL+1-pl4YER NEtWoRKed +@Nk 8@+TLE 9@m3. Th3r3 4Re PH1Ve +E4m5:"
+
 msgid "red, green, blue, purple, and rogues (rogue tanks are black).  Destroying a"
 msgstr "RED, gRE3N, 8LUE, pUrpL3, 4nD Ro9U35 (r0gUe +ANk$ @Re BL4Ck). DEs+ROY1N9 4"
+
 msgid "player on another team scores a win, while being destroyed or destroying a"
 msgstr "PLAY3R 0N @nOTHEr +e4m 5C0R35 4 WIN, WHIL3 beiN9 DE$trOyEd oR deS+r0y1Ng 4"
+
 msgid "teammate scores a loss.  Individual and aggregate team scores are tallied."
 msgstr "+3@Mm@Te $COR3$ 4 lOS$. INDivIDu4L 4Nd 499r394T3 t34M scOr3$ 4Re +4LLieD."
+
 msgid "Rogues have no teammates (not even other rogues),so they cannot shoot"
 msgstr "R09uE5 hAv3 N0 T3Amm4T3$ (nO+ 3V3n OTH3r R0gue5),50 th3Y C4NNo+ $HOoT"
+
 msgid "teammates and they don't have a team score."
 msgstr "+E@mM@T3S @nd Th3Y DON'+ h@V3 4 T3@M 5C0r3. "
+
 msgid "There are two styles of play, determined by the server configuration:  capture-"
 msgstr "+HeRe 4RE +W0 5TyLe5 0PH pL4Y, d3+ErM1nED By TEh 5ERv3R C0nfiGUR4t10n: c@P+URe-"
+
 msgid "the-flag and free-for-all.  In free-for-all the object is simply to get the"
 msgstr "Th3-pHL@9 anD PhR33-PH0R-4LL. iN FrEE-F0R-4ll ThE 0BJeCT 1$ $ImPLY +o G3T t3H"
+
 msgid "highest score by shooting opponents.  The object in capture-the-flag is to"
 msgstr "H19H35+ 5c0r3 BY 5h0OTIn9 oPpOneNT$. +3H objeCT In c4p+uRE-+HE-fL@9 I5 tO"
+
 msgid "capture enemy flags while preventing opponents from capturing yours.  In this"
 msgstr "C4P+URE 3n3my FL@9S WHiL3 pR3V3n+1N9 0Pp0N3Nt5 pHrOM c4ptUR1nG Y0UR5. 1N TH15"
+
 msgid "style, each team (but not rogues) has a team base and each team with at least"
 msgstr "$TylE, e4cH +E4M (bU+ NO+ R09UE$) H45 4 te@m B@se @ND 3ACh tE4M w1TH 4+ lE45T"
+
 msgid "one player has a team flag which has the color of the team.  To capture a flag,"
 msgstr "oN3 pl4Y3R h45 4 +34m fl4G wHiCH H45 +3h colOR 0F +H3 +3aM. t0 c4pTUr3 @ PHl49,"
+
 msgid "you must grab it and bring it back to your team base (you must be on the ground"
 msgstr "J00 mU$T 9r4b i+ 4nD briNG 1+ 8@cK T0 J00r +34m 8A5E (Y0u Mu$+ bE 0N +h3 9ROUNd"
+
 msgid "in your base to register the capture).  Capturing a flag destroys all the players"
 msgstr "iN j00r 8453 +0 r3915+ER The caP+uR3). C4p+UrINg 4 FL4g d35tRoYs 4LL +h3 PL@Y3r$"
+
 msgid "on that team and gives your team score a bonus;  the players will restart on"
 msgstr "oN tH4+ t34M 4ND GIVES j00r tE@M $C0re @ 8onu5; +H3 pL4YER5 w1ll r35T@R+ 0N"
+
 msgid "their team base.  Taking your flag onto an enemy base counts as a capture against"
 msgstr "+HE1R te4M 8A53. +@kIN9 j00r FL4g oN+O 4n EnEmy b@$e COUN+5 45 4 C4PTure @9A1Ns+"
+
 msgid "your team but not for the enemy team."
 msgstr "J00R +E4M 8u+ nOt F0R tH3 En3mY +3@M."
+
 #Help 3 Strings
+
 msgid "The world environment contains an outer wall and several buildings."
 msgstr "tEh WOrld 3NV1R0Nm3N+ C0NT41n$ 4N 0uT3R W4ll 4ND $EV3RAl 8UILd1n9$."
+
 msgid "You cannot go outside the outer wall (you can't even jump over it)."
 msgstr "J00 C@NnOT gO ouT5ID3 +hE Ou+3r w@Ll (Y0U c@N'+ 3V3N jUMp 0vEr 1+). "
+
 msgid "You cannot normally drive or shoot through buildings."
 msgstr "J00 CanNOt noRm@LLY DRIVe Or $h0O+ ThrOU9h 8uiLdiN95."
+
 msgid "The server may be configured to include teleporters:  large transparent"
 msgstr "Teh 5ERVeR MaY be CoNPhi9uR3D +O INcLUde T3l3p0R+eR5: L4R9e +R4N5PArEn+"
+
 msgid "black slabs.  Objects entering one side of a teleporter are instantly"
 msgstr "Bl4cK sl4b5. O8J3Ct5 3n+eR1NG 0ne 51D3 0PH A +3Lep0R+3r 4r3 1N5+AN+lY"
+
 msgid "moved to one side of another (or possibly the same) teleporter.  The"
 msgstr "moveD +0 ON3 SIDE Of 4n0+h3R (OR pOs$i8LY +HE 54ME) TeL3pORt3R. +hE"
+
 msgid "teleport is reversible;  reentering the same side of the destination"
 msgstr "+3LeP0Rt 15 REV3R5iblE; re3N+ERin9 +He 54m3 $1d3 0F +H3 d3$tin4t10N"
+
 msgid "teleporter brings you back to where you started.  Teleport connections"
 msgstr "TELEPORTER br1N95 j00 84CK +0 WHEr3 J00 5+4R+ed. +3lEP0Rt C0nN3c+I0N5"
+
 msgid "are fixed at the start of the game and don't change during the game."
 msgstr "@Re pH1XEd 4+ +H3 St@RT 0PH T3H gAMe 4ND DOn'+ CH4n93 DUR1N9 +H3 94mE. "
+
 msgid "The connections are always the same in the capture-the-flag style."
 msgstr "t3h C0nnEcTI0N5 aR3 @LW4Y$ +3H 54M3 1N tHE c@P+URe-+HE-FL@G $TYl3."
+
 msgid "Each side of a teleporter teleports independently of the other side."
 msgstr "E4CH 51D3 0F @ +3lEp0r+ER +EL3P0RTs iNDEp3ND3ntLY 0F TH3 Oth3R $1d3."
+
 msgid "It's possible for a teleporter to teleport to the opposite side of"
 msgstr "i+'5 p0$518L3 PhOr @ +3lEP0RtEr +0 tElEP0R+ +0 +h3 OPP0$I+3 5iDE OF"
+
 msgid "itself.  Such a thru-teleporter acts almost as if it wasn't there."
 msgstr "ITseLPH. 5UCh 4 THRu-+el3P0r+eR @C+5 almO5t 4s 1ph it w45N'T THEre."
+
 msgid "A teleporter can also teleport to the same side of itself.  This is a"
 msgstr "@ +3lEpOrT3R CaN AL$O TELEPOR+ T0 +H3 S@M3 51D3 0f i+$3Lf. ThI$ 1$ @"
+
 msgid "reverse teleporter.  Shooting at a reverse teleporter is likely to be"
 msgstr "R3v3r5e +elEPor+Er. 5HooT1n9 @+ 4 R3V3r53 T3LEpor+Er 15 l1kELY +0 BE"
+
 msgid "self destructive;  shooting a laser at one is invariably fatal."
 msgstr "5ELF D3$+RUc+IV3; $H0O+1nG 4 l45ER 4+ OnE IS 1nv4R14BLY F4+4L."
+
 # Help 4 Strings
+
 msgid "Flags come in two varieties:  team flags and super flags.  Team flags"
 msgstr "Phl4GS c0M3 in tw0 V4R1Et1E$: +34m FL4g$ @Nd 5uP3r pHL495. +34M PhL49S"
+
 msgid "are used only in the capture-the-flag style.  The server may also be"
 msgstr "4R3 U5Ed oNLY 1N +hE C4P+UR3-+h3-phL@9 5TYL3. Th3 $3rVER m@Y 4L5o BE"
+
 msgid "configured to supply super flags, which give your tank some advantage"
 msgstr "CONf1GurEd +O 5UPPLy $Uper pHl4G5, WH1ch 9IV3 J00R +4Nk 50M3 4Dv4N+A93"
+
 msgid "or disadvantage.  You normally can't tell which until you pick one up,"
 msgstr "0R D1$4Dv4n+@9e. j00 NORM4LlY C4N'+ t3Ll whIcH UNT1L J00 piCK 0N3 Up, "
+
 msgid "but good flags generally outnumber bad flags two to one."
 msgstr "bUT Go0D FL49s G3N3R@LlY 0U+NUMbeR 84d fL495 +W0 +0 One. "
+
 msgid "Team flags are not allowed to be in Bad Places.  Bad Places are:  on"
 msgstr "+e@m Phl495 @R3 N0+ @llow3D +0 BE In B4D pl@c35. B4d pL4CeS 4R3: 0n "
+
 msgid "a building or on an enemy base.  Team flags dropped in a Bad Place are"
 msgstr "a bUiLDInG OR On @N 3n3MY 8@53. +3aM Fl@9S DR0PP3D In @ B4d PlaCE 4re"
+
 msgid "moved to a safety position.  Captured flags are placed back on their"
 msgstr "MOV3D +0 4 S4PhEtY p05itI0n. CaP+UreD fL@g$ 4RE PL4cED b4Ck 0n ThEIr"
+
 msgid "team base.  Super flags dropped above a building always disappear."
 msgstr "Te@M b4$3. SuP3R fl@g5 dR0PP3d 4bov3 4 8uiLd1N9 4LW4Ys Di5apPE4R."
+
 msgid "A random good super flag will remain for up to 4 possessions.  After"
 msgstr "A R@nd0m Go0D 5uP3R PhL@G wIlL R3m41N fOR Up TO 4 po5s3S$10n5. 4PH+3R "
+
 msgid "that it'll disappear and will eventually be replaced by a new random"
 msgstr "+haT 1t'Ll DI5ApP3@R 4nd w1Ll 3VEntU4lLy b3 REPL@CED By @ neW R4NDoM"
+
 msgid "flag.  Bad random super flags disappear after the first possession."
 msgstr "Phl49. 8@D R4nd0M 5uP3r Phl495 D15@pP34R AF+3R +H3 F1R5T p0$53551oN. "
+
 msgid "Bad super flags can't normally be dropped.  The server can be set to"
 msgstr "B4d sUp3r fLa9S cAN'+ norm4lly BE DRoPP3d. +3H 53rVer C4N Be 53+ To"
+
 msgid "automatically drop the flag for you after some time, after you destroy"
 msgstr "4UT0M4t1C@lLy DR0P +3h FLA9 Phor J00 4pHTeR 50M3 +1m3, @PH+Er j00 d3sTr0Y"
+
 msgid "a certain number of enemies, and/or when you grab an antidote flag."
 msgstr "A c3R+4In NUMb3R 0pH eNem13S, 4nD/Or wh3n j00 GR@8 4n @n+1doTE Fl4g. "
 
 msgid "Antidote flags are yellow and only appear when you have a bad flag."
 msgstr "@nTIdO+3 fL49S 4r3 y3lLOW 4nD oNly @Ppe@r when j00 H4V3 A B@D PhL@g."
+
 # Help 5 Strings
 
 msgid "Good Flags:"
