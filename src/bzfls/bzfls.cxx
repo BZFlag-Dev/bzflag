@@ -36,6 +36,12 @@ static const char copyright[] = "Copyright (c) 1993 - 2002 Tim Riker";
 #include "TimeKeeper.h"
 #include "TimeBomb.h"
 
+// Like verbose debug messages?
+#define DEBUG1 if (debug >= 1) printf
+#define DEBUG2 if (debug >= 2) printf
+#define DEBUG3 if (debug >= 3) printf
+#define DEBUG4 if (debug >= 4) printf
+
 // give up on connections that have been idle DisconnectTimeout seconds.
 static const float DisconnectTimeout = 10.0f;
 
@@ -212,14 +218,12 @@ Server::Server(const char* inNamePort,
     if (isspace(*scanTitle))
       *scanTitle = ' ';
 
-  if (debug >= 1)
-    fprintf(stderr, "added server: %s, %s, %s, %s, %s\n", nameport, build, gameInfo, address, title);
+  DEBUG1("added server: %s, %s, %s, %s, %s\n", nameport, build, gameInfo, address, title);
 }
 
 Server::~Server()
 {
-  if (debug >= 1)
-    fprintf(stderr, "removed server: %s\n", nameport);
+  DEBUG1("removed server: %s\n", nameport);
 
   free(title);
   free(gameInfo);
@@ -260,8 +264,7 @@ void Server::setStale()
 {
   if (fresh) {
     unref();
-    if (debug >= 1)
-      fprintf(stderr, "server %s is stale\n", nameport);
+    DEBUG1("server %s is stale\n", nameport);
   }
   fresh = False;
 }
@@ -270,8 +273,7 @@ void Server::setFresh()
 {
   if (!fresh) {
     ref();
-    if (debug >= 1)
-      fprintf(stderr, "server %s is fresh\n", nameport);
+    DEBUG1("server %s is fresh\n", nameport);
   }
   time = TimeKeeper::getCurrent();
   fresh = True;
@@ -523,8 +525,7 @@ static void acceptClient(int fd)
   if (client[index].fd > maxFileDescriptor)
     maxFileDescriptor = client[index].fd;
 
-  if (debug >= 3)
-    fprintf(stderr, "accepted from %s on %d\n",
+  DEBUG3("accepted from %s on %d\n",
 				inet_ntoa(addr.sin_addr), client[index].fd);
 }
 
@@ -533,8 +534,7 @@ static void removeClient(int index)
 {
   assert(client[index].fd != NotConnected);
 
-  if (debug >= 3)
-    fprintf(stderr, "closing %d\n", client[index].fd);
+  DEBUG3("closing %d\n", client[index].fd);
 
   // close connection
   close(client[index].fd);
@@ -671,8 +671,7 @@ static void checkList(const TimeKeeper& time)
     // next server
     scan = next;
   }
-  if (debug >= 5)
-    fprintf(stderr, "checkList: %d current servers\n", serverCount);
+  DEBUG4("checkList: %d current servers\n", serverCount);
 }
 
 // check if server at address is accessible and responsive
@@ -938,8 +937,7 @@ static boolean startReplyClient(int index)
   // get command into cmd and remaining arguments into request
   char* cmd = args[0];
   request = args[1];
-  if (debug >= 4)
-    fprintf(stderr, "on %d, command %s %s\n", client[index].fd, cmd, request);
+  DEBUG2("on %d, command %s %s\n", client[index].fd, cmd, request);
 
   // parse request
   if (strcmp(cmd, "ADD") == 0) {
