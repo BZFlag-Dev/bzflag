@@ -20,6 +20,7 @@
 #include "common.h"
 #include <string>
 #include <map>
+#include <vector>
 #include "BzfEvent.h"
 #include "CallbackList.h"
 
@@ -41,6 +42,11 @@ public:
 
   // get the command for a key event press or release
   std::string		get(const BzfKeyEvent&, bool press) const;
+
+  /** returns a set of keypress strings that correspond to keys bound
+   * to a particular command
+   */
+  std::vector<std::string> KeyManager::getKeysFromCommand(std::string command, bool press) const;
 
   // convert a key event to/from a string
   std::string		keyEventToString(const BzfKeyEvent&) const;

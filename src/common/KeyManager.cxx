@@ -127,6 +127,28 @@ std::string		KeyManager::get(const BzfKeyEvent& key,
     return index->second;
 }
 
+
+std::vector<std::string> KeyManager::getKeysFromCommand(std::string command, bool press) const 
+{
+  std::vector<std::string> keys;
+  EventToCommandMap::const_iterator index;
+  if (press) {
+    for (index = pressEventToCommand.begin(); index != pressEventToCommand.end(); ++index) {
+      if (index->second == command) {
+	keys.push_back(this->keyEventToString(index->first));
+      }
+    }
+  } else {
+    for (index = releaseEventToCommand.begin(); index != releaseEventToCommand.end(); ++index) {
+      if (index->second == command) {
+	keys.push_back(this->keyEventToString(index->first));
+      }
+    }
+  }
+  return keys;
+}
+
+
 std::string		KeyManager::keyEventToString(
 					const BzfKeyEvent& key) const
 {
