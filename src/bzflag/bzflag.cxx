@@ -134,11 +134,12 @@ static const char*	bindingList[] = {
   "bind F5 down screenshot",
 #endif
   "bind - down \"time backward\"",
-  "bind + down \"time forward\"",
+  "bind = down \"time forward\"",
   "bind H down \"toggle displayRadarFlags\"",
   "bind J down \"toggle displayMainFlags\"",
   "bind K down \"silence\"",
   "bind L down \"toggle displayLabels\"",
+  "bind Delete down destruct",
   "bind \"Ctrl+Left Arrow\" down \"roam rotate left\"",
   "bind \"Ctrl+Left Arrow\" up \"roam rotate stop\"",
   "bind \"Ctrl+Right Arrow\" down \"roam rotate right\"",

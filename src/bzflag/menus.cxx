@@ -839,10 +839,16 @@ void			KeyboardMapMenu::resize(int width, int height)
 
 void			KeyboardMapMenu::update()
 {
+  std::map<std::string, keymap>::iterator it;
+  // clear
+  for (it = mappable.begin(); it != mappable.end(); it++) {
+    it->second.key1 = "";
+    it->second.key2 = "";
+  }
   // load current settings
   KEYMGR->iterate(&onScanCB, this);
   std::vector<HUDuiControl*>& list = getControls();
-  for (std::map<std::string, keymap>::iterator it = mappable.begin(); it != mappable.end(); it++) {
+  for (it = mappable.begin(); it != mappable.end(); it++) {
     std::string value = "";
     if (it->second.key1.empty()) {
       if (it->second.index == (int) editing)
