@@ -14,17 +14,20 @@
 #pragma warning(4:4786)
 #endif
 
+/* interface header */
+#include "Permissions.h"
+
+/* system implementation headers */
 #include <string>
-#include <vector>
 #include <fstream>
 #include <stdlib.h>
-#include "Permissions.h"
-#include "md5.h"
 
-// implementation-specific bzflag headers
+/* common implementation headers */
+#include "md5.h"
 #include "bzfio.h"
 #include "Protocol.h"
 #include "TextUtils.h"
+
 
 PlayerAccessMap	groupAccess;
 PlayerAccessMap	userDatabase;
@@ -83,6 +86,10 @@ void PlayerAccessInfo::reloadInfo() {
 void PlayerAccessInfo::setAdmin() {
   passwordAttempts = 0;
   Admin            = true;
+}
+
+bool PlayerAccessInfo::isAdmin() const {
+  return Admin;
 }
 
 bool PlayerAccessInfo::passwordAttemptsMax() {
@@ -228,13 +235,13 @@ bool userExists(const std::string &nick)
 //FIXME - check for non-existing user (throw?)
 PlayerAccessInfo &PlayerAccessInfo::getUserInfo(const std::string &nick)
 {
-//  if (!userExists(nick))
-//    return false;
+  //  if (!userExists(nick))
+  //    return false;
   std::string str = nick;
   makeupper(str);
   PlayerAccessMap::iterator itr = userDatabase.find(str);
-//  if (itr == userDatabase.end())
-//    return false;
+  //  if (itr == userDatabase.end())
+  //    return false;
   return itr->second;
 }
 
@@ -259,70 +266,82 @@ void setUserPassword(const std::string &nick, const std::string &pass)
 std::string nameFromPerm(PlayerAccessInfo::AccessPerm perm)
 {
   switch (perm) {
-    case PlayerAccessInfo::idleStats: return "idleStats";
-    case PlayerAccessInfo::lagStats: return "lagStats";
-    case PlayerAccessInfo::flagMod: return "flagMod";
-    case PlayerAccessInfo::flagHistory: return "flagHistory";
-    case PlayerAccessInfo::lagwarn: return "lagwarn";
-    case PlayerAccessInfo::kick: return "kick";
+    case PlayerAccessInfo::adminMessages: return "adminMessages";
+    case PlayerAccessInfo::antiban : return "antiban";
+    case PlayerAccessInfo::antideregister : return "antideregister";
+    case PlayerAccessInfo::antikick : return "antikick";
+    case PlayerAccessInfo::antipoll : return "antipoll";
+    case PlayerAccessInfo::antipollban : return "antipollban";
+    case PlayerAccessInfo::antipollkick : return "antipollkick";
     case PlayerAccessInfo::ban: return "ban";
     case PlayerAccessInfo::banlist: return "banlist";
-    case PlayerAccessInfo::unban: return "unban";
     case PlayerAccessInfo::countdown: return "countdown";
     case PlayerAccessInfo::endGame: return "endGame";
-    case PlayerAccessInfo::shutdownServer: return "shutdownServer";
-    case PlayerAccessInfo::superKill: return "superKill";
-    case PlayerAccessInfo::playerList: return "playerList";
+    case PlayerAccessInfo::flagHistory: return "flagHistory";
+    case PlayerAccessInfo::flagMod: return "flagMod";
+    case PlayerAccessInfo::idleStats: return "idleStats";
     case PlayerAccessInfo::info: return "info";
+    case PlayerAccessInfo::kick: return "kick";
+    case PlayerAccessInfo::lagStats: return "lagStats";
+    case PlayerAccessInfo::lagwarn: return "lagwarn";
     case PlayerAccessInfo::listPerms: return "listPerms";
-    case PlayerAccessInfo::showOthers: return "showOthers";
-    case PlayerAccessInfo::removePerms: return "removePerms";
+    case PlayerAccessInfo::playerList: return "playerList";
+    case PlayerAccessInfo::poll: return "poll";
     case PlayerAccessInfo::record: return "record";
+    case PlayerAccessInfo::removePerms: return "removePerms";
     case PlayerAccessInfo::replay: return "replay";
+    case PlayerAccessInfo::requireIdentify: return "requireIdentify";
+    case PlayerAccessInfo::setAll: return "setAll";
     case PlayerAccessInfo::setPassword: return "setPassword";
     case PlayerAccessInfo::setPerms: return "setPerms";
-    case PlayerAccessInfo::setAll: return "setAll";
     case PlayerAccessInfo::setVar: return "setVar";
-    case PlayerAccessInfo::poll: return "poll";
-    case PlayerAccessInfo::vote: return "vote";
+    case PlayerAccessInfo::showOthers: return "showOthers";
+    case PlayerAccessInfo::shutdownServer: return "shutdownServer";
+    case PlayerAccessInfo::superKill: return "superKill";
+    case PlayerAccessInfo::unban: return "unban";
     case PlayerAccessInfo::veto: return "veto";
-    case PlayerAccessInfo::requireIdentify: return "requireIdentify";
     case PlayerAccessInfo::viewReports: return "viewReports";
-	  case PlayerAccessInfo::adminMessages: return "adminMessages";
-  default: return "";
+    case PlayerAccessInfo::vote: return "vote";
+    default: return "";
   };
 }
 
 PlayerAccessInfo::AccessPerm permFromName(const std::string &name)
 {
-  if (name == "IDLESTATS") return PlayerAccessInfo::idleStats;
-  if (name == "LAGSTATS") return PlayerAccessInfo::lagStats;
-  if (name == "FLAGMOD") return PlayerAccessInfo::flagMod;
-  if (name == "FLAGHISTORY") return PlayerAccessInfo::flagHistory;
-  if (name == "LAGWARN") return PlayerAccessInfo::lagwarn;
-  if (name == "KICK") return PlayerAccessInfo::kick;
+  if (name == "ADMINMESSAGES") return PlayerAccessInfo::adminMessages;
+  if (name == "ANTIBAN") return PlayerAccessInfo::antiban;
+  if (name == "ANTIDEREGISTER") return PlayerAccessInfo::antideregister;
+  if (name == "ANTIKICK") return PlayerAccessInfo::antikick;
+  if (name == "ANTIPOLL") return PlayerAccessInfo::antipoll;
+  if (name == "ANTIPOLLBAN") return PlayerAccessInfo::antipollban;
+  if (name == "ANTIPOLLKICK") return PlayerAccessInfo::antipollkick;
   if (name == "BAN") return PlayerAccessInfo::ban;
   if (name == "BANLIST") return PlayerAccessInfo::banlist;
-  if (name == "UNBAN") return PlayerAccessInfo::unban;
   if (name == "COUNTDOWN") return PlayerAccessInfo::countdown;
   if (name == "ENDGAME") return PlayerAccessInfo::endGame;
-  if (name == "SHUTDOWNSERVER") return PlayerAccessInfo::shutdownServer;
-  if (name == "SUPERKILL") return PlayerAccessInfo::superKill;
-  if (name == "PLAYERLIST") return PlayerAccessInfo::playerList;
+  if (name == "FLAGHISTORY") return PlayerAccessInfo::flagHistory;
+  if (name == "FLAGMOD") return PlayerAccessInfo::flagMod;
+  if (name == "IDLESTATS") return PlayerAccessInfo::idleStats;
   if (name == "INFO") return PlayerAccessInfo::info;
+  if (name == "KICK") return PlayerAccessInfo::kick;
+  if (name == "LAGSTATS") return PlayerAccessInfo::lagStats;
+  if (name == "LAGWARN") return PlayerAccessInfo::lagwarn;
   if (name == "LISTPERMS") return PlayerAccessInfo::listPerms;
-  if (name == "SHOWOTHERS") return PlayerAccessInfo::showOthers;
+  if (name == "PLAYERLIST") return PlayerAccessInfo::playerList;
+  if (name == "POLL") return PlayerAccessInfo::poll;
   if (name == "REMOVEPERMS") return PlayerAccessInfo::removePerms;
+  if (name == "REQUIREIDENTIFY") return PlayerAccessInfo::requireIdentify;
+  if (name == "SETALL") return PlayerAccessInfo::setAll;
   if (name == "SETPASSWORD") return PlayerAccessInfo::setPassword;
   if (name == "SETPERMS") return PlayerAccessInfo::setPerms;
   if (name == "SETVAR") return PlayerAccessInfo::setVar;
-  if (name == "SETALL") return PlayerAccessInfo::setAll;
-  if (name == "POLL") return PlayerAccessInfo::poll;
-  if (name == "VOTE") return PlayerAccessInfo::vote;
+  if (name == "SHOWOTHERS") return PlayerAccessInfo::showOthers;
+  if (name == "SHUTDOWNSERVER") return PlayerAccessInfo::shutdownServer;
+  if (name == "SUPERKILL") return PlayerAccessInfo::superKill;
+  if (name == "UNBAN") return PlayerAccessInfo::unban;
   if (name == "VETO") return PlayerAccessInfo::veto;
-  if (name == "REQUIREIDENTIFY") return PlayerAccessInfo::requireIdentify;
   if (name == "VIEWREPORTS") return PlayerAccessInfo::viewReports;
-  if (name == "ADMINMESSAGES") return PlayerAccessInfo::adminMessages;
+  if (name == "VOTE") return PlayerAccessInfo::vote;
   return PlayerAccessInfo::lastPerm;
 }
 
@@ -484,11 +503,11 @@ void PlayerAccessInfo::updateDatabases()
     writePermsFile(userDatabaseFile);
 }
 
+
 // Local Variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-
