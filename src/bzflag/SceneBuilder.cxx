@@ -419,11 +419,6 @@ void			SceneDatabaseBuilder::addBase(SceneDatabase *db,
     }
     else{
       if (useColorTexture[1]){  // only set the texture if we have one and are using it
-        node->setColor(boxColors[part - 2]);
-        node->setModulateColor(boxModulateColors[part - 2]);
-        node->setLightedColor(boxLightedColors[part - 2]);
-        node->setLightedModulateColor(boxLightedModulateColors[part - 2]);
-        node->setMaterial(boxMaterial);
         node->setTexture(*baseTopTexture);
         node->setUseColorTexture(useColorTexture[1]);
       }
