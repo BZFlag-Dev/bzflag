@@ -55,6 +55,7 @@ bzfs \- BZFlag game server
 [\fB\-s \fIflag-count\fR]
 [\fB\-sa\fR]
 [\fB\-sb\fR]
+[\fB\-set \fIname value\fR]
 [\fB\-sl \fIid num\fR]
 [\fB\-speedtol \fIfactor\fR]
 [\fB\-srvmsg \fImessage\fR]
@@ -327,6 +328,9 @@ Antidote flags are provided for players with bad flags.
 .TP
 .B -sb
 Allow spawns on box buildings.
+.TP
+.B -set \fIname value\fR
+Set BZDB variable \fIname\fR to \fIvalue\fR
 .TP
 \fB-sl \fIid num\fR
 Restrict flag \fIid\fR to \fInum\fR shots.
