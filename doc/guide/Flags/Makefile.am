@@ -26,6 +26,7 @@ EXTRA_DIST = \
 	QuickTurn.xml \
 	RapidFire.xml \
 	RedTeam.xml \
+	ReverseControls.xml \
 	ReverseOnly.xml \
 	Ricochet.xml \
 	RightTurnOnly.xml \
