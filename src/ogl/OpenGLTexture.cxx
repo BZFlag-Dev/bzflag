@@ -39,8 +39,7 @@ static int		hasTextureObject = -1;
 //
 
 
-OpenGLTexture::Rep*	OpenGLTexture::Rep::first = NULL;
-const GLenum		OpenGLTexture::Rep::minifyFilter[] = {
+const GLenum		OpenGLTexture::minifyFilter[] = {
 				GL_NEAREST,
 				GL_NEAREST,
 				GL_LINEAR,
@@ -49,7 +48,7 @@ const GLenum		OpenGLTexture::Rep::minifyFilter[] = {
 				GL_NEAREST_MIPMAP_LINEAR,
 				GL_LINEAR_MIPMAP_LINEAR
 			};
-const GLenum		OpenGLTexture::Rep::magnifyFilter[] = {
+const GLenum		OpenGLTexture::magnifyFilter[] = {
 				GL_NEAREST,
 				GL_NEAREST,
 				GL_LINEAR,
@@ -68,19 +67,26 @@ const char*		OpenGLTexture::configFilterValues[] = {
 				"linearmipmaplinear"
 };
 
-OpenGLTexture::Rep::Rep(int _width, int _height,
+
+//
+// OpenGLTexture
+//
+
+OpenGLTexture::Filter	OpenGLTexture::filter = LinearMipmapLinear;
+
+
+OpenGLTexture::OpenGLTexture(int _width, int _height,
 				const GLvoid* pixels,
-				int _maxFilter,
+				Filter _maxFilter,
 				bool _repeat,
-				int _internalFormat) :
-				refCount(1), list(0),
-				alpha(false),
+				int _internalFormat)
+				: alpha(false),
 				width(_width),
 				height(_height),
 				repeat(_repeat),
 				internalFormat(_internalFormat),
-				maxFilter(_maxFilter)
-
+				maxFilter(_maxFilter),
+				list(0)
 {
   // check for texture object extension
   if (hasTextureObject < 0) {
@@ -93,10 +99,6 @@ OpenGLTexture::Rep::Rep(int _width, int _height,
     hasTextureObject = 0;
 #endif // BZF_TEXTURE_OBJECT
   }
-
-  // add me to list
-  next = first;
-  first = this;
 
   // make texture map object/list
 #if defined(BZF_TEXTURE_OBJECT)
@@ -114,16 +116,18 @@ OpenGLTexture::Rep::Rep(int _width, int _height,
   image = new GLubyte[4 * width * height];
   ::memcpy(image, pixels, 4 * width * height);
 
-  // create the texture maps
-  doInitContext();
+  { int patlabor_remove_this_once_tm_does_this; }
+  setFilter(std::string("linearmipmaplinear"));
+
+  initContext();
 
   // watch for context recreation
-  OpenGLGState::registerContextInitializer(initContext, (void*)this);
+  OpenGLGState::registerContextInitializer(static_initContext, (void*)this);
 }
 
-OpenGLTexture::Rep::~Rep()
+OpenGLTexture::~OpenGLTexture()
 {
-  OpenGLGState::unregisterContextInitializer(initContext, (void*)this);
+  OpenGLGState::unregisterContextInitializer(static_initContext, (void*)this);
 
   // free image data
   delete[] image;
@@ -136,43 +140,14 @@ OpenGLTexture::Rep::~Rep()
   else
 #endif // BZF_TEXTURE_OBJECT
   if (list) glDeleteLists(list, 1);
-
-  // remove me from list
-  if (this == first) {
-    first = next;
-  }
-  else {
-    for (Rep* scan = first; scan; scan = scan->next)
-      if (scan->next == this) {
-	scan->next = next;
-	break;
-      }
-  }
 }
 
-void			OpenGLTexture::Rep::setFilter(int filter)
+void OpenGLTexture::static_initContext(void *that)
 {
-  // limit filter.  try to keep nearest... filters as nearest and
-  // linear... as linear.
-  if (filter > maxFilter) {
-    if ((filter & 1) == 1)	// nearest...
-      if ((maxFilter & 1) == 1) filter = maxFilter;
-      else filter = maxFilter > 0 ? maxFilter - 1 : 0;
-
-    else			// linear...
-      if ((maxFilter & 1) == 1) filter = maxFilter - 1;
-      else filter = maxFilter;
-  }
-
-#if defined(BZF_TEXTURE_OBJECT)
-  if (hasTextureObject > 0)
-    glBindTexture(GL_TEXTURE_2D, list);
-#endif // BZF_TEXTURE_OBJECT
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, minifyFilter[filter]);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, magnifyFilter[filter]);
+  ((OpenGLTexture*) that)->initContext();
 }
 
-void			OpenGLTexture::Rep::doInitContext()
+void OpenGLTexture::initContext()
 {
   // set size
   int tmpWidth = width;
@@ -232,7 +207,7 @@ void			OpenGLTexture::Rep::doInitContext()
 #endif // BZF_TEXTURE_OBJECT
   glNewList(list, GL_COMPILE);
 
-  setFilter(maxFilter);
+  setFilter((Filter)maxFilter);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S,
 			repeat ? GL_REPEAT : GL_CLAMP);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T,
@@ -279,53 +254,6 @@ void			OpenGLTexture::Rep::doInitContext()
   delete[] origData;
 }
 
-void			OpenGLTexture::Rep::initContext(void* self)
-{
-  ((Rep*)self)->doInitContext();
-}
-
-//
-// OpenGLTexture
-//
-
-OpenGLTexture::Rep*	OpenGLTexture::lastRep = NULL;
-OpenGLTexture::Filter	OpenGLTexture::filter = LinearMipmapLinear;
-
-OpenGLTexture::OpenGLTexture()
-{
-  rep = NULL;
-}
-
-OpenGLTexture::OpenGLTexture(int width, int height,
-				const GLvoid* pixels,
-				Filter maxFilter,
-				bool repeat,
-				int internalFormat)
-{
-  rep = new Rep(width, height, pixels, (int)maxFilter, repeat, internalFormat);
-}
-
-OpenGLTexture::OpenGLTexture(const OpenGLTexture& t)
-{
-  rep = t.rep;
-  ref();
-}
-
-OpenGLTexture::~OpenGLTexture()
-{
-  if (unref()) delete rep;
-}
-
-OpenGLTexture&		OpenGLTexture::operator=(const OpenGLTexture& t)
-{
-  if (rep != t.rep) {
-    if (unref()) delete rep;
-    rep = t.rep;
-    ref();
-  }
-  return *this;
-}
-
 OpenGLTexture::Filter	OpenGLTexture::getFilter()
 {
   return filter;
@@ -353,83 +281,57 @@ void			OpenGLTexture::setFilter(Filter _filter)
   // can only change filters when using texture objects
   if (hasTextureObject <= 0) return;
 
-  // change filter on all textures
-  for (Rep* scan = Rep::first; scan; scan = scan->next)
-    scan->setFilter(filter);
+  int filterIndex = (int) filter;
+  // limit filter.  try to keep nearest... filters as nearest and
+  // linear... as linear.
+  if (filterIndex > maxFilter) {
+    if ((filterIndex & 1) == 1)	// nearest...
+      if ((maxFilter & 1) == 1) filterIndex = maxFilter;
+      else filterIndex = maxFilter > 0 ? maxFilter - 1 : 0;
 
-  // back to previously bound texture, or no texture if filter is Off
-  if (Rep::first != lastRep && filter != Off) bind(lastRep);
-  else if (lastRep) bind(NULL);
+    else			// linear...
+      if ((maxFilter & 1) == 1) filterIndex = maxFilter - 1;
+      else filterIndex = maxFilter;
+  }
 
-#else // BZF_TEXTURE_OBJECT
-
-  // bind no texture if filter is Off
-  if (filter == Off && lastRep) bind(NULL);
-
+#if defined(BZF_TEXTURE_OBJECT)
+  if (hasTextureObject > 0)
+    glBindTexture(GL_TEXTURE_2D, list);
 #endif // BZF_TEXTURE_OBJECT
-}
-
-bool			OpenGLTexture::operator==(const OpenGLTexture& t) const
-{
-  return (rep == t.rep);
-}
-
-bool			OpenGLTexture::operator!=(const OpenGLTexture& t) const
-{
-  return (rep != t.rep);
-}
-
-bool			OpenGLTexture::operator<(const OpenGLTexture& t) const
-{
-  if (rep == t.rep) return false;
-  if (!t.rep) return false;
-  if (!rep) return true;
-  return (rep->list < t.rep->list);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, minifyFilter[filterIndex]);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, magnifyFilter[filterIndex]);
+#endif // BZF_TEXTURE_OBJECT
 }
 
 GLuint			OpenGLTexture::getList() const
 {
-  return (!rep ? 0 : rep->list);
+  return (list);
 }
 
-void			OpenGLTexture::execute() const
+void			OpenGLTexture::execute()
 {
-  bind(rep);
-  lastRep = rep;
+  bind();
 }
 
 float			OpenGLTexture::getAspectRatio() const
 {
-  if (rep)
-    return ((float) rep->height) / ((float) rep->width);
-  else
-    return 1.0f;
+    return ((float) height) / ((float) width);
 }
 
-void			OpenGLTexture::ref()
-{
-  if (rep) ++rep->refCount;
-}
-
-bool			OpenGLTexture::unref()
-{
-  return (rep && --rep->refCount == 0);
-}
-
-void			OpenGLTexture::bind(Rep* r)
+void			OpenGLTexture::bind()
 {
 #if defined(BZF_TEXTURE_OBJECT)
   if (hasTextureObject > 0) {
-    if (r && r->list) glBindTexture(GL_TEXTURE_2D, r->list);
+    if (list) glBindTexture(GL_TEXTURE_2D, list);
     else glBindTexture(GL_TEXTURE_2D, 0);
   }
   else
 #endif // BZF_TEXTURE_OBJECT
-  if (r && r->list) glCallList(r->list);
+  if (list) glCallList(list);
   else glTexImage2D(GL_TEXTURE_2D, 0, 3, 0, 0, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
 }
 
-int			OpenGLTexture::Rep::getBestFormat(
+int			OpenGLTexture::getBestFormat(
 				int width, int height,
 				const GLvoid* pixels)
 {

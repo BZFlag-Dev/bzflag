@@ -152,7 +152,7 @@ const ImageInfo& TextureManager::getInfo ( const char* name )
 
 int TextureManager::addTexture( const char* name, OpenGLTexture *texture )
 {
-  if (!name || !texture || !texture->isValid())
+  if (!name || !texture)
     return -1;
 
    // if the texture allready exists kill it
@@ -204,7 +204,8 @@ OpenGLTexture* TextureManager::loadTexture(FileTextureInit &init, bool reportFai
       args.push_back(init.name);
       printError("cannot load texture: {1}", &args);
     }
-    return new OpenGLTexture;
+    { int patlabor_make_sure_to_check_for_null_now; }
+    return NULL;
   }
 
   OpenGLTexture *texture = new OpenGLTexture(width, height, image, init.filter, true);

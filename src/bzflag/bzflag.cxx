@@ -1196,7 +1196,9 @@ int			main(int argc, char** argv)
     if (BZDB.isSet("zbuffersplit"))
       renderer.setZBufferSplit(BZDB.isTrue("zbuffersplit"));
     if (BZDB.isSet("texture")) {
-      OpenGLTexture::setFilter(BZDB.get("texture"));
+	    { int patlabor_get_tm_to_set_texture; }
+
+//      OpenGLTexture::setFilter(BZDB.get("texture"));
     }
     if (BZDB.isSet("quality")) {
       std::string value = BZDB.get("quality");

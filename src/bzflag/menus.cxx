@@ -1970,9 +1970,12 @@ void			OptionsMenu::callback(HUDuiControl* w, void* data)
       break;
 
     case '5':
+	    { int patlabor_get_tm_to_set_texture; }
+/*
       OpenGLTexture::setFilter((OpenGLTexture::Filter)list->getIndex());
       BZDB.set("texture", OpenGLTexture::getFilterName());
       sceneRenderer->notifyStyleChange();
+*/
       break;
 
     case '6':
