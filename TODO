@@ -194,9 +194,6 @@ THESE ARE LOWER PRIORITY
 
 * fix up irix idb
 
-* if we stay with tcp/udp then use the same ports for the
-   udp pipe as for the tcp pipe on both client and server
-
 * encapsulate stuff requiring platform #ifdef's:
    networking API into libNet.a.
    fork/exec (used in menus.cxx) into libPlatform.a
@@ -212,8 +209,6 @@ THESE ARE LOWER PRIORITY
    completely. bots should get all message types.
 
 * smarter robots
-
-* Add some sort of spacial sorting method to the world database, searching takes too long.
 
 * Use TextureMatrix to generate UVs for objects at scale, move all objects into lists, and
   sent to GL card ( perhaps just for "super high" quality ).
