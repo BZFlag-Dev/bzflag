@@ -688,7 +688,7 @@ static BzfString	cmdSend(const BzfString&,
 	}
 	else if (args[0] == "nemesis") {
 		const Player *nemesis = myTank->getNemesis();
-		if (!nemesis) {
+		if (nemesis) {
 			void* buf = messageMessage;
 			buf = nboPackUByte(buf, nemesis->getId());
 			buf = nboPackUShort(buf, uint16_t(RogueTeam));
