@@ -426,6 +426,15 @@ AC_OUTPUT(bzflag.spec
 	data/Makefile
 	data/l10n/Makefile
 	debian/Makefile
+	doc/Makefile
+	doc/faq/Makefile
+	doc/guide/Makefile
+	doc/guide/Commands/Makefile
+	doc/guide/Flags/Makefile
+	doc/guide/Geometry/Makefile
+	doc/guide/Tactics/Makefile
+	doc/howto/Makefile
+	doc/man/Makefile
 	include/Makefile
 	misc/Makefile
 	man/Makefile
