@@ -36,8 +36,12 @@
 
 using namespace TrackMarks;
 
+enum TrackType {
+  treads = 0,
+  puddle = 1
+};
+  
 typedef struct {
-  TrackType type;
   float pos[3];
   float angle;
   float scale;
@@ -49,7 +53,8 @@ typedef struct {
 // Local Variables
 //////////////////
 
-static std::list<TrackEntry> TrackList;
+static std::list<TrackEntry> TreadsList;
+static std::list<TrackEntry> PuddleList;
 static int TrackTexture = -1;
 static float TrackFadeTime = 5.0f;
 static float UserFadeScale = 1.0f;
@@ -87,28 +92,22 @@ void TrackMarks::init()
   
   OpenGLGStateBuilder gb;
   
-  const float grey[4] = {0.5f, 0.5f, 0.5f, 1.0f};
-  OpenGLMaterial puddleMaterial(grey, grey, 0.5f);
   gb.reset();
   gb.setShading(GL_FLAT);
   gb.setAlphaFunc(GL_GEQUAL, 0.1f);
   gb.setBlending(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-  gb.setMaterial(puddleMaterial);
+  gb.enableMaterial(false); // no lighting
   gb.setTexture(TrackTexture);
   puddleState = gb.getState();
   
-  const float black[4] = {0.0f, 0.0f, 0.f, 1.0f};
-  OpenGLMaterial treadsMaterial(black, black, 0.0f);
   gb.reset();
   gb.setShading(GL_FLAT);
   gb.setAlphaFunc(GL_GEQUAL, 0.1f);
   gb.setBlending(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-  gb.setMaterial(treadsMaterial);
+  gb.enableMaterial(false); // no lighting
   treadsState = gb.getState();
   
   setUserFade(BZDB.eval("userTrackFade"));
-  
-//  BZDB.addCallback("_trackMarkTime", bzdbCallback, NULL);
   
   return;
 }
@@ -117,25 +116,14 @@ void TrackMarks::init()
 void TrackMarks::kill()
 {
   clear();
-  
-//  BZDB.removeCallback("_trackMarkTime", bzdbCallback, NULL);
-  
   return;
 }
 
 
-//static void bzdbCallback(const std::string& /*name*/, void* /*data*/)
-//{
-//  
-//  TrackFadeTime = BZDB.eval("_trackFade");
-//
-//  return;
-//}
-
-
 void TrackMarks::clear()
 {
-  TrackList.clear();
+  TreadsList.clear();
+  PuddleList.clear();
   return;
 }
 
@@ -166,12 +154,17 @@ bool TrackMarks::addMark(const float pos[3], float scale, float angle,
                          int phydrv)
 {
   TrackEntry te;
+  TrackType type;
   
   if ((pos[2] <= 0.1f) && BZDB.get(StateDatabase::BZDB_MIRROR) != "none") {
-    te.type = puddle;
+    type = puddle;
   } else {
-    te.type = treads;
+    type = treads;
+    if (scale < 0.01f) {
+      return false; // Narrow tanks don't draw treads
+    }
   }
+  
   te.startTime = TimeKeeper::getCurrent();
   memcpy (te.pos, pos, sizeof(float[3]));
   if (pos[2] > 0.0f) {
@@ -180,15 +173,20 @@ bool TrackMarks::addMark(const float pos[3], float scale, float angle,
   te.scale = scale;
   te.angle = angle * (180.0f / M_PI) ;
   te.phydrv = phydrv;
-  TrackList.push_back(te);
+
+  if (type == treads) {
+    TreadsList.push_back(te);
+  } else {
+    PuddleList.push_back(te);
+  }
   return true;
 }
 
 
-void TrackMarks::update(float dt)
+static void updateList(std::list<TrackEntry>& list, float dt)
 {
   std::list<TrackEntry>::iterator it;
-  for (it = TrackList.begin(); it != TrackList.end(); it++) {
+  for (it = list.begin(); it != list.end(); it++) {
     TrackEntry& te = *it;
     // update for the Physics Driver
     if (te.phydrv >= 0) {
@@ -218,49 +216,57 @@ void TrackMarks::update(float dt)
 }
 
 
+void TrackMarks::update(float dt)
+{
+  updateList(TreadsList, dt);
+  updateList(PuddleList, dt);
+  return;
+}
+
+
 void TrackMarks::render()
 {
   TrackFadeTime = BZDB.eval(StateDatabase::BZDB_TRACKFADE);
   TrackFadeTime = TrackFadeTime * UserFadeScale;
   
-  if ((TrackFadeTime <= 0.0f) || 
-      (RENDERER.useQuality() < 3) || !BZDBCache::zbuffer) {
+  if ((TrackFadeTime <= 0.0f) || !BZDBCache::zbuffer) {
     clear();
     return;
   }
 
   TimeKeeper nowTime = TimeKeeper::getCurrent();
 
-  std::list<TrackEntry>::iterator it = TrackList.begin();
-  
-  glDisable(GL_LIGHTING);
-  
-  while (it != TrackList.end()) {  
+  std::list<TrackEntry>::iterator it;
+
+  it = TreadsList.begin();
+  while (it != TreadsList.end()) {  
     std::list<TrackEntry>::iterator next = it;
     next++;
     TrackEntry& te = *it;
     float timeDiff = nowTime - te.startTime;
     if (timeDiff > TrackFadeTime) {
-      TrackList.erase(it);
+      TreadsList.erase(it);
       it = next;
       continue;
     }
     it = next;
-    
-    if (te.type == treads) {
-      // Narrow tanks don't draw tread marks
-      if (te.scale > 0.01f) {
-        drawTreads(te, timeDiff);
-      }
-    } else {
-      drawPuddle(te, timeDiff);
-    }
+    drawTreads(te, timeDiff);
   }
-  
-  glEnable(GL_LIGHTING);
-
-  // something is borked in the state management
-  OpenGLGState::resetState();
+    
+  it = PuddleList.begin();
+  while (it != PuddleList.end()) {  
+    std::list<TrackEntry>::iterator next = it;
+    next++;
+    TrackEntry& te = *it;
+    float timeDiff = nowTime - te.startTime;
+    if (timeDiff > TrackFadeTime) {
+      PuddleList.erase(it);
+      it = next;
+      continue;
+    }
+    it = next;
+    drawPuddle(te, timeDiff);
+  }
   
   return;
 }
@@ -296,7 +302,7 @@ static void drawPuddle(const TrackEntry& te, float lifetime)
   }
   glPopMatrix();
 
-  // Narrow tanks only needs 1 puddle
+  // Narrow tanks only need 1 puddle
   if (offset > 0.01f) {
     glPushMatrix();
     {
@@ -342,6 +348,7 @@ static void drawTreads(const TrackEntry& te, float lifetime)
 
   glBegin(GL_QUADS);
   {
+    // glRectf() if no texturing ...
     glVertex3f(-halfWidth, +TreadOutside, 0.0f);
     glVertex3f(-halfWidth, +TreadInside, 0.0f);
     glVertex3f(+halfWidth, +TreadInside, 0.0f);

@@ -22,11 +22,6 @@ namespace TrackMarks {
   void render();
   void update(float dt);
 
-  enum TrackType {
-    treads = 0,
-    puddle = 1
-  };
-  
   bool addMark(const float pos[3], float scale, float angle, int phydrv);
   
   void setUserFade(float);
