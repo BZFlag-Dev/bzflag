@@ -79,6 +79,7 @@ CPPFLAGS="$CPPFLAGS $X_CFLAGS"
 LDFLAGS="$X_LIBS"
 case $host_os in
      solaris*)	LIBS="-lresolv -lsocket -lnsl";;
+     irix*) LIBS="-lXsgivc -lX11 -laudio";;
 esac;
 
 AC_CHECK_LIB(m, sqrtf)
@@ -95,9 +96,7 @@ fi
 
 AC_CHECK_LIB(Xext, XextAddDisplay)
 
-if test $host_os = irix; then
-   LIBS="-lXsgivc $LIBS";
-elif test $host_os = linux-gnu; then
+if test $host_os = linux-gnu; then
    AC_CHECK_LIB(Xxf86vm, XF86VidModeGetAllModeLines)
    AC_CHECK_LIB(Xi, XListInputDevices)
 fi
@@ -109,16 +108,6 @@ case $host_os in
      solaris*)
 	LDFLAGS="$LDFLAGS -L/usr/demo/SOUND/lib";
 	LIBS="-laudio $LIBS";;
-     irix)
-	if test ! -f $${ROOT}/usr/lib/libaudio.so; then
-# on irix 6.2 and earlier we have libaudio.a and on later irix versions we have
-# libaudio.so.  we need to include `-B static' before -laudio if we need to
-# link against libaudio.a.  this macro decides at link time if it's necessary
-# or not based on whether libaudio.so exists.
-	       LIBS="-B static -laudio -B dynamic $LIBS";
-	else
-	       LIBS="-laudio -B dynamic $LIBS";
-	fi;;
 esac
 
 case $host_os in
@@ -126,9 +115,9 @@ case $host_os in
 	LDFLAGS="$LDFLAGS -framework Carbon -framework OpenGL -framework AGL";;
      irix)
 	if test x$host_cpu = xmips64; then
-	   LDFLAGS="$LDFLAGS -Wl,-wall -L$(ROOT)/usr/lib32"
+	   LDFLAGS="$LDFLAGS -L$(ROOT)/usr/lib32"
 	else
-	   LDFLAGS="$LDFLAGS -Wl,-wall -L$(ROOT)/usr/lib"
+	   LDFLAGS="$LDFLAGS -L$(ROOT)/usr/lib"
 	fi;;
 esac
 
@@ -189,16 +178,12 @@ case $host_os in
 	CPPFLAGS="$CPPFLAGS /D \"WIN32\" /D \"_MBCS\"";
 	CPPFLAGS="$CPPFLAGS /I \"$(top_srcdir)/include\" /nologo /W3";;
      irix)
-	if test x$host_cpu != xmips64; then
-	   CPPFLAGS="$CPPFLAGS -Dbool=boolean -Dtrue=True -Dfalse=False"
-	fi;
-	CPPFLAGS="$CPPFLAGS -I$(ROOT)/usr/include -fullwarn";
+	CPPFLAGS="$CPPFLAGS -I$(ROOT)/usr/include -Wall";
 	if test x$host_cpu = xmips64; then
-	   CPPFLAGS="CPPFLAGS -n32 -mips3";
+	   CPPFLAGS="CPPFLAGS -march=mips3";
 	else
-	   CPPFLAGS="CPPFLAGS -o32 -mips2";
+	   CPPFLAGS="CPPFLAGS -march=mips2";
 	fi;
-	CFLAGS="${CFLAGS} -xansi";;
 esac
 
 # /FD generates dependencies;  don't know where though
@@ -253,10 +238,9 @@ else
 		if test x$host_cpu = xmips64; then
 		   CFLAGS="$CFLAGS -O3";
 		   CXXFLAGS="$CXXFLAGS -O3";
-		   CPPFLAGS="$CPPFLAGS -DNDEBUG -OPT:Olimit=0:space=ON";
-		   CPPFLAGS="$CPPFLAGS -TENV:X=1 -CG:unique_exit=on";
-		   CPPFLAGS="$CPPFLAGS -OPT:IEEE_arithmetic=1:roundoff=0:"
-		   CPPFLAGS="${CPPFLAGS}wrap_around_unsafe_opt=off";
+		   CPPFLAGS="$CPPFLAGS -DNDEBUG";
+		   CPPFLAGS="$CPPFLAGS -ffast-math -fomit-frame-pointer";
+		   CPPFLAGS="$CPPFLAGS -fexpensive-optimizations"
 		else
 		   CFLAGS="$CFLAGS -O2";
 		   CXXFLAGS="$CXXFLAGS -O2";
@@ -265,24 +249,6 @@ else
      esac;
 fi;
 
-
-if test $host_os = irix; then
-   if test $host_cpu = mips64; then
-# warnings switched off:
-#   1174 -- variable declared but never referenced
-#   1209 -- controlling expression is constant
-#   1233 -- explicit type is missing
-#   1314 -- value copied to temporary, reference to temporary used
-#   1375 -- destructor is not virtual
-#   1376 -- no accessible constructor
-#   1681 -- functions don't match -- virtual function override intended?
-	CFLAGS="$CFLAGS -diag_suppress 1009,1014,1107,1110,1116,1164,1174";
-	CFLAGS="${CFLAGS},1185,1188,1204,1230,1233";
-	CXXFLAGS="$CXXFLAGS -diag_suppress 1174,1209,1233,1314,1375,1681";
-   else
-	CXXFLAGS="$CXXFLAGS -woff 3482,3577";
-   fi;
-fi;
 
 LIBDIR="\$(top_srcdir)/lib"
 AC_SUBST(LIBDIR)
