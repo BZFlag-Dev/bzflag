@@ -173,3 +173,11 @@ void TeamBase::getRandomPosition( float &x, float &y, float &z ) const
   y = position[1] + deltaX * sinf(rotation) + deltaY * cosf(rotation);
   z = position[2] + size[2];
 }
+
+// Local Variables: ***
+// mode: C++ ***
+// tab-width: 8 ***
+// c-basic-offset: 2 ***
+// indent-tabs-mode: t ***
+// End: ***
+// ex: shiftwidth=2 tabstop=8

@@ -10,18 +10,16 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-
 #ifndef __TEAMBASES_H__
 #define __TEAMBASES_H__
 
+/* system interface headers */
 #include <vector>
+#include <map>
+
+/* common interface headers */
 #include "global.h"
 
-class TeamBases;
-
-class TeamBase;
-
-typedef std::map<int, TeamBases> BasesList;
 
 class TeamBase
 { // This class represents one base
@@ -58,6 +56,15 @@ private:
   TeamColor    color;
 };
 
+typedef std::map<int, TeamBases> BasesList;
 
 
-#endif
+#endif /* __TEAMBASES_H__ */
+
+// Local Variables: ***
+// mode: C++ ***
+// tab-width: 8 ***
+// c-basic-offset: 2 ***
+// indent-tabs-mode: t ***
+// End: ***
+// ex: shiftwidth=2 tabstop=8
