@@ -13,16 +13,27 @@
 #ifndef __SERVERLIST_H__
 #define __SERVERLIST_H__
 
+#include "common.h"
+
+/* system interface headers */
 #include <vector>
 
-#include "ListServer.h"
+/* common interface headers */
 #include "BzfEvent.h"
-#include "ServerItem.h"
-#include "ServerListCache.h"
 #include "Protocol.h"
 #include "version.h"
 
+/* local interface headers */
+#include "ServerItem.h"
+#include "ServerListCache.h"
+#include "ListServer.h"
+
+/** The ServerList class contains links to the list server as well as
+ * any fetched list of servers.  The list handles cacheing of those
+ * server entries in case of list server unavailability.
+ */
 class ServerList {
+
 public:
   ServerList();
   virtual ~ServerList();
@@ -33,14 +44,15 @@ public:
   void checkEchos();
   void addCacheToList();
   void startServerPings();
-
   bool searchActive();
   const std::vector<ServerItem>& getServers();
   std::vector<ServerItem>::size_type size();
   int updateFromCache();
   void clear();
+
 private:
   void _shutDown();
+
 private:
   bool addedCacheToList;
   long numListServers;
@@ -51,9 +63,10 @@ private:
   struct sockaddr_in pingInAddr;
   int pingBcastSocket;
   struct sockaddr_in pingBcastAddr;
+
 };
 
-#endif
+#endif  /* __SERVERLIST_H__ */
 
 // Local Variables: ***
 // mode: C++ ***
