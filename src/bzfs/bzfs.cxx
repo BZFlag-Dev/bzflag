@@ -5224,6 +5224,11 @@ int main(int argc, char **argv)
  * tab-width: 8 ***
  * c-basic-offset: 2 ***
  * indent-tabs-mode: t ***
+ * syntax-coloring: on
+ * block-collapsing; on
+ * uml-sync: 2
+ * refactor-hints: on
+ * wsdl: off
  * End: ***
  */
 
