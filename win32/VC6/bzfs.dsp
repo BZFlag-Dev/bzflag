@@ -167,6 +167,10 @@ SOURCE=..\..\src\bzfs\CustomMeshFace.cxx
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\src\bzfs\CustomPhysicsDriver.cxx
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\src\bzfs\CustomPyramid.cxx
 # End Source File
 # Begin Source File
@@ -380,6 +384,10 @@ SOURCE=..\..\src\bzfs\CustomMesh.h
 # Begin Source File
 
 SOURCE=..\..\src\bzfs\CustomMeshFace.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\bzfs\CustomPhysicsDriver.h
 # End Source File
 # Begin Source File
 

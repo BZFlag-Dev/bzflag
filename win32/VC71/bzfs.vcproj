@@ -535,6 +535,9 @@ copy ..\..\src\bzfs\debug\*.exe ..\..\*.exe
 				RelativePath="..\..\src\bzfs\CustomMeshFace.h">
 			</File>
 			<File
+				RelativePath="..\..\src\bzfs\CustomPhysicsDriver.cxx">
+			</File>
+			<File
 				RelativePath="..\..\src\bzfs\CustomPyramid.cxx">
 				<FileConfiguration
 					Name="Release|Win32">
@@ -1000,6 +1003,9 @@ copy ..\..\src\bzfs\debug\*.exe ..\..\*.exe
 			</File>
 			<File
 				RelativePath="..\..\src\bzfs\CustomMaterial.h">
+			</File>
+			<File
+				RelativePath="..\..\src\bzfs\CustomPhysicsDriver.h">
 			</File>
 			<File
 				RelativePath="..\..\src\bzfs\CustomPyramid.h">
