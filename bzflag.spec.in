@@ -69,4 +69,5 @@ make DESTDIR=$RPM_BUILD_ROOT install-strip
 %dir %{bzdatadir}
 %{bzdatadir}/*
 %doc %{bzmandir}/man6/*
+%doc %{bzmandir}/man5/*
 %attr(755,root,root) %{bzbindir}/*
