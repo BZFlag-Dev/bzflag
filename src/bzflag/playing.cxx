@@ -698,7 +698,6 @@ bool			SilenceDefaultKey::keyPress(const BzfKeyEvent& key)
       break;
 
     default:
-
       return false;
   }
 
