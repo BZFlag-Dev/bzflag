@@ -110,6 +110,7 @@ int			getErrno();
 
 #define	MAXHOSTNAMELEN	64
 
+#define EINPROGRESS	WSAEWOULDBLOCK
 #define	EWOULDBLOCK	WSAEWOULDBLOCK
 #define	ECONNRESET	WSAECONNRESET
 #define	EBADMSG		WSAECONNRESET	/* not defined by windows */
