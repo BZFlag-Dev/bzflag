@@ -1370,16 +1370,18 @@ static void		handleServerMessage(boolean human, uint16_t code,
 	  // terminate the shot
 	  killerLocal->endShot(shotId, True);
 	}
-	if (victimPlayer->getTeam() == killerLocal->getTeam() && killerLocal->getTeam() != RogueTeam) {
-	  if (killerLocal == myTank && victimPlayer != myTank)
-	    hud->setAlert(1, "Don't shoot teammates!!!", 3.0f, True);
-	  // teammate
-	  if (killerLocal != victimPlayer)
+	if (killerLocal != victimPlayer) {
+	  if (victimPlayer->getTeam() == killerLocal->getTeam() &&
+	      killerLocal->getTeam() != RogueTeam) {
+	    if (killerLocal == myTank)
+	      hud->setAlert(1, "Don't shoot teammates!!!", 3.0f, True);
+	    // teammate
 	    killerLocal->changeScore(0, 1);
+	  }
+	  else
+	    // enemy
+	    killerLocal->changeScore(1, 0);
 	}
-	else
-	  // enemy
-	  killerLocal->changeScore(1, 0);
       }
       // handle my personal score against other players
       if ((killerPlayer == myTank || victimPlayer == myTank) &&
@@ -1931,7 +1933,7 @@ static void		restartPlaying()
 
       // test against living enemy tanks
       if (!player[i]->isAlive() ||
-          (myColor != RogueTeam  && player[i]->getTeam() == myColor)) continue;
+	  (myColor != RogueTeam  && player[i]->getTeam() == myColor)) continue;
 
       // compute enemy position in my local coordinate system
       const float* enemyPos = player[i]->getPosition();
@@ -1947,8 +1949,8 @@ static void		restartPlaying()
       // don't allow tank placement if enemy tank is +/- 30 degrees of
       // my boresight and in firing range (our unfair advantage)
       if (enemyDist < minSafeRange(enemyCos)) {
-        located = False;
-        break;
+	located = False;
+	break;
       }
 
       // compute my position in enemy coordinate system
@@ -1966,8 +1968,8 @@ static void		restartPlaying()
       // don't allow tank placement if my tank is +/- 30 degrees of
       // the enemy's boresight and in firing range (enemy's unfair advantage)
       if (myDist < minSafeRange(myCos)) {
-        located = False;
-        break;
+	located = False;
+	break;
       }
     }
   } while (!located && ++locateCount <= MaxTries);
@@ -2242,7 +2244,7 @@ static void		checkEnvironment()
 	  world->getFlag(i).status != FlagOnGround) continue;
       const float* fpos = world->getFlag(i).position;
       const float dist = (tpos[0] - fpos[0]) * (tpos[0] - fpos[0]) +
-                         (tpos[1] - fpos[1]) * (tpos[1] - fpos[1]);
+			 (tpos[1] - fpos[1]) * (tpos[1] - fpos[1]);
       if (dist < minDist) {
 	minDist = dist;
 	closestFlag = i;
@@ -2778,7 +2780,7 @@ static boolean		enterServer(ServerLink* serverLink, World* world,
   }
   while (code == MsgAddPlayer || code == MsgTeamUpdate ||
 	 code == MsgFlagUpdate || code == MsgNetworkRelay ||
-         code == MsgUDPLinkRequest) {
+	 code == MsgUDPLinkRequest) {
     void* buf = msg;
     switch (code) {
       case MsgAddPlayer: {
@@ -3603,11 +3605,11 @@ static void		playingLoop()
        static float FocalPlane = BoxBase;
        static boolean init = False;
        if (!init) {
-         init = True;
-         if (resources->hasValue("eyesep"))
-           EyeDisplacement = (float)atof(resources->getValue("eyesep"));
-         if (resources->hasValue("focal"))
-           FocalPlane = (float)atof(resources->getValue("focal"));
+	 init = True;
+	 if (resources->hasValue("eyesep"))
+	   EyeDisplacement = (float)atof(resources->getValue("eyesep"));
+	 if (resources->hasValue("focal"))
+	   FocalPlane = (float)atof(resources->getValue("focal"));
        }
 
        // setup view for left eye
