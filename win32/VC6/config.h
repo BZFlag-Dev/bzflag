@@ -16,6 +16,9 @@
 #ifndef _VC5_6_CONFIG
 #define _VC5_6_CONFIG
 
+/* Building regex */
+#define BUILD_REGEX 1
+
 /* Time Bomb expiration */
 /* #undef TIME_BOMB */
 
@@ -30,6 +33,9 @@
 
 /* On windows, strcasecmp is really stricmp */
 #define HAVE_STRICMP 1
+
+/* Define to 1 if you have regex stuff available */
+/* undef HAVE_REGEX_H */
 
 // define our OS
 #ifndef BZ_BUILD_OS
