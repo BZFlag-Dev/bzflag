@@ -177,8 +177,8 @@ char					XMLTree::XMLStream::get()
 char					XMLTree::XMLStream::peek()
 {
 	// get next character.  if stream runs out then pop the stack and retry.
-	char c = stream->peek();
-	if (stream->eof() && !streamStack.empty()) {
+	int c = stream->peek();
+	if (c == EOF && !streamStack.empty()) {
 		pop();
 		c = stream->peek();
 	}
