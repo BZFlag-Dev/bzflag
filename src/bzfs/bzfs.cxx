@@ -2881,16 +2881,15 @@ static void shotFired(int playerIndex, void *buf, int len)
 
     // probably a cheater using wrong shots.. exception for thief since they steal someone elses
     if (firingInfo.flagType != Flags::Thief) {
-
-      DEBUG2("Player %s [%d] shot flag mismatch %s %s\n", shooter.getCallSign(),
-	     playerIndex, fireFlag.c_str(), holdFlag.c_str());
-
       // bye bye supposed cheater
       DEBUG1("Kicking Player %s [%d] Player using wrong shots\n", shooter.getCallSign(), playerIndex);
       sendMessage(ServerPlayer, playerIndex, "Autokick: Your shots do not to match the expected shot type.");
       removePlayer(playerIndex, "Player shot mismatch");
-      return;
     }
+
+    DEBUG2("Player %s [%d] shot flag mismatch %s %s\n", shooter.getCallSign(),
+	   playerIndex, fireFlag.c_str(), holdFlag.c_str());
+    return;
   }
 
   // verify shot number
