@@ -2677,7 +2677,24 @@ static void captureFlag(int playerIndex, TeamColor teamCaptured)
   if (flagIndex < 0 || (flag[flagIndex].flag.type->flagTeam == ::NoTeam))
     return;
 
-  // TODO: Cheat detection
+  { //cheat checking
+  	TeamColor base = whoseBase(lastState[playerIndex].pos[0],
+															 lastState[playerIndex].pos[1],
+															 lastState[playerIndex].pos[2]);
+  	if ((flag[flagIndex].flag.type->flagTeam == playerData->player.getTeam() &&
+			 	 base == playerData->player.getTeam()))
+			return; //sanity check
+
+  	if ((base == NoTeam) ||
+				(flag[flagIndex].flag.type->flagTeam != playerData->player.getTeam() &&
+			 	 base != playerData->player.getTeam())) {
+       char message[MessageLen];
+       strcpy(message, "Autokick: Tried to capture flag without landing on your base" );
+       sendMessage(ServerPlayer, playerIndex, message);
+       removePlayer(playerIndex, "capturecheat");
+       return;
+  	}
+	}
 
   // player no longer has flag and put flag back at it's base
   playerData->player.resetFlag();
