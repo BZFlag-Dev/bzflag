@@ -3279,6 +3279,8 @@ possible attack from %s\n",
 	 // them if someone else is trying to log on
 	 // and has globally authenticated.
 	 for (int i = 0; i < curMaxPlayers; i++) {
+	   // don't kick _us_, kick the other guy
+	   if (t == i) continue;
 	   GameKeeper::Player *otherPlayer = GameKeeper::Player::getPlayerByIndex(i);
 	   if (!otherPlayer) continue;
 	   if (strcasecmp(otherPlayer->player.getCallSign(), playerData->player.getCallSign()) == 0){
