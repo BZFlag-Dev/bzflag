@@ -50,13 +50,6 @@ recent bugs
 
 - Observer movement controls seems to get locked-up in Hunt mode.
 
-- Sometimes letters can go missing from the status line of the HUD.
-  Like "Cloaking" turning into "loaking", "Brad2901" turning into "rad"
-  Alignment is correct for the new strings (e.g. "loaking" is centered)
-  so it's not just a rendering problem. Only observed on VC builds.
-  Seems to be rather erratic also, but I've heard it from at least four
-  people and one sent me a screenshot.
-
 - Record/Replay does not immediately reassign flags to players after a
   state reset, you have to wait until the first MsgGrabFlag.
 
