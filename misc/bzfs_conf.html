@@ -182,17 +182,22 @@
 
 					if (mainform.passdb.value.length > 0) {
 						d.writeln("#File that stores user passwords<br/>");
-						d.writeln("-passdb \"" + mainform.passdb.value + "\"<br/><br>");
+						d.writeln("-passdb \"" + mainform.passdb.value + "\"<br/><br/>");
 					}
 
 					if (mainform.groupdb.value.length > 0) {
 						d.writeln("#File that stores group privileges<br/>");
-						d.writeln("-groupdb \"" + mainform.groupdb.value + "\"<br/><br>");
+						d.writeln("-groupdb \"" + mainform.groupdb.value + "\"<br/><br/>");
 					}
 
 					if (mainform.userdb.value.length > 0) {
 						d.writeln("#File that stores user privileges<br/>");
-						d.writeln("-userdb \"" + mainform.userdb.value + "\"<br/><br>");
+						d.writeln("-userdb \"" + mainform.userdb.value + "\"<br/><br/>");
+					}
+
+					if (mainform.vars.value.length > 0) {
+						d.writeln("#File that stores world parameter variable overrides<br/>");
+						d.writeln("-vars \"" + mainform.vars.value + "\"<br/><br/>");
 					}
 
 					if (mainform.world_type.checked && (mainform.world_file.value.length > 0)) {
@@ -489,6 +494,10 @@
 					<tr>
 						<td>User Privilege Database</td>
 						<td><input type="file" name="userdb" title="File that stores user privileges"/></td>
+					</tr>
+					<tr>
+						<td>World Property Variables file</td>
+						<td><input type="file" name="vars" title="File that stores world variable overrides"/></td>
 					</tr>
 
 				</table>
