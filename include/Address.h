@@ -25,7 +25,6 @@
 #include <string>
 #include "common.h"
 #include "network.h"
-#include "common.h"
 #include "Pack.h"
 
 typedef struct in_addr	InAddr;			// shorthand
