@@ -342,6 +342,7 @@ void			WallSceneNode::copyStyle(WallSceneNode* node)
   setLightedModulateColor(node->lightedModulateColor);
   isBlended = node->isBlended;
   wantBlending = node->wantBlending;
+  wantSphereMap = node->wantSphereMap;
 }
 
 void			WallSceneNode::setColor()
