@@ -5480,7 +5480,7 @@ static std::string cmdSet(const std::string&, const CommandManager::ArgList& arg
 int main(int argc, char **argv)
 {
   VotingPoll *votingpoll = (VotingPoll *)NULL;
-  
+
   setvbuf(stdout, (char *)NULL, _IOLBF, 0);
   setvbuf(stderr, (char *)NULL, _IOLBF, 0);
 
@@ -5637,6 +5637,7 @@ int main(int argc, char **argv)
 #if defined(_WIN32)
     WSACleanup();
 #endif /* defined(_WIN32) */
+    fprintf(stderr, "Something failed\n");
     return 1;
   }
   if (clOptions->debug >= 2) {
