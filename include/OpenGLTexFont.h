@@ -23,7 +23,7 @@
 #include <string>
 
 #define ESC_CHAR	((char) 0x1B)
-#define FONT_CODES	11
+#define FONT_CODES	12
 
 typedef enum ColorCodes {
   // the first 5 codes line up with the TeamColor enum from global.h
@@ -38,6 +38,7 @@ typedef enum ColorCodes {
   CyanColor		= 7,
 
   ResetColor		= 8,
+  FinalResetColor       = 11,
   BlinkColor		= 9,
   UnderlineColor	= 10,
 

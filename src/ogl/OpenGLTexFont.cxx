@@ -25,6 +25,7 @@
 // ANSI (ISO 6429) colors codes (these are all used in BRIGHT mode)
 
 #define ANSI_STR_RESET		"\033[0;1m"	// reset & bright
+#define ANSI_STR_RESET_FINAL	"\033[0m"	// only reset
 #define ANSI_STR_BRIGHT		"\033[1m"	// unimplemented
 #define ANSI_STR_DIM		"\033[2m"	// unimplemented
 #define ANSI_STR_UNDERLINE	"\033[4m"
@@ -54,7 +55,8 @@ const char * ColorStrings[FONT_CODES] = {
   ANSI_STR_FG_CYAN,     // 7  Cyan
   ANSI_STR_RESET,       // 8  Reset
   ANSI_STR_BLINK,       // 9  Blink
-  ANSI_STR_UNDERLINE    // 10 Underline
+  ANSI_STR_UNDERLINE,   // 10 Underline
+  ANSI_STR_RESET_FINAL  // 11 Really reset (no brightness added)
 };
 
 // This maps the ANSI LSB code to bzflag color numbers

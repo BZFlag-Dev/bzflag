@@ -78,6 +78,12 @@ ControlPanel::~ControlPanel()
   // don't notify me anymore (cos you can't wake the dead!)
   window.getWindow()->removeResizeCallback(resizeCallback, this);
   window.getWindow()->removeExposeCallback(exposeCallback, this);
+  extern bool echoToConsole;
+  extern bool echoClean;
+  if (echoToConsole && !echoClean) {
+    fprintf(stdout, ColorStrings[FinalResetColor]);
+    fflush(stdout);
+  }
 }
 
 void			ControlPanel::setControlColor(const GLfloat *color)
