@@ -241,6 +241,7 @@ class WorldInfo {
 	memcpy(pos, ol.pos, sizeof(float) * 3);
 	rotation = ol.rotation;
 	memcpy(size, ol.size, sizeof(float) * 3);
+	return *this;
       }
     };
 
