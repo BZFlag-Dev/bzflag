@@ -237,7 +237,7 @@ void			LocalPlayer::doUpdateMotion(float dt)
 
       // reset our flap count if we have wings
       if (getFlag() == Flags::Wings)
-         wingsFlapCount = BZDB.eval(StateDatabase::BZDB_WINGSJUMPCOUNT);
+         wingsFlapCount = (int) BZDB.eval(StateDatabase::BZDB_WINGSJUMPCOUNT);
 
       if ((oldPosition[2] < 0.0f) && (getFlag() == Flags::Burrow))
 	newVelocity[2] += 4 * BZDB.eval(StateDatabase::BZDB_GRAVITY) * dt;
