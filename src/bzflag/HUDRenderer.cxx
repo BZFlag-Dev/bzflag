@@ -38,7 +38,6 @@
 #include "OpenGLGState.h"
 #include "StateDatabase.h"
 #include "texture.h"
-#include "TextUtils.h"
 
 
 //
