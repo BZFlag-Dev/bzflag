@@ -390,7 +390,7 @@ MacWindow::MacWindow(const MacDisplay *display, MacVisual *visual) :
   /* set the size of the window to the default (existing resolution). this
    * includes initializing the opengl context to the correct aspect ratio.
    */
-  setSize(settings.Window_Size.width, settings.Window_Size.height);
+  setSize((int)settings.Window_Size.width, (int)settings.Window_Size.height);
 
   display->setContext(gl_context.GetGLContext());
 
