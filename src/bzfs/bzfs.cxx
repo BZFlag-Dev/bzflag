@@ -4644,8 +4644,10 @@ static void parseCommand(const char *message, int t)
      * class and hook functions
      */
 
+#if 0
     sprintf(reply,"DEBUG: poll command section entered");
     sendMessage(ServerPlayer, t, reply, true);
+#endif
     
     /* make sure player has permission to request a poll */
     if (!hasPerm(t, poll)) {
@@ -4698,8 +4700,10 @@ static void parseCommand(const char *message, int t)
     }
     commandLength=(int)strlen(command);
 
+#if 0
     sprintf(reply,"DEBUG: command is [%s] with strlen %d", command, (int)commandLength);
     sendMessage(ServerPlayer, t, reply, true);
+#endif
 
     /* find the start of any arguments */
     size_t argStart = 0;
@@ -4710,8 +4714,10 @@ static void parseCommand(const char *message, int t)
     }
     size_t argStartOffset=5+nextChar+commandLength+argStart;
 
+#if 0
     sprintf(reply,"DEBUG: callsign is [%s] with nextChar %d and callsign at %d", message+argStartOffset, (int)nextChar, (int)argStartOffset);
     sendMessage(ServerPlayer, t, reply, true);
+#endif
 
     /* see if the action is kick/ban/vote/veto and is valid */
     char voteplayer[256];
@@ -4720,8 +4726,10 @@ static void parseCommand(const char *message, int t)
     if ((strncmp(command, "ban", 3) == 0) ||
 	(strncmp(command, "kick", 4) == 0)) {
 
+#if 0
       sprintf(reply,"DEBUG: poll %s command section entered", command);
       sendMessage(ServerPlayer, t, reply, true);
+#endif
 
       if (!isPrintable(*(message+argStartOffset))) {
 	/* if there was no callsign, or bad data was fed -- barf */
@@ -4761,8 +4769,10 @@ static void parseCommand(const char *message, int t)
 	}
       }
 
+#if 0
       sprintf(reply,"DEBUG: %s callsign is [%s]", command, voteplayer);
       sendMessage(ServerPlayer, t, reply, true);
+#endif
 
       /* see if the player is a valid user name */
       if (strlen(voteplayer) == 0) {
@@ -4778,8 +4788,10 @@ static void parseCommand(const char *message, int t)
       bool foundPlayer=false;
       std::string playerIP = "";
       for (int v = 0; v < curMaxPlayers; v++) {
+#if 0
 	sprintf(reply,"DEBUG: comparing %s == %s", voteplayer, player[v].callSign);
 	sendMessage(ServerPlayer, t, reply, true);
+#endif
 
 	if (strncmp(player[v].callSign, voteplayer, 256)==0) {
 	  playerIP = player[v].peer.getDotNotation().c_str();
@@ -4819,8 +4831,10 @@ static void parseCommand(const char *message, int t)
       
     } else if (strncmp(command, "vote", 4) == 0) {
 
+#if 0
       sprintf(reply,"DEBUG: poll vote command section entered");
       sendMessage(ServerPlayer, t, reply, true);
+#endif
 
       if (!hasPerm(t, vote)) {
 	sprintf(reply,"%s, you do not presently have permission to vote (must /identify first)", player[t].callSign);
@@ -4835,8 +4849,10 @@ static void parseCommand(const char *message, int t)
 
     } else if (strncmp(command, "veto", 4) == 0) {
 
+#if 0
       sprintf(reply,"DEBUG: poll veto command section entered");
       sendMessage(ServerPlayer, t, reply, true);
+#endif
 
       if (!hasPerm(t, veto)) {
 	sprintf(reply,"%s, you do not have permission to veto the poll", player[t].callSign);
@@ -4861,8 +4877,10 @@ static void parseCommand(const char *message, int t)
 
   } else if (strncmp(message+1, "vote",4) == 0) {
     
+#if 0
     sprintf(reply,"DEBUG: vote command section entered");
     sendMessage(ServerPlayer, t, reply, true);
+#endif
 
     if (!hasPerm(t, vote)) {
       /* permission denied for /vote */
@@ -4930,8 +4948,10 @@ static void parseCommand(const char *message, int t)
     sprintf(noAnswers[5], "non");
     sprintf(noAnswers[6], "nao");
 
+#if 0
     sprintf(reply,"DEBUG: vote of %s was provided", answer);
     sendMessage(ServerPlayer, t, reply, true);
+#endif
 
     // see if the vote response is a valid yes or no answer
     int vote=-1;
@@ -4950,8 +4970,10 @@ static void parseCommand(const char *message, int t)
       }
     }
 
+#if 0
     sprintf(reply,"DEBUG: vote was determined to be %s", vote ? "in favor" : "against");
     sendMessage(ServerPlayer, t, reply, true);
+#endif
 
     // cast the vote or complain
     bool cast = false;
@@ -4992,8 +5014,10 @@ static void parseCommand(const char *message, int t)
     
   } else if (strncmp(message+1, "veto",4) == 0) {
 
+#if 0
     sprintf(reply,"DEBUG: veto command section entered");
     sendMessage(ServerPlayer, t, reply, true);
+#endif
 
     if (!hasPerm(t, veto)) {
       /* permission denied for /veto */
@@ -5600,7 +5624,7 @@ int main(int argc, char **argv)
       // includes observers on purpose
       maxplayers+=clOptions->maxTeam[i];
     }
-    // override the default voter count
+    // override the default voter count to the max number of players possible
     votingarbiter->setAvailableVoters(maxplayers);
     BZDB->setPointer("poll", (void *)votingarbiter);
   }
@@ -5826,6 +5850,21 @@ int main(int argc, char **argv)
 	
 	std::string person = votingarbiter->getPollPlayer();
 	std::string action = votingarbiter->getPollAction();
+
+	// update available voter count
+	static unsigned short int available = 0;
+	unsigned short int availplayers = 0;
+	for (int i=0; i < curMaxPlayers; i++) {
+	  // anyone on the server (even observers) are eligible to vote
+	  if (player[i].fd != NotConnected) {
+	    availplayers++;
+	  }
+	}
+	if (availplayers != available) {
+	  // update the number of available voters
+	  votingarbiter->setAvailableVoters(availplayers);
+	  available = availplayers;
+	}
 
 	if (votingarbiter->isPollClosed()) {
 	  if (votingarbiter->isPollSuccessful()) {
