@@ -4392,9 +4392,7 @@ int main(int argc, char **argv)
     clOptions->publicizedAddress = Address::getHostName();
     if (clOptions->publicizedAddress.find('.') == std::string::npos)
       clOptions->publicizedAddress = serverAddress.getDotNotation();
-    if (clOptions->wksPort != ServerPort) {
-      clOptions->publicizedAddress += string_util::format(":%d", clOptions->wksPort);
-    }
+    clOptions->publicizedAddress += string_util::format(":%d", clOptions->wksPort);
   }
 
   /* print debug information about how the server is running */
