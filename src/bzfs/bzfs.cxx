@@ -34,7 +34,7 @@ const int MaxShots = 10;
 
 // must be before network.h because that defines a close() macro which
 // messes up fstreams.  luckily, we don't need to call the close() method
-// on any fstream.#include "bzfio.h"
+// on any fstream.
 #include "bzfio.h"
 #include <fstream.h>
 
@@ -1013,7 +1013,7 @@ void disassemblePacket(int playerIndex, void *msg, int *nopackets)
 		buf+=length;
 		npackets++;
 	}
-        UMDEBUG("%d: Got %d packets\n",time(0),npackets);
+        UMDEBUG("%d: Got %d packets\n",(int)time(0),npackets);
 	// printQueueDepth(playerIndex);
 	*nopackets = npackets;
 }
@@ -1109,16 +1109,16 @@ static void sendUDPupdate(int playerIndex)
   directMessage(playerIndex, MsgUDPLinkRequest, sizeof(buffer), buffer);
 }
 
-static void sendUDPseqno(int playerIndex)
-{
-  char  buffer[2];
-  unsigned short seqno = player[playerIndex].lastRecvPacketNo;
-  void* buf = (void*)buffer;
-  buf = nboPackUShort(buf, seqno);
+//static void sendUDPseqno(int playerIndex)
+//{
+//  char  buffer[2];
+//  unsigned short seqno = player[playerIndex].lastRecvPacketNo;
+//  void* buf = (void*)buffer;
+//  buf = nboPackUShort(buf, seqno);
 
-  // send it
-  directMessage(playerIndex, MsgUDPLinkUpdate, sizeof(buffer), buffer);
-}
+//  // send it
+//  directMessage(playerIndex, MsgUDPLinkUpdate, sizeof(buffer), buffer);
+//}
 
 static void createUDPcon(int t, int remote_port) {
 	int local_port, n, sndbufsize, recbufsize;
@@ -1508,18 +1508,23 @@ static void pwrite(int playerIndex, const void* b, int l)
 // new clients use <clientip><clientport><number> as id
 // where clientip etc is as seen from the server
 // here we patch up the msg to what the old client wants to see
-static void patchPlayerId(int playerIndex, void *msg)
+static void patchPlayerId(int playerIndex, void *msg, int offset)
 {
   PlayerId id;
-  
-  fprintf(stderr, "patchPlayerId fixup: %08x:%04x:%04x -> ",
-      ntohl(*(int *)msg), ntohs(*((short *)msg + 2)), ntohs(*((short *)msg + 3)));
-  id.unpack(msg);
+  short code = ntohs(*(short *)msg + 1);
+
+  fprintf(stderr, "patchPlayerId fixup:%c%c %08x:%u:%u -> ", code >> 8, code & 0xff,
+      ntohl(*(int *)((char *)msg + offset)),
+      ntohs(*((short *)((char *)msg + offset + 4))),
+      ntohs(*((short *)((char *)msg + offset + 6))));
+  id.unpack((char *)msg + offset);
   if (id == player[playerIndex].id) {
-    player[playerIndex].perceivedId.pack(msg);
+    player[playerIndex].perceivedId.pack((char *)msg + offset);
   }
-  fprintf(stderr, "%08x:%04x:%04x\n",
-      ntohl(*(int *)msg), ntohs(*((short *)msg + 2)), ntohs(*((short *)msg + 3)));
+  fprintf(stderr, "%08x:%u:%u\n",
+      ntohl(*(int *)((char *)msg + offset)),
+      ntohs(*((short *)((char *)msg + offset + 4))),
+      ntohs(*((short *)((char *)msg + offset + 6))));
 }
 
 static void directMessage(int playerIndex, uint16_t code,
@@ -1548,14 +1553,14 @@ static void directMessage(int playerIndex, uint16_t code,
     case MsgTeleport:
     case MsgPlayerUpdate:
     case MsgGMUpdate:
-      patchPlayerId(playerIndex, &msgbuf[4]);
+      patchPlayerId(playerIndex, msgbuf, 4);
       ;;
     case MsgFlagUpdate:
-      patchPlayerId(playerIndex, &msgbuf[12]);
+      patchPlayerId(playerIndex, msgbuf, 12);
       ;;
     case MsgMessage:
-      patchPlayerId(playerIndex, &msgbuf[4]);
-      patchPlayerId(playerIndex, &msgbuf[12]);
+      patchPlayerId(playerIndex, msgbuf, 4);
+      patchPlayerId(playerIndex, msgbuf, 12);
       ;;
   }
   pwrite(playerIndex, msgbuf, len + 4);
@@ -2705,8 +2710,8 @@ static void acceptClient()
   fprintf(stderr, "accept() from %s:%d on %i\n", inet_ntoa(addr.sin_addr), ntohs(addr.sin_port), fd);
 
   // don't buffer info, send it immediately
-//  setNoDelay(fd);
-//  BzfNetwork::setNonBlocking(fd);
+  setNoDelay(fd);
+  BzfNetwork::setNonBlocking(fd);
 
   // look for reconnecting player
   for (playerIndex = 0; playerIndex < maxPlayers; playerIndex++) {
@@ -3674,8 +3679,7 @@ static void releaseRadio(int playerIndex)
   broadcastMessage(MsgReleaseRadio, sizeof(msg), msg);
 }
 
-static void handleCommand(int t, uint16_t code,
-					uint16_t len, void* rawbuf)
+static void handleCommand(int t, uint16_t code, uint16_t len, void* rawbuf)
 {
   void* buf = (void*)((char*)rawbuf + 4);
   switch (code) {
@@ -3693,7 +3697,7 @@ static void handleCommand(int t, uint16_t code,
       buf = nboUnpackString(buf, player[t].callSign, CallSignLen);
       buf = nboUnpackString(buf, player[t].email, EmailLen);
       addPlayer(t);
-      UMDEBUG("Player %s [%d] has joined (%8lx:%d:%d)\n",
+      UMDEBUG("Player %s [%d] has joined (%8x:%d:%d)\n",
 	  player[t].callSign, t, ntohl(*(int *)&player[t].id.serverHost), ntohs(player[t].id.port), ntohs(player[t].id.number));
       break;
     }
