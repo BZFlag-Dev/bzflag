@@ -1,4 +1,4 @@
-SUFFIXES = .6s .6
+SUFFIXES = .6s .6 .5s .5
 
 if HASPOD2MAN
 man_MANS = bzadmin.6 bzflag.6 bzfs.6 bzw.5 bzfquery.6
