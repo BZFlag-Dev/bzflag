@@ -104,7 +104,7 @@
 	#endif
     #else
 	#ifdef DEBUG
-	    #define BZ_BUILD_OS			"W32-DevC++"
+	    #define BZ_BUILD_OS			"W32-DevC++D"
 	#else
 	    #define BZ_BUILD_OS			"W32-DevC++"
 	#endif
