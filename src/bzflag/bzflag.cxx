@@ -103,7 +103,8 @@ static DefaultDBItem	defaultDBItems[] = {
   { "underline",		"0",			true,	StateDatabase::ReadWrite,	NULL },
   { "killerhighlight",		"0",			true,	StateDatabase::ReadWrite,	NULL },
   { "serverCacheAge",		"0",			true,	StateDatabase::ReadWrite,	NULL },
-  { "displayRadarFlags",	"1",			true,	StateDatabase::ReadWrite,	NULL }
+  { "displayRadarFlags",	"1",			true,	StateDatabase::ReadWrite,	NULL },
+  { "displayMainFlags",		"1",			true,	StateDatabase::ReadWrite,	NULL }
 };
 
 // default key bindings
@@ -127,7 +128,9 @@ static const char*	bindingList[] = {
   "bind F5 down screenshot",
 #endif
   "bind - down \"time backward\"",
-  "bind + down \"time forward\""
+  "bind + down \"time forward\"",
+  "bind H down \"toggle displayRadarFlags\"",
+  "bind J down \"toggle displayMainFlags\""
 };
 
 #ifdef ROBOT

@@ -32,6 +32,7 @@
 #include "EighthDBaseSceneNode.h"
 #include "playing.h"
 #include "texture.h"
+#include "StateDatabase.h"
 
 static OpenGLTexture*	flagTexture = NULL;
 
@@ -60,7 +61,6 @@ World::World() : gameStyle(PlainGameStyle),
 				pyramidInsideNodes(NULL),
 				baseInsideNodes(NULL)
 {
-  showFlags = true;
   int i;
   for (i = 0; i < NumTeams; i++) {
     bases[i][0] = 0.0f;
@@ -546,7 +546,7 @@ void			World::addFlags(SceneDatabase* scene)
   if (!flagNodes) return;
   for (int i = 0; i < maxFlags; i++) {
     // if not showing flags, only allow FlagOnTank through
-    if (flags[i].status != FlagOnTank && !showFlags){
+    if (flags[i].status != FlagOnTank && !BZDB->isTrue("displayMainFlags")) {
       continue;
     }
 
@@ -934,8 +934,3 @@ void			WorldBuilder::setBase(TeamColor team,
 }
 
 // ex: shiftwidth=2 tabstop=8
-
-void World::toggleFlags()
-{
-  showFlags = !showFlags;
-}
