@@ -340,7 +340,7 @@ void findConfigFile(void)
 #endif
 }
 
-void updateConfigFile ( void )
+void updateConfigFile(void)
 {
   int		configVersion = 0;
   if (BZDB.isSet("config_version"))
