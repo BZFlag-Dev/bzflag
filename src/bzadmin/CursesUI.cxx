@@ -23,7 +23,7 @@ UIAdder CursesUI::uiAdder("curses", &CursesUI::creator);
 
 CursesUI::CursesUI(BZAdminClient& c) :
   BZAdminUI(c),
-  menuState(0), menu(c.getPlayers()), client(c), players(c.getPlayers()), 
+  menuState(NoMenu), menu(c.getPlayers()), client(c), players(c.getPlayers()), 
   me(c.getMyId()), maxHistory(20), currentHistory(0), 
   maxBufferSize(300), scrollOffset(0) {
 
@@ -381,8 +381,8 @@ void CursesUI::updateCmdWin() {
 
 
 void CursesUI::toggleMenu() {
-  if (menuState == 0) {
-    menuState = 1;
+  if (menuState == NoMenu) {
+    menuState = VisibleActive;
     curs_set(0);
     const int menuWinSize = (LINES - 2) / 2;
     wresize(mainWin, LINES - 2 - menuWinSize, COLS);
@@ -392,12 +392,12 @@ void CursesUI::toggleMenu() {
     menu.setWindow(menuWin);
     menu.showMenu();
   }
-  else if (menuState == 1) {
-    menuState = 2;
+  else if (menuState == VisibleActive) {
+    menuState = VisibleInactive;
     curs_set(1);
   }
   else {
-    menuState = 0;
+    menuState = NoMenu;
     menu.setWindow(NULL);
     delwin(menuWin);
     wresize(mainWin, LINES - 2, COLS);

@@ -117,9 +117,11 @@ protected:
   WINDOW* cmdWin;
   WINDOW* menuWin;
   
-  // 0 = no menu, 1 = menu is visible and handles keystrokes, 2 = menu is
-  // visible but command prompt handles keystrokes
-  int menuState;
+  enum {
+    NoMenu,
+    VisibleActive,
+    VisibleInactive
+  } menuState;
   CursesMenu menu;
   
   BZAdminClient& client;
