@@ -1894,7 +1894,7 @@ Help9Menu::Help9Menu() : HelpMenu("Credits")
   list.append(createLabel("Adam Rosen, Erin Shaw", ""));
   list.append(createLabel("Ben Trumbore, Don Greenberg", ""));
   list.append(createLabel("", ""));
-  list.append(createLabel("http://BZFlag.SourceForge.net/",
+  list.append(createLabel("http://BZFlag.org/",
 						"BZFlag Home Page:"));
   list.append(createLabel("", ""));
   list.append(createLabel("Tim Riker", "Copyright (c) 1993 - 2001"));

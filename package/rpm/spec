@@ -25,7 +25,7 @@ release:	%{release}
 group:		Recreation/Action
 copyright:	Copyright (c) 1993 - 2001 Tim Riker
 packager:	Tim Riker <Tim@Rikers.org>
-url:		http://BZFlag.SourceForge.net/
+url:		http://BZFlag.org/
 summary:	multiplayer 3D tank battle game
 source:		http://download.SourceForge.net/bzflag/%{name}-%{version}.tgz
 buildroot:	/var/tmp/%{name}-%{version}-%{release}
