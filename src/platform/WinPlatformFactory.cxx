@@ -11,10 +11,15 @@
  */
 
 #include "WinPlatformFactory.h"
+#ifdef HAVE_SDL
+#include "SDLDisplay.h"
+#include "SDLMedia.h"
+#else
 #include "WinDisplay.h"
 #include "WinVisual.h"
 #include "WinWindow.h"
 #include "WinMedia.h"
+#endif
 
 PlatformFactory*	PlatformFactory::getInstance()
 {
@@ -35,9 +40,17 @@ WinPlatformFactory::~WinPlatformFactory()
 }
 
 BzfDisplay*		WinPlatformFactory::createDisplay(
+#ifdef HAVE_SDL
+				const char* name, const char*)
+#else
 				const char* name, const char* videoFormat)
+#endif
 {
+#ifdef HAVE_SDL
+  SDLDisplay* display = new SDLDisplay();
+#else
   WinDisplay* display = new WinDisplay(name, videoFormat);
+#endif
   if (!display || !display->isValid()) {
     delete display;
     return NULL;
@@ -48,19 +61,31 @@ BzfDisplay*		WinPlatformFactory::createDisplay(
 BzfVisual*		WinPlatformFactory::createVisual(
 				const BzfDisplay* display)
 {
+#ifdef HAVE_SDL
+  return new SDLVisual((const SDLDisplay*)display);
+#else
   return new WinVisual((const WinDisplay*)display);
+#endif
 }
 
 BzfWindow*		WinPlatformFactory::createWindow(
 				const BzfDisplay* display, BzfVisual* visual)
 {
+#ifdef HAVE_SDL
+  window = new SDLWindow((const SDLDisplay*)display, (SDLVisual*)visual);
+#else
   window = new WinWindow((const WinDisplay*)display, (WinVisual*)visual);
+#endif
   return window;
 }
 
 BzfMedia*		WinPlatformFactory::createMedia()
 {
+#ifdef HAVE_SDL
+  return new SDLMedia();
+#else
   return new WinMedia(window);
+#endif
 }
 
 // Local Variables: ***
