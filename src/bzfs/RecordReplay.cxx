@@ -695,7 +695,7 @@ bool Replay::loadFile(int playerIndex, const char *filename)
   name += filename;
   
   if (!ReplayMode) {
-    sendMessage (ServerPlayer, playerIndex, "Server isn't in replay mode");
+    sendMessage (ServerPlayer, playerIndex, "Server is not in replay mode");
     return false;
   }
   
