@@ -30,7 +30,7 @@ ActionBinding::ActionBinding() {
   wayToBindActions.insert(std::make_pair(std::string("fire"), both));
   wayToBindActions.insert(std::make_pair(std::string("drop"), press));
   wayToBindActions.insert(std::make_pair(std::string("identify"), press));
-  wayToBindActions.insert(std::make_pair(std::string("jump"), press));
+  wayToBindActions.insert(std::make_pair(std::string("jump"), both));
   wayToBindActions.insert(std::make_pair(std::string("send all"), press));
   wayToBindActions.insert(std::make_pair(std::string("send team"), press));
   wayToBindActions.insert(std::make_pair(std::string("send nemesis"), press));

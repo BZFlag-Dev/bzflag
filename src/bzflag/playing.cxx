@@ -797,6 +797,11 @@ static void		doKeyPlaying(const BzfKeyEvent& key, bool pressed)
 {
   static ServerCommandKey serverCommandKeyHandler;
 
+  const std::string cmd = KEYMGR.get(key, pressed);
+  if (cmd == "jump") {
+    myTank->setJumpPressed(pressed);
+  }
+
   if (HUDui::getFocus())
     if ((pressed && HUDui::keyPress(key)) ||
 	(!pressed && HUDui::keyRelease(key))) {

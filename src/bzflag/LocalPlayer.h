@@ -74,7 +74,9 @@ public:
   bool		fireShot();
   void		forceReload(float time = 0.0f);
   void		explodeTank();
-  void		jump();
+  void		doJump();
+  void		setJump();
+  void		setJumpPressed(bool value);
   void		setTarget(const Player*);
 
   void		setNemesis(const Player*);
@@ -157,7 +159,9 @@ private:
   bool          right;
   bool          up;
   bool          down;
-  bool			entryDrop; // first drop since entering
+  bool          entryDrop; // first drop since entering
+  bool		wantJump;
+  bool		jumpPressed;
 };
 
 

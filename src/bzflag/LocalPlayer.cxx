@@ -58,7 +58,9 @@ LocalPlayer::LocalPlayer(const PlayerId& id,
   left(false),
   right(false),
   up(false),
-  down(false)
+  down(false),
+  wantJump(false),
+  jumpPressed(false)
 {
   // initialize shots array to no shots fired
   const int numShots = World::getWorld()->getMaxShots();
@@ -167,7 +169,7 @@ void			LocalPlayer::doUpdateMotion(float dt)
   static const int MaxSearchSteps = 7;
   static const int MaxSteps = 4;
   static const float TinyDistance = 0.001f;
-
+  
   // save old state
   const Location oldLocation = location;
   const float* oldPosition = getPosition();
@@ -292,6 +294,7 @@ void			LocalPlayer::doUpdateMotion(float dt)
       }
     }
 
+
     // now apply outside forces
     doForces(dt, newVelocity, newAngVel);
 
@@ -305,6 +308,14 @@ void			LocalPlayer::doUpdateMotion(float dt)
     }
   }
 
+  // jump here, we allow a little change in horizontal motion
+  if (wantJump) {
+    doJump();
+    if (!wantJump) {
+      newVelocity[2] = oldVelocity[2];
+    }
+  }
+  
   // do the physics driver stuff
   if ((lastObstacle != NULL) && 
       (lastObstacle->getType() == MeshFace::getClassName())) {
@@ -709,7 +720,7 @@ void			LocalPlayer::doUpdateMotion(float dt)
   if ((getFlag() == Flags::Bouncy) && ((location == OnGround) || (location == OnBuilding))) {
     if (oldLocation != InAir) {
       if ((TimeKeeper::getCurrent() - bounceTime) > 0) {
-        this->jump();
+        this->doJump();
       }
     }
     else {
@@ -1100,16 +1111,29 @@ bool			LocalPlayer::doEndShot(int id, bool isHit, float* pos)
   return true;
 }
 
-void			LocalPlayer::jump()
+void			LocalPlayer::setJump()
+{
+  wantJump = jumpPressed;
+}
+
+void			LocalPlayer::setJumpPressed(bool value)
+{
+  jumpPressed = value;
+}
+
+void			LocalPlayer::doJump()
 {
   FlagType* flag = getFlag();
 
   // can't jump while burrowed
-  if (getPosition()[2] < 0.0f)
+  if (getPosition()[2] < 0.0f) {
     return;
+  }
 
   if (flag == Flags::Wings) {
-    if (wingsFlapCount <= 0) return;
+    if (wingsFlapCount <= 0) {
+      return;
+    }
     wingsFlapCount--;
   } else if (location != OnGround && location != OnBuilding) {
     // can't jump unless on the ground or a building
@@ -1146,6 +1170,8 @@ void			LocalPlayer::jump()
   } else {
     playLocalSound(SFX_JUMP);
   }
+
+  wantJump = false;
 }
 
 void			LocalPlayer::setTarget(const Player* _target)

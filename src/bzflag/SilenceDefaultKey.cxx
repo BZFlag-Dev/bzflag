@@ -33,7 +33,7 @@ bool			SilenceDefaultKey::keyPress(const BzfKeyEvent& key)
   LocalPlayer *myTank = LocalPlayer::getMyTank();
   if (KEYMGR.get(key, true) == "jump") {
     // jump while typing
-    myTank->jump();
+    myTank->setJump();
   }
 
   if (myTank->getInputMethod() != LocalPlayer::Keyboard) {

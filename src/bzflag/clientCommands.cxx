@@ -134,7 +134,7 @@ std::string cmdJump(const std::string&, const CommandManager::ArgList& args)
   if (args.size() != 0)
     return "usage: jump";
   if (myTank != NULL)
-    myTank->jump();
+    myTank->setJump();
   return std::string();
 }
 

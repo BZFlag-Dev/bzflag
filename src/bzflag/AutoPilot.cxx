@@ -190,7 +190,7 @@ bool	avoidBullet(float &rotation, float &speed)
    && (minDistance < (std::max(dotProd,0.5f) * BZDBCache::tankLength * 2.25f))
    && (myTank->getFlag() != Flags::NoJumping)) {
 #endif
-    myTank->jump();
+    myTank->setJump();
     return (myTank->getFlag() != Flags::Wings);
   } else if (dotProd > 0.96f) {
     speed = 1.0;
@@ -385,7 +385,7 @@ bool chasePlayer(float &rotation, float &speed)
 
         if (((building->getPosition()[2] - pos[2] + building->getHeight())) < maxJump) {
           speed = d / 50.0f;
-          myTank->jump();
+          myTank->setJump();
 	  return true;
 	}
       }
@@ -534,7 +534,7 @@ bool navigate(float &rotation, float &speed)
   }
   if (myTank->getLocation() == LocalPlayer::InAir
       && myTank->getFlag() == Flags::Wings)
-    myTank->jump();
+    myTank->setJump();
   navRot = rotation;
   navSpeed = speed;
   lastNavChange = TimeKeeper::getCurrent();
