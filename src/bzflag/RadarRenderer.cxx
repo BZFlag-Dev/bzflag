@@ -130,19 +130,17 @@ void RadarRenderer::drawTank(const float pos[3], const Player* player)
     glRectf(-size, -size, +size, +size);
   }
   else {
-    // NOTE: the local tank doesn't need a rotation transform
+    const float tankAngle = player->getAngle();
+    glPushMatrix();
+    glRotatef(float(tankAngle * 180.0 / M_PI), 0.0f, 0.0f, 1.0f);
     if (useTankModels) {
       drawFancyTank(player);
-    }
-    else {
-      const float tankAngle = player->getAngle();
-      glPushMatrix();
-      glRotatef(float(tankAngle * 180.0 / M_PI), 0.0f, 0.0f, 1.0f);
+    } else {
       const float halfWidth = 0.5f * BZDBCache::tankWidth;
       const float halfLength = 0.5f * BZDBCache::tankLength;
       glRectf(-halfLength, -halfWidth, +halfLength, +halfWidth);
-      glPopMatrix();
     }
+    glPopMatrix();
 
     // align to the screen axes
     glRotatef(float(myAngle * 180.0 / M_PI), 0.0f, 0.0f, 1.0f);
@@ -167,42 +165,35 @@ void RadarRenderer::drawTank(const float pos[3], const Player* player)
 
 void RadarRenderer::drawFancyTank(const Player* player)
 {
-  // experimental tank radar drawing 
-  glPushMatrix();  
-  
   if (smooth) {
     glDisable(GL_BLEND);
   }
-  
+
   // we use the depth buffer so that the treads look ok
   if (BZDBCache::zbuffer) {
     glClearDepth(1.0);
     glClear(GL_DEPTH_BUFFER_BIT);
     glEnable(GL_DEPTH_TEST);
   }
-  
-  const float tankAngle = player->getAngle();
-  glRotatef(float(tankAngle * 180.0 / M_PI), 0.0f, 0.0f, 1.0f);
 
-  
   OpenGLGState::resetState();
   glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
   RENDERER.enableSun(true);
+
   player->renderRadar(); // draws at (0,0,0)
+
   RENDERER.enableSun(false);
-  glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+  glColor4f(1.0f, 1.0f, 1.0f, 1.0f); // FIXME - height box color
   OpenGLGState::resetState();
 
   if (BZDBCache::zbuffer) {
     glDisable(GL_DEPTH_TEST);
   }
-  
+
   if (smooth) {
     glEnable(GL_BLEND);
   }
 
-  glPopMatrix();  
-  
   return;      
 }
 
@@ -228,7 +219,7 @@ void RadarRenderer::drawFlagOnTank(const float pos[3])
   
   // align it to the screen axes
   const float angle = LocalPlayer::getMyTank()->getAngle();
-  glTranslatef(pos[0], pos[1], pos[2]);
+  glTranslatef(pos[0], pos[1], 0.0f);
   glRotatef(float(angle * 180.0 / M_PI), 0.0f, 0.0f, 1.0f);
   
   float tankRadius = BZDBCache::tankRadius;
@@ -675,15 +666,15 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
       glRotatef((float)(90.0 - myAngle * 180.0 / M_PI), 0.0f, 0.0f, 1.0f);
       glTranslatef(-myPos[0], -myPos[1], 0.0f);
       
-      // my tank
-      glColor3f(1.0f, 1.0f, 1.0f);
-      drawTank(myPos, myTank);
-
       // my flag
       if (myTank->getFlag() != Flags::Null) {
         glColor3fv(myTank->getFlag()->getColor());
         drawFlagOnTank(myPos);
       }
+
+      // my tank
+      glColor3f(1.0f, 1.0f, 1.0f);
+      drawTank(myPos, myTank);
     }
     
     if (smooth) {
