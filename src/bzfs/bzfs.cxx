@@ -826,8 +826,8 @@ static void sendMessageToListServerForReal(int index)
       pingReply.purpleCount = 0;
     }
 
-    // encode ping reply as ascii hex digits
-    char gameInfo[PingPacketHexPackedSize];
+    // encode ping reply as ascii hex digits plus NULL
+    char gameInfo[PingPacketHexPackedSize + 1];
     pingReply.packHex(gameInfo);
 
     // send ADD message
@@ -872,7 +872,7 @@ static void sendMessageToListServerForReal(int index)
 	      url_encode(clOptions->publicizedTitle).c_str());
     }
   }
-  DEBUG3("%s",msg);
+  DEBUG3("%s\n",msg);
   send(link.socket, msg, strlen(msg), 0);
 
   // hangup (we don't care about replies)
