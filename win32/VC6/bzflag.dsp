@@ -189,6 +189,10 @@ SOURCE=..\..\src\bzflag\DisplayMenu.cxx
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\src\bzflag\EffectsMenu.cxx
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\src\bzflag\FormatMenu.cxx
 # End Source File
 # Begin Source File
@@ -410,6 +414,10 @@ SOURCE=..\..\src\bzflag\RobotPlayer.cxx
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\src\bzflag\RoofTops.cxx
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\src\bzflag\Roster.cxx
 # End Source File
 # Begin Source File
@@ -471,6 +479,10 @@ SOURCE=..\..\src\bzflag\stars.cxx
 # Begin Source File
 
 SOURCE=..\..\src\bzflag\TargetingUtils.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\bzflag\TrackMarks.cxx
 # End Source File
 # Begin Source File
 
@@ -730,6 +742,10 @@ SOURCE=..\..\include\DrawablesManager.h
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\src\bzflag\EffectsMenu.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\include\EighthDBaseSceneNode.h
 # End Source File
 # Begin Source File
@@ -950,6 +966,10 @@ SOURCE=..\..\include\resource.h
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\src\bzflag\RoofTops.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\src\bzflag\RobotPlayer.h
 # End Source File
 # Begin Source File
@@ -1075,6 +1095,10 @@ SOURCE=..\..\include\TimeBomb.h
 # Begin Source File
 
 SOURCE=..\..\include\TimeKeeper.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\bzflag\TrackMarks.h
 # End Source File
 # Begin Source File
 

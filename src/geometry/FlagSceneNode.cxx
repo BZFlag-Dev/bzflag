@@ -69,6 +69,7 @@ WaveGeometry::WaveGeometry() : refCount(0)
 
 void WaveGeometry::waveFlag(float dt)
 { 
+  int i;
   if (!refCount)
     return;
   ripple1 += dt * RippleSpeed1;
@@ -82,7 +83,7 @@ void WaveGeometry::waveFlag(float dt)
   float	wave0[maxChunks];
   float	wave1[maxChunks];
   float	wave2[maxChunks];
-  for (int i = 0; i <= flagChunks; i++) {
+  for (i = 0; i <= flagChunks; i++) {
     const float x      = float(i) / float(flagChunks);
     const float damp   = 0.1f * x;
     const float angle1 = ripple1 - 4.0f * M_PI * x;
@@ -96,7 +97,7 @@ void WaveGeometry::waveFlag(float dt)
   glList     = glGenLists(1);
   glNewList(glList, GL_COMPILE);
   glBegin(GL_QUAD_STRIP);
-  for (int i = 0; i <= flagChunks; i++) {
+  for (i = 0; i <= flagChunks; i++) {
     const float x      = float(i) / float(flagChunks);
     const float shift1 = wave0[i];
     GLfloat v1[3], v2[3];
