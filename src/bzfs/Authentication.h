@@ -29,6 +29,7 @@ class Authentication {
  public:
   Authentication();
 
+  static void cleanUp();
   static void init(const char *address, int port, const char *password);
   void        setPrincipalName(char *buf, int len);
   void        verifyCredential(char *buf, int len);
@@ -41,6 +42,7 @@ private:
   static krb5_principal client;
   krb5_principal        server;
   static krb5_creds     my_creds;
+  static char           ccfile[MAXPATHLEN+6]; // FILE:path+\0
 #endif
   static bool           authentication;
   bool                  trusted;

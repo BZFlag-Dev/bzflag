@@ -559,6 +559,9 @@ static void serverStop()
   // remove from list server and disconnect
   // this destructor must be explicitly called
   listServerLink->~ListServerLink();
+
+  // clean up Kerberos
+  Authentication::cleanUp();
 }
 
 

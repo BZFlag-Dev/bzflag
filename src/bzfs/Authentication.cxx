@@ -36,6 +36,7 @@ krb5_context   Authentication::context        = NULL;
 krb5_ccache    Authentication::cc             = NULL;
 krb5_principal Authentication::client;
 krb5_creds     Authentication::my_creds;
+char           Authentication::ccfile[MAXPATHLEN+6]; // FILE:path+\0
 #endif
 bool           Authentication::authentication = false;
 
@@ -44,13 +45,26 @@ Authentication::Authentication() : trusted(false)
 }
 
 #ifdef HAVE_KRB5
+void Authentication::cleanUp()
+{
+  krb5_error_code retval;
+
+  if ((retval = krb5_cc_destroy(context, cc)))
+    com_err("bzfs:", retval, "while destroying credential cache");
+}
+#else
+void Authentication::cleanUp()
+{
+}
+#endif
+
+#ifdef HAVE_KRB5
 void Authentication::init(const char *address, int port, const char *password)
 {
   assert(context == NULL);
   assert(cc == NULL);
 
   krb5_error_code retval;
-  char            ccfile[MAXPATHLEN+6]; // FILE:path+\0
 
   if (!address)
     return;
@@ -72,7 +86,7 @@ void Authentication::init(const char *address, int port, const char *password)
   // Gettin a default cache different for any bzfs process
   sprintf(ccfile, "FILE:%skrb5cc_p%ld", getTempDirName().c_str(), (long)getpid());
   if (context && (retval = krb5_cc_set_default_name(context, ccfile)))
-    com_err("bzfs:", retval, "setting default cache");
+    com_err("bzfs:", retval, "setting default credential cache");
   unlink(ccfile+strlen("FILE:"));
 
   // Getting credential cache 
