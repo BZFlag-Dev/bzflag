@@ -97,6 +97,7 @@ static const char copyright[] = "Copyright (c) 1993 - 2004 Tim Riker";
 #include "TankGeometryMgr.h"
 #include "motd.h"
 #include "URLManager.h"
+#include "md5.h"
 
 // versioning that makes us recompile every time
 #include "version.h"
@@ -3539,35 +3540,41 @@ static World*		makeWorld(ServerLink* serverLink)
 
   char *hexDigest = new char[len];
   nboUnpackString(msg, hexDigest, len);
-  url += hexDigest;
-  url += ".bwc";
   isTemp = hexDigest[0] == 't';
 
   worldPath = getCacheDirName();
   worldPath += hexDigest;
   worldPath += ".bwc";
   cachedWorld = FILEMGR.createDataInStream(worldPath, true);
-  delete[] hexDigest;
 
   connectStatusCB("Downloading World...");
 
   char* worldDatabase;
   bool  gotFromURL = false;
-  if ((cachedWorld == NULL) && cacheURL && !isTemp) {
-    unsigned int readSize;
+  unsigned int readSize;
+  if ((cachedWorld == NULL) && url.size() && !isTemp) {
     gotFromURL = URLManager::instance().getURL(url, (void **) &worldDatabase,
 					       readSize);
-    if (gotFromURL) {
-      cleanWorldCache();
-      std::ostream* cacheOut
-	= FILEMGR.createDataOutStream(worldPath, true, true);
-      if (cacheOut != NULL) {
-	cacheOut->write(worldDatabase, readSize);
-	delete cacheOut;
-      }
-      cachedWorld = FILEMGR.createDataInStream(worldPath, true);
-      URLManager::instance().freeURLData((void *)worldDatabase);
+  }
+  if (gotFromURL) {
+    MD5 md5;
+    md5.update((unsigned char *)worldDatabase, readSize);
+    md5.finalize();
+    std::string digest = md5.hexdigest();
+    if (strcmp(md5.hexdigest().c_str(), &hexDigest[1]))
+      gotFromURL = false;
+  }
+  delete[] hexDigest;
+  if (gotFromURL) {
+    cleanWorldCache();
+    std::ostream* cacheOut
+      = FILEMGR.createDataOutStream(worldPath, true, true);
+    if (cacheOut != NULL) {
+      cacheOut->write(worldDatabase, readSize);
+      delete cacheOut;
     }
+    cachedWorld = FILEMGR.createDataInStream(worldPath, true);
+    URLManager::instance().freeURLData((void *)worldDatabase);
   }
   if (cachedWorld == NULL) {
     // ask for world and wait for it (ignoring all other messages)
