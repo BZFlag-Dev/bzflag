@@ -235,13 +235,22 @@ AC_SUBST(INSTALL_DATA_DIR)
 
 # do we want bzadmin?
 AC_ARG_ENABLE(bzadmin, [  --disable-bzadmin       do not build text client])
-AM_CONDITIONAL(BZADMIN_INCLUDED, test x$enable_bzadmin != xno)
 if test x$enable_bzadmin != xno; then
-   MP_WITH_CURSES
-   if test "x$CURSES_LIB" = x; then
+  if test "$ac_cv_search_gluScaleImage" = no; then
+    AC_MSG_WARN(
+      [bzAdmin build has been requested, but GL is not fully available
+... disabling bzAdmin generation])
+    AM_CONDITIONAL(BZADMIN_INCLUDED, false)
+  else
+    MP_WITH_CURSES
+    if test "x$CURSES_LIB" = x; then
       AC_MSG_WARN([could not find a curses library, will build bzadmin \
-                  without curses])
-   fi
+without curses])
+    fi
+    AM_CONDITIONAL(BZADMIN_INCLUDED, true)
+  fi
+else
+  AM_CONDITIONAL(BZADMIN_INCLUDED, false)
 fi
 AM_CONDITIONAL(HAVE_CURSES, test "x$CURSES_LIB" != x)
 AC_SUBST(CURSES_LIB)
