@@ -6,8 +6,6 @@ recent bugs
   --steamroller is a weak flag without this leaway. Perhaps split SR radius a
   and BU radius
 
-- a burrowed tank cannot shoot a Narrow tank (even broadside)
-
 - depth ordering/culling is incorrect on mac's playground (small field, 4
   team ctf with large bases and elevated positions for 3 of the bases).  a 
   flag will be on the ground in front of a base wall, yet it is rendered
