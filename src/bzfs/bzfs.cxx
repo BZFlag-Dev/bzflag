@@ -4268,7 +4268,7 @@ static void shotFired(int playerIndex, void *buf, int len)
       shotSpeed = 0.0f;
       tankSpeed = 0.0f;
   }
-  else if (firingInfo.flag == Flags::HighSpeed) {
+  else if (firingInfo.flag == Flags::Velocity) {
       tankSpeed *= VelocityAd;
   }
   else {
@@ -5381,7 +5381,7 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
 
 	// if tank is not driving cannot be sure it didn't toss (V) in flight
 	// if tank is not alive cannot be sure it didn't just toss (V)
-	if (flag[player[t].flag].flag.desc == Flags::HighSpeed)
+	if (flag[player[t].flag].flag.desc == Flags::Velocity)
 	  maxPlanarSpeedSqr *= VelocityAd*VelocityAd;
 	else {
 	  // If player is moving vertically, or not alive the speed checks seem to be problematic
@@ -6419,7 +6419,7 @@ static void parse(int argc, char **argv, CmdLineOptions &options)
 
   // prep flags
   for (i = 0; i < numFlags; i++) {
-    flag[i].flag.id = NullFlag;
+    flag[i].flag.desc = Flags::Null;
     flag[i].flag.status = FlagNoExist;
     flag[i].flag.type = FlagNormal;
     flag[i].flag.owner = 0;
@@ -6442,16 +6442,16 @@ static void parse(int argc, char **argv, CmdLineOptions &options)
   f = 0;
   if (options.gameStyle & TeamFlagGameStyle) {
     flag[0].required = true;
-    flag[0].flag.id = RedFlag;
+    flag[0].flag.desc = Flags::RedTeam;
     flag[0].flag.type = FlagNormal;
     flag[1].required = true;
-    flag[1].flag.id = GreenFlag;
+    flag[1].flag.desc = Flags::RedTeam;
     flag[1].flag.type = FlagNormal;
     flag[2].required = true;
-    flag[2].flag.id = BlueFlag;
+    flag[2].flag.desc = Flags::BlueTeam;
     flag[2].flag.type = FlagNormal;
     flag[3].required = true;
-    flag[3].flag.id = PurpleFlag;
+    flag[3].flag.desc = Flags::PurpleTeam;
     flag[3].flag.type = FlagNormal;
     f = 4;
   }
@@ -6826,7 +6826,7 @@ int main(int argc, char **argv)
       if ((float)bzfrand() > t) {
 	// find an empty slot for an extra flag
 	for (i = numFlags - clOptions.numExtraFlags; i < numFlags; i++)
-	  if (flag[i].flag.id == NullFlag)
+	  if (flag[i].flag.desc == Flags::Null)
 	    break;
 	if (i != numFlags)
 	  randomFlag(i);
