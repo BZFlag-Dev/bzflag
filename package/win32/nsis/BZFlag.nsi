@@ -7,14 +7,14 @@
 ;
 
 !define VER_MAJOR 1.11
-!define VER_MINOR .28
+!define VER_MINOR .32
 
 ; Main Installer Options
 Name "BZFlag"
 ;Icon ..\..\..\win32\bzflag.ico
 WindowIcon On
-;EnabledBitmap "EnableCheck.bmp"
-;DisabledBitmap "DisableCheck.bmp"
+EnabledBitmap "EnableCheck.bmp"
+DisabledBitmap "DisableCheck.bmp"
 Caption "BZFlag ${VER_MAJOR}${VER_MINOR}: - Setup"
 
 ; The file to write
@@ -37,7 +37,7 @@ ComponentText "This will install the BZFlag ${VER_MAJOR}${VER_MINOR} game and se
 ; The text to prompt the user to enter a directory
 DirText "Please choose a directory to install into:"
 
-CompletedText " Thank you for installing BZFlag ${VER_MAJOR}${VER_MINOR}."
+CompletedText "Thank you for installing BZFlag ${VER_MAJOR}${VER_MINOR}."
 ; The stuff to install
 
 Section "BZFlag (required)"
@@ -74,7 +74,7 @@ Section "BZFlag (required)"
 	WriteRegStr HKLM SOFTWARE\BZFlag "Install_Dir" "$INSTDIR"
 
 	; Write the uninstall keys for Windows
-	WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\BZFlag${VER_MAJOR}${VER_MINOR}" "DisplayName" "BZFlag(remove only)"
+	WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\BZFlag${VER_MAJOR}${VER_MINOR}" "DisplayName" "BZFlag${VER_MAJOR}${VER_MINOR} (remove only)"
 	WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\BZFlag${VER_MAJOR}${VER_MINOR}" "UninstallString" '"$INSTDIR\uninstall.exe"'
 	WriteUninstaller "uninstall.exe"
 SectionEnd
@@ -124,8 +124,8 @@ UninstallText "This will uninstall BZFlag. Please hit next to continue with the 
 Section "Uninstall"
 	; remove registry keys
 
-	DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\BZFlag"
-	DeleteRegKey HKLM SOFTWARE\BZFlag
+	DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\BZFlag${VER_MAJOR}${VER_MINOR}"
+	DeleteRegKey HKLM "Software\BZFlag${VER_MAJOR}${VER_MINOR}"
 	; remove files
 
 	Delete $INSTDIR\bzflag.exe
