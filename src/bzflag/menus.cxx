@@ -3790,14 +3790,12 @@ void			ServerMenu::addToList(ServerItem& info, bool doCache)
 
   // find point to insert new player at
   int insertPoint = -1; // point to insert server into
-  int numPlayers;
 
   // insert new item before the first serveritem with is deemed to be less
   // in value than the item to be inserted -- cached items are less than
   // non-cached, items that have more players are more, etc..
   for (i = 0; i < (int)servers.size(); i++) {
     ServerItem& server = servers[i];
-    numPlayers = server.getPlayerCount();
     if (server < info){
       insertPoint = i;
       break;
