@@ -6408,7 +6408,10 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
 	InBounds = false;
       else if ( (state.pos[0] >= WorldSize*0.5f + fudge) || (state.pos[0] <= -WorldSize*0.5f - fudge))
 	InBounds = false;
- 
+
+	  if (state.pos[2]<0)
+	InBounds = false;
+
       // kick em cus they are cheating
       if (!InBounds)
       {
