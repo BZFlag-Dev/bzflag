@@ -840,7 +840,8 @@ static void sendMessageToListServerForReal(int index)
   }
   else if (strcmp(link.nextMessage, "REMOVE") == 0) {
     // send REMOVE
-    sprintf(msg, "GET %s?action=REMOVE&nameport=%s HTTP/1.1\r\nHost: %s\r\n",
+    sprintf(msg, "GET %s?action=REMOVE&nameport=%s HTTP/1.1\r\n"
+      "Host: %s\r\n",
       link.pathname.c_str(),
       clOptions->publicizedAddress.c_str(),
       link.hostname.c_str());
