@@ -765,7 +765,7 @@ WordFilter::~WordFilter(void)
 
 
 // adds an individual word to the filter list
-bool WordFilter::addToFilter(const std::string &word, const std::string &expression)
+bool WordFilter::addToFilter(const std::string &word, const std::string expression)
 {
   long int length = (long int)word.length();
   if (0 >= length) {
