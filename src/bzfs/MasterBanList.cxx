@@ -34,6 +34,7 @@ MasterBanList::~MasterBanList()
 #endif
 }
 
+#ifdef HAVE_CURL
 void MasterBanList::collectData(char* ptr, int len)
 {
   std::string readData(ptr, 0, len);
@@ -47,13 +48,16 @@ size_t MasterBanList::writeFunction(void *ptr, size_t size, size_t nmemb,
   ((MasterBanList *)stream)->collectData((char *)ptr, len);
   return len;
 }
+#endif
 
 const std::string& MasterBanList::get ( const std::string URL )
 {
   data = "";
   // get all up on the internet and go get the thing
+#ifdef HAVE_CURL
   curl_easy_setopt(easyHandle, CURLOPT_URL, URL.c_str());
   curl_easy_perform(easyHandle);
   curl_easy_setopt(easyHandle, CURLOPT_URL, NULL);
+#endif
   return data;
 }
