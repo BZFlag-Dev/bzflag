@@ -30,9 +30,11 @@
 #include "EighthDimSceneNode.h"
 #include "BundleMgr.h"
 
+
 class Ray;
 class Player;
 class RemotePlayer;
+class WorldPlayer;
 class SceneDatabase;
 class FlagSceneNode;
 class FlagWarpSceneNode;
@@ -72,6 +74,7 @@ class World {
     Team&		getTeam(int index);
     RemotePlayer**	getPlayers() const;
     RemotePlayer*&	getPlayer(int index) const;
+    WorldPlayer*	getWorldWeapons() const;
     Flag&		getFlag(int index) const;
     const float*	getBase(int) const;
     const std::vector<WallObstacle>	&getWalls() const;
@@ -142,6 +145,7 @@ class World {
     std::vector<int>			teleportTargets;
     Team		team[NumTeams];
     RemotePlayer**	players;
+    WorldPlayer*	worldWeapons;
     Flag*		flags;
     FlagSceneNode**	flagNodes;
     FlagWarpSceneNode**	flagWarpNodes;
@@ -337,6 +341,11 @@ inline RemotePlayer**	World::getPlayers() const
 inline RemotePlayer*&	World::getPlayer(int index) const
 {
   return players[index];
+}
+
+inline WorldPlayer*	World::getWorldWeapons() const
+{
+  return worldWeapons;
 }
 
 inline Flag&		World::getFlag(int index) const

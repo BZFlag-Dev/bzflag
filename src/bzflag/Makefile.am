@@ -39,6 +39,8 @@ bzflag_SOURCES =			\
 	LocalPlayer.h			\
 	RemotePlayer.cxx		\
 	RemotePlayer.h			\
+	WorldPlayer.cxx			\
+	WorldPlayer.h			\
 	RobotPlayer.cxx			\
 	RobotPlayer.h			\
 	ServerLink.cxx			\

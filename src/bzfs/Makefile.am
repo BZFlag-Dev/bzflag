@@ -12,6 +12,8 @@ bzfs_SOURCES = \
 	WorldInfo.h \
 	Permissions.cxx \
 	Permissions.h \
+	WorldWeapons.cxx \
+	WorldWeapons.h \
 	bzfs.cxx
 
 LDADD = ../net/libNet.a ../common/libCommon.a

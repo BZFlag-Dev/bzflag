@@ -40,7 +40,6 @@ class BaseLocalPlayer : public Player {
     virtual void	explodeTank() = 0;
     virtual bool	checkHit(const Player* source,
 				const ShotPath*& hit, float& minTime) const = 0;
-
   protected:
     int			getSalt();
     virtual void	doUpdate(float dt) = 0;
@@ -105,7 +104,6 @@ class LocalPlayer : public BaseLocalPlayer {
     void		restart(const float* pos, float azimuth);
     bool		checkHit(const Player* source, const ShotPath*& hit,
 							float& minTime) const;
-
     void		setFlag(FlagDesc*);
     void		changeScore(short deltaWins, short deltaLosses, short deltaTeamKills);
 

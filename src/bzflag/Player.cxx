@@ -64,24 +64,28 @@ Player::Player(const PlayerId& _id, TeamColor _team,
   ::strncpy(email, _email, EmailLen);
   email[EmailLen-1] = '\0';
 
-  // make scene nodes
-  tankNode = new TankSceneNode(state.pos, forward);
-  tankIDLNode = new TankIDLSceneNode(tankNode);
-  changeTeam(team);
-  pausedSphere = new SphereSceneNode(state.pos, 1.5f * TankRadius);
-  pausedSphere->setColor(0.0f, 0.0f, 0.0f, 0.5f);
+  if (id != ServerPlayer) {
+    // make scene nodes
+    tankNode = new TankSceneNode(state.pos, forward);
+    tankIDLNode = new TankIDLSceneNode(tankNode);
+    changeTeam(team);
+    pausedSphere = new SphereSceneNode(state.pos, 1.5f * TankRadius);
+    pausedSphere->setColor(0.0f, 0.0f, 0.0f, 0.5f);
+    totalCount++;
+  }
 
-  totalCount++;
 }
 
 Player::~Player()
 {
-  delete tankIDLNode;
-  delete tankNode;
-  delete pausedSphere;
-  if (--totalCount == 0) {
-    delete tankTexture;
-    tankTexture = NULL;
+  if (id != ServerPlayer) {
+    delete tankIDLNode;
+    delete tankNode;
+    delete pausedSphere;
+    if (--totalCount == 0) {
+      delete tankTexture;
+      tankTexture = NULL;
+    }
   }
 }
 
@@ -312,10 +316,15 @@ void			Player::setInvisible(bool invisible)
   tankNode->setInvisible(invisible);
 }
 
+int			Player::getMaxShots() const
+{
+  return World::getWorld()->getMaxShots();
+}
+
 void			Player::addShots(SceneDatabase* scene,
 					bool colorblind) const
 {
-  const int count = World::getWorld()->getMaxShots();
+  const int count = getMaxShots();
   for (int i = 0; i < count; i++) {
     ShotPath* shot = getShot(i);
     if (shot && !shot->isExpiring() && !shot->isExpired())

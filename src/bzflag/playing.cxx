@@ -72,6 +72,7 @@ static const char copyright[] = "Copyright (c) 1993 - 2003 Tim Riker";
 #include "Flag.h"
 #include "LocalPlayer.h"
 #include "RemotePlayer.h"
+#include "WorldPlayer.h"
 #include "RobotPlayer.h"
 #include "MainWindow.h"
 #include "ControlPanel.h"
@@ -383,6 +384,9 @@ Player*			lookupPlayer(PlayerId id)
   if (myTank->getId() == id)
     return myTank;
 
+  if (id == ServerPlayer)
+    return World::getWorld()->getWorldWeapons();
+
   if (id < curMaxPlayers && player[id] && player[id]->getId() == id)
     return player[id];
 
@@ -396,6 +400,9 @@ static int		lookupPlayerIndex(PlayerId id)
   if (myTank->getId() == id)
     return -2;
 
+  if (id == ServerPlayer)
+    return ServerPlayer;
+
   if (id < curMaxPlayers && player[id] && player[id]->getId() == id)
     return id;
 
@@ -407,6 +414,8 @@ static Player*		getPlayerByIndex(int index)
 {
   if (index == -2)
     return myTank;
+  if (index == ServerPlayer)
+    return World::getWorld()->getWorldWeapons();
   if (index == -1 || index >= curMaxPlayers)
     return NULL;
   return player[index];
@@ -417,6 +426,9 @@ static Player*		getPlayerByName(const char* name)
   for (int i = 0; i < curMaxPlayers; i++)
     if (player[i] && strcmp( player[i]->getCallSign(), name ) == 0)
       return player[i];
+    WorldPlayer *worldWeapons = World::getWorld()->getWorldWeapons();
+    if (strcmp(worldWeapons->getCallSign(), name) == 0)
+	    return worldWeapons;
   return NULL;
 }
 
@@ -3176,11 +3188,22 @@ static void		handleServerMessage(bool human, uint16_t code,
     case MsgShotBegin: {
       FiringInfo firingInfo;
       msg = firingInfo.unpack(msg);
-      for (int i = 0; i < curMaxPlayers; i++)
-	if (player[i] && player[i]->getId() == firingInfo.shot.player) {
-	  const float* pos = firingInfo.shot.pos;
-	  player[i]->addShot(firingInfo);
-	  if (human) {
+      int i;
+
+      if (firingInfo.shot.player != ServerPlayer) {
+        for (i = 0; i < curMaxPlayers; i++) {
+	  if (player[i] && player[i]->getId() == firingInfo.shot.player) {
+	    player[i]->addShot(firingInfo);
+	  }
+	}
+	if (i == curMaxPlayers)
+	  break;
+      }
+      else
+	World::getWorld()->getWorldWeapons()->addShot(firingInfo);
+
+      if (human) {
+	    const float* pos = firingInfo.shot.pos;
 	    if (firingInfo.flag == Flags::ShockWave)
 	      playWorldSound(SFX_SHOCK, pos[0], pos[1], pos[2]);
 	    else if (firingInfo.flag == Flags::Laser)
@@ -3191,9 +3214,7 @@ static void		handleServerMessage(bool human, uint16_t code,
 	      playWorldSound(SFX_THIEF, pos[0], pos[1], pos[2]);
 	    else
 	      playWorldSound(SFX_FIRE, pos[0], pos[1], pos[2]);
-	  }
-	  break;
-	}
+      }
       break;
     }
 
@@ -4067,6 +4088,10 @@ static void		checkEnvironment()
   for (i = 0; i < curMaxPlayers; i++)
     if (player[i])
       myTank->checkHit(player[i], hit, minTime);
+
+  // Check Server Shots
+  myTank->checkHit( World::getWorld()->getWorldWeapons(), hit, minTime);
+
   if (hit) {
     // i got shot!  terminate the shot that hit me and blow up.
     // force shot to terminate locally immediately (no server round trip);
@@ -5436,10 +5461,6 @@ static bool		joinGame()
   return false;
 }
 
-//
-// main playing loop
-//
-
 static void		renderDialog()
 {
   if (HUDDialogStack::get()->isActive()) {
@@ -5468,6 +5489,10 @@ static int		getZoomFactor()
   if (zoom > 8) return 8;
   return zoom;
 }
+
+//
+// main playing loop
+//
 
 static void		playingLoop()
 {
@@ -5682,6 +5707,11 @@ static void		playingLoop()
       if (player[i])
 	player[i]->updateShots(dt);
 
+    World *world = World::getWorld();
+    // update servers shots
+    if (world)
+      world->getWorldWeapons()->updateShots(dt);
+
     // stuff to draw a frame
     if (!unmapped) {
       // compute fps
@@ -5824,6 +5854,11 @@ static void		playingLoop()
 	}
 	// add my shells
 	myTank->addShots(scene, false);
+
+	//add server shells
+	if (world)
+	world->getWorldWeapons()->addShots(scene, false);
+
 	// add antidote flag
 	myTank->addAntidote(scene);
 	// add flags

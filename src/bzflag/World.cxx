@@ -23,6 +23,7 @@
 #include "Ray.h"
 #include "Protocol.h"
 #include "RemotePlayer.h"
+#include "WorldPlayer.h"
 #include "FlagSceneNode.h"
 #include "FlagWarpSceneNode.h"
 #include "SceneDatabase.h"
@@ -60,6 +61,7 @@ World::World() : gameStyle(PlainGameStyle),
 				baseInsideNodes(NULL)
 {
   int i;
+  worldWeapons = new WorldPlayer();
   for (i = 0; i < NumTeams; i++) {
     bases[i][0] = 0.0f;
     bases[i][1] = 0.0f;
@@ -81,6 +83,7 @@ World::~World()
   for (i = 0; i < curMaxPlayers; i++)
     delete players[i];
   delete[] players;
+  delete worldWeapons;
 }
 
 void			World::init()

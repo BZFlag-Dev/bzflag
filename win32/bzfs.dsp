@@ -117,6 +117,10 @@ SOURCE=..\src\bzfs\TextChunkManager.cxx
 
 SOURCE=..\src\bzfs\WorldInfo.cxx
 # End Source File
+# Begin Source File
+
+SOURCE=..\src\bzfs\WorldWeapons.cxx
+# End Source File
 # End Group
 # Begin Group "Header Files"
 
@@ -188,6 +192,10 @@ SOURCE=..\include\TimeKeeper.h
 # Begin Source File
 
 SOURCE=..\src\bzfs\WorldInfo.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\src\bzfs\WorldWeapons.h
 # End Source File
 # End Group
 # Begin Group "Resource Files"

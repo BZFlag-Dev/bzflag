@@ -61,13 +61,14 @@ class Player {
     short		getFromTeleporter() const;
     short		getToTeleporter() const;
     float		getTeleporterProximity() const;
+    virtual int		getMaxShots() const;
     virtual ShotPath*	getShot(int index) const = 0;
 
     void		setId(PlayerId&);
 
     void		addPlayer(SceneDatabase*, const float* colorOverride,
 							bool showIDL);
-    void		addShots(SceneDatabase*, bool colorblind) const;
+    virtual void	addShots(SceneDatabase*, bool colorblind) const;
     void		setHidden(bool hidden = true);
     void		setInvisible(bool invisible = true);
 

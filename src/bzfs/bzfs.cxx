@@ -97,6 +97,7 @@ const int udpBufSize = 128000;
 #include "AccessControlList.h"
 #include "WorldInfo.h"
 #include "Permissions.h"
+#include "WorldWeapons.h"
 
 
 float	WorldSize = DEFAULT_WORLD;
@@ -448,6 +449,9 @@ static float safetyBasePos[CtfTeams][3];
 // be found.
 static uint8_t rabbitIndex = NoPlayer;
 
+static WorldWeapons  wWeapons;
+
+
 static void stopPlayerPacketRelay();
 static void removePlayer(int playerIndex, char *reason, bool notify=true);
 static void resetFlag(int flagIndex);
@@ -679,6 +683,65 @@ void CustomBase::write(WorldInfo* world) const {
   safetyBasePos[color][1] = 0;
   safetyBasePos[color][2] = 0;
   world->addBase(pos[0], pos[1], pos[2], rotation, size[0], size[1], (pos[2] > 0.0) ? 1.0f : 0.0f,driveThrough,shootThrough);
+}
+
+class CustomWeapon : public WorldFileObstacle {
+  public:
+    CustomWeapon();
+    virtual bool read(const char *cmd, istream&);
+    virtual void write(WorldInfo*) const;
+
+  protected:
+    float initdelay;
+    std::vector<float> delay;
+    FlagDesc *type;
+};
+
+CustomWeapon::CustomWeapon()
+{
+  pos[0] = pos[1] = pos[2] = 0.0f;
+  rotation = 0.0f;
+  size[0] = size[1] = size[2] = 1.0f;
+  initdelay = 10.0f;
+  delay.push_back(10.0f);
+  type = Flags::Null;
+}
+
+bool CustomWeapon::read(const char *cmd, istream& input) {
+  if (strcmp(cmd, "initdelay") == 0) {
+    input >> initdelay;
+  }
+  else if (strcmp(cmd, "delay") == 0) {
+    std::string args;
+    float d;
+
+    delay.clear();
+    getline(input, args);
+    std::istringstream  parms(args);
+
+    while (parms.good()) {
+      parms >> d;
+      delay.push_back(d);
+    }
+    input.putback('\n');
+    if (delay.size() == 0)
+      return false;
+  }
+  else if (strcmp(cmd, "type") == 0) {
+    std::string abbv;
+    input >> abbv;
+    type = Flag::getDescFromAbbreviation(abbv.c_str());
+    if (type == NULL)
+      return false;
+  }
+  else if (!WorldFileObstacle::read(cmd, input))
+      return false;
+
+  return true;
+}
+
+void CustomWeapon::write(WorldInfo* world) const {
+  wWeapons.add(type, pos, rotation, initdelay, delay);
 }
 
 class CustomWorld : public WorldFileObject {
@@ -962,7 +1025,7 @@ static void pwrite(int playerIndex, const void *b, int l)
 }
 
 static char sMsgBuf[MaxPacketLen];
-static char *getDirectMessageBuffer()
+char *getDirectMessageBuffer()
 {
   return &sMsgBuf[2*sizeof(short)];
 }
@@ -984,7 +1047,7 @@ static void directMessage(int playerIndex, uint16_t code, int len, const void *m
   pwrite(playerIndex, bufStart, len + 4);
 }
 
-static void broadcastMessage(uint16_t code, int len, const void *msg)
+void broadcastMessage(uint16_t code, int len, const void *msg)
 {
   // send message to everyone
   for (int i = 0; i < curMaxPlayers; i++)
@@ -1830,6 +1893,9 @@ static bool readWorldStream(istream& input, const char *location, std::vector<Wo
 
     else if (strcasecmp(buffer, "base") == 0)
       newObject = new CustomBase;
+
+    else if (strcasecmp(buffer, "weapon") == 0)
+      newObject = new CustomWeapon;
 
     else if (strcasecmp(buffer, "world") == 0){
 		if (!gotWorld){
@@ -6718,6 +6784,10 @@ int main(int argc, char **argv)
 	// sleep(1);
       }
     }
+
+    //Fire world weapons
+    wWeapons.fire();
+
   }
 
   serverStop();

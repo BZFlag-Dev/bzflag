@@ -932,7 +932,7 @@ bool			LocalPlayer::checkHit(const Player* source,
   // if firing tank is paused then it doesn't count
   if (source->isPaused()) return goodHit;
 
-  const int maxShots = World::getWorld()->getMaxShots();
+  const int maxShots = source->getMaxShots();
   for (int i = 0; i < maxShots; i++) {
     // get shot
     const ShotPath* shot = source->getShot(i);

@@ -22,6 +22,7 @@
 #include "World.h"
 #include "LocalPlayer.h"
 #include "RemotePlayer.h"
+#include "WorldPlayer.h"
 #include "Team.h"
 #include "Flag.h"
 #include "OpenGLGState.h"
@@ -323,7 +324,7 @@ void			RadarRenderer::render(SceneRenderer& renderer,
     }
 
     // draw my shots
-    const int maxShots = world.getMaxShots();
+    int maxShots = world.getMaxShots();
     int i;
     for (i = 0; i < maxShots; i++) {
       const ShotPath* shot = myTank->getShot(i);
@@ -334,6 +335,20 @@ void			RadarRenderer::render(SceneRenderer& renderer,
         shot->radarRender();
       }
     }
+
+    //draw world weapon shots
+    WorldPlayer *worldWeapons = World::getWorld()->getWorldWeapons();
+    maxShots = worldWeapons->getMaxShots();
+    for (i = 0; i < maxShots; i++) {
+      const ShotPath* shot = worldWeapons->getShot(i);
+      if (shot) {
+        const float cs = colorScale(shot->getPosition()[2],
+				    MuzzleHeight, BZDB->isTrue("enhancedradar"));
+        glColor3f(1.0f * cs, 1.0f * cs, 1.0f * cs);
+        shot->radarRender();
+      }
+    }
+
 
     // draw other tanks (and any flags on them)
     // note about flag drawing.  each line segment is drawn twice

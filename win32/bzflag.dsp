@@ -200,6 +200,10 @@ SOURCE=..\src\bzflag\ServerLink.cxx
 # End Source File
 # Begin Source File
 
+SOURCE=..\src\bzflag\ServerListCache.cxx
+# End Source File
+# Begin Source File
+
 SOURCE=..\src\bzflag\ShotPath.cxx
 # End Source File
 # Begin Source File
@@ -225,9 +229,8 @@ SOURCE=..\src\bzflag\World.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\src\bzflag\ServerListCache.cxx
+SOURCE=..\src\bzflag\WorldPlayer.cxx
 # End Source File
-
 # End Group
 # Begin Group "Header Files"
 
@@ -314,6 +317,10 @@ SOURCE=..\src\bzflag\ServerLink.h
 # End Source File
 # Begin Source File
 
+SOURCE=..\src\bzflag\ServerListCache.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\src\bzflag\ShotPath.h
 # End Source File
 # Begin Source File
@@ -334,7 +341,7 @@ SOURCE=..\src\bzflag\World.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\src\bzflag\ServerListCache.h
+SOURCE=..\src\bzflag\WorldPlayer.h
 # End Source File
 # End Group
 # Begin Group "Resource Files"
