@@ -14,7 +14,7 @@
 #
 #teleporter
 #position     x     y     0.0
-#rotation     rad
+#rotation     deg
 #size         0.56  4.48  20.16
 #border       1.12
 #end
@@ -33,7 +33,7 @@
 #
 #box
 #position     x     y     0.0
-#rotation     rad
+#rotation     deg
 #size         30.0  30.0  9.42
 #end
 
@@ -44,7 +44,7 @@
 #
 #box
 #position     x     y     0.0
-#rotation     rad
+#rotation     deg
 #size         8.20  8.20  10.25
 #end
 
@@ -59,62 +59,62 @@
 # top of the world
 box
 position 0.0 0.0 30.0
-rotation 0.7853981625
+rotation 45.0
 size     7.5 7.5 15.0
 end
 
 # cross bars
 box
 position 0.0 0.0 29.0
-rotation 0.7853981625
+rotation 45.0
 size     7.5 550.0 1.0
 end
 box
 position 0.0 0.0 29.0
-rotation 2.3561944875
+rotation 135.0
 size     7.5 550.0 1.0
 end
 
 # walls under crossbars
 box
 position 180.0 180.0 15.0
-rotation 2.3561944875
+rotation 135.0
 size     0.5 150.0 14.0
 end
 box
 position -180.0 -180.0 15.0
-rotation 2.3561944875
+rotation 135.0
 size     0.5 150.0 14.0
 end
 box
 position 180.0 -180.0 15.0
-rotation 0.7853981625
+rotation 45.0
 size     0.5 150.0 14.0
 end
 box
 position -180.0 180.0 15.0
-rotation 0.7853981625
+rotation 45.0
 size     0.5 150.0 14.0
 end
 # fat walls along base
 box
 position 180.0 180.0 0.0
-rotation 2.3561944875
+rotation 135.0
 size     6.0 150.0 15.0
 end
 box
 position -180.0 -180.0 0.0
-rotation 2.3561944875
+rotation 135.0
 size     6.0 150.0 15.0
 end
 box
 position 180.0 -180.0 0.0
-rotation 0.7853981625
+rotation 45.0
 size     6.0 150.0 15.0
 end
 box
 position -180.0 180.0 0.0
-rotation 0.7853981625
+rotation 45.0
 size     6.0 150.0 15.0
 end
 
@@ -195,53 +195,53 @@ size     7.5 400.0 1.0
 end
 box
 position 0.0 392.5 29.0
-rotation 1.570796325
+rotation 90.0
 size     7.5 400.0 1.0
 end
 box
 position 0.0 -392.5 29.0
-rotation 1.570796325
+rotation 90.0
 size     7.5 400.0 1.0
 end
 # boxes for access
 box
 position 400.0 180.0 0.0
-rotation 0.7853981625
+rotation 45.0
 size     30.0 30.0 15.0
 end
 box
 position 400.0 -180.0 0.0
-rotation 0.7853981625
+rotation 45.0
 size     30.0 30.0 15.0
 end
 box
 position -400.0 180.0 0.0
-rotation 0.7853981625
+rotation 45.0
 size     30.0 30.0 15.0
 end
 box
 position -400.0 -180.0 0.0
-rotation 0.7853981625
+rotation 45.0
 size     30.0 30.0 15.0
 end
 box
 position 180.0 400.0 0.0
-rotation 0.7853981625
+rotation 45.0
 size     30.0 30.0 15.0
 end
 box
 position -180.0 400.0 0.0
-rotation 0.7853981625
+rotation 45.0
 size     30.0 30.0 15.0
 end
 box
 position 180.0 -400.0 0.0
-rotation 0.7853981625
+rotation 45.0
 size     30.0 30.0 15.0
 end
 box
 position -180.0 -400.0 0.0
-rotation 0.7853981625
+rotation 45.0
 size     30.0 30.0 15.0
 end
 
@@ -270,13 +270,13 @@ end
 # teleporter elevators in the corners
 teleporter
 position     390.0 390.0 0.0
-rotation     0.7853981625
+rotation     45.0
 size         0.56  4.48  27.76
 border       1.12
 end
 teleporter
 position     390.0 390.0 30.0
-rotation     0.7853981625
+rotation     45.0
 size         0.56  4.48  15.0
 border       1.12
 end
@@ -299,13 +299,13 @@ end
 
 teleporter
 position     -390.0 -390.0 0.0
-rotation     0.7853981625
+rotation     45.0
 size         0.56  4.48  27.76
 border       1.12
 end
 teleporter
 position     -390.0 -390.0 30.0
-rotation     0.7853981625
+rotation     45.0
 size         0.56  4.48  15.0
 border       1.12
 end
@@ -328,13 +328,13 @@ end
 
 teleporter
 position     390.0 -390.0 0.0
-rotation     2.3561944875
+rotation     135.0
 size         0.56  4.48  27.76
 border       1.12
 end
 teleporter
 position     390.0 -390.0 30.0
-rotation     2.3561944875
+rotation     135.0
 size         0.56  4.48  15.0
 border       1.12
 end
@@ -357,13 +357,13 @@ end
 
 teleporter
 position     -390.0 390.0 0.0
-rotation     2.3561944875
+rotation     135.0
 size         0.56  4.48  27.76
 border       1.12
 end
 teleporter
 position     -390.0 390.0 30.0
-rotation     2.3561944875
+rotation     135.0
 size         0.56  4.48  15.0
 border       1.12
 end

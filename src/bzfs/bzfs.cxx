@@ -424,9 +424,10 @@ bool WorldFileObstacle::read(const char *cmd, istream& input)
 {
   if (strcmp(cmd, "position") == 0)
     input >> posX >> posY >> posZ;
-  else if (strcmp(cmd, "rotation") == 0)
+  else if (strcmp(cmd, "rotation") == 0) {
     input >> rotation;
-  else if (strcmp(cmd, "size") == 0)
+    rotation = rotation * M_PI / 180.0;
+  } else if (strcmp(cmd, "size") == 0)
     input >> sizeX >> sizeY >> sizeZ;
   else
     return False;
