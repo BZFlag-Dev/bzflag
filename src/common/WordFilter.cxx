@@ -458,6 +458,18 @@ WordFilter::WordFilter()
   fix.word = "a";
   fix.expression = expressionFromString(fix.word);
   suffixes.insert(fix);
+  fix.word = "e";
+  fix.expression = expressionFromString(fix.word);
+  suffixes.insert(fix);
+  fix.word = "i";
+  fix.expression = expressionFromString(fix.word);
+  suffixes.insert(fix);
+  fix.word = "o";
+  fix.expression = expressionFromString(fix.word);
+  suffixes.insert(fix);
+  fix.word = "u";
+  fix.expression = expressionFromString(fix.word);
+  suffixes.insert(fix);
   fix.word = "z";
   fix.expression = expressionFromString(fix.word);
   suffixes.insert(fix);
@@ -510,7 +522,7 @@ WordFilter::WordFilter()
 
   // bz-specific
 
-#if 0
+#if 1
   /* XXX adding prefixes _significantly_ increases the expression count
    * and is rather expensive (slow, XN+N extra checks for N words) 
    */
@@ -521,6 +533,12 @@ WordFilter::WordFilter()
   fix.expression = expressionFromString(fix.word);
   prefixes.insert(fix);
   fix.word = "beze";
+  fix.expression = expressionFromString(fix.word);
+  prefixes.insert(fix);
+  fix.word = "u";
+  fix.expression = expressionFromString(fix.word);
+  prefixes.insert(fix);
+  fix.word = "you";
   fix.expression = expressionFromString(fix.word);
   prefixes.insert(fix);
   
@@ -562,28 +580,39 @@ bool WordFilter::addToFilter(const std::string &word, const std::string &express
 
   } else if (append) {
     /* add words with all suffixes appended */
-  std::set<filter_t, expressionCompare>::iterator i;
+    std::set<filter_t, expressionCompare>::iterator i;
 #if 1
-    std::string fullPrefix = "(";
+    std::string fullSuffix = "((";
     for (i = suffixes.begin();
 	 i != suffixes.end();) {
-      fullPrefix.append(i->word);
+      fullSuffix.append(i->word);
       if (++i != suffixes.end()) {
-	fullPrefix.append("|");
+	fullSuffix.append(")|(");
       }
     }
-    fullPrefix.append(")*");
-    //    std::cout << "prefixes: " << fullPrefix << std::endl;
-    return addToFilter(word, expression, false);
-    return addToFilter(word, expression +  fullPrefix, false);
+    fullSuffix.append("))*");
+    //    std::cout << "prefixes: " << fullSuffix << std::endl;
+    return addToFilter(word, expression +  fullSuffix, false);
 #else
     for (std::set<filter_t, expressionCompare>::iterator i = suffixes.begin();
 	 i != suffixes.end(); ++i) {
       addToFilter(word + i->word, expression + i->expression, false);
     }
-#endif
+#endif /* suffixes */
     
     /* add words with all prefixes prepended */
+#if 0
+    std::string fullPrefix = "((";
+    for (i = prefixes.begin();
+	 i != prefixes.end();) {
+      fullPrefix.append(i->word);
+      if (++i != prefixes.end()) {
+	fullPrefix.append(")|(");
+      }
+    }
+    fullPrefix.append("))*");
+    return addToFilter(word, fullPrefix + expression + fullSuffix, false);
+#else
     for (i = prefixes.begin();
 	 i != prefixes.end(); ++i) {
       addToFilter(i->word + word, i->expression + expression, false);
@@ -596,6 +625,7 @@ bool WordFilter::addToFilter(const std::string &word, const std::string &express
 		    false);
       }      
     }
+#endif  /* prefixes */
 
     /* don't forget to add the unadulterated word */
     return addToFilter(word, expression, false);
