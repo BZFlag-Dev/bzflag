@@ -163,14 +163,20 @@ protected:
    */
   static inline float fastinvsqrt0(float n)
   {
-    return 1.0f / sqrtf(n);
+    float f;
+    float p = sqrtf(n);
+    FP_INV(f, p)
+    return f;
   }
 
   /** software estimate of inverse square root 
    */
   static inline float fastinvsqrt1(float n)
   {
-    return 1.0f / fastsqrt1(n);
+    float f;
+    float p = fastsqrt1(n);
+    FP_INV(f, p)
+    return f;
   }
 
   /** hardware instruction based inverse square root estimate 
@@ -182,7 +188,10 @@ protected:
     asm ( "frsqrte %0, %1" : /*OUT*/ "=f" (result) : /*IN*/ "f" (n) );
     return result;
 #else
-    return 1.0f / sqrtf(n);
+    float f;
+    float p = sqrtf(n);
+    FP_INV(f, p)
+    return f;
 #endif
   }
 
@@ -224,7 +233,10 @@ protected:
   static inline float fastsqrt2(float n)
   {
 #if defined(__APPLE__)
-    return 1.0f / fastinvsqrt2(n);
+    float f;
+    float p = fastinvsqrt2(n);
+    FP_INV(f, p)
+    return f;
 #else
     return sqrtf(n);
 #endif
@@ -280,13 +292,13 @@ public:
     /* test math routine candidates (reverse order) */
     unsigned int mostIterations = 0;
     unsigned int bestIndex = 0;
-    for (int i = 5; i >= 0; i--) {
+    for (int i = 0; i < 6; i++) {
       unsigned int iterations = 0; // how many test iterations were performed
       sum = 0.0; // make sure optimizer doesn't optimize us away
 
-      if (i == 2) {
+      if (i == 0) {
 	std::cout << "...testing square root" << std::flush;
-      } else if (i == 5) {
+      } else if (i == 3) {
 	std::cout << "...testing inverse square root" << std::flush;
       }
 
@@ -311,13 +323,15 @@ public:
 	bestIndex = i;
       }
 
-      if (i == 0) {
+      if (i == 2) {
 	fastsqrt = mathTest[bestIndex];
 	std::cout << std::endl << "...using " << label[bestIndex] << std::endl;
-	bestIndex = 3;
-      } else if (i == 3) {
+	mostIterations = 0;
+	bestIndex = 0;
+      } else if (i == 5) {
 	fastinvsqrt = mathTest[bestIndex];
 	std::cout << std::endl << "...using " << label[bestIndex] << std::endl;
+	mostIterations = 0;
 	bestIndex = 0;
       }
     }
