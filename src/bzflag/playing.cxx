@@ -543,7 +543,11 @@ enum roamingView {
   roamViewFlag,
   roamViewCount
 } roamView = roamViewFP;
+#ifdef DEBUG
+static const bool devDriving = true;
+#else
 static const bool devDriving = false;
+#endif
 
 int roamTrackTank = -1, roamTrackWinner = -1, roamTrackFlag = 0;
 float roamPos[3] = {0.0f, 0.0f, 1.57f};  /* MuzzleHeight */
@@ -586,7 +590,7 @@ void setRoamingLabel(bool force)
   } else {
     tracked = myTank;
   }
-  
+
   if (tracked) {
     if (BZDBCache::colorful) {
       int color = tracked->getTeam();
@@ -4420,7 +4424,7 @@ void drawFrame(const float dt)
     // only use a close plane for drawing in the
     // cockpit, and even then only for odd sized tanks
     setupNearPlane();
-    
+
     float worldSize = BZDBCache::worldSize;
     sceneRenderer->getViewFrustum().setProjection(fov,
 						  NearPlane,
