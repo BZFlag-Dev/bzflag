@@ -234,15 +234,8 @@ static Address serverAddress;
 static int wksSocket;
 // udpSocket should also be on serverAddress
 static int udpSocket;
-// listen for pings here
-static int pingInSocket;
-static struct sockaddr_in pingInAddr;
-// reply to pings here
-static int pingOutSocket;
-static struct sockaddr_in pingOutAddr;
 // broadcast pings in/out here
 static int pingBcastSocket;
-static struct sockaddr_in pingBcastAddr;
 // relay player packets
 bool handlePings = true;
 static PingPacket pingReply;
@@ -986,18 +979,14 @@ static void setNoDelay(int fd)
 }
 
 // uread - interface to the UDP Receive routines
-static int uread(int *playerIndex, int *nopackets)
+static int uread(int *playerIndex, int *nopackets, int& n,
+		 unsigned char *ubuf, struct sockaddr_in &uaddr)
 {
-  int n = 0;
-  struct sockaddr_in uaddr;
-  unsigned char ubuf[MaxPacketLen];
-  AddrLen recvlen = sizeof(uaddr);
   //DEBUG4("Into UREAD\n");
 
   *nopackets = 0;
 
   PlayerInfo *pPlayerInfo;
-  if ((n = recvfrom(udpSocket, (char *)ubuf, MaxPacketLen, MSG_PEEK, (struct sockaddr*)&uaddr, &recvlen)) != -1) {
     int pi;
     for (pi = 0, pPlayerInfo = player; pi < curMaxPlayers; pi++, pPlayerInfo++) {
       if ((pPlayerInfo->ulinkup) &&
@@ -1069,7 +1058,6 @@ static int uread(int *playerIndex, int *nopackets)
       }
       return pPlayerInfo->udplen;
     }
-  }
   return 0;
 }
 
@@ -1538,25 +1526,9 @@ static bool serverStart()
   maxFileDescriptor = udpSocket;
 
   // open sockets to receive and reply to pings
+  struct sockaddr_in pingBcastAddr;
   Address multicastAddress(BroadcastAddress);
-  pingInSocket = openMulticast(multicastAddress, ServerPort, NULL,
-      clOptions->pingTTL, clOptions->pingInterface, "r", &pingInAddr);
-  pingOutSocket = openMulticast(multicastAddress, ServerPort, NULL,
-      clOptions->pingTTL, clOptions->pingInterface, "w", &pingOutAddr);
   pingBcastSocket = openBroadcast(BroadcastPort, NULL, &pingBcastAddr);
-  if (pingInSocket == -1 || pingOutSocket == -1) {
-    closeMulticast(pingInSocket);
-    closeMulticast(pingOutSocket);
-    pingInSocket = -1;
-    pingOutSocket = -1;
-  }
-  else {
-    maxFileDescriptor = pingOutSocket;
-  }
-  if (pingBcastSocket != -1) {
-    if (pingBcastSocket > maxFileDescriptor)
-      maxFileDescriptor = pingBcastSocket;
-  }
 
   for (int i = 0; i < MaxPlayers; i++) {	// no connections
     player[i].fd = NotConnected;
@@ -1583,8 +1555,6 @@ static void serverStop()
   shutdown(wksSocket, 2);
   close(wksSocket);
   closeMulticast(pingBcastSocket);
-  closeMulticast(pingInSocket);
-  closeMulticast(pingOutSocket);
 
   // tell players to quit
   int i;
@@ -2613,53 +2583,27 @@ static void acceptClient()
   }
 }
 
-static void respondToPing(bool broadcast = false)
+static void respondToPing()
 {
   // get and discard ping packet
   int minReplyTTL;
   struct sockaddr_in addr;
-  if (broadcast) {
-    if (!PingPacket::isRequest(pingBcastSocket, &addr, &minReplyTTL)) return;
-  }
-  else {
-    if (!PingPacket::isRequest(pingInSocket, &addr, &minReplyTTL)) return;
-  }
-
-  // if no output port then ignore
-  if (!broadcast && pingOutSocket == -1)
-    return;
+  if (!PingPacket::isRequest(udpSocket, &addr, &minReplyTTL)) return;
 
   // if I'm ignoring pings and the ping is not from a connected host
   // then ignore the ping.
   if (!handlePings) {
-    int i;
-    Address remoteAddress(addr);
-    for (i = 0; i < curMaxPlayers; i++)
-      if (player[i].fd != NotConnected && player[i].peer == remoteAddress)
-	break;
-    if (i == curMaxPlayers)
       return;
   }
 
-  // boost my reply ttl if ping requests it
-  if (minReplyTTL > MaximumTTL)
-    minReplyTTL = MaximumTTL;
-  if (pingOutSocket != -1 && minReplyTTL > clOptions->pingTTL) {
-    clOptions->pingTTL = minReplyTTL;
-    setMulticastTTL(pingOutSocket, clOptions->pingTTL);
-  }
-
-  // reply with current game info on pingOutSocket or pingBcastSocket
+  // reply with current game info on pingBcastSocket
   pingReply.sourceAddr = Address(addr);
   pingReply.rogueCount = team[0].team.activeSize;
   pingReply.redCount = team[1].team.activeSize;
   pingReply.greenCount = team[2].team.activeSize;
   pingReply.blueCount = team[3].team.activeSize;
   pingReply.purpleCount = team[4].team.activeSize;
-  if (broadcast)
-    pingReply.write(pingBcastSocket, &pingBcastAddr);
-  else
-    pingReply.write(pingOutSocket, &pingOutAddr);
+  pingReply.write(pingBcastSocket, &addr);
 }
 
 void sendMessage(int playerIndex, PlayerId targetPlayer, const char *message, bool fullBuffer)
@@ -5821,11 +5765,6 @@ int main(int argc, char **argv)
     // always listen for connections
     FD_SET(wksSocket, &read_set);
     FD_SET(udpSocket, &read_set);
-    // always listen for pings
-    if (pingInSocket != -1)
-      FD_SET(pingInSocket, &read_set);
-    if (pingBcastSocket != -1)
-      FD_SET(pingBcastSocket, &read_set);
 
     // check for list server socket connected
     for (i = 0; i < listServerLinksCount; i++)
@@ -6148,13 +6087,6 @@ int main(int argc, char **argv)
       if (FD_ISSET(wksSocket, &read_set))
 	acceptClient();
 
-      // now check pings
-      if (pingInSocket != -1 && FD_ISSET(pingInSocket, &read_set))
-	respondToPing();
-      if (pingBcastSocket != -1 && FD_ISSET(pingBcastSocket, &read_set))
-	respondToPing(true);
-
-
       // check for connection to list server
       for (i = 0; i < listServerLinksCount; ++i)
 	if (listServerLinks[i].socket != NotConnected &&
@@ -6164,12 +6096,28 @@ int main(int argc, char **argv)
       // check if we have any UDP packets pending
       if (FD_ISSET(udpSocket, &read_set)) {
 	int numpackets;
-	while (uread(&i, &numpackets) > 0) {
+	while (true) {
+	  struct sockaddr_in uaddr;
+	  unsigned char ubuf[MaxPacketLen];
+	  AddrLen recvlen = sizeof(uaddr);
+	  int n = recvfrom(udpSocket, (char *) ubuf, MaxPacketLen, MSG_PEEK,
+			   (struct sockaddr*)&uaddr, &recvlen);
+	  if (n < 4)
+	    break;
+
 	  // read head
 	  uint16_t len, code;
-	  void *buf = player[i].udpmsg;
+	  void *buf = ubuf;
 	  buf = nboUnpackUShort(buf, len);
 	  buf = nboUnpackUShort(buf, code);
+	  if (n == 6 && len == 2 && code == PingCodeRequest) {
+	    respondToPing();
+	    continue;
+	  }
+
+	  int result = uread(&i, &numpackets, n, ubuf, uaddr);
+	  if (result <= 0)
+	    break;
 
 	  // clear out message
 	  player[i].udplen = 0;

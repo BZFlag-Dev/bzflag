@@ -69,7 +69,6 @@ int			openBroadcast(int port, const char* service,
   /* set address info */
   addr->sin_family = AF_INET;
   addr->sin_addr.s_addr = htonl(INADDR_ANY);
-  addr->sin_port = htons(port);
 
 #if defined(SO_REUSEPORT)
   /* set reuse port */
@@ -106,6 +105,7 @@ int			openBroadcast(int port, const char* service,
 
   // address to send to is the broadcast address
   addr->sin_addr.s_addr = INADDR_BROADCAST;
+  addr->sin_port = htons(port);
 
 #if defined(__linux__)
   // linux doesn't seem to like INADDR_BROADCAST, but it's okay
