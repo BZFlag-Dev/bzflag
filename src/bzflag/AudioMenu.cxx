@@ -55,12 +55,20 @@ AudioMenu::AudioMenu()
   option->update();
   list.push_back(option);
 
+/* Right now only SDL_Media has a setDriver function.
+   Disable driver selection for others as it gets saved in config
+   and can screw things up if you switch from non-SDL to SDL build.
+   If more platforms get setDriver functions, they can be added. */   
+#ifdef HAVE_SDL
   driver = new HUDuiTypeIn;
   driver->setFont(MainMenu::getFont());
   driver->setLabel("Driver:");
   driver->setMaxLength(10);
   driver->setString(currentDriver);
   list.push_back(driver);
+#else
+  driver = NULL;
+#endif // HAVE_SDL
 
   initNavigation(list, 1,list.size()-1);
 }
