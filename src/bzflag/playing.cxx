@@ -5342,7 +5342,7 @@ static bool		joinGame(const StartupInfo* info,
 
   // determine which team to join
   std::vector<TeamColor> minIndex;
-  int mostEmpty=0;
+  int mostEmpty = 0;
   if (info->team - 1 == -1) {
     // AutomaticTeam was selected
 
@@ -5352,53 +5352,38 @@ static bool		joinGame(const StartupInfo* info,
     int newMost;
     if ((newMost = ping.redMax - ping.redCount) >= mostEmpty) {
       if (newMost > mostEmpty) {
-	while (minIndex.size() > 0) {
-	  minIndex.pop_back();
-	}
+        minIndex.clear();
 	mostEmpty = newMost;
       }
       minIndex.push_back(RedTeam);
-
     }
     if ((newMost = ping.greenMax - ping.greenCount) >= mostEmpty) {
       if (newMost > mostEmpty) {
-	while (minIndex.size() > 0) {
-	  minIndex.pop_back();
-	}
+        minIndex.clear();
 	mostEmpty = newMost;
       }
       minIndex.push_back(GreenTeam);
-
     }
     if ((newMost = ping.blueMax - ping.blueCount) >= mostEmpty) {
       if (newMost > mostEmpty) {
-	while (minIndex.size() > 0) {
-	  minIndex.pop_back();
-	}
+        minIndex.clear();
 	mostEmpty = newMost;
       }
       minIndex.push_back(BlueTeam);
-
     }
     if ((newMost = ping.purpleMax - ping.purpleCount) >= mostEmpty) {
       if (newMost > mostEmpty) {
-	while (minIndex.size() > 0) {
-	  minIndex.pop_back();
-	}
+        minIndex.clear();
 	mostEmpty = newMost;
       }
       minIndex.push_back(PurpleTeam);
-
     }
     if ((newMost = ping.rogueMax - ping.rogueCount) >= mostEmpty) {
       if (newMost > mostEmpty) {
-	while (minIndex.size() > 0) {
-	  minIndex.pop_back();
-	}
+        minIndex.clear();
 	mostEmpty = newMost;
       }
       minIndex.push_back(RogueTeam);
-
     }
     //    std::cout << "Most empty count is " << mostEmpty << " with " << minIndex.size() << " matching teams" << std::endl;
     //    std::cout << "Maximum count is " << world->getMaxPlayers() << std::endl;
