@@ -1,4 +1,4 @@
-/* 3dScreamers
+/* 3dScreamers */
 /* bzflag
  * Copyright (c) 1993 - 2004 Tim Riker
  *

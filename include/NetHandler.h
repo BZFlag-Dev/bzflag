@@ -15,6 +15,7 @@
 
 /* local implementation headers */
 #include "PlayerInfo.h"
+#include "Address.h"
 
 enum RxStatus {
   ReadAll,
@@ -25,7 +26,7 @@ enum RxStatus {
   ReadDiscon
 };
 
-const int maxHandlers = 200;
+const int maxHandlers = LastRealPlayer;
 
 #ifdef DEBUG
 #define NETWORK_STATS
