@@ -19,11 +19,7 @@
 
 #include "PlatformFactory.h"
 
-#ifdef HAVE_SDL
-  class SDLWindow;
-#else
   class WinWindow;
-#endif
 
 class WinPlatformFactory : public PlatformFactory {
   public:
@@ -42,11 +38,7 @@ class WinPlatformFactory : public PlatformFactory {
     BzfMedia*		createMedia();
 
   private:
-#ifdef HAVE_SDL
-    static SDLWindow*	window;
-#else
     static WinWindow*	window;
-#endif
 };
 
 #endif // BZF_WINPLATFORM_FACTORY_H
