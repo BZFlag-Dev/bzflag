@@ -321,6 +321,9 @@ killed you or was killed by you. The
 .IR .
 key will send a private message to another player. You can choose the
 recipient by using the left and right arrow keys.
+.IR o
+toggles the quick-admin interface. Use the arrow keys to select a
+command, then fill in the necessary parameters
 .SS Scoring
 An individual's score is the difference between that player's wins and
 losses.  A win is scored for each enemy tank destroyed.  A loss is
