@@ -2614,7 +2614,7 @@ static void				leaveGame()
 	SCENEMGR->getView().setProjection(60.0f,
 								static_cast<float>(wWindow) /
 									static_cast<float>(hWindow),
-								1.1f, 1.5f * WorldSize);
+								1.1f, 2.0f * WorldSize);
 	SCENEMGR->getView().setView(eyePoint, targetPoint);
 
 	// reset some flags
@@ -3326,7 +3326,7 @@ static void				playingLoop()
 				SCENEMGR->getView().setProjection(fov,
 									static_cast<float>(wWindow) /
 										static_cast<float>(hWindow),
-									1.1f, 1.5f * WorldSize);
+									1.1f, 2.0f * WorldSize);
 				SCENEMGR->getView().setOffset(0.0f, 0.0f);
 			}
 
