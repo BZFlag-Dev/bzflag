@@ -376,7 +376,7 @@ int main(int argc, char** argv)
     if (outFileName) {
 	outFile = fopen(outFileName, "wb");
 	if (!outFile) {
-	    fprintf(stderr, "can't open input file %s\n", inFileName);
+	    fprintf(stderr, "can't open output file %s\n", outFileName);
 	    return 1;
 	}
     }
