@@ -10,7 +10,7 @@ bzflag_SOURCES =			\
 	ActionBinding.h			\
 	BackgroundRenderer.cxx		\
 	BackgroundRenderer.h		\
-	ComposeDefaultKey.cxx	\
+	ComposeDefaultKey.cxx		\
 	ComposeDefaultKey.h		\
 	ControlPanel.cxx		\
 	ControlPanel.h			\
@@ -60,14 +60,14 @@ bzflag_SOURCES =			\
 	RemotePlayer.h			\
 	RobotPlayer.cxx			\
 	RobotPlayer.h			\
-	Roster.cxx				\
-	Roster.h				\
+	Roster.cxx			\
+	Roster.h			\
 	SaveWorldMenu.cxx		\
 	SaveWorldMenu.h			\
 	SceneBuilder.cxx		\
 	SceneBuilder.h			\
 	SceneRenderer.cxx		\
-	ServerCommandKey.cxx	\
+	ServerCommandKey.cxx		\
 	ServerCommandKey.h		\
 	ServerItem.cxx			\
 	ServerItem.h			\
@@ -81,9 +81,11 @@ bzflag_SOURCES =			\
 	ServerStartMenu.h		\
 	ShotPath.cxx			\
 	ShotPath.h			\
+	ShotPathSegment.cxx		\
+	ShotPathSegment.h		\
 	ShotStrategy.cxx		\
 	ShotStrategy.h			\
-	SilenceDefaultKey.cxx	\
+	SilenceDefaultKey.cxx		\
 	SilenceDefaultKey.h		\
 	StartupInfo.h			\
 	TargetingUtils.cxx		\

@@ -73,26 +73,10 @@ class ShotStrategy {
     ShotPath*		path;
 };
 
-class ShotPathSegment {
-  public:
-    enum Reason		{ Initial, Through, Ricochet, Teleport };
 
-			ShotPathSegment();
-			ShotPathSegment(const TimeKeeper& start,
-					const TimeKeeper& end,
-					const Ray& r,
-					Reason = Initial);
-			ShotPathSegment(const ShotPathSegment&);
-			~ShotPathSegment();
-    ShotPathSegment&	operator=(const ShotPathSegment&);
+// TEMP - until classes below are broken out
+#include "ShotPathSegment.h"
 
-  public:
-    TimeKeeper		start;
-    TimeKeeper		end;
-    Ray			ray;
-    Reason		reason;
-    float		bbox[2][3];
-};
 
 class SegmentedShotStrategy : public ShotStrategy {
   public:
