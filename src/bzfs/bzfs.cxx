@@ -513,10 +513,10 @@ static int uread(int *playerIndex, int *nopackets, int& n,
 	      player[pi].callSign, pi, inet_ntoa(player[pi].uaddr.sin_addr),
 	      ntohs(player[pi].uaddr.sin_port),
 	      inet_ntoa(uaddr.sin_addr), ntohs(uaddr.sin_port));
-	  pi = curMaxPlayers;
+	  pi = (PlayerId)curMaxPlayers;
 	}
       } else {
-	pi = curMaxPlayers;
+	pi = (PlayerId)curMaxPlayers;
       }
     }
   }
@@ -2675,7 +2675,7 @@ static void anointNewRabbit()
 
   for (i = 0; i < curMaxPlayers; i++) {
     if (i != oldRabbit && !player[i].paused && !player[i].notResponding && player[i].state == PlayerAlive && player[i].team != ObserverTeam) {
-      float ratio = (player[i].wins - player[i].losses) * player[i].wins;
+      float ratio = (float)(player[i].wins - player[i].losses) * player[i].wins;
       if (ratio > topRatio) {
 	topRatio = ratio;
 	rabbitIndex = i;
@@ -2686,7 +2686,7 @@ static void anointNewRabbit()
     // nobody, or no other than old rabbit to choose from
     for (i = 0; i < curMaxPlayers; i++) {
       if (player[i].state > PlayerInLimbo && !player[i].paused && !player[i].notResponding && player[i].team != ObserverTeam) {
-	float ratio = (player[i].wins - player[i].losses) * player[i].wins;
+	float ratio = (float)(player[i].wins - player[i].losses) * player[i].wins;
 	if (ratio > topRatio) {
 	  topRatio = ratio;
 	  rabbitIndex = i;
@@ -2904,9 +2904,9 @@ static void getSpawnLocation( int playerId, float* pos, float *azimuth)
 
     int lastType = IN_PYRAMID;
     while ((lastType == IN_PYRAMID) || (lastType == IN_TELEPORTER)) {
-      pos[0] = (bzfrand() - 0.5f) * (size - 2.0f * tankRadius);
-      pos[1] = (bzfrand() - 0.5f) * (size - 2.0f * tankRadius);
-      pos[2] = (bzfrand() * maxWorldHeight);
+      pos[0] = ((float)bzfrand() - 0.5f) * (size - 2.0f * tankRadius);
+      pos[1] = ((float)bzfrand() - 0.5f) * (size - 2.0f * tankRadius);
+      pos[2] = ((float)bzfrand() * maxWorldHeight);
 
       int type = world->inBuilding(&building,
 				   pos[0], pos[1], pos[2],
@@ -2930,7 +2930,7 @@ static void getSpawnLocation( int playerId, float* pos, float *azimuth)
     }
   }
 
-  *azimuth = bzfrand() * 2.0f * M_PI;
+  *azimuth = (float)bzfrand() * 2.0f * M_PI;
 }
 
 static void sendWorld(int playerIndex, uint32_t ptr)

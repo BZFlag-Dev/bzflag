@@ -52,67 +52,13 @@
 	</References>
 	<Files>
 		<File
-			RelativePath="..\man\bzadmin.6s">
-			<FileConfiguration
-				Name="Debug|Win32">
-				<Tool
-					Name="VCCustomBuildTool"
-					Description="Running $(OutDir)\man2html on $(InputPath)"
-					CommandLine="&quot;$(OutDir)&quot;\man2html &lt; &quot;$(InputPath)&quot; &gt; &quot;$(ProjectDir)&quot;..\doc\bzadmin.html
-"
-					Outputs="$(ProjectDir)..\doc\bzadmin.html"/>
-			</FileConfiguration>
-			<FileConfiguration
-				Name="Release|Win32">
-				<Tool
-					Name="VCCustomBuildTool"
-					Description="Running $(OutDir)\man2html on $(InputPath)"
-					CommandLine="&quot;$(OutDir)&quot;\man2html &lt; &quot;$(InputPath)&quot; &gt; &quot;$(ProjectDir)&quot;..\doc\bzadmin.html
-"
-					Outputs="$(ProjectDir)..\doc\bzadmin.html"/>
-			</FileConfiguration>
+			RelativePath="..\..\man\bzadmin.6s">
 		</File>
 		<File
-			RelativePath="..\man\bzflag.6s">
-			<FileConfiguration
-				Name="Debug|Win32">
-				<Tool
-					Name="VCCustomBuildTool"
-					Description="Running $(OutDir)\man2html on $(InputPath)"
-					CommandLine="&quot;$(OutDir)&quot;\man2html &lt; &quot;$(InputPath)&quot; &gt; &quot;$(ProjectDir)&quot;..\doc\bzflag.html
-"
-					Outputs="$(ProjectDir)..\doc\bzflag.html"/>
-			</FileConfiguration>
-			<FileConfiguration
-				Name="Release|Win32">
-				<Tool
-					Name="VCCustomBuildTool"
-					Description="Running $(OutDir)\man2html on $(InputPath)"
-					CommandLine="&quot;$(OutDir)&quot;\man2html &lt; &quot;$(InputPath)&quot; &gt; &quot;$(ProjectDir)&quot;..\doc\bzflag.html
-"
-					Outputs="$(ProjectDir)..\doc\bzflag.html"/>
-			</FileConfiguration>
+			RelativePath="..\..\man\bzflag.6s">
 		</File>
 		<File
-			RelativePath="..\man\bzfs.6s">
-			<FileConfiguration
-				Name="Debug|Win32">
-				<Tool
-					Name="VCCustomBuildTool"
-					Description="Running $(OutDir)\man2html on $(InputPath)"
-					CommandLine="&quot;$(OutDir)&quot;\man2html &lt; &quot;$(InputPath)&quot; &gt; &quot;$(ProjectDir)&quot;..\doc\bzfs.html
-"
-					Outputs="$(ProjectDir)..\doc\bzfs.html"/>
-			</FileConfiguration>
-			<FileConfiguration
-				Name="Release|Win32">
-				<Tool
-					Name="VCCustomBuildTool"
-					Description="Running $(OutDir)\man2html on $(InputPath)"
-					CommandLine="&quot;$(OutDir)&quot;\man2html &lt; &quot;$(InputPath)&quot; &gt; &quot;$(ProjectDir)&quot;..\doc\bzfs.html
-"
-					Outputs="$(ProjectDir)..\doc\bzfs.html"/>
-			</FileConfiguration>
+			RelativePath="..\..\man\bzfs.6s">
 		</File>
 	</Files>
 	<Globals>

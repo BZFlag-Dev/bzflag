@@ -52,32 +52,7 @@
 	</References>
 	<Files>
 		<File
-			RelativePath="..\package\win32\nsis\BZFlag.nsi">
-			<FileConfiguration
-				Name="Debug|Win32">
-				<Tool
-					Name="VCCustomBuildTool"
-					Description="Building installer using $(InputPath)"
-					CommandLine="cd ..\package\win32\nsis
-makensis bzflag.nsi
-"
-					AdditionalDependencies="..\..\src\bzfs\debug\bzfs.exe;..\..\src\bzflag\debug\bzflag.exe;..\..\src\bzadmin\debug\bzadmin.exe;"
-					Outputs="..\dist\BZFlag1.9a0.exe"/>
-			</FileConfiguration>
-			<FileConfiguration
-				Name="Release|Win32">
-				<Tool
-					Name="VCCustomBuildTool"
-					Description="Building installer using $(InputPath)"
-					CommandLine="cd ..\package\win32\nsis
-makensis bzflag.nsi
-"
-					AdditionalDependencies="..\..\src\bzfs\bzfs.exe;..\..\src\bzflag\bzflag.exe;..\..\src\bzadmin\bzadmin.exe;"
-					Outputs="..\dist\BZFlag1.9a0.exe"/>
-			</FileConfiguration>
-		</File>
-		<File
-			RelativePath="NudgeDate.txt">
+			RelativePath="..\..\package\win32\nsis\BZFlag.nsi">
 		</File>
 	</Files>
 	<Globals>
