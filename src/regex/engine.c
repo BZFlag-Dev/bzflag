@@ -150,8 +150,8 @@ int eflags;
 	struct match mv;
 	register struct match *m = &mv;
 	register char *dp;
-	const register sopno gf = g->firststate+1;	/* +1 for OEND */
-	const register sopno gl = g->laststate;
+	register const sopno gf = g->firststate+1;	/* +1 for OEND */
+	register const sopno gl = g->laststate;
 	char *start;
 	char *stop;
 
@@ -224,7 +224,7 @@ int eflags;
 			STATETEARDOWN(m);
 			return(REG_ESPACE);
 		}
-		for (i = 1; i <= m->g->nsub; i++)
+		for (i = 1; i <= (int)m->g->nsub; i++)
 			m->pmatch[i].rm_so = m->pmatch[i].rm_eo = -1;
 		if (!g->backrefs && !(m->eflags&REG_BACKR)) {
 			NOTE("dissecting");
@@ -256,7 +256,7 @@ int eflags;
 				break;		/* defeat */
 			/* try it on a shorter possibility */
 #ifndef NDEBUG
-			for (i = 1; i <= m->g->nsub; i++) {
+			for (i = 1; i <= (int)m->g->nsub; i++) {
 				assert(m->pmatch[i].rm_so == -1);
 				assert(m->pmatch[i].rm_eo == -1);
 			}
@@ -281,8 +281,8 @@ int eflags;
 	}
 	if (nmatch > 1) {
 		assert(m->pmatch != NULL);
-		for (i = 1; i < nmatch; i++)
-			if (i <= m->g->nsub)
+		for (i = 1; i < (int)nmatch; i++)
+			if (i <= (int)m->g->nsub)
 				pmatch[i] = m->pmatch[i];
 			else {
 				pmatch[i].rm_so = -1;
@@ -468,12 +468,12 @@ sopno stopst;
 			break;
 		case OLPAREN:
 			i = OPND(m->g->strip[ss]);
-			assert(0 < i && i <= m->g->nsub);
+			assert(0 < i && i <= (int)m->g->nsub);
 			m->pmatch[i].rm_so = sp - m->offp;
 			break;
 		case ORPAREN:
 			i = OPND(m->g->strip[ss]);
-			assert(0 < i && i <= m->g->nsub);
+			assert(0 < i && i <= (int)m->g->nsub);
 			m->pmatch[i].rm_eo = sp - m->offp;
 			break;
 		default:		/* uh oh */
@@ -599,18 +599,18 @@ sopno lev;			/* PLUS nesting level */
 	switch (OP(s)) {
 	case OBACK_:		/* the vilest depths */
 		i = OPND(s);
-		assert(0 < i && i <= m->g->nsub);
+		assert(0 < i && i <= (int)m->g->nsub);
 		if (m->pmatch[i].rm_eo == -1)
 			return(NULL);
 		assert(m->pmatch[i].rm_so != -1);
 		len = m->pmatch[i].rm_eo - m->pmatch[i].rm_so;
-		assert(stop - m->beginp >= len);
+		assert(stop - m->beginp >= (int)len);
 		if (sp > stop - len)
 			return(NULL);	/* not enough left to match */
 		ssp = m->offp + m->pmatch[i].rm_so;
 		if (memcmp(sp, ssp, len) != 0)
 			return(NULL);
-		while (m->g->strip[ss] != SOP(O_BACK, i))
+		while ((int)m->g->strip[ss] != SOP(O_BACK, i))
 			ss++;
 		return(backref(m, sp+len, stop, ss+1, stopst, lev));
 	case OQUEST_:		/* to null or not */
@@ -655,7 +655,7 @@ sopno lev;			/* PLUS nesting level */
 		}
 	case OLPAREN:		/* must undo assignment if rest fails */
 		i = OPND(s);
-		assert(0 < i && i <= m->g->nsub);
+		assert(0 < i && i <= (int)m->g->nsub);
 		offsave = m->pmatch[i].rm_so;
 		m->pmatch[i].rm_so = sp - m->offp;
 		dp = backref(m, sp, stop, ss+1, stopst, lev);
@@ -665,7 +665,7 @@ sopno lev;			/* PLUS nesting level */
 		return(NULL);
 	case ORPAREN:		/* must undo assignment if rest fails */
 		i = OPND(s);
-		assert(0 < i && i <= m->g->nsub);
+		assert(0 < i && i <= (int)m->g->nsub);
 		offsave = m->pmatch[i].rm_eo;
 		m->pmatch[i].rm_eo = sp - m->offp;
 		dp = backref(m, sp, stop, ss+1, stopst, lev);
