@@ -5140,8 +5140,13 @@ int main(int argc, char **argv)
 	  AddrLen recvlen = sizeof(uaddr);
 	  int n = recvfrom(udpSocket, (char *) ubuf, MaxPacketLen, MSG_PEEK,
 	      (struct sockaddr*)&uaddr, &recvlen);
-	  if (n < 4)
+	  if (n < 0)
 	    break;
+	  if (n < 4) {
+	    // flush malformed packet
+            recvfrom(udpSocket, (char *) ubuf, MaxPacketLen, 0, (struct sockaddr *)&uaddr, &recvlen);
+            continue;
+	  }
 
 	  // read head
 	  uint16_t len, code;
@@ -5150,8 +5155,10 @@ int main(int argc, char **argv)
 	  buf = nboUnpackUShort(buf, code);
 	  if (n == 6 && len == 2 && code == MsgPingCodeRequest) {
 	    respondToPing();
-	    continue;
-	  }
+            // flush PingCodeRequest packet (since we don't do a uread in this case)
+            recvfrom(udpSocket, (char *) ubuf, MaxPacketLen, 0, (struct sockaddr *)&uaddr, &recvlen);
+            continue;
+ 	  }
 
 	  int numpackets;
 	  int result = uread(&i, &numpackets, n, ubuf, uaddr);
