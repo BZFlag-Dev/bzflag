@@ -19,16 +19,6 @@
 #include <string>
 #include <algorithm>
 
-// work around an ugly STL bug in BeOS
-// FIXME someone test whether it is still needed
-#ifdef __BEOS__
-#define private public
-#endif
-#include <bitset>
-#ifdef __BEOS__
-#undef private
-#endif
-
 
 /** VotingBooth is a means to create and track a vote.  A single booth
  * will track and allow voting on a poll.
