@@ -5006,6 +5006,10 @@ int main(int argc, char **argv)
     }
 
     // check team flag timeouts
+    /* FIXME -- there is some assumption being made here that is bad.  There
+     * should be a way to prevent indexing flag[-1] when i is 0 without relying
+     * on the flagTimeout or active team size for rogues..
+     */
     if (clOptions->gameStyle & TeamFlagGameStyle) {
       for (i = 0; i < CtfTeams; ++i) {
 	if (team[i].flagTimeout - tm < 0 && team[i].team.activeSize == 0 &&
