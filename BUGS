@@ -10,9 +10,6 @@ recent bugs
 - bzfrelay is probably broken for current net protocol. Should be just
   forwarding TCP and UDP packets on a single port.
 
-- The window isn't shaded when the menu is shown unless we're connected to a
-  server
-
 - the aggressive filter will occasionally encounter a false-positive match
   due to apostrophe's -- need to take then into consideration.  need a
   a better way to handle localized pre/suffix matching too as a handful

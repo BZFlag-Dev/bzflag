@@ -182,7 +182,7 @@ unsigned long		BzfWindow::getJoyButtons() const
 }
 
 void                    BzfWindow::getJoyDevices(std::vector<std::string>
-						 &list) const {
+						 &) const {
 #ifdef HAVE_SDL
   
   int numJoystick = SDL_NumJoysticks();
