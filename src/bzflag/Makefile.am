@@ -79,7 +79,7 @@ bzflag_SOURCES =			\
 	MenuDefaultKey.h		\
 	MenuDefaultKey.cxx		\
 	motd.h				\
-	motd.cxx				\
+	motd.cxx			\
 	OptionsMenu.cxx			\
 	OptionsMenu.h			\
 	Player.cxx			\
@@ -111,12 +111,6 @@ bzflag_SOURCES =			\
 	SegmentedShotStrategy.h		\
 	ServerCommandKey.cxx		\
 	ServerCommandKey.h		\
-	ServerItem.cxx			\
-	ServerItem.h			\
-	ServerList.cxx			\
-	ServerList.h			\
-	ServerListCache.cxx		\
-	ServerListCache.h		\
 	ServerLink.cxx			\
 	ServerLink.h			\
 	ServerMenu.cxx			\
@@ -139,7 +133,6 @@ bzflag_SOURCES =			\
 	ShotStrategy.h			\
 	SilenceDefaultKey.cxx		\
 	SilenceDefaultKey.h		\
-	StartupInfo.h			\
 	TargetingUtils.cxx		\
 	TargetingUtils.h		\
 	TrackMarks.cxx			\
@@ -194,9 +187,9 @@ endif
 
 LDADD =	\
 	../3D/lib3D.a			\
-	../net/libNet.a			\
 	../common/libCommon.a		\
 	../game/libGame.a		\
+	../net/libNet.a			\
 	../obstacle/libObstacle.a	\
 	$(NACLIB)			\
 	../platform/libPlatform.a	\
