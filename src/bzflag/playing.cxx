@@ -3762,8 +3762,8 @@ static void		handleServerMessage(bool human, uint16_t code,
 
       addMessage(srcPlayer,"[Sent versioninfo per request]", false, oldcolor);
       break;
-    } else if (srcName == "SERVER") {
-      char passwdRequest[] =  "Identify with /identify <your password>";
+    } else if (fromServer) {
+      static const char passwdRequest[] =  "Identify with /identify <your password>";
       if (!strncmp((char*)msg, passwdRequest, strlen(passwdRequest))) {
 	std::string passwdKey = "password@";
 	passwdKey += startupInfo.serverName;
