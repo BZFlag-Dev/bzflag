@@ -227,33 +227,34 @@ WallSceneNode*	BaseSceneNodeGenerator::getNextNode(float uRepeats, float vRepeat
 	break;
       case 2:
 	base->getCorner(0, bPoint);
-	base->getCorner(3, sCorner);
-	base->getCorner(1, tCorner);
-	break;
-      case 3:
-	base->getCorner(0, bPoint);
 	base->getCorner(1, sCorner);
 	base->getCorner(4, tCorner);
 	break;
-      case 4:
+      case 3:
 	base->getCorner(1, bPoint);
 	base->getCorner(2, sCorner);
 	base->getCorner(5, tCorner);
 	break;
-      case 5:
+      case 4:
 	base->getCorner(2, bPoint);
 	base->getCorner(3, sCorner);
 	base->getCorner(6, tCorner);
 	break;
+      case 5:
+	base->getCorner(3, bPoint);
+	base->getCorner(0, sCorner);
+	base->getCorner(7, tCorner);
+	break;
       case 6:
 	if (base->getPosition()[2] > 0.0f) {
-	  base->getCorner(3, bPoint);
-	  base->getCorner(0, sCorner);
-	  base->getCorner(7, tCorner);
+	  base->getCorner(0, bPoint);
+	  base->getCorner(3, sCorner);
+	  base->getCorner(1, tCorner);
 	}
 	else
 	  return NULL;
 	break;
+
     }
   }
   GLfloat color[4];
