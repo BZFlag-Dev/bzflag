@@ -2,6 +2,7 @@
 
 			     BZFlag release notes
 
+* Set size of shots on radar - Sean Morrison
 * Server spawn positions - Dave Brosius
 * Added client-side automatic team selection - Alfredo Tupone, Sean Morrison
 * Calc jitter based on client timestamps in MsgPlayerUpdate packets - Frank Thilo
