@@ -116,6 +116,7 @@ const std::string StateDatabase::BZDB_SHOTLENGTH	= std::string("_shotLength");
 const std::string StateDatabase::BZDB_SHOTTAILLENGTH	= std::string("_shotTailLength");
 const std::string StateDatabase::BZDB_SRRADIUSMULT	= std::string("_srRadiusMult");
 const std::string StateDatabase::BZDB_TANKANGVEL        = std::string("_tankAngVel");
+const std::string StateDatabase::BZDB_TANKEXPLOSIONSIZE = std::string("_tankExplosionSize");
 const std::string StateDatabase::BZDB_TANKHEIGHT	= std::string("_tankHeight");
 const std::string StateDatabase::BZDB_TANKLENGTH	= std::string("_tankLength");
 const std::string StateDatabase::BZDB_TANKRADIUS        = std::string("_tankRadius");

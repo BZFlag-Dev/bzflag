@@ -212,12 +212,13 @@ public:
   static const std::string	BZDB_SHOTLENGTH;
   static const std::string	BZDB_SHOTTAILLENGTH;
   static const std::string	BZDB_SRRADIUSMULT;
+  static const std::string	BZDB_TANKANGVEL;
+  static const std::string	BZDB_TANKEXPLOSIONSIZE;
   static const std::string	BZDB_TANKLENGTH;
   static const std::string	BZDB_TANKWIDTH;
   static const std::string	BZDB_TANKHEIGHT;
   static const std::string	BZDB_TANKSPEED;
   static const std::string	BZDB_TANKRADIUS;
-  static const std::string	BZDB_TANKANGVEL;
   static const std::string	BZDB_TARGETINGANGLE;
   static const std::string	BZDB_TELEPORTTIME;
   static const std::string	BZDB_THIEFVELAD;

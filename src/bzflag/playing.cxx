@@ -3836,7 +3836,7 @@ bool			addExplosion(const float* _pos,
 
 void			addTankExplosion(const float* pos)
 {
-  addExplosion(pos, 3.5f * BZDB->eval(StateDatabase::BZDB_TANKLENGTH), 1.2f);
+  addExplosion(pos, BZDB->eval(StateDatabase::BZDB_TANKEXPLOSIONSIZE), 1.2f);
 }
 
 void			addShotExplosion(const float* pos)
