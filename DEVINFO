@@ -94,6 +94,10 @@ exceptions to this such as simple utility classes that are local to
 that same file's implementation.  If it's a public class, though, it's
 usually best to separate it out into another file by itself.
 
+Avoid "extern" in C files. This prevents the compiler from type checking in
+most cases. If you need access to somthing, put it in a header. That's what
+headers are for.
+
 C++ features
 ------------
 Earlier versions of BZFlag avoided certain features of C++ that have
@@ -237,7 +241,8 @@ A profile build is specified via:
 
 Sounds
 ======
-Sounds are stored as 22.050KHz WAV files. We will likely move to OGG.
+Sounds are stored as uncompressed 22.050KHz WAV files. We will likely move to
+OGG someday.
 
 
 Images
