@@ -20,9 +20,10 @@
  * If we've got a socklen_t typedefed, define HAVE_SOCKLEN_T to
  * avoid #define'ing it in common.h */
 
-#if _MSC_VER < 1200
-	#define socklen_t int 
-#endif //_MSC_VER == 1100
+// IF YOU HAVE THE NEW PLAT SDK COMMOENT THIS OUT
+// VC5 and VC6 standard need it
+// AND David don't you DARE COMMIT a change to put this back.
+#define socklen_t int 
 
 /* Time Bomb expiration */
 /* #undef TIME_BOMB */
