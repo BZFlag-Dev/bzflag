@@ -1,4 +1,5 @@
 EXTRA_DIST =	\
+	3D.dsp		\
 	bzadmin.dsp	\
 	bzflag.dsw	\
 	bzflag.dsp	\
