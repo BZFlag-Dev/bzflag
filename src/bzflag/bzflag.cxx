@@ -672,22 +672,20 @@ static void		parse(int argc, char** argv)
 	usage();
       }
       BZDB->set("filterFilename", argv[i], StateDatabase::ReadOnly);
-    } else if (i == argc-1) {
-      if (strlen(argv[i]) >= sizeof(startupInfo.serverName)) {
-	printFatalError("Server name too long.  Ignoring.");
-      }
-      else {
-	/* if there was actually something that looks akin to a command,
-	 * do not assume it is a server name
-	 */
-	if (strncmp(argv[i], "-", 1) == 0) {
-	  memset(startupInfo.serverName, 0, sizeof(char) * 80);
-	} else {
-	  strcpy(startupInfo.serverName, argv[i]);
-	  startupInfo.autoConnect = true;
-	}
+    } else if (argv[i][0] != '-') {
+      if (i == argc-1) {
+        if (strlen(argv[i]) >= sizeof(startupInfo.serverName)) {
+          printFatalError("Server name too long.  Ignoring.");
+        }
+        else {
+          strcpy(startupInfo.serverName, argv[i]);
+          startupInfo.autoConnect = true;
+        }
+      } else {
+        printFatalError("Unexpected: %s. Server must go after all options.", argv[i]);
       }
     } else {
+      printFatalError("Unknown option %s.", argv[i]);
       usage();
     }
   }
