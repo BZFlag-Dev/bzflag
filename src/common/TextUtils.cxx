@@ -10,6 +10,9 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
+// BZFlag common header
+#include "common.h"
+
 // interface header
 #include "TextUtils.h"
 
@@ -27,7 +30,6 @@ namespace TextUtils
   std::string vformat(const char* fmt, va_list args) {
     const int fixedbs = 8192;
     char buffer[fixedbs];
-#ifdef HAVE_VSNPRINTF
     const int bs = vsnprintf(buffer, fixedbs, fmt, args) + 1;
     if (bs > fixedbs) {
       char *bufp = new char[bs];
@@ -36,11 +38,7 @@ namespace TextUtils
       delete[] bufp;
       return ret;
     }
-#else
-    const int bs = vsprintf(buffer, fmt, args) + 1;
-    assert(bs <= fixedbs);
-#endif
-  
+ 
     return buffer;
   }
 

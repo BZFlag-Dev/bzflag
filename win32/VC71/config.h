@@ -63,12 +63,12 @@
 // define our OS
 
 #ifndef BZ_BUILD_OS
-	#ifdef _DEBUG
-		#define DEBUG
-		#define BZ_BUILD_OS			"W32VC71D"
-	#else
-		#define BZ_BUILD_OS			"W32VC71"
-	#endif //_DEBUG
+  #ifdef _DEBUG
+    #define DEBUG
+    #define BZ_BUILD_OS			"W32VC71D"
+  #else
+    #define BZ_BUILD_OS			"W32VC71"
+  #endif //_DEBUG
 #endif //BZ_BUILD_OS
 
 #include <stdio.h>
@@ -84,8 +84,14 @@
 /* Define to 1 if you have the `wglGetCurrentContext' function. */
 #define HAVE_WGLGETCURRENTCONTEXT 1
 
-/* Define to 1 if you have the `vsnprintf' function. */
-#define HAVE_VSNPRINTF 1
+/* Define to 1 if you have the `_stricmp' function */
+#define HAVE__STRICMP 1
+
+/* Define to 1 if you have the `_strnicmp' function */
+#define HAVE__STRNICMP 1
+
+/* Define to 1 if you have the `_vsnprintf' function */
+#define HAVE__VSNPRINTF 1
 
 /* Define to 1 if you have the <SDL/SDL.h> header file. */
 #define HAVE_SDL_SDL_H 1

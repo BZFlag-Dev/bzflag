@@ -22,11 +22,7 @@ void formatDebug(const char* fmt, ...)
     char buffer[8192];
     va_list args;
     va_start(args, fmt);
-#ifdef HAVE_VSNPRINTF
     vsnprintf(buffer, 8192, fmt, args);
-#else
-    vsprintf(buffer, fmt, args);
-#endif
     va_end(args);
     #if defined(_MSC_VER)
       W32_DEBUG_TRACE(buffer);
