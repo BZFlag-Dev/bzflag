@@ -23,30 +23,25 @@
 #include "OpenGLTexFont.h"
 #include "StateDatabase.h"
 #include "BZDBCache.h"
-#include "BzfDisplay.h"
-#include "BzfWindow.h"
 #include "SceneRenderer.h"
 #include "TextUtils.h"
 
 /* local implementation headers */
 #include "MainMenu.h"
 #include "HUDDialogStack.h"
-#include "MainWindow.h"
 #include "ControlPanel.h"
 #include "StartupInfo.h"
 
 /* FIXME - from playing.h */
-BzfDisplay* getDisplay();
-MainWindow* getMainWindow();
 SceneRenderer* getSceneRenderer();
 void setSceneDatabase();
 StartupInfo* getStartupInfo();
 extern ControlPanel* controlPanel;
 
 
-OptionsMenu::OptionsMenu() : formatMenu(NULL),
-			     guiOptionsMenu(NULL), saveWorldMenu(NULL),
-			     inputMenu(NULL), audioMenu(NULL)
+OptionsMenu::OptionsMenu() : guiOptionsMenu(NULL), saveWorldMenu(NULL),
+			     inputMenu(NULL), audioMenu(NULL),
+			     displayMenu(NULL)
 {
   // add controls
   std::vector<HUDuiControl*>& list = getControls();
@@ -181,31 +176,6 @@ OptionsMenu::OptionsMenu() : formatMenu(NULL),
   list.push_back(option);
 #endif
 
-  BzfDisplay* display = getDisplay();
-  int numFormats = display->getNumResolutions();
-  if (numFormats < 2) {
-    videoFormat = NULL;
-  } else {
-    videoFormat = label = new HUDuiLabel;
-    label->setFont(MainMenu::getFont());
-    label->setLabel("Change Video Format");
-    list.push_back(label);
-  }
-
-  BzfWindow* window = getMainWindow()->getWindow();
-  option = new HUDuiList;
-  option->setFont(MainMenu::getFont());
-  option->setLabel("Brightness:");
-  option->setCallback(callback, (void*)"g");
-  if (window->hasGammaControl()) {
-    option->createSlider(15);
-  } else {
-    options = &option->getList();
-    options->push_back(std::string("Unavailable"));
-  }
-  option->update();
-  list.push_back(option);
-
   option = new HUDuiList;
   option->setFont(MainMenu::getFont());
   option->setLabel("UDP network connection:");
@@ -259,25 +229,27 @@ OptionsMenu::OptionsMenu() : formatMenu(NULL),
   label->setLabel("Audio Setting");
   list.push_back(label);
 
+  displaySetting = label = new HUDuiLabel;
+  label->setFont(MainMenu::getFont());
+  label->setLabel("Display Setting");
+  list.push_back(label);
+
   initNavigation(list, 1,list.size()-1);
 }
 
 OptionsMenu::~OptionsMenu()
 {
-  delete formatMenu;
   delete guiOptionsMenu;
   delete saveWorldMenu;
   delete inputMenu;
   delete audioMenu;
+  delete displayMenu;
 }
 
 void OptionsMenu::execute()
 {
   HUDuiControl* focus = HUDui::getFocus();
-  if (focus == videoFormat) {
-    if (!formatMenu) formatMenu = new FormatMenu;
-    HUDDialogStack::get()->push(formatMenu);
-  } else if (focus == guiOptions) {
+  if (focus == guiOptions) {
     if (!guiOptionsMenu) guiOptionsMenu = new GUIOptionsMenu;
     HUDDialogStack::get()->push(guiOptionsMenu);
   } else if (focus == clearCache) {
@@ -295,6 +267,9 @@ void OptionsMenu::execute()
   } else if (focus == audioSetting) {
     if (!audioMenu) audioMenu = new AudioMenu;
     HUDDialogStack::get()->push(audioMenu);
+  } else if (focus == displaySetting) {
+    if (!displayMenu) displayMenu = new DisplayMenu;
+    HUDDialogStack::get()->push(displayMenu);
   }
 }
 
@@ -360,15 +335,6 @@ void OptionsMenu::resize(int width, int height)
     ((HUDuiList*)list[i++])->setIndex(renderer->useWireframe() ? 1 : 0);
     ((HUDuiList*)list[i++])->setIndex(renderer->useDepthComplexity() ? 1 : 0);
 #endif
-
-    if (videoFormat)
-      i++;
-
-    // brightness
-    BzfWindow* window = getMainWindow()->getWindow();
-    if (window->hasGammaControl())
-      ((HUDuiList*)list[i])->setIndex(gammaToIndex(window->getGamma()));
-    i++;
 
     const StartupInfo* info = getStartupInfo();
 
@@ -469,13 +435,6 @@ void OptionsMenu::callback(HUDuiControl* w, void* data)
     }
       break;
 
-    case 'g': {
-      BzfWindow* window = getMainWindow()->getWindow();
-      if (window->hasGammaControl())
-	window->setGamma(indexToGamma(list->getIndex()));
-      break;
-    }
-
     case 'S': { // server cache
       time_t minutes = 0;
       int index = list->getIndex();
@@ -514,18 +473,6 @@ void OptionsMenu::callback(HUDuiControl* w, void* data)
       break;
   }
 }
-
-int OptionsMenu::gammaToIndex(float gamma)
-{
-  return (int)(0.5f + 5.0f * (1.0f + logf(gamma) / logf(2.0)));
-}
-
-float OptionsMenu::indexToGamma(int index)
-{
-  // map index 5 to gamma 1.0 and index 0 to gamma 0.5
-  return powf(2.0f, (float)index / 5.0f - 1.0f);
-}
-
 
 // Local Variables: ***
 // mode: C++ ***

@@ -18,6 +18,8 @@ bzflag_SOURCES =			\
 	ComposeDefaultKey.h		\
 	ControlPanel.cxx		\
 	ControlPanel.h			\
+	DisplayMenu.cxx			\
+	DisplayMenu.h			\
 	FlashClock.cxx			\
 	FlashClock.h			\
 	FormatMenu.cxx			\

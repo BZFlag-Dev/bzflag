@@ -17,12 +17,11 @@
 #include "HUDDialog.h"
 #include "MenuDefaultKey.h"
 #include "HUDui.h"
-#include "FormatMenu.h"
 #include "GUIOptionsMenu.h"
 #include "SaveWorldMenu.h"
 #include "InputMenu.h"
 #include "AudioMenu.h"
-
+#include "DisplayMenu.h"
 
 class OptionsMenu : public HUDDialog {
 public:
@@ -37,21 +36,19 @@ public:
   void		resize(int width, int height);
 
   static void	callback(HUDuiControl* w, void* data);
-  static int	gammaToIndex(float);
-  static float	indexToGamma(int);
 
 private:
-  HUDuiControl*	videoFormat;
   HUDuiControl*	guiOptions;
   HUDuiControl*	clearCache;
   HUDuiControl*	saveWorld;
   HUDuiControl*	inputSetting;
   HUDuiControl*	audioSetting;
-  FormatMenu*		formatMenu;
+  HUDuiControl*	displaySetting;
   GUIOptionsMenu*	guiOptionsMenu;
   SaveWorldMenu*	saveWorldMenu;
   InputMenu*            inputMenu;
   AudioMenu*            audioMenu;
+  DisplayMenu*          displayMenu;
 };
 
 
