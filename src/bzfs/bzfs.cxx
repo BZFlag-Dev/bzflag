@@ -58,8 +58,6 @@
 #include "AnsiCodes.h"
 
 
-const int udpBufSize = 128000;
-
 // every ListServerReAddTime server add ourself to the list
 // server again.  this is in case the list server has reset
 // or dropped us for some reason.
