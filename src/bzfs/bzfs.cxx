@@ -2871,7 +2871,7 @@ static void sendTeleport(int playerIndex, uint16_t from, uint16_t to)
 static void parseCommand(const char *message, int t)
 {
   GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(t);
-  if (!playerData)
+  if (!playerData && t != ServerPlayer) //it's ok; the server has the go-ahead
     return;
 
   if (strncmp(message + 1, "me ", 3) == 0) {
