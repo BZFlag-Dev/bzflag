@@ -299,6 +299,9 @@ InBuildingType WorldInfo::classifyHit (const Obstacle* obstacle)
   else if (obstacle->getType() == Teleporter::getClassName()) {
     return IN_TELEPORTER;
   }
+  else if (obstacle->getType() == WallObstacle::getClassName()) {
+    return IN_WALL;
+  }
   else {
     // FIXME - choke here?
     printf ("*** Unknown obstacle type in WorldInfo::boxInBuilding()\n");

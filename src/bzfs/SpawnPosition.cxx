@@ -110,9 +110,9 @@ SpawnPosition::SpawnPosition(int playerId, bool onGroundOnly, bool notNearEdges)
 	    break;
 	  }
         }
-        // ok, when not on top of pyramid or teleporter
-        if (lastType != IN_PYRAMID  &&  lastType != IN_TETRA  &&
-            lastType != IN_TELEPORTER) {
+        // ok, when not on top of pyramid, tetra, or teleporter
+        if ((lastType != IN_PYRAMID) && (lastType != IN_TETRA) &&
+            (lastType != IN_TELEPORTER)) {
           foundspot = true;
         }
         // only try up in the sky so many times

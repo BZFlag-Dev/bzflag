@@ -35,8 +35,16 @@ class CustomZone;
 
 typedef std::vector<std::string> QualifierList;
 
-typedef enum { NOT_IN_BUILDING, IN_BASE, IN_BOX_NOTDRIVETHROUGH, IN_BOX_DRIVETHROUGH, 
-               IN_PYRAMID, IN_TETRA, IN_TELEPORTER } InBuildingType;
+typedef enum {
+  NOT_IN_BUILDING,
+  IN_BASE,
+  IN_BOX_NOTDRIVETHROUGH,
+  IN_BOX_DRIVETHROUGH,
+  IN_PYRAMID,
+  IN_TETRA,
+  IN_TELEPORTER,
+  IN_WALL
+} InBuildingType;
 
 
 class WorldInfo {
