@@ -1,6 +1,10 @@
 SUFFIXES = .6s .6
 
+if HASPOD2MAN
 man_MANS = bzadmin.6 bzflag.6 bzfls.6 bzfrelay.6 bzfs.6 bzfquery.6
+else
+man_MANS = bzadmin.6 bzflag.6 bzfls.6 bzfrelay.6 bzfs.6
+endif
 
 bzfquery.6: $(top_srcdir)/misc/bzfquery.pl
 	pod2man $(top_srcdir)/misc/bzfquery.pl > bzfquery.6
