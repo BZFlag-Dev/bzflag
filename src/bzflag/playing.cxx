@@ -3356,11 +3356,13 @@ static boolean		joinGame(const StartupInfo* info,
     playerLink->setUseRelay();
     playerLink->setRelay(serverLink);
     printError("Using multicast relay");
-	if (startupInfo.useUDPconnection)
-		playerLink->enableUDPConIfRelayed();
-	else
-		printError("No UDP connection, see Options to enable.");
   }
+
+  // use parallel UDP if desired and using server relay
+  if (startupInfo.useUDPconnection && (playerLink->getState() == PlayerLink::ServerRelay))
+    playerLink->enableUDPConIfRelayed();
+  else
+    printError("No UDP connection, see Options to enable.");
 
   // set marker colors -- team color and antidote flag color
   const float* myTeamColor = Team::getTankColor(myTank->getTeam());
