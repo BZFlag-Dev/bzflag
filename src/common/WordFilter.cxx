@@ -793,6 +793,30 @@ bool WordFilter::filter(char *input, bool simple) const
   return filtered;
 }
 
+bool WordFilter::filter(std::string &input, bool simple) const
+{
+  char input2[512] = {0};
+  bool filtered = false;
+  std::string resultString = "";
+
+  /* filter in 512 chunks.  ugly means to support large input strings,
+   * but it works.  just means words that span the boundary might be
+   * wrong.
+   */
+  for (unsigned int i = 0; i < input.size(); i+=512) {
+    strncpy(input2, input.c_str() + i, 512);
+    bool filteredChunk = filter(input2, simple);
+    if (filteredChunk) {
+      filtered = true;
+    }
+    resultString += input2;
+  }
+  if (filtered) {
+    input = resultString;
+  }
+  return filtered;
+}
+
 void WordFilter::outputFilter(void) const
 {
   for (int i=0; i < MAX_FILTER_SETS; ++i) {

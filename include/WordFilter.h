@@ -220,6 +220,7 @@ class WordFilter
    * using either the simple or agressive filter
    */
   bool filter(char *input, const bool simple=false) const;
+  bool filter(std::string &input, const bool simple=false) const;
 
   /** dump a list of words in the filter to stdout */
   void outputWords(void) const;
