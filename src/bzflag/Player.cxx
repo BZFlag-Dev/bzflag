@@ -62,7 +62,9 @@ Player::Player(const PlayerId& _id, TeamColor _team,
   localTks(0),
   deltaTime(0.0),
   offset(0.0),
-  deadReckoningState(0)
+  deadReckoningState(0),
+  oldStatus(0),
+  oldZSpeed(0.0f)
 {
   static const float zero[3] = { 0.0f, 0.0f, 0.0f };
   move(zero, 0.0f);
