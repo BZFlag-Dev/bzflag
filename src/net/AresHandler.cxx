@@ -55,6 +55,8 @@ void AresHandler::staticCallback(void *arg, int callbackStatus,
 
 void AresHandler::callback(int callbackStatus, struct hostent *hostent)
 {
+  if (callbackStatus == ARES_EDESTRUCTION)
+    return;
   if (callbackStatus != ARES_SUCCESS) {
       DEBUG1("Player [%d] failed to resolve: error %d\n", index,
 	     callbackStatus);
