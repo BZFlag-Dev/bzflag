@@ -417,7 +417,6 @@ void            SceneRenderer::setEnhancedRadar(boolean _setEnhancedRadar)
 {
     useEnhancedRadarOn = _setEnhancedRadar;
     notifyStyleChange();
-
 }
 
 boolean         SceneRenderer::useEnhancedRadar() const
