@@ -89,7 +89,7 @@ BZAdminClient::getServerString(std::string& str, ColorCode& colorCode) {
   std::string dstName, srcName;
   int i;
   PlayerIdMap::iterator iter;
-  std::string returnString = "";
+  std::string returnString;
 
   /* read until we have a package that we want, or until there are no more
      packages for 100 ms */
@@ -100,7 +100,8 @@ BZAdminClient::getServerString(std::string& str, ColorCode& colorCode) {
     PlayerId p;
     PlayerIdMap::const_iterator it;
     std::string victimName, killerName;
-
+    returnString = ""; 
+     
     switch (code) {
 
     case MsgNewRabbit:

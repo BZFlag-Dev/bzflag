@@ -13,11 +13,13 @@
 #ifndef CURSESMENU_H
 #define CURSESMENU_H
 
+/* bzflag special common - 1st one */
+#include "common.h"
+
 #include <string>
 #include <vector>
 
 #include "BZAdminClient.h"
-#include "config.h"
 #include "curses_wrapper.h"
 #include "PlayerInfo.h"
 

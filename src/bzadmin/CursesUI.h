@@ -13,12 +13,13 @@
 #ifndef CURSESUI_H
 #define CURSESUI_H
 
+/* bzflag special common - 1st one */
+#include "common.h"
+
 #include <iostream>
 #include <map>
 #include <string>
 #include <utility>
-
-#include "config.h"
 
 #include "Address.h"
 #include "AutoCompleter.h"

@@ -23,10 +23,8 @@
 #ifndef CURSES_WRAPPER_H
 #define CURSES_WRAPPER_H
 
-#include <cstring>
-
-#include "config.h"
-
+/* bzflag special common - 1st one */
+#include "common.h"
 
 // if we have ncurses.h, just include it
 #ifdef HAVE_NCURSES_H
@@ -42,7 +40,9 @@
 #define NOMACROS
 #include <curses.h>
 
+#ifndef KEY_RESIZE
 #define KEY_RESIZE (KEY_MAX + 1)
+#endif
 #define COLOR_BGDEFAULT COLOR_BLACK
 #define COLOR_FGDEFAULT COLOR_WHITE
 
@@ -63,6 +63,7 @@ inline int cr_waddstr(WINDOW* w, const char* str) {
   strcpy(newStr, str);
   return waddstr(w, newStr);
 }
+#undef waddstr
 #define waddstr(W, C) cr_waddstr(W, C)
 
 #endif // curses
