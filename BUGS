@@ -1,6 +1,8 @@
 recent bugs
 ------------
 
+- Burrowed tanks can be steamrolled by Phantom Zoned tanks, this shouldn't be.
+
 - In a non jump world, if you drive into a pyramid and building at the same
   time, your tank will make a small jump (hop) backwards (in air). Probably
   do to the unsticky fix. Perhaps we can live with this.
