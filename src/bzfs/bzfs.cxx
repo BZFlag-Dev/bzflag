@@ -2273,6 +2273,10 @@ static void addPlayer(int playerIndex)
     *tp=0;
   }
 
+  // don't allow empty callsign
+  if (player[playerIndex].callSign[0] == '\0')
+    rejectPlayer(playerIndex, RejectBadCallsign);
+
   // look if there is as name clash, we won't allow this
   int i;
   for (i = 0; i < curMaxPlayers; i++)
