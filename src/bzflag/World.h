@@ -131,7 +131,7 @@ class World {
     void		freeInsideNodes();
 
   private:
-    typedef struct BaseParms { float p[7]; };
+    typedef struct { float p[7]; } BaseParms;
     typedef std::vector<BaseParms> TeamBases;
     short		gameStyle;
     float		linearAcceleration;
