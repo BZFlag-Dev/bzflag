@@ -756,8 +756,14 @@ void			HUDRenderer::renderStatus(SceneRenderer& renderer)
 
 int HUDRenderer::tankScoreCompare(const void* _a, const void* _b)
 {
+#if defined(PTR_SCORE_SORT)
   LocalPlayer *a = (LocalPlayer *) _a;
   LocalPlayer *b = (LocalPlayer *) _b;
+#else
+  // See below, alternative to buggy qsort
+  RemotePlayer* a = World::getWorld()->getPlayer(*(int*)_a);
+  RemotePlayer* b = World::getWorld()->getPlayer(*(int*)_b);
+#endif
 
   return a->getScore() - b->getScore();
 }
@@ -788,6 +794,11 @@ void			HUDRenderer::renderScoreboard(SceneRenderer& renderer)
   int plrCount = 0;
   const int maxPlayers = World::getWorld()->getMaxPlayers();
   // run a sort by score
+
+#if defined(PTR_SCORE_SORT)
+  // Bugged at least under Solaris gcc 2.95.2. The call to qsort() may 
+  // invalidate the array. Might reveal a buffer overflow elsewhere?
+
   RemotePlayer **players = (RemotePlayer **)alloca(maxPlayers * sizeof(RemotePlayer *));
   for (j = 0; j < maxPlayers; j++) {
      players[j] = World::getWorld()->getPlayer(j);
@@ -802,6 +813,24 @@ void			HUDRenderer::renderScoreboard(SceneRenderer& renderer)
     y -= (int)dy;
     drawPlayerScore(player, x1, x2, x3, (float)y);
   }
+#else
+  // Alternative: sort players indexes
+
+  int* players = new int[maxPlayers];
+
+  for (j = 0; j < maxPlayers; j++)
+    if (World::getWorld()->getPlayer(j))
+      players[plrCount++] = j;
+
+  qsort(players, plrCount, sizeof(int), tankScoreCompare);
+
+  for (i = 0; i < plrCount; i++) {
+    RemotePlayer* player = World::getWorld()->getPlayer(players[i]);
+    y -= (int)dy;
+    drawPlayerScore(player, x1, x2, x3, (float)y);
+  }
+  delete[] players;
+#endif
 
   y -= (int)dy;
   const int maxDeadPlayers = World::getWorld()->getMaxDeadPlayers();
