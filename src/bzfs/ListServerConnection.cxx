@@ -172,8 +172,8 @@ void ListServerLink::read()
 	char *callsign, *group;
 	callsign = (char *)(base + strlen(tokGoodIdentifier));
 	group = callsign;
-	while (*group && !isspace(*group)) group++;
-	while (*group && isspace(*group)) *group++ = 0;
+	while (*group && (*group != ':')) group++;
+	while (*group && (*group == ':')) *group++ = 0;
 	int playerIndex = getTarget(callsign);
 	if (playerIndex < curMaxPlayers) {
 	  GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(playerIndex);
@@ -182,8 +182,8 @@ void ListServerLink::read()
 	  playerData->accessInfo.setPermissionRights();
 	  while (*group) {
 	    char *nextgroup = group;
-	    while (*nextgroup && !isspace(*nextgroup)) nextgroup++;
-	    while (*nextgroup && isspace(*nextgroup)) *nextgroup++ = 0;
+	    while (*nextgroup && (*nextgroup != ':')) nextgroup++;
+	    while (*nextgroup && (*nextgroup == ':')) *nextgroup++ = 0;
 	    playerData->accessInfo.addGroup(group);
 	    //DEBUG3("Got: [%d] \"%s\" \"%s\"\n", playerIndex, callsign, group);
 	    group = nextgroup;
