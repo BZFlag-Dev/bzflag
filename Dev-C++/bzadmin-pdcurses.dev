@@ -62,7 +62,7 @@ BuildCmd=
 [Unit4]
 FileName=..\src\bzadmin\BZAdminUI.cxx
 CompileCpp=1
-Folder=Source Files/BZAdmin
+Folder=Source Files/UI
 Compile=1
 Link=1
 Priority=1000

@@ -9,8 +9,8 @@ CppCompiler=-D_DEVCPP=1 -D__GNUWIN32__ -D_CONSOLE -DWIN32 -D_MBCS_@@_ -Wall -Wer
 Includes=..\Dev-C++;..\include;..\Dev-C++
 Linker=-lstdc++ -lws2_32 -lwinmm -lkernel32 -luser32 -lgdi32 -lwinspool -lcomdlg32 -ladvapi32 -lshell32 -lole32 -loleaut32 -luuid_@@_
 Libs=
-UnitCount=206
-Folders="Header Files","Header Files/bzfs","Header Files/common","Header Files/game","Header Files/net","Header Files/regex","Resource Files","Source Files","Source Files/bzfs","Source Files/common","Source Files/date","Source Files/game","Source Files/Net","Source Files/regex","Source Files/zlib"
+UnitCount=212
+Folders="Header Files","Header Files/bzfs","Header Files/common","Header Files/game","Header Files/net","Header Files/regex","Resource Files","Source Files","Source Files/bzfs","Source Files/common","Source Files/game","Source Files/net","Source Files/regex","Source Files/zlib"
 ObjFiles=
 PrivateResource=
 ResourceIncludes=
@@ -651,7 +651,7 @@ BuildCmd=
 
 [Unit65]
 FileName=..\src\net\Ping.cxx
-Folder=Source Files/Net
+Folder=Source Files/net
 Compile=1
 CompileCpp=1
 Link=1
@@ -661,7 +661,7 @@ BuildCmd=
 
 [Unit66]
 FileName=..\src\net\Address.cxx
-Folder=Source Files/Net
+Folder=Source Files/net
 Compile=1
 CompileCpp=1
 Link=1
@@ -671,7 +671,7 @@ BuildCmd=
 
 [Unit67]
 FileName=..\src\net\multicast.cxx
-Folder=Source Files/Net
+Folder=Source Files/net
 Compile=1
 CompileCpp=1
 Link=1
@@ -681,7 +681,7 @@ BuildCmd=
 
 [Unit68]
 FileName=..\src\net\network.cxx
-Folder=Source Files/Net
+Folder=Source Files/net
 Compile=1
 CompileCpp=1
 Link=1
@@ -691,7 +691,7 @@ BuildCmd=
 
 [Unit69]
 FileName=..\src\net\Pack.cxx
-Folder=Source Files/Net
+Folder=Source Files/net
 Compile=1
 CompileCpp=1
 Link=1
@@ -900,7 +900,7 @@ BuildCmd=
 [Unit88]
 FileName=..\src\date\buildDate.cxx
 CompileCpp=1
-Folder=Source Files/date
+Folder=Source Files/common
 Compile=1
 Link=1
 Priority=1000
@@ -960,7 +960,7 @@ BuildCmd=
 [Unit94]
 FileName=..\src\net\AdnsHandler.cxx
 CompileCpp=1
-Folder=Source Files/Net
+Folder=Source Files/net
 Compile=1
 Link=1
 Priority=1000
@@ -2101,6 +2101,66 @@ BuildCmd=
 FileName=..\src\common\ParseColor.cxx
 CompileCpp=1
 Folder=Source Files/bzfs
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit207]
+FileName=..\include\MeshTransform.h
+CompileCpp=1
+Folder=Header Files/game
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit208]
+FileName=..\src\game\MeshTransform.cxx
+CompileCpp=1
+Folder=Source Files/game
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit209]
+FileName=..\src\bzfs\DropGeometry.cxx
+CompileCpp=1
+Folder=Source Files/bzfs
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit210]
+FileName=..\src\bzfs\CustomMeshTransform.cxx
+CompileCpp=1
+Folder=Source Files/bzfs
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit211]
+FileName=..\src\bzfs\CustomMeshTransform.h
+CompileCpp=1
+Folder=Header Files/bzfs
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit212]
+FileName=..\src\bzfs\DropGeometry.h
+CompileCpp=1
+Folder=Header Files/bzfs
 Compile=1
 Link=1
 Priority=1000
