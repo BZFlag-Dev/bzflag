@@ -109,10 +109,12 @@ OpenGLTexture* TextureManager::loadTexture( FileTextureInit &init, bool reportFa
 	 image = MediaFile::readImage( nameToTry.c_str(), &width, &height);
   if (!image)
 	  image =  MediaFile::readImage( init.name.c_str(), &width, &height);
-  if (!image && reportFail) {
-    std::vector<std::string> args;
-    args.push_back(init.name);
-    printError("cannot load texture: {1}", &args);
+  if (!image) {
+	  if (reportFail){
+        std::vector<std::string> args;
+        args.push_back(init.name);
+        printError("cannot load texture: {1}", &args);
+	  }
     return new OpenGLTexture();
   }
 
