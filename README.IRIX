@@ -1,0 +1,6 @@
+README for Unix platforms
+-------------------------
+
+IRIX now requires the gcc3 compiler, available from SGI freeware. Note that
+the gcc-3.2.2 version picked up some 6.5.18-isms, so you may need to track
+down the older 3.1 release (or compile 3.2 yourself)
