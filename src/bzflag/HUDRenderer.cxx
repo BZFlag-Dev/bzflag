@@ -151,6 +151,7 @@ HUDRenderer::HUDRenderer(const BzfDisplay* _display,
 				window(renderer.getWindow()),
 				firstRender(True),
 				playing(False),
+				roaming(False),
 				dim(False),
 				sDim(False),
 				numPlayers(0),
@@ -163,6 +164,7 @@ HUDRenderer::HUDRenderer(const BzfDisplay* _display,
 				fps(-1.0),
 				drawTime(-1.0),
 				restartLabel(restartLabelFormat),
+				roamingLabel("Roaming"),
 				showCompose(False)
 {
   int i;
@@ -395,6 +397,11 @@ void			HUDRenderer::setPlaying(boolean _playing)
   playing = _playing;
 }
 
+void			HUDRenderer::setRoaming(boolean _roaming)
+{
+  roaming = _roaming;
+}
+
 void			HUDRenderer::setDim(boolean _dim)
 {
   dim = _dim;
@@ -553,6 +560,11 @@ void			HUDRenderer::setRestartKeyLabel(const BzfString& label)
   restartLabelWidth = bigFont.getWidth(restartLabel);
 }
 
+void			HUDRenderer::setRoamingLabel(const BzfString& label)
+{
+  roamingLabel = label;
+}
+
 void			HUDRenderer::setTimeLeft(int _timeLeft)
 {
   timeLeft = _timeLeft;
@@ -658,6 +670,8 @@ void			HUDRenderer::render(SceneRenderer& renderer)
   OpenGLGState::resetState();
   if (playing)
     renderPlaying(renderer);
+  else if (roaming)
+    renderRoaming(renderer);
   else
     renderNotPlaying(renderer);
 }
@@ -687,7 +701,7 @@ void			HUDRenderer::renderStatus(SceneRenderer& renderer)
   FlagId flag = player->getFlag();
 
   // print player name and score in upper left corner in team (radar) color
-  if (!playerHasHighScore || scoreClock.isOn()) {
+  if (!roaming && (!playerHasHighScore || scoreClock.isOn())) {
     sprintf(buffer, "%s: %d", player->getCallSign(), player->getScore());
     hudColor3fv(Team::getRadarColor(teamIndex));
     majorFont.draw(buffer, x, y);
@@ -723,36 +737,43 @@ void			HUDRenderer::renderStatus(SceneRenderer& renderer)
   else {
     strcpy(buffer, "");
   }
-  switch (player->getFiringStatus()) {
-    case LocalPlayer::Deceased:
-      strcat(buffer, "Dead");
-      break;
+  if (!roaming) {
+    switch (player->getFiringStatus()) {
+      case LocalPlayer::Deceased:
+        strcat(buffer, "Dead");
+        break;
+  
+      case LocalPlayer::Ready:
+        if (flag != NoFlag && Flag::getType(flag) == FlagSticky &&
+                  World::getWorld()->allowShakeTimeout()) {
+          /* have a bad flag -- show time left 'til we shake it */
+          statusColor = yellowColor;
+          sprintf(buffer, "%.1f", player->getFlagShakingTime());
+        }
+        else {
+          statusColor = greenColor;
+          strcat(buffer, "Ready");
+        }
+        break;
+  
+      case LocalPlayer::Loading:
+        statusColor = redColor;
+        sprintf(buffer, "Reloaded in %.1f", player->getReloadTime());
+        break;
+  
+      case LocalPlayer::Sealed:
+        strcat(buffer, "Sealed");
+        break;
+  
+      case LocalPlayer::Zoned:
+        strcat(buffer, "Zoned");
+        break;
+    }
+  }
 
-    case LocalPlayer::Ready:
-      if (flag != NoFlag && Flag::getType(flag) == FlagSticky &&
-				World::getWorld()->allowShakeTimeout()) {
-	/* have a bad flag -- show time left 'til we shake it */
-	statusColor = yellowColor;
-	sprintf(buffer, "%.1f", player->getFlagShakingTime());
-      }
-      else {
-	statusColor = greenColor;
-	strcat(buffer, "Ready");
-      }
-      break;
-
-    case LocalPlayer::Loading:
-      statusColor = redColor;
-      sprintf(buffer, "Reloaded in %.1f", player->getReloadTime());
-      break;
-
-    case LocalPlayer::Sealed:
-      strcat(buffer, "Sealed");
-      break;
-
-    case LocalPlayer::Zoned:
-      strcat(buffer, "Zoned");
-      break;
+  if (roaming) {
+    statusColor = messageColor;
+    strcat(buffer,roamingLabel.getString());
   }
 
   x = 0.5f * ((float)renderer.getWindow().getWidth() -
@@ -1244,6 +1265,59 @@ void			HUDRenderer::renderNotPlaying(SceneRenderer& renderer)
 			0.5f * ((float)width - resumeLabelWidth), y);
     }
   }
+
+  // restore graphics state
+  glPopMatrix();
+}
+
+void			HUDRenderer::renderRoaming(SceneRenderer& renderer)
+{
+  extern boolean gameOver;
+
+  // get view metrics
+  const int width = renderer.getWindow().getWidth();
+  const int height = renderer.getWindow().getViewHeight();
+  const int ox = renderer.getWindow().getOriginX();
+  const int oy = renderer.getWindow().getOriginY();
+
+  // use one-to-one pixel projection
+  glScissor(ox, oy + renderer.getWindow().getPanelHeight(),
+		width, renderer.getWindow().getHeight());
+  glMatrixMode(GL_PROJECTION);
+  glLoadIdentity();
+  glOrtho(0.0, width,
+	-GLdouble(renderer.getWindow().getPanelHeight()),
+	GLdouble(renderer.getWindow().getViewHeight()),
+	-1.0, 1.0);
+  glMatrixMode(GL_MODELVIEW);
+  glPushMatrix();
+  glLoadIdentity();
+
+  // draw alert messages
+  renderAlerts(renderer);
+
+  // show player scoreboard
+  if (renderer.getScore()) renderScoreboard(renderer);
+
+  // draw times
+  renderTimes(renderer);
+
+  // draw message composition
+  if (showCompose)
+    renderCompose(renderer);
+
+  // tell player what to do to start/resume playing
+  LocalPlayer* myTank = LocalPlayer::getMyTank();
+  if (myTank && globalClock.isOn()) {
+    float y = 0.5f * (float)height + bigFont.getSpacing();
+    if (gameOver) {
+      hudColor3fv(messageColor);
+      bigFont.draw(gameOverLabel,
+			0.5f * ((float)width - gameOverLabelWidth), y);
+    }
+  }
+
+  renderStatus(renderer);
 
   // restore graphics state
   glPopMatrix();

@@ -440,19 +440,64 @@ boolean			ComposeDefaultKey::keyRelease(const BzfKeyEvent& key)
 
 #if defined(DEBUG)
 #define FREEZING
-#define ROAMING
 #define SNAPPING
 #endif
 #if defined(FREEZING)
 static boolean		motionFreeze = False;
 #endif
-#if defined(ROAMING)
-static boolean		roaming = False, roamTrack = False;
-static float		roamPos[3] = { 0.0f, 0.0f, MuzzleHeight }, roamDPos[3];
-static float		roamTheta = 0.0f, roamDTheta;
-static float		roamPhi = 0.0f, roamDPhi;
-static float		roamZoom = 60.0f, roamDZoom;
-#endif
+static boolean		roaming = False;
+enum roamingView {
+  roamViewFree = 0,
+  roamViewTrack,
+  roamViewFollow,
+  roamViewFP,
+  roamViewFlag,
+  roamViewCount
+} roamView = roamViewFree;
+static int		roamTrackTank = 0, roamTrackFlag = 0;
+static float		roamPos[3] = { 0.0f, 0.0f, MuzzleHeight },
+			roamDPos[3] = {0.0f, 0.0f, 0.0f};
+static float		roamTheta = 0.0f, roamDTheta = 0.0f;
+static float		roamPhi = 0.0f, roamDPhi = 0.0f;
+static float		roamZoom = 60.0f, roamDZoom = 0.0f;
+
+static void setRoamingLabel()
+{
+  if (player[roamTrackTank]) {
+    switch (roamView) {
+      case roamViewTrack:
+        hud->setRoamingLabel(BzfString("Tracking ") +
+                             player[roamTrackTank]->getCallSign());
+        break;
+  
+      case roamViewFollow:
+        hud->setRoamingLabel(BzfString("Following ") +
+                             player[roamTrackTank]->getCallSign());
+        break;
+  
+      case roamViewFP:
+        hud->setRoamingLabel(BzfString("Driving with ") +
+                             player[roamTrackTank]->getCallSign());
+        break;
+
+      case roamViewFlag:
+        {
+          char buf[10];
+          sprintf(buf,"%d",roamTrackFlag);
+        hud->setRoamingLabel(BzfString("Tracking ") +
+                             Flag::getName(world->getFlag(roamTrackFlag).id) +
+                             " " + buf + " Flag");
+        }
+        break;
+
+      default:
+        hud->setRoamingLabel(BzfString("Roaming"));
+        break;
+    }
+  }
+  else
+    hud->setRoamingLabel("Roaming");
+}
 
 static void		showKeyboardStatus()
 {
@@ -613,68 +658,151 @@ static void		doKeyPlaying(const BzfKeyEvent& key, boolean pressed)
   }
   //  else
 #endif
-#if defined(ROAMING)
-  if (key.ascii == '~' && pressed) {
-    // toggle roaming
-    roaming = !roaming;
-  }
-  else if (roaming && pressed) {
+  if (roaming) {
+    bool roamingkey = true;
     switch (key.button) {
       case BzfKeyEvent::Left:
-	roamDTheta = 60.0f * (roamZoom / 90.0f);
+        if (pressed) {
+          if (key.shift == BzfKeyEvent::ShiftKey)
+            roamDPos[1] =  4.0f * TankSpeed;
+          else
+            roamDTheta = 90.0f * (roamZoom / 90.0f);
+        }
+        else
+          roamDTheta = roamDPos[1] = 0.0f;
 	break;
 
       case BzfKeyEvent::Right:
-	roamDTheta = -60.0f * (roamZoom / 90.0f);
+        if (pressed) {
+          if (key.shift == BzfKeyEvent::ShiftKey)
+            roamDPos[1] = -4.0f * TankSpeed;
+          else
+            roamDTheta = -90.0f * (roamZoom / 90.0f);
+        }
+        else
+          roamDTheta = roamDPos[1] = 0.0f;
 	break;
 
       case BzfKeyEvent::Up:
-	roamDPhi = 60.0f * (roamZoom / 90.0f);
+        if (pressed) {
+          if (key.shift == BzfKeyEvent::ShiftKey)
+            roamDPos[0] =  4.0f * TankSpeed;
+          else if (key.shift == BzfKeyEvent::AltKey)
+            roamDPos[2] =  4.0f * TankSpeed;
+          else
+            roamDPhi = -60.0f * (roamZoom / 90.0f);
+        }
+        else
+          roamDPhi = roamDPos[0] = roamDPos[2] = 0.0f;
 	break;
 
       case BzfKeyEvent::Down:
-	roamDPhi = -60.0f * (roamZoom / 90.0f);
+        if (pressed)
+        {
+          if (key.shift == BzfKeyEvent::ShiftKey)
+            roamDPos[0] = -4.0f * TankSpeed;
+          else if (key.shift == BzfKeyEvent::AltKey)
+            roamDPos[2] = -4.0f * TankSpeed;
+          else
+            roamDPhi = 60.0f * (roamZoom / 90.0f);
+        }
+        else
+          roamDPhi = roamDPos[0] = roamDPos[2] = 0.0f;
 	break;
 
-      case BzfKeyEvent::End:
-	roamDPos[0] = -4.0f * TankSpeed;
-	break;
+      case BzfKeyEvent::F6:
+        if (pressed) {
+          if (roamView == roamViewFree)
+            break;
+          if (roamView == roamViewFlag) {
+            // search next team flag
+            const int maxFlags = world->getMaxFlags();
+            for (int i = 1; i < maxFlags; i++) {
+              int j = (roamTrackFlag - i + maxFlags) % maxFlags;
+              const Flag& flag = world->getFlag(j);
+              if (flag.id >= FirstTeamFlag && flag.id <= LastTeamFlag) {
+                roamTrackFlag = j;
+                break;
+              }
+            }
+          }
+          else {
+            for (int i = 1; i < maxPlayers; i++) {
+              int j = (roamTrackTank - i + maxPlayers) % maxPlayers;
+              if (player[j] && player[j]->isAlive()) {
+                roamTrackTank = j;
+                break;
+              }
+            }
+          }
+      	  setRoamingLabel();
+	 }
+	 break;
 
-      case BzfKeyEvent::Home:
-	roamDPos[0] =  4.0f * TankSpeed;
-	break;
+      case BzfKeyEvent::F7:
+        if (pressed) {
+          if (roamView == roamViewFree)
+            break;
+          if (roamView == roamViewFlag) {
+            // search previous team flag
+            const int maxFlags = world->getMaxFlags();
+            for (int i = 1; i < maxFlags; i++) {
+              int j = (roamTrackFlag + i) % maxFlags;
+              const Flag& flag = world->getFlag(j);
+              if (flag.id >= FirstTeamFlag && flag.id <= LastTeamFlag) {
+                roamTrackFlag = j;
+                break;
+              }
+            }
+          }
+          else {
+            for (int i = 1; i < maxPlayers; i++) {
+              int j = (roamTrackTank + i) % maxPlayers;
+              if (player[j] && player[j]->isAlive()) {
+                    roamTrackTank = j;
+                    break;
+              }
+            }
+          }
+          setRoamingLabel();
+        }
+        break;
 
-      case BzfKeyEvent::Delete:
-	roamDPos[1] =  4.0f * TankSpeed;
-	break;
-
-      case BzfKeyEvent::PageDown:
-	roamDPos[1] = -4.0f * TankSpeed;
-	break;
-
-      case BzfKeyEvent::Insert:
-	roamDPos[2] = -4.0f * TankSpeed;
-	break;
-
-      case BzfKeyEvent::PageUp:
-	roamDPos[2] =  4.0f * TankSpeed;
-	break;
+      case BzfKeyEvent::F8:
+        if (pressed) {
+          roamView = roamingView((roamView + 1) % roamViewCount);
+          if (!world->allowTeamFlags() && roamView==roamViewFlag)
+            roamView = roamingView((roamView + 1) % roamViewCount);
+          setRoamingLabel();
+        }
+        break;
 
       case BzfKeyEvent::F9:
-	roamDZoom =  30.0;
+        if (pressed)
+          roamDZoom =  50.0;
+        else
+          roamDZoom = 0.0;
 	break;
 
       case BzfKeyEvent::F10:
-	roamDZoom = -30.0;
-	break;
+        if (pressed)
+          roamDZoom = -50.0;
+        else
+          roamDZoom = 0.0;
+        break;
 
-      case BzfKeyEvent::F8:
-	roamTrack = !roamTrack;
-	break;
+      case BzfKeyEvent::F11:
+        if (pressed)
+          roamZoom = 60.0;
+
+      default:
+        roamingkey = false;
+        break;
     }
+    if (roamingkey)
+      return;
   }
   //  else
-#endif
 
   if (keymap.isMappedTo(BzfKeyMap::FireShot, key)) {
     fireButton = pressed;
@@ -699,7 +827,7 @@ static void		doKeyPlaying(const BzfKeyEvent& key, boolean pressed)
   }
 
   else if (keymap.isMappedTo(BzfKeyMap::Identify, key)) {
-    if (pressed && !gameOver && !myTank->isAlive() && !myTank->isExploding()) {
+    if (pressed && !gameOver && !Observer && !myTank->isAlive() && !myTank->isExploding()) {
       restartPlaying();
     }
 
@@ -3115,6 +3243,7 @@ static boolean		enterServer(ServerLink* serverLink, World* world,
 
   // @ as first lettter of callsign is observer
   Observer = myTank->getCallSign()[0] == '@';
+  roaming = Observer;
 
   // wait for response
   uint16_t code, len;
@@ -3723,10 +3852,6 @@ static void		playingLoop()
 
     // handle events
     clockAdjust = 0.0f;
-#if defined(ROAMING)
-    roamDPos[0] = roamDPos[1] = roamDPos[2] = 0.0f;
-    roamDTheta = roamDPhi = roamDZoom = 0.0f;
-#endif
 //#ifndef macintosh
     while (!mainWindow->getQuit() && display->isEventPending())
       doEvent(display);
@@ -3761,22 +3886,20 @@ static void		playingLoop()
       lastEpochOffset = epochOffset;
     }
 
-#if defined(ROAMING)
-    {
-      // move roaming camera
-      float c, s;
-      c = cosf(roamTheta * M_PI / 180.0f);
-      s = sinf(roamTheta * M_PI / 180.0f);
-      roamPos[0] += dt * (c * roamDPos[0] - s * roamDPos[1]);
-      roamPos[1] += dt * (c * roamDPos[1] + s * roamDPos[0]);
-      roamPos[2] += dt * roamDPos[2];
-      roamTheta  += dt * roamDTheta;
-      roamPhi    += dt * roamDPhi;
-      roamZoom   += dt * roamDZoom;
-      if (roamZoom < 1.0f) roamZoom = 1.0f;
-      else if (roamZoom > 179.0f) roamZoom = 179.0f;
-    }
-#endif
+    // move roaming camera
+    float c, s;
+    c = cosf(roamTheta * M_PI / 180.0f);
+    s = sinf(roamTheta * M_PI / 180.0f);
+    roamPos[0] += dt * (c * roamDPos[0] - s * roamDPos[1]);
+    roamPos[1] += dt * (c * roamDPos[1] + s * roamDPos[0]);
+    roamPos[2] += dt * roamDPos[2];
+    if (roamPos[2] < 0.0f)
+      roamPos[2] = 0.0f;
+    roamTheta  += dt * roamDTheta;
+    roamPhi    += dt * roamDPhi;
+    roamZoom   += dt * roamDZoom;
+    if (roamZoom < 1.0f) roamZoom = 1.0f;
+    else if (roamZoom > 179.0f) roamZoom = 179.0f;
 
     // update test video format timer
     if (testVideoFormatTimer > 0.0f) {
@@ -3854,7 +3977,7 @@ static void		playingLoop()
       frameCount++;
       cumTime += float(dt);
       if (cumTime >= 2.0) {
-	if (showFPS) hud->setFPS(float(frameCount) / cumTime);
+        if (showFPS) hud->setFPS(float(frameCount) / cumTime);
 	cumTime = 0.0;
 	frameCount = 0;
       }
@@ -3890,8 +4013,8 @@ static void		playingLoop()
       targetPoint[0] = eyePoint[0] + myTankDir[0];
       targetPoint[1] = eyePoint[1] + myTankDir[1];
       targetPoint[2] = eyePoint[2] + myTankDir[2];
-#if defined(ROAMING)
       if (roaming) {
+        float roamViewAngle;
 #ifdef FOLLOWTANK
 	eyePoint[0] = myTankPos[0] - myTankDir[0] * 20;
 	eyePoint[1] = myTankPos[1] - myTankDir[1] * 20;
@@ -3900,22 +4023,68 @@ static void		playingLoop()
 	targetPoint[1] = eyePoint[1] + myTankDir[1];
 	targetPoint[2] = eyePoint[2] + myTankDir[2];
 #else
-	float dir[3];
-	dir[0] = cosf(roamPhi * M_PI / 180.0f) * cosf(roamTheta * M_PI / 180.0f);
-	dir[1] = cosf(roamPhi * M_PI / 180.0f) * sinf(roamTheta * M_PI / 180.0f);
-	dir[2] = sinf(roamPhi * M_PI / 180.0f);
-	eyePoint[0] = roamPos[0];
-	eyePoint[1] = roamPos[1];
-	eyePoint[2] = roamPos[2];
-	if (!roamTrack) {
+        if (player[roamTrackTank] && roamView != roamViewFree) {
+          RemotePlayer *target = player[roamTrackTank];
+          const float *targetTankDir = target->getForward();
+          // fixed camera tracking target
+          if (roamView == roamViewTrack) {
+            eyePoint[0] = roamPos[0];
+            eyePoint[1] = roamPos[1];
+            eyePoint[2] = roamPos[2];
+            targetPoint[0] = target->getPosition()[0];
+            targetPoint[1] = target->getPosition()[1];
+            targetPoint[2] = target->getPosition()[2];
+          }
+          // camera following target
+          else if (roamView == roamViewFollow) {
+            eyePoint[0] = target->getPosition()[0] - targetTankDir[0] * 40;
+            eyePoint[1] = target->getPosition()[1] - targetTankDir[1] * 40;
+            eyePoint[2] = target->getPosition()[2] + MuzzleHeight * 6;
+            targetPoint[0] = target->getPosition()[0];
+            targetPoint[1] = target->getPosition()[1];
+            targetPoint[2] = target->getPosition()[2];
+          }
+          // target's view
+          else if (roamView == roamViewFP) {
+            eyePoint[0] = target->getPosition()[0];
+            eyePoint[1] = target->getPosition()[1];
+            eyePoint[2] = target->getPosition()[2] + MuzzleHeight;
+            targetPoint[0] = eyePoint[0] + targetTankDir[0];
+            targetPoint[1] = eyePoint[1] + targetTankDir[1];
+            targetPoint[2] = eyePoint[2] + targetTankDir[2];
+          }
+          // track team flag
+          else if (roamView == roamViewFlag) {
+            Flag &targetFlag = world->getFlag(roamTrackFlag);
+            eyePoint[0] = roamPos[0];
+            eyePoint[1] = roamPos[1];
+            eyePoint[2] = roamPos[2];
+            targetPoint[0] = targetFlag.position[0];
+            targetPoint[1] = targetFlag.position[1];
+            targetPoint[2] = targetFlag.position[2];
+          }
+          roamViewAngle = (float) (atan2(targetPoint[1]-eyePoint[1],
+                            targetPoint[0]-eyePoint[0]) * 180.0f / M_PI);
+        }
+        // free Roaming
+        else {
+          float dir[3];
+          dir[0] = cosf(roamPhi * M_PI / 180.0f) * cosf(roamTheta * M_PI / 180.0f);
+          dir[1] = cosf(roamPhi * M_PI / 180.0f) * sinf(roamTheta * M_PI / 180.0f);
+          dir[2] = sinf(roamPhi * M_PI / 180.0f);
+          eyePoint[0] = roamPos[0];
+          eyePoint[1] = roamPos[1];
+          eyePoint[2] = roamPos[2];
 	  targetPoint[0] = eyePoint[0] + dir[0];
 	  targetPoint[1] = eyePoint[1] + dir[1];
-	  targetPoint[2] = eyePoint[2] + dir[2];
-	}
+          targetPoint[2] = eyePoint[2] + dir[2];
+          roamViewAngle = roamTheta;
+        }
+        float virtPos[]={eyePoint[0], eyePoint[1], 0};
+        myTank->move(virtPos, roamViewAngle * M_PI / 180.0f);
 #endif
 	fov = roamZoom * M_PI / 180.0f;
       }
-#endif
       sceneRenderer->getViewFrustum().setProjection(fov,
 					1.1f, 1.5f * WorldSize,
 					mainWindow->getWidth(),
@@ -3929,13 +4098,11 @@ static void		playingLoop()
 	myTank->addPlayer(scene, False, False);	// add my tank
 	if (myTank->getFlag() == CloakingFlag)
 	  myTank->setInvisible();		// and make it invisible
-#if defined(ROAMING)
 	else if (roaming)
 	  myTank->setHidden(False);
-#endif
 	else
 	  myTank->setHidden();			// or make it hidden
-	myTank->addShots(scene, False);		// add my shells
+	myTank->addShots(scene, False);	// add my shells
 	myTank->addAntidote(scene);		// add antidote flag
 	world->addFlags(scene);			// add flags
 
@@ -3945,8 +4112,12 @@ static void		playingLoop()
 	  if (player[i]) {
 	    player[i]->updateSparks(dt);
 	    player[i]->addShots(scene, colorblind);
-	    player[i]->addPlayer(scene, colorblind, True);
-	    player[i]->setInvisible(player[i]->getFlag() == CloakingFlag);
+        player[i]->addPlayer(scene, colorblind, True);
+        if (player[i]->getFlag() == CloakingFlag)
+          player[i]->setInvisible();
+        else
+	      player[i]->setHidden(roaming && roamView == roamViewFP &&
+	                           roamTrackTank == i);
 	  }
 
 	// add explosions
@@ -3970,11 +4141,12 @@ static void		playingLoop()
       // turn on scene dimming when showing menu or when
       // we're dead and no longer exploding.
       sceneRenderer->setDim(HUDDialogStack::get()->isActive() ||
-		(myTank && !myTank->isAlive() && !myTank->isExploding()));
+		(myTank && !roaming && !myTank->isAlive() && !myTank->isExploding()));
 
       // set hud state
       hud->setDim(HUDDialogStack::get()->isActive());
       hud->setPlaying(myTank && (myTank->isAlive() && !myTank->isPaused()));
+      hud->setRoaming(roaming);
       hud->setCracks(myTank && !firstLife && !myTank->isAlive());
 
       // get frame start time

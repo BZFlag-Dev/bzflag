@@ -64,6 +64,7 @@ class HUDRenderer {
 
     void		setColor(float r, float g, float b);
     void		setPlaying(boolean playing);
+    void		setRoaming(boolean roaming);
     void		setPlayerHasHighScore(boolean = True);
     void		setTeamHasHighScore(boolean = True);
     void		setHeading(float angle);
@@ -79,6 +80,7 @@ class HUDRenderer {
     void		setMarkerHeading(int index, float heading);
     void		setMarkerColor(int index, float r, float g, float b);
     void		setRestartKeyLabel(const BzfString&);
+    void		setRoamingLabel(const BzfString&);
     void		setTimeLeft(int timeLeftInSeconds);
 
     void		setDim(boolean);
@@ -105,6 +107,7 @@ class HUDRenderer {
     void		renderScoreboard(SceneRenderer&);
     void		renderPlaying(SceneRenderer&);
     void		renderNotPlaying(SceneRenderer&);
+    void		renderRoaming(SceneRenderer&);
     void		renderTimes(SceneRenderer&);
     void		drawPlayerScore(const Player*,
 					float x1, float x2, float x3, float y);
@@ -152,6 +155,7 @@ class HUDRenderer {
     OpenGLTexFont	headingFont;
     OpenGLTexFont	composeFont;
     boolean		playing;
+    boolean		roaming;
     boolean		dim;
     boolean		sDim;
     int			numPlayers;
@@ -175,6 +179,7 @@ class HUDRenderer {
     float		resumeLabelWidth;
     float		gameOverLabelWidth;
     BzfString		restartLabel;
+    BzfString		roamingLabel;
 
     FlashClock		globalClock;
     FlashClock		scoreClock;

@@ -473,10 +473,14 @@ boolean			Player::isDeadReckoningWrong() const
 
 void			Player::doDeadReckoning()
 {
+  if (!isAlive() && !isExploding())
+    return;
+
   // get predicted state
   float predictedPos[3], predictedAzimuth, predictedVel[3];
   notResponding = !getDeadReckoning(predictedPos, &predictedAzimuth,
 								predictedVel);
+
   if (!isAlive()) notResponding = False;
 
   // if hit ground then update input state (since we don't want to fall
