@@ -87,7 +87,7 @@ elsif ( $action eq "ADD" ) {
   # Filter out badly formatted or buggy versions
   exit unless (
     $version =~ /^BZFS/         and
-    $version ne "BZFS107x"
+    $version ne "BZFS1906"
   );
   
   # Test to see whether nameport is valid by attempting to establish a
