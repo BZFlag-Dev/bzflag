@@ -59,7 +59,7 @@ EffectsMenu::EffectsMenu()
   option->setCallback(callback, (void*)"r");
   options = &option->getList();
   options->push_back(std::string("Off"));
-  option->createSlider(11);
+  option->createSlider(10);
   option->update();
   list.push_back(option);
 
@@ -103,7 +103,7 @@ EffectsMenu::EffectsMenu()
   option->setCallback(callback, (void*)"t");
   options = &option->getList();
   options->push_back(std::string("Off"));
-  option->createSlider(11);
+  option->createSlider(10);
   option->update();
   list.push_back(option);
 
@@ -190,7 +190,7 @@ void EffectsMenu::callback(HUDuiControl* w, void* data)
 
   switch (((const char*)data)[0]) {
     case 'r': {
-      int scale = list->getIndex() - 1;
+      int scale = list->getIndex();
       BZDB.setFloat("userRainScale", float(scale) / 10.0f);
       break;
     }
@@ -208,7 +208,7 @@ void EffectsMenu::callback(HUDuiControl* w, void* data)
       break;
     }
     case 't': {
-      int fade = list->getIndex() - 1;
+      int fade = list->getIndex();
       TrackMarks::setUserFade(float(fade) / 10.0f);
       break;
     }
