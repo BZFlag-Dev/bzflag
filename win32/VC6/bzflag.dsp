@@ -212,11 +212,6 @@ SOURCE=..\..\src\bzflag\sound.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\src\bzflag\stars.cxx
-# PROP Exclude_From_Build 1
-# End Source File
-# Begin Source File
-
 SOURCE=..\..\src\bzflag\TargetingUtils.cxx
 # End Source File
 # Begin Source File
@@ -582,6 +577,10 @@ SOURCE=..\..\src\bzflag\sound.h
 # Begin Source File
 
 SOURCE=..\..\include\SphereSceneNode.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\bzflag\stars.h
 # End Source File
 # Begin Source File
 
