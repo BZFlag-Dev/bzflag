@@ -3023,6 +3023,25 @@ static void parseCommand(const char *message, int t)
   }
 }
 
+
+static bool invalidPlayerAction(PlayerInfo p, int t, const char *action) {
+  if (p.isNotPlaying()) {
+    if (!p.isPaused()) {
+      DEBUG1("Player %s tried to %s while not playing\n", p.getCallSign(), action);
+    } else {
+      char buffer[MessageLen];
+      DEBUG1("Player %s tried to %s while paused\n", p.getCallSign(), action);
+      snprintf(buffer, MessageLen, "Autokick: Looks like you tried to %s while paused.", action);
+      sendMessage(ServerPlayer, t, buffer, true);
+      snprintf(buffer, MessageLen, "Invalid attempt to %s while paused", action);
+      removePlayer(t, buffer);
+    }
+    return true;
+  }
+  return false;
+}
+
+
 static void handleCommand(int t, const void *rawbuf)
 {
   NetHandler *handler = NetHandler::getHandler(t);
@@ -3162,6 +3181,11 @@ static void handleCommand(int t, const void *rawbuf)
     case MsgGrabFlag: {
       // data: flag index
       uint16_t flag;
+
+      if (invalidPlayerAction(player[t], t, "grab a flag")) {
+	break;
+      }
+	
       buf = nboUnpackUShort(buf, flag);
       grabFlag(t, int(flag));
       break;
@@ -3180,6 +3204,11 @@ static void handleCommand(int t, const void *rawbuf)
     case MsgCaptureFlag: {
       // data: team whose territory flag was brought to
       uint16_t team;
+
+      if (invalidPlayerAction(player[t], t, "capture a flag")) {
+	break;
+      }
+	
       buf = nboUnpackUShort(buf, team);
       captureFlag(t, TeamColor(team));
       break;
@@ -3187,6 +3216,10 @@ static void handleCommand(int t, const void *rawbuf)
 
     // shot fired
     case MsgShotBegin:
+      if (invalidPlayerAction(player[t], t, "shoot")) {
+	break;
+      }
+
       // Sanity check
       if (len == 39) //wow thats bad
 	shotFired(t, buf, int(len));
@@ -3209,9 +3242,12 @@ static void handleCommand(int t, const void *rawbuf)
 
     // player teleported
     case MsgTeleport: {
-      if (player[t].isObserver())
-	break;
       uint16_t from, to;
+
+      if (invalidPlayerAction(player[t], t, "teleport")) {
+	break;
+      }
+
       buf = nboUnpackUShort(buf, from);
       buf = nboUnpackUShort(buf, to);
       sendTeleport(t, from, to);
@@ -3247,8 +3283,7 @@ static void handleCommand(int t, const void *rawbuf)
       // check if the target player is invalid
       else if (targetPlayer < LastRealPlayer && 
                !player[targetPlayer].isPlaying()) {
-	sendMessage(ServerPlayer, t, "The player you tried to talk to does "
-		    "not exist!");
+	sendMessage(ServerPlayer, t, "The player you tried to talk to does not exist!");
       } else {
 	if (clOptions->filterChat) {
 	  if (clOptions->filterSimple) {
@@ -3350,6 +3385,11 @@ static void handleCommand(int t, const void *rawbuf)
       float timestamp;
       PlayerId id;
       PlayerState state;
+
+      if (invalidPlayerAction(player[t], t, "move")) {
+	break;
+      }
+
       buf = nboUnpackFloat(buf, timestamp);
       buf = nboUnpackUByte(buf, id);
       buf = state.unpack(buf);
