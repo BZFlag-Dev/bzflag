@@ -154,6 +154,7 @@ const std::string StateDatabase::BZDB_SHOTTAILLENGTH	= std::string("_shotTailLen
 const std::string StateDatabase::BZDB_SHOTSKEEPVERTICALV= std::string("_shotsKeepVerticalVelocity");
 const std::string StateDatabase::BZDB_SRRADIUSMULT	= std::string("_srRadiusMult");
 const std::string StateDatabase::BZDB_SQUISHFACTOR	= std::string("_squishFactor");
+const std::string StateDatabase::BZDB_SQUISHTIME	= std::string("_squishTime");
 const std::string StateDatabase::BZDB_SYNCTIME	        = std::string("_syncTime");
 const std::string StateDatabase::BZDB_SYNCLOCATION      = std::string("_syncLocation");
 const std::string StateDatabase::BZDB_TANKANGVEL        = std::string("_tankAngVel");

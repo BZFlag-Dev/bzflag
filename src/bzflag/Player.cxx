@@ -537,25 +537,43 @@ void			Player::setCloaked(bool invisible)
   tankNode->setCloaked(invisible);
 }
 
-void			Player::setLanded(float velocity)
+
+void            Player::setLanded(float velocity)
 {
   float squishiness = BZDB.eval(StateDatabase::BZDB_SQUISHFACTOR);
-  if (squishiness <= 0.0f) {
+  if (squishiness < 0.001f) {
+    return;
+  }
+  float squishTime = BZDB.eval(StateDatabase::BZDB_SQUISHTIME);
+  if (squishTime < 0.001) {
     return;
   }
   const float gravity = BZDB.eval(StateDatabase::BZDB_GRAVITY);
   if (velocity > 0.0f) {
     velocity = 0.0f;
   }
-  // FIXME - setup a BZDB_SQUISHTIME variable?
-  float effectTime = BZDB.eval(StateDatabase::BZDB_FLAGEFFECTTIME);
-  if (effectTime > 60.0f) {
-    effectTime = 60.0f; // more then reasonbale
-  }
-  dimensionsRate[2] = 1.0f / effectTime;
-  dimensionsScale[2] = gravity / (gravity + (velocity * squishiness));
+  // use a fixed decompression rate
+  dimensionsRate[2] = 1.0f / squishTime;
+  
+  // Setup so that a drop height of BZDB_GRAVITY squishes
+  // by a factor of 1/11, when BZDB_SQUISHFACTOR is set to 1
+  // 
+  // G = gravity;  V = velocity;  D = fall distance; K = factor
+  //
+  // V = sqrt (2 * D * G)
+  // V = sqrt(2) * G  { @ D = G)
+  // scale = 1 / (1 + (K * V^2))
+  // scale = 1 / (1 + (K * 2 * G^2))
+  // set: (K * 2 * G^2) = 0.1
+  // K = 0.1 / (2 * G^2)
+  //
+  float k = 0.1f / (2.0f * gravity * gravity);
+  k = k * squishiness;
+  dimensionsScale[2] = 1.0f / (1.0f + (k * (velocity * velocity)));
+  
   return;
 }
+
 
 void			Player::spawnEffect()
 {
@@ -571,10 +589,12 @@ void			Player::spawnEffect()
   return;
 }
 
+
 int			Player::getMaxShots() const
 {
   return World::getWorld()->getMaxShots();
 }
+
 
 void			Player::addShots(SceneDatabase* scene,
 					 bool colorblind) const

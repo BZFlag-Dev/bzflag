@@ -250,7 +250,8 @@ bool WorldInfo::rectHitCirc(float dx, float dy, const float *p, float r) const
   return true;
 }
 
-bool WorldInfo::inRect(const float *p1, float angle, const float *size, float x, float y, float r) const
+bool WorldInfo::inRect(const float *p1, float angle, const float *size, 
+                       float x, float y, float r) const
 {
   // translate origin
   float pa[2];
