@@ -280,9 +280,10 @@ bool PNGImageFile::expand()
 
 bool PNGImageFile::expand()
 {
-  if (bitDepth == 8 && colorDepth != 3)
-    return true;
- 
+  // all indexed color modes require a palette  
+  if (colorDepth == 3 && palette == NULL)
+    return false;
+  
   unsigned char *pData = getLineBuffer();
 
   int width = getWidth();
@@ -292,10 +293,14 @@ bool PNGImageFile::expand()
       for (int i = width-1; i >= 0; i--) {
 	int byteOffset = i/8 + 1;
 	int bit = 7 - i%8;
-	if (*(pData+byteOffset) & bit)
-	  *(pData+i+1) = 0xFF;
-	else
-	  *(pData+i+1) = 0x00;
+        if (colorDepth != 3) {
+          *(pData+i+1) = ((*(pData+byteOffset) >> bit) & 0x01) ? 0xFF : 0x00;
+        } else {
+          PNGRGB &rgb = palette->get(((*(pData+byteOffset) >> bit) & 0x01));
+          *(pData + i*3 + 1) = rgb.red;
+          *(pData + i*3 + 2) = rgb.green;
+          *(pData + i*3 + 3) = rgb.blue;
+        }
       }
     }
     break;
@@ -305,7 +310,14 @@ bool PNGImageFile::expand()
       for (int i = width-1; i >= 0; i--) {
 	int byteOffset = i/4 + 1;
 	int bitShift = 6-2*(i%4);
-	*(pData+i+1) = (((*(pData+byteOffset)) >> bitShift) & 0x03) << 6;
+        if (colorDepth != 3) {
+	  *(pData+i+1) = (((*(pData+byteOffset)) >> bitShift) & 0x03) << 6;
+        } else {
+          PNGRGB &rgb = palette->get(((*(pData+byteOffset)) >> bitShift) & 0x03);
+          *(pData + i*3 + 1) = rgb.red;
+          *(pData + i*3 + 2) = rgb.green;
+          *(pData + i*3 + 3) = rgb.blue;
+        }
       }
     }
     break;
@@ -315,7 +327,14 @@ bool PNGImageFile::expand()
       for (int i = width-1; i >= 0; i--) {
 	int byteOffset = i/2+1;
 	int bitShift = 4-4*(i%2);
-	*(pData+i+1) = (((*(pData+byteOffset)) >> bitShift) & 0x0F) << 4;
+        if (colorDepth != 3) {
+	  *(pData+i+1) = (((*(pData+byteOffset)) >> bitShift) & 0x0F) << 4;
+        } else {
+          PNGRGB &rgb = palette->get(((*(pData+byteOffset)) >> bitShift) & 0x0F);
+          *(pData + i*3 + 1) = rgb.red;
+          *(pData + i*3 + 2) = rgb.green;
+          *(pData + i*3 + 3) = rgb.blue;
+        }
       }
     }
     break;
@@ -323,15 +342,16 @@ bool PNGImageFile::expand()
     case 8:
     {
       if (colorDepth == 3) {
-	if (palette == NULL)
-	  return false;
-
+        // colormapped
 	for (int i = width-1; i >= 0; i--) {
 	  PNGRGB &rgb = palette->get(*(pData+i));
 	  *(pData + i*3 + 1) = rgb.red;
 	  *(pData + i*3 + 2) = rgb.green;
 	  *(pData + i*3 + 3) = rgb.blue;
 	}
+      } else {
+        // already in native color
+        return true;
       }
     }
     break;
