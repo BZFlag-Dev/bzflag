@@ -2641,7 +2641,7 @@ static float rabbitRank (PlayerInfo& player) {
     return 0.5;
   float average = (float)player.wins/(float)sum;
   // IIRC that is how wide is the gaussian
-  float penalty = (1 - 0.5 / sqrt((float)sum));
+  float penalty = (1.0f - 0.5f / sqrt((float)sum));
   return average * penalty;
 }
 

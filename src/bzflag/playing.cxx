@@ -2211,8 +2211,8 @@ static std::string cmdScreenshot(const std::string&, const CommandManager::ArgLi
     if (BZDB.isSet("gamma")) {
       float gamma = (float) atof(BZDB.get("gamma").c_str());
       for(int i = 0; i < 256; i++) {
-	float lum = ((float) i) / 256.0;
-	float lumadj = pow(lum, 1.0 / gamma);
+	float lum = ((float) i) / 256.0f;
+	float lumadj = pow(lum, 1.0f / gamma);
 	gammaTable[i] = (unsigned char) (lumadj * 256);
       }
     }
