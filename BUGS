@@ -1,7 +1,7 @@
 recent bugs
 ------------
 
-- Tank/base stuck problem has reappeared with server spawning.
+  Tank/base stuck problem has reappeared with server spawning.
   LocalPlayer::doUpdateMotion is foobared.
   When spawning on an elevated base, You tank's location is set to OnGround
   due to
@@ -20,6 +20,17 @@ recent bugs
 
   This code is in real need of refactoring, 
 
+  I (Tupone) tryed that with the hix2.bzw world.
+  I was stucked too, and the problem was the task spawned inside the base.
+  i.e.: z base position is 29, z height is 1, tank was spawned at 29.
+  This is because the base height does not go through the wire and is
+  set to 1 by the client if is elevated, 0 otherwise. 
+  Bzfs value come from the world file. 
+  Setting base height to 1 on the file let it works.
+  Forcing base height to 1 was probably due to a bug "falling throug the floor'.
+  Now there isn't.
+  Action: breaking protocols and pass the base height?
+          changing hix.bzw?
 
 - bzfls.pl doesn't properly list multiple servers from the same ip (brlcad.org
   is a good example)
