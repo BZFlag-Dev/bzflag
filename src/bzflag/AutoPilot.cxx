@@ -96,9 +96,9 @@ ShotPath *findWorstBullet(float &minDistance)
         continue; //Theoretically Roger could triangulate the sound
       if (player[t]->getFlag() == Flags::PhantomZone && player[t]->isFlagActive() &&
       		!(myTank->getFlag() == Flags::PhantomZone && myTank->isFlagActive()))
-    		continue;
+    	continue;
       if (shot->getFlag() == Flags::Laser && myTank->getFlag() == Flags::Cloaking)
-				continue; //cloaked tanks can't die from lasers
+	continue; //cloaked tanks can't die from lasers
 
       const float* shotPos = shot->getPosition();
       if ((fabs(shotPos[2] - pos[2]) > BZDBCache::tankHeight) && (shot->getFlag() != Flags::GuidedMissile))
@@ -442,8 +442,8 @@ bool lookForFlag(float &rotation, float &speed)
      || (world->getFlag(i).status != FlagOnGround))
       continue;
 
-		if (world->getFlag(i).type->flagTeam != NoTeam)
-			teamFlag = i;
+    if (world->getFlag(i).type->flagTeam != NoTeam)
+      teamFlag = i;
     const float* fpos = world->getFlag(i).position;
     if (fpos[2] == pos[2]) {
       float dist = TargetingUtils::getTargetDistance(pos, fpos);
@@ -458,8 +458,8 @@ bool lookForFlag(float &rotation, float &speed)
     }
   }
 
-	if (teamFlag != -1 && (minDist < 10.0f || closestFlag == -1))
-		closestFlag = teamFlag; //FIXME: should a team flag be more significant than a closer flag?
+  if (teamFlag != -1 && (minDist < 10.0f || closestFlag == -1))
+    closestFlag = teamFlag; //FIXME: should a team flag be more significant than a closer flag?
   if (closestFlag != -1) {
     if (minDist < 10.0f || teamFlag != -1) {
       if (myTank->getFlag() != Flags::Null) {
@@ -569,7 +569,7 @@ bool fireAtTank()
 	  if ((player[t]->getFlag() == Flags::PhantomZone) 
 	  &&  (player[t]->isFlagActive()) &&
       	(!(myTank->getFlag() == Flags::PhantomZone && myTank->isFlagActive()) ||
-					(myTank->getFlag() != Flags::ShockWave && myTank->getFlag() != Flags::SuperBullet)))
+	  (myTank->getFlag() != Flags::ShockWave && myTank->getFlag() != Flags::SuperBullet)))
 	    continue;
 
 	  const float *tp = player[t]->getPosition();
@@ -582,11 +582,11 @@ bool fireAtTank()
           enemyPos[2] += 0.3f * tv[2];
 	  if (enemyPos[2] < 0.0f)
 	    enemyPos[2] = 0.0f;
-			float dist = TargetingUtils::getTargetDistance( pos, enemyPos );
-      if (dist <= BZDB.eval(StateDatabase::BZDB_SHOCKOUTRADIUS)) {
-        if (!myTank->validTeamTarget(player[t])) {
-          hasSWTarget = false;
-          	t = curMaxPlayers;
+	  float dist = TargetingUtils::getTargetDistance( pos, enemyPos );
+	  if (dist <= BZDB.eval(StateDatabase::BZDB_SHOCKOUTRADIUS)) {
+	    if (!myTank->validTeamTarget(player[t])) {
+	      hasSWTarget = false;
+	      t = curMaxPlayers;
 	    } else {
 	      hasSWTarget = true;
 	    }
