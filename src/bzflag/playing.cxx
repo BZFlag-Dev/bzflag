@@ -5134,7 +5134,11 @@ static World*		makeWorld(ServerLink* serverLink)
     isTemp = hexDigest[0] == 't';
 
     worldPath = getCacheDirectoryName();
+#ifdef _WIN32
+    worldPath += "\\";
+#else
     worldPath += "/";
+#endif
     worldPath += hexDigest;
     worldPath += ".bwc";
     cachedWorld = FILEMGR.createDataInStream(worldPath, true);
