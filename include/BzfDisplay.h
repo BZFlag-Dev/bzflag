@@ -75,6 +75,7 @@ class BzfDisplay {
     int			defaultResolution;
     int			currentResolution;
     ResInfo**		resolutions;
+  protected:
     int                 modeIndex;
 };
 

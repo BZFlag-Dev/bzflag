@@ -16,6 +16,7 @@
 #include <stdio.h>
 #include "SDLDisplay.h"
 #include "OpenGLGState.h"
+#include <iostream>
 
 static int mx = 0;
 static int my = 0;
@@ -432,13 +433,10 @@ void SDLDisplay::createWindow() {
   int    height;
   Uint32 flags = SDL_OPENGL;
   // getting width, height & flags for SetVideoMode
+  getWindowSize(width, height);
   if (fullScreen) {
-    width  = getWidth();
-    height = getHeight();
     flags |= SDL_FULLSCREEN;
   } else {
-    width  = base_width;
-    height = base_height;
     flags |= SDL_RESIZABLE;
   }
   // if they are the same, don't bother building a new window
@@ -465,8 +463,13 @@ void SDLDisplay::setWindowSize(int _width, int _height) {
 
 void SDLDisplay::getWindowSize(int& width, int& height) const {
   if (fullScreen) {
-    width  = getWidth();
-    height = getHeight();
+    if (modeIndex >= 0) {
+      width  = getResolution(modeIndex)->width;
+      height = getResolution(modeIndex)->height;
+    } else {
+      width  = 640;
+      height = 480;
+    }
   } else {
     width  = base_width;
     height = base_height;
