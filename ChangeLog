@@ -2,6 +2,11 @@
 
 			     BZFlag release notes
 
+BZFlag 1.11
+-----------
+
+* Rip out the ref counted texture system, as TM controls this now - Dave Brosius
+
 BZFlag 1.10.4 "not a smurf"
 ---------------------------
 
