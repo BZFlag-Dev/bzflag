@@ -15,7 +15,7 @@
 
 DEPTH = .
 
-default targets clean clobber pristine man: config-sys _force
+default targets clean clobber pristine man tarball: config-sys _force
 	$(MAKE) -f Make-sys $@
 
 all: targets man
@@ -32,6 +32,7 @@ AVAILTARGETS =		\
 	linux-i386	\
 	linux-ppc	\
 	solaris		\
+	solaris-SUNWspro \
 	$(NULL)
 
 config-sys:
@@ -44,32 +45,33 @@ config-sys:
 	@echo "  make solaris"
 	@echo "  make win32"
 	@echo "Append -debug for a debug build (e.g. make linux-debug)."
+	@echo "Append -noopt for a non-optimized build (e.g. make linux-noopt)."
 	@exit 1
+
+configmsg:
+	@echo "Configured.  Following targets available:"
+	@echo "  make           build programs"
+	@echo "  make man       build man pages"
+	@echo "  make all       build all the above"
+	@echo "  make package   build an installable package from the above"
+	@echo "  make clean     remove intermediate files"
+	@echo "  make clobber   remove everything built by make all"
+	@echo "  make pristine  remove everything except original files"
+	@echo "  make tarball   makes pristine then creates source tarball"
 
 $(AVAILTARGETS): _force
 	@cd configs; $(MAKE) $(MFLAGS) PLATFORM=$@ default
-	@echo "Configured.  Following targets available:"
-	@echo "  make           build programs"
-	@echo "  make man       build man pages"
-	@echo "  make all       build all the above"
-	@echo "  make package   build an installable package from the above"
-	@echo "  make clean     remove intermediate files"
-	@echo "  make clobber   remove everything built by make all"
-	@echo "  make pristine  remove everything except original files"
+	@$(MAKE) $(MFLAGS) configmsg
 
 $(AVAILTARGETS:=-debug): _force
 	@cd configs; $(MAKE) $(MFLAGS) PLATFORM=$(@:-debug=) debug
-	@echo "Configured.  Following targets available:"
-	@echo "  make           build programs"
-	@echo "  make man       build man pages"
-	@echo "  make all       build all the above"
-	@echo "  make package   build an installable package from the above"
-	@echo "  make clean     remove intermediate files"
-	@echo "  make clobber   remove everything built by make all"
-	@echo "  make pristine  remove everything except original files"
+	@$(MAKE) $(MFLAGS) configmsg
 
-win32 win32-debug: _force
+$(AVAILTARGETS:=-noopt): _force
+	@cd configs; $(MAKE) $(MFLAGS) PLATFORM=$(@:-noopt=) noopt
+	@$(MAKE) $(MFLAGS) configmsg
+
+win32 win32-debug win32-noopt: _force
 	@echo "win32 makefiles not available yet.  use the msdev"
 	@echo "workspace and project files in the win32 directory."
 	@echo "see README.WIN32 for build instructions."
-

@@ -31,7 +31,6 @@ class WinMedia : public BzfMedia {
     void		sleep(float);
     boolean		openAudio();
     void		closeAudio();
-    boolean		isAudioBrainDead() const;
     boolean		startAudioThread(void (*)(void*), void*);
     void		stopAudioThread();
     boolean		hasAudioThread() const;

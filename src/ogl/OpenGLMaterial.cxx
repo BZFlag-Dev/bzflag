@@ -11,6 +11,7 @@
  */
 
 #include "OpenGLMaterial.h"
+#include "OpenGLGState.h"
 
 //
 // OpenGLMaterial::Rep
@@ -49,8 +50,9 @@ OpenGLMaterial::Rep*	OpenGLMaterial::Rep::getRep(
 OpenGLMaterial::Rep::Rep(const GLfloat* _specular,
 				const GLfloat* _emissive,
 				GLfloat _shininess) :
-				shininess(_shininess),
-				refCount(1)
+				init(False),
+				refCount(1),
+				shininess(_shininess)
 {
   prev = NULL;
   next = head;
@@ -67,15 +69,13 @@ OpenGLMaterial::Rep::Rep(const GLfloat* _specular,
   emissive[3] = 1.0f;
 
   list = glGenLists(1);
-  glNewList(list, GL_COMPILE);
-  glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, specular);
-  glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, emissive);
-  glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, shininess);
-  glEndList();
+  OpenGLGState::registerContextInitializer(initContext, (void*)this);
 }
 
 OpenGLMaterial::Rep::~Rep()
 {
+  OpenGLGState::unregisterContextInitializer(initContext, (void*)this);
+
   // free OpenGL display list
   if (list) glDeleteLists(list, 1);
 
@@ -93,6 +93,24 @@ void			OpenGLMaterial::Rep::ref()
 void			OpenGLMaterial::Rep::unref()
 {
   if (--refCount == 0) delete this;
+}
+
+void			OpenGLMaterial::Rep::execute()
+{
+  if (!init) {
+    glNewList(list, GL_COMPILE);
+    glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, specular);
+    glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, emissive);
+    glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, shininess);
+    glEndList();
+    init = True;
+  }
+  glCallList(list);
+}
+
+void			OpenGLMaterial::Rep::initContext(void* self)
+{
+  ((Rep*)self)->init = False;
 }
 
 //
@@ -162,5 +180,5 @@ GLuint			OpenGLMaterial::getList() const
 
 void			OpenGLMaterial::execute() const
 {
-  if (rep) glCallList(rep->list);
+  if (rep) rep->execute();
 }

@@ -63,6 +63,9 @@ class BackgroundRenderer {
 			BackgroundRenderer(const BackgroundRenderer&);
     BackgroundRenderer&	operator=(const BackgroundRenderer&);
 
+    void		doInitDisplayLists();
+    static void		initDisplayLists(void*);
+
   private:
     // rendering state
     boolean		blank;
@@ -93,6 +96,7 @@ class BackgroundRenderer {
     boolean		mountainsAvailable;
     boolean		mountainsVisible;
     int			numMountainTextures;
+    int			mountainsMinWidth;
     OpenGLGState*	mountainsGState;
     OpenGLDisplayList*	mountainsList;
 

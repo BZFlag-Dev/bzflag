@@ -17,6 +17,11 @@
 #include "BzfMedia.h"
 #include <math.h>
 
+const float		SpeedOfSound = 343.0f;			// meters/sec
+const float		MinEventDist = 20.0f * TankRadius;	// meters
+const int		MaxEvents = 30;
+const float		InterAuralDistance = 0.1f;		// meters
+
 /*
  * producer/consumer shared data types and defines
  */
@@ -46,6 +51,7 @@ typedef struct {
   double		dmlength;	/* mlength as a double minus one */
   float*		data;		/* left in even, right in odd */
   float*		mono;		/* avg of channels for world sfx */
+  float*		monoRaw;	/* mono with silence before & after */
   double		duration;	/* time to play sound */
 } AudioSamples;
 
@@ -86,7 +92,7 @@ static const char*	soundFiles[] = {
 				"flag_grab",
 				"boom"
 			};
-#define	SFX_COUNT	(sizeof(soundFiles) / sizeof(soundFiles[0]))
+#define	SFX_COUNT	((int)(sizeof(soundFiles) / sizeof(soundFiles[0])))
 
 /*
  * producer/consumer shared arena
@@ -108,6 +114,7 @@ void			openSound(const char*)
   for (int i = 0; i < SFX_COUNT; i++) {
     soundSamples[i].data = NULL;
     soundSamples[i].mono = NULL;
+    soundSamples[i].monoRaw = NULL;
   }
 
   // open audio data files
@@ -180,7 +187,7 @@ static void		freeAudioSamples(void)
 {
   for (int i = 0; i < SFX_COUNT; i++) {
     delete[] soundSamples[i].data;
-    delete[] soundSamples[i].mono;
+    delete[] soundSamples[i].monoRaw;
   }
 }
 
@@ -195,16 +202,30 @@ static int		resampleAudio(const float* in,
     // return 0;
   }
 
+  // compute safety margin for left/right ear time discrepancy.  since
+  // each ear can hear a sound at slightly different times one ear might
+  // be hearing a sound before the other hears it or one ear may no longer
+  // be hearing a sound that the other is still hearing.  if we didn't
+  // account for this we'd end up sampling outside the mono buffer (and
+  // only the mono buffer because the data buffer is only used for local
+  // sounds, which don't have this effect).  to avoid doing a lot of tests
+  // in inner loops, we'll just put some silent samples before and after
+  // the sound effect.  here we compute how many samples can be needed.
+  const int safetyMargin = (int)(1.5f + InterAuralDistance / SpeedOfSound *
+		   (float)PlatformFactory::getMedia()->getAudioOutputRate());
+
+  // fill in samples structure
   out->length = 2 * frames;
   out->mlength = out->length >> 1;
   out->dmlength = double(out->mlength - 1);
   out->duration = (float)out->mlength /
 		  (float)PlatformFactory::getMedia()->getAudioOutputRate();
   out->data = new float[out->length];
-  out->mono = new float[out->mlength];
-  if (!out->data || !out->mono) {
+  out->monoRaw = new float[out->mlength + 2 * safetyMargin];
+  out->mono = out->monoRaw + safetyMargin;
+  if (!out->data || !out->monoRaw) {
     delete[] out->data;
-    delete[] out->mono;
+    delete[] out->monoRaw;
     return 0;
   }
 
@@ -214,6 +235,11 @@ static int		resampleAudio(const float* in,
     out->data[dst+1] = GlobalAtten * in[dst+1];
     out->mono[dst>>1] = 0.5f * (out->data[dst] + out->data[dst+1]);
   }
+
+  // silence in safety margins
+  for (int i = 0; i < safetyMargin; ++i)
+    out->monoRaw[i] = out->monoRaw[out->mlength + safetyMargin + i] = 0.0f;
+
   return 1;
 }
 
@@ -319,9 +345,6 @@ int			getSoundVolume()
  * Below this point is stuff for real-time audio thread
  */
 
-const float		SpeedOfSound = 343.0f;			// meters/sec
-const float		MinEventDist = 20.0f * TankRadius;	// meters
-const int		MaxEvents = 30;
 #define	SEF_WORLD	1
 #define	SEF_FIXED	2
 #define	SEF_IGNORING	4
@@ -338,7 +361,8 @@ typedef struct {
   AudioSamples*		samples;		/* event sound effect */
   boolean		busy;			/* true iff in use */
   long			ptr;			/* current sample */
-  double		ptrFrac;		/* fractional step ptr */
+  double		ptrFracLeft;		/* fractional step ptr */
+  double		ptrFracRight;		/* fractional step ptr */
   int			flags;			/* state info */
   float			x, y, z;		/* event location */
   double		time;			/* time of event */
@@ -346,6 +370,8 @@ typedef struct {
   float			lastRightAtten;
   float			dx, dy, dz;		/* last relative position */
   float			d;			/* last relative distance */
+  float			dLeft;			/* last relative distance */
+  float			dRight;			/* last relative distance */
   float			amplitude;		/* last sfx amplitude */
 } SoundEvent;
 
@@ -356,14 +382,16 @@ static double		endTime;
 
 /* last position of the receiver */
 static float		lastX, lastY, lastZ, lastTheta;
-static float		forwardX, forwardZ;
-static float		leftX, leftZ;
+static float		lastXLeft, lastYLeft;
+static float		lastXRight, lastYRight;
+static float		forwardX, forwardY;
+static float		leftX, leftY;
 static int		positionDiscontinuity;
 
 /* motion info for Doppler shift */
 static float		velX;
-//static float		velY;
-static float		velZ;
+static float		velY;
+//static float		velZ;
 
 /* volume */
 static float		volumeAtten = 1.0f;
@@ -387,15 +415,28 @@ static void		recalcEventDistance(SoundEvent* e)
   e->dx = e->x - lastX;
   e->dy = e->y - lastY;
   e->dz = e->z - lastZ;
-  const float d2 = e->dx * e->dx + e->dy * e->dy + e->dz * e->dz;
+  const float d2 = e->dx * e->dx + e->dy * e->dy;
+  const float d3 = e->dz * e->dz;
   if (d2 <= 1.0f) {
     e->d = 0.0f;
+    e->dLeft = 0.0f;
+    e->dRight = 0.0f;
   }
   else {
-    e->d = sqrtf(d2);
-    e->dx /= e->d;
-    e->dz /= e->d;
+    const float d = 1.0f / sqrtf(d2);
+    e->dx *= d;
+    e->dy *= d;
+    e->d = sqrtf(d2 + d3);
     e->amplitude = (e->d < MinEventDist) ? 1.0f : MinEventDist / e->d;
+
+    // compute distance to each ear
+    float dx, dy;
+    dx = e->x - lastXLeft;
+    dy = e->y - lastYLeft;
+    e->dLeft = sqrtf(dx * dx + dy * dy + d3);
+    dx = e->x - lastXRight;
+    dy = e->y - lastYRight;
+    e->dRight = sqrtf(dx * dx + dy * dy + d3);
   }
 }
 
@@ -428,14 +469,24 @@ static int		recalcEventIgnoring(SoundEvent* e)
     float timeFromFront;
     if (e->flags & SEF_IGNORING) {
       /* compute time from sound front */
-      timeFromFront = travelTime - eventDistance;
+      timeFromFront = travelTime - e->dLeft / SpeedOfSound;
       if (!positionDiscontinuity && timeFromFront < 0.0f) timeFromFront = 0.0f;
 
-      /* recompute sample pointer */
-      e->ptrFrac = timeFromFront *
+      /* recompute sample pointers */
+      e->ptrFracLeft = timeFromFront *
 		   (float)PlatformFactory::getMedia()->getAudioOutputRate();
-      if (e->ptrFrac >= 0.0 && e->ptrFrac < e->samples->dmlength) {
+      if (e->ptrFracLeft >= 0.0 && e->ptrFracLeft < e->samples->dmlength) {
 	/* not ignoring anymore */
+	e->flags &= ~SEF_IGNORING;
+	useChange = 1;
+      }
+
+      /* now do it again for right ear */
+      timeFromFront = travelTime - e->dRight / SpeedOfSound;
+      if (!positionDiscontinuity && timeFromFront < 0.0f) timeFromFront = 0.0f;
+      e->ptrFracRight = timeFromFront *
+		   (float)PlatformFactory::getMedia()->getAudioOutputRate();
+      if (e->ptrFracRight >= 0.0 && e->ptrFracRight < e->samples->dmlength) {
 	e->flags &= ~SEF_IGNORING;
 	useChange = 1;
       }
@@ -449,10 +500,23 @@ static int		recalcEventIgnoring(SoundEvent* e)
 
 static void		receiverMoved(float* data)
 {
+  // save data
   lastX = data[0];
   lastY = data[1];
   lastZ = data[2];
   lastTheta = data[3];
+
+  // compute forward and left vectors
+  forwardX = cosf(lastTheta);
+  forwardY = sinf(lastTheta);
+  leftX = -forwardY;
+  leftY = forwardX;
+
+  // compute position of each ear
+  lastXLeft = lastX + 0.5f * InterAuralDistance * leftX;
+  lastYLeft = lastY + 0.5f * InterAuralDistance * leftY;
+  lastXRight = lastX - 0.5f * InterAuralDistance * leftX;
+  lastYRight = lastY - 0.5f * InterAuralDistance * leftY;
 
   for (int i = 0; i < MaxEvents; i++)
     if (events[i].busy && events[i].flags & SEF_WORLD)
@@ -464,8 +528,8 @@ static void		receiverVelocity(float* data)
   static const float s = 1.0f / SpeedOfSound;
 
   velX = s * data[0];
-//  velY = s * data[1];
-  velZ = s * data[2];
+  velY = s * data[1];
+//  velZ = s * data[2];
 }
 
 static int		addLocalContribution(SoundEvent* e, long* len)
@@ -477,10 +541,12 @@ static int		addLocalContribution(SoundEvent* e, long* len)
   if (numSamples > audioBufferSize) numSamples = audioBufferSize;
 
   if (!mutingOn && numSamples != 0) {
-    if (numSamples > *len)
+    /* initialize new areas of scratch space and adjust output sample count */
+    if (numSamples > *len) {
       for (n = *len; n < numSamples; n += 2)
 	scratch[n] = scratch[n+1] = 0.0f;
-    *len = numSamples;
+      *len = numSamples;
+    }
 
     // add contribution -- conditionals outside loop for run-time efficiency
     src = e->samples->data + e->ptr;
@@ -538,17 +604,12 @@ static void		getWorldStuff(SoundEvent *e, float* la, float* ra,
     rightAtten = 1.0f;
   }
   else {
-    float t = 0.9f * fabsf(forwardX * e->dx + forwardZ * e->dz) + 0.1f;
-    if (leftX * e->dx + leftZ * e->dz < 0.0f) {
-      leftAtten = t * e->amplitude;
-      rightAtten = e->amplitude;
-    }
-    else {
-      leftAtten = e->amplitude;
-      rightAtten = t * e->amplitude;
-    }
+    const float ff = (2.0f + forwardX * e->dx + forwardY * e->dy) / 3.0f;
+    const float fl = (2.0f + leftX * e->dx + leftY * e->dy) / 3.0f;
+    leftAtten = ff * fl * e->amplitude;
+    rightAtten = ff * (4.0f/3.0f - fl) * e->amplitude;
   }
-  if (e->ptrFrac == 0.0f) {
+  if (e->ptrFracLeft == 0.0f || e->ptrFracRight == 0.0f) {
     e->lastLeftAtten = leftAtten;
     e->lastRightAtten = rightAtten;
   }
@@ -556,15 +617,16 @@ static void		getWorldStuff(SoundEvent *e, float* la, float* ra,
   *ra = mutingOn ? 0.0f : rightAtten * volumeAtten;
 
   /* compute doppler effect */
-  *sampleStep = double(1.0 + velX * e->dx + velZ * e->dz);
+  // FIXME -- should be per ear
+  *sampleStep = double(1.0 + velX * e->dx + velY * e->dy);
 }
 
 static int		addWorldContribution(SoundEvent* e, long* len)
 {
   int		fini = 0;
-  long		n, nm;
+  long		n, nmL, nmR;
   float*	src = e->samples->mono;
-  float		leftAtten, rightAtten, frac, fsample;
+  float		leftAtten, rightAtten, fracL, fracR, fsampleL, fsampleR;
   double	sampleStep;
 
   if (e->flags & SEF_IGNORING) return 0;
@@ -572,45 +634,59 @@ static int		addWorldContribution(SoundEvent* e, long* len)
   getWorldStuff(e, &leftAtten, &rightAtten, &sampleStep);
   if (sampleStep <= 0.0) fini = 1;
 
-  if (audioBufferSize > *len)
+  /* initialize new areas of scratch space and adjust output sample count */
+  if (audioBufferSize > *len) {
     for (n = *len; n < audioBufferSize; n += 2)
       scratch[n] = scratch[n+1] = 0.0f;
-  *len = audioBufferSize;
+    *len = audioBufferSize;
+  }
 
   // add contribution with crossfade
   for (n = 0; !fini && n < FadeDuration; n += 2) {
     // get sample position (to subsample resolution)
-    nm = (long)e->ptrFrac;
-    frac = (float)(e->ptrFrac - floor(e->ptrFrac));
+    nmL = (long)e->ptrFracLeft;
+    nmR = (long)e->ptrFracRight;
+    fracL = (float)(e->ptrFracLeft - floor(e->ptrFracLeft));
+    fracR = (float)(e->ptrFracRight - floor(e->ptrFracRight));
 
     // get sample (lerp closest two samples)
-    fsample = (1.0f - frac) * src[nm] + frac * src[nm+1];
+    fsampleL = (1.0f - fracL) * src[nmL] + fracL * src[nmL+1];
+    fsampleR = (1.0f - fracR) * src[nmR] + fracR * src[nmR+1];
 
     // filter and accumulate
-    scratch[n] += fsample * (fadeIn[n] * leftAtten +
+    scratch[n] += fsampleL * (fadeIn[n] * leftAtten +
 				fadeOut[n] * e->lastLeftAtten);
-    scratch[n+1] += fsample * (fadeIn[n] * rightAtten +
+    scratch[n+1] += fsampleR * (fadeIn[n] * rightAtten +
 				fadeOut[n] * e->lastRightAtten);
 
     // next sample
-    fini = ((e->ptrFrac += sampleStep) >= e->samples->dmlength);
+    if ((e->ptrFracLeft += sampleStep) >= e->samples->dmlength)
+      fini = True;
+    if ((e->ptrFracRight += sampleStep) >= e->samples->dmlength)
+      fini = True;
   }
 
   // add contribution
   for (; !fini && n < audioBufferSize; n += 2) {
     // get sample position (to subsample resolution)
-    nm = (long)e->ptrFrac;
-    frac = (float)(e->ptrFrac - floor(e->ptrFrac));
+    nmL = (long)e->ptrFracLeft;
+    nmR = (long)e->ptrFracRight;
+    fracL = (float)(e->ptrFracLeft - floor(e->ptrFracLeft));
+    fracR = (float)(e->ptrFracRight - floor(e->ptrFracRight));
 
     // get sample (lerp closest two samples)
-    fsample = (1.0f - frac) * src[nm] + frac * src[nm+1];
+    fsampleL = (1.0f - fracL) * src[nmL] + fracL * src[nmL+1];
+    fsampleR = (1.0f - fracR) * src[nmR] + fracR * src[nmR+1];
 
     // filter and accumulate
-    scratch[n] += fsample * leftAtten;
-    scratch[n+1] += fsample * rightAtten;
+    scratch[n] += fsampleL * leftAtten;
+    scratch[n+1] += fsampleR * rightAtten;
 
     // next sample
-    fini = ((e->ptrFrac += sampleStep) >= e->samples->dmlength);
+    if ((e->ptrFracLeft += sampleStep) >= e->samples->dmlength)
+      fini = True;
+    if ((e->ptrFracRight += sampleStep) >= e->samples->dmlength)
+      fini = True;
   }
   e->lastLeftAtten = leftAtten;
   e->lastRightAtten = rightAtten;
@@ -632,55 +708,66 @@ static int		addWorldContribution(SoundEvent* e, long* len)
 
 static int		addFixedContribution(SoundEvent* e, long* len)
 {
-  long		n, nm;
+  long		n, nmL, nmR;
   float*	src = e->samples->mono;
-  float		leftAtten, rightAtten, frac, fsample;
+  float		leftAtten, rightAtten, fracL, fracR, fsampleL, fsampleR;
   double	sampleStep;
 
   getWorldStuff(e, &leftAtten, &rightAtten, &sampleStep);
 
-  /* initialize untouched areas of scratch space */
-  if (audioBufferSize > *len)
+  /* initialize new areas of scratch space and adjust output sample count */
+  if (audioBufferSize > *len) {
     for (n = *len; n < audioBufferSize; n += 2)
       scratch[n] = scratch[n+1] = 0.0f;
-  *len = audioBufferSize;
+    *len = audioBufferSize;
+  }
 
   // add contribution with crossfade
   for (n = 0; n < FadeDuration; n += 2) {
     // get sample position (to subsample resolution)
-    nm = (long)e->ptrFrac;
-    frac = (float)(e->ptrFrac - floor(e->ptrFrac));
+    nmL = (long)e->ptrFracLeft;
+    nmR = (long)e->ptrFracRight;
+    fracL = (float)(e->ptrFracLeft - floor(e->ptrFracLeft));
+    fracR = (float)(e->ptrFracRight - floor(e->ptrFracRight));
 
     // get sample (lerp closest two samples)
-    fsample = (1.0f - frac) * src[nm] + frac * src[nm+1];
+    fsampleL = (1.0f - fracL) * src[nmL] + fracL * src[nmL+1];
+    fsampleR = (1.0f - fracR) * src[nmR] + fracR * src[nmR+1];
 
     // filter and accumulate
-    scratch[n] += fsample * (fadeIn[n] * leftAtten +
+    scratch[n] += fsampleL * (fadeIn[n] * leftAtten +
 				fadeOut[n] * e->lastLeftAtten);
-    scratch[n+1] += fsample * (fadeIn[n] * rightAtten +
+    scratch[n+1] += fsampleR * (fadeIn[n] * rightAtten +
 				fadeOut[n] * e->lastRightAtten);
 
     // next sample
-    if ((e->ptrFrac += sampleStep) >= e->samples->dmlength)
-      e->ptrFrac -= e->samples->dmlength;
+    if ((e->ptrFracLeft += sampleStep) >= e->samples->dmlength)
+      e->ptrFracLeft -= e->samples->dmlength;
+    if ((e->ptrFracRight += sampleStep) >= e->samples->dmlength)
+      e->ptrFracRight -= e->samples->dmlength;
   }
 
   // add contribution
   for (; n < audioBufferSize; n += 2) {
     // get sample position (to subsample resolution)
-    nm = (long)e->ptrFrac;
-    frac = (float)(e->ptrFrac - floor(e->ptrFrac));
+    nmL = (long)e->ptrFracLeft;
+    nmR = (long)e->ptrFracRight;
+    fracL = (float)(e->ptrFracLeft - floor(e->ptrFracLeft));
+    fracR = (float)(e->ptrFracRight - floor(e->ptrFracRight));
 
     // get sample (lerp closest two samples)
-    fsample = (1.0f - frac) * src[nm] + frac * src[nm+1];
+    fsampleL = (1.0f - fracL) * src[nmL] + fracL * src[nmL+1];
+    fsampleR = (1.0f - fracR) * src[nmR] + fracR * src[nmR+1];
 
     // filter and accumulate
-    scratch[n] += fsample * leftAtten;
-    scratch[n+1] += fsample * rightAtten;
+    scratch[n] += fsampleL * leftAtten;
+    scratch[n+1] += fsampleR * rightAtten;
 
     // next sample
-    if ((e->ptrFrac += sampleStep) >= e->samples->dmlength)
-      e->ptrFrac -= e->samples->dmlength;
+    if ((e->ptrFracLeft += sampleStep) >= e->samples->dmlength)
+      e->ptrFracLeft -= e->samples->dmlength;
+    if ((e->ptrFracRight += sampleStep) >= e->samples->dmlength)
+      e->ptrFracRight -= e->samples->dmlength;
   }
   e->lastLeftAtten = leftAtten;
   e->lastRightAtten = rightAtten;
@@ -800,11 +887,7 @@ static int		findBestLocalSlot()
 //
 // audioLoop() simply generates samples and keeps the audio hw fed
 //
-static int		silentChunks = 0;
 static BzfMedia*	media = NULL;
-static boolean		silent = True;
-static int		numChunks;
-static boolean		isBrainDead;
 static boolean		usingSameThread = False;
 
 static boolean		audioInnerLoop(boolean noWaiting)
@@ -812,8 +895,7 @@ static boolean		audioInnerLoop(boolean noWaiting)
     int i, j;
 
     // sleep until audio buffers hit low water mark or new command available
-    media->audioSleep((isBrainDead && !silent) || portUseCount != 0,
-						noWaiting ? 0.0 : endTime);
+    media->audioSleep(True, noWaiting ? 0.0 : endTime);
 
     /* get time step */
     prevTime = curTime;
@@ -837,10 +919,6 @@ static boolean		audioInnerLoop(boolean noWaiting)
 	case SQC_JUMP_POS: {
 	  positionDiscontinuity = (cmd.cmd == SQC_JUMP_POS);
 	  receiverMoved(cmd.data);
-	  forwardX = -sinf(lastTheta);
-	  forwardZ = -cosf(lastTheta);
-	  leftX = forwardZ;
-	  leftZ = -forwardX;
 	  break;
 	}
 
@@ -891,7 +969,8 @@ static boolean		audioInnerLoop(boolean noWaiting)
 	  event = events + i;
 
 	  event->samples = soundSamples + cmd.code;
-	  event->ptrFrac = 0.0;
+	  event->ptrFracLeft = 0.0;
+	  event->ptrFracRight = 0.0;
 	  event->flags = SEF_WORLD | SEF_IGNORING;
 	  if (cmd.cmd == SQC_IWORLD_SFX) event->flags |= SEF_IMPORTANT;
 	  event->x = cmd.data[0];
@@ -911,7 +990,8 @@ static boolean		audioInnerLoop(boolean noWaiting)
 	  event = events + i;
 
 	  event->samples = soundSamples + cmd.code;
-	  event->ptrFrac = 0.0;
+	  event->ptrFracLeft = 0.0;
+	  event->ptrFracRight = 0.0;
 	  event->flags = SEF_FIXED | SEF_WORLD;
 	  event->x = cmd.data[0];
 	  event->y = cmd.data[1];
@@ -931,8 +1011,8 @@ static boolean		audioInnerLoop(boolean noWaiting)
 
     /* sum contributions to the port and output samples */
     if (media->isAudioTooEmpty()) {
+      long numSamples = 0;
       if (portUseCount != 0) {
-	long numSamples = 0;
 	for (j = 0; j < MaxEvents; j++) {
 	  if (!events[j].busy) continue;
 
@@ -946,28 +1026,18 @@ static boolean		audioInnerLoop(boolean noWaiting)
 	    deltaCount = addLocalContribution(events + j, &numSamples);
 	  portUseCount += deltaCount;
 	}
-
-	// if brain dead then fill out partial buffers with zeros
-	if ((isBrainDead && numSamples < audioBufferSize) || mutingOn) {
-	  if (mutingOn) numSamples = 0;
-	  for (j = numSamples; j < audioBufferSize; j++)
-	    scratch[j] = 0.0f;
-	  numSamples = audioBufferSize;
-	}
-
-	media->writeAudioFrames(scratch, numSamples >> 1);
-	silentChunks = 0;
-	silent = False;
       }
 
-      else if (isBrainDead && !silent) {
-	// must write silence for at least numChunks chunks
-	if (silentChunks == 0)
-	  for (j = 0; j < audioBufferSize; j++) scratch[j] = 0.0f;
-	media->writeAudioFrames(scratch, audioBufferSize >> 1);
-	silentChunks++;
-	silent = (silentChunks >= numChunks);
-      }
+      // replace all samples with silence if muting is on
+      if (mutingOn)
+	numSamples = 0;
+
+      // fill out partial buffers with silence
+      for (j = numSamples; j < audioBufferSize; j++)
+	scratch[j] = 0.0f;
+
+      // write samples
+      media->writeAudioFrames(scratch, audioBufferSize >> 1);
     }
 
     return False;
@@ -979,9 +1049,6 @@ static void		audioLoop(void*)
 
   media = PlatformFactory::getMedia();
   audioBufferSize = media->getAudioBufferChunkSize() << 1;
-  numChunks = media->getAudioBufferSize() /
-			media->getAudioBufferChunkSize();
-  isBrainDead = media->isAudioBrainDead();
 
   /* initialize */
   timeSizeOfWorld = 1.414f * WorldSize / SpeedOfSound;

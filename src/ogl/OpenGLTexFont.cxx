@@ -22,7 +22,7 @@
 OpenGLTexFont::Rep::Rep() : refCount(1),
 				ascent(0.0f), descent(0.0f),
 				height(0.0f), spacing(0.0f),
-				width(0), data(NULL)
+				data(NULL), width(0)
 {
   // do nothing
 }
@@ -31,7 +31,7 @@ OpenGLTexFont::Rep::Rep(int dx, int dy, const unsigned char* pixels) :
 				refCount(1),
 				ascent(0.0f), descent(0.0f),
 				height(0.0f), spacing(0.0f),
-				width(dx), data(NULL)
+				data(NULL), width(dx)
 {
   // pick a good format.  we want to pack it as much as possible.
 #if defined(GL_VERSION_1_1)
@@ -304,13 +304,13 @@ void			OpenGLTexFont::BitmapRep::createGlyph(int index)
 // OpenGLTexFont
 //
 
-OpenGLTexFont::OpenGLTexFont() : width(1.0f), height(1.0f), bitmapRep(NULL)
+OpenGLTexFont::OpenGLTexFont() : bitmapRep(NULL), width(1.0f), height(1.0f)
 {
   rep = new Rep;
 }
 
 OpenGLTexFont::OpenGLTexFont(int dx, int dy, const unsigned char* pixels) :
-				width(1.0f), height(1.0f), bitmapRep(NULL)
+				bitmapRep(NULL), width(1.0f), height(1.0f)
 {
   rep = new Rep(dx, dy, pixels);
 }

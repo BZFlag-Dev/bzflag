@@ -79,13 +79,14 @@ class OpenGLTexture {
     static Filter	getFilter();
     static void		setFilter(Filter);
 
-    static int		getBestFormat(int width, int height,
-					const GLvoid* pixels);
-
   private:
     class Rep {
       public:
-			Rep(int maxFilter);
+			Rep(int width, int height,
+					const GLvoid* pixels,
+					int maxFilter,
+					boolean repeat,
+					int internalFormat);
 			~Rep();
 	void		setFilter(int filter);
 
@@ -97,6 +98,18 @@ class OpenGLTexture {
 	static Rep*	first;
 
       private:
+	void		doInitContext();
+	static void	initContext(void*);
+	static int	getBestFormat(int width, int height,
+					const GLvoid* pixels);
+
+      private:
+	const int	width;
+	const int	height;
+	GLubyte*	image;
+	boolean		repeat;
+	int		internalFormat;
+
 	int			maxFilter;
 	static const GLenum	minifyFilter[];
 	static const GLenum	magnifyFilter[];

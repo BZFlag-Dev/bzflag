@@ -53,6 +53,9 @@ class RadarRenderer {
     void		drawShot(const ShotPath*);
     void		drawTank(float x, float y, float z, float ps);
 
+    void		doInitContext();
+    static void		initContext(void*);
+
   private:
     const World&	world;
     int			x, y;

@@ -213,6 +213,13 @@ int			openMulticast(const Address& address, int port,
     return -1;
   }
 
+  /* open socket */
+  fd = socket(AF_INET, SOCK_DGRAM, 0);
+  if (fd < 0) {
+    nerror("openMulticast: socket");
+    return -1;
+  }
+
   /* check interface */
   if (net_interface && net_interface[0]) {
     ifaddr.s_addr = inet_addr(net_interface);
@@ -220,6 +227,7 @@ int			openMulticast(const Address& address, int port,
       struct hostent* hp = gethostbyname(net_interface);
       if (!hp) {
 	printError("openMulticast: Can't get address of %s", net_interface);
+	close(fd);
 	return -1;
       }
       memcpy(&ifaddr, hp->h_addr, hp->h_length);
@@ -230,64 +238,59 @@ int			openMulticast(const Address& address, int port,
     mreq.imr_interface.s_addr = htonl(INADDR_ANY);
 
 #if defined(__linux__)
-  // linux doesn't seem to like INADDR_ANY as the interface.
-  // find the first non-loopback interface and use that.
-  // (only check the first numInterfaces interfaces.)
-  const int numInterfaces = 5;
-  int i;
-  struct ifconf conf;
-  struct ifreq req[numInterfaces];
+    // linux doesn't seem to like INADDR_ANY as the interface.
+    // find the first non-loopback interface and use that.
+    // (only check the first numInterfaces interfaces.)
+    const int numInterfaces = 5;
+    int i;
+    struct ifconf conf;
+    struct ifreq req[numInterfaces];
 
-  // get the list of interface names
-  conf.ifc_len = sizeof(req);
-  conf.ifc_ifcu.ifcu_req = req;
-  for (i = 0; i < numInterfaces; ++i)
-    req[i].ifr_ifrn.ifrn_name[0] = 0;
-  if (ioctl(fd, SIOCGIFCONF, &conf) < 0) {
-    nerror("openMulticast: getting interface list");
-    close(fd);
-    return(-1);
-  }
+    // get the list of interface names
+    conf.ifc_len = sizeof(req);
+    conf.ifc_ifcu.ifcu_req = req;
+    for (i = 0; i < numInterfaces; ++i)
+      req[i].ifr_ifrn.ifrn_name[0] = 0;
+    if (ioctl(fd, SIOCGIFCONF, &conf) < 0) {
+      nerror("openMulticast: getting interface list");
+      close(fd);
+      return(-1);
+    }
 
-  // get the address of each interface
-  for (i = 0; i < numInterfaces; ++i) {
-    // if no name then we're done
-    if (req[i].ifr_ifrn.ifrn_name[0] == 0)
-      break;
+    // get the address of each interface
+    for (i = 0; i < numInterfaces; ++i) {
+      // if no name then we're done
+      if (req[i].ifr_ifrn.ifrn_name[0] == 0)
+	break;
 
-    // if we can't get the address then skip this interface
-    if (ioctl(fd, SIOCGIFADDR, req + i) < 0)
-      continue;
+      // if we can't get the address then skip this interface
+      if (ioctl(fd, SIOCGIFADDR, req + i) < 0)
+	continue;
 
-    // if the address is the loopback address then skip it
-    const sockaddr_in* ifaddr = (const sockaddr_in*)
+      // if the address is the loopback address then skip it
+      const sockaddr_in* ifaddr = (const sockaddr_in*)
 					&req[i].ifr_ifru.ifru_addr;
-    if (ntohl(ifaddr->sin_addr.s_addr) == INADDR_LOOPBACK)
-      continue;
+      if (ntohl(ifaddr->sin_addr.s_addr) == INADDR_LOOPBACK)
+	continue;
 
-    // got the address on the interface
-    addr->sin_addr.s_addr = ifaddr->sin_addr.s_addr;
-    break;
-  }
+      // got the address on the interface
+      if (!net_interface || !net_interface[0])
+	mreq.imr_interface.s_addr = ifaddr->sin_addr.s_addr;
+      break;
+    }
 #endif
-  }
-
-  /* open socket */
-  fd = socket(AF_INET, SOCK_DGRAM, 0);
-  if (fd < 0) {
-    nerror("openMulticast: socket");
-    return -1;
   }
 
   /* set address info */
   addr->sin_family = AF_INET;
-  addr->sin_addr.s_addr = htonl(INADDR_ANY);
+  addr->sin_addr.s_addr = mreq.imr_multiaddr.s_addr;
   addr->sin_port = htons(port);
 
   /* set options on socket */
   if (mode[0] == 'w') {
-#if defined(_WIN32)
+#if defined(_WIN32) || defined(__linux__)
     /* windows requires socket to be bound before using multicast sockopts */
+    /* linux requires that we bind to an interface's address to send */
     struct sockaddr_in tmpAddr;
     memset(&tmpAddr, 0, sizeof(tmpAddr));
     tmpAddr.sin_family = AF_INET;
@@ -314,8 +317,6 @@ int			openMulticast(const Address& address, int port,
       close(fd);
       return -1;
     }
-
-    addr->sin_addr.s_addr = mreq.imr_multiaddr.s_addr;
   }
 
   else {
@@ -344,6 +345,10 @@ int			openMulticast(const Address& address, int port,
 #endif
 
     /* bind address */
+#if defined(_WIN32)
+    /* unlike linux, win32 requires that we bind to the ANY address */
+    addr->sin_addr.s_addr = htonl(INADDR_ANY);
+#endif
     if (bind(fd, (const struct sockaddr*)addr, sizeof(*addr)) < 0) {
       nerror("openMulticast: bind");
       close(fd);

@@ -16,15 +16,37 @@
 #   we can also get RPM to put files in an alternate location by
 #   using an external rpmrc file.
 #
-Name:		bzflag
-Version:	1.7c
-Release:	2
-Copyright:	Chris Schoeneman 1993-1999
-Group:		X11/Games/Video
-URL:		http://www.bigfoot.com/~bzflag
-Packager:	Chris Schoeneman <crs23@bigfoot.com>
-BuildRoot:	/var/tmp/bzflag
-Summary:	multiplayer 3D tank battle game
+# thanks to Tim Riker (TimR@CalderaSystems.com) for improvements
+# to this spec file.
+#
+
+%define name bzflag
+%define version 1.7d
+%define release 6
+
+%define bzbasedir	/usr/X11R6/lib/X11/bzflag
+%define bzbindir	%{bzbasedir}/bin
+%define bzdatadir	%{bzbasedir}/data
+%define bzmandir	/usr/man
+%define bzdocdir	/usr/doc/%{name}-%{version}
+
+name:		%{name}
+version:	%{version}
+release:	%{release}
+group:		Recreation/Action
+copyright:	Chris Schoeneman 1993-1999
+packager:	Chris Schoeneman <crs23@bigfoot.com>
+url:		http://www.bigfoot.com/~bzflag/
+summary:	multiplayer 3D tank battle game
+source:		http://www.bigfoot.com/~bzflag/packages/src/%{name}-%{version}-%{release}.src.tar.gz
+buildroot:	/var/tmp/%{name}-%{version}-%{release}-root
+
+# all we want here is to remove glide, but RPM does not provide a way. ;-(
+# [crs -- mesa 3.1 now uses libGL.so.1 and libGLU.so.1.  also, linking
+#  against a mesa built without glide support avoids the glide dependency.]
+#autoreqprov: no
+#requires: ld-linux.so.2 libMesaGL.so.3 libMesaGLU.so.3 libX11.so.6
+#requires: libXext.so.6 libc.so.6 libm.so.6 libstdc++.so.2.9
 
 %description
 bzflag is a networked multiplayer 3D tank battle game, combining
@@ -32,65 +54,49 @@ both fast action and strategy.  Free-for-all and capture-the-flag
 styles are available.
 
 %prep
-# do nothing
+%setup -q -c
 
 %build
-# do nothing
+%ifarch ppc
+make linux-ppc-noopt
+%else
+%ifarch i386 i486 i586 i686
+make linux-i386-noopt
+%else
+make linux
+%endif
+%endif
+make ACXXOPTS="$RPM_OPT_FLAGS" ACOPTS="$RPM_OPT_FLAGS"		\
+	INSTALL_DATA_DIR=%{bzdatadir}				\
+	all
 
 %install
-# do nothing
+rm -rf $RPM_BUILD_ROOT
+mkdir -p $RPM_BUILD_ROOT%{bzdocdir}
+mkdir -p $RPM_BUILD_ROOT%{bzbindir}
+mkdir -p $RPM_BUILD_ROOT%{bzdatadir}
+mkdir -p $RPM_BUILD_ROOT%{bzmandir}/man6
+mkdir -p $RPM_BUILD_ROOT/usr/X11R6/bin
+install -m644 package/rpm/README.linux $RPM_BUILD_ROOT%{bzdocdir}/README
+install -m644 LICENSE $RPM_BUILD_ROOT%{bzdocdir}
+install -m644 man/*.6 $RPM_BUILD_ROOT%{bzmandir}/man6
+gzip $RPM_BUILD_ROOT%{bzmandir}/man6/*.6
+install -m644 data/*.rgb data/*.wav $RPM_BUILD_ROOT%{bzdatadir}
+install bin/* $RPM_BUILD_ROOT%{bzbindir}
+ln -s %{bzbindir}/bzflag $RPM_BUILD_ROOT/usr/X11R6/bin/bzflag
 
 %clean
-# do nothing
+rm -rf $RPM_BUILD_ROOT
 
-#
-# note -- bzflag must be setuid root to use 3Dfx drivers
-#
+# note -- bzflag must be setuid root to use 3Dfx drivers without /dev/3dfx
 %files
-%attr(-, root, root) %doc README
-%attr(-, root, root) %doc LICENSE
-%attr(04755, root, root) /usr/local/bzflag/bin/bzflag.real
-%attr(755, root, root) /usr/local/bzflag/bin/bzflag
-%attr(755, root, root) /usr/local/bzflag/bin/bzfs
-%attr(755, root, root) /usr/X11R6/bin/bzflag
-%attr(444, root, root) /usr/local/bzflag/data/bbolt.rgb
-%attr(444, root, root) /usr/local/bzflag/data/boom.wav
-%attr(444, root, root) /usr/local/bzflag/data/boxwall.rgb
-%attr(444, root, root) /usr/local/bzflag/data/caution.rgb
-%attr(444, root, root) /usr/local/bzflag/data/clouds.rgb
-%attr(444, root, root) /usr/local/bzflag/data/explode1.rgb
-%attr(444, root, root) /usr/local/bzflag/data/explosion.wav
-%attr(444, root, root) /usr/local/bzflag/data/fire.wav
-%attr(444, root, root) /usr/local/bzflag/data/fixedbr.rgb
-%attr(444, root, root) /usr/local/bzflag/data/fixedmr.rgb
-%attr(444, root, root) /usr/local/bzflag/data/flag.rgb
-%attr(444, root, root) /usr/local/bzflag/data/flag_alert.wav
-%attr(444, root, root) /usr/local/bzflag/data/flag_drop.wav
-%attr(444, root, root) /usr/local/bzflag/data/flag_grab.wav
-%attr(444, root, root) /usr/local/bzflag/data/flag_lost.wav
-%attr(444, root, root) /usr/local/bzflag/data/flag_won.wav
-%attr(444, root, root) /usr/local/bzflag/data/flage.rgb
-%attr(444, root, root) /usr/local/bzflag/data/gbolt.rgb
-%attr(444, root, root) /usr/local/bzflag/data/ground.rgb
-%attr(444, root, root) /usr/local/bzflag/data/helvbi.rgb
-%attr(444, root, root) /usr/local/bzflag/data/helvbr.rgb
-%attr(444, root, root) /usr/local/bzflag/data/laser.wav
-%attr(444, root, root) /usr/local/bzflag/data/laser.rgb
-%attr(444, root, root) /usr/local/bzflag/data/missile.rgb
-%attr(444, root, root) /usr/local/bzflag/data/mountain.rgb
-%attr(444, root, root) /usr/local/bzflag/data/panel.rgb
-%attr(444, root, root) /usr/local/bzflag/data/pbolt.rgb
-%attr(444, root, root) /usr/local/bzflag/data/pop.wav
-%attr(444, root, root) /usr/local/bzflag/data/pyrwall.rgb
-%attr(444, root, root) /usr/local/bzflag/data/rbolt.rgb
-%attr(444, root, root) /usr/local/bzflag/data/ricochet.wav
-%attr(444, root, root) /usr/local/bzflag/data/roof.rgb
-%attr(444, root, root) /usr/local/bzflag/data/shock.wav
-%attr(444, root, root) /usr/local/bzflag/data/teleport.wav
-%attr(444, root, root) /usr/local/bzflag/data/timesbi.rgb
-%attr(444, root, root) /usr/local/bzflag/data/timesbr.rgb
-%attr(444, root, root) /usr/local/bzflag/data/title.rgb
-%attr(444, root, root) /usr/local/bzflag/data/wall.rgb
-%attr(444, root, root) /usr/local/bzflag/data/ybolt.rgb
-%attr(444, root, root) /usr/local/man/man6/bzflag.6
-%attr(444, root, root) /usr/local/man/man6/bzfs.6
+%defattr(-,root,root)
+%dir %{bzdocdir}
+%dir %{bzbindir}
+%dir %{bzdatadir}
+%dir %{bzbasedir}
+%doc %{bzdocdir}/*
+%doc %{bzmandir}/man6/*
+%attr(755,root,root) /usr/X11R6/bin/*
+%attr(755,root,root) %{bzbindir}/*
+%attr(644,root,root) %{bzdatadir}/*

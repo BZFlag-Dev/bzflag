@@ -211,11 +211,6 @@ void			SGIMedia::closeAudio()
   outputBuffer = NULL;
 }
 
-boolean			SGIMedia::isAudioBrainDead() const
-{
-  return False;
-}
-
 boolean			SGIMedia::startAudioThread(
 				void (*proc)(void*), void* data)
 {

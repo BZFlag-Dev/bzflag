@@ -243,7 +243,7 @@ BzfString		KeyMap::getKeyName(Key key)
 
 KeyMap::Key		KeyMap::lookupKeyName(const BzfString& name)
 {
-  for (int i = 0; i < sizeof(keyName) / sizeof(keyName[0]); i++)
+  for (int i = 0; i < (int)(sizeof(keyName) / sizeof(keyName[0])); i++)
     if (name == keyName[i])
       return (Key)i;
   return LastKey;
@@ -305,7 +305,7 @@ boolean			KeyMap::translateStringToEvent(
   }
 
   // check non-ascii button strings
-  for (int i = 0; i < sizeof(eventNames) / sizeof(eventNames[0]); i++)
+  for (int i = 0; i < (int)(sizeof(eventNames) / sizeof(eventNames[0])); i++)
     if (value == eventNames[i]) {
       event.ascii = 0;
       event.button = i;

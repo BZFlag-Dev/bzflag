@@ -47,97 +47,97 @@ static OpenGLTexture	getImage(const BzfString& file,
 static const GLfloat	black[3] = { 0.0f, 0.0f, 0.0f };
 
 const GLfloat		SceneDatabaseBuilder::wallColors[4][4] = {
-				0.5f, 0.5f, 0.5f, 1.0f,
-				0.4f, 0.4f, 0.4f, 1.0f,
-				0.5f, 0.5f, 0.5f, 1.0f,
-				0.6f, 0.6f, 0.6f, 1.0f
+				{ 0.5f, 0.5f, 0.5f, 1.0f },
+				{ 0.4f, 0.4f, 0.4f, 1.0f },
+				{ 0.5f, 0.5f, 0.5f, 1.0f },
+				{ 0.6f, 0.6f, 0.6f, 1.0f }
 			};
 const GLfloat		SceneDatabaseBuilder::wallModulateColors[4][4] = {
-				0.5f, 0.5f, 0.5f, 1.0f,
-				0.4f, 0.4f, 0.4f, 1.0f,
-				0.5f, 0.5f, 0.5f, 1.0f,
-				0.6f, 0.6f, 0.6f, 1.0f
+				{ 0.5f, 0.5f, 0.5f, 1.0f },
+				{ 0.4f, 0.4f, 0.4f, 1.0f },
+				{ 0.5f, 0.5f, 0.5f, 1.0f },
+				{ 0.6f, 0.6f, 0.6f, 1.0f }
 			};
 const GLfloat		SceneDatabaseBuilder::wallLightedColors[1][4] = {
-				0.5f, 0.5f, 0.5f, 1.0f
+				{ 0.5f, 0.5f, 0.5f, 1.0f }
 			};
 const GLfloat		SceneDatabaseBuilder::wallLightedModulateColors[1][4] = {
-				0.5f, 0.5f, 0.5f, 1.0f
+				{ 0.5f, 0.5f, 0.5f, 1.0f }
 			};
 
 const GLfloat		SceneDatabaseBuilder::boxColors[5][4] = {
-				0.75f, 0.25f, 0.25f, 1.0f,
-				0.63f, 0.25f, 0.25f, 1.0f,
-				0.75f, 0.25f, 0.25f, 1.0f,
-				0.75f, 0.375f, 0.375f, 1.0f,
-				0.875f, 0.5f, 0.5f, 1.0f
+				{ 0.75f, 0.25f, 0.25f, 1.0f },
+				{ 0.63f, 0.25f, 0.25f, 1.0f },
+				{ 0.75f, 0.25f, 0.25f, 1.0f },
+				{ 0.75f, 0.375f, 0.375f, 1.0f },
+				{ 0.875f, 0.5f, 0.5f, 1.0f }
 			};
 const GLfloat		SceneDatabaseBuilder::boxModulateColors[5][4] = {
-				0.75f, 0.75f, 0.75f, 1.0f,
-				0.63f, 0.63f, 0.63f, 1.0f,
-				0.75f, 0.75f, 0.75f, 1.0f,
-				0.69f, 0.69f, 0.69f, 1.0f,
-				0.875f, 0.875f, 0.875f, 1.0f
+				{ 0.75f, 0.75f, 0.75f, 1.0f },
+				{ 0.63f, 0.63f, 0.63f, 1.0f },
+				{ 0.75f, 0.75f, 0.75f, 1.0f },
+				{ 0.69f, 0.69f, 0.69f, 1.0f },
+				{ 0.875f, 0.875f, 0.875f, 1.0f }
 			};
 const GLfloat		SceneDatabaseBuilder::boxLightedColors[5][4] = {
-				0.75f, 0.25f, 0.25f, 1.0f,
-				0.75f, 0.25f, 0.25f, 1.0f,
-				0.75f, 0.25f, 0.25f, 1.0f,
-				0.75f, 0.25f, 0.25f, 1.0f,
-				0.875f, 0.5f, 0.5f, 1.0f
+				{ 0.75f, 0.25f, 0.25f, 1.0f },
+				{ 0.75f, 0.25f, 0.25f, 1.0f },
+				{ 0.75f, 0.25f, 0.25f, 1.0f },
+				{ 0.75f, 0.25f, 0.25f, 1.0f },
+				{ 0.875f, 0.5f, 0.5f, 1.0f }
 			};
 const GLfloat		SceneDatabaseBuilder::boxLightedModulateColors[5][4] = {
-				0.75f, 0.75f, 0.75f, 1.0f,
-				0.75f, 0.75f, 0.75f, 1.0f,
-				0.75f, 0.75f, 0.75f, 1.0f,
-				0.75f, 0.75f, 0.75f, 1.0f,
-				0.875f, 0.875f, 0.875f, 1.0f
+				{ 0.75f, 0.75f, 0.75f, 1.0f },
+				{ 0.75f, 0.75f, 0.75f, 1.0f },
+				{ 0.75f, 0.75f, 0.75f, 1.0f },
+				{ 0.75f, 0.75f, 0.75f, 1.0f },
+				{ 0.875f, 0.875f, 0.875f, 1.0f }
 			};
 
 const GLfloat		SceneDatabaseBuilder::pyramidColors[4][4] = {
-				0.25f, 0.25f, 0.63f, 1.0f,
-				0.13f, 0.13f, 0.51f, 1.0f,
-				0.25f, 0.25f, 0.63f, 1.0f,
-				0.375f, 0.375f, 0.75f, 1.0f
+				{ 0.25f, 0.25f, 0.63f, 1.0f },
+				{ 0.13f, 0.13f, 0.51f, 1.0f },
+				{ 0.25f, 0.25f, 0.63f, 1.0f },
+				{ 0.375f, 0.375f, 0.75f, 1.0f }
 			};
 const GLfloat		SceneDatabaseBuilder::pyramidModulateColors[4][4] = {
-				0.25f, 0.25f, 0.63f, 1.0f,
-				0.13f, 0.13f, 0.51f, 1.0f,
-				0.25f, 0.25f, 0.63f, 1.0f,
-				0.375f, 0.375f, 0.75f, 1.0f
+				{ 0.25f, 0.25f, 0.63f, 1.0f },
+				{ 0.13f, 0.13f, 0.51f, 1.0f },
+				{ 0.25f, 0.25f, 0.63f, 1.0f },
+				{ 0.375f, 0.375f, 0.75f, 1.0f }
 			};
 const GLfloat		SceneDatabaseBuilder::pyramidLightedColors[4][4] = {
-				0.25f, 0.25f, 0.63f, 1.0f,
-				0.25f, 0.25f, 0.63f, 1.0f,
-				0.25f, 0.25f, 0.63f, 1.0f,
-				0.25f, 0.25f, 0.63f, 1.0f
+				{ 0.25f, 0.25f, 0.63f, 1.0f },
+				{ 0.25f, 0.25f, 0.63f, 1.0f },
+				{ 0.25f, 0.25f, 0.63f, 1.0f },
+				{ 0.25f, 0.25f, 0.63f, 1.0f }
 			};
 const GLfloat		SceneDatabaseBuilder::pyramidLightedModulateColors[4][4] = {
-				0.25f, 0.25f, 0.63f, 1.0f,
-				0.25f, 0.25f, 0.63f, 1.0f,
-				0.25f, 0.25f, 0.63f, 1.0f,
-				0.25f, 0.25f, 0.63f, 1.0f
+				{ 0.25f, 0.25f, 0.63f, 1.0f },
+				{ 0.25f, 0.25f, 0.63f, 1.0f },
+				{ 0.25f, 0.25f, 0.63f, 1.0f },
+				{ 0.25f, 0.25f, 0.63f, 1.0f }
 			};
 
 const GLfloat		SceneDatabaseBuilder::teleporterColors[3][4] = {
-				1.0f, 0.875f, 0.0f, 1.0f,
-				0.9f, 0.8f, 0.0f, 1.0f,
-				0.0f, 0.0f, 0.0f, 0.5f
+				{ 1.0f, 0.875f, 0.0f, 1.0f },
+				{ 0.9f, 0.8f, 0.0f, 1.0f },
+				{ 0.0f, 0.0f, 0.0f, 0.5f }
 			};
 const GLfloat		SceneDatabaseBuilder::teleporterModulateColors[3][4] = {
-				1.0f, 1.0f, 1.0f, 1.0f,
-				0.9f, 0.9f, 0.9f, 1.0f,
-				0.0f, 0.0f, 0.0f, 0.5f
+				{ 1.0f, 1.0f, 1.0f, 1.0f },
+				{ 0.9f, 0.9f, 0.9f, 1.0f },
+				{ 0.0f, 0.0f, 0.0f, 0.5f }
 			};
 const GLfloat		SceneDatabaseBuilder::teleporterLightedColors[3][4] = {
-				1.0f, 0.875f, 0.0f, 1.0f,
-				1.0f, 0.875f, 0.0f, 1.0f,
-				0.0f, 0.0f, 0.0f, 0.5f
+				{ 1.0f, 0.875f, 0.0f, 1.0f },
+				{ 1.0f, 0.875f, 0.0f, 1.0f },
+				{ 0.0f, 0.0f, 0.0f, 0.5f }
 			};
 const GLfloat		SceneDatabaseBuilder::teleporterLightedModulateColors[3][4] = {
-				1.0f, 1.0f, 1.0f, 1.0f,
-				1.0f, 1.0f, 1.0f, 1.0f,
-				0.0f, 0.0f, 0.0f, 0.5f
+				{ 1.0f, 1.0f, 1.0f, 1.0f },
+				{ 1.0f, 1.0f, 1.0f, 1.0f },
+				{ 0.0f, 0.0f, 0.0f, 0.5f }
 			};
 
 SceneDatabaseBuilder::SceneDatabaseBuilder(const SceneRenderer* _renderer) :

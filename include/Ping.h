@@ -22,6 +22,8 @@
 #include "Pack.h"
 #include "multicast.h"
 
+static const int	PingPacketHexPackedSize = 2 * 2 * 18;
+
 class PingPacket {
   public:
 			PingPacket();
@@ -31,6 +33,13 @@ class PingPacket {
     boolean		write(int fd, const struct sockaddr_in*) const;
     boolean		waitForReply(int fd, const Address& from,
 				int millisecondsToBlock = 0);
+
+    void*		pack(void*, const char* version) const;
+    void*		unpack(void*, char* version);
+
+    void		packHex(char*) const;
+    void		unpackHex(char*);
+    static void		repackHexPlayerCounts(char*, int* counts);
 
     static boolean	isRequest(int fd, struct sockaddr_in*,
 						int* minReplyTTL = NULL);
@@ -58,6 +67,12 @@ class PingPacket {
     uint16_t		maxPlayerScore;
     uint16_t		maxTeamScore;
     uint16_t		maxTime;		// seconds
+
+  private:
+    static int		hex2bin(char);
+    static char		bin2hex(int);
+    static char*	packHex16(char*, uint16_t);
+    static char*	unpackHex16(char*, uint16_t&);
 
   private:
     static const int	PacketSize;

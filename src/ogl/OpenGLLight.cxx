@@ -12,6 +12,7 @@
 
 #include <math.h>
 #include "OpenGLLight.h"
+#include "OpenGLGState.h"
 
 static class OpenGLLightCleanup {
   public:
@@ -56,6 +57,8 @@ OpenGLLight::OpenGLLight(const OpenGLLight& l) : mailbox(0)
 
 OpenGLLight::~OpenGLLight()
 {
+  OpenGLGState::unregisterContextInitializer(initContext, (void*)this);
+
   // put display lists on oldLists list
   oldLists.append(listBase);
   delete[] list;
@@ -181,6 +184,9 @@ void			OpenGLLight::makeLists()
   else {
     listBase = glGenLists(numLights);
   }
+
+  // watch for context recreation
+  OpenGLGState::registerContextInitializer(initContext, (void*)this);
 }
 
 void			OpenGLLight::freeLists()
@@ -210,4 +216,10 @@ void			OpenGLLight::cleanup()
     // FIXME -- can't call safely since context is probably gone
     // glDeleteLists(oldLists[i], getMaxLights());
   }
+}
+
+void			OpenGLLight::initContext(void* self)
+{
+  // cause display list to be recreated on next execute()
+  ((OpenGLLight*)self)->freeLists();
 }

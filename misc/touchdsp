@@ -1,0 +1,21 @@
+#!/bin/sh
+#
+# update the version numbers in the win32 projects
+
+root=".."			# bzflag top-level dir
+dir="$root/win32"		# location of projects
+files="bzflag bzfs bzfls"	# projects to update
+
+# get version number from config file
+eval `grep "^VERSION *= *" $root/config | sed -e 's/ *//g'`
+
+# do replacement
+for file in $files; do
+    if [ ! -w $dir/${file}.dsp ]; then
+	echo "$dir/${file}.dsp not found or not writable."
+	continue
+    fi
+    cat $dir/${file}.dsp | sed -e 's/VERSION=[0-9]*/'VERSION=$VERSION/g > tmp.dsp
+    mv tmp.dsp $dir/${file}.dsp
+done
+

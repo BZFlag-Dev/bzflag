@@ -13,69 +13,87 @@ DEPTH = ..
 COMMONPREF = rpm
 include $(DEPTH)/Make-common
 
-RPM_NAME    = bzflag
-RPM_VERSION = 1.7c
-RPM_RELEASE = 2
+RPM        = rpm
+RPMBASEDIR = tmp
+RPMDIR     = $(RPM)/$(RPMBASEDIR)
+RPMRC      = rpmrc
+SPECFILE   = spec
+RPMROOT    = $(RPMDIR)/root
+TMPROOT    = /var/tmp/bzflag-$(VERSIONID)-$(VERSIONBUILD)-root
 
-RPM      = rpm
-RPMDIR   = $(RPM)/tmp
-RPMRC    = $(RPM)/rpmrc
-SPECFILE = spec
-RPMROOT  = $(RPMDIR)/root
-TMPROOT  = /var/tmp/bzflag
-
-LDIRT    = $(RPMRC)
+LDIRT    = $(RPM)/$(RPMRC)
 
 #
 # build RPM package
 #
-targets: rpmprep instprep
-	strip $(TARGETDIR)/bzflag
-	strip $(TARGETDIR)/bzfs
-	rpm -ba --rcfile $(RPMRC) $(RPM)/$(SPECFILE)
+targets: binprep rpmprep
+	cd $(RPM); rpm -bb --rcfile $(RPMRC) $(RPMBASEDIR)/SPECS/$(SPECFILE)
 	mv $(RPMDIR)/RPMS/$(ARCH)/*.rpm $(PACKAGEDIR)
+
+#
+# prepare binaries
+#
+binprep:
+	strip $(TARGETDIR)/bzflag
+	strip $(TARGETDIR)/bzfls
+	strip $(TARGETDIR)/bzfrelay
+	strip $(TARGETDIR)/bzfs
 
 #
 # prepare RPM stuff
 #
 rpmprep:
+	# clean up
 	-$(RMR) $(RPMDIR) $(TMPROOT)
-	$(MKDIR) $(RPMDIR) $(RPMDIR)/BUILD \
+
+	# make RPM area
+	$(MKDIR) $(RPMDIR) \
 		$(RPMDIR)/RPMS $(RPMDIR)/RPMS/$(ARCH) \
 		$(RPMDIR)/SOURCES $(RPMDIR)/SPECS $(RPMDIR)/SRPMS
-	ln $(RPM)/$(SPECFILE) $(RPMDIR)/SPECS/$(SPECFILE)
-	$(ECHO) "topdir: $(RPMDIR)" > $(RPMRC)
+
+	# build area just our top level directory
+	ln -s `cd $(DEPTH); pwd` $(RPMDIR)/BUILD
+
+	# adjust spec file.  replace version and release numbers and
+	# don't do anything in the prep stage.
+	#
+	# also what version of rpm?  rpm below 3.0 needs topdir in
+	# rpmrc instead of defined in the spec file.
+	rpmversion=`rpm --version | sed -e 's/[^0-9]*\([0-9]*\).*/\1/'`; \
+	( if [ $$rpmversion -ge 3 ]; then \
+		echo "%define _topdir $(RPMBASEDIR)"; fi; \
+		cat $(RPM)/$(SPECFILE) ) | \
+		sed -e 's/%setup -q -c//' \
+		-e 's/%define version.*/%define version '$(VERSIONID)/ \
+		-e 's/%define release.*/%define release '$(VERSIONBUILD)/ \
+		-e 's@%define bzdatadir.*@%define bzdatadir '$(INSTALL_DATA_DIR)@ > \
+						$(RPMDIR)/SPECS/$(SPECFILE)
+	# make rpmrc file
+	$(ECHO) "" > $(RPM)/$(RPMRC)
+	rpmversion=`rpm --version | sed -e 's/[^0-9]*\([0-9]*\).*/\1/'`; \
+	if [ $$rpmversion -lt 3 ]; then \
+	    $(ECHO) "topdir: $(RPMBASEDIR)" >> $(RPM)/$(RPMRC); \
+	fi
+
+	# make buildroot named in spec file point into our RPM root area
 	ln -s `pwd`/$(RPMROOT) $(TMPROOT)
 
 #
-# populate fake install area
+# easy way to make the spec file.  note that this isn't used for the
+# build.  it's just a handy way to get an up to date spec file for
+# use directly with rpm.
 #
-instprep:
-	-$(RMR) $(RPMROOT)
-	$(MKDIR) $(RPMROOT)
-	$(MKDIR) $(RPMROOT)/usr
-	$(MKDIR) $(RPMROOT)/usr/doc
-	$(MKDIR) $(RPMROOT)/usr/local
-	$(MKDIR) $(RPMROOT)/usr/local/bzflag
-	$(MKDIR) $(RPMROOT)/usr/local/bzflag/bin
-	$(MKDIR) $(RPMROOT)/usr/local/bzflag/data
-	$(MKDIR) $(RPMROOT)/usr/local/man
-	$(MKDIR) $(RPMROOT)/usr/local/man/man6
-	$(MKDIR) $(RPMROOT)/usr/X11R6
-	$(MKDIR) $(RPMROOT)/usr/X11R6/bin
-	ln $(RPM)/README.linux $(RPMDIR)/BUILD/README
-	ln $(DEPTH)/LICENSE $(RPMDIR)/BUILD/LICENSE
-	ln $(DEPTH)/man/bzflag.6 $(RPMROOT)/usr/local/man/man6
-	ln $(DEPTH)/man/bzfs.6 $(RPMROOT)/usr/local/man/man6
-	ln $(DEPTH)/data/*.rgb $(RPMROOT)/usr/local/bzflag/data
-	ln $(DEPTH)/data/*.wav $(RPMROOT)/usr/local/bzflag/data
-	ln $(TARGETDIR)/bzfs $(RPMROOT)/usr/local/bzflag/bin/bzfs
-	ln $(TARGETDIR)/bzflag $(RPMROOT)/usr/local/bzflag/bin/bzflag.real
-	ln linux/bzflag.wrap.linux $(RPMROOT)/usr/local/bzflag/bin/bzflag
-	ln -s /usr/local/bzflag/bin/bzflag $(RPMROOT)/usr/X11R6/bin/bzflag
+newspec:
+	# adjust spec file.  replace version and release numbers and
+	# don't do anything in the prep stage.
+	cat $(RPM)/$(SPECFILE) | \
+		sed -e 's/%define version.*/%define version '$(VERSIONID)/ \
+		-e 's/%define release.*/%define release '$(VERSIONBUILD)/ \
+		-e 's@%define bzdatadir.*@%define bzdatadir '$(INSTALL_DATA_DIR)@ > \
+								newspec
 
 clean: $(COMMONPREF)clean
 
 clobber: $(COMMONPREF)clobber
-	$(RMR) $(RPMDIR) $(TMPROOT)
+	$(RMR) $(RPMDIR) $(TMPROOT) newspec
 

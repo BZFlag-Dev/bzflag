@@ -111,7 +111,7 @@ class HUDRenderer {
 					float x1, float x2, float x3, float y);
     void		drawDeadPlayerScore(const Player*,
 					float x1, float x2, float x3, float y);
-    void		drawTeamScore(int team, float x1, float x2, float y);
+    void		drawTeamScore(int team, float x, float y);
 
     void		makeCrack(int n, int l, float a);
     BzfString		makeHelpString(const char* help) const;
@@ -168,6 +168,7 @@ class HUDRenderer {
     float		altitudeMarkSpacing;
     float		altitudeLabelMaxWidth;
     float		scoreLabelWidth;
+    float		killsLabelWidth;
     float		teamScoreLabelWidth;
     float		restartLabelWidth;
     float		resumeLabelWidth;

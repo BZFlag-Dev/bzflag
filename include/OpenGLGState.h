@@ -26,6 +26,8 @@ class OpenGLGStateRep;
 class OpenGLGStateState;
 class RenderNode;
 
+typedef void		(*OpenGLContextInitializer)(void* userData);
+
 class OpenGLGState {
   friend class OpenGLGStateBuilder;
   public:
@@ -50,8 +52,44 @@ class OpenGLGState {
 
     static void		init();
 
+    // these are in OpenGLGState for lack of a better place.  register...
+    // is for clients to add a function to call when the OpenGL context
+    // has been destroyed and must be recreated.  the function is called
+    // by initContext() and initContext() will call all initializers in
+    // the order they were registered, plus reset the OpenGLGState state.
+    //
+    // destroying and recreating the OpenGL context is only necessary on
+    // platforms that cannot abstract the graphics system sufficiently.
+    // for example, on win32, changing the display bit depth will cause
+    // most OpenGL drivers to crash unless we destroy the context before
+    // the switch and recreate it afterwards.
+    static void		registerContextInitializer(
+				OpenGLContextInitializer,
+				void* userData = NULL);
+    static void		unregisterContextInitializer(
+				OpenGLContextInitializer,
+				void* userData = NULL);
+    static void		initContext();
+
   private:
-    static void		initStipple();
+    static void		initGLState();
+    static void		initStipple(void* = NULL);
+
+    struct ContextInitializer {
+      public:
+	ContextInitializer(OpenGLContextInitializer, void*);
+	~ContextInitializer();
+	static void		   execute();
+	static ContextInitializer* find(OpenGLContextInitializer, void*);
+
+      public:
+	OpenGLContextInitializer callback;
+	void*			userData;
+	ContextInitializer*	prev;
+	ContextInitializer*	next;
+	static ContextInitializer* head;
+	static ContextInitializer* tail;
+    };
 
   private:
     OpenGLGStateRep*	rep;

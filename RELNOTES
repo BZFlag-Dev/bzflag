@@ -1,6 +1,27 @@
 
                              bzflag 1.7 release notes
 
+bzflag 1.7d release 6
+---------------------
+
+* now allows user to configure a non-optimized build (e.g. make linux-noopt)
+* added tarball make target to gather source tree into a tarball
+* modified spec file for RPM packaging (Tim Riker)
+* more sound fixes
+    now always writes sound even when silent (which simplifies things)
+    now handles failure of SNDCTL_DSP_SETFRAGMENT
+    BZF_NOAUDIO_POST env var disables latency workaround when SETFRAGMENT fails
+    fixed bug that caused some truncated chunks
+* video format menu now uses multiple pages if lots of formats
+* now ungrabs mouse on pause and grabs on resume (if grabbing)
+* players now drop a team flag when pausing (prevents a cheat)
+* made some readouts more readable at low resolution (changed font)
+* changes to bzfs to make it more robust against network errors
+* fixed bzfs messages to bzfls (was only ever sending ADD messages)
+* bzfls now keeps traffic statistics (SIGUSR2 dumps to /var/tmp/bzfls.cnt)
+* added man pages for bzfls and bzfrelay
+
+
 bzflag 1.7d release 5
 ---------------------
 

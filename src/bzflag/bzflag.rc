@@ -22,29 +22,6 @@ LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
 #endif //_WIN32
 
 //
-// Dialog
-//
-
-IDD_VIDEO_FORMAT DIALOG DISCARDABLE  200, 200, 181, 199
-STYLE DS_MODALFRAME | DS_CENTER | WS_POPUP | WS_CAPTION
-CAPTION "BZFlag"
-FONT 8, "MS Sans Serif"
-BEGIN
-    CONTROL         102,-1,"Static",SS_BITMAP,7,7,167,67
-    LTEXT           "Full Screen Display Modes:",-1,7,78,86,8
-    LISTBOX         IDC_VIDEO_FORMAT,7,89,167,83,LBS_SORT | 
-                    LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
-    DEFPUSHBUTTON   "Start",IDOK,119,177,55,14
-END
-
-
-//
-// Bitmap
-//
-
-IDB_BZ_LOGO             BITMAP  DISCARDABLE     "bzflag.bmp"
-
-//
 // Icon
 //
 

@@ -12,51 +12,14 @@
 
 #include "XWindow.h"
 #include "XVisual.h"
-#if defined(__linux__)
-# if defined(__i386__)
+#if defined(__linux__) && defined(XF86VIDMODE_EXT)
+#  define USE_XF86VIDMODE_EXT
 #  define private c_private
 #  include <X11/extensions/xf86vmode.h>
 #  undef private
-# endif
-# include <stdlib.h>
 #endif
-
-static unsigned short	pixelField(int i, int bits, int offset)
-{
-  static const unsigned short mask1[2] = { 0x0000, 0xffff };
-  static const unsigned short mask2[4] = { 0x0000, 0x5555, 0xaaaa, 0xffff };
-  static const unsigned short mask3[8] = { 0x0000, 0x2492, 0x4924, 0x6db6,
-					   0x9248, 0xb6da, 0xdb6c, 0xffff };
-
-  i >>= offset;
-  switch (bits) {
-    case 1: return mask1[i & 1];
-    case 2: return mask2[i & 3];
-    case 3: return mask3[i & 7];
-  }
-  return 0;
-}
-
-static void		countBits(unsigned long mask, int& num, int& offset)
-{
-  num = 0;
-  offset = 0;
-
-  // find the offset
-  while (mask && (mask & 1) == 0) {
-    offset++;
-    mask >>= 1;
-  }
-
-  // count the one bits
-  while (mask & 1) {
-    num++;
-    mask >>= 1;
-  }
-
-  // verify that there are no more set bits (non-contiguous mask)
-  if (mask) num = 0;
-}
+#include <math.h>
+#include <ctype.h>
 
 //
 // XWindow
@@ -73,15 +36,18 @@ XWindow::XWindow(const XDisplay* _display, XVisual* _visual) :
 				noWM(False),
 				defaultColormap(True),
 				prev(NULL),
-				next(NULL)
+				next(NULL),
+				colormapPixels(NULL),
+				gammaVal(1.0)
 {
   // get desired visual
-  XVisualInfo* visual = _visual->get();
-  if (!visual) return;
+  XVisualInfo* pvisual = _visual->get();
+  if (!pvisual) return;
+  visual = *pvisual;
 
   // make a colormap
   colormap = XCreateColormap(display->getDisplay(), display->getRootWindow(),
-			visual->visual, AllocNone);
+			visual.visual, AllocNone);
 
   // create the window
   XSetWindowAttributes windowAttrib;
@@ -94,8 +60,8 @@ XWindow::XWindow(const XDisplay* _display, XVisual* _visual) :
 			ButtonPressMask | ButtonReleaseMask |
 			KeyPressMask | KeyReleaseMask;
   window = XCreateWindow(display->getDisplay(), display->getRootWindow(),
-			0, 0, 1, 1, 0, visual->depth,
-			InputOutput, visual->visual,
+			0, 0, 1, 1, 0, visual.depth,
+			InputOutput, visual.visual,
 			CWBackPixel | CWBorderPixel | CWColormap | CWEventMask,
 			&windowAttrib);
   if (window == None) {
@@ -113,124 +79,53 @@ XWindow::XWindow(const XDisplay* _display, XVisual* _visual) :
     XFree(classHint);
   }
 
+  // set window manager protocols.  we want the window manager
+  // to ask us before destroying our window when the user clicks
+  // the close-window button.
+  Atom a;
+  a = XInternAtom(display->getDisplay(), "WM_DELETE_WINDOW", True);
+  if (a != None)
+    XSetWMProtocols(display->getDisplay(), window, &a, 1);
+
   // setup colormap if visual doesn't define it
-  if (visual->c_class == DirectColor) {
+  if (visual.c_class == DirectColor) {
     // find how many bits are in each of red, green, and blue channels
     int rBits, rOffset;
     int gBits, gOffset;
     int bBits, bOffset;
-    countBits(visual->red_mask,   rBits, rOffset);
-    countBits(visual->green_mask, gBits, gOffset);
-    countBits(visual->blue_mask,  bBits, bOffset);
-
-    // get how many colors needed for biggest color ramp
-    int numColors = visual->colormap_size;
-
-    // allocate space for colors
-    unsigned long* pixels = new unsigned long[numColors];
-    XColor* colors = new XColor[numColors];
+    countBits(visual.red_mask, rBits, rOffset);
+    countBits(visual.green_mask, gBits, gOffset);
+    countBits(visual.blue_mask, bBits, bOffset);
 
     // allocate colors
-    unsigned long rMask, gMask, bMask;
-    if (pixels && colors && XAllocColorPlanes(display->getDisplay(),
-				colormap, True, pixels, numColors,
-				rBits, gBits, bBits, &rMask, &gMask, &bMask)) {
-      int i;
-      for (i = 0; i < numColors; i++) {
-	colors[i].pixel = pixels[i];
-	colors[i].red   = 0;
-	colors[i].green = 0;
-	colors[i].blue  = 0;
-	colors[i].flags = 0;
-      }
-
-      int n = 1 << rBits;
-      for (i = 0; i < n; i++) {
-	const unsigned short v = (unsigned short)(0.5f + 65535.0f *
-						(float)i / (float)(n - 1));
-	colors[i].red   = v;
-	colors[i].flags |= DoRed;
-      }
-
-      n = 1 << gBits;
-      for (i = 0; i < n; i++) {
-	const unsigned short v = (unsigned short)(0.5f + 65535.0f *
-						(float)i / (float)(n - 1));
-	colors[i].green = v;
-	colors[i].flags |= DoGreen;
-      }
-
-      n = 1 << bBits;
-      for (i = 0; i < n; i++) {
-	const unsigned short v = (unsigned short)(0.5f + 65535.0f *
-						(float)i / (float)(n - 1));
-	colors[i].blue  = v;
-	colors[i].flags |= DoBlue;
-      }
-
-      // set colors
-      XStoreColors(display->getDisplay(), colormap, colors, numColors);
-      XSetWMColormapWindows(display->getDisplay(), window, &window, 1);
+    unsigned long rMask, gMask, bMask, pixel;
+    if (XAllocColorPlanes(display->getDisplay(),
+				colormap, True, &pixel, 1,
+				rBits, gBits, bBits, &rMask, &gMask, &bMask))
       defaultColormap = False;
-    }
-
-    delete[] colors;
-    delete[] pixels;
   }
 
   // these shouldn't happen because we request an RGBA visual, but Mesa
   // doesn't play by the usual rules.
-  else if (visual->c_class == GrayScale ||
-	   (visual->c_class == PseudoColor && visual->depth == 8)) {
-    // assume a 3:3:2 (RGB) colormap for an 8 bit deep PseudoColor,
-    // with red in the low bits, then green, then blue.
-    
-    // get how many colors needed for biggest color ramp
-    int numColors = visual->colormap_size;
-
-    // allocate space for colors
-    unsigned long* pixels = new unsigned long[numColors];
-    XColor* colors = new XColor[numColors];
-
+  else if (visual.c_class == GrayScale ||
+	   (visual.c_class == PseudoColor && visual.depth == 8)) {
     // allocate colors
     unsigned long mask;
-    if (pixels && colors && XAllocColorCells(display->getDisplay(),
-				colormap, True, &mask, 0, pixels, numColors)) {
-      if (visual->c_class == GrayScale) {
-	for (int i = 0; i < numColors; i++) {
-	  const unsigned short v = (unsigned short)(0.5f + 65535.0f *
-					(float)i / (float)(numColors - 1));
-	  colors[i].pixel = pixels[i];
-	  colors[i].red   = v;
-	  colors[i].green = v;
-	  colors[i].blue  = v;
-	  colors[i].flags = DoRed | DoGreen | DoBlue;
-	}
-      }
-      else {
-	for (int i = 0; i < numColors; i++) {
-	  const unsigned short v = (unsigned short)(0.5f + 65535.0f *
-					(float)i / (float)(numColors - 1));
-	  colors[i].pixel = pixels[i];
-	  colors[i].red   = pixelField(i, 3, 0);
-	  colors[i].green = pixelField(i, 3, 3);
-	  colors[i].blue  = pixelField(i, 2, 6);
-	  colors[i].flags = DoRed | DoGreen | DoBlue;
-	}
-      }
-
-      // set colors
-      XStoreColors(display->getDisplay(), colormap, colors, numColors);
-      XSetWMColormapWindows(display->getDisplay(), window, &window, 1);
+    colormapPixels = new unsigned long[visual.colormap_size];
+    if (colormapPixels && XAllocColorCells(display->getDisplay(),
+				colormap, True, &mask,
+				0, colormapPixels, visual.colormap_size))
       defaultColormap = False;
-    }
-
-    delete[] colors;
-    delete[] pixels;
+  }
+  if (!defaultColormap) {
+    loadColormap();
+    XSetWMColormapWindows(display->getDisplay(), window, &window, 1);
   }
 
-  // make an OpenGL context for the window
-  context = glXCreateContext(display->getDisplay(), visual, NULL, True);
+  // make an OpenGL context for the window.  do *not* bind it to the
+  // window yet:  to support 3Dfx correctly we have to wait until the
+  // window has been sized.
+  context = glXCreateContext(display->getDisplay(), &visual, NULL, True);
   if (context == NULL) {
     XDestroyWindow(display->getDisplay(), window);
     XFreeColormap(display->getDisplay(), colormap);
@@ -251,14 +146,12 @@ XWindow::XWindow(const XDisplay* _display, XVisual* _visual) :
 XWindow::~XWindow()
 {
   // free up stuff
-  if (glXGetCurrentContext() == context)
-    glXMakeCurrent(display->getDisplay(), None, NULL);
-  if (context)
-    glXDestroyContext(display->getDisplay(), context);
+  freeContext();
   if (window != None)
     XDestroyWindow(display->getDisplay(), window);
   if (colormap != None)
     XFreeColormap(display->getDisplay(), colormap);
+  delete[] colormapPixels;
 
   if (prev) prev->next = next;
   if (next) next->prev = prev;
@@ -458,16 +351,16 @@ void			XWindow::setFullscreen()
 
 #ifdef __linux__
   {
-    int eventbase, errorbase;
     char *env;
 
     env=getenv("MESA_GLX_FX");
-    if (env && *env=='f') { // Full screen Mesa mode
-      xsh.base_width=640;
-      xsh.base_height=480;
+    if (env && *env != tolower('w')) { // Full screen Mesa mode
+      xsh.base_width=getDisplay()->getPassthroughWidth();
+      xsh.base_height=getDisplay()->getPassthroughHeight();
     }
-#if defined(__i386__)
+#if defined(USE_XF86VIDMODE_EXT)
     else {
+      int eventbase, errorbase;
       // Check if we have the XF86 vidmode extension, for virtual roots
       if (XF86VidModeQueryExtension(display->getDisplay(), &eventbase,
 				    &errorbase)) {
@@ -567,14 +460,171 @@ void			XWindow::hideMouse()
     XDefineCursor(display->getDisplay(), window, cursor);
 }
 
+void			XWindow::setGamma(float newGamma)
+{
+  gammaVal = newGamma;
+  loadColormap();
+}
+
+float			XWindow::getGamma() const
+{
+  return gammaVal;
+}
+
+boolean			XWindow::hasGammaControl() const
+{
+  return !defaultColormap;
+}
+
 void			XWindow::makeCurrent()
 {
-  glXMakeCurrent(display->getDisplay(), window, context);
+  if (context)
+    glXMakeCurrent(display->getDisplay(), window, context);
 }
 
 void			XWindow::swapBuffers()
 {
   glXSwapBuffers(display->getDisplay(), window);
+}
+
+void			XWindow::makeContext()
+{
+  if (!context)
+    context = glXCreateContext(display->getDisplay(), &visual, NULL, True);
+  makeCurrent();
+}
+
+void			XWindow::freeContext()
+{
+  if (context) {
+    if (glXGetCurrentContext() == context)
+      glXMakeCurrent(display->getDisplay(), None, NULL);
+    glXDestroyContext(display->getDisplay(), context);
+    context = NULL;
+  }
+}
+
+void			XWindow::loadColormap()
+{
+  if (defaultColormap)
+    return;
+
+  // allocate space for colors
+  XColor* colors = new XColor[visual.colormap_size];
+  if (!colors)
+    return;
+
+  if (visual.c_class == DirectColor) {
+    // find how many bits are in each of red, green, and blue channels
+    int rBits, rOffset;
+    int gBits, gOffset;
+    int bBits, bOffset;
+    countBits(visual.red_mask, rBits, rOffset);
+    countBits(visual.green_mask, gBits, gOffset);
+    countBits(visual.blue_mask, bBits, bOffset);
+
+    // create colors
+    int i;
+    for (i = 0; i < visual.colormap_size; i++) {
+      colors[i].pixel = 0;
+      colors[i].red   = 0;
+      colors[i].green = 0;
+      colors[i].blue  = 0;
+      colors[i].flags = 0;
+    }
+
+    int n = 1 << rBits;
+    for (i = 0; i < n; i++) {
+      colors[i].pixel |= i << rOffset;
+      colors[i].red   = getIntensityValue((float)i / (float)(n - 1));
+      colors[i].flags |= DoRed;
+    }
+
+    n = 1 << gBits;
+    for (i = 0; i < n; i++) {
+      colors[i].pixel |= i << gOffset;
+      colors[i].green = getIntensityValue((float)i / (float)(n - 1));
+      colors[i].flags |= DoGreen;
+    }
+
+    n = 1 << bBits;
+    for (i = 0; i < n; i++) {
+      colors[i].pixel |= i << bOffset;
+      colors[i].blue  = getIntensityValue((float)i / (float)(n - 1));
+      colors[i].flags |= DoBlue;
+    }
+  }
+
+  else if (visual.c_class == GrayScale) {
+    // create colors
+    for (int i = 0; i < visual.colormap_size; i++) {
+      const unsigned short v = getIntensityValue((float)i /
+					(float)(visual.colormap_size - 1));
+      colors[i].pixel = colormapPixels[i];
+      colors[i].red   = v;
+      colors[i].green = v;
+      colors[i].blue  = v;
+      colors[i].flags = DoRed | DoGreen | DoBlue;
+    }
+  }
+
+  else if (visual.c_class == PseudoColor && visual.depth == 8) {
+    // assume a 3:3:2 (RGB) colormap for an 8 bit deep PseudoColor,
+    // with red in the low bits, then green, then blue.
+    
+    // create colors
+    for (int i = 0; i < visual.colormap_size; i++) {
+      colors[i].pixel = colormapPixels[i];
+      colors[i].red   = getIntensityValue(pixelField(i, 3, 0));
+      colors[i].green = getIntensityValue(pixelField(i, 3, 3));
+      colors[i].blue  = getIntensityValue(pixelField(i, 2, 6));
+      colors[i].flags = DoRed | DoGreen | DoBlue;
+    }
+  }
+
+  else {
+    assert(0 && "bad visual in loadColormap()");
+  }
+
+  // set colors
+  XStoreColors(display->getDisplay(), colormap, colors, visual.colormap_size);
+  delete[] colors;
+}
+
+unsigned short		XWindow::getIntensityValue(float i) const
+{
+  if (i <= 0.0f) return 0;
+  if (i >= 1.0f) return 65535;
+  i = powf(i, 1.0 / gammaVal);
+  return (unsigned short)(0.5f + 65535.0f * i);
+}
+
+float			XWindow::pixelField(int i, int bits, int offset)
+{
+  const int mask = (1 << bits) - 1;
+  return (float)((i >> offset) & mask) / (float)mask;
+}
+
+void			XWindow::countBits(
+				unsigned long mask, int& num, int& offset)
+{
+  num = 0;
+  offset = 0;
+
+  // find the offset
+  while (mask && (mask & 1) == 0) {
+    offset++;
+    mask >>= 1;
+  }
+
+  // count the one bits
+  while (mask & 1) {
+    num++;
+    mask >>= 1;
+  }
+
+  // verify that there are no more set bits (non-contiguous mask)
+  if (mask) num = 0;
 }
 
 XWindow*		XWindow::lookupWindow(Window w)

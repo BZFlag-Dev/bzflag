@@ -124,12 +124,16 @@ class TankSceneNode : public SceneNode {
 	};
 
 	virtual GLuint	getParts(Style) = 0;
+	virtual void	freeParts() = 0;
 	void		renderParts();
 	void		renderPart(Part);
 	void		renderLights();
 	void		prepStyle(Style);
 	void		doVertex3f(GLfloat x, GLfloat y, GLfloat z);
 	void		doNormal3f(GLfloat x, GLfloat y, GLfloat z);
+      private:
+	void		doInitContext();
+	static void	initContext(void*);
       protected:
 	const TankSceneNode* sceneNode;
 	const GLfloat*	color;
@@ -152,6 +156,7 @@ class TankSceneNode : public SceneNode {
 			~LowTankRenderNode();
       protected:
 	GLuint		getParts(Style);
+	void		freeParts();
 	void		makeBody();
 	void		makeBarrel();
 	void		makeTurret();
@@ -166,6 +171,7 @@ class TankSceneNode : public SceneNode {
 			~MedTankRenderNode();
       protected:
 	GLuint		getParts(Style);
+	void		freeParts();
 	void		makeBody();
 	void		makeBarrel();
 	void		makeTurret();
@@ -180,6 +186,7 @@ class TankSceneNode : public SceneNode {
 			~HighTankRenderNode();
       protected:
 	GLuint		getParts(Style);
+	void		freeParts();
 	void		makeBody();
 	void		makeBarrel();
 	void		makeTurret();

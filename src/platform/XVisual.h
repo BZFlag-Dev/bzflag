@@ -50,8 +50,12 @@ class XVisual : public BzfVisual {
     void		removeAttribute(int index);
     void		editAttribute(int index, int value);
 
+    boolean		matchRequirements(XVisualInfo*) const;
+    static boolean	visualClassIsBetter(int thisBetter, int thanThis);
+
   private:
-    XDisplay::Rep*	display;    boolean		multisampleExt;
+    XDisplay::Rep*	display;
+    boolean		multisampleExt;
     int			attributes[65];
     int			attributeCount;
     XVisualInfo*	visual;

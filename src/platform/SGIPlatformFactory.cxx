@@ -11,7 +11,7 @@
  */
 
 #include "SGIPlatformFactory.h"
-#include "XDisplay.h"
+#include "SGIDisplay.h"
 #include "XVisual.h"
 #include "XWindow.h"
 #include "SGIMedia.h"
@@ -35,7 +35,7 @@ SGIPlatformFactory::~SGIPlatformFactory()
 BzfDisplay*		SGIPlatformFactory::createDisplay(
 				const char* name, const char*)
 {
-  XDisplay* display = new XDisplay(name);
+  XDisplay* display = new XDisplay(name, new SGIDisplayMode);
   if (!display || !display->isValid()) {
     delete display;
     return NULL;

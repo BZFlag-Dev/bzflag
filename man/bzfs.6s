@@ -19,6 +19,9 @@ bzfs \- bzflag game server
 [\fB\-ms \fIshots\fR]
 [\fB\-mts \fR{\fImax-score\fR}]
 [\fB\-p \fIport\fR]
+[\fB\-public \fIdescription\fR]
+[\fB\-publicaddr \fIaddress\fR[\fI:port\fR]]
+[\fB\-publiclist \fIurl\fR]
 [\fB\-q\fR]
 [\fB\+r\fR]
 [\fB\-r\fR]
@@ -105,6 +108,32 @@ declared the winner and the game is over.
 Listen for game connections on \fIport\fR instead of the default port.
 Use \fB-help\fR to print the default port.
 .TP
+\fB-public\fI description\fR
+Advertise this server on the internet with the given \fIdescription\fR.
+By default, a server will respond to broadcast or multicast queries,
+allowing clients to find servers on the local subnet or accessible
+through multicast routers.  However, this doesn't allow clients to
+find servers not accessible via multicast.  The \fB-public\fR option
+causes the server to register itself with a \fBbzfls\fR server, which
+clients can query to get a list of \fBbzfs\fR servers.
+.TP
+\fB-publicaddr\fI address\fR[:\fIport\fR]
+Advertise this server with the given \fIaddress\fR and \fIport\fR.
+Only has an effect when used with \fB-public\fR.
+Normally a server advertises itself at the local address and port.
+Some servers are not accessible from the internet at this address
+(for example servers behind a firewall using \fBbzfrelay\fR).  Use
+this option to specify the address and/or port that internet users
+should use to access this server.
+.TP
+\fB-publiclist\fI url\fR
+Advertise this server on the \fBbzfls\fR servers listed at \fIurl\fR.
+Only has an effect when used with \fB-public\fR.
+A built-in url is used by default.  The \fBbzflag\fR clients use the
+same built-in url so, by default, clients will see public servers
+automatically.  See \fBbzfls\fR for a description of the format of
+\fIurl\fR.
+.TP
 .B -q
 If specified, the server will not listen for nor respond to ``pings''.
 \fBBzflag\fR sends out these pings to give the user a list of
@@ -162,9 +191,9 @@ of the server's existence.
 Prints the version number of the executable.
 .RE
 .SS Notes
-The server uses zero CPU time when nobody is playing, and even during
-a game the server uses very little CPU, so it's not a burden on the
-system to leave one running and it won't interfere with a player
+The server uses nearly zero CPU time when nobody is playing, and even
+during a game the server uses very little CPU, so it's not a burden on
+the system to leave one running and it won't interfere with a player
 using the same system (except on Windows 95, which \fIreally\fR
 sucks at multitasking).  The server will continue to run until
 terminated.  If a game is in progress when the server goes down,
@@ -179,7 +208,7 @@ The following game styles are recommended starting points.
 \fB-c\fR [\fB-b\fR]
 Basic capture-the-flag game.  It teaches teamwork and dogfighting skills.
 .TP
-\fB-h -r -s -t\fR
+\fB-r -s -t\fR
 Free-for-all with superflags and teleporters.  Rogues are allowed.
 Teaches players how to use superflags and teleporters for maximum effect.
 You may want to allow players to drop bad flags with any of -sa, -st,
@@ -197,14 +226,16 @@ Communication between the server and clients (i.e. between \fBbzfs\fR and
 \fBbzflag\fR) during a game is via TCP.  Use the \fB-help\fR option to get
 the server's default port.  If there's a firewall between the server and
 client, the firewall must accept connections from the client to this port
-and forward them to the server.
+and forward them to the server.  See \fBbzfrelay\fR for a bzflag firewall
+relay.
 .PP
 Clients can search for servers by sending and receiving multicast UDP
 packets.  For a client to discover a server, there must be
 a multicast route between them with fewer hops than the default TTL
 (time-to-live) which is 8 or whatever the TTL was set to using the
 \fB-ttl\fR option to \fBbzflag\fR.  However, a client can still connect
-to a server beyond the multicast TTL.
+to a server beyond the multicast TTL.  Clients can also find servers
+advertised using \fI-public\fR by querying \fBbzfls\fR servers.
 .PP
 Some communication between clients, such as position and orientation
 information, is normally sent directly via multicast UDP packets.  Other
@@ -234,8 +265,7 @@ loopback interface), then you may have to use a different interface.
 A typical scenario of this situation is a remote system connected via
 ISDN to a main network.  Use \fBnetstat -i\fR to list your interfaces,
 then use the \fB-interface\fR \fIinterface\fR option to \fBbzflag\fR,
-replacing \fIinterface\fR with the correct interface (probably something
-like \fBppp0\fR).
+replacing \fIinterface\fR with the correct interface IP address.
 .PP
 The next thing to check is the TTL (time-to-live) on the client.  By
 default it is 8.  This means all other players must be no more than
@@ -260,4 +290,4 @@ subnets on the Internet.  You'll need to run a tunneling router at both
 ends of the tunnel.  See \fBmrouted\fR for more information about a
 multicast router.
 .SH SEE ALSO
-bzflag(6), mrouted(1)
+bzflag(6), bzfls(6), bzfrelay(6), mrouted(1)

@@ -61,14 +61,6 @@ void			NewMedia::closeAudio()
   // XXX -- shut down audio device and IPC stuff
 }
 
-boolean			NewMedia::isAudioBrainDead() const
-{
-  // XXX -- return True if audio subsystem doesn't stop playing
-  // when there are no more samples to play (e.g. if it plays a
-  // ring buffer continuously).
-  return False;
-}
-
 boolean			NewMedia::startAudioThread(
 				void (*proc)(void*), void* data)
 {
@@ -118,7 +110,7 @@ int			NewMedia::getAudioOutputRate() const
 
 int			NewMedia::getAudioBufferSize() const
 {
-  // XXX -- return the total size of the audio buffer
+  // XXX -- return the total size of the audio buffer in frames
   return 0;
 }
 

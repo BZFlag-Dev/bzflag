@@ -19,6 +19,9 @@
 #ifndef	BZF_NETWORK_H
 #define	BZF_NETWORK_H
 
+#include "common.h"
+#include "BzfString.h"
+
 #if !defined(_WIN32)
 
 #include <sys/time.h>
@@ -45,6 +48,14 @@
 
 /* setsockopt incorrectly prototypes the 4th arg without const. */
 #define SSOType		void*
+#endif
+
+#if defined(sun)
+/* setsockopt prototypes the 4th arg as const char*. */
+#define SSOType		const char*
+
+/* connect prototypes the 2nd arg without const */
+#define CNCTType	struct sockaddr
 #endif
 
 extern "C" {
@@ -99,6 +110,9 @@ int			getErrno();
 #if !defined(SSOType)
 #define SSOType		const void*
 #endif
+#if !defined(CNCTType)
+#define CNCTType	const struct sockaddr
+#endif
 
 // some platforms don't have a SIG_PF type.
 // note that this isn't really network code.
@@ -113,6 +127,20 @@ typedef void		(*SIG_PF)(int);
 class BzfNetwork {
   public:
     static int		setNonBlocking(int fd);
+    static boolean	dereferenceURLs(BzfStringAList& list,
+				int max, BzfStringAList& failedList);
+    static boolean	parseURL(const BzfString& url,
+				BzfString& protocol,
+				BzfString& hostname,
+				int& port,
+				BzfString& pathname);
+
+  private:
+    static BzfString	dereferenceHTTP(const BzfString& hostname, int port,
+				const BzfString& pathname);
+    static BzfString	dereferenceFile(const BzfString& pathname);
+    static void		insertLines(BzfStringAList& list,
+				int index, const BzfString& data);
 };
 
 #endif // BZF_NETWORK_H

@@ -15,6 +15,7 @@
 #include <string.h>
 #include <ctype.h>
 #include <errno.h>
+#include <signal.h>
 #if defined(_WIN32)
 #include <process.h>
 #else
@@ -33,11 +34,13 @@
 #include "Ping.h"
 #include "Protocol.h"
 #include "BzfDisplay.h"
+#include "BzfWindow.h"
 #include "MainWindow.h"
 #include "SceneRenderer.h"
 #include "OpenGLTexture.h"
 #include "ErrorHandler.h"
 #include "KeyMap.h"
+#include "TimeKeeper.h"
 
 //
 // MenuDefaultKey
@@ -216,23 +219,73 @@ class FormatMenuDefaultKey : public MenuDefaultKey {
 class FormatMenu : public HUDDialog {
   public:
 			FormatMenu();
-			~FormatMenu() { }
+			~FormatMenu();
 
     HUDuiDefaultKey*	getDefaultKey() { return &defaultKey; }
+    int			getSelected() const;
+    void		setSelected(int);
+    void		show();
     void		execute();
     void		resize(int width, int height);
 
     void		setFormat(boolean test);
 
+  public:
+    static const int	NumItems;
+
+  private:
+    void		addLabel(const char* msg, const char* _label);
+
   private:
     FormatMenuDefaultKey defaultKey;
     int			numFormats;
     float		center;
+
+    HUDuiLabel*		currentLabel;
+    HUDuiLabel*		pageLabel;
+    int			selectedIndex;
+    boolean*		badFormats;
+
+    static const int	NumColumns;
+    static const int	NumReadouts;
 };
 
 boolean			FormatMenuDefaultKey::keyPress(const BzfKeyEvent& key)
 {
-  if (key.ascii == 'T' || key.ascii == 't') {
+  if (key.ascii == 0) switch (key.button) {
+    case BzfKeyEvent::Up:
+      if (HUDui::getFocus()) {
+	menu->setSelected(menu->getSelected() - 1);
+      }
+      return True;
+
+    case BzfKeyEvent::Down:
+      if (HUDui::getFocus()) {
+	menu->setSelected(menu->getSelected() + 1);
+      }
+      return True;
+
+    case BzfKeyEvent::PageUp:
+      if (HUDui::getFocus()) {
+	menu->setSelected(menu->getSelected() - FormatMenu::NumItems);
+      }
+      return True;
+
+    case BzfKeyEvent::PageDown:
+      if (HUDui::getFocus()) {
+	menu->setSelected(menu->getSelected() + FormatMenu::NumItems);
+      }
+      return True;
+  }
+
+  else if (key.ascii == '\t') {
+    if (HUDui::getFocus()) {
+	menu->setSelected(menu->getSelected() + 1);
+    }
+    return True;
+  }
+
+  else if (key.ascii == 'T' || key.ascii == 't') {
     menu->setFormat(True);
     return True;
   }
@@ -241,73 +294,145 @@ boolean			FormatMenuDefaultKey::keyPress(const BzfKeyEvent& key)
 
 boolean			FormatMenuDefaultKey::keyRelease(const BzfKeyEvent& key)
 {
-  if (key.ascii == 'T' || key.ascii == 't')
-    return True;
+  switch (key.button) {
+    case BzfKeyEvent::Up:
+    case BzfKeyEvent::Down:
+    case BzfKeyEvent::PageUp:
+    case BzfKeyEvent::PageDown:
+      return True;
+  }
+  switch (key.ascii) {
+    case 27:	// escape
+    case 13:	// return
+    case 'T':
+    case 't':
+      return True;
+  }
   return MenuDefaultKey::keyRelease(key);
 }
 
-FormatMenu::FormatMenu() : defaultKey(this)
-{
-  // add controls
-  HUDuiControlList& list = getControls();
+const int		FormatMenu::NumReadouts = 4;
+const int		FormatMenu::NumItems = 30;
+const int		FormatMenu::NumColumns = 3;
 
-  HUDuiLabel* label = new HUDuiLabel;
-  label->setFont(MainMenu::getFont());
-  label->setString("Video Format");
-  list.append(label);
+FormatMenu::FormatMenu() : defaultKey(this), badFormats(NULL)
+{
+  int i;
 
   BzfDisplay* display = getDisplay();
   numFormats = display->getNumResolutions();
-  label = new HUDuiLabel;
-  label->setFont(MainMenu::getFont());
-  label->setString((numFormats < 2) ? "" :
-	"Press Enter to select and T to test a format.  Esc to exit.");
-  list.append(label);
+  badFormats = new boolean[numFormats];
+  for (i = 0; i < numFormats; i++)
+    badFormats[i] = False;
 
-  // add formats at end
+  // add controls
+  addLabel("Video Format", "");
+  addLabel("", "");			// instructions
+  addLabel("", "Current Format:");	// current format readout
+  addLabel("", "");			// page readout
+  currentLabel = (HUDuiLabel*)(getControls()[NumReadouts - 2]);
+  pageLabel = (HUDuiLabel*)(getControls()[NumReadouts - 1]);
+
+  // add resolution list items
+  for (i = 0; i < NumItems; ++i)
+    addLabel("", "");
+
+  // fill in static labels
   if (numFormats < 2) {
-    label = new HUDuiLabel;
-    label->setFont(MainMenu::getFont());
-    label->setString("<switching not available>");
-    list.append(label);
-
-    // set initial focus
+    currentLabel->setString("<switching not available>");
     setFocus(NULL);
   }
-
   else {
-    char buffer[128];
-    sprintf(buffer, "Current format: %s",
-		display->getResolution(display->getResolution())->name);
-    label = new HUDuiLabel;
-    label->setFont(MainMenu::getFont());
-    label->setString(buffer);
-    list.append(label);
-
-    int i;
-    for (i = 0; i < numFormats; i++) {
-      label = new HUDuiLabel;
-      label->setFont(MainMenu::getFont());
-      label->setString(display->getResolution(i)->name);
-      label->setCallback(NULL, (void*)i);
-      list.append(label);
-    }
-
-    // set order
-    const int first = 3;
-    const int last = first + numFormats - 1;
-    for (i = 1; i < numFormats - 1; i++) {
-      list[first + i]->setPrev(list[first + i - 1]);
-      list[first + i]->setNext(list[first + i + 1]);
-    }
-    list[first]->setPrev(list[last]);
-    list[first]->setNext(list[first + 1]);
-    list[last]->setPrev(list[last - 1]);
-    list[last]->setNext(list[first]);
-
-    // set initial focus
-    setFocus(list[first + display->getResolution()]);
+    HUDuiLabel* label = (HUDuiLabel*)(getControls()[NumReadouts - 3]);
+    label->setString("Press Enter to select and T to test a format."
+							"  Esc to exit.");
+    setFocus(pageLabel);
   }
+}
+
+FormatMenu::~FormatMenu()
+{
+  delete[] badFormats;
+}
+
+void			FormatMenu::addLabel(
+				const char* msg, const char* _label)
+{
+  HUDuiLabel* label = new HUDuiLabel;
+  label->setFont(MainMenu::getFont());
+  label->setString(msg);
+  label->setLabel(_label);
+  getControls().append(label);
+}
+
+int			FormatMenu::getSelected() const
+{
+  return selectedIndex;
+}
+
+void			FormatMenu::setSelected(int index)
+{
+  BzfDisplay* display = getDisplay();
+  HUDuiControlList& list = getControls();
+
+  // clamp index
+  if (index < 0)
+    index = numFormats - 1;
+  else if (index != 0 && index >= numFormats)
+    index = 0;
+
+  // ignore if no change
+  if (selectedIndex == index)
+    return;
+
+  // update current format
+  currentLabel->setString(display->getResolution(
+				display->getResolution())->name);
+
+  // update selected index and get old and new page numbers
+  const int oldPage = (selectedIndex < 0) ? -1 : (selectedIndex / NumItems);
+  selectedIndex = index;
+  const int newPage = (selectedIndex / NumItems);
+
+  // if page changed then load items for this page
+  if (oldPage != newPage) {
+    // fill items
+    const int base = newPage * NumItems;
+    for (int i = 0; i < NumItems; ++i) {
+      HUDuiLabel* label = (HUDuiLabel*)list[i + NumReadouts];
+      if (base + i < numFormats)
+	if (badFormats[base + i])
+	  label->setString("<unloadable>");
+	else
+	  label->setString(display->getResolution(base + i)->name);
+      else
+	label->setString("");
+    }
+
+    // change page label
+    if (numFormats > NumItems) {
+      char msg[50];
+      sprintf(msg, "Page %d of %d\n", newPage + 1, (numFormats + 
+						NumItems - 1) / NumItems);
+      pageLabel->setString(msg);
+    }
+  }
+
+  // set focus to selected item
+  if (numFormats > 0) {
+    const int indexOnPage = selectedIndex % NumItems;
+    getControls()[NumReadouts + indexOnPage]->setFocus();
+  }
+  else {
+    setFocus(NULL);
+  }
+}
+
+void			FormatMenu::show()
+{
+  pageLabel->setString("");
+  selectedIndex = -1;
+  setSelected(getDisplay()->getResolution());
 }
 
 void			FormatMenu::execute()
@@ -317,28 +442,22 @@ void			FormatMenu::execute()
 
 void			FormatMenu::setFormat(boolean test)
 {
-  HUDuiLabel* control = (HUDuiLabel*)HUDui::getFocus();
-  if (!control) return;
-  const int format = (int)control->getUserData();
-  if (!setVideoFormat(format, test)) {
-    control->setString("<unloadable>");
-    control->getPrev()->setNext(control->getNext());
-    control->getNext()->setPrev(control->getPrev());
-    HUDui::setFocus(control->getNext());
+  if (selectedIndex >= numFormats || badFormats[selectedIndex])
+    return;
+
+  if (!setVideoFormat(selectedIndex, test)) {
+    // can't load format
+    badFormats[selectedIndex] = True;
   }
   else if (!test) {
-    BzfDisplay* display = getDisplay();
-    char buffer[128];
-    sprintf(buffer, "Current format: %s",
-		display->getResolution(display->getResolution())->name);
-    HUDuiControlList& list = getControls();
-    HUDuiLabel* label = (HUDuiLabel*)list[2];
-    label->setString(buffer);
-
-    const OpenGLTexFont& font = label->getFont();
-    const float stringWidth = font.getWidth(label->getString());
-    label->setPosition(center - 0.5f * stringWidth, label->getY());
+    // print OpenGL renderer, which might have changed
+    printError((const char*)glGetString(GL_RENDERER));
   }
+
+  // update readouts
+  const int oldSelectedIndex = selectedIndex;
+  selectedIndex = -1;
+  setSelected(oldSelectedIndex);
 }
 
 void			FormatMenu::resize(int width, int height)
@@ -373,68 +492,42 @@ void			FormatMenu::resize(int width, int height)
     label->setPosition(x, y);
   }
   {
-    HUDuiLabel* label = (HUDuiLabel*)list[2];
+    HUDuiLabel* label = currentLabel;
+    label->setFontSize(fontWidth, fontHeight);
+    const OpenGLTexFont& font = label->getFont();
+    y -= 1.0f * font.getHeight();
+    label->setPosition(0.5f * (float)width, y);
+  }
+
+  // position page readout
+  fontWidth = (float)height / 36.0f;
+  fontHeight = (float)height / 36.0f;
+  {
+    HUDuiLabel* label = pageLabel;
     label->setFontSize(fontWidth, fontHeight);
     const OpenGLTexFont& font = label->getFont();
     const float stringWidth = font.getWidth(label->getString());
-    center = 0.5f * (float)width;
-    x = center - 0.5f * stringWidth;
-    y -= 1.0f * font.getHeight();
+    x = 0.5f * ((float)width - stringWidth);
+    y -= 2.0f * font.getHeight();
     label->setPosition(x, y);
   }
 
-  // compute font size that'll fit all the allowed formats, but
-  // no larger than default.  then put formats in columns and rows.
-  // use the minimum number of rows, but arrange formats in columns.
-  int columns, rows;
-  if (numFormats >= 2) {
-    // get pixels left vertically for formats
-    float height2 = y - 0.30f * height;
-
-    // compute number of columns and rows to fit all formats
-    columns = 3;
-    rows = 4 * columns;
-    while (columns * rows < numFormats) {
-      columns++;
-      rows = 4 * columns;
+  // position format item list
+  const float yBase = y;
+  int lastColumn = -1;
+  for (int i = 0; i < NumItems; ++i) {
+    const int column = i * NumColumns / NumItems;
+    if (column != lastColumn) {
+      lastColumn = column;
+      x = (float)width * ((0.5f + (float)column) / (float)(NumColumns + 1));
+      y = yBase;
     }
 
-    // find largest font that fits all rows and columns
-    HUDuiLabel* label = (HUDuiLabel*)list[3];
-    label->setFontSize(1.0f, 1.0f);
+    HUDuiLabel* label = (HUDuiLabel*)list[i + NumReadouts];
+    label->setFontSize(fontWidth, fontHeight);
     const OpenGLTexFont& font = label->getFont();
-    const float defaultSize = 1.0f + font.getWidth("0000x0000x00@000");
-    const float unitColumns = ((float)width - 1.0f) / defaultSize;
-    const float unitRows = height2 - 1.0f;
-    fontWidth = unitColumns / (float)columns;
-    fontHeight = unitRows / (float)rows;
-    if (fontWidth > fontHeight) {
-      if (fontHeight > (float)height / 36.0f)
-	fontHeight = (float)height / 36.0f;
-      fontWidth = fontHeight;
-    }
-    else {
-      if (fontWidth > (float)height / 36.0f)
-	fontWidth = (float)height / 36.0f;
-      fontHeight = fontWidth;
-    }
-
-    // reposition
-    const float dx = (float)(width - fontHeight) / (float)columns;
-    x = 2.0f * fontHeight;
-    y -= 1.5f * fontHeight;
-
-    ((HUDuiLabel*)list[3])->setFontSize(fontWidth, fontHeight);
-    const float h = ((HUDuiLabel*)list[3])->getFont().getHeight();
-    rows = (numFormats + columns - 1) / columns;
-    for (int i = 0; i < numFormats; i++) {
-      const int column = i / rows;
-      const int row = i % rows;
-
-      HUDuiLabel* label = (HUDuiLabel*)list[3 + i];
-      label->setFontSize(fontWidth, fontHeight);
-      label->setPosition(x + dx * (float)column, y - h * (float)row);
-    }
+    y -= 1.0f * font.getHeight();
+    label->setPosition(x, y);
   }
 }
 
@@ -622,7 +715,6 @@ void			KeyboardMapMenu::execute()
   else {
     // start editing
     HUDuiControlList& list = getControls();
-    const int count = list.getLength();
     editing = KeyMap::LastKey;
     for (int i = 0; i < (int)KeyMap::LastKey; i++)
       if (list[i + 2] == focus) {
@@ -735,6 +827,8 @@ class OptionsMenu : public HUDDialog {
     void		resize(int width, int height);
 
     static void		callback(HUDuiControl* w, void* data);
+    static int		gammaToIndex(float);
+    static float	indexToGamma(int);
 
   private:
     HUDuiControl*	videoFormat;
@@ -876,7 +970,6 @@ OptionsMenu::OptionsMenu()
   list.append(option);
 #endif
 
-#if !defined(_WIN32)			// windows only changes at startup
   BzfDisplay* display = getDisplay();
   int numFormats = display->getNumResolutions();
   if (numFormats < 2) {
@@ -888,9 +981,35 @@ OptionsMenu::OptionsMenu()
     label->setLabel("Change Video Format");
     list.append(label);
   }
-#else
-  videoFormat = NULL;
-#endif
+
+  BzfWindow* window = getMainWindow()->getWindow();
+  option = new HUDuiList;
+  option->setFont(MainMenu::getFont());
+  option->setLabel("Brightness:");
+  option->setCallback(callback, (void*)"g");
+  options = &option->getList();
+  if (window->hasGammaControl()) {
+    options->append(BzfString("[O--------------]"));
+    options->append(BzfString("[-O-------------]"));
+    options->append(BzfString("[--O------------]"));
+    options->append(BzfString("[---O-----------]"));
+    options->append(BzfString("[----O----------]"));
+    options->append(BzfString("[-----O---------]"));
+    options->append(BzfString("[------O--------]"));
+    options->append(BzfString("[-------O-------]"));
+    options->append(BzfString("[--------O------]"));
+    options->append(BzfString("[---------O-----]"));
+    options->append(BzfString("[----------O----]"));
+    options->append(BzfString("[-----------O---]"));
+    options->append(BzfString("[------------O--]"));
+    options->append(BzfString("[-------------O-]"));
+    options->append(BzfString("[--------------O]"));
+  }
+  else {
+    options->append(BzfString("Unavailable"));
+  }
+  option->update();
+  list.append(option);
 
   option = new HUDuiList;
   option->setFont(MainMenu::getFont());
@@ -911,7 +1030,7 @@ OptionsMenu::OptionsMenu()
     options->append(BzfString("10"));
   }
   else {
-    options->append(BzfString("Disabled"));
+    options->append(BzfString("Unavailable"));
   }
   option->update();
   list.append(option);
@@ -1002,6 +1121,10 @@ void			OptionsMenu::resize(int width, int height)
       i++;
     ((HUDuiList*)list[i++])->setIndex(getSoundVolume());
 
+    BzfWindow* window = getMainWindow()->getWindow();
+    if (window->hasGammaControl())
+      ((HUDuiList*)list[i++])->setIndex(gammaToIndex(window->getGamma()));
+
     if (!renderer->useTexture())
       tex->setIndex(0);
     else
@@ -1064,6 +1187,13 @@ void			OptionsMenu::callback(HUDuiControl* w, void* data)
       setSoundVolume(list->getIndex());
       break;
 
+    case 'g': {
+      BzfWindow* window = getMainWindow()->getWindow();
+      if (window->hasGammaControl())
+	window->setGamma(indexToGamma(list->getIndex()));
+      break;
+    }
+
 #if defined(DEBUG_RENDERING)
     case 'a':
       sceneRenderer->setHiddenLine(list->getIndex() != 0);
@@ -1082,6 +1212,17 @@ void			OptionsMenu::callback(HUDuiControl* w, void* data)
       // do nothing -- wait for enter or t key
       break;
   }
+}
+
+int			OptionsMenu::gammaToIndex(float gamma)
+{
+    return (int)(0.5f + 5.0f * (1.0f + logf(gamma) / logf(2.0)));
+}
+
+float			OptionsMenu::indexToGamma(int index)
+{
+    // map index 5 to gamma 1.0 and index 0 to gamma 0.5
+    return powf(2.0f, (float)index / 5.0f - 1.0f);
 }
 
 //
@@ -1281,7 +1422,7 @@ void			Help1Menu::resize(int width, int height)
   // get current key mapping and set strings appropriately
   KeyMap& map = getKeyMap();
   HUDuiControlList& list = getControls();
-  for (int j = 0; j < sizeof(key) / sizeof(key[0]); j++) {
+  for (int j = 0; j < (int)(sizeof(key) / sizeof(key[0])); j++) {
     if (key[j] == KeyMap::LastKey) continue;
 
     BzfString value;
@@ -1766,10 +1907,21 @@ class ServerMenuDefaultKey : public MenuDefaultKey {
 class ServerItem {
   public:
     BzfString		name;
-    BzfString		nameAndPort;
+    BzfString		description;
     PingPacket		ping;
 };
 BZF_DEFINE_ALIST(ServerList, ServerItem);
+
+static const int	MaxListServers = 5;
+class ListServer {
+  public:
+    Address		address;
+    int			port;
+    int			socket;
+    int			phase;
+    int			bufferSize;
+    char		buffer[1024];
+};
 
 class ServerMenu : public HUDDialog {
   public:
@@ -1777,16 +1929,25 @@ class ServerMenu : public HUDDialog {
 			~ServerMenu() { }
 
     HUDuiDefaultKey*	getDefaultKey() { return &defaultKey; }
-    void		pick();
+    int			getSelected() const;
+    void		setSelected(int);
     void		show();
     void		execute();
     void		dismiss();
     void		resize(int width, int height);
 
+  public:
+    static const int	NumItems;
+
   private:
     void		addLabel(const char* string, const char* label);
     void		checkEchos();
+    void		readServerList(int index);
     void		addToList(ServerItem&);
+    void		addToListWithLookup(ServerItem&);
+    void		setStatus(const char*);
+    void		pick();
+    int			getPlayerCount(int index) const;
     static void		playingCB(void*);
 
   private:
@@ -1797,6 +1958,15 @@ class ServerMenu : public HUDDialog {
     int			pingBcastSocket;
     struct sockaddr_in	pingBcastAddr;
     int			width, height;
+    HUDuiLabel*		status;
+
+    HUDuiLabel*		pageLabel;
+    int			selectedIndex;
+
+    int			phase;
+    ListServer		listServers[MaxListServers];
+    int			numListServers;
+
     static const int	NumReadouts;
 };
 
@@ -1805,23 +1975,32 @@ boolean			ServerMenuDefaultKey::keyPress(const BzfKeyEvent& key)
   if (key.ascii == 0) switch (key.button) {
     case BzfKeyEvent::Up:
       if (HUDui::getFocus()) {
-	HUDui::setFocus(HUDui::getFocus()->getPrev());
-	menu->pick();
+	menu->setSelected(menu->getSelected() - 1);
       }
       return True;
 
     case BzfKeyEvent::Down:
       if (HUDui::getFocus()) {
-	HUDui::setFocus(HUDui::getFocus()->getNext());
-	menu->pick();
+	menu->setSelected(menu->getSelected() + 1);
+      }
+      return True;
+
+    case BzfKeyEvent::PageUp:
+      if (HUDui::getFocus()) {
+	menu->setSelected(menu->getSelected() - ServerMenu::NumItems);
+      }
+      return True;
+
+    case BzfKeyEvent::PageDown:
+      if (HUDui::getFocus()) {
+	menu->setSelected(menu->getSelected() + ServerMenu::NumItems);
       }
       return True;
   }
 
   else if (key.ascii == '\t') {
     if (HUDui::getFocus()) {
-      HUDui::setFocus(HUDui::getFocus()->getNext());
-      menu->pick();
+	menu->setSelected(menu->getSelected() + 1);
     }
     return True;
   }
@@ -1834,6 +2013,8 @@ boolean			ServerMenuDefaultKey::keyRelease(const BzfKeyEvent& key)
   switch (key.button) {
     case BzfKeyEvent::Up:
     case BzfKeyEvent::Down:
+    case BzfKeyEvent::PageUp:
+    case BzfKeyEvent::PageDown:
       return True;
   }
   switch (key.ascii) {
@@ -1844,11 +2025,13 @@ boolean			ServerMenuDefaultKey::keyRelease(const BzfKeyEvent& key)
   return False;
 }
 
-const int		ServerMenu::NumReadouts = 19;
+const int		ServerMenu::NumReadouts = 21;
+const int		ServerMenu::NumItems = 10;
 
 ServerMenu::ServerMenu() : defaultKey(this),
 				pingInSocket(-1),
-				pingBcastSocket(-1)
+				pingBcastSocket(-1),
+				numListServers(0)
 {
   // add controls
   addLabel("Servers", "");
@@ -1870,9 +2053,17 @@ ServerMenu::ServerMenu() : defaultKey(this),
   addLabel("", "");			// time limit
   addLabel("", "");			// max team score
   addLabel("", "");			// max player score
+  addLabel("", "");			// search status
+  addLabel("", "");			// page readout
+  status = (HUDuiLabel*)(getControls()[NumReadouts - 2]);
+  pageLabel = (HUDuiLabel*)(getControls()[NumReadouts - 1]);
+
+  // add server list items
+  for (int i = 0; i < NumItems; ++i)
+    addLabel("", "");
 
   // set initial focus
-  setFocus(NULL);
+  setFocus(status);
 }
 
 void			ServerMenu::addLabel(
@@ -1885,15 +2076,67 @@ void			ServerMenu::addLabel(
   getControls().append(label);
 }
 
+int			ServerMenu::getSelected() const
+{
+  return selectedIndex;
+}
+
+void			ServerMenu::setSelected(int index)
+{
+  // clamp index
+  if (index < 0)
+    index = servers.getLength() - 1;
+  else if (index != 0 && index >= servers.getLength())
+    index = 0;
+
+  // ignore if no change
+  if (selectedIndex == index)
+    return;
+
+  // update selected index and get old and new page numbers
+  const int oldPage = (selectedIndex < 0) ? -1 : (selectedIndex / NumItems);
+  selectedIndex = index;
+  const int newPage = (selectedIndex / NumItems);
+
+  // if page changed then load items for this page
+  if (oldPage != newPage) {
+    // fill items
+    HUDuiControlList& list = getControls();
+    const int base = newPage * NumItems;
+    for (int i = 0; i < NumItems; ++i) {
+      HUDuiLabel* label = (HUDuiLabel*)list[i + NumReadouts];
+      if (base + i < servers.getLength())
+	label->setString(servers[base + i].description);
+      else
+	label->setString("");
+    }
+
+    // change page label
+    if (servers.getLength() > NumItems) {
+      char msg[50];
+      sprintf(msg, "Page %d of %d\n", newPage + 1, (servers.getLength() + 
+						NumItems - 1) / NumItems);
+      pageLabel->setString(msg);
+    }
+  }
+
+  // set focus to selected item
+  if (servers.getLength() > 0) {
+    const int indexOnPage = selectedIndex % NumItems;
+    getControls()[NumReadouts + indexOnPage]->setFocus();
+  }
+
+  // update readouts
+  pick();
+}
+
 void			ServerMenu::pick()
 {
-  // get index of server from picked control
-  HUDuiLabel* label = (HUDuiLabel*)HUDui::getFocus();
-  if (!label) return;
-  const int index = (int)label->getUserData();
+  if (servers.getLength() == 0)
+    return;
 
   // get server info
-  const ServerItem& item = servers[index];
+  const ServerItem& item = servers[selectedIndex];
   const PingPacket& ping = item.ping;
 
   // update server readouts
@@ -2005,13 +2248,13 @@ void			ServerMenu::pick()
   if (ping.maxTeamScore != 0)
     sprintf(buf, "Max team score: %d", ping.maxTeamScore);
   else
-    sprintf(buf, "");
+    strcpy(buf, "");
   ((HUDuiLabel*)list[17])->setString(buf);
 
   if (ping.maxPlayerScore != 0)
     sprintf(buf, "Max player score: %d", ping.maxPlayerScore);
   else
-    sprintf(buf, "");
+    strcpy(buf, "");
   ((HUDuiLabel*)list[18])->setString(buf);
 }
 
@@ -2041,19 +2284,24 @@ void			ServerMenu::show()
   ((HUDuiLabel*)list[16])->setString("");
   ((HUDuiLabel*)list[17])->setString("");
   ((HUDuiLabel*)list[18])->setString("");
+  setStatus("Servers found: 0");
+  pageLabel->setString("");
+  selectedIndex = -1;
+  setSelected(0);
 
-  // no focus
-  HUDui::setFocus(NULL);
+  // focus to no-server
+  setFocus(status);
 
-  // remove server labels
-  const int count = list.getLength();
-  for (int i = count - 1; i >= NumReadouts; i--) {
-    delete list[i];
-    list.remove(i);
-  }
+  // schedule lookup of server list url.  dereference URL chain every
+  // time instead of only first time just in case one of the pointers
+  // has changed.
+  const StartupInfo* info = getStartupInfo();
+  if (info->listServerURL.getLength() == 0)
+    phase = -1;
+  else
+    phase = 0;
 
   // open output multicast socket
-  const StartupInfo* info = getStartupInfo();
   Address multicastAddress(BroadcastAddress);
   struct sockaddr_in pingOutAddr;
   const int pingOutSocket = openMulticast(multicastAddress,
@@ -2087,15 +2335,14 @@ void			ServerMenu::show()
 
 void			ServerMenu::execute()
 {
-  // get index of server from picked control
-  HUDuiLabel* label = (HUDuiLabel*)HUDui::getFocus();
-  if (!label) return;
-  const int index = (int)label->getUserData();
+  if (selectedIndex < 0 || selectedIndex >= servers.getLength())
+    return;
 
   // update startup info
   StartupInfo* info = getStartupInfo();
-  strcpy(info->serverName, servers[index].name);
-  info->serverPort = ntohs((unsigned short)servers[index].ping.serverId.port);
+  strcpy(info->serverName, servers[selectedIndex].name);
+  info->serverPort = ntohs((unsigned short)
+				servers[selectedIndex].ping.serverId.port);
 
   // all done
   HUDDialogStack::get()->pop();
@@ -2105,6 +2352,14 @@ void			ServerMenu::dismiss()
 {
   // no more callbacks
   removePlayingCallback(&playingCB, this);
+
+  // close server list sockets
+  for (int i = 0; i < numListServers; i++)
+    if (listServers[i].socket != -1) {
+      close(listServers[i].socket);
+      listServers[i].socket = -1;
+    }
+  numListServers = 0;
 
   // close input multicast socket
   closeMulticast(pingInSocket);
@@ -2121,7 +2376,6 @@ void			ServerMenu::resize(int _width, int _height)
 
   // get number of servers
   HUDuiControlList& list = getControls();
-  const int numServers = list.getLength() - NumReadouts;
 
   // use a big font for title, smaller font for the rest
   const float titleFontWidth = (float)height / 10.0f;
@@ -2144,7 +2398,7 @@ void			ServerMenu::resize(int _width, int _height)
   const float y0 = y;
   float fontWidth = (float)height / 36.0f;
   float fontHeight = (float)height / 36.0f;
-  for (i = 1; i < NumReadouts; i++) {
+  for (i = 1; i < NumReadouts - 2; i++) {
     if (i % 6 == 1) {
       x = (0.125f + 0.25f * (float)((i - 1) / 6)) * (float)width;
       y = y0;
@@ -2157,154 +2411,377 @@ void			ServerMenu::resize(int _width, int _height)
     label->setPosition(x, y);
   }
 
-  // compute font size that'll fit all the allowed formats, but
-  // no larger than default.
-  int columns, rows;
-  if (numServers != 0) {
-    // get pixels left vertically for formats
-    float height2 = y - 0.30f * height;
+  // reposition search status readout
+  {
+    fontWidth = (float)height / 24.0f;
+    fontHeight = (float)height / 24.0f;
+    status->setFontSize(fontWidth, fontHeight);
+    const OpenGLTexFont& font = status->getFont();
+    const float statusWidth = font.getWidth(status->getString());
+    x = 0.5f * ((float)width - statusWidth);
+    y -= 0.8f * font.getHeight();
+    status->setPosition(x, y);
+  }
 
-    // compute number of columns and rows to fit all formats
-    columns = 2;
-    rows = 8 * columns;
-    while (columns * rows < numServers) {
-      columns++;
-      rows = 8 * columns;
-    }
-
-    // find largest font that fits all rows and columns
-    HUDuiLabel* label = (HUDuiLabel*)list[NumReadouts];
-    label->setFontSize(1.0f, 1.0f);
-    const OpenGLTexFont& font = label->getFont();
-    const float defaultSize = (1.0f +
-		font.getWidth("NNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN")) /
-		font.getWidth();
-    const float unitColumns = ((float)width - 1.0f) / defaultSize;
-    const float unitRows = height2 - 1.0f;
-    fontWidth = unitColumns / (float)columns;
-    fontHeight = unitRows / (float)rows;
-    if (fontWidth > fontHeight) {
-      if (fontHeight > (float)height / 36.0f)
-	fontHeight = (float)height / 36.0f;
-      fontWidth = fontHeight;
-    }
-    else {
-      if (fontWidth > (float)height / 36.0f)
-	fontWidth = (float)height / 36.0f;
-      fontHeight = fontWidth;
-    }
-
+  // position page readout and server item list
+  fontWidth = (float)height / 36.0f;
+  fontHeight = (float)height / 36.0f;
+  x = 0.125f * (float)width;
+  for (i = -1; i < NumItems; ++i) {
+    HUDuiLabel* label = (HUDuiLabel*)list[i + NumReadouts];
     label->setFontSize(fontWidth, fontHeight);
-    const float h = label->getFont().getHeight();
-
-    // put servers in columns and rows.  use the minimum number of
-    // rows, but arrange formats in columns.
-    const float dx = (float)(width - h) / (float)columns;
-    x = 2.0f * h;
-    y -= 7.0f * 1.0f * h;
-
-    rows = (numServers + columns - 1) / columns;
-    for (i = 0; i < numServers; i++) {
-      const int column = i / rows;
-      const int row = i % rows;
-
-      HUDuiLabel* label = (HUDuiLabel*)list[NumReadouts + i];
-      label->setFontSize(fontWidth, fontHeight);
-      label->setPosition(x + dx * (float)column, y - h * (float)row);
-    }
+    const OpenGLTexFont& font = label->getFont();
+    y -= 1.0f * font.getHeight();
+    label->setPosition(x, y);
   }
+}
 
-  else {
-    // do nothing -- no servers
-  }
+void			ServerMenu::setStatus(const char* msg)
+{
+  status->setString(msg);
+  const OpenGLTexFont& font = status->getFont();
+  const float statusWidth = font.getWidth(status->getString());
+  status->setPosition(0.5f * ((float)width - statusWidth), status->getY());
 }
 
 void			ServerMenu::checkEchos()
 {
+  // lookup server list in phase 0
+  if (phase == 0) {
+    // dereference URL
+    BzfStringAList urls, failedURLs;
+    urls.append(getStartupInfo()->listServerURL);
+    BzfNetwork::dereferenceURLs(urls, MaxListServers, failedURLs);
+
+    // print urls we failed to open
+    int i;
+    for (i = 0; i < failedURLs.getLength(); ++i)
+	printError("Can't open list server: %s", (const char*)failedURLs[i]);
+
+    // check urls for validity
+    numListServers = 0;
+    for (i = 0; i < urls.getLength(); ++i) {
+	// parse url
+	BzfString protocol, hostname, path;
+	int port = ServerPort + 1;
+	Address address;
+	if (!BzfNetwork::parseURL(urls[i], protocol, hostname, port, path) ||
+	    protocol != "bzflist" || port < 1 || port > 65535 ||
+	    (address = Address::getHostAddress(hostname)).isAny()) {
+	    printError("Can't open list server: %s", (const char*)urls[i]);
+	    continue;
+	}
+
+	// add to list
+	listServers[numListServers].address = address;
+	listServers[numListServers].port    = port;
+	listServers[numListServers].socket  = -1;
+	listServers[numListServers].phase   = 2;
+	numListServers++;
+    }
+
+    // do phase 1 only if we found a valid list server url
+    if (numListServers > 0)
+      phase = 1;
+    else
+      phase = -1;
+  }
+
+  // connect to list servers in phase 1
+  else if (phase == 1) {
+    phase = -1;
+    for (int i = 0; i < numListServers; i++) {
+      ListServer& listServer = listServers[i];
+
+      // create socket.  give up on failure.
+      listServer.socket = socket(AF_INET, SOCK_STREAM, 0);
+      if (listServer.socket < 0) {
+	printError("Can't create list server socket");
+	listServer.socket = -1;
+	continue;
+      }
+
+      // set to non-blocking.  we don't want to wait for the connection.
+      if (BzfNetwork::setNonBlocking(listServer.socket) < 0) {
+	printError("Error with list server socket");
+	close(listServer.socket);
+	listServer.socket = -1;
+	continue;
+      }
+
+      // start connection
+      struct sockaddr_in addr;
+      addr.sin_family = AF_INET;
+      addr.sin_port = htons(listServer.port);
+      addr.sin_addr = listServer.address;
+      if (connect(listServer.socket, (CNCTType*)&addr, sizeof(addr)) < 0) {
+#if defined(_WIN32)
+#undef EINPROGRESS
+#define EINPROGRESS EWOULDBLOCK
+#endif
+	if (getErrno() != EINPROGRESS) {
+	  printError("Can't connect list server socket");
+	  close(listServer.socket);
+	  listServer.socket = -1;
+	  continue;
+	}
+      }
+
+      // at least this socket is okay so proceed to phase 2
+      phase = 2;
+    }
+  }
+
   // get echo messages
   while (1) {
+    int i;
+
     struct timeval timeout;
     timeout.tv_sec = 0;
     timeout.tv_usec = 0;
 
-    fd_set read_set;
+    fd_set read_set, write_set;
     FD_ZERO(&read_set);
+    FD_ZERO(&write_set);
     if (pingInSocket != -1) FD_SET(pingInSocket, &read_set);
     if (pingBcastSocket != -1) FD_SET(pingBcastSocket, &read_set);
-    const int fdMax = (pingInSocket > pingBcastSocket) ?
+    int fdMax = (pingInSocket > pingBcastSocket) ?
 				pingInSocket : pingBcastSocket;
 
-    const int nfound = select(fdMax+1, (fd_set*)&read_set, 0, 0, &timeout);
+    // check for list server connection or data
+    for (i = 0; i < numListServers; i++) {
+      ListServer& listServer = listServers[i];
+      if (listServer.socket != -1) {
+	if (listServer.phase == 2)
+	  FD_SET(listServer.socket, &write_set);
+	else if (listServer.phase == 3)
+	  FD_SET(listServer.socket, &read_set);
+	if (listServer.socket > fdMax)
+	  fdMax = listServer.socket;
+      }
+    }
+
+    const int nfound = select(fdMax+1, (fd_set*)&read_set,
+					(fd_set*)&write_set, 0, &timeout);
     if (nfound <= 0) break;
 
+    // check broadcast and multicast sockets
     ServerItem serverInfo;
     if (pingInSocket != -1 && FD_ISSET(pingInSocket, &read_set))
       if (serverInfo.ping.read(pingInSocket, NULL))
-	addToList(serverInfo);
+	addToListWithLookup(serverInfo);
     if (pingBcastSocket != -1 && FD_ISSET(pingBcastSocket, &read_set))
       if (serverInfo.ping.read(pingBcastSocket, NULL))
-	addToList(serverInfo);
+	addToListWithLookup(serverInfo);
+
+    // check list servers
+    for (i = 0; i < numListServers; i++) {
+      ListServer& listServer = listServers[i];
+      if (listServer.socket != -1) {
+	// read more data from server
+	if (FD_ISSET(listServer.socket, &read_set)) {
+	  readServerList(i);
+	}
+
+	// send list request
+	else if (FD_ISSET(listServer.socket, &write_set)) {
+	  static const char* msg = "LIST\n\n";
+#if !defined(_WIN32)
+	  // ignore SIGPIPE for this send
+	  SIG_PF oldPipeHandler = signal(SIGPIPE, SIG_IGN);
+#endif
+	  if (send(listServer.socket, msg, strlen(msg), 0) != (int)strlen(msg)) {
+	    // probably unable to connect to server
+	    close(listServer.socket);
+	    listServer.socket = -1;
+	  }
+	  else {
+	    listServer.phase = 3;
+	    listServer.bufferSize = 0;
+	  }
+#if !defined(_WIN32)
+	  signal(SIGPIPE, oldPipeHandler);
+#endif
+	}
+      }
+    }
   }
 }
 
-void			ServerMenu::addToList(ServerItem& info)
+void			ServerMenu::readServerList(int index)
 {
-  // get name and don't wait forever.
-  info.name = Address::getHostByAddress(info.ping.serverId.serverHost);
-  info.nameAndPort = info.name;
+  ListServer& listServer = listServers[index];
 
-  // tack on port number if not default
+  // read more data into server list buffer
+  int n = recv(listServer.socket, listServer.buffer + listServer.bufferSize,
+				sizeof(listServer.buffer) -
+					listServer.bufferSize - 1, 0);
+  if (n > 0) {
+    listServer.bufferSize += n;
+    listServer.buffer[listServer.bufferSize] = 0;
+
+    char* base = listServer.buffer;
+    while (*base) {
+      // find next newline
+      char* scan = base;
+      while (*scan && *scan != '\n') scan++;
+
+      // if no newline then no more complete replies
+      if (*scan != '\n') break;
+      *scan++ = '\0';
+
+      // parse server info
+      char* scan2, *name, *version, *info, *title;
+      name = base;
+      version = name;
+      while (*version && !isspace(*version))  version++;
+      while (*version &&  isspace(*version)) *version++ = 0;
+      info = version;
+      while (*info && !isspace(*info))  info++;
+      while (*info &&  isspace(*info)) *info++ = 0;
+      title = info;
+      while (*title && !isspace(*title))  title++;
+      while (*title &&  isspace(*title)) *title++ = 0;
+
+      // extract port number from address
+      int port = ServerPort;
+      scan2 = strchr(name, ':');
+      if (scan2) {
+	port = atoi(scan2 + 1);
+	*scan2 = 0;
+      }
+
+      // check info
+      if (strncmp(version, ServerVersion, 7) == 0 &&
+	  (int)strlen(info) == PingPacketHexPackedSize &&
+	  port >= 1 && port <= 65535) {
+	// store info
+	ServerItem serverInfo;
+	serverInfo.ping.unpackHex(info);
+	serverInfo.ping.serverId.serverHost = Address::getHostAddress(name);
+	serverInfo.ping.serverId.port = htons((int16_t)port);
+	serverInfo.name = name;
+
+	// if name looks like an address in dot notation then try
+	// converting it to a hostname
+	int dot[4];
+	if (sscanf(name, "%d.%d.%d.%d", dot+0, dot+1, dot+2, dot+3) == 4) {
+	  if (dot[0] >= 0 && dot[0] <= 255 &&
+		dot[1] >= 0 && dot[1] <= 255 &&
+		dot[2] >= 0 && dot[2] <= 255 &&
+		dot[3] >= 0 && dot[3] <= 255) {
+	    InAddr addr;
+	    unsigned char* paddr = (unsigned char*)&addr.s_addr;
+	    paddr[0] = (unsigned char)dot[0];
+	    paddr[1] = (unsigned char)dot[1];
+	    paddr[2] = (unsigned char)dot[2];
+	    paddr[3] = (unsigned char)dot[3];
+	    serverInfo.name = Address::getHostByAddress(addr);
+	  }
+	}
+
+	// construct description
+	serverInfo.description = serverInfo.name;
+	if (port != ServerPort) {
+	  char portBuf[20];
+	  sprintf(portBuf, "%d", port);
+	  serverInfo.description += ":";
+	  serverInfo.description += portBuf;
+	}
+	if (strlen(title) > 0) {
+	  serverInfo.description += "; ";
+	  serverInfo.description += title;
+	}
+
+	// add to list
+	addToList(serverInfo);
+      }
+
+      // next reply
+      base = scan;
+    }
+
+    // remove parsed replies
+    listServer.bufferSize -= (base - listServer.buffer);
+    memmove(listServer.buffer, base, listServer.bufferSize);
+  }
+  else if (n == 0) {
+    // server hungup
+    close(listServer.socket);
+    listServer.socket = -1;
+    listServer.phase = 4;
+  }
+  else if (n < 0) {
+    close(listServer.socket);
+    listServer.socket = -1;
+    listServer.phase = -1;
+  }
+}
+
+void			ServerMenu::addToListWithLookup(ServerItem& info)
+{
+  info.name = Address::getHostByAddress(info.ping.serverId.serverHost);
+
+  // tack on port number to description if not default
+  info.description = info.name;
   const int port = (int)ntohs((unsigned short)info.ping.serverId.port);
   if (port != ServerPort) {
     char portBuf[20];
     sprintf(portBuf, "%d", port);
-    info.nameAndPort += ":";
-    info.nameAndPort += portBuf;
+    info.description += ":";
+    info.description += portBuf;
   }
 
+  addToList(info);
+}
+
+int			ServerMenu::getPlayerCount(int index) const
+{
+  const PingPacket& item = servers[index].ping;
+  return item.rogueCount + item.redCount + item.greenCount +
+				item.blueCount + item.purpleCount;
+}
+
+void			ServerMenu::addToList(ServerItem& info)
+{
   // update if we already have it
-  HUDuiControlList& list = getControls();
   const int count = servers.getLength();
   int i;
   for (i = 0; i < count; i++) {
-    const ServerItem& server = servers[i];
-    if (server.ping.serverId == info.ping.serverId) {
-      servers[i] = info;
-      ((HUDuiLabel*)list[NumReadouts + i])->setString(info.nameAndPort);
+    ServerItem& server = servers[i];
+    if (server.ping.serverId.serverHost.s_addr ==
+				info.ping.serverId.serverHost.s_addr &&
+	server.ping.serverId.port == info.ping.serverId.port) {
+      if (server.description.getLength() < info.description.getLength())
+	server.description = info.description;
       break;
     }
   }
 
   // add if we don't already have it
   if (i == count) {
+    char msg[50];
+    sprintf(msg, "Servers found: %d", count + 1);
+    setStatus(msg);
+
     // add to server list
     servers.append(info);
-
-    // add a new label
-    HUDuiLabel* label = new HUDuiLabel;
-    label->setFont(MainMenu::getFont());
-    label->setString(info.nameAndPort);
-    label->setCallback(NULL, (void*)count);
-    list.append(label);
-
-    // set next/prev
-    if (count == 0) {
-      label->setPrev(label);
-      label->setNext(label);
-      HUDui::setFocus(label);
-    }
-    else {
-      label->setNext(list[NumReadouts]);
-      label->setPrev(list[NumReadouts + count - 1]);
-      list[NumReadouts]->setPrev(label);
-      list[NumReadouts + count - 1]->setNext(label);
-    }
-
-    // re-layout
-    resize(width, height);
   }
 
-  pick();
+  // sort by number of players
+  const int n = servers.getLength();
+  for (i = 0; i < n - 1; ++i) {
+    int indexWithMin = i;
+    for (int j = i + 1; j < n; ++j)
+      if (getPlayerCount(j) > getPlayerCount(indexWithMin))
+	indexWithMin = j;
+    servers.swap(i, indexWithMin);
+  }
+
+  // force update
+  const int oldSelectedIndex = selectedIndex;
+  selectedIndex = -1;
+  setSelected(oldSelectedIndex);
 }
 
 void			ServerMenu::playingCB(void* _self)
@@ -2830,11 +3307,6 @@ JoinMenu::JoinMenu() : oldErrorCallback(NULL)
   label->setString("Join Game");
   list.append(label);
 
-  HUDuiLabel* startServer = new HUDuiLabel;
-  startServer->setFont(MainMenu::getFont());
-  startServer->setString("Start Server");
-  list.append(startServer);
-
   HUDuiLabel* findServer = new HUDuiLabel;
   findServer->setFont(MainMenu::getFont());
   findServer->setString("Find Server");
@@ -2882,6 +3354,11 @@ JoinMenu::JoinMenu() : oldErrorCallback(NULL)
   port->setString(buffer);
   list.append(port);
 
+  HUDuiLabel* startServer = new HUDuiLabel;
+  startServer->setFont(MainMenu::getFont());
+  startServer->setString("Start Server");
+  list.append(startServer);
+
   status = new HUDuiLabel;
   status->setFont(MainMenu::getFont());
   status->setString("");
@@ -2922,7 +3399,6 @@ void			JoinMenu::show()
 {
   activeMenu = this;
 
-  HUDuiControlList& list = getControls();
   StartupInfo* info = getStartupInfo();
 
   // set fields
@@ -2958,17 +3434,17 @@ void			JoinMenu::execute()
 {
   HUDuiControlList& list = getControls();
   HUDuiControl* focus = HUDui::getFocus();
-  if (focus == list[1]) {
+  if (focus == list[7]) {
     static ServerStartMenu serverStartMenu;
     HUDDialogStack::get()->push(&serverStartMenu);
   }
 
-  else if (focus == list[2]) {
+  else if (focus == list[1]) {
     static ServerMenu serverMenu;
     HUDDialogStack::get()->push(&serverMenu);
   }
 
-  else if (focus == list[3]) {
+  else if (focus == list[2]) {
     // load startup info
     loadInfo();
 
@@ -3071,7 +3547,7 @@ void			JoinMenu::resize(int width, int height)
     list[i]->setFontSize(fontWidth, fontHeight);
     list[i]->setPosition(x, y);
     y -= 1.0f * h;
-    if (i <= 3) y -= 0.5f * h;
+    if (i <= 2 || i == 6) y -= 0.5f * h;
   }
 }
 

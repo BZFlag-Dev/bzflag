@@ -83,8 +83,7 @@ ServerLink::ServerLink(const Address& serverAddress, int port, int number) :
   signal(SIGALRM, SIG_PF(timeout));
   alarm(5);
 #endif // !defined(_WIN32)
-  const boolean okay = (connect(query, (const struct sockaddr*)&addr,
-							sizeof(addr)) >= 0);
+  const boolean okay = (connect(query, (CNCTType*)&addr, sizeof(addr)) >= 0);
 #if !defined(_WIN32)
   alarm(0);
   signal(SIGALRM, SIG_IGN);
@@ -117,7 +116,7 @@ ServerLink::ServerLink(const Address& serverAddress, int port, int number) :
   addr.sin_addr = serverAddress;
   fd = socket(AF_INET, SOCK_STREAM, 0);
   if (fd < 0) goto done;
-  if (connect(fd, (const struct sockaddr*)&addr, sizeof(addr)) < 0) {
+  if (connect(fd, (CNCTType*)&addr, sizeof(addr)) < 0) {
     close(fd);
     fd = -1;
     goto done;
@@ -206,6 +205,7 @@ void			ServerLink::send(uint16_t code, uint16_t len,
   buf = nboPackUShort(buf, code);
   if (msg && len != 0) buf = nboPackString(buf, msg, len);
   int r = ::send(fd, (const char*)msgbuf, len + 4, 0);
+  (void)r; // silence g++
 #if defined(_WIN32)
   if (r == SOCKET_ERROR) {
     const int e = WSAGetLastError();
@@ -271,7 +271,10 @@ int			ServerLink::read(uint16_t& code, uint16_t& len,
   void* buf = headerBuffer;
   buf = nboUnpackUShort(buf, len);
   buf = nboUnpackUShort(buf, code);
-  rlen = recv(fd, (char*)msg, int(len), 0);
+  if (len > 0)
+    rlen = recv(fd, (char*)msg, int(len), 0);
+  else
+    rlen = 0;
 #if defined(NETWORK_STATS)
   if (rlen >= 0) bytesReceived += rlen;
 #endif

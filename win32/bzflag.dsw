@@ -36,6 +36,24 @@ Package=<4>
 
 ###############################################################################
 
+Project: "bzfls"=.\bzfls.dsp - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+    Begin Project Dependency
+    Project_Dep_Name common
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name net
+    End Project Dependency
+}}}
+
+###############################################################################
+
 Project: "bzfrelay"=.\bzfrelay.dsp - Package Owner=<4>
 
 Package=<5>

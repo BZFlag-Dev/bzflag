@@ -1,5 +1,6 @@
 -file ../../bin/bzflag.exe bzflag.exe
 -file ../../bin/bzfs.exe bzfs.exe
+-file ../../bin/bzfls.exe bzfls.exe
 -file bin/bzfuinst.exe bzfuinst.exe
 -pushdir data
 -file ../../data/bbolt.rgb bbolt.rgb
@@ -43,7 +44,7 @@
 -file ../../data/teleport.wav teleport.wav
 -popdir
 -pushdir doc
--file license.txt LICENSE
+-file ../../LICENSE LICENSE
 -file README.win32.html README.HTM
 -readme README.HTM
 -popdir

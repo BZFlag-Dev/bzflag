@@ -173,11 +173,6 @@ void			SolarisMedia::closeAudio()
   close(audioctl_fd);
 }
 
-boolean			SolarisMedia::isAudioBrainDead() const
-{
-  return True;
-}
-
 boolean			SolarisMedia::startAudioThread(
 				void (*proc)(void*), void* data)
 {

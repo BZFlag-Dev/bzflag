@@ -21,6 +21,11 @@ XF86VIDMODE_DEF = -DXF86VIDMODE_EXT
 XF86VIDMODE_LIB = -lXxf86vm
 
 #
+# install locations
+#
+INSTALL_DATA_DIR = /usr/X11R6/lib/X11/bzflag/data
+
+#
 # tools
 #
 AR	= /usr/bin/ar cru
@@ -39,9 +44,9 @@ ECHO	= echo
 #
 # compiler definitions
 #
-PCDEFS   = -D_BSD_SOURCE -D_POSIX_SOURCE -DHALF_RATE_AUDIO -DNO_AUDIO_THREAD \
+PCDEFS   = -D_BSD_SOURCE -D_POSIX_SOURCE -DHALF_RATE_AUDIO \
 	   $(XF86VIDMODE_DEF)
-PCXXDEFS = -D_BSD_SOURCE -D_POSIX_SOURCE -DHALF_RATE_AUDIO -DNO_AUDIO_THREAD \
+PCXXDEFS = -D_BSD_SOURCE -D_POSIX_SOURCE -DHALF_RATE_AUDIO \
 	   $(XF86VIDMODE_DEF)
 
 #
@@ -60,8 +65,8 @@ CXXWOFF  =
 #
 # search paths
 #
-PCINCS   =
-PCXXINCS =
+PCINCS   = -I/usr/X11R6/include
+PCXXINCS = -I/usr/X11R6/include
 
 #
 # linker options

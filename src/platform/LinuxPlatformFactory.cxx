@@ -11,7 +11,7 @@
  */
 
 #include "LinuxPlatformFactory.h"
-#include "XDisplay.h"
+#include "LinuxDisplay.h"
 #include "XVisual.h"
 #include "XWindow.h"
 #include "LinuxMedia.h"
@@ -35,7 +35,7 @@ LinuxPlatformFactory::~LinuxPlatformFactory()
 BzfDisplay*		LinuxPlatformFactory::createDisplay(
 				const char* name, const char*)
 {
-  XDisplay* display = new XDisplay(name);
+  XDisplay* display = new XDisplay(name, new LinuxDisplayMode);
   if (!display || !display->isValid()) {
     delete display;
     return NULL;

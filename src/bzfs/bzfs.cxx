@@ -56,7 +56,20 @@ const int		MaxShots = 10;
 #include "Ping.h"
 #include "TimeBomb.h"
 
-static const float	DisconnectTimeout = 3.0f;
+// DisconnectTimeout is how long to wait for a reconnect before
+// giving up.  this should be pretty short to avoid bad clients
+// from using up our resources, but long enough to allow for
+// even a slow client/connection.
+static const float	DisconnectTimeout = 10.0f;
+
+// every ListServerReAddTime server add ourself to the list
+// server again.  this is in case the list server has reset
+// or dropped us for some reason.
+static const float	ListServerReAddTime = 30.0f * 60.0f;
+
+// maximum number of list servers to advertise ourself to
+static const int	MaxListServers = 5;
+
 static const float	FlagHalfLife = 45.0f;
 static int		NotConnected = -1;	// do NOT change
 static int		InvalidPlayer = -1;
@@ -87,6 +100,8 @@ struct PlayerInfo {
     int			flag;			// flag index player has
     int			wins, losses;		// player's score
     boolean		multicastRelay;		// if player can't multicast
+    int			len;			// bytes read in current msg
+    char		msg[MaxPacketLen];	// current msg
 };
 
 struct FlagInfo {
@@ -154,6 +169,14 @@ class WorldInfo {
     int			databaseSize;
 };
 
+class ListServerLink {
+  public:
+    Address		address;
+    int			port;
+    int			socket;
+    const char*		nextMessage;
+};
+
 static Address		serverAddress;
 static int		wksPort = ServerPort;	// default port
 static int		wksSocket;		// well known service socket
@@ -211,9 +234,17 @@ static boolean		printScore = False;
 static float		timeLimit = 0.0f, timeElapsed = 0.0f;
 static TimeKeeper	gameStartTime;
 #endif
+static boolean		publicizeServer = False;
+static BzfString	publicizedAddress;
+static boolean		publicizedAddressGiven = False;
+static const char*	publicizedTitle = NULL;
+static const char*	listServerURL = DefaultListServerURL;
+static TimeKeeper	listServerLastAddTime;
+static ListServerLink	listServerLinks[MaxListServers];
+static int		listServerLinksCount = 0;
 
 static WorldInfo*	world = NULL;
-static void*		worldDatabase = NULL;
+static char*		worldDatabase = NULL;
 static int		worldDatabaseSize = 0;
 static float		basePos[NumTeams][3];
 static float		safetyBasePos[NumTeams][3];
@@ -438,15 +469,6 @@ static int		lookupPlayer(const PlayerId& id)
   return InvalidPlayer;
 }
 
-static int		lookupByFd(int fd)
-{
-  if (fd == -1) return -1;
-  for (int i = 0; i < maxPlayers; i++)
-    if (fd == player[i].fd)
-      return i;
-  return -1;
-}
-
 static void		setNoDelay(int fd)
 {
   // turn off TCP delay (collection).  we want packets sent immediately.
@@ -461,48 +483,85 @@ static void		setNoDelay(int fd)
   }
 }
 
-static int		dread(int fd, void* b, int l)
+static int		pread(int playerIndex, int l)
 {
-  if (fd < 0) return 0;
-  int e = recv(fd, (char*)b, l, 0);
-  if (e < 0 || (e == 0 && l > 0)) {
-    int i;
-    if ((i = lookupByFd(fd)) != -1) {
-      if (e == 0 || errno == ECONNRESET || errno == EINTR || errno == EBADMSG) {
-	removePlayer(i);
-      }
-      else if (errno != EAGAIN) {
-	if (e < 0) nerror("error on read");
-	else fprintf(stderr, "zero length read\n");
-	fprintf(stderr, "player is %d (%s)\n", i, player[i].callSign);
-	done = True;
-	exitCode = 1;
-      }
-    }
+  PlayerInfo& p = player[playerIndex];
+  if (p.fd == NotConnected || l == 0) return 0;
+
+  // read more data into player's message buffer
+  const int e = recv(p.fd, p.msg + p.len, l, 0);
+
+  // accumulate bytes read
+  if (e > 0) {
+    p.len += e;
   }
+
+  // handle errors
+  else if (e < 0) {
+    // get error code
+    const int err = getErrno();
+
+    // ignore if it's one of these errors
+    if (err == EAGAIN || err == EINTR)
+      return 0;
+
+    // if socket is closed then give up
+    if (err == ECONNRESET || err == EPIPE) {
+      removePlayer(playerIndex);
+      return -1;
+    }
+
+    // dump other errors and remove the player
+    nerror("error on read");
+    fprintf(stderr, "player is %d (%s)\n", playerIndex, p.callSign);
+    removePlayer(playerIndex);
+    return -1;
+  }
+
   return e;
 }
 
-static int		dwrite(int fd, const void* b, int l)
+static int		pwrite(int playerIndex, const void* b, int l)
 {
-  if (fd < 0) return 0;
-  int e = send(fd, (const char*)b, l, 0);
-  if (e < 0 || (e == 0 && l > 0)) {
-    int i;
-    if ((i = lookupByFd(fd)) != -1) {
-      if (e == 0 || errno == ECONNRESET || errno == EINTR || errno == EPIPE) {
-	removePlayer(i);
-      }
-      else if (errno != EAGAIN) {
-	if (e < 0) nerror("error on write");
-	else fprintf(stderr, "zero length write\n");
-	fprintf(stderr, "player is %d (%s)\n", i, player[i].callSign);
-	done = True;
-	exitCode = 1;
-      }
+  PlayerInfo& p = player[playerIndex];
+  if (p.fd == NotConnected || l == 0) return 0;
+
+  int total = 0;
+  const char* data = (const char*)b;
+  do {
+    // send data
+    const int e = send(p.fd, data + total, l - total, 0);
+
+    // accumulate number of bytes sent so far
+    if (e > 0) {
+      total += e;
     }
-  }
-  return e;
+
+    // handle errors
+    else if (e < 0) {
+      // get error code
+      const int err = getErrno();
+
+      // just try again if it's one of these errors
+      if (err == EAGAIN || err == EINTR)
+	continue;
+
+      // if socket is closed then give up
+      if (err == ECONNRESET || err == EPIPE) {
+	removePlayer(playerIndex);
+	return -1;
+      }
+
+      // dump other errors and remove the player
+      nerror("error on write");
+      fprintf(stderr, "player is %d (%s)\n", playerIndex, p.callSign);
+      removePlayer(playerIndex);
+      return -1;
+    }
+
+    // continue sending until all data is sent
+  } while (total < l);
+  return total;
 }
 
 static void		broadcastMessage(uint16_t code,
@@ -515,47 +574,50 @@ static void		broadcastMessage(uint16_t code,
   buf = nboPackUShort(buf, code);
   buf = nboPackString(buf, msg, len);
   for (int i = 0; i < maxPlayers; i++)
-    if (player[i].fd != -1 && player[i].state != PlayerInLimbo)
-      dwrite(player[i].fd, msgbuf, len + 4);
+    if (player[i].state != PlayerInLimbo)
+      pwrite(i, msgbuf, len + 4);
 }
 
-static void		directMessage(int fd, uint16_t code,
+static void		directMessage(int playerIndex, uint16_t code,
 					int len, const void* msg)
 {
+  if (player[playerIndex].fd == NotConnected)
+    return;
+
   // send message to one player
   char msgbuf[MaxPacketLen];
   void* buf = msgbuf;
   buf = nboPackUShort(buf, uint16_t(len));
   buf = nboPackUShort(buf, code);
   buf = nboPackString(buf, msg, len);
-  dwrite(fd, msgbuf, len + 4);
+  pwrite(playerIndex, msgbuf, len + 4);
 }
 
-static void		sendFlagUpdate(int flagIndex, int fd = -1)
+static void		sendFlagUpdate(int flagIndex, int index = -1)
 {
   char msg[2 + FlagPLen];
   void* buf = msg;
   buf = nboPackUShort(buf, flagIndex);
   buf = flag[flagIndex].flag.pack(buf);
-  if (fd == -1)
+  if (index == -1)
     broadcastMessage(MsgFlagUpdate, sizeof(msg), msg);
   else
-    directMessage(fd, MsgFlagUpdate, sizeof(msg), msg);
+    directMessage(index, MsgFlagUpdate, sizeof(msg), msg);
 }
 
-static void		sendTeamUpdate(int teamIndex, int fd = -1)
+static void		sendTeamUpdate(int teamIndex, int index = -1)
 {
   char msg[TeamPLen];
   void* buf = msg;
   buf = nboPackUShort(buf, teamIndex);
   buf = team[teamIndex].team.pack(buf);
-  if (fd == -1)
+  if (index == -1)
     broadcastMessage(MsgTeamUpdate, sizeof(msg), msg);
   else
-    directMessage(fd, MsgTeamUpdate, sizeof(msg), msg);
+    directMessage(index, MsgTeamUpdate, sizeof(msg), msg);
 }
 
-static void		sendPlayerUpdate(int playerIndex, int fd = -1)
+static void		sendPlayerUpdate(int playerIndex, int index = -1)
 {
   char msg[PlayerIdPLen + 8 + CallSignLen + EmailLen];
   void* buf = msg;
@@ -566,10 +628,222 @@ static void		sendPlayerUpdate(int playerIndex, int fd = -1)
   buf = nboPackUShort(buf, uint16_t(player[playerIndex].losses));
   buf = nboPackString(buf, player[playerIndex].callSign, CallSignLen);
   buf = nboPackString(buf, player[playerIndex].email, EmailLen);
-  if (fd == -1)
+  if (index == -1)
     broadcastMessage(MsgAddPlayer, sizeof(msg), msg);
   else
-    directMessage(fd, MsgAddPlayer, sizeof(msg), msg);
+    directMessage(index, MsgAddPlayer, sizeof(msg), msg);
+}
+
+static void		closeListServer(int index)
+{
+  assert(index >= 0 && index < MaxListServers);
+  if (index >= listServerLinksCount)
+    return;
+
+  ListServerLink& link = listServerLinks[index];
+  if (link.socket != NotConnected) {
+    shutdown(link.socket, 2);
+    close(link.socket);
+    link.socket = NotConnected;
+    link.nextMessage = "";
+  }
+}
+
+static void		closeListServers()
+{
+  for (int i = 0; i < listServerLinksCount; ++i)
+    closeListServer(i);
+}
+
+static void		openListServer(int index)
+{
+  assert(index >= 0 && index < MaxListServers);
+  if (index >= listServerLinksCount)
+    return;
+
+  ListServerLink& link = listServerLinks[index];
+  link.nextMessage = "";
+
+  // start opening connection if not already doing so
+  if (link.socket == NotConnected) {
+    link.socket = socket(AF_INET, SOCK_STREAM, 0);
+    if (link.socket == NotConnected) {
+      closeListServer(index);
+      return;
+    }
+
+    // set to non-blocking for connect
+    if (BzfNetwork::setNonBlocking(link.socket) < 0) {
+      closeListServer(index);
+      return;
+    }
+
+    // connect.  this should fail with EINPROGRESS but check for
+    // success just in case.
+    struct sockaddr_in addr;
+    addr.sin_family = AF_INET;
+    addr.sin_port   = htons(link.port);
+    addr.sin_addr   = link.address;
+    if (connect(link.socket, (CNCTType*)&addr, sizeof(addr)) < 0) {
+#if defined(_WIN32)
+#undef EINPROGRESS
+#define EINPROGRESS EWOULDBLOCK
+#endif
+      if (getErrno() != EINPROGRESS) {
+	nerror("connecting to list server");
+	closeListServer(index);
+      }
+      else {
+	if (maxFileDescriptor < link.socket)
+	  maxFileDescriptor = link.socket;
+      }
+    }
+  }
+}
+
+static void		sendMessageToListServer(const char* msg)
+{
+  // ignore if not publicizing
+  if (!publicizeServer)
+    return;
+
+  // start opening connections if not already doing so
+  for (int i = 0; i < listServerLinksCount; i++) {
+    openListServer(i);
+
+    // record next message to send.  note that each message overrides
+    // any other message, except SETNUM doesn't override ADD (cos ADD
+    // sends SETNUM data anyway).
+    ListServerLink& link = listServerLinks[i];
+    if (strcmp(msg, "SETNUM") != 0 || strcmp(link.nextMessage, "ADD") != 0)
+      link.nextMessage = msg;
+  }
+}
+
+static void		sendMessageToListServerForReal(int index)
+{
+  assert(index >= 0 && index < MaxListServers);
+  if (index >= listServerLinksCount)
+    return;
+
+  // ignore if link not connected
+  ListServerLink& link = listServerLinks[index];
+  if (link.socket == NotConnected)
+    return;
+
+  char msg[1024];
+  if (strcmp(link.nextMessage, "ADD") == 0) {
+    // update player counts in ping reply.  pretend there are no players
+    // if the game is over.
+    if (gameOver) {
+      pingReply.rogueCount = team[0].team.activeSize;
+      pingReply.redCount = team[1].team.activeSize;
+      pingReply.greenCount = team[2].team.activeSize;
+      pingReply.blueCount = team[3].team.activeSize;
+      pingReply.purpleCount = team[4].team.activeSize;
+    }
+    else {
+      pingReply.rogueCount = 0;
+      pingReply.redCount = 0;
+      pingReply.greenCount = 0;
+      pingReply.blueCount = 0;
+      pingReply.purpleCount = 0;
+    }
+
+    // encode ping reply as ascii hex digits
+    char gameInfo[PingPacketHexPackedSize];
+    pingReply.packHex(gameInfo);
+
+    // send ADD message
+    sprintf(msg, "%s %s %s %.*s %.256s\n\n", link.nextMessage,
+				(const char*)publicizedAddress,
+				ServerVersion,
+				PingPacketHexPackedSize, gameInfo,
+				publicizedTitle);
+    send(link.socket, msg, strlen(msg), 0);
+  }
+  else if (strcmp(link.nextMessage, "REMOVE") == 0) {
+    // send REMOVE
+    sprintf(msg, "%s %s\n\n", link.nextMessage,
+				(const char*)publicizedAddress);
+    send(link.socket, msg, strlen(msg), 0);
+  }
+  else if (strcmp(link.nextMessage, "SETNUM") == 0) {
+    // pretend there are no players if the game is over
+    if (gameOver)
+      sprintf(msg, "%s %s 0 0 0 0 0\n\n", link.nextMessage,
+				(const char*)publicizedAddress);
+    else
+      sprintf(msg, "%s %s %d %d %d %d %d\n\n", link.nextMessage,
+				(const char*)publicizedAddress,
+				team[0].team.activeSize,
+				team[1].team.activeSize,
+				team[2].team.activeSize,
+				team[3].team.activeSize,
+				team[4].team.activeSize);
+
+    // send SETNUM
+    send(link.socket, msg, strlen(msg), 0);
+  }
+
+  // hangup (we don't care about replies)
+  closeListServer(index);
+}
+
+static void		publicize()
+{
+  // hangup any previous list server sockets
+  closeListServers();
+
+  // list server initialization
+  listServerLinksCount  = 0;
+
+  // parse the list server URL if we're publicizing ourself
+  if (publicizeServer && publicizedTitle) {
+    // assume we'll fail to find any list server
+    publicizeServer = False;
+
+    // dereference URL, including following redirections.  get no
+    // more than MaxListServers urls.
+    BzfStringAList urls, failedURLs;
+    urls.append(listServerURL);
+    BzfNetwork::dereferenceURLs(urls, MaxListServers, failedURLs);
+
+    for (int j = 0; j < failedURLs.getLength(); ++j)
+      fprintf(stderr, "failed: %s\n", (const char*)failedURLs[j]);
+
+    // check url list for validity
+    for (int i = 0; i < urls.getLength(); ++i) {
+	// parse url
+	BzfString protocol, hostname, pathname;
+	int port = ServerPort + 1;
+	if (!BzfNetwork::parseURL(urls[i], protocol, hostname, port, pathname))
+	    continue;
+
+	// ignore if not right protocol
+	if (protocol != "bzflist")
+	    continue;
+
+	// ignore if port is bogus
+	if (port < 1 || port > 65535)
+	    continue;
+
+	// ignore if bad address
+	Address address = Address::getHostAddress(hostname);
+	if (address.isAny())
+	    continue;
+
+	// add to list
+	listServerLinks[listServerLinksCount].address = address;
+	listServerLinks[listServerLinksCount].port    = port;
+	listServerLinks[listServerLinksCount].socket  = NotConnected;
+	listServerLinksCount++;
+    }
+    publicizeServer = (listServerLinksCount > 0);
+
+    // schedule message for list server
+    sendMessageToListServer("ADD");
+  }
 }
 
 static boolean		serverStart()
@@ -618,6 +892,16 @@ static boolean		serverStart()
     AddrLen addrLen = sizeof(addr);
     if (getsockname(wksSocket, (struct sockaddr*)&addr, &addrLen) >= 0)
       pingReply.serverId.port = addr.sin_port;
+
+    // fixup publicized name
+    if (!publicizedAddressGiven) {
+      publicizedAddress = Address::getHostName();
+      if (strchr(publicizedAddress, '.') == NULL)
+	publicizedAddress = serverAddress.getDotNotation();
+      char portString[20];
+      sprintf(portString, ":%d", ntohs(addr.sin_port));
+      publicizedAddress += portString;
+    }
   }
 
   if (listen(wksSocket, 5) == -1) {
@@ -659,6 +943,8 @@ static boolean		serverStart()
     reconnect[i].listen = NotConnected;
   }
 
+  listServerLinksCount = 0;
+  publicize();
   return True;
 }
 
@@ -680,8 +966,7 @@ static void		serverStop()
   // tell players to quit
   int i;
   for (i = 0; i < MaxPlayers; i++)
-    if (player[i].fd != NotConnected)
-      directMessage(player[i].fd, MsgSuperKill, 0, NULL);
+    directMessage(i, MsgSuperKill, 0, NULL);
 
   // close connections
   for (i = 0; i < MaxPlayers; i++)
@@ -689,6 +974,46 @@ static void		serverStop()
       shutdown(player[i].fd, 2);
       close(player[i].fd);
     }
+
+  // now tell the list servers that we're going away.  this can
+  // take some time but we don't want to wait too long.  we do
+  // our own multiplexing loop and wait for a maximum of 3 seconds
+  // total.
+  sendMessageToListServer("REMOVE");
+  TimeKeeper start = TimeKeeper::getCurrent();
+  do {
+    // compute timeout
+    float waitTime = 3.0f - (TimeKeeper::getCurrent() - start);
+    if (waitTime <= 0.0f)
+      break;
+
+    // check for list server socket connection
+    int fdMax = -1;
+    fd_set write_set;
+    FD_ZERO(&write_set);
+    for (i = 0; i < listServerLinksCount; i++)
+      if (listServerLinks[i].socket != NotConnected) {
+	FD_SET(listServerLinks[i].socket, &write_set);
+	fdMax = listServerLinks[i].socket;
+      }
+    if (fdMax == -1)
+      break;
+
+    // wait for socket to connect or timeout
+    struct timeval timeout;
+    timeout.tv_sec = long(floorf(waitTime));
+    timeout.tv_usec = long(1.0e+6f * (waitTime - floorf(waitTime)));
+    int nfound = select(fdMax + 1, NULL, (fd_set*)&write_set, 0, &timeout);
+    // check for connection to list server
+    if (nfound > 0)
+      for (i = 0; i < listServerLinksCount; ++i)
+	if (listServerLinks[i].socket != NotConnected &&
+		FD_ISSET(listServerLinks[i].socket, &write_set))
+	  sendMessageToListServerForReal(i);
+  } while (True);
+
+  // stop list server communication
+  closeListServers();
 }
 
 static boolean		startPlayerPacketRelay(int playerIndex)
@@ -716,10 +1041,8 @@ static boolean		startPlayerPacketRelay(int playerIndex)
     // force all players to start relaying.
     for (int i = 0; i < maxPlayers; i++)
       if (i != playerIndex &&
-	  player[i].fd != NotConnected &&
-	  player[i].state != PlayerInLimbo &&
-	  !player[i].multicastRelay) {
-	directMessage(player[i].fd, MsgNetworkRelay, 0, NULL);
+	  player[i].state != PlayerInLimbo && !player[i].multicastRelay) {
+	directMessage(i, MsgNetworkRelay, 0, NULL);
 	player[i].multicastRelay = True;
       }
     noMulticastRelay = True;
@@ -742,6 +1065,7 @@ static void		stopPlayerPacketRelay()
 
 static void		relayPlayerPacket()
 {
+// XXX -- accumulate data until we've received all data in message
   // get packet from multicast port and multiplex to player's needing a relay.
   // first get packet header
   char buffer[MaxPacketLen];
@@ -761,8 +1085,8 @@ static void		relayPlayerPacket()
 
   // relay packet to all players needing multicast relay
   for (int i = 0; i < maxPlayers; i++)
-    if (player[i].fd != NotConnected && player[i].multicastRelay)
-      dwrite(player[i].fd, buffer, msglen);
+    if (player[i].multicastRelay)
+      pwrite(i, buffer, msglen);
 }
 
 static void		relayPlayerPacket(int index,
@@ -774,8 +1098,8 @@ static void		relayPlayerPacket(int index,
 
   // relay packet to all players needing multicast relay
   for (int i = 0; i < maxPlayers; i++)
-    if (i != index && player[i].fd != NotConnected && player[i].multicastRelay)
-      dwrite(player[i].fd, rawbuf, len + 4);
+    if (i != index && player[i].multicastRelay)
+      pwrite(i, rawbuf, len + 4);
 }
 
 static WorldInfo*	defineTeamWorld()
@@ -1276,6 +1600,7 @@ static void		addClient(int playerIndex)
     maxFileDescriptor = player[playerIndex].fd;
   player[playerIndex].peer = Address(addr);
   player[playerIndex].multicastRelay = False;
+  player[playerIndex].len = 0;
 
   // if game was over and this is the first player then game is on
   if (gameOver) {
@@ -1382,9 +1707,22 @@ static void		addPlayer(int playerIndex)
 
     char msg[2];
     nboPackUShort(msg, code);
-    directMessage(player[playerIndex].fd, MsgReject, sizeof(msg), &msg);
+    directMessage(playerIndex, MsgReject, sizeof(msg), &msg);
     return;
   }
+
+  // accept player
+  directMessage(playerIndex, MsgAccept, 0, NULL);
+
+  // abort if we hung up on the client
+  if (player[playerIndex].fd == NotConnected)
+    return;
+
+  // player is signing on (has already connected via addClient).
+  player[playerIndex].state = PlayerOnTeamDead;
+  player[playerIndex].flag = -1;
+  player[playerIndex].wins = 0;
+  player[playerIndex].losses = 0;
 
   // update team state and if first active player on team,
   // add team's flag and reset it's score
@@ -1403,36 +1741,32 @@ static void		addPlayer(int playerIndex)
       // player just joining, so do it later
       resetTeamFlag = True;
   }
-  player[playerIndex].wins = 0;
-  player[playerIndex].losses = 0;
-
-  // accept player
-  directMessage(player[playerIndex].fd, MsgAccept, 0, NULL);
 
   // send new player updates on each player, all existing flags, and all teams.
-  // don't send robots any game info.
+  // don't send robots any game info.  watch out for connection being closed
+  // because of an error.
   if (player[playerIndex].type != ComputerPlayer) {
     int i;
-    for (i = 0; i < NumTeams; i++)
-      sendTeamUpdate(i, player[playerIndex].fd);
-    for (i = 0; i < numFlags; i++)
+    for (i = 0; i < NumTeams && player[playerIndex].fd != NotConnected; i++)
+      sendTeamUpdate(i, playerIndex);
+    for (i = 0; i < numFlags && player[playerIndex].fd != NotConnected; i++)
       if (flag[i].flag.status != FlagNoExist)
-	sendFlagUpdate(i, player[playerIndex].fd);
-    for (i = 0; i < maxPlayers; i++)
+	sendFlagUpdate(i, playerIndex);
+    for (i = 0; i < maxPlayers && player[playerIndex].fd != NotConnected; i++)
       if (player[i].fd != NotConnected &&
 	  player[i].state != PlayerInLimbo)
-	sendPlayerUpdate(i, player[playerIndex].fd);
+	sendPlayerUpdate(i, playerIndex);
   }
-
-  // player is signing on (has already connected via addClient).
-  player[playerIndex].state = PlayerOnTeamDead;
-  player[playerIndex].flag = -1;
 
   // if necessary force multicast relaying
   if (noMulticastRelay) {
-    directMessage(player[playerIndex].fd, MsgNetworkRelay, 0, NULL);
+    directMessage(playerIndex, MsgNetworkRelay, 0, NULL);
     player[playerIndex].multicastRelay = True;
   }
+
+  // if new player connection was closed (because of an error) then stop here
+  if (player[playerIndex].fd == NotConnected)
+    return;
 
   // send MsgAddPlayer to everybody -- this concludes MsgEnter response
   // to joining player
@@ -1448,12 +1782,19 @@ static void		addPlayer(int playerIndex)
     char msg[2];
     void* buf = msg;
     buf = nboPackUShort(buf, (uint16_t)(int)timeLeft);
-    directMessage(player[playerIndex].fd, MsgTimeUpdate, sizeof(msg), msg);
+    directMessage(playerIndex, MsgTimeUpdate, sizeof(msg), msg);
   }
+
+  // again check if player was disconnected
+  if (player[playerIndex].fd == NotConnected)
+    return;
 
   // reset that flag
   if (resetTeamFlag)
     resetFlag(teamIndex-1);
+
+  // tell the list server the new number of players
+  sendMessageToListServer("SETNUM");
 
 #ifdef PRINTSCORE
   dumpScore();
@@ -1594,6 +1935,7 @@ static void		removePlayer(int playerIndex)
   shutdown(player[playerIndex].fd, 2);
   close(player[playerIndex].fd);
   player[playerIndex].fd = NotConnected;
+  player[playerIndex].len = 0;
 
   // can we turn off relaying now?
   if (player[playerIndex].multicastRelay) {
@@ -1646,6 +1988,9 @@ static void		removePlayer(int playerIndex)
     sendTeamUpdate(teamNum);
   }
 
+  // tell the list server the new number of players
+  sendMessageToListServer("SETNUM");
+
   // anybody left?
   int i;
   for (i = 0; i < maxPlayers; i++)
@@ -1662,6 +2007,12 @@ static void		removePlayer(int playerIndex)
       done = True;
       exitCode = 1;
     }
+    else {
+      // republicize ourself.  this dereferences the URL chain
+      // again so we'll notice any pointer change when any game
+      // is over (i.e. all players have quit).
+      publicize();
+    }
   }
 }
 
@@ -1676,7 +2027,7 @@ static void		sendWorld(int playerIndex, int ptr)
   else if (ptr + size >= worldDatabaseSize) size = worldDatabaseSize - ptr;
   buf = nboPackUShort(buf, uint16_t(left));
   buf = nboPackString(buf, (char*)worldDatabase + ptr, size);
-  directMessage(player[playerIndex].fd, MsgGetWorld, size + 2, buffer);
+  directMessage(playerIndex, MsgGetWorld, size + 2, buffer);
 }
 
 static void		sendQueryGame(int playerIndex)
@@ -1706,7 +2057,7 @@ static void		sendQueryGame(int playerIndex)
   buf = nboPackUShort(buf, pingReply.maxTime);
 
   // send it
-  directMessage(player[playerIndex].fd, MsgQueryGame, sizeof(buffer), buffer);
+  directMessage(playerIndex, MsgQueryGame, sizeof(buffer), buffer);
 }
 
 static void		sendQueryPlayers(int playerIndex)
@@ -1723,15 +2074,14 @@ static void		sendQueryPlayers(int playerIndex)
   void* buf = (void*)buffer;
   buf = nboPackUShort(buf, NumTeams);
   buf = nboPackUShort(buf, numPlayers);
-  directMessage(player[playerIndex].fd, MsgQueryPlayers,
-						sizeof(buffer), buffer);
+  directMessage(playerIndex, MsgQueryPlayers, sizeof(buffer), buffer);
 
   // now send the teams and players
-  for (i = 0; i < NumTeams; i++)
-    sendTeamUpdate(i, player[playerIndex].fd);
-  for (i = 0; i < maxPlayers; i++)
+  for (i = 0; i < NumTeams && player[playerIndex].fd != NotConnected; i++)
+    sendTeamUpdate(i, playerIndex);
+  for (i = 0; i < maxPlayers && player[playerIndex].fd != NotConnected; i++)
     if (player[i].fd != NotConnected && player[i].state != PlayerInLimbo)
-      sendPlayerUpdate(i, player[playerIndex].fd);
+      sendPlayerUpdate(i, playerIndex);
 }
 
 static void		playerAlive(int playerIndex, const float* pos,
@@ -2140,11 +2490,11 @@ static void		handleCommand(int t, uint16_t code,
 
     case MsgNetworkRelay:	// player can't use multicast;  we must relay
       if (startPlayerPacketRelay(t)) {
-	directMessage(player[t].fd, MsgAccept, 0, NULL);
 	player[t].multicastRelay = True;
+	directMessage(t, MsgAccept, 0, NULL);
       }
       else {
-	directMessage(player[t].fd, MsgReject, 0, NULL);
+	directMessage(t, MsgReject, 0, NULL);
       }
       break;
 
@@ -2307,6 +2657,9 @@ static const char*	usageString =
 #ifdef PRINTSCORE
 "[-printscore] "
 #endif
+"[-public <server-description>] "
+"[-publicaddr <server-hostname>[:<server-port>]] "
+"[-publiclist <list-server-url>] "
 "[+r] "
 "[-r] [{+s|-s} [<num>]] "
 "[-sa] "
@@ -2373,6 +2726,9 @@ static void		extraUsage(const char* pname)
 #ifdef PRINTSCORE
   cout << "\t -printscore: write score to stdout whenever it changes" << endl;
 #endif
+  cout << "\t -public <server-description>" << endl;
+  cout << "\t -publicaddr <effective-server-hostname>[:<effective-server-port>]" << endl;
+  cout << "\t -publiclist <list-server-url>" << endl;
   cout << "\t -q: don't listen for or respond to pings" << endl;
   cout << "\t +r: all shots ricochet" << endl;
   cout << "\t -r: allow rogue tanks" << endl;
@@ -2708,6 +3064,33 @@ static void		parse(int argc, char** argv)
       printScore = True;
     }
 #endif
+    else if (strcmp(argv[i], "-public") == 0) {
+      if (++i == argc) {
+	cerr << "argument expected for -public" << endl;
+	usage(argv[0]);
+      }
+      publicizeServer = True;
+      publicizedTitle = argv[i];
+      if (strlen(publicizedTitle) > 127) {
+	argv[i][127] = '\0';
+	cerr << "description too long... truncated" << endl;
+      }
+    }
+    else if (strcmp(argv[i], "-publicaddr") == 0) {
+      if (++i == argc) {
+	cerr << "argument expected for -publicaddr" << endl;
+	usage(argv[0]);
+      }
+      publicizedAddress = argv[i];
+      publicizedAddressGiven = True;
+    }
+    else if (strcmp(argv[i], "-publiclist") == 0) {
+      if (++i == argc) {
+	cerr << "argument expected for -publiclist" << endl;
+	usage(argv[0]);
+      }
+      listServerURL = argv[i];
+    }
     else if (strcmp(argv[i], "-q") == 0) {
       // don't handle pings
       handlePings = False;
@@ -3034,8 +3417,26 @@ int			main(int argc, char** argv)
   }
 #endif /* defined(_WIN32) */
   bzfsrand(time(0));
-  parse(argc, argv);
   serverAddress = Address::getHostAddress();
+  publicizedAddress = "";
+
+  // parse arguments
+  parse(argc, argv);
+
+  // my address to publish.  allow arguments to override (useful for
+  // firewalls).  use my official hostname if it appears to be
+  // canonicalized, otherwise use my IP in dot notation.
+  // set publicized address if not set by arguments
+  if (publicizedAddress.isNull()) {
+    publicizedAddress = Address::getHostName();
+    if (strchr(publicizedAddress, '.') == NULL)
+      publicizedAddress = serverAddress.getDotNotation();
+    if (wksPort != ServerPort) {
+      char portString[20];
+      sprintf(portString, ":%d", wksPort);
+      publicizedAddress += portString;
+    }
+  }
 
   // prep ping reply
   pingReply.serverId.serverHost = serverAddress;
@@ -3066,12 +3467,12 @@ int			main(int argc, char** argv)
   TimeKeeper lastSuperFlagInsertion = TimeKeeper::getCurrent();
   const float flagExp = -logf(0.5f) / FlagHalfLife;
 
-  static char msgbuf[MaxPacketLen];
   int i;
   while (!done) {
     // prepare select set
-    fd_set read_set;
+    fd_set read_set, write_set;
     FD_ZERO(&read_set);
+    FD_ZERO(&write_set);
     for (i = 0; i < maxPlayers; i++) {
       if (player[i].fd != NotConnected)
 	FD_SET(player[i].fd, &read_set);
@@ -3087,6 +3488,11 @@ int			main(int argc, char** argv)
       FD_SET(pingBcastSocket, &read_set);
     if (relayInSocket != -1)
       FD_SET(relayInSocket, &read_set);	// always listen for packets to relay
+
+    // check for list server socket connected
+    for (i = 0; i < listServerLinksCount; i++)
+      if (listServerLinks[i].socket != NotConnected)
+	FD_SET(listServerLinks[i].socket, &write_set);
 
     // find timeout when next flag would hit ground
     TimeKeeper tm = TimeKeeper::getCurrent();
@@ -3109,7 +3515,7 @@ int			main(int argc, char** argv)
     timeout.tv_sec = long(floorf(waitTime));
     timeout.tv_usec = long(1.0e+6f * (waitTime - floorf(waitTime)));
     int nfound = select(maxFileDescriptor+1,
-			(fd_set*)&read_set, 0, 0, &timeout);
+			(fd_set*)&read_set, (fd_set*)&write_set, 0, &timeout);
     tm = TimeKeeper::getCurrent();
 
     // see if game time ran out
@@ -3152,8 +3558,8 @@ int			main(int argc, char** argv)
       }
     }
 
-    // maybe add a super flag
-    if (numExtraFlags > 0) {
+    // maybe add a super flag (only if game isn't over)
+    if (!gameOver && numExtraFlags > 0) {
       float t = expf(-flagExp * (tm - lastSuperFlagInsertion));
       if ((float)bzfrand() > t) {
 	// find an empty slot for an extra flag
@@ -3165,6 +3571,14 @@ int			main(int argc, char** argv)
 	lastSuperFlagInsertion = tm;
       }
     }
+
+    // occasionally add ourselves to the list again (in case we were
+    // dropped for some reason).
+    if (publicizeServer)
+      if (tm - listServerLastAddTime > ListServerReAddTime) {
+	sendMessageToListServer("ADD");
+	listServerLastAddTime = tm;
+      }
 
     // check messages
     if (nfound >= 0) {
@@ -3197,24 +3611,47 @@ int			main(int argc, char** argv)
 	  shutdownAcceptClient(i);
       }
 
+      // check for connection to list server
+      for (i = 0; i < listServerLinksCount; ++i)
+	if (listServerLinks[i].socket != NotConnected &&
+		FD_ISSET(listServerLinks[i].socket, &write_set))
+	  sendMessageToListServerForReal(i);
+
       // now check messages from connected players
       for (i = 0; i < maxPlayers; i++) {
 	if (player[i].fd != NotConnected && FD_ISSET(player[i].fd, &read_set)) {
-	  if (dread(player[i].fd, msgbuf, 4) < 4)
-	    continue;
+	  // read header if we don't have it yet
+	  if (player[i].len < 4) {
+	    pread(i, 4 - player[i].len);
 
+	    // if header not ready yet then skip the read of the body
+	    if (player[i].len < 4)
+	      continue;
+	  }
+
+	  // read body if we don't have it yet
 	  uint16_t len, code;
-	  void* buf = msgbuf;
+	  void* buf = player[i].msg;
 	  buf = nboUnpackUShort(buf, len);
 	  buf = nboUnpackUShort(buf, code);
-	  if (len != 0 && dread(player[i].fd, buf, int(len)) < int(len))
-	    continue;
-	  handleCommand(i, code, len, msgbuf);
+	  if (player[i].len < 4 + (int)len) {
+	    pread(i, 4 + (int)len - player[i].len);
+
+	    // if body not ready yet then skip the command handling
+	    if (player[i].len < 4 + (int)len)
+	      continue;
+	  }
+
+	  // clear out message
+	  player[i].len = 0;
+
+	  // handle the command
+	  handleCommand(i, code, len, player[i].msg);
 	}
       }
     }
     else if (nfound < 0) {
-      if (errno != EINTR) {
+      if (getErrno() != EINTR) {
 	sleep(1);
       }
     }

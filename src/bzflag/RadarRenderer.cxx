@@ -53,10 +53,14 @@ RadarRenderer::RadarRenderer(const SceneRenderer& renderer,
   noiseFormat = GL_RGBA;
 #endif
   makeNoise();
+
+  // watch for context recreation
+  OpenGLGState::registerContextInitializer(initContext, (void*)this);
 }
 
 RadarRenderer::~RadarRenderer()
 {
+  OpenGLGState::unregisterContextInitializer(initContext, (void*)this);
   freeList();
   delete[] noise;
 }
@@ -503,4 +507,15 @@ void			RadarRenderer::makeList(boolean smoothingOn)
     glDisable(GL_BLEND);
     glDisable(GL_LINE_SMOOTH);
   }
+}
+
+void			RadarRenderer::doInitContext()
+{
+  // forget about old lists
+  list = 0;
+}
+
+void			RadarRenderer::initContext(void* self)
+{
+  ((RadarRenderer*)self)->doInitContext();
 }

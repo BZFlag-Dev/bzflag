@@ -103,7 +103,7 @@ IDI_INSTALL             ICON    DISCARDABLE     "install.ico"
 // RAWSTRING
 //
 
-IDR_LICENSE             RAWSTRING DISCARDABLE   "..\\..\\license.txt"
+IDR_LICENSE             RAWSTRING DISCARDABLE   "..\\..\\..\\..\\LICENSE"
 
 
 //

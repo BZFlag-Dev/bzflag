@@ -83,6 +83,12 @@ const boolean		True = !False;
 typedef u_int16_t	uint16_t;
 typedef u_int32_t	uint32_t;
 #endif
+#if defined(sun)
+typedef signed short	int16_t;
+typedef ushort_t	uint16_t;
+typedef signed int	int32_t;
+typedef uint_t		uint32_t;
+#endif
 
 #endif
 

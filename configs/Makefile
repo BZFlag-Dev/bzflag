@@ -28,3 +28,10 @@ debug:
 	@$(CP) config-$(PLATFORM) $(DEPTH)/config-sys
 	@$(ECHO) "COPTIMIZER   = $(CDEBUG)" >> $(DEPTH)/config-sys
 	@$(ECHO) "CXXOPTIMIZER   = $(CXXDEBUG)" >> $(DEPTH)/config-sys
+
+# copy config file to config-sys and append macros to do non-optimized build
+noopt:
+	@$(ECHO) > $(DEPTH)/config-sys
+	@$(CP) config-$(PLATFORM) $(DEPTH)/config-sys
+	@$(ECHO) "COPTIMIZER   = " >> $(DEPTH)/config-sys
+	@$(ECHO) "CXXOPTIMIZER   = " >> $(DEPTH)/config-sys

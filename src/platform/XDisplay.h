@@ -19,15 +19,15 @@
 
 #include "BzfDisplay.h"
 #include <X11/Xlib.h>
-#include <GL/gl.h>
 
 class BzfString;
 class BzfKeyEvent;
-class Resolution;
+class XDisplayMode;
 
 class XDisplay : public BzfDisplay {
   public:
-			XDisplay(const char* displayName);
+			XDisplay(const char* displayName,
+				XDisplayMode* adoptedVideoModeChanger = NULL);
 			~XDisplay();
 
     boolean		isValid() const;
@@ -55,30 +55,35 @@ class XDisplay : public BzfDisplay {
     Rep*		getRep() const { return rep; }
 
   private:
+    // not implemented
 			XDisplay(const XDisplay&);
     XDisplay&		operator=(const XDisplay&);
 
-    void		setResolutions();
-    boolean		doSetResolutions();
-    void		freeResolution();
-    boolean		doSetResolution(int);
-
     boolean		getKey(const XEvent&, BzfKeyEvent&) const;
+
+    boolean		doSetResolution(int);
 
   private:
     Rep*		rep;
+    XDisplayMode*	mode;
+};
 
-    // resolution stuff
-    int			numResolutions;
-    Resolution**	resolutions;
-    int			defaultChannel;
-    int			numVideoChannels;
-    int			numVideoCombos;
-    int*		numVideoFormats;
-    Resolution***	videoFormats;
-    Resolution**	videoCombos;
-    int*		defaultVideoFormats;
-    char*		defaultVideoCombo;
+class XDisplayMode {
+  public:
+    typedef XDisplay::ResInfo ResInfo;
+
+			XDisplayMode();
+    virtual		~XDisplayMode();
+
+    // override to return the available display modes, how many there
+    // are (num), and which one is the current mode (current).  return
+    // NULL if mode switching isn't available (in which case num and
+    // current are ignored).
+    virtual ResInfo**	init(XDisplay* owner, int& num, int& current);
+
+    // set the display mode to modeNumber (an index into the list
+    // returned by init().  return True iff successful.
+    virtual boolean	set(int modeNumber);
 };
 
 #endif // BZF_XDISPLAY_H

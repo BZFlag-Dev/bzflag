@@ -1,0 +1,130 @@
+.TH bzfls 6
+.SH NAME
+bzfls \- bzflag game server-list server
+.SH SYNOPSIS
+.sS
+.B bzfls
+[\fB\-d\fR]
+[\fB\-help\fR]
+[\fB\-p \fIport\fR]
+[\fB\-version\fR]
+[\fIbootstrap-list\fR]
+.SH DESCRIPTION
+\fBBzfls\fR keeps a list of \fBbzfs\fR servers.  It's used to help
+\fBbzflag\fR clients find available servers on the internet.
+.SS Options
+.RS
+.TP 15
+\fB-d\fR
+Increases the debugging level.  The option may appear multiple times
+to increase the amount of debugging information printed.  It should
+not be used in normal circumstances.
+.TP
+\fB-help\fR
+Print the version and usage information then exit.
+.TP
+\fB-p\fI port\fR
+Listen for requests on \fIport\fR instead of the default port.
+.TP
+\fB-version\fR
+Print version information and exit.
+.TP
+\fIbootstrap-list\fR
+Initialize the server list with the servers listed in the file
+\fIbootstrap-list\fR.  This is normally used when restarting the
+server to avoid having to wait for servers to register themselves
+again.
+.RE
+.SS Notes
+Public \fBbzfs\fR servers (i.e. those that used the \fI-public\fR
+option) register themselves with \fBbzfls\fR servers at regular
+intervals and update their information, such as the number of
+current players, as it changes.  \fBBzflag\fR clients query the
+\fBbzfls\fR servers to provide the user a list of available
+servers.  Working together these programs provide users an easy
+way to find games.
+.PP
+Game servers (\fBbzfs\fR) will also unregister themselves when
+they exit.  However, since it's possible for the servers to be
+unable to unregister themselves, bzfls will drop servers that
+it hasn't heard from in a certain amount of time.  Normally
+bzfs will send updates more often than this, even if nothing
+has changed.  If bzfls is stopped and restarted, the listed
+bzfs servers will not know this and they won't show up on the
+list until they send an update.
+.PP
+Both clients and servers use a built-in url to find a list of
+\fBbzfls\fR servers (see URLs below).  This url is maintained
+by the bzflag author and lists a number of \fBbzfls\fR servers.
+Only these servers are required for game clients and servers
+to provide automatic server finding.  You do not need to run
+your own bzfls under normal circumstances.
+.PP
+If you want a private list of servers then you can run bzfls
+but you must also get clients and servers to use it.  Bzflag
+uses the \fB-list\fI url\fR option to specify an alternate
+bzfls server.  Bzfs uses \fB-publiclist\fI url\fR.  See URLs
+below for a description of the url format.
+.SS URLs
+The bzflag family understands URLs with the standard syntax but
+supports a non-standard set of protocols.
+.RS
+.TP 15
+\fBhttp://\fIhostname\fR[:\fIport\fR][\fIpath\fR]
+.TP
+\fBfile:\fIpath\fR
+.TP
+\fBbzflist://\fIhostname\fR[:\fIport\fR]
+.RE
+.PP
+The \fBhttp\fR protocol is the standard HTTP protocol but only
+a subset of responses are understood.  The reply must either
+be 200 (okay) with one or more URLs in the above form, one per
+line;  or a 302 (object moved) with the new http URL.
+.PP
+The \fBfile\fR protocol names a file on the system that contains
+one or more URLs in the above form, one per line.
+.PP
+The \fBbzflist\fR protocol names a \fBbzfls\fR server and an
+optional port.  Unlike the other protocols, this type of URL does
+not list more URLs.  Instead it points to an actual bzfls server.
+.PP
+Note that the http and file protocols can be used to list
+multiple bzfls servers.  The built-in url does this;  each bzfls
+server acts as a backup for the others.  Any number of URLs may
+be given, but only a certain number of bzflist URLs will be
+used (the exact number is compiled into bzflag and bzfs).
+.SS Protocol
+The bzfls protcol is very simple, with just 5 messages.  See
+the source code for details.  One message worth noting here is
+\fBGET\fR.  You can request the server list from a bzfls server
+using a protocol similar to HTTP.  Sending a message with the
+first line of the form "GET \fIurl\fR HTTP/\fI*\fR", where
+the * stands for any sequence of characters, causes bzfls to
+send an HTTP reply with the server list.  The GET line may be
+followed by any number of lines;  they are ignored.  Most web
+browsers can successfully query the server list;  just change
+bzflist in a URL to http.  Note that the url in the GET line is
+ignored.
+.SS Signals
+\fBBzfls\fR handles the following signals:
+.RS
+.TP 15
+\fBSIGUSR1\fR
+Causes bzfls to write the current server list to /var/tmp/bzfls.lst.
+This list can be used as a bootstrap file.
+.TP 15
+\fBSIGUSR2\fR
+Causes bzfls to write network statistics to /var/tmp/bzfls.cnt.
+.RE
+.SH FILES
+.RS
+.TP 15
+/var/tmp/bzfls.cnt
+The network statistics dumped by SIGUSR2.
+.TP
+/var/tmp/bzfls.lst
+The server list dumped by SIGUSR1.
+.RE
+.SH SEE ALSO
+bzflag(6), bzfs(6)

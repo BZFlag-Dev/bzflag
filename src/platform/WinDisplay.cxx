@@ -19,6 +19,33 @@
 #include <stdio.h>
 #include <string.h>
 
+class Resolution {
+  public:
+    int			width;
+    int			height;
+    int			refresh;
+    int			depth;
+};
+
+static int		resolutionCompare(const void* _a, const void* _b)
+{
+  const Resolution* a = (const Resolution*)_a;
+  const Resolution* b = (const Resolution*)_b;
+
+  // test the stuff we actually care about
+  if (a->width < b->width) return -1;
+  if (a->width > b->width) return 1;
+  if (a->height < b->height) return -1;
+  if (a->height > b->height) return 1;
+  if (a->refresh < b->refresh) return -1;
+  if (a->refresh > b->refresh) return 1;
+  if (a->depth < b->depth) return -1;
+  if (a->depth > b->depth) return 1;
+
+  // other info can be ordered arbitrarily
+  return 0;
+}
+
 //
 // WinDisplay::Rep
 //
@@ -66,6 +93,12 @@ LONG WINAPI		WinDisplay::Rep::windowProc(HWND hwnd, UINT msg,
 				WPARAM wparam, LPARAM lparam)
 {
   switch(msg) {
+    case WM_DESTROY: {
+      WinWindow* window = WinWindow::lookupWindow(hwnd);
+      if (window && window->getHandle() == hwnd) window->onDestroy();
+      break;
+    }
+
     case WM_PAINT:
       ValidateRect(hwnd, NULL);
       return 0;
@@ -82,6 +115,40 @@ LONG WINAPI		WinDisplay::Rep::windowProc(HWND hwnd, UINT msg,
 	if (window) window->paletteChanged();
       }
       return 0;
+
+    case WM_ACTIVATE: {
+      WinWindow* window = WinWindow::lookupWindow(hwnd);
+      if (window) {
+	if (LOWORD(wparam) == WA_INACTIVE) {
+	  if (window->deactivate())
+	    PostMessage(hwnd, WM_APP + 1, (WPARAM)0, (LPARAM)0);
+	}
+	else {
+	  if (window->activate())
+	    PostMessage(hwnd, WM_APP + 0, (WPARAM)0, (LPARAM)0);
+	}
+      }
+      break;
+    }
+
+    case WM_DISPLAYCHANGE: {
+      WinWindow* window = WinWindow::lookupWindow(hwnd);
+      if (window && window->getHandle() == hwnd) {
+	// recreate opengl context
+	WinWindow::deactivateAll();
+	WinWindow::reactivateAll();
+      }
+      break;
+    }
+
+    case WM_SYSCOMMAND:
+      switch (wparam) {
+	// disable screen saver and monitor power-saving mode
+	case SC_SCREENSAVE:
+	case SC_MONITORPOWER:
+	  return 0;
+      }
+      break;
   }
 
   return DefWindowProc(hwnd, msg, wparam, lparam); 
@@ -91,68 +158,53 @@ LONG WINAPI		WinDisplay::Rep::windowProc(HWND hwnd, UINT msg,
 // WinDisplay
 //
 
-int			WinDisplay::videoFormat = -1;
-int*			WinDisplay::videoFormatMap = NULL;
-int			WinDisplay::videoFormatMapSize = 0;
-WinDisplay*		WinDisplay::videoFormatDisplay = NULL;
-
-WinDisplay::WinDisplay(const char* displayName, const char* _videoFormatName) :
+WinDisplay::WinDisplay(const char* displayName, const char*) :
 				rep(NULL),
-				init(False),
 				hwnd(NULL),
-				configVideoFormat(_videoFormatName),
 				using3Dfx(False),
 				fullWidth(0),
 				fullHeight(0),
+				resolutions(NULL),
 				translated(False),
 				charCode(0)
 {
   rep = new Rep(displayName);
-}
-
-WinDisplay::~WinDisplay()
-{
-  // restore display
-  if (canChangeFormat()) {
-    ChangeDisplaySettings(0, 0);
-  }
-
-  rep->unref();
-}
-
-boolean			WinDisplay::initBeforeWindow() const
-{
-  return True;
-}
-
-boolean			WinDisplay::canChangeFormat() const
-{
-  return init;
-}
-
-void			WinDisplay::initVideoFormat(HWND _hwnd)
-{
-  if (!isValid() || canChangeFormat()) return;
-  init = True;
 
   // see if we're using a 3Dfx card.  if so we'll skip the resolution
   // picking later.
   using3Dfx = (GetModuleHandle("glide2x.dll") != NULL);
   if (using3Dfx) {
-// FIXME -- allow different resolution
-    fullWidth = 640;
-    fullHeight = 480;
+    fullWidth = getPassthroughWidth();
+    fullHeight = getPassthroughHeight();
   }
 
-  // query the available formats
-  setResolutions();
+  // get resolutions
+  if (isValid() && !isFullScreenOnly()) {
+    int numModes, currentMode;
+    ResInfo** resInfo = getVideoFormats(numModes, currentMode);
 
-  // let user pick a video format if not running in a window
-  if (canChangeFormat() && configVideoFormat != "window") {
-    videoFormat = findResolution(configVideoFormat);
-    if (videoFormat == -1) videoFormat = getDefaultResolution();
-    setVideoFormat();
+    // if no modes then make default
+    if (!resInfo) {
+      HDC hDC = GetDC(GetDesktopWindow());
+      resInfo = new ResInfo*[1];
+      resInfo[0] = new ResInfo("default",
+				GetDeviceCaps(hDC, HORZRES),
+				GetDeviceCaps(hDC, VERTRES), 0);
+      ReleaseDC(GetDesktopWindow(), hDC);
+      numModes = 1;
+      currentMode = 0;
+    }
+
+    // register modes
+    initResolutions(resInfo, numModes, currentMode);
   }
+}
+
+WinDisplay::~WinDisplay()
+{
+  setDefaultResolution();
+  delete[] resolutions;
+  rep->unref();
 }
 
 boolean			WinDisplay::isFullScreenOnly() const
@@ -209,6 +261,14 @@ boolean			WinDisplay::getEvent(BzfEvent& event) const
       event.mouseMove.y = HIWORD(msg.lParam);
       break;
 
+    case WM_APP + 0:
+      event.type = BzfEvent::Map;
+      break;
+
+    case WM_APP + 1:
+      event.type = BzfEvent::Unmap;
+      break;
+
     case WM_LBUTTONDOWN:
     case WM_MBUTTONDOWN:
     case WM_RBUTTONDOWN:
@@ -241,6 +301,7 @@ boolean			WinDisplay::getEvent(BzfEvent& event) const
     case WM_SYSKEYDOWN:
       ((WinDisplay*)this)->translated = (boolean)(TranslateMessage(&msg) != 0);
       if (!translated) ((WinDisplay*)this)->charCode = 0;
+      if (isNastyKey(msg)) return False;
       DispatchMessage(&msg);
       event.type = BzfEvent::KeyDown;
       if (!getKey(msg, event.keyDown)) return False;
@@ -249,6 +310,7 @@ boolean			WinDisplay::getEvent(BzfEvent& event) const
     case WM_KEYUP:
     case WM_SYSKEYUP: {
       ((WinDisplay*)this)->translated = (boolean)(TranslateMessage(&msg) != 0);
+      if (isNastyKey(msg)) return False;
       DispatchMessage(&msg);
       event.type = BzfEvent::KeyUp;
       if (!getKey(msg, event.keyUp)) return False;
@@ -295,10 +357,33 @@ boolean			WinDisplay::getKey(const MSG& msg,
   return (key.ascii != 0 || key.button != 0);
 }
 
+boolean			WinDisplay::isNastyKey(const MSG& msg) const
+{
+  switch (msg.wParam) {
+    case VK_LWIN:
+    case VK_RWIN:
+      // disable windows keys
+      return True;
+
+    case VK_ESCAPE:
+      // disable ctrl+escape (which pops up the start menu)
+      if (GetKeyState(VK_CONTROL) < 0)
+	return True;
+      break;
+  }
+  return False;
+}
+
+boolean			WinDisplay::setDefaultResolution()
+{
+  ChangeDisplaySettings(0, 0);
+  return True;
+}
+
 boolean			WinDisplay::doSetResolution(int index)
 {
   // try setting the format
-  WinDisplayRes& format = formats[index];
+  Resolution& format = resolutions[index];
   DEVMODE dm;
   memset(&dm, 0, sizeof(dm));
   dm.dmSize             = sizeof(dm);
@@ -309,36 +394,121 @@ boolean			WinDisplay::doSetResolution(int index)
   dm.dmFields           = DM_PELSWIDTH | DM_PELSHEIGHT | DM_BITSPERPEL;
   if (dm.dmDisplayFrequency != 0)
     dm.dmFields |= DM_DISPLAYFREQUENCY;
-  return (ChangeDisplaySettings(&dm, CDS_FULLSCREEN) ==
+
+  // test the change before really doing it
+  if (ChangeDisplaySettings(&dm, CDS_FULLSCREEN | CDS_TEST) !=
+						DISP_CHANGE_SUCCESSFUL)
+    return False;
+
+  // deactivate windows before resolution change.  if we don't do this
+  // then the app will almost certainly crash in the OpenGL driver.
+  WinWindow::deactivateAll();
+
+  // change resolution
+  const boolean changed = (ChangeDisplaySettings(&dm, CDS_FULLSCREEN) ==
 						DISP_CHANGE_SUCCESSFUL);
+
+  // reactivate previously deactivated window after change
+  WinWindow::reactivateAll();
+
+  return changed;
 }
 
-void			WinDisplay::enumResolution(
-				int width, int height,
-				int refresh, int depth)
+BzfDisplay::ResInfo**	WinDisplay::getVideoFormats(
+				int& numModes, int& currentMode)
 {
-  // ignore formats we know wont work
-  if (width < 640 || height < 400 || depth < 8)
-    return;
+  HDC hDC = GetDC(GetDesktopWindow());
 
-  // ignore duplicates
-  const int n = formats.getLength();
-  for (int i = 0; i < n; i++) {
-    const WinDisplayRes& format = formats[i];
-    if (format.width == width && format.height == height &&
-	format.refresh == refresh && format.depth == depth)
-      return;
+  // get the current display depth
+  const boolean changeDepth = canChangeDepth();
+  int currentDepth = GetDeviceCaps(hDC, BITSPIXEL) * GetDeviceCaps(hDC, PLANES);
+
+  // count the resolutions
+  int i, j = 0;
+  DEVMODE dm;
+  while (EnumDisplaySettings(NULL, j, &dm))
+    j++;
+
+  // allocate space for resolutions
+  int numResolutions = j;
+  resolutions = new Resolution[numResolutions];
+
+  // enumerate all resolutions.  note that we might throw some
+  // resolutions away, so resolutions may be bigger than necessary.
+  for (i = j = 0; EnumDisplaySettings(NULL, j, &dm); j++) {
+    // convert frequency of 1 to 0 (meaning the default)
+    if ((dm.dmFields & DM_DISPLAYFREQUENCY) && dm.dmDisplayFrequency == 1)
+      dm.dmDisplayFrequency = 0;
+
+    // ignore formats of different depth if we can't change depth
+    if (!changeDepth && (int)dm.dmBitsPerPel != currentDepth)
+      continue;
+
+    // ignore formats we know won't work
+    if (dm.dmPelsWidth < 640 || dm.dmPelsHeight < 400 || dm.dmBitsPerPel < 8)
+      continue;
+
+    // fill in format
+    Resolution r;
+    r.width = dm.dmPelsWidth;
+    r.height = dm.dmPelsHeight;
+    r.refresh = dm.dmDisplayFrequency;
+    r.depth = dm.dmBitsPerPel;
+
+    // do we already have an equivalent format already?
+    int k;
+    for (k = 0; k < i; ++k)
+      if (resolutionCompare(&r, resolutions + k) == 0)
+	break;
+    if (k < i)
+      continue;
+
+    // add format
+    resolutions[i++] = r;
+  }
+  numResolutions = i;
+
+  // now sort resolutions
+  qsort(resolutions, numResolutions, sizeof(resolutions[0]), resolutionCompare);
+
+  // find current format
+  int current = -1;
+  const int currentWidth = GetDeviceCaps(hDC, HORZRES);
+  const int currentHeight = GetDeviceCaps(hDC, VERTRES);
+  for (i = 0; i < numResolutions; i++) {
+    const Resolution* r = resolutions + i;
+    if (r->width == currentWidth &&
+	r->height == currentHeight &&
+	r->depth == currentDepth) {
+      // FIXME -- compare display refresh rate
+      current = i;
+      break;
+    }
   }
 
-  // construct format
-  WinDisplayRes format;
-  format.width = width;
-  format.height = height;
-  format.refresh = refresh;
-  format.depth = depth;
+  // make ResInfo list if we found the current format
+  ResInfo** resInfo = NULL;
+  if (current != -1) {
+    char name[80];
+    resInfo = new ResInfo*[numResolutions];
+    for (i = 0; i < numResolutions; i++) {
+      const Resolution* r = resolutions + i;
+      if (r->refresh == 0)
+	sprintf(name, "%dx%d %d bits", r->width, r->height, r->depth);
+      else
+	sprintf(name, "%dx%d @%dHz %d bits", r->width, r->height,
+					r->refresh, r->depth);
+      resInfo[i] = new ResInfo(name, r->width, r->height, r->refresh);
+    }
+  }
 
-  // add to format list
-  formats.append(format);
+  // done with desktop DC
+  ReleaseDC(GetDesktopWindow(), hDC);
+
+  // return modes
+  numModes = numResolutions;
+  currentMode = current;
+  return resInfo;
 }
 
 #define OSR2_BUILD_NUMBER 1111
@@ -361,210 +531,6 @@ boolean			WinDisplay::canChangeDepth()
       return True;
   }
   return False;
-}
-
-void			WinDisplay::setResolutions()
-{
-  // if can't change formats then make just one possible format
-  if (canChangeFormat()) {
-    ResInfo** resInfo = new ResInfo*[1];
-    HDC hDC = GetDC(GetDesktopWindow());
-    if (using3Dfx)
-      resInfo[0] = new ResInfo("default", fullWidth, fullHeight, 0);
-    else
-      resInfo[0] = new ResInfo("default",
-			GetDeviceCaps(hDC, HORZRES),
-			GetDeviceCaps(hDC, VERTRES), 0);
-    ReleaseDC(GetDesktopWindow(), hDC);
-    initResolutions(resInfo, 1, 0);
-  }
-
-  // enumerate valid display modes
-  formats.removeAll();
-  {
-    const boolean changeDepth = canChangeDepth();
-    int depth = 0;
-    if (!changeDepth) {
-      HDC hDC = GetDC(GetDesktopWindow());
-      depth = GetDeviceCaps(hDC, BITSPIXEL) * GetDeviceCaps(hDC, PLANES);
-      ReleaseDC(GetDesktopWindow(), hDC);
-    }
-
-    DEVMODE dm;
-    for (int j = 0; EnumDisplaySettings(NULL, j, &dm); j++) {
-      // convert frequency of 1 to 0 (meaning the default)
-      if ((dm.dmFields & DM_DISPLAYFREQUENCY) && dm.dmDisplayFrequency == 1)
-	dm.dmDisplayFrequency = 0;
-
-      // if we can't change depth than use the current depth
-      if (!changeDepth) {
-	dm.dmBitsPerPel = depth;
-	dm.dmDisplayFrequency = 0;
-      }
-
-      // add format
-      enumResolution(dm.dmPelsWidth, dm.dmPelsHeight,
-			dm.dmDisplayFrequency, dm.dmBitsPerPel);
-    }
-  }
-
-  // make a buffer for each format
-  int i;
-  const int numFormats = formats.getLength();
-  ResInfo** resInfo = new ResInfo*[numFormats];
-  for (i = 0; i < numFormats; i++) {
-    const WinDisplayRes& format = formats[i];
-
-    char name[128];
-    if (format.refresh != 0)
-      sprintf(name, "%dx%d@%d %dbbp", format.width, format.height,
-					format.refresh, format.depth);
-    else
-      sprintf(name, "%dx%d %dbbp", format.width, format.height, format.depth);
-    resInfo[i] = new ResInfo(name, format.width, format.height, format.refresh);
-  }
-
-  // find current format
-  int current = 0;
-  HDC hDC = GetDC(GetDesktopWindow());
-  const int width  = GetDeviceCaps(hDC, HORZRES);
-  const int height = GetDeviceCaps(hDC, VERTRES);
-  const int depth  = GetDeviceCaps(hDC, BITSPIXEL) * GetDeviceCaps(hDC, PLANES);
-  ReleaseDC(GetDesktopWindow(), hDC);
-  for (i = 0; i < numFormats; i++) {
-    const WinDisplayRes& format = formats[i];
-    if (width == format.width &&
-	height == format.height &&
-	depth == format.depth) {
-      current = i;
-      break;
-    }
-  }
-
-  // give formats to base class
-  initResolutions(resInfo, numFormats, current);
-}
-
-void			WinDisplay::setVideoFormat()
-{
-  if (using3Dfx) {
-    setResolution(videoFormat);
-  }
-  else {
-    videoFormatMap = new int[getNumResolutions()];
-    videoFormatDisplay = this;
-
-    DialogBox(rep->hInstance, MAKEINTRESOURCE(IDD_VIDEO_FORMAT),
-				NULL, (DLGPROC)videoFormatDialogProc);
-
-    videoFormatDisplay = NULL;
-    delete[] videoFormatMap;
-    videoFormatMap = NULL;
-  }
-}
-
-BOOL CALLBACK		WinDisplay::videoFormatDialogProc(
-				HWND hwnd, UINT iMsg,
-				WPARAM wParam, LPARAM lParam)
-{
-  switch (iMsg) {
-    case WM_INITDIALOG: {
-      // load the list box with the available formats
-      HWND list = GetDlgItem(hwnd, IDC_VIDEO_FORMAT);
-      if (list != NULL) {
-	const int count = videoFormatDisplay->getNumResolutions();
-	int i;
-	for (i = 0; i < count; i++) {
-	  // do default format last
-	  if (i == videoFormat) continue;
-
-	  const BzfDisplay::ResInfo* format =
-				videoFormatDisplay->getResolution(i);
-	  SendMessage(list, LB_ADDSTRING, 0, (LPARAM)(LPCTSTR)format->name);
-	}
-
-	// put default format in
-	if (videoFormat != -1) {
-	  const BzfDisplay::ResInfo* format =
-				videoFormatDisplay->getResolution(videoFormat);
-	  const int pos = (int)SendMessage(list, LB_ADDSTRING, 0,
-				(LPARAM)(LPCTSTR)format->name);
-	  if (pos >= 0 && pos < count)
-	    SendMessage(list, LB_SETCURSEL, (WPARAM)pos, 0);
-	}
-
-	// find final positions of each entry
-	videoFormatMapSize = 0;
-	for (i = 0; i < count; i++)
-	  videoFormatMap[i] = -1;
-	for (i = 0; i < count; i++) {
-	  const BzfDisplay::ResInfo* format =
-				videoFormatDisplay->getResolution(i);
-	  const int pos = SendMessage(list, LB_FINDSTRINGEXACT,
-				(WPARAM)-1, (LPARAM)(LPCSTR)format->name);
-	  if (pos >= 0 && pos < count) {
-	    videoFormatMap[pos] = i;
-	    videoFormatMapSize++;
-	  }
-	}
-      }
-      return true;
-    }
-
-    case WM_COMMAND:
-      switch (LOWORD(wParam)) {
-	case IDC_VIDEO_FORMAT:
-	  if (HIWORD(wParam) != LBN_DBLCLK)
-	    return false;
-	  // fall through
-
-	case IDOK:
-	  // get selected format
-	  videoFormat = SendMessage(GetDlgItem(hwnd, IDC_VIDEO_FORMAT),
-					LB_GETCURSEL, (WPARAM)0, (LPARAM)0);
-
-	  // try changing video format if format index is valid
-	  if (videoFormat != LB_ERR) {
-	    ShowWindow(videoFormatDisplay->hwnd, SW_SHOW);
-	    if (videoFormatDisplay->setResolution(videoFormatMap[videoFormat])){
-	      EndDialog(hwnd, 0);
-	    }
-	    else {
-	      ShowWindow(videoFormatDisplay->hwnd, SW_HIDE);
-
-	      // remove format from list
-	      SendMessage(GetDlgItem(hwnd, IDC_VIDEO_FORMAT), LB_DELETESTRING,
-					(WPARAM)videoFormat, (LPARAM)0);
-	      for (int i = videoFormat + 1; i < videoFormatMapSize; i++)
-		videoFormatMap[i - 1] = videoFormatMap[i];
-	      videoFormatMapSize--;
-
-	      // if no formats left then give up
-	      if (videoFormatMapSize == 0) {
-		MessageBox(hwnd,
-			"No formats supported.\n"
-			"Press OK to start with current format.",
-			"No Formats", MB_OK);
-		EndDialog(hwnd, 1);
-	      }
-
-	      // let user try again
-	      MessageBox(hwnd,
-			"Sorry, the selected format isn't supported.\n"
-			"Please choose another format.",
-			"Invalid Format", MB_OK);
-	    }
-	  }
-	  return true;
-
-	case IDCANCEL:
-	  EndDialog(hwnd, 1);
-	  return true;
-      }
-      break;
-  }
-
-  return false;
 }
 
 const int		WinDisplay::asciiMap[] = {

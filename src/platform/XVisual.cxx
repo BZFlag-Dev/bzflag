@@ -133,6 +133,7 @@ void			XVisual::setStereo(boolean on)
 
 void			XVisual::setMultisample(int minSamples)
 {
+  (void)minSamples;  // quiet compiler if ifdef'd code not used
 #if defined(GLX_SAMPLES_SGIS) && defined(GLX_SGIS_multisample)
   int index = findAttribute(GLX_SAMPLES_SGIS);
   if (index == -1) appendAttribute(GLX_SAMPLES_SGIS, minSamples);
@@ -148,8 +149,7 @@ int			XVisual::findAttribute(int attribute) const
   return -1;
 }
 
-void			XVisual::appendAttribute(int attribute,
-								int value)
+void			XVisual::appendAttribute(int attribute, int value)
 {
   attributes[attributeCount] = attribute;
   attributes[attributeCount+1] = value;
@@ -172,9 +172,188 @@ void			XVisual::editAttribute(int index, int value)
 
 boolean			XVisual::build()
 {
-  if (!visual) visual = glXChooseVisual(display->getDisplay(),
+  if (!visual && getenv("MESA_RGB_VISUAL") == NULL) {
+    // check each available visual looking for the best match.
+    // we prefer deeper and dynamic (rather than static) visuals.
+
+    // first get the list of all visuals by making a template to
+    // match any visual on the screen and matching it.
+    const long visualMask = VisualScreenMask;
+    XVisualInfo visualTemplate;
+    visualTemplate.screen = display->getScreen();
+    int numVisuals;
+    XVisualInfo* visualList = XGetVisualInfo(display->getDisplay(),
+					visualMask,
+					&visualTemplate,
+					&numVisuals);
+    if (numVisuals > 0 && visualList != NULL) {
+      // no best visual so far
+      int bestVisual = -1;
+      int attrib;
+
+      // now check each visual
+      for (int i = 0; i < numVisuals; i++) {
+	// ignore visuals that aren't deep enough
+	if (visualList[i].depth < 8)
+	  continue;
+
+	// ignore visuals that glX can't use
+	if (glXGetConfig(display->getDisplay(), visualList + i,
+					GLX_USE_GL, &attrib) != 0 ||
+					attrib == GL_FALSE)
+	  continue;
+
+	// ignore visuals that don't satisfy our requirements
+	if (!matchRequirements(visualList + i))
+	  continue;
+
+	// use visual if it's better than the existing one.  some visual
+	// is always better than none at all.
+	if (bestVisual == -1) {
+	  bestVisual = i;
+	  continue;
+	}
+
+	// DirectColor is better than other visual classes, then
+	// PseudoColor, then TrueColor, then StaticColor, then GreyScale.
+	if (visualClassIsBetter(visualList[i].c_class,
+				visualList[bestVisual].c_class)) {
+	  bestVisual = i;
+	  continue;
+	}
+
+	// if visual class wasn't better and isn't the same then it
+	// must be worse.
+	if (visualList[i].c_class != visualList[bestVisual].c_class)
+	  continue;
+
+	// deeper is better
+	if (visualList[i].depth > visualList[bestVisual].depth) {
+	  bestVisual = i;
+	  continue;
+	}
+
+	// not better
+      }
+
+      // save best visual, if one was found
+      if (bestVisual != -1) {
+	visual = XGetVisualInfo(display->getDisplay(),
+				VisualAllMask,
+				visualList + bestVisual,
+				&numVisuals);
+	if (numVisuals == 0)
+	  visual = NULL;
+      }
+
+      // done with visuals
+      XFree(visualList);
+    }
+  }
+
+  // emergency backup plan -- let glXChooseVisual choose for us
+  if (!visual) {
+    visual = glXChooseVisual(display->getDisplay(),
 					display->getScreen(), attributes);
+  }
+
   return visual != NULL;
+}
+
+boolean			XVisual::matchRequirements(XVisualInfo* v) const
+{
+  // check RGBA, DOUBLEBUFFER, and STEREO
+  int value;
+  if (glXGetConfig(display->getDisplay(), v, GLX_RGBA, &value) != 0 ||
+			(findAttribute(GLX_RGBA) != -1) != value)
+    return False;
+  if (glXGetConfig(display->getDisplay(), v, GLX_DOUBLEBUFFER, &value) != 0 ||
+			(findAttribute(GLX_DOUBLEBUFFER) != -1) != value)
+    return False;
+  if (glXGetConfig(display->getDisplay(), v, GLX_STEREO, &value) != 0 ||
+			(findAttribute(GLX_STEREO) != -1) != value)
+    return False;
+
+  // check the rest
+  for (int i = 0; i < attributeCount; i += 2) {
+    // get value of desired attribute from visual
+    if (glXGetConfig(display->getDisplay(), v, attributes[i], &value) != 0)
+      return False;
+
+    // compare to desired value
+    switch (attributes[i]) {
+      case GLX_RGBA:
+      case GLX_DOUBLEBUFFER:
+      case GLX_STEREO:
+	// skip these
+	break;
+
+      case GLX_LEVEL:
+	if (value != attributes[i + 1])
+	  return False;
+	break;
+
+      case GLX_BUFFER_SIZE:
+      case GLX_RED_SIZE:
+      case GLX_GREEN_SIZE:
+      case GLX_BLUE_SIZE:
+      case GLX_ALPHA_SIZE:
+      case GLX_DEPTH_SIZE:
+      case GLX_STENCIL_SIZE:
+      case GLX_ACCUM_RED_SIZE:
+      case GLX_ACCUM_GREEN_SIZE:
+      case GLX_ACCUM_BLUE_SIZE:
+      case GLX_ACCUM_ALPHA_SIZE:
+#if defined(GLX_SAMPLES_SGIS) && defined(GLX_SGIS_multisample)
+      case GLX_SAMPLES_SGIS:
+#endif
+	if (value < attributes[i + 1])
+	  return False;
+	break;
+
+      default:
+	assert(0 && "unexpected GLX attribute");
+    }
+  }
+
+  return True;
+}
+
+boolean			XVisual::visualClassIsBetter(int a, int b)
+{
+    // not better if the same
+    if (a == b)
+	return False;
+
+    // direct color is best
+    if (a == DirectColor)
+	return True;
+    if (b == DirectColor)
+	return False;
+
+    // then pseudo color (because we can adjust it)
+    if (a == PseudoColor)
+	return True;
+    if (b == PseudoColor)
+	return False;
+
+    // then true color
+    if (a == TrueColor)
+	return True;
+    if (b == TrueColor)
+	return False;
+
+    // then static color
+    if (a == StaticColor)
+	return True;
+    if (b == StaticColor)
+	return False;
+
+    // then gray scale
+    if (a == GrayScale)
+	return True;
+
+    return False;
 }
 
 XVisualInfo*		XVisual::get()

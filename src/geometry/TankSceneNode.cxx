@@ -27,8 +27,8 @@ TankSceneNode::TankSceneNode(const GLfloat pos[3], const GLfloat forward[3]) :
 				colorblind(False),
 				hidden(False),
 				invisible(False),
-				style(TankRenderNode::Normal),
 				clip(False),
+				style(TankRenderNode::Normal),
 				lowRenderNode(this),
 				medRenderNode(this),
 				highRenderNode(this),
@@ -520,11 +520,14 @@ TankSceneNode::TankRenderNode::TankRenderNode(
     vel[i][0] = 80.0f * ((float)bzfrand() - 0.5f);
     vel[i][1] = 80.0f * ((float)bzfrand() - 0.5f);
   }
+
+  // watch for context recreation
+  OpenGLGState::registerContextInitializer(initContext, (void*)this);
 }
 
 TankSceneNode::TankRenderNode::~TankRenderNode()
 {
-  // do nothing
+  OpenGLGState::unregisterContextInitializer(initContext, (void*)this);
 }
 
 void			TankSceneNode::TankRenderNode::setShadow()
@@ -710,6 +713,16 @@ void			TankSceneNode::TankRenderNode::
   glNormal3f(x, y, z);
 }
 
+void			TankSceneNode::TankRenderNode::doInitContext()
+{
+  freeParts();
+}
+
+void			TankSceneNode::TankRenderNode::initContext(void* self)
+{
+  ((TankSceneNode::TankRenderNode*)self)->doInitContext();
+}
+
 //
 // TankSceneNode::LowTankRenderNode
 //
@@ -758,6 +771,13 @@ GLuint			TankSceneNode::LowTankRenderNode::
   }
 
   return parts[style];
+}
+
+void			TankSceneNode::LowTankRenderNode::freeParts()
+{
+  // forget about old parts
+  for (unsigned int i = 0; i < sizeof(parts) / sizeof(parts[0]); i++)
+    parts[i] = 0;
 }
 
 //
@@ -810,6 +830,13 @@ GLuint			TankSceneNode::MedTankRenderNode::
   return parts[style];
 }
 
+void			TankSceneNode::MedTankRenderNode::freeParts()
+{
+  // forget about old parts
+  for (unsigned int i = 0; i < sizeof(parts) / sizeof(parts[0]); i++)
+    parts[i] = 0;
+}
+
 //
 // TankSceneNode::HighTankRenderNode
 //
@@ -858,6 +885,13 @@ GLuint			TankSceneNode::HighTankRenderNode::
   }
 
   return parts[style];
+}
+
+void			TankSceneNode::HighTankRenderNode::freeParts()
+{
+  // forget about old parts
+  for (unsigned int i = 0; i < sizeof(parts) / sizeof(parts[0]); i++)
+    parts[i] = 0;
 }
 
 //

@@ -4,7 +4,7 @@ Welcome to the Linux version of BZFLAG!
 BZFLAG is a network multiplayer 3D tank battle game.  You can play
 against several other people anywhere on a TCP/IP based network,
 including the Internet.  Bzflag is freeware;  please read the
-LICENSE file in the bzflag-1.7c directory off the standard doc
+LICENSE file in the bzflag-1.7d directory off the standard doc
 directory (probably /usr/doc).
 
 This version will work with X using software only rendering or with a

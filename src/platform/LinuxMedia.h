@@ -30,7 +30,6 @@ class LinuxMedia : public BzfMedia {
     void		sleep(float);
     boolean		openAudio();
     void		closeAudio();
-    boolean		isAudioBrainDead() const;
     boolean		startAudioThread(void (*)(void*), void*);
     void		stopAudioThread();
     boolean		hasAudioThread() const;
@@ -46,12 +45,15 @@ class LinuxMedia : public BzfMedia {
   private:
     boolean		checkForAudioHardware();
     boolean		openAudioHardware();
+    boolean		openIoctl(int cmd, void* value, boolean req = True);
     static void		audioThreadInit(void*);
 
     void		writeAudioFrames8Bit(
 				const float* samples, int numFrames);
     void		writeAudioFrames16Bit(
 				const float* samples, int numFrames);
+
+    static double	getTime();
 
   private:
     boolean		audioReady;
@@ -65,6 +67,12 @@ class LinuxMedia : public BzfMedia {
     pid_t		childProcID;
     double		stopwatchTime;
     boolean		audio8Bit;
+
+    boolean		noSetFragment;
+    boolean		getospaceBroken;
+    int			chunksPending;
+    double		chunkTime;
+    double		chunksPerSecond;
 };
 
 #endif // BZF_LINUXMEDIA_H

@@ -24,6 +24,7 @@
 class WinVisual : public BzfVisual {
   public:
 			WinVisual(const WinDisplay*);
+			WinVisual(const WinVisual&);
 			~WinVisual();
 
     void		setLevel(int level);
@@ -41,6 +42,7 @@ class WinVisual : public BzfVisual {
     boolean		build();
 
     // for other Windows stuff
+    void		reset();
     int			get(HDC, const PIXELFORMATDESCRIPTOR**);
 
   protected:

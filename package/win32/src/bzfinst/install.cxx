@@ -500,6 +500,19 @@ static BOOL		addDesktopLink(const char* linkname,
     return TRUE;
 }
 
+// if allowRegistryFailure is TRUE then ignore failure to
+// write registry.  since we only use the registry to save
+// uninstall info, we're safe in ignoring failures (the
+// uninstaller just won't be available from Add/Remove
+// programs).  some users complained that they couldn't
+// install because they didn't have permission to edit the
+// registry and there was no way to override the registry
+// changing.
+//
+// FIXME -- must do more sophisticated handling when we
+// use the registry for stuff that actually matters.
+static BOOL allowRegistryFailure = TRUE;
+
 static BOOL		addRegistryKey(const char* parent, const char* name,
 				UndoList& undoList)
 {
@@ -507,7 +520,7 @@ static BOOL		addRegistryKey(const char* parent, const char* name,
 
     // open parent
     key = findKey(parent);
-    if (!key) return FALSE;
+    if (!key) return allowRegistryFailure;
 
     DWORD disp;
     LONG hr = RegCreateKeyEx(key, name, 0, REG_NONE, 0,
@@ -515,7 +528,7 @@ static BOOL		addRegistryKey(const char* parent, const char* name,
 				&disp);
     RegCloseKey(key);
     if (hr != ERROR_SUCCESS)
-	return FALSE;
+	return allowRegistryFailure;
 
     if (disp != REG_OPENED_EXISTING_KEY)
 	undoList.append(new UndoNewRegKey(parent, name));
@@ -529,7 +542,7 @@ static BOOL		addRegistryDWord(const char* parent,
 {
     // open parent
     HKEY key = findKey(parent);
-    if (!key) return FALSE;
+    if (!key) return allowRegistryFailure;
 
     // get the current value
     BYTE* data = NULL;
@@ -542,7 +555,7 @@ static BOOL		addRegistryDWord(const char* parent,
 	if (hr != ERROR_SUCCESS) {
 	    delete[] data;
 	    RegCloseKey(key);
-	    return FALSE;
+	    return allowRegistryFailure;
 	}
 	undo = new UndoNewRegValue(parent, name, type, data, size);
 	delete[] data;
@@ -556,7 +569,7 @@ static BOOL		addRegistryDWord(const char* parent,
     RegCloseKey(key);
     if (hr != ERROR_SUCCESS) {
 	delete undo;
-	return FALSE;
+	return allowRegistryFailure;
     }
 
     if (undo)
@@ -570,7 +583,7 @@ static BOOL		addRegistryString(const char* parent,
 {
     // open parent
     HKEY key = findKey(parent);
-    if (!key) return FALSE;
+    if (!key) return allowRegistryFailure;
 
     // get the current value
     BYTE* data = NULL;
@@ -583,7 +596,7 @@ static BOOL		addRegistryString(const char* parent,
 	if (hr != ERROR_SUCCESS) {
 	    delete[] data;
 	    RegCloseKey(key);
-	    return FALSE;
+	    return allowRegistryFailure;
 	}
 	undo = new UndoNewRegValue(parent, name, type, data, size);
 	delete[] data;
@@ -594,7 +607,7 @@ static BOOL		addRegistryString(const char* parent,
     RegCloseKey(key);
     if (hr != ERROR_SUCCESS) {
 	delete undo;
-	return FALSE;
+	return allowRegistryFailure;
     }
 
     if (undo)

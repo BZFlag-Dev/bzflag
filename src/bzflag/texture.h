@@ -49,7 +49,11 @@ class TextureFont {
 
     static OpenGLTexFont getTextureFont(Font, boolean required = False);
 
+// sun's compiler is broken: sizeof(fontFileName) fails unless
+// fontFileName is public.
+#if !defined(sun)
   private:
+#endif
     static OpenGLTexFont*	font[];
     static const char*		fontFileName[];
 };

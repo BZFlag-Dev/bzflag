@@ -116,6 +116,7 @@ SceneRenderer::SceneRenderer(MainWindow& _window) :
   const char* renderer = (const char*)glGetString(GL_RENDERER);
   const char* version = (const char*)glGetString(GL_VERSION);
   const char* extensions = (const char*)glGetString(GL_EXTENSIONS);
+  (void)vendor; (void)renderer; (void)version; (void)extensions; // silence g++
 #ifdef GL_ABGR_EXT
   if (strstr(extensions, "GL_EXT_abgr") != NULL && strcmp(vendor, "SGI") == 0) {
     // old hardware is faster with ABGR.  new hardware isn't.
@@ -787,7 +788,7 @@ void			SceneRenderer::render(
 
   if (!reallyUseFogHack) {
     float density = 0.0f;
-    const GLfloat* color;
+    const GLfloat* color = NULL;
     if (useDimming) {
       density = dimDensity;
       color = dimnessColor;
@@ -797,7 +798,7 @@ void			SceneRenderer::render(
 			1.0f : teleporterProximity / 0.75f;
       color = blindnessColor;
     }
-    if (density > 0.0f) {
+    if (density > 0.0f && color != NULL) {
       glMatrixMode(GL_PROJECTION);
       glLoadIdentity();
       glMatrixMode(GL_MODELVIEW);

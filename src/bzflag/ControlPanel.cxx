@@ -47,6 +47,7 @@ ControlPanelMessage::ControlPanelMessage(const BzfString& _string,
 //
 
 const int		ControlPanel::maxLines = 30;
+extern void		printMissingDataDirectoryError(const char*);
 
 ControlPanel::ControlPanel(MainWindow& _mainWindow, SceneRenderer& renderer) :
 				window(_mainWindow),
@@ -70,9 +71,8 @@ ControlPanel::ControlPanel(MainWindow& _mainWindow, SceneRenderer& renderer) :
   int width, height, depth;
   panelImage = getTextureImage(panelFile, width, height, depth);
   if (!panelImage) {
-    static const char* msg = "Can't continue without control panel image.  "
-				"Exiting";
-    printFatalError(msg);
+    printMissingDataDirectoryError("Can't continue without control "
+				"panel image.");
     exit(1);
   }
   background = OpenGLTexture(width, height, panelImage,
@@ -120,8 +120,8 @@ ControlPanel::ControlPanel(MainWindow& _mainWindow, SceneRenderer& renderer) :
 
   // reverse channel order of control panel image if ABGR
   panelFormat = GL_RGBA;
-#ifdef GL_ABGR_EXT
   if (renderer.useABGR()) {
+#ifdef GL_ABGR_EXT
     unsigned char* scan = panelImage;
     const int count = width * (height - 1);
     for (int i = 0; i < count; i++) {
@@ -134,8 +134,8 @@ ControlPanel::ControlPanel(MainWindow& _mainWindow, SceneRenderer& renderer) :
       scan += 4;
     }
     panelFormat = GL_ABGR_EXT;
-  }
 #endif GL_ABGR_EXT
+  }
 
   // gstate for background
   OpenGLGStateBuilder builder(gstate);

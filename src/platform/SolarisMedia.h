@@ -11,7 +11,7 @@
  */
 
 /* SolarisMedia:
- *	Media I/O template
+ *	Media I/O on Solaris
  */
 
 #ifndef BZF_SOLARISMEDIA_H
@@ -40,7 +40,6 @@ class SolarisMedia : public BzfMedia {
     void		sleep(float);
     boolean		openAudio();
     void		closeAudio();
-    boolean		isAudioBrainDead() const;
     boolean		startAudioThread(void (*)(void*), void*);
     void		stopAudioThread();
     boolean		hasAudioThread() const;

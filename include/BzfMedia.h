@@ -31,7 +31,8 @@
 // those platforms will use a separate thread regardless.
 //
 // some platforms don't context switch well enough for the real
-// time demands of audio.
+// time demands of audio.  but be aware that running audio in the
+// main thread is fraught with peril.
 // #define NO_AUDIO_THREAD
 
 class BzfMedia {
@@ -67,10 +68,6 @@ class BzfMedia {
 
     // close the audio subsystem
     virtual void	closeAudio() = 0;
-
-    // returns true iff audio keeps playing output (ring) buffer
-    // after last written sample.
-    virtual boolean	isAudioBrainDead() const = 0;
 
     // start a thread for audio processing and call proc in that thread.
     // data is passed to the proc function.  return true iff the thread

@@ -61,6 +61,7 @@ class OpenGLMaterial {
 			~Rep();
 	void		ref();
 	void		unref();
+	void		execute();
 	static Rep*	getRep(const GLfloat* specular,
 				const GLfloat* emissive,
 				GLfloat shininess);
@@ -68,7 +69,9 @@ class OpenGLMaterial {
 			Rep(const GLfloat* specular,
 				const GLfloat* emissive,
 				GLfloat shininess);
+	static void	initContext(void*);
       public:
+	boolean		init;
 	int		refCount;
 	Rep*		prev;
 	Rep*		next;

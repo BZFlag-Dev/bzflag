@@ -102,10 +102,6 @@ SOURCE=..\src\common\Flag.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\src\common\Ping.cxx
-# End Source File
-# Begin Source File
-
 SOURCE=..\src\common\Team.cxx
 # End Source File
 # Begin Source File
@@ -147,10 +143,6 @@ SOURCE=..\include\Flag.h
 # Begin Source File
 
 SOURCE=..\include\global.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\include\Ping.h
 # End Source File
 # Begin Source File
 

@@ -43,15 +43,6 @@ enum TeamColor {
 			PurpleTeam = 4
 };
 
-// view enumerations
-// FIXME -- may not be used anywhere
-enum ViewDirection {
-			FrontView = 0,
-			LeftView = 1,
-			BackView = 2,
-			RightView = 3
-};
-
 // epsilon and very far for ray intersections
 const float		Epsilon =	1.0e-5f;	// arbitrary
 const float		Infinity =	MAXFLOAT;	// arbitrary

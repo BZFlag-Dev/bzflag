@@ -19,7 +19,6 @@ CXXFILES =				\
 	BzfString.cxx			\
 	ErrorHandler.cxx		\
 	Flag.cxx			\
-	Ping.cxx			\
 	Team.cxx			\
 	TimeBomb.cxx			\
 	TimeKeeper.cxx			\

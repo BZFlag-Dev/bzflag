@@ -17,6 +17,7 @@ TARGETS  = $(LIBDIR)/libNet.a
 CXXFILES =				\
 	Address.cxx			\
 	Pack.cxx			\
+	Ping.cxx			\
 	multicast.cxx			\
 	network.cxx			\
 	$(NULL)

@@ -48,12 +48,7 @@ gzipped: sourceform
 # replace tokens in source to make nroff source
 .1s.1 .2s.2 .3s.3 .4s.4 .5s.5 .6s.6 .7s.7 .8s.8:
 	cat $< | 						\
-	sed -e "s@INSTALL_BIN_DIR@$(INSTALL_BIN_DIR)@g"		\
-		-e "s@INSTALL_DATA_DIR@$(INSTALL_DATA_DIR)@g"	\
-		-e "s@INSTALL_MAN_DIR@$(INSTALL_MAN_DIR)@g"	\
-		-e "s@INSTALL_SRC_DIR@$(INSTALL_SRC_DIR)@g"	\
-		-e "s@TARGET_DIR@$(TARGETDIR)@g"		\
-		-e "s@DEPTH@$(DEPTH)@g" >$@
+	sed -e "s@INSTALL_DATA_DIR@$(INSTALL_DATA_DIR)@g" >$@
 
 # compile and pack
 .1.z .2.z .3.z .4.z .5.z .6.z .7.z .8.z:

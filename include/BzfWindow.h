@@ -55,8 +55,14 @@ class BzfWindow {
     virtual void	showMouse() = 0;
     virtual void	hideMouse() = 0;
 
+    virtual void	setGamma(float) = 0;
+    virtual float	getGamma() const = 0;
+    virtual boolean	hasGammaControl() const = 0;
+
     virtual void	makeCurrent() = 0;
     virtual void	swapBuffers() = 0;
+    virtual void	makeContext() = 0;
+    virtual void	freeContext() = 0;
 
     void		callExposeCallbacks() const;
     void		addExposeCallback(void (*cb)(void*), void* data);

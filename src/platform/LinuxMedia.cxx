@@ -22,6 +22,7 @@
 #include <sys/soundcard.h>
 #include <sys/ioctl.h>
 #include <TimeKeeper.h>
+#include <errno.h>
 
 #ifdef HALF_RATE_AUDIO
 static const int defaultAudioRate=11025;
@@ -37,7 +38,9 @@ LinuxMedia::LinuxMedia() : BzfMedia(), audioReady(False),
 				audioPortFd(-1),
 				queueIn(-1), queueOut(-1),
 				outputBuffer(NULL),
-				childProcID(0)
+				childProcID(0),
+				audio8Bit(False),
+				getospaceBroken(False)
 {
   // do nothing
 }
@@ -47,15 +50,20 @@ LinuxMedia::~LinuxMedia()
   // do nothing
 }
 
-double			LinuxMedia::stopwatch(boolean start)
+double			LinuxMedia::getTime()
 {
   struct timeval tv;
   gettimeofday(&tv, 0);
+  return (double)tv.tv_sec + 1.0e-6 * (double)tv.tv_usec;
+}
+
+double			LinuxMedia::stopwatch(boolean start)
+{
   if (start) {
-    stopwatchTime = (double)tv.tv_sec + 1.0e-6 * (double)tv.tv_usec;
+    stopwatchTime = getTime();
     return 0.0;
   }
-  return (double)tv.tv_sec + 1.0e-6 * (double)tv.tv_usec - stopwatchTime;
+  return getTime() - stopwatchTime;
 }
 
 void			LinuxMedia::sleep(float timeInSeconds)
@@ -109,79 +117,122 @@ boolean			LinuxMedia::checkForAudioHardware()
   return False;
 }
 
+boolean			LinuxMedia::openIoctl(
+				int cmd, void* value, boolean req)
+{
+  if (audioPortFd == -1)
+      return False;
+
+  if (ioctl(audioPortFd, cmd, value) < 0) {
+    fprintf(stderr, "audio ioctl failed (cmd %x, err %d)... ", cmd, errno);
+    if (req) {
+      close(audioPortFd);
+      audioPortFd = -1;
+      fprintf(stderr, "giving up on audio\n");
+    }
+    else {
+      fprintf(stderr, "ignored\n");
+    }
+    return False;
+  }
+  return True;
+}
+
 static const int	NumChunks = 3;
 
 boolean			LinuxMedia::openAudioHardware()
 {
-  int format, origFormat, stereo, audioChunkSize;
+  int format, n;
 
-  if ((audioPortFd=open("/dev/dsp", O_WRONLY, 0))==-1) {
-    fprintf(stderr, "Couldn't open /dev/dsp\n");
+  // what's the audio format?
+#if BYTE_ORDER == BIG_ENDIAN
+  format = AFMT_S16_BE;
+#else
+  format = AFMT_S16_LE;
+#endif
+
+  // what the frequency?
+  audioOutputRate = defaultAudioRate;
+
+  // how big a fragment to use?  we want to hold at around 1/10th of
+  // a second.
+  int fragmentSize = (int)(0.08f * (float)audioOutputRate);
+  n = 0;
+  while ((1 << n) < fragmentSize)
+    ++n;
+
+  // samples are two bytes each and we're in stereo so quadruple the size
+  fragmentSize = n + 2;
+
+  // now how many fragments and what's the low water mark (in fragments)?
+  int fragmentInfo = (NumChunks << 16) | fragmentSize;
+  audioLowWaterMark = NumChunks - 1;
+
+  // open device (but don't wait for it)
+  audioPortFd = open("/dev/dsp", O_WRONLY | O_NDELAY, 0);
+  if (audioPortFd == -1) {
+    fprintf(stderr, "Failed to open audio device /dev/dsp (%d)\n", errno);
     return False;
   }
-  if (ioctl(audioPortFd, SNDCTL_DSP_RESET, 0)==-1) {
-    fprintf(stderr, "Couldn't reset audio\n");
-    return False;
-  }
+
+  // back to blocking I/O
+  fcntl(audioPortFd, F_SETFL, fcntl(audioPortFd, F_GETFL, 0) & ~O_NDELAY);
 
   /* close audio on exec so launched server doesn't hold sound device */
   fcntl(audioPortFd, F_SETFD, fcntl(audioPortFd, F_GETFD) | FD_CLOEXEC);
 
-  audio8Bit=False;
-#if BYTE_ORDER == BIG_ENDIAN
-  origFormat=AFMT_S16_BE;
-#else
-  origFormat=AFMT_S16_LE;
-#endif
-  format=origFormat;
-  if ((ioctl(audioPortFd, SNDCTL_DSP_SETFMT, &format)==-1) || 
-      format!=origFormat) {
-    format=AFMT_U8;
-    audio8Bit=True;
-    if ((ioctl(audioPortFd, SNDCTL_DSP_SETFMT, &format)==-1) || 
-	format!=AFMT_U8) {
-      close(audioPortFd);
-      audioPortFd=-1;
-      fprintf(stderr, "Couldn't setup audio format\n");
-      return False;
+  // initialize device
+  openIoctl(SNDCTL_DSP_RESET, 0);
+  n = fragmentInfo;
+  noSetFragment = false;
+  if (!openIoctl(SNDCTL_DSP_SETFRAGMENT, &n, False)) {
+    // this is not good.  we can't set the size of the fragment
+    // buffers.  we'd like something short to minimize latencies
+    // and the default is probably too long.  we've got two
+    // options here:  accept the latency or try to force the
+    // driver to play partial fragments.  we'll try the later
+    // unless BZF_AUDIO_NOPOST is in the environment
+    if (!getenv("BZF_AUDIO_NOPOST"))
+      noSetFragment = true;
+  }
+  n = format;
+  openIoctl(SNDCTL_DSP_SETFMT, &n, False);
+  if (n != format) {
+    audio8Bit = True;
+    n = AFMT_U8;
+    openIoctl(SNDCTL_DSP_SETFMT, &n);
+  }
+  n = 1;
+  openIoctl(SNDCTL_DSP_STEREO, &n);
+  n = defaultAudioRate;
+  openIoctl(SNDCTL_DSP_SPEED, &n);
+
+  // set audioBufferSize, which is the number of samples (not bytes)
+  // in each fragment.  there are two bytes per sample so divide the
+  // fragment size by two unless we're in audio8Bit mode.  also, if
+  // we couldn't set the fragment size then force the buffer size to
+  // the size we would've asked for.  we'll force the buffer to be
+  // flushed after we write that much data to keep latency low.
+  if (noSetFragment || !openIoctl(SNDCTL_DSP_GETBLKSIZE,
+						&audioBufferSize, False))
+    audioBufferSize = 1 << fragmentSize;
+  if (!audio8Bit)
+    audioBufferSize >>= 1;
+
+  // SNDCTL_DSP_GETOSPACE not supported on all platforms.  check if
+  // it fails here and, if so, do a workaround by using the wall
+  // clock.  *shudder*
+  if (audioPortFd != -1) {
+    audio_buf_info info;
+    if (!openIoctl(SNDCTL_DSP_GETOSPACE, &info, False)) {
+      getospaceBroken = True;
+      chunksPending = 0;
+      chunksPerSecond = (double)getAudioOutputRate() / 
+				(double)getAudioBufferChunkSize();
     }
   }
-  stereo = 1;
-  if ((ioctl(audioPortFd, SNDCTL_DSP_STEREO, &stereo)==-1) ||
-      stereo!=1) {
-    close(audioPortFd);
-    audioPortFd=-1;
-    fprintf(stderr, "Couldn't set stereo mode\n");
-    return False;
-  }
-  audioOutputRate=defaultAudioRate;
-  if (ioctl(audioPortFd, SNDCTL_DSP_SPEED, &audioOutputRate)==-1) {
-    close(audioPortFd);
-    audioPortFd=-1;
-    fprintf(stderr, "Couldn't set rate to %d\n", defaultAudioRate);
-    return False;
-  }
-/*
-  if (audioOutputRate!=defaultAudioRate) {
-    fprintf(stderr, "Using output rate of %d\n", audioOutputRate);
-  }
-*/
 
-  // get size of fragment
-  audio_buf_info info;
-  if (ioctl(audioPortFd, SNDCTL_DSP_GETOSPACE, &info) < 0) {
-    close(audioPortFd);
-    audioPortFd=-1;
-    fprintf(stderr, "Couldn't get audio buffer parameters\n");
-    return False;
-  }
-
-  // set other sound buffering parameters
-  audioBufferSize = info.fragsize;
-  if (!audio8Bit) audioBufferSize >>= 1;
-  audioLowWaterMark = info.fragstotal - 2;
-
-  fprintf(stderr, "audio initialized\n");
+  return (audioPortFd != -1);
 }
 
 void			LinuxMedia::closeAudio()
@@ -195,11 +246,6 @@ void			LinuxMedia::closeAudio()
   queueIn=-1;
   queueOut=-1;
   outputBuffer=0;
-}
-
-boolean			LinuxMedia::isAudioBrainDead() const
-{
-  return True;
 }
 
 boolean			LinuxMedia::startAudioThread(
@@ -273,13 +319,30 @@ int			LinuxMedia::getAudioBufferChunkSize() const
 
 boolean			LinuxMedia::isAudioTooEmpty() const
 {
-  audio_buf_info info;
+  if (getospaceBroken) {
+    if (chunksPending > 0) {
+      // get time elapsed since chunkTime
+      const double dt = getTime() - chunkTime;
 
-  if (ioctl(audioPortFd, SNDCTL_DSP_GETOSPACE, &info)==-1) {
-    fprintf(stderr, "Couldn't read sound buffer space\n");
-    return False;
+      // how many chunks could've played in the elapsed time?
+      const int numChunks = (int)(dt * chunksPerSecond);
+
+      // remove pending chunks
+      LinuxMedia* self = (LinuxMedia*)this;
+      self->chunksPending -= numChunks;
+      if (chunksPending < 0)
+	self->chunksPending = 0;
+      else
+	self->chunkTime += (double)numChunks / chunksPerSecond;
+    }
+    return chunksPending < audioLowWaterMark;
   }
-  return info.fragments >= audioLowWaterMark;
+  else {
+    audio_buf_info info;
+    if (ioctl(audioPortFd, SNDCTL_DSP_GETOSPACE, &info) < 0)
+      return False;
+    return info.fragments >= audioLowWaterMark;
+  }
 }
 
 void			LinuxMedia::writeAudioFrames8Bit(
@@ -297,6 +360,13 @@ void			LinuxMedia::writeAudioFrames8Bit(
       if (samples[j] <= -32767.0) smOutputBuffer[j] = 0;
       else if (samples[j] >= 32767.0) smOutputBuffer[j] = 255;
       else smOutputBuffer[j] = char((samples[j]+32767)/257);
+    }
+
+    // fill out the chunk (we never write a partial chunk)
+    if (limit < audioBufferSize) {
+      for (int j = limit; j < audioBufferSize; ++j)
+	smOutputBuffer[j] = 127;
+      limit = audioBufferSize;
     }
 
     write(audioPortFd, smOutputBuffer, limit);
@@ -320,6 +390,13 @@ void			LinuxMedia::writeAudioFrames16Bit(
       else outputBuffer[j] = short(samples[j]);
     }
 
+    // fill out the chunk (we never write a partial chunk)
+    if (limit < audioBufferSize) {
+      for (int j = limit; j < audioBufferSize; ++j)
+	outputBuffer[j] = 0;
+      limit = audioBufferSize;
+    }
+
     write(audioPortFd, outputBuffer, 2*limit);
     samples += limit;
     numSamples -= limit;
@@ -331,6 +408,20 @@ void			LinuxMedia::writeAudioFrames(
 {
   if (audio8Bit) writeAudioFrames8Bit(samples, numFrames);
   else writeAudioFrames16Bit(samples, numFrames);
+
+  // if we couldn't set the fragment size then force the driver
+  // to play the short buffer.
+  if (noSetFragment) {
+    int dummy = 0;
+    ioctl(audioPortFd, SNDCTL_DSP_POST, &dummy);
+  }
+
+  if (getospaceBroken) {
+    if (chunksPending == 0)
+      chunkTime = getTime();
+    chunksPending += (numFrames + getAudioBufferChunkSize() - 1) /
+						getAudioBufferChunkSize();
+  }
 }
 
 void			LinuxMedia::audioSleep(
@@ -339,10 +430,6 @@ void			LinuxMedia::audioSleep(
   fd_set commandSelectSet;
   struct timeval tv;
 
-  FD_ZERO(&commandSelectSet);
-  FD_SET(queueOut, &commandSelectSet);
-
-  isAudioTooEmpty();
   // To do both these operations at once, we need to poll.
   if (checkLowWater) {
     // start looping
@@ -350,6 +437,7 @@ void			LinuxMedia::audioSleep(
     do {
       // break if buffer has drained enough
       if (isAudioTooEmpty()) break;
+      FD_ZERO(&commandSelectSet);
       FD_SET(queueOut, &commandSelectSet);
       tv.tv_sec=0;
       tv.tv_usec=0;
@@ -357,6 +445,8 @@ void			LinuxMedia::audioSleep(
 
     } while (endTime<0.0 || (TimeKeeper::getCurrent()-start)<endTime);
   } else {
+    FD_ZERO(&commandSelectSet);
+    FD_SET(queueOut, &commandSelectSet);
     tv.tv_sec=int(endTime);
     tv.tv_usec=int(1.0e6*(endTime-floor(endTime)));
 

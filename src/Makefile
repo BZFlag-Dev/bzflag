@@ -18,9 +18,10 @@ COMMONPREF = src
 include $(DEPTH)/Make-common
 
 SUBDIRS =				\
-	net				\
 	common				\
+	net				\
 	bzfs				\
+	bzfls				\
 	geometry			\
 	obstacle			\
 	ogl				\

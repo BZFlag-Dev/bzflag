@@ -48,6 +48,15 @@ WinVisual::WinVisual(const WinDisplay* _display) :
   pfd.dwDamageMask	= 0;
 }
 
+WinVisual::WinVisual(const WinVisual& visual) :
+				display(visual.display),
+				pfd(visual.pfd),
+				pixelFormat(visual.pixelFormat),
+				hDC(NULL)
+{
+  display->ref();
+}
+
 WinVisual::~WinVisual()
 {
   display->unref();
@@ -117,28 +126,21 @@ boolean			WinVisual::build()
 			0, 0, 1, 1, NULL, NULL, display->hInstance, NULL);
       if (hwnd == NULL) return False;
       hDC = GetDC(hwnd);
-
-      pfd.dwFlags |= PFD_GENERIC_ACCELERATED;
       pixelFormat = ChoosePixelFormat(hDC, &pfd);
-      if (pixelFormat == 0) {
-	pfd.dwFlags &= ~PFD_GENERIC_ACCELERATED;
-	pixelFormat = ChoosePixelFormat(hDC, &pfd);
-      }
-
       ReleaseDC(hwnd, hDC);
       DestroyWindow(hwnd);
       hDC = NULL;
     }
     else {
-      pfd.dwFlags |= PFD_GENERIC_ACCELERATED;
       pixelFormat = ChoosePixelFormat(hDC, &pfd);
-      if (pixelFormat == 0) {
-	pfd.dwFlags &= ~PFD_GENERIC_ACCELERATED;
-	pixelFormat = ChoosePixelFormat(hDC, &pfd);
-      }
     }
   }
   return pixelFormat > 0;
+}
+
+void			WinVisual::reset()
+{
+  pixelFormat = -1;
 }
 
 int			WinVisual::get(HDC _hDC,

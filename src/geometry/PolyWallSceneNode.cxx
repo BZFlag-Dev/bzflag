@@ -23,9 +23,9 @@ PolyWallSceneNode::Geometry::Geometry(PolyWallSceneNode* _wall,
 				const GLfloat2Array& _uv,
 				const GLfloat* _normal) :
 				wall(_wall),
+				normal(_normal),
 				vertex(_vertex),
-				uv(_uv),
-				normal(_normal)
+				uv(_uv)
 {
   // do nothing
 }

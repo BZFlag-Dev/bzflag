@@ -114,6 +114,7 @@ boolean			gameOver = False;
 static ExplosionList	explosions;
 static ExplosionList	prototypeExplosions;
 static int		savedVolume = -1;
+static boolean		grabMouseAlways = False;
 
 static char		messageMessage[PlayerIdPLen + 2 + MessageLen];
 
@@ -156,12 +157,29 @@ StartupInfo::StartupInfo() : hasConfiguration(False),
 				autoConnect(False),
 				serverPort(ServerPort),
 				ttl(DefaultTTL),
-				team(RogueTeam)
+				team(RogueTeam),
+				listServerURL(DefaultListServerURL),
+				listServerPort(ServerPort + 1)
 {
   strcpy(serverName, "");
   strcpy(multicastInterface, "");
   strcpy(callsign, "");
   strcpy(email, "");
+}
+
+//
+// should we grab the mouse?
+//
+
+static void		setGrabMouse(boolean grab)
+{
+  grabMouseAlways = grab;
+}
+
+static boolean		shouldGrabMouse()
+{
+  return grabMouseAlways && !unmapped &&
+			(myTank == NULL || !myTank->isPaused());
 }
 
 //
@@ -205,6 +223,13 @@ KeyMap&			getKeyMap()
 
 boolean			setVideoFormat(int index, boolean test)
 {
+#if defined(_WIN32)
+  // give windows extra time to test format (context reloading takes a while)
+  static const float testDuration = 10.0f;
+#else
+  static const float testDuration = 5.0f;
+#endif
+
   // ignore bad formats or when the format test timer is running
   if (testVideoFormatTimer != 0.0f || !display->isValidResolution(index))
     return False;
@@ -220,8 +245,8 @@ boolean			setVideoFormat(int index, boolean test)
   mainWindow->setFullscreen();
   mainWindow->getWindow()->callResizeCallbacks();
   mainWindow->warpMouse();
-  if (test) testVideoFormatTimer = 5.0f;
-  else if (index != display->getDefaultResolution()) mainWindow->grabMouse();
+  if (test) testVideoFormatTimer = testDuration;
+  else if (shouldGrabMouse()) mainWindow->grabMouse();
   return True;
 }
 
@@ -275,9 +300,8 @@ void			joinGameHandler(boolean okay, void*)
 
 static void		dying(int sig)
 {
-#if !defined(_WIN32)
-  display->setResolution(display->getDefaultResolution());
-#endif
+  signal(sig, SIG_DFL);
+  display->setDefaultResolution();
   raise(sig);
 }
 
@@ -357,9 +381,11 @@ boolean			ComposeDefaultKey::keyRelease(const BzfKeyEvent& key)
 // user input handling
 //
 
+#if defined(DEBUG)
 #define FREEZING
 #define ROAMING
 #define SNAPPING
+#endif
 #if defined(FREEZING)
 static boolean		motionFreeze = False;
 #endif
@@ -458,6 +484,27 @@ static boolean		doKeyCommon(const BzfKeyEvent& key, boolean pressed)
 	  return True;
 	}
 	break;
+
+/* XXX -- for testing forced recreation of OpenGL context
+      case 'o':
+	if (pressed) {
+	  // destroy OpenGL context
+	  getMainWindow()->getWindow()->freeContext();
+
+	  // recreate OpenGL context
+	  getMainWindow()->getWindow()->makeContext();
+
+	  // force a redraw (mainly for control panel)
+	  getMainWindow()->getWindow()->callExposeCallbacks();
+
+	  // cause sun/moon to be repositioned immediately
+	  lastEpochOffset = epochOffset - 5.0;
+
+	  // reload display lists and textures and initialize other state
+	  OpenGLGState::initContext();
+	}
+	break;
+*/
 
       case ']':
       case '}':
@@ -708,6 +755,10 @@ static void		doKeyPlaying(const BzfKeyEvent& key, boolean pressed)
 	    setSoundVolume(savedVolume);
 	    savedVolume = -1;
 	  }
+
+	  // grab mouse
+	  if (shouldGrabMouse())
+	    mainWindow->grabMouse();
 	}
 	else if (pauseCountdown > 0.0f) {
 	  pauseCountdown = 0.0f;
@@ -756,13 +807,11 @@ static void		doEvent(BzfDisplay* display)
 	}
       }
 
-      // grab the mouse if we're running full screen
+      // restore the resolution we want if full screen
       if (mainWindow->getFullscreen()) {
 	if (preUnmapFormat != -1) {
 	  display->setResolution(preUnmapFormat);
 	  mainWindow->warpMouse();
-	  if (preUnmapFormat != display->getDefaultResolution())
-	    mainWindow->grabMouse();
 	}
       }
 
@@ -773,6 +822,8 @@ static void		doEvent(BzfDisplay* display)
       }
 
       unmapped = False;
+      if (shouldGrabMouse())
+	mainWindow->grabMouse();
       break;
 
     case BzfEvent::Unmap:
@@ -794,10 +845,7 @@ static void		doEvent(BzfDisplay* display)
 	preUnmapFormat = -1;
 	if (display->getNumResolutions() > 1) {
 	  preUnmapFormat = display->getResolution();
-	  if (preUnmapFormat != display->getDefaultResolution()) {
-	    mainWindow->ungrabMouse();
-	    display->setResolution(display->getDefaultResolution());
-	  }
+	  display->setDefaultResolution();
 	}
       }
 
@@ -808,6 +856,7 @@ static void		doEvent(BzfDisplay* display)
       }
 
       unmapped = True;
+      mainWindow->ungrabMouse();
       break;
 
     case BzfEvent::KeyUp:
@@ -822,6 +871,9 @@ static void		doEvent(BzfDisplay* display)
 	doKeyNotPlaying(event.keyUp, True);
       else
 	doKeyPlaying(event.keyUp, True);
+      break;
+
+    case BzfEvent::MouseMove:
       break;
   }
 }
@@ -3196,7 +3248,12 @@ static void		playingLoop()
       const int oldPauseCountdown = (int)(pauseCountdown + 0.99f);
       pauseCountdown -= dt;
       if (pauseCountdown <= 0.0f) {
-	// okay, now we pause
+	// okay, now we pause.  first drop any team flag we may have.
+	const FlagId flagId = myTank->getFlag();
+	if (flagId >= FirstTeamFlag && flagId <= LastTeamFlag)
+	  serverLink->sendDropFlag(myTank->getPosition());
+
+	// now actually pause
 	myTank->setPause(True);
 	hud->setAlert(1, NULL, 0.0f, True);
 	controlPanel->addMessage("Paused");
@@ -3206,6 +3263,9 @@ static void		playingLoop()
 	  savedVolume = getSoundVolume();
 	  setSoundVolume(0);
 	}
+
+	// ungrab mouse
+	mainWindow->ungrabMouse();
       }
       else if ((int)(pauseCountdown + 0.99f) != oldPauseCountdown &&
 							!pausedByUnmap) {
@@ -3653,6 +3713,14 @@ static void		playingLoop()
 #endif
   }
 
+  // restore the sound.  if we don't do this then we'll save the
+  // wrong volume when we dump out the configuration file if the
+  // app exits when the game is paused.
+  if (savedVolume != -1) {
+    setSoundVolume(savedVolume);
+    savedVolume = -1;
+  }
+
   // hide window
   mainWindow->showWindow(False);
 }
@@ -3916,12 +3984,16 @@ void			startPlaying(BzfDisplay* _display,
     OpenGLTexture::setFilter(OpenGLTexture::Off);
   }
 
+  // should we grab the mouse?  yes if fullscreen.
+  if (!resources->hasValue("window"))
+    setGrabMouse(True);
+#if defined(__linux__)
+  // linux usually has a virtual root window so grab mouse always
+  setGrabMouse(True);
+#endif
+
   // show window and clear it immediately
   mainWindow->showWindow(True);
-#if defined(__linux__)
-  // linux usually has a virtual root window so grab mouse
-  mainWindow->grabMouse();
-#endif
   glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
   glDisable(GL_SCISSOR_TEST);
   glClear(GL_COLOR_BUFFER_BIT);
@@ -3961,7 +4033,6 @@ void			startPlaying(BzfDisplay* _display,
   signal(SIGUSR2, SIG_IGN);
 #endif /* !defined(_WIN32) */
 
-#if !defined(_WIN32)
   // set the resolution (only if in full screen mode)
   if (!resources->hasValue("window") && resources->hasValue("resolution")) {
     BzfString videoFormat = resources->getValue("resolution");
@@ -3993,12 +4064,13 @@ void			startPlaying(BzfDisplay* _display,
 	// more resize handling
 	mainWindow->getWindow()->callResizeCallbacks();
 	mainWindow->warpMouse();
-	if (format != display->getDefaultResolution())
-	  mainWindow->grabMouse();
       }
     }
   }
-#endif /* !defined(_WIN32) */
+
+  // grab mouse if we should
+  if (shouldGrabMouse())
+    mainWindow->grabMouse();
 
   // draw again
   glClear(GL_COLOR_BUFFER_BIT);
@@ -4036,7 +4108,8 @@ void			startPlaying(BzfDisplay* _display,
 				"explode4"
 			};
   static const GLfloat	zero[3] = { 0.0f, 0.0f, 0.0f };
-  for (i = 0; i < sizeof(explosionNames) / sizeof(explosionNames[0]); i++) {
+  for (i = 0; i < (int)(sizeof(explosionNames) /
+					sizeof(explosionNames[0])); i++) {
     // try loading texture
     OpenGLTexture tex = getTexture(explosionNames[i],
 				OpenGLTexture::Linear, False, True);

@@ -56,6 +56,9 @@ class OpenGLLight {
     static void		cleanup();
 
   private:
+    static void		initContext(void*);
+
+  private:
     GLfloat		pos[4];
     GLfloat		color[4];
     GLfloat		atten[3];

@@ -14,6 +14,8 @@
 #
 CONFIG	= # this file is called config-$(CONFIG)
 
+# XXX -- override install locations here (see Make-common)
+
 #
 # tools
 #

@@ -31,7 +31,7 @@
 // adding new flags or changing the communication protocol require
 // minor release number changes.  adding new graphics effects normally
 // only require incrementing the revision number.
-const char* const	ServerVersion = "BZFS107c";
+const char* const	ServerVersion = "BZFS107d";
 
 // well known service port number for bzflag server
 const int		ServerPort = 5155;
@@ -40,6 +40,9 @@ const int		ServerPort = 5155;
 // this is the sgi-dog multicast address.
 const char* const	BroadcastAddress = "224.0.1.2";
 const int		BroadcastPort = 5154;
+
+// URL for default list server
+const char* const	DefaultListServerURL = "http://www.bigfoot.com/~bzflag/list-server.txt";
 
 // multicast ttl's
 const int		DefaultTTL = 8;

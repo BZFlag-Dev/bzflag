@@ -20,6 +20,7 @@
 #include "common.h"
 #include "global.h"
 #include "AList.h"
+#include "BzfString.h"
 
 class SceneRenderer;
 class KeyMap;
@@ -38,6 +39,8 @@ struct StartupInfo {
     TeamColor		team;
     char		callsign[CallSignLen];
     char		email[EmailLen];
+    BzfString		listServerURL;
+    int			listServerPort;
 };
 
 typedef void		(*JoinGameCallback)(boolean success, void* data);

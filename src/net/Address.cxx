@@ -18,6 +18,11 @@
 #include <signal.h>
 #endif
 
+#if !defined(inet_aton)
+  // Solaris...
+  extern "C" int inet_aton(const char *, struct in_addr *);
+#endif
+
 //
 // Address
 //

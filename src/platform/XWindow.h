@@ -49,11 +49,23 @@ class XWindow : public BzfWindow {
     void		showMouse();
     void		hideMouse();
 
+    void		setGamma(float);
+    float		getGamma() const;
+    boolean		hasGammaControl() const;
+
     void		makeCurrent();
     void		swapBuffers();
+    void		makeContext();
+    void		freeContext();
 
     // other X stuff
     static XWindow*	lookupWindow(Window);
+
+  private:
+    void		loadColormap();
+    unsigned short	getIntensityValue(float i) const;
+    static float	pixelField(int i, int bits, int offset);
+    static void		countBits(unsigned long mask, int& num, int& offset);
 
   private:
     XDisplay::Rep*	display;
@@ -64,6 +76,9 @@ class XWindow : public BzfWindow {
     boolean		defaultColormap;
     XWindow*		prev;
     XWindow*		next;
+    XVisualInfo		visual;
+    unsigned long*	colormapPixels;
+    float		gammaVal;
     static XWindow*	first;
 };
 
