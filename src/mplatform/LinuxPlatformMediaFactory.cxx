@@ -102,6 +102,9 @@ bool					LinuxPlatformMediaFactory::openAudio()
 	// Set default no thread
 	childProcID = 0;
 
+	// no data in command buffer
+	cmdBufferSize = 0;
+
 	// ready to go
 	audioReady = true;
 	return true;
@@ -267,6 +270,7 @@ bool					LinuxPlatformMediaFactory::startAudioThread(
 	else if (childProcID < 0) {
 		return false;
 	}
+
 	close(queueIn);
 	proc(data);
 	exit(0);
@@ -274,8 +278,10 @@ bool					LinuxPlatformMediaFactory::startAudioThread(
 
 void					LinuxPlatformMediaFactory::stopAudioThread()
 {
-	if (childProcID != 0)
+	if (childProcID != 0) {
 		kill(childProcID, SIGTERM);
+		wait(NULL);
+	}
 	childProcID = 0;
 }
 
@@ -288,8 +294,17 @@ bool					LinuxPlatformMediaFactory::hasAudioThread() const
 #endif
 }
 
+static void				die(int)
+{
+	exit(0);
+}
+
 void					LinuxPlatformMediaFactory::audioThreadInit(void*)
 {
+	// parent will kill me when it wants me to quit.  catch the signal
+	// and gracefully exit.  don't use PlatformFactory because that
+	// doesn't distinguish between processes.
+	signal(SIGTERM, die);
 }
 
 void					LinuxPlatformMediaFactory::writeSoundCommand(const void* cmd, int len)
@@ -301,7 +316,51 @@ void					LinuxPlatformMediaFactory::writeSoundCommand(const void* cmd, int len)
 
 bool					LinuxPlatformMediaFactory::readSoundCommand(void* cmd, int len)
 {
-	return (read(queueOut, cmd, len)==len);
+	assert((size_t)len < sizeof(cmdBuffer));
+
+	// read more data into buffer
+	ssize_t n = 0;
+	if (cmdBufferSize < len) {
+		n = read(queueOut, cmdBuffer + cmdBufferSize,
+								sizeof(cmdBuffer) - cmdBufferSize);
+		if (n < 0)
+			return false;
+		cmdBufferSize += n;
+	}
+
+	// use buffered data
+	if (cmdBufferSize >= len) {
+		memcpy(cmd, cmdBuffer, len);
+		cmdBufferSize -= len;
+		memmove(cmdBuffer, cmdBuffer + len, cmdBufferSize);
+		return true;
+	}
+
+	// if we read no data then see if other end of pipe was closed
+	if (n == 0) {
+		fd_set commandSelectSet;
+		struct timeval tv;
+		FD_ZERO(&commandSelectSet);
+		FD_SET(queueOut, &commandSelectSet);
+		tv.tv_sec  = 0;
+		tv.tv_usec = 0;
+		if (select(maxFd, &commandSelectSet, 0, 0, &tv) == 1) {
+			switch (read(queueOut, cmdBuffer + cmdBufferSize, 1)) {
+				case 0:
+					// other end hungup
+					exit(0);
+
+				case 1:
+					// still going
+					cmdBufferSize += 1;
+
+				default:
+					break;
+			}
+		}
+	}
+
+	return false;
 }
 
 int						LinuxPlatformMediaFactory::getAudioOutputRate() const

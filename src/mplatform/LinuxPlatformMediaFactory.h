@@ -70,6 +70,9 @@ private:
 	int					chunksPending;
 	double				chunkTime;
 	double				chunksPerSecond;
+
+	int					cmdBufferSize;
+	char				cmdBuffer[100];
 };
 
 #endif // BZF_LINUX_PLATFORM_MEDIA_FACTORY_H
