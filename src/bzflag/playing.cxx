@@ -1917,42 +1917,6 @@ static void		doMotion()
   else {
     if (mainWindow->joystick()) {
       mainWindow->getJoyPosition(mx, my);
-
-      static const BzfKeyEvent::Button button_map[] = {
-	BzfKeyEvent::LeftMouse,
-	BzfKeyEvent::MiddleMouse,
-	BzfKeyEvent::RightMouse,
-	BzfKeyEvent::BZ_Mouse_Button_4,
-	BzfKeyEvent::BZ_Mouse_Button_5,
-	BzfKeyEvent::BZ_Mouse_Button_6,
-	BzfKeyEvent::BZ_Mouse_Button_7,
-	BzfKeyEvent::BZ_Mouse_Button_8,
-	BzfKeyEvent::BZ_Mouse_Button_9,
-	BzfKeyEvent::F1,
-	BzfKeyEvent::F2,
-	BzfKeyEvent::F3,
-	BzfKeyEvent::F4,
-	BzfKeyEvent::F5,
-	BzfKeyEvent::F6,
-	BzfKeyEvent::F7,
-	BzfKeyEvent::F8,
-	BzfKeyEvent::F9
-      };
-
-      static unsigned long old_buttons = 0;
-      const int button_count = countof(button_map);
-      unsigned long new_buttons = mainWindow->getJoyButtonSet();
-      if (old_buttons != new_buttons)
-	for (int j = 0; j<button_count; j++) {
-	  if ((old_buttons & (1<<j)) != (new_buttons & (1<<j))) {
-	    BzfKeyEvent ev;
-	    ev.button = button_map[j];
-	    ev.ascii = 0;
-	    ev.shift = 0;
-	    doKeyPlaying(ev, (new_buttons&(1<<j)) != 0);
-	  }
-	}
-      old_buttons = new_buttons;
     }
 
     // calculate desired rotation
@@ -5820,6 +5784,44 @@ static void		playingLoop()
     clockAdjust = 0.0f;
     while (!CommandsStandard::isQuit() && display->isEventPending())
       doEvent(display);
+
+    if (mainWindow->joystick()) {
+      static const BzfKeyEvent::Button button_map[] = {
+	BzfKeyEvent::LeftMouse,
+	BzfKeyEvent::MiddleMouse,
+	BzfKeyEvent::RightMouse,
+	BzfKeyEvent::BZ_Mouse_Button_4,
+	BzfKeyEvent::BZ_Mouse_Button_5,
+	BzfKeyEvent::BZ_Mouse_Button_6,
+	BzfKeyEvent::BZ_Mouse_Button_7,
+	BzfKeyEvent::BZ_Mouse_Button_8,
+	BzfKeyEvent::BZ_Mouse_Button_9,
+	BzfKeyEvent::F1,
+	BzfKeyEvent::F2,
+	BzfKeyEvent::F3,
+	BzfKeyEvent::F4,
+	BzfKeyEvent::F5,
+	BzfKeyEvent::F6,
+	BzfKeyEvent::F7,
+	BzfKeyEvent::F8,
+	BzfKeyEvent::F9
+      };
+
+      static unsigned long old_buttons = 0;
+      const int button_count = countof(button_map);
+      unsigned long new_buttons = mainWindow->getJoyButtonSet();
+      if (old_buttons != new_buttons)
+	for (int j = 0; j<button_count; j++) {
+	  if ((old_buttons & (1<<j)) != (new_buttons & (1<<j))) {
+	    BzfKeyEvent ev;
+	    ev.button = button_map[j];
+	    ev.ascii = 0;
+	    ev.shift = 0;
+	    doKeyPlaying(ev, (new_buttons&(1<<j)) != 0);
+	  }
+	}
+      old_buttons = new_buttons;
+    }
 
     mainWindow->getWindow()->yieldCurrent();
 
