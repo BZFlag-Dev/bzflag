@@ -1,5 +1,7 @@
 noinst_LIBRARIES = libDate.a
 
+AM_CXXFLAGS = -DBZ_BUILD_DATE=$$(date +%Y%m%d)
+
 MAINTAINERCLEANFILES = \
 	Makefile.in
 
@@ -10,4 +12,4 @@ libDate_a_SOURCES  =			\
 	buildDate.cxx
 
 all-local:
-	touch buildDate.cxx
+	rm buildDate.o

@@ -17,8 +17,6 @@
 #include <string.h>
 #include "config.h"
 
-char buildDate[] = {__DATE__};
-
 // opaque version number increments on protocol incompatibility
 #ifndef BZ_PROTO_VERSION
 #define BZ_PROTO_VERSION	"0015"
@@ -45,7 +43,9 @@ char buildDate[] = {__DATE__};
 /* to get the version in the right format YYYYMMDD */
 /* yes this is horible but it needs to be done to get it right */
 /* windows should pull from a resouce */
-/* *nix should sed from `date +%Y%m%d` to a constant */
+/* *nix gets this from the passed from my the Makefile */
+char buildDate[] = {__DATE__};
+
 inline int getBuildDate()
 {
   int year = 1900, month = 0, day = 0;
