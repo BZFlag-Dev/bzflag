@@ -3,7 +3,9 @@ to do list for BZFlag
 
 THESE SHOULD HAPPEN BEFORE THE NEXT RELEASE:
 
-* tickle MAC
+* fix TCP/UDP negotiation for fw'ed clients to handle:
+   to server works, from does not
+   from server works, to does not
 
 
 THESE ARE LOWER PRIORITY
