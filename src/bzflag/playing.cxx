@@ -4178,7 +4178,7 @@ static void joinInternetGame()
     return;
   }
   
-  // check server name authorization state
+  // check for a local server block
   ServerAccessList.reload(); 
   std::vector<std::string> nameAndIp;
   nameAndIp.push_back(startupInfo.serverName);
