@@ -165,6 +165,7 @@ static Player*		getPlayerByName( const char* name );
 static void		addMessage(const Player* player, const std::string& msg,
                                    bool highlight=false, const char* oldColor=NULL);
 extern void		dumpResources(BzfDisplay*, SceneRenderer&);
+static void		setRobotTarget(RobotPlayer* robot);
 
 enum BlowedUpReason {
   GotKilledMsg,
@@ -3039,6 +3040,7 @@ static void		handleServerMessage(bool human, uint16_t code,
         for (int r = 0; r < numRobots; r++) {
 	  if (robots[r]->getId() == playerIndex) {
 	    robots[r]->restart(pos,forward);
+	    setRobotTarget(robots[r]);
 	    break;
 	  }
 	}
@@ -4549,7 +4551,7 @@ static void		setRobotTarget(RobotPlayer* robot)
 
 static void		updateRobots(float dt)
 {
-  static float newTargetTimeout = 2.0f;
+  static float newTargetTimeout = 1.0f;
   static float clock = 0.0f;
   bool pickTarget = false;
   int i;
@@ -4561,17 +4563,17 @@ static void		updateRobots(float dt)
     pickTarget = true;
   }
 
-  // start dead robots and retarget
+  // start dead robots
   for (i = 0; i < numRobots; i++)
-    if (!gameOver && !robots[i]->isAlive() && !robots[i]->isExploding()) {
-
+    if (!gameOver && !robots[i]->isAlive() && !robots[i]->isExploding()
+	&& pickTarget)
       robotServer[i]->sendAlive();
+
+  // retarget robots
+  for (i = 0; i < numRobots; i++)
+    if (robots[i]->isAlive() && (pickTarget || !robots[i]->getTarget() 
+				 || !robots[i]->getTarget()->isAlive()))
       setRobotTarget(robots[i]);
-    }
-    else if (pickTarget || !robots[i]->getTarget()
-	     || !robots[i]->getTarget()->isAlive()) {
-      setRobotTarget(robots[i]);
-    }
 
   // do updates
   for (i = 0; i < numRobots; i++)
