@@ -17,7 +17,7 @@
 #include "TimeKeeper.h"
 
 #include <vector>
-#include <ostream>
+#include <iostream>
 
 
 class DynamicColor {

@@ -19,7 +19,7 @@
 
 #include "common.h"
 #include <string>
-#include <ostream>
+#include <iostream>
 
 
 class MeshMaterial {

@@ -20,7 +20,7 @@
 #include "common.h"
 #include <string>
 #include <vector>
-#include <ostream>
+#include <iostream>
 #include "vectors.h"
 #include "Ray.h"
 #include "Obstacle.h"
