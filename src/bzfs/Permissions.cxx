@@ -198,9 +198,9 @@ bool PlayerAccessInfo::removeGroup(const std::string &group)
 }
 
 bool PlayerAccessInfo::canSet(const std::string& group) {
-  if (hasPerm(PlayerAccessInfo::setAll) || hasPerm(PlayerAccessInfo::setPerms))
+  if (hasPerm(PlayerAccessInfo::setAll))
     return true;
-  return hasGroup(group);
+  return hasGroup(group) && hasPerm(PlayerAccessInfo::setPerms);
 }
 
 bool PlayerAccessInfo::hasPerm(PlayerAccessInfo::AccessPerm right) {
