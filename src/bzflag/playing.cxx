@@ -583,6 +583,7 @@ static std::string	cmdJump(const std::string&,
 		return "usage: jump";
 
 	if (myTank != NULL)
+		if (myTank->getFlag() != NoJumpingFlag)
 		myTank->jump();
 
 	return std::string();

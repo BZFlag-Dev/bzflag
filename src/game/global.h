@@ -180,24 +180,12 @@ enum FlagId {
 						JammingFlag,			// radar doesn't work
 						WideAngleFlag,			// fish eye view (sounds good
 												// but isn't)
-
-						// the rest are not yet implemented
-						Magnet,					// draws shots toward you
-						Kamikazi,				// self destruct big time
-						HeatSeeker,				// aims at strongest heat source
-						Death,					// die the instant you grab it
-						Possession,				// control another tank's motion
-						Suicide,				// high speed, fast shots, die at first kill
-						ECMFlag,				// disable radars of nearby tanks (not teammates)
-						InterdimensionalTeleport,		// teleport (to random teleporter) when dropped
-						SmartBomb,				// drop, gets to apex, large radius of destruction
-												// (including player who dropped it)
-						TurboBoost,				// quick burst of acceleration
+						NoJumpingFlag,			// tank cannot jump
 
 
 						// special flags for size of team and super-flag sets
 						FirstFlag =			RedFlag,
-						LastFlag =			WideAngleFlag,
+						LastFlag =			NoJumpingFlag,
 						FirstTeamFlag =		RedFlag,
 						LastTeamFlag =		PurpleFlag,
 						FirstSuperFlag =	VelocityFlag,

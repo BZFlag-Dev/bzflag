@@ -52,7 +52,8 @@ const char*				Flag::flagName[] = {
 								"Momentum",
 								"Blindness",
 								"Jamming",
-								"Wide Angle"
+								"Wide Angle",
+								"No Jumping"
 						};
 
 const char*				Flag::flagAbbv[] = {
@@ -93,7 +94,8 @@ const char*				Flag::flagAbbv[] = {
 								"M",						// momentum
 								"B",						// blindness
 								"JM",						// jamming
-								"WA"						// wide angle
+								"WA",						// wide angle
+								"NJ"						// no jumping
 						};
 
 const char*				Flag::flagHelp[] = {
@@ -148,7 +150,8 @@ const char*				Flag::flagHelp[] = {
 "Momentum (-M):  Tank has inertia.  Acceleration is limited.",
 "Blindness (-B):  Can't see out window.  Radar still works.",
 "JaMming (-JM):  Radar doesn't work.  Can still see.",
-"Wide Angle (-WA):  Fish-eye lens distorts view."
+"Wide Angle (-WA):  Fish-eye lens distorts view.",
+"No Jumping (-NJ):  Tank cannot jump."
 						};
 
 void*					Flag::pack(void* buf) const
@@ -214,6 +217,7 @@ FlagType				Flag::getType(FlagId id)
 		case BlindnessFlag:
 		case JammingFlag:
 		case WideAngleFlag:
+		case NoJumpingFlag:
 			return FlagSticky;
 		default:
 			return FlagUnstable;
