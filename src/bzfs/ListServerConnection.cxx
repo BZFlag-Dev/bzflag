@@ -71,14 +71,14 @@ ListServerLink::ListServerLink(std::string listServerURL, std::string publicized
 ListServerLink::ListServerLink()
 {
   // does not create a usable link, so checks should be placed
-  // in  all public member functions to ensure that nothing tries 
+  // in  all public member functions to ensure that nothing tries
   // to happen if publicizeServer is false
   this->linkSocket = NotConnected;
   this->publicizeServer = false;
 }
 
 ListServerLink::~ListServerLink()
-{ 
+{
   // now tell the list server that we're going away.  this can
   // take some time but we don't want to wait too long.  we do
   // our own multiplexing loop and wait for a maximum of 3 seconds
@@ -194,7 +194,8 @@ void ListServerLink::openLink()
 #endif
       if (getErrno() != EINPROGRESS) {
 	nerror("connecting to list server");
-	// TODO should try to lookup dns name again, but we don't have it anymore
+	// try to lookup dns name again in case it moved
+  	this->address = Address::getHostAddress(this->hostname.c_str());
 	closeLink();
       } else {
 	phase = CONNECTING;
@@ -233,7 +234,7 @@ void ListServerLink::sendQueuedMessages()
   }
 }
 
-void ListServerLink::addMe(PingPacket pingInfo, 
+void ListServerLink::addMe(PingPacket pingInfo,
 			   std::string publicizedAddress,
 			   std::string publicizedTitle)
 {
