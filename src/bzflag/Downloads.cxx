@@ -360,7 +360,7 @@ void Downloads::doDownloads()
   bool needWarning = false;
   BzMaterialManager::TextureSet set;
   BzMaterialManager::TextureSet::iterator set_it;
-  MATERIALMGR.makeTextureList(set);
+  MATERIALMGR.makeTextureList(set, true);
 
   for (set_it = set.begin(); set_it != set.end(); set_it++) {
     const std::string& texUrl = set_it->c_str();
@@ -391,7 +391,7 @@ void Downloads::doDownloads()
 }
 
 
-bool Downloads::updateDownloads()
+bool Downloads::updateDownloads(bool& /*rebuild*/)
 {
   std::string msg = ColorStrings[RedColor];
   msg += "Downloads are not available for clients without libcurl";
