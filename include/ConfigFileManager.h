@@ -15,6 +15,8 @@
 
 #define CFGMGR (ConfigFileManager::getInstance())
 
+void writeEntry(const std::string& name, void *stream);
+
 class ConfigFileManager {
 public:
   ConfigFileManager();
@@ -25,6 +27,12 @@ public:
   // opened.  they all call parse().
   bool				read(std::string filename);
   void				read(std::istream&);
+
+  // write out a configuration file
+  bool				write(std::string filename);
+
+  // adds default values to BZDB
+  static void			addDefaults();
 
   // get the singleton instance
   static ConfigFileManager*	getInstance();

@@ -626,7 +626,6 @@ void			dumpResources(BzfDisplay* display,
 				SceneRenderer& renderer)
 {
   // collect new configuration
-
   db.addValue("udpnet", startupInfo.useUDPconnection ? "yes" : "no");
   db.addValue("callsign", startupInfo.callsign);
   db.addValue("team", Team::getName(startupInfo.team));
@@ -827,6 +826,7 @@ int			main(int argc, char** argv)
   userTime = *localtime(&timeNow);
 
   CommandsStandard::add();
+  ConfigFileManager::addDefaults();
 
   // read resources
   {
@@ -1284,6 +1284,7 @@ int			main(int argc, char** argv)
 
   // save resources
   dumpResources(display, renderer);
+  CFGMGR->write(getConfigFileName());
 
   // shut down
   display->setDefaultResolution();
