@@ -1,4 +1,5 @@
 # this is l337!
+
 msgid "Join Game"
 msgstr "j0iN gamE"
 
@@ -599,8 +600,8 @@ msgstr "C0nFIgUr4tiON F1LE: ERR0R On LiNe {1}: l1N3 To0 L0NG"
 msgid "Network: Created local UDP downlink port {1}"
 msgstr "n3TWOrK: Cr3AT3D LOC4L Udp dowNlink P0RT {1}"
 
-#msgid "More Info: [{1}:{2}:{3}]"
-#msgstr ""
+msgid "More Info: [{1}:{2}:{3}]"
+msgstr "m0R3 1nF0: [{1}:{2}:{3}]"
 
 msgid "msgid "
 msgstr "M$9iD "
@@ -676,11 +677,11 @@ msgstr "rIcOCHEt"
 msgid "Super Bullet"
 msgstr "5UpER BuLl3T"
 
-#msgid "Your team's flag:  prevent other teams from capturing it!"
-#msgstr ""
+msgid "Your team's flag:  prevent other teams from capturing it!"
+msgstr "Joor 73@M'5 f149:  9R3v3n7 07H3r 734m5 fr0m c497uRiN9 iT!"
 
-#msgid "Opponent's team flag:  take it to your base to capture it!"
-#msgstr ""
+msgid "Opponent's team flag:  take it to your base to capture it!"
+msgstr "099on3n7'5 734m fl49:  73k3 iT t0 jour B4s3 70 c497uR3 iT!"
 
 msgid "Invisible Bullet"
 msgstr "InVi$I8L3 Bulle+"
@@ -712,9 +713,6 @@ msgstr "9ENOC1D3"
 msgid "Jumping"
 msgstr "JuMP1n9"
 
-#msgid "Angular velocity (+A): Tank turns faster.  Dodge quicker."
-#msgstr ""
-
 msgid "Identify"
 msgstr "1dEn+iFY"
 
@@ -742,8 +740,8 @@ msgstr "8LINDNE$5"
 msgid "Jamming"
 msgstr "jAMMin9"
 
-#msgid "Velocity (V):  Tank moves faster.  Outrun bad guys."
-#msgstr ""
+msgid "Velocity (V):  Tank moves faster.  Outrun bad guys."
+msgstr "V310ci7y (V):  74nK m0v35 f457eR.  0u7run b4d 9uy$"
 
 msgid "Wide Angle"
 msgstr "WIde @NglE"
@@ -760,17 +758,11 @@ msgstr "M@5Kw3r4dE"
 msgid "Seer"
 msgstr "533R"
 
-#msgid "Angular velocity (A): Tank turns faster.  Dodge quicker."
-#msgstr ""
-
 msgid "Burrow"
 msgstr "8URroW"
 
-#msgid "Oscillation Overthruster (OO):  Can drive through buildings.  Can't backup or shoot while inside."
-#msgstr ""
-
-#msgid "rapid Fire (F):  Shoots more often.  Shells go faster but not as far."
-#msgstr ""
+msgid "Oscillation Overthruster (OO):  Can drive through buildings.  Can't backup or shoot while inside."
+msgstr "O$cILL@+1on 0VErthrU5TEr (OO):  C4n dR1v3 8hr0u9H bU1lc|1n9s.  C4n'7 b4cKuP 0r 5h007 wHi13 iN$ic|3"
 
 #msgid "Machine Gun (MG):  Very fast reload and very short range."
 #msgstr ""
