@@ -9,6 +9,7 @@ FORCE:
 EXTRA_DIST = \
 	autogen.sh \
 	BUGS \
+	bzflag.info \
 	bzflag.lsm \
 	bzflag.spec \
 	DEVINFO \
@@ -29,6 +30,7 @@ MAINTAINERCLEANFILES = \
 	config.guess \
 	config.sub \
 	configure \
+	bzflag.info \
 	bzflag.spec \
 	INSTALL \
 	install-sh \

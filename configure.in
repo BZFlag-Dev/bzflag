@@ -463,8 +463,9 @@ fi;
 LIBDIR="\$(top_srcdir)/lib"
 AC_SUBST(LIBDIR)
 
-AC_OUTPUT(bzflag.spec
+AC_OUTPUT(bzflag.info
 	bzflag.lsm
+	bzflag.spec
 	Makefile
 	data/Makefile
 	data/alternate/Makefile

@@ -1,0 +1,53 @@
+# BZFlag fink info file
+#
+# Copyright (c) 1993 - 2004 Tim Riker
+#
+# This package is free software;  you can redistribute it and/or
+# modify it under the terms of the license found in the file
+# named COPYING that should have accompanied this file.
+#
+# THIS PACKAGE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
+# IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
+# WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+
+Package: bzflag
+Version: @VERSION@
+Revision: 11
+HomePage: http://BZFlag.org
+Description: multiplayer multiplatform on-line 3D tank battle game
+DescDetail: <<
+BZFlag is a 3D multi-player multi-platform tank battle game that
+allows users to play against each other in a network environment.
+Teams play against each other in a variety of game styles including
+capture-the-flag, free-for-all, rabbit hunt, and more.  Destroying a
+player on another team scores a win while being destroyed or
+destroying a teammate scores a loss.  Rogues have no teammates (not
+even other rogues).
+
+The object of capture the flag is to bring an enemy's flag to your
+team base.  The objective of free for all is to simply get as high a
+score as possible.  Have fun, play fair. ;)
+<<
+
+License: LGPL
+Maintainer: Christopher Sean Morrison <fink@bzflag.bz>
+Source: mirror:sourceforge:%n/%n-%v.tar.gz
+Source-MD5: 
+
+# Dependancies
+Depends: libpng3-shlibs
+BuildDepends: autoconf | autoconf2.5, automake1.4 | automake1.5 | automake1.6 | automake1.7 | automake1.8, ncurses-dev, libpng3
+
+# Build
+GCC: 3.3
+ConfigureParams: --without-x --with-regex CPPFLAGS="-I/sw/include" LDFLAGS="-L/sw/lib -lpng"
+CompileScript: <<
+./autogen.sh
+./configure %c
+make
+<<
+
+# Install
+DocFiles: AUTHORS BUGS COPYING ChangeLog README README.MacOSX README.UNIX
+InstallScript: make install
+
