@@ -3652,12 +3652,6 @@ static void enteringServer(void *buf)
     }
   }
 
-  // use parallel UDP if desired and using server relay
-  if (startupInfo.useUDPconnection)
-    serverLink->sendUDPlinkRequest();
-  else
-    printError("No UDP connection, see Options to enable.");
-
   // send my version string
   serverLink->sendVersionString();
 
@@ -4052,6 +4046,12 @@ static void joinInternetGame()
 
   // Sending our credential to the server
   ClientAuthentication::sendCredential(*serverLink);
+
+  // use parallel UDP if desired and using server relay
+  if (startupInfo.useUDPconnection)
+    serverLink->sendUDPlinkRequest();
+  else
+    printError("No UDP connection, see Options to enable.");
 
   HUDDialogStack::get()->setFailedMessage("Connection Established...");
 

@@ -55,11 +55,6 @@ recent bugs
   might be related to a rapidly repeating world weapon as well (like once
   a second).
 
-- sometimes a player will get kicked off of a server for "no udp" even when
-  udp is enabled on both ends and working in the middle.  subsequent 
-  connections from the same client to the same server (e.g. rejoin)
-  often work fine.
-
 - sending bzfs a single byte udp packet sends bzfs into lala land. (trepan)
 
 - bzfrelay is broken for current net protocol. Should be just forwarding TCP
