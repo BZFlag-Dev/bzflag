@@ -416,11 +416,13 @@ static bool onBuilding(const float pos[3])
   const ObsList* olist = COLLISIONMGR.rayTest (&ray, 0.5f);
   for (int i = 0; i < olist->count; i++) {
     const Obstacle* obs = olist->list[i];
-    const float top = obs->getPosition()[2] + obs->getHeight();
-    if (fabsf(top - pos[2]) < 0.2f) {
-      const float hitTime = obs->intersect(ray);
-      if (hitTime >= 0.0f) {
-	return true;
+    if (obs->isFlatTop()) {
+      const float top = obs->getExtents().maxs[2];
+      if ((pos[2] >= (top - 0.1f)) && (pos[2] <= (top + 0.1f))) {
+        const float hitTime = obs->intersect(ray);
+        if (hitTime >= 0.0f) {
+          return true;
+        }
       }
     }
   }

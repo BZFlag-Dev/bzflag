@@ -20,18 +20,6 @@
 #include <string.h>
 #include <assert.h>
 
-#if defined(HAVE_X11_XLIB_H) and !defined(__APPLE__)
-#  include <X11/Xlib.h>
-#endif
-
-#ifdef HAVE_GL_GLX_H
-#  include <GL/glx.h>
-#endif
-
-#ifdef HAVE_AGL_AGL_H
-#  include <AGL/agl.h>
-#endif
-
 /* common implementation headers */
 #include "bzfio.h" // for DEBUG1
 #include "OpenGLGState.h"
@@ -39,21 +27,6 @@
 #include "TextureMatrix.h"
 #include "OpenGLMaterial.h"
 #include "RenderNode.h"
-
-
-#ifdef HAVE_AGLGETCURRENNTCONTEXT
-#  define GET_CURRENT_CONTEXT aglGetCurrentContext
-#endif
-#ifdef HAVE_WGLGETCURRENTCONTEXT
-#  define GET_CURRENT_CONTEXT wglGetCurrentContext
-#endif
-#ifdef HAVE_GLXGETCURRENTCONTEXT
-#  define GET_CURRENT_CONTEXT glXGetCurrentContext
-#endif
-#define GET_CURRENT_CONTEXT aglGetCurrentContext
-#ifndef GET_CURRENT_CONTEXT
-#  error ERROR: Do not know how to get the current OpenGL context on this system
-#endif
 
 
 // for tracking glBegin/End pairs; see include/bzfgl.h
@@ -1393,6 +1366,11 @@ OpenGLGState		OpenGLGStateBuilder::getState() const
 }
 
 
+//
+// TODO: Move the rest of this junk into it's own file,
+//       bring the context switch stuff along for the ride
+//
+
 
 // for hooking debuggers
 static void contextFreeError(const char* message)
@@ -1423,7 +1401,6 @@ GLuint bzGenLists(GLsizei count)
   return base;
 }
 
-
 #undef glDeleteLists
 void bzDeleteLists(GLuint base, GLsizei count)
 {
@@ -1437,7 +1414,6 @@ void bzDeleteLists(GLuint base, GLsizei count)
   }
   return;
 }
-
 
 #undef glGenTextures
 void bzGenTextures(GLsizei count, GLuint *textures)
@@ -1461,6 +1437,89 @@ void bzDeleteTextures(GLsizei count, const GLuint *textures)
   }
   return;
 }
+
+#ifdef DEBUG_GL_MATRIX_STACKS
+
+static GLenum matrixMode = GL_MODELVIEW;
+static int matrixDepth[3] = {0, 0, 0};
+
+static inline int getMatrixSlot(GLenum mode)
+{
+  if (mode == GL_MODELVIEW) {
+    return 0;
+  } else if (mode == GL_PROJECTION) {
+    return 1;
+  } else if (mode == GL_TEXTURE) {
+    return 2;
+  } else {
+    return -1;
+  }
+}
+
+#undef glPushMatrix
+void bzPushMatrix()
+{
+  int slot = getMatrixSlot(matrixMode);
+  if (slot < 0) {
+    printf ("bzPushMatrix(): bad matrix mode: %i\n", matrixMode);
+    return;
+  }
+  matrixDepth[slot]++;
+  glPushMatrix();
+}
+
+#undef glPopMatrix
+void bzPopMatrix()
+{
+  int slot = getMatrixSlot(matrixMode);
+  if (slot < 0) {
+    printf ("bzPopMatrix(): bad matrix mode: %i\n", matrixMode);
+    return;
+  }
+  matrixDepth[slot]--;
+  if (matrixDepth[slot] < 0) {
+    printf ("bzPopMatrix(): underflow: %i\n", matrixDepth[slot]);
+    return;
+  }
+  glPopMatrix();
+}
+
+#undef glMatrixMode
+void bzMatrixMode(GLenum mode)
+{
+  int slot = getMatrixSlot(matrixMode);
+  if (slot < 0) {
+    printf ("bzMatrixMode(): bad matrix mode: %i\n", mode);
+    return;
+  }
+  matrixMode = mode;
+  glMatrixMode(mode);
+  DEBUG1 ("MatrixMode: %i %i %i\n", matrixDepth[0], matrixDepth[1], matrixDepth[2]);
+}
+
+#endif // DEBUG_GL_MATRIX_STACKS
+
+
+#ifdef _WIN32
+#  define GET_CURRENT_CONTEXT wglGetCurrentContext
+#else
+#  ifdef __APPLE__
+#    include <AGL/agl.h>
+#    define GET_CURRENT_CONTEXT aglGetCurrentContext
+#  else
+#    include <X11/Xlib.h>
+#    include <GL/glx.h>
+#    define GET_CURRENT_CONTEXT glXGetCurrentContext
+#  endif
+#endif
+
+// NOTE: if you're compiler croaks here, then you might want
+//       to find an alternative method for OpenGL context 
+//       detection on our system.
+
+#ifndef GET_CURRENT_CONTEXT
+#  error ERROR: Do not know how to get the current OpenGL context on this system
+#endif
 
 bool OpenGLGState::haveGLContext()
 {
