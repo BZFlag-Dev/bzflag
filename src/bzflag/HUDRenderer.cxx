@@ -23,6 +23,7 @@
 #include "World.h"
 #include "OpenGLGState.h"
 #include "texture.h"
+#include <malloc.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <ctype.h>
@@ -753,6 +754,14 @@ void			HUDRenderer::renderStatus(SceneRenderer& renderer)
   majorFont.draw(buffer, x, y);
 }
 
+int HUDRenderer::tankScoreCompare(const void* _a, const void* _b)
+{
+  LocalPlayer *a = (LocalPlayer *) _a;
+  LocalPlayer *b = (LocalPlayer *) _b;
+
+  return a->getScore() - b->getScore();
+}
+
 void			HUDRenderer::renderScoreboard(SceneRenderer& renderer)
 {
   int i, j;
@@ -776,44 +785,24 @@ void			HUDRenderer::renderScoreboard(SceneRenderer& renderer)
   int y = (int)(y0 - dy);
   drawPlayerScore(myTank, x1, x2, x3, (float)y);
   y -= (int)dy;
-  RemotePlayer **players_unsorted;
-  RemotePlayer **players;
-  int hiScore;
-  int hiScoreIndex;
-  RemotePlayer* hiScorePlayer;
   int plrCount = 0;
-  int maxPlayers = World::getWorld()->getMaxPlayers();
+  const int maxPlayers = World::getWorld()->getMaxPlayers();
   // run a sort by score
-  players_unsorted = (RemotePlayer **)malloc(maxPlayers * sizeof(RemotePlayer *));
-  players = (RemotePlayer **)malloc(maxPlayers * sizeof(RemotePlayer *));
+  RemotePlayer **players = (RemotePlayer **)alloca(maxPlayers * sizeof(RemotePlayer *));
   for (j = 0; j < maxPlayers; j++) {
-    players_unsorted[j] = World::getWorld()->getPlayer(j);
-    if (players_unsorted[j]) plrCount++;
+     players[j] = World::getWorld()->getPlayer(j);
+     if (players[j]) plrCount++;
   }
-  for (i = 0; i < plrCount; i++) {
-    hiScoreIndex = -1;
-    hiScore = 0;
-    hiScorePlayer = (RemotePlayer *)NULL;
-    for (j = 0; j < maxPlayers; j++) {
-      if (players_unsorted[j] && (hiScoreIndex < 0 || (players_unsorted[j]->getScore() > hiScore))) {
-	hiScore = players_unsorted[j]->getScore();
-	hiScorePlayer = players_unsorted[j];
-        hiScoreIndex = j;
-      }
-    }
-    if (hiScoreIndex >= 0) {
-      players[i] = hiScorePlayer;
-      players_unsorted[hiScoreIndex] = (RemotePlayer *)NULL;
-    }
-  }
-  free(players_unsorted);
+
+  qsort(players, plrCount, sizeof(LocalPlayer*), tankScoreCompare);
+
   for (i = 0; i < plrCount; i++) {
     RemotePlayer* player = players[i];
     if (!player) continue;
     y -= (int)dy;
     drawPlayerScore(player, x1, x2, x3, (float)y);
   }
-  free(players);
+
   y -= (int)dy;
   const int maxDeadPlayers = World::getWorld()->getMaxDeadPlayers();
   DeadPlayer** deadPlayers = World::getWorld()->getDeadPlayers();

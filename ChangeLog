@@ -9,7 +9,7 @@ BZFlag 1.7e3
 * send to nemesis - Dave Brosius
 * USB joystick support - Nick Sayer
 * new (faster?) radar jamming code - Mathias Gumz
-* sort by score - Colin Bayer
+* sort by score - Colin Bayer, Dave Brosius
 * world file rad -> deg - Tim Riker
 * add player flag display to HUD - Tim Riker (prompted by Colin Bayer)
 * random height pyramids too - Tim Riker
