@@ -9,13 +9,25 @@ is quite easy.
    should be the file entitled, "devcppXXXsetup.exe" (replace XXX with a version number).
    If there is none, it should be quite obvious anyway.
 
-2. Open up the corresponding project files, included in the "Dev-C++"
+2. Download the latest version of SDL, available from:
+
+    http://libsdl.org/
+
+    Installation instructions are below.
+    
+3. Download libCURL, available from:
+
+    http://curl.haxx.se/latest.cgi?curl=win32-ssl-devel-mingw
+    
+   Installation is roughly the same as the SDL instructions below.
+
+4. Open up the corresponding project files, included in the "Dev-C++"
    directory. Note that each project uses an individual project file,
    so no two can be combined.
 
-3. Let the opened project compile (this may take several minutes, depending on your computer).
+5. Let the opened project compile (this may take several minutes, depending on your computer).
 
-4. The binary should be in each project's corresponding main source
+6. The binary should be in each project's corresponding main source
    directory, such as src/bzflag/ for BZFlag client.
 
 Project files were maintained using Dev-C++ 4.9.9.1
@@ -38,7 +50,7 @@ than DirectX SDK, and is available from:
 
     www.libsdl.org
 
-It is only a few megabytes, and is cross-platform. Remember to download the "runtime"
+It is only a few megabytes, and is cross-platform. Remember to download the "devel"
 one for MinGW32 so it works nicely (however, a VC++ one may also work, but it is not recommended), if you
 are on Windows, otherwise download the one for GCC on Linux. Place
 the .a files in your "/lib/" directory of Dev-C++ (or MinGW32 dir), and the headers in
