@@ -425,7 +425,11 @@ void BZAdminClient::outputServerList() const {
       ui->outputMessage(std::string("...waiting on the list server..."), Yellow);
     }
     serverList.checkEchos(&info);
+#ifndef WIN32
     sleep(1);
+#else
+    Sleep(1000);
+#endif
   }
   // what is your final answer?
   serverList.checkEchos(&info);
