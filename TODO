@@ -17,6 +17,10 @@ THESE ARE LOWER PRIORITY
   dependencies - if a variable changes, all the expressions
   that use that variable should be updated as well
 
+* make the vertical rico solution more elegant - get rid of
+  BoxBuilding::getNormal and fix existing code to do z -
+  getNormalRect & the like.
+
 * require an email contact name for public servers. Perhaps
   unpublished by default
 

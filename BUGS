@@ -1,16 +1,15 @@
 recent bugs
 ------------
 
+- Shots that bounce off the ground occasionally reflect in the wrong
+  direction - x/y flipped
+
 - Radar doesn't respect WorldSize
 
 - tanks only check their bottoms as regards hit detection against pyramids
 
 - resetting key map doesn't seem to fully erase the current bindings before
   reapplying defaults
-
-- src/bzflag/ShotStrategy.cxx SegmentedShotStrategy::makeSegments will not
-  handle shots that bounce 'down', it presenly ends them. it should make
-  them bounce when they hit the gound.
 
 - make maintainer-clean does not enter DIST_SUBDIRS
   so all Makefile.in and Makefile files are not removed correctly
