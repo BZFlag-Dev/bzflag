@@ -105,10 +105,6 @@ SOURCE=..\src\bzflag\CommandsSearch.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\src\bzflag\daylight.cxx
-# End Source File
-# Begin Source File
-
 SOURCE=..\src\bzflag\DeadPlayer.cxx
 # End Source File
 # Begin Source File
@@ -138,10 +134,6 @@ SOURCE=..\src\bzflag\RemotePlayer.cxx
 # Begin Source File
 
 SOURCE=..\src\bzflag\SceneBuilder.cxx
-# End Source File
-# Begin Source File
-
-SOURCE=..\src\bzflag\SceneManager.cxx
 # End Source File
 # Begin Source File
 
