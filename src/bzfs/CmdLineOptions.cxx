@@ -730,7 +730,6 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
       checkFromWorldFile(argv[i], fromWorldFile);
       checkArgc(1, i, argc, argv[i]);
       // at least put password someplace that ps won't see
-      options.password = (char *)malloc(strlen(argv[i]) + 1);
       options.password = argv[i];
       memset(argv[i], ' ', options.password.size());
     } else if (strcmp(argv[i], "-pf") == 0) {
