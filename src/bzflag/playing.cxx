@@ -1777,14 +1777,15 @@ static void		doAutoPilot(float &rotation, float &speed)
 	      const float *shotVel = shot->getVelocity();
 	      float shotAngle = atan2f(shotVel[1],shotVel[0]);
 	      float shotUnitVec[2] = {cos(shotAngle), sin(shotAngle)};
-	      float trueVec[2] = {pos[0]-shotPos[0],pos[1]-shotPos[1]};
+
+	      float trueVec[2] = {(pos[0]-shotPos[0])/dist,(pos[1]-shotPos[1])/dist};
 	      float dotProd = trueVec[0]*shotUnitVec[0]+trueVec[1]*shotUnitVec[1];
 
 	      if (dotProd <= 0.1f) //pretty wide angle, if it hits me, jumping wouldn't have helped
 	        continue;
 
 	      if (((World::getWorld()->allowJumping() || (myTank->getFlag()) == Flags::Jumping)) 
-	      && (dist < (BZDB->eval(StateDatabase::BZDB_TANKLENGTH) * 2.25f))) {
+	      && (dist < (max(dotProd,0.5f) * BZDB->eval(StateDatabase::BZDB_TANKLENGTH) * 2.5f))) {
 	        myTank->jump();
 	        s = maxShots;
 	        t = curMaxPlayers;
