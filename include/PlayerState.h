@@ -28,7 +28,7 @@ class PlayerState
       CrossingWall =    (1 << 5),	// tank crossing building wall
       Falling =	 	(1 << 6),	// tank accel'd by gravity
       OnDriver =	(1 << 7),	// tank is on a physics driver
-      OnIce =		(1 << 8),	// tank is on ice, sending user specs
+      UserInputs =	(1 << 8),	// user speed and angvel are sent
       JumpJets =	(1 << 9)	// tank has jump jets on
     };
 

@@ -64,13 +64,13 @@ bool CustomPhysicsDriver::read(const char *cmd, std::istream& input)
     }
     driver->setRadial(vel, pos);
   }
-  else if (strcasecmp ("ice", cmd) == 0) {
-    float iceTime;
-    if (!(input >> iceTime)) {
+  else if (strcasecmp ("slide", cmd) == 0) {
+    float slideTime;
+    if (!(input >> slideTime)) {
       std::cout << "parameters errors " << std::endl;
       return false;
     }
-    driver->setIceTime(iceTime);
+    driver->setSlideTime(slideTime);
   }
   else if (strcasecmp ("death", cmd) == 0) {
     std::string line;

@@ -166,7 +166,7 @@ void			LocalPlayer::doUpdate(float dt)
 }
 
 
-void LocalPlayer::doSlideMotion(float dt, float iceTime,
+void LocalPlayer::doSlideMotion(float dt, float slideTime,
                                 float newAngVel, float* newVelocity)
 {
   const float oldAzimuth = getAngle();
@@ -175,7 +175,7 @@ void LocalPlayer::doSlideMotion(float dt, float iceTime,
   const float angle = oldAzimuth + (0.5f * dt * newAngVel);
   const float cos_val = cosf(angle);
   const float sin_val = sinf(angle);
-  const float scale = (dt / iceTime);
+  const float scale = (dt / slideTime);
   const float speedAdj = desiredSpeed * scale;
   const float* ov = oldVelocity;
   const float oldSpeed = sqrtf((ov[0] * ov[0]) + (ov[1] * ov[1]));
@@ -196,7 +196,7 @@ void LocalPlayer::doSlideMotion(float dt, float iceTime,
   if (newSpeed > maxSpeed) {
     float adjSpeed;
     if (oldSpeed > maxSpeed) {
-      adjSpeed = oldSpeed - (dt * (maxSpeed / iceTime));
+      adjSpeed = oldSpeed - (dt * (maxSpeed / slideTime));
       if (adjSpeed < 0.0f) {
         adjSpeed = 0.0f;
       }
@@ -390,9 +390,9 @@ void			LocalPlayer::doUpdateMotion(float dt)
 
     newVelocity[2] += v[2];
     
-    if (phydrv->getIsIce()) {
-      const float iceTime = phydrv->getIceTime();
-      doSlideMotion(dt, iceTime, newAngVel, newVelocity);
+    if (phydrv->getIsSlide()) {
+      const float slideTime = phydrv->getSlideTime();
+      doSlideMotion(dt, slideTime, newAngVel, newVelocity);
     }
     else {
       // adjust the horizontal velocity
@@ -762,6 +762,16 @@ void			LocalPlayer::doUpdateMotion(float dt)
   }
   else if (location == InAir || location == InBuilding) {
     setStatus(getStatus() | short(PlayerState::Falling));
+  }
+
+  // set UserInput status (determines how animated treads are drawn)
+  const PhysicsDriver* phydrv2 = PHYDRVMGR.getDriver(getPhysicsDriver());
+  if (((phydrv2 != NULL) && phydrv2->getIsSlide()) ||
+      ((getFlag() == Flags::Wings) && (location == InAir) &&
+       (BZDB.eval(StateDatabase::BZDB_WINGSSLIDETIME) > 0.0f))) {
+    setStatus(getStatus() | short(PlayerState::UserInputs));
+  } else {
+    setStatus(getStatus() & ~short(PlayerState::UserInputs));
   }
 
   // compute firing status

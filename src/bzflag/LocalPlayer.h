@@ -132,7 +132,7 @@ protected:
   ServerLink*	server;
 
 private:
-  void		doSlideMotion(float dt, float iceTime,
+  void		doSlideMotion(float dt, float slideTime,
                           float newAngVel, float* newVelocity);
   float		getNewAngVel(float old, float desired);
   

@@ -657,7 +657,7 @@ void			ServerLink::sendPlayerUpdate(Player* player)
   if ((player->getStatus() & PlayerState::OnDriver) != 0) {
     len += sizeof(int);
   }
-  if ((player->getStatus() & PlayerState::OnIce) != 0) {
+  if ((player->getStatus() & PlayerState::UserInputs) != 0) {
     len += (2 * sizeof(short));
   }
   send(code, len, msg);

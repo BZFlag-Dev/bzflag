@@ -488,10 +488,10 @@ void ConeObstacle::print(std::ostream& out, int /*level*/)
     out << std::endl;
   }
 
-  if (phydrv >= 0) {
+  const PhysicsDriver* driver = PHYDRVMGR.getDriver(phydrv);
+  if (driver != NULL) {
     out << "  phydrv ";
-    const PhysicsDriver* driver = PHYDRVMGR.getDriver(phydrv);
-    if ((driver != NULL) && (driver->getName().size() > 0)) {
+    if (driver->getName().size() > 0) {
       out << driver->getName();
     } else {
       out << phydrv;

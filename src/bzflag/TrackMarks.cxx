@@ -26,6 +26,7 @@
 #include "TimeKeeper.h"
 #include "StateDatabase.h"
 #include "BZDBCache.h"
+#include "CollisionManager.h"
 #include "PhysicsDriver.h"
 #include "bzfgl.h"
 #include "TextureManager.h"
@@ -185,25 +186,23 @@ static void updateList(std::list<TrackEntry>& list, float dt)
   for (it = list.begin(); it != list.end(); it++) {
     TrackEntry& te = *it;
     // update for the Physics Driver
-    if (te.phydrv >= 0) {
-      const PhysicsDriver* phydrv = PHYDRVMGR.getDriver(te.phydrv);
-      if (phydrv != NULL) {
-	const float* v = phydrv->getVelocity();
-	te.pos[0] += (v[0] * dt);
-	te.pos[1] += (v[1] * dt);
+    const PhysicsDriver* phydrv = PHYDRVMGR.getDriver(te.phydrv);
+    if (phydrv != NULL) {
+      const float* v = phydrv->getVelocity();
+      te.pos[0] += (v[0] * dt);
+      te.pos[1] += (v[1] * dt);
 
-	const float av = phydrv->getAngularVel();
-	if (av != 0.0f) {
-	  const float* ap = phydrv->getAngularPos();
-	  const float da = (av * dt);
-	  const float cos_val = cosf(da);
-	  const float sin_val = sinf(da);
-	  const float dx = te.pos[0] - ap[0];
-	  const float dy = te.pos[1] - ap[1];
-	  te.pos[0] = ap[0] + ((cos_val * dx) - (sin_val * dy));
-	  te.pos[1] = ap[1] + ((cos_val * dy) + (sin_val * dx));
-	  te.angle += da * (180.0f / M_PI);
-	}
+      const float av = phydrv->getAngularVel();
+      if (av != 0.0f) {
+        const float* ap = phydrv->getAngularPos();
+        const float da = (av * dt);
+        const float cos_val = cosf(da);
+        const float sin_val = sinf(da);
+        const float dx = te.pos[0] - ap[0];
+        const float dy = te.pos[1] - ap[1];
+        te.pos[0] = ap[0] + ((cos_val * dx) - (sin_val * dy));
+        te.pos[1] = ap[1] + ((cos_val * dy) + (sin_val * dx));
+        te.angle += da * (180.0f / M_PI);
       }
     }
   }

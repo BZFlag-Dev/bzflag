@@ -714,10 +714,10 @@ void MeshFace::print(std::ostream& out, int level)
   MATERIALMGR.printReference(out, bzMaterial);
   out  << std::endl;
 
-  if (phydrv >= 0) {
-    out << "    phydrv ";
-    const PhysicsDriver* driver = PHYDRVMGR.getDriver(phydrv);
-    if ((driver != NULL) && (driver->getName().size() > 0)) {
+  const PhysicsDriver* driver = PHYDRVMGR.getDriver(phydrv);
+  if (driver != NULL) {
+    out << "  phydrv ";
+    if (driver->getName().size() > 0) {
       out << driver->getName();
     } else {
       out << phydrv;

@@ -124,7 +124,7 @@ void*	PlayerState::pack(void* buf, uint16_t& code)
     buf = nboPackInt(buf, phydrv);
   }
 
-  if ((status & OnIce) != 0) {
+  if ((status & UserInputs) != 0) {
     float tmp;
     // pack userSpeed
     tmp = clampedValue(userSpeed, smallMaxVel);
@@ -188,7 +188,7 @@ void*	PlayerState::unpack(void* buf, uint16_t code)
     phydrv = -1;
   }
 
-  if ((inStatus & OnIce) != 0) {
+  if ((inStatus & UserInputs) != 0) {
     int16_t userSpeedShort, userAngVelShort;
     buf = nboUnpackShort(buf, userSpeedShort);
     buf = nboUnpackShort(buf, userAngVelShort);

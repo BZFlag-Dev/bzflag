@@ -28,7 +28,7 @@ class PhysicsDriver {
     void setVelocity(const float vel[3]);
     void setAngular(float angleVel, const float pos[2]);
     void setRadial(float radialVel, const float pos[2]);
-    void setIceTime(float iceTime);
+    void setSlideTime(float slideTime);
     void setDeathMessage(const std::string& msg);
 
     void finalize();
@@ -40,8 +40,8 @@ class PhysicsDriver {
     const float* getAngularPos() const;
     const float getRadialVel() const;
     const float* getRadialPos() const;
-    const bool getIsIce() const;
-    const float getIceTime() const;
+    const bool getIsSlide() const;
+    const float getSlideTime() const;
     const bool getIsDeath() const;
     const std::string& getDeathMsg() const;
 
@@ -60,8 +60,8 @@ class PhysicsDriver {
     float angularPos[2];
     float radialVel;
     float radialPos[2];
-    bool ice;
-    float iceTime;
+    bool slide;
+    float slideTime;
     bool death;
     std::string deathMsg;
 };
@@ -86,13 +86,13 @@ inline const float* PhysicsDriver::getRadialPos() const
 {
   return radialPos;
 }
-inline const bool PhysicsDriver::getIsIce() const
+inline const bool PhysicsDriver::getIsSlide() const
 {
-  return ice;
+  return slide;
 }
-inline const float PhysicsDriver::getIceTime() const
+inline const float PhysicsDriver::getSlideTime() const
 {
-  return iceTime;
+  return slideTime;
 }
 inline const bool PhysicsDriver::getIsDeath() const
 {
@@ -123,6 +123,16 @@ class PhysicsDriverManager {
   private:
     std::vector<PhysicsDriver*> drivers;
 };
+
+inline const PhysicsDriver* PhysicsDriverManager::getDriver(int id) const
+{
+  if ((id >= 0) && (id < (int)drivers.size())) {
+    return drivers[id];
+  } else {
+    return NULL;
+  }
+}
+
 
 extern PhysicsDriverManager PHYDRVMGR;
 

@@ -100,16 +100,6 @@ int PhysicsDriverManager::findDriver(const std::string& dyncol) const
 }
 
 
-const PhysicsDriver* PhysicsDriverManager::getDriver(int id) const
-{
-  if ((id >= 0) && (id < (int)drivers.size())) {
-    return drivers[id];
-  } else {
-    return NULL;
-  }
-}
-
-
 void * PhysicsDriverManager::pack(void *buf)
 {
   std::vector<PhysicsDriver*>::iterator it;
@@ -169,8 +159,8 @@ PhysicsDriver::PhysicsDriver()
   velocity[0] = velocity[1] = velocity[2] = 0.0f;
   angularVel = 0.0f;
   angularPos[0] = angularPos[1] = 0.0f;
-  ice = false;
-  iceTime = 0.0f;
+  slide = false;
+  slideTime = 0.0f;
   death = false;
   deathMsg = "";
   return;
@@ -184,11 +174,11 @@ PhysicsDriver::~PhysicsDriver()
 
 void PhysicsDriver::finalize()
 {
-  if (iceTime > 0.0f) {
-    ice = true;
+  if (slideTime > 0.0f) {
+    slide = true;
   } else {
-    ice = false;
-    iceTime = 0.0f;
+    slide = false;
+    slideTime = 0.0f;
   }
   if (deathMsg.size() > 0) {
     death = true;
@@ -246,9 +236,9 @@ void PhysicsDriver::setRadial(float vel, const float pos[2])
 }
 
 
-void PhysicsDriver::setIceTime(float _iceTime)
+void PhysicsDriver::setSlideTime(float _slideTime)
 {
-  iceTime = _iceTime;
+  slideTime = _slideTime;
   return;
 }
 
@@ -293,7 +283,7 @@ void * PhysicsDriver::pack(void *buf)
   buf = nboPackFloat (buf, radialPos[0]);
   buf = nboPackFloat (buf, radialPos[1]);
 
-  buf = nboPackFloat (buf, iceTime);
+  buf = nboPackFloat (buf, slideTime);
   buf = nboPackStdString(buf, deathMsg);
 
   return buf;
@@ -312,7 +302,7 @@ void * PhysicsDriver::unpack(void *buf)
   buf = nboUnpackFloat (buf, radialPos[0]);
   buf = nboUnpackFloat (buf, radialPos[1]);
 
-  buf = nboUnpackFloat (buf, iceTime);
+  buf = nboUnpackFloat (buf, slideTime);
   buf = nboUnpackStdString(buf, deathMsg);
   
   finalize();
@@ -330,7 +320,7 @@ int PhysicsDriver::packSize()
   fullSize += sizeof(float) * 2; // angular position
   fullSize += sizeof(float) * 1; // radial velocity
   fullSize += sizeof(float) * 2; // radial position
-  fullSize += sizeof(float) * 1; // ice time
+  fullSize += sizeof(float) * 1; // slide time
   
   fullSize += nboStdStringPackSize(deathMsg);
 
@@ -363,8 +353,8 @@ void PhysicsDriver::print(std::ostream& out, int /*level*/)
                        << rp[0] << " " << rp[1] << std::endl;
   }
 
-  if (ice) {
-    out << "  ice " << iceTime << std::endl;
+  if (slide) {
+    out << "  slide " << slideTime << std::endl;
   }
 
   if (death) {

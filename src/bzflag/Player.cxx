@@ -221,19 +221,14 @@ void Player::setAngularVelocity(float _angVel)
 void Player::setPhysicsDriver(int driver)
 {
   state.phydrv = driver;
-  if (driver >= 0) {
-    const PhysicsDriver* phydrv = PHYDRVMGR.getDriver(driver);
-    if (phydrv) {
-      state.status |= PlayerState::OnDriver;
-      if (phydrv->getIsIce()) {
-        state.status |= PlayerState::OnIce;
-      } else {
-        state.status &= ~PlayerState::OnIce;
-      }
-    }
+
+  const PhysicsDriver* phydrv = PHYDRVMGR.getDriver(driver);
+  if (phydrv != NULL) {
+    state.status |= PlayerState::OnDriver;
   } else {
-    state.status &= ~(PlayerState::OnDriver | PlayerState::OnIce);
+    state.status &= ~PlayerState::OnDriver;
   }
+
   return;
 }
 
@@ -544,7 +539,7 @@ void Player::updateTreads(float dt)
   float speedFactor;
   float angularFactor;
 
-  if ((state.status & PlayerState::OnIce) != 0) {
+  if ((state.status & PlayerState::UserInputs) != 0) {
     speedFactor = state.userSpeed;
     angularFactor = state.userAngVel;
   } else {
@@ -1021,8 +1016,8 @@ void Player::getDeadReckoning(float* predictedPos, float* predictedAzimuth,
 
     // make the physics driver adjustments
     const PhysicsDriver* phydrv = PHYDRVMGR.getDriver(inputPhyDrv);
-    if (phydrv) {
-      if (phydrv->getIsIce()) {
+    if (phydrv != NULL) {
+      if (phydrv->getIsSlide()) {
         predictedVel[0] = inputRelVel[0];
         predictedVel[1] = inputRelVel[1];
         predictedPos[0] = inputPos[0] + (dt * inputRelVel[0]);
