@@ -151,11 +151,15 @@ SOURCE=..\include\OpenGLTexFont.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\include\OpenGLTexture.h
+SOURCE=..\..\include\OpenGLTexture.h
 # End Source File
 # Begin Source File
 
 SOURCE=..\include\RenderNode.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\include\TextureManager.h
 # End Source File
 # End Group
 # End Target

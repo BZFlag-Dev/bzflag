@@ -12,5 +12,4 @@ libGLKit_a_SOURCES =			\
 	OpenGLTexture.cxx		\
 	OpenGLTexFont.cxx		\
 	OpenGLDisplayList.cxx		\
-	RenderNode.cxx			\
-	TextureManager.cxx
+	RenderNode.cxx

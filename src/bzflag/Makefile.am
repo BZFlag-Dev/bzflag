@@ -57,7 +57,8 @@ bzflag_SOURCES =			\
 	menus.cxx			\
 	menus.h				\
 	ServerListCache.cxx		\
-	ServerListCache.h		
+	ServerListCache.h		\
+	TextureManager.cxx
 
 noinst_HEADERS = \
 	stars.cxx

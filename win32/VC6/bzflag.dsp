@@ -217,6 +217,10 @@ SOURCE=..\..\src\bzflag\texture.cxx
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\src\bzflag\TextureManager.cxx
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\src\bzflag\World.cxx
 # End Source File
 # Begin Source File
