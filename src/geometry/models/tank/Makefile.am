@@ -1,7 +1,9 @@
 MAINTAINERCLEANFILES = \
 	Makefile.in
 
+if CLIENT_INCLUDED
 noinst_LIBRARIES =	libTank.a
+endif
 
 libTank_a_SOURCES =	\
 	high_barrel.cxx		\
