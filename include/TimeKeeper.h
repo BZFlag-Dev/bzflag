@@ -43,9 +43,19 @@ public:
 
   float		operator-(const TimeKeeper&) const;
   bool		operator<=(const TimeKeeper&) const;
-  TimeKeeper&		operator+=(float);
+	TimeKeeper&		operator+=(float);
   TimeKeeper&		operator+=(const TimeKeeper&) ;
 
+	// make a TimeKeeper with seconds = NULL act like unset
+	// Fixme: must this be defined here? didn't work for me outside the class
+	inline operator void*()
+	{
+		if (seconds > 0.0f)
+			return this;
+		else
+			return NULL;
+	}
+	
   /** returns how many seconds have elapsed since epoch, Jan 1, 1970 */
   float	       getSeconds(void) const;
 
