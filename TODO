@@ -3,6 +3,8 @@ to do list for BZFlag
 
 THESE SHOULD HAPPEN BEFORE THE NEXT RELEASE:
 
+* the players have spoken, and hold-the-flag is wanted
+
 * add language translations for the new flags
 
 * either disable server checks when -handicap mode is enabled, or
