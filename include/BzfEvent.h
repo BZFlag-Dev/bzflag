@@ -85,7 +85,7 @@ class BzfKeyEvent {
 			BZ_Mouse_Button_8,
 			BZ_Mouse_Button_9,
 			BZ_Mouse_Button_10,
-			LastButton
+			LastButton  // special marker that must be last
     };
     enum {
 			ShiftKey = 1,

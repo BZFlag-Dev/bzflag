@@ -60,7 +60,7 @@ const char*		KeyManager::buttonNames[] = {
   "Joystick Button 8",
   "Joystick Button 9",
   "Joystick Button 10",
-  "LastButton"
+  "LastButton"  // should always be last item listed
 };
 const char*		KeyManager::asciiNames[][2] = {
   { "Tab",		"\t" },
