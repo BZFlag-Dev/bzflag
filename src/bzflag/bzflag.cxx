@@ -1396,9 +1396,11 @@ int			main(int argc, char** argv)
 	case GL_OUT_OF_MEMORY:
 	  std::cerr << "ERROR: GL_OUT_OF_MEMORY" << std::endl;
 	  break;
+#ifdef GL_VERSION_1_2
 	case GL_TABLE_TOO_LARGE:
 	  std::cerr << "ERROR: GL_TABLE_TOO_LARGE" << std::endl;
 	  break;
+#endif
 	case GL_NO_ERROR:
 	  // should not reach
 	  std::cerr << "ERROR: GL_NO_ERROR" << std::endl;
