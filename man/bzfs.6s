@@ -797,6 +797,10 @@ VOTE			/vote
 VETO			/veto
 .br
 REQUIREIDENTIFY         user must /identify when using this callsign
+.br
+PRIVATEMESSAGE		/msg
+.br
+ACTIONMESSAGE		/me
 
 .TP
 .B /register {password}
@@ -880,6 +884,21 @@ a poll.
 
 If there is a poll active, this will cancel the poll.  By default, you must be
 an admin to veto a poll.
+
+.TP
+.B /me
+
+This command displays an "action" that is conveyed to another player.  It allows
+for a little more expressivity in the game.  For example: "/me is hunting wabbits"
+turns into a message like "TimRiker is hunting wabbits" that gets displayed
+differently to other players.
+
+.TP
+.B /msg "some player" some message
+
+This command allows a player to send a message to another player.  Similar to using
+the "," and "." message keys in the game and then selecting your recipient, this
+will send some message to particular player.  The quotes are optional.
 
 .SH WORLDS
 
