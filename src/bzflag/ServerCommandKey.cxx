@@ -204,7 +204,7 @@ bool			ServerCommandKey::keyPress(const BzfKeyEvent& key)
     myTank->jump();
   }
 
-  if (!myTank->isKeyboardMoving()) {
+  if (myTank->getInputMethod() != LocalPlayer::Keyboard) {
     if ((key.button == BzfKeyEvent::Up) ||
 	(key.button == BzfKeyEvent::Down) ||
 	(key.button == BzfKeyEvent::Left) ||
@@ -356,7 +356,7 @@ bool			ServerCommandKey::keyPress(const BzfKeyEvent& key)
 bool			ServerCommandKey::keyRelease(const BzfKeyEvent& key)
 {
   LocalPlayer *myTank = LocalPlayer::getMyTank();
-  if (!myTank->isKeyboardMoving()) {
+  if (myTank->getInputMethod() != LocalPlayer::Keyboard) {
 
     if (key.button == BzfKeyEvent::Up || key.button==BzfKeyEvent::Down
 	||key.button==BzfKeyEvent::Left||key.button==BzfKeyEvent::Right) {

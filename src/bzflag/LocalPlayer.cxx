@@ -330,7 +330,7 @@ LocalPlayer::LocalPlayer(const PlayerId& id,
   shots = new LocalShotPath*[numShots];
   for (int i = 0; i < numShots; i++)
     shots[i] = NULL;
-  keyboardMoving = false;
+  inputMethod = Mouse;
 }
 
 LocalPlayer::~LocalPlayer()
@@ -482,7 +482,7 @@ void			LocalPlayer::doUpdateMotion(float dt)
       // full control
       float speed = desiredSpeed;
 
-      if (keyboardMoving) {
+      if (inputMethod == Keyboard) {
 	/* the larger the oldAngVel contribution, the more slowly an
 	 * angular velocity converges to the desired "max" velocity; the
 	 * contribution of the desired and old velocity should add up to
@@ -495,7 +495,7 @@ void			LocalPlayer::doUpdateMotion(float dt)
 	  newAngVel = desiredAngVel;
 	}
       }
-      else { // mouse
+      else { // mouse or joystick
 	newAngVel = desiredAngVel;
       }
 

@@ -60,18 +60,23 @@ class LocalPlayer : public BaseLocalPlayer {
 public:
   enum FiringStatus {
     Deceased,		// can't shoot cos I'm dead
-    Ready,			// ready to shoot
+    Ready,		// ready to shoot
     Loading,		// reloading
-    Sealed,			// I'm inside a building
-    Zoned			// I'm zoned
+    Sealed,		// I'm inside a building
+    Zoned		// I'm zoned
   };
   enum Location {
-    Dead,			// dead, explosion over
+    Dead,		// dead, explosion over
     Exploding,		// dead and exploding
     OnGround,		// playing on ground
     InBuilding,		// playing in building
     OnBuilding,		// playing on building
-    InAir			// playing in air
+    InAir		// playing in air
+  };
+  enum InputMethod {	// what device am I using to move around
+    Keyboard,
+    Mouse,
+    Joystick
   };
 
   LocalPlayer(const PlayerId&,
@@ -112,8 +117,8 @@ public:
 
   void		addAntidote(SceneDatabase*);
 
-  bool		isKeyboardMoving() const;
-  void		setKeyboardMoving(bool status);
+  InputMethod	getInputMethod() const;
+  void		setInputMethod(InputMethod newInput);
   void		setKeyboardSpeed(float speed);
   void		setKeyboardAngVel(float angVel);
   float		getKeyboardSpeed() const;
@@ -167,7 +172,7 @@ private:
   const Player*	nemesis;
   const Player*	recipient;
   static LocalPlayer*	mainPlayer;
-  bool		keyboardMoving;
+  InputMethod	inputMethod;
   float		keyboardSpeed;
   float		keyboardAngVel;
   int		keyButton;
@@ -210,14 +215,14 @@ inline const Obstacle*	LocalPlayer::getContainingBuilding() const
   return insideBuilding;
 }
 
-inline bool LocalPlayer::isKeyboardMoving() const
+inline LocalPlayer::InputMethod LocalPlayer::getInputMethod() const
 {
-  return keyboardMoving;
+  return inputMethod;
 }
 
-inline void LocalPlayer::setKeyboardMoving(bool status)
+inline void LocalPlayer::setInputMethod(InputMethod newInput)
 {
-  keyboardMoving = status;
+  inputMethod = newInput;
 }
 
 inline void LocalPlayer::setKeyboardSpeed(float speed)

@@ -501,12 +501,15 @@ static void setRoamingLabel(bool force)
 
 static void		showKeyboardStatus()
 {
-  if (myTank->isKeyboardMoving())
+  if (myTank->getInputMethod() == LocalPlayer::Keyboard)
     controlPanel->addMessage("Keyboard movement");
-  else if (mainWindow->joystick())
+  //FIXME - setInputMethod(Joystick) is never called; leaving old mainWindow->Joystick for now
+  else if (mainWindow->joystick() || myTank->getInputMethod() == LocalPlayer::Joystick)
     controlPanel->addMessage("Joystick movement");
-  else
+  else if (myTank->getInputMethod() == LocalPlayer::Mouse)
     controlPanel->addMessage("Mouse movement");
+  else
+    DEBUG1("Unknown input method!");
 }
 
 static bool		doKeyCommon(const BzfKeyEvent& key, bool pressed)
@@ -670,19 +673,20 @@ static void		doKeyPlaying(const BzfKeyEvent& key, bool pressed)
   }
   // Might be a direction key. Save it for later.
   else if (myTank->isAlive()) {
-    if (!myTank->isKeyboardMoving() && pressed)
+    if ((myTank->getInputMethod() != LocalPlayer::Keyboard) && pressed) {
       switch (key.button)
 	{
 	case BzfKeyEvent::Left:
 	case BzfKeyEvent::Right:
 	case BzfKeyEvent::Up:
 	case BzfKeyEvent::Down:
-	  myTank->setKeyboardMoving(true);
+	  myTank->setInputMethod(LocalPlayer::Keyboard);
 	  showKeyboardStatus();
 	  break;
 	}
-    if (myTank->isKeyboardMoving())
+    } else if (myTank->getInputMethod() == LocalPlayer::Keyboard) {
       myTank->setKey(key.button, pressed);
+    }
   }
 }
 
@@ -1000,7 +1004,7 @@ static void		doMotion()
   if (myTank->isAutoPilot()) {
     doAutoPilot(rotation, speed);
   }
-  else if (myTank->isKeyboardMoving()) {
+  else if (myTank->getInputMethod() == LocalPlayer::Keyboard) {
     rotation = myTank->getKeyboardAngVel();
     speed = myTank->getKeyboardSpeed();
 
@@ -1782,8 +1786,8 @@ static void		doEvent(BzfDisplay* display)
     break;
 
   case BzfEvent::MouseMove:
-    if (myTank && myTank->isAlive() && myTank->isKeyboardMoving()) {
-      myTank->setKeyboardMoving(false);
+    if (myTank && myTank->isAlive() && (myTank->getInputMethod() == LocalPlayer::Keyboard)) {
+      myTank->setInputMethod(LocalPlayer::Mouse);
       showKeyboardStatus();
     }
     break;
