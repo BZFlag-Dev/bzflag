@@ -280,8 +280,8 @@ void			getSkyColor(const float sunDir[3], GLfloat sky[4][3])
   static const GLfloat	sunrise2Color[3] = { 0.47f, 0.12f, 0.08f };
 
   float skyDarknessFactor = 1;
-  if (BZDB.isSet("skyDarknessFactor"))
-	  skyDarknessFactor = BZDB.eval("skyDarknessFactor");
+  if (BZDB.isSet("_skyDarknessFactor"))
+	  skyDarknessFactor = BZDB.eval("_skyDarknessFactor");
 
   // sky colors
   if (sunDir[2] < nightElevation) {

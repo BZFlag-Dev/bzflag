@@ -36,6 +36,12 @@
 // local impl headers
 #include "SceneRenderer.h"
 
+void bzdbCallBack(const std::string& name, void* userData)
+{
+	((WeatherRenderer*)userData)->set();
+}
+
+
 WeatherRenderer::WeatherRenderer()
 {
 	rainColor[0][0] = 0.75f;   rainColor[0][1] = 0.75f;   rainColor[0][2] = 0.75f;   rainColor[0][3] = 0.75f; 
@@ -64,10 +70,38 @@ WeatherRenderer::WeatherRenderer()
 	gridSize = 100;
 
 	keyFactor = 1.0f/gridSize;
+
+	// install callbacks
+	BZDB.addCallback("_rainType",bzdbCallBack,this);
+	BZDB.addCallback("_rainDensity",bzdbCallBack,this);
+	BZDB.addCallback("_rainSpread",bzdbCallBack,this);
+	BZDB.addCallback("_rainSpeedMod",bzdbCallBack,this);
+	BZDB.addCallback("_rainStartZ",bzdbCallBack,this);
+	BZDB.addCallback("_rainEndZ",bzdbCallBack,this);
+	BZDB.addCallback("_rainBaseColor",bzdbCallBack,this);
+	BZDB.addCallback("_useRainPuddles",bzdbCallBack,this);
+	BZDB.addCallback("_useLineRain",bzdbCallBack,this);
+	BZDB.addCallback("_useRainBillboards",bzdbCallBack,this);
+	BZDB.addCallback("_rainPuddleSpeed",bzdbCallBack,this);
+	BZDB.addCallback("_rainMaxPuddleTime",bzdbCallBack,this);
+	BZDB.addCallback("_rainPuddleColor",bzdbCallBack,this);
 }
 
 WeatherRenderer::~WeatherRenderer()
 {
+	BZDB.removeCallback("_rainType",bzdbCallBack,this);
+	BZDB.removeCallback("_rainDensity",bzdbCallBack,this);
+	BZDB.removeCallback("_rainSpread",bzdbCallBack,this);
+	BZDB.removeCallback("_rainSpeedMod",bzdbCallBack,this);
+	BZDB.removeCallback("_rainStartZ",bzdbCallBack,this);
+	BZDB.removeCallback("_rainEndZ",bzdbCallBack,this);
+	BZDB.removeCallback("_rainBaseColor",bzdbCallBack,this);
+	BZDB.removeCallback("_useRainPuddles",bzdbCallBack,this);
+	BZDB.removeCallback("_useLineRain",bzdbCallBack,this);
+	BZDB.removeCallback("_useRainBillboards",bzdbCallBack,this);
+	BZDB.removeCallback("_rainPuddleSpeed",bzdbCallBack,this);
+	BZDB.removeCallback("_rainMaxPuddleTime",bzdbCallBack,this);
+	BZDB.removeCallback("_rainPuddleColor",bzdbCallBack,this);
 }
 
 void WeatherRenderer::init ( void )
@@ -103,7 +137,7 @@ void WeatherRenderer::set ( void )
 	// check the bzdb and see if we need to change any rain stuff
 	rainDensity = 0;
 
-	if (BZDB.isSet("rainType") || BZDB.isSet("rainDensity"))
+	if (dbItemSet("_rainType") || dbItemSet("_rainDensity"))
 	{
 		// default rain desnity
 		rainDensity = 1000;
@@ -122,8 +156,6 @@ void WeatherRenderer::set ( void )
 		puddleColor[0] = puddleColor[1] = puddleColor[2] = puddleColor[3] = 1.0f;
 
 		rainSpread  = 500.0f;
-		if (BZDB.isSet("rainSpread"))
-			rainSpread = BZDB.eval("rainSpread");
 
 		TextureManager &tm = TextureManager::instance();
 
@@ -141,9 +173,9 @@ void WeatherRenderer::set ( void )
 
 		puddleGStateBuilder.setTexture(tm.getTextureID("puddle"));
 
-		if (BZDB.isSet("rainType"))
+		if (dbItemSet("_rainType"))
 		{
-			std::string rainType = TextUtils::tolower(BZDB.get("rainType"));
+			std::string rainType = TextUtils::tolower(BZDB.get("_rainType"));
 
 			if (rainType == "snow")
 			{
@@ -198,66 +230,72 @@ void WeatherRenderer::set ( void )
 			}
 			else if (rainType == "rain")
 			{
+				puddleColor[0] = 1.0f;
+				puddleColor[1] = puddleColor[2] = 1.0f;
 				doLineRain = true;
 				rainSize[0] = 0; rainSize[1] = 0.75f;
+				puddleGStateBuilder.setTexture(tm.getTextureID("puddle"));
 			}
 		}
 
-		if (BZDB.isSet("rainPuddleTexture"))
-			puddleGStateBuilder.setTexture(tm.getTextureID(BZDB.get("rainPuddleTexture").c_str()));
+		if (dbItemSet("_rainPuddleTexture"))
+			puddleGStateBuilder.setTexture(tm.getTextureID(BZDB.get("_rainPuddleTexture").c_str()));
 
 		OpenGLMaterial puddleMaterial(puddleColor, puddleColor, 0.0f);
 		puddleGStateBuilder.setMaterial(puddleMaterial);
 		puddleState = puddleGStateBuilder.getState();
 
 		// see if the texture is specificly overiden
-		if (BZDB.isSet("rainTexture"))
-			gstate.setTexture(tm.getTextureID(BZDB.get("rainTexture").c_str()));
+		if (dbItemSet("_rainTexture"))
+			gstate.setTexture(tm.getTextureID(BZDB.get("_rainTexture").c_str()));
 
 		texturedRainState = gstate.getState();
 
 		// if there is a specific overides for stuff
-		if (BZDB.isSet("rainDensity"))
-			rainDensity = (int)BZDB.eval("rainDensity");
+		if (dbItemSet("_rainSpread"))
+			rainSpread = BZDB.eval("_rainSpread");
+	
+		if (dbItemSet("_rainDensity"))
+			rainDensity = (int)BZDB.eval("_rainDensity");
 
-		if (BZDB.isSet("rainSpeed"))
-			rainSpeed = BZDB.eval("rainSpeed");
+		if (dbItemSet("_rainSpeed"))
+			rainSpeed = BZDB.eval("_rainSpeed");
 
-		if (BZDB.isSet("rainSpeedMod"))
-			rainSpeedMod = BZDB.eval("rainSpeedMod");
+		if (dbItemSet("_rainSpeedMod"))
+			rainSpeedMod = BZDB.eval("_rainSpeedMod");
 
-		if (BZDB.isSet("rainSize"))
-			BZDB.evalPair("rainSize",rainSize);
+		if (dbItemSet("_rainSize"))
+			BZDB.evalPair("_rainSize",rainSize);
 
-		if (BZDB.isSet("rainStartZ"))
-			rainStartZ = BZDB.eval("rainStartZ");
+		if (dbItemSet("_rainStartZ"))
+			rainStartZ = BZDB.eval("_rainStartZ");
 
-		if (BZDB.isSet("rainEndZ"))
-			rainEndZ = BZDB.eval("rainEndZ");
+		if (dbItemSet("_rainEndZ"))
+			rainEndZ = BZDB.eval("_rainEndZ");
 
-		if (BZDB.isSet("rainBaseColor"))
-			BZDB.evalTriplet("rainBaseColor",rainColor[0]);
+		if (dbItemSet("_rainBaseColor"))
+			BZDB.evalTriplet("_rainBaseColor",rainColor[0]);
 
-		if (BZDB.isSet("rainTopColor"))
-			BZDB.evalTriplet("rainTopColor",rainColor[1]);
+		if (dbItemSet("_rainTopColor"))
+			BZDB.evalTriplet("_rainTopColor",rainColor[1]);
 
-		if (BZDB.isSet("useRainPuddles"))
-			doPuddles = BZDB.evalInt("useRainPuddles") == 1;
+		if (dbItemSet("_useRainPuddles"))
+			doPuddles = BZDB.evalInt("_useRainPuddles") == 1;
 
-		if (BZDB.isSet("useLineRain"))
-			doLineRain = BZDB.evalInt("useLineRain") == 1;
+		if (dbItemSet("_useLineRain"))
+			doLineRain = BZDB.evalInt("_useLineRain") == 1;
 
-		if (BZDB.isSet("useRainBillboards"))
-			doBillBoards = BZDB.evalInt("useRainBillboards") == 1;
+		if (dbItemSet("_useRainBillboards"))
+			doBillBoards = BZDB.evalInt("_useRainBillboards") == 1;
 
-		if (BZDB.isSet("rainPuddleColor"))
-			BZDB.evalTriplet("rainPuddleColor",puddleColor);
+		if (dbItemSet("_rainPuddleColor"))
+			BZDB.evalTriplet("_rainPuddleColor",puddleColor);
 
-		if (BZDB.isSet("rainPuddleSpeed"))
+		if (dbItemSet("_rainPuddleSpeed"))
 			puddleSpeed = BZDB.eval("rainPuddleSpeed");
 
-		if (BZDB.isSet("rainMaxPuddleTime"))
-			maxPuddleTime = BZDB.eval("rainMaxPuddleTime");
+		if (dbItemSet("_rainMaxPuddleTime"))
+			maxPuddleTime = BZDB.eval("_rainMaxPuddleTime");
 
 		// make sure we know where to start and stop the rain
 		// we want to compute the heights for us
@@ -652,6 +690,18 @@ void WeatherRenderer::setChunkFromDrop ( visibleChunk &chunk, rain & drop )
 	chunk.bbox[0] = keyX * gridSize + gridSize;
 	chunk.bbox[1] = keyY * gridSize + gridSize;
 }
+
+bool WeatherRenderer::dbItemSet ( const char* name )
+{
+	if (!BZDB.isSet(name))
+		return false;
+
+	if (TextUtils::tolower(BZDB.get(name)) == "none")
+		return false;
+
+	return true;
+}
+
 
 // Local Variables: ***
 // mode:C++ ***

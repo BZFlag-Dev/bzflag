@@ -77,6 +77,16 @@ const struct GlobalDBItem globalDBItems[] = {
   { "_positionTolerance",	"0.09",				false, StateDatabase::Locked},
   { "_pyrBase",			"4.0*_tankHeight",		false, StateDatabase::Locked},
   { "_pyrHeight",		"5.0*_tankHeight",		false, StateDatabase::Locked},
+  { "_rainBaseColor",		"none",			false, StateDatabase::Locked},
+  { "_rainDensity",			"none",			false, StateDatabase::Locked},
+  { "_rainEndZ",			"none",			false, StateDatabase::Locked},
+  { "_rainMaxPuddleTime",	"none",			false, StateDatabase::Locked},
+  { "_rainPuddleSpeed",		"none",			false, StateDatabase::Locked},
+  { "_rainPuddleColor",		"none",			false, StateDatabase::Locked},
+  { "_rainSpread",			"none",			false, StateDatabase::Locked},
+  { "_rainSpeedMod",		"none",			false, StateDatabase::Locked},
+  { "_rainStartZ",			"none",			false, StateDatabase::Locked},
+  { "_rainType",			"none",			false, StateDatabase::Locked},
   { "_rejoinTime",		"_explodeTime",			false, StateDatabase::Locked},
   { "_reloadTime",		"_shotRange / _shotSpeed",	false, StateDatabase::Locked},
   { "_rFireAdLife",		"1.0 / _rFireAdRate",		false, StateDatabase::Locked},
@@ -91,6 +101,7 @@ const struct GlobalDBItem globalDBItems[] = {
   { "_shotRange",		"350.0",			false, StateDatabase::Locked},
   { "_shotSpeed",		"100.0",			false, StateDatabase::Locked},
   { "_shotsKeepVerticalVelocity",	"0",			false, StateDatabase::Locked},
+  { "_skyDarknessFactor",	"1",			false, StateDatabase::Locked},
   { "_srRadiusMult",		"2.0",				false, StateDatabase::Locked},
   { "_squishFactor",		"1.0",				false, StateDatabase::Locked},
   { "_squishTime",		"1.0",				false, StateDatabase::Locked},
@@ -116,6 +127,9 @@ const struct GlobalDBItem globalDBItems[] = {
   { "_thiefDropTime",		"_reloadTime * 0.5",		false, StateDatabase::Locked},
   { "_tinyFactor",		"0.4",				false, StateDatabase::Locked},
   { "_updateThrottleRate",	"30.0",				false, StateDatabase::Locked},
+  { "_useLineRain",			"none",			false, StateDatabase::Locked},
+  { "_useRainPuddles",		"none",			false, StateDatabase::Locked},
+  { "_useRainBillboards",	"none",			false, StateDatabase::Locked},
   { "_velocityAd",		"1.5",				false, StateDatabase::Locked},
   { "_wallHeight",		"3.0*_tankHeight",		false, StateDatabase::Locked},
   { "_wideAngleAng",		"1.745329",			false, StateDatabase::Locked},
@@ -123,6 +137,7 @@ const struct GlobalDBItem globalDBItems[] = {
   { "_wingsJumpCount",		"1",				false, StateDatabase::Locked},
   { "_wingsJumpVelocity",	"_jumpVelocity",		false, StateDatabase::Locked},
   { "_worldSize",		"800.0",			false, StateDatabase::Locked}
+
 };
 const unsigned int	numGlobalDBItems = countof(globalDBItems);
 

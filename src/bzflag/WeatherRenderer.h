@@ -111,6 +111,8 @@ protected:
 	std::map<int,visibleChunk>	chunkMap;
 
 	void setChunkFromDrop ( visibleChunk &chunk, rain & drop );
+
+	bool dbItemSet ( const char* name );
 };
 
 #endif // BZF_WEATHER_RENDERER_H
