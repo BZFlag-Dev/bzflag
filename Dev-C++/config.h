@@ -73,6 +73,7 @@
 #define HAVE_FABSF 1
 #define HAVE_FLOORF 1
 #define HAVE_FMODF 1
+#define HAVE_HYPOTF 1
 #define HAVE_LOGF 1
 #define HAVE_POWF 1
 #define HAVE_SINF 1
