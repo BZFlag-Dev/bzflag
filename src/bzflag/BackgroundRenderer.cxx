@@ -421,7 +421,7 @@ void			BackgroundRenderer::setCelestial(
 
   if (BZDB.isSet("RAIN_TYPE"))
   {
-	  rainDensity = 1000;
+	  rainDensity = 5000;
 	  
 	  if (BZDB.isSet("RAIN_DENSITY"))
 		  rainDensity = (int)BZDB.eval("RAIN_DENSITY");
@@ -474,6 +474,7 @@ void			BackgroundRenderer::setCelestial(
 				gstate.setTexture(tm.getTextureID("frog"));
 				rainSpeed = 100.0f;
 				rainSpeedMod = 5.0f;
+				rainSize[0] = 2.0f; rainSize[1] = 2.0f;
 				doPuddles = true;
 			}
 			else if (rainType == "bubble")
@@ -1695,6 +1696,7 @@ void WeatherRenderer::set ( void )
 				// ewww
 				puddleColor[0] = 0.75f;
 				puddleColor[1] = puddleColor[2] = 0.0f;
+				rainSize[0] = 2.0; rainSize[1] = 2.0f;
 			}
 			else if (rainType == "bubble")
 			{
