@@ -3,9 +3,15 @@
 		<title>BZFS Configuration Builder</title>
 		<style type="text/css">
 			a { font-size: 110%; text-decoration:none; display: block; color:#0000FF; background-color:#DAE2F6; }
-			a:link { display: block; color:#0000FF; background-color:#9FB5E0; }
-			a:visit { display: block; color:#0000FF; background-color:#7090D0; }
-			a:hover { display: block; color:#000000; background-color: #BED0EA; }
+			a:link.selected { display: block; color:#000000; background-color:#BED0EA; }
+			a:visit.selected { display: block; color:#000000; background-color:#BED0EA; }
+			a:hover.selected { display: block; color:#000000; background-color: #BED0EA; }
+			a:link.unselected { display: block; color:#0000FF; background-color:#9FB5E0; }
+			a:visit.unselected { display: block; color:#0000FF; background-color:#7090D0; }
+			a:hover.unselected { display: block; color:#000000; background-color: #BED0EA; }
+			a:link.build { display: block; color:#0000FF; background-color:#9FB5E0; }
+			a:visit.build { display: block; color:#0000FF; background-color:#7090D0; }
+			a:hover.build { display: block; color:#000000; background-color: #BED0EA; }
 			legend { font-size: 110%; line-height: 1.5; }			
 		</style>
 		<script language="JavaScript">
@@ -457,8 +463,12 @@
 				var el;
 				el = document.getElementById( seldiv );
 				el.style.display = "none";
+				el = document.getElementById( seldiv + "_ctl" );
+				el.className = "unselected";
 				el = document.getElementById( newdiv );
 				el.style.display = "block";
+				el = document.getElementById( newdiv + "_ctl" );
+				el.className = "selected";
 				seldiv = newdiv;
 				return;
 			}
@@ -471,12 +481,12 @@
 			<div id="controls" style="visibility: visible;">
 				<table width="100%" align="center">
 					<tr>
-						<td align="center" width="16%"><a href='javascript:changeDiv("server")'>Server</a></td>
-						<td align="center" width="16%"><a href='javascript:changeDiv("administration")'>Administration</a></td>
-						<td align="center" width="16%"><a href='javascript:changeDiv("world")'>World</a></td>
-						<td align="center" width="16%"><a href='javascript:changeDiv("tank")'>Tank</a></td>
-						<td align="center" width="16%"><a href='javascript:changeDiv("flag")'>Flags</a></td>
-						<td align="center" width="16%"><a href='javascript:buildConfig()'>Build Configuration</a></td>
+						<td align="center" width="16%"><a class="selected" id="server_ctl" href='javascript:changeDiv("server")'>Server</a></td>
+						<td align="center" width="16%"><a class="unselected" id="administration_ctl" href='javascript:changeDiv("administration")'>Administration</a></td>
+						<td align="center" width="16%"><a class="unselected" id="world_ctl" href='javascript:changeDiv("world")'>World</a></td>
+						<td align="center" width="16%"><a class="unselected" id="tank_ctl" href='javascript:changeDiv("tank")'>Tank</a></td>
+						<td align="center" width="16%"><a class="unselected" id="flag_ctl" href='javascript:changeDiv("flag")'>Flags</a></td>
+						<td align="center" width="16%"><a class="build" href='javascript:buildConfig()'>Build Configuration</a></td>
 					</tr>
 				</table>
 				<hr/>
