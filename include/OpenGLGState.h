@@ -175,12 +175,6 @@ class OpenGLGStateBuilder {
 };
 
 
-inline void		initContextCB(void *)
-{
-  return OpenGLGState::initContext();
-}
-
-
 #endif // BZF_OPENGL_GSTATE_H
 
 // Local Variables: ***
