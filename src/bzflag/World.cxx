@@ -907,11 +907,11 @@ void			WorldBuilder::setBase(TeamColor team,
 
 void			WorldBuilder::growTargetList(int newMinSize)
 {
-  if (newMinSize <= targetArraySize) return;
+  if (newMinSize < targetArraySize) return;
 
   // get new size at lease as big as newMinSize
   int newSize = targetArraySize;
-  while (newSize < newMinSize) newSize += TeleportArrayGranularity;
+  while (newSize <= newMinSize) newSize += TeleportArrayGranularity;
 
   // copy targets into a larger buffer
   int* newTargets = new int[2 * newSize];
