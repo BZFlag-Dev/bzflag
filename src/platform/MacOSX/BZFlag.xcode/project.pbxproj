@@ -120,6 +120,267 @@
 			settings = {
 			};
 		};
+		14AEE77C05E149A200964215 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			name = EmptySceneNodeGenerator.cxx;
+			path = ../../obstacle/EmptySceneNodeGenerator.cxx;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		14AEE77D05E149A200964215 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = EmptySceneNodeGenerator.h;
+			path = ../../obstacle/EmptySceneNodeGenerator.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		14AEE77E05E149A200964215 = {
+			fileRef = 14AEE77C05E149A200964215;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		14AEE77F05E149A200964215 = {
+			fileRef = 14AEE77D05E149A200964215;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		14AEE78205E149E800964215 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			name = BaseSceneNodeGenerator.cxx;
+			path = ../../obstacle/BaseSceneNodeGenerator.cxx;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		14AEE78305E149E800964215 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = BaseSceneNodeGenerator.h;
+			path = ../../obstacle/BaseSceneNodeGenerator.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		14AEE78405E149E800964215 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			name = BoxSceneNodeGenerator.cxx;
+			path = ../../obstacle/BoxSceneNodeGenerator.cxx;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		14AEE78505E149E800964215 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = BoxSceneNodeGenerator.h;
+			path = ../../obstacle/BoxSceneNodeGenerator.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		14AEE78605E149E800964215 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			name = ObstacleSceneNodeGenerator.cxx;
+			path = ../../obstacle/ObstacleSceneNodeGenerator.cxx;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		14AEE78705E149E800964215 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			name = PyramidSceneNodeGenerator.cxx;
+			path = ../../obstacle/PyramidSceneNodeGenerator.cxx;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		14AEE78805E149E800964215 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = PyramidSceneNodeGenerator.h;
+			path = ../../obstacle/PyramidSceneNodeGenerator.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		14AEE78905E149E800964215 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			name = TeleporterSceneNodeGenerator.cxx;
+			path = ../../obstacle/TeleporterSceneNodeGenerator.cxx;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		14AEE78A05E149E800964215 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = TeleporterSceneNodeGenerator.h;
+			path = ../../obstacle/TeleporterSceneNodeGenerator.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		14AEE78B05E149E800964215 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			name = WallSceneNodeGenerator.cxx;
+			path = ../../obstacle/WallSceneNodeGenerator.cxx;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		14AEE78C05E149E800964215 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = WallSceneNodeGenerator.h;
+			path = ../../obstacle/WallSceneNodeGenerator.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		14AEE78D05E149E800964215 = {
+			fileRef = 14AEE78205E149E800964215;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		14AEE78E05E149E800964215 = {
+			fileRef = 14AEE78305E149E800964215;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		14AEE78F05E149E800964215 = {
+			fileRef = 14AEE78405E149E800964215;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		14AEE79005E149E800964215 = {
+			fileRef = 14AEE78505E149E800964215;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		14AEE79105E149E800964215 = {
+			fileRef = 14AEE78605E149E800964215;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		14AEE79205E149E800964215 = {
+			fileRef = 14AEE78705E149E800964215;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		14AEE79305E149E800964215 = {
+			fileRef = 14AEE78805E149E800964215;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		14AEE79405E149E800964215 = {
+			fileRef = 14AEE78905E149E800964215;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		14AEE79505E149E800964215 = {
+			fileRef = 14AEE78A05E149E800964215;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		14AEE79605E149E800964215 = {
+			fileRef = 14AEE78B05E149E800964215;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		14AEE79705E149E800964215 = {
+			fileRef = 14AEE78C05E149E800964215;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		14AEE79A05E14BD200964215 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			name = FlashClock.cxx;
+			path = ../../bzflag/FlashClock.cxx;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		14AEE79B05E14BD200964215 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = FlashClock.h;
+			path = ../../bzflag/FlashClock.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		14AEE79C05E14BD200964215 = {
+			fileRef = 14AEE79A05E14BD200964215;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		14AEE79D05E14BD200964215 = {
+			fileRef = 14AEE79B05E14BD200964215;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		14AEE79E05E14C1300964215 = {
+			fileRef = 7BBD620605D9C7F60063FD3C;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		14AEE7A105E14C4F00964215 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			name = WorldBuilder.cxx;
+			path = ../../bzflag/WorldBuilder.cxx;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		14AEE7A205E14C4F00964215 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = WorldBuilder.h;
+			path = ../../bzflag/WorldBuilder.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		14AEE7A305E14C4F00964215 = {
+			fileRef = 14AEE7A105E14C4F00964215;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		14AEE7A405E14C4F00964215 = {
+			fileRef = 14AEE7A205E14C4F00964215;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
 //140
 //141
 //142
@@ -3107,6 +3368,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				14AEE77305E134BF00964215,
+				14AEE77F05E149A200964215,
+				14AEE78E05E149E800964215,
+				14AEE79005E149E800964215,
+				14AEE79305E149E800964215,
+				14AEE79505E149E800964215,
+				14AEE79705E149E800964215,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -3121,6 +3388,13 @@
 				7B77499705C5BD0D0018EA21,
 				7B77499805C5BD0D0018EA21,
 				7B77499905C5BD0D0018EA21,
+				14AEE77E05E149A200964215,
+				14AEE78D05E149E800964215,
+				14AEE78F05E149E800964215,
+				14AEE79105E149E800964215,
+				14AEE79205E149E800964215,
+				14AEE79405E149E800964215,
+				14AEE79605E149E800964215,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -3164,11 +3438,24 @@
 			children = (
 				7B77498C05C5BD0D0018EA21,
 				7B77498D05C5BD0D0018EA21,
+				14AEE78205E149E800964215,
+				14AEE78305E149E800964215,
+				14AEE78405E149E800964215,
+				14AEE78505E149E800964215,
+				14AEE77C05E149A200964215,
+				14AEE77D05E149A200964215,
 				7B77498E05C5BD0D0018EA21,
 				7B77498F05C5BD0D0018EA21,
+				14AEE78605E149E800964215,
 				7B77499005C5BD0D0018EA21,
+				14AEE78705E149E800964215,
+				14AEE78805E149E800964215,
 				7B77499105C5BD0D0018EA21,
+				14AEE78905E149E800964215,
+				14AEE78A05E149E800964215,
 				7B77499205C5BD0D0018EA21,
+				14AEE78B05E149E800964215,
+				14AEE78C05E149E800964215,
 			);
 			isa = PBXGroup;
 			name = obstacle;
@@ -4658,6 +4945,8 @@
 				7B774A5D05C5C0220018EA21,
 				7B774A5E05C5C0220018EA21,
 				7B774A5F05C5C0220018EA21,
+				14AEE79A05E14BD200964215,
+				14AEE79B05E14BD200964215,
 				7BBA6D5D05D9D349008D1AA8,
 				7BBA6D5E05D9D349008D1AA8,
 				7BBA6D5F05D9D349008D1AA8,
@@ -4750,6 +5039,8 @@
 				7B774A8805C5C0220018EA21,
 				7B774A8905C5C0220018EA21,
 				7B774A8A05C5C0220018EA21,
+				14AEE7A105E14C4F00964215,
+				14AEE7A205E14C4F00964215,
 				7B774A8B05C5C0220018EA21,
 				7B774A8C05C5C0220018EA21,
 			);
@@ -5303,6 +5594,8 @@
 				7BBA6DD205D9D5C7008D1AA8,
 				7BBA6DD405D9D5C7008D1AA8,
 				14AEE76805E1306100964215,
+				14AEE79D05E14BD200964215,
+				14AEE7A405E14C4F00964215,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -5368,6 +5661,8 @@
 				7BBA6DD105D9D5C7008D1AA8,
 				7BBA6DD305D9D5C7008D1AA8,
 				14AEE76705E1306100964215,
+				14AEE79C05E14BD200964215,
+				14AEE7A305E14C4F00964215,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -5391,6 +5686,7 @@
 				7B774B3905C5C4ED0018EA21,
 				7B774B1705C5C3F40018EA21,
 				7B774B3305C5C4AD0018EA21,
+				14AEE79E05E14C1300964215,
 				7B774B1D05C5C4210018EA21,
 				7B774F7D05C5C91E0018EA21,
 				7BAD11EB05C5F59E00A62E43,
