@@ -193,6 +193,29 @@ static std::string		cmdAdd(const std::string&,
 	return std::string();
 }
 
+static std::string		cmdMult(const std::string&,
+								const CommandManager::ArgList& args)
+{
+	if (args.size() != 2)
+		return "usage: mult <name> <value>";
+
+	// get value
+	double value;
+	if (sscanf(BZDB->get(args[0]).c_str(), "%lf", &value) != 1)
+		value = 0.0;
+
+	// add argument
+	double amount;
+	if (sscanf(args[1].c_str(), "%lf", &amount) != 1)
+		amount = 1.0;
+	value *= amount;
+
+	// set new value
+	BZDB->set(args[0], string_util::format("%f", value), StateDatabase::User);
+
+	return std::string();
+}
+
 static void				onBindCB(const std::string& name, bool press,
 								const std::string& cmd, void* userData)
 {
@@ -342,6 +365,7 @@ static const CommandListItem commandList[] = {
 	{ "unset",	&cmdUnset,	"unset <name>:  unset a variable" },
 	{ "toggle",	&cmdToggle,	"toggle <name>:  toggle truth value of a variable" },
 	{ "add",	&cmdAdd,	"add <name> <value>:  add an amount to a variable" },
+	{ "mult",	&cmdMult,	"add <name> <value>:  add an amount to a variable" },
 	{ "bind",	&cmdBind,	"bind [<button-name> {up|down} <command> <args>...]:  bind a key/button to a command or print all bindings" },
 	{ "unbind",	&cmdUnbind,	"unbind <button-name> {up|down}:  unbind a key/button from a command" },
 	{ "menu",	&cmdMenu,	"menu {push <name>|pop}:  push a menu onto the menu stack or pop the top menu" },
