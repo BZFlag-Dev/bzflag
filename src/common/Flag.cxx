@@ -153,8 +153,17 @@ void*			Flag::unpack(void* buf)
 FlagDesc* Flag::getDescFromAbbreviation(const char* abbreviation)
 {
   std::map<std::string, FlagDesc*>::iterator i;
-  i = FlagDesc::flagMap.find(abbreviation);
+  std::string abbvString;
+
+  /* Uppercase the abbreviation */
+  while (*abbreviation) {
+    abbvString += toupper(*abbreviation);
+    abbreviation++;
+  }
+
+  i = FlagDesc::flagMap.find(abbvString);
   if (i == FlagDesc::flagMap.end())
+    /* Not found, return the Null flag */
     return Flags::Null;
   else
     return i->second;
