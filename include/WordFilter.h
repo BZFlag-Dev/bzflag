@@ -47,7 +47,7 @@
 #include "common.h"
 
 
-/** utility method returns truthfully whether 
+/** utility function returns truthfully whether 
  * given character is an alphanumeric
  */
 inline bool isAlphanumeric(const char c)
@@ -59,6 +59,20 @@ inline bool isAlphanumeric(const char c)
   }
   return false;
 }
+
+/** utility function returns truthfully whether
+ * given character is printable (including white
+ * space).
+ */
+inline bool isPrintable(const char c)
+{
+  /* 9 is tab, 10 is newline, 32 is space */
+  if (((c < 32) && (c != 9) && (c != 10)) || ((unsigned char)c == 127)) {
+    return false;
+  }
+  return true;
+}
+
 
 #if defined (UINT8_MAX)
 static const unsigned short int MAX_FILTERS = UINT8_MAX;
@@ -209,10 +223,7 @@ class WordFilter
 
     int i = 0;
     /* range of printable characters, with failsafe */
-    while (((input[i] < 33) || \
-	    (input[i] == 127) || \
-	    ((unsigned char)input[i] == 255)) \
-	   && (i < MAX_FILTERS)) {
+    while (!isPrintable(input[i]) && (i < MAX_FILTERS)) {
       i++;
     }
     return i;
@@ -229,10 +240,7 @@ class WordFilter
 
     int i = 0;
     /* range of non-printable characters, with failsafe */
-    while (((input[i] > 32) && \
-	    ((unsigned char)input[i] < 255) && \
-	    (input[i] != 127))		       \
-	   && (i < MAX_FILTERS)) {
+    while (isPrintable(input[i]) && (i < MAX_FILTERS)) {
       i++;
     }
     return i;
