@@ -1967,13 +1967,13 @@ static void		handleServerMessage(boolean human, uint16_t code,
         else {
           // team message
           if (int(team) != int(RogueTeam)) {
-  #ifdef BWSUPPORT
+#ifdef BWSUPPORT
             fullMsg = "[to ";
             fullMsg += Team::getName(TeamColor(team));
             fullMsg += "] ";
-  #else
+#else
             fullMsg = "[Team] ";
-  #endif
+#endif
           }
           fullMsg += srcName;
           fullMsg += ": ";
