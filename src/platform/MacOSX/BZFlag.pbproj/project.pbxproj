@@ -926,10 +926,9 @@
 				FRAMEWORK_VERSION = A;
 				INSTALL_PATH = "@executable_path/../Frameworks";
 				OTHER_CFLAGS = "";
-				OTHER_LDFLAGS = "";
+				OTHER_LDFLAGS = "-seg1addr 0x30000000";
 				OTHER_LIBTOOL_FLAGS = "";
 				OTHER_REZFLAGS = "";
-				PREBINDING = NO;
 				PRINCIPAL_CLASS = "";
 				PRODUCT_NAME = libMediaFile;
 				SECTORDER_FLAGS = "";
@@ -1294,6 +1293,18 @@
 			isa = PBXTargetDependency;
 			target = 4E030DD8048EB3820009E055;
 		};
+		146B71FB04E6BA2300A80164 = {
+			fileRef = 4E030E13048ED2DB0009E055;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		146B720204E7458D00A80164 = {
+			fileRef = 4E030C37048E70E70009E055;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
 		14953626049CCA4100A80164 = {
 			buildPhases = (
 				14953628049CCA5C00A80164,
@@ -1657,7 +1668,7 @@
 				FRAMEWORK_VERSION = A;
 				INSTALL_PATH = "@executable_path/../Frameworks";
 				OTHER_CFLAGS = "";
-				OTHER_LDFLAGS = "";
+				OTHER_LDFLAGS = "-seg1addr 0x10000000";
 				OTHER_LIBTOOL_FLAGS = "";
 				OTHER_REZFLAGS = "";
 				PRINCIPAL_CLASS = "";
@@ -2235,7 +2246,6 @@
 				INSTALL_PATH = "$(HOME)/Applications";
 				LIBRARY_SEARCH_PATHS = "";
 				OTHER_CFLAGS = "";
-				OTHER_LDFLAGS = "";
 				PREBINDING = NO;
 				PRECOMPILE_PREFIX_HEADER = YES;
 				PREFIX_HEADER = BZFlag_Prefix.h;
@@ -2398,12 +2408,10 @@
 				4E030E6A048EDC480009E055,
 				4E030E6B048EDC4B0009E055,
 				4E030E6C048EDC520009E055,
-				4E030E6D048EDC530009E055,
 				4E030E6E048EDC550009E055,
 				4E030E6F048EDC570009E055,
 				4E030E70048EDC580009E055,
 				4E030E71048EDC590009E055,
-				4E030E72048EDC5B0009E055,
 				4E030E74048EDC5E0009E055,
 				4E030E75048EDC640009E055,
 				4E030E76048EDC660009E055,
@@ -2471,7 +2479,7 @@
 			);
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
-				OPTIMIZATION_CFLAGS = "-O0";
+				OPTIMIZATION_CFLAGS = "-O0 -g";
 			};
 			isa = PBXBuildStyle;
 			name = Development;
@@ -4494,8 +4502,6 @@
 				4E030C2A048E70E70009E055,
 				4E030C2B048E70E70009E055,
 				4E030C2C048E70E70009E055,
-				4E030C2D048E70E70009E055,
-				4E030C2E048E70E70009E055,
 				4E030C2F048E70E70009E055,
 				4E030C30048E70E70009E055,
 				4E030C31048E70E70009E055,
@@ -4504,7 +4510,6 @@
 				4E030C34048E70E70009E055,
 				4E030C35048E70E70009E055,
 				4E030C36048E70E70009E055,
-				4E030C37048E70E70009E055,
 				4E030C3A048E70E70009E055,
 				4E030C3B048E70E70009E055,
 				4E030C3C048E70E70009E055,
@@ -4676,18 +4681,6 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = Player.h;
-			refType = 4;
-		};
-		4E030C2D048E70E70009E055 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = PlayerLink.cxx;
-			refType = 4;
-		};
-		4E030C2E048E70E70009E055 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = PlayerLink.h;
 			refType = 4;
 		};
 		4E030C2F048E70E70009E055 = {
@@ -5490,6 +5483,7 @@
 				4E030CB2048E70E70009E055,
 				4E030CB3048E70E70009E055,
 				4E030CB4048E70E80009E055,
+				4E030C37048E70E70009E055,
 			);
 			isa = PBXGroup;
 			path = ogl;
@@ -6380,7 +6374,7 @@
 				HEADER_SEARCH_PATHS = ../../../include;
 				INSTALL_PATH = "@executable_path/../Frameworks";
 				OTHER_CFLAGS = "";
-				OTHER_LDFLAGS = "";
+				OTHER_LDFLAGS = "-seg1addr 0x20000000";
 				OTHER_LIBTOOL_FLAGS = "";
 				OTHER_REZFLAGS = "";
 				PREFIX_HEADER = BZFlag_Prefix.h;
@@ -6458,6 +6452,7 @@
 				4E030E38048ED84D0009E055,
 				4E030E39048ED84D0009E055,
 				4E030E3A048ED84E0009E055,
+				146B720204E7458D00A80164,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -6465,6 +6460,7 @@
 		4E030D4C048E83B70009E055 = {
 			buildActionMask = 2147483647;
 			files = (
+				146B71FB04E6BA2300A80164,
 			);
 			isa = PBXFrameworksBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -6490,10 +6486,9 @@
 				FRAMEWORK_VERSION = A;
 				INSTALL_PATH = "@executable_path/../Frameworks";
 				OTHER_CFLAGS = "";
-				OTHER_LDFLAGS = "-undefined suppress -flat_namespace";
+				OTHER_LDFLAGS = "-seg1addr 0x60000000";
 				OTHER_LIBTOOL_FLAGS = "";
 				OTHER_REZFLAGS = "";
-				PREBINDING = NO;
 				PRINCIPAL_CLASS = "";
 				PRODUCT_NAME = libGLKit;
 				SECTORDER_FLAGS = "";
@@ -6642,10 +6637,9 @@
 				DYLIB_CURRENT_VERSION = 1;
 				FRAMEWORK_VERSION = A;
 				INSTALL_PATH = "@executable_path/../Frameworks";
-				OTHER_LDFLAGS = "-undefined suppress -flat_namespace";
+				OTHER_LDFLAGS = "-undefined suppress -flat_namespace -seg1addr 0x40000000";
 				OTHER_LIBTOOL_FLAGS = "";
 				OTHER_REZFLAGS = "";
-				PREBINDING = NO;
 				PRINCIPAL_CLASS = "";
 				PRODUCT_NAME = libGeometry;
 				SECTORDER_FLAGS = "";
@@ -6753,10 +6747,9 @@
 				FRAMEWORK_VERSION = A;
 				INSTALL_PATH = "@executable_path/../Frameworks";
 				OTHER_CFLAGS = "";
-				OTHER_LDFLAGS = "-undefined suppress -flat_namespace";
+				OTHER_LDFLAGS = "-undefined suppress -flat_namespace -seg1addr 0x50000000";
 				OTHER_LIBTOOL_FLAGS = "";
 				OTHER_REZFLAGS = "";
-				PREBINDING = NO;
 				PRINCIPAL_CLASS = "";
 				PRODUCT_NAME = libObstacle;
 				SECTORDER_FLAGS = "";
@@ -6874,10 +6867,9 @@
 				FRAMEWORK_VERSION = A;
 				INSTALL_PATH = "@executable_path/../Frameworks";
 				OTHER_CFLAGS = "";
-				OTHER_LDFLAGS = "";
+				OTHER_LDFLAGS = "-seg1addr 0x80000000";
 				OTHER_LIBTOOL_FLAGS = "";
 				OTHER_REZFLAGS = "";
-				PREBINDING = NO;
 				PRINCIPAL_CLASS = "";
 				PRODUCT_NAME = libPlatform;
 				SECTORDER_FLAGS = "";
@@ -6982,7 +6974,7 @@
 				FRAMEWORK_VERSION = A;
 				INSTALL_PATH = "@executable_path/../Frameworks";
 				OTHER_CFLAGS = "";
-				OTHER_LDFLAGS = "-undefined suppress -flat_namespace";
+				OTHER_LDFLAGS = "-undefined suppress -flat_namespace -seg1addr 0x70000000";
 				OTHER_LIBTOOL_FLAGS = "";
 				OTHER_REZFLAGS = "";
 				PREBINDING = NO;
@@ -8180,12 +8172,6 @@
 			settings = {
 			};
 		};
-		4E030E6D048EDC530009E055 = {
-			fileRef = 4E030C2D048E70E70009E055;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
 		4E030E6E048EDC550009E055 = {
 			fileRef = 4E030C2F048E70E70009E055;
 			isa = PBXBuildFile;
@@ -8206,12 +8192,6 @@
 		};
 		4E030E71048EDC590009E055 = {
 			fileRef = 4E030C35048E70E70009E055;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		4E030E72048EDC5B0009E055 = {
-			fileRef = 4E030C37048E70E70009E055;
 			isa = PBXBuildFile;
 			settings = {
 			};
