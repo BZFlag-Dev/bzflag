@@ -3504,11 +3504,7 @@ static void		addRobots()
 
   for (int j = 0; j < numRobots;) {
 
-#if !defined(_WIN32)
     snprintf(callsign, CallSignLen, "%s%2.2d", myTank->getCallSign(), j);
-#else
-    sprintf(callsign, "%s%2.2d", myTank->getCallSign(), j);
-#endif
 
     robots[j] = new RobotPlayer(robotServer[j]->getId(), callsign, robotServer[j], myTank->getEmailAddress());
     robots[j]->setTeam(AutomaticTeam);
@@ -3595,14 +3591,10 @@ static void cleanWorldCache()
 {
   char buffer[10];
   int cacheLimit = 100L * 1024L;
-  if (BZDB.isSet("worldCacheLimit"))
+  if (BZDB.isSet("worldCacheLimit")) {
     cacheLimit = atoi(BZDB.get("worldCacheLimit").c_str());
-  else {
-#ifndef _WIN32
+  } else {
     snprintf(buffer, 10, "%d", cacheLimit);
-#else
-    sprintf(buffer, "%d", cacheLimit);
-#endif
     BZDB.set("worldCacheLimit", buffer);
   }
 
