@@ -3974,6 +3974,9 @@ static void shotFired(int playerIndex, void *buf, int len)
   else if (firingInfo.flag == Flags::Thief) {
       tankSpeed *= ThiefVelAd;
   }
+  else if ((firingInfo.flag == Flags::Burrow) && (firingInfo.shot.pos[2] < MuzzleHeight)) {
+      tankSpeed *= BurrowVelAd;
+  }
   else {
       //If shot is different height than player, can't be sure they didn't drop V in air
       if (shooter.lastState.pos[2] != (shot.pos[2]-MuzzleHeight))
@@ -5097,8 +5100,9 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
       else if ( (state.pos[0] >= WorldSize*0.5f + fudge) || (state.pos[0] <= -WorldSize*0.5f - fudge))
 	InBounds = false;
 
-	  if (state.pos[2]<0)
+      if (state.pos[2]<BurrowDepth)
 	InBounds = false;
+
 
       // kick em cus they are cheating
       if (!InBounds)

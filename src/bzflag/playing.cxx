@@ -4128,7 +4128,7 @@ static void		checkEnvironment()
     const float myRadius = myTank->getRadius();
     for (i = 0; i < curMaxPlayers; i++)
       if (player[i] &&
-	  player[i]->getFlag() == Flags::Steamroller &&
+	 ((player[i]->getFlag() == Flags::Steamroller) || (myTank->getFlag() == Flags::Burrow)) &&
 	  !player[i]->isPaused()) {
 	const float* pos = player[i]->getPosition();
 	if (!(flagd == Flags::PhantomZone && myTank->isFlagActive())) {
@@ -4514,11 +4514,11 @@ static void		checkEnvironment(RobotPlayer* tank)
   }
 
   // if not dead yet, see if i got run over by the steamroller
-  else if (tank->getPosition()[2] == 0.0) {
+  else {
     bool dead = false;
     const float* myPos = tank->getPosition();
     const float myRadius = tank->getRadius();
-    if (myTank->getFlag() == Flags::Steamroller && !myTank->isPaused()) {
+    if (((myTank->getFlag() == Flags::Steamroller) || (tank->getFlag() == Flags::Burrow)) && !myTank->isPaused()) {
       const float* pos = myTank->getPosition();
       const float radius = myRadius + SRRadiusMult * myTank->getRadius();
       if (hypot(hypot(myPos[0] - pos[0], myPos[1] - pos[1]), myPos[2] - pos[2]) < radius) {
@@ -4528,7 +4528,7 @@ static void		checkEnvironment(RobotPlayer* tank)
     }
     for (i = 0; !dead && i < curMaxPlayers; i++)
       if (player[i] &&
-	  player[i]->getFlag() == Flags::Steamroller &&
+	  ((player[i]->getFlag() == Flags::Steamroller) || (myTank->getFlag() == Flags::Burrow)) &&
 	  !player[i]->isPaused()) {
 	  const float* pos = player[i]->getPosition();
 	  const float radius = myRadius + SRRadiusMult * player[i]->getRadius();

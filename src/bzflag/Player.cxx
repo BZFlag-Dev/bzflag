@@ -282,6 +282,13 @@ void			Player::addPlayer(SceneDatabase* scene,
 	tankNode->setClipPlane(plane);
       }
     }
+    else if ((getFlag() == Flags::Burrow) && (getPosition()[2] < 0.0f)) {
+      GLfloat plane[4];
+      plane[0] = plane[1] = 0.0f;
+      plane[2] = 1.0f;
+      plane[3] = -0.1f;
+      tankNode->setClipPlane(plane);
+    }
     else {
       tankNode->setClipPlane(NULL);
     }
@@ -494,8 +501,12 @@ void			Player::doDeadReckoning()
 
   // if hit ground then update input state (since we don't want to fall
   // anymore)
-  if (predictedPos[2] < 0.0f) {
-    predictedPos[2] = 0.0f;
+  float groundLimit = 0.0f;
+  if (getFlag() == Flags::Burrow)
+    groundLimit = BurrowDepth;
+
+  if (predictedPos[2] < groundLimit) {
+    predictedPos[2] = groundLimit;
     predictedVel[2] = 0.0f;
     inputStatus &= ~PlayerState::Falling;
     inputZSpeed = 0.0f;

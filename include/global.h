@@ -165,6 +165,9 @@ const float		ThiefVelAd =    1.67f;          // 66% faster
 const float		ThiefTinyFactor=0.5f;		// 50% smaller
 const float		ThiefAdShotVel =1000.0f;	//1000x faster shots
 const float		ThiefAdRate =   10.0f;		//10x faster reload
+const float		BurrowDepth =   0.2f-MuzzleHeight; 
+const float		BurrowVelAd =   0.66f;
+const float		BurrowAngAd = 0.5f;
 
 
 // map object flags

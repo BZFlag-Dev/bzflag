@@ -85,6 +85,8 @@ namespace Flags {
 						    "SEer (+SE):  See stealthed, cloaked and masquerading tanks as normal.");
   FlagDesc *Thief                   = new FlagDesc( "Thief", "TH", FlagUnstable, SpecialShot, FlagGood, NoTeam,
 						    "THief (+TH):  Steal flags.  Small and fast but can't kill.");
+  FlagDesc *Burrow                  = new FlagDesc( "Burrow", "BU", FlagUnstable, NormalShot, FlagGood, NoTeam,
+						    "Burrow (+BU):  Tank burrows underground, impervious to normal shots, but can be steamrolled by anyone!");
   FlagDesc *Colorblindness          = new FlagDesc( "Colorblindness", "CB", FlagSticky, NormalShot, FlagBad, NoTeam,
 						    "ColorBlindness (-CB):  Can't tell team colors.  Don't shoot teammates!");
   FlagDesc *Obesity                 = new FlagDesc( "Obesity", "O", FlagSticky, NormalShot, FlagBad, NoTeam,

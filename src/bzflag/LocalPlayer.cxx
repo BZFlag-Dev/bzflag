@@ -242,6 +242,10 @@ void			LocalPlayer::doUpdateMotion(float dt)
 			(getFlag() == Flags::OscillationOverthruster) ||
 			(getFlag() == Flags::PhantomZone && isFlagActive()));
 
+  float groundLimit = 0.0f;
+  if (getFlag() == Flags::Burrow)
+    groundLimit = BurrowDepth;
+
   // get linear and angular speed at start of time step
   if (dt != 0.0f) {
     if (location == Dead || isPaused()) {
@@ -275,11 +279,12 @@ void			LocalPlayer::doUpdateMotion(float dt)
 
       // compute velocity so far
       if (location == OnGround || location == OnBuilding ||
-	  (location == InBuilding && oldPosition[2] == 0.0f)) {
+	  (location == InBuilding && oldPosition[2] == groundLimit)) {
 	newVelocity[0] = speed * cosf(oldAzimuth + 0.5f * dt * newAngVel);
 	newVelocity[1] = speed * sinf(oldAzimuth + 0.5f * dt * newAngVel);
 	newVelocity[2] = 0.0f;
-	if (oldPosition[2] != 0.0f)
+
+	if (oldPosition[2] > groundLimit)
 	  newVelocity[2] += Gravity * dt;
       }
       else {
@@ -324,7 +329,7 @@ void			LocalPlayer::doUpdateMotion(float dt)
     newPos[0] = tmpPos[0] + timeStep * newVelocity[0];
     newPos[1] = tmpPos[1] + timeStep * newVelocity[1];
     newPos[2] = tmpPos[2] + timeStep * newVelocity[2];
-    if (newPos[2] < 0.0f) newPos[2] = 0.0f;
+    if (newPos[2] < groundLimit) newPos[2] = groundLimit;
 
     // see if we hit anything.  if not then we're done.
     obstacle = getHitBuilding(newPos, newAzimuth, phased, expelled);
@@ -347,7 +352,7 @@ void			LocalPlayer::doUpdateMotion(float dt)
       newPos[0] = tmpPos[0] + t * newVelocity[0];
       newPos[1] = tmpPos[1] + t * newVelocity[1];
       newPos[2] = tmpPos[2] + t * newVelocity[2];
-      if (newPos[2] < 0.0f) newPos[2] = 0.0f;
+      if (newPos[2] < groundLimit) newPos[2] = groundLimit;
 
       // see if we hit anything
       bool searchExpelled;
@@ -373,7 +378,7 @@ void			LocalPlayer::doUpdateMotion(float dt)
     newPos[0] = tmpPos[0] + searchTime * newVelocity[0];
     newPos[1] = tmpPos[1] + searchTime * newVelocity[1];
     newPos[2] = tmpPos[2] + searchTime * newVelocity[2];
-    if (newPos[2] < 0.0f) newPos[2] = 0.0f;
+    if (newPos[2] < groundLimit) newPos[2] = groundLimit;
 
     // record how much time is left in time step
     timeStep -= searchTime;
@@ -709,6 +714,8 @@ void			LocalPlayer::setDesiredSpeed(float fracOfMaxSpeed)
     fracOfMaxSpeed *= VelocityAd;
   else if (getFlag() == Flags::Thief)
     fracOfMaxSpeed *= ThiefVelAd;
+  else if ((getFlag() == Flags::Burrow) && (getPosition()[2] < 0.0f))
+    fracOfMaxSpeed *= BurrowVelAd;
 
   // set desired speed
   desiredSpeed = fracOfMaxSpeed * TankSpeed;
@@ -729,6 +736,8 @@ void			LocalPlayer::setDesiredAngVel(float fracOfMaxAngVel)
   // boost turn speed for other flags
   if (getFlag() == Flags::QuickTurn)
     fracOfMaxAngVel *= AngularAd;
+  else if ((getFlag() == Flags::Burrow) && (getPosition()[2] < 0.0f))
+    fracOfMaxAngVel *= BurrowAngAd;
 
   // set desired turn speed
   desiredAngVel = fracOfMaxAngVel * TankAngVel;
@@ -843,6 +852,9 @@ void			LocalPlayer::jump()
 {
   // can't jump unless on the ground or a building
   if (location != OnGround && location != OnBuilding)
+    return;
+
+  if (getFlag() == Flags::Burrow)
     return;
 
   // can only jump with a jumping flag or if jumping is allowed for all

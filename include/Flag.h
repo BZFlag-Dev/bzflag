@@ -152,9 +152,9 @@ namespace Flags {
     *OscillationOverthruster, *RapidFire, *MachineGun, *GuidedMissile, *Laser,
     *Ricochet, *SuperBullet, *InvisibleBullet, *Stealth, *Tiny, *Narrow,
     *Shield, *Steamroller, *ShockWave, *PhantomZone, *Genocide, *Jumping,
-    *Identify, *Cloaking, *Useless, *Masquerade, *Seer, *Thief, *Colorblindness,
-    *Obesity, *LeftTurnOnly, *RightTurnOnly, *Momentum, *Blindness, *Jamming,
-    *WideAngle;
+    *Identify, *Cloaking, *Useless, *Masquerade, *Seer, *Thief, *Burrow, 
+    *Colorblindness, *Obesity, *LeftTurnOnly, *RightTurnOnly, *Momentum, *Blindness, 
+    *Jamming, *WideAngle;
 }
 
 #endif // BZF_FLAG_H

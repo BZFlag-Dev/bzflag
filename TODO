@@ -1,6 +1,8 @@
 to do list for bzflag
 ---------------------
 
+* need burrow sound
+
 * convert server to use 5154 as the default port, because IANA rocks!
 
 * remove -noudp option
