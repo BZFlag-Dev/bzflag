@@ -18,11 +18,6 @@ known bugs in bzflag
 * line stipple doesn't (can't) match polygon stipple
    messes up shadow of flag stem
 
-* connection protocol is stupid
-   currently: connect/get hello/reconnect at new port/close 1st
-   should be: connect/get hello
-   can't fix without being incompatible
-
 * can sometimes appear in front of bad guys
 
 * some linux systems get XIO error on startup

@@ -33,17 +33,17 @@ $sockaddr = 'S n a4 x8';
 $server = pack($sockaddr, $AF_INET, $port, $serveraddr);
 
 # connect
-die $! unless socket(S1, $AF_INET, $SOCK_STREAM, $proto);
-die $! unless connect(S1, $server);
+die $! unless socket(S, $AF_INET, $SOCK_STREAM, $proto);
+die $! unless connect(S, $server);
 
 # don't buffer
-select(S1); $| = 1; select(STDOUT);
+select(S); $| = 1; select(STDOUT);
 
 # get hello
-die $! unless sysread(S1, $buffer, 10) == 10;
+die $! unless sysread(S, $buffer, 9) == 9;
 
 # parse reply
-($magic,$major,$minor,$revision,$port) = unpack("a4 a1 a2 a1 n", $buffer);
+($magic,$major,$minor,$revision,$playerid) = unpack("a4 a1 a2 a1 C", $buffer);
 
 # quit if version isn't valid
 die "not a bzflag server" if ($magic ne "BZFS");
@@ -52,16 +52,7 @@ die "incompatible version" if ($major == 1 && $minor < 7);
 die "incompatible version" if ($major == 1 && $minor == 7 && $revision eq "b");
 
 # quit if rejected
-die "rejected by server" if ($port == 0);
-
-# reconnect on new port
-$server = pack($sockaddr, $AF_INET, $port, $serveraddr);
-die $! unless socket(S, $AF_INET, $SOCK_STREAM, $proto);
-die $! unless connect(S, $server);
-select(S); $| = 1; select(STDOUT);
-
-# close first socket
-close(S1);
+die "rejected by server" if ($playerid == 255);
 
 # send game request
 print S pack("n2", 0, 0x7167);

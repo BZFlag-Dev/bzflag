@@ -44,18 +44,11 @@ from the terminal and log to syslog.
 .TP
 \fB\-h\fR
 Print help information and exit.  The help information includes
-the default connect and reconnect ports.
+the default connect port.
 .TP
 \fB\-p \fIport\fR
-Listen for reconnections on \fIport\fR instead of the default.
-The BZFlag protocol is broken in that it requires clients to
-connect to the server, get a port to reconnect to, disconnect,
-and reconnect on the new port (there's no reason for this
-except backward compatibility).  This option overrides the
-default reconnect port number.  Packet filters on the firewall
-must be configured to allow TCP packets to and from this port;
-clients will be initiating the connection.  Use \fB-h\fR to get
-the default reconnection port number.
+Listen for connections on \fIport\fR instead of the default.
+Use \fB-h\fR to get the default port number.
 .TP
 \fB\-r \fIaddress\fR \fImask\fR
 Reject addresses matching \fIaddress\fR and \fImask\fR.  An address

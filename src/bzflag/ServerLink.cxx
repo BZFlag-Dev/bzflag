@@ -95,7 +95,7 @@ ServerLink::ServerLink(const Address& serverAddress, int port, int number) :
 								state(SocketError),		// assume failure
 								fd(-1)					// assume failure
 {
-	int i, err;
+	int i;
 	char cServerVersion[128];
 
 	struct protoent* p;
@@ -163,12 +163,12 @@ ServerLink::ServerLink(const Address& serverAddress, int port, int number) :
 
 #endif // !defined(_WIN32)
 	if (!okay)
-		goto done;
+		return;
 
 	// get server version and verify (last digit in version is ignored)
 	i = recv(query, (char*)version, 8, 0);
 	if (i < 8)
-		goto done;
+		return;
 
 	sprintf(cServerVersion,"Server version: '%8s'",version);
 	printError(cServerVersion);
@@ -177,69 +177,19 @@ ServerLink::ServerLink(const Address& serverAddress, int port, int number) :
 	server_abilities |= CanDoUDP;
 	if (strncmp(version, ServerVersion, 7) != 0) {
 		state = BadVersion;
-		goto done;
+		return;
 	}
 
-	// get reconnect port
-	i = recv(query, (char*)&addr.sin_port, sizeof(addr.sin_port), 0);
-	if (i < (int)sizeof(addr.sin_port))
-		goto done;
-	if (addr.sin_port == htons(0)) {
+	// read local player's id
+	i = recv(query, (char*)&id, sizeof(id), 0);
+	if (i < (int)sizeof(id))
+		return;
+	if (id == 0xff) {
 		state = Rejected;
-		goto done;
+		return;
 	}
 
-/*
-	i = recv(query, (char*)&addr.sin_port, sizeof(addr.sin_port), 0);
-	if (i == (int)sizeof(addr.sin_port)) {
-	} else {
-		state = BadVersion;
-		goto done;
-	}
-*/
-
-	// setup local player's id
-	id = 0;
-
-	// reconnect at new port
-	addr.sin_family = AF_INET;
-	addr.sin_addr = serverAddress;
-	fd = socket(AF_INET, SOCK_STREAM, 0);
-	if (fd < 0)
-		goto done;
-	err = connect(fd, (CNCTType*)&addr, sizeof(addr));
-
-/*
-	int blockTime = 5000;
-	struct timeval timeout;
-	timeout.tv_sec = blockTime / 1000;
-	timeout.tv_usec = blockTime - 1000 * timeout.tv_sec;
-
-	// only check server
-	fd_set read_set;
-	FD_ZERO(&read_set);
-	FD_SET(fd, &read_set);
-	int nfound = select(fd+1, NULL, (fd_set*)&read_set, NULL,
-						(struct timeval*)(blockTime >= 0 ? &timeout : NULL));
-*/
-
-//  printf ("select\n");
-//  printf("waiting...");
-//  wait = 100000000;
-//  while(wait > 0)
-//    wait--;
-//  printf("done\n");
-
-	if (err < 0) {
-		closesocket(fd);
-		fd = -1;
-		goto done;
-	}
-
-/* not necessary on sgi
-	int len = 8192;
-	setsockopt(fd, SOL_SOCKET, SO_RCVBUF, &len, sizeof(len));
-*/
+	fd = query;
 
 	// turn on TCP no delay
 	p = getprotobyname("tcp");
@@ -259,9 +209,6 @@ ServerLink::ServerLink(const Address& serverAddress, int port, int number) :
 		packetStream = fopen(getenv("BZFLAGSAVE"), "w");
 		packetStartTime = TimeKeeper::getCurrent();
 	}
-
-done:
-	closesocket(query);
 }
 
 ServerLink::~ServerLink()

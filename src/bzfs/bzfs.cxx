@@ -68,12 +68,6 @@ const int udpBufSize = 128000;
 #include "Ping.h"
 #include "TimeBomb.h"
 
-// DisconnectTimeout is how long to wait for a reconnect before
-// giving up.  this should be pretty short to avoid bad clients
-// from using up our resources, but long enough to allow for
-// even a slow client/connection.
-static const float DisconnectTimeout = 10.0f;
-
 // every ListServerReAddTime server add ourself to the list
 // server again.  this is in case the list server has reset
 // or dropped us for some reason.
@@ -288,9 +282,6 @@ static int wksPort = ServerPort;
 static int wksSocket;
 static bool useGivenPort = false;
 static bool useFallbackPort = false;
-// reconnectSocket should also be on serverAddress
-static int reconnectPort = 0; // default to only new clients
-static int reconnectSocket;
 // udpSocket should also be on serverAddress
 static int udpSocket;
 // listen for pings here
@@ -1969,53 +1960,6 @@ static bool serverStart()
 	}
 	maxFileDescriptor = wksSocket;
 
-	// reconnectPort == 0 if old clients are not supported
-	{
-		if (reconnectPort != 0)
-			addr.sin_port = htons(reconnectPort);
-		else
-			addr.sin_port = 0;
-		reconnectSocket = socket(AF_INET, SOCK_STREAM, 0);
-		if (reconnectSocket == -1) {
-			nerror("couldn't make reconnect socket");
-			return false;
-		}
-#ifdef SO_REUSEADDR
-		// set reuse address
-		opt = optOn;
-		if (setsockopt(reconnectSocket, SOL_SOCKET, SO_REUSEADDR, (SSOType)&opt, sizeof(opt)) < 0) {
-			nerror("serverStart: setsockopt SO_REUSEADDR");
-			closesocket(wksSocket);
-			closesocket(reconnectSocket);
-			return false;
-		}
-#endif
-		if (bind(reconnectSocket, (const struct sockaddr*)&addr, sizeof(addr)) == -1) {
-			nerror("couldn't bind reconnect socket");
-			closesocket(wksSocket);
-			closesocket(reconnectSocket);
-			return false;
-		}
-		if (reconnectPort == 0) {
-			struct sockaddr_in tmp;
-			AddrLen tmpLen = sizeof(tmp);
-			if (getsockname(reconnectSocket, (struct sockaddr*)&tmp, &tmpLen) == -1) {
-				nerror("couldn't make reconnect socket queue");
-				closesocket(wksSocket);
-				closesocket(reconnectSocket);
-				return false;
-			}
-			reconnectPort = ntohs(tmp.sin_port);
-		}
-		if (listen(reconnectSocket, 5) == -1) {
-			nerror("couldn't make reconnect socket queue");
-			closesocket(wksSocket);
-			closesocket(reconnectSocket);
-			return false;
-		}
-		maxFileDescriptor = reconnectSocket;
-	}
-
 	// udp socket
 	if (alsoUDP) {
 		int n;
@@ -2034,7 +1978,6 @@ static bool serverStart()
 		if (n < 0) {
 			nerror("couldn't increase udp send buffer size");
 			closesocket(wksSocket);
-			closesocket(reconnectSocket);
 			closesocket(udpSocket);
 			return false;
 		}
@@ -2047,7 +1990,6 @@ static bool serverStart()
 		if (n < 0) {
 			nerror("couldn't increase udp receive buffer size");
 			closesocket(wksSocket);
-			closesocket(reconnectSocket);
 			closesocket(udpSocket);
 			return false;
 		}
@@ -2055,7 +1997,6 @@ static bool serverStart()
 		if (bind(udpSocket, (struct sockaddr *) &addr, sizeof(addr)) == -1) {
 			nerror("couldn't bind udp listen port");
 			closesocket(wksSocket);
-			closesocket(reconnectSocket);
 			closesocket(udpSocket);
 			return false;
 		}
@@ -2891,78 +2832,31 @@ static void acceptClient()
 	if (fd > maxFileDescriptor)
 		maxFileDescriptor = fd;
 
-	struct sockaddr_in serverAddr;
-	serverAddr.sin_port = htons(reconnectPort);
+	// send server version and playerid
+	char buffer[9];
+	memcpy(buffer, ServerVersion, 8);
+	// send 0xff if list is full
+	buffer[8] = 0xff;
 
-	// if don't want another player or couldn't make socket then refuse
-	// connection by returning an obviously bogus port (port zero).
-	int playerIndex;
-	if (gameOver) {
-		for (playerIndex = 0; playerIndex < maxPlayers; playerIndex++)
-			if (player[playerIndex].state >= PlayerInLimbo) {
-				serverAddr.sin_port = htons(0);
-				break;
-			}
-	}
-
+	PlayerId playerIndex;
 	// find open slot in players list
 	for (playerIndex = 0; playerIndex < maxPlayers; playerIndex++)
 		if (player[playerIndex].state == PlayerNoExist)
 			break;
-	if (playerIndex == maxPlayers)
-		serverAddr.sin_port = htons(0);
-
-	// update player state
-	if (serverAddr.sin_port != htons(0)) {
-		player[playerIndex].time = TimeKeeper::getCurrent();
-		player[playerIndex].fd = fd;
-		player[playerIndex].state = PlayerAccept;
-	}
-
-	// send server version and which port to reconnect to
-	char buffer[8 + sizeof(serverAddr.sin_port)];
-	// char buffer[8 + sizeof(serverAddr.sin_port) + sizeof(clientAddr.sin_addr) + sizeof(clientAddr.sin_port)];
-	memcpy(buffer, ServerVersion, 8);
-	memcpy(buffer + 8, &serverAddr.sin_port, sizeof(serverAddr.sin_port));
-	// FIXME add new client server welcome packet here when client code is ready
-	//memcpy(buffer + 8 + sizeof(serverAddr.sin_port), &clientAddr.sin_addr, sizeof(clientAddr.sin_addr));
-	//memcpy(buffer + 8 + sizeof(serverAddr.sin_port) + sizeof(clientAddr.sin_addr), &clientAddr.sin_port, sizeof(clientAddr.sin_port));
-	send(fd, (const char*)buffer, sizeof(buffer), 0);
-
-	// don't wait for client to reconnect here in case the client
-	// is badly behaved and would cause us to hang on accept().
-	// this also goes even if we're rejecting the connection.
-}
-
-static void addClient(int acceptSocket)
-{
-	int playerIndex;
-	for (playerIndex = 0; playerIndex < maxPlayers; playerIndex++) {
-		// check for clients that are reconnecting
-		if (player[playerIndex].state == PlayerAccept)
-			break;
-	}
-	// close the old connection
-	closesocket(player[playerIndex].fd);
-	// accept game connection
-	AddrLen addr_len = sizeof(player[playerIndex].taddr);
-	player[playerIndex].fd = accept(acceptSocket,
-			(struct sockaddr *)&player[playerIndex].taddr, &addr_len);
-
-	// see if accept worked
-	if (player[playerIndex].fd == NotConnected) {
-		nerror("accepting client connection");
+	if (playerIndex == maxPlayers) {
+		send(fd, (const char*)buffer, sizeof(buffer), 0);
 		return;
 	}
 
-	// turn off packet buffering and set socket non-blocking
-	setNoDelay(player[playerIndex].fd);
-	BzfNetwork::setNonBlocking(player[playerIndex].fd);
+	buffer[8] = (uint8_t)playerIndex;
+	send(fd, (const char*)buffer, sizeof(buffer), 0);
 
-	// now add client
+	// FIXME add new client server welcome packet here when client code is ready
+
+	// update player state
+	player[playerIndex].time = TimeKeeper::getCurrent();
+	player[playerIndex].fd = fd;
 	player[playerIndex].state = PlayerInLimbo;
-	if (player[playerIndex].fd > maxFileDescriptor)
-		maxFileDescriptor = player[playerIndex].fd;
 	player[playerIndex].peer = Address(player[playerIndex].taddr);
 	player[playerIndex].multicastRelay = false;
 	player[playerIndex].tcplen = 0;
@@ -2989,14 +2883,6 @@ static void addClient(int acceptSocket)
 #endif
 		}
 	}
-}
-
-static void shutdownAcceptClient(int playerIndex)
-{
-	// close socket that client initially contacted us on
-	closesocket(player[playerIndex].fd);
-	player[playerIndex].fd = NotConnected;
-	player[playerIndex].state = PlayerNoExist;
 }
 
 static void respondToPing(bool broadcast = false)
@@ -4330,7 +4216,6 @@ static const char *usageString =
 "[-ms <shots>] "
 "[-mts <score>] "
 "[-p <port>] "
-"[-pr <reconnect port>] "
 "[-noudp] "
 "[-passwd <password>] "
 #ifdef PRINTSCORE
@@ -4782,16 +4667,6 @@ static void parse(int argc, char **argv)
 				wksPort = ServerPort;
 			else
 				useGivenPort = true;
-		}
-		else if (strcmp(argv[i], "-pr") == 0) {
-			// use a different port
-			if (++i == argc) {
-				std::cerr << "argument expected for -pr" << std::endl;
-				usage(argv[0]);
-			}
-			reconnectPort = atoi(argv[i]);
-			if (reconnectPort < 1 || reconnectPort > 65535)
-				usage(argv[0]);
 		}
 		else if (strcmp(argv[i], "-pf") == 0) {
 			// try wksPort first and if we can't open that port then
@@ -5269,8 +5144,6 @@ int main(int argc, char **argv)
 		}
 		// always listen for connections
 		FD_SET(wksSocket, &read_set);
-		if (reconnectPort)
-			FD_SET(reconnectSocket, &read_set);
 		if (alsoUDP)
 			FD_SET(udpSocket, &read_set);
 		// always listen for pings
@@ -5436,17 +5309,6 @@ int main(int argc, char **argv)
 			// now check multicast for relay
 			if (relayInSocket != -1 && FD_ISSET(relayInSocket, &read_set))
 				relayPlayerPacket();
-
-			// check for clients that are reconnecting
-			if (FD_ISSET(reconnectSocket, &read_set))
-				addClient(reconnectSocket);
-			// check for players that were accepted
-			for (i = 0; i < maxPlayers; i++) {
-				// check the initial contact port.  if any activity or
-				// we've waited a while, then shut it down
-				if (player[i].state == PlayerAccept && tm - player[i].time > DisconnectTimeout)
-					shutdownAcceptClient(i);
-			}
 
 			// check for connection to list server
 			for (i = 0; i < listServerLinksCount; ++i)

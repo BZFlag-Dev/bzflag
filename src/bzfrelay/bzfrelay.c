@@ -64,7 +64,6 @@
 
 #define	RELAY_BUFLEN		4096			/* size of relay buffers */
 #define BZFS_PORT			"5155"			/* well known bzfs port */
-#define RECONNECT_PORT		"5157"			/* listen for reconnect here */
 #define NETWORK_TIMEOUT		15				/* seconds until give up */
 
 #define	DL_ALERT			0				/* always report */
@@ -81,8 +80,6 @@ static const char*		priorityString[] = { "INFO", "WARNING", "ERROR" };
 enum	{ DISABLED,				/* shutdown */
 		  CONNECTING,			/* first connect() to server in progress */
 		  FIRST_CONTACT,		/* waiting for server hello */
-		  RECONNECTING,			/* second connect() to server in progress */
-		  AWAITING_RECONNECT,	/* waiting for reconnection from client */
 		  RELAYING,				/* relaying client<->server */
 		  CLOSING };			/* waiting for client to hangup */
 
@@ -96,7 +93,6 @@ typedef struct Relay {
     int						fdSrc;					/* client side socket */
     int						fdDst;					/* server side socket */
     int						fdOldSrc;				/* old client side socket */
-    int						fdOldDst;				/* old server side socket */
     unsigned char*	srcToDstBuffer, *srcMark;
     unsigned char*	dstToSrcBuffer, *dstMark;
     int						srcToDstFilled;
@@ -129,7 +125,6 @@ static int				done;					/* != 0 to quit */
 static int				debugLevel;				/* amount of logging */
 static int				fdMax;					/* highest file descriptor */
 static int				fdListen;				/* listen for connections */
-static int				fdReconnect;			/* listen for reconnections */
 static int				usingSyslog;			/* != 0 to use syslog */
 static Relay*			relays;					/* doubly-linked list of relays */
 
@@ -140,7 +135,6 @@ static const char	copyright[] = "Copyright (c) 1993 - 2002 Tim Riker";
  */
 
 static const char*		usageString = "usage: %s [-f] [-s <address[:port]>] "
-								"[-p <reconnect-port>] "
 								"[-a <addr> <mask>] "
 								"[-r <addr> <mask>] <server-addr[:port]>\n";
 static const char*		helpString =
@@ -148,8 +142,6 @@ static const char*		helpString =
 "\t                   (otherwise background, log to syslog)\n"
 "\t-s:                listen on given address and port instead\n"
 "\t                   of port " BZFS_PORT " on all interfaces\n"
-"\t-p:                listen for reconnections on given port\n"
-"\t                   instead of port " RECONNECT_PORT "\n"
 "\t-a:                allow clients at given addresses\n"
 "\t-r:                reject clients at given addresses\n"
 "\tserver-addr:port:  address (and port) of bzfs server\n"
@@ -162,12 +154,6 @@ static const char*		helpString =
 "address is supplied, the port is optional;  if no port is given, the\n"
 "default port " BZFS_PORT " is used.  The default is to listen on port\n"
 BZFS_PORT " on all interfaces.\n"
-"\n"
-"The -p option specifies an alternative port to listen on for reconnects.\n"
-"The default port is " RECONNECT_PORT ".  Both this port and the port\n"
-"given by the -s option (or " BZFS_PORT " if not supplied) must be\n"
-"accessible to external hosts.  Only reconnects on the same interface\n"
-"as the initial connection are accepted.\n"
 "\n"
 "The -a and -r options define the allowed client addresses:  -a adds a\n"
 "set of addresses to the list of allowed addresses and -r removes a set\n"
@@ -520,8 +506,7 @@ static int				acceptConnection(int listener, struct sockaddr_in* addr)
  * listen port handling
  */
 
-static int				startListening(struct sockaddr_in* addr,
-								struct sockaddr_in* reconnect_addr)
+static int				startListening(struct sockaddr_in* addr)
 {
 	/* start listening */
 	if ((fdListen = createListeningSocket(addr)) < 0) {
@@ -529,17 +514,8 @@ static int				startListening(struct sockaddr_in* addr,
 		return -1;
 	}
 
-	/* start listening */
-	if ((fdReconnect = createListeningSocket(reconnect_addr)) < 0) {
-		printl(DL_IMPORTANT, BZFR_LOG_INFO, "cannot open reconnect socket");
-		close(fdListen);
-		fdListen = -1;
-		return -1;
-	}
-
-	printl(DL_INFO, BZFR_LOG_INFO, "listening on %s:%d, reconnect on %d",
-				inet_ntoa(addr->sin_addr), ntohs(addr->sin_port),
-				ntohs(reconnect_addr->sin_port));
+	printl(DL_INFO, BZFR_LOG_INFO, "listening on %s:%d",
+				inet_ntoa(addr->sin_addr), ntohs(addr->sin_port));
 	return fdListen;
 }
 
@@ -552,15 +528,6 @@ static int				stopListening(void)
 			printl(DL_NOTICE, BZFR_LOG_ERR, "cannot close listen port: %s",
 														strerror(errno));
 		fdListen = -1;
-	}
-
-	/* close down reconnect listen socket if it's open */
-	if (fdReconnect != -1) {
-		printl(DL_INFO, BZFR_LOG_INFO, "closing reconnect port");
-		if (close(fdReconnect) < 0)
-			printl(DL_NOTICE, BZFR_LOG_ERR, "cannot close reconnect port: %s",
-														strerror(errno));
-		fdReconnect = -1;
 	}
 
 	return 0;
@@ -622,7 +589,6 @@ static void				createRelay(struct sockaddr_in* serverAddr,
 	relay->fdSrc          = fdSrc;
 	relay->fdDst          = -1;
 	relay->fdOldSrc       = -1;
-	relay->fdOldDst       = -1;
 	relay->srcMark        = relay->srcToDstBuffer;
 	relay->dstMark        = relay->dstToSrcBuffer;
 	relay->srcToDstFilled = 0;
@@ -669,11 +635,9 @@ static int				shutdownRelay(Relay* relay)
 	if (relay->fdSrc != -1) close(relay->fdSrc);
 	if (relay->fdDst != -1) close(relay->fdDst);
 	if (relay->fdOldSrc != -1) close(relay->fdOldSrc);
-	if (relay->fdOldDst != -1) close(relay->fdOldDst);
 	relay->fdSrc    = -1;
 	relay->fdDst    = -1;
 	relay->fdOldSrc = -1;
-	relay->fdOldDst = -1;
 	relay->status   = DISABLED;
 	return 0;
 }
@@ -752,12 +716,12 @@ static void				connectToServer(Relay* relay)
 	gettimeofday(&relay->startTime, &tz);
 }
 
-static void				readHello(Relay* relay, struct sockaddr_in* serverAddr)
+static void				readHello(Relay* relay)
 {
 	int n;
 
 	/* read data from server */
-	n = recv(relay->fdDst, (RecvType)relay->dstMark, 10, 0);
+	n = recv(relay->fdDst, (RecvType)relay->dstMark, 9, 0);
 	if (n < 0) {
 		printl(DL_NOTICE, BZFR_LOG_WARN, "error reading from server: %s",
 														strerror(errno));
@@ -770,11 +734,10 @@ static void				readHello(Relay* relay, struct sockaddr_in* serverAddr)
 	}
 	relay->dstMark += n;
 
-	/* when we've got the entire hello message, close the connection to the
-	 * server and connect again at the new port.  if the server is rejecting
-	 * us then relay the hello (and goodbye) message and shutdown. */
-	if (relay->dstMark - relay->dstToSrcBuffer >= 10) {
-		unsigned short port;
+	/* when we've got the entire hello message, if the server is rejecting us
+	 * then relay the hello (and goodbye) message and shutdown. */
+	if (relay->dstMark - relay->dstToSrcBuffer >= 9) {
+		unsigned char playerId;
 
 		/* check header */
 		if (relay->dstToSrcBuffer[0] != 'B' ||
@@ -782,159 +745,37 @@ static void				readHello(Relay* relay, struct sockaddr_in* serverAddr)
 		relay->dstToSrcBuffer[2] != 'F' ||
 		relay->dstToSrcBuffer[3] != 'S') {
 			/* not a bzflag server.  pass on whatever gibberish we got */
-			send(relay->fdSrc, (SendType)relay->dstToSrcBuffer, 10, 0);
+			send(relay->fdSrc, (SendType)relay->dstToSrcBuffer, 9, 0);
 			closingRelay(relay, 0);
 
-			for (n = 0; n < 10; n++)
+			for (n = 0; n < 9; n++)
 				if (!isprint(relay->dstToSrcBuffer[n]))
 					relay->dstToSrcBuffer[n] = ' ';
-			printl(DL_NOTICE, BZFR_LOG_WARN, "not a bzflag server: %10.10s",
+			printl(DL_NOTICE, BZFR_LOG_WARN, "not a bzflag server: %9.9s",
 												relay->dstToSrcBuffer);
 			return;
 		}
 
-		/* port is in network byte order */
-		port = ((unsigned short)relay->dstToSrcBuffer[8] << 8) +
-						   (unsigned short)relay->dstToSrcBuffer[9];
+		/* playerid is in network byte order */
+		playerId = (unsigned short)relay->dstToSrcBuffer[8];
 
-		/* if port is zero, server is rejecting connection */
-		if (port == 0) {
+		/* if playerId is 0xff, server is rejecting connection */
+		if (playerId == 0xff) {
 			printl(DL_NOTICE, BZFR_LOG_INFO, "server rejected %s", relay->srcName);
-			send(relay->fdSrc, (SendType)relay->dstToSrcBuffer, 10, 0);
+			send(relay->fdSrc, (SendType)relay->dstToSrcBuffer, 9, 0);
 			closingRelay(relay, 0);
 			return;
 		}
 
 		/* if port is not zero, server is allowing connection */
 		else {
-			int fdDst;
-			struct sockaddr_in addr;
 			struct timezone tz;
 
-			/* begin reconnect to server */
-			printl(DL_INFO, BZFR_LOG_INFO, "client %s accepted;  reconnecting",
-														relay->srcName);
-			printl(DL_DEBUG, BZFR_LOG_INFO, "server accepted %s on port %d",
-														relay->srcName, port);
-			addr          = *serverAddr;
-			addr.sin_port = htons(port);
-			fdDst = createConnectingSocket(&addr);
-			if (fdDst < 0) {
-				printl(DL_IMPORTANT, BZFR_LOG_ERR,
-						"cannot create server reconnection socket");
-				closingRelay(relay, 1);
-				return;
-			}
-
-			/* start using new socket.  don't close old connection yet because
-			 * server will tear down the new socket before we have a chance
-			 * to use it if we do. */
-			relay->fdOldDst = relay->fdDst;
-			relay->fdDst    = fdDst;
-
-			/* next stage */
-			relay->status = RECONNECTING;
+			printl(DL_INFO, BZFR_LOG_INFO, "client %s accepted", relay->srcName);
+			printl(DL_DEBUG, BZFR_LOG_INFO, "server accepted %s", relay->srcName);
 			gettimeofday(&relay->startTime, &tz);
 		}
 	}
-}
-
-static void				connectToServerAgain(Relay* relay,
-								struct sockaddr_in* listenAddr)
-{
-	socklen_t addrlen;
-	struct sockaddr_in addr;
-	struct timezone tz;
-
-	(void)listenAddr; /* silence compiler */
-
-	/* now reconnected to server.  get peer name to make sure we're connected. */
-	if (!isSocketConnected(relay->fdDst)) {
-		printl(DL_IMPORTANT, BZFR_LOG_ERR,
-				"failed to reconnect to server for %s", relay->srcName);
-		closingRelay(relay, 1);
-		return;
-	}
-	printl(DL_DEBUG, BZFR_LOG_INFO,
-				"reconnected to server for %s", relay->srcName);
-
-	/* close old server connection */
-	close(relay->fdOldDst);
-	relay->fdOldDst = -1;
-
-	/* get the port number of the reconnect socket */
-	addrlen = sizeof(addr);
-	if (getsockname(fdReconnect, (struct sockaddr*)&addr, &addrlen) < 0) {
-		printl(DL_IMPORTANT, BZFR_LOG_ERR,
-				"cannot get port number of server connection for %s: %s",
-				relay->srcName, strerror(errno));
-		closingRelay(relay, 1);
-		return;
-	}
-	printl(DL_DEBUG, BZFR_LOG_INFO,
-				"listening for client %s reconnect on port %d",
-				relay->srcName, ntohs(addr.sin_port));
-
-	/* modify hello message to provide new port (in network byte order) */
-	relay->dstToSrcBuffer[8] = (unsigned char)((ntohs(addr.sin_port) >> 8) & 0xff);
-	relay->dstToSrcBuffer[9] = (unsigned char)(ntohs(addr.sin_port) & 0xff);
-
-	/* send hello message to client to cause client to reconnect */
-	if (send(relay->fdSrc, (SendType)relay->dstToSrcBuffer, 10, 0) != 10) {
-		printl(DL_NOTICE, BZFR_LOG_ERR, "cannot send hello to client %s: %s",
-				relay->srcName, strerror(errno));
-		closingRelay(relay, 0);
-		return;
-	}
-
-	/* wait for client to close old connection */
-	relay->fdOldSrc = relay->fdSrc;
-
-	/* no active connection to client */
-	relay->fdSrc = -1;
-
-	/* next stage */
-	relay->status  = AWAITING_RECONNECT;
-	relay->dstMark = relay->dstToSrcBuffer;
-	gettimeofday(&relay->startTime, &tz);
-}
-
-static void				acceptClientReconnect(Relay* relays)
-{
-	int fdSrc;
-	struct sockaddr_in addr;
-	Relay* scan;
-
-	/* accept client reconnection */
-	fdSrc = acceptConnection(fdReconnect, &addr);
-	if (fdSrc < 0) {
-		printl(DL_IMPORTANT, BZFR_LOG_INFO, "failed to accept reconnect");
-		return;
-	}
-
-	/* figure out which client */
-	for (scan = relays; scan; scan = scan->next)
-		if (scan->status == AWAITING_RECONNECT &&
-			addr.sin_addr.s_addr == scan->srcAddr.s_addr)
-			break;
-
-	/* if no client found then some unexpected client tried our
-     reconnect port.  this is suspicious. */
-	if (!scan) {
-		printl(DL_IMPORTANT, BZFR_LOG_WARN,
-				"rejecting unexpected connection from %s",
-				inet_ntoa(addr.sin_addr));
-		return;
-	}
-
-	/* stop listening on listen socket and start using connection */
-	scan->fdSrc = fdSrc;
-	printl(DL_DEBUG, BZFR_LOG_INFO,
-				"accepting reconnect from client %s", scan->srcName);
-
-	/* next stage */
-	scan->status = RELAYING;
-	printl(DL_NOTICE, BZFR_LOG_INFO, "relaying for %s", scan->srcName);
 }
 
 static void				readFromServer(Relay* relay)
@@ -1106,13 +947,8 @@ int						main(int argc, char** argv)
 	debugLevel = 0;
 	fdMax = 0;
 	fdListen = -1;
-	fdReconnect = -1;
 	usingSyslog = 1;
 	if (parseAddress(&listenOn, "0.0.0.0", BZFS_PORT, 1) != 0) {
-		fprintf(stderr, "internal error:  invalid default address\n");
-		exit(1);
-	}
-	if (parseAddress(&reconnectOn, "0.0.0.0", RECONNECT_PORT, 1) != 0) {
 		fprintf(stderr, "internal error:  invalid default address\n");
 		exit(1);
 	}
@@ -1205,8 +1041,6 @@ int						main(int argc, char** argv)
 			i += 1;
 		}
 		else if (strcmp(argv[i], "-s") == 0) {
-			u_short savedPort = reconnectOn.sin_port;
-
 			/* can't have this argument twice */
 			if (gotListen) {
 				fprintf(stderr, "argument %s cannot appear more than once\n", argv[i]);
@@ -1241,8 +1075,6 @@ int						main(int argc, char** argv)
 					fprintf(stderr, "invalid argument: %s\n", argv[i + 1]);
 					return 1;
 			}
-			parseAddress(&reconnectOn, argv[i + 1], RECONNECT_PORT, 1);
-			reconnectOn.sin_port = savedPort;
 			/* note -- bind() will fail later if listenOn is not a local address */
 
 			gotListen = 1;
@@ -1307,7 +1139,7 @@ parseServerArg:
 				inet_ntoa(relayTo.sin_addr), ntohs(relayTo.sin_port));
 
 	/* start listening */
-	if (startListening(&listenOn, &reconnectOn) < 0)
+	if (startListening(&listenOn) < 0)
 		done = 1;
 
 	/* main loop */
@@ -1348,32 +1180,6 @@ parseServerArg:
 					break;
 				}
 
-				case RECONNECTING: {
-					/* we've received the server's hello and now we're waiting for
-					 * the server to accept our new connection to it.  we haven't
-					 * relayed the server's hello yet so we still ignore the client. */
-					struct timeval t;
-					getRelayTimeout(scan, &t);
-					if ((t.tv_sec < timeout.tv_sec) ||
-		     			(t.tv_sec == timeout.tv_sec && t.tv_usec < timeout.tv_usec))
-						timeout = t;
-					FD_SET(scan->fdDst, &write_set);
-					break;
-				}
-
-				case AWAITING_RECONNECT: {
-					/* we've reconnected to the server, relayed the hello to the
-					 * client, hungup on the client, and now we're waiting for the
-					 * client to reconnect.  ignore the server until then. */
-					struct timeval t;
-					getRelayTimeout(scan, &t);
-					if ((t.tv_sec < timeout.tv_sec) ||
-		      			(t.tv_sec == timeout.tv_sec && t.tv_usec < timeout.tv_usec))
-						timeout = t;
-					FD_SET(fdReconnect, &read_set);
-					break;
-				}
-
 				case RELAYING:
 					/* okay, we've connected to both the client and the server.
 					 * listen for data on both ends (if they're still open) and
@@ -1409,8 +1215,6 @@ parseServerArg:
 			/* listen for old client and old server connection hangup */
 			if (scan->fdOldSrc != -1)
 				FD_SET(scan->fdOldSrc, &read_set);
-			if (scan->fdOldDst != -1)
-				FD_SET(scan->fdOldDst, &read_set);
 		}
 
 		/* see if there's a connection to timeout */
@@ -1438,8 +1242,6 @@ parseServerArg:
 		gettimeofday(&currentTime, &tz);
 		for (scan = relays; scan; scan = scan->next) {
 			if (scan->status == CONNECTING ||
-				  scan->status == RECONNECTING ||
-				  scan->status == AWAITING_RECONNECT ||
 				  scan->status == CLOSING) {
 				getRelayTimeout(scan, &timeout);
 				if ((timeout.tv_sec < currentTime.tv_sec) ||
@@ -1448,10 +1250,6 @@ parseServerArg:
 					const char* msg;
 					if (scan->status == CONNECTING)
 						msg = "server connection";
-					else if (scan->status == RECONNECTING)
-						msg = "server reconnection";
-					else if (scan->status == AWAITING_RECONNECT)
-						msg = "client reconnection";
 					else
 						msg = "client hangup";
 					printl(DL_NOTICE, BZFR_LOG_WARN,
@@ -1478,10 +1276,6 @@ parseServerArg:
 		if (FD_ISSET(fdListen, &read_set))
 			createRelay(&relayTo, addresses);
 
-		/* now handle reconnections */
-		if (FD_ISSET(fdReconnect, &read_set))
-			acceptClientReconnect(relays);
-
 		/* handle relay sockets */
 		for (scan = relays; scan; scan = scan->next) {
 			switch (scan->status) {
@@ -1492,12 +1286,7 @@ parseServerArg:
 
 				case FIRST_CONTACT:
 					if (FD_ISSET(scan->fdDst, &read_set))
-						readHello(scan, &relayTo);
-					break;
-
-				case RECONNECTING:
-					if (FD_ISSET(scan->fdDst, &write_set))
-						connectToServerAgain(scan, &listenOn);
+						readHello(scan);
 					break;
 
 				case RELAYING:
@@ -1528,13 +1317,6 @@ parseServerArg:
 				if (recv(scan->fdOldSrc, (RecvType)buffer, sizeof(buffer), 0) == 0) {
 					close(scan->fdOldSrc);
 					scan->fdOldSrc = -1;
-				}
-			}
-			if (scan->fdOldDst != -1 && FD_ISSET(scan->fdOldDst, &read_set)) {
-				char buffer[256];
-				if (recv(scan->fdOldDst, (RecvType)buffer, sizeof(buffer), 0) == 0) {
-					close(scan->fdOldDst);
-					scan->fdOldDst = -1;
 				}
 			}
 		}
