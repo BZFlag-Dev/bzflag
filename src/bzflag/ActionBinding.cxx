@@ -172,11 +172,13 @@ void ActionBinding::onScanCB(const std::string& name, bool,
 void ActionBinding::associate(std::string key,
 			      std::string action,
 			      bool        keyBind) {
-  BindingTable::iterator index;
+  BindingTable::iterator index, next;
   if (!wayToBindActions.count(action))
     return;
   PressStatusBind newStatusBind = wayToBindActions[action];
-  for (index = bindingTable.lower_bound( key ); index != bindingTable.upper_bound( key ); ++index) {
+  for (index = bindingTable.lower_bound( key ); index != bindingTable.upper_bound( key ); index = next) {
+    next = index;
+    ++next;
     if (newStatusBind == both) {
       if (keyBind)
 	unbind(index->second, key);
