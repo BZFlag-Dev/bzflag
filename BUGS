@@ -1,5 +1,7 @@
 recent bugs
 ------------
+- It happens that killed bots does not respawn at bases if, in the meantime,
+  team flag is captures. I suppose it happens also to normal player
 
 - using the -worldsize option makes the client rendering go berzerk (see the 
   brlcad.org Test Server I or II).  size ends up getting set to a trillion..
