@@ -467,7 +467,7 @@ bool Record::saveBuffer (int playerIndex, const char *filename, int seconds)
     p = RecordBuf.head;
     RRtime usecs = (RRtime)seconds * (RRtime)1000000;
     while (p != NULL) {
-      if ((p->mode == StatePacket) && (p->code == MsgTeamUpdate)) {
+      if (p->mode == UpdatePacket) {
         RRtime diff = RecordBuf.head->timestamp - p->timestamp;
         if (diff >= usecs) {
           break;
@@ -480,7 +480,7 @@ bool Record::saveBuffer (int playerIndex, const char *filename, int seconds)
   if ((seconds == 0) || (p == NULL)) {
     // save the whole buffer from the first update
     p = RecordBuf.tail;
-    while (!((p->mode == StatePacket) && (p->code == MsgTeamUpdate))) {
+    while (p->mode != UpdatePacket) {
       p = p->next;
     }
     
@@ -576,7 +576,7 @@ routePacket (u16 code, int len, const void * data, u16 mode)
       RRpacket *p;
       DEBUG4 ("routePacket: deleting until State Update\n");
       while (((p = delTailPacket (&RecordBuf)) != NULL) &&
-             !(p->mode && (p->code == MsgTeamUpdate))) {
+             (p->mode != UpdatePacket)) {
         delete[] p->data;
         delete p;
       }
@@ -677,8 +677,7 @@ static bool preloadVariables ()
   RRpacket *p = ReplayBuf.tail;
   
   // find the first BZDB update packet in the first state update block
-  while ((p != NULL) && (p->code != MsgSetVar) &&
-         ((p->mode == StatePacket) || (p->mode == HiddenPacket))) {
+  while ((p != NULL) && (p->mode != RealPacket) && (p->code != MsgSetVar)) {
     p = p->next;
   }
   if ((p == NULL) || (p->mode != StatePacket) || (p->code != MsgSetVar)) {
@@ -1031,33 +1030,28 @@ bool Replay::sendPackets ()
       // send message to all replay observers
       for (i = MaxPlayers; i < curMaxPlayers; i++) {
         PlayerInfo &pi = player[i];
-        bool fake = true;
-        if (p->mode == RealPacket) { 
-          fake = false;
-        }
         
         if (pi.isPlaying()) {
           // State machine for State Updates
-          if (fake) {
-            if (p->code == MsgTeamUpdate) { // always start on a team update
-              if (pi.getReplayState() == ReplayNone) {
-                // start receiving state info
-                pi.setReplayState (ReplayReceiving);
-              }
-              else if (pi.getReplayState() == ReplayReceiving) {
-                // two states seesions back-to-back
-                pi.setReplayState (ReplayStateful);
-              }
+          if (p->mode == UpdatePacket) {
+            if (pi.getReplayState() == ReplayNone) {
+              pi.setReplayState (ReplayReceiving);
+            }
+            else if (pi.getReplayState() == ReplayReceiving) {
+              // two state updates in a row
+              pi.setReplayState (ReplayStateful);
             }
           }
-          else if (pi.getReplayState() == ReplayReceiving) {
-            // this is the end of a state session
-            pi.setReplayState (ReplayStateful);
+          else if (p->mode != StatePacket) {
+            if (pi.getReplayState() == ReplayReceiving) {
+              pi.setReplayState (ReplayStateful);
+            }
           }
 
+          PlayerReplayState state = pi.getReplayState();
           // send the packets
-          if ((fake && (pi.getReplayState() == ReplayReceiving)) ||
-              (!fake && (pi.getReplayState() == ReplayStateful))) {
+          if (((p->mode == StatePacket) && (state == ReplayReceiving)) ||
+              ((p->mode == RealPacket) && (state == ReplayStateful))) {
             // the 4 bytes before p->data need to be allocated
             void *buf = getDirectMessageBuffer ();
             memcpy (buf, p->data, p->len);
@@ -1259,8 +1253,7 @@ nextStatePacket ()
 
   RRpacket *p = nextPacket();
   
-  while ((p != NULL) && 
-         !((p->mode == StatePacket) && (p->code == MsgTeamUpdate))) {
+  while ((p != NULL) && (p->mode != UpdatePacket)) {
     p = nextPacket();
   }
   
@@ -1273,8 +1266,7 @@ prevStatePacket ()
 {
   RRpacket *p = prevPacket();
   
-  while ((p != NULL) && 
-         !((p->mode == StatePacket) && (p->code == MsgTeamUpdate))) {
+  while ((p != NULL) && (p->mode != UpdatePacket)) {
     p = prevPacket();
   }
   
@@ -1297,11 +1289,13 @@ prevStatePacket ()
 static bool
 saveStates ()
 {
+  routePacket (0, 0, NULL, UpdatePacket);
+  
   // order is important
+  saveVariablesState ();
   saveTeamsState ();
   saveFlagsState ();
   savePlayersState ();
-  saveVariablesState ();
   saveRabbitState ();
   
   RecordUpdateTime = getRRtime ();
@@ -1418,12 +1412,24 @@ savePlayersState ()
   // that gets sent out, we'll record the players' addresses
   // here in case the record buffer has grown past the original
   // packet.
-  if (i > 0) {
+  if (adminPtr != (adminBuf + sizeof(unsigned char))) {
     buf = nboPackUByte (adminPtr, i);
     routePacket (MsgAdminInfo,
                  (char*)adminPtr - (char*)adminBuf, adminBuf, HiddenPacket);
   }
   
+  for (i = 0; i < curMaxPlayers; i++) {
+    if (player[i].isAlive()) {
+      float pos[3] = {0.0f, 0.0f, 0.0f};
+      // Complete MsgAlive
+      buf = nboPackUByte(bufStart, i);
+      buf = nboPackVector (buf, pos);
+      buf = nboPackFloat (buf, pos[0]); // azimuth
+      routePacket (MsgAlive,
+                   (char*)buf - (char*)bufStart, bufStart, StatePacket);
+    }
+  }
+
   return true;
 }
 
@@ -1544,8 +1550,11 @@ savePacket (RRpacket *p, FILE *f)
   buf = nboPackUInt (buf, RecordFilePrevPos);
   buf = nboPackRRtime (buf, p->timestamp);
 
-  if ((fwrite (bufStart, RRpacketHdrSize, 1, f) == 0) ||
-      (fwrite (p->data, p->len, 1, f) == 0)) {
+  if (fwrite (bufStart, RRpacketHdrSize, 1, f) == 0) {
+    return false;
+  }
+  
+  if ((p->len != 0) && (fwrite (p->data, p->len, 1, f) == 0)) {
     return false;
   }
 
@@ -1588,11 +1597,16 @@ loadPacket (FILE *f)
     return NULL;
   }
 
-  p->data = new char [p->len];
-  if (fread (p->data, p->len, 1, f) <= 0) {
-    delete[] p->data;
-    delete p;
-    return NULL;
+  if (p->len == 0) {
+    p->data = NULL;
+  }
+  else {
+    p->data = new char [p->len];
+    if (fread (p->data, p->len, 1, f) <= 0) {
+      delete[] p->data;
+      delete p;
+      return NULL;
+    }
   }
   
   DEBUG4 ("loadRRpacket(): mode = %i, len = %4i, code = %s, data = %p\n",
