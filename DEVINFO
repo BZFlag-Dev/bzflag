@@ -327,18 +327,18 @@ cannot proceed.  A checklist of items to be completed follows:
 
 - Version numbers are updated to the next expected release number.
   This minimally includes updating README, configure.in, and
-  ChangeLog.  Version numbers in all other platform-specific 
+  ChangeLog.  Version numbers in all other platform-specific
   README.* files should also be verified.
 
 - Update package/win32/nsis/*.nsi (for windows) with appropriate
-  version numbers 
+  version numbers
 
 - Perform a "make distcheck" on multiple (preferably all) platforms.
   This will verify that a proper source distribution can be made.
   Also verify that all non-autotools builds build properly.
 
 - Tag the release.  Tag format should be consistent with the other
-  tags using the format of vMAJOR_MINOR_RELEASE 
+  tags using the format of vMAJOR_MINOR_RELEASE
 	e.g. cvs tag v1_10_2
 
 - Perform a "cvs export -r vMAJOR_MINOR_RELEASE" from somehwere else
@@ -371,4 +371,3 @@ John Gowin <jgowin@linuxorbit.com> (thanx for the review!)
 jd@linuxgaming.co.uk
 updates@superdownloads.com.br
 mail -s add LSM@execpc.com < bzflag.lsm
-
