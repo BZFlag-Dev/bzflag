@@ -7,12 +7,8 @@ recent bugs
   to do with the singleton, the class defines a deconstructor, but the header dosn't have one.
 
 - if a modified client sends an invalid id back to the server, the invalid id
-  gets propagated to all clients, crashing everyone during unpack() with a
-  variety of nasty results.  simple to reproduce, modify the
-	ShotPath.cxx:FiringInfo() shot.id = uint16_t(id); line to be some high
-  number and then shoot yourself.  (fhffhqvb reported this)  1) Server should
-  check that id's are valid to not propagate garbage and 2) Clients should
-  not have actually crashed in unpack() regardless..
+  gets propagated to all clients  1) Server should
+  check that id's are valid to not propagate garbage 
 
 - Address Exception reported when unpacking a FlagType in MsgFlagUpdate on client
   in Rabbit game. The reported message buffer address was bad (ie 0xbfffd7ed)
