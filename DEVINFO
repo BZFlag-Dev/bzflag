@@ -19,7 +19,6 @@ platform	- general platform dependant code
 applications
 ------------
 bzflag		-- the BZFlag client
-bzfls		-- the BZFlag meta-server (i.e. the list of servers server)
 bzfs		-- the BZFlag server
 bzfrelay	-- the BZFlag relay (for relaying to servers)
 bzadmin		-- the BZFlag admin tool and chat client
