@@ -524,7 +524,7 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
 {
   // prepare flag counts
   int i;
-  bool allFlagsOut = false;
+  static bool allFlagsOut = false;
   static bool teamFlagsAdded = false;
 
   // parse command line
@@ -931,8 +931,10 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
     } else if (strcmp(argv[i], "-requireudp") == 0) {
       std::cerr << "require UDP clients!" << std::endl;
       options.requireUDP = true;
-    } else if (strcmp(argv[i], "+s") == 0) {
-      // set required number of random flags
+    } else if (strcmp(argv[i], "+s") == 0 || strcmp(argv[i], "-s") == 0) {
+      // with +s all flags are required to exist all the time
+      allFlagsOut = argv[i][0] == '+' ? true : false;
+      // set number of random flags
       if (i+1 < argc && isdigit(argv[i+1][0])) {
 	++i;
 	if ((options.numExtraFlags = atoi(argv[i])) == 0)
@@ -940,17 +942,6 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
       } else {
 	options.numExtraFlags = 16;
       }
-      allFlagsOut = true;
-    } else if (strcmp(argv[i], "-s") == 0) {
-      // allow up to given number of random flags
-      if (i+1 < argc && isdigit(argv[i+1][0])) {
-	++i;
-	if ((options.numExtraFlags = atoi(argv[i])) == 0)
-	  options.numExtraFlags = 16;
-      } else {
-	options.numExtraFlags = 16;
-      }
-      allFlagsOut = false;
     } else if (strcmp(argv[i], "-sa") == 0) {
       // insert antidote flags
       options.gameStyle |= int(AntidoteGameStyle);
