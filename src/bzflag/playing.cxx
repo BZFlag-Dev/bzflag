@@ -4965,71 +4965,71 @@ static World*		makeWorld(ServerLink* serverLink)
   //ask for the hash of the world (ignoring all other messages)
   serverLink->send( MsgWantWHash, 0, NULL );
   if (serverLink->read(code, len, msg, 5000) > 0) {
-	  if (code != MsgWantWHash) return NULL;
-
-	  char *hexDigest = new char[len];
-	  nboUnpackString( msg, hexDigest, len );
-	  isTemp = hexDigest[0] == 't';
-
-	  worldPath = getCacheDirectoryName();
-	  worldPath += "/";
-	  worldPath += hexDigest;
-	  worldPath += ".bwc";
-	  cachedWorld = FILEMGR->createDataInStream(worldPath, true);
+    if (code != MsgWantWHash) return NULL;
+  
+    char *hexDigest = new char[len];
+    nboUnpackString( msg, hexDigest, len );
+    isTemp = hexDigest[0] == 't';
+  
+    worldPath = getCacheDirectoryName();
+    worldPath += "/";
+    worldPath += hexDigest;
+    worldPath += ".bwc";
+    cachedWorld = FILEMGR->createDataInStream(worldPath, true);
   }
 
   char* worldDatabase;
   if (cachedWorld == NULL) {
-	  // ask for world and wait for it (ignoring all other messages)
-	  nboPackUInt(msg, 0);
-	  serverLink->send(MsgGetWorld, sizeof(uint32_t), msg);
-	  if (serverLink->read(code, len, msg, 5000) <= 0) return NULL;
-	  if (code == MsgNull || code == MsgSuperKill) return NULL;
-	  if (code != MsgGetWorld) return NULL;
-
-	  // get size of entire world database and make space
-	  uint32_t bytesLeft;
-	  void *buf = nboUnpackUInt(msg, bytesLeft);
-	  size = bytesLeft + len - 4;
-	  worldDatabase = new char[size];
-
-	  // get world database
-	  uint32_t ptr = 0;
-	  while (bytesLeft != 0) {
-		// add chunk to database so far
-		::memcpy(worldDatabase + int(ptr), buf, len - sizeof(uint32_t));
-
-		// increment pointer
-		ptr += len - sizeof(uint32_t);
-		// ask and wait for next chunk
-		nboPackUInt(msg, ptr);
-		serverLink->send(MsgGetWorld, sizeof(uint32_t), msg);
-		if (serverLink->read(code, len, msg, 5000) < 0 ||
-		code == MsgNull || code == MsgSuperKill) {
-		  delete[] worldDatabase;
-		  return NULL;
-		}
-		// get bytes left
-		buf = nboUnpackUInt(msg, bytesLeft);
-	  }
-	  //add final chunk
-	  ::memcpy(worldDatabase + int(ptr), buf, len - sizeof(uint32_t));
-	  
-	  if (worldPath.length() > 0) {
-	    cleanWorldCache();
-	    ostream* cacheOut = FILEMGR->
-	      createDataOutStream(worldPath, true, true);
-	    if (cacheOut != NULL) {
-	      cacheOut->write(worldDatabase, size);
-	      delete cacheOut;
-	      if (isTemp)
-		markOld(worldPath);
-	    }
-	  }
+    // ask for world and wait for it (ignoring all other messages)
+    nboPackUInt(msg, 0);
+    serverLink->send(MsgGetWorld, sizeof(uint32_t), msg);
+    if (serverLink->read(code, len, msg, 5000) <= 0) return NULL;
+    if (code == MsgNull || code == MsgSuperKill) return NULL;
+    if (code != MsgGetWorld) return NULL;
+  
+    // get size of entire world database and make space
+    uint32_t bytesLeft;
+    void *buf = nboUnpackUInt(msg, bytesLeft);
+    size = bytesLeft + len - 4;
+    worldDatabase = new char[size];
+  
+    // get world database
+    uint32_t ptr = 0;
+    while (bytesLeft != 0) {
+      // add chunk to database so far
+      ::memcpy(worldDatabase + int(ptr), buf, len - sizeof(uint32_t));
+  
+      // increment pointer
+      ptr += len - sizeof(uint32_t);
+      // ask and wait for next chunk
+      nboPackUInt(msg, ptr);
+      serverLink->send(MsgGetWorld, sizeof(uint32_t), msg);
+      if (serverLink->read(code, len, msg, 5000) < 0 ||
+      code == MsgNull || code == MsgSuperKill) {
+        delete[] worldDatabase;
+        return NULL;
+      }
+      // get bytes left
+      buf = nboUnpackUInt(msg, bytesLeft);
+    }
+    //add final chunk
+    ::memcpy(worldDatabase + int(ptr), buf, len - sizeof(uint32_t));
+    
+    if (worldPath.length() > 0) {
+      cleanWorldCache();
+      ostream* cacheOut = FILEMGR->
+        createDataOutStream(worldPath, true, true);
+      if (cacheOut != NULL) {
+        cacheOut->write(worldDatabase, size);
+        delete cacheOut;
+        if (isTemp)
+          markOld(worldPath);
+      }
+    }
   }
   else
   {
-    cachedWorld->seekg(0, ios_base::end);
+    cachedWorld->seekg(0, std::ios::end);
     streampos size = cachedWorld->tellg();
     cachedWorld->seekg(0);
     worldDatabase = new char[size];
@@ -5039,8 +5039,8 @@ static World*		makeWorld(ServerLink* serverLink)
   // make world
   WorldBuilder worldBuilder;
   if (!worldBuilder.unpack(worldDatabase)){		// world didn't make for some reason
-	  delete[] worldDatabase;
-	  return NULL;
+    delete[] worldDatabase;
+    return NULL;
   }
 
   delete[] worldDatabase;
