@@ -247,11 +247,11 @@ bool Capture::sendStats (int playerIndex)
   }
    
   if (CaptureMode == BufferedCapture) {
-    sprintf (buffer, "  buffered: %i bytes, %i packets, time = %i\n",
+    sprintf (buffer, "  buffered: %i bytes, %i packets, time = %i",
              CaptureBuf.byteCount, CaptureBuf.packetCount, 0);
   }
   else {
-    sprintf (buffer, "  saved: %i bytes, %i packets, time = %i\n",
+    sprintf (buffer, "  saved: %i bytes, %i packets, time = %i",
              CaptureFileBytes, CaptureFilePackets, 0);   
   }
   sendMessage (ServerPlayer, playerIndex, buffer);
@@ -565,15 +565,27 @@ bool Replay::play(int playerIndex)
 
 bool Replay::skip(int playerIndex, int seconds) //FIXME
 {
+  seconds = seconds;
+  
   if (!ReplayMode || (ReplayFile == NULL)) {
     sendMessage (ServerPlayer, playerIndex,
                  "Server is not in replay mode, or no file loaded");
     return false;
   }
-  seconds = seconds;
+
+  // FIXME - just jump to the next packet for now
+  
+  if (ReplayBuf.tail == NULL) {
+    sendMessage (ServerPlayer, playerIndex, "can't skip, no more data");
+    return false;
+  }
+  
+  CRtime newOffset = getCRtime() - ReplayBuf.tail->timestamp;
+  CRtime diff = ReplayOffset - newOffset;
+  ReplayOffset = newOffset;
   
   char buffer[256];
-  sprintf (buffer, "Skipping %i seconds", seconds);
+  sprintf (buffer, "Skipping %f seconds", (float)diff/1000000.0f);
   sendMessage (ServerPlayer, playerIndex, buffer);
   
   return true;
@@ -970,7 +982,7 @@ static void
 freeCRbuffer (CRbuffer *b)
 {
   CRpacket *p, *ptmp;
-  
+
   p = b->tail;
 
   while (p != NULL) {
@@ -979,6 +991,11 @@ freeCRbuffer (CRbuffer *b)
     free (p);
     p = ptmp;
   }
+  
+  b->tail = NULL;
+  b->head = NULL;
+  b->byteCount = 0;
+  b->packetCount = 0;
   
   return;
 }
