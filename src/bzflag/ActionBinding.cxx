@@ -37,6 +37,7 @@ ActionBinding::ActionBinding() {
   wayToBindActions.insert(std::make_pair(std::string("toggle displayScore"), press));
   wayToBindActions.insert(std::make_pair(std::string("toggle displayBinoculars"), press));
   wayToBindActions.insert(std::make_pair(std::string("pause"), press));
+  wayToBindActions.insert(std::make_pair(std::string("iconify"), press));
 #ifdef SNAPPING
   wayToBindActions.insert(std::make_pair(std::string("screenshot"), press));
 #endif
