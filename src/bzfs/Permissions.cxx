@@ -257,7 +257,7 @@ void setUserPassword(const std::string &nick, const std::string &pass)
   makeupper(str1);
   if (pass.size() == 0) {
     passwordDatabase[str1] = "*";
-  } else if (pass = "*") {
+  } else if (pass == "*") {
     // never encode *, this would change the person's password from NULL to *.
     passwordDatabase[str1] = "*";
   } else {
