@@ -54,7 +54,7 @@ enum TeamColor {
 #endif
 
 // epsilon and very far for ray intersections
-const float		Epsilon =	1.0e-5f;	// arbitrary
+const float		Epsilon =	ZERO_TOLERANCE;	// arbitrary
 const float		Infinity =	MAXFLOAT;	// arbitrary
 
 #define	DEFAULT_GRAVITY	-9.81f

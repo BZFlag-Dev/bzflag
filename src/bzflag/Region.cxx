@@ -356,7 +356,7 @@ void			BzfRegion::tidy()
   for (int i = 0; i < count; i++) {
     const float* p1 = corners[i].get();
     const float* p2 = corners[(i+1)%count].get();
-    if (fabs(p1[0] - p2[0]) < 1.0e-5 && fabs(p1[1] - p2[1]) < 1.0e-5) {
+    if (fabs(p1[0] - p2[0]) < ZERO_TOLERANCE && fabs(p1[1] - p2[1]) < ZERO_TOLERANCE) {
       std::vector<RegionPoint>::iterator it1 = corners.begin();
       for(int j = 0; j < i; j++) it1++;
       corners.erase(it1);

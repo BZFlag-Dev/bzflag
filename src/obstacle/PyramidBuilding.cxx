@@ -93,7 +93,7 @@ void			PyramidBuilding::getNormal(const float* p,
 void			PyramidBuilding::get3DNormal(const float* p,
 						     float* n) const
 {
-  const float epsilon = 1.0e-5f;
+  const float epsilon = ZERO_TOLERANCE;
 
   // get normal in z = const plane
   const float s = shrinkFactor(p[2]);

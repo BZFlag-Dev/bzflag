@@ -494,7 +494,7 @@ float			RobotPlayer::getRegionExitPoint(
 
   float vect = d[0] * b[1] - d[1] * b[0];
   float t    = 0.0f;  // safe value
-  if (fabs(vect) > 1.0e-6) {
+  if (fabs(vect) > ZERO_TOLERANCE) {
     // compute intersection along (p1,d) with (a,b)
     t = (a[0] * b[1] - a[1] * b[0] - p1[0] * b[1] + p1[1] * b[0]) / vect;
     if (t > 1.0f)
