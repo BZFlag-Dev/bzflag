@@ -151,9 +151,9 @@ void handlePartCmd(GameKeeper::Player *playerData, const char *message)
   }
 
   std::string message2;
-  message2 = TextUtils::format("%s has quit (\"%s\") ",
-				 playerData->player.getCallSign(),  byeStatement.c_str());
-
+  message2 = TextUtils::format("%s has left (\"%s\") ",
+			       playerData->player.getCallSign(),  byeStatement.c_str());
+  
   DEBUG2("%s has quit with the message \"%s\"\n", playerData->player.getCallSign(), byeStatement.c_str());
   sendMessage(ServerPlayer, AllPlayers, message2.c_str());
 
