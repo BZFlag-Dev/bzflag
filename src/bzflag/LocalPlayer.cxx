@@ -874,6 +874,7 @@ void			LocalPlayer::setDesiredSpeed(float fracOfMaxSpeed)
     fracOfMaxSpeed = 0.0f;
   } else if (flag == Flags::Agility) {
     if ((TimeKeeper::getCurrent() - agilityTime) < BZDB.eval(StateDatabase::BZDB_AGILITYTIMEWINDOW)) {
+      float tm = TimeKeeper::getCurrent() - agilityTime;
       fracOfMaxSpeed *= BZDB.eval(StateDatabase::BZDB_AGILITYADVEL);
     } else {
       float oldFrac = desiredSpeed / BZDB.eval(StateDatabase::BZDB_TANKSPEED);
