@@ -125,13 +125,6 @@ void TankGeometryMgr::setupScales(const std::string& /*name*/, void * /*data*/)
 {
   float scale;
   
-  for (int i = 0; i < LastTankSize; i++) {
-    scaleFactors[i][0] = 1.0f;
-    scaleFactors[i][1] = 1.0f;
-    scaleFactors[i][2] = 1.0f;
-  }
-  return;
-
   scaleFactors[Normal][0] = BZDB.eval(StateDatabase::BZDB_TANKLENGTH);
   scale = (float)atof(BZDB.getDefault(StateDatabase::BZDB_TANKLENGTH).c_str());
   scaleFactors[Normal][0] /= scale;
