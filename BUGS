@@ -45,6 +45,7 @@ recent bugs
 
 - menu does not display modified values after quitting and returning, although
   the bindings appear to remain in effect.
+  I cannot reproduce this. Can someone give more details, maybe an example?
 
 - Flaghelp falls into the radar area when radar is 'bigger'
 
