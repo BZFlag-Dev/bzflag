@@ -825,8 +825,8 @@ void			HUDRenderer::renderScoreboard(SceneRenderer& renderer)
   }
   if (!drewMyScore) {
     // if my score is smaller or equal to last remote player draw my score 
-    y -= (int)dy;
     drawPlayerScore(myTank, x1, x2, x3, (float)y);
+    y -= (int)dy;
   }
   delete[] players;
 
