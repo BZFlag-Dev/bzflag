@@ -135,10 +135,11 @@ static FILE *RecordFile = NULL;
 // -------------------------
 
 static bool saveStates ();
-static bool saveTeamStates ();
-static bool saveFlagStates ();
-static bool savePlayerStates ();
-static bool saveVariableStates ();
+static bool saveTeamsState ();
+static bool saveFlagsState ();
+static bool saveRabbitState ();
+static bool savePlayersState ();
+static bool saveVariablesState ();
 static bool resetStates ();
 
 static bool setVariables (void *data);
@@ -193,6 +194,7 @@ extern u16 curMaxPlayers;
 extern TeamInfo team[NumTeams];
 extern char *worldDatabase;
 extern u32 worldDatabaseSize;
+extern uint8_t rabbitIndex;
 extern CmdLineOptions *clOptions;
 
 extern char *getDirectMessageBuffer(void);
@@ -1190,7 +1192,22 @@ prevStatePacket (int seconds)
 // at the time which these functions were called.
 
 static bool
-saveTeamStates ()
+saveStates ()
+{
+  saveTeamsState ();
+  saveFlagsState ();
+  saveRabbitState ();
+  savePlayersState ();
+  saveVariablesState ();
+  
+  RecordUpdateTime = getRRtime ();
+  
+  return true;
+}
+
+
+static bool
+saveTeamsState ()
 {
   int i;
   char bufStart[MaxPacketLen];
@@ -1210,7 +1227,7 @@ saveTeamStates ()
 
 
 static bool
-saveFlagStates () // look at sendFlagUpdate() in bzfs.cxx ... very similar
+saveFlagsState () // look at sendFlagUpdate() in bzfs.cxx ... very similar
 {
   int flagIndex;
   char bufStart[MaxPacketLen];
@@ -1252,7 +1269,21 @@ saveFlagStates () // look at sendFlagUpdate() in bzfs.cxx ... very similar
 
 
 static bool
-savePlayerStates ()
+saveRabbitState ()
+{
+  if (clOptions->gameStyle & int(RabbitChaseGameStyle)) {
+    char bufStart[MaxPacketLen];
+    void *buf;
+    buf = nboPackUByte (bufStart, rabbitIndex);
+    routePacket (MsgNewRabbit, (char*)buf - (char*)bufStart, bufStart,
+               StatePacket);
+  }
+  return true;
+}
+
+
+static bool
+savePlayersState ()
 {
   int i;
   char bufStart[MaxPacketLen];
@@ -1293,18 +1324,58 @@ savePlayerStates ()
 }
 
 
-static bool
-saveStates ()
+typedef struct {
+  void *bufStart;
+  void *buf;
+  int len;
+  int count;
+} packVarData;
+
+static void
+packVars (const std::string& key, void *data)
 {
-  saveTeamStates ();
-  saveFlagStates ();
-  savePlayerStates ();
-  saveVariableStates ();
+  packVarData& pvd = *((packVarData*) data);
+  std::string value = BZDB.get(key);
+  int pairLen = key.length() + 1 + value.length() + 1;
+  if ((pairLen + pvd.len) > (int)(MaxPacketLen - 2*sizeof(u16))) {
+    nboPackUShort(pvd.bufStart, pvd.count);
+    pvd.count = 0;
+    routePacket (MsgSetVar, pvd.len, pvd.bufStart, StatePacket);
+    pvd.buf = nboPackUShort(pvd.bufStart, 0); //placeholder
+    pvd.len = sizeof(u16);
+  }
+
+  pvd.buf = nboPackUByte(pvd.buf, key.length());
+  pvd.buf = nboPackString(pvd.buf, key.c_str(), key.length());
+  pvd.buf = nboPackUByte(pvd.buf, value.length());
+  pvd.buf = nboPackString(pvd.buf, value.c_str(), value.length());
+  pvd.len += pairLen;
+  pvd.count++;
+}
+
+static bool
+saveVariablesState ()
+{
+  // This is basically a PackVars.h rip-off, with the
+  // difference being that instead of sending packets
+  // to the network, it sends them to routePacket().
+
+  char buffer[MaxPacketLen];
+  packVarData pvd;
+
+  pvd.bufStart = buffer;
+  pvd.buf      = buffer + sizeof(u16); // u16 placeholder for count
+  pvd.len      = 0;
+  pvd.count    = 0;
   
-  RecordUpdateTime = getRRtime ();
-  
+  BZDB.iterate (packVars, &pvd);
+  if (pvd.len > 0) {
+    nboPackUShort(pvd.bufStart, pvd.count);
+    routePacket (MsgSetVar, pvd.len, pvd.bufStart, StatePacket);
+  }
   return true;
 }
+
 
 static bool
 resetStates ()
@@ -1337,59 +1408,6 @@ resetStates ()
     player[i].setReplayState (ReplayNone);
   }
 
-  return true;
-}
-
-
-typedef struct {
-  void *bufStart;
-  void *buf;
-  int len;
-  int count;
-} packVarData;
-
-static void
-packVars (const std::string& key, void *data)
-{
-  packVarData& pvd = *((packVarData*) data);
-  std::string value = BZDB.get(key);
-  int pairLen = key.length() + 1 + value.length() + 1;
-  if ((pairLen + pvd.len) > (int)(MaxPacketLen - 2*sizeof(u16))) {
-    nboPackUShort(pvd.bufStart, pvd.count);
-    pvd.count = 0;
-    routePacket (MsgSetVar, pvd.len, pvd.bufStart, StatePacket);
-    pvd.buf = nboPackUShort(pvd.bufStart, 0); //placeholder
-    pvd.len = sizeof(u16);
-  }
-
-  pvd.buf = nboPackUByte(pvd.buf, key.length());
-  pvd.buf = nboPackString(pvd.buf, key.c_str(), key.length());
-  pvd.buf = nboPackUByte(pvd.buf, value.length());
-  pvd.buf = nboPackString(pvd.buf, value.c_str(), value.length());
-  pvd.len += pairLen;
-  pvd.count++;
-}
-
-static bool
-saveVariableStates ()
-{
-  // This is basically a PackVars.h rip-off, with the
-  // difference being that instead of sending packets
-  // to the network, it sends them to routePacket().
-
-  char buffer[MaxPacketLen];
-  packVarData pvd;
-
-  pvd.bufStart = buffer;
-  pvd.buf      = buffer + sizeof(u16); // u16 placeholder for count
-  pvd.len      = 0;
-  pvd.count    = 0;
-  
-  BZDB.iterate (packVars, &pvd);
-  if (pvd.len > 0) {
-    nboPackUShort(pvd.bufStart, pvd.count);
-    routePacket (MsgSetVar, pvd.len, pvd.bufStart, StatePacket);
-  }
   return true;
 }
 

@@ -87,7 +87,8 @@ BasesList bases;
 // Client does not check for rabbit to be 255, but it still works
 // because 255 should be > curMaxPlayers and thus no matchign player will
 // be found.
-static uint8_t rabbitIndex = NoPlayer;
+// FIXME: should be static, but needed by RecordReplay
+uint8_t rabbitIndex = NoPlayer;
 
 WorldWeapons  wWeapons;
 
