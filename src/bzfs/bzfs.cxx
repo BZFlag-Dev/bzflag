@@ -3326,7 +3326,7 @@ static void handleCommand(int t, const void *rawbuf)
       if (now - lastWorldParmChange > 10.0f) {
 	float gravity;
 	
-	if (flag[player[t].getFlag()].flag.type == Flags::Wings)
+	if ((player[t].getFlag() >= 0) && (flag[player[t].getFlag()].flag.type == Flags::Wings))
           gravity = BZDB.eval(StateDatabase::BZDB_WINGSGRAVITY);
 	else
 	  gravity = BZDB.eval(StateDatabase::BZDB_GRAVITY);
@@ -3334,7 +3334,7 @@ static void handleCommand(int t, const void *rawbuf)
 	if (gravity < 0.0f) {
 	  float maxTankHeight;
 	  
-	  if (flag[player[t].getFlag()].flag.type == Flags::Wings)
+	  if ((player[t].getFlag() >= 0) && (flag[player[t].getFlag()].flag.type == Flags::Wings))
 	    maxTankHeight = maxWorldHeight + heightFudge * ((BZDB.eval(StateDatabase::BZDB_WINGSJUMPVELOCITY)*BZDB.eval(StateDatabase::BZDB_WINGSJUMPVELOCITY)*(1+BZDB.eval(StateDatabase::BZDB_WINGSJUMPCOUNT))) / (2.0f * -gravity));
           else
 	    maxTankHeight = maxWorldHeight + heightFudge * ((BZDB.eval(StateDatabase::BZDB_JUMPVELOCITY)*BZDB.eval(StateDatabase::BZDB_JUMPVELOCITY)) / (2.0f * -gravity));
@@ -3390,30 +3390,31 @@ static void handleCommand(int t, const void *rawbuf)
 
 	    // if tank is not driving cannot be sure it didn't toss (V) in flight
 	    // if tank is not alive cannot be sure it didn't just toss (V)
-  	    if (flag[player[t].getFlag()].flag.type == Flags::Velocity)
-	      maxPlanarSpeedSqr *= BZDB.eval(StateDatabase::BZDB_VELOCITYAD) * BZDB.eval(StateDatabase::BZDB_VELOCITYAD);
-	    else if (flag[player[t].getFlag()].flag.type == Flags::Thief)
-	      maxPlanarSpeedSqr *= BZDB.eval(StateDatabase::BZDB_THIEFVELAD) * BZDB.eval(StateDatabase::BZDB_THIEFVELAD);
-	    else if (flag[player[t].getFlag()].flag.type == Flags::Agility)
-	      maxPlanarSpeedSqr *= BZDB.eval(StateDatabase::BZDB_AGILITYADVEL) * BZDB.eval(StateDatabase::BZDB_AGILITYADVEL);
- 	    else if ((flag[player[t].getFlag()].flag.type == Flags::Burrow) &&
-	      (lastState[t].pos[2] == state.pos[2]) && 
-	      (lastState[t].velocity[2] == state.velocity[2]) &&
-	      (state.pos[2] <= BZDB.eval(StateDatabase::BZDB_BURROWDEPTH)))
-	      // if we have burrow and are not actively burrowing
-	      // You may have burrow and still be above ground. Must check z in ground!!
- 	      maxPlanarSpeedSqr *= BZDB.eval(StateDatabase::BZDB_BURROWSPEEDAD) * BZDB.eval(StateDatabase::BZDB_BURROWSPEEDAD);
-	    else {
-	      // If player is moving vertically, or not alive the speed checks
-	      // seem to be problematic. If this happens, just log it for now,
-	      // but don't actually kick
-	      if ((lastState[t].pos[2] != state.pos[2])
-	      ||  (lastState[t].velocity[2] != state.velocity[2])
-	      ||  ((state.status & PlayerState::Alive) == 0)) {
-		logOnly = true;
-	      }
+	    if (player[t].getFlag() >= 0) {
+  	      if (flag[player[t].getFlag()].flag.type == Flags::Velocity)
+	        maxPlanarSpeedSqr *= BZDB.eval(StateDatabase::BZDB_VELOCITYAD) * BZDB.eval(StateDatabase::BZDB_VELOCITYAD);
+	      else if (flag[player[t].getFlag()].flag.type == Flags::Thief)
+	        maxPlanarSpeedSqr *= BZDB.eval(StateDatabase::BZDB_THIEFVELAD) * BZDB.eval(StateDatabase::BZDB_THIEFVELAD);
+	      else if (flag[player[t].getFlag()].flag.type == Flags::Agility)
+	        maxPlanarSpeedSqr *= BZDB.eval(StateDatabase::BZDB_AGILITYADVEL) * BZDB.eval(StateDatabase::BZDB_AGILITYADVEL);
+ 	      else if ((flag[player[t].getFlag()].flag.type == Flags::Burrow) &&
+	        (lastState[t].pos[2] == state.pos[2]) && 
+	        (lastState[t].velocity[2] == state.velocity[2]) &&
+	        (state.pos[2] <= BZDB.eval(StateDatabase::BZDB_BURROWDEPTH)))
+	        // if we have burrow and are not actively burrowing
+	        // You may have burrow and still be above ground. Must check z in ground!!
+ 	        maxPlanarSpeedSqr *= BZDB.eval(StateDatabase::BZDB_BURROWSPEEDAD) * BZDB.eval(StateDatabase::BZDB_BURROWSPEEDAD);
 	    }
-
+	    
+	    // If player is moving vertically, or not alive the speed checks
+	    // seem to be problematic. If this happens, just log it for now,
+	    // but don't actually kick
+	    if ((lastState[t].pos[2] != state.pos[2])
+	    ||  (lastState[t].velocity[2] != state.velocity[2])
+	    ||  ((state.status & PlayerState::Alive) == 0)) {
+	      logOnly = true;
+	    }
+	    
 	    // allow a 10% tolerance level for speed if -speedtol is not sane
 	    float realtol = 1.1f;
 	    if (speedTolerance > 1.0f)
