@@ -150,56 +150,60 @@ DisplayMenu::DisplayMenu() : formatMenu(NULL)
   option->update();
   list.push_back(option);
 
-#if defined(DEBUG_RENDERING)
-  option = new HUDuiList;
-  option->setFontFace(fontFace);
-  option->setLabel("Hidden Line:");
-  option->setCallback(callback, (void*)"a");
-  options = &option->getList();
-  options->push_back(std::string("Off"));
-  options->push_back(std::string("On"));
-  option->update();
-  list.push_back(option);
+#if !defined(DEBUG_RENDERING)
+  if (debugLevel > 0) {
+#endif  
+    option = new HUDuiList;
+    option->setFontFace(fontFace);
+    option->setLabel("Hidden Line:");
+    option->setCallback(callback, (void*)"a");
+    options = &option->getList();
+    options->push_back(std::string("Off"));
+    options->push_back(std::string("On"));
+    option->update();
+    list.push_back(option);
 
-  option = new HUDuiList;
-  option->setFontFace(fontFace);
-  option->setLabel("Wireframe:");
-  option->setCallback(callback, (void*)"b");
-  options = &option->getList();
-  options->push_back(std::string("Off"));
-  options->push_back(std::string("On"));
-  option->update();
-  list.push_back(option);
+    option = new HUDuiList;
+    option->setFontFace(fontFace);
+    option->setLabel("Wireframe:");
+    option->setCallback(callback, (void*)"b");
+    options = &option->getList();
+    options->push_back(std::string("Off"));
+    options->push_back(std::string("On"));
+    option->update();
+    list.push_back(option);
 
-  option = new HUDuiList;
-  option->setFontFace(fontFace);
-  option->setLabel("Depth Complexity:");
-  option->setCallback(callback, (void*)"c");
-  options = &option->getList();
-  options->push_back(std::string("Off"));
-  options->push_back(std::string("On"));
-  option->update();
-  list.push_back(option);
+    option = new HUDuiList;
+    option->setFontFace(fontFace);
+    option->setLabel("Depth Complexity:");
+    option->setCallback(callback, (void*)"c");
+    options = &option->getList();
+    options->push_back(std::string("Off"));
+    options->push_back(std::string("On"));
+    option->update();
+    list.push_back(option);
 
-  option = new HUDuiList;
-  option->setFontFace(fontFace);
-  option->setLabel("Culling Tree:");
-  option->setCallback(callback, (void*)"d");
-  options = &option->getList();
-  options->push_back(std::string("Off"));
-  options->push_back(std::string("On"));
-  option->update();
-  list.push_back(option);
+    option = new HUDuiList;
+    option->setFontFace(fontFace);
+    option->setLabel("Culling Tree:");
+    option->setCallback(callback, (void*)"d");
+    options = &option->getList();
+    options->push_back(std::string("Off"));
+    options->push_back(std::string("On"));
+    option->update();
+    list.push_back(option);
 
-  option = new HUDuiList;
-  option->setFontFace(fontFace);
-  option->setLabel("Collision Tree:");
-  option->setCallback(callback, (void*)"e");
-  options = &option->getList();
-  options->push_back(std::string("Off"));
-  options->push_back(std::string("On"));
-  option->update();
-  list.push_back(option);
+    option = new HUDuiList;
+    option->setFontFace(fontFace);
+    option->setLabel("Collision Tree:");
+    option->setCallback(callback, (void*)"e");
+    options = &option->getList();
+    options->push_back(std::string("Off"));
+    options->push_back(std::string("On"));
+    option->update();
+    list.push_back(option);
+#if !defined(DEBUG_RENDERING)
+  }
 #endif
 
   BzfWindow* window = getMainWindow()->getWindow();
@@ -298,12 +302,16 @@ void			DisplayMenu::resize(int width, int height)
     ((HUDuiList*)list[i++])->setIndex(renderer->useQuality());
     ((HUDuiList*)list[i++])->setIndex(BZDB.isTrue("shadows"));
     ((HUDuiList*)list[i++])->setIndex(BZDBCache::zbuffer);
-#if defined(DEBUG_RENDERING)
-    ((HUDuiList*)list[i++])->setIndex(renderer->useHiddenLine() ? 1 : 0);
-    ((HUDuiList*)list[i++])->setIndex(renderer->useWireframe() ? 1 : 0);
-    ((HUDuiList*)list[i++])->setIndex(renderer->useDepthComplexity() ? 1 : 0);
-    ((HUDuiList*)list[i++])->setIndex(BZDBCache::showCullingGrid ? 1 : 0);
-    ((HUDuiList*)list[i++])->setIndex(BZDBCache::showCollisionGrid ? 1 : 0);
+#if !defined(DEBUG_RENDERING)
+    if (debugLevel > 0) {
+#endif
+      ((HUDuiList*)list[i++])->setIndex(renderer->useHiddenLine() ? 1 : 0);
+      ((HUDuiList*)list[i++])->setIndex(renderer->useWireframe() ? 1 : 0);
+      ((HUDuiList*)list[i++])->setIndex(renderer->useDepthComplexity() ? 1 : 0);
+      ((HUDuiList*)list[i++])->setIndex(BZDBCache::showCullingGrid ? 1 : 0);
+      ((HUDuiList*)list[i++])->setIndex(BZDBCache::showCollisionGrid ? 1 : 0);
+#if !defined(DEBUG_RENDERING)
+    }
 #endif
   }
 
@@ -382,7 +390,6 @@ void			DisplayMenu::callback(HUDuiControl* w, void* data) {
     setSceneDatabase();
     sceneRenderer->notifyStyleChange();
     break;
-#if defined(DEBUG_RENDERING)
   case 'a':
     sceneRenderer->setHiddenLine(list->getIndex() != 0);
     break;
@@ -392,7 +399,6 @@ void			DisplayMenu::callback(HUDuiControl* w, void* data) {
   case 'c':
     sceneRenderer->setDepthComplexity(list->getIndex() != 0);
     break;
-#endif
   case 'd':
     BZDB.setBool("showCullingGrid", list->getIndex() != 0);
     break;
