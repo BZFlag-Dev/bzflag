@@ -20,10 +20,12 @@
 #include "PlayerInfo.h"
 #include "ServerLink.h"
 #include "UIMap.h"
+#include "StartupInfo.h"
 
 
 class BZAdminUI;
 
+extern StartupInfo startupInfo;
 
 /** This class is a client that connects to a BZFlag server and has
     functions for sending and receiving messages. If you give it
@@ -43,7 +45,7 @@ public:
 
   /** A default constructor. It tries to connect to the server at host:port.
       If it doesn't succeed, calls to isValid() will return false. */
-  BZAdminClient(std::string callsign, std::string host, int port,
+  BZAdminClient(std::string callsign, std::string password, std::string host, int port,
 		BZAdminUI* bzInterface = NULL);
 
   /** Formats an incoming message. */

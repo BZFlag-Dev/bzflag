@@ -29,10 +29,10 @@
 #include "version.h"
 #include "Team.h"
 #include "ServerList.h"
-#include "StartupInfo.h"
 
+StartupInfo startupInfo;
 
-BZAdminClient::BZAdminClient(std::string callsign, std::string host,
+BZAdminClient::BZAdminClient(std::string callsign, std::string password, std::string host,
 			     int port, BZAdminUI* bzInterface)
   : myTeam(ObserverTeam), sLink(Address(host), port), valid(false),
     ui(bzInterface) {
@@ -411,8 +411,8 @@ void BZAdminClient::outputServerList() const {
 
   ui->outputMessage(std::string("Server List:"), Yellow);
   ServerList serverList;
-  StartupInfo info;
-  serverList.startServerPings(&info);
+
+  serverList.startServerPings(&startupInfo);
 
   // wait no more than 20 seconds for the list server
   for (int i = 0; i < 20; i++) {
@@ -424,11 +424,11 @@ void BZAdminClient::outputServerList() const {
     } else {
       ui->outputMessage(std::string("...waiting on the list server..."), Yellow);
     }
-    serverList.checkEchos(&info);
+    serverList.checkEchos(&startupInfo);
     TimeKeeper::sleep(1.0f);
   }
   // what is your final answer?
-  serverList.checkEchos(&info);
+  serverList.checkEchos(&startupInfo);
 
   std::vector<ServerItem> servers = serverList.getServers();
   for (std::vector<ServerItem>::const_iterator server = servers.begin();

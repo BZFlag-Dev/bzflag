@@ -82,6 +82,7 @@ int main(int argc, char** argv) {
   const std::string uiOption("ui");
   const std::string uiMsg = "choose a user interface";
   op.registerVariable(uiOption, uiName, uiUsage, uiMsg);
+  op.registerVariable("list", startupInfo.listServerURL, "[-list <list-server-url>]", "specify a list server to use");
   op.registerVector("show", visibleMsgs, "[-show msgtype{,msgtype}*]",
 		      "tell bzadmin to show these message types");
   op.registerVector("hide", invisibleMsgs, "[-hide msgtype{,msgtype}*]",
@@ -138,7 +139,7 @@ int main(int argc, char** argv) {
   }
 
   // try to connect
-  BZAdminClient client(name, host, port);
+  BZAdminClient client(name, password, host, port);
   if (!client.isValid())
     return 1;
 
