@@ -4878,7 +4878,7 @@ static void playerKilled(int victimIndex, int killerIndex, int reason,
   //update tk-score
   if ((victimIndex != killerIndex) &&
       (player[victimIndex].team == player[killerIndex].team) &&
-      (player[victimIndex].team != RogueTeam)) {
+      ((player[victimIndex].team != RogueTeam) || (clOptions.gameStyle & int(RabbitChaseGameStyle)))) {
      player[killerIndex].tks++;
      if ((player[killerIndex].tks >= 3) && (clOptions.teamKillerKickRatio > 0) && // arbitrary 3
 	 ((player[killerIndex].wins == 0) ||
@@ -4917,7 +4917,7 @@ static void playerKilled(int victimIndex, int killerIndex, int reason,
     player[victimIndex].losses++;
     if (killerIndex != InvalidPlayer) {
       if (victimIndex != killerIndex) {
-	if ((player[victimIndex].team != RogueTeam)
+	if (((player[victimIndex].team != RogueTeam) || (clOptions.gameStyle & int(RabbitChaseGameStyle)))
 	    && (player[victimIndex].team == player[killerIndex].team)) {
 	  if (clOptions.teamKillerDies)
 	    playerKilled(killerIndex, killerIndex, reason, -1);
@@ -4962,19 +4962,19 @@ static void playerKilled(int victimIndex, int killerIndex, int reason,
     int winningTeam = (int)NoTeam;
     if (!(clOptions.gameStyle & TeamFlagGameStyle)) {
       if (player[victimIndex].team == player[killerIndex].team) {
-        if (player[killerIndex].team != RogueTeam)
+        if ((player[killerIndex].team != RogueTeam) || (clOptions.gameStyle & int(RabbitChaseGameStyle)))
           if (killerIndex == victimIndex)
             team[int(player[victimIndex].team)].team.lost += 1;
           else
             team[int(player[victimIndex].team)].team.lost += 2;
       } else {
-        if (player[killerIndex].team != RogueTeam) {
-          winningTeam = int(player[killerIndex].team);
-          team[winningTeam].team.won++;
-        }
-        if (player[victimIndex].team != RogueTeam)
-          team[int(player[victimIndex].team)].team.lost++;
-        sendTeamUpdate(int(player[killerIndex].team));
+	  if ((player[killerIndex].team != RogueTeam) || (clOptions.gameStyle & int(RabbitChaseGameStyle))) {
+		winningTeam = int(player[killerIndex].team);
+		team[winningTeam].team.won++;
+	  }
+	  if (player[victimIndex].team != RogueTeam)
+		team[int(player[victimIndex].team)].team.lost++;
+	  sendTeamUpdate(int(player[killerIndex].team));
       }
       sendTeamUpdate(int(player[victimIndex].team));
     }
