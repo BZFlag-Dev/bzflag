@@ -358,8 +358,8 @@ void sendIPUpdate(int targetPlayer = -1, int playerIndex = -1) {
 		    (char*)buf - (char*)bufStart, bufStart);
     }
     if (Record::enabled()) {
-      Record::addPacket (MsgAdminInfo, (char*)buf - (char*)bufStart,
-                          bufStart, HiddenPacket);
+      Record::addPacket (MsgAdminInfo,
+                         (char*)buf - (char*)bufStart, bufStart, HiddenPacket);
     }
   }
   else {

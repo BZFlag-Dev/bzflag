@@ -13,15 +13,11 @@
 #include "bzfs.h"
 #include "RecordReplay.h"
 #include "DirectoryNames.h"
+#include "NetHandler.h"
 
 #ifndef _MSC_VER
 # include <dirent.h>
 #endif  // _MSC_VER
-
-
-// Type Definitions
-// ----------------
-
 
 #ifndef _WIN32
 #  include <sys/types.h>
@@ -39,35 +35,38 @@ typedef __int64 s64;
 #  endif
 #endif
 
-typedef uint16_t u16;
-typedef s64 CRtime;
 
+// Type Definitions
+// ----------------
+
+typedef uint16_t u16;
+typedef s64 RRtime;
 
 enum RecordType {
   StraightToFile  = 0,
   BufferedRecord = 1
 };
 
-typedef struct CRpacket {
-  struct CRpacket *next;
-  struct CRpacket *prev;
+typedef struct RRpacket {
+  struct RRpacket *next;
+  struct RRpacket *prev;
   u16 mode;
   u16 code;
   int len;
   int prev_len;
-  CRtime timestamp;
+  RRtime timestamp;
   void *data;
-} CRpacket;
-static const int CRpacketHdrLen = sizeof (CRpacket) - 
-                                  (2 * sizeof (CRpacket*) - sizeof (void *));
+} RRpacket;
+static const int RRpacketHdrLen = sizeof (RRpacket) - 
+                                  (2 * sizeof (RRpacket*) - sizeof (void *));
 typedef struct {
   int byteCount;
   int packetCount;
   // into the head, out of the tail
-  CRpacket *head; // last packet in 
-  CRpacket *tail; // first packet in
-//  std::list<CRpacket *> ListTest;
-} CRbuffer;
+  RRpacket *head; // last packet in 
+  RRpacket *tail; // first packet in
+//  std::list<RRpacket *> ListTest;
+} RRbuffer;
 
 typedef struct {
   unsigned int magic;           // record file type identifier
@@ -96,9 +95,10 @@ static const unsigned int DefaultUpdateRate = 10 * 1000000; // seconds
 
 static std::string RecordDir;
 
-static bool Capturing = false;
+static bool Recording = false;
 static RecordType RecordMode = BufferedRecord;
-static CRtime UpdateTime = 0;
+static RRtime RecordUpdateTime = 0;
+static RRtime RecordUpdateRate = 0;
 static int RecordMaxBytes = DefaultMaxBytes;
 static int RecordFileBytes = 0;
 static int RecordFilePackets = 0;
@@ -106,16 +106,13 @@ static int RecordFilePrevLen = 0;
 
 static bool Replaying = false;
 static bool ReplayMode = false;
-static CRtime ReplayOffset = 0;
-static CRpacket *ReplayPos = NULL;
-
-static unsigned int UpdateRate = DefaultUpdateRate;
-
+static RRtime ReplayOffset = 0;
+static RRpacket *ReplayPos = NULL;
 
 static TimeKeeper StartTime;
 
-static CRbuffer ReplayBuf = {0, 0, NULL, NULL}; // for replaying
-static CRbuffer RecordBuf = {0, 0, NULL, NULL};  // for capturing
+static RRbuffer ReplayBuf = {0, 0, NULL, NULL}; // for replaying
+static RRbuffer RecordBuf = {0, 0, NULL, NULL};  // for capturing
 
 static FILE *ReplayFile = NULL;
 static FILE *RecordFile = NULL;
@@ -130,15 +127,18 @@ static bool saveFlagStates ();
 static bool savePlayerStates ();
 static bool resetStates ();
 
-static CRpacket *newCRpacket (u16 mode, u16 code, int len, const void *data);
-static CRpacket *delCRpacket (CRbuffer *b);         // delete from the tail
-static void addCRpacket (CRbuffer *b, CRpacket *p); // add to head
-static void freeCRbuffer (CRbuffer *buf);           // clean it out
-static void initCRpacket (u16 mode, u16 code, int len, const void *data,
-                          CRpacket *p);
+// saves straight to a file, or into a buffer
+static bool routePacket (u16 code, int len, const void * data, u16 mode);
 
-static bool saveCRpacket (CRpacket *p, FILE *f);
-static CRpacket *loadCRpacket (FILE *f); // makes a new packet
+static RRpacket *newRRpacket (u16 mode, u16 code, int len, const void *data);
+static RRpacket *delRRpacket (RRbuffer *b);         // delete from the tail
+static void addRRpacket (RRbuffer *b, RRpacket *p); // add to head
+static void freeRRbuffer (RRbuffer *buf);           // clean it out
+static void initRRpacket (u16 mode, u16 code, int len, const void *data,
+                          RRpacket *p);
+
+static bool saveRRpacket (RRpacket *p, FILE *f);
+static RRpacket *loadRRpacket (FILE *f); // makes a new packet
 static bool saveHeader (int playerIndex, FILE *f);
 static bool loadHeader (ReplayHeader *h, FILE *f);
 static FILE *openFile (const char *filename, const char *mode);
@@ -146,7 +146,7 @@ static FILE *openWriteFile (int playerIndex, const char *filename);
 static bool makeDirExist (int playerIndex);
 static bool badFilename (const char *name);
 
-static CRtime getCRtime ();
+static RRtime getRRtime ();
 
 static const char *print_msg_code (u16 code);
 
@@ -159,6 +159,7 @@ extern int numFlags;
 extern int numFlagsInAir;
 extern FlagInfo *flag;
 extern PlayerInfo player[MaxPlayers + ReplayObservers];
+extern PlayerAccessInfo accessInfo[MaxPlayers + ReplayObservers];
 extern u16 curMaxPlayers;
 extern TeamInfo team[NumTeams];
 extern char *worldDatabase;
@@ -181,16 +182,14 @@ static bool recordReset ()
     fclose (RecordFile);
     RecordFile = NULL;
   }
-  freeCRbuffer (&RecordBuf);
+  freeRRbuffer (&RecordBuf);
 
-  Capturing = false;
+  Recording = false;
   RecordMode = BufferedRecord;
-  RecordMaxBytes = DefaultMaxBytes; // FIXME - this doesn't seem right
   RecordFileBytes = 0;
   RecordFilePackets = 0;
   RecordFilePrevLen = 0;
-  UpdateTime = 0;
-  UpdateRate = DefaultUpdateRate;
+  RecordUpdateTime = 0;
   
   return true;
 }
@@ -199,6 +198,8 @@ static bool recordReset ()
 bool Record::init ()
 {
   RecordDir = getRecordDirName();
+  RecordMaxBytes = DefaultMaxBytes;
+  RecordUpdateRate = DefaultUpdateRate;
   recordReset();
   return true;
 }
@@ -217,7 +218,7 @@ bool Record::start (int playerIndex)
     sendMessage(ServerPlayer, playerIndex, "Couldn't start capturing");
     return false;
   }
-  Capturing = true;
+  Recording = true;
   saveStates ();
   sendMessage(ServerPlayer, playerIndex, "Record started");
   
@@ -227,16 +228,17 @@ bool Record::start (int playerIndex)
 
 bool Record::stop (int playerIndex)
 {
-  if (Capturing == false) {
+  if (Recording == false) {
     sendMessage(ServerPlayer, playerIndex, "Couldn't stop capturing");
     return false;
   }
   
-  Capturing = false;
+  sendMessage(ServerPlayer, playerIndex, "Record stopped");
+  
+  Recording = false;
   if (RecordMode == StraightToFile) {
     Record::init();
   }
-  sendMessage(ServerPlayer, playerIndex, "Record stopped");
 
   return true;
 }
@@ -266,7 +268,7 @@ bool Record::setSize (int playerIndex, int Mbytes)
 bool Record::setRate (int playerIndex, int seconds)
 {
   char buffer[MessageLen];
-  UpdateRate = seconds * 1000000;
+  RecordUpdateRate = seconds * 1000000;
   snprintf (buffer, MessageLen, "Record rate set to %i", seconds);
   sendMessage(ServerPlayer, playerIndex, buffer, true);    
   return true;
@@ -277,11 +279,11 @@ bool Record::sendStats (int playerIndex)
 {
   char buffer[MessageLen];
   
-  if (Capturing) {
-    sendMessage (ServerPlayer, playerIndex, "Capturing enabled");
+  if (Recording) {
+    sendMessage (ServerPlayer, playerIndex, "Recording enabled");
   }
   else {
-    sendMessage (ServerPlayer, playerIndex, "Capturing disabled");
+    sendMessage (ServerPlayer, playerIndex, "Recording disabled");
   }
    
   if (RecordMode == BufferedRecord) {
@@ -301,6 +303,8 @@ bool Record::sendStats (int playerIndex)
 bool Record::saveFile (int playerIndex, const char *filename)
 {
   char buffer[MessageLen];
+  std::string name = getRecordDirName();
+  name += filename;
   
   if (ReplayMode) {
     sendMessage (ServerPlayer, playerIndex, "Can't record in replay mode");
@@ -314,32 +318,32 @@ bool Record::saveFile (int playerIndex, const char *filename)
   }
   
   Record::init();
-  Capturing = true;
+  Recording = true;
   RecordMode = StraightToFile;
 
   RecordFile = openWriteFile (playerIndex, filename);
   if (RecordFile == NULL) {
     Record::init();
-    snprintf (buffer, MessageLen, "Could not open for writing: %s", filename);
+    snprintf (buffer, MessageLen, "Could not open for writing: %s", name.c_str());
     sendMessage (ServerPlayer, playerIndex, buffer, true);
     return false;
   }
   
   if (!saveHeader (playerIndex, RecordFile)) {
     Record::init();
-    snprintf (buffer, MessageLen, "Could not save header: %s", filename);
+    snprintf (buffer, MessageLen, "Could not save header: %s", name.c_str());
     sendMessage (ServerPlayer, playerIndex, buffer, true);
     return false;
   }
   
   if (!saveStates ()) {
     Record::init();
-    snprintf (buffer, MessageLen, "Could not save states: %s", filename);
+    snprintf (buffer, MessageLen, "Could not save states: %s", name.c_str());
     sendMessage (ServerPlayer, playerIndex, buffer, true);
     return false;
   }
 
-  snprintf (buffer, MessageLen, "Capturing to file: %s", filename);
+  snprintf (buffer, MessageLen, "Recording to file: %s", name.c_str());
   sendMessage (ServerPlayer, playerIndex, buffer, true);
   
   return true;
@@ -348,15 +352,17 @@ bool Record::saveFile (int playerIndex, const char *filename)
 
 bool Record::saveBuffer (int playerIndex, const char *filename, int seconds)
 {
-  CRpacket *p;
+  RRpacket *p;
   char buffer[MessageLen];
+  std::string name = getRecordDirName();
+  name += filename;
   
   if (ReplayMode) {
     sendMessage (ServerPlayer, playerIndex, "Can't record in replay mode");
     return false;
   }
     
-  if (!Capturing || (RecordMode != BufferedRecord)) { // FIXME - !Capturing ?
+  if (!Recording || (RecordMode != BufferedRecord)) { // FIXME - !Recording ?
     sendMessage (ServerPlayer, playerIndex, "No buffer to save");
     return false;
   }
@@ -367,13 +373,16 @@ bool Record::saveBuffer (int playerIndex, const char *filename, int seconds)
     return false;
   }
   
+
+  // setup the beginning position for the recording
+
   if (seconds != 0) { 
     // start the first update that happened at least 'seconds' ago
     p = RecordBuf.head;
     while (p != NULL) {
       if ((p->mode == FakePacket) && (p->code == MsgTeamUpdate)) {
-        CRtime diff = RecordBuf.head->timestamp - p->timestamp;
-        CRtime usecs = (CRtime)seconds * (CRtime)1000000;
+        RRtime diff = RecordBuf.head->timestamp - p->timestamp;
+        RRtime usecs = (RRtime)seconds * (RRtime)1000000;
         if (diff >= usecs) {
           break;
         }
@@ -398,14 +407,14 @@ bool Record::saveBuffer (int playerIndex, const char *filename, int seconds)
   RecordFile = openWriteFile (playerIndex, filename);
   if (RecordFile == NULL) {
     Record::init();
-    snprintf (buffer, MessageLen, "Could not open for writing: %s", filename);
+    snprintf (buffer, MessageLen, "Could not open for writing: %s", name.c_str());
     sendMessage (ServerPlayer, playerIndex, buffer, true);
     return false;
   }
   
   if (!saveHeader (playerIndex, RecordFile)) {
     Record::init();
-    snprintf (buffer, MessageLen, "Could not save header: %s", filename);
+    snprintf (buffer, MessageLen, "Could not save header: %s", name.c_str());
     sendMessage (ServerPlayer, playerIndex, buffer, true);
     return false;
   }
@@ -413,7 +422,7 @@ bool Record::saveBuffer (int playerIndex, const char *filename, int seconds)
   // Save the packets
   
   while (p != NULL) {
-    saveCRpacket (p, RecordFile);
+    saveRRpacket (p, RecordFile);
     p = p->next;
   }
   
@@ -423,47 +432,10 @@ bool Record::saveBuffer (int playerIndex, const char *filename, int seconds)
   RecordFilePackets = 0;
   RecordFilePrevLen = 0;
   
-  snprintf (buffer, MessageLen, "Recordd buffer saved to: %s", filename);
+  snprintf (buffer, MessageLen, "Record buffer saved to: %s", name.c_str());
   sendMessage (ServerPlayer, playerIndex, buffer, true);
   
   return true;
-}
-
-
-bool 
-routePacket (u16 code, int len, const void * data, u16 mode)
-{
-  if (!Capturing) {
-    return false;
-  }
-  
-  if (RecordMode == BufferedRecord) {
-    CRpacket *p = newCRpacket (mode, code, len, data);
-    p->timestamp = getCRtime();
-    addCRpacket (&RecordBuf, p);
-    DEBUG4 ("routeCRpacket(): mode = %i, len = %4i, code = %s, data = %p\n",
-            (int)p->mode, p->len, print_msg_code (p->code), p->data);
-
-    if (RecordBuf.byteCount > RecordMaxBytes) {
-      CRpacket *p;
-      DEBUG4 ("routePacket: deleting until State Update\n");
-      while (((p = delCRpacket (&RecordBuf)) != NULL) &&
-             !(p->mode && (p->code == MsgTeamUpdate))) {
-        free (p->data);
-        free (p);
-      }
-    }
-  }
-  else {
-    CRpacket p;
-    p.timestamp = getCRtime();
-    initCRpacket (mode, code, len, data, &p);
-    saveCRpacket (&p, RecordFile);
-    DEBUG4 ("routeCRpacket(): mode = %i, len = %4i, code = %s, data = %p\n",
-            (int)p.mode, p.len, print_msg_code (p.code), p.data);
-  }
-  
-  return true; 
 }
 
 
@@ -479,10 +451,11 @@ Record::addPacket (u16 code, int len, const void * data, u16 mode)
   // but it's nice to be able to see the trigger message.
   
   if (code == MsgAddPlayer) {
+
     retval = routePacket (code, len, data, mode);
   }
   
-  if ((getCRtime() - UpdateTime) > (int)UpdateRate) {
+  if ((getRRtime() - RecordUpdateTime) > (int)RecordUpdateRate) {
     // save the states periodically. if there's nothing happening
     // on the server, then this won't get called, and the file size
     // will not increase.
@@ -498,9 +471,46 @@ Record::addPacket (u16 code, int len, const void * data, u16 mode)
 }
 
 
+static bool 
+routePacket (u16 code, int len, const void * data, u16 mode)
+{
+  if (!Recording) {
+    return false;
+  }
+  
+  if (RecordMode == BufferedRecord) {
+    RRpacket *p = newRRpacket (mode, code, len, data);
+    p->timestamp = getRRtime();
+    addRRpacket (&RecordBuf, p);
+    DEBUG4 ("routeRRpacket(): mode = %i, len = %4i, code = %s, data = %p\n",
+            (int)p->mode, p->len, print_msg_code (p->code), p->data);
+
+    if (RecordBuf.byteCount > RecordMaxBytes) {
+      RRpacket *p;
+      DEBUG4 ("routePacket: deleting until State Update\n");
+      while (((p = delRRpacket (&RecordBuf)) != NULL) &&
+             !(p->mode && (p->code == MsgTeamUpdate))) {
+        free (p->data);
+        free (p);
+      }
+    }
+  }
+  else {
+    RRpacket p;
+    p.timestamp = getRRtime();
+    initRRpacket (mode, code, len, data, &p);
+    saveRRpacket (&p, RecordFile);
+    DEBUG4 ("routeRRpacket(): mode = %i, len = %4i, code = %s, data = %p\n",
+            (int)p.mode, p.len, print_msg_code (p.code), p.data);
+  }
+  
+  return true; 
+}
+
+
 bool Record::enabled ()
 {
-  return Capturing;
+  return Recording;
 }
 
 
@@ -512,7 +522,7 @@ int Record::getSize ()
 
 int Record::getRate ()
 {
-  return (UpdateRate / 1000000);
+  return (RecordUpdateRate / (RRtime)1000000);
 }
 
 
@@ -539,7 +549,7 @@ static bool replayReset()
     fclose (ReplayFile);
     ReplayFile = NULL;
   }
-  freeCRbuffer (&ReplayBuf);
+  freeRRbuffer (&ReplayBuf);
   
   ReplayMode = true;
   Replaying = false;
@@ -552,7 +562,7 @@ static bool replayReset()
 
 bool Replay::init()
 {
-  if (Capturing) {
+  if (Recording) {
     return false;
   }
   replayReset();
@@ -571,8 +581,10 @@ bool Replay::kill()
 bool Replay::loadFile(int playerIndex, const char *filename)
 {
   ReplayHeader header;
-  CRpacket *p;
+  RRpacket *p;
   char buffer[MessageLen];
+  std::string name = getRecordDirName();
+  name += filename;
   
   if (!ReplayMode) {
     sendMessage (ServerPlayer, playerIndex, "Server isn't in replay mode");
@@ -589,13 +601,13 @@ bool Replay::loadFile(int playerIndex, const char *filename)
   
   ReplayFile = openFile (filename, "rb");
   if (ReplayFile == NULL) {
-    snprintf (buffer, MessageLen, "Could not open: %s", filename);
+    snprintf (buffer, MessageLen, "Could not open: %s", name.c_str());
     sendMessage (ServerPlayer, playerIndex, buffer, true);
     return false;
   }
   
   if (!loadHeader (&header, ReplayFile)) {
-    snprintf (buffer, MessageLen, "Could not open header: %s", filename);
+    snprintf (buffer, MessageLen, "Could not open header: %s", name.c_str());
     sendMessage (ServerPlayer, playerIndex, buffer, true);
     fclose (ReplayFile);
     ReplayFile = NULL;
@@ -603,7 +615,7 @@ bool Replay::loadFile(int playerIndex, const char *filename)
   }
 
   if (header.magic != ReplayMagic) {
-    snprintf (buffer, MessageLen, "Not a bzflag replay file: %s", filename);
+    snprintf (buffer, MessageLen, "Not a bzflag replay file: %s", name.c_str());
     sendMessage (ServerPlayer, playerIndex, buffer, true);
     fclose (ReplayFile);
     ReplayFile = NULL;
@@ -619,24 +631,24 @@ bool Replay::loadFile(int playerIndex, const char *filename)
   // preload the buffer 
   // FIXME - this needs to be a moving window
   while (ReplayBuf.byteCount < RecordMaxBytes) {
-    p = loadCRpacket (ReplayFile);
+    p = loadRRpacket (ReplayFile);
     if (p == NULL) {
       break;
     }
     else {
-      addCRpacket (&ReplayBuf, p);
+      addRRpacket (&ReplayBuf, p);
     }
   }
 
   ReplayPos = ReplayBuf.tail; // setup the initial position
 
   if (ReplayBuf.tail == NULL) {
-    snprintf (buffer, MessageLen, "No valid data: %s", filename);
+    snprintf (buffer, MessageLen, "No valid data: %s", name.c_str());
     sendMessage (ServerPlayer, playerIndex, buffer, true);
     return false;
   }
 
-  snprintf (buffer, MessageLen, "Loaded file: %s", filename);
+  snprintf (buffer, MessageLen, "Loaded file: %s", name.c_str());
   sendMessage (ServerPlayer, playerIndex, buffer, true);
   
   return true;
@@ -687,7 +699,7 @@ bool Replay::play(int playerIndex)
   
   Replaying = true;
   if (ReplayPos != NULL) {
-    ReplayOffset = getCRtime () - ReplayBuf.tail->timestamp;
+    ReplayOffset = getRRtime () - ReplayBuf.tail->timestamp;
   }
 
   // reset the replay observers' view of state  
@@ -704,7 +716,7 @@ bool Replay::play(int playerIndex)
 
 bool Replay::skip(int playerIndex, int seconds)
 {
-  CRpacket *p;
+  RRpacket *p;
 
   if (!ReplayMode) {
     sendMessage (ServerPlayer, playerIndex, "Server is not in replay mode");
@@ -719,8 +731,8 @@ bool Replay::skip(int playerIndex, int seconds)
   p = ReplayPos;
 
   if (seconds != 0) {
-    CRtime target = (getCRtime() - ReplayOffset) + 
-                    ((CRtime)seconds * (CRtime)1000000);
+    RRtime target = (getRRtime() - ReplayOffset) + 
+                    ((RRtime)seconds * (RRtime)1000000);
 
     if (seconds > 0) {
       while (p != NULL) {
@@ -761,8 +773,8 @@ bool Replay::skip(int playerIndex, int seconds)
     }
   }
   
-  CRtime newOffset = getCRtime() - p->timestamp;
-  CRtime diff = ReplayOffset - newOffset;
+  RRtime newOffset = getRRtime() - p->timestamp;
+  RRtime diff = ReplayOffset - newOffset;
   ReplayOffset = newOffset;
   ReplayPos = p;
   
@@ -783,7 +795,7 @@ bool Replay::sendPackets () {
 
   while (Replay::nextTime () < 0.0f) {
     int i;
-    CRpacket *p;
+    RRpacket *p;
     
     p = ReplayPos;
 
@@ -856,7 +868,7 @@ bool Replay::sendPackets () {
   }
   
   if (sent && (ReplayPos->prev != NULL)) {  
-    CRtime diff = (ReplayPos->timestamp - ReplayPos->prev->timestamp);
+    RRtime diff = (ReplayPos->timestamp - ReplayPos->prev->timestamp);
     if (diff > (10 * 1000000)) {
       char buffer[MessageLen];
       sprintf (buffer, "No activity for the next %.3f seconds", 
@@ -875,7 +887,7 @@ float Replay::nextTime()
     return 1000.0f;
   }
   else {
-    CRtime diff = (ReplayPos->timestamp + ReplayOffset) - getCRtime();
+    RRtime diff = (ReplayPos->timestamp + ReplayOffset) - getRRtime();
     return (float)diff / 1000000.0f;
   }
 }
@@ -924,7 +936,8 @@ saveTeamStates ()
     buf = team[i].team.pack(buf);
   }
   
-  routePacket (MsgTeamUpdate, (char*)buf - (char*)bufStart,  bufStart, true);
+  routePacket (MsgTeamUpdate, 
+               (char*)buf - (char*)bufStart,  bufStart, FakePacket);
   
   return true;
 }
@@ -947,7 +960,8 @@ saveFlagStates () // look at sendFlagUpdate() in bzfs.cxx ... very similar
       if ((length + sizeof(u16) + FlagPLen) > MaxPacketLen - 2*sizeof(u16)) {
         // packet length overflow
         nboPackUShort(bufStart, cnt);
-        routePacket (MsgFlagUpdate, (char*)buf - (char*)bufStart, bufStart, true);
+        routePacket (MsgFlagUpdate, 
+                     (char*)buf - (char*)bufStart, bufStart, FakePacket);
 
         cnt = 0;
         length = sizeof(u16);
@@ -963,7 +977,8 @@ saveFlagStates () // look at sendFlagUpdate() in bzfs.cxx ... very similar
 
   if (cnt > 0) {
     nboPackUShort(bufStart, cnt);
-    routePacket (MsgFlagUpdate, (char*)buf - (char*)bufStart, bufStart, true);
+    routePacket (MsgFlagUpdate,
+                 (char*)buf - (char*)bufStart, bufStart, FakePacket);
   }
   
   return true;
@@ -975,15 +990,36 @@ savePlayerStates ()
 {
   int i;
   char bufStart[MaxPacketLen];
-  void *buf;
+  char adminBuf[MaxPacketLen];
+  void *buf, *adminPtr;
+  
+  // place holder for the number of IPs
+  adminPtr = adminBuf + sizeof (unsigned char);
 
   for (i = 0; i < curMaxPlayers; i++) {
     if (player[i].isPlaying()) {
+      // Complete MsgAddPlayer      
       PlayerInfo *pPlayer = &player[i];
       buf = nboPackUByte(bufStart, i);
       buf = pPlayer->packUpdate(buf);
-      routePacket (MsgAddPlayer, (char*)buf - (char*)bufStart, bufStart, true);
+      routePacket (MsgAddPlayer, 
+                   (char*)buf - (char*)bufStart, bufStart, FakePacket);
+      // Part of MsgAdminInfo
+      NetHandler *handler = NetHandler::getHandler(i);
+      adminPtr = nboPackUByte(adminPtr, handler->sizeOfIP());
+      adminPtr = nboPackUByte(adminPtr, i);
+      adminPtr = nboPackUByte(adminPtr, accessInfo[i].getPlayerProperties());
+      adminPtr = handler->packAdminInfo(adminPtr);
     }
+  }
+
+  // Rather then recording the original MsgAdminInfo message
+  // that gets sent out, we'll record the players' addresses
+  // here in case the record buffer has grown past it.
+  if (i > 0) {
+    buf = nboPackUByte (adminPtr, i);
+    routePacket (MsgAdminInfo,
+                 (char*)adminPtr - (char*)adminBuf, adminBuf, HiddenPacket);
   }
   
   return true;
@@ -997,7 +1033,7 @@ saveStates ()
   saveFlagStates ();
   savePlayerStates ();
   
-  UpdateTime = getCRtime ();
+  RecordUpdateTime = getRRtime ();
   
   return true;
 }
@@ -1040,9 +1076,9 @@ resetStates ()
 // types, so everything is saved in network byte order.
                           
 static bool
-saveCRpacket (CRpacket *p, FILE *f)
+saveRRpacket (RRpacket *p, FILE *f)
 {
-  char bufStart[CRpacketHdrLen];
+  char bufStart[RRpacketHdrLen];
   void *buf;
 
   if (f == NULL) {
@@ -1056,14 +1092,14 @@ saveCRpacket (CRpacket *p, FILE *f)
   buf = nboPackUInt (buf, (unsigned int) (p->timestamp >> 32));        // msb
   buf = nboPackUInt (buf, (unsigned int) (p->timestamp & 0xFFFFFFFF)); // lsb
 
-  if ((fwrite (bufStart, CRpacketHdrLen, 1, f) == 0) ||
+  if ((fwrite (bufStart, RRpacketHdrLen, 1, f) == 0) ||
       (fwrite (p->data, p->len, 1, f) == 0)) {
     return false;
   }
 
   fflush (f);//FIXME
   
-  RecordFileBytes += p->len + CRpacketHdrLen;
+  RecordFileBytes += p->len + RRpacketHdrLen;
   RecordFilePackets++;
   RecordFilePrevLen = p->len;
 
@@ -1071,11 +1107,11 @@ saveCRpacket (CRpacket *p, FILE *f)
 }
 
 
-static CRpacket *
-loadCRpacket (FILE *f)
+static RRpacket *
+loadRRpacket (FILE *f)
 {
-  CRpacket *p;
-  char bufStart[CRpacketHdrLen];
+  RRpacket *p;
+  char bufStart[RRpacketHdrLen];
   void *buf;
   unsigned int timeMsb, timeLsb;
   
@@ -1083,9 +1119,9 @@ loadCRpacket (FILE *f)
     return false;
   }
   
-  p = (CRpacket *) malloc (sizeof (CRpacket));
+  p = (RRpacket *) malloc (sizeof (RRpacket));
 
-  if (fread (bufStart, CRpacketHdrLen, 1, f) <= 0) {
+  if (fread (bufStart, RRpacketHdrLen, 1, f) <= 0) {
     free (p);
     return NULL;
   }
@@ -1095,10 +1131,10 @@ loadCRpacket (FILE *f)
   buf = nboUnpackInt (buf, p->prev_len);
   buf = nboUnpackUInt (buf, timeMsb);
   buf = nboUnpackUInt (buf, timeLsb);
-  p->timestamp = ((CRtime)timeMsb << 32) + (CRtime)timeLsb;
+  p->timestamp = ((RRtime)timeMsb << 32) + (RRtime)timeLsb;
 
   if (p->len > (MaxPacketLen - ((int)sizeof(u16) * 2))) {
-    fprintf (stderr, "loadCRpacket: ERROR, packtlen = %i\n", p->len);
+    fprintf (stderr, "loadRRpacket: ERROR, packtlen = %i\n", p->len);
     free (p);
     Replay::init();
     return NULL;
@@ -1111,7 +1147,7 @@ loadCRpacket (FILE *f)
     return NULL;
   }
   
-  DEBUG4 ("loadCRpacket(): mode = %i, len = %4i, code = %s, data = %p\n",
+  DEBUG4 ("loadRRpacket(): mode = %i, len = %4i, code = %s, data = %p\n",
           (int)p->mode, p->len, print_msg_code (p->code), p->data);
 
   return p;  
@@ -1300,7 +1336,7 @@ badFilename (const char *name)
 // Buffer Functions
 
 static void
-initCRpacket (u16 mode, u16 code, int len, const void *data, CRpacket *p)
+initRRpacket (u16 mode, u16 code, int len, const void *data, RRpacket *p)
 {
   // RecordFilePrevLen takes care of p->prev_len
   p->mode = mode;
@@ -1310,10 +1346,10 @@ initCRpacket (u16 mode, u16 code, int len, const void *data, CRpacket *p)
 }
 
 
-static CRpacket *
-newCRpacket (u16 mode, u16 code, int len, const void *data)
+static RRpacket *
+newRRpacket (u16 mode, u16 code, int len, const void *data)
 {
-  CRpacket *p = (CRpacket *) malloc (sizeof (CRpacket));
+  RRpacket *p = (RRpacket *) malloc (sizeof (RRpacket));
   
   p->next = NULL;
   p->prev = NULL;
@@ -1322,14 +1358,14 @@ newCRpacket (u16 mode, u16 code, int len, const void *data)
   if (data != NULL) {
     memcpy (p->data, data, len);
   }
-  initCRpacket (mode, code, len, p->data, p);
+  initRRpacket (mode, code, len, p->data, p);
 
   return p;
 }
 
 
 static void
-addCRpacket (CRbuffer *b, CRpacket *p)
+addRRpacket (RRbuffer *b, RRpacket *p)
 {
   if (b->head != NULL) {
     b->head->next = p;
@@ -1341,23 +1377,23 @@ addCRpacket (CRbuffer *b, CRpacket *p)
   p->next = NULL;
   b->head = p;
   
-  b->byteCount = b->byteCount + (p->len + CRpacketHdrLen);
+  b->byteCount = b->byteCount + (p->len + RRpacketHdrLen);
   b->packetCount++;
   
   return;
 }
 
 
-static CRpacket *
-delCRpacket (CRbuffer *b)
+static RRpacket *
+delRRpacket (RRbuffer *b)
 {
-  CRpacket *p = b->tail;
+  RRpacket *p = b->tail;
 
   if (p == NULL) {
     return NULL;
   }
   
-  b->byteCount = b->byteCount - (p->len + CRpacketHdrLen);
+  b->byteCount = b->byteCount - (p->len + RRpacketHdrLen);
   b->packetCount--;
 
   b->tail = p->next;
@@ -1375,9 +1411,9 @@ delCRpacket (CRbuffer *b)
 
 
 static void
-freeCRbuffer (CRbuffer *b)
+freeRRbuffer (RRbuffer *b)
 {
-  CRpacket *p, *ptmp;
+  RRpacket *p, *ptmp;
 
   p = b->tail;
 
@@ -1401,18 +1437,18 @@ freeCRbuffer (CRbuffer *b)
 
 // Timing Functions
 
-static CRtime
-getCRtime ()
+static RRtime
+getRRtime ()
 {
-  CRtime now;
+  RRtime now;
 #ifndef _WIN32
   struct timeval tv;
   gettimeofday (&tv, NULL);
-  now = (CRtime)tv.tv_sec * (CRtime)1000000;
-  now = now + (CRtime)tv.tv_usec;
+  now = (RRtime)tv.tv_sec * (RRtime)1000000;
+  now = now + (RRtime)tv.tv_usec;
 #else //_WIN32
   // FIXME - this will roll every (2^32/1000) seconds (49.71 days)
-  now = (CRtime)timeGetTime() * (CRtime)1000;
+  now = (RRtime)timeGetTime() * (RRtime)1000;
 #endif //_WIN32
   
   return now;
@@ -1493,6 +1529,7 @@ print_msg_code (u16 code)
 
   switch (code) {
       STRING_CASE (MsgNull);
+      
       STRING_CASE (MsgAccept);
       STRING_CASE (MsgAlive);
       STRING_CASE (MsgAdminInfo);

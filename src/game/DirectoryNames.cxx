@@ -106,7 +106,7 @@ extern std::string		getCacheDirName()
 extern std::string		getRecordDirName()
 {
   std::string name = getConfigDirName();
-  name += "recordings";
+  name += "recordings/";
   return name;
 }
 
@@ -114,7 +114,7 @@ extern std::string		getRecordDirName()
 extern std::string		getScreenShotDirName()
 {
   std::string name = getConfigDirName();
-  name += "screenshots";
+  name += "screenshots/";
   return name;
 }
 
