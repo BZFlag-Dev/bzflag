@@ -526,16 +526,20 @@ void handleHostBanCmd(GameKeeper::Player *playerData, const char *message)
     strcpy(reply, "Host pattern added to banlist");
     char kickmessage[MessageLen];
     for (int i = 0; i < curMaxPlayers; i++) {
-      NetHandler *netHandler = NetHandler::getHandler(i);
-      if (netHandler && netHandler->getHostname()
+      GameKeeper::Player *p = GameKeeper::Player::getPlayerByIndex(i);
+      if (p == NULL)
+	continue;
+      NetHandler *netHandler = p->netHandler;
+      if (netHandler->getHostname()
 	  && (!clOptions->acl.hostValidate(netHandler->getHostname()))) {
 
 	// admins can override antiperms
 	if (!playerData->accessInfo.isAdmin()) {
 	  // make sure this player isn't protected
-	  GameKeeper::Player *p = GameKeeper::Player::getPlayerByIndex(i);
-	  if ((p != NULL) && (p->accessInfo.hasPerm(PlayerAccessInfo::antiban))) {
-	    sprintf(kickmessage, "%s is protected from being banned (skipped).");
+	  if (p->accessInfo.hasPerm(PlayerAccessInfo::antiban)) {
+	    sprintf(kickmessage,
+		    "%s is protected from being banned (skipped).",
+		    p->player.getCallSign());
 	    sendMessage(ServerPlayer, t, kickmessage);
 	    continue;
 	  }
