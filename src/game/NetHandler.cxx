@@ -639,7 +639,9 @@ const char *NetHandler::getTargetIP() {
 }
 
 int NetHandler::sizeOfIP() {
-  return peer.getIPVersion() == 4 ? 8 : 20; // 8 for IPv4, 20 for IPv6
+  // IPv4 is 1 byte for type and 4 bytes for IP = 5
+  // IPv6 is 1 byte for type and 16 bytes for IP = 17
+  return peer.getIPVersion() == 4 ? 5 : 17;
 }
 
 void *NetHandler::packAdminInfo(void *buf) {
