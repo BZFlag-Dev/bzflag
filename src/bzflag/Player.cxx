@@ -590,7 +590,7 @@ void			Player::setDeadReckoning(float timestamp)
   float alpha;
   if (deadReckoningState < 10) {
     // Initialization
-    alpha = 1.0 / float(deadReckoningState + 1);
+    alpha = 1.0f / float(deadReckoningState + 1);
   } else {
     // Stable
     alpha = 0.01f;
