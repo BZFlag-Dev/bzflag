@@ -1439,12 +1439,12 @@ static void handleReloadCmd(GameKeeper::Player *playerData, const char *)
   // Check host bans
   GameKeeper::Player::setAllNeedHostbanChecked(true);
 
-  //Check IP bans
+  // Check IP bans
   for (int i = 0; i < curMaxPlayers; i++) {
     GameKeeper::Player *otherPlayer = GameKeeper::Player::getPlayerByIndex(i);
-	if (otherPlayer && !clOptions->acl.validate
+      if (otherPlayer && !clOptions->acl.validate
 	(otherPlayer->netHandler->getIPAddress())) {
-      // admins can override antiperms
+	  // admins can override antiperms
 	  if (!playerData->accessInfo.isAdmin()) {
 	    // make sure this player isn't protected
 	    GameKeeper::Player *p = GameKeeper::Player::getPlayerByIndex(i);
