@@ -5555,6 +5555,9 @@ static void parse(int argc, char **argv)
 	   usage(argv[0]);
 	 }
 	 worldFile = argv[i];
+	 if (useTeleporters)
+	   fprintf(stderr, "-t is meaningless when using a custom world, ignoring\n");
+
       }
       else if (strcmp(argv[i], "+f") == 0) {
       // add required flag
@@ -5904,6 +5907,8 @@ static void parse(int argc, char **argv)
     else if (strcmp(argv[i], "-t") == 0) {
       // allow teleporters
       useTeleporters = True;
+      if (worldFile != NULL)
+	fprintf(stderr, "-t is meaningless when using a custom world, ignoring\n");
     }
 #ifdef TIMELIMIT
     else if (strcmp(argv[i], "-time") == 0) {
