@@ -25,6 +25,7 @@
 #include "ShotUpdate.h"
 #include "Protocol.h"
 #include "Address.h"
+#include "StateDatabase.h"
 
 char *getDirectMessageBuffer();
 void broadcastMessage(uint16_t code, int len, const void *msg);
@@ -88,12 +89,15 @@ void WorldWeapons::fire()
       firingInfo.shot.vel[1] = shotSpeed*sin(w->direction);
       firingInfo.shot.vel[2] = 0.0f;
       firingInfo.shot.id = worldShotId++;
-      if (worldShotId > 30) // Maximum of 30 world shots
-	worldShotId = 0;
+      if (worldShotId > 30) { // Maximum of 30 world shots
+	    worldShotId = 0;
+      }
       firingInfo.shot.dt = 0;
       buf = firingInfo.pack(bufStart);
 
-      broadcastMessage(MsgShotBegin, (char *)buf - (char *)bufStart, bufStart);
+      if (BZDB.isTrue(StateDatabase::BZDB_WEAPONS)) {
+        broadcastMessage(MsgShotBegin, (char *)buf - (char *)bufStart, bufStart);
+      }
 
       //Set up timer for next shot, and eat any shots that have been missed
       while (w->nextTime <= nowTime) {
