@@ -210,7 +210,6 @@ extern int numFlagsInAir;
 extern FlagInfo *flag;
 extern PlayerInfo player[MaxPlayers + ReplayObservers];
 extern PlayerAccessInfo accessInfo[MaxPlayers + ReplayObservers];
-extern Score *score[MaxPlayers  + ReplayObservers];
 extern u16 curMaxPlayers;
 extern TeamInfo team[NumTeams];
 extern char *worldDatabase;
