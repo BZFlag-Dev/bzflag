@@ -237,19 +237,21 @@ BZAdminClient::getServerString(std::string& str, ColorCode& colorCode) {
       std::istringstream iss(returnString);
       char c, d;
       int pt;
-      iss>>c>>pt>>d;
-      PlayerIdMap::iterator iter;
-      if (c == '[' && (iter = players.find(pt)) != players.end() && d == ']') {
-	std::vector<std::string> tokens;
-	tokens = string_util::tokenize(iss.str(), " ");
-	if (*tokens.rbegin() == "udp" || *tokens.rbegin() == "udp+")
-	  tokens.pop_back();
-	if (tokens.size() >= 2) {
-	  std::string callsign = *(++tokens.rbegin());
-	  if (*callsign.rbegin() == ':') {
-	    iter->second.ip = *tokens.rbegin();
-	  }
-	}
+      if (iss >> c >> pt >> d) {
+        PlayerIdMap::iterator iter;
+        if (c == '[' && (iter = players.find(pt)) != players.end() && d == ']') {
+          std::vector<std::string> tokens = string_util::tokenize(returnString, " ");
+          if (!tokens.empty()) {
+            if (*tokens.rbegin() == "udp" || *tokens.rbegin() == "udp+")
+              tokens.pop_back();
+            if (tokens.size() >= 2) {
+              std::string callsign = *(++tokens.rbegin());
+              if (*callsign.rbegin() == ':') {
+                iter->second.ip = *tokens.rbegin();
+              }
+            }
+          }
+        }
       }
       
       // is the message for me?
