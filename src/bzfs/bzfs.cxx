@@ -1560,10 +1560,10 @@ static void addPlayer(int playerIndex)
   // or if the team is full or if the server is full
   if (!player[playerIndex].isHuman() && !player[playerIndex].isBot()) {
     rejectPlayer(playerIndex, RejectBadType);
-        return;
+    return;
   } else if (t == NoTeam) {
     rejectPlayer(playerIndex, RejectBadTeam);
-        return;
+    return;
   } else if (t == ObserverTeam && player[playerIndex].isBot()) {
     rejectPlayer(playerIndex, RejectServerFull);
     return;
@@ -1572,8 +1572,8 @@ static void addPlayer(int playerIndex)
     rejectPlayer(playerIndex, RejectServerFull);
     return;
   } else if (team[int(t)].team.size >= clOptions->maxTeam[int(t)]) {
-      rejectPlayer(playerIndex, RejectTeamFull);
-      return ;
+    rejectPlayer(playerIndex, RejectTeamFull);
+    return ;
   }
   accessInfo[playerIndex].reset(player[playerIndex].getCallSign());
   player[playerIndex].resetPlayer
@@ -1866,11 +1866,11 @@ void resetFlag(int flagIndex)
 	pFlagInfo->flag.status = FlagNoExist;
       else
 	pFlagInfo->flag.status = FlagOnGround;
-    }
-    else if (pFlagInfo->flag.type == Flags::Null)
+    } else if (pFlagInfo->flag.type == Flags::Null) {
       randomFlag(flagIndex);
-    else
+    } else {
       addFlag(flagIndex);
+    }
   }
 
   sendFlagUpdate(flagIndex);
@@ -1989,8 +1989,7 @@ static void pausePlayer(int playerIndex, bool paused)
   if (clOptions->gameStyle & int(RabbitChaseGameStyle)) {
     if (paused && (rabbitIndex == playerIndex)) {
       anointNewRabbit();
-    }
-    else if (!paused && (rabbitIndex == NoPlayer)) {
+    } else if (!paused && (rabbitIndex == NoPlayer)) {
       anointNewRabbit();
     }
   }
@@ -2052,8 +2051,7 @@ void removePlayer(int playerIndex, const char *reason, bool notify)
 	Flag &carriedflag = flag[flagid].flag;
 	if (carriedflag.type->flagTeam != ::NoTeam) {
 	  dropFlag(playerIndex, lastState[playerIndex].pos);
-	}
-	else {
+	} else {
 	  zapFlag(flagid);
 	}
       }
@@ -2117,12 +2115,10 @@ void removePlayer(int playerIndex, const char *reason, bool notify)
       if (clOptions->oneGameOnly) {
 	done = true;
 	exitCode = 0;
-      }
-      else if ((clOptions->worldFile == "") && (!defineWorld())) {
+      } else if ((clOptions->worldFile == "") && (!defineWorld())) {
 	done = true;
 	exitCode = 1;
-      }
-      else {
+      } else {
 	// republicize ourself.  this dereferences the URL chain
 	// again so we'll notice any pointer change when any game
 	// is over (i.e. all players have quit).
@@ -2634,6 +2630,8 @@ static void captureFlag(int playerIndex, TeamColor teamCaptured)
   int flagIndex = player[playerIndex].getFlag();
   if (flagIndex < 0 || (flag[flagIndex].flag.type->flagTeam == ::NoTeam))
     return;
+
+  // TODO: Cheat detection
 
   // player no longer has flag and put flag back at it's base
   player[playerIndex].resetFlag();
