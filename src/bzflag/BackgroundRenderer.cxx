@@ -82,14 +82,14 @@ BackgroundRenderer::BackgroundRenderer(const SceneRenderer&) :
   // ground
   {
     // load texture for normal ground
-   // OpenGLTexture *groundTexture = NULL;
+    // OpenGLTexture *groundTexture = NULL;
     int groundTextureID = -1;
 
     if (userTextures[0].size())
-      groundTextureID = tm.getTextureID( userTextures[0].c_str(),false );
+      groundTextureID = tm.getTextureID( userTextures[0].c_str(), false );
 
-    if (groundTextureID <0)
-      groundTextureID = tm.getTextureID( BZDB.get("stdGroundTexture").c_str(),true );
+    if (groundTextureID < 0)
+      groundTextureID = tm.getTextureID( BZDB.get("stdGroundTexture").c_str(), true );
 
     // gstates
     gstate.reset();
@@ -108,10 +108,10 @@ BackgroundRenderer::BackgroundRenderer(const SceneRenderer&) :
     // load texture for inverted ground
     groundTextureID = -1;
     if (userTextures[1].size())
-      groundTextureID = tm.getTextureID( userTextures[1].c_str(),false );
+      groundTextureID = tm.getTextureID( userTextures[1].c_str(), false );
 
-    if (groundTextureID <0)
-      groundTextureID = tm.getTextureID( BZDB.get("zoneGroundTexture").c_str(),false );
+    if (groundTextureID < 0)
+      groundTextureID = tm.getTextureID( BZDB.get("zoneGroundTexture").c_str(), false );
 
     // gstates
     gstate.reset();
@@ -120,11 +120,11 @@ BackgroundRenderer::BackgroundRenderer(const SceneRenderer&) :
     gstate.setMaterial(defaultMaterial);
     invGroundGState[1] = gstate.getState();
     gstate.reset();
-    gstate.setTexture(groundTextureID <0);
+    gstate.setTexture(groundTextureID < 0);
     invGroundGState[2] = gstate.getState();
     gstate.reset();
     gstate.setMaterial(defaultMaterial);
-    gstate.setTexture(groundTextureID <0);
+    gstate.setTexture(groundTextureID < 0);
     invGroundGState[3] = gstate.getState();
   }
 
@@ -616,16 +616,15 @@ void			BackgroundRenderer::drawGround()
 {
   // draw ground
   glNormal3f(0.0f, 0.0f, 1.0f);
-  if (invert){
+  if (invert) {
     if (BZDB.isTrue("texture"))
-      glColor3f(1,1,1);
+      glColor3f(1, 1, 1);
     else
       glColor3fv(groundColorInv[styleIndex]);
     invGroundGState[styleIndex].setState();
-  }
-  else{
+  } else {
     if (BZDB.isTrue("texture"))
-      glColor3f(1,1,1);
+      glColor3f(1, 1, 1);
     else
       glColor3fv(groundColor[styleIndex]);
     groundGState[styleIndex].setState();
