@@ -25,9 +25,9 @@ OggAudioFile::OggAudioFile(std::istream* in) : AudioFile(in)
 	cb.tell_func = OAFTell;
 
 	OAFInputBundle* bundle = new OAFInputBundle;
-	in->seekg(0, ios::end);
+	in->seekg(0, std::ios::end);
 	bundle->input = in; bundle->length = std::streamoff(in->tellg());
-	in->seekg(0, ios::beg);
+	in->seekg(0, std::ios::beg);
 
 	if(ov_open_callbacks(bundle, &file, NULL, 0, cb) < 0) {
 		std::cout << "OggAudioFile() failed: call to ov_open_callbacks failed\n";
@@ -61,8 +61,8 @@ bool		OggAudioFile::read(void* buffer, int numFrames)
 	frames = ov_read(&file, (char *) buffer, bytes, 0, 2, 1, &stream);
 #endif
 	ogg_int64_t pcmoff = ov_pcm_tell(&file);
-	std::cout << "requested: " << numFrames << endl;
-	std::cout << "actual:    " << pcmoff  - oldoff << endl << endl;
+	std::cout << "requested: " << numFrames << "\n";
+	std::cout << "actual:    " << pcmoff  - oldoff << "\n\n";
 	if (frames < 0) {
 		if (frames == OV_HOLE)
 			// OV_HOLE is non-fatal
