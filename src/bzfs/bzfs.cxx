@@ -4439,11 +4439,27 @@ int main(int argc, char **argv)
     for (int j=0;j<curMaxPlayers;j++) {
       GameKeeper::Player *p = GameKeeper::Player::getPlayerByIndex(j);
       if (p != NULL) {
-        int nextPingSeqno = p->lagInfo->getNextPingSeqno();
+	bool warn;
+	bool kick;
+        int nextPingSeqno = p->lagInfo->getNextPingSeqno(warn, kick);
 	if (nextPingSeqno > 0) {
 	  void *buf, *bufStart = getDirectMessageBuffer();
 	  buf = nboPackUShort(bufStart, nextPingSeqno);
 	  directMessage(j, MsgLagPing, (char*)buf - (char*)bufStart, bufStart);
+	  if (warn) {
+	    char message[MessageLen];
+	    sprintf(message, "*** Server Warning: your lag is too high ***");
+	    sendMessage(ServerPlayer, j, message);
+	    if (kick) {
+	      // drop the player
+	      sprintf(message,
+		      "You have been kicked due to excessive lag\
+ (you have been warned %d times).",
+		      clOptions->maxlagwarn);
+	      sendMessage(ServerPlayer, j, message);
+	      removePlayer(j, "lag");
+	    }
+	  }
 	}
       }
     }

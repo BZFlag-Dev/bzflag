@@ -33,7 +33,7 @@ public:
   void        updateLag(float timestamp, bool ooo);
   /** get the ping seqno, if need to send one now!
    */
-  int         getNextPingSeqno();
+  int         getNextPingSeqno(bool &warn, bool &kick);
   /** update the latency
    */
   void        updateLatency(float &waitTime);

@@ -101,7 +101,7 @@ void LagInfo::updateLag(float timestamp, bool ooo) {
   lastupdate    = now;
 }
 
-int LagInfo::getNextPingSeqno() {
+int LagInfo::getNextPingSeqno(bool &warn, bool &kick) {
   if (!info->isPlaying() || !info->isHuman())
     return -1;
 
@@ -115,6 +115,16 @@ int LagInfo::getNextPingSeqno() {
     // ping lost
     lostavg   = lostavg * (1 - lostalpha) + lostalpha;
     lostalpha = lostalpha / (0.99f + lostalpha);
+    if (!info->isObserver() && (threshold > 0)
+	&& lagcount - laglastwarn > 2 * lagwarncount) {
+      laglastwarn = lagcount;
+      lagwarncount++;
+      warn = true;
+      kick = (lagwarncount++ > max);
+    } else {
+      warn = false;
+      kick = false;
+    }
   }
 
   pingpending = true;
