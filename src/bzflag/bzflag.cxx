@@ -1040,8 +1040,8 @@ int			main(int argc, char** argv)
   if (!db.hasValue("fakecursor")) {
     // check that the renderer is Mesa Glide
     const char* renderer = (const char*)glGetString(GL_RENDERER);
-    if (strncmp(renderer, "Mesa Glide", 10) == 0 ||
-	strncmp(renderer, "3Dfx", 4) == 0)
+    if ((renderer != NULL) && (strncmp(renderer, "Mesa Glide", 10) == 0 ||
+	strncmp(renderer, "3Dfx", 4) == 0))
       db.addValue("fakecursor", "yes");
   }
 
