@@ -553,17 +553,15 @@ void BackgroundRenderer::renderGroundEffects(SceneRenderer& renderer)
   }
 }
 
-void			BackgroundRenderer::renderEnvironment(SceneRenderer& renderer)
+void BackgroundRenderer::renderEnvironment(SceneRenderer& renderer)
 {
-	if (renderer.useQuality() < 3)
-		return;
+  if (renderer.useQuality() < 3)
+    return;
 
-	float puddleZ = 0.0f;
-
-	if (!blank) {
-		weather.update();
-		weather.draw(renderer);
-	}
+  if (!blank) {
+    weather.update();
+    weather.draw(renderer);
+  }
 }
 
 
