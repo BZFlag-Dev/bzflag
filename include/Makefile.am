@@ -1,51 +1,41 @@
 noinst_HEADERS =		\
 	3DOptionsManager.h	\
 	Address.h		\
+	BSPSceneDatabase.h	\
+	BZDBCache.h		\
 	BaseBuilding.h		\
 	BaseResources.h		\
 	BillboardSceneNode.h	\
 	BoltSceneNode.h		\
 	BoxBuilding.h		\
-	BSPSceneDatabase.h	\
 	Bundle.h		\
 	BundleMgr.h		\
-	BZDBCache.h		\
 	BzfDisplay.h		\
 	BzfEvent.h		\
 	BzfJoystick.h		\
-	bzfSDL.h		\
-	bzfgl.h			\
-	bzfio.h			\
 	BzfMedia.h		\
 	BzfVisual.h		\
 	BzfWindow.h		\
-	bzsignal.h		\
 	CallbackList.h		\
 	CommandManager.h	\
 	CommandsStandard.h	\
-	common.h		\
 	ConfigFileManager.h	\
 	Country.h		\
 	DisplayListManager.h	\
 	DrawablesManager.h	\
 	EighthDBaseSceneNode.h	\
 	EighthDBoxSceneNode.h	\
-	EighthDimSceneNode.h	\
 	EighthDPyrSceneNode.h	\
+	EighthDimSceneNode.h	\
 	ErrorHandler.h		\
 	FileManager.h		\
 	Flag.h			\
 	FlagSceneNode.h		\
 	FlagWarpSceneNode.h	\
-	global.h		\
 	Intersect.h		\
 	KeyManager.h		\
 	Language.h		\
 	LaserSceneNode.h	\
-	bz_Locale.h		\
-	md5.h			\
-	multicast.h		\
-	network.h		\
 	MediaFile.h		\
 	Obstacle.h		\
 	ObstacleSceneNodeGenerator.h	\
@@ -55,18 +45,17 @@ noinst_HEADERS =		\
 	OpenGLMaterial.h	\
 	OpenGLTexFont.h		\
 	OpenGLTexture.h		\
+	PTSceneNode.h		\
 	Pack.h			\
 	Ping.h			\
 	PlatformFactory.h	\
 	PlayerState.h		\
 	PolyWallSceneNode.h	\
 	Protocol.h		\
-	PTSceneNode.h		\
 	PyramidBuilding.h	\
 	QuadWallSceneNode.h	\
 	Ray.h			\
 	RenderNode.h		\
-	resource.h		\
 	SceneDatabase.h		\
 	SceneNode.h		\
 	SceneRenderer.h		\
@@ -79,22 +68,34 @@ noinst_HEADERS =		\
 	TankSceneNode.h		\
 	Team.h			\
 	Teleporter.h		\
-	texture.h		\
-	TextureManager.h	\
 	TextUtils.h		\
+	TextureManager.h	\
 	TimeBomb.h		\
 	TimeKeeper.h		\
 	TracerSceneNode.h	\
 	TriWallSceneNode.h	\
-	udpnetwork.h		\
-	version.h		\
 	ViewFrustum.h		\
 	VotingArbiter.h		\
 	VotingBooth.h		\
 	WallObstacle.h		\
 	WallSceneNode.h		\
 	WordFilter.h		\
-	ZSceneDatabase.h
+	ZSceneDatabase.h	\
+	bz_Locale.h		\
+	bzfSDL.h		\
+	bzfgl.h			\
+	bzfio.h			\
+	bzsignal.h		\
+	common.h		\
+	global.h		\
+	md5.h			\
+	multicast.h		\
+	network.h		\
+	regex.h			\
+	resource.h		\
+	texture.h		\
+	udpnetwork.h		\
+	version.h
 
 MAINTAINERCLEANFILES = \
 	config.h.in \
