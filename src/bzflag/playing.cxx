@@ -115,7 +115,7 @@ static float		testVideoFormatTimer = 0.0f;
 static int		testVideoPrevFormat = -1;
 static PlayingCallbackList	playingCallbacks;
 boolean			gameOver = False;
-static boolean 		Observer = False;
+static boolean		Observer = False;
 static OpenGLTexture*	tankTexture = NULL;
 static ExplosionList	explosions;
 static ExplosionList	prototypeExplosions;
@@ -357,9 +357,9 @@ boolean			ComposeDefaultKey::keyPress(const BzfKeyEvent& key)
 
   if (!myTank->isKeyboardMoving()) {
     if ((key.button == BzfKeyEvent::Up) ||
-        (key.button == BzfKeyEvent::Down) ||
-        (key.button == BzfKeyEvent::Left) ||
-        (key.button == BzfKeyEvent::Right))
+	(key.button == BzfKeyEvent::Down) ||
+	(key.button == BzfKeyEvent::Left) ||
+	(key.button == BzfKeyEvent::Right))
       return True;
   }
 
@@ -415,80 +415,80 @@ boolean			ComposeDefaultKey::keyRelease(const BzfKeyEvent& key)
   if (!myTank->isKeyboardMoving()) {
     if (key.button == BzfKeyEvent::Up) {
       if (messageHistoryIndex < messageHistory.getLength()) {
-        hud->setComposeString(messageHistory[messageHistoryIndex]);
-        messageHistoryIndex++;
+	hud->setComposeString(messageHistory[messageHistoryIndex]);
+	messageHistoryIndex++;
       }
       else
-        hud->setComposeString(BzfString());
+	hud->setComposeString(BzfString());
       return True;
     }
     else if (key.button == BzfKeyEvent::Down) {
       if (messageHistoryIndex > 0){
-        messageHistoryIndex--;
-        hud->setComposeString(messageHistory[messageHistoryIndex]);
+	messageHistoryIndex--;
+	hud->setComposeString(messageHistory[messageHistoryIndex]);
       }
       else
-        hud->setComposeString(BzfString());
+	hud->setComposeString(BzfString());
       return True;
     }
     else if (key.button == BzfKeyEvent::Left || key.button==BzfKeyEvent::Right) {
       const Player *recipient = myTank->getRecipient();
       if(!recipient) {
-        for (int i = 0; i < maxPlayers; i++) {
-          if (player[i]) {
-            myTank->setRecipient(player[i]);
-            break;
-          }
-        }
+	for (int i = 0; i < maxPlayers; i++) {
+	  if (player[i]) {
+	    myTank->setRecipient(player[i]);
+	    break;
+	  }
+	}
       }
       else {
-        const PlayerId id = recipient->getId();
-        int rindex = 0;
-        for (int i = 0; i < maxPlayers; i++) {
-          if (player[i] && player[i]->getId() == id) rindex = i; }
-        if (key.button == BzfKeyEvent::Left) {
-          for (int i = rindex-1; i >= 0; i--) {
-            if (player[i]) {
-              myTank->setRecipient(player[i]);
-              break;
-            }
-          }
-          if (recipient == myTank->getRecipient()) {
-            for (int i = maxPlayers-1; i >=0; i--) {
-              if (player[i]) {
-                myTank->setRecipient(player[i]);
-                break;
-              }
-            }
-          }
-        }
-        else
-        {
-          for (int i = rindex+1; i < maxPlayers; i++) {
-            if (player[i]) {
-              myTank->setRecipient(player[i]);
-              break;
-            }
-          }
-          if (recipient == myTank->getRecipient()) {
-            for (int i = 0; i < maxPlayers; i++) {
-              if (player[i]) {
-                myTank->setRecipient(player[i]);
-                break;
-              }
-            }
-          }
-        }
+	const PlayerId id = recipient->getId();
+	int rindex = 0;
+	for (int i = 0; i < maxPlayers; i++) {
+	  if (player[i] && player[i]->getId() == id) rindex = i; }
+	if (key.button == BzfKeyEvent::Left) {
+	  for (int i = rindex-1; i >= 0; i--) {
+	    if (player[i]) {
+	      myTank->setRecipient(player[i]);
+	      break;
+	    }
+	  }
+	  if (recipient == myTank->getRecipient()) {
+	    for (int i = maxPlayers-1; i >=0; i--) {
+	      if (player[i]) {
+		myTank->setRecipient(player[i]);
+		break;
+	      }
+	    }
+	  }
+	}
+	else
+	{
+	  for (int i = rindex+1; i < maxPlayers; i++) {
+	    if (player[i]) {
+	      myTank->setRecipient(player[i]);
+	      break;
+	    }
+	  }
+	  if (recipient == myTank->getRecipient()) {
+	    for (int i = 0; i < maxPlayers; i++) {
+	      if (player[i]) {
+		myTank->setRecipient(player[i]);
+		break;
+	      }
+	    }
+	  }
+	}
       }
       recipient = myTank->getRecipient();
       if (recipient) {
-        void* buf = messageMessage;
-        buf = recipient->getId().pack(buf);
-        buf = nboPackUShort( buf, uint16_t(RogueTeam));
-        BzfString composePrompt = "Send to ";
-        composePrompt += recipient->getCallSign();
-        composePrompt += ": ";
-        hud->setComposing(composePrompt);
+	void* buf = messageMessage;
+	buf = recipient->getId().pack(buf);
+	buf = nboPackUShort( buf, uint16_t(RogueTeam));
+	BzfString composePrompt = "Send to ";
+	composePrompt += recipient->getCallSign();
+	composePrompt += ": ";
+	hud->setComposing(composePrompt);
       }
       return False;
     }
@@ -528,29 +528,29 @@ static void setRoamingLabel()
   if (player[roamTrackTank]) {
     switch (roamView) {
       case roamViewTrack:
-        hud->setRoamingLabel(BzfString("Tracking ") +
-                             player[roamTrackTank]->getCallSign());
-        break;
+	hud->setRoamingLabel(BzfString("Tracking ") +
+			     player[roamTrackTank]->getCallSign());
+	break;
   
       case roamViewFollow:
-        hud->setRoamingLabel(BzfString("Following ") +
-                             player[roamTrackTank]->getCallSign());
-        break;
+	hud->setRoamingLabel(BzfString("Following ") +
+			     player[roamTrackTank]->getCallSign());
+	break;
   
       case roamViewFP:
-        hud->setRoamingLabel(BzfString("Driving with ") +
-                             player[roamTrackTank]->getCallSign());
-        break;
+	hud->setRoamingLabel(BzfString("Driving with ") +
+			     player[roamTrackTank]->getCallSign());
+	break;
 
       case roamViewFlag:
-        hud->setRoamingLabel(BzfString("Tracking ") +
-                             Flag::getName(world->getFlag(roamTrackFlag).id) +
-                             " Flag");
-        break;
+	hud->setRoamingLabel(BzfString("Tracking ") +
+			     Flag::getName(world->getFlag(roamTrackFlag).id) +
+			     " Flag");
+	break;
 
       default:
-        hud->setRoamingLabel(BzfString("Roaming"));
-        break;
+	hud->setRoamingLabel(BzfString("Roaming"));
+	break;
     }
   }
   else
@@ -720,142 +720,142 @@ static void		doKeyPlaying(const BzfKeyEvent& key, boolean pressed)
     bool roamingkey = true;
     switch (key.button) {
       case BzfKeyEvent::Left:
-        if (pressed) {
-          if (key.shift == BzfKeyEvent::ShiftKey)
-            roamDPos[1] =  4.0f * TankSpeed;
-          else
-            roamDTheta = 90.0f * (roamZoom / 90.0f);
-        }
-        else
-          roamDTheta = roamDPos[1] = 0.0f;
+	if (pressed) {
+	  if (key.shift == BzfKeyEvent::ShiftKey)
+	    roamDPos[1] =  4.0f * TankSpeed;
+	  else
+	    roamDTheta = 90.0f * (roamZoom / 90.0f);
+	}
+	else
+	  roamDTheta = roamDPos[1] = 0.0f;
 	break;
 
       case BzfKeyEvent::Right:
-        if (pressed) {
-          if (key.shift == BzfKeyEvent::ShiftKey)
-            roamDPos[1] = -4.0f * TankSpeed;
-          else
-            roamDTheta = -90.0f * (roamZoom / 90.0f);
-        }
-        else
-          roamDTheta = roamDPos[1] = 0.0f;
+	if (pressed) {
+	  if (key.shift == BzfKeyEvent::ShiftKey)
+	    roamDPos[1] = -4.0f * TankSpeed;
+	  else
+	    roamDTheta = -90.0f * (roamZoom / 90.0f);
+	}
+	else
+	  roamDTheta = roamDPos[1] = 0.0f;
 	break;
 
       case BzfKeyEvent::Up:
-        if (pressed) {
-          if (key.shift == BzfKeyEvent::ShiftKey)
-            roamDPos[0] =  4.0f * TankSpeed;
-          else if (key.shift == BzfKeyEvent::AltKey)
-            roamDPos[2] =  4.0f * TankSpeed;
-          else
-            roamDPhi = -60.0f * (roamZoom / 90.0f);
-        }
-        else
-          roamDPhi = roamDPos[0] = roamDPos[2] = 0.0f;
+	if (pressed) {
+	  if (key.shift == BzfKeyEvent::ShiftKey)
+	    roamDPos[0] =  4.0f * TankSpeed;
+	  else if (key.shift == BzfKeyEvent::AltKey)
+	    roamDPos[2] =  4.0f * TankSpeed;
+	  else
+	    roamDPhi = -60.0f * (roamZoom / 90.0f);
+	}
+	else
+	  roamDPhi = roamDPos[0] = roamDPos[2] = 0.0f;
 	break;
 
       case BzfKeyEvent::Down:
-        if (pressed)
-        {
-          if (key.shift == BzfKeyEvent::ShiftKey)
-            roamDPos[0] = -4.0f * TankSpeed;
-          else if (key.shift == BzfKeyEvent::AltKey)
-            roamDPos[2] = -4.0f * TankSpeed;
-          else
-            roamDPhi = 60.0f * (roamZoom / 90.0f);
-        }
-        else
-          roamDPhi = roamDPos[0] = roamDPos[2] = 0.0f;
+	if (pressed)
+	{
+	  if (key.shift == BzfKeyEvent::ShiftKey)
+	    roamDPos[0] = -4.0f * TankSpeed;
+	  else if (key.shift == BzfKeyEvent::AltKey)
+	    roamDPos[2] = -4.0f * TankSpeed;
+	  else
+	    roamDPhi = 60.0f * (roamZoom / 90.0f);
+	}
+	else
+	  roamDPhi = roamDPos[0] = roamDPos[2] = 0.0f;
 	break;
 
       case BzfKeyEvent::F6:
-        if (pressed) {
-          if (roamView == roamViewFree)
-            break;
-          if (roamView == roamViewFlag) {
-            // search next team flag
-            const int maxFlags = world->getMaxFlags();
-            for (int i = 1; i < maxFlags; i++) {
-              int j = (roamTrackFlag - i + maxFlags) % maxFlags;
-              const Flag& flag = world->getFlag(j);
-              if (flag.id >= FirstTeamFlag && flag.id <= LastTeamFlag) {
-                roamTrackFlag = j;
-                break;
-              }
-            }
-          }
-          else {
-            for (int i = 1; i < maxPlayers; i++) {
-              int j = (roamTrackTank - i + maxPlayers) % maxPlayers;
-              if (player[j] && player[j]->isAlive()) {
-                roamTrackTank = j;
-                break;
-              }
-            }
-          }
-      	  setRoamingLabel();
+	if (pressed) {
+	  if (roamView == roamViewFree)
+	    break;
+	  if (roamView == roamViewFlag) {
+	    // search next team flag
+	    const int maxFlags = world->getMaxFlags();
+	    for (int i = 1; i < maxFlags; i++) {
+	      int j = (roamTrackFlag - i + maxFlags) % maxFlags;
+	      const Flag& flag = world->getFlag(j);
+	      if (flag.id >= FirstTeamFlag && flag.id <= LastTeamFlag) {
+		roamTrackFlag = j;
+		break;
+	      }
+	    }
+	  }
+	  else {
+	    for (int i = 1; i < maxPlayers; i++) {
+	      int j = (roamTrackTank - i + maxPlayers) % maxPlayers;
+	      if (player[j] && player[j]->isAlive()) {
+		roamTrackTank = j;
+		break;
+	      }
+	    }
+	  }
+	  setRoamingLabel();
 	 }
 	 break;
 
       case BzfKeyEvent::F7:
-        if (pressed) {
-          if (roamView == roamViewFree)
-            break;
-          if (roamView == roamViewFlag) {
-            // search previous team flag
-            const int maxFlags = world->getMaxFlags();
-            for (int i = 1; i < maxFlags; i++) {
-              int j = (roamTrackFlag + i) % maxFlags;
-              const Flag& flag = world->getFlag(j);
-              if (flag.id >= FirstTeamFlag && flag.id <= LastTeamFlag) {
-                roamTrackFlag = j;
-                break;
-              }
-            }
-          }
-          else {
-            for (int i = 1; i < maxPlayers; i++) {
-              int j = (roamTrackTank + i) % maxPlayers;
-              if (player[j] && player[j]->isAlive()) {
-                    roamTrackTank = j;
-                    break;
-              }
-            }
-          }
-          setRoamingLabel();
-        }
-        break;
+	if (pressed) {
+	  if (roamView == roamViewFree)
+	    break;
+	  if (roamView == roamViewFlag) {
+	    // search previous team flag
+	    const int maxFlags = world->getMaxFlags();
+	    for (int i = 1; i < maxFlags; i++) {
+	      int j = (roamTrackFlag + i) % maxFlags;
+	      const Flag& flag = world->getFlag(j);
+	      if (flag.id >= FirstTeamFlag && flag.id <= LastTeamFlag) {
+		roamTrackFlag = j;
+		break;
+	      }
+	    }
+	  }
+	  else {
+	    for (int i = 1; i < maxPlayers; i++) {
+	      int j = (roamTrackTank + i) % maxPlayers;
+	      if (player[j] && player[j]->isAlive()) {
+		    roamTrackTank = j;
+		    break;
+	      }
+	    }
+	  }
+	  setRoamingLabel();
+	}
+	break;
 
       case BzfKeyEvent::F8:
-        if (pressed) {
-          roamView = roamingView((roamView + 1) % roamViewCount);
-          if (!world->allowTeamFlags() && roamView==roamViewFlag)
-            roamView = roamingView((roamView + 1) % roamViewCount);
-          setRoamingLabel();
-        }
-        break;
+	if (pressed) {
+	  roamView = roamingView((roamView + 1) % roamViewCount);
+	  if (!world->allowTeamFlags() && roamView==roamViewFlag)
+	    roamView = roamingView((roamView + 1) % roamViewCount);
+	  setRoamingLabel();
+	}
+	break;
 
       case BzfKeyEvent::F9:
-        if (pressed)
-          roamDZoom =  50.0;
-        else
-          roamDZoom = 0.0;
+	if (pressed)
+	  roamDZoom =  50.0;
+	else
+	  roamDZoom = 0.0;
 	break;
 
       case BzfKeyEvent::F10:
-        if (pressed)
-          roamDZoom = -50.0;
-        else
-          roamDZoom = 0.0;
-        break;
+	if (pressed)
+	  roamDZoom = -50.0;
+	else
+	  roamDZoom = 0.0;
+	break;
 
       case BzfKeyEvent::F11:
-        if (pressed)
-          roamZoom = 60.0;
+	if (pressed)
+	  roamZoom = 60.0;
 
       default:
-        roamingkey = false;
-        break;
+	roamingkey = false;
+	break;
     }
     if (roamingkey)
       return;
@@ -879,7 +879,7 @@ static void		doKeyPlaying(const BzfKeyEvent& key, boolean pressed)
 	serverLink->sendDropFlag(myTank->getPosition());
 		// changed: on windows it may happen the MsgDropFlag
 		// never comes back to us, so we drop it right away
-	    	handleFlagDropped(myTank);
+		handleFlagDropped(myTank);
 	  }
     }
   }
@@ -943,23 +943,23 @@ static void		doKeyPlaying(const BzfKeyEvent& key, boolean pressed)
       }
       else {
 	const Player *recipient = myTank->getRecipient();
-        if (!recipient) {
-          for (int i = 0; i < maxPlayers; i++) {
-            if (player[i]) {
-              myTank->setRecipient(player[i]);
-              break;
-            }
-          }
-        }
-        recipient = myTank->getRecipient();
-        if (recipient) {
-          void* buf = messageMessage;
-          buf = recipient->getId().pack(buf);
-          buf = nboPackUShort( buf, uint16_t(RogueTeam));
-          composePrompt = "Send to ";
-          composePrompt += recipient->getCallSign();
-          composePrompt += ": ";
-        }
+	if (!recipient) {
+	  for (int i = 0; i < maxPlayers; i++) {
+	    if (player[i]) {
+	      myTank->setRecipient(player[i]);
+	      break;
+	    }
+	  }
+	}
+	recipient = myTank->getRecipient();
+	if (recipient) {
+	  void* buf = messageMessage;
+	  buf = recipient->getId().pack(buf);
+	  buf = nboPackUShort( buf, uint16_t(RogueTeam));
+	  composePrompt = "Send to ";
+	  composePrompt += recipient->getCallSign();
+	  composePrompt += ": ";
+	}
       }
 
       // to send to a player use:
@@ -2154,28 +2154,28 @@ static void		handleServerMessage(boolean human, uint16_t code,
 
       // CLIENTQUERY hack
       if (!strncmp((char *)msg,"CLIENTQUERY",strlen("CLIENTQUERY"))) {
-        char messageBuffer[MessageLen];
-        memset(messageBuffer, 0, MessageLen);
-        sprintf(messageBuffer,"Version %d.%d%c%d",
-          (VERSION / 10000000) % 100, (VERSION / 100000) % 100,
-          (char)('a' - 1 + (VERSION / 1000) % 100), VERSION % 1000);
-        if (startupInfo.useUDPconnection)
-          strcat(messageBuffer,"+UDP");
+	char messageBuffer[MessageLen];
+	memset(messageBuffer, 0, MessageLen);
+	sprintf(messageBuffer,"Version %d.%d%c%d",
+	  (VERSION / 10000000) % 100, (VERSION / 100000) % 100,
+	  (char)('a' - 1 + (VERSION / 1000) % 100), VERSION % 1000);
+	if (startupInfo.useUDPconnection)
+	  strcat(messageBuffer,"+UDP");
 
-        char response[PlayerIdPLen + 2 + MessageLen];
+	char response[PlayerIdPLen + 2 + MessageLen];
 	void* buf = response;
 	buf = src.pack(buf); // send to requesting client
 	buf = nboPackUShort( buf, uint16_t(RogueTeam));
-        nboPackString(buf, messageBuffer, MessageLen);
-        serverLink->send(MsgMessage, sizeof(response), response);
-        const GLfloat* msgColor;
-        if (int(team) == int(RogueTeam) || srcPlayer->getTeam() == NoTeam)
-          msgColor = Team::getRadarColor(RogueTeam);
-        else
-          msgColor = Team::getRadarColor(srcPlayer->getTeam());
+	nboPackString(buf, messageBuffer, MessageLen);
+	serverLink->send(MsgMessage, sizeof(response), response);
+	const GLfloat* msgColor;
+	if (int(team) == int(RogueTeam) || srcPlayer->getTeam() == NoTeam)
+	  msgColor = Team::getRadarColor(RogueTeam);
+	else
+	  msgColor = Team::getRadarColor(srcPlayer->getTeam());
 
-        addMessage(srcPlayer,"[Sent versioninfo per request]", msgColor);
-        break;
+	addMessage(srcPlayer,"[Sent versioninfo per request]", msgColor);
+	break;
       }
 
       if (srcPlayer == myTank || dstPlayer == myTank || (!dstPlayer &&
@@ -2184,8 +2184,8 @@ static void		handleServerMessage(boolean human, uint16_t code,
 	// message is for me
 	BzfString fullMsg;
 
-        // direct message to or from me
-        if (dstPlayer) {
+	// direct message to or from me
+	if (dstPlayer) {
 	  // talking to myself? that's strange
 	  if (dstPlayer==myTank && srcPlayer==myTank) {
 	    fullMsg=(const char*)msg;
@@ -2193,9 +2193,9 @@ static void		handleServerMessage(boolean human, uint16_t code,
 	    fullMsg="[";
 	    if (srcPlayer == myTank) {
 	      fullMsg += "->";
-              fullMsg += dstName;
+	      fullMsg += dstName;
 	    } else {
-              fullMsg += srcName;
+	      fullMsg += srcName;
 	      fullMsg += "->";
 	      if (srcPlayer)
 		myTank->setRecipient(srcPlayer);
@@ -2204,29 +2204,29 @@ static void		handleServerMessage(boolean human, uint16_t code,
 	    fullMsg += (const char*)msg;
 	  }
 	}
-        else {
-          // team message
-          if (int(team) != int(RogueTeam)) {
+	else {
+	  // team message
+	  if (int(team) != int(RogueTeam)) {
 #ifdef BWSUPPORT
-            fullMsg = "[to ";
-            fullMsg += Team::getName(TeamColor(team));
-            fullMsg += "] ";
+	    fullMsg = "[to ";
+	    fullMsg += Team::getName(TeamColor(team));
+	    fullMsg += "] ";
 #else
-            fullMsg = "[Team] ";
+	    fullMsg = "[Team] ";
 #endif
-          }
-          fullMsg += srcName;
-          fullMsg += ": ";
-          fullMsg += (const char*)msg;
-        }
+	  }
+	  fullMsg += srcName;
+	  fullMsg += ": ";
+	  fullMsg += (const char*)msg;
+	}
 	const GLfloat* msgColor;
-        if (srcPlayer && srcPlayer->getTeam()!=NoTeam)
+	if (srcPlayer && srcPlayer->getTeam()!=NoTeam)
 	  msgColor = Team::getRadarColor(srcPlayer->getTeam());
 	else
 	  msgColor = Team::getRadarColor(RogueTeam);
 	addMessage(NULL, fullMsg, msgColor);
 
-        if (!srcPlayer || srcPlayer!=myTank)
+	if (!srcPlayer || srcPlayer!=myTank)
 	hud->setAlert(0, fullMsg, 3.0f, False);
       }
       break;
@@ -2321,7 +2321,7 @@ static void		handlePlayerMessage(uint16_t code, uint16_t,
       if (targetTank && (targetTank == myTank)) {
 	static TimeKeeper lastLockMsg;
 	if (TimeKeeper::getTick() - lastLockMsg > 0.75) {
-  	  playWorldSound(SFX_LOCK, shot.pos[0], shot.pos[1], shot.pos[2]);
+	  playWorldSound(SFX_LOCK, shot.pos[0], shot.pos[1], shot.pos[2]);
 	  lastLockMsg=TimeKeeper::getTick();
 	  addMessage(tank, "locked on me");
 	}
@@ -2513,7 +2513,7 @@ static void		restartPlaying()
       // my boresight and in firing range (our unfair advantage)
       float safeDist = enemyDist - minSafeRange(enemyCos);
       if (safeDist < worstDist)
-        worstDist = safeDist;
+	worstDist = safeDist;
 
       // compute my position in enemy coordinate system
       // cos = enemyUnitVect[0], sin = enemyUnitVect[1]
@@ -2531,7 +2531,7 @@ static void		restartPlaying()
       // the enemy's boresight and in firing range (enemy's unfair advantage)
       safeDist = myDist - minSafeRange(myCos);
       if (safeDist < worstDist)
-        worstDist = safeDist;
+	worstDist = safeDist;
     }
     if (located && worstDist > bestDist) {
       bestDist = worstDist;
@@ -3764,7 +3764,7 @@ static boolean		joinGame(const StartupInfo* info,
 
   // decide how start for first time
   restartOnBase = world->allowTeamFlags() && myTank->getTeam() != RogueTeam &&
-                  !Observer;
+		  !Observer;
 
   // if server constrains time then adjust it
   if (!world->allowTimeOfDayAdjust()) {
@@ -3971,8 +3971,8 @@ static void		playingLoop()
     roamPos[0] += dt * (c * roamDPos[0] - s * roamDPos[1]);
     roamPos[1] += dt * (c * roamDPos[1] + s * roamDPos[0]);
     roamPos[2] += dt * roamDPos[2];
-    if (roamPos[2] < 0.0f)
-      roamPos[2] = 0.0f;
+    if (roamPos[2] < MuzzleHeight)
+      roamPos[2] = MuzzleHeight;
     roamTheta  += dt * roamDTheta;
     roamPhi    += dt * roamDPhi;
     roamZoom   += dt * roamDZoom;
@@ -4055,7 +4055,7 @@ static void		playingLoop()
       frameCount++;
       cumTime += float(dt);
       if (cumTime >= 2.0) {
-        if (showFPS) hud->setFPS(float(frameCount) / cumTime);
+	if (showFPS) hud->setFPS(float(frameCount) / cumTime);
 	cumTime = 0.0;
 	frameCount = 0;
       }
@@ -4092,7 +4092,7 @@ static void		playingLoop()
       targetPoint[1] = eyePoint[1] + myTankDir[1];
       targetPoint[2] = eyePoint[2] + myTankDir[2];
       if (roaming) {
-        float roamViewAngle;
+	float roamViewAngle;
 #ifdef FOLLOWTANK
 	eyePoint[0] = myTankPos[0] - myTankDir[0] * 20;
 	eyePoint[1] = myTankPos[1] - myTankDir[1] * 20;
@@ -4101,87 +4101,94 @@ static void		playingLoop()
 	targetPoint[1] = eyePoint[1] + myTankDir[1];
 	targetPoint[2] = eyePoint[2] + myTankDir[2];
 #else
-        if (player[roamTrackTank] && roamView != roamViewFree) {
-          RemotePlayer *target = player[roamTrackTank];
-          const float *targetTankDir = target->getForward();
-          // fixed camera tracking target
-          if (roamView == roamViewTrack) {
-            eyePoint[0] = roamPos[0];
-            eyePoint[1] = roamPos[1];
-            eyePoint[2] = roamPos[2];
-            targetPoint[0] = target->getPosition()[0];
-            targetPoint[1] = target->getPosition()[1];
-            targetPoint[2] = target->getPosition()[2];
-          }
-          // camera following target
-          else if (roamView == roamViewFollow) {
-            eyePoint[0] = target->getPosition()[0] - targetTankDir[0] * 40;
-            eyePoint[1] = target->getPosition()[1] - targetTankDir[1] * 40;
-            eyePoint[2] = target->getPosition()[2] + MuzzleHeight * 6;
-            targetPoint[0] = target->getPosition()[0];
-            targetPoint[1] = target->getPosition()[1];
-            targetPoint[2] = target->getPosition()[2];
-          }
-          // target's view
-          else if (roamView == roamViewFP) {
-            eyePoint[0] = target->getPosition()[0];
-            eyePoint[1] = target->getPosition()[1];
-            eyePoint[2] = target->getPosition()[2] + MuzzleHeight;
-            targetPoint[0] = eyePoint[0] + targetTankDir[0];
-            targetPoint[1] = eyePoint[1] + targetTankDir[1];
-            targetPoint[2] = eyePoint[2] + targetTankDir[2];
-          }
-          // track team flag
-          else if (roamView == roamViewFlag) {
-            Flag &targetFlag = world->getFlag(roamTrackFlag);
-            eyePoint[0] = roamPos[0];
-            eyePoint[1] = roamPos[1];
-            eyePoint[2] = roamPos[2];
-            targetPoint[0] = targetFlag.position[0];
-            targetPoint[1] = targetFlag.position[1];
-            targetPoint[2] = targetFlag.position[2];
-          }
-          roamViewAngle = (float) (atan2(targetPoint[1]-eyePoint[1],
-                            targetPoint[0]-eyePoint[0]) * 180.0f / M_PI);
-        }
-        // free Roaming
-        else {
-          float dir[3];
-          dir[0] = cosf(roamPhi * M_PI / 180.0f) * cosf(roamTheta * M_PI / 180.0f);
-          dir[1] = cosf(roamPhi * M_PI / 180.0f) * sinf(roamTheta * M_PI / 180.0f);
-          dir[2] = sinf(roamPhi * M_PI / 180.0f);
-          eyePoint[0] = roamPos[0];
-          eyePoint[1] = roamPos[1];
-          eyePoint[2] = roamPos[2];
+	if (player[roamTrackTank] && (roamView != roamViewFree)) {
+	  RemotePlayer *target = player[roamTrackTank];
+	  const float *targetTankDir = target->getForward();
+	  // fixed camera tracking target
+	  if (roamView == roamViewTrack) {
+	    eyePoint[0] = roamPos[0];
+	    eyePoint[1] = roamPos[1];
+	    eyePoint[2] = roamPos[2];
+	    targetPoint[0] = target->getPosition()[0];
+	    targetPoint[1] = target->getPosition()[1];
+	    targetPoint[2] = target->getPosition()[2];
+	  }
+	  // camera following target
+	  else if (roamView == roamViewFollow) {
+	    eyePoint[0] = target->getPosition()[0] - targetTankDir[0] * 40;
+	    eyePoint[1] = target->getPosition()[1] - targetTankDir[1] * 40;
+	    eyePoint[2] = target->getPosition()[2] + MuzzleHeight * 6;
+	    targetPoint[0] = target->getPosition()[0];
+	    targetPoint[1] = target->getPosition()[1];
+	    targetPoint[2] = target->getPosition()[2];
+	  }
+	  // target's view
+	  else if (roamView == roamViewFP) {
+	    eyePoint[0] = target->getPosition()[0];
+	    eyePoint[1] = target->getPosition()[1];
+	    eyePoint[2] = target->getPosition()[2] + MuzzleHeight;
+	    targetPoint[0] = eyePoint[0] + targetTankDir[0];
+	    targetPoint[1] = eyePoint[1] + targetTankDir[1];
+	    targetPoint[2] = eyePoint[2] + targetTankDir[2];
+	  }
+	  // track team flag
+	  else if (roamView == roamViewFlag) {
+	    Flag &targetFlag = world->getFlag(roamTrackFlag);
+	    eyePoint[0] = roamPos[0];
+	    eyePoint[1] = roamPos[1];
+	    eyePoint[2] = roamPos[2];
+	    targetPoint[0] = targetFlag.position[0];
+	    targetPoint[1] = targetFlag.position[1];
+	    targetPoint[2] = targetFlag.position[2];
+	  }
+	  roamViewAngle = (float) (atan2(targetPoint[1]-eyePoint[1],
+	      targetPoint[0]-eyePoint[0]) * 180.0f / M_PI);
+	}
+	// free Roaming
+	else {
+	  float dir[3];
+	  dir[0] = cosf(roamPhi * M_PI / 180.0f) * cosf(roamTheta * M_PI / 180.0f);
+	  dir[1] = cosf(roamPhi * M_PI / 180.0f) * sinf(roamTheta * M_PI / 180.0f);
+	  dir[2] = sinf(roamPhi * M_PI / 180.0f);
+	  eyePoint[0] = roamPos[0];
+	  eyePoint[1] = roamPos[1];
+	  eyePoint[2] = roamPos[2];
 	  targetPoint[0] = eyePoint[0] + dir[0];
 	  targetPoint[1] = eyePoint[1] + dir[1];
-          targetPoint[2] = eyePoint[2] + dir[2];
-          roamViewAngle = roamTheta;
-        }
-        float virtPos[]={eyePoint[0], eyePoint[1], 0};
-        myTank->move(virtPos, roamViewAngle * M_PI / 180.0f);
+	  targetPoint[2] = eyePoint[2] + dir[2];
+	  roamViewAngle = roamTheta;
+	}
+	float virtPos[]={eyePoint[0], eyePoint[1], 0};
+	myTank->move(virtPos, roamViewAngle * M_PI / 180.0f);
 #endif
 	fov = roamZoom * M_PI / 180.0f;
       }
       sceneRenderer->getViewFrustum().setProjection(fov,
-					1.1f, 1.5f * WorldSize,
-					mainWindow->getWidth(),
-					mainWindow->getHeight());
+	  1.1f, 1.5f * WorldSize,
+	  mainWindow->getWidth(),
+	  mainWindow->getHeight());
       sceneRenderer->getViewFrustum().setView(eyePoint, targetPoint);
 
       // add dynamic nodes
       SceneDatabase* scene = sceneRenderer->getSceneDatabase();
       if (scene && myTank) {
-	myTank->addPlayer(scene, False, False);	// add my tank
-	if (myTank->getFlag() == CloakingFlag)
-	  myTank->setInvisible();		// and make it invisible
-	else if (roaming)
+	// add my tank
+	myTank->addPlayer(scene, False, False);
+	if (myTank->getFlag() == CloakingFlag) {
+	  // and make it invisible
+	  myTank->setInvisible();
+	} else if (roaming)
 	  myTank->setHidden(False);
-	else
-	  myTank->setHidden();			// or make it hidden
-	myTank->addShots(scene, False);	// add my shells
-	myTank->addAntidote(scene);		// add antidote flag
-	world->addFlags(scene);			// add flags
+	else {
+	  // or make it hidden
+	  myTank->setHidden();
+	}
+	// add my shells
+	myTank->addShots(scene, False);
+	// add antidote flag
+	myTank->addAntidote(scene);
+	// add flags
+	world->addFlags(scene);
 
 	// add other tanks and shells
 	const boolean colorblind = (myTank->getFlag() == ColorblindnessFlag);
@@ -4189,12 +4196,11 @@ static void		playingLoop()
 	  if (player[i]) {
 	    player[i]->updateSparks(dt);
 	    player[i]->addShots(scene, colorblind);
-        player[i]->addPlayer(scene, colorblind, True);
-        if (player[i]->getFlag() == CloakingFlag)
-          player[i]->setInvisible();
-        else
-	      player[i]->setHidden(roaming && roamView == roamViewFP &&
-	                           roamTrackTank == i);
+	    player[i]->addPlayer(scene, colorblind, True);
+	    if (player[i]->getFlag() == CloakingFlag)
+	      player[i]->setInvisible();
+	    else
+	      player[i]->setHidden(roaming && roamView == roamViewFP && roamTrackTank == i);
 	  }
 
 	// add explosions
@@ -4202,23 +4208,22 @@ static void		playingLoop()
 
 	// if i'm inside a building then add eighth dimension scene node.
 	if (myTank->getContainingBuilding()) {
-	  SceneNode* node = world->getInsideSceneNode(myTank->
-						getContainingBuilding());
+	  SceneNode* node = world->getInsideSceneNode(myTank->getContainingBuilding());
 	  if (node) scene->addDynamicNode(node);
 	}
       }
 
       // turn blanking and inversion on/off as appropriate
       sceneRenderer->setBlank(myTank && (myTank->isPaused() ||
-			myTank->getFlag() == BlindnessFlag));
+	  myTank->getFlag() == BlindnessFlag));
       sceneRenderer->setInvert(myTank &&
-			myTank->getFlag() == PhantomZoneFlag &&
-			myTank->isFlagActive());
+	  myTank->getFlag() == PhantomZoneFlag &&
+	  myTank->isFlagActive());
 
       // turn on scene dimming when showing menu or when
       // we're dead and no longer exploding.
       sceneRenderer->setDim(HUDDialogStack::get()->isActive() ||
-		(myTank && !roaming && !myTank->isAlive() && !myTank->isExploding()));
+	  (myTank && !roaming && !myTank->isAlive() && !myTank->isExploding()));
 
       // set hud state
       hud->setDim(HUDDialogStack::get()->isActive());
@@ -4489,8 +4494,8 @@ static void		playingLoop()
 	  myTank->fireShot();
       }
       else {
-        int mx, my;
-        mainWindow->getMousePosition(mx, my);        
+	int mx, my;
+	mainWindow->getMousePosition(mx, my);        
       }
       myTank->update();
     }

@@ -979,18 +979,30 @@ void			HUDRenderer::renderPlaying(SceneRenderer& renderer)
 
   // draw targeting box
   hudColor3fv(hudColor);
-  glBegin(GL_LINE_LOOP);
+  glBegin(GL_LINE_LOOP); {
     glVertex2i(centerx - noMotionSize, centery - noMotionSize);
     glVertex2i(centerx + noMotionSize, centery - noMotionSize);
     glVertex2i(centerx + noMotionSize, centery + noMotionSize);
     glVertex2i(centerx - noMotionSize, centery + noMotionSize);
-  glEnd();
-  glBegin(GL_LINE_LOOP);
+  } glEnd();
+  glBegin(GL_POINTS); {
+    glVertex2i(centerx - noMotionSize, centery - noMotionSize);
+    glVertex2i(centerx + noMotionSize, centery - noMotionSize);
+    glVertex2i(centerx + noMotionSize, centery + noMotionSize);
+    glVertex2i(centerx - noMotionSize, centery + noMotionSize);
+  } glEnd();
+  glBegin(GL_LINE_LOOP); {
     glVertex2i(centerx - maxMotionSize, centery - maxMotionSize);
     glVertex2i(centerx + maxMotionSize, centery - maxMotionSize);
     glVertex2i(centerx + maxMotionSize, centery + maxMotionSize);
     glVertex2i(centerx - maxMotionSize, centery + maxMotionSize);
-  glEnd();
+  } glEnd();
+  glBegin(GL_POINTS); {
+    glVertex2i(centerx - maxMotionSize, centery - maxMotionSize);
+    glVertex2i(centerx + maxMotionSize, centery - maxMotionSize);
+    glVertex2i(centerx + maxMotionSize, centery + maxMotionSize);
+    glVertex2i(centerx - maxMotionSize, centery + maxMotionSize);
+  } glEnd();
 
   // draw heading strip
   if (True /* always draw heading strip */) {
