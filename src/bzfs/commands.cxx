@@ -153,6 +153,12 @@ void handleMsgCmd(GameKeeper::Player *playerData, const char *message)
     callsignStart++;
   }
 
+  // make sure there was _some_ whitespace after /msg
+  if (callsignStart == 0) {
+    sendMessage(ServerPlayer, from, "Usage: /msg \"some callsign\" some message");
+    return;
+  }
+
   // find the player name, optionally quoted
   if ( arguments[callsignStart] == '"' ) {
     callsignStart++;
