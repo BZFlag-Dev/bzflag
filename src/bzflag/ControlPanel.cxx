@@ -12,6 +12,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include "global.h"
 #include "ControlPanel.h"
 #include "SceneRenderer.h"
@@ -47,6 +48,8 @@ ControlPanelMessage::ControlPanelMessage(const BzfString& _string,
 //
 
 const int		ControlPanel::maxLines = 30;
+const int		ControlPanel::maxScrollPages = 4;
+int				ControlPanel::messagesOffset = 0;
 extern void		printMissingDataDirectoryError(const char*);
 
 ControlPanel::ControlPanel(MainWindow& _mainWindow, SceneRenderer& renderer) :
@@ -186,6 +189,11 @@ ControlPanel::~ControlPanel()
 
 void			ControlPanel::render(int retouch)
 {
+int          msgRowOffset;		// These are used for line-wrap and may be
+unsigned int lineCharWidth;		//  better suited for a {} group below.
+BzfString    curMsgPos;			// Current position in display message
+float        curMsgY;				// Current Y offset for this message
+
   if (!resized) resize();
   if (retouch) {
     if (exposed) exposed += retouch;
@@ -332,11 +340,42 @@ void			ControlPanel::render(int retouch)
     }
 
     // draw messages
-    for (i = messages.getLength() - 1, j = 0;
-				i >= 0 && j < maxLines; i--, j++) {
+    // Code added to allow line-wrap -- just the basics so please modify
+    //  for +'s at the beginning of wrapped lines, etc.
+    //
+    // It works by calculating the chars in the current mode's message
+    //  area, calculating the number of lines the message will use, then
+    //  moving up the proper number of lines and displaying downward -- that
+    //  is, it kinda backtracks for each line that will wrap.
+    //
+    //  messageAreaPixels[2] = Width of Message Window in Pixels
+    //  maxLines             = Max messages lines that can be displayed
+    //  maxScrollPages       = This number * maxLines is the total maximum
+    //                         lines of messages (and scrollback)
+
+      // The font is fixed, so getWidth() returns the same for any char.
+    lineCharWidth=(int)(messageAreaPixels[2] / (messageFont.getWidth("-")));
+
+    i=messages.getLength()-1;
+    if (messagesOffset>0) {
+		if (i-messagesOffset > 0) i-=messagesOffset;
+		else i=0;
+	}
+    for (j = 0; i>=0 && j<maxLines; i--) {
       glColor3fv(messages[i].color);
-      messageFont.draw(messages[i].string, fx, fy);
-      fy += lineHeight;
+      curMsgPos = messages[i].string;
+      msgRowOffset = (int)(strlen(curMsgPos)/lineCharWidth);	// 0, 1, ...
+      curMsgY = fy + (lineHeight * msgRowOffset);
+      do {
+        messageFont.draw(curMsgPos, fx, curMsgY);
+        curMsgY -= lineHeight;
+        if (strlen(curMsgPos) > lineCharWidth) {
+          curMsgPos = curMsgPos+lineCharWidth;
+        }
+        else break;
+        j++;
+      } while (1);
+      fy += (lineHeight * (msgRowOffset+1));
     }
   }
 
@@ -463,11 +502,45 @@ void			ControlPanel::zoomPanel(int width, int height)
   }
 }
 
+void			ControlPanel::setMessagesOffset(int offset, int whence)
+{	// offset = offset from whence (offset of 0 is the bottom/most recent)
+	// whence = 0, 1, or 2 (akin to SEEK_SET, SEEK_CUR, SEEK_END)
+  switch (whence) {
+    case 0:
+      if (offset < messages.getLength()) messagesOffset=offset;
+	 else messagesOffset=messages.getLength()-1;
+	 break;
+    case 1:
+      if (offset>0)
+	   {
+        if (messagesOffset+offset < messages.getLength())
+	     messagesOffset+=offset;
+	   else messagesOffset=messages.getLength()-1;
+	   }
+	 else if (offset<0)
+	   {
+        if (messagesOffset+offset >= 0)
+	     messagesOffset+=offset;
+	   else messagesOffset=0;
+	   }
+	 break;
+    case 2:
+      if (offset<0)
+	   {
+        if (messages.getLength()-offset >= 0) messagesOffset+=offset;
+	   else messagesOffset=0;
+        }
+	 break;
+  }
+  changedMessage = 2;
+}
+
 void			ControlPanel::addMessage(const BzfString& line,
 						const GLfloat* color)
 {
   ControlPanelMessage item(line, color);
-  if (messages.getLength() < maxLines) {
+
+  if (messages.getLength() < maxLines * maxScrollPages) {
     // not full yet so just append it
     messages.append(item);
   }

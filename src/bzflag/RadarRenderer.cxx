@@ -118,7 +118,17 @@ void			RadarRenderer::drawShot(const ShotPath* shot)
 void			RadarRenderer::drawTank(float x, float y,
 						float z, float ps)
 {
-  const GLfloat s = ps * (2.0f + 2.0f * z / (4.0f * BoxHeight));
+  GLfloat s = 2.5f + ps * (2.0f + 2.5f * z / (4.0f * BoxHeight));
+
+  glBegin(GL_LINE_STRIP);
+  glVertex2f(x-s,y);
+  glVertex2f(x,y-s);
+  glVertex2f(x+s,y);
+  glVertex2f(x,y+s);
+  glVertex2f(x-s,y);
+  glEnd();
+
+  s = 1.5f + ps * (2.0f + 2.0f * z / (4.0f * BoxHeight));
   glRectf(x - s, y - s, x + s, y + s);
 }
 

@@ -29,7 +29,10 @@ const BzfKeyEvent	KeyMap::defaults1[] = {
 				{ '=', 0, 0 },
 				{ '-', 0, 0 },
 				{ 0, BzfKeyEvent::Pause, 0 },
-				{ 0, BzfKeyEvent::F12, 0 }
+				{ 0, BzfKeyEvent::F12, 0 },
+				{ 0, BzfKeyEvent::PageUp, 0 },
+				{ 0, BzfKeyEvent::PageDown, 0 }
+
 			};
 const BzfKeyEvent	KeyMap::defaults2[] = {
 				{ 0, 0, 0 },
@@ -47,6 +50,8 @@ const BzfKeyEvent	KeyMap::defaults2[] = {
 				{ '+', 0, 0 },
 				{ '_', 0, 0 },
 				{ 'p', 0, 0 },
+				{ 0, 0, 0 },
+				{ 0, 0, 0 },
 				{ 0, 0, 0 }
 			};
 const char*		KeyMap::keyName[] = {
@@ -65,8 +70,11 @@ const char*		KeyMap::keyName[] = {
 				"timeForwardKey",
 				"timeBackwardKey",
 				"pauseKey",
-				"quitKey"
+				"quitKey",
+				"scrollBackwardKey",
+				"scrollForwardKey",
 			};
+
 const char*		KeyMap::eventNames[] = {
 				"???",
 				"Pause",
@@ -125,6 +133,8 @@ void			KeyMap::resetAll()
   reset(TimeBackward);
   reset(Pause);
   reset(Quit);
+  reset(ScrollBackward);
+  reset(ScrollForward);
 }
 
 void			KeyMap::reset(Key key)

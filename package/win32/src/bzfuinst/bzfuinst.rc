@@ -27,13 +27,13 @@ LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
 
 IDD_MAIN DIALOG DISCARDABLE  0, 0, 127, 68
 STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "Uninstall BZFLAG"
+CAPTION "Uninstall BZFlag"
 FONT 8, "MS Sans Serif"
 BEGIN
     DEFPUSHBUTTON   "OK",IDOK,70,47,50,14,WS_DISABLED
     CONTROL         "Progress1",IDC_TOTAL_METER,"msctls_progress32",
                     WS_BORDER,15,22,98,11
-    LTEXT           "Uninstalling BZFLAG...",-1,7,7,107,9
+    LTEXT           "Uninstalling BZFlag...",-1,7,7,107,9
 END
 
 #endif    // English (U.S.) resources

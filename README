@@ -228,3 +228,39 @@ tell if a header file is (can be) used by clients of the
 library.
 
 
+UDP added by Frank Siegert, frank@this.net, frank@bzflag.de
+
+This Client and Server now implement UDP unicast relay networking. It
+should provide much better timing and stability compared to the old TCP
+way. To stress test the new way the Client now always forces to relay
+even if Multicasting is available. Please use an older client if you
+need to run multicasting.
+
+This release is compatible with older networking. If this clients connects 
+to an older server the normal TCP based networking is used. Also if an older
+client connects to a new server the same happens. Only if a newer client
+and a new server connect the new protocol is engaged. You can see it on
+the console of the client where some messages telling you about.
+
+It is advisable to run only new clients together with new server as otherwise
+the mixed networking may cause strange timing effects on the players.
+
+2. It does not work, why?
+
+- When I connect to a newer server with this client others report they can
+  see me but I get 'black caps' after a few seconds for all other players?
+
+Two possibilies:
+
+a) you are behind a NAT router that is not forwarding UDP port 17200 to your
+   system. If this is the case please put this port into the port forwarding
+   rules.
+
+b) you are behind a firewall or a desktop firewall (e.g. ZoneAlarm) that is
+   blocking incoming UDP traffic. Please reconfigure the firewall or disable
+   ZoneAlert for the game, for more intelligent desktop firewalls alike 
+   AtGuard just set them up to let UDP port 17200 to 17220 through.
+
+CU on the battlefield
+	
+	Onkel Frank

@@ -632,6 +632,8 @@ KeyboardMapMenu::KeyboardMapMenu() : defaultKey(this), editing(KeyMap::LastKey)
   controls.append(createLabel(NULL, "Time Backward:"));
   controls.append(createLabel(NULL, "Pause/Resume:"));
   controls.append(createLabel(NULL, "Fast Quit:"));
+  controls.append(createLabel(NULL, "Scroll Backward:"));
+  controls.append(createLabel(NULL, "Scroll Forward:"));
 
   // set control order
   controls[0]->setNext(controls[0]);
@@ -652,8 +654,10 @@ KeyboardMapMenu::KeyboardMapMenu() : defaultKey(this), editing(KeyMap::LastKey)
   controls[14]->setNext(controls[15]);
   controls[15]->setNext(controls[16]);
   controls[16]->setNext(controls[17]);
-  controls[17]->setNext(controls[1]);
-  controls[1]->setPrev(controls[17]);
+  controls[17]->setNext(controls[18]);
+  controls[18]->setNext(controls[19]);
+  controls[19]->setNext(controls[1]);
+  controls[1]->setPrev(controls[19]);
   controls[2]->setPrev(controls[1]);
   controls[3]->setPrev(controls[2]);
   controls[4]->setPrev(controls[3]);
@@ -670,7 +674,8 @@ KeyboardMapMenu::KeyboardMapMenu() : defaultKey(this), editing(KeyMap::LastKey)
   controls[15]->setPrev(controls[14]);
   controls[16]->setPrev(controls[15]);
   controls[17]->setPrev(controls[16]);
-
+  controls[18]->setPrev(controls[17]);
+  controls[19]->setPrev(controls[18]);
   // set initial focus
   setFocus(controls[1]);
 }
@@ -1042,6 +1047,16 @@ OptionsMenu::OptionsMenu() : formatMenu(NULL), keyboardMapMenu(NULL)
   label->setLabel("Change Key Mapping");
   list.append(label);
 
+  option = new HUDuiList;
+  option->setFont(MainMenu::getFont());
+  option->setLabel("UDP network connection:");
+  option->setCallback(callback, (void*)"U");
+  options = &option->getList();
+  options->append(BzfString("Off"));
+  options->append(BzfString("On"));
+  option->update();
+  list.append(option);
+
   // set control order
   const int count = list.getLength();
   list[0]->setNext(list[0]);
@@ -1137,10 +1152,17 @@ void			OptionsMenu::resize(int width, int height)
     // sound
     ((HUDuiList*)list[i++])->setIndex(getSoundVolume());
 
+	const StartupInfo* info = getStartupInfo();
+
+	// mind the ++i !
+   ((HUDuiList*)list[++i])->setIndex(info->useUDPconnection ? 1 : 0);
+
+
     if (!renderer->useTexture())
       tex->setIndex(0);
     else
       tex->setIndex(OpenGLTexture::getFilter());
+
   }
 }
 
@@ -1199,6 +1221,12 @@ void			OptionsMenu::callback(HUDuiControl* w, void* data)
       setSoundVolume(list->getIndex());
       break;
 
+    case 'U': {
+		StartupInfo* info = getStartupInfo();
+		info->useUDPconnection = (list->getIndex() != 0);
+	}
+      break;
+	
     case 'g': {
       BzfWindow* window = getMainWindow()->getWindow();
       if (window->hasGammaControl())
@@ -1430,7 +1458,9 @@ void			Help1Menu::resize(int width, int height)
 				KeyMap::TimeForward,
 				KeyMap::TimeBackward,
 				KeyMap::Pause,
-				KeyMap::Quit
+				KeyMap::Quit,
+				KeyMap::ScrollBackward,
+				KeyMap::ScrollForward
 			};
 
   // get current key mapping and set strings appropriately
@@ -1475,7 +1505,7 @@ Help2Menu::Help2Menu() : HelpMenu("General")
   // add controls
   HUDuiControlList& list = getControls();
   list.append(createLabel(
-	"BZFLAG is a multi-player networked tank battle game.  There are five teams:"));
+	"BZFlag is a multi-player networked tank battle game.  There are five teams:"));
   list.append(createLabel(
 	"red, green, blue, purple, and rogues (rogue tanks are black).  Destroying a"));
   list.append(createLabel(
@@ -1863,7 +1893,7 @@ Help9Menu::Help9Menu() : HelpMenu("Credits")
   list.append(createLabel("Ben Trumbore, Don Greenberg", ""));
   list.append(createLabel("", ""));
   list.append(createLabel("http://BZFlag.SourceForge.net/",
-						"BZFLAG Home Page:"));
+						"BZFlag Home Page:"));
   list.append(createLabel("", ""));
   list.append(createLabel("Tim Riker", "Copyright (c) 1993 - 2001"));
 }
@@ -3612,7 +3642,7 @@ MainMenu::MainMenu() : HUDDialog(), joinMenu(NULL),
   textureLabel = new HUDuiTextureLabel;
   textureLabel->setFont(font);
   textureLabel->setTexture(title);
-  textureLabel->setString("BZFLAG");
+  textureLabel->setString("BZFlag");
   list.append(textureLabel);
 
   label = new HUDuiLabel;

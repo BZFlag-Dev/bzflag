@@ -203,6 +203,7 @@ class GuidedMissileStrategy : public ShotStrategy {
     TimeKeeper		prevTime;
     TimeKeeper		currentTime;
     ShotPathSegments	segments;
+	int			renderTimes;
     float		azimuth;
     float		elevation;
     float		nextPos[3];

@@ -41,7 +41,6 @@ GCFLAGS	= $(GCDEFS) $(GCINCS) $(GCOPTS)
 GCOPTS	= 
 GCDEFS  =						\
 	-DVERSION=$(VERSION)				\
-	$(RELEASEDEF)					\
 	$(TIMEBOMB)					\
 	$(DEBUG_RENDERING)				\
 	$(ROBOTS)					\
@@ -60,7 +59,6 @@ GCXXFLAGS = $(GCXXDEFS) $(GCXXINCS) $(GCXXOPTS)
 GCXXOPTS  =
 GCXXDEFS  =						\
 	-DVERSION=$(VERSION)				\
-	$(RELEASEDEF)					\
 	$(TIMEBOMB)					\
 	$(DEBUG_RENDERING)				\
 	$(ROBOTS)					\

@@ -39,8 +39,8 @@ PCXXDEFS =
 #
 # compiler options
 #
-PCOPTS   = -xansi -fullwarn -n32 -mips3
-PCXXOPTS = -fullwarn -n32 -mips3
+PCOPTS   = -xansi -fullwarn -n32 -mips4
+PCXXOPTS = -fullwarn -n32 -mips4
 COPT     = -DNDEBUG -O3
 CXXOPT   = -DNDEBUG -O3 -OPT:fold_arith_limit=3000
 CDEBUG   = -DDEBUG -g

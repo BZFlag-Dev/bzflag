@@ -1,5 +1,5 @@
 product bzflag
-    id "bzflag ${VERSIONID} ${RELEASETYPE}"
+    id "bzflag ${VERSIONID}"
     image sw
         id "Software"
         version ${VERSION}
@@ -54,7 +54,7 @@ product bzflag
 endproduct
 
 product bzflag_src
-    id "bzflag source code ${VERSIONID} ${RELEASETYPE}"
+    id "bzflag source code ${VERSIONID}"
     image src
         id "Source Code"
         version ${VERSION}

@@ -21,6 +21,8 @@
 #include <shlobj.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <direct.h>
+
 #else /* defined(_WIN32) */
 #include <pwd.h>
 #endif /* defined(_WIN32) */
@@ -77,7 +79,7 @@ void			printFatalError(const char* fmt, ...)
   vsprintf(buffer, fmt, args);
   va_end(args);
 #if defined(_WIN32)
-  MessageBox(NULL, buffer, "BZFLAG Error", MB_OK | MB_ICONERROR | MB_TASKMODAL);
+  MessageBox(NULL, buffer, "BZFlag Error", MB_OK | MB_ICONERROR | MB_TASKMODAL);
 #else
   cerr << buffer << endl;
 #endif
@@ -434,43 +436,21 @@ static void		parse(int argc, char** argv,
     else if (strcmp(argv[i], "-v") == 0 ||
 	     strcmp(argv[i], "-version") == 0 ||
 	     strcmp(argv[i], "--version") == 0) {
-#if defined(ALPHA_RELEASE) || defined(BETA_RELEASE)
-      printFatalError("BZFLAG client, version %d.%d%c build %d %s\n"
-#else
-      printFatalError("BZFLAG client, version %d.%d%c\n"
-#endif
+      printFatalError("BZFlag client, version %d.%d%c%d\n"
 		"  protocol %c.%d%c",
 		(VERSION / 10000000) % 100,
 		(VERSION / 100000) % 100,
 		(char)('a' - 1 + (VERSION / 1000) % 100),
-#if defined(ALPHA_RELEASE) || defined(BETA_RELEASE)
 		VERSION % 1000,
-#if defined(ALPHA_RELEASE)
-		"Alpha",
-#elif defined(BETA_RELEASE)
-		"Beta",
-#else
-		"",
-#endif
-#endif
 		ServerVersion[4],
 		atoi(ServerVersion + 5),
 		ServerVersion[7]);
 #if 0
-      cout << "BZFLAG client, version " <<
+      cout << "BZFlag client, version " <<
 		(VERSION / 10000000) % 100 << "." <<
 		(VERSION / 100000) % 100 <<
 		(char)('a' - 1 + (VERSION / 1000) % 100) <<
-#if defined(ALPHA_RELEASE) || defined(BETA_RELEASE)
-		" build " << VERSION % 1000 <<
-#endif
-#if defined(ALPHA_RELEASE)
-		"Alpha" <<
-#elif defined(BETA_RELEASE)
-		"Beta" <<
-#else
-		"" <<
-#endif
+		<< VERSION % 1000 <<
 		endl;
 
       cout << "  protocol " << ServerVersion[4] << ".";
@@ -609,6 +589,8 @@ void			dumpResources(BzfDisplay* display,
 				SceneRenderer& renderer)
 {
   // collect new configuration
+
+  db.addValue("udpnet", startupInfo.useUDPconnection ? "yes" : "no");	
   db.addValue("callsign", startupInfo.callsign);
   db.addValue("team", Team::getName(startupInfo.team));
   db.addValue("server", startupInfo.serverName);
@@ -729,6 +711,10 @@ int			main(int argc, char** argv)
 {
   argv0 = argv[0];
 
+  // init libs
+
+  //init_packetcompression();
+  
   // check time bomb
   if (timeBombBoom()) {
     printFatalError("This release expired on %s. \n"
@@ -852,6 +838,12 @@ int			main(int argc, char** argv)
     if (db.hasValue("purpleradar"))
       setRadarColor(PurpleTeam, db.getValue("purpleradar"));
 
+	startupInfo.useUDPconnection=true;
+	if (db.hasValue("udpnet")) {
+		if (!strcmp(db.getValue("udpnet"),"no")) {
+			startupInfo.useUDPconnection=false;
+		}
+	}
     // ignore window name in config file (it's used internally)
     db.removeValue("window");
     db.removeValue("multisample");
@@ -1201,7 +1193,6 @@ int WINAPI		WinMain(HINSTANCE, HINSTANCE, LPSTR _cmdLine, int)
     }
   }
 
-  // run the app
   const int exitCode = myMain(argc, argv);
 
   // clean up and return exit code

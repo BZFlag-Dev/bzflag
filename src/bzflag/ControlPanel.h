@@ -42,6 +42,7 @@ class ControlPanel {
     void		resize();
 
     void		addMessage(const BzfString&, const GLfloat* = NULL);
+	void		setMessagesOffset(int offset, int whence);
     void		setStatus(const char*);
     void		resetTeamCounts();
     void		setTeamCounts(const int* counts);
@@ -98,6 +99,8 @@ class ControlPanel {
     BzfString		status;
     int			teamCounts[NumTeams];
     ControlPanelMessageList	messages;
+    static int			messagesOffset;
+    static const int	maxScrollPages;
     static const int	maxLines;
 };
 

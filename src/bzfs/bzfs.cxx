@@ -17,6 +17,16 @@ static const char	copyright[] = "Copyright (c) 1993 - 2001 Tim Riker";
 
 #define TIMELIMIT
 
+// Like verbose debug messages?
+#define UDEBUG if (UDEBUGMSG) printf
+#define UDEBUGMSG false
+
+// Like version status messages?
+#define UMDEBUG if (UMDEBUGMSG) printf
+#define UMDEBUGMSG false
+
+#define SERVERLOGINMSG true
+
 const int		MaxPlayers = 40;
 const int		MaxShots = 10;
 
@@ -64,6 +74,12 @@ const int		MaxShots = 10;
 #include "Ping.h"
 #include "TimeBomb.h"
 
+// forward ref
+static void             sendMessage(int playerIndex,
+                                        const PlayerId& targetPlayer,
+                                        TeamColor targetTeam,
+                                        const char* message);
+
 // DisconnectTimeout is how long to wait for a reconnect before
 // giving up.  this should be pretty short to avoid bad clients
 // from using up our resources, but long enough to allow for
@@ -82,6 +98,8 @@ static const float	FlagHalfLife = 45.0f;
 static int		NotConnected = -1;	// do NOT change
 static int		InvalidPlayer = -1;
 
+static char *		servermsg = NULL;	// custom server login message
+
 enum PlayerState {
 			PlayerInLimbo,		// unconnected or entered
 			PlayerOnTeamDead,
@@ -93,6 +111,14 @@ struct ConnectInfo {
     int			accept;			// what fd we accepted on
     int			listen;			// what fd we're listening on
     TimeKeeper		time;			// time accepted
+};
+
+struct PacketQueue {
+  public:
+	unsigned short seqno;
+	void *data;
+	int length;
+	struct PacketQueue *next;
 };
 
 struct PlayerInfo {
@@ -111,14 +137,32 @@ struct PlayerInfo {
 
     // input buffer
     int			len;			// bytes read in current msg
-    char		msg[MaxPacketLen];	// current msg
+    char		msg[8192];		// current msg
 
     // output buffer
     int			outmsgOffset;
     int			outmsgSize;
     int			outmsgCapacity;
     char*		outmsg;
+
+    // UDP connection
+    boolean 		ulinkup;
+    int                 urecvfd;
+    struct sockaddr     urecvaddr;
+    unsigned short      urecport;
+    struct sockaddr     usendaddr;
+
+    // UDP message queue
+    struct PacketQueue  *uqueue;
+    struct PacketQueue  *dqueue;
+    unsigned short      lastRecvPacketNo;
+    unsigned short 	lastSendPacketNo;
+
+    boolean 		toBeKicked;
 };
+
+#define SEND 1
+#define RECEIVE 0
 
 struct FlagInfo {
   public:
@@ -251,6 +295,10 @@ static int		broadcastRadio = InvalidPlayer;
 static int		maxPlayerScore = 0;
 static int		maxTeamScore = 0;
 static int		debug = 0;
+
+static boolean		udpOnly;		// True if only new clients allowed
+static boolean 		neverUdp;		// True if no UDP is used at all
+
 #ifdef PRINTSCORE
 static boolean		printScore = False;
 #endif
@@ -706,6 +754,428 @@ int			WorldInfo::getDatabaseSize() const
 // rest of server (no more classes, just functions)
 //
 
+static void		directMessage(int playerIndex, uint16_t code,
+					int len, const void* msg);
+
+
+void*			getPacketFromClient(int playerIndex, uint16_t* length, uint16_t* rseqno)
+{
+	struct PacketQueue *moving=player[playerIndex].dqueue;
+	struct PacketQueue *remindme= NULL;
+	while (moving != NULL) {
+		if (moving->next == NULL) {
+			void *remember = moving->data;
+			*length = moving->length;
+			if (rseqno) *rseqno = moving->seqno;
+			if (remindme) remindme->next = NULL;
+				else player[playerIndex].dqueue=NULL;
+			free(moving);
+			return remember;
+		}
+		remindme = moving;
+		moving = moving->next;
+	}
+	*length = 0;
+	return NULL;
+}
+
+
+void			printQueueDepth(int playerIndex)
+{
+	int d,u;
+	struct PacketQueue *moving;
+	moving = player[playerIndex].dqueue;
+	d = 0;
+	while (moving) {
+		d++;
+		moving = moving->next;
+	}
+	u = 0;
+	moving = player[playerIndex].uqueue;
+        while (moving) {
+                u++;
+                moving = moving->next;
+        }
+	UMDEBUG("Player %d RECV QUEUE %d   SEND QUEUE %d\n", playerIndex,
+		d,u);
+	
+}
+
+
+boolean			enqueuePacket(int playerIndex, int op, int rseqno, void *msg, int n)
+{
+	struct PacketQueue *oldpacket;
+	struct PacketQueue *newpacket;
+
+	if (op == SEND) 
+		oldpacket = player[playerIndex].uqueue; 
+	else {
+		oldpacket = player[playerIndex].dqueue;
+	}
+
+	if (oldpacket) {
+		if (oldpacket->data) free(oldpacket->data);
+		free(oldpacket);		
+	}
+
+	newpacket = (struct PacketQueue *)malloc(sizeof(struct PacketQueue));
+	newpacket->seqno = rseqno;
+	newpacket->data = (unsigned char *)malloc(n);
+	memcpy((unsigned char *)newpacket->data, (unsigned char *)msg, n);
+	newpacket->length = n;
+	newpacket->next = NULL;
+
+	if (op == SEND) player[playerIndex].uqueue = newpacket; 
+		else player[playerIndex].dqueue = newpacket;
+
+	return true;
+}
+
+
+void			disqueuePacket(int playerIndex, int op, int rseqno)
+{
+        struct PacketQueue *oldpacket;
+
+        if (op == SEND)
+                oldpacket = player[playerIndex].uqueue;
+        else {
+                oldpacket = player[playerIndex].dqueue;
+        }
+
+        if (oldpacket) {
+                if (oldpacket->data) free(oldpacket->data);
+                free(oldpacket);
+        }
+
+	if (op == SEND) player[playerIndex].uqueue = NULL;
+		else player[playerIndex].dqueue = NULL;
+}
+
+
+void* 			assembleSendPacket(int playerIndex, int* len) 
+{
+	struct PacketQueue *moving = player[playerIndex].uqueue;
+	unsigned char *assemblybuffer;
+	int n=8192, packets=0, startseq=(-1), endseq, noinqueue;
+ 	unsigned char *buf;
+	assemblybuffer= (unsigned char *)malloc(n);
+	buf = assemblybuffer;
+	
+  	buf = (unsigned char *)nboPackUShort(buf, 0xfeed);
+  	buf = (unsigned char *)nboPackUShort(buf, player[playerIndex].lastRecvPacketNo);
+	n -= 4;
+
+	// lets find how deep the send queue is
+	noinqueue = 0;
+	while (moving) {
+		noinqueue++;
+		moving=moving->next;
+		startseq=moving->seqno;
+	}
+
+	// lets see if it is too large (CAN'T BE, Queue is always 1 length)
+
+	if (noinqueue > 128) {
+		// we have more than 128 not aknowledged packets
+		printf("%d Packets outstanding\n",noinqueue);
+	}
+
+	noinqueue -= 1;  // this is actually the number of single
+                         // packets we send with a single write
+                         // 1 means we only send the most recent
+                         // 2 the last two most recent, etc...
+                         // it is currently advisable to use 1 here as
+                         // a. lines are resonable stable (not much loss)
+                         // b. an ISDN link will be flooded with 4 > player
+                        
+	moving = player[playerIndex].uqueue;
+        
+	packets = 0;
+	startseq = -1;
+
+	while (moving) {
+		packets++;
+		if (packets > noinqueue) {
+			if (startseq < 0) startseq=moving->seqno;
+			endseq=moving->seqno;
+			n -= 2; if (n <= 2) break;
+  			buf = (unsigned char *)nboPackUShort(buf, moving->length);
+			n -= 2; if (n <= 2) break;
+  			buf = (unsigned char *)nboPackUShort(buf, moving->seqno);
+			n -= moving->length; if (n <= 2) break;
+			memcpy((unsigned char *)buf, (unsigned char *)moving->data,
+				moving->length);
+			buf += moving->length;
+		} // noinqueue
+		moving = moving->next;
+	}
+  	buf = (unsigned char *)nboPackUShort(buf, 0xffff);
+	n -= 2;
+	if (n <= 2) {
+		UDEBUG("ASSEMBLE SEND PACKET OVERRUN BUFFER\n");
+		*len = 0;
+		return assemblybuffer;
+	}
+	if (n < 4096) UMDEBUG("Warning: TOO Long a PACKET: %d %d\n",noinqueue, packets);
+	*len = (8192 - n);
+	UDEBUG("ASSEMBLY %d packets, %d - %d\n",packets,startseq, endseq);
+	return assemblybuffer;
+}
+
+
+void 			disassemblePacket(int playerIndex, void *msg, int *nopackets) 
+{
+	unsigned short marker;
+	unsigned short usdata;
+	unsigned char *buf = (unsigned char *)msg;	
+
+	int npackets = 0;
+
+	UDEBUG("::: Disassemble Packet\n");
+
+  	buf = (unsigned char *)nboUnpackUShort(buf, marker);
+	if (marker!=0xfeed) {
+		UDEBUG("Reject UPacket because invalid header %04x\n", marker);
+		return;
+	}
+  	buf = (unsigned char *)nboUnpackUShort(buf, usdata);
+
+	disqueuePacket(playerIndex, SEND, usdata);
+
+	while (true) {
+		unsigned short seqno;
+		unsigned short length;
+		int ilength;
+  		buf = (unsigned char *)nboUnpackUShort(buf, length);
+		ilength=length;
+		if (length == 0xffff) break;
+		else
+			if (ilength > 1024) {
+				 fprintf(stderr,"* RECEIVE PACKET BUFFER OVERFLOW ATTEMPT: %d sent %d Bytes\n",
+					 playerIndex, ilength);
+					break;
+			}
+  		buf = (unsigned char *)nboUnpackUShort(buf, seqno);
+		UDEBUG("SEQ RECV %d Enqueing now...\n",seqno);
+		enqueuePacket(playerIndex, RECEIVE, seqno, buf, length);
+		buf+=length;
+		npackets++;
+	}
+        UMDEBUG("%d: Got %d packets\n",time(0),npackets);
+	// printQueueDepth(playerIndex);
+	*nopackets = npackets;
+}
+
+
+const void*			assembleUDPPacket(int playerIndex, const void* b, int* l)
+{
+	int length = *l;
+
+	UDEBUG("ENQUEUE %d [%d]\n",length, player[playerIndex].lastSendPacketNo);
+	enqueuePacket(playerIndex, SEND, 
+			player[playerIndex].lastSendPacketNo, (void *)b, length);
+				
+	player[playerIndex].lastSendPacketNo++;
+
+	UDEBUG("ASSEMBLE\n");
+	return assembleSendPacket(playerIndex, l);
+}
+
+// write an UDP packet down the link to the client, we don't know if it comes through
+// so this code is using a queuing mechanism. As it turns out the queue is not strictly
+// needed if we only use the Multicast messages...
+
+static int			puwrite(int playerIndex, const void* b, int l)
+{
+  PlayerInfo& p = player[playerIndex];
+  const void* tobesend = b;
+
+  UDEBUG("INTO PUWRITE\n");
+
+  assert(p.urecvfd != 0 && l >= 0);
+
+  tobesend = assembleUDPPacket(playerIndex,b,&l);
+
+  if (!tobesend || (l == 0)) {
+	removePlayer(playerIndex);
+    	fprintf(stderr, "Send Queue Overrun for player %d (%s)\n", playerIndex, p.callSign);
+  	if (tobesend) free((unsigned char *)tobesend);
+	return -1;
+  }
+  
+  UDEBUG("PUWRITE - ASSEMBLED UDP LEN %d for Player %d\n",l,playerIndex);
+  // write as much data from buffer as we can in one send()
+
+  int n;
+
+#ifdef TESTLINK
+  if ((random()%LINKQUALITY) != 0) {
+#endif
+    n = sendto(p.urecvfd, (const char *)tobesend, l, 0, &p.usendaddr, sizeof(p.usendaddr));
+#ifdef TESTLINK
+  } else printf("Drop Packet due to Test\n");
+#endif
+  if (tobesend) free((unsigned char *)tobesend);
+
+  // handle errors
+  if (n < 0) {
+    // get error code
+    const int err = getErrno();
+
+    // just try again later if it's one of these errors
+    if (err == EAGAIN || err == EINTR)
+      return -1;
+
+    // if socket is closed then give up
+    if (err == ECONNRESET || err == EPIPE) {
+      UMDEBUG("REMOVE: ECONNRESET/EPIPE\n");
+      removePlayer(playerIndex);
+      return -1;
+    }
+
+    // dump other errors and continue
+    nerror("error on UDP write");
+    fprintf(stderr, "player is %d (%s)\n", playerIndex, p.callSign);
+    fprintf(stderr, "%d bytes\n", n);
+
+    // we may actually run into not enough buffer space here
+    // but as the link is unreliable anyway we never treat it as
+    // hard error
+  }
+
+  return n;
+}
+
+static void		sendUDPupdate(int playerIndex)
+{
+  char  buffer[2];
+  unsigned short local_port = player[playerIndex].urecport;
+  void* buf = (void*)buffer;
+  buf = nboPackUShort(buf, local_port);
+  UMDEBUG("LOCAL Update to %d port %d\n",playerIndex,local_port);
+  // send it
+  directMessage(playerIndex, MsgUDPLinkRequest, sizeof(buffer), buffer);
+}
+
+static void		sendUDPseqno(int playerIndex)
+{
+  char  buffer[2];
+  unsigned short seqno = player[playerIndex].lastRecvPacketNo;
+  void* buf = (void*)buffer;
+  buf = nboPackUShort(buf, seqno);
+
+  // send it
+  directMessage(playerIndex, MsgUDPLinkUpdate, sizeof(buffer), buffer);
+}
+
+static void 		createUDPcon(int t, int remote_port) {
+	int local_port, n, sndbufsize, recbufsize;
+	unsigned short s_remote = remote_port;
+
+	UMDEBUG("Message received: UDP request for remote port %d\n",remote_port);
+
+	if (remote_port == 0) return;
+
+	// we need to open a socket for him to listen to
+	struct sockaddr_in serv_addr;
+	if ((player[t].urecvfd = socket(AF_INET, SOCK_DGRAM, 0)) < 0) {
+		UDEBUG("SOCKET RECV failed\n");
+		return; // we cannot comply
+	}
+
+	// lets increase send/rcv buffer size as we are quite volume hungry
+        sndbufsize = 128000;
+#if defined(_WIN32)
+        n = setsockopt(player[t].urecvfd,SOL_SOCKET,SO_SNDBUF,(const char *)&sndbufsize,sizeof(int));
+#else
+        n = setsockopt(player[t].urecvfd,SOL_SOCKET,SO_SNDBUF,(const void *)&sndbufsize,sizeof(int));
+#endif
+        if (n<0) {
+                fprintf(stderr, "SETSOCKOPT: BUFFERSPACE SEND failed\n");
+        }
+
+	recbufsize = 128000;
+#if defined(_WIN32)
+	n = setsockopt(player[t].urecvfd,SOL_SOCKET,SO_RCVBUF,(const char *)&recbufsize,sizeof(int));
+#else
+	n = setsockopt(player[t].urecvfd,SOL_SOCKET,SO_RCVBUF,(const void *)&recbufsize,sizeof(int));
+#endif
+	if (n<0) {
+		fprintf(stderr, "SETSOCKOPT: BUFFERSPACE RECV failed\n");
+	}
+
+	// ignore the results for now
+
+        // now find a free port, starting at 17200 to be NAT and Firewall
+        // friendly, this way ports are mostly in the range 17200-17220
+
+  	for (int portno=17200; portno < 65536; portno++) {
+		if (portno == 65535) {
+			UDEBUG("Unable to bind UDP port\n");
+			return;
+		}
+  		memset((char *)&serv_addr, 0, sizeof(serv_addr)); 
+  		serv_addr.sin_family = AF_INET;
+  		serv_addr.sin_addr.s_addr = htonl(INADDR_ANY);
+  		serv_addr.sin_port = htons(portno);
+  		if (bind(player[t].urecvfd, (struct sockaddr *) &serv_addr, sizeof(serv_addr)) == 0) {
+			break;
+  		}
+  	}
+
+	// lets log our bound port, WinBlows does not like getsockname()
+	// so we reuse the structure directly from the bind
+	local_port=ntohs(serv_addr.sin_port);
+	player[t].urecport = local_port;
+
+	memcpy((char *)&player[t].urecvaddr,(char *)&serv_addr, sizeof(serv_addr));
+
+	// at this point we have successfully created our endpoint
+	// now build the send structure for sendto()
+        memset((char *)&serv_addr, 0, sizeof(serv_addr));
+        serv_addr.sin_family = AF_INET;
+        player[t].peer.pack(&serv_addr.sin_addr.s_addr);
+        serv_addr.sin_port = htons(s_remote);
+        memcpy((char *)&player[t].usendaddr,(char *)&serv_addr, sizeof(serv_addr));
+	
+	// show some message on the console
+	UMDEBUG("UDP link created, remote %d %04x, local %d\n",
+		remote_port,ntohl(serv_addr.sin_addr.s_addr), local_port);
+
+	// do no delay, we never wait on socket I/O
+#if defined _WIN32
+    int on = 1;
+    ioctl(player[t].urecvfd, FIONBIO, &on);
+#else
+  	int mode = fcntl(player[t].urecvfd, F_GETFL, 0);
+  	if (mode == -1 || fcntl(player[t].urecvfd, F_SETFL, mode | O_NDELAY) < 0)
+   		 nerror("enabling O_NDELAY");
+#endif
+	// init the queues
+	player[t].uqueue = player[t].dqueue = NULL;
+	player[t].lastRecvPacketNo = player[t].lastSendPacketNo = 0;
+
+	// send client the message that we are ready for him
+	sendUDPupdate(t);
+
+	return;	
+}
+
+// called as the last stage of the UDP link establishment
+void 			upUDPcon(int t) {
+        UDEBUG("STATUS: Up UDP CON received\n");
+	
+	// now simply enable the downlink
+	if (player[t].urecvfd > 0) 
+		player[t].ulinkup = true;
+}
+
+// obsolete now
+void 			OOBQueueUpdate(int t, uint32_t rseqno) {
+	if (rseqno > 0)
+		disqueuePacket(t, SEND, rseqno);
+}
+
 static int		lookupPlayer(const PlayerId& id)
 {
   for (int i = 0; i < maxPlayers; i++)
@@ -733,6 +1203,72 @@ static void		setNoDelay(int fd)
   }
 }
 
+// pupeek - checks if a message is available in the UDP receive buffers
+static int		pupeek(int playerIndex)
+{
+  PlayerInfo& p = player[playerIndex];
+  if (p.fd == NotConnected) return 0;
+
+  UDEBUG("Into PUPEEK\n");
+
+  if (p.urecvfd > 0) {
+    int n = 0;
+    AddrLen recvlen = sizeof(p.urecvaddr);
+    unsigned char ubuf[8192];
+    UDEBUG("CHECK UDP RECV MSGPEEK\n");
+    n = recvfrom(p.urecvfd, (char *)ubuf, 8192, MSG_PEEK, &p.urecvaddr, &recvlen);
+    return n;
+  }
+  return 0;
+}
+
+// puread - interface to the UDP Receive routines
+static int		puread(int playerIndex, int *nopackets)
+{
+  PlayerInfo& p = player[playerIndex];
+  if (p.fd == NotConnected) return 0;
+
+  UDEBUG("Into PUREAD\n");
+
+  *nopackets = 0;
+
+  if (p.urecvfd > 0) {
+    int n = 0;
+    uint16_t len, lseqno;
+    void *pmsg;
+    AddrLen recvlen = sizeof(p.urecvaddr);
+    unsigned char ubuf[8192];
+
+    UDEBUG("CHECK UDP RECV\n");
+    // first get the whole package assembly from the UDP receive buffers
+    n = recvfrom(p.urecvfd, (char *)ubuf, 8192, 0, &p.urecvaddr, &recvlen);
+    if (n>0) {
+	// got something! now disassemble the package block into single BZPackets
+	// filling up the dqueue with these packets
+
+	disassemblePacket(playerIndex, ubuf, nopackets);
+
+	// old code is obsolete
+	// if (*nopackets > 6 ) pucdwrite(playerIndex);
+    }	
+    // have something in the receive buffer? so get it
+    // due to the organization sequence and reliability is always granted
+    // even if some packets are lost during transfer
+    pmsg =  getPacketFromClient(playerIndex, &len, &lseqno);
+    if (pmsg != NULL) {
+	int clen = len;
+	if (clen < 1024) {
+		memcpy(p.msg,pmsg,clen);
+		p.len = clen;
+	}
+	free(pmsg);  // be sure to free the packet again
+    	UDEBUG("GOT UDP READ %d Bytes [%d]\n",len, lseqno);
+	return p.len;
+    }
+  }
+  return 0;
+}
+
 static int		pread(int playerIndex, int l)
 {
   PlayerInfo& p = player[playerIndex];
@@ -757,6 +1293,7 @@ static int		pread(int playerIndex, int l)
 
     // if socket is closed then give up
     if (err == ECONNRESET || err == EPIPE) {
+      UMDEBUG("REMOVE: Socket reset (2)\n");
       removePlayer(playerIndex);
       return -1;
     }
@@ -764,12 +1301,14 @@ static int		pread(int playerIndex, int l)
     // dump other errors and remove the player
     nerror("error on read");
     fprintf(stderr, "player is %d (%s)\n", playerIndex, p.callSign);
+    UMDEBUG("REMOVE: READ ERROR\n");
     removePlayer(playerIndex);
     return -1;
   }
 
   else {
     // disconnected
+    UMDEBUG("REMOVE: Disconnected (3)\n");
     removePlayer(playerIndex);
     return -1;
   }
@@ -796,6 +1335,7 @@ static int		prealwrite(int playerIndex, const void* b, int l)
 
     // if socket is closed then give up
     if (err == ECONNRESET || err == EPIPE) {
+      UMDEBUG("REMOVE: Reset socket (4)\n");
       removePlayer(playerIndex);
       return -1;
     }
@@ -803,6 +1343,7 @@ static int		prealwrite(int playerIndex, const void* b, int l)
     // dump other errors and remove the player
     nerror("error on write");
     fprintf(stderr, "player is %d (%s)\n", playerIndex, p.callSign);
+    UMDEBUG("REMOVE: WRITE ERROR\n");
     removePlayer(playerIndex);
     return -1;
   }
@@ -829,9 +1370,28 @@ static void		pwrite(int playerIndex, const void* b, int l)
   PlayerInfo& p = player[playerIndex];
   if (p.fd == NotConnected || l == 0) return;
 
+  // Check if UDP Link is used instead of TCP, if so jump into puwrite
+  if (p.ulinkup) {
+    uint16_t len, code;
+    void* buf = (void *)b;
+    buf = nboUnpackUShort(buf, len);
+    buf = nboUnpackUShort(buf, code);
+
+    // only send bulk messages by UDP
+    switch (code) {
+	case MsgShotBegin:
+	case MsgShotEnd:
+	case MsgPlayerUpdate:
+	case MsgGMUpdate:
+    		puwrite(playerIndex,b,l);
+   		return;
+    }
+  }
+ 
   // try flushing buffered data
   pflush(playerIndex);
 
+  UDEBUG("TCP write\n");
   // if the buffer is empty try writing the data immediately
   if (p.fd != NotConnected && p.outmsgSize == 0) {
     const int n = prealwrite(playerIndex, b, l);
@@ -857,6 +1417,7 @@ static void		pwrite(int playerIndex, const void* b, int l)
 	fprintf(stderr, "dropping unresponsive player %d (%s) with"
 				" %d bytes queued\n",
 				playerIndex, p.callSign, p.outmsgSize + l);
+        UMDEBUG("REMOVE: CAPACITY\n");
 	removePlayer(playerIndex);
 	return;
       }
@@ -968,6 +1529,7 @@ static void		closeListServer(int index)
   if (link.socket != NotConnected) {
     shutdown(link.socket, 2);
     close(link.socket);
+    UMDEBUG("Closing List server %d\n",index);
     link.socket = NotConnected;
     link.nextMessage = "";
   }
@@ -991,6 +1553,7 @@ static void		openListServer(int index)
   // start opening connection if not already doing so
   if (link.socket == NotConnected) {
     link.socket = socket(AF_INET, SOCK_STREAM, 0);
+    UMDEBUG("Opening List Server %d\n",index);
     if (link.socket == NotConnected) {
       closeListServer(index);
       return;
@@ -1041,6 +1604,8 @@ static void		sendMessageToListServer(const char* msg)
     ListServerLink& link = listServerLinks[i];
     if (strcmp(msg, "SETNUM") != 0 || strcmp(link.nextMessage, "ADD") != 0)
       link.nextMessage = msg;
+    else if (strcmp(msg, "SETNUM") != 0)
+          link.nextMessage = msg;
   }
 }
 
@@ -1430,7 +1995,7 @@ static void		relayPlayerPacket(int index,
 
 static istream&                readToken(istream& input, char* buffer, int n)
 {
-  int c;
+  int c = -1;
 
   // skip whitespace
   while (input.good() && (c = input.get()) != -1 && isspace(c) && c != '\n')
@@ -2209,6 +2774,15 @@ static void		addPlayer(int playerIndex)
     return;
   }
 
+  player[playerIndex].ulinkup = false;
+  player[playerIndex].toBeKicked = false;
+
+  player[playerIndex].lastRecvPacketNo=0;
+  player[playerIndex].lastSendPacketNo=0;
+
+  player[playerIndex].uqueue=NULL;
+  player[playerIndex].dqueue=NULL;
+
   // accept player
   directMessage(playerIndex, MsgAccept, 0, NULL);
 
@@ -2298,6 +2872,18 @@ static void		addPlayer(int playerIndex)
 #ifdef PRINTSCORE
   dumpScore();
 #endif
+  char message[MessageLen];
+
+#ifdef SERVERLOGINMSG
+  sprintf(message,"BZFlag 1.7fx Server, http://BZFlag.SourceForge.net/\n");
+  sendMessage(playerIndex, player[playerIndex].id, player[playerIndex].team, message);
+
+  if (servermsg && (strlen(servermsg) > 0)) {
+	sprintf(message,"%s\n",servermsg);
+	sendMessage(playerIndex, player[playerIndex].id, player[playerIndex].team, message);
+  }
+#endif
+
 }
 
 static void		addFlag(int flagIndex)
@@ -2431,11 +3017,48 @@ static void		removePlayer(int playerIndex)
   // bad packet can come before MsgEnter, we must be careful
   // not to undo operations that haven't been done.
   // first shutdown connection
+
+  // check if we are called again for a dropped player!
+
+  if (player[playerIndex].fd == NotConnected) return;
+
+  // status message
+  UMDEBUG("Player %s [%d] is removed\n",player[playerIndex].callSign,playerIndex);
+
+  // shutdown TCP socket
   shutdown(player[playerIndex].fd, 2);
   close(player[playerIndex].fd);
+
+  // free up the UDP packet buffers
+  if (player[playerIndex].uqueue) disqueuePacket(playerIndex, SEND, 65536);
+  if (player[playerIndex].dqueue) disqueuePacket(playerIndex, RECEIVE, 65536);
+
+  player[playerIndex].uqueue = NULL;
+  player[playerIndex].dqueue = NULL;
+  player[playerIndex].lastRecvPacketNo = 0;
+  player[playerIndex].lastSendPacketNo = 0;
+
+  // shutdown the UDP socket
+  if (player[playerIndex].urecvfd) {
+	close(player[playerIndex].urecvfd);
+	player[playerIndex].urecvfd = 0;
+	memset(&player[playerIndex].urecvaddr,0,sizeof(struct sockaddr));
+    	player[playerIndex].urecport = 0;
+    	memset(&player[playerIndex].usendaddr,0,sizeof(struct sockaddr));
+  }
+
+  // no UDP connection anymore
+  player[playerIndex].ulinkup = false;
+  player[playerIndex].toBeKicked = false;
+
   player[playerIndex].fd = NotConnected;
   player[playerIndex].len = 0;
+
+  player[playerIndex].callSign[0] = 0;
+
+  if (player[playerIndex].outmsg != NULL)
   delete[] player[playerIndex].outmsg;
+
   player[playerIndex].outmsg = NULL;
 
   // can we turn off relaying now?
@@ -2680,7 +3303,6 @@ static void		grabFlag(int playerIndex, int flagIndex)
 	player[playerIndex].flag != -1 ||
 	flag[flagIndex].flag.status != FlagOnGround)
     return;
-
   // okay, player can have it
   flag[flagIndex].flag.status = FlagOnTank;
   flag[flagIndex].flag.owner = player[playerIndex].id;
@@ -2967,11 +3589,14 @@ static void		handleCommand(int t, uint16_t code,
       buf = nboUnpackString(buf, player[t].callSign, CallSignLen);
       buf = nboUnpackString(buf, player[t].email, EmailLen);
       addPlayer(t);
+      UMDEBUG("Player %s [%d] has joined\n", player[t].callSign, t);
       break;
     }
 
     case MsgExit:		// player closing connection
       // data: <none>
+      UMDEBUG("Player %s [%d] has dropped\n", player[t].callSign, t);
+      UMDEBUG("REMOVE: DROPPED BY REQUEST\n");
       removePlayer(t);
       break;
 
@@ -3113,6 +3738,7 @@ static void		handleCommand(int t, uint16_t code,
       buf = targetPlayer.unpack(buf);
       buf = nboUnpackUShort(buf, targetTeam);
       buf = nboUnpackString(buf, message, sizeof(message));
+      UMDEBUG("Player %s [%d]: %s\n",player[t].callSign, t, message);
       sendMessage(t, targetPlayer, TeamColor(targetTeam), message);
       break;
     }
@@ -3129,6 +3755,31 @@ static void		handleCommand(int t, uint16_t code,
       // data: <none>
       releaseRadio(t);
       break;
+
+    case MsgUDPLinkRequest: {	// player is requesting an additional
+				// UDP connection, sending its own UDP port
+      if (neverUdp == false) {
+        uint16_t port;
+        buf = nboUnpackUShort(buf, port);
+        createUDPcon(t, port);
+      }
+      break;
+    }
+
+    case MsgUDPLinkEstablished: { // player is ready to receive data over UDP
+				  // UDP connection, sending 0
+      uint16_t queueUpdate;
+      buf = nboUnpackUShort(buf, queueUpdate);
+      OOBQueueUpdate(t, queueUpdate);
+      upUDPcon(t);
+      if (neverUdp) {
+        fprintf(stderr,"Clients sends MsgUDPLinkEstablished without MsgUDPLinkRequest!\n");
+      }
+      break;
+    } 
+
+    case MsgServerControl:	// player is sending a Server Control Message
+      break;			// not implemented yet
 
     case MsgPlayerUpdate:	// player is sending multicast data
     case MsgGMUpdate:
@@ -3170,6 +3821,9 @@ static const char*	usageString =
 "[-time <seconds>] "
 #endif
 "[-ttl <ttl>]"
+"[-udponly]"
+"[-noudp]"
+"[-srvmsg <text>]"
 "[-world <filename>]";
 
 static void		printVersion(ostream& out)
@@ -3180,16 +3834,7 @@ static void		printVersion(ostream& out)
 		(VERSION / 10000000) % 100 << "." <<
 		(VERSION / 100000) % 100 <<
 		(char)('a' - 1 + (VERSION / 1000) % 100) <<
-#if defined(ALPHA_RELEASE) || defined(BETA_RELEASE)
-		" build " << VERSION % 1000 <<
-#endif
-#if defined(ALPHA_RELEASE)
-		" Alpha" <<
-#elif defined(BETA_RELEASE)
-		" Beta" <<
-#else
-		"" <<
-#endif
+		VERSION % 1000 <<
 		endl;
 
   out << "  protocol " << ServerVersion[4] << ".";
@@ -3246,6 +3891,9 @@ static void		extraUsage(const char* pname)
 #endif
   cout << "\t -ttl: time-to-live for pings (default=" << pingTTL << ")" << endl;
   cout << "\t -world: world file to load" << endl;
+  cout << "\t -noudp: never use the new UDP networking" << endl;
+  cout << "\t -udponly: allow only new clients" << endl;
+  cout << "\t -srvmsg: specify a <msg> to print upon client login" << endl;
   cout << "\nFlag codes:" << endl;
   for (int f = int(FirstSuperFlag); f <= int(LastSuperFlag); f++)
     cout << "\t " << setw(2) << Flag::getAbbreviation(FlagId(f)) <<
@@ -3349,6 +3997,8 @@ static void		parse(int argc, char** argv)
   linearAcceleration = 0.0f;
   angularAcceleration = 0.0f;
   numAllowedFlags = 0;
+  udpOnly = false;
+  neverUdp = false;
   delete[] flag;  flag = NULL;
   delete[] allowedFlags;  allowedFlags = NULL;
 
@@ -3368,6 +4018,21 @@ static void		parse(int argc, char** argv)
   // parse command line
   int playerCountArg = 0;
   for (i = 1; i < argc; i++) {
+      if (strcmp(argv[i], "-noudp") == 0) {
+	UMDEBUG("Setup: Server will use only TCP for connections\n");
+	neverUdp = true;
+      } else
+      if (strcmp(argv[i], "-udponly") == 0) {
+	UMDEBUG("Setup: Server runs for new (UDP) clients only!\n");
+	udpOnly = true;
+      } else
+      if (strcmp(argv[i], "-srvmsg") == 0) {
+         if (++i == argc) {
+                cerr << "argument expected for -srvmsg" << endl;
+                usage(argv[0]);
+         }
+         servermsg = argv[i];
+      } else
       if (strcmp(argv[i], "-world") == 0) {
          if (++i == argc) {
                 cerr << "argument expected for -world" << endl;
@@ -3874,6 +4539,8 @@ static void		parse(int argc, char** argv)
 
 int			main(int argc, char** argv)
 {
+  int nfound;
+
   // check time bomb
   if (timeBombBoom()) {
     cerr << "This release expired on " << timeBombString() << "." << endl;
@@ -3885,17 +4552,9 @@ int			main(int argc, char** argv)
   if (timeBombString()) {
     char bombMessage[80];
     cerr << "This release will expire on " << timeBombString() << "." << endl;
-    sprintf(bombMessage, "Version %d.%d%c build %d %s",
+    sprintf(bombMessage, "Version %d.%d%c%d",
 		(VERSION / 10000000) % 100, (VERSION / 100000) % 100,
-		(char)('a' - 1 + (VERSION / 1000) % 100), VERSION % 1000,
-#if defined(ALPHA_RELEASE)
-		"Alpha"
-#elif defined(BETA_RELEASE)
-		"Beta"
-#else
-		""
-#endif
-		);
+		(char)('a' - 1 + (VERSION / 1000) % 100), VERSION % 1000);
      cerr << bombMessage << endl;
   }
 
@@ -3987,6 +4646,7 @@ int			main(int argc, char** argv)
     for (i = 0; i < maxPlayers; i++) {
       if (player[i].fd != NotConnected) {
 	FD_SET(player[i].fd, &read_set);
+
 	if (player[i].outmsgSize > 0)
 	  FD_SET(player[i].fd, &write_set);
       }
@@ -4010,9 +4670,9 @@ int			main(int argc, char** argv)
 
     // find timeout when next flag would hit ground
     TimeKeeper tm = TimeKeeper::getCurrent();
-    float waitTime = 3.0f;
+    float waitTime = 0.25f;   // lets start by waiting 0.25 sec
 #ifdef TIMELIMIT
-    if (timeLimit > 0.0f) waitTime = 1.0f;
+    if (timeLimit > 0.0f) waitTime = 0.125f;
 #endif
     if (numFlagsInAir > 0) {
       for (i = 0; i < numFlags; i++)
@@ -4022,14 +4682,45 @@ int			main(int argc, char** argv)
 		flag[i].dropDone - tm < waitTime)
 	  waitTime = flag[i].dropDone - tm;
     }
-    if (waitTime < 0.0f) waitTime = 0.0f;
+
+    if (waitTime < 0.0f) waitTime = 0.005f;  // minmal waitTime
+    if (waitTime > 0.25f) waitTime = 0.15f; // maximal waitTime
+
+    // in case any UDP link is established don't wait
+    if (waitTime > 0.005f)
+    for (i = 0; i < maxPlayers; i++) {
+	// printQueueDepth(i);
+	if (player[i].ulinkup) {
+	  if ((pupeek(i) > 0) || player[i].dqueue) {
+	    waitTime=0.005f;
+	    break;
+	  } else waitTime=0.01f;
+        }
+    }
 
     // wait for communication or for a flag to hit the ground
+
+    nfound = 0;  // we have no pending packets
+
+    do {
+	float localWaitTime=0.004f;
     struct timeval timeout;
-    timeout.tv_sec = long(floorf(waitTime));
-    timeout.tv_usec = long(1.0e+6f * (waitTime - floorf(waitTime)));
-    int nfound = select(maxFileDescriptor+1,
+    	timeout.tv_sec = long(floorf(localWaitTime));
+    	timeout.tv_usec = long(1.0e+6f * (localWaitTime - floorf(localWaitTime)));
+    	nfound = select(maxFileDescriptor+1,
 			(fd_set*)&read_set, (fd_set*)&write_set, 0, &timeout);
+
+	if ((nfound > 0) || ((pupeek(i) > 0) || player[i].dqueue)) {
+		nfound = 1;  // possible for only UDP players, so declare work tbd
+		break;
+	}
+
+	waitTime = waitTime - localWaitTime;
+
+    } while (waitTime>0.0f);
+
+    waitTime=0.05f;
+
     tm = TimeKeeper::getCurrent();
 
     // see if game time ran out
@@ -4113,8 +4804,28 @@ int			main(int argc, char** argv)
 	listServerLastAddTime = tm;
       }
 
+    for (i = 0; i < maxPlayers; i++) {
+	// lets kick the old bastards
+	if (udpOnly && player[i].toBeKicked) {
+		char message[MessageLen];
+		player[i].toBeKicked = false;
+                sprintf(message,"You don't run an UDP link");
+                sendMessage(i, player[i].id, player[i].team, message);
+
+                sprintf(message,"Please update, Bye!");
+                sendMessage(i, player[i].id, player[i].team, message);
+
+		fprintf(stderr, "*** Kicking Player due to old client [%d]\n",i);
+		removePlayer(i);
+	}
+	if (player[i].ulinkup && pupeek(i)) {
+		nfound = 1;
+		break;
+	}
+    }
     // check messages
-    if (nfound >= 0) {
+    if (nfound > 0) {
+
       // first check initial contacts
       if (FD_ISSET(wksSocket, &read_set))
 	acceptClient();
@@ -4152,6 +4863,24 @@ int			main(int argc, char** argv)
 
       // now check messages from connected players and send queued messages
       for (i = 0; i < maxPlayers; i++) {
+	int numpackets;
+
+	// check first if we have any UDP packets pending
+	if (puread(i, &numpackets) > 0) {
+	  // read head
+	  uint16_t len, code;
+	  void* buf = player[i].msg;
+	  buf = nboUnpackUShort(buf, len);
+	  buf = nboUnpackUShort(buf, code);
+
+	  // clear out message
+	  player[i].len = 0;
+
+	  // handle the command for UDP
+	  handleCommand(i, code, len, player[i].msg);
+
+        } 
+
 	if (player[i].fd != NotConnected && FD_ISSET(player[i].fd, &write_set)) {
 	  pflush(i);
 	}
@@ -4182,6 +4911,14 @@ int			main(int argc, char** argv)
 	  // clear out message
 	  player[i].len = 0;
 
+	  // simple ruleset, if player sends a MsgShotBegin over TCP
+ 	  // he/she must not be using the UDP link 
+	  if (udpOnly) {
+        	if (code == MsgShotBegin) {
+                	player[i].toBeKicked = true;
+        	}
+  	  }
+
 	  // handle the command
 	  handleCommand(i, code, len, player[i].msg);
 	}
@@ -4189,7 +4926,7 @@ int			main(int argc, char** argv)
     }
     else if (nfound < 0) {
       if (getErrno() != EINTR) {
-	sleep(1);
+	// sleep(1);   // test code - do not uncomment, will cause big stuttering
       }
     }
   }
@@ -4208,3 +4945,4 @@ int			main(int argc, char** argv)
   // done
   return exitCode;
 }
+

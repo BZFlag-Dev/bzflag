@@ -1008,6 +1008,9 @@ void			GuidedMissileStrategy::update(float dt)
   newDirection[2] = sinf(elevation);
   Ray ray = Ray(nextPos, newDirection);
 
+  // Changed: GM leave smoke trail, call add puff every 3 updates
+  if ((++renderTimes % 3) == 0) addShotPuff(nextPos);
+
   // get next position
   ray.getPoint(dt * ShotSpeed, nextPos);
 

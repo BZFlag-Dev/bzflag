@@ -40,6 +40,8 @@ class KeyMap {
 			TimeBackward,
 			Pause,
 			Quit,
+			ScrollBackward,
+			ScrollForward,
 			LastKey
     };
 

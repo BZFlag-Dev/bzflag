@@ -31,6 +31,7 @@
 // adding new flags or changing the communication protocol require
 // minor release number changes.  adding new graphics effects normally
 // only require incrementing the revision number.
+
 const char* const	ServerVersion = "BZFS107e";
 
 // well known service port number for bzflag server
@@ -117,6 +118,16 @@ const uint16_t		RejectNoRogues = 0x0003;
 const uint16_t		RejectTeamFull = 0x0004;
 const uint16_t		RejectServerFull = 0x0005;
 
+// request for additional UDP link
+
+const uint16_t		MsgUDPLinkRequest = 0x6f66;		// 'of'
+const uint16_t		MsgUDPLinkEstablished = 0x6f67;		// 'og'
+const uint16_t		MsgUDPLinkUpdate = 0x6f68;		// 'oh'
+const uint16_t		MsgClientVersion = 0x6f69;		// 'oj'
+
+// server control message
+
+const uint16_t		MsgServerControl = 0x6f69;		// 'oi'
 
 /* server communication protocol:
   --> incoming messages (to server)

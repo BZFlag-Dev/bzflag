@@ -20,7 +20,7 @@
 #include "ErrorHandler.h"
 #include "Ping.h"
 
-#if defined(ALPHA_RELEASE)
+#if defined(DEBUG)
 #define NETWORK_STATS
 #endif
 
@@ -147,9 +147,7 @@ void			PlayerLink::send(uint16_t code, uint16_t len,
     bytesSent += len + 4;
     packetsSent++;
 #endif
-  }
-
-  else if (state == ServerRelay) {
+  } else if (state == ServerRelay) {
     relay->send(code, len, msg);
   }
 }
@@ -209,15 +207,14 @@ int			PlayerLink::read(uint16_t& code, uint16_t& len,
     memcpy(msg, buf, int(len));
 
 // FIXME -- packet recording
-if (packetStream) {
+    if (packetStream) {
   long dt = (long)((TimeKeeper::getCurrent() - packetStartTime) * 10000.0f);
   fwrite(&playerPacket, sizeof(playerPacket), 1, packetStream);
   fwrite(&dt, sizeof(dt), 1, packetStream);
   fwrite(buffer, msglen, 1, packetStream);
-}
-    return 1;
   }
-
+    return 1;
+  } else // not Multicasting
   if (state == ServerRelay)
     return relay->read(code, len, msg, blockTime);
 
@@ -243,3 +240,16 @@ void			PlayerLink::setMulticast(PlayerLink* _multicast)
 {
   multicast = _multicast;
 }
+
+void			PlayerLink::setPortForUPD(unsigned short port)
+{
+  if (state == ServerRelay)
+     relay->setUDPRemotePort(port);
+}
+
+void			PlayerLink::enableUDPConIfRelayed()
+{
+  if (state == ServerRelay)
+     relay->enableUDPCon();
+}
+

@@ -35,6 +35,7 @@ struct StartupInfo {
     char		serverName[80];
     int			serverPort;
     int			ttl;
+    boolean		useUDPconnection;
     char		multicastInterface[65];
     TeamColor		team;
     char		callsign[CallSignLen];
@@ -77,6 +78,7 @@ boolean			addExplosion(const float* pos,
 				float size, float duration);
 void			addTankExplosion(const float* pos);
 void			addShotExplosion(const float* pos);
+void			addShotPuff(const float* pos);
 
 void			addPlayingCallback(PlayingCallback, void* data);
 void			removePlayingCallback(PlayingCallback, void* data);

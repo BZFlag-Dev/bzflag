@@ -32,6 +32,8 @@ to do list for bzflag
    better would be UDP relay through server because we
    don't need TCP's reliability for player packets.
 
+   * DONE - Frank
+
 * radio chat:
    allow players to communicate via low-quality audio.
    already some support built into the server for this.
@@ -42,3 +44,4 @@ to do list for bzflag
    to wait for enough players for a game and to discuss
    strategy, etc.  could build this into bzfs easily.
 
+   * Scrollback now build into the game - may help too - Frank

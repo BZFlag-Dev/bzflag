@@ -1,6 +1,17 @@
 
                              BZFlag release notes
 
+BZFlag 1.7e1
+------------
+
+* optional UDP unicast based networking,
+  downward compatible with the old TCP method - frank
+* GM now leave smoke trail - frank
+* Explosions are larger - frank
+* Scrollback and Line wrap (use pageup/down keys) - Digit1
+* radar tank dots are larger - frank
+
+
 BZFlag 1.7e release 000
 -----------------------
 

@@ -22,13 +22,6 @@ targets: tardist
 dist: $(_FORCE)
 	@VERSION=$(VERSION); export VERSION; \
 	VERSIONID=$(VERSIONID); export VERSIONID; \
-	if test "$(RELEASEDEF)" = "-DALPHA_RELEASE"; then \
-	  RELEASETYPE=Alpha; \
-	elif test "$(RELEASEDEF)" = "-DBETA_RELEASE"; then \
-	  RELEASETYPE=Beta; \
-	else \
-	  RELEASETYPE=""; \
-	fi; export RELEASETYPE; \
 	if test ! -d $(PACKAGEDIR); then $(MKDIR) $(PACKAGEDIR); fi; \
 	if test ! -d $(PACKAGEDIR)/irix; then $(MKDIR) $(PACKAGEDIR)/irix; fi; \
 	($(CD) $(PACKAGEDIR)/irix; $(RM) *); \

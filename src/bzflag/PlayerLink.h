@@ -22,6 +22,7 @@
 #include "Address.h"
 #include "Protocol.h"
 #include "multicast.h"
+#include "udpnetwork.h"
 
 class Player;
 class ServerLink;
@@ -31,7 +32,8 @@ class PlayerLink {
     enum State {
 			Okay = 0,
 			SocketError = 1,
-			ServerRelay = 2
+			ServerUDPRelay = 2,
+			ServerRelay = 3
     };
 
 			PlayerLink(const Address& multicastAddress,
@@ -59,7 +61,8 @@ class PlayerLink {
 
     static PlayerLink*	getMulticast(); // const
     static void		setMulticast(PlayerLink*);
-
+    void         	setPortForUPD(unsigned short port);
+    void		enableUDPConIfRelayed();
   private:
     State		state;
     int			ttl;

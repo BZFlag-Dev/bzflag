@@ -18,20 +18,13 @@
 # increase build number for every potentially released build.
 # must change this in MSDev project, too.
 #
-VERSION = 10705000
+VERSION = 10705001
 
 #
 # version id string and build number.  these should be consistent with
 # VERSION.
 #
-VERSIONID = 1.7e0
-
-#
-# uncomment one of these to change the release type.
-# default is a normal release.
-#
-#RELEASEDEF = -DALPHA_RELEASE
-#RELEASEDEF = -DBETA_RELEASE
+VERSIONID = 1.7e1
 
 #
 # uncomment this to build in an expiration date (month/day/year)

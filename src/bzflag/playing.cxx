@@ -107,6 +107,7 @@ static double		epochOffset;
 static double		lastEpochOffset;
 static float		clockAdjust = 0.0f;
 static float		pauseCountdown = 0.0f;
+static float		maxPauseCountdown = 0.0f;
 static float		testVideoFormatTimer = 0.0f;
 static int		testVideoPrevFormat = -1;
 static PlayingCallbackList	playingCallbacks;
@@ -655,8 +656,12 @@ static void		doKeyPlaying(const BzfKeyEvent& key, boolean pressed)
 	  Flag::getType(flagId) != FlagSticky &&
 	  !(flagId == PhantomZoneFlag && myTank->isFlagActive()) &&
 	  !(flagId == OscOverthrusterFlag &&
-	    myTank->getLocation() == LocalPlayer::InBuilding))
+	  myTank->getLocation() == LocalPlayer::InBuilding)) {
 	serverLink->sendDropFlag(myTank->getPosition());
+		// changed: on windows it may happen the MsgDropFlag
+		// never comes back to us, so we drop it right away
+	    	handleFlagDropped(myTank);
+	  }
     }
   }
 
@@ -709,6 +714,19 @@ static void		doKeyPlaying(const BzfKeyEvent& key, boolean pressed)
       //   buf = nboPackUShort(buf, uint16_t(RogueTeam));
       hud->setComposing(composePrompt);
       HUDui::setDefaultKey(&composeKeyHandler);
+    }
+  }
+  else if (keymap.isMappedTo(KeyMap::ScrollBackward, key)) {
+    // scroll message list backward
+    if (pressed) {
+      controlPanel->setMessagesOffset(1,1);
+    }
+  }
+
+  else if (keymap.isMappedTo(KeyMap::ScrollForward, key)) {
+    // scroll message list forward
+    if (pressed) {
+      controlPanel->setMessagesOffset(-1,1);
     }
   }
 
@@ -1142,6 +1160,14 @@ static void		handleServerMessage(boolean human, uint16_t code,
 {
   boolean checkScores = False;
   switch (code) {
+
+    case MsgUDPLinkRequest:
+      uint16_t portNo;
+      msg = nboUnpackUShort(msg, portNo);
+	  printError("Server sent downlink endpoint information, port %d\n",portNo);
+	  playerLink->setPortForUPD(portNo);
+      break;
+ 
     case MsgSuperKill:
       printError("Server forced a disconnect");
       serverError = True;
@@ -1612,6 +1638,33 @@ static void		handleServerMessage(boolean human, uint16_t code,
 	  fullMsg += Team::getName(TeamColor(team));
 	  fullMsg += "] ";
 	}
+	if (!srcPlayer) {
+		/* may unkown not harm us */
+		fullMsg = "(UNKNOWN) ";
+		fullMsg += (const char*)msg;
+
+		addMessage(NULL, fullMsg, teamMsgColor[0]);
+		break;
+	}
+	if (!strncmp((char *)msg,"CLIENTQUERY",strlen("CLIENTQUERY"))) {
+		char messageBuffer[MessageLen];
+		memset(messageBuffer, 0, MessageLen);
+		sprintf(messageBuffer,"Version 1.7fx3");
+		if (startupInfo.useUDPconnection) strcat(messageBuffer,"+UDP");
+
+        nboPackString(messageMessage + PlayerIdPLen + 2,
+					messageBuffer, MessageLen);
+		serverLink->send(MsgMessage, sizeof(messageMessage), messageMessage);
+		const GLfloat* msgColor;
+		if (int(team) == int(RogueTeam) || srcPlayer->getTeam() == NoTeam)
+		  msgColor = teamMsgColor[0];
+		else
+		  msgColor = teamMsgColor[srcPlayer->getTeam()];
+
+		addMessage(srcPlayer,"[Sent versioninfo per request]", msgColor);
+
+		break;
+	}
 	fullMsg += (const char*)msg;
 	const GLfloat* msgColor;
 	if (int(team) == int(RogueTeam) || srcPlayer->getTeam() == NoTeam)
@@ -1961,6 +2014,31 @@ boolean			addExplosion(const float* _pos,
 
   // add copy to list of current explosions
   explosions.append(newExplosion);
+
+  if (size < (3.0f * TankLength)) return True; // shot explosion
+
+  int boom = (int) (bzfrand() * 8.0) + 3;
+  while (boom--) {
+  // pick a random prototype explosion
+  const int index = (int)(bzfrand() * (float)prototypeExplosions.getLength());
+
+  // make a copy and initialize it
+  BillboardSceneNode* newExplosion = prototypeExplosions[index]->copy();
+  GLfloat pos[3];
+  pos[0] = _pos[0]+(float)(bzfrand()*12.0 - 6.0);
+  pos[1] = _pos[1]+(float)(bzfrand()*12.0 - 6.0);
+  pos[2] = _pos[2]+(float)(bzfrand()*10.0);
+  newExplosion->move(pos);
+  newExplosion->setSize(size);
+  newExplosion->setDuration(duration);
+  newExplosion->setAngle(2.0f * M_PI * (float)bzfrand());
+  newExplosion->setLightScaling(size / TankLength);
+  newExplosion->setLightFadeStartTime(0.7f * duration);
+
+  // add copy to list of current explosions
+  explosions.append(newExplosion);
+  }
+
   return True;
 }
 
@@ -1972,8 +2050,13 @@ void			addTankExplosion(const float* pos)
 void			addShotExplosion(const float* pos)
 {
   // only play explosion sound if you see an explosion
-  if (addExplosion(pos, 1.0f * TankLength, 0.8f))
+  if (addExplosion(pos, 1.2f * TankLength, 0.8f))
     playWorldSound(SFX_SHOT_BOOM, pos[0], pos[1], pos[2]);
+}
+
+void			addShotPuff(const float* pos)
+{
+  addExplosion(pos, 0.3f * TankLength, 0.8f);
 }
 
 static void		updateExplosions(float dt)
@@ -2614,6 +2697,9 @@ static World*		makeWorld(ServerLink* serverLink)
 static boolean		enterServer(ServerLink* serverLink, World* world,
 						const LocalPlayer* myTank)
 {
+
+  time_t timeout=time(0) + 10;  // give us 10 sec
+
   // tell server we want to join
   serverLink->sendEnter(TankPlayer, myTank->getTeam(),
 		myTank->getCallSign(), myTank->getEmailAddress());
@@ -2622,7 +2708,7 @@ static boolean		enterServer(ServerLink* serverLink, World* world,
   uint16_t code, len;
   char msg[MaxPacketLen];
   if (serverLink->read(code, len, msg, -1) < 0) {
-    printError("Communication error joining game.");
+    printError("Communication error joining game [No immediate respose].");
     return False;
   }
   if (code == MsgSuperKill) {
@@ -2630,7 +2716,7 @@ static boolean		enterServer(ServerLink* serverLink, World* world,
     return False;
   }
   if (code != MsgAccept && code != MsgReject) {
-    printError("Communication error joining game.");
+    printError("Communication error joining game [Wrong Code %04x].",code);
     return False;
   }
   if (code == MsgReject) {
@@ -2641,7 +2727,7 @@ static boolean		enterServer(ServerLink* serverLink, World* world,
       case RejectBadRequest:
       case RejectBadTeam:
       case RejectBadType:
-	printError("Communication error joining game.");
+	printError("Communication error joining game [Rejected].");
 	break;
 
       case RejectNoRogues:
@@ -2649,20 +2735,23 @@ static boolean		enterServer(ServerLink* serverLink, World* world,
 	break;
 
       case RejectTeamFull:
-	printError("Team is full.  Try another team.");
+	printError("This team is full.  Try another team.");
 	break;
 
       case RejectServerFull:
-	printError("Game is full.  Try again later.");
+	printError("This game is full.  Try again later.");
 	break;
     }
     return False;
   }
 
   // get updates
-  if (serverLink->read(code, len, msg, -1) < 0) goto failed;
+  if (serverLink->read(code, len, msg, -1) < 0) {
+	goto failed;
+  }
   while (code == MsgAddPlayer || code == MsgTeamUpdate ||
-	 code == MsgFlagUpdate || code == MsgNetworkRelay) {
+	 code == MsgFlagUpdate || code == MsgNetworkRelay ||
+         code == MsgUDPLinkRequest) {
     void* buf = msg;
     switch (code) {
       case MsgAddPlayer: {
@@ -2705,7 +2794,13 @@ static boolean		enterServer(ServerLink* serverLink, World* world,
 	printError("Using multicast relay");
 	break;
       }
+      case MsgUDPLinkRequest:
+	printError("*** Received UDP Link Granted");
+	// internally
+	break;
     }
+
+    if (time(0)>timeout) goto failed;
 
     if (serverLink->read(code, len, msg, -1) < 0) goto failed;
   }
@@ -2831,6 +2926,7 @@ static boolean		joinGame(const StartupInfo* info,
     return False;
   }
 
+  // printError("Join Game\n");
   // check server
   if (serverLink->getState() != ServerLink::Okay) {
     switch (serverLink->getState()) {
@@ -2999,6 +3095,10 @@ static boolean		joinGame(const StartupInfo* info,
     playerLink->setUseRelay();
     playerLink->setRelay(serverLink);
     printError("Using multicast relay");
+	if (startupInfo.useUDPconnection)
+		playerLink->enableUDPConIfRelayed();
+	else 
+		printError("No UDP connection, see Options to enable.");
   }
 
   // set marker colors -- team color and antidote flag color
@@ -3250,6 +3350,18 @@ static void		playingLoop()
       pauseCountdown = 0.0f;
       hud->setAlert(1, NULL, 0.0f, True);
     }
+//    if (maxPauseCountdown > 0.0f) {
+//     const int oldMaxPauseCountdown = (int)(maxPauseCountdown + 0.99f);
+//      maxPauseCountdown -= dt;
+//     if (maxPauseCountdown <= 0.0f) {
+//			maxPauseCountdown=0.0;
+//	  }
+//	  if ((int)(maxPauseCountdown + 0.99f) != oldMaxPauseCountdown) {
+//		char msgBuf[40];
+//		sprintf(msgBuf, "Pause Countdown %d", (int)(maxPauseCountdown + 0.99f));
+//		hud->setAlert(1, msgBuf, 1.0f, False);
+//	  }
+//	}
     if (pauseCountdown > 0.0f) {
       const int oldPauseCountdown = (int)(pauseCountdown + 0.99f);
       pauseCountdown -= dt;
@@ -4161,17 +4273,9 @@ void			startPlaying(BzfDisplay* _display,
   // print version
   {
     char bombMessage[80];
-    sprintf(bombMessage, "BZFLAG version %d.%d%c build %d %s",
+    sprintf(bombMessage, "BZFlag version %d.%d%c%d",
 		(VERSION / 10000000) % 100, (VERSION / 100000) % 100,
-		(char)('a' - 1 + (VERSION / 1000) % 100), VERSION % 1000,
-#if defined(ALPHA_RELEASE)
-		"Alpha"
-#elif defined(BETA_RELEASE)
-		"Beta"
-#else
-		""
-#endif
-		);
+		(char)('a' - 1 + (VERSION / 1000) % 100), VERSION % 1000);
     controlPanel->addMessage("");
     controlPanel->addMessage(bombMessage);
   }
@@ -4187,7 +4291,6 @@ void			startPlaying(BzfDisplay* _display,
   // print copyright
   controlPanel->addMessage(copyright);
   controlPanel->addMessage("Maintainer: Tim Riker <Tim@Rikers.org>");
-
   // print OpenGL renderer
   controlPanel->addMessage((const char*)glGetString(GL_RENDERER));
 

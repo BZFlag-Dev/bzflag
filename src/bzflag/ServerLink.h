@@ -23,6 +23,13 @@
 #include "Protocol.h"
 #include "ShotPath.h"
 
+struct PacketQueue {
+	unsigned short seqno;
+	void *data;
+	int length;
+	struct PacketQueue *next;
+};
+
 class ServerLink {
   public:
     enum State {
@@ -32,6 +39,14 @@ class ServerLink {
 			BadVersion = 3,
 			Hungup = 4,		// only used by Winsock
 			CrippledVersion = 5
+    };
+
+    enum Abilities {
+			Nothing = 0,
+			CanDoUDP = 1,
+			SendScripts = 2,
+			SendTextures = 4,
+			HasMessageLink = 8
     };
 
 			ServerLink(const Address& serverAddress,
@@ -59,17 +74,46 @@ class ServerLink {
     void		sendAlive(const float* pos, const float* fwd);
     void		sendTeleport(int from, int to);
     void		sendNewScore(int wins, int losses);
+    void                sendUDPlinkRequest();
+    void		enableUDPCon();
+
+    void*		getPacketFromServer(uint16_t* length, uint16_t* seqno);
+    void		enqueuePacket(int op, int rseqno, void *msg, int n);
+    void		disqueuePacket(int op, int rseqno);
+    void* 		assembleSendPacket(uint32_t *length);
+    void* 		assembleCDPacket(uint32_t* length);
+    void 		disassemblePacket(void *msg, int *numpackets);
 
     static ServerLink*	getServer(); // const
     static void		setServer(ServerLink*);
+    void		setUDPRemotePort(unsigned short port);
 
+    void		sendClientVersion();
   private:
     State		state;
     int			fd;
+
+    uint32_t		remoteAddress;
+    int			usendfd;
+    struct sockaddr     usendaddr;
+    int 		urecvfd;
+    struct sockaddr     urecvaddr;
+    boolean 		ulinkup;
+
     PlayerId		id;
     char		version[9];
     static ServerLink*	server;
+    int			server_abilities;
+
+    struct PacketQueue  *uqueue;
+    struct PacketQueue  *dqueue;
+    unsigned short      lastRecvPacketNo;
+    unsigned short      currentRecvSeq;
+    unsigned short 	lastSendPacketNo;
 };
+
+#define SEND 1
+#define RECEIVE 0
 
 //
 // ServerLink
