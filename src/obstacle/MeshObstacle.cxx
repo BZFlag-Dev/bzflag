@@ -312,7 +312,6 @@ void *MeshObstacle::pack(void *buf)
 
   buf = nboPackInt(buf, checkCount);
   for (i = 0; i < checkCount; i++) {
-    printf ("pack: %02X\n", checkTypes[i]);
     buf = nboPackUByte(buf, checkTypes[i]);
     buf = nboPackVector(buf, checkPoints[i]);
   }
@@ -357,12 +356,10 @@ void *MeshObstacle::unpack(void *buf)
   buf = nboUnpackInt(buf, checkCount);
   checkTypes = new char[checkCount];
   checkPoints = new fvec3[checkCount];
-  printf ("CheckCOunt = %i\n", checkCount);
   for (i = 0; i < checkCount; i++) {
     unsigned char tmp;
     buf = nboUnpackUByte(buf, tmp);
     checkTypes[i] = tmp;
-    printf ("unpack: %02X\n", checkTypes[i]);
     buf = nboUnpackVector(buf, checkPoints[i]);
   }
 
