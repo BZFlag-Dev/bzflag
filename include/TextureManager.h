@@ -57,6 +57,7 @@ public:
   OpenGLTexture::Filter getTextureFilter(int texId);
 
   void updateTextureFilters();
+  bool reloadTextureImage(const std::string& filename);
 
   bool bind ( int id );
   bool bind ( const char* name );

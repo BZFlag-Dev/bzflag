@@ -176,11 +176,11 @@ void TextureManager::setMaxFilter (OpenGLTexture::Filter filter )
 
 void TextureManager::updateTextureFilters()
 {
-  // flush all the textures so they get rebuilt on next use
-  TextureNameMap::iterator	itr = textureNames.begin();
-
+  // reset all texture filters to the current maxFilter
+  TextureNameMap::iterator itr = textureNames.begin();
   while (itr != textureNames.end()) {
     OpenGLTexture* texture = itr->second.texture;
+    // getting, then setting re-clamps the filter level
     OpenGLTexture::Filter current = texture->getFilter();
     texture->setFilter(current);
     itr++;
@@ -194,6 +194,36 @@ void TextureManager::updateTextureFilters()
 }
 
 
+bool TextureManager::reloadTextureImage(const std::string& filename)
+{
+  TextureNameMap::iterator it = textureNames.find(filename);
+  if (it == textureNames.end()) {
+    return false;
+  }
+  
+  ImageInfo& info = it->second;
+  OpenGLTexture* oldTex = info.texture;
+  OpenGLTexture::Filter filter = oldTex->getFilter();
+
+  // make the new texture object
+  FileTextureInit fileInit;
+  fileInit.filter = OpenGLTexture::LinearMipmapLinear;
+  fileInit.name = filename;
+  OpenGLTexture* newTex = loadTexture(fileInit, false);
+  newTex->setFilter(filter);
+  
+  //  name and id fields are not changed
+  info.texture = newTex;
+  info.alpha = newTex->hasAlpha();
+  info.x = newTex->getWidth();
+  info.y = newTex->getHeight();
+  
+  delete oldTex;
+  
+  return true;
+}
+
+  
 float TextureManager::GetAspectRatio ( int id )
 {
   TextureIDMap::iterator it = textureIDs.find(id);

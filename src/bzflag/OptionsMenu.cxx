@@ -38,8 +38,9 @@ extern ControlPanel* controlPanel;
 
 
 OptionsMenu::OptionsMenu() : guiOptionsMenu(NULL), effectsMenu(NULL),
-			     saveWorldMenu(NULL), inputMenu(NULL),
-			     audioMenu(NULL), displayMenu(NULL)
+                             cacheMenu(NULL), saveWorldMenu(NULL),
+                             inputMenu(NULL), audioMenu(NULL),
+                             displayMenu(NULL)
 {
   // cache font face ID
   int fontFace = MainMenu::getFontFace();
@@ -69,14 +70,19 @@ OptionsMenu::OptionsMenu() : guiOptionsMenu(NULL), effectsMenu(NULL),
   label->setLabel("Display Settings");
   list.push_back(label);
 
+  guiOptions = label = new HUDuiLabel;
+  label->setFontFace(fontFace);
+  label->setLabel("GUI Settings");
+  list.push_back(label);
+
   effectsOptions = label = new HUDuiLabel;
   label->setFontFace(fontFace);
   label->setLabel("Effects Settings");
   list.push_back(label);
 
-  guiOptions = label = new HUDuiLabel;
+  cacheOptions = label = new HUDuiLabel;
   label->setFontFace(fontFace);
-  label->setLabel("GUI Settings");
+  label->setLabel("Cache Settings");
   list.push_back(label);
 
   option = new HUDuiList;
@@ -100,29 +106,6 @@ OptionsMenu::OptionsMenu() : guiOptionsMenu(NULL), effectsMenu(NULL),
   option->update();
   list.push_back(option);
 
-  option = new HUDuiList;
-  option->setFontFace(fontFace);
-  option->setLabel("Server List Cache:");
-  option->setCallback(callback, (void*)"S");
-  options = &option->getList();
-  options->push_back(std::string("Off / Backup Mode"));
-  options->push_back(std::string("5 Minutes"));
-  options->push_back(std::string("15 Minutes"));
-  options->push_back(std::string("30 Minutes"));
-  options->push_back(std::string("1 Hour"));
-  options->push_back(std::string("5 Hours"));
-  options->push_back(std::string("15 Hours"));
-  options->push_back(std::string("1 day"));
-  options->push_back(std::string("15 days"));
-  options->push_back(std::string("30 days"));
-  option->update();
-  list.push_back(option);
-
-  clearCache = label = new HUDuiLabel;
-  label->setFontFace(fontFace);
-  label->setLabel("Clear Server List Cache");
-  list.push_back(label);
-
   saveWorld = label = new HUDuiLabel;
   label->setFontFace(fontFace);
   label->setLabel("Save World");
@@ -135,6 +118,7 @@ OptionsMenu::~OptionsMenu()
 {
   delete guiOptionsMenu;
   delete effectsMenu;
+  delete cacheMenu;
   delete saveWorldMenu;
   delete inputMenu;
   delete audioMenu;
@@ -150,12 +134,9 @@ void OptionsMenu::execute()
   } else if (focus == effectsOptions) {
     if (!effectsMenu) effectsMenu = new EffectsMenu;
     HUDDialogStack::get()->push(effectsMenu);
-  } else if (focus == clearCache) {
-    if ((ServerListCache::get())->clearCache()){
-      controlPanel->addMessage("Cache Cleared");
-    } else {
-      // already cleared -- do nothing
-    }
+  } else if (focus == cacheOptions) {
+    if (!cacheMenu) cacheMenu = new CacheMenu;
+    HUDDialogStack::get()->push(cacheMenu);
   } else if (focus == saveWorld) {
     if (!saveWorldMenu) saveWorldMenu = new SaveWorldMenu;
     HUDDialogStack::get()->push(saveWorldMenu);
@@ -196,47 +177,26 @@ void OptionsMenu::resize(int width, int height)
   y -= 0.6f * titleHeight;
   const int count = list.size();
   const float h = fm.getStrHeight(MainMenu::getFontFace(), fontSize, " ");
-  int foundBreak = false;
   for (i = 1; i < count; i++) {
     HUDuiControl *ctl = list[i];
-    if (!foundBreak && (dynamic_cast<HUDuiList*>(ctl) != NULL)) {
-      y -= 1.0f * h;
-      foundBreak = true;
-    }
-
     ctl->setFontSize(fontSize);
     ctl->setPosition(x, y);
-    y -= 1.0f * h;
+    if ((i == 6) || (i == 8)) {
+      y -= 1.75f * h;
+    } else {
+      y -= 1.0f * h;
+    }
   }
 
   // load current settings
   {
-    int i = 6;
+    int i = 7;
 
     ((HUDuiList*)list[i++])->setIndex((int)BZDB.eval("saveIdentity"));
 
-    const StartupInfo* info = getStartupInfo();
-
     // mind the ++i !
+    const StartupInfo* info = getStartupInfo();
     ((HUDuiList*)list[i++])->setIndex(info->useUDPconnection ? 1 : 0);
-
-    // server cache age
-    int index = 0;
-    switch ((ServerListCache::get())->getMaxCacheAge()){
-      case 0: index = 0; break;
-      case 5: index = 1; break;
-      case 15: index = 2; break;
-      case 30: index = 3; break;
-      case 60: index = 4; break;
-      case 60*5: index = 5; break;
-      case 60*15: index = 6; break;
-      case 60*24: index = 7; break;
-      case 60*24*15: index = 8; break;
-      case 60*24*30: index = 9; break;
-      default: index = 4;
-    }
-    ((HUDuiList*)list[i++])->setIndex(index);
-    i++; // clear cache label
   }
 }
 
@@ -250,30 +210,10 @@ void OptionsMenu::callback(HUDuiControl* w, void* data)
       info->useUDPconnection = (list->getIndex() != 0);
       break;
     }
-
-    case 'S': { // server cache
-      time_t minutes = 0;
-      int index = list->getIndex();
-      switch (index){
-	case 0: minutes = 0; break;
-	case 1: minutes = 5; break;
-	case 2: minutes = 15; break;
-	case 3: minutes = 30; break;
-	case 4: minutes = 60; break;
-	case 5: minutes = 60*5; break;
-	case 6: minutes = 60*15; break;
-	case 7: minutes = 60*24; break;
-	case 8: minutes = 60*24*15; break;
-	case 9: minutes = 60*24*30; break;
-      }
-      (ServerListCache::get())->setMaxCacheAge(minutes);
-      break;
-    }
-
     case 'i': { // save identity
 	BZDB.setInt("saveIdentity", list->getIndex());
 	break;
-      }
+    }
   }
 }
 

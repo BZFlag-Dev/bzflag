@@ -14,7 +14,7 @@
 #define DOWNLOADS_H
 
 extern void doDownloads();
-extern void updateDownloads();
+extern bool updateDownloads();
 
 #endif
 

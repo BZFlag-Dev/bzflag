@@ -111,23 +111,21 @@ bool CacheManager::addFile(CacheRecord& record, const void* data)
     return false;
   }
   
-  if (record.key.size() <= 0) {
-    record.key = "NOKEY";
-  }
-  
   record.name = getLocalName(record.url);
   std::ostream* out = FILEMGR.createDataOutStream(record.name);
   if (out == NULL) {
     return false;
   }
   
-  int pos = findRecord(record.url);
   bool replacement = false;
+  CacheRecord* rec = &record;
+
+  int pos = findRecord(record.url);
   if (pos >= 0) {
     records[pos] = record;
+    rec = &records[pos];
     replacement = true;
   }
-  CacheRecord* rec = &record;
 
   out->write((char*)data, rec->size);
   

@@ -28,6 +28,8 @@ bzflag_SOURCES =			\
 	BackgroundRenderer.h		\
 	BaseLocalPlayer.cxx		\
 	BaseLocalPlayer.h		\
+	CacheMenu.cxx			\
+	CacheMenu.h			\
 	ComposeDefaultKey.cxx		\
 	ComposeDefaultKey.h		\
 	ControlPanel.cxx		\

@@ -20,10 +20,15 @@
 #include "CacheManager.h"
 #include "BzMaterial.h"
 #include "URLManager.h"
-#include "AnsiCodes.h"     
+#include "AnsiCodes.h"
+#include "TextureManager.h"
 
 /* local implementation headers */
 #include "playing.h"
+
+
+#ifdef HAVE_CURL
+
 
 // FIXME - someone write a better explanation
 static const char DownloadContent[] =
@@ -81,12 +86,12 @@ static bool authorizedServer(const std::string& url)
 
 void doDownloads()
 {
-  BzMaterialManager::TextureSet set;
-  BzMaterialManager::TextureSet::iterator it;
   const bool updateDownloads = BZDB.isTrue("updateDownloads");
   
   DownloadAccessList.reload();
 
+  BzMaterialManager::TextureSet set;
+  BzMaterialManager::TextureSet::iterator set_it;
   MATERIALMGR.makeTextureList(set);
   
   CACHEMGR.loadIndex();
@@ -98,8 +103,8 @@ void doDownloads()
   bool authNotice = false;
 
 
-  for (it = set.begin(); it != set.end(); it++) {
-    const std::string& texUrl = it->c_str();
+  for (set_it = set.begin(); set_it != set.end(); set_it++) {
+    const std::string& texUrl = set_it->c_str();
     if (CACHEMGR.isCacheFile(texUrl)) {
 
       // check access authorization
@@ -192,26 +197,41 @@ void doDownloads()
 }
 
 
-void updateDownloads()
+bool updateDownloads()
 {
+  bool updated = false;
+  
+  BzMaterialManager::TextureSet set;
+  MATERIALMGR.makeTextureList(set);
+  
   CACHEMGR.loadIndex();
   CACHEMGR.limitCacheSize();
-
-  URLManager& urlMgr = URLManager::instance();
-  urlMgr.setProgressFunc(curlProgressFunc, NULL);
   
   std::vector<CacheManager::CacheRecord> records = CACHEMGR.getCacheList();
+  
+  URLManager& urlMgr = URLManager::instance();
+  urlMgr.setProgressFunc(curlProgressFunc, NULL);
+
+  TextureManager& texMgr = TextureManager::instance();
+
   for (unsigned int i = 0; i < records.size(); i++) {
     CacheManager::CacheRecord& rec = records[i];
 
-    time_t filetime;
+    // only update textures in the current world
+    if (set.find(rec.url) == set.end()) {
+      continue;
+    }
+
+    // get last modification timestamp
+    time_t filetime = 0;
     urlMgr.setProgressFunc(NULL, NULL);
     if (!urlMgr.getFileTime(rec.url, filetime)) {
       continue;
     }
     urlMgr.setProgressFunc(curlProgressFunc, NULL);
-
-    if (filetime <= rec.date) {
+    
+    // download the file and update the cache
+    if (filetime > rec.date) {
       std::string msg = ColorStrings[YellowColor];
       msg += "downloading: " + rec.url;
       addMessage(NULL, msg);
@@ -219,11 +239,12 @@ void updateDownloads()
       void* urlData;
       unsigned int urlSize;
       if (urlMgr.getURL(rec.url, &urlData, urlSize)) {
-        CacheManager::CacheRecord rec;
         // CACHEMGR generates name, usedDate, and key
         rec.size = urlSize;
         rec.date = filetime;
         CACHEMGR.addFile(rec, urlData);
+        texMgr.reloadTextureImage(rec.name);
+        updated = true;
         free(urlData);
       } else {
         msg = ColorStrings[RedColor] + "* failure *";
@@ -235,8 +256,22 @@ void updateDownloads()
   urlMgr.setProgressFunc(NULL, NULL);
   CACHEMGR.saveIndex();
   
+  return updated;
+}
+
+#else // HAVE_CURL
+
+void doDownloads()
+{
   return;
 }
+
+bool updateDownloads()
+{
+  return false;
+}
+
+#endif // HAVE_CURL
 
 
 // Local Variables: ***
