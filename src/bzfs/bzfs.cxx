@@ -141,7 +141,7 @@ class AccessControlList
 public:
   void ban(in_addr &ipAddr, int period = 0) {
     BanInfo toban(ipAddr, period);
-    banList_t::iterator oldit = find(banList.begin(), banList.end(), toban);
+    banList_t::iterator oldit = std::find(banList.begin(), banList.end(), toban);
     if (oldit != banList.end()) // IP already in list? -> replace
       *oldit = toban;
     else
@@ -177,7 +177,7 @@ public:
   }
 
   bool unban(in_addr &ipAddr) {
-    banList_t::iterator it = remove(banList.begin(), banList.end(), BanInfo(ipAddr));
+    banList_t::iterator it = std::remove(banList.begin(), banList.end(), BanInfo(ipAddr));
     if (it != banList.end()) {
       banList.erase(it, banList.end());
       return true;
