@@ -2680,8 +2680,11 @@ void sendMessage(int playerIndex, PlayerId targetPlayer, const char *message, bo
   buf = nboPackUByte(buf, targetPlayer);
   buf = nboPackString(buf, message, MessageLen);
 
-  if (targetPlayer <= LastRealPlayer)
+  if (targetPlayer <= LastRealPlayer) {
     directMessage(targetPlayer, MsgMessage, (char*)buf-(char*)bufStart, bufStart);
+    if (playerIndex <= LastRealPlayer)
+      directMessage(playerIndex, MsgMessage, (char*)buf-(char*)bufStart, bufStart);
+  }
   else
     broadcastMessage(MsgMessage, (char*)buf-(char*)bufStart, bufStart);
 }
