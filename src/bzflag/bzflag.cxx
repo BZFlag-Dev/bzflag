@@ -913,6 +913,8 @@ int			main(int argc, char** argv)
   }
 
   // get email address if not anonymous
+	anonymous = BZDB.isTrue("anonymous");
+
   std::string email;
   if (!anonymous) {
     if (BZDB.isSet("email")) {
