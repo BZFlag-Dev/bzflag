@@ -1389,9 +1389,11 @@ catzo vai via stronzo   # it - get the fuck out of here ass hole
 chiavare                # it - to fuck with
 # (already added by spanish) culo                    # it - ass
 ditalino                # it - masturbation
+fanculo                 # it - fuck off (slang)
 fica                    # it - cunt
 ficona                  # it - whore
 figa                    # it - cunt
+figona                  # it - whore
 figlio de puttana       # it - you are a piece of shit.
 finocchio               # it - fag, homosexual
 fottere                 # it - to fuck
@@ -1416,6 +1418,7 @@ no skuche ala gats!     # it - what the fuck do you want from my balls?
 patacca                 # it - pussy, vagina
 pezzo de merda          # it - son of a bitch
 pisciatella             # it - pussy
+piscio                  # it - piss (usually followed by "in your head")
 pisella                 # it - pussy
 puchiacca               # it - cunt
 # (already added by spanish) puta                    # it - whore
@@ -1423,9 +1426,12 @@ puttana                 # it - whore
 quaglia                 # it - pussy
 que catza               # it - what the fuck
 sbatiare                # it - to bang/screw/fuck
-sbatto                  # it - fuck it (i don't give a shit)
-sburro                  # it - cum
+sbato                   # it - fuck it (i don't give a shit)
+sborare                 # it - to cum
+sboro                   # it - cum
+sburo                   # it - cum
 scopa                   # it - fuck
+scopare                 # it - to fuck
 scopata                 # it - a fuck
 screggia                # it - cheap whore, easy lay, promicuous woman
 # sega                    # it - beat/fuck off (noun)
@@ -1434,6 +1440,7 @@ stronzetto              # it - piece of shit
 stronzino               # it - piece of shit
 stronzo                 # it - piece of shit
 stronzolo               # it - piece of shit
+suchiamelo              # it - blowjob (slang)
 uccellino               # it - dick
 uccello                 # it - dick
 vaffanculo              # it - fuck off
