@@ -24,8 +24,8 @@ void formatDebug(const char* fmt, ...)
     va_start(args, fmt);
     vsnprintf(buffer, 8192, fmt, args);
     va_end(args);
-    #if defined(_MSC_VER)
-		W32_DEBUG_TRACE(buffer);
+    #if defined(_MSC_VER) && (_MSC_VER >= 1200)
+      W32_DEBUG_TRACE(buffer);
     #else
       std::cout << buffer;
     #endif
