@@ -210,7 +210,7 @@ StartupInfo::StartupInfo() : hasConfiguration(false),
 {
   strcpy(serverName, "");
   strcpy(callsign, "");
-  strcpy(email, "");
+  strcpy(email, "default");
   joystickName = "joystick";
   joystick = false;
 }
@@ -6564,12 +6564,7 @@ static void		timeConfigurations()
   printError("  full quality");
   BZDB.set("blend", "1");
   BZDB.set("smooth", "1");
-#if defined(__APPLE__)
-  /* FIXME */
-  BZDB.set("lighting", "0");
-#else
   BZDB.set("lighting", "1");
-#endif
   OpenGLTexture::setFilter(OpenGLTexture::LinearMipmapLinear);
   BZDB.set("texture", OpenGLTexture::getFilterName());
   sceneRenderer->setQuality(2);
