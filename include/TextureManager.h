@@ -58,6 +58,7 @@ private:
   TextureManager& operator=(const TextureManager &tm);
   
   OpenGLTexture* loadTexture( FileTextureInit &init );
+  void           loadBigTexture(TextureType type, FileTextureInit &init);
 
   
   std::map<int, OpenGLTexture*> m_Textures;

@@ -50,7 +50,6 @@ FileTextureInit fileLoader[] =
 
 	{ TX_GROUND, NO_VARIANT, "ground", OpenGLTexture::LinearMipmapLinear },
 	{ TX_CLOUDS, NO_VARIANT, "clouds", OpenGLTexture::LinearMipmapLinear },
-	{ TX_MOUNTAIN, NO_VARIANT, "mountain", OpenGLTexture::LinearMipmapLinear },
 
 	{ TX_EXPLOSION, 1, "explode1", OpenGLTexture::Linear },
 
@@ -66,6 +65,11 @@ FileTextureInit fileLoader[] =
 	{ TX_TITLEFONT, NO_VARIANT, "title", OpenGLTexture::Linear },
 };
 
+FileTextureInit fileBigLoader[] = 
+{
+	{ TX_MOUNTAIN, NO_VARIANT, "mountain", OpenGLTexture::LinearMipmapLinear },
+};
+
 ProcTextureInit procLoader[] = 
 {
 	{ TX_NOISE, NO_VARIANT, TextureManager::noiseProc, OpenGLTexture::Nearest },
@@ -79,6 +83,10 @@ TextureManager::TextureManager()
   numTextures = sizeof( fileLoader ) / sizeof( FileTextureInit );
   for (i = 0; i < numTextures; i++)
     addTexture( fileLoader[i].type, fileLoader[i].variant, loadTexture( fileLoader[i] ));
+
+  numTextures = sizeof(fileBigLoader) / sizeof(FileTextureInit);
+  for (i = 0; i < numTextures; i++)
+    loadBigTexture(fileBigLoader[i].type, fileBigLoader[i]);
 
   numTextures = sizeof( procLoader ) / sizeof( ProcTextureInit );
   for (i = 0; i < numTextures; i++)
@@ -137,6 +145,108 @@ OpenGLTexture* TextureManager::loadTexture( FileTextureInit &init )
   delete[] image;
 
   return texture;
+}
+
+void TextureManager::loadBigTexture(TextureType type, FileTextureInit &init)
+{
+  // get mountain texture then break up into textures no larger than
+  // 256 pixels wide and no higher than wide, whichever is less (go
+  // by height rounded up to a power of 2).  also, will be using
+  // border pixels from adjacent textures, so must add 2 pixels to
+  // width of each texture (if the texture gets split up).
+  int width, height;
+  unsigned char* image =  MediaFile::readImage( init.fileName, &width, &height);
+  if (!image) {
+    std::vector<std::string> args;
+    args.push_back(init.fileName);
+    printError("cannot load texture: {1}", &args);
+    return;
+  }
+
+  // find power of two at least as large as height
+  int scaledHeight = 1;
+  while (scaledHeight < height)
+    scaledHeight <<= 1;
+
+  // choose minimum width
+  int minWidth = scaledHeight;
+  if (minWidth > 256)
+    minWidth = 256;
+
+  int numTextures;
+  // prepare each texture
+  if (width <= minWidth) {
+    OpenGLTexture *texture = new OpenGLTexture(width, height,
+					       image,
+					       OpenGLTexture::Linear,
+					       true);
+    m_Textures.insert(std::map<int,OpenGLTexture*>::value_type(type << 16, texture));
+  } else {
+    numTextures = (width + minWidth - 3) / (minWidth - 2);
+    unsigned char* subimage = new unsigned char[4 * minWidth * height];
+    const int subwidth = width / numTextures;
+    for (int n = 0; n < numTextures; n++) {
+      // pick size of subtexture
+      int dx = subwidth;
+      if (n == numTextures - 1)
+	dx += width % numTextures;
+      
+      // copy subimage
+      const unsigned char* src = image + 4 * n * subwidth;
+      unsigned char* dst = subimage + 4;
+      int i, j;
+      for (j = 0; j < height; j++) {
+	for (i = 0; i < subwidth; i++) {
+	  dst[4 * i + 0] = src[4 * i + 0];
+	  dst[4 * i + 1] = src[4 * i + 1];
+	  dst[4 * i + 2] = src[4 * i + 2];
+	  dst[4 * i + 3] = src[4 * i + 3];
+	}
+	src += 4 * width;
+	dst += 4 * minWidth;
+      }
+      
+      // copy left border
+      if (n == 0)
+	src = image + 4 * (width - 1);
+      else
+	src = image + 4 * n * subwidth - 4;
+      dst = subimage;
+      for (j = 0; j < height; j++) {
+	dst[0] = src[0];
+	dst[1] = src[1];
+	dst[2] = src[2];
+	dst[3] = src[3];
+	src += 4 * width;
+	dst += 4 * minWidth;
+      }
+
+      // copy right border
+      if (n == numTextures - 1)
+	src = image;
+      else
+	src = image + 4 * (n + 1) * subwidth - 4;
+      dst = subimage + 4 * (minWidth - 1);
+      for (j = 0; j < height; j++) {
+	dst[0] = src[0];
+	dst[1] = src[1];
+	dst[2] = src[2];
+	dst[3] = src[3];
+	src += 4 * width;
+	dst += 4 * minWidth;
+      }
+
+      // make texture and set gstate
+      OpenGLTexture *texture = new OpenGLTexture(dx + 2, height,
+						 subimage,
+						 OpenGLTexture::Linear,
+						 false);
+      m_Textures.insert(std::map<int,OpenGLTexture*>::value_type(type << 16 | n, texture));
+    }
+    delete[] subimage;
+  }
+  
+  delete[] image;
 }
 
 /* --- Procs --- */

@@ -27,6 +27,7 @@
 #include "StateDatabase.h"
 #include "BZDBCache.h"
 #include "TextureManager.h"
+#include "MediaFile.h"
 #include <string.h>
 
 static const GLfloat	squareShape[4][2] =
@@ -75,7 +76,7 @@ BackgroundRenderer::BackgroundRenderer(const SceneRenderer&) :
   OpenGLGStateBuilder gstate;
   static const GLfloat	black[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
   OpenGLMaterial defaultMaterial(black, black, 0.0f);
-  int i, j;
+  int i;
 
   // initialize global to class stuff
   if (!init) {
@@ -161,16 +162,20 @@ BackgroundRenderer::BackgroundRenderer(const SceneRenderer&) :
   // make mountain stuff
   mountainsAvailable = false;
   {
-    // get mountain texture then break up into textures no larger than
-    // 256 pixels wide and no higher than wide, whichever is less (go
-    // by height rounded up to a power of 2).  also, will be using
-    // border pixels from adjacent textures, so must add 2 pixels to
-    // width of each texture (if the texture gets split up).
-    int width, height, depth;
-    unsigned char* mountainImage = getTextureImage("mountain",
-							width, height, depth);
-    if (mountainImage) {
+    OpenGLTexture *mountainTexture;
+    numMountainTextures = 0;
+    while (true) {
+      mountainTexture = tm.getTexture(TX_MOUNTAIN, numMountainTextures);
+      if (!mountainTexture)
+	break;
+      numMountainTextures++;
+    }
+    if (numMountainTextures) {
       mountainsAvailable = true;
+
+      int width, height;
+      unsigned char* mountainImage = MediaFile::readImage("mountain", &width, &height);
+      delete[] mountainImage;
 
       // prepare common gstate
       gstate.reset();
@@ -189,75 +194,11 @@ BackgroundRenderer::BackgroundRenderer(const SceneRenderer&) :
       mountainsMinWidth = minWidth;
 
       // prepare each texture
-      if (width <= minWidth) {
-	numMountainTextures = 1;
-	mountainsGState = new OpenGLGState[numMountainTextures];
-	gstate.setTexture(OpenGLTexture(width, height,
-				mountainImage, OpenGLTexture::Linear, true));
-	mountainsGState[0] = gstate.getState();
+      mountainsGState = new OpenGLGState[numMountainTextures];
+      for (i = 0; i < numMountainTextures; i++) {
+	gstate.setTexture(*tm.getTexture(TX_MOUNTAIN, i));
+	mountainsGState[i] = gstate.getState();
       }
-      else {
-	numMountainTextures = (width + minWidth - 3) / (minWidth - 2);
-	mountainsGState = new OpenGLGState[numMountainTextures];
-	unsigned char* subimage = new unsigned char[4 * minWidth * height];
-	const int subwidth = width / numMountainTextures;
-	for (int n = 0; n < numMountainTextures; n++) {
-	  // pick size of subtexture
-	  int dx = subwidth;
-	  if (n == numMountainTextures - 1) dx += width % numMountainTextures;
-
-	  // copy subimage
-	  const unsigned char* src = mountainImage + 4 * n * subwidth;
-	  unsigned char* dst = subimage + 4;
-	  for (j = 0; j < height; j++) {
-	    for (i = 0; i < subwidth; i++) {
-	      dst[4 * i + 0] = src[4 * i + 0];
-	      dst[4 * i + 1] = src[4 * i + 1];
-	      dst[4 * i + 2] = src[4 * i + 2];
-	      dst[4 * i + 3] = src[4 * i + 3];
-	    }
-	    src += 4 * width;
-	    dst += 4 * minWidth;
-	  }
-
-	  // copy left border
-	  if (n == 0)
-	    src = mountainImage + 4 * (width - 1);
-	  else
-	    src = mountainImage + 4 * n * subwidth - 4;
-	  dst = subimage;
-	  for (j = 0; j < height; j++) {
-	    dst[0] = src[0];
-	    dst[1] = src[1];
-	    dst[2] = src[2];
-	    dst[3] = src[3];
-	    src += 4 * width;
-	    dst += 4 * minWidth;
-	  }
-
-	  // copy right border
-	  if (n == numMountainTextures - 1)
-	    src = mountainImage;
-	  else
-	    src = mountainImage + 4 * (n + 1) * subwidth - 4;
-	  dst = subimage + 4 * (minWidth - 1);
-	  for (j = 0; j < height; j++) {
-	    dst[0] = src[0];
-	    dst[1] = src[1];
-	    dst[2] = src[2];
-	    dst[3] = src[3];
-	    src += 4 * width;
-	    dst += 4 * minWidth;
-	  }
-
-	  // make texture and set gstate
-	  gstate.setTexture(OpenGLTexture(dx + 2, height,
-				subimage, OpenGLTexture::Linear, false));
-	  mountainsGState[n] = gstate.getState();
-	}
-	delete[] subimage;
-      }
-      delete[] mountainImage;
       mountainsList = new OpenGLDisplayList[numMountainTextures];
     }
   }
