@@ -7,6 +7,7 @@ BZFlag 2.0.1
 * Fixed weirdness on Console Panel when disabling chat display - Alfredo Tupone
 * Fixed a segfault with SDL and no audio - Alfredo Tupone
 * bzadmin wipes argv to hide possible password - Tim Riker
+* Lagstats and Playerlist no longer filtered - Steve Krenzel
 
 
 BZFlag 2.0.0  "Falcor's Despair" (2004-01-17)
@@ -467,7 +468,7 @@ BZFlag 1.7e6  Armoured Smashing Fist (2002-06-19 was 1.7e5)
 BZFlag 1.7e4 (2001-11-27 was 1.7e3)
 -----------------------------------
 
-* ::memset() instead of bzero() - Björn Augustsson
+* ::memset() instead of bzero() - Bjï¿½rn Augustsson
 * win32 audio thread fix for win2k - crs
 * send to nemesis - Dave Brosius, Frank Thilo
 * USB joystick support - Nick Sayer
@@ -554,7 +555,7 @@ BZFlag 1.7e release 000 (2001-01-26)
 * FreeBSD patch by Eric Anholt
 * world creation reordering to support world from file
 * compilation with VC++6 Jeremiah Moss <jeremiah_moss@cobraa1.com>
-* world from a file by Daniel Léonard <fork@videotron.ca>
+* world from a file by Daniel Lï¿½onard <fork@videotron.ca>
 * travel underneath floating buildings by Jeremiah
 * radar update to not hide teleporters under buildings by Jeremiah
 * teleporter player positioning by Jeremiah
