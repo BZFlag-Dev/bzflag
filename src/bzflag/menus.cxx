@@ -753,7 +753,7 @@ void			KeyboardMapMenu::execute()
 {
   const HUDuiControl* const focus = HUDui::getFocus();
   if (focus == reset) {
-    getBzfKeyMap().resetAll();
+    // FIXME - need to reset keymap to default values
   }
   else {
     // start editing
@@ -1939,62 +1939,8 @@ float			Help1Menu::getLeftSide(int width, int height)
 
 void			Help1Menu::resize(int width, int height)
 {
-  static const BzfKeyMap::Key key[] = {
-				BzfKeyMap::LastKey,
-				BzfKeyMap::LastKey,
-				BzfKeyMap::LastKey,
-				BzfKeyMap::FireShot,
-				BzfKeyMap::DropFlag,
-				BzfKeyMap::Identify,
-				BzfKeyMap::Jump,
-				BzfKeyMap::ShortRange,
-				BzfKeyMap::MediumRange,
-				BzfKeyMap::LongRange,
-				BzfKeyMap::Binoculars,
-				BzfKeyMap::FlagHelp,
-				BzfKeyMap::SendTeam,
-				BzfKeyMap::SendAll,
-				BzfKeyMap::SendNemesis,
-				BzfKeyMap::SendRecipient,
-                                BzfKeyMap::Score,
-				BzfKeyMap::Labels,
-				BzfKeyMap::TimeForward,
-				BzfKeyMap::TimeBackward,
-				BzfKeyMap::Pause,
-				BzfKeyMap::Destruct,
-				BzfKeyMap::Quit,
-				BzfKeyMap::ScrollBackward,
-				BzfKeyMap::ScrollForward,
-				BzfKeyMap::SlowKeyboardMotion,
-				BzfKeyMap::ToggleMainFlags,
-				BzfKeyMap::ToggleRadarFlags,
-				BzfKeyMap::ChooseSilence,
-				BzfKeyMap::ServerCommand,
-				BzfKeyMap::Hunt
-			};
-
   // get current key mapping and set strings appropriately
-  BzfKeyMap& map = getBzfKeyMap();
-  std::vector<HUDuiControl*>& list = getControls();
-  for (int j = 0; j < (int)(sizeof(key) / sizeof(key[0])); j++) {
-    if (key[j] == BzfKeyMap::LastKey) continue;
-
-    std::string value;
-    const BzfKeyEvent& key1 = map.get(key[j]);
-    if (key1.ascii == 0 && key1.button == 0) {
-      value = "<not mapped>";
-    }
-    else {
-      value = BzfKeyMap::getKeyEventString(key1);
-      const BzfKeyEvent& key2 = map.getAlternate(key[j]);
-      if (key2.ascii != 0 || key2.button != 0) {
-	value += " or ";
-	value += BzfKeyMap::getKeyEventString(key2);
-      }
-    }
-    value += ":";
-    list[j]->setLabel(value);
-  }
+  // FIXME - need to retrieve key map
 
   // now do regular resizing
   HelpMenu::resize(width, height);
