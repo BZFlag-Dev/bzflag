@@ -47,10 +47,6 @@ THESE ARE LOWER PRIORITY
 * Smaller ideas: Make PZ have PZ shots, only useahle on PZ tanks, but scare
   the begeebers out of regular folk.
 
-* unable to remap the respawn binding (it's not "specifically/individually"
-  provided on the key binding menu) without manually editing the config file
-  needs to be decoupled from identify and added to menu.
-
 * make tank scene node not use a list per size mode, just use the scale matrix.
 
 * server should track last reported player and shot positions
