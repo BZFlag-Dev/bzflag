@@ -142,6 +142,10 @@ SOURCE=..\..\src\game\CommandsStandard.cxx
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\src\game\GetCacheDir.cxx
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\src\game\VotingArbiter.cxx
 # End Source File
 # Begin Source File
@@ -155,6 +159,10 @@ SOURCE=..\..\src\game\NetHandler.cxx
 # Begin Source File
 
 SOURCE=..\..\src\game\CommandsStandard.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\include\GetCacheDir.h
 # End Source File
 # Begin Source File
 
