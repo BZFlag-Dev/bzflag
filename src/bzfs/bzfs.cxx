@@ -2648,7 +2648,8 @@ static void grabFlag(int playerIndex, FlagInfo &flag)
     = GameKeeper::Player::getPlayerByIndex(playerIndex);
 
   // player wants to take possession of flag
-  if (playerData->player.isObserver() ||
+  if (!playerData ||
+      playerData->player.isObserver() ||
       !playerData->player.isAlive() ||
       playerData->player.haveFlag() ||
       flag.flag.status != FlagOnGround)
@@ -3983,7 +3984,7 @@ static void handleTcp(NetHandler &netPlayer, int i, const RxStatus e)
 
   // simple ruleset, if player sends a MsgShotBegin over TCP he/she
   // must not be using the UDP link
-  if (clOptions->requireUDP && !playerData->player.isBot()) {
+  if (clOptions->requireUDP && playerData != NULL && !playerData->player.isBot()) {
     if (code == MsgShotBegin) {
       char message[MessageLen];
       sprintf(message,"Your end is not using UDP, turn on udp");
@@ -4618,6 +4619,7 @@ int main(int argc, char **argv)
 	    for (int i = 0; i < curMaxPlayers; i++) {
 	      void *buf, *bufStart = getDirectMessageBuffer();
 	      player = GameKeeper::Player::getPlayerByIndex(i);
+	      if (!player) continue;
 
 	      // the server gets to capture the flag -- send some bogus player id
 	      // curMaxPlayers should never exceed 255, so this should be a safe cast

@@ -184,34 +184,36 @@ void ListServerLink::read()
 	int playerIndex = getTarget(callsign);
 	if (playerIndex < curMaxPlayers) {
 	  GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(playerIndex);
-	  // don't accept the global auth if there's a local account of the same name
-	  // and the local account is not marked as being the same as the global account
-	  if (!playerData->accessInfo.hasRealPassword()
-	      || playerData->accessInfo.getUserInfo(callsign).hasGroup("LOCAL.GLOBAL")) {
-	    if (!playerData->accessInfo.isRegistered())
-	      playerData->accessInfo.storeInfo(NULL);
-	    playerData->accessInfo.setPermissionRights();
-	    while (*group) {
-	      char *nextgroup = group;
-	      while (*nextgroup && (*nextgroup != ':')) nextgroup++;
-	      while (*nextgroup && (*nextgroup == ':')) *nextgroup++ = 0;
-	      playerData->accessInfo.addGroup(group);
-	      //DEBUG3("Got: [%d] \"%s\" \"%s\"\n", playerIndex, callsign, group);
-	      group = nextgroup;
+	  if (playerData != NULL) {
+	    // don't accept the global auth if there's a local account of the same name
+	    // and the local account is not marked as being the same as the global account
+	    if (!playerData->accessInfo.hasRealPassword()
+		|| playerData->accessInfo.getUserInfo(callsign).hasGroup("LOCAL.GLOBAL")) {
+	      if (!playerData->accessInfo.isRegistered())
+		playerData->accessInfo.storeInfo(NULL);
+	      playerData->accessInfo.setPermissionRights();
+	      while (*group) {
+		char *nextgroup = group;
+		while (*nextgroup && (*nextgroup != ':')) nextgroup++;
+		while (*nextgroup && (*nextgroup == ':')) *nextgroup++ = 0;
+		playerData->accessInfo.addGroup(group);
+		//DEBUG3("Got: [%d] \"%s\" \"%s\"\n", playerIndex, callsign, group);
+		group = nextgroup;
+	      }
+	      sendMessage(ServerPlayer, playerIndex, "Global login approved!");
+	      sendIPUpdate(playerIndex, -1);
+	      sendPlayerInfo();
+	    } else {
+	      sendMessage(ServerPlayer, playerIndex, "Global login rejected. "
+			  "This callsign is registered locally on this server.");
+	      sendMessage(ServerPlayer, playerIndex, "If the local account is yours, "
+			  "/identify, /deregister and reconnnect, "
+			  "or ask an admin for the LOCAL.GLOBAL group.");
+	      sendMessage(ServerPlayer, playerIndex, "If it is not yours, please ask an admin "
+			  "to deregister it so that you may use your global callsign.");
 	    }
-	    sendMessage(ServerPlayer, playerIndex, "Global login approved!");
-	    sendIPUpdate(playerIndex, -1);
-	    sendPlayerInfo();
-	  } else {
-	    sendMessage(ServerPlayer, playerIndex, "Global login rejected. "
-			"This callsign is registered locally on this server.");
-	    sendMessage(ServerPlayer, playerIndex, "If the local account is yours, "
-			"/identify, /deregister and reconnnect, "
-			"or ask an admin for the LOCAL.GLOBAL group.");
-	    sendMessage(ServerPlayer, playerIndex, "If it is not yours, please ask an admin "
-			"to deregister it so that you may use your global callsign.");
+	    playerData->player.clearToken();
 	  }
-	  playerData->player.clearToken();
 	}
       } else if (strncmp(base, tokBadIdentifier, strlen(tokBadIdentifier)) == 0) {
 	char *callsign;
@@ -221,7 +223,8 @@ void ListServerLink::read()
 	if (playerIndex < curMaxPlayers) {
 	  GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(playerIndex);
 	  sendMessage(ServerPlayer, playerIndex, "Global login rejected, bad token.");
-	  playerData->player.clearToken();
+	  if (playerData != NULL)
+	    playerData->player.clearToken();
 	}
       }
 

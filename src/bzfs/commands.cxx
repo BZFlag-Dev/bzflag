@@ -1289,22 +1289,25 @@ void handleShowgroupCmd(GameKeeper::Player *playerData, const char *message)
     int playerIndex = getTarget(settie.c_str());
     // once for global groups
     if (playerIndex < curMaxPlayers) {
-      PlayerAccessInfo &info = GameKeeper::Player::getPlayerByIndex(playerIndex)->accessInfo;
-      // FIXME remove local groups from this list. better yet unify the two.
-      std::string line = "Global Groups (only extras) for ";
-      line += settie;
-      line += ": ";
-      std::vector<std::string>::iterator itr = info.groups.begin();
-      while (itr != info.groups.end()) {
-	line += *itr;
-	line += " ";
-	itr++;
+      GameKeeper::Player* target = GameKeeper::Player::getPlayerByIndex(playerIndex);
+      if (target != NULL) {
+        PlayerAccessInfo &info = target->accessInfo;
+        // FIXME remove local groups from this list. better yet unify the two.
+        std::string line = "Global Groups (only extras) for ";
+        line += settie;
+        line += ": ";
+        std::vector<std::string>::iterator itr = info.groups.begin();
+        while (itr != info.groups.end()) {
+	  line += *itr;
+	  line += " ";
+	  itr++;
+        }
+        while (line.size() > (unsigned int)MessageLen) {
+	  sendMessage(ServerPlayer, t, line.substr(0, MessageLen).c_str());
+	  line.erase(line.begin(), line.begin() + (MessageLen - 1));
+        }
+        sendMessage(ServerPlayer, t, line.c_str());
       }
-      while (line.size() > (unsigned int)MessageLen) {
-	sendMessage(ServerPlayer, t, line.substr(0, MessageLen).c_str());
-	line.erase(line.begin(), line.begin() + (MessageLen - 1));
-      }
-      sendMessage(ServerPlayer, t, line.c_str());
     }
     // once for local groups
     if (userExists(settie)) {
@@ -1695,8 +1698,14 @@ void handlePollCmd(GameKeeper::Player *playerData, const char *message)
 	sendMessage(ServerPlayer, t, reply);
 	return;
       }
-      targetIP = GameKeeper::Player::getPlayerByIndex(v)
-	->netHandler->getTargetIP();
+      GameKeeper::Player* targetData = GameKeeper::Player::getPlayerByIndex(v);
+      if (!targetData) {
+	/* wrong name? */
+	sprintf(reply, "The server has no information on %s.", cmd.c_str());
+	sendMessage(ServerPlayer, t, reply);
+	return;
+      }
+      targetIP = targetData->netHandler->getTargetIP();
 
       // admins can override antiperms
       if (!playerData->accessInfo.isAdmin()) {
