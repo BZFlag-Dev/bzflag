@@ -43,7 +43,7 @@
 		<color value="white" />
 		<viewport x="5%" y="-36p" w="60%" h="70%">
 			<score shadow=yes title="Score@34%Callsign"
-					format="%s (%w-%l) (%W-%L)@34%%c (%F)%S"></score>
+					format="%s (%w-%l) (%W-%L)@34%%c (%F)%S %e"></score>
 		</viewport>
 		<viewport x="72%" y="-36p" w="25%" h="70%">
 			<score team=yes shadow=yes title="" format="%n % 11c %s (%w-%l)" />
