@@ -177,6 +177,14 @@ void			PyramidBuilding::getCorner(int index,
 
 float			PyramidBuilding::shrinkFactor(float z) const
 {
+/* old way of doing it, but needed for legacy support */
+ if (z >= getHeight())
+	 return 0.0;
+
+ return (getHeight() - z) / getHeight();
+
+/* todo: put this bug fix back in after we break protocol so all clients use the same logic
+* Jeff Myers (2/12/03)
   const float *pos = getPosition();
   z -= pos[2];
 
@@ -185,7 +193,7 @@ float			PyramidBuilding::shrinkFactor(float z) const
   if (z > getHeight())
     return 0.0f;
 
-  return (getHeight() - z) / getHeight();
+  return (getHeight() - z) / getHeight(); */
 }
 
 //
