@@ -1,6 +1,8 @@
 recent bugs
 ------------
 
+- tanks get stuck on pyramids instead of sliding off
+
 - tanks may be squished from too high away.  i.e. tank carrying steamroller
   can squish from high above as will a burrowed tank (on MAC's playground)
   --steamroller is a weak flag without this leaway. Perhaps split SR radius a
