@@ -17,8 +17,6 @@
 #include <string>
 #include <vector>
 
-#include <curses.h>
-
 #include "BZAdminUI.h"
 #if (defined(HAVE_CURSES_H) || defined (HAVE_NCURSES_H))
 #include "CursesUI.h"
