@@ -21,6 +21,8 @@
 #include <sys/stat.h>
 #include <sys/uio.h>
 #include <sys/stropts.h>
+#include <signal.h>
+#include <sys/types.h>
 
 #define DEBUG_SOLARIS					0		//(1 = debug, 0 = don't!)
 

@@ -71,7 +71,7 @@ PDIRT    = *.[eou] a.out core ar.tmp.*
 # audio libraries
 AUDIO_LIBS =				\
 	-L/usr/demo/SOUND/lib 		\
-	-laudio				\
+#	-laudio				\
 	$(NULL)
 
 # display resolution change libraries

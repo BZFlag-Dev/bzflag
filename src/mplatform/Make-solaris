@@ -10,7 +10,7 @@
 # WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 
 PCXXFILES =				\
-	UnixPlatformMediaFactory.cxx	\	
+	UnixPlatformMediaFactory.cxx	\
 	SolarisPlatformMediaFactory.cxx	\
 	XDisplay.cxx			\
 	XVisual.cxx			\

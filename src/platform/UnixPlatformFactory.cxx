@@ -124,11 +124,15 @@ std::string				UnixPlatformFactory::getUserName() const
 	return std::string((pwent != NULL) ? pwent->pw_name : "unix_user");
 }
 
+#if defined(sun)
+#  define putenv(x_) putenv(strdup(x_))
+#endif
+
 void					UnixPlatformFactory::setEnv(
 								const std::string& name, const std::string& value)
 {
 #if !defined(__linux__)
-	putenv(std::string::format("%s=%s", name.c_str(), value.c_str()).c_str());
+	putenv(string_util::format("%s=%s", name.c_str(), value.c_str()).c_str());
 #else
 	setenv(name.c_str(), value.c_str(), 1);
 #endif

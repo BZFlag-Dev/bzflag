@@ -32,7 +32,12 @@
 #ifndef GUSI_20
 #include <sys/param.h>
 #endif
+
+#if !defined(sun)
+// conflicts with struct map / template map
 #include <net/if.h>
+#endif
+
 #include <netinet/in.h>
 #if defined(__linux__)
 /* these are defined in both socket.h and tcp.h without ifdef guards. */
