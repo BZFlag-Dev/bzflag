@@ -1755,9 +1755,9 @@ static void sendTeamUpdate(int teamIndex, int index = -1)
     directMessage(index, MsgTeamUpdate, sizeof(msg), msg);
 }
 
-static void sendPlayerUpdate(int playerIndex, int index = -1)
+static void sendPlayerUpdate(int playerIndex, int index)
 {
-  char msg[PlayerIdPLen + 8 + CallSignLen + EmailLen];
+  char msg[PlayerIdPLen + 8 + CallSignLen + EmailLen + PlayerIdPLen];
   void *buf = msg;
   buf = player[playerIndex].id.pack(buf);
   buf = nboPackUShort(buf, uint16_t(player[playerIndex].type));
@@ -1766,10 +1766,17 @@ static void sendPlayerUpdate(int playerIndex, int index = -1)
   buf = nboPackUShort(buf, uint16_t(player[playerIndex].losses));
   buf = nboPackString(buf, player[playerIndex].callSign, CallSignLen);
   buf = nboPackString(buf, player[playerIndex].email, EmailLen);
-  if (index == -1)
-    broadcastMessage(MsgAddPlayer, sizeof(msg), msg);
-  else
+  // this playerid is for the player itself to get our playerid (hack)
+  buf = player[playerIndex].id.pack(buf);
+  if (playerIndex == index) {
+    // send all players info about player[playerIndex]
+    for (int i = 0; i < maxPlayers; i++)
+      if (player[i].state > PlayerInLimbo && i != playerIndex)
+        directMessage(i, MsgAddPlayer, sizeof(msg) - PlayerIdPLen, msg);
+    // append playerid which will not be mangled so new clients can adapt
     directMessage(index, MsgAddPlayer, sizeof(msg), msg);
+  } else
+    directMessage(index, MsgAddPlayer, sizeof(msg) - PlayerIdPLen, msg);
 }
 
 static void closeListServer(int index)
@@ -3257,7 +3264,7 @@ static void addPlayer(int playerIndex)
 
   // send MsgAddPlayer to everybody -- this concludes MsgEnter response
   // to joining player
-  sendPlayerUpdate(playerIndex);
+  sendPlayerUpdate(playerIndex, playerIndex);
 
   // send update of info for team just joined
   sendTeamUpdate(teamIndex);
@@ -4173,6 +4180,13 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
       UMDEBUG("Player %s [%d] has joined\n", player[t].callSign, t);
       break;
     }
+
+    // player accepted the ID we gave him
+    case MsgIdAck:
+      player[t].oldId.serverHost = player[t].id.serverHost;
+      player[t].oldId.port = player[t].id.port;
+      player[t].oldId.number = player[t].id.number;
+      break;
 
     // player closing connection
     case MsgExit:

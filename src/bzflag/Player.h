@@ -46,6 +46,7 @@ class Player {
 				const char* callsign, const char* emailAddress);
     virtual		~Player();
 
+    PlayerId		id;			// my credentials
     const PlayerId&	getId() const;
     TeamColor		getTeam() const;
     const char*		getCallSign() const;
@@ -136,7 +137,6 @@ class Player {
     static int		totalCount;
 
     // permanent data
-    PlayerId		id;			// my credentials
     TeamColor		team;			// my team
     char		callSign[CallSignLen];	// my pseudonym
     char		email[EmailLen];	// my email address

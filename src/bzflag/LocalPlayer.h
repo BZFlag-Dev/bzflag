@@ -190,7 +190,7 @@ inline const Player*	LocalPlayer::getTarget() const
 
 inline const Player*	LocalPlayer::getNemesis() const
 {
-	return nemesis;
+  return nemesis;
 }
 
 inline const Obstacle*	LocalPlayer::getContainingBuilding() const

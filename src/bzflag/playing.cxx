@@ -2933,7 +2933,7 @@ static World*		makeWorld(ServerLink* serverLink)
 }
 
 static boolean		enterServer(ServerLink* serverLink, World* world,
-						const LocalPlayer* myTank)
+						LocalPlayer* myTank)
 {
 
   time_t timeout=time(0) + 10;  // give us 10 sec
@@ -2995,7 +2995,32 @@ static boolean		enterServer(ServerLink* serverLink, World* world,
       case MsgAddPlayer: {
 	PlayerId id;
 	buf = id.unpack(buf);
-	if (id == myTank->getId()) {		// it's me!  end of updates
+	if (id == myTank->getId()) {
+	  // it's me!  end of updates
+	  {
+	    // check for actual id appended to msg
+	    void *tmpbuf = buf;
+	    uint16_t team, type, wins, losses;
+	    char callsign[CallSignLen];
+	    char email[EmailLen];
+	    tmpbuf = nboUnpackUShort(tmpbuf, type);
+	    tmpbuf = nboUnpackUShort(tmpbuf, team);
+	    tmpbuf = nboUnpackUShort(tmpbuf, wins);
+	    tmpbuf = nboUnpackUShort(tmpbuf, losses);
+	    tmpbuf = nboUnpackString(tmpbuf, callsign, CallSignLen);
+	    tmpbuf = nboUnpackString(tmpbuf, email, EmailLen);
+	    if (tmpbuf < msg + len) {
+	      PlayerId id;
+	      fprintf(stderr, "id test %p %p %p %8.8x %8.8x\n", myTank, tmpbuf, msg,
+		  *(int *)tmpbuf, *((int *)tmpbuf + 1));
+	      tmpbuf = id.unpack(tmpbuf);
+	      myTank->id.serverHost = id.serverHost;
+	      myTank->id.port = id.port;
+	      myTank->id.number = id.number;
+	      fprintf(stderr, "id test %p\n", myTank);
+  	      serverLink->send(MsgIdAck, 0, NULL);
+	    }
+	  }
 	  // scan through flags and, for flags on
 	  // tanks, tell the tank about its flag.
 	  const int maxFlags = world->getMaxFlags();
