@@ -4770,7 +4770,7 @@ static void shotFired(int playerIndex, void *buf, int len)
   float dz = shooter.lastState.pos[2] - shot.pos[2];
 
   float delta = dx*dx + dy*dy + dz*dz;
-  if (delta > (TankSpeed * TankSpeed * VelocityAd * VelocityAd)) {
+  if (delta > (TankSpeed * TankSpeed * VelocityAd * VelocityAd) + MuzzleFront) {
     DEBUG2("Player %s [%d] shot origination %f %f %f too far from tank %f %f %f: distance=%f\n",
             shooter.callSign, playerIndex,
 	    shot.pos[0], shot.pos[1], shot.pos[2],
@@ -5455,9 +5455,11 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
       ||  ((state.status & PlayerState::Alive) == 0))
 	maxPlanarSpeedSqr *= VelocityAd*VelocityAd;
 
-      if (curPlanarSpeedSqr > (1.0 + maxPlanarSpeedSqr)) {
+      if (curPlanarSpeedSqr > (4.0 + maxPlanarSpeedSqr)) {
         char message[MessageLen];
-        DEBUG1("kicking Player %s [%d]: tank too fast\n", player[t].callSign, t);
+        DEBUG1("kicking Player %s [%d]: tank too fast (tank: %f,allowed> %f)\n",
+               player[t].callSign, t,
+               sqrt(curPlanarSpeedSqr), sqrt(maxPlanaSpeedSqr));
 	strcpy( message, "Autokick: Tank moving too fast, Update your client." );
         sendMessage(t, player[t].id, player[t].team, message);
 	directMessage(t, MsgSuperKill, 0, getDirectMessageBuffer());
