@@ -24,7 +24,7 @@ public:
   WorldFileLocation();
   virtual bool read(const char *cmd, std::istream&);
   virtual void write(WorldInfo*) const;
-
+  void *pack(void *buf) const;
 protected:
   float pos[3];
   float rotation;

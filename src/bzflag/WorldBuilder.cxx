@@ -191,7 +191,74 @@ void* WorldBuilder::unpack(void* buf)
 	setBase(TeamColor(team), data, data[3], data[4], data[5], data[6]);
 	break;
       }
+      case WorldCodeWeapon: {
+	Weapon weapon;
+        uint16_t delays; 
 
+	buf = FlagType::unpack(buf, weapon.type);
+	buf = nboUnpackFloat(buf, weapon.pos[0]);
+	buf = nboUnpackFloat(buf, weapon.pos[1]);
+	buf = nboUnpackFloat(buf, weapon.pos[2]);
+	buf = nboUnpackFloat(buf, weapon.dir);
+	buf = nboUnpackFloat(buf, weapon.initDelay);
+	buf = nboUnpackUShort(buf, delays);
+	
+	uint16_t weapon_len = WorldCodeWeaponSize + (delays * sizeof(float));
+	if (len != weapon_len) {
+	  return NULL;
+	}
+	
+	int i;
+	for (i = 0; i < delays; i++) {
+	  float delay;
+  	  buf = nboUnpackFloat(buf, delay);
+  	  weapon.delay.push_back(delay);
+  	}
+	append(weapon);
+	break;
+      }
+      case WorldCodeZone: {
+        EntryZone zone;
+        uint16_t flags, teams, safety;
+
+	buf = nboUnpackFloat(buf, zone.pos[0]);
+	buf = nboUnpackFloat(buf, zone.pos[1]);
+	buf = nboUnpackFloat(buf, zone.pos[2]);
+	buf = nboUnpackFloat(buf, zone.size[0]);
+	buf = nboUnpackFloat(buf, zone.size[1]);
+	buf = nboUnpackFloat(buf, zone.size[2]);
+	buf = nboUnpackFloat(buf, zone.rot);
+	buf = nboUnpackUShort(buf, flags);
+	buf = nboUnpackUShort(buf, teams);
+	buf = nboUnpackUShort(buf, safety);
+
+        uint16_t zone_len = WorldCodeZoneSize;
+        zone_len += FlagType::packSize * flags;
+        zone_len += sizeof(uint16_t) * teams;
+        zone_len += sizeof(uint16_t) * safety;
+	if (len != zone_len) {
+	  return NULL;
+	}
+
+        int i;
+	for (i = 0; i < flags; i++) {
+	  FlagType *type;
+  	  buf = FlagType::unpack (buf, type);
+  	  zone.flags.push_back(type);
+  	}
+	for (i = 0; i < teams; i++) {
+	  uint16_t team;
+  	  buf = nboUnpackUShort(buf, team);
+  	  zone.teams.push_back((TeamColor)team);
+  	}
+	for (i = 0; i < safety; i++) {
+	  uint16_t safety;
+  	  buf = nboUnpackUShort(buf, safety);
+  	  zone.safety.push_back((TeamColor)safety);
+  	}
+	append(zone);
+	break;
+      }
       default:
 	return NULL;
     }
@@ -346,6 +413,16 @@ void WorldBuilder::append(const Teleporter& teleporter)
 {
   // save teleporter
   world->teleporters.push_back(teleporter);
+}
+
+void WorldBuilder::append(const Weapon& weapon)
+{
+  world->weapons.push_back(weapon);
+}
+
+void WorldBuilder::append(const EntryZone& zone)
+{
+  world->entryZones.push_back(zone);
 }
 
 void WorldBuilder::setTeleporterTarget(int src, int tgt)

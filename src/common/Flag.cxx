@@ -26,6 +26,7 @@
 
 
 int FlagType::flagCount = 0;
+int FlagType::packSize = 2;
 FlagSet FlagType::flagSets[NumQualities];
 
 // Initialize flag description singletons in our Flags namespace

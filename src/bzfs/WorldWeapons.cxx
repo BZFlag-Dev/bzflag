@@ -114,6 +114,7 @@ void WorldWeapons::add(const FlagType *type, const float *origin, float directio
   w->direction = direction;
   w->nextTime = sync;
   w->nextTime += initdelay;
+  w->initDelay = initdelay;
   w->nextDelay = 0;
   w->delay = delay;
 
@@ -123,6 +124,37 @@ void WorldWeapons::add(const FlagType *type, const float *origin, float directio
 unsigned int WorldWeapons::count(void)
 {
   return weapons.size();
+}
+
+int WorldWeapons::packSize(void) const
+{
+  int size = 0;
+  for (unsigned int i=0 ; i < weapons.size(); i++) {
+    size += 2 + 2 + WorldCodeWeaponSize;
+    size += weapons[i]->delay.size() * sizeof (float);
+  }
+  return size;
+}
+
+void * WorldWeapons::pack(void *buf) const
+{
+  for (unsigned int i=0 ; i < weapons.size(); i++) {
+    const Weapon *w = (const Weapon *) weapons[i];
+    void *bufStart = buf;
+    buf = nboPackUShort(buf, 0); // place-holder
+    buf = nboPackUShort(buf, WorldCodeWeapon);
+    buf = w->type->pack (buf);                  //  2
+    buf = nboPackVector(buf, w->origin);        // 14
+    buf = nboPackFloat(buf, w->direction);      // 18
+    buf = nboPackFloat(buf, w->initDelay);      // 22
+    buf = nboPackUShort(buf, w->delay.size());  // 24
+    for (unsigned int j = 0; j < w->delay.size(); j++) {
+      buf = nboPackFloat(buf, w->delay[j]);
+    }
+    uint16_t len = (char*)buf - (char*)bufStart;
+    nboPackUShort (bufStart, len - (2 * sizeof(uint16_t)));
+  }
+  return buf;
 }
 
 

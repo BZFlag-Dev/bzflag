@@ -19,6 +19,13 @@
 #include "Protocol.h"
 #include "Intersect.h"
 
+/* bzfs specific headers */
+#include "WorldWeapons.h"
+
+/* FIXME - external dependancies */
+extern WorldWeapons wWeapons;
+
+
 WorldInfo::WorldInfo() :
   maxHeight(0),
   database(NULL)
@@ -300,7 +307,8 @@ int WorldInfo::packDatabase()
     (2 + 2 + WorldCodeBoxSize) * boxes.size() +
     (2 + 2 + WorldCodePyramidSize) * pyramids.size() +
     (2 + 2 + WorldCodeTeleporterSize) * teleporters.size() +
-    (2 + 2 + WorldCodeLinkSize) * 2 * teleporters.size();
+    (2 + 2 + WorldCodeLinkSize) * 2 * teleporters.size() +
+    wWeapons.packSize() + entryZones.packSize();
   database = new char[databaseSize];
   void *databasePtr = database;
 
@@ -380,6 +388,9 @@ int WorldInfo::packDatabase()
     databasePtr = nboPackUShort(databasePtr, uint16_t(i * 2 + 1));
     databasePtr = nboPackUShort(databasePtr, uint16_t(tele.to[1]));
   }
+  
+  databasePtr = wWeapons.pack (databasePtr);
+  databasePtr = entryZones.pack (databasePtr);
 
   return 1;
 }

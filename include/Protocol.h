@@ -108,6 +108,8 @@ const uint16_t		WorldCodeLink = 0x6c6e;			// 'ln'
 const uint16_t		WorldCodePyramid = 0x7079;		// 'py'
 const uint16_t		WorldCodeTeleporter = 0x7465;		// 'te'
 const uint16_t		WorldCodeWall = 0x776c;			// 'wl'
+const uint16_t		WorldCodeWeapon = 0x7765;		// 'we'
+const uint16_t		WorldCodeZone = 0x7A6e;			// 'zn'
 
 // world database sizes
 const uint16_t		WorldCodeHeaderSize = 30;
@@ -119,6 +121,8 @@ const uint16_t		WorldCodeEndSize = 0;
 const uint16_t		WorldCodePyramidSize = 29;
 const uint16_t		WorldCodeTeleporterSize = 33;
 const uint16_t		WorldCodeLinkSize = 4;
+const uint16_t		WorldCodeWeaponSize = 24;  // basic size, not including lists
+const uint16_t		WorldCodeZoneSize = 34;    // basic size, not including lists
 
 // ping packet sizes, codes and structure
 const uint16_t		MsgPingCodeReply = 0x0303;

@@ -15,6 +15,7 @@
 
 #include <vector>
 #include <map>
+#include "Flag.h"
 #include "WorldFileLocation.h"
 
 class CustomZone;
@@ -32,9 +33,16 @@ public:
   bool getZonePoint( const std::string &qualifier, float *pt ) const;
   bool getSafetyPoint( const std::string &qualifier, const float *pos, float *pt ) const;
   static const char *getSafetyPrefix ();
+  int packSize() const;
+  void *pack(void *buf) const;
 private:
   ZoneList zones;
   QualifierMap qmap;
+
+  void makeSplitLists (int zone,
+                       std::vector<FlagType*> &flags,
+                       std::vector<TeamColor> &teams,
+                       std::vector<TeamColor> &safety) const;
 };
 
 

@@ -54,6 +54,8 @@ class WorldBuilder {
     void		append(const PyramidBuilding&);
     void		append(const BaseBuilding&);
     void		append(const Teleporter&);
+    void		append(const Weapon&);
+    void		append(const EntryZone&);
     void		setTeleporterTarget(int source, int target);
     void		setBase(TeamColor team,
 				const float* pos, float rotation,

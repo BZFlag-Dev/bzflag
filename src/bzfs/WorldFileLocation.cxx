@@ -14,6 +14,7 @@
 #pragma warning( 4: 4786 )
 #endif
 #include "common.h"
+#include "Pack.h"
 #include <math.h>
 
 #include "WorldFileObject.h"
@@ -40,6 +41,14 @@ bool WorldFileLocation::read(const char *cmd, std::istream& input)
   else
     return WorldFileObject::read(cmd, input);
   return true;
+}
+
+void * WorldFileLocation::pack (void *buf) const
+{
+  buf = nboPackVector (buf, pos);
+  buf = nboPackVector (buf, size);
+  buf = nboPackFloat (buf, rotation);
+  return buf;
 }
 
 // Local variables: ***

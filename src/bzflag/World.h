@@ -35,6 +35,8 @@
 /* local interface headers */
 #include "RemotePlayer.h"
 #include "WorldPlayer.h"
+#include "Weapon.h"
+#include "EntryZone.h"
 
 
 /**
@@ -151,6 +153,8 @@ class World {
     std::vector<BaseBuilding>		basesR;
     std::vector<Teleporter>		teleporters;
     std::vector<WallObstacle>		walls;
+    std::vector<Weapon>		        weapons;
+    std::vector<EntryZone>		entryZones;
     std::vector<int>			teleportTargets;
     Team		team[NumTeams];
     RemotePlayer**	players;

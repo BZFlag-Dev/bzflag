@@ -814,6 +814,66 @@ bool			World::writeWorld(std::string filename)
     }
   }
 
+  // Write weapons
+  {
+    for (std::vector<Weapon>::iterator it = weapons.begin(); it != weapons.end(); ++it) {
+      Weapon weapon = *it;
+      out << "weapon" << std::endl;
+      if (weapon.type != Flags::Null) {
+        out << "\ttype " << weapon.type->flagAbbv << std::endl;
+      }
+      out << "\tposition " << weapon.pos[0] << " " << weapon.pos[1] << " " << weapon.pos[2] << std::endl;
+      out << "\trotation " << ((weapon.dir * 180.0) / M_PI) << std::endl;
+      out << "\tinitdelay " << weapon.initDelay << std::endl;
+      if (weapon.delay.size() > 0) {
+        out << "\tdelay";
+        for (std::vector<float>::iterator dit = weapon.delay.begin(); dit != weapon.delay.end(); ++dit) {
+          out << " " << (float)*dit;
+        }
+        out << std::endl;
+      }
+      out << "end" << std::endl;
+      out << std::endl;
+    }
+  }
+
+  // Write entry zones
+  {
+    for (std::vector<EntryZone>::iterator it = entryZones.begin(); it != entryZones.end(); ++it) {
+      EntryZone zone = *it;
+      out << "zone" << std::endl;
+      out << "\tposition " << zone.pos[0] << " " << zone.pos[1] << " " << zone.pos[2] << std::endl;
+      out << "\tsize " << zone.size[0] << " " << zone.size[1] << " " << zone.size[2] << std::endl;
+      out << "\trotation " << ((zone.rot * 180.0) / M_PI) << std::endl;
+      if (zone.flags.size() > 0) {
+        out << "\tflag";
+        std::vector<FlagType*>::iterator fit;
+        for (fit = zone.flags.begin(); fit != zone.flags.end(); ++fit) {
+          out << " " << (*fit)->flagAbbv;
+        }
+        out << std::endl;
+      }
+      if (zone.teams.size() > 0) {
+        out << "\tteam";
+        std::vector<TeamColor>::iterator tit;
+        for (tit = zone.teams.begin(); tit != zone.teams.end(); ++tit) {
+          out << " " << (*tit);
+        }
+        out << std::endl;
+      }
+      if (zone.safety.size() > 0) {
+        out << "\tsafety";
+        std::vector<TeamColor>::iterator sit;
+        for (sit = zone.safety.begin(); sit != zone.safety.end(); ++sit) {
+          out << " " << (*sit);
+        }
+        out << std::endl;
+      }
+      out << "end" << std::endl;
+      out << std::endl;
+    }
+  }
+
   out.close();
 
   return true;

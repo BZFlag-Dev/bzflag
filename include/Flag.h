@@ -156,6 +156,7 @@ public:
   typedef std::set<FlagType*> FlagSet;
   static int flagCount;
   static FlagSet flagSets[NumQualities];
+  static int packSize;
 };
 
 
