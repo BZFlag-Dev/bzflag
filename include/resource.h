@@ -13,7 +13,7 @@
 #define IDI_BZICON                      101
 
 /*
- * Local variables: ***
+ * Local Variables: ***
  * mode:C++ ***
  * tab-width: 8 ***
  * c-basic-offset: 2 ***

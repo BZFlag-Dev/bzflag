@@ -102,9 +102,9 @@ SceneRenderer::SceneRenderer(MainWindow& _window) :
   // get visual info
   window.getWindow()->makeCurrent();
   GLint bits;
-  if (!BZDB->isSet("zbuffer")) {
+  if (!BZDB.isSet("zbuffer")) {
     glGetIntegerv(GL_DEPTH_BITS, &bits);
-    BZDB->set("zbuffer", (bits > 0) ? "1" : "0");
+    BZDB.set("zbuffer", (bits > 0) ? "1" : "0");
   }
   glGetIntegerv(GL_STENCIL_BITS, &bits);
   useStencilOn = (bits > 0);
@@ -274,7 +274,7 @@ bool			SceneRenderer::useWireframe() const
 
 void			SceneRenderer::setHiddenLine(bool on)
 {
-  useHiddenLineOn = on && BZDB->isTrue("zbuffer") && canUseHiddenLine;
+  useHiddenLineOn = on && BZDB.isTrue("zbuffer") && canUseHiddenLine;
   if (!useHiddenLineOn) { depthRange = 0; return; }
 #if defined(GL_VERSION_1_1)
   glPolygonOffset(1.0f, 2.0f);
@@ -386,7 +386,7 @@ void			SceneRenderer::enableLight(int index, bool on)
 
 void			SceneRenderer::enableSun(bool on)
 {
-  if (BZDB->isTrue("lighting") && sunOrMoonUp)
+  if (BZDB.isTrue("lighting") && sunOrMoonUp)
     theSun.enableLight(SunLight, on);
 }
 
@@ -423,8 +423,8 @@ void			SceneRenderer::setTimeOfDay(double julianDay)
 
   // get position of sun and moon at 0,0 lat/long
   float sunDir[3], moonDir[3];
-  float latitude = BZDB->eval("latitude");
-  float longitude = BZDB->eval("longitude");
+  float latitude = BZDB.eval("latitude");
+  float longitude = BZDB.eval("longitude");
   getSunPosition(julianDay, latitude, longitude, sunDir);
   getMoonPosition(julianDay, latitude, longitude, moonDir);
   ::getCelestialTransform(julianDay, latitude, longitude,
@@ -473,7 +473,7 @@ void			SceneRenderer::render(
   static const GLfloat blindnessColor[4] = { 1.0f, 1.0f, 0.0f, 1.0f };
   static const GLfloat dimnessColor[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
   static const float dimDensity = 0.75f;
-  bool               lighting   = BZDB->isTrue("lighting");
+  bool               lighting   = BZDB.isTrue("lighting");
 
   lastFrame = _lastFrame;
   sameFrame = _sameFrame;
@@ -556,7 +556,7 @@ void			SceneRenderer::render(
   if (!blank && LocalPlayer::getMyTank())
     teleporterProximity = LocalPlayer::getMyTank()->getTeleporterProximity();
 
-  float worldSize = BZDB->eval(StateDatabase::BZDB_WORLDSIZE);
+  float worldSize = BZDB.eval(StateDatabase::BZDB_WORLDSIZE);
   bool reallyUseFogHack = useFogHack && (useQualityValue >= 2);
   if (reallyUseFogHack) {
     if (useDimming) {
@@ -601,7 +601,7 @@ void			SceneRenderer::render(
   }
 
   // prepare z buffer
-  if (BZDB->isTrue("zbuffer")) {
+  if (BZDB.isTrue("zbuffer")) {
     if (sameFrame && ++depthRange == numDepthRanges) depthRange = 0;
     if (exposed || useHiddenLineOn || --depthRange < 0) {
       depthRange = numDepthRanges - 1;
@@ -646,7 +646,7 @@ void			SceneRenderer::render(
     }
 
     frustum.executeProjection();
-    if (BZDB->isTrue("zbuffer")) glEnable(GL_DEPTH_TEST);
+    if (BZDB.isTrue("zbuffer")) glEnable(GL_DEPTH_TEST);
 
     if (useHiddenLineOn) {
 #if defined(GL_VERSION_1_1)
@@ -679,7 +679,7 @@ void			SceneRenderer::render(
 	OpenGLLight::enableLight(i + reservedLights, false);
     }
 
-    if (BZDB->isTrue("zbuffer")) glDisable(GL_DEPTH_TEST);
+    if (BZDB.isTrue("zbuffer")) glDisable(GL_DEPTH_TEST);
 
     // FIXME -- must do post-rendering: flare lights, etc.
     // flare lights are in world coordinates.  trace ray to that world
@@ -715,7 +715,7 @@ void			SceneRenderer::render(
       glColor4f(color[0], color[1], color[2], density);
 
       // if low quality then use stipple -- it's probably much faster
-      if (BZDB->isTrue("blend") && (useQualityValue >= 2)) {
+      if (BZDB.isTrue("blend") && (useQualityValue >= 2)) {
 	glEnable(GL_BLEND);
 	glRectf(-1.0f, -1.0f, 1.0f, 1.0f);
 	glDisable(GL_BLEND);
@@ -761,16 +761,16 @@ void			SceneRenderer::notifyStyleChange()
 /* FIXME
   // fixup my gstates
   OpenGLGStateBuilder builder(flareGState);
-  builder.enableTexture(BZDB->isTrue("texture"));
-  if (BZDB->isTrue("smooth")) {
-    if (BZDB->isTrue("texture"))
+  builder.enableTexture(BZDB.isTrue("texture"));
+  if (BZDB.isTrue("smooth")) {
+    if (BZDB.isTrue("texture"))
       builder.setBlending(GL_ONE, GL_ONE);
     else
       builder.setBlending();
     builder.setSmoothing();
   }
   else {
-    if (BZDB->isTrue("texture"))
+    if (BZDB.isTrue("texture"))
       builder.setBlending(GL_ONE, GL_ONE);
     else
       builder.resetBlending();
@@ -817,7 +817,7 @@ void			SceneRenderer::doRender()
   glDepthMask(GL_TRUE);
 }
 
-// Local variables: ***
+// Local Variables: ***
 // mode:C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***

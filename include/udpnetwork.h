@@ -41,7 +41,7 @@ int			recvUDPNetwork(int fd, void* buffer,
 
 #endif // BZF_UDPNET_H
 
-// Local variables: ***
+// Local Variables: ***
 // mode:C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***

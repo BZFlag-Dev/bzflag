@@ -675,7 +675,7 @@ bool			testRectInRect(const float* p1, float angle1,
   return true;
 }
 
-// Local variables: ***
+// Local Variables: ***
 // mode:C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***

@@ -127,7 +127,7 @@ extern GlobalDBItem		globalDBItems[67];
 
 #endif // BZF_GLOBAL_H
 
-// Local variables: ***
+// Local Variables: ***
 // mode:C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***

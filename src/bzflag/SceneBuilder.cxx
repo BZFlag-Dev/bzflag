@@ -164,7 +164,7 @@ SceneDatabaseBuilder::SceneDatabaseBuilder(const SceneRenderer* _renderer) :
   if (wallTexture.isValid()) wallTexWidth *= wallTexHeight;
 
   // make box styles
-  boxTexWidth = boxTexHeight = 0.2f * BZDB->eval(StateDatabase::BZDB_BOXHEIGHT);
+  boxTexWidth = boxTexHeight = 0.2f * BZDB.eval(StateDatabase::BZDB_BOXHEIGHT);
   boxTexture = getImage(boxwallFilename, &boxTexWidth);
   if (boxTexture.isValid()) boxTexWidth *= boxTexHeight;
   boxTopTexture = getImage(boxtopFilename);
@@ -187,15 +187,15 @@ SceneDatabaseBuilder::~SceneDatabaseBuilder()
 SceneDatabase*		SceneDatabaseBuilder::make(const World* world)
 {
   // set LOD flags
-  wallLOD = BZDB->isTrue("lighting") && BZDB->isTrue("zbuffer");
-  baseLOD = BZDB->isTrue("lighting") && BZDB->isTrue("zbuffer");
-  boxLOD = BZDB->isTrue("lighting") && BZDB->isTrue("zbuffer");
-  pyramidLOD = BZDB->isTrue("lighting") && BZDB->isTrue("zbuffer");
-  teleporterLOD = BZDB->isTrue("lighting") && BZDB->isTrue("zbuffer");
+  wallLOD = BZDB.isTrue("lighting") && BZDB.isTrue("zbuffer");
+  baseLOD = BZDB.isTrue("lighting") && BZDB.isTrue("zbuffer");
+  boxLOD = BZDB.isTrue("lighting") && BZDB.isTrue("zbuffer");
+  pyramidLOD = BZDB.isTrue("lighting") && BZDB.isTrue("zbuffer");
+  teleporterLOD = BZDB.isTrue("lighting") && BZDB.isTrue("zbuffer");
 
   // pick type of database
   SceneDatabase* db;
-  if (BZDB->isTrue("zbuffer"))
+  if (BZDB.isTrue("zbuffer"))
     db = new ZSceneDatabase;
   else
     db = new BSPSceneDatabase;
@@ -376,7 +376,7 @@ void			SceneDatabaseBuilder::addTeleporter(SceneDatabase* db,
   delete nodeGen;
 }
 
-// Local variables: ***
+// Local Variables: ***
 // mode:C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***

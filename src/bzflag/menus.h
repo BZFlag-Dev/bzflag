@@ -197,7 +197,7 @@ class ServerMenu : public HUDDialog {
 
 #endif /* BZF_MENUS_H */
 
-// Local variables: ***
+// Local Variables: ***
 // mode:C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***

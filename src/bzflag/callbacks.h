@@ -15,7 +15,7 @@ void setFlagHelp(const std::string& name, void*);
 void setDepthBuffer(const std::string& name, void*);
 
 
-// Local variables: ***
+// Local Variables: ***
 // mode:C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***

@@ -90,9 +90,9 @@ void			BaseLocalPlayer::update()
 
   // expand bounding box to include entire tank
   float size = BZDBCache::tankRadius;
-  if (getFlag() == Flags::Obesity) size *= BZDB->eval(StateDatabase::BZDB_OBESEFACTOR);
-  else if (getFlag() == Flags::Tiny) size *= BZDB->eval(StateDatabase::BZDB_TINYFACTOR);
-  else if (getFlag() == Flags::Thief) size *= BZDB->eval(StateDatabase::BZDB_THIEFTINYFACTOR);
+  if (getFlag() == Flags::Obesity) size *= BZDB.eval(StateDatabase::BZDB_OBESEFACTOR);
+  else if (getFlag() == Flags::Tiny) size *= BZDB.eval(StateDatabase::BZDB_TINYFACTOR);
+  else if (getFlag() == Flags::Thief) size *= BZDB.eval(StateDatabase::BZDB_THIEFTINYFACTOR);
   bbox[0][0] -= size;
   bbox[1][0] += size;
   bbox[0][1] -= size;
@@ -127,7 +127,7 @@ static float		minSafeRange(float angleCosOffBoresight)
   // place at MinRange
   static const float	SafeAngle = 0.5f;		// cos(angle)
 
-  const float shotSpeed = BZDB->eval(StateDatabase::BZDB_SHOTSPEED);
+  const float shotSpeed = BZDB.eval(StateDatabase::BZDB_SHOTSPEED);
   // don't ever place within this range
   const float	MinRange = 2.0f * shotSpeed;	// meters
 
@@ -172,7 +172,7 @@ void			BaseLocalPlayer::startingLocation
   float startPoint[3];
   startPoint[2] = 0.0f;
   float tankRadius = BZDBCache::tankRadius;
-  float worldSize = BZDB->eval(StateDatabase::BZDB_WORLDSIZE);
+  float worldSize = BZDB.eval(StateDatabase::BZDB_WORLDSIZE);
   do {
     do {
       if (restartOnBase) {
@@ -225,8 +225,8 @@ void			BaseLocalPlayer::startingLocation
       // (mine don't count because I can't come alive before all my
       // shots have expired anyway)
       const int maxShots = World::getWorld()->getMaxShots();
-      float tankLength = BZDB->eval(StateDatabase::BZDB_TANKLENGTH);
-      float tankWidth = BZDB->eval(StateDatabase::BZDB_TANKWIDTH);
+      float tankLength = BZDB.eval(StateDatabase::BZDB_TANKLENGTH);
+      float tankWidth = BZDB.eval(StateDatabase::BZDB_TANKWIDTH);
       for (int j = 0; j < maxShots; j++) {
 	// get shot and ignore non-existent ones
 	ShotPath* shot = player[i]->getShot(j);
@@ -374,7 +374,7 @@ void			LocalPlayer::doUpdate(float dt)
       pauseTime = TimeKeeper::getCurrent();
       wasPaused = true;
     }
-    if (TimeKeeper::getCurrent() -  pauseTime > BZDB->eval(StateDatabase::BZDB_PAUSEDROPTIME)) {
+    if (TimeKeeper::getCurrent() -  pauseTime > BZDB.eval(StateDatabase::BZDB_PAUSEDROPTIME)) {
       ServerLink::getServer()->sendDropFlag(getPosition());
       pauseTime = TimeKeeper::getSunExplodeTime();
     }
@@ -439,7 +439,7 @@ void			LocalPlayer::doUpdateMotion(float dt)
   float newAngVel = 0.0f;
 
   // if was teleporting and exceeded teleport time then not teleporting anymore
-  if (isTeleporting() && getTeleportTime() - lastTime >= BZDB->eval(StateDatabase::BZDB_TELEPORTTIME))
+  if (isTeleporting() && getTeleportTime() - lastTime >= BZDB.eval(StateDatabase::BZDB_TELEPORTTIME))
     setStatus(getStatus() & ~short(PlayerState::Teleporting));
 
   // phased means we can pass through buildings
@@ -449,7 +449,7 @@ void			LocalPlayer::doUpdateMotion(float dt)
 
   float groundLimit = 0.0f;
   if (getFlag() == Flags::Burrow)
-    groundLimit = BZDB->eval(StateDatabase::BZDB_BURROWDEPTH);
+    groundLimit = BZDB.eval(StateDatabase::BZDB_BURROWDEPTH);
 
   // get linear and angular speed at start of time step
   if (!NEAR_ZERO(dt,ZERO_TOLERANCE)) {
@@ -461,17 +461,17 @@ void			LocalPlayer::doUpdateMotion(float dt)
     }
     else if (location == Exploding) {
       // see if explosing time has expired
-      if (lastTime - getExplodeTime() >= BZDB->eval(StateDatabase::BZDB_EXPLODETIME)) {
-	dt -= (lastTime - getExplodeTime()) - BZDB->eval(StateDatabase::BZDB_EXPLODETIME);
+      if (lastTime - getExplodeTime() >= BZDB.eval(StateDatabase::BZDB_EXPLODETIME)) {
+	dt -= (lastTime - getExplodeTime()) - BZDB.eval(StateDatabase::BZDB_EXPLODETIME);
 	if (dt < 0.0f) dt = 0.0f;
 	setStatus(PlayerState::DeadStatus);
 	location = Dead;
 	if (isAutoPilot())
-	  CMDMGR->run("restart");
+	  CMDMGR.run("restart");
       }
 
       // can't control explosion motion
-      newVelocity[2] += BZDB->eval(StateDatabase::BZDB_GRAVITY) * dt;
+      newVelocity[2] += BZDB.eval(StateDatabase::BZDB_GRAVITY) * dt;
       newAngVel = 0.0f;	// or oldAngVel to spin while exploding
     }
     else {
@@ -506,13 +506,13 @@ void			LocalPlayer::doUpdateMotion(float dt)
 	newVelocity[2] = 0.0f;
 
 	if ((oldPosition[2] < 0.0f) && (getFlag() == Flags::Burrow))
-	  newVelocity[2] += 4 * BZDB->eval(StateDatabase::BZDB_GRAVITY) * dt;
+	  newVelocity[2] += 4 * BZDB.eval(StateDatabase::BZDB_GRAVITY) * dt;
 	else if (oldPosition[2] > groundLimit)
-	  newVelocity[2] += BZDB->eval(StateDatabase::BZDB_GRAVITY) * dt;
+	  newVelocity[2] += BZDB.eval(StateDatabase::BZDB_GRAVITY) * dt;
       }
       else {
 	// can't control motion in air
-	newVelocity[2] += BZDB->eval(StateDatabase::BZDB_GRAVITY) * dt;
+	newVelocity[2] += BZDB.eval(StateDatabase::BZDB_GRAVITY) * dt;
 	newAngVel = oldAngVel;
       }
 
@@ -708,13 +708,13 @@ void			LocalPlayer::doUpdateMotion(float dt)
   // see if we're crossing a wall
   if (location == InBuilding && getFlag() == Flags::OscillationOverthruster) {
     if (insideBuilding->isCrossing(newPos, newAzimuth,
-				   0.5f * BZDB->eval(StateDatabase::BZDB_TANKLENGTH), 0.5f * BZDB->eval(StateDatabase::BZDB_TANKWIDTH), NULL))
+				   0.5f * BZDB.eval(StateDatabase::BZDB_TANKLENGTH), 0.5f * BZDB.eval(StateDatabase::BZDB_TANKWIDTH), NULL))
       setStatus(getStatus() | int(PlayerState::CrossingWall));
     else
       setStatus(getStatus() & ~int(PlayerState::CrossingWall));
   }
   else if (World::getWorld()->crossingTeleporter(newPos, newAzimuth,
-						 0.5f * BZDB->eval(StateDatabase::BZDB_TANKLENGTH), 0.5f * BZDB->eval(StateDatabase::BZDB_TANKWIDTH), crossingPlane)) {
+						 0.5f * BZDB.eval(StateDatabase::BZDB_TANKLENGTH), 0.5f * BZDB.eval(StateDatabase::BZDB_TANKWIDTH), crossingPlane)) {
     setStatus(getStatus() | int(PlayerState::CrossingWall));
   }
   else {
@@ -823,22 +823,22 @@ void			LocalPlayer::doUpdateMotion(float dt)
 const Obstacle*		LocalPlayer::getHitBuilding(const float* p, float a,
 						    bool phased, bool& expelled) const
 {
-  float length = 0.5f * BZDB->eval(StateDatabase::BZDB_TANKLENGTH);
-  float width = 0.5f * BZDB->eval(StateDatabase::BZDB_TANKWIDTH);
+  float length = 0.5f * BZDB.eval(StateDatabase::BZDB_TANKLENGTH);
+  float width = 0.5f * BZDB.eval(StateDatabase::BZDB_TANKWIDTH);
   float factor;
 
   if (getFlag() == Flags::Obesity) {
-    factor = BZDB->eval(StateDatabase::BZDB_OBESEFACTOR);
+    factor = BZDB.eval(StateDatabase::BZDB_OBESEFACTOR);
     length *= factor;
     width *= 2.0f * factor;
   }
   else if (getFlag() == Flags::Tiny) {
-    factor = BZDB->eval(StateDatabase::BZDB_TINYFACTOR);
+    factor = BZDB.eval(StateDatabase::BZDB_TINYFACTOR);
     length *= factor;
     width *= 2.0f * factor;
   }
   else if (getFlag() == Flags::Thief) {
-    factor = BZDB->eval(StateDatabase::BZDB_THIEFTINYFACTOR);
+    factor = BZDB.eval(StateDatabase::BZDB_THIEFTINYFACTOR);
     length *= factor;
     width *= 2.0f * factor;
   }
@@ -862,22 +862,22 @@ const Obstacle*		LocalPlayer::getHitBuilding(
 						    const float* p, float a,
 						    bool phased, bool& expelled) const
 {
-  float length = 0.5f * BZDB->eval(StateDatabase::BZDB_TANKLENGTH);
-  float width = 0.5f * BZDB->eval(StateDatabase::BZDB_TANKWIDTH);
+  float length = 0.5f * BZDB.eval(StateDatabase::BZDB_TANKLENGTH);
+  float width = 0.5f * BZDB.eval(StateDatabase::BZDB_TANKWIDTH);
   float factor;
 
   if (getFlag() == Flags::Obesity) {
-    factor = BZDB->eval(StateDatabase::BZDB_OBESEFACTOR);
+    factor = BZDB.eval(StateDatabase::BZDB_OBESEFACTOR);
     length *= factor;
     width *= 2.0f * factor;
   }
   else if (getFlag() == Flags::Tiny) {
-    factor = BZDB->eval(StateDatabase::BZDB_TINYFACTOR);
+    factor = BZDB.eval(StateDatabase::BZDB_TINYFACTOR);
     length *= factor;
     width *= 2.0f * factor;
   }
   else if (getFlag() == Flags::Thief) {
-    factor = BZDB->eval(StateDatabase::BZDB_THIEFTINYFACTOR);
+    factor = BZDB.eval(StateDatabase::BZDB_THIEFTINYFACTOR);
     length *= factor;
     width *= 2.0f * factor;
   }
@@ -901,21 +901,21 @@ bool			LocalPlayer::getHitNormal(const Obstacle* o,
 						  const float* pos2, float azimuth2,
 						  float* normal) const
 {
-  float length = 0.5f * BZDB->eval(StateDatabase::BZDB_TANKLENGTH);
-  float width = 0.5f * BZDB->eval(StateDatabase::BZDB_TANKWIDTH);
+  float length = 0.5f * BZDB.eval(StateDatabase::BZDB_TANKLENGTH);
+  float width = 0.5f * BZDB.eval(StateDatabase::BZDB_TANKWIDTH);
   float factor;
   if (getFlag() == Flags::Obesity) {
-    factor = BZDB->eval(StateDatabase::BZDB_OBESEFACTOR);
+    factor = BZDB.eval(StateDatabase::BZDB_OBESEFACTOR);
     length *= factor;
     width *= 2.0f * factor;
   }
   else if (getFlag() == Flags::Tiny) {
-    factor = BZDB->eval(StateDatabase::BZDB_TINYFACTOR);
+    factor = BZDB.eval(StateDatabase::BZDB_TINYFACTOR);
     length *= factor;
     width *= 2.0f * factor;
   }
   else if (getFlag() == Flags::Thief) {
-    factor = BZDB->eval(StateDatabase::BZDB_THIEFTINYFACTOR);
+    factor = BZDB.eval(StateDatabase::BZDB_THIEFTINYFACTOR);
     length *= factor;
     width *= 2.0f * factor;
   }
@@ -1028,15 +1028,15 @@ void			LocalPlayer::setDesiredSpeed(float fracOfMaxSpeed)
 
   // boost speed for certain flags
   if (flag == Flags::Velocity) {
-    fracOfMaxSpeed *= BZDB->eval(StateDatabase::BZDB_VELOCITYAD);
+    fracOfMaxSpeed *= BZDB.eval(StateDatabase::BZDB_VELOCITYAD);
   } else if (flag == Flags::Thief) {
-    fracOfMaxSpeed *= BZDB->eval(StateDatabase::BZDB_THIEFVELAD);
+    fracOfMaxSpeed *= BZDB.eval(StateDatabase::BZDB_THIEFVELAD);
   } else if ((flag == Flags::Burrow) && (getPosition()[2] < 0.0f)) {
-    fracOfMaxSpeed *= BZDB->eval(StateDatabase::BZDB_BURROWSPEEDAD);
+    fracOfMaxSpeed *= BZDB.eval(StateDatabase::BZDB_BURROWSPEEDAD);
    }
 
   // set desired speed
-  desiredSpeed = fracOfMaxSpeed * BZDB->eval(StateDatabase::BZDB_TANKSPEED);
+  desiredSpeed = fracOfMaxSpeed * BZDB.eval(StateDatabase::BZDB_TANKSPEED);
 }
 
 void			LocalPlayer::setDesiredAngVel(float fracOfMaxAngVel)
@@ -1053,12 +1053,12 @@ void			LocalPlayer::setDesiredAngVel(float fracOfMaxAngVel)
 
   // boost turn speed for other flags
   if (getFlag() == Flags::QuickTurn)
-    fracOfMaxAngVel *= BZDB->eval(StateDatabase::BZDB_ANGULARAD);
+    fracOfMaxAngVel *= BZDB.eval(StateDatabase::BZDB_ANGULARAD);
   else if ((getFlag() == Flags::Burrow) && (getPosition()[2] < 0.0f))
-    fracOfMaxAngVel *= BZDB->eval(StateDatabase::BZDB_BURROWANGULARAD);
+    fracOfMaxAngVel *= BZDB.eval(StateDatabase::BZDB_BURROWANGULARAD);
 
   // set desired turn speed
-  desiredAngVel = fracOfMaxAngVel * BZDB->eval(StateDatabase::BZDB_TANKANGVEL);
+  desiredAngVel = fracOfMaxAngVel * BZDB.eval(StateDatabase::BZDB_TANKANGVEL);
 }
 
 void			LocalPlayer::setPause(bool pause)
@@ -1221,7 +1221,7 @@ void			LocalPlayer::jump()
   float newVelocity[3];
   newVelocity[0] = oldVelocity[0];
   newVelocity[1] = oldVelocity[1];
-  newVelocity[2] = BZDB->eval(StateDatabase::BZDB_JUMPVELOCITY);
+  newVelocity[2] = BZDB.eval(StateDatabase::BZDB_JUMPVELOCITY);
   setVelocity(newVelocity);
   location = InAir;
   playLocalSound(SFX_JUMP);
@@ -1247,8 +1247,8 @@ void			LocalPlayer::setRecipient(const Player* _recipient)
 void			LocalPlayer::explodeTank()
 {
   if (location == Dead || location == Exploding) return;
-  float gravity      = BZDB->eval(StateDatabase::BZDB_GRAVITY);
-  float explodeTime  = BZDB->eval(StateDatabase::BZDB_EXPLODETIME);
+  float gravity      = BZDB.eval(StateDatabase::BZDB_GRAVITY);
+  float explodeTime  = BZDB.eval(StateDatabase::BZDB_EXPLODETIME);
   // Limiting max height increment to this value (the old default value)
   const float zMax  = 49.0f;
   setExplode(TimeKeeper::getTick());
@@ -1278,9 +1278,9 @@ void			LocalPlayer::doMomentum(float dt,
 						float& speed, float& angVel)
 {
   // get maximum linear and angular accelerations
-  const float linearAcc = (getFlag() == Flags::Momentum) ? BZDB->eval(StateDatabase::BZDB_MOMENTUMLINACC) :
+  const float linearAcc = (getFlag() == Flags::Momentum) ? BZDB.eval(StateDatabase::BZDB_MOMENTUMLINACC) :
     World::getWorld()->getLinearAcceleration();
-  const float angularAcc = (getFlag() == Flags::Momentum) ? BZDB->eval(StateDatabase::BZDB_MOMENTUMANGACC) :
+  const float angularAcc = (getFlag() == Flags::Momentum) ? BZDB.eval(StateDatabase::BZDB_MOMENTUMANGACC) :
     World::getWorld()->getAngularAcceleration();
 
   // limit linear acceleration
@@ -1359,7 +1359,7 @@ void			LocalPlayer::setFlag(FlagType* flag)
 {
   Player::setFlag(flag);
 
-  float worldSize = BZDB->eval(StateDatabase::BZDB_WORLDSIZE);
+  float worldSize = BZDB.eval(StateDatabase::BZDB_WORLDSIZE);
   // if it's bad then reset countdowns and set antidote flag
   if (getFlag() != Flags::Null && getFlag()->endurance == FlagSticky) {
     if (World::getWorld()->allowShakeTimeout())
@@ -1414,7 +1414,7 @@ void			LocalPlayer::addAntidote(SceneDatabase* scene)
     scene->addDynamicNode(antidoteFlag);
 }
 
-// Local variables: ***
+// Local Variables: ***
 // mode:C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***

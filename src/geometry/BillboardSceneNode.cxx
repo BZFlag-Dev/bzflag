@@ -270,8 +270,8 @@ void			BillboardSceneNode::addLight(
 void			BillboardSceneNode::notifyStyleChange(
 				const SceneRenderer&)
 {
-  show = hasTexture && BZDB->isTrue("texture") &&
-	(!hasAlpha || BZDB->isTrue("blend"));
+  show = hasTexture && BZDB.isTrue("texture") &&
+	(!hasAlpha || BZDB.isTrue("blend"));
   if (show) {
     OpenGLGStateBuilder builder(gstate);
     if (hasAlpha) {
@@ -369,7 +369,7 @@ void			BillboardSceneNode::BillboardRenderNode::render()
   glDisable(GL_CLIP_PLANE0);
 }
 
-// Local variables: ***
+// Local Variables: ***
 // mode:C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***

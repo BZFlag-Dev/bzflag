@@ -27,8 +27,8 @@
 CustomWorld::CustomWorld()
 {
   // initialize with database defaults
-  _size = BZDB->eval(StateDatabase::BZDB_WORLDSIZE);
-  _fHeight = BZDB->eval(StateDatabase::BZDB_FLAGHEIGHT);
+  _size = BZDB.eval(StateDatabase::BZDB_WORLDSIZE);
+  _fHeight = BZDB.eval(StateDatabase::BZDB_FLAGHEIGHT);
 }
 
 
@@ -37,10 +37,10 @@ bool CustomWorld::read(const char *cmd, std::istream& input)
   if (strcmp(cmd, "size") == 0) {
     input >> _size;
     _size *= 2.0;
-    BZDB->set(StateDatabase::BZDB_WORLDSIZE, string_util::format("%f", _size));
+    BZDB.set(StateDatabase::BZDB_WORLDSIZE, string_util::format("%f", _size));
   } else if (strcmp(cmd, "flagHeight") == 0) {
     input >> _fHeight;
-    BZDB->set(StateDatabase::BZDB_FLAGHEIGHT, string_util::format("%f", _fHeight));
+    BZDB.set(StateDatabase::BZDB_FLAGHEIGHT, string_util::format("%f", _fHeight));
   } else {
     return WorldFileObject::read(cmd, input);
   }

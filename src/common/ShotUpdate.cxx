@@ -70,7 +70,7 @@ void*			FiringInfo::unpack(void* buf)
  return buf;
 }
 
-// Local variables: ***
+// Local Variables: ***
 // mode:C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***

@@ -255,7 +255,7 @@ SceneRenderer*		getSceneRenderer()
 
 void			setSceneDatabase()
 {
-  if (BZDB->isTrue("zbuffer")) {
+  if (BZDB.isTrue("zbuffer")) {
     sceneRenderer->setSceneDatabase(zScene);
   }
   else {
@@ -483,15 +483,15 @@ public:
 
 void printout(const std::string& name, void*)
 {
-  std::cout << name << " = " << BZDB->get(name) << std::endl;
+  std::cout << name << " = " << BZDB.get(name) << std::endl;
 }
 
 void listSetVars(const std::string& name, void*)
 {
   char message[MessageLen];
 
-  if (BZDB->getPermission(name) == StateDatabase::Locked) {
-    sprintf(message, "/set %s %f", name.c_str(), BZDB->eval(name));
+  if (BZDB.getPermission(name) == StateDatabase::Locked) {
+    sprintf(message, "/set %s %f", name.c_str(), BZDB.eval(name));
     addMessage(myTank, message, false, NULL);
   }
 }
@@ -499,7 +499,7 @@ void listSetVars(const std::string& name, void*)
 bool			ComposeDefaultKey::keyPress(const BzfKeyEvent& key)
 {
   bool sendIt;
-  if (KEYMGR->get(key, true) == "jump") {
+  if (KEYMGR.get(key, true) == "jump") {
     // jump while typing
     myTank->jump();
   }
@@ -540,7 +540,7 @@ bool			ComposeDefaultKey::keyPress(const BzfKeyEvent& key)
 	  addMessage(NULL, message);
 	}
       } else if (strncmp(silence, "DUMP", 4) == 0) {
-	BZDB->iterate(printout, NULL);
+	BZDB.iterate(printout, NULL);
       } else if (strncmp(silence, "UNSILENCE", 9) == 0) {
 	Player *loudmouth = getPlayerByName(silence + 10);
 	if (loudmouth) {
@@ -563,7 +563,7 @@ bool			ComposeDefaultKey::keyPress(const BzfKeyEvent& key)
 	  addMessage(NULL, "Invalid file name specified");
 	}
       } else if (message == "/set") {
-	BZDB->iterate(listSetVars, NULL);
+	BZDB.iterate(listSetVars, NULL);
       } else {
 	int i, mhLen = messageHistory.size();
 	for (i = 0; i < mhLen; i++) {
@@ -692,7 +692,7 @@ SilenceDefaultKey::SilenceDefaultKey()
 bool			SilenceDefaultKey::keyPress(const BzfKeyEvent& key)
 {
   bool sendIt;
-  if (KEYMGR->get(key, true) == "jump") {
+  if (KEYMGR.get(key, true) == "jump") {
     // jump while typing
     myTank->jump();
   }
@@ -1062,7 +1062,7 @@ std::string		ServerCommandKey::makePattern(const InAddr& address)
 bool			ServerCommandKey::keyPress(const BzfKeyEvent& key)
 {
   bool sendIt;
-  if (KEYMGR->get(key, true) == "jump") {
+  if (KEYMGR.get(key, true) == "jump") {
     // jump while typing
     myTank->jump();
   }
@@ -1378,24 +1378,24 @@ static void		showKeyboardStatus()
 
 static bool		doKeyCommon(const BzfKeyEvent& key, bool pressed)
 {
-  const std::string cmd = KEYMGR->get(key, pressed);
+  const std::string cmd = KEYMGR.get(key, pressed);
   if (key.ascii == 27) {
     if (pressed) HUDDialogStack::get()->push(mainMenu);
     return true;
   } else if (hud->getHunt()) {
     if (key.button == BzfKeyEvent::Down ||
-        KEYMGR->get(key, true) == "identify") {
+        KEYMGR.get(key, true) == "identify") {
       if (pressed) {
         hud->setHuntPosition(hud->getHuntPosition()+1);
       }
       return true;
     } else if (key.button == BzfKeyEvent::Up ||
-    	       KEYMGR->get(key, true) == "drop") {
+    	       KEYMGR.get(key, true) == "drop") {
       if (pressed) {
         hud->setHuntPosition(hud->getHuntPosition()-1);
       }
       return true;
-    } else if (KEYMGR->get(key, true) == "fire") {
+    } else if (KEYMGR.get(key, true) == "fire") {
       if (pressed) {
         hud->setHuntSelection(true);
         playLocalSound(SFX_HUNT_SELECT);
@@ -1406,7 +1406,7 @@ static bool		doKeyCommon(const BzfKeyEvent& key, bool pressed)
   if (!cmd.empty()) {
     if (cmd=="fire")
       fireButton = pressed;
-    std::string result = CMDMGR->run(cmd);
+    std::string result = CMDMGR.run(cmd);
     if (!result.empty())
       std::cerr << result << std::endl;
     return true;
@@ -1523,11 +1523,11 @@ static void		doKeyPlaying(const BzfKeyEvent& key, bool pressed)
         sprintf(name, "quickMessage%d", msgno);
         buf = nboPackUByte(buf, AllPlayers);
       }
-      if (BZDB->isSet(name)) {
+      if (BZDB.isSet(name)) {
 	char messageBuffer[MessageLen];
 	memset(messageBuffer, 0, MessageLen);
 	strncpy(messageBuffer,
-		BZDB->get(name).c_str(),
+		BZDB.get(name).c_str(),
 		MessageLen);
 	nboPackString(buf, messageBuffer, MessageLen);
 	serverLink->send(MsgMessage, sizeof(messageMessage), messageMessage);
@@ -1616,9 +1616,9 @@ static void		doAutoPilot(float &rotation, float &speed)
       bool shotFired = false;
 
       float dir[3] = {cosf(myTank->getAngle()), sinf(myTank->getAngle()), 0.0f};
-      pos[2] += BZDB->eval(StateDatabase::BZDB_MUZZLEHEIGHT);
+      pos[2] += BZDB.eval(StateDatabase::BZDB_MUZZLEHEIGHT);
       Ray tankRay(pos, dir);
-      pos[2] -= BZDB->eval(StateDatabase::BZDB_MUZZLEHEIGHT);
+      pos[2] -= BZDB.eval(StateDatabase::BZDB_MUZZLEHEIGHT);
 
       if (myTank->getFlag() == Flags::ShockWave) {
         TimeKeeper now = TimeKeeper::getCurrent();
@@ -1631,7 +1631,7 @@ static void		doAutoPilot(float &rotation, float &speed)
 
 	      const float *tp = player[t]->getPosition();
 	      float dist = hypotf(tp[0] - pos[0], tp[1] - pos[1]);
-	      if (dist <= BZDB->eval(StateDatabase::BZDB_SHOCKOUTRADIUS)) {
+	      if (dist <= BZDB.eval(StateDatabase::BZDB_SHOCKOUTRADIUS)) {
 	        if (!myTank->validTeamTarget(player[t])) {
 		  hasSWTarget = false;
 		  t = curMaxPlayers;
@@ -1652,7 +1652,7 @@ static void		doAutoPilot(float &rotation, float &speed)
         TimeKeeper now = TimeKeeper::getCurrent();
         if (now - lastShot >= (1.0f / World::getWorld()->getMaxShots())) {
 
-	  float errorLimit = World::getWorld()->getMaxShots() * BZDB->eval(StateDatabase::BZDB_LOCKONANGLE) / 8.0f;
+	  float errorLimit = World::getWorld()->getMaxShots() * BZDB.eval(StateDatabase::BZDB_LOCKONANGLE) / 8.0f;
 	  float closeErrorLimit = errorLimit * 2.0f;
 
 	  for (t = 0; t < curMaxPlayers; t++) {
@@ -1670,7 +1670,7 @@ static void		doAutoPilot(float &rotation, float &speed)
 	        if (targetRotation > 1.0f * M_PI) targetRotation -= 2.0f * M_PI;
 
 	        if ((fabs(targetRotation) < errorLimit)
-		    ||  ((distance < (2.0f * BZDB->eval(StateDatabase::BZDB_SHOTSPEED))) && (fabs(targetRotation) < closeErrorLimit))) {
+		    ||  ((distance < (2.0f * BZDB.eval(StateDatabase::BZDB_SHOTSPEED))) && (fabs(targetRotation) < closeErrorLimit))) {
 		  float d = hypotf(tp[0] - pos[0], tp[1] - pos[1]);
 		  const Obstacle *building = NULL;
 		  if (myTank->getFlag() != Flags::SuperBullet)
@@ -1738,7 +1738,7 @@ static void		doAutoPilot(float &rotation, float &speed)
 	if (rotation > 1.0f * M_PI) rotation -= 2.0f * M_PI;
 
 	//If we are driving relatively towards our target and a building pops up jump over it
-	if (fabs(rotation) < BZDB->eval(StateDatabase::BZDB_LOCKONANGLE)) {
+	if (fabs(rotation) < BZDB.eval(StateDatabase::BZDB_LOCKONANGLE)) {
 	  const Obstacle *building = NULL;
 	  float d = distance - 5.0f; //Make sure building is REALLY in front of player (-5)
 
@@ -1750,8 +1750,8 @@ static void		doAutoPilot(float &rotation, float &speed)
 	    //Never did good in math, he should really see if he can reach the building
 	    //based on jumpvel and gravity, but settles for assuming 20-50 is a good range
 	    if ((d > 20.0f) && (d < 50.0f) && (building->getType() == BoxBuilding::typeName)) {
-	      float jumpVel = BZDB->eval(StateDatabase::BZDB_JUMPVELOCITY);
-	      float maxJump = (jumpVel * jumpVel) / (2 * -BZDB->eval(StateDatabase::BZDB_GRAVITY));
+	      float jumpVel = BZDB.eval(StateDatabase::BZDB_JUMPVELOCITY);
+	      float maxJump = (jumpVel * jumpVel) / (2 * -BZDB.eval(StateDatabase::BZDB_GRAVITY));
 
 	      if (((building->getPosition()[2] - pos[2] + building->getHeight()) ) < maxJump) {
 		speed = d / 50.0f;
@@ -1763,7 +1763,7 @@ static void		doAutoPilot(float &rotation, float &speed)
 
 	// weave towards the player
 	const Player *target = myTank->getTarget();
-	if (distance > (BZDB->eval(StateDatabase::BZDB_SHOTSPEED) /2.0f)) {
+	if (distance > (BZDB.eval(StateDatabase::BZDB_SHOTSPEED) /2.0f)) {
 	  float enemyUnitVec[2] = { cos(enemyAzimuth), sin(enemyAzimuth) };
 	  float myUnitVec[2] = { cos(myAzimuth), sin(myAzimuth) };
 	  float dotProd = (myUnitVec[0]*enemyUnitVec[0] + myUnitVec[1]*enemyUnitVec[1]);
@@ -1813,10 +1813,10 @@ static void		doAutoPilot(float &rotation, float &speed)
 
 #ifdef _WIN32
 	      if (((World::getWorld()->allowJumping() || (myTank->getFlag()) == Flags::Jumping))
-		  && (dist < (max(dotProd,0.5f) * BZDB->eval(StateDatabase::BZDB_TANKLENGTH) * 2.5f))) {
+		  && (dist < (max(dotProd,0.5f) * BZDB.eval(StateDatabase::BZDB_TANKLENGTH) * 2.5f))) {
 #else
 	      if (((World::getWorld()->allowJumping() || (myTank->getFlag()) == Flags::Jumping))
-		  && (dist < (std::max(dotProd,0.5f) * BZDB->eval(StateDatabase::BZDB_TANKLENGTH) * 2.5f))) {
+		  && (dist < (std::max(dotProd,0.5f) * BZDB.eval(StateDatabase::BZDB_TANKLENGTH) * 2.5f))) {
 #endif
 		myTank->jump();
 	        s = maxShots;
@@ -1894,9 +1894,9 @@ static void		doMotion()
     myTank->setKeyboardSpeed(speed);
     myTank->resetKey();
 
-    if (BZDB->isTrue("displayBinoculars"))
+    if (BZDB.isTrue("displayBinoculars"))
       rotation *= 0.2f;
-    if (BZDB->isTrue("slowKeyboard")) {
+    if (BZDB.isTrue("slowKeyboard")) {
       rotation /= 2.0f;
       speed /= 2.0f;
     }
@@ -2256,17 +2256,17 @@ static std::string cmdRoam(const std::string&, const CommandManager::ArgList& ar
     if (args.size() != 2)
       return "usage: roam translate {left|right|forward|backward|up|down|stop}";
     if (args[1] == "left") {
-      roamDPos[1] = 4.0f * BZDB->eval(StateDatabase::BZDB_TANKSPEED);
+      roamDPos[1] = 4.0f * BZDB.eval(StateDatabase::BZDB_TANKSPEED);
     } else if (args[1] == "right") {
-      roamDPos[1] = -4.0f * BZDB->eval(StateDatabase::BZDB_TANKSPEED);
+      roamDPos[1] = -4.0f * BZDB.eval(StateDatabase::BZDB_TANKSPEED);
     } else if (args[1] == "forward") {
-      roamDPos[0] = 4.0f * BZDB->eval(StateDatabase::BZDB_TANKSPEED);
+      roamDPos[0] = 4.0f * BZDB.eval(StateDatabase::BZDB_TANKSPEED);
     } else if (args[1] == "backward") {
-      roamDPos[0] = -4.0f * BZDB->eval(StateDatabase::BZDB_TANKSPEED);
+      roamDPos[0] = -4.0f * BZDB.eval(StateDatabase::BZDB_TANKSPEED);
     } else if (args[1] == "up") {
-      roamDPos[2] = 4.0f * BZDB->eval(StateDatabase::BZDB_TANKSPEED);
+      roamDPos[2] = 4.0f * BZDB.eval(StateDatabase::BZDB_TANKSPEED);
     } else if (args[1] == "down") {
-      roamDPos[2] = -4.0f * BZDB->eval(StateDatabase::BZDB_TANKSPEED);
+      roamDPos[2] = -4.0f * BZDB.eval(StateDatabase::BZDB_TANKSPEED);
     } else if (args[1] == "stop") {
       roamDTheta  = 0.0f;
       roamDPhi    = 0.0f;
@@ -2440,8 +2440,8 @@ static std::string cmdHunt(const std::string&, const CommandManager::ArgList& ar
     playLocalSound(SFX_HUNT);
     hud->setHunt(!hud->getHunt());
     hud->setHuntPosition(0);
-    if (!BZDB->isTrue("displayScore"))
-      BZDB->set("displayScore", "1");
+    if (!BZDB.isTrue("displayScore"))
+      BZDB.set("displayScore", "1");
   }
   return std::string();
 }
@@ -2591,12 +2591,12 @@ static void		addMessage(const Player* player,
 {
   std::string fullMessage;
 
-  if (BZDB->isTrue("colorful")) {
+  if (BZDB.isTrue("colorful")) {
     if (player) {
       if (highlight) {
-	if (BZDB->get("killerhighlight") == "0")
+	if (BZDB.get("killerhighlight") == "0")
           fullMessage += ColorStrings[BlinkColor];
-	else if (BZDB->get("killerhighlight") == "1")
+	else if (BZDB.get("killerhighlight") == "1")
 	  fullMessage += ColorStrings[UnderlineColor];
       }
       int color = player->getTeam();
@@ -2728,7 +2728,7 @@ static void		updateFlag(FlagType* flag)
     hud->setAlert(2, flag->flagName, 3.0f, flag->endurance == FlagSticky);
   }
 
-  if (BZDB->isTrue("displayFlagHelp"))
+  if (BZDB.isTrue("displayFlagHelp"))
     hud->setFlagHelp(flag, FlagHelpDuration);
 
   if (!radar && !myTank || !World::getWorld()) return;
@@ -2748,11 +2748,11 @@ static void		updateFlag(FlagType* flag)
 void			notifyBzfKeyMapChanged()
 {
   std::string restartLabel = "Right Mouse";
-  std::vector<std::string> keys = KEYMGR->getKeysFromCommand("restart", false);
+  std::vector<std::string> keys = KEYMGR.getKeysFromCommand("restart", false);
 
   if (keys.size() == 0) {
     // found nothing on down binding, so try up
-    keys = KEYMGR->getKeysFromCommand("identify", true);
+    keys = KEYMGR.getKeysFromCommand("identify", true);
     if (keys.size() == 0) {
       std::cerr << "There does not appear to be any key bound to enter the game" << std::endl;
     }
@@ -2865,7 +2865,7 @@ static void		handleServerMessage(bool human, uint16_t code,
 {
   std::vector<std::string> args;
   bool checkScores = false;
-  static WordFilter *wordfilter = (WordFilter *)BZDB->getPointer("filter");
+  static WordFilter *wordfilter = (WordFilter *)BZDB.getPointer("filter");
 
   switch (code) {
 
@@ -3114,7 +3114,7 @@ static void		handleServerMessage(bool human, uint16_t code,
       float explodePos[3];
       explodePos[0] = pos[0];
       explodePos[1] = pos[1];
-      explodePos[2] = pos[2] + BZDB->eval(StateDatabase::BZDB_MUZZLEHEIGHT);
+      explodePos[2] = pos[2] + BZDB.eval(StateDatabase::BZDB_MUZZLEHEIGHT);
       addTankExplosion(explodePos);
     }
     if (killerLocal) {
@@ -3189,9 +3189,9 @@ static void		handleServerMessage(bool human, uint16_t code,
 	  playerStr += "teammate ";
 
 	if (victimPlayer == myTank) {
-	  if (BZDB->get("killerhighlight") == "0")
+	  if (BZDB.get("killerhighlight") == "0")
 	    playerStr += ColorStrings[BlinkColor];
-	  else if (BZDB->get("killerhighlight") == "1")
+	  else if (BZDB.get("killerhighlight") == "1")
 	    playerStr += ColorStrings[UnderlineColor];
 	}
 	playerStr += ColorStrings[killerPlayer->getTeam()];
@@ -3395,7 +3395,7 @@ static void		handleServerMessage(bool human, uint16_t code,
 	float explodePos[3];
 	explodePos[0] = pos[0];
 	explodePos[1] = pos[1];
-	explodePos[2] = pos[2] + BZDB->eval(StateDatabase::BZDB_MUZZLEHEIGHT);
+	explodePos[2] = pos[2] + BZDB.eval(StateDatabase::BZDB_MUZZLEHEIGHT);
 	addTankExplosion(explodePos);
       }
     }
@@ -3650,9 +3650,9 @@ static void		handleServerMessage(bool human, uint16_t code,
 	  fullMsg=text;
 	}
 	else {
-	  if (BZDB->get("killerhighlight") == "0")
+	  if (BZDB.get("killerhighlight") == "0")
 	    fullMsg += ColorStrings[BlinkColor];
-	  else if (BZDB->get("killerhighlight") == "1")
+	  else if (BZDB.get("killerhighlight") == "1")
 	    fullMsg += ColorStrings[UnderlineColor];
 	  fullMsg += "[";
 	  if (srcPlayer == myTank) {
@@ -3843,7 +3843,7 @@ bool			addExplosion(const float* _pos,
   if (sceneRenderer->useQuality() < 2) return false;
 
   // don't add explosion if blending or texture mapping are off
-  if (!BZDB->isTrue("blend") || !BZDB->isTrue("texture"))
+  if (!BZDB.isTrue("blend") || !BZDB.isTrue("texture"))
     return false;
 
   // pick a random prototype explosion
@@ -3859,13 +3859,13 @@ bool			addExplosion(const float* _pos,
   newExplosion->setSize(size);
   newExplosion->setDuration(duration);
   newExplosion->setAngle(2.0f * M_PI * (float)bzfrand());
-  newExplosion->setLightScaling(size / BZDB->eval(StateDatabase::BZDB_TANKLENGTH));
+  newExplosion->setLightScaling(size / BZDB.eval(StateDatabase::BZDB_TANKLENGTH));
   newExplosion->setLightFadeStartTime(0.7f * duration);
 
   // add copy to list of current explosions
   explosions.push_back(newExplosion);
 
-  if (size < (3.0f * BZDB->eval(StateDatabase::BZDB_TANKLENGTH))) return true; // shot explosion
+  if (size < (3.0f * BZDB.eval(StateDatabase::BZDB_TANKLENGTH))) return true; // shot explosion
 
   int boom = (int) (bzfrand() * 8.0) + 3;
   while (boom--) {
@@ -3882,7 +3882,7 @@ bool			addExplosion(const float* _pos,
     newExplosion->setSize(size);
     newExplosion->setDuration(duration);
     newExplosion->setAngle(2.0f * M_PI * (float)bzfrand());
-    newExplosion->setLightScaling(size / BZDB->eval(StateDatabase::BZDB_TANKLENGTH));
+    newExplosion->setLightScaling(size / BZDB.eval(StateDatabase::BZDB_TANKLENGTH));
     newExplosion->setLightFadeStartTime(0.7f * duration);
 
     // add copy to list of current explosions
@@ -3894,19 +3894,19 @@ bool			addExplosion(const float* _pos,
 
 void			addTankExplosion(const float* pos)
 {
-  addExplosion(pos, BZDB->eval(StateDatabase::BZDB_TANKEXPLOSIONSIZE), 1.2f);
+  addExplosion(pos, BZDB.eval(StateDatabase::BZDB_TANKEXPLOSIONSIZE), 1.2f);
 }
 
 void			addShotExplosion(const float* pos)
 {
   // only play explosion sound if you see an explosion
-  if (addExplosion(pos, 1.2f * BZDB->eval(StateDatabase::BZDB_TANKLENGTH), 0.8f))
+  if (addExplosion(pos, 1.2f * BZDB.eval(StateDatabase::BZDB_TANKLENGTH), 0.8f))
     playWorldSound(SFX_SHOT_BOOM, pos[0], pos[1], pos[2]);
 }
 
 void			addShotPuff(const float* pos)
 {
-  addExplosion(pos, 0.3f * BZDB->eval(StateDatabase::BZDB_TANKLENGTH), 0.8f);
+  addExplosion(pos, 0.3f * BZDB.eval(StateDatabase::BZDB_TANKLENGTH), 0.8f);
 }
 
 // update events from outside if they should be checked
@@ -3976,9 +3976,9 @@ static void *handleMsgSetVars(void *msg)
     msg = nboUnpackString(msg, value, valueLen);
     value[valueLen] = '\0';
 
-    BZDB->set(name, value);
-    BZDB->setPersistent(name, false);
-    BZDB->setPermission(name, StateDatabase::Locked);
+    BZDB.set(name, value);
+    BZDB.setPersistent(name, false);
+    BZDB.setPermission(name, StateDatabase::Locked);
   }
   return msg;
 }
@@ -3992,7 +3992,7 @@ static void		handleFlagDropped(Player* tank)
 
     // make sure the player must reload after theft
     if (tank->getFlag() == Flags::Thief) {
-      myTank->forceReload(BZDB->eval(StateDatabase::BZDB_THIEFDROPTIME));
+      myTank->forceReload(BZDB.eval(StateDatabase::BZDB_THIEFDROPTIME));
     }
 
     // update display and play sound effects
@@ -4096,7 +4096,7 @@ static bool		gotBlowedUp(BaseLocalPlayer* tank,
       float explodePos[3];
       explodePos[0] = pos[0];
       explodePos[1] = pos[1];
-      explodePos[2] = pos[2] + BZDB->eval(StateDatabase::BZDB_MUZZLEHEIGHT);
+      explodePos[2] = pos[2] + BZDB.eval(StateDatabase::BZDB_MUZZLEHEIGHT);
       addTankExplosion(explodePos);
     }
 
@@ -4187,7 +4187,7 @@ static void		checkEnvironment()
     // identify closest flag
     const float* tpos = myTank->getPosition();
     std::string message("Closest Flag: ");
-    float minDist = BZDB->eval(StateDatabase::BZDB_IDENTIFYRANGE);
+    float minDist = BZDB.eval(StateDatabase::BZDB_IDENTIFYRANGE);
     minDist*= minDist;
     int closestFlag = -1;
     for (int i = 0; i < numFlags; i++) {
@@ -4262,7 +4262,7 @@ static void		checkEnvironment()
 	const float* pos = player[i]->getPosition();
 	if (pos[2] < 0.0f) continue;
 	if (!(flagd == Flags::PhantomZone && myTank->isFlagActive())) {
-	  const float radius = myRadius + BZDB->eval(StateDatabase::BZDB_SRRADIUSMULT) * player[i]->getRadius();
+	  const float radius = myRadius + BZDB.eval(StateDatabase::BZDB_SRRADIUSMULT) * player[i]->getRadius();
 	  if (hypot(hypot(myPos[0] - pos[0], myPos[1] - pos[1]), (myPos[2] - pos[2]) * 2.0f) < radius)
 	    gotBlowedUp(myTank, GotRunOver, player[i]->getId());
 	}
@@ -4300,7 +4300,7 @@ static void		setTarget()
     const float a = fabsf(y / d);
 
     // see if it's inside lock-on angle (if we're trying to lock-on)
-    if (a < BZDB->eval(StateDatabase::BZDB_LOCKONANGLE) &&					// about 8.5 degrees
+    if (a < BZDB.eval(StateDatabase::BZDB_LOCKONANGLE) &&					// about 8.5 degrees
 	myTank->getFlag() == Flags::GuidedMissile &&	// am i locking on?
 	player[i]->getFlag() != Flags::Stealth &&		// can't lock on stealth
 	!player[i]->isPaused() &&			// can't lock on paused
@@ -4310,7 +4310,7 @@ static void		setTarget()
       bestDistance = d;
       lockedOn = true;
     }
-    else if (a < BZDB->eval(StateDatabase::BZDB_TARGETINGANGLE) &&				// about 17 degrees
+    else if (a < BZDB.eval(StateDatabase::BZDB_TARGETINGANGLE) &&				// about 17 degrees
 	     ((player[i]->getFlag() != Flags::Stealth) || (myTank->getFlag() == Flags::Seer)) &&	// can't "see" stealth unless have seer
 	     d < bestDistance && !lockedOn) {		// is it better?
       bestTarget = player[i];
@@ -4394,7 +4394,7 @@ static void		setHuntTarget()
     const float a = fabsf(y / d);
 
     // see if it's inside lock-on angle (if we're trying to lock-on)
-    if (a < BZDB->eval(StateDatabase::BZDB_LOCKONANGLE) &&					// about 8.5 degrees
+    if (a < BZDB.eval(StateDatabase::BZDB_LOCKONANGLE) &&					// about 8.5 degrees
 	myTank->getFlag() == Flags::GuidedMissile &&	// am i locking on?
 	player[i]->getFlag() != Flags::Stealth &&	// can't lock on stealth
 	!player[i]->isPaused() &&			// can't lock on paused
@@ -4404,7 +4404,7 @@ static void		setHuntTarget()
       bestDistance = d;
       lockedOn = true;
     }
-    else if (a < BZDB->eval(StateDatabase::BZDB_TARGETINGANGLE) &&				// about 17 degrees
+    else if (a < BZDB.eval(StateDatabase::BZDB_TARGETINGANGLE) &&				// about 17 degrees
 	     ((player[i]->getFlag() != Flags::Stealth) || (myTank->getFlag() == Flags::Seer)) &&	// can't "see" stealth unless have seer
 	     d < bestDistance && !lockedOn) {		// is it better?
       bestTarget = player[i];
@@ -4520,7 +4520,7 @@ static void		makeObstacleList()
 
   // FIXME -- shouldn't hard code game area
   float gameArea[4][2];
-  float worldSize = BZDB->eval(StateDatabase::BZDB_WORLDSIZE);
+  float worldSize = BZDB.eval(StateDatabase::BZDB_WORLDSIZE);
   gameArea[0][0] = -0.5f * worldSize + tankRadius;
   gameArea[0][1] = -0.5f * worldSize + tankRadius;
   gameArea[1][0] =  0.5f * worldSize - tankRadius;
@@ -4656,7 +4656,7 @@ static void		checkEnvironment(RobotPlayer* tank)
     if (((myTank->getFlag() == Flags::Steamroller) || ((tank->getFlag() == Flags::Burrow) && myTank->isAlive())) && !myTank->isPaused()) {
       const float* pos = myTank->getPosition();
       if (pos[2] >= 0.0f) {
-        const float radius = myRadius + BZDB->eval(StateDatabase::BZDB_SRRADIUSMULT) * myTank->getRadius();
+        const float radius = myRadius + BZDB.eval(StateDatabase::BZDB_SRRADIUSMULT) * myTank->getRadius();
         if (hypot(hypot(myPos[0] - pos[0], myPos[1] - pos[1]), myPos[2] - pos[2]) < radius) {
 	  gotBlowedUp(tank, GotRunOver, myTank->getId());
 	  dead = true;
@@ -4668,7 +4668,7 @@ static void		checkEnvironment(RobotPlayer* tank)
 	  ((player[i]->getFlag() == Flags::Steamroller) || ((tank->getFlag() == Flags::Burrow) && player[i]->isAlive()))) {
 	const float* pos = player[i]->getPosition();
 	if (pos[2] < 0.0f) continue;
-	const float radius = myRadius + BZDB->eval(StateDatabase::BZDB_SRRADIUSMULT) * player[i]->getRadius();
+	const float radius = myRadius + BZDB.eval(StateDatabase::BZDB_SRRADIUSMULT) * player[i]->getRadius();
 	if (hypot(hypot(myPos[0] - pos[0], myPos[1] - pos[1]), myPos[2] - pos[2]) < radius) {
 	  gotBlowedUp(tank, GotRunOver, player[i]->getId());
 	  dead = true;
@@ -4790,15 +4790,15 @@ static void cleanWorldCache()
 {
   char buffer[10];
   int cacheLimit = 100L * 1024L;
-  if (BZDB->isSet("worldCacheLimit"))
-    cacheLimit = atoi(BZDB->get("worldCacheLimit").c_str());
+  if (BZDB.isSet("worldCacheLimit"))
+    cacheLimit = atoi(BZDB.get("worldCacheLimit").c_str());
   else {
 #ifndef _WIN32
     snprintf(buffer, 10, "%d", cacheLimit);
 #else
     sprintf(buffer, "%d", cacheLimit);
 #endif
-    BZDB->set("worldCacheLimit", buffer);
+    BZDB.set("worldCacheLimit", buffer);
   }
 
   std::string worldPath = getCacheDirectoryName();
@@ -4977,7 +4977,7 @@ static World*		makeWorld(ServerLink* serverLink)
     worldPath += "/";
     worldPath += hexDigest;
     worldPath += ".bwc";
-    cachedWorld = FILEMGR->createDataInStream(worldPath, true);
+    cachedWorld = FILEMGR.createDataInStream(worldPath, true);
     delete[] hexDigest;
   }
 
@@ -5020,8 +5020,7 @@ static World*		makeWorld(ServerLink* serverLink)
 
     if (worldPath.length() > 0) {
       cleanWorldCache();
-      std::ostream* cacheOut = FILEMGR->
-        createDataOutStream(worldPath, true, true);
+      std::ostream* cacheOut = FILEMGR.createDataOutStream(worldPath, true, true);
       if (cacheOut != NULL) {
         cacheOut->write(worldDatabase, size);
         delete cacheOut;
@@ -5265,10 +5264,10 @@ static void		leaveGame()
 
   // reset viewpoint
   float eyePoint[3], targetPoint[3];
-  float worldSize = BZDB->eval(StateDatabase::BZDB_WORLDSIZE);
+  float worldSize = BZDB.eval(StateDatabase::BZDB_WORLDSIZE);
   eyePoint[0] = 0.0f;
   eyePoint[1] = 0.0f;
-  eyePoint[2] = 0.0f + BZDB->eval(StateDatabase::BZDB_MUZZLEHEIGHT);
+  eyePoint[2] = 0.0f + BZDB.eval(StateDatabase::BZDB_MUZZLEHEIGHT);
   targetPoint[0] = eyePoint[0] - 1.0f;
   targetPoint[1] = eyePoint[1] + 0.0f;
   targetPoint[2] = eyePoint[2] + 0.0f;
@@ -5365,14 +5364,14 @@ static bool		joinGame(const StartupInfo* info,
   numFlags = world->getMaxFlags();
 
   // make scene database
-  const bool oldUseZBuffer = BZDB->isTrue("zbuffer");
-  BZDB->set("zbuffer", "0");
+  const bool oldUseZBuffer = BZDB.isTrue("zbuffer");
+  BZDB.set("zbuffer", "0");
   bspScene = sceneBuilder->make(world);
-  BZDB->set("zbuffer", "1");
+  BZDB.set("zbuffer", "1");
   // FIXME - test the zbuffer here
-  if (BZDB->isTrue("zbuffer"))
+  if (BZDB.isTrue("zbuffer"))
     zScene = sceneBuilder->make(world);
-  BZDB->set("zbuffer", oldUseZBuffer ? "1" : "0");
+  BZDB.set("zbuffer", oldUseZBuffer ? "1" : "0");
   setSceneDatabase();
 
   mainWindow->getWindow()->yieldCurrent();
@@ -5593,8 +5592,8 @@ static void		renderDialog()
 
 static int		getZoomFactor()
 {
-  if (!BZDB->isSet("displayZoom")) return 1;
-  const int zoom = atoi(BZDB->get("displayZoom").c_str());
+  if (!BZDB.isSet("displayZoom")) return 1;
+  const int zoom = atoi(BZDB.get("displayZoom").c_str());
   if (zoom < 1) return 1;
   if (zoom > 8) return 8;
   return zoom;
@@ -5622,7 +5621,7 @@ static void		playingLoop()
   // get view type (constant for entire game)
   const SceneRenderer::ViewType viewType = sceneRenderer->getViewType();
   const int zoomFactor = getZoomFactor();
-  const bool fakeCursor = BZDB->isTrue("fakecursor");
+  const bool fakeCursor = BZDB.isTrue("fakecursor");
   mainWindow->setZoomFactor(zoomFactor);
   if (fakeCursor)
     mainWindow->getWindow()->hideMouse();
@@ -5721,7 +5720,7 @@ static void		playingLoop()
       roamPos[0] += dt * (c * roamDPos[0] - s * roamDPos[1]);
       roamPos[1] += dt * (c * roamDPos[1] + s * roamDPos[0]);
       roamPos[2] += dt * roamDPos[2];
-      float muzzleHeight = BZDB->eval(StateDatabase::BZDB_MUZZLEHEIGHT);
+      float muzzleHeight = BZDB.eval(StateDatabase::BZDB_MUZZLEHEIGHT);
       if (roamPos[2] < muzzleHeight)
 	roamPos[2] = muzzleHeight;
       roamTheta  += dt * roamDTheta;
@@ -5870,16 +5869,16 @@ static void		playingLoop()
 
 	if (viewType == SceneRenderer::ThreeChannel) {
 	  if (myTank->getFlag() == Flags::WideAngle) fov = 90.0f;
-	  else fov = (BZDB->isTrue("displayBinoculars") ? 12.0f : 45.0f);
+	  else fov = (BZDB.isTrue("displayBinoculars") ? 12.0f : 45.0f);
 	}
 	else {
 	  if (myTank->getFlag() == Flags::WideAngle) fov = 120.0f;
-	  else fov = (BZDB->isTrue("displayBinoculars") ? 15.0f : 60.0f);
+	  else fov = (BZDB.isTrue("displayBinoculars") ? 15.0f : 60.0f);
 	}
       }
       fov *= M_PI / 180.0f;
 
-      float muzzleHeight = BZDB->eval(StateDatabase::BZDB_MUZZLEHEIGHT);
+      float muzzleHeight = BZDB.eval(StateDatabase::BZDB_MUZZLEHEIGHT);
       // set projection and view
       eyePoint[0] = myTankPos[0];
       eyePoint[1] = myTankPos[1];
@@ -5964,7 +5963,7 @@ static void		playingLoop()
 	fov = roamZoom * M_PI / 180.0f;
 	moveSoundReceiver(eyePoint[0], eyePoint[1], eyePoint[2], 0.0, false);
       }
-      float worldSize = BZDB->eval(StateDatabase::BZDB_WORLDSIZE);
+      float worldSize = BZDB.eval(StateDatabase::BZDB_WORLDSIZE);
       sceneRenderer->getViewFrustum().setProjection(fov,
 						    1.1f, 1.5f * worldSize,
 						    mainWindow->getWidth(),
@@ -6106,15 +6105,15 @@ static void		playingLoop()
 	// back to center channel
 	mainWindow->setQuadrant(MainWindow::UpperRight);
       } else if (viewType == SceneRenderer::Stacked) {
-	static float EyeDisplacement = 0.25f * BZDB->eval(StateDatabase::BZDB_TANKWIDTH);
+	static float EyeDisplacement = 0.25f * BZDB.eval(StateDatabase::BZDB_TANKWIDTH);
 	static float FocalPlane = BoxBase;
 	static bool init = false;
 	if (!init) {
 	  init = true;
-	  if (BZDB->isSet("eyesep"))
-	    EyeDisplacement = BZDB->eval("eyesep");
-	  if (BZDB->isSet("focal"))
-	    FocalPlane = BZDB->eval("focal");
+	  if (BZDB.isSet("eyesep"))
+	    EyeDisplacement = BZDB.eval("eyesep");
+	  if (BZDB.isSet("focal"))
+	    FocalPlane = BZDB.eval("focal");
 	}
 
 	// setup view for left eye
@@ -6143,15 +6142,15 @@ static void		playingLoop()
 	// back to left channel
 	mainWindow->setQuadrant(MainWindow::LowerHalf);
       } else if (viewType == SceneRenderer::Stereo) {
-	static float EyeDisplacement = 0.25f * BZDB->eval(StateDatabase::BZDB_TANKWIDTH);
+	static float EyeDisplacement = 0.25f * BZDB.eval(StateDatabase::BZDB_TANKWIDTH);
 	static float FocalPlane = BoxBase;
 	static bool init = false;
 	if (!init) {
 	  init = true;
-	  if (BZDB->isSet("eyesep"))
-	    EyeDisplacement = BZDB->eval("eyesep");
-	  if (BZDB->isSet("focal"))
-	    FocalPlane = BZDB->eval("focal");
+	  if (BZDB.isSet("eyesep"))
+	    EyeDisplacement = BZDB.eval("eyesep");
+	  if (BZDB.isSet("focal"))
+	    FocalPlane = BZDB.eval("focal");
 	}
 
 	// setup view for left eye
@@ -6200,15 +6199,15 @@ static void		playingLoop()
 	mainWindow->setQuadrant(MainWindow::UpperRight);
 #endif
       } else if (viewType == SceneRenderer::Anaglyph) {
-	static float EyeDisplacement = 0.25f * BZDB->eval(StateDatabase::BZDB_TANKWIDTH);
+	static float EyeDisplacement = 0.25f * BZDB.eval(StateDatabase::BZDB_TANKWIDTH);
 	static float FocalPlane = BoxBase;
 	static bool init = false;
 	if (!init) {
 	  init = true;
-	  if (BZDB->isSet("eyesep"))
-	    EyeDisplacement = BZDB->eval("eyesep");
-	  if (BZDB->isSet("focal"))
-	    FocalPlane = BZDB->eval("focal");
+	  if (BZDB.isSet("eyesep"))
+	    EyeDisplacement = BZDB.eval("eyesep");
+	  if (BZDB.isSet("focal"))
+	    FocalPlane = BZDB.eval("focal");
 	}
 
 	// setup view for left eye
@@ -6267,7 +6266,7 @@ static void		playingLoop()
 	  glPixelZoom((float)zoomFactor, (float)zoomFactor);
 	  glCopyPixels(x, y, w, h, GL_COLOR);
 	  glPixelZoom(1.0f, 1.0f);
-	  if (BZDB->isTrue("dither")) glEnable(GL_DITHER);
+	  if (BZDB.isTrue("dither")) glEnable(GL_DITHER);
 	}
 	else {
 	  // normal rendering
@@ -6417,7 +6416,7 @@ static void		playingLoop()
 static float		timeConfiguration(bool useZBuffer)
 {
   // prepare depth buffer if requested
-  BZDB->set("zbuffer", useZBuffer ? "1" : "0");
+  BZDB.set("zbuffer", useZBuffer ? "1" : "0");
   if (useZBuffer) {
     glEnable(GL_DEPTH_TEST);
     glClear(GL_DEPTH_BUFFER_BIT);
@@ -6442,14 +6441,14 @@ static void		timeConfigurations()
   static const float MaxFrameTime = 0.050f;	// seconds
 
   // ignore results of first test.  OpenGL could be doing lazy setup.
-  BZDB->set("blend", "0");
-  BZDB->set("smooth", "0");
-  BZDB->set("lighting", "0");
-  BZDB->set("texture", "0");
+  BZDB.set("blend", "0");
+  BZDB.set("smooth", "0");
+  BZDB.set("lighting", "0");
+  BZDB.set("texture", "0");
   sceneRenderer->setQuality(0);
-  BZDB->set("dither", "1");
-  BZDB->set("shadows", "0");
-  BZDB->set("enhancedradar", "0");
+  BZDB.set("dither", "1");
+  BZDB.set("shadows", "0");
+  BZDB.set("enhancedradar", "0");
   OpenGLTexture::setFilter(OpenGLTexture::Off);
   timeConfiguration(true);
 
@@ -6459,7 +6458,7 @@ static void		timeConfigurations()
   printError("  lowest quality");
   const float timeNoBlendNoZ = timeConfiguration(false);
   const float timeNoBlendZ   = timeConfiguration(true);
-  BZDB->set("blend", "1");
+  BZDB.set("blend", "1");
   const float timeBlendNoZ   = timeConfiguration(false);
   const float timeBlendZ     = timeConfiguration(true);
   if (timeNoBlendNoZ > MaxFrameTime &&
@@ -6470,41 +6469,41 @@ static void		timeConfigurations()
 	timeNoBlendNoZ < timeBlendNoZ &&
 	timeNoBlendNoZ < timeBlendZ) {
       // no depth, no blending definitely fastest
-      BZDB->set("zbuffer", "0");
-      BZDB->set("blend", "0");
+      BZDB.set("zbuffer", "0");
+      BZDB.set("blend", "0");
     }
     if (timeNoBlendZ < timeBlendNoZ &&
 	timeNoBlendZ < timeBlendZ) {
       // no blending faster than blending
-      BZDB->set("zbuffer", "0");
-      BZDB->set("blend", "0");
+      BZDB.set("zbuffer", "0");
+      BZDB.set("blend", "0");
     }
     if (timeBlendNoZ < timeBlendZ) {
       // blending faster than depth
-      BZDB->set("zbuffer", "0");
-      BZDB->set("blend", "1");
+      BZDB.set("zbuffer", "0");
+      BZDB.set("blend", "1");
     }
     // blending and depth faster than without either
-    BZDB->set("zbuffer", "1");
-    BZDB->set("blend", "1");
+    BZDB.set("zbuffer", "1");
+    BZDB.set("blend", "1");
     return;
   }
 
   // leave blending on if blending clearly faster than stippling
   if (timeBlendNoZ > timeNoBlendNoZ || timeBlendNoZ > timeNoBlendZ &&
       timeBlendZ   > timeNoBlendNoZ || timeBlendZ   > timeNoBlendZ) {
-    BZDB->set("blend", "0");
+    BZDB.set("blend", "0");
   }
 
   // try texturing.  if it's too slow then fall back to
   // lowest quality and return.
   OpenGLTexture::setFilter(OpenGLTexture::Nearest);
-  BZDB->set("texture", OpenGLTexture::getFilterName());
+  BZDB.set("texture", OpenGLTexture::getFilterName());
   sceneRenderer->setQuality(1);
   printError("  lowest quality with texture");
   if (timeConfiguration(false) > MaxFrameTime ||
       timeConfiguration(true) > MaxFrameTime) {
-    BZDB->set("texture", "0");
+    BZDB.set("texture", "0");
     OpenGLTexture::setFilter(OpenGLTexture::Off);
     sceneRenderer->setQuality(0);
     return;
@@ -6512,20 +6511,20 @@ static void		timeConfigurations()
 
   // everything
   printError("  full quality");
-  BZDB->set("blend", "1");
-  BZDB->set("smooth", "1");
-  BZDB->set("lighting", "1");
+  BZDB.set("blend", "1");
+  BZDB.set("smooth", "1");
+  BZDB.set("lighting", "1");
   OpenGLTexture::setFilter(OpenGLTexture::LinearMipmapLinear);
-  BZDB->set("texture", OpenGLTexture::getFilterName());
+  BZDB.set("texture", OpenGLTexture::getFilterName());
   sceneRenderer->setQuality(2);
-  BZDB->set("dither", "1");
-  BZDB->set("shadows", "1");
-  BZDB->set("enhancedradar", "1");
+  BZDB.set("dither", "1");
+  BZDB.set("shadows", "1");
+  BZDB.set("enhancedradar", "1");
   if (timeConfiguration(true) < MaxFrameTime) return;
   if (timeConfiguration(false) < MaxFrameTime) return;
 
   // try it without shadows -- some platforms stipple very slowly
-  BZDB->set("shadows", "0");
+  BZDB.set("shadows", "0");
   if (timeConfiguration(true) < MaxFrameTime) return;
   if (timeConfiguration(false) < MaxFrameTime) return;
 
@@ -6547,32 +6546,32 @@ static void		timeConfigurations()
 
   // no texturing
   printError("  no texturing");
-  BZDB->set("texture", "0");
+  BZDB.set("texture", "0");
   OpenGLTexture::setFilter(OpenGLTexture::Off);
   if (timeConfiguration(true) < MaxFrameTime) return;
   if (timeConfiguration(false) < MaxFrameTime) return;
 
   // no blending
   printError("  no blending");
-  BZDB->set("blend", "0");
+  BZDB.set("blend", "0");
   if (timeConfiguration(true) < MaxFrameTime) return;
   if (timeConfiguration(false) < MaxFrameTime) return;
 
   // no smoothing.  shouldn't really affect fill rate too much.
   printError("  no smoothing");
-  BZDB->set("smooth", "0");
+  BZDB.set("smooth", "0");
   if (timeConfiguration(true) < MaxFrameTime) return;
   if (timeConfiguration(false) < MaxFrameTime) return;
 
   // no lighting.  shouldn't really affect fill rate, either.
   printError("  no lighting");
-  BZDB->set("lighting", "0");
+  BZDB.set("lighting", "0");
   if (timeConfiguration(true) < MaxFrameTime) return;
   if (timeConfiguration(false) < MaxFrameTime) return;
 
   // no dithering
   printError("  no dithering");
-  BZDB->set("dither", "0");
+  BZDB.set("dither", "0");
   if (timeConfiguration(true) < MaxFrameTime) return;
   if (timeConfiguration(false) < MaxFrameTime) return;
 }
@@ -6590,10 +6589,10 @@ static void		findFastConfiguration()
   // across invokations.
 
   // setup projection
-  float muzzleHeight = BZDB->eval(StateDatabase::BZDB_MUZZLEHEIGHT);
+  float muzzleHeight = BZDB.eval(StateDatabase::BZDB_MUZZLEHEIGHT);
   static const GLfloat eyePoint[3] = { 0.0f, 0.0f, muzzleHeight };
   static const GLfloat targetPoint[3] = { 0.0f, 10.0f, muzzleHeight };
-  float worldSize = BZDB->eval(StateDatabase::BZDB_WORLDSIZE);
+  float worldSize = BZDB.eval(StateDatabase::BZDB_WORLDSIZE);
   sceneRenderer->getViewFrustum().setProjection(45.0f * M_PI / 180.0f,
 						1.1f, 1.5f * worldSize,
 						mainWindow->getWidth(),
@@ -6656,7 +6655,7 @@ void			startPlaying(BzfDisplay* _display,
 
   // register some commands
   for (unsigned int c = 0; c < countof(commandList); ++c) {
-    CMDMGR->add(commandList[c].name, commandList[c].func, commandList[c].help);
+    CMDMGR.add(commandList[c].name, commandList[c].func, commandList[c].help);
   }
 
   // make control panel
@@ -6694,19 +6693,19 @@ void			startPlaying(BzfDisplay* _display,
   // if no configuration, turn off fancy rendering so startup is fast,
   // even on a slow machine.
   if (!_info->hasConfiguration) {
-    BZDB->set("blend", "0");
-    BZDB->set("smooth", "0");
-    BZDB->set("lighting", "0");
-    BZDB->set("texture", "0");
+    BZDB.set("blend", "0");
+    BZDB.set("smooth", "0");
+    BZDB.set("lighting", "0");
+    BZDB.set("texture", "0");
     sceneRenderer->setQuality(0);
-    BZDB->set("dither", "0");
-    BZDB->set("shadows", "0");
-    BZDB->set("enhancedradar", "0");
+    BZDB.set("dither", "0");
+    BZDB.set("shadows", "0");
+    BZDB.set("enhancedradar", "0");
     OpenGLTexture::setFilter(OpenGLTexture::Off);
   }
 
   // should we grab the mouse?  yes if fullscreen.
-  if (!BZDB->isSet("_window"))
+  if (!BZDB.isSet("_window"))
     setGrabMouse(true);
 #if defined(__linux__) && !defined(DEBUG)
   // linux usually has a virtual root window so grab mouse always
@@ -6759,8 +6758,8 @@ void			startPlaying(BzfDisplay* _display,
 #endif /* !defined(_WIN32) */
 
   // set the resolution (only if in full screen mode)
-  if (!BZDB->isSet("_window") && BZDB->isSet("resolution")) {
-    std::string videoFormat = BZDB->get("resolution");
+  if (!BZDB.isSet("_window") && BZDB.isSet("resolution")) {
+    std::string videoFormat = BZDB.get("resolution");
     if (videoFormat.length() != 0) {
       const int format = display->findResolution(videoFormat.c_str());
       if (display->isValidResolution(format) &&
@@ -6768,10 +6767,10 @@ void			startPlaying(BzfDisplay* _display,
 	  display->setResolution(format)) {
 
 	// handle resize
-	if (BZDB->isSet("geometry")) {
+	if (BZDB.isSet("geometry")) {
 	  int w, h, x, y, count;
 	  char xs, ys;
-	  count = sscanf(BZDB->get("geometry").c_str(),
+	  count = sscanf(BZDB.get("geometry").c_str(),
 			 "%dx%d%c%d%c%d", &w, &h, &xs, &x, &ys, &y);
 	  if (w < 256) w = 256;
 	  if (h < 192) h = 192;
@@ -6828,10 +6827,10 @@ void			startPlaying(BzfDisplay* _display,
 
   static const GLfloat	zero[3] = { 0.0f, 0.0f, 0.0f };
 
-  TextureManager *tm = TextureManager::getTextureManager();
+  TextureManager &tm = TextureManager::instance();
   for (i = 1;; i++) {
     // try loading texture
-    OpenGLTexture *tex = tm->getTexture( TX_EXPLOSION, i );
+    OpenGLTexture *tex = tm.getTexture( TX_EXPLOSION, i );
 
     if (!tex || !tex->isValid()) break;
 
@@ -6848,7 +6847,7 @@ void			startPlaying(BzfDisplay* _display,
   }
 
   // get tank textures
-  tankTexture = tm->getTexture( TX_TANK );
+  tankTexture = tm.getTexture( TX_TANK );
 
   // let other stuff do initialization
   sceneBuilder = new SceneDatabaseBuilder(sceneRenderer);
@@ -6938,7 +6937,6 @@ void			startPlaying(BzfDisplay* _display,
   sceneRenderer->setSceneDatabase(NULL);
   delete zScene;
   delete bspScene;
-  TextureManager::terminate();
   World::done();
   zScene = NULL;
   bspScene = NULL;
@@ -6947,7 +6945,7 @@ void			startPlaying(BzfDisplay* _display,
   display = NULL;
 }
 
-// Local variables: ***
+// Local Variables: ***
 // mode:C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***

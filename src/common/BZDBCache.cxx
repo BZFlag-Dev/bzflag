@@ -28,42 +28,44 @@ float BZDBCache::tankRadius;
 
 void BZDBCache::init()
 {
-  BZDB->addCallback("displayMainFlags", clientCallback, NULL);
-  BZDB->addCallback("enhancedradar", clientCallback, NULL);
+  BZDB.addCallback("displayMainFlags", clientCallback, NULL);
+  BZDB.addCallback("enhancedradar", clientCallback, NULL);
 
-  BZDB->addCallback(StateDatabase::BZDB_MAXLOD, serverCallback, NULL);
-  BZDB->addCallback(StateDatabase::BZDB_TANKHEIGHT, serverCallback, NULL);
-  BZDB->addCallback(StateDatabase::BZDB_FLAGRADIUS, serverCallback, NULL);
+  BZDB.addCallback(StateDatabase::BZDB_MAXLOD, serverCallback, NULL);
+  BZDB.addCallback(StateDatabase::BZDB_TANKHEIGHT, serverCallback, NULL);
+  BZDB.addCallback(StateDatabase::BZDB_FLAGRADIUS, serverCallback, NULL);
 
-  maxLOD     = BZDB->eval(StateDatabase::BZDB_MAXLOD);
-  tankHeight = BZDB->eval(StateDatabase::BZDB_TANKHEIGHT);
-  flagRadius = BZDB->eval(StateDatabase::BZDB_FLAGRADIUS);
+  maxLOD     = BZDB.eval(StateDatabase::BZDB_MAXLOD);
+  tankHeight = BZDB.eval(StateDatabase::BZDB_TANKHEIGHT);
+  flagRadius = BZDB.eval(StateDatabase::BZDB_FLAGRADIUS);
   update();
 }
 
 void BZDBCache::clientCallback(const std::string& name, void *)
 {
   if (name == "displayMainFlags")
-    displayMainFlags = BZDB->isTrue("displayMainFlags");
+    displayMainFlags = BZDB.isTrue("displayMainFlags");
   else if (name == "enhancedradar")
-    enhancedRadar = BZDB->isTrue("enhancedradar");
+    enhancedRadar = BZDB.isTrue("enhancedradar");
 }
 
 void BZDBCache::serverCallback(const std::string& name, void *)
 {
   if (name == StateDatabase::BZDB_MAXLOD)
-    maxLOD = BZDB->eval(StateDatabase::BZDB_MAXLOD);
+    maxLOD = BZDB.eval(StateDatabase::BZDB_MAXLOD);
   else if (name == StateDatabase::BZDB_TANKHEIGHT)
-    tankHeight = BZDB->eval(StateDatabase::BZDB_TANKHEIGHT);
+    tankHeight = BZDB.eval(StateDatabase::BZDB_TANKHEIGHT);
   else if (name == StateDatabase::BZDB_FLAGRADIUS)
-    flagRadius = BZDB->eval(StateDatabase::BZDB_FLAGRADIUS);
+    flagRadius = BZDB.eval(StateDatabase::BZDB_FLAGRADIUS);
 }
 
 void BZDBCache::update() {
-  tankRadius = BZDB->eval(StateDatabase::BZDB_TANKRADIUS);
+  tankRadius = BZDB.eval(StateDatabase::BZDB_TANKRADIUS);
 }
-// Local variables: ***
-// mode:C++ ***
+
+
+// Local Variables: ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***

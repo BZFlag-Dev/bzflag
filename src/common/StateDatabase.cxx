@@ -157,7 +157,6 @@ StateDatabase::Item::Item() : value(),
 // StateDatabase
 //
 
-StateDatabase*		StateDatabase::s_instance = NULL;
 
 StateDatabase::StateDatabase()
 {
@@ -166,7 +165,7 @@ StateDatabase::StateDatabase()
 
 StateDatabase::~StateDatabase()
 {
-  s_instance = NULL;
+  // do nothing
 }
 
 void			StateDatabase::set(const std::string& name,
@@ -422,13 +421,6 @@ void			StateDatabase::write(Callback callback, void* userData) const
       (*callback)(index->first, userData);
     }
   }
-}
-
-StateDatabase*		StateDatabase::getInstance()
-{
-  if (s_instance == NULL)
-    s_instance = new StateDatabase;
-  return s_instance;
 }
 
 StateDatabase::ExpressionToken::ExpressionToken()
@@ -789,7 +781,7 @@ float StateDatabase::evaluate(Expression e) const
         break;
       case ExpressionToken::variable:
         // strip off '$'?
-        tok.setNumber(BZDB->eval(i->getVariable()));
+        tok.setNumber(BZDB.eval(i->getVariable()));
         evaluationStack.push(tok);
         break;
       case ExpressionToken::oper:
@@ -840,7 +832,7 @@ float StateDatabase::evaluate(Expression e) const
 }
 
 
-// Local variables: ***
+// Local Variables: ***
 // mode:C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***

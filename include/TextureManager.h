@@ -14,7 +14,7 @@
 #include <map>
 
 #include "OpenGLTexture.h"
-
+#include "Singleton.h"
 
 typedef enum TextureType { TX_BOLT, TX_TRANSBOLT, TX_LASER, TX_THIEF, TX_MISSILE,
                            TX_GROUND, TX_CLOUDS, TX_MOUNTAIN, TX_EXPLOSION,
@@ -29,27 +29,33 @@ struct TextureInit
   OpenGLTexture::Filter	filter;
 };
 
-class TextureManager
+class TextureManager : public Singleton<TextureManager>
 {
 public:
-	static TextureManager* getTextureManager();
-	static void TextureManager::terminate();
-
-	~TextureManager();
-
-	OpenGLTexture* getTexture( TextureType type );
-	OpenGLTexture* getTexture( TextureType type, int variant );
-	void addTexture( TextureType type, OpenGLTexture *texture );
-	void addTexture( TextureType type, int variant, OpenGLTexture *texture );
+  OpenGLTexture* getTexture( TextureType type );
+  OpenGLTexture* getTexture( TextureType type, int variant );
+  void addTexture( TextureType type, OpenGLTexture *texture );
+  void addTexture( TextureType type, int variant, OpenGLTexture *texture );
+  
+protected:
+  friend class Singleton<TextureManager>;
+  ~TextureManager();
 
 private:
-	TextureManager();
-	TextureManager(const TextureManager &tm);
-	TextureManager& operator=(const TextureManager &tm);
-
-	OpenGLTexture* loadTexture( TextureInit &init );
-
-	static TextureManager *m_TM;
-	std::map<int, OpenGLTexture*> m_Textures;
+  TextureManager();
+  TextureManager(const TextureManager &tm);
+  TextureManager& operator=(const TextureManager &tm);
+  
+  OpenGLTexture* loadTexture( TextureInit &init );
+  
+  std::map<int, OpenGLTexture*> m_Textures;
 };
 
+
+// Local Variables: ***
+// mode: C++ ***
+// tab-width: 8 ***
+// c-basic-offset: 2 ***
+// indent-tabs-mode: t ***
+// End: ***
+// ex: shiftwidth=2 tabstop=8

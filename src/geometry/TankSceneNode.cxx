@@ -28,9 +28,9 @@ public:
        TankFactors()
        {
          if (!callbackAdded) {
-	     BZDB->addCallback(StateDatabase::BZDB_OBESEFACTOR, callback, NULL );
-	     BZDB->addCallback(StateDatabase::BZDB_TINYFACTOR, callback, NULL );
-	     BZDB->addCallback(StateDatabase::BZDB_THIEFTINYFACTOR, callback, NULL );
+	     BZDB.addCallback(StateDatabase::BZDB_OBESEFACTOR, callback, NULL );
+	     BZDB.addCallback(StateDatabase::BZDB_TINYFACTOR, callback, NULL );
+	     BZDB.addCallback(StateDatabase::BZDB_THIEFTINYFACTOR, callback, NULL );
 	     callbackAdded = true;
 	 }
        }
@@ -38,15 +38,15 @@ public:
        static void callback(const std::string& name, void*)
        {
 	  if (name == StateDatabase::BZDB_OBESEFACTOR) {
-             styleFactors[1][0] = BZDB->eval(StateDatabase::BZDB_OBESEFACTOR);
+             styleFactors[1][0] = BZDB.eval(StateDatabase::BZDB_OBESEFACTOR);
              styleFactors[1][1] = styleFactors[1][0];
 	  }
 	  else if (name == StateDatabase::BZDB_TINYFACTOR) {
-             styleFactors[2][0] = BZDB->eval(StateDatabase::BZDB_TINYFACTOR);
+             styleFactors[2][0] = BZDB.eval(StateDatabase::BZDB_TINYFACTOR);
              styleFactors[2][1] = styleFactors[2][0];
 	  }
 	  else if (name == StateDatabase::BZDB_THIEFTINYFACTOR) {
-             styleFactors[4][0] = BZDB->eval(StateDatabase::BZDB_THIEFTINYFACTOR);
+             styleFactors[4][0] = BZDB.eval(StateDatabase::BZDB_THIEFTINYFACTOR);
              styleFactors[4][1] = styleFactors[4][0];
 	  }
        }
@@ -86,8 +86,8 @@ TankSceneNode::TankSceneNode(const GLfloat pos[3], const GLfloat forward[3]) :
 
 			// prepare geometry
   move(pos, forward);
-  baseRadius = 0.25f * (BZDB->eval(StateDatabase::BZDB_TANKLENGTH) * BZDB->eval(StateDatabase::BZDB_TANKLENGTH) +
-			BZDB->eval(StateDatabase::BZDB_TANKWIDTH) * BZDB->eval(StateDatabase::BZDB_TANKWIDTH) +
+  baseRadius = 0.25f * (BZDB.eval(StateDatabase::BZDB_TANKLENGTH) * BZDB.eval(StateDatabase::BZDB_TANKLENGTH) +
+			BZDB.eval(StateDatabase::BZDB_TANKWIDTH) * BZDB.eval(StateDatabase::BZDB_TANKWIDTH) +
 			BZDBCache::tankHeight * BZDBCache::tankHeight);
   setRadius(baseRadius);
 
@@ -153,12 +153,12 @@ void			TankSceneNode::move(const GLfloat pos[3],
 void			TankSceneNode::notifyStyleChange(
 				const SceneRenderer&)
 {
-  sort = !BZDB->isTrue("zbuffer");
-  blending = BZDB->isTrue("blend");
+  sort = !BZDB.isTrue("zbuffer");
+  blending = BZDB.isTrue("blend");
   OpenGLGStateBuilder builder(gstate);
-  builder.enableTexture(BZDB->isTrue("texture"));
-  builder.enableMaterial(BZDB->isTrue("lighting"));
-  builder.setSmoothing(BZDB->isTrue("smooth"));
+  builder.enableTexture(BZDB.isTrue("texture"));
+  builder.enableMaterial(BZDB.isTrue("lighting"));
+  builder.setSmoothing(BZDB.isTrue("smooth"));
   if (blending && transparent) {
     builder.setBlending(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     builder.setStipple(1.0f);
@@ -170,7 +170,7 @@ void			TankSceneNode::notifyStyleChange(
   gstate = builder.getState();
 
   OpenGLGStateBuilder builder2(lightsGState);
-  if (BZDB->isTrue("smooth")) {
+  if (BZDB.isTrue("smooth")) {
     builder2.setBlending(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     builder2.setSmoothing();
   }
@@ -239,14 +239,14 @@ void			TankSceneNode::setNormal()
 void			TankSceneNode::setObese()
 {
   style = TankRenderNode::Obese;
-  float factor = BZDB->eval(StateDatabase::BZDB_OBESEFACTOR);
+  float factor = BZDB.eval(StateDatabase::BZDB_OBESEFACTOR);
   setRadius(factor*factor*baseRadius);
 }
 
 void			TankSceneNode::setTiny()
 {
   style = TankRenderNode::Tiny;
-  float factor = BZDB->eval(StateDatabase::BZDB_TINYFACTOR);
+  float factor = BZDB.eval(StateDatabase::BZDB_TINYFACTOR);
   setRadius(factor*factor*baseRadius);
 }
 
@@ -259,7 +259,7 @@ void			TankSceneNode::setNarrow()
 void			TankSceneNode::setThief()
 {
   style = TankRenderNode::Thief;
-  float factor = BZDB->eval(StateDatabase::BZDB_THIEFTINYFACTOR);
+  float factor = BZDB.eval(StateDatabase::BZDB_THIEFTINYFACTOR);
   setRadius(factor*factor*baseRadius);
 }
 
@@ -309,7 +309,7 @@ TankIDLSceneNode::TankIDLSceneNode(const TankSceneNode* _tank) :
 {
   static const GLfloat defaultPlane[4] = { 1.0f, 0.0f, 0.0f, 0.0f };
   move(defaultPlane);
-  setRadius(4.0f * BZDB->eval(StateDatabase::BZDB_TANKLENGTH) * BZDB->eval(StateDatabase::BZDB_TANKLENGTH));
+  setRadius(4.0f * BZDB.eval(StateDatabase::BZDB_TANKLENGTH) * BZDB.eval(StateDatabase::BZDB_TANKLENGTH));
 
   OpenGLGStateBuilder builder(gstate);
   builder.setCulling(GL_NONE);
@@ -332,16 +332,16 @@ void			TankIDLSceneNode::move(const GLfloat _plane[4])
 
   // compute new sphere
   const GLfloat* s = tank->getSphere();
-  setCenter(s[0] + 1.5f * BZDB->eval(StateDatabase::BZDB_TANKLENGTH) * plane[0],
-	    s[1] + 1.5f * BZDB->eval(StateDatabase::BZDB_TANKLENGTH) * plane[1],
-	    s[2] + 1.5f * BZDB->eval(StateDatabase::BZDB_TANKLENGTH) * plane[2]);
+  setCenter(s[0] + 1.5f * BZDB.eval(StateDatabase::BZDB_TANKLENGTH) * plane[0],
+	    s[1] + 1.5f * BZDB.eval(StateDatabase::BZDB_TANKLENGTH) * plane[1],
+	    s[2] + 1.5f * BZDB.eval(StateDatabase::BZDB_TANKLENGTH) * plane[2]);
 }
 
 void			TankIDLSceneNode::notifyStyleChange(
 				const SceneRenderer&)
 {
   OpenGLGStateBuilder builder(gstate);
-  if (BZDB->isTrue("blend")) {
+  if (BZDB.isTrue("blend")) {
     builder.setBlending(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     builder.setStipple(1.0f);
   }
@@ -474,7 +474,7 @@ void			TankIDLSceneNode::IDLRenderNode::render()
 	      sphere[2] * _plane[2] + _plane[3]);
 
   // compute projection point -- one TankLengthy in from plane
-  const GLfloat pd = -1.0f * BZDB->eval(StateDatabase::BZDB_TANKLENGTH) - plane[3];
+  const GLfloat pd = -1.0f * BZDB.eval(StateDatabase::BZDB_TANKLENGTH) - plane[3];
   GLfloat origin[3];
   origin[0] = pd * plane[0];
   origin[1] = pd * plane[1];
@@ -1074,7 +1074,7 @@ void			TankSceneNode::HighTankRenderNode::makeRightTread()
 #include "models/hitank/rtread.c"
 }
 
-// Local variables: ***
+// Local Variables: ***
 // mode:C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***

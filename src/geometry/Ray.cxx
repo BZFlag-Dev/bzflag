@@ -53,7 +53,7 @@ void			Ray::getPoint(float t, float p[3]) const
   p[2] = o[2] + t * d[2];
 }
 
-// Local variables: ***
+// Local Variables: ***
 // mode:C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***

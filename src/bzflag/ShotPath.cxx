@@ -29,13 +29,14 @@ FiringInfo::FiringInfo(const BaseLocalPlayer& tank, int id)
   tank.getMuzzle(shot.pos);
   const float* dir = tank.getForward();
   const float* tankVel = tank.getVelocity();
-  float shotSpeed = BZDB->eval(StateDatabase::BZDB_SHOTSPEED);
+  float shotSpeed = BZDB.eval(StateDatabase::BZDB_SHOTSPEED);
   shot.vel[0] = tankVel[0] + shotSpeed * dir[0];
   shot.vel[1] = tankVel[1] + shotSpeed * dir[1];
   shot.vel[2] = tankVel[2] + shotSpeed * dir[2];
   shot.dt = 0.0f;
   flagType = tank.getFlag();
-  lifetime = BZDB->eval(StateDatabase::BZDB_RELOADTIME);
+  lifetime = BZDB.eval(StateDatabase::BZDB_RELOADTIME);
+  lifetime = BZDB.eval(StateDatabase::BZDB_RELOADTIME);
 }
 
 //
@@ -44,7 +45,7 @@ FiringInfo::FiringInfo(const BaseLocalPlayer& tank, int id)
 
 ShotPath::ShotPath(const FiringInfo& info) :
 				firingInfo(info),
-				reloadTime(BZDB->eval(StateDatabase::BZDB_RELOADTIME)),
+				reloadTime(BZDB.eval(StateDatabase::BZDB_RELOADTIME)),
 				startTime(TimeKeeper::getTick()),
 				currentTime(TimeKeeper::getTick()),
 				expiring(false),
@@ -207,7 +208,7 @@ void			RemoteShotPath::update(const ShotUpdate& shot,
   getStrategy()->readUpdate(code, msg);
 }
 
-// Local variables: ***
+// Local Variables: ***
 // mode:C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***

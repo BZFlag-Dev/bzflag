@@ -56,24 +56,6 @@ TextureInit loader[] =
 	{ TX_FLAG, NO_VARIANT, "flag", OpenGLTexture::Max },
 };
 
-
-TextureManager *TextureManager::m_TM = NULL;
-
-TextureManager* TextureManager::getTextureManager()
-{
-  if (m_TM == NULL)
-    m_TM = new TextureManager();
-
-  return m_TM;
-}
-
-void TextureManager::terminate()
-{
-  if (m_TM)
-    delete m_TM;
-  m_TM = NULL;
-}
-  
 TextureManager::TextureManager()
 {
   int numTextures = sizeof( loader ) / sizeof( TextureInit );
@@ -85,7 +67,9 @@ TextureManager::~TextureManager()
 {
   for( std::map<int, OpenGLTexture*>::iterator it = m_Textures.begin(); it != m_Textures.end(); ++it) {
     OpenGLTexture* tex = it->second;
-    delete tex;
+    if (tex != NULL) {
+      delete tex;
+    }
   }
   m_Textures.clear();
 }
@@ -122,3 +106,12 @@ OpenGLTexture* TextureManager::loadTexture( TextureInit &init )
   *texture = ::getTexture( init.fileName, init.filter);
   return texture;
 }
+
+
+// Local Variables: ***
+// mode: C++ ***
+// tab-width: 8 ***
+// c-basic-offset: 2 ***
+// indent-tabs-mode: t ***
+// End: ***
+// ex: shiftwidth=2 tabstop=8

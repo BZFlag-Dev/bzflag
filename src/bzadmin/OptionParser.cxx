@@ -89,7 +89,7 @@ void OptionParser::printUsage(std::ostream& os, const std::string& progName) con
   os<<usageSuf;
 }
 
-// Local variables: ***
+// Local Variables: ***
 // mode:C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***

@@ -91,14 +91,14 @@ void handlePasswordCmd(int t, const char *message)
 
 void handleSetCmd(int t, const char *message)
 {
-  sendMessage(ServerPlayer, t, CMDMGR->run(message+1).c_str());
+  sendMessage(ServerPlayer, t, CMDMGR.run(message+1).c_str());
   return;
 }
 
 
 void handleResetCmd(int t, const char *message)
 {
-  sendMessage(ServerPlayer, t, CMDMGR->run(message+1).c_str());
+  sendMessage(ServerPlayer, t, CMDMGR.run(message+1).c_str());
   return;
 }
 
@@ -904,7 +904,7 @@ void handlePollCmd(int t, const char *message)
   DEBUG2("Player has permission\n");
 
   /* make sure that there is a poll arbiter */
-  if (BZDB->isEmpty("poll")) {
+  if (BZDB.isEmpty("poll")) {
     sprintf(reply, "ERROR: the poll arbiter has disappeared (this should never happen)");
     sendMessage(ServerPlayer, t, reply, true);
     return;
@@ -913,7 +913,7 @@ void handlePollCmd(int t, const char *message)
   DEBUG2("BZDB poll value is not empty\n");
 
   // only need to do this once
-  static VotingArbiter *arbiter = (VotingArbiter *)BZDB->getPointer("poll");
+  static VotingArbiter *arbiter = (VotingArbiter *)BZDB.getPointer("poll");
 
   DEBUG2("Arbiter was acquired with address 0x%x\n", (unsigned int)arbiter);
 
@@ -1139,14 +1139,14 @@ void handleVoteCmd(int t, const char *message)
   }
 
   /* make sure that there is a poll arbiter */
-  if (BZDB->isEmpty("poll")) {
+  if (BZDB.isEmpty("poll")) {
     sprintf(reply, "ERROR: the poll arbiter has disappeared (this should never happen)");
     sendMessage(ServerPlayer, t, reply, true);
     return;
   }
 
   // only need to get this once
-  static VotingArbiter *arbiter = (VotingArbiter *)BZDB->getPointer("poll");
+  static VotingArbiter *arbiter = (VotingArbiter *)BZDB.getPointer("poll");
 
   /* make sure that there is a poll to vote upon */
   if ((arbiter != NULL) && !arbiter->knowsPoll()) {
@@ -1260,14 +1260,14 @@ void handleVetoCmd(int t, const char * /*message*/)
   }
 
   /* make sure that there is a poll arbiter */
-  if (BZDB->isEmpty("poll")) {
+  if (BZDB.isEmpty("poll")) {
     sprintf(reply, "ERROR: the poll arbiter has disappeared (this should never happen)");
     sendMessage(ServerPlayer, t, reply, true);
     return;
   }
 
   // only need to do this once
-  static VotingArbiter *arbiter = (VotingArbiter *)BZDB->getPointer("poll");
+  static VotingArbiter *arbiter = (VotingArbiter *)BZDB.getPointer("poll");
 
   /* make sure there is an unexpired poll */
   if ((arbiter != NULL) && !arbiter->knowsPoll()) {
@@ -1291,7 +1291,7 @@ void handleVetoCmd(int t, const char * /*message*/)
 
 
 
-// Local variables: ***
+// Local Variables: ***
 // mode:C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***

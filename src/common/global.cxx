@@ -87,7 +87,7 @@ GlobalDBItem				globalDBItems[] = {
 	{ "_worldSize",			"800.0",			false, StateDatabase::Locked}
 };
 
-// Local variables: ***
+// Local Variables: ***
 // mode:C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***

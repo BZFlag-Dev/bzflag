@@ -18,7 +18,6 @@
 #include <assert.h>
 #include <ctype.h>
 
-KeyManager*		KeyManager::instance = NULL;
 const char*		KeyManager::buttonNames[] = {
   "???",
   "Pause",
@@ -82,14 +81,6 @@ KeyManager::KeyManager()
 
 KeyManager::~KeyManager()
 {
-  instance = NULL;
-}
-
-KeyManager*		KeyManager::getInstance()
-{
-  if (instance == NULL)
-    instance = new KeyManager;
-  return instance;
 }
 
 void			KeyManager::bind(const BzfKeyEvent& key,
@@ -292,7 +283,7 @@ bool			KeyManager::KeyEventLess::operator()(
   return false;
 }
 
-// Local variables: ***
+// Local Variables: ***
 // mode:C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***

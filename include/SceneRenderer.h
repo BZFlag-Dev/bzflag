@@ -275,7 +275,7 @@ inline bool			SceneRenderer::isSameFrame() const
 
 #endif // BZF_SCENE_RENDERER_H
 
-// Local variables: ***
+// Local Variables: ***
 // mode:C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***

@@ -18,7 +18,6 @@
 #include "CommandManager.h"
 #include "TextUtils.h"
 
-CommandManager*			CommandManager::mgr = NULL;
 
 CommandManager::CommandManager()
 {
@@ -27,7 +26,7 @@ CommandManager::CommandManager()
 
 CommandManager::~CommandManager()
 {
-  mgr = NULL;
+  // do nothing
 }
 
 void				CommandManager::add(const std::string& name,
@@ -122,12 +121,6 @@ void				CommandManager::iterate(Callback callback,
     (*callback)(index->first, userData);
 }
 
-CommandManager*			CommandManager::getInstance()
-{
-  if (mgr == NULL)
-    mgr = new CommandManager;
-  return mgr;
-}
 
 const char*			CommandManager::readValue(const char* string,
 							  std::string* value)
@@ -187,7 +180,7 @@ const char*			CommandManager::skipWhitespace(const char* string)
   return string;
 }
 
-// Local variables: ***
+// Local Variables: ***
 // mode:C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***

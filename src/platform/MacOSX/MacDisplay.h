@@ -66,7 +66,7 @@ class MacDisplay : public BzfDisplay {
 #endif // BZF_MACDISPLAY_H
 //BZF_DEFINE_ALIST(MacDisplayResList, MacDisplayRes);
 
-// Local variables: ***
+// Local Variables: ***
 // mode:C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***

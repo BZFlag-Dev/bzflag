@@ -16,24 +16,16 @@
 
 #include "UIMap.h"
 
-
 UIMap::UIMap() {
-
 }
-
-
-UIMap& UIMap::getInstance() {
-  static UIMap uiMap;
-  return uiMap;
-}
-
 
 UIAdder::UIAdder(const std::string& name, UICreator creator) {
-  UIMap::getInstance()[name] = creator;
+  UIMap::instance()[name] = creator;
 }
 
-// Local variables: ***
-// mode:C++ ***
+
+// Local Variables: ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***

@@ -270,7 +270,7 @@ BZAdminUI* CursesUI::creator(const std::map<PlayerId, std::string>& players,
   return new CursesUI(players, me);
 }
 
-// Local variables: ***
+// Local Variables: ***
 // mode:C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***

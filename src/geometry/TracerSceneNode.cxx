@@ -76,7 +76,7 @@ void			TracerSceneNode::notifyStyleChange(
 				const SceneRenderer&)
 {
   OpenGLGStateBuilder builder(gstate);
-  if (BZDB->isTrue("blend")) {
+  if (BZDB.isTrue("blend")) {
     // add tail contribution instead of regular blend
     builder.setBlending(GL_SRC_ALPHA, GL_ONE);
     builder.setShading(GL_SMOOTH);
@@ -155,7 +155,7 @@ void			TracerSceneNode::TracerRenderNode::render()
   glPopMatrix();
 }
 
-// Local variables: ***
+// Local Variables: ***
 // mode:C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***

@@ -102,7 +102,7 @@ bool			MenuDefaultKey::keyPress(const BzfKeyEvent& key)
       return true;
   }
 
-  if (KEYMGR->get(key, true) == "quit") {
+  if (KEYMGR.get(key, true) == "quit") {
     CommandsStandard::quit();
     return true;
   }
@@ -749,14 +749,14 @@ void			KeyboardMapMenu::setKey(const BzfKeyEvent& event)
   for (it = mappable.begin(); it != mappable.end(); it++)
     if (it->second.index == editing)
       break;
-  if ((KEYMGR->keyEventToString(event) == it->second.key1 && it->second.key2.empty()) || (KEYMGR->keyEventToString(event) == it->second.key2))
+  if ((KEYMGR.keyEventToString(event) == it->second.key1 && it->second.key2.empty()) || (KEYMGR.keyEventToString(event) == it->second.key2))
     return;
-  KEYMGR->unbind(event, false);
+  KEYMGR.unbind(event, false);
   if (it->first == "fire") {
-    KEYMGR->bind(event, false, it->first);
+    KEYMGR.bind(event, false, it->first);
   }
-  KEYMGR->unbind(event, true);
-  KEYMGR->bind(event, true, it->first);
+  KEYMGR.unbind(event, true);
+  KEYMGR.bind(event, true, it->first);
   editing = -1;
   update();
 }
@@ -766,9 +766,9 @@ void			KeyboardMapMenu::execute()
   const HUDuiControl* const focus = HUDui::getFocus();
   if (focus == reset) {
     // FIXME - need to reset keymap to default values
-    KEYMGR->iterate(onResetCB, this);
+    KEYMGR.iterate(onResetCB, this);
     for (int i = 0; i < NUM_DEFAULT_BINDINGS; ++i) {
-      CMDMGR->run(defaultBindings[i]);
+      CMDMGR.run(defaultBindings[i]);
     }
     update();
   }
@@ -782,14 +782,14 @@ void			KeyboardMapMenu::execute()
         if (!it->second.key1.empty() && !it->second.key2.empty()) {
           // gotta kill the old values
           BzfKeyEvent ev;
-          KEYMGR->stringToKeyEvent(it->second.key1, ev);
-          KEYMGR->unbind(ev, true);
+          KEYMGR.stringToKeyEvent(it->second.key1, ev);
+          KEYMGR.unbind(ev, true);
 	  if (it->first == "fire")
-	    KEYMGR->unbind(ev, false);
-          KEYMGR->stringToKeyEvent(it->second.key2, ev);
-          KEYMGR->unbind(ev, true);
+	    KEYMGR.unbind(ev, false);
+          KEYMGR.stringToKeyEvent(it->second.key2, ev);
+          KEYMGR.unbind(ev, true);
 	  if (it->first == "fire")
-	    KEYMGR->unbind(ev, false);
+	    KEYMGR.unbind(ev, false);
         }
       }
     }
@@ -871,7 +871,7 @@ void			KeyboardMapMenu::update()
     it->second.key2 = "";
   }
   // load current settings
-  KEYMGR->iterate(&onScanCB, this);
+  KEYMGR.iterate(&onScanCB, this);
   std::vector<HUDuiControl*>& list = getControls();
   for (it = mappable.begin(); it != mappable.end(); it++) {
     std::string value = "";
@@ -896,8 +896,8 @@ void			KeyboardMapMenu::onReset(const std::string&, bool press,
 						   const std::string& cmd)
 {
   BzfKeyEvent ev;
-  KEYMGR->stringToKeyEvent(cmd, ev);
-  KEYMGR->unbind(ev, press);
+  KEYMGR.stringToKeyEvent(cmd, ev);
+  KEYMGR.unbind(ev, press);
 }
 
 void			KeyboardMapMenu::onScan(const std::string& name, bool press,
@@ -1204,17 +1204,17 @@ void			GUIOptionsMenu::resize(int width, int height)
   if (renderer) {
     int i = 1;
     ((HUDuiList*)list[i++])->setIndex(BZDBCache::enhancedRadar ? 1 : 0);
-    ((HUDuiList*)list[i++])->setIndex(BZDB->isTrue("bigfont") ? 1 : 0);
+    ((HUDuiList*)list[i++])->setIndex(BZDB.isTrue("bigfont") ? 1 : 0);
     ((HUDuiList*)list[i++])->setIndex((int)(10.0f * renderer->getPanelOpacity() + 0.5));
-    ((HUDuiList*)list[i++])->setIndex(BZDB->isTrue("coloredradarshots") ? 1 : 0);
-    ((HUDuiList*)list[i++])->setIndex(static_cast<int>(BZDB->eval("linedradarshots")));
-    ((HUDuiList*)list[i++])->setIndex(static_cast<int>(BZDB->eval("sizedradarshots")));
+    ((HUDuiList*)list[i++])->setIndex(BZDB.isTrue("coloredradarshots") ? 1 : 0);
+    ((HUDuiList*)list[i++])->setIndex(static_cast<int>(BZDB.eval("linedradarshots")));
+    ((HUDuiList*)list[i++])->setIndex(static_cast<int>(BZDB.eval("sizedradarshots")));
     ((HUDuiList*)list[i++])->setIndex(renderer->getRadarSize());
     ((HUDuiList*)list[i++])->setIndex(renderer->getMaxMotionFactor());
     i++; // locale
-    ((HUDuiList*)list[i++])->setIndex(BZDB->isTrue("colorful") ? 1 : 0);
+    ((HUDuiList*)list[i++])->setIndex(BZDB.isTrue("colorful") ? 1 : 0);
     ((HUDuiList*)list[i++])->setIndex(atoi(OpenGLTexFont::getUnderlineColor().c_str()));
-    ((HUDuiList*)list[i++])->setIndex(static_cast<int>(BZDB->eval("killerhighlight")));
+    ((HUDuiList*)list[i++])->setIndex(static_cast<int>(BZDB.eval("killerhighlight")));
   }
 }
 
@@ -1225,11 +1225,11 @@ void			GUIOptionsMenu::callback(HUDuiControl* w, void* data)
   SceneRenderer* sceneRenderer = getSceneRenderer();
   switch (((const char*)data)[0]) {
     case 'e':
-      BZDB->set("enhancedradar", list->getIndex() ? "1" : "0");
+      BZDB.set("enhancedradar", list->getIndex() ? "1" : "0");
       break;
 
     case 'w':
-      BZDB->set("bigfont", list->getIndex() ? "1" : "0");
+      BZDB.set("bigfont", list->getIndex() ? "1" : "0");
       break;
 
     case 'y':
@@ -1239,15 +1239,15 @@ void			GUIOptionsMenu::callback(HUDuiControl* w, void* data)
     }
 
     case 'z':
-      BZDB->set("coloredradarshots", list->getIndex() ? "1" : "0");
+      BZDB.set("coloredradarshots", list->getIndex() ? "1" : "0");
       break;
 
     case 'l':
-      BZDB->set("linedradarshots", string_util::format("%d", list->getIndex()));
+      BZDB.set("linedradarshots", string_util::format("%d", list->getIndex()));
       break;
 
     case 's':
-      BZDB->set("sizedradarshots", string_util::format("%d", list->getIndex()));
+      BZDB.set("sizedradarshots", string_util::format("%d", list->getIndex()));
       break;
 
     case 'R':
@@ -1264,7 +1264,7 @@ void			GUIOptionsMenu::callback(HUDuiControl* w, void* data)
 
     case 'c':
     {
-      BZDB->set("colorful", list->getIndex() ? "1" : "0");
+      BZDB.set("colorful", list->getIndex() ? "1" : "0");
       break;
     }
 
@@ -1276,7 +1276,7 @@ void			GUIOptionsMenu::callback(HUDuiControl* w, void* data)
 
     case 'k':
     {
-      BZDB->set("killerhighlight", string_util::format("%d", list->getIndex()));
+      BZDB.set("killerhighlight", string_util::format("%d", list->getIndex()));
       break;
     }
 
@@ -1286,7 +1286,7 @@ void			GUIOptionsMenu::callback(HUDuiControl* w, void* data)
       std::string locale = (*options)[list->getIndex()];
 
       World::setLocale(locale);
-      BZDB->set("locale", locale);
+      BZDB.set("locale", locale);
       World::getBundleMgr()->getBundle(locale, true);
 
       GUIOptionsMenu *menu = (GUIOptionsMenu *) HUDDialogStack::get()->top();
@@ -1772,14 +1772,14 @@ void			OptionsMenu::resize(int width, int height)
   if (renderer) {
     HUDuiList* tex;
     int i = 1;
-    ((HUDuiList*)list[i++])->setIndex(BZDB->isTrue("dither"));
-    ((HUDuiList*)list[i++])->setIndex(BZDB->isTrue("blend"));
-    ((HUDuiList*)list[i++])->setIndex(BZDB->isTrue("smooth"));
-    ((HUDuiList*)list[i++])->setIndex(BZDB->isTrue("lighting"));
+    ((HUDuiList*)list[i++])->setIndex(BZDB.isTrue("dither"));
+    ((HUDuiList*)list[i++])->setIndex(BZDB.isTrue("blend"));
+    ((HUDuiList*)list[i++])->setIndex(BZDB.isTrue("smooth"));
+    ((HUDuiList*)list[i++])->setIndex(BZDB.isTrue("lighting"));
     tex = (HUDuiList*)list[i++];
     ((HUDuiList*)list[i++])->setIndex(renderer->useQuality());
-    ((HUDuiList*)list[i++])->setIndex(BZDB->isTrue("shadows"));
-    ((HUDuiList*)list[i++])->setIndex(BZDB->isTrue("zbuffer"));
+    ((HUDuiList*)list[i++])->setIndex(BZDB.isTrue("shadows"));
+    ((HUDuiList*)list[i++])->setIndex(BZDB.isTrue("zbuffer"));
 #if defined(DEBUG_RENDERING)
     ((HUDuiList*)list[i++])->setIndex(renderer->useHiddenLine() ? 1 : 0);
     ((HUDuiList*)list[i++])->setIndex(renderer->useWireframe() ? 1 : 0);
@@ -1803,7 +1803,7 @@ void			OptionsMenu::resize(int width, int height)
     // mind the ++i !
     ((HUDuiList*)list[i++])->setIndex(info->useUDPconnection ? 1 : 0);
 
-    if (!BZDB->isTrue("texture"))
+    if (!BZDB.isTrue("texture"))
       tex->setIndex(0);
     else
       tex->setIndex(OpenGLTexture::getFilter());
@@ -1835,58 +1835,58 @@ void			OptionsMenu::callback(HUDuiControl* w, void* data)
   SceneRenderer* sceneRenderer = getSceneRenderer();
   switch (((const char*)data)[0]) {
     case '1':
-      BZDB->set("dither", list->getIndex() ? "1" : "0");
+      BZDB.set("dither", list->getIndex() ? "1" : "0");
       sceneRenderer->notifyStyleChange();
       break;
 
     case '2':
-      BZDB->set("blend", list->getIndex() ? "1" : "0");
+      BZDB.set("blend", list->getIndex() ? "1" : "0");
       sceneRenderer->notifyStyleChange();
       break;
 
     case '3':
-      BZDB->set("smooth", list->getIndex() ? "1" : "0");
+      BZDB.set("smooth", list->getIndex() ? "1" : "0");
       sceneRenderer->notifyStyleChange();
       break;
 
     case '4':
-      BZDB->set("lighting", list->getIndex() ? "1" : "0");
+      BZDB.set("lighting", list->getIndex() ? "1" : "0");
 
-      BZDB->set("_texturereplace", (!BZDB->isTrue("lighting") &&
+      BZDB.set("_texturereplace", (!BZDB.isTrue("lighting") &&
 		sceneRenderer->useQuality() < 2) ? "1" : "0");
-      BZDB->setPersistent("_texturereplace", false);
+      BZDB.setPersistent("_texturereplace", false);
       sceneRenderer->notifyStyleChange();
       break;
 
     case '5':
       OpenGLTexture::setFilter((OpenGLTexture::Filter)list->getIndex());
-      BZDB->set("texture", OpenGLTexture::getFilterName());
+      BZDB.set("texture", OpenGLTexture::getFilterName());
       sceneRenderer->notifyStyleChange();
       break;
 
     case '6':
       sceneRenderer->setQuality(list->getIndex());
 
-      BZDB->set("_texturereplace", (!BZDB->isTrue("lighting") &&
+      BZDB.set("_texturereplace", (!BZDB.isTrue("lighting") &&
 		sceneRenderer->useQuality() < 2) ? "1" : "0");
-      BZDB->setPersistent("_texturereplace", false);
+      BZDB.setPersistent("_texturereplace", false);
       sceneRenderer->notifyStyleChange();
       break;
 
     case '7':
-      BZDB->set("shadows", list->getIndex() ? "1" : "0");
+      BZDB.set("shadows", list->getIndex() ? "1" : "0");
       sceneRenderer->notifyStyleChange();
       break;
 
     case '8':
-      BZDB->set("zbuffer", list->getIndex() ? "1" : "0");
+      BZDB.set("zbuffer", list->getIndex() ? "1" : "0");
       // FIXME - test for whether the z buffer will work
       setSceneDatabase();
       sceneRenderer->notifyStyleChange();
       break;
 
     case 's':
-      BZDB->set("volume", string_util::format("%d", list->getIndex()));
+      BZDB.set("volume", string_util::format("%d", list->getIndex()));
       setSoundVolume(list->getIndex());
       break;
 
@@ -2216,7 +2216,7 @@ void			Help1Menu::resize(int width, int height)
     it->second.key2 = "";
   }
   // load current settings
-  KEYMGR->iterate(&onScanCB, this);
+  KEYMGR.iterate(&onScanCB, this);
   std::vector<HUDuiControl*>& list = getControls();
   for (it = mappable.begin(); it != mappable.end(); it++) {
     std::string value = "";
@@ -4696,7 +4696,7 @@ void			MainMenu::resize(int width, int height)
   }
 }
 
-// Local variables: ***
+// Local Variables: ***
 // mode:C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***

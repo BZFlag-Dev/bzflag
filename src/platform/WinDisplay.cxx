@@ -1319,7 +1319,7 @@ const int		WinDisplay::buttonMap[] = {
 	BzfKeyEvent::NoButton	// no VK_ code
 };
 
-// Local variables: ***
+// Local Variables: ***
 // mode:C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***

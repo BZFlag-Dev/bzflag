@@ -1071,7 +1071,7 @@ static void		audioLoop(void*)
   audioBufferSize = media->getAudioBufferChunkSize() << 1;
 
   /* initialize */
-  float worldSize = BZDB->eval(StateDatabase::BZDB_WORLDSIZE);
+  float worldSize = BZDB.eval(StateDatabase::BZDB_WORLDSIZE);
   timeSizeOfWorld = 1.414f * worldSize / SpeedOfSound;
   for (i = 0; i < MaxEvents; i++) {
     events[i].samples = NULL;
@@ -1109,7 +1109,7 @@ void			updateSound()
     audioInnerLoop(true);
 }
 
-// Local variables: ***
+// Local Variables: ***
 // mode:C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***

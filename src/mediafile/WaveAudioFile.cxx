@@ -165,7 +165,7 @@ bool		WaveAudioFile::findChunk(const char* tag, uint32_t* length)
   return false;
 }
 
-// Local variables: ***
+// Local Variables: ***
 // mode:C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***

@@ -169,7 +169,7 @@ void parse(int argc, char **argv, CmdLineOptions &options);
 struct CmdLineOptions;
 #endif
 
-// Local variables: ***
+// Local Variables: ***
 // mode:C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***

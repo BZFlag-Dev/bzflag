@@ -13,7 +13,9 @@
 #ifndef BZF_CONFIG_FILE_MANAGER_H
 #define BZF_CONFIG_FILE_MANAGER_H
 
-#define CFGMGR (ConfigFileManager::getInstance())
+#include "Singleton.h"
+
+#define CFGMGR (ConfigFileManager::instance())
 
 void writeBZDB(const std::string& name, void *stream);
 void writeKEYMGR(const std::string& name, bool press, const std::string& command, void* stream);
@@ -24,11 +26,8 @@ void writeKEYMGR(const std::string& name, bool press, const std::string& command
  CommandManager and handles default values in BZDB,
 */
 
-class ConfigFileManager {
+class ConfigFileManager : public Singleton<ConfigFileManager> {
 public:
-  ConfigFileManager();
-  ~ConfigFileManager();
-
   /** Read a configuration file.
    read(filename) uses FileManager to open the stream and returns
    false if the file cannot be opened.  they all call parse().
@@ -45,22 +44,21 @@ public:
   */
   bool				write(const std::string& filename);
 
-  /** Get the singleton instance.
-   returns the existing singleton if available, if not, creates
-   an instance and returns it.
-  */
-  static ConfigFileManager*	getInstance();
+
+protected:
+  friend class Singleton<ConfigFileManager>;
+  ConfigFileManager();
+  ~ConfigFileManager();
 
 private:
   // parse a config file
   bool				parse(std::istream&);
 
-  static ConfigFileManager*	mgr;
 };
 
 #endif
 
-// Local variables: ***
+// Local Variables: ***
 // mode:C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***

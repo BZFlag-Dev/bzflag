@@ -225,7 +225,7 @@ void			OpenGLLight::initContext(void* self)
   ((OpenGLLight*)self)->freeLists();
 }
 
-// Local variables: ***
+// Local Variables: ***
 // mode:C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***

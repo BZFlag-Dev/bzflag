@@ -100,7 +100,7 @@ class BillboardSceneNode : public SceneNode {
 
 #endif // BZF_BILLBOARD_SCENE_NODE_H
 
-// Local variables: ***
+// Local Variables: ***
 // mode:C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***

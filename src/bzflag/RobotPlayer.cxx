@@ -117,9 +117,9 @@ void			RobotPlayer::doUpdate(float dt)
 
   // fire shot if any available
   timeSinceShot += dt;
-  float reloadTime = BZDB->eval(StateDatabase::BZDB_RELOADTIME);
   float tankRadius = BZDBCache::tankRadius;
-  float shotRange  = BZDB->eval(StateDatabase::BZDB_SHOTRANGE);
+  float shotRange  = BZDB.eval(StateDatabase::BZDB_SHOTRANGE);
+  float reloadTime = BZDB.eval(StateDatabase::BZDB_RELOADTIME);
 #if !defined(SHOOTING_FIX)
   timeSinceShot += reloadTime / numShots;
 #endif
@@ -180,7 +180,7 @@ void			RobotPlayer::doUpdateMotion(float dt)
   position[1] = oldPosition[1];
   position[2] = oldPosition[2];
   float azimuth = oldAzimuth;
-  float tankAngVel = BZDB->eval(StateDatabase::BZDB_TANKANGVEL);
+  float tankAngVel = BZDB.eval(StateDatabase::BZDB_TANKANGVEL);
   if (isAlive()) {
     if (dt > 0.0 && pathIndex < (int)path.size()) {
       float distance;
@@ -190,8 +190,8 @@ void			RobotPlayer::doUpdateMotion(float dt)
       v[0] = endPoint[0] - position[0];
       v[1] = endPoint[1] - position[1];
       distance = hypotf(v[0], v[1]);
-      float tankSpeed = BZDB->eval(StateDatabase::BZDB_TANKSPEED);
       float tankRadius = BZDBCache::tankRadius;
+      float tankSpeed = BZDB.eval(StateDatabase::BZDB_TANKSPEED);
       if (distance <= tankRadius)
 	pathIndex++;
 
@@ -228,14 +228,14 @@ void			RobotPlayer::doUpdateMotion(float dt)
     }
   }
   else if (isExploding()) {
-    if (lastTime - getExplodeTime() >= BZDB->eval(StateDatabase::BZDB_EXPLODETIME))
+    if (lastTime - getExplodeTime() >= BZDB.eval(StateDatabase::BZDB_EXPLODETIME))
       setStatus(PlayerState::DeadStatus);
   }
 
   float velocity[3];
   velocity[0] = (position[0] - oldPosition[0]) / dt;
   velocity[1] = (position[1] - oldPosition[1]) / dt;
-  velocity[2] = getVelocity()[2] + BZDB->eval(StateDatabase::BZDB_GRAVITY) * dt;
+  velocity[2] = getVelocity()[2] + BZDB.eval(StateDatabase::BZDB_GRAVITY) * dt;
   position[2] += dt * velocity[2];
   if (position[2] <= 0.0f) {
     position[2] = 0.0f;
@@ -302,8 +302,8 @@ bool			RobotPlayer::checkHit(const Player* source,
 void			RobotPlayer::explodeTank()
 {
   // NOTE -- code taken directly from LocalPlayer
-  float gravity      = BZDB->eval(StateDatabase::BZDB_GRAVITY);
-  float explodeTime  = BZDB->eval(StateDatabase::BZDB_EXPLODETIME);
+  float gravity      = BZDB.eval(StateDatabase::BZDB_GRAVITY);
+  float explodeTime  = BZDB.eval(StateDatabase::BZDB_EXPLODETIME);
   float explodeTime2 = explodeTime * explodeTime;
   float tMax2;
   const float zMax  = 49.0f;
@@ -380,7 +380,7 @@ float			RobotPlayer::getTargetPriority(const
 
   // go after closest player
   // FIXME -- this is a pretty stupid heuristic
-  const float worldSize = BZDB->eval(StateDatabase::BZDB_WORLDSIZE);
+  const float worldSize = BZDB.eval(StateDatabase::BZDB_WORLDSIZE);
   const float* p1 = getPosition();
   const float* p2 = _target->getPosition();
 
@@ -535,7 +535,7 @@ void			RobotPlayer::findPath(RegionPriorityQueue& queue,
 }
 
 
-// Local variables: ***
+// Local Variables: ***
 // mode:C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***

@@ -82,7 +82,7 @@ void			ServerListCache::saveCache()
 
   char buffer[MAX_STRING+1];
 
-  std::ostream* outFile = FILEMGR->createDataOutStream(fileName, true, true);
+  std::ostream* outFile = FILEMGR.createDataOutStream(fileName, true, true);
   int lenCpy = MAX_STRING;
   bool doWeed = (cacheAddedNum >0); // weed out as many items as were added
 
@@ -177,7 +177,7 @@ time_t			ServerListCache::getMaxCacheAge()
   return maxCacheAge;
 }
 
-// Local variables: ***
+// Local Variables: ***
 // mode:C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***

@@ -215,7 +215,7 @@ void MacDisplay::getKey (BzfKeyEvent &bzf_key, EventRecord &event_rec) const {
   }
 }
 
-// Local variables: ***
+// Local Variables: ***
 // mode:C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***

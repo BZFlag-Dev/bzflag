@@ -113,8 +113,8 @@ void			FlagSceneNode::setTexture(const OpenGLTexture& texture)
 void			FlagSceneNode::notifyStyleChange(
 				const SceneRenderer&)
 {
-  blending = BZDB->isTrue("blend");
-  texturing = BZDB->isTrue("texture") && blending;
+  blending = BZDB.isTrue("blend");
+  texturing = BZDB.isTrue("texture") && blending;
   OpenGLGStateBuilder builder(gstate);
   builder.enableTexture(texturing);
   if (blending && (transparent || texturing)) {
@@ -223,7 +223,7 @@ void			FlagSceneNode::FlagRenderNode::render()
   glPopMatrix();
 }
 
-// Local variables: ***
+// Local Variables: ***
 // mode:C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***

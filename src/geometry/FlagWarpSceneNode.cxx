@@ -68,7 +68,7 @@ void			FlagWarpSceneNode::notifyStyleChange(
 				const SceneRenderer&)
 {
   OpenGLGStateBuilder builder(gstate);
-  if (BZDB->isTrue("blend")) {
+  if (BZDB.isTrue("blend")) {
     builder.setBlending(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     builder.setStipple(1.0f);
   }
@@ -167,7 +167,7 @@ void			FlagWarpSceneNode::FlagWarpRenderNode::render()
   glPopMatrix();
 }
 
-// Local variables: ***
+// Local Variables: ***
 // mode:C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***

@@ -239,7 +239,7 @@ GLfloat3Array&		GLfloat3Array::operator=(const GLfloat3Array& a)
   return *this;
 }
 
-// Local variables: ***
+// Local Variables: ***
 // mode:C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***

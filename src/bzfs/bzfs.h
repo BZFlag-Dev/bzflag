@@ -120,7 +120,7 @@ static const char copyright[] = "Copyright (c) 1993 - 2003 Tim Riker";
 
 #endif
 
-// Local variables: ***
+// Local Variables: ***
 // mode:C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***

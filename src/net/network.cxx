@@ -555,7 +555,7 @@ bool			BzfNetwork::parseURL(const std::string& url,
   return true;
 }
 
-// Local variables: ***
+// Local Variables: ***
 // mode:C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***

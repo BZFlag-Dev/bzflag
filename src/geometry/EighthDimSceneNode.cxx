@@ -40,7 +40,7 @@ void			EighthDimSceneNode::notifyStyleChange(
 {
   OpenGLGStateBuilder builder(gstate);
   builder.setCulling(GL_NONE);
-  if (BZDB->isTrue("blend")) {
+  if (BZDB.isTrue("blend")) {
     builder.setBlending(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
   }
   else {
@@ -108,7 +108,7 @@ void			EighthDimSceneNode::EighthDimRenderNode::setPolygon(
   ::memcpy(poly[index], vertex, sizeof(GLfloat[3][3]));
 }
 
-// Local variables: ***
+// Local Variables: ***
 // mode:C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***

@@ -52,7 +52,7 @@ public:
 
   void sendPackVars(const std::string &key)
   {
-    std::string value = BZDB->get(key);
+    std::string value = BZDB.get(key);
     int pairLen = key.length() + 1 + value.length() + 1;
     if ((pairLen + len) > (MaxPacketLen - 2*sizeof(uint16_t))) {
       nboPackUShort(bufStart, count);
@@ -83,7 +83,7 @@ private:
 class PackVars;
 #endif
 
-// Local variables: ***
+// Local Variables: ***
 // mode:C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***

@@ -175,7 +175,7 @@ bool BundleMgr::getLocaleList(std::vector<std::string> *list) {
   return ((int)list->size() > initSize) ? true : false;
 }
 
-// Local variables: ***
+// Local Variables: ***
 // mode:C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***

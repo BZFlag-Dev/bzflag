@@ -68,8 +68,7 @@ Player::Player(const PlayerId& _id, TeamColor _team,
     tankNode = new TankSceneNode(state.pos, forward);
     tankIDLNode = new TankIDLSceneNode(tankNode);
     changeTeam(team);
-    pausedSphere = new SphereSceneNode(state.pos,
-				       1.5f * BZDBCache::tankRadius);
+    pausedSphere = new SphereSceneNode(state.pos, 1.5f * BZDBCache::tankRadius);
     pausedSphere->setColor(0.0f, 0.0f, 0.0f, 0.5f);
   }
 
@@ -87,22 +86,22 @@ Player::~Player()
 float			Player::getRadius() const
 {
   float tankRadius = BZDBCache::tankRadius;
-  if (flagType == Flags::Obesity) return tankRadius * BZDB->eval(StateDatabase::BZDB_OBESEFACTOR);
-  if (flagType == Flags::Tiny)    return tankRadius * BZDB->eval(StateDatabase::BZDB_TINYFACTOR);
-  if (flagType == Flags::Thief)   return tankRadius * BZDB->eval(StateDatabase::BZDB_THIEFTINYFACTOR);
+  if (flagType == Flags::Obesity) return tankRadius * BZDB.eval(StateDatabase::BZDB_OBESEFACTOR);
+  if (flagType == Flags::Tiny)    return tankRadius * BZDB.eval(StateDatabase::BZDB_TINYFACTOR);
+  if (flagType == Flags::Thief)   return tankRadius * BZDB.eval(StateDatabase::BZDB_THIEFTINYFACTOR);
   return tankRadius;
 }
 
 void			Player::getMuzzle(float* m) const
 {
   // okay okay, I should really compute the up vector instead of using [0,0,1]
-  float front = BZDB->eval(StateDatabase::BZDB_MUZZLEFRONT);
-  if (flagType == Flags::Obesity) front *= BZDB->eval(StateDatabase::BZDB_OBESEFACTOR);
-  else if (flagType == Flags::Tiny) front *= BZDB->eval(StateDatabase::BZDB_TINYFACTOR);
-  else if (flagType == Flags::Thief) front *= BZDB->eval(StateDatabase::BZDB_THIEFTINYFACTOR);
+  float front = BZDB.eval(StateDatabase::BZDB_MUZZLEFRONT);
+  if (flagType == Flags::Obesity) front *= BZDB.eval(StateDatabase::BZDB_OBESEFACTOR);
+  else if (flagType == Flags::Tiny) front *= BZDB.eval(StateDatabase::BZDB_TINYFACTOR);
+  else if (flagType == Flags::Thief) front *= BZDB.eval(StateDatabase::BZDB_THIEFTINYFACTOR);
   m[0] = state.pos[0] + front * forward[0];
   m[1] = state.pos[1] + front * forward[1];
-  m[2] = state.pos[2] + front * forward[2] + BZDB->eval(StateDatabase::BZDB_MUZZLEHEIGHT);
+  m[2] = state.pos[2] + front * forward[2] + BZDB.eval(StateDatabase::BZDB_MUZZLEHEIGHT);
 }
 
 void			Player::move(const float* _pos, float _azimuth)
@@ -273,8 +272,8 @@ void			Player::addPlayer(SceneDatabase* scene,
     if (isCrossingWall()) {
       // get which plane to compute IDL against
       GLfloat plane[4];
-      float tankLength = BZDB->eval(StateDatabase::BZDB_TANKLENGTH);
-      float tankWidth = BZDB->eval(StateDatabase::BZDB_TANKWIDTH);
+      float tankLength = BZDB.eval(StateDatabase::BZDB_TANKLENGTH);
+      float tankWidth = BZDB.eval(StateDatabase::BZDB_TANKWIDTH);
       const GLfloat a = atan2f(forward[1], forward[0]);
       const Obstacle* obstacle = World::getWorld()->hitBuilding(state.pos, a,
 								0.5f * tankLength, 0.5f * tankWidth);
@@ -304,7 +303,7 @@ void			Player::addPlayer(SceneDatabase* scene,
     }
   }
   else if (isExploding()) {
-    float t = (TimeKeeper::getTick() - explodeTime) / BZDB->eval(StateDatabase::BZDB_EXPLODETIME);
+    float t = (TimeKeeper::getTick() - explodeTime) / BZDB.eval(StateDatabase::BZDB_EXPLODETIME);
     if (t > 1.0f) {
       // FIXME
       //      setStatus(DeadStatus);
@@ -404,7 +403,7 @@ bool			Player::getDeadReckoning(
       *predictedAzimuth = inputAzimuth;
 
     // update z with Newtownian integration (like LocalPlayer)
-    inputZSpeed += BZDB->eval(StateDatabase::BZDB_GRAVITY) * (dt - dt2);
+    inputZSpeed += BZDB.eval(StateDatabase::BZDB_GRAVITY) * (dt - dt2);
     inputPos[2] += inputZSpeed * (dt - dt2);
   }
   else {
@@ -445,7 +444,7 @@ bool			Player::getDeadReckoning(
   predictedPos[2] = inputPos[2];
 
   // return false if we haven't gotten an update in a while
-  return (dt < BZDB->eval(StateDatabase::BZDB_NOTRESPONDINGTIME));
+  return (dt < BZDB.eval(StateDatabase::BZDB_NOTRESPONDINGTIME));
 }
 
 bool			Player::isDeadReckoningWrong() const
@@ -468,21 +467,21 @@ bool			Player::isDeadReckoningWrong() const
   // always send a new packet on reckoned touchdown
   float groundLimit = 0.0f;
   if (getFlag() == Flags::Burrow)
-    groundLimit = BZDB->eval(StateDatabase::BZDB_BURROWDEPTH);
+    groundLimit = BZDB.eval(StateDatabase::BZDB_BURROWDEPTH);
   if (predictedPos[2] < groundLimit) return true;
 
   // client side throttling
-  const int throttleRate = int(BZDB->eval(StateDatabase::BZDB_UPDATETHROTTLERATE));
+  const int throttleRate = int(BZDB.eval(StateDatabase::BZDB_UPDATETHROTTLERATE));
   const float minUpdateTime = throttleRate > 0 ? 1.0f / throttleRate : 0.0f;
   if (TimeKeeper::getTick() - inputTime < minUpdateTime) return false;
 
   // see if position and azimuth are close enough
-  float positionTolerance = BZDB->eval(StateDatabase::BZDB_POSITIONTOLERANCE);
+  float positionTolerance = BZDB.eval(StateDatabase::BZDB_POSITIONTOLERANCE);
   if (fabsf(state.pos[0] - predictedPos[0]) > positionTolerance) return true;
   if (fabsf(state.pos[1] - predictedPos[1]) > positionTolerance) return true;
   if (fabsf(state.pos[2] - predictedPos[2]) > positionTolerance) return true;
 
-  float angleTolerance = BZDB->eval(StateDatabase::BZDB_ANGLETOLERANCE);
+  float angleTolerance = BZDB.eval(StateDatabase::BZDB_ANGLETOLERANCE);
   if (fabsf(state.azimuth - predictedAzimuth) > angleTolerance) return true;
 
   // prediction is good enough
@@ -505,7 +504,7 @@ void			Player::doDeadReckoning()
   // anymore)
   float groundLimit = 0.0f;
   if (getFlag() == Flags::Burrow)
-    groundLimit = BZDB->eval(StateDatabase::BZDB_BURROWDEPTH);
+    groundLimit = BZDB.eval(StateDatabase::BZDB_BURROWDEPTH);
 
   if (predictedPos[2] < groundLimit) {
     predictedPos[2] = groundLimit;
@@ -540,8 +539,8 @@ void			Player::setDeadReckoning()
   inputAngVel = state.angVel;
 }
 
-// Local variables: ***
-// mode: C++ ***
+// Local Variables: ***
+// mode:C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***

@@ -60,13 +60,13 @@ bool			LaserSceneNode::cull(const ViewFrustum&) const
 void			LaserSceneNode::notifyStyleChange(
 				const SceneRenderer&)
 {
-  texturing = BZDB->isTrue("texture") && BZDB->isTrue("blend");
+  texturing = BZDB.isTrue("texture") && BZDB.isTrue("blend");
   OpenGLGStateBuilder builder(gstate);
   builder.enableTexture(texturing);
-  if (BZDB->isTrue("blend")) {
+  if (BZDB.isTrue("blend")) {
     // add in contribution from laser
     builder.setBlending(GL_SRC_ALPHA, GL_ONE);
-    builder.setSmoothing(BZDB->isTrue("smooth"));
+    builder.setSmoothing(BZDB.isTrue("smooth"));
   }
   else {
     builder.resetBlending();
@@ -182,7 +182,7 @@ void			LaserSceneNode::LaserRenderNode::render()
   glPopMatrix();
 }
 
-// Local variables: ***
+// Local Variables: ***
 // mode:C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***

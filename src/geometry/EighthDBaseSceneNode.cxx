@@ -73,7 +73,7 @@ void EighthDBaseSceneNode::notifyStyleChange(const SceneRenderer& renderer)
   EighthDimSceneNode::notifyStyleChange(renderer);
 
   OpenGLGStateBuilder builder(gstate);
-  if (BZDB->isTrue("smooth")) {
+  if (BZDB.isTrue("smooth")) {
     builder.setBlending(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     builder.setSmoothing();
   } else {
@@ -140,7 +140,7 @@ void EighthDBaseSceneNode::EighthDBaseRenderNode::render()
   glEnd();
 }
 
-// Local variables: ***
+// Local Variables: ***
 // mode:C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***

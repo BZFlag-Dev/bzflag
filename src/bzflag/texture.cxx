@@ -144,7 +144,7 @@ OpenGLTexFont		TextureFont::getTextureFont(Font index, bool required)
   return font[index] ? *(font[index]) : OpenGLTexFont();
 }
 
-// Local variables: ***
+// Local Variables: ***
 // mode:C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***

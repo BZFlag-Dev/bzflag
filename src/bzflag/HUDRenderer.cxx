@@ -284,7 +284,7 @@ void			HUDRenderer::setMajorFontSize(int, int height)
 
 void			HUDRenderer::setMinorFontSize(int, int height)
 {
-  const float add = BZDB->isTrue("bigfont") ? 5.0f : 0.0f;
+  const float add = BZDB.isTrue("bigfont") ? 5.0f : 0.0f;
   const float s = add + (float)height / 48.0f;
   if (s > 20.0f)
     minorFont = TextureFont::getTextureFont(TextureFont::HelveticaBold, true);
@@ -1128,7 +1128,7 @@ void			HUDRenderer::renderBox(SceneRenderer&)
   float x, y;
 
   OpenGLGState::resetState();
-  const bool smooth = BZDB->isTrue("smooth");
+  const bool smooth = BZDB.isTrue("smooth");
 
   // draw targeting box
   hudColor3fv(hudColor);
@@ -1365,7 +1365,7 @@ void			HUDRenderer::renderPlaying(SceneRenderer& renderer)
   LocalPlayer *myTank = LocalPlayer::getMyTank();
   if (myTank && myTank->getPosition()[2] < 0.0f) {
     glColor4f(0.02f, 0.01f, 0.01f, 1.0);
-    glRectf(0, 0, (float)width, (myTank->getPosition()[2]/(BZDB->eval(StateDatabase::BZDB_BURROWDEPTH)-0.1f)) * ((float)viewHeight/2.0f));
+    glRectf(0, 0, (float)width, (myTank->getPosition()[2]/(BZDB.eval(StateDatabase::BZDB_BURROWDEPTH)-0.1f)) * ((float)viewHeight/2.0f));
   }
 
 
@@ -1380,7 +1380,7 @@ void			HUDRenderer::renderPlaying(SceneRenderer& renderer)
   renderAlerts();
 
   // show player scoreboard
-  if (BZDB->isTrue("displayScore")) renderScoreboard();
+  if (BZDB.isTrue("displayScore")) renderScoreboard();
 
   // draw flag help
   if (flagHelpClock.isOn()) {
@@ -1513,10 +1513,10 @@ void			HUDRenderer::renderRoaming(SceneRenderer& renderer)
   renderAlerts();
 
   // show player scoreboard
-  if (BZDB->isTrue("displayScore")) renderScoreboard();
+  if (BZDB.isTrue("displayScore")) renderScoreboard();
 
   // show tank labels
-  if (BZDB->isTrue("displayLabels")) renderTankLabels(renderer);
+  if (BZDB.isTrue("displayLabels")) renderTankLabels(renderer);
 
   // draw times
   renderTimes();
@@ -1592,7 +1592,7 @@ void			HUDRenderer::drawPlayerScore(const Player* player,
   }
   minorFont.draw(player->getCallSign(), x3, y);
   minorFont.draw(email, x3 + callSignWidth, y);
-  if (BZDB->isTrue("colorful") && 
+  if (BZDB.isTrue("colorful") && 
       ((flagd == Flags::ShockWave)   ||
        (flagd == Flags::Genocide)    ||
        (flagd == Flags::Laser)       ||
@@ -1625,7 +1625,7 @@ void			HUDRenderer::drawTeamScore(int teamIndex, float x1, float y)
   minorFont.draw(score, x1, y);
 }
 
-// Local variables: ***
+// Local Variables: ***
 // mode:C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***

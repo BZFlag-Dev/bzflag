@@ -48,7 +48,7 @@ bool setRequiredFlag(FlagInfo& flag, FlagType *desc);
 struct FlagInfo;
 #endif
 
-// Local variables: ***
+// Local Variables: ***
 // mode:C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***

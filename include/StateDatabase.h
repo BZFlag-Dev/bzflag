@@ -18,8 +18,9 @@
 #include <vector>
 #include "CallbackList.h"
 #include "bzfio.h"
+#include "Singleton.h"
 
-#define BZDB (StateDatabase::getInstance())
+#define BZDB (StateDatabase::instance())
 
 /** BZDB is the generic name:value pair database within bzflag and bzfs. Its
  * useful for data that can be serialized to a string that needs to be
@@ -39,8 +40,16 @@
  * to do so (eg: config file option, game variable downloaded from server), use
  * BZDB. If you wanted an object broker, use a freakin' global.
  */
-class StateDatabase {
+class StateDatabase : public Singleton<StateDatabase> {
+
+protected:
+  friend class Singleton<StateDatabase>;
+
+  StateDatabase();
+  ~StateDatabase();
+
 public:
+
   typedef void (*Callback)(const std::string& name, void* userData);
   enum Permission {
     // permission levels
@@ -53,8 +62,6 @@ public:
     Server = Locked,
     Client = ReadOnly
   };
-
-  ~StateDatabase();
 
   /** set a name/value pair.  if access is less than the permission
    *level of the name then this has no effect.
@@ -236,7 +243,6 @@ public:
   static const std::string	BZDB_WORLDSIZE;
 
 private:
-  StateDatabase();
 
   static bool			onCallback(Callback, void* userData,
 					   void* iterateData);
@@ -261,7 +267,6 @@ private:
 
 private:
   Map				items;
-  static StateDatabase*	s_instance;
 
 public:
   class ExpressionToken {
@@ -313,11 +318,10 @@ std::ostream& operator << (std::ostream& dst, const StateDatabase::Expression& s
 
 #endif // BZF_STATE_DATABASE_H
 
-// Local variables: ***
+// Local Variables: ***
 // mode:C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

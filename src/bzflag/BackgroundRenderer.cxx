@@ -83,12 +83,12 @@ BackgroundRenderer::BackgroundRenderer(const SceneRenderer&) :
     resizeSky();
   }
 
-  TextureManager *tm = TextureManager::getTextureManager();
+  TextureManager &tm = TextureManager::instance();
 
   // ground
   {
     // load texture
-    OpenGLTexture *groundTexture = tm->getTexture( TX_GROUND );
+    OpenGLTexture *groundTexture = tm.getTexture( TX_GROUND );
 
     // gstates
     gstate.reset();
@@ -146,7 +146,7 @@ BackgroundRenderer::BackgroundRenderer(const SceneRenderer&) :
 
   // make cloud stuff
   cloudsAvailable = false;
-  OpenGLTexture *cloudsTexture = tm->getTexture( TX_CLOUDS );
+  OpenGLTexture *cloudsTexture = tm.getTexture( TX_CLOUDS );
   if (cloudsTexture->isValid()) {
     cloudsAvailable = true;
     gstate.reset();
@@ -281,27 +281,27 @@ void			BackgroundRenderer::notifyStyleChange(
 {
   if (renderer.testAndSetStyle(style)) return;
 
-  if (BZDB->isTrue("texture"))
-    if (BZDB->isTrue("lighting"))
+  if (BZDB.isTrue("texture"))
+    if (BZDB.isTrue("lighting"))
       styleIndex = 3;
     else
       styleIndex = 2;
   else
-    if (BZDB->isTrue("lighting"))
+    if (BZDB.isTrue("lighting"))
       styleIndex = 1;
     else
       styleIndex = 0;
 
   // some stuff is drawn only for certain states
-  cloudsVisible = (styleIndex>=2 && cloudsAvailable && BZDB->isTrue("blend"));
+  cloudsVisible = (styleIndex>=2 && cloudsAvailable && BZDB.isTrue("blend"));
   mountainsVisible = (styleIndex >= 2 && mountainsAvailable);
-  shadowsVisible = BZDB->isTrue("shadows");
-  starGStateIndex = BZDB->isTrue("smooth");
+  shadowsVisible = BZDB.isTrue("shadows");
+  starGStateIndex = BZDB.isTrue("smooth");
 
   // fixup gstates
   OpenGLGStateBuilder gstate;
   gstate.reset();
-  if (BZDB->isTrue("smooth")) {
+  if (BZDB.isTrue("smooth")) {
     gstate.setBlending();
     gstate.setSmoothing();
   }
@@ -363,7 +363,7 @@ void			BackgroundRenderer::setCelestial(
 				moonDir[2] * sunDir[2];
   // hack coverage to lean towards full
   coverage = (coverage < 0.0f) ? -sqrtf(-coverage) : coverage * coverage;
-  float worldSize = BZDB->eval(StateDatabase::BZDB_WORLDSIZE);
+  float worldSize = BZDB.eval(StateDatabase::BZDB_WORLDSIZE);
   const float moonRadius = 2.0f * worldSize *
 				atanf(60.0f * M_PI / 180.0f) / 60.0f;
   // limbAngle is dependent on moon position but sun is so much farther
@@ -463,7 +463,7 @@ void			BackgroundRenderer::renderSkyAndGround(
 
     // back to normal
     glPopAttrib();
-    if (BZDB->isTrue("dither")) glEnable(GL_DITHER);
+    if (BZDB.isTrue("dither")) glEnable(GL_DITHER);
   }
 }
 
@@ -484,7 +484,7 @@ void			BackgroundRenderer::render(SceneRenderer& renderer)
     // the ground gets illuminated).  this is necessary because lighting is
     // performed only at a vertex, and the ground's vertices are a few
     // kilometers away.
-    if (BZDB->isTrue("blend") && BZDB->isTrue("lighting"))
+    if (BZDB.isTrue("blend") && BZDB.isTrue("lighting"))
       drawGroundReceivers(renderer);
 
     if (renderer.useQuality() > 1) {
@@ -511,7 +511,7 @@ void			BackgroundRenderer::render(SceneRenderer& renderer)
 
 void BackgroundRenderer::resizeSky() {
   // sky pyramid must fit inside far clipping plane
-  const GLfloat skySize = 1.3f * BZDB->eval(StateDatabase::BZDB_WORLDSIZE);
+  const GLfloat skySize = 1.3f * BZDB.eval(StateDatabase::BZDB_WORLDSIZE);
   for (int i = 0; i < 4; i++) {
     skyPyramid[i][0] = skySize * squareShape[i][0];
     skyPyramid[i][1] = skySize * squareShape[i][1];
@@ -859,7 +859,7 @@ void			BackgroundRenderer::doInitDisplayLists()
 
   // sun first.  sun is a disk that should be about a half a degree wide
   // with a normal (60 degree) perspective.
-  const float worldSize = BZDB->eval(StateDatabase::BZDB_WORLDSIZE);
+  const float worldSize = BZDB.eval(StateDatabase::BZDB_WORLDSIZE);
   const float sunRadius = 2.0f * worldSize * atanf(60.0f*M_PI/180.0f) / 60.0f;
   sunList = OpenGLDisplayList();
   sunList.begin();
@@ -1242,7 +1242,7 @@ void			BackgroundRenderer::initDisplayLists(void* self)
   ((BackgroundRenderer*)self)->doInitDisplayLists();
 }
 
-// Local variables: ***
+// Local Variables: ***
 // mode:C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***

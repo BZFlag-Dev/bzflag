@@ -116,7 +116,7 @@ BZAdminUI* StdBothUI::creator(const std::map<PlayerId, std::string>&, PlayerId) 
   return new StdBothUI();
 }
 
-// Local variables: ***
+// Local Variables: ***
 // mode:C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***

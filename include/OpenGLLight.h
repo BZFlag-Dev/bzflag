@@ -94,7 +94,7 @@ inline const GLfloat*	OpenGLLight::getAttenuation() const
 
 #endif // BZF_OPENGL_LIGHT_H
 
-// Local variables: ***
+// Local Variables: ***
 // mode:C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***

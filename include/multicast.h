@@ -63,7 +63,7 @@ int			recvMulticast(int fd, void* buffer,
 
 #endif // BZF_MULTICAST_H
 
-// Local variables: ***
+// Local Variables: ***
 // mode:C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***

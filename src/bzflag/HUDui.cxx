@@ -110,8 +110,8 @@ HUDuiControl::HUDuiControl() : showingFocus(true),
 {
   if (totalCount == 0) {
     // load arrow texture
-    TextureManager *tm = TextureManager::getTextureManager();
-    arrow = tm->getTexture( TX_BOLT, RogueTeam );
+    TextureManager &tm = TextureManager::instance();
+    arrow = tm.getTexture( TX_BOLT, RogueTeam );
 
     // make gstate for focus arrow
     gstate = new OpenGLGState;
@@ -741,7 +741,7 @@ void			HUDuiTextureLabel::doRender()
   }
 }
 
-// Local variables: ***
+// Local Variables: ***
 // mode:C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***

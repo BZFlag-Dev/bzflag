@@ -20,8 +20,9 @@
 #include <string>
 #include "common.h"
 #include "bzfio.h"
+#include "Singleton.h"
 
-#define FILEMGR (FileManager::getInstance())
+#define FILEMGR (FileManager::instance())
 
 /**
  Simple file management.
@@ -29,10 +30,8 @@
  some platform independence for files requiring directory names.
 */
 
-class FileManager {
+class FileManager : public Singleton<FileManager> {
 public:
-  /** Destroy the FileManager */
-  ~FileManager();
 
   /** Open an input stream.
    create an input stream for a file in the data directory.
@@ -64,22 +63,16 @@ public:
   */
   std::string		catPath(const std::string& a, const std::string& b) const;
 
-  /** Get the singleton instance.
-   returns the existing singleton if available, if not, creates
-   an instance and returns it.
-  */
-  static FileManager*	getInstance();
-
-private:
+protected:
+  friend class Singleton<FileManager>;
   FileManager();
+  ~FileManager();
 
-private:
-  static FileManager*	mgr;
 };
 
 #endif
 
-// Local variables: ***
+// Local Variables: ***
 // mode:C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***

@@ -17,13 +17,12 @@
 #include "StateDatabase.h"
 #include "KeyManager.h"
 
-ConfigFileManager* ConfigFileManager::mgr = NULL;
 static const int        MaximumLineLength = 1024;
 
 void writeBZDB(const std::string& name, void *stream)
 {
   std::ostream& s = *reinterpret_cast<std::ostream*>(stream);
-  std::string value = BZDB->get(name);
+  std::string value = BZDB.get(name);
   // quotify anything with a space
   if (value.find(' ') != value.npos)
     value = std::string("\"") + value + "\"";
@@ -51,8 +50,6 @@ ConfigFileManager::ConfigFileManager()
 
 ConfigFileManager::~ConfigFileManager()
 {
-  if (mgr == this)
-    mgr = NULL;
 }
 
 bool				ConfigFileManager::parse(std::istream& stream)
@@ -60,14 +57,14 @@ bool				ConfigFileManager::parse(std::istream& stream)
   char buffer[MaximumLineLength];
   while (!stream.eof()) {
     stream.getline(buffer, MaximumLineLength);
-    CMDMGR->run(buffer);
+    CMDMGR.run(buffer);
   }
   return true;
 }
 
 bool				ConfigFileManager::read(const std::string& filename)
 {
-  std::istream* stream = FILEMGR->createDataInStream(filename);
+  std::istream* stream = FILEMGR.createDataInStream(filename);
   if (stream == NULL)
     return false;
   bool ret = parse(*stream);
@@ -82,23 +79,17 @@ void				ConfigFileManager::read(std::istream& stream)
 
 bool				ConfigFileManager::write(const std::string& filename)
 {
-  std::ostream* stream = FILEMGR->createDataOutStream(filename);
+  std::ostream* stream = FILEMGR.createDataOutStream(filename);
   if (stream == NULL)
     return false;
-  BZDB->write(writeBZDB, stream);
-  KEYMGR->iterate(writeKEYMGR, stream);
+  BZDB.write(writeBZDB, stream);
+  KEYMGR.iterate(writeKEYMGR, stream);
   delete stream;
   return true;
 }
 
-ConfigFileManager*		ConfigFileManager::getInstance()
-{
-  if (mgr == NULL)
-    mgr = new ConfigFileManager;
-  return mgr;
-}
 
-// Local variables: ***
+// Local Variables: ***
 // mode:C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***

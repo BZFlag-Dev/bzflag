@@ -49,7 +49,7 @@ RadarRenderer::RadarRenderer(const SceneRenderer&,
 {
   setControlColor();
 
-  blend = BZDB->isTrue("blend");
+  blend = BZDB.isTrue("blend");
   smooth = true;
 #if defined(GLX_SAMPLES_SGIS) && defined(GLX_SGIS_multisample)
   GLint bits;
@@ -134,7 +134,7 @@ void RadarRenderer::drawTank(float x, float y, float z)
 {
   // Does not change with height.
   float tankRadius = BZDBCache::tankRadius;
-  float boxHeight = BZDB->eval(StateDatabase::BZDB_BOXHEIGHT);
+  float boxHeight = BZDB.eval(StateDatabase::BZDB_BOXHEIGHT);
   GLfloat s = tankRadius > 1.5f + 2.0f * ps ? tankRadius : 1.5f + 2.0f * ps;
   glRectf(x - s, y - s, x + s, y + s);
 
@@ -184,7 +184,7 @@ void RadarRenderer::drawFlagOnTank(float x, float y, float)
 void			RadarRenderer::render(SceneRenderer& renderer,
 							bool blank)
 {
-  const bool smoothingOn = smooth && BZDB->isTrue("smooth");
+  const bool smoothingOn = smooth && BZDB.isTrue("smooth");
 
   const int ox = renderer.getWindow().getOriginX();
   const int oy = renderer.getWindow().getOriginY();
@@ -194,11 +194,11 @@ void			RadarRenderer::render(SceneRenderer& renderer,
     glScissor(ox + x - 2, oy + y - 2, w + 4, h + 4);
 
     // draw nice blended background
-    if (BZDB->isTrue("blend") && opacity < 1.0f)
+    if (BZDB.isTrue("blend") && opacity < 1.0f)
       glEnable(GL_BLEND);
     glColor4f(0.0f, 0.0f, 0.0f, opacity);
     glRectf((float) x, (float) y, (float)(x + w), (float)(y + h));
-    if (BZDB->isTrue("blend") && opacity < 1.0f)
+    if (BZDB.isTrue("blend") && opacity < 1.0f)
       glDisable(GL_BLEND);
   }
 
@@ -215,8 +215,8 @@ void			RadarRenderer::render(SceneRenderer& renderer,
     return;
 
   // prepare transforms
-  float worldSize = BZDB->eval(StateDatabase::BZDB_WORLDSIZE);
-  float range = BZDB->eval("displayRadarRange") * worldSize;
+  float worldSize = BZDB.eval(StateDatabase::BZDB_WORLDSIZE);
+  float range = BZDB.eval("displayRadarRange") * worldSize;
   // when burrowed, limit radar range
   if (myTank && (myTank->getFlag() == Flags::Burrow) &&
       (myTank->getPosition()[2] < 0.0f)) {
@@ -284,7 +284,7 @@ void			RadarRenderer::render(SceneRenderer& renderer,
       glDisable(GL_TEXTURE_2D);
     }
 
-    else if (noiseTexture != 0 && BZDB->isTrue("texture") &&
+    else if (noiseTexture != 0 && BZDB.isTrue("texture") &&
 	renderer.useQuality()==0) {
       glEnable(GL_TEXTURE_2D);
       noiseTexture->execute();
@@ -341,7 +341,7 @@ void			RadarRenderer::render(SceneRenderer& renderer,
     // draw my shots
     int maxShots = world.getMaxShots();
     int i;
-    float muzzleHeight = BZDB->eval(StateDatabase::BZDB_MUZZLEHEIGHT);
+    float muzzleHeight = BZDB.eval(StateDatabase::BZDB_MUZZLEHEIGHT);
     for (i = 0; i < maxShots; i++) {
       const ShotPath* shot = myTank->getShot(i);
       if (shot) {
@@ -428,7 +428,7 @@ void			RadarRenderer::render(SceneRenderer& renderer,
 	const ShotPath* shot = player->getShot(j);
         if (shot && shot->getFlag() != Flags::InvisibleBullet) {
           const float *shotcolor;
-	  if (BZDB->isTrue("coloredradarshots")) {
+	  if (BZDB.isTrue("coloredradarshots")) {
             if (myTank->getFlag() == Flags::Colorblindness)
               shotcolor = Team::getRadarColor(RogueTeam);
             else
@@ -446,7 +446,7 @@ void			RadarRenderer::render(SceneRenderer& renderer,
 
     // draw flags not on tanks.
     const int maxFlags = world.getMaxFlags();
-    if (BZDB->isTrue("displayRadarFlags")) {
+    if (BZDB.isTrue("displayRadarFlags")) {
       for (i = 0; i < maxFlags; i++) {
         // draw normal flags
         const Flag& flag = world.getFlag(i);
@@ -762,7 +762,7 @@ void			RadarRenderer::initContext(void* self)
   ((RadarRenderer*)self)->doInitContext();
 }
 
-// Local variables: ***
+// Local Variables: ***
 // mode:C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***

@@ -50,10 +50,10 @@ void WorldWeapons::fire()
 
       FiringInfo firingInfo;
       firingInfo.flagType = (FlagType*)w->type;
-      firingInfo.lifetime = BZDB->eval(StateDatabase::BZDB_RELOADTIME);
+      firingInfo.lifetime = BZDB.eval(StateDatabase::BZDB_RELOADTIME);
       firingInfo.shot.player = ServerPlayer;
       memmove(firingInfo.shot.pos, w->origin, 3 * sizeof(float));
-      float shotSpeed = BZDB->eval(StateDatabase::BZDB_SHOTSPEED);
+      float shotSpeed = BZDB.eval(StateDatabase::BZDB_SHOTSPEED);
       firingInfo.shot.vel[0] = shotSpeed*cos(w->direction);
       firingInfo.shot.vel[1] = shotSpeed*sin(w->direction);
       firingInfo.shot.vel[2] = 0.0f;
@@ -96,8 +96,8 @@ unsigned int WorldWeapons::count(void)
 }
 
 
-// Local variables: ***
-// mode:C++ ***
+// Local Variables: ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***

@@ -138,7 +138,7 @@ void			RenderNodeGStateList::sort(const GLfloat* e)
   }
 }
 
-// Local variables: ***
+// Local Variables: ***
 // mode:C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***

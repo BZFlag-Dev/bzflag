@@ -23,17 +23,15 @@
 #include <vector>
 #include "BzfEvent.h"
 #include "CallbackList.h"
+#include "Singleton.h"
 
-#define KEYMGR (KeyManager::getInstance())
+#define KEYMGR (KeyManager::instance())
 
-class KeyManager {
+class KeyManager : public Singleton<KeyManager> {
 public:
   typedef void (*IterateCallback)(const std::string& name, bool press,
 				  const std::string& cmd, void* userData);
   typedef IterateCallback ChangeCallback;
-
-  KeyManager();
-  ~KeyManager();
 
   // bind/unbind a command to/from a key event press or release
   void			bind(const BzfKeyEvent&,
@@ -60,7 +58,10 @@ public:
   void			addCallback(ChangeCallback, void* userData);
   void			removeCallback(ChangeCallback, void* userData);
 
-  static KeyManager*	getInstance();
+protected:
+  friend class Singleton<KeyManager>;
+  KeyManager();
+  ~KeyManager();
 
 private:
   void			notify(const BzfKeyEvent&,
@@ -88,7 +89,6 @@ private:
   EventToCommandMap	releaseEventToCommand;
   StringToEventMap	stringToEvent;
   CallbackList<ChangeCallback>	callbacks;
-  static KeyManager*	instance;
   static const char*	buttonNames[];
   static const char*	asciiNames[][2];
 };
@@ -100,7 +100,7 @@ extern const char*		defaultBindings[NUM_DEFAULT_BINDINGS];
 
 #endif // BZF_KEYMANAGER_H
 
-// Local variables: ***
+// Local Variables: ***
 // mode:C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***

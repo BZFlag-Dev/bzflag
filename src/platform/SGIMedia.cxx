@@ -340,7 +340,7 @@ void			SGIMedia::audioSleep(
 			NULL, (struct timeval*)(endTime >= 0.0 ? &tv : NULL));
 }
 
-// Local variables: ***
+// Local Variables: ***
 // mode:C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***

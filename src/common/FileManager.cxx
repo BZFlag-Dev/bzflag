@@ -27,8 +27,6 @@
 // FileManager
 //
 
-FileManager*			FileManager::mgr = NULL;
-
 FileManager::FileManager()
 {
   // do nothing
@@ -36,14 +34,6 @@ FileManager::FileManager()
 
 FileManager::~FileManager()
 {
-  mgr = NULL;
-}
-
-FileManager*			FileManager::getInstance()
-{
-  if (mgr == NULL)
-    mgr = new FileManager;
-  return mgr;
 }
 
 std::istream*			FileManager::createDataInStream(
@@ -58,8 +48,8 @@ std::istream*			FileManager::createDataInStream(
   const bool relative = !isAbsolute(filename);
   if (relative) {
     // try directory stored in DB
-    if (BZDB->isSet("directory")) {
-      std::ifstream* stream = new std::ifstream(catPath(BZDB->get("directory"),
+    if (BZDB.isSet("directory")) {
+      std::ifstream* stream = new std::ifstream(catPath(BZDB.get("directory"),
 						filename).c_str(), mode);
       if (stream && *stream)
         return stream;
@@ -112,8 +102,8 @@ std::ostream*			FileManager::createDataOutStream(
   const bool relative = !isAbsolute(filename);
   if (relative) {
     // try directory stored in DB
-    if (BZDB->isSet("directory")) {
-      std::ofstream* stream = new std::ofstream(catPath(BZDB->get("directory"),
+    if (BZDB.isSet("directory")) {
+      std::ofstream* stream = new std::ofstream(catPath(BZDB.get("directory"),
 						filename).c_str(), mode);
       if (stream && *stream)
         return stream;
@@ -221,7 +211,7 @@ std::string			FileManager::catPath(
 #endif
 }
 
-// Local variables: ***
+// Local Variables: ***
 // mode:C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***

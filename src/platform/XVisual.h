@@ -63,7 +63,7 @@ class XVisual : public BzfVisual {
 
 #endif // BZF_XVISUAL_H
 
-// Local variables: ***
+// Local Variables: ***
 // mode:C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***

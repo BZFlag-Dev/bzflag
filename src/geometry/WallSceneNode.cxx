@@ -265,7 +265,7 @@ void			WallSceneNode::notifyStyleChange(
 				const SceneRenderer&)
 {
   float alpha;
-  bool lighted = (BZDB->isTrue("lighting") && gstate.isLighted());
+  bool lighted = (BZDB.isTrue("lighting") && gstate.isLighted());
   OpenGLGStateBuilder builder(gstate);
   style = 0;
   if (lighted) {
@@ -275,7 +275,7 @@ void			WallSceneNode::notifyStyleChange(
   else {
     builder.setShading(GL_FLAT);
   }
-  if (BZDB->isTrue("texture") && gstate.isTextured()) {
+  if (BZDB.isTrue("texture") && gstate.isTextured()) {
     style += 2;
     builder.enableTexture(true);
     alpha = lighted ? lightedModulateColor[3] : modulateColor[3];
@@ -284,9 +284,9 @@ void			WallSceneNode::notifyStyleChange(
     builder.enableTexture(false);
     alpha = lighted ? lightedColor[3] : color[3];
   }
-  builder.enableTextureReplace(BZDB->isTrue("_texturereplace"));
+  builder.enableTextureReplace(BZDB.isTrue("_texturereplace"));
   builder.enableMaterial(lighted);
-  if (BZDB->isTrue("blend") && alpha != 1.0f) {
+  if (BZDB.isTrue("blend") && alpha != 1.0f) {
     builder.setBlending(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     builder.setStipple(1.0f);
   }
@@ -455,7 +455,7 @@ void			WallSceneNode::splitEdge(const GLfloat* p1,
   uv[1] = uv1[1] + t * (uv2[1] - uv1[1]);
 }
 
-// Local variables: ***
+// Local Variables: ***
 // mode:C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***

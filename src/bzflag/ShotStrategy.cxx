@@ -341,8 +341,8 @@ SegmentedShotStrategy::SegmentedShotStrategy(ShotPath* _path, bool transparent) 
   const float* c = Team::getRadarColor(team);
   boltSceneNode->setColor(c[0], c[1], c[2]);
 
-  TextureManager *tm = TextureManager::getTextureManager();
-  OpenGLTexture *texture = tm->getTexture(transparent ? TX_TRANSBOLT : TX_BOLT, team);
+  TextureManager &tm = TextureManager::instance();
+  OpenGLTexture *texture = tm.getTexture(transparent ? TX_TRANSBOLT : TX_BOLT, team);
   if (texture && texture->isValid())
     boltSceneNode->setTexture(*texture);
 }
@@ -444,9 +444,9 @@ float			SegmentedShotStrategy::checkHit(const BaseLocalPlayer* tank,
   float scaleFactor = 1.0f;
 
 
-  if (tank->getFlag() == Flags::Obesity)   scaleFactor = BZDB->eval(StateDatabase::BZDB_OBESEFACTOR);
-  else if (tank->getFlag() == Flags::Tiny) scaleFactor = BZDB->eval(StateDatabase::BZDB_TINYFACTOR);
-  else if (tank->getFlag() == Flags::Thief) scaleFactor = BZDB->eval(StateDatabase::BZDB_THIEFTINYFACTOR);
+  if (tank->getFlag() == Flags::Obesity)   scaleFactor = BZDB.eval(StateDatabase::BZDB_OBESEFACTOR);
+  else if (tank->getFlag() == Flags::Tiny) scaleFactor = BZDB.eval(StateDatabase::BZDB_TINYFACTOR);
+  else if (tank->getFlag() == Flags::Thief) scaleFactor = BZDB.eval(StateDatabase::BZDB_THIEFTINYFACTOR);
 
   // get tank radius
   float radius = BZDBCache::tankRadius * scaleFactor;
@@ -496,7 +496,7 @@ float			SegmentedShotStrategy::checkHit(const BaseLocalPlayer* tank,
       // is shell radius so you can actually hit narrow tank head on.
       static float origin[3] = { 0.0f, 0.0f, 0.0f };
       t = timeRayHitsBlock(relativeRay, origin, tank->getAngle(),
-			0.5f * BZDB->eval(StateDatabase::BZDB_TANKLENGTH),
+			0.5f * BZDB.eval(StateDatabase::BZDB_TANKLENGTH),
 			ShotRadius,
 			0.5f * BZDBCache::tankHeight);
     }
@@ -545,8 +545,8 @@ void			SegmentedShotStrategy::addShot(
     TeamColor tmpTeam = colorblind ? RogueTeam : team;
     const float* c = Team::getRadarColor(tmpTeam);
     boltSceneNode->setColor(c[0], c[1], c[2]);
-    TextureManager *tm = TextureManager::getTextureManager();
-    OpenGLTexture *texture = tm->getTexture(TX_BOLT, tmpTeam);
+    TextureManager &tm = TextureManager::instance();
+    OpenGLTexture *texture = tm.getTexture(TX_BOLT, tmpTeam);
     if (texture && texture->isValid())
       boltSceneNode->setTexture(*texture);
   }
@@ -556,8 +556,8 @@ void			SegmentedShotStrategy::addShot(
 void			SegmentedShotStrategy::radarRender() const
 {
   const float *orig = getPath().getPosition();
-  const int length = static_cast<int>(BZDB->eval("linedradarshots"));
-  const int size = static_cast<int>(BZDB->eval("sizedradarshots"));
+  const int length = static_cast<int>(BZDB.eval("linedradarshots"));
+  const int size = static_cast<int>(BZDB.eval("sizedradarshots"));
 
   // Display leading lines
   if (length > 0) {
@@ -608,7 +608,7 @@ void			SegmentedShotStrategy::makeSegments(ObstacleEffect e)
   const float* v = path.getVelocity();
   TimeKeeper startTime = path.getStartTime();
   float timeLeft = path.getLifetime();
-  float minTime = BZDB->eval(StateDatabase::BZDB_MUZZLEFRONT) / hypotf(v[0], hypotf(v[1], v[2]));
+  float minTime = BZDB.eval(StateDatabase::BZDB_MUZZLEFRONT) / hypotf(v[0], hypotf(v[1], v[2]));
 
   // if all shots ricochet and obstacle effect is stop, then make it ricochet
   if (e == Stop && World::getWorld()->allShotsRicochet())
@@ -788,12 +788,12 @@ RapidFireStrategy::RapidFireStrategy(ShotPath* path) :
 {
   // speed up shell and decrease lifetime
   FiringInfo& f = getFiringInfo(path);
-  f.lifetime *= BZDB->eval(StateDatabase::BZDB_RFIREADLIFE);
-  float fireAdVel = BZDB->eval(StateDatabase::BZDB_RFIREADVEL);
+  f.lifetime *= BZDB.eval(StateDatabase::BZDB_RFIREADLIFE);
+  float fireAdVel = BZDB.eval(StateDatabase::BZDB_RFIREADVEL);
   f.shot.vel[0] *= fireAdVel;
   f.shot.vel[1] *= fireAdVel;
   f.shot.vel[2] *= fireAdVel;
-  setReloadTime(path->getReloadTime() / BZDB->eval(StateDatabase::BZDB_RFIREADRATE));
+  setReloadTime(path->getReloadTime() / BZDB.eval(StateDatabase::BZDB_RFIREADRATE));
 
   // make segments
   makeSegments(Stop);
@@ -814,12 +814,12 @@ ThiefStrategy::ThiefStrategy(ShotPath* path) :
 {
   // speed up shell and decrease lifetime
   FiringInfo& f = getFiringInfo(path);
-  f.lifetime *= BZDB->eval(StateDatabase::BZDB_THIEFADLIFE);
-  float thiefAdVel = BZDB->eval(StateDatabase::BZDB_THIEFADSHOTVEL);
+  f.lifetime *= BZDB.eval(StateDatabase::BZDB_THIEFADLIFE);
+  float thiefAdVel = BZDB.eval(StateDatabase::BZDB_THIEFADSHOTVEL);
   f.shot.vel[0] *= thiefAdVel;
   f.shot.vel[1] *= thiefAdVel;
   f.shot.vel[2] *= thiefAdVel;
-  setReloadTime(path->getReloadTime() / BZDB->eval(StateDatabase::BZDB_THIEFADRATE));
+  setReloadTime(path->getReloadTime() / BZDB.eval(StateDatabase::BZDB_THIEFADRATE));
 
   // make segments
   makeSegments(Stop);
@@ -830,8 +830,8 @@ ThiefStrategy::ThiefStrategy(ShotPath* path) :
   const int numSegments = getSegments().size();
   thiefNodes = new LaserSceneNode*[numSegments];
 
-  TextureManager *tm = TextureManager::getTextureManager();
-  OpenGLTexture *texture = tm->getTexture(TX_THIEF);
+  TextureManager &tm = TextureManager::instance();
+  OpenGLTexture *texture = tm.getTexture(TX_THIEF);
 
   for (int i = 0; i < numSegments; i++) {
     const ShotPathSegment& segment = getSegments()[i];
@@ -903,12 +903,12 @@ MachineGunStrategy::MachineGunStrategy(ShotPath* path) :
 {
   // speed up shell and decrease lifetime
   FiringInfo& f = getFiringInfo(path);
-  f.lifetime *= BZDB->eval(StateDatabase::BZDB_MGUNADLIFE);
-  float mgunAdVel = BZDB->eval(StateDatabase::BZDB_MGUNADVEL);
+  f.lifetime *= BZDB.eval(StateDatabase::BZDB_MGUNADLIFE);
+  float mgunAdVel = BZDB.eval(StateDatabase::BZDB_MGUNADVEL);
   f.shot.vel[0] *= mgunAdVel;
   f.shot.vel[1] *= mgunAdVel;
   f.shot.vel[2] *= mgunAdVel;
-  setReloadTime(path->getReloadTime() / BZDB->eval(StateDatabase::BZDB_MGUNADRATE));
+  setReloadTime(path->getReloadTime() / BZDB.eval(StateDatabase::BZDB_MGUNADRATE));
 
   // make segments
   makeSegments(Stop);
@@ -961,12 +961,12 @@ LaserStrategy::LaserStrategy(ShotPath* path) :
 {
   // speed up shell and decrease lifetime
   FiringInfo& f = getFiringInfo(path);
-  f.lifetime *= BZDB->eval(StateDatabase::BZDB_LASERADLIFE);
-  float laserAdVel = BZDB->eval(StateDatabase::BZDB_LASERADVEL);
+  f.lifetime *= BZDB.eval(StateDatabase::BZDB_LASERADLIFE);
+  float laserAdVel = BZDB.eval(StateDatabase::BZDB_LASERADVEL);
   f.shot.vel[0] *= laserAdVel;
   f.shot.vel[1] *= laserAdVel;
   f.shot.vel[2] *= laserAdVel;
-  setReloadTime(path->getReloadTime() / BZDB->eval(StateDatabase::BZDB_LASERADRATE));
+  setReloadTime(path->getReloadTime() / BZDB.eval(StateDatabase::BZDB_LASERADRATE));
 
   // make segments
   makeSegments(Stop);
@@ -979,8 +979,8 @@ LaserStrategy::LaserStrategy(ShotPath* path) :
   const LocalPlayer* myTank = LocalPlayer::getMyTank();
   TeamColor tmpTeam = (myTank->getFlag() == Flags::Colorblindness) ? RogueTeam : team;
 
-  TextureManager *tm = TextureManager::getTextureManager();
-  OpenGLTexture *texture = tm->getTexture(TX_LASER, tmpTeam);
+  TextureManager &tm = TextureManager::instance();
+  OpenGLTexture *texture = tm.getTexture(TX_LASER, tmpTeam);
 
   for (int i = 0; i < numSegments; i++) {
     const ShotPathSegment& segment = getSegments()[i];
@@ -1059,8 +1059,8 @@ GuidedMissileStrategy::GuidedMissileStrategy(ShotPath* _path) :
 				needUpdate(true)
 {
   ptSceneNode = new BoltSceneNode(_path->getPosition());
-  TextureManager *tm = TextureManager::getTextureManager();
-  OpenGLTexture *texture = tm->getTexture(TX_MISSILE);
+  TextureManager &tm = TextureManager::instance();
+  OpenGLTexture *texture = tm.getTexture(TX_MISSILE);
 
   if (texture && texture->isValid()) {
     ptSceneNode->setTexture(*texture);
@@ -1071,7 +1071,7 @@ GuidedMissileStrategy::GuidedMissileStrategy(ShotPath* _path) :
 
   // get initial shot info
   FiringInfo& f = getFiringInfo(_path);
-  f.lifetime *= BZDB->eval(StateDatabase::BZDB_GMISSILEADLIFE);
+  f.lifetime *= BZDB.eval(StateDatabase::BZDB_GMISSILEADLIFE);
   const float* vel = getPath().getVelocity();
   const float d = 1.0f / hypotf(vel[0], hypotf(vel[1], vel[2]));
   float dir[3];
@@ -1091,7 +1091,7 @@ GuidedMissileStrategy::GuidedMissileStrategy(ShotPath* _path) :
   segments.push_back(segment);
 
   // setup shot
-  float shotSpeed = BZDB->eval(StateDatabase::BZDB_SHOTSPEED);
+  float shotSpeed = BZDB.eval(StateDatabase::BZDB_SHOTSPEED);
   f.shot.vel[0] = shotSpeed * dir[0];
   f.shot.vel[1] = shotSpeed * dir[1];
   f.shot.vel[2] = shotSpeed * dir[2];
@@ -1103,13 +1103,13 @@ GuidedMissileStrategy::GuidedMissileStrategy(ShotPath* _path) :
 
   // check that first segment doesn't start inside a building
   float startPos[3];
-  float muzzleFront = BZDB->eval(StateDatabase::BZDB_MUZZLEFRONT);
+  float muzzleFront = BZDB.eval(StateDatabase::BZDB_MUZZLEFRONT);
   startPos[0] = f.shot.pos[0] - muzzleFront * dir[0];
   startPos[1] = f.shot.pos[1] - muzzleFront * dir[1];
   startPos[2] = f.shot.pos[2] - muzzleFront * dir[2];
   Ray firstRay = Ray(startPos, dir);
   prevTime = currentTime;
-  prevTime += -muzzleFront / BZDB->eval(StateDatabase::BZDB_SHOTSPEED);
+  prevTime += -muzzleFront / BZDB.eval(StateDatabase::BZDB_SHOTSPEED);
   checkBuildings(firstRay);
   prevTime = currentTime;
 
@@ -1187,14 +1187,14 @@ void			GuidedMissileStrategy::update(float dt)
     desiredDir[0] = targetPos[0] - nextPos[0];
     desiredDir[1] = targetPos[1] - nextPos[1];
     desiredDir[2] = targetPos[2] - nextPos[2];
-    desiredDir[2] += BZDB->eval(StateDatabase::BZDB_MUZZLEHEIGHT);	// aim for turret
+    desiredDir[2] += BZDB.eval(StateDatabase::BZDB_MUZZLEHEIGHT);	// aim for turret
 
     // compute desired angles
     float newAzimuth = atan2f(desiredDir[1], desiredDir[0]);
     float newElevation = atan2f(desiredDir[2],
 				hypotf(desiredDir[1], desiredDir[0]));
 
-    float gmissileAng = BZDB->eval(StateDatabase::BZDB_GMISSILEANG);
+    float gmissileAng = BZDB.eval(StateDatabase::BZDB_GMISSILEANG);
 
     // compute new azimuth
     float deltaAzimuth = limitAngle(newAzimuth - azimuth);
@@ -1224,7 +1224,7 @@ void			GuidedMissileStrategy::update(float dt)
   if ((++renderTimes % 3) == 0) addShotPuff(nextPos);
 
   // get next position
-  float shotSpeed = BZDB->eval(StateDatabase::BZDB_SHOTSPEED);
+  float shotSpeed = BZDB.eval(StateDatabase::BZDB_SHOTSPEED);
   ray.getPoint(dt * shotSpeed, nextPos);
 
   // see if we hit something
@@ -1265,7 +1265,7 @@ void			GuidedMissileStrategy::update(float dt)
 
 float			GuidedMissileStrategy::checkBuildings(const Ray& ray)
 {
-  float shotSpeed = BZDB->eval(StateDatabase::BZDB_SHOTSPEED);
+  float shotSpeed = BZDB.eval(StateDatabase::BZDB_SHOTSPEED);
   float t = (currentTime - prevTime) * shotSpeed;
   int face;
   const Obstacle* building = getFirstBuilding(ray, Epsilon, t);
@@ -1308,9 +1308,9 @@ float			GuidedMissileStrategy::checkHit(const BaseLocalPlayer* tank,
 
   // get tank radius
   float radius = BZDBCache::tankRadius;
-  if (tank->getFlag() == Flags::Obesity)   radius *= BZDB->eval(StateDatabase::BZDB_OBESEFACTOR);
-  else if (tank->getFlag() == Flags::Tiny) radius *= BZDB->eval(StateDatabase::BZDB_TINYFACTOR);
-  else if (tank->getFlag() == Flags::Thief) radius *= BZDB->eval(StateDatabase::BZDB_THIEFTINYFACTOR);
+  if (tank->getFlag() == Flags::Obesity)   radius *= BZDB.eval(StateDatabase::BZDB_OBESEFACTOR);
+  else if (tank->getFlag() == Flags::Tiny) radius *= BZDB.eval(StateDatabase::BZDB_TINYFACTOR);
+  else if (tank->getFlag() == Flags::Thief) radius *= BZDB.eval(StateDatabase::BZDB_THIEFTINYFACTOR);
   const float radius2 = radius * radius;
 
   // tank is positioned from it's bottom so shift position up by
@@ -1334,7 +1334,7 @@ float			GuidedMissileStrategy::checkHit(const BaseLocalPlayer* tank,
     // construct ray with correct velocity
     float speed[3];
     const float* dir = ray.getDirection();
-    float shotSpeed = BZDB->eval(StateDatabase::BZDB_SHOTSPEED);
+    float shotSpeed = BZDB.eval(StateDatabase::BZDB_SHOTSPEED);
     speed[0] = shotSpeed * dir[0];
     speed[1] = shotSpeed * dir[1];
     speed[2] = shotSpeed * dir[2];
@@ -1351,7 +1351,7 @@ float			GuidedMissileStrategy::checkHit(const BaseLocalPlayer* tank,
       // is shell radius so you can actually hit narrow tank head on.
       static float origin[3] = { 0.0f, 0.0f, 0.0f };
       t = timeRayHitsBlock(relativeRay, origin, tank->getAngle(),
-		      0.5f * BZDB->eval(StateDatabase::BZDB_TANKLENGTH),
+		      0.5f * BZDB.eval(StateDatabase::BZDB_TANKLENGTH),
 		      ShotRadius,
 		      BZDBCache::tankHeight);
     }
@@ -1455,8 +1455,8 @@ void			GuidedMissileStrategy::expire()
 void			GuidedMissileStrategy::radarRender() const
 {
   const float *orig = getPath().getPosition();
-  const int length = static_cast<int>(BZDB->eval("linedradarshots"));
-  const int size = static_cast<int>(BZDB->eval("sizedradarshots"));
+  const int length = static_cast<int>(BZDB.eval("linedradarshots"));
+  const int size = static_cast<int>(BZDB.eval("sizedradarshots"));
 
   // Display leading lines
   if (length > 0) {
@@ -1505,12 +1505,12 @@ void			GuidedMissileStrategy::radarRender() const
 
 ShockWaveStrategy::ShockWaveStrategy(ShotPath* path) :
 				ShotStrategy(path),
-				radius(BZDB->eval(StateDatabase::BZDB_SHOCKINRADIUS)),
+				radius(BZDB.eval(StateDatabase::BZDB_SHOCKINRADIUS)),
 				radius2(radius * radius)
 {
   // setup shot
   FiringInfo& f = getFiringInfo(path);
-  f.lifetime *= BZDB->eval(StateDatabase::BZDB_SHOCKADLIFE);
+  f.lifetime *= BZDB.eval(StateDatabase::BZDB_SHOCKADLIFE);
 
   // make scene node
   shockNode = new SphereSceneNode(path->getPosition(), radius);
@@ -1527,12 +1527,12 @@ ShockWaveStrategy::~ShockWaveStrategy()
 
 void			ShockWaveStrategy::update(float dt)
 {
-  radius += dt * (BZDB->eval(StateDatabase::BZDB_SHOCKOUTRADIUS) - BZDB->eval(StateDatabase::BZDB_SHOCKINRADIUS)) / getPath().getLifetime();
+  radius += dt * (BZDB.eval(StateDatabase::BZDB_SHOCKOUTRADIUS) - BZDB.eval(StateDatabase::BZDB_SHOCKINRADIUS)) / getPath().getLifetime();
   radius2 = radius * radius;
 
   // update shock wave scene node
-  const GLfloat frac = (radius - BZDB->eval(StateDatabase::BZDB_SHOCKINRADIUS)) /
-			(BZDB->eval(StateDatabase::BZDB_SHOCKOUTRADIUS) - BZDB->eval(StateDatabase::BZDB_SHOCKINRADIUS));
+  const GLfloat frac = (radius - BZDB.eval(StateDatabase::BZDB_SHOCKINRADIUS)) /
+			(BZDB.eval(StateDatabase::BZDB_SHOCKOUTRADIUS) - BZDB.eval(StateDatabase::BZDB_SHOCKINRADIUS));
   shockNode->move(getPath().getPosition(), radius);
   Player* p = lookupPlayer(getPath().getPlayer());
   const LocalPlayer* myTank = LocalPlayer::getMyTank();
@@ -1541,7 +1541,7 @@ void			ShockWaveStrategy::update(float dt)
   shockNode->setColor(c[0], c[1], c[2], 0.75f - 0.5f * frac);
 
   // expire when full size
-  if (radius >= BZDB->eval(StateDatabase::BZDB_SHOCKOUTRADIUS)) setExpired();
+  if (radius >= BZDB.eval(StateDatabase::BZDB_SHOCKOUTRADIUS)) setExpired();
 }
 
 float			ShockWaveStrategy::checkHit(const BaseLocalPlayer* tank,
@@ -1590,7 +1590,7 @@ void			ShockWaveStrategy::radarRender() const
   glEnd();
 }
 
-// Local variables: ***
+// Local Variables: ***
 // mode:C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***

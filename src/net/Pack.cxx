@@ -155,7 +155,7 @@ void*			nboUnpackString(void* b, void* m, int len)
   return (void*)((char*)b + len);
 }
 
-// Local variables: ***
+// Local Variables: ***
 // mode:C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***

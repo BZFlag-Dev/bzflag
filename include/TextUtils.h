@@ -402,7 +402,7 @@ inline std::string url_encode(std::string text)
 #endif // __TEXTUTILS_H__
 
 
-// Local variables: ***
+// Local Variables: ***
 // mode:C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***

@@ -59,7 +59,7 @@ int main(int argc, char** argv) {
   std::string uiName("curses");
 
   // no curses, use stdboth as default instead
-  const UIMap& interfaces = UIMap::getInstance();
+  const UIMap& interfaces = UIMap::instance();
   if (interfaces.find("curses") == interfaces.end())
     uiName = "stdboth";
 
@@ -96,8 +96,8 @@ int main(int argc, char** argv) {
   }
 
   // check that the ui is valid
-  uiIter = UIMap::getInstance().find(uiName);
-  if (uiIter == UIMap::getInstance().end()) {
+  uiIter = UIMap::instance().find(uiName);
+  if (uiIter == UIMap::instance().end()) {
     std::cerr<<"There is no interface called \""<<uiName<<"\"."<<std::endl;
     return 1;
   }
@@ -124,7 +124,7 @@ int main(int argc, char** argv) {
   return 0;
 }
 
-// Local variables: ***
+// Local Variables: ***
 // mode:C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***

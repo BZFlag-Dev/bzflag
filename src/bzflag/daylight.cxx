@@ -360,7 +360,7 @@ bool			areStarsVisible(const float sunDir[3])
   return sunDir[2] < dawnElevation;
 }
 
-// Local variables: ***
+// Local Variables: ***
 // mode:C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***

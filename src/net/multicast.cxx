@@ -442,7 +442,7 @@ int			recvMulticast(int fd, void* buffer, int bufferLength,
   return byteCount;
 }
 
-// Local variables: ***
+// Local Variables: ***
 // mode:C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***

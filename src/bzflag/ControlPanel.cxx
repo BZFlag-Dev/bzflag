@@ -58,7 +58,7 @@ ControlPanel::ControlPanel(MainWindow& _mainWindow, SceneRenderer& renderer) :
   window.getWindow()->addResizeCallback(resizeCallback, this);
   window.getWindow()->addExposeCallback(exposeCallback, this);
 
-  blend = BZDB->isTrue("blend");
+  blend = BZDB.isTrue("blend");
 
   // other initialization
   radarAreaPixels[0] = 0;
@@ -131,14 +131,14 @@ void			ControlPanel::render(SceneRenderer& renderer)
   OpenGLGState::resetState();
   if (renderer.getPanelOpacity() > 0.0f) {
   // nice blended messages background
-    if (BZDB->isTrue("blend") && renderer.getPanelOpacity() < 1.0f)
+    if (BZDB.isTrue("blend") && renderer.getPanelOpacity() < 1.0f)
       glEnable(GL_BLEND);
     glColor4f(0.0f, 0.0f, 0.0f, renderer.getPanelOpacity());
     glRecti(messageAreaPixels[0],
     messageAreaPixels[1],
     messageAreaPixels[0] + messageAreaPixels[2],
     messageAreaPixels[1] + messageAreaPixels[3]);
-    if (BZDB->isTrue("blend") && renderer.getPanelOpacity() < 1.0f)
+    if (BZDB.isTrue("blend") && renderer.getPanelOpacity() < 1.0f)
       glDisable(GL_BLEND);
   }
 
@@ -322,7 +322,7 @@ void			ControlPanel::resize()
     radarRenderer->setShape(radarAreaPixels[0], radarAreaPixels[1],
                             radarAreaPixels[2], radarAreaPixels[3]);
 
-  const bool useBigFont = messageAreaPixels[2] / (BZDB->isTrue("bigfont") ? 60.0f : 80.0f) > 10.0f;
+  const bool useBigFont = messageAreaPixels[2] / (BZDB.isTrue("bigfont") ? 60.0f : 80.0f) > 10.0f;
   const float fontSize = useBigFont ? 11.0f : 7.0f;
   if (useBigFont)
     messageFont = TextureFont::getTextureFont(TextureFont::FixedBold, true);
@@ -436,7 +436,7 @@ void			ControlPanel::setRadarRenderer(RadarRenderer* rr)
   radarRenderer = rr;
 }
 
-// Local variables: ***
+// Local Variables: ***
 // mode:C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***

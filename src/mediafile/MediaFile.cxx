@@ -114,9 +114,9 @@ uint32_t	MediaFile::swap32BE(uint32_t* d)
 
 #define OPENMEDIA(_T)					\
 do {							\
-  stream = FILEMGR->createDataInStream(filename, true);	\
+  stream = FILEMGR.createDataInStream(filename, true);	\
   if (stream == NULL)					\
-    stream = FILEMGR->createDataInStream(filename +	\
+    stream = FILEMGR.createDataInStream(filename +	\
 	     _T::getExtension(), true);			\
   if (stream != NULL) {					\
     file = new _T(stream);				\
@@ -295,7 +295,7 @@ float*		MediaFile::readSound(
 }
 */
 
-// Local variables: ***
+// Local Variables: ***
 // mode:C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***

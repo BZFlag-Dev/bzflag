@@ -351,7 +351,7 @@ std::ostream& operator<<(std::ostream& out, MD5 md5)
   return out << md5.hexdigest();
 }
 
-// Local variables: ***
+// Local Variables: ***
 // mode:C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***

@@ -58,7 +58,7 @@ class TracerSceneNode : public ShotSceneNode {
 
 #endif // BZF_TRACER_SCENE_NODE_H
 
-// Local variables: ***
+// Local Variables: ***
 // mode:C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***

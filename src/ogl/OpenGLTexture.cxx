@@ -485,7 +485,7 @@ int			OpenGLTexture::Rep::getBestFormat(
 		(useAlpha ? GL_RGBA : GL_RGB));
 }
 
-// Local variables: ***
+// Local Variables: ***
 // mode:C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***

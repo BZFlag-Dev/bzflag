@@ -184,8 +184,8 @@ typedef unsigned int	uint32_t;
 #endif // BZF_COMMON_H
 
 
-// Local variables: ***
-// mode:C++ ***
+// Local Variables: ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***

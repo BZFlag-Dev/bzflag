@@ -106,8 +106,8 @@ SceneNode**		SphereSceneNode::getParts(int& numParts)
 void			SphereSceneNode::notifyStyleChange(
 				const SceneRenderer&)
 {
-  blending = BZDB->isTrue("blend");
-  lighting = BZDB->isTrue("lighting");
+  blending = BZDB.isTrue("blend");
+  lighting = BZDB.isTrue("lighting");
   OpenGLGStateBuilder builder(gstate);
   if (blending && transparent) {
     builder.setBlending(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -423,7 +423,7 @@ void			SphereFragmentSceneNode::FragmentRenderNode::render()
   glPopMatrix();
 }
 
-// Local variables: ***
+// Local Variables: ***
 // mode:C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***

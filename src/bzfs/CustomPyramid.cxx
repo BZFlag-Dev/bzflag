@@ -22,8 +22,8 @@
 
 CustomPyramid::CustomPyramid()
 {
-  size[0] = size[1] = BZDB->eval(StateDatabase::BZDB_PYRBASE);
-  size[2] = BZDB->eval(StateDatabase::BZDB_PYRHEIGHT);
+  size[0] = size[1] = BZDB.eval(StateDatabase::BZDB_PYRBASE);
+  size[2] = BZDB.eval(StateDatabase::BZDB_PYRHEIGHT);
 }
 
 

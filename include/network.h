@@ -171,7 +171,7 @@ class BzfNetwork {
 
 #endif // BZF_NETWORK_H
 
-// Local variables: ***
+// Local Variables: ***
 // mode:C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***

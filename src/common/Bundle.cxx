@@ -306,7 +306,7 @@ std::string Bundle::formatMessage(const std::string &key, const std::vector<std:
   return messageOut;
 }
 
-// Local variables: ***
+// Local Variables: ***
 // mode:C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***

@@ -63,7 +63,7 @@ void			PhotonTorpedoSceneNode::addLight(
 void			PhotonTorpedoSceneNode::notifyStyleChange(
 				const SceneRenderer&)
 {
-  blending = BZDB->isTrue("blend");
+  blending = BZDB.isTrue("blend");
   OpenGLGStateBuilder builder(gstate);
   if (blending) {
     builder.setBlending(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -271,7 +271,7 @@ void			PhotonTorpedoSceneNode::PTRenderNode::render()
   glPopMatrix();
 }
 
-// Local variables: ***
+// Local Variables: ***
 // mode:C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***

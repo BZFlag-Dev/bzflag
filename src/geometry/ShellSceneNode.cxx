@@ -75,7 +75,7 @@ void			ShellSceneNode::notifyStyleChange(
 				const SceneRenderer&)
 {
   OpenGLGStateBuilder builder(gstate);
-  const bool lighting = BZDB->isTrue("lighting");
+  const bool lighting = BZDB.isTrue("lighting");
   builder.enableMaterial(lighting);
   builder.setShading(lighting ? GL_SMOOTH : GL_FLAT);
   renderNode.setLighting(lighting);
@@ -164,7 +164,7 @@ void			ShellSceneNode::ShellRenderNode::render()
   glPopMatrix();
 }
 
-// Local variables: ***
+// Local Variables: ***
 // mode:C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***

@@ -17,6 +17,7 @@
 #include <string>
 
 #include "BZAdminUI.h"
+#include "Singleton.h"
 
 
 /** The function type that creates interface objects. */
@@ -27,15 +28,13 @@ typedef BZAdminUI* (*UICreator)(const std::map<PlayerId, std::string>& players,
 /** This class maps strings to BZAdmin interfaces (subclasses of
     BZAdminUI). New interface classes should register using the UIAdder
     class. */
-class UIMap : public std::map<std::string, UICreator> {
-private:
-  /** The constructor is private, this is a singleton. */
+class UIMap : public std::map<std::string, UICreator>,
+	      public Singleton<UIMap>
+{
+protected:
+  friend class Singleton<UIMap>;
+  /** The constructor is hidden, this is a singleton. */
   UIMap();
-
-public:
-
-  /** This function returns the single instance of this class. */
-  static UIMap& getInstance();
 
 };
 
@@ -55,7 +54,7 @@ public:
 
 #endif
 
-// Local variables: ***
+// Local Variables: ***
 // mode:C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***

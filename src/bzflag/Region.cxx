@@ -459,7 +459,7 @@ bool			RegionPriorityQueue::isEmpty() const
   return (head == 0);
 }
 
-// Local variables: ***
+// Local Variables: ***
 // mode:C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
