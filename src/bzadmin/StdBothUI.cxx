@@ -47,8 +47,7 @@ unsigned long __stdcall winInput(void *that)
 // add this UI to the map
 UIAdder StdBothUI::uiAdder("stdboth", &StdBothUI::creator);
 
-StdBothUI::StdBothUI()
-{
+StdBothUI::StdBothUI() : atEOF(false) {
 #ifdef _WIN32
   unsigned long tid;
   console = GetStdHandle(STD_INPUT_HANDLE);
@@ -85,6 +84,12 @@ bool StdBothUI::checkCommand(std::string& str) {
 #else
 
 bool StdBothUI::checkCommand(std::string& str) {
+  // if we read EOF last time, quit now
+  if (atEOF) {
+    str = "/quit";
+    return true;
+  }
+  
   static char buffer[MessageLen + 1];
   static int pos = 0;
 
@@ -95,7 +100,11 @@ bool StdBothUI::checkCommand(std::string& str) {
   tv.tv_sec = 0;
   tv.tv_usec = 0;
   if (select(1, &rfds, NULL, NULL, &tv) > 0) {
-    read(0, &buffer[pos], 1);
+    if (read(0, &buffer[pos], 1) == 0) {
+      // select says we have data, but there's nothing to read - assume EOF
+      buffer[pos] = '\n';
+      atEOF = true;
+    }
     if (buffer[pos] == '\n' || pos == MessageLen - 1) {
       buffer[pos] = '\0';
       str = buffer;

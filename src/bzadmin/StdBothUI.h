@@ -35,6 +35,9 @@ public:
  protected:
 
   static UIAdder uiAdder;
+  
+  bool atEOF;
+
 #ifdef _WIN32
  public:
   HANDLE console;
