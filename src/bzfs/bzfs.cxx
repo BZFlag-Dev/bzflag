@@ -601,6 +601,7 @@ static boolean flagsOnBuildings;
 static boolean oneGameOnly;
 static int gameStyle;
 static uint16_t maxPlayers = MaxPlayers;
+static uint16_t curMaxPlayers = 0;
 // max simulataneous per player
 static uint16_t maxShots;
 static uint16_t maxTeam[NumTeams];
@@ -1857,7 +1858,7 @@ static void directMessage(int playerIndex, uint16_t code, int len, const void *m
 static void broadcastMessage(uint16_t code, int len, const void *msg)
 {
   // send message to everyone
-  for (int i = 0; i < maxPlayers; i++)
+  for (int i = 0; i < curMaxPlayers; i++)
     if (player[i].state > PlayerInLimbo)
       directMessage(i, code, len, msg);
 }
@@ -1916,7 +1917,7 @@ void OOBQueueUpdate(int t, uint32_t rseqno) {
 
 static int lookupPlayer(const PlayerId& id)
 {
-  for (int i = 0; i < maxPlayers; i++)
+  for (int i = 0; i < curMaxPlayers; i++)
     if (player[i].state > PlayerInLimbo && player[i].id == id)
       return i;
   return InvalidPlayer;
@@ -1952,16 +1953,16 @@ static int uread(int *playerIndex, int *nopackets)
     uint16_t len, lseqno;
     void *pmsg;
     int pi;
-    for (pi = 0, pPlayerInfo = player; pi < MaxPlayers; pi++, pPlayerInfo++) {
+    for (pi = 0, pPlayerInfo = player; pi < curMaxPlayers; pi++, pPlayerInfo++) {
       if ((pPlayerInfo->ulinkup) &&
 	  (pPlayerInfo->uaddr.sin_port == uaddr.sin_port) &&
 	  (memcmp(&pPlayerInfo->uaddr.sin_addr, &uaddr.sin_addr, sizeof(uaddr.sin_addr)) == 0)) {
 	break;
       }
     }
-    if (pi == MaxPlayers) {
+    if (pi == curMaxPlayers) {
       // didn't find player so test for exact match new player
-      for (pi = 0, pPlayerInfo = player; pi < MaxPlayers; pi++, pPlayerInfo++) {
+      for (pi = 0, pPlayerInfo = player; pi < curMaxPlayers; pi++, pPlayerInfo++) {
 	if (!pPlayerInfo->ulinkup &&
 	    (pPlayerInfo->uaddr.sin_port == uaddr.sin_port) &&
 	    (memcmp(&pPlayerInfo->uaddr.sin_addr, &uaddr.sin_addr, sizeof(uaddr.sin_addr)) == 0)) {
@@ -1973,9 +1974,9 @@ static int uread(int *playerIndex, int *nopackets)
 	}
       }
     }
-    if (pi == MaxPlayers) {
+    if (pi == curMaxPlayers) {
       // still didn't find player so test for just address not port (ipmasq fw etc.)
-      for (pi = 0, pPlayerInfo = player; pi < MaxPlayers; pi++, pPlayerInfo++) {
+      for (pi = 0, pPlayerInfo = player; pi < curMaxPlayers; pi++, pPlayerInfo++) {
 	if (!pPlayerInfo->ulinkup &&
 	    memcmp(&uaddr.sin_addr, &pPlayerInfo->uaddr.sin_addr, sizeof(uaddr.sin_addr)) == 0) {
 	  DEBUG2("uread() fuzzy udp up for player %d %s:%d actual port %d\n",
@@ -1990,10 +1991,10 @@ static int uread(int *playerIndex, int *nopackets)
 
     // get the packet
     n = recv(udpSocket, (char *)ubuf, MaxPacketLen, 0);
-    if (pi == MaxPlayers) {
+    if (pi == curMaxPlayers) {
       // no match, discard packet
       DEBUG2("uread() discard packet! %s:%d choices p(l) h:p", inet_ntoa(uaddr.sin_addr), ntohs(uaddr.sin_port));
-      for (pi = 0, pPlayerInfo = player; pi < MaxPlayers; pi++, pPlayerInfo++) {
+      for (pi = 0, pPlayerInfo = player; pi < curMaxPlayers; pi++, pPlayerInfo++) {
 	if (pPlayerInfo->fd != -1) {
 	  DEBUG3(" %d(%d) %s:%d",
 	      pi, pPlayerInfo->ulinkup,
@@ -2123,7 +2124,7 @@ static void sendPlayerUpdate(int playerIndex, int index)
   buf = pPlayer->id.pack(buf);
   if (playerIndex == index) {
     // send all players info about player[playerIndex]
-    for (int i = 0; i < maxPlayers; i++)
+    for (int i = 0; i < curMaxPlayers; i++)
       if (player[i].state > PlayerInLimbo && i != playerIndex)
 	directMessage(i, MsgAddPlayer, (char*)buf - (char*)bufStart - PlayerIdPLen, bufStart);
     // append playerid which will not be mangled so new clients can adapt
@@ -2627,7 +2628,7 @@ static boolean startPlayerPacketRelay(int playerIndex)
     // multicasting yet, we'll have to do it the hard way -- when
     // we can't multicast and a player wants relaying we must
     // force all players to start relaying.
-    for (int i = 0; i < maxPlayers; i++)
+    for (int i = 0; i < curMaxPlayers; i++)
       if (i != playerIndex &&
 	  player[i].state > PlayerInLimbo && !player[i].multicastRelay) {
 	directMessage(i, MsgNetworkRelay, 0, getDirectMessageBuffer());
@@ -2672,7 +2673,7 @@ static void relayPlayerPacket()
   }
 
   // relay packet to all players needing multicast relay
-  for (int i = 0; i < maxPlayers; i++)
+  for (int i = 0; i < curMaxPlayers; i++)
     if (player[i].multicastRelay)
       pwrite(i, buffer, msglen);
 }
@@ -2684,7 +2685,7 @@ static void relayPlayerPacket(int index, uint16_t len, const void *rawbuf)
     sendMulticast(relayOutSocket, rawbuf, len + 4, &relayOutAddr);
 
   // relay packet to all players needing multicast relay
-  for (int i = 0; i < maxPlayers; i++)
+  for (int i = 0; i < curMaxPlayers; i++)
     if (i != index && player[i].multicastRelay)
       pwrite(i, rawbuf, len + 4);
 }
@@ -3473,7 +3474,7 @@ static void dumpScore()
   // sort players by team (do it in five easy pieces)
   cout << "#players" << endl;
   for (i = 0; i < NumTeams; i++)
-    for (int j = 0; j < maxPlayers; j++)
+    for (int j = 0; j < curMaxPlayers; j++)
       if (player[j].state > PlayerInLimbo && int(player[j].team) == i) {
 	cout << player[j].wins << " " <<
 	    player[j].losses << " " <<
@@ -3532,6 +3533,9 @@ static void acceptClient()
   if (playerIndex == maxPlayers)
     serverAddr.sin_port = htons(0);
 
+  if (playerIndex >= curMaxPlayers)
+    curMaxPlayers = playerIndex+1;
+
   // record what port we accepted on
   player[playerIndex].time = TimeKeeper::getCurrent();
   player[playerIndex].fd = fd;
@@ -3556,7 +3560,7 @@ static void acceptClient()
 static void addClient(int acceptSocket)
 {
   int playerIndex;
-  for (playerIndex = 0; playerIndex < maxPlayers; playerIndex++) {
+  for (playerIndex = 0; playerIndex < curMaxPlayers; playerIndex++) {
     // check for clients that are reconnecting
     if (player[playerIndex].state == PlayerAccept)
       break;
@@ -3597,7 +3601,7 @@ static void addClient(int acceptSocket)
   // if game was over and this is the first player then game is on
   if (gameOver) {
     int count = 0;
-    for (int i = 0; i < maxPlayers; i++)
+    for (int i = 0; i < curMaxPlayers; i++)
       if (player[i].state >= PlayerInLimbo)
 	count++;
     if (count == 1) {
@@ -3619,6 +3623,14 @@ static void shutdownAcceptClient(int playerIndex)
   close(player[playerIndex].fd);
   player[playerIndex].fd = NotConnected;
   player[playerIndex].state = PlayerNoExist;
+
+  while ((playerIndex >= 0)
+  &&     (playerIndex+1 == curMaxPlayers)
+  &&     (player[playerIndex].state == PlayerNoExist))
+  {
+     playerIndex--;
+     curMaxPlayers--;
+  }
 }
 
 static void respondToPing(boolean broadcast = False)
@@ -3642,10 +3654,10 @@ static void respondToPing(boolean broadcast = False)
   if (!handlePings) {
     int i;
     Address remoteAddress(addr);
-    for (i = 0; i < maxPlayers; i++)
+    for (i = 0; i < curMaxPlayers; i++)
       if (player[i].fd != NotConnected && player[i].peer == remoteAddress)
 	break;
-    if (i == maxPlayers)
+    if (i == curMaxPlayers)
       return;
   }
 
@@ -3713,7 +3725,7 @@ static void addPlayer(int playerIndex)
   }
 
   int numobservers = 0;
-  for (i=0;i<MaxPlayers;i++) {
+  for (i=0;i<curMaxPlayers;i++) {
     if (i != playerIndex && player[i].state > PlayerInLimbo &&
 	player[i].Observer)
       numobservers++;
@@ -3827,7 +3839,7 @@ static void addPlayer(int playerIndex)
     for (i = 0; i < numFlags && player[playerIndex].fd != NotConnected; i++)
       if (flag[i].flag.status != FlagNoExist)
 	sendFlagUpdate(i, playerIndex);
-    for (i = 0; i < maxPlayers && player[playerIndex].fd != NotConnected; i++)
+    for (i = 0; i < curMaxPlayers && player[playerIndex].fd != NotConnected; i++)
       if (player[i].state > PlayerInLimbo && i != playerIndex)
 	sendPlayerUpdate(i, playerIndex);
   }
@@ -4075,10 +4087,10 @@ static void removePlayer(int playerIndex)
   if (player[playerIndex].multicastRelay) {
     player[playerIndex].multicastRelay = False;
     int i;
-    for (i = 0; i < maxPlayers; i++)
+    for (i = 0; i < curMaxPlayers; i++)
       if (player[i].state > PlayerInLimbo && player[i].multicastRelay)
 	break;
-    if (i == maxPlayers)
+    if (i == curMaxPlayers)
       stopPlayerPacketRelay();
   }
 
@@ -4086,6 +4098,14 @@ static void removePlayer(int playerIndex)
   // don't count as a player.
   if (player[playerIndex].state == PlayerInLimbo) {
     player[playerIndex].state = PlayerNoExist;
+
+    while ((playerIndex >= 0)
+    &&     (playerIndex+1 == curMaxPlayers)
+    &&     (player[playerIndex].state == PlayerNoExist))
+    {
+	playerIndex--;
+	curMaxPlayers--;
+    }
     return;
   }
 
@@ -4141,14 +4161,22 @@ static void removePlayer(int playerIndex)
   // tell the list server the new number of players
   sendMessageToListServer("SETNUM");
 
+  while ((playerIndex >= 0)
+  &&     (playerIndex+1 == curMaxPlayers)
+  &&     (player[playerIndex].state == PlayerNoExist))
+  {
+     playerIndex--;
+     curMaxPlayers--;
+  }
+
   // anybody left?
   int i;
-  for (i = 0; i < maxPlayers; i++)
+  for (i = 0; i < curMaxPlayers; i++)
     if (player[i].state > PlayerInLimbo)
       break;
 
   // if everybody left then reset world
-  if (i == maxPlayers) {
+  if (i == curMaxPlayers) {
     if (oneGameOnly) {
       done = True;
       exitCode = 0;
@@ -4218,7 +4246,7 @@ static void sendQueryPlayers(int playerIndex)
   int i, numPlayers = 0;
 
   // count the number of active players
-  for (i = 0; i < maxPlayers; i++)
+  for (i = 0; i < curMaxPlayers; i++)
     if (player[i].state > PlayerInLimbo)
       numPlayers++;
 
@@ -4231,7 +4259,7 @@ static void sendQueryPlayers(int playerIndex)
   // now send the teams and players
   for (i = 0; i < NumTeams && player[playerIndex].fd != NotConnected; i++)
     sendTeamUpdate(i, playerIndex);
-  for (i = 0; i < maxPlayers && player[playerIndex].fd != NotConnected; i++)
+  for (i = 0; i < curMaxPlayers && player[playerIndex].fd != NotConnected; i++)
     if (player[i].state > PlayerInLimbo)
       sendPlayerUpdate(i, playerIndex);
 }
@@ -4508,7 +4536,7 @@ static void captureFlag(int playerIndex, TeamColor teamCaptured)
   broadcastMessage(MsgCaptureFlag, (char*)buf-(char*)bufStart, bufStart);
 
   // everyone on losing team is dead
-  for (int i = 0; i < maxPlayers; i++)
+  for (int i = 0; i < curMaxPlayers; i++)
     if (player[i].fd != NotConnected &&
 	int(flag[flagIndex].flag.id) == int(player[i].team) &&
 	player[i].state == PlayerAlive) {
@@ -4712,12 +4740,12 @@ static void parseCommand(const char *message, int t)
     if (gameStyle & int(TeamFlagGameStyle)) {
       // get someone to can do virtual capture
       int j;
-      for (j=0;j<maxPlayers;j++) {
+      for (j=0;j<curMaxPlayers;j++) {
 	if (player[j].state > PlayerInLimbo)
 	  break;
       }
-      if (j < maxPlayers) {
-	for (int i=0;i<maxPlayers;i++) {
+      if (j < curMaxPlayers) {
+	for (int i=0;i<curMaxPlayers;i++) {
 	  if (player[i].playedEarly) {
 	    char msg[PlayerIdPLen + 4];
 	    void *buf = msg;
@@ -4792,10 +4820,10 @@ static void parseCommand(const char *message, int t)
   } else if (player[t].Admin && strncmp(message + 1, "kick ", 5) == 0) {
     int i;
     const char *victimname = message + 6;
-    for (i = 0; i < maxPlayers; i++)
+    for (i = 0; i < curMaxPlayers; i++)
       if (player[i].fd != NotConnected && strcmp(player[i].callSign, victimname) == 0)
 	break;
-    if (i < maxPlayers) {
+    if (i < curMaxPlayers) {
       char kickmessage[MessageLen];
       player[i].toBeKicked = false;
       sprintf(kickmessage,"Your were kicked off the server by %s", player[t].callSign);
@@ -4825,7 +4853,7 @@ static void parseCommand(const char *message, int t)
       strcpy(reply, "malformed address");
     sendMessage(t, player[t].id, player[t].team, reply);
     char kickmessage[MessageLen];
-    for (int i = 0; i < maxPlayers; i++) {
+    for (int i = 0; i < curMaxPlayers; i++) {
       if ((player[i].fd != NotConnected) && (!acl.validate( player[i].taddr.sin_addr))) {
 	player[i].toBeKicked = false;
 	sprintf(kickmessage,"Your were banned from this server by %s", player[t].callSign);
@@ -4862,7 +4890,7 @@ static void parseCommand(const char *message, int t)
   }
   // /lagstats gives simple statistics about players' lags
   else if (strncmp(message+1,"lagstats",8) == 0) {
-    for (int i = 0; i < maxPlayers; i++) {
+    for (int i = 0; i < curMaxPlayers; i++) {
       if (player[i].state > PlayerInLimbo) {
 	char reply[MessageLen];
 	sprintf(reply,"%-12s : %4dms (%d)%s",player[i].callSign,
@@ -4877,7 +4905,7 @@ static void parseCommand(const char *message, int t)
   // /idlestats gives a list of players' idle times
   else if (strncmp(message+1,"idlestats",9) == 0) {
     TimeKeeper now=TimeKeeper::getCurrent();
-    for (int i = 0; i < maxPlayers; i++) {
+    for (int i = 0; i < curMaxPlayers; i++) {
       if (player[i].state > PlayerInLimbo) {
 	char reply[MessageLen];
 	sprintf(reply,"%-12s : %4ds",player[i].callSign,
@@ -4888,7 +4916,7 @@ static void parseCommand(const char *message, int t)
   }
   // /flaghistory gives history of what flags player has carried
   else if (strncmp(message+1, "flaghistory", 11 ) == 0) {
-    for (int i = 0; i < maxPlayers; i++)
+    for (int i = 0; i < curMaxPlayers; i++)
       if (player[i].fd != NotConnected) {
 	char reply[MessageLen];
 	char flag[MessageLen];
@@ -4909,7 +4937,7 @@ static void parseCommand(const char *message, int t)
   }
   // /playerlist dumps a list of players with IPs etc.
   else if (player[t].Admin && strncmp(message+1,"playerlist",10) == 0) {
-    for (int i = 0; i < maxPlayers; i++) {
+    for (int i = 0; i < curMaxPlayers; i++) {
       if (player[i].state > PlayerInLimbo) {
 	char reply[MessageLen];
 	sprintf(reply,"[%d]%-12s: %s:%d%s%s",i,player[i].callSign,
@@ -6268,7 +6296,7 @@ int main(int argc, char **argv)
     }
 
     // get time for next lagping
-    for (int p=0;p<maxPlayers;p++)
+    for (int p=0;p<curMaxPlayers;p++)
     {
       if (player[p].state == PlayerAlive &&
 	  player[p].trypings && player[p].nextping - tm < waitTime)
@@ -6314,7 +6342,7 @@ int main(int argc, char **argv)
 
     // kick idle players
     if (idlekickthresh > 0) {
-      for (int i=0;i<maxPlayers;i++) {
+      for (int i=0;i<curMaxPlayers;i++) {
 	if (!player[i].Observer && player[i].state == PlayerDead &&
 	    (tm - player[i].lastupdate >
 	      (tm - player[i].lastmsg < idlekickthresh ?
@@ -6337,7 +6365,7 @@ int main(int argc, char **argv)
 	char message[MessageLen];
 	strncpy(message, advertisemsg, MessageLen);
 
-	for (int i=0; i<maxPlayers; i++)
+	for (int i=0; i<curMaxPlayers; i++)
 	  if (player[i].state > PlayerInLimbo)
 	    sendMessage(i, player[i].id, player[i].team, message);
 
@@ -6382,7 +6410,7 @@ int main(int argc, char **argv)
     }
 
     // send lag pings
-    for (int j=0;j<maxPlayers;j++)
+    for (int j=0;j<curMaxPlayers;j++)
     {
       if (player[j].trypings &&
 	  player[j].state == PlayerAlive && player[j].nextping-tm < 0)
@@ -6419,12 +6447,12 @@ int main(int argc, char **argv)
 	if (listServerLinksCount == 0) {
 	  // count the number of players
 	  int i;
-	  for (i = 0; i < maxPlayers; i++)
+	  for (i = 0; i < curMaxPlayers; i++)
 	    if (player[i].state > PlayerInLimbo)
 	      break;
 
 	  // if nobody playing then publicize
-	  if (i == maxPlayers)
+	  if (i == curMaxPlayers)
 	    publicize();
 	}
 
@@ -6433,7 +6461,7 @@ int main(int argc, char **argv)
 	listServerLastAddTime = tm;
       }
 
-    for (i = 0; i < maxPlayers; i++) {
+    for (i = 0; i < curMaxPlayers; i++) {
       // kick any clients that don't speak UDP
       if (requireUDP && player[i].toBeKicked) {
 	char message[MessageLen];
@@ -6472,7 +6500,7 @@ int main(int argc, char **argv)
       if (FD_ISSET(reconnectSocket, &read_set))
 	  addClient(reconnectSocket);
       // check for players that were accepted
-      for (i = 0; i < maxPlayers; i++) {
+      for (i = 0; i < curMaxPlayers; i++) {
 	// check the initial contact port.  if any activity or
 	// we've waited a while, then shut it down
 	if (player[i].state == PlayerAccept &&
@@ -6506,7 +6534,7 @@ int main(int argc, char **argv)
       }
 
       // now check messages from connected players and send queued messages
-      for (i = 0; i < maxPlayers; i++) {
+      for (i = 0; i < curMaxPlayers; i++) {
 
 	if (player[i].fd != NotConnected && FD_ISSET(player[i].fd, &write_set)) {
 	  pflush(i);
