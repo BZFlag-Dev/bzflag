@@ -38,7 +38,6 @@ const int udpBufSize = 128000;
 // must be before network.h because that defines a close() macro which
 // messes up fstreams.	luckily, we don't need to call the close() method
 // on any fstream.
-#include "bzfio.h"
 #include <fstream>
 
 // must be before windows.h
@@ -69,25 +68,16 @@ const int udpBufSize = 128000;
 #undef private
 #endif
 #include <string>
-#include <sstream>
-#include <stdlib.h>
 #include <string.h>
-#include <ctype.h>
 #include <sys/types.h>
-#include <errno.h>
 #include <math.h>
 #include "bzsignal.h"
 #include <time.h>
-#include "common.h"
-#include "global.h"
-#include "Protocol.h"
-#include "Address.h"
 #include "Pack.h"
 #include "PlayerState.h"
 #include "TimeKeeper.h"
 #include "Flag.h"
 #include "Team.h"
-#include "multicast.h"
 #include "Ping.h"
 #include "TimeBomb.h"
 #include "md5.h"
