@@ -63,7 +63,7 @@
 #define _WIN32_WINNT 0x0400
 #include <Windows.h>
 
-#if (1)
+#if (1) && _MSC_VER != 1100
   #include "ATLbase.h"
   inline void W32_DEBUG_TRACE (const char* buffer) {ATLTRACE(buffer);}
 #else
