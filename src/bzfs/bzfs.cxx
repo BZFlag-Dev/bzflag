@@ -5378,7 +5378,8 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
       }
 
       player[t].lastupdate = TimeKeeper::getCurrent();
-      float maxTankHeight = maxWorldHeight + 1.0f + ((BZDB->eval(StateDatabase::BZDB_JUMPVELOCITY)*BZDB->eval(StateDatabase::BZDB_JUMPVELOCITY)) / (2.0f * -BZDB->eval(StateDatabase::BZDB_GRAVITY)));
+      float gravity = BZDB->eval(StateDatabase::BZDB_GRAVITY);
+      float maxTankHeight = maxWorldHeight + 1.0f + ((BZDB->eval(StateDatabase::BZDB_JUMPVELOCITY)*BZDB->eval(StateDatabase::BZDB_JUMPVELOCITY)) / (2.0f * (gravity < -1 ? -gravity : 1)));
 
       if (state.pos[2] > maxTankHeight) {
 	char message[MessageLen];
