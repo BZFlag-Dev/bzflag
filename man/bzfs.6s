@@ -117,8 +117,8 @@ and write the banlist back to the file when someone gets banned or unbanned.
 If this option isn't given the banlist will not be saved.
 .TP
 .B -c
-Enables the capture-the-flag style game. By default, the free-for-all
-style is used.
+Enables the capture-the-flag style game. By default this allocates one team flag per team. 
+This can be modified see +f team. By default, the free-for-all style is used.
 .TP
 \fB\-conf \fIconfigfilename\fR
 Specifies the name of a configuration file to be used to set all of the
@@ -127,7 +127,8 @@ bzfs options, rather than setting them on the command line.
 .B -cr\fR
 Enables the capture-the-flag style game with random map.  You can
 optionally specify a building density by providing an number (default
-is 5).  By default, the free-for-all style is used.
+is 5).  One team flag per team is provided, but more can be added thru +f team.
+By default, the free-for-all style is used.
 .TP
 .B -d
 Increase debugging level. More -d are used, more debugging info are obtained.
@@ -792,7 +793,8 @@ and a list of attributes for that object, one per line, inbetween. Attributes ma
 any order. Attributes have default values, and if that is good enough, the attribute need not
 be listed. Words are always specified in lowercase. Line comments can be specified by placing a
 # sign at the start of the line. For documentation purposes, you can tag each object by adding
-a name attribute.
+a name attribute. There is set limit to the number of times you may use box, pyramid, teleporter,
+link, base and weapon objects. You must only supply one world object at most.
 
 .br
 In the following examples, the values are the defaults.
