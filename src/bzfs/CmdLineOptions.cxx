@@ -381,6 +381,7 @@ void parse(int argc, char **argv, CmdLineOptions &options)
   // prepare flag counts
   int i;
   bool allFlagsOut = false;
+  bool teamFlagsAdded = false;
 
   // parse command line
   int playerCountArg = 0,playerCountArg2 = 0;
@@ -444,9 +445,10 @@ void parse(int argc, char **argv, CmdLineOptions &options)
 	fprintf(stderr, "Capture the flag incompatible with Rabbit Chase\n");
 	fprintf(stderr, "Capture the flag assumed\n");
       }
-      if ((options.gameStyle & int(TeamFlagGameStyle)) == 0) {
+      if (!teamFlagsAdded) {
         for (int t = RedTeam; t <= PurpleTeam; t++)
           options.numTeamFlags[t] += 1;
+	teamFlagsAdded = true;
       }
     } else if (strcmp(argv[i], "-conf") == 0) {
       if (++i == argc) {
@@ -477,9 +479,10 @@ void parse(int argc, char **argv, CmdLineOptions &options)
 	fprintf(stderr, "Capture the flag incompatible with Rabbit Chase\n");
 	fprintf(stderr, "Capture the flag assumed\n");
       }
-      if ((options.gameStyle & int(TeamFlagGameStyle)) == 0) {
+      if (!teamFlagsAdded) {
         for (int t = RedTeam; t <= PurpleTeam; t++)
           options.numTeamFlags[t] += 1;
+	teamFlagsAdded = true;
       }
 
       // if there are any arguments following, see if they are a
