@@ -88,6 +88,7 @@ static const char copyright[] = "Copyright (c) 1993 - 2004 Tim Riker";
 #include "TextUtils.h"
 #include "TextureManager.h"
 #include "TargetingUtils.h"
+#include "menus.h"
 #include "../zlib/zconf.h"
 #include "../zlib/zlib.h"
 
