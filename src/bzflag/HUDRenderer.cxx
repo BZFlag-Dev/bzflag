@@ -167,15 +167,6 @@ HUDRenderer::HUDRenderer(const BzfDisplay* _display,
     }
   }
 
-  // initialize miscellaneous stuff
-  for (i = 0; i < MaxHUDMarkers; i++) {
-    marker[i].on = false;
-    marker[i].heading = 0.0f;
-    marker[i].color[0] = 0.0f;
-    marker[i].color[1] = 0.0f;
-    marker[i].color[2] = 0.0f;
-  }
-
   // initialize clocks
   globalClock.setClock(-1.0f, 0.8f, 0.4f);
   scoreClock.setClock(-1.0f, 0.5f, 0.2f);
@@ -524,28 +515,16 @@ void			HUDRenderer::setCracks(bool _showCracks)
   showCracks = _showCracks;
 }
 
-void			HUDRenderer::setMarker(int index, bool on)
+void			HUDRenderer::addMarker(float _heading, const float *_color )
 {
-  if (index < 0 || index >= MaxHUDMarkers) return;
-  marker[index].on = on;
-}
+  markers.resize( markers.size() + 1 );
+  Marker &m = markers[markers.size() - 1];
 
-void			HUDRenderer::setMarkerHeading(int index, float _heading)
-{
-  if (index < 0 || index >= MaxHUDMarkers) return;
   _heading = 90.0f - 180.0f * _heading / M_PI;
   while (_heading < 0.0f) _heading += 360.0f;
   while (_heading >= 360.0f) _heading -= 360.0f;
-  marker[index].heading = _heading;
-}
-
-void			HUDRenderer::setMarkerColor(int index,
-						float r, float g, float b)
-{
-  if (index < 0 || index >= MaxHUDMarkers) return;
-  marker[index].color[0] = r;
-  marker[index].color[1] = g;
-  marker[index].color[2] = b;
+  m.heading = _heading;
+  memcpy(m.color, _color, sizeof(m.color));
 }
 
 void			HUDRenderer::setRestartKeyLabel(const std::string& label)
@@ -1244,9 +1223,10 @@ void			HUDRenderer::renderBox(SceneRenderer&)
 		2 * maxMotionSize + 16, 10);
     glPushMatrix();
     glTranslatef((float)centerx, (float)(centery + maxMotionSize), 0.0f);
-    for (i = 0; i < MaxHUDMarkers; i++) if (marker[i].on) {
-      const float relAngle = fmodf(360.0f + marker[i].heading - heading, 360.0f);
-      hudColor3fv(marker[i].color);
+    for (MarkerList::const_iterator it = markers.begin(); it != markers.end(); ++it) {
+      const Marker &m = *it;
+      const float relAngle = fmodf(360.0f + m.heading - heading, 360.0f);
+      hudColor3fv(m.color);
       if (relAngle <= headingOffset || relAngle >= 360.0f - headingOffset) {
 	// on the visible part of tape
 	GLfloat mx = maxMotionSize / headingOffset *
@@ -1275,6 +1255,7 @@ void			HUDRenderer::renderBox(SceneRenderer&)
 	glEnd();
       }
     }
+    markers.clear();
     glPopMatrix();
   }
 

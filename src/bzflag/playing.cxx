@@ -2865,13 +2865,6 @@ static void		updateFlag(FlagType* flag)
 
   radar->setJammed(flag == Flags::Jamming);
   hud->setAltitudeTape(flag == Flags::Jumping || World::getWorld()->allowJumping());
-
-  // enable/disable display of markers
-  hud->setMarker(0, Team::isColorTeam(myTank->getTeam()) &&
-		 flag->flagTeam != myTank->getTeam() &&
-		 World::getWorld()->allowTeamFlags());
-  hud->setMarker(1, World::getWorld()->allowAntidote() &&
-		 flag != Flags::Null && flag->endurance == FlagSticky);
 }
 
 
@@ -5478,8 +5471,6 @@ static void		leaveGame()
   hud->setHeading(0.0f);
   hud->setAltitude(0.0f);
   hud->setAltitudeTape(false);
-  hud->setMarker(0, false);
-  hud->setMarker(1, false);
 
   // shut down server connection
   if (sayGoodbye) serverLink->send(MsgExit, 0, NULL);
@@ -5624,10 +5615,6 @@ static bool		joinGame(const StartupInfo* info,
   else
     printError("No UDP connection, see Options to enable.");
 
-  // set marker colors -- team color and antidote flag color
-  const float* myTeamColor = Team::getTankColor(myTank->getTeam());
-  hud->setMarkerColor(0, myTeamColor[0], myTeamColor[1], myTeamColor[2]);
-  hud->setMarkerColor(1, 1.0f, 1.0f, 0.0f);
 
   // add robot tanks
 #if defined(ROBOT)
@@ -6497,23 +6484,24 @@ static void		playingLoop()
       hud->setHeading(myTank->getAngle());
       hud->setAltitude(myPos[2]);
       if (world->allowTeamFlags()) {
-	// marker for my team flag
+	const float* myTeamColor = Team::getTankColor(myTank->getTeam());
+	// markers for my team flag
 	for (i = 0; i < numFlags; i++) {
 	  Flag& flag = world->getFlag(i);
 	  if ((flag.type->flagTeam == myTank->getTeam())
 	      &&  (flag.status != FlagOnTank || flag.owner != myTank->getId())) {
 	    const float* flagPos = flag.position;
-	    hud->setMarkerHeading(0, atan2f(flagPos[1] - myPos[1],
-					    flagPos[0] - myPos[0]));
-	    break;
+	    float heading = atan2f(flagPos[1] - myPos[1],flagPos[0] - myPos[0]);
+	    hud->addMarker(heading, myTeamColor);
 	  }
 	}
       }
       if (myTank->getAntidoteLocation()) {
 	// marker for my antidote flag
 	const GLfloat* antidotePos = myTank->getAntidoteLocation();
-	hud->setMarkerHeading(1, atan2f(antidotePos[1] - myPos[1],
-					antidotePos[0] - myPos[0]));
+	float heading = atan2f(antidotePos[1] - myPos[1],antidotePos[0] - myPos[0]);
+	const float antidoteColor[] = {1.0f, 1.0f, 0.0f};
+	hud->addMarker(heading, antidoteColor);
       }
     }
 

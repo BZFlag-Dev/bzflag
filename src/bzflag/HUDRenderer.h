@@ -32,7 +32,6 @@ class MainWindow;
 class Player;
 
 const int		MaxAlerts = 3;
-const int		MaxHUDMarkers = 3;
 const int		HUDNumCracks = 8;
 const int		HUDCrackLevels = 4;
 
@@ -77,9 +76,7 @@ class HUDRenderer {
     void		setFlagHelp(FlagType* desc, float duration);
     void		initCracks();
     void		setCracks(bool showCracks);
-    void		setMarker(int index, bool = true);
-    void		setMarkerHeading(int index, float heading);
-    void		setMarkerColor(int index, float r, float g, float b);
+    void		addMarker(float heading, const float *color);
     void		setRestartKeyLabel(const std::string&);
     void		setRoamingLabel(const std::string&);
     void		setTimeLeft(int timeLeftInSeconds);
@@ -148,10 +145,10 @@ class HUDRenderer {
 
     class Marker {
       public:
-	bool		on;
 	float		heading;
 	GLfloat		color[3];
     };
+    typedef std::vector<Marker> MarkerList;
 
   private:
     const BzfDisplay*	display;
@@ -219,7 +216,7 @@ class HUDRenderer {
     TimeKeeper		crackStartTime;
     bool		showCracks;
 
-    Marker		marker[MaxHUDMarkers];
+    MarkerList		markers;
 
     HUDuiTypeIn*	composeTypeIn;
 
