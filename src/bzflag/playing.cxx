@@ -3762,6 +3762,22 @@ static void		handleServerMessage(bool human, uint16_t code,
 
       addMessage(srcPlayer,"[Sent versioninfo per request]", false, oldcolor);
       break;
+    } else if (srcName == "SERVER") {
+      char passwdRequest[] =  "Identify with /identify <your password>";
+      if (!strncmp((char*)msg, passwdRequest, strlen(passwdRequest))) {
+	std::string passwdKey = "password@";
+	passwdKey += startupInfo.serverName;
+	if (BZDB.isSet(passwdKey)) {
+	  std::string passwdResponse = "/identify " + BZDB.get(passwdKey);
+	  std::cout << passwdResponse << std::endl;
+ 	  char messageBuffer[MessageLen];
+ 	  memset(messageBuffer, 0, MessageLen);
+ 	  strncpy(messageBuffer, passwdResponse.c_str(), MessageLen);
+ 	  nboPackString(messageMessage + PlayerIdPLen,
+			messageBuffer, MessageLen);
+ 	  serverLink->send(MsgMessage, sizeof(messageMessage), messageMessage);
+	}
+      }
     }
 
     OpenGLTexFont::stripAnsiCodes((char*) msg, strlen ((char*) msg));
