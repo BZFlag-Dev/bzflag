@@ -1329,8 +1329,14 @@ static WorldInfo *defineTeamWorld()
     const float pyrBase = BZDB.eval(StateDatabase::BZDB_PYRBASE);
 
     // set team base and team flag safety positions
-    for (int t = RedTeam; t <= PurpleTeam; t++)
+    int t;
+    for (t = RedTeam; t <= PurpleTeam; t++)
       (*bases)[t] = new TeamBases((TeamColor)t, true);
+
+    const bool haveRed    = clOptions->maxTeam[RedTeam] > 0;
+    const bool haveGreen  = clOptions->maxTeam[GreenTeam] > 0;
+    const bool haveBlue   = clOptions->maxTeam[BlueTeam] > 0;
+    const bool havePurple = clOptions->maxTeam[PurpleTeam] > 0;
 
     // make walls
     const float wallHeight = BZDB.eval(StateDatabase::BZDB_WALLHEIGHT);
@@ -1341,7 +1347,7 @@ static WorldInfo *defineTeamWorld()
 
     const float pyrHeight = BZDB.eval(StateDatabase::BZDB_PYRHEIGHT);
     // make pyramids
-    if (!clOptions->randomCTF || (clOptions->maxTeam[1] > 0)) {
+    if (haveRed) {
       // around red base
       const float *pos = (*bases)[RedTeam]->getBasePosition(0);
       world->addPyramid(
@@ -1362,7 +1368,7 @@ static WorldInfo *defineTeamWorld()
 	  pyrBase, pyrBase, pyrHeight);
     }
 
-    if (!clOptions->randomCTF || (clOptions->maxTeam[2] > 0)) {
+    if (haveGreen) {
       // around green base
       const float *pos = (*bases)[GreenTeam]->getBasePosition(0);
       world->addPyramid(
@@ -1383,7 +1389,7 @@ static WorldInfo *defineTeamWorld()
 	  pyrBase, pyrBase, pyrHeight);
     }
 
-    if (!clOptions->randomCTF || (clOptions->maxTeam[3] > 0)) {
+    if (haveBlue) {
       // around blue base
       const float *pos = (*bases)[BlueTeam]->getBasePosition(0);
       world->addPyramid(
@@ -1404,7 +1410,7 @@ static WorldInfo *defineTeamWorld()
 	  pyrBase, pyrBase, pyrHeight);
     }
 
-    if (!clOptions->randomCTF || (clOptions->maxTeam[4] > 0)) {
+    if (havePurple) {
       // around purple base
       const float *pos = (*bases)[PurpleTeam]->getBasePosition(0);
       world->addPyramid(
@@ -1429,8 +1435,8 @@ static WorldInfo *defineTeamWorld()
     if (clOptions->randomCTF) {
       int i;
       float h = BZDB.eval(StateDatabase::BZDB_BOXHEIGHT);
-      const bool redGreen = clOptions->maxTeam[1] > 0 || clOptions->maxTeam[2] > 0;
-      const bool bluePurple = clOptions->maxTeam[3] > 0 || clOptions->maxTeam[4] > 0;
+      const bool redGreen = haveRed || haveGreen;
+      const bool bluePurple = haveBlue || havePurple;
       if (!redGreen && !bluePurple) {
 	fprintf(stderr, "need some teams, use -mp");
 	exit(20);
@@ -1720,6 +1726,14 @@ static WorldInfo *defineTeamWorld()
       }
     }
 
+    // get rid of unneeded bases
+    for (t = RedTeam; t <= PurpleTeam; t++) {
+      if (clOptions->maxTeam[t] == 0) {
+        delete (*bases)[t];
+        bases->erase(t);
+      }
+    }
+
     return world;
   } else {
     return defineWorldFromFile(clOptions->worldFile);
@@ -1919,8 +1933,6 @@ static TeamColor whoseBase(float x, float y, float z)
   int highestteam = -1;
 
   for (BasesList::iterator it = bases->begin(); it != bases->end(); ++it) {
-    if (clOptions->randomCTF && (clOptions->maxTeam[it->second->getTeam()] == 0))
-      continue;
     float baseZ = it->second->findBaseZ(x,y,z);
     if (baseZ > highest) {
       highest = baseZ;
