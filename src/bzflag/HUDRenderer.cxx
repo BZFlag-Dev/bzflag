@@ -756,16 +756,10 @@ void			HUDRenderer::renderStatus(SceneRenderer& renderer)
 
 int HUDRenderer::tankScoreCompare(const void* _a, const void* _b)
 {
-#if defined(PTR_SCORE_SORT)
-  LocalPlayer *a = (LocalPlayer *) _a;
-  LocalPlayer *b = (LocalPlayer *) _b;
-#else
-  // See below, alternative to buggy qsort
   RemotePlayer* a = World::getWorld()->getPlayer(*(int*)_a);
   RemotePlayer* b = World::getWorld()->getPlayer(*(int*)_b);
-#endif
 
-  return a->getScore() - b->getScore();
+  return b->getScore() - a->getScore();
 }
 
 void			HUDRenderer::renderScoreboard(SceneRenderer& renderer)
@@ -791,31 +785,10 @@ void			HUDRenderer::renderScoreboard(SceneRenderer& renderer)
   int y = (int)(y0 - dy);
   drawPlayerScore(myTank, x1, x2, x3, (float)y);
   y -= (int)dy;
+
+  // print players sorted by score
   int plrCount = 0;
   const int maxPlayers = World::getWorld()->getMaxPlayers();
-  // run a sort by score
-
-#if defined(PTR_SCORE_SORT)
-  // Bugged at least under Solaris gcc 2.95.2. The call to qsort() may 
-  // invalidate the array. Might reveal a buffer overflow elsewhere?
-
-  RemotePlayer **players = (RemotePlayer **)alloca(maxPlayers * sizeof(RemotePlayer *));
-  for (j = 0; j < maxPlayers; j++) {
-     players[j] = World::getWorld()->getPlayer(j);
-     if (players[j]) plrCount++;
-  }
-
-  qsort(players, plrCount, sizeof(LocalPlayer*), tankScoreCompare);
-
-  for (i = 0; i < plrCount; i++) {
-    RemotePlayer* player = players[i];
-    if (!player) continue;
-    y -= (int)dy;
-    drawPlayerScore(player, x1, x2, x3, (float)y);
-  }
-#else
-  // Alternative: sort players indexes
-
   int* players = new int[maxPlayers];
 
   for (j = 0; j < maxPlayers; j++)
@@ -830,7 +803,6 @@ void			HUDRenderer::renderScoreboard(SceneRenderer& renderer)
     drawPlayerScore(player, x1, x2, x3, (float)y);
   }
   delete[] players;
-#endif
 
   y -= (int)dy;
   const int maxDeadPlayers = World::getWorld()->getMaxDeadPlayers();
@@ -841,6 +813,7 @@ void			HUDRenderer::renderScoreboard(SceneRenderer& renderer)
     drawDeadPlayerScore(deadPlayers[i], x1, x2, x3, (float)y);
   }
 
+  // TODO should sort these by score
   y = (int)y0;
   for (i = RedTeam; i < NumTeams; i++) {
     const Team* team = World::getWorld()->getTeams() + i;
