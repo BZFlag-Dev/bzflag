@@ -3618,6 +3618,9 @@ int main(int argc, char **argv)
   if (clOptions->replayServer) {
 
     Replay::init();
+    
+    // we don't send flags to a client that isn't expecting them 
+    numFlags = 0;
 
     // disable the BZDB callbacks    
     for (unsigned int gi = 0; gi < numGlobalDBItems; ++gi) {

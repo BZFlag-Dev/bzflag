@@ -77,7 +77,6 @@ typedef struct {
   // into the head, out of the tail
   RRpacket *head; // last packet in 
   RRpacket *tail; // first packet in
-//  std::list<RRpacket *> ListTest;
 } RRbuffer;
 
 typedef struct {
@@ -150,8 +149,8 @@ static bool routePacket (u16 code, int len, const void *data, u16 mode);
 
 static RRpacket *nextPacket ();
 static RRpacket *prevPacket ();
-static RRpacket *nextStatePacket ();
-static RRpacket *prevStatePacket ();
+static RRpacket *nextStatePacket (int seconds);
+static RRpacket *prevStatePacket (int seconds);
 
 static bool savePacket (RRpacket *p, FILE *f);
 static RRpacket *loadPacket (FILE *f);            // makes a new packet
@@ -1078,18 +1077,13 @@ setVariables (void *data)
     data = nboUnpackString(data, value, valueLen);
     value[valueLen] = '\0';
     
-    if (strcmp (name, "poll") == 0) {
+    if (strcmp (name, "poll") != 0) {
       // do not save the poll state, it can
       // lead to SEGV's when players leave
       // and there is no ongoing poll
       // [see bzfs.cxx removePlayer()]
-      continue;
+      BZDB.set(name, value);
     }
-    
-    BZDB.set(name, value);
-    // FIXME - the following two required again?
-    BZDB.setPersistent(name, false);
-    BZDB.setPermission(name, StateDatabase::Locked);
   }
   return true;
 }
@@ -1098,32 +1092,91 @@ setVariables (void *data)
 static RRpacket *
 nextPacket ()
 {
-  return NULL;
+  if (ReplayPos == NULL) {
+    ReplayPos = ReplayBuf.tail;
+    return NULL;
+  }
+  else if (ReplayPos->next == NULL) {
+    // FIXME - load more file here
+    ReplayPos = ReplayBuf.head;
+    return NULL;
+  }
+  else {
+    RRpacket *tmp = ReplayPos;
+    ReplayPos = ReplayPos->next;
+    return tmp;
+  }
 }
 
 
 static RRpacket *
 prevPacket ()
 {
-  return NULL;
+  if (ReplayPos == NULL) {
+    ReplayPos = ReplayBuf.tail;
+    return NULL;
+  }
+  else if (ReplayPos->prev == NULL) {
+    // FIXME - load more file here
+    ReplayPos = ReplayBuf.tail;
+    return NULL;
+  }
+  else {
+    ReplayPos = ReplayPos->prev;
+    return ReplayPos;
+  }
 }
 
 
 static RRpacket *
-nextStatePacket ()
+nextStatePacket (int seconds)
 {
-  return NULL;
+  RRtime target = (getRRtime() - ReplayOffset) + 
+                  ((RRtime)seconds * (RRtime)1000000);
+
+  RRpacket *p = nextPacket();
+  
+  while (p != NULL) {
+    if ((p->timestamp >= target) && ((p == ReplayPos) || 
+        ((p->mode == StatePacket) && (p->code == MsgTeamUpdate)))) {
+      break;
+    }
+    p = nextPacket();
+  }
+  if (p == NULL) {
+    ReplayPos = ReplayBuf.head;
+  }
+  
+  return p;
 }
 
 
 static RRpacket *
-prevStatePacket ()
+prevStatePacket (int seconds)
 {
+  RRtime target = (getRRtime() - ReplayOffset) -
+                  ((RRtime)seconds * (RRtime)1000000);
+
+  RRpacket *p = nextPacket();
+  
+  while (p != NULL) {
+    if ((p->timestamp <= target) && 
+        ((p->mode == StatePacket) && (p->code == MsgTeamUpdate))) {
+      break;
+    }
+    p = prevPacket();
+  }
+  if (p == NULL) {
+    ReplayPos = ReplayBuf.tail;
+  }
+  
+  return p;
+
+  // FIXME
   nextPacket ();
   prevPacket ();
-  nextStatePacket ();
-  prevStatePacket ();
-  return NULL;
+  nextStatePacket (1);
+  prevStatePacket (2);
 }
 
 
@@ -1567,9 +1620,15 @@ saveHeader (int p, FILE *f)
   buf = nboPackString (buf, hdr.realHash, sizeof (hdr.realHash));
 
   // store the data  
-  if ((fwrite (buffer, ReplayHeaderSize, 1, f) == 0) ||
-      (fwrite (hdr.flags, hdr.flagsSize, 1, f) == 0) ||
-      (fwrite (worldDatabase, worldDatabaseSize, 1, f) == 0)) {
+  if (fwrite (buffer, ReplayHeaderSize, 1, f) == 0) {
+    return false;
+  }
+  if (hdr.flagsSize > 0) {
+    if (fwrite (hdr.flags, hdr.flagsSize, 1, f) == 0) {
+      return false;
+    }
+  }
+  if (fwrite (worldDatabase, worldDatabaseSize, 1, f) == 0) {
     return false;
   }
   
@@ -1601,15 +1660,21 @@ loadHeader (ReplayHeader *h, FILE *f)
   buf = nboUnpackString (buf, h->serverVersion, sizeof (h->serverVersion));
   buf = nboUnpackString (buf, h->appVersion, sizeof (h->appVersion));
   buf = nboUnpackString (buf, h->realHash, sizeof (h->realHash));
-  
-  h->flags = new char [h->flagsSize];
-  h->world = new char [h->worldSize]; // use new, as defineWorld() does
-  if ((h->flags == NULL) || (h->world == NULL)) {
-    return false;
+
+  // load the flags, if there are any  
+  if (h->flagsSize > 0) {
+    h->flags = new char [h->flagsSize];
+    if (fread (h->flags, h->flagsSize, 1, f) == 0) {
+      return false;
+    }
+  }
+  else {
+    h->flags = NULL;
   }
 
-  if ((fread (h->flags, h->flagsSize, 1, f) <= 0) ||
-      (fread (h->world, h->worldSize, 1, f) <= 0)) {
+  // load the world database
+  h->world = new char [h->worldSize];
+  if (fread (h->world, h->worldSize, 1, f) == 0) {
     return false;
   }
   
