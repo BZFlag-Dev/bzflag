@@ -6363,7 +6363,8 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
 
     case MsgNewRabbit: 
     {
-      annointNewRabbit();
+      if (t == rabbitIndex)
+        annointNewRabbit();
       break;
     }
 
