@@ -19,6 +19,9 @@
 
 #include "bzfgl.h"
 #include "common.h"
+#if defined(_MACOSX_)
+#include <OpenGL/gl.h>
+#endif
 
 class OpenGLTexture;
 class OpenGLMaterial;

@@ -23,7 +23,9 @@
 #include "World.h"
 #include "OpenGLGState.h"
 #include "texture.h"
+#if !defined(_MACOSX_)
 #include <malloc.h>
+#endif
 #include <stdio.h>
 #include <stdlib.h>
 #include <ctype.h>

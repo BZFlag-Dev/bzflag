@@ -14,7 +14,11 @@
 #include "OpenGLGState.h"
 #include <string.h>
 // glu used to resample textures for mipmaps;  should use something better.
+#if defined(_MACOSX_)
+#include <OpenGL/glu.h>
+#else
 #include <GL/glu.h>
+#endif
 
 #if defined(GL_VERSION_1_1)
 #  define	BZF_TEXTURE_OBJECT

@@ -57,7 +57,7 @@ const boolean		False = 0;
 const boolean		True = !False;
 
 // some platforms don't have float versions of the math library
-#if defined(_old_linux_) || defined(sun)
+#if defined(_old_linux_) || defined(_MACOSX_) || defined(sun)
 #define	asinf		(float)asin
 #define	atanf		(float)atan
 #define	atan2f		(float)atan2
@@ -87,7 +87,7 @@ const boolean		True = !False;
 #endif
 #include <sys/types.h>
 
-#if defined(__linux) || (defined(__sgi) && !defined(__INTTYPES_MAJOR))
+#if defined(__linux) || defined(_MACOSX_) || (defined(__sgi) && !defined(__INTTYPES_MAJOR))
 typedef u_int16_t	uint16_t;
 typedef u_int32_t	uint32_t;
 #endif

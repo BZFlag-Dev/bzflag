@@ -936,6 +936,13 @@ int			main(int argc, char** argv)
   // set data directory if user specified
   if (db.hasValue("directory"))
     PlatformFactory::getMedia()->setMediaDirectory(db.getValue("directory"));
+#if defined(_MACOSX_)
+    else
+    {
+        extern char *GetMacOSXDataPath(void);
+        PlatformFactory::getMedia()->setMediaDirectory(GetMacOSXDataPath());
+    }
+#endif
 
   // set window size (we do it here because the OpenGL context isn't yet bound)
   boolean setPosition = False, setSize = False;

@@ -28,7 +28,11 @@
 #include <windows.h>
 #endif
 
+#if defined(_MACOSX_)
+#include <OpenGL/gl.h>
+#else
 #include <GL/gl.h>
+#endif
 
 #endif
 

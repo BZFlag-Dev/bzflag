@@ -10,6 +10,10 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
+#if defined(_MACOSX_)
+#include <OpenGL/gl.h>
+#endif
+
 static const GLfloat	stars[][6] = {
 			{ 1.00f, 1.00f, 1.00f, -0.18746032f, 0.93921369f, -0.28763914f },
 			{ 1.00f, 1.00f, 1.00f, -0.06323564f, 0.60291260f, -0.79529721f },
