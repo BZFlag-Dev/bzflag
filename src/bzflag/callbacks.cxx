@@ -28,7 +28,7 @@ void setFlagHelp(const std::string& name, void*)
     hud->setFlagHelp(Flags::Null, 0.0);
 }
 
-void setDepthBuffer(const std::string& name, void*)
+void setDepthBuffer(const std::string&, void*)
 {
   /* FIXME - time dependant callback is not safe.  cannot make
    * ogl call until the pipeline/context is initialized, whereas
