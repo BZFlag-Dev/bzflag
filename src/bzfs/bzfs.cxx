@@ -102,20 +102,11 @@ static float flagHeight = FlagAltitude;
 static char *servermsg = NULL;
 
 enum PlayerState {
-  // unconnected or entered
-  PlayerInLimbo,
-  PlayerOnTeamDead,
-  PlayerOnTeamAlive
-};
-
-struct ConnectInfo {
-  public:
-    // what fd we accepted on
-    int accept;
-    // what fd we're listening on
-    int listen;
-    // time accepted
-    TimeKeeper time;
+  PlayerNoExist, // does not exist
+  PlayerAccept, // got connect, sending hello
+  PlayerInLimbo, // not entered
+  PlayerDead, // dead
+  PlayerAlive // alive
 };
 
 struct PacketQueue {
@@ -128,6 +119,8 @@ struct PacketQueue {
 
 struct PlayerInfo {
   public:
+    // time accepted
+    TimeKeeper time;
     // socket file descriptor
     int fd;
     // peer's network address
@@ -326,8 +319,6 @@ static PingPacket pingReply;
 static int maxFileDescriptor;
 // players list
 static PlayerInfo player[MaxPlayers];
-// network reconnection list
-static ConnectInfo reconnect[MaxPlayers+1];
 // team info
 static TeamInfo team[NumTeams];
 // flags list
@@ -1514,7 +1505,7 @@ static void broadcastMessage(uint16_t code, int len, const void *msg)
 {
   // send message to everyone
   for (int i = 0; i < maxPlayers; i++)
-    if (player[i].state != PlayerInLimbo)
+    if (player[i].state > PlayerInLimbo)
       directMessage(i, code, len, msg);
 }
 
@@ -1575,7 +1566,7 @@ void OOBQueueUpdate(int t, uint32_t rseqno) {
 static int lookupPlayer(const PlayerId& id)
 {
   for (int i = 0; i < maxPlayers; i++)
-    if (player[i].fd != NotConnected && player[i].id == id)
+    if (player[i].state > PlayerInLimbo && player[i].id == id)
       return i;
   return InvalidPlayer;
 }
@@ -1708,10 +1699,8 @@ static int pread(int playerIndex, int l)
   // accumulate bytes read
   if (e > 0) {
     p.tcplen += e;
-  }
-
-  // handle errors
-  else if (e < 0) {
+  } else if (e < 0) {
+    // handle errors
     // get error code
     const int err = getErrno();
 
@@ -1732,9 +1721,7 @@ static int pread(int playerIndex, int l)
     UMDEBUG("REMOVE: READ ERROR\n");
     removePlayer(playerIndex);
     return -1;
-  }
-
-  else {
+  } else {
     // disconnected
     UMDEBUG("REMOVE: Disconnected (3)\n");
     removePlayer(playerIndex);
@@ -2176,13 +2163,11 @@ static boolean serverStart()
 
   for (int i = 0; i < MaxPlayers; i++) {	// no connections
     player[i].fd = NotConnected;
-    player[i].state = PlayerInLimbo;
+    player[i].state = PlayerNoExist;
     player[i].outmsg = NULL;
     player[i].outmsgSize = 0;
     player[i].outmsgOffset = 0;
     player[i].outmsgCapacity = 0;
-    reconnect[i].accept = NotConnected;
-    reconnect[i].listen = NotConnected;
   }
 
   listServerLinksCount = 0;
@@ -2284,7 +2269,7 @@ static boolean startPlayerPacketRelay(int playerIndex)
     // force all players to start relaying.
     for (int i = 0; i < maxPlayers; i++)
       if (i != playerIndex &&
-	  player[i].state != PlayerInLimbo && !player[i].multicastRelay) {
+	  player[i].state > PlayerInLimbo && !player[i].multicastRelay) {
 	directMessage(i, MsgNetworkRelay, 0, NULL);
 	player[i].multicastRelay = True;
       }
@@ -2956,7 +2941,7 @@ static void dumpScore()
   cout << "#players" << endl;
   for (i = 0; i < NumTeams; i++)
     for (int j = 0; j < maxPlayers; j++)
-      if (player[j].fd != NotConnected && int(player[j].team) == i) {
+      if (player[j].state > PlayerInLimbo && int(player[j].team) == i) {
 	cout << player[j].wins << " " <<
 	    player[j].losses << " " <<
 	    player[j].callSign << endl;
@@ -2977,7 +2962,6 @@ static void acceptClient()
     nerror("accepting on wks");
     return;
   }
-
   fprintf(stderr, "accept() from %s:%d on %i\n",
       inet_ntoa(clientAddr.sin_addr), ntohs(clientAddr.sin_port), fd);
 
@@ -2985,39 +2969,29 @@ static void acceptClient()
   setNoDelay(fd);
   BzfNetwork::setNonBlocking(fd);
 
-  // find open slot in players list
-  int playerIndex;
-  for (playerIndex = 0; playerIndex < maxPlayers; playerIndex++)
-    if (player[playerIndex].fd == NotConnected &&
-	reconnect[playerIndex].accept == NotConnected &&
-	reconnect[playerIndex].listen == NotConnected)
-      break;
+  if (fd > maxFileDescriptor)
+    maxFileDescriptor = fd;
 
-  // game is over;  no new players until everyone quits
-  if (gameOver) {
-    for (int i = 0; i < maxPlayers; i++)
-      if (player[i].fd != NotConnected) {
-	playerIndex = maxPlayers;
-	break;
-      }
-  }
-
-  // record what port we accepted on and are now listening on.
-  reconnect[playerIndex].time = TimeKeeper::getCurrent();
-  reconnect[playerIndex].listen = reconnectSocket;
-  reconnect[playerIndex].accept = fd;
-  if (reconnect[playerIndex].listen > maxFileDescriptor)
-    maxFileDescriptor = reconnect[playerIndex].listen;
-  if (reconnect[playerIndex].accept > maxFileDescriptor)
-    maxFileDescriptor = reconnect[playerIndex].accept;
+  struct sockaddr_in serverAddr;
+  serverAddr.sin_port = htons(reconnectPort);
 
   // if don't want another player or couldn't make socket then refuse
   // connection by returning an obviously bogus port (port zero).
-  struct sockaddr_in serverAddr;
-  if (reconnect[playerIndex].listen == NotConnected)
-    serverAddr.sin_port = htons(0);
-  else
-    serverAddr.sin_port = htons(reconnectPort);
+  int playerIndex;
+  if (gameOver)
+    for (playerIndex = 0; playerIndex < maxPlayers; playerIndex++)
+      if (player[playerIndex].state >= PlayerInLimbo)
+	serverAddr.sin_port = htons(0);
+
+  // find open slot in players list
+  for (playerIndex = 0; playerIndex < maxPlayers; playerIndex++)
+    if (player[playerIndex].state == PlayerNoExist)
+      break;
+
+  // record what port we accepted on
+  player[playerIndex].time = TimeKeeper::getCurrent();
+  player[playerIndex].fd = fd;
+  player[playerIndex].state = PlayerAccept;
 
   // send server version and which port to reconnect to
   char buffer[8 + sizeof(serverAddr.sin_port)];
@@ -3038,23 +3012,22 @@ static void addClient(int acceptSocket)
 {
   int playerIndex;
   for (playerIndex = 0; playerIndex < maxPlayers; playerIndex++) {
-    // first check for clients that are reconnecting
-    if (reconnect[playerIndex].listen != NotConnected)
+    // check for clients that are reconnecting
+    if (player[playerIndex].state == PlayerAccept)
       break;
   }
+  // close the old connection
+  close(player[playerIndex].fd);
   // accept game connection
   AddrLen addr_len = sizeof(player[playerIndex].taddr);
   player[playerIndex].fd = accept(acceptSocket,
       (struct sockaddr *)&player[playerIndex].taddr, &addr_len);
-  if (player[playerIndex].fd == NotConnected)
-    nerror("accepting client connection");
-
-  // done with listen socket
-  reconnect[playerIndex].listen = NotConnected;
 
   // see if accept worked
-  if (player[playerIndex].fd == NotConnected)
+  if (player[playerIndex].fd == NotConnected) {
+    nerror("accepting client connection");
     return;
+  }
 
   // turn off packet buffering and set socket non-blocking
   setNoDelay(player[playerIndex].fd);
@@ -3077,7 +3050,7 @@ static void addClient(int acceptSocket)
   if (gameOver) {
     int count = 0;
     for (int i = 0; i < maxPlayers; i++)
-      if (player[i].fd != NotConnected)
+      if (player[i].state > PlayerInLimbo)
 	count++;
     if (count == 1) {
       gameOver = False;
@@ -3092,13 +3065,9 @@ static void addClient(int acceptSocket)
 static void shutdownAcceptClient(int playerIndex)
 {
   // close socket that client initially contacted us on
-  close(reconnect[playerIndex].accept);
-  reconnect[playerIndex].accept = NotConnected;
-
-  // if we're still listening on reconnect port then give up
-  if (reconnect[playerIndex].listen != NotConnected) {
-    reconnect[playerIndex].listen = NotConnected;
-  }
+  close(player[playerIndex].fd);
+  player[playerIndex].fd = NotConnected;
+  player[playerIndex].state = PlayerNoExist;
 }
 
 static void respondToPing(boolean broadcast = False)
@@ -3238,7 +3207,7 @@ static void addPlayer(int playerIndex)
     return;
 
   // player is signing on (has already connected via addClient).
-  player[playerIndex].state = PlayerOnTeamDead;
+  player[playerIndex].state = PlayerDead;
   player[playerIndex].flag = -1;
   player[playerIndex].wins = 0;
   player[playerIndex].losses = 0;
@@ -3272,7 +3241,7 @@ static void addPlayer(int playerIndex)
       if (flag[i].flag.status != FlagNoExist)
 	sendFlagUpdate(i, playerIndex);
     for (i = 0; i < maxPlayers && player[playerIndex].fd != NotConnected; i++)
-      if (player[i].fd != NotConnected && player[i].state != PlayerInLimbo && i != playerIndex)
+      if (player[i].state > PlayerInLimbo && i != playerIndex)
 	sendPlayerUpdate(i, playerIndex);
   }
 
@@ -3479,6 +3448,7 @@ static void removePlayer(int playerIndex)
   // shutdown TCP socket
   shutdown(player[playerIndex].fd, 2);
   close(player[playerIndex].fd);
+  player[playerIndex].fd = NotConnected;
 
   // free up the UDP packet buffers
   if (player[playerIndex].uqueue)
@@ -3499,22 +3469,21 @@ static void removePlayer(int playerIndex)
   player[playerIndex].toBeKicked = false;
   player[playerIndex].udplen = 0;
 
-  player[playerIndex].fd = NotConnected;
   player[playerIndex].tcplen = 0;
 
   player[playerIndex].callSign[0] = 0;
 
-  if (player[playerIndex].outmsg != NULL)
+  if (player[playerIndex].outmsg != NULL) {
     delete[] player[playerIndex].outmsg;
-
-  player[playerIndex].outmsg = NULL;
+    player[playerIndex].outmsg = NULL;
+  }
 
   // can we turn off relaying now?
   if (player[playerIndex].multicastRelay) {
-    int i;
     player[playerIndex].multicastRelay = False;
+    int i;
     for (i = 0; i < maxPlayers; i++)
-      if (player[i].fd != NotConnected && player[i].multicastRelay)
+      if (player[i].state > PlayerInLimbo && player[i].multicastRelay)
 	break;
     if (i == maxPlayers)
       stopPlayerPacketRelay();
@@ -3522,9 +3491,12 @@ static void removePlayer(int playerIndex)
 
   // player is outta here.  if player never joined a team then
   // don't count as a player.
-  if (player[playerIndex].state == PlayerInLimbo)
+  if (player[playerIndex].state == PlayerInLimbo) {
+    player[playerIndex].state = PlayerNoExist;
     return;
-  player[playerIndex].state = PlayerInLimbo;
+  }
+
+  player[playerIndex].state = PlayerNoExist;
 
   if (player[playerIndex].team != NoTeam) {
     // if player had flag then flag just disappears.  it'd be nice
@@ -3555,7 +3527,7 @@ static void removePlayer(int playerIndex)
 	player[playerIndex].type == ComputerPlayer) &&
 	team[teamNum].team.activeSize == 0 &&
 	(gameStyle & int(TeamFlagGameStyle)))
-      zapFlag(teamNum-1);
+      zapFlag(teamNum - 1);
 
     // send team update
     sendTeamUpdate(teamNum);
@@ -3567,7 +3539,7 @@ static void removePlayer(int playerIndex)
   // anybody left?
   int i;
   for (i = 0; i < maxPlayers; i++)
-    if (player[i].fd != NotConnected && player[i].state != PlayerInLimbo)
+    if (player[i].state > PlayerInLimbo)
       break;
 
   // if everybody left then reset world
@@ -3644,7 +3616,7 @@ static void sendQueryPlayers(int playerIndex)
 
   // count the number of active players
   for (i = 0; i < maxPlayers; i++)
-    if (player[i].fd != NotConnected && player[i].state != PlayerInLimbo)
+    if (player[i].state > PlayerInLimbo)
       numPlayers++;
 
   // first send number of teams and players being sent
@@ -3658,7 +3630,7 @@ static void sendQueryPlayers(int playerIndex)
   for (i = 0; i < NumTeams && player[playerIndex].fd != NotConnected; i++)
     sendTeamUpdate(i, playerIndex);
   for (i = 0; i < maxPlayers && player[playerIndex].fd != NotConnected; i++)
-    if (player[i].fd != NotConnected && player[i].state != PlayerInLimbo)
+    if (player[i].state > PlayerInLimbo)
       sendPlayerUpdate(i, playerIndex);
 }
 
@@ -3668,7 +3640,7 @@ static void playerAlive(int playerIndex, const float *pos, const float *fwd)
   // from the multicast info, but it's nice to have a clear statement.
   // it also allows clients that don't snoop the multicast group to
   // find about it.
-  player[playerIndex].state = PlayerOnTeamAlive;
+  player[playerIndex].state = PlayerAlive;
   player[playerIndex].flag = -1;
 
   // send MsgAlive
@@ -3702,10 +3674,10 @@ static void playerKilled(int victimIndex, int killerIndex,
 {
   // victim has been destroyed.  keep score.
   if (killerIndex == InvalidPlayer ||
-	player[victimIndex].state != PlayerOnTeamAlive) return;
+	player[victimIndex].state != PlayerAlive) return;
   if (team[int(player[victimIndex].team)].radio == victimIndex)
     releaseRadio(victimIndex);
-  player[victimIndex].state = PlayerOnTeamDead;
+  player[victimIndex].state = PlayerDead;
 
   // send MsgKilled
   char msg[PlayerIdPLen + PlayerIdPLen + 2];
@@ -3761,7 +3733,7 @@ static void playerKilled(int victimIndex, int killerIndex,
 static void grabFlag(int playerIndex, int flagIndex)
 {
   // player wants to take possession of flag
-  if (player[playerIndex].state != PlayerOnTeamAlive ||
+  if (player[playerIndex].state != PlayerAlive ||
       player[playerIndex].flag != -1 ||
       flag[flagIndex].flag.status != FlagOnGround)
     return;
@@ -3914,10 +3886,10 @@ static void captureFlag(int playerIndex, TeamColor teamCaptured)
   for (int i = 0; i < maxPlayers; i++)
     if (player[i].fd != NotConnected &&
 	int(flag[flagIndex].flag.id) == int(player[i].team) &&
-	player[i].state == PlayerOnTeamAlive) {
+	player[i].state == PlayerAlive) {
       if (team[int(player[i].team)].radio == i)
 	releaseRadio(i);
-      player[i].state = PlayerOnTeamDead;
+      player[i].state = PlayerDead;
     }
 
   // update score (rogues can't capture flags)
@@ -4029,7 +4001,7 @@ static void acquireRadio(int playerIndex, uint16_t flags)
   // player wants to grab the radio (only one person per team can have it)
   // ignore request if player wants a radio already in use, or if a rogue
   // player asks for a team broadcast radio, or if the player is dead
-  if (player[playerIndex].state != PlayerOnTeamAlive ||
+  if (player[playerIndex].state != PlayerAlive ||
       ((flags & RadioToAll) && broadcastRadio != InvalidPlayer) ||
       (!(flags & RadioToAll) && player[playerIndex].team == RogueTeam) ||
       team[int(player[playerIndex].team)].radio != InvalidPlayer)
@@ -5387,13 +5359,11 @@ int main(int argc, char **argv)
 	if (player[i].outmsgSize > 0)
 	  FD_SET(player[i].fd, &write_set);
       }
-      if (reconnect[i].accept != NotConnected)
-	FD_SET(reconnect[i].accept, &read_set);
-      if (reconnect[i].listen != NotConnected)
-	FD_SET(reconnect[i].listen, &read_set);
     }
     // always listen for connections
     FD_SET(wksSocket, &read_set);
+    if (reconnectPort)
+      FD_SET(reconnectSocket, &read_set);
     if (alsoUDP)
       FD_SET(udpSocket, &read_set);
     // always listen for pings
@@ -5511,8 +5481,7 @@ int main(int argc, char **argv)
 	  // count the number of players
 	  int i;
 	  for (i = 0; i < maxPlayers; i++)
-	    if (player[i].fd != NotConnected &&
-		player[i].state != PlayerInLimbo)
+	    if (player[i].state > PlayerInLimbo)
 	      break;
 
 	  // if nobody playing then publicize
@@ -5565,11 +5534,9 @@ int main(int argc, char **argv)
 	  addClient(reconnectSocket);
       // check for players that were accepted
       for (i = 0; i < maxPlayers; i++) {
-	// now check the initial contact port.  if any activity or
+	// check the initial contact port.  if any activity or
 	// we've waited a while, then shut it down
-	if (reconnect[i].accept != NotConnected &&
-		(FD_ISSET(reconnect[i].accept, &read_set) ||
-		tm - reconnect[i].time > DisconnectTimeout))
+	if (player[i].state == PlayerAccept && tm - player[i].time > DisconnectTimeout)
 	  shutdownAcceptClient(i);
       }
 
@@ -5604,7 +5571,7 @@ int main(int argc, char **argv)
 	  pflush(i);
 	}
 
-	if (player[i].fd != NotConnected && FD_ISSET(player[i].fd, &read_set)) {
+	if (player[i].state >= PlayerInLimbo && FD_ISSET(player[i].fd, &read_set)) {
 	  // read header if we don't have it yet
 	  if (player[i].tcplen < 4) {
 	    pread(i, 4 - player[i].tcplen);
