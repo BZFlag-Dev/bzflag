@@ -35,10 +35,10 @@ CustomTetra::CustomTetra()
     }
   }
   
-  // FIXME - can't use WorldFileObstable as the base
-  //         class because of the position, size, rotation, protperties
-  driveThrough = false; //FIXME
-  shootThrough = false; //FIXME
+  // NOTE - we can't use WorldFileObstable as the base class
+  //        because of the position, size, and rotation fields
+  driveThrough = false;
+  shootThrough = false;
 }
 
 bool CustomTetra::read(const char *cmd, std::istream& input)
@@ -63,8 +63,6 @@ bool CustomTetra::read(const char *cmd, std::istream& input)
       // assign to all planes
       input >> bytecolor[0] >> bytecolor[1] 
             >> bytecolor[2] >> bytecolor[3];
-      printf ("%i %i %i %i\n", // FIXME
-              bytecolor[0], bytecolor[1], bytecolor[2], bytecolor[3]);
       for (int v = 0; v < 4; v++) {
         colored[v] = true;
         for (int c = 0; c < 4; c++) {
