@@ -72,7 +72,7 @@ AC_SUBST(CURL_LIBS)
 
 # Testing if kerberos 5 is in the system
 AC_MSG_CHECKING([for krb5])
-if eval curl-config --version >/dev/null >/dev/null; then
+if eval krb5-config --version >/dev/null >/dev/null; then
   AC_MSG_RESULT([found])
   KRB5_CFLAGS=`krb5-config --cflags`
   KRB5_LIBS=`krb5-config --libs`
