@@ -7,7 +7,7 @@
 ;
 
 !define VER_MAJOR 1.9
-!define VER_MINOR .7
+!define VER_MINOR .8
 
 ; Main Installer Options
 Name "BZFlag"
@@ -45,7 +45,7 @@ Section "BZFlag (required)"
 	SetOutPath $INSTDIR
 	; Put file there
 	File ..\..\..\src\bzflag\bzflag.exe
-	File ..\..\..\src\bzfls\bzfls.exe
+	File ..\..\..\src\bzadmin\bzadmin.exe
 	File ..\..\..\src\bzfs\bzfs.exe
 
 	; make the data dir
