@@ -515,9 +515,9 @@ void NetHandler::countMessage(uint16_t code, int len, int direction) {
 
   } else {
 
-    msg[direction][code].count++;
-    if (msg[direction][code].maxSize < len) {
-      msg[direction][code].maxSize = len;
+    i->second.count++;
+    if (i->second.maxSize < len) {
+      i->second.maxSize = len;
     }
   }
   
