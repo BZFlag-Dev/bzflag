@@ -85,6 +85,8 @@ WeatherRenderer::WeatherRenderer()
 	BZDB.addCallback("_rainPuddleSpeed",bzdbCallBack,this);
 	BZDB.addCallback("_rainMaxPuddleTime",bzdbCallBack,this);
 	BZDB.addCallback("_rainPuddleColor",bzdbCallBack,this);
+	BZDB.addCallback("_rainPuddleTexture",bzdbCallBack,this);
+	BZDB.addCallback("_rainTexture",bzdbCallBack,this);
 }
 
 WeatherRenderer::~WeatherRenderer()
@@ -102,6 +104,8 @@ WeatherRenderer::~WeatherRenderer()
 	BZDB.removeCallback("_rainPuddleSpeed",bzdbCallBack,this);
 	BZDB.removeCallback("_rainMaxPuddleTime",bzdbCallBack,this);
 	BZDB.removeCallback("_rainPuddleColor",bzdbCallBack,this);
+	BZDB.removeCallback("_rainPuddleTexture",bzdbCallBack,this);
+	BZDB.removeCallback("_rainTexture",bzdbCallBack,this);
 }
 
 void WeatherRenderer::init ( void )
