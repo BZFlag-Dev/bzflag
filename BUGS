@@ -7,6 +7,8 @@ must fix for 1.10.4 patch release
   happens for all registered users or just the ones in the admin group
   (the admin users have all permissions, including REQUIREIDENTIFY).
 
+- when using -sl, you get the private message sound every time you shoot.
+
 recent bugs
 ------------
 
