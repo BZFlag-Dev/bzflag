@@ -39,40 +39,30 @@ Most messages begin with the length of the message in bytes followed by a 16 bit
 The length is 16 bits and excludes itself and the code, so it's the actual length of
 the message minus 4.
 
-Player identifiers are used in many messages and are always the same:
+Player identifiers are 1 byte and are used in many messages.
 
-	+----+----+----+----+----+----+----+----+
-	| server host addr  |  port   | number  |
-	+----+----+----+----+----+----+----+----+
 
-The `client host addr' is the IP address of the host the server is on.  This is
-superfluous for TCP connections with the server, but is necessary for UDP multicast
-communication.  `Port' is the TCP port on the server the client is connected to.
-Since clients have to reconnect to the server (see `connect to server'), this will be
-unique to each client.  `Number' is the player number on this particular client.
-Normally this is zero, but a client is allowed to have multiple players over one
-server connection.
+	FIXME list "special" playerids
 
 Flag status is common to a few message types:
 
-	+----+----+----+----+----+----+----+----+
-	| flag id | status  |  type   |
-	+----+----+----+----+----+----+----+----+
-	       owner id...            | position
-	+----+----+----+----+----+----+----+----+
-	    (x)   |    position (y)   | position
-	+----+----+----+----+----+----+----+----+
-	    (z)   |     launch (x)    |  launch
-	+----+----+----+----+----+----+----+----+
-	    (y)   |     launch (z)    | landing
-	+----+----+----+----+----+----+----+----+
-	    (x)   |    landing (y)    | landing
-	+----+----+----+----+----+----+----+----+
-	    (z)   |    flight time    |  flight
-	+----+----+----+----+----+----+----+----+
-	 end time | initial velocity  |
-	+----+----+----+----+----+----+
-
+	u16	flag id
+	u16	status
+	u16	type
+	u8	owner id
+	float	position (x)
+	float	position (y)
+	float	position (z)
+	float	launch (x)
+	float	launch (y)
+	float	launch (z)
+	float	landing (x)
+	float	landing (y)
+	float	landing (z)
+	float	flight time
+	float	flight end time
+	float	initial velocity
+	
 `Position,' `launch,' `landing,' `flight time,' `flight end,' and `initial velocity'
 are all floating point numbers.  `Flag id' is the type of flag,enumerated in FlagId.
 
