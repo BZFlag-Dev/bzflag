@@ -13,6 +13,7 @@
 #include "PlatformFactory.h"
 #include "bzfSDL.h"
 #include "ErrorHandler.h"
+#include "BzfMedia.h"
 
 PlatformFactory*	PlatformFactory::instance = 0;
 BzfMedia*		PlatformFactory::media = 0;
@@ -34,6 +35,8 @@ PlatformFactory::PlatformFactory()
 PlatformFactory::~PlatformFactory()
 {
 #ifdef HAVE_SDL
+  if (media)
+    media->closeAudio();
   SDL_Quit();
 #endif
 }
