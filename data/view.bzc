@@ -50,13 +50,8 @@
 	<if name="displayRadar">
 		<viewport x=4% y=4% w=15% h=1x>
 			<radar>
-				<color value=black alpha=0.5/>
-				<poly>
-					<vertex x=0% y=0%/>
-					<vertex x=100% y=0%/>
-					<vertex x=100% y=100%/>
-					<vertex x=0% y=100%/>
-				</poly>
+				# draw radar background
+				<model filename="radar.bzg" />
 			</radar>
 		</viewport>
 	</if>
@@ -107,14 +102,8 @@
 
 	# menu
 	<menu>
-		# fade everything behind menu to black by 75%
-		<color value=black alpha=0.75/>
-		<poly>
-			<vertex x=0% y=0%/>
-			<vertex x=100% y=0%/>
-			<vertex x=100% y=100%/>
-			<vertex x=0% y=100%/>
-		</poly>
+		# draw menu background
+		<model filename="menu.bzg" />
 	</menu>
 </view>
 

@@ -253,6 +253,7 @@ static void				onFlagHelp(const BzfString&, void*)
 // user input handling
 //
 
+#if 0 // roaming, freezing, and snapping are out-of-date and so disabled
 #if defined(DEBUG)
 #define FREEZING
 #define ROAMING
@@ -267,6 +268,7 @@ static float			roamPos[3] = { 0.0f, 0.0f, MuzzleHeight }, roamDPos[3];
 static float			roamTheta = 0.0f, roamDTheta;
 static float			roamPhi = 0.0f, roamDPhi;
 static float			roamZoom = 60.0f, roamDZoom;
+#endif
 #endif
 
 static void				showKeyboardStatus()

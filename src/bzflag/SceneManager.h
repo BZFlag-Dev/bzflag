@@ -53,7 +53,11 @@ public:
 	// set the time.  used by setParams().
 	void				setTime(float time);
 
-	// set parameters for time, sun and moon
+	// set parameters for time, sun and moon, and other rendering stuff.
+	// initParams() should be called once for each parameters object
+	// that will have values set on it.  initParams() also sets the
+	// parameters.
+	void				initParams(SceneVisitorParams& paramsToModify);
 	void				setParams(SceneVisitorParams& paramsToModify);
 
 	// set the color of full-scene fade.  the color includes alpha.

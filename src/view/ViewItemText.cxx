@@ -174,6 +174,10 @@ void					ViewItemText::onPostRender(
 		case ViewState::Center:
 			yText += 0.5f * hText;
 			break;
+
+		case ViewState::Top:
+			// no adjustment
+			break;
 	}
 	yText -= font.getAscent();
 	const ViewState::Align xAlign = getState().hAlign;
@@ -187,6 +191,10 @@ void					ViewItemText::onPostRender(
 			wLine += 1.0f;
 		float xLine = xText;
 		switch (xAlign) {
+			case ViewState::Left:
+				// no adjustment
+				break;
+
 			case ViewState::Center:
 				xLine -= 0.5f * wLine;
 				break;

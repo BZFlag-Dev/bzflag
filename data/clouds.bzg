@@ -39,8 +39,8 @@
           -1.00 -1.00 0.0    1.00 -1.00 0.0   -1.00  1.00 0.0    1.00 1.00 0.0
         </vertex>
         <gstate>
-          <texture filename="clouds"/>
-          <blending src="sa" dst="1-sa"/>
+          <texture filename="clouds" />
+          <blending src="sa" dst="1-sa" />
           <culling cull=off/>
           <shading model=smooth/>
           <depth write=off/>

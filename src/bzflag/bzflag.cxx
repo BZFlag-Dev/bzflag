@@ -17,6 +17,7 @@
 #define _WINSOCKAPI_
 #endif /* defined(_WIN32) */
 #include "ErrorHandler.h"
+#include "OpenGLGState.h"
 #include "OpenGLTexture.h"
 #include "OpenGLTexFont.h"
 #include "Address.h"
@@ -201,6 +202,22 @@ static void				onTexturingChanged(const BzfString& name, void*)
 	else
 		filter = OpenGLTexture::Off;
 	OpenGLTexture::setFilter(filter);
+	OpenGLGState::enableTexture(filter != OpenGLTexture::Off);
+}
+
+static void				onBlendingChanged(const BzfString& name, void*)
+{
+	OpenGLGState::enableBlending(BZDB->isTrue(name));
+}
+
+static void				onSmoothingChanged(const BzfString& name, void*)
+{
+	OpenGLGState::enableSmoothing(BZDB->isTrue(name));
+}
+
+static void				onDitheringChanged(const BzfString& name, void*)
+{
+	OpenGLGState::enableDithering(BZDB->isTrue(name));
 }
 
 static void				onColorChangeCB(const BzfString&, void*)
@@ -599,15 +616,17 @@ static DefaultDBItem		defaultDBItems[] = {
 	{ "displayView",		"normal",	true,  StateDatabase::ReadWrite, NULL },
 	{ "featuresAudio",		"1",		false, StateDatabase::ReadOnly,  NULL },
 	{ "featuresGamma",		"1",		false, StateDatabase::ReadOnly,  NULL },
-	{ "featuresMouseGrab",	"1",		true,  StateDatabase::ReadWrite, NULL },
 	{ "featuresResolutions","",			false, StateDatabase::ReadOnly,  NULL },
 	{ "featuresServers",	NULL,		false, StateDatabase::ReadOnly,  NULL },
 	{ "audioVolume",		"10",		true,  StateDatabase::ReadWrite, NULL },
 	{ "audioMute",			"0",		false, StateDatabase::ReadWrite, NULL },
+	{ "renderBlending",		"1",		true,  StateDatabase::ReadWrite, onBlendingChanged },
+	{ "renderDithering",	"1",		true,  StateDatabase::ReadWrite, onDitheringChanged },
 	{ "renderGamma",		"2.0",		true,  StateDatabase::ReadWrite, onGammaChanged },
 	{ "renderMaxLOD",		NULL,		true,  StateDatabase::ReadWrite, NULL },
 	{ "renderQuality",		"2",		true,  StateDatabase::ReadWrite, NULL },
-	{ "renderTexturing",	NULL,		true,  StateDatabase::ReadWrite, onTexturingChanged },
+	{ "renderSmoothing",	"1",		true,  StateDatabase::ReadWrite, onSmoothingChanged },
+	{ "renderTexturing",	"linearmipmapnearest",	true,  StateDatabase::ReadWrite, onTexturingChanged },
 	{ "infoLatitude",		"37.5",		true,  StateDatabase::ReadWrite, NULL },
 	{ "infoLongitude",		"122.0",	true,  StateDatabase::ReadWrite, NULL },
 	{ "infoListServerURL",	DefaultListServerURL,

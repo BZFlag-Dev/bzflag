@@ -40,6 +40,10 @@ static const BzfString s_moonAzimuth("moonAzimuth");
 static const BzfString s_moonAltitude("moonAltitude");
 static const BzfString s_moonTwist("moonTwist");
 static const BzfString s_moonPhase("moonPhase");
+static const BzfString s_renderSmoothing("renderSmoothing");
+static const BzfString s_renderBlending("renderBlending");
+static const BzfString s_renderLighting("renderLighting");
+static const BzfString s_renderTexturing("renderTexturing");
 
 //
 // SceneManager
@@ -228,17 +232,38 @@ void					SceneManager::setTime(float _time)
 	time = _time;
 }
 
+void					SceneManager::initParams(
+								SceneVisitorParams& params)
+{
+	params.pushFloat(s_time, 0.0f);
+	params.pushFloat(s_sunAzimuth, 0.0f);
+	params.pushFloat(s_sunAltitude, 0.0f);
+	params.pushFloat(s_moonAzimuth, 0.0f);
+	params.pushFloat(s_moonAltitude, 0.0f);
+	params.pushFloat(s_moonTwist, 0.0f);
+	params.pushFloat(s_moonPhase, 0.0f);
+	params.pushFloat(s_renderSmoothing, 0.0f);
+	params.pushFloat(s_renderBlending, 0.0f);
+	params.pushFloat(s_renderLighting, 0.0f);
+	params.pushFloat(s_renderTexturing, 0.0f);
+	setParams(params);
+}
+
 void					SceneManager::setParams(
 								SceneVisitorParams& params)
 {
 	updateSkyStuff();
-	params.pushFloat(s_time, time);
-	params.pushFloat(s_sunAzimuth, fmodf(360.0f + sunAzimuth, 360.0f) / 360.0f);
-	params.pushFloat(s_sunAltitude, (sunAltitude + 90.0f) / 180.0f);
-	params.pushFloat(s_moonAzimuth, fmodf(360.0f + moonAzimuth, 360.0f) / 360.0f);
-	params.pushFloat(s_moonAltitude, (moonAltitude + 90.0f) / 180.0f);
-	params.pushFloat(s_moonTwist, fmodf(360.0f + moonTwist, 360.0f) / 360.0f);
-	params.pushFloat(s_moonPhase, (1.0f - moonPhase) / 2.0f);
+	params.setFloat(s_time, time);
+	params.setFloat(s_sunAzimuth, fmodf(360.0f + sunAzimuth, 360.0f) / 360.0f);
+	params.setFloat(s_sunAltitude, (sunAltitude + 90.0f) / 180.0f);
+	params.setFloat(s_moonAzimuth, fmodf(360.0f + moonAzimuth, 360.0f) / 360.0f);
+	params.setFloat(s_moonAltitude, (moonAltitude + 90.0f) / 180.0f);
+	params.setFloat(s_moonTwist, fmodf(360.0f + moonTwist, 360.0f) / 360.0f);
+	params.setFloat(s_moonPhase, (1.0f - moonPhase) / 2.0f);
+	params.setFloat(s_renderSmoothing, BZDB->isTrue(s_renderSmoothing) ? 1.0f : 0.0f);
+	params.setFloat(s_renderBlending, BZDB->isTrue(s_renderBlending) ? 1.0f : 0.0f);
+	params.setFloat(s_renderLighting, BZDB->isTrue(s_renderLighting) ? 1.0f : 0.0f);
+	params.setFloat(s_renderTexturing, BZDB->isTrue(s_renderTexturing) ? 1.0f : 0.0f);
 }
 
 void					SceneManager::setFade(

@@ -29,6 +29,9 @@ ViewItemPlayerScene::ViewItemPlayerScene()
 	builder.setDepthFunc(GState::kAlways);
 	builder.setDepthMask(false);
 	fadeGState = builder.getState();
+
+	// prep renderer
+	SCENEMGR->initParams(getRenderer().getParams());
 }
 
 ViewItemPlayerScene::~ViewItemPlayerScene()

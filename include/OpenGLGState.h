@@ -53,12 +53,19 @@ public:
 	BlendFactor			blendingDst;
 	bool				smoothing;
 	bool				culling;
+	bool				dithering;
 	Func				alphaFunc;
 	float				alphaFuncRef;
 	Func				depthFunc;
 	bool				depthMask;
 	float				pointSize;
+	float				stipple;
 	int					pass;
+
+	bool				forceTexture;
+	bool				forceBlending;
+	bool				forceSmoothing;
+	bool				forceDithering;
 };
 
 //
@@ -69,7 +76,6 @@ class OpenGLGState {
 public:
 	OpenGLGState();
 	OpenGLGState(const OpenGLGState&);
-	OpenGLGState(OpenGLGStateRep*);
 	~OpenGLGState();
 	OpenGLGState&		operator=(const OpenGLGState& state);
 
@@ -84,6 +90,15 @@ public:
 	// modified externally.
 	static void			resetState();
 
+	// globally enable/disable certain kinds of state.  gstates that
+	// try to set disabled state and don't have the corresponding
+	// force flag set don't modify the state.  these are enabled
+	// by default.
+	static void			enableTexture(bool);
+	static void			enableBlending(bool);
+	static void			enableSmoothing(bool);
+	static void			enableDithering(bool);
+
 	// change the device and shadow rendering state to match this
 	// object.  only the state that's different from the shadow
 	// state is changed.  direct changes to the device state made
@@ -94,7 +109,7 @@ public:
 	// get the GState
 	const GState*		getState() const;
 
-	// instrumentation methods.
+	// instrumentation stuff
 	struct Instruments {
 	public:
 		float			time;
@@ -109,6 +124,7 @@ public:
 		unsigned int	nDepthFunc;
 		unsigned int	nDepthMask;
 		unsigned int	nPointSize;
+		unsigned int	nStipple;
 	};
 	static void					instrReset();
 	static const Instruments*	instrGet();
@@ -142,6 +158,10 @@ public:
 private:
 	// builder needs access to rep to construct from an OpenGLGState
 	friend class OpenGLGStateBuilder;
+
+	OpenGLGState(OpenGLGStateRep*);
+
+private:
 	OpenGLGStateRep*	rep;
 	static CallbackList<GraphicsContextInitializer>	initList;
 };
@@ -170,12 +190,18 @@ public:
 							GState::BlendFactor dst = GState::kZero);
 	void				setSmoothing(bool = false);
 	void				setCulling(bool = true);
+	void				setDithering(bool = true);
 	void				setAlphaFunc(GState::Func = GState::kAlways,
 							float ref = 0.0f);
 	void				setDepthFunc(GState::Func = GState::kAlways);
 	void				setDepthMask(bool enabled = true);
 	void				setPointSize(float size = 1.0f);
+	void				setStipple(float alpha = 1.0f);
 	void				setPass(int = 0);
+	void				setForceTexture(bool);
+	void				setForceBlending(bool);
+	void				setForceSmoothing(bool);
+	void				setForceDithering(bool);
 
 	// get current builder state
 	OpenGLTexture		getTexture() const;
@@ -185,12 +211,18 @@ public:
 	GState::BlendFactor	getBlendingDst() const;
 	bool				getSmoothing() const;
 	bool				getCulling() const;
+	bool				getDithering() const;
 	GState::Func		getAlphaFunc() const;
 	float				getAlphaFuncRef() const;
 	GState::Func		getDepthFunc() const;
 	bool				getDepthMask() const;
 	float				getPointSize() const;
+	float				getStipple() const;
 	int					getPass() const;
+	bool				getForceTexture() const;
+	bool				getForceBlending() const;
+	bool				getForceSmoothing() const;
+	bool				getForceDithering() const;
 
 	// return a gstate having the current state of the builder
 	OpenGLGState		getState() const;
@@ -243,11 +275,22 @@ void					OpenGLGStateBuilder::setCulling(bool enabled)
 }
 
 inline
+void					OpenGLGStateBuilder::setDithering(bool enabled)
+{
+	data->dithering = enabled;
+}
+
+inline
 void					OpenGLGStateBuilder::setAlphaFunc(
 								GState::Func func, float ref)
 {
 	data->alphaFunc    = func;
-	data->alphaFuncRef = ref;
+	if (ref < 0.0f)
+		data->alphaFuncRef = 0.0f;
+	else if (ref > 1.0f)
+		data->alphaFuncRef = 1.0f;
+	else
+		data->alphaFuncRef = ref;
 }
 
 inline
@@ -266,13 +309,51 @@ void					OpenGLGStateBuilder::setDepthMask(bool enabled)
 inline
 void					OpenGLGStateBuilder::setPointSize(float size)
 {
-	data->pointSize = size;
+	if (size <= 0.0f)
+		data->pointSize = 1.0f;
+	else
+		data->pointSize = size;
+}
+
+inline
+void					OpenGLGStateBuilder::setStipple(float alpha)
+{
+	if (alpha < 0.0f)
+		data->stipple = 0.0f;
+	else if (alpha > 1.0f)
+		data->stipple = 1.0f;
+	else
+		data->stipple = alpha;
 }
 
 inline
 void					OpenGLGStateBuilder::setPass(int pass)
 {
 	data->pass = pass;
+}
+
+inline
+void					OpenGLGStateBuilder::setForceTexture(bool force)
+{
+	data->forceTexture = force;
+}
+
+inline
+void					OpenGLGStateBuilder::setForceBlending(bool force)
+{
+	data->forceBlending = force;
+}
+
+inline
+void					OpenGLGStateBuilder::setForceSmoothing(bool force)
+{
+	data->forceSmoothing = force;
+}
+
+inline
+void					OpenGLGStateBuilder::setForceDithering(bool force)
+{
+	data->forceDithering = force;
 }
 
 inline
@@ -318,6 +399,12 @@ bool					OpenGLGStateBuilder::getCulling() const
 }
 
 inline
+bool					OpenGLGStateBuilder::getDithering() const
+{
+	return data->dithering;
+}
+
+inline
 GState::Func			OpenGLGStateBuilder::getAlphaFunc() const
 {
 	return data->alphaFunc;
@@ -348,9 +435,39 @@ float					OpenGLGStateBuilder::getPointSize() const
 }
 
 inline
+float					OpenGLGStateBuilder::getStipple() const
+{
+	return data->stipple;
+}
+
+inline
 int						OpenGLGStateBuilder::getPass() const
 {
 	return data->pass;
+}
+
+inline
+bool					OpenGLGStateBuilder::getForceTexture() const
+{
+	return data->forceTexture;
+}
+
+inline
+bool					OpenGLGStateBuilder::getForceBlending() const
+{
+	return data->forceBlending;
+}
+
+inline
+bool					OpenGLGStateBuilder::getForceSmoothing() const
+{
+	return data->forceSmoothing;
+}
+
+inline
+bool					OpenGLGStateBuilder::getForceDithering() const
+{
+	return data->forceDithering;
 }
 
 #endif // BZF_OPENGL_GSTATE_H

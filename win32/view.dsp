@@ -110,10 +110,6 @@ SOURCE=..\src\view\ViewItemModel.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\src\view\ViewItemPoly.cxx
-# End Source File
-# Begin Source File
-
 SOURCE=..\src\view\ViewItemScene.cxx
 # End Source File
 # Begin Source File
@@ -163,10 +159,6 @@ SOURCE=..\include\ViewItemMessages.h
 # Begin Source File
 
 SOURCE=..\include\ViewItemModel.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\include\ViewItemPoly.h
 # End Source File
 # Begin Source File
 

@@ -9,27 +9,24 @@
 # IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
 # WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 
-DEPTH = ../..
-include $(DEPTH)/Make-common
-
-TARGETS  = $(LIBDIR)/libView.a
-
-CXXFILES =				\
-	View.cxx			\
-	ViewItemBuffer.cxx		\
-	ViewItemIf.cxx			\
-	ViewItemMenu.cxx		\
-	ViewItemMessages.cxx		\
-	ViewItemModel.cxx		\
-	ViewItemScene.cxx		\
-	ViewItemScissor.cxx		\
-	ViewItemText.cxx		\
-	ViewItemViewport.cxx		\
-	ViewManager.cxx			\
-	ViewReader.cxx			\
-	$(NULL)
-
-targets: $(TARGETS)
-
-$(TARGETS): $(OBJECTS)
-	$(ARF) $@ $?
+<geometry>
+	<color>
+		0 0 0 0.5
+	</color>
+	<vertex>
+		0 0 0
+		1 0 0
+		0 1 0
+		1 1 0
+	</vertex>
+	<gstate>
+		<shading model="flat" />
+		<blending src="sa" dst="1-sa" />
+		<depth func="1" write="off" />
+		<primitive type="tstrip">
+			<index>
+				0 1 2 3
+			</index>
+		</primitive>
+	</gstate>
+</geometry>

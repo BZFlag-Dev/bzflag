@@ -144,6 +144,10 @@ bool					ViewItemMessages::drawLine(
 
 	float x = cbState->x;
 	switch (getState().hAlign) {
+		case ViewState::Left:
+			// no adjustment
+			break;
+
 		case ViewState::Center:
 			x += 0.5f * (cbState->w - font.getWidth(buffer));
 			if (shadow)

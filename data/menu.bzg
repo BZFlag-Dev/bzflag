@@ -1,0 +1,47 @@
+# bzflag
+# Copyright (c) 1993 - 2002 Tim Riker
+#
+# This package is free software;  you can redistribute it and/or
+# modify it under the terms of the license found in the file
+# named LICENSE that should have accompanied this file.
+#
+# THIS PACKAGE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
+# IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
+# WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+
+<geometry>
+	<color>
+		0 0 0 0.75
+	</color>
+	<vertex>
+		0 0 0
+		1 0 0
+		0 1 0
+		1 1 0
+	</vertex>
+	<choice>
+		<mask t="renderBlending">1 2</mask>
+		<gstate>
+			# stippled
+			<shading model="flat" />
+			<stipple alpha="0.75" />
+			<depth func="1" write="off" />
+			<primitive type="tstrip">
+				<index>
+					0 1 2 3
+				</index>
+			</primitive>
+		</gstate>
+		<gstate>
+			# blended
+			<shading model="flat" />
+			<blending src="sa" dst="1-sa" />
+			<depth func="1" write="off" />
+			<primitive type="tstrip">
+				<index>
+					0 1 2 3
+				</index>
+			</primitive>
+		</gstate>
+	</choice>
+</geometry>

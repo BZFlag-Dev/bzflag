@@ -415,6 +415,9 @@ bool					SceneNodeGStateReader::open(
 		index = values.find("rgba");
 		if (index != values.end())
 			forceRGBA = (index->second != "off");
+		index = values.find("force");
+		if (index != values.end())
+			builder.setForceTexture(index->second != "off");
 
 		// get file name and verify that it's there
 		index = values.find("filename");
@@ -422,13 +425,32 @@ bool					SceneNodeGStateReader::open(
 			builder.setTexture(OpenGLTexture());
 		}
 		else {
+			const BzfString filename(index->second);
+
+			// get the filter
+			OpenGLTexture::Filter filter = OpenGLTexture::Max;
+			index = values.find("filter");
+			if (index != values.end()) {
+				if (index->second == "nearest")
+					filter = OpenGLTexture::Nearest;
+				else if (index->second == "linear")
+					filter = OpenGLTexture::Linear;
+				else if (index->second == "nearestmipmapnearest")
+					filter = OpenGLTexture::NearestMipmapNearest;
+				else if (index->second == "linearmipmapnearest")
+					filter = OpenGLTexture::LinearMipmapNearest;
+				else if (index->second == "nearestmipmaplinear")
+					filter = OpenGLTexture::NearestMipmapLinear;
+				else if (index->second == "linearmipmaplinear")
+					filter = OpenGLTexture::LinearMipmapLinear;
+			}
+
 			// load the texture
 			int w, h;
-			builder.setTexture(OpenGLTexture(index->second, &w, &h,
-								OpenGLTexture::Max,		// max filter
-								repeat,						// repeat
-								forceRGBA ?
-										OpenGLTexture::getRGBAFormat() : 0));
+			builder.setTexture(OpenGLTexture(filename, &w, &h,
+							filter,				// max filter
+							repeat,				// repeat
+							forceRGBA ? OpenGLTexture::getRGBAFormat() : 0));
 		}
 	}
 
@@ -496,6 +518,9 @@ bool					SceneNodeGStateReader::open(
 				dst = GState::kOneMinusSrcColor;
 		}
 		builder.setBlending(src, dst);
+		index = values.find("force");
+		if (index != values.end())
+			builder.setForceBlending(index->second != "off");
 	}
 
 	else if (tag == "smoothing") {
@@ -506,6 +531,9 @@ bool					SceneNodeGStateReader::open(
 			else if (index->second == "off")
 				builder.setSmoothing(false);
 		}
+		index = values.find("force");
+		if (index != values.end())
+			builder.setForceSmoothing(index->second != "off");
 	}
 
 	else if (tag == "culling") {
@@ -515,6 +543,16 @@ bool					SceneNodeGStateReader::open(
 				builder.setCulling(true);
 			else if (index->second == "off")
 				builder.setCulling(false);
+		}
+	}
+
+	else if (tag == "dithering") {
+		index = values.find("dither");
+		if (index != values.end()) {
+			if (index->second == "on")
+				builder.setDithering(true);
+			else if (index->second == "off")
+				builder.setDithering(false);
 		}
 	}
 
@@ -593,6 +631,19 @@ bool					SceneNodeGStateReader::open(
 				size = 1.0f;
 		}
 		builder.setPointSize(size);
+	}
+
+	else if (tag == "stipple") {
+		float alpha = 1.0f;
+		index = values.find("alpha");
+		if (index != values.end()) {
+			alpha = (float)atof(index->second.c_str());
+			if (alpha < 0.0f)
+				alpha = 0.0f;
+			else if (alpha > 1.0f)
+				alpha = 1.0f;
+		}
+		builder.setStipple(alpha);
 	}
 
 	else if (tag == "pass") {

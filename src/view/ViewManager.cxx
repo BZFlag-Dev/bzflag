@@ -17,7 +17,6 @@
 #include "ViewItemMenu.h"
 #include "ViewItemMessages.h"
 #include "ViewItemModel.h"
-#include "ViewItemPoly.h"
 #include "ViewItemScissor.h"
 #include "ViewItemText.h"
 #include "ViewItemViewport.h"
@@ -36,7 +35,6 @@ ViewManager::ViewManager()
 	addReader("menu", new ViewItemMenuReader);
 	addReader("message", new ViewItemMessagesReader);
 	addReader("model", new ViewItemModelReader);
-	addReader("poly", new ViewItemPolyReader);
 	addReader("scissor", new ViewItemScissorReader);
 	addReader("text", new ViewItemTextReader);
 	addReader("unless", new ViewItemIfReader(true));

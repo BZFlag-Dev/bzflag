@@ -318,6 +318,10 @@ bool					Trackball::onEvent(const BzfEvent& event, bool& redraw)
 				xlate[2] = xlate0[2] - 4.0 * (y - y0);
 			}
 			return true;
+
+		default:
+			// ignore other events
+			break;
 	}
 	return false;
 }

@@ -23,6 +23,7 @@
 #include <ctype.h>
 #include <string.h>
 #include <errno.h>
+#include <assert.h>
 
 //
 // command name to function mapping
@@ -303,6 +304,10 @@ void					CommandsSearch::onFrame()
 
 		case ConnectListServers:
 			connectToListServers();
+			break;
+
+		default:
+			assert(0 && "invalid global search phase");
 			break;
 	}
 

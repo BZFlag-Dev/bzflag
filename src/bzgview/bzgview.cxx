@@ -184,6 +184,10 @@ static bool handleEvent(const BzfEvent& event, bool& redraw)
 				return true;
 			}
 			break;
+
+		default:
+			// ignore other events
+			break;
 	}
 	return false;
 }
@@ -344,6 +348,10 @@ int main(int argc, char** argv)
 
 					case BzfEvent::Resize:
 						resize(event.resize.width, event.resize.height);
+						break;
+
+					default:
+						// ignore other events
 						break;
 				}
 
