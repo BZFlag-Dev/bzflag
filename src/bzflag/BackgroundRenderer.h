@@ -21,11 +21,13 @@
 #define	BZF_BACKGROUND_RENDERER_H
 
 #include "common.h"
+
+/* common interface headers */
 #include "bzfgl.h"
 #include "OpenGLGState.h"
 #include "OpenGLDisplayList.h"
+#include "SceneRenderer.h"
 
-class SceneRenderer;
 
 class BackgroundRenderer {
   public:

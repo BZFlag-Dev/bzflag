@@ -10,18 +10,17 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-/*
- *
- */
+#ifndef	__MAINWINDOW_H__
+#define	__MAINWINDOW_H__
 
-#ifndef	BZF_MAIN_WINDOW_H
-#define	BZF_MAIN_WINDOW_H
+/* system interface headers */
+#include <vector>
+#include <string>
+
+/* common interface headers */
+#include "BzfWindow.h"
 
 #define	USE_GL_STEREO
-
-#include "common.h"
-
-class BzfWindow;
 
 class MainWindow {
   public:
@@ -136,13 +135,12 @@ inline bool		MainWindow::getFullView() const
   return isFullView;
 }
 
-#endif // BZF_MAIN_WINDOW_H
+#endif /* __MAINWINDOW_H__ */
 
 // Local Variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-
