@@ -672,6 +672,7 @@ KeyboardMapMenu::KeyboardMapMenu() : defaultKey(this), editing(BzfKeyMap::LastKe
   controls.push_back(createLabel(NULL, "Toggle Main Flags:"));
   controls.push_back(createLabel(NULL, "Silience/UnSilence Key:"));
   controls.push_back(createLabel(NULL, "Server Command Key:"));
+  controls.push_back(createLabel(NULL, "Hunt Key:"));
 
   initNavigation(controls, 1, controls.size()-1);
 }
@@ -1854,6 +1855,8 @@ Help1Menu::Help1Menu() : HelpMenu("Controls")
   list.push_back(createLabel("Toggle Radar Flags"));
   list.push_back(createLabel("Toggle Main Flags"));
   list.push_back(createLabel("Silience/UnSilence"));
+  list.push_back(createLabel("Server Admin"));
+  list.push_back(createLabel("Hunt"));
   list.push_back(createLabel("show/dismiss menu", "Esc:"));
 }
 
@@ -1893,7 +1896,9 @@ void			Help1Menu::resize(int width, int height)
 				BzfKeyMap::SlowKeyboardMotion,
 				BzfKeyMap::ToggleMainFlags,
 				BzfKeyMap::ToggleRadarFlags,
-				BzfKeyMap::ChooseSilence
+				BzfKeyMap::ChooseSilence,
+				BzfKeyMap::ServerCommand,
+				BzfKeyMap::Hunt
 			};
 
   // get current key mapping and set strings appropriately
