@@ -1,9 +1,3 @@
-# FIXME find a way to avoid this dir during the makes.
-# SUBDIRS is NOT processed conditionally on some versions of automake
-# DIST_SUBDIRS might be supported?
-# do NOT move this without trying a "make distcheck" on non-mac
-SUBDIRS = MacOSX
-
 if LINUX
 libPlatform_a_SOURCES =				\
 	PlatformFactory.cxx			\
@@ -26,7 +20,8 @@ libPlatform_a_SOURCES =				\
 	XVisual.h				\
 	XWindow.cxx				\
 	XWindow.h
-else
+endif
+
 if SOLARIS
 libPlatform_a_SOURCES =				\
 	PlatformFactory.cxx			\
@@ -46,7 +41,8 @@ libPlatform_a_SOURCES =				\
 	XVisual.h				\
 	XWindow.cxx				\
 	XWindow.h
-else
+endif
+
 if IRIX
 libPlatform_a_SOURCES =				\
 	PlatformFactory.cxx			\
@@ -68,8 +64,11 @@ libPlatform_a_SOURCES =				\
 	XVisual.h				\
 	XWindow.cxx				\
 	XWindow.h
-else
+endif
+
 if MACOS
+SUBDIRS += MacOSX
+
 libPlatform_a_SOURCES =				\
 	PlatformFactory.cxx			\
 	BzfDisplay.cxx				\
@@ -79,6 +78,9 @@ libPlatform_a_SOURCES =				\
 	wave.cxx				\
 	wave.h
 else
+DIST_SUBDIRS += MacOSX
+endif
+
 if BEOS
 libPlatform_a_SOURCES =				\
 	PlatformFactory.cxx			\
@@ -98,7 +100,8 @@ libPlatform_a_SOURCES =				\
 	BeOSWindow.h				\
 	BeOSMedia.cxx				\
 	BeOSMedia.h
-else
+endif
+
 if WIN32
 libPlatform_a_SOURCES =				\
 	PlatformFactory.cxx			\
@@ -118,11 +121,6 @@ libPlatform_a_SOURCES =				\
 	WinWindow.h				\
 	WinMedia.cxx				\
 	WinMedia.h
-endif
-endif
-endif
-endif
-endif
 endif
 
 if CLIENT_INCLUDED
