@@ -768,6 +768,8 @@ int						main(int argc, char** argv)
 		callsign = PLATFORM->getEnv("BZID");
 	if (!callsign.empty())
 		BZDB->set("infoCallsign", callsign);
+	BZDB->set("playerType", "tank");
+
 	{
 		const char* hostname = Address::getHostName();
 		std::string username = PLATFORM->getUserName();
