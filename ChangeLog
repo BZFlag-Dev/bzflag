@@ -1,7 +1,10 @@
 ﻿			     BZFlag Release Notes
 			     ====================
 
-* additional lines for a group modify permissions instead of replacing them - Frank Evers
+BZFlag 2.0.3
+------------
+
+* Allow additional group modify permission lines - Frank Evers
 * bzfs creates default groups before parsing groupdb file - Frank Evers
 * +ALL and -ALL adds/removes all perms froma a group in groupdb - Frank Evers
 * Support for +,- and ! operators in bzfs' groupdb file - Frank Evers
@@ -125,7 +128,7 @@ BZFlag 2.0.0  "Falcor's Despair" (2004-01-17)
 * Shot accuracy statistics dialog - Daniel Remenak
 * Faster zbuffer graphics using octree and dynamic occluders - Anonymous
 * Faster startup times by making the SceneDatabase on the fly - Anonymous
-* Auto-completion for commands & callsigns (ala bzadmin) - Ian Agar, Frank Thilo
+* Autocompletion for commands & callsigns (ala bzadmin) - Ian Agar, Frank Thilo
 * /clientquery can now be requested on single individuals - Ian Agar
 * Added support for irc-like /me actions and /msg messages - Sean Morrison
 * Seer flag now can see Invisible Bullets - Anonymous
