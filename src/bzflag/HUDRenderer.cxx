@@ -14,6 +14,7 @@
 #include "HUDRenderer.h"
 
 /* system implementation headers */
+#include <time.h>
 
 /* common implementation headers */
 #include "texture.h"
