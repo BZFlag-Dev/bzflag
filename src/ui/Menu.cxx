@@ -246,9 +246,12 @@ void					Menu::renderFocus(const Control& control)
 	m[15] =  1.0f;
 	projection->matrix.set(m, 16);
 
-	glPushAttrib(GL_VIEWPORT_BIT);
+	glPushAttrib(GL_VIEWPORT_BIT | GL_SCISSOR_BIT);
 	glViewport(static_cast<int>(x + fx), static_cast<int>(y + fy),
 								static_cast<int>(h), static_cast<int>(h));
+	glScissor(static_cast<int>(x + fx), static_cast<int>(y + fy),
+								static_cast<int>(h), static_cast<int>(h));
+	glClear(GL_DEPTH_BUFFER_BIT);
 	renderer->setArea(h * h);
 	renderer->getParams().pushFloat("time", wallClock - TimeKeeper::getCurrent());
 	renderer->traverse(projection);
