@@ -85,6 +85,7 @@ class HUDRenderer {
 
     boolean		getComposing() const;
     BzfString		getComposeString() const;
+    void		setComposeString(const BzfString &message) const;
 
     void		setComposing(const BzfString &prompt);
 

@@ -68,6 +68,9 @@ static const char copyright[] = "Copyright (c) 1993 - 2001 Tim Riker";
 #include "AList.h"
 BZF_DEFINE_ALIST(ExplosionList, BillboardSceneNode*);
 
+#define MAX_MESSAGE_HISTORY (10)
+BZF_DEFINE_ALIST(MessageHistoryList, BzfString);
+
 static const float	FlagHelpDuration = 60.0f;
 
 static StartupInfo	startupInfo;
@@ -119,6 +122,9 @@ static int		savedVolume = -1;
 static boolean		grabMouseAlways = False;
 
 static char		messageMessage[PlayerIdPLen + 2 + MessageLen];
+
+static MessageHistoryList	messageHistory;
+static int					messageHistoryIndex = 0;
 
 static void		restartPlaying();
 static void		setTarget();
@@ -347,6 +353,13 @@ boolean			ComposeDefaultKey::keyPress(const BzfKeyEvent& key)
     // jump while typing
     myTank->jump();
   }
+
+  if (!myTank->isKeyboardMoving()) {
+	  if ((key.button == BzfKeyEvent::Up) ||
+	      (key.button == BzfKeyEvent::Down))
+	  return True;
+  }
+
   switch (key.ascii) {
     case 3:	// ^C
     case 27:	// escape
@@ -366,6 +379,19 @@ boolean			ComposeDefaultKey::keyPress(const BzfKeyEvent& key)
   if (sendIt) {
     BzfString message = hud->getComposeString();
     if (message.getLength() > 0) {
+	  int i, mhLen = messageHistory.getLength();
+	  for (i = 0; i < mhLen; i++) {
+		  if (messageHistory[i] == message) {
+			  messageHistory.rotate( i, 0 );
+			  break;
+		  }
+	  }
+	  if (i == mhLen) {
+		if (mhLen >= MAX_MESSAGE_HISTORY)
+			messageHistory.remove( mhLen - 1 );
+		messageHistory.prepend( message );
+	  }
+
       char messageBuffer[MessageLen];
       memset(messageBuffer, 0, MessageLen);
       strncpy(messageBuffer, message, MessageLen);
@@ -375,6 +401,7 @@ boolean			ComposeDefaultKey::keyPress(const BzfKeyEvent& key)
     }
   }
 
+  messageHistoryIndex = 0;
   hud->setComposing(BzfString());
   HUDui::setDefaultKey(NULL);
   return True;
@@ -382,6 +409,27 @@ boolean			ComposeDefaultKey::keyPress(const BzfKeyEvent& key)
 
 boolean			ComposeDefaultKey::keyRelease(const BzfKeyEvent& key)
 {
+  if (!myTank->isKeyboardMoving()) {
+	  if (key.button == BzfKeyEvent::Up) {
+		  if (messageHistoryIndex < messageHistory.getLength()) {
+			  hud->setComposeString(messageHistory[messageHistoryIndex]);
+			  messageHistoryIndex++;
+		  }
+		  else
+			  hud->setComposeString(BzfString());
+		  return True;
+	  }
+	  else if (key.button == BzfKeyEvent::Down) {
+		  if (messageHistoryIndex > 0){
+			  messageHistoryIndex--;
+			  hud->setComposeString(messageHistory[messageHistoryIndex]);
+		  }
+		  else
+			  hud->setComposeString(BzfString());
+		  return True;
+	  }
+  }
+
   return keyPress(key);
 }
 
@@ -709,6 +757,7 @@ static void		doKeyPlaying(const BzfKeyEvent& key, boolean pressed)
       // to send to a player use:
       //   buf = myTank->getId().pack(buf);
       //   buf = nboPackUShort(buf, uint16_t(RogueTeam));
+	  messageHistoryIndex = 0;
       hud->setComposing(composePrompt);
       HUDui::setDefaultKey(&composeKeyHandler);
     }

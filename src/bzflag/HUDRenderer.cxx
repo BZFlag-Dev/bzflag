@@ -461,6 +461,11 @@ BzfString		HUDRenderer::getComposeString() const
   return composeTypeIn->getString();
 }
 
+void		    HUDRenderer::setComposeString(const BzfString &message) const
+{
+  composeTypeIn->setString(message);
+}
+
 void			HUDRenderer::setComposing(const BzfString &prompt)
 {
   showCompose = (!prompt.isNull());

@@ -4,6 +4,7 @@
 BZFlag 1.7e5
 ------------
 
+* Message History buffer - Dave Brosius (cleaned by Tim Riker)
 * Nemesis set on direct receive - Frank Thilo
 * LT and RT command line aliases for shell impaired - Tim Riker
 * radar shade flags by altitude - Tim Riker (reworked from Jeremiah) 
