@@ -208,6 +208,7 @@ NetHandler::NetHandler(PlayerInfo* _info, const struct sockaddr_in &clientAddr,
     for (i = 0; i < MessageTypes; i++) {
       statMsg[i].count = 0;
       statMsg[i].code = 0;
+      statMsg[i].maxSize = 0;
     }
     msgBytes[direction] = 0;
     perSecondTime[direction] = time;
