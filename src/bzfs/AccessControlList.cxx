@@ -292,7 +292,9 @@ bool AccessControlList::load() {
       return false;
     is>>banEnd;
     if (banEnd != 0) {
-      banEnd -= long(time(NULL) + TimeKeeper::getCurrent().getSeconds());
+      // banEnd is absolute time - get delay from now, in minute
+      // ban command use minute as ban time
+      banEnd -= long(time(NULL));
       banEnd /= 60;
       if (banEnd == 0)
 	banEnd = -1;
