@@ -159,10 +159,6 @@ SOURCE=..\..\src\bzfs\CustomZone.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\src\bzfs\DelayQueue.cxx
-# End Source File
-# Begin Source File
-
 SOURCE=..\..\src\bzfs\EntryZones.cxx
 # End Source File
 # Begin Source File
@@ -188,10 +184,6 @@ SOURCE=..\..\src\bzfs\ListServerConnection.cxx
 # Begin Source File
 
 SOURCE=..\..\src\bzfs\Permissions.cxx
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\src\bzfs\PlayerInfo.cxx
 # End Source File
 # Begin Source File
 

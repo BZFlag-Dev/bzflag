@@ -142,15 +142,23 @@ SOURCE=..\..\src\game\CommandsStandard.cxx
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\src\game\DelayQueue.cxx
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\src\game\DirectoryNames.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\src\game\VotingArbiter.cxx
+SOURCE=..\..\src\game\NetHandler.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\src\game\NetHandler.cxx
+SOURCE=..\..\src\game\PlayerInfo.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\game\VotingArbiter.cxx
 # End Source File
 # End Group
 # Begin Group "Header Files"
@@ -162,15 +170,23 @@ SOURCE=..\..\src\game\CommandsStandard.h
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\include\DelayQueue.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\include\DirectoryNames.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\include\VotingArbiter.h
+SOURCE=..\..\include\NetHandler.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\include\NetHandler.h
+SOURCE=..\..\include\PlayerInfo.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\include\VotingArbiter.h
 # End Source File
 # End Group
 # End Target
