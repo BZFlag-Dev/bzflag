@@ -1,9 +1,0 @@
-#!/bin/sh
-exec /bin/tar \
- --dereference \
- --exclude CVS \
- --exclude .cvsignore \
- --exclude config.log \
- --exclude config.cache \
- --exclude config.status \
- $*

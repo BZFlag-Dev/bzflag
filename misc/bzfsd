@@ -1,9 +1,0 @@
-#!/bin/bash
-
-# This is a simple script that starts bzfs in the background and redirects
-# the output to a file. It could be useful together with the initscript.
-
-BZLOGFILE=/tmp/bzfs.log
-
-nohup /usr/local/bin/bzfs $* > $BZLOGFILE &
-
