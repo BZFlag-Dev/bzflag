@@ -1256,7 +1256,7 @@ int			main(int argc, char** argv)
   // By only allowing up to a certain # of people can prevent
   // the vague chance of buffer overrun.
   const int bufferLength = 30;
-  int maxListSize = 1000000; // do even that many play bzflag?
+  const int maxListSize = 1000000; // do even that many play bzflag?
   char buffer [bufferLength];
   bool keepGoing = true;
 
@@ -1268,8 +1268,9 @@ int			main(int argc, char** argv)
       // remove the value from the database so when we save
       // it saves the list's new values in order
       BZDB.unset(buffer);
-    } else
+    } else {
       keepGoing = false;
+    }
   }
 
   if (BZDB.isSet("serverCacheAge")) {

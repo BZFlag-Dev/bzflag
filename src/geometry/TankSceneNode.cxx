@@ -395,7 +395,7 @@ const int		TankIDLSceneNode::IDLRenderNode::idlFaces[][5] = {
 				{ 4,  15, 14, 11, 10 },
 				{ 4,  10, 11, 8, 9 },
 				{ 4,  9, 8, 13, 12 },
-				// barrrel
+				// barrel
 				{ 4,  21, 17, 18, 22 },
 				{ 4,  22, 18, 19, 23 },
 				{ 4,  23, 19, 16, 20 },
@@ -433,7 +433,7 @@ const GLfloat		TankIDLSceneNode::IDLRenderNode::idlVertex[][3] = {
 				{ -0.456f, 1.080f, 1.040f },
 				{ 1.480f, 0.516f, 1.040f },
 				{ 1.480f, -0.516f, 1.040f },
-				// barrrel
+				// barrel
 				{ 4.940f, 0.047f, 1.410f },
 				{ 4.940f, -0.079f, 1.530f },
 				{ 4.940f, 0.047f, 1.660f },
