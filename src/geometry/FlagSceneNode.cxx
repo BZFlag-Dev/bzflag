@@ -121,12 +121,10 @@ void			FlagSceneNode::notifyStyleChange(
   if (BZDBCache::blend && (transparent || texturing)) {
     builder.setBlending(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     builder.setStipple(1.0f);
-  }
-  else if (transparent) {
+  } else if (transparent) {
     builder.resetBlending();
     builder.setStipple(0.5f);
-  }
-  else {
+  } else {
     builder.resetBlending();
     builder.setStipple(1.0f);
   }
@@ -135,7 +133,7 @@ void			FlagSceneNode::notifyStyleChange(
   gstate = builder.getState();
 
   flagChunks = (int)BZDB.eval("flagChunks");
-  geoPole = (int)BZDB.eval("useQuality")>2.0f;
+  geoPole = (int)BZDB.eval("useQuality") > 2.0f;
 }
 
 void			FlagSceneNode::addRenderNodes(
@@ -176,9 +174,11 @@ void			FlagSceneNode::FlagRenderNode::render()
     glTranslatef(sphere[0], sphere[1], sphere[2]);
 
     myColor4fv(sceneNode->color);
+
     if (!BZDBCache::blend &&
-			(sceneNode->transparent || sceneNode->texturing))
+        (sceneNode->transparent || sceneNode->texturing))
       myStipple(sceneNode->color[3]);
+
     if (sceneNode->billboard) {
       RENDERER.getViewFrustum().executeBillboard();
       glBegin(GL_QUAD_STRIP);
@@ -200,8 +200,7 @@ void			FlagSceneNode::FlagRenderNode::render()
 	  glVertex3fv(v2);
 	}
       glEnd();
-    }
-    else {
+    } else {
       glRotatef(sceneNode->angle + 180.0f, 0.0f, 0.0f, 1.0f);
       glRotatef(90.0f, 1.0f, 0.0f, 0.0f);
       glBegin(GL_QUADS);
@@ -219,20 +218,18 @@ void			FlagSceneNode::FlagRenderNode::render()
     myColor4f(0.0f, 0.0f, 0.0f, sceneNode->color[3]);
     if (sceneNode->texturing) glDisable(GL_TEXTURE_2D);
 
-    if (geoPole){
+    if (geoPole) {
       glBegin(GL_QUADS);
         glVertex3f(-poleWidth, 0.0f, 0.0f);
         glVertex3f(poleWidth, 0.0f, 0.0f);
-       glVertex3f(poleWidth, base + Height, 0.0f);
-       glVertex3f(-poleWidth, base + Height, 0.0f);
+        glVertex3f(poleWidth, base + Height, 0.0f);
+        glVertex3f(-poleWidth, base + Height, 0.0f);
       glEnd();
-
-    }
-    else{
-    glBegin(GL_LINE_STRIP);
-      glVertex3f(0.0f, 0.0f, 0.0f);
-      glVertex3f(0.0f, base + Height, 0.0f);
-    glEnd();
+    } else {
+      glBegin(GL_LINE_STRIP);
+	glVertex3f(0.0f, 0.0f, 0.0f);
+	glVertex3f(0.0f, base + Height, 0.0f);
+      glEnd();
     }
     if (sceneNode->texturing) glEnable(GL_TEXTURE_2D);
 
