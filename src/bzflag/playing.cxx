@@ -6853,7 +6853,6 @@ void			startPlaying(BzfDisplay* _display,
   // let other stuff do initialization
   sceneBuilder = new SceneDatabaseBuilder(sceneRenderer);
   World::init();
-  ShotStrategy::init();
 
   // prepare dialogs
   mainMenu = new MainMenu;

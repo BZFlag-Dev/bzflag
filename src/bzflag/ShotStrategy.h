@@ -38,9 +38,6 @@ class ShotStrategy {
 			ShotStrategy(ShotPath*);
     virtual		~ShotStrategy();
 
-    static void		init();
-    static void		done();
-
     virtual void	update(float dt) = 0;
     virtual float	checkHit(const BaseLocalPlayer*, float pos[3]) const = 0;
     virtual bool	isStoppedByHit() const;

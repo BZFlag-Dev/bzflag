@@ -28,18 +28,11 @@
 #include "ServerLink.h"
 #include "sound.h"
 #include "OpenGLTexture.h"
-#include "texture.h"
 #include "Team.h"
 #include "SceneRenderer.h"
 #include "StateDatabase.h"
 #include "BZDBCache.h"
 #include "TextureManager.h"
-
-static OpenGLTexture*	boltTexture[NumTeams];
-static OpenGLTexture*	tboltTexture[NumTeams];
-static OpenGLTexture*	laserTexture[NumTeams];
-static OpenGLTexture*   thiefTexture;
-static OpenGLTexture*	gmTexture;
 
 //
 // ShotPathStrategy
@@ -54,34 +47,6 @@ ShotStrategy::ShotStrategy(ShotPath* _path) :
 ShotStrategy::~ShotStrategy()
 {
   // do nothing
-}
-
-void			ShotStrategy::init()
-{
-  TextureManager *tm = TextureManager::getTextureManager();
-  boltTexture[RogueTeam] = tm->getTexture( TX_BOLT, RogueTeam );
-  boltTexture[RedTeam] = tm->getTexture( TX_BOLT, RedTeam );
-  boltTexture[GreenTeam] = tm->getTexture( TX_BOLT, GreenTeam );
-  boltTexture[BlueTeam] = tm->getTexture( TX_BOLT, BlueTeam );
-  boltTexture[PurpleTeam] = tm->getTexture( TX_BOLT, PurpleTeam );
-  boltTexture[RabbitTeam] = tm->getTexture( TX_BOLT, RabbitTeam );
-
-  tboltTexture[RogueTeam] = tm->getTexture( TX_TRANSBOLT, RogueTeam );
-  tboltTexture[RedTeam] = tm->getTexture( TX_TRANSBOLT, RedTeam );
-  tboltTexture[GreenTeam] = tm->getTexture( TX_TRANSBOLT, GreenTeam );
-  tboltTexture[BlueTeam] = tm->getTexture( TX_TRANSBOLT, BlueTeam );
-  tboltTexture[PurpleTeam] = tm->getTexture( TX_TRANSBOLT, PurpleTeam );
-  tboltTexture[RabbitTeam] = tm->getTexture( TX_TRANSBOLT, RabbitTeam );
- 
-  laserTexture[RogueTeam] = tm->getTexture( TX_LASER, RogueTeam );
-  laserTexture[RedTeam] = tm->getTexture( TX_LASER, RedTeam );
-  laserTexture[GreenTeam] = tm->getTexture( TX_LASER, GreenTeam );
-  laserTexture[BlueTeam] = tm->getTexture( TX_LASER, BlueTeam );
-  laserTexture[PurpleTeam] = tm->getTexture( TX_LASER, PurpleTeam );
-  laserTexture[RabbitTeam] = tm->getTexture( TX_LASER, RabbitTeam );
-
-  thiefTexture = tm->getTexture( TX_THIEF );
-  gmTexture = tm->getTexture( TX_MISSILE );
 }
 
 bool			ShotStrategy::isStoppedByHit() const
@@ -375,10 +340,11 @@ SegmentedShotStrategy::SegmentedShotStrategy(ShotPath* _path, bool transparent) 
   boltSceneNode = new BoltSceneNode(_path->getPosition());
   const float* c = Team::getRadarColor(team);
   boltSceneNode->setColor(c[0], c[1], c[2]);
-  if ((!transparent) && boltTexture[team] && boltTexture[team]->isValid())
-    boltSceneNode->setTexture(*boltTexture[team]);
-  if ((transparent) && tboltTexture[team] && tboltTexture[team]->isValid())
-    boltSceneNode->setTexture(*tboltTexture[team]);
+
+  TextureManager *tm = TextureManager::getTextureManager();
+  OpenGLTexture *texture = tm->getTexture(transparent ? TX_TRANSBOLT : TX_BOLT, team);
+  if (texture && texture->isValid())
+    boltSceneNode->setTexture(*texture);
 }
 
 SegmentedShotStrategy::~SegmentedShotStrategy()
@@ -579,8 +545,10 @@ void			SegmentedShotStrategy::addShot(
     TeamColor tmpTeam = colorblind ? RogueTeam : team;
     const float* c = Team::getRadarColor(tmpTeam);
     boltSceneNode->setColor(c[0], c[1], c[2]);
-    if (boltTexture[tmpTeam] && boltTexture[tmpTeam]->isValid())
-      boltSceneNode->setTexture(*boltTexture[tmpTeam]);
+    TextureManager *tm = TextureManager::getTextureManager();
+    OpenGLTexture *texture = tm->getTexture(TX_BOLT, tmpTeam);
+    if (texture && texture->isValid())
+      boltSceneNode->setTexture(*texture);
   }
   scene->addDynamicNode(boltSceneNode);
 }
@@ -861,6 +829,10 @@ ThiefStrategy::ThiefStrategy(ShotPath* path) :
   // make thief scene nodes
   const int numSegments = getSegments().size();
   thiefNodes = new LaserSceneNode*[numSegments];
+
+  TextureManager *tm = TextureManager::getTextureManager();
+  OpenGLTexture *texture = tm->getTexture(TX_THIEF);
+
   for (int i = 0; i < numSegments; i++) {
     const ShotPathSegment& segment = getSegments()[i];
     const float t = segment.end - segment.start;
@@ -871,8 +843,8 @@ ThiefStrategy::ThiefStrategy(ShotPath* path) :
     dir[1] = t * rawdir[1];
     dir[2] = t * rawdir[2];
     thiefNodes[i] = new LaserSceneNode(ray.getOrigin(), dir);
-    if (thiefTexture && thiefTexture->isValid())
-      thiefNodes[i]->setTexture(*thiefTexture);
+    if (texture && texture->isValid())
+      thiefNodes[i]->setTexture(*texture);
   }
   setCurrentSegment(numSegments - 1);
 }
@@ -1006,6 +978,10 @@ LaserStrategy::LaserStrategy(ShotPath* path) :
   laserNodes = new LaserSceneNode*[numSegments];
   const LocalPlayer* myTank = LocalPlayer::getMyTank();
   TeamColor tmpTeam = (myTank->getFlag() == Flags::Colorblindness) ? RogueTeam : team;
+
+  TextureManager *tm = TextureManager::getTextureManager();
+  OpenGLTexture *texture = tm->getTexture(TX_LASER, tmpTeam);
+
   for (int i = 0; i < numSegments; i++) {
     const ShotPathSegment& segment = getSegments()[i];
     const float t = segment.end - segment.start;
@@ -1016,8 +992,8 @@ LaserStrategy::LaserStrategy(ShotPath* path) :
     dir[1] = t * rawdir[1];
     dir[2] = t * rawdir[2];
     laserNodes[i] = new LaserSceneNode(ray.getOrigin(), dir);
-    if (laserTexture[tmpTeam] && laserTexture[tmpTeam]->isValid())
-      laserNodes[i]->setTexture(*laserTexture[tmpTeam]);
+    if (texture && texture->isValid())
+      laserNodes[i]->setTexture(*texture);
   }
   setCurrentSegment(numSegments - 1);
 }
@@ -1083,8 +1059,11 @@ GuidedMissileStrategy::GuidedMissileStrategy(ShotPath* _path) :
 				needUpdate(true)
 {
   ptSceneNode = new BoltSceneNode(_path->getPosition());
-  if (gmTexture && gmTexture->isValid()) {
-    ptSceneNode->setTexture(*gmTexture);
+  TextureManager *tm = TextureManager::getTextureManager();
+  OpenGLTexture *texture = tm->getTexture(TX_MISSILE);
+
+  if (texture && texture->isValid()) {
+    ptSceneNode->setTexture(*texture);
     ptSceneNode->setTextureAnimation(4, 4);
     ptSceneNode->setColor(1.0f, 0.2f, 0.0f);
     ptSceneNode->setFlares(true);
