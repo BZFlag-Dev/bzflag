@@ -212,8 +212,10 @@ struct PlayerInfo {
     TimeKeeper lagkillertime;
 
     FlagHistoryList flagHistory;
+#ifdef TIMELIMIT
     // player played before countdown started
     bool playedEarly;
+#endif
 
     // idle kick
     TimeKeeper lastupdate,lastmsg;
@@ -3777,7 +3779,9 @@ static void addPlayer(int playerIndex)
   player[playerIndex].pingslost = 0;
   player[playerIndex].pingssent = 0;
 
+#ifdef TIMELIMIT
   player[playerIndex].playedEarly = false;
+#endif
 
   // accept player
   directMessage(playerIndex, MsgAccept, 0, getDirectMessageBuffer());
@@ -3842,6 +3846,7 @@ static void addPlayer(int playerIndex)
   // send update of info for team just joined
   sendTeamUpdate(teamIndex);
 
+#ifdef TIMELIMIT
   // send time update to new player if we're counting down
   if (countdownActive && timeLimit > 0.0f && player[playerIndex].type != ComputerPlayer) {
     float timeLeft = timeLimit - (TimeKeeper::getCurrent() - gameStartTime);
@@ -3854,6 +3859,7 @@ static void addPlayer(int playerIndex)
     buf = nboPackUShort(bufStart, (uint16_t)(int)timeLeft);
     directMessage(playerIndex, MsgTimeUpdate, (char*)buf-(char*)bufStart, bufStart);
   }
+#endif
 
   // again check if player was disconnected
   if (player[playerIndex].fd == NotConnected)
@@ -4673,6 +4679,7 @@ static void parseCommand(const char *message, int t)
     buf = nboPackUShort(buf, uint16_t(NoTeam));
     broadcastMessage(MsgScoreOver, (char*)buf-(char*)bufStart, bufStart);
     gameOver = True;
+#ifdef TIMELIMIT
   // /countdown starts timed game
   } else if (player[t].Admin && strncmp(message + 1, "countdown", 9) == 0) {
     if (timeLimit > 0.0f) {
@@ -4718,6 +4725,7 @@ static void parseCommand(const char *message, int t)
     // reset all flags
     for (int i = 0; i < numFlags; i++)
       zapFlag(i);
+#endif
   // /flag command allows operator to control flags
   } else if (player[t].Admin && strncmp(message + 1, "flag ", 5) == 0) {
     if (strncmp(message + 6, "reset", 5) == 0) {
@@ -5005,11 +5013,11 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
 
     // player is coming alive
     case MsgAlive: {
+#ifdef TIMELIMIT
       // player moved before countdown started
       if (timeLimit>0.0f && !countdownActive)
-      {
 	player[t].playedEarly = true;
-      }
+#endif
       // data: position, forward-vector
       float pos[3], fwd[3];
       buf = nboUnpackVector(buf, pos);
@@ -6196,7 +6204,11 @@ int main(int argc, char **argv)
   pingReply.purpleMax = maxTeam[4];
   pingReply.shakeWins = shakeWins;
   pingReply.shakeTimeout = shakeTimeout;
+#ifdef TIMELIMIT
   pingReply.maxTime = (int)timeLimit;
+#else
+  pingReply.maxTime = (int)0.0f;
+#endif
   pingReply.maxPlayerScore = maxPlayerScore;
   pingReply.maxTeamScore = maxTeamScore;
 
