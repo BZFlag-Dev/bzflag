@@ -3,18 +3,18 @@
 ; This script is based on example1.nsi, but adds uninstall support
 ; and (optionally) start menu shortcuts.
 ;
-; It will install notepad.exe into a directory that the user selects,
+; It will install BZFlag into a directory that the user selects.
 ;
 
 !define VER_MAJOR 2.0
-!define VER_MINOR .0
+!define VER_MINOR .2
 
 ; Main Installer Options
 Name "BZFlag"
 ;Icon ..\..\..\win32\bzflag.ico
 WindowIcon On
-EnabledBitmap "EnableCheck.bmp"
-DisabledBitmap "DisableCheck.bmp"
+;EnabledBitmap "EnableCheck.bmp"
+;DisabledBitmap "DisableCheck.bmp"
 Caption "BZFlag ${VER_MAJOR}${VER_MINOR}: - Setup"
 
 ; The file to write
