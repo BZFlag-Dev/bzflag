@@ -50,15 +50,18 @@ extern int __beginendCount;
 
 #define _GL_INVALID_ID 0xFFFFFFFF
 
-// The following are temporary until a
-// proper context manager is in place.
-#ifndef glDeleteLists
-# define glDeleteLists(base,count) {}
+/* disabling list and texture deletions can be useful for debugging
+ * corrupted context states.  still don't have a "proper" context
+ * manager, but things are working so it can be disabled. 
+ */
+#if 0
+#  ifndef glDeleteLists
+#    define glDeleteLists(base,count) {}
+#  endif
+#  ifndef glDeleteTextures
+#    define glDeleteTextures(count,textures) {}
+#  endif
 #endif
-#ifndef glDeleteTextures
-# define glDeleteTextures(count,textures) {}
-#endif
-
 
 #endif /* __BZFGL_H__ */
 
