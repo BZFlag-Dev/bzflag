@@ -67,7 +67,6 @@ class RobotPlayer : public BaseLocalPlayer {
     LocalShotPath**	shots;
     const Player*	target;
     std::vector<RegionPoint>	path;
-    std::vector<float>	pathAzimuth;
     int			pathIndex;
     float		timeSinceShot;
     float		timerForShot;

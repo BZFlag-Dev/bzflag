@@ -165,9 +165,6 @@ void			RobotPlayer::doUpdate(float dt)
 
 void			RobotPlayer::doUpdateMotion(float dt)
 {
-  // record time
-  const float dt0 = dt;
-
   // record previous position
   const float oldAzimuth = getAngle();
   const float* oldPosition = getPosition();
@@ -178,35 +175,39 @@ void			RobotPlayer::doUpdateMotion(float dt)
   float azimuth = oldAzimuth;
   float tankAngVel = BZDB->eval(StateDatabase::BZDB_TANKANGVEL);
   if (isAlive()) {
-    while (dt > 0.0 && pathIndex < (int)path.size()) {
-      float azimuthDiff = pathAzimuth[pathIndex] - azimuth;
+    if (dt > 0.0 && pathIndex < (int)path.size()) {
+      float distance;
+      float v[2];
+      const float* endPoint = path[pathIndex].get();
+      // find how long it will take to get to next path segment
+      v[0] = endPoint[0] - position[0];
+      v[1] = endPoint[1] - position[1];
+      distance = hypotf(v[0], v[1]);
+      float tankSpeed = BZDB->eval(StateDatabase::BZDB_TANKSPEED);
+      float tankRadius = BZDB->eval(StateDatabase::BZDB_TANKRADIUS);
+      if (distance <= tankRadius)
+	pathIndex++;
+
+      float segmentAzimuth = atan2f(v[1], v[0]);
+      float azimuthDiff = segmentAzimuth - azimuth;
       if (azimuthDiff > M_PI) azimuthDiff -= 2.0f * M_PI;
       else if (azimuthDiff < -M_PI) azimuthDiff += 2.0f * M_PI;
       if (fabs(azimuthDiff) > 0.01f) {
 	// tank doesn't move forward while turning
 	if (azimuthDiff >= dt * tankAngVel) {
 	  azimuth += dt * tankAngVel;
-	  dt = 0.0f;
 	}
 	else if (azimuthDiff <= -dt * tankAngVel) {
 	  azimuth -= dt * tankAngVel;
-	  dt = 0.0f;
 	}
 	else {
 	  azimuth += azimuthDiff;
-	  dt -= fabsf(azimuthDiff / tankAngVel);
 	}
       }
       else {
 	// tank doesn't turn while moving forward
 	// find how long it will take to get to next path segment
-	const float* endPoint = path[pathIndex].get();
-	float v[2];
-	v[0] = endPoint[0] - position[0];
-	v[1] = endPoint[1] - position[1];
-	const float distance = hypotf(v[0], v[1]);
 	float t;
-	float tankSpeed = BZDB->eval(StateDatabase::BZDB_TANKSPEED);
 	if (distance <= dt * tankSpeed) {
 	  pathIndex++;
 	  t = distance / tankSpeed;
@@ -214,7 +215,6 @@ void			RobotPlayer::doUpdateMotion(float dt)
 	else {
 	  t = dt;
 	}
-	dt -= t;
 	position[0] += t * tankSpeed * cosf(azimuth);
 	position[1] += t * tankSpeed * sinf(azimuth);
       }
@@ -226,10 +226,10 @@ void			RobotPlayer::doUpdateMotion(float dt)
   }
 
   float velocity[3];
-  velocity[0] = (position[0] - oldPosition[0]) / dt0;
-  velocity[1] = (position[1] - oldPosition[1]) / dt0;
-  velocity[2] = getVelocity()[2] + BZDB->eval(StateDatabase::BZDB_GRAVITY) * dt0;
-  position[2] += dt0 * velocity[2];
+  velocity[0] = (position[0] - oldPosition[0]) / dt;
+  velocity[1] = (position[1] - oldPosition[1]) / dt;
+  velocity[2] = getVelocity()[2] + BZDB->eval(StateDatabase::BZDB_GRAVITY) * dt;
+  position[2] += dt * velocity[2];
   if (position[2] <= 0.0f) {
     position[2] = 0.0f;
     velocity[2] = 0.0f;
@@ -237,7 +237,7 @@ void			RobotPlayer::doUpdateMotion(float dt)
 
   move(position, azimuth);
   setVelocity(velocity);
-  setAngularVelocity((getAngle() - oldAzimuth) / dt0);
+  setAngularVelocity((getAngle() - oldAzimuth) / dt);
 }
 
 // NOTE -- code taken directly from LocalPlayer
@@ -351,7 +351,6 @@ void			RobotPlayer::restart()
 
   // no target
   path.clear();
-  pathAzimuth.clear();
   target = NULL;
   pathIndex = 0;
 
@@ -406,12 +405,12 @@ void			RobotPlayer::setTarget(const Player* _target)
   static int mailbox = 0;
 
   path.clear();
-  pathAzimuth.clear();
   target = _target;
   if (!target) return;
 
   // work backwards (from target to me)
   const float* p1 = target->getPosition();
+  const float* tgt = p1;
   const float* p2 = getPosition();
   BzfRegion* headRegion = findRegion(p1);
   BzfRegion* tailRegion = findRegion(p2);
@@ -432,13 +431,11 @@ void			RobotPlayer::setTarget(const Player* _target)
   next = tailRegion;
   do {
     p1 = next->getA();
-    float segmentAzimuth = atan2f(p1[1] - p2[1], p1[0] - p2[0]);
-    if (segmentAzimuth < 0.0f) segmentAzimuth += 2.0f * M_PI;
-    p2 = p1;
-    pathAzimuth.push_back(segmentAzimuth);
     path.push_back(p1);
     next = next->getTarget();
   } while (next && next != headRegion);
+  if (headRegion->isInside(tgt))
+    path.push_back(tgt);
   pathIndex = 0;
 }
 
