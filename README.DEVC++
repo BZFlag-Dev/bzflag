@@ -1,4 +1,5 @@
-Building BZFlag and its associating projects in Dev-C++ is quite easy.
+Building BZFlag and its associated projects in Dev-C++ on Windows
+is quite easy.
 
 1. Open up the corresponding project files, included in the "Dev-C++"
    directory. Note that each project uses an individual project file,
@@ -9,15 +10,19 @@ Building BZFlag and its associating projects in Dev-C++ is quite easy.
 3. The binary should be in each project's corresponding main source
    directory, such as src/bzflag/ for BZFlag client.
 
-You will need DirectX library unless building using SDL. DirectX can
-be retrieved from:
+You will need the DirectX SDK unless building using SDL. The DirectX 
+SDK can be retrieved from:
 
    http://www.microsoft.com/directX
 
 It is over 200 MB!
 
-MinGW32, for some reason, seems to have the definitions for the parts
-of DirectX that BZFlag uses, so you may only need the headers.
+MinGW32 includes DirectX libraries, but not the headers.
+Unfortunately, the MS license agreement prohibits us from 
+redistributing only the needed files, so you must get the entire
+DirectX SDK.
 
-The needed file from BZFlag is dsound.h, but that will then include
-ddraw.h and d3dtypes.h
+The needed DirectX file for BZFlag is dsound.h, but that will then 
+include ddraw.h and d3dtypes.h.  You may either add an entry in the
+include paths to the DirectX include folder, or place those three
+headers in bzflag\include.
