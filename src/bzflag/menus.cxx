@@ -2142,9 +2142,9 @@ Help2Menu::Help2Menu() : HelpMenu("General")
   list.push_back(createLabel(
 	"the-flag, rabbit-chase and free-for-all.  In free-for-all the object is simply to get the"));
   list.push_back(createLabel(
-	"so that you have the white tank, then everyone is against you. The object in capture-the-flag is to"));
-  list.push_back(createLabel(
 	"highest score by shooting opponents.  The object in rabbit chase is to be the highest score"));
+  list.push_back(createLabel(
+	"so that you have the white tank, then everyone is against you. The object in capture-the-flag is to"));
   list.push_back(createLabel(
 	"capture enemy flags while preventing opponents from capturing yours.  In this"));
   list.push_back(createLabel(
@@ -2350,6 +2350,16 @@ Help6Menu::Help6Menu() : HelpMenu("Flags III")
 	"allows tank to jump", "Jumping (JP)"));
   list.push_back(createLabel(
 	"shows type of nearest superflag", "Identify (ID)"));
+  list.push_back(createLabel(
+	"it's useless", "Useless (US)"));
+  list.push_back(createLabel(
+	"In opponent's hud, you appear as a teammate", "Masquerade (MQ)"));
+  list.push_back(createLabel(
+	"See stealthed, cloaked and masquerading tanks as normal.", "Seer (SE)"));
+  list.push_back(createLabel(
+	"Steal flags.  Small and fast but can't kill.", "Thief (TH)"));
+  list.push_back(createLabel(
+	"Tank burrows underground, impervious to normal shots, but can be steamrolled by anyone!", "Burrow (BU)"));
   list.push_back(createLabel(
 	"", ""));
   list.push_back(createLabel(
