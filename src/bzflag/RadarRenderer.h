@@ -43,7 +43,6 @@ class RadarRenderer {
     void		setShape(int x, int y, int w, int h);
     void		setRange(float range);
     void		setJammed(bool = true);
-    void		toggleFlags();
 
     void		render(SceneRenderer&, bool blank = false);
     void		freeList();
@@ -76,7 +75,6 @@ class RadarRenderer {
     bool		blend;
     bool		smooth;
     bool		jammed;
-    bool		showFlags;
     double		decay;
     GLuint		list;
     GLfloat		teamColor[3];

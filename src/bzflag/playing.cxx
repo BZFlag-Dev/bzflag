@@ -1504,10 +1504,6 @@ static bool		doKeyCommon(const BzfKeyEvent& key, bool pressed)
     if (pressed)
       world->toggleFlags();
     return true;
-  } else if (keymap.isMappedTo(BzfKeyMap::ToggleRadarFlags, key)) {
-    if (pressed)
-      radar->toggleFlags();
-    return true;
   } else {
     // built-in unchangeable keys.  only perform if not masked.
     switch (key.ascii) {

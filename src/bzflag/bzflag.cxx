@@ -102,7 +102,8 @@ static DefaultDBItem	defaultDBItems[] = {
   { "colorful",			"1",			true,	StateDatabase::ReadWrite,	NULL },
   { "underline",		"0",			true,	StateDatabase::ReadWrite,	NULL },
   { "killerhighlight",		"0",			true,	StateDatabase::ReadWrite,	NULL },
-  { "serverCacheAge",		"0",			true,	StateDatabase::ReadWrite,	NULL }
+  { "serverCacheAge",		"0",			true,	StateDatabase::ReadWrite,	NULL },
+  { "displayRadarFlags",	"1",			true,	StateDatabase::ReadWrite,	NULL }
 };
 
 // default key bindings
