@@ -4792,7 +4792,7 @@ int main(int argc, char **argv)
 		DEBUG1("Poll set taking action: setting %s to %s\n", 
 		       args[0].c_str(), args[1].c_str());
 		BZDB.set(args[0], args[1], StateDatabase::User);
-	      } else if (action == "flagreset") {
+	      } else if (action == "reset") {
 		DEBUG1("Poll flagreset taking action: resetting unused flags.\n");
 		for (int f = 0; f < numFlags; f++) {
 		  FlagInfo &flag = *FlagInfo::get(f);
