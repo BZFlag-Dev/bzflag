@@ -148,7 +148,8 @@ const Obstacle* ShotStrategy::getFirstBuilding(const Ray& ray,
 void ShotStrategy::reflect(float* v, const float* n) // const
 {
   // normal is assumed to be normalized, v needn't be
-  const float d = -2.0f * (n[0] * v[0] + n[1] * v[1] + n[2] * v[2]);
+  float d = -2.0f * (n[0] * v[0] + n[1] * v[1] + n[2] * v[2]);
+  d = fabsf(d); // allows for refraction by inverted normals
   v[0] += d * n[0];
   v[1] += d * n[1];
   v[2] += d * n[2];
