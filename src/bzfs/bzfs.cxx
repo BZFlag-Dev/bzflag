@@ -2817,7 +2817,12 @@ static bool readWorldStream(istream& input, const char *location, std::vector<Wo
 static WorldInfo *defineWorldFromFile(const char *filename)
 {
   // open file
+#ifdef _WIN32
+  ifstream input(filename, ios::in|ios::nocreate);
+#else
   ifstream input(filename, ios::in);
+#endif
+
   if (!input) {
     printf("could not find bzflag world file : %s\n", filename);
     return NULL;
