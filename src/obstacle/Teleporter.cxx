@@ -108,7 +108,6 @@ void Teleporter::makeLinks()
     }
     backLink = new MeshFace(NULL, 4, bvrts, NULL, btxcds,
 			    NULL, -1, false, false, true, true);
-    backLink->finalize();
 
     for (i = 0; i < 4 ;i++) {
       fvrts[i][0] = p[0] - (wlen[0] + (blen[0] * params[i][0]));
@@ -117,7 +116,6 @@ void Teleporter::makeLinks()
     }
     frontLink = new MeshFace(NULL, 4, fvrts, NULL, ftxcds,
 			     NULL, -1, false, false, true, true);
-    frontLink->finalize();
   }
   else {
     float xlen = w - br;
@@ -136,7 +134,6 @@ void Teleporter::makeLinks()
     bvrts[3][2] = p[2] + h - br;
     backLink = new MeshFace(NULL, 4, bvrts, NULL, btxcds,
 			    NULL, -1, false, false, true, true);
-    backLink->finalize();
 
     for (i = 0; i < 4; i++) {
       memcpy(fvrts[i], bvrts[3 - i], sizeof(float[3])); // reverse order
@@ -144,7 +141,6 @@ void Teleporter::makeLinks()
     }
     frontLink = new MeshFace(NULL, 4, fvrts, NULL, ftxcds,
 			     NULL, -1, false, false, true, true);
-    frontLink->finalize();
   }
 
   return;
