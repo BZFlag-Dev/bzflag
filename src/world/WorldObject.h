@@ -18,8 +18,8 @@ public:
   virtual ~WorldObject() { };
   
   virtual std::string myToken() const;
-  virtual bool deserialize(std::istream&);
-  virtual bool serialize() const;
+  friend istream& operator>>(std::istream& o, const WorldObject&) const;
+  friend ostream& operator<<(std::ostream& o, const WorldObject&) const;
 }
 
 #endif //__WORLDOBJECT_H__

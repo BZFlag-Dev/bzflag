@@ -135,7 +135,10 @@ LIB32=link.exe -lib
 # PROP Default_Filter "cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
 # End Group
 # Begin Group "Header Files"
+# Begin Source File
 
+SOURCE=..\..\src\world\WorldObject.h
+# End Source File
 # PROP Default_Filter "h;hpp;hxx;hm;inl"
 # End Group
 # End Target
