@@ -41,8 +41,9 @@
 #define BZ_REV                  2
 #endif
 
+// DEVEL | STABLE | MAINT
 #ifndef BZ_BUILD_TYPE
-#define BZ_BUILD_TYPE		"DEVELOPMENT"
+#define BZ_BUILD_TYPE		"DEVEL"
 #endif
 
 // Build Date will be defined at link time, can be different for each exe
