@@ -411,7 +411,9 @@ bool writePassFile(const std::string &filename)
     return false;
   PasswordMap::iterator itr = passwordDatabase.begin();
   while (itr != passwordDatabase.end()) {
-    out << TextUtils::escape(itr->first, '\\') << ':' << itr->second << std::endl;
+    if (itr->second != "*") {
+      out << TextUtils::escape(itr->first, '\\') << ':' << itr->second << std::endl;
+    }
     itr++;
   }
   out.close();
