@@ -382,9 +382,10 @@ void MeshTransform::Tool::modifyNormal(float n[3]) const
 
 
 void MeshTransform::Tool::modifyOldStyle(float pos[3], float size[3],
-                                         float& angle) const
+                                         float& angle, bool& flipz) const
 {
   if (empty) {
+    flipz = false;
     return;
   }
   
@@ -415,6 +416,14 @@ void MeshTransform::Tool::modifyOldStyle(float pos[3], float size[3],
 
   // setup the angle
   angle = atan2f (x[1], x[0]);
+  
+  // see if the Z axis has flipped
+  if (z[2] < 0.0f) {
+    flipz = true;
+    pos[2] = pos[2] - size[2];
+  } else {
+    flipz = false;
+  }
 
   return;
 }

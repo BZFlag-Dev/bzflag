@@ -45,14 +45,14 @@ Obstacle* PyramidBuilding::copyWithTransform(const MeshTransform& xform) const
   newAngle = angle;
 
   MeshTransform::Tool tool(xform);
-  tool.modifyOldStyle(newPos, newSize, newAngle);
+  bool flipped;
+  tool.modifyOldStyle(newPos, newSize, newAngle, flipped);
   
   PyramidBuilding* copy =
     new PyramidBuilding(newPos, newAngle, newSize[0], newSize[1], newSize[2],
                         driveThrough, shootThrough);
-  if (getZFlip()) {
-    copy->setZFlip();
-  }
+
+  copy->ZFlip = !(getZFlip() == flipped);
   
   return copy;
 }

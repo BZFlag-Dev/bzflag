@@ -57,7 +57,8 @@ Obstacle* Teleporter::copyWithTransform(const MeshTransform& xform) const
   newAngle = angle;
 
   MeshTransform::Tool tool(xform);
-  tool.modifyOldStyle(newPos, newSize, newAngle);
+  bool flipped;
+  tool.modifyOldStyle(newPos, newSize, newAngle, flipped);
   
   Teleporter* copy =
     new Teleporter(newPos, newAngle, newSize[0], newSize[1], newSize[2],

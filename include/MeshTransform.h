@@ -75,7 +75,8 @@ class MeshTransform {
         bool getIsInverted() const;
         void modifyVertex(float vertex[3]) const;
         void modifyNormal(float normal[3]) const;
-        void modifyOldStyle(float pos[3], float size[3], float& angle) const;
+        void modifyOldStyle(float pos[3], float size[3],
+                            float& angle, bool& flipz) const;
 
       private:
         void processTransforms(const std::vector<TransformData>& transforms);

@@ -45,7 +45,8 @@ Obstacle* BaseBuilding::copyWithTransform(const MeshTransform& xform) const
   newAngle = angle;
 
   MeshTransform::Tool tool(xform);
-  tool.modifyOldStyle(newPos, newSize, newAngle);
+  bool flipped;
+  tool.modifyOldStyle(newPos, newSize, newAngle, flipped);
   
   BaseBuilding* copy = new BaseBuilding(newPos, newAngle, newSize, team);
   
