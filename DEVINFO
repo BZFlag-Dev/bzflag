@@ -346,7 +346,7 @@ cannot proceed.  A checklist of items to be completed follows:
   latest changes.
 
 - Version numbers are updated to the next expected release number.
-  This minimally includes updating README, configure.in, and
+  This minimally includes updating README, buildDate.cxx, and
   ChangeLog.  Version numbers in all other platform-specific
   README.* files should also be verified.
 
