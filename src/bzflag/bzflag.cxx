@@ -25,6 +25,7 @@
 
 #elif !defined(macintosh)
 #include <pwd.h>
+#include <dirent.h>
 #endif /* defined(_WIN32) */
 #include <stdarg.h>
 #include "common.h"
@@ -1004,13 +1005,23 @@ int			main(int argc, char** argv)
   if (db.hasValue("directory"))
     PlatformFactory::getMedia()->setMediaDirectory(db.getValue("directory"));
 
-#if defined(__APPLE__)
     else
     {
+#if defined(__APPLE__)
 	extern char *GetMacOSXDataPath(void);
 	PlatformFactory::getMedia()->setMediaDirectory(GetMacOSXDataPath());
-    }
+#elif (defined(_WIN32) || defined(WIN32))
+	// What to put here?
+#else
+	// It's only checking existence of l10n directory 
+	DIR *localedir = opendir("data/l10n/");
+	if (localedir == NULL)
+	  PlatformFactory::getMedia()->setMediaDirectory(INSTALL_DATA_DIR);
+	else {
+	  closedir(localedir);
+	}
 #endif
+    }
 
   // set window size (we do it here because the OpenGL context isn't yet bound)
 
