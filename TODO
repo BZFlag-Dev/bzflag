@@ -1,6 +1,18 @@
 to do list for bzflag
 ---------------------
 
+* server should pick client enter position
+
+* flags should all be nullflags from client view until
+  a) you pick one up
+  b) you get the identify flag (send updates for all flags?)
+  If player drops a flag and it stays, it can have it's real ID.
+
+* remove all DNS lookups from client when contacting a server IP
+  supplied from the list server
+
+* add http connect proxy support for list server and gaming
+
 * allow /dev/dsp* on Linux to be selected someplace. command line,
   environment var, config file, who knows. ;-)
 
