@@ -134,51 +134,51 @@ private:
   TankIDLSceneNode*	tankIDLNode;
   SphereSceneNode*	pausedSphere;
   GLfloat		color[4];
-  bool		notResponding;
-  bool		autoPilot;
+  bool			notResponding;
+  bool			autoPilot;
   static OpenGLTexture* tankTexture;
   static int		totalCount;
-  bool		hunted;
+  bool			hunted;
   PlayerId		id;			// my credentials
 
   // permanent data
   TeamColor		team;			// my team
-  char		callSign[CallSignLen];	// my pseudonym
-  char		email[EmailLen];	// my email address
-  PlayerType          type;                   // Human/Computer
+  char			callSign[CallSignLen];	// my pseudonym
+  char			email[EmailLen];	// my email address
+  PlayerType		type;                   // Human/Computer
 
   // relatively stable data
   FlagType*		flagType;		// flag type I'm holding
   TimeKeeper		explodeTime;		// time I started exploding
   TimeKeeper		teleportTime;		// time I started teleporting
-  short		fromTeleporter;		// teleporter I entered
-  short		toTeleporter;		// teleporter I exited
-  float		teleporterProximity;	// how close to a teleporter
-  short		wins;			// number of kills
-  short		losses;			// number of deaths
-  short		tks;			// number of teamkills
+  short			fromTeleporter;		// teleporter I entered
+  short			toTeleporter;		// teleporter I exited
+  float			teleporterProximity;	// how close to a teleporter
+  short			wins;			// number of kills
+  short			losses;			// number of deaths
+  short			tks;			// number of teamkills
 
   // score of local player against this player
-  short		localWins;		// local player won this many
-  short		localLosses;		// local player lost this many
-  short		localTks;		// local player team killed this many
+  short			localWins;		// local player won this many
+  short			localLosses;		// local player lost this many
+  short			localTks;		// local player team killed this many
 
   // highly dynamic data
   PlayerState		state;
 
   // computable highly dynamic data
-  float		forward[3];		// forward unit vector
+  float			forward[3];		// forward unit vector
 
   // dead reckoning stuff
   TimeKeeper		inputTime;		// time of input
   mutable TimeKeeper	inputPrevTime;		// time of last dead reckoning
   int			inputStatus;		// tank status
-  mutable float	inputPos[3];		// tank position
-  float		inputSpeed;		// tank horizontal speed
+  mutable float		inputPos[3];		// tank position
+  float			inputSpeed;		// tank horizontal speed
   mutable float      	inputZSpeed;		// tank vertical speed
-  float		inputAzimuth;		// direction tank is pointing
-  float		inputSpeedAzimuth;	// direction of speed
-  float		inputAngVel;		// tank turn rate
+  float			inputAzimuth;		// direction tank is pointing
+  float			inputSpeedAzimuth;	// direction of speed
+  float			inputAngVel;		// tank turn rate
 };
 
 // shot data goes in LocalPlayer or RemotePlayer so shot type isn't lost.
@@ -357,51 +357,30 @@ inline void		Player::resetNotResponding()
   notResponding = false;
 }
 
-inline bool  Player::isHunted() const
+inline bool		Player::isHunted() const
 {
   return hunted;
 }
 
-inline void  Player::setHunted(bool _hunted)
+inline void		Player::setHunted(bool _hunted)
 {
   hunted = _hunted;
 }
 
-inline bool  Player::isAutoPilot() const
+inline bool		Player::isAutoPilot() const
 {
-  return (autoPilot);
+  return autoPilot;
 }
 
-inline void Player::setDeadReckoning()
+inline void		Player::setAutoPilot(bool _autoPilot)
 {
-  // save stuff for dead reckoning
-  inputTime = TimeKeeper::getTick();
-  inputPrevTime = inputTime;
-  inputStatus = state.status;
-  inputPos[0] = state.pos[0];
-  inputPos[1] = state.pos[1];
-  inputPos[2] = state.pos[2];
-  inputSpeed = hypotf(state.velocity[0], state.velocity[1]);
-  if (cosf(state.azimuth) * state.velocity[0] + sinf(state.azimuth) * state.velocity[1] < 0.0f)
-    inputSpeed = -inputSpeed;
-  if (inputSpeed != 0.0f)
-    inputSpeedAzimuth = atan2f(state.velocity[1], state.velocity[0]);
-  else
-    inputSpeedAzimuth = 0.0f;
-  inputZSpeed = state.velocity[2];
-  inputAzimuth = state.azimuth;
-  inputAngVel = state.angVel;
+  autoPilot = _autoPilot;
 }
 
-inline void* Player::pack(void* buf)
+inline void*		Player::pack(void* buf)
 {
   setDeadReckoning();
   return state.pack(buf);
-}
-
-inline void Player::setAutoPilot(bool _autoPilot)
-{
-  autoPilot = _autoPilot;
 }
 
 #endif // BZF_PLAYER_H
