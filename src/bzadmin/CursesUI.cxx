@@ -15,32 +15,33 @@
 using namespace std;
 
 
-CursesUI::CursesUI(const map<PlayerId, string>& p, PlayerId m) : 
+CursesUI::CursesUI(const map<PlayerId, string>& p, PlayerId m) :
   players(p), me(m), maxHistory(20), currentHistory(0) {
-  
+
   // initialize ncurses
   initscr();
   nonl();
   cbreak();
   noecho();
-  
+
   // create main output window
   mainWin = newwin(LINES - 5, 0, 0, 0);
-  wsetscrreg(mainWin, 0, LINES - 5);
+  wsetscrreg(mainWin, 0, LINES - 2);
   scrollok(mainWin, TRUE);
   wrefresh(mainWin);
-  
+
   // create target window
-  targetWin = newwin(2, 0, LINES - 5, 0);
+  targetWin = newwin(1, 0, LINES - 2, 0);
+  wattron(targetWin, A_UNDERLINE);
   targetIter = players.begin();
   updateTargetWin();
 
   // create command window
-  cmdWin = newwin(0, 0, LINES - 3, 0);
+  cmdWin = newwin(0, 0, LINES - 1, 0);
   keypad(cmdWin, TRUE);
   nodelay(cmdWin, TRUE);
   updateCmdWin();
-  
+
   // register commands for tab completion
   comp.registerWord("/lagstats");
   comp.registerWord("/idlestats");
@@ -74,7 +75,7 @@ void CursesUI::outputMessage(const string& msg) {
   wrefresh(mainWin);
 }
 
-  
+
 bool CursesUI::checkCommand(string& str) {
   wrefresh(cmdWin);
   str = "";
@@ -83,12 +84,12 @@ bool CursesUI::checkCommand(string& str) {
   switch (c) {
   case ERR:
     return false;
-    
+
     // clear command (21 is Ctrl-U)
   case 21:
     cmd = "";
     updateCmdWin();
-    
+
     // delete last character
   case KEY_BACKSPACE:
   case KEY_DC:
@@ -96,7 +97,7 @@ bool CursesUI::checkCommand(string& str) {
     cmd = cmd.substr(0, cmd.size() - 1);
     updateCmdWin();
     return false;
-    
+
     // send command
   case 13:
     if (history.size() == maxHistory)
@@ -107,7 +108,7 @@ bool CursesUI::checkCommand(string& str) {
     currentHistory = history.size();
     updateCmdWin();
     return true;
-    
+
     // scroll main window - doesn't work
   case KEY_NPAGE:
     wscrl(mainWin, 1);
@@ -115,7 +116,7 @@ bool CursesUI::checkCommand(string& str) {
   case KEY_PPAGE:
     wscrl(mainWin, -1);
     return false;
-    
+
     // change target
   case KEY_LEFT:
     if (targetIter == players.begin())
@@ -131,7 +132,7 @@ bool CursesUI::checkCommand(string& str) {
       targetIter = players.begin();
     updateTargetWin();
     return false;
-    
+
     // command history
   case KEY_UP:
     if (currentHistory != 0)
@@ -148,7 +149,7 @@ bool CursesUI::checkCommand(string& str) {
       cmd = history[currentHistory];
     updateCmdWin();
     return false;
-    
+
     // kick target
   case KEY_F(5):
     if (targetIter != players.end() && targetIter->first != me) {
@@ -175,14 +176,14 @@ bool CursesUI::checkCommand(string& str) {
     return false;
 
 #endif
-    
+
     // tab - autocomplete
   case '\t':
     i = cmd.find_last_of(" \t");
     cmd = cmd.substr(0, i+1) + comp.complete(cmd.substr(i+1));
     updateCmdWin();
     return false;
-    
+
   default:
     if (c < 32 || c > 127 || cmd.size() >= CMDLENGTH)
       return false;
@@ -217,10 +218,9 @@ PlayerId CursesUI::getTarget() const {
 void CursesUI::updateTargetWin() {
   wclear(targetWin);
   wmove(targetWin, 0, 0);
-  whline(targetWin, 0, COLS);
   wmove(targetWin, 1, 1);
   string tmp = "Send to ";
-  tmp = tmp + (targetIter == players.end() || targetIter->first == me ? 
+  tmp = tmp + (targetIter == players.end() || targetIter->first == me ?
 	       "all" : targetIter->second) + ":";
   waddstr(targetWin, tmp.c_str());
   wrefresh(targetWin);
@@ -229,7 +229,6 @@ void CursesUI::updateTargetWin() {
 
 void CursesUI::updateCmdWin() {
   wclear(cmdWin);
-  wborder(cmdWin, 0, 0, 0, 0, 0, 0, 0, 0);
   wmove(cmdWin, 1, 1);
   waddstr(cmdWin, cmd.c_str());
   wmove(cmdWin, 1, 1 + cmd.size());
