@@ -7,6 +7,7 @@ BZFlag 1.10.6  "the little hop"
 
 * Fixed the little hop on spawn at some sites - Alfredo Tupone
 * Fixed issue of players add/removing others from groups - Alfredo Tupone
+* Fixed false positive filter matches involving apostrophes - Sean Morrison
 * Curing ghost/duplicated/ungetable flag - Alfredo Tupone
 * Fixed 0 height flag, no more flags inside buildings - Alfredo Tupone
 * Observers see Masquerade tank with their true color - Alfredo Tupone
