@@ -21,6 +21,8 @@
 #define err(x,y,z) if (debugLevel >= 1) com_err(x,y,z)
 #endif
 
+#include "DirectoryNames.h"
+
 #ifdef HAVE_KRB5
 krb5_context      ClientAuthentication::context      = NULL;
 krb5_ccache       ClientAuthentication::cc           = NULL;
@@ -55,9 +57,9 @@ void ClientAuthentication::init(const char *username, const char *)
   if ((retval = krb5_init_context(&context)))
     err("bzflag:", retval, "while initializing krb5");
   // Getting a default cache specifically for bzflag
+  std::string ccfile = "FILE:" + getConfigDirName() + "krb5_cc";
   if (context && (retval
-		  = krb5_cc_set_default_name(context,
-					     "FILE:/tmp/krb5_cc_bzflag")))
+		  = krb5_cc_set_default_name(context, ccfile.c_str())))
     err("bzflag", retval, "setting default cache");
   // Getting credential cache 
   if (!retval && (retval = krb5_cc_default(context, &cc)))
