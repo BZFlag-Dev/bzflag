@@ -10,7 +10,6 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#include <cstdio>
 #include <Carbon/Carbon.h>
 #include <CoreServices/CoreServices.h>
 
@@ -18,7 +17,7 @@
 #define _BSD_SOCKLEN_T_
 /* BZFlag version */
 #define VERSION	10707001
-/* enable robots (but they don't work?)
+/* enable robots */
 #define ROBOT
 /* We are MacOS X */
 #define _MACOSX_

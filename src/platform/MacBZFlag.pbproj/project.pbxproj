@@ -3352,9 +3352,11 @@
 		};
 		01BBF1FE03D009A700A80110 = {
 			fileEncoding = 30;
+			indentWidth = 2;
 			isa = PBXFileReference;
 			path = BundleMgr.cxx;
 			refType = 4;
+			tabWidth = 8;
 		};
 		01BBF1FF03D009A700A80110 = {
 			fileRef = 01BBF1FD03D009A700A80110;
@@ -3604,10 +3606,21 @@
 				04313892FE3035C9C02AAC07,
 				D54B3D1A03E7357900EF6797,
 				D54B3D1E03E736EF00EF6797,
+				D5AD906A03FBB92000A800BF,
+				D5AD906D03FBB9A600A800BF,
+				D5AD907F03FBEF9100A800BF,
+				D5AD907103FBBA6A00A800BF,
+				D5AD907303FBBA8400A800BF,
+				D5AD907503FBBAA600A800BF,
+				D5AD907D03FBEF3E00A800BF,
+				D5AD907703FBBAB900A800BF,
+				D5AD907903FBBDC900A800BF,
+				D5AD907B03FBBDDF00A800BF,
 			);
 			buildSettings = {
 				FRAMEWORK_SEARCH_PATHS = "";
 				GCC_VERSION = 2.x;
+				HEADER_SEARCH_PATHS = "";
 				INSTALL_PATH = "$(HOME)/Applications/BZFlag";
 				LIBRARY_SEARCH_PATHS = "";
 				OTHER_CFLAGS = "-Wall -W -fno-exceptions -fno-rtti";
@@ -4133,7 +4146,7 @@
 			dstPath = l10n;
 			dstSubfolderSpec = 7;
 			files = (
-				D54B3D1F03E7374900EF6797,
+				D5AD906B03FBB98100A800BF,
 				D54B3D2003E7374900EF6797,
 				D54B3D2103E7374900EF6797,
 				D54B3D2203E7374900EF6797,
@@ -4147,12 +4160,6 @@
 			);
 			isa = PBXCopyFilesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
-		};
-		D54B3D1F03E7374900EF6797 = {
-			fileRef = D57D7AD603E43459006CC2CA;
-			isa = PBXBuildFile;
-			settings = {
-			};
 		};
 		D54B3D2003E7374900EF6797 = {
 			fileRef = D57D7AD703E43459006CC2CA;
@@ -4901,6 +4908,172 @@
 		};
 		D57D7B3D03E440C6006CC2CA = {
 			fileRef = 017F079203C2980100A80110;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D5AD906A03FBB92000A800BF = {
+			buildActionMask = 2147483647;
+			dstPath = da.lproj;
+			dstSubfolderSpec = 7;
+			files = (
+				D5AD906C03FBB98900A800BF,
+			);
+			isa = PBXCopyFilesBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D5AD906B03FBB98100A800BF = {
+			fileRef = D57D7AD603E43459006CC2CA;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D5AD906C03FBB98900A800BF = {
+			fileRef = D57D7AD603E43459006CC2CA;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D5AD906D03FBB9A600A800BF = {
+			buildActionMask = 2147483647;
+			dstPath = de.lproj;
+			dstSubfolderSpec = 7;
+			files = (
+				D5AD906E03FBB9B300A800BF,
+			);
+			isa = PBXCopyFilesBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D5AD906E03FBB9B300A800BF = {
+			fileRef = D57D7AD703E43459006CC2CA;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D5AD907103FBBA6A00A800BF = {
+			buildActionMask = 2147483647;
+			dstPath = es.lproj;
+			dstSubfolderSpec = 7;
+			files = (
+				D5AD907203FBBA7700A800BF,
+			);
+			isa = PBXCopyFilesBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D5AD907203FBBA7700A800BF = {
+			fileRef = D57D7ADA03E43459006CC2CA;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D5AD907303FBBA8400A800BF = {
+			buildActionMask = 2147483647;
+			dstPath = fr.lproj;
+			dstSubfolderSpec = 7;
+			files = (
+				D5AD907403FBBA9100A800BF,
+			);
+			isa = PBXCopyFilesBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D5AD907403FBBA9100A800BF = {
+			fileRef = D57D7ADB03E43459006CC2CA;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D5AD907503FBBAA600A800BF = {
+			buildActionMask = 2147483647;
+			dstPath = it.lproj;
+			dstSubfolderSpec = 7;
+			files = (
+				D5AD907603FBBAB000A800BF,
+			);
+			isa = PBXCopyFilesBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D5AD907603FBBAB000A800BF = {
+			fileRef = D57D7ADC03E43459006CC2CA;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D5AD907703FBBAB900A800BF = {
+			buildActionMask = 2147483647;
+			dstPath = nl.lproj;
+			dstSubfolderSpec = 7;
+			files = (
+				D5AD907803FBBD0B00A800BF,
+			);
+			isa = PBXCopyFilesBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D5AD907803FBBD0B00A800BF = {
+			fileRef = D57D7ADE03E43459006CC2CA;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D5AD907903FBBDC900A800BF = {
+			buildActionMask = 2147483647;
+			dstPath = pt.lproj;
+			dstSubfolderSpec = 7;
+			files = (
+				D5AD907A03FBBDD300A800BF,
+			);
+			isa = PBXCopyFilesBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D5AD907A03FBBDD300A800BF = {
+			fileRef = D57D7ADF03E43459006CC2CA;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D5AD907B03FBBDDF00A800BF = {
+			buildActionMask = 2147483647;
+			dstPath = sv.lproj;
+			dstSubfolderSpec = 7;
+			files = (
+				D5AD907C03FBBDE800A800BF,
+			);
+			isa = PBXCopyFilesBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D5AD907C03FBBDE800A800BF = {
+			fileRef = D57D7AE003E43459006CC2CA;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D5AD907D03FBEF3E00A800BF = {
+			buildActionMask = 2147483647;
+			dstPath = kg.lproj;
+			dstSubfolderSpec = 7;
+			files = (
+				D5AD907E03FBEF6200A800BF,
+			);
+			isa = PBXCopyFilesBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D5AD907E03FBEF6200A800BF = {
+			fileRef = D57D7ADD03E43459006CC2CA;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D5AD907F03FBEF9100A800BF = {
+			buildActionMask = 2147483647;
+			dstPath = en.lproj;
+			dstSubfolderSpec = 7;
+			files = (
+				D5AD908003FBEFCC00A800BF,
+			);
+			isa = PBXCopyFilesBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D5AD908003FBEFCC00A800BF = {
+			fileRef = 01128F5B03C2CCC300A80110;
 			isa = PBXBuildFile;
 			settings = {
 			};

@@ -57,6 +57,31 @@ Bundle *BundleMgr::getBundle(const std::string &locale, bool setcur /*= true*/)
   if (locale.length() > 0)
     path += "_" + locale;
   path += ".po";
+  
+#ifdef _MACOSX_
+  // This is MacOS X. Use the CoreFoundation resource location API
+  // to find the correct language resource if 'default' is specified.
+  if (locale.length() == 7 && locale.compare("default") == 0) {
+    char	localePath[512];
+    CFBundleRef	mainBundle = CFBundleGetMainBundle();
+    CFArrayRef	locales 	= NULL;
+    CFURLRef	localeURL	= NULL;
+    // Look for a resource in the main bundle by name and type.
+    do {
+      if (mainBundle == NULL) break;
+      locales = CFBundleCopyResourceURLsOfType(mainBundle, CFSTR("po"), NULL);
+      if (locales == NULL || CFArrayGetCount(locales) == 0) break;
+      localeURL = (CFURLRef) CFArrayGetValueAtIndex(locales, 0);
+      if(localeURL != NULL && ::CFURLGetFileSystemRepresentation(
+	  localeURL, true, reinterpret_cast<UInt8 *>(localePath), sizeof(localePath))
+	 ) {
+	path = localePath;
+      }
+    } while(0);
+    CFRelease(locales);
+  }
+#endif
+  
   pB->load(path);
 
   bundles.insert(std::pair<std::string,Bundle*>(locale, pB));
