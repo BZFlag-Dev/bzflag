@@ -3,6 +3,22 @@ recent bugs
 
 - Tank/base stuck problem has reappeared with server spawning.
   LocalPlayer::doUpdateMotion is foobared.
+  When spawning on an elevated base, You tank's location is set to OnGround
+  due to
+    if (location != Dead && location != Exploding) location = OnGround;
+  Then location is set to InAir because of this:
+    if (location == OnGround) {
+      if (obstacle && !expelled) {
+        location = InBuilding;
+      }
+      else if (newPos[2] > 0.0f) {
+        location = InAir;
+      }
+    }
+  Now because state is InAir, velocity adjustments are ignored
+  So you get stuck.
+
+  This code is in real need of refactoring, 
 
 
 - bzfls.pl doesn't properly list multiple servers from the same ip (brlcad.org
