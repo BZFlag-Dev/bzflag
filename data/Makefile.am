@@ -13,6 +13,7 @@ EXTRA_DIST =			\
 	boxwall.png		\
 	bubble.png		\
 	burrow.wav		\
+	bzflag-48x48.png	\
 	caution.png		\
 	clouds.png		\
 	explode1.png		\
