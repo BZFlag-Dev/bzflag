@@ -5,20 +5,31 @@ if [ -z "$1" -o ! -r configure.in ] ; then
  exit 1
 fi
 VERSIONID=`grep ^AM_INIT_AUTOMAKE configure.in | sed -e 's/.* //g' -e 's/)//g'`
+date=`date --rfc-822`
+arch=$(dpkg-architecture -qDEB_HOST_ARCH)
 if [ "$1" == "release" ] ; then
+ if [ ! -r debian/changelog ] ; then
+   echo "You must create debian/changelog to do a release"
+   exit 1
+ fi
  version=$VERSIONID
 else
  version=$VERSIONID.`date +%Y%m%d`
+ sed -e "s/@VERSION@/$version/g" -e "s/@DATE@/$date/g" < debian/changelog.in > debian/changelog
 fi
-date=`date --rfc-822`
-arch=$(dpkg-architecture -qDEB_HOST_ARCH)
+echo "Starting on $date to build:"
+echo "../bzflag_${version}.${arch}.deb"
+echo "../bzflag-server_${version}_${arch}.deb"
+echo -n "debian/changelog entry: "
+head -n 1 debian/changelog
 ./autogen.sh
 ./configure
 make maintainer-clean
 ./autogen.sh
-echo "date=$date version=$version arch=$arch"
-sed -e "s/@VERSION@/$version/g" -e "s/@DATE@/$date/g" < debian/changelog.in > debian/changelog
 chmod +x debian/rules misc/tar
 # cvs/non-cvs builds should conflict and replace each other.
 PATH=`pwd`/misc:$PATH dpkg-buildpackage -us -uc -rfakeroot
 echo "now do \"debsign\" and then a \"dupload ../bzflag_${version}_${arch}.changes\""
+if [ "$1" == "release" ] ; then
+ echo "don't forget to copy new changelog entry to changelog.in"
+fi
