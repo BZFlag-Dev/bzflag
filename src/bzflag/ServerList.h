@@ -18,7 +18,6 @@
 #include "ListServer.h"
 #include "BzfEvent.h"
 #include "ServerItem.h"
-#include "ServerList.h"
 #include "ServerListCache.h"
 #include "Protocol.h"
 #include "version.h"
