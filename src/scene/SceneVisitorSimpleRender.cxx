@@ -12,6 +12,7 @@
 
 #include "SceneVisitorSimpleRender.h"
 #include "StateDatabase.h"
+#include "ViewFrustum.h"
 #include "TimeKeeper.h"
 #include "bzfgl.h"
 #include <math.h>
@@ -321,32 +322,43 @@ bool					SceneVisitorSimpleRender::visit(SceneNodeGeometry* n)
 
 bool					SceneVisitorSimpleRender::visit(SceneNodeParticleSystem* n)
 {
-	float size;
-	float vertex[3];
+	// update the particle system
+	Matrix matrix = ViewFrustum::getTransform();
+	matrix *= modelXFormStack.back();
+	matrix.inverse();
+	n->update(getParams().getFloat("time"), matrix);
 
-	for(unsigned int i = 0; i < n->particles.size(); i++) {
-		size = n->particles[i].size / 2;
-		glColor4fv(n->particles[i].color);
+	// set client state
+	glColorPointer(4, GL_FLOAT, 0, n->colors.get());
+	glTexCoordPointer(2, GL_FLOAT, 0, n->texcoords.get());
+	glVertexPointer(3, GL_FLOAT, 0, n->verteces.get());
+	glEnableClientState(GL_COLOR_ARRAY);
+	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+	glEnableClientState(GL_VERTEX_ARRAY);
 
-		glBegin(GL_TRIANGLE_STRIP); {
-		  vertex[0] = n->particles[i].location[0] - size;
-		  vertex[1] = n->particles[i].location[1] + size;
-		  vertex[2] = n->particles[i].location[2];
-		  glVertex3fv(vertex);
-		  vertex[0] = n->particles[i].location[0] + size;
-		  vertex[1] = n->particles[i].location[1] + size;
-		  vertex[2] = n->particles[i].location[2];
-		  glVertex3fv(vertex);
-		  vertex[0] = n->particles[i].location[0] - size;
-		  vertex[1] = n->particles[i].location[1] - size;
-		  vertex[2] = n->particles[i].location[2];
-		  glVertex3fv(vertex);
-		  vertex[0] = n->particles[i].location[0] + size;
-		  vertex[1] = n->particles[i].location[1] - size;
-		  vertex[2] = n->particles[i].location[2];
-		  glVertex3fv(vertex);
-		}
+	// draw
+	const unsigned int* index = n->index.get();
+	glDrawElements(GL_QUADS, 4 * n->particles.size(), GL_UNSIGNED_INT, index);
+
+	// restore client state
+	if (colorStack.empty()) {
+		glDisableClientState(GL_COLOR_ARRAY);
 	}
+	else if (colorStack.back()->getNum() == 4) {
+		glColor4fv(colorStack.back()->get());
+		glDisableClientState(GL_COLOR_ARRAY);
+	}
+	else {
+		glColorPointer(4, GL_FLOAT, 0, colorStack.back()->get());
+	}
+	if (texcoordStack.empty())
+		glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+	else
+		glTexCoordPointer(2, GL_FLOAT, 0, texcoordStack.back()->get());
+	if (vertexStack.empty())
+		glDisableClientState(GL_VERTEX_ARRAY);
+	else
+		glVertexPointer(3, GL_FLOAT, 0, vertexStack.back()->get());
 
 	return true;
 }

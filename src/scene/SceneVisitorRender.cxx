@@ -728,23 +728,10 @@ bool					SceneVisitorRender::visit(SceneNodeParticleSystem* n)
 	}
 
 	// save transforms that haven't been added to a list yet
-	Matrix m(modelXFormStack.back());
-	float *matrix = m.get();
-	float x = hypotf(matrix[0], hypotf(matrix[4], matrix[8]));
-	float y = hypotf(matrix[1], hypotf(matrix[5], matrix[9]));
-	float z = hypotf(matrix[2], hypotf(matrix[6], matrix[10]));
-	matrix[0]  = x;
-	matrix[1]  = 0.0;
-	matrix[2]  = 0.0;
-	matrix[4]  = 0.0;
-	matrix[5]  = y;
-	matrix[6]  = 0.0;
-	matrix[8]  = 0.0;
-	matrix[9]  = 0.0;
-	matrix[10] = z;
-	m.mult(ViewFrustum::getTransform());
-	unsigned int modelXFormIndex = matrixList.size();
-	matrixList.push_back(m);
+	if (modelXFormIndexStack.back() == 0xffffffff) {
+		modelXFormIndexStack.back() = matrixList.size();
+		matrixList.push_back(modelXFormStack.back());
+	}
 	if (projectionXFormIndexStack.back() == 0xffffffff) {
 		projectionXFormIndexStack.back() = matrixList.size();
 		matrixList.push_back(projectionXFormStack.back());
@@ -778,7 +765,10 @@ bool					SceneVisitorRender::visit(SceneNodeParticleSystem* n)
 	}
 
 	// update our particle system
-	n->update(getParams().getFloat("time"), modelXFormStack.back());
+	Matrix matrix = ViewFrustum::getTransform();
+	matrix *= modelXFormStack.back();
+	matrix.inverse();
+	n->update(getParams().getFloat("time"), matrix);
 
 	Job job(gstateStack.back());
 	job.primitive		= NULL;
@@ -791,7 +781,7 @@ bool					SceneVisitorRender::visit(SceneNodeParticleSystem* n)
 	job.texcoord		= &(n->texcoords);
 	job.normal		= normalStack.back();
 	job.vertex		= &(n->verteces);
-	job.xformView		= modelXFormIndex;
+	job.xformView		= modelXFormIndexStack.back();
 	job.xformProjection	= projectionXFormIndexStack.back();
 	job.xformTexture	= textureXFormIndexStack.back();
 	job.lightSet		= lightSetIndexStack.back();

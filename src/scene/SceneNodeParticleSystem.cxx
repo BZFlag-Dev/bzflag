@@ -292,22 +292,23 @@ bool SceneNodeParticleSystem::update(float time, ParticleSystemUpdate flag, floa
 	texcoords.clear();
 	index.clear();
 
+	const float* m = matrix;
 	for(unsigned int i = 0; i < particles.size(); i++) {
-		float p[3];
-		matrix.transform3(p, particles[i].location);
+		const float* p = particles[i].location;
 		size = particles[i].size / 4;
-		verteces.push(p[0] + size);
-		verteces.push(p[1]);
-		verteces.push(p[2] - size);
-		verteces.push(p[0] + size);
-		verteces.push(p[1]);
-		verteces.push(p[2] + size);
-		verteces.push(p[0] - size);
-		verteces.push(p[1]);
-		verteces.push(p[2] + size);
-		verteces.push(p[0] - size);
-		verteces.push(p[1]);
-		verteces.push(p[2] - size);
+		verteces.push(p[0] + size * ( m[0] - m[8]));
+		verteces.push(p[1] + size * ( m[1] - m[9]));
+		verteces.push(p[2] + size * ( m[2] - m[10]));
+		verteces.push(p[0] + size * ( m[0] + m[8]));
+		verteces.push(p[1] + size * ( m[1] + m[9]));
+		verteces.push(p[2] + size * ( m[2] + m[10]));
+		verteces.push(p[0] + size * (-m[0] + m[8]));
+		verteces.push(p[1] + size * (-m[1] + m[9]));
+		verteces.push(p[2] + size * (-m[2] + m[10]));
+		verteces.push(p[0] + size * (-m[0] - m[8]));
+		verteces.push(p[1] + size * (-m[1] - m[9]));
+		verteces.push(p[2] + size * (-m[2] - m[10]));
+
 		texcoords.push(1.0f, 0.0f);
 		texcoords.push(1.0f, 1.0f);
 		texcoords.push(0.0f, 1.0f);
