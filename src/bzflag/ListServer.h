@@ -13,6 +13,8 @@
 #ifndef __LISTSERVER_H__
 #define __LISTSERVER_H__
 
+#include "common.h"
+
 /* system interface headers */
 #include <string>
 
