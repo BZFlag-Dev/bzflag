@@ -30,8 +30,8 @@ typedef int CRtime;
 #endif
 
 typedef enum {
-  FakedPacket  = 0,
-  NormalPacket = 1
+  NormalPacket = 0,
+  FakedPacket  = 1
 } RCPacketType;
 
 typedef enum {
@@ -166,7 +166,7 @@ bool Capture::init ()
   
   Capturing = false;
   CaptureMode = BufferedCapture;
-  CaptureMaxBytes = DefaultMaxBytes;
+  CaptureMaxBytes = DefaultMaxBytes; // FIXME - this doesn't seem right
   CaptureFileBytes = 0;
   CaptureFilePackets = 0;
   CaptureFilePrevLen = 0;
@@ -557,6 +557,11 @@ bool Replay::play(int playerIndex)
   Replaying = true;
   ReplayOffset = getCRtime () - ReplayBuf.tail->timestamp;
 
+  // reset the players' view of state  
+  for (int i = 0; i < curMaxPlayers; i++) {
+    player[i].setReplayState (ReplayNone);
+  }
+
   sendMessage (ServerPlayer, playerIndex, "Starting replay");
   
   return true;
@@ -615,17 +620,46 @@ bool Replay::sendPackets () {
 
     // send message to everyone
     for (i = 0; i < curMaxPlayers; i++) {
-      if (player[i].isPlaying()) {
-        // the 4 bytes before p->data need to be allocated
-        void *buf = getDirectMessageBuffer ();
-        memcpy (buf, p->data, p->len);
-        directMessage(i, p->code, p->len, buf);
+      PlayerInfo &pi = player[i];
+      bool faked = false;
+      if (p->fake == FakedPacket) {
+        faked = true;
       }
-    }
+      
+      if (pi.isPlaying()) {
+        // State machine for State Updates
+        if (faked) {
+          if (p->code == MsgTeamUpdate) { // always start on a team update
+            if (pi.getReplayState() == ReplayNone) {
+              // start receiving state info
+              pi.setReplayState (ReplayReceiving);
+            }
+            else if (pi.getReplayState() == ReplayReceiving) {
+              // two states seesions back-to-back
+              pi.setReplayState (ReplayStateful);
+            }
+          }
+        }
+        else if (pi.getReplayState() == ReplayReceiving) {
+          // this is the end of a state session
+          pi.setReplayState (ReplayStateful);
+        }
+
+        if ((faked && (pi.getReplayState() == ReplayReceiving)) ||
+            (!faked && (pi.getReplayState() == ReplayStateful))) {
+          // the 4 bytes before p->data need to be allocated
+          void *buf = getDirectMessageBuffer ();
+          memcpy (buf, p->data, p->len);
+          directMessage(i, p->code, p->len, buf);
+        }
+      }
+      
+    } // for loop
     
     free (p->data);
     free (p);
-  }
+    
+  } // while loop
     
   return true;
 }

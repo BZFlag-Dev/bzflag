@@ -50,6 +50,12 @@ enum ClientState {
   PlayerAlive
 };
 
+enum PlayerReplayState {
+  ReplayNone,
+  ReplayReceiving,
+  ReplayStateful
+};
+
 #define SEND 1
 #define RECEIVE 0
 
@@ -129,6 +135,9 @@ public:
   void        addFlagToHistory(FlagType* type);
   bool        hasPlayedEarly();
   void        setPlayedEarly();
+  void        setReplayState(PlayerReplayState state);
+  PlayerReplayState getReplayState();
+  
 #ifdef HAVE_ADNS_H
   // return true if host is resolved
   bool        checkDNSResolution();
@@ -184,6 +193,9 @@ private:
     TimeKeeper pausedSince;
 
     bool notResponding;
+    
+    // Has the player been sent any replay 'faked' state
+    PlayerReplayState replayState;
 
     // lag measurement
     float lagavg, jitteravg, lostavg, lagalpha, jitteralpha, lostalpha;

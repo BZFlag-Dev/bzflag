@@ -86,6 +86,8 @@ void PlayerInfo::resetPlayer(bool ctf) {
   pingpending = false;
   pingseqno = 0;
   pingssent = 0;
+  
+  replayState = ReplayNone;
 
 #ifdef TIMELIMIT
   playedEarly = false;
@@ -598,6 +600,16 @@ bool PlayerInfo::hasPlayedEarly() {
 void PlayerInfo::setPlayedEarly() {
   playedEarly = true;
 };
+
+void        PlayerInfo::setReplayState(PlayerReplayState state) {
+  replayState = state;
+}
+
+PlayerReplayState PlayerInfo::getReplayState()
+{
+  return replayState;
+}
+
 
 #ifdef HAVE_ADNS_H
 // return true if host is resolved
