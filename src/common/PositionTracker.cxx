@@ -206,7 +206,7 @@ bool PositionTracker::addWaypoint(const double from[3], const double to[3], doub
 	(waypointSet[i]->position[1] = from[1]) &&
 	(waypointSet[i]->position[2] = from[2])) {
       foundPoint = true;
-      fromToken = waypointSet[i]->intID;
+      fromToken = (unsigned short)waypointSet[i]->intID;
     }
   }
   if (!foundPoint) {
@@ -227,7 +227,7 @@ bool PositionTracker::addWaypoint(const double from[3], const double to[3], doub
 	(waypointSet[i]->position[1] = to[1]) &&
 	(waypointSet[i]->position[2] = to[2])) {
       foundPoint = true;
-      toToken = waypointSet[i]->intID;
+      toToken = (unsigned short)waypointSet[i]->intID;
     }
   }
   if (!foundPoint) {
