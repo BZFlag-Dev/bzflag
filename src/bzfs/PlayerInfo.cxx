@@ -24,7 +24,9 @@
 
 #define MAX_FLAG_HISTORY (10)
 
+#ifdef HAVE_ADNS_H
 adns_state PlayerInfo::adnsState;
+#endif
 
 void PlayerInfo::initPlayer(const struct sockaddr_in& clientAddr, int _fd,
 			    int _playerIndex) {
