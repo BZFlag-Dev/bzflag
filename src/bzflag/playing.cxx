@@ -5793,8 +5793,6 @@ static bool		joinInternetGame(const StartupInfo* info)
   if (serverAddress.isAny()) return false;
   ServerLink* serverLink = new ServerLink(serverAddress, info->serverPort);
 
-  Address multicastAddress(BroadcastAddress);
-
 #if defined(ROBOT)
   extern int numRobotTanks;
   int i, j;
