@@ -353,7 +353,7 @@ moves any object (tanks and shots) passing through it to some other
 teleporter.  The teleporter connections are fixed for the entire
 game.  In the capture-the-flag style the connections are always
 the same.  In the free-for-all style the connections are random and
-reversable (going back through where you come out puts you back where
+reversible (going back through where you come out puts you back where
 you started).
 .PP
 Each side of a teleporter teleports independently of the other
@@ -611,7 +611,7 @@ full server.
 When in observer mode, you can freely roam the world. Using the
 arrow keys you can rotate the camera in every direction. Holding shift and
 using the arrow keys moves the camera left, right, forward or back. Pressing
-the up or down arrow while holding the the
+the up or down arrow while holding the
 .IR ALT
 key will change the camera's altitude. The
 .IR F9
