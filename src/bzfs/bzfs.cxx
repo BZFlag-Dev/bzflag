@@ -4784,7 +4784,7 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
       if (ptr == 0) {
 	// update time of day in world database
 	const uint32_t epochOffset = (uint32_t)time(NULL);
-	void *epochPtr = ((char*)worldDatabase) + 24;
+	void *epochPtr = ((char*)worldDatabase) + 30;
 	nboPackUInt(epochPtr, epochOffset);
       }
       sendWorld(t, ptr);
