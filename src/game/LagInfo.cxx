@@ -102,6 +102,10 @@ void LagInfo::updateLag(float timestamp, bool ooo) {
 }
 
 int LagInfo::getNextPingSeqno(bool &warn, bool &kick) {
+
+  warn = false;
+  kick = false;
+
   if (!info->isPlaying() || !info->isHuman())
     return -1;
 
@@ -121,9 +125,6 @@ int LagInfo::getNextPingSeqno(bool &warn, bool &kick) {
       lagwarncount++;
       warn = true;
       kick = (lagwarncount++ > max);
-    } else {
-      warn = false;
-      kick = false;
     }
   }
 
