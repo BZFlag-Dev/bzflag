@@ -163,13 +163,13 @@ class WordFilter
     return i;
   }
 
-  int filterCharacters(char *input, int start, int end, bool filterSpaces=false) const
+  /* !!! filter isn't working right it's start and length -- not end */
+  int filterCharacters(char *input, int start, int length, bool filterSpaces=false) const
   {
     if (input == NULL) {
       return -1;
     }
-    int length = end - start;
-    if (length <= 0) {
+    if ((length <= 0) || (start <= length)){
       return -1;
     }
     if (strlen(input) < start) {

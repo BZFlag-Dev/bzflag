@@ -41,8 +41,8 @@ bool WordFilter::simpleFilter(char *input) const
 
     word = line.substr(startPosition, endPosition-startPosition);
     findWord.word = word;
-    if (filters[word.c_str()[0]].find(findWord) != \
-	filters[word.c_str()[0]].end()) {
+    if (filters[word[0]].find(findWord) != \
+	filters[word[0]].end()) {
 
       /* fill with asterisks */
       //      memset(input+startPosition,'*', endPosition-startPosition);
@@ -76,34 +76,48 @@ bool WordFilter::aggressiveFilter(char *input) const
   int previousCharPos;
   int maxFilterChar=filterChars.length();
 
-  std::string line = input;
   int startPosition = firstPrintable(input);
+  if (startPosition < 0) {
+    return false;
+  }
+  std::string line = input + startPosition;
+
+  int inputPosition = startPosition;
+  startPosition = 0;
 
   int endPosition;
-  std::string word;
+  //  std::string word;
   
+  char characterIndex;
+
   /* iterate over all the words start position in the input */
   while (startPosition >= 0) {
     endPosition = firstNonprintable(line);
-    if (endPosition < 0)
+    if (endPosition < 0) {
       endPosition = line.length();
-    
-    word = line.substr(startPosition, endPosition-startPosition);
+    }
+    //    word = line.substr(startPosition, endPosition-startPosition);
 
-    for (std::set<filter_t, expressionCompare>::iterator i = filters[word.c_str()[0]].begin(); \
-	 i != filters[word.c_str()[0]].end(); 
+    // words are hashed by lowercase first letter
+    characterIndex = tolower(line[startPosition]);
+
+    for (std::set<filter_t, expressionCompare>::iterator i = filters[characterIndex].begin(); \
+	 i != filters[characterIndex].end(); 
 	 ++i) {
     
-      regCode = regexec(i->compiled, input, 1, match, NULL);
+      regCode = regexec(i->compiled, input + inputPosition, 1, match, NULL);
       
       if ( regCode == 0 ) {
 	//				std::cout << "Matched [" << i->word << "] with substring [" << input + match[0].rm_so << "] for " << match[0].rm_eo << " position; so was " << match[0].rm_so << std::endl;
       
-	matchPair[matchCount * 2] = match[0].rm_so; /* position */
-	matchPair[(matchCount * 2) + 1] = match[0].rm_eo - match[0].rm_so; /* length */
-	matchCount++;
-	
-	filtered = true;
+	/* only consider matches from the beginning */
+	if (match[0].rm_so == 0) {
+	  matchPair[matchCount * 2] = match[0].rm_so + inputPosition; /* position */
+	  matchPair[(matchCount * 2) + 1] = match[0].rm_eo - match[0].rm_so; /* length */
+	  matchCount++;
+	  filtered = true;
+	}
+
       } else if ( regCode == REG_NOMATCH ) {
 	
 	// do nothing
@@ -115,7 +129,16 @@ bool WordFilter::aggressiveFilter(char *input) const
     
     }
 
-    startPosition = firstPrintable(line);
+    // trim off the front of the line including the last non-printable
+    line.erase(0, endPosition + 1);
+    inputPosition += endPosition + 1;
+
+    startPosition = firstPrintable(line); // should be zero most of the time
+    if (startPosition > 0) {
+      line.erase(0,startPosition);
+      inputPosition += startPosition;
+      startPosition = 0;
+    }
   }
 
   
@@ -417,10 +440,6 @@ WordFilter::~WordFilter(void)
 // adds an individual word to the filter list
 bool WordFilter::addToFilter(const std::string &word, const std::string &expression, bool append)
 {
-  if ((word.c_str() == NULL)) {
-    return false;
-  } // end check if word non null
-  
   long int length = (long int)word.length();  
   if (0 >= length) {
     return false;
@@ -462,11 +481,11 @@ bool WordFilter::addToFilter(const std::string &word, const std::string &express
     newFilter.expression = expression;
     newFilter.compiled = getCompiledExpression(expression);
     
-    filters[newFilter.word.c_str()[0]].insert(newFilter);
+    filters[tolower(newFilter.word[0])].insert(newFilter);
   }
 
   return true;
-} // end addWord
+} // end addToFilter
 bool WordFilter::addToFilter(const std::string &word, const std::string &expression)
 {
   return addToFilter(word, expression, false);
@@ -596,11 +615,16 @@ int main (int argc, char *argv[])
   
   WordFilter filter;
   //  filter.addToFilter("fuck?!", true);
-  filter.addToFilter("test()");
+  filter.addToFilter("test");
   //  filter.addToFilter("tah fei kei (tfk)?", true);
 
   filter.outputWords();
   filter.outputFilter();
+
+  char message3[1024] = " This test is a fucKing simple test; you're NOT a beezeebitch!! ";
+  std::cout << message3 << std::endl;
+  filter.filter(message3, false);
+  std::cout << message3 << std::endl;
 
   std::cout << "Loading file" << std::endl;
   filter.loadFromFile(argv[1]);
@@ -618,7 +642,7 @@ int main (int argc, char *argv[])
   filter.filter(message2);
   std::cout << message2 << std::endl;
   
-  filter.outputWords();
+  //  filter.outputWords();
   return 0;
 }
 #endif
