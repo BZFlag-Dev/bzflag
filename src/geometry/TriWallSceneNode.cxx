@@ -74,7 +74,11 @@ void			TriWallSceneNode::Geometry::render()
 
 void			TriWallSceneNode::Geometry::renderShadow()
 {
-  drawV();
+  glBegin(GL_TRIANGLE_STRIP);
+  glVertex3fv(vertex[(de + 1) * (de + 2) / 2 - 1]);
+  glVertex3fv(vertex[0]);
+  glVertex3fv(vertex[de]);
+  glEnd();
 }
 
 
