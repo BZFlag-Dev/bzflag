@@ -141,7 +141,7 @@ ZLIB = -lz
 endif
 
 if MACOS
-EXTRALIB =	\
+NACLIB =	\
 	../platform/MacOSX/libMac.a
 endif
 
@@ -150,13 +150,13 @@ LDADD =	\
 	../common/libCommon.a		\
 	../game/libGame.a		\
 	../obstacle/libObstacle.a	\
+	$(NACLIB)			\
 	../platform/libPlatform.a	\
 	../ogl/libGLKit.a		\
 	../scene/libSceneDB.a		\
 	../geometry/libGeometry.a	\
 	../mediafile/libMediaFile.a	\
 	../3D/lib3D.a			\
-	$(EXTRALIB)			\
 	$(ZLIB)				\
 	$(RESOURCE)			\
 	$(GLIBS)			\

@@ -235,6 +235,8 @@ fi
 case $host_os in
      macos|darwin*)
 	LIBS="$LIBS -framework Carbon -framework OpenGL -framework AGL"
+# There's a bug in the mac curl-config. It's been reported to Apple.
+	CURL_LIBS="-L/usr/local/lib -lcurl -lssl -lcrypto"
 	;;
      irix)
 	if test x$host_cpu = xmips64; then
