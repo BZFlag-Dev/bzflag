@@ -164,13 +164,14 @@ bool	avoidDeathFall(float &rotation, float &speed)
   LocalPlayer *myTank = LocalPlayer::getMyTank();
   float pos1[3], pos2[3];
   memcpy(pos1, myTank->getPosition(), sizeof(pos1));
-  memcpy(pos2, pos2, sizeof(pos1));
-  pos1[2] += 3.0f * BZDBCache::tankHeight;
+  memcpy(pos2, pos1, sizeof(pos1));
+  pos1[2] += 10.0f * BZDBCache::tankHeight;
   float azimuth = myTank->getAngle();
   if (speed < 0.0f)
 	  azimuth += (float)M_PI;
-  pos2[0] += BZDBCache::tankHeight * cosf(azimuth);
-  pos2[1] += BZDBCache::tankHeight * sinf(azimuth);
+  pos2[0] += 2.f * BZDBCache::tankHeight * cosf(azimuth);
+  pos2[1] += 2.0f * BZDBCache::tankHeight * sinf(azimuth);
+  pos2[2] += 0.01;
 
   float collisionPt[3];
   if (TargetingUtils::getFirstCollisionPoint( pos1, pos2, collisionPt )) {

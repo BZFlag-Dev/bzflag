@@ -18,6 +18,7 @@ class TargetingUtils
 {
 public:
   static void getUnitVector( const float *src, const float *target, float unitVector[3] );
+  static void get3DUnitVector( const float *src, const float *target, float unitVector[3] );
   static float getTargetDistance( const float *src, const float *target );
   static float getTargetAzimuth( const float *src, const float *target );
   static float getTargetRotation( const float startAzimuth, float targetAzimuth );

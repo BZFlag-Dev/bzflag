@@ -25,8 +25,30 @@ void TargetingUtils::getUnitVector( const float *src, const float *target, float
 
   float len = (float) sqrt(unitVector[0] * unitVector[0] +
 			   unitVector[1] * unitVector[1]);
+
+  if (len == 0.0f)
+	  return;
+
   unitVector[0] /= len;
   unitVector[1] /= len;
+}
+
+void TargetingUtils::get3DUnitVector( const float *src, const float *target, float unitVector[3] )
+{
+  unitVector[0] = target[0] - src[0];
+  unitVector[1] = target[1] - src[1];
+  unitVector[2] = target[2] - src[1];
+
+  float len = (float) sqrt(unitVector[0] * unitVector[0] +
+			   unitVector[1] * unitVector[1] +
+			     unitVector[2] * unitVector[2]);
+
+  if (len == 0.0f)
+	  return;
+
+  unitVector[0] /= len;
+  unitVector[1] /= len;
+  unitVector[2] /= len;
 }
 
 float TargetingUtils::getTargetDistance( const float *src, const float *target )
@@ -96,7 +118,7 @@ bool TargetingUtils::getFirstCollisionPoint( const float *src, const float *targ
 {
   float t = MAXFLOAT;
   float dir[3];
-  getUnitVector(src, target, dir);
+  get3DUnitVector(src, target, dir);
 
   Ray tankRay( src, dir );
   const Obstacle *building = ShotStrategy::getFirstBuilding(tankRay, 0.0f, t);
