@@ -88,11 +88,10 @@ ControlPanel::~ControlPanel()
 
 void			ControlPanel::setControlColor(const GLfloat *color)
 {
-	if (color)
-		memcpy(teamColor, color, 3 * sizeof(float));
-	else {
-		memset(teamColor, 0, 3 * sizeof(float));
-	}
+  if (color)
+    memcpy(teamColor, color, 3 * sizeof(float));
+  else
+    memset(teamColor, 0, 3 * sizeof(float));
 }
 
 void			ControlPanel::render(SceneRenderer& renderer)
@@ -158,13 +157,13 @@ void			ControlPanel::render(SceneRenderer& renderer)
   const int lineCharWidth = (int)(messageAreaPixels[2] / (messageFont.getWidth("-")));
 
   i = messages.size() - 1;
-  if (messagesOffset>0) {
-    if (i-messagesOffset > 0)
-      i-=messagesOffset;
+  if (messagesOffset > 0) {
+    if (i - messagesOffset > 0)
+      i -= messagesOffset;
     else
-      i=0;
+      i = 0;
   }
-  for (j = 0; i>=0 && j<maxLines; i--) {
+  for (j = 0; i >= 0 && j < maxLines; i--) {
     GLfloat whiteColor[3] = {1.0f, 1.0f, 1.0f};
     glColor3fv(whiteColor);
 
@@ -185,8 +184,7 @@ void			ControlPanel::render(SceneRenderer& renderer)
       // the unprinted ANSI codes don't count
       if (lineLen <= lineCharWidth) {
 	n = lineLen;
-      }
-      else {
+      } else {
 	int r = 0;
 	n = 0;
 	while ((n < lineLen) && (r < lineCharWidth)) {
@@ -202,12 +200,10 @@ void			ControlPanel::render(SceneRenderer& renderer)
 	      if (n < lineLen)
 		n++;
 	    }
-	  }
-	  else if ((msg[n] >= 32) && (msg[n] < 127)) {
+	  } else if ((msg[n] >= 32) && (msg[n] < 127)) {
 	    n++;
 	    r++;
-	  }
-	  else {
+	  } else {
 	    n++;
 	  }
 	}
@@ -233,7 +229,7 @@ void			ControlPanel::render(SceneRenderer& renderer)
       messageAreaPixels[3] + 2);
   OpenGLGState::resetState();
 
-  //  nice border
+  // nice border
   glColor3f(teamColor[0], teamColor[1], teamColor[2] );
   glBegin(GL_LINE_LOOP); {
     glVertex2f((float) (x + messageAreaPixels[0] - 0.9f),
@@ -300,8 +296,7 @@ void			ControlPanel::resize()
   if (opacity == 1.0f) {
     radarSize = float(window.getHeight() - window.getViewHeight());
     radarSpace = 0.0f;
-  }
-  else {
+  } else {
     radarSize = h * (14 + SceneRenderer::getInstance()->getRadarSize()) / 60.0f;
     radarSpace = 3.0f * w / MinY;
   }
@@ -365,30 +360,29 @@ void			ControlPanel::setMessagesOffset(int offset, int whence)
   switch (whence) {
     case 0:
       if (offset < (int)messages.size())
-	messagesOffset=offset;
+	messagesOffset = offset;
       else
-	messagesOffset=messages.size()-1;
+	messagesOffset = messages.size() - 1;
       break;
     case 1:
       if (offset > 0) {
-	if (messagesOffset+offset < (int)messages.size())
-	  messagesOffset+=offset;
+	if (messagesOffset + offset < (int)messages.size())
+	  messagesOffset += offset;
 	else
-	  messagesOffset=messages.size()-1;
-      }
-      else if (offset < 0) {
-	if (messagesOffset+offset >= 0)
-	  messagesOffset+=offset;
+	  messagesOffset = messages.size() - 1;
+      } else if (offset < 0) {
+	if (messagesOffset + offset >= 0)
+	  messagesOffset += offset;
 	else
-	  messagesOffset=0;
+	  messagesOffset = 0;
       }
       break;
     case 2:
       if (offset < 0) {
 	if ((int)messages.size() >= offset)
-	  messagesOffset+=offset;
+	  messagesOffset += offset;
 	else
-	  messagesOffset=0;
+	  messagesOffset = 0;
       }
       break;
   }
@@ -402,8 +396,7 @@ void			ControlPanel::addMessage(const std::string& line)
   if ((int)messages.size() < maxLines * maxScrollPages) {
     // not full yet so just append it
     messages.push_back(item);
-  }
-  else {
+  } else {
     // rotate list and replace oldest (in newest position after rotate)
     messages.erase(messages.begin());
     messages.push_back(item);

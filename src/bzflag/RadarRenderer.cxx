@@ -58,11 +58,10 @@ RadarRenderer::RadarRenderer(const SceneRenderer&,
 
 void			RadarRenderer::setControlColor(const GLfloat *color)
 {
-	if (color)
-		memcpy(teamColor, color, 3 * sizeof(float));
-	else {
-		memset(teamColor, 0, 3 * sizeof(float));
-	}
+  if (color)
+    memcpy(teamColor, color, 3 * sizeof(float));
+  else
+    memset(teamColor, 0, 3 * sizeof(float));
 }
 
 void			RadarRenderer::setShape(int _x, int _y, int _w, int _h)
@@ -169,7 +168,7 @@ void			RadarRenderer::render(SceneRenderer& renderer,
    glClear(GL_COLOR_BUFFER_BIT);
   }
 
-  if(blank)
+  if (blank)
     return;
 
   // prepare transforms
@@ -207,7 +206,7 @@ void			RadarRenderer::render(SceneRenderer& renderer,
 
     glColor3f(1.0,1.0,1.0);
 
-    if (noiseTexture >=0  && renderer.useQuality()>0) {
+    if (noiseTexture >= 0 && renderer.useQuality() > 0) {
 
       const int sequences = 10;
 
@@ -360,20 +359,18 @@ void			RadarRenderer::render(SceneRenderer& renderer,
 	drawFlagOnTank(x, y, z);
       }
 
-      if (myTank->getFlag() == Flags::Colorblindness) {
-	glColor3fv(Team::getRadarColor(RogueTeam));
+      if (player->isPaused() || player->isNotResponding()) {
+	const float dimfactor = 0.4f;
+	const float *color = Team::getRadarColor(myTank->getFlag() ==
+			     Flags::Colorblindness ? RogueTeam : player->getTeam());
+	float dimmedcolor[3];
+	dimmedcolor[0] = color[0] * dimfactor;
+	dimmedcolor[1] = color[1] * dimfactor;
+	dimmedcolor[2] = color[2] * dimfactor;
+	glColor3fv(dimmedcolor);
       } else {
-	if (player->isPaused() || player->isNotResponding()) {
-	  const float dimfactor=0.4f;
-	  const float *color = Team::getRadarColor(myTank->getFlag() ==
-			       Flags::Colorblindness ? RogueTeam : player->getTeam());
-	  float dimmedcolor[3];
-	  dimmedcolor[0] = color[0] * dimfactor;
-	  dimmedcolor[1] = color[1] * dimfactor;
-	  dimmedcolor[2] = color[2] * dimfactor;
-	  glColor3fv(dimmedcolor);
-	} else
-	  glColor3fv(Team::getRadarColor(player->getTeam()));
+	glColor3fv(Team::getRadarColor(myTank->getFlag() ==
+			     Flags::Colorblindness ? RogueTeam : player->getTeam()));
       }
       // If this tank is hunted flash it on the radar
       if (player->isHunted()) {
@@ -411,9 +408,9 @@ void			RadarRenderer::render(SceneRenderer& renderer,
 	    const float cs = colorScale(shot->getPosition()[2],
 		    muzzleHeight, BZDBCache::enhancedRadar);
 	    glColor3f(shotcolor[0] * cs, shotcolor[1] * cs, shotcolor[2] * cs);
-	  }
-	  else
+	  } else {
 	    glColor3f(1.0f, 1.0f, 1.0f);
+	  }
 	  shot->radarRender();
 	}
       }
@@ -421,32 +418,19 @@ void			RadarRenderer::render(SceneRenderer& renderer,
 
     // draw flags not on tanks.
     const int maxFlags = world.getMaxFlags();
-    if (BZDB.isTrue("displayRadarFlags")) {
-      for (i = 0; i < maxFlags; i++) {
-	// draw normal flags
-	const Flag& flag = world.getFlag(i);
-	if (flag.status == FlagNoExist || flag.status == FlagOnTank)
-	  continue;
-	if (flag.type->flagTeam != NoTeam)
-	  continue;
-	const float cs = colorScale(flag.position[2], muzzleHeight, BZDBCache::enhancedRadar);
-	const float *flagcolor = flag.type->getColor();
-	glColor3f(flagcolor[0] * cs, flagcolor[1] * cs, flagcolor[2] * cs);
-	drawFlag(flag.position[0], flag.position[1], flag.position[2]);
-      }
-    }
+    const bool drawNormalFlags = BZDB.isTrue("displayRadarFlags");
     for (i = 0; i < maxFlags; i++) {
-      // draw team flags
       const Flag& flag = world.getFlag(i);
+      // don't draw flags that don't exist or are on a tank
       if (flag.status == FlagNoExist || flag.status == FlagOnTank)
 	continue;
-      if (flag.type->flagTeam == NoTeam)
+      // don't draw normal flags if we aren't supposed to
+      if (flag.type->flagTeam == NoTeam && !drawNormalFlags)
 	continue;
       // Flags change color by height
       const float cs = colorScale(flag.position[2], muzzleHeight, BZDBCache::enhancedRadar);
       const float *flagcolor = flag.type->getColor();
       glColor3f(flagcolor[0] * cs, flagcolor[1] * cs, flagcolor[2] * cs);
-      // always draw team flags
       drawFlag(flag.position[0], flag.position[1], flag.position[2]);
     }
     // draw antidote flag
@@ -522,8 +506,7 @@ float			RadarRenderer::colorScale(const float z, const float h, bool enhancedRad
     // Don't fade all the way
     if (scaleColor < 0.35f)
       scaleColor = 0.35f;
-  }
-  else {
+  } else {
     scaleColor = 1.0f;
   }
 
