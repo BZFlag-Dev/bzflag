@@ -1432,7 +1432,7 @@ static void setRoamingLabel(bool force)
 
       case roamViewFlag:
 	hud->setRoamingLabel(std::string("Tracking ") +
-			     Flag::getName(world->getFlag(roamTrackFlag).id) +
+			     world->getFlag(roamTrackFlag).desc->flagName +
 			     " Flag");
 	break;
 
@@ -1665,7 +1665,7 @@ static void		doKeyPlaying(const BzfKeyEvent& key, bool pressed)
 	    for (int i = 1; i < maxFlags; i++) {
 	      int j = (roamTrackFlag - i + maxFlags) % maxFlags;
 	      const Flag& flag = world->getFlag(j);
-	      if (flag.id >= FirstTeamFlag && flag.id <= LastTeamFlag) {
+	      if (flag.desc->flagTeam != NoTeam) {
 		roamTrackFlag = j;
 		break;
 	      }
@@ -1694,7 +1694,7 @@ static void		doKeyPlaying(const BzfKeyEvent& key, bool pressed)
 	    for (int i = 1; i < maxFlags; i++) {
 	      int j = (roamTrackFlag + i) % maxFlags;
 	      const Flag& flag = world->getFlag(j);
-	      if (flag.id >= FirstTeamFlag && flag.id <= LastTeamFlag) {
+	      if (flag.desc->flagTeam != NoTeam) {
 		roamTrackFlag = j;
 		break;
 	      }
@@ -1722,7 +1722,7 @@ static void		doKeyPlaying(const BzfKeyEvent& key, bool pressed)
 	    bool found = false;
 	    for(int i = 0; i < maxFlags; i++) {
 	      const Flag& flag = world->getFlag(i);
-	      if(flag.id >= FirstTeamFlag && flag.id <= LastTeamFlag) {
+	      if (flag.desc->flagTeam != NoTeam) {
 		roamTrackFlag = i;
 		found = true;
 		break;
@@ -1779,7 +1779,7 @@ static void		doKeyPlaying(const BzfKeyEvent& key, bool pressed)
 
   if (keymap.isMappedTo(BzfKeyMap::Binoculars, key)) {
     if (pressed) {
-      if (myTank->getFlag() != WideAngleFlag)
+      if (myTank->getFlag() != Flags::WideAngle)
 	myTank->setMagnify(1 - myTank->getMagnify());
     }
   }
@@ -1829,7 +1829,7 @@ static void		doKeyPlaying(const BzfKeyEvent& key, bool pressed)
     // toggle flag help
     if (pressed) {
       sceneRenderer->setShowFlagHelp(!sceneRenderer->getShowFlagHelp());
-      if (!sceneRenderer->getShowFlagHelp()) hud->setFlagHelp(NoFlag, 0.0);
+      if (!sceneRenderer->getShowFlagHelp()) hud->setFlagHelp(Flags::Null, 0.0);
       else hud->setFlagHelp(myTank->getFlag(), FlagHelpDuration);
     }
   }
@@ -2039,11 +2039,11 @@ static std::string cmdDrop(const std::string&, const CommandManager::ArgList& ar
   if (args.size() != 0)
     return "usage: drop";
   if (myTank != NULL) {
-    FlagId flagId = myTank->getFlag();
-    if (flagId != NoFlag && !myTank->isPaused() &&
-        Flag::getType(flagId) != FlagSticky &&
-        !(flagId == PhantomZoneFlag && myTank->isFlagActive()) &&
-	!(flagId == OscOverthrusterFlag &&
+    FlagDesc* flag = myTank->getFlag();
+    if (flag != Flags::Null && !myTank->isPaused() &&
+        flag->flagType != FlagSticky &&
+        !(flag == Flags::PhantomZone && myTank->isFlagActive()) &&
+	!(flag == Flags::OscillationOverthruster &&
 	myTank->getLocation() == LocalPlayer::InBuilding)) {
       serverLink->sendDropFlag(myTank->getPosition());
       // changed: on windows it may happen the MsgDropFlag
@@ -2479,32 +2479,32 @@ static void		updateHighScores()
   }
 }
 
-static void		updateFlag(FlagId id)
+static void		updateFlag(FlagDesc* flag)
 {
-  if (id == NoFlag) {
+  if (flag == Flags::Null) {
     hud->setColor(1.0f, 0.625f, 0.125f);
     hud->setAlert(2, NULL, 0.0f);
   }
   else {
-    const float* color = Flag::getColor(id);
+    const float* color = flag->getColor();
     hud->setColor(color[0], color[1], color[2]);
-    hud->setAlert(2, Flag::getName(id), 3.0f, Flag::getType(id) == FlagSticky);
+    hud->setAlert(2, flag->flagName, 3.0f, flag->flagType == FlagSticky);
   }
 
   if (sceneRenderer->getShowFlagHelp())
-    hud->setFlagHelp(id, FlagHelpDuration);
+    hud->setFlagHelp(flag, FlagHelpDuration);
 
   if (!radar && !myTank || !World::getWorld()) return;
 
-  radar->setJammed(id == JammingFlag);
-  hud->setAltitudeTape(id == JumpingFlag || World::getWorld()->allowJumping());
+  radar->setJammed(flag == Flags::Jamming);
+  hud->setAltitudeTape(flag == Flags::Jumping || World::getWorld()->allowJumping());
 
   // enable/disable display of markers
   hud->setMarker(0, myTank->getTeam() != RogueTeam &&
-			int(id) != int(myTank->getTeam()) &&
+			flag->flagTeam != myTank->getTeam() &&
 			World::getWorld()->allowTeamFlags());
   hud->setMarker(1, World::getWorld()->allowAntidote() &&
-			id != NoFlag && Flag::getType(id) == FlagSticky);
+			flag != Flags::Null && flag->flagType == FlagSticky);
 }
 
 void			notifyBzfKeyMapChanged()
@@ -2906,39 +2906,38 @@ static void		handleServerMessage(bool human, uint16_t code,
 	  playerStr += ColorStrings[WhiteColor];
 
 	  // Give more informative kill messages
-	  switch (shot->getFlag())
-	  {
-	  case LaserFlag:
+	  FlagDesc* shotFlag = shot->getFlag();
+	  if (shotFlag == Flags::Laser) {
 	    message += "was fried by ";
 	    message += playerStr;
 	    message += "'s laser";
-	    break;
-	  case GuidedMissileFlag:
+	  }
+	  else if (shotFlag == Flags::GuidedMissile) {
 	    message += "was destroyed by ";
 	    message += playerStr;
 	    message += "'s guided missile";
-	    break;
-	  case ShockWaveFlag:
+	  }
+	  else if (shotFlag == Flags::ShockWave) {
 	    message += "felt the effects of ";
 	    message += playerStr;
 	    message += "'s shockwave";
-	    break;
-	  case InvisibleBulletFlag:
+	  }
+	  else if (shotFlag == Flags::InvisibleBullet) {
 	    message += "didn't see ";
 	    message += playerStr;
 	    message += "'s bullet";
-	    break;
-	  case MachineGunFlag:
+	  }
+	  else if (shotFlag == Flags::MachineGun) {
 	    message += "was turned into swiss cheese by ";
 	    message += playerStr;
 	    message += "'s machine gun";
-	    break;
-	  case SuperBulletFlag:
+	  }
+	  else if (shotFlag == Flags::SuperBullet) {
 	    message += "got skewered by ";
 	    message += playerStr;
 	    message += "'s super bullet";
-	    break;
-	  default:
+	  }
+	  else {
 	    message += "killed by ";
 	    message += playerStr;
 	  }
@@ -2953,7 +2952,7 @@ static void		handleServerMessage(bool human, uint16_t code,
 		((myTank->getTeam() != RogueTeam) || World::getWorld()->allowRabbit()) && shotId >= 0) {
 	// now see if shot was fired with a GenocideFlag
 	const ShotPath* shot = killerPlayer->getShot(int(shotId));
-	if (shot && shot->getFlag() == GenocideFlag) {
+	if (shot && shot->getFlag() == Flags::Genocide) {
 	  gotBlowedUp(myTank, GenocideEffect, killerPlayer->getId());
 	}
       }
@@ -2962,7 +2961,7 @@ static void		handleServerMessage(bool human, uint16_t code,
       // blow up robots on victim's team if shot was genocide
       if (killerPlayer && victimPlayer && shotId >= 0) {
 	const ShotPath* shot = killerPlayer->getShot(int(shotId));
-	if (shot && shot->getFlag() == GenocideFlag)
+	if (shot && shot->getFlag() == Flags::Genocide)
 	  for (int i = 0; i < numRobots; i++)
 	    if (victimPlayer != robots[i] &&
 		victimPlayer->getTeam() == robots[i]->getTeam() &&
@@ -2986,7 +2985,7 @@ static void		handleServerMessage(bool human, uint16_t code,
       if (!tank) break;
 
       // player now has flag
-      tank->setFlag(world->getFlag(flagIndex).id);
+      tank->setFlag(world->getFlag(flagIndex).desc);
       if (tank == myTank) {
 	// not allowed to grab it if not on the ground
 	if (myTank->getLocation() != LocalPlayer::OnGround &&
@@ -2995,29 +2994,29 @@ static void		handleServerMessage(bool human, uint16_t code,
 	}
 	else {
 	  // grabbed flag
-	  playLocalSound(Flag::getType(myTank->getFlag()) != FlagSticky ?
+	  playLocalSound(myTank->getFlag()->flagType != FlagSticky ?
 	      SFX_GRAB_FLAG : SFX_GRAB_BAD);
 	  updateFlag(myTank->getFlag());
 	}
       }
       else if (myTank->getTeam() != RabbitTeam && tank &&
 	       tank->getTeam() != myTank->getTeam() &&
-	       int(world->getFlag(flagIndex).id) == int(myTank->getTeam())) {
+	       world->getFlag(flagIndex).desc->flagTeam == myTank->getTeam()) {
 	hud->setAlert(1, "Flag Alert!!!", 3.0f, true);
 	playLocalSound(SFX_ALERT);
       }
       else {
-	FlagId fID = world->getFlag(flagIndex).id;
-	if (((fID >= RedFlag) && (fID <= PurpleFlag))
-	    && (int(fID) != int(tank->getTeam()))
-	    && ((tank && (tank->getTeam() == myTank->getTeam())))) {
+	FlagDesc* fd = world->getFlag(flagIndex).desc;
+	if ( fd->flagTeam != NoTeam
+	     && fd->flagTeam != tank->getTeam()
+	     && ((tank && (tank->getTeam() == myTank->getTeam())))) {
 	  hud->setAlert(1, "Team Grab!!!", 3.0f, false);
 	  const float* pos = tank->getPosition();
 	  playWorldSound(SFX_TEAMGRAB, pos[0], pos[1], pos[2], false);
 	}
       }
       std::string message("grabbed ");
-      message += Flag::getName(tank->getFlag());
+      message += tank->getFlag()->flagName;
       message += " flag";
       addMessage(tank, message);
       break;
@@ -3042,13 +3041,13 @@ static void		handleServerMessage(bool human, uint16_t code,
       msg = nboUnpackUShort(msg, flagIndex);
       msg = nboUnpackUShort(msg, team);
       Player* capturer = lookupPlayer(id);
-      int capturedTeam = int(world->getFlag(int(flagIndex)).id);
+      int capturedTeam = world->getFlag(int(flagIndex)).desc->flagTeam;
 
       // player no longer has flag
       if (capturer) {
-	capturer->setFlag(NoFlag);
+	capturer->setFlag(Flags::Null);
 	if (capturer == myTank) {
-	  updateFlag(NoFlag);
+	  updateFlag(Flags::Null);
 	}
 
 	// add message
@@ -3144,11 +3143,11 @@ static void		handleServerMessage(bool human, uint16_t code,
 	  const float* pos = firingInfo.shot.pos;
 	  player[i]->addShot(firingInfo);
 	  if (human) {
-	    if (firingInfo.flag == ShockWaveFlag)
+	    if (firingInfo.flag == Flags::ShockWave)
 	      playWorldSound(SFX_SHOCK, pos[0], pos[1], pos[2]);
-	    else if (firingInfo.flag == LaserFlag)
+	    else if (firingInfo.flag == Flags::Laser)
 	      playWorldSound(SFX_LASER, pos[0], pos[1], pos[2]);
-	    else if (firingInfo.flag == GuidedMissileFlag)
+	    else if (firingInfo.flag == Flags::GuidedMissile)
 	      playWorldSound(SFX_MISSILE, pos[0], pos[1], pos[2]);
 	    else
 	      playWorldSound(SFX_FIRE, pos[0], pos[1], pos[2]);
@@ -3795,22 +3794,22 @@ static void		handleMyTankKilled(int reason)
 static void		handleFlagDropped(Player* tank)
 {
   // skip it if player doesn't actually have a flag
-  if (tank->getFlag() == NoFlag) return;
+  if (tank->getFlag() == Flags::Null) return;
 
   if (tank == myTank) {
     // update display and play sound effects
     playLocalSound(SFX_DROP_FLAG);
-    updateFlag(NoFlag);
+    updateFlag(Flags::Null);
   }
 
   // add message
   std::string message("dropped ");
-  message += Flag::getName(tank->getFlag());
+  message += tank->getFlag()->flagName;
   message += " flag";
   addMessage(tank, message);
 
   // player no longer has flag
-  tank->setFlag(NoFlag);
+  tank->setFlag(Flags::Null);
 }
 
 static bool		gotBlowedUp(BaseLocalPlayer* tank,
@@ -3823,7 +3822,7 @@ static bool		gotBlowedUp(BaseLocalPlayer* tank,
 
   // you can't take it with you
   const FlagId flag = tank->getFlag();
-  if (flag != NoFlag) {
+  if (flag != Flags::Null) {
     // tell other players I've dropped my flag
     lookupServer(tank)->sendDropFlag(tank->getPosition());
 
@@ -3845,7 +3844,7 @@ static bool		gotBlowedUp(BaseLocalPlayer* tank,
   // message when it gets back to us -- do this by ignoring killed
   // message if we're already dead.
   // don't die if we had the shield flag and we've been shot.
-  if (reason != GotShot || flag != ShieldFlag) {
+  if (reason != GotShot || flag != Flags::Shield) {
     // blow me up
     tank->explodeTank();
     if (tank == myTank) {
@@ -3909,7 +3908,7 @@ static bool		gotBlowedUp(BaseLocalPlayer* tank,
   // hit me again if I had the shield flag.  this is important for the
   // shots that aren't stopped by a hit and so may stick around to hit
   // me on the next update, making the shield useless.
-  return (reason == GotShot && flag == ShieldFlag && shotId != -1);
+  return (reason == GotShot && flag == Flags::Shield && shotId != -1);
 }
 
 static void		checkEnvironment()
@@ -3920,7 +3919,7 @@ static void		checkEnvironment()
   if (!myTank->isAlive() || myTank->isPaused()) return;
 
   FlagId flagId = myTank->getFlag();
-  if (flagId != NoFlag && int(flagId) >= int(FirstTeamFlag) &&
+  if (flagId != Flags::Null && int(flagId) >= int(FirstTeamFlag) &&
       int(flagId) <= int(LastTeamFlag)) {
     // have I captured a flag?
     TeamColor base = world->whoseBase(myTank->getPosition());
@@ -3930,7 +3929,7 @@ static void		checkEnvironment()
 	(int(flagId) != int(team) && base == team)))
       serverLink->sendCaptureFlag(base);
   }
-  else if (flagId == NoFlag && (myTank->getLocation() == LocalPlayer::OnGround ||
+  else if (flagId == Flags::Null && (myTank->getLocation() == LocalPlayer::OnGround ||
       myTank->getLocation() == LocalPlayer::OnBuilding)) {
     // Don't grab too fast
     static TimeKeeper lastGrabSent;
@@ -3940,7 +3939,7 @@ static void		checkEnvironment()
       const float radius = myTank->getRadius();
       const float radius2 = (radius + FlagRadius) * (radius + FlagRadius);
       for (int i = 0; i < numFlags; i++) {
-	if (world->getFlag(i).id == NoFlag || world->getFlag(i).status != FlagOnGround)
+	if (world->getFlag(i).id == Flags::Null || world->getFlag(i).status != FlagOnGround)
 	  continue;
 	if (world->getFlag(i).id == NullFlag)
 	  continue;
@@ -3960,7 +3959,7 @@ static void		checkEnvironment()
     float minDist = IdentityRange * IdentityRange;
     int closestFlag = -1;
     for (int i = 0; i < numFlags; i++) {
-      if (world->getFlag(i).id == NoFlag ||
+      if (world->getFlag(i).id == Flags::Null ||
 	  world->getFlag(i).status != FlagOnGround) continue;
       const float* fpos = world->getFlag(i).position;
       const float dist = (tpos[0] - fpos[0]) * (tpos[0] - fpos[0]) +
@@ -4078,7 +4077,7 @@ static void		setTarget()
     msg += bestTarget->getCallSign();
     msg += " (";
     msg += Team::getName(bestTarget->getTeam());
-    if (bestTarget->getFlag() != NoFlag) {
+    if (bestTarget->getFlag() != Flags::Null) {
       msg += ") with ";
       msg += Flag::getName(bestTarget->getFlag());
     }
@@ -4100,7 +4099,7 @@ static void		setTarget()
     msg += bestTarget->getCallSign();
     msg += " (";
     msg += Team::getName(bestTarget->getTeam());
-    if (bestTarget->getFlag() != NoFlag) {
+    if (bestTarget->getFlag() != Flags::Null) {
       msg += ") with ";
       msg += Flag::getName(bestTarget->getFlag());
     }
@@ -4170,7 +4169,7 @@ static void		setHuntTarget()
       msg += bestTarget->getCallSign();
       msg += " (";
       msg += Team::getName(bestTarget->getTeam());
-      if (bestTarget->getFlag() != NoFlag) {
+      if (bestTarget->getFlag() != Flags::Null) {
         msg += ") with ";
         msg += Flag::getName(bestTarget->getFlag());
       } else {
@@ -5246,7 +5245,7 @@ static bool		joinGame(const StartupInfo* info,
 
   // initialize some other stuff
   updateNumPlayers();
-  updateFlag(NoFlag);
+  updateFlag(Flags::Null);
   updateHighScores();
   radar->setRange(RadarMedRangeFactor*WorldSize);
   hud->setHeading(myTank->getAngle());
@@ -6471,7 +6470,7 @@ void			startPlaying(BzfDisplay* _display,
 
   // initialize control panel and hud
   updateNumPlayers();
-  updateFlag(NoFlag);
+  updateFlag(Flags::Null);
   updateHighScores();
   notifyBzfKeyMapChanged();
 
