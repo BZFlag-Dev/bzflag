@@ -548,8 +548,7 @@ static void serverStop()
   close(wksSocket);
 
   // tell players to quit
-  int i;
-  for (i = 0; i < curMaxPlayers; i++)
+  for (int i = 0; i < curMaxPlayers; i++)
     directMessage(i, MsgSuperKill, 0, getDirectMessageBuffer());
 
   // close connections
@@ -1235,8 +1234,6 @@ static TeamColor whoseBase(float x, float y, float z)
 #ifdef PRINTSCORE
 static void dumpScore()
 {
-  int i;
-
   if (!clOptions->printScore)
     return;
 #ifdef TIMELIMIT
@@ -1244,7 +1241,7 @@ static void dumpScore()
     std::cout << "#time " << clOptions->timeLimit - clOptions->timeElapsed << std::endl;
 #endif
   std::cout << "#teams";
-  for (i = int(RedTeam); i < NumTeams; i++)
+  for (int i = int(RedTeam); i < NumTeams; i++)
     std::cout << ' ' << team[i].team.won << '-' << team[i].team.lost << ' ' <<
     	         Team::getName(TeamColor(i));
   GameKeeper::Player::dumpScore();
@@ -1273,8 +1270,7 @@ static void acceptClient()
     return;
   }
 
-  int keepalive = 1;
-  int n;
+  int keepalive = 1, n;
   n = setsockopt(fd, SOL_SOCKET, SO_KEEPALIVE,
 		 (SSOType)&keepalive, sizeof(int));
   if (n < 0) {
@@ -1289,8 +1285,7 @@ static void acceptClient()
   PlayerId playerIndex;
 
   // find open slot in players list
-  PlayerId minPlayerId = 0;
-  PlayerId maxPlayerId = (PlayerId)maxPlayers;
+  PlayerId minPlayerId = 0, maxPlayerId = (PlayerId)maxPlayers;
   if (Replay::enabled()) {
      minPlayerId = MaxPlayers;
      maxPlayerId = MaxPlayers + ReplayObservers;
@@ -1419,8 +1414,7 @@ static void rejectPlayer(int playerIndex, uint16_t code, const char *reason)
 // Team Size is wrong at some time
 // as we are fixing, look also at unconnected player slot to rub it
 static void fixTeamCount() {
-  int playerIndex;
-  int teamNum;
+  int playerIndex, teamNum;
   for (teamNum = RogueTeam; teamNum < RabbitTeam; teamNum++)
     team[teamNum].team.size = 0;
   for (playerIndex = 0; playerIndex < maxPlayers; playerIndex++) {
@@ -1440,8 +1434,6 @@ static void addPlayer(int playerIndex)
     = GameKeeper::Player::getPlayerByIndex(playerIndex);
   if (!playerData)
     return;
-
-  int i;
   
   // make sure the callsign is not obscene/filtered
   if (clOptions->filterCallsigns) {
@@ -1486,7 +1478,7 @@ static void addPlayer(int playerIndex)
 
   // count current number of players and players+observers
   int numplayers = 0;
-  for (i = 0; i < int(ObserverTeam); i++)
+  for (int i = 0; i < int(ObserverTeam); i++)
     numplayers += team[i].team.size;
   const int numplayersobs = numplayers + team[ObserverTeam].team.size;
 
@@ -1606,11 +1598,10 @@ static void addPlayer(int playerIndex)
   // don't send robots any game info.  watch out for connection being closed
   // because of an error.
   if (!playerData->player.isBot()) {
-    int i;
     sendTeamUpdate(playerIndex);
     sendFlagUpdate(-1, playerIndex);
     GameKeeper::Player *otherData;
-    for (i = 0; i < curMaxPlayers && NetHandler::exists(playerIndex); i++)
+    for (int i = 0; i < curMaxPlayers && NetHandler::exists(playerIndex); i++)
       if (i != playerIndex) {
 	otherData = GameKeeper::Player::getPlayerByIndex(i);
 	if (otherData)
@@ -2166,8 +2157,6 @@ static void sendQueryGame(int playerIndex)
 
 static void sendQueryPlayers(int playerIndex)
 {
-  int i = 0;
-
   // count the number of active players
   int numPlayers = GameKeeper::Player::count();
 
@@ -2181,7 +2170,7 @@ static void sendQueryPlayers(int playerIndex)
   if (NetHandler::exists(playerIndex))
     sendTeamUpdate(playerIndex);
   GameKeeper::Player *otherData;
-  for (i = 0; i < curMaxPlayers && NetHandler::exists(playerIndex); i++) {
+  for (int i = 0; i < curMaxPlayers && NetHandler::exists(playerIndex); i++) {
     otherData = GameKeeper::Player::getPlayerByIndex(i);
     if (otherData)
       sendPlayerUpdate(otherData, playerIndex);
@@ -3098,11 +3087,10 @@ static void handleCommand(int t, const void *rawbuf)
 	FlagSet::iterator m_it;
 	FlagOptionMap hasFlag;
 	FlagSet missingFlags;
-	int i;
 	unsigned short numClientFlags = len/2;
 
 	/* Unpack incoming message containing the list of flags our client supports */
-	for (i = 0; i < numClientFlags; i++) {
+	for (int i = 0; i < numClientFlags; i++) {
 		FlagType *fDesc;
 		buf = FlagType::unpack(buf, fDesc);
 		if (fDesc != Flags::Null)
@@ -3416,8 +3404,7 @@ static void handleCommand(int t, const void *rawbuf)
       break;
 
     case MsgLagPing: {
-      bool warn;
-      bool kick;
+      bool warn, kick;
       int lag = playerData->lagInfo.updatePingLag(buf, warn, kick);
       if (warn) {
 	char message[MessageLen];
@@ -4026,7 +4013,6 @@ int main(int argc, char **argv)
 	  waitTime = flag[i].dropDone - tm;
     }
 
-    int p;
     // get time for next Player internal action
     GameKeeper::Player::updateLatency(waitTime);
 
@@ -4086,7 +4072,7 @@ int main(int argc, char **argv)
 #endif
 
     // send delayed packets
-    for (p = 0; p < curMaxPlayers; p++) {
+    for (int p = 0; p < curMaxPlayers; p++) {
       GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(p);
       if (!playerData)
 	continue;
