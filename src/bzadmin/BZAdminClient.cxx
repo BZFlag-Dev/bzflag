@@ -303,13 +303,11 @@ BZAdminClient::ServerCode BZAdminClient::checkMessage() {
 	vbuf = nboUnpackUInt(vbuf, timeLeft);
 	if (timeLeft == 0)
 	  lastMessage.first = "*** Time Expired.";
-	else {
-	  if (timeLeft == ~0u)
-	    lastMessage.first = "*** Paused.";
-	  else
+	else if (timeLeft == ~0u)
+	  lastMessage.first = "*** Paused.";
+	else
 	    lastMessage.first = std::string("*** ") +
-	      TextUtils::format("%d", timeLeft) + " seconds remaining.";
-	}
+	      TextUtils::format("%u", timeLeft) + " seconds remaining.";
       }
       break;
 
