@@ -28,6 +28,9 @@
 #include "BzfJoystick.h"
 #include <map>
 
+#include <linux/input.h>
+
+
 struct EvdevJoystickInfo {
   /* Information about a joystick that's installed on the
    * system but not necessarily the one we're using. This
@@ -65,6 +68,11 @@ class EvdevJoystick : public BzfJoystick {
     unsigned long getJoyButtons();
     void        getJoyDevices(std::vector<std::string> &list) const;
 
+    bool        ffHasRumble() const;
+    void        ffRumble(int count,
+			 float delay, float duration,
+			 float strong_motor, float weak_motor=0.0f);
+
     /* Test whether this driver should be used without actually
      * loading it. Will return false if no event devices can be
      * located, or if it has been specifically disabled by setting
@@ -79,11 +87,14 @@ class EvdevJoystick : public BzfJoystick {
 
     void        poll();
     void        setButton(int button_num, int state);
+    void        ffResetRumble();
+
+    std::map<std::string,EvdevJoystickInfo> joysticks;
 
     EvdevJoystickInfo*          currentJoystick;
     int                         joystickfd;
-    std::map<std::string,EvdevJoystickInfo> joysticks;
     int                         buttons;
+    struct ff_effect            ff_rumble;
 };
 
 #endif // BZF_EVDEV_JOY_H

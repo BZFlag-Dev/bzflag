@@ -59,6 +59,15 @@ void                    BzfJoystick::getJoyDevices(std::vector<std::string>
   list.clear();
 }
 
+bool                    BzfJoystick::ffHasRumble() const
+{
+  return false;
+}
+
+void                    BzfJoystick::ffRumble(int, float, float, float, float)
+{
+}
+
 // Local Variables: ***
 // mode:C++ ***
 // tab-width: 8 ***

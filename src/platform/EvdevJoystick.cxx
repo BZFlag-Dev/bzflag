@@ -22,7 +22,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
-#include <linux/input.h>
 #include <sys/types.h>
 #include <dirent.h>
 #include <fcntl.h>
@@ -168,6 +167,7 @@ bool			EvdevJoystick::isJoystick(struct EvdevJoystickInfo &info)
 void			EvdevJoystick::initJoystick(const char* joystickName)
 {
   /* Close the previous joystick */
+  ffResetRumble();
   if (joystickfd > 0)
     close(joystickfd);
   currentJoystick = NULL;
@@ -292,6 +292,65 @@ void                    EvdevJoystick::getJoyDevices(std::vector<std::string>
   std::map<std::string,EvdevJoystickInfo>::const_iterator i;
   for (i = joysticks.begin(); i != joysticks.end(); ++i)
     list.push_back(i->first);
+}
+
+bool                    EvdevJoystick::ffHasRumble() const
+{
+  if (!currentJoystick)
+    return false;
+  else
+    return test_bit(EV_FF, currentJoystick->evbit) &&
+           test_bit(FF_RUMBLE, currentJoystick->ffbit);
+}
+
+void                    EvdevJoystick::ffResetRumble()
+{
+  /* Erase old effects before closing a device,
+   * if we had any, then initialize the ff_rumble struct.
+   */
+  if (ffHasRumble() && ff_rumble.id != -1) {
+
+    /* Stop the effect first */
+    struct input_event event;
+    event.type = EV_FF;
+    event.code = ff_rumble.id;
+    event.value = 0;
+    write(joystickfd, &event, sizeof(event));
+
+    /* Erase the downloaded effect */
+    ioctl(joystickfd, EVIOCRMFF, ff_rumble.id);
+  }
+
+  /* Reinit the ff_rumble struct. It starts out with
+   * an id of -1, prompting the driver to assign us one.
+   * Once that happens, we stick with the same effect slot
+   * as long as we have the device open.
+   */
+  memset(&ff_rumble, 0, sizeof(ff_rumble));
+  ff_rumble.type = FF_RUMBLE;
+  ff_rumble.id = -1;
+}
+
+void                    EvdevJoystick::ffRumble(int count,
+						float delay, float duration,
+						float strong_motor, float weak_motor)
+{
+  if (!ffHasRumble())
+    return;
+
+  /* Download an updated effect */
+  ff_rumble.u.rumble.strong_magnitude = (int) (0xFFFF * strong_motor + 0.5);
+  ff_rumble.u.rumble.weak_magnitude = (int) (0xFFFF * weak_motor + 0.5);
+  ff_rumble.replay.length = (int) (duration * 1000 + 0.5);
+  ff_rumble.replay.delay = (int) (delay * 1000 + 0.5);
+  ioctl(joystickfd, EVIOCSFF, &ff_rumble);
+
+  /* Play it the indicated number of times */
+  struct input_event event;
+  event.type = EV_FF;
+  event.code = ff_rumble.id;
+  event.value = count;
+  write(joystickfd, &event, sizeof(event));
 }
 
 // Local Variables: ***
