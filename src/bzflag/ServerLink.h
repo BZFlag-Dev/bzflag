@@ -34,7 +34,8 @@ class ServerLink {
 			Rejected = 2,
 			BadVersion = 3,
 			Hungup = 4,		// only used by Winsock
-			CrippledVersion = 5
+			CrippledVersion = 5,
+			Refused = 6
     };
 
     enum Abilities {
@@ -50,6 +51,7 @@ class ServerLink {
 			~ServerLink();
 
     State		getState() const;
+		const std::string& getRejectionMessage ( void ) { return rejectionMessage;}
     int			getSocket() const;	// file descriptor actually
     const PlayerId&	getId() const;
     const char*		getVersion() const;
@@ -101,6 +103,8 @@ class ServerLink {
     char		version[9];
     static ServerLink*	server;
     int			server_abilities;
+
+		std::string	rejectionMessage;
 };
 
 #define SEND 1

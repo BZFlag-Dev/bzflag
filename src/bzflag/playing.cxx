@@ -3855,6 +3855,14 @@ static bool		joinGame(const StartupInfo* info,
 	break;
       }
 
+			// you got banned
+			case ServerLink::Refused:{
+				std::string banMessage = "Server Refused connection due to ban: ";
+				banMessage += serverLink->getRejectionMessage();
+			printError(banMessage);
+		break;
+				}
+
       case ServerLink::Rejected:
 	// the server is probably full or the game is over.  if not then
 	// the server is having network problems.

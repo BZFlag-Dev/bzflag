@@ -1270,7 +1270,23 @@ static void acceptClient()
   setNoDelay(fd);
   BzfNetwork::setNonBlocking(fd);
 
-  if (!clOptions->acl.validate( clientAddr.sin_addr)) {
+   // send server version and playerid
+  char buffer[9];
+  memcpy(buffer, getServerVersion(), 8);
+  // send 0xff if list is full
+  buffer[8] = (char)0xff;
+
+
+ if (!clOptions->acl.validate( clientAddr.sin_addr)) {
+
+	 std::string rejectionMessage;
+
+	 rejectionMessage = "REFUSED_";
+	 rejectionMessage += "Insert reason here";
+	 rejectionMessage += (char)0xff;
+// send back 0xff before closing
+	 send(fd, rejectionMessage.c_str(), rejectionMessage.size(), 0);
+
     close(fd);
     return;
   }
@@ -1281,11 +1297,6 @@ static void acceptClient()
   if (n < 0) {
     nerror("couldn't set keepalive");
   }
-  // send server version and playerid
-  char buffer[9];
-  memcpy(buffer, getServerVersion(), 8);
-  // send 0xff if list is full
-  buffer[8] = (char)0xff;
 
   PlayerId playerIndex;
 
