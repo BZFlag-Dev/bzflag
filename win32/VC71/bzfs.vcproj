@@ -12,8 +12,8 @@
 	<Configurations>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory=".\..\bin"
-			IntermediateDirectory=".\Release"
+			OutputDirectory="..\..\src\bzfs\"
+			IntermediateDirectory="..\..\src\bzfs\"
 			ConfigurationType="1"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE"
