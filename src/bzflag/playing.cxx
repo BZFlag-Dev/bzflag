@@ -1599,53 +1599,6 @@ static void		doKeyPlaying(const BzfKeyEvent& key, bool pressed)
   }
   //  else
 #endif
-  if (roaming) {
-    bool roamingkey = true;
-    switch (key.button) {
-      case BzfKeyEvent::F8:
-	if (pressed) {
-	  roamView = roamingView((roamView + 1) % roamViewCount);
-	  if (roamView == roamViewFlag) {
-	    const int maxFlags = world->getMaxFlags();
-	    bool found = false;
-	    for(int i = 0; i < maxFlags; i++) {
-	      const Flag& flag = world->getFlag(i);
-	      if (flag.desc->flagTeam != NoTeam) {
-		roamTrackFlag = i;
-		found = true;
-		break;
-	      }
-	    }
-	    if(!found)
-	      roamView = roamViewFree;
-	  }
-	  else if ((roamTrackTank != -1) && (roamView == roamViewTrack ||
-		roamView == roamViewFollow || roamView == roamViewFP)) {
-	    if ((player[roamTrackTank] != NULL) && (!player[roamTrackTank]->isAlive())) {
-	      bool found = false;
-	      for(int i = 0; i < curMaxPlayers; i++) {
-		if(player[i] && player[i]->isAlive()) {
-		  roamTrackTank = roamTrackWinner = i;
-		  found = true;
-		  break;
-		}
-	      }
-	      if(!found)
-		roamTrackTank = -1;
-	    }
-	  }
-	  setRoamingLabel(true);
-	}
-	break;
-
-      default:
-	roamingkey = false;
-	break;
-    }
-    if (roamingkey)
-      return;
-  }
-  //  else
 
   if (key.ascii == 0 &&
 	   key.button >= BzfKeyEvent::F1 &&
@@ -2081,7 +2034,37 @@ static std::string cmdRoam(const std::string&, const CommandManager::ArgList& ar
       return "usage: roam cycle {type|subject} {forward|backward}";
     if (args[1] == "type") {
       if (args[2] == "forward") {
+	roamView = roamingView((roamView + 1) % roamViewCount);
+	if (roamView == roamViewFlag) {
+	  const int maxFlags = world->getMaxFlags();
+	  bool found = false;
+	  for (int i = 0; i < maxFlags; i++) {
+	    const Flag& flag = world->getFlag(i);
+	    if (flag.desc->flagTeam != NoTeam) {
+	      roamTrackFlag = i;
+	      found = true;
+	      break;
+	    }
+	  }
+	  if (!found)
+	    roamView = roamViewFree;
+	} else if ((roamTrackTank != -1) && (roamView == roamViewTrack || roamView == roamViewFollow || roamView == roamViewFP)) {
+	  if ((player[roamTrackTank] != NULL) && (!player[roamTrackTank]->isAlive())) {
+	    bool found = false;
+	    for (int i = 0; i < curMaxPlayers; i++) {
+	      if (player[i] && player[i]->isAlive()) {
+		roamTrackTank = roamTrackWinner = i;
+		found = true;
+		break;
+	      }
+	    }
+	    if (!found)
+	      roamTrackTank = -1;
+	  }
+	}
+	setRoamingLabel(true);
       } else if (args[2] == "backward") {
+	// FIXME
       } else {
         return "usage: roam cycle {type|subject} {forward|backward}";
       }
