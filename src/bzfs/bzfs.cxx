@@ -103,7 +103,7 @@ static RejoinList rejoinList;
 
 static TimeKeeper lastWorldParmChange;
 
-void sendMessage(int playerIndex, PlayerId targetPlayer, const char *message, bool fullBuffer=false);
+void sendMessage(int playerIndex, PlayerId targetPlayer, const char *message);
 
 void removePlayer(int playerIndex, const char *reason, bool notify=true);
 void resetFlag(int flagIndex);
@@ -1429,32 +1429,26 @@ static void respondToPing(Address addr)
 }
 
 
-void sendMessage(int playerIndex, PlayerId targetPlayer, const char *message, bool fullBuffer)
+void sendMessage(int playerIndex, PlayerId targetPlayer, const char *message)
 {
   // player is sending a message to a particular player, a team, or all.
   // send MsgMessage
+  int msglen = strlen (message) + 1; // include the terminator
 
-  if (strlen(message) > (unsigned)MessageLen) {
-    DEBUG1("WARNING: Network message being sent is too long! (message is %d, cutoff at %d)\n",
-    		    strlen(message), MessageLen);
-  }
-
-  // if fullBuffer=true, it means, that caller already passed a buffer
-  // of size MessageLen and we can use that directly;
-  // otherwise copy the message to a buffer of the correct size first
-  char messagebuf[MessageLen];
-  if (!fullBuffer) {
-    strncpy(messagebuf,message,MessageLen);
-    message=messagebuf;
+  if (msglen > MessageLen) {
+    msglen = MessageLen;
+    DEBUG1("WARNING: Network message being sent is too long! "
+           "(message is %d, cutoff at %d)\n", msglen, MessageLen);
   }
 
   void *buf, *bufStart = getDirectMessageBuffer();
   buf = nboPackUByte(bufStart, playerIndex);
   buf = nboPackUByte(buf, targetPlayer);
-  buf = nboPackString(buf, message, MessageLen);
-
+  buf = nboPackString(buf, message, msglen);
+  ((char*)bufStart)[MessageLen - 1] = '\0'; // always terminate
+  
+  int len = 2 + msglen;
   bool broadcast = false;
-  int len = (char*)buf - (char*)bufStart;
 
   if (targetPlayer <= LastRealPlayer) {
     directMessage(targetPlayer, MsgMessage, len, bufStart);
@@ -1802,7 +1796,7 @@ static void addPlayer(int playerIndex)
 
 #ifdef SERVERLOGINMSG
   sprintf(message,"BZFlag server %s, http://BZFlag.org/", getAppVersion());
-  sendMessage(ServerPlayer, playerIndex, message, true);
+  sendMessage(ServerPlayer, playerIndex, message);
 
   if (clOptions->servermsg != "") {
 
@@ -1813,12 +1807,12 @@ static void addPlayer(int playerIndex)
       unsigned int l = j - i < MessageLen - 1 ? j - i : MessageLen - 1;
       strncpy(message, i, l);
       message[l] = '\0';
-      sendMessage(ServerPlayer, playerIndex, message, true);
+      sendMessage(ServerPlayer, playerIndex, message);
       i = j + 2;
     }
     strncpy(message, i, MessageLen - 1);
     message[strlen(i) < MessageLen - 1 ? strlen(i) : MessageLen - 1] = '\0';
-    sendMessage(ServerPlayer, playerIndex, message, true);
+    sendMessage(ServerPlayer, playerIndex, message);
   }
 
   // look for a startup message -- from a file
@@ -2400,7 +2394,7 @@ static void playerKilled(int victimIndex, int killerIndex, int reason,
     if (killerData->score.isTK()) {
        char message[MessageLen];
        strcpy(message, "You have been automatically kicked for team killing" );
-       sendMessage(ServerPlayer, killerIndex, message, true);
+       sendMessage(ServerPlayer, killerIndex, message);
        removePlayer(killerIndex, "teamkilling");
      }
   }
@@ -2923,7 +2917,7 @@ static void shotFired(int playerIndex, void *buf, int len)
 	// give message each shot below 5, each 5th shot & at start
 	if (shotsLeft % 5 == 0 || shotsLeft <= 3 || shotsLeft == limit-1){
 	  sprintf(message,"%d shots left",shotsLeft);
-	  sendMessage(ServerPlayer, playerIndex, message, true);
+	  sendMessage(ServerPlayer, playerIndex, message);
 	}
       } else { // no shots left
 	if (shotsLeft == 0 || (limit == 0 && shotsLeft < 0)){
@@ -3092,7 +3086,7 @@ static void parseCommand(const char *message, int t)
   } else {
     char reply[MessageLen];
     snprintf(reply, MessageLen, "Unknown command [%s]", message + 1);
-    sendMessage(ServerPlayer, t, reply, true);
+    sendMessage(ServerPlayer, t, reply);
   }
 }
 
@@ -3106,7 +3100,7 @@ static bool invalidPlayerAction(PlayerInfo &p, int t, const char *action) {
       char buffer[MessageLen];
       DEBUG1("Player %s tried to %s while paused\n", p.getCallSign(), action);
       snprintf(buffer, MessageLen, "Autokick: Looks like you tried to %s while paused.", action);
-      sendMessage(ServerPlayer, t, buffer, true);
+      sendMessage(ServerPlayer, t, buffer);
       snprintf(buffer, MessageLen, "Invalid attempt to %s while paused", action);
       removePlayer(t, buffer);
     } else {
@@ -3377,7 +3371,7 @@ static void handleCommand(int t, const void *rawbuf)
 	parseCommand(message, t);
       } else if (targetPlayer == AdminPlayers
 		 && accessInfo[t].hasPerm(PlayerAccessInfo::adminMessages)) {
-	sendMessage (t, AdminPlayers, message, true);			
+	sendMessage (t, AdminPlayers, message);			
       }
       // check if the target player is invalid
       else if (targetPlayer < LastRealPlayer && 
@@ -3391,7 +3385,7 @@ static void handleCommand(int t, const void *rawbuf)
 	    clOptions->filter.filter(message, false);
 	  }
 	}
-	sendMessage(t, targetPlayer, message, true);
+	sendMessage(t, targetPlayer, message);
       }
       break;
     }
@@ -3462,14 +3456,14 @@ static void handleCommand(int t, const void *rawbuf)
 	char message[MessageLen];
 	sprintf(message,"*** Server Warning: your lag is too high (%d ms) ***",
 		lag);
-	sendMessage(ServerPlayer, t, message, true);
+	sendMessage(ServerPlayer, t, message);
 	if (kick) {
 	  // drop the player
 	  sprintf
 	    (message,
 	     "You have been kicked due to excessive lag (you have been warned %d times).",
 	     clOptions->maxlagwarn);
-	  sendMessage(ServerPlayer, t, message, true);
+	  sendMessage(ServerPlayer, t, message);
 	  removePlayer(t, "lag");
 	}
       }
@@ -3516,7 +3510,7 @@ static void handleCommand(int t, const void *rawbuf)
 
 	  if (state.pos[2] > maxTankHeight) {
 	    DEBUG1("Kicking Player %s [%d] jumped too high [max: %f height: %f]\n", player[t].getCallSign(), t, maxTankHeight, state.pos[2]);
-	    sendMessage(ServerPlayer, t, "Autokick: Player location was too high.", true);
+	    sendMessage(ServerPlayer, t, "Autokick: Player location was too high.");
 	    removePlayer(t, "too high");
 	    break;
 	  }
@@ -3545,7 +3539,7 @@ static void handleCommand(int t, const void *rawbuf)
 	if (!InBounds)
 	{
 	  DEBUG1("Kicking Player %s [%d] Out of map bounds at position (%.2f,%.2f,%.2f)\n", player[t].getCallSign(), t, state.pos[0], state.pos[1], state.pos[2]);
-	  sendMessage(ServerPlayer, t, "Autokick: Player location was outside the playing area.", true);
+	  sendMessage(ServerPlayer, t, "Autokick: Player location was outside the playing area.");
 	  removePlayer(t, "Out of map bounds");
 	}
 
@@ -3604,7 +3598,7 @@ static void handleCommand(int t, const void *rawbuf)
 		DEBUG1("Kicking Player %s [%d] tank too fast (tank: %f, allowed: %f)\n",
 		       player[t].getCallSign(), t,
 		       sqrt(curPlanarSpeedSqr), sqrt(maxPlanarSpeedSqr));
-		sendMessage(ServerPlayer, t, "Autokick: Player tank is moving too fast.", true);
+		sendMessage(ServerPlayer, t, "Autokick: Player tank is moving too fast.");
 		removePlayer(t, "too fast");
 	      }
 	      break;
@@ -4134,7 +4128,7 @@ int main(int argc, char **argv)
 	if (player[i].isTooMuchIdling(tm, clOptions->idlekickthresh)) {
 	  char message[MessageLen]
 	    = "You were kicked because you were idle too long";
-	  sendMessage(ServerPlayer, i,  message, true);
+	  sendMessage(ServerPlayer, i,  message);
 	  removePlayer(i, "idling");
 	}
       }
@@ -4188,7 +4182,7 @@ int main(int argc, char **argv)
 	if (!announcedOpening) {
 	  voteTime = votingarbiter->getVoteTime();
 	  sprintf(message, "A poll to %s %s has begun.  Players have up to %d seconds to vote.", action.c_str(), target.c_str(), voteTime);
-	  sendMessage(ServerPlayer, AllPlayers, message, true);
+	  sendMessage(ServerPlayer, AllPlayers, message);
 	  announcedOpening = true;
 	}
 
@@ -4199,7 +4193,7 @@ int main(int argc, char **argv)
 	    ((int)(TimeKeeper::getCurrent() - lastAnnounce) != 0) &&
 	    (votingarbiter->timeRemaining() > 0)) {
 	  sprintf(message, "%d seconds remain in the poll to %s %s.", votingarbiter->timeRemaining(), action.c_str(), target.c_str());
-	  sendMessage(ServerPlayer, AllPlayers, message, true);
+	  sendMessage(ServerPlayer, AllPlayers, message);
 	  lastAnnounce = TimeKeeper::getCurrent();
 	}
 
@@ -4207,7 +4201,7 @@ int main(int argc, char **argv)
 
 	  if (!announcedResults) {
 	    sprintf(message, "Poll Results: %ld in favor, %ld oppose, %ld abstain", votingarbiter->getYesCount(), votingarbiter->getNoCount(), votingarbiter->getAbstentionCount());
-	    sendMessage(ServerPlayer, AllPlayers, message, true);
+	    sendMessage(ServerPlayer, AllPlayers, message);
 	    announcedResults = true;
 	  }
 
@@ -4225,13 +4219,13 @@ int main(int argc, char **argv)
 	      	sprintf(message, "The poll is now closed and was successful.  %s is scheduled to be %s.", target.c_str(), pollAction.c_str());
 	      else
 	      	sprintf(message, "The poll is now closed and was successful.  Currently unused flags are scheduled to be reset.");
-   	      sendMessage(ServerPlayer, AllPlayers, message, true);
+   	      sendMessage(ServerPlayer, AllPlayers, message);
 	      announcedClosure = true;
 	    }
 	  } else {
 	    if (!announcedClosure) {
 	      sprintf(message, "The poll to %s %s was not successful", action.c_str(), target.c_str());
-	      sendMessage(ServerPlayer, AllPlayers, message, true);
+	      sendMessage(ServerPlayer, AllPlayers, message);
 	      announcedClosure = true;
 
 	      // go ahead and reset the poll (don't bother waiting for veto timeout)
@@ -4273,7 +4267,7 @@ int main(int argc, char **argv)
 	      	sprintf(message, "%s has been %s", target.c_str(), pollAction.c_str());
 	      else
 	      	sprintf(message, "All unused flags have now been reset.");
-	      sendMessage(ServerPlayer, AllPlayers, message, true);
+	      sendMessage(ServerPlayer, AllPlayers, message);
 
 	      /* regardless of whether or not the player was found, if the poll
 	       * is a ban poll, ban the weenie
@@ -4302,7 +4296,7 @@ int main(int argc, char **argv)
 		if (foundPlayer) {
 		  // notify the player
 		  sprintf(message, "You have been %s due to sufficient votes to have you removed", action == "ban" ? "temporarily banned" : "kicked");
-		  sendMessage(ServerPlayer, v, message, true);
+		  sendMessage(ServerPlayer, v, message);
 		  sprintf(message, "/poll %s", action.c_str());
 		  removePlayer(v, message);
 		}
@@ -4329,7 +4323,7 @@ int main(int argc, char **argv)
  	    else
  	      sprintf(message, "Enough votes were collected to reset all unused flags early.");
 
-	    sendMessage(ServerPlayer, AllPlayers, message, true);
+	    sendMessage(ServerPlayer, AllPlayers, message);
 
 	    // close the poll since we have enough votes (next loop will kick off notification)
 	    votingarbiter->closePoll();
@@ -4355,12 +4349,12 @@ int main(int argc, char **argv)
 	    int l = j - c < MessageLen - 1 ? j - c : MessageLen - 1;
 	    strncpy(message, c, l);
 	    message[l] = '\0';
-	    sendMessage(ServerPlayer, AllPlayers, message, true);
+	    sendMessage(ServerPlayer, AllPlayers, message);
 	    c = j + 2;
 	  }
 	  strncpy(message, c, MessageLen - 1);
 	  message[strlen(c) < MessageLen - 1 ? strlen(c) : MessageLen -1] = '\0';
-	  sendMessage(ServerPlayer, AllPlayers, message, true);
+	  sendMessage(ServerPlayer, AllPlayers, message);
 	}
 	// multi line from file advert
 	if (adLines != NULL) {
@@ -4586,13 +4580,13 @@ int main(int argc, char **argv)
 	    if (code == MsgShotBegin) {
 	      char message[MessageLen];
 	      sprintf(message,"Your end is not using UDP, turn on udp");
-	      sendMessage(ServerPlayer, i, message, true);
+	      sendMessage(ServerPlayer, i, message);
 
 	      sprintf(message,"upgrade your client http://BZFlag.org/ or");
-	      sendMessage(ServerPlayer, i, message, true);
+	      sendMessage(ServerPlayer, i, message);
 
 	      sprintf(message,"Try another server, Bye!");
-	      sendMessage(ServerPlayer, i, message, true);
+	      sendMessage(ServerPlayer, i, message);
 	      removePlayer(i, "no UDP");
 	      continue;
 	    }

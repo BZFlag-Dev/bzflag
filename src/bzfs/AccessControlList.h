@@ -29,7 +29,7 @@
 #include "TimeKeeper.h"
 
 /* FIXME - needs to come from a public header */
-extern void sendMessage(int playerIndex, PlayerId targetPlayer, const char *message, bool fullBuffer);
+extern void sendMessage(int playerIndex, PlayerId targetPlayer, const char *message);
 
 
 /** This struct contains information about a ban - the address that was banned,
@@ -311,8 +311,8 @@ public:
     expire();
 
     char banlistmessage[MessageLen];
-    sendMessage(ServerPlayer, id, "IP Ban List", false);
-    sendMessage(ServerPlayer, id, "-----------", false);
+    sendMessage(ServerPlayer, id, "IP Ban List");
+    sendMessage(ServerPlayer, id, "-----------");
     for (banList_t::iterator it = banList.begin(); it != banList.end(); ++it) {
       char *pMsg = banlistmessage;
       in_addr mask = it->addr;
@@ -343,13 +343,13 @@ public:
       if( it->bannedBy.length() )
 	sprintf(pMsg + strlen(pMsg), " banned by: %s", it->bannedBy.c_str());
 
-      sendMessage(ServerPlayer, id, banlistmessage, true);
+      sendMessage(ServerPlayer, id, banlistmessage);
 
       // add reason, if any
       if( it->reason.size() ) {
 	char *pMsg = banlistmessage;
 	sprintf(pMsg, "   reason: %s", it->reason.c_str() );
-	sendMessage(ServerPlayer, id, banlistmessage, true );
+	sendMessage(ServerPlayer, id, banlistmessage);
       }
     }
   }
@@ -360,8 +360,8 @@ public:
     char banlistmessage[MessageLen];
     expire();
 
-    sendMessage(ServerPlayer, id, "Host Ban List", false);
-    sendMessage(ServerPlayer, id, "-------------", false);
+    sendMessage(ServerPlayer, id, "Host Ban List");
+    sendMessage(ServerPlayer, id, "-------------");
     for (hostBanList_t::iterator it = hostBanList.begin(); it != hostBanList.end(); ++it) {
       char *pMsg = banlistmessage;
 
@@ -374,13 +374,13 @@ public:
       if( it->bannedBy.length() )
 	sprintf(pMsg + strlen(pMsg), " banned by: %s", it->bannedBy.c_str());
 
-      sendMessage(ServerPlayer, id, banlistmessage, true);
+      sendMessage(ServerPlayer, id, banlistmessage);
 
       // add reason, if any
       if( it->reason.size() ) {
 	char *pMsg = banlistmessage;
 	sprintf(pMsg, "   reason: %s", it->reason.c_str() );
-	sendMessage(ServerPlayer, id, banlistmessage, true );
+	sendMessage(ServerPlayer, id, banlistmessage);
       }
     }
   }

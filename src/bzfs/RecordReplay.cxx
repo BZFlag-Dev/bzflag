@@ -221,7 +221,7 @@ extern char *getDirectMessageBuffer(void);
 extern void directMessage(int playerIndex, u16 code, 
                           int len, const void *msg);
 extern void sendMessage(int playerIndex, PlayerId targetPlayer, 
-                        const char *message, bool fullBuffer=false);
+                        const char *message);
 
                         
 /****************************************************************************/
@@ -331,7 +331,7 @@ bool Record::setSize (int playerIndex, int Mbytes)
   }
   RecordMaxBytes = Mbytes * (1024) * (1024);
   snprintf (buffer, MessageLen, "Record size set to %i", Mbytes);
-  sendMessage(ServerPlayer, playerIndex, buffer, true);    
+  sendMessage(ServerPlayer, playerIndex, buffer);    
   return true;
 }
 
@@ -347,7 +347,7 @@ bool Record::setRate (int playerIndex, int seconds)
   }
   RecordUpdateRate = seconds * 1000000;
   snprintf (buffer, MessageLen, "Record rate set to %i", seconds);
-  sendMessage(ServerPlayer, playerIndex, buffer, true);    
+  sendMessage(ServerPlayer, playerIndex, buffer);    
   return true;
 }
 
@@ -380,7 +380,7 @@ bool Record::sendStats (int playerIndex)
               "  saved: %i bytes / %i packets / %.1f seconds",
               RecordFileBytes, RecordFilePackets, saveTime);   
   }
-  sendMessage (ServerPlayer, playerIndex, buffer, true);
+  sendMessage (ServerPlayer, playerIndex, buffer);
 
   return true;
 }
@@ -411,28 +411,28 @@ bool Record::saveFile (int playerIndex, const char *filename)
   if (RecordFile == NULL) {
     recordReset();
     snprintf (buffer, MessageLen, "Could not open for writing: %s", name.c_str());
-    sendMessage (ServerPlayer, playerIndex, buffer, true);
+    sendMessage (ServerPlayer, playerIndex, buffer);
     return false;
   }
   
   if (!saveHeader (playerIndex, 0 /* placeholder */, RecordFile)) {
     recordReset();
     snprintf (buffer, MessageLen, "Could not save header: %s", name.c_str());
-    sendMessage (ServerPlayer, playerIndex, buffer, true);
+    sendMessage (ServerPlayer, playerIndex, buffer);
     return false;
   }
   
   if (!saveStates ()) {
     recordReset();
     snprintf (buffer, MessageLen, "Could not save states: %s", name.c_str());
-    sendMessage (ServerPlayer, playerIndex, buffer, true);
+    sendMessage (ServerPlayer, playerIndex, buffer);
     return false;
   }
   
   RecordStartTime = getRRtime ();
 
   snprintf (buffer, MessageLen, "Recording to file: %s", name.c_str());
-  sendMessage (ServerPlayer, playerIndex, buffer, true);
+  sendMessage (ServerPlayer, playerIndex, buffer);
   
   return true;
 }
@@ -498,7 +498,7 @@ bool Record::saveBuffer (int playerIndex, const char *filename, int seconds)
   RecordFile = openWriteFile (playerIndex, filename);
   if (RecordFile == NULL) {
     snprintf (buffer, MessageLen, "Could not open for writing: %s", name.c_str());
-    sendMessage (ServerPlayer, playerIndex, buffer, true);
+    sendMessage (ServerPlayer, playerIndex, buffer);
     return false;
   }
   
@@ -506,7 +506,7 @@ bool Record::saveBuffer (int playerIndex, const char *filename, int seconds)
     fclose (RecordFile);
     RecordFile = NULL;
     snprintf (buffer, MessageLen, "Could not save header: %s", name.c_str());
-    sendMessage (ServerPlayer, playerIndex, buffer, true);
+    sendMessage (ServerPlayer, playerIndex, buffer);
     return false;
   }
 
@@ -523,7 +523,7 @@ bool Record::saveBuffer (int playerIndex, const char *filename, int seconds)
   RecordFilePrevPos = 0;
   
   snprintf (buffer, MessageLen, "Record buffer saved to: %s", name.c_str());
-  sendMessage (ServerPlayer, playerIndex, buffer, true);
+  sendMessage (ServerPlayer, playerIndex, buffer);
   
   return true;
 }
@@ -709,13 +709,13 @@ bool Replay::loadFile(int playerIndex, const char *filename)
   ReplayFile = openFile (filename, "rb");
   if (ReplayFile == NULL) {
     snprintf (buffer, MessageLen, "Could not open: %s", name.c_str());
-    sendMessage (ServerPlayer, playerIndex, buffer, true);
+    sendMessage (ServerPlayer, playerIndex, buffer);
     return false;
   }
   
   if (!loadHeader (&header, ReplayFile)) {
     snprintf (buffer, MessageLen, "Could not open header: %s", name.c_str());
-    sendMessage (ServerPlayer, playerIndex, buffer, true);
+    sendMessage (ServerPlayer, playerIndex, buffer);
     fclose (ReplayFile);
     ReplayFile = NULL;
     return false;
@@ -723,7 +723,7 @@ bool Replay::loadFile(int playerIndex, const char *filename)
 
   if (header.magic != ReplayMagic) {
     snprintf (buffer, MessageLen, "Not a bzflag replay file: %s", name.c_str());
-    sendMessage (ServerPlayer, playerIndex, buffer, true);
+    sendMessage (ServerPlayer, playerIndex, buffer);
     fclose (ReplayFile);
     ReplayFile = NULL;
     return false;
@@ -742,7 +742,7 @@ bool Replay::loadFile(int playerIndex, const char *filename)
 
   if (ReplayBuf.tail == NULL) {
     snprintf (buffer, MessageLen, "No valid data: %s", name.c_str());
-    sendMessage (ServerPlayer, playerIndex, buffer, true);
+    sendMessage (ServerPlayer, playerIndex, buffer);
     replayReset ();
     return false;
   }
@@ -752,23 +752,23 @@ bool Replay::loadFile(int playerIndex, const char *filename)
   if (!preloadVariables()) {
     snprintf (buffer, MessageLen, "Could not preload variables: %s",
               name.c_str());
-    sendMessage (ServerPlayer, playerIndex, buffer, true);
+    sendMessage (ServerPlayer, playerIndex, buffer);
     replayReset ();
     return false;
   }
 
   snprintf (buffer, MessageLen, "Loaded file: %s", name.c_str());
-  sendMessage (ServerPlayer, playerIndex, buffer, true);
+  sendMessage (ServerPlayer, playerIndex, buffer);
   snprintf (buffer, MessageLen, "  author:    %s (%s)",
             header.callSign, header.email);
-  sendMessage (ServerPlayer, playerIndex, buffer, true);
+  sendMessage (ServerPlayer, playerIndex, buffer);
   snprintf (buffer, MessageLen, "  protocol:  %.8s", header.serverVersion);
-  sendMessage (ServerPlayer, playerIndex, buffer, true);
+  sendMessage (ServerPlayer, playerIndex, buffer);
   snprintf (buffer, MessageLen, "  server:    %s", header.appVersion);
-  sendMessage (ServerPlayer, playerIndex, buffer, true);
+  sendMessage (ServerPlayer, playerIndex, buffer);
   snprintf (buffer, MessageLen, "  seconds:   %.1f",
             (float)header.filetime/1000000.0f);
-  sendMessage (ServerPlayer, playerIndex, buffer, true);
+  sendMessage (ServerPlayer, playerIndex, buffer);
   
   
   return true;
@@ -808,7 +808,7 @@ bool Replay::sendFileList(int playerIndex)
   char buffer[MessageLen];
 
   snprintf (buffer, MessageLen, "dir:   %s",RecordDir.c_str());
-  sendMessage (ServerPlayer, playerIndex, buffer, true);
+  sendMessage (ServerPlayer, playerIndex, buffer);
     
 #ifndef _MSC_VER
 
@@ -833,7 +833,7 @@ bool Replay::sendFileList(int playerIndex)
       if (loadFileTime (&filetime, file)) {
         snprintf (buffer, MessageLen, "file:  %-20s  [%9.1f seconds]",
                   de->d_name, (float)filetime/1000000.0f);
-        sendMessage (ServerPlayer, playerIndex, buffer, true);
+        sendMessage (ServerPlayer, playerIndex, buffer);
         count++;
       }
       fclose (file);
@@ -862,7 +862,7 @@ bool Replay::sendFileList(int playerIndex)
         if (loadFileTime (&filetime, file)) {
           snprintf (buffer, MessageLen, "file:  %-20s  [%9.1f seconds]",
                     findData.cFileName, (float)filetime/1000000.0f);
-          sendMessage (ServerPlayer, playerIndex, buffer, true);
+          sendMessage (ServerPlayer, playerIndex, buffer);
           count++;
         }
         fclose (file);
@@ -967,7 +967,7 @@ bool Replay::skip(int playerIndex, int seconds)
   char buffer[MessageLen];
   snprintf (buffer, MessageLen, "Skipping %.1f seconds (asked %i)",
            (float)diff/1000000.0f, seconds);
-  sendMessage (ServerPlayer, playerIndex, buffer, true);
+  sendMessage (ServerPlayer, playerIndex, buffer);
   
   return true;
 }
@@ -1682,7 +1682,7 @@ makeDirExistMsg (const char *dirname, int playerIndex)
     sendMessage (ServerPlayer, playerIndex,
                  "Could not open or create record directory:");
     snprintf (buffer, MessageLen, "  %s", RecordDir.c_str());
-    sendMessage (ServerPlayer, playerIndex, buffer, true);
+    sendMessage (ServerPlayer, playerIndex, buffer);
     return false;
   }    
   return true;
