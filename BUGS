@@ -10,6 +10,8 @@ recent bugs
   however. The function setLastMsg(std::string) is to blame, rather than the call to it in bzfs.cxx
   Moving the call to setLastMsg(std::string) to the MsgMessage case in handleCommand() in bzfs.cxx
   does not work either, just in case it may have for whatever reason.
+  NOTE -> Once this is fixed, please also make sure that
+          the player doesn't have the antikick permission
 
 - spin inversion bug, fix in MeshTransform.cxx (around line 300)
   during the next protocol breakage
