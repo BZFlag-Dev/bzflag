@@ -179,7 +179,7 @@ void OpenGLTexture::initContext()
     delete[] unaligned;
     unaligned = unalignedScaled;
     aligned = alignedScaled;
-    DEBUG1("Scaling texture from %iX%i to %iX%i\n",
+    DEBUG1("Scaling texture from %ix%i to %ix%i\n",
            tmpWidth, tmpHeight, scaledWidth, scaledHeight);
   }
 
