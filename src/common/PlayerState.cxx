@@ -46,7 +46,6 @@ void*	PlayerState::pack(void* buf, uint16_t& code)
     float worldSize = BZDB.eval(StateDatabase::BZDB_WORLDSIZE);
     float maxVel = BZDB.eval(StateDatabase::BZDB_MAXVEL);
     float maxAngVel = BZDB.eval(StateDatabase::BZDB_MAXANGVEL);
-    float tmpf;
     int16_t posShort[3], velShort[3], aziShort, angVelShort;
     
     for (int i=0; i<3; i++) {
@@ -65,9 +64,16 @@ void*	PlayerState::pack(void* buf, uint16_t& code)
         velShort[i] = (int16_t) ((velocity[i] * 32767.0f) / maxVel);
       }
     }
-    
-    tmpf = fmodf (azimuth + M_PI, 2.0f * M_PI) - M_PI; // between -M_PI and M_PI
-    aziShort = (int16_t) ((tmpf * 32767.0f) / M_PI);
+
+    // put the angle between -M_PI and +M_PI
+    float angle = fmodf (azimuth, M_PI * 2.0f);
+    if (angle > M_PI) {
+      angle -= (M_PI * 2.0f);
+    }    
+    else if (angle < -M_PI) {
+      angle += (M_PI * 2.0f);
+    }    
+    aziShort = (int16_t) ((angle * 32767.0f) / M_PI);
     angVelShort = (int16_t) ((angVel * 32767.0f) / maxAngVel);
 
     buf = nboPackShort(buf, posShort[0]);
