@@ -19,7 +19,11 @@
 #include <stdio.h>
 #include <string.h>
 
-// protocol version
+/* protocol version should only be updated when the networking protocol
+ * changes in a backwards incompatible way.  when the protocol really
+ * is broken, the version should be set to match the release version that
+ * broke it
+ */
 // TODO make this sucker an int when we change BZFS stuff
 #ifndef BZ_PROTO_VERSION
 #define BZ_PROTO_VERSION	"1910"
