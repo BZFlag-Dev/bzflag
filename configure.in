@@ -125,7 +125,14 @@ if test $host_os != beos; then
   fi
 fi
 
-AC_LANG(C++)
+AC_LANG_CPLUSPLUS
+
+AC_TRY_LINK([
+#include <sys/types.h>
+#include <regex.h>],
+[regcomp(0, 0, 0);
+ regexec(0, 0, 0, 0, 0)],
+[], [AC_MSG_WARN([regexp/regcomp seems not being available on your system])])
 
 ac_cv_search_glBegin=no
 ac_cv_search_gluScaleImage=no
