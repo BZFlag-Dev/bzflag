@@ -137,54 +137,11 @@ static int puwrite(int playerIndex, const void *b, int l)
   return sendto(udpSocket, (const char *)b, l, 0, (struct sockaddr*)&p.uaddr, sizeof(p.uaddr));
 }
 
-
-static int prealwrite(int playerIndex, const void *b, int l)
-{
-  PlayerInfo& p = player[playerIndex];
-
-  // write as much data from buffer as we can in one send()
-  const int n = p.send(b, l);
-
-  // handle errors
-  if (n < 0) {
-    // get error code
-    const int err = getErrno();
-
-    // just try again later if it's one of these errors
-    if (err == EAGAIN || err == EINTR)
-      return -1;
-
-    // if socket is closed then give up
-    if (err == ECONNRESET || err == EPIPE) {
-      removePlayer(playerIndex, "ECONNRESET/EPIPE", false);
-      return -1;
-    }
-
-    // dump other errors and remove the player
-    nerror("error on write");
-    player[playerIndex].toBeKicked = true;
-    player[playerIndex].toBeKickedReason = "Write error";
-    return -1;
-  }
-
-  return n;
+static void prealwrite(int playerIndex, const void *b, int l) {
+  int result = player[playerIndex].bufferedSend(playerIndex, b, l);
+  if (result == -1)
+    removePlayer(playerIndex, "ECONNRESET/EPIPE", false);
 }
-
-
-// try to write stuff from the output buffer
-static void pflush(int playerIndex)
-{
-  PlayerInfo& p = player[playerIndex];
-  if (!p.isConnected() || p.outmsgSize == 0)
-    return;
-
-  const int n = prealwrite(playerIndex, p.outmsg + p.outmsgOffset, p.outmsgSize);
-  if (n > 0) {
-    p.outmsgOffset += n;
-    p.outmsgSize   -= n;
-  }
-}
-
 
 #ifdef NETWORK_STATS
 int countMessage(int playerIndex, uint16_t code, int len, int direction)
@@ -262,64 +219,7 @@ static void pwrite(int playerIndex, const void *b, int l)
     return;
   }
 
-  // try flushing buffered data
-  pflush(playerIndex);
-
-  //DEBUG4("TCP write\n");
-  // if the buffer is empty try writing the data immediately
-  if (p.isConnected() && p.outmsgSize == 0) {
-    const int n = prealwrite(playerIndex, b, l);
-    if (n > 0) {
-      b  = (void*)(((const char*)b) + n);
-      l -= n;
-    }
-  }
-
-  // write leftover data to the buffer
-  if (p.isConnected() && l > 0) {
-    // is there enough room in buffer?
-    if (p.outmsgCapacity < p.outmsgSize + l) {
-      // double capacity until it's big enough
-      int newCapacity = (p.outmsgCapacity == 0) ? 512 : p.outmsgCapacity;
-      while (newCapacity < p.outmsgSize + l)
-	newCapacity <<= 1;
-
-      // if the buffer is getting too big then drop the player.  chances
-      // are the network is down or too unreliable to that player.
-      // FIXME -- is 20kB too big?  too small?
-      if (newCapacity >= 20 * 1024) {
-	DEBUG2("Player %s [%d] drop, unresponsive with %d bytes queued\n",
-	    p.getCallSign(), playerIndex, p.outmsgSize + l);
-	player[playerIndex].toBeKicked = true;
-	player[playerIndex].toBeKickedReason = "send queue too big";
-	return;
-      }
-
-      // allocate memory
-      char *newbuf = new char[newCapacity];
-
-      // copy old data over
-      memmove(newbuf, p.outmsg + p.outmsgOffset, p.outmsgSize);
-
-      // cutover
-      delete[] p.outmsg;
-      p.outmsg	       = newbuf;
-      p.outmsgOffset   = 0;
-      p.outmsgCapacity = newCapacity;
-    }
-
-    // if we can't fit new data at the end of the buffer then move existing
-    // data to head of buffer
-    // FIXME -- use a ring buffer to avoid moving memory
-    if (p.outmsgOffset + p.outmsgSize + l > p.outmsgCapacity) {
-      memmove(p.outmsg, p.outmsg + p.outmsgOffset, p.outmsgSize);
-      p.outmsgOffset = 0;
-    }
-
-    // append data
-    memmove(p.outmsg + p.outmsgOffset + p.outmsgSize, b, l);
-    p.outmsgSize += l;
-  }
+  prealwrite(playerIndex, b, l);
 }
 
 
@@ -4867,7 +4767,8 @@ int main(int argc, char **argv)
       // now check messages from connected players and send queued messages
       for (i = 0; i < curMaxPlayers; i++) {
 	if (player[i].isConnected() && player[i].fdIsSet(&write_set)) {
-	  pflush(i);
+	  // send whatever we have ... if any
+	  prealwrite(i, NULL, 0);
 	}
 
 	if (player[i].exist() && player[i].fdIsSet(&read_set)) {

@@ -114,7 +114,7 @@ public:
   void        dumpMessageStats();
 #endif
   bool        isConnected();
-  int         send(const void *buffer, size_t length);
+  int         bufferedSend(int playerIndex, const void *buffer, size_t length);
   RxStatus    receive(size_t length);
   void        resetComm();
   void        closeComm();
@@ -176,6 +176,8 @@ public:
   void       *getTcpBuffer();
   void        cleanTcp();
 private:
+  int         send(const void *buffer, size_t length);
+
     // player access
     PlayerAccessInfo accessInfo;
     bool Admin;
@@ -222,13 +224,13 @@ private:
     // current UDP msg
     char udpmsg[MaxPacketLen];
 
-public:
     // output buffer
     int outmsgOffset;
     int outmsgSize;
     int outmsgCapacity;
     char *outmsg;
 
+public:
     // UDP connection
     bool udpin; // udp inbound up, player is sending us udp
     bool udpout; // udp outbound up, we can send udp

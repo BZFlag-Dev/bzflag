@@ -297,8 +297,104 @@ bool PlayerInfo::isConnected() {
 };
 
 int PlayerInfo::send(const void *buffer, size_t length) {
-  assert(fd != -1 && length > 0);
-  return ::send(fd, (const char *)buffer, length, 0);
+  int n;
+
+  n = ::send(fd, (const char *)buffer, length, 0);
+  if (n >= 0) 
+    return n;
+
+  // get error code
+  const int err = getErrno();
+
+  // if socket is closed then give up
+  if (err == ECONNRESET || err == EPIPE) {
+    return -1;
+  }
+
+  // just try again later if it's one of these errors
+  if (err != EAGAIN && err != EINTR) {
+    // dump other errors and remove the player
+    nerror("error on write");
+    toBeKicked = true;
+    toBeKickedReason = "Write error";
+  }
+  return 0;
+};
+
+int PlayerInfo::bufferedSend(int playerIndex,
+			     const void *buffer,
+			     size_t length) {
+  if (fd == -1)
+    return 0;
+
+  // try flushing buffered data
+  if (outmsgSize != 0) {
+    const int n = send(outmsg + outmsgOffset, outmsgSize);
+    if (n == -1) {
+      return -1;
+    }
+    if (n > 0) {
+      outmsgOffset += n;
+      outmsgSize   -= n;
+    }
+  }
+  // if the buffer is empty try writing the data immediately
+  if ((outmsgSize == 0) && length > 0) {
+    const int n = send(buffer, length);
+    if (n == -1) {
+      return -1;
+    }
+    if (n > 0) {
+      buffer  = (void*)(((const char*)buffer) + n);
+      length -= n;
+    }
+  }
+  // write leftover data to the buffer
+  if (fd != -1 && length > 0) {
+    // is there enough room in buffer?
+    if (outmsgCapacity < outmsgSize + (int)length) {
+      // double capacity until it's big enough
+      int newCapacity = (outmsgCapacity == 0) ? 512 : outmsgCapacity;
+      while (newCapacity < outmsgSize + (int)length)
+	newCapacity <<= 1;
+
+      // if the buffer is getting too big then drop the player.  chances
+      // are the network is down or too unreliable to that player.
+      // FIXME -- is 20kB too big?  too small?
+      if (newCapacity >= 20 * 1024) {
+	DEBUG2("Player %s [%d] drop, unresponsive with %d bytes queued\n",
+	       callSign, playerIndex, outmsgSize + length);
+	toBeKicked = true;
+	toBeKickedReason = "send queue too big";
+	return 0;
+      }
+
+      // allocate memory
+      char *newbuf = new char[newCapacity];
+
+      // copy old data over
+      memmove(newbuf, outmsg + outmsgOffset, outmsgSize);
+
+      // cutover
+      delete[] outmsg;
+      outmsg	       = newbuf;
+      outmsgOffset   = 0;
+      outmsgCapacity = newCapacity;
+    }
+
+    // if we can't fit new data at the end of the buffer then move existing
+    // data to head of buffer
+    // FIXME -- use a ring buffer to avoid moving memory
+    if (outmsgOffset + outmsgSize + (int)length > outmsgCapacity) {
+      memmove(outmsg, outmsg + outmsgOffset, outmsgSize);
+      outmsgOffset = 0;
+    }
+
+    // append data
+    memmove(outmsg + outmsgOffset + outmsgSize, buffer, length);
+    outmsgSize += length;
+  }
+  return 0;
 };
 
 RxStatus PlayerInfo::receive(size_t length) {
