@@ -45,7 +45,6 @@ TetraBuilding::TetraBuilding(const float (*_vertices)[3], const bool *_visible,
   cross[2] = (edge[0][0] * edge[1][1]) - (edge[0][1] * edge[1][0]);
   float dot =
     (cross[0] * edge[2][0]) + (cross[1] * edge[2][1]) + (cross[2] * edge[2][2]);
-
   // swap vertices 1 & 2 if we are out of order
   if (dot < 0.0f) {
     memcpy (vertices[1], _vertices[2], sizeof(float[3]));
@@ -55,10 +54,11 @@ TetraBuilding::TetraBuilding(const float (*_vertices)[3], const bool *_visible,
   }
 
   // FIXME - what to do here if one of the planes fails?
-  makePlane (vertices[2], vertices[1], vertices[3], planes[0]);
-  makePlane (vertices[3], vertices[0], vertices[2], planes[1]);
-  makePlane (vertices[1], vertices[0], vertices[3], planes[2]);
-  makePlane (vertices[2], vertices[0], vertices[1], planes[3]);
+  // make outward facing normals to the planes
+  makePlane (vertices[1], vertices[2], vertices[3], planes[0]);
+  makePlane (vertices[0], vertices[3], vertices[2], planes[1]);
+  makePlane (vertices[0], vertices[1], vertices[3], planes[2]);
+  makePlane (vertices[0], vertices[2], vertices[1], planes[3]);
   
   return;
 }                             
@@ -122,20 +122,125 @@ static bool makePlane (const float* p1, const float* p2, const float* pc,
 }                       
 
 
+float			TetraBuilding::intersect(const Ray& ray) const
+{
+  // NOTE: i'd use a quick test here first, but the
+  //       plan is to use an octree for the collision
+  //       manager which should get us close enough
+  //       that a quick test might actually eat up time.
+  //
+  // find where the ray crosses each plane, and then
+  // check the dot-product of the three bounding planes
+  // to see if the intersection point is contained within 
+  // the face.
+  //
+  //  L - line unit vector          Lo - line origin
+  //  N - plane normal unit vector  d  - plane offset
+  //  P - point in question         t - time
+  //  
+  //  (N dot P) + d = 0                      { plane equation }
+  //  P = (t * L) + Lo                       { line equation }
+  //  t (N dot L) + (N dot Lo) + d = 0
+  //
+  //  t = - (d + (N dot Lo)) / (N dot L)     { time of impact }
+  //
+  int p;
+  const float* dir = ray.getDirection();
+  const float* origin = ray.getOrigin();
+  float times[4];
+  
+  // get the time until the shot would hit each plane
+  for (p = 0; p < 4; p++) {
+    const float linedot = (planes[p][0] * dir[0]) +
+                          (planes[p][1] * dir[1]) +
+                          (planes[p][2] * dir[2]);
+    if (linedot >= -0.001f) {
+      // shot is either parallel, or going through backwards
+      times[p] = Infinity;
+      continue;
+    }
+    const float origindot = (planes[p][0] * origin[0]) +
+                            (planes[p][1] * origin[1]) +
+                            (planes[p][2] * origin[2]);
+    // linedot should be safe to divide with now
+    times[p] = - (planes[p][3] + origindot) / linedot;
+    if (times[p] < 0.0f) {
+      times[p] = Infinity;
+    }
+  }
+  
+  // sort, smallest time first - FIXME (ick, bubble sort)
+  int order[4] = { 0, 1, 2, 3 };
+  for (int i = 3; i > 0; i--) {
+    for (int j = 3; j > (3 - i); j--)
+      if (times[order[j]] < times[order[j - 1]]) {
+        int tmp = order[j];
+        order[j] = order[j - 1];
+        order[j - 1] = tmp;
+    }
+  }
+    
+  // see if the point is within the face
+  for (p = 0; p < 4; p++) {
+    int target = order[p];
+    if (times[target] == Infinity) {
+      continue;
+    }
+    float targetTime = times[target];
+    // get the contact location
+    float point[3];
+    point[0] = (dir[0] * targetTime) + origin[0];
+    point[1] = (dir[1] * targetTime) + origin[1];
+    point[2] = (dir[2] * targetTime) + origin[2];
+    bool gotFirstHit = true;
+    // now test against the planes
+    for (int q = 0; q < 4; q++) {
+      if (q == target) {
+        continue;
+      }
+      float d = (planes[q][0] * point[0]) +
+                (planes[q][1] * point[1]) +
+                (planes[q][2] * point[2]) + planes[q][3];
+      if (d > 0.001f) {
+        gotFirstHit = false;
+        break;
+      }      
+    }
+    if (gotFirstHit) {
+      return targetTime;
+    }
+  }
+
+  return -1.0f;
+}
+
+
+void			TetraBuilding::get3DNormal(const float* p, float* n) const
+{
+  // FIXME: this is silly, we should just use the computations in
+  // intersect() to pull out this information, maybe have intersect
+  // return an 'int' relating to a collision code (each obstacle 
+  // type gets to define its own, for tetra (1-4 = planes, 5-10 = edges)? 
+  float closestDist = -Infinity;
+  int closestPlane = -1;
+  for (int i = 0; i < 4; i++) {
+    float d = (planes[i][0] * p[0]) +
+              (planes[i][1] * p[1]) +
+              (planes[i][2] * p[2]) + planes[i][3];
+    if (fabsf(d) < fabsf(closestDist)) {
+      closestDist = d;
+      closestPlane = i;
+    }
+  }
+  memcpy (n, planes[closestPlane], sizeof(float[3]));
+  return;
+}
+
 
 /////////////////////////////////////////////////////////////
 //  FIXME - everything after this point is currently JUNK! //
 /////////////////////////////////////////////////////////////
 
-
-
-float			TetraBuilding::intersect(const Ray& /* FIXME */) const
-{
-  return -1.0f;
-//  return timeRayHitsTetra(r, getPosition(), getRotation(),
-//			     getWidth(), getBreadth(), getHeight(),
-//			     getZFlip());
-}
 
 
 void			TetraBuilding::getNormal(const float* p,
@@ -164,23 +269,13 @@ bool			TetraBuilding::getHitNormal(
 }
 
 
-void			TetraBuilding::get3DNormal(const float* p,
-						     float* n) const
-{
-  p = p;
-  n[0] = 0.0f;
-  n[1] = 0.0f;
-  n[2] = +1.0f;
-}
-
-
 bool			TetraBuilding::inCylinder(const float* p,
 						float radius, float height) const
 {
   p = p;
   radius = height;
-  if ((fabsf(p[0] - vertices[0][0]) < 100.0f) &&
-      (fabsf(p[1] - vertices[0][1]) < 100.0f)) {
+  if ((fabsf(p[0] - vertices[0][0]) < 10.0f) &&
+      (fabsf(p[1] - vertices[0][1]) < 10.0f)) {
     return true;
   }
   return false;
@@ -192,8 +287,8 @@ bool			TetraBuilding::inBox(const float* p, float a,
 {
   p = p;
   dx = dy = a = height;
-  if ((fabsf(p[0] - vertices[0][0]) < 100.0f) &&
-      (fabsf(p[1] - vertices[0][1]) < 100.0f)) {
+  if ((fabsf(p[0] - vertices[0][0]) < 10.0f) &&
+      (fabsf(p[1] - vertices[0][1]) < 10.0f)) {
     return true;
   }
   return false;
@@ -207,8 +302,8 @@ bool			TetraBuilding::inMovingBox(const float*, float,
   p = p;
   dx = dy;
   dz = angle;
-  if ((fabsf(p[0] - vertices[0][0]) < 100.0f) &&
-      (fabsf(p[1] - vertices[0][1]) < 100.0f)) {
+  if ((fabsf(p[0] - vertices[0][0]) < 10.0f) &&
+      (fabsf(p[1] - vertices[0][1]) < 10.0f)) {
     return true;
   }
   return false;
@@ -220,8 +315,8 @@ bool			TetraBuilding::isCrossing(const float* p, float a,
 {
   p = p;
   dx = dy = a = height;
-  if ((fabsf(p[0] - vertices[0][0]) < 100.0f) &&
-      (fabsf(p[1] - vertices[0][1]) < 100.0f)) {
+  if ((fabsf(p[0] - vertices[0][0]) < 10.0f) &&
+      (fabsf(p[1] - vertices[0][1]) < 10.0f)) {
     if (plane != NULL) {
       plane[0] = 0.0f;
       plane[1] = 0.0f;

@@ -66,7 +66,7 @@ EighthDTetraSceneNode::EighthDTetraSceneNode(const float (*vertices)[3],
           float dist = (planes[p][0] * vertex[j][0]) +
                        (planes[p][1] * vertex[j][1]) +
                        (planes[p][2] * vertex[j][2]) + planes[p][3];
-          if (dist < 0.0f) {
+          if (dist > 0.0f) {
             done = false;
             break;
           }

@@ -182,6 +182,23 @@ const Obstacle* ShotStrategy::getFirstBuilding(const Ray& ray,
     }
   }
 
+  // check tetrahedrons
+  {
+    const std::vector<TetraBuilding> &tetras = World::getWorld()->getTetras();
+    std::vector<TetraBuilding>::const_iterator it = tetras.begin();
+    while (it != tetras.end()) {
+      const TetraBuilding& tetra = *it;
+      if (!tetra.isShootThrough()) {
+        const float tetrat = tetra.intersect(ray);
+        if (tetrat > min && tetrat < t) {
+          t = tetrat;
+          closestObstacle = &tetra;
+        }
+      }
+      it++;
+    }
+  }
+
   return closestObstacle;
 }
 
