@@ -1988,27 +1988,6 @@ static boolean serverStart()
   }
   maxFileDescriptor = wksSocket;
 
-  // open sockets to receive and reply to pings
-  Address multicastAddress(BroadcastAddress);
-  pingInSocket = openMulticast(multicastAddress, ServerPort, NULL,
-      pingTTL, pingInterface, "r", &pingInAddr);
-  pingOutSocket = openMulticast(multicastAddress, ServerPort, NULL,
-      pingTTL, pingInterface, "w", &pingOutAddr);
-  pingBcastSocket = openBroadcast(BroadcastPort, NULL, &pingBcastAddr);
-  if (pingInSocket == -1 || pingOutSocket == -1) {
-    closeMulticast(pingInSocket);
-    closeMulticast(pingOutSocket);
-    pingInSocket = -1;
-    pingOutSocket = -1;
-  }
-  else {
-    maxFileDescriptor = pingOutSocket;
-  }
-  if (pingBcastSocket != -1) {
-    if (pingBcastSocket > maxFileDescriptor)
-      maxFileDescriptor = pingBcastSocket;
-  }
-
   if (alsoUDP) {
     int n;
     // we open a udp socket on the same port if alsoUDP
@@ -2051,6 +2030,27 @@ static boolean serverStart()
     BzfNetwork::setNonBlocking(udpSocket);
 
     maxFileDescriptor = udpSocket;
+  }
+
+  // open sockets to receive and reply to pings
+  Address multicastAddress(BroadcastAddress);
+  pingInSocket = openMulticast(multicastAddress, ServerPort, NULL,
+      pingTTL, pingInterface, "r", &pingInAddr);
+  pingOutSocket = openMulticast(multicastAddress, ServerPort, NULL,
+      pingTTL, pingInterface, "w", &pingOutAddr);
+  pingBcastSocket = openBroadcast(BroadcastPort, NULL, &pingBcastAddr);
+  if (pingInSocket == -1 || pingOutSocket == -1) {
+    closeMulticast(pingInSocket);
+    closeMulticast(pingOutSocket);
+    pingInSocket = -1;
+    pingOutSocket = -1;
+  }
+  else {
+    maxFileDescriptor = pingOutSocket;
+  }
+  if (pingBcastSocket != -1) {
+    if (pingBcastSocket > maxFileDescriptor)
+      maxFileDescriptor = pingBcastSocket;
   }
 
   // initialize player packet relaying to be off
@@ -5116,9 +5116,11 @@ int main(int argc, char **argv)
   // parse arguments
   parse(argc, argv);
 
-  serverAddress = Address::getHostAddress(pingInterface);
-  if (!pingInterface)
-    pingInterface = serverAddress.getHostName();
+  if (pingInterface)
+    serverAddress = Address::getHostAddress(pingInterface);
+// TimR use 0.0.0.0 by default, multicast will need to have a -i specified for now.
+//  if (!pingInterface)
+//    pingInterface = serverAddress.getHostName();
 
 
   // my address to publish.  allow arguments to override (useful for

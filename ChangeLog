@@ -30,6 +30,7 @@ BZFlag 1.7e3
 * CTF world from file - Colin Bayer, Tim Riker
 * patch playerIds to prepare for one tcp port - Tim Riker
 * missile sound effect - Dave Brosius
+* udp first then multicast, IRIX fix? (use -i <> for multicast) - Tim Riker
 
 
 BZFlag 1.7e2
