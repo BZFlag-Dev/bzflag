@@ -1566,10 +1566,10 @@ float			HelpMenu::getLeftSide(int, int height)
 void			HelpMenu::resize(int width, int height)
 {
   // use a big font for title, smaller font for the rest
-  const float titleFontWidth = (float)height / 10.0f;
-  const float titleFontHeight = (float)height / 10.0f;
-  const float fontWidth = (float)height / 36.0f;
-  const float fontHeight = (float)height / 36.0f;
+  const float titleFontWidth = (float)height / 15.0f;
+  const float titleFontHeight = (float)height / 15.0f;
+  const float fontWidth = (float)height / 48.0f;
+  const float fontHeight = (float)height / 48.0f;
 
   // reposition title
   std::vector<HUDuiControl*>& list = getControls();
