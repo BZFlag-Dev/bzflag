@@ -4128,7 +4128,7 @@ static void doStuffOnPlayer(GameKeeper::Player &playerData)
       return;
     if (warn) {
       char message[MessageLen];
-      sprintf(message, "*** Server Warning: your lag is too high ***");
+      sprintf(message, "*** Server Warning: your lag is too high (failed to return ping) ***");
       sendMessage(ServerPlayer, p, message);
       // Should recheck if player is still available
       if (!GameKeeper::Player::getPlayerByIndex(p))
