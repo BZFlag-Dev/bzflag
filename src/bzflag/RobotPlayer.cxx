@@ -436,7 +436,10 @@ void			RobotPlayer::setTarget(const Player* _target)
     path.push_back(p1);
     next = next->getTarget();
   } while (next && next != headRegion);
-  path.push_back(q1);
+  if (next || tailRegion == headRegion)
+    path.push_back(q1);
+  else
+    path.clear();
   pathIndex = 0;
 }
 
