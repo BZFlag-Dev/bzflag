@@ -2627,7 +2627,7 @@ void sendMessage(int playerIndex, PlayerId targetPlayer, const char *message, bo
 
   if (targetPlayer <= LastRealPlayer) {
     directMessage(targetPlayer, MsgMessage, (char*)buf-(char*)bufStart, bufStart);
-    if (playerIndex <= LastRealPlayer)
+    if (playerIndex <= LastRealPlayer && targetPlayer != playerIndex)
       directMessage(playerIndex, MsgMessage, (char*)buf-(char*)bufStart, bufStart);
   }
   else
@@ -2907,7 +2907,7 @@ static void addPlayer(int playerIndex)
     }
     strncpy(message, i, MessageLen - 1);
     message[strlen(i) < MessageLen - 1 ? strlen(i) : MessageLen - 1] = '\0';
-    sendMessage(playerIndex, playerIndex, message);
+    sendMessage(ServerPlayer, playerIndex, message, true);
   }
 
   // look for a startup message -- from a file
