@@ -95,12 +95,6 @@ int			getErrno();
 
 #else /* !defined(_WIN32) */
 
-// turn off == signed/unsigned mismatch.  would rather not, but FD_SET
-// is broken.
-#ifdef _MSCVER
-#pragma warning(disable: 4018)
-#endif
-
 #define	MAXHOSTNAMELEN	64
 
 #define EINPROGRESS	WSAEWOULDBLOCK
