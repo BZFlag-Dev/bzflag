@@ -15,6 +15,7 @@
 #ifdef HAVE_SDL
 #include <stdio.h>
 #include "SDLDisplay.h"
+#include "OpenGLGState.h"
 
 static int mx = 0;
 static int my = 0;
@@ -388,6 +389,8 @@ void SDLWindow::swapBuffers() {
 
 void SDLWindow::create(void) {
   ((SDLDisplay *)getDisplay())->createWindow();
+  // reload context data
+  OpenGLGState::initContext();  
 };
 
 #endif
