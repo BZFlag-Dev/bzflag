@@ -276,7 +276,7 @@ void sendMessage(ServerLink& sLink, const string& msg, PlayerId target) {
 
   buf = nboPackUByte(buf, target);
   memset(buffer, 0, MessageLen);
-  strncpy(buffer, msg.c_str(), MessageLen);
+  strncpy(buffer, msg.c_str(), MessageLen - 1);
   nboPackString(buffer2 + 1, buffer, MessageLen);
   sLink.send(MsgMessage, sizeof(buffer2), buffer2);
 }

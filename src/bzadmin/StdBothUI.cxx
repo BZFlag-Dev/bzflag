@@ -37,7 +37,7 @@ bool StdBothUI::checkCommand(string& str) {
   tv.tv_usec = 0;
   if (select(1, &rfds, NULL, NULL, &tv) > 0) {
     read(0, &buffer[pos], 1);
-    if (buffer[pos] == '\n') {
+    if (buffer[pos] == '\n' || pos == MessageLen - 1) {
       buffer[pos] = '\0';
       str = buffer;
       if (pos != 0) {
