@@ -75,6 +75,7 @@ extern std::vector<std::string>& getSilenceList();
 const char*		argv0;
 static bool		anonymous = false;
 static std::string	anonymousName("anonymous");
+static std::string	alternateConfig("");
 static bool		noAudio = false;
 struct tm		userTime;
 static StartupInfo	startupInfo;
@@ -287,6 +288,7 @@ static void		usage()
 	" [-no3dfx]"
 	" [-anonymous]"
 	" [-badwords <filterfile>]"
+	" [-config <configfile>]"
 	" [-directory <data-directory>]"
 	" [-echo]"
 	" [-echoAnsi]"
@@ -319,6 +321,12 @@ static void		parse(int argc, char** argv)
     if (strcmp(argv[i], "-a") == 0 ||
 		strcmp(argv[i], "-anonymous") == 0) {
       anonymous = true;
+    } else if (strcmp(argv[i], "-config") == 0) {
+      if (++i == argc) {
+	printFatalError("Missing argument for %s.", argv[i-1]);
+	usage();
+      }
+      // the setting has already been done in parseConfigName()
     } else if (strcmp(argv[i], "-debug") == 0) {
       debugLevel++;
     } else if (strcmp(argv[i], "-d") == 0 ||
@@ -590,6 +598,20 @@ static void		parse(int argc, char** argv)
   }
 }
 
+static void		parseConfigName(int argc, char** argv)
+{
+  for (int i = 1; i < argc; i++) {
+    if (strcmp(argv[i], "-config") == 0) {
+      if (++i == argc) {
+	printFatalError("Missing argument for %s.", argv[i-1]);
+	usage();
+      }
+      alternateConfig = getConfigDirName();
+      alternateConfig += argv[i]; 
+    }
+  }
+}
+
 //
 // resource database dumping.  used during initial startup to save
 // preferences in case anything catastrophic goes wrong afterwards
@@ -776,10 +798,21 @@ int			main(int argc, char** argv)
     BZDB.addCallback(defaultDBItems[i].name, defaultDBItems[i].callback, NULL);
   }
 
+  // parse for the config filename
+  // the rest of the options are parsed after the config file
+  // has been loaded to allow for command line overrides
+  parseConfigName(argc, argv);
+  
   // read resources
-  if (CFGMGR.read(getConfigFileName()))
-    startupInfo.hasConfiguration = true;
-
+  if (alternateConfig != "") {
+    if (CFGMGR.read(alternateConfig)) {
+      startupInfo.hasConfiguration = true;
+    }
+  }
+  if (!startupInfo.hasConfiguration) {
+    if (CFGMGR.read(getConfigFileName()))
+      startupInfo.hasConfiguration = true;
+  }
 #if !defined(_WIN32) & !defined(macintosh)
   if (!startupInfo.hasConfiguration)
     if (CFGMGR.read(getConfigFileName2()))
@@ -1247,7 +1280,10 @@ int			main(int argc, char** argv)
 
   // save resources
   dumpResources(display, renderer);
-  CFGMGR.write(getConfigFileName());
+  if (alternateConfig == "")
+    CFGMGR.write(getConfigFileName());
+  else
+    CFGMGR.write(alternateConfig);
 
   // shut down
   if (filter != NULL)
