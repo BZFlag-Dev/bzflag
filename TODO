@@ -7,6 +7,8 @@ THESE SHOULD HAPPEN BEFORE THE NEXT RELEASE:
 
 THESE ARE LOWER PRIORITY
 
+* misc/bzfquery.py is still 1.10.x net protocol (014)
+
 * fix the misalignment between the selected server and the one that
   is joined when the Server List Cache is enabled.
 
