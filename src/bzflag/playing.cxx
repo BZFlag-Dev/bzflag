@@ -107,7 +107,7 @@ static double		epochOffset;
 static double		lastEpochOffset;
 static float		clockAdjust = 0.0f;
 static float		pauseCountdown = 0.0f;
-static float		maxPauseCountdown = 0.0f;
+//static float		maxPauseCountdown = 0.0f;
 static float		testVideoFormatTimer = 0.0f;
 static int		testVideoPrevFormat = -1;
 static PlayingCallbackList	playingCallbacks;
@@ -714,6 +714,7 @@ static void		doKeyPlaying(const BzfKeyEvent& key, boolean pressed)
 	buf = nboPackUShort(buf, uint16_t(myTank->getTeam()));
 	composePrompt = "Send to teammates: ";
       }
+	
       // to send to a player use:
       //   buf = myTank->getId().pack(buf);
       //   buf = nboPackUShort(buf, uint16_t(RogueTeam));
@@ -3518,6 +3519,14 @@ static void		playingLoop()
       targetPoint[2] = eyePoint[2] + myTankDir[2];
 #if defined(ROAMING)
       if (roaming) {
+#ifdef FOLLOWTANK
+        eyePoint[0] = myTankPos[0] - myTankDir[0] * 20;
+        eyePoint[1] = myTankPos[1] - myTankDir[1] * 20;
+        eyePoint[2] = myTankPos[2] + MuzzleHeight * 3;
+        targetPoint[0] = eyePoint[0] + myTankDir[0];
+        targetPoint[1] = eyePoint[1] + myTankDir[1];
+        targetPoint[2] = eyePoint[2] + myTankDir[2];
+#endif
 	float dir[3];
 	dir[0] = cosf(roamPhi * M_PI / 180.0f) * cosf(roamTheta * M_PI / 180.0f);
 	dir[1] = cosf(roamPhi * M_PI / 180.0f) * sinf(roamTheta * M_PI / 180.0f);
@@ -3530,6 +3539,7 @@ static void		playingLoop()
 	  targetPoint[1] = eyePoint[1] + dir[1];
 	  targetPoint[2] = eyePoint[2] + dir[2];
 	}
+#endif
 	fov = roamZoom * M_PI / 180.0f;
       }
 #endif
