@@ -4481,7 +4481,8 @@ void drawFrame(const float dt)
 
 	  const bool cloaked = (player[i]->getFlag() == Flags::Cloaking) &&
 			       (myTank->getFlag() != Flags::Seer);
-	  const bool following = roaming && (roamView == roamViewFP) &&
+	  const bool following = (roaming && !devDriving) &&
+	                         (roamView == roamViewFP) &&
 				 (roamTrackWinner == i);
 	  const bool showPlayer = !following || showTreads;
 	  const bool inCockpit = following && showTreads;
