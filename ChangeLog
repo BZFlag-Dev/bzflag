@@ -28,6 +28,8 @@ BZFlag 1.7e3
 * add rogue team and radar colors to config - Valery Fouques
 * Shots as lines on radar - Valery Fouques, Tim Riker
 * CTF world from file - Colin Bayer, Tim Riker
+* patch playerIds to prepare for one tcp port - Tim Riker
+* missile sound effect - Dave Brosius
 
 
 BZFlag 1.7e2

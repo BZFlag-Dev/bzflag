@@ -774,6 +774,8 @@ boolean			LocalPlayer::fireShot()
     playLocalSound(SFX_SHOCK);
   else if (firingInfo.flag == LaserFlag)
     playLocalSound(SFX_LASER);
+  else if (firingInfo.flag == GuidedMissileFlag)
+    playLocalSound(SFX_MISSILE);
   else
     playLocalSound(SFX_FIRE);
 
