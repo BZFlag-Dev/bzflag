@@ -3,8 +3,6 @@ recent bugs
 
 - a burrowed tank cannot shoot a thief
 
-- expansion of smaller (e.g. tiny and thief) tanks can result in a stuck tank
-
 - depth ordering/culling is incorrect on mac's playground (small field, 4
   team ctf with large bases and elevated positions for 3 of the bases).  a 
   flag will be on the ground in front of a base wall, yet it is rendered
@@ -75,6 +73,8 @@ older bugs in BZFlag
 
 see the bug tracker on SourceForge for more
 http://SourceForge.net/tracker/?group_id=3248&atid=103248
+
+* expansion of smaller (e.g. tiny, thin, thief, obese) tanks can result in a stuck tank
 
 * exploding tank parts sometimes move along the ground instead of
    flying up into the air.
