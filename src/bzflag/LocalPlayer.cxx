@@ -1167,15 +1167,15 @@ void			LocalPlayer::doFriction(float dt,
   if (friction > 0.0f) {
     // limit vector acceleration
 
-	float delta[2] = {newVelocity[0] - oldVelocity[0], newVelocity[1] - oldVelocity[1]};
-	float acc2 = (delta[0] * delta[0] + delta[1] * delta[1]) / (dt*dt);
-	float accLimit = 20.0f * friction;
+    float delta[2] = {newVelocity[0] - oldVelocity[0], newVelocity[1] - oldVelocity[1]};
+    float acc2 = (delta[0] * delta[0] + delta[1] * delta[1]) / (dt*dt);
+    float accLimit = 20.0f * friction;
 
-	if (acc2 > accLimit*accLimit) {
-		float ratio = accLimit / sqrtf(acc2);
-		newVelocity[0] = oldVelocity[0] + delta[0]*ratio;
-		newVelocity[1] = oldVelocity[1] + delta[1]*ratio;
-	}
+    if (acc2 > accLimit*accLimit) {
+      float ratio = accLimit / sqrtf(acc2);
+      newVelocity[0] = oldVelocity[0] + delta[0]*ratio;
+      newVelocity[1] = oldVelocity[1] + delta[1]*ratio;
+    }
   }
 }
 
@@ -1210,20 +1210,21 @@ bool			LocalPlayer::checkHit(const Player* source,
     const FlagType* shotFlag = shot->getFlag();
     if (getFlag() == Flags::PhantomZone && isFlagActive() &&
 	shotFlag != Flags::SuperBullet && shotFlag != Flags::ShockWave &&
-  shotFlag != Flags::PhantomZone)
+	shotFlag != Flags::PhantomZone)
       continue;
+
     // laser can't hit a cloaked tank
     if (getFlag() == Flags::Cloaking && shotFlag == Flags::Laser)
       continue;
 
+    // zoned shots only kill zoned tanks
     if (shotFlag == Flags::PhantomZone){ // zoned shot
       if (getFlag() != Flags::PhantomZone) { // I don't have PZ
         continue; // no way
       } else { // I have PZ
         if (!isFlagActive()) { // not zoned, can't get shot
           continue;
-        }
-        else { 
+        } else { 
           // do nothing - I am zoned, I can get shot
         }
       }
@@ -1269,8 +1270,7 @@ void			LocalPlayer::setFlag(FlagType* flag)
 	  flagAntidotePos[0] = 0.5f * worldSize * ((float)bzfrand() - 0.5f);
 	  flagAntidotePos[1] = 0.5f * worldSize * ((float)bzfrand() - 0.5f);
 	  flagAntidotePos[2] = 0.0f;
-	}
-	else {
+	} else {
 	  flagAntidotePos[0] = (worldSize - baseSize) * ((float)bzfrand() - 0.5f);
 	  flagAntidotePos[1] = (worldSize - baseSize) * ((float)bzfrand() - 0.5f);
 	  flagAntidotePos[2] = 0.0f;
@@ -1280,8 +1280,7 @@ void			LocalPlayer::setFlag(FlagType* flag)
       antidoteFlag->setColor(1.0f, 1.0f, 0.0f);
       World::setFlagTexture(antidoteFlag);
     }
-  }
-  else {
+  } else {
     delete antidoteFlag;
     antidoteFlag = NULL;
     flagShakingTime = 0.0f;
