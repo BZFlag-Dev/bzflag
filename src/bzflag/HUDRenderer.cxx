@@ -1592,10 +1592,11 @@ void			HUDRenderer::drawPlayerScore(const Player* player,
   }
   minorFont.draw(player->getCallSign(), x3, y);
   minorFont.draw(email, x3 + callSignWidth, y);
-  if ((flagd == Flags::ShockWave)   ||
-      (flagd == Flags::Genocide)    ||
-      (flagd == Flags::Laser)       ||
-      (flagd == Flags::GuidedMissile)) {
+  if (BZDB->isTrue("colorful") && 
+      ((flagd == Flags::ShockWave)   ||
+       (flagd == Flags::Genocide)    ||
+       (flagd == Flags::Laser)       ||
+       (flagd == Flags::GuidedMissile))) {
     GLfloat white_color[3] = {1.0f, 1.0f, 1.0f};
     hudSColor3fv(white_color);
     minorFont.draw(flag, x3 + callSignWidth + emailWidth, y);
