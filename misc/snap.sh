@@ -13,7 +13,7 @@
 #  below.  Namely, you can configure what to checkout, where to checkout, how
 #  to checkout, and where to post the snapshots.
 #
-#  Version 1.0.2
+#  Version 1.0.3 + doxygen mods
 #  Copyright 2004, Sean Morrison aka brlcad aka learner
 #  this script is in the public domain
 ###
@@ -60,6 +60,15 @@ cvs -d$CVSROOT $cvsmeth $project
 
 echo "Running autogen.sh"
 [ -f autogen.sh ] && sh autogen.sh || exit 4
+
+if [ -f misc/doxyfile ] ; then
+    echo "Updating Doxygen docs"
+    ln -s $HOME/bzflag/htdocs/doxygen doc/doxygen/html
+    rm -f doc/doxygen/html/*
+    doxygen misc/doxyfile
+    rm doc/doxygen/html
+fi
+
 cd ..
 
 echo "Cleaning out previous snapshot(s)"
@@ -73,7 +82,7 @@ stamp=`date +"%Y-%m-%d"`
 if [ -d $project ] ; then
     echo "tar zcvf \"$cvsweb/$project-$stamp.tar.gz\" $project"
     tar zcvf "$cvsweb/$project-$stamp.tar.gz" $project
-    [ -d $project.old ] && diff -duPNr $project.old $project > "$cvsweb/$project-$stamp.patch"
+    [ -d $project.old ] && diff --ignore CVS -duPNr $project.old $project > "$cvsweb/$project-$stamp.patch"
     [ -d $project.old ] && rm -rf $project.old
     mv $project $project.old
 else
