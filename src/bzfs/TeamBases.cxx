@@ -59,6 +59,9 @@ TeamBases::TeamBases(TeamColor team, bool initDefault)
         teamBase.safetyZone[0] = teamBase.position[0] + 0.5f * BaseSize + pyrBase;
         teamBase.safetyZone[1] = teamBase.position[1] - 0.5f * BaseSize - pyrBase;
       break;
+
+    default:
+      break;
     }
 
     teamBase.position[2] = 0.0f;
@@ -91,7 +94,7 @@ TeamColor TeamBases::getTeam() const
 
 const float *TeamBases::getBasePosition( int base ) const
 {
-  if ((base < 0) || (base >= teamBases.size()))
+  if ((base < 0) || (base >= (int)teamBases.size()))
     base = 0;
 
   return teamBases[base].position;
@@ -99,7 +102,7 @@ const float *TeamBases::getBasePosition( int base ) const
 
 const float *TeamBases::getBaseSize( int base ) const
 {
-  if ((base < 0) || (base >= teamBases.size()))
+  if ((base < 0) || (base >= (int)teamBases.size()))
     base = 0;
 
   return teamBases[base].size;
@@ -145,7 +148,7 @@ float TeamBases::findBaseZ( float x, float y, float z ) const
 
 void TeamBases::getRandomPosition( float &x, float &y, float &z ) const
 {
-  int baseIndex = (int) teamBases.size() * bzfrand();
+  int baseIndex = (int) (teamBases.size() * bzfrand());
   const TeamBase &base = teamBases[baseIndex];
 
   x = (base.size[0] - 2.0f * BZDBCache::tankRadius) * ((float)bzfrand() - 0.5f);
@@ -157,7 +160,7 @@ void TeamBases::getRandomPosition( float &x, float &y, float &z ) const
 
 void TeamBases::getSafetyZone( float &x, float &y, float &z ) const
 {
-  int baseIndex = (int) teamBases.size() * bzfrand();
+  int baseIndex = (int) (teamBases.size() * bzfrand());
   const TeamBase &base = teamBases[baseIndex];
 
   x = base.safetyZone[0];

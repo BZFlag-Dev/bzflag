@@ -358,7 +358,7 @@ inline Flag&		World::getFlag(int index) const
 inline const float*	World::getBase(int team, int base) const
 {
   const TeamBases &b = bases[team];
-  if ((base < 0) || (base >= b.size()))
+  if ((base < 0) || (base >= (int)b.size()))
     return NULL;
 
   return b[base].p;
