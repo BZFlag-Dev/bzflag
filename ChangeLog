@@ -10,6 +10,11 @@ BZFlag 1.10.4
 * Start of better spawn positions based on tanks - Dave Brosius
 * PNG image grabbing - Daniel Remenak
 * Texture Manager only loads textures when needed, reorg textures to make more sense - Jeff Myers
+* BZDB alternate image dir added - Jeff Myers
+* Ground Texture Repeat added to BZDB, deafault increased to 0.1  - Jeff Myers
+* Tanks will search for colored team textures and use them if found. - Jeff Myers
+* Ground will search for colored std and zone textures and use them if found. - Jeff Myers
+* Non rabbit tanks will try to use "hunter" texture if found. - Jeff Myers
 
 BZFlag 1.10.2
 -------------
