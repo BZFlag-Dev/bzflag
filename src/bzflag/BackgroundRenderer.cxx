@@ -413,9 +413,9 @@ void			BackgroundRenderer::setCelestial(
   // rain stuff
   rainDensity = 0;
 
-  if (BZDB.isSet("RAIN_DESNSITY"))
+  if (BZDB.isSet("RAIN_DENSITY"))
   {
-	  rainDensity = (int)BZDB.eval("RAIN_DESNSITY");
+	  rainDensity = (int)BZDB.eval("RAIN_DENSITY");
 	  rainColor[0][0] = 0.75f;   rainColor[1][0] = 0.75f;   rainColor[2][0] = 0.75f;   rainColor[3][0] = 0.75f; 
 	  rainColor[0][1] = 0.0f;   rainColor[1][1] = 0.0f;   rainColor[2][1] = 0.0f;   rainColor[3][1] = 0.0f; 
 	  rainSize[0] = 0.0f; rainSize[1] = 10.0f;
