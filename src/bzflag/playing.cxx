@@ -1415,9 +1415,11 @@ int curlProgressFunc(void* /*clientp*/,
     if (display->peekEvent(event)) {
       switch (event.type) {
 	case BzfEvent::Quit:
+	  addMessage(NULL, "download aborted");
 	  return 1;		    // terminate the curl call
 	case BzfEvent::KeyDown:
 	  display->getEvent(event); // flush the event
+	  addMessage(NULL, "download aborted");
 	  return 1;		    // terminate the curl call
 	case BzfEvent::KeyUp:
 	  display->getEvent(event); // flush the event
