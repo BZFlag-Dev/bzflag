@@ -96,6 +96,17 @@ class HUDRenderer {
 
     void		render(SceneRenderer&);
 
+    void		setHunting(bool _hunting);
+    bool		getHunting() const;
+    void		setHuntIndicator(bool _huntIndicator);
+    void		setHuntPosition(int _huntPosition);
+    int			getHuntPosition() const;
+    bool		getHuntSelection() const;
+    void		setHuntSelection(bool _huntSelection);
+    bool		getHuntIndicator() const;
+    bool		getHunt() const;
+    void		setHunt(bool _showHunt);
+
   protected:
     void		hudColor3f(GLfloat, GLfloat, GLfloat);
     void		hudColor4f(GLfloat, GLfloat, GLfloat, GLfloat);
@@ -229,6 +240,11 @@ class HUDRenderer {
     static std::string	cancelDestructLabel;
     static std::string	gameOverLabel;
     static const char*	flagHelpString[int(LastFlag) - int(FirstFlag) + 1];
+    bool		huntIndicator;
+    bool		hunting;
+    int			huntPosition;
+    bool		huntSelection;
+    bool		showHunt;
 };
 
 #endif // BZF_HUD_RENDERER_H

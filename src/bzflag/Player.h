@@ -77,6 +77,8 @@ class Player {
     bool		isCrossingWall() const;
     bool		isNotResponding() const;
     void		resetNotResponding();
+    bool		isHunted() const;
+    void		setHunted(bool _hunted);
 
     // returns true iff dead reckoning is too different from the
     // current tank state.
@@ -124,6 +126,7 @@ class Player {
     bool		notResponding;
     static OpenGLTexture* tankTexture;
     static int		totalCount;
+    bool		hunted;
 
     // permanent data
     TeamColor		team;			// my team
@@ -311,6 +314,16 @@ inline bool		Player::isNotResponding() const
 inline void		Player::resetNotResponding()
 {
   notResponding = false;
+}
+
+inline bool  Player::isHunted() const
+{
+  return hunted;
+}
+
+inline void  Player::setHunted(bool _hunted)
+{
+  hunted = _hunted;
 }
 
 #endif // BZF_PLAYER_H

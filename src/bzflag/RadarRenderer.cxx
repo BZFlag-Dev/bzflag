@@ -25,6 +25,10 @@
 #include "Team.h"
 #include "Flag.h"
 #include "OpenGLGState.h"
+#include "HUDRenderer.h"
+
+FlashClock flashTank;
+static bool toggleTank = false;
 
 const float		RadarRenderer::colorFactor = 40.0f;
 
@@ -370,7 +374,18 @@ void			RadarRenderer::render(SceneRenderer& renderer,
 	} else
 	  glColor3fv(Team::getRadarColor(player->getTeam()));
       }
-      drawTank(x, y, z);
+      // If this tank is hunted flash it on the radar
+      if (player->isHunted()) {
+        if (flashTank.isOn()) {
+          if (!toggleTank) continue;
+          else drawTank(x, y, z);
+        } else {
+          toggleTank = !toggleTank;
+          flashTank.setClock(0.2f);
+        }
+      } else {
+        drawTank(x, y, z);
+      }
     }
 
     // draw other tanks' shells

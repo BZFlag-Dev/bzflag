@@ -128,7 +128,12 @@ HUDRenderer::HUDRenderer(const BzfDisplay* _display,
 				restartLabel(restartLabelFormat),
 				roamingLabel("observing"),
 				showCompose(false),
-				showCracks(true)
+				showCracks(true),
+				huntIndicator(false),
+				hunting(false),
+				huntPosition(0),
+				huntSelection(false),
+				showHunt(false)
 {
   int i;
 
@@ -806,9 +811,60 @@ int HUDRenderer::teamScoreCompare(const void* _c, const void* _d)
   return (d->won-d->lost) - (c->won-c->lost);
 }
 
+void		HUDRenderer::setHuntPosition(int _huntPosition)
+{
+	huntPosition = _huntPosition;
+}
+
+int			HUDRenderer::getHuntPosition() const
+{
+	return huntPosition;
+}
+
+bool			HUDRenderer::getHuntSelection() const
+{
+  return huntSelection;
+}
+
+void			HUDRenderer::setHuntSelection(bool _huntSelection)
+{
+  huntSelection = _huntSelection;
+}
+
+void		HUDRenderer::setHuntIndicator(bool _huntIndicator)
+{
+  huntIndicator = _huntIndicator;
+}
+
+bool			HUDRenderer::getHuntIndicator() const
+{
+  return huntIndicator;
+}
+
+void		HUDRenderer::setHunting(bool _hunting)
+{
+  hunting = _hunting;
+}
+
+bool			HUDRenderer::getHunting() const
+{
+  return hunting;
+}
+
+bool			HUDRenderer::getHunt() const
+{
+  return showHunt;
+}
+
+void			HUDRenderer::setHunt(bool _showHunt)
+{
+  showHunt = _showHunt;
+}
+
 void			HUDRenderer::renderScoreboard(void)
 {
   int i, j;
+  bool huntPlayerAlive = false;
 
   LocalPlayer* myTank = LocalPlayer::getMyTank();
   if (!myTank || !World::getWorld()) return;
@@ -851,18 +907,45 @@ void			HUDRenderer::renderScoreboard(void)
   bool drewMyScore = false;
   for (i = 0; i < plrCount; i++) {
     RemotePlayer* player = World::getWorld()->getPlayer(players[i]);
+    if(getHunt()) {
+      // Make the selection marker wrap.
+      if(getHuntPosition() >= plrCount) setHuntPosition(0);
+      if(getHuntPosition() < 0) setHuntPosition(plrCount-1);
+
+      // toggle the hunt indicator if this is the current player pointed to
+      if(getHuntPosition() == i) {
+        setHuntIndicator(true);
+        // If hunt is selected set this player to be hunted
+        if(getHuntSelection()) {
+          player->setHunted(true);
+          setHunting(true);
+          setHuntSelection(false);
+          setHunt(false);
+          huntPlayerAlive = true; // hunted player is alive since you selected him
+        }
+      } else {
+        setHuntIndicator(false);
+      }
+    } else {
+      setHuntIndicator(false);
+      if (!getHunting()) player->setHunted(false); // if not hunting make sure player isn't hunted
+      else if (player->isHunted()) huntPlayerAlive = true; // confirm hunted player is alive
+    }
     if (!drewMyScore && myTank->getScore() > player->getScore() &&
 	myTank->getCallSign()[0] != '@') {
+	  if(getHunt() && getHuntPosition() == i) setHuntIndicator(false);// don't hunt myself
       // if i have greater score than remote player draw my name here
       drawPlayerScore(myTank, x1, x2, x3, (float)y);
       drewMyScore = true;
       y -= (int)dy;
     }
+	if(getHunt() && getHuntPosition() == i) setHuntIndicator(true);// set hunt indicator back to normal
     drawPlayerScore(player, x1, x2, x3, (float)y);//then draw the remote player
     y -= (int)dy;
   }
+  if (!huntPlayerAlive && getHunting()) setHunting(false); //stop hunting if hunted player is dead
   if (!drewMyScore && myTank->getCallSign()[0] != '@') {
-    // if my score is smaller or equal to last remote player draw my score here
+	  // if my score is smaller or equal to last remote player draw my score here
     drawPlayerScore(myTank, x1, x2, x3, (float)y);
     y -= (int)dy;
     drewMyScore = true;
@@ -1448,6 +1531,10 @@ void			HUDRenderer::drawPlayerScore(const Player* player,
   if (player->isPaused())
     strcpy(status,"[p]");
 
+  const float huntArrow = minorFont.getWidth("-> ");
+  const float huntedArrow = minorFont.getWidth("Hunt->");
+  const float x4 = x2 + (scoreLabelWidth - huntArrow);
+  const float x5 = x2 + (scoreLabelWidth - huntedArrow);
   const float callSignWidth = minorFont.getWidth(player->getCallSign());
   const float emailWidth = minorFont.getWidth(email);
   const float flagWidth = minorFont.getWidth(flag);
@@ -1466,11 +1553,18 @@ void			HUDRenderer::drawPlayerScore(const Player* player,
     hudSColor3fv(white_color);
     minorFont.draw(flag, x3 + callSignWidth + emailWidth, y);
     hudSColor3fv(Team::getRadarColor(player->getTeam()));
-  }
-  else {
+  } else {
     minorFont.draw(flag, x3 + callSignWidth + emailWidth, y);
   }
   minorFont.draw(status, x3 + callSignWidth + flagWidth + emailWidth, y);
+  if (player->isHunted()) {
+    minorFont.draw("Hunt->", x5, y);
+  } else if (getHuntIndicator()) {
+    minorFont.draw("->", x4, y);
+    setHuntIndicator(false);
+  } else {
+    minorFont.draw("      ", x5, y);
+  }
 }
 
 void			HUDRenderer::drawDeadPlayerScore(const Player* player,

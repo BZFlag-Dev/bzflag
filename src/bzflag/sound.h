@@ -41,6 +41,8 @@
 #define SFX_MISSILE	19		/* guided missile fired */
 #define SFX_LOCK	20		/* missile locked on me */
 #define SFX_TEAMGRAB	21		/* grabbed an opponents team flag */
+#define	SFX_HUNT	22		/* hunting sound */
+#define SFX_HUNT_SELECT	23		/* hunt target selected */
 
 /* prepare sound effects generator and shut it down */
 void			openSound(const char* pname);

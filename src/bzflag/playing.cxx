@@ -147,6 +147,7 @@ static std::vector<BillboardSceneNode*>	prototypeExplosions;
 static int		savedVolume = -1;
 static bool		grabMouseAlways = false;
 int			killerHighlight = 0;
+FlashClock		pulse;
 
 static char		messageMessage[PlayerIdPLen + 2 + MessageLen];
 
@@ -156,6 +157,7 @@ static std::vector<std::string>	silencePlayers;
 
 static void		restartPlaying();
 static void		setTarget();
+static void		setHuntTarget();
 static void		handleFlagDropped(Player* tank);
 static void		handlePlayerMessage(uint16_t, uint16_t, void*);
 static Player*		getPlayerByName( const char* name );
@@ -1368,36 +1370,58 @@ static bool		doKeyCommon(const BzfKeyEvent& key, bool pressed)
     // plus five minutes
     if (pressed) clockAdjust += 5.0f * 60.0f;
     return true;
-  }
-
-  else if (keymap.isMappedTo(BzfKeyMap::TimeBackward, key)) {
+  } else if (keymap.isMappedTo(BzfKeyMap::TimeBackward, key)) {
     // minus five minutes
     if (pressed) clockAdjust -= 5.0f * 60.0f;
     return true;
-  }
-
-  else if (key.ascii == 27) {
+  } else if (key.ascii == 27) {
     if (pressed) HUDDialogStack::get()->push(mainMenu);
     return true;
-  }
-
-  else if (keymap.isMappedTo(BzfKeyMap::Quit, key)) {
+  } else if (keymap.isMappedTo(BzfKeyMap::Hunt, key)) {
+    if (pressed) {
+      if (hud->getHunting())
+	hud->setHunting(false);
+      else {
+        playLocalSound(SFX_HUNT);
+        hud->setHunt(!hud->getHunt());
+        hud->setHuntPosition(0);
+        if (!sceneRenderer->getScore())
+	  sceneRenderer->setScore(true);
+      }
+    }
+    return true;
+  } else if (hud->getHunt()) {
+    if (key.button == BzfKeyEvent::Down || 
+        keymap.isMappedTo(BzfKeyMap::Identify, key)) {
+      if (pressed) {
+        hud->setHuntPosition(hud->getHuntPosition()+1);
+      }
+      return true;
+    } else if (key.button == BzfKeyEvent::Up || 
+               keymap.isMappedTo(BzfKeyMap::DropFlag, key)) {
+      if (pressed) {
+        hud->setHuntPosition(hud->getHuntPosition()-1);
+      }
+      return true;
+    } else if (keymap.isMappedTo(BzfKeyMap::FireShot, key)) {
+      if (pressed) {
+        hud->setHuntSelection(true);
+        playLocalSound(SFX_HUNT_SELECT);
+      }
+      return true;
+    }
+  } else if (keymap.isMappedTo(BzfKeyMap::Quit, key)) {
     getMainWindow()->setQuit();
     return true;
-  }
-	
-  else if (keymap.isMappedTo(BzfKeyMap::ToggleMainFlags, key)) {
+  } else if (keymap.isMappedTo(BzfKeyMap::ToggleMainFlags, key)) {
     if (pressed)
       world->toggleFlags();
     return true;
-  }
-  else if (keymap.isMappedTo(BzfKeyMap::ToggleRadarFlags, key)) {
+  } else if (keymap.isMappedTo(BzfKeyMap::ToggleRadarFlags, key)) {
     if (pressed)
       radar->toggleFlags();
     return true;
-  }
-
-  else {
+  } else {
     // built-in unchangeable keys.  only perform if not masked.
     switch (key.ascii) {
       case 'T':
@@ -4075,6 +4099,78 @@ static void		setTarget()
   }
 }
 
+static void		setHuntTarget()
+{
+  // get info about my tank
+  const float c = cosf(-myTank->getAngle());
+  const float s = sinf(-myTank->getAngle());
+  const float x0 = myTank->getPosition()[0];
+  const float y0 = myTank->getPosition()[1];
+
+  // initialize best target
+  Player* bestTarget = NULL;
+  float bestDistance = Infinity;
+  bool lockedOn = false;
+
+  // figure out which tank is centered in my sights
+  for (int i = 0; i < maxPlayers; i++) {
+    if (!player[i] || !player[i]->isAlive()) continue;
+
+    // compute position in my local coordinate system
+    const float* pos = player[i]->getPosition();
+    const float x = c * (pos[0] - x0) - s * (pos[1] - y0);
+    const float y = s * (pos[0] - x0) + c * (pos[1] - y0);
+
+    // ignore things behind me
+    if (x < 0.0f) continue;
+
+    // get distance and sin(angle) from directly forward
+    const float d = hypotf(x, y);
+    const float a = fabsf(y / d);
+
+    // see if it's inside lock-on angle (if we're trying to lock-on)
+    if (a < 0.15f &&					// about 8.5 degrees
+	myTank->getFlag() == GuidedMissileFlag &&	// am i locking on?
+	player[i]->getFlag() != StealthFlag &&		// can't lock on stealth
+	!player[i]->isPaused() &&			// can't lock on paused
+	!player[i]->isNotResponding() &&		// can't lock on not responding
+	d < bestDistance) {				// is it better?
+      bestTarget = player[i];
+      bestDistance = d;
+      lockedOn = true;
+    }
+    else if (a < 0.3f &&				// about 17 degrees
+	player[i]->getFlag() != StealthFlag &&		// can't "see" stealth
+	d < bestDistance && !lockedOn) {		// is it better?
+      bestTarget = player[i];
+      bestDistance = d;
+    }
+  }
+  if (!bestTarget) return;
+
+
+  if (bestTarget->isHunted()  && myTank->getFlag() != BlindnessFlag) {
+    if (myTank->getTarget() == NULL) { // Don't interfere with GM lock display
+      std::string msg("SPOTTED: ");
+      msg += bestTarget->getCallSign();
+      msg += " (";
+      msg += Team::getName(bestTarget->getTeam());
+      if (bestTarget->getFlag() != NoFlag) {
+        msg += ") with ";
+        msg += Flag::getName(bestTarget->getFlag());
+      } else {
+        msg += ")";
+      }
+    hud->setAlert(1, msg.c_str(), 2.0f, 0);
+    }
+    if (!pulse.isOn()) {
+      const float* bestTargetPosition = bestTarget->getPosition();
+      playWorldSound(SFX_HUNT, bestTargetPosition[0], bestTargetPosition[1], bestTargetPosition[2]);
+      pulse.setClock(1.0f);
+    }
+  }
+}
+
 static void		updateDaylight(double offset, SceneRenderer& renderer)
 {
   static const double SecondsInDay = 86400.0;
@@ -5850,6 +5946,7 @@ static void		playingLoop()
     if (myTank) {
       if (myTank->isAlive() && !myTank->isPaused()) {
 	doMotion();
+	if (hud->getHunting()) setHuntTarget(); //spot hunt target
 	if (fireButton && myTank->getFlag() == MachineGunFlag && !Observer) 
 	  myTank->fireShot();
       }

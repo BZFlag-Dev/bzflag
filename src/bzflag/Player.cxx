@@ -36,6 +36,7 @@ Player::Player(const PlayerId& _id, TeamColor _team,
 		const char* name, const char* _email) :
 				id(_id),
 				notResponding(false),
+				hunted(false),
 				team(_team),
 				flag(NoFlag),
 				fromTeleporter(0),
