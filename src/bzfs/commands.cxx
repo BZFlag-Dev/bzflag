@@ -110,76 +110,15 @@ int getTarget(const char *victimname) {
   return i;
 }
 
-// function for uptime conversion
-
-int convertTime(float raw, int convertedTimes[])
-{
-  int day, hour, min, sec, remainder;
-  int const secondsInDay = 86400;
-
-  sec = (int)raw;
-  day = sec / secondsInDay;
-  remainder = sec - (day * secondsInDay);
-  hour = remainder / 3600;
-  remainder = sec - ((hour * 3600) + (day * secondsInDay));
-  min = remainder / 60;
-  remainder = sec - ((hour * 3600) + (day * secondsInDay) + (min * 60));
-  sec = remainder;
-
-  convertedTimes[0] = day;
-  convertedTimes[1] = hour;
-  convertedTimes[2] = min;
-  convertedTimes[3] = sec;
-
-  return 0;
-}
-// function for uptime printing
-
-std::string printTime(int timeValue[])
-{
-  std::string valueNames;
-  char temp[20];
-
-  if (timeValue[0] > 0) {
-    snprintf(temp, 20, "%i day%s", timeValue[0], timeValue[0] == 1 ? "" : "s");
-    valueNames.append(temp);
-  }
-  if (timeValue[1] > 0) {
-    if (timeValue[0] > 0) {
-      valueNames.append(", ");
-    }
-    snprintf(temp, 20, "%i hour%s", timeValue[1], timeValue[1] == 1 ? "" : "s");
-    valueNames.append(temp);
-  }
-  if (timeValue[2] > 0) {
-    if ((timeValue[1] > 0) || (timeValue[0] > 0)) {
-      valueNames.append(", ");
-    }
-    snprintf(temp, 20, "%i min%s", timeValue[2], timeValue[2] == 1 ? "" : "s");
-    valueNames.append(temp);
-  }
-  if (timeValue[3] > 0) {
-    if ((timeValue[2] > 0) || (timeValue[1] > 0) || (timeValue[0] > 0)) {
-      valueNames.append(", ");
-    }
-    snprintf(temp, 20, "%i sec%s", timeValue[3], timeValue[3] == 1 ? "" : "s");
-    valueNames.append(temp);
-  }
-
-  return valueNames;
-}
-
 void handleUptimeCmd(GameKeeper::Player *playerData, const char *)
 {
   float rawTime;
   int t = playerData->getIndex();
   char reply[MessageLen] = {0};
-  int temp[4];
 
   rawTime = TimeKeeper::getCurrent() - TimeKeeper::getStartTime();
-  convertTime(rawTime,temp);
-  sprintf(reply,"%s.", printTime(temp).c_str());
-  sendMessage(ServerPlayer,t, reply);
+  sprintf(reply, "%s.", TimeKeeper::printTime(rawTime).c_str());
+  sendMessage(ServerPlayer, t, reply);
 }
 
 void handleServerQueryCmd(GameKeeper::Player *playerData, const char *)
@@ -500,14 +439,14 @@ void handleCountdownCmd(GameKeeper::Player *playerData, const char *message)
     if (countdownDelay == 0) {
       matchBegins = "Match begins now!";
     } else {
-      convertTime((float)countdownDelay, timeArray);
-      std::string countdowntime = printTime(timeArray);
+      TimeKeeper::convertTime((float)countdownDelay, timeArray);
+      std::string countdowntime = TimeKeeper::printTime(timeArray);
       matchBegins = TextUtils::format("Match begins in about %s", countdowntime.c_str());
     }
     sendMessage(ServerPlayer, AllPlayers, matchBegins.c_str());
 
-    convertTime(clOptions->timeLimit, timeArray);
-    std::string timelimit = printTime(timeArray);
+    TimeKeeper::convertTime(clOptions->timeLimit, timeArray);
+    std::string timelimit = TimeKeeper::printTime(timeArray);
     matchBegins = TextUtils::format("Match duration is %s", timelimit.c_str());
     sendMessage(ServerPlayer, AllPlayers, matchBegins.c_str());
 

@@ -25,6 +25,8 @@
 
 #include "common.h"
 
+#include <string>
+
 
 /** TimeKeeper keeps time.  It's useful to determine how much time has
  * elapsed from some other point in time.  Use getCurrent() to return a
@@ -66,7 +68,15 @@ public:
   static const TimeKeeper&	getNullTime(void);
 
   /** returns a string of the local time */
-  static const char *timestamp(void);
+  static const char		*timestamp(void);
+
+  /** converts a float time difference into an array of integers
+      representing days, hours, minutes, seconds */
+  static const void		convertTime(float raw, int convertedTimes[]);
+  /** prints an integer-array time difference in human-readable form */
+  static const std::string	printTime(int timeValue[]);
+  /** prints an float time difference in human-readable form */
+  static const std::string	printTime(float diff);
 
 private:
   double		seconds;
