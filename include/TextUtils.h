@@ -217,20 +217,15 @@ namespace TextUtils {
    */
   inline int firstAlphanumeric(const std::string &input, unsigned short int max=4096)
   {
-    if (input.size() == 0) {
-      return -1;
-
-    }
-
-    int i = 0;
 
     if(max > input.length())
       max = (unsigned short)input.length();
 
-    while (!isAlphanumeric(input[i]) && (i < max)) {
-      i++;
-    }
-    return i;
+	for(unsigned short i = 0; i < max; i++)
+      if(isAlphanumeric(input[i]))
+        return i;
+
+    return -1;
   }
 
 
@@ -239,19 +234,15 @@ namespace TextUtils {
    */
   inline int firstNonalphanumeric(const std::string &input, unsigned short int max=4096)
   {
-    if (input.size() == 0) {
-      return -1;
-    }
-
-    int i = 0;
 
     if(max > input.length())
       max = (unsigned short)input.length();
 
-    while (isAlphanumeric(input[i]) && (i < max)) {
-      i++;
-    }
-    return i;
+    for(unsigned short i = 0; i < max; i++)
+      if(!isAlphanumeric(input[i]))
+        return i;
+
+    return -1;
   }
 
 
@@ -260,19 +251,15 @@ namespace TextUtils {
    */
   inline int firstPrintable(const std::string &input, unsigned short int max=4096)
   {
-    if (input.size() == 0) {
-      return -1;
-    }
-
-    int i = 0;
 
     if(max > input.length())
       max = (unsigned short)input.length();
+   
+	for(unsigned short i = 0; i < max; i++)
+      if(isPrintable(input[i]))
+        return i;
 
-    while (!isPrintable(input[i]) && (i < max)) {
-      i++;
-    }
-    return i;
+    return -1;
   }
 
 
@@ -281,19 +268,14 @@ namespace TextUtils {
    */
   inline int firstNonprintable(const std::string &input, unsigned short int max=4096)
   {
-    if (input.size() == 0) {
-      return -1;
-    }
-
-    int i = 0;
-
     if(max > input.length())
       max = (unsigned short)input.length();
 
-    while (isPrintable(input[i]) && (i < max)) {
-      i++;
-    }
-    return i;
+	for(unsigned short i = 0; i < max; i++)
+      if(!isPrintable(input[i]))
+        return i;
+	  
+	return -1;
   }
 
 
@@ -302,19 +284,15 @@ namespace TextUtils {
    */
   inline int firstVisible(const std::string &input, unsigned short int max=4096)
   {
-    if (input.size() == 0) {
-      return -1;
-    }
-
-    int i = 0;
 
     if(max > input.length())
       max = (unsigned short)input.length();
 
-    while (!isVisible(input[i]) && (i < max)) {
-      i++;
-    }
-    return i;
+    for(unsigned short i = 0; i < max; i++)
+      if(isVisible(input[i]))
+        return i;
+
+    return -1;
   }
 
 
@@ -324,19 +302,15 @@ namespace TextUtils {
    */
   inline int firstNonvisible(const std::string &input, unsigned short int max=4096)
   {
-    if (input.size() == 0) {
-      return -1;
-    }
-
-    int i = 0;
-
     if(max > input.length())
       max = (unsigned short)input.length();
+    
+	for(unsigned short i = 0; i < max; i++)
+      if(!isVisible(input[i]))
+        return i;
+	
+	  return -1;  
 
-   while (isVisible(input[i]) && (i < max)) {
-      i++;
-    }
-    return i;
   }
 
 
@@ -345,20 +319,15 @@ namespace TextUtils {
    */
   inline int firstAlphabetic(const std::string &input, unsigned short int max=4096)
   {
-    if (input.size() == 0) {
-      return -1;
-
-    }
-
-    int i = 0;
-
+	  
     if(max > input.length())
       max = (unsigned short)input.length();
-
-    while (!isAlphabetic(input[i]) && (i < max)) {
-      i++;
-    }
-    return i;
+	
+    for(unsigned short i = 0; i < max; i++)
+      if(isAlphabetic(input[i]))
+        return i;
+   
+	return -1;
   }
 
 
@@ -367,19 +336,14 @@ namespace TextUtils {
    */
   inline int firstNonalphabetic(const std::string &input, unsigned short int max=4096)
   {
-    if (input.size() == 0) {
-      return -1;
-    }
-
-    int i = 0;
-
     if(max > input.length())
       max = (unsigned short)input.length();
 
-   while (isAlphabetic(input[i]) && (i < max)) {
-      i++;
-    }
-    return i;
+    for(unsigned short i = 0; i < max; i++)
+      if(!isAlphabetic(input[i]))
+        return i;
+
+    return -1;
   }
 
   /** url-encodes a string
