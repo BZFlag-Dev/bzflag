@@ -19,6 +19,8 @@ THESE SHOULD HAPPEN BEFORE THE NEXT RELEASE:
 
 THESE ARE LOWER PRIORITY
 
+* would be nice if LocalPlayer<->Robots wouldn't relayPackets (MsgPlayerUpdate) thru server
+
 * bzadmin should build without GL headers installed
 
 * rework the BZDB->eval() cacheing to support expression
