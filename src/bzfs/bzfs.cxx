@@ -3873,6 +3873,10 @@ int main(int argc, char **argv)
 
   Record::init();
 
+#ifdef HAVE_CURL
+  curl_global_cleanup();
+#endif
+
 
   // check time bomb
   if (timeBombBoom()) {
@@ -4715,6 +4719,12 @@ int main(int argc, char **argv)
 
   Record::kill();
   Replay::kill();
+
+#ifdef HAVE_CURL
+  CURLcode curlResult;
+  if ((curlResult = curl_global_init(CURL_GLOBAL_NOTHING)))
+    std::cout << "Unexpected error from libcurl: " << curlResult << std::endl;
+#endif
 
 #if defined(_WIN32)
   WSACleanup();

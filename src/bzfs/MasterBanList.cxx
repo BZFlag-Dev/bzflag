@@ -20,10 +20,17 @@ MasterBanList::MasterBanList()
 {
 #ifdef HAVE_CURL
   easyHandle = curl_easy_init();
-  if (!easyHandle)
+  if (!easyHandle) {
     std::cout << "Something wrong with CURL" << std::endl;
-  curl_easy_setopt(easyHandle, CURLOPT_WRITEFUNCTION, writeFunction);
-  curl_easy_setopt(easyHandle, CURLOPT_WRITEDATA, this);
+    return;
+  }
+  CURLcode result;
+  result = curl_easy_setopt(easyHandle, CURLOPT_WRITEFUNCTION, writeFunction);
+  if (result)
+    std::cout << "Something wrong with CURL; Error: " << result << std::endl;
+  result = curl_easy_setopt(easyHandle, CURLOPT_WRITEDATA, this);
+  if (result)
+    std::cout << "Something wrong with CURL; Error: " << result << std::endl;
 #endif
 }
 
@@ -55,9 +62,24 @@ const std::string& MasterBanList::get ( const std::string URL )
   data = "";
   // get all up on the internet and go get the thing
 #ifdef HAVE_CURL
-  curl_easy_setopt(easyHandle, CURLOPT_URL, URL.c_str());
-  curl_easy_perform(easyHandle);
-  curl_easy_setopt(easyHandle, CURLOPT_URL, NULL);
+  CURLcode result;
+  if (!easyHandle)
+    return "";
+  result = curl_easy_setopt(easyHandle, CURLOPT_URL, URL.c_str());
+  if (result)
+    std::cout << "Something wrong with CURL; Error: " << result << std::endl;
+  result = curl_easy_perform(easyHandle);
+  if (result == CURLOPT_ERRORBUFFER) {
+    std::cout << "Error: server reported: " << data << std::endl;
+    return "";
+  }
+  if (result) {
+    std::cout << "Something wrong with CURL; Error: " << result << std::endl;
+    return "";
+  }
+  result = curl_easy_setopt(easyHandle, CURLOPT_URL, NULL);
+  if (result)
+    std::cout << "Something wrong with CURL; Error: " << result << std::endl;
 #endif
   return data;
 }
