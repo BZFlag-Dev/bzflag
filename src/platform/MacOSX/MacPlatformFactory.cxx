@@ -10,11 +10,16 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
+#include "MacPlatformFactory.h"
+#ifdef HAVE_SDL
+#include "SDLMedia.h"
+#include "SDLDisplay.h"
+#else
 #include "MacDisplay.h"
 #include "MacVisual.h"
 #include "MacWindow.h"
 #include "MacMedia.h"
-#include "MacPlatformFactory.h"
+#endif
 
 PlatformFactory* PlatformFactory::getInstance()
 {
@@ -25,30 +30,50 @@ PlatformFactory* PlatformFactory::getInstance()
 }
 
 
+#ifdef HAVE_SDL
+BzfDisplay* MacPlatformFactory::createDisplay(const char *, const char *) {
+#else
 BzfDisplay* MacPlatformFactory::createDisplay(const char *name, const char *videoFormat) {
+#endif
   if (!display)
+#ifdef HAVE_SDL
+    display = new SDLDisplay();
+#else
     display = new MacDisplay(name, videoFormat);
+#endif
 
   return display;
 }
 
 BzfVisual* MacPlatformFactory::createVisual(const BzfDisplay *_display) {
   if (!visual)
+#ifdef HAVE_SDL
+    visual = new SDLVisual((const SDLDisplay*)_display);
+#else
     visual = new MacVisual((const MacDisplay*)_display);
+#endif
 
   return visual;
 }
 
 BzfWindow* MacPlatformFactory::createWindow(const BzfDisplay *_display, BzfVisual *_visual) {
   if (!window)
+#ifdef HAVE_SDL
+    window = new SDLWindow((const SDLDisplay*)_display, (SDLVisual*)_visual);
+#else
     window = new MacWindow((const MacDisplay*)_display, (MacVisual*)_visual);
+#endif
 
   return window;
 }
 
 BzfMedia* MacPlatformFactory::createMedia() {
   if (!media)
+#ifdef HAVE_SDL
+    media = new SDLMedia();
+#else
     media = new MacMedia();
+#endif
 
   return media;
 }
