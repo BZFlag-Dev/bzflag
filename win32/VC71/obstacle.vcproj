@@ -258,6 +258,31 @@
 						BasicRuntimeChecks="3"/>
 				</FileConfiguration>
 			</File>
+			<Filter
+				Name="Generators"
+				Filter="">
+				<File
+					RelativePath="..\..\src\obstacle\BaseSceneNodeGenerator.cxx">
+				</File>
+				<File
+					RelativePath="..\..\src\obstacle\BoxSceneNodeGenerator.cxx">
+				</File>
+				<File
+					RelativePath="..\..\src\obstacle\EmptySceneNodeGenerator.cxx">
+				</File>
+				<File
+					RelativePath="..\..\src\obstacle\ObstacleSceneNodeGenerator.cxx">
+				</File>
+				<File
+					RelativePath="..\..\src\obstacle\PyramidSceneNodeGenerator.cxx">
+				</File>
+				<File
+					RelativePath="..\..\src\obstacle\TeleporterSceneNodeGenerator.cxx">
+				</File>
+				<File
+					RelativePath="..\..\src\obstacle\WallSceneNodeGenerator.cxx">
+				</File>
+			</Filter>
 		</Filter>
 		<Filter
 			Name="Header Files"
@@ -266,7 +291,13 @@
 				RelativePath="..\..\include\BaseBuilding.h">
 			</File>
 			<File
+				RelativePath="..\..\src\obstacle\BaseSceneNodeGenerator.h">
+			</File>
+			<File
 				RelativePath="..\..\include\BoxBuilding.h">
+			</File>
+			<File
+				RelativePath="..\..\src\obstacle\BoxSceneNodeGenerator.h">
 			</File>
 			<File
 				RelativePath="..\..\include\bzfgl.h">
@@ -281,6 +312,9 @@
 				RelativePath="..\..\include\common.h">
 			</File>
 			<File
+				RelativePath="..\..\src\obstacle\EmptySceneNodeGenerator.h">
+			</File>
+			<File
 				RelativePath="..\..\include\Intersect.h">
 			</File>
 			<File
@@ -291,6 +325,9 @@
 			</File>
 			<File
 				RelativePath="..\..\include\PyramidBuilding.h">
+			</File>
+			<File
+				RelativePath="..\..\src\obstacle\PyramidSceneNodeGenerator.h">
 			</File>
 			<File
 				RelativePath="..\..\include\QuadWallSceneNode.h">
@@ -308,6 +345,9 @@
 				RelativePath="..\..\include\Teleporter.h">
 			</File>
 			<File
+				RelativePath="..\..\src\obstacle\TeleporterSceneNodeGenerator.h">
+			</File>
+			<File
 				RelativePath="..\..\include\TriWallSceneNode.h">
 			</File>
 			<File
@@ -315,6 +355,9 @@
 			</File>
 			<File
 				RelativePath="..\..\include\WallSceneNode.h">
+			</File>
+			<File
+				RelativePath="..\..\src\obstacle\WallSceneNodeGenerator.h">
 			</File>
 		</Filter>
 	</Files>

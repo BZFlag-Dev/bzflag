@@ -213,6 +213,9 @@ copy debug\*.pdb ..\..\*.pdb
 				</FileConfiguration>
 			</File>
 			<File
+				RelativePath="..\..\src\bzflag\commands.cxx">
+			</File>
+			<File
 				RelativePath="..\..\src\bzflag\ControlPanel.cxx">
 				<FileConfiguration
 					Name="Debug|Win32">
@@ -231,6 +234,9 @@ copy debug\*.pdb ..\..\*.pdb
 						AdditionalIncludeDirectories=""
 						PreprocessorDefinitions=""/>
 				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\src\bzflag\FlashClock.cxx">
 			</File>
 			<File
 				RelativePath="..\..\src\bzflag\MainWindow.cxx">
@@ -521,8 +527,7 @@ copy debug\*.pdb ..\..\*.pdb
 				<File
 					RelativePath="..\..\src\bzflag\stars.cxx">
 					<FileConfiguration
-						Name="Debug|Win32"
-						ExcludedFromBuild="TRUE">
+						Name="Debug|Win32">
 						<Tool
 							Name="VCCLCompilerTool"
 							Optimization="0"
@@ -531,8 +536,7 @@ copy debug\*.pdb ..\..\*.pdb
 							BasicRuntimeChecks="3"/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Release|Win32"
-						ExcludedFromBuild="TRUE">
+						Name="Release|Win32">
 						<Tool
 							Name="VCCLCompilerTool"
 							Optimization="2"
@@ -564,6 +568,9 @@ copy debug\*.pdb ..\..\*.pdb
 			<Filter
 				Name="game"
 				Filter="">
+				<File
+					RelativePath="..\..\src\bzflag\BaseLocalPlayer.cxx">
+				</File>
 				<File
 					RelativePath="..\..\src\bzflag\ComposeDefaultKey.cxx">
 				</File>
@@ -626,6 +633,9 @@ copy debug\*.pdb ..\..\*.pdb
 							AdditionalIncludeDirectories=""
 							PreprocessorDefinitions=""/>
 					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\..\src\bzflag\RegionPriorityQueue.cxx">
 				</File>
 				<File
 					RelativePath="..\..\src\bzflag\RemotePlayer.cxx">
@@ -697,6 +707,9 @@ copy debug\*.pdb ..\..\*.pdb
 					</FileConfiguration>
 				</File>
 				<File
+					RelativePath="..\..\src\bzflag\WorldBuilder.cxx">
+				</File>
+				<File
 					RelativePath="..\..\src\bzflag\WorldPlayer.cxx">
 					<FileConfiguration
 						Name="Debug|Win32">
@@ -724,6 +737,9 @@ copy debug\*.pdb ..\..\*.pdb
 					</File>
 					<File
 						RelativePath="..\..\src\bzflag\SegmentedShotStrategy.cxx">
+					</File>
+					<File
+						RelativePath="..\..\src\bzflag\ShockWaveStrategy.cxx">
 					</File>
 					<File
 						RelativePath="..\..\src\bzflag\ShotPath.cxx">
@@ -774,6 +790,9 @@ copy debug\*.pdb ..\..\*.pdb
 				Name="menus"
 				Filter="">
 				<File
+					RelativePath="..\..\src\bzflag\AudioMenu.cxx">
+				</File>
+				<File
 					RelativePath="..\..\src\bzflag\FormatMenu.cxx">
 				</File>
 				<File
@@ -784,6 +803,9 @@ copy debug\*.pdb ..\..\*.pdb
 				</File>
 				<File
 					RelativePath="..\..\src\bzflag\HUDDialogStack.cxx">
+				</File>
+				<File
+					RelativePath="..\..\src\bzflag\InputMenu.cxx">
 				</File>
 				<File
 					RelativePath="..\..\src\bzflag\JoinMenu.cxx">
@@ -824,10 +846,19 @@ copy debug\*.pdb ..\..\*.pdb
 			Name="Header Files"
 			Filter="h;hpp;hxx;hm;inl">
 			<File
+				RelativePath="..\..\src\bzflag\AudioMenu.h">
+			</File>
+			<File
 				RelativePath="..\..\src\bzflag\BackgroundRenderer.h">
 			</File>
 			<File
+				RelativePath="..\..\src\bzflag\BaseLocalPlayer.h">
+			</File>
+			<File
 				RelativePath="..\..\src\bzflag\callbacks.h">
+			</File>
+			<File
+				RelativePath="..\..\src\bzflag\commands.h">
 			</File>
 			<File
 				RelativePath="..\..\src\bzflag\ComposeDefaultKey.h">
@@ -837,6 +868,9 @@ copy debug\*.pdb ..\..\*.pdb
 			</File>
 			<File
 				RelativePath="..\..\src\bzflag\daylight.h">
+			</File>
+			<File
+				RelativePath="..\..\src\bzflag\FlashClock.h">
 			</File>
 			<File
 				RelativePath="..\..\src\bzflag\FormatMenu.h">
@@ -861,6 +895,9 @@ copy debug\*.pdb ..\..\*.pdb
 			</File>
 			<File
 				RelativePath="..\..\src\bzflag\HUDui.h">
+			</File>
+			<File
+				RelativePath="..\..\src\bzflag\InputMenu.h">
 			</File>
 			<File
 				RelativePath="..\..\src\bzflag\JoinMenu.h">
@@ -908,6 +945,9 @@ copy debug\*.pdb ..\..\*.pdb
 				RelativePath="..\..\src\bzflag\Region.h">
 			</File>
 			<File
+				RelativePath="..\..\src\bzflag\RegionPriorityQueue.h">
+			</File>
+			<File
 				RelativePath="..\..\src\bzflag\RemotePlayer.h">
 			</File>
 			<File
@@ -947,6 +987,9 @@ copy debug\*.pdb ..\..\*.pdb
 				RelativePath="..\..\src\bzflag\ServerStartMenu.h">
 			</File>
 			<File
+				RelativePath="..\..\src\bzflag\ShockWaveStrategy.h">
+			</File>
+			<File
 				RelativePath="..\..\src\bzflag\ShotPath.h">
 			</File>
 			<File
@@ -978,6 +1021,9 @@ copy debug\*.pdb ..\..\*.pdb
 			</File>
 			<File
 				RelativePath="..\..\src\bzflag\World.h">
+			</File>
+			<File
+				RelativePath="..\..\src\bzflag\WorldBuilder.h">
 			</File>
 			<File
 				RelativePath="..\..\src\bzflag\WorldPlayer.h">
