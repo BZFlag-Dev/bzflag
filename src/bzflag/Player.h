@@ -83,7 +83,8 @@ public:
 
   const ShotStatistics*	getShotStatistics() const;
 
-  void		addToScene(SceneDatabase*, TeamColor effectiveTeam, bool showIDL);
+  void		addToScene(SceneDatabase*, TeamColor effectiveTeam,
+                           bool inCockpit, bool showIDL);
   virtual void	addShots(SceneDatabase*, bool colorblind) const;
   void		setLandingSpeed(float velocity);
   void		spawnEffect();

@@ -227,6 +227,9 @@ void			Player::setTeleport(const TimeKeeper& t,
 
 void			Player::updateTank(float dt)
 {
+  static bool oldOOstate = false;
+  static bool newOOstate = false;
+  
   // copy the current dimensions to the old dimensions
   memcpy (oldDimensions, dimensions, sizeof(float[3]));
   
@@ -470,8 +473,8 @@ void			Player::setVisualTeam (TeamColor visualTeam)
 
 
 void			Player::addToScene(SceneDatabase* scene,
-					  TeamColor effectiveTeam,
-					  bool showIDL)
+					   TeamColor effectiveTeam,
+					   bool inCockpit, bool showIDL)
 {
   if (!isAlive() && !isExploding()) {
     return;
@@ -494,6 +497,9 @@ void			Player::addToScene(SceneDatabase* scene,
   else {
     tankNode->setDimensions(dimensionsScale);
   }
+
+  // reset the clipping plane
+  tankNode->setClipPlane(NULL);
   
   if (isAlive()) {
     tankNode->setExplodeFraction(0.0f);
@@ -520,18 +526,20 @@ void			Player::addToScene(SceneDatabase* scene,
 	}
 
 	// add clipping plane to tank node
-	tankNode->setClipPlane(plane);
+	if (!inCockpit) {
+	  tankNode->setClipPlane(plane);
+        }
       }
-    } else if ((getFlag() == Flags::Burrow) && (getPosition()[2] < 0.0f)) {
+    }
+    else if ((getFlag() == Flags::Burrow) && (getPosition()[2] < 0.0f)) {
       GLfloat plane[4];
       plane[0] = plane[1] = 0.0f;
       plane[2] = 1.0f;
       plane[3] = 0.0f;
       tankNode->setClipPlane(plane);
-    } else {
-      tankNode->setClipPlane(NULL);
-    }
-  } else if (isExploding() && state.pos[2] > ZERO_TOLERANCE) {
+    } // isCrossingWall()
+  }   // isAlive()
+  else if (isExploding() && state.pos[2] > ZERO_TOLERANCE) {
     float t = (TimeKeeper::getTick() - explodeTime) / 
               BZDB.eval(StateDatabase::BZDB_EXPLODETIME);
     if (t > 1.0f) {

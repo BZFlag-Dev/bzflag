@@ -4266,7 +4266,7 @@ void			drawFrame(const float dt)
       const bool showTreads = BZDB.isTrue("showTreads");
       const bool cloaked = myTank->getFlag() == Flags::Cloaking;
       if (myTank->needsToBeRendered(cloaked, showTreads)) {
-        myTank->addToScene(scene, myTank->getTeam(), showTreads);
+        myTank->addToScene(scene, myTank->getTeam(), true, showTreads);
       }
 
       // add my shells
@@ -4306,10 +4306,11 @@ void			drawFrame(const float dt)
           const bool following = roaming && (roamView == roamViewFP) && 
                                  (roamTrackWinner == i);
           const bool showPlayer = !following || showTreads;
+          const bool inCockpit = following && showTreads;
                                
           // add player tank if required
           if (player[i]->needsToBeRendered(cloaked, showPlayer)) {
-            player[i]->addToScene(scene, effectiveTeam, showPlayer);
+            player[i]->addToScene(scene, effectiveTeam, inCockpit, showPlayer);
           }
         }
       }
