@@ -85,10 +85,6 @@ LIB32=link.exe -lib
 # PROP Default_Filter "cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
 # Begin Source File
 
-SOURCE=..\src\mediafile\AudioFile.cxx
-# End Source File
-# Begin Source File
-
 SOURCE=..\src\mediafile\ImageFile.cxx
 # End Source File
 # Begin Source File
@@ -103,18 +99,10 @@ SOURCE=..\src\mediafile\PNGImageFile.cxx
 
 SOURCE=..\src\mediafile\SGIImageFile.cxx
 # End Source File
-# Begin Source File
-
-SOURCE=..\src\mediafile\WaveAudioFile.cxx
-# End Source File
 # End Group
 # Begin Group "Header Files"
 
 # PROP Default_Filter "h;hpp;hxx;hm;inl"
-# Begin Source File
-
-SOURCE=..\src\mediafile\AudioFile.h
-# End Source File
 # Begin Source File
 
 SOURCE=..\src\mediafile\ImageFile.h
@@ -130,10 +118,6 @@ SOURCE=..\src\mediafile\PNGImageFile.h
 # Begin Source File
 
 SOURCE=..\src\mediafile\SGIImageFile.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\src\mediafile\WaveAudioFile.h
 # End Source File
 # End Group
 # End Target
