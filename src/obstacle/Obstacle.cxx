@@ -125,8 +125,10 @@ float			Obstacle::getHitNormal(
       bestSide = 4;
     }
   } else if (pos2[2] == pos1[2]) {
-    minTime = 0.0f;
-    bestSide = 4;
+    if (pos1[2] == (oHeight + oPos[2])) {
+      minTime = 0.0f;
+      bestSide = 4;
+    }
   }
 
   // now do the same with obstacle's corners against moving object.
