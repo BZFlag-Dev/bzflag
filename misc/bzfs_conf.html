@@ -4,7 +4,7 @@
 		<script language="JavaScript">
 			var flags = new Array(	"V", "A", "OO", "F", "MG", "GM", "L", "R", "SB",
 						"IB", "ST", "T", "N", "SH", "SR", "SW", "PZ", "G",
-						"JP", "ID", "CL", "CB", "<-", "->", "M", "B", "JM", "WA" );
+						"JP", "ID", "CL", "CB", "LT", "GT", "M", "B", "JM", "WA" );
 
 			function ableControls()
 			{
@@ -250,6 +250,13 @@
 					d.writeln("-sw " + mainform.bad_flag_shake_wins.value + "<br/>");
 				}
 
+				if (mainform.good_mand_flag.value > 0) {
+					d.write("+f good");
+					if (mainform.good_mand_flag.value > 1)
+						d.write("{"+mainform.good_mand_flag.value+"}");
+					d.write(" ");
+				}
+
 				for (var i = 0; i < flags.length; i++) {
 					var el = flags[i].toLowerCase() + "_mand_flag";
 					var cnt = mainform.elements[el].value;
@@ -262,6 +269,9 @@
 				}
 				d.writeln("");
 				
+				if (mainform.bad_forbid_flag.checked > 0)
+					d.write("-f bad ");
+
 				for (var i = 0; i < flags.length; i++) {
 					var el = flags[i].toLowerCase() + "_forbid_flag";
 					if (mainform.elements[el].checked) {
