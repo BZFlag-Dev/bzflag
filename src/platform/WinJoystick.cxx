@@ -31,8 +31,16 @@ WinJoystick::~WinJoystick()
 
 void	      WinJoystick::initJoystick(const char* joystickName)
 {
-  if (strlen(joystickName) > 11)
+  inited = false;
+
+  if (!strcmp(joystickName, "off") || !strcmp(joystickName, "")) {
     return;
+  }
+
+  if (strlen(joystickName) < 11) {
+    printError("Invalid joystick name.");
+    return;
+  }
 
   if (joystickName[10] == '1')
     JoystickID = JOYSTICKID1;
@@ -44,7 +52,6 @@ void	      WinJoystick::initJoystick(const char* joystickName)
   if ((joyGetPos(JoystickID, &joyInfo) != JOYERR_NOERROR) ||
       (joyGetDevCaps(JoystickID, &joyCaps, sizeof(joyCaps)) != JOYERR_NOERROR)) {
     printError("Unable to initialize joystick.  Perhaps it is not plugged in?");
-    inited = false;
     return;
   }
 
