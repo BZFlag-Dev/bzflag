@@ -80,7 +80,7 @@ bool DelayQueue::getPacket (int *length, void **data)
   if (nextPacketTime() > 0.0f) {
     return false;
   }
-
+  
   // output is not NULL (nextPacketTime() checks this)
   
   DelayNode *dn = output;
@@ -105,6 +105,6 @@ float DelayQueue::nextPacketTime ()
     return +Infinity;
   }
   else {
-    return TimeKeeper::getCurrent() - output->sendtime;
+    return output->sendtime - TimeKeeper::getCurrent();
   }
 }
