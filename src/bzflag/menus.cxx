@@ -1335,9 +1335,11 @@ SaveWorldMenu::SaveWorldMenu()
   status = new HUDuiLabel;
   status->setFont(MainMenu::getFont());
   status->setString("");
+  status->setPosition(0.5f * (float)width, status->getY());
   list.push_back(status);
 
-  initNavigation(list, 1,list.size()-1);
+  // only navigate to the file name
+  initNavigation(list, 1,1);
 }
 
 SaveWorldMenu::~SaveWorldMenu()
