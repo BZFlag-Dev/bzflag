@@ -2108,7 +2108,7 @@ static int uread(int *playerIndex, int *nopackets)
 	      ntohs(pPlayerInfo->uaddr.sin_port));
 	}
       }
-      DEBUG3("\n");
+      DEBUG2("\n");
       *playerIndex = 0;
       return 0;
     }
