@@ -4,6 +4,7 @@
 BZFlag 1.7e5
 ------------
 
+* Fix Teamflag drop over building when building at 0 - Dave Brosius
 * Fix flags spawning in pyramids - Dave Brosius
 * Fix client crashes with UNKNOWNS - Valery Fouques
 * fix patchMessage for MsgAlive - Dave Brosius

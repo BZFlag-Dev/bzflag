@@ -2909,14 +2909,16 @@ static TeamColor whoseBase(float x, float y, float z)
 
   float highest = -1;
   int highestteam = -1;
+  //Skip Rogue
   for (int i = 1; i < NumTeams; i++) {
     float nx = x - basePos[i][0];
     float ny = y - basePos[i][1];
+    if (nx == 0.0f) nx = 1.0f;
     float rx = (float)(cosf(atanf(ny/nx)-baseRotation[i]) * sqrt((ny * ny) + (nx * nx)));
     float ry = (float)(sinf(atanf(ny/nx)-baseRotation[i]) * sqrt((ny * ny) + (nx * nx)));
     if (fabsf(rx) < baseSize[i][0] &&
 	fabsf(ry) < baseSize[i][1] &&
-	basePos[i][2] < z) {
+	basePos[i][2] <= z) {
       if(basePos[i][2] > highest) {
 	highest = basePos[i][2];
 	highestteam = i;
@@ -3771,15 +3773,16 @@ static void dropFlag(int playerIndex, float pos[3])
   // player wants to drop flag.  we trust that the client won't tell
   // us to drop a sticky flag until the requirements are satisfied.
   const int flagIndex = player[playerIndex].flag;
-  if (flagIndex == -1 || flag[flagIndex].flag.status != FlagOnTank)
+  FlagInfo *pFlagInfo = &flag[flagIndex];
+  if (flagIndex == -1 || pFlagInfo->flag.status != FlagOnTank)
     return;
 
   // okay, go ahead and drop it
-  flag[flagIndex].player = -1;
-  if (flag[flagIndex].flag.type == FlagNormal || --flag[flagIndex].grabs > 0)
-    flag[flagIndex].flag.status = FlagInAir;
+  pFlagInfo->player = -1;
+  if (pFlagInfo->flag.type == FlagNormal || --flag[flagIndex].grabs > 0)
+    pFlagInfo->flag.status = FlagInAir;
   else
-    flag[flagIndex].flag.status = FlagGoing;
+    pFlagInfo->flag.status = FlagGoing;
   numFlagsInAir++;
 
   for (float i = pos[2]; i >= 0.0f; i -= 0.1f) {
@@ -3793,57 +3796,63 @@ static void dropFlag(int playerIndex, float pos[3])
   // figure out landing spot -- if flag in a Bad Place
   // when dropped, move to safety position or make it going
   TeamColor teamBase = whoseBase(pos[0], pos[1], pos[2]);
-  if (flag[flagIndex].flag.status == FlagGoing) {
-    flag[flagIndex].flag.landingPosition[0] = pos[0];
-    flag[flagIndex].flag.landingPosition[1] = pos[1];
-    flag[flagIndex].flag.landingPosition[2] = pos[2];
+  FlagId flagId = pFlagInfo->flag.id;
+  bool isTeamFlag = (flagId >= FirstTeamFlag) && (flagId <= LastTeamFlag);
+
+  if (pFlagInfo->flag.status == FlagGoing) {
+    pFlagInfo->flag.landingPosition[0] = pos[0];
+    pFlagInfo->flag.landingPosition[1] = pos[1];
+    pFlagInfo->flag.landingPosition[2] = pos[2];
   }
-  else if ((int(flag[flagIndex].flag.id) >= int(FirstTeamFlag)) &&
-      int((flag[flagIndex].flag.id) <= int(LastTeamFlag)) &&
-      (teamBase != NoTeam) && (int(teamBase) == int(flag[flagIndex].flag.id)) && (topmosttype == 1)) {
-    flag[flagIndex].flag.landingPosition[0] = pos[0];
-    flag[flagIndex].flag.landingPosition[1] = pos[1];
-    flag[flagIndex].flag.landingPosition[2] = topmost->pos[2] + topmost->size[2];
+  else if (isTeamFlag && (teamBase == flagId) && (topmosttype == 1)) {
+    pFlagInfo->flag.landingPosition[0] = pos[0];
+    pFlagInfo->flag.landingPosition[1] = pos[1];
+    pFlagInfo->flag.landingPosition[2] = topmost->pos[2] + topmost->size[2];
   }
-  else if ((int(flag[flagIndex].flag.id) >= int(FirstTeamFlag)) &&
-      int((flag[flagIndex].flag.id) <= int(LastTeamFlag)) &&
-      (teamBase != NoTeam) && (int(teamBase) != int(flag[flagIndex].flag.id))) {
-    flag[flagIndex].flag.landingPosition[0] = safetyBasePos[int(teamBase)][0];
-    flag[flagIndex].flag.landingPosition[1] = safetyBasePos[int(teamBase)][1];
-    flag[flagIndex].flag.landingPosition[2] = safetyBasePos[int(teamBase)][2];
+  else if (isTeamFlag && (teamBase != NoTeam) && (teamBase != flagId)) {
+    pFlagInfo->flag.landingPosition[0] = safetyBasePos[int(teamBase)][0];
+    pFlagInfo->flag.landingPosition[1] = safetyBasePos[int(teamBase)][1];
+    pFlagInfo->flag.landingPosition[2] = safetyBasePos[int(teamBase)][2];
   }
   else if (topmosttype == 0) {
-    flag[flagIndex].flag.landingPosition[0] = pos[0];
-    flag[flagIndex].flag.landingPosition[1] = pos[1];
-    flag[flagIndex].flag.landingPosition[2] = 0.0f;
+    pFlagInfo->flag.landingPosition[0] = pos[0];
+    pFlagInfo->flag.landingPosition[1] = pos[1];
+    pFlagInfo->flag.landingPosition[2] = 0.0f;
   }
   else if (flagsOnBuildings && (topmosttype == 2 || topmosttype == 1)) {
-    flag[flagIndex].flag.landingPosition[0] = pos[0];
-    flag[flagIndex].flag.landingPosition[1] = pos[1];
-    flag[flagIndex].flag.landingPosition[2] = topmost->pos[2] + topmost->size[2];
+    pFlagInfo->flag.landingPosition[0] = pos[0];
+    pFlagInfo->flag.landingPosition[1] = pos[1];
+    pFlagInfo->flag.landingPosition[2] = topmost->pos[2] + topmost->size[2];
   }
-  else if (int(flag[flagIndex].flag.id) >= int(FirstTeamFlag) &&
-      int(flag[flagIndex].flag.id) <= int(LastTeamFlag)) {
+  else if (isTeamFlag) {
     // people were cheating by dropping their flag above the nearest
     // convenient building which makes it fly all the way back to
     // your own base.  make it fly to the center of the board.
-    flag[flagIndex].flag.landingPosition[0] = 0.0f;
-    flag[flagIndex].flag.landingPosition[1] = 0.0f;
-    flag[flagIndex].flag.landingPosition[2] = 0.0f;
+    topmosttype = world->inBuilding(&container, 0.0f, 0.0f, 0.0f, TankRadius);
+    if (topmosttype == 0) {
+	pFlagInfo->flag.landingPosition[0] = 0.0f;
+	pFlagInfo->flag.landingPosition[1] = 0.0f;
+	pFlagInfo->flag.landingPosition[2] = 0.0f;
+    }
+    else {// oh well, whatcha gonna do?
+	pFlagInfo->flag.landingPosition[0] = basePos[flagId][0];
+	pFlagInfo->flag.landingPosition[1] = basePos[flagId][1];
+	pFlagInfo->flag.landingPosition[2] = basePos[flagId][2];
+    }
   }
   else
-    flag[flagIndex].flag.status = FlagGoing;
+    pFlagInfo->flag.status = FlagGoing;
 
-  flag[flagIndex].flag.position[0] = flag[flagIndex].flag.landingPosition[0];
-  flag[flagIndex].flag.position[1] = flag[flagIndex].flag.landingPosition[1];
-  flag[flagIndex].flag.position[2] = flag[flagIndex].flag.landingPosition[2];
-  flag[flagIndex].flag.launchPosition[0] = pos[0];
-  flag[flagIndex].flag.launchPosition[1] = pos[1];
-  flag[flagIndex].flag.launchPosition[2] = pos[2] + TankHeight;
+  pFlagInfo->flag.position[0] = pFlagInfo->flag.landingPosition[0];
+  pFlagInfo->flag.position[1] = pFlagInfo->flag.landingPosition[1];
+  pFlagInfo->flag.position[2] = pFlagInfo->flag.landingPosition[2];
+  pFlagInfo->flag.launchPosition[0] = pos[0];
+  pFlagInfo->flag.launchPosition[1] = pos[1];
+  pFlagInfo->flag.launchPosition[2] = pos[2] + TankHeight;
 
   // compute flight info -- flight time depends depends on start and end
   // altitudes and desired height above start altitude.
-  const float thrownAltitude = (flag[flagIndex].flag.id == ShieldFlag) ?
+  const float thrownAltitude = (pFlagInfo->flag.id == ShieldFlag) ?
       ShieldFlight * FlagAltitude : FlagAltitude;
   const float maxAltitude = pos[2] + thrownAltitude;
   const float upTime = sqrtf(-2.0f * thrownAltitude / Gravity);
@@ -3851,11 +3860,11 @@ static void dropFlag(int playerIndex, float pos[3])
   const float flightTime = upTime + downTime;
 
   // set flight info
-  flag[flagIndex].dropDone = TimeKeeper::getCurrent();
-  flag[flagIndex].dropDone += flightTime;
-  flag[flagIndex].flag.flightTime = 0.0f;
-  flag[flagIndex].flag.flightEnd = flightTime;
-  flag[flagIndex].flag.initialVelocity = -Gravity * upTime;
+  pFlagInfo->dropDone = TimeKeeper::getCurrent();
+  pFlagInfo->dropDone += flightTime;
+  pFlagInfo->flag.flightTime = 0.0f;
+  pFlagInfo->flag.flightEnd = flightTime;
+  pFlagInfo->flag.initialVelocity = -Gravity * upTime;
 
   // player no longer has flag -- send MsgDropFlag
   player[playerIndex].flag = -1;
