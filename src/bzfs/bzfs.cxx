@@ -368,9 +368,8 @@ class ListServerLink {
 class PackVars
 {
 public:
-  PackVars(void *buffer, int playerIndex)
+  PackVars(void *buffer, int playerIndex) : bufStart(buffer)
   {
-     bufStart = (char *)buffer;
      buf = nboPackUShort(bufStart, 0);//placeholder
      playerId = playerIndex;
      len = sizeof(uint16_t);
@@ -395,11 +394,11 @@ public:
   {
     std::string value = BZDB->get(key);
     int pairLen = key.length() + 1 + value.length() + 1;
-    if ((pairLen + len) > (MaxPacketLen - 2*sizeof(short))) {
+    if ((pairLen + len) > (MaxPacketLen - 2*sizeof(uint16_t))) {
       nboPackUShort(bufStart, count);
       count = 0;
       directMessage(playerId, MsgSetVar, len, bufStart);
-      buf = nboPackUShort(bufStart,0); //placeholder
+      buf = nboPackUShort(bufStart, 0); //placeholder
       len = sizeof(uint16_t);
     }
 
@@ -412,10 +411,11 @@ public:
   }
 
 private:
-  void *buf, *bufStart;
+  void * const bufStart;
+  void *buf;
   int playerId;
   unsigned int len;
-  int count;
+  unsigned int count;
 };
 
 
