@@ -3133,9 +3133,6 @@ void			ServerMenu::show()
   else
     phase = 0;
 
-  // open output multicast socket
-  Address multicastAddress(BroadcastAddress);
-
   // also try broadcast
   pingBcastSocket = openBroadcast(BroadcastPort, NULL, &pingBcastAddr);
   if (pingBcastSocket != -1)
@@ -3389,7 +3386,7 @@ void			ServerMenu::checkEchos()
 					(fd_set*)&write_set, 0, &timeout);
     if (nfound <= 0) break;
 
-    // check broadcast and multicast sockets
+    // check broadcast sockets
     ServerItem serverInfo;
 	sockaddr_in addr;
 
