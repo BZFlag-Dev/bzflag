@@ -1741,24 +1741,29 @@ static void		doAutoPilot(float &rotation, float &speed)
 	  }
 	}
 
-	const Obstacle *building = NULL;
-	if (myTank->getFlag() != Flags::SuperBullet)
-	  building = ShotStrategy::getFirstBuilding(tankRay, -0.5f, distance);
-	if (building) {
-	  if ((distance > 20.f) && (distance < 50.0f) 
-	       && (building->getType() == BoxBuilding::typeName)
-	       && (((building->getPosition()[2] - pos[2] + building->getHeight()) ) < 17.0f)) {
-	     //Roger should really make sure that his velocity vector is in the same
-	     //general direction as his azimuth, before jumping, but what do you want
-	     //from a autopilot
-	     myTank->jump();
-	  }
-        }
-
-	// weave towards the player
-        const float *tp = player[target]->getPosition();
+	//figure out my rotation to my target
+	const float *tp = player[target]->getPosition();
         float azimuth = atan2f(tp[1] - pos[1], tp[0] - pos[0]);
         rotation = azimuth - myTank->getAngle();
+        if (rotation < -1.0f * M_PI) rotation += 2.0f * M_PI;
+	if (rotation > 1.0f * M_PI) rotation -= 2.0f * M_PI;
+
+	//If we are driving relatively towards our target and a building pops up jump over it
+	if (fabs(rotation) < BZDB->eval(StateDatabase::BZDB_LOCKONANGLE)) {
+	  const Obstacle *building = NULL;
+	  if (myTank->getFlag() != Flags::SuperBullet)
+	    building = ShotStrategy::getFirstBuilding(tankRay, -0.5f, distance);
+	  if (building) {
+	    if ((distance > 20.f) && (distance < 50.0f) 
+	       && (building->getType() == BoxBuilding::typeName)
+	       && (((building->getPosition()[2] - pos[2] + building->getHeight()) ) < 17.0f)) {
+	     
+	     myTank->jump();
+	    }
+	  }
+	}
+
+	// weave towards the player
         int period = int(TimeKeeper::getCurrent().getSeconds());
         float bias = ((period % 4) < 2) ? M_PI/9.0f : -M_PI/9.0f;
 	rotation += bias;
