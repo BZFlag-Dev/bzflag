@@ -3,8 +3,6 @@ recent bugs
 
 - Reported that mapping Binocular, and perhaps others, doesn't work.
 
-- Some times see ALL tanks as MQ when someone picks an MQ flag
-
 - players gets stuck for no reason, can't move or turn, but can shoot.
   Seen on xmission (CTF), also seen on brlcad (FFA). Was stuck after each respawn,
   could jump vertically, sometimes, but could shoot. Had to restart client toget unstuck.
