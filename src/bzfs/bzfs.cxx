@@ -261,7 +261,7 @@ static void sendFlagUpdate(int playerIndex)
   int cnt = 0;
   int length = sizeof(uint16_t);
   for (int flagIndex = 0; flagIndex < numFlags; flagIndex++) {
-    FlagInfo &flag = FlagInfo::flagList[flagIndex];
+    FlagInfo &flag = *FlagInfo::get(flagIndex);
     if (flag.exist()) {
       if ((length + sizeof(uint16_t) + FlagPLen)
 	  > MaxPacketLen - 2*sizeof(uint16_t)) {
@@ -558,7 +558,7 @@ static void relayPlayerPacket(int index, uint16_t len, const void *rawbuf, uint1
     if (i != index && pi.isPlaying()) {
       if (((code == MsgPlayerUpdate) ||(code == MsgPlayerUpdateSmall))
           && pi.haveFlag()
-	  && (FlagInfo::flagList[pi.getFlag()].flag.type == Flags::Lag)) {
+	  && (FlagInfo::get(pi.getFlag())->flag.type == Flags::Lag)) {
         // delay sending to this player
 	playerData->delayq.addPacket(len+4, rawbuf,
 				     BZDB.eval(StateDatabase::BZDB_FAKELAG));
@@ -1192,7 +1192,7 @@ static bool defineWorld()
   }
   FlagInfo::setNoFlagInAir();
   for (i = 0; i < numFlags; i++)
-    resetFlag(FlagInfo::flagList[i]);
+    resetFlag(*FlagInfo::get(i));
 
   return true;
 }
@@ -1743,10 +1743,10 @@ static void addPlayer(int playerIndex)
       && Team::isColorTeam((TeamColor)teamIndex)) {
     if (clOptions->gameStyle & int(TeamFlagGameStyle)) {
       int flagid = FlagInfo::lookupFirstTeamFlag(teamIndex);
-      if (flagid >= 0 && !FlagInfo::flagList[flagid].exist()) {
+      if (flagid >= 0 && !FlagInfo::get(flagid)->exist()) {
 	// reset those flags
 	for (int n = 0; n < clOptions->numTeamFlags[teamIndex]; n++)
-	  resetFlag(FlagInfo::flagList[n+flagid]);
+	  resetFlag(*FlagInfo::get(n + flagid));
       }
     }
   }
@@ -1929,7 +1929,7 @@ void zapFlag(FlagInfo &flag)
 // Should be called when we sure that tank does not hold any
 static void dropAssignedFlag(int playerIndex) {
   for (int flagIndex = 0; flagIndex < numFlags; flagIndex++) {
-    FlagInfo &flag = FlagInfo::flagList[flagIndex];
+    FlagInfo &flag = *FlagInfo::get(flagIndex);
     if (flag.flag.status == FlagOnTank && flag.flag.owner == playerIndex)
       resetFlag(flag);
   }
@@ -2006,7 +2006,7 @@ static void zapFlagByPlayer(int playerIndex)
   if (flagid < 0)
     return;
 
-  FlagInfo &flag = FlagInfo::flagList[flagid];
+  FlagInfo &flag = *FlagInfo::get(flagid);
   // do not simply zap team flag
   Flag &carriedflag = flag.flag;
   if (carriedflag.type->flagTeam != ::NoTeam) {
@@ -2081,7 +2081,7 @@ void removePlayer(int playerIndex, const char *reason, bool notify)
       if (flagid >= 0) {
 	GameKeeper::Player *otherData;
 	for (int n = 0; n < clOptions->numTeamFlags[teamNum]; n++) {
-	  FlagInfo &flag = FlagInfo::flagList[flagid+n];
+	  FlagInfo &flag = *FlagInfo::get(flagid+n);
 	  otherData
 	    = GameKeeper::Player::getPlayerByIndex(flag.player);
 	  if (!otherData || otherData->player.isTeam((TeamColor)teamNum))
@@ -2487,7 +2487,7 @@ static void dropFlag(int playerIndex, float pos[3])
   const int flagIndex = playerData->player.getFlag();
   if (flagIndex < 0)
     return;
-  FlagInfo &drpFlag = FlagInfo::flagList[flagIndex];
+  FlagInfo &drpFlag = *FlagInfo::get(flagIndex);
   if (drpFlag.flag.status != FlagOnTank)
     return;
   int flagTeam = drpFlag.flag.type->flagTeam;
@@ -2643,7 +2643,7 @@ static void captureFlag(int playerIndex, TeamColor teamCaptured)
   int flagIndex = playerData->player.getFlag();
   if (flagIndex < 0)
     return;
-  FlagInfo &flag = FlagInfo::flagList[flagIndex];
+  FlagInfo &flag = *FlagInfo::get(flagIndex);
 
   int teamIndex = flag.teamIndex();
   if (teamIndex == ::NoTeam)
@@ -2737,7 +2737,7 @@ static void shotFired(int playerIndex, void *buf, int len)
     repack = true;
   }
 
-  FlagInfo &fInfo = FlagInfo::flagList[shooter.getFlag()];
+  FlagInfo &fInfo = *FlagInfo::get(shooter.getFlag());
   // verify player flag
   if ((firingInfo.flagType != Flags::Null)
       && (firingInfo.flagType != fInfo.flag.type)) {
@@ -3227,7 +3227,7 @@ static void handleCommand(int t, const void *rawbuf)
       buf = nboUnpackUShort(buf, flag);
       // Sanity check
       if (flag < numFlags)
-	grabFlag(t, FlagInfo::flagList[flag]);
+	grabFlag(t, *FlagInfo::get(flag));
       break;
     }
 
@@ -3356,7 +3356,7 @@ static void handleCommand(int t, const void *rawbuf)
 	int flagIndex = fromData->player.getFlag();
 	if (to == ServerPlayer) {
 	  if (flagIndex >= 0)
-	    zapFlag (FlagInfo::flagList[flagIndex]);
+	    zapFlag (*FlagInfo::get(flagIndex));
 	  return;
 	}
 
@@ -3374,12 +3374,12 @@ static void handleCommand(int t, const void *rawbuf)
 
 	int oFlagIndex = toData->player.getFlag();
 	if (oFlagIndex >= 0)
-	  zapFlag (FlagInfo::flagList[oFlagIndex]);
+	  zapFlag (*FlagInfo::get(oFlagIndex));
 
 	void *bufStart = getDirectMessageBuffer();
 	void *buf = nboPackUByte(bufStart, from);
 	buf = nboPackUByte(buf, to);
-	FlagInfo &flag = FlagInfo::flagList[flagIndex];
+	FlagInfo &flag = *FlagInfo::get(flagIndex);
 	flag.flag.owner = to;
 	flag.player = to;
 	toData->player.resetFlag();
@@ -3544,7 +3544,7 @@ static void handleCommand(int t, const void *rawbuf)
 	    // if tank is not alive cannot be sure it didn't just toss
 	    // (V)
 	    if (pFlag >= 0) {
-	      FlagInfo &flag = FlagInfo::flagList[pFlag];
+	      FlagInfo &flag = *FlagInfo::get(pFlag);
   	      if (flag.flag.type == Flags::Velocity)
 	        maxPlanarSpeedSqr *= BZDB.eval(StateDatabase::BZDB_VELOCITYAD)
 		  * BZDB.eval(StateDatabase::BZDB_VELOCITYAD);
@@ -4142,7 +4142,7 @@ int main(int argc, char **argv)
 	  anointNewRabbit();
 	// if player is holding a flag, drop it
 	for (int j = 0; j < numFlags; j++) {
-	  if (FlagInfo::flagList[j].player == h) {
+	  if (FlagInfo::get(j)->player == h) {
 	    dropFlag(h, lastState[h].pos);
 	  }
 	}
@@ -4372,7 +4372,7 @@ int main(int argc, char **argv)
 
     // if any flags were in the air, see if they've landed
     for (i = 0; i < numFlags; i++) {
-      FlagInfo &flag = FlagInfo::flagList[i];
+      FlagInfo &flag = *FlagInfo::get(i);
       if (flag.landing(tm))
 	if (flag.flag.status == FlagOnGround)
 	  sendFlagUpdate(flag);
@@ -4387,7 +4387,7 @@ int main(int argc, char **argv)
           int flagid = FlagInfo::lookupFirstTeamFlag(i);
 	  if (flagid >= 0) {
 	    for (int n = 0; n < clOptions->numTeamFlags[i]; n++) {
-	      FlagInfo &flag = FlagInfo::flagList[flagid + n];
+	      FlagInfo &flag = *FlagInfo::get(flagid + n);
               if (flag.exist() && flag.player == -1) {
 	        DEBUG1("Flag timeout for team %d\n", i);
                 zapFlag(flag);
@@ -4404,7 +4404,7 @@ int main(int argc, char **argv)
       if ((float)bzfrand() > t) {
 	// find an empty slot for an extra flag
 	for (i = numFlags - clOptions->numExtraFlags; i < numFlags; i++) {
-	  FlagInfo &flag = FlagInfo::flagList[i];
+	  FlagInfo &flag = *FlagInfo::get(i);
 	  if (flag.flag.type == Flags::Null) {
 	    // flag in now entering game
 	    flag.addFlag();
@@ -4625,7 +4625,7 @@ int main(int argc, char **argv)
 
   // free misc stuff
   delete clOptions; clOptions = NULL;
-  delete[] FlagInfo::flagList;  FlagInfo::flagList = NULL;
+  FlagInfo::setSize(0);
   delete world; world = NULL;
   delete[] worldDatabase; worldDatabase = NULL;
   delete votingarbiter; votingarbiter = NULL;

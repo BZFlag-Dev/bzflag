@@ -196,8 +196,7 @@ const bool SpawnPosition::isImminentlyDangerous() const
       float enemyAngle = lastState[i].azimuth;
       if (playerData->player.getFlag() >= 0) {
 	// check for dangerous flags
-      	const FlagInfo *finfo
-	  = &FlagInfo::flagList[playerData->player.getFlag()];
+      	const FlagInfo *finfo = FlagInfo::get(playerData->player.getFlag());
       	const FlagType *ftype = finfo->flag.type;
   	// FIXME: any more?
       	if (ftype == Flags::Laser) {  // don't spawn in the line of sight of an L

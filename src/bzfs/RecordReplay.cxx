@@ -1330,8 +1330,8 @@ saveFlagsState () // look at sendFlagUpdate() in bzfs.cxx ... very similar
   int length = sizeof(u16);
 
   for (flagIndex = 0; flagIndex < numFlags; flagIndex++) {
-
-    if (FlagInfo::flagList[flagIndex].flag.status != FlagNoExist) {
+    FlagInfo &flag = *FlagInfo::get(flagIndex);
+    if (flag.flag.status != FlagNoExist) {
       if ((length + sizeof(u16) + FlagPLen) > MaxPacketLen - 2*sizeof(u16)) {
         // packet length overflow
         nboPackUShort(bufStart, cnt);
@@ -1343,7 +1343,7 @@ saveFlagsState () // look at sendFlagUpdate() in bzfs.cxx ... very similar
         buf = nboPackUShort(bufStart,0); //placeholder
       }
 
-      buf = FlagInfo::flagList[flagIndex].pack(buf);
+      buf = flag.pack(buf);
       length += sizeof(u16)+FlagPLen;
       cnt++;
     }

@@ -39,14 +39,13 @@ public:
   void getTextualInfo(char *message);
   bool exist();
 
+  static FlagInfo *get(int index);
   static void setSize(int _numFlags);
   static void setAllowed(std::vector<FlagType*> allowed);
   static void setExtra(int extra);
   static int  lookupFirstTeamFlag(int teamindex);
   static float getNextDrop(TimeKeeper &tm);
   static void  setNoFlagInAir();
-
-  static FlagInfo *flagList;
 
     // flag info
     Flag flag;
@@ -65,6 +64,7 @@ private:
   static int                    numExtraFlags;
   static int                    numFlags;
   static int                    numFlagsInAir;
+  static FlagInfo              *flagList;
 
   // time flag will land
   TimeKeeper                    dropDone;

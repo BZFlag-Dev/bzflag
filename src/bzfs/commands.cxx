@@ -456,7 +456,7 @@ static void zapAllFlags()
 {
   // reset all flags
   for (int i = 0; i < numFlags; i++)
-    zapFlag(FlagInfo::flagList[i]);
+    zapFlag(*FlagInfo::get(i));
 }
 
 void handleCountdownCmd(GameKeeper::Player *playerData, const char *)
@@ -532,7 +532,7 @@ void handleFlagCmd(GameKeeper::Player *playerData, const char *message)
     bool onlyUnused = strncmp(message + 11, " unused", 7) == 0;
     if (onlyUnused)
       for (int i = 0; i < numFlags; i++) {
-	FlagInfo &flag = FlagInfo::flagList[i];
+	FlagInfo &flag = *FlagInfo::get(i);
 	// see if someone had grabbed flag,
 	const int playerIndex = flag.player;
 	if (playerIndex == -1) {
@@ -543,7 +543,7 @@ void handleFlagCmd(GameKeeper::Player *playerData, const char *message)
       zapAllFlags();
   } else if (strncmp(message + 6, "up", 2) == 0) {
     for (int i = 0; i < numFlags; i++) {
-      FlagInfo &flag = FlagInfo::flagList[i];
+      FlagInfo &flag = *FlagInfo::get(i);
       if (flag.flag.type->flagTeam == ::NoTeam) {
 	sendDrop(flag);
 	flag.flag.status = FlagGoing;
@@ -556,7 +556,7 @@ void handleFlagCmd(GameKeeper::Player *playerData, const char *message)
   } else if (strncmp(message + 6, "show", 4) == 0) {
     for (int i = 0; i < numFlags; i++) {
       char message[MessageLen];
-      FlagInfo::flagList[i].getTextualInfo(message);
+      FlagInfo::get(i)->getTextualInfo(message);
       sendMessage(ServerPlayer, t, message);
     }
   } else {

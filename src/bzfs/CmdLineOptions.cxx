@@ -1149,22 +1149,22 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
   if (options.gameStyle & TeamFlagGameStyle) {
     if (options.maxTeam[RedTeam] > 0) {
       for (int n = 0; n < options.numTeamFlags[RedTeam]; n++) {
-        FlagInfo::flagList[f++].setRequiredFlag(Flags::RedTeam);
+        FlagInfo::get(f++)->setRequiredFlag(Flags::RedTeam);
       }
     }
     if (options.maxTeam[GreenTeam] > 0) {
       for (int n = 0; n < options.numTeamFlags[GreenTeam]; n++) {
-        FlagInfo::flagList[f++].setRequiredFlag(Flags::GreenTeam);
+        FlagInfo::get(f++)->setRequiredFlag(Flags::GreenTeam);
       }
     }
     if (options.maxTeam[BlueTeam] > 0) {
       for (int n = 0; n < options.numTeamFlags[BlueTeam]; n++) {
-        FlagInfo::flagList[f++].setRequiredFlag(Flags::BlueTeam);
+	FlagInfo::get(f++)->setRequiredFlag(Flags::BlueTeam);
       }
     }
     if (options.maxTeam[PurpleTeam] > 0) {
       for (int n = 0; n < options.numTeamFlags[PurpleTeam]; n++) {
-        FlagInfo::flagList[f++].setRequiredFlag(Flags::PurpleTeam);
+	FlagInfo::get(f++)->setRequiredFlag(Flags::PurpleTeam);
       }
     }
   }
@@ -1178,12 +1178,12 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
 
     if ((fDesc != Flags::Null) && (fDesc->flagTeam == NoTeam)) {
       for (int j = 0; j < options.flagCount[fDesc]; j++) {
-	FlagInfo::flagList[f++].setRequiredFlag(fDesc);
+	FlagInfo::get(f++)->setRequiredFlag(fDesc);
       }
     }
   }
   for (; f < numFlags; f++) {
-    FlagInfo::flagList[f].required = allFlagsOut;
+     FlagInfo::get(f)->required = allFlagsOut;
   }
 
   // debugging

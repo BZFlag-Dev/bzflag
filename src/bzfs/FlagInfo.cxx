@@ -61,7 +61,9 @@ void FlagInfo::setSize(int _numFlags)
 {
   numFlags = _numFlags;
   delete[] flagList;
-  flagList = new FlagInfo[numFlags];
+  flagList = NULL;
+  if (numFlags)
+    flagList = new FlagInfo[numFlags];
   for (int i = 0; i < numFlags; i++)
     flagList[i].flagIndex = i;
 }
@@ -266,6 +268,15 @@ void FlagInfo::getTextualInfo(char *message)
 bool FlagInfo::exist()
 {
   return flag.status != FlagNoExist;
+}
+
+FlagInfo *FlagInfo::get(int index)
+{
+  if (index < 0)
+    return NULL;
+  if (index >= numFlags)
+    return NULL;
+  return &flagList[index];
 }
 
 // Local Variables: ***
