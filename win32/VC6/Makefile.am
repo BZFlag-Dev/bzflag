@@ -9,17 +9,20 @@ EXTRA_DIST =	\
 	common.dsp	\
 	config.h	\
 	date.dsp	\
+	game.dsp	\
 	geometry.dsp	\
 	installer.dsp	\
 	makehtml.dsp	\
 	man2html.dsp	\
 	mediafile.dsp	\
-	net.dsp	\
+	net.dsp		\
 	obstacle.dsp	\
-	ogl.dsp	\
+	ogl.dsp		\
 	platform.dsp	\
+	regex.dsp	\
 	scene.dsp	\
-	zlib.dsp
+	zlib.dsp	\
+	world.dsp
 
 MAINTAINERCLEANFILES = \
 	Makefile.in

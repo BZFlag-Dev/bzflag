@@ -7,6 +7,7 @@ EXTRA_DIST =	\
 	common.vcproj	\
 	config.h	\
 	date.vcproj	\
+	game.vcproj	\
 	geometry.vcproj	\
 	installer.vcproj	\
 	makehtml.vcproj	\
@@ -16,6 +17,7 @@ EXTRA_DIST =	\
 	obstacle.vcproj	\
 	ogl.vcproj	\
 	platform.vcproj	\
+	regex.vcproj	\
 	scene.vcproj	\
 	zlib.vcproj
 
