@@ -979,7 +979,7 @@ static void		addMessage(const Player* player,
   }
   fullMessage += msg;
 #ifndef BWSUPPORT
-  if (color == NULL)
+  if (player && color == NULL)
     color = Team::getRadarColor(player->getTeam());
 #endif
   controlPanel->addMessage(fullMessage, color);
