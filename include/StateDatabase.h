@@ -218,8 +218,9 @@ public:
   static const std::string	BZDB_FLAGPOLEWIDTH;
   static const std::string	BZDB_FLAGPOLESIZE;
   static const std::string	BZDB_FLAGRADIUS;
-  static const std::string	BZDB_GMISSILEANG;
-  static const std::string	BZDB_GMISSILEADLIFE;
+  static const std::string	BZDB_GMACTIVATIONTIME;
+  static const std::string	BZDB_GMADLIFE;
+  static const std::string	BZDB_GMTURNANGLE;
   static const std::string	BZDB_GRAVITY;
   static const std::string	BZDB_FRICTION;
   static const std::string	BZDB_IDENTIFYRANGE;

@@ -55,7 +55,7 @@ GuidedMissileStrategy::GuidedMissileStrategy(ShotPath* _path) :
 
   // get initial shot info
   FiringInfo& f = getFiringInfo(_path);
-  f.lifetime *= BZDB.eval(StateDatabase::BZDB_GMISSILEADLIFE);
+  f.lifetime *= BZDB.eval(StateDatabase::BZDB_GMADLIFE);
   const float* vel = getPath().getVelocity();
   const float d = 1.0f / hypotf(vel[0], hypotf(vel[1], vel[2]));
   float dir[3];
@@ -177,7 +177,7 @@ void GuidedMissileStrategy::update(float dt)
     float newElevation = atan2f(desiredDir[2],
 				hypotf(desiredDir[1], desiredDir[0]));
 
-    float gmissileAng = BZDB.eval(StateDatabase::BZDB_GMISSILEANG);
+    float gmissileAng = BZDB.eval(StateDatabase::BZDB_GMTURNANGLE);
 
     // compute new azimuth
     float deltaAzimuth = limitAngle(newAzimuth - azimuth);
@@ -285,10 +285,10 @@ float GuidedMissileStrategy::checkHit(const BaseLocalPlayer* tank, float positio
   float minTime = Infinity;
   if (getPath().isExpired()) return minTime;
 
-  // can't shoot myself for first 1/2 second (kludge!)
-  if (((TimeKeeper::getCurrent() - getPath().getStartTime()) < 0.5) &&
-      (tank->getId() == getPath().getPlayer()))
+  // GM is not active until activation time passes (for any tank)
+  if ((TimeKeeper::getCurrent() - getPath().getStartTime()) < BZDB.eval(StateDatabase::BZDB_GMACTIONATIONTIME)) {
     return minTime;
+  }
 
   // get tank radius
   float radius = tank->getRadius();
