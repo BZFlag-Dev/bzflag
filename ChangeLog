@@ -4,6 +4,8 @@
 BZFlag 1.10.4
 -------------
 
+* Server sends warning to sender of privmsg to an invalid target - Lars Luthman
+* -filterCallsigns filters email too now - Lars Luthman
 * allow multiple team flags per team thru -c 5 - Dave Brosius
 * -maxidle handles idle / paused players the same - Frank Thilo
 * Added optional building density to random ctf map - Sean Morrison
