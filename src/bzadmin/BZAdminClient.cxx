@@ -104,7 +104,7 @@ BZAdminClient::ServerCode BZAdminClient::checkMessage() {
   uint16_t code, len;
   char inbuf[MaxPacketLen];
   std::string dstName, srcName;
-  int i;
+  int i = 0;
   PlayerIdMap::iterator iter;
 
   // read until we have a package, or until we have waited 100 ms
@@ -200,8 +200,8 @@ BZAdminClient::ServerCode BZAdminClient::checkMessage() {
       if (ui != NULL)
 	ui->addedPlayer(p);
       if (messageMask[MsgAddPlayer]) {
-      Team temp;
-  std::string joinMsg = std::string("*** \'") + callsign + "\' joined the game as " +
+	Team temp;
+	std::string joinMsg = std::string("*** \'") + callsign + "\' joined the game as " +
 		temp.getName(players[p].team) + ".";
 	lastMessage.first = joinMsg;
       }
@@ -222,7 +222,7 @@ BZAdminClient::ServerCode BZAdminClient::checkMessage() {
       uint8_t numIPs;
       uint8_t tmp;
       vbuf = nboUnpackUByte(vbuf, numIPs);
-      for (int i = 0; i < numIPs; ++i) {
+      for (i = 0; i < numIPs; ++i) {
 	vbuf = nboUnpackUByte(vbuf, tmp);
 	vbuf = nboUnpackUByte(vbuf, p);
 	// FIXME - actually parse the bitfield
@@ -296,7 +296,7 @@ BZAdminClient::ServerCode BZAdminClient::checkMessage() {
     case MsgScore:
       uint8_t numScores;
       vbuf = nboUnpackUByte(vbuf, numScores);
-      for (uint8_t i = 0; i < numScores; i++) {
+      for (i = 0; i < numScores; i++) {
 	uint16_t wins, losses, tks;
 	vbuf = nboUnpackUByte(vbuf, p);
 	vbuf = nboUnpackUShort(vbuf, wins);

@@ -75,11 +75,14 @@ protected:
   T& var;
 };
 
+// true ugliness to fool VC5
+typedef std::string STRING;
+
 /** This is a specialization for @c string variables. It copies the
     entire parameter instead of just the first word (which the
     stream operator would have done). */
 template<>
-class VariableParser<std::string> : public Parser {
+class VariableParser<STRING> : public Parser {
 public:
   VariableParser(std::string& variable, const std::string& usageText,
 		 const std::string& helpText)
