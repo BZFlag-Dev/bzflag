@@ -124,8 +124,8 @@ Section "Uninstall"
 	; remove files
 
 	Delete $INSTDIR\bzflag.exe
-	Delete $INSTDIR\bzfls.exe
 	Delete $INSTDIR\bzfs.exe
+	Delete $INSTDIR\bzadmin.exe
 	Delete $INSTDIR\doc\*.*
 	Delete $INSTDIR\data\*.*
 
