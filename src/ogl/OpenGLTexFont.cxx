@@ -18,7 +18,7 @@
 #include <string>
 #include <string.h>
 #include <math.h>
-#include <time.h>
+#include "TimeKeeper.h"
 #include "OpenGLTexFont.h"
 
 
@@ -577,7 +577,8 @@ void			OpenGLTexFont::draw(const char* string, int length,
       OpenGLTexFont::BitmapRep::setState();
   }
 
-  float blinkTime = (float)((int)time(NULL));
+  float blinkTime = TimeKeeper::getCurrent().getSeconds();
+
 
   for (int i = 0; i < length; i++) {
     const unsigned int c = (unsigned int)string[i];
