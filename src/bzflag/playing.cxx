@@ -2497,13 +2497,10 @@ static Player*		addPlayer(const PlayerId& id, void* msg,
   // Strip any ANSI color codes
   OpenGLTexFont::stripAnsiCodes (callsign, strlen (callsign));
 
-  // find empty player slot
-  int i;
-  for (i = 0; i < maxPlayers; i++)
-    if (!player[i])
-      break;
-  if (i == maxPlayers) {
-    // if this happens the server has screwed up
+  // id is slot, check if it's empty
+  const int i = id;
+  if (player[i]) {
+    // we're not in synch with server -> help!
     printError("Server error when adding player");
     serverError = true;
     return NULL;
