@@ -12,6 +12,8 @@
 
 #ifdef _WIN32
 #define strcasecmp _stricmp
+#include <winsock2.h>
+#include <ws2tcpip.h>
 #endif
 
 #include <math.h>
