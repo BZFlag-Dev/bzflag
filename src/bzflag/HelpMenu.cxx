@@ -91,7 +91,7 @@ void HelpMenu::resize(int width, int height)
 
   // use a big font for title, smaller font for the rest
   const float titleFontSize = (float)height / 23.0f;
-  const float fontSize = (float)height / 72.0f;
+  const float fontSize = (float)height / 100.0f;
   FontManager &fm = FontManager::instance();
 
   // reposition title
@@ -184,6 +184,10 @@ Help1Menu::Help1Menu() : HelpMenu("Controls")
   list.push_back(createLabel(NULL, "Server Admin:"));
   list.push_back(createLabel(NULL, "Hunt:"));
   list.push_back(createLabel(NULL, "Auto Pilot:"));
+  list.push_back(createLabel(NULL, "Main Message Tab:"));
+  list.push_back(createLabel(NULL, "Chat Message Tab:"));
+  list.push_back(createLabel(NULL, "Server Message Tab:"));
+  list.push_back(createLabel(NULL, "Misc Message Tab:"));
   list.push_back(createLabel("Esc", "Show/Dismiss menu:"));
 
   initKeymap("fire", 3);
@@ -209,12 +213,16 @@ Help1Menu::Help1Menu() : HelpMenu("Controls")
   initKeymap("scrollpanel up", 23);
   initKeymap("scrollpanel down", 24);
   initKeymap("toggle slowKeyboard", 25);
-  initKeymap("toggle displayRadarFlags", 26);
-  initKeymap("toggle displayMainFlags", 27);
+  initKeymap("toggleFlags radar", 26);
+  initKeymap("toggleFlags main", 27);
   initKeymap("silence", 28);
   initKeymap("servercommand", 29);
   initKeymap("hunt", 30);
   initKeymap("autopilot", 31);
+  initKeymap("messagepanel all", 32);
+  initKeymap("messagepanel chat", 33);
+  initKeymap("messagepanel server", 34);
+  initKeymap("messagepanel misc", 35);
 }
 
 void Help1Menu::onScan(const std::string& name, bool press,

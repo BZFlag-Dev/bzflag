@@ -103,6 +103,10 @@ KeyboardMapMenu::KeyboardMapMenu() : defaultKey(this), editing(-1), quickKeysMen
   controls.push_back(createLabel(NULL, "Server Command Key:"));
   controls.push_back(createLabel(NULL, "Hunt Key:"));
   controls.push_back(createLabel(NULL, "AutoPilot Key: "));
+  controls.push_back(createLabel(NULL, "Main Message Tab: "));
+  controls.push_back(createLabel(NULL, "Chat Message Tab: "));
+  controls.push_back(createLabel(NULL, "Server Message Tab: "));
+  controls.push_back(createLabel(NULL, "Misc Message Tab: "));
   controls.push_back(createLabel(NULL, "Forward Key: "));
   controls.push_back(createLabel(NULL, "Reverse Key: "));
   controls.push_back(createLabel(NULL, "Left Key: "));
@@ -145,6 +149,10 @@ KeyboardMapMenu::KeyboardMapMenu() : defaultKey(this), editing(-1), quickKeysMen
   initkeymap("servercommand", ++i);
   initkeymap("hunt", ++i);
   initkeymap("autopilot", ++i);
+  initkeymap("messagepanel all", ++i);
+  initkeymap("messagepanel chat", ++i);
+  initkeymap("messagepanel server", ++i);
+  initkeymap("messagepanel misc", ++i);
   initkeymap("drive forward", ++i);
   initkeymap("drive reverse", ++i);
   initkeymap("turn left", ++i);
@@ -223,7 +231,7 @@ void KeyboardMapMenu::resize(int width, int height)
   // use a big font for title, smaller font for the rest
   const float titleFontSize = (float)height / 15.0f;
   const float bigFontSize = (float)height / 42.0f;
-  const float fontSize = (float)height / 57.0f;
+  const float fontSize = (float)height / 100.0f;
   FontManager &fm = FontManager::instance();
   const int fontFace = MainMenu::getFontFace();
 
