@@ -5,8 +5,6 @@ THESE SHOULD HAPPEN BEFORE THE NEXT RELEASE:
 
 * fix bugs.  the following bugs need to be fixed prior to release:
 
-    - voting system doesn't start a poll (doesn't parse player name properly)
-
 
 THESE ARE LOWER PRIORITY
 
