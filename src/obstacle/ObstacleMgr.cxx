@@ -329,7 +329,7 @@ void GroupDefinition::makeGroups(const MeshTransform& xform,
                                  GroupDefinition* world ) const
 {
   if (active) {
-    DEBUG1("warning: avoided recursion, groupdef (%s)\n", name.c_str());
+    DEBUG1("warning: avoided recursion, groupdef \"%s\"\n", name.c_str());
     return; // avoid recursion
   }
 
@@ -345,7 +345,7 @@ void GroupDefinition::makeGroups(const MeshTransform& xform,
         world->addObstacle(obs);
         // generate contained meshes
         MeshObstacle* mesh = getContainedMesh(type, obs);
-        if (mesh != NULL) {
+        if ((mesh != NULL) && mesh->isValid()) {
           mesh->setSource(Obstacle::GroupDefSource |
                           Obstacle::ContainerSource);
           obsMod.execute(mesh);
@@ -364,6 +364,9 @@ void GroupDefinition::makeGroups(const MeshTransform& xform,
       MeshTransform tmpXform = xform;
       tmpXform.prepend(group->getTransform());
       groupDef->makeGroups(tmpXform, newObsMod, world);
+    } else {
+      DEBUG1("warning: group definition \"%s\" is missing\n",
+             group->getGroupDef().c_str());
     }
   }
 
@@ -607,6 +610,9 @@ void GroupDefinitionMgr::makeWorld()
       ObstacleModifier noMods;
       ObstacleModifier newObsMod(noMods, *group);
       groupDef->makeGroups(group->getTransform(), newObsMod, &world);
+    } else {
+      DEBUG1("warning: group definition \"%s\" is missing\n",
+             group->getGroupDef().c_str());
     }
   }
   
