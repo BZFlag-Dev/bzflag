@@ -100,8 +100,16 @@ struct PlayerInfo {
     int			flag;			// flag index player has
     int			wins, losses;		// player's score
     boolean		multicastRelay;		// if player can't multicast
+
+    // input buffer
     int			len;			// bytes read in current msg
     char		msg[MaxPacketLen];	// current msg
+
+    // output buffer
+    int			outmsgOffset;
+    int			outmsgSize;
+    int			outmsgCapacity;
+    char*		outmsg;
 };
 
 struct FlagInfo {
@@ -565,47 +573,115 @@ static int		pread(int playerIndex, int l)
   return e;
 }
 
-static int		pwrite(int playerIndex, const void* b, int l)
+static int		prealwrite(int playerIndex, const void* b, int l)
 {
   PlayerInfo& p = player[playerIndex];
-  if (p.fd == NotConnected || l == 0) return 0;
+  assert(p.fd != NotConnected && l > 0);
 
-  int total = 0;
-  const char* data = (const char*)b;
-  do {
-    // send data
-    const int e = send(p.fd, data + total, l - total, 0);
+  // write as much data from buffer as we can in one send()
+  const int n = send(p.fd, b, l, 0);
 
-    // accumulate number of bytes sent so far
-    if (e > 0) {
-      total += e;
-    }
+  // handle errors
+  if (n < 0) {
+    // get error code
+    const int err = getErrno();
 
-    // handle errors
-    else if (e < 0) {
-      // get error code
-      const int err = getErrno();
+    // just try again later if it's one of these errors
+    if (err == EAGAIN || err == EINTR)
+      return -1;
 
-      // just try again if it's one of these errors
-      if (err == EAGAIN || err == EINTR)
-	continue;
-
-      // if socket is closed then give up
-      if (err == ECONNRESET || err == EPIPE) {
-	removePlayer(playerIndex);
-	return -1;
-      }
-
-      // dump other errors and remove the player
-      nerror("error on write");
-      fprintf(stderr, "player is %d (%s)\n", playerIndex, p.callSign);
+    // if socket is closed then give up
+    if (err == ECONNRESET || err == EPIPE) {
       removePlayer(playerIndex);
       return -1;
     }
 
-    // continue sending until all data is sent
-  } while (total < l);
-  return total;
+    // dump other errors and remove the player
+    nerror("error on write");
+    fprintf(stderr, "player is %d (%s)\n", playerIndex, p.callSign);
+    removePlayer(playerIndex);
+    return -1;
+  }
+
+  return n;
+}
+
+// try to write stuff from the output buffer
+static void		pflush(int playerIndex)
+{
+  PlayerInfo& p = player[playerIndex];
+  if (p.fd == NotConnected || p.outmsgSize == 0) return;
+
+  const int n = prealwrite(playerIndex, p.outmsg +
+				p.outmsgOffset, p.outmsgSize);
+  if (n > 0) {
+    p.outmsgOffset += n;
+    p.outmsgSize   -= n;
+  }
+}
+
+static void		pwrite(int playerIndex, const void* b, int l)
+{
+  PlayerInfo& p = player[playerIndex];
+  if (p.fd == NotConnected || l == 0) return;
+
+  // try flushing buffered data
+  pflush(playerIndex);
+
+  // if the buffer is empty try writing the data immediately
+  if (p.fd != NotConnected && p.outmsgSize == 0) {
+    const int n = prealwrite(playerIndex, b, l);
+    if (n > 0) {
+      b  = (const void*)(((const char*)b) + n);
+      l -= n;
+    }
+  }
+
+  // write leftover data to the buffer
+  if (p.fd != NotConnected && l > 0) {
+    // is there enough room in buffer?
+    if (p.outmsgCapacity < p.outmsgSize + l) {
+      // double capacity until it's big enough
+      int newCapacity = (p.outmsgCapacity == 0) ? 512 : p.outmsgCapacity;
+      while (newCapacity < p.outmsgSize + l)
+	newCapacity <<= 1;
+
+      // if the buffer is getting too big then drop the player.  chances
+      // are the network is down or too unreliable to that player.
+      // FIXME -- is 20kB to big?  to small?
+      if (newCapacity >= 20 * 1024) {
+	fprintf(stderr, "dropping unresponsive player %d (%s) with"
+				" %d bytes queued\n",
+				playerIndex, p.callSign, p.outmsgSize + l);
+	removePlayer(playerIndex);
+	return;
+      }
+
+      // allocate memory
+      char* newbuf = new char[newCapacity];
+
+      // copy old data over
+      memmove(newbuf, p.outmsg + p.outmsgOffset, p.outmsgSize);
+
+      // cutover
+      delete[] p.outmsg;
+      p.outmsg         = newbuf;
+      p.outmsgOffset   = 0;
+      p.outmsgCapacity = newCapacity;
+    }
+
+    // if we can't fit new data at the end of the buffer then move existing
+    // data to head of buffer
+    // FIXME -- use a ring buffer to avoid moving memory
+    if (p.outmsgOffset + p.outmsgSize + l > p.outmsgCapacity) {
+      memmove(p.outmsg, p.outmsg + p.outmsgOffset, p.outmsgSize);
+      p.outmsgOffset = 0;
+    }
+
+    // append data
+    memmove(p.outmsg + p.outmsgOffset + p.outmsgSize, b, l);
+    p.outmsgSize += l;
+  }
 }
 
 static void		broadcastMessage(uint16_t code,
@@ -980,6 +1056,10 @@ static boolean		serverStart()
   for (int i = 0; i < MaxPlayers; i++) {	// no connections
     player[i].fd = NotConnected;
     player[i].state = PlayerInLimbo;
+    player[i].outmsg = NULL;
+    player[i].outmsgSize = 0;
+    player[i].outmsgOffset = 0;
+    player[i].outmsgCapacity = 0;
     reconnect[i].accept = NotConnected;
     reconnect[i].listen = NotConnected;
   }
@@ -1014,6 +1094,7 @@ static void		serverStop()
     if (player[i].fd != NotConnected) {
       shutdown(player[i].fd, 2);
       close(player[i].fd);
+      delete[] player[i].outmsg;
     }
 
   // now tell the list servers that we're going away.  this can
@@ -1632,8 +1713,9 @@ static void		addClient(int playerIndex)
   if (player[playerIndex].fd == NotConnected)
     return;
 
-  // turn off packet buffering
+  // turn off packet buffering and set socket non-blocking
   setNoDelay(player[playerIndex].fd);
+  BzfNetwork::setNonBlocking(player[playerIndex].fd);
 
   // now add client
   player[playerIndex].state = PlayerInLimbo;
@@ -1642,6 +1724,10 @@ static void		addClient(int playerIndex)
   player[playerIndex].peer = Address(addr);
   player[playerIndex].multicastRelay = False;
   player[playerIndex].len = 0;
+  assert(player[playerIndex].outmsg == NULL);
+  player[playerIndex].outmsgSize = 0;
+  player[playerIndex].outmsgOffset = 0;
+  player[playerIndex].outmsgCapacity = 0;
 
   // if game was over and this is the first player then game is on
   if (gameOver) {
@@ -1977,6 +2063,8 @@ static void		removePlayer(int playerIndex)
   close(player[playerIndex].fd);
   player[playerIndex].fd = NotConnected;
   player[playerIndex].len = 0;
+  delete[] player[playerIndex].outmsg;
+  player[playerIndex].outmsg = NULL;
 
   // can we turn off relaying now?
   if (player[playerIndex].multicastRelay) {
@@ -3516,8 +3604,11 @@ int			main(int argc, char** argv)
     FD_ZERO(&read_set);
     FD_ZERO(&write_set);
     for (i = 0; i < maxPlayers; i++) {
-      if (player[i].fd != NotConnected)
+      if (player[i].fd != NotConnected) {
 	FD_SET(player[i].fd, &read_set);
+	if (player[i].outmsgSize > 0)
+	  FD_SET(player[i].fd, &write_set);
+      }
       if (reconnect[i].accept != NotConnected)
 	FD_SET(reconnect[i].accept, &read_set);
       if (reconnect[i].listen != NotConnected)
@@ -3678,8 +3769,12 @@ int			main(int argc, char** argv)
 		FD_ISSET(listServerLinks[i].socket, &write_set))
 	  sendMessageToListServerForReal(i);
 
-      // now check messages from connected players
+      // now check messages from connected players and send queued messages
       for (i = 0; i < maxPlayers; i++) {
+	if (player[i].fd != NotConnected && FD_ISSET(player[i].fd, &write_set)) {
+	  pflush(i);
+	}
+
 	if (player[i].fd != NotConnected && FD_ISSET(player[i].fd, &read_set)) {
 	  // read header if we don't have it yet
 	  if (player[i].len < 4) {
