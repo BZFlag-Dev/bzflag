@@ -1033,7 +1033,7 @@ dynamicColor :=
 .br
 	| channel "limits" <float> <float>
 .br
-	| channel "sinusoid" <float> <float>
+	| channel "sinusoid" <float> <float> <float>
 .br
 	| channel "clampup" <float> <float> <float>
 .br
