@@ -732,9 +732,11 @@ int			main(int argc, char** argv)
   if (LOBYTE(wsaData.wVersion) != major ||
       HIBYTE(wsaData.wVersion) != minor) {
     printFatalError("Version mismatch in winsock;"
-		    "  got %d.%d.  Terminating.\n",
+		    "  got %d.%d, expected %d.%d.  Terminating.\n",
 		    (int)LOBYTE(wsaData.wVersion),
-		    (int)HIBYTE(wsaData.wVersion));
+		    (int)HIBYTE(wsaData.wVersion),
+						 major,
+						 minor);
     WSACleanup();
     return 1;
   }

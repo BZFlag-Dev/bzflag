@@ -3050,7 +3050,7 @@ static bool invalidPlayerAction(PlayerInfo &p, int t, const char *action) {
   if (p.isObserver() || p.isPaused()) {
     if (p.isPaused()) {
       char buffer[MessageLen];
-      DEBUG1("Player %s tried to %s while paused\n", p.getCallSign(), action);
+      DEBUG1("Player \"%s\" (%s) tried to %s while paused\n", p.getCallSign(), p.getTargetIP(), action);
       snprintf(buffer, MessageLen, "Autokick: Looks like you tried to %s while paused.", action);
       sendMessage(ServerPlayer, t, buffer);
       snprintf(buffer, MessageLen, "Invalid attempt to %s while paused", action);
@@ -3746,9 +3746,11 @@ int main(int argc, char **argv)
     if (LOBYTE(wsaData.wVersion) != major ||
 	HIBYTE(wsaData.wVersion) != minor) {
       DEBUG2("Version mismatch in winsock;"
-	  "  got %d.%d.  Terminating.\n",
+	  "  got %d.%d, expected %d.%d.  Terminating.\n",
 	  (int)LOBYTE(wsaData.wVersion),
-	  (int)HIBYTE(wsaData.wVersion));
+	  (int)HIBYTE(wsaData.wVersion),
+				 major,
+				 minor);
       WSACleanup();
       return 1;
     }
