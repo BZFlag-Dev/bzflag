@@ -781,8 +781,8 @@ void			TankSceneNode::TankRenderNode::initContext(void* self)
 // TankSceneNode::LowTankRenderNode
 //
 
-GLuint			TankSceneNode::LowTankRenderNode::parts[4] =
-				{ 0, 0, 0, 0 };
+GLuint			TankSceneNode::LowTankRenderNode::parts[lastStyle] =
+				{ _NO_LIST_ID, _NO_LIST_ID, _NO_LIST_ID, _NO_LIST_ID, _NO_LIST_ID };
 
 TankSceneNode::LowTankRenderNode::LowTankRenderNode(
 				const TankSceneNode* sceneNode) :
@@ -841,8 +841,8 @@ void			TankSceneNode::LowTankRenderNode::freeParts()
 // TankSceneNode::MedTankRenderNode
 //
 
-GLuint			TankSceneNode::MedTankRenderNode::parts[4] =
-				{ 0, 0, 0, 0 };
+GLuint			TankSceneNode::MedTankRenderNode::parts[lastStyle] =
+				{ _NO_LIST_ID, _NO_LIST_ID, _NO_LIST_ID, _NO_LIST_ID };
 
 TankSceneNode::MedTankRenderNode::MedTankRenderNode(
 				const TankSceneNode* sceneNode) :
@@ -900,8 +900,8 @@ void			TankSceneNode::MedTankRenderNode::freeParts()
 // TankSceneNode::HighTankRenderNode
 //
 
-GLuint			TankSceneNode::HighTankRenderNode::parts[4] =
-				{ 0, 0, 0, 0 };
+GLuint			TankSceneNode::HighTankRenderNode::parts[lastStyle] =
+				{ _NO_LIST_ID, _NO_LIST_ID, _NO_LIST_ID, _NO_LIST_ID, _NO_LIST_ID };
 
 TankSceneNode::HighTankRenderNode::HighTankRenderNode(
 				const TankSceneNode* sceneNode) :

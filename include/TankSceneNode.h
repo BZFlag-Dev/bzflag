@@ -104,11 +104,12 @@ class TankSceneNode : public SceneNode {
     class TankRenderNode : public RenderNode {
       public:
 	enum Style {
-			Normal,
+			Normal = 0,
 			Obese,
 			Tiny,
 			Narrow,
-			Thief
+			Thief,
+			lastStyle
 	};
 
 			TankRenderNode(const TankSceneNode*);
@@ -166,7 +167,8 @@ class TankSceneNode : public SceneNode {
 	void		makeLeftTread();
 	void		makeRightTread();
       private:
-	static GLuint	parts[4];
+	static GLuint	parts[lastStyle];
+	friend class TankSceneNode;
     };
     class MedTankRenderNode : public TankRenderNode {
       public:
@@ -181,7 +183,8 @@ class TankSceneNode : public SceneNode {
 	void		makeLeftTread();
 	void		makeRightTread();
       private:
-	static GLuint	parts[4];
+	static GLuint	parts[lastStyle];
+	friend class TankSceneNode;
     };
     class HighTankRenderNode : public TankRenderNode {
       public:
@@ -196,7 +199,8 @@ class TankSceneNode : public SceneNode {
 	void		makeLeftTread();
 	void		makeRightTread();
       private:
-	static GLuint	parts[4];
+	static GLuint	parts[lastStyle];
+	friend class TankSceneNode;
     };
     friend class TankRenderNode;
 
