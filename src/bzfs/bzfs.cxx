@@ -309,11 +309,18 @@ static void sendPlayerUpdate(int playerIndex, int index)
   
   if (playerIndex == index) {
     // send all players info about player[playerIndex]
-    for (int i = 0; i < curMaxPlayers; i++)
-      if (player[i].isPlaying())
+    for (int i = 0; i < curMaxPlayers; i++) {
+      if (player[i].isPlaying()) {
 	directMessage(i, MsgAddPlayer, (char*)buf - (char*)bufStart, bufStart);
-  } else
+      }
+    }
+    if (Capture::enabled()) {
+      Capture::addPacket (MsgAddPlayer, (char*)buf - (char*)bufStart, bufStart);
+    }
+  }
+  else {
     directMessage(index, MsgAddPlayer, (char*)buf - (char*)bufStart, bufStart);
+  }
 }
 
 void sendIPUpdate(int targetPlayer = -1, int playerIndex = -1) {

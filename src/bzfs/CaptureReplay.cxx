@@ -49,6 +49,8 @@ typedef struct CRpacket {
   CRtime timestamp;
   void *data;
 } CRpacket;
+static const int CRpacketHdrLen = sizeof (CRpacket) - 
+                                   (2*sizeof(CRpacket*) - sizeof (void *));
 
 typedef struct {
   int byteCount;
@@ -74,9 +76,6 @@ static const unsigned int ReplayMagic = 0x425A6372; // "BZcr"
 static const unsigned int ReplayVersion = 0x0001;
 static const int DefaultMaxBytes = (16 * 1024 * 1024); // 16 Mbytes
 static const unsigned int DefaultUpdateRate = 10 * 1000000; // seconds
-
-static const int CRpacketDataLen = 
-                   (sizeof (u16) * 2) + (sizeof (int) * 2) + sizeof (CRtime);
 
 
 static bool Capturing = false;
@@ -365,7 +364,8 @@ routePacket (u16 code, int len, const void * data, bool fake)
     CRpacket *p = newCRpacket (fakeval, code, len, data);
     p->timestamp = getCRtime();
     addCRpacket (&CaptureBuf, p);
-    DEBUG3 ("routePacket: buffered %s\n", print_msg_code (code));
+    DEBUG3 ("routeCRpacket(): fake = %i, len = %4i, code = %s, data = %p\n",
+            (int)p->fake, p->len, print_msg_code (p->code), p->data);
 
     if (CaptureBuf.byteCount > CaptureMaxBytes) {
       CRpacket *p;
@@ -382,7 +382,8 @@ routePacket (u16 code, int len, const void * data, bool fake)
     p.timestamp = getCRtime();
     initCRpacket (fakeval, code, len, data, &p);
     saveCRpacket (&p, CaptureFile);
-    DEBUG3 ("routePacket: saved %s\n", print_msg_code (code));
+    DEBUG3 ("routeCRpacket(): fake = %i, len = %4i, code = %s, data = %p\n",
+            (int)p.fake, p.len, print_msg_code (p.code), p.data);
   }
   
   return true; 
@@ -392,13 +393,31 @@ routePacket (u16 code, int len, const void * data, bool fake)
 bool 
 Capture::addPacket (u16 code, int len, const void * data, bool fake)
 {
+  bool retval;
+  
+  // If this packet adds a player, save it before the
+  // state update. If not, you'll get those annoying 
+  // "Server error when adding player" messages. I'd
+  // just put all messages before the state updates, 
+  // but it's nice to be able to see the trigger message.
+  
+  if (code == MsgAddPlayer) {
+    retval = routePacket (code, len, data, fake);
+  }
+  
   if ((getCRtime() - UpdateTime) > (int)UpdateRate) {
     // save the states periodically. if there's nothing happening
     // on the server, then this won't get called, and the file size
     // will not increase.
     saveStates ();
   }
-  return routePacket (code, len, data, fake);
+  
+  if (code == MsgAddPlayer) {
+    return retval;
+  }
+  else {
+    return routePacket (code, len, data, fake);
+  }
 }
 
 
@@ -681,8 +700,8 @@ bool Replay::sendPackets () {
       return false;
     }
     
-    DEBUG3 ("sendPackets(): len = %4i, code = %s, data = %p\n",
-            p->len, print_msg_code (p->code), p->data);
+    DEBUG3 ("sendPackets(): fake = %i, len = %4i, code = %s, data = %p\n",
+            (int)p->fake, p->len, print_msg_code (p->code), p->data);
     fflush (stdout);
 
     // send message to all replay observers
@@ -735,7 +754,7 @@ bool Replay::sendPackets () {
     sendMessage (ServerPlayer, AllPlayers, "Replay Finished");
     return false;
   }
-
+  
   if (sent && (ReplayPos->prev != NULL)) {  
     CRtime diff = (ReplayPos->timestamp - ReplayPos->prev->timestamp);
     if (diff > (10 * 1000000)) {
@@ -923,8 +942,7 @@ resetStates ()
 static bool
 saveCRpacket (CRpacket *p, FILE *f)
 {
-  const int bufsize = sizeof(u16)*2 + sizeof(int)*2;
-  char bufStart[bufsize];
+  char bufStart[CRpacketHdrLen];
   void *buf;
 
   if (f == NULL) {
@@ -935,13 +953,15 @@ saveCRpacket (CRpacket *p, FILE *f)
   buf = nboPackUShort (buf, p->code);
   buf = nboPackUInt (buf, p->len);
   buf = nboPackUInt (buf, CaptureFilePrevLen);
-  fwrite (bufStart, bufsize, 1, f);
-  fwrite (&p->timestamp, sizeof (CRtime), 1, f); //FIXME 
+  buf = nboPackUInt (buf, (unsigned int) (p->timestamp >> 32));        // msb
+  buf = nboPackUInt (buf, (unsigned int) (p->timestamp & 0xFFFFFFFF)); // lsb
+  fwrite (bufStart, CRpacketHdrLen, 1, f);
+
   fwrite (p->data, p->len, 1, f);
 
   fflush (f);//FIXME
   
-  CaptureFileBytes += p->len + CRpacketDataLen;
+  CaptureFileBytes += p->len + CRpacketHdrLen;
   CaptureFilePackets++;
   CaptureFilePrevLen = p->len;
 
@@ -953,9 +973,9 @@ static CRpacket *
 loadCRpacket (FILE *f)
 {
   CRpacket *p;
-  const int bufsize = sizeof(u16)*2 + sizeof(int);
-  char bufStart[bufsize];
+  char bufStart[CRpacketHdrLen];
   void *buf;
+  unsigned int timeMsb, timeLsb;
   
   if (f == NULL) {
     return false;
@@ -963,7 +983,7 @@ loadCRpacket (FILE *f)
   
   p = (CRpacket *) malloc (sizeof (CRpacket));
 
-  if (fread (bufStart, bufsize, 1, f) <= 0) {
+  if (fread (bufStart, CRpacketHdrLen, 1, f) <= 0) {
     free (p);
     return NULL;
   }
@@ -971,12 +991,10 @@ loadCRpacket (FILE *f)
   buf = nboUnpackUShort (buf, p->code);
   buf = nboUnpackInt (buf, p->len);
   buf = nboUnpackInt (buf, p->prev_len);
+  buf = nboUnpackUInt (buf, timeMsb);
+  buf = nboUnpackUInt (buf, timeLsb);
+  p->timestamp = ((CRtime)timeMsb << 32) + (CRtime)timeLsb;
 
-  if (fread (&p->timestamp, sizeof (CRtime), 1, f) <= 0) {
-    free (p);
-    return NULL;
-  }
-  
   if (p->len > (MaxPacketLen - ((int)sizeof(uint16_t) * 2))) {
     fprintf (stderr, "loadCRpacket: ERROR, packtlen = %i\n", p->len);
     free (p);
@@ -991,8 +1009,8 @@ loadCRpacket (FILE *f)
     return NULL;
   }
   
-  DEBUG3 ("loadCRpacket(): len = %4i, code = %s, data = %p\n",
-          p->len, print_msg_code (p->code), p->data);
+  DEBUG3 ("loadCRpacket(): fake = %i, len = %4i, code = %s, data = %p\n",
+          (int)p->fake, p->len, print_msg_code (p->code), p->data);
 
   return p;  
 }
@@ -1014,7 +1032,7 @@ saveHeader (ReplayHeader *h, FILE *f)
 
   buf = nboPackUInt (buffer, ReplayMagic);
   buf = nboPackUInt (buf, ReplayVersion);
-  buf = nboPackUInt (buf, 0 /* place holder for seconds */);
+  buf = nboPackUInt (buf, 0); // place holder for seconds
   buf = nboPackString (buf, hexDigest, hashlen);
   buf = (char*)buf + (sizeof (h->worldhash) - hashlen);
   
@@ -1097,7 +1115,7 @@ addCRpacket (CRbuffer *b, CRpacket *p)
   p->next = NULL;
   b->head = p;
   
-  b->byteCount = b->byteCount + (p->len + CRpacketDataLen);
+  b->byteCount = b->byteCount + (p->len + CRpacketHdrLen);
   b->packetCount++;
   
   return;
@@ -1113,7 +1131,7 @@ delCRpacket (CRbuffer *b)
     return NULL;
   }
   
-  b->byteCount = b->byteCount - (p->len + CRpacketDataLen);
+  b->byteCount = b->byteCount - (p->len + CRpacketHdrLen);
   b->packetCount--;
 
   b->tail = p->next;
