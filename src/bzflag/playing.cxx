@@ -2421,6 +2421,7 @@ static void		doEvent(BzfDisplay* display)
       break;
 
     case BzfEvent::Redraw:
+      mainWindow->showWindow(true);
       mainWindow->getWindow()->callExposeCallbacks();
       sceneRenderer->setExposed();
       break;
