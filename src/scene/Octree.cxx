@@ -19,6 +19,7 @@
 #include "Occluder.h"
 
 static const int fullListBreak = 3; // FIXME
+static const float testFudge = 0.1f;
 
 static int maxDepth = 0;
 static int minElements = 16;
@@ -130,13 +131,15 @@ void Octree::addNodes (SceneNode** list, int listSize, int depth, int elements)
 
   getExtents (mins, maxs, list, listSize);
 
-  leafNodes = 0;
-  totalNodes = 0;
-  totalElements = 0;
 
   // making babies
   root = new OctreeNode(0, mins, maxs, list, listSize);
-
+  
+  leafNodes = 0;
+  totalNodes = 0;
+  totalElements = 0;
+  root->tallyStats();
+  
   DEBUG2 ("Octree scene nodes = %i\n", listSize);
   for (i = 0; i < 3; i++) {
     DEBUG2 ("  extent[%i] = %f, %f\n", i, mins[i], maxs[i]);
@@ -370,8 +373,8 @@ OctreeNode::OctreeNode(unsigned char _depth,
   for (i = 0; i < 3; i++) {
     mins[i] = _mins[i];
     maxs[i] = _maxs[i];
-    testMins[i] = mins[i] - 0.1f;
-    testMaxs[i] = maxs[i] + 0.1f;
+    testMins[i] = mins[i] - testFudge;
+    testMaxs[i] = maxs[i] + testFudge;
   }
 
   // find all of the intersecting nodes
@@ -394,9 +397,6 @@ OctreeNode::OctreeNode(unsigned char _depth,
   // return if this is a leaf node
   if (((int)depth >= maxDepth) || (listSize <= minElements)) {
     DEBUG4 ("LEAF NODE: depth = %d, items = %i\n", depth, count);
-    leafNodes++;
-    totalNodes++;
-    totalElements += listSize;
     resizeCell();
     return;
   }
@@ -412,17 +412,11 @@ OctreeNode::OctreeNode(unsigned char _depth,
   resizeCell();
 
   // leave some lists for FullyVisible grabs
-  if (((depth + 1) % fullListBreak) != 0) {
+  if ((depth % fullListBreak) != 0) {
     listSize = 0;
     free (list);
     list = NULL;
   }
-  else {
-    totalElements += listSize;
-  }
-
-  // tally ho
-  totalNodes++;
 
   DEBUG4 ("BRANCH NODE: depth = %d, children = %i\n", depth, childCount);
 
@@ -554,7 +548,7 @@ void OctreeNode::getFrustumList () const
 
 void OctreeNode::getFullyVisible () const
 {
-  if ((childCount > 0) && (((depth + 1) % fullListBreak) != 0)) {
+  if ((childCount > 0) && (listSize == 0)) {
     for (int i = 0; i < childCount; i++) {
       children[i]->getFullyVisible ();
     }
@@ -648,7 +642,7 @@ void OctreeNode::getShadowList () const
 
 void OctreeNode::getFullyShadow () const
 {
-  if ((childCount > 0) && (((depth + 1) % fullListBreak) != 0)) {
+  if ((childCount > 0) && (listSize == 0)) {
     for (int i = 0; i < childCount; i++) {
       children[i]->getFullyShadow ();
     }
@@ -671,6 +665,23 @@ void OctreeNode::getExtents(float* _mins, float* _maxs) const
 {
   memcpy (_mins, mins, 3 * sizeof(float));
   memcpy (_maxs, maxs, 3 * sizeof(float));
+  return;
+}
+
+
+void OctreeNode::tallyStats()
+{
+  totalNodes++;
+  totalElements += listSize;
+  
+  if (childCount > 0) {
+    for (int i = 0; i < childCount; i++) {
+      children[i]->tallyStats();
+    }
+  } else {
+    leafNodes++;
+  }
+    
   return;
 }
 

@@ -70,6 +70,7 @@ class OctreeNode {
     SceneNode** getList() const;     // list of nodes
     void getExtents(float* mins, float* maxs) const;
 
+    void tallyStats();
     void draw ();
 
   private:

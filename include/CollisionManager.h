@@ -125,8 +125,8 @@ class ColDetNode {
     // this fills in the SplitList return list
     // (FIXME: not yet implemented, boxTestSplit might be useful for radar)
     //void boxTestSplit (const float* pos, float angle, float dx, float dy, float dz) const;
-
-    // make some pretty drawings
+    
+    void tallyStats();
     void draw(DrawLinesFunc drawLinesFunc);
 
   private:

@@ -286,6 +286,11 @@ void CollisionManager::load (std::vector<MeshObstacle*>   &meshes,
   // generate the octree
   setExtents (&FullList);
   root = new ColDetNode (0, mins, maxs, &FullList);
+  
+  leafNodes = 0;
+  totalNodes = 0;
+  totalElements = 0;
+  root->tallyStats();
 
   DEBUG2 ("ColDet Octree obstacles = %i\n", FullList.count);
   for (int i = 0; i < 3; i++) {
@@ -432,9 +437,6 @@ ColDetNode::ColDetNode(unsigned char _depth,
   // return if this is a leaf node
   if (((int)depth >= maxDepth) || (fullList.count <= minElements)) {
     DEBUG4 ("COLDET LEAF NODE: depth = %d, items = %i\n", depth, count);
-    leafNodes++;
-    totalNodes++;
-    totalElements += fullList.count;
     resizeCell();
     return;
   }
@@ -453,9 +455,6 @@ ColDetNode::ColDetNode(unsigned char _depth,
   fullList.count = 0;
   free (fullList.list);
   fullList.list = NULL;
-
-  // tally ho
-  totalNodes++;
 
   DEBUG4 ("COLDET BRANCH NODE: depth = %d, children = %i\n", depth, childCount);
 
@@ -651,6 +650,24 @@ void ColDetNode::boxTestSplit (const float* pos, float angle,
   return;
 }
 */
+
+
+void ColDetNode::tallyStats()
+{
+  totalNodes++;
+  totalElements += fullList.count;
+
+  if (childCount > 0) {
+    for (int i = 0; i < childCount; i++) {
+      children[i]->tallyStats();
+    }
+  } else {
+    leafNodes++;
+  }
+
+  return;
+}
+
 
 void ColDetNode::draw(DrawLinesFunc drawLinesFunc)
 {
