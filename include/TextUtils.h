@@ -79,12 +79,12 @@ public:
     if (replaceMe == "") return in; // can't replace nothing with something -- can do reverse
 
     while (endPos != std::string::npos){
-      // push the  part up to 
-      tempStream << in.substr(beginPos,endPos-beginPos); 
+      // push the  part up to
+      tempStream << in.substr(beginPos,endPos-beginPos);
       tempStream << withMe;
       beginPos = endPos + replaceMe.size();
       endPos = (unsigned int)in.find(replaceMe,beginPos);
-    } 
+    }
     tempStream << in.substr(beginPos);
     return tempStream.str();
   }
@@ -98,7 +98,7 @@ public:
    * inside quotes are ignored.
    * Hence /ban "Mr Blahblah" isajerk parses to "/ban", "Mr Blahlah" and "isajerk"
    * but so does "Mr Blahblah" "isajerk", so if you want 3 tokens and a delimeter
-   * is in one of the tokens, by puting quotes around it you can get the correct 
+   * is in one of the tokens, by puting quotes around it you can get the correct
    * parsing. When use quotes is enabled, \'s and "'s should\can be escaped with \
    * escaping is not currently done for any other character.
    * Should not have " as a delimeter if you want to use quotes
@@ -109,16 +109,16 @@ public:
     bool inQuote = false;
     bool enoughTokens;
 
-    unsigned int pos = 0; 
+    unsigned int pos = 0;
     int currentChar;
     std::ostringstream currentToken;
-	
+
     pos = (unsigned int)in.find_first_not_of(delims);
     currentChar = (pos == std::string::npos)? -1: in[pos];
     enoughTokens = (maxTokens && (numTokens >= (maxTokens-1)));
 
     while (pos != std::string::npos && !enoughTokens){
-	
+
       // get next token
       bool tokenDone = false;
       bool foundSlash = false;
@@ -132,7 +132,7 @@ public:
 	  pos ++;
 	  break; // breaks out of while look
 	}
-			
+
 	if (!useQuotes){
 	  currentToken << char(currentChar);
 	} else {
@@ -180,7 +180,7 @@ public:
 	pos ++;
 	currentChar = (pos < in.size() )? in[pos] : -1;
       } // end of getting a Token
-		
+
       if (currentToken.str().size() > 0){ // if the token is something add to list
 	tokens.push_back(currentToken.str());
 	currentToken.str("");
@@ -199,11 +199,11 @@ public:
     if (enoughTokens && pos != std::string::npos){
       std::string lastToken = in.substr(pos);
       if (lastToken.size() > 0)
-	tokens.push_back(lastToken); 
+	tokens.push_back(lastToken);
     }
- 
+
     return tokens;
-  } 
+  }
 
   static int parseDuration(std::string &duration)
   {
@@ -553,7 +553,7 @@ inline std::string unescape(std::string text, char escaper)
       if (i < len - 1)
 	destination += text[++i];
       else
-	// Should print an error 
+	// Should print an error
 	;
     } else {
       destination += c;

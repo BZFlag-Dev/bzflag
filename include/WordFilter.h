@@ -41,7 +41,7 @@
 
 /* words are stored by the index of their first letter of
  * UTF-8 format.  it would be nice to eventually support
- * full indexing of 
+ * full indexing of
  */
 #define MAX_FILTER_SETS 256
 

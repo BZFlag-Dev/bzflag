@@ -32,23 +32,23 @@ const int TeamPLen = 10;
 class Team {
 public:
   Team();
-  
+
   void* pack(void*) const;
   void* unpack(void*);
-  
+
   static const std::string getImagePrefix(TeamColor); // const
   static const char* getName(TeamColor); // const
   static const float* getTankColor(TeamColor); // const
   static const float* getRadarColor(TeamColor); // const
   static bool isColorTeam(TeamColor); // const
-  
+
   static void setColors(TeamColor, const float* tank, const float* radar);
-  
+
 public:
   unsigned short size; // num players on team
   unsigned short won;  // wins by team members
   unsigned short lost; // losses by team members
-  
+
   static float tankColor[NumTeams][4];
   static float radarColor[NumTeams][4];
 };
