@@ -47,16 +47,7 @@ AudioMenu::AudioMenu()
   options = &option->getList();
   if (isSoundOpen()) {
     options->push_back(std::string("Off"));
-    options->push_back(std::string("1"));
-    options->push_back(std::string("2"));
-    options->push_back(std::string("3"));
-    options->push_back(std::string("4"));
-    options->push_back(std::string("5"));
-    options->push_back(std::string("6"));
-    options->push_back(std::string("7"));
-    options->push_back(std::string("8"));
-    options->push_back(std::string("9"));
-    options->push_back(std::string("10"));
+    option->createSlider(10);
   }
   else {
     options->push_back(std::string("Unavailable"));
