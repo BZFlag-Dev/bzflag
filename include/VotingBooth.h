@@ -14,6 +14,8 @@
 #define __VOTINGBOOTH_H__
 
 #include <ctype.h>
+#include <map>
+#include <vector>
 #include <string>
 
 // work around an ugly STL bug in BeOS
@@ -26,14 +28,6 @@
 #undef private
 #endif
 
-/* positive vote is an index; non-positive is an error or retracted vote */
-typedef long int vote_t;
-
-static const vote_t ERROR_VOTE=-1;
-static const vote_t RETRACTED_VOTE=-2;
-
-/* max number of potential poll responses */
-static const unsigned short int MAX_VOTE_RESPONSES=255;
 
 /** VotingBooth is a means to create and track a vote.  A single booth
  * will track and allow voting on a poll.
@@ -45,75 +39,49 @@ class VotingBooth
 {
  private:
 
+  static const short int RETRACTED_VOTE=-2;
+
   /** question that is voted upon (optionally provided)
    */
   std::string _question;
 
-  /** array of potential poll responses (a response is a poll
-   * option/choice -- not a vote itself)
+  /** vector of potential poll response choices
    */
-  std::string _response[MAX_VOTE_RESPONSES];
+  std::vector<std::string> _choice;
 
-  /** how many responses have been manually added
+  /** collection of the voters and their response responses (index into the
+   * choice vector)
    */
-  unsigned short int _responseCount;
-
-  /** counts of the vote responses
-   */
-  vote_t _vote[MAX_VOTE_RESPONSES];
-
-  /** lists of who has voted
-   */
-  std::string _voter[MAX_VOTE_RESPONSES];
-
-  /** how many voters have been manually added
-   */
-  unsigned short int _voterCount;
-
-  /* require unique voters */
-  bool _requireUnique;
+  std::map<std::string, short int> _vote;
 
  protected:
 
  public:
 
-  VotingBooth(std::string question = "", bool requireUnique = true);
+  VotingBooth(std::string question = "");
   VotingBooth(const VotingBooth& booth);
   ~VotingBooth(void);
 
   /** add a response to vote upon.  vote responses are the choices that
    * may be voted upon (e.g. "yes", "no", "maybe", etc).
    */
-  vote_t addResponse(const std::string response);
+  bool addResponse(const std::string response);
 
-  /** lookup the id of a vote response given a string.
-   */
-  vote_t getResponseIDFromString(const std::string name) const;
-
-  /** lookup the string of a vote response given an id.
+  /** return truthfully if a particular person has already voted
     */
-  const std::string getStringFromResponseID(vote_t id) const;
-
-  /** see if a particular person has already voted
-    */
-  bool hasVoted(const std::string name) const;
+  bool hasVoted(const std::string voterName) const;
 
   /** a given user id/name responds and votes to a particular poll
-   * response.
+   * response.  returns truthfully whether the vote was placed.
    */
-  bool vote(const std::string name, vote_t id);
+  bool vote(const std::string voterName, const std::string response);
 
-  /** allow a vote to be retracted
+  /** allow a vote to be retracted, returns truefully whether a retraction
+   * was possible.
    */
-  bool retractVote(const std::string name);
+  bool retractVote(const std::string voterName);
   
   /** return how many votes have been placed for a particular response.
-   * lookup votes by vote identifier.
-   */
-  unsigned long int getVoteCount(vote_t id) const;
-
-  /** return how many votes have been placed for a particular response.
-   * lookup votes by response.
    */
   unsigned long int getVoteCount(const std::string response) const;
 
@@ -121,25 +89,27 @@ class VotingBooth
    */
   unsigned long int getTotalVotes(void) const;
 
-  /** returns the number of voters
+  /** returns the number of voters that have participated
    */
   inline unsigned long int getVoterCount(void) const {
-    return _voterCount;
+    return _vote.size();
   }
 
   /** returns the number of responses available
    */
   inline unsigned long int getResponseCount(void) const {
-    return _responseCount;
+    return _choice.size();
   }
 
+  /** returns a string identifier for this poll
+   */
   inline const std::string getPollName(void) const {
     return _question;
   }
 
 };
 
-/* convenience func that sets up and returns a default poll */
+/* convenience func that sets up and returns a default boolean poll */
 VotingBooth *YesNoVotingBooth(std::string question = "");
 
 #else
