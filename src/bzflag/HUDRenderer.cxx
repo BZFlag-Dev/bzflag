@@ -80,7 +80,7 @@ HUDRenderer::HUDRenderer(const BzfDisplay* _display,
 				hunting(false),
 				huntPosition(0),
 				huntSelection(false),
- 				showHunt(false),
+				showHunt(false),
 				dater(false),
 				lastTimeChange(time(NULL))
 {
@@ -685,12 +685,12 @@ void			HUDRenderer::renderStatus(void)
     struct tm userTime;
     time(&timeNow);
     userTime = *localtime(&timeNow);
-   
+
     // switch date and time if necessary
     if (BZDB.eval("timedate") == 2) {
       if (time(NULL) - lastTimeChange >= 2) {
-        dater = !dater;
-        lastTimeChange = time(NULL);
+	dater = !dater;
+	lastTimeChange = time(NULL);
       }
     } else {
       dater = (BZDB.eval("timedate") == 1);

@@ -34,11 +34,11 @@ ConeObstacle::ConeObstacle()
 
 
 ConeObstacle::ConeObstacle(const MeshTransform& xform,
-                           const float* _pos, const float* _size,
-                           float _rotation, float _sweepAngle,
-                           const float _texsize[2], bool _useNormals,
-                           int _divisions, const BzMaterial* mats[MaterialCount],
-                           int physics, bool bounce, bool drive, bool shoot)
+			   const float* _pos, const float* _size,
+			   float _rotation, float _sweepAngle,
+			   const float _texsize[2], bool _useNormals,
+			   int _divisions, const BzMaterial* mats[MaterialCount],
+			   int physics, bool bounce, bool drive, bool shoot)
 {
   mesh = NULL;
 
@@ -80,9 +80,9 @@ Obstacle* ConeObstacle::copyWithTransform(const MeshTransform& xform) const
 
   ConeObstacle* copy =
     new ConeObstacle(tmpXform, pos, size, angle, sweepAngle,
-                    texsize, useNormals, divisions,
-                    (const BzMaterial**)materials, phydrv,
-                    smoothBounce, driveThrough, shootThrough);
+		    texsize, useNormals, divisions,
+		    (const BzMaterial**)materials, phydrv,
+		    smoothBounce, driveThrough, shootThrough);
   return copy;
 }
 
@@ -498,9 +498,9 @@ void ConeObstacle::print(std::ostream& out, const std::string& indent) const
   out << indent << "cone" << std::endl;
 
   out << indent << "  position " << pos[0] << " " << pos[1] << " "
-                                 << pos[2] << std::endl;
+				 << pos[2] << std::endl;
   out << indent << "  size " << size[0] << " " << size[1] << " "
-                             << size[2] << std::endl;
+			     << size[2] << std::endl;
   out << indent << "  rotation " << ((angle * 180.0) / M_PI) << std::endl;
   out << indent << "  angle " << sweepAngle << std::endl;
   out << indent << "  divisions " << divisions << std::endl;
@@ -508,7 +508,7 @@ void ConeObstacle::print(std::ostream& out, const std::string& indent) const
   transform.printTransforms(out, indent);
 
   out << indent << "  texsize " << texsize[0] << " "
-                                << texsize[1] << std::endl;
+				<< texsize[1] << std::endl;
 
   const char* sideNames[MaterialCount] =
     { "edge", "bottom", "startside", "endside" };

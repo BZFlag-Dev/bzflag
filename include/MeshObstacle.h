@@ -32,7 +32,7 @@ class MeshObstacle : public Obstacle {
   public:
     MeshObstacle();
     MeshObstacle(const MeshTransform& transform,
-                 const std::vector<char>& checkTypes,
+		 const std::vector<char>& checkTypes,
 		 const std::vector<cfvec3>& checkPoints,
 		 const std::vector<cfvec3>& vertices,
 		 const std::vector<cfvec3>& normals,
@@ -52,7 +52,7 @@ class MeshObstacle : public Obstacle {
 
     Obstacle* copyWithTransform(const MeshTransform&) const;
     void copyFace(int face, MeshObstacle* mesh) const;
-        
+
     enum CheckType {
       CheckInside =  0,
       CheckOutside = 1,
@@ -124,8 +124,8 @@ class MeshObstacle : public Obstacle {
     bool smoothBounce;
     bool noclusters;
     bool inverted; // used during building. can be ditched if
-                   // edge tables are setup with bi-directional
-                   // ray-vs-face tests and parity counts.
+		   // edge tables are setup with bi-directional
+		   // ray-vs-face tests and parity counts.
 
     fvec3 mins, maxs;
 };

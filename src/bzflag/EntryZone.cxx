@@ -58,7 +58,7 @@ void* EntryZone::unpack(void* buf)
     buf = nboUnpackUShort(buf, safetyTeam);
     safety.push_back((TeamColor)safetyTeam);
   }
-  
+
   return buf;
 };
 

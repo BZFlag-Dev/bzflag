@@ -132,7 +132,7 @@ void* WallObstacle::pack(void* buf) const
   buf = nboPackFloat(buf, angle);
   buf = nboPackFloat(buf, size[1]);
   buf = nboPackFloat(buf, size[2]);
-  
+
   return buf;
 }
 
@@ -143,9 +143,9 @@ void* WallObstacle::unpack(void* buf)
   buf = nboUnpackFloat(buf, angle);
   buf = nboUnpackFloat(buf, size[1]);
   buf = nboUnpackFloat(buf, size[2]);
-  
+
   finalize();
-  
+
   return buf;
 }
 
@@ -162,7 +162,7 @@ int WallObstacle::packSize() const
 
 
 void WallObstacle::print(std::ostream& /*out*/,
-                         const std::string& /*indent*/) const
+			 const std::string& /*indent*/) const
 {
   return;
 }

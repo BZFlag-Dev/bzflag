@@ -36,7 +36,7 @@ class SphereObstacle : public Obstacle {
 
     SphereObstacle();
     SphereObstacle(const MeshTransform& transform,
-                   const float* _pos, const float* _size,
+		   const float* _pos, const float* _size,
 		   float _rotation, const float _texsize[2],
 		   bool _useNormals, bool hemisphere,
 		   int _divisions, const BzMaterial* mats[MaterialCount],
@@ -44,7 +44,7 @@ class SphereObstacle : public Obstacle {
     ~SphereObstacle();
 
     Obstacle* copyWithTransform(const MeshTransform&) const;
-    
+
     MeshObstacle* getMesh();
     void disownMesh();
 

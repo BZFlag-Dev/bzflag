@@ -57,7 +57,7 @@ class Obstacle {
   */
   Obstacle(const float* pos, float rotation, float hwidth, float hbreadth,
 	   float height, bool drive = false, bool shoot = false);
-	   
+
   /** This function makes a copy using the given transform */
   virtual Obstacle* copyWithTransform(const MeshTransform&) const;
 
@@ -76,16 +76,16 @@ class Obstacle {
 
   /** TThis function returns the network packed size in bytes */
   virtual int packSize() const = 0;
-  
+
   /** This function packs the obstacle into buf */
   virtual void *pack(void* buf) const = 0;
 
   /** This function unpacks the obstacle from buf */
   virtual void *unpack(void* buf) = 0;
-            
+
   /** This function prints the obstacle to the stream */
   virtual void print(std::ostream& out, const std::string& indent) const = 0;
-            
+
   /** This function returns the position of this obstacle. */
   const float* getPosition() const;
 
@@ -253,7 +253,7 @@ class Obstacle {
   private:
     int insideNodeCount;
     SceneNode** insideNodes;
-    
+
 };
 
 //

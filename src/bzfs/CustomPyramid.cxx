@@ -50,12 +50,12 @@ void CustomPyramid::writeToGroupDef(GroupDefinition *groupdef) const
 
   PyramidBuilding* pyr =
     new PyramidBuilding(pos, rotation,
-                        fabsf(size[0]), fabsf(size[1]), fabsf(size[2]),
-                        driveThrough, shootThrough);
+			fabsf(size[0]), fabsf(size[1]), fabsf(size[2]),
+			driveThrough, shootThrough);
   if (flipit) {
     pyr->setZFlip();
   }
-  
+
   groupdef->addObstacle(pyr);
 }
 

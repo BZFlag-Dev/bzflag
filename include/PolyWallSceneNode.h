@@ -33,8 +33,8 @@ class PolyWallSceneNode : public WallSceneNode {
     void		addShadowNodes(SceneRenderer&);
 
     RenderNode* getRenderNode(int) { return node; }
-    int 		getRenderNodeCount() { return 1; }
-    
+    int		getRenderNodeCount() { return 1; }
+
   protected:
     class Geometry : public RenderNode {
       public:

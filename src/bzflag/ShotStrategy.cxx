@@ -168,13 +168,13 @@ void ShotStrategy::reflect(float* v, const float* n) // const
 }
 
 const Teleporter* ShotStrategy::getFirstTeleporter(const Ray& ray, float min,
-                                                   float& t, int& f) const
+						   float& t, int& f) const
 {
   const Teleporter* closestTeleporter = NULL;
   int face;
 
   const ObstacleList& teles = OBSTACLEMGR.getTeles();
-  
+
   for (unsigned int i = 0; i < teles.size(); i++) {
     const Teleporter& tele = *((const Teleporter*) teles[i]);
     const float telet = tele.isTeleported(ray, face);

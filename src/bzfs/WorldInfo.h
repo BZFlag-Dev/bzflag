@@ -75,18 +75,18 @@ public:
   void addWeapon(const FlagType *type, const float *origin, float direction,
 		 float initdelay, const std::vector<float> &delay, TimeKeeper &sync);
   void addWaterLevel (float level, const BzMaterial* matref);
-  
+
   void addBox(float x, float y, float z, float r,
-              float w, float d, float h,
-              bool drive = false, bool shoot = false);
+	      float w, float d, float h,
+	      bool drive = false, bool shoot = false);
   void addPyramid(float x, float y, float z, float r,
-                  float w, float d, float h,
-                  bool drive = false, bool shoot = false, bool flipZ = false);
+		  float w, float d, float h,
+		  bool drive = false, bool shoot = false, bool flipZ = false);
   void addTeleporter(float x, float y, float z, float r,
-                     float w, float d, float h, float b,
-                     bool horizontal, bool drive = false, bool shoot = false);
+		     float w, float d, float h, float b,
+		     bool horizontal, bool drive = false, bool shoot = false);
   void addBase(float x, float y, float z, float r,
-               float w, float d, float h,
+	       float w, float d, float h,
 	       int color, bool drive = false, bool shoot = false);
 
   float getWaterLevel() const;
@@ -100,7 +100,7 @@ public:
 
   void finishWorld();
   int packDatabase();
-  
+
 private:
 
   void setTeleporterTarget(int src, int tgt);

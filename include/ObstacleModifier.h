@@ -21,9 +21,9 @@ class ObstacleModifier {
   public:
     ObstacleModifier();
     ObstacleModifier(const ObstacleModifier& obsMod,
-                     const GroupInstance& grpinst);
+		     const GroupInstance& grpinst);
     ~ObstacleModifier();
-        
+
     void execute(Obstacle* obstacle) const;
 
   private:

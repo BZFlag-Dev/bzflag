@@ -32,7 +32,7 @@ Weapon::Weapon()
 void* Weapon::unpack(void* buf)
 {
   uint16_t delayCount;
-  
+
   buf = FlagType::unpack(buf, type);
   buf = nboUnpackVector(buf, pos);
   buf = nboUnpackFloat(buf, dir);
@@ -45,7 +45,7 @@ void* Weapon::unpack(void* buf)
     buf = nboUnpackFloat(buf, delayValue);
     delay.push_back(delayValue);
   }
-  
+
   return buf;
 };
 

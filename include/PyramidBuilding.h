@@ -27,9 +27,9 @@ class PyramidBuilding : public Obstacle {
 			PyramidBuilding(const float* pos, float rotation,
 				float width, float breadth, float height, bool drive = false, bool shoot = false);
 			~PyramidBuilding();
-			
+
     virtual Obstacle*	copyWithTransform(const MeshTransform&) const;
-			
+
     const char*		getType() const;
     static const char*	getClassName(); // const
 
@@ -61,7 +61,7 @@ class PyramidBuilding : public Obstacle {
     int packSize() const;
     void *pack(void*) const;
     void *unpack(void*);
-    
+
     void print(std::ostream& out, const std::string& indent) const;
 
     std::string		userTextures[1];

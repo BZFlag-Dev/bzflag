@@ -47,10 +47,10 @@ Obstacle* BoxBuilding::copyWithTransform(const MeshTransform& xform) const
   MeshTransform::Tool tool(xform);
   bool flipped;
   tool.modifyOldStyle(newPos, newSize, newAngle, flipped);
-  
+
   BoxBuilding* copy =
     new BoxBuilding(newPos, newAngle, newSize[0], newSize[1], newSize[2],
-                    driveThrough, shootThrough, noNodes);
+		    driveThrough, shootThrough, noNodes);
   return copy;
 }
 
@@ -257,12 +257,12 @@ void BoxBuilding::print(std::ostream& out, const std::string& indent) const
 {
   out << indent << "box" << std::endl;
   const float *pos = getPosition();
-  out << indent << "  position " << pos[0] << " " << pos[1] << " " 
-                                 << pos[2] << std::endl;
-  out << indent << "  size " << getWidth() << " " << getBreadth() 
-                             << " " << getHeight() << std::endl;
-  out << indent << "  rotation " << ((getRotation() * 180.0) / M_PI) 
-                                 << std::endl;
+  out << indent << "  position " << pos[0] << " " << pos[1] << " "
+				 << pos[2] << std::endl;
+  out << indent << "  size " << getWidth() << " " << getBreadth()
+			     << " " << getHeight() << std::endl;
+  out << indent << "  rotation " << ((getRotation() * 180.0) / M_PI)
+				 << std::endl;
   if (isDriveThrough() && isShootThrough()) {
     out << indent << "  passable" << std::endl;
   } else {

@@ -38,8 +38,8 @@ Obstacle::Obstacle()
 }
 
 Obstacle::Obstacle(const float* _pos, float _angle,
-                   float _width, float _breadth, float _height,
-                   bool drive, bool shoot)
+		   float _width, float _breadth, float _height,
+		   bool drive, bool shoot)
 {
   pos[0] = _pos[0];
   pos[1] = _pos[1];

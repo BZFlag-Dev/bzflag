@@ -249,7 +249,7 @@ Player identifiers are 1 byte and are used in many messages.
         251 - 252 : Unused IDs
               253 : ServerPlayer (World weapons, etc)
               254 : All Players
-              255 : No Player (Invalid Player)	
+              255 : No Player (Invalid Player)
 
 Flag status is common to a few message types:
 
@@ -334,10 +334,10 @@ indicate client user interface changes. A following FF ends the packet.
 negotiating world flags
 -----------------------
   --&gt;   +----+----+----+----+----+----+----+----+----+----+
-	| length  | 6E | 66 | FlagID1 | FlagID2 | ....... |     MsgNegotiateFlags 
+	| length  | 6E | 66 | FlagID1 | FlagID2 | ....... |     MsgNegotiateFlags
 	+----+----+----+----+----+----+----+----+----+----+     (List of client flag ids)
   &lt;--   +----+----+----+----+----+----+----+----+----+----+
-	| length  | 6E | 66 | FlagID1 | FlagID2 | ....... |     MsgNegotiateFlags 
+	| length  | 6E | 66 | FlagID1 | FlagID2 | ....... |     MsgNegotiateFlags
 	+----+----+----+----+----+----+----+----+----+----+     (List of server flag ids, that client doesn't know)
 
 </screen>
@@ -347,7 +347,7 @@ In the case that a flag is only one letter, (N) for instance, the second byte is
 Otherwise, the null byte is implied at position 3. The server upon receipt of this list,
 finds all flags that are used by the server, but not known by the client, and sends this
 list to the client. The client upon receipt of the list, either disallows play, if flags exist,
-or continues if the list is empty. 
+or continues if the list is empty.
 </para>
 <screen>
 
@@ -406,7 +406,7 @@ only MsgGetWorld requests.
 The `data' has the following encoding:
 
 	+----+----+----+----+
-	| 00 | 1E | 73 | 74 |        length of data, WorldCodeStyle 
+	| 00 | 1E | 73 | 74 |        length of data, WorldCodeStyle
 	+----+----+----+----+----+----+
 	| version |      worldsize    |
         +----+----+----+----+----+----+----+----+

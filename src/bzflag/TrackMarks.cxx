@@ -192,11 +192,11 @@ static OpenGLGState puddleGState;
 static const char puddleTexture[] = "puddle";
 static OpenGLGState treadsGState;
 
-#ifndef FANCY_TREADMARKS  
+#ifndef FANCY_TREADMARKS
 static const float TextureHeightOffset = 0.05f;
 #else
 static const float TextureHeightOffset = 0.0f;
-#endif // FANCY_TREADMARKS  
+#endif // FANCY_TREADMARKS
 
 
 //
@@ -637,19 +637,19 @@ void TrackMarks::renderObstacleTracks()
   glDepthMask(GL_FALSE);
 
   // draw treads
-#ifdef FANCY_TREADMARKS  
+#ifdef FANCY_TREADMARKS
   glDepthFunc(GL_LEQUAL);
   glEnable(GL_POLYGON_OFFSET_FILL);
   glPolygonOffset(-1.0f, -1.0f);
-#endif // FANCY_TREADMARKS  
+#endif // FANCY_TREADMARKS
   treadsGState.setState();
   for (ptr = TreadsObstacleList.getStart(); ptr != NULL; ptr = ptr->getNext()) {
     drawTreads(*ptr);
   }
-#ifdef FANCY_TREADMARKS  
+#ifdef FANCY_TREADMARKS
   glDepthFunc(GL_LESS);
   glDisable(GL_POLYGON_OFFSET_FILL);
-#endif // FANCY_TREADMARKS  
+#endif // FANCY_TREADMARKS
 
   // draw smoke
   smokeGState.setState();

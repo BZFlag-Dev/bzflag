@@ -25,7 +25,7 @@ class WallObstacle : public Obstacle {
   public:
 			WallObstacle();
 			WallObstacle(const float* pos, float rotation,
-                                     float breadth, float height);
+				     float breadth, float height);
 			~WallObstacle();
 
     const char*		getType() const;
@@ -51,9 +51,9 @@ class WallObstacle : public Obstacle {
     int packSize() const;
     void *pack(void*) const;
     void *unpack(void*);
-    
+
     void print(std::ostream& out, const std::string& indent) const;
-    
+
     std::string		userTextures[1];
 
   private:

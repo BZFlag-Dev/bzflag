@@ -76,17 +76,17 @@ class Teleporter : public Obstacle {
     int packSize() const;
     void *pack(void*) const;
     void *unpack(void*);
-    
+
     void print(std::ostream& out, const std::string& indent) const;
-    
+
     std::string		userTextures[1];
 
   private:
     void finalize();
-  
+
   private:
     static const char*	typeName;
-    
+
     float border;
     bool horizontal;
     float origSize[3];

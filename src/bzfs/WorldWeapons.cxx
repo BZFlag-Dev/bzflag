@@ -158,7 +158,7 @@ void * WorldWeapons::pack(void *buf) const
 int WorldWeapons::packSize(void) const
 {
   int fullSize = 0;
-  
+
   fullSize += sizeof(uint32_t);
 
   for (unsigned int i=0 ; i < weapons.size(); i++) {

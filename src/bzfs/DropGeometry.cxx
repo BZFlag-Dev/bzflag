@@ -35,7 +35,7 @@ static int sortByTopHeight(const void* a, const void* b);
 
 
 bool DropGeometry::dropPlayer (float pos[3], float minZ, float maxZ,
-                               const WorldInfo& world)
+			       const WorldInfo& world)
 {
   minZ= maxZ;
   const float radius = BZDBCache::tankRadius;
@@ -48,12 +48,12 @@ bool DropGeometry::dropPlayer (float pos[3], float minZ, float maxZ,
 
   // list of all possible colliders
   const ObsList* olist = COLLISIONMGR.cylinderTest(pos, radius, maxHeight);
-  
+
   // sort by top height
   qsort(olist->list, olist->count, sizeof(Obstacle*), sortByTopHeight);
 
   for (int i = 0; i < olist->count; i++) {
-    
+
     const Obstacle* obs = olist->list[i];
     obs = obs;
   }

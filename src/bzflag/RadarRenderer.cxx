@@ -558,14 +558,14 @@ void			RadarRenderer::makeList(bool smoothingOn, SceneRenderer&)
   }
 
   // draw walls.  walls are flat so a line will do.
-              
+
   const ObstacleList& walls = OBSTACLEMGR.getWalls();
   int count = walls.size();
   glColor3f(0.25f, 0.5f, 0.5f);
   glBegin(GL_LINES);
   int i;
   for (i = 0; i < count; i++) {
-    const WallObstacle& wall = *((const WallObstacle*) walls[i]);   
+    const WallObstacle& wall = *((const WallObstacle*) walls[i]);
     const float w = wall.getBreadth();
     const float c = w * cosf(wall.getRotation());
     const float s = w * sinf(wall.getRotation());
@@ -579,7 +579,7 @@ void			RadarRenderer::makeList(bool smoothingOn, SceneRenderer&)
   if (smoothingOn && BZDBCache::enhancedRadar == false) glDisable(GL_BLEND);
 
   // draw box buildings.
-  
+
   const ObstacleList& boxes = OBSTACLEMGR.getBoxes();
   count = boxes.size();
   glBegin(GL_QUADS);
@@ -631,11 +631,11 @@ void			RadarRenderer::makeList(bool smoothingOn, SceneRenderer&)
   for (i = 0; i < count; i++) {
     const MeshObstacle* mesh = (const MeshObstacle*) meshes[i];
     int faces = mesh->getFaceCount();
-    
+
     for (int f = 0; f < faces; f++) {
       const MeshFace* face = mesh->getFace(f);
       if (face->getPlane()[2] <= 0.0f) {
-        continue;
+	continue;
       }
       const float z = face->getPosition()[2];
       const float h = face->getHeight();
@@ -643,9 +643,9 @@ void			RadarRenderer::makeList(bool smoothingOn, SceneRenderer&)
       // draw death faces with a soupcon of red
       const PhysicsDriver* phydrv = PHYDRVMGR.getDriver(face->getPhysicsDriver());
       if ((phydrv != NULL) && phydrv->getIsDeath()) {
-        glColor4f(0.75f * cs, 0.25f * cs, 0.25f * cs, transScale(z, h));
+	glColor4f(0.75f * cs, 0.25f * cs, 0.25f * cs, transScale(z, h));
       } else {
-        glColor4f(0.25f * cs, 0.5f * cs, 0.5f * cs, transScale(z, h));
+	glColor4f(0.25f * cs, 0.5f * cs, 0.5f * cs, transScale(z, h));
       }
       // draw the face as a triangle fan
       int vertexCount = face->getVertexCount();

@@ -1166,7 +1166,7 @@ Sets how high the water is, in a matter of units.
 .br
 \fB  slide\fR 0.0             # time until max velocity  (t > 0.0 for any sliding)
 .br
-\fB  death\fR Message goes here. 
+\fB  death\fR Message goes here.
 .br
   # the 'death' property requires a non-blank message
 .br
@@ -1180,7 +1180,7 @@ Sets how high the water is, in a matter of units.
 .br
 \fB  name\fR example_mesh
 .br
-  # Material properties applied to a mesh apply to all faces 
+  # Material properties applied to a mesh apply to all faces
 .br
   # that follow the setting. Mesh faces will alter their own
 .br
@@ -1232,7 +1232,7 @@ Sets how high the water is, in a matter of units.
 .br
 \fB  position\fR 0.0 0.0 0.0
 .br
-\fB  size\fR 10 10 10 
+\fB  size\fR 10 10 10
 .br
 \fB  rotation\fR 0.0
 .br
@@ -1254,7 +1254,7 @@ Sets how high the water is, in a matter of units.
 .br
 \fB  position\fR 0.0 0.0 0.0
 .br
-\fB  size\fR 10 10 10 
+\fB  size\fR 10 10 10
 .br
 \fB  rotation\fR 0.0
 .br
@@ -1274,7 +1274,7 @@ Sets how high the water is, in a matter of units.
 .br
 \fB  position\fR 0.0 0.0 10.0
 .br
-\fB  size\fR 10 10 10 
+\fB  size\fR 10 10 10
 .br
 \fB  radius 10\fR    #  sets all size values to this value
 .br

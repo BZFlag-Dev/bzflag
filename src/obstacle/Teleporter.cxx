@@ -33,8 +33,8 @@ Teleporter::Teleporter()
 Teleporter::Teleporter(const float* p, float a, float w,
 		       float b, float h, float _border, bool _horizontal,
 		       bool drive, bool shoot) :
-		         Obstacle(p, a, w, b, h, drive, shoot),
-		         border(_border), horizontal(_horizontal)
+			 Obstacle(p, a, w, b, h, drive, shoot),
+			 border(_border), horizontal(_horizontal)
 {
   finalize();
   return;
@@ -59,10 +59,10 @@ Obstacle* Teleporter::copyWithTransform(const MeshTransform& xform) const
   MeshTransform::Tool tool(xform);
   bool flipped;
   tool.modifyOldStyle(newPos, newSize, newAngle, flipped);
-  
+
   Teleporter* copy =
     new Teleporter(newPos, newAngle, newSize[0], newSize[1], newSize[2],
-                   border, horizontal, driveThrough, shootThrough);
+		   border, horizontal, driveThrough, shootThrough);
   return copy;
 }
 
@@ -76,9 +76,9 @@ void Teleporter::finalize()
     size[1] = origSize[1] + (border * 2.0f);
     size[2] = origSize[2] + border;
   }
-  
+
   makeLinks();
-  
+
   return;
 }
 
@@ -225,7 +225,7 @@ float Teleporter::intersect(const Ray& r) const
 {
   // expand to include border
   return timeRayHitsBlock(r, getPosition(), getRotation(),
-                          getWidth(), getBreadth(), getHeight());
+			  getWidth(), getBreadth(), getHeight());
 }
 
 
@@ -281,7 +281,7 @@ bool Teleporter::inBox(const float* p, float a,
   if ((p[2] < teleTop) && (tankTop >= crossbarBottom)) {
     // test crossbar
     if (testRectRect(p, a, dx, dy, getPosition(),
-                     getRotation(), getWidth(), getBreadth())) {
+		     getRotation(), getWidth(), getBreadth())) {
       return true;
     }
   }
@@ -529,7 +529,7 @@ void* Teleporter::pack(void* buf) const
 
   unsigned char horizontalByte = horizontal ? 1 : 0;
   buf = nboPackUByte(buf, horizontalByte);
-  
+
   unsigned char stateByte = 0;
   stateByte |= isDriveThrough() ? _DRIVE_THRU : 0;
   stateByte |= isShootThrough() ? _SHOOT_THRU : 0;
@@ -549,14 +549,14 @@ void* Teleporter::unpack(void* buf)
   unsigned char horizontalByte;
   buf = nboUnpackUByte(buf, horizontalByte);
   horizontal = (horizontalByte == 0) ? false : true;
-  
+
   unsigned char stateByte;
   buf = nboUnpackUByte(buf, stateByte);
   driveThrough = (stateByte & _DRIVE_THRU) != 0;
   shootThrough = (stateByte & _SHOOT_THRU) != 0;
 
   finalize();
-  
+
   return buf;
 }
 
@@ -579,11 +579,11 @@ void Teleporter::print(std::ostream& out, const std::string& indent) const
   out << indent << "teleporter" << std::endl;
   const float *pos = getPosition();
   out << indent << "  position " << pos[0] << " " << pos[1] << " "
-                                 << pos[2] << std::endl;
+				 << pos[2] << std::endl;
   out << indent << "  size " << origSize[0] << " " << origSize[1] << " "
-                             << origSize[2] << std::endl;
+			     << origSize[2] << std::endl;
   out << indent << "  rotation " << ((getRotation() * 180.0) / M_PI)
-                                 << std::endl;
+				 << std::endl;
   out << indent << "  border " << getBorder() << std::endl;
   out << indent << "end" << std::endl << std::endl;
   return;

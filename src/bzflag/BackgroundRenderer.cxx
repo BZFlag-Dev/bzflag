@@ -483,7 +483,7 @@ void BackgroundRenderer::renderSky(SceneRenderer& renderer, bool fullWindow,
 
 
 void BackgroundRenderer::renderGround(SceneRenderer& renderer,
-                                      bool fullWindow)
+				      bool fullWindow)
 {
   if (renderer.useQuality() > 0) {
     drawGround();
@@ -529,7 +529,7 @@ void BackgroundRenderer::renderGround(SceneRenderer& renderer,
 
 
 void BackgroundRenderer::renderGroundEffects(SceneRenderer& renderer,
-                                             bool drawingMirror)
+					     bool drawingMirror)
 {
   // zbuffer should be disabled.  either everything is coplanar with
   // the ground or is drawn back to front and is occluded by everything
@@ -681,7 +681,7 @@ void BackgroundRenderer::drawSky(SceneRenderer& renderer, bool mirror)
     const GLdouble plane[4] = {0.0, 0.0, +1.0, 0.0};
     glClipPlane(GL_CLIP_PLANE0, plane);
   }
-  
+
   if (sunDirection[2] > -0.009f) {
     sunGState.setState();
     glColor3fv(renderer.getSunScaledColor());
@@ -700,7 +700,7 @@ void BackgroundRenderer::drawSky(SceneRenderer& renderer, bool mirror)
  //     glEnable(GL_TEXTURE_2D);
     moonList.execute();
   }
-  
+
   if (mirror) {
     glDisable(GL_CLIP_PLANE0);
   }
@@ -751,7 +751,7 @@ void BackgroundRenderer::drawGroundCentered()
   const float groundSize = 10.0f * BZDBCache::worldSize;
   const float repeat = BZDB.eval("groundHighResTexRepeat");
 
-  // vertices  
+  // vertices
   const float vXmin = -groundSize;
   const float vXmax = +groundSize;
   const float vYmin = -groundSize;
@@ -779,7 +779,7 @@ void BackgroundRenderer::drawGroundCentered()
   glEnableClientState(GL_VERTEX_ARRAY);
   glTexCoordPointer(2, GL_FLOAT, 0, texcoords);
   glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-  
+
   glDrawElements(GL_TRIANGLE_FAN, 6, GL_UNSIGNED_BYTE, fan);
 
   glDisableClientState(GL_TEXTURE_COORD_ARRAY);

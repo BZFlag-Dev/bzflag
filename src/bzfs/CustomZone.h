@@ -25,7 +25,7 @@ class CustomZone : public WorldFileLocation {
     virtual bool read(const char *cmd, std::istream&);
     virtual void writeToWorld(WorldInfo*) const;
     virtual bool usesGroupDef() { return false; }
-    
+
     const QualifierList &getQualifiers() const;
     float getArea() const;
     void getRandomPoint(float *pt) const;

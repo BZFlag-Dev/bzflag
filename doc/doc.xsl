@@ -1,5 +1,5 @@
 <xsl:transform version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
-<!--To use, add 
+<!--To use, add
     <?xml-stylesheet type="text/xsl" href="../doc.xsl"?>
     To the top of any xml document, using the correct relative path.
 -->
@@ -16,7 +16,7 @@
 				a:visit.unselected { display: block; color:#0000FF; background-color:#7090D0; }
 				a:hover.unselected { display: block; color:#000000; background-color: #BED0EA; }
 			</style>
-	
+
 			<script language="JavaScript">
 				var curDiv = &quot;<xsl:value-of select="chapter[1]/@id"/>&quot;;
 				function switchDiv( divName )

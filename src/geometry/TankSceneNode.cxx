@@ -986,7 +986,7 @@ void TankSceneNode::TankRenderNode::renderNarrowWithDepth()
   const float offsetDepth = -1.0f;
 
   glDepthFunc(GL_LEQUAL);
-  
+
   glPolygonOffset(1.0f * offsetFactor, 1.0f * offsetDepth);
   if (left) {
     renderPart(LeftCasing);

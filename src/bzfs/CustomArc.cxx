@@ -58,7 +58,7 @@ CustomArc::CustomArc(bool box)
     size[0] = size[1] = BZDB.eval(StateDatabase::BZDB_BOXBASE);
     size[2] = BZDB.eval(StateDatabase::BZDB_BOXHEIGHT);
   }
-  
+
   // setup the default textures
   materials[Top].setTexture("roof");
   materials[Bottom].setTexture("roof");
@@ -148,8 +148,8 @@ void CustomArc::writeToGroupDef(GroupDefinition *groupdef) const
   ArcObstacle* arc;
   if (!boxStyle) {
     arc = new ArcObstacle(transform, pos, size, rotation, angle, ratio,
-                          texsize, useNormals, divisions, mats, phydrv,
-                          smoothBounce, driveThrough, shootThrough);
+			  texsize, useNormals, divisions, mats, phydrv,
+			  smoothBounce, driveThrough, shootThrough);
   } else {
     const float zAxis[3] = {0.0f, 0.0f, 1.0f};
     const float origin[3] = {0.0f, 0.0f, 0.0f};
@@ -162,10 +162,10 @@ void CustomArc::writeToGroupDef(GroupDefinition *groupdef) const
     newSize[1] = (float)(size[1] * M_SQRT2);
     newSize[2] = size[2];
     arc = new ArcObstacle(xform, origin, newSize, (float)(M_PI * 0.25), angle, ratio,
-                          texsize, useNormals, divisions, mats, phydrv,
-                          smoothBounce, driveThrough, shootThrough);
+			  texsize, useNormals, divisions, mats, phydrv,
+			  smoothBounce, driveThrough, shootThrough);
   }
-  
+
   if (arc->isValid()) {
     groupdef->addObstacle(arc);
   } else {

@@ -285,7 +285,7 @@ void SceneRenderer::setQuality(int value)
     glHint(GL_LINE_SMOOTH_HINT, GL_FASTEST);
     glHint(GL_POINT_SMOOTH_HINT, GL_FASTEST);
   }
-  
+
   if (useQualityValue == 3)
     TankSceneNode::setMaxLOD(-1);
   else if (useQualityValue >= 1)
@@ -668,7 +668,7 @@ void SceneRenderer::render(bool _lastFrame, bool _sameFrame,
     TrackMarks::notifyStyleChange();
     needStyleUpdate = false;
   }
-  
+
   if (rebuildTanks) {
     TankGeometryMgr::deleteLists();
     TankGeometryMgr::buildLists();

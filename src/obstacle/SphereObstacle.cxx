@@ -34,7 +34,7 @@ SphereObstacle::SphereObstacle()
 
 
 SphereObstacle::SphereObstacle(const MeshTransform& xform,
-                         const float* _pos, const float* _size,
+			 const float* _pos, const float* _size,
 			 float _rotation, const float _texsize[2],
 			 bool _useNormals, bool _hemisphere,
 			 int _divisions, const BzMaterial* mats[MaterialCount],
@@ -80,8 +80,8 @@ Obstacle* SphereObstacle::copyWithTransform(const MeshTransform& xform) const
 
   SphereObstacle* copy =
     new SphereObstacle(tmpXform, pos, size, angle, texsize, useNormals,
-                       hemisphere, divisions, (const BzMaterial**)materials,
-                       phydrv, smoothBounce, driveThrough, shootThrough);
+		       hemisphere, divisions, (const BzMaterial**)materials,
+		       phydrv, smoothBounce, driveThrough, shootThrough);
   return copy;
 }
 
@@ -140,7 +140,7 @@ void SphereObstacle::finalize()
     // unless you want to do elliptic integrals, here's
     // the Ramanujan approximation for the circumference
     // of an ellipse  (it will be rounded anyways)
-    const float circ = 
+    const float circ =
       (float)M_PI * ((3.0f * (sz[0] + sz[1])) -
 	      sqrtf ((sz[0] + (3.0f * sz[1])) * (sz[1] + (3.0f * sz[0]))));
     // make sure it's an integral number so that the edges line up
@@ -579,11 +579,11 @@ void SphereObstacle::print(std::ostream& out, const std::string& indent) const
   int i;
 
   out << indent << "sphere" << std::endl;
-  
+
   out << indent << "  position " << pos[0] << " " << pos[1] << " "
-                                 << pos[2] << std::endl;
+				 << pos[2] << std::endl;
   out << indent << "  size " << size[0] << " " << size[1] << " "
-                             << size[2] << std::endl;
+			     << size[2] << std::endl;
   out << indent << "  rotation " << ((angle * 180.0) / M_PI) << std::endl;
   out << indent << "  divisions " << divisions << std::endl;
   if (hemisphere) {
@@ -593,7 +593,7 @@ void SphereObstacle::print(std::ostream& out, const std::string& indent) const
   transform.printTransforms(out, indent);
 
   out << indent << "  texsize " << texsize[0] << " "
-                                << texsize[1] << std::endl;
+				<< texsize[1] << std::endl;
 
   const char* sideNames[MaterialCount] =
     { "edge", "bottom" };

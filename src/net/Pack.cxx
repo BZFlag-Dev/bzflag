@@ -20,7 +20,7 @@
 
 //
 // Buffer Overrun Checks
-// 
+//
 
 static bool Error = false;
 static bool ErrorChecking = false;

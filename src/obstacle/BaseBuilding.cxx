@@ -47,9 +47,9 @@ Obstacle* BaseBuilding::copyWithTransform(const MeshTransform& xform) const
   MeshTransform::Tool tool(xform);
   bool flipped;
   tool.modifyOldStyle(newPos, newSize, newAngle, flipped);
-  
+
   BaseBuilding* copy = new BaseBuilding(newPos, newAngle, newSize, team);
-  
+
   return copy;
 }
 
@@ -222,7 +222,7 @@ bool			BaseBuilding::isFlatTop() const
 void* BaseBuilding::pack(void* buf) const
 {
   buf = nboPackUShort(buf, (uint16_t) team);
-  
+
   buf = nboPackVector(buf, pos);
   buf = nboPackFloat(buf, angle);
   buf = nboPackVector(buf, size);
@@ -241,7 +241,7 @@ void* BaseBuilding::unpack(void* buf)
   uint16_t shortTeam;
   buf = nboUnpackUShort(buf, shortTeam);
   team = (int)shortTeam;
-  
+
   buf = nboUnpackVector(buf, pos);
   buf = nboUnpackFloat(buf, angle);
   buf = nboUnpackVector(buf, size);
@@ -271,12 +271,12 @@ void BaseBuilding::print(std::ostream& out, const std::string& indent) const
 {
   out << indent << "base" << std::endl;
   const float *pos = getPosition();
-  out << indent << "  position " << pos[0] << " " << pos[1] << " " 
-                                 << pos[2] << std::endl;
-  out << indent << "  size " << getWidth() << " " << getBreadth() 
-                             << " " << getHeight() << std::endl;
+  out << indent << "  position " << pos[0] << " " << pos[1] << " "
+				 << pos[2] << std::endl;
+  out << indent << "  size " << getWidth() << " " << getBreadth()
+			     << " " << getHeight() << std::endl;
   out << indent << "  rotation " << ((getRotation() * 180.0) / M_PI)
-                                 << std::endl;
+				 << std::endl;
   out << indent << "  color " << getTeam() << std::endl;
   if (isDriveThrough() && isShootThrough()) {
     out << indent << "  passable" << std::endl;

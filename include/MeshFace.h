@@ -40,7 +40,7 @@ class MeshFace : public Obstacle {
 	     const BzMaterial* material, int physics,
 	     bool noclusters, bool smoothBounce, bool drive, bool shoot);
     ~MeshFace();
-    
+
     const char* getType() const;
     static const char* getClassName(); // const
     bool isValid() const;
@@ -138,7 +138,7 @@ class MeshFace : public Obstacle {
       LinkToFace      = (1 << 0),
       LinkFromFace    = (1 << 1),
       BaseFace	      = (1 << 2),
-      IcyFace         = (1 << 3),
+      IcyFace	 = (1 << 3),
       StickyFace      = (1 << 5),
       DeathFace       = (1 << 6),
       PortalFace      = (1 << 7)

@@ -22,14 +22,14 @@
 #include "StateDatabase.h"
 #include "BZDBCache.h"
 #include "Intersect.h"
-#include "Ray.h"       
+#include "Ray.h"
 #include "ObstacleMgr.h"
 #include "Obstacle.h"
 #include "MeshObstacle.h"
-#include "BoxBuilding.h" 
+#include "BoxBuilding.h"
 #include "PyramidBuilding.h"
-#include "BaseBuilding.h"   
-#include "Teleporter.h"     
+#include "BaseBuilding.h"
+#include "Teleporter.h"
 
 
 /* static variables */
@@ -321,13 +321,13 @@ void CollisionManager::load ()
 {
   unsigned int i;
 
-  // get the lists  
+  // get the lists
   const ObstacleList& meshes = OBSTACLEMGR.getMeshes();
   const ObstacleList& boxes = OBSTACLEMGR.getBoxes();
   const ObstacleList& pyrs = OBSTACLEMGR.getPyrs();
   const ObstacleList& bases = OBSTACLEMGR.getBases();
   const ObstacleList& teles = OBSTACLEMGR.getTeles();
-  
+
   // clean out the cell lists
   clear();
 
@@ -390,7 +390,7 @@ void CollisionManager::load ()
   totalNodes = 0;
   totalElements = 0;
   root->tallyStats();
-  
+
   DEBUG2 ("ColDet Octree obstacles = %i\n", FullList.count);
   for (int i = 0; i < 3; i++) {
     DEBUG2 ("  extent[%i] = %f, %f\n", i, mins[i], maxs[i]);
@@ -443,7 +443,7 @@ void CollisionManager::setExtents (ObsList *list)
       }
     }
   }
-  
+
   // set the max height
   MaxHeight = maxs[2];
 

@@ -653,7 +653,7 @@ void			ServerLink::sendPlayerUpdate(Player* player)
 
   // variable length
   const int len = (char*)buf - (char*)msg;
-  
+
   send(code, len, msg);
 }
 #endif

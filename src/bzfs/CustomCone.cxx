@@ -148,8 +148,8 @@ void CustomCone::writeToGroupDef(GroupDefinition *groupdef) const
   ConeObstacle* cone;
   if (!pyramidStyle) {
     cone = new ConeObstacle(transform, pos, size, rotation, angle,
-                            texsize, useNormals, divisions, mats, phydrv,
-                            smoothBounce, driveThrough, shootThrough);
+			    texsize, useNormals, divisions, mats, phydrv,
+			    smoothBounce, driveThrough, shootThrough);
   } else {
     const float zAxis[3] = {0.0f, 0.0f, 1.0f};
     const float origin[3] = {0.0f, 0.0f, 0.0f};
@@ -168,8 +168,8 @@ void CustomCone::writeToGroupDef(GroupDefinition *groupdef) const
     newSize[1] = (float)(size[1] * M_SQRT2);
     newSize[2] = size[2];
     cone = new ConeObstacle(xform, origin, newSize, (float)(M_PI * 0.25), angle,
-                            texsize, useNormals, divisions, mats, phydrv,
-                            smoothBounce, driveThrough, shootThrough);
+			    texsize, useNormals, divisions, mats, phydrv,
+			    smoothBounce, driveThrough, shootThrough);
   }
 
   if (cone->isValid()) {

@@ -20,7 +20,7 @@ class Weapon {
   public:
     Weapon();
     void* unpack(void*);
-    
+
   public:
     FlagType *type;
     float pos[3];

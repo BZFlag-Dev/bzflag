@@ -57,7 +57,7 @@ WorldInfo::WorldInfo() :
 WorldInfo::~WorldInfo()
 {
   delete[] database;
-  OBSTACLEMGR.clear(); 
+  OBSTACLEMGR.clear();
 }
 
 
@@ -99,7 +99,7 @@ void WorldInfo::addWaterLevel (float level, const BzMaterial* matref)
 }
 
 void WorldInfo::addBox(float x, float y, float z, float r,
-                       float w, float d, float h, bool drive, bool shoot)
+		       float w, float d, float h, bool drive, bool shoot)
 {
   const float pos[3] = {x, y, z};
   BoxBuilding* box = new BoxBuilding(pos, r, w, d, h, drive, shoot, false);
@@ -107,8 +107,8 @@ void WorldInfo::addBox(float x, float y, float z, float r,
 }
 
 void WorldInfo::addPyramid(float x, float y, float z, float r,
-                           float w, float d, float h,
-                           bool drive, bool shoot, bool flipZ)
+			   float w, float d, float h,
+			   bool drive, bool shoot, bool flipZ)
 {
   const float pos[3] = {x, y, z};
   PyramidBuilding* pyr = new PyramidBuilding(pos, r, w, d, h, drive, shoot);
@@ -119,8 +119,8 @@ void WorldInfo::addPyramid(float x, float y, float z, float r,
 }
 
 void WorldInfo::addTeleporter(float x, float y, float z, float r,
-                              float w, float d, float h, float b,
-                              bool horizontal, bool drive, bool shoot)
+			      float w, float d, float h, float b,
+			      bool horizontal, bool drive, bool shoot)
 {
   const float pos[3] = {x, y, z};
   Teleporter* tele = new Teleporter(pos, r, w, d, h, b, horizontal, drive, shoot);
@@ -273,13 +273,13 @@ InBuildingType WorldInfo::inCylinderNoOctree(Obstacle **location,
     for (unsigned int i = 0; i < list.size(); i++) {
       Obstacle* obs = list[i];
       if (obs->inCylinder(pos, radius, height)) {
-        if (location != NULL) {
-          *location = obs;
-        }
-        return classifyHit(obs);
+	if (location != NULL) {
+	  *location = obs;
+	}
+	return classifyHit(obs);
       }
     }
-  }  
+  }
 
   if (location != NULL) {
     *location = (Obstacle *)NULL;
@@ -424,9 +424,9 @@ bool WorldInfo::getSafetyPoint(const std::string &qualifier,
 void WorldInfo::finishWorld()
 {
   entryZones.calculateQualifierLists();
-  
+
   loadCollisionManager();
-  
+
   maxHeight = COLLISIONMGR.getMaxWorldHeight();
   const float wallHeight = BZDB.eval(StateDatabase::BZDB_WALLHEIGHT);
   if (maxHeight < wallHeight) {
@@ -435,7 +435,7 @@ void WorldInfo::finishWorld()
   if (maxHeight < 0.0f) {
     maxHeight = 0.0f;
   }
-  
+
   return;
 }
 
@@ -444,7 +444,7 @@ int WorldInfo::packDatabase()
 {
   unsigned int i;
   const ObstacleList& teles = OBSTACLEMGR.getTeles();
-  
+
   // make default water material. we wait to make the default material
   // to avoid messing up any user indexing. this has to be done before
   // the texture matrices and materials are packed.
@@ -455,7 +455,7 @@ int WorldInfo::packDatabase()
   // compute the database size
   databaseSize =
     DYNCOLORMGR.packSize() + TEXMATRIXMGR.packSize() +
-    MATERIALMGR.packSize() + PHYDRVMGR.packSize() + 
+    MATERIALMGR.packSize() + PHYDRVMGR.packSize() +
     TRANSFORMMGR.packSize() + OBSTACLEMGR.packSize() +
     worldWeapons.packSize() + entryZones.packSize() +
     (sizeof(uint32_t) + (WorldCodeLinkSize * 2 * teles.size()));
@@ -469,7 +469,7 @@ int WorldInfo::packDatabase()
   // allocate the buffer
   database = new char[databaseSize];
   void *databasePtr = database;
-  
+
 
   // pack dynamic colors
   databasePtr = DYNCOLORMGR.pack(databasePtr);
@@ -501,7 +501,7 @@ int WorldInfo::packDatabase()
 
   // pack entry zones
   databasePtr = entryZones.pack(databasePtr);
-  
+
   // pack teleporter links
   uint32_t linkCount = 2 * teles.size();
   databasePtr = nboPackUInt(databasePtr, linkCount);

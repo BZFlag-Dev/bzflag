@@ -59,7 +59,7 @@ void CustomMaterial::writeToManager() const
   material.setName(name);
   if ((name.size() > 0) && (MATERIALMGR.findMaterial(name) != NULL)) {
     std::cout << "warning: duplicate material"
-              << " (" << name << ")" << std::endl;
+	      << " (" << name << ")" << std::endl;
   }
   const BzMaterial* matref = MATERIALMGR.addMaterial(&material);
   int index = MATERIALMGR.getIndex(matref);

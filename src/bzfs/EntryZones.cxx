@@ -180,7 +180,7 @@ void EntryZones::makeSplitLists (int zone,
 void * EntryZones::pack(void *buf) const
 {
   buf = nboPackUInt(buf, zones.size());
-  
+
   for (unsigned int i = 0; i < zones.size(); i++) {
     const WorldFileLocation& z = (const WorldFileLocation) zones[i];
     std::vector<FlagType*> flags;
@@ -211,7 +211,7 @@ int EntryZones::packSize() const
   int fullSize = 0;
 
   fullSize += sizeof(uint32_t); // zone count
-  
+
   for (unsigned int i = 0; i < zones.size(); i++) {
     std::vector<FlagType*> flags;
     std::vector<TeamColor> teams;

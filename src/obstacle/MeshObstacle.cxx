@@ -57,7 +57,7 @@ static void cfvec3ListToArray(const std::vector<cfvec3>& list,
 }
 
 static void arrayToCfvec3List(const fvec3* array, int count,
-                              std::vector<cfvec3>& list)
+			      std::vector<cfvec3>& list)
 {
   list.clear();
   for (int i = 0; i < count; i++) {
@@ -68,7 +68,7 @@ static void arrayToCfvec3List(const fvec3* array, int count,
 
 
 MeshObstacle::MeshObstacle(const MeshTransform& transform,
-                           const std::vector<char>& checkTypesL,
+			   const std::vector<char>& checkTypesL,
 			   const std::vector<cfvec3>& checkList,
 			   const std::vector<cfvec3>& verticeList,
 			   const std::vector<cfvec3>& normalList,
@@ -90,7 +90,7 @@ MeshObstacle::MeshObstacle(const MeshTransform& transform,
   cfvec3ListToArray (checkList, checkCount, checkPoints);
   cfvec3ListToArray (verticeList, vertexCount, vertices);
   cfvec3ListToArray (normalList, normalCount, normals);
-  
+
   // modify according to the transform
   int j;
   for (j = 0; j < checkCount; j++) {
@@ -221,7 +221,7 @@ MeshObstacle::~MeshObstacle()
 
 Obstacle* MeshObstacle::copyWithTransform(const MeshTransform& xform) const
 {
-  int i; 
+  int i;
   std::vector<char> ctlist;
   std::vector<cfvec3> clist;
   std::vector<cfvec3> vlist;
@@ -237,17 +237,17 @@ Obstacle* MeshObstacle::copyWithTransform(const MeshTransform& xform) const
   for (i = 0; i < texcoordCount; i++) {
     tlist.push_back(texcoords[i]);
   }
-  
+
   MeshObstacle* copy =
-    new MeshObstacle(xform, ctlist, clist, vlist, nlist, tlist, faceCount, 
+    new MeshObstacle(xform, ctlist, clist, vlist, nlist, tlist, faceCount,
 		     noclusters, smoothBounce, driveThrough, shootThrough);
-  
+
   for (i = 0; i < faceCount; i++) {
     copyFace(i, copy);
   }
-  
+
   copy->finalize();
-  
+
   return copy;
 }
 
@@ -274,11 +274,11 @@ void MeshObstacle::copyFace(int f, MeshObstacle* mesh) const
       tlist.push_back(index);
     }
   }
-  
+
   mesh->addFace(vlist, nlist, tlist, face->getMaterial(),
-                face->getPhysicsDriver(), face->noClusters(),
-                face->isSmoothBounce(),
-                face->isDriveThrough(), face->isShootThrough());
+		face->getPhysicsDriver(), face->noClusters(),
+		face->isSmoothBounce(),
+		face->isDriveThrough(), face->isShootThrough());
   return;
 }
 
@@ -553,7 +553,7 @@ void *MeshObstacle::pack(void *buf) const
 void *MeshObstacle::unpack(void *buf)
 {
   int i;
-  
+
   buf = nboUnpackInt(buf, checkCount);
   checkTypes = new char[checkCount];
   checkPoints = new fvec3[checkCount];

@@ -136,11 +136,11 @@ void*	PlayerState::pack(void* buf, uint16_t& code)
     int16_t angvel = (int16_t) ((tmp * smallScale) / smallMaxAngVel);
     buf = nboPackShort(buf, angvel);
   }
-  
+
   if ((status & Falling) != 0) {
     buf = nboPackUByte(buf, jumpCounter);
   }
-  
+
   return buf;
 }
 

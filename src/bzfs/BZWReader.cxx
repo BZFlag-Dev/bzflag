@@ -71,7 +71,7 @@ BZWReader::BZWReader(std::string filename) : location(filename), input(NULL)
   }
 
   // .BZW is the official worldfile extension, warn for others
-  if ((filename.length() > 4) && 
+  if ((filename.length() > 4) &&
   (strcasecmp(filename.substr(filename.length() - 4, 4).c_str(), ".bzw") != 0))  {
     errorHandler->warning(std::string("world file extension is not .bzw, trying to load anyway"), 0);
   }
@@ -160,7 +160,7 @@ static bool parseNormalObject(const char* token, WorldFileObject** object)
   } else if (strcasecmp(token, "transform") == 0) {
     tmpObj = new CustomMeshTransform;
   }
-  
+
   if (tmpObj != NULL) {
     *object = tmpObj;
     return true;
@@ -191,7 +191,7 @@ bool BZWReader::readWorldStream(std::vector<WorldFileObject*>& wlist)
 	  std::string("discarding incomplete object"), line);
 	if (object != fakeObject) {
 	  delete object;
-        }
+	}
       }
       object = newObject;
       newObject = NULL;
@@ -223,50 +223,50 @@ bool BZWReader::readWorldStream(std::vector<WorldFileObject*>& wlist)
 	  std::string("unexpected \"end\" token"), line);
 	return false;
       }
-      
+
     } else if (parseNormalObject(buffer, &newObject)) {
       // newObject has already been assigned
-      
+
     } else if (strcasecmp(buffer, "define") == 0) {
       if (groupDef != worldDef) {
-        errorHandler->warning(
-          std::string("group definitions can not be nested \"") +
-          std::string(buffer) + std::string("\" - skipping"), line);
+	errorHandler->warning(
+	  std::string("group definitions can not be nested \"") +
+	  std::string(buffer) + std::string("\" - skipping"), line);
       } else {
-        readToken(buffer, sizeof(buffer));
-        if (strlen(buffer) > 0) {
-          if (OBSTACLEMGR.findGroupDef(buffer) != NULL) {
-            errorHandler->warning(
-              std::string("duplicate group definition \"") +
-              std::string(buffer) + std::string("\" - using newest"), line);
-          }
-          groupDef = new GroupDefinition(buffer);
-        } else {
-          errorHandler->warning(
-            std::string("missing group definition name"), line);
-        }
+	readToken(buffer, sizeof(buffer));
+	if (strlen(buffer) > 0) {
+	  if (OBSTACLEMGR.findGroupDef(buffer) != NULL) {
+	    errorHandler->warning(
+	      std::string("duplicate group definition \"") +
+	      std::string(buffer) + std::string("\" - using newest"), line);
+	  }
+	  groupDef = new GroupDefinition(buffer);
+	} else {
+	  errorHandler->warning(
+	    std::string("missing group definition name"), line);
+	}
       }
 
     } else if (strcasecmp(buffer, "enddef") == 0) {
       if (groupDef == worldDef) {
-        errorHandler->warning(
-          std::string("enddef without define - skipping"), line);
+	errorHandler->warning(
+	  std::string("enddef without define - skipping"), line);
       } else {
-        OBSTACLEMGR.addGroupDef(groupDef);
-        groupDef = worldDef;
+	OBSTACLEMGR.addGroupDef(groupDef);
+	groupDef = worldDef;
       }
 
     } else if (strcasecmp(buffer, "group") == 0) {
       readToken(buffer, sizeof(buffer));
       if (strlen(buffer) <= 0) {
-        errorHandler->warning(
-          std::string("missing group definition reference"), line);
+	errorHandler->warning(
+	  std::string("missing group definition reference"), line);
       }
       newObject = new CustomGroup(buffer);
 
     } else if (strcasecmp(buffer, "options") == 0) {
       newObject = fakeObject;
-    
+
     } else if (strcasecmp(buffer, "world") == 0) {
       if (!gotWorld) {
 	newObject = new CustomWorld();
@@ -291,8 +291,8 @@ bool BZWReader::readWorldStream(std::vector<WorldFileObject*>& wlist)
     } else { // filling the current object
       // unknown token
       errorHandler->warning(
-        std::string("invalid object type \"") +
-        std::string(buffer) + std::string("\" - skipping"), line);
+	std::string("invalid object type \"") +
+	std::string(buffer) + std::string("\" - skipping"), line);
       if (object != fakeObject)
 	delete object;
      // return false;
@@ -345,7 +345,7 @@ WorldInfo* BZWReader::defineWorldFromFile()
     delete world;
     return NULL;
   }
-  
+
   // make walls
   float wallHeight = BZDB.eval(StateDatabase::BZDB_WALLHEIGHT);
   float worldSize = BZDBCache::worldSize;
@@ -354,7 +354,7 @@ WorldInfo* BZWReader::defineWorldFromFile()
   world->addWall(0.0f, -0.5f * worldSize, 0.0f, (float)(0.5 * M_PI), 0.5f * worldSize, wallHeight);
   world->addWall(-0.5f * worldSize, 0.0f, 0.0f, 0.0f, 0.5f * worldSize, wallHeight);
 
-  // generate group instances 
+  // generate group instances
   OBSTACLEMGR.makeWorld();
 
   // make local bases
@@ -368,9 +368,9 @@ WorldInfo* BZWReader::defineWorldFromFile()
       bases[color] = TeamBases((TeamColor)color);
     }
     bases[color].addBase(base->getPosition(), base->getSize(),
-                         base->getRotation(), safety);
+			 base->getRotation(), safety);
   }
-  
+
   // make defaults links
   const ObstacleList& teles = OBSTACLEMGR.getTeles();
   for (i = 0; i < teles.size(); i++) {
@@ -379,7 +379,7 @@ WorldInfo* BZWReader::defineWorldFromFile()
     world->addLink(side1, side2);
     world->addLink(side2, side1);
   }
-  
+
   // add objects
   const int n = list.size();
   for (int i = 0; i < n; ++i) {
@@ -389,7 +389,7 @@ WorldInfo* BZWReader::defineWorldFromFile()
   // clean up
   emptyWorldFileObjectList(list);
   world->finishWorld();
-  
+
   return world;
 }
 

@@ -41,21 +41,21 @@
 
 	!insertmacro MUI_UNPAGE_CONFIRM
 	!insertmacro MUI_UNPAGE_INSTFILES
-  
+
 ;--------------------------------
 ;Languages
- 
+
 	!insertmacro MUI_LANGUAGE "English"
 	!insertmacro MUI_LANGUAGE "Italian"
 	!insertmacro MUI_LANGUAGE "German"
 
 ;--------------------------------
 ;Reserve Files
-  
+
   ;These files should be inserted before other files in the data block
   ;Keep these lines before any File command
   ;Only for solid compression (by default, solid compression is enabled for BZIP2 and LZMA)
-  
+
   !insertmacro MUI_RESERVEFILE_LANGDLL
 
 
@@ -65,13 +65,13 @@
 Section "BZFlag Core (required)" SecCore
 
 	SetOutPath "$INSTDIR"
-  
+
 	File ..\..\src\bzflag\bzflag.exe
 	File ..\..\libcurl.dll
-  
+
   ;Store installation folder
   WriteRegStr HKCU "Software\bzflag_2" "" $INSTDIR
-  
+
   ;Create uninstaller
   WriteUninstaller "$INSTDIR\Uninstall.exe"
 
@@ -80,7 +80,7 @@ SectionEnd
 Section "BZAdmin" SecBZAdmin
 
 	SetOutPath "$INSTDIR"
-  
+
 	File ..\..\src\bzadmin\bzadmin.exe
 
 SectionEnd
@@ -88,7 +88,7 @@ SectionEnd
 Section "BZFlag Server" SecBZFS
 
 	SetOutPath "$INSTDIR"
-  
+
 	File ..\..\src\bzfs\bzfs.exe
 SectionEnd
 

@@ -38,7 +38,7 @@
 	#endif
 	#ifndef  M_SQRT2
 	#define	 M_SQRT2	 1.41421356237309504880f
-	#endif 
+	#endif
 #endif
 
 

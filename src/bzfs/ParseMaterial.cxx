@@ -62,7 +62,7 @@ bool parseMaterials(const char* cmd, std::istream& input,
       error = true;
     } else {
       for (i = 0; i < materialCount; i++) {
-        materials[i].setDynamicColor(dynamicColor);
+	materials[i].setDynamicColor(dynamicColor);
       }
     }
   }
@@ -128,7 +128,7 @@ bool parseMaterials(const char* cmd, std::istream& input,
       error = true;
     } else {
       for (i = 0; i < materialCount; i++) {
-        materials[i].setTexture(name);
+	materials[i].setTexture(name);
       }
     }
   }

@@ -43,7 +43,7 @@ void ObstacleList::clear()
   listCount = 0;
   listSize = minListSize;
   list = new Obstacle*[listSize];
-  return;  
+  return;
 }
 
 
@@ -57,7 +57,7 @@ void ObstacleList::push_back(Obstacle* obs)
     delete[] list;
     list = tmpList;
   }
-  list[listCount - 1] = obs;    
+  list[listCount - 1] = obs;
   return;
 }
 
@@ -72,7 +72,7 @@ void ObstacleList::tighten()
   memcpy (tmpList, list, listCount * sizeof(Obstacle*));
   delete[] list;
   list = tmpList;
-  return;  
+  return;
 }
 
 

@@ -22,7 +22,7 @@ class DynamicColor {
   public:
     DynamicColor();
     ~DynamicColor();
-    
+
     enum SequenceState {
       colorMin = 0,
       colorMid = 1,
@@ -32,7 +32,7 @@ class DynamicColor {
     bool setName(const std::string& name);
     void setLimits(int channel, float min, float max);
     void setSequence(int channel, float period, float offset,
-                     std::vector<char>& list);
+		     std::vector<char>& list);
     void addSinusoid(int channel, const float sinusoid[3]);
     void addClampUp(int channel, const float clampUp[3]);
     void addClampDown(int channel, const float clampDown[3]);
@@ -55,7 +55,7 @@ class DynamicColor {
 
     std::string name;
     float color[4];
-    
+
     typedef struct sequenceList {
       float period;
       float offset;

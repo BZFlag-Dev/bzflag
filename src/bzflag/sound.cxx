@@ -197,7 +197,7 @@ void			openSound(const char*)
   }
   portUseCount = 0;
   for (i = 0; i < FadeDuration; i += 2) {
-    fadeIn[i] = fadeIn[i+1] = 
+    fadeIn[i] = fadeIn[i+1] =
 		sinf((float)(M_PI / 2.0 * (double)i / (double)(FadeDuration-2)));
     fadeOut[i] = fadeOut[i+1] = 1.0f - fadeIn[i];
   }

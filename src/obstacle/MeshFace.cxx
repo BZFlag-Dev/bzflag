@@ -662,7 +662,7 @@ void MeshFace::print(std::ostream& out, const std::string& indent) const
   if (mesh == NULL) {
     return;
   }
-  
+
   int i;
   out << indent << "  face" << std::endl;
 

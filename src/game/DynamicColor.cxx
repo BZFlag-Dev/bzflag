@@ -210,9 +210,9 @@ void DynamicColor::finalize()
     std::vector<char>& list = channels[i].sequence.list;
     for (unsigned int j = 0; j < list.size(); j++) {
       if (list[j] < colorMin) {
-        list[j] = colorMin;
+	list[j] = colorMin;
       } else if (list[j] > colorMax) {
-        list[j] = colorMax;
+	list[j] = colorMax;
       }
     }
   }
@@ -268,7 +268,7 @@ void DynamicColor::setLimits(int channel, float min, float max)
 
 
 void DynamicColor::setSequence(int channel,float period, float offset,
-                                std::vector<char>& list)
+				std::vector<char>& list)
 {
   sequenceParams& seq = channels[channel].sequence;
   if (period < minPeriod) {
@@ -281,7 +281,7 @@ void DynamicColor::setSequence(int channel,float period, float offset,
   }
   return;
 }
-                               
+
 
 void DynamicColor::addSinusoid(int channel, const float sinusoid[3])
 {
@@ -346,39 +346,39 @@ void DynamicColor::update (float t)
       indexTime = fmodf (indexTime, fullPeriod);
       const unsigned int index = (unsigned int)(indexTime / seq.period);
       if (seq.list[index] == colorMin) {
-        clampDown = true;
+	clampDown = true;
       }
       else if (seq.list[index] == colorMax) {
-        clampUp = true;
+	clampUp = true;
       }
     }
     else {
       // check for active clampUp
       for (i = 0; i < channel.clampUps.size(); i++) {
-        const clampParams& clamp = channel.clampUps[i];
-        float upTime = (t - clamp.offset);
-        if (upTime < 0.0f) {
-          upTime -= clamp.period * floorf(upTime / clamp.period);
-        }
-        upTime = fmodf (upTime, clamp.period);
-        if (upTime < clamp.width) {
-          clampUp = true;
-          break;
-        }
+	const clampParams& clamp = channel.clampUps[i];
+	float upTime = (t - clamp.offset);
+	if (upTime < 0.0f) {
+	  upTime -= clamp.period * floorf(upTime / clamp.period);
+	}
+	upTime = fmodf (upTime, clamp.period);
+	if (upTime < clamp.width) {
+	  clampUp = true;
+	  break;
+	}
       }
 
       // check for active clampDown
       for (i = 0; i < channel.clampDowns.size(); i++) {
-        const clampParams& clamp = channel.clampDowns[i];
-        float downTime = (t - clamp.offset);
-        if (downTime < 0.0f) {
-          downTime -= clamp.period * floorf(downTime / clamp.period);
-        }
-        downTime = fmodf (downTime, clamp.period);
-        if (downTime < clamp.width) {
-          clampDown = true;
-          break;
-        }
+	const clampParams& clamp = channel.clampDowns[i];
+	float downTime = (t - clamp.offset);
+	if (downTime < 0.0f) {
+	  downTime -= clamp.period * floorf(downTime / clamp.period);
+	}
+	downTime = fmodf (downTime, clamp.period);
+	if (downTime < clamp.width) {
+	  clampDown = true;
+	  break;
+	}
       }
     }
 
@@ -459,7 +459,7 @@ void * DynamicColor::pack(void *buf) const
       buf = nboPackFloat (buf, p.sequence.period);
       buf = nboPackFloat (buf, p.sequence.offset);
       for (i = 0; i < seqSize; i++) {
-        buf = nboPackUByte (buf, (uint8_t)p.sequence.list[i]);
+	buf = nboPackUByte (buf, (uint8_t)p.sequence.list[i]);
       }
     }
   }
@@ -510,9 +510,9 @@ void * DynamicColor::unpack(void *buf)
       buf = nboUnpackFloat (buf, p.sequence.period);
       buf = nboUnpackFloat (buf, p.sequence.offset);
       for (i = 0; i < size; i++) {
-        uint8_t value;
-        buf = nboUnpackUByte (buf, value);
-        p.sequence.list[i] = value;
+	uint8_t value;
+	buf = nboUnpackUByte (buf, value);
+	p.sequence.list[i] = value;
       }
     } else {
       p.sequence.period = 0.0f;
@@ -566,9 +566,9 @@ void DynamicColor::print(std::ostream& out, const std::string& /*indent*/) const
     unsigned int i;
     if (p.sequence.list.size() > 0) {
       out << "  " << colorStr << " sequence " << p.sequence.period << " "
-                                              << p.sequence.offset;
+					      << p.sequence.offset;
       for (i = 0; i < p.sequence.list.size(); i++) {
-        out << " " << (int)p.sequence.list[i];
+	out << " " << (int)p.sequence.list[i];
       }
       out << std::endl;
     }

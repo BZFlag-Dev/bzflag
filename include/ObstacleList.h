@@ -22,12 +22,12 @@ class ObstacleList {
   public:
     ObstacleList();
     ~ObstacleList();
-    
+
     void clear();
     void tighten();
     void push_back(Obstacle* obs);
     void erase(unsigned int index);
-    
+
     unsigned int size() const;
     Obstacle* operator[](int index) const;
 

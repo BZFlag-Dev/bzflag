@@ -51,15 +51,15 @@ class GroupInstance {
     GroupInstance(const std::string& groupdef);
     GroupInstance();
     ~GroupInstance();
-    
+
     void setTeam(int team);
     void setTint(const float tint[4]);
     void setPhysicsDriver(int phydrv);
     void setTransform(const MeshTransform&);
-    
+
     const std::string& getGroupDef() const;
     const MeshTransform& getTransform() const;
-    
+
     void *pack(void*);
     void *unpack(void*);
     int packSize();
@@ -69,7 +69,7 @@ class GroupInstance {
   private:
     std::string groupdef;
     MeshTransform transform;
-    
+
     bool modifyTeam;
     int team;
     bool modifyColor;
@@ -95,8 +95,8 @@ class GroupDefinition {
     void clear(); // delete the list and the obstacles
     void tighten(); // reduce memory usage
     void makeGroups(const MeshTransform& xform,
-                    const ObstacleModifier& obsMod,
-                    GroupDefinition* world) const;
+		    const ObstacleModifier& obsMod,
+		    GroupDefinition* world) const;
     void replaceBasesWithBoxes();
 
     enum ObstacleTypes {
@@ -112,7 +112,7 @@ class GroupDefinition {
       tetraType,
       ObstacleTypeCount
     };
-    
+
     const std::string& getName() const;
     const ObstacleList& getList(int type) const;
     const std::vector<GroupInstance*>& getGroups() const;
@@ -122,10 +122,10 @@ class GroupDefinition {
     void *unpack(void*);
 
     void print(std::ostream& out, const std::string& indent) const;
-    
+
   private:
     Obstacle* newObstacle(int type);
-  
+
   private:
     std::string name;
 
@@ -163,14 +163,14 @@ class GroupDefinitionMgr {
     void tighten(); // reduce memory usage
     void makeWorld(); // make the local obstacles for the groups
     void replaceBasesWithBoxes();
-    
+
     void addWorldObstacle(Obstacle* obstacle);
     void addGroupDef(GroupDefinition* groupdef);
     GroupDefinition* findGroupDef(const std::string& name);
 
     const GroupDefinition* getWorld() const;
 
-    // convenience functions    
+    // convenience functions
     const ObstacleList& getWalls() const;
     const ObstacleList& getBoxes() const;
     const ObstacleList& getPyrs() const;
@@ -181,13 +181,13 @@ class GroupDefinitionMgr {
     const ObstacleList& getCones() const;
     const ObstacleList& getSpheres() const;
     const ObstacleList& getTetras() const;
-    
+
     int packSize() const;
     void *pack(void*) const;
     void *unpack(void*);
 
     void print(std::ostream& out, const std::string& indent) const;
-    
+
   private:
     GroupDefinition world;
     std::vector<GroupDefinition*> list;

@@ -34,7 +34,7 @@ ArcObstacle::ArcObstacle()
 
 
 ArcObstacle::ArcObstacle(const MeshTransform& xform,
-                         const float* _pos, const float* _size,
+			 const float* _pos, const float* _size,
 			 float _rotation, float _sweepAngle, float _ratio,
 			 const float _texsize[4], bool _useNormals,
 			 int _divisions, const BzMaterial* mats[MaterialCount],
@@ -81,9 +81,9 @@ Obstacle* ArcObstacle::copyWithTransform(const MeshTransform& xform) const
 
   ArcObstacle* copy =
     new ArcObstacle(tmpXform, pos, size, angle, sweepAngle, ratio,
-                    texsize, useNormals, divisions,
-                    (const BzMaterial**)materials, phydrv,
-                    smoothBounce, driveThrough, shootThrough);
+		    texsize, useNormals, divisions,
+		    (const BzMaterial**)materials, phydrv,
+		    smoothBounce, driveThrough, shootThrough);
   return copy;
 }
 
@@ -721,19 +721,19 @@ void ArcObstacle::print(std::ostream& out, const std::string& indent) const
   out << indent << "arc" << std::endl;
 
   out << indent << "  position " << pos[0] << " "
-                                 << pos[1] << " " << pos[2] << std::endl;
+				 << pos[1] << " " << pos[2] << std::endl;
   out << indent << "  size " << size[0] << " "
-                             << size[1] << " " << size[2] << std::endl;
+			     << size[1] << " " << size[2] << std::endl;
   out << indent << "  rotation " << ((angle * 180.0) / M_PI) << std::endl;
   out << indent << "  angle " << sweepAngle << std::endl;
   out << indent << "  ratio " << ratio << std::endl;
   out << indent << "  divisions " << divisions << std::endl;
-  
+
   transform.printTransforms(out, indent);
 
   out << indent << "  texsize " << texsize[0] << " " << texsize[1] << " "
-                                << texsize[2] << " " << texsize[3]
-                                << std::endl;
+				<< texsize[2] << " " << texsize[3]
+				<< std::endl;
 
   const char* sideNames[MaterialCount] =
     { "top", "bottom", "inside", "outside", "startside", "endside" };

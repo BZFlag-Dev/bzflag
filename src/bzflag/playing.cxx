@@ -3128,16 +3128,16 @@ static void		checkEnvironment()
     for (i = 0; i < curMaxPlayers; i++) {
       if (player[i] && !player[i]->isPaused() &&
 	  ((player[i]->getFlag() == Flags::Steamroller) ||
-	   ((myPos[2] < 0.0f) && player[i]->isAlive() && 
+	   ((myPos[2] < 0.0f) && player[i]->isAlive() &&
 	    !player[i]->isPhantomZoned()))) {
 	const float* pos = player[i]->getPosition();
 	if (pos[2] < 0.0f) continue;
 	if (!myTank->isPhantomZoned()) {
 	  const float radius = myRadius +
 	    BZDB.eval(StateDatabase::BZDB_SRRADIUSMULT) * player[i]->getRadius();
-          const float distSquared =
-            hypotf(hypotf(myPos[0] - pos[0],
-                          myPos[1] - pos[1]), (myPos[2] - pos[2]) * 2.0f);
+	  const float distSquared =
+	    hypotf(hypotf(myPos[0] - pos[0],
+			  myPos[1] - pos[1]), (myPos[2] - pos[2]) * 2.0f);
 	  if (distSquared < radius) {
 	    gotBlowedUp(myTank, GotRunOver, player[i]->getId());
 	  }
@@ -3457,7 +3457,7 @@ static void		setRobotTarget(RobotPlayer* robot)
 	((robot->getTeam() == RogueTeam && !World::getWorld()->allowRabbit())
 	 || player[j]->getTeam() != robot->getTeam())) {
 
-      if (player[j]->isPhantomZoned() && !robot->isPhantomZoned())         
+      if (player[j]->isPhantomZoned() && !robot->isPhantomZoned())
 	continue;
 
       if (World::getWorld()->allowTeamFlags() &&
@@ -3591,14 +3591,14 @@ static void		checkEnvironment(RobotPlayer* tank)
     if (((myTank->getFlag() == Flags::Steamroller) ||
 	 ((tank->getFlag() == Flags::Burrow) && myTank->isAlive() &&
 	  !myTank->isPhantomZoned()))
-        && !myTank->isPaused()) {
+	&& !myTank->isPaused()) {
       const float* pos = myTank->getPosition();
       if (pos[2] >= 0.0f) {
 	const float radius = myRadius +
 	  (BZDB.eval(StateDatabase::BZDB_SRRADIUSMULT) * myTank->getRadius());
-        const float distSquared =
-          hypotf(hypotf(myPos[0] - pos[0],
-                        myPos[1] - pos[1]), (myPos[2] - pos[2]) * 2.0f);
+	const float distSquared =
+	  hypotf(hypotf(myPos[0] - pos[0],
+			myPos[1] - pos[1]), (myPos[2] - pos[2]) * 2.0f);
 	if (distSquared < radius) {
 	  gotBlowedUp(tank, GotRunOver, myTank->getId());
 	  dead = true;
@@ -3614,9 +3614,9 @@ static void		checkEnvironment(RobotPlayer* tank)
 	if (pos[2] < 0.0f) continue;
 	const float radius = myRadius +
 	  (BZDB.eval(StateDatabase::BZDB_SRRADIUSMULT) * player[i]->getRadius());
-        const float distSquared = 
-          hypotf(hypotf(myPos[0] - pos[0],
-                        myPos[1] - pos[1]), (myPos[2] - pos[2]) * 2.0f);
+	const float distSquared =
+	  hypotf(hypotf(myPos[0] - pos[0],
+			myPos[1] - pos[1]), (myPos[2] - pos[2]) * 2.0f);
 	if (distSquared < radius) {
 	  gotBlowedUp(tank, GotRunOver, player[i]->getId());
 	  dead = true;
@@ -4517,7 +4517,7 @@ void drawFrame(const float dt)
       // if inside a building, add some eighth dimension scene nodes.
       const std::vector<const Obstacle*>& list = myTank->getInsideBuildings();
       for (unsigned int n = 0; n < list.size(); n++) {
-        const Obstacle* obs = list[n];
+	const Obstacle* obs = list[n];
 	const int nodeCount = obs->getInsideSceneNodeCount();
 	SceneNode** nodeList = obs->getInsideSceneNodeList();
 	for (int n = 0; n < nodeCount; n++) {

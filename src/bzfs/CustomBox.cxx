@@ -35,8 +35,8 @@ void CustomBox::writeToGroupDef(GroupDefinition *groupdef) const
 {
   BoxBuilding* box =
     new BoxBuilding(pos, rotation,
-                    fabsf(size[0]), fabsf(size[1]), fabsf(size[2]),
-                    driveThrough, shootThrough);
+		    fabsf(size[0]), fabsf(size[1]), fabsf(size[2]),
+		    driveThrough, shootThrough);
   groupdef->addObstacle(box);
 }
 

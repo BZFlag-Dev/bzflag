@@ -39,13 +39,13 @@ TetraBuilding::TetraBuilding()
 
 
 TetraBuilding::TetraBuilding(const MeshTransform& xform,
-                             const float _vertices[4][3],
-                             const float _normals[4][3][3],
-                             const float _texcoords[4][3][2],
-                             const bool _useNormals[4],
-                             const bool _useTexcoords[4],
-                             const BzMaterial* _materials[4],
-                             bool drive, bool shoot)
+			     const float _vertices[4][3],
+			     const float _normals[4][3][3],
+			     const float _texcoords[4][3][2],
+			     const bool _useNormals[4],
+			     const bool _useTexcoords[4],
+			     const BzMaterial* _materials[4],
+			     bool drive, bool shoot)
 {
   mesh = NULL;
 
@@ -82,8 +82,8 @@ Obstacle* TetraBuilding::copyWithTransform(const MeshTransform& xform) const
 
   TetraBuilding* copy =
     new TetraBuilding(tmpXform, vertices, normals, texcoords,
-                      useNormals, useTexcoords, (const BzMaterial**)materials,
-                      driveThrough, shootThrough);
+		      useNormals, useTexcoords, (const BzMaterial**)materials,
+		      driveThrough, shootThrough);
   return copy;
 }
 
@@ -117,8 +117,8 @@ void TetraBuilding::finalize()
     verts.push_back(vertices[i]);
   }
 
-  mesh = new MeshObstacle(transform, 
-                          checkTypes, checkPoints, verts, norms, texcds,
+  mesh = new MeshObstacle(transform,
+			  checkTypes, checkPoints, verts, norms, texcds,
 			  4, false, false, driveThrough, shootThrough);
 
   // add the faces to the mesh
@@ -345,7 +345,7 @@ void *TetraBuilding::pack(void* buf) const
 
   // pack the transform
   buf = transform.pack(buf);
-  
+
   // pack the vertices
   for (v = 0; v < 4; v++) {
     buf = nboPackVector(buf, vertices[v]);
@@ -398,7 +398,7 @@ void *TetraBuilding::unpack(void* buf)
 
   // unpack the transform
   buf = transform.unpack(buf);
-  
+
   // unpack the vertices
   for (v = 0; v < 4; v++) {
     buf = nboUnpackVector(buf, vertices[v]);
@@ -478,25 +478,25 @@ void TetraBuilding::print(std::ostream& out, const std::string& indent) const
   out << indent << "tetra" << std::endl;
 
   transform.printTransforms(out, "");
-  
+
   // write the vertex information
   for (i = 0; i < 4; i++) {
     const float* vertex = vertices[i];
     out << indent << "\tvertex " << vertex[0] << " " << vertex[1] << " "
-                                 << vertex[2] << std::endl;
+				 << vertex[2] << std::endl;
     if (useNormals[i]) {
       for (int j = 0; j < 3; j++) {
 	const float* normal = normals[i][j];
 	out << indent << "\tnormal " << normal[0] << " " << normal[1] << " "
-                                     << normal[2] << std::endl;
+				     << normal[2] << std::endl;
       }
     }
     if (useTexcoords[i]) {
       for (int j = 0; j < 3; j++) {
 	const float* texcoord = texcoords[i][j];
 	out << indent << "\tnormal " << texcoord[0] << " "
-                                     << texcoord[1] << " "
-			             << texcoord[2] << std::endl;
+				     << texcoord[1] << " "
+				     << texcoord[2] << std::endl;
       }
     }
     MATERIALMGR.printReference(out, materials[i]);

@@ -47,9 +47,9 @@ bool CustomGate::read(const char *cmd, std::istream& input)
 void CustomGate::writeToGroupDef(GroupDefinition *groupdef) const
 {
   Teleporter* tele =
-    new Teleporter(pos, rotation, 
-                   fabsf(size[0]), fabsf(size[1]), fabsf(size[2]),
-                   border, horizontal, driveThrough, shootThrough);
+    new Teleporter(pos, rotation,
+		   fabsf(size[0]), fabsf(size[1]), fabsf(size[2]),
+		   border, horizontal, driveThrough, shootThrough);
   groupdef->addObstacle(tele);
 }
 

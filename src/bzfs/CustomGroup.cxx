@@ -42,7 +42,7 @@ CustomGroup::~CustomGroup()
 
 
 bool CustomGroup::read(const char *cmd, std::istream& input) {
-  
+
   if (strcmp(cmd, "team") == 0) {
     int team;
     if (!(input >> team) || (team < 0) || (team >= CtfTeams)) {
@@ -77,7 +77,7 @@ bool CustomGroup::read(const char *cmd, std::istream& input) {
   else if (!WorldFileLocation::read(cmd, input)) {
     return false;
   }
-  
+
   return true;
 }
 
@@ -92,14 +92,14 @@ void CustomGroup::writeToGroupDef(GroupDefinition *grpdef) const
   if (rotation != 0.0f) {
     const float zAxis[3] = {0.0f, 0.0f, 1.0f};
     xform.addSpin((float)(rotation * (180.0 / M_PI)), zAxis);
-  }  
+  }
   if ((pos[0] != 0.0f) || (pos[1] != 0.0f) || (pos[2] != 0.0f)) {
     xform.addShift(pos);
   }
   xform.append(transform);
-  
+
   group->setTransform(xform);
-  
+
   // make the group instance
   if (group->getGroupDef().size() > 0) {
     grpdef->addGroupInstance(group);
@@ -107,7 +107,7 @@ void CustomGroup::writeToGroupDef(GroupDefinition *grpdef) const
     delete group;
   }
   group = NULL;
-  
+
   return;
 }
 

@@ -152,7 +152,7 @@ int TextureMatrixManager::packSize() const
 
 
 void TextureMatrixManager::print(std::ostream& out,
-                                 const std::string& indent) const
+				 const std::string& indent) const
 {
   std::vector<TextureMatrix*>::const_iterator it;
   for (it = matrices.begin(); it != matrices.end(); it++) {

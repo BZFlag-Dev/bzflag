@@ -31,7 +31,7 @@ class CustomWorld : public WorldFileObject {
     virtual bool read(const char *cmd, std::istream&);
     virtual void writeToWorld(WorldInfo*) const;
     virtual bool usesGroupDef() { return false; }
-    
+
   protected:
     double _size;
     double _fHeight;

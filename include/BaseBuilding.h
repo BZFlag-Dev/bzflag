@@ -32,7 +32,7 @@ class BaseBuilding : public Obstacle {
 			~BaseBuilding();
 
     Obstacle*	copyWithTransform(const MeshTransform&) const;
-			
+
     const char*		getType() const;
     static const char*	getClassName(); // const
 
@@ -63,9 +63,9 @@ class BaseBuilding : public Obstacle {
     int packSize() const;
     void *pack(void*) const;
     void *unpack(void*);
-    
+
     void print(std::ostream& out, const std::string& indent) const;
-    
+
     std::string		userTextures[2];
  private:
     static const char*	typeName;

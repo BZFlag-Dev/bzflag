@@ -159,7 +159,7 @@ void CustomMesh::writeToGroupDef(GroupDefinition *groupdef) const
   if (rotation != 0.0f) {
     const float zAxis[3] = {0.0f, 0.0f, 1.0f};
     xform.addSpin((float)(rotation * (180.0 / M_PI)), zAxis);
-  }  
+  }
   if ((pos[0] != 0.0f) || (pos[1] != 0.0f) || (pos[2] != 0.0f)) {
     xform.addShift(pos);
   }
@@ -167,8 +167,8 @@ void CustomMesh::writeToGroupDef(GroupDefinition *groupdef) const
 
   MeshObstacle* mesh =
     new MeshObstacle(xform, checkTypes, checkPoints,
-                     vertices, normals, texcoords, faces.size(),
-                     noclusters, smoothBounce, driveThrough, shootThrough);
+		     vertices, normals, texcoords, faces.size(),
+		     noclusters, smoothBounce, driveThrough, shootThrough);
 
   std::vector<CustomMeshFace*>::const_iterator face_it;
   for (face_it = faces.begin(); face_it != faces.end(); face_it++) {

@@ -231,12 +231,12 @@ SceneDatabase* SceneDatabaseBuilder::make(const World* world)
 
   // add nodes to database
   unsigned int i;
-  
+
   const ObstacleList& walls = OBSTACLEMGR.getWalls();
   for (i = 0; i < walls.size(); i++) {
     addWall(db, *((WallObstacle*) walls[i]));
   }
-  
+
   const ObstacleList& boxes = OBSTACLEMGR.getBoxes();
   for (i = 0; i < boxes.size(); i++) {
     addBox (db, *((BoxBuilding*) boxes[i]));
@@ -261,7 +261,7 @@ SceneDatabase* SceneDatabaseBuilder::make(const World* world)
   for (i = 0; i < meshes.size(); i++) {
     addMesh (db, (MeshObstacle*) meshes[i]);
   }
-  
+
   // add the water level node
   addWaterLevel(db, world);
 
@@ -419,7 +419,7 @@ void SceneDatabaseBuilder::addBox(SceneDatabase* db, BoxBuilding& o)
     o.addInsideSceneNode(inode);
 #else
     db->addStaticNode(node, false);
-#endif // SHELL_INSIDE_NODES  
+#endif // SHELL_INSIDE_NODES
 
     part = (part + 1) % 6;
   }
@@ -433,7 +433,7 @@ void SceneDatabaseBuilder::addBox(SceneDatabase* db, BoxBuilding& o)
   SceneNode* inode =
     new EighthDBoxSceneNode(o.getPosition(), obstacleSize, o.getRotation());
   o.addInsideSceneNode(inode);
-#endif // SHELL_INSIDE_NODES  
+#endif // SHELL_INSIDE_NODES
 
   delete nodeGen;
 }
@@ -480,7 +480,7 @@ void SceneDatabaseBuilder::addPyramid(SceneDatabase* db, PyramidBuilding& o)
     o.addInsideSceneNode(inode);
 #else
     db->addStaticNode(node, false);
-#endif // SHELL_INSIDE_NODES  
+#endif // SHELL_INSIDE_NODES
 
     part = (part + 1) % 5;
   }
@@ -494,7 +494,7 @@ void SceneDatabaseBuilder::addPyramid(SceneDatabase* db, PyramidBuilding& o)
   SceneNode* inode =
     new EighthDPyrSceneNode(o.getPosition(), obstacleSize, o.getRotation());
   o.addInsideSceneNode(inode);
-#endif // SHELL_INSIDE_NODES  
+#endif // SHELL_INSIDE_NODES
 
   delete nodeGen;
 }
@@ -571,7 +571,7 @@ void SceneDatabaseBuilder::addBase(SceneDatabase *db, BaseBuilding &o)
     o.addInsideSceneNode(inode);
 #else
     db->addStaticNode(node, false);
-#endif // SHELL_INSIDE_NODES  
+#endif // SHELL_INSIDE_NODES
   }
 
 #ifndef SHELL_INSIDE_NODES
@@ -583,14 +583,14 @@ void SceneDatabaseBuilder::addBase(SceneDatabase *db, BaseBuilding &o)
   SceneNode* inode = new
     EighthDBaseSceneNode(o.getPosition(), obstacleSize, o.getRotation());
   o.addInsideSceneNode(inode);
-#endif // SHELL_INSIDE_NODES  
+#endif // SHELL_INSIDE_NODES
 
   delete nodeGen;
 }
 
 void SceneDatabaseBuilder::addTeleporter(SceneDatabase* db,
-                                         const Teleporter& o,
-                                         const World* world)
+					 const Teleporter& o,
+					 const World* world)
 {
   // this assumes teleporters have fourteen parts:  12 border sides, 2 faces
   int part = 0;

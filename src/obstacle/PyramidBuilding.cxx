@@ -47,13 +47,13 @@ Obstacle* PyramidBuilding::copyWithTransform(const MeshTransform& xform) const
   MeshTransform::Tool tool(xform);
   bool flipped;
   tool.modifyOldStyle(newPos, newSize, newAngle, flipped);
-  
+
   PyramidBuilding* copy =
     new PyramidBuilding(newPos, newAngle, newSize[0], newSize[1], newSize[2],
-                        driveThrough, shootThrough);
+			driveThrough, shootThrough);
 
   copy->ZFlip = !(getZFlip() == flipped);
-  
+
   return copy;
 }
 
@@ -457,16 +457,16 @@ void PyramidBuilding::print(std::ostream& out, const std::string& indent) const
 {
   out << indent << "pyramid" << std::endl;
   const float *pos = getPosition();
-  out << indent << "  position " << pos[0] << " " << pos[1] << " " 
-                                 << pos[2] << std::endl;
+  out << indent << "  position " << pos[0] << " " << pos[1] << " "
+				 << pos[2] << std::endl;
   float height = getHeight();
   if (getZFlip()) {
     height = -height;
   }
-  out << indent << "  size " << getWidth() << " " << getBreadth() 
-                             << " " << height << std::endl;
+  out << indent << "  size " << getWidth() << " " << getBreadth()
+			     << " " << height << std::endl;
   out << indent << "  rotation " << ((getRotation() * 180.0) / M_PI)
-                                 << std::endl;
+				 << std::endl;
   if (isDriveThrough() && isShootThrough()) {
     out << indent << "  passable" << std::endl;
   } else {

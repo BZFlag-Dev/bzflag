@@ -40,7 +40,7 @@ class ArcObstacle : public Obstacle {
 
     ArcObstacle();
     ArcObstacle(const MeshTransform& transform,
-                const float* _pos, const float* _size,
+		const float* _pos, const float* _size,
 		float _rotation, float _angle, float _ratio,
 		const float _texsize[4], bool _useNormals,
 		int _divisions, const BzMaterial* mats[MaterialCount],

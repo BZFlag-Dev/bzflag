@@ -125,7 +125,7 @@ void			LocalPlayer::doUpdate(float dt)
     }
     if (TimeKeeper::getCurrent() -  pauseTime > BZDB.eval(StateDatabase::BZDB_PAUSEDROPTIME)) {
       server->sendDropFlag(getPosition());
-      setStatus(getStatus() & ~PlayerState::FlagActive);      
+      setStatus(getStatus() & ~PlayerState::FlagActive);
       pauseTime = TimeKeeper::getSunExplodeTime();
     }
 
@@ -507,8 +507,8 @@ void			LocalPlayer::doUpdateMotion(float dt)
 
     float obstacleTop = obstacle->getPosition()[2] + obstacle->getHeight();
     if ((oldLocation != InAir) && obstacle->isFlatTop() &&
-        (obstacleTop != tmpPos[2]) &&
-        (obstacleTop < (tmpPos[2] + BZDB.eval(StateDatabase::BZDB_MAXBUMPHEIGHT)))) {
+	(obstacleTop != tmpPos[2]) &&
+	(obstacleTop < (tmpPos[2] + BZDB.eval(StateDatabase::BZDB_MAXBUMPHEIGHT)))) {
       newPos[0] = oldPosition[0];
       newPos[1] = oldPosition[1];
       newPos[2] = obstacleTop;
@@ -651,9 +651,9 @@ void			LocalPlayer::doUpdateMotion(float dt)
   // see if we're crossing a wall
   if (location == InBuilding && getFlag() == Flags::OscillationOverthruster) {
     if (obstacle->isCrossing(newPos, newAzimuth,
-                             0.5f * BZDBCache::tankLength,
-                             0.5f * BZDBCache::tankWidth,
-                             BZDBCache::tankHeight, NULL)) {
+			     0.5f * BZDBCache::tankLength,
+			     0.5f * BZDBCache::tankWidth,
+			     BZDBCache::tankHeight, NULL)) {
       setStatus(getStatus() | int(PlayerState::CrossingWall));
     } else {
       setStatus(getStatus() & ~int(PlayerState::CrossingWall));
@@ -684,7 +684,7 @@ void			LocalPlayer::doUpdateMotion(float dt)
   } else {
     teleporter = World::getWorld()->crossesTeleporter(oldPosition, newPos, face);
   }
-  
+
   if (teleporter) {
     if (getFlag() == Flags::PhantomZone) {
       // change zoned state
@@ -697,32 +697,32 @@ void			LocalPlayer::doUpdateMotion(float dt)
       const int source = World::getWorld()->getTeleporter(teleporter, face);
       int target = World::getWorld()->getTeleportTarget(source);
       if (target == randomTeleporter) {
-        target = rand() % (2 * OBSTACLEMGR.getTeles().size());
+	target = rand() % (2 * OBSTACLEMGR.getTeles().size());
       }
 
       int outFace;
       const Teleporter* outPort =
-        World::getWorld()->getTeleporter(target, outFace);
+	World::getWorld()->getTeleporter(target, outFace);
       teleporter->getPointWRT(*outPort, face, outFace,
-                              newPos, newVelocity, newAzimuth,
-                              newPos, newVelocity, &newAzimuth);
+			      newPos, newVelocity, newAzimuth,
+			      newPos, newVelocity, &newAzimuth);
 
       // check for a hit on the other side
       const Obstacle* teleObs =
-        getHitBuilding(newPos, newAzimuth, newPos, newAzimuth, phased, expelled);
+	getHitBuilding(newPos, newAzimuth, newPos, newAzimuth, phased, expelled);
       if (teleObs != NULL) {
-        // revert
-        memcpy (newPos, oldPosition, sizeof(float[3]));
-        newVelocity[0] = newVelocity[1] = 0.0f;
-        newVelocity[2] = oldVelocity[2];
-        newAzimuth = oldAzimuth;
+	// revert
+	memcpy (newPos, oldPosition, sizeof(float[3]));
+	newVelocity[0] = newVelocity[1] = 0.0f;
+	newVelocity[2] = oldVelocity[2];
+	newAzimuth = oldAzimuth;
       } else {
-        // save teleport info
-        setTeleport(lastTime, source, target);
-        server->sendTeleport(source, target);
-        if (gettingSound) {
-          playLocalSound(SFX_TELEPORT);
-        }
+	// save teleport info
+	setTeleport(lastTime, source, target);
+	server->sendTeleport(source, target);
+	if (gettingSound) {
+	  playLocalSound(SFX_TELEPORT);
+	}
       }
     }
   }
@@ -800,7 +800,7 @@ void			LocalPlayer::doUpdateMotion(float dt)
     firingStatus = (getFlag() == Flags::PhantomZone) ? Zoned : Sealed;
     break;
   default:
-    if (isPhantomZoned()) 
+    if (isPhantomZoned())
       firingStatus = Zoned;
     else if (getReloadTime() > 0.0f)
       firingStatus = Loading;
@@ -808,7 +808,7 @@ void			LocalPlayer::doUpdateMotion(float dt)
       firingStatus = Ready;
     break;
   }
-  
+
   // calculate the list of inside buildings
   insideBuildings.clear(); // clear the list
   if (location == InBuilding) {
@@ -922,7 +922,7 @@ bool LocalPlayer::getHitNormal(const Obstacle* o,
 
 
 static bool notInObstacleList(const Obstacle* obs,
-                              const std::vector<const Obstacle*>& list)
+			      const std::vector<const Obstacle*>& list)
 {
   for (unsigned int i = 0; i < list.size(); i++) {
     if (obs == list[i]) {
@@ -938,7 +938,7 @@ void LocalPlayer::collectInsideBuildings()
   const float* pos = getPosition();
   const float angle = getAngle();
   const float* dims = getDimensions();
-  
+
   // get the list of possible inside buildings
   const ObsList* olist =
     COLLISIONMGR.boxTest (pos, angle, dims[0], dims[1], dims[2]);
@@ -947,31 +947,31 @@ void LocalPlayer::collectInsideBuildings()
     const Obstacle* obs = olist->list[i];
     if (obs->inBox(pos, angle, dims[0], dims[1], dims[2])) {
       if (obs->getType() == MeshFace::getClassName()) {
-        const MeshFace* face = (const MeshFace*) obs;
-        const MeshObstacle* mesh = (const MeshObstacle*) face->getMesh();
-        // check it for the death touch
-        if (deathPhyDrv < 0) {
-          const int driver = face->getPhysicsDriver();
-          const PhysicsDriver* phydrv = PHYDRVMGR.getDriver(driver);
-          if ((phydrv != NULL) && (phydrv->getIsDeath())) {
-            deathPhyDrv = driver;
-          }
-        }
-        // add the mesh if not already present
-        if (!obs->isDriveThrough() &&
-            notInObstacleList(mesh, insideBuildings)) {
-          insideBuildings.push_back(mesh);
-        }
+	const MeshFace* face = (const MeshFace*) obs;
+	const MeshObstacle* mesh = (const MeshObstacle*) face->getMesh();
+	// check it for the death touch
+	if (deathPhyDrv < 0) {
+	  const int driver = face->getPhysicsDriver();
+	  const PhysicsDriver* phydrv = PHYDRVMGR.getDriver(driver);
+	  if ((phydrv != NULL) && (phydrv->getIsDeath())) {
+	    deathPhyDrv = driver;
+	  }
+	}
+	// add the mesh if not already present
+	if (!obs->isDriveThrough() &&
+	    notInObstacleList(mesh, insideBuildings)) {
+	  insideBuildings.push_back(mesh);
+	}
       }
       else if (!obs->isDriveThrough()) {
-        if (obs->getType() == MeshObstacle::getClassName()) {
-          // add the mesh if not already present
-          if (notInObstacleList(obs, insideBuildings)) {
-            insideBuildings.push_back(obs);
-          }
-        } else {
-          insideBuildings.push_back(obs);
-        }
+	if (obs->getType() == MeshObstacle::getClassName()) {
+	  // add the mesh if not already present
+	  if (notInObstacleList(obs, insideBuildings)) {
+	    insideBuildings.push_back(obs);
+	  }
+	} else {
+	  insideBuildings.push_back(obs);
+	}
       }
     }
   }
@@ -1194,7 +1194,7 @@ bool			LocalPlayer::fireShot()
   if (i == numShots) return false;
 
   // make sure we're allowed to shoot
-  if (!isAlive() || isPaused() || 
+  if (!isAlive() || isPaused() ||
       ((location == InBuilding) && !isPhantomZoned())) {
     return false;
   }

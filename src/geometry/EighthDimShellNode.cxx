@@ -28,7 +28,7 @@ EighthDimShellNode::EighthDimShellNode(SceneNode* node, bool _ownTheNode)
 {
   sceneNode = node;
   ownTheNode = _ownTheNode;
-  
+
   const OpenGLGState* gs = node->getGState(0);
   if (gs == NULL) {
     renderNodeCount = 0;
@@ -95,7 +95,7 @@ void EighthDimShellNode::notifyStyleChange()
   gb.setCulling(GL_FRONT); // invert the culling
 
   gstate = gb.getState(); // get the modified gstate
-  
+
   return;
 }
 
@@ -130,7 +130,7 @@ void EighthDimShellNode::ShellRenderNode::render()
 {
 //  glLogicOp(GL_XOR);
 //  glEnable(GL_COLOR_LOGIC_OP);
-//  glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_FALSE);  
+//  glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_FALSE);
 
   if (BZDBCache::blend && RENDERER.useQuality() >= 3) {
     renderNode->render();
@@ -144,7 +144,7 @@ void EighthDimShellNode::ShellRenderNode::render()
   glLineWidth(1.0f);
   glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
-//  glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);  
+//  glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
 //  glDisable(GL_COLOR_LOGIC_OP);
 
   return;

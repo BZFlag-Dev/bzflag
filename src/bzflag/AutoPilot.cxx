@@ -92,17 +92,17 @@ ShotPath *findWorstBullet(float &minDistance)
 	continue;
 
       if ((shot->getFlag() == Flags::InvisibleBullet) &&
-          (myTank->getFlag() != Flags::Seer))
+	  (myTank->getFlag() != Flags::Seer))
 	continue; //Theoretically Roger could triangulate the sound
-      if (player[t]->isPhantomZoned() && !myTank->isPhantomZoned())		
+      if (player[t]->isPhantomZoned() && !myTank->isPhantomZoned())
 	continue;
       if ((shot->getFlag() == Flags::Laser) &&
-          (myTank->getFlag() == Flags::Cloaking))
+	  (myTank->getFlag() == Flags::Cloaking))
 	continue; //cloaked tanks can't die from lasers
 
       const float* shotPos = shot->getPosition();
       if ((fabs(shotPos[2] - pos[2]) > BZDBCache::tankHeight) &&
-          (shot->getFlag() != Flags::GuidedMissile))
+	  (shot->getFlag() != Flags::GuidedMissile))
 	continue;
 
       const float dist = TargetingUtils::getTargetDistance(pos, shotPos);
@@ -287,14 +287,14 @@ RemotePlayer *findBestTarget()
     &&  (myTank->validTeamTarget(player[t]))) {
 
       if (player[t]->isPhantomZoned() && !myTank->isPhantomZoned()
-          && (myTank->getFlag() != Flags::ShockWave)
-          && (myTank->getFlag() != Flags::SuperBullet))
+	  && (myTank->getFlag() != Flags::ShockWave)
+	  && (myTank->getFlag() != Flags::SuperBullet))
 	continue;
 
       if ((player[t]->getFlag() == Flags::Cloaking) &&
-          (myTank->getFlag() == Flags::Laser))
+	  (myTank->getFlag() == Flags::Laser))
 	continue;
-	
+
       //perform a draft that has us chase the proposed opponent if they have our flag
       if (World::getWorld()->allowTeamFlags() &&
 	  (myTank->getTeam() == RedTeam && player[t]->getFlag() == Flags::RedTeam) ||
@@ -366,7 +366,7 @@ bool chasePlayer(float &rotation, float &speed)
 
     building = ShotStrategy::getFirstBuilding(tankRay, -0.5f, d);
     if (building && !myTank->isPhantomZoned() &&
-        (myTank->getFlag() != Flags::OscillationOverthruster)) {
+	(myTank->getFlag() != Flags::OscillationOverthruster)) {
       //If roger can drive around it, just do that
 
       float leftDistance = TargetingUtils::getOpenDistance( pos, (float)(myAzimuth + (M_PI/6.0)));
@@ -385,7 +385,7 @@ bool chasePlayer(float &rotation, float &speed)
       //Never did good in math, he should really see if he can reach the building
       //based on jumpvel and gravity, but settles for assuming 20-50 is a good range
       if ((d > 20.0f) && (d < 50.0f) &&
-          (building->getType() == BoxBuilding::getClassName())) {
+	  (building->getType() == BoxBuilding::getClassName())) {
 	float jumpVel = BZDB.eval(StateDatabase::BZDB_JUMPVELOCITY);
 	float maxJump = (jumpVel * jumpVel) / (2 * -BZDBCache::gravity);
 
@@ -573,7 +573,7 @@ bool fireAtTank()
 
 	  if (player[t]->isPhantomZoned() && !myTank->isPhantomZoned()
 	      && (myTank->getFlag() != Flags::ShockWave)
-              && (myTank->getFlag() != Flags::SuperBullet))
+	      && (myTank->getFlag() != Flags::SuperBullet))
 	    continue;
 
 	  const float *tp = player[t]->getPosition();

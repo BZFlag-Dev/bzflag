@@ -226,7 +226,7 @@ private:
 
   std::vector<FlareLight>	flareLightList;
   RenderNodeList		shadowList;
-  RenderNodeGStateList 		orderedList;
+  RenderNodeGStateList		orderedList;
 };
 
 

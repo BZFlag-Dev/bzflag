@@ -48,7 +48,7 @@ dnl On SGI systems, figure out if we are using MIPSPro compiler
 using_mipspro=no
 if test "$build_vendor" = "sgi" ; then
     AC_MSG_CHECKING([whether we are using the MIPSPro compiler])
-    AC_TRY_COMPILE([], 
+    AC_TRY_COMPILE([],
 		   [#if defined(sgi) && !defined(__GNUC__) && defined(_COMPILER_VERSION)
 this line should cause a compile failure when building with the MIPSpro compiler;
 #endif
@@ -286,7 +286,7 @@ AC_TRY_COMPILE([
 char array[] = "test";
 int i = std::count(array, array + 5, 't');
 ],
-[AC_DEFINE(HAVE_STD_COUNT, 1, [Define to 1 if you have a conforming 
+[AC_DEFINE(HAVE_STD_COUNT, 1, [Define to 1 if you have a conforming
 std::count, otherwise old version of count template is assumed])])
 
 ac_cv_search_glBegin=no

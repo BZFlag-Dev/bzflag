@@ -138,7 +138,7 @@ void CustomDynamicColor::writeToManager() const
   color->setName(name);
   if ((name.size() > 0) && (DYNCOLORMGR.findColor(name) >= 0)) {
     std::cout << "warning: duplicate dynamic color"
-              << " (" << name << ")" << std::endl;
+	      << " (" << name << ")" << std::endl;
   }
   color->finalize();
   DYNCOLORMGR.addColor (color);

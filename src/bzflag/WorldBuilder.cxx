@@ -73,9 +73,9 @@ void* WorldBuilder::unpack(void* buf)
     return NULL;
   }
   char* uncompressedEnd = uncompressedWorld + uncompressedSize;;
-  
+
   buf = uncompressedWorld;
-  
+
   // setup the buffer overrun checking
   nboUseErrorChecking(true);
   nboSetBufferLength(uncompressedSize);
@@ -111,9 +111,9 @@ void* WorldBuilder::unpack(void* buf)
     buf = nboUnpackInt(buf, matindex);
     world->waterMaterial = MATERIALMGR.getMaterial(matindex);
   }
-  
+
   uint32_t i, count;
-  
+
   // unpack the weapons
   buf = nboUnpackUInt(buf, count);
   for (i = 0; i < count; i++) {
@@ -121,7 +121,7 @@ void* WorldBuilder::unpack(void* buf)
     buf = weapon.unpack(buf);
     world->weapons.push_back(weapon);
   }
-  
+
   // unpack the entry zones
   buf = nboUnpackUInt(buf, count);
   for (i = 0; i < count; i++) {
@@ -129,7 +129,7 @@ void* WorldBuilder::unpack(void* buf)
     buf = zone.unpack(buf);
     world->entryZones.push_back(zone);
   }
-  
+
   // unpack the teleporter links
   buf = nboUnpackUInt(buf, count);
   for (i = 0; i < count; i++) {
@@ -138,7 +138,7 @@ void* WorldBuilder::unpack(void* buf)
     buf = nboUnpackUShort(buf, data[1]);
     setTeleporterTarget(int(data[0]), int(data[1]));
   }
-  
+
   // check if the unpacking was successful
   nboUseErrorChecking(false);
   if (nboGetBufferError()) {
@@ -149,10 +149,10 @@ void* WorldBuilder::unpack(void* buf)
   if ((char*)buf != uncompressedEnd) {
     delete[] uncompressedWorld;
     DEBUG1 ("WorldBuilder::unpack() ending mismatch (%i)\n",
-            (char*)buf - uncompressedEnd);
+	    (char*)buf - uncompressedEnd);
     return NULL;
   }
- 
+
   // switch back to the original buffer
   buf = compressedWorld + compressedSize;
   buf = nboUnpackUShort(buf, len);
@@ -172,16 +172,16 @@ void* WorldBuilder::unpack(void* buf)
   // make the team bases
   if (world->gameStyle & TeamFlagGameStyle) {
     const ObstacleList& bases = OBSTACLEMGR.getBases();
-    for (i = 0; i < bases.size(); i++) {  
+    for (i = 0; i < bases.size(); i++) {
       const BaseBuilding* base = (const BaseBuilding*) bases[i];
       setBase((TeamColor)base->getTeam(),
-              base->getPosition(), base->getRotation(),
-              base->getWidth(), base->getBreadth(), base->getHeight());  
+	      base->getPosition(), base->getRotation(),
+	      base->getWidth(), base->getBreadth(), base->getHeight());
     }
   } else {
     OBSTACLEMGR.replaceBasesWithBoxes();
   }
-  
+
   world->loadCollisionManager();
   world->makeLinkMaterial();
 

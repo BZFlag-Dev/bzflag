@@ -25,13 +25,13 @@ class BoxBuilding : public Obstacle {
   public:
 			BoxBuilding();
 			BoxBuilding(const float* pos, float rotation,
-				        float width, float breadth, float height,
-				        bool drive = false, bool shoot = false,
-				        bool invisible = false);
+					float width, float breadth, float height,
+					bool drive = false, bool shoot = false,
+					bool invisible = false);
 			~BoxBuilding();
-			
-    Obstacle* 		copyWithTransform(const MeshTransform&) const;
-    
+
+    Obstacle*		copyWithTransform(const MeshTransform&) const;
+
     const char*		getType() const;
     static const char*	getClassName(); // const
 
@@ -64,9 +64,9 @@ class BoxBuilding : public Obstacle {
     int packSize() const;
     void *pack(void*) const;
     void *unpack(void*);
-    
+
     void print(std::ostream& out, const std::string& indent) const;
-    
+
     std::string	userTextures[2];
  private:
    static const char*	typeName;

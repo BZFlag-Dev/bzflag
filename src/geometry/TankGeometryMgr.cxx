@@ -137,7 +137,7 @@ void TankGeometryMgr::kill()
 
   // remove the context initializer callback
   OpenGLGState::unregisterContextInitializer(initContext, NULL);
-  
+
   return;
 }
 
@@ -173,8 +173,8 @@ void TankGeometryMgr::buildLists()
   setupScales();
   currentScaleFactor = scaleFactors[Normal];
   const bool animated = BZDBCache::animatedTreads;
-  
-  // setup the quality level	
+
+  // setup the quality level
   const int divisionLevels[4][2] = { // wheel divs, tread divs
     {4, 4},   // low
     {8, 16},  // med
@@ -217,27 +217,27 @@ void TankGeometryMgr::buildLists()
 	    // the basic parts
 	    partFunctions[lod][part]();
 	  } else {
-            // the animated parts
+	    // the animated parts
 	    if (part == LeftCasing) {
 	      buildHighLCasingAnim();
-            } 
+	    }
 	    else if (part == RightCasing) {
 	      buildHighRCasingAnim();
-            } 
-            else if (part == LeftTread) {
-              buildHighLTread(treadDivs);
-            }
-            else if (part == RightTread) {
-              buildHighRTread(treadDivs);
-            }
-            else if ((part >= LeftWheel0) && (part <= LeftWheel3)) {
-              int wheel = part - LeftWheel0;
-              buildHighLWheel(wheel, (float)wheel * (float)(M_PI / 2.0), wheelDivs);
-            }
-            else if ((part >= RightWheel0) && (part <= RightWheel3)) {
-              int wheel = part - RightWheel0;
-              buildHighRWheel(wheel, (float)wheel * (float)(M_PI / 2.0), wheelDivs);
-            }
+	    }
+	    else if (part == LeftTread) {
+	      buildHighLTread(treadDivs);
+	    }
+	    else if (part == RightTread) {
+	      buildHighRTread(treadDivs);
+	    }
+	    else if ((part >= LeftWheel0) && (part <= LeftWheel3)) {
+	      int wheel = part - LeftWheel0;
+	      buildHighLWheel(wheel, (float)wheel * (float)(M_PI / 2.0), wheelDivs);
+	    }
+	    else if ((part >= RightWheel0) && (part <= RightWheel3)) {
+	      int wheel = part - RightWheel0;
+	      buildHighRWheel(wheel, (float)wheel * (float)(M_PI / 2.0), wheelDivs);
+	    }
 	  }
 
 	  // end of the list

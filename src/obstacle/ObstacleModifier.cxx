@@ -45,13 +45,13 @@ ObstacleModifier::ObstacleModifier()
   // phydrv
   modifyPhysicsDriver = false;
   phydrv = -1;
-  
+
   return;
 }
 
 
 ObstacleModifier::ObstacleModifier(const ObstacleModifier& obsMod,
-                                   const GroupInstance& grpinst)
+				   const GroupInstance& grpinst)
 {
   modifyTeam = false;
   modifyColor = false;
@@ -94,11 +94,11 @@ ObstacleModifier::ObstacleModifier(const ObstacleModifier& obsMod,
       phydrv = grpinst.phydrv;
     }
   }
-  
+
   return;
 }
 
-                                   
+
 ObstacleModifier::~ObstacleModifier()
 {
   return;
@@ -106,7 +106,7 @@ ObstacleModifier::~ObstacleModifier()
 
 
 static const BzMaterial* getTintedMaterial(const float tint[4],
-                                           const BzMaterial* mat)
+					   const BzMaterial* mat)
 {
   BzMaterial tintmat(*mat);
   float color[4];
@@ -119,7 +119,7 @@ static const BzMaterial* getTintedMaterial(const float tint[4],
   return newmat;
 }
 
-        
+
 void ObstacleModifier::execute(Obstacle* obstacle) const
 {
   if (modifyTeam) {
@@ -132,8 +132,8 @@ void ObstacleModifier::execute(Obstacle* obstacle) const
     if (obstacle->getType() == MeshObstacle::getClassName()) {
       const MeshObstacle* mesh = (MeshObstacle*) obstacle;
       for (int i = 0; i < mesh->getFaceCount(); i++) {
-        MeshFace* face = (MeshFace*) mesh->getFace(i);
-        face->bzMaterial = getTintedMaterial(tint, face->bzMaterial);
+	MeshFace* face = (MeshFace*) mesh->getFace(i);
+	face->bzMaterial = getTintedMaterial(tint, face->bzMaterial);
       }
     }
   }
@@ -141,15 +141,15 @@ void ObstacleModifier::execute(Obstacle* obstacle) const
     if (obstacle->getType() == MeshObstacle::getClassName()) {
       const MeshObstacle* mesh = (MeshObstacle*) obstacle;
       for (int i = 0; i < mesh->getFaceCount(); i++) {
-        MeshFace* face = (MeshFace*) mesh->getFace(i);
-        // only modify faces that already have a physics driver
-        if (face->phydrv >= 0) {
-          face->phydrv = phydrv;
-        }
+	MeshFace* face = (MeshFace*) mesh->getFace(i);
+	// only modify faces that already have a physics driver
+	if (face->phydrv >= 0) {
+	  face->phydrv = phydrv;
+	}
       }
     }
   }
-  
+
   return;
 }
 
