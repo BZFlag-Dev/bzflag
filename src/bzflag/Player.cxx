@@ -193,7 +193,15 @@ void			Player::changeTeam(TeamColor _team)
     texName = Team::getImagePrefix(team);
 
   texName += "tank";
-  tankTexture = tm.getTexture(texName.c_str(),false);
+
+  // now after we did all that, see if they have a user texture
+  tankTexture = NULL;
+  if (userTexture.size())
+    tankTexture = tm.getTexture(userTexture.c_str(),false);
+
+  // if the user load failed try our calculated texture
+  if (!tankTexture || !tankTexture->isValid())
+    tankTexture = tm.getTexture(texName.c_str(),false);
   if (tankTexture && tankTexture->isValid())
     useColorTexture = true;
   else

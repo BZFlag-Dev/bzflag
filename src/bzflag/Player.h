@@ -117,6 +117,7 @@ public:
 
   void		setDeadReckoning();
 
+  void		setUserTexture ( const char *tex ) { if(tex) userTexture = tex;}
 private:
   // return true if the shot had to be terminated or false if it
   // was already terminated.  position must be set to the shot's
@@ -144,6 +145,7 @@ private:
   char			callSign[CallSignLen];	// my pseudonym
   char			email[EmailLen];	// my email address
   PlayerType		type;                   // Human/Computer
+  std::string		userTexture;
 
   // relatively stable data
   FlagType*		flagType;		// flag type I'm holding
