@@ -973,18 +973,7 @@ GUIOptionsMenu::GUIOptionsMenu()
   option->setFont(MainMenu::getFont());
   option->setLabel("Radar & Panel Opacity:");
   option->setCallback(callback, (void*)"y");
-  options = &option->getList();
-  options->push_back(std::string("[O----------]"));
-  options->push_back(std::string("[-O---------]"));
-  options->push_back(std::string("[--O--------]"));
-  options->push_back(std::string("[---O-------]"));
-  options->push_back(std::string("[----O------]"));
-  options->push_back(std::string("[-----O-----]"));
-  options->push_back(std::string("[------O----]"));
-  options->push_back(std::string("[-------O---]"));
-  options->push_back(std::string("[--------O--]"));
-  options->push_back(std::string("[---------O-]"));
-  options->push_back(std::string("[----------O]"));
+  option->createSlider(11);
   option->update();
   list.push_back(option);
 
@@ -1004,18 +993,7 @@ GUIOptionsMenu::GUIOptionsMenu()
   option->setFont(MainMenu::getFont());
   option->setLabel("Radar Shot Length:");
   option->setCallback(callback, (void*)"l");
-  options = &option->getList();
-  options->push_back(std::string("[O----------]"));
-  options->push_back(std::string("[-O---------]"));
-  options->push_back(std::string("[--O--------]"));
-  options->push_back(std::string("[---O-------]"));
-  options->push_back(std::string("[----O------]"));
-  options->push_back(std::string("[-----O-----]"));
-  options->push_back(std::string("[------O----]"));
-  options->push_back(std::string("[-------O---]"));
-  options->push_back(std::string("[--------O--]"));
-  options->push_back(std::string("[---------O-]"));
-  options->push_back(std::string("[----------O]"));
+  option->createSlider(11);
   option->update();
   list.push_back(option);
 
@@ -1024,18 +1002,7 @@ GUIOptionsMenu::GUIOptionsMenu()
   option->setFont(MainMenu::getFont());
   option->setLabel("Radar Shot Size:");
   option->setCallback(callback, (void*)"s");
-  options = &option->getList();
-  options->push_back(std::string("[O----------]"));
-  options->push_back(std::string("[-O---------]"));
-  options->push_back(std::string("[--O--------]"));
-  options->push_back(std::string("[---O-------]"));
-  options->push_back(std::string("[----O------]"));
-  options->push_back(std::string("[-----O-----]"));
-  options->push_back(std::string("[------O----]"));
-  options->push_back(std::string("[-------O---]"));
-  options->push_back(std::string("[--------O--]"));
-  options->push_back(std::string("[---------O-]"));
-  options->push_back(std::string("[----------O]"));
+  option->createSlider(11);
   option->update();
   list.push_back(option);
 
@@ -1044,18 +1011,7 @@ GUIOptionsMenu::GUIOptionsMenu()
   option->setFont(MainMenu::getFont());
   option->setLabel("Radar & Panel Size:");
   option->setCallback(callback, (void*)"R");
-  options = &option->getList();
-  options->push_back(std::string("[O----------]"));
-  options->push_back(std::string("[-O---------]"));
-  options->push_back(std::string("[--O--------]"));
-  options->push_back(std::string("[---O-------]"));
-  options->push_back(std::string("[----O------]"));
-  options->push_back(std::string("[-----O-----]"));
-  options->push_back(std::string("[------O----]"));
-  options->push_back(std::string("[-------O---]"));
-  options->push_back(std::string("[--------O--]"));
-  options->push_back(std::string("[---------O-]"));
-  options->push_back(std::string("[----------O]"));
+  option->createSlider(11);
   option->update();
   list.push_back(option);
 
@@ -1064,18 +1020,7 @@ GUIOptionsMenu::GUIOptionsMenu()
   option->setFont(MainMenu::getFont());
   option->setLabel("Mouse Box Size:");
   option->setCallback(callback, (void*)"M");
-  options = &option->getList();
-  options->push_back(std::string("[O----------]"));
-  options->push_back(std::string("[-O---------]"));
-  options->push_back(std::string("[--O--------]"));
-  options->push_back(std::string("[---O-------]"));
-  options->push_back(std::string("[----O------]"));
-  options->push_back(std::string("[-----O-----]"));
-  options->push_back(std::string("[------O----]"));
-  options->push_back(std::string("[-------O---]"));
-  options->push_back(std::string("[--------O--]"));
-  options->push_back(std::string("[---------O-]"));
-  options->push_back(std::string("[----------O]"));
+  option->createSlider(11);
   option->update();
   list.push_back(option);
 
@@ -1572,25 +1517,11 @@ OptionsMenu::OptionsMenu() : formatMenu(NULL), keyboardMapMenu(NULL),
   option->setFont(MainMenu::getFont());
   option->setLabel("Brightness:");
   option->setCallback(callback, (void*)"g");
-  options = &option->getList();
   if (window->hasGammaControl()) {
-    options->push_back(std::string("[O--------------]"));
-    options->push_back(std::string("[-O-------------]"));
-    options->push_back(std::string("[--O------------]"));
-    options->push_back(std::string("[---O-----------]"));
-    options->push_back(std::string("[----O----------]"));
-    options->push_back(std::string("[-----O---------]"));
-    options->push_back(std::string("[------O--------]"));
-    options->push_back(std::string("[-------O-------]"));
-    options->push_back(std::string("[--------O------]"));
-    options->push_back(std::string("[---------O-----]"));
-    options->push_back(std::string("[----------O----]"));
-    options->push_back(std::string("[-----------O---]"));
-    options->push_back(std::string("[------------O--]"));
-    options->push_back(std::string("[-------------O-]"));
-    options->push_back(std::string("[--------------O]"));
+    option->createSlider(15);
   }
   else {
+    options = &option->getList();
     options->push_back(std::string("Unavailable"));
   }
   option->update();
