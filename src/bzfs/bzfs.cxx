@@ -5023,23 +5023,17 @@ int main(int argc, char **argv)
     if (waitTime > 0.25f)
       waitTime = 0.15f;
 
-    // wait for communication or for a flag to hit the ground
 
     // we have no pending packets
     nfound = 0;
 
-    do {
-	float localWaitTime = 0.004f;
-	struct timeval timeout;
-	timeout.tv_sec = long(floorf(localWaitTime));
-	timeout.tv_usec = long(1.0e+6f * (localWaitTime - floorf(localWaitTime)));
-	nfound = select(maxFileDescriptor+1, (fd_set*)&read_set, (fd_set*)&write_set, 0, &timeout);
-	//if (nfound)
-	//  fprintf(stderr, "nfound,read,write %i,%08lx,%08lx\n", nfound, read_set, write_set);
-	waitTime = waitTime - localWaitTime;
-
-    } while (waitTime > 0.0f);
-
+    // wait for communication or for a flag to hit the ground
+    struct timeval timeout;
+    timeout.tv_sec = long(floorf(waitTime));
+    timeout.tv_usec = long(1.0e+6f * (waitTime - floorf(waitTime)));
+    nfound = select(maxFileDescriptor+1, (fd_set*)&read_set, (fd_set*)&write_set, 0, &timeout);
+    //if (nfound)
+    //  fprintf(stderr, "nfound,read,write %i,%08lx,%08lx\n", nfound, read_set, write_set);
     waitTime = 0.05f;
 
     tm = TimeKeeper::getCurrent();
