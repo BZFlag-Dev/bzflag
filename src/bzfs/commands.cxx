@@ -652,9 +652,10 @@ void handleLagstatsCmd(GameKeeper::Player *playerData, const char *)
     sendMessage(ServerPlayer, t, "You do not have permission to run the lagstats command");
     return;
   }
-  GameKeeper::Player *sortedPlayer[curMaxPlayers];
-  int j = 0;
-  for (int i = 0; i < curMaxPlayers; i++) {
+  // yeah, ok this is ugly but it works - curMaxPlayers is never >255
+  GameKeeper::Player *sortedPlayer[256];
+  int i = 0, j = 0;
+  for (i = 0; i < curMaxPlayers; i++) {
     GameKeeper::Player *p = GameKeeper::Player::getPlayerByIndex(i);
     if (p != NULL) {
       sortedPlayer[j++] = p;
@@ -663,7 +664,7 @@ void handleLagstatsCmd(GameKeeper::Player *playerData, const char *)
   qsort(sortedPlayer, j, sizeof(GameKeeper::Player *), lagCompare);
 
   char reply[MessageLen];
-  for (int i = 0; i < j; i++) {
+  for (i = 0; i < j; i++) {
     GameKeeper::Player *p = sortedPlayer[i];
     p->lagInfo.getLagStats(reply);
     if (strlen(reply)) {
