@@ -25,6 +25,8 @@
 #include <iostream>
 #include <math.h>
 
+#include <TimeKeeper.h> // only for debugEval()
+
 const std::string StateDatabase::BZDB_ANGLETOLERANCE    = std::string("_angleTolerance");
 const std::string StateDatabase::BZDB_ANGULARAD         = std::string("_angularAd");
 const std::string StateDatabase::BZDB_BOXHEIGHT         = std::string("_boxHeight");
@@ -247,7 +249,7 @@ void	debugEvals(const std::string &name)
 {
   /* This bit of nastyness help debug BDZB->eval accesses sorted from worst to best*/
   static std::map<std::string,int> cnts;
-  static long last = GetTickCount();
+  static TimeKeeper last = TimeKeeper::getCurrent();
 
   std::map<std::string,int>::iterator it = cnts.find(name);
   if (it == cnts.end())
@@ -255,8 +257,8 @@ void	debugEvals(const std::string &name)
   else
     it->second++;
 
-  long now = GetTickCount();
-  if (now - last > 20 * 1000) {
+  TimeKeeper now = TimeKeeper::getCurrent();
+  if (now - last > 20.0f) {
     std::map<int,std::string> order;
     for (it = cnts.begin(); it != cnts.end(); it++) {
       order[-it->second] = it->first;
