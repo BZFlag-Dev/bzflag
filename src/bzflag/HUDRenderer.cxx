@@ -219,7 +219,7 @@ void			HUDRenderer::setMinorFontSize(int, int height)
   minorFontFace = fm.getFaceID(BZDB.get("consoleFont"));
   minorFontSize = s;
 
-	if (minorFontSize > 8)
+	if (minorFontSize < 8)
 		minorFontSize = 8;
   scoreLabelWidth = fm.getStrLength(minorFontFace, minorFontSize, scoreSpacingLabel);
   killsLabelWidth = fm.getStrLength(minorFontFace, minorFontSize, killLabel);
