@@ -347,7 +347,8 @@ bool chasePlayer( float &rotation, float &speed)
     Ray tankRay(pos, dir);
   
     building = ShotStrategy::getFirstBuilding(tankRay, -0.5f, d);
-    if (building && myTank->getFlag() != Flags::OscillationOverthruster) {
+    if (building && (myTank->getFlag() != Flags::OscillationOverthruster ||
+		 		(myTank->getFlag() == Flags::PhantomZone && !myTank->isFlagActive()))) {
       //If roger can drive around it, just do that
       
       float leftDistance = TargetingUtils::getOpenDistance( pos, myAzimuth + (M_PI/6.0f));
@@ -597,7 +598,8 @@ bool fireAtTank()
 	    myTank->validTeamTarget(player[t])) {
 
 	  if ((player[t]->getFlag() == Flags::PhantomZone) 
-	  &&  (player[t]->isFlagActive()))
+	  &&  (player[t]->isFlagActive()) && (myTank->getFlag() == Flags::PhantomZone &&
+   			 !myTank->isFlagActive()) || (myTank->getFlag() != Flags::PhantomZone))
 	    continue;
 
 	  const float *tp = player[t]->getPosition();
