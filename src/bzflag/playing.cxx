@@ -4278,8 +4278,8 @@ void			startPlaying(BzfDisplay* _display,
 	  char xs, ys;
 	  count = sscanf(resources->getValue("geometry"),
 			"%dx%d%c%d%c%d", &w, &h, &xs, &x, &ys, &y);
-	  if (w < 640) w = 640;
-	  if (h < 400) h = 400;
+	  if (w < 256) w = 256;
+	  if (h < 192) h = 192;
 	  if (count == 6) {
 	    if (xs == '-') x = display->getWidth() - x - w;
 	    if (ys == '-') y = display->getHeight() - y - h;

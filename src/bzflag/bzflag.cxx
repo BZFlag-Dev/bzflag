@@ -963,8 +963,8 @@ int			main(int argc, char** argv)
     }
     /*else*/ {
       setSize = True;
-      if (w < 640) w = 640;
-      if (h < 400) h = 400;
+      if (w < 256) w = 256;
+      if (h < 192) h = 292;
       if (count == 6) {
 	if (xs == '-') x = display->getWidth() - x - w;
 	if (ys == '-') y = display->getHeight() - y - h;
@@ -1016,7 +1016,7 @@ int			main(int argc, char** argv)
 
   // set main window's minimum size (arbitrary but should be big enough
   // to see stuff in control panel)
-  mainWindow.setMinSize(640, 120, 360);
+  mainWindow.setMinSize(256, 64, 128);
 
   // initialize graphics state
   mainWindow.getWindow()->makeCurrent();

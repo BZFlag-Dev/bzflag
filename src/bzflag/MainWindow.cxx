@@ -137,9 +137,9 @@ void			MainWindow::setNoMouseGrab()
 void			MainWindow::setQuadrant(Quadrant _quadrant)
 {
   int inWidth = trueWidth;
-  if (inWidth < 600) inWidth = 600;
+  if (inWidth < 256) inWidth = 256;
   int inHeight = trueHeight;
-  if (inHeight < 400) inHeight = 400;
+  if (inHeight < 192) inHeight = 192;
 
   quadrant = _quadrant;
   int height, minPanelHeight2 = minPanelHeight >> 1;
