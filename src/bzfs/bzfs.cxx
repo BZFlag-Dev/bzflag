@@ -1023,11 +1023,7 @@ static bool serverStart()
   }
 
     // increase send/rcv buffer size
-#if defined(_WIN32)
-  n = setsockopt(udpSocket,SOL_SOCKET,SO_SNDBUF,(const char *)&udpBufSize,sizeof(int));
-#else
-  n = setsockopt(udpSocket,SOL_SOCKET,SO_SNDBUF,(const void *)&udpBufSize,sizeof(int));
-#endif
+  n = setsockopt(udpSocket,SOL_SOCKET,SO_SNDBUF,(SSOType)&udpBufSize,sizeof(int));
   if (n < 0) {
       nerror("couldn't increase udp send buffer size");
       close(wksSocket);
@@ -1035,11 +1031,7 @@ static bool serverStart()
       return false;
   }
 
-#if defined(_WIN32)
-  n = setsockopt(udpSocket,SOL_SOCKET,SO_RCVBUF,(const char *)&udpBufSize,sizeof(int));
-#else
-  n = setsockopt(udpSocket,SOL_SOCKET,SO_RCVBUF,(const void *)&udpBufSize,sizeof(int));
-#endif
+  n = setsockopt(udpSocket,SOL_SOCKET,SO_RCVBUF,(SSOType)&udpBufSize,sizeof(int));
   if (n < 0) {
       nerror("couldn't increase udp receive buffer size");
       close(wksSocket);
@@ -1277,11 +1269,7 @@ static bool readWorldStream(std::istream& input, const char *location, std::vect
 static WorldInfo *defineWorldFromFile(const char *filename)
 {
   // open file
-#ifdef _WIN32
-  std::ifstream input(filename, std::ios::in);//|ios::nocreate);
-#else
   std::ifstream input(filename, std::ios::in);
-#endif
 
   if (!input) {
     std::cout << "could not find bzflag world file : " << filename << std::endl;
@@ -2007,13 +1995,8 @@ static void acceptClient()
 
   int keepalive = 1;
   int n;
-#if defined(_WIN32)
   n = setsockopt(fd, SOL_SOCKET, SO_KEEPALIVE,
-		 (const char *)&keepalive, sizeof(int));
-#else
-  n = setsockopt(fd, SOL_SOCKET, SO_KEEPALIVE,
-		 (const void *)&keepalive, sizeof(int));
-#endif
+		 (SSOType)&keepalive, sizeof(int));
   if (n < 0) {
       nerror("couldn't set keepalive");
   }
@@ -4509,11 +4492,9 @@ int main(int argc, char **argv)
     bzSignal(SIGINT, SIG_PF(terminateServer));
   // ditto
   bzSignal(SIGTERM, SIG_PF(terminateServer));
-// no SIGPIPE in Windows
-#if !defined(_WIN32)
+
   // don't die on broken pipe
   bzSignal(SIGPIPE, SIG_IGN);
-#endif
 
   // initialize
 #if defined(_WIN32)
@@ -4535,6 +4516,7 @@ int main(int argc, char **argv)
     }
   }
 #endif /* defined(_WIN32) */
+
   bzfsrand(time(0));
 
   Flags::init();
@@ -4660,12 +4642,20 @@ int main(int argc, char **argv)
   pingReply.maxTeamScore = clOptions->maxTeamScore;
 
   // start listening and prepare world database
-  if (!defineWorld() || !serverStart()) {
+  if (!defineWorld()) {
 #if defined(_WIN32)
     WSACleanup();
 #endif /* defined(_WIN32) */
-    std::cerr << "Something failed\n";
+    std::cerr << "ERROR: A world was not specified" << std::endl;
     return 1;
+  }
+
+  if (!serverStart()) {
+#if defined(_WIN32)
+    WSACleanup();
+#endif /* defined(_WIN32) */
+    std::cerr << "ERROR: Unable to start the server" << std::endl;
+    return 2;
   }
 
   TimeKeeper lastSuperFlagInsertion = TimeKeeper::getCurrent();
