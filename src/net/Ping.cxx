@@ -12,6 +12,9 @@
 // todo make this turn off for .net
 #if defined(_WIN32)
 	#pragma warning(disable: 4786)
+#include <winsock2.h>
+#include <ws2tcpip.h>
+
 #endif
 
 

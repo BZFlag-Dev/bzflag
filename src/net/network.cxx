@@ -12,6 +12,9 @@
 
 #if defined(_WIN32)
 	#pragma warning(disable: 4786)
+#include <winsock2.h>
+#include <ws2tcpip.h>
+
 #endif
 
 #if !defined(WIN32)
