@@ -1,4 +1,11 @@
+//
 // modeltool.cpp : Defines the entry point for the console application.
+//
+//
+// If you're doing a command line compilation, and
+// the Makefile is broken, then this may do the job:
+//
+//   g++ -o modeltool modeltool.cxx  -I../../include ../../src/common/libCommon.a
 //
 
 #include "common.h"
@@ -152,7 +159,7 @@ void readMTL ( CModel &model, std::string file )
 
 	fclose(fp);
 
-	std::string lineTerminator = "\r";
+	std::string lineTerminator = "\n";
 
 	char *p = strchr(pData,13);
 	if (p)
@@ -160,13 +167,11 @@ void readMTL ( CModel &model, std::string file )
 		if ( *(p+1) == 10)  // windows file
 			lineTerminator = "\r\n";
 	}
-	else
-		return;	// has to have more then one 
 
 	std::string fileText = pData;
 	free(pData);
 
-	std::vector<std::string> lines = TextUtils::tokenize(fileText,lineTerminator);
+	std::vector<std::string> lines = TextUtils::tokenize(fileText, lineTerminator);
 
 	if ( lines.size() < 2 )
 		return;
@@ -246,8 +251,10 @@ void readOBJ ( CModel &model, std::string file )
 	model.clear();
 
 	FILE *fp = fopen(file.c_str(),"rb");
-	if (!fp)
+	if (!fp) {
+	  printf ("Could not open %s\n", file.c_str());
 		return;
+	}
 
 	fseek(fp,0,SEEK_END);
 	int size = ftell(fp);
@@ -272,7 +279,7 @@ void readOBJ ( CModel &model, std::string file )
 		baseFilePath.erase(baseFilePath.begin()+(p-file.c_str()+1),baseFilePath.end());
 	}
 	
-	std::string lineTerminator = "\r";
+	std::string lineTerminator = "\n";
 
 	p = strchr(pData,13);
 	if (p)
@@ -280,8 +287,6 @@ void readOBJ ( CModel &model, std::string file )
 		if ( *(p+1) == 10)  // windows file
 			lineTerminator = "\r\n";
 	}
-	else
-		return;	// has to have more then one 
 
 	std::string fileText = pData;
 	free(pData);
@@ -416,16 +421,16 @@ void writeBZW  ( CModel &model, std::string file )
 	while ( materialItr != model.materials.end() )
 	{
 		CMaterial &material = materialItr->second;
-		fprintf (fp,"material\nname %s\n",materialItr->first.c_str());
+		fprintf (fp,"material\n  name %s\n",materialItr->first.c_str());
 		if ( material.texture.size())
-			fprintf (fp,"texture %s\n", material.texture.c_str());
+			fprintf (fp,"  texture %s\n", material.texture.c_str());
 		else
-			fprintf (fp,"notextures\n");
+			fprintf (fp,"  notextures\n");
 
-		fprintf (fp,"ambient %f %f %f %f\n", material.ambient[0], material.ambient[1], material.ambient[2], material.ambient[3]);
-		fprintf (fp,"diffuse %f %f %f %f\n", material.diffuse[0], material.diffuse[1], material.diffuse[2], material.diffuse[3]);
-		fprintf (fp,"specular %f %f %f %f\n", material.specular[0], material.specular[1], material.specular[2], material.specular[3]);
-		fprintf (fp,"shininess %f\n", material.shine);
+		fprintf (fp,"  ambient %f %f %f %f\n", material.ambient[0], material.ambient[1], material.ambient[2], material.ambient[3]);
+		fprintf (fp,"  diffuse %f %f %f %f\n", material.diffuse[0], material.diffuse[1], material.diffuse[2], material.diffuse[3]);
+		fprintf (fp,"  specular %f %f %f %f\n", material.specular[0], material.specular[1], material.specular[2], material.specular[3]);
+		fprintf (fp,"  shininess %f\n", material.shine);
 		fprintf (fp,"end\n\n");
 
 		materialItr++;
@@ -442,63 +447,64 @@ void writeBZW  ( CModel &model, std::string file )
 
 		fprintf (fp,"mesh # %s\n", mesh.name.c_str());
 		if (mesh.material.size())
-			fprintf (fp,"matref %s\n", mesh.material.c_str());
+			fprintf (fp,"  matref %s\n", mesh.material.c_str());
 
 		fprintf (fp,"# vertices: %d\n", (int)mesh.verts.size());
 		fprintf (fp,"# normals: %d\n", (int)mesh.normals.size());
 		fprintf (fp,"# texcoords: %d\n", (int)mesh.texCoords.size());
 		fprintf (fp,"# faces: %d\n\n", (int) mesh.faces.size());
 
+		if (useSmothBounce)
+			fprintf (fp,"  smoothbounce\n");
+			
 		tvVertList::iterator vertItr = mesh.verts.begin();
 		while ( vertItr != mesh.verts.end() )
 		{
-			fprintf (fp,"vertex %f %f %f\n", vertItr->x,vertItr->y,vertItr->z);
+			fprintf (fp,"  vertex %f %f %f\n", vertItr->x,vertItr->y,vertItr->z);
 			vertItr++;
 		}
 
 		vertItr = mesh.normals.begin();
 		while ( vertItr != mesh.normals.end() )
 		{
-			fprintf (fp,"normal %f %f %f\n", vertItr->x,vertItr->y,vertItr->z);
+			fprintf (fp,"  normal %f %f %f\n", vertItr->x,vertItr->y,vertItr->z);
 			vertItr++;
 		}
 
 		tvTexCoordList::iterator uvItr = mesh.texCoords.begin();
 		while ( uvItr != mesh.texCoords.end() )
 		{
-			fprintf (fp,"texcoord %f %f\n", uvItr->u,uvItr->v);
+			fprintf (fp,"  texcoord %f %f\n", uvItr->u,uvItr->v);
 			uvItr++;
 		}
 
-		if (useSmothBounce)
-			fprintf (fp,"smoothbounce\n");
 
 		tvFaceList::iterator	faceItr = mesh.faces.begin();
 		while ( faceItr != mesh.faces.end() )
 		{
 			CFace	&face = *faceItr;
 
-			fprintf (fp,"face\n");
+			fprintf (fp,"  face\n");
 			
 			tvIndexList::iterator	indexItr = face.verts.begin();
-			fprintf (fp,"vertices");
+			fprintf (fp,"    vertices");
 			while ( indexItr != face.verts.end() )
 				fprintf(fp," %d",*indexItr++);
 			fprintf (fp,"\n");
 
 			indexItr = face.normals.begin();
-			fprintf (fp,"normals");
+			fprintf (fp,"    normals");
 			while ( indexItr != face.normals.end() )
 				fprintf(fp," %d",*indexItr++);
 			fprintf (fp,"\n");
 
 			indexItr = face.texCoords.begin();
-			fprintf (fp,"texcoords");
+			fprintf (fp,"    texcoords");
 			while ( indexItr != face.texCoords.end() )
 				fprintf(fp," %d",*indexItr++);
 			fprintf (fp,"\n");
 
-			fprintf (fp,"endface\n");
+			fprintf (fp,"  endface\n");
 
 			faceItr++;
 		}
@@ -512,7 +518,7 @@ void writeBZW  ( CModel &model, std::string file )
 int  dumpUsage ( char *exeName, const char* reason )
 {
 	printf("error: %s\n",reason);
-	printf("usage: %s <input_file_name> -flipYZ -smoothBounce n", exeName);
+	printf("usage: %s <input_file_name> -flipYZ -smoothBounce\n", exeName);
 	return 1;
 }
 
@@ -544,7 +550,7 @@ int main(int argc, char* argv[])
 		output = input + ".bzw";
 	else
 	{
-		*p = NULL;
+		*p = '\0'; // clip the old extension
 		output = argv[1] + std::string(".bzw");
 	}
 
@@ -565,17 +571,21 @@ int main(int argc, char* argv[])
 	CModel	model;
 
 	if ( TextUtils::tolower(extenstion) == "obj" )
+	{
 		readOBJ(model,input);
+	}
 	else
 	{
 		printf("unknown input format\n");
 		return 2;
 	}
 
-	if (model.meshes.size() > 0)
+	if (model.meshes.size() > 0) {
 		writeBZW(model,output);
-
-	printf("%s file %s converted to BZW at %s\n", extenstion.c_str(),input.c_str(),output.c_str());
+		printf("%s file %s converted to BZW as %s\n", extenstion.c_str(),input.c_str(),output.c_str());
+	} else {
+		printf("no valid meshes written from %s\n", input.c_str());
+	}
 
 	return 0;
 }
