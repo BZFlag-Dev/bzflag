@@ -585,7 +585,7 @@ void			SceneRenderer::getGroundUV(const float p[2],
 
 void			SceneRenderer::enableLight(int index, bool on)
 {
-  lights[index]->enableLight(index + reservedLights, on);
+  OpenGLLight::enableLight(index + reservedLights, on);
 }
 
 void			SceneRenderer::enableSun(bool on)
@@ -863,7 +863,7 @@ void			SceneRenderer::render(
     if (useLighting()) {
       // now turn on the remaining lights
       for (i = 0; i < numLights; i++)
-	lights[i]->enableLight(i + reservedLights);
+	OpenGLLight::enableLight(i + reservedLights);
     }
 
     frustum.executeProjection();
@@ -897,7 +897,7 @@ void			SceneRenderer::render(
     if (useLighting()) {
       theSun.enableLight(SunLight, false);
       for (i = 0; i < numLights; i++)
-	lights[i]->enableLight(i + reservedLights, false);
+	OpenGLLight::enableLight(i + reservedLights, false);
     }
 
     if (useZBuffer()) glDisable(GL_DEPTH_TEST);
