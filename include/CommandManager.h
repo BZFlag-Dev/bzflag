@@ -10,15 +10,17 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifndef BZF_COMMAND_MANAGER_H
-#define BZF_COMMAND_MANAGER_H
+#ifndef __COMMANDMANAGER_H__
+#define __COMMANDMANAGER_H__
 
-// system includes
+#include "common.h"
+
+/* system interface headers */
 #include <string>
 #include <map>
 #include <vector>
 
-// bzflag interface includes
+/* common interface headers */
 #include "common.h"
 #include "Singleton.h"
 
@@ -75,13 +77,13 @@ private:
   Commands			commands;
 };
 
-#endif
+
+#endif /* __COMMANDMANAGER_H__ */
 
 // Local Variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-
