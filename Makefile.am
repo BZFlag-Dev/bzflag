@@ -1,4 +1,4 @@
-SUBDIRS = data include man package src
+SUBDIRS = data include man package src doc
 DIST_SUBDIRS = data debian include misc man package win32 src doc
 
 package: FORCE
