@@ -83,17 +83,7 @@ BackgroundRenderer::BackgroundRenderer(const SceneRenderer&) :
   // initialize global to class stuff
   if (!init) {
     init = true;
-
-    // sky pyramid must fit inside far clipping plane
-    const GLfloat skySize = 1.3f * BZDB->eval(StateDatabase::BZDB_WORLDSIZE);
-    for (i = 0; i < 4; i++) {
-      skyPyramid[i][0] = skySize * squareShape[i][0];
-      skyPyramid[i][1] = skySize * squareShape[i][1];
-      skyPyramid[i][2] = 0.0f;
-    }
-    skyPyramid[4][0] = 0.0f;
-    skyPyramid[4][1] = 0.0f;
-    skyPyramid[4][2] = skySize;
+    resizeSky();
   }
 
   // ground
@@ -514,6 +504,21 @@ void			BackgroundRenderer::render(SceneRenderer& renderer)
     }
   }
 }
+
+
+void BackgroundRenderer::resizeSky() {
+  // sky pyramid must fit inside far clipping plane
+  const GLfloat skySize = 1.3f * BZDB->eval(StateDatabase::BZDB_WORLDSIZE);
+  for (int i = 0; i < 4; i++) {
+    skyPyramid[i][0] = skySize * squareShape[i][0];
+    skyPyramid[i][1] = skySize * squareShape[i][1];
+    skyPyramid[i][2] = 0.0f;
+  }
+  skyPyramid[4][0] = 0.0f;
+  skyPyramid[4][1] = 0.0f;
+  skyPyramid[4][2] = skySize;
+}
+
 
 void			BackgroundRenderer::drawSky(SceneRenderer& renderer)
 {
