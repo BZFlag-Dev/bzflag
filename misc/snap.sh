@@ -62,11 +62,11 @@ echo "Running autogen.sh"
 [ -f autogen.sh ] && sh autogen.sh || exit 4
 
 if [ -f misc/doxyfile ] ; then
-    echo "Updating Doxygen docs"
-    ln -s $HOME/bzflag/htdocs/doxygen doc/doxygen/html
-    rm -f doc/doxygen/html/*
-    doxygen misc/doxyfile
-    rm doc/doxygen/html
+  echo "Updating Doxygen docs"
+  ln -s $HOME/bzflag/htdocs/doxygen doc/doxygen/html
+  rm -f doc/doxygen/html/*
+  doxygen misc/doxyfile
+  rm doc/doxygen/html
 fi
 
 cd ..
@@ -80,14 +80,14 @@ rm -f "$cvsweb/$project-*.patch"
 echo "Generating source tarball and patch"
 stamp=`date +"%Y-%m-%d"`
 if [ -d $project ] ; then
-    echo "tar zcvf \"$cvsweb/$project-$stamp.tar.gz\" $project"
-    tar zcvf "$cvsweb/$project-$stamp.tar.gz" $project
-    [ -d $project.old ] && diff --ignore CVS -duPNr $project.old $project > "$cvsweb/$project-$stamp.patch"
-    [ -d $project.old ] && rm -rf $project.old
-    mv $project $project.old
+  echo "tar zcvf \"$cvsweb/$project-$stamp.tar.gz\" $project"
+  tar zcvf "$cvsweb/$project-$stamp.tar.gz" $project
+  [ -d $project.old ] && diff --ignore CVS -duPNr $project.old $project > "$cvsweb/$project-$stamp.patch"
+  [ -d $project.old ] && rm -rf $project.old
+  mv $project $project.old
 else
-    echo "ERROR: No checkout to make a snapshot off of"
-    exit 6
+  echo "ERROR: No checkout to make a snapshot off of"
+  exit 6
 fi
 
 echo "Linking to the latest"
