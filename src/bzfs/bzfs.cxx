@@ -3679,6 +3679,7 @@ static void addClient(int acceptSocket)
       break;
   }
   // close the old connection FIXME hope it's the right one
+  DEBUG2("addClient: close(%d)\n", player[playerIndex].fd);
   close(player[playerIndex].fd);
   // accept game connection
   AddrLen addr_len = sizeof(player[playerIndex].taddr);
@@ -3733,6 +3734,7 @@ static void addClient(int acceptSocket)
 static void shutdownAcceptClient(int playerIndex)
 {
   // close socket that client initially contacted us on
+  DEBUG2("shutdownAcceptClient: close(%d)\n", player[playerIndex].fd);
   close(player[playerIndex].fd);
   player[playerIndex].fd = NotConnected;
   player[playerIndex].state = PlayerNoExist;
@@ -4183,7 +4185,8 @@ static void removePlayer(int playerIndex)
     return;
 
   // status message
-  DEBUG1("Player %s [%d] is removed\n",player[playerIndex].callSign,playerIndex);
+  DEBUG1("Player %s [%d] on %d is removed\n",
+      player[playerIndex].callSign, player[playerIndex].fd, playerIndex);
 
   // shutdown TCP socket
   shutdown(player[playerIndex].fd, 2);
