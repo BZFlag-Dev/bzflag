@@ -6,9 +6,6 @@
 # The second and third parts are optional, but if you want to specify a dialect, you need to specify the country
 # so, <language>_[<country>[_<dialect>]]
 
-# If you don't know a translation for a phrase, just comment out the msgid and msgstr for that entry
-# Use the pound # character to comment a line out
-
 # Language codes can be found at
 #  http://ftp.ics.uci.edu/pub/ietf/http/related/iso639.txt
 # Country codes can be found at 
@@ -17,12 +14,16 @@
 # name your resultant file: bzflag_<locale>.po
 
 # When run, pick a locale like bzflag -locale en_US_l33t
+# Your locale will be saved in the bzc file, so you can modify it there as well
 
 # locale files are cummulative. That is, if you specify a locale that contains a country and dialect, 
 # the base language file is first loaded, and any strings found in the country file replace the base ones, and then
 # strings found in the dialect file replace the country one. So if you have two or three language files based
 # on one language, you only need to put the changes in the country and dialect one. The two (or three) files are merged
 # at runtime.
+
+# If you don't know a translation for a phrase, just comment out the msgid and msgstr for that entry
+# Use the pound # character to comment a line out
 
 msgid "Join Game"
 msgstr ""
@@ -445,6 +446,27 @@ msgid "Sealed"
 msgstr ""
 
 msgid "Zoned"
+msgstr ""
+
+msgid "Servers found: {1}"
+msgstr ""
+
+msgid "{1} Shot{2}"
+msgstr ""
+
+msgid "{1} sec{2} To Drop Bad Flag"
+msgstr ""
+
+msgid "{1} Win{2} Drops Bad Flag"
+msgstr ""
+
+msgid "Time limit: {1}"
+msgstr ""
+
+msgid "Max team score: {1}"
+msgstr ""
+
+msgid "Max player score: {1}"
 msgstr ""
 
 # Super Flags
