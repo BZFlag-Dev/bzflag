@@ -4657,7 +4657,7 @@ static void markOld(std::string &fileName)
 #endif
 }
 
-static int negotiateFlags(ServerLink* serverLink)
+static bool negotiateFlags(ServerLink* serverLink)
 {
   uint16_t code, len;
   char msg[MaxPacketLen];
@@ -4672,9 +4672,43 @@ static int negotiateFlags(ServerLink* serverLink)
   }
   serverLink->send( MsgNegotiateFlags, buf - msg, msg );
 
-  if (serverLink->read(code, len, msg, 5000) <= 0) return MsgNull;
+  /* Response should always be a MsgNegotiateFlags. If not, assume the server
+   * is too old or new to understand our flag system.
+   */
+  if (serverLink->read(code, len, msg, 5000)<=0 || code != MsgNegotiateFlags) { 
+    printError("Unsupported response from server during flag negotiation");
+    return false;
+  }
 
-  return MsgNegotiateFlags;
+  /* The response contains a list of flags we're missing. If it's empty,
+   * we're good to go. Otherwise, try to give a good error messages.
+   */
+  if (len > 0) {
+    int i;
+    int numFlags = len/2;
+    std::string flags;
+    buf = msg;
+
+    for (i=0; i<numFlags; i++) {
+      /* We can't use FlagDesc::unpack() here, since it counts on the
+       * flags existing in our flag database.
+       */
+      if (i)
+	flags += ", ";
+      flags += buf[0];
+      if (buf[1])
+	flags += buf[1];
+      buf += 2;
+    }
+
+    std::vector<std::string> args;
+    args.push_back(flags);
+    printError("Flags not supported by this client: {1}", &args);
+
+    return false;
+  }
+
+  return true;
 }
 
 //
@@ -5067,19 +5101,9 @@ static bool		joinGame(const StartupInfo* info,
   // set tank textures
   Player::setTexture(*tankTexture);
 
-  int code = negotiateFlags(serverLink);
-  switch (code) {
-    case MsgSuperKill:
-	printError("Your tank is not capable of carrying flags found in this world");
-	leaveGame();
-	return false;
-    break;
-    case MsgNull:
-        printError("Communication error joining game [No immediate respose].");
-        leaveGame();
-	return false;
-    break;
-
+  if (!negotiateFlags(serverLink)) {
+    leaveGame();
+    return false;
   }
 
   // create world
