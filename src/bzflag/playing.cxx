@@ -773,6 +773,8 @@ static void		doKeyPlaying(const BzfKeyEvent& key, bool pressed)
     if (isspace(hud->getComposeString()[hud->getComposeString().size() - 1]))
       return;
     std::vector<std::string> tokens = string_util::tokenize(hud->getComposeString(), " ");
+    if (tokens.size() < 1)
+      return;
     std::string name = tokens.at(tokens.size() - 1); //the last token is the seed
     int c;
     bool found = false;
