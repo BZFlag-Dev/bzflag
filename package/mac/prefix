@@ -5,7 +5,7 @@
   version number: aabbccddd, aa=major, bb=minor, cc=revision, ddd=build.
   increase build number for every potentially released build.
 */
-#define VERSION 10704002
+#define VERSION 10900000
 
 #define ALPHA_RELEASE
 

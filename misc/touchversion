@@ -31,9 +31,9 @@ for file in \
 done
 
 # dsp and vcproj
+# vcproj's are gone?
 for file in \
 	$root/win32/*.dsp \
-	$root/win32/*.vcproj \
 	$root/src/platform/MacBZFlag-prefix.h \
 	$root/src/platform/MacOSX/MacBZFlag-prefix.h \
 	; do
