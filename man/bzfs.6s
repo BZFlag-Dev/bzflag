@@ -15,6 +15,9 @@ bzfs \- BZFlag game server
 [\fB\+f \fR{\fIgood\fR|\fIflag-id\fR}[\fI{count}\fR]]
 [\fB\-f \fR{\fIbad\fR|\fIflag-id\fR}]
 [\fB\-fb\fR]
+[\fB\-filterCallsigns\fR]
+[\fB\-filterChat\fR]
+[\fB\-filterSimple\fR]
 [\fB\-g\fR]
 [\fB\-groupdb \fIfile\fR]
 [\fB\-h\fR]
@@ -85,8 +88,8 @@ Define a message which will be broadcast to all players every 15 minutes.
 When \fB-c\fR is supplied, this option randomly rotates the buildings.
 .TP
 \fB\-badwords \fIbadwordfile\fR
-Specify a file that contains bad words that when used in messages get
-replaced with *'s.
+Specify a file that contains bad words that will be used when either
+\fB-filterCallsigns\fR or \fB-filterChat\fR is enabled.
 .TP
 .B -ban \fIaddress\fR[,...]
 Prohibits connections from the listed addresses. Trailing 255 bytes are
@@ -119,6 +122,20 @@ to specifying \fB-f\fR once for each kind of bad flag.
 .TP
 .B -fb
 Allow flags on box buildings.
+.TP
+.B -filterCallsigns
+Turn on the filtering of callsigns.  Callsigns are compared against bad
+words provided via \fB-badwords\fR.
+.TP
+.B -filterChat
+Turn on the filtering of chat messages.  Messages have words provided via
+a \fB-badwords\fR file are replaced with !@#$%^&* characters.
+.TP
+.B -filterSimple
+By default, all filtering is aggressive, matching much more than what is
+strictly listed in a \fB-badwords\fR file for convenience.  Providing
+this option will make the \fB-filterCallsigns\fR and \fB-filterChat\fR
+comparisons exact match only.
 .TP
 .B -g
 Quit after serving one game.
