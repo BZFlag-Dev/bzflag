@@ -17,10 +17,6 @@ recent bugs
 - menu does not display modified values after quitting and returning, although
   the bindings appear to remain in effect.
 
-- issuing a /set command in bzadmin with no arguments does not provide a list
-  of settable variables. This is because /set is a local command that lists
-  the variables in the local BZDB, and bzadmin does not have a BZDB.
-
 - thief sound is too dang loud.  the players are all gonna go deaf if someone
   doesn't tone that puppy down a bit.
 
