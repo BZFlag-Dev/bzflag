@@ -225,6 +225,16 @@ BzfRegion*		BzfRegion::orphanSplitRegion(const float e1[2],
 	(etsplit[0] >= 1.0 && etsplit[1] >= 1.0))
     return 0;
 
+  // corner is t the left of cutting edge -- new region between edge 1 and 0
+  if (!fistCornerRight) {
+    int i = edge[0];
+    edge[0] = edge[1];
+    edge[1] = i;
+    float tsplitTemp = tsplit[0];
+    tsplit[0] = tsplit[1];
+    tsplit[1] = tsplitTemp;
+  }
+
   // make new corners and region
   p1 = corners[edge[1]].get();
   const float* p2 = corners[(edge[1]+1) % count].get();
@@ -240,15 +250,19 @@ BzfRegion*		BzfRegion::orphanSplitRegion(const float e1[2],
   // must be to the right of the edge.  see if the corner after the
   // split on the first split edge is to the right or left of the
   // cutting edge.
-  if (fistCornerRight) {
-    // corner is to right of cutting edge -- new region between edge 0 and 1
+  {
     // add sides to new region
     newRegion->addSide(n1, neighbors[edge[0]]);
-    for (i = edge[0] + 1; i < edge[1]; i++) {
+    i = edge[0];
+    while (true) {
+      i++;
+      if (i == count)
+	i = 0;
       newRegion->addSide(corners[i], neighbors[i]);
+      if (i == edge[1])
+	break;
       if (neighbors[i]) neighbors[i]->setNeighbor(this, newRegion);
     }
-    newRegion->addSide(corners[edge[1]], neighbors[edge[1]]);
     newRegion->addSide(n2, this);
 
     // tell neighbors on split edges to split the shared edge at the
@@ -264,52 +278,17 @@ BzfRegion*		BzfRegion::orphanSplitRegion(const float e1[2],
     std::vector<BzfRegion*> newNeighbors;
     newCorners.push_back(n2);
     newNeighbors.push_back(neighbors[edge[1]]);
-    for (i = edge[1] + 1; i < count; i++) {
+    i = edge[1];
+    while (true) {
+      i++;
+      if (i == count)
+	i = 0;
       newCorners.push_back(corners[i]);
       newNeighbors.push_back(neighbors[i]);
-    }
-    for (i = 0; i <= edge[0]; i++) {
-      newCorners.push_back(corners[i]);
-      newNeighbors.push_back(neighbors[i]);
+      if (i == edge[0])
+	break;
     }
     newCorners.push_back(n1);
-    newNeighbors.push_back(newRegion);
-    corners = newCorners;
-    neighbors = newNeighbors;
-  }
-  else {
-    // corner to left -- new region before edge 0 and after edge 1
-    // add sides to new region
-    newRegion->addSide(n2, neighbors[edge[1]]);
-    for (i = edge[1] + 1; i < count; i++) {
-      newRegion->addSide(corners[i], neighbors[i]);
-      if (neighbors[i]) neighbors[i]->setNeighbor(this, newRegion);
-    }
-    for (i = 0; i < edge[0]; i++) {
-      newRegion->addSide(corners[i], neighbors[i]);
-      if (neighbors[i]) neighbors[i]->setNeighbor(this, newRegion);
-    }
-    newRegion->addSide(corners[edge[0]], neighbors[edge[0]]);
-    newRegion->addSide(n1, this);
-
-    // tell neighbors on split edges to split the shared edge at the
-    // same place and to point to their new neighbor
-    // tell them about their new neighbor.
-    if (neighbors[edge[0]])
-      neighbors[edge[0]]->splitEdge(this, newRegion, n1, false);
-    if (neighbors[edge[1]])
-      neighbors[edge[1]]->splitEdge(this, newRegion, n2, true);
-
-    // remove old edges from myself and add new ones
-    std::vector<RegionPoint> newCorners;
-    std::vector<BzfRegion*> newNeighbors;
-    newCorners.push_back(n1);
-    newNeighbors.push_back(neighbors[edge[0]]);
-    for (i = edge[0] + 1; i <= edge[1]; i++) {
-      newCorners.push_back(corners[i]);
-      newNeighbors.push_back(neighbors[i]);
-    }
-    newCorners.push_back(n2);
     newNeighbors.push_back(newRegion);
     corners = newCorners;
     neighbors = newNeighbors;
