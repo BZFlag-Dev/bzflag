@@ -3418,14 +3418,14 @@ void			ServerMenu::checkEchos()
 	  {
 	    char url[1024];
 #ifdef _WIN32
-	    _snprintf(url, sizeof(url), "GET http://%s%s?action=LIST\r\n",
-		      listServer.hostname.c_str(),
-		      listServer.pathname.c_str());
+	    _snprintf(url, sizeof(url),
 #else
-	    snprintf(url, sizeof(url), "GET http://%s%s?action=LIST\r\n",
-		     listServer.hostname.c_str(),
-		     listServer.pathname.c_str());
+	    snprintf(url, sizeof(url),
 #endif
+		     "GET http://%s%s?action=LIST&version=%s\r\n",
+		     listServer.hostname.c_str(),
+		     listServer.pathname.c_str(),
+		     getServerVersion());
 	    errorSending = send(listServer.socket, url, strlen(url), 0)
 	      != (int) strlen(url);
 	  }
