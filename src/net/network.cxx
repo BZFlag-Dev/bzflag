@@ -362,7 +362,7 @@ void					BzfNetwork::insertLines(URLList& list,
 
 		// if non-empty and not beginning with # then add to list
 		if (end > start && *start != '#')
-		    list.insert(&list[index++], data.substr(start - data.c_str(), end - start));
+		    list.insert(list.begin() + index++, data.substr(start - data.c_str(), end - start));
 
 		// go to next line
 		start = end;
@@ -398,7 +398,7 @@ bool					BzfNetwork::dereferenceURLs(
 				insertLines(list, i + 1, data);
 
 		    // done with this URL
-		    list.erase(&list[i]);
+		    list.erase(list.begin() + i);
 		}
 
 		else if (protocol == "file") {
@@ -412,7 +412,7 @@ bool					BzfNetwork::dereferenceURLs(
 				insertLines(list, i + 1, data);
 
 		    // done with this URL
-		    list.erase(&list[i]);
+		    list.erase(list.begin() + i);
 		}
 
 		else if (protocol == "bzflist") {
@@ -423,13 +423,13 @@ bool					BzfNetwork::dereferenceURLs(
 		else {
 		    // invalid protocol or url
 		    failedList.push_back(list[i]);
-		    list.erase(&list[i]);
+		    list.erase(list.begin() + i);
 		}
     }
 
     // remove any urls we didn't get to
     if (list.size() > max)
-		list.erase(&list[max], list.end());
+		list.erase(list.begin() + max, list.end());
 
     return (list.size() > 0);
 }
