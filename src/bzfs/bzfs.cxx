@@ -4795,8 +4795,10 @@ int main(int argc, char **argv)
       for (int i=0;i<curMaxPlayers;i++) {
         if (player[i].state > PlayerInLimbo && player[i].team != ObserverTeam) {
           int idletime = (int)(tm - player[i].lastupdate);
+	  int pausetime = 0;
           if (player[i].paused && tm - player[i].pausedSince > idletime)
-            idletime = (int)(tm - player[i].pausedSince);
+            pausetime = (int)(tm - player[i].pausedSince);
+	  idletime = idletime > pausetime ? idletime : pausetime;
           if (idletime >
 	      (tm - player[i].lastmsg < clOptions->idlekickthresh ?
 	       3 * clOptions->idlekickthresh : clOptions->idlekickthresh)) {
