@@ -64,6 +64,12 @@ namespace TextUtils
     return tempStream.str();
   }
 
+  std::string no_whitespace(const std::string &s)
+  {
+    std::string result;
+    std::remove_copy_if(s.begin(), s.end(), std::back_inserter(result), isWhitespace);
+    return result;
+  }
 
   std::vector<std::string> tokenize(const std::string& in, const std::string &delims, const int maxTokens, const bool useQuotes){
     std::vector<std::string> tokens;

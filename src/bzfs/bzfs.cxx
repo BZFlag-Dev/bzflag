@@ -3255,19 +3255,15 @@ static void adjustTolerances()
 bool checkSpam(char* message, GameKeeper::Player* playerData, int t)
 {
   PlayerInfo player = playerData->player;
-  std::string newMsg = message;
   const std::string &oldMsg = player.getLastMsg();
   float dt = TimeKeeper::getCurrent() - player.getLastMsgTime();
+
+  // don't consider whitespace
+  std::string newMsg = TextUtils::no_whitespace(message);
 
   // if it's first message, or enough time since last message - can't be spam yet
   if (oldMsg.length() > 0 && dt > clOptions->msgTimer) {
     // might be spam, start doing comparisons
-
-    // don't consider whitespace
-    for (std::string::iterator c = newMsg.begin(); c <= newMsg.end(); c++)
-      if (isspace(*c))
-	newMsg.erase(c);
-
     // does it match the last message? (disregarding whitespace and case)
     if (TextUtils::compare_nocase(newMsg, oldMsg) == 0) {
       player.incSpamWarns();

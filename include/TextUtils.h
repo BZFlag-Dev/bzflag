@@ -62,6 +62,10 @@ namespace TextUtils {
    */
   std::string replace_all(const std::string& in, const std::string& replaceMe, const std::string& withMe);
 
+  /** return copy of string with all whitespace stripped
+   */
+  std::string no_whitespace(const std::string &s);
+
   /**
    * Get a vector of strings from a string, using all of chars of thedelims
    * string as separators. If maxTokens > 0, then the last 'token' maycontain delimiters
