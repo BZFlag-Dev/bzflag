@@ -38,7 +38,8 @@ extern int debugLevel;
 #define DEBUG4 if (debugLevel >= 4) formatDebug
 
 #ifdef __MINGW32__
-inline void W32_DEBUG_TRACE (const char*) {return;}
+#include <iostream>
+inline void W32_DEBUG_TRACE (const char* buffer) {std::cout << buffer;}
 #endif
 
 /* near zero by some epsilon convenience define since relying on
