@@ -223,5 +223,12 @@ unsigned long int VotingArbiter::timeRemaining(void) const
   return (unsigned int)remaining;
 }
 
+bool VotingArbiter::retractVote(std::string player) 
+{
+  if (_votingBooth == NULL) {
+    return false;
+  }
+  return _votingBooth->retractVote(player);
+}
 
 // ex: shiftwidth=2 tabstop=8

@@ -172,7 +172,11 @@ private:
   /** returns how much time is remaining on a poll, if one is active
    */
   unsigned long int timeRemaining(void) const;
-  
+
+  /** allow a player vote to be retracted (perhaps if a player leaves
+   */
+  bool retractVote(std::string player);
+
 };
 
 
