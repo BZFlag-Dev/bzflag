@@ -1,6 +1,9 @@
 recent bugs
 ------------
 
+- CTF team capture results in dead players respawning mid-map instead
+  of on the base.
+
 - Font texture filtering is inconsistent, might be driver problems, a bug
   in bz code, or just wrong expectations. The following screenhots show the
   problem:
