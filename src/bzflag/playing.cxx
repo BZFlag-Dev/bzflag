@@ -4121,7 +4121,8 @@ static bool		gotBlowedUp(BaseLocalPlayer* tank,
       tank->changeScore(0, 1, 0);
 
     // tell server I'm dead if it won't already know
-    if (reason == GotShot || reason == GotRunOver || reason == GenocideEffect)
+    if (reason == GotShot || reason == GotRunOver ||
+        reason == GenocideEffect || reason == SelfDestruct)
       lookupServer(tank)->sendKilled(killer, reason, shotId);
   }
 
