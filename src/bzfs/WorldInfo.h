@@ -27,12 +27,12 @@ typedef enum { NOT_IN_BUILDING, IN_BASE, IN_BOX, IN_PYRAMID, IN_TELEPORTER } InB
 extern float flagHeight;
 
 class WorldInfo {
- 
+
  public:
-  
+
   WorldInfo();
   ~WorldInfo();
-  
+
   void setSize ( float x, float y );
   void setGravity ( float g );
   void addWall(float x, float y, float z, float r, float w, float h);
@@ -45,13 +45,13 @@ class WorldInfo {
   int packDatabase();
   void *getDatabase() const;
   int getDatabaseSize() const;
-  
+
  private:
 
   bool rectHitCirc(float dx, float dy, const float *p, float r) const;
-  
+
  public:
-  
+
   struct ObstacleLocation {
     public:
     float pos[3];
@@ -71,18 +71,18 @@ class WorldInfo {
       return *this;
     }
   };
-  
+
   struct Teleporter : public ObstacleLocation {
     public:
     float border;
     int to[2];
   };
-  
+
   InBuildingType inBuilding(ObstacleLocation **location, float x, float y, float z, float radius) const;
   bool inRect(const float *p1, float angle, const float *size, float x, float y, float radius) const;
-  
+
  private:
-  
+
   float size[2];
   float gravity;
   int numWalls;
