@@ -53,6 +53,7 @@ SDLDisplay::SDLDisplay() : fullScreen(false), base_width(640),
     int  w;
     int  j = 0; 
 
+    defaultResolutionIndex = 0;
     for (int i = 0; modeList[i]; i++) {
       h = modeList[i]->h;
       w = modeList[i]->w;
@@ -61,8 +62,6 @@ SDLDisplay::SDLDisplay() : fullScreen(false), base_width(640),
 	  continue;
       sprintf(name, "%dx%d    ", w, h);
       resolutions[j] = new ResInfo(name, w, h, 0);
-      if (w == 640 && h == 480)
-	defaultResolutionIndex = j;
       j++;
     }
   } else {
