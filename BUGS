@@ -1,10 +1,8 @@
 must fix for 1.10.4 patch release
 ---------------------------------
 
-- Tanks with N and O (probably other shape-altering flags too) are rendered
-  as normal tanks. This is because the files src/geometry/models/*tank/*.cxx
-  uses the real glVertex3f() and glNormal3f() instead of the ones #defined in
-  TankRenderNode that compensate for the current tank style.
+- Now that the tank parts actually have real sides, there are some depth buffer
+  artifacts with a tank has N
 
 - quol reports that his 1.10.3 server is requiring identification, although
   require identify is not listed anywhere in his group file.  problem still

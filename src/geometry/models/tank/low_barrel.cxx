@@ -12,36 +12,36 @@
 
 #include "TankSceneNode.h"
 
-#define	glVertex3f	doVertex3f
-#define	glNormal3f	doNormal3f
+#define	doVertex3f	doVertex3f
+#define	doNormal3f	doNormal3f
 
 void buildLowBarrel ( void )
 {
   glShadeModel(GL_SMOOTH);
       glBegin(GL_TRIANGLE_STRIP);
-	glNormal3f(0.0f, -1.0f, 0.0f);
-	glVertex3f(1.570f, -0.18f, 1.530f);
-	glVertex3f(4.940f, -0.126f, 1.530f);
-	glNormal3f(0.0f, 0.0f, 1.0f);
-	glVertex3f(1.570f, 0.0f, 1.710f);
-	glVertex3f(4.940f, 0.0f, 1.660f);
-	glNormal3f(0.0f, 1.0f, 0.0f);
-	glVertex3f(1.570f, 0.18f, 1.530f);
-	glVertex3f(4.940f, 0.126f, 1.530f);
-	glNormal3f(0.0f, 0.0f, -1.0f);
-	glVertex3f(1.570f, 0.0f, 1.350f);
-	glVertex3f(4.940f, 0.0f, 1.410f);
-	glNormal3f(0.0f, -1.0f, 0.0f);
-	glVertex3f(1.570f, -0.18f, 1.530f);
-	glVertex3f(4.940f, -0.126f, 1.530f);
+	doNormal3f(0.0f, -1.0f, 0.0f);
+	doVertex3f(1.570f, -0.18f, 1.530f);
+	doVertex3f(4.940f, -0.126f, 1.530f);
+	doNormal3f(0.0f, 0.0f, 1.0f);
+	doVertex3f(1.570f, 0.0f, 1.710f);
+	doVertex3f(4.940f, 0.0f, 1.660f);
+	doNormal3f(0.0f, 1.0f, 0.0f);
+	doVertex3f(1.570f, 0.18f, 1.530f);
+	doVertex3f(4.940f, 0.126f, 1.530f);
+	doNormal3f(0.0f, 0.0f, -1.0f);
+	doVertex3f(1.570f, 0.0f, 1.350f);
+	doVertex3f(4.940f, 0.0f, 1.410f);
+	doNormal3f(0.0f, -1.0f, 0.0f);
+	doVertex3f(1.570f, -0.18f, 1.530f);
+	doVertex3f(4.940f, -0.126f, 1.530f);
       glEnd();
       glShadeModel(GL_FLAT);
       glBegin(GL_TRIANGLE_FAN);
-	glNormal3f(1.000000f, 0.000000f, 0.000000f);
-	glVertex3f(4.940f, 0.0f, 1.410f);
-	glVertex3f(4.940f, 0.126f, 1.530f);
-	glVertex3f(4.940f, 0.0f, 1.660f);
-	glVertex3f(4.940f, -0.126f, 1.530f);
+	doNormal3f(1.000000f, 0.000000f, 0.000000f);
+	doVertex3f(4.940f, 0.0f, 1.410f);
+	doVertex3f(4.940f, 0.126f, 1.530f);
+	doVertex3f(4.940f, 0.0f, 1.660f);
+	doVertex3f(4.940f, -0.126f, 1.530f);
       glEnd();
 }
 /*
