@@ -7,8 +7,8 @@ BZFlag \- a tank battle game
 [\fB\-no3dfx\fR]
 [\fB\-anonymous\fR]
 [\fB\-config \fIfilename\fR]
-[\fB\-debug\fR]
-[\fB\-directory \fIdirectory\fR]
+[\fB\-d | -debug\fR]
+[\fB\-dir | -directory \fIdirectory\fR]
 [\fB\-echo\fR]
 [\fB\-echoAnsi\fR]
 [\fB\-geometry \fIwidth\fR\fBx\fR\fIheight\fR[{\fB+\fR|\fB-\fR}x{\fB+\fR|\fB-\fR}y]]
@@ -71,11 +71,11 @@ unsetting MESA_GLX_FX in your environment.
 \fB-anonymous\fR
 Uses the email address \fIanonymous\fR instead of \fIusername@hostname\fR.
 .TP
-\fB-debug\fR
+\fB-d or -debug\fR
 Adds some diagnostic output. Can be specified multiple times to increase
 verbosity.
 .TP
-\fB-directory\fI directory\fR
+\fB-dir or -directory\fI directory\fR
 Looks for data files in \fIdirectory\fR first.  This defaults to a
 directory named \fIdata\fR in the current directory.  If not found
 there, the game looks for data files in the current directory, then
@@ -84,10 +84,6 @@ in the default installation location \fIINSTALL_DATA_DIR\fR.
 .B -config
 Specify the configuration file to load. The name is relative to the
 default configuration directory. This is usually only used by developers.
-.TP
-.B -debug
-Increase debugging level. Use multiple \fB-debug\fR options to obtain more
-debugging info.
 .TP
 .B -echo
 Copies all message window output to the shell.
