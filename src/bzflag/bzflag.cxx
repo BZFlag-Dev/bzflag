@@ -648,7 +648,7 @@ void			dumpResources(BzfDisplay* display,
   }
 
   BZDB.set("quality", configQualityValues[renderer.useQuality()]);
-  if (display->getResolution() != -1 &&
+  if (!BZDB.isSet("_window") && display->getResolution() != -1 &&
       display->getResolution(display->getResolution())) {
     BZDB.set("resolution", display->getResolution(display->getResolution())->name);
   }
