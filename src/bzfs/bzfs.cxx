@@ -3926,7 +3926,8 @@ int main(int argc, char **argv)
     }
 
     // update notResponding
-    for (int h = 0; h < curMaxPlayers; h++) {
+    int h;
+    for (h = 0; h < curMaxPlayers; h++) {
       if (player[h].hasStartedToNotRespond()) {
 	// if player is the rabbit, anoint a new one
 	if (h == rabbitIndex)
@@ -3941,7 +3942,7 @@ int main(int argc, char **argv)
     }
 
     NetHandler::updateHandlers();
-    for (int h = 0; h < curMaxPlayers; h++) {
+    for (h = 0; h < curMaxPlayers; h++) {
       NetHandler *handler = NetHandler::getHandler(h);
       if (handler) {
 	const char *hostname = handler->getHostname();
