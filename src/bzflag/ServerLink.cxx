@@ -329,8 +329,8 @@ void			ServerLink::send(uint16_t code, uint16_t len,
     UDEBUG("ASSEMBLE\n");
     tobesend = assembleSendPacket(&length);
     if (length == 0) {
-       printError("Attention: Server has not answered for a long time\n");
-       printError("           Connection will be dropped.\n");
+       printError("Attention: Server has not answered for a long time");
+       printError("           Connection will be dropped.");
        // Server has not answered to clear packet for send buffer, we have
        // reached the UDP limit (8192) and so we assume the connection is
        // broken
@@ -339,7 +339,7 @@ void			ServerLink::send(uint16_t code, uint16_t len,
 
     // length = compressPacket(tobesend, length);
 
-    //printError("UDP SEND %d %d\n",lastSendPacketNo-1, length);
+    //printError("UDP SEND %d %d",lastSendPacketNo-1, length);
 #ifdef TESTLINK
     if ((random()%TESTQUALTIY) != 0)
 #endif
@@ -391,7 +391,7 @@ void			ServerLink::enqueuePacket(int op, int rseqno, void *msg, int n)
 	struct PacketQueue *newpacket = (struct PacketQueue *)malloc(sizeof(struct PacketQueue));
 
 	if (!newpacket) {
-		printError("Fatal: no memory for packetBuffer\n");
+		printError("Fatal: no memory for packetBuffer");
 		return;
 	}
 
@@ -462,10 +462,10 @@ void* 			ServerLink::assembleSendPacket(uint32_t* length)
 		memcpy((unsigned char *)buf, (unsigned char *)moving->data, moving->length);
 		buf += moving->length;
 	} else {
-		printError("ASSEMBLE SEND PACKET OVERRUN BUFFER\n");
+		printError("ASSEMBLE SEND PACKET OVERRUN BUFFER");
 	}
 	if (n<=2) {
-		printError("ASSEMBLE SEND PACKET OVERRUN BUFFER\n");
+		printError("ASSEMBLE SEND PACKET OVERRUN BUFFER");
 		assemblybuffer[0]=0x0;  // invalidate
 		*length=0;
 		return assemblybuffer;
@@ -533,19 +533,19 @@ int			ServerLink::read(uint16_t& code, uint16_t& len,
     }
     void *pmsg =  getPacketFromServer(&len, &lseqno);
     if (pmsg != NULL) {
-	  // unpack header and get message
-	  uint16_t sub_length;
-	  void* buf = pmsg;
-	  buf = nboUnpackUShort(buf, sub_length);
-	  buf = nboUnpackUShort(buf, code);
-	  UDEBUG("<** UDP Packet Code %x Len %x / %x\n",code, sub_length, len);
-	  len = len - 4;
+      // unpack header and get message
+      uint16_t sub_length;
+      void* buf = pmsg;
+      buf = nboUnpackUShort(buf, sub_length);
+      buf = nboUnpackUShort(buf, code);
+      UDEBUG("<** UDP Packet Code %x Len %x / %x\n",code, sub_length, len);
+      len = len - 4;
       memcpy((char *)msg,(char *)buf,len);
-	  free(pmsg);
-	  return 1;
+      free(pmsg);
+      return 1;
     }
 
-    if (UDEBUGMSG) printError("Fallback to normal TCP receive\n");
+    if (UDEBUGMSG) printError("Fallback to normal TCP receive");
     len = 0;
     code = MsgNull;
 
@@ -567,7 +567,7 @@ int			ServerLink::read(uint16_t& code, uint16_t& len,
   if (nfound == 0) return 0;
   if (nfound < 0) return -1;
 
-  // printError("<** TCP Packet Code Recevied %d\n", time(0));
+  // printError("<** TCP Packet Code Recevied %d", time(0));
   // FIXME -- don't really want to take the chance of waiting forever
   // on the remaining select() calls, but if the server and network
   // haven't been hosed then the data will get here soon.  And if the
@@ -601,7 +601,7 @@ int			ServerLink::read(uint16_t& code, uint16_t& len,
   buf = nboUnpackUShort(buf, len);
   buf = nboUnpackUShort(buf, code);
   
-  //printError("Code is %02x\n",code);
+  //printError("Code is %02x",code);
   if (len > 0)
     rlen = recv(fd, (char*)msg, int(len), 0);
   else
@@ -775,21 +775,21 @@ void			ServerLink::sendUDPlinkRequest()
   if (getsockname(urecvfd, (struct sockaddr*)&serv_addr, &addr_len) < 0) {
 	close(urecvfd);
 	urecvfd = 0;
-    	printError("Error: getsockname() failed, cannot open UDP socket.\n");
+    	printError("Error: getsockname() failed, cannot open UDP socket.");
 	return;  // we cannot get connection, bail out
   }
 #endif
   localPort = ntohs(serv_addr.sin_port);
   memcpy((char *)&urecvaddr,(char *)&serv_addr, sizeof(serv_addr));
 
-  printError("Network: Created local UDP downlink port %d\n",localPort);
+  printError("Network: Created local UDP downlink port %d",localPort);
 
   buf = nboPackUShort(buf, uint16_t(localPort));
 
   send(MsgUDPLinkRequest, sizeof(msg), msg);
 
   if (BzfNetwork::setNonBlocking(urecvfd) < 0) {
-	printError("Error: Unable to set NonBlocking for UDP receive socket\n");
+	printError("Error: Unable to set NonBlocking for UDP receive socket");
   }
 }
 
@@ -803,7 +803,7 @@ void			ServerLink::setUDPRemotePort(unsigned short portno)
   AddrLen addr_len = sizeof(existing_addr);
 
   if (getsockname(fd, (struct sockaddr*)&existing_addr, &addr_len) < 0) {
-	printError("GETSOCKNAME: Unable to get my address\n");
+	printError("GETSOCKNAME: Unable to get my address");
 	return;  // we cannot get
   }
 
@@ -812,7 +812,7 @@ void			ServerLink::setUDPRemotePort(unsigned short portno)
   serv_addr.sin_port = htons(portno);
   memcpy((unsigned char *)&usendaddr,(unsigned char *)&serv_addr, sizeof(serv_addr));
 
-  printError("Server did send endpoint information, UDP connection up\n");
+  printError("Server did send endpoint information, UDP connection up");
   printError("More Info: [%04x : %d : %d]",(unsigned int) ntohl(remoteAddress), portno, urecvfd);
 
   buf = nboPackUShort(buf, 0);  // empty

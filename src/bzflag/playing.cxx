@@ -1213,7 +1213,7 @@ static void		handleServerMessage(boolean human, uint16_t code,
     case MsgUDPLinkRequest:
       uint16_t portNo;
       msg = nboUnpackUShort(msg, portNo);
-	  printError("Server sent downlink endpoint information, port %d\n",portNo);
+	  printError("Server sent downlink endpoint information, port %d",portNo);
 	  playerLink->setPortForUPD(portNo);
       break;
  
@@ -2990,7 +2990,7 @@ static boolean		joinGame(const StartupInfo* info,
     return False;
   }
 
-  // printError("Join Game\n");
+  // printError("Join Game");
   // check server
   if (serverLink->getState() != ServerLink::Okay) {
     switch (serverLink->getState()) {
