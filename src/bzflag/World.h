@@ -117,7 +117,7 @@ class World {
 
     void		initFlag(int index);
     void		updateFlag(int index, float dt);
-    void		addFlags(SceneDatabase*);
+    void		addFlags(SceneDatabase*, bool seerView);
 
     static World*	getWorld();
     static void		setWorld(World*);

@@ -769,7 +769,7 @@ void			World::updateFlag(int index, float dt)
   }
 }
 
-void			World::addFlags(SceneDatabase* scene)
+void			World::addFlags(SceneDatabase* scene, bool seerView)
 {
   if (!flagNodes) return;
   for (int i = 0; i < maxFlags; i++) {
@@ -779,10 +779,12 @@ void			World::addFlags(SceneDatabase* scene)
     }
 
     if (flags[i].status == FlagNoExist) continue;
-    // skip flag on a tank that isn't alive.  also skip Cloaking
-    // flags on tanks.
+    // skip flag on a tank that isn't alive. also skip
+    // Cloaking flags on if we don't have a seer flag.
     if (flags[i].status == FlagOnTank) {
-      if (flags[i].type == Flags::Cloaking) continue;
+      if ((flags[i].type == Flags::Cloaking) && !seerView) {
+        continue;
+      }
       int j;
       for (j = 0; j < curMaxPlayers; j++)
 	if (players[j] && players[j]->getId() == flags[i].owner)

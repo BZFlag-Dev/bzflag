@@ -4492,7 +4492,7 @@ void drawFrame(const float dt)
       myTank->addAntidote(scene);
 
       // add flags
-      world->addFlags(scene);
+      world->addFlags(scene, seerView);
 
 
       // add other tanks and shells
