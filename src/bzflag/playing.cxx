@@ -166,7 +166,8 @@ enum BlowedUpReason {
   GotRunOver,
   GotCaptured,
   GenocideEffect,
-  SelfDestruct
+  SelfDestruct,
+  DeadUnderDeath
 };
 static const char*	blowedUpMessage[] = {
   NULL,
@@ -175,6 +176,7 @@ static const char*	blowedUpMessage[] = {
   "Team flag was captured by ",
   "Teammate hit with Genocide by ",
   "Tank Self Destructed",
+  "Tank Rusted"
 };
 static bool		gotBlowedUp(BaseLocalPlayer* tank,
 				    BlowedUpReason reason,
@@ -1584,6 +1586,11 @@ static void		handleServerMessage(bool human, uint16_t code,
       else if (!killerPlayer) {
 	addMessage(victimPlayer, "destroyed by (UNKNOWN)");
       }
+      else if (reason == DeadUnderDeath) {
+	std::string message(ColorStrings[WhiteColor]);
+	message += "fell in the water";
+	addMessage(victimPlayer, message);
+      }
       else if ((shotId == -1) || (killerPlayer->getShot(int(shotId)) == NULL)) {
 	std::string message(ColorStrings[WhiteColor]);
 	message += "destroyed by ";
@@ -2634,7 +2641,8 @@ static bool		gotBlowedUp(BaseLocalPlayer* tank,
 
     // tell server I'm dead if it won't already know
     if (reason == GotShot || reason == GotRunOver ||
-        reason == GenocideEffect || reason == SelfDestruct)
+        reason == GenocideEffect || reason == SelfDestruct ||
+        reason == DeadUnderDeath)
       lookupServer(tank)->sendKilled(killer, reason, shotId);
   }
 
@@ -2786,7 +2794,7 @@ static void		checkEnvironment()
 
   // if not dead yet, see if i've dropped below the death level
   else if ((deadUnder > 0.0f) && (myTank->getPosition()[2] <= deadUnder)) {
-    gotBlowedUp(myTank, SelfDestruct, ServerPlayer);
+    gotBlowedUp(myTank, DeadUnderDeath, ServerPlayer);
   }
 
   // if not dead yet, see if i got run over by the steamroller
@@ -3222,7 +3230,7 @@ static void		checkEnvironment(RobotPlayer* tank)
 
   // if not dead yet, see if the robot dropped below the death level
   else if ((deadUnder > 0.0f) && (tank->getPosition()[2] <= deadUnder)) {
-    gotBlowedUp(tank, SelfDestruct, ServerPlayer);
+    gotBlowedUp(tank, DeadUnderDeath, ServerPlayer);
   }
 
   // if not dead yet, see if i got run over by the steamroller
