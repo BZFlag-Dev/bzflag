@@ -983,7 +983,7 @@ void handleReportCmd(GameKeeper::Player *playerData, const char *message)
         std::string temp2;
         while (temp2.size() <= (unsigned) MessageLen &&
                (temp2.size() + words[0].size()) <= (unsigned) MessageLen) {
-            temp2 += words[0];
+            temp2 += words[0] + " ";
             words.erase(words.begin());
         }
         sendMessage (t, AdminPlayers, temp2.c_str());
