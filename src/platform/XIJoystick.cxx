@@ -130,7 +130,7 @@ bool	      XIJoystick::joystick() const
   return (device != NULL);
 }
 
-void	      XIJoystick::getJoy(int& x, int& y) const
+void	      XIJoystick::getJoy(int& x, int& y)
 {
   x = y = 0;
 
@@ -163,7 +163,7 @@ void	      XIJoystick::getJoy(int& x, int& y) const
   y = (y * abs(y)) / 1000;
 }
 
-unsigned long XIJoystick::getJoyButtons() const
+unsigned long XIJoystick::getJoyButtons()
 {
   /* XXX: FIXME: return joystick buttons.
    * These are reported to XDisplay as events, we'll

@@ -72,7 +72,7 @@ bool	      WinJoystick::joystick() const
   return inited;
 }
 
-void	      WinJoystick::getJoy(int& x, int& y) const
+void	      WinJoystick::getJoy(int& x, int& y)
 {
   if (!inited)
     return;
@@ -98,7 +98,7 @@ void	      WinJoystick::getJoy(int& x, int& y) const
 
 }
 
-unsigned long WinJoystick::getJoyButtons() const
+unsigned long WinJoystick::getJoyButtons()
 {
   if (!inited)
     return 0;

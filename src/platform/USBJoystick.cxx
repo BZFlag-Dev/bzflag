@@ -180,7 +180,7 @@ bool USBJoystick::joystick() const
   return status;
 }
 
-void USBJoystick::getJoy(int &x, int &y) const
+void USBJoystick::getJoy(int &x, int &y)
 {
   if (status) {
     poll();
@@ -191,7 +191,7 @@ void USBJoystick::getJoy(int &x, int &y) const
   }
 }
 
-unsigned long USBJoystick::getJoyButtons() const
+unsigned long USBJoystick::getJoyButtons()
 {
   if (status) {
     poll();

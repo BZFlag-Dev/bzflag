@@ -38,7 +38,7 @@ void			BzfJoystick::initJoystick(const char* joystickName)
   }
 }
 
-unsigned long		BzfJoystick::getJoyButtons() const
+unsigned long		BzfJoystick::getJoyButtons()
 {
   return 0;
 }
@@ -48,7 +48,7 @@ bool			BzfJoystick::joystick() const
   return false;
 }
 
-void			BzfJoystick::getJoy(int& x, int& y) const
+void			BzfJoystick::getJoy(int& x, int& y)
 {
   x = y = 0;
 }

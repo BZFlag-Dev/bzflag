@@ -75,7 +75,7 @@ bool			SDLJoystick::joystick() const
   return joystickID != NULL;
 }
 
-void			SDLJoystick::getJoy(int& x, int& y) const
+void			SDLJoystick::getJoy(int& x, int& y)
 {
   x = y = 0;
 
@@ -95,7 +95,7 @@ void			SDLJoystick::getJoy(int& x, int& y) const
 
 }
 
-unsigned long		SDLJoystick::getJoyButtons() const
+unsigned long		SDLJoystick::getJoyButtons()
 {
   unsigned long buttons = 0;
 

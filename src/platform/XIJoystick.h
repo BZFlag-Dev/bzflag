@@ -29,8 +29,8 @@ class XIJoystick : public BzfJoystick {
 
     void	initJoystick(const char* joystickName);
     bool	joystick() const;
-    void	getJoy(int& x, int& y) const;
-    unsigned long getJoyButtons() const;
+    void	getJoy(int& x, int& y);
+    unsigned long getJoyButtons();
     void        getJoyDevices(std::vector<std::string> &list) const;
 
   private:
