@@ -751,8 +751,8 @@ void			KeyboardMapMenu::setKey(const BzfKeyEvent& event)
       break;
   if ((KEYMGR->keyEventToString(event) == it->second.key1 && it->second.key2.empty()) || (KEYMGR->keyEventToString(event) == it->second.key2))
     return;
+  KEYMGR->unbind(event, false);
   if (it->first == "fire") {
-    KEYMGR->unbind(event, false);
     KEYMGR->bind(event, false, it->first);
   }
   KEYMGR->unbind(event, true);
@@ -784,8 +784,12 @@ void			KeyboardMapMenu::execute()
           BzfKeyEvent ev;
           KEYMGR->stringToKeyEvent(it->second.key1, ev);
           KEYMGR->unbind(ev, true);
+	  if (it->first == "fire")
+	    KEYMGR->unbind(ev, false);
           KEYMGR->stringToKeyEvent(it->second.key2, ev);
           KEYMGR->unbind(ev, true);
+	  if (it->first == "fire")
+	    KEYMGR->unbind(ev, false);
         }
       }
     }
