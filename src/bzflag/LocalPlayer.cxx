@@ -760,7 +760,7 @@ void			LocalPlayer::setDesiredAngVel(float fracOfMaxAngVel)
     fracOfMaxAngVel *= BZDB->eval(StateDatabase::BZDB_BURROWANGULARAD);
 
   // set desired turn speed
-  desiredAngVel = fracOfMaxAngVel * TankAngVel;
+  desiredAngVel = fracOfMaxAngVel * BZDB->eval(StateDatabase::BZDB_TANKANGVEL);
 }
 
 void			LocalPlayer::setPause(bool pause)

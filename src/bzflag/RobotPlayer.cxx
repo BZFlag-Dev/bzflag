@@ -149,7 +149,7 @@ void			RobotPlayer::doUpdateMotion(float dt)
   position[1] = oldPosition[1];
   position[2] = oldPosition[2];
   float azimuth = oldAzimuth;
-
+  float tankAngVel = BZDB->eval(StateDatabase::BZDB_TANKANGVEL);
   if (isAlive()) {
     while (dt > 0.0 && pathIndex < (int)path.size()) {
       float azimuthDiff = pathAzimuth[pathIndex] - azimuth;
@@ -157,17 +157,17 @@ void			RobotPlayer::doUpdateMotion(float dt)
       else if (azimuthDiff < -M_PI) azimuthDiff += 2.0f * M_PI;
       if (fabs(azimuthDiff) > 0.01f) {
 	// tank doesn't move forward while turning
-	if (azimuthDiff >= dt * TankAngVel) {
-	  azimuth += dt * TankAngVel;
+	if (azimuthDiff >= dt * tankAngVel) {
+	  azimuth += dt * tankAngVel;
 	  dt = 0.0f;
 	}
-	else if (azimuthDiff <= -dt * TankAngVel) {
-	  azimuth -= dt * TankAngVel;
+	else if (azimuthDiff <= -dt * tankAngVel) {
+	  azimuth -= dt * tankAngVel;
 	  dt = 0.0f;
 	}
 	else {
 	  azimuth += azimuthDiff;
-	  dt -= fabsf(azimuthDiff / TankAngVel);
+	  dt -= fabsf(azimuthDiff / tankAngVel);
 	}
       }
       else {
