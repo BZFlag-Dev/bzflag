@@ -10,7 +10,7 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#include <string>
+#include <string.h>
 #include <assert.h>
 #include "common.h"
 #include "OpenGLGState.h"
