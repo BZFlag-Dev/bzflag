@@ -601,7 +601,7 @@ static bool		doKeyCommon(const BzfKeyEvent& key, bool pressed)
       }
       return true;
     } else if (key.button == BzfKeyEvent::Up ||
-    	       KEYMGR.get(key, true) == "drop") {
+	       KEYMGR.get(key, true) == "drop") {
       if (pressed) {
 	hud->setHuntPosition(hud->getHuntPosition()-1);
       }
