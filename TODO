@@ -3,6 +3,17 @@ to do list for BZFlag
 
 THESE SHOULD HAPPEN BEFORE THE NEXT RELEASE:
 
+* fix bug where tanks disappear when they are sitting still (perhaps
+  only on OS X?)
+
+* fix the corners and edges on the tabbed panels (corner pixels are
+  missing)
+
+* fix the menu font garbage above some letters on some fonts
+
+* fix the position of the label of the tabbel panels (position
+  incorrectly)
+
 * configure should test and enable the fudged acosf atanf asinf
 
 * add language translations for the new flags
