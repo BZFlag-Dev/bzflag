@@ -109,9 +109,6 @@ CursesUI::~CursesUI() {
 
 
 void CursesUI::outputMessage(const std::string& msg, ColorCode color) {
-  
-  std::cerr<<(color == Green ? "Green" : "Other")<<std::endl;
-  
   // add message to the message buffer, remove the oldest message if it's full
   if (msgBuffer.size() == maxBufferSize)
     msgBuffer.erase(msgBuffer.begin());
