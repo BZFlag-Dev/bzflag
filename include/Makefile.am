@@ -88,6 +88,7 @@ noinst_HEADERS =			\
 	Singleton.h			\
 	SphereSceneNode.h		\
 	StateDatabase.h			\
+	TankGeometryMgr.h		\
 	TankSceneNode.h			\
 	Team.h				\
 	Teleporter.h			\
