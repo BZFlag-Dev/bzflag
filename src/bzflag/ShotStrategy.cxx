@@ -680,7 +680,9 @@ void			SegmentedShotStrategy::makeSegments(ObstacleEffect e)
 
   segments.clear();
   ShotPathSegment::Reason reason = ShotPathSegment::Initial;
-  do {
+  int i;
+  const int maxSegment = 100;
+  for (i = 0; (i < maxSegment) && (timeLeft > Epsilon); i++) {
     // construct ray and find the first building, teleporter, or outer wall
     float o2[3];
     o2[0] = o[0] - minTime * d[0];
@@ -781,7 +783,7 @@ void			SegmentedShotStrategy::makeSegments(ObstacleEffect e)
 	    }
 	  }
 	}
-  } while (timeLeft > Epsilon);
+  }
   lastTime = startTime;
 
   // make bounding box for entire path
