@@ -4,6 +4,9 @@
 BZFlag 1.7e5
 ------------
 
+* fix /ban and add /unban - Frank Thilo
+* allow both -mp # and -mp #,#,#,#,# - Frank Thilo
+* CTF flag returning to base fixes - Frank Thilo
 * sort teams by score, sort in self - janne hassinen, Tim Riker
 * observer hack, should be a team - Frank Thilo
 * /countdown, /lagwarn - Frank Thilo
