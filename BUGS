@@ -1,6 +1,10 @@
 recent bugs
 ------------
 
+- 1.9.3 client was able to connect to 1.9.7 server.. odd behavior ensued,
+  server tried to kick and fails to find the player. server iterates over
+  player ids and it looks like it skips the id of the player to be kicked.
+
 - Reported that mapping Binocular, and perhaps others, doesn't work.
 
 - players gets stuck for no reason, can't move or turn, but can shoot.
