@@ -784,10 +784,7 @@ getRecordFile (const char *filename)
   char buffer[sizeof(magic)];
 
   FILE *file = fopen (filename, "rb");
-  if (file == NULL) {
-    return false;
-  }
-  else {
+  if (file) {
     if (fread (buffer, sizeof(magic), 1, file) <= 0) {
       fclose (file);
       return NULL;
@@ -796,7 +793,7 @@ getRecordFile (const char *filename)
       nboUnpackUInt (buffer, magic);
       if (magic != ReplayMagic) {
         fclose (file);
-        return false;
+        return NULL;
       }
     }
   }
