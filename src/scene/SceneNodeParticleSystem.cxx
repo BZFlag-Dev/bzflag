@@ -60,7 +60,6 @@ void Particle::create(SceneNodeParticleSystem *parent_, float /*timeCounter*/)
 	temp = (bzfrand() * ((float) (parent->spreadMax - parent->spreadMin))) + parent->spreadMin;
 	location[2] += temp / parent->spreadFactor;
 
-	std::cout << "creating particle:\n\tfield angle: " << parent->fieldAngle << std::endl;
 	randomPitch = bzfrand() * M_PI * 2.0;
 	randomYaw = (M_PI / 180.0) * bzfrand() * parent->fieldAngle;
 
