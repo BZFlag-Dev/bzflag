@@ -6,7 +6,7 @@ BZFlag 1.7e3
 
 * ::memset() instead of bzero() - Björn Augustsson
 * win32 audio thread fix for win2k - crs
-* send to nemesis - Dave Brosius
+* send to nemesis - Dave Brosius, Frank Thilo
 * USB joystick support - Nick Sayer
 * new (faster?) radar jamming code - Mathias Gumz
 * sort by score - Colin Bayer, Dave Brosius, Tim Riker
@@ -28,6 +28,7 @@ BZFlag 1.7e3
 * add rogue team and radar colors to config - Valery Fouques
 * Shots as lines on radar - Valery Fouques, Tim Riker
 * CTF world from file - Colin Bayer, Tim Riker
+
 
 BZFlag 1.7e2
 ------------

@@ -1512,10 +1512,8 @@ static void		handleServerMessage(boolean human, uint16_t code,
 	if (victimLocal->isAlive()){
 	  gotBlowedUp(victimLocal, GotKilledMsg, killer);
 	}
-	myTank->setNemesis(killerPlayer);
       }
       else if (victimPlayer) {
-	myTank->setNemesis( victimPlayer);
 	victimPlayer->setExplode(TimeKeeper::getTick());
 	const float* pos = victimPlayer->getPosition();
 	playWorldSound(SFX_EXPLOSION, pos[0], pos[1], pos[2],
@@ -1552,9 +1550,11 @@ static void		handleServerMessage(boolean human, uint16_t code,
 	 !(killerPlayer == myTank && victimPlayer == myTank)) {
 	if (killerLocal == myTank) {
 	  victimPlayer->changeLocalScore(1, 0);
+	  myTank->setNemesis(victimPlayer);
 	}
 	else {
 	  killerPlayer->changeLocalScore(0, 1);
+	  myTank->setNemesis(killerPlayer);
 	}
       }
 
