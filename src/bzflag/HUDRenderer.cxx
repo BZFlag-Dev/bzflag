@@ -473,7 +473,7 @@ void			HUDRenderer::setAlert(int index, const char* string,
     alertClock[index].setClock(0.0f);
   }
   else {
-    alertLabel[index] = string;
+    alertLabel[index] = bdl->getLocalString(string);
     alertLabelWidth[index] = alertFont.getWidth(alertLabel[index]);
     alertColor[index] = warning ? warningColor : messageColor;
     alertClock[index].setClock(duration);
@@ -751,7 +751,7 @@ void			HUDRenderer::renderStatus(void)
 
   // print flag if player has one in upper right
   if (flag != NoFlag) {
-    sprintf(buffer, "%s", Flag::getName(flag));
+    sprintf(buffer, "%s", bdl->getLocalString(Flag::getName(flag)).c_str());
     x = (float)window.getWidth() - 0.25f * h - majorFont.getWidth(buffer);
     if (Flag::getType(flag) == FlagSticky)
       hudColor3fv(warningColor);

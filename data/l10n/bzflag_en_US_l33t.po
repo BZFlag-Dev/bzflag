@@ -401,12 +401,6 @@ msgstr "SUper PHL49$"
 msgid "Antidote Flags"
 msgstr "@NT1d0T3 FL495"
 
-msgid "Jumping"
-msgstr "jUMPIn9"
-
-msgid "Ricochet"
-msgstr "RicOcHE+"
-
 msgid "Trying..."
 msgstr "TRY1n9..."
 
@@ -430,6 +424,95 @@ msgstr "$EaL3d"
 
 msgid "Zoned"
 msgstr "z0Ned"
+
+# Super Flags
+
+msgid "High Speed"
+msgstr "h1GH $pe3d"
+
+msgid "Quick Turn"
+msgstr "kw1cK TURn"
+
+msgid "Oscillation Overthruster"
+msgstr "05C1ll4TIOn OVerTHRU$+er"
+
+msgid "Rapid Fire"
+msgstr "R4P1d FIRe"
+
+msgid "Machine Gun"
+msgstr "M@cH1nE 9Un"
+
+msgid "Guided Missile"
+msgstr "9u1d3D mI551LE"
+
+msgid "Laser"
+msgstr "L4$3R"
+
+msgid "Ricochet"
+msgstr "rIcOCHEt"
+
+msgid "Super Bullet"
+msgstr "5UpER BuLl3T"
+
+msgid "Invisible Bullet"
+msgstr ""
+
+msgid "Stealth"
+msgstr "InV1$I8lE 8UlLET"
+
+msgid "Tiny"
+msgstr "+iny"
+
+msgid "Narrow"
+msgstr "N4RRoW"
+
+msgid "Shield"
+msgstr "$HIeLD"
+
+msgid "Steamroller"
+msgstr "5+E4mR0LL3R"
+
+msgid "Shock Wave"
+msgstr "sh0Ck w@Ve"
+
+msgid "Phantom Zone"
+msgstr "Ph4N+0m ZON3"
+
+msgid "Genocide"
+msgstr "9ENOC1D3"
+
+msgid "Jumping"
+msgstr "JuMP1n9"
+
+msgid "Identify"
+msgstr "1dEn+iFY"
+
+msgid "Cloaking"
+msgstr "clO4K1N9"
+
+msgid "Colorblindness"
+msgstr "COLorBL1NDNE$$"
+
+msgid "Obesity"
+msgstr "o83$1ty"
+
+msgid "Left Turn Only"
+msgstr "l3f+ +UrN onlY"
+
+msgid "Right Turn Only"
+msgstr "ri9HT tuRN ONLY"
+
+msgid "Momentum"
+msgstr "MOM3nTuM"
+
+msgid "Blindness"
+msgstr "8LINDNE$5"
+
+msgid "Jamming"
+msgstr "jAMMin9"
+
+msgid "Wide Angle
+msgstr "WIde @NglE"
 
 # Flag help
 
