@@ -1123,7 +1123,7 @@ void OpenGLGState::freeStipple(void*)
 void OpenGLGState::init()
 {
   if (!haveGLContext()) {
-    DEBUG1("OpenGLGState::init(), no context\n");
+    printf("OpenGLGState::init(), no context\n");
     return;
   }
 
