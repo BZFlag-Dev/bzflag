@@ -222,8 +222,8 @@ void			HUDuiControl::renderFocus()
 
   TextureManager &tm = TextureManager::instance();
   const ImageInfo &info = tm.getInfo(arrow);
-  
-  if (gstate->isTextured()) { // asumes there are w/h fames of animation h x h in each image
+
+  if (gstate->isTextured()) { // assumes there are w/h frames of animation h x h in each image
     float imageSize = (float)info.y;
     int uFrames = 1;
     if (imageSize != 0)
