@@ -64,9 +64,9 @@
 static const float ListServerReAddTime = 30.0f * 60.0f;
 
 static const float FlagHalfLife = 10.0f;
+
 // do NOT change
-int NotConnected = -1;
-int InvalidPlayer = -1;
+static const int InvalidPlayer = -1;
 
 float speedTolerance = 1.125f;
 

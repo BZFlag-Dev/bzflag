@@ -26,9 +26,6 @@
 #include "Ping.h"
 #include "TimeKeeper.h"
 
-// FIXME - references bzfs.cxx
-extern int NotConnected;
-
 class ListServerLink {
 public:
     // c'tor will fill list and local server information variables and do an initial ADD
@@ -52,6 +49,8 @@ public:
     int linkSocket;
 
 private:
+    static const int NotConnected;
+
     // list server information
     Address address;
     int port;

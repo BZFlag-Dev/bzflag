@@ -41,6 +41,8 @@ extern void sendPlayerInfo(void);
 extern void sendIPUpdate(int targetPlayer, int playerIndex);
 extern CmdLineOptions *clOptions;
 
+const int ListServerLink::NotConnected = -1;
+
 ListServerLink::ListServerLink(std::string listServerURL, std::string publicizedAddress, std::string publicizedTitle)
 {
   // parse url
