@@ -10,8 +10,9 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifdef HAVE_SDL
+#include "common.h"
 
+#ifdef HAVE_SDL
 #include "SDLMedia.h"
 #include "ErrorHandler.h"
 

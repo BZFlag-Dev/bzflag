@@ -10,6 +10,7 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
+#include "common.h"
 
 #ifdef HAVE_SDL
 #include <stdio.h>
