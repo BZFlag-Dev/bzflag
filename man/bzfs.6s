@@ -1,3 +1,14 @@
+.\" bzflag
+.\" Copyright (c) 1993 - 2005 Tim Riker
+.\"
+.\" This package is free software;  you can redistribute it and/or
+.\" modify it under the terms of the license found in the file
+.\" named COPYING that should have accompanied this file.
+.\"
+.\" THIS PACKAGE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
+.\" IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
+.\" WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+
 .TH bzfs 6 BUILD_DATE bzfs-BUILD_VERSION BZFlag
 .SH NAME
 bzfs \- BZFlag game server
@@ -57,8 +68,8 @@ bzfs \- BZFlag game server
 [\fB\-replay\fR]
 [\fB\-reportfile \fIfilename\fR]
 [\fB\-reportpipe \fIcommand\fR]
-[\fB\-requireudp\fR]
 [\fB\-requireidentify\fR]
+[\fB\-requireudp\fR]
 [\fB\+s \fIflag-count\fR]
 [\fB\-s \fIflag-count\fR]
 [\fB\-sa\fR]
@@ -96,7 +107,7 @@ Terminating the server terminates the game in progress.
 .SS Options
 .RS
 .TP 15
-\fB-a\fI velocity rotation\fR
+\fB-a \fIvelocity rotation\fR
 Enables inertia and sets the maximum linear and angular accelerations.
 The units are somewhat arbitrary so you'll have to experiment to find
 suitable values.  The values must be non-negative and higher values
@@ -220,7 +231,7 @@ Shows a help page and lists all the valid flag id's.
 Create a help message accessible by /help name, which prints the contents
 of file. Restricted to 10 lines per help message.
 .TP
-\fB-i\fI interface\fR
+\fB-i \fIinterface\fR
 Server will listen for and respond to ``pings'' (sent via broadcast)
 on the given interface.  Clients use this to find active servers on the
 network. This is the TCP/UDP/IP address the server will listen on.
@@ -231,14 +242,14 @@ Allows jumping.
 \fB\-lagdrop \fIwarn-count\fR
 Kicks players after \fIwarn-count\fR lag warnings.
 .TP
-\fB-lagwarn\fI time/ms\fR
+\fB-lagwarn \fItime/ms\fR
 Send warnings to players that lag more than \fItime\fR.
 .TP
-\fB-masterBanURL\fI URL/s\fR
+\fB-masterBanURL \fIURL/s\fR
 Specify alternate URLs for the master ban file to be pulled from.
 This argument may be provided multiple times.
 .TP
-\fB-maxidle\fI time/s\fR
+\fB-maxidle \fItime/s\fR
 Kick players that did not play longer than time seconds. Pausing players are
 not kicked. If a player uttered a word recently, he will be kicked after
 thrice the given time.
@@ -250,43 +261,43 @@ maximum for each team.  If a count is left blank then no limit is set for
 that team, except for the limit on the total number of players.  Both forms
 may be provided.
 .TP
-\fB\-mps\fI max-score\fR
+\fB\-mps \fImax-score\fR
 Sets a maximum score for individual players.  The first player to reach
 this score is declared the winner and the game is over.
 .TP
-\fB-ms\fI shots\fR
+\fB-ms \fIshots\fR
 Allows up to \fIshots\fR simultaneous shots for each player.
 This is 1 by default.
 .TP
-\fB\-mts\fI max-score\fR
+\fB\-mts \fImax-score\fR
 Sets a maximum score for teams.  The first team to reach this score is
 declared the winner and the game is over.
 .TP
 .B -noMasterBanList
 Forces the server to not attempt to load the master ban list from the internet.
 .TP
-\fB-p\fI port\fR
+\fB-p \fIport\fR
 Listen for game connections on \fIport\fR instead of the default port.
 Use \fB-help\fR to print the default port, or use \fB-d\fR debug printing.
 .TP
-\fB-passdb\fI file\fR
+\fB-passdb \fIfile\fR
 Load passwords from file
 .TP
-\fB-passwd\fI password\fR
+\fB-passwd \fIpassword\fR
 Specify a server administrator password for use in remote administration
 such as /kick messages.
 .TP
 .B -printscore
 Write score to stdout whenever it changes
 .TP
-\fB-public\fI description\fR
+\fB-public \fIdescription\fR
 Advertise this server on the internet with the given \fIdescription\fR.
 By default, a server will respond to broadcast queries, allowing clients
 to find servers running on the standard port on the local subnet.
 The \fB-public\fR option causes the server to register itself with
 a list server, which clients can query to get a list of \fBbzfs\fR servers.
 .TP
-\fB-publicaddr\fI address\fR[:\fIport\fR]
+\fB-publicaddr \fIaddress\fR[:\fIport\fR]
 Advertise this server with the given \fIaddress\fR and \fIport\fR.
 Only has an effect when used with \fB-public\fR.
 Normally a server advertises itself at the local address and port.
@@ -295,7 +306,7 @@ Some servers are not accessible from the internet at this address
 Translation).  Use this option to specify the address and/or port
 that internet users should use to access this server.
 .TP
-\fB-publiclist\fI url\fR
+\fB-publiclist \fIurl\fR
 Advertise this server on the list servers listed at \fIurl\fR.
 Only has an effect when used with \fB-public\fR.
 A built-in url is used by default.  The \fBBZFlag\fR clients use the
@@ -323,38 +334,38 @@ whomever kills the rabbit becomes the new rabbit.  The \fIrandom\fR
 algorithm randomly picks a new rabbit without regard to score.  (The
 \fIscore\fR algorithm is the original behavior.)
 .TP
-.B -recbuf\fI size\fR
+.B -recbuf \fIsize\fR
 Start with the recording buffer active, with the specified size (in megabytes).
 .TP
-.B -recdir\fI directory\fR
+.B -recdir \fIdirectory\fR
 Specify the directory for record and replay files.
 .TP
 .B -replay
 Start the server in replay mode.
 .TP
-.B -reportfile\fI filename\fR
+.B -reportfile \fIfilename\fR
 Write messages to the server admin written using the \fB/report\fR command to
 this file. If neither \fB-reportfile\fR or \fB-reportpipe\fR is used the
 \fB/report\fR command will be disabled.
 .TP
-.B -reportpipe\fI command\fR
+.B -reportpipe \fIcommand\fR
 Pipe messages to the server admin written using the \fB/report\fR command to
 this program or shell command. See \fB-reportfile\fR.
+.TP
+.B -requireidentify
+Require clients register and identify before they can spawn.
 .TP
 .B -requireudp
 Require clients to use parallel UDP. If players fire before opening a
 UDP channel, kick them off the server.
 .TP
-.B -requireidentify
-Require clients register and identify before they can spawn.
-.TP
-\fB+s\fI num-flags\fR
+\fB+s \fInum-flags\fR
 The server will have an extra \fInum-flags\fR random super flags available
 at all times.  The \fB-f\fR option can be used to restrict which types of
 flags will be added.  Required flags given by the \fB+f\fR option are not
 included in the \fInum-flags\fR total.
 .TP
-\fB-s\fI num-flags\fR
+\fB-s \fInum-flags\fR
 The server will have up to \fInum-flags\fR random super flags available at
 any time.  The \fB-f\fR option can be used to restrict which types of flags
 will be added.  Required flags given by the \fB+f\fR option are not included
@@ -385,10 +396,10 @@ Override the default speed auto kick factor. The factor should not be less then 
 Define a server welcome message. This option can be used multiple times
 to define a multiline message.
 .TP
-\fB-st\fI time\fR
+\fB-st \fItime\fR
 Bad flags are automatically dropped after \fItime\fR seconds.
 .TP
-\fB-sw\fI count\fR
+\fB-sw \fIcount\fR
 Bad flags are automatically dropped after \fIcount\fR wins.  Capturing
 a team flag does not count as a win.
 .TP
@@ -400,14 +411,14 @@ the clients.
 .B -t
 Adds teleporters to the game.
 .TP
-\fB\-tftimeout\fI time-limit\fR
+\fB\-tftimeout \fItime-limit\fR
 If the last player in a team leaves while someone else is carrying the team
 flag, the team flag will not reset until it is captured, or until the player
 drops it and it is left alone for some time. This option specifies the number
 of seconds that the flag should be left alone before it is reset. The
 default value is 30.
 .TP
-\fB\-time\fI time-limit\fR
+\fB\-time \fItime-limit\fR
 Sets a time limit on the game to \fItime-limit\fR.  The game will be
 stopped \fItime-limit\fR seconds after the first player connects.
 .TP
@@ -421,14 +432,14 @@ Changes the default behavior where a player dies when he kills a teammate.
 When using this option, he will just get a -1 score penalty for the kill but
 stay alive.
 .TP
-\fB-tkkr\fI percent\fR
+\fB-tkkr \fIpercent\fR
 Kicks players whose team killing to normal kill ratio is greater than
 \fIpercent\fR [1-100]. A start up grace period is given to players.
 .TP
-\fB-userdb\fI file\fR
+\fB-userdb \fIfile\fR
 Load group associations from file
 .TP
-\fB-vars\fI file\fR
+\fB-vars \fIfile\fR
 Loads values for game configurable variables from \fIfile\fR. Entries are
 one per line in the form: \fBset variable value\fR. For a list of variables
 that are configurable, in the BZFlag client, send a message with
