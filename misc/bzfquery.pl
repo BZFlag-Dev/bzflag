@@ -126,7 +126,13 @@ print "\n";
 # get the players
 @playerType = ("tank", "observer", "robot tank");
 for (1..$numPlayers) {
-die $! unless sysread(S, $buffer, 180) == 180;
+
+$bytesRead =  sysread(S, $buffer, 180); 
+while ($bytesRead != 180 && $bytesRead != 0){
+ $bytesRead += sysread(S, $buffer, 180-$bytesRead) 
+}
+if ($bytesRead == undef || $bytesRead < 180){ die $!; }
+
 ($len,$code,$pAddr,$pPort,$pNum,$type,$team,$won,$lost,$sign,$email) =
 					unpack("n2Nn2 n4A32A128", $buffer);
 die $! unless $code == 0x6170;
