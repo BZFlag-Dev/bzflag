@@ -590,16 +590,29 @@ class KeyboardMapMenu : public HUDDialog {
 
     bool		isEditing() const;
     void		setKey(const BzfKeyEvent&);
+    void		onChanged(const std::string& name, bool, const std::string&);
+    void		onScan(const std::string& name, bool press, const std::string& cmd);
+    static void		onChangedCB(const std::string& name, bool press,
+    				    const std::string& cmd, void* userData);
+    static void		onScanCB(const std::string& name, bool press,
+    				 const std::string& cmd, void* userData);
 
   private:
     void		update();
 
     HUDuiLabel*		createLabel(const char*, const char* = NULL);
 
+    void		initkeymap(const std::string& name, int index);
   private:
-    KeyboardMapMenuDefaultKey defaultKey;
-    HUDuiControl*	reset;
-    BzfKeyMap::Key		editing;
+    struct keymap {
+      int index;	// ui label index
+      std::string key1;
+      std::string key2;
+    };
+    std::map<std::string, keymap>	mappable;
+    KeyboardMapMenuDefaultKey		defaultKey;
+    HUDuiControl*			reset;
+    BzfKeyMap::Key			editing;
 };
 
 KeyboardMapMenuDefaultKey::KeyboardMapMenuDefaultKey(KeyboardMapMenu* _menu) :
@@ -645,7 +658,7 @@ KeyboardMapMenu::KeyboardMapMenu() : defaultKey(this), editing(BzfKeyMap::LastKe
   controls.push_back(createLabel("Key Mapping"));
 
   controls.push_back(reset = createLabel(NULL, "Reset Defaults"));
-  controls.push_back(createLabel(NULL, "Fire shot:"));
+  controls.push_back(createLabel("fire", "Fire shot:"));
   controls.push_back(createLabel(NULL, "Drop flag:"));
   controls.push_back(createLabel(NULL, "Identify/Lock On:"));
   controls.push_back(createLabel(NULL, "Radar Short:"));
@@ -675,6 +688,42 @@ KeyboardMapMenu::KeyboardMapMenu() : defaultKey(this), editing(BzfKeyMap::LastKe
   controls.push_back(createLabel(NULL, "Hunt Key:"));
 
   initNavigation(controls, 1, controls.size()-1);
+
+  initkeymap("fire", 2);
+  initkeymap("drop", 3);
+  initkeymap("identify", 4);
+  initkeymap("set displayRadarRange 1.0", 5);
+  initkeymap("set displayRadarRange 0.5", 6);
+  initkeymap("set displayRadarRange 0.25", 7);
+  initkeymap("send all", 8);
+  initkeymap("send team", 9);
+  initkeymap("send nemesis", 10);
+  initkeymap("send recipient", 11);
+  initkeymap("jump", 12);
+  initkeymap("toggle displayBinoculars", 13);
+  initkeymap("toggle displayScore", 14);
+  initkeymap("toggle displayLabels", 15);
+  initkeymap("toggle displayFlagHelp", 16);
+  initkeymap("time forward", 17);
+  initkeymap("time backward", 18);
+  initkeymap("pause", 19);
+  initkeymap("destruct", 20);
+  initkeymap("quit", 21);
+  initkeymap("scrollpanel up", 22);
+  initkeymap("scrollpanel down", 23);
+  initkeymap("toggle slowKeyboard", 24);
+  initkeymap("toggle displayRadarFlags", 25);
+  initkeymap("toggle displayMainFlags", 26);
+  initkeymap("silence", 27);
+  initkeymap("servercommand", 28);
+  initkeymap("hunt", 29);
+}
+
+void			KeyboardMapMenu::initkeymap(const std::string& name, int index)
+{
+  mappable[name].key1 = "";
+  mappable[name].key2 = "";
+  mappable[name].index = index;
 }
 
 bool			KeyboardMapMenu::isEditing() const
@@ -791,30 +840,56 @@ void			KeyboardMapMenu::resize(int width, int height)
 void			KeyboardMapMenu::update()
 {
   // load current settings
-  BzfKeyMap& map = getBzfKeyMap();
+  KEYMGR->iterate(&onScanCB, this);
   std::vector<HUDuiControl*>& list = getControls();
-  for (int j = 0; j < (int)BzfKeyMap::LastKey; j++) {
-    const BzfKeyEvent& key1 = map.get((BzfKeyMap::Key)j);
-    const BzfKeyEvent& key2 = map.getAlternate((BzfKeyMap::Key)j);
-    std::string value;
-    if (key1.ascii == 0 && key1.button == 0) {
-      if (j == (int)editing)
+  for (std::map<std::string, keymap>::iterator it = mappable.begin(); it != mappable.end(); it++) {
+    std::string value = "";
+    if (it->second.key1.empty()) {
+      if (it->second.index == (int) editing)
 	value = "???";
       else
 	value = "<not mapped>";
-    }
-    else {
-      value += BzfKeyMap::getKeyEventString(key1);
-      if (key2.ascii != 0 || key2.button != 0) {
-	value += " or ";
-	value += BzfKeyMap::getKeyEventString(key2);
-      }
-      else if (j == (int)editing) {
+    } else {
+      value += it->second.key1;
+      if (!it->second.key2.empty()) {
+        value += " or " + it->second.key2;
+      } else if (it->second.index == (int) editing) {
 	value += " or ???";
       }
     }
-    ((HUDuiLabel*)list[j + 2])->setString(value);
+    ((HUDuiLabel*)list[it->second.index])->setString(value);
   }
+}
+
+void			KeyboardMapMenu::onChanged(const std::string&/* name*/, bool,
+						   const std::string&)
+{
+}
+
+void			KeyboardMapMenu::onScan(const std::string& name, bool press,
+						const std::string& cmd)
+{
+  if (!press)
+    return;
+  std::map<std::string, keymap>::iterator it = mappable.find(cmd);
+  if (it == mappable.end())
+    return;
+  if (it->second.key1.empty())
+    it->second.key1 = name;
+  else if (it->second.key2.empty())
+    it->second.key2 = name;
+}
+
+void			KeyboardMapMenu::onChangedCB(const std::string& name, bool press,
+						     const std::string& cmd, void* userData)
+{
+  reinterpret_cast<KeyboardMapMenu*>(userData)->onChanged(name, press, cmd);
+}
+
+void			KeyboardMapMenu::onScanCB(const std::string& name, bool press,
+						  const std::string& cmd, void* userData)
+{
+  reinterpret_cast<KeyboardMapMenu*>(userData)->onScan(name, press, cmd);
 }
 
 HUDuiLabel*		KeyboardMapMenu::createLabel(
