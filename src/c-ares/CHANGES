@@ -1,0 +1,102 @@
+  Changelog for the c-ares project
+
+Version 1.2.0 (April 13, 2004)
+
+* April 2, 2004
+- Updated various man pages to look nicer when converted to HTML on the web
+  site.
+
+* April 1, 2004
+- Dirk Manske provided a new function that is now named ares_cancel(). It is
+  used to cancel/cleanup a resolve/request made using ares functions on the
+  given ares channel. It does not destroy/kill the ares channel itself.
+
+- Dominick Meglio cleaned up the formatting in several man pages.
+
+* March 30, 2004
+- Dominick Meglio's new ares_expand_string. A helper function when decoding
+  incoming DNS packages.
+
+- Daniel Stenberg modified the Makefile.in to use a for loop for the man page
+  installation to improve overview and make it easier to add man pages.
+
+Version 1.1.0 (March 11, 2004)
+
+* March 9, 2004
+- Gisle Vanem improved build on Windows.
+
+* February 25, 2004
+- Dan Fandrich found a flaw in the Feb 22 fix.
+
+- Added better configure --enable-debug logic (taken from the curl configure
+  script). Added acinclude.m4 to the tarball.
+
+* February 23, 2004
+- Removed ares_free_errmem(), the function, the file and the man page. It was
+  not used and it did nothing.
+
+- Fixed a lot of code that wasn't "64bit clean" and thus caused a lot of
+  compiler warnings on picky compilers.
+
+* February 22, 2004
+- Dominick Meglio made ares init support multiple name servers in the
+  NameServer key on Windows.
+
+* February 16, 2004
+- Modified ares_private.h to include libcurl's memory debug header if
+  CURLDEBUG is set. This makes all the ares-functions supervised properly by
+  the curl test suite. This also forced me to add inclusion of the
+  ares_private.h header in a few more files that are using some kind of
+  memory-related resources.
+
+- Made the makefile only build ahost and adig if 'make demos' is used.
+
+* February 10, 2004
+- Dirk Manske made ares_version.h installed with 'make install'
+
+* February 4, 2004
+- ares_free_errmem() is subject for removal, it is simply present for future
+  purposes, and since we removed the extra parameter in strerror() it won't
+  be used by c-ares!
+- configure --enable-debug now enables picky compiler options if gcc is used
+- fixed several compiler warnings --enable-debug showed and Joerg Mueller-Tolk
+  reported
+
+Version 1.0.0 (February 3, 2004)
+
+* February 3, 2004
+- now we produce the libcares.a library instead of the previous libares.a
+  since we are no longer compatible
+
+* February 2, 2004
+
+- ares_strerror() has one argument less. This is the first official
+  modification of the existing provided ares API.
+
+* January 29, 2004
+
+- Dirk Manske fixed how the socket is set non-blocking.
+
+* January 4, 2004
+
+- Dominick Meglio made the private gettimeofday() become ares_gettimeofday()
+  instead in order to not pollute the name space and risk colliding with
+  other libraries' versions of this function.
+
+* October 24, 2003. Daniel Stenberg
+
+  Added ares_version().
+
+Version 1.0-pre1 (8 October 2003)
+
+- James Bursa made it run on RISC OS
+
+- Dominick Meglio made it run fine on NT4
+
+- Duncan Wilcox made it work fine on Mac OS X
+
+- Daniel Stenberg adjusted the windows port
+
+- liren at vivisimo.com made the initial windows port
+
+* Imported the sources from ares 1.1.1
