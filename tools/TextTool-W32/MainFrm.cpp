@@ -33,6 +33,9 @@ static UINT indicators[] =
 	ID_INDICATOR_SCRL,
 };
 
+// This is ugly
+CStatusBar* sbar;
+
 /////////////////////////////////////////////////////////////////////////////
 // CMainFrame construction/destruction
 
@@ -72,6 +75,9 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		TRACE0("Failed to create status bar\n");
 		return -1;      // fail to create
 	}
+
+	// ugliness
+	sbar = &m_wndStatusBar;
 
 	// TODO: Delete these three lines if you don't want the toolbar to
 	//  be dockable

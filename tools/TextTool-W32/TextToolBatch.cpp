@@ -38,7 +38,7 @@ void TextToolBatch::loadFile(std::string file)
     ws(*input);
 
     // read a line
-    input->getline(buffer, sizeof(buffer));
+    input->getline(buffer, 256);
 
     // ignore and read next line if comment or blank
     if (buffer[0] == 0) continue;
@@ -49,6 +49,8 @@ void TextToolBatch::loadFile(std::string file)
       if (group) error("group: Already in group");
       // set flag and read next line if "group" and not already in group
       else group = true;
+      // read next line
+      continue;
     } else if (strcmp(buffer, "end") == 0) {
       // error if "end" and not in group
       if (!group) error("end: Not in group");
@@ -60,8 +62,10 @@ void TextToolBatch::loadFile(std::string file)
 	  // set font face
           temp.font = font;
 	  // set font flags (just bold and italic; underline and strikethrough are just lines)
-	  if (flags.find("bold", 0)) temp.bold = true; else temp.bold = false;
-	  if (flags.find("italic", 0)) temp.italic = true; else temp.italic = false;
+	  int index = flags.find("bold", 0);
+	  if (index >= 0) temp.bold = true; else temp.bold = false;
+	  index = flags.find("italic", 0);
+	  if (index >= 0) temp.italic = true; else temp.italic = false;
 	  // set font size
           temp.size = sizes[i];
 	  // set filename (with $s -> size transform)
@@ -72,27 +76,32 @@ void TextToolBatch::loadFile(std::string file)
 	  temp.filename = tmp;
 	  items.push_back(temp);
 	}
+	sizes.clear();
       }  
+      // read next line
+      continue;
     }
   
     // error if not in group
     if (!group) error("command: Not in group");
 
     // parse "font", "flags", "sizes", "filename" into the structure
-    if (strcmp(buffer, "font") == 0) {
+    if (strncmp(buffer, "font", 4) == 0) {
       font = std::string(buffer + 5);
-    } else if (strcmp(buffer, "flags") == 0) {
+    } else if (strncmp(buffer, "flags", 5) == 0) {
       flags = std::string(buffer + 6);
-    } else if (strcmp(buffer, "sizes") == 0) {
+    } else if (strncmp(buffer, "sizes", 5) == 0) {
       std::string tmp = std::string(buffer + 6);
       unsigned int x = tmp.find(" ", 0);
       unsigned int y = tmp.size();
       while (x < tmp.size()) {
         y = tmp.find(" ", x + 1);
-	sizes.push_back(atoi(tmp.substr(x, y).c_str()));
+	std::string sizestr = tmp.substr(x, y);
+	int sizeint = atoi(sizestr.c_str());
+	sizes.push_back(sizeint);
 	x = y;
       }
-    } else if (strcmp(buffer, "filename") == 0) {
+    } else if (strncmp(buffer, "filename", 8) == 0) {
       filename = std::string(buffer + 9);
     } else {
       error("command: unrecognized");

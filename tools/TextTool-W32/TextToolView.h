@@ -12,7 +12,7 @@
 typedef struct
 {
 	int iStartX;
-	int	iEndX;
+	int iEndX;
 	int iStartY;
 	int iEndY;
 }trGlyphExtents;

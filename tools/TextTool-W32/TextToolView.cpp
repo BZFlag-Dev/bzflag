@@ -89,14 +89,13 @@ void CTextToolView::OnDraw(CDC* pDC)
 	ASSERT_VALID(pDoc);
 	// TODO: add draw code for native data here
 
-	if (iLogicalPixelsY == -1)
-	{
-		iLogicalPixelsY = pDC->GetDeviceCaps(LOGPIXELSY);
+	if (iLogicalPixelsY == -1) {
+	  iLogicalPixelsY = pDC->GetDeviceCaps(LOGPIXELSY);
 
-		LOGFONT		rLogFont;
-		m_pFont->GetLogFont(&rLogFont);
+	  LOGFONT		rLogFont;
+	  m_pFont->GetLogFont(&rLogFont);
 
-		m_iFontPointSize = -((rLogFont.lfHeight*72)/iLogicalPixelsY);
+	  m_iFontPointSize = -((rLogFont.lfHeight*72)/iLogicalPixelsY);
 	}
 
 	CBrush	brush(RGB(0,0,0));
@@ -126,7 +125,7 @@ void CTextToolView::OnDraw(CDC* pDC)
 	CString		szString = " !\"#$%'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ{\\]^_`abcdefghijklmnopqrstuvwxyz{|}~";
 	pDC->GetCharABCWidths(' ','~',m_aWidths);
 
-	LOGFONT			rLogFont;
+	LOGFONT		rLogFont;
 
 	m_pFont->GetLogFont(&rLogFont);
 
@@ -136,7 +135,7 @@ void CTextToolView::OnDraw(CDC* pDC)
 	m_iTextureZStep = size.cy; //-rLogFont.lfHeight+2;
 
 	int iXPos = 0;
-	int	iYPos = 0;
+	int iYPos = 0;
 
 	int iXCount = 0;
 	for (int iChar = ' '; iChar <= '~'; iChar++)
@@ -233,49 +232,46 @@ CTextToolDoc* CTextToolView::GetDocument() // non-debug version is inline
 
 BOOL CTextToolView::OnEraseBkgnd(CDC* pDC)
 {
-	// TODO: Add your message handler code here and/or call default
-	CBrush	brush(RGB(0,0,0));
+  // TODO: Add your message handler code here and/or call default
+  CBrush	brush(RGB(0,0,0));
 
-	RECT	rect;
-//	GetWindowRect(&rect);
-	pDC->GetBoundsRect(&rect,0);
-	pDC->FillRect(&rect,&brush);
-	return true; //CView::OnEraseBkgnd(pDC);
+  RECT	rect;
+// GetWindowRect(&rect);
+  pDC->GetBoundsRect(&rect,0);
+  pDC->FillRect(&rect,&brush);
+  return true; //CView::OnEraseBkgnd(pDC);
 }
 
 void CTextToolView::OnFontSetfont()
 {
-	LOGFONT			rLogFont;
+  LOGFONT rLogFont;
 
-	m_pFont->GetLogFont(&rLogFont);
+  m_pFont->GetLogFont(&rLogFont);
 
-	rLogFont.lfHeight = abs(rLogFont.lfHeight);
+  rLogFont.lfHeight = abs(rLogFont.lfHeight);
 
-	CFontDialog		oDlog(&rLogFont);
+  CFontDialog oDlog(&rLogFont);
 
-	if (oDlog.DoModal() == IDOK)
-	{
-		oDlog.GetCurrentFont(&rLogFont);
-		delete(m_pFont);
-		m_pFont = new CFont;
-		m_pFont->CreateFontIndirect(&rLogFont);
+  if (oDlog.DoModal() == IDOK) {
+    oDlog.GetCurrentFont(&rLogFont);
+    delete(m_pFont);
+    m_pFont = new CFont;
+    m_pFont->CreateFontIndirect(&rLogFont);
 
-		//m_iFontPointSize = abs(rLogFont.lfHeight);
+    int i, j;
+    float k;
 
-		int i,j;
-		float k;
+    i = rLogFont.lfHeight * 72;
+    j = iLogicalPixelsY;
 
-		i = rLogFont.lfHeight*72;
-		j = iLogicalPixelsY;
+    k = (float)i / (float)j;
 
-		k = (float)i/(float)j;
+    k -= 0.5f;
 
-		k -= 0.5f;
+    m_iFontPointSize = -(int)k;
+  }
 
-		m_iFontPointSize = -(int)k;
-
-	}
-	InvalidateRect(NULL,true);
+  InvalidateRect(NULL, true);
 }
 
 void CTextToolView::OnFontSavefontfiles()
@@ -285,8 +281,8 @@ void CTextToolView::OnFontSavefontfiles()
   m_pFont->GetLogFont(&rLogFont);
 
   CString	szFaceNameT;
-  CString szFaceName;
-  szFaceNameT.Format("%s",rLogFont.lfFaceName);
+  CString	szFaceName;
+  szFaceNameT.Format("%s", rLogFont.lfFaceName);
 
   for (int i = 0; i < szFaceNameT.GetLength(); i++) {
     if (szFaceNameT[i] != ' ')
@@ -338,11 +334,11 @@ void CTextToolView::OnFontSavefontfiles()
 
   CString	szSize;
 
-  szSize.Format("_%d",m_iFontPointSize);
+  szSize.Format("_%d", m_iFontPointSize);
 
   CString	szFileName = szFaceName + szType + szSize;
 
-  CFileDialog oFile(false,NULL,szFileName);
+  CFileDialog oFile(false, NULL, szFileName);
 
   if (oFile.DoModal() == IDOK) {
     DoFontSavefontfiles(oFile.GetPathName());
@@ -509,7 +505,7 @@ void CTextToolView::DoFontSavefontfiles(CString szPathName)
     int iEndX;
     int iStartY;
     int iEndY;
-  }rFontMetrics;
+  } rFontMetrics;
 
   int iNumChars = '~' - ' ';
 
@@ -538,9 +534,63 @@ void CTextToolView::OnBatchProcessing()
   CFileDialog oFile(true,".ttb",0,0,"TextTool batch processing files (*.ttb)|*.ttb");
 
   if (oFile.DoModal() == IDOK) {
-    std::string filename = oFile.GetFileName();
+    std::string filename = oFile.GetPathName();
+    int pos = filename.rfind('\\', filename.size() - 1);
+    std::string path = filename.substr(0, pos + 1);
+    CString szPath = path.c_str();
 
     TextToolBatch* ttb = new TextToolBatch(filename);
+
+    BatchItem item;
+    bool good = ttb->getNext(item);
+    while (good) {
+      // set the font
+      BYTE italic;
+      int bold;
+      if (item.italic) italic = TRUE; else italic = FALSE;
+      if (item.bold) bold = FW_BOLD; else bold = FW_NORMAL;
+      int nHeight = -MulDiv(item.size, iLogicalPixelsY, 72);
+
+      delete(m_pFont);
+      m_pFont = new CFont;
+      m_pFont->CreateFont(nHeight, 0, 0, 0, bold, italic, FALSE, FALSE, ANSI_CHARSET, OUT_TT_PRECIS,
+			  CLIP_DEFAULT_PRECIS, ANTIALIASED_QUALITY, DEFAULT_PITCH | FF_DONTCARE,
+			  item.font.c_str());
+
+      LOGFONT rLogFont;
+      m_pFont->GetLogFont(&rLogFont);
+      int i, j;
+      float k;
+      i = rLogFont.lfHeight * 72;
+      j = iLogicalPixelsY;
+      k = (float)i / (float)j;
+      k -= 0.5f;
+      m_iFontPointSize = -(int)k;
+      InvalidateRect(NULL, true);
+      OnDraw(GetDC());
+
+      // say what we're doing
+      std::string sbarText = "Batch Processing: creating " + item.filename;
+      sbar->SetWindowText(sbarText.c_str());
+
+      // give it some time to redraw
+      HANDLE dummyEvent = CreateEvent(NULL, TRUE, FALSE, NULL);
+      WaitForSingleObject(dummyEvent, (DWORD)(1000.0f));
+      CloseHandle(dummyEvent);
+
+      // save the files
+      DoFontSavefontfiles(szPath + item.filename.c_str());
+
+      // give it some time to finish
+      dummyEvent = CreateEvent(NULL, TRUE, FALSE, NULL);
+      WaitForSingleObject(dummyEvent, (DWORD)(1000.0f));
+      CloseHandle(dummyEvent);
+
+      // do the next one
+      good = ttb->getNext(item);
+    }
+
+    sbar->SetWindowText("Batch Processing Completed.");
 
     delete ttb;
   }
