@@ -303,20 +303,21 @@ const Obstacle*		World::hitBuilding(const float* oldPos, float oldAngle,
 
   if (hitCount > 0) {
 //    printf ("HitCount = %i: ", hitCount);
+    bool goingUp = (oldPos[2] < pos[2]);
     int lastNonZ = -1;
     // see if we're hitting a ZPlane first
     for (int i = 0; i < hitCount; i++) {
       const MeshFace* face = (const MeshFace*) olist->list[i];
       const float z = face->getPosition()[2];
       if (face->isUpPlane()) {
-        if ((oldPos[2] >= z) && (pos[2] <= z)) {
+        if ((oldPos[2] >= z) && (pos[2] <= z) && !goingUp) {
 //          printf ("UpPlane\n");
           return face;
         }
       }
       else if (face->isDownPlane()) {
         const float zoff = z - dz; // offset for the tank height
-        if ((oldPos[2] <= zoff) && (pos[2] >= zoff)) {
+        if ((oldPos[2] <= zoff) && (pos[2] >= zoff) && goingUp) {
 //          printf ("DownPlane\n");
           return face;
         }
@@ -332,7 +333,6 @@ const Obstacle*		World::hitBuilding(const float* oldPos, float oldAngle,
       return olist->list[lastNonZ];
     } else {
 //      printf ("listZero\n");
-      return olist->list[0];
     }
   }
 
