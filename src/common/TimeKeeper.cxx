@@ -26,6 +26,7 @@ static double		qpcFrequency = 0.0;
 
 TimeKeeper		TimeKeeper::currentTime;
 TimeKeeper		TimeKeeper::tickTime;
+TimeKeeper		TimeKeeper::sunExplodeTime;
 
 const TimeKeeper&	TimeKeeper::getCurrent()
 {
@@ -80,4 +81,11 @@ void			TimeKeeper::setTick()
 {
   tickTime = getCurrent();
 }
+
+const TimeKeeper& TimeKeeper::getSunExplodeTime()
+{
+	sunExplodeTime.seconds = 10000.0 * 365 * 24 * 60 * 60;
+	return sunExplodeTime;
+}
+
 // ex: shiftwidth=2 tabstop=8

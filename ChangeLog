@@ -4,6 +4,7 @@
 BZFlag 1.7e5
 ------------
 
+* added temporary bans (minutes) - Dave Brosius
 * Can now build entire win32 installer from VC Workspace - Dave Brosius
 * non-listserver connection gave 0.0.0.0 as host: fixed - Dave Brosius
 * fix /ban and add /unban - Frank Thilo

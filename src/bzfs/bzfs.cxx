@@ -327,20 +327,38 @@ class ListServerLink {
 // FIXME this assumes that 255 is a wildcard
 // it should include a cidr mask with each address
 // it's still useful as is
-BZF_DEFINE_ALIST(IPMaskList, in_addr);
+
+typedef struct BanInfo
+{
+    BanInfo( in_addr &banAddr, int period = 0 ) {
+	memcpy( &addr, &banAddr, sizeof( in_addr ));
+	if (period == 0)
+	    banEnd = TimeKeeper::getSunExplodeTime();
+	else {
+	    banEnd = TimeKeeper::getCurrent();
+	    banEnd += period * 60.0f;
+	}
+    }
+
+    in_addr	addr;
+    TimeKeeper	banEnd;
+} BanInfo;
+
+BZF_DEFINE_ALIST(IPMaskList, BanInfo);
 
 class AccessControlList
 {
 public:
-  void ban(in_addr &ipAddr) {
-    banList.append(ipAddr);
+  void ban(in_addr &ipAddr, int period = 0) {
+
+    banList.append(BanInfo(ipAddr, period));
   }
 
-  bool ban(BzfString &ipList) {
-    return ban((const char *)ipList);
+  bool ban(BzfString &ipList, int period = 0) {
+    return ban((const char *)ipList, period);
   }
 
-  bool ban(const char *ipList) {
+  bool ban(const char *ipList, int period = 0) {
     char *buf = strdup(ipList);
     char *pStart = buf;
     char *pSep;
@@ -350,14 +368,14 @@ public:
     while ((pSep = strchr(pStart, ',')) != NULL) {
       *pSep = 0;
       if (convert(pStart, mask)) {
-        ban(mask);
+        ban(mask, period);
         added = true;
       }
       *pSep = ',';
       pStart = pSep + 1;
     }
     if (convert(pStart, mask)) {
-      ban(mask);
+      ban(mask, period);
       added = true;
     }
     free(buf);
@@ -368,7 +386,7 @@ public:
     int numBans = banList.getLength();
     bool found = false;
     for (int i = 0; i < numBans; i++) {
-      if (banList[i].s_addr == ipAddr.s_addr) {
+      if (banList[i].addr.s_addr == ipAddr.s_addr) {
         banList.remove(i);
         i--;
         numBans--;
@@ -404,8 +422,18 @@ public:
 
   bool validate(in_addr &ipAddr) {
     int numBans = banList.getLength();
+	TimeKeeper now = TimeKeeper::getCurrent();
+
     for (int i = 0; i < numBans; i++) {
-      in_addr mask = banList[i];
+      in_addr mask = banList[i].addr;
+      TimeKeeper banEnd = banList[i].banEnd;
+	  if (banEnd <= now) {
+		banList.remove(i);
+		i--;
+		numBans--;
+		continue;
+	  }
+
       if ((ntohl(mask.s_addr) & 0x00ffffff) == 0x00ffffff)
         mask.s_addr = htonl((ntohl(mask.s_addr) & 0xff000000) | (ntohl(ipAddr.s_addr) & 0x00ffffff));
       else if ((ntohl(mask.s_addr) & 0x0000ffff) == 0x0000ffff)
@@ -425,32 +453,39 @@ public:
 
     sendMessage(playerIndex, id, teamColor, "IP Ban List");
     sendMessage(playerIndex, id, teamColor, "-----------");
-      int numBans = banList.getLength();
-      for (int i = 0; i < numBans; i++) {
-        char *pMsg = banlistmessage;
-	in_addr mask = banList[i];
+    TimeKeeper now = TimeKeeper::getCurrent();
+    int numBans = banList.getLength();
+    for (int i = 0; i < numBans; i++) {
+	char *pMsg = banlistmessage;
+	if (banList[i].banEnd <= now) {
+	  banList.remove(i);
+	  i--;
+	  numBans--;
+	  continue;
+	}
+	in_addr mask = banList[i].addr;
 
 	sprintf( pMsg, "%d.", ((unsigned char)(ntohl(mask.s_addr) >> 24)));
 	pMsg+=strlen(pMsg);
 
 	if ((ntohl(mask.s_addr) & 0x00ffffff) == 0x00ffffff)
-	  strcat( pMsg, "*.*.*" );
+	    strcat( pMsg, "*.*.*" );
 	else {
-	  sprintf( pMsg, "%d.", ((unsigned char)(ntohl(mask.s_addr) >> 16)));
-	  pMsg+=strlen(pMsg);
-	  if ((ntohl(mask.s_addr) & 0x0000ffff) == 0x0000ffff)
-	    strcat( pMsg, "*.*" );
-	  else {
-	    sprintf( pMsg, "%d.", ((unsigned char)(ntohl(mask.s_addr) >> 8)));
+	    sprintf( pMsg, "%d.", ((unsigned char)(ntohl(mask.s_addr) >> 16)));
 	    pMsg+=strlen(pMsg);
-	    if ((ntohl(mask.s_addr) & 0x000000ff) == 0x000000ff)
-	      strcat( pMsg, "*" );
-	    else
-	      sprintf( pMsg, "%d", ((unsigned char)ntohl(mask.s_addr)));
-	  }
+	    if ((ntohl(mask.s_addr) & 0x0000ffff) == 0x0000ffff)
+		strcat( pMsg, "*.*" );
+	    else {
+		sprintf( pMsg, "%d.", ((unsigned char)(ntohl(mask.s_addr) >> 8)));
+		pMsg+=strlen(pMsg);
+		if ((ntohl(mask.s_addr) & 0x000000ff) == 0x000000ff)
+		    strcat( pMsg, "*" );
+		else
+		    sprintf( pMsg, "%d", ((unsigned char)ntohl(mask.s_addr)));
+	    }
 	}
 
-      sendMessage(playerIndex, id, teamColor, banlistmessage);
+	sendMessage(playerIndex, id, teamColor, banlistmessage);
     }
   }
 
@@ -4761,7 +4796,12 @@ static void parseCommand(const char *message, int t)
   // /ban command allows operator to ban players based on ip
   else if (player[t].Admin && strncmp(message+1, "ban", 3) == 0) {
     char reply[MessageLen];
-    if (acl.ban(message + 5))
+    char *ips = (char *) (message + 5);
+    char *time = strchr(ips, ' ');
+    int period = 0;
+    if (time != NULL)
+	period = atoi(time);
+    if (acl.ban(ips, period))
       strcpy(reply, "IP pattern added to banlist");
     else
       strcpy(reply, "malformed address");

@@ -38,12 +38,14 @@ class TimeKeeper {
 
     static const TimeKeeper&	getCurrent();
     static const TimeKeeper&	getTick(); // const
+	static const TimeKeeper&	getSunExplodeTime();
     static void			setTick();
 
   private:
     double		seconds;
     static TimeKeeper	currentTime;
     static TimeKeeper	tickTime;
+	static TimeKeeper	sunExplodeTime;
 };
 
 //
