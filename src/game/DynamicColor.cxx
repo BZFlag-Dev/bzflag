@@ -303,7 +303,7 @@ void DynamicColor::setSequence(int channel,float period, float offset,
   if (period >= minPeriod) {
     seq.period = period;
     seq.offset = offset;
-    seq.count = list.size();
+    seq.count = (unsigned int)list.size();
     seq.list = new char[seq.count];
     for (unsigned int i = 0; i < seq.count; i++) {
       seq.list[i] = list[i];
