@@ -566,6 +566,8 @@ bool WorldFileObstacle::read(const char *cmd, istream& input)
     rotation = rotation * M_PI / 180.0f;
   } else if (strcasecmp(cmd, "size") == 0){
     input >> size[0] >> size[1] >> size[2];
+	if (size[2] < 0)
+	flipZ = true;
 	size[0] = fabs(size[0]);	// make sure they are postive, no more tricks
 	size[1] = fabs(size[1]);
 	size[2] = fabs(size[2]);
@@ -6464,11 +6466,11 @@ static void parse(int argc, char **argv, CmdLineOptions &options)
   }
 
 
-  for (std::map<std::string, FlagDesc*>::iterator it = FlagDesc::getFlagMap().begin(); 
-       it != FlagDesc::getFlagMap().end(); ++it) {
-    if (options.flagCount[it->second] > 0) {
-	  for (int j = 0; j < options.flagCount[it->second]; j++) {
-		  if (setRequiredFlag(flag[f], it->second))
+  for (std::map<std::string, FlagDesc*>::iterator it2 = FlagDesc::getFlagMap().begin(); 
+       it2 != FlagDesc::getFlagMap().end(); ++it2) {
+    if (options.flagCount[it2->second] > 0) {
+	  for (int j = 0; j < options.flagCount[it2->second]; j++) {
+		  if (setRequiredFlag(flag[f], it2->second))
 			f++;
 	  }
 	  options.gameStyle |= int(SuperFlagGameStyle);
