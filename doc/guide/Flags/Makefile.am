@@ -2,6 +2,7 @@ EXTRA_DIST = \
 	Agility.xml \
 	Blindness.xml \
 	BlueTeam.xml \
+	Bouncy.xml \
 	Burrow.xml \
 	Cloaking.xml \
 	Colorblindness.xml \
