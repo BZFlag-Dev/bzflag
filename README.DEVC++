@@ -17,7 +17,7 @@ is quite easy.
 
 3. Download libCURL, available from:
 
-    http://curl.haxx.se/latest.cgi?curl=win32-ssl-devel-mingw
+    http://ileague.xoopiter.com/downloads/curl-7.11.1-win32-nossl-devel.zip
 
    Installation is roughly the same as the SDL instructions below.
 
