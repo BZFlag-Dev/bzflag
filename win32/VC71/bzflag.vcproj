@@ -445,26 +445,6 @@ copy debug\*.pdb ..\..\*.pdb
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="..\..\src\bzflag\menus.cxx">
-					<FileConfiguration
-						Name="Debug|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							Optimization="0"
-							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""
-							BasicRuntimeChecks="3"/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							Optimization="2"
-							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""/>
-					</FileConfiguration>
-				</File>
-				<File
 					RelativePath="..\..\src\bzflag\RadarRenderer.cxx">
 					<FileConfiguration
 						Name="Debug|Win32">
@@ -916,9 +896,6 @@ copy debug\*.pdb ..\..\*.pdb
 			</File>
 			<File
 				RelativePath="..\..\src\bzflag\MenuDefaultKey.h">
-			</File>
-			<File
-				RelativePath="..\..\src\bzflag\menus.h">
 			</File>
 			<File
 				RelativePath="..\..\src\bzflag\OptionsMenu.h">
