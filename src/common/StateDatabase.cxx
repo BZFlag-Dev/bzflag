@@ -19,7 +19,6 @@
 #include <assert.h>
 #include <ctype.h>
 #include <stack>
-#include <limits>
 #include <iostream>
 #include <math.h>
 
@@ -151,19 +150,19 @@ std::string		StateDatabase::get(const std::string& name) const
 float			StateDatabase::eval(const std::string& name) const
 {
   static std::vector<std::string> variables;
+  // ugly hack, since gcc 2.95 doesn't have <limits>
+  float NaN;
+  memset(&NaN, 0xff, sizeof(float));
 
   for (std::vector<std::string>::iterator i = variables.begin(); i != variables.end(); i++)
     if (*i == name)
-      return std::numeric_limits<float>::signaling_NaN();
-// riker says exceptions are bad, but in the future they may not be
-//      throw std::runtime_error("circular reference in eval(" + name + ")\n");
+      return NaN;
 	
   variables.push_back(name);
 
   Map::const_iterator index = items.find(name);
   if (index == items.end() || !index->second.isSet)
-    return std::numeric_limits<float>::signaling_NaN();
-//    throw std::runtime_error("BZDB:" + name + " not found\n");
+    return NaN;
   Expression pre, inf;
   std::string value = index->second.value;
   value >> inf;
