@@ -99,7 +99,6 @@ static DefaultDBItem	defaultDBItems[] = {
   { "volume",			"10",			true,	StateDatabase::ReadWrite,	NULL },
   { "latitude",			"37.5",			true,	StateDatabase::ReadWrite,	NULL },
   { "longitude",		"122",			true,	StateDatabase::ReadWrite,	NULL },
-  { "joystick",			"0",			true,	StateDatabase::ReadWrite,	NULL },
   { "enhancedRadar",		"1",			true,	StateDatabase::ReadWrite,	NULL },
   { "coloredradarshots",	"1",			true,	StateDatabase::ReadWrite,	NULL },
   { "linedradarshots",		"0",			true,	StateDatabase::ReadWrite,	NULL },
@@ -316,8 +315,6 @@ static void		usage()
 	" [-echo]"
 	" [-echoAnsi]"
 	" [-geometry <geometry-spec>]"
-	" [-joystick {1|0}]"
-	" [-joystickname <name>]"
 	" [-latitude <latitude>] [-longitude <longitude>]"
 	" [-list <server-list-url>] [-nolist]"
 	" [-locale <locale>]"
@@ -468,22 +465,6 @@ static void		parse(int argc, char** argv)
 	printFatalError("Invalid argument for %s.", argv[i-1]);
 	usage();
       }
-    } else if (strcmp(argv[i], "-joystick") == 0) {
-      if (++i == argc) {
-	printFatalError("Missing argument for %s.", argv[i-1]);
-	usage();
-      }
-      if (strcmp(argv[i], "0") != 0 && strcmp(argv[i], "1") != 0) {
-	printFatalError("Invalid argument for %s.", argv[i-1]);
-	usage();
-      }
-      BZDB.set("joystick", argv[i]);
-    } else if (strcmp(argv[i], "-joystickname") == 0) {
-      if (++i == argc) {
-	printFatalError("Missing argument for %s.", argv[i-1]);
-	usage();
-      }
-      BZDB.set("joystickname", argv[i]);
     } else if (strcmp(argv[i], "-v") == 0 ||
 	     strcmp(argv[i], "-version") == 0 ||
 	     strcmp(argv[i], "--version") == 0) {
@@ -1046,8 +1027,7 @@ int			main(int argc, char** argv)
   window->setTitle("bzflag");
 
   /* initialize the joystick */
-  if (BZDB.isTrue("joystick"))
-    window->initJoystick(BZDB.get("joystickname").c_str());
+  window->initJoystick(BZDB.get("joystickname").c_str());
 
   // set data directory if user specified
   if (BZDB.isSet("directory"))
