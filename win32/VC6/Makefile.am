@@ -1,7 +1,6 @@
 EXTRA_DIST =	\
-	bzflag.dsp	\
-	bzflag.dsw	\
 	bzadmin.dsp	\
+	bzflag.dsp	\
 	bzfs.dsp	\
 	bzwtransform.dsp	\
 	common.dsp	\

@@ -1,6 +1,6 @@
 EXTRA_DIST =	\
 	bzflag.sln	\
-      bzflag.vcproj	\
+	bzflag.vcproj	\
 	bzadmin.vcproj	\
 	bzfs.vcproj	\
 	bzwtransform.vcproj	\
@@ -15,6 +15,5 @@ EXTRA_DIST =	\
 	platform.vcproj	\
 	scene.vcproj
 
-	
 MAINTAINERCLEANFILES = \
 	Makefile.in
