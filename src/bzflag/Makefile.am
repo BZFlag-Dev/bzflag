@@ -136,6 +136,7 @@ if MACOS
 LDADD =	\
 	../net/libNet.a			\
 	../common/libCommon.a		\
+	../game/libGame.a		\
 	../obstacle/libObstacle.a	\
 	../platform/MacOSX/libMac.a	\
 	../platform/libPlatform.a	\
