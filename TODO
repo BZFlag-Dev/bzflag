@@ -24,6 +24,8 @@ THESE SHOULD HAPPEN BEFORE THE NEXT RELEASE:
 
 THESE ARE LOWER PRIORITY
 
+* make motd.php page take a version so that the next version can have it's own MOTD
+
 * the players have spoken, and hold-the-flag is wanted
 
 * server should precompute it's MAX_Z and send it to the client.
