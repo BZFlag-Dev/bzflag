@@ -53,7 +53,19 @@ float			BoxBuilding::intersect(const Ray& r) const
 
 void			BoxBuilding::getNormal(const float* p, float* n) const
 {
-  getNormalRect(p, getPosition(), getRotation(), getWidth(), getBreadth(), n);
+  // This bit of cruft causes bullets to bounce of buildings in the z direction
+  if (p[2] == getPosition()[2]) {
+    n[0] = 0.0f;
+    n[1] = 0.0f;
+    n[2] = -1.0f;
+  }
+  else if (p[2] == getPosition()[2] + getHeight()) {
+    n[0] = 0.0f;
+    n[1] = 0.0f;
+    n[2] = 1.0f;
+  } // end cruftiness
+  else
+    getNormalRect(p, getPosition(), getRotation(), getWidth(), getBreadth(), n);
 }
 
 bool			BoxBuilding::isInside(const float* p,
