@@ -313,7 +313,7 @@ float			timeRayHitsBlock(const Ray& r, const float* p1,
 
 /** Computing ray travel time to the plane described by 3 points
  */
-float			timeRayHitsPlane(const float pb[3],
+static float		timeRayHitsPlane(const float pb[3],
 					 const float db[3],
 					 const float x1[3],
 					 const float x2[3],
@@ -331,7 +331,7 @@ float			timeRayHitsPlane(const float pb[3],
   }
   // Thats a distance vector: a vector from the plane to the ray beginning
   for (i = 0; i < 3; i++) {
-    d[i] = x1[i] - pb[i];
+    d[i] = pb[i] - x1[i];
   }
 
   // plane versor unnormalized
@@ -361,13 +361,14 @@ float			timeRayHitsPlane(const float pb[3],
     return -1.0f;
 
   // time is ... that is normalized
-  return distance / velocity;
+  return - distance / velocity;
 }
 
 float			timeRayHitsPyramids(const Ray& r,
 					    const float* p1, float angle,
 					    float dx, float dy, float dz)
 {
+  const float epsilon = 1.0e-5;
   // get names for ray info
   int i;
   const float* p2 = r.getOrigin();
@@ -417,7 +418,7 @@ float			timeRayHitsPyramids(const Ray& r,
   x2[0] =   dx;
   x2[1] = - dy;
   residualTemp = timeRayHitsPlane(pb, db, x1, x2, x3);
-  if (residualTemp < 0.5f)
+  if (residualTemp < -0.5f)
     return residualTemp;
   for (i = 0; i < 3; i++) {
     pb[i] += residualTemp * db[i];
@@ -427,7 +428,7 @@ float			timeRayHitsPyramids(const Ray& r,
   x1[0] = - x1[0];
   x1[1] = - x1[1];
   residualTemp = timeRayHitsPlane(pb, db, x2, x1, x3);
-  if (residualTemp < 0.5f)
+  if (residualTemp < -0.5f)
     return residualTemp;
   for (i = 0; i < 3; i++) {
     pb[i] += residualTemp * db[i];
@@ -437,7 +438,7 @@ float			timeRayHitsPyramids(const Ray& r,
   x2[0] = - x2[0];
   x2[1] = - x2[1];
   residualTemp = timeRayHitsPlane(pb, db, x1, x2, x3);
-  if (residualTemp < 0.5f)
+  if (residualTemp < -0.5f)
     return residualTemp;
   for (i = 0; i < 3; i++) {
     pb[i] += residualTemp * db[i];
@@ -447,7 +448,7 @@ float			timeRayHitsPyramids(const Ray& r,
   x1[0] = - x1[0];
   x1[1] = - x1[1];
   residualTemp = timeRayHitsPlane(pb, db, x2, x1, x3);
-  if (residualTemp < 0.5f)
+  if (residualTemp < -0.5f)
     return residualTemp;
   for (i = 0; i < 3; i++) {
     pb[i] += residualTemp * db[i];
@@ -458,12 +459,31 @@ float			timeRayHitsPyramids(const Ray& r,
   x3[1] = dy;
   x3[2] = 0.0f;
   residualTemp = timeRayHitsPlane(pb, db, x1, x2, x3);
-  if (residualTemp < 0.5f)
+  if (residualTemp < -0.5f)
     return residualTemp;
   for (i = 0; i < 3; i++) {
     pb[i] += residualTemp * db[i];
   }
   residualTime += residualTemp;
+
+  // No way to move further. See if inside
+  // first bounding box
+  pb[0] = fabsf(pb[0]);
+  pb[1] = fabsf(pb[1]);
+  if (pb[0] > dx + epsilon * dx)
+    return -1.0f;
+  if (pb[1] > dy + epsilon * dy)
+    return -1.0f;
+  if (pb[2] < 0.0f - epsilon * dz)
+    return -1.0f;
+  // now shrink
+  float scaledDistance;
+  if (pb[0] * dy > pb[1] * dx)
+    scaledDistance = dz * (dx - pb[0]) - pb[2] * dx;
+  else
+    scaledDistance = dz * (dy - pb[1]) - pb[2] * dy;
+  if (scaledDistance < - epsilon * dz)
+    residualTime = -1.0f;
 
   return residualTime;
 }
