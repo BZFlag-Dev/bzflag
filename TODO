@@ -4,6 +4,10 @@ current bugs
   code in the client to send a MsgNewRabbit and thus requesting to appoint
   a new rabbit. Maybe rabbit shouldn't be able to pause anyway?
 
+- describe rabbit hunt in man page (and in-game help?)
+
+- doc/protocol is not up to date
+
 
 to do list for bzflag
 ---------------------
