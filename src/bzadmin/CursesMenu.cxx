@@ -276,6 +276,7 @@ void PlayerCMItem::showItem(WINDOW* menuWin, int line, int col, int width,
   int wins, losses, tks;
   int scorePad = 17;
   int callsignPad = CallSignLen;
+  int attrPad = std::string("(Reg/Ident/Admin)").length();
   PlayerIdMap::const_iterator iter = playerMap.find(id);
   if (iter != playerMap.end()) {
     name = iter->second.name;
@@ -283,6 +284,19 @@ void PlayerCMItem::showItem(WINDOW* menuWin, int line, int col, int width,
     wins = iter->second.wins;
     losses = iter->second.losses;
     tks = iter->second.tks;
+
+    std::string attrstr = "(";
+    if (iter->second.isRegistered)
+      attrstr += "Reg/";
+    if (iter->second.isIdentified)
+      attrstr += "Ident/";
+    if (iter->second.isAdmin)
+      attrstr += "Admin/";
+    if (attrstr == "(")
+      attrstr += "Anon)";
+    else
+      attrstr[attrstr.length()-1] = ')';
+
     std::ostringstream oss;
     oss<<(wins - losses)<<" ("<<wins<<"-"<<losses<<")["<<tks<<"]";
     unsigned int streamLength = oss.str().size();
@@ -290,6 +304,9 @@ void PlayerCMItem::showItem(WINDOW* menuWin, int line, int col, int width,
       oss<<' ';
     oss<<' '<<name;
     for (unsigned int i = 0; i < callsignPad - name.size(); ++i)
+      oss<<' ';
+    oss<<' '<<attrstr;
+    for (unsigned int i = 0; i < attrPad - attrstr.size(); ++i)
       oss<<' ';
     streamLength = oss.str().size();
     if (selected)

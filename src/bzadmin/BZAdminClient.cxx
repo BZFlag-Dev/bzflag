@@ -252,14 +252,17 @@ BZAdminClient::ServerCode BZAdminClient::checkMessage() {
       for (i = 0; i < numIPs; ++i) {
 	vbuf = nboUnpackUByte(vbuf, tmp);
 	vbuf = nboUnpackUByte(vbuf, p);
-	// FIXME - actually parse the bitfield
+	// parse player info bitfield
 	vbuf = nboUnpackUByte(vbuf, tmp);
+	players[p].isAdmin = ((tmp & IsAdmin) != 0);
+	players[p].isRegistered = ((tmp & IsRegistered) != 0);
+	players[p].isIdentified = ((tmp & IsIdentified) != 0);
 	vbuf = a.unpack(vbuf);
 	players[p].ip = a.getDotNotation();
       }
       if (messageMask[MsgAdminInfo]) {
 	lastMessage.first = std::string("*** IP update received, ") +
-	  TextUtils::format("%d", numIPs) + " IP" +(numIPs == 1 ? "" : "s") +
+	  TextUtils::format("%d", numIPs) + " IP" + (numIPs == 1 ? "" : "s") +
 	  " updated.";
       }
       break;

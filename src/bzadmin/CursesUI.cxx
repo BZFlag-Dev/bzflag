@@ -223,6 +223,10 @@ bool CursesUI::checkCommand(std::string& str) {
   case KEY_F(5):
     if (targetIter != players.end() && targetIter->first != me &&
 	targetIter->first <= LastRealPlayer) {
+      if (targetIter->second.isAdmin) {
+	outputMessage("Warning: Kicking Administrator (" 
+	  + targetIter->second.name + ")!", Red);
+      }
       cmd = "/kick \"";
       cmd += targetIter->second.name;
       cmd += "\"";
@@ -237,6 +241,10 @@ bool CursesUI::checkCommand(std::string& str) {
     if (targetIter != players.end() && targetIter->first != me &&
 	targetIter->first <= LastRealPlayer) {
       if (targetIter->second.ip != "") {
+	if (targetIter->second.isAdmin) {
+	  outputMessage("Warning: Banning Administrator (" 
+	    + targetIter->second.name + ")!", Red);
+	}
 	cmd = "/ban ";
 	cmd += targetIter->second.ip;
 	targetIter = players.find(me);
