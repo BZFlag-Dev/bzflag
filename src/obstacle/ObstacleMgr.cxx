@@ -529,9 +529,7 @@ void GroupDefinition::clear()
   for (int type = 0; type < ObstacleTypeCount; type++) {
     ObstacleList& list = lists[type];
     for (unsigned int i = 0; i < list.size(); i++) {
-      if (!list[i]->isFromContainer()) {
-	delete list[i];
-      }
+      delete list[i];
     }
     list.clear();
   }
