@@ -55,6 +55,7 @@ noinst_HEADERS =			\
 	LagInfo.h			\
 	Language.h			\
 	LaserSceneNode.h		\
+	ListServer.h			\
 	MathUtils.h			\
 	MediaFile.h			\
 	MeshFace.h			\
@@ -140,6 +141,7 @@ noinst_HEADERS =			\
 	vectors.h			\
 	version.h			\
 	win32.h
+
 
 MAINTAINERCLEANFILES =	\
 	config.h.in	\

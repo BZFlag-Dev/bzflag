@@ -70,7 +70,6 @@ bzflag_SOURCES =			\
 	InputMenu.h			\
 	KeyboardMapMenu.cxx		\
 	KeyboardMapMenu.h		\
-	ListServer.h			\
 	LocalPlayer.cxx			\
 	LocalPlayer.h			\
 	MainMenu.cxx			\
