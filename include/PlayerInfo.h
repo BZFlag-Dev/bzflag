@@ -118,7 +118,12 @@ public:
   void        setReplayState(PlayerReplayState state);
   void        updateIdleTime();
   PlayerReplayState getReplayState();
+
+  void setTrackerID(unsigned short int t);
+  unsigned short int trackerID();
+
 private:
+
   void        cleanCallSign();
   void        cleanEMail();
 
@@ -164,7 +169,9 @@ private:
 
   // player played before countdown started
   bool playedEarly;
-  
+
+  // tracker id for position tracking
+  unsigned short int tracker;
 };
 
 

@@ -24,6 +24,7 @@
 
 PlayerInfo::PlayerInfo() {
   state = PlayerNoExist;
+  tracker = 0;
 }
 
 std::string PlayerInfo::getLastMsg() {
@@ -388,6 +389,18 @@ void        PlayerInfo::setReplayState(PlayerReplayState state) {
 PlayerReplayState PlayerInfo::getReplayState()
 {
   return replayState;
+}
+
+
+void PlayerInfo::setTrackerID(unsigned short int t)
+{
+  tracker = t;
+}
+
+
+unsigned short int PlayerInfo::trackerID()
+{
+  return tracker;
 }
 
 
