@@ -95,12 +95,13 @@ bool			MenuDefaultKey::keyPress(const BzfKeyEvent& key)
 {
   switch (key.ascii) {
     case 27:	// escape
+      playLocalSound(SFX_DROP_FLAG);
       HUDDialogStack::get()->pop();
       return true;
 
     case 13:	// return
+      playLocalSound(SFX_GRAB_FLAG);
       HUDDialogStack::get()->top()->execute();
-      playLocalSound(SFX_FIRE);
       return true;
   }
 
