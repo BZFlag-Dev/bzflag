@@ -104,8 +104,8 @@ bzfs \- BZFlag game server
 and it must be running to play.  It can be run on any system on the
 network (including a player's system or one without graphics).
 Terminating the server terminates the game in progress.
-.SS Options
-.RS
+
+.SH OPTIONS
 .TP 15
 \fB-a \fIvelocity rotation\fR
 Enables inertia and sets the maximum linear and angular accelerations.
@@ -461,7 +461,7 @@ The number of voters needed to hold a vote
 The length of time the players are able to vote
 .TP
 \fB-world \fIworld-file\fR
-Reads a specific BZFlag \fB.bzw\bR world layout file for the game map.
+Reads a specific BZFlag \fB.bzw\fR world layout file for the game map.
 .TP
 \fB-worldsize \fIworld-size\fR
 Changes the size for random maps
