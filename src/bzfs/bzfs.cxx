@@ -2928,8 +2928,8 @@ static void shotFired(int playerIndex, void *buf, int len)
   float tankSpeed	   = maxTankSpeed;
   float lifetime = BZDB.eval(StateDatabase::BZDB_RELOADTIME);
   if (clOptions->gameStyle & HandicapGameStyle) {
-    tankSpeed *= HandicapSpeedAdj;
-    shotSpeed *= HandicapShotSpeedAdj;
+    tankSpeed *= BZDB.eval(StateDatabase::BZDB_HANDICAPVELAD);
+    shotSpeed *= BZDB.eval(StateDatabase::BZDB_HANDICAPSHOTAD);
   }
   if (firingInfo.flagType == Flags::ShockWave) {
     shotSpeed = 0.0f;
@@ -3242,7 +3242,8 @@ static void adjustTolerances()
 {
   // check for handicap adjustment
   if ((clOptions->gameStyle & HandicapGameStyle) != 0) {
-    speedTolerance *= HandicapSpeedAdj * HandicapSpeedAdj;
+    const float speedAdj = BZDB.eval(StateDatabase::BZDB_HANDICAPVELAD);
+    speedTolerance *= speedAdj * speedAdj;
   }
 
   // check for physics driver disabling

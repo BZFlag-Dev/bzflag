@@ -1124,7 +1124,7 @@ void			LocalPlayer::setDesiredSpeed(float fracOfMaxSpeed)
   }
 
   // apply handicap advantage to tank speed
-  fracOfMaxSpeed *= (1.0f + (handicap * (HandicapSpeedAdj - 1.0f)));
+  fracOfMaxSpeed *= (1.0f + (handicap * (BZDB.eval(StateDatabase::BZDB_HANDICAPVELAD) - 1.0f)));
 
   // set desired speed
   desiredSpeed = BZDBCache::tankSpeed * fracOfMaxSpeed;
@@ -1156,7 +1156,7 @@ void			LocalPlayer::setDesiredAngVel(float fracOfMaxAngVel)
   }
 
   // apply handicap advantage to tank speed
-  fracOfMaxAngVel *= (1.0f + (handicap * (HandicapAngAdj - 1.0f)));
+  fracOfMaxAngVel *= (1.0f + (handicap * (BZDB.eval(StateDatabase::BZDB_HANDICAPANGAD) - 1.0f)));
 
   // set desired turn speed
   desiredAngVel = fracOfMaxAngVel * BZDB.eval(StateDatabase::BZDB_TANKANGVEL);
@@ -1229,7 +1229,7 @@ bool			LocalPlayer::fireShot()
   else {
     // apply any handicap advantage to shot speed
     if (handicap > 0.0f) {
-      const float speedAd = 1.0f + (handicap * (HandicapShotSpeedAdj - 1.0f));
+      const float speedAd = 1.0f + (handicap * (BZDB.eval(StateDatabase::BZDB_HANDICAPSHOTAD) - 1.0f));
       const float* dir = getForward();
       const float* tankVel = getVelocity();
       const float shotSpeed = speedAd * BZDB.eval(StateDatabase::BZDB_SHOTSPEED);
@@ -1638,7 +1638,7 @@ float			LocalPlayer::updateHandicap()
 
   if (World::getWorld()->allowHandicap()) {
     // a relative score of -50 points will provide maximum handicap
-    handicap = float(getHandicapScoreBase()) / 50.0f;
+    handicap = float(getHandicapScoreBase()) / BZDB.eval(StateDatabase::BZDB_HANDICAPSCOREDIFF);
 
     /* limit how much of a handicap is afforded, and only provide
      * handicap advantages instead of disadvantages.
