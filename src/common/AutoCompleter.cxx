@@ -117,6 +117,7 @@ void DefaultCompleter::setDefaults() {
   registerWord("/superkill");
   registerWord("/time");
   registerWord("/unban ");
+  registerWord("/uptime");
   registerWord("/veto");
   registerWord("/viewreports");
   registerWord("/vote");
