@@ -379,9 +379,9 @@ void			RadarRenderer::render(SceneRenderer& renderer,
 	if (flashTank.isOn()) {
 	  if (!toggleTank) {
 	    float flashcolor[3];
-	    flashcolor[0] = 0.0;
-	    flashcolor[1] = 0.8;
-	    flashcolor[2] = 0.9;
+	    flashcolor[0] = 0.0f;
+	    flashcolor[1] = 0.8f;
+	    flashcolor[2] = 0.9f;
 	    glColor3fv(flashcolor);
 	  }
 	} else {
