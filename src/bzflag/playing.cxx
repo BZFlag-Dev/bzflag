@@ -1556,6 +1556,8 @@ static void		doAutoPilot(float &rotation, float &speed)
   PlayerId target = curMaxPlayers;
 
   float pos[3];
+  float myAzimuth = myTank->getAngle();
+  float enemyAzimuth;
 
   memcpy(pos, myTank->getPosition(), sizeof(pos));
 
@@ -1701,8 +1703,8 @@ static void		doAutoPilot(float &rotation, float &speed)
 
       if (closestFlag != -1) {
 	const float *fpos = world->getFlag(closestFlag).position;
-	float azimuth = atan2f(fpos[1] - pos[1], fpos[0] - pos[0]);
-	rotation = azimuth - myTank->getAngle();
+	float flagAzimuth = atan2f(fpos[1] - pos[1], fpos[0] - pos[0]);
+	rotation = flagAzimuth - myAzimuth;
 	if (rotation < -1.0f * M_PI) rotation += 2.0f * M_PI;
 	if (rotation > 1.0f * M_PI) rotation -= 2.0f * M_PI;
 	speed = M_PI/2.0f - fabs(rotation);
@@ -1710,8 +1712,8 @@ static void		doAutoPilot(float &rotation, float &speed)
       else {
 	//figure out my rotation to my target
 	const float *tp = player[target]->getPosition();
-	float azimuth = atan2f(tp[1] - pos[1], tp[0] - pos[0]);
-	rotation = azimuth - myTank->getAngle();
+	enemyAzimuth = atan2f(tp[1] - pos[1], tp[0] - pos[0]);
+	rotation = enemyAzimuth - myTank->getAngle();
 	if (rotation < -1.0f * M_PI) rotation += 2.0f * M_PI;
 	if (rotation > 1.0f * M_PI) rotation -= 2.0f * M_PI;
 
@@ -1737,12 +1739,20 @@ static void		doAutoPilot(float &rotation, float &speed)
 	// weave towards the player
 	const Player *target = myTank->getTarget();
 	if (distance > 30.0f) {
-	  int period = int(TimeKeeper::getCurrent().getSeconds());
-	  float bias = ((period % 4) < 2) ? M_PI/9.0f : -M_PI/9.0f;
-	  rotation += bias;
-	  if (rotation < -1.0f * M_PI) rotation += 2.0f * M_PI;
-	  if (rotation > 1.0f * M_PI) rotation -= 2.0f * M_PI;
-	  speed = M_PI/2.0f - fabs(rotation);
+	  float enemyUnitVec[2] = { cos(enemyAzimuth), sin(enemyAzimuth) };
+	  float myUnitVec[2] = { cos(myAzimuth), sin(myAzimuth) };
+	  if ((myUnitVec[0]*enemyUnitVec[0] + myUnitVec[1]*enemyUnitVec[1]) < 0.0f) {
+	    rotation *= M_PI / (2.0f * fabs(rotation));
+	    speed = 0.0f;
+	  }
+	  else {
+	    int period = int(TimeKeeper::getCurrent().getSeconds());
+	    float bias = ((period % 4) < 2) ? M_PI/9.0f : -M_PI/9.0f;
+	    rotation += bias;
+	    if (rotation < -1.0f * M_PI) rotation += 2.0f * M_PI;
+	    if (rotation > 1.0f * M_PI) rotation -= 2.0f * M_PI;
+	    speed = M_PI/2.0f - fabs(rotation);
+	  }
 	}
 	else if (target->getFlag() != Flags::Burrow) {
 	  speed = -0.5f;
@@ -1774,7 +1784,7 @@ static void		doAutoPilot(float &rotation, float &speed)
 	        continue;
 
 	      if (((World::getWorld()->allowJumping() || (myTank->getFlag()) == Flags::Jumping)) 
-	      && (dist < (BZDB->eval(StateDatabase::BZDB_TANKLENGTH) * 2.5f))) {
+	      && (dist < (BZDB->eval(StateDatabase::BZDB_TANKLENGTH) * 2.25f))) {
 	        myTank->jump();
 	        s = maxShots;
 	        t = curMaxPlayers;
