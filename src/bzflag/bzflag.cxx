@@ -761,7 +761,12 @@ int			main(int argc, char** argv)
   }
 
   // Init libcurl
+#ifndef _WIN32
   CURLcode curlResult = curl_global_init(CURL_GLOBAL_SSL);
+#else
+  // XXX: FIXME: SSL crashes windows builds, disable for now
+  CURLcode curlResult = curl_global_init(0);
+#endif
   if (curlResult) {
     printFatalError("Curl reports %d on init\n", curlResult);
   }
