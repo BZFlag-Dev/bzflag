@@ -2213,6 +2213,12 @@ static void addPlayer(int playerIndex)
     char cs[CallSignLen];
     memcpy(cs, player[playerIndex].callSign, sizeof(char) * CallSignLen);
     filtered = clOptions->filter.filter(cs, clOptions->filterSimple);
+    if (!filtered) {
+      DEBUG2("checking email: %s\n",player[playerIndex].email);
+      char em[EmailLen];
+      memcpy(em, player[playerIndex].email, sizeof(char) * EmailLen);
+      filtered = clOptions->filter.filter(em, clOptions->filterSimple);
+    }
     if (filtered) {
       rejectPlayer(playerIndex, RejectBadCallsign);
       return ;
