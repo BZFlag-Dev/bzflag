@@ -207,7 +207,10 @@ struct PlayerInfo {
     bool lagkillerpending;
     TimeKeeper lagkillertime;
 
- 	FlagHistoryList	flagHistory;
+    FlagHistoryList flagHistory;
+    // player played before countdown started
+    bool playedEarly;
+ 
 #ifdef NETWORK_STATS
     // message stats bloat
     TimeKeeper perSecondTime[2];
@@ -527,6 +530,7 @@ static boolean printScore = False;
 static float timeLimit = 0.0f;
 static float timeElapsed = 0.0f;
 static TimeKeeper gameStartTime;
+static bool countdownActive = false;
 #endif
 static boolean publicizeServer = False;
 static BzfString publicizedAddress;
@@ -3505,6 +3509,7 @@ static void addClient(int acceptSocket)
 #ifdef TIMELIMIT
       gameStartTime = TimeKeeper::getCurrent();
       timeElapsed = 0.0f;
+      countdownActive = false;
 #endif
     }
   }
@@ -3655,6 +3660,7 @@ static void addPlayer(int playerIndex)
 
   player[playerIndex].lagkillerpending = false;
 
+  player[playerIndex].playedEarly = false;
 
   // accept player
   directMessage(playerIndex, MsgAccept, 0, getDirectMessageBuffer());
@@ -3720,7 +3726,7 @@ static void addPlayer(int playerIndex)
   sendTeamUpdate(teamIndex);
 
   // send time update to new player if we're counting down
-  if (timeLimit > 0.0f && player[playerIndex].type != ComputerPlayer) {
+  if (countdownActive && timeLimit > 0.0f && player[playerIndex].type != ComputerPlayer) {
     float timeLeft = timeLimit - (TimeKeeper::getCurrent() - gameStartTime);
     if (timeLeft < 0.0f) {
       // oops
@@ -4522,6 +4528,51 @@ static void parseCommand(const char *message, int t)
     buf = nboPackUShort(buf, uint16_t(NoTeam));
     broadcastMessage(MsgScoreOver, (char*)buf-(char*)bufStart, bufStart);
     gameOver = True;
+  // /countdown starts timed game
+  } else if (player[t].Admin && strncmp(message + 1, "countdown", 9) == 0) {
+    if (timeLimit > 0.0f) {
+      gameStartTime = TimeKeeper::getCurrent();
+      timeElapsed = 0.0f;
+      countdownActive = true;
+
+      char msg[2];
+      void *buf = msg;
+      nboPackUShort(buf, (uint16_t)(int)timeLimit);
+      broadcastMessage(MsgTimeUpdate, sizeof(msg), msg);
+    }
+    // reset team scores
+    for (int i=RedTeam;i<=PurpleTeam;i++) {
+      team[i].team.lost = team[i].team.won=0;
+      sendTeamUpdate(i);
+    }
+    char reply[MessageLen]="Countdown started.";
+    sendMessage(t, player[t].id,player[t].team,reply);
+
+    // CTF game -> simulate flag captures to return ppl to base
+    if (gameStyle & int(TeamFlagGameStyle)) {
+      // get someone to can do virtual capture
+      int j;
+      for (j=0;j<maxPlayers;j++) {
+        if (player[j].state > PlayerInLimbo)
+          break;
+      }
+      if (j < maxPlayers) {
+        for (int i=0;i<maxPlayers;i++) {
+          if (player[i].playedEarly) {
+            char msg[PlayerIdPLen + 4];
+            void *buf = msg;
+            buf = player[j].id.pack(buf);
+            buf = nboPackUShort(buf, uint16_t(int(player[i].team)-1));
+            buf = nboPackUShort(buf, uint16_t(1+((int(player[i].team))%4)));
+            directMessage(i,MsgCaptureFlag, sizeof(msg), msg);
+            player[i].playedEarly = false;
+          }
+        }
+      }
+    }
+    // reset all flags
+    for (int i = 0; i < numFlags; i++)
+      zapFlag(i);
   // /flag command allows operator to control flags
   } else if (player[t].Admin && strncmp(message + 1, "flag ", 5) == 0) {
     if (strncmp(message + 6, "reset", 5) == 0) {
@@ -4757,6 +4808,11 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
 
     // player is coming alive
     case MsgAlive: {
+      // player moved before countdown started
+      if (timeLimit>0.0f && !countdownActive)
+      {
+        player[t].playedEarly = true;
+      }
       // data: position, forward-vector
       float pos[3], fwd[3];
       buf = nboUnpackVector(buf, pos);
@@ -5939,7 +5995,7 @@ int main(int argc, char **argv)
     // lets start by waiting 0.25 sec
     float waitTime = 3.0f;
 #ifdef TIMELIMIT
-    if (timeLimit > 0.0f)
+    if (countdownActive && timeLimit > 0.0f)
 	waitTime = 1.0f;
 #endif
     if (numFlagsInAir > 0) {
@@ -5977,7 +6033,7 @@ int main(int argc, char **argv)
 
 #ifdef TIMELIMIT
     // see if game time ran out
-    if (!gameOver && timeLimit > 0.0f) {
+    if (!gameOver && countdownActive && timeLimit > 0.0f) {
       float newTimeElapsed = tm - gameStartTime;
       float timeLeft = timeLimit - newTimeElapsed;
       if (timeLeft <= 0.0f) {
