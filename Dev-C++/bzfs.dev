@@ -10,7 +10,7 @@ Includes=..\Dev-C++;..\include;..\Dev-C++
 Linker=-lstdc++ -lws2_32 -lwinmm -lkernel32 -luser32 -lgdi32 -lwinspool -lcomdlg32 -ladvapi32 -lshell32 -lole32 -loleaut32 -luuid_@@_
 Libs=
 UnitCount=212
-Folders="Header Files","Header Files/bzfs","Header Files/common","Header Files/game","Header Files/net","Header Files/regex","Resource Files","Source Files","Source Files/bzfs","Source Files/common","Source Files/game","Source Files/net","Source Files/regex","Source Files/zlib"
+Folders="Header Files","Header Files/bzfs","Header Files/common","Header Files/game","Header Files/net","Header Files/regex","Resource Files","Source Files","Source Files/bzfs","Source Files/common","Source Files/date","Source Files/game","Source Files/Net","Source Files/regex","Source Files/zlib"
 ObjFiles=
 PrivateResource=
 ResourceIncludes=
@@ -2108,9 +2108,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit207]
-FileName=..\include\MeshTransform.h
+FileName=..\src\obstacle\ObstacleModifier.cxx
 CompileCpp=1
-Folder=Header Files/game
+Folder=Source Files/common
 Compile=1
 Link=1
 Priority=1000
@@ -2118,9 +2118,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit208]
-FileName=..\src\game\MeshTransform.cxx
+FileName=..\src\obstacle\ObstacleList.cxx
 CompileCpp=1
-Folder=Source Files/game
+Folder=Source Files/common
 Compile=1
 Link=1
 Priority=1000
@@ -2128,9 +2128,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit209]
-FileName=..\src\bzfs\DropGeometry.cxx
+FileName=..\src\obstacle\ObstacleMgr.cxx
 CompileCpp=1
-Folder=Source Files/bzfs
+Folder=Source Files/common
 Compile=1
 Link=1
 Priority=1000
@@ -2138,9 +2138,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit210]
-FileName=..\src\bzfs\CustomMeshTransform.cxx
+FileName=..\src\game\MeshTransform.cxx
 CompileCpp=1
-Folder=Source Files/bzfs
+Folder=Source Files/common
 Compile=1
 Link=1
 Priority=1000
@@ -2148,9 +2148,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit211]
-FileName=..\src\bzfs\CustomMeshTransform.h
+FileName=..\src\bzfs\CustomGroup.cxx
 CompileCpp=1
-Folder=Header Files/bzfs
+Folder=Source Files/common
 Compile=1
 Link=1
 Priority=1000
@@ -2158,12 +2158,11 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit212]
-FileName=..\src\bzfs\DropGeometry.h
+FileName=..\src\bzfs\CustomMeshTransform.cxx
 CompileCpp=1
-Folder=Header Files/bzfs
+Folder=Source Files/common
 Compile=1
 Link=1
 Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
-
