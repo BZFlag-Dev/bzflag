@@ -502,7 +502,7 @@ static void acceptClient(int fd)
   if (client[index].fd > maxFileDescriptor)
     maxFileDescriptor = client[index].fd;
 
-  if (debug >= 2)
+  if (debug >= 3)
     fprintf(stderr, "accepted from %s on %d\n",
 				inet_ntoa(addr.sin_addr), client[index].fd);
 }
@@ -512,7 +512,7 @@ static void removeClient(int index)
 {
   assert(client[index].fd != NotConnected);
 
-  if (debug >= 2)
+  if (debug >= 3)
     fprintf(stderr, "closing %d\n", client[index].fd);
 
   // close connection
