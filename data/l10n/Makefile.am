@@ -12,7 +12,8 @@ EXTRA_DIST = \
 	bzflag_nl.po	\
 	bzflag_pt.po	\
 	bzflag_sv.po	\
-	bzflag_xx.po
+	bzflag_xx.po	\
+	ISO-639-2_values_8bits.txt
 
 MAINTAINERCLEANFILES = \
 	Makefile.in
