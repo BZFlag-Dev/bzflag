@@ -59,6 +59,7 @@ bool VotingArbiter::forgetPoll(void)
   _startTime = TimeKeeper::getNullTime();
   _pollee = "nobody";
   _action = UNDEFINED;
+  _pollRequestor = "nobody";
   return true;
 }
 
@@ -101,6 +102,7 @@ bool VotingArbiter::poll(std::string player, std::string playerRequesting, pollA
   _votingBooth = YesNoVotingBooth(message);
   _pollee = player;
   _action = action;
+  _pollRequestor = playerRequesting;
 
   // set timers
   _startTime = TimeKeeper::getCurrent();

@@ -66,9 +66,10 @@ private:
    */
   std::deque<poller_t> _pollers;
 
-  /* who and what are being voted on */
+  /* who and what are being voted on, and who asked for the poll */
   std::string _pollee;
   pollAction_t _action;
+  std::string _pollRequestor;
   
  protected:
     
@@ -119,6 +120,10 @@ private:
   /** return a string representing the player being voted upon
     */
   inline std::string getPollPlayer(void) const;
+
+  /** return a string representing the player who requested the poll
+    */
+  inline std::string getPollRequestor(void) const;
 
 
   /** attempt to activate/open a poll
@@ -179,8 +184,9 @@ inline VotingArbiter::VotingArbiter(unsigned short int voteTime=60,
     _voteRepeatTime(voteRepeatTime)
 {
   _startTime = TimeKeeper::getNullTime();
-  _action = UNDEFINED;
   _pollee = "nobody";
+  _action = UNDEFINED;
+  _pollRequestor = "nobody";
   return;
 }
 
@@ -194,7 +200,8 @@ inline VotingArbiter::VotingArbiter(const VotingArbiter& arbiter)
     _votePercentage(arbiter._votePercentage),
     _voteRepeatTime(arbiter._voteRepeatTime),
     _pollee(arbiter._pollee),
-    _action(arbiter._action)
+    _action(arbiter._action),
+    _pollRequestor(arbiter._pollRequestor)
 {
   return;
 }
@@ -264,6 +271,11 @@ inline std::string VotingArbiter::getPollAction(void) const
 inline std::string VotingArbiter::getPollPlayer(void) const
 {
   return _pollee.size() == 0 ? "nobody" : _pollee;
+}
+
+inline std::string VotingArbiter::getPollRequestor(void) const
+{
+  return _pollRequestor.size() == 0 ? "nobody" : _pollRequestor;
 }
 
 
