@@ -99,6 +99,9 @@ const struct GlobalDBItem globalDBItems[] = {
   { "_velocityAd",		"1.5",				false, StateDatabase::Locked},
   { "_wallHeight",		"3.0*_tankHeight",		false, StateDatabase::Locked},
   { "_wideAngleAng",		"1.745329", 			false, StateDatabase::Locked},
+  { "_wingsGravity",		"_gravity",			false, StateDatabase::Locked},
+  { "_wingsJumpCount",		"0",				false, StateDatabase::Locked},
+  { "_wingsJumpVelocity",	"_jumpVelocity",		false, StateDatabase::Locked},
   { "_worldSize",		"800.0",			false, StateDatabase::Locked}
 };
 const unsigned int	numGlobalDBItems = countof(globalDBItems);

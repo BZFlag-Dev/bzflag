@@ -4188,7 +4188,7 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
       if (now - lastWorldParmChange > 10.0f) {
 	float gravity = BZDB.eval(StateDatabase::BZDB_GRAVITY);
 	if (gravity < 0.0f) {
-	  float maxTankHeight = maxWorldHeight + heightFudge * ((BZDB.eval(StateDatabase::BZDB_JUMPVELOCITY)*BZDB.eval(StateDatabase::BZDB_JUMPVELOCITY)) / (2.0f * -gravity));
+	  float maxTankHeight = maxWorldHeight + heightFudge * ((BZDB.eval(StateDatabase::BZDB_JUMPVELOCITY)*BZDB.eval(StateDatabase::BZDB_JUMPVELOCITY)*(1+BZDB.eval(StateDatabase::BZDB_WINGSJUMPCOUNT))) / (2.0f * -gravity));
 
 	  if (state.pos[2] > maxTankHeight) {
 	    DEBUG1("Kicking Player %s [%d] jumped too high [max: %f height: %f]\n", player[t].callSign, t, maxTankHeight, state.pos[2]);

@@ -158,6 +158,7 @@ private:
   bool		keyPressed;
   int           stuckingFrameCount;
   bool		spawning;
+  int		wingsFlapCount;
 };
 
 
