@@ -61,6 +61,30 @@ other players. When the rabbit (target) is destroyed, the live player
 with the next highest score becomes the rabbit. The object is to
 remain the rabbit for as long as possible. The rabbit is marked as
 a white tank.
+.SS Joining a Game
+.PP
+To get quickly started, select the "Join Game" menu in the BZFlag
+client using the arrow keys on your keyboard.  Choose the "Select a
+Server" link and pick one of the servers near the top of the menu.
+This should take you back to the "Join Game" menu where you should
+then provide a callsign.  Select the "Connect".  Within a few seconds
+you should be on that server ready to play.
+.PP
+BZFlag includes a global registration system that allows players to
+register a callsign that defines them uniquely on the BZFlag network.
+Some servers require registration for all users, some require it to
+obtain administrative abilities.  If you attempt to use a callsign
+that is already registered, you may be denied access to a server.  See
+http://my.bzflag.org/bb/ for details regarding callsign registration
+and to check on available names.  Once registered, you will be able to
+provide your password in the "Join Game" menu and have it used for
+authentication.  You are encouraged to register your callsign.
+.PP
+There are generally public BZFlag servers running around the clock all
+around the world, available over the Internet.  Similarly, private
+servers can be set up for running local network games.  See the bzfs
+manual page (bzfs.6) for details on starting a new server, public or
+private.  
 .SS Options
 .TP 15
 .B -3dfx
