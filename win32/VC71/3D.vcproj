@@ -177,16 +177,7 @@
 			Filter="cpp;c;cxx;def;odl;idl;hpj;bat;asm;asmx"
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}">
 			<File
-				RelativePath="..\..\src\3d\3DOptionsManager.cxx">
-			</File>
-			<File
 				RelativePath="..\..\src\3d\BitmapFont.cxx">
-			</File>
-			<File
-				RelativePath="..\..\src\3d\DisplayListManager.cxx">
-			</File>
-			<File
-				RelativePath="..\..\src\3d\DrawablesManager.cxx">
 			</File>
 			<File
 				RelativePath="..\..\src\3d\FontManager.cxx">
@@ -206,16 +197,7 @@
 			Filter="h;hpp;hxx;hm;inl;inc;xsd"
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}">
 			<File
-				RelativePath="..\..\include\3DOptionsManager.h">
-			</File>
-			<File
 				RelativePath="..\..\src\3d\BitmapFont.h">
-			</File>
-			<File
-				RelativePath="..\..\include\DisplayListManager.h">
-			</File>
-			<File
-				RelativePath="..\..\include\DrawablesManager.h">
 			</File>
 			<File
 				RelativePath="..\..\include\FontManager.h">

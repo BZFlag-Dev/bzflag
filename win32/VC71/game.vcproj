@@ -184,9 +184,6 @@
 				RelativePath="..\..\src\game\CommandsStandard.cxx">
 			</File>
 			<File
-				RelativePath="..\..\src\game\DelayQueue.cxx">
-			</File>
-			<File
 				RelativePath="..\..\src\game\DirectoryNames.cxx">
 			</File>
 			<File

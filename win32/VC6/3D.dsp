@@ -136,19 +136,7 @@ LIB32=link.exe -lib
 # PROP Default_Filter "cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
 # Begin Source File
 
-SOURCE=..\..\src\3D\3DOptionsManager.cxx
-# End Source File
-# Begin Source File
-
 SOURCE=..\..\src\3D\BitmapFont.cxx
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\src\3D\DisplayListManager.cxx
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\src\3D\DrawablesManager.cxx
 # End Source File
 # Begin Source File
 
@@ -170,10 +158,6 @@ SOURCE=..\..\src\3D\TextureManager.cxx
 # Begin Group "Header Files"
 
 # PROP Default_Filter "h;hpp;hxx;hm;inl"
-# Begin Source File
-
-SOURCE=..\..\include\3DOptionsManager.h
-# End Source File
 # Begin Source File
 
 SOURCE=..\..\include\AnsiCodes.h
@@ -205,14 +189,6 @@ SOURCE=..\..\include\common.h
 # Begin Source File
 
 SOURCE=.\config.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\include\DisplayListManager.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\include\DrawablesManager.h
 # End Source File
 # Begin Source File
 

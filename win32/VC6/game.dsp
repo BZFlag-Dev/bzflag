@@ -150,10 +150,6 @@ SOURCE=..\..\src\game\CommandsStandard.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\src\game\DelayQueue.cxx
-# End Source File
-# Begin Source File
-
 SOURCE=..\..\src\game\DirectoryNames.cxx
 # End Source File
 # Begin Source File
@@ -231,10 +227,6 @@ SOURCE=..\..\include\BzMaterial.h
 # Begin Source File
 
 SOURCE=..\..\src\game\CommandsStandard.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\include\DelayQueue.h
 # End Source File
 # Begin Source File
 
