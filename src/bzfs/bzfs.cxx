@@ -60,7 +60,10 @@ const int udpBufSize = 128000;
 #include <set>
 #include <vector>
 #include <map>
+#include <bitset>
 #include <algorithm>
+#include <string>
+#include <sstream>
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
@@ -154,8 +157,8 @@ enum AccessPerm
 
 struct PlayerAccessInfo
 {
-  bool				explicitAllows[lastPerm];
-  bool				explicitDenys[lastPerm];
+  std::bitset<lastPerm>		explicitAllows;
+  std::bitset<lastPerm>		explicitDenys;
   std::vector<std::string>	groups;
   bool				verified;
   float				loginTime;
@@ -213,16 +216,16 @@ bool removeGroup(PlayerAccessInfo& info, const std::string &group)
 
 bool hasPerm(PlayerAccessInfo& info, AccessPerm right)
 {
-  if (info.explicitDenys[right])
+  if (info.explicitDenys.test(right))
     return false;
-  if (info.explicitAllows[right])
+  if (info.explicitAllows.test(right))
     return true;
   std::vector<std::string>::iterator itr = info.groups.begin();
   std::map<std::string, PlayerAccessInfo>::iterator group;
   while (itr != info.groups.end()) {
     group = groupAccess.find(*itr);
     if (group != groupAccess.end())
-      if (group->second.explicitAllows[right])
+      if (group->second.explicitAllows.test(right))
 	return true;
     itr++;
   }
@@ -277,7 +280,7 @@ void setUserPassword(const std::string &nick, const std::string &pass)
   passwordDatabase[str1] = pass;
 }
 
-const char* nameFromPerm(AccessPerm perm)
+std::string nameFromPerm(AccessPerm perm)
 {
   switch (perm) {
     case idleStats: return "idleStats";
@@ -305,7 +308,7 @@ const char* nameFromPerm(AccessPerm perm)
   };
 }
 
-AccessPerm permFromName(std::string name)
+AccessPerm permFromName(const std::string &name)
 {
   if (name == "IDLESTATS") return idleStats;
   if (name == "LAGSTATS") return lagStats;
@@ -331,39 +334,26 @@ AccessPerm permFromName(std::string name)
   return lastPerm;
 }
 
-void parsePermissionString(const char* permissionString, bool perms[lastPerm])
+void parsePermissionString(const std::string &permissionString, std::bitset<lastPerm> &perms)
 {
-  if (!permissionString)
+  if (permissionString.length() < 1)
     return;
-  if (strlen(permissionString) < 1)
-    return;
-  char temp[512];
-  memset(perms, 0, sizeof(perms));
-  if (strlen(permissionString) > 512)
-    return;
-  char *data = const_cast<char*>(permissionString);
-  while (data != '\0') {
-    temp[0] = '\0';
-    sscanf(data, "%s", temp);
-    if (strlen(temp) > 0) {
-      if (data - permissionString >= (int) strlen(permissionString))
-	data = const_cast<char*>(&permissionString[strlen(permissionString)]);
-      std::string field;
-      makeupper(field);
-      AccessPerm perm = permFromName(field);
-      if (perm != lastPerm)
-	perms[perm] = true;
-    } else {
-      data = const_cast<char*>(&permissionString[strlen(permissionString) - 1]);
-    }
+  perms.reset();
+
+  std::istringstream permStream(permissionString);
+  std::string word;
+
+  while (permStream >> word) {
+    makeupper(word);
+    AccessPerm perm = permFromName(word);
+    if (perm != lastPerm)
+      perms.set(perm);
   }
 }
 
-bool readPassFile(const char* filename)
+bool readPassFile(const std::string &filename)
 {
-  if (!filename)
-    return false;
-  ifstream in(filename);
+  ifstream in(filename.c_str());
   if (!in)
     return false;
   in.unsetf(ios::skipws);
@@ -388,11 +378,9 @@ bool readPassFile(const char* filename)
   return (passwordDatabase.size() > 0);
 }
 
-bool writePassFile(const char* filename)
+bool writePassFile(const std::string &filename)
 {
-  if (!filename)
-    return false;
-  ofstream out(filename);
+  ofstream out(filename.c_str());
   if (!out)
     return false;
   std::map<std::string, std::string>::iterator itr = passwordDatabase.begin();
@@ -404,15 +392,12 @@ bool writePassFile(const char* filename)
   return true;
 }
 
-bool readGroupsFile(const char* filename)
+bool readGroupsFile(const std::string &filename)
 {
-  if (!filename)
-    return false;
-  ifstream in(filename);
+  ifstream in(filename.c_str());
   if (!in)
     return false;
   in.unsetf(ios::skipws);
-  PlayerAccessInfo info;
   bool done = false;
   std::string name;
   std::string perm;
@@ -431,8 +416,7 @@ bool readGroupsFile(const char* filename)
       done = true;
     else {
       makeupper(name);
-      memset(info.explicitDenys, 0, sizeof(info.explicitDenys));
-      memset(info.explicitAllows, 0, sizeof(info.explicitAllows));
+      PlayerAccessInfo info;
       info.verified = true;
       groupAccess[name] = info;
     }
@@ -441,21 +425,16 @@ bool readGroupsFile(const char* filename)
   return true;
 }
 
-bool readPermsFile(const char* filename)
+bool readPermsFile(const std::string &filename)
 {
-  if (!filename)
-    return false;
-  ifstream in(filename);
+  ifstream in(filename.c_str());
   if (!in)
     return false;
   in.unsetf(ios::skipws);
   bool done = false;
   std::string name;
-  std::string perms;
-  std::string temp;
   std::vector<std::string> groups;
   char c;
-  PlayerAccessInfo info;
 
   while (!done) {
     name.erase(name.begin(), name.end());
@@ -466,24 +445,28 @@ bool readPermsFile(const char* filename)
     makeupper(name);
     // get the groups
     while ((in >> c) && (!in.eof()) && (c != '\n')) {
-      temp = c;
+      std::string temp;
+      temp += c;
       while ((in >> c) && (!in.eof()) && (c != ' '))
 	temp += c;
-      if (temp.size())
+      if (temp.size() > 0)
 	groups.push_back(temp);
     }
+
+    PlayerAccessInfo info;
+
+    std::string perms;
     // get the allows
     while ((in >> c) && (!in.eof()) && (c != '\n'))
       perms += c;
-    memset(info.explicitAllows, 0, sizeof(info.explicitAllows));
-    parsePermissionString(perms.c_str(), info.explicitAllows);
-    perms.erase(perms.begin(), perms.end());
+    parsePermissionString(perms, info.explicitAllows);
+
+    perms="";
     // get the denys
     while ((in >> c) && (!in.eof()) && (c != '\n'))
       perms += c;
-    memset(info.explicitDenys, 0, sizeof(info.explicitDenys));
-    parsePermissionString(perms.c_str(), info.explicitDenys);
-    perms.erase(perms.begin(), perms.end());
+    parsePermissionString(perms, info.explicitDenys);
+
     if (name.size() == 0)
       done = true;
     else {
@@ -495,12 +478,10 @@ bool readPermsFile(const char* filename)
   return true;
 }
 
-bool writePermsFile(const char* filename)
+bool writePermsFile(const std::string &filename)
 {
   int i;
-  if (!filename)
-    return false;
-  ofstream out(filename);
+  ofstream out(filename.c_str());
   if (!out)
     return false;
   std::map<std::string, PlayerAccessInfo>::iterator itr = userDatabase.begin();
@@ -515,12 +496,12 @@ bool writePermsFile(const char* filename)
     out << std::endl;
     // allows
     for (i = 0; i < lastPerm; i++)
-      if (itr->second.explicitAllows[i])
+      if (itr->second.explicitAllows.test(i))
 	out << nameFromPerm((AccessPerm) i);
     out << std::endl;
     // denys
     for (i = 0; i < lastPerm; i++)
-      if (itr->second.explicitDenys[i])
+      if (itr->second.explicitDenys.test(i))
 	out << nameFromPerm((AccessPerm) i);
     out << std::endl;
     itr++;
@@ -536,9 +517,9 @@ std::string		userDatabaseFile;
 void updateDatabases()
 {
   if(passFile.size())
-    writePassFile(passFile.c_str());
+    writePassFile(passFile);
   if(userDatabaseFile.size())
-    writePermsFile(userDatabaseFile.c_str());
+    writePermsFile(userDatabaseFile);
 }
 
 // FIXME this assumes that 255 is a wildcard
@@ -4451,10 +4432,8 @@ static void addPlayer(int playerIndex)
 
   makeupper(player[playerIndex].regName);
 
-  memset(player[playerIndex].accessInfo.explicitAllows, 0,
-	 sizeof(player[playerIndex].accessInfo.explicitAllows));
-  memset(player[playerIndex].accessInfo.explicitDenys, 0,
-	 sizeof(player[playerIndex].accessInfo.explicitDenys));
+  player[playerIndex].accessInfo.explicitAllows.reset();
+  player[playerIndex].accessInfo.explicitDenys.reset();
   player[playerIndex].accessInfo.verified = false;
   player[playerIndex].accessInfo.loginTime = 0;// put some time shit here
   player[playerIndex].accessInfo.loginAttempts = 0;
@@ -5981,8 +5960,8 @@ static void parseCommand(const char *message, int t)
 
 	  // get their real info
 	  PlayerAccessInfo &info = getUserInfo(player[t].regName);
-	  memcpy(player[t].accessInfo.explicitAllows, info.explicitAllows, sizeof(info.explicitAllows));
-	  memcpy(player[t].accessInfo.explicitDenys, info.explicitDenys, sizeof(info.explicitDenys));
+	  player[t].accessInfo.explicitAllows = info.explicitAllows;
+	  player[t].accessInfo.explicitDenys = info.explicitDenys;
 	  player[t].accessInfo.groups = info.groups;
 
 	  DEBUG1("Identify %s\n",player[t].regName.c_str());
@@ -6006,8 +5985,6 @@ static void parseCommand(const char *message, int t)
 	  PlayerAccessInfo info;
 	  info.groups.push_back(std::string("DEFAULT"));
 	  info.groups.push_back(std::string("REGISTERED"));
-	  memset(info.explicitAllows, 0, sizeof(info.explicitAllows));
-	  memset(info.explicitDenys, 0, sizeof(info.explicitDenys));
 	  std::string pass = message + 10;
 	  setUserPassword(player[t].regName.c_str(), pass.c_str());
 	  setUserInfo(player[t].regName, info);
@@ -6127,7 +6104,7 @@ static void parseCommand(const char *message, int t)
       sendMessage(t, player[t].id, player[t].team, line.c_str());
 
       for (int i = 0; i < lastPerm; i++) {
-	if (itr->second.explicitAllows[i]) {
+	if (itr->second.explicitAllows.test(i)) {
 	  line = "     ";
 	  line += nameFromPerm((AccessPerm)i);
 	  sendMessage(t, player[t].id, player[t].team, line.c_str());
@@ -7827,12 +7804,11 @@ int main(int argc, char **argv)
 
   // load up the access permissions & stuff
   if(groupsFile.size())
-    readGroupsFile(groupsFile.c_str());
+    readGroupsFile(groupsFile);
   // make sure that the 'admin' & 'default' groups exist
   std::map<std::string, PlayerAccessInfo>::iterator itr = groupAccess.find(std::string("DEFAULT"));
   if (itr == groupAccess.end()) {
     PlayerAccessInfo info;
-    memset(info.explicitAllows, 0, sizeof(info.explicitAllows));
     info.explicitAllows[idleStats] = true;
     info.explicitAllows[lagStats] = true;
     groupAccess[std::string("DEFAULT")] = info;
@@ -7840,15 +7816,14 @@ int main(int argc, char **argv)
   itr = groupAccess.find(std::string("ADMIN"));
   if (itr == groupAccess.end()) {
     PlayerAccessInfo info;
-    memset(info.explicitAllows, 0, sizeof(info.explicitAllows));
     for (int i = 0; i < lastPerm; i++)
       info.explicitAllows[i] = true;
     groupAccess[std::string("ADMIN")] = info;
   }
   if (passFile.size())
-    readPassFile(passFile.c_str());
+    readPassFile(passFile);
   if (userDatabaseFile.size())
-    readPermsFile(userDatabaseFile.c_str());
+    readPermsFile(userDatabaseFile);
 
   int i;
   while (!done) {
