@@ -159,6 +159,7 @@ class HUDuiTypeIn : public HUDuiControl {
 
     void		setMaxLength(int);
     void		setString(const std::string&);
+    void		setEditing(bool _allowEdit);
 
   protected:
     bool		doKeyPress(const BzfKeyEvent&);
@@ -169,6 +170,7 @@ class HUDuiTypeIn : public HUDuiControl {
     int			maxLength;
     std::string		string;
     int			cursorPos;
+    bool		allowEdit;
 };
 
 class HUDuiLabel : public HUDuiControl {

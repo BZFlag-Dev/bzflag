@@ -491,15 +491,35 @@ std::string		HUDRenderer::getComposeString() const
   return composeTypeIn->getString();
 }
 
-void		    HUDRenderer::setComposeString(const std::string &message) const
+// Sets the string and allows editing by default
+void			HUDRenderer::setComposeString(const std::string &message) const
 {
+  composeTypeIn->setEditing(true);
   composeTypeIn->setString(message);
 }
 
-void			HUDRenderer::setComposing(const std::string &prompt)
+// Sets the string and allows you to edit if _allowEdit is true
+void			HUDRenderer::setComposeString(const std::string &message,
+						bool _allowEdit) const
+{
+  composeTypeIn->setEditing(_allowEdit);
+  composeTypeIn->setString(message);
+}
+
+
+// Set the prompt and allow editing by default
+void			HUDRenderer::setComposing(const std::string &prompt) {
+  this->setComposing(prompt, true);
+}
+
+
+// Set the prompt and allow editing or not depending on _allowEdit
+void			HUDRenderer::setComposing(const std::string &prompt,
+						bool _allowEdit)
 {
   showCompose = (prompt.length() != 0);
   if (showCompose) {
+    composeTypeIn->setEditing(_allowEdit);
     composeTypeIn->setLabel(prompt);
     composeTypeIn->setString("");
     composeTypeIn->setFocus();
@@ -796,7 +816,7 @@ void			HUDRenderer::renderStatus(void)
       case LocalPlayer::Deceased:
 	strcat(buffer, bdl->getLocalString("Dead").c_str());
 	break;
-  
+
       case LocalPlayer::Ready:
 	if (flag != NoFlag && Flag::getType(flag) == FlagSticky &&
 		  World::getWorld()->allowShakeTimeout()) {
@@ -809,16 +829,16 @@ void			HUDRenderer::renderStatus(void)
 	  strcat(buffer, bdl->getLocalString("Ready").c_str());
 	}
 	break;
-  
+
       case LocalPlayer::Loading:
 	statusColor = redColor;
 	sprintf(buffer, bdl->getLocalString("Reloaded in %.1f").c_str(), player->getReloadTime());
 	break;
-  
+
       case LocalPlayer::Sealed:
 	strcat(buffer, bdl->getLocalString("Sealed").c_str());
 	break;
-  
+
       case LocalPlayer::Zoned:
 	strcat(buffer, bdl->getLocalString("Zoned").c_str());
 	break;
@@ -848,7 +868,7 @@ int HUDRenderer::teamScoreCompare(const void* _c, const void* _d)
 
   Team* c= World::getWorld()->getTeams()+*(int*)_c;
   Team* d= World::getWorld()->getTeams()+*(int*)_d;
-	 
+
   return (d->won-d->lost) - (c->won-c->lost);
 }
 
@@ -897,7 +917,7 @@ void			HUDRenderer::renderScoreboard(void)
     y -= (int)dy;
   }
   if (!drewMyScore) {
-    // if my score is smaller or equal to last remote player draw my score 
+    // if my score is smaller or equal to last remote player draw my score
     drawPlayerScore(myTank, x1, x2, x3, (float)y);
     y -= (int)dy;
   }

@@ -43,6 +43,7 @@ RadarRenderer::RadarRenderer(const SceneRenderer& renderer,
   setControlColor();
 
   blend = renderer.useBlending();
+  showFlags = true;
   smooth = true;
 #if defined(GLX_SAMPLES_SGIS) && defined(GLX_SGIS_multisample)
   GLint bits;
@@ -148,6 +149,7 @@ void RadarRenderer::drawTank(float x, float y, float z)
 
 void RadarRenderer::drawFlag(float x, float y, float)
 {
+  if (!showFlags) return;
   GLfloat s = FlagRadius > 3.0f * ps ? FlagRadius : 3.0f * ps;
   glBegin(GL_LINES);
   glVertex2f(x - s, y);
@@ -692,3 +694,8 @@ void			RadarRenderer::initContext(void* self)
   ((RadarRenderer*)self)->doInitContext();
 }
 // ex: shiftwidth=2 tabstop=8
+
+void RadarRenderer::toggleFlags()
+{
+  showFlags = !showFlags; 
+}

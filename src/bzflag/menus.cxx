@@ -641,6 +641,9 @@ KeyboardMapMenu::KeyboardMapMenu() : defaultKey(this), editing(BzfKeyMap::LastKe
   controls.push_back(createLabel(NULL, "Scroll Backward:"));
   controls.push_back(createLabel(NULL, "Scroll Forward:"));
   controls.push_back(createLabel(NULL, "Slow Keyboard Motion:"));
+  controls.push_back(createLabel(NULL, "Toggle Radar Flags:"));
+  controls.push_back(createLabel(NULL, "Toggle Main Flags:"));
+  controls.push_back(createLabel(NULL, "Silience/UnSilence Key:"));
 
   initNavigation(controls, 1, controls.size()-1);
 }
@@ -1643,7 +1646,10 @@ void			Help1Menu::resize(int width, int height)
 				BzfKeyMap::Quit,
 				BzfKeyMap::ScrollBackward,
 				BzfKeyMap::ScrollForward,
-				BzfKeyMap::SlowKeyboardMotion
+				BzfKeyMap::SlowKeyboardMotion,
+				BzfKeyMap::ToggleMainFlags,
+				BzfKeyMap::ToggleRadarFlags,
+				BzfKeyMap::ChooseSilence
 			};
 
   // get current key mapping and set strings appropriately

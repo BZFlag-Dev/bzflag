@@ -54,6 +54,7 @@ World::World() : gameStyle(PlainGameStyle),
 				pyramidInsideNodes(NULL),
 				baseInsideNodes(NULL)
 {
+  showFlags = true;
   int i;
   for (i = 0; i < NumTeams; i++) {
     bases[i][0] = 0.0f;
@@ -108,7 +109,7 @@ void			World::setWorld(World* _playingField)
 
 int			World::getTeleportTarget(int source) const
 {
-  assert(source >= 0 && source < 2 * teleporters.size());
+  assert(source >= 0 && source < (int)(2 * teleporters.size()));
   return teleportTargets[source];
 }
 
@@ -125,7 +126,7 @@ int			World::getTeleporter(const Teleporter* teleporter,
 
 const Teleporter*	World::getTeleporter(int source, int& face) const
 {
-  assert(source >= 0 && source < 2 * teleporters.size());
+  assert(source >= 0 && source < (int)(2 * teleporters.size()));
   face = (source & 1);
   return &teleporters[source / 2];
 }
@@ -528,6 +529,11 @@ void			World::addFlags(SceneDatabase* scene)
 {
   if (!flagNodes) return;
   for (int i = 0; i < maxFlags; i++) {
+    // if not showing flags, only allow FlagOnTank through
+    if (flags[i].status != FlagOnTank && !showFlags){
+      continue;
+    }  
+	  
     if (flags[i].status == FlagNoExist) continue;
     // skip flag on a tank that isn't alive.  also skip Cloaking
     // flags on tanks.
@@ -898,3 +904,8 @@ void			WorldBuilder::setBase(TeamColor team,
 }
 
 // ex: shiftwidth=2 tabstop=8
+
+void World::toggleFlags()
+{
+  showFlags = !showFlags;
+}

@@ -123,7 +123,6 @@ static double		lastEpochOffset;
 static float		clockAdjust = 0.0f;
 static float		pauseCountdown = 0.0f;
 static float		destructCountdown = 0.0f;
-//static float		maxPauseCountdown = 0.0f;
 static float		testVideoFormatTimer = 0.0f;
 static int		testVideoPrevFormat = -1;
 static std::vector<PlayingCallbackItem>	playingCallbacks;
@@ -196,6 +195,12 @@ StartupInfo::StartupInfo() : hasConfiguration(false),
   strcpy(email, "");
   joystickName = "joystick";
   joystick = false;
+}
+
+// access silencePlayers from bzflag.cxx
+std::vector<std::string>& getSilenceList()
+{
+  return silencePlayers;
 }
 
 //
@@ -547,6 +552,209 @@ bool			ComposeDefaultKey::keyRelease(const BzfKeyEvent& key)
 }
 
 //
+// Choose person to silence
+
+class SilenceDefaultKey : public HUDuiDefaultKey {
+  public:
+    SilenceDefaultKey();
+	bool		keyPress(const BzfKeyEvent&);
+    bool		keyRelease(const BzfKeyEvent&);
+};
+
+SilenceDefaultKey::SilenceDefaultKey()
+{ 
+   
+}
+bool			SilenceDefaultKey::keyPress(const BzfKeyEvent& key)
+{
+  bool sendIt;
+  if (keymap.isMappedTo(BzfKeyMap::Jump, key)) {
+    // jump while typing
+    myTank->jump();
+  }
+
+  if (!myTank->isKeyboardMoving()) {
+    if ((key.button == BzfKeyEvent::Up) ||
+	(key.button == BzfKeyEvent::Down) ||
+	(key.button == BzfKeyEvent::Left) ||
+	(key.button == BzfKeyEvent::Right))
+
+      return true;
+  }
+
+  switch (key.ascii) {
+    case 3:	// ^C
+    case 27:	// escape
+//    case 127:	// delete
+      sendIt = false;			// finished composing -- don't send
+      break;
+
+    case 4:	// ^D
+    case 13:	// return
+      sendIt = true;
+      break;
+
+    default:
+
+      return false;
+  }
+
+  if (sendIt) {
+    std::string message = hud->getComposeString();
+
+    // find the name of the person to silence,
+    // either by picking through arrow keys or by compose
+    const char* name = NULL;
+
+    if (message.size() == 0) {
+      // silence just by picking arrowkeys
+      const Player * silenceMe = myTank->getRecipient();
+      if (silenceMe) {
+	name = silenceMe->getCallSign();
+      }
+    }	
+    else if (message.size() > 0) {
+      // typed in name
+      name = message.c_str();
+    }
+	
+    // if name is NULL we skip
+    if (name != NULL) {
+      // bad indent :)
+      int inListPos = -1;
+      for (int i = 0; i < silencePlayers.size(); i++) {
+	if (strcmp(silencePlayers[i].c_str(),name) == 0) {
+	  inListPos = i;
+	}
+      }
+
+      bool isInList = (inListPos != -1);
+
+      Player *loudmouth = getPlayerByName(name);
+      if (loudmouth) {
+	// we know this person exists
+	if (!isInList) {
+	  // exists and not in silence list
+	  silencePlayers.push_back(name); 
+	  std::string message = "Silenced ";
+	  message += (name); 
+	  addMessage(NULL, message);
+	} else {
+	  // exists and in list --> remove from list
+	  silencePlayers.erase(silencePlayers.begin()+inListPos);
+	  std::string message = "Unsilenced ";
+	  message += (name); 
+	  addMessage(NULL, message);
+	}
+      } else {
+	// person does not exist, but may be in silence list
+	if (isInList) {
+	  // does not exist but is in list --> remove 
+	  silencePlayers.erase(silencePlayers.begin()+inListPos);  
+	  std::string message = "Unsilenced ";
+	  message += (name); 
+	  if (strcmp (name, "*") == 0) {
+	    // to make msg fancier
+	    message = "Unblocked Msgs";
+	  }
+	  addMessage(NULL, message);
+	} else {
+	  // does not exist and not in list -- duh 
+	  if (name != NULL) {
+	    if (strcmp (name,"*") == 0) {
+	      // check for * case
+	      silencePlayers.push_back(name); 
+	      std::string message = "Silenced All Msgs";
+	      addMessage(NULL, message); 
+	    } else {
+	      std::string message = name; 
+	      message += (" Does not exist"); 
+	      addMessage(NULL, message); 
+	    }
+	  } 
+	} 
+      }  
+    } 
+  }
+  
+  hud->setComposing(std::string());
+
+  HUDui::setDefaultKey(NULL);
+  return true;
+} 
+
+bool			SilenceDefaultKey::keyRelease(const BzfKeyEvent& key)
+{
+  if (!myTank->isKeyboardMoving()) { 
+
+    if (key.button == BzfKeyEvent::Up || key.button==BzfKeyEvent::Down 
+		||key.button==BzfKeyEvent::Left||key.button==BzfKeyEvent::Right) { 
+      const Player *recipient = myTank->getRecipient();
+      if (!recipient) { 
+	for (int i = 0; i < curMaxPlayers; i++) { 
+	  if (player[i]) { 
+	    myTank->setRecipient(player[i]);
+	    break; 
+	  } 
+	} 
+      }
+      else {  
+	const PlayerId id = recipient->getId();
+	int rindex = 0;
+	for (int i = 0; i < curMaxPlayers; i++) { 
+	  if (player[i] && player[i]->getId() == id) rindex = i; }
+	if (key.button == BzfKeyEvent::Up || 
+		key.button== BzfKeyEvent::Right) { 
+	  for (int i = rindex-1; i >= 0; i--) { 
+	    if (player[i]) { 
+	      myTank->setRecipient(player[i]);
+	      break;
+	    } 
+	  } 
+	  if (recipient == myTank->getRecipient()) { 
+	    for (int i = curMaxPlayers-1; i >=0; i--) { 
+	      if (player[i]) { 
+		myTank->setRecipient(player[i]);
+		break;
+	      } 
+	    } 
+	  }  
+	}  
+	else
+	{
+	  for (int i = rindex+1; i < curMaxPlayers; i++) {
+	    if (player[i]) {
+	      myTank->setRecipient(player[i]);
+	      break;
+	    }
+	  }
+	  if (recipient == myTank->getRecipient()) {
+	    for (int i = 0; i < curMaxPlayers; i++) {
+	      if (player[i]) {
+		myTank->setRecipient(player[i]);
+		break;
+	      }
+	    }
+	  }
+	}
+      }
+      recipient = myTank->getRecipient();
+      if (recipient) {
+	// FIXME change prompt to show current silence state
+	std::string composePrompt = "[Un]Silence -->";
+	composePrompt += recipient->getCallSign();
+
+	// Set the prompt and disable editing/composing
+	hud->setComposing(composePrompt, false);
+      }
+      return false;
+    }
+  }
+  return keyPress(key);
+}
+
+
+//
 // user input handling
 //
 
@@ -663,6 +871,17 @@ static bool		doKeyCommon(const BzfKeyEvent& key, bool pressed)
     getMainWindow()->setQuit();
     return true;
   }
+	
+  else if (keymap.isMappedTo(BzfKeyMap::ToggleMainFlags, key)) {
+    if (pressed)
+      world->toggleFlags();
+    return true;
+  }
+  else if (keymap.isMappedTo(BzfKeyMap::ToggleRadarFlags, key)) {
+    if (pressed)
+      radar->toggleFlags();
+    return true;
+  }
 
   else {
     // built-in unchangeable keys.  only perform if not masked.
@@ -750,6 +969,7 @@ static void		doKeyNotPlaying(const BzfKeyEvent& key, bool pressed)
 static void		doKeyPlaying(const BzfKeyEvent& key, bool pressed)
 {
   static ComposeDefaultKey composeKeyHandler;
+  static SilenceDefaultKey silenceKeyHandler;
 
   if (HUDui::getFocus())
     if ((pressed && HUDui::keyPress(key)) ||
@@ -1071,6 +1291,14 @@ static void		doKeyPlaying(const BzfKeyEvent& key, bool pressed)
       HUDui::setDefaultKey(&composeKeyHandler);
     }
   }
+  else if (keymap.isMappedTo(BzfKeyMap::ChooseSilence, key)) {
+    if (pressed) {
+      messageHistoryIndex = 0;
+      hud->setComposing("[Un]Silence  :");
+      HUDui::setDefaultKey(&silenceKeyHandler);
+    }
+  }
+
   else if (keymap.isMappedTo(BzfKeyMap::ScrollBackward, key)) {
     // scroll message list backward
     if (pressed) {
@@ -2342,16 +2570,26 @@ static void		handleServerMessage(bool human, uint16_t code,
 	srcName = srcPlayer->getCallSign();
 
       bool ignore = false;
-      for (unsigned int i = 0; i < silencePlayers.size(); i++) {
+      unsigned int i;
+      for (i = 0; i < silencePlayers.size(); i++) {
 	const char *silenceCallSign = silencePlayers[i].c_str();
 	if ((strcmp(srcName.c_str(), silenceCallSign) == 0) 
-        ||  (strcmp( "*", silenceCallSign) == 0)) {
-	    ignore = true;
-	    break;
+	    || (strcmp( "*", silenceCallSign) == 0)) {
+	  ignore = true;
+	  break;
 	}
       }
-      if (ignore)
+      if (ignore) {
+	// to verify working
+	std::string msg = "Ignored Msg";
+	if (silencePlayers[i] != "*") {
+	  msg = msg + " from " + silencePlayers[i];
+	} else {
+	  //if * just echo a generic Ignored
+	}
+	addMessage(NULL,msg);
 	break;
+      }
 
       if (dstPlayer == NULL) {
 #ifdef DEBUG
@@ -4986,7 +5224,7 @@ static void		playingLoop()
     if (myTank) {
       if (myTank->isAlive() && !myTank->isPaused()) {
 	doMotion();
-	if (fireButton && myTank->getFlag() == MachineGunFlag && !Observer)
+	if (fireButton && myTank->getFlag() == MachineGunFlag && !Observer) 
 	  myTank->fireShot();
       }
       else {
@@ -5541,6 +5779,16 @@ void			startPlaying(BzfDisplay* _display,
   controlPanel->addMessage("Maintainer: Tim Riker <Tim@Rikers.org>");
   // print OpenGL renderer
   controlPanel->addMessage((const char*)glGetString(GL_RENDERER));
+
+  //inform user of silencePlayers on startup
+  for (int j = 0; j < silencePlayers.size(); j ++){
+    std::string aString = silencePlayers[j];
+    aString += " Silenced";
+    if (silencePlayers[j] == "*") {
+      aString = "Silenced All Msgs";
+    }
+    controlPanel->addMessage(aString);
+  }
 
   // enter game if we have all the info we need, otherwise
   // pop up main menu

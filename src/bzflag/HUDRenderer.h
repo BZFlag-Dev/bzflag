@@ -89,8 +89,10 @@ class HUDRenderer {
     bool		getComposing() const;
     std::string		getComposeString() const;
     void		setComposeString(const std::string &message) const;
+    void		setComposeString(const std::string &message, bool _allowEdit) const;
 
     void		setComposing(const std::string &prompt);
+    void		setComposing(const std::string &prompt, bool _allowEdit);
 
     void		render(SceneRenderer&);
 

@@ -53,6 +53,7 @@
 #include "BundleMgr.h"
 #include "World.h"
 
+extern std::vector<std::string>& getSilenceList();
 const char*		argv0;
 static bool		anonymous = false;
 static std::string	anonymousName("anonymous");
@@ -717,6 +718,22 @@ void			dumpResources(BzfDisplay* display,
   db.removeValue("window");
   db.removeValue("multisample");
 
+  const std::vector<std::string> list = getSilenceList();
+  
+  // add entries silencedPerson0 silencedPerson1 etc..
+  // to the database. Stores silenceList
+  // By only allowing up to a certain # of people can prevent
+  // the vague chance of buffer overrun.
+  const int bufferLength = 30;
+  int maxListSize = 1000000; //do even that many play bzflag?
+  char buffer [bufferLength]; 
+  
+  if (list.size() < maxListSize) maxListSize = list.size();
+  for (int i = 0; i < maxListSize; i++) {
+    sprintf(buffer,"silencedPerson%d",i); 
+    db.addValue(buffer, list[i]);	
+  }
+
   // save configuration
   {
     ofstream resourceStream(getConfigFileName().c_str());
@@ -1188,6 +1205,30 @@ int			main(int argc, char** argv)
   // set server list URL
   if (db.hasValue("list"))
     startupInfo.listServerURL = db.getValue("list");
+
+  // setup silence list
+  std::vector<std::string>& list = getSilenceList();
+  
+  // search for entries silencedPerson0 silencedPerson1 etc..
+  // to the database. Stores silenceList
+  // By only allowing up to a certain # of people can prevent
+  // the vague chance of buffer overrun.
+  const int bufferLength = 30;
+  int maxListSize = 1000000; // do even that many play bzflag?
+  char buffer [bufferLength]; 
+  bool keepGoing = true;
+
+  for (int i = 0; keepGoing && (i < maxListSize); i++) {
+    sprintf(buffer,"silencedPerson%d",i); // could do %-10d
+
+    if (db.hasValue(buffer)) {
+      list.push_back(db.getValue(buffer));
+      // remove the value from the database so when we save
+      // it saves the list's new values in order
+      db.removeValue(buffer); 
+    } else
+      keepGoing = false;
+  }
 
   // start playing
   startPlaying(display, renderer, db, &startupInfo);

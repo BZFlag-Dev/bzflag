@@ -102,6 +102,7 @@ class World {
     void		initFlag(int index);
     void		updateFlag(int index, float dt);
     void		addFlags(SceneDatabase*);
+    void		toggleFlags();
 
     void		reviveDeadPlayer(Player* revivedPlayer);
     void		addDeadPlayer(Player* dyingPlayer);
@@ -128,6 +129,7 @@ class World {
     void		freeInsideNodes();
 
   private:
+    bool		showFlags;
     short		gameStyle;
     float		linearAcceleration;
     float		angularAcceleration;

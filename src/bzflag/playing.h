@@ -89,6 +89,7 @@ void			addPlayingCallback(PlayingCallback, void* data);
 void			removePlayingCallback(PlayingCallback, void* data);
 
 void			joinGame(JoinGameCallback, void* userData);
+std::vector<std::string>& getSilenceList();
 
 #endif // BZF_PLAYING_H
 // ex: shiftwidth=2 tabstop=8

@@ -36,7 +36,10 @@ const BzfKeyEvent	BzfKeyMap::defaults1[] = {
 				{ 0, BzfKeyEvent::F12, 0 },
 				{ 0, BzfKeyEvent::PageUp, 0 },
 				{ 0, BzfKeyEvent::PageDown, 0 },
-				{ 'a', 0, 0 }
+				{ 'a', 0, 0 },
+				{ 'h',0,0},
+				{ 'j',0,0},
+				{ 'k',0,0}
 			};
 const BzfKeyEvent	BzfKeyMap::defaults2[] = {
 				{ '\r', 0, 0 },
@@ -57,6 +60,9 @@ const BzfKeyEvent	BzfKeyMap::defaults2[] = {
 				{ '+', 0, 0 },
 				{ '_', 0, 0 },
 				{ 'p', 0, 0 },
+				{ 0, 0, 0 },
+				{ 0, 0, 0 },
+				{ 0, 0, 0 },
 				{ 0, 0, 0 },
 				{ 0, 0, 0 },
 				{ 0, 0, 0 },
@@ -87,6 +93,9 @@ const char*		BzfKeyMap::keyName[] = {
 				"scrollBackwardKey",
 				"scrollForwardKey",
 				"slowKeyboardMotion",
+				"hideRadarFlagsKey",
+				"hideMainFlagsKey",
+				"chooseSilenceKey"
 			};
 
 const char*		BzfKeyMap::eventNames[] = {
@@ -160,6 +169,9 @@ void			BzfKeyMap::resetAll()
   reset(ScrollBackward);
   reset(ScrollForward);
   reset(SlowKeyboardMotion);
+  reset(ToggleRadarFlags);
+  reset(ToggleMainFlags);
+  reset(ChooseSilence);
 }
 
 void			BzfKeyMap::reset(Key key)

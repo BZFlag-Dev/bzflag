@@ -47,6 +47,9 @@ class BzfKeyMap {
 			ScrollBackward,
 			ScrollForward,
 			SlowKeyboardMotion,
+			ToggleRadarFlags,
+			ToggleMainFlags,
+			ChooseSilence,
 			LastKey
     };
 
