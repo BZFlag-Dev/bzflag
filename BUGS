@@ -13,6 +13,10 @@ must fix for 1.10.4 patch release
 recent bugs
 ------------
 
+- Bots fall down if they spawn on an elevated base. This is because the bots
+  don't have any collision detection at all and normally just move on the
+  ground.
+
 - Change any documentation/help that says rabbit hunters are black (s/b orange)
   If that change is going to stick.
 
