@@ -43,9 +43,11 @@ PlayerState::PlayerState()
   phydrv = -1;
 }
 
+
 void*	PlayerState::pack(void* buf, uint16_t& code)
 {
   order++;
+
   buf = nboPackInt(buf, int32_t(order));
   buf = nboPackShort(buf, int16_t(status));
 
@@ -96,8 +98,14 @@ void*	PlayerState::pack(void* buf, uint16_t& code)
     buf = nboPackShort(buf, aziShort);
     buf = nboPackShort(buf, angVelShort);
   }
+
+  if ((status & OnDriver) != 0) {
+    buf = nboPackInt(buf, phydrv);
+  }
+  
   return buf;
 }
+
 
 void*	PlayerState::unpack(void* buf, uint16_t code)
 {
@@ -133,8 +141,16 @@ void*	PlayerState::unpack(void* buf, uint16_t code)
     azimuth = ((float)aziShort * M_PI) / smallScale;
     angVel = ((float)angVelShort * smallMaxAngVel) / smallScale;
   }
+
+  if ((inStatus & OnDriver) != 0) {
+    buf = nboUnpackInt(buf, phydrv);
+  } else {
+    phydrv = -1;
+  }
+  
   return buf;
 }
+
 
 // Local Variables: ***
 // mode:C++ ***

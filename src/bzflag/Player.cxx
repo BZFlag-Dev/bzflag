@@ -209,6 +209,18 @@ void Player::setAngularVelocity(float _angVel)
 }
 
 
+void Player::setPhysicsDriver(int driver)
+{
+  state.phydrv = driver;
+  if (driver >= 0) {
+    state.status |= PlayerState::OnDriver;
+  } else {
+    state.status &= ~PlayerState::OnDriver;
+  }
+  return;
+}
+
+
 void Player::changeTeam(TeamColor _team)
 {
   // set team

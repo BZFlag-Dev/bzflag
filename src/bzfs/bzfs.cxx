@@ -590,7 +590,7 @@ static void relayPlayerPacket(int index, uint16_t len, const void *rawbuf, uint1
     PlayerInfo& pi = playerData->player;
 
     if (i != index && pi.isPlaying()) {
-      if (((code == MsgPlayerUpdate) ||(code == MsgPlayerUpdateSmall))
+      if (((code == MsgPlayerUpdate) || (code == MsgPlayerUpdateSmall))
           && pi.haveFlag()
 	  && (FlagInfo::get(pi.getFlag())->flag.type == Flags::Lag)) {
         // delay sending to this player

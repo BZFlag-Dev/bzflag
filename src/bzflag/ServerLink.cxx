@@ -638,6 +638,9 @@ void			ServerLink::sendPlayerUpdate(Player* player)
   if (code == MsgPlayerUpdateSmall) {
     len = PlayerUpdateSmallPLen;
   }
+  if ((player->getStatus() & PlayerState::OnDriver) != 0) {
+    len = len + sizeof(int);
+  }
   send(code, len, msg);
 }
 #endif

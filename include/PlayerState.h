@@ -17,16 +17,17 @@
 
 class PlayerState
 {
-public:
-    enum PStatus {				// bit masks
-			DeadStatus =	0x0000,	// not alive, not paused, etc.
-			Alive =		0x0001,	// player is alive
-			Paused =	0x0002,	// player is paused
-			Exploding =	0x0004,	// currently blowing up
-			Teleporting =	0x0008,	// teleported recently
-			FlagActive =	0x0010,	// flag special powers active
-			CrossingWall =	0x0020,	// tank crossing building wall
-			Falling =	0x0040	// tank accel'd by gravity
+  public:
+    enum PStatus {                // bit masks
+      DeadStatus =      0,        // not alive, not paused, etc.
+      Alive =           (1 << 0), // player is alive
+      Paused =          (1 << 1), // player is paused
+      Exploding =       (1 << 2), // currently blowing up
+      Teleporting =     (1 << 3), // teleported recently
+      FlagActive =      (1 << 4), // flag special powers active
+      CrossingWall =    (1 << 5), // tank crossing building wall
+      Falling =         (1 << 6), // tank accel'd by gravity
+      OnDriver =        (1 << 7)  // tank is on a physics driver
     };
 
     PlayerState();

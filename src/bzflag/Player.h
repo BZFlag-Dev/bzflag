@@ -321,12 +321,6 @@ inline int		Player::getPhysicsDriver() const
   return state.phydrv;
 }
 
-inline void		Player::setPhysicsDriver(int driver)
-{
-  state.phydrv = driver;
-  return;
-}
-
 inline short		Player::getWins() const
 {
   return wins;
