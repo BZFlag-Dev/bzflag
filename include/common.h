@@ -89,7 +89,7 @@ inline void W32_DEBUG_TRACE (const char*) {return;}
 #define bzfsrand(_s)	srand(_s)
 
 
-#if !defined(_WIN32) && !defined(__APPLE__)
+#if !defined(_WIN32)
 
 #ifndef BSD
 #  ifndef __BEOS__
@@ -104,6 +104,10 @@ inline void W32_DEBUG_TRACE (const char*) {return;}
 #endif /* BSD */
 
 #include <sys/types.h>
+
+#ifdef HAVE_STDINT_H
+#  include <stdint.h>
+#endif
 
 #if defined(__linux) || (defined(__sgi) && !defined(__INTTYPES_MAJOR))
 typedef u_int16_t	uint16_t;
