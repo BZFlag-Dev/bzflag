@@ -15,7 +15,7 @@
 #include "WallObstacle.h"
 #include "Intersect.h"
 
-std::string		WallObstacle::typeName("WallObstacle");
+const char*		WallObstacle::typeName = "WallObstacle";
 
 WallObstacle::WallObstacle(const float* p, float a, float b, float h) :
 				Obstacle(p, a, 0.0, b, h)
@@ -32,12 +32,12 @@ WallObstacle::~WallObstacle()
   // do nothing
 }
 
-std::string		WallObstacle::getType() const
+const char*		WallObstacle::getType() const
 {
   return typeName;
 }
 
-std::string		WallObstacle::getClassName() // const
+const char*		WallObstacle::getClassName() // const
 {
   return typeName;
 }

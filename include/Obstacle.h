@@ -57,7 +57,7 @@ class Obstacle {
   
   /** This function returns a string describing what kind of obstacle this is.
    */
-  virtual std::string getType() const = 0;
+  virtual const char* getType() const = 0;
   
   /** This function returns the position of this obstacle. */
   const float* getPosition() const;

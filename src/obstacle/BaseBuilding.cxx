@@ -16,7 +16,7 @@
 #include "global.h"
 #include "Intersect.h"
 
-std::string		BaseBuilding::typeName("BaseBuilding");
+const char*		BaseBuilding::typeName = "BaseBuilding";
 
 BaseBuilding::BaseBuilding(const float *p, float rotation,
 	const float *size, int _team) :
@@ -30,12 +30,12 @@ BaseBuilding::~BaseBuilding()
   // do nothing
 }
 
-std::string		BaseBuilding::getType() const
+const char*		BaseBuilding::getType() const
 {
   return typeName;
 }
 
-std::string		BaseBuilding::getClassName()
+const char*		BaseBuilding::getClassName()
 {
   return typeName;
 }

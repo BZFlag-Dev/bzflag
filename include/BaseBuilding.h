@@ -25,8 +25,8 @@ class BaseBuilding : public Obstacle {
 			BaseBuilding(const float *pos, float rotation,
 				const float *size, int _team);
 			~BaseBuilding();
-    std::string		getType() const;
-    static std::string	getClassName(); // const
+    const char*		getType() const;
+    static const char*	getClassName(); // const
     float		intersect(const Ray &) const;
     void		getNormal(const float *p, float *n) const;
     void		get3DNormal(const float* p, float* n) const;
@@ -50,7 +50,7 @@ class BaseBuilding : public Obstacle {
     int			getTeam() const;
     std::string	        userTextures[2];
  private:
-    static std::string	typeName;
+    static const char*	typeName;
     int team;
 };
 

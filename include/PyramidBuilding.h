@@ -26,8 +26,8 @@ class PyramidBuilding : public Obstacle {
 				float width, float breadth, float height, bool drive = false, bool shoot = false);
 			~PyramidBuilding();
 
-    std::string		getType() const;
-    static std::string	getClassName(); // const
+    const char*		getType() const;
+    static const char*	getClassName(); // const
 
     float		intersect(const Ray&) const;
     void		getNormal(const float* p, float* n) const;
@@ -59,7 +59,7 @@ class PyramidBuilding : public Obstacle {
     float		shrinkFactor(float z, float height = 0.0) const;
 
   private:
-    static std::string	typeName;
+    static const char*	typeName;
 };
 
 #endif // BZF_PYRAMID_BUILDING_H

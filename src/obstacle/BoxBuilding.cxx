@@ -17,7 +17,7 @@
 #include "Intersect.h"
 #include "QuadWallSceneNode.h"
 
-std::string		BoxBuilding::typeName("BoxBuilding");
+const char*		BoxBuilding::typeName = "BoxBuilding";
 
 BoxBuilding::BoxBuilding() : Obstacle(), noNodes(false)
 {
@@ -36,12 +36,12 @@ BoxBuilding::~BoxBuilding()
   // do nothing
 }
 
-std::string		BoxBuilding::getType() const
+const char*		BoxBuilding::getType() const
 {
   return typeName;
 }
 
-std::string		BoxBuilding::getClassName() // const
+const char*		BoxBuilding::getClassName() // const
 {
   return typeName;
 }

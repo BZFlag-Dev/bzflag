@@ -27,8 +27,8 @@ class BoxBuilding : public Obstacle {
 				float width, float breadth, float height, bool drive = false, bool shoot = false, bool invisible = false);
 			~BoxBuilding();
 
-    std::string		getType() const;
-    static std::string	getClassName(); // const
+    const char*		getType() const;
+    static const char*	getClassName(); // const
 
     float		intersect(const Ray&) const;
     void		getNormal(const float* p, float* n) const;
@@ -54,7 +54,7 @@ class BoxBuilding : public Obstacle {
 
     void		getCorner(int index, float* pos) const;
 
-    static std::string	typeName;
+    static const char*	typeName;
     std::string	userTextures[2];
  private:
    bool noNodes;

@@ -26,8 +26,8 @@ class WallObstacle : public Obstacle {
 					float breadth, float height);
 			~WallObstacle();
 
-    std::string		getType() const;
-    static std::string	getClassName(); // const
+    const char*		getType() const;
+    static const char*	getClassName(); // const
 
     float		intersect(const Ray&) const;
     void		getNormal(const float* p, float* n) const;
@@ -50,7 +50,7 @@ class WallObstacle : public Obstacle {
 
   private:
     float		plane[4];
-    static std::string	typeName;
+    static const char*	typeName;
 };
 
 #endif // BZF_WALL_OBSTACLE_H

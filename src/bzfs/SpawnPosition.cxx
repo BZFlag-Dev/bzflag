@@ -49,8 +49,8 @@ SpawnPosition::SpawnPosition(int playerId, bool onGroundOnly, bool notNearEdges)
     playerData->player.setRestartOnBase(false);
   } else {
     const float tankRadius = BZDB.eval(StateDatabase::BZDB_TANKRADIUS);
-    const float tankWidth = BZDB.eval(StateDatabase::BZDB_TANKWIDTH) / 2.0f;
-    const float tankLength = BZDB.eval(StateDatabase::BZDB_TANKLENGTH) / 2.0f;
+    const float tankWidth = 0.5f * BZDB.eval(StateDatabase::BZDB_TANKWIDTH);
+    const float tankLength = 0.5f * BZDB.eval(StateDatabase::BZDB_TANKLENGTH);
     const float tankHeight = BZDB.eval(StateDatabase::BZDB_TANKHEIGHT);
     safeSWRadius = (float)((BZDB.eval(StateDatabase::BZDB_SHOCKOUTRADIUS) + BZDB.eval(StateDatabase::BZDB_TANKRADIUS)) * 1.5);
     safeDistance = tankRadius * 20; // FIXME: is this a good value?

@@ -27,8 +27,8 @@ class Teleporter : public Obstacle {
 				float borderSize = 1.0f, bool drive = false, bool shoot = false);
 			~Teleporter();
 
-    std::string		getType() const;
-    static std::string	getClassName(); // const
+    const char*		getType() const;
+    static const char*	getClassName(); // const
 
     float		getBorder() const;
 
@@ -63,7 +63,7 @@ class Teleporter : public Obstacle {
     std::string	        userTextures[1];
   private:
     float		border;
-    static std::string	typeName;
+    static const char*	typeName;
 };
 
 const int randomTeleporter = (unsigned short)(-1);

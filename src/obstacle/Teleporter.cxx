@@ -16,7 +16,7 @@
 #include "Teleporter.h"
 #include "Intersect.h"
 
-std::string		Teleporter::typeName("Teleporter");
+const char*		Teleporter::typeName = "Teleporter";
 
 Teleporter::Teleporter(const float* p, float a, float w,
 				float b, float h,float _border, bool drive, bool shoot) :
@@ -31,12 +31,12 @@ Teleporter::~Teleporter()
   // do nothing
 }
 
-std::string		Teleporter::getType() const
+const char*		Teleporter::getType() const
 {
   return typeName;
 }
 
-std::string		Teleporter::getClassName() // const
+const char*		Teleporter::getClassName() // const
 {
   return typeName;
 }
