@@ -1,9 +1,6 @@
 recent bugs
 ------------
 
-- it appears that MSVC5 has problems loading large world files
-  (for example: 500Kbytes).
-
 - tank begins driving backwards on spawn (perhaps only with keyboard,
   perhaps only with mac)
 
@@ -25,10 +22,6 @@ recent bugs
   available mode that is possible, lowering memory usage, or reporting
   an error and aborting.
 
-- server has been reported to segfault (gethostname fails?) when chrooted
-  and run as a private server (ask tegan for more details if needed)
-  Tim Riker says this one is fixed. Please re-test.
-
 - XIJoystick does not compile
 
 - time limiter does not take jumping into consideration when holding Agility
@@ -42,10 +35,6 @@ recent bugs
 
 - Can be kicked with WINGS for going to high when adjusting wings gravity,
   jump count or jump velocity.
-
-- texture method doesn't seem to be settable from the gui, sometimes -
-  switching to the experimental quality mode dropped textures (looked just
-  like lowest quality without the stippling) and they couldn't be set back.
 
 - world weapons seem to lag the server when there are many players joined.
   might be related to a rapidly repeating world weapon as well (like once
@@ -62,12 +51,6 @@ recent bugs
   teleporter (and landing in front of the teleporter, albeit dead).  i
   didn't respawn, waited a couple sec (was chatting), then the assertion was
   raised.
-
-- Change any documentation/help that says rabbit hunters are black (s/b orange)
-  If that change is going to stick.
-
-- the "default" keyword in the email line can get into the HUD, it shouldn't.
-  must have missed something.
 
 - list server includes counts for players running on non-public/mis-configured
   servers on the same machine on different ports.  if server runs on port 5156
