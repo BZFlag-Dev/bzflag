@@ -366,11 +366,10 @@ void			DisplayMenu::callback(HUDuiControl* w, void* data) {
     break;
   case '6':
     sceneRenderer->setQuality(list->getIndex());
-	if (list->getIndex() > 3)
-	{
-		BZDB.set("zbuffer","1");
-		setSceneDatabase();
-	}
+    if (list->getIndex() > 3) {
+      BZDB.set("zbuffer","1");
+      setSceneDatabase();
+    }
     BZDB.set("_texturereplace", (!BZDBCache::lighting &&
 				 sceneRenderer->useQuality() < 2) ? "1" : "0");
     BZDB.setPersistent("_texturereplace", false);
@@ -378,6 +377,12 @@ void			DisplayMenu::callback(HUDuiControl* w, void* data) {
     break;
   case '7':
     BZDB.set("shadows", list->getIndex() ? "1" : "0");
+    sceneRenderer->notifyStyleChange();
+    break;
+  case '8':
+    // FIXME - test for whether the z buffer will work
+    BZDB.set("zbuffer", list->getIndex() ? "1" : "0");
+    setSceneDatabase();
     sceneRenderer->notifyStyleChange();
     break;
 #if defined(DEBUG_RENDERING)
