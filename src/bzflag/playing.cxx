@@ -564,7 +564,7 @@ float roamTheta = 0.0f, roamDTheta = 0.0f;
 float roamPhi = 0.0f, roamDPhi = 0.0f;
 float roamZoom = 60.0f, roamDZoom = 0.0f;
 
-void setRoamingLabel(bool force)
+void setRoamingLabel(bool)
 {
   if (!player) {
     return;
@@ -573,7 +573,6 @@ void setRoamingLabel(bool force)
   std::string playerString = "";
 
   if (roamTrackTank == -1) {
-    int oldWinner = roamTrackWinner;
     if (roamTrackWinner == -1) {
       // in case we don't find one
       roamTrackWinner = 0;
@@ -585,9 +584,6 @@ void setRoamingLabel(bool force)
 	roamTrackWinner = i;
 	bestScore = player[i]->getScore();
       }
-    }
-    if (!force && roamTrackWinner == oldWinner) {
-      return;
     }
     playerString = "Winner ";
   }
