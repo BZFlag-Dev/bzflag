@@ -145,7 +145,7 @@ GUIOptionsMenu::GUIOptionsMenu()
   options = &option->getList();
   std::vector<std::string> locales;
   if (BundleMgr::getLocaleList(&locales) == true) {
-    options->push_back(std::string("default"));
+    options->push_back(std::string("Default"));
     for (int i = 0; i < (int)locales.size(); i++) {
       options->push_back(locales[i]);
     }
@@ -154,7 +154,7 @@ GUIOptionsMenu::GUIOptionsMenu()
   else {
     // Something failed when trying to compile a list
     // of all the locales.
-    options->push_back(std::string("default"));
+    options->push_back(std::string("Default"));
   }
 
   for (int i = 0; i < (int)options->size(); i++) {
@@ -172,9 +172,9 @@ GUIOptionsMenu::GUIOptionsMenu()
   option->setLabel("Control panel tabs:");
   option->setCallback(callback, (void*)"t");
   options = &option->getList();
-  options->push_back(std::string("off"));
-  options->push_back(std::string("left"));
-  options->push_back(std::string("right"));
+  options->push_back(std::string("Off"));
+  options->push_back(std::string("Left"));
+  options->push_back(std::string("Right"));
   option->update();
   list.push_back(option);
   // GUI coloring
@@ -183,8 +183,8 @@ GUIOptionsMenu::GUIOptionsMenu()
   option->setLabel("Control panel coloring:");
   option->setCallback(callback, (void*)"c");
   options = &option->getList();
-  options->push_back(std::string("off"));
-  options->push_back(std::string("on"));
+  options->push_back(std::string("Off"));
+  options->push_back(std::string("On"));
   option->update();
   list.push_back(option);
   // Underline color
@@ -193,9 +193,9 @@ GUIOptionsMenu::GUIOptionsMenu()
   option->setLabel("Underline color:");
   option->setCallback(callback, (void*)"u");
   options = &option->getList();
-  options->push_back(std::string("cyan"));
-  options->push_back(std::string("grey"));
-  options->push_back(std::string("text"));
+  options->push_back(std::string("Cyan"));
+  options->push_back(std::string("Grey"));
+  options->push_back(std::string("Text"));
   option->update();
   list.push_back(option);
   // Killer Highlight

@@ -61,7 +61,7 @@ InputMenu::InputMenu() : keyboardMapMenu(NULL)
   option->setLabel("Joystick device:");
   option->setCallback(callback, (void*)"J");
   options = &option->getList();
-  options->push_back(std::string("off"));
+  options->push_back(std::string("Off"));
   std::vector<std::string> joystickDevices;
   getMainWindow()->getJoyDevices(joystickDevices);
   int i;
