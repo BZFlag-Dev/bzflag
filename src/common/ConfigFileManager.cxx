@@ -28,19 +28,21 @@ void writeBZDB(const std::string& name, void *stream)
   std::ostream& s = *reinterpret_cast<std::ostream*>(stream);
   std::string value = BZDB.get(name);
   std::string defaultVal = BZDB.getDefault(name);
+  std::string newkey;
   bool commentOut = (value == defaultVal);
-    
+
   // quotify anything with a space and empty strings
   if ((value.find(' ') != value.npos) || (value.size() == 0)) {
     value = std::string("\"") + value + "\"";
   }
 
   // quotify the key if there's a space
-  if (name.find(' ') != name.npos) {
-    name = std::string("\"") + name + "\"";
-  }
+  if (name.find(' ') != name.npos)
+    newkey = std::string("\"") + name + "\"";
+  else
+    newkey = name;
 
-  s << (commentOut ? "#set " : "set ") << name << ' ' << value << std::endl;
+  s << (commentOut ? "#set " : "set ") << newkey << ' ' << value << std::endl;
 }
 
 void writeKEYMGR(const std::string& name, bool press, const std::string& command, void* stream)
