@@ -21,7 +21,8 @@ static int mx = 0;
 static int my = 0;
 
 SDLDisplay::SDLDisplay() : fullScreen(false), base_width(640),
-			   base_height(480), oldFullScreen(false),
+			   base_height(480), canGrabMouse(true),
+			   oldFullScreen(false),
 			   oldWidth(0), oldHeight(0)
 {
   if (SDL_InitSubSystem(SDL_INIT_VIDEO) == -1) {
@@ -420,6 +421,12 @@ void SDLDisplay::createWindow() {
   if ((width == oldWidth) && (height == oldHeight)
       && (fullScreen == oldFullScreen))
     return;
+  // Let SDL decide grabbing or not on fullscreen
+  if (!fullScreen)
+    if (canGrabMouse)
+      SDL_WM_GrabInput(SDL_GRAB_ON);
+    else
+      SDL_WM_GrabInput(SDL_GRAB_OFF);
   // save the values for the next
   oldWidth      = width;
   oldHeight     = height;
@@ -447,6 +454,10 @@ void SDLDisplay::getWindowSize(int& width, int& height) const {
     height = base_height;
   }
 };
+
+void SDLDisplay::enableGrabMouse(bool on) {
+  canGrabMouse = on;
+}
 
 void SDLVisual::setDoubleBuffer(bool on) {
   SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, on ? 1 : 0);
@@ -498,14 +509,6 @@ void SDLWindow::getMouse(int& x, int& y) const {
   y = my;
 };
 
-void SDLWindow::grabMouse() {
-  SDL_WM_GrabInput(SDL_GRAB_ON);
-};
-
-void SDLWindow::ungrabMouse() {
-  SDL_WM_GrabInput(SDL_GRAB_OFF);
-};
-
 void SDLWindow::setSize(int width, int height) {
   ((SDLDisplay *)getDisplay())->setWindowSize(width, height);
 };
@@ -539,6 +542,10 @@ void SDLWindow::create(void) {
   ((SDLDisplay *)getDisplay())->createWindow();
   // reload context data
   OpenGLGState::initContext();  
+};
+
+void SDLWindow::enableGrabMouse(bool on) {
+  ((SDLDisplay *)getDisplay())->enableGrabMouse(on);
 };
 
 #endif

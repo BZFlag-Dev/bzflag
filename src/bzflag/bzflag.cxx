@@ -1232,8 +1232,12 @@ int			main(int argc, char** argv)
   }
 
   // grab the mouse only if allowed
-  if (BZDB.isSet("mousegrab") && !BZDB.isTrue("mousegrab"))
+  if (BZDB.isSet("mousegrab") && !BZDB.isTrue("mousegrab")) {
     mainWindow.setNoMouseGrab();
+    mainWindow.enableGrabMouse(false);
+  } else {
+    mainWindow.enableGrabMouse(true);
+  }
 
   // set window quadrant
   if (renderer.getViewType() == SceneRenderer::ThreeChannel)

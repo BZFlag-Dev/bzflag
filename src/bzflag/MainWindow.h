@@ -63,6 +63,7 @@ class MainWindow {
     void		showWindow(bool = true);
     void		warpMouse();
     void		grabMouse();
+    void		enableGrabMouse(bool on);
     void		ungrabMouse();
 
     void		resize();

@@ -36,6 +36,7 @@ class SDLDisplay : public BzfDisplay {
   void setWindowSize(int width, int height);
   void getWindowSize(int& width, int& height) const;
   void doSetVideoMode();
+  void enableGrabMouse(bool);
  private:
   bool fullScreen;
   bool doSetResolution(int) {return true;};
@@ -45,6 +46,7 @@ class SDLDisplay : public BzfDisplay {
   int  min_height;
   int  x;
   int  y;
+  bool canGrabMouse;
   // to avoid flashing we memorize the old values used to build the window
   bool oldFullScreen;
   int  oldWidth;
@@ -82,8 +84,9 @@ class SDLWindow : public BzfWindow {
   void  iconify(void);
   void  warpMouse(int x, int y);
   void  getMouse(int& x, int& y) const;
-  void  grabMouse();
-  void  ungrabMouse();
+  void  grabMouse() {;};
+  void  ungrabMouse() {;};
+  void  enableGrabMouse(bool);
   void  showMouse() {;};
   void  hideMouse() {;};
   void  setGamma(float newGamma);

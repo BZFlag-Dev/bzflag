@@ -98,6 +98,11 @@ void			MainWindow::ungrabMouse()
   if (allowMouseGrab) window->ungrabMouse();
 }
 
+void			MainWindow::enableGrabMouse(bool on)
+{
+  window->enableGrabMouse(on);
+}
+
 bool			MainWindow::getFullscreen()
 {
   return isFullscreen;

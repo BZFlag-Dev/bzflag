@@ -59,6 +59,7 @@ class BzfWindow {
     virtual void	getMouse(int& x, int& y) const = 0;
     virtual void	grabMouse() = 0;
     virtual void	ungrabMouse() = 0;
+    virtual void	enableGrabMouse(bool) {;};
     virtual void	showMouse() = 0;
     virtual void	hideMouse() = 0;
 
