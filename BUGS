@@ -28,17 +28,6 @@ recent bugs
   so I guess after drawing the rabbit tank it draws a rogue tank and resets
   the material data.
 
-- Server handles MsgKilled correctly, but client displays it as 'killed by                       
-  unknown>'; killer id is -1=InvalidPlayer, why not ServerPlayer? 
-  Chestal, Can you show steps of how this happens? I get 
-  'Killed by World Weapon (Rogue)'
-  (Chestal) Easy to reproduce on ducati 59155. Just get shot by the single
-  world weapon there.
-  Update: big HUD message says 'world weapon', but message area almost
-  always says 'unknown'. I think this means that the shot has the right
-  player id, but MsgKilled msg from server has not (HUD msg is displayed
-  when player blows up, other msg when MsgKilled is received).
-
 - Spawn code sometimes spawns you mid-air
 
 - Robots don't do z collision checks other than to see if z < 0.

@@ -456,6 +456,9 @@ static void createUDPcon(int t, int remote_port) {
 
 static int lookupPlayer(const PlayerId& id)
 {
+  if (id == ServerPlayer)
+    return id;
+
   for (int i = 0; i < curMaxPlayers; i++)
     if ((player[i].state > PlayerInLimbo) && (i == id))
       return i;
@@ -3119,8 +3122,8 @@ static void playerKilled(int victimIndex, int killerIndex, int reason,
 			int16_t shotIndex)
 {
   // aliases for convenience
-  // Warning: killer should not be used when killerIndex == InvalidPlayer
-  PlayerInfo &killer = player[killerIndex == InvalidPlayer ? 0 : killerIndex],
+  // Warning: killer should not be used when killerIndex == InvalidPlayer or ServerPlayer
+  PlayerInfo &killer = player[((killerIndex == InvalidPlayer) || (killerIndex == ServerPlayer)) ? 0 : killerIndex],
              &victim = player[victimIndex];
 
   // victim was already dead. keep score.
@@ -3130,7 +3133,7 @@ static void playerKilled(int victimIndex, int killerIndex, int reason,
 
   // killing rabbit or killing anything when I am a dead ex-rabbit is allowed
   bool teamkill = false;
-  if (killerIndex != InvalidPlayer) {
+  if ((killerIndex != InvalidPlayer) && (killerIndex != ServerPlayer)) {
     const bool rabbitinvolved = killer.wasRabbit || victim.team == RabbitTeam;
     const bool foe = areFoes(victim.team, killer.team);
     teamkill = !foe && !rabbitinvolved;
@@ -3175,7 +3178,7 @@ static void playerKilled(int victimIndex, int killerIndex, int reason,
   if (victimIndex != InvalidPlayer) {
     bufStart = getDirectMessageBuffer();
     victim.losses++;
-    if (killerIndex != InvalidPlayer) {
+    if ((killerIndex != InvalidPlayer) && (killerIndex != ServerPlayer)) {
       if (victimIndex != killerIndex) {
 	if (teamkill) {
 	  if (clOptions->teamKillerDies)
@@ -3205,6 +3208,7 @@ static void playerKilled(int victimIndex, int killerIndex, int reason,
     // see if the player reached the score limit
     if (clOptions->maxPlayerScore != 0
 	&& killerIndex != InvalidPlayer
+	&& killerIndex != ServerPlayer
 	&& killer.wins - killer.losses >= clOptions->maxPlayerScore) {
       void *buf, *bufStart = getDirectMessageBuffer();
       buf = nboPackUByte(bufStart, killerIndex);
@@ -3225,20 +3229,20 @@ static void playerKilled(int victimIndex, int killerIndex, int reason,
     int winningTeam = (int)NoTeam;
     if (!(clOptions->gameStyle & (TeamFlagGameStyle | RabbitChaseGameStyle))) {
       int killerTeam = -1;
-      if (killerIndex != InvalidPlayer && victim.team == killer.team) {
+      if (killerIndex != InvalidPlayer && killerIndex != ServerPlayer && victim.team == killer.team) {
 	if (killer.team != RogueTeam)
 	  if (killerIndex == victimIndex)
 	    team[int(victim.team)].team.lost += 1;
 	  else
 	    team[int(victim.team)].team.lost += 2;
       } else {
-	if (killerIndex != InvalidPlayer && killer.team != RogueTeam) {
+	if (killerIndex != InvalidPlayer && killerIndex != ServerPlayer && killer.team != RogueTeam) {
 	  winningTeam = int(killer.team);
 	  team[winningTeam].team.won++;
 	}
 	if (victim.team != RogueTeam)
 	  team[int(victim.team)].team.lost++;
-	if (killerIndex != InvalidPlayer)
+	if ((killerIndex != InvalidPlayer) && (killerIndex != ServerPlayer))
 	  killerTeam = killer.team;
       }
       sendTeamUpdate(-1,int(victim.team), killerTeam);
