@@ -26,6 +26,11 @@ LagInfo::LagInfo(PlayerInfo *_info)
   lastupdate     = now;
 }
 
+int LagInfo::getLag()
+{
+  return int(lagavg * 1000);
+}
+
 void LagInfo::getLagStats(char* msg) {
   msg[0] = 0;
   if (!info->isPlaying() || !info->isHuman())
