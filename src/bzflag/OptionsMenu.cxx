@@ -10,8 +10,6 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#include "common.h"
-
 /* interface header */
 #include "OptionsMenu.h"
 
@@ -20,16 +18,16 @@
 #include <string>
 
 /* common implementation headers */
-#include "StateDatabase.h"
 #include "BZDBCache.h"
-#include "TextUtils.h"
 #include "FontManager.h"
+#include "StartupInfo.h"
+#include "StateDatabase.h"
+#include "TextUtils.h"
 
 /* local implementation headers */
 #include "MainMenu.h"
 #include "HUDDialogStack.h"
 #include "ControlPanel.h"
-#include "StartupInfo.h"
 #include "ServerListCache.h"
 #include "HUDuiControl.h"
 #include "HUDuiLabel.h"
