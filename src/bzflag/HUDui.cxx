@@ -18,8 +18,8 @@
 #include "World.h"
 #include "texture.h"
 #include "BundleMgr.h"
+#include "TextureManager.h"
 
-static const char*	arrowFile = "ybolt";
 static const GLfloat	dimTextColor[3] = { 0.7f, 0.7f, 0.7f };
 static const GLfloat	moreDimTextColor[3] = { 0.4f, 0.4f, 0.4f };
 static const GLfloat	textColor[3] = { 1.0f, 1.0f, 1.0f };
@@ -110,8 +110,8 @@ HUDuiControl::HUDuiControl() : showingFocus(true),
 {
   if (totalCount == 0) {
     // load arrow texture
-    arrow = new OpenGLTexture;
-    *arrow = getTexture(arrowFile, OpenGLTexture::Linear);
+    TextureManager *tm = TextureManager::getTextureManager();
+    arrow = tm->getTexture( TX_BOLT, RogueTeam );
 
     // make gstate for focus arrow
     gstate = new OpenGLGState;
