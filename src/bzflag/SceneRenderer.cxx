@@ -118,16 +118,16 @@ SceneRenderer::SceneRenderer() :
 				sameFrame(false),
 				needStyleUpdate(true)
 {
+  lightsSize = 4;
+  lightsCount = 0;
+  lights = new OpenGLLight*[lightsSize];
+  dynamicLights = 0;
+  return;
 }
 
 void SceneRenderer::setWindow(MainWindow* _window) {
   window = _window;
   
-  lightsSize = 4;
-  lightsCount = 0;
-  lights = new OpenGLLight*[lightsSize];
-  dynamicLights = 0;
-
   // get visual info
   window->getWindow()->makeCurrent();
   GLint bits;
@@ -493,6 +493,7 @@ int			SceneRenderer::getNumAllLights() const
 void			SceneRenderer::clearLights()
 {
   lightsCount = 0;
+  dynamicLights = 0;
   return;
 }
 
@@ -637,7 +638,8 @@ void			SceneRenderer::render(
   // get the important lights in the scene
   if (!sameFrame) {
 
-    clearLights();
+    lightsCount = 0;
+    dynamicLights = 0;
     
     if (scene && !blank && lighting) {
       // get the potential dynamic lights
