@@ -669,7 +669,6 @@ AC_OUTPUT(bzflag.info
 	src/ogl/Makefile
 	src/platform/Makefile
 	src/platform/MacOSX/Makefile
-	src/platform/MacOSX/BZFlag.pbproj/Makefile
 	src/platform/MacOSX/BZFlag.xcode/Makefile
 	src/platform/MacOSX/English.lproj/Makefile
 	src/platform/MacOSX/English.lproj/MainMenu.nib/Makefile
