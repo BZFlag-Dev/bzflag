@@ -275,11 +275,11 @@ void			HUDuiControl::renderFocus()
 
     float u = (float)(arrowFrame % uFrames) / (float)uFrames;
     float v = (float)(arrowFrame / uFrames) / (float)vFrames;
-	fh2 = floorf(0.5f * imageSize);
-    gstate->setState();
+	fh2 = floorf(0.5f * fontHeight);	// this really should not scale the image based on the font,
+    gstate->setState();					// best would be to load an image for each size
     glColor3f(1.0f, 1.0f, 1.0f);
-	float imageXShift = 1;//fh2;
-	float imageYShift = -fh2 + fontHeight * 0.5f;
+	float imageXShift = -fh2+1;
+	float imageYShift = fh2 * 0.5f;
     float outputSize = fh2;
     glBegin(GL_QUADS);
       glTexCoord2f(u, v);
