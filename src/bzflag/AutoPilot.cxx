@@ -94,6 +94,8 @@ ShotPath *findWorstBullet(float &minDistance)
     
       if (shot->getFlag() == Flags::InvisibleBullet)
         continue; //Theoretically Roger could triangulate the sound
+			if (shot->getFlag() == Flags::Laser && myTank->getFlag() == Flags::Cloaking)
+				continue; //cloaked tanks can't die from lasers
 
       const float* shotPos = shot->getPosition();
       if ((fabs(shotPos[2] - pos[2]) > BZDBCache::tankHeight) && (shot->getFlag() != Flags::GuidedMissile))
@@ -125,6 +127,8 @@ ShotPath *findWorstBullet(float &minDistance)
 
     if (shot->getFlag() == Flags::InvisibleBullet)
       continue; //Theoretically Roger could triangulate the sound
+		if (shot->getFlag() == Flags::Laser && myTank->getFlag() == Flags::Cloaking)
+			continue; //cloaked tanks can't die from lasers
 
     const float* shotPos = shot->getPosition();
     if ((fabs(shotPos[2] - pos[2]) > BZDBCache::tankHeight) && (shot->getFlag() != Flags::GuidedMissile))
