@@ -93,10 +93,13 @@ boolean			SolarisMedia::openAudio()
   if(DEBUG_SOLARIS)
     fprintf(stderr, "Opened audio control device '/dev/audioctl'\n");
 
+// removing these avoids a kernel crash on solaris 8 - bzFrank
+#ifdef FLUSHDRAIN
   // Empty buffers
   ioctl(audio_fd, AUDIO_DRAIN, 0);
   ioctl(audio_fd, I_FLUSH, FLUSHRW);
   ioctl(audioctl_fd, I_FLUSH, FLUSHRW);
+#endif
 
   if(ioctl(audio_fd, AUDIO_GETDEV, &a_dev) < 0)
   {

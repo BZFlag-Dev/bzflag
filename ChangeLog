@@ -25,6 +25,7 @@ BZFlag 1.7e1
 * udp network code reworking to select() on one server port - TimR
 * rogue tank placement on enter - chestal
 * pseudo variable height buildings in cf mode - TimR
+* don't drain and flush audio on solaris - frank
 
 
 BZFlag 1.7e release 000
