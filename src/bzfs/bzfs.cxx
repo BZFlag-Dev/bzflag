@@ -5765,12 +5765,12 @@ static bool parsePlayerCount(const char *argv, CmdLineOptions &options)
       scan = tail + 1;
     }
 
-    // if rogues not allowed then zero that count
-    if (!(clOptions.gameStyle & int(RoguesGameStyle)))
-      options.maxTeam[RogueTeam] = 0;
 
     // if all counts explicitly listed then add 'em up and set maxPlayers
     if (countCount == NumTeams) {
+    // if num rogues allowed team > 0, then set Rogues game style
+      if (options.maxTeam[RogueTeam] > 0)
+        clOptions.gameStyle |= int(RoguesGameStyle);
       softmaxPlayers = 0;
       for (i = 0; i < NumTeams; i++)
 	softmaxPlayers += options.maxTeam[i];
