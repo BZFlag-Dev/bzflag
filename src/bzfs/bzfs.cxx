@@ -2880,7 +2880,7 @@ static void addPlayer(int playerIndex)
   {
     if (i==playerIndex)
       continue;
-    if (strcmp(player[i].callSign,player[playerIndex].callSign)==0)
+    if (strcasecmp(player[i].callSign,player[playerIndex].callSign)==0)
       break;
   }
   if (i<maxPlayers)
