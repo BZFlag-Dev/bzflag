@@ -14,6 +14,7 @@
 #ifdef HAVE_SDL
 #include "SDLMedia.h"
 #include "SDLDisplay.h"
+#include "SDLJoystick.h"
 #else
 #include "MacDisplay.h"
 #include "MacVisual.h"
@@ -77,6 +78,12 @@ BzfMedia* MacPlatformFactory::createMedia() {
 
   return media;
 }
+
+#ifdef HAVE_SDL
+BzfJoystick* MacPlatformFactory::createJoystick() {
+  return new SDLJoystick;
+}
+#endif
 
 MacPlatformFactory::MacPlatformFactory() {
   display = NULL;

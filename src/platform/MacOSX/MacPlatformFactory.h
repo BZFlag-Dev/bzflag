@@ -29,6 +29,10 @@ class MacPlatformFactory : public PlatformFactory
     BzfVisual* createVisual(const BzfDisplay*);
     BzfWindow* createWindow(const BzfDisplay*, BzfVisual*);
 
+#ifdef HAVE_SDL
+    BzfJoystick* createJoystick();
+#endif
+
   private:
     //MacPlatformFactory(const MacPlatformFactory&);
     //MacPlatformFactory&  operator=(const MacPlatformFactory&);
