@@ -247,7 +247,7 @@ std::string		KeyManager::keyEventToString(
     case ' ':
       return name + "Space";
     default:
-      if (!isspace(key.ascii))
+      if (!isspace((unsigned char)key.ascii))
 	return name + std::string(&key.ascii, 1);
       return name + "???";
   }
