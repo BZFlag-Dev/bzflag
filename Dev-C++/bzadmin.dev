@@ -1,11 +1,11 @@
 [Project]
-FileName=bzadmin.dev
+FileName=BZADMIN.DEV
 Name=bzadmin
-UnitCount=41
+UnitCount=42
 Type=1
 Ver=1
 ObjFiles=
-Includes=
+Includes=..\include;..\src\bzflag
 Libs=
 PrivateResource=
 ResourceIncludes=
@@ -451,6 +451,16 @@ BuildCmd=
 FileName=..\src\common\Team.cxx
 CompileCpp=1
 Folder=Source Files/Common
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit42]
+FileName=..\src\bzflag\ServerLink.h
+CompileCpp=1
+Folder=Header Files/Common
 Compile=1
 Link=1
 Priority=1000
