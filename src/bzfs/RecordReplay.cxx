@@ -1394,11 +1394,7 @@ savePlayersState ()
       routePacket (MsgAddPlayer, 
                    (char*)buf - (char*)bufStart, bufStart, StatePacket);
       // Part of MsgAdminInfo
-      NetHandler *handler = NetHandler::getHandler(i);
-      adminPtr = nboPackUByte(adminPtr, handler->sizeOfIP());
-      adminPtr = nboPackUByte(adminPtr, i);
-      adminPtr = nboPackUByte(adminPtr, accessInfo[i].getPlayerProperties());
-      adminPtr = handler->packAdminInfo(adminPtr);
+      adminPtr = playerData->packAdminInfo(adminPtr);
       
       count++;
     }
