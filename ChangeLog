@@ -4,6 +4,7 @@
 BZFlag 1.12.0  (was 1.11.x)
 ---------------------------
 
+* Lighting menu option now has "None / Fast / Best" - Dave Rodgers
 * Dev-C++ project files - Ian Agar, Daniel Remenak, Jeff Myers
 * Shot accuracy statistics dialog - Daniel Remenak
 * Faster zbuffer graphics using octree and dynamic occluders - Dave Rodgers
