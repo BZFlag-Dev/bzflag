@@ -1,10 +1,6 @@
 recent bugs
 ------------
-
-- VC6 users with an updated platform SDK need to comment out the socketlen_t line
-  in config.h. We should make sure the windows net headers are included before
-  common.h so that we can test for the existence of this item before we define
-  it. Or Mr.ApathyCream will keep changing it back.
+- Flaghelp falls into the radar area when radar is 'bigger'
 
 - VC 7.1 release builds do not work, link errors in texture manager. It seems to have
   to do with the singleton, the class defines a deconstructor, but the header dosn't have one.
@@ -16,6 +12,10 @@ recent bugs
   number and then shoot yourself.  (fhffhqvb reported this)  1) Server should
   check that id's are valid to not propagate garbage and 2) Clients should
   not have actually crashed in unpack() regardless..  
+- Address Exception reported when unpacking a FlagType in MsgFlagUpdate on client
+  in Rabbit game. The reported message buffer address was bad (ie 0xbfffd7ed)
+  Could we be running off the end of the packet (ie count is fubar'ed?)
+  Perhaps add sanity check for not overruning end of buffer.
 
 - On a FFA game, where no purple was allowed a Team size of 65535 was displayed for Purple. 
 
@@ -33,11 +33,6 @@ recent bugs
   score, the formula does not work well then). Nope: Top player was 44-31 or there
   abouts.
 
-- Address Exception reported when unpacking a FlagType in MsgFlagUpdate on client
-  in Rabbit game. The reported message buffer address was bad (ie 0xbfffd7ed)
-  Could we be running off the end of the packet (ie count is fubar'ed?)
-  Perhaps add sanity check for not overruning end of buffer.
-
 - Player kicked after getting V flag (and possibly TH) stolen by another thief.
 
 - bzadmin seems to be less responsive over the network than bzflag - a 
@@ -49,7 +44,7 @@ recent bugs
   shooter locked onto a different target. (Nidhoggr reported this)
 
 - Sometimes when you pick up MG, the tank automatically, and constantly
-  starts firing all the shots over and over. Seen no Mac and Windows.
+  starts firing all the shots over and over. Seen on Mac and Windows.
 
 - Killed tanks continue drifting and leave tank bits floating around on the
   modified gravity ducati.  players seem to continue forwarding after landing
