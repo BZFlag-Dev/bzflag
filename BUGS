@@ -13,6 +13,8 @@ recent bugs
   need to test that theory.
 
 - Shift+Tab seems to be bound to jump without being bound to jump
+  It doesn't happen on Linux. Shift+Tab action is untranslated by XLookupString
+  (xfree86 4.3), so need custom code to go into bzflag. 
 
 - menu does not display modified values after quitting and returning, although
   the bindings appear to remain in effect.
