@@ -3779,9 +3779,6 @@ static bool		gotBlowedUp(BaseLocalPlayer* tank,
   if (Observer || !tank->isAlive())
     return false;
 
-  if (World::getWorld()->allowRabbit())
-	tank->changeTeam( RogueTeam );
-
   // you can't take it with you
   const FlagId flag = tank->getFlag();
   if (flag != NoFlag) {
