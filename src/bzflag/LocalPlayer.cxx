@@ -939,7 +939,7 @@ void			LocalPlayer::setPause(bool pause)
 
 bool			LocalPlayer::fireShot()
 {
-  if (firingStatus != Ready)
+  if (! (firingStatus == Ready || firingStatus == Zoned))
     return false;
 
   // find an empty slot
@@ -951,8 +951,8 @@ bool			LocalPlayer::fireShot()
   if (i == numShots) return false;
 
   // make sure we're allowed to shoot
-  if (!isAlive() || isPaused() || location == InBuilding ||
-      (getFlag() == Flags::PhantomZone && isFlagActive()))
+  if (!isAlive() || isPaused() || location == InBuilding) // ||
+      //(getFlag() == Flags::PhantomZone && isFlagActive()))
     return false;
 
   // prepare shot
@@ -1208,11 +1208,26 @@ bool			LocalPlayer::checkHit(const Player* source,
     // only superbullet or shockwave can kill zoned dude
     const FlagType* shotFlag = shot->getFlag();
     if (getFlag() == Flags::PhantomZone && isFlagActive() &&
-	shotFlag != Flags::SuperBullet && shotFlag != Flags::ShockWave)
+	shotFlag != Flags::SuperBullet && shotFlag != Flags::ShockWave &&
+  shotFlag != Flags::PhantomZone)
       continue;
     // laser can't hit a cloaked tank
     if (getFlag() == Flags::Cloaking && shotFlag == Flags::Laser)
       continue;
+
+    if (shotFlag == Flags::PhantomZone){ // zoned shot
+      if (getFlag() != Flags::PhantomZone) { // I don't have PZ
+        continue; // no way
+      } else { // I have PZ
+        if (!isFlagActive()) { // not zoned, can't get shot
+          continue;
+        }
+        else { 
+          // do nothing - I am zoned, I can get shot
+        }
+      }
+
+    }
 
     // test myself against shot
     float position[3];

@@ -42,7 +42,14 @@ FiringInfo::FiringInfo(const BaseLocalPlayer& tank, int id)
   shot.vel[1] = tankVel[1] + shotSpeed * dir[1];
   shot.vel[2] = tankVel[2] + shotSpeed * dir[2];
   shot.dt = 0.0f;
+
   flagType = tank.getFlag();
+  // wee bit o hack -- if phantom flag but not phantomized
+  // the shot flag is normal -- otherwise FiringInfo will have
+  // to be changed to add a real bitwise status variable
+  if (tank.getFlag() == Flags::PhantomZone && !tank.isFlagActive()){
+    flagType = Flags::Null;
+  }
   lifetime = BZDB.eval(StateDatabase::BZDB_RELOADTIME);
   lifetime = BZDB.eval(StateDatabase::BZDB_RELOADTIME);
 }
@@ -82,6 +89,8 @@ ShotPath::ShotPath(const FiringInfo& info) :
       strategy = new ShockWaveStrategy(this);
     else if (firingInfo.flagType == Flags::Thief)
       strategy = new ThiefStrategy(this);
+    else if (firingInfo.flagType == Flags::PhantomZone)
+      strategy = new PhantomBulletStrategy(this);
     else
       assert(0);    // shouldn't happen
   }

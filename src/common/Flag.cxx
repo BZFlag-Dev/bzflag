@@ -121,7 +121,7 @@ namespace Flags {
 					    "Destroys tanks you touch but you have to get really close.");
     ShockWave               = new FlagType( "Shock Wave", "SW", FlagUnstable, SpecialShot, FlagGood, NoTeam,
 					    "Firing destroys all tanks nearby.  Don't kill teammates!  Can kill tanks on/in buildings.");
-    PhantomZone             = new FlagType( "Phantom Zone", "PZ", FlagUnstable, NormalShot, FlagGood, NoTeam,
+    PhantomZone             = new FlagType( "Phantom Zone", "PZ", FlagUnstable, SpecialShot, FlagGood, NoTeam,
 					    "Teleporting toggles Zoned effect.  Zoned tank can drive through buildings.  Zoned tank can't shoot or be shot (except by superbullet and shock wave).");
     Genocide                = new FlagType( "Genocide", "G", FlagUnstable, NormalShot, FlagGood, NoTeam,
 					    "Killing one tank kills that tank's whole team.");

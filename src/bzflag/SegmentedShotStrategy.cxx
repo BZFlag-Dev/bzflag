@@ -34,7 +34,7 @@ Player* lookupPlayer(PlayerId id);
 void addShotExplosion(const float* pos);
 
 
-SegmentedShotStrategy::SegmentedShotStrategy(ShotPath* _path, bool transparent) :
+SegmentedShotStrategy::SegmentedShotStrategy(ShotPath* _path, bool useSuperTexture, bool faint) :
 				ShotStrategy(_path)
 {
   // initialize times
@@ -51,11 +51,16 @@ SegmentedShotStrategy::SegmentedShotStrategy(ShotPath* _path, bool transparent) 
   // initialize scene nodes
   boltSceneNode = new BoltSceneNode(_path->getPosition());
   const float* c = Team::getRadarColor(team);
-  boltSceneNode->setColor(c[0], c[1], c[2]);
+  if (faint){
+    boltSceneNode->setColor(c[0], c[1], c[2],0.2f);
+    boltSceneNode->setTextureColor(1.0f,1.0f,1.0f,0.3f);
+  } else {
+    boltSceneNode->setColor(c[0], c[1], c[2], 1.0f);
+  }
 
   TextureManager &tm = TextureManager::instance();
   std::string imageName = Team::getImagePrefix(team);
-  if (transparent)
+  if (useSuperTexture)
     imageName += BZDB.get("superPrefix");
   imageName += BZDB.get("boltTexture");
 
@@ -668,6 +673,19 @@ SuperBulletStrategy::SuperBulletStrategy(ShotPath* path) :
 }
 
 SuperBulletStrategy::~SuperBulletStrategy()
+{
+  // do nothing
+}
+
+
+PhantomBulletStrategy::PhantomBulletStrategy(ShotPath* path) :
+				SegmentedShotStrategy(path, false,true)
+{
+  // make segments that go through buildings
+  makeSegments(Through);
+}
+
+PhantomBulletStrategy::~PhantomBulletStrategy()
 {
   // do nothing
 }

@@ -32,7 +32,7 @@
 
 class SegmentedShotStrategy : public ShotStrategy {
   public:
-			SegmentedShotStrategy(ShotPath*, bool transparent);
+			SegmentedShotStrategy(ShotPath*, bool useSuperTexture, bool faint = false);
 			~SegmentedShotStrategy();
 
     void		update(float dt);
@@ -128,6 +128,12 @@ class SuperBulletStrategy : public SegmentedShotStrategy {
   public:
 			SuperBulletStrategy(ShotPath*);
 			~SuperBulletStrategy();
+};
+
+class PhantomBulletStrategy : public SegmentedShotStrategy {
+  public:
+			PhantomBulletStrategy(ShotPath*);
+			~PhantomBulletStrategy();
 };
 
 

@@ -30,7 +30,8 @@ class BoltSceneNode : public ShotSceneNode {
 
     void		setFlares(bool);
     void		setSize(float radius);
-    void		setColor(GLfloat r, GLfloat g, GLfloat b);
+    void		setColor(GLfloat r, GLfloat g, GLfloat b, GLfloat a = 1.0f);
+    void		setTextureColor(GLfloat r, GLfloat g, GLfloat b, GLfloat a = 1.0f);
     void		setColor(const GLfloat* rgb);
     void		setTexture(const int);
     void		setColorblindTexture(const OpenGLTexture&);
@@ -50,7 +51,8 @@ class BoltSceneNode : public ShotSceneNode {
       public:
 			BoltRenderNode(const BoltSceneNode*);
 			~BoltRenderNode();
-	void		setColor(const GLfloat* rgb);
+	void		setColor(const GLfloat* rgba);
+  void    setTextureColor(const GLfloat* rgba);
 	void		render();
 	const GLfloat*	getPosition() { return sceneNode->getSphere(); }
 	void		setAnimation(int cu, int cv);
@@ -58,11 +60,12 @@ class BoltSceneNode : public ShotSceneNode {
 	const BoltSceneNode* sceneNode;
 	int		u, v, cu, cv;
 	GLfloat		du, dv;
-	GLfloat		mainColor[3];
-	GLfloat		innerColor[3];
+	GLfloat		mainColor[4];
+	GLfloat		innerColor[4];
 	GLfloat		outerColor[4];
 	GLfloat		coronaColor[4];
 	GLfloat		flareColor[4];
+  GLfloat		textureColor[4];
 	int		numFlares;
 	float		theta[6];
 	float		phi[6];
@@ -81,7 +84,7 @@ class BoltSceneNode : public ShotSceneNode {
     bool		texturing;
     bool		colorblind;
     float		size;
-    GLfloat		color[3];
+    GLfloat		color[4];
     OpenGLLight		light;
     OpenGLGState	gstate;
     OpenGLGState	colorblindGState;
