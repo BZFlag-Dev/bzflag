@@ -301,6 +301,11 @@
 						d.writeln("-mp " + mainform.maximum_players.value + "<br/><br/>");
 					}
 
+					if (mainform.spawn_on_buildings.checked) {
+						d.writeln("#Tanks can spawn on buildings<br/>");
+						d.writeln("-sb<br/><br/>");
+					}
+
 					if (mainform.maximum_team_score.value > 0) {
 						d.writeln("#Maximum Team score limit on game<br/>");
 						d.writeln("-mts " + mainform.maximum_team_score.value + "<br/><br/>");
@@ -704,6 +709,8 @@
 						<tr>
 							<td>Maximum Players</td>
 							<td><input type="text" name="maximum_players" value="40" size="30" title="Maximum number of players who can join (n), or max players per team (n,n,n,n,n,n)"/></td>
+							<td>Spawn on Buildings</td>
+							<td><input type="checkbox" name="spawn_on_buildings"  title="Tanks can spawn on buildings"/></td>
 						</tr>
 						<tr>
 							<td>Maximum Team Score</td>
