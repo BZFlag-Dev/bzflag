@@ -1,6 +1,13 @@
 recent bugs
 ------------
 
+- os x client audio is very choppy when the user has a video card installed
+
+- client does bad things if the home directory is not writeable
+
+- if a tank carries the burrow flag and is on the edge of the world, they may
+  get kicked for being out of bounds.
+
 - trouble remapping the "Identify/Respawn" key from "right mouse or i" to 
   something else.  tried remapping to "w" during gameplay and it fails for
   windows and os x.  also fails to respawn with right mouse if you try to 
