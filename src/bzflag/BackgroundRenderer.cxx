@@ -51,8 +51,6 @@ const GLfloat		BackgroundRenderer::receiverColor[3] =
 const GLfloat		BackgroundRenderer::receiverColorInv[3] =
 				{ 0.55f, 0.3f, 0.55f };
 
-const int		NumStars = countof(stars);
-
 BackgroundRenderer::BackgroundRenderer(const SceneRenderer&) :
 				blank(false),
 				invert(false),
@@ -869,7 +867,7 @@ void			BackgroundRenderer::doInitDisplayLists()
   // make stars list
   starList.begin();
     glBegin(GL_POINTS);
-    for (i = 0; i < NumStars; i++) {
+    for (i = 0; i < (int)NumStars; i++) {
       glColor3fv(stars[i]);
       glVertex3fv(stars[i] + 3);
     }

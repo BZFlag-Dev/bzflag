@@ -109,6 +109,7 @@ bzflag_SOURCES =			\
 	playing.h			\
 	sound.cxx			\
 	sound.h				\
+	stars.cxx			\
 	stars.h				\
 	texture.cxx
 
