@@ -39,7 +39,7 @@ $(LIB): ${OBJS}
 	ar cru $@ ${OBJS}
 	${RANLIB} $@
 
-all: $(LIB) demos
+all: $(LIB)
 
 demos: adig ahost
 
