@@ -547,7 +547,7 @@ int			ServerLink::read(uint16_t& code, uint16_t& len,
 
     AddrLen recvlen = sizeof(urecvaddr);
     unsigned char ubuf[8192];
-    n = recvfrom(urecvfd, (char *)ubuf, 8192, 0, &urecvaddr, &recvlen);
+    n = recvfrom(urecvfd, (char *)ubuf, 8192, 0, &urecvaddr, (socklen_t*) &recvlen);
     if (n>0) {
 		disassemblePacket(ubuf, &num_packets);
     }
@@ -786,7 +786,7 @@ void			ServerLink::sendUDPlinkRequest()
   }
 #if !defined(_WIN32)
   AddrLen addr_len = sizeof(serv_addr);
-  if (getsockname(urecvfd, (struct sockaddr*)&serv_addr, &addr_len) < 0) {
+  if (getsockname(urecvfd, (struct sockaddr*)&serv_addr, (socklen_t*) &addr_len) < 0) {
 	close(urecvfd);
 	urecvfd = 0;
     	printError("Error: getsockname() failed, cannot open UDP socket.");
@@ -820,7 +820,7 @@ void			ServerLink::setUDPRemotePort(unsigned short portno)
   struct sockaddr_in serv_addr, existing_addr;
   AddrLen addr_len = sizeof(existing_addr);
 
-  if (getsockname(fd, (struct sockaddr*)&existing_addr, &addr_len) < 0) {
+  if (getsockname(fd, (struct sockaddr*)&existing_addr, (socklen_t*) &addr_len) < 0) {
 	printError("GETSOCKNAME: Unable to get my address");
 	return;  // we cannot get
   }

@@ -104,7 +104,7 @@ int			recvUDPNetwork(int fd, void* buffer, int bufferLength,
   AddrLen fromLength = sizeof(from);
 
   int byteCount = recvfrom(fd, (char*)buffer, bufferLength, 0,
-				(struct sockaddr*)&from, &fromLength);
+				(struct sockaddr*)&from, (socklen_t*) &fromLength);
   if (byteCount < 0) {
     if (getErrno() == EWOULDBLOCK) {
       return 0;
