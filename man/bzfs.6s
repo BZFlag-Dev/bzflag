@@ -64,6 +64,7 @@ bzfs \- BZFlag game server
 [\fB\-tkkr \fIpercent\fR]
 [\fB\-ttl \fIttl\fR]
 [\fB\-userdb \fIfile\fR]
+[\fB\-vars \fIfile\fR]
 [\fB\-version\fR]
 [\fB\-world \fIworld-file\fR]
 [\fB\-worldsize \fIworld size\fR]
@@ -340,6 +341,12 @@ of the server's existence.
 .TP
 \fB-userdb\fI file\fR
 Load group associations from file
+.TP
+\fB-vars\fI file\fR
+Loads values for game configurable variables from \fIfile\fR. Entries are
+one per line in the form: \fBset variable value\fR. For a list of variables
+that are configurable, in the the BZFlag client, send a message with
+\fI/set\fR as the text.
 .TP
 .B -version
 Prints the version number of the executable.
