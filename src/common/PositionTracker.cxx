@@ -195,12 +195,13 @@ bool PositionTracker::addWaypoint(const double from[3], const double to[3], doub
   unsigned short int fromToken, toToken;
   bool updated;
   bool foundPoint;
+  unsigned int i;
 
   TrackedItemVector& waypointSet = _trackedItem[std::string("__waypoint__")];
 
   // see if the first point already exists
   foundPoint = false;
-  for (unsigned int i = 0; i != waypointSet.size(); i++) {
+  for (i = 0; i != waypointSet.size(); i++) {
     if ((waypointSet[i]->position[0] = from[0]) &&
 	(waypointSet[i]->position[1] = from[1]) &&
 	(waypointSet[i]->position[2] = from[2])) {
@@ -221,7 +222,7 @@ bool PositionTracker::addWaypoint(const double from[3], const double to[3], doub
 
   // see if the second point already exists
   foundPoint = false;
-  for (unsigned int i = 0; i != waypointSet.size(); i++) {
+  for (i = 0; i != waypointSet.size(); i++) {
     if ((waypointSet[i]->position[0] = to[0]) &&
 	(waypointSet[i]->position[1] = to[1]) &&
 	(waypointSet[i]->position[2] = to[2])) {
