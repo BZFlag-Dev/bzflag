@@ -161,6 +161,9 @@ std::string nameFromPerm(AccessPerm perm)
     case setPerms: return "setPerms";
     case setAll: return "setAll";
     case setVar: return "setVar";
+    case poll: return "poll";
+    case vote: return "vote";
+    case veto: return "veto";
   default: return NULL;
   };
 }
@@ -189,6 +192,9 @@ AccessPerm permFromName(const std::string &name)
   if (name == "SETPERMS") return setPerms;
   if (name == "SETVAR") return setVar;
   if (name == "SETALL") return setAll;
+  if (name == "POLL") return poll;
+  if (name == "VOTE") return vote;
+  if (name == "VETO") return veto;
   return lastPerm;
 }
 

@@ -52,6 +52,9 @@ enum AccessPerm
   setPerms,
   setAll,
   setVar,
+  poll,
+  vote,
+  veto,
  lastPerm	// just so we know how many rights there
 		// are this dosn't do anything really, just
 		// make sure it's the last real right
