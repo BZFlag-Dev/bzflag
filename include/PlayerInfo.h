@@ -59,11 +59,13 @@ class PlayerInfo {
 public:
   PlayerInfo(int _playerIndex);
 
+
   void	setLastMsg(std::string msg);
   const std::string& getLastMsg() const;
   TimeKeeper  getLastMsgTime() const;
   void	incSpamWarns();
   int	getSpamWarns() const;
+
   void	resetPlayer(bool ctf);
   void	setRestartOnBase(bool on);
   bool	shouldRestartAtBase();
@@ -195,6 +197,7 @@ inline bool PlayerInfo::haveFlag() const {
 inline int PlayerInfo::getFlag() const {
   return flag;
 }
+
 
 inline const std::string& PlayerInfo::getLastMsg() const {
   return lastMsgSent;

@@ -555,7 +555,7 @@ void BackgroundRenderer::addCloudDrift(GLfloat uDrift, GLfloat vDrift)
 void BackgroundRenderer::renderSky(SceneRenderer& renderer, bool fullWindow,
 				   bool mirror)
 {
-  if (renderer.useQuality() > 0) {
+  if (renderer.useQuality() ==0/*> 0*/) {
     drawSky(renderer, mirror);
   } else {
     // low detail -- draw as damn fast as ya can, ie cheat.  use glClear()
@@ -566,7 +566,6 @@ void BackgroundRenderer::renderSky(SceneRenderer& renderer, bool fullWindow,
     const int width = window.getWidth();
     const int height = window.getHeight();
     const int viewHeight = window.getViewHeight();
-    const SceneRenderer::ViewType viewType = renderer.getViewType();
 
     // draw sky
     glDisable(GL_DITHER);
@@ -576,6 +575,7 @@ void BackgroundRenderer::renderSky(SceneRenderer& renderer, bool fullWindow,
     glClear(GL_COLOR_BUFFER_BIT);
 
     // draw ground -- first get the color (assume it's all green)
+    drawGround();/*
     GLfloat groundColor = 0.1f + 0.15f * renderer.getSunColor()[1];
     if (fullWindow && viewType == SceneRenderer::ThreeChannel)
       glScissor(x, y, width, height >> 1);
@@ -589,7 +589,7 @@ void BackgroundRenderer::renderSky(SceneRenderer& renderer, bool fullWindow,
       glScissor(x, y + height - viewHeight, width, (viewHeight + 1) >> 1);
     if (invert) glClearColor(groundColor, 0.0f, groundColor, 0.0f);
     else glClearColor(0.0f, groundColor, 0.0f, 0.0f);
-    glClear(GL_COLOR_BUFFER_BIT);
+    glClear(GL_COLOR_BUFFER_BIT);*/
 
     // back to normal
     glPopAttrib();

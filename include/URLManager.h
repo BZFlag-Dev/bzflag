@@ -34,10 +34,9 @@ class URLManager : public Singleton<URLManager> {
     bool getURL(const std::string& URL, std::string &data);
     bool getURL(const std::string& URL, void **data, unsigned int& size);
     bool getURLHeader(const std::string& URL);
-
+    
     bool getFileTime(time_t &t);
-    const char* getErrorString() const;
-
+    const char* URLManager::getErrorString() const;
     void setProgressFunc(int (*func)(void* clientp,
 				     double dltotal, double dlnow,
 				     double ultotal, double ulnow),

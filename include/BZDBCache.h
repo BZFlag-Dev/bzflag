@@ -49,6 +49,7 @@ public:
 	static float tankWidth;
 	static float tankLength;
 	static float tankHeight;
+	static float cloudHeight;
 	static float tankSpeed;
 	static float tankRadius;
 	static float flagRadius;

@@ -43,6 +43,7 @@ float BZDBCache::radarLimit;
 float BZDBCache::gravity;
 float BZDBCache::tankWidth;
 float BZDBCache::tankLength;
+float BZDBCache::cloudHeight;
 float BZDBCache::tankHeight;
 float BZDBCache::tankSpeed;
 float BZDBCache::tankRadius;
@@ -76,6 +77,7 @@ void BZDBCache::init()
   BZDB.addCallback(StateDatabase::BZDB_WORLDSIZE, serverCallback, NULL);
   BZDB.addCallback(StateDatabase::BZDB_RADARLIMIT, serverCallback, NULL);
   BZDB.addCallback(StateDatabase::BZDB_GRAVITY, serverCallback, NULL);
+  BZDB.addCallback(StateDatabase::BZDB_CLOUDHEIGHT, serverCallback, NULL);
   BZDB.addCallback(StateDatabase::BZDB_TANKWIDTH, serverCallback, NULL);
   BZDB.addCallback(StateDatabase::BZDB_TANKLENGTH, serverCallback, NULL);
   BZDB.addCallback(StateDatabase::BZDB_TANKHEIGHT, serverCallback, NULL);
@@ -91,6 +93,7 @@ void BZDBCache::init()
   tankWidth = BZDB.eval(StateDatabase::BZDB_TANKWIDTH);
   tankLength = BZDB.eval(StateDatabase::BZDB_TANKLENGTH);
   tankHeight = BZDB.eval(StateDatabase::BZDB_TANKHEIGHT);
+  cloudHeight = BZDB.eval(StateDatabase::BZDB_CLOUDHEIGHT);
   tankSpeed = BZDB.eval(StateDatabase::BZDB_TANKSPEED);
   tankRadius = BZDB.eval(StateDatabase::BZDB_TANKRADIUS);
   flagRadius = BZDB.eval(StateDatabase::BZDB_FLAGRADIUS);
@@ -159,6 +162,9 @@ void BZDBCache::serverCallback(const std::string& name, void *)
   }
   else if (name == StateDatabase::BZDB_TANKLENGTH) {
     tankLength = BZDB.eval(StateDatabase::BZDB_TANKLENGTH);
+  }
+  else if (name == StateDatabase::BZDB_CLOUDHEIGHT) {
+    cloudHeight = BZDB.eval(StateDatabase::BZDB_CLOUDHEIGHT);
   }
   else if (name == StateDatabase::BZDB_TANKHEIGHT) {
     tankHeight = BZDB.eval(StateDatabase::BZDB_TANKHEIGHT);
