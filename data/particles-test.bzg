@@ -18,8 +18,8 @@
 	<endcolor>0.0  0.55  0.1  0.0</endcolor>
 	<startsize>0.1</startsize>
 	<endsize>0.1</endsize>
-	<speed>10</speed>
-	<life>3</life>
+	<speed>1</speed>
+	<life>10000</life>
 	<fieldangle>180</fieldangle>
 	<spreadmin>-1</spreadmin>
 	<spreadmax>1</spreadmax>
