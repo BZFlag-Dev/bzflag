@@ -200,7 +200,7 @@ FIXME
 
 Details -- mediafile
 ====================
-FIXME
+Contains loaders for image and sound files
 
 Details -- zlib
 ===============
