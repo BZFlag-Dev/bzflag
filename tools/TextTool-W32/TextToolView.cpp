@@ -509,7 +509,7 @@ void CTextToolView::OnFontSavefontfiles()
 
 	  int iNumChars = '~' - ' ';
 
-	  fprintf(fp,"NumChars: %d\nTextureWidth: %d\nTextureHeight: %d\nTextZStep: %d\n\n",iNumChars,m_iMaxTextureWidth,iPictureY,m_iTextureZStep);
+	  fprintf(fp,"NumChars: %d\nTextureWidth: %d\nTextureHeight: %d\nTextZStep: %d\n\n",iNumChars+1,m_iMaxTextureWidth,iPictureY,m_iTextureZStep);
 
 	  for (int iChar = 0; iChar <= iNumChars; iChar++)
 	  {
