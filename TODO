@@ -50,11 +50,6 @@ THESE ARE LOWER PRIORITY
 
 * the players have spoken, and hold-the-flag is wanted
 
-* server should precompute it's MAX_Z and send it to the client.
-  Client should use that Z and not let the tank go over it.
-  Server needs to resend max when ever gravity changes.
-  This way only real cheaters hit the cheat test.
-
 * Iterative octree cell shot collision detection
 
 * instead of kicking laggy players, they should be made observers
