@@ -17,6 +17,8 @@
 #include "TextureManager.h"
 #include "texture.h"
 #include "global.h"
+#include "MediaFile.h"
+#include "ErrorHandler.h"
 
 const int NO_VARIANT = (-1);
 
@@ -60,6 +62,8 @@ FileTextureInit fileLoader[] =
 	{ TX_ROOF, NO_VARIANT, "roof", OpenGLTexture::LinearMipmapLinear },
 	{ TX_PYRAMID, NO_VARIANT, "pyrwall", OpenGLTexture::LinearMipmapLinear },
 	{ TX_CAUTION, NO_VARIANT, "caution", OpenGLTexture::LinearMipmapLinear },
+
+	{ TX_TITLEFONT, NO_VARIANT, "title", OpenGLTexture::Linear },
 };
 
 ProcTextureInit procLoader[] = 
@@ -120,8 +124,18 @@ void TextureManager::addTexture( TextureType type, int variant, OpenGLTexture *t
 
 OpenGLTexture* TextureManager::loadTexture( FileTextureInit &init )
 {
-  OpenGLTexture *texture = new OpenGLTexture();
-  *texture = ::getTexture(init.fileName, NULL, NULL, init.filter);
+  int width, height;
+  unsigned char* image =  MediaFile::readImage( init.fileName, &width, &height);
+  if (!image) {
+    std::vector<std::string> args;
+    args.push_back(init.fileName);
+    printError("cannot load texture: {1}", &args);
+    return new OpenGLTexture();
+  }
+
+  OpenGLTexture *texture = new OpenGLTexture(width, height, image, init.filter, true);
+  delete[] image;
+
   return texture;
 }
 

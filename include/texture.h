@@ -22,15 +22,9 @@
 #include "OpenGLTexture.h"
 #include "OpenGLTexFont.h"
 
+
 unsigned char*		getTextureImage(const std::string& file,
 				int& width, int& height, int& depth);
-unsigned char*		getTextImage(const std::string& file,
-				int& width, int& height);
-OpenGLTexture		getTexture(const std::string& file,
-				int* width = NULL, int* height = NULL,
-				OpenGLTexture::Filter = OpenGLTexture::Max,
-				bool repeat = true,
-				bool noError = false);
 
 class TextureFont {
   public:

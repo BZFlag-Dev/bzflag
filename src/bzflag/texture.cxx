@@ -32,6 +32,7 @@ unsigned char*		getTextureImage(const std::string& file,
   return MediaFile::readImage( file, &width, &height);
 }
 
+
 unsigned char*		getTextImage(const std::string& file,
 				int& width, int& height)
 {
@@ -40,31 +41,6 @@ unsigned char*		getTextImage(const std::string& file,
   args.push_back(file);
   printError("loading {1}", &args );
   return MediaFile::readImage( file, &width, &height);
-}
-
-OpenGLTexture		getTexture(const std::string& file,
-				int* _width, int* _height,
-				OpenGLTexture::Filter filter,
-				bool repeat,
-				bool noError)
-{
-  if (file.length() == 0) return OpenGLTexture();
-
-  int width, height, depth;
-  unsigned char* image = getTextureImage(file, width, height,depth);
-  if (!image) {
-    std::vector<std::string> args;
-    args.push_back(file);
-    if (!noError) printError("cannot load texture: {1}", &args);
-    return OpenGLTexture();
-  }
-
-  if (_width) *_width = width;
-  if (_height) *_height = height;
-  OpenGLTexture tex(width, height, image, filter, repeat);
-  delete[] image;
-
-  return tex;
 }
 
 void			printMissingDataDirectoryError(const char* msg)

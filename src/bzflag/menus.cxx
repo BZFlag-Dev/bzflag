@@ -69,6 +69,7 @@
 #include "ServerListCache.h"
 #include "BZDBCache.h"
 #include "TextUtils.h"
+#include "TextureManager.h"
 
 
 // cause persistent rebuilding for build versioning
@@ -4562,19 +4563,20 @@ void			JoinMenu::resize(int width, int height)
 // MainMenu
 //
 
-static const char*	titleFile = "title";
 OpenGLTexFont*		MainMenu::mainFont = NULL;
 
 MainMenu::MainMenu() : HUDDialog(), joinMenu(NULL),
 				optionsMenu(NULL), quitMenu(NULL)
 {
+  TextureManager &tm = TextureManager::instance();
+
   // create font
   font = TextureFont::getTextureFont(TextureFont::HelveticaBold, true);
   mainFont = &font;
 
   // load title
-  title = getTexture(titleFile, NULL, NULL,
-		     OpenGLTexture::Linear, false, true);
+
+  OpenGLTexture *title = tm.getTexture( TX_TITLEFONT );
 
   // add controls
   std::vector<HUDuiControl*>& list = getControls();
@@ -4583,7 +4585,7 @@ MainMenu::MainMenu() : HUDDialog(), joinMenu(NULL),
 
   textureLabel = new HUDuiTextureLabel;
   textureLabel->setFont(font);
-  textureLabel->setTexture(title);
+  textureLabel->setTexture(*title);
   textureLabel->setString("BZFlag");
   list.push_back(textureLabel);
 

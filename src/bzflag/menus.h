@@ -76,7 +76,6 @@ class MainMenu : public HUDDialog {
 
   private:
     OpenGLTexFont	font;
-    OpenGLTexture	title;
     JoinMenu*		joinMenu;
     OptionsMenu*	optionsMenu;
     QuitMenu*		quitMenu;
