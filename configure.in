@@ -353,9 +353,10 @@ case $host_os in
      linux-gnu)
 	AC_DEFINE(HALF_RATE_AUDIO, 1, [Half rate Audio])
 	AC_DEFINE(XF86VIDMODE_EXT, 1, [XFree86 Video Mode Extension])
-	if test x$no_sdl = xyes; then
-	AC_DEFINE(XIJOYSTICK, 1, [XInput Joystick Handling])
-	fi
+	# FIXME see XIJoystick.cxx
+	#if test x$no_sdl = xyes; then
+	#AC_DEFINE(XIJOYSTICK, 1, [XInput Joystick Handling])
+	#fi
 	CPPFLAGS="$CPPFLAGS -Wall -W"
 	CFLAGS="$CFLAGS -ansi -fno-exceptions";
 	case $host_vendor in
@@ -365,9 +366,9 @@ case $host_os in
      cygwin)
 	AC_DEFINE(HALF_RATE_AUDIO, 1, [Half rate Audio])
 	AC_DEFINE(XF86VIDMODE_EXT, 1, [XFree86 Video Mode Extension])
-	if test x$no_sdl = xyes; then
-	AC_DEFINE(XIJOYSTICK, 1, [XInput Joystick Handling])
-	fi
+	#if test x$no_sdl = xyes; then
+	#AC_DEFINE(XIJOYSTICK, 1, [XInput Joystick Handling])
+	#fi
 	CPPFLAGS="$CPPFLAGS -Wall -W -mcpu=$host_cpu"
 	CFLAGS="$CFLAGS -ansi -fno-exceptions";;
      mingw32)
