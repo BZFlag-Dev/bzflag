@@ -259,12 +259,13 @@ void			ControlPanel::render(SceneRenderer& renderer)
   float fx = messageAreaPixels[0] + margin;
   float fy = messageAreaPixels[1] + margin + 1.0f;
   int   ay = (renderer.getPanelOpacity() == 1.0f || !showTabs) ? 0 : int(lineHeight + 4);
-  glScissor(x + messageAreaPixels[0],
+
+  glScissor(x + messageAreaPixels[0] - 1,
       y + messageAreaPixels[1],
       messageAreaPixels[2],
       messageAreaPixels[3] + ay);
-
   OpenGLGState::resetState();
+
   if (renderer.getPanelOpacity() > 0.0f) {
     // nice blended messages background
     if (BZDBCache::blend && renderer.getPanelOpacity() < 1.0f)
@@ -272,7 +273,7 @@ void			ControlPanel::render(SceneRenderer& renderer)
 
     // clear the background
     glColor4f(0.0f, 0.0f, 0.0f, renderer.getPanelOpacity());
-    glRecti(messageAreaPixels[0],
+    glRecti(messageAreaPixels[0] - 1, // clear an extra pixel column to simplify fuzzy float stuff later
 	    messageAreaPixels[1],
 	    messageAreaPixels[0] + messageAreaPixels[2],
 	    messageAreaPixels[1] + messageAreaPixels[3]);
