@@ -43,37 +43,15 @@ BZAdminClient::BZAdminClient(std::string callsign, std::string host,
     std::cerr << "Rejected." << std::endl;
     return;
   }
-
-  // wait for response
-  // FIXME - code duplicated from playing.cxx
-  uint16_t code, len;
-  char msg[MaxPacketLen];
-  if (sLink.read(code, len, msg, -1) < 0) {
-    std::cerr << "Communication error joining game [No immediate respose]." << std::endl;
-    return;
-  }
-  if (code == MsgSuperKill) {
-    std::cerr << "Server forced disconnection." << std::endl;
-    return;
-  }
-  if (code != MsgAccept && code != MsgReject) {
-    char buf[10];
-    sprintf(buf, "%04x", code);
-    std::cerr << "Communication error joining game [Wrong Code: " << buf << "]."<< std::endl;
-    return;
-  }
-  if (code == MsgReject) {
-    void *buf;
-    char buffer[MessageLen];
-    uint16_t code;
-    buf = nboUnpackUShort (msg, code); // filler for now
-    buf = nboUnpackString (buf, buffer, MessageLen);
-    buffer[MessageLen - 1] = '\0';
-    std::cerr << buffer << std::endl;
-    return;
+  
+  std::string reason;
+  uint16_t code, rejcode;
+  if (sLink.readEnter (reason, code, rejcode)) {
+    valid = true;
+  } else {
+    std::cerr << reason << std::endl;
   }
   
-  valid = true;
   
   // tell BZDB to shut up, we can't have debug data printed to stdout
   BZDB.setDebug(false);

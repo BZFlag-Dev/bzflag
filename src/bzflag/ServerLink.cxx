@@ -522,6 +522,43 @@ void			ServerLink::sendEnter(PlayerType type,
   send(MsgEnter, sizeof(msg), msg);
 }
 
+bool ServerLink::readEnter (std::string& reason,
+                            uint16_t& code, uint16_t& rejcode)
+{
+  // wait for response
+  uint16_t len;
+  char msg[MaxPacketLen];
+
+  if (this->read(code, len, msg, -1) < 0) {
+    reason = "Communication error joining game [No immediate respose].";
+    return false;
+  }
+  
+  if (code == MsgSuperKill) {
+    reason = "Server forced disconnection.";
+    return false;
+  }
+  else if (code == MsgReject) {
+    void *buf;
+    char buffer[MessageLen];
+    buf = nboUnpackUShort (msg, rejcode); // filler for now
+    buf = nboUnpackString (buf, buffer, MessageLen);
+    buffer[MessageLen - 1] = '\0';
+    reason = buffer;
+    return false;
+  }
+  else if (code != MsgAccept) {
+    char buf[10];
+    sprintf(buf, "%04x", code);
+    reason = "Communication error joining game [Wrong Code ";
+    reason += buf;
+    reason += "].";
+    return false;
+  }
+
+  return true;
+}
+
 void			ServerLink::sendCaptureFlag(TeamColor team)
 {
   char msg[2];

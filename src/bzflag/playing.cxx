@@ -3503,37 +3503,18 @@ static bool		enterServer(ServerLink* serverLink, World* world,
   serverLink->sendEnter(TankPlayer, myTank->getTeam(),
 			myTank->getCallSign(), myTank->getEmailAddress());
 
-  // wait for response
-  uint16_t code, len;
-  char msg[MaxPacketLen];
-  if (serverLink->read(code, len, msg, -1) < 0) {
-    printError("Communication error joining game [No immediate respose].");
-    return false;
-  }
-  if (code == MsgSuperKill) {
-    printError("Server forced disconnection.");
-    return false;
-  }
-  if (code != MsgAccept && code != MsgReject) {
-    char buf[10];
-    std::vector<std::string> args;
-    sprintf(buf, "%04x", code);
-    args.push_back(buf);
-    printError("Communication error joining game [Wrong Code {1}].",&args);
-    return false;
-  }
-  if (code == MsgReject) {
-    void *buf;
-    char buffer[MessageLen];
-    uint16_t code;
-    buf = nboUnpackUShort (msg, code); // filler for now
-    buf = nboUnpackString (buf, buffer, MessageLen);
-    buffer[MessageLen-1] = '\0';
-    printError(buffer);
+  // see if the server is feeling agreeable
+  uint16_t code, rejcode;
+  std::string reason;
+  if (!serverLink->readEnter(reason, code, rejcode)) {
+    printError(reason);
     return false;
   }
 
   // get updates
+  uint16_t len;
+  char msg[MaxPacketLen];
+  
   if (serverLink->read(code, len, msg, -1) < 0) {
     goto failed;
   }

@@ -56,8 +56,11 @@ class ServerLink {
     int			read(uint16_t& code, uint16_t& len, void* msg,
 						int millisecondsToBlock = 0);
 
-    void		sendEnter(PlayerType, TeamColor,
-					const char* name, const char* email);
+    void                sendEnter(PlayerType, TeamColor,
+                                  const char* name, const char* email);
+    bool                readEnter(std::string& reason,
+                                  uint16_t& code, uint16_t& rejcode);
+    
     void		sendCaptureFlag(TeamColor);
     void		sendGrabFlag(int flagIndex);
     void		sendDropFlag(const float* position);
