@@ -44,13 +44,13 @@ to do / idea list for bzflag
 * windows makefiles
    currently have microsoft visual c++ projects only
 
-* move robots to separate binaries and allow either the
+* create robots as separate binaries and allow either the
    client or server to exec them. Have a server option
-   to keep n players in the game which auto spawns/kills
-   enough bots to do it. Get rid of bot player type
-   completely. bots should get all message types.
+   to keep n players in the game which auto spawns/kills enough
+   bots to do it. Bot player type is just a bit. bots get all
+   message types.
 
-* smarter robots
+* smart robots
   robot API - libbzflag anyone?
 
 * change basic server config to a file
@@ -84,6 +84,10 @@ to do / idea list for bzflag
    to wait for enough players for a game and to discuss
    strategy, etc. Would also be useful for timed matches, e.g.
    in a tournament.
+
+* inter-server teleporters:
+   lead from one server to another. If the other end exists,
+   exit from that portal. If not, do a normal game join.
 
 * spectator mode. Possibly only through a relay server
   so as to not load down the normal server.
