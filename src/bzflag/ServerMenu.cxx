@@ -446,6 +446,12 @@ void			ServerMenu::show()
   // *** NOTE *** start ping here
   // listen for echos
   addPlayingCallback(&playingCB, this);
+  serverList.callsign = BZDB.get("callsign");
+  if (BZDB.isSet("password")) {
+    serverList.password = BZDB.get("password");
+  } else {
+    serverList.password = "";
+  }
   serverList.startServerPings();
 
 }

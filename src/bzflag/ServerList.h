@@ -40,6 +40,11 @@ public:
   std::vector<ServerItem>::size_type size();
   int updateFromCache();
   void clear();
+  // User's callsign and password on the listServer
+  std::string callsign;
+  std::string password;
+  // the last token the listServer gave us
+  std::string token;
 private:
   void _shutDown();
 private:

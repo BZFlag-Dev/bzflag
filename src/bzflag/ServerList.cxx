@@ -41,6 +41,9 @@ void addPlayingCallback(PlayingCallback, void* data);
 void removePlayingCallback(PlayingCallback, void* data);
 
 ServerList::ServerList() :
+	callsign(""),
+	password(""),
+	token(""),
 	numListServers(0),
 	phase(-1),
 	serverCache(ServerListCache::get()),
@@ -92,6 +95,14 @@ void ServerList::readServerList(int index)
       if (*scan != '\n') break;
       *scan++ = '\0';
 
+      // look for ^TOKEN: here and save
+      static char *tokenIdentifier = "TOKEN:";
+      if (strncmp(base, tokenIdentifier, strlen(tokenIdentifier)) == 0) {
+	printError("got token. TODO: save it and give it to the server");
+	printError(base);
+	base=scan;
+	continue;
+      }
       // parse server info
       char *scan2, *name, *version, *info, *address, *title;
       name = base;
@@ -429,9 +440,11 @@ void			ServerList::checkEchos()
 	  {
 	    char url[1024];
 	    snprintf(url, sizeof(url),
-		     "GET %s?action=LIST&version=%s HTTP/1.1\r\nHost: %s\r\nCache-control: no-cache\r\n\r\n",
+		     "GET %s?action=LIST&version=%s&callsign=%s&password=%s HTTP/1.1\r\nHost: %s\r\nCache-control: no-cache\r\n\r\n",
 		     listServer.pathname.c_str(), getServerVersion(),
+		     callsign.c_str(), password.c_str(),
 		     listServer.hostname.c_str());
+	    //printError(url);
 	    errorSending = send(listServer.socket, url, strlen(url), 0)
 	      != (int) strlen(url);
 	  }
