@@ -39,7 +39,8 @@ BzfDisplay::BzfDisplay() : passWidth(640), passHeight(480),
 				numResolutions(0),
 				defaultResolution(-1),
 				currentResolution(-1),
-				resolutions(NULL)
+			        resolutions(NULL),
+			        modeIndex(-1)
 {
   // do nothing
 }
@@ -54,13 +55,13 @@ BzfDisplay::~BzfDisplay()
 int			BzfDisplay::getWidth() const
 {
   if (currentResolution == -1) return 640;
-  return resolutions[currentResolution]->width;
+  return resolutions[modeIndex]->width;
 }
 
 int			BzfDisplay::getHeight() const
 {
   if (currentResolution == -1) return 480;
-  return resolutions[currentResolution]->height;
+  return resolutions[modeIndex]->height;
 }
 
 void			BzfDisplay::setPassthroughSize(int w, int h)
@@ -111,6 +112,7 @@ bool			BzfDisplay::setResolution(int index)
     return false;
   }
   currentResolution = index;
+  setFullScreenFormat(index);
   return true;
 }
 
@@ -155,6 +157,10 @@ void			BzfDisplay::initResolutions(ResInfo** _resolutions,
   currentResolution = _currentResolution;
   defaultResolution = currentResolution;
 }
+
+void BzfDisplay::setFullScreenFormat(int index) {
+  modeIndex = index;
+};
 
 // Local Variables: ***
 // mode:C++ ***

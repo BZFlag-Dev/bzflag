@@ -32,6 +32,7 @@ class BzfDisplay {
 
     int			getWidth() const;
     int			getHeight() const;
+    void                setFullScreenFormat(int);
 
     void		setPassthroughSize(int w, int h);
     int			getPassthroughWidth() const;
@@ -74,6 +75,7 @@ class BzfDisplay {
     int			defaultResolution;
     int			currentResolution;
     ResInfo**		resolutions;
+    int                 modeIndex;
 };
 
 #endif // BZF_DISPLAY_H
