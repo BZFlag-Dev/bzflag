@@ -25,6 +25,7 @@
 				PreprocessorDefinitions="_WINDOWS;WIN32;_DEBUG"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
+				RuntimeTypeInfo="TRUE"
 				PrecompiledHeaderFile=".\..\..\src\bzflag\debug/bzflag.pch"
 				AssemblerListingLocation=".\..\..\src\bzflag\debug/"
 				ObjectFile=".\..\..\src\bzflag\debug/"

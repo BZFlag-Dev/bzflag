@@ -79,11 +79,6 @@ OptionsMenu::OptionsMenu() : guiOptionsMenu(NULL), effectsMenu(NULL),
   label->setLabel("GUI Settings");
   list.push_back(label);
 
-  label = new HUDuiLabel;
-  label->setFontFace(fontFace);
-  label->setLabel("");
-  list.push_back(label);
-
   option = new HUDuiList;
   option->setFontFace(fontFace);
   option->setLabel("Save identity:");
@@ -201,9 +196,16 @@ void OptionsMenu::resize(int width, int height)
   y -= 0.6f * titleHeight;
   const int count = list.size();
   const float h = fm.getStrHeight(MainMenu::getFontFace(), fontSize, " ");
+  int foundBreak = false;
   for (i = 1; i < count; i++) {
-    list[i]->setFontSize(fontSize);
-    list[i]->setPosition(x, y);
+    HUDuiControl *ctl = list[i];
+	if (!foundBreak && (dynamic_cast<HUDuiList*>(ctl) != NULL)) {
+		y -= 1.0f * h;
+		foundBreak = true;
+	}
+
+    ctl->setFontSize(fontSize);
+    ctl->setPosition(x, y);
     y -= 1.0f * h;
   }
 
