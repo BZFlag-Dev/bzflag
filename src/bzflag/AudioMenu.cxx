@@ -102,7 +102,7 @@ AudioMenu::AudioMenu()
   option->update();
   list.push_back(option);
 
-  initNavigation(list, 1,list.size()-1);
+  initNavigation(list, 1, list.size() - 1);
 }
 
 AudioMenu::~AudioMenu()
@@ -154,8 +154,10 @@ void			AudioMenu::resize(int width, int height)
   i = 1;
   // sound
   ((HUDuiList*)list[i++])->setIndex(getSoundVolume());
+#ifdef HAVE_SDL
   i++; // driver
   i++; // device
+#endif // HAVE_SDL  
   ((HUDuiList*)list[i++])->setIndex(BZDB.isTrue("remoteSounds") ? 1 : 0);
 }
 
