@@ -655,15 +655,14 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
     } else if (strcmp(argv[i], "-help") == 0) {
       extraUsage(argv[0]);
     } else if (strcmp(argv[i], "-helpmsg") == 0) {
-      // FIXME - should this be in a {} block, or is it indented wrong?
       if (i + 2 >= argc)
 	checkArgc(2, i, argc, argv[i]);
-	i++;
-	if (!options.textChunker.parseFile(argv[i], argv[i+1])){
-	  std::cerr << "couldn't read helpmsg file \"" << argv[i] << "\"\n";
-	  usage(argv[0]);
-	}
-	i++;
+      i++;
+      if (!options.textChunker.parseFile(argv[i], argv[i+1])){
+	std::cerr << "couldn't read helpmsg file \"" << argv[i] << "\"\n";
+	usage(argv[0]);
+      }
+      i++;
     } else if (strcmp(argv[i], "-i") == 0) {
       // use a different interface
       checkArgc(1, i, argc, argv[i]);
@@ -852,29 +851,28 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
       DEBUG1 ("set variable: %s = %s\n", name, BZDB.get(name).c_str());
     } else if (strcmp(argv[i], "-sl") == 0) {
       // add required flag
-      // FIXME - should this be in a {} block, or is it indented wrong?
       if (i + 2 >= argc)
 	checkArgc(2, i, argc, argv[i]);
+      i++;
+      FlagType *fDesc = Flag::getDescFromAbbreviation(argv[i]);
+      if (fDesc == Flags::Null) {
+	std::cerr << "invalid flag \"" << argv[i] << "\"\n";
+	usage(argv[0]);
+      } else {
 	i++;
-	FlagType *fDesc = Flag::getDescFromAbbreviation(argv[i]);
-	if (fDesc == Flags::Null) {
-	  std::cerr << "invalid flag \"" << argv[i] << "\"\n";
-	  usage(argv[0]);
-	} else {
-	  i++;
-	  int x = 10;
-	  if (isdigit(argv[i][0])){
-	    x = atoi(argv[i]);
-	    if (x < 1){
-	      std::cerr << "can only limit to 1 or more shots\n";
-	      usage(argv[0]);
-	    }
-	  } else {
-	    std::cerr << "invalid shot limit \"" << argv[i] << "\"\n";
+	int x = 10;
+	if (isdigit(argv[i][0])){
+	  x = atoi(argv[i]);
+	  if (x < 1){
+	    std::cerr << "can only limit to 1 or more shots\n";
 	    usage(argv[0]);
 	  }
-	  options.flagLimit[fDesc] = x;
+	} else {
+	  std::cerr << "invalid shot limit \"" << argv[i] << "\"\n";
+	  usage(argv[0]);
 	}
+	options.flagLimit[fDesc] = x;
+      }
     } else if (strcmp(argv[i], "-speedtol") == 0) {
       checkArgc(1, i, argc, argv[i]);
       speedTolerance = (float) atof(argv[i]);
