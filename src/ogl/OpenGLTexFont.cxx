@@ -20,6 +20,10 @@
 #include "common.h"
 #include "OpenGLTexFont.h"
 #include "global.h"		// for TeamColor enum
+/* XXX there is a symbol dependancy on libcommon due to only two
+ * lines (Team::radarColor and TimeKeeper::getTick().  should consider
+ * a way to decouple the libraries.
+ */
 #include "Team.h"		// for TeamColor colors
 #include "TimeKeeper.h"	// for blinking timer
 #include "common.h"		// for bool type
@@ -289,7 +293,7 @@ void			OpenGLTexFont::BitmapRep::draw(
   gstate.setState();
   glRasterPos3f(x, y, z);
  
-  length = rawStrlen (string, length);
+  length = rawStrlen(string, length);
 
   for (int i = 0; i < length; i++) {
     c = (unsigned int)string[i];
@@ -559,6 +563,7 @@ void			OpenGLTexFont::draw(const char* string, int length,
     if (blinking) {
       float	blinkFactor;
 
+      /* XXX dependancy on libcommon */
       blinkFactor = TimeKeeper::getTick() - basetime;
       blinkFactor = fmodf(blinkFactor, BLINK_RATE) - BLINK_RATE/2.0f;
       blinkFactor = fabsf (blinkFactor) / (BLINK_RATE/2.0f);
@@ -722,6 +727,7 @@ void			OpenGLTexFont::draw(const char* string, int length,
 
           if (color_tmp != -1) {
             if (color_tmp < 5) {
+              /* XXX dependancy on libcommon */
               color = Team::radarColor[color_tmp];
             }
             else if (color_tmp == GreyColor) {
