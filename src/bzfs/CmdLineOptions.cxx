@@ -538,7 +538,7 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
       parse(ac, av, options);
 
       for (int i = 0; i < ac; i++)
-	delete[] av[i];
+        free(av[i]);
       delete[] av;
 
       options.numAllowedFlags = 0;
