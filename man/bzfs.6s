@@ -847,13 +847,12 @@ use the "LOCAL." prefix as part of the group name, e.g.:
 
 LOCAL.OPERATOR: BANLIST
 
-The server will automatically create three groups if they are not
-specified in the groups file: EVERYONE, VERIFIED, and LOCAL.ADMIN.  The
-LOCAL.ADMIN group has almost every permission possible (similar to
-granting admin powers via /password).  VERIFIED presently allows
-access to the voting system's /poll and /vote commands.  EVERYONE
-allows /lagstats, /idlestats, /flaghistory, /date, /msg, /me, and
-/report.
+The server will automatically create three groups if they are not specified in
+the groups file: EVERYONE, VERIFIED, and LOCAL.ADMIN.  EVERYONE  has
+ACTIONMESSAGE, ADMINMESSAGESEND, DATE, FLAGHISTORY, IDLESTATS, LAGSTATS,
+PRIVATEMESSAGE and SPAWN by default.  VERIFIED has POLL and VOTE. The
+LOCAL.ADMIN group has almost every permission possible (similar to granting
+admin powers via /password).
 
 Once the server is running, users can register their callsigns and
 admins can set their group memberships. Users can use any command that
@@ -922,6 +921,8 @@ SETPERMS	/setgroup
 SETALL	use of all set/remove commands
 .br
 SETPASSWORD	not implemented
+.br
+SPAWN	join game as a player. observers don't need this flag.
 .br
 POLL	/poll ban|kick
 .br
