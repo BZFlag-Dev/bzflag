@@ -17,6 +17,8 @@
 #include "LinuxMedia.h"
 #ifdef USBJOYSTICK
   #include "USBJoystick.h"
+#else
+#include "LinuxJoystick.h"
 #endif
 
 PlatformFactory*	PlatformFactory::getInstance()
