@@ -952,12 +952,6 @@ struct PlayerInfo {
     Address peer;
     // current state of player
     ClientState state;
-    // player's id
-    PlayerId id;
-    // does player know his real id?
-    int knowId;
-    // what an old client thinks its id is
-    PlayerId oldId;
     // type of player
     PlayerType type;
     // player's pseudonym
@@ -1150,7 +1144,6 @@ static CmdLineOptions clOptions;
 static Address serverAddress;
 // well known service socket
 static int wksSocket;
-static int reconnectSocket;
 // udpSocket should also be on serverAddress
 static int udpSocket;
 // listen for pings here
@@ -2130,125 +2123,6 @@ static void pflush(int playerIndex)
   }
 }
 
-// a hack to handle old clients
-// old clients use <serverip><serverport><number> as id
-// where serverip etc is as seen from the client
-// new clients use <clientip><clientport><number> as id
-// where clientip etc is as seen from the server
-// here we patch up one id, from fromId to toId
-static void patchPlayerId(PlayerId fromId, PlayerId toId, const void *msg, int offset)
-{
-  PlayerId id;
-
-  id.unpack((char *)msg + offset);
-  if (id == fromId) {
-#ifdef DEBUG_PLAYERID
-    DEBUG1("patchPlayerId %c%c(%02x%02x)%08x:%u(%04x):%u(%04x)->",
-	*((unsigned char *)msg + 2), *((unsigned char *)msg + 3),
-	*((unsigned char *)msg + 2), *((unsigned char *)msg + 3),
-	ntohl(*(int *)((char *)msg + offset)),
-	ntohs(*((short *)((char *)msg + offset + 4))),
-	ntohs(*((short *)((char *)msg + offset + 4))),
-	ntohs(*((short *)((char *)msg + offset + 6))),
-	ntohs(*((short *)((char *)msg + offset + 6))));
-#endif
-    toId.pack((char *)msg + offset);
-#ifdef DEBUG_PLAYERID
-    DEBUG1("%08x:%u(%04x):%u(%04x)\n",
-	ntohl(*(int *)((char *)msg + offset)),
-	ntohs(*((short *)((char *)msg + offset + 4))),
-	ntohs(*((short *)((char *)msg + offset + 4))),
-	ntohs(*((short *)((char *)msg + offset + 6))),
-	ntohs(*((short *)((char *)msg + offset + 6))));
-#endif
-  }
-}
-
-// Tim Riker <Tim@Rikers.org> is responsible for this
-// butt ugly hack. All this to allow support for old clients
-// patch all incoming or outgoing packets to old clients
-// so they still see what they want to see.
-static void patchMessage(PlayerId fromId, PlayerId toId, const void *msg)
-{
-  uint16_t len;
-  uint16_t code;
-
-  nboUnpackUShort((unsigned char *)msg, len);
-  nboUnpackUShort((unsigned char *)msg + 2, code);
-  switch (code) {
-    case MsgAddPlayer:
-    case MsgCaptureFlag:
-    case MsgPlayerUpdate:
-    case MsgRemovePlayer:
-    case MsgScoreOver:
-    case MsgShotBegin:
-    case MsgShotEnd:
-    case MsgTeleport:
-      patchPlayerId(fromId, toId, msg, 4);
-      break;
-      ;;
-    case MsgAlive:
-      if (len == 32)
-	patchPlayerId(fromId, toId, msg, 4);
-      break;
-      ;;
-    case MsgDropFlag:
-    case MsgGrabFlag:
-       if (len > 28) {
-	// server version
-	patchPlayerId(fromId, toId, msg, 4);
-	patchPlayerId(fromId, toId, msg, 20);
-       }
-      break;
-      ;;
-    case MsgFlagUpdate:
-      patchPlayerId(fromId, toId, msg, 12);
-      break;
-      ;;
-    case MsgGMUpdate:
-      patchPlayerId(fromId, toId, msg, 4);
-      patchPlayerId(fromId, toId, msg, 42);
-      break;
-      ;;
-    case MsgKilled:
-    case MsgMessage:
-      patchPlayerId(fromId, toId, msg, 4);
-      if (len > 16)
-	// server version
-	patchPlayerId(fromId, toId, msg, 12);
-      break;
-      ;;
-    case MsgScore:
-      if (len == 12)
-	// server version
-	patchPlayerId(fromId, toId, msg, 4);
-      ;;
-    case MsgAccept:
-    case MsgClientVersion:
-    case MsgEnter:
-    case MsgExit:
-    case MsgGetWorld:
-    case MsgWantWHash:
-    case MsgNetworkRelay:
-    case MsgReject:
-    case MsgSetTTL:
-    case MsgSuperKill:
-    case MsgTeamUpdate:
-    case MsgUDPLinkEstablished:
-    case MsgUDPLinkRequest:
-    case MsgLagPing:
-      // No changes required
-      break;
-      ;;
-    default:
-#ifdef DEBUG_PLAYERID
-      DEBUG1("unhandled msg type: %c%c(%04x)\n", code >> 8, code, code);
-#endif
-      break;
-      ;;
-  }
-}
-
 #ifdef NETWORK_STATS
 void initPlayerMessageStats(int playerIndex)
 {
@@ -2342,9 +2216,6 @@ static void pwrite(int playerIndex, const void *b, int l)
   if (p.fd == NotConnected || l == 0)
     return;
 
-  if (!player[playerIndex].knowId)
-     patchMessage(player[playerIndex].id, player[playerIndex].oldId, b);
-
   void *buf = (void *)b;
   uint16_t len, code;
   buf = nboUnpackUShort(buf, len);
@@ -2363,7 +2234,7 @@ static void pwrite(int playerIndex, const void *b, int l)
       case MsgGMUpdate:
       case MsgLagPing:
 	puwrite(playerIndex,b,l);
-	goto unpatch;
+	return;
     }
   }
 
@@ -2396,7 +2267,7 @@ static void pwrite(int playerIndex, const void *b, int l)
 	DEBUG2("Player %s [%d] drop, unresponsive with %d bytes queued\n",
 	    p.callSign, playerIndex, p.outmsgSize + l);
 	removePlayer(playerIndex, NULL, false);
-	goto unpatch;
+	return;
       }
 
       // allocate memory
@@ -2424,10 +2295,6 @@ static void pwrite(int playerIndex, const void *b, int l)
     memmove(p.outmsg + p.outmsgOffset + p.outmsgSize, buf, l);
     p.outmsgSize += l;
   }
-unpatch:
-  if (!player[playerIndex].knowId)
-     patchMessage(player[playerIndex].oldId, player[playerIndex].id, b);
-  return;
 }
 
 static char sMsgBuf[MaxPacketLen];
@@ -2510,7 +2377,7 @@ void OOBQueueUpdate(int t, uint32_t rseqno) {
 static int lookupPlayer(const PlayerId& id)
 {
   for (int i = 0; i < curMaxPlayers; i++)
-    if (player[i].state > PlayerInLimbo && player[i].id == id)
+    if ((player[i].state > PlayerInLimbo) && (i == id))
       return i;
   return InvalidPlayer;
 }
@@ -2701,7 +2568,7 @@ static void sendPlayerUpdate(int playerIndex, int index)
 {
   void *buf, *bufStart = getDirectMessageBuffer();
   PlayerInfo *pPlayer = &player[playerIndex];
-  buf = pPlayer->id.pack(bufStart);
+  buf = nboPackUByte(bufStart, playerIndex);
   buf = nboPackUShort(buf, uint16_t(pPlayer->type));
   buf = nboPackUShort(buf, uint16_t(pPlayer->team));
   buf = nboPackUShort(buf, uint16_t(pPlayer->wins));
@@ -2709,7 +2576,7 @@ static void sendPlayerUpdate(int playerIndex, int index)
   buf = nboPackString(buf, pPlayer->callSign, CallSignLen);
   buf = nboPackString(buf, pPlayer->email, EmailLen);
   // this playerid is for the player itself to get our playerid (hack)
-  buf = pPlayer->id.pack(buf);
+  buf = nboPackUByte(buf, playerIndex);
   if (playerIndex == index) {
     // send all players info about player[playerIndex]
     for (int i = 0; i < curMaxPlayers; i++)
@@ -3001,39 +2868,6 @@ static bool serverStart()
   }
   maxFileDescriptor = wksSocket;
 
-  // reconnectPort == 0 if old clients are not supported
-  if (clOptions.reconnectPort != 0) {
-    addr.sin_port = htons(clOptions.reconnectPort);
-    reconnectSocket = socket(AF_INET, SOCK_STREAM, 0);
-    if (reconnectSocket == -1) {
-      nerror("couldn't make reconnect socket");
-      return false;
-    }
-#ifdef SO_REUSEADDR
-    // set reuse address
-    opt = optOn;
-    if (setsockopt(reconnectSocket, SOL_SOCKET, SO_REUSEADDR, (SSOType)&opt, sizeof(opt)) < 0) {
-      nerror("serverStart: setsockopt SO_REUSEADDR");
-      close(wksSocket);
-      close(reconnectSocket);
-      return false;
-    }
-#endif
-    if (bind(reconnectSocket, (const struct sockaddr*)&addr, sizeof(addr)) == -1) {
-      nerror("couldn't bind reconnect socket");
-      close(wksSocket);
-      close(reconnectSocket);
-      return false;
-    }
-    if (listen(reconnectSocket, 5) == -1) {
-      nerror("couldn't make reconnect socket queue");
-      close(wksSocket);
-      close(reconnectSocket);
-      return false;
-    }
-    maxFileDescriptor = reconnectSocket;
-  }
-
   // udp socket
   if (clOptions.alsoUDP) {
     int n;
@@ -3052,7 +2886,6 @@ static bool serverStart()
     if (n < 0) {
       nerror("couldn't increase udp send buffer size");
       close(wksSocket);
-      close(reconnectSocket);
       close(udpSocket);
       return false;
     }
@@ -3065,7 +2898,6 @@ static bool serverStart()
     if (n < 0) {
       nerror("couldn't increase udp receive buffer size");
       close(wksSocket);
-      close(reconnectSocket);
       close(udpSocket);
       return false;
     }
@@ -3073,7 +2905,6 @@ static bool serverStart()
     if (bind(udpSocket, (struct sockaddr *) &addr, sizeof(addr)) == -1) {
       nerror("couldn't bind udp listen port");
       close(wksSocket);
-      close(reconnectSocket);
       close(udpSocket);
       return false;
     }
@@ -4130,24 +3961,17 @@ static void acceptClient()
   if (fd > maxFileDescriptor)
     maxFileDescriptor = fd;
 
-  struct sockaddr_in serverAddr;
-  serverAddr.sin_port = htons(clOptions.reconnectPort);
-
   if (!clOptions.acl.validate( clientAddr.sin_addr)) {
-	  serverAddr.sin_port = htons(0);
+    close(fd);
   }
 
-  // if don't want another player or couldn't make socket then refuse
-  // connection by returning an obviously bogus port (port zero).
-  int playerIndex;
-  if (gameOver) {
-    for (playerIndex = 0; playerIndex < maxPlayers; playerIndex++) {
-      if (player[playerIndex].state >= PlayerInLimbo) {
-	serverAddr.sin_port = htons(0);
-	break;
-      }
-    }
-  }
+  // send server version and playerid
+  char buffer[9];
+  memcpy(buffer, ServerVersion, 8);
+  // send 0xff if list is full
+  buffer[8] = (char)0xff;
+
+  PlayerId playerIndex;
 
   // find open slot in players list
   for (playerIndex = 0; playerIndex < maxPlayers; playerIndex++)
@@ -4160,76 +3984,26 @@ static void acceptClient()
   
     if (playerIndex >= curMaxPlayers)
       curMaxPlayers = playerIndex+1;
-  
-    // record what port we accepted on
-    player[playerIndex].time = TimeKeeper::getCurrent();
-    player[playerIndex].fd = fd;
-    player[playerIndex].state = PlayerAccept;
-    player[playerIndex].knowId = false;
-  }
-  else { // full? reject by returning bogus port
+  } else { // full? reject by closing socket
     DEBUG1("all slots occupied, rejecting accept() from %s:%d on %i\n",
 	   inet_ntoa(clientAddr.sin_addr), ntohs(clientAddr.sin_port), fd);
-    serverAddr.sin_port = htons(0);
+    close(fd);
   }
 
-  // send server version and which port to reconnect to
-  char buffer[8 + sizeof(serverAddr.sin_port)];
-  // char buffer[8 + sizeof(serverAddr.sin_port) + sizeof(clientAddr.sin_addr) + sizeof(clientAddr.sin_port)];
-  memcpy(buffer, ServerVersion, 8);
-  memcpy(buffer + 8, &serverAddr.sin_port, sizeof(serverAddr.sin_port));
-  // FIXME add new client server welcome packet here when client code is ready
-  //memcpy(buffer + 8 + sizeof(serverAddr.sin_port), &clientAddr.sin_addr, sizeof(clientAddr.sin_addr));
-  //memcpy(buffer + 8 + sizeof(serverAddr.sin_port) + sizeof(clientAddr.sin_addr), &clientAddr.sin_port, sizeof(clientAddr.sin_port));
+  buffer[8] = (uint8_t)playerIndex;
   send(fd, (const char*)buffer, sizeof(buffer), 0);
 
   if (playerIndex == maxPlayers) { // full?
     DEBUG2("acceptClient: close(%d)\n", fd);
     close(fd);
   }
+  
+  // FIXME add new client server welcome packet here when client code is ready
 
-  // don't wait for client to reconnect here in case the client
-  // is badly behaved and would cause us to hang on accept().
-  // this also goes even if we're rejecting the connection.
-}
-
-static void addClient(int acceptSocket)
-{
-  int playerIndex;
-  for (playerIndex = 0; playerIndex < curMaxPlayers; playerIndex++) {
-    // check for clients that are reconnecting
-    if (player[playerIndex].state == PlayerAccept)
-      break;
-  }
-  // strange - didn't find a suitable player
-  if (playerIndex == curMaxPlayers) {
-    DEBUG2("addClient: no candidate player slot found\n");
-    int fd = accept(acceptSocket, 0, 0); // get socket and close it right away
-    close(fd);
-    return;
-  }
-  // close the old connection FIXME hope it's the right one
-  DEBUG2("Player [%d] addClient: close(%d)\n", playerIndex, player[playerIndex].fd);
-  close(player[playerIndex].fd);
-  // accept game connection
-  AddrLen addr_len = sizeof(player[playerIndex].taddr);
-  player[playerIndex].fd = accept(acceptSocket,
-      (struct sockaddr *)&player[playerIndex].taddr, &addr_len);
-
-  // see if accept worked
-  if (player[playerIndex].fd == NotConnected) {
-    nerror("accepting client connection");
-    return;
-  }
-
-  // turn off packet buffering and set socket non-blocking
-  setNoDelay(player[playerIndex].fd);
-  BzfNetwork::setNonBlocking(player[playerIndex].fd);
-
-  // now add client
+  // update player state
+  player[playerIndex].time = TimeKeeper::getCurrent();
+  player[playerIndex].fd = fd;
   player[playerIndex].state = PlayerInLimbo;
-  if (player[playerIndex].fd > maxFileDescriptor)
-    maxFileDescriptor = player[playerIndex].fd;
   player[playerIndex].peer = Address(player[playerIndex].taddr);
   player[playerIndex].multicastRelay = false;
   player[playerIndex].tcplen = 0;
@@ -4258,24 +4032,6 @@ static void addClient(int acceptSocket)
       }
 #endif
     }
-  }
-}
-
-static void shutdownAcceptClient(int playerIndex)
-{
-  // close socket that client initially contacted us on
-  DEBUG2("Player [%d] shutdownAcceptClient: close(%d)\n", playerIndex, player[playerIndex].fd);
-  close(player[playerIndex].fd);
-  player[playerIndex].fd = NotConnected;
-  player[playerIndex].state = PlayerNoExist;
-
-  while ((playerIndex >= 0)
-      && (playerIndex+1 == curMaxPlayers)
-      && (player[playerIndex].state == PlayerNoExist)
-      && (player[playerIndex].fd == NotConnected))
-  {
-     playerIndex--;
-     curMaxPlayers--;
   }
 }
 
@@ -4343,8 +4099,8 @@ static void sendMessage(int playerIndex, const PlayerId& targetPlayer, TeamColor
   }
 
   void *buf, *bufStart = getDirectMessageBuffer();
-  buf = player[playerIndex].id.pack(bufStart);
-  buf = targetPlayer.pack(buf);
+  buf = nboPackUByte(bufStart, playerIndex);
+  buf = nboPackUByte(buf, targetPlayer);
   buf = nboPackUShort(buf, uint16_t(targetTeam));
   buf = nboPackString(buf, message, MessageLen);
   broadcastMessage(MsgMessage, (char*)buf-(char*)bufStart, bufStart);
@@ -4487,7 +4243,9 @@ static void addPlayer(int playerIndex)
 #endif
 
   // accept player
-  directMessage(playerIndex, MsgAccept, 0, getDirectMessageBuffer());
+  void *buf, *bufStart = getDirectMessageBuffer();
+  buf = nboPackUByte(bufStart, playerIndex);
+  directMessage(playerIndex, MsgAccept, (char*)buf-(char*)bufStart, bufStart);
 
   // abort if we hung up on the client
   if (player[playerIndex].fd == NotConnected)
@@ -4586,7 +4344,7 @@ static void addPlayer(int playerIndex)
   sprintf(message,"BZFlag server %d.%d%c%d, http://BZFlag.org/",
       (BZVERSION / 10000000) % 100, (BZVERSION / 100000) % 100,
       (char)('a' - 1 + (BZVERSION / 1000) % 100), BZVERSION % 1000);
-  sendMessage(playerIndex, player[playerIndex].id, player[playerIndex].team, message, true);
+  sendMessage(playerIndex, playerIndex, player[playerIndex].team, message, true);
   
   if (clOptions.servermsg && (strlen(clOptions.servermsg) > 0)) {
     
@@ -4597,13 +4355,13 @@ static void addPlayer(int playerIndex)
       unsigned int l = j - i < MessageLen - 1 ? j - i : MessageLen - 1;
       strncpy(message, i, l);
       message[l] = '\0';
-      sendMessage(playerIndex, player[playerIndex].id, 
+      sendMessage(playerIndex, playerIndex, 
 		  player[playerIndex].team, message, true);
       i = j + 2;
     }
     strncpy(message, i, MessageLen - 1);
     message[strlen(i) < MessageLen - 1 ? strlen(i) : MessageLen - 1] = '\0';
-    sendMessage(playerIndex, player[playerIndex].id, 
+    sendMessage(playerIndex, playerIndex, 
 		player[playerIndex].team, message);
   }
 
@@ -4611,19 +4369,19 @@ static void addPlayer(int playerIndex)
   static const std::vector<std::string>* lines = clOptions.textChunker.getTextChunk("srvmsg");
   if (lines != NULL){
     for (int i = 0; i < (int)lines->size(); i ++){
-      sendMessage(playerIndex, player[playerIndex].id, player[playerIndex].team, (*lines)[i].c_str());
+      sendMessage(playerIndex, playerIndex, player[playerIndex].team, (*lines)[i].c_str());
     }
   }
   
   if (player[playerIndex].Observer)
-    sendMessage(playerIndex, player[playerIndex].id, player[playerIndex].team,"You are in observer mode.");
+    sendMessage(playerIndex, playerIndex, player[playerIndex].team,"You are in observer mode.");
 #endif
 
   if (userExists(player[playerIndex].regName)) {
     // nick is in the DB send him a message to identify
-    sendMessage(playerIndex, player[playerIndex].id, player[playerIndex].team,
+    sendMessage(playerIndex, playerIndex, player[playerIndex].team,
 		"This callsign is registered.");
-    sendMessage(playerIndex, player[playerIndex].id, player[playerIndex].team,
+    sendMessage(playerIndex, playerIndex, player[playerIndex].team,
 		"Identify with /identify <your password>");
   }
 }
@@ -4753,7 +4511,7 @@ static void zapFlag(int flagIndex)
     player[playerIndex].flag = -1;
 
     void *buf, *bufStart = getDirectMessageBuffer();
-    buf = player[playerIndex].id.pack(bufStart);
+    buf = nboPackUByte(bufStart, playerIndex);
     buf = nboPackUShort(buf, uint16_t(flagIndex));
     buf = flag[flagIndex].flag.pack(buf);
     broadcastMessage(MsgDropFlag, (char*)buf-(char*)bufStart, bufStart);
@@ -4879,7 +4637,7 @@ static void removePlayer(int playerIndex, char *reason, bool notify)
 
     // tell everyone player has left
     void *buf, *bufStart = getDirectMessageBuffer();
-    buf = player[playerIndex].id.pack(bufStart);
+    buf = nboPackUByte(bufStart, playerIndex);
     broadcastMessage(MsgRemovePlayer, (char*)buf-(char*)bufStart, bufStart);
 
     // decrease team size
@@ -5029,7 +4787,7 @@ static void playerAlive(int playerIndex, const float *pos, const float *fwd)
 
   // send MsgAlive
   void *buf, *bufStart = getDirectMessageBuffer();
-  buf = player[playerIndex].id.pack(bufStart);
+  buf = nboPackUByte(bufStart, playerIndex);
   buf = nboPackVector(buf,pos);
   buf = nboPackVector(buf,fwd);
   broadcastMessage(MsgAlive, (char*)buf-(char*)bufStart, bufStart);
@@ -5040,7 +4798,7 @@ static void checkTeamScore(int playerIndex, int teamIndex)
   if (clOptions.maxTeamScore == 0 || teamIndex == (int)RogueTeam) return;
   if (team[teamIndex].team.won - team[teamIndex].team.lost >= clOptions.maxTeamScore) {
     void *buf, *bufStart = getDirectMessageBuffer();
-    buf = player[playerIndex].id.pack(bufStart);
+    buf = nboPackUByte(bufStart, playerIndex);
     buf = nboPackUShort(buf, uint16_t(teamIndex));
     broadcastMessage(MsgScoreOver, (char*)buf-(char*)bufStart, bufStart);
     gameOver = true;
@@ -5067,15 +4825,15 @@ static void playerKilled(int victimIndex, int killerIndex,
 	  ((player[killerIndex].tks * 100) / player[killerIndex].wins) > clOptions.teamKillerKickRatio)) {
 	 char message[MessageLen];
 	 strcpy(message, "You have been automatically kicked for team killing" );
-	 sendMessage(killerIndex, player[killerIndex].id, player[killerIndex].team, message, true);
+	 sendMessage(killerIndex, killerIndex, player[killerIndex].team, message, true);
 	 removePlayer(killerIndex, "teamkilling");
      }
   }
 
   // send MsgKilled
   void *buf, *bufStart = getDirectMessageBuffer();
-  buf = player[victimIndex].id.pack(bufStart);
-  buf = player[killerIndex].id.pack(buf);
+  buf = nboPackUByte(bufStart, victimIndex);
+  buf = nboPackUByte(buf, killerIndex);
   buf = nboPackShort(buf, shotIndex);
   broadcastMessage(MsgKilled, (char*)buf-(char*)bufStart, bufStart);
 
@@ -5120,7 +4878,7 @@ static void playerKilled(int victimIndex, int killerIndex,
       }
 
       void *buf, *bufStart = getDirectMessageBuffer();
-      buf = player[killerIndex].id.pack(bufStart);
+      buf = nboPackUByte(bufStart, killerIndex);
       buf = nboPackUShort(buf, player[killerIndex].wins);
       buf = nboPackUShort(buf, player[killerIndex].losses);
       broadcastMessage(MsgScore, (char*)buf-(char*)bufStart, bufStart);
@@ -5128,7 +4886,7 @@ static void playerKilled(int victimIndex, int killerIndex,
 
     //In the future we should send both (n) scores in one packet
     void *buf, *bufStart = getDirectMessageBuffer();
-    buf = player[victimIndex].id.pack(bufStart);
+    buf = nboPackUByte(bufStart, victimIndex);
     buf = nboPackUShort(buf, player[victimIndex].wins);
     buf = nboPackUShort(buf, player[victimIndex].losses);
     broadcastMessage(MsgScore, (char*)buf-(char*)bufStart, bufStart);
@@ -5137,7 +4895,7 @@ static void playerKilled(int victimIndex, int killerIndex,
     if ((clOptions.maxPlayerScore != 0)
     &&	((player[killerIndex].wins - player[killerIndex].losses) >= clOptions.maxPlayerScore)) {
 	void *buf, *bufStart = getDirectMessageBuffer();
-	buf = player[killerIndex].id.pack(bufStart);
+	buf = nboPackUByte(bufStart, killerIndex);
 	buf = nboPackUShort(buf, uint16_t(NoTeam));
 	broadcastMessage(MsgScoreOver, (char*)buf-(char*)bufStart, bufStart);
 	gameOver = true;
@@ -5198,14 +4956,14 @@ static void grabFlag(int playerIndex, int flagIndex)
 
   // okay, player can have it
   flag[flagIndex].flag.status = FlagOnTank;
-  flag[flagIndex].flag.owner = player[playerIndex].id;
+  flag[flagIndex].flag.owner = playerIndex;
   flag[flagIndex].player = playerIndex;
   flag[flagIndex].numShots = 0;
   player[playerIndex].flag = flagIndex;
 
   // send MsgGrabFlag
   void *buf, *bufStart = getDirectMessageBuffer();
-  buf = player[playerIndex].id.pack(bufStart);
+  buf = nboPackUByte(bufStart, playerIndex);
   buf = nboPackUShort(buf, uint16_t(flagIndex));
   buf = flag[flagIndex].flag.pack(buf);
   broadcastMessage(MsgGrabFlag, (char*)buf-(char*)bufStart, bufStart);
@@ -5346,7 +5104,7 @@ static void dropFlag(int playerIndex, float pos[3])
   // player no longer has flag -- send MsgDropFlag
   player[playerIndex].flag = -1;
   void *buf, *bufStart = getDirectMessageBuffer();
-  buf = player[playerIndex].id.pack(bufStart);
+  buf = nboPackUByte(bufStart, playerIndex);
   buf = nboPackUShort(buf, uint16_t(flagIndex));
   buf = flag[flagIndex].flag.pack(buf);
   broadcastMessage(MsgDropFlag, (char*)buf-(char*)bufStart, bufStart);
@@ -5371,7 +5129,7 @@ static void captureFlag(int playerIndex, TeamColor teamCaptured)
 
   // send MsgCaptureFlag
   void *buf, *bufStart = getDirectMessageBuffer();
-  buf = player[playerIndex].id.pack(bufStart);
+  buf = nboPackUByte(bufStart, playerIndex);
   buf = nboPackUShort(buf, uint16_t(flagIndex));
   buf = nboPackUShort(buf, uint16_t(teamCaptured));
   broadcastMessage(MsgCaptureFlag, (char*)buf-(char*)bufStart, bufStart);
@@ -5414,7 +5172,7 @@ static void shotFired(int playerIndex, void *buf, int len)
   const ShotUpdate &shot = firingInfo.shot;
 
   // verify playerId
-  if (shot.player != shooter.id) {
+  if (shot.player != playerIndex) {
     DEBUG2("Player %s [%d] shot playerid mismatch\n", shooter.callSign, playerIndex);
     return;
   }
@@ -5510,7 +5268,7 @@ static void shotFired(int playerIndex, void *buf, int len)
 	// give message each shot below 5, each 5th shot & at start
 	if (shotsLeft % 5 == 0 || shotsLeft <= 3 || shotsLeft == limit-1){
 	  sprintf(message,"%d shots left",shotsLeft);
-	  sendMessage(playerIndex, shooter.id, shooter.team,message, true);
+	  sendMessage(playerIndex, playerIndex, shooter.team,message, true);
 	}
       } else { // no shots left
 	if (shotsLeft == 0 || (limit == 0 && shotsLeft < 0)){
@@ -5537,7 +5295,7 @@ static void shotEnded(const PlayerId& id, int16_t shotIndex, uint16_t reason)
 {
   // shot has ended prematurely -- send MsgShotEnd
   void *buf, *bufStart = getDirectMessageBuffer();
-  buf = id.pack(bufStart);
+  buf = nboPackUByte(bufStart, id);
   buf = nboPackShort(buf, shotIndex);
   buf = nboPackUShort(buf, reason);
   broadcastMessage(MsgShotEnd, (char*)buf-(char*)bufStart, bufStart);
@@ -5556,14 +5314,14 @@ static void calcLag(int playerIndex, float timepassed)
     char message[MessageLen];
     sprintf(message,"*** Server Warning: your lag is too high (%d ms) ***",
 	int(pl.lagavg * 1000));
-    sendMessage(playerIndex, pl.id, pl.team,message, true);
+    sendMessage(playerIndex, playerIndex, pl.team,message, true);
     pl.laglastwarn = pl.lagcount;
     pl.lagwarncount++;;
     if (pl.lagwarncount++ > clOptions.maxlagwarn) {
       // drop the player
       sprintf(message,"You have been kicked due to excessive lag (you have been warned %d times).",
 	clOptions.maxlagwarn);
-      sendMessage(playerIndex, pl.id, pl.team, message, true);
+      sendMessage(playerIndex, playerIndex, pl.team, message, true);
       removePlayer(playerIndex, "lag");
     }
   }
@@ -5589,7 +5347,7 @@ static void scoreChanged(int playerIndex)
 static void sendTeleport(int playerIndex, uint16_t from, uint16_t to)
 {
   void *buf, *bufStart = getDirectMessageBuffer();
-  buf = player[playerIndex].id.pack(bufStart);
+  buf = nboPackUByte(bufStart, playerIndex);
   buf = nboPackUShort(buf, from);
   buf = nboPackUShort(buf, to);
   broadcastMessage(MsgTeleport, (char*)buf-(char*)bufStart, bufStart);
@@ -5611,7 +5369,7 @@ static void acquireRadio(int playerIndex, uint16_t flags)
 
   // send MsgAcquireRadio
   void *buf, *bufStart = getDirectMessageBuffer();
-  buf = player[playerIndex].id.pack(bufStart);
+  buf = nboPackUByte(bufStart, playerIndex);
   buf = nboPackUShort(buf, flags);
   broadcastMessage(MsgAcquireRadio, (char*)buf-(char*)bufStart, bufStart);
 }
@@ -5627,7 +5385,7 @@ static void releaseRadio(int playerIndex)
 
   // send MsgReleaseRadio
   void *buf, *bufStart = getDirectMessageBuffer();
-  buf = player[playerIndex].id.pack(bufStart);
+  buf = nboPackUByte(bufStart, playerIndex);
   broadcastMessage(MsgReleaseRadio, (char*)buf-(char*)bufStart, bufStart);
 }
 
@@ -5638,15 +5396,15 @@ static void parseCommand(const char *message, int t)
   // /password command allows player to become operator
   if (strncmp(message + 1,"password ",9) == 0){
     if (player[t].passwordAttempts >=5 ){	// see how many times they have tried, you only get 5
-      sendMessage(t, player[t].id, player[t].team, "Too many attempts");
+      sendMessage(t, t, player[t].team, "Too many attempts");
     }else{
     player[t].passwordAttempts++;
     if (clOptions.password && strncmp(message + 10, clOptions.password, strlen(clOptions.password)) == 0){
       player[t].passwordAttempts = 0;
       player[t].Admin = true;
-      sendMessage(t, player[t].id, player[t].team, "You are now an administrator!");
+      sendMessage(t, t, player[t].team, "You are now an administrator!");
     }else{
-      sendMessage(t, player[t].id, player[t].team, "Wrong Password!");
+      sendMessage(t, t, player[t].team, "Wrong Password!");
     }
   }
   // /shutdownserver terminates the server
@@ -5661,7 +5419,7 @@ static void parseCommand(const char *message, int t)
   // /gameover command allows operator to end the game
   } else if (hasPerm(t, endGame) && strncmp(message + 1, "gameover", 8) == 0) {
     void *buf, *bufStart = getDirectMessageBuffer();
-    buf = player[t].id.pack(bufStart);
+    buf = nboPackUByte(bufStart, t);
     buf = nboPackUShort(buf, uint16_t(NoTeam));
     broadcastMessage(MsgScoreOver, (char*)buf-(char*)bufStart, bufStart);
     gameOver = true;
@@ -5685,7 +5443,7 @@ static void parseCommand(const char *message, int t)
       sendTeamUpdate(i);
     }
     char reply[MessageLen] = "Countdown started.";
-    sendMessage(t, player[t].id, player[t].team, reply, true);
+    sendMessage(t, t, player[t].team, reply, true);
 
     // CTF game -> simulate flag captures to return ppl to base
     if (clOptions.gameStyle & int(TeamFlagGameStyle)) {
@@ -5700,7 +5458,7 @@ static void parseCommand(const char *message, int t)
 	  if (player[i].playedEarly) {
 	    char msg[PlayerIdPLen + 4];
 	    void *buf = msg;
-	    buf = player[j].id.pack(buf);
+	    buf = nboPackUByte(buf, j);
 	    buf = nboPackUShort(buf, uint16_t(int(player[i].team)-1));
 	    buf = nboPackUShort(buf, uint16_t(1+((int(player[i].team))%4)));
 	    directMessage(i,MsgCaptureFlag, sizeof(msg), msg);
@@ -5727,7 +5485,7 @@ static void parseCommand(const char *message, int t)
 	    player[playerIndex].flag = -1;
 
 	    void *buf, *bufStart = getDirectMessageBuffer();
-	    buf = player[playerIndex].id.pack(bufStart);
+	    buf = nboPackUByte(bufStart, playerIndex);
 	    buf = nboPackUShort(buf, uint16_t(i));
 	    buf = flag[i].flag.pack(buf);
 	    broadcastMessage(MsgDropFlag, (char*)buf-(char*)bufStart, bufStart);
@@ -5747,7 +5505,7 @@ static void parseCommand(const char *message, int t)
 	    player[playerIndex].flag = -1;
 
 	    void *buf, *bufStart = getDirectMessageBuffer();
-	    buf = player[playerIndex].id.pack(bufStart);
+	    buf = nboPackUByte(bufStart, playerIndex);
 	    buf = nboPackUShort(buf, uint16_t(i));
 	    buf = flag[i].flag.pack(buf);
 	    broadcastMessage(MsgDropFlag, (char*)buf-(char*)bufStart, bufStart);
@@ -5767,7 +5525,7 @@ static void parseCommand(const char *message, int t)
 	    flag[i].flag.position[0],
 	    flag[i].flag.position[1],
 	    flag[i].flag.position[2]);
-	sendMessage(t, player[t].id, player[t].team, message, true);
+	sendMessage(t, t, player[t].team, message, true);
       }
     }
   // /kick command allows operator to remove players
@@ -5780,18 +5538,18 @@ static void parseCommand(const char *message, int t)
     if (i < curMaxPlayers) {
       char kickmessage[MessageLen];
       sprintf(kickmessage,"Your were kicked off the server by %s", player[t].callSign);
-      sendMessage(i, player[i].id, player[i].team, kickmessage, true);
+      sendMessage(i, i, player[i].team, kickmessage, true);
       removePlayer(i, "/kick");
     } else {
       char errormessage[MessageLen];
       sprintf(errormessage, "player %s not found", victimname);
-      sendMessage(t, player[t].id, player[t].team, errormessage, true);
+      sendMessage(t, t, player[t].team, errormessage, true);
     }
   }
   // /banlist command shows ips that are banned
   else if (hasPerm(t, banlist) &&
 	  strncmp(message+1, "banlist", 7) == 0) {
-	clOptions.acl.sendBans(t,player[t].id,player[t].team);
+	clOptions.acl.sendBans(t, t, player[t].team);
   }
   // /ban command allows operator to ban players based on ip
   else if (hasPerm(t, ban) && strncmp(message+1, "ban", 3) == 0) {
@@ -5805,12 +5563,12 @@ static void parseCommand(const char *message, int t)
       strcpy(reply, "IP pattern added to banlist");
     else
       strcpy(reply, "malformed address");
-    sendMessage(t, player[t].id, player[t].team, reply, true);
+    sendMessage(t, t, player[t].team, reply, true);
     char kickmessage[MessageLen];
     for (int i = 0; i < curMaxPlayers; i++) {
       if ((player[i].fd != NotConnected) && (!clOptions.acl.validate(player[i].taddr.sin_addr))) {
 	sprintf(kickmessage,"Your were banned from this server by %s", player[t].callSign);
-	sendMessage(i, player[i].id, player[i].team, kickmessage, true);
+	sendMessage(i, i, player[i].team, kickmessage, true);
 	removePlayer(i, "/ban");
       }
     }
@@ -5822,7 +5580,7 @@ static void parseCommand(const char *message, int t)
       strcpy(reply, "removed IP pattern");
     else
       strcpy(reply, "no pattern removed");
-    sendMessage(t, player[t].id, player[t].team, reply, true);
+    sendMessage(t, t, player[t].team, reply, true);
   }
   // /lagwarn - set maximum allowed lag
   else if (hasPerm(t, lagwarn) && strncmp(message+1, "lagwarn",7) == 0) {
@@ -5831,13 +5589,13 @@ static void parseCommand(const char *message, int t)
       clOptions.lagwarnthresh = (float) (atoi(maxlag) / 1000.0);
       char reply[MessageLen];
       sprintf(reply,"lagwarn is now %d ms",int(clOptions.lagwarnthresh * 1000 + 0.5));
-      sendMessage(t, player[t].id, player[t].team, reply, true);
+      sendMessage(t, t, player[t].team, reply, true);
     }
     else
     {
       char reply[MessageLen];
       sprintf(reply,"lagwarn is set to %d ms",int(clOptions.lagwarnthresh * 1000 +  0.5));
-      sendMessage(t, player[t].id, player[t].team, reply, true);
+      sendMessage(t, t, player[t].team, reply, true);
     }
   }
   // /lagstats gives simple statistics about players' lags
@@ -5851,7 +5609,7 @@ static void parseCommand(const char *message, int t)
             player[i].accessInfo.verified ? "(R)" : "");
 	if (player[i].doespings && player[i].pingslost>0)
 	  sprintf(reply+strlen(reply), " %d lost", player[i].pingslost);
-	    sendMessage(t,player[t].id, player[t].team, reply, true);
+	    sendMessage(t, t, player[t].team, reply, true);
       }
     }
   }
@@ -5863,7 +5621,7 @@ static void parseCommand(const char *message, int t)
 	char reply[MessageLen];
 	sprintf(reply,"%-16s : %4ds",player[i].callSign,
 		int(now-player[i].lastupdate));
-	sendMessage(t, player[t].id, player[t].team, reply, true);
+	sendMessage(t, t, player[t].team, reply, true);
       }
     }
   }
@@ -5885,7 +5643,7 @@ static void parseCommand(const char *message, int t)
 	  strcat( reply, flag );
 	  fhIt++;
 	}
-	sendMessage(t, player[t].id, player[t].team, reply, true);
+	sendMessage(t, t, player[t].team, reply, true);
       }
   }
   // /playerlist dumps a list of players with IPs etc.
@@ -5893,11 +5651,10 @@ static void parseCommand(const char *message, int t)
     for (int i = 0; i < curMaxPlayers; i++) {
       if (player[i].state > PlayerInLimbo) {
 	char reply[MessageLen];
-	sprintf(reply,"[%d]%-16s: %s:%d%s%s",i,player[i].callSign,
-	    inet_ntoa(player[i].id.serverHost), ntohs(player[i].id.port),
-	    player[i].ulinkup ? " udp" : "",
-	    player[i].knowId ? " id" : "");
-	sendMessage(t, player[t].id, player[t].team, reply, true);
+	sprintf(reply,"[%d]%-16s: %s%s",i,player[i].callSign,
+	    player[i].peer.getDotNotation().c_str(),
+	    player[i].ulinkup ? " udp" : "");
+	sendMessage(t, t, player[t].team, reply, true);
       }
     }
   }
@@ -5931,13 +5688,13 @@ static void parseCommand(const char *message, int t)
       else
 	sprintf(reply, "Your report has been filed. Thank you.");
     }
-    sendMessage(t, player[t].id, player[t].team, reply, true);
+    sendMessage(t, t, player[t].team, reply, true);
   } else if (strncmp(message+1, "help", 4) == 0) {
     if (strlen(message + 1) == 4) {
       const std::vector<std::string>& chunks = clOptions.textChunker.getChunkNames();
-      sendMessage(t, player[t].id, player[t].team, "Available help pages (use /help <page>)");
+      sendMessage(t, t, player[t].team, "Available help pages (use /help <page>)");
       for (int i = 0; i < (int) chunks.size(); i++) {
-	sendMessage(t, player[t].id, player[t].team, chunks[i].c_str());
+	sendMessage(t, t, player[t].team, chunks[i].c_str());
       }
     } else {
       bool foundChunk = false;
@@ -5947,7 +5704,7 @@ static void parseCommand(const char *message, int t)
 	  const std::vector<std::string>* lines = clOptions.textChunker.getTextChunk((message + 6));
 	  if (lines != NULL) {
 	    for (int j = 0; j < (int)lines->size(); j++) {
-	      sendMessage(t, player[t].id, player[t].team, (*lines)[j].c_str());
+	      sendMessage(t, t, player[t].team, (*lines)[j].c_str());
 	    }
 	    foundChunk = true;
 	    break;
@@ -5957,25 +5714,25 @@ static void parseCommand(const char *message, int t)
       if (!foundChunk){
 	char reply[MessageLen];
 	sprintf(reply, "help command %s not found", message + 6);
-	sendMessage(t, player[t].id, player[t].team, reply, true);
+	sendMessage(t, t, player[t].team, reply, true);
       }
     }
   } else if (strncmp(message + 1, "identify", 8) == 0) {
     // player is trying to send an ID
     if (player[t].accessInfo.verified) {
-      sendMessage(t, player[t].id, player[t].team, "You have already identified");
+      sendMessage(t, t, player[t].team, "You have already identified");
     } else if (player[t].accessInfo.loginAttempts >= 5) {
-      sendMessage(t,player[t].id,player[t].team,"You have attempted to identify too many times");
+      sendMessage(t, t, player[t].team,"You have attempted to identify too many times");
       DEBUG1("Too Many Identifys %s\n",player[t].regName.c_str());
     } else {
       // get their info
       if (!userExists(player[t].regName)) {
 	// not in DB, tell them to reg
-	sendMessage(t, player[t].id, player[t].team, "This callsign is not registered,"
+	sendMessage(t, t, player[t].team, "This callsign is not registered,"
 		    " please register it with a /register command");
       } else {
 	if (verifyUserPassword(player[t].regName.c_str(), message + 10)) {
-	  sendMessage(t, player[t].id, player[t].team, "Password Accepted, welcome back.");
+	  sendMessage(t, t, player[t].team, "Password Accepted, welcome back.");
 	  player[t].accessInfo.verified = true;
 
 	  // get their real info
@@ -5987,18 +5744,18 @@ static void parseCommand(const char *message, int t)
 	  DEBUG1("Identify %s\n",player[t].regName.c_str());
 	} else {
 	  player[t].accessInfo.loginAttempts++;
-	  sendMessage(t, player[t].id, player[t].team, "Identify Failed, please make sure"
+	  sendMessage(t, t, player[t].team, "Identify Failed, please make sure"
 		      " your password was correct");
 	}
       }
     }
   } else if (strncmp(message + 1, "register", 8) == 0) {
     if (player[t].accessInfo.verified) {
-      sendMessage(t, player[t].id, player[t].team, "You have allready registered and"
+      sendMessage(t, t, player[t].team, "You have allready registered and"
 		  " identified this callsign");
     } else {
       if (userExists(player[t].regName)) {
-	sendMessage(t, player[t].id, player[t].team, "This callsign is allready registered,"
+	sendMessage(t, t, player[t].team, "This callsign is allready registered,"
 		    " if it is yours /identify to login");
       } else {
 	if (strlen(message) > 12) {
@@ -6010,11 +5767,11 @@ static void parseCommand(const char *message, int t)
 	  setUserInfo(player[t].regName, info);
 	  DEBUG1("Register %s %s\n",player[t].regName.c_str(),pass.c_str());
 
-	  sendMessage(t, player[t].id, player[t].team, "Callsign registration confirmed,"
+	  sendMessage(t, t, player[t].team, "Callsign registration confirmed,"
 		      " please /identify to login");
 	  updateDatabases();
 	} else {
-	  sendMessage(t,player[t].id, player[t].team, "your password must be 3 or more characters");
+	  sendMessage(t, t, player[t].team, "your password must be 3 or more characters");
 	}
       }
     }
@@ -6024,7 +5781,7 @@ static void parseCommand(const char *message, int t)
     char *p2 = 0;
     if (p1) p2 = strchr(p1 + 1, '\"');
     if (!p2) {
-      sendMessage(t, player[t].id, player[t].team, "not enough parameters, usage"
+      sendMessage(t, t, player[t].team, "not enough parameters, usage"
 		  " /ghost \"CALLSIGN\" PASSWORD");
     } else {
       std::string ghostie(p1+1,p2-p1-1);
@@ -6034,19 +5791,19 @@ static void parseCommand(const char *message, int t)
 
       int user = getPlayerIDByRegName(ghostie);
       if (user == -1) {
-	sendMessage(t,player[t].id,player[t].team,"There is no user logged in by that name");
+	sendMessage(t, t, player[t].team,"There is no user logged in by that name");
       } else {
 	if (!userExists(ghostie)) {
-	  sendMessage(t,player[t].id,player[t].team,"That callsign is not registered");
+	  sendMessage(t, t, player[t].team,"That callsign is not registered");
 	} else {
 	  if (!verifyUserPassword(ghostie, ghostPass)) {
-	    sendMessage(t, player[t].id, player[t].team, "Invalid Password");
+	    sendMessage(t, t, player[t].team, "Invalid Password");
 	  } else {
-	    sendMessage(t, player[t].id, player[t].team, "Ghosting User");
+	    sendMessage(t, t, player[t].team, "Ghosting User");
 	    char temp[MessageLen];
 	    sprintf(temp, "Your Callsign is registered to another user,"
 		    " You have been ghosted by %s", player[t].callSign);
-	    sendMessage(user, player[user].id, player[user].team, temp, true);
+	    sendMessage(user, user, player[user].team, temp, true);
 	    removePlayer(user, "Ghost");
 	  }
 	}
@@ -6060,7 +5817,7 @@ static void parseCommand(const char *message, int t)
       passwordDatabase.erase(itr1);
       userDatabase.erase(itr2);
       updateDatabases();
-      sendMessage(t, player[t].id, player[t].team, "Your callsign has been deregistered");
+      sendMessage(t, t, player[t].team, "Your callsign has been deregistered");
     } else if (strlen(message) > 12 && hasPerm(t, setAll)) {
       // removing someone else's
       std::string name = message + 12;
@@ -6073,30 +5830,30 @@ static void parseCommand(const char *message, int t)
         updateDatabases();
         char text[MessageLen];
         sprintf(text, "%s has been deregistered", name.c_str());
-        sendMessage(t, player[t].id, player[t].team, text);
+        sendMessage(t, t, player[t].team, text);
       } else {
 	char text[MessageLen];
 	sprintf(text, "user %s does not exist", name.c_str());
-	sendMessage(t, player[t].id, player[t].team, text);
+	sendMessage(t, t, player[t].team, text);
       }
     }
   } else if (player[t].accessInfo.verified && strncmp(message + 1, "setpass", 7) == 0) {
     std::string pass;
     if (strlen(message) < 9) {
-      sendMessage(t,player[t].id,player[t].team,"Not enough parameters: usage /setpass PASSWORD");
+      sendMessage(t, t, player[t].team,"Not enough parameters: usage /setpass PASSWORD");
     } else {
       pass = message + 9;
       setUserPassword(player[t].regName.c_str(), pass);
       updateDatabases();
       char text[MessageLen];
       sprintf(text, "Your password is now set to \"%s\"", pass.c_str());
-      sendMessage(t, player[t].id, player[t].team, text, true);
+      sendMessage(t, t, player[t].team, text, true);
     }
   } else if (strncmp(message + 1, "grouplist", 9) == 0) {
-    sendMessage(t,player[t].id,player[t].team,"Group List:");
+    sendMessage(t, t, player[t].team,"Group List:");
     std::map<std::string, PlayerAccessInfo>::iterator itr = groupAccess.begin();
     while (itr != groupAccess.end()) {
-      sendMessage(t,player[t].id,player[t].team,itr->first.c_str());
+      sendMessage(t, t, player[t].team,itr->first.c_str());
       itr++;
     }
   } else if (strncmp(message + 1, "showgroup", 9) == 0) {
@@ -6106,7 +5863,7 @@ static void parseCommand(const char *message, int t)
       if (player[t].accessInfo.verified) {
 	settie = player[t].regName;
       } else {
-	sendMessage(t, player[t].id, player[t].team, "You are not identified");
+	sendMessage(t, t, player[t].team, "You are not identified");
       }
     } else if (hasPerm(t, showOthers)) { // show groups for other player
       char *p1 = strchr(message + 1, '\"');
@@ -6116,11 +5873,11 @@ static void parseCommand(const char *message, int t)
 	settie = string(p1+1, p2-p1-1);
 	makeupper(settie);
       } else {
-	sendMessage(t, player[t].id, player[t].team, "wrong format, usage"
+	sendMessage(t, t, player[t].team, "wrong format, usage"
 		    " /showgroup  or  /showgroup \"CALLSIGN\"");
       }
     } else {
-      sendMessage(t, player[t].id, player[t].team, "No permission!");
+      sendMessage(t, t, player[t].team, "No permission!");
     }
 
     // something is wrong
@@ -6138,24 +5895,24 @@ static void parseCommand(const char *message, int t)
 	  itr++;
 	}
 	// FIXME let's hope that line is not too long (> MessageLen)
-	sendMessage(t, player[t].id, player[t].team, line.c_str());
+	sendMessage(t, t, player[t].team, line.c_str());
       } else {
-	sendMessage(t, player[t].id, player[t].team, "There is no user by that name");
+	sendMessage(t, t, player[t].team, "There is no user by that name");
       }
     }
   } else if (strncmp(message + 1, "groupperms", 10) == 0) {
-    sendMessage(t, player[t].id, player[t].team, "Group List:");
+    sendMessage(t, t, player[t].team, "Group List:");
     std::map<std::string, PlayerAccessInfo>::iterator itr = groupAccess.begin();
     std::string line;
     while (itr != groupAccess.end()) {
       line = itr->first + ":   ";
-      sendMessage(t, player[t].id, player[t].team, line.c_str());
+      sendMessage(t, t, player[t].team, line.c_str());
 
       for (int i = 0; i < lastPerm; i++) {
 	if (itr->second.explicitAllows.test(i)) {
 	  line = "     ";
 	  line += nameFromPerm((AccessPerm)i);
-	  sendMessage(t, player[t].id, player[t].team, line.c_str());
+	  sendMessage(t, t, player[t].team, line.c_str());
 	}
       }
       itr++;
@@ -6166,7 +5923,7 @@ static void parseCommand(const char *message, int t)
     char *p2 = 0;
     if (p1) p2 = strchr(p1 + 1, '\"');
     if (!p2) {
-      sendMessage(t, player[t].id, player[t].team, "not enough parameters, usage"
+      sendMessage(t, t, player[t].team, "not enough parameters, usage"
 		  " /setgroup \"CALLSIGN\" GROUP");
     } else {
       string settie(p1+1, p2-p1-1);
@@ -6180,26 +5937,26 @@ static void parseCommand(const char *message, int t)
 	if (!hasPerm(t, setAll))
 	  canset = hasGroup(player[t].accessInfo, group.c_str());
 	if (!canset) {
-	  sendMessage(t, player[t].id, player[t].team, "You do not have permission to set this group");
+	  sendMessage(t, t, player[t].team, "You do not have permission to set this group");
 	} else {
 	  PlayerAccessInfo &info = getUserInfo(settie);
 
 	  if (addGroup(info, group)) {
-	    sendMessage(t, player[t].id, player[t].team, "Group Add successful");
+	    sendMessage(t, t, player[t].team, "Group Add successful");
 	    int getID = getPlayerIDByRegName(settie);
 	    if (getID != -1) {
 	      char temp[MessageLen];
 	      sprintf(temp, "you have been added to the %s group, by %s", group.c_str(), player[t].callSign);
-	      sendMessage(getID, player[getID].id, player[getID].team, temp, true);
+	      sendMessage(getID, getID, player[getID].team, temp, true);
 	      addGroup(player[getID].accessInfo, group);
 	    }
 	    updateDatabases();
 	  } else {
-	    sendMessage(t, player[t].id, player[t].team, "Group Add failed (user may allready have that group)");
+	    sendMessage(t, t, player[t].team, "Group Add failed (user may allready have that group)");
 	  }
 	}
       } else {
-	sendMessage(t, player[t].id, player[t].team, "There is no user by that name");
+	sendMessage(t, t, player[t].team, "There is no user by that name");
       }
     }
   } else if ((hasPerm(t, setPerms) || hasPerm(t, setAll)) &&
@@ -6208,7 +5965,7 @@ static void parseCommand(const char *message, int t)
     char *p2 = 0;
     if (p1) p2 = strchr(p1 + 1, '\"');
     if (!p2) {
-      sendMessage(t, player[t].id, player[t].team, "not enough parameters, usage /removegroup \"CALLSIGN\" GROUP");
+      sendMessage(t, t, player[t].team, "not enough parameters, usage /removegroup \"CALLSIGN\" GROUP");
     } else
     {
       string settie(p1+1, p2-p1-1);
@@ -6221,26 +5978,26 @@ static void parseCommand(const char *message, int t)
 	if (!hasPerm(t, setAll))
 	  canset = hasGroup(player[t].accessInfo, group.c_str());
 	if (!canset) {
-	  sendMessage(t, player[t].id, player[t].team, "You do not have permission to remove this group");
+	  sendMessage(t, t, player[t].team, "You do not have permission to remove this group");
 	} else {
 	  PlayerAccessInfo &info = getUserInfo(settie);
 
 	  if (removeGroup(info, group)) {
-	    sendMessage(t, player[t].id, player[t].team, "Group Remove successful");
+	    sendMessage(t, t, player[t].team, "Group Remove successful");
 	    int getID = getPlayerIDByRegName(settie);
 	    if (getID != -1) {
 	      char temp[MessageLen];
 	      sprintf(temp, "you have been removed from the %s group, by %s", group.c_str(), player[t].callSign);
-	      sendMessage(getID, player[getID].id, player[getID].team, temp, true);
+	      sendMessage(getID, getID, player[getID].team, temp, true);
 	      removeGroup(player[getID].accessInfo, group);
 	    }
 	    updateDatabases();
 	  } else {
-	    sendMessage(t, player[t].id, player[t].team, "Group Remove failed ( user may not have had group)");
+	    sendMessage(t, t, player[t].team, "Group Remove failed ( user may not have had group)");
 	  }
 	}
       } else {
-	sendMessage(t, player[t].id, player[t].team, "There is no user by that name");
+	sendMessage(t, t, player[t].team, "There is no user by that name");
       }
     }
   } else if (hasPerm(t, setAll) && strncmp(message + 1, "reload", 6) == 0) {
@@ -6276,9 +6033,9 @@ static void parseCommand(const char *message, int t)
 	player[p].accessInfo.verified = true;
       }
     }
-    sendMessage(t, player[t].id, player[t].team, "Databases reloaded");
+    sendMessage(t, t, player[t].team, "Databases reloaded");
   } else {
-    sendMessage(t, player[t].id, player[t].team, "unknown command");
+    sendMessage(t, t, player[t].team, "unknown command");
   }
 }
 
@@ -6288,17 +6045,11 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
 #ifdef NETWORK_STATS
   countMessage(t, code, len, 0);
 #endif
-  if (!player[t].knowId)
-    patchMessage(player[t].oldId, player[t].id, rawbuf);
   switch (code) {
     // player joining
     case MsgEnter: {
-      // data: id, type, team, name, email
+      // data: type, team, name, email
       uint16_t type, team;
-      buf = player[t].oldId.unpack(buf);
-      player[t].id.number = htons(t);
-      player[t].id.port = player[t].taddr.sin_port;
-      memcpy(&player[t].id.serverHost, &player[t].taddr.sin_addr.s_addr, sizeof(player[t].id.serverHost));
       buf = nboUnpackUShort(buf, type);
       buf = nboUnpackUShort(buf, team);
       player[t].type = PlayerType(type);
@@ -6313,14 +6064,6 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
 	  player[t].fd);
       break;
     }
-
-    // player accepted the ID we gave him
-    case MsgIdAck:
-      player[t].oldId.serverHost = player[t].id.serverHost;
-      player[t].oldId.port = player[t].id.port;
-      player[t].oldId.number = player[t].id.number;
-      player[t].knowId = true;
-      break;
 
     // player closing connection
     case MsgExit:
@@ -6347,7 +6090,9 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
     case MsgNetworkRelay:
       if (startPlayerPacketRelay(t)) {
 	player[t].multicastRelay = true;
-	directMessage(t, MsgAccept, 0, getDirectMessageBuffer());
+	void *buf, *bufStart = getDirectMessageBuffer();
+	buf = nboPackUByte(bufStart, t);
+	directMessage(t, MsgAccept, (char*)buf-(char*)bufStart, bufStart);
       }
       else {
 	directMessage(t, MsgReject, 0, getDirectMessageBuffer());
@@ -6404,7 +6149,7 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
       // data: id of killer, shot id of killer
       PlayerId killer;
       int16_t shot;
-      buf = killer.unpack(buf);
+      buf = nboUnpackUByte(buf, killer);
       buf = nboUnpackShort(buf, shot);
       playerKilled(t, lookupPlayer(killer), shot);
       break;
@@ -6450,7 +6195,7 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
       PlayerId sourcePlayer;
       int16_t shot;
       uint16_t reason;
-      buf = sourcePlayer.unpack(buf);
+      buf = nboUnpackUByte(buf, sourcePlayer);
       buf = nboUnpackShort(buf, shot);
       buf = nboUnpackUShort(buf, reason);
       shotEnded(sourcePlayer, shot, reason);
@@ -6485,7 +6230,7 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
       PlayerId targetPlayer;
       uint16_t targetTeam;
       char message[MessageLen];
-      buf = targetPlayer.unpack(buf);
+      buf = nboUnpackUByte(buf, targetPlayer);
       buf = nboUnpackUShort(buf, targetTeam);
       buf = nboUnpackString(buf, message, sizeof(message));
       DEBUG1("Player %s [%d]: %s\n",player[t].callSign, t, message);
@@ -6567,13 +6312,13 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
       player[t].lastupdate = TimeKeeper::getCurrent();
       PlayerId id;
       PlayerState state;
-      buf = id.unpack(buf);
+      buf = nboUnpackUByte(buf, id);
       buf = state.unpack(buf);
       if (state.pos[2] > maxTankHeight) {
 	char message[MessageLen];
 	DEBUG1("kicking Player %s [%d]: jump too high\n", player[t].callSign, t);
 	strcpy(message, "Autokick: Out of world bounds, Jump too high, Update your client." );
-	sendMessage(t, player[t].id, player[t].team, message, true);
+	sendMessage(t, t, player[t].team, message, true);
 	removePlayer(t, "too high");
 	break;
       }
@@ -6594,7 +6339,7 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
 	char message[MessageLen];
 	DEBUG1("kicking Player %s [%d]: Out of map bounds\n", player[t].callSign, t);
 	strcpy(message, "Autokick: Out of world bounds, XY pos out of bounds, Don't cheat." );
-	sendMessage(t, player[t].id, player[t].team, message, true);
+	sendMessage(t, t, player[t].team, message, true);
 	removePlayer(t, "Out of map bounds");
       }
 	     
@@ -6637,7 +6382,7 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
 	      player[t].callSign, t,
 	      sqrt(curPlanarSpeedSqr), sqrt(maxPlanarSpeedSqr));
 	    strcpy(message, "Autokick: Tank moving too fast, Update your client." );
-	    sendMessage(t, player[t].id, player[t].team, message, true);
+	    sendMessage(t, t, player[t].team, message, true);
 	    removePlayer(t, "too fast");
 	  }
 	  break;
@@ -6700,7 +6445,6 @@ static const char *usageString =
 "[-noudp] "
 "[-p <port>] "
 "[-passwd <password>] "
-"[-pr <reconnect port>] "
 #ifdef PRINTSCORE
 "[-printscore] "
 #endif
@@ -6765,7 +6509,6 @@ static const char *extraUsageString =
 "\t-noudp: never use the new UDP networking\n"
 "\t-p: use alternative port (default is 5155)\n"
 "\t-passwd: specify a <password> for operator commands\n"
-"\t-pr <port>: use reconnect port\n"
 #ifdef PRINTSCORE
 "\t-printscore: write score to stdout whenever it changes\n"
 #endif
@@ -7320,16 +7063,6 @@ static void parse(int argc, char **argv, CmdLineOptions &options)
       else
 	options.useGivenPort = true;
     }
-    else if (strcmp(argv[i], "-pr") == 0) {
-      // use a different port
-      if (++i == argc) {
-	fprintf(stderr, "argument expected for -pr\n");
-	usage(argv[0]);
-      }
-      options.reconnectPort = atoi(argv[i]);
-      if (options.reconnectPort < 1 || options.reconnectPort > 65535)
-	usage(argv[0]);
-    }
     else if (strcmp(argv[i], "-pf") == 0) {
       // try wksPort first and if we can't open that port then
       // let system assign a port for us.
@@ -7663,9 +7396,7 @@ static void parse(int argc, char **argv, CmdLineOptions &options)
     flag[i].flag.id = NullFlag;
     flag[i].flag.status = FlagNoExist;
     flag[i].flag.type = FlagNormal;
-    flag[i].flag.owner.serverHost = Address();
-    flag[i].flag.owner.port = 0;
-    flag[i].flag.owner.number = 0;
+    flag[i].flag.owner = 0;
     flag[i].flag.position[0] = 0.0f;
     flag[i].flag.position[1] = 0.0f;
     flag[i].flag.position[2] = 0.0f;
@@ -7902,8 +7633,6 @@ int main(int argc, char **argv)
     }
     // always listen for connections
     FD_SET(wksSocket, &read_set);
-    if (clOptions.reconnectPort)
-      FD_SET(reconnectSocket, &read_set);
     if (clOptions.alsoUDP)
       FD_SET(udpSocket, &read_set);
     // always listen for pings
@@ -7993,7 +7722,7 @@ int main(int argc, char **argv)
 	  DEBUG1("kicking Player %s [%d]: idle %d\n", player[i].callSign, i,
 		 int(tm - player[i].lastupdate));
 	  char message[MessageLen] = "You were kicked because of idling too long";
-	  sendMessage(i, player[i].id, player[i].team, message, true);
+	  sendMessage(i, i, player[i].team, message, true);
 	  removePlayer(i, "idling");
 	}
       }
@@ -8016,21 +7745,21 @@ int main(int argc, char **argv)
 	    message[l] = '\0';
 	    for (int i=0; i<curMaxPlayers; i++)
 	      if (player[i].state > PlayerInLimbo)
-		sendMessage(i, player[i].id, player[i].team, message, true);
+		sendMessage(i, i, player[i].team, message, true);
 	    c = j + 2;
 	  }
 	  strncpy(message, c, MessageLen - 1);
 	  message[strlen(c) < MessageLen - 1 ? strlen(c) : MessageLen -1] = '\0';
 	  for (int i=0; i<curMaxPlayers; i++)
 	    if (player[i].state > PlayerInLimbo)
-	      sendMessage(i, player[i].id, player[i].team, message, true);
+	      sendMessage(i, i, player[i].team, message, true);
 	}
 	// multi line from file advert
 	if (adLines != NULL){
 	  for (int j = 0; j < (int)adLines->size(); j ++){
 	    for (int i=0; i<curMaxPlayers; i++){
 	      if (player[i].state > PlayerInLimbo){
-		sendMessage(i, player[i].id, player[i].team, (*adLines)[j].c_str());
+		sendMessage(i, i, player[i].team, (*adLines)[j].c_str());
 	      }
 	    }
 	  }
@@ -8144,13 +7873,13 @@ int main(int argc, char **argv)
 	char message[MessageLen];
 	player[i].toBeKicked = false;
 	sprintf(message,"Your end is not using UDP, turn on udp");
-	sendMessage(i, player[i].id, player[i].team, message, true);
+	sendMessage(i, i, player[i].team, message, true);
 
 	sprintf(message,"upgrade your client http://BZFlag.org/ or");
-	sendMessage(i, player[i].id, player[i].team, message, true);
+	sendMessage(i, i, player[i].team, message, true);
 
 	sprintf(message,"Try another server, Bye!");
-	sendMessage(i, player[i].id, player[i].team, message, true);
+	sendMessage(i, i, player[i].team, message, true);
 
 	removePlayer(i, "no UDP");
       }
@@ -8171,19 +7900,6 @@ int main(int argc, char **argv)
       // now check multicast for relay
       if (relayInSocket != -1 && FD_ISSET(relayInSocket, &read_set))
 	relayPlayerPacket();
-
-      // check for clients that are reconnecting
-      if (FD_ISSET(reconnectSocket, &read_set))
-	  addClient(reconnectSocket);
-      // check for players that were accepted
-      for (i = 0; i < curMaxPlayers; i++) {
-	// check the initial contact port.  if any activity or
-	// we've waited a while, then shut it down
-	if (player[i].state == PlayerAccept &&
-	    (FD_ISSET(player[i].fd, &read_set) ||
-	    tm - player[i].time > DisconnectTimeout))
-	  shutdownAcceptClient(i);
-      }
 
       // check for connection to list server
       for (i = 0; i < listServerLinksCount; ++i)

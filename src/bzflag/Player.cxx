@@ -34,9 +34,9 @@ int			Player::totalCount = 0;
 
 Player::Player(const PlayerId& _id, TeamColor _team,
 		const char* name, const char* _email) :
-				id(_id),
 				notResponding(false),
 				hunted(false),
+				id(_id),
 				team(_team),
 				flag(NoFlag),
 				fromTeleporter(0),
@@ -80,6 +80,11 @@ Player::~Player()
     delete tankTexture;
     tankTexture = NULL;
   }
+}
+
+void			Player::setId(PlayerId& newId)
+{
+  id = newId;
 }
 
 float			Player::getRadius() const

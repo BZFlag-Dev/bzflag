@@ -227,7 +227,7 @@ void			PlayerLink::sendPlayerUpdate(const Player* player)
   if (state == SocketError) return;
   char msg[PlayerUpdatePLen];
   void* buf = msg;
-  buf = player->getId().pack(buf);
+  buf = nboPackUByte(buf, player->getId());
   buf = player->pack(buf);
   send(MsgPlayerUpdate, sizeof(msg), msg);
 }

@@ -1496,18 +1496,11 @@ void			HUDRenderer::drawPlayerScore(const Player* player,
 					float x1, float x2, float x3, float y)
 {
   char score[40], kills[40];
-#ifndef DEBUG
   char email[EmailLen + 5];
   if (player->getEmailAddress()[0] != '\0')
     sprintf(email, " (%s)", player->getEmailAddress());
   else
     email[0] = '\0';
-#else
-  char email[EmailLen + 25];
-  const PlayerId& id = player->getId();
-  sprintf(email, " %s:%d-%1x(%s)", inet_ntoa(id.serverHost),
-      ntohs(id.port), ntohs(id.number), player->getEmailAddress());
-#endif
   sprintf(score, "%d (%d-%d)", player->getScore(),
       player->getWins(), player->getLosses());
   if (LocalPlayer::getMyTank() != player)

@@ -17,6 +17,12 @@
 
 #define	ADV(_b, _t)	((void*)(((char*)(_b)) + sizeof(_t)))
 
+void*			nboPackUByte(void* b, uint8_t v)
+{
+  ::memcpy(b, &v, sizeof(uint8_t));
+  return ADV(b, uint8_t);
+}
+
 void*			nboPackShort(void* b, int16_t v)
 {
   const int16_t x = (int16_t)htons(v);
@@ -73,6 +79,12 @@ void*			nboPackString(void* b, const void* m, int len)
   if (!m || len == 0) return b;
   ::memcpy(b, m, len);
   return (void*)((char*)b + len);
+}
+
+void*			nboUnpackUByte(void* b, uint8_t& v)
+{
+  ::memcpy(&v, b, sizeof(uint8_t));
+  return ADV(b, uint8_t);
 }
 
 void*			nboUnpackShort(void* b, int16_t& v)

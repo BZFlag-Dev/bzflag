@@ -550,8 +550,8 @@ bool			ComposeDefaultKey::keyRelease(const BzfKeyEvent& key)
       recipient = myTank->getRecipient();
       if (recipient) {
 	void* buf = messageMessage;
-	buf = recipient->getId().pack(buf);
-	buf = nboPackUShort( buf, uint16_t(RogueTeam));
+	buf = nboPackUByte(buf, recipient->getId());
+	buf = nboPackUShort(buf, uint16_t(RogueTeam));
 	std::string composePrompt = "Send to ";
 	composePrompt += recipient->getCallSign();
 	composePrompt += ": ";
@@ -861,9 +861,12 @@ void			ServerCommandKey::updatePrompt()
 	break;
       case BanIp: case Ban1: case Ban2: case Ban3:
 	// Set the prompt and enable editing/composing --> allows to enter ban time
+	/* FIXME FIXME FIXME
+	 * temporarily breaking bans for playerid->ubyte
 	banPattern = makePattern(recipient->id.serverHost);
 	composePrompt = "Ban " + banPattern + " -> " + recipient->getCallSign() + " :";
 	hud->setComposing(composePrompt, true);
+	*/
 	break;
       
       case Setgroup: composePrompt = "Set players group "; 
@@ -1028,12 +1031,15 @@ bool			ServerCommandKey::keyPress(const BzfKeyEvent& key)
 	  break;
 	case BanIp: case Ban1: case Ban2: case Ban3:
 
+	  /* FIXME FIXME FIXME
+	   * temporarily break ban-by-name for playerid->ubyte
 	  banPattern = makePattern(troll->id.serverHost);
 	  sendMsg="/ban " + banPattern;
 	  
 	  if (message != ""){ // add ban length if something is there
 	    sendMsg = sendMsg + " " + message;
 	  }
+	  */
 	  break;
 
 	case Setgroup: 
@@ -1795,8 +1801,8 @@ static void		doKeyPlaying(const BzfKeyEvent& key, bool pressed)
 	if (!nemesis) return;
 
 	void* buf = messageMessage;
-	buf = nemesis->getId().pack(buf);
-	buf = nboPackUShort( buf, uint16_t(RogueTeam));
+	buf = nboPackUByte(buf, nemesis->getId());
+	buf = nboPackUShort(buf, uint16_t(RogueTeam));
 	composePrompt = "Send to ";
 	composePrompt += nemesis->getCallSign();
 	composePrompt += ": ";
@@ -1814,8 +1820,8 @@ static void		doKeyPlaying(const BzfKeyEvent& key, bool pressed)
 	recipient = myTank->getRecipient();
 	if (recipient) {
 	  void* buf = messageMessage;
-	  buf = recipient->getId().pack(buf);
-	  buf = nboPackUShort( buf, uint16_t(RogueTeam));
+	  buf = nboPackUByte(buf, recipient->getId());
+	  buf = nboPackUShort(buf, uint16_t(RogueTeam));
 	  composePrompt = "Send to ";
 	  composePrompt += recipient->getCallSign();
 	  composePrompt += ": ";
@@ -1823,7 +1829,7 @@ static void		doKeyPlaying(const BzfKeyEvent& key, bool pressed)
       }
 
       // to send to a player use:
-      //   buf = myTank->getId().pack(buf);
+      //   buf = nboPackUByte(buf, myTank->getId());
       //   buf = nboPackUShort(buf, uint16_t(RogueTeam));
       messageHistoryIndex = 0;
       hud->setComposing(composePrompt);
@@ -2535,11 +2541,6 @@ static Player*		addPlayer(const PlayerId& id, void* msg,
       name += message;
       message = name;
     }
-#ifdef DEBUG
-    const PlayerId& id = player[i]->getId();
-    message += " from ";
-    message += inet_ntoa(id.serverHost);
-#endif
     addMessage(player[i], message);
   }
 
@@ -2592,7 +2593,7 @@ static void		handleServerMessage(bool human, uint16_t code,
       // unpack packet
       PlayerId id;
       uint16_t team;
-      msg = id.unpack(msg);
+      msg = nboUnpackUByte(msg, id);
       msg = nboUnpackUShort(msg, team);
       Player* player = lookupPlayer(id);
 
@@ -2645,7 +2646,7 @@ static void		handleServerMessage(bool human, uint16_t code,
 
     case MsgAddPlayer: {
       PlayerId id;
-      msg = id.unpack(msg);
+      msg = nboUnpackUByte(msg, id);
 #if defined(FIXME) && defined(ROBOT)
       for (int i = 0; i < numRobots; i++) {
 	void *tmpbuf = msg;
@@ -2671,7 +2672,7 @@ static void		handleServerMessage(bool human, uint16_t code,
 	      robots[i], tmpbuf, msg, *(int *)tmpbuf, *((int *)tmpbuf + 1));
 	  if (tmpbuf < (char *)msg + len) {
 	    PlayerId id;
-	    tmpbuf = id.unpack(tmpbuf);
+	    tmpbuf = nboUnpackUByte(tmpbuf, id);
 	    robots[i]->id.serverHost = id.serverHost;
 	    robots[i]->id.port = id.port;
 	    robots[i]->id.number = id.number;
@@ -2689,7 +2690,7 @@ static void		handleServerMessage(bool human, uint16_t code,
 
     case MsgRemovePlayer: {
       PlayerId id;
-      msg = id.unpack(msg);
+      msg = nboUnpackUByte(msg, id);
       int playerIndex = lookupPlayerIndex(id);
       if (playerIndex >= 0) {
 	addMessage(player[playerIndex], "signing off");
@@ -2736,7 +2737,7 @@ static void		handleServerMessage(bool human, uint16_t code,
     case MsgAlive: {
       PlayerId id;
       float pos[3], forward[3];
-      msg = id.unpack(msg);
+      msg = nboUnpackUByte(msg, id);
       msg = nboUnpackVector(msg, pos);
       msg = nboUnpackVector(msg, forward);
       int playerIndex = lookupPlayerIndex(id);
@@ -2756,8 +2757,8 @@ static void		handleServerMessage(bool human, uint16_t code,
     case MsgKilled: {
       PlayerId victim, killer;
       int16_t shotId;
-      msg = victim.unpack(msg);
-      msg = killer.unpack(msg);
+      msg = nboUnpackUByte(msg, victim);
+      msg = nboUnpackUByte(msg, killer);
       msg = nboUnpackShort(msg, shotId);
       int victimIndex = lookupPlayerIndex(victim);
       int killerIndex = lookupPlayerIndex(killer);
@@ -2835,17 +2836,7 @@ static void		handleServerMessage(bool human, uint16_t code,
 	  addMessage(victimPlayer, message);
 	}
 	else if (!killerPlayer) {
-#ifdef DEBUG
-	  char message[41];
-	  sprintf(message, "%sdestroyed by <%s:%d-%1x>",
-	      ColorStrings[WhiteColor],
-	      inet_ntoa(killer.serverHost),
-	      ntohs(killer.port),
-	      ntohs(killer.number));
-	  addMessage(victimPlayer, message);
-#else
-	  addMessage(victimPlayer, "destroyed by <unknown>");
-#endif
+	  addMessage(victimPlayer, "destroyed by (UNKNOWN)");
 	}
 	else if ((shotId == -1) || (killerPlayer->getShot(int(shotId)) == NULL)) {
 	  std::string message(ColorStrings[WhiteColor]);
@@ -2952,7 +2943,7 @@ static void		handleServerMessage(bool human, uint16_t code,
 // ROBOT -- FIXME -- robots don't grab flag at the moment
       PlayerId id;
       uint16_t flagIndex;
-      msg = id.unpack(msg);
+      msg = nboUnpackUByte(msg, id);
       msg = nboUnpackUShort(msg, flagIndex);
       msg = world->getFlag(int(flagIndex)).unpack(msg);
       Player* tank = lookupPlayer(id);
@@ -3000,7 +2991,7 @@ static void		handleServerMessage(bool human, uint16_t code,
     case MsgDropFlag: {
       PlayerId id;
       uint16_t flagIndex;
-      msg = id.unpack(msg);
+      msg = nboUnpackUByte(msg, id);
       msg = nboUnpackUShort(msg, flagIndex);
       msg = world->getFlag(int(flagIndex)).unpack(msg);
       Player* tank = lookupPlayer(id);
@@ -3012,7 +3003,7 @@ static void		handleServerMessage(bool human, uint16_t code,
     case MsgCaptureFlag: {
       PlayerId id;
       uint16_t flagIndex, team;
-      msg = id.unpack(msg);
+      msg = nboUnpackUByte(msg, id);
       msg = nboUnpackUShort(msg, flagIndex);
       msg = nboUnpackUShort(msg, team);
       Player* capturer = lookupPlayer(id);
@@ -3101,7 +3092,7 @@ static void		handleServerMessage(bool human, uint16_t code,
       PlayerId id;
       int16_t shotId;
       uint16_t reason;
-      msg = id.unpack(msg);
+      msg = nboUnpackUByte(msg, id);
       msg = nboUnpackShort(msg, shotId);
       msg = nboUnpackUShort(msg, reason);
       BaseLocalPlayer* localPlayer = getLocalPlayer(id);
@@ -3119,7 +3110,7 @@ static void		handleServerMessage(bool human, uint16_t code,
     case MsgScore: {
       PlayerId id;
       uint16_t wins, losses;
-      msg = id.unpack(msg);
+      msg = nboUnpackUByte(msg, id);
       msg = nboUnpackUShort(msg, wins);
       msg = nboUnpackUShort(msg, losses);
       // only update score of remote players (local score is already known)
@@ -3135,7 +3126,7 @@ static void		handleServerMessage(bool human, uint16_t code,
     case MsgTeleport: {
       PlayerId id;
       uint16_t from, to;
-      msg = id.unpack(msg);
+      msg = nboUnpackUByte(msg, id);
       msg = nboUnpackUShort(msg, from);
       msg = nboUnpackUShort(msg, to);
       Player* tank = lookupPlayer(id);
@@ -3153,28 +3144,16 @@ static void		handleServerMessage(bool human, uint16_t code,
       PlayerId src;
       PlayerId dst;
       uint16_t team;
-      msg = src.unpack(msg);
-      msg = dst.unpack(msg);
+      msg = nboUnpackUByte(msg, src);
+      msg = nboUnpackUByte(msg, dst);
       msg = nboUnpackUShort(msg, team);
       Player* srcPlayer = lookupPlayer(src);
       Player* dstPlayer = lookupPlayer(dst);
       std::string srcName;
       std::string dstName;
 
-#ifdef DEBUG
-      char srcNameText[26], dstNameText[26];
-#endif
-
       if (srcPlayer == NULL) {
-#ifdef DEBUG
-	sprintf(srcNameText, "<%s:%d-%1x>",
-	    inet_ntoa(src.serverHost),
-	    ntohs(src.port),
-	    ntohs(src.number));
-	srcName = srcNameText;
-#else
 	srcName = "(UNKNOWN)";
-#endif
       } else
 	srcName = srcPlayer->getCallSign();
 
@@ -3201,15 +3180,7 @@ static void		handleServerMessage(bool human, uint16_t code,
       }
 
       if (dstPlayer == NULL) {
-#ifdef DEBUG
-	sprintf(dstNameText, "<%s:%d-%1x>",
-	    inet_ntoa(dst.serverHost),
-	    ntohs(dst.port),
-	    ntohs(dst.number));
-	dstName = dstNameText;
-#else
 	dstName = "(UNKNOWN)";
-#endif
       } else
 	dstName = dstPlayer->getCallSign();
 
@@ -3225,7 +3196,7 @@ static void		handleServerMessage(bool human, uint16_t code,
 
 	char response[PlayerIdPLen + 2 + MessageLen];
 	void* buf = response;
-	buf = src.pack(buf); // send to requesting client
+	buf = nboPackUByte(buf, src);
 	buf = nboPackUShort( buf, uint16_t(RogueTeam));
 	nboPackString(buf, messageBuffer, MessageLen);
 	serverLink->send(MsgMessage, sizeof(response), response);
@@ -3323,7 +3294,7 @@ static void		handleServerMessage(bool human, uint16_t code,
     case MsgAcquireRadio: {
       PlayerId id;
       uint16_t types;
-      msg = id.unpack(msg);
+      msg = nboUnpackUByte(msg, id);
       msg = nboUnpackUShort(msg, types);
       Player* tank = lookupPlayer(id);
       if (tank == myTank) {
@@ -3337,7 +3308,7 @@ static void		handleServerMessage(bool human, uint16_t code,
 
     case MsgReleaseRadio: {
       PlayerId id;
-      msg = id.unpack(msg);
+      msg = nboUnpackUByte(msg, id);
       Player* tank = lookupPlayer(id);
       if (tank == myTank) {
 	// FIXME -- i lost the radio, disable transmission
@@ -3371,7 +3342,7 @@ static void		handlePlayerMessage(uint16_t code, uint16_t,
   switch (code) {
     case MsgPlayerUpdate: {
       PlayerId id;
-      msg = id.unpack(msg);
+      msg = nboUnpackUByte(msg, id);
       Player* tank = lookupPlayer(id);
       if (!tank || tank == myTank) break;
       short oldStatus = tank->getStatus();
@@ -3404,7 +3375,7 @@ static void		handlePlayerMessage(uint16_t code, uint16_t,
 		(RemoteShotPath*)remoteTank->getShot(shot.id);
       if (shotPath) shotPath->update(shot, code, msg);
       PlayerId targetId;
-      targetId.unpack(msg);
+      msg = nboUnpackUByte(msg, targetId);
       Player* targetTank = lookupPlayer(targetId);
       if (targetTank && (targetTank == myTank)) {
 	static TimeKeeper lastLockMsg;
@@ -4812,7 +4783,7 @@ static bool		enterServer(ServerLink* serverLink, World* world,
     switch (code) {
       case MsgAddPlayer: {
 	PlayerId id;
-	buf = id.unpack(buf);
+	buf = nboUnpackUByte(buf, id);
 	if (id == myTank->getId()) {
 	  // it's me!  end of updates
 	  {
@@ -4831,10 +4802,8 @@ static bool		enterServer(ServerLink* serverLink, World* world,
 	      PlayerId id;
 	      //fprintf(stderr, "id test %p %p %p %8.8x %8.8x ", myTank, tmpbuf, msg,
 		  //*(int *)tmpbuf, *((int *)tmpbuf + 1));
-	      tmpbuf = id.unpack(tmpbuf);
-	      myTank->id.serverHost = id.serverHost;
-	      myTank->id.port = id.port;
-	      myTank->id.number = id.number;
+	      tmpbuf = nboUnpackUByte(tmpbuf, id);
+	      myTank->setId(id);
 	      //fprintf(stderr, "%p\n", myTank);
 	      serverLink->send(MsgIdAck, 0, NULL);
 	    }
@@ -5112,6 +5081,8 @@ static bool		joinGame(const StartupInfo* info,
   // we have to assume the network can't do multicasting.  fall back to
   // using the server as a relay.
   bool multicastOkay = false;
+  /* FIXME - commented out by davidtrowbridge for ubyte playerid
+   * id.port is the issue
   if (playerLink->getState() == PlayerLink::Okay) {
     // send 5 pings, one every 2/10ths of a second.  wait up to two
     // seconds after the last ping for a reply.  that's kinda long but
@@ -5159,7 +5130,7 @@ static bool		joinGame(const StartupInfo* info,
     // close sockets
     closeMulticast(pingOutSocket);
     closeMulticast(pingInSocket);
-  }
+  }*/
 
   // if multicast isn't okay then ask server if it can relay for us.
   // give up after waiting for one second.  if we don't get a valid

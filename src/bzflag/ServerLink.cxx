@@ -96,11 +96,11 @@ static const unsigned long endPacket = 0;
 
 ServerLink*		ServerLink::server = NULL;
 
-ServerLink::ServerLink(const Address& serverAddress, int port, int number) :
+ServerLink::ServerLink(const Address& serverAddress, int port, int) :
 				state(SocketError),	// assume failure
 				fd(-1)			// assume failure
 {
-  int i, err;
+  int i;
   char cServerVersion[128];
 
   struct protoent* p;
@@ -149,22 +149,22 @@ ServerLink::ServerLink(const Address& serverAddress, int port, int number) :
   bzSignal(SIGALRM, SIG_IGN);
 #else // Connection timeout for Windows
 
-	// Initialize structure
-	conn.query = query;
-	conn.addr = (CNCTType*)&addr;
-	conn.saddr = sizeof(addr);
+  // Initialize structure
+  conn.query = query;
+  conn.addr = (CNCTType*)&addr;
+  conn.saddr = sizeof(addr);
 
-	// Create event
-	hConnected = CreateEvent(NULL, FALSE, FALSE, "Connected Event");
+  // Create event
+  hConnected = CreateEvent(NULL, FALSE, FALSE, "Connected Event");
 
-	hThread=CreateThread(NULL, 0, ThreadConnect, &conn, 0, &ThreadID);
-	const bool okay = (WaitForSingleObject(hConnected, 5000) == WAIT_OBJECT_0);
-	if(!okay)
-		TerminateThread(hThread ,1);
+  hThread=CreateThread(NULL, 0, ThreadConnect, &conn, 0, &ThreadID);
+  const bool okay = (WaitForSingleObject(hConnected, 5000) == WAIT_OBJECT_0);
+  if(!okay)
+    TerminateThread(hThread ,1);
 
-	// Do some cleanup
-	CloseHandle(hConnected);
-	CloseHandle(hThread);
+  // Do some cleanup
+  CloseHandle(hConnected);
+  CloseHandle(hThread);
 
 #endif // !defined(_WIN32)
   if (!okay)
@@ -185,67 +185,16 @@ ServerLink::ServerLink(const Address& serverAddress, int port, int number) :
     goto done;
   }
 
-  // get reconnect port
-  i = recv(query, (char*)&addr.sin_port, sizeof(addr.sin_port), 0);
-  if (i < (int)sizeof(addr.sin_port)) goto done;
-  if (addr.sin_port == htons(0)) {
+  // read local player's id
+  i = recv(query, (char *) &id, sizeof(id), 0);
+  if (i < (int) sizeof(id))
+    return;
+  if (id == 0xff) {
     state = Rejected;
     goto done;
   }
 
-/*
-  i = recv(query, (char*)&addr.sin_port, sizeof(addr.sin_port), 0);
-  if (i == (int)sizeof(addr.sin_port)) {
-  } else {
-    state = BadVersion;
-    goto done;
-  }
-*/
-
-  // setup local player's id
-  id.serverHost = serverAddress;
-  id.port = addr.sin_port;
-  id.number = htons(number);
-
-  // reconnect at new port
-  addr.sin_family = AF_INET;
-  addr.sin_addr = serverAddress;
-  fd = socket(AF_INET, SOCK_STREAM, 0);
-  if (fd < 0)
-    goto done;
-  err = connect(fd, (CNCTType*)&addr, sizeof(addr));
-
-/*
-  int blockTime = 5000;
-  struct timeval timeout;
-  timeout.tv_sec = blockTime / 1000;
-  timeout.tv_usec = blockTime - 1000 * timeout.tv_sec;
-
-  // only check server
-  fd_set read_set;
-  FD_ZERO(&read_set);
-  FD_SET(fd, &read_set);
-  int nfound = select(fd+1, NULL, (fd_set*)&read_set, NULL,
-			(struct timeval*)(blockTime >= 0 ? &timeout : NULL));
-*/
-
-//  printf ("select\n");
-//  printf("waiting...");
-//  wait = 100000000;
-//  while(wait > 0)
-//    wait--;
-//  printf("done\n");
-
-  if (err < 0) {
-    close(fd);
-    fd = -1;
-    goto done;
-  }
-
-/* not necessary on sgi
-  int len = 8192;
-  setsockopt(fd, SOL_SOCKET, SO_RCVBUF, &len, sizeof(len));
-*/
+  fd = query;
 
   // turn on TCP no delay
   p = getprotobyname("tcp");
@@ -265,6 +214,7 @@ ServerLink::ServerLink(const Address& serverAddress, int port, int number) :
     packetStream = fopen(getenv("BZFLAGSAVE"), "w");
     packetStartTime = TimeKeeper::getCurrent();
   }
+  return;
 
 done:
   close(query);
@@ -674,7 +624,6 @@ void			ServerLink::sendEnter(PlayerType type,
   char msg[PlayerIdPLen + 4 + CallSignLen + EmailLen];
   ::memset(msg, 0, sizeof(msg));
   void* buf = msg;
-  buf = id.pack(buf);
   buf = nboPackUShort(buf, uint16_t(type));
   buf = nboPackUShort(buf, uint16_t(team));
   ::memcpy(buf, name, ::strlen(name));
@@ -716,7 +665,7 @@ void			ServerLink::sendKilled(const PlayerId& killer,
 {
   char msg[PlayerIdPLen + 2];
   void* buf = msg;
-  buf = killer.pack(buf);
+  buf = nboPackUByte(buf, killer);
   buf = nboPackShort(buf, int16_t(shotId));
   send(MsgKilled, sizeof(msg), msg);
 }
@@ -734,7 +683,7 @@ void			ServerLink::sendEndShot(const PlayerId& source,
 {
   char msg[PlayerIdPLen + 4];
   void* buf = msg;
-  buf = source.pack(buf);
+  buf = nboPackUByte(buf, source);
   buf = nboPackShort(buf, int16_t(shotId));
   buf = nboPackUShort(buf, uint16_t(reason));
   send(MsgShotEnd, sizeof(msg), msg);

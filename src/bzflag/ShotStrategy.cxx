@@ -974,9 +974,7 @@ GuidedMissileStrategy::GuidedMissileStrategy(ShotPath* _path) :
   prevTime = currentTime;
 
   // no last target
-  lastTarget.serverHost = Address();
-  lastTarget.port = 0;
-  lastTarget.number = -1;
+  lastTarget = 0;
 }
 
 GuidedMissileStrategy::~GuidedMissileStrategy()
@@ -1012,7 +1010,7 @@ void			GuidedMissileStrategy::update(float dt)
   // get target
   const Player* target = NULL;
   if (isRemote) {
-    if (lastTarget.number != -1)
+    if (lastTarget != 0)
       target = lookupPlayer(lastTarget);
   }
   else {
@@ -1027,9 +1025,9 @@ void			GuidedMissileStrategy::update(float dt)
       }
     }
     else {
-      if (lastTarget.number != -1) {
+      if (lastTarget != 0) {
 	needUpdate = true;
-	lastTarget.number = -1;
+	lastTarget = 0;
       }
     }
   }
@@ -1247,7 +1245,7 @@ void			GuidedMissileStrategy::sendUpdate(
   char packet[ShotUpdatePLen + PlayerIdPLen];
   void *buf = (void*)packet;
   buf = firingInfo.shot.pack(buf);
-  buf = lastTarget.pack(buf);
+  buf = nboPackUByte(buf, lastTarget);
   PlayerLink::getMulticast()->send(MsgGMUpdate, sizeof(packet), packet);
 }
 
@@ -1264,7 +1262,7 @@ void			GuidedMissileStrategy::readUpdate(
   // to be rare anyway.
 
   // read the lastTarget
-  lastTarget.unpack(msg);
+  nboUnpackUByte(msg, lastTarget);
 
   // fix up dependent variables
   const float* vel = getPath().getVelocity();

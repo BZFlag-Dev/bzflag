@@ -25,6 +25,7 @@
 #include <vector>
 #include "common.h"
 #include "global.h"
+#include "Address.h"
 
 class SceneRenderer;
 class BzfKeyMap;
@@ -62,7 +63,6 @@ class BzfDisplay;
 class MainWindow;
 class SceneRenderer;
 class ResourceDatabase;
-class PlayerId;
 class Player;
 
 BzfDisplay*		getDisplay();

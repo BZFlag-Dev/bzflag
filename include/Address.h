@@ -57,15 +57,17 @@ class Address {
     static Address	localAddress;
 };
 
-const int		PlayerIdPLen = 8;
+typedef uint8_t		PlayerId;
+const int		PlayerIdPLen = sizeof(PlayerId);
+const int		ServerIdPLen = 8;
 
-class PlayerId {
+class ServerId {
   public:
     void*		pack(void*) const;
     void*		unpack(void*);
 
-    bool		operator==(const PlayerId&) const;
-    bool		operator!=(const PlayerId&) const;
+    bool		operator==(const ServerId&) const;
+    bool		operator!=(const ServerId&) const;
 
   public:
     // host and port in network byte order

@@ -35,8 +35,7 @@ class Player {
 				const char* callsign, const char* emailAddress);
     virtual		~Player();
 
-    PlayerId		id;			// my credentials
-    const PlayerId&	getId() const;
+    PlayerId		getId() const;
     TeamColor		getTeam() const;
     const char*		getCallSign() const;
     const char*		getEmailAddress() const;
@@ -60,6 +59,8 @@ class Player {
     short		getToTeleporter() const;
     float		getTeleporterProximity() const;
     virtual ShotPath*	getShot(int index) const = 0;
+
+    void		setId(PlayerId&);
 
     void		addPlayer(SceneDatabase*, bool colorblind,
 							bool showIDL);
@@ -127,6 +128,7 @@ class Player {
     static OpenGLTexture* tankTexture;
     static int		totalCount;
     bool		hunted;
+    PlayerId		id;			// my credentials
 
     // permanent data
     TeamColor		team;			// my team
@@ -171,7 +173,7 @@ class Player {
 // Player
 //
 
-inline const PlayerId&	Player::getId() const
+inline PlayerId		Player::getId() const
 {
   return id;
 }

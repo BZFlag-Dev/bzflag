@@ -226,10 +226,10 @@ void*			Address::unpack(void* _buf)
 }
 
 //
-// PlayerId
+// ServerId
 //
 
-void*			PlayerId::pack(void* _buf) const
+void*			ServerId::pack(void* _buf) const
 {
   // everything in PlayerId is already in network byte order
   unsigned char* buf = (unsigned char*)_buf;
@@ -240,9 +240,9 @@ void*			PlayerId::pack(void* _buf) const
   return (void*)buf;
 }
 
-void*			PlayerId::unpack(void* _buf)
+void*			ServerId::unpack(void* _buf)
 {
-  // everything in PlayerId should be stored in network byte order
+  // everything in ServerId should be stored in network byte order
   unsigned char* buf = (unsigned char*)_buf;
   int32_t hostaddr;
   ::memcpy(&hostaddr, buf, sizeof(int32_t));	buf += sizeof(int32_t);
@@ -252,13 +252,13 @@ void*			PlayerId::unpack(void* _buf)
   return (void*)buf;
 }
 
-bool			PlayerId::operator==(const PlayerId& id) const
+bool			ServerId::operator==(const ServerId& id) const
 {
   return serverHost.s_addr == id.serverHost.s_addr &&
 			port == id.port && number == id.number;
 }
 
-bool			PlayerId::operator!=(const PlayerId& id) const
+bool			ServerId::operator!=(const ServerId& id) const
 {
   return serverHost.s_addr != id.serverHost.s_addr ||
 			port != id.port || number != id.number;

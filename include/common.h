@@ -102,6 +102,8 @@ typedef uint_t		uint32_t;
 
 #endif
 
+typedef unsigned char	uint8_t;
+
 #if defined( macintosh ) || defined( __BEOS__ )
 
 // missing constants

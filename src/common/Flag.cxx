@@ -95,7 +95,7 @@ void*			Flag::pack(void* buf) const
   buf = nboPackUShort(buf, uint16_t(id));
   buf = nboPackUShort(buf, uint16_t(status));
   buf = nboPackUShort(buf, uint16_t(type));
-  buf = owner.pack(buf);
+  buf = nboPackUByte(buf, owner);
   buf = nboPackVector(buf, position);
   buf = nboPackVector(buf, launchPosition);
   buf = nboPackVector(buf, landingPosition);
@@ -111,7 +111,7 @@ void*			Flag::unpack(void* buf)
   buf = nboUnpackUShort(buf, data); id = FlagId(data);
   buf = nboUnpackUShort(buf, data); status = FlagStatus(data);
   buf = nboUnpackUShort(buf, data); type = FlagType(data);
-  buf = owner.unpack(buf);
+  buf = nboUnpackUByte(buf, owner);
   buf = nboUnpackVector(buf, position);
   buf = nboUnpackVector(buf, launchPosition);
   buf = nboUnpackVector(buf, landingPosition);

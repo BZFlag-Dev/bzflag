@@ -571,9 +571,6 @@ void			World::reviveDeadPlayer(Player* revivedPlayer)
   for (int i = 0; i < maxDeadPlayers; i++) {
     if (deadPlayers[i] == NULL)
       continue;
-    if (deadPlayers[i]->getId().serverHost.s_addr !=
-		revivedPlayer->getId().serverHost.s_addr)
-      continue;
     if (strcmp(deadPlayers[i]->getCallSign(), revivedPlayer->getCallSign())!=0)
       continue;
 
