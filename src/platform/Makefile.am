@@ -1,3 +1,19 @@
+if HAVE_SDL
+if LINUX
+libPlatform_a_SOURCES =				\
+	PlatformFactory.cxx			\
+	BzfDisplay.cxx				\
+	BzfVisual.cxx				\
+	BzfWindow.cxx				\
+	BzfMedia.cxx				\
+	SDLPlatformFactory.cxx			\
+	SDLPlatformFactory.h			\
+	SDLMedia.cxx				\
+	SDLMedia.h				\
+	SDLDisplay.h				\
+	SDLDisplay.cxx
+endif
+else
 if LINUX
 libPlatform_a_SOURCES =				\
 	PlatformFactory.cxx			\
@@ -13,17 +29,14 @@ libPlatform_a_SOURCES =				\
 	LinuxDisplay.h				\
 	LinuxMedia.cxx				\
 	LinuxMedia.h				\
-	SDLMedia.cxx				\
-	SDLMedia.h				\
 	usbjoy.cxx				\
-	SDLDisplay.h				\
-	SDLDisplay.cxx				\
 	XDisplay.cxx				\
 	XDisplay.h				\
 	XVisual.cxx				\
 	XVisual.h				\
 	XWindow.cxx				\
 	XWindow.h
+endif
 endif
 
 if SOLARIS
