@@ -76,7 +76,6 @@ bool BundleMgr::getLocaleList(std::vector<std::string> *list) {
   // There could have been stuff added to the list
   // prior to this call. Save the list count.
   int 	initSize = list->size();
-  char	fileName[255], *end = NULL;
   
   do {
 	  
