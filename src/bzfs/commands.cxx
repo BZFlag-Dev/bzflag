@@ -19,8 +19,16 @@
 
 // implementation-specific system headers
 #include <string>
+#ifdef HAVE_CSTDIO
 #include <cstdio>
+#else
+#include <stdio.h>
+#endif
+#ifdef HAVE_CSTRING
 #include <cstring>
+#else
+#include <string.h>
+#endif
 
 // implementation-specific bzflag headers
 #include "global.h"
