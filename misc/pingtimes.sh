@@ -51,7 +51,7 @@ echo -n "... getting server names .."
 servers=""
 line=1
 while [ $line -le $servercount ] ; do
-    fileline=`head -$line "$tempfile" | tail -1`
+    fileline=`head -n $line "$tempfile" | tail -n 1`
     server="`echo $fileline | awk '{print $1}'`"
     servers="$servers $server"
     line="`expr $line + 1`"
