@@ -136,11 +136,7 @@ SOURCE=..\..\src\bzflag\daylight.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\src\bzflag\HUDDialog.cxx
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\src\bzflag\HUDDialogStack.cxx
+SOURCE=..\..\src\bzflag\LocalPlayer.cxx
 # End Source File
 # Begin Source File
 
@@ -149,10 +145,6 @@ SOURCE=..\..\src\bzflag\HUDRenderer.cxx
 # Begin Source File
 
 SOURCE=..\..\src\bzflag\HUDui.cxx
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\src\bzflag\LocalPlayer.cxx
 # End Source File
 # Begin Source File
 
@@ -393,10 +385,6 @@ SOURCE=..\..\include\FlagWarpSceneNode.h
 # Begin Source File
 
 SOURCE=..\..\include\global.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\src\bzflag\HUDDialog.h
 # End Source File
 # Begin Source File
 

@@ -97,6 +97,14 @@ SOURCE=..\..\src\bzflag\HelpMenu.cxx
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\src\bzflag\HUDDialog.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\bzflag\HUDDialogStack.cxx
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\src\bzflag\JoinMenu.cxx
 # End Source File
 # Begin Source File
@@ -158,6 +166,14 @@ SOURCE=..\..\src\bzflag\GUIOptionsMenu.h
 # Begin Source File
 
 SOURCE=..\..\src\bzflag\HelpMenu.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\bzflag\HUDDialog.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\bzflag\HUDDialogStack.h
 # End Source File
 # Begin Source File
 
