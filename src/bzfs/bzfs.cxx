@@ -3606,7 +3606,6 @@ static void acceptClient()
   player[playerIndex].fd = fd;
   player[playerIndex].state = PlayerAccept;
   player[playerIndex].knowId = false;
-  memcpy(&player[playerIndex].taddr, &clientAddr, addr_len);
 
   // send server version and which port to reconnect to
   char buffer[8 + sizeof(serverAddr.sin_port)];
@@ -3625,36 +3624,24 @@ static void acceptClient()
 
 static void addClient(int acceptSocket)
 {
-  // accept game connection
-  struct sockaddr_in taddr;
-  AddrLen addr_len = sizeof(taddr);
-  int newfd = accept(acceptSocket, (struct sockaddr *)&taddr, &addr_len);
-
-  // see if accept worked
-  if (newfd == NotConnected) {
-    nerror("accepting client connection");
-    return;
-  }
-
-  // look for a matching IP
   int playerIndex;
   for (playerIndex = 0; playerIndex < curMaxPlayers; playerIndex++) {
     // check for clients that are reconnecting
-    if (player[playerIndex].state == PlayerAccept) {
-      if (player[playerIndex].taddr.sin_addr.s_addr == taddr.sin_addr.s_addr)
-        break;
-    }
+    if (player[playerIndex].state == PlayerAccept)
+      break;
   }
-  if (playerIndex == curMaxPlayers) {
-    DEBUG1("did not find reconnect for %s:%d on %i!\n",
-	inet_ntoa(taddr.sin_addr),
-	ntohs(taddr.sin_port),
-	newfd);
+  // close the old connection FIXME hope it's the right one
+  close(player[playerIndex].fd);
+  // accept game connection
+  AddrLen addr_len = sizeof(player[playerIndex].taddr);
+  player[playerIndex].fd = accept(acceptSocket,
+      (struct sockaddr *)&player[playerIndex].taddr, &addr_len);
+
+  // see if accept worked
+  if (player[playerIndex].fd == NotConnected) {
+    nerror("accepting client connection");
     return;
   }
-  close(player[playerIndex].fd);
-  player[playerIndex].fd = newfd;
-  memcpy(&player[playerIndex].taddr, &taddr, addr_len);
 
   // turn off packet buffering and set socket non-blocking
   setNoDelay(player[playerIndex].fd);
