@@ -40,17 +40,17 @@ INSTALL_DATA_DIR = /usr/X11R6/lib/X11/bzflag/data
 #
 # tools
 #
-AR	= /usr/bin/ar cru
-CC	= /usr/bin/gcc
-CXX	= /usr/bin/g++
+AR	= ar cru
+CC	= gcc
+CXX	= g++
 CD	= cd
-CP	= /bin/cp
-LD	= /usr/bin/ld
-MKDIR	= /bin/mkdir
-NROFF	= /usr/bin/nroff
-RM	= /bin/rm -f
+CP	= cp
+LD	= ld
+MKDIR	= mkdir
+NROFF	= nroff
+RM	= rm -f
 RMR	= $(RM) -r
-SHELL	= /bin/sh
+SHELL	= sh
 ECHO	= echo
 
 #
