@@ -544,14 +544,24 @@ void			Player::addToScene(SceneDatabase* scene,
 }
 
 
-void			Player::setHidden(bool hidden)
+bool			Player::needsToBeRendered(bool cloaked, bool showTreads)
 {
-  tankNode->setHidden(hidden);
-}
+  if (cloaked && !showTreads) {
+    return false;
+  }
 
-void			Player::setCloaked(bool invisible)
-{
-  tankNode->setCloaked(invisible);
+  // setup the visibility properties
+  if (cloaked) {
+    tankNode->setCloaked(true); // show the fading effect
+  }
+  else if (!showTreads) {
+    tankNode->setHidden(true); // just shadows
+  }
+  else {
+    tankNode->setHidden(false); // show all
+  }
+  
+  return true;
 }
 
 

@@ -225,6 +225,18 @@ GUIOptionsMenu::GUIOptionsMenu()
   option->createSlider(9);
   option->update();
   list.push_back(option);
+#if defined(DEBUG_RENDERING)
+  // Display Treads
+  option = new HUDuiList;
+  option->setFontFace(fontFace);
+  option->setLabel("Display Treads:");
+  option->setCallback(callback, (void*)"T");
+  options = &option->getList();
+  options->push_back(std::string("Off"));
+  options->push_back(std::string("On"));
+  option->update();
+  list.push_back(option);
+#endif // DEBUG_RENDERING
 
   initNavigation(list, 1, list.size()-1);
 }
@@ -300,6 +312,7 @@ void			GUIOptionsMenu::resize(int width, int height)
     ((HUDuiList*)list[i++])->setIndex(static_cast<int>(BZDB.eval("killerhighlight")));
     ((HUDuiList*)list[i++])->setIndex(static_cast<int>(BZDB.eval("pulseRate") * 5) - 1);
     ((HUDuiList*)list[i++])->setIndex(static_cast<int>(BZDB.eval("pulseDepth") * 10) - 1);
+    ((HUDuiList*)list[i++])->setIndex(BZDB.isTrue("showTreads") ? 1 : 0);
   }
 }
 
@@ -407,6 +420,11 @@ void			GUIOptionsMenu::callback(HUDuiControl* w, void* data)
     case 'd':
       {
 	BZDB.set("pulseDepth", string_util::format("%f", (float)(list->getIndex() + 1) / 10.0f));
+	break;
+      }
+    case 'T':
+      {
+        BZDB.set("showTreads", list->getIndex() ? "1" : "0");
 	break;
       }
   }

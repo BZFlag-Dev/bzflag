@@ -4233,25 +4233,21 @@ void			drawFrame(const float dt)
     // add dynamic nodes
     SceneDatabase* scene = sceneRenderer->getSceneDatabase();
     if (scene && myTank) {
-      // add my tank
-      if (!(myTank->getFlag() == Flags::Cloaking)) {
+
+      // add my tank if required
+      const bool showTreads = BZDB.isTrue("showTreads");
+      const bool cloaked = myTank->getFlag() == Flags::Cloaking;
+      if (myTank->needsToBeRendered(cloaked, showTreads)) {
         myTank->addToScene(scene, myTank->getTeam(), false);
-        if (roaming) {
-	  myTank->setHidden(false);
-        } else {
-	  if (!BZDB.isTrue("showTreads")) {
-	    // or make it hidden
-	    myTank->setHidden(true);
-          }
-        }
       }
 
       // add my shells
       myTank->addShots(scene, false);
 
       // add server shells
-      if (world)
+      if (world) {
 	world->getWorldWeapons()->addShots(scene, false);
+      }
 
       // add antidote flag
       myTank->addAntidote(scene);
@@ -4262,7 +4258,7 @@ void			drawFrame(const float dt)
       const bool colorblind = (myTank->getFlag() == Flags::Colorblindness);
 
       // add other tanks and shells
-      for (i = 0; i < curMaxPlayers; i++)
+      for (i = 0; i < curMaxPlayers; i++) {
 	if (player[i]) {
 	  player[i]->addShots(scene, colorblind);
 	  overrideTeam = RogueTeam;
@@ -4274,12 +4270,20 @@ void			drawFrame(const float dt)
 	    else
 	      overrideTeam = player[i]->getTeam();
 	  }
-	  player[i]->addToScene(scene, overrideTeam, true);
-	  if ((player[i]->getFlag() == Flags::Cloaking) && (myTank->getFlag() != Flags::Seer))
-	    player[i]->setCloaked();
-	  else
-	    player[i]->setHidden(roaming && roamView == roamViewFP && roamTrackWinner == i);
-	}
+
+          const bool cloaked = (player[i]->getFlag() == Flags::Cloaking) &&
+                               (myTank->getFlag() != Flags::Seer);
+          const bool showTreads = BZDB.isTrue("showTreads");
+          const bool following = roaming && (roamView == roamViewFP) && 
+                                 (roamTrackWinner == i);
+          const bool showPlayer = !following || showTreads;
+                               
+          // add player tank if required
+          if (player[i]->needsToBeRendered(cloaked, showPlayer)) {
+            player[i]->addToScene(scene, player[i]->getTeam(), false);
+          }
+        }
+      }
 
       // add explosions
       addExplosions(scene);
