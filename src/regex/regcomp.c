@@ -109,9 +109,6 @@ static int freezeset __P((struct parse *p, cset *cs));
 static int firstch __P((struct parse *p, cset *cs));
 static int nch __P((struct parse *p, cset *cs));
 static void mcadd __P((struct parse *p, cset *cs, char *cp));
-static void mcsub __P((cset *cs, char *cp));
-static int mcin __P((cset *cs, char *cp));
-static char *mcfind __P((cset *cs, char *cp));
 static void mcinvert __P((struct parse *p, cset *cs));
 static void mccase __P((struct parse *p, cset *cs));
 static int isinsets __P((struct re_guts *g, int c));
@@ -125,6 +122,11 @@ static void enlarge __P((struct parse *p, sopno size));
 static void stripsnug __P((struct parse *p, struct re_guts *g));
 static void findmust __P((struct parse *p, struct re_guts *g));
 static sopno pluscount __P((struct parse *p, struct re_guts *g));
+#if 0  /* mcsub/mcin UNUSED */
+static void mcsub __P((cset *cs, char *cp));
+static int mcin __P((cset *cs, char *cp));
+static char *mcfind __P((cset *cs, char *cp));
+#endif
 
 #ifdef __cplusplus
 }
@@ -291,9 +293,9 @@ register struct parse *p;
 int stop;			/* character this ERE should end at */
 {
 	register char c;
-	register sopno prevback;
-	register sopno prevfwd;
-	register sopno conc;
+	register sopno prevback = (sopno)0;
+	register sopno prevfwd = (sopno)0;
+	register sopno conc = (sopno)0;
 	register int first = 1;		/* is this the first alternative? */
 
 	for (;;) {
@@ -1267,6 +1269,8 @@ register char *cp;
 	cs->multis[cs->smultis - 1] = '\0';
 }
 
+#if 0  /* mcsub/mcin UNUSED */
+
 /*
  - mcsub - subtract a collating element from a cset
  == static void mcsub(register cset *cs, register char *cp);
@@ -1306,6 +1310,7 @@ register char *cp;
 	return(mcfind(cs, cp) != NULL);
 }
 
+
 /*
  - mcfind - find a collating element in a cset
  == static char *mcfind(register cset *cs, register char *cp);
@@ -1324,6 +1329,8 @@ register char *cp;
 			return(p);
 	return(NULL);
 }
+
+#endif  /* mcsub/mcin UNUSED */
 
 /*
  - mcinvert - invert the list of collating elements in a cset
@@ -1594,7 +1601,7 @@ register struct re_guts *g;
 {
 	register sop *scan;
 	sop *start;
-	register sop *newstart;
+	register sop *newstart = (sop *)0;
 	register sopno newlen;
 	register sop s;
 	register char *cp;
