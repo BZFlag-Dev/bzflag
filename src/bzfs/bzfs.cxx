@@ -3122,15 +3122,10 @@ static WorldInfo *defineTeamWorld()
 
       // make teleporters
       if (clOptions.useTeleporters) {
-	int numLinks, teamFactor;
-	int numTeleporters = (8 + int(8 * (float)bzfrand()));
-	if (numTeams > 2)
-	  teamFactor = 4;
-	else
-	  teamFactor = 2;
-	numTeleporters -= numTeleporters % teamFactor;
-	numLinks = 2 * numTeleporters / teamFactor;
-	int (*linked)[2] = (int(*)[2])new int[numLinks];
+	const int teamFactor = numTeams > 2 ? 4 : 2;
+	const int numTeleporters = (8 + int(8 * (float)bzfrand())) / teamFactor * teamFactor;
+	const int numLinks = 2 * numTeleporters / teamFactor;
+	int (*linked)[2] = new int[numLinks][2];
 	for (i = 0; i < numTeleporters;) {
 	  const float x = (WorldSize - 4.0f * TeleBreadth) * ((float)bzfrand() - 0.5f);
 	  const float y = (WorldSize - 4.0f * TeleBreadth) * ((float)bzfrand() - 0.5f);
@@ -3338,7 +3333,8 @@ static WorldInfo *defineRandomWorld()
   // make boxes
   int i;
   float h = BoxHeight;
-  for (i = 0; i < CitySize * CitySize; i++) {
+  const int numBoxes = int((0.5f + 0.7f * bzfrand()) * CitySize * CitySize);
+  for (i = 0; i < numBoxes; i++) {
     if (clOptions.randomHeights)
       h = BoxHeight * ( 2.0f * (float)bzfrand() + 0.5f);
       world->addBox(WorldSize * ((float)bzfrand() - 0.5f),
@@ -3349,7 +3345,8 @@ static WorldInfo *defineRandomWorld()
 
   // make pyramids
   h = PyrHeight;
-  for (i = 0; i < CitySize * CitySize; i++) {
+  const int numPyrs = int((0.5f + 0.7f * bzfrand()) * CitySize * CitySize);
+  for (i = 0; i < numPyrs; i++) {
     if (clOptions.randomHeights)
       h = PyrHeight * ( 2.0f * (float)bzfrand() + 0.5f);
       world->addPyramid(WorldSize * ((float)bzfrand() - 0.5f),
@@ -3360,7 +3357,7 @@ static WorldInfo *defineRandomWorld()
 
   if (clOptions.useTeleporters) {
     // make teleporters
-    int (*linked)[2] = (int(*)[2])new int[2 * numTeleporters];
+    int (*linked)[2] = new int[numTeleporters][2];
     for (i = 0; i < numTeleporters;) {
       const float x = (WorldSize - 4.0f * TeleBreadth) * ((float)bzfrand() - 0.5f);
       const float y = (WorldSize - 4.0f * TeleBreadth) * ((float)bzfrand() - 0.5f);
