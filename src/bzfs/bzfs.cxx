@@ -4715,12 +4715,13 @@ static void parseCommand(const char *message, int t)
     size_t argStart = 0;
     while ((argStart < (messageLength - 5 - nextChar - commandLength)) &&
 	   (*(message+5+nextChar+commandLength+argStart) != '\0') &&
-	   (!isAlphanumeric(*(message+5+nextChar+commandLength+argStart)))) {
+	   ((!isPrintable(*(message+5+nextChar+commandLength+argStart))) ||
+	    (isWhitespace(*(message+5+nextChar+commandLength+argStart))))) {
       argStart++;
     }
     size_t argStartOffset=5+nextChar+commandLength+argStart;
 
-#if 0
+#if 1
     sprintf(reply,"DEBUG: callsign is [%s] with nextChar %d and callsign at %d", message+argStartOffset, (int)nextChar, (int)argStartOffset);
     sendMessage(ServerPlayer, t, reply, true);
 #endif
@@ -4775,7 +4776,7 @@ static void parseCommand(const char *message, int t)
 	}
       }
 
-#if 0
+#if 1
       sprintf(reply,"DEBUG: %s callsign is [%s]", command, voteplayer);
       sendMessage(ServerPlayer, t, reply, true);
 #endif
@@ -4794,7 +4795,7 @@ static void parseCommand(const char *message, int t)
       bool foundPlayer=false;
       std::string playerIP = "";
       for (int v = 0; v < curMaxPlayers; v++) {
-#if 0
+#if 1
 	sprintf(reply,"DEBUG: comparing %s == %s", voteplayer, player[v].callSign);
 	sendMessage(ServerPlayer, t, reply, true);
 #endif
