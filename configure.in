@@ -500,18 +500,16 @@ AC_ARG_ENABLE(adns,  [  --enable-adns           use asynchronous DNS resolver],
   yes) use_adns=true ;;
   no)  use_adns=false ;;
   *) AC_MSG_ERROR(bad value ${enableval} for --enable-adns) ;;
-esac],[use_adns=false])
-if $use_adns ; then
-  AC_DEFINE([HAVE_ADNS], 1, [Define if ADNS is available])
-fi
-
+esac],[use_adns=true])
 if test x$use_adns = xtrue ; then
-AC_TRY_LINK([
+
+  AC_TRY_LINK([
 #include <adns.h>],
 [adns_init(0, (adns_initflags)0, 0)],
 [AC_DEFINE(HAVE_ADNS_H, 1, [Define if you have ADNS header available])],
 [AC_MSG_WARN([adns seems to not be available on your system.
 See http://www.chiark.greenend.org.uk/~ian/adns/ if you want to be able to use hostmask based bans.])])
+
 fi
 
 AC_ARG_ENABLE(client, [  --disable-client        servers-only build])
