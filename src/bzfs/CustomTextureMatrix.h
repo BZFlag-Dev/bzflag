@@ -10,42 +10,27 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifndef __CUSTOMTETRA_H__
-#define __CUSTOMTETRA_H__
+#ifndef __CUSTOM_TEXUTRE_MATRIX_H__
+#define __CUSTOM_TEXUTRE_MATRIX_H__
 
 /* interface header */
 #include "WorldFileObject.h"
 
-/* local interface header */
-#include "WorldInfo.h"
+/* common headers */
+#include "TextureMatrix.h"
 
-/* system header */
-#include <string>
-
-class CustomTetra : public WorldFileObject {
+class CustomTextureMatrix : public WorldFileObject {
   public:
-    CustomTetra();
+    CustomTextureMatrix();
+    ~CustomTextureMatrix();
     virtual bool read(const char *cmd, std::istream& input);
     virtual void write(WorldInfo*) const;
+
   private:
-    int vertexCount;
-
-    bool visible[4];
-    float vertices[4][3];
-    bool useColor[4];
-    float colors[4][4];
-    bool useNormals[4];
-    float normals[4][3][3];
-    bool useTexCoords[4];
-    float texCoords[4][3][2];
-    int textureMatrices[4];
-    std::string textures[4];
-
-    bool driveThrough; //FIXME
-    bool shootThrough; //FIXME
+    mutable TextureMatrix* texmat;
 };
 
-#endif  /* __CUSTOMTETRA_H__ */
+#endif  /* __CUSTOM_TEXUTRE_MATRIX_H__ */
 
 // Local variables: ***
 // mode: C++ ***

@@ -15,11 +15,8 @@
 /* interface header */
 #include "CustomTetra.h"
 
-/* system implementation headers */
-#include <math.h>
-
 /* common implementation headers */
-#include "StateDatabase.h"
+#include "TextureMatrix.h"
 
 
 CustomTetra::CustomTetra()
@@ -29,10 +26,10 @@ CustomTetra::CustomTetra()
   // make all of the planes visible
   for (int i = 0; i < 4; i++) {
     visible[i] = true;
-    colored[i] = false;
     for (int j = 0; j < 4; j++) {
       colors[j][i] = 1.0f;
     }
+    useColor[i] = false;
     useNormals[i] = false;
     useTexCoords[i] = false;
     textureMatrices[i] = -1;
@@ -68,7 +65,7 @@ bool CustomTetra::read(const char *cmd, std::istream& input)
       input >> bytecolor[0] >> bytecolor[1]
             >> bytecolor[2] >> bytecolor[3];
       for (int v = 0; v < 4; v++) {
-        colored[v] = true;
+        useColor[v] = true;
         for (int c = 0; c < 4; c++) {
           colors[v][c] = (float)bytecolor[c];
         }
@@ -78,14 +75,14 @@ bool CustomTetra::read(const char *cmd, std::istream& input)
       std::cout << "Tetrahedron color for extra vertex" << std::endl;
       // keep on chugging
     }
-    else if (colored[vertexCount - 1]) {
+    else if (useColor[vertexCount - 1]) {
       std::cout << "Extra tetrahedron color" << std::endl;
       // keep on chugging
     }
     else {
       input >> bytecolor[0] >> bytecolor[1]
             >> bytecolor[2] >> bytecolor[3];
-      colored[vertexCount - 1] = true;
+      useColor[vertexCount - 1] = true;
       float* color = colors[vertexCount - 1];
       for (int c = 0; c < 4; c++) {
         color[c] = (float)bytecolor[c];
@@ -139,7 +136,7 @@ bool CustomTetra::read(const char *cmd, std::istream& input)
       input >> textures[vertexCount - 1];
     }
   }
-  else if (strcasecmp(cmd, "texmatrix") == 0) {
+  else if (strcasecmp(cmd, "texmat") == 0) {
     if (vertexCount < 1) {
       std::cout << "TextureMatrix defined before any vertex" << std::endl;
       // keep on chugging
@@ -178,7 +175,12 @@ void CustomTetra::write(WorldInfo *world) const
     return;
   }
 
-  world->addTetra(vertices, visible, colored, colors, driveThrough, shootThrough);
+  world->addTetra(vertices, visible,
+                  useColor, colors,
+                  useNormals, normals,
+                  useTexCoords, texCoords,
+                  textureMatrices, textures, 
+                  driveThrough, shootThrough);
 }
 
 // Local variables: ***

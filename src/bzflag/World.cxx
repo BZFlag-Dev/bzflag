@@ -23,6 +23,8 @@
 #include "BZDBCache.h"
 #include "TextureManager.h"
 #include "FileManager.h"
+#include "DynamicColor.h"
+#include "TextureMatrix.h"
 
 
 //
@@ -65,6 +67,14 @@ World::~World()
   delete worldWeapons;
   for (i = 0; i < NumTeams; i++) {
     bases[i].clear();
+  }
+  for (i = 0; i < NumTeams; i++) {
+    bases[i].clear();
+  }
+  std::vector<MeshObstacle*>::iterator it;
+  for (it = meshes.begin(); it != meshes.end(); it++) {
+    MeshObstacle* mesh = *it;
+    delete mesh;
   }
 }
 
@@ -636,6 +646,20 @@ bool			World::writeWorld(std::string filename)
 	out << "\tflagHeight " << flagHeight << std::endl;
       }
       out << "end" << std::endl << std::endl;
+    }
+  }
+  
+  // Write dynamic colors
+  DYNCOLORMGR.print(out, 3);
+
+  // Write texture matrices
+  TEXMATRIXMGR.print(out, 3);
+
+  // Write meshs
+  {
+    for (std::vector<MeshObstacle*>::iterator it = meshes.begin(); it != meshes.end(); ++it) {
+      MeshObstacle* mesh = *it;
+      mesh->print(out, 3);
     }
   }
 

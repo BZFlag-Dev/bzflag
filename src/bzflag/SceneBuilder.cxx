@@ -36,6 +36,7 @@
 #include "TetraSceneNodeGenerator.h"
 #include "TeleporterSceneNodeGenerator.h"
 #include "WallSceneNodeGenerator.h"
+#include "MeshSceneNodeGenerator.h"
 
 //
 // SceneDatabaseBuilder
@@ -235,6 +236,12 @@ SceneDatabase*		SceneDatabaseBuilder::make(const World* world)
     addWall(db, *wallScan);
     ++wallScan;
   }
+  const std::vector<MeshObstacle*> &meshes = world->getMeshes();
+  std::vector<MeshObstacle*>::const_iterator meshScan = meshes.begin();
+  while (meshScan != meshes.end()) {
+    addMesh(db, *meshScan);
+    ++meshScan;
+  }
   const std::vector<BoxBuilding> &boxes = world->getBoxes();
   std::vector<BoxBuilding>::const_iterator boxScan = boxes.begin();
   while (boxScan != boxes.end()) {
@@ -301,6 +308,18 @@ void			SceneDatabaseBuilder::addWall(SceneDatabase* db,
 
     db->addStaticNode(node);
     part = (part + 1) % 5;
+  }
+  delete nodeGen;
+}
+
+void			SceneDatabaseBuilder::addMesh(SceneDatabase* db,
+						const MeshObstacle* mesh)
+{
+  WallSceneNode* node;
+  MeshSceneNodeGenerator* nodeGen = new MeshSceneNodeGenerator (mesh);
+
+  while ((node = nodeGen->getNextNode(1.0f, 1.0f, wallLOD))) {
+    db->addStaticNode(node);
   }
   delete nodeGen;
 }
@@ -419,8 +438,8 @@ void			SceneDatabaseBuilder::addTetra(SceneDatabase* db,
 
   bool useColorTexture = false;
   // try object, standard, then default
-  if (o.userTextures[0].size())
-    tetraTexture = tm.getTextureID(o.userTextures[0].c_str(),false);
+  if (o.textures[0].size())
+    tetraTexture = tm.getTextureID(o.textures[0].c_str(),false);
   if (tetraTexture < 0)
     tetraTexture = tm.getTextureID(BZDB.get("tetraWallTexture").c_str(),false);
 
@@ -442,10 +461,10 @@ void			SceneDatabaseBuilder::addTetra(SceneDatabase* db,
     }
 
     if (!o.isColoredPlane(realPart)) {
-      node->setColor(tetraColors[part]);
-      node->setModulateColor(tetraModulateColors[part]);
-      node->setLightedColor(tetraLightedColors[part]);
-      node->setLightedModulateColor(tetraLightedModulateColors[part]);
+      node->setColor(tetraColors[realPart]);
+      node->setModulateColor(tetraModulateColors[realPart]);
+      node->setLightedColor(tetraLightedColors[realPart]);
+      node->setLightedModulateColor(tetraLightedModulateColors[realPart]);
       node->setUseColorTexture(useColorTexture);
     }
     else {
@@ -456,8 +475,13 @@ void			SceneDatabaseBuilder::addTetra(SceneDatabase* db,
       node->setLightedModulateColor(color);
       node->setUseColorTexture(false);
     }
+    
     node->setMaterial(tetraMaterial);
     node->setTexture(tetraTexture);
+    int texmat = o.getTextureMatrix(realPart);
+    if (texmat >= 0) {
+      node->setTextureMatrix(texmat);
+    }
 
     db->addStaticNode(node);
     part = (part + 1) % 4;

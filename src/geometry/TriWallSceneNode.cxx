@@ -21,19 +21,12 @@
 // TriWallSceneNode::Geometry
 //
 
-TriWallSceneNode::Geometry::Geometry(TriWallSceneNode* _wall,
-				int eCount,
-				const GLfloat base[3],
-				const GLfloat uEdge[3],
-				const GLfloat vEdge[3],
-				const GLfloat* _normal,
-				float uRepeats, float vRepeats) :
-				wall(_wall),
-				style(0),
-				de(eCount),
-				normal(_normal),
-				vertex((eCount+1) * (eCount+2) / 2),
-				uv((eCount+1) * (eCount+2) / 2)
+TriWallSceneNode::Geometry::Geometry(TriWallSceneNode* _wall, int eCount,
+  const GLfloat base[3], const GLfloat uEdge[3], const GLfloat vEdge[3],
+  const GLfloat* _normal, float uRepeats, float vRepeats) :
+    wall(_wall), style(0), de(eCount), normal(_normal),
+    vertex((eCount+1) * (eCount+2) / 2),
+    uv((eCount+1) * (eCount+2) / 2)
 {
   for (int n = 0, j = 0; j <= eCount; j++) {
     const int k = eCount - j;
@@ -49,10 +42,12 @@ TriWallSceneNode::Geometry::Geometry(TriWallSceneNode* _wall,
   }
 }
 
+
 TriWallSceneNode::Geometry::~Geometry()
 {
   // do nothing
 }
+
 
 #define	RENDER(_e)							\
   for (int k = 0, t = 0; t < de; t++) {					\
@@ -77,20 +72,24 @@ void			TriWallSceneNode::Geometry::render()
   else drawV();
 }
 
+
 void			TriWallSceneNode::Geometry::drawV() const
 {
   RENDER(EMITV)
 }
+
 
 void			TriWallSceneNode::Geometry::drawVT() const
 {
   RENDER(EMITVT)
 }
 
+
 const GLfloat*		TriWallSceneNode::Geometry::getVertex(int i) const
 {
   return vertex[i];
 }
+
 
 //
 // TriWallSceneNode
@@ -203,6 +202,7 @@ TriWallSceneNode::TriWallSceneNode(const GLfloat base[3],
   setNumLODs(numLevels, areas);
 }
 
+
 TriWallSceneNode::~TriWallSceneNode()
 {
   // free LODs
@@ -212,6 +212,7 @@ TriWallSceneNode::~TriWallSceneNode()
   delete[] nodes;
   delete shadowNode;
 }
+
 
 bool			TriWallSceneNode::cull(const ViewFrustum& frustum) const
 {
@@ -237,12 +238,14 @@ bool			TriWallSceneNode::cull(const ViewFrustum& frustum) const
   return false;
 }
 
+
 int			TriWallSceneNode::split(const float* plane,
 				SceneNode*& front, SceneNode*& back) const
 {
   return WallSceneNode::splitWall(plane,
 				nodes[0]->vertex, nodes[0]->uv, front, back);
 }
+
 
 void			TriWallSceneNode::addRenderNodes(
 				SceneRenderer& renderer)
@@ -252,11 +255,13 @@ void			TriWallSceneNode::addRenderNodes(
   renderer.addRenderNode(nodes[lod], &getGState());
 }
 
+
 void			TriWallSceneNode::addShadowNodes(
 				SceneRenderer& renderer)
 {
   renderer.addShadowNode(shadowNode);
 }
+
 
 void                    TriWallSceneNode::getExtents(float* _mins, float* _maxs) const
 {
@@ -264,6 +269,7 @@ void                    TriWallSceneNode::getExtents(float* _mins, float* _maxs)
   memcpy (_maxs, maxs, 3 * sizeof(float));
   return;
 }
+
 
 bool                    TriWallSceneNode::inAxisBox(const float* boxMins,
                                                     const float* boxMaxs) const
@@ -283,10 +289,12 @@ bool                    TriWallSceneNode::inAxisBox(const float* boxMins,
   return testPolygonInAxisBox (3, vertices, getPlane(), boxMins, boxMaxs);
 }
 
+
 int                     TriWallSceneNode::getVertexCount () const
 {
   return 3;
 }
+
 
 const GLfloat*          TriWallSceneNode::getVertex (int vertex) const
 {

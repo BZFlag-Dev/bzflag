@@ -175,8 +175,8 @@ LDADD =	\
 	../3D/lib3D.a			\
 	../net/libNet.a			\
 	../common/libCommon.a		\
-	../game/libGame.a		\
 	../obstacle/libObstacle.a	\
+	../game/libGame.a		\
 	$(NACLIB)			\
 	../platform/libPlatform.a	\
 	../ogl/libGLKit.a		\

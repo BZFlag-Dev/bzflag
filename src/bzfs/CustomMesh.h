@@ -10,42 +10,50 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifndef __CUSTOMTETRA_H__
-#define __CUSTOMTETRA_H__
+#ifndef __CUSTOM_MESH_H__
+#define __CUSTOM_MESH_H__
 
 /* interface header */
 #include "WorldFileObject.h"
 
-/* local interface header */
+/* local interface headers */
 #include "WorldInfo.h"
+#include "CustomMeshFace.h"
 
-/* system header */
+/* common interface headers */
+#include "MeshMaterial.h"
+#include "MeshObstacle.h"
+#include "vectors.h"
+
+/* system headers */
 #include <string>
+#include <vector>
 
-class CustomTetra : public WorldFileObject {
+class CustomMesh : public WorldFileObject {
   public:
-    CustomTetra();
+    CustomMesh();
+    ~CustomMesh();
     virtual bool read(const char *cmd, std::istream& input);
     virtual void write(WorldInfo*) const;
+
   private:
-    int vertexCount;
 
-    bool visible[4];
-    float vertices[4][3];
-    bool useColor[4];
-    float colors[4][4];
-    bool useNormals[4];
-    float normals[4][3][3];
-    bool useTexCoords[4];
-    float texCoords[4][3][2];
-    int textureMatrices[4];
-    std::string textures[4];
+    MeshMaterial material; // holds current defaults
+    
+    bool driveThrough;
+    bool shootThrough;
 
-    bool driveThrough; //FIXME
-    bool shootThrough; //FIXME
+    std::vector<char> checkTypes;
+    std::vector<cfvec3> checkPoints;
+    std::vector<cfvec3> vertices;
+    std::vector<cfvec3> normals;
+    std::vector<cfvec2> texcoords;
+
+    CustomMeshFace* face;
+    std::vector<CustomMeshFace*> faces;
 };
 
-#endif  /* __CUSTOMTETRA_H__ */
+#endif  /* __CUSTOM_MESH_H__ */
 
 // Local variables: ***
 // mode: C++ ***

@@ -918,13 +918,19 @@ command line or configuration file option. The world file specified by the -worl
 option is a text based file that contains a list of world objects. This file can
 be created using programs found on sourceforge.net through cvs, or can be hand edited.
 
-The format of this text file consists of any number of objects listed in any order.
-The list of world types consists of
+The format of this text file consists of any number of objects listed in any order
+(except that teleporters must come before links, and texmatrix's must come before
+they are used in a mesh). The list of world types consists of:
 
-
+.B	texmatrix
+.br
+.B	mesh
+.br
 .B	box
 .br
 .B	pyramid
+.br
+.B	tetra
 .br
 .B	teleporter
 .br
@@ -946,13 +952,93 @@ and a list of attributes for that object, one per line, inbetween. Attributes ma
 any order. Attributes have default values, and if that is good enough, the attribute need not
 be listed. Words are always specified in lowercase. Line comments can be specified by placing a
 # sign at the start of the line. For documentation purposes, you can tag each object by adding
-a name attribute. There is no set limit to the number of times you may use box, pyramid, tetra,
-teleporter, link, base, weapon, and zone objects. You may only supply one world object and one
-options object. The options object contains command line arguments that are used to configure the
-server's game mode, but can not contain server specific options such as -p, -passwd, and -conf.
+a name attribute. There is no set limit to the number of times you may use any of the objects
+except for the world and options objects, they can only be specified once. The options object
+contains command line arguments that are used to configure the server's game mode, but can not
+contain server specific options such as -p, -passwd, and -conf.
 
 .br
 In the following examples, the values are the defaults.
+
+.B The Texture Matrix object
+
+\fBtexmatrix\fR
+.br
+\fB  name\fR example_texmat
+.br
+\fB  shift\fR 0.1 0.2  # u/v freqs
+.br
+\fB  rotate\fR 0.2 0.5 0.5  # rotation freq, u/v centers
+.br
+\fB  scale\fR 0.1 0.2 2 3 0.5 0.5  # u/v freqs, u/v scales, u/v centers
+.br
+\fBend\fR
+.br
+
+.B The Mesh object
+
+\fBmesh\fR
+.br
+\fB  name\fR example_mesh
+.br
+\fB  inside\fR 5.5 4.5 1.2  # add an inside point  (\fBrepeatable\fR)
+.br
+\fB  outside\fR 0 0 1000  # add an outside point  (\fBrepeatable\fR)
+.br
+\fB  vertex\fR 100 200 300  # add a vertex  (\fBrepeatable\fR)
+.br
+\fB  normal\fR 1.0 0 0  # add a normal  (\fBrepeatable\fR)
+.br
+\fB  texcoord\fR 0.1 0.75  # add a texture coordinate  (\fBrepeatable\fR)
+.br
+\fB  ambient\fR 0.2 0.2 0.2 1.0  # set working ambient RGBA
+.br
+\fB  diffuse\fR 0.8 0.8 0.8 1.0  # set working diffuse RGBA
+.br
+\fB  specular\fR 0.0 0.0 0.0 1.0  # set working specular RGBA
+.br
+\fB  emission\fR 0.0 0.0 0.0 1.0  # set working emission RGBA
+.br
+\fB  shininess\fR 0.0  # set working shininess
+.br
+\fB  texture\fR filename  # set working texture (without PNG extension)
+.br
+\fB  notexture\fR # specify that no texture be used
+.br
+\fB  texmat\fR -1  # set working texture matrix  (-1 for none)
+.br
+\fB  reset\fR  # restore default values
+.br
+\fB  face\fR  # start a face  (\fBrepeatable\fR)
+.br
+    # faces must be convex polygons
+.br
+\fB    vertices\fR 1 2 4 3 5  # list of vertices
+.br
+\fB    normals\fR 3 5 4 6 7  # list of normals
+.br
+\fB    texcoords\fR 10 3 2 4 9  # list of texture coordinates
+.br
+\fB    ambient\fR 0.1 0.2 0.3 1.0  # set face's ambient RGBA
+.br
+\fB    diffuse\fR 0.1 0.2 0.3 1.0  # set face's diffuse RGBA
+.br
+\fB    specular\fR 0.1 0.2 0.3 1.0  # set face's specular RGBA
+.br
+\fB    emission\fR 0.1 0.2 0.3 1.0  # set face's emission RGBA
+.br
+\fB    shininess\fR 0.1  # set face's shininess
+.br
+\fB    texture\fR filename  # set face's texture (without PNG extension)
+.br
+\fB    notexture\fR # specify that no texture be used
+.br
+\fB    texmat\fR 0  # set face's texture matrix  (-1 for none)
+.br
+\fB  endface\fR  # end the face
+.br
+\fBend\fR
+.br
 
 .B The Box object
 

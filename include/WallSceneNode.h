@@ -57,6 +57,8 @@ class WallSceneNode : public SceneNode {
     void		setLightedModulateColor(const GLfloat* rgba);
     void		setMaterial(const OpenGLMaterial&);
     void		setTexture(const int);
+    void		setTextureMatrix(const int);
+    void		setDynamicColor(const float* color);
 
     void		setColor();
 
@@ -85,15 +87,16 @@ class WallSceneNode : public SceneNode {
     GLfloat             maxs[3];
 
   private:
-    static void		splitEdge(const GLfloat* p1, const GLfloat* p2,
-				const GLfloat* uv1, const GLfloat* uv2,
-				const GLfloat* plane,
-				GLfloat* p, GLfloat* uv); // const
+    static void splitEdge(float d1, float d2,
+                          const GLfloat* p1, const GLfloat* p2,
+                          const GLfloat* uv1, const GLfloat* uv2,
+                          GLfloat* p, GLfloat* uv); //const
 
   private:
     int			numLODs;
     float*		elementAreas;
     GLfloat		plane[4];	// unit normal, distance to origin
+    const GLfloat*	dynamicColor;
     GLfloat		color[4];
     GLfloat		modulateColor[4];
     GLfloat		lightedColor[4];

@@ -25,6 +25,7 @@
 class SceneRenderer;
 class SceneDatabase;
 class WallObstacle;
+class MeshObstacle;
 class BoxBuilding;
 class PyramidBuilding;
 class BaseBuilding;
@@ -41,6 +42,7 @@ class SceneDatabaseBuilder {
 
   protected:
     void		addWall(SceneDatabase*, const WallObstacle&);
+    void		addMesh(SceneDatabase*, const MeshObstacle*);
     void		addBox(SceneDatabase*, const BoxBuilding&);
     void		addPyramid(SceneDatabase*, const PyramidBuilding&);
     void		addBase(SceneDatabase*, const BaseBuilding&);

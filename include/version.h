@@ -25,7 +25,7 @@
  * broke it
  */
 #ifndef BZ_PROTO_VERSION
-#define BZ_PROTO_VERSION	"0000"
+#define BZ_PROTO_VERSION	"0001"
 #endif
 
 #ifndef BZ_MAJOR_VERSION

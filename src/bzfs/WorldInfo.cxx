@@ -18,6 +18,8 @@
 #include "Pack.h"
 #include "Protocol.h"
 #include "Intersect.h"
+#include "DynamicColor.h"
+#include "TextureMatrix.h"
 
 /* compression library header */
 #include "../zlib/zlib.h"
@@ -35,6 +37,11 @@ WorldInfo::WorldInfo() :
 WorldInfo::~WorldInfo()
 {
   delete[] database;
+  std::vector<MeshObstacle*>::iterator it;
+  for (it = meshes.begin(); it != meshes.end(); it++) {
+    MeshObstacle* mesh = *it;
+    delete mesh;
+  }
 }
 
 void WorldInfo::addWall(float x, float y, float z, float r, float w, float h)
@@ -70,11 +77,16 @@ void WorldInfo::addPyramid(float x, float y, float z, float r, float w, float d,
   pyramids.push_back (pyr);
 }
 
-void WorldInfo::addTetra(const float (*vertices)[3], const bool *visible,
-                         const bool *colored, const float (*colors)[4],
+void WorldInfo::addTetra(const float vertices[4][3], const bool visible[4],  
+                         const bool useColor[4], const float colors[4][4],   
+                         const bool useNormals[4], const float normals[4][3][3],
+                         const bool useTexCoords[4], const float texCoords[4][3][2],
+                         const int textureMatrices[4], const std::string textures[4],
                          bool drive, bool shoot)
 {
-  TetraBuilding tetra (vertices, visible, colored, colors, drive, shoot);
+  TetraBuilding tetra (vertices, visible, useColor, colors,
+                       useNormals, normals, useTexCoords, texCoords,
+                       textureMatrices, textures, drive, shoot);
   tetras.push_back (tetra);
 
   float tetraHeight = tetra.getPosition()[2] + tetra.getHeight();
@@ -121,6 +133,16 @@ void WorldInfo::addLink(int from, int to)
   } else {
     setTeleporterTarget (from, to);
   }
+}
+
+void WorldInfo::addMesh(MeshObstacle* mesh)
+{
+  float mins[3], maxs[3];
+  mesh->getExtents(mins, maxs);
+  if (maxs[2] > maxHeight) {
+    maxHeight = maxs[2];
+  }
+  meshes.push_back(mesh);
 }
 
 void WorldInfo::addZone(const CustomZone *zone)
@@ -417,6 +439,8 @@ void WorldInfo::finishWorld()
 
 int WorldInfo::packDatabase(const BasesList* baseList)
 {
+  std::vector<TetraBuilding>::iterator tetra_it;
+  std::vector<MeshObstacle*>::iterator mesh_it;
   int numBases = 0;
   BasesList::const_iterator base_it;
   if (baseList != NULL) {
@@ -430,15 +454,53 @@ int WorldInfo::packDatabase(const BasesList* baseList)
     (2 + 2 + WorldCodeWallSize) * walls.size() +
     (2 + 2 + WorldCodeBoxSize) * boxes.size() +
     (2 + 2 + WorldCodePyramidSize) * pyramids.size() +
-    (2 + 2 + WorldCodeTetraSize) * tetras.size() +
     (2 + 2 + WorldCodeTeleporterSize) * teleporters.size() +
     (2 + 2 + WorldCodeLinkSize) * 2 * teleporters.size() +
-    worldWeapons.packSize() + entryZones.packSize();
+    worldWeapons.packSize() + entryZones.packSize() + 
+    DYNCOLORMGR.packSize() + TEXMATRIXMGR.packSize();
+
+  // tetra sizes are variable
+  for (tetra_it = tetras.begin(); tetra_it != tetras.end(); ++tetra_it) {
+    TetraBuilding &tetra = *tetra_it;
+    databaseSize = databaseSize + (2 + 2); 
+    databaseSize = databaseSize + tetra.packSize();
+  }
+
+  // meshes have variable sizes
+  for (mesh_it = meshes.begin(); mesh_it != meshes.end(); ++mesh_it) {
+    MeshObstacle &mesh = (**mesh_it);
+    databaseSize += (2 + 2) + mesh.packSize();
+  }
 
   database = new char[databaseSize];
   void *databasePtr = database;
 
   unsigned char	bitMask;
+  
+  // add dynamic colors
+  databasePtr = DYNCOLORMGR.pack(databasePtr);
+
+  // add texture matrices
+  databasePtr = TEXMATRIXMGR.pack(databasePtr);
+
+  // add meshes
+  for (mesh_it = meshes.begin(); mesh_it != meshes.end(); ++mesh_it) {
+    MeshObstacle &mesh = **mesh_it;
+    databasePtr = nboPackUShort(databasePtr, WorldCodeMeshSize); // dummy value
+    databasePtr = nboPackUShort(databasePtr, WorldCodeMesh);
+    databasePtr = mesh.pack(databasePtr);
+    if (debugLevel > 3) {
+      mesh.print(std::cout, 3);
+    }
+  }
+
+  // add tetras
+  for (tetra_it = tetras.begin(); tetra_it != tetras.end(); ++tetra_it) {
+    TetraBuilding &tetra = *tetra_it;
+    databasePtr = nboPackUShort(databasePtr, WorldCodeTetraSize); // dummy
+    databasePtr = nboPackUShort(databasePtr, WorldCodeTetra);
+    databasePtr = tetra.pack(databasePtr);
+  }
 
   // add bases
   if (baseList != NULL) {
@@ -493,43 +555,6 @@ int WorldInfo::packDatabase(const BasesList* baseList)
       bitMask |= _SHOOT_THRU;
     if (pyr.getZFlip())
       bitMask |= _FLIP_Z;
-    databasePtr = nboPackUByte(databasePtr, bitMask);
-  }
-
-  // add tetras
-  for (std::vector<TetraBuilding>::iterator tetra_it = tetras.begin();
-       tetra_it != tetras.end(); ++tetra_it) {
-    TetraBuilding &tetra = *tetra_it;
-    unsigned char planeflags = 0;   // 0-3 are visibility, 4-7 are colored
-    unsigned char bytecolors[4][4]; // pack the colors into a 32bit format
-    int v, c;
-    for (v = 0; v < 4; v++) {
-      if (tetra.isVisiblePlane(v)) {
-        planeflags = planeflags | (1 << v);
-      }
-      if (tetra.isColoredPlane(v)) {
-        planeflags = planeflags | (1 << (v + 4));
-      }
-      for (c = 0; c < 4; c++) {
-        bytecolors[v][c] = (unsigned char) tetra.getPlaneColor(v)[c];
-      }
-    }
-    databasePtr = nboPackUShort(databasePtr, WorldCodeTetraSize);
-    databasePtr = nboPackUShort(databasePtr, WorldCodeTetra);
-    for (v = 0; v < 4; v++) {
-      databasePtr = nboPackVector(databasePtr, tetra.getVertex(v));
-    }
-    for (v = 0; v < 4; v++) {
-      for (c = 0; c < 4; c++) {
-        databasePtr = nboPackUByte(databasePtr, bytecolors[v][c]);
-      }
-    }
-    databasePtr = nboPackUByte(databasePtr, planeflags);
-    bitMask = 0;
-    if (tetra.isDriveThrough())
-      bitMask |= _DRIVE_THRU;
-    if (tetra.isShootThrough())
-      bitMask |= _SHOOT_THRU;
     databasePtr = nboPackUByte(databasePtr, bitMask);
   }
 

@@ -18,10 +18,18 @@ bzfs_SOURCES = \
 	CustomBase.h \
 	CustomBox.cxx \
 	CustomBox.h \
+	CustomDynamicColor.cxx \
+	CustomDynamicColor.h \
 	CustomGate.cxx \
 	CustomGate.h \
 	CustomLink.cxx \
 	CustomLink.h \
+	CustomMesh.cxx \
+	CustomMesh.h \
+	CustomMeshFace.cxx \
+	CustomMeshFace.h \
+	CustomTextureMatrix.cxx \
+	CustomTextureMatrix.h \
 	CustomPyramid.cxx \
 	CustomPyramid.h \
 	CustomTetra.cxx \

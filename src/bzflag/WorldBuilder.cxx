@@ -22,7 +22,8 @@
 #include "EighthDPyrSceneNode.h"
 #include "EighthDBaseSceneNode.h"
 #include "EighthDTetraSceneNode.h"
-#include "TetraBuilding.h"
+#include "DynamicColor.h"
+#include "TextureMatrix.h"
 
 /* compression library header */
 #include "../zlib/zlib.h"
@@ -93,6 +94,14 @@ void* WorldBuilder::unpack(void* buf)
     return NULL;
   }
   buf = uncompressedWorld;
+  
+  // unpack dynamic colors
+  DYNCOLORMGR.clear();
+  buf = DYNCOLORMGR.unpack(buf);
+
+  // unpack texture matrices
+  TEXMATRIXMGR.clear();
+  buf = TEXMATRIXMGR.unpack(buf);
 
   // read geometry
   buf = nboUnpackUShort(buf, len);
@@ -100,6 +109,39 @@ void* WorldBuilder::unpack(void* buf)
 
   while (code != WorldCodeEnd) {
     switch (code) {
+
+      case WorldCodeTetra: {
+      
+        // a good double check, but a bogus length
+	if (len != WorldCodeTetraSize) {
+          delete[] uncompressedWorld;
+          DEBUG1 ("WorldBuilder::unpack() bad tetra size\n");
+	  return NULL;
+        }
+
+	TetraBuilding tetra;
+	buf = tetra.unpack(buf);
+        if (tetra.isValid()) {
+	  append(tetra);
+        }
+	break;
+      }
+      case WorldCodeMesh: {
+      
+        // a good double check, but a bogus length
+	if (len != WorldCodeMeshSize) {
+          delete[] uncompressedWorld;
+          DEBUG1 ("WorldBuilder::unpack() bad mesh size\n");
+	  return NULL;
+        }
+
+	MeshObstacle* mesh = new MeshObstacle;
+	buf = mesh->unpack(buf);
+        if (mesh->isValid()) {
+	  append(mesh);
+        }
+	break;
+      }
       case WorldCodeBox: {
 	float data[7];
 	unsigned char tempflags;
@@ -152,59 +194,6 @@ void* WorldBuilder::unpack(void* buf)
 
         if (pyr.isValid()) {
 	  append(pyr);
-        }
-	break;
-      }
-      case WorldCodeTetra: {
-        float vertices[4][3];
-        bool visible[4];
-        bool colored[4];
-        float colors[4][4];
-        unsigned char bytecolor;
-	unsigned char planeflags, tempflags;
-	int v, c;
-
-	if (len != WorldCodeTetraSize) {
-          delete[] uncompressedWorld;
-          DEBUG1 ("WorldBuilder::unpack() bad tetra size\n");
-	  return NULL;
-        }
-
-        for (v = 0; v < 4; v++) {
-          buf = nboUnpackVector(buf, vertices[v]);
-        }
-        for (v = 0; v < 4; v++) {
-          for (c = 0; c < 4; c++) {
-            buf = nboUnpackUByte(buf, bytecolor);
-            if (bytecolor == 0xFF) {
-              colors[v][c] = 1.0f; // no rounding errors here,
-                                   // likely isn't a real problem
-            } else {
-              colors[v][c] = ((float)bytecolor) / 255.0f;
-            }
-          }
-        }
-	buf = nboUnpackUByte(buf, planeflags);
-	buf = nboUnpackUByte(buf, tempflags);
-
-	for (int p = 0; p < 4; p++) {
-	  if (planeflags & (1 << p)) {
-            visible[p] = true;
-          } else {
-            visible[p] = false;
-          }
-	  if (planeflags & (1 << (p + 4))) {
-            colored[p] = true;
-          } else {
-            colored[p] = false;
-          }
-        }
-
-	TetraBuilding tetra(vertices, visible, colored, colors,
-			    (tempflags & _DRIVE_THRU) != 0,
-			    (tempflags & _SHOOT_THRU) != 0);
-        if (tetra.isValid()) {
-	  append(tetra);
         }
 	break;
       }
@@ -522,6 +511,11 @@ void WorldBuilder::setEpochOffset(uint32_t seconds) const
 void WorldBuilder::append(const WallObstacle& wall)
 {
   world->walls.push_back(wall);
+}
+
+void WorldBuilder::append(MeshObstacle* mesh)
+{
+  world->meshes.push_back(mesh);
 }
 
 void WorldBuilder::append(const BoxBuilding& box)

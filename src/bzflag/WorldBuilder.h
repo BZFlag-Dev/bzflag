@@ -20,10 +20,12 @@
 
 /* common interface headers */
 #include "WallObstacle.h"
+#include "MeshObstacle.h"
 #include "BoxBuilding.h"
 #include "PyramidBuilding.h"
 #include "BaseBuilding.h"
 #include "Teleporter.h"
+#include "TetraBuilding.h"
 
 /* local interface headers */
 #include "World.h"
@@ -50,6 +52,7 @@ class WorldBuilder {
     void		setShakeWins(int wins) const;
     void		setEpochOffset(uint32_t seconds) const;
     void		append(const WallObstacle&);
+    void		append(MeshObstacle*);
     void		append(const BoxBuilding&);
     void		append(const PyramidBuilding&);
     void		append(const BaseBuilding&);

@@ -12,7 +12,11 @@ THESE SHOULD HAPPEN BEFORE THE NEXT RELEASE:
 * either disable server checks when -handicap mode is enabled, or
   incorporate the player's handicap value into the check calculations.
 
-* complete the tetrahedron collision code (trepan)
+* complete the tetra getHitNormal() collision code (trepan)
+
+* start/complete the mesh collision code (trepan)
+
+* speed up the radar rendering
 
 * fix the misalignment between the selected server and the one that
   is joined when the Server List Cache is enabled.

@@ -15,6 +15,7 @@ libGeometry_a_SOURCES  =		\
 	WallSceneNode.cxx		\
 	QuadWallSceneNode.cxx		\
 	TriWallSceneNode.cxx		\
+	MeshPolySceneNode.cxx		\
 	PolyWallSceneNode.cxx		\
 	EighthDimSceneNode.cxx		\
 	EighthDBaseSceneNode.cxx	\

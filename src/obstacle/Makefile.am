@@ -16,8 +16,11 @@ libObstacle_a_SOURCES =			\
 	TetraSceneNodeGenerator.cxx	\
 	TeleporterSceneNodeGenerator.cxx\
 	WallSceneNodeGenerator.cxx	\
+	MeshSceneNodeGenerator.cxx	\
 	BaseBuilding.cxx		\
 	BoxBuilding.cxx			\
+	MeshFace.cxx			\
+	MeshObstacle.cxx		\
 	Obstacle.cxx			\
 	PyramidBuilding.cxx		\
 	Teleporter.cxx			\
@@ -27,6 +30,8 @@ else
 libObstacle_a_SOURCES =			\
 	BaseBuilding.cxx		\
 	BoxBuilding.cxx			\
+	MeshFace.cxx			\
+	MeshObstacle.cxx		\
 	Obstacle.cxx			\
 	PyramidBuilding.cxx		\
 	Teleporter.cxx			\

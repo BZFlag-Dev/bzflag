@@ -22,6 +22,7 @@
 /* common interface headers */
 #include "Team.h"
 #include "WallObstacle.h"
+#include "MeshObstacle.h"
 #include "BoxBuilding.h"
 #include "PyramidBuilding.h"
 #include "BaseBuilding.h"
@@ -83,6 +84,7 @@ class World {
     Flag&		getFlag(int index) const;
     const float*	getBase(int, int=0) const;
     const std::vector<WallObstacle>	&getWalls() const;
+    const std::vector<MeshObstacle*>	&getMeshes() const;
     const std::vector<BoxBuilding>&	getBoxes() const;
     const std::vector<PyramidBuilding>& getPyramids() const;
     const std::vector<BaseBuilding> &getBases() const;
@@ -166,6 +168,7 @@ class World {
     std::vector<TetraBuilding>		tetras;
     std::vector<Teleporter>		teleporters;
     std::vector<WallObstacle>		walls;
+    std::vector<MeshObstacle*>		meshes;
     std::vector<Weapon>		        weapons;
     std::vector<EntryZone>		entryZones;
     std::vector<int>			teleportTargets;
@@ -353,6 +356,11 @@ inline const float*	World::getBase(int team, int base) const
 inline const std::vector<WallObstacle>&	World::getWalls() const
 {
   return walls;
+}
+
+inline const std::vector<MeshObstacle*>& World::getMeshes() const
+{
+  return meshes;
 }
 
 inline const std::vector<BaseBuilding>&	World::getBases() const

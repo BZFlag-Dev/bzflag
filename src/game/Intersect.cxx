@@ -665,12 +665,12 @@ bool testPolygonInAxisBox(int pointCount, const float (*points)[3],
                           const float* plane,
                           const float* boxMins, const float* boxMaxs)
 {
+  return true;
   points = points;
   plane = plane;
   boxMins = boxMins;
   boxMaxs = boxMaxs;
   pointCount = pointCount;
-  return true;
 }
 
 

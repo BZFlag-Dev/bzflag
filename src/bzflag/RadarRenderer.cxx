@@ -640,6 +640,27 @@ void			RadarRenderer::makeList(bool smoothingOn, SceneRenderer&)
   }
   glEnd();
 
+  // draw mesh obstacles
+  const std::vector<MeshObstacle*>& meshes = world.getMeshes();
+  count = meshes.size();
+  for (i = 0; i < count; i++) {
+    const MeshObstacle* mesh = meshes[i];
+    int faces = mesh->getFaceCount();
+    for (int f = 0; f < faces; f++) {
+      const MeshFace* face = mesh->getFace(f);
+      const float z = face->getPosition()[2];
+      const float h = face->getHeight();
+      const float cs = colorScale(z, h);
+      glColor4f(0.25f * cs, 0.5f * cs, 0.5f * cs, transScale(z, h));
+      int vertexCount = face->getVertexCount();
+      glBegin(GL_TRIANGLE_FAN);
+      for (int v = 0; v < vertexCount; v++) {
+        glVertex2f(face->getVertex(v)[0], face->getVertex(v)[1]);
+      }
+      glEnd();
+    }
+  }
+
   // now draw antialiased outlines around the polygons
   if (smoothingOn) {
     glEnable(GL_BLEND);

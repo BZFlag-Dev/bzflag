@@ -51,6 +51,11 @@ noinst_HEADERS =			\
 	LaserSceneNode.h		\
 	MathUtils.h			\
 	MediaFile.h			\
+	MeshFace.h			\
+	MeshMaterial.h			\
+	MeshObstacle.h			\
+	MeshPolySceneNode.h		\
+	MeshSceneNodeGenerator.h	\
 	NetHandler.h			\
 	Obstacle.h			\
 	ObstacleSceneNodeGenerator.h	\
@@ -91,6 +96,7 @@ noinst_HEADERS =			\
 	TetraSceneNodeGenerator.h	\
 	TextUtils.h			\
 	TextureManager.h		\
+	TextureMatrix.h			\
 	TextureFont.h			\
 	TimeBomb.h			\
 	TimeKeeper.h			\

@@ -23,10 +23,17 @@
 
 class TetraBuilding : public Obstacle {
   public:
-			TetraBuilding(const float (*vertices)[3], const bool *visible,
-			              const bool *colored, const float (*colors)[4],
-			              bool drive = false, bool shoot = false);
-			~TetraBuilding();
+
+    TetraBuilding();
+    TetraBuilding(const float vertices[4][3], const bool visible[4],
+                  const bool useColor[4], const float colors[4][4],
+                  const bool useNormals[4], const float normals[4][3][3],
+                  const bool useTexCoords[4], const float texCoords[4][3][2],
+                  const int textureMatrices[4], const std::string textures[4],
+                  bool drive = false, bool shoot = false);
+    ~TetraBuilding();
+
+    void		finalize();
 
     const char*		getType() const;
     static const char*	getClassName(); // const
@@ -63,12 +70,20 @@ class TetraBuilding : public Obstacle {
     bool           isVisiblePlane(int plane) const;
     bool           isColoredPlane(int plane) const;
     const float*   getPlaneColor(int plane) const;
+    int            getTextureMatrix(int plane) const;
+    const float*   getTexCoords(int plane, int vertex) const;
+    const float*   getNormals(int plane, int vertex) const;
     
     void *pack(void*);
     void *unpack(void*);
     int packSize();
 
-    std::string	        userTextures[1];
+    bool useNormals[4];
+    float normals[4][3][3];
+    bool useTexCoords[4];
+    float texCoords[4][3][2];
+    int textureMatrices[4];
+    std::string	textures[4];
 
   private:
     static const char*	typeName;
@@ -77,7 +92,7 @@ class TetraBuilding : public Obstacle {
     float mins[3];        // minimum extents
     float maxs[3];        // maximum extents
     bool visible[4];      // is this plane visible?
-    bool colored[4];      // is this plane colored?
+    bool useColor[4];      // is this plane colored?
     float colors[4][4];   // RGBA color specifications per plane
 
     mutable unsigned char lastPlaneShot;
@@ -112,7 +127,7 @@ inline bool TetraBuilding::isVisiblePlane(int plane) const
 
 inline bool TetraBuilding::isColoredPlane(int plane) const
 {
-  return colored[plane];
+  return useColor[plane];
 }
 
 inline const float *TetraBuilding::getPlaneColor(int plane) const
@@ -128,6 +143,21 @@ inline const float (*TetraBuilding::getPlanes() const)[4]
 inline const float (*TetraBuilding::getVertices() const)[3]
 {
   return vertices;
+}
+
+inline int TetraBuilding::getTextureMatrix(int plane) const
+{
+  return textureMatrices[plane];
+}
+
+inline const float* TetraBuilding::getTexCoords(int plane, int vertex) const
+{
+  return texCoords[plane][vertex];
+}
+
+inline const float* TetraBuilding::getNormals(int plane, int vertex) const
+{
+  return normals[plane][vertex];
 }
 
 

@@ -13,33 +13,12 @@
 #include <math.h>
 #include "common.h"
 #include "global.h"
+#include "vectors.h"
 #include "TetraBuilding.h"
 #include "Intersect.h"
 #include "Pack.h"
 
 
-
-// FIXME - some these should go into a common file
-// Some handy geometry functions
-
-static inline void vec3sub (float *result, const float* v1, const float* v2)
-{
-  result[0] = v1[0] - v2[0];
-  result[1] = v1[1] - v2[1];
-  result[2] = v1[2] - v2[2];
-  return;
-}
-static inline float vec3dot (const float* v1, const float* v2)
-{
-  return (v1[0] * v2[0]) + (v1[1] * v2[1]) + (v1[2] * v2[2]);
-}
-static inline void vec3cross (float* result, const float* v1, const float* v2)
-{
-  result[0] = (v1[1] * v2[2]) - (v1[2] * v2[1]);
-  result[1] = (v1[2] * v2[0]) - (v1[0] * v2[2]);
-  result[2] = (v1[0] * v2[1]) - (v1[1] * v2[0]);
-  return;
-}
 static inline void projectTetra (float *dists, const float* normal,
                                  const float (*vertices)[3])
 {
@@ -115,16 +94,56 @@ const char* TetraBuilding::typeName = "TetraBuilding";
 TetraBuilding::planeTest TetraBuilding::axisTests[25];
 
 
-TetraBuilding::TetraBuilding(const float (*_vertices)[3], const bool *_visible,
-                             const bool *_colored, const float (*_colors)[4],
-			     bool drive, bool shoot)
+TetraBuilding::TetraBuilding()
+{
+  for (int v = 0; v < 4; v++) {
+    useColor[v] = false;
+    useNormals[v] = false;
+    useTexCoords[v] = false;
+    visible[v] = false;
+    textures[v] = "";
+    textureMatrices[v] = -1;
+    for (int c = 0; c < 4; c++) {
+      colors[v][c] = 1.0f;
+    }
+  }
+  return;    
+}
+
+
+TetraBuilding::TetraBuilding(
+  const float _vertices[4][3], const bool _visible[4],
+  const bool _useColor[4], const float _colors[4][4],
+  const bool _useNormals[4], const float _normals[4][3][3],
+  const bool _useTexCoords[4], const float _texCoords[4][3][2],
+  const int _textureMatrices[4], const std::string _textures[4],
+  bool drive, bool shoot)
+{
+  // making copies
+  memcpy (vertices, _vertices, sizeof(vertices));
+  memcpy (visible, _visible, sizeof(visible));
+  memcpy (textureMatrices, _textureMatrices, sizeof(textureMatrices));
+  memcpy (useColor, _useColor, sizeof(useColor));
+  memcpy (colors, _colors, sizeof(colors));
+  memcpy (useNormals, _useNormals, sizeof(useNormals));
+  memcpy (normals, _normals, sizeof(normals));
+  memcpy (useTexCoords, _useTexCoords, sizeof(useTexCoords));
+  memcpy (texCoords, _texCoords, sizeof(texCoords));
+  for (int v = 0; v < 4; v++) {
+    textures[v] = _textures[v];
+  }
+  driveThrough = drive;
+  shootThrough = shoot;
+  
+  finalize();
+
+  return;
+}
+
+
+void TetraBuilding::finalize()
 {
   int v, a;
-
-  memcpy (vertices, _vertices, 4 * sizeof (float[3]));
-  memcpy (visible, _visible, 4 * sizeof (bool));
-  memcpy (colored, _colored, 4 * sizeof (bool));
-  memcpy (colors, _colors, 4 * sizeof (float[4]));
 
   // make sure the the planes are facing outwards
   float edge[3][3]; // edges from vertex 0
@@ -140,14 +159,51 @@ TetraBuilding::TetraBuilding(const float (*_vertices)[3], const bool *_visible,
 
   // swap vertices 1 & 2 if we are out of order
   if (dot < 0.0f) {
-    memcpy (vertices[1], _vertices[2], sizeof(float[3]));
-    memcpy (vertices[2], _vertices[1], sizeof(float[3]));
-    memcpy (colors[1], _colors[2], sizeof (float[4]));
-    memcpy (colors[2], _colors[1], sizeof (float[4]));
-    visible[1] = _visible[2];
-    visible[2] = _visible[1];
-    colored[1] = _colored[2];
-    colored[2] = _colored[1];
+    bool tmpBool;
+    
+    float tmpVertex[3];
+    memcpy (tmpVertex, vertices[1], sizeof(tmpVertex));
+    memcpy (vertices[1], vertices[2], sizeof(vertices[1]));
+    memcpy (vertices[2], tmpVertex, sizeof(vertices[2]));
+
+    tmpBool = visible[1];
+    visible[1] = visible[2];
+    visible[2] = tmpBool;
+
+    tmpBool = useColor[1];
+    useColor[1] = useColor[2];
+    useColor[2] = tmpBool;
+    
+    float tmpColor[4];
+    memcpy (tmpColor, colors[1], sizeof(tmpColor));
+    memcpy (colors[1], colors[2], sizeof(colors[1]));
+    memcpy (colors[2], tmpColor, sizeof(colors[2]));
+    
+    tmpBool = useNormals[1];
+    useNormals[1] = useNormals[2];
+    useNormals[2] = tmpBool;
+    
+    float tmpNormals[4][3];
+    memcpy (tmpNormals, normals[1], sizeof(tmpNormals));
+    memcpy (normals[1], normals[2], sizeof(normals[1]));
+    memcpy (normals[2], tmpNormals, sizeof(normals[2]));
+    
+    tmpBool = useTexCoords[1];
+    useTexCoords[1] = useTexCoords[2];
+    useTexCoords[2] = tmpBool;
+    
+    float tmpTexCoords[3][2];
+    memcpy (tmpTexCoords, texCoords[1], sizeof(tmpTexCoords));
+    memcpy (texCoords[1], texCoords[2], sizeof(texCoords[1]));
+    memcpy (texCoords[2], tmpTexCoords, sizeof(texCoords[2]));
+    
+    int tmpInt = textureMatrices[1];
+    textureMatrices[1] = textureMatrices[2];
+    textureMatrices[2] = tmpInt;
+    
+    std::string tmpString = textures[1];
+    textures[1] = textures[2];
+    textures[2] = tmpString;
   }
 
   // make outward facing normals to the planes
@@ -186,8 +242,6 @@ TetraBuilding::TetraBuilding(const float (*_vertices)[3], const bool *_visible,
   size[1] = 0.5f * (maxs[1] - mins[1]);
   size[2] = maxs[2] - mins[2];
   angle = 0.0f;
-  driveThrough = drive;
-  shootThrough = shoot;
   ZFlip = false;
 
   return;
@@ -641,58 +695,248 @@ bool TetraBuilding::isCrossing(const float* p, float angle,
 }
 
 
-void *TetraBuilding::pack(void* buf)
+////////////////////////////////////////////////////////////////////////////////
+//
+// Packing stuff
+//
+
+static void pack4Bools (unsigned char* byte, const bool bools[4])
 {
-  unsigned char planeflags = 0;   // 0-3 are visibility, 4-7 are colored
-  unsigned char bytecolors[4][4]; // pack the colors into a 32bit format
-  int v, c;
-  
-  // setup the planeflags and bytecolors bytes
-  for (v = 0; v < 4; v++) {
-    if (isVisiblePlane(v)) {
-      planeflags = planeflags | (1 << v);
-    }
-    if (isColoredPlane(v)) {
-      planeflags = planeflags | (1 << (v + 4));
-    }
-    for (c = 0; c < 4; c++) {
-      bytecolors[v][c] = (unsigned char) colors[v][c];
+  *byte = 0;
+  for (int i = 0; i < 4; i++) {
+    if (bools[i]) {
+      *byte = *byte | (1 << i);
     }
   }
+  return;
+}
+
+static void unpack4Bools (unsigned char byte, bool bools[4])
+{
+  for (int i = 0; i < 4; i++) {
+    if (byte & (1 << i)) {
+      bools[i] = true;
+    } else {
+      bools[i] = false;
+    }
+  }
+  return;
+}
+
+
+void *TetraBuilding::pack(void* buf)
+{
+  int v;
   
+  // pack the vertices
   for (v = 0; v < 4; v++) {
     buf = nboPackVector(buf, vertices[v]);
   }
+  
+  // pack the visibility byte  
+  unsigned char visibleByte;
+  pack4Bools (&visibleByte, visible);
+  buf = nboPackUByte(buf, visibleByte);
+
+  // pack the state byte
+  unsigned char stateByte = 0;
+  if (isDriveThrough())
+    stateByte |= _DRIVE_THRU;
+  if (isShootThrough())
+    stateByte |= _SHOOT_THRU;
+  buf = nboPackUByte(buf, stateByte);
+  
+  // pack the texture matrices
   for (v = 0; v < 4; v++) {
-    for (c = 0; c < 4; c++) {
-      buf = nboPackUByte(buf, bytecolors[v][c]);
+    buf = nboPackInt(buf, textureMatrices[v]);
+  }
+
+  // pack the colors
+  unsigned char useColorByte;
+  pack4Bools (&useColorByte, useColor);
+  buf = nboPackUByte(buf, useColorByte);
+  for (v = 0; v < 4; v++) {
+    if (useColor[v]) {
+      unsigned char bytecolor; // pack the colors into a 32bit format
+      for (int c = 0; c < 4; c++) {
+        bytecolor = (unsigned char) colors[v][c];
+        buf = nboPackUByte(buf, bytecolor);
+      }
     }
   }
 
-  buf = nboPackUByte(buf, planeflags);
+  // pack the normals
+  unsigned char useNormalsByte;
+  pack4Bools (&useNormalsByte, useNormals);
+  buf = nboPackUByte(buf, useNormalsByte);
+  for (v = 0; v < 4; v++) {
+    if (useNormals[v]) {
+      for (int i = 0; i < 3; i++) {
+        buf = nboPackVector(buf, normals[v][i]);
+      }
+    }
+  }
+
+  // pack the texCoords
+  unsigned char useTexCoordsByte;
+  pack4Bools (&useTexCoordsByte, useTexCoords);
+  buf = nboPackUByte(buf, useTexCoordsByte);
+  for (v = 0; v < 4; v++) {
+    if (useTexCoords[v]) {
+      for (int i = 0; i < 3; i++) {
+        buf = nboPackFloat(buf, texCoords[v][i][0]);
+        buf = nboPackFloat(buf, texCoords[v][i][1]);
+      }
+    }
+  }
   
-  unsigned char bitMask = 0;
-  if (isDriveThrough())
-    bitMask |= _DRIVE_THRU;
-  if (isShootThrough())
-    bitMask |= _SHOOT_THRU;
-    
-  buf = nboPackUByte(buf, bitMask);
-  
+  // pack the texture strings
+  for (v = 0; v < 4; v++) {
+    unsigned char length = textures[v].size();
+    buf = nboPackUByte(buf, length);
+    buf = nboPackString(buf, textures[v].c_str(), length);
+  }
+
   return buf;
 }
 
 
 void *TetraBuilding::unpack(void* buf)
 {
-  buf = buf;
+  int v;
+  
+  // unpack the vertices
+  for (v = 0; v < 4; v++) {
+    buf = nboUnpackVector(buf, vertices[v]);
+  }
+  
+  // unpack the visibility byte  
+  unsigned char visibleByte;
+  buf = nboUnpackUByte(buf, visibleByte);
+  unpack4Bools (visibleByte, visible);
+
+  // unpack the state byte
+  unsigned char stateByte;
+  buf = nboUnpackUByte(buf, stateByte);
+  if (stateByte & _DRIVE_THRU)
+    driveThrough = true;
+  if (stateByte & _SHOOT_THRU)
+    shootThrough = true;
+  
+  // unpack the texture matrices
+  for (v = 0; v < 4; v++) {
+    buf = nboUnpackInt(buf, textureMatrices[v]);
+  }
+
+  // unpack the colors
+  unsigned char useColorByte;
+  buf = nboUnpackUByte(buf, useColorByte);
+  unpack4Bools (useColorByte, useColor);
+  for (v = 0; v < 4; v++) {
+    if (useColor[v]) {
+      for (int c = 0; c < 4; c++) {
+        unsigned char bytecolor; // unpack the colors into a 32bit format
+        buf = nboUnpackUByte(buf, bytecolor);
+        if (bytecolor == 0xFF) {
+          colors[v][c] = 1.0f; // no rounding errors here,
+                               // likely isn't a real problem
+        } else {
+          colors[v][c] = ((float)bytecolor) / 255.0f;
+        }        
+      }
+    }
+  }
+
+  // unpack the normals
+  unsigned char useNormalsByte;
+  buf = nboUnpackUByte(buf, useNormalsByte);
+  unpack4Bools (useNormalsByte, useNormals);
+  for (v = 0; v < 4; v++) {
+    if (useNormals[v]) {
+      for (int i = 0; i < 3; i++) {
+        buf = nboUnpackVector(buf, normals[v][i]);
+      }
+    }
+  }
+
+  // unpack the texCoords
+  unsigned char useTexCoordsByte;
+  buf = nboUnpackUByte(buf, useTexCoordsByte);
+  unpack4Bools (useTexCoordsByte, useTexCoords);
+  for (v = 0; v < 4; v++) {
+    if (useTexCoords[v]) {
+      for (int i = 0; i < 3; i++) {
+        buf = nboUnpackFloat(buf, texCoords[v][i][0]);
+        buf = nboUnpackFloat(buf, texCoords[v][i][1]);
+      }
+    }
+  }
+  
+  // unpack the texture strings
+  for (v = 0; v < 4; v++) {
+    char textureStr[256];
+    unsigned char length;
+    buf = nboUnpackUByte(buf, length);
+    buf = nboUnpackString(buf, textureStr, length);
+    textureStr[length] = '\0';
+    textures[v] = textureStr;
+  }
+
+/*  
+  printf ("TETRA: %s %s %s %s\n", textures[0].c_str(),textures[1].c_str(),textures[2].c_str(),textures[3].c_str());
+  printf ("  v0 = %f,%f,%f, texmats = %i, %i, %i, %i\n",
+          vertices[0][0],vertices[0][1],vertices[0][2],
+          textureMatrices[0],textureMatrices[1],textureMatrices[2],textureMatrices[3]);
+  printf ("  useColorByte = 0x%02X, useNormalsByte = 0x%02X, useTexCoordsByte = 0x%02X\n",
+          useColorByte, useNormalsByte, useTexCoordsByte);
+*/          
+
+  finalize();
+
   return buf;
 }
 
 
 int TetraBuilding::packSize()
 {
-  return 0;
+  int v;
+  int fullSize = 0;
+  // vectors
+  fullSize = fullSize + (4 * sizeof(float[3]));
+  // visibility byte
+  fullSize = fullSize + sizeof(unsigned char);
+  // state byte
+  fullSize = fullSize + sizeof(unsigned char);
+  // texture matrices
+  fullSize = fullSize + sizeof(int[4]);
+  // colors
+  fullSize = fullSize + sizeof(unsigned char); 
+  for (v = 0; v < 4; v++) {
+    if (useColor[v]) {
+      fullSize = fullSize + sizeof(unsigned char[4]);
+    }
+  }
+  // normals
+  fullSize = fullSize + sizeof(unsigned char); 
+  for (v = 0; v < 4; v++) {
+    if (useNormals[v]) {
+      fullSize = fullSize + sizeof(float[3][3]);
+    }
+  }
+  // texcoords
+  fullSize = fullSize + sizeof(unsigned char); 
+  for (v = 0; v < 4; v++) {
+    if (useTexCoords[v]) {
+      fullSize = fullSize + sizeof(float[3][2]);
+    }
+  }
+  // the texture strings
+  for (v = 0; v < 4; v++) {
+    fullSize = fullSize + sizeof(unsigned char);
+    fullSize = fullSize + textures[v].size();
+  }
+  
+  return fullSize;
 }
 
 

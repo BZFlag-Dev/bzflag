@@ -29,6 +29,8 @@
 #include "MainWindow.h"
 #include "OpenGLGState.h"
 #include "RenderNode.h"
+#include "DynamicColor.h"
+#include "TextureMatrix.h"
 #include "BzfWindow.h"
 #include "TankSceneNode.h"
 #include "StateDatabase.h"
@@ -553,6 +555,12 @@ void			SceneRenderer::render(
 
   lastFrame = _lastFrame;
   sameFrame = _sameFrame;
+  
+  // update the dynamic colors
+  DYNCOLORMGR.update();
+
+  // update the texture matrices
+  TEXMATRIXMGR.update();
 
   // make sure there is something to render on
   if (!window) return;

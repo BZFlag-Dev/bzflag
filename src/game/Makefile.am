@@ -10,12 +10,15 @@ libGame_a_SOURCES =			\
 	CommandsStandard.cxx		\
 	DelayQueue.cxx			\
 	DirectoryNames.cxx		\
+	DynamicColor.cxx		\
 	Frustum.cxx			\
 	Intersect.cxx			\
 	LagInfo.cxx			\
+	MeshMaterial.cxx		\
 	NetHandler.cxx			\
 	PlayerInfo.cxx			\
 	Ray.cxx				\
+	TextureMatrix.cxx	\
 	VotingArbiter.cxx
 
 EXTRA_DIST = \
