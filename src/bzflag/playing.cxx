@@ -1079,11 +1079,11 @@ static void		doEvent(BzfDisplay* display)
       break;
 
     case BzfEvent::KeyUp:
-      doKey(event.keyDown, false);
+      doKey(event.keyUp, false);
       break;
 
     case BzfEvent::KeyDown:
-      doKey(event.keyUp, true);
+      doKey(event.keyDown, true);
       break;
 
     case BzfEvent::MouseMove:
