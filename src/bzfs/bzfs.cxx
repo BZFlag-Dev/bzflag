@@ -243,25 +243,25 @@ public:
       pMsg+=strlen(pMsg);
 
       if ((ntohl(mask.s_addr) & 0x00ffffff) == 0x00ffffff)
-          strcat( pMsg, "*.*.*" );
+	  strcat( pMsg, "*.*.*" );
       else {
-          sprintf( pMsg, "%d.", ((unsigned char)(ntohl(mask.s_addr) >> 16)));
-          pMsg+=strlen(pMsg);
-          if ((ntohl(mask.s_addr) & 0x0000ffff) == 0x0000ffff)
-              strcat( pMsg, "*.*" );
-          else {
-              sprintf( pMsg, "%d.", ((unsigned char)(ntohl(mask.s_addr) >> 8)));
-              pMsg+=strlen(pMsg);
-              if ((ntohl(mask.s_addr) & 0x000000ff) == 0x000000ff)
-                  strcat( pMsg, "*" );
-              else
-                  sprintf( pMsg, "%d", ((unsigned char)ntohl(mask.s_addr)));
-          }
+	  sprintf( pMsg, "%d.", ((unsigned char)(ntohl(mask.s_addr) >> 16)));
+	  pMsg+=strlen(pMsg);
+	  if ((ntohl(mask.s_addr) & 0x0000ffff) == 0x0000ffff)
+	      strcat( pMsg, "*.*" );
+	  else {
+	      sprintf( pMsg, "%d.", ((unsigned char)(ntohl(mask.s_addr) >> 8)));
+	      pMsg+=strlen(pMsg);
+	      if ((ntohl(mask.s_addr) & 0x000000ff) == 0x000000ff)
+		  strcat( pMsg, "*" );
+	      else
+		  sprintf( pMsg, "%d", ((unsigned char)ntohl(mask.s_addr)));
+	  }
       }
       // print duration when < 1 year
       double duration = it->banEnd - TimeKeeper::getCurrent();
       if (duration < 365.0f * 24 * 3600)
-        sprintf(pMsg + strlen(pMsg)," (%.1f minutes)", duration / 60);
+	sprintf(pMsg + strlen(pMsg)," (%.1f minutes)", duration / 60);
 
       sendMessage(playerIndex, id, teamColor, banlistmessage);
     }
@@ -300,10 +300,10 @@ private:
     TimeKeeper now = TimeKeeper::getCurrent();
     for (banList_t::iterator it = banList.begin(); it != banList.end();) {
       if (it->banEnd <= now) {
-        it = banList.erase(it);
+	it = banList.erase(it);
       }
       else
-        ++it;
+	++it;
     }
   }
 
@@ -323,12 +323,12 @@ public:
       std::string badWord = buffer;
       int pos = badWord.find_first_not_of("\t \r\n");
       if (pos > 0)
-        badWord = badWord.substr(pos);
+	badWord = badWord.substr(pos);
       pos = badWord.find_first_of("\t \r\n");
       if ((pos >= 0) & (pos < (int)badWord.length()))
 	badWord = badWord.substr(0, pos);
       if (badWord.length() > 0)
-        badWords.insert(badWord);
+	badWords.insert(badWord);
     }
   }
 
@@ -341,7 +341,7 @@ public:
     while (startPos >= 0) {
       int endPos = line.find_first_of("\t \r\n", startPos+1);
       if (endPos < 0)
-        endPos = line.length();
+	endPos = line.length();
       std::string word = line.substr(startPos, endPos-startPos);
       if (badWords.find(word) != badWords.end())
 	 memset(input+startPos,'*', endPos-startPos);
@@ -741,7 +741,7 @@ static float baseSize[NumTeams][3];
 static float safetyBasePos[NumTeams][3];
 
 static void stopPlayerPacketRelay();
-static void removePlayer(int playerIndex);
+static void removePlayer(int playerIndex, char *reason);
 static void resetFlag(int flagIndex);
 static void releaseRadio(int playerIndex);
 static void dropFlag(int playerIndex, float pos[3]);
@@ -1542,8 +1542,7 @@ static int puwrite(int playerIndex, const void *b, int l)
   tobesend = assembleUDPPacket(playerIndex,b,&l);
 
   if (!tobesend || (l == 0)) {
-    removePlayer(playerIndex);
-    DEBUG2("Send Queue Overrun for player %d (%s)\n", playerIndex, p.callSign);
+    removePlayer(playerIndex, "Send Queue Overrun");
     if (tobesend)
       free((unsigned char *)tobesend);
     return -1;
@@ -1576,8 +1575,7 @@ static int puwrite(int playerIndex, const void *b, int l)
 
     // if socket is closed then give up
     if (err == ECONNRESET || err == EPIPE) {
-      DEBUG4("REMOVE: ECONNRESET/EPIPE\n");
-      removePlayer(playerIndex);
+      removePlayer(playerIndex, "ECONNRESET/EPIPE");
       return -1;
     }
 
@@ -1612,16 +1610,13 @@ static int prealwrite(int playerIndex, const void *b, int l)
 
     // if socket is closed then give up
     if (err == ECONNRESET || err == EPIPE) {
-      DEBUG4("REMOVE: Reset socket (4)\n");
-      removePlayer(playerIndex);
+      removePlayer(playerIndex, "ECONNRESET/EPIPE");
       return -1;
     }
 
     // dump other errors and remove the player
     nerror("error on write");
-    DEBUG2("player is %d (%s)\n", playerIndex, p.callSign);
-    DEBUG4("REMOVE: WRITE ERROR\n");
-    removePlayer(playerIndex);
+    removePlayer(playerIndex, "Write error");
     return -1;
   }
 
@@ -1816,8 +1811,7 @@ static void pwrite(int playerIndex, const void *b, int l)
       if (newCapacity >= 20 * 1024) {
 	DEBUG2("Player %s [%d] drop, unresponsive with %d bytes queued\n",
 	    p.callSign, playerIndex, p.outmsgSize + l);
-	DEBUG4("REMOVE: CAPACITY\n");
-	removePlayer(playerIndex);
+	removePlayer(playerIndex, NULL);
 	goto unpatch;
       }
 
@@ -1988,8 +1982,6 @@ static void sendUDPupdate(int playerIndex)
 //}
 
 static void createUDPcon(int t, int remote_port) {
-  DEBUG4("Message received: UDP request for remote port %d\n",remote_port);
-
   if (remote_port == 0)
     return;
 
@@ -2002,8 +1994,8 @@ static void createUDPcon(int t, int remote_port) {
   memcpy((char *)&player[t].uaddr,(char *)&addr, sizeof(addr));
 
   // show some message on the console
-  DEBUG3("UDP link created, remote %d %04x, local %d\n",
-      remote_port,ntohl(addr.sin_addr.s_addr), clOptions.wksPort);
+  DEBUG3("Player %s [%d] UDP link requested, remote %s:%d\n",
+      player[t].callSign, t, inet_ntoa(addr.sin_addr), remote_port);
 
   // init the queues
   player[t].uqueue = player[t].dqueue = NULL;
@@ -2172,21 +2164,17 @@ static int pread(int playerIndex, int l)
 
     // if socket is closed then give up
     if (err == ECONNRESET || err == EPIPE) {
-      DEBUG2("REMOVE: Socket reset (2)\n");
-      removePlayer(playerIndex);
+      removePlayer(playerIndex, "ECONNRESET/EPIPE");
       return -1;
     }
 
     // dump other errors and remove the player
     nerror("error on read");
-    DEBUG2("player is %d (%s)\n", playerIndex, p.callSign);
-    DEBUG4("REMOVE: READ ERROR\n");
-    removePlayer(playerIndex);
+    removePlayer(playerIndex, "Read error");
     return -1;
   } else {
     // disconnected
-    DEBUG2("REMOVE: Disconnected (3)\n");
-    removePlayer(playerIndex);
+    removePlayer(playerIndex, "Disconnected");
     return -1;
   }
 
@@ -2832,7 +2820,7 @@ static bool readWorldStream(istream& input, const char *location, std::vector<Wo
     if (newObject) {
       if (object) {
 	printf("%s(%d) : discarding incomplete object\n", location, line);
-        delete object;
+	delete object;
       }
       object = newObject;
       newObject = NULL;
@@ -2880,7 +2868,7 @@ static bool readWorldStream(istream& input, const char *location, std::vector<Wo
 
     else if (object) {
       if (!object->read(buffer, input)) {
-        // unknown token
+	// unknown token
 	printf("%s(%d) : invalid object parameter \"%s\"\n", location, line, buffer);
 	delete object;
 	return false;
@@ -3723,8 +3711,8 @@ static void addClient(int acceptSocket)
 #ifdef TIMELIMIT
       gameStartTime = TimeKeeper::getCurrent();
       if (clOptions.timeLimit > 0.0f && !clOptions.timeManualStart) {
-        clOptions.timeElapsed = 0.0f;
-        countdownActive = true;
+	clOptions.timeElapsed = 0.0f;
+	countdownActive = true;
       }
 #endif
     }
@@ -4114,11 +4102,11 @@ static void resetFlag(int flagIndex)
 	  pFlagInfo->flag.position[2] = obj->pos[2] + obj->size[2];
 	}
 	else {
-          pFlagInfo->flag.position[0] = (WorldSize - BaseSize) * ((float)bzfrand() - 0.5f);
-          pFlagInfo->flag.position[1] = (WorldSize - BaseSize) * ((float)bzfrand() - 0.5f);
-          pFlagInfo->flag.position[2] = 0.0f;
+	  pFlagInfo->flag.position[0] = (WorldSize - BaseSize) * ((float)bzfrand() - 0.5f);
+	  pFlagInfo->flag.position[1] = (WorldSize - BaseSize) * ((float)bzfrand() - 0.5f);
+	  pFlagInfo->flag.position[2] = 0.0f;
 	}
-        topmosttype = world->inBuilding(&obj, pFlagInfo->flag.position[0],
+	topmosttype = world->inBuilding(&obj, pFlagInfo->flag.position[0],
 					     pFlagInfo->flag.position[1],pFlagInfo->flag.position[2], r);
     }
   }
@@ -4173,7 +4161,7 @@ static void zapFlag(int flagIndex)
   resetFlag(flagIndex);
 }
 
-static void removePlayer(int playerIndex)
+static void removePlayer(int playerIndex, char *reason)
 {
   // player is signing off or sent a bad packet.  since the
   // bad packet can come before MsgEnter, we must be careful
@@ -4184,9 +4172,15 @@ static void removePlayer(int playerIndex)
   if (player[playerIndex].fd == NotConnected)
     return;
 
+  if (reason == NULL)
+    reason = "";
+
   // status message
-  DEBUG1("Player %s [%d] on %d is removed\n",
-      player[playerIndex].callSign, playerIndex, player[playerIndex].fd);
+  DEBUG1("Player %s [%d] on %d removed: %s\n",
+      player[playerIndex].callSign, playerIndex, player[playerIndex].fd, reason);
+
+  // send a super kill to be polite
+  directMessage(playerIndex, MsgSuperKill, 0, getDirectMessageBuffer());
 
   // shutdown TCP socket
   shutdown(player[playerIndex].fd, 2);
@@ -4243,7 +4237,7 @@ static void removePlayer(int playerIndex)
     while ((playerIndex >= 0)
 	&& (playerIndex+1 == curMaxPlayers)
 	&& (player[playerIndex].state == PlayerNoExist)
-        && (player[playerIndex].fd == NotConnected))
+	&& (player[playerIndex].fd == NotConnected))
     {
 	playerIndex--;
 	curMaxPlayers--;
@@ -4456,8 +4450,8 @@ static void playerKilled(int victimIndex, int killerIndex,
 	  ((player[killerIndex].tks * 100) / player[killerIndex].wins) > clOptions.teamKillerKickRatio)) {
 	 char message[MessageLen];
 	 strcpy( message, "You have been automatically kicked for team killing" );
-         sendMessage(killerIndex, player[killerIndex].id, player[killerIndex].team, message);
-	 directMessage(killerIndex, MsgSuperKill, 0, getDirectMessageBuffer());
+	 sendMessage(killerIndex, player[killerIndex].id, player[killerIndex].team, message);
+	 removePlayer(killerIndex, "teamkilling");
      }
   }
 
@@ -4580,7 +4574,7 @@ static void grabFlag(int playerIndex, int flagIndex)
 
   if ((fabs(tpos[2] - fpos[2]) < 0.1f) && (delta > radius2)) {
     DEBUG2("Player %s [%d] %f %f %f tried to grab distant flag %f %f %f: distance=%f\n",
-        player[playerIndex].callSign, playerIndex,
+	player[playerIndex].callSign, playerIndex,
 	tpos[0], tpos[1], tpos[2], fpos[0], fpos[1], fpos[2], sqrt(delta));
     return;
   }
@@ -4785,7 +4779,7 @@ static void shotFired(int playerIndex, void *buf, int len)
   // verify player flag
   if ((firingInfo.flag != NullFlag) && (firingInfo.flag != flag[shooter.flag].flag.id)) {
     DEBUG2("Player %s [%d] shot flag mismatch %d %d\n", shooter.callSign,
-           playerIndex, firingInfo.flag, flag[shooter.flag].flag.id);
+	   playerIndex, firingInfo.flag, flag[shooter.flag].flag.id);
     firingInfo.flag = NullFlag;
     repack = true;
   }
@@ -4793,7 +4787,7 @@ static void shotFired(int playerIndex, void *buf, int len)
   // verify shot number
   if ((shot.id & 0xff) > clOptions.maxShots - 1) {
     DEBUG2("Player %s [%d] shot id out of range %d %d\n", shooter.callSign,
-           playerIndex,	shot.id & 0xff, clOptions.maxShots);
+	   playerIndex,	shot.id & 0xff, clOptions.maxShots);
     return;
   }
 
@@ -4821,15 +4815,15 @@ static void shotFired(int playerIndex, void *buf, int len)
   // verify lifetime
   if (fabs(firingInfo.lifetime - lifetime) > Epsilon) {
     DEBUG2("Player %s [%d] shot lifetime mismatch %f %f\n", shooter.callSign,
-           playerIndex, firingInfo.lifetime, lifetime);
+	   playerIndex, firingInfo.lifetime, lifetime);
     return;
   }
 
   // verify velocity
   if (hypotf(shot.vel[0], hypotf(shot.vel[1], shot.vel[2])) > shotSpeed * 1.01f) {
     DEBUG2("Player %s [%d] shot over speed %f %f\n", shooter.callSign,
-           playerIndex, hypotf(shot.vel[0], hypotf(shot.vel[1], shot.vel[2])),
-           shotSpeed);
+	   playerIndex, hypotf(shot.vel[0], hypotf(shot.vel[1], shot.vel[2])),
+	   shotSpeed);
     return;
   }
 
@@ -4844,12 +4838,12 @@ static void shotFired(int playerIndex, void *buf, int len)
 
   float delta = dx*dx + dy*dy + dz*dz;
   if (delta > (TankSpeed * VelocityAd + front) *
-              (TankSpeed * VelocityAd + front)) {
+	      (TankSpeed * VelocityAd + front)) {
     DEBUG2("Player %s [%d] shot origination %f %f %f too far from tank %f %f %f: distance=%f\n",
-            shooter.callSign, playerIndex,
+	    shooter.callSign, playerIndex,
 	    shot.pos[0], shot.pos[1], shot.pos[2],
-            shooter.lastState.pos[0], shooter.lastState.pos[1],
-            shooter.lastState.pos[2], sqrt(delta));
+	    shooter.lastState.pos[0], shooter.lastState.pos[1],
+	    shooter.lastState.pos[2], sqrt(delta));
     return;
   }
 
@@ -4891,9 +4885,7 @@ static void calcLag(int playerIndex, float timepassed)
       sprintf(message,"You have been kicked due to excessive lag (you have been warned %d times).",
 	clOptions.maxlagwarn);
       sendMessage(playerIndex, pl.id, pl.team, message);
-      DEBUG1("*** Player %s [%d] was lag-kicked\n",
-	      player[playerIndex].callSign, playerIndex);
-      removePlayer(playerIndex);
+      removePlayer(playerIndex, "lag");
     }
   }
 }
@@ -4978,7 +4970,7 @@ static void parseCommand(const char *message, int t)
   // /superkill closes all player connections
   } else if (player[t].Admin && strncmp(message + 1, "superkill", 8) == 0) {
     for (i = 0; i < MaxPlayers; i++)
-      directMessage(i, MsgSuperKill, 0, getDirectMessageBuffer());
+      removePlayer(i, "/superkill");
     gameOver = true;
   // /gameover command allows operator to end the game
   } else if (player[t].Admin && strncmp(message + 1, "gameover", 8) == 0) {
@@ -5102,7 +5094,7 @@ static void parseCommand(const char *message, int t)
       char kickmessage[MessageLen];
       sprintf(kickmessage,"Your were kicked off the server by %s", player[t].callSign);
       sendMessage(i, player[i].id, player[i].team, kickmessage);
-      removePlayer(i);
+      removePlayer(i, "/kick");
     } else {
       char errormessage[MessageLen];
       sprintf(errormessage, "player %s not found", victimname);
@@ -5131,7 +5123,7 @@ static void parseCommand(const char *message, int t)
       if ((player[i].fd != NotConnected) && (!clOptions.acl.validate(player[i].taddr.sin_addr))) {
 	sprintf(kickmessage,"Your were banned from this server by %s", player[t].callSign);
 	sendMessage(i, player[i].id, player[i].team, kickmessage);
-	removePlayer(i);
+	removePlayer(i, "/ban");
       }
     }
   }
@@ -5269,9 +5261,7 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
     // player closing connection
     case MsgExit:
       // data: <none>
-      DEBUG4("Player %s [%d] has dropped\n", player[t].callSign, t);
-      DEBUG4("REMOVE: DROPPED BY REQUEST\n");
-      removePlayer(t);
+      removePlayer(t, "left");
       break;
 
     // player requesting new ttl
@@ -5477,7 +5467,7 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
       uint16_t queueUpdate;
       buf = nboUnpackUShort(buf, queueUpdate);
       OOBQueueUpdate(t, queueUpdate);
-      DEBUG3("STATUS: Up UDP CON received\n");
+      DEBUG3("Player %s [%d] UDP confirmed\n", player[t].callSign, t);
       // enable the downlink
       //player[t].ulinkup = true;
       if (!clOptions.alsoUDP) {
@@ -5512,40 +5502,40 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
       buf = id.unpack(buf);
       buf = state.unpack(buf);
       if (state.pos[2] > maxTankHeight) {
-        char message[MessageLen];
-        DEBUG1("kicking Player %s [%d]: jump too high\n", player[t].callSign, t);
+	char message[MessageLen];
+	DEBUG1("kicking Player %s [%d]: jump too high\n", player[t].callSign, t);
 	strcpy( message, "Autokick: Out of world bounds, Jump too high, Update your client." );
-        sendMessage(t, player[t].id, player[t].team, message);
-	directMessage(t, MsgSuperKill, 0, getDirectMessageBuffer());
+	sendMessage(t, player[t].id, player[t].team, message);
+	removePlayer(t, "too high");
 	break;
       }
 
       // check for highspeec cheat; if inertia is enabled, skip test for now
       if (clOptions.linearAcceleration == 0.0f) {
-        // Doesn't account for going fast backwards, or jumping/falling
-        float curPlanarSpeedSqr = state.velocity[0]*state.velocity[0] +
-                                  state.velocity[1]*state.velocity[1];
+	// Doesn't account for going fast backwards, or jumping/falling
+	float curPlanarSpeedSqr = state.velocity[0]*state.velocity[0] +
+				  state.velocity[1]*state.velocity[1];
   
-        float maxPlanarSpeedSqr = TankSpeed*TankSpeed;
+	float maxPlanarSpeedSqr = TankSpeed*TankSpeed;
   
-        // if tank is not driving cannot be sure it didn't toss (V) in flight
-        // if tank is not alive cannot be sure it didn't just toss (V)
-        if ((flag[player[t].flag].flag.id == VelocityFlag)
-        ||  (player[t].lastState.pos[2] != state.pos[2])
-        ||  ((state.status & PlayerState::Alive) == 0))
-          maxPlanarSpeedSqr *= VelocityAd*VelocityAd;
+	// if tank is not driving cannot be sure it didn't toss (V) in flight
+	// if tank is not alive cannot be sure it didn't just toss (V)
+	if ((flag[player[t].flag].flag.id == VelocityFlag)
+	||  (player[t].lastState.pos[2] != state.pos[2])
+	||  ((state.status & PlayerState::Alive) == 0))
+	  maxPlanarSpeedSqr *= VelocityAd*VelocityAd;
   
-        // tanks can get faster than allowed, probably due to floating point
-        if (curPlanarSpeedSqr > (10.0f + maxPlanarSpeedSqr)) {
-          char message[MessageLen];
-          DEBUG1("kicking Player %s [%d]: tank too fast (tank: %f, allowed: %f)\n",
-                 player[t].callSign, t,
-                 sqrt(curPlanarSpeedSqr), sqrt(maxPlanarSpeedSqr));
-          strcpy( message, "Autokick: Tank moving too fast, Update your client." );
-          sendMessage(t, player[t].id, player[t].team, message);
-          directMessage(t, MsgSuperKill, 0, getDirectMessageBuffer());
-          break;
-        }
+	// tanks can get faster than allowed, probably due to floating point
+	if (curPlanarSpeedSqr > (10.0f + maxPlanarSpeedSqr)) {
+	  char message[MessageLen];
+	  DEBUG1("kicking Player %s [%d]: tank too fast (tank: %f, allowed: %f)\n",
+		 player[t].callSign, t,
+		 sqrt(curPlanarSpeedSqr), sqrt(maxPlanarSpeedSqr));
+	  strcpy( message, "Autokick: Tank moving too fast, Update your client." );
+	  sendMessage(t, player[t].id, player[t].team, message);
+	  removePlayer(t, "too fast");
+	  break;
+	}
       }
 
       player[t].lastState = state;
@@ -5837,7 +5827,7 @@ static char **parseConfFile( const char *file, int &ac)
 	   startPos++;
 	   endPos = line.find_first_of('"', startPos);
 	 }
-         else
+	 else
 	   endPos = line.find_first_of("\t \r\n", startPos+1);
 	 if (endPos < 0)
 	    endPos = line.length();
@@ -5914,8 +5904,8 @@ static void parse(int argc, char **argv, CmdLineOptions &options)
       int rptCnt = 1;
       if (repeatStr != NULL) {
 	*(repeatStr++) = 0;
-        rptCnt = atoi(repeatStr);
-        if (rptCnt <= 0)
+	rptCnt = atoi(repeatStr);
+	if (rptCnt <= 0)
 	  rptCnt = 1;
       }
 
@@ -6011,12 +6001,13 @@ static void parse(int argc, char **argv, CmdLineOptions &options)
 		av = parseConfFile(argv[i], ac);
 		// Theoretically we could merge the options specified in the conf file after parsing
 		// the cmd line options. But for now just override them on the spot
-	        //	parse(ac, av, confOptions);
+		//	parse(ac, av, confOptions);
 		parse(ac, av, options);
 
 		options.numAllowedFlags = 0;
 
-		//for (int i = 0; i < ac; i++) // These strings need to stick around for -world, -servermsg, etc
+		// These strings need to stick around for -world, -servermsg, etc
+		//for (int i = 0; i < ac; i++)
 		//  delete[] av[i];
 		delete[] av;
 
@@ -6758,7 +6749,7 @@ int main(int argc, char **argv)
 		 int(tm - player[i].lastupdate));
 	  char message[MessageLen]="You were kicked because of idling too long";
 	  sendMessage(i, player[i].id, player[i].team, message);
-	  removePlayer(i);
+	  removePlayer(i, "idling");
 	}
       }
     }
@@ -6881,8 +6872,7 @@ int main(int argc, char **argv)
 	sprintf(message,"Try another server, Bye!");
 	sendMessage(i, player[i].id, player[i].team, message);
 
-	DEBUG1("Player %s [%d] kicked, no UDP\n",player[i].callSign,i);
-	removePlayer(i);
+	removePlayer(i, "no UDP");
       }
     }
     // check messages
