@@ -199,9 +199,6 @@ void ListServerLink::read()
 	      //DEBUG3("Got: [%d] \"%s\" \"%s\"\n", playerIndex, callsign, group);
 	      group = nextgroup;
 	    }
-	    // automatically give global users permission to use local accounts
-	    // since they either already have it, or there's no existing local account.
-	    playerData->accessInfo.addGroup("LOCAL.GLOBAL");
 	    sendMessage(ServerPlayer, playerIndex, "Global login approved!");
 	    sendIPUpdate(playerIndex, -1);
 	    sendPlayerInfo();

@@ -136,6 +136,8 @@ void PlayerAccessInfo::storeInfo(const char* pwd) {
   info.addGroup("VERIFIED");
 
   if (pwd == NULL) {
+    // automatically give global users permission to use local accounts
+    // since they either already have it, or there's no existing local account.
     info.addGroup("LOCAL.GLOBAL");
     setUserPassword(regName.c_str(), "");
     DEBUG1("Global Temp Register %s\n", regName.c_str());
