@@ -106,7 +106,7 @@ bool PlayerInfo::unpackEnter(void *buf, uint16_t &rejectCode, char *rejectMsg)
   if (!isCallSignReadable()) {
     DEBUG2("rejecting unreadable callsign: %s\n", callSign);
     rejectCode   = RejectBadCallsign;
-    strcpy(rejectMsg, "The callsign was rejected.  Try a different callsign.");
+    strcpy(rejectMsg, errorString.c_str());
     return false;
   }
   // no spoofing the server name
@@ -134,12 +134,16 @@ bool PlayerInfo::isCallSignReadable() {
 
   int callsignlen = (int)strlen(callSign);
   // reject less than 5 characters
-  if (callsignlen < 5)
+  if (callsignlen < 3) {
+    errorString = "Your callsign is too short.";
     return false;
+  }
 
   // reject trailing space
-  if (isspace(callSign[strlen(callSign) - 1]))
+  if (isspace(callSign[strlen(callSign) - 1])) {
+    errorString = "Trailing space are not allowed on nick";
     return false;
+  }
 
   // start with true to reject leading space
   bool lastWasSpace = true;
@@ -147,16 +151,23 @@ bool PlayerInfo::isCallSignReadable() {
   const char *sp = callSign;
   do {
     // reject sequential spaces
-    if (lastWasSpace && isspace(*sp))
+    if (lastWasSpace && isspace(*sp)) {
+      errorString = "Sequential space are not allowed on nick";
       return false;
+    }
 
     // reject ' and " and any nonprintable
-    if ((*sp == '\'') || (*sp == '"') || ((unsigned)*sp > 0x7f) || !isprint(*sp))
-	return false;
+    if ((*sp == '\'') || (*sp == '"') || ((unsigned)*sp > 0x7f)
+	|| !isprint(*sp)) {
+      errorString = "Non printable chars on nick";
+      return false;
+    }
     if (isspace(*sp)) {
       // only space is valid, not tab etc.
-      if (*sp != ' ')
+      if (*sp != ' ') {
+	errorString = "Not valid space on nick";
 	return false;
+      }
       lastWasSpace = true;
     } else {
       lastWasSpace = false;

@@ -168,6 +168,9 @@ private:
   // tracker id for position tracking
   unsigned short int tracker;
 
+  // Error string
+  std::string errorString;
+
   // just need one of these for
   static WordFilter serverSpoofingFilter;
 };
