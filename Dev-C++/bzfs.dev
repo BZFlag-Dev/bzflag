@@ -9,8 +9,8 @@ CppCompiler=-D_DEVCPP=1 -D__GNUWIN32__ -D_CONSOLE -DWIN32 -D_MBCS_@@_ -Wall -Wer
 Includes=..\Dev-C++;..\include;..\Dev-C++
 Linker=-lstdc++ -lws2_32 -lwinmm -lkernel32 -luser32 -lgdi32 -lwinspool -lcomdlg32 -ladvapi32 -lshell32 -lole32 -loleaut32 -luuid -lcurl_@@_
 Libs=
-UnitCount=213
-Folders="Header Files","Header Files/bzfs","Header Files/common","Header Files/game","Header Files/net","Header Files/regex","Resource Files","Source Files","Source Files/bzfs","Source Files/common","Source Files/date","Source Files/game","Source Files/Net","Source Files/regex","Source Files/zlib"
+UnitCount=238
+Folders="Header Files","Header Files/bzfs","Header Files/common","Header Files/game","Header Files/net","Header Files/regex","Resource Files","Source Files","Source Files/bzfs","Source Files/c-ares","Source Files/common","Source Files/date","Source Files/game","Source Files/net","Source Files/regex","Source Files/zlib"
 ObjFiles=
 PrivateResource=
 ResourceIncludes=
@@ -2178,9 +2178,259 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit214]
-FileName=..\src\bzfs\DropGeometry.cxx
+FileName=..\src\c-ares\ares_init.c
+CompileCpp=0
+Folder=Source Files/c-ares
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=1
+BuildCmd=$(CC) -c ../src/c-ares/ares_init.c -o ../src/bzfs/ares_init.o -D_DEVCPP=1 -D__GNUWIN32__ -D_CONSOLE -DWIN32 -D_MBCS
+
+[Unit215]
+FileName=..\src\c-ares\ares_mkquery.c
+CompileCpp=0
+Folder=Source Files/c-ares
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit216]
+FileName=..\src\c-ares\ares_parse_a_reply.c
+CompileCpp=0
+Folder=Source Files/c-ares
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit217]
+FileName=..\src\c-ares\ares_parse_ptr_reply.c
+CompileCpp=0
+Folder=Source Files/c-ares
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit218]
+FileName=..\src\c-ares\ares_process.c
+CompileCpp=0
+Folder=Source Files/c-ares
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=1
+BuildCmd=$(CC) -c ../src/c-ares/ares_process.c -o ../src/bzfs/ares_process.o -D_DEVCPP=1 -D__GNUWIN32__ -D_CONSOLE -DWIN32 -D_MBCS
+
+[Unit219]
+FileName=..\src\c-ares\ares_query.c
+CompileCpp=0
+Folder=Source Files/c-ares
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit220]
+FileName=..\src\c-ares\ares_search.c
+CompileCpp=0
+Folder=Source Files/c-ares
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit221]
+FileName=..\src\c-ares\ares_send.c
+CompileCpp=0
+Folder=Source Files/c-ares
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit222]
+FileName=..\src\c-ares\ares_strerror.c
+CompileCpp=0
+Folder=Source Files/c-ares
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit223]
+FileName=..\src\c-ares\ares_timeout.c
+CompileCpp=0
+Folder=Source Files/c-ares
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit224]
+FileName=..\src\c-ares\ares_version.c
+CompileCpp=0
+Folder=Source Files/c-ares
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit225]
+FileName=..\src\c-ares\windows_port.c
+CompileCpp=0
+Folder=Source Files/c-ares
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=1
+BuildCmd=$(CC) -c ../src/c-ares/windows_port.c -o ../src/bzfs/windows_port.o -D_DEVCPP=1 -D__GNUWIN32__ -D_CONSOLE -DWIN32 -D_MBCS
+
+[Unit227]
+FileName=..\src\c-ares\ares__get_hostent.c
+CompileCpp=0
+Folder=Source Files/c-ares
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit228]
+FileName=..\src\c-ares\ares__read_line.c
+CompileCpp=0
+Folder=Source Files/c-ares
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit229]
+FileName=..\src\c-ares\ares_cancel.c
+CompileCpp=0
+Folder=Source Files/c-ares
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit230]
+FileName=..\src\c-ares\ares_destroy.c
+CompileCpp=0
+Folder=Source Files/c-ares
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit231]
+FileName=..\src\c-ares\ares_expand_name.c
+CompileCpp=0
+Folder=Source Files/c-ares
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit232]
+FileName=..\src\c-ares\ares_expand_string.c
+CompileCpp=0
+Folder=Source Files/c-ares
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit233]
+FileName=..\src\c-ares\ares_fds.c
+CompileCpp=0
+Folder=Source Files/c-ares
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit234]
+FileName=..\src\c-ares\ares_free_hostent.c
+CompileCpp=0
+Folder=Source Files/c-ares
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit235]
+FileName=..\src\c-ares\ares_free_string.c
+CompileCpp=0
+Folder=Source Files/c-ares
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit236]
+FileName=..\src\c-ares\ares_gethostbyaddr.c
+CompileCpp=0
+Folder=Source Files/c-ares
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit237]
+FileName=..\src\c-ares\ares_gethostbyname.c
+CompileCpp=0
+Folder=Source Files/c-ares
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit238]
+FileName=..\src\net\AresHandler.cxx
 CompileCpp=1
-Folder=Source Files/bzfs
+Folder=Source Files/net
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit239]
+FileName=..\src\net\AresHandler.cxx
+CompileCpp=1
+Folder=Source Files/net
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit226]
+FileName=..\src\c-ares\ares__close_sockets.c
+CompileCpp=0
+Folder=Source Files/c-ares
 Compile=1
 Link=1
 Priority=1000
