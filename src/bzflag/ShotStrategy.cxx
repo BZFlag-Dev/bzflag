@@ -813,8 +813,6 @@ ThiefStrategy::ThiefStrategy(ShotPath* path) :
   // make laser scene nodes
   const int numSegments = getSegments().size();
   thiefNodes = new LaserSceneNode*[numSegments];
-  const LocalPlayer* myTank = LocalPlayer::getMyTank();
-  TeamColor tmpTeam = (myTank->getFlag() == Flags::Colorblindness) ? RogueTeam : team;
   for (int i = 0; i < numSegments; i++) {
     const ShotPathSegment& segment = getSegments()[i];
     const float t = segment.end - segment.start;
