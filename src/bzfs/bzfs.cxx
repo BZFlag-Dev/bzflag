@@ -3599,8 +3599,10 @@ static void addClient(int acceptSocket)
       gameOver = False;
 #ifdef TIMELIMIT
       gameStartTime = TimeKeeper::getCurrent();
-      timeElapsed = 0.0f;
-      countdownActive = false;
+      if (timeLimit > 0.0f) {
+        timeElapsed = 0.0f;
+        countdownActive = true;
+      }
 #endif
     }
   }
@@ -5862,8 +5864,8 @@ static void parse(int argc, char **argv)
       timeLimit = (float)atof(argv[i]);
       if (timeLimit <= 0.0f) {
 	timeLimit = 300.0f;
-	cerr << "using time limit of " << (int)timeLimit << " seconds" << endl;
       }
+      cerr << "using time limit of " << (int)timeLimit << " seconds" << endl;
       timeElapsed = timeLimit;
     }
 #endif
@@ -6289,8 +6291,6 @@ int main(int argc, char **argv)
     //if (nfound)
     //  DEBUG1("nfound,read,write %i,%08lx,%08lx\n", nfound, read_set, write_set);
 
-    tm = TimeKeeper::getCurrent();
-
 #ifdef TIMELIMIT
     // see if game time ran out
     if (!gameOver && countdownActive && timeLimit > 0.0f) {
@@ -6305,20 +6305,23 @@ int main(int argc, char **argv)
 	buf = nboPackUShort(bufStart, (uint16_t)(int)timeLeft);
 	broadcastMessage(MsgTimeUpdate, (char*)buf-(char*)bufStart, bufStart);
 	timeElapsed = newTimeElapsed;
+	if (oneGameOnly) {
+	  done = True;
+	  exitCode = 0;
+	}
       }
     }
 #endif
 
     // kick idle players
     if (idlekickthresh > 0) {
-      TimeKeeper now = TimeKeeper::getCurrent();
       for (int i=0;i<maxPlayers;i++) {
 	if (!player[i].Observer && player[i].state == PlayerDead &&
-	    (now - player[i].lastupdate >
-	      (now-player[i].lastmsg < idlekickthresh ?
+	    (tm - player[i].lastupdate >
+	      (tm - player[i].lastmsg < idlekickthresh ?
 	       3 * idlekickthresh : idlekickthresh))) {
 	  DEBUG1("kicking idle player %s (%d)\n",player[i].callSign,
-		 int(now - player[i].lastupdate));
+		 int(tm - player[i].lastupdate));
 	  char message[MessageLen]="You were kicked because of idling too long";
 	  sendMessage(i, player[i].id, player[i].team, message);
 	  removePlayer(i);
