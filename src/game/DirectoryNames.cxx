@@ -104,30 +104,28 @@ extern std::string		getCacheDirName()
 
 extern std::string		getRecordDirName()
 {
-  std::string name = getConfigDirName();
-  name += "recordings";
-  name += DirectorySeparator;
-  return name;
+  return setupString("recordings");
 }
 
 
 extern std::string		getScreenShotDirName()
 {
-  std::string name = getConfigDirName();
-  name += "screenshots";
-  name += DirectorySeparator;
-  return name;
+  return setupString("screenshots");
 }
 
 
 extern std::string		getWorldDirName()
 {
+  return setupString("worlds");
+}
+
+extern std::string		setupString(std::string dir)
+{
   std::string name = getConfigDirName();
-  name += "worlds";
+  name += dir;
   name += DirectorySeparator;
   return name;
 }
-
 
 // Local Variables: ***
 // mode: C++ ***
