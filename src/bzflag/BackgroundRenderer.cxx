@@ -105,7 +105,7 @@ BackgroundRenderer::BackgroundRenderer(const SceneRenderer&) :
   // ground
   {
     // load texture for normal ground
-    OpenGLTexture *groundTexture = tm.getTexture( "std.ground" );
+    OpenGLTexture *groundTexture = tm.getTexture( "std.ground",false );
 
 	if (!groundTexture || !groundTexture->isValid())
 		groundTexture = tm.getTexture( "ground" );
@@ -127,7 +127,7 @@ BackgroundRenderer::BackgroundRenderer(const SceneRenderer&) :
     groundGState[3] = gstate.getState();
 
 	// load texture for inverted ground
-    groundTexture = tm.getTexture( "zone.ground" );
+    groundTexture = tm.getTexture( "zone.ground",false );
 
 	if (!groundTexture || !groundTexture->isValid())
 		groundTexture = tm.getTexture( "ground" );
@@ -213,7 +213,7 @@ BackgroundRenderer::BackgroundRenderer(const SceneRenderer&) :
 	while (!done){
 		char text[256];
 		sprintf(text,"mountain%d",numMountainTextures+1);
-		mountainTexture = tm.getTexture(text);
+		mountainTexture = tm.getTexture(text,false);
 		if (mountainTexture && mountainTexture->isValid()){
 			height = mountainTexture->getHeight();
 			width += mountainTexture->getWidth();

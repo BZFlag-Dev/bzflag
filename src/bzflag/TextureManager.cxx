@@ -52,7 +52,7 @@ TextureManager::~TextureManager()
   m_Textures.clear();
 }
 
-OpenGLTexture* TextureManager::getTexture( const char* name )
+OpenGLTexture* TextureManager::getTexture( const char* name, bool reportFail )
 {
   if (!name)
   	return NULL;
@@ -65,7 +65,7 @@ OpenGLTexture* TextureManager::getTexture( const char* name )
 	  FileTextureInit	file;
 	  file.filter = OpenGLTexture::LinearMipmapLinear;
 	  file.name = texName;
-	  OpenGLTexture* tex = loadTexture(file);
+	  OpenGLTexture* tex = loadTexture(file,reportFail);
 	  if (!tex) // well crap it failed, give them nothing
 		  return NULL;
 	  addTexture(name,tex);
@@ -88,7 +88,7 @@ void TextureManager::addTexture( const char* name, OpenGLTexture *texture )
   m_Textures[name] = texture;
 }
 
-OpenGLTexture* TextureManager::loadTexture( FileTextureInit &init )
+OpenGLTexture* TextureManager::loadTexture( FileTextureInit &init, bool reportFail )
 {
   int width, height;
   std::string nameToTry = "";
@@ -109,7 +109,7 @@ OpenGLTexture* TextureManager::loadTexture( FileTextureInit &init )
 	 image = MediaFile::readImage( nameToTry.c_str(), &width, &height);
   if (!image)
 	  image =  MediaFile::readImage( init.name.c_str(), &width, &height);
-  if (!image) {
+  if (!image && reportFail) {
     std::vector<std::string> args;
     args.push_back(init.name);
     printError("cannot load texture: {1}", &args);

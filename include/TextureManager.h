@@ -37,7 +37,7 @@ typedef std::map<std::string, OpenGLTexture*> TextureNameMap;
 class TextureManager : public Singleton<TextureManager>
 {
 public:
-  OpenGLTexture* getTexture( const char* name );
+  OpenGLTexture* getTexture( const char* name, bool reportFail = true );
   void addTexture( const char*, OpenGLTexture *texture );
 
   static OpenGLTexture* noiseProc( ProcTextureInit &init );
@@ -51,7 +51,7 @@ private:
   TextureManager& operator=(const TextureManager &tm);
   ~TextureManager();
 
-  OpenGLTexture* loadTexture( FileTextureInit &init );
+  OpenGLTexture* loadTexture( FileTextureInit &init, bool reportFail = true  );
 
 
   TextureNameMap m_Textures;

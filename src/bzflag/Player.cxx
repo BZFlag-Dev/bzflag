@@ -163,7 +163,7 @@ void			Player::changeTeam(TeamColor _team)
   static const GLfloat	tankSpecular[3] = { 0.1f, 0.1f, 0.1f };
   static GLfloat	tankEmissive[3] = { 0.0f, 0.0f, 0.0f };
   static float		tankShininess = 20.0f;
-  static GLfloat	rabbitEmissive[3] = { 1.0f, 1.0f, 1.0f };
+  static GLfloat	rabbitEmissive[3] = { 0.25f, 0.25f, 0.25f };
   static float		rabbitShininess = 100.0f;
 
   GLfloat *emissive;
@@ -193,7 +193,7 @@ void			Player::changeTeam(TeamColor _team)
     texName = Team::getImagePrefix(team);
 
   texName += "tank";
-  tankTexture = tm.getTexture(texName.c_str());
+  tankTexture = tm.getTexture(texName.c_str(),false);
   if (tankTexture && tankTexture->isValid())
     useColorTexture = true;
   else

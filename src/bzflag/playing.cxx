@@ -6921,7 +6921,7 @@ void			startPlaying(BzfDisplay* _display,
 	  char text[256];
 	  sprintf(text,"explode%d",explostion);
 
-	  OpenGLTexture *tex = tm.getTexture( text );
+	  OpenGLTexture *tex = tm.getTexture( text, false );
 	  
 	  if (!tex || !tex->isValid())
 		  done = true;
