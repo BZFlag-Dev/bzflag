@@ -419,7 +419,7 @@
 	<key>CFBundleExecutable</key>
 	<string>BZFlag</string>
 	<key>CFBundleGetInfoString</key>
-	<string>BZFlag version 1.9a0, 1993-2003 Tim Riker, Chris Schoeneman</string>
+	<string>BZFlag version 1.7g3, 1993-2003 Tim Riker, Chris Schoeneman</string>
 	<key>CFBundleIconFile</key>
 	<string>MacBZFlag.icns</string>
 	<key>CFBundleIdentifier</key>
@@ -435,7 +435,7 @@
 	<key>CFBundleSignature</key>
 	<string>BZfl</string>
 	<key>CFBundleVersion</key>
-	<string>1.9a0</string>
+	<string>1.7g3</string>
 	<key>CSResourcesFileMapped</key>
 	<true/>
 	<key>NSMainNibFile</key>
