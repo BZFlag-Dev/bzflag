@@ -2957,8 +2957,9 @@ static void		handleServerMessage(bool human, uint16_t code,
 	  updateFlag(myTank->getFlag());
 	}
       }
-      else if (tank && tank->getTeam() != myTank->getTeam() &&
-	  int(world->getFlag(flagIndex).id) == int(myTank->getTeam())) {
+      else if (myTank->getTeam() != RabbitTeam && tank && 
+	       tank->getTeam() != myTank->getTeam() &&
+	       int(world->getFlag(flagIndex).id) == int(myTank->getTeam())) {
 	hud->setAlert(1, "Flag Alert!!!", 3.0f, true);
 	playLocalSound(SFX_ALERT);
       }

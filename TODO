@@ -1,8 +1,5 @@
 current bugs
 ------------
-- Whenever a V flag is grabbed, a rabbit gets a capture the flag warning
-  sound. Probably because flag id=team id
-
 - messages to all go to player at slot 0. We should probably define some
   special playerids which refer to no player, every player, team and server.
   Was this way in 1.8 for Msgmesage I think
