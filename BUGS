@@ -27,23 +27,12 @@ recent bugs
   un aided. Now stop yourself. Now alt doesn't work. Bagheera reports he gets
   into situations where movement is out of control.
 
-- 1.9.3 client was able to connect to 1.9.7 server.. odd behavior ensued,
-  server tried to kick and fails to find the player.
-  (this won't happen with newer clients since they check the whole version
-  string instead of only the first seven characters)  the server should
-  be able to kick unacceptable clients, and not rely on clients to remove
-  themselves.
-
 - bzfs should re-resolve the list server IP if it can't reach it for an update
 
 - Shots that bounce off the ground occasionally reflect in the wrong
   direction - x/y flipped
   Actually i think sometimes the bullet misses the bounce against the ground
   and travels unabatted downward, making it look like an odd angle.
-
-- tanks only check their bottoms as regards hit detection against pyramids
-  Corollary, if you drop burrow while under pyr, you get stuck, not unlike
-  grabbing obese next to a building.
 
 - resetting key map doesn't seem to fully erase the current bindings before
   reapplying defaults
@@ -80,8 +69,6 @@ http://SourceForge.net/tracker/?group_id=3248&atid=103248
 * same stipple on teleporters and phantom zone, making phatom
    tank behind teleporter virtually invisible when blending is off.
 
-* hit detection on pyramids computed at altitude of ray origin
-
 * not drawing back to front when depth buffer is on:
    flag edges can't be antialiased right
    teleporter blended on top of shots in front of them
@@ -102,8 +89,3 @@ http://SourceForge.net/tracker/?group_id=3248&atid=103248
 
 * error dialogs on win32 may appear off screen
    only when display resolution was changed
-
-* collision problems
-   can sometimes get stuck on a pyramid or in a corner.  also
-   picking up the obese flag close to a building can cause you
-   to get stuck.
