@@ -268,8 +268,6 @@ void handleMsgCmd2(GameKeeper::Player *playerData, const char *message)
   std::string recipient;
   bool quoted = false;
 
-  DEBUG2("Command arguments are [%s]\n", arguments.c_str());
-
   startPosition = 0;
   while ((startPosition < arguments.size()) &&
 	 (isspace(arguments[startPosition]))) {
@@ -319,7 +317,7 @@ void handleMsgCmd2(GameKeeper::Player *playerData, const char *message)
     endPosition++;
   }
 
-  DEBUG2("Recipient's name is \"%s\" with start %d and end %d\n", recipient.c_str(), startPosition, endPosition);
+  DEBUG3("Recipient's name for /msg is \"%s\" with start %d and end %d\n", recipient.c_str(), startPosition, endPosition);
 
   if (v >= curMaxPlayers) {
     std::string msg;
@@ -1486,7 +1484,7 @@ void handlePollCmd(GameKeeper::Player *playerData, const char *message)
   char reply[MessageLen] = {0};
   std::string callsign = std::string(playerData->player.getCallSign());
 
-  DEBUG2("Entered poll command handler (MessageLen is %d)\n", MessageLen);
+  DEBUG2("\"%s\" has requested a poll: %s\n", callsign.c_str(), message);
 
   /* make sure player has permission to request a poll */
   if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::poll)) {
@@ -1495,7 +1493,7 @@ void handlePollCmd(GameKeeper::Player *playerData, const char *message)
     return;
   }
 
-  DEBUG2("Player has permission\n");
+  DEBUG3("Player has permission to run /poll\n");
 
   /* make sure that there is a poll arbiter */
   if (BZDB.isEmpty("poll")) {
@@ -1503,12 +1501,12 @@ void handlePollCmd(GameKeeper::Player *playerData, const char *message)
     return;
   }
 
-  DEBUG2("BZDB poll value is not empty\n");
+  DEBUG3("BZDB poll value is not empty\n");
 
   // only need to do this once
   static VotingArbiter *arbiter = (VotingArbiter *)BZDB.getPointer("poll");
 
-  DEBUG2("Arbiter was acquired with address 0x%x\n", (unsigned int)arbiter);
+  DEBUG3("Arbiter was acquired with address 0x%x\n", (unsigned int)arbiter);
 
   /* make sure that there is not a poll active already */
   if (arbiter->knowsPoll()) {
@@ -1518,7 +1516,7 @@ void handlePollCmd(GameKeeper::Player *playerData, const char *message)
     return;
   }
 
-  DEBUG2("The arbiter says there is not another poll active\n");
+  DEBUG3("The arbiter says there is not another poll active\n");
 
   // get available voter count
   unsigned short int available = 0;
@@ -1531,7 +1529,7 @@ void handlePollCmd(GameKeeper::Player *playerData, const char *message)
     }
   }
 
-  DEBUG2("There are %d available players for %d votes required\n", available, clOptions->votesRequired);
+  DEBUG3("There are %d available players for %d votes required\n", available, clOptions->votesRequired);
 
   /* make sure there are enough players to even make a poll that has a chance
    * of succeeding (not counting the person being acted upon)
@@ -1547,10 +1545,10 @@ void handlePollCmd(GameKeeper::Player *playerData, const char *message)
     return;
   }
 
-  std::string arguments = &message[5];
+  std::string arguments = &message[5]; /* skip "/poll" */
   std::string cmd = "";
 
-  DEBUG2("The arguments string is [%s]\n", arguments.c_str());
+  DEBUG3("The arguments string is [%s]\n", arguments.c_str());
 
   /* find the start of the command */
   size_t startPosition = 0;
@@ -1559,7 +1557,7 @@ void handlePollCmd(GameKeeper::Player *playerData, const char *message)
     startPosition++;
   }
 
-  DEBUG2("Start position is %d\n", (int)startPosition);
+  DEBUG3("Start position is %d\n", (int)startPosition);
 
   /* find the end of the command */
   size_t endPosition = startPosition + 1;
@@ -1568,7 +1566,7 @@ void handlePollCmd(GameKeeper::Player *playerData, const char *message)
     endPosition++;
   }
 
-  DEBUG2("End position is %d\n", (int)endPosition);
+  DEBUG3("End position is %d\n", (int)endPosition);
 
   /* stash the command ('kick', etc) in lowercase to simplify comparison */
   if ((startPosition != arguments.size()) &&
@@ -1578,7 +1576,7 @@ void handlePollCmd(GameKeeper::Player *playerData, const char *message)
     }
   }
 
-  DEBUG2("Command is %s\n", cmd.c_str());
+  DEBUG3("Command is %s\n", cmd.c_str());
 
   /* handle subcommands */
 
@@ -1588,7 +1586,7 @@ void handlePollCmd(GameKeeper::Player *playerData, const char *message)
 
     arguments = arguments.substr(endPosition);
 
-    DEBUG2("Command arguments are [%s]\n", arguments.c_str());
+    DEBUG3("Command arguments are [%s]\n", arguments.c_str());
 
     /* find the start of the target (e.g. player name) */
     startPosition = 0;
@@ -1601,7 +1599,7 @@ void handlePollCmd(GameKeeper::Player *playerData, const char *message)
       startPosition++;
     }
 
-    DEBUG2("Start position for target is %d\n", (int)startPosition);
+    DEBUG3("Start position for target is %d\n", (int)startPosition);
 
     /* find the end of the target */
     endPosition = arguments.size() - 1;
@@ -1614,11 +1612,11 @@ void handlePollCmd(GameKeeper::Player *playerData, const char *message)
       endPosition--;
     }
 
-    DEBUG2("End position for target is %d\n", (int)endPosition);
+    DEBUG3("End position for target is %d\n", (int)endPosition);
 
     target = arguments.substr(startPosition, endPosition - startPosition + 1);
 
-    DEBUG2("Target specified to vote upon is [%s]\n", target.c_str());
+    DEBUG3("Target specified to vote upon is [%s]\n", target.c_str());
 
     if ((target.length() == 0) && (cmd != "flagreset")) {
       sprintf(reply,"%s, no target was specified for the [%s] vote", callsign.c_str(), cmd.c_str());
@@ -1731,12 +1729,12 @@ void handlePollCmd(GameKeeper::Player *playerData, const char *message)
     }
 
     // automatically place a vote for the player requesting the poll
-    DEBUG2("Attempting to automatically place a vote for [%s]\n", callsign.c_str());
+    DEBUG3("Attempting to automatically place a vote for [%s]\n", callsign.c_str());
 
     bool voted = arbiter->voteYes(callsign);
     if (!voted) {
       sendMessage(ServerPlayer, t, "Unable to automatically place your vote for some unknown reason");
-      DEBUG2("Unable to automatically place a vote for [%s]\n", callsign.c_str());
+      DEBUG3("Unable to automatically place a vote for [%s]\n", callsign.c_str());
     }
 
   } else if (cmd == "vote") {
@@ -2150,38 +2148,117 @@ void handleDateCmd(GameKeeper::Player *playerData, const char * /*message*/)
   sendMessage(ServerPlayer, t, timeStr);
 }
 
-void handleReloadMasterBanCmd(GameKeeper::Player *playerData, const char * /*message*/)
+void handleMasterBanCmd(GameKeeper::Player *playerData, const char *message)
 {
   int t = playerData->getIndex();
-  if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::unban)) {
-    sendMessage(ServerPlayer, t, "You do not have permission to run the reloadMasterBan command");
+  std::string callsign = std::string(playerData->player.getCallSign());
+
+  DEBUG2("\"%s\" has requested masterban: %s\n", callsign.c_str(), message);
+
+  if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::masterBan)) {
+    sendMessage(ServerPlayer, t, string_util::format("%s, you are presently not authorized to run /masterban", callsign.c_str()).c_str());
     return;
   }
 
-  clOptions->acl.purgeMasters();
-  sendMessage(ServerPlayer, t, "master ban list flushed");
+  DEBUG3("Player has permission to run /masterban\n");
 
-  if (clOptions->publicizeServer && !clOptions->suppressMasterBanList){
-    MasterBanList	banList;
-    std::string URL  = "http://bzflag.sourceforge.net/master-bans.txt";
-    for (std::vector<std::string>::const_iterator i = clOptions->masterBanListURL.begin(); i != clOptions->masterBanListURL.end(); i++) {
-      clOptions->acl.merge(banList.get(i->c_str()));
-      DEBUG1("Reloaded master ban list from %s\n", i->c_str());
+  if (!clOptions->publicizeServer) {
+    sendMessage(ServerPlayer, t, "This is not a public server.  Private servers do not use the master ban list.");
+  }
+  if (clOptions->suppressMasterBanList) {
+    sendMessage(ServerPlayer, t, "The master ban list is disabled on this server.");
+  }
+
+  std::string argument = &message[10]; /* skip "/masterban" */
+  std::string cmd = "";
+
+  // allow for arbitrary whitespace
+  size_t start = 0;
+  while ((start < argument.size()) &&
+	 (isspace(argument[start]))) {
+    start++;
+  }
+
+  size_t end = 0;
+  while ((end < argument.size()) &&
+	 (!isspace(argument[end]))) {
+    end++;
+  }
+
+  // make sure the command is lower case for comparison simplicity/insensitivity
+  cmd = argument.substr(start, end - start);
+  std::transform(cmd.begin(), cmd.end(), cmd.begin(), tolower);
+
+  if (cmd == "reload") {
+    if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::ban) ||
+	!playerData->accessInfo.hasPerm(PlayerAccessInfo::unban)) {
+      sendMessage(ServerPlayer, t, "You do not have permission to reload the master ban list.");
+      sendMessage(ServerPlayer, t, "Permission to ban and unban is required to reload the master ban list.");
+      return;
     }
+    
+    if (clOptions->publicizeServer && !clOptions->suppressMasterBanList) {
+      MasterBanList	banList;
+      
+      clOptions->acl.purgeMasters();
+      sendMessage(ServerPlayer, t, "Previous master ban list entries have been flushed.");
+      
+      for (std::vector<std::string>::const_iterator i = clOptions->masterBanListURL.begin(); i != clOptions->masterBanListURL.end(); i++) {
+	std::string reloadmsg = string_util::format("Reloaded master ban list from %s\n", i->c_str());
+	clOptions->acl.merge(banList.get(i->c_str()));
+	DEBUG1("%s", reloadmsg.c_str());
+	sendMessage(ServerPlayer, t, reloadmsg.c_str());
+      }
+
+    } else {
+      sendMessage(ServerPlayer, t, "No action taken.");
+    }
+    
+  } else if (cmd == "flush") {
+    if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::unban)) {
+      sendMessage(ServerPlayer, t, "You do not have permission to reload the master ban list.");
+      sendMessage(ServerPlayer, t, "Permission to unban is required to flush the master ban list.");
+      return;
+    }
+    
+    clOptions->acl.purgeMasters();
+    sendMessage(ServerPlayer, t, "The master ban list has been flushed.");
+    
+  } else if (cmd == "list") {
+    std::vector<std::pair<std::string, std::string> > bans = clOptions->acl.listMasterBans();
+
+    if (bans.size() > 20) {
+      sendMessage(ServerPlayer, t, string_util::format("There are %d bans, only displaying the first 20", bans.size()).c_str());
+
+    } else if (bans.size() == 0) {
+      sendMessage(ServerPlayer, t, "There are no master bans loaded.");
+
+    } else {
+      // print out a list header
+      std::string banmsg = string_util::format("Master Bans from %s:", DefaultMasterBanURL);
+      sendMessage(ServerPlayer, t, banmsg.c_str());
+      for (size_t i = 0; i < banmsg.size(); i++) {
+	banmsg[i] = '-';
+      }
+      sendMessage(ServerPlayer, t, banmsg.c_str());
+    }
+
+    // print out the bans
+    int counter = 0;
+    for (std::vector<std::pair<std::string, std::string> >::const_iterator j = bans.begin(); j != bans.end() && counter < 20; j++, counter++) {
+      sendMessage(ServerPlayer, t, string_util::format("%s: %s", (j->first).c_str(), (j->second).c_str()).c_str());
+    }
+
+  } else {
+    if (cmd.size() > 0) {
+      sendMessage(ServerPlayer, t, string_util::format("Unknown masterban command [%s]", cmd.c_str()).c_str());
+    }
+    sendMessage(ServerPlayer, t, string_util::format("Usage: /masterban list|reload|flush").c_str());
   }
+
+  return;
 }
 
-void handleFlushMasterBanCmd(GameKeeper::Player *playerData, const char * /*message*/)
-{
-  int t = playerData->getIndex();
-  if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::unban)) {
-    sendMessage(ServerPlayer, t, "You do not have permission to run the flushMasterBan command");
-    return;
-  }
-	
-  clOptions->acl.purgeMasters();
-  sendMessage(ServerPlayer, t, "master ban list flushed");
-}
 
 // Local Variables: ***
 // mode: C++ ***

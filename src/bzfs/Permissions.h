@@ -61,6 +61,7 @@ public:
       lagStats,
       lagwarn,
       listPerms,
+      masterBan,
       playerList,
       poll,
       privateMessage,

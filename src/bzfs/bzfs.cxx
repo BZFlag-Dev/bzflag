@@ -1285,7 +1285,7 @@ static void acceptClient()
 
     std::string rejectionMessage;
 
-    rejectionMessage = "REFUSED_For: ";
+    rejectionMessage = "REFUSED: ";
     if (info.reason.size())
       rejectionMessage += info.reason;
     else
@@ -1297,7 +1297,7 @@ static void acceptClient()
     }
 
     if (info.fromMaster)
-      rejectionMessage += " from the master server";
+      rejectionMessage += " [you are on the master ban list]";
 
     // send back 0xff before closing
     rejectionMessage += (char)0xff;
@@ -3060,7 +3060,7 @@ static void parseCommand(const char *message, int t)
   } else if (strncmp(message + 1, "clientquery", 11) == 0) {
     handleClientqueryCmd(playerData, message);
 
-  } else if (strncmp(message+1, "date",4) == 0 || strncmp(message+1, "time",4) == 0) {
+  } else if (strncmp(message + 1, "date", 4) == 0 || strncmp(message + 1, "time", 4) == 0) {
     handleDateCmd(playerData, message);
 
   } else if (strncmp(message + 1, "record", 6) == 0) {
@@ -3069,11 +3069,8 @@ static void parseCommand(const char *message, int t)
   } else if (strncmp(message + 1, "replay", 6) == 0) {
     handleReplayCmd(playerData, message);
 
-  } else if (strncmp(message + 1, "masterbanreload", 15) == 0) {
-    handleReloadMasterBanCmd(playerData, message);
-
-  } else if (strncmp(message + 1, "masterbanflush", 14) == 0) {
-    handleFlushMasterBanCmd(playerData, message);
+  } else if (strncmp(message + 1, "masterban", 9) == 0) {
+    handleMasterBanCmd(playerData, message);
 
   } else {
     char reply[MessageLen];

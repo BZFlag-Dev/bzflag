@@ -292,6 +292,7 @@ void handleClientqueryCmd(GameKeeper::Player *playerData, const char *);
  */
 void handleRecordCmd(GameKeeper::Player *playerData, const char *);
 
+
 /** /replay command hook function
  *
  *  /replay list                # list available replay files
@@ -302,20 +303,21 @@ void handleRecordCmd(GameKeeper::Player *playerData, const char *);
 void handleReplayCmd(GameKeeper::Player *playerData, const char *);
 
 
-// reload the master ban list from the server
-void handleReloadMasterBanCmd(GameKeeper::Player *playerData, const char *);
-
-// flush the master ban list
-void handleFlushMasterBanCmd(GameKeeper::Player *playerData, const char *);
+/** /masterban command hook function
+ *
+ * /masterban flush             # remove all master ban entries from this server
+ * /masterban reload            # reread and reload all master ban entries
+ * /masterban list              # output a list of who is banned
+ */
+void handleMasterBanCmd(GameKeeper::Player *playerData, const char *message);
 
 
 #endif
 
 // Local Variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-
