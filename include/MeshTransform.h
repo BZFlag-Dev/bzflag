@@ -90,6 +90,7 @@ class MeshTransform {
         float vertexMatrix[4][4];
         float normalMatrix[3][3];
     };
+  friend class MeshTransform::Tool;
 };
 
 inline bool MeshTransform::Tool::getIsInverted() const
