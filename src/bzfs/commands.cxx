@@ -1160,7 +1160,7 @@ void handlePollCmd(int t, const char *message)
    * of succeeding (not counting the person being acted upon)
    */
   if (available - 1 < clOptions->votesRequired) {
-    sendMessage(ServerPlayer, t, "Unable to initiate a new poll.  There are not enough regsitered players playing.", true);
+    sendMessage(ServerPlayer, t, "Unable to initiate a new poll.  There are not enough registered players playing.", true);
     sprintf(reply,"There needs to be at least %d other %s and only %d %s available.",
 	    clOptions->votesRequired,
 	    clOptions->votesRequired - 1 == 1 ? "player" : "players",
