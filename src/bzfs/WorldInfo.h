@@ -104,7 +104,7 @@ public:
    */
   void checkCollisionManager();
 
-  bool WorldInfo::inRect(const float *p1, float angle, const float *size,
+  bool inRect(const float *p1, float angle, const float *size,
                          float x, float y, float r) const;
 
 private:
