@@ -10,6 +10,10 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
+#ifdef _WIN32
+#include <winsock2.h>
+#include <ws2tcpip.h>
+#endif
 #include "common.h"
 #include "playing.h"
 #include "ShotStrategy.h"
@@ -29,6 +33,7 @@
 #include "SceneRenderer.h"
 #include "StateDatabase.h"
 #include "BZDBCache.h"
+#include "TextureManager.h"
 
 static OpenGLTexture*	boltTexture[NumTeams];
 static OpenGLTexture*	tboltTexture[NumTeams];
@@ -53,58 +58,30 @@ ShotStrategy::~ShotStrategy()
 
 void			ShotStrategy::init()
 {
-  int i;
-  for (i = 0; i < (int)(sizeof(boltTexture) / sizeof(boltTexture[0])); i++)
-    boltTexture[i] = new OpenGLTexture;
-  for (i = 0; i < (int)(sizeof(tboltTexture) / sizeof(tboltTexture[0])); i++)
-    tboltTexture[i] = new OpenGLTexture;
-  for (i = 0; i < (int)(sizeof(laserTexture) / sizeof(laserTexture[0])); i++)
-    laserTexture[i] = new OpenGLTexture;
-  thiefTexture = new OpenGLTexture;
-  gmTexture = new OpenGLTexture;
+  TextureManager *tm = TextureManager::getTextureManager();
+  boltTexture[RogueTeam] = tm->getTexture( TX_BOLT, RogueTeam );
+  boltTexture[RedTeam] = tm->getTexture( TX_BOLT, RedTeam );
+  boltTexture[GreenTeam] = tm->getTexture( TX_BOLT, GreenTeam );
+  boltTexture[BlueTeam] = tm->getTexture( TX_BOLT, BlueTeam );
+  boltTexture[PurpleTeam] = tm->getTexture( TX_BOLT, PurpleTeam );
+  boltTexture[RabbitTeam] = tm->getTexture( TX_BOLT, RabbitTeam );
 
-  *boltTexture[RogueTeam] = getTexture("ybolt", OpenGLTexture::Linear);
-  *boltTexture[RedTeam] = getTexture("rbolt", OpenGLTexture::Linear);
-  *boltTexture[GreenTeam] = getTexture("gbolt", OpenGLTexture::Linear);
-  *boltTexture[BlueTeam] = getTexture("bbolt", OpenGLTexture::Linear);
-  *boltTexture[PurpleTeam] = getTexture("pbolt", OpenGLTexture::Linear);
-  *boltTexture[RabbitTeam] = getTexture("wbolt", OpenGLTexture::Linear);
-  *tboltTexture[RogueTeam] = getTexture("ytbolt", OpenGLTexture::Linear);
-  *tboltTexture[RedTeam] = getTexture("rtbolt", OpenGLTexture::Linear);
-  *tboltTexture[GreenTeam] = getTexture("gtbolt", OpenGLTexture::Linear);
-  *tboltTexture[BlueTeam] = getTexture("btbolt", OpenGLTexture::Linear);
-  *tboltTexture[PurpleTeam] = getTexture("ptbolt", OpenGLTexture::Linear);
-  *tboltTexture[RabbitTeam] = getTexture("wtbolt", OpenGLTexture::Linear);
-  *laserTexture[RogueTeam] = getTexture("ylaser", OpenGLTexture::Max);
-  *laserTexture[RedTeam] = getTexture("rlaser", OpenGLTexture::Max);
-  *laserTexture[GreenTeam] = getTexture("glaser", OpenGLTexture::Max);
-  *laserTexture[BlueTeam] = getTexture("blaser", OpenGLTexture::Max);
-  *laserTexture[PurpleTeam] = getTexture("plaser", OpenGLTexture::Max);
-  *laserTexture[RabbitTeam] = getTexture("wlaser", OpenGLTexture::Max);
-  *thiefTexture = getTexture("thief", OpenGLTexture::Max);
-  *gmTexture = getTexture("missile", OpenGLTexture::Max);
-}
+  tboltTexture[RogueTeam] = tm->getTexture( TX_TRANSBOLT, RogueTeam );
+  tboltTexture[RedTeam] = tm->getTexture( TX_TRANSBOLT, RedTeam );
+  tboltTexture[GreenTeam] = tm->getTexture( TX_TRANSBOLT, GreenTeam );
+  tboltTexture[BlueTeam] = tm->getTexture( TX_TRANSBOLT, BlueTeam );
+  tboltTexture[PurpleTeam] = tm->getTexture( TX_TRANSBOLT, PurpleTeam );
+  tboltTexture[RabbitTeam] = tm->getTexture( TX_TRANSBOLT, RabbitTeam );
+ 
+  laserTexture[RogueTeam] = tm->getTexture( TX_LASER, RogueTeam );
+  laserTexture[RedTeam] = tm->getTexture( TX_LASER, RedTeam );
+  laserTexture[GreenTeam] = tm->getTexture( TX_LASER, GreenTeam );
+  laserTexture[BlueTeam] = tm->getTexture( TX_LASER, BlueTeam );
+  laserTexture[PurpleTeam] = tm->getTexture( TX_LASER, PurpleTeam );
+  laserTexture[RabbitTeam] = tm->getTexture( TX_LASER, RabbitTeam );
 
-void			ShotStrategy::done()
-{
-  int i;
-  delete gmTexture;
-  gmTexture = NULL;
-  delete thiefTexture;
-  thiefTexture = NULL;
-
-  for (i = 0; i < (int)(sizeof(boltTexture) / sizeof(boltTexture[0])); i++) {
-    delete boltTexture[i];
-    boltTexture[i] = NULL;
-  }
-  for (i = 0; i < (int)(sizeof(tboltTexture) / sizeof(tboltTexture[0])); i++) {
-    delete tboltTexture[i];
-    tboltTexture[i] = NULL;
-  }
-  for (i = 0; i < (int)(sizeof(laserTexture) / sizeof(laserTexture[0])); i++) {
-    delete laserTexture[i];
-    laserTexture[i] = NULL;
-  }
+  thiefTexture = tm->getTexture( TX_THIEF );
+  gmTexture = tm->getTexture( TX_MISSILE );
 }
 
 bool			ShotStrategy::isStoppedByHit() const
