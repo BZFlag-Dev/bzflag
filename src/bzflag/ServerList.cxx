@@ -26,7 +26,10 @@
 #include "ServerListCache.h"
 #include "StartupInfo.h"
 #include "ErrorHandler.h"
-
+#if !defined(_WIN32)
+#include <errno.h>
+#endif
+                                                                                
 /* from playing.h */
 StartupInfo* getStartupInfo();
 typedef void (*PlayingCallback)(void*);
