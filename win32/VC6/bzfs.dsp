@@ -111,7 +111,7 @@ SOURCE=..\..\src\bzfs\BZWReader.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\src\bzfs\CaptureRelay.cxx
+SOURCE=..\..\src\bzfs\CaptureReplay.cxx
 # End Source File
 # Begin Source File
 
@@ -247,7 +247,7 @@ SOURCE=..\..\include\CallbackList.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\src\bzfs\CaptureRelay.h
+SOURCE=..\..\src\bzfs\CaptureReplay.h
 # End Source File
 # Begin Source File
 
