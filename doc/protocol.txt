@@ -929,5 +929,7 @@ UDP negotiation:
 
   if request has valid player number and is from same address
     server sends MsgUDPLinkRequest over back over udp
+      FIXME should also send MsgUDPLinkEstablished over tcp to handle clients
+      that can send but not receive udp
 
   player responds with MsgUDPLinkEstablished accepting request over udp
