@@ -4047,10 +4047,21 @@ static void addPlayer(int playerIndex)
       (VERSION / 10000000) % 100, (VERSION / 100000) % 100,
       (char)('a' - 1 + (VERSION / 1000) % 100), VERSION % 1000);
   sendMessage(playerIndex, player[playerIndex].id, player[playerIndex].team, message);
-
+  
   if (clOptions.servermsg && (strlen(clOptions.servermsg) > 0)) {
-    sprintf(message,"%s",clOptions.servermsg);
-    sendMessage(playerIndex, player[playerIndex].id, player[playerIndex].team, message);
+    
+    // split the servermsg into several lines if it contains '\n'
+    const char* i = clOptions.servermsg;
+    const char* j;
+    while ((j = strstr(i, "\\n")) != NULL) {
+      strncpy(message, i, j - i);
+      message[j - i] = '\0';
+      sendMessage(playerIndex, player[playerIndex].id, 
+		  player[playerIndex].team, message);
+      i = j + 2;
+    }
+    sendMessage(playerIndex, player[playerIndex].id, 
+		player[playerIndex].team, i);
   }
   if (player[playerIndex].Observer)
     sendMessage(playerIndex, player[playerIndex].id, player[playerIndex].team,"You are in observer mode.");
@@ -7040,12 +7051,22 @@ int main(int argc, char **argv)
       if (TimeKeeper::getCurrent() - lastbroadcast > 900) // every 15 minutes
       {
 	char message[MessageLen];
-	strncpy(message, clOptions.advertisemsg, MessageLen);
-
+	
+	// split the admsg into several lines if it contains '\n'
+	const char* c = clOptions.advertisemsg;
+	const char* j;
+	while ((j = strstr(c, "\\n")) != NULL) {
+	  strncpy(message, c, j - c);
+	  message[j - c] = '\0';
+	  for (int i=0; i<curMaxPlayers; i++)
+	    if (player[i].state > PlayerInLimbo)
+	      sendMessage(i, player[i].id, player[i].team, message);
+	  c = j + 2;
+	}
 	for (int i=0; i<curMaxPlayers; i++)
 	  if (player[i].state > PlayerInLimbo)
-	    sendMessage(i, player[i].id, player[i].team, message);
-
+	    sendMessage(i, player[i].id, player[i].team, c);
+	
 	lastbroadcast = TimeKeeper::getCurrent();
       }
     }
