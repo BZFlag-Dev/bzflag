@@ -639,7 +639,7 @@ void			ServerLink::sendKilled(const PlayerId& killer,
 #ifndef BUILDING_BZADMIN
 void			ServerLink::sendPlayerUpdate(Player* player)
 {
-  char msg[PlayerUpdatePLen];
+  char msg[PlayerUpdatePLen + 3 * sizeof(short) + sizeof(int)];
   const float timeStamp = TimeKeeper::getCurrent() - TimeKeeper::getNullTime();
   void* buf = msg;
   uint16_t code;
