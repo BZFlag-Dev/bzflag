@@ -46,7 +46,7 @@ void			RobotPlayer::doUpdate(float dt)
 
   float tankRadius = BZDBCache::tankRadius;
   float shotRange  = BZDB.eval(StateDatabase::BZDB_SHOTRANGE);
-  // separate shot by at least 0.4 sec
+
   timerForShot  -= dt;
   if (timerForShot < 0.0f)
     timerForShot = 0.0f;
