@@ -129,12 +129,6 @@ int LagInfo::getNextPingSeqno(bool &warn, bool &kick) {
     // ping lost
     lostavg   = lostavg * (1 - lostalpha) + lostalpha;
     lostalpha = lostalpha / (0.99f + lostalpha);
-    if (!info->isObserver() && (threshold > 0)
-	&& lagcount - laglastwarn > 2 * lagwarncount) {
-      laglastwarn = lagcount;
-      warn = true;
-      kick = (lagwarncount++ > max);
-    }
   }
 
   pingpending = true;
