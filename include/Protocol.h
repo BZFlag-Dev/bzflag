@@ -65,7 +65,6 @@ const uint16_t		MsgVideo = 0x7669;			// 'vi'
 const uint16_t		MsgAccept = 0x6163;			// 'ac'
 const uint16_t		MsgAlive = 0x616c;			// 'al'
 const uint16_t		MsgAddPlayer = 0x6170;			// 'ap'
-const uint16_t		MsgAcquireRadio = 0x6172;		// 'ar'
 const uint16_t		MsgCaptureFlag = 0x6366;		// 'cf'
 const uint16_t		MsgDropFlag = 0x6466;			// 'df'
 const uint16_t		MsgEnter = 0x656e;			// 'en'
@@ -82,7 +81,6 @@ const uint16_t		MsgQueryGame = 0x7167;			// 'qg'
 const uint16_t		MsgQueryPlayers = 0x7170;		// 'qp'
 const uint16_t		MsgReject = 0x726a;			// 'rj'
 const uint16_t		MsgRemovePlayer = 0x7270;		// 'rp'
-const uint16_t		MsgReleaseRadio = 0x7272;		// 'rr'
 const uint16_t		MsgShotBegin = 0x7362;			// 'sb'
 const uint16_t		MsgScore = 0x7363;			// 'sc'
 const uint16_t		MsgScoreOver = 0x736f;			// 'so'
@@ -109,9 +107,6 @@ const uint16_t		PingCodeOldReply = 0x0101;
 const uint16_t		PingCodeOldRequest = 0x0202;
 const uint16_t		PingCodeReply = 0x0303;
 const uint16_t		PingCodeRequest = 0x0404;
-
-// radio flags
-const uint16_t		RadioToAll = 0x0001;
 
 // rejection codes
 const uint16_t		RejectBadRequest = 0x0000;
@@ -191,13 +186,6 @@ player to server messages:
   MsgMessage		player is sending a message
 			--> /id,/ target-id/team-id, message string
 			<== MsgMessage
-  MsgAcquireRadio	player wants to transmit
-			--> /id,/ flags
-			<== MsgAcquireRadio (if available)
-  MsgReleaseRadio	player is done transmitting
-			--> /id/
-			<== MsgReleaseRadio
-			(give radio to next player who wanted it)
   MsgNetworkRelay	player can't use multicast, server must relay
 			--> <none>
 			<-- MsgAccept or MsgReject
@@ -246,10 +234,6 @@ server to player messages:
 			<== id, from-teleporter, to-teleporter
   MsgMessage		message to players
 			<== from-id, to-id/team-id, message string
-  MsgAcquireRadio	player is granted request to transmit
-			<== id, flags
-  MsgReleaseRadio	player is no longer transmitting
-			<== id
   MsgQueryGame		game status
   MsgQueryPlayers	list of players
   MsgWantWHash		md5 digest of world file

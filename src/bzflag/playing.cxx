@@ -3305,34 +3305,6 @@ static void		handleServerMessage(bool human, uint16_t code,
       break;
     }
 
-    case MsgAcquireRadio: {
-      PlayerId id;
-      uint16_t types;
-      msg = nboUnpackUByte(msg, id);
-      msg = nboUnpackUShort(msg, types);
-      Player* tank = lookupPlayer(id);
-      if (tank == myTank) {
-	// FIXME -- i now have radio
-      }
-      else if (tank) {
-	// FIXME -- start receiving from player
-      }
-      break;
-    }
-
-    case MsgReleaseRadio: {
-      PlayerId id;
-      msg = nboUnpackUByte(msg, id);
-      Player* tank = lookupPlayer(id);
-      if (tank == myTank) {
-	// FIXME -- i lost the radio, disable transmission
-      }
-      else if (tank) {
-	// FIXME -- stop receiving from player
-      }
-      break;
-    }
-
     // inter-player relayed message
     case MsgPlayerUpdate:
     case MsgGMUpdate:

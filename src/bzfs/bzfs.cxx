@@ -1056,8 +1056,6 @@ struct FlagInfo {
 struct TeamInfo {
   public:
     Team team;
-    // player index with radio
-    int radio;
     TimeKeeper flagTimeout;
 };
 
@@ -1183,7 +1181,6 @@ static int exitCode = 0;
 static uint16_t maxPlayers = MaxPlayers;
 static uint16_t curMaxPlayers = 0;
 // max simulataneous per player
-static int broadcastRadio = InvalidPlayer;
 static bool hasBase[NumTeams] = { false };
 
 static float maxTankHeight = 0.0f;
@@ -1216,7 +1213,6 @@ static int rabbitIndex = NoPlayer;
 static void stopPlayerPacketRelay();
 static void removePlayer(int playerIndex, char *reason, bool notify=true);
 static void resetFlag(int flagIndex);
-static void releaseRadio(int playerIndex);
 static void dropFlag(int playerIndex, float pos[3]);
 
 // util functions
@@ -3886,9 +3882,7 @@ static bool defineWorld()
     team[i].team.activeSize = 0;
     team[i].team.won = 0;
     team[i].team.lost = 0;
-    team[i].radio = InvalidPlayer;
   }
-  broadcastRadio = InvalidPlayer;
   numFlagsInAir = 0;
   for (i = 0; i < numFlags; i++)
     resetFlag(i);
@@ -4275,9 +4269,6 @@ static void addPlayer(int playerIndex)
   // add team's flag and reset it's score
   bool resetTeamFlag = false;
   int teamIndex = int(player[playerIndex].team);
-  if (++team[teamIndex].team.size == 1) {
-    team[teamIndex].radio = -1;
-  }
   if ((!player[playerIndex].Observer && player[playerIndex].type == TankPlayer ||
 	player[playerIndex].type == ComputerPlayer) &&
 	++team[teamIndex].team.activeSize == 1) {
@@ -4689,10 +4680,6 @@ static void removePlayer(int playerIndex, char *reason, bool notify)
       }
     }
 
-    // if player had radio then release it
-    if (team[int(player[playerIndex].team)].radio == playerIndex)
-      releaseRadio(playerIndex);
-
     // tell everyone player has left
     void *buf, *bufStart = getDirectMessageBuffer();
     buf = nboPackUByte(bufStart, playerIndex);
@@ -4869,8 +4856,6 @@ static void playerKilled(int victimIndex, int killerIndex, int reason,
   // victim has been destroyed.  keep score.
   if (killerIndex == InvalidPlayer ||
 	player[victimIndex].state != PlayerAlive) return;
-  if (team[int(player[victimIndex].team)].radio == victimIndex)
-    releaseRadio(victimIndex);
   player[victimIndex].state = PlayerDead;
 
   //update tk-score
@@ -5194,8 +5179,6 @@ static void captureFlag(int playerIndex, TeamColor teamCaptured)
     if (player[i].fd != NotConnected &&
 	int(flag[flagIndex].flag.id) == int(player[i].team) &&
 	player[i].state == PlayerAlive) {
-      if (team[int(player[i].team)].radio == i)
-	releaseRadio(i);
       player[i].state = PlayerDead;
     }
 
@@ -5389,42 +5372,6 @@ static void sendTeleport(int playerIndex, uint16_t from, uint16_t to)
   buf = nboPackUShort(buf, from);
   buf = nboPackUShort(buf, to);
   broadcastMessage(MsgTeleport, (char*)buf-(char*)bufStart, bufStart);
-}
-
-static void acquireRadio(int playerIndex, uint16_t flags)
-{
-  // player wants to grab the radio (only one person per team can have it)
-  // ignore request if player wants a radio already in use, or if a rogue
-  // player asks for a team broadcast radio, or if the player is dead
-  if (player[playerIndex].state != PlayerAlive ||
-      ((flags & RadioToAll) && broadcastRadio != InvalidPlayer) ||
-      (!(flags & RadioToAll) && player[playerIndex].team == RogueTeam) ||
-      team[int(player[playerIndex].team)].radio != InvalidPlayer)
-    return;
-  if (flags & RadioToAll)
-    broadcastRadio = playerIndex;
-  team[int(player[playerIndex].team)].radio = playerIndex;
-
-  // send MsgAcquireRadio
-  void *buf, *bufStart = getDirectMessageBuffer();
-  buf = nboPackUByte(bufStart, playerIndex);
-  buf = nboPackUShort(buf, flags);
-  broadcastMessage(MsgAcquireRadio, (char*)buf-(char*)bufStart, bufStart);
-}
-
-static void releaseRadio(int playerIndex)
-{
-  // player is releasing the radio (allowing a teammate to grab it)
-  if (team[int(player[playerIndex].team)].radio != playerIndex)
-    return;
-  if (broadcastRadio == playerIndex)
-    broadcastRadio = InvalidPlayer;
-  team[int(player[playerIndex].team)].radio = InvalidPlayer;
-
-  // send MsgReleaseRadio
-  void *buf, *bufStart = getDirectMessageBuffer();
-  buf = nboPackUByte(bufStart, playerIndex);
-  broadcastMessage(MsgReleaseRadio, (char*)buf-(char*)bufStart, bufStart);
 }
 
 // parse player comands (messages with leading /)
@@ -6322,21 +6269,6 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
       }
       break;
     }
-
-    // player wants to grab radio
-    case MsgAcquireRadio: {
-      // data: audio/video flags
-      uint16_t flags;
-      buf = nboUnpackUShort(buf, flags);
-      acquireRadio(t, flags);
-      break;
-    }
-
-    // player is releasing radio
-    case MsgReleaseRadio:
-      // data: <none>
-      releaseRadio(t);
-      break;
 
     // player is requesting an additional UDP connection, sending its own UDP port
     case MsgUDPLinkRequest: {
