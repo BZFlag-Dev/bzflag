@@ -26,6 +26,7 @@
 #include "StdBothUI.h"
 #include "global.h"
 
+#ifdef _WIN32
 unsigned long __stdcall winInput(void *that)
 {
   StdBothUI *input = (StdBothUI*)that;
@@ -41,6 +42,7 @@ unsigned long __stdcall winInput(void *that)
   }
   return 0;
 }
+#endif
 
 // add this UI to the map
 UIAdder StdBothUI::uiAdder("stdboth", &StdBothUI::creator);
