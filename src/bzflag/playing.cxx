@@ -1697,7 +1697,7 @@ static Player*		addPlayer(const PlayerId& id, void* msg,
 }
 
 static void		handleServerMessage(bool human, uint16_t code,
-						uint16_t, void* msg)
+						uint16_t len, void* msg)
 {
   bool checkScores = false;
   switch (code) {
@@ -1789,6 +1789,40 @@ static void		handleServerMessage(bool human, uint16_t code,
     case MsgAddPlayer: {
       PlayerId id;
       msg = id.unpack(msg);
+#if defined(FIXME) && defined(ROBOT)
+      for (int i = 0; i < numRobots; i++) {
+	void *tmpbuf = msg;
+	uint16_t team, type, wins, losses;
+	char callsign[CallSignLen];
+	char email[EmailLen];
+	tmpbuf = nboUnpackUShort(tmpbuf, type);
+	tmpbuf = nboUnpackUShort(tmpbuf, team);
+	tmpbuf = nboUnpackUShort(tmpbuf, wins);
+	tmpbuf = nboUnpackUShort(tmpbuf, losses);
+	tmpbuf = nboUnpackString(tmpbuf, callsign, CallSignLen);
+	tmpbuf = nboUnpackString(tmpbuf, email, EmailLen);
+        fprintf(stderr, "id %d:%u:%s %d:%u:%s\n",
+	    id.port,
+	    id.number,
+	    callsign,
+	    robots[i]->getId().port,
+	    robots[i]->getId().number,
+	    robots[i]->getCallSign());
+	if (strncmp(robots[i]->getCallSign(), callsign, CallSignLen)) {
+	  // check for real robot id
+	  fprintf(stderr, "id test %p %p %p %8.8x %8.8x\n",
+	      robots[i], tmpbuf, msg, *(int *)tmpbuf, *((int *)tmpbuf + 1));
+	  if (tmpbuf < (char *)msg + len) {
+	    PlayerId id;
+	    tmpbuf = id.unpack(tmpbuf);
+	    robots[i]->id.serverHost = id.serverHost;
+	    robots[i]->id.port = id.port;
+	    robots[i]->id.number = id.number;
+	    robots[i]->server->send(MsgIdAck, 0, NULL);
+	  }
+	}
+      }
+#endif
       if (id == myTank->getId()) break;		// that's odd -- it's me!
       addPlayer(id, msg, true);
       updateNumPlayers();

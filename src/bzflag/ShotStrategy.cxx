@@ -519,6 +519,7 @@ float			SegmentedShotStrategy::checkHit(const BaseLocalPlayer* tank,
       position[0] = tankPos[0] + closestPos[0];
       position[1] = tankPos[1] + closestPos[1];
       position[2] = tankPos[2] + closestPos[2];
+      //printf("%u:%u %u:%u\n", tank->getId().port, tank->getId().number, getPath().getPlayer().port, getPath().getPlayer().number);
     }
   }
   return minTime;
@@ -927,12 +928,8 @@ GuidedMissileStrategy::GuidedMissileStrategy(ShotPath* _path) :
   azimuth = limitAngle(atan2f(dir[1], dir[0]));
   elevation = limitAngle(atan2f(dir[2], hypotf(dir[1], dir[0])));
 
-  // mark early segments for special treatment
-  
-
   // initialize segments
-  initTime = getPath().getStartTime();
-  currentTime = initTime;
+  currentTime = getPath().getStartTime();
   Ray ray = Ray(f.shot.pos, dir);
   ShotPathSegment segment(currentTime, currentTime, ray);
   segments.push_back(segment);
@@ -1141,8 +1138,9 @@ float			GuidedMissileStrategy::checkHit(const BaseLocalPlayer* tank,
   float minTime = Infinity;
   if (getPath().isExpired()) return minTime;
 
-  // can't shoot myself for first few segments (kludge!)
-  if (((TimeKeeper::getCurrent() - initTime) < 0.5) && (tank->getId() == getPath().getPlayer()))
+  // can't shoot myself for first 1/2 second (kludge!)
+  if (((TimeKeeper::getCurrent() - getPath().getStartTime()) < 0.5) &&
+      (tank->getId() == getPath().getPlayer()))
     return minTime;
 
   // get tank radius

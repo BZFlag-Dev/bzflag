@@ -198,11 +198,10 @@ class GuidedMissileStrategy : public ShotStrategy {
     float		checkBuildings(const Ray& ray);
 
   private:
-    TimeKeeper		initTime;
     TimeKeeper		prevTime;
     TimeKeeper		currentTime;
     std::vector<ShotPathSegment>	segments;
-	int			renderTimes;
+    int			renderTimes;
     float		azimuth;
     float		elevation;
     float		nextPos[3];
