@@ -366,6 +366,11 @@ void			DisplayMenu::callback(HUDuiControl* w, void* data) {
     break;
   case '6':
     sceneRenderer->setQuality(list->getIndex());
+	if (list->getIndex() > 3)
+	{
+		BZDB.set("zbuffer","1");
+		setSceneDatabase();
+	}
     BZDB.set("_texturereplace", (!BZDBCache::lighting &&
 				 sceneRenderer->useQuality() < 2) ? "1" : "0");
     BZDB.setPersistent("_texturereplace", false);

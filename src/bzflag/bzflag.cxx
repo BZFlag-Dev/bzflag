@@ -1387,6 +1387,10 @@ int			main(int argc, char** argv)
 	  RENDERER.setQuality(i);
 	  break;
 	}
+	if (RENDERER.useQuality() > 3){	// experimental quality allways forces z buffer
+		BZDB.set("zbuffer","1");
+	//	RENDERER.setZBuffer(true);
+	}
     }
     BZDB.set("_texturereplace", (!BZDBCache::lighting &&
 	      RENDERER.useQuality() < 2) ? "1" : "0");
