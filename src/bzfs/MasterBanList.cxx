@@ -18,16 +18,42 @@
 
 MasterBanList::MasterBanList()
 {
-
+#ifdef HAVE_CURL
+  easyHandle = curl_easy_init();
+  if (!easyHandle)
+    std::cout << "Something wrong with CURL" << std::endl;
+  curl_easy_setopt(easyHandle, CURLOPT_WRITEFUNCTION, writeFunction);
+  curl_easy_setopt(easyHandle, CURLOPT_WRITEDATA, this);
+#endif
 }
 
 MasterBanList::~MasterBanList()
 {
+#ifdef HAVE_CURL
+  curl_easy_cleanup(easyHandle);
+#endif
+}
 
+void MasterBanList::collectData(char* ptr, int len)
+{
+  std::string readData(ptr, 0, len);
+  data += readData;
+}
+
+size_t MasterBanList::writeFunction(void *ptr, size_t size, size_t nmemb,
+				    void *stream)
+{
+  int len = size * nmemb;
+  ((MasterBanList *)stream)->collectData((char *)ptr, len);
+  return len;
 }
 
 const std::string& MasterBanList::get ( const std::string URL )
 {
-	// get all up on the internet and go get the thing
-	return data;
+  data = "";
+  // get all up on the internet and go get the thing
+  curl_easy_setopt(easyHandle, CURLOPT_URL, URL.c_str());
+  curl_easy_perform(easyHandle);
+  curl_easy_setopt(easyHandle, CURLOPT_URL, NULL);
+  return data;
 }
