@@ -3750,6 +3750,18 @@ static void		playingLoop()
 	// draw right channel
 	sceneRenderer->render(True, True, True);
 
+#if defined(DEBUG_RENDERING)
+	// set up for drawing rear channel
+	mainWindow->setQuadrant(MainWindow::UpperLeft);
+	// FIXME -- this assumes up is along +z
+	targetPoint[0] = eyePoint[0] - myTankDir[0];
+	targetPoint[1] = eyePoint[1] - myTankDir[1];
+	targetPoint[2] = eyePoint[2] + myTankDir[2];
+	sceneRenderer->getViewFrustum().setView(eyePoint, targetPoint);
+
+	// draw rear channel
+	sceneRenderer->render(True, True, True);
+#endif
 	// back to center channel
 	mainWindow->setQuadrant(MainWindow::UpperRight);
       }
