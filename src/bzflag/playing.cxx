@@ -648,7 +648,7 @@ bool			ComposeDefaultKey::keyPress(const BzfKeyEvent& key)
 
 // try to select the next recipient in the specified direction
 // eventually avoiding robots
-static void selectNextRecipient (bool forward, bool robotIn)
+static void selectNextRecipient(bool forward, bool robotIn)
 {
   const Player *recipient = myTank->getRecipient();
   int rindex;
@@ -2262,9 +2262,8 @@ static std::string cmdSend(const std::string&, const CommandManager::ArgList& ar
   } else if (args[0] == "admin") {
     void* buf = messageMessage;
     buf = nboPackUByte(buf, AdminPlayers);
-    composePrompt = "Send to Admin : ";			
-		
-	} else { 
+    composePrompt = "Send to Admin : ";
+  } else {
     return "usage: send {all|team|nemesis|recipient|admin}";
   }
   messageHistoryIndex = 0;
@@ -3777,18 +3776,18 @@ static void		handleServerMessage(bool human, uint16_t code,
     TeamColor dstTeam = PlayerIdToTeam(dst);
     bool toAll = (dst == AllPlayers);
     bool fromServer = (src == ServerPlayer);
-		bool toAdmin = (dst == AdminPlayers);
+    bool toAdmin = (dst == AdminPlayers);
     std::string dstName;
 
     const std::string srcName = fromServer ? "SERVER" : (srcPlayer ? srcPlayer->getCallSign() : "(UNKNOWN)");
     
     if (dstPlayer){
-			dstName = dstPlayer->getCallSign();
+      dstName = dstPlayer->getCallSign();
     } else if (toAdmin){
       dstName = "Admin";
     } else {
       dstName = "(UNKNOWN)";
-		} 
+    }
 
     std::string fullMsg;
 
