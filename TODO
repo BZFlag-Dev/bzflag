@@ -8,10 +8,6 @@ These should happen before the next release:
 * Some BZDB variables are still incorrectly cached. Root them
   out and use callbacks, or refetch them always.
 
-* convert server to use 5154 as the default port, because IANA rocks!
-
-* remove -noudp option
-
 * server should pick client enter position
 
 * describe rabbit hunt in man page (and in-game help?)
