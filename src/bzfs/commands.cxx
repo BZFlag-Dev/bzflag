@@ -448,7 +448,7 @@ void handleHostBanCmd(int t, const char *message)
     strcpy(reply, "Host pattern added to banlist");
     char kickmessage[MessageLen];
     for (int i = 0; i < curMaxPlayers; i++) {
-      if ((player[i].fd != NotConnected) && (!clOptions->acl.hostValidate(player[i].hostname))) {
+      if ((player[i].fd != NotConnected) && player[i].hostname && (!clOptions->acl.hostValidate(player[i].hostname))) {
 	sprintf(kickmessage,"You were banned from this server by %s", player[t].callSign);
 	sendMessage(ServerPlayer, i, kickmessage, true);
 	if( reason.length() > 0 ){
