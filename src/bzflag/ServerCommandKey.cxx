@@ -23,12 +23,12 @@
 #include "playing.h" // THIS IS TEMPORARY...TO BE REMOVED...BABY STEPS
 
 
-const ServerCommandKey::Mode ServerCommandKey::nonAdminModes [7] = {LagStats, IdleStats, FlagHistory, Report, Password, Register, Identify};
+const ServerCommandKey::Mode ServerCommandKey::nonAdminModes [8] = {LagStats, IdleStats, FlagHistory, Report, Password, Register, Identify, ClientQuery};
 
 /* FIXME - note the important numModes and numNonAdminModes values inited here
  * when new commands are added, the indices need to be adjusted here.
  */
-ServerCommandKey::ServerCommandKey(): mode(LagStats), startIndex(-1), numModes(34), numNonAdminModes(7)
+ServerCommandKey::ServerCommandKey(): mode(LagStats), startIndex(-1), numModes(35), numNonAdminModes(8)
 {
   return;
 }
@@ -144,6 +144,7 @@ void			ServerCommandKey::updatePrompt()
     case SuperKill: hud->setComposing("Disconnect all Players", false); break;
     case LagWarn: hud->setComposing("Lag Warning threshold:", true); break;
     case IdleStats: hud->setComposing("Idle Stats", false); break;
+    case ClientQuery: hud->setComposing("Client Version Query", false); break;
     case LagStats: hud->setComposing("Lag / Ping Stats", false); break;
     case FlagHistory: hud->setComposing("Flag History", false); break;
     case Password: hud->setComposing("Admin Password:", true); break;
@@ -307,6 +308,7 @@ bool			ServerCommandKey::keyPress(const BzfKeyEvent& key)
       case LagWarn: sendMsg = "/lagwarn " + message; break;
       case IdleStats: sendMsg = "/idlestats"; break;
       case LagStats: sendMsg = "/lagstats"; break;
+      case ClientQuery: sendMsg = "/clientquery"; break;
       case FlagHistory: sendMsg = "/flaghistory"; break;
       case Password: sendMsg = "/password "+ message; break;
       case Report: sendMsg = "/report "+ message; break;

@@ -49,6 +49,7 @@ private:
     FlagShow,
     FlagHistory,
     IdleStats,
+    ClientQuery,
     LagStats,
     Report,
     LagWarn,
@@ -71,7 +72,7 @@ private:
   int startIndex;
   const int numModes;
   const int numNonAdminModes;
-  static const Mode nonAdminModes[7];
+  static const Mode nonAdminModes[8];
 
 
 };
