@@ -3174,6 +3174,12 @@ static void playerAlive(int playerIndex)
     return;
   }
 
+  if (player[playerIndex].type == ComputerPlayer && clOptions->prohibitBots) {
+    sendMessage(ServerPlayer, playerIndex, "I'm sorry, we do not allow bots on this server.");
+    removePlayer(playerIndex, "ComputerPlayer");
+    return;
+  }
+
   // player is coming alive.
   player[playerIndex].state = PlayerAlive;
   player[playerIndex].flag = -1;
@@ -4176,7 +4182,7 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
 	}
 	sendMessage(t, targetPlayer, message, true);
 
-	if (clOptions->prohibitRoger && strncmp(message, "[ROGER] Taking Controls of ", 27) == 0) {
+	if (clOptions->prohibitBots && strncmp(message, "[ROGER] Taking Controls of ", 27) == 0) {
 	  sendMessage(ServerPlayer, t, "Autopilot is prohibited on this server.  Please turn it off immediately.");
 	  player[t].quellRoger = true;
 	} else if (player[t].quellRoger && strncmp(message, "[ROGER] Releasing Controls of ", 30) == 0) {

@@ -70,7 +70,7 @@ struct CmdLineOptions
     randomCTF(false), flagsOnBuildings(false), respawnOnBuildings(false),
     oneGameOnly(false), timeManualStart(false), randomHeights(false),
     useTeleporters(false), teamKillerDies(true), printScore(false),
-    publicizeServer(false), prohibitRoger(false), filterFilename(""),
+    publicizeServer(false), prohibitBots(false), filterFilename(""),
     filterCallsigns(false), filterChat(false), filterSimple(false), voteTime(60),
     vetoTime(10), votesRequired(3), votePercentage(50.1f),
     voteRepeatTime(300), autoTeam(false), citySize(5)
@@ -135,7 +135,7 @@ struct CmdLineOptions
   bool			teamKillerDies;
   bool			printScore;
   bool			publicizeServer;
-  bool			prohibitRoger; // disallow autopilot
+  bool			prohibitBots;
 
   uint16_t		maxTeam[NumTeams];
   FlagNumberMap		flagCount;
