@@ -101,6 +101,14 @@ const uint16_t		WorldCodeStyle = 0x7374;		// 'st'
 const uint16_t		WorldCodeTeleporter = 0x7465;		// 'te'
 const uint16_t		WorldCodeWall = 0x776c;			// 'wl'
 
+// world database sizes
+const uint16_t		WorldCodeBaseSize = 46;
+const uint16_t		WorldCodeWallSize = 24;
+const uint16_t		WorldCodeBoxSize = 29;
+const uint16_t		WorldCodePyramidSize = 21;
+const uint16_t		WorldCodeTeleporterSize = 37;
+const uint16_t		WorldCodeLinkSize = 4;
+
 // ping packet sizes, codes and structure
 const uint16_t		PingCodeOldReply = 0x0101;
 const uint16_t		PingCodeOldRequest = 0x0202;

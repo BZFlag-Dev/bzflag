@@ -2605,7 +2605,7 @@ static bool defineWorld()
     for (int i = 1; i < CtfTeams; i++) {
       if (!clOptions->randomCTF || (clOptions->maxTeam[i] > 0)) {
 	buf = nboPackUShort(buf, WorldCodeBase);
-	buf = nboPackUShort(buf, 46);
+	buf = nboPackUShort(buf, WorldCodeBaseSize);
 	buf = nboPackUShort(buf, uint16_t(i));
 	buf = nboPackVector(buf, basePos[i]);
 	buf = nboPackFloat(buf, baseRotation[i]);
