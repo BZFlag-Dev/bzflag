@@ -90,6 +90,8 @@ BZAdminClient::BZAdminClient(std::string callsign, std::string host,
   msgTypeMap["rabbit"] = MsgNewRabbit;
   msgTypeMap["score"] = MsgScore;
   msgTypeMap["spawn"] = MsgAlive;
+  msgTypeMap["time"] = MsgTimeUpdate;
+  msgTypeMap["over"] = MsgScoreOver;
 }
 
 
@@ -234,7 +236,37 @@ BZAdminClient::ServerCode BZAdminClient::checkMessage() {
       }
       break;
 
-    case MsgKilled:
+  	case MsgScoreOver: {
+  	  if (messageMask[MsgScoreOver]) {
+ 	PlayerId id;
+	uint16_t team;
+	vbuf = nboUnpackUByte(vbuf, id);
+	vbuf = nboUnpackUShort(vbuf, team);
+	it = players.find(id);
+	victimName = (it != players.end() ? it->second.name : "<unknown>");
+	if (team == (uint16_t)NoTeam) {
+	  Team temp;
+		victimName = temp.getName((TeamColor)team);
+			}
+	lastMessage.first = std::string("*** ") + victimName + " won the game.";
+		}
+			}
+		break;
+
+  	case MsgTimeUpdate: {
+	  	if (messageMask[MsgTimeUpdate]) {
+  uint16_t timeLeft;
+  vbuf = nboUnpackUShort(vbuf, timeLeft);
+  if (timeLeft == 0)
+  	lastMessage.first = "*** Time Expired.";
+	else
+		lastMessage.first = std::string("*** ") + string_util::format("%d", timeLeft)
+												+ " seconds remaining.";
+	}
+		}
+		break;
+
+  	case MsgKilled:
       if (messageMask[MsgKilled]) {
 	PlayerId victim, killer;
 	int16_t shotId, reason;

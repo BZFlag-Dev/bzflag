@@ -4,6 +4,7 @@
 BZFlag 1.12.0  (was 1.11.x)
 ---------------------------
 
+* Added MsgScoreOver and MsgTimeUpdate to BZAdmin - Ian Agar
 * Have BZAdmin allow whitespace in callsign and host - Ian Agar
 * Prevent message flooding/spamming - Ian Agar
 * Consolidated polling system bzfs options (-poll) - Ian Agar, Sean Morrison
