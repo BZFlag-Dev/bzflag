@@ -21,6 +21,9 @@
 #include <errno.h>
 #include "bzsignal.h"
 #if defined(_WIN32)
+#define _POSIX_
+#include <limits.h>
+#undef _POSIX_
 #include <process.h>
 #else
 #include <sys/types.h>
@@ -3324,7 +3327,7 @@ void			ServerStartMenu::execute()
     // get path to server from path to client
     extern const char* argv0;			// from bzflag.cxx
 	// add 256 for flags room
-    char serverCmd[512];
+    char serverCmd[PATH_MAX + 256];
     strcpy(serverCmd, argv0);
 #ifdef _MACOSX_
 	/* this should be in a header file somewhere */
