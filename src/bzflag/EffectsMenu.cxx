@@ -102,9 +102,8 @@ EffectsMenu::EffectsMenu()
   option->setCallback(callback, (void*)"c");
   options = &option->getList();
   options->push_back(std::string("None"));
-  options->push_back(std::string("Air"));
-  options->push_back(std::string("Moving"));
-  options->push_back(std::string("Full"));
+  options->push_back(std::string("Fast"));
+  options->push_back(std::string("Best"));
   option->update();
   list.push_back(option);
 
@@ -161,7 +160,14 @@ void EffectsMenu::resize(int width, int height)
   ((HUDuiList*)list[i++])->setIndex(BZDB.isTrue("userMirror") ? 1 : 0);
   ((HUDuiList*)list[i++])->setIndex(BZDB.isTrue("showTreads") ? 1 : 0);
   ((HUDuiList*)list[i++])->setIndex(int((TrackMarks::getUserFade() * 10.0f) + 0.5f));
-  ((HUDuiList*)list[i++])->setIndex(int(TrackMarks::getAirCulling()));
+  TrackMarks::AirCullStyle style = TrackMarks::getAirCulling();
+  if (style == TrackMarks::NoAirCull) {
+    ((HUDuiList*)list[i++])->setIndex(0);
+  } else if (style != TrackMarks::FullAirCull) {
+    ((HUDuiList*)list[i++])->setIndex(1);
+  } else {
+    ((HUDuiList*)list[i++])->setIndex(2);
+  }
 }
 
 
@@ -189,7 +195,14 @@ void EffectsMenu::callback(HUDuiControl* w, void* data)
       break;
     }
     case 'c': {
-      TrackMarks::setAirCulling((TrackMarks::AirCullStyle)list->getIndex());
+      int culling = list->getIndex();
+      if (culling <= 0) {
+        TrackMarks::setAirCulling(TrackMarks::NoAirCull);
+      } else if (culling == 1) {
+        TrackMarks::setAirCulling(TrackMarks::InitAirCull);
+      } else {
+        TrackMarks::setAirCulling(TrackMarks::FullAirCull);
+      }
       break;
     }
   }
