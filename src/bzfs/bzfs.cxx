@@ -6581,7 +6581,7 @@ int main(int argc, char **argv)
     fd_set read_set, write_set;
     FD_ZERO(&read_set);
     FD_ZERO(&write_set);
-    for (i = 0; i < maxPlayers; i++) {
+    for (i = 0; i < curMaxPlayers; i++) {
       if (player[i].fd != NotConnected) {
 	//DEBUG1("fdset fd,read %i %lx\n",player[i].fd,read_set);
 	FD_SET(player[i].fd, &read_set);
