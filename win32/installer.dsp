@@ -61,30 +61,32 @@ MTL=midl.exe
 # Name "installer - Win32 Debug"
 # Begin Source File
 
-SOURCE=.\makeins.bat
+SOURCE=..\package\win32\nsis\BZFlag.nsi
 
 !IF  "$(CFG)" == "installer - Win32 Release"
 
 # PROP Ignore_Default_Tool 1
-USERDEP__MAKEI="../bin/bzflag.exe"	"../bin/bzfs.exe"	"../bin/bzfls.exe"	
-# Begin Custom Build - Building Installer...
-InputPath=.\makeins.bat
+USERDEP__BZFLA="..\bin\bzfs.exe"	"..\bin\bzflag.exe"	"..\bin\bzfls.exe"	
+# Begin Custom Build - Building installer using $(InputPath)
+InputPath=..\package\win32\nsis\BZFlag.nsi
 
-"..\dist\BZFlag_1.7e8.exe" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	cmd /c $(InputPath)
-
+"..\dist\BZFlag_1.7g1.exe" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+	cd ..\package\win32\nsis 
+	makensis bzflag.nsi 
+	
 # End Custom Build
 
 !ELSEIF  "$(CFG)" == "installer - Win32 Debug"
 
 # PROP Ignore_Default_Tool 1
-USERDEP__MAKEI="../bin/Debug/bzflag.exe"	"../bin/Debug/bzfs.exe"	"../bin/Debug/bzfls.exe"	
-# Begin Custom Build - Building Installer...
-InputPath=.\makeins.bat
+USERDEP__BZFLA="..\bin\debug\bzfs.exe"	"..\bin\debug\bzflag.exe"	"..\bin\debug\bzfls.exe"	
+# Begin Custom Build - Building installer using $(InputPath)
+InputPath=..\package\win32\nsis\BZFlag.nsi
 
-"..\dist\BZFlag_1.7e8.exe" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	cmd /c $(InputPath)
-
+"..\dist\BZFlag_1.7g1.exe" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+	cd ..\package\win32\nsis 
+	makensis bzflag.nsi 
+	
 # End Custom Build
 
 !ENDIF 
