@@ -1,4 +1,4 @@
-SUBDIRS = data include man package src doc
+SUBDIRS = data doc include man package src
 DIST_SUBDIRS = $(SUBDIRS) debian misc win32 Dev-C++
 
 package: FORCE
