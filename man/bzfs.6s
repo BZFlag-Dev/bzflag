@@ -115,18 +115,19 @@ the free-for-all style is used.
 .B -d
 Increase debugging level. More -d are used, more debugging info are obtained.
 .TP
-\fB+f\fR {\fIgood\fR|\fIflag-id\fR}[\fI{count}\fR]
+\fB+f\fR {\fIgood\fR|\fIbad\fR|\fIflag-id\fR}[\fI{count}\fR]
 Forces the existence of the given flag.  If specified multiple times
 for the same \fIflag-id\fR, then that many flags will appear.  The
 \fIgood\fR argument is equivalent to specifying \fB+f\fR once for
-each kind of good flag. The optional \fI{count}\fR parameter allows the
-specification of multiple flags of the same type. Note that the curly braces
-are required.
+each kind of good flag. Same goes for the \fIbad\fR argument.  The optional 
+\fI{count}\fR parameter allows the specification of multiple flags of the 
+same type. Note that the curly braces are required.
 .TP
-\fB-f\fR {\fIbad\fR|\fIflag-id\fR}
+\fB-f\fR {\fIgood\fR|\fIbad\fR|\fIflag-id\fR}
 Disallows random flags of the given type.  Required flags given by the
 \fB+f\fR option are still provided.  The \fIbad\fR argument is equivalent
-to specifying \fB-f\fR once for each kind of bad flag.
+to specifying \fB-f\fR once for each kind of bad flag.  Same goes for
+\fBgood\fR, but you probably do not want to do that.
 .TP
 .B -fb
 Allow flags on box buildings.
