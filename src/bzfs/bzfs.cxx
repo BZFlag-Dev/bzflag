@@ -14,7 +14,7 @@
 const int udpBufSize = 128000;
 bool    gotWorld = false;
 
-static void directMessage(int playerIndex, uint16_t code, int len, const void *msg);
+void directMessage(int playerIndex, uint16_t code, int len, const void *msg);
 void sendMessage(int playerIndex, PlayerId targetPlayer, const char *message, bool fullBuffer=false);
 
 // every ListServerReAddTime server add ourself to the list
@@ -41,62 +41,6 @@ class ListServerLink {
     int socket;
     const char *nextMessage;
 };
-
-// class to easily send a bunch of BZDB variables via MsgSetVar
-// dtor does the actual send
-class PackVars
-{
-public:
-  PackVars(void *buffer, int playerIndex) : bufStart(buffer)
-  {
-     buf = nboPackUShort(bufStart, 0);//placeholder
-     playerId = playerIndex;
-     len = sizeof(uint16_t);
-     count = 0;
-  }
-
-  ~PackVars()
-  {
-    if (len > sizeof(uint16_t)) {
-      nboPackUShort(bufStart, count);
-      directMessage(playerId, MsgSetVar, len, bufStart);
-    }
-  }
-
-  // callback forwarder
-  static void packIt(const std::string &key, void *pv)
-  {
-    reinterpret_cast<PackVars*>(pv)->sendPackVars(key);
-  }
-
-  void sendPackVars(const std::string &key)
-  {
-    std::string value = BZDB->get(key);
-    int pairLen = key.length() + 1 + value.length() + 1;
-    if ((pairLen + len) > (MaxPacketLen - 2*sizeof(uint16_t))) {
-      nboPackUShort(bufStart, count);
-      count = 0;
-      directMessage(playerId, MsgSetVar, len, bufStart);
-      buf = nboPackUShort(bufStart, 0); //placeholder
-      len = sizeof(uint16_t);
-    }
-
-    buf = nboPackUByte(buf, key.length());
-    buf = nboPackString(buf, key.c_str(), key.length());
-    buf = nboPackUByte(buf, value.length());
-    buf = nboPackString(buf, value.c_str(), value.length());
-    len += pairLen;
-    count++;
-  }
-
-private:
-  void * const bufStart;
-  void *buf;
-  int playerId;
-  unsigned int len;
-  unsigned int count;
-};
-
 
 // Command Line Options
 CmdLineOptions *clOptions;
@@ -744,7 +688,7 @@ char *getDirectMessageBuffer()
 // FIXME? 4 bytes before msg must be valid memory, will get filled in with len+code
 // usually, the caller gets a buffer via getDirectMessageBuffer(), but for example
 // for MsgShotBegin the receiving buffer gets used directly
-static void directMessage(int playerIndex, uint16_t code, int len, const void *msg)
+void directMessage(int playerIndex, uint16_t code, int len, const void *msg)
 {
   if (player[playerIndex].fd == NotConnected)
     return;

@@ -102,6 +102,7 @@ static const char copyright[] = "Copyright (c) 1993 - 2003 Tim Riker";
 #include "VotingArbiter.h"
 #include "PlayerInfo.h"
 #include "commands.h"
+#include "PackVars.h"
 
 // invoke incessant rebuilding for build versioning
 #include "version.h"
