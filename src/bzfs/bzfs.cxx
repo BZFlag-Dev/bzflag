@@ -5574,7 +5574,13 @@ static char **parseConfFile( const char *file, int &ac)
        std::string line = buffer;
        int startPos = line.find_first_not_of("\t \r\n");
        while ((startPos >= 0) && (line.at(startPos) != '#')) {
-	 int endPos = line.find_first_of("\t \r\n", startPos+1);
+	 int endPos;
+	 if (line.at(startPos) == '"') {
+	   startPos++;
+	   endPos = line.find_first_of('"', startPos);
+	 }
+         else
+	   endPos = line.find_first_of("\t \r\n", startPos+1);
 	 if (endPos < 0)
 	    endPos = line.length();
 	 tokens.push_back(line.substr(startPos,endPos-startPos));
@@ -5731,8 +5737,9 @@ static void parse(int argc, char **argv, CmdLineOptions &options)
 		// the cmd line options. But for now just overright them on the spot
 //		parse(ac, av, confOptions); 
 		parse(ac, av, options);
-		for (int i = 0; i < ac; i++)
-		  delete[] av[i];
+
+		//for (int i = 0; i < ac; i++) // These strings need to stick around for -world, -servermsg, etc
+		//  delete[] av[i];
 		delete[] av; 
 	  }
     }
