@@ -72,12 +72,12 @@ public:
   static bool initHandlers(struct sockaddr_in addr);
   static void destroyHandlers();
 
-  // General function to support the select statement
+  /// General function to support the select statement
   static void setFd(fd_set *read_set, fd_set *write_set, int &maxFile);
   static bool isUdpFdSet(fd_set *read_set);
   bool	isFdSet(fd_set *set);
 
-  // return the opened socket, usable from all other network internal client
+  /// return the opened socket, usable from all other network internal client
   static int  getUdpSocket();
 
   /**
@@ -109,10 +109,10 @@ public:
   RxStatus    tcpReceive();
   void       *getTcpBuffer();
 
-  // Request if there is any buffered udp messages waiting to be sent
+  /// Request if there is any buffered udp messages waiting to be sent
   static bool	anyUDPPending() {return pendingUDP;};
 
-  // Send all buffered UDP messages, if any
+  /// Send all buffered UDP messages, if any
   void		flushUDP();
   static void	flushAllUDP();
 
@@ -127,9 +127,9 @@ public:
   in_addr	getIPAddress();
   const char*	getHostname();
 
-  // Notify that the channel is going to be close.
-  // In the meantime any pwrite call will do nothing.
-  // Cannot be undone.
+  /// Notify that the channel is going to be close.
+  /// In the meantime any pwrite call will do nothing.
+  /// Cannot be undone.
   void		closing();
 
 private:
@@ -146,29 +146,29 @@ private:
   AdnsHandler *adns;
 #endif
 
-  // On win32, a socket is typedef UINT_PTR SOCKET;
-  // Hopefully int will be ok
+  /// On win32, a socket is typedef UINT_PTR SOCKET;
+  /// Hopefully int will be ok
   static int		udpSocket;
   static NetHandler*	netPlayer[maxHandlers];
   PlayerInfo*		info;
   struct sockaddr_in	uaddr;
   int			playerIndex;
-  // socket file descriptor
+  /// socket file descriptor
   int			fd;
 
-  // peer's network address
+  /// peer's network address
   Address peer;
 
-  // input buffers
-  // bytes read in current msg
-  int tcplen;
-  // current TCP msg
+  /// input buffers
+  /// current TCP msg
   char tcpmsg[MaxPacketLen];
+  /// bytes read in current msg
+  int tcplen;
 
-  // Closing flag
+  /// Closing flag
   bool closed;
 
-  // output buffer
+  /// output buffer
   int outmsgOffset;
   int outmsgSize;
   int outmsgCapacity;
@@ -178,7 +178,7 @@ private:
   int udpOutputLen;
   static bool pendingUDP;
 
-  // UDP connection
+  /// UDP connection
   bool udpin; // udp inbound up, player is sending us udp
   bool udpout; // udp outbound up, we can send udp
 
