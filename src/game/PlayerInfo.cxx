@@ -21,6 +21,7 @@
 /* implementation-specific common headers */
 #include "TextUtils.h"
 
+WordFilter PlayerInfo::serverSpoofingFilter;
 
 PlayerInfo::PlayerInfo(int _playerIndex) :
   playerIndex(_playerIndex), state(PlayerInLimbo), flag(-1),
