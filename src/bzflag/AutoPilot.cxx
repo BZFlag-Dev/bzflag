@@ -516,6 +516,10 @@ bool navigate( float &rotation, float &speed)
 	}
 	else
   	speed = 1.0f;
+  float jumpVel = BZDB.eval(StateDatabase::BZDB_JUMPVELOCITY);
+  float maxJump = (jumpVel * jumpVel) / (2 * -BZDB.eval(StateDatabase::BZDB_GRAVITY));
+  if (myTank->getLocation() == LocalPlayer::InAir && myTank->getFlag() == Flags::Wings)
+      myTank->jump();
   navRot = rotation;
   navSpeed = speed;
   lastNavChange = TimeKeeper::getCurrent();
