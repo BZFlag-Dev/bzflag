@@ -337,8 +337,10 @@ void ListServerLink::addMe(PingPacket pingInfo,
   msg += "&groups=";
   PlayerAccessMap::iterator itr = groupAccess.begin();
   for ( ; itr != groupAccess.end(); itr++) {
-    msg += itr->first.c_str();
-    msg += "%0D%0A";
+    if (itr->first != "ADMIN") {
+      msg += itr->first.c_str();
+      msg += "%0D%0A";
+    }
   }
   msg += TextUtils::format("&title=%s HTTP/1.1\r\n"
       "User-Agent: bzfs %s\r\n"
