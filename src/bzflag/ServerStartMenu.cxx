@@ -68,7 +68,9 @@ ServerStartMenu::ServerStartMenu()
   items = &list->getList();
   items->push_back("Capture the Flag");
   items->push_back("Free for All");
-  items->push_back("Rabbit Hunt");
+  items->push_back("Rabbit Hunt (Random Selection)");
+  items->push_back("Rabbit Hunt (Score-based Selection)");
+  items->push_back("Rabbit Hunt (Killer Selection)");
   list->update();
   controls.push_back(list);
 
@@ -403,7 +405,9 @@ void ServerStartMenu::execute()
       args[arg++] = "-h";
     }
     else {
-      args[arg++] = "-rabbit";
+    	static const char* rabbitStyles[] = { "random", "score", "killer" };
+    	args[arg++] = "-rabbit";
+    	args[arg++] = rabbitStyles[(((HUDuiList*)list[1])->getIndex()) - 2];
     }
 
     // max players
