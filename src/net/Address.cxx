@@ -254,13 +254,13 @@ void*			ServerId::unpack(void* _buf)
   return (void*)buf;
 }
 
-boolean			ServerId::operator==(const ServerId& id) const
+bool			ServerId::operator==(const ServerId& id) const
 {
   return serverHost.s_addr == id.serverHost.s_addr &&
 			port == id.port && number == id.number;
 }
 
-boolean			ServerId::operator!=(const ServerId& id) const
+bool			ServerId::operator!=(const ServerId& id) const
 {
   return serverHost.s_addr != id.serverHost.s_addr ||
 			port != id.port || number != id.number;

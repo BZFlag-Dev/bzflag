@@ -716,7 +716,7 @@ void					ServerLink::sendKilled(const PlayerId& killer,
 {
 	char msg[PlayerIdPLen + 2];
 	void* buf = msg;
-	buf = nboPackUByte( buf, killer );
+	buf = nboPackUByte(buf, killer);
 	buf = nboPackShort(buf, int16_t(shotId));
 	send(MsgKilled, sizeof(msg), msg);
 }
@@ -734,7 +734,7 @@ void					ServerLink::sendEndShot(const PlayerId& source,
 {
 	char msg[PlayerIdPLen + 4];
 	void* buf = msg;
-	buf = nboPackUByte( buf, source );
+	buf = nboPackUByte(buf, source);
 	buf = nboPackShort(buf, int16_t(shotId));
 	buf = nboPackUShort(buf, uint16_t(reason));
 	send(MsgShotEnd, sizeof(msg), msg);

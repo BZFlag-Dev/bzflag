@@ -1666,7 +1666,7 @@ static void sendPlayerUpdate(int playerIndex, int index)
 {
 	void *buf, *bufStart = getDirectMessageBuffer();
 	PlayerInfo *pPlayer = &player[playerIndex];
-	buf = nboPackUByte( bufStart, playerIndex );
+	buf = nboPackUByte(bufStart, playerIndex);
 	buf = nboPackUShort(buf, uint16_t(pPlayer->type));
 	buf = nboPackUShort(buf, uint16_t(pPlayer->team));
 	buf = nboPackUShort(buf, uint16_t(pPlayer->wins));
@@ -1674,7 +1674,7 @@ static void sendPlayerUpdate(int playerIndex, int index)
 	buf = nboPackString(buf, pPlayer->callSign, CallSignLen);
 	buf = nboPackString(buf, pPlayer->email, EmailLen);
 	// this playerid is for the player itself to get our playerid (hack)
-	buf = nboPackUByte( buf, playerIndex );
+	buf = nboPackUByte(buf, playerIndex);
 	if (playerIndex == index) {
 		// send all players info about player[playerIndex]
 		for (int i = 0; i < maxPlayers; i++)
@@ -3053,8 +3053,8 @@ static void sendMessage(int playerIndex, const PlayerId& targetPlayer, TeamColor
 	// player is sending a message to a particular player, a team, or all.
 	// send MsgMessage
 	void *buf, *bufStart = getDirectMessageBuffer();
-	buf = nboPackUByte( bufStart, playerIndex );
-	buf = nboPackUByte( buf, targetPlayer );
+	buf = nboPackUByte(bufStart, playerIndex);
+	buf = nboPackUByte(buf, targetPlayer);
 	buf = nboPackUShort(buf, uint16_t(targetTeam));
 	buf = nboPackString(buf, message, MessageLen);
 	broadcastMessage(MsgMessage, (char*)buf-(char*)bufStart, bufStart);
@@ -3129,7 +3129,7 @@ static void addPlayer(int playerIndex)
 
 	// accept player
 	void *buf, *bufStart = getDirectMessageBuffer();
-	buf = nboPackUByte( bufStart, playerIndex );
+	buf = nboPackUByte(bufStart, playerIndex);
 	directMessage(playerIndex, MsgAccept, (char*)buf-(char*)bufStart, bufStart);
 
 	// abort if we hung up on the client
@@ -3341,7 +3341,7 @@ static void zapFlag(int flagIndex)
 		player[playerIndex].flag = -1;
 
 		void *buf, *bufStart = getDirectMessageBuffer();
-		buf = nboPackUByte( bufStart, playerIndex );
+		buf = nboPackUByte(bufStart, playerIndex);
 		buf = nboPackUShort(buf, uint16_t(flagIndex));
 		buf = flag[flagIndex].flag.pack(buf);
 		broadcastMessage(MsgDropFlag, (char*)buf-(char*)bufStart, bufStart);
@@ -3437,7 +3437,7 @@ static void removePlayer(int playerIndex)
 
 		// tell everyone player has left
 		void *buf, *bufStart = getDirectMessageBuffer();
-		buf = nboPackUByte( bufStart, playerIndex );
+		buf = nboPackUByte(bufStart, playerIndex);
 		broadcastMessage(MsgRemovePlayer, (char*)buf-(char*)bufStart, bufStart);
 
 		// decrease team size
@@ -3573,7 +3573,7 @@ static void playerAlive(int playerIndex, const float *pos, const float *fwd)
 
 	// send MsgAlive
 	void *buf, *bufStart = getDirectMessageBuffer();
-	buf = nboPackUByte( bufStart, playerIndex );
+	buf = nboPackUByte(bufStart, playerIndex);
 	buf = nboPackVector(buf,pos);
 	buf = nboPackVector(buf,fwd);
 	broadcastMessage(MsgAlive, (char*)buf-(char*)bufStart, bufStart);
@@ -3584,7 +3584,7 @@ static void checkTeamScore(int playerIndex, int teamIndex)
 	if (maxTeamScore == 0 || teamIndex == (int)RogueTeam) return;
 	if (team[teamIndex].team.won - team[teamIndex].team.lost >= maxTeamScore) {
 		void *buf, *bufStart = getDirectMessageBuffer();
-		buf = nboPackUByte( bufStart, playerIndex );
+		buf = nboPackUByte(bufStart, playerIndex);
 		buf = nboPackUShort(buf, uint16_t(teamIndex));
 		broadcastMessage(MsgScoreOver, (char*)buf-(char*)bufStart, bufStart);
 		gameOver = true;
@@ -3603,8 +3603,8 @@ static void playerKilled(int victimIndex, int killerIndex,
 
 	// send MsgKilled
 	void *buf, *bufStart = getDirectMessageBuffer();
-	buf = nboPackUByte( bufStart, victimIndex );
-	buf = nboPackUByte( buf, killerIndex );
+	buf = nboPackUByte(bufStart, victimIndex);
+	buf = nboPackUByte(buf, killerIndex);
 	buf = nboPackShort(buf, shotIndex);
 	broadcastMessage(MsgKilled, (char*)buf-(char*)bufStart, bufStart);
 
@@ -3666,7 +3666,7 @@ static void grabFlag(int playerIndex, int flagIndex)
 
 	// send MsgGrabFlag
 	void *buf, *bufStart = getDirectMessageBuffer();
-	buf = nboPackUByte( bufStart, playerIndex );
+	buf = nboPackUByte(bufStart, playerIndex);
 	buf = nboPackUShort(buf, uint16_t(flagIndex));
 	buf = flag[flagIndex].flag.pack(buf);
 	broadcastMessage(MsgGrabFlag, (char*)buf-(char*)bufStart, bufStart);
@@ -3778,7 +3778,7 @@ static void dropFlag(int playerIndex, float pos[3])
 	// player no longer has flag -- send MsgDropFlag
 	player[playerIndex].flag = -1;
 	void *buf, *bufStart = getDirectMessageBuffer();
-	buf = nboPackUByte( bufStart, playerIndex );
+	buf = nboPackUByte(bufStart, playerIndex);
 	buf = nboPackUShort(buf, uint16_t(flagIndex));
 	buf = flag[flagIndex].flag.pack(buf);
 	broadcastMessage(MsgDropFlag, (char*)buf-(char*)bufStart, bufStart);
@@ -3803,7 +3803,7 @@ static void captureFlag(int playerIndex, TeamColor teamCaptured)
 
 	// send MsgCaptureFlag
 	void *buf, *bufStart = getDirectMessageBuffer();
-	buf = nboPackUByte( bufStart, playerIndex );
+	buf = nboPackUByte(bufStart, playerIndex);
 	buf = nboPackUShort(buf, uint16_t(flagIndex));
 	buf = nboPackUShort(buf, uint16_t(teamCaptured));
 	broadcastMessage(MsgCaptureFlag, (char*)buf-(char*)bufStart, bufStart);
@@ -3845,7 +3845,7 @@ static void shotEnded(const PlayerId& id, int16_t shotIndex, uint16_t reason)
 {
 	// shot has ended prematurely -- send MsgShotEnd
 	void *buf, *bufStart = getDirectMessageBuffer();
-	buf = nboPackUByte( bufStart, id );
+	buf = nboPackUByte(bufStart, id);
 	buf = nboPackShort(buf, shotIndex);
 	buf = nboPackUShort(buf, reason);
 	broadcastMessage(MsgShotEnd, (char*)buf-(char*)bufStart, bufStart);
@@ -3888,7 +3888,7 @@ static void scoreChanged(int playerIndex, uint16_t wins, uint16_t losses)
 	}
 
 	void *buf, *bufStart = getDirectMessageBuffer();
-	buf = nboPackUByte( bufStart, playerIndex );
+	buf = nboPackUByte(bufStart, playerIndex);
 	buf = nboPackUShort(buf, wins);
 	buf = nboPackUShort(buf, losses);
 	broadcastMessage(MsgScore, (char*)buf-(char*)bufStart, bufStart);
@@ -3902,7 +3902,7 @@ static void scoreChanged(int playerIndex, uint16_t wins, uint16_t losses)
 	if (maxPlayerScore != 0 &&
 			player[playerIndex].wins - player[playerIndex].losses >= maxPlayerScore) {
 		void *buf, *bufStart = getDirectMessageBuffer();
-		buf = nboPackUByte( bufStart, playerIndex );
+		buf = nboPackUByte(bufStart, playerIndex);
 		buf = nboPackUShort(buf, uint16_t(NoTeam));
 		broadcastMessage(MsgScoreOver, (char*)buf-(char*)bufStart, bufStart);
 		gameOver = true;
@@ -3912,7 +3912,7 @@ static void scoreChanged(int playerIndex, uint16_t wins, uint16_t losses)
 static void sendTeleport(int playerIndex, uint16_t from, uint16_t to)
 {
 	void *buf, *bufStart = getDirectMessageBuffer();
-	buf = nboPackUByte( bufStart, playerIndex );
+	buf = nboPackUByte(bufStart, playerIndex);
 	buf = nboPackUShort(buf, from);
 	buf = nboPackUShort(buf, to);
 	broadcastMessage(MsgTeleport, (char*)buf-(char*)bufStart, bufStart);
@@ -3934,7 +3934,7 @@ static void acquireRadio(int playerIndex, uint16_t flags)
 
 	// send MsgAcquireRadio
 	void *buf, *bufStart = getDirectMessageBuffer();
-	buf = nboPackUByte( bufStart, playerIndex );
+	buf = nboPackUByte(bufStart, playerIndex);
 	buf = nboPackUShort(buf, flags);
 	broadcastMessage(MsgAcquireRadio, (char*)buf-(char*)bufStart, bufStart);
 }
@@ -3950,7 +3950,7 @@ static void releaseRadio(int playerIndex)
 
 	// send MsgReleaseRadio
 	void *buf, *bufStart = getDirectMessageBuffer();
-	buf = nboPackUByte( bufStart, playerIndex );
+	buf = nboPackUByte(bufStart, playerIndex);
 	broadcastMessage(MsgReleaseRadio, (char*)buf-(char*)bufStart, bufStart);
 }
 
@@ -3976,7 +3976,7 @@ static void parseCommand(const char *message, int t)
 	// /gameover command allows operator to end the game
 	} else if (player[t].Admin && strncmp(message + 1, "gameover", 8) == 0) {
 		void *buf, *bufStart = getDirectMessageBuffer();
-		buf = nboPackUByte( bufStart, t );
+		buf = nboPackUByte(bufStart, t);
 		buf = nboPackUShort(buf, uint16_t(NoTeam));
 		broadcastMessage(MsgScoreOver, (char*)buf-(char*)bufStart, bufStart);
 		gameOver = true;
@@ -3992,8 +3992,8 @@ static void parseCommand(const char *message, int t)
 					player[playerIndex].flag = -1;
 
 					void *buf, *bufStart = getDirectMessageBuffer();
-					buf = nboPackUByte( bufStart, playerIndex );
-					buf = nboPackUByte( bufStart, playerIndex );
+					buf = nboPackUByte(bufStart, playerIndex);
+					buf = nboPackUByte(bufStart, playerIndex);
 					buf = nboPackUShort(buf, uint16_t(i));
 					buf = flag[i].flag.pack(buf);
 					broadcastMessage(MsgDropFlag, (char*)buf-(char*)bufStart, bufStart);
@@ -4012,7 +4012,7 @@ static void parseCommand(const char *message, int t)
 						player[playerIndex].flag = -1;
 
 						void *buf, *bufStart = getDirectMessageBuffer();
-						buf = nboPackUByte( bufStart, playerIndex );
+						buf = nboPackUByte(bufStart, playerIndex);
 						buf = nboPackUShort(buf, uint16_t(i));
 						buf = flag[i].flag.pack(buf);
 						broadcastMessage(MsgDropFlag, (char*)buf-(char*)bufStart, bufStart);
@@ -4119,7 +4119,7 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
 			if (startPlayerPacketRelay(t)) {
 				player[t].multicastRelay = true;
 				void *buf, *bufStart = getDirectMessageBuffer();
-				buf = nboPackUByte( bufStart, t );
+				buf = nboPackUByte(bufStart, t);
 				directMessage(t, MsgAccept, (char*)buf-(char*)bufStart, bufStart);
 			}
 			else {
@@ -4166,7 +4166,7 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
 			// data: id of killer, shot id of killer
 			PlayerId killer;
 			int16_t shot;
-			buf = nboUnpackUByte( buf, killer );
+			buf = nboUnpackUByte(buf, killer);
 			buf = nboUnpackShort(buf, shot);
 			playerKilled(t, lookupPlayer(killer), shot);
 			break;
@@ -4212,7 +4212,7 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
 			PlayerId sourcePlayer;
 			int16_t shot;
 			uint16_t reason;
-			buf = nboUnpackUByte( buf, sourcePlayer );
+			buf = nboUnpackUByte(buf, sourcePlayer);
 			buf = nboUnpackShort(buf, shot);
 			buf = nboUnpackUShort(buf, reason);
 			shotEnded(sourcePlayer, shot, reason);
@@ -4244,7 +4244,7 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
 			PlayerId targetPlayer;
 			uint16_t targetTeam;
 			char message[MessageLen];
-			nboUnpackUByte( buf, targetPlayer );
+			buf = nboUnpackUByte(buf, targetPlayer);
 			buf = nboUnpackUShort(buf, targetTeam);
 			buf = nboUnpackString(buf, message, sizeof(message));
 			DEBUG4("Player %s [%d]: %s\n",player[t].callSign, t, message);
