@@ -3092,40 +3092,40 @@ static void handleCommand(int t, const void *rawbuf)
       break;
 
     case MsgNegotiateFlags: {
-	void *bufStart;
-	FlagTypeMap::iterator it;
-	FlagSet::iterator m_it;
-	FlagOptionMap hasFlag;
-	FlagSet missingFlags;
-	unsigned short numClientFlags = len/2;
+      void *bufStart;
+      FlagTypeMap::iterator it;
+      FlagSet::iterator m_it;
+      FlagOptionMap hasFlag;
+      FlagSet missingFlags;
+      unsigned short numClientFlags = len/2;
 
-	/* Unpack incoming message containing the list of flags our client supports */
-	for (int i = 0; i < numClientFlags; i++) {
-		FlagType *fDesc;
-		buf = FlagType::unpack(buf, fDesc);
-		if (fDesc != Flags::Null)
-		  hasFlag[fDesc] = true;
-	}
+      /* Unpack incoming message containing the list of flags our client supports */
+      for (int i = 0; i < numClientFlags; i++) {
+	FlagType *fDesc;
+	buf = FlagType::unpack(buf, fDesc);
+	if (fDesc != Flags::Null)
+	  hasFlag[fDesc] = true;
+      }
 
-	/* Compare them to the flags this game might need, generating a list of missing flags */
-	for (it = FlagType::getFlagMap().begin();
-	     it != FlagType::getFlagMap().end(); ++it) {
-		if (!hasFlag[it->second]) {
-		   if (clOptions->flagCount[it->second] > 0)
-		     missingFlags.insert(it->second);
-		   if ((clOptions->numExtraFlags > 0) && !clOptions->flagDisallowed[it->second])
-		     missingFlags.insert(it->second);
-		}
+      /* Compare them to the flags this game might need, generating a list of missing flags */
+      for (it = FlagType::getFlagMap().begin();
+	   it != FlagType::getFlagMap().end(); ++it) {
+	if (!hasFlag[it->second]) {
+	   if (clOptions->flagCount[it->second] > 0)
+	     missingFlags.insert(it->second);
+	   if ((clOptions->numExtraFlags > 0) && !clOptions->flagDisallowed[it->second])
+	     missingFlags.insert(it->second);
 	}
+      }
 
-	/* Pack a message with the list of missing flags */
-	buf = bufStart = getDirectMessageBuffer();
-	for (m_it = missingFlags.begin(); m_it != missingFlags.end(); ++m_it) {
-	  if ((*m_it) != Flags::Null)
-	    buf = (*m_it)->pack(buf);
-	}
-	directMessage(t, MsgNegotiateFlags, (char*)buf-(char*)bufStart, bufStart);
-	break;
+      /* Pack a message with the list of missing flags */
+      buf = bufStart = getDirectMessageBuffer();
+      for (m_it = missingFlags.begin(); m_it != missingFlags.end(); ++m_it) {
+	if ((*m_it) != Flags::Null)
+	  buf = (*m_it)->pack(buf);
+      }
+      directMessage(t, MsgNegotiateFlags, (char*)buf-(char*)bufStart, bufStart);
+      break;
     }
 
 
