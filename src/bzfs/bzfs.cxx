@@ -2902,7 +2902,8 @@ static void getSpawnLocation( int playerId, float* pos, float *azimuth)
     const float size = BZDB.eval(StateDatabase::BZDB_WORLDSIZE);
     WorldInfo::ObstacleLocation *building;
 
-    int attempts = 20;
+    int inAirAttempts = 20;
+    long int nearInfiniteFailsafe = 1000000;
     bool foundspot = false;
     while (!foundspot) {
       pos[0] = ((float)bzfrand() - 0.5f) * (size - 2.0f * tankRadius);
@@ -2926,19 +2927,34 @@ static void getSpawnLocation( int playerId, float* pos, float *azimuth)
 
         // in a building? try climbing on roof until on top
         int lastType = type;
+	int retriesRemaining = 1000; // don't climb forever
         while (type != NOT_IN_BUILDING) {
-          pos[2] = building->pos[2] + building->size[2];
+          pos[2] = building->pos[2] + building->size[2]f;
           lastType = type;
           type = world->inBuilding(&building, pos[0], pos[1], pos[2],
                                    tankRadius, BZDBCache::tankHeight);
+	  if (--retriesRemaining <= 0) {
+	    DEBUG1("Warning: getSpawnLocation had to climb too many buildings\n");
+	    break;
+	  }
         }
         // ok, when not on top of pyramid or teleporter
         if (lastType != IN_PYRAMID  &&  lastType != IN_TELEPORTER) {
           foundspot = true;
         }
       }
-      if (--attempts == 0)
+
+      // only try up in the sky so many times
+      if (--inAirAttempts <= 0) {
 	onGroundOnly = true;
+      }
+
+      // simple check for a hanging server
+      if (--nearInfiniteFailsafe-- <= 0) {
+	sendMessage(ServerPlayer, playerID, "Server is shutting down due to fatal player spawn issues..\n");
+	DEBUG1("ERROR: getSpawnLocation seems to be stuck .. shutting down\n");
+	exit(1);
+      }
     }
   }
 
