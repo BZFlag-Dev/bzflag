@@ -218,7 +218,7 @@ declared the winner and the game is over.
 .TP
 \fB-p\fI port\fR
 Listen for game connections on \fIport\fR instead of the default port.
-Use \fB-help\fR to print the default port.
+Use \fB-help\fR to print the default port, or use \fB-d\fR debug printing.
 .TP
 \fB-passdb\fI file\fR
 Load passwords from file
