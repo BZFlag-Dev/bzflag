@@ -43,7 +43,7 @@ class RobotPlayer : public BaseLocalPlayer {
     ShotPath*		getShot(int index) const;
 
     void		setTeam(TeamColor);
-    void		restart();
+    void		restart(const float* pos, float azimuth);
     bool		checkHit(const Player* source, const ShotPath*& hit,
 							float& minTime) const;
     void		explodeTank();

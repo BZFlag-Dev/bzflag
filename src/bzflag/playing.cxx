@@ -127,7 +127,6 @@ static bool		admin = false; // am I an admin?
 static bool		serverError = false;
 static bool		serverDied = false;
 static bool		fireButton = false;
-static bool		restartOnBase = false;
 static bool		firstLife = false;
 static bool		showFPS = false;
 static bool		showDrawTime = false;
@@ -3250,13 +3249,14 @@ static void		handleServerMessage(bool human, uint16_t code,
       // blow up if my team flag captured
       if (capturedTeam == int(myTank->getTeam())) {
 	gotBlowedUp(myTank, GotCaptured, id);
-	restartOnBase = true;
+	myTank->restartOnBase = true;
       }
 
       //kill all my robots if they are on the captured team
       for (int r = 0; r < numRobots; r++) {
         if (robots[r]->getTeam() == capturedTeam) {
 	  gotBlowedUp(robots[r], GotCaptured, robots[r]->getId());
+	  robots[r]->restartOnBase = true;
 	}
       }
 
@@ -3689,183 +3689,18 @@ static void		doMessages()
 #endif
 }
 
-//
-// local update utility functions
-//
-
-static float		minSafeRange(float angleCosOffBoresight)
-{
-  // anything farther than this much from dead-center is okay to
-  // place at MinRange
-  static const float	SafeAngle = 0.5f;		// cos(angle)
-
-  const float shotSpeed = BZDB->eval(StateDatabase::BZDB_SHOTSPEED);
-  // don't ever place within this range
-  const float	MinRange = 2.0f * shotSpeed;	// meters
-
-  // anything beyond this range is okay at any angle
-  const float	MaxRange = 4.0f * shotSpeed;	// meters
-
-  // if more than SafeAngle off boresight then MinRange is okay
-  if (angleCosOffBoresight < SafeAngle) return MinRange;
-
-  // ramp up to MaxRange as target comes to dead center
-  const float f = (angleCosOffBoresight - SafeAngle) / (1.0f - SafeAngle);
-  return (float)(MinRange + f * (MaxRange - MinRange));
-}
-
 static void		restartPlaying()
 {
-  // maximum tries to find a safe place
-  static const int	MaxTries = 1000;
-
-  // minimum time before an existing shot can hit us
-  static const float	MinShotImpact = 2.0f;		// seconds
-
   // restart my tank
-  float startPoint[3];
   float startAzimuth;
-  int locateCount = 0;
-  startPoint[2] = 0.0f;
-  float bestStartPoint[3], bestDist = -1e6;
-  bool located;
+  float bestStartPoint[3];
 
-  // check for valid starting (no unfair advantage to player or enemies)
-  // should find a good location in a few tries... locateCount is a safety
-  // check that will probably be invoked when restarting on the team base
-  // if the enemy is loitering around waiting for players to reappear.
-  // also have to make sure new position isn't in a building;  that must
-  // be enforced no matter how many times we need to try new locations.
-  // If I can't find a safe spot, try to use the best of the unsafe ones.
-  // The best one is that which violates the minimum safe distance by the
-  // smallest amount.
-  float tankRadius = BZDB->eval(StateDatabase::BZDB_TANKRADIUS);
-  float worldSize = BZDB->eval(StateDatabase::BZDB_WORLDSIZE);
-  do {
-    do {
-      if (restartOnBase) {
-	const float* base = world->getBase(int(myTank->getTeam()));
-	const float x = (base[4] - 2.0f * tankRadius) * ((float)bzfrand() - 0.5f);
-	const float y = (base[5] - 2.0f * tankRadius) * ((float)bzfrand() - 0.5f);
-	startPoint[0] = base[0] + x * cosf(base[3]) - y * sinf(base[3]);
-	startPoint[1] = base[1] + x * sinf(base[3]) + y * cosf(base[3]);
-	if(base[2] != 0) {
-	  startPoint[2] = base[2] + 1;
-	} else {
-	  startPoint[2] = base[2];
-	}
-      }
-      else {
-	if (world->allowTeamFlags()) {
-	  startPoint[0] = 0.4f * worldSize * ((float)bzfrand() - 0.5f);
-	  startPoint[1] = 0.4f * worldSize * ((float)bzfrand() - 0.5f);
-	}
-	else {
-	  startPoint[0] = (worldSize - 2.0f * tankRadius) * ((float)bzfrand() - 0.5f);
-	  startPoint[1] = (worldSize - 2.0f * tankRadius) * ((float)bzfrand() - 0.5f);
-	}
-      }
-      startAzimuth = 2.0f * M_PI * (float)bzfrand();
-    } while (world->inBuilding(startPoint, 2.0f * tankRadius));
-
-    // use first point as best point, so we'll have a fallback
-    if (locateCount == 0) {
-      bestStartPoint[0] = startPoint[0];
-      bestStartPoint[1] = startPoint[1];
-      bestStartPoint[2] = startPoint[2];
-    }
-
-    // get info on my tank
-    const TeamColor myColor = myTank->getTeam();
-    const float myCos = cosf(-startAzimuth);
-    const float mySin = sinf(-startAzimuth);
-
-    // check each enemy tank
-    located = true;
-    float worstDist = 1e6;
-    for (int i = 0; i < curMaxPlayers; i++) {
-      // ignore missing player
-      if (!player[i]) continue;
-
-      // test against all existing shots of all players except mine
-      // (mine don't count because I can't come alive before all my
-      // shots have expired anyway)
-      const int maxShots = World::getWorld()->getMaxShots();
-      float tankLength = BZDB->eval(StateDatabase::BZDB_TANKLENGTH);
-      float tankWidth = BZDB->eval(StateDatabase::BZDB_TANKWIDTH);
-      for (int j = 0; j < maxShots; j++) {
-	// get shot and ignore non-existent ones
-	ShotPath* shot = player[i]->getShot(j);
-	if (!shot) continue;
-
-	// get shot's current position and velocity and see if it'll
-	// hit my tank earlier than MinShotImpact.  use something
-	// larger than the actual tank size to give some leeway.
-	const Ray ray(shot->getPosition(), shot->getVelocity());
-	const float t = timeRayHitsBlock(ray, startPoint, startAzimuth,
-				4.0f * tankLength, 4.0f * tankWidth,
-				2.0f * BZDBCache::tankHeight);
-	if (t >= 0.0f && t < MinShotImpact) {
-	  located = false;
-	  break;
-	}
-      }
-      if (!located) break;
-
-      // test against living enemy tanks
-      if (!player[i]->isAlive() ||
-	  (myColor != RogueTeam  && player[i]->getTeam() == myColor)) continue;
-
-      // compute enemy position in my local coordinate system
-      const float* enemyPos = player[i]->getPosition();
-      const float enemyX = myCos * (enemyPos[0] - startPoint[0]) -
-			   mySin * (enemyPos[1] - startPoint[1]);
-      const float enemyY = mySin * (enemyPos[0] - startPoint[0]) +
-			   myCos * (enemyPos[1] - startPoint[1]);
-
-      // get distance and angle of enemy from boresight
-      const float enemyDist = hypotf(enemyX, enemyY);
-      const float enemyCos = enemyX / enemyDist;
-
-      // don't allow tank placement if enemy tank is +/- 30 degrees of
-      // my boresight and in firing range (our unfair advantage)
-      float safeDist = enemyDist - minSafeRange(enemyCos);
-      if (safeDist < worstDist)
-	worstDist = safeDist;
-
-      // compute my position in enemy coordinate system
-      // cos = enemyUnitVect[0], sin = enemyUnitVect[1]
-      const float* enemyUnitVect = player[i]->getForward();
-      const float myX = enemyUnitVect[0] * (startPoint[0] - enemyPos[0]) -
-			enemyUnitVect[1] * (startPoint[1] - enemyPos[1]);
-      const float myY = enemyUnitVect[1] * (startPoint[0] - enemyPos[0]) +
-			enemyUnitVect[0] * (startPoint[1] - enemyPos[1]);
-
-      // get distance and angle of enemy from boresight
-      const float myDist = hypotf(myX, myY);
-      const float myCos = myX / myDist;
-
-      // don't allow tank placement if my tank is +/- 30 degrees of
-      // the enemy's boresight and in firing range (enemy's unfair advantage)
-      safeDist = myDist - minSafeRange(myCos);
-      if (safeDist < worstDist)
-	worstDist = safeDist;
-    }
-    if (located && worstDist > bestDist) {
-      bestDist = worstDist;
-      bestStartPoint[0] = startPoint[0];
-      bestStartPoint[1] = startPoint[1];
-      bestStartPoint[2] = startPoint[2];
-    }
-    if (bestDist < 0.0f)
-      located = false;
-  } while (!located && ++locateCount <= MaxTries);
-
+  myTank->startingLocation(bestStartPoint, startAzimuth, world,
+			   (Player**) player, curMaxPlayers);
   // restart the tank
   myTank->restart(bestStartPoint, startAzimuth);
   if (myTank->getTeam() != ObserverTeam)
     serverLink->sendAlive(myTank->getPosition(), myTank->getForward());
-  restartOnBase = false;
   firstLife = false;
   mainWindow->warpMouse();
   playLocalSound(SFX_POP);
@@ -4640,7 +4475,11 @@ static void		updateRobots(float dt)
   // start dead robots and retarget
   for (i = 0; i < numRobots; i++)
     if (!gameOver && !robots[i]->isAlive() && !robots[i]->isExploding()) {
-      robots[i]->restart();
+      float startAzimuth;
+      float bestStartPoint[3];
+      robots[i]->startingLocation(bestStartPoint, startAzimuth, world,
+				  (Player**) player, curMaxPlayers);
+      robots[i]->restart(bestStartPoint, startAzimuth);
       robotServer[i]->sendAlive(robots[i]->getPosition(), robots[i]->getForward());
       setRobotTarget(robots[i]);
     }
@@ -4761,6 +4600,11 @@ static void		addRobots()
     else
       robots[j]->setTeam((TeamColor)((int)RedTeam + (int)(bzfrand() *
 					(int)(PurpleTeam - RedTeam + 1))));
+
+    // decide how start for first time
+    robots[j]->restartOnBase = world->allowTeamFlags()
+      && Team::isColorTeam(robots[j]->getTeam());
+
     robotServer[j]->sendEnter(ComputerPlayer, robots[j]->getTeam(),
 		robots[j]->getCallSign(), robots[j]->getEmailAddress());
 
@@ -5464,7 +5308,8 @@ static bool		joinGame(const StartupInfo* info,
 #endif
 
   // decide how start for first time
-  restartOnBase = world->allowTeamFlags() && Team::isColorTeam(myTank->getTeam());
+  myTank->restartOnBase = world->allowTeamFlags()
+    && Team::isColorTeam(myTank->getTeam());
 
   // resize background and adjust time (this is needed even if we
   // don't sync with the server)

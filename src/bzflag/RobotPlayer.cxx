@@ -324,22 +324,8 @@ void			RobotPlayer::changeScore(short deltaWins,
   Player::changeScore(deltaWins, deltaLosses, deltaTeamKills);
 }
 
-void			RobotPlayer::restart()
+void			RobotPlayer::restart(const float* pos, float _azimuth)
 {
-  // pick a random location and position to join at
-  // FIXME -- doesn't handle starting on team base or capture the flag
-  // style play.  this code should be merged with restartPlaying() in
-  // playing.c++ and moved elsewhere (maybe World).
-  float startPoint[3];
-  startPoint[2] = 0.0f;
-  float tankRadius = BZDB->eval(StateDatabase::BZDB_TANKRADIUS);
-  float worldSize = BZDB->eval(StateDatabase::BZDB_WORLDSIZE);
-  do {
-    startPoint[0] = (worldSize - 2.0f * tankRadius) * ((float)bzfrand() - 0.5f);
-    startPoint[1] = (worldSize - 2.0f * tankRadius) * ((float)bzfrand() - 0.5f);
-  } while (World::getWorld()->inBuilding(startPoint, 2.0f * tankRadius));
-
-  // NOTE -- code taken directly from LocalPlayer
   // put me in limbo
   setStatus(short(PlayerState::DeadStatus));
 
@@ -362,7 +348,7 @@ void			RobotPlayer::restart()
 
   // initialize position/speed state
   static const float zero[3] = { 0.0f, 0.0f, 0.0f };
-  move(startPoint, 2.0f * M_PI * (float)bzfrand());
+  move(pos, _azimuth);
   setVelocity(zero);
   setAngularVelocity(0.0f);
   doUpdateMotion(0.0f);
