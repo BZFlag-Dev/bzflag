@@ -2089,7 +2089,8 @@ Help9Menu::Help9Menu() : HelpMenu("Credits")
   list.append(createLabel("Dan Kartch, Jed Lengyel", ""));
   list.append(createLabel("Jeff Myers, Tim Olson", ""));
   list.append(createLabel("Brian Smits, Greg Spencer", ""));
-  list.append(createLabel("Daryll Strauss", ""));
+  list.append(createLabel("Daryll Strauss, Frank Thilo", ""));
+  list.append(createLabel("Dave Brosius, David Trowbridge", ""));
   list.append(createLabel("", ""));
   list.append(createLabel("Tamar Cohen", "Tank Models:"));
   list.append(createLabel("", ""));
