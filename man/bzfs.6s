@@ -91,6 +91,7 @@ bzfs \- BZFlag game server
 [\fB\-tk\fR]
 [\fB\-tkkr \fIpercent\fR]
 [\fB\-userdb \fIfile\fR]
+[\fB\-useremotegroups \fIgroup\fR,[\fIgroup\fR],[\fI...\fR]]
 [\fB\-vars \fIfile\fR]
 [\fB\-version\fR]
 [\fB\-vetoTime \fIseconds\fR]
@@ -443,6 +444,10 @@ Kicks players whose team killing to normal kill ratio is greater than
 .TP
 \fB-userdb \fIfile\fR
 Load group associations from file
+.TP
+\fB\-useremotegroups \fIgroup\fR,[\fIgroup\fR],[\fI...\fR]
+Ask the list server for information about player membership in these groups.
+Comma-separated list of groups about which the server is interested.
 .TP
 \fB-vars \fIfile\fR
 Loads values for game configurable variables from \fIfile\fR. Entries are

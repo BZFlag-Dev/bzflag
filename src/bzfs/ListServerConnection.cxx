@@ -28,6 +28,9 @@
 #include "Protocol.h"
 #include "GameKeeper.h"
 
+/* local implementation headers */
+#include "CmdLineOptions.h"
+
 // FIXME remove externs!
 extern Address serverAddress;
 extern PingPacket getTeamCounts();
@@ -36,6 +39,7 @@ extern int getTarget(const char *victimname);
 extern void sendMessage(int playerIndex, PlayerId targetPlayer, const char *message);
 extern void sendPlayerInfo(void);
 extern void sendIPUpdate(int targetPlayer, int playerIndex);
+extern CmdLineOptions *clOptions;
 
 ListServerLink::ListServerLink(std::string listServerURL, std::string publicizedAddress, std::string publicizedTitle)
 {
@@ -331,17 +335,16 @@ void ListServerLink::addMe(PingPacket pingInfo,
       msg += "%0D%0A";
     }
   }
-  // TODO loop through groups we are interested in and request them
   // *groups=GROUP0%0D%0AGROUP1%0D%0A
-  // see handleGrouplistCmd()
   msg += "&groups=";
-  PlayerAccessMap::iterator itr = groupAccess.begin();
-  for ( ; itr != groupAccess.end(); itr++) {
-    if (itr->first != "ADMIN") {
-      msg += itr->first.c_str();
+  std::vector<std::string>::iterator itr = clOptions->remoteGroups.begin();
+  for ( ; itr != clOptions->remoteGroups.end(); itr++) {
+    if (*itr != "ADMIN") {
+      msg += itr->c_str();
       msg += "%0D%0A";
     }
   }
+
   msg += TextUtils::format("&title=%s HTTP/1.1\r\n"
       "User-Agent: bzfs %s\r\n"
       "Host: %s\r\n"

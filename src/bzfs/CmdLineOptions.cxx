@@ -137,6 +137,7 @@ const char *usageString =
 "[-tk] "
 "[-tkkr <percent>] "
 "[-userdb <user permissions file>] "
+"[-useremotegroups <group>,[<group>],[...]]"
 "[-vars <filename>] "
 "[-version] "
 "[-world <filename>] "
@@ -227,10 +228,11 @@ const char *extraUsageString =
 "\t-tk: player does not die when killing a teammate\n"
 "\t-tkkr: team-kills-to-wins percentage (1-100) for kicking tk-ing players\n"
 "\t-userdb: file to read for user access permissions\n"
+"\t-useremotegroups: comma-separated (no spaces!) list of groups to request player membership notification from the list server\n"
 "\t-vars: file to read for worlds configuration variables\n"
 "\t-version: print version and exit\n"
 "\t-world: world file to load\n"
-"\t-worldsize: numeric value for the size of the world ( def 400 )\n"
+"\t-worldsize: numeric value for the size of the world (default 400)\n"
 "\n"
 "Poll Variables:  (see -poll)\n"
 "\n"
@@ -1079,6 +1081,17 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
       checkArgc(1, i, argc, argv[i]);
       userDatabaseFile = argv[i];
       std::cerr << "using userDB file \"" << argv[i] << "\"" << std::endl;
+    } else if (strcmp(argv[i], "-useremotegroups") == 0) {
+      checkArgc(1, i, argc, argv[i]);
+      options.remoteGroups = TextUtils::tokenize(argv[i], ",", 0, true);
+      if (debugLevel >= 1) {
+        std::vector<std::string>::iterator itr = options.remoteGroups.begin();
+	std::cout << "Importing remote groups: ";
+	for ( ; itr != options.remoteGroups.end(); ++itr) {
+	  std::cout << *itr << " ";
+	}
+	std::cout << std::endl;
+      }
     } else if (strcmp(argv[i], "-v") == 0 || strcmp(argv[i], "-version") == 0) {
       printVersion();
       exit(0);

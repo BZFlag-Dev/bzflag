@@ -88,6 +88,9 @@ struct CmdLineOptions
 
     listServerURL.push_back(DefaultListServerURL);
     masterBanListURL.push_back(DefaultMasterBanURL);
+
+    // always use remote user authentication even if we've disabled remote groups
+    remoteGroups.push_back("VERIFIED");
   }
 
   int			wksPort;
@@ -101,6 +104,8 @@ struct CmdLineOptions
   std::string   worldFile;
   std::string   pingInterface;
   std::string   password;
+
+  std::vector<std::string> remoteGroups;
 
   bool listServerOverridden;
   std::vector<std::string>   listServerURL;
