@@ -21,7 +21,7 @@ PlayerState::PlayerState()
   velocity[0] = velocity[0] = velocity[2] = 0.0f;
 }
 
-void*	PlayerState::pack(void* buf) const
+void*	PlayerState::pack(void* buf)
 {
   buf = nboPackShort(buf, int16_t(status));
   buf = nboPackVector(buf, pos);
