@@ -13,7 +13,9 @@
 #ifndef __SINGLETON_H__
 #define __SINGLETON_H__
 
-#include <stdlib.h>
+/* system headers */
+#include <cstdlib>
+
 
 /* Singleton template class
  *
@@ -33,6 +35,10 @@
  * The class can easily be extended to support different allocation
  * mechanisms or multithreading access.  This implementation, however, 
  * only uses new/delete and is not thread safe.
+ *
+ * The Singleton will automatically get destroyed when the application
+ * terminates (via an atexit() hook) unless the inheriting class has an
+ * accessible destructor.
  */
 template < typename T >
 class Singleton {
