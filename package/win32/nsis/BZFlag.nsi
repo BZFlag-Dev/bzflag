@@ -128,6 +128,7 @@ Section "Uninstall"
 	Delete $INSTDIR\bzadmin.exe
 	Delete $INSTDIR\doc\*.*
 	Delete $INSTDIR\data\*.*
+	Delete $INSTDIR\data\l10n\*.*
 
 	; MUST REMOVE UNINSTALLER, too
 	Delete $INSTDIR\uninstall.exe
