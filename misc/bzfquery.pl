@@ -104,11 +104,11 @@ print S pack("n2", 0, 0x7170);
 
 # get number of teams and players we'll be receiving
 die $! unless sysread(S, $buffer, 8) == 8;
-($len,$code,$numTeams,$numPlayers) = unpack("n4", $buffer);
+($len,$code,$numTotalTeams,$numPlayers) = unpack("n4", $buffer);
 die $! unless $code == 0x7170;
 
 # get the teams
-# TimRiker: MsgTeamUpdate has numTeams too
+# TimRiker: MsgTeamUpdate has numTotalTeams but this is how many we will get
 die $! unless sysread(S, $buffer, 5) == 5;
 ($len,$code,$numTeams) = unpack("n n C", $buffer);
 die $! unless $code == 0x7475;
