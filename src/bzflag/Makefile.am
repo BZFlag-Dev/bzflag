@@ -64,6 +64,12 @@ bzflag_SOURCES = 			\
 
 noinst_HEADERS = \
 	stars.cxx
+
+if WIN32
+  RESOURCE = bzflag.res
+else
+  RESOURCE = 
+endif
 LDADD =	\
 	../net/libNet.a			\
 	../common/libCommon.a		\
@@ -71,12 +77,9 @@ LDADD =	\
 	../platform/libPlatform.a	\
 	../ogl/libGLKit.a		\
 	../scene/libSceneDB.a		\
-	../geometry/libGeometry.a
-if WIN32
-  LDADD += bzflag.res $(GLIBS)
-else
-  LDADD += $(GLIBS)
-endif
+	../geometry/libGeometry.a	\
+	$(RESOURCE)			\
+	$(GLIBS)
 EXTRA_DIST = bzflag.bmp
 AM_CPPFLAGS = $(X_CFLAGS)
 
