@@ -124,6 +124,7 @@ class BackgroundRenderer {
 	int						rainDensity;
 	float						rainSpeed;
 	float						rainSpeedMod;
+	float						rainSpread;
 	typedef struct {
 		float    pos[3];
 		float	 speed;

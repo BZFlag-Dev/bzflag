@@ -430,7 +430,7 @@ void			BackgroundRenderer::setCelestial(
 		  rainSpeedMod = 20;
 
 	  // seed the clouds
-	  float rainSpread  = 500.0f;
+	  rainSpread  = 500.0f;
 	  if (BZDB.isSet("RAIN_SPREAD"))
 		  rainSpread = BZDB.eval("RAIN_SPREAD");
 
@@ -561,8 +561,6 @@ void			BackgroundRenderer::renderEnvironment(SceneRenderer& renderer)
 
 		float frameTime = TimeKeeper::getCurrent().getSeconds()-lastRainTime;
 		lastRainTime = TimeKeeper::getCurrent().getSeconds();
-
-		float rainSpread  = 1000.0f;
 		float rainHeight  = 120.0f * BZDBCache::tankHeight;	// same as the clouds
 
 		rainGState.setState();
