@@ -2836,7 +2836,7 @@ static bool defineWorld()
    // package up world
   world->packDatabase();
   // now get world packaged for network transmission
-  worldDatabaseSize = 4 + 32 + world->getDatabaseSize() + 2;
+  worldDatabaseSize = 4 + 30 + world->getDatabaseSize() + 2;
   if (clOptions.gameStyle & TeamFlagGameStyle)
     worldDatabaseSize += 4 * (4 + 9 * 4);
 
@@ -2847,7 +2847,7 @@ static bool defineWorld()
 
   void *buf = worldDatabase;
   buf = nboPackUShort(buf, WorldCodeStyle);
-  buf = nboPackUShort(buf, 28);// size of the header
+  buf = nboPackUShort(buf, 30);// size of the header
   buf = nboPackUShort(buf, mapVersion);
   buf = nboPackFloat(buf, WorldSize);
   buf = nboPackUShort(buf, clOptions.gameStyle);
