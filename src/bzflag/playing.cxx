@@ -6004,11 +6004,12 @@ static void		playingLoop()
 	  if (player[i]) {
 	    player[i]->updateSparks(dt);
 	    player[i]->addShots(scene, colorblind);
-	    if (!colorblind && (player[i]->getFlag() == Flags::Masquerade) && (myTank->getFlag() != Flags::Seer)) {
-	      override = Team::getTankColor(myTank->getTeam());
-	    }
-	    else
-	      override = false;
+	    if (!colorblind)
+	      if ((player[i]->getFlag() == Flags::Masquerade) && (myTank->getFlag() != Flags::Seer)) {
+		override = Team::getTankColor(myTank->getTeam());
+	      }
+	      else
+		override = NULL;
 	    player[i]->addPlayer(scene, override, true);
 	    if ((player[i]->getFlag() == Flags::Cloaking) && (myTank->getFlag() != Flags::Seer))
 	      player[i]->setInvisible();
