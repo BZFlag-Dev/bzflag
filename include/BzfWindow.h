@@ -74,6 +74,7 @@ class BzfWindow {
     virtual bool	joystick() const;
     virtual void	getJoy(int& x, int& y) const;
     virtual unsigned long getJoyButtons() const;
+    virtual void        getJoyDevices(std::vector<std::string> &list) const;
 
     void		callExposeCallbacks() const;
     void		addExposeCallback(void (*cb)(void*), void* data);

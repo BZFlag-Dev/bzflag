@@ -94,6 +94,10 @@ void			BzfWindow::removeResizeCallback(
 void			BzfWindow::initJoystick(const char* joystickName)
 {
 #ifdef HAVE_SDL
+  if (!strcmp(joystickName, "off")) {
+    joystickID = NULL;
+    return;
+  }
   int numJoystick = SDL_NumJoysticks();
   if (!numJoystick) {
     printError("no joystick is supported...");
@@ -114,9 +118,11 @@ void			BzfWindow::initJoystick(const char* joystickName)
   }
   joystickButtons = SDL_JoystickNumButtons(joystickID);
 #else
-  std::vector<std::string> args;
-  args.push_back(joystickName);
-  printError("joystick '{1}' not supported...", &args);
+  if (strcmp(joystickName, "off")) {
+    std::vector<std::string> args;
+    args.push_back(joystickName);
+    printError("joystick '{1}' not supported...", &args);
+  }
 #endif
 }
 
@@ -172,6 +178,17 @@ unsigned long		BzfWindow::getJoyButtons() const
   return buttons;
 #else
   return 0;
+#endif
+}
+
+void                    BzfWindow::getJoyDevices(std::vector<std::string>
+						 &list) const {
+#ifdef HAVE_SDL
+  
+  int numJoystick = SDL_NumJoysticks();
+  int i;
+  for (i = 0; i < numJoystick; i++)
+    list.push_back(SDL_JoystickName(i));
 #endif
 }
 
