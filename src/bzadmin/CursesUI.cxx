@@ -211,7 +211,10 @@ bool CursesUI::checkCommand(std::string& str) {
 
 
 void CursesUI::addedPlayer(PlayerId p) {
-  comp.registerWord(players.find(p)->second);
+  std::map<PlayerId, std::string>::const_iterator iter = players.find(p);
+  comp.registerWord(iter->second);
+  if (p == me)
+    targetIter == iter;
 }
 
 
