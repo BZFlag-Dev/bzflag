@@ -36,81 +36,81 @@ WallSceneNode*		PyramidSceneNodeGenerator::getNextNode(
 				float uRepeats, float vRepeats, bool lod)
 {
 
-	bool isSquare = false;
+  bool isQuad = false;
 
-	if (getNodeNumber() == 5) return NULL;
+  if (getNodeNumber() == 5) return NULL;
 
   GLfloat base[3], sCorner[3], tCorner[3];
-  if (pyramid->getZFlip()){
-  switch (incNodeNumber()) {
-    case 1:
-      pyramid->getCorner(4, base);
-      pyramid->getCorner(1, sCorner);
-      pyramid->getCorner(0, tCorner);
-	  isSquare = false;
-      break;
-    case 2:
-      pyramid->getCorner(4, base);
-      pyramid->getCorner(2, sCorner);
-      pyramid->getCorner(1, tCorner);
-	  isSquare = false;
-      break;
-    case 3:
-      pyramid->getCorner(4, base);
-      pyramid->getCorner(3, sCorner);
-      pyramid->getCorner(2, tCorner);
-	  isSquare = false;
-      break;
-    case 4:
-      pyramid->getCorner(4, base);
-      pyramid->getCorner(0, sCorner);
-      pyramid->getCorner(3, tCorner);
-	  isSquare = false;
-      break;
-    case 5:
-      pyramid->getCorner(0, base);
-      pyramid->getCorner(1, sCorner);
-      pyramid->getCorner(3, tCorner);
-	  isSquare = true;
-      break;
-  }
-  }else{
-	  switch (incNodeNumber()) {
-    case 1:
-      pyramid->getCorner(0, base);
-      pyramid->getCorner(1, sCorner);
-      pyramid->getCorner(4, tCorner);
-	  isSquare = false;
-      break;
-    case 2:
-      pyramid->getCorner(1, base);
-      pyramid->getCorner(2, sCorner);
-      pyramid->getCorner(4, tCorner);
-	  isSquare = false;
-      break;
-    case 3:
-      pyramid->getCorner(2, base);
-      pyramid->getCorner(3, sCorner);
-      pyramid->getCorner(4, tCorner);
-	  isSquare = false;
-      break;
-    case 4:
-      pyramid->getCorner(3, base);
-      pyramid->getCorner(0, sCorner);
-      pyramid->getCorner(4, tCorner);
-	  isSquare = false;
-      break;
-    case 5:
-      if ((pyramid->getPosition()[2] > 0.0) || pyramid->getZFlip()) {
-	pyramid->getCorner(0, base);
-	pyramid->getCorner(3, sCorner);
+  if (pyramid->getZFlip()) {
+    switch (incNodeNumber()) {
+      case 1:
+	pyramid->getCorner(4, base);
+	pyramid->getCorner(1, sCorner);
+	pyramid->getCorner(0, tCorner);
+	isQuad = false;
+	break;
+      case 2:
+	pyramid->getCorner(4, base);
+	pyramid->getCorner(2, sCorner);
 	pyramid->getCorner(1, tCorner);
-	isSquare = true;
-      }
-      else
-	return NULL;
-      break;
-  }
+	isQuad = false;
+	break;
+      case 3:
+	pyramid->getCorner(4, base);
+	pyramid->getCorner(3, sCorner);
+	pyramid->getCorner(2, tCorner);
+	isQuad = false;
+	break;
+      case 4:
+	pyramid->getCorner(4, base);
+	pyramid->getCorner(0, sCorner);
+	pyramid->getCorner(3, tCorner);
+	isQuad = false;
+	break;
+      case 5:
+	pyramid->getCorner(0, base);
+	pyramid->getCorner(1, sCorner);
+	pyramid->getCorner(3, tCorner);
+	isQuad = true;
+	break;
+    }
+  } else {
+    switch (incNodeNumber()) {
+      case 1:
+	pyramid->getCorner(0, base);
+	pyramid->getCorner(1, sCorner);
+	pyramid->getCorner(4, tCorner);
+	isQuad = false;
+	break;
+      case 2:
+	pyramid->getCorner(1, base);
+	pyramid->getCorner(2, sCorner);
+	pyramid->getCorner(4, tCorner);
+	isQuad = false;
+	break;
+      case 3:
+	pyramid->getCorner(2, base);
+	pyramid->getCorner(3, sCorner);
+	pyramid->getCorner(4, tCorner);
+	isQuad = false;
+	break;
+      case 4:
+	pyramid->getCorner(3, base);
+	pyramid->getCorner(0, sCorner);
+	pyramid->getCorner(4, tCorner);
+	isQuad = false;
+	break;
+      case 5:
+	if ((pyramid->getPosition()[2] > 0.0f) || pyramid->getZFlip()) {
+	  pyramid->getCorner(0, base);
+	  pyramid->getCorner(3, sCorner);
+	  pyramid->getCorner(1, tCorner);
+	  isQuad = true;
+	} else {
+	  return NULL;
+	}
+	break;
+    }
   }
 
   GLfloat sEdge[3];
@@ -122,10 +122,10 @@ WallSceneNode*		PyramidSceneNodeGenerator::getNextNode(
   tEdge[1] = tCorner[1] - base[1];
   tEdge[2] = tCorner[2] - base[2];
 
-  if(isSquare != true)
-	return new TriWallSceneNode(base, sEdge, tEdge, uRepeats, vRepeats, lod);
+  if (isQuad == false)
+    return new TriWallSceneNode(base, sEdge, tEdge, uRepeats, vRepeats, lod);
   else
-	return new QuadWallSceneNode(base, sEdge, tEdge, uRepeats, vRepeats, lod);
+    return new QuadWallSceneNode(base, sEdge, tEdge, uRepeats, vRepeats, lod);
 
 }
 

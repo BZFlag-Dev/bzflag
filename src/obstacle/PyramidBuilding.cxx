@@ -91,23 +91,23 @@ void			PyramidBuilding::getNormal(const float* p,
 
   // make sure we are not way above or way below it
   // above is good so we can drive on it when it's fliped
-  float top =  getPosition()[2]+getHeight();
+  float top =  getPosition()[2] + getHeight();
   float bottom = getPosition()[2];
 
-  if (s ==0){
-	  if (this->getZFlip()){
-		  if (p[2] >= top){
-			  n[0] = n[1] = 0;
-			  n[2] = 1;
-			  return;
-		  }
-	  }else{
-		  if (p[2] <= bottom){
-			  n[0] = n[1] = 0;
-			  n[2] = -1;
-			  return;
-		  }
-	  }
+  if (s ==0) {
+    if (this->getZFlip()) {
+      if (p[2] >= top) {
+	n[0] = n[1] = 0;
+	n[2] = 1;
+	return;
+      }
+    } else {
+      if (p[2] <= bottom) {
+	n[0] = n[1] = 0;
+	n[2] = -1;
+	return;
+      }
+    }
   }
 
   // now angle it due to slope of wall
@@ -118,7 +118,7 @@ void			PyramidBuilding::getNormal(const float* p,
   n[2] = h * getWidth();
 
   if (this->getZFlip())
-	  n[2] *= -1;
+    n[2] *= -1;
 }
 
 void			PyramidBuilding::get3DNormal(const float* p,
@@ -238,8 +238,7 @@ bool			PyramidBuilding::isCrossing(const float* p, float a,
     plane[1] = ((x < 0.0) ? -sinf(a2) : sinf(a2));
     pw[0] = p2[0] + getWidth() * plane[0];
     pw[1] = p2[1] + getWidth() * plane[1];
-  }
-  else {
+  } else {
     plane[0] = ((y < 0.0) ? sinf(a2) : -sinf(a2));
     plane[1] = ((y < 0.0) ? -cosf(a2) : cosf(a2));
     pw[0] = p2[0] + getBreadth() * plane[0];
@@ -325,42 +324,42 @@ void			PyramidBuilding::getCorner(int index,
     case 0:
       pos[0] = base[0] + c * w - s * h;
       pos[1] = base[1] + s * w + c * h;
-	  if (getZFlip())
-		 pos[2] = top;
-	  else
-		 pos[2] = base[2];
+      if (getZFlip())
+	pos[2] = top;
+      else
+	pos[2] = base[2];
       break;
     case 1:
       pos[0] = base[0] - c * w - s * h;
       pos[1] = base[1] - s * w + c * h;
-	  if (getZFlip())
-		 pos[2] = top;
-	  else
-		 pos[2] = base[2];
+      if (getZFlip())
+	pos[2] = top;
+      else
+	pos[2] = base[2];
       break;
     case 2:
       pos[0] = base[0] - c * w + s * h;
       pos[1] = base[1] - s * w - c * h;
-	  if (getZFlip())
-		 pos[2] = top;
-	  else
-		 pos[2] = base[2];
+      if (getZFlip())
+	pos[2] = top;
+      else
+	pos[2] = base[2];
       break;
     case 3:
       pos[0] = base[0] + c * w + s * h;
       pos[1] = base[1] + s * w - c * h;
-	  if (getZFlip())
-		 pos[2] = top;
-	  else
-		 pos[2] = base[2];
+      if (getZFlip())
+	pos[2] = top;
+      else
+	pos[2] = base[2];
       break;
     case 4:
       pos[0] = base[0];
       pos[1] = base[1];
-	  if (getZFlip())
-		 pos[2] = base[2];
-	  else
-		 pos[2] = top;
+      if (getZFlip())
+	pos[2] = base[2];
+      else
+	pos[2] = top;
       break;
   }
 }
