@@ -1183,6 +1183,12 @@ void			GuidedMissileStrategy::update(float dt)
     }
   }
 
+  if ((target != NULL) && (target->getFlag() == Flags::Stealth)) {
+    target = NULL;
+    lastTarget = 0;
+    needUpdate = true;
+  }
+
   // compute next segment's ray
   if (target) {
     // turn towards target
