@@ -28,8 +28,9 @@ public:
 	// ImageFile overrides
 	virtual bool		read(void* buffer);
 private:
-	PNGPalette* readPalette( PNGChunk *c );
-	int decodeData( void *buffer, int bufferPos, PNGChunk *c );
+	PNGPalette* readPalette(PNGChunk *c);
+	unsigned char *getLineBuffer(bool active=true);
+	void switchLineBuffers();
 
 	static unsigned char	pngHeader[8];
 	bool					valid;
@@ -38,6 +39,9 @@ private:
 	unsigned char			compressionMethod;
 	unsigned char			filterMethod;
 	unsigned char			interlaceMethod;
+	unsigned char			*lineBuffers[2];
+	int						activeBufferIndex;
+	int						lineBufferSize;
 };
 
 class PNGRGB

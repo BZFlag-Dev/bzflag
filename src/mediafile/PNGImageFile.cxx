@@ -55,12 +55,43 @@ PNGImageFile::PNGImageFile(std::istream* stream) : ImageFile(stream), valid(true
 	data = (unsigned char *)nboUnpackUByte(data, filterMethod);
 	data = (unsigned char *)nboUnpackUByte(data, interlaceMethod);
 
+	int lineBufferSize;
+
+	switch (colorDepth) {
+		case 0:
+			lineBufferSize = (width * (8/bitDepth))+1;
+		break;
+
+		case 2:
+			lineBufferSize = (width * 3 * (8/bitDepth))+1;
+		break;
+
+		case 3:
+			lineBufferSize = (width * (8/bitDepth))+1;
+		break;
+
+		case 4:
+			lineBufferSize = (width * 2 * (8/bitDepth))+1;
+		break;
+
+		case 6:
+			lineBufferSize = (width * 4 * (8/bitDepth))+1;
+		break;
+	}
+	lineBuffers[0] = new unsigned char[lineBufferSize];
+	lineBuffers[1] = new unsigned char[lineBufferSize];
+	activeBufferIndex = 0;
+
 	init(3, width, height);
+	valid = true;
 }
 
 PNGImageFile::~PNGImageFile()
 {
-	// do nothing
+	if (valid) {
+		delete lineBuffers[0];
+		delete lineBuffers[1];
+	}
 }
 
 std::string				PNGImageFile::getExtension()
@@ -71,6 +102,7 @@ std::string				PNGImageFile::getExtension()
 bool					PNGImageFile::read(void* buffer)
 {
 	PNGChunk *c;
+	int	bufferPos = 0;
 	
 	c = PNGChunk::readChunk(getStream());
 	while ((c->getType() != PNGChunk::IDAT) && (c->getType() != PNGChunk::IEND)) {
@@ -80,12 +112,12 @@ bool					PNGImageFile::read(void* buffer)
 		c = PNGChunk::readChunk(getStream());
 	}
 
-	int lineLen = 4 * this->getWidth() + 1;
-	unsigned char *line = new unsigned char[lineLen];
+	unsigned char *line = getLineBuffer();
+
 	int err;
 	z_stream stream;
 	stream.next_out = line;
-	stream.avail_out = lineLen;
+	stream.avail_out = lineBufferSize;
 	stream.zalloc = (alloc_func)NULL;
 	stream.zfree = (free_func)NULL;
 
@@ -103,10 +135,14 @@ bool					PNGImageFile::read(void* buffer)
 
 		err = inflate(&stream, Z_FINISH);
 		while (err == Z_BUF_ERROR) {
-			//Do something with line			
+			//ignore filter bit for now, assume None!!!
+			//also assume rgb (2)
+			memcpy( ((unsigned char *)buffer)+bufferPos, line+1, lineBufferSize+1 );
 
+			switchLineBuffers();
+			line = getLineBuffer();
 			stream.next_out = line;
-			stream.avail_out = lineLen;
+			stream.avail_out = lineBufferSize;
 			err = inflate(&stream, Z_FINISH);
 		}
 		if (err != Z_STREAM_END) {
@@ -143,10 +179,18 @@ PNGPalette* PNGImageFile::readPalette(PNGChunk *c)
 	return p;
 }
 
-int PNGImageFile::decodeData(void *buffer, int bufferPos, PNGChunk *c)
+unsigned char *PNGImageFile::getLineBuffer(bool active)
 {
-	return bufferPos;
+	return lineBuffers[active ? activeBufferIndex : (1 - activeBufferIndex)];
 }
+
+void PNGImageFile::switchLineBuffers()
+{
+	activeBufferIndex = 1 - activeBufferIndex;
+}
+
+
+
 
 PNGPalette::PNGPalette(int nc)
 {
