@@ -20,9 +20,7 @@ libCommon_a_SOURCES  =			\
 	VotingBooth.cxx			\
 	bzsignal.c			\
 	BZDBCache.cxx			\
-	global.cxx		
-
-EXTRA_DIST = Ping.cxx
+	global.cxx
 
 MAINTAINERCLEANFILES = \
 	Makefile.in
