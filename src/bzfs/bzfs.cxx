@@ -288,15 +288,19 @@ class ListServerLink {
     const char *nextMessage;
 };
 
+// server address to listen on
+static Address serverAddress;
 // default port
 static int wksPort = ServerPort;
 // well known service socket
 static int wksSocket;
-static Address serverAddress;
-// udpSocket should also be on serverAddress
-static int udpSocket;
 static boolean useGivenPort = False;
 static boolean useFallbackPort = False;
+// reconnectSocket should also be on serverAddress
+static int reconnectPort = 0; // default to only new clients
+static int reconnectSocket;
+// udpSocket should also be on serverAddress
+static int udpSocket;
 // listen for pings here
 static int pingInSocket;
 static struct sockaddr_in pingInAddr;
@@ -2063,6 +2067,40 @@ static boolean serverStart()
   }
   maxFileDescriptor = wksSocket;
 
+  // reconnectPort == 0 if old clients are not supported
+  if (reconnectPort != 0) {
+    addr.sin_port = htons(reconnectPort);
+    reconnectSocket = socket(AF_INET, SOCK_STREAM, 0);
+    if (reconnectSocket == -1) {
+      nerror("couldn't make reconnect socket");
+      return False;
+    }
+#ifdef SO_REUSEADDR
+    // set reuse address
+    opt = optOn;
+    if (setsockopt(reconnectSocket, SOL_SOCKET, SO_REUSEADDR, (SSOType)&opt, sizeof(opt)) < 0) {
+      nerror("serverStart: setsockopt SO_REUSEADDR");
+      close(wksSocket);
+      close(reconnectSocket);
+      return False;
+    }
+#endif
+    if (bind(reconnectSocket, (const struct sockaddr*)&addr, sizeof(addr)) == -1) {
+      nerror("couldn't bind reconnect socket");
+      close(wksSocket);
+      close(reconnectSocket);
+      return False;
+    }
+    if (listen(reconnectSocket, 5) == -1) {
+      nerror("couldn't make reconnect socket queue");
+      close(wksSocket);
+      close(reconnectSocket);
+      return False;
+    }
+    maxFileDescriptor = reconnectSocket;
+  }
+
+  // udp socket
   if (alsoUDP) {
     int n;
     // we open a udp socket on the same port if alsoUDP
@@ -2080,6 +2118,7 @@ static boolean serverStart()
     if (n < 0) {
       nerror("couldn't increase udp send buffer size");
       close(wksSocket);
+      close(reconnectSocket);
       close(udpSocket);
       return False;
     }
@@ -2092,12 +2131,14 @@ static boolean serverStart()
     if (n < 0) {
       nerror("couldn't increase udp receive buffer size");
       close(wksSocket);
+      close(reconnectSocket);
       close(udpSocket);
       return False;
     }
     if (bind(udpSocket, (struct sockaddr *) &addr, sizeof(addr)) == -1) {
       nerror("couldn't bind udp listen port");
       close(wksSocket);
+      close(reconnectSocket);
       close(udpSocket);
       return False;
     }
@@ -2420,7 +2461,7 @@ static boolean readWorldStream(istream& input, const char *location, WorldFileOb
   return True;
 }
 
-static WorldInfo *defineWorldFromFile(const char *filename, boolean is_CTF = false)
+static WorldInfo *defineWorldFromFile(const char *filename)
 {
   // open file
   ifstream input(filename, ios::in | ios::nocreate);
@@ -2700,7 +2741,7 @@ static WorldInfo *defineTeamWorld()
 
     return world;
   } else {
-  return defineWorldFromFile(worldFile, true);
+    return defineWorldFromFile(worldFile);
   }
 }
 
@@ -2928,15 +2969,16 @@ static void acceptClient()
 {
   // client (not a player yet) is requesting service.
   // accept incoming connection on our well known port
-  struct sockaddr_in addr;
-  AddrLen addr_len = sizeof(addr);
-  int fd = accept(wksSocket, (struct sockaddr*)&addr, &addr_len);
+  struct sockaddr_in clientAddr;
+  AddrLen addr_len = sizeof(clientAddr);
+  int fd = accept(wksSocket, (struct sockaddr*)&clientAddr, &addr_len);
   if (fd == -1) {
     nerror("accepting on wks");
     return;
   }
 
-  fprintf(stderr, "accept() from %s:%d on %i\n", inet_ntoa(addr.sin_addr), ntohs(addr.sin_port), fd);
+  fprintf(stderr, "accept() from %s:%d on %i\n",
+      inet_ntoa(clientAddr.sin_addr), ntohs(clientAddr.sin_port), fd);
 
   // don't buffer info, send it immediately
   setNoDelay(fd);
@@ -2951,7 +2993,6 @@ static void acceptClient()
       break;
 
   // game is over;  no new players until everyone quits
-  int gameListen = NotConnected;
   if (gameOver) {
     for (int i = 0; i < maxPlayers; i++)
       if (player[i].fd != NotConnected) {
@@ -2959,27 +3000,10 @@ static void acceptClient()
 	break;
       }
   }
-  if (playerIndex < maxPlayers) {
-    // create a new socket to listen for reconnection
-    addr.sin_family = AF_INET;
-    // any open port
-    addr.sin_port = 0;
-    addr.sin_addr = serverAddress;
-    addr_len = sizeof(addr);
-    if ((gameListen = socket(AF_INET, SOCK_STREAM, 0)) == -1 ||
-	bind(gameListen, (const struct sockaddr*)&addr, sizeof(addr)) == -1 ||
-	getsockname(gameListen, (struct sockaddr*)&addr, &addr_len) == -1 ||
-	listen(gameListen, 1) == -1) {
-      nerror("creating client listen socket");
-      if (gameListen != -1)
-	close(gameListen);
-      gameListen = NotConnected;
-    }
-  }
 
   // record what port we accepted on and are now listening on.
   reconnect[playerIndex].time = TimeKeeper::getCurrent();
-  reconnect[playerIndex].listen = gameListen;
+  reconnect[playerIndex].listen = reconnectSocket;
   reconnect[playerIndex].accept = fd;
   if (reconnect[playerIndex].listen > maxFileDescriptor)
     maxFileDescriptor = reconnect[playerIndex].listen;
@@ -2988,13 +3012,18 @@ static void acceptClient()
 
   // if don't want another player or couldn't make socket then refuse
   // connection by returning an obviously bogus port (port zero).
+  struct sockaddr_in serverAddr;
   if (reconnect[playerIndex].listen == NotConnected)
-    addr.sin_port = htons(0);
+    serverAddr.sin_port = htons(0);
+  else
+    serverAddr.sin_port = htons(reconnectPort);
 
   // send server version and which port to reconnect to
-  char buffer[8 + sizeof(addr.sin_port)];
+  char buffer[8 + sizeof(serverAddr.sin_port) + sizeof(clientAddr.sin_addr) + sizeof(clientAddr.sin_port)];
   memcpy(buffer, ServerVersion, 8);
-  memcpy(buffer + 8, &addr.sin_port, sizeof(addr.sin_port));
+  memcpy(buffer + 8, &serverAddr.sin_port, sizeof(serverAddr.sin_port));
+  memcpy(buffer + 8 + sizeof(serverAddr.sin_port), &clientAddr.sin_addr, sizeof(clientAddr.sin_addr));
+  memcpy(buffer + 8 + sizeof(serverAddr.sin_port) + sizeof(clientAddr.sin_addr), &clientAddr.sin_port, sizeof(clientAddr.sin_port));
   send(fd, (const char*)buffer, sizeof(buffer), 0);
 
   // don't wait for client to reconnect here in case the client
@@ -3002,17 +3031,22 @@ static void acceptClient()
   // this also goes even if we're rejecting the connection.
 }
 
-static void addClient(int playerIndex)
+static void addClient(int acceptSocket)
 {
+  int playerIndex;
+  for (playerIndex = 0; playerIndex < maxPlayers; playerIndex++) {
+    // first check for clients that are reconnecting
+    if (reconnect[playerIndex].listen != NotConnected)
+      break;
+  }
   // accept game connection
   AddrLen addr_len = sizeof(player[playerIndex].taddr);
-  player[playerIndex].fd = accept(reconnect[playerIndex].listen,
-				(struct sockaddr*)&player[playerIndex].taddr, &addr_len);
+  player[playerIndex].fd = accept(acceptSocket,
+      (struct sockaddr *)&player[playerIndex].taddr, &addr_len);
   if (player[playerIndex].fd == NotConnected)
     nerror("accepting client connection");
 
   // done with listen socket
-  close(reconnect[playerIndex].listen);
   reconnect[playerIndex].listen = NotConnected;
 
   // see if accept worked
@@ -3060,7 +3094,6 @@ static void shutdownAcceptClient(int playerIndex)
 
   // if we're still listening on reconnect port then give up
   if (reconnect[playerIndex].listen != NotConnected) {
-    close(reconnect[playerIndex].listen);
     reconnect[playerIndex].listen = NotConnected;
   }
 }
@@ -4411,6 +4444,7 @@ static const char *usageString =
 "[-ms <shots>] "
 "[-mts <score>] "
 "[-p <port>] "
+"[-pr <reconnect port>] "
 "[-noudp] "
 "[-passwd <password>] "
 #ifdef PRINTSCORE
@@ -4861,6 +4895,16 @@ static void parse(int argc, char **argv)
 	wksPort = ServerPort;
       else
 	useGivenPort = True;
+    }
+    else if (strcmp(argv[i], "-pr") == 0) {
+      // use a different port
+      if (++i == argc) {
+	cerr << "argument expected for -pr" << endl;
+	usage(argv[0]);
+      }
+      reconnectPort = atoi(argv[i]);
+      if (reconnectPort < 1 || reconnectPort > 65535)
+	usage(argv[0]);
     }
     else if (strcmp(argv[i], "-pf") == 0) {
       // try wksPort first and if we can't open that port then
@@ -5513,13 +5557,11 @@ int main(int argc, char **argv)
       if (relayInSocket != -1 && FD_ISSET(relayInSocket, &read_set))
 	relayPlayerPacket();
 
+      // check for clients that are reconnecting
+      if (FD_ISSET(reconnectSocket, &read_set))
+	  addClient(reconnectSocket);
       // check for players that were accepted
       for (i = 0; i < maxPlayers; i++) {
-	// first check for clients that are reconnecting
-	if (reconnect[i].listen != NotConnected &&
-		FD_ISSET(reconnect[i].listen, &read_set))
-	  addClient(i);
-
 	// now check the initial contact port.  if any activity or
 	// we've waited a while, then shut it down
 	if (reconnect[i].accept != NotConnected &&
