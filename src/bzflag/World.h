@@ -80,7 +80,6 @@ class World {
     int			getMaxFlags() const;
     float		getShakeTimeout() const;
     int			getShakeWins() const;
-    uint32_t		getEpochOffset() const;
     const Team*		getTeams() const;
     const Team&		getTeam(int index) const;
     Team*		getTeams();
@@ -173,7 +172,6 @@ class World {
     int			maxFlags;
     float		shakeTimeout;
     int			shakeWins;
-    uint32_t		epochOffset;
     TeamBases		bases[NumTeams];
     std::vector<BoxBuilding*>		boxes;
     std::vector<PyramidBuilding*>	pyramids;
@@ -327,11 +325,6 @@ inline float		World::getShakeTimeout() const
 inline int		World::getShakeWins() const
 {
   return shakeWins;
-}
-
-inline uint32_t		World::getEpochOffset() const
-{
-  return epochOffset;
 }
 
 inline const Team*	World::getTeams() const

@@ -1010,7 +1010,7 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
       options.gameStyle |= int(ShakableGameStyle);
     } else if (strcmp(argv[i], "-synctime") == 0) {
       // client clocks should be synchronized to server clock
-      BZDB.set(StateDatabase::BZDB_SYNCTIME, "true");
+      BZDB.set(StateDatabase::BZDB_SYNCTIME, "1.0"); // any positive number
     } else if (strcmp(argv[i], "-synclocation") == 0) {
       // client coordinates should be set to server coordinates
       BZDB.set(StateDatabase::BZDB_SYNCLOCATION, "true");

@@ -62,7 +62,7 @@ static bool translucentMaterial(const BzMaterial* mat)
   // translucent texture?
   TextureManager &tm = TextureManager::instance();
   int faceTexture = -1;
-  if ((mat->getTextureCount() > 0) &&(mat->getTexture(0).size() > 0)) {
+  if ((mat->getTextureCount() > 0) && (mat->getTexture(0).size() > 0)) {
     faceTexture = tm.getTextureID(mat->getTexture(0).c_str());
     if (faceTexture >= 0) {
       const ImageInfo& imageInfo = tm.getInfo(faceTexture);
@@ -73,19 +73,24 @@ static bool translucentMaterial(const BzMaterial* mat)
   }
 
   // translucent color?
-  if (mat->getDiffuse()[3] != 1.0f) {
+  bool translucentColor = false;
+  const DynamicColor* dyncol = DYNCOLORMGR.getColor(mat->getDynamicColor());
+  if (dyncol == NULL) {
+    if (mat->getDiffuse()[3] != 1.0f) {
+      translucentColor = true;
+    }
+  } else if (dyncol->canHaveAlpha()) {
+    translucentColor = true;
+  }
+
+  // is the color used?  
+  if (translucentColor) {
     if (((faceTexture >= 0) && mat->getUseColorOnTexture(0)) ||
         (faceTexture < 0)) {
       // modulate with the color if asked to, or
       // if the specified texture was not available
       return true;
     }
-  }
-
-  // translucent Dynamic Color?
-  const DynamicColor* dyncol = DYNCOLORMGR.getColor(mat->getDynamicColor());
-  if ((dyncol != NULL) && dyncol->canHaveAlpha()) {
-    return true;
   }
 
   return false;

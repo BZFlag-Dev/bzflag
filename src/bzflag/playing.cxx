@@ -3639,13 +3639,14 @@ static void enteringServer(void *buf)
   // resize background and adjust time (this is needed even if we
   // don't sync with the server)
   sceneRenderer->getBackground()->resize();
-  if (!BZDB.isTrue(StateDatabase::BZDB_SYNCTIME)) {
+  float syncTime = BZDB.eval(StateDatabase::BZDB_SYNCTIME);
+  if (syncTime < 0.0f) {
     updateDaylight(epochOffset, *sceneRenderer);
   } else {
-    epochOffset = double(world->getEpochOffset());
+    epochOffset = (double)syncTime;
     updateDaylight(epochOffset, *sceneRenderer);
-    lastEpochOffset = epochOffset;
   }
+  lastEpochOffset = epochOffset;
 
   // restore the sound
   if (savedVolume != -1) {
@@ -3907,12 +3908,25 @@ void		leaveGame()
   delete myTank;
   myTank = NULL;
 
-  // time goes back to current time if previously constrained by server
-  if (BZDB.isTrue(StateDatabase::BZDB_SYNCTIME)) {
+  // reset the daylight time
+  const bool syncTime = (BZDB.eval(StateDatabase::BZDB_SYNCTIME) >= 0.0f);
+  const bool fixedTime = BZDB.isSet("fixedTime");
+  if (syncTime) {
+    // return to the desired user time
     epochOffset = userTimeEpochOffset;
-    updateDaylight(epochOffset, *sceneRenderer);
-    lastEpochOffset = epochOffset;
   }
+  else if (fixedTime) {
+    // save the current user time
+    userTimeEpochOffset = epochOffset;
+  }
+  else {
+    // revert back to when the client was started?
+    epochOffset = userTimeEpochOffset;
+  }
+  updateDaylight(epochOffset, *sceneRenderer);
+  lastEpochOffset = epochOffset;
+  BZDB.set(StateDatabase::BZDB_SYNCTIME,
+           BZDB.getDefault(StateDatabase::BZDB_SYNCTIME));
 
   // delete world
   World::setWorld(NULL);
@@ -4784,10 +4798,16 @@ static void		playingLoop()
     }
 
     // update time of day -- update sun and sky every few seconds
-    if (!BZDB.isSet("fixedTime") || BZDB.isTrue(StateDatabase::BZDB_SYNCTIME))
-      epochOffset += (double)dt;
-    if (!world || !BZDB.isTrue(StateDatabase::BZDB_SYNCTIME))
+    float syncTime = BZDB.eval(StateDatabase::BZDB_SYNCTIME);
+    if (syncTime < 0.0f) {
+      if (!BZDB.isSet("fixedTime")) {
+        epochOffset += (double)dt;
+      }
       epochOffset += (double)(50.0f * dt * clockAdjust);
+    } else {
+      epochOffset = (double)syncTime;
+      lastEpochOffset += (double)dt;
+    }
     if (fabs(epochOffset - lastEpochOffset) >= 4.0) {
       updateDaylight(epochOffset, *sceneRenderer);
       lastEpochOffset = epochOffset;

@@ -2253,9 +2253,7 @@ static void sendGameSetting(int playerIndex)
   buf = nboPackFloat(buf, clOptions->angularAcceleration);
   buf = nboPackUShort(buf, clOptions->shakeTimeout);
   buf = nboPackUShort(buf, clOptions->shakeWins);
-  // update time of day in world database
-  const uint32_t epochOffset = (uint32_t)time(NULL);
-  buf = nboPackUInt(buf, epochOffset);
+  buf = nboPackUInt(buf, 0); // FIXME - used to be sync time
 
   // send it
   directMessage(playerIndex, MsgGameSetting, (char*)buf-(char*)bufStart,

@@ -51,7 +51,6 @@ class WorldBuilder {
     void		setMaxFlags(int maxFlags);
     void		setShakeTimeout(float timeout) const;
     void		setShakeWins(int wins) const;
-    void		setEpochOffset(uint32_t seconds) const;
     void		setTeleporterTarget(int source, int target);
     void		setBase(TeamColor team,
 				const float* pos, float rotation,

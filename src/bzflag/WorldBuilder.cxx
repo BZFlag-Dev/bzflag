@@ -480,9 +480,8 @@ void* WorldBuilder::gameSetting(void* buf)
   setShakeTimeout(0.1f * float(shakeTimeout));
   buf = nboUnpackUShort(buf, shakeWins);
   setShakeWins(shakeWins);
-  uint32_t epochOffset;
-  buf = nboUnpackUInt(buf, epochOffset);
-  setEpochOffset(epochOffset);
+  uint32_t UsedToBeSyncTime; // FIXME
+  buf = nboUnpackUInt(buf, UsedToBeSyncTime);
 
   return buf;
 }
@@ -600,11 +599,6 @@ void WorldBuilder::setShakeTimeout(float timeout) const
 void WorldBuilder::setShakeWins(int wins) const
 {
   world->shakeWins = wins;
-}
-
-void WorldBuilder::setEpochOffset(uint32_t seconds) const
-{
-  world->epochOffset = seconds;
 }
 
 void WorldBuilder::setTeleporterTarget(int src, int tgt)

@@ -261,6 +261,34 @@ const Obstacle*		World::hitBuilding(const float* pos, float angle,
   return NULL;
 }
 
+static float Vel[3];
+static bool GoingDown;
+
+static int sortHitNormal(const void* a, const void* b)
+{
+  const MeshFace* obsA = *((const MeshFace**) a);
+  const MeshFace* obsB = *((const MeshFace**) b);
+
+  if (GoingDown) {  
+    if (obsA->isUpPlane() && !obsB->isUpPlane()) {
+      return -1;
+    }
+    if (obsB->isUpPlane() && !obsA->isUpPlane()) {
+      return +1;
+    }
+  }
+      
+  const float* plnA = obsA->getPlane();
+  const float* plnB = obsB->getPlane();
+  const float dotA = (plnA[0] * Vel[0]) + (plnA[1] * Vel[1]) + (plnA[2] * Vel[2]);
+  const float dotB = (plnB[0] * Vel[0]) + (plnB[1] * Vel[1]) + (plnB[2] * Vel[2]);
+  if (dotA < dotB) {
+    return -1;
+  } else {
+    return +1;
+  }
+}
+
 
 const Obstacle*		World::hitBuilding(const float* oldPos, float oldAngle,
 					   const float* pos, float angle,
@@ -275,10 +303,16 @@ const Obstacle*		World::hitBuilding(const float* oldPos, float oldAngle,
     }
     wallScan++;
   }
+
+  Vel[0] = pos[0] - oldPos[0];  
+  Vel[1] = pos[1] - oldPos[1];  
+  Vel[2] = pos[2] - oldPos[2];
   
-  // FIXME - more hack testing
-//  const float vel[3] =
-//    { pos[0] - oldPos[0], pos[1] - oldPos[1], pos[2] - oldPos[2]};
+  if (Vel[2] <= 0.0f) {
+    GoingDown = true;
+  } else {
+    GoingDown = false;
+  }
 
   // get the list of potential hits from the collision manager
   const ObsList* olist =
@@ -304,6 +338,27 @@ const Obstacle*		World::hitBuilding(const float* oldPos, float oldAngle,
       }
     }
   }
+  
+  qsort (olist->list, hitCount, sizeof(Obstacle*), sortHitNormal);
+  
+  if (hitCount > 0) {
+    const MeshFace* face = (const MeshFace*) olist->list[0];
+    if (face->isUpPlane() && GoingDown) {
+      return face;
+    } else {
+      const float* p = ((const MeshFace*)olist->list[0])->getPlane();
+      const float dot = (p[0] * Vel[0]) + (p[1] * Vel[1]) + (p[2] * Vel[2]);
+      if (dot < 0.0f) {
+        return olist->list[0];
+      } else {
+        return NULL;
+      }
+    }
+  }
+
+
+
+
 
   if (hitCount > 0) {
 //    printf ("HitCount = %i: ", hitCount);
