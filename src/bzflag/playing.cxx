@@ -5343,7 +5343,8 @@ static bool		joinGame(const StartupInfo* info,
   // determine which team to join
   std::vector<TeamColor> minIndex;
   int mostEmpty = 0;
-  if (info->team - 1 == -1) {
+
+  if (info->team  == AutomaticTeam) {
     // AutomaticTeam was selected
 
     PingPacket ping = PingPacket();
@@ -5385,9 +5386,10 @@ static bool		joinGame(const StartupInfo* info,
       }
       minIndex.push_back(RogueTeam);
     }
-    //    std::cout << "Most empty count is " << mostEmpty << " with " << minIndex.size() << " matching teams" << std::endl;
-    //    std::cout << "Maximum count is " << world->getMaxPlayers() << std::endl;
-
+  }
+  // player chose a specific team
+  else {
+    minIndex.push_back(info->team);
   }
 
   // make local player
@@ -5397,10 +5399,8 @@ static bool		joinGame(const StartupInfo* info,
   // pick the one doing the worst
   if (minIndex.size() == 0) {
     myTank->setTeam(ObserverTeam);
-
   } else if (minIndex.size() == 1) {
     myTank->setTeam(minIndex[0]);
-
   } else {
     // there were several equally unfilled teams, pick one
     /* FIXME -- eventually would be good to pick the team
@@ -5414,7 +5414,9 @@ static bool		joinGame(const StartupInfo* info,
 
   // enter server
   bool enteredServer = false;
-  if (!enterServer(serverLink, world, myTank) && (minIndex.size() > 1)) {
+  if (enterServer(serverLink, world, myTank))
+    enteredServer = true;
+  else if (minIndex.size() > 1) {
     // we failed for some reason, so try them all
     for (unsigned int i = 0; i < minIndex.size(); i++) {
       myTank->setTeam(minIndex[i]);
@@ -5430,8 +5432,6 @@ static bool		joinGame(const StartupInfo* info,
 	enteredServer = true;
       }
     }
-  } else {
-    enteredServer = true;
   }
 
   // no luck joining

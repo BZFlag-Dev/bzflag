@@ -4122,6 +4122,8 @@ class JoinMenu : public HUDDialog {
     static void		teamCallback(HUDuiControl*, void*);
     static void		joinGameCallback(bool, void*);
     static void		joinErrorCallback(const char* msg);
+    TeamColor		getTeam() const;
+    void		setTeam(TeamColor);
     void		setStatus(const char*, const std::vector<std::string> *parms = NULL);
     void		loadInfo();
 
@@ -4175,7 +4177,7 @@ JoinMenu::JoinMenu() : oldErrorCallback(NULL),
   team->setLabel("Team:");
   team->setCallback(teamCallback, NULL);
   std::vector<std::string>& teams = team->getList();
-  // these do not need to be in enum order
+  // these do not need to be in enum order, but must match getTeam() & setTeam()
   teams.push_back(std::string(Team::getName(AutomaticTeam)));
   teams.push_back(std::string(Team::getName(RogueTeam)));
   teams.push_back(std::string(Team::getName(RedTeam)));
@@ -4184,7 +4186,7 @@ JoinMenu::JoinMenu() : oldErrorCallback(NULL),
   teams.push_back(std::string(Team::getName(PurpleTeam)));
   teams.push_back(std::string(Team::getName(ObserverTeam)));
   team->update();
-  team->setIndex((int)info->team);
+  setTeam(info->team);
   list.push_back(team);
 
   server = new HUDuiTypeIn;
@@ -4235,7 +4237,7 @@ void			JoinMenu::show()
 
   // set fields
   callsign->setString(info->callsign);
-  team->setIndex((int)info->team);
+  setTeam(info->team);
 
   server->setString(info->serverName);
   char buffer[10];
@@ -4258,8 +4260,7 @@ void			JoinMenu::loadInfo()
   // load startup info with current settings
   StartupInfo* info = getStartupInfo();
   strcpy(info->callsign, callsign->getString().c_str());
-  info->team = (TeamColor)team->getIndex();
-
+  info->team = getTeam();
   strcpy(info->serverName, server->getString().c_str());
   info->serverPort = atoi(port->getString().c_str());
 }
@@ -4336,6 +4337,16 @@ void			JoinMenu::joinErrorCallback(const char* msg)
 
   // also forward to old callback
   if (self->oldErrorCallback) (*self->oldErrorCallback)(msg);
+}
+
+TeamColor		JoinMenu::getTeam() const
+{
+  return team->getIndex() == 0 ? AutomaticTeam : TeamColor(team->getIndex() - 1);
+}
+
+void			JoinMenu::setTeam(TeamColor teamcol)
+{
+  team->setIndex(teamcol == AutomaticTeam ? 0 : int(teamcol) + 1);
 }
 
 void			JoinMenu::setStatus(const char* msg, const std::vector<std::string> *)
