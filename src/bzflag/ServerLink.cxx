@@ -503,11 +503,6 @@ void			ServerLink::sendEnter(PlayerType type,
   send(MsgEnter, sizeof(msg), msg);
 }
 
-void			ServerLink::enableUDPCon()
-{
-  if ((server_abilities & CanDoUDP) == CanDoUDP) sendUDPlinkRequest();
-}
-
 void			ServerLink::sendCaptureFlag(TeamColor team)
 {
   char msg[2];
@@ -612,6 +607,9 @@ void			ServerLink::sendPaused(bool paused)
 
 void			ServerLink::sendUDPlinkRequest()
 {
+  if ((server_abilities & CanDoUDP) != CanDoUDP)
+	return; // server does not support udp (future bzfls test)
+
   char msg[2];
   unsigned short localPort;
   void* buf = msg;
@@ -685,8 +683,7 @@ void			ServerLink::setUDPRemotePort(unsigned short portno)
   args.push_back(info);
   printError("More Info: [{1}:{2}:{3}]", &args);
 
-  send(MsgUDPLinkEstablished, 0, NULL);
-
   ulinkup = true;
+  send(MsgUDPLinkEstablished, 0, NULL);
 }
 // ex: shiftwidth=2 tabstop=8
