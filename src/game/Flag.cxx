@@ -53,7 +53,7 @@ const char*				Flag::flagName[] = {
 						};
 
 const char*				Flag::flagAbbv[] = {
-								"B*",						// rogue team
+								"X*",						// rogue team
 								"R*",						// red team
 								"G*",						// green team
 								"B*",						// blue team
