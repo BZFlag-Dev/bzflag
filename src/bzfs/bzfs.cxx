@@ -5203,10 +5203,16 @@ static void terminateServer(int /*sig*/)
 }
 
 static const char *usageString =
-"[-a <vel> <rot>] [-b] [-c] [-cr] [+f {good|<id>}] [-f {bad|<id>}] [-g] "
+"[-a <vel> <rot>] "
 "[-admsg <text>] "
+"[-b] "
 "[-ban ip{,ip}*] "
+"[-c] "
+"[-cr] "
 "[-d] "
+"[+f {good|<id>}] "
+"[-f {bad|<id>}] "
+"[-g] "
 "[-h] "
 "[-i interface] "
 "[-j] "
@@ -5218,10 +5224,10 @@ static const char *usageString =
 "[-mps <score>] "
 "[-ms <shots>] "
 "[-mts <score>] "
-"[-p <port>] "
-"[-pr <reconnect port>] "
 "[-noudp] "
+"[-p <port>] "
 "[-passwd <password>] "
+"[-pr <reconnect port>] "
 #ifdef PRINTSCORE
 "[-printscore] "
 #endif
@@ -5233,13 +5239,15 @@ static const char *usageString =
 "[-requireudp]"
 "[{+s|-s} [<num>]] "
 "[-sa] "
-"[-st <time>] [-sw <num>] [-synctime] "
+"[-srvmsg <text>] "
+"[-st <time>] "
+"[-sw <num>] "
+"[-synctime] "
 "[-t] "
 #ifdef TIMELIMIT
 "[-time <seconds>] "
 #endif
 "[-ttl <ttl>] "
-"[-srvmsg <text>] "
 "[-world <filename>]";
 
 
