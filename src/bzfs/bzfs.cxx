@@ -90,6 +90,7 @@ const int udpBufSize = 128000;
 #include "TimeBomb.h"
 #include "md5.h"
 #include "ShotUpdate.h"
+#include "WordFilter.h"
 
 /* bzfs class specific headers */
 #include "TextChunkManager.h"
@@ -120,56 +121,6 @@ static float speedTolerance = 1.125f;
 
 #define MAX_FLAG_HISTORY (10)
 
-
-class BadWordList
-{
-public:
-  void parseFile(const std::string &fileName)
-  {
-    char buffer[1024];
-    ifstream badWordStrm(fileName.c_str());
-    while (badWordStrm.good()) {
-      badWordStrm.getline(buffer,1024);
-      std::string badWord = buffer;
-      int pos = badWord.find_first_not_of("\t \r\n");
-      if (pos > 0)
-	badWord = badWord.substr(pos);
-      pos = badWord.find_first_of("\t \r\n");
-      if ((pos >= 0) && (pos < (int)badWord.length()))
-	badWord = badWord.substr(0, pos);
-      if (badWord.length() > 0)
-	badWords.insert(badWord);
-    }
-  }
-
-  void filter(char *input)
-  {
-    static std::string
-      alphabet("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ");
-    if (badWords.size() == 0) // all words allowed -> skip processing
-      return;
-    std::string line = input;
-    int startPos = line.find_first_of(alphabet);
-    while (startPos >= 0) {
-      int endPos = line.find_first_not_of(alphabet, startPos+1);
-      if (endPos < 0)
-	endPos = line.length();
-      std::string word = line.substr(startPos, endPos-startPos);
-      if (badWords.find(word) != badWords.end())
-	 memset(input+startPos,'*', endPos-startPos);
-      startPos = line.find_first_of(alphabet, endPos);
-    }
-  }
-
-private:
-  struct BadLess
-  {
-    bool operator()(const std::string& s1, const std::string& s2) const {
-	return strcasecmp(s1.c_str(), s2.c_str()) < 0;
-    }
-  };
-  std::set<std::string, BadLess> badWords;
-};
 
 struct CmdLineOptions
 {
@@ -255,7 +206,13 @@ struct CmdLineOptions
 
   AccessControlList	acl;
   TextChunkManager	textChunker;
-  BadWordList		bwl;
+
+  /* inappropriate language filter */
+  std::string		filterFilename;
+  bool			filterCallsigns;
+  bool			filterChat;
+  bool			filterSimple;
+  WordFilter		filter;
 
   std::string		reportFile;
   std::string		reportPipe;
@@ -4950,7 +4907,13 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
 	parseCommand(message, t);
       }
       else {
-	clOptions->bwl.filter(message);
+	if (clOptions->filterChat) {
+	  if (clOptions->filterSimple) {
+	    clOptions->filter.filter(message, true);
+	  } else {
+	    clOptions->filter.filter(message, false);
+	  }
+	}
 	sendMessage(t, targetPlayer, message, true);
       }
       break;
@@ -5154,6 +5117,9 @@ static const char *usageString =
 "[+f {good|<id>}] "
 "[-f {bad|<id>}] "
 "[-fb] "
+"[-filterCallsigns] "
+"[-filterChat] "
+"[-filterSimple] "
 "[-g] "
 "[-h] "
 "[-helpmsg <file> <name>]"
@@ -5219,6 +5185,9 @@ static const char *extraUsageString =
 "\t+f: always have flag <id> available\n"
 "\t-f: never randomly generate flag <id>\n"
 "\t-fb: allow flags on box buildings\n"
+"\t-filterCallsigns: filter callsigns to disallow inappropriate user names\n"
+"\t-filterChat: filter chat messages\n"
+"\t-filterSimple: perform simple exact matches with the bad word list\n"
 "\t-g: serve one game and then exit\n"
 "\t-h: use random building heights\n"
 "\t-helpmsg: show the lines in <file> on command /help <name>\n"
@@ -5568,9 +5537,16 @@ static void parse(int argc, char **argv, CmdLineOptions &options)
 	fprintf(stderr, "argument expected for -badwords\n");
 	usage(argv[0]);
       }
-      else
-	options.bwl.parseFile(argv[i]);
-   }
+      else {
+	options.filterFilename = argv[i];
+      }
+    }
+    else if (strcmp(argv[i], "-filterSimple") == 0) {
+      options.filterSimple = true;
+    }
+    else if (strcmp(argv[i], "-filterChat") == 0) {
+      options.filterChat = true;
+    }
     else if (strcmp(argv[i], "-ban") == 0) {
       if (++i == argc) {
 	fprintf(stderr, "argument expected for -ban\n");
@@ -6267,6 +6243,23 @@ int main(int argc, char **argv)
 
   // parse arguments
   parse(argc, argv, *clOptions);
+
+  /* load the bad word filter if it was set */
+  if (clOptions->filterFilename.length() != 0) {
+    if (clOptions->filterChat || clOptions->filterCallsigns) {
+      if (clOptions->debug >= 1) {    
+	unsigned int count;
+	DEBUG1("Loading %s\n", clOptions->filterFilename.c_str());
+	count = clOptions->filter.loadFromFile(clOptions->filterFilename, true);
+	DEBUG1("Loaded %u words\n", count);
+      } else {
+	clOptions->filter.loadFromFile(clOptions->filterFilename, false);
+      }
+    } else {
+      DEBUG1("Bad word filter specified without -filterChat or -filterCallsigns\n");
+    }
+    
+  }
 
   if (clOptions->pingInterface)
     serverAddress = Address::getHostAddress(clOptions->pingInterface);
