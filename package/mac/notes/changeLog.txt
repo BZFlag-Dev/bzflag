@@ -72,6 +72,3 @@ Address.cxx
 
 What was happening was that the static var was calling my sockets
 library before it(sockets library) was initialized.
-
-Note: had to and env var ROBOTS
-Q: Is this OK? Should robots always be compiled in?

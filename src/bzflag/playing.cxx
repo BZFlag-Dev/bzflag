@@ -39,7 +39,6 @@ static const char copyright[] = "Copyright (c) 1993 - 2001 Tim Riker";
 #include "Flag.h"
 #include "LocalPlayer.h"
 #include "RemotePlayer.h"
-#include "RobotPlayer.h"
 #include "ShotStrategy.h"
 #include "sound.h"
 #include "TimeBomb.h"
@@ -128,14 +127,6 @@ static bool				gotBlowedUp(BaseLocalPlayer* tank,
 										BlowedUpReason reason,
 										const PlayerId& killer,
 										int shotId = -1);
-
-#ifdef ROBOT
-static void				handleMyTankKilled();
-static ServerLink*		robotServer[20];
-static RobotPlayer*		robots[20];
-static int				numRobots = 0;
-#endif
-
 
 //
 // playing callbacks
@@ -917,11 +908,6 @@ static Player*			getPlayerByIndex(int index)
 static BaseLocalPlayer*	getLocalPlayer(const PlayerId& id)
 {
 	if (myTank->getId() == id) return myTank;
-#ifdef ROBOT
-	for (int i = 0; i < numRobots; i++)
-		if (robots[i]->getId() == id)
-			return robots[i];
-#endif
 	return NULL;
 }
 
@@ -929,11 +915,6 @@ static ServerLink*		lookupServer(const Player* player)
 {
 	const PlayerId& id = player->getId();
 	if (myTank->getId() == id) return serverLink;
-#ifdef ROBOT
-	for (int i = 0; i < numRobots; i++)
-		if (robots[i]->getId() == id)
-			return robotServer[i];
-#endif
 	return NULL;
 }
 
@@ -989,15 +970,6 @@ static void				updateHighScores()
 			anyPlayers = true;
 			break;
 		}
-#ifdef ROBOT
-	if (!anyPlayers) {
-		for (i = 0; i < numRobots; i++)
-			if (robots[i]) {
-				anyPlayers = true;
-				break;
-			}
-	}
-#endif
 /* FIXME -- this turns off score blinking
 	if (!anyPlayers) {
 		hud->setPlayerHasHighScore(false);
@@ -1013,15 +985,6 @@ static void				updateHighScores()
 			haveBest = false;
 			break;
 		}
-#ifdef ROBOT
-	if (haveBest) {
-		for (i = 0; i < numRobots; i++)
-			if (robots[i] && robots[i]->getScore() >= bestScore) {
-				haveBest = false;
-				break;
-			}
-	}
-#endif
 /* FIXME -- high score blinking
 	hud->setPlayerHasHighScore(haveBest);
 */
@@ -1172,10 +1135,6 @@ static void				handleServerMessage(bool human, uint16_t code,
 				gameOver = true;
 				myTank->explodeTank();
 				MSGMGR->insert("alertGameOver", "Time Expired", warningColor);
-#ifdef ROBOT
-				for (int i = 0; i < numRobots; i++)
-				  robots[i]->explodeTank();
-#endif
 			}
 			break;
     	}
@@ -1214,10 +1173,6 @@ static void				handleServerMessage(bool human, uint16_t code,
 */
 			myTank->explodeTank();
 			MSGMGR->insert("alertGameOver", msg, warningColor);
-#ifdef ROBOT
-			for (int i = 0; i < numRobots; i++)
-			  robots[i]->explodeTank();
-#endif
 			break;
 		}
 
@@ -1311,15 +1266,6 @@ static void				handleServerMessage(bool human, uint16_t code,
 			BaseLocalPlayer* killerLocal = getLocalPlayer(killer);
 			Player* victimPlayer = getPlayerByIndex(victimIndex);
 			Player* killerPlayer = getPlayerByIndex(killerIndex);
-#ifdef ROBOT
-			if (victimPlayer == myTank) {
-				// uh oh, i'm dead
-				if (myTank->isAlive()) {
-					serverLink->sendDropFlag(myTank->getPosition());
-					handleMyTankKilled();
-				}
-			}
-#endif
 			if (victimLocal) {
 				// uh oh, local player is dead
 				if (victimLocal->isAlive()) {
@@ -1407,26 +1353,11 @@ static void				handleServerMessage(bool human, uint16_t code,
 				}
 			}
 
-#ifdef ROBOT
-			// blow up robots on victim's team if shot was genocide
-			if (killerPlayer && victimPlayer && shotId >= 0) {
-				const ShotPath* shot = killerPlayer->getShot(int(shotId));
-				if (shot && shot->getFlag() == GenocideFlag)
-					for (int i = 0; i < numRobots; i++)
-						if (victimPlayer != robots[i] &&
-							victimPlayer->getTeam() == robots[i]->getTeam() &&
-							robots[i]->getTeam() != RogueTeam)
-							gotBlowedUp(robots[i],
-								GenocideEffect, killerPlayer->getId());
-			}
-#endif
-
 			checkScores = true;
 			break;
 		}
 
 		case MsgGrabFlag: {
-// ROBOT -- FIXME -- robots don't grab flag at the moment
 			PlayerId id;
 			uint16_t flagIndex;
 			msg = id.unpack(msg);
@@ -1776,7 +1707,6 @@ static void				handlePlayerMessage(uint16_t code, uint16_t,
 				// alive again, then call setExplode to kill him.
 				tank->setStatus(newStatus | short(Player::Alive));
 				tank->setExplode(TimeKeeper::getTick());
-				// ROBOT -- play explosion now
 			}
 			break;
 		}
@@ -1826,14 +1756,6 @@ static void				doMessages()
 			return;
 		}
 	}
-
-#ifdef ROBOT
-	for (int i = 0; i < numRobots; i++) {
-		while ((e = robotServer[i]->read(code, len, msg, 0)) == 1);
-			if (code == MsgKilled || code == MsgShotBegin || code == MsgShotEnd)
-				handleServerMessage(false, code, len, msg);
-	}
-#endif
 
 	// handle player messages
 	if (playerLink) {
@@ -2118,18 +2040,6 @@ static void				updateExplosions(float dt)
 		}
 	}
 }
-
-#ifdef ROBOT
-static void				handleMyTankKilled()
-{
-	// blow me up
-	myTank->explodeTank();
-	playLocalSound(SFX_DIE);
-
-	// i lose a point
-	myTank->changeScore(0, 1);
-}
-#endif
 
 static void				handleFlagDropped(Player* tank)
 {
@@ -2416,279 +2326,6 @@ static void				setTarget()
 	}
 }
 
-#ifdef ROBOT
-
-//
-// some robot stuff
-//
-
-static RegionList		obstacleList;
-
-static void				addObstacle(RegionList& list, const Obstacle& obstacle)
-{
-	float p[4][2];
-	const float* c = obstacle.getPosition();
-	const float a = obstacle.getRotation();
-	// FIXME -- this is too generous;  robots will be able to come within
-	//		0.49*TankWidth of a building at any orientation which means they
-	//		could penetrate buildings.  it's either this or have robots go
-	//		dead when they (or the target) moves within a dead-zone.
-	const float w = obstacle.getWidth() + 0.49f * TankWidth;
-	const float h = obstacle.getBreadth() + 0.49f * TankWidth;
-	const float xx =  w * cosf(a);
-	const float xy =  w * sinf(a);
-	const float yx = -h * sinf(a);
-	const float yy =  h * cosf(a);
-	p[0][0] = c[0] - xx - yx;
-	p[0][1] = c[1] - xy - yy;
-	p[1][0] = c[0] + xx - yx;
-	p[1][1] = c[1] + xy - yy;
-	p[2][0] = c[0] + xx + yx;
-	p[2][1] = c[1] + xy + yy;
-	p[3][0] = c[0] - xx + yx;
-	p[3][1] = c[1] - xy + yy;
-
-	int numRegions = list.size();
-	for (int k = 0; k < numRegions; k++) {
-		BzfRegion* region = list[k];
-		int side[4];
-		if ((side[0] = region->classify(p[0], p[1])) == 1 ||
-				(side[1] = region->classify(p[1], p[2])) == 1 ||
-				(side[2] = region->classify(p[2], p[3])) == 1 ||
-				(side[3] = region->classify(p[3], p[0])) == 1)
-			continue;
-		if (side[0] == -1 && side[1] == -1 && side[2] == -1 && side[3] == -1) {
-			list[k] = list[numRegions - 1];
-			list[numRegions - 1] = list[list.size() - 1];
-			list.pop_back();
-			numRegions--;
-			k--;
-			delete region;
-			continue;
-		}
-		for (int j = 0; j < 4; j++) {
-			if (side[j] == -1) continue;				// to inside
-			// split
-			const float* p1 = p[j];
-			const float* p2 = p[(j+1)&3];
-			BzfRegion* newRegion = region->orphanSplitRegion(p2, p1);
-			if (!newRegion) continue;			// no split
-			if (region != list[k]) list.push_back(region);
-			region = newRegion;
-		}
-		if (region != list[k]) delete region;
-	}
-}
-
-static void				makeObstacleList()
-{
-	int i;
-	const int count = obstacleList.size();
-	for (i = 0; i < count; i++)
-		delete obstacleList[i];
-	obstacleList.clear();
-
-	// FIXME -- shouldn't hard code game area
-	float gameArea[4][2];
-	gameArea[0][0] = -0.5f * WorldSize;
-	gameArea[0][1] = -0.5f * WorldSize;
-	gameArea[1][0] =  0.5f * WorldSize;
-	gameArea[1][1] = -0.5f * WorldSize;
-	gameArea[2][0] =  0.5f * WorldSize;
-	gameArea[2][1] =  0.5f * WorldSize;
-	gameArea[3][0] = -0.5f * WorldSize;
-	gameArea[3][1] =  0.5f * WorldSize;
-	obstacleList.push_back(new BzfRegion(4, gameArea));
-
-	const BoxBuildings& boxes = World::getWorld()->getBoxes();
-	const int numBoxes = boxes.size();
-	for (i = 0; i < numBoxes; i++)
-		addObstacle(obstacleList, boxes[i]);
-	const PyramidBuildings& pyramids = World::getWorld()->getPyramids();
-	const int numPyramids = pyramids.size();
-	for (i = 0; i < numPyramids; i++)
-		addObstacle(obstacleList, pyramids[i]);
-	const Teleporters& teleporters = World::getWorld()->getTeleporters();
-	const int numTeleporters = teleporters.size();
-	for (i = 0; i < numTeleporters; i++)
-		addObstacle(obstacleList, teleporters[i]);
-}
-
-static void				setRobotTarget(RobotPlayer* robot)
-{
-	Player* bestTarget = NULL;
-	float bestPriority = 0.0f;
-	for (int j = 0; j < maxPlayers; j++)
-		if (player[j] && player[j]->getId() != robot->getId() &&
-		player[j]->isAlive() && (robot->getTeam() == RogueTeam ||
-		player[j]->getTeam() != robot->getTeam())) {
-			const float priority = robot->getTargetPriority(player[j]);
-			if (priority > bestPriority) {
-				bestTarget = player[j];
-				bestPriority = priority;
-			}
-		}
-	if (myTank->isAlive() && (robot->getTeam() == RogueTeam ||
-								myTank->getTeam() != robot->getTeam())) {
-		const float priority = robot->getTargetPriority(myTank);
-		if (priority > bestPriority) {
-			bestTarget = myTank;
-			bestPriority = priority;
-		}
-	}
-	robot->setTarget(obstacleList, bestTarget);
-}
-
-static void				updateRobots(float dt)
-{
-	static float newTargetTimeout = 2.0f;
-	static float clock = 0.0f;
-	bool pickTarget = false;
-	int i;
-
-	// see if we should look for new targets
-	clock += dt;
-	if (clock > newTargetTimeout) {
-		while (clock > newTargetTimeout) clock -= newTargetTimeout;
-		pickTarget = true;
-	}
-
-	// start dead robots and retarget
-	for (i = 0; i < numRobots; i++)
-		if (!gameOver && !robots[i]->isAlive() && !robots[i]->isExploding()) {
-			robots[i]->restart();
-			robotServer[i]->sendAlive(robots[i]->getPosition(), robots[i]->getForward());
-			setRobotTarget(robots[i]);
-		}
-		else if (pickTarget || (robots[i]->getTarget() &&
-								!robots[i]->getTarget()->isAlive())) {
-			setRobotTarget(robots[i]);
-		}
-
-	// do updates
-	for (i = 0; i < numRobots; i++)
-		robots[i]->update();
-}
-
-
-static void				checkEnvironment(RobotPlayer* tank)
-{
-	// skip this if i'm dead or paused
-	if (!tank->isAlive() || tank->isPaused()) return;
-
-	// see if i've been shot
-	const ShotPath* hit = NULL;
-	float minTime = Infinity;
-	tank->checkHit(myTank, hit, minTime);
-	int i;
-	for (i = 0; i < maxPlayers; i++)
-		if (player[i] && player[i]->getId() != tank->getId())
-			tank->checkHit(player[i], hit, minTime);
-	if (hit) {
-		// i got shot!  terminate the shot that hit me and blow up.
-		// force shot to terminate locally immediately (no server round trip);
-		// this is to ensure that we don't get shot again by the same shot
-		// after dropping our shield flag.
-		if (hit->isStoppedByHit())
-			lookupServer(tank)->sendEndShot(hit->getPlayer(), hit->getShotId(), 1);
-		gotBlowedUp(tank, GotShot, hit->getPlayer(), hit->getShotId());
-		if (hit->isStoppedByHit()) {
-			Player* hitter = lookupPlayer(hit->getPlayer());
-			if (hitter) hitter->endShot(hit->getShotId());
-		}
-	}
-
-	// if not dead yet, see if i got run over by the steamroller
-	else if (tank->getPosition()[2] == 0.0) {
-		bool dead = false;
-		const float* myPos = tank->getPosition();
-		const float myRadius = tank->getRadius();
-		if (myTank->getFlag() == SteamrollerFlag && !myTank->isPaused()) {
-			const float* pos = myTank->getPosition();
-			const float radius = myRadius + SRRadiusMult * myTank->getRadius();
-			if (hypot(hypot(myPos[0] - pos[0], myPos[1] - pos[1]), myPos[2] - pos[2]) < radius) {
-				gotBlowedUp(tank, GotRunOver, myTank->getId());
-				dead = true;
-			}
-		}
-		for (i = 0; !dead && i < maxPlayers; i++)
-			if (player[i] &&
-		  player[i]->getFlag() == SteamrollerFlag &&
-		  !player[i]->isPaused()) {
-		  const float* pos = player[i]->getPosition();
-		  const float radius = myRadius + SRRadiusMult * player[i]->getRadius();
-		  if (hypot(hypot(myPos[0] - pos[0], myPos[1] - pos[1]), myPos[2] - pos[2]) < radius) {
-		    gotBlowedUp(tank, GotRunOver, player[i]->getId());
-		    dead = true;
-		  }
-			}
-	}
-}
-
-static void				checkEnvironmentForRobots()
-{
-	for (int i = 0; i < numRobots; i++)
-		checkEnvironment(robots[i]);
-}
-
-static void				sendRobotUpdates()
-{
-	for (int i = 0; i < numRobots; i++)
-		if (robots[i]->isDeadReckoningWrong()) {
-			playerLink->setRelay(robotServer[i]);
-			playerLink->sendPlayerUpdate(robots[i]);
-		}
-}
-
-static void				addRobots(bool useMulticastRelay)
-{
-	uint16_t code, len;
-	char msg[MaxPacketLen];
-	char callsign[CallSignLen];
-
-	for (int j = 0; j < numRobots;) {
-#if !defined(_WIN32)
-		snprintf(callsign, CallSignLen, "%s%d", myTank->getCallSign(), j);
-#else
-		sprintf(callsign, "%s%d", myTank->getCallSign(), j);
-#endif
-
-		robots[j] = new RobotPlayer(robotServer[j]->getId(), callsign, robotServer[j], myTank->getEmailAddress());
-		if (world->allowRogues())
-			robots[j]->setTeam((TeamColor)((int)RogueTeam + (int)(bzfrand() *
-											(int)(PurpleTeam - RogueTeam + 1))));
-		else
-			robots[j]->setTeam((TeamColor)((int)RedTeam + (int)(bzfrand() *
-											(int)(PurpleTeam - RedTeam + 1))));
-		robotServer[j]->sendEnter(ComputerPlayer, robots[j]->getTeam(),
-					robots[j]->getCallSign(), robots[j]->getEmailAddress());
-
-		// wait for response
-		if (robotServer[j]->read(code, len, msg, -1) < 0 || code != MsgAccept) {
-			delete robots[j];
-			delete robotServer[j];
-			robotServer[j] = robotServer[--numRobots];
-			continue;
-		}
-
-		// use multicast relay if required
-		if (useMulticastRelay) {
-			robotServer[j]->send(MsgNetworkRelay, 0, NULL);
-			if (robotServer[j]->read(code, len, msg, 1000) <= 0 || code == MsgReject) {
-				delete robots[j];
-				delete robotServer[j];
-				robotServer[j] = robotServer[--numRobots];
-				continue;
-			}
-		}
-
-		j++;
-	}
-	makeObstacleList();
-}
-
-#endif
-
 //
 // join/leave a game
 //
@@ -2887,25 +2524,6 @@ static void				leaveGame()
 {
 	// delete scene database
 	SCENEMGR->setStatic(NULL);
-
-#if defined(ROBOT)
-	// shut down robot connections
-	int i;
-	for (i = 0; i < numRobots; i++) {
-		if (robots[i] && robotServer[i])
-			robotServer[i]->send(MsgExit, 0, NULL);
-		delete robots[i];
-		delete robotServer[i];
-		robots[i] = NULL;
-		robotServer[i] = NULL;
-	}
-	numRobots = 0;
-
-	const int count = obstacleList.size();
-	for (i = 0; i < count; i++)
-		delete obstacleList[i];
-	obstacleList.clear();
-#endif
 
 	// use rogue color as team color when there's no team
 	ViewColor::setMyTeam(ViewColor::Rogue);
@@ -3267,11 +2885,6 @@ static bool				joinGame(ServerLink* _serverLink,
 		printError("No UDP connection, see Options to enable.");
 */
 
-	// add robot tanks
-#if defined(ROBOT)
-	addRobots(!multicastOkay);
-#endif
-
 	// tell server what ttl I need
 	char msg[2];
 	nboPackUShort(msg, playerLink->getTTL());
@@ -3324,22 +2937,6 @@ static bool				joinInternetGame()
 	PlayerLink* playerLink = new PlayerLink(multicastAddress, BroadcastPort,
 								atoi(BZDB->get("infoNetworkTTL").c_str()),
 								BZDB->get("infoMulticastInterface").c_str());
-
-#if defined(ROBOT)
-	extern int numRobotTanks;
-	int i, j;
-	for (i = 0, j = 0; i < numRobotTanks; i++) {
-		robotServer[j] = new ServerLink(serverAddress,
-								atoi(BZDB->get("infoPort").c_str()),
-								j + 1);
-		if (!robotServer[j] || robotServer[j]->getState() != ServerLink::Okay) {
-			delete robotServer[j];
-			continue;
-		}
-		j++;
-	}
-	numRobots = j;
-#endif
 
 	return joinGame(serverLink, playerLink);
 }
@@ -3823,10 +3420,6 @@ static void				playingLoop()
 			myTank->update();
 		}
 
-#ifdef ROBOT
-		updateRobots(dt);
-#endif
-
 		// prep the HUD
 		bool markedTeam = false, markedAntidote = false;
 		if (myTank) {
@@ -3866,10 +3459,6 @@ static void				playingLoop()
 
 		// check for flags and hits
 		checkEnvironment();
-
-#ifdef ROBOT
-		checkEnvironmentForRobots();
-#endif
 
 		// update transient data
 		if (myTank) {
@@ -3918,10 +3507,6 @@ static void				playingLoop()
 			playerLink->setRelay(serverLink);
 			playerLink->sendPlayerUpdate(myTank);
 		}
-
-#ifdef ROBOT
-		sendRobotUpdates();
-#endif
 	}
 }
 

@@ -51,11 +51,6 @@ static bool				useFullscreen = false;
 static bool				allowResolutionChange = false;
 static const char*		commandPrompt = "> ";
 
-#ifdef ROBOT
-// ROBOT -- tidy up
-int numRobotTanks = 0;
-#endif
-
 //
 // error handlers.  fatalErrorCallback() is used when the app is
 // about to exit (taking the console with it on win32).
@@ -266,9 +261,6 @@ static void				usage()
 		" [-multisample]"
 		" [-mute]"
 		" [-port <server-port>]"
-#ifdef ROBOT
-		" [-solo <num-robots>]"
-#endif
 		" [-team {red|green|blue|purple|rogue}]"
 		" [-ttl <time-to-live>]"
 		" [-version]"
@@ -372,19 +364,6 @@ static void				parse(int argc, char** argv)
 				BZDB->set("infoPort", argv[i]);
 			}
 		}
-#ifdef ROBOT
-		else if (strcmp(argv[i], "-solo") == 0) {
-			if (++i == argc) {
-				printError("Missing argument for %s.", argv[i-1]);
-				usage();
-			}
-			numRobotTanks = atoi(argv[i]);
-			if (numRobotTanks < 1 || numRobotTanks > 20) {
-				printError("Invalid argument for %s.", argv[i-1]);
-				usage();
-			}
-		}
-#endif
     	else if (strcmp(argv[i], "-team") == 0) {
     		if (++i == argc) {
 				printError("Missing argument for %s.", argv[i-1]);

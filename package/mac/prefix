@@ -15,8 +15,6 @@
 
 //#define DEBUG_RENDERING
 
-//#define ROBOT
-
 // fixes msl problem
 #define __NO_WIDE_CHAR    // Fixes msl problem. Is msl is screwed ?
 

@@ -348,10 +348,6 @@ only receive the following kinds of messages:
         MsgAddPlayer
         MsgNetworkRelay
 
-Players of type ComputerPlayer are not sent team or flag updates and only get the
-MsgAddPlayer for themselves.  This probably wasn't a good idea, but there it is.
-
-          
 leave game
 ----------
 Once entered, a player can leave the game at any time.  This should be done by sending

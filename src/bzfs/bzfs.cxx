@@ -3100,12 +3100,12 @@ static void addPlayer(int playerIndex)
 
 	TeamColor t = player[playerIndex].team;
 	if ((t == NoTeam && (player[playerIndex].type == TankPlayer ||
-		player[playerIndex].type == ComputerPlayer)) ||
-		(t == RogueTeam && !(gameStyle & RoguesGameStyle)) ||
-		(team[int(t)].team.activeSize >= maxTeam[int(t)])) {
+			player[playerIndex].type == ComputerPlayer)) ||
+			(t == RogueTeam && !(gameStyle & RoguesGameStyle)) ||
+			(team[int(t)].team.activeSize >= maxTeam[int(t)])) {
 		uint16_t code = RejectBadRequest;
 		if (player[playerIndex].type != TankPlayer &&
-		player[playerIndex].type != ComputerPlayer)
+				player[playerIndex].type != ComputerPlayer)
 			code = RejectBadType;
 		else if (t == NoTeam)
 			code = RejectBadTeam;
@@ -3166,8 +3166,8 @@ static void addPlayer(int playerIndex)
 		team[teamIndex].radio = -1;
 	}
 	if ((player[playerIndex].type == TankPlayer ||
-		player[playerIndex].type == ComputerPlayer) &&
-		++team[teamIndex].team.activeSize == 1) {
+			player[playerIndex].type == ComputerPlayer) &&
+			++team[teamIndex].team.activeSize == 1) {
 		team[teamIndex].team.won = 0;
 		team[teamIndex].team.lost = 0;
 		if ((gameStyle & int(TeamFlagGameStyle)) && teamIndex != int(RogueTeam))
@@ -3177,19 +3177,16 @@ static void addPlayer(int playerIndex)
 	}
 
 	// send new player updates on each player, all existing flags, and all teams.
-	// don't send robots any game info.  watch out for connection being closed
-	// because of an error.
-	if (player[playerIndex].type != ComputerPlayer) {
-		int i;
-		for (i = 0; i < NumTeams && player[playerIndex].fd != NotConnected; i++)
-			sendTeamUpdate(i, playerIndex);
-		for (i = 0; i < numFlags && player[playerIndex].fd != NotConnected; i++)
-			if (flag[i].flag.status != FlagNoExist)
-				sendFlagUpdate(i, playerIndex);
-		for (i = 0; i < maxPlayers && player[playerIndex].fd != NotConnected; i++)
-			if (player[i].state > PlayerInLimbo && i != playerIndex)
-				sendPlayerUpdate(i, playerIndex);
-	}
+	// watch out for connection being closed because of an error.
+	int i;
+	for (i = 0; i < NumTeams && player[playerIndex].fd != NotConnected; i++)
+		sendTeamUpdate(i, playerIndex);
+	for (i = 0; i < numFlags && player[playerIndex].fd != NotConnected; i++)
+		if (flag[i].flag.status != FlagNoExist)
+			sendFlagUpdate(i, playerIndex);
+	for (i = 0; i < maxPlayers && player[playerIndex].fd != NotConnected; i++)
+		if (player[i].state > PlayerInLimbo && i != playerIndex)
+			sendPlayerUpdate(i, playerIndex);
 
 	// if necessary force multicast relaying
 	if (noMulticastRelay) {
@@ -3209,7 +3206,7 @@ static void addPlayer(int playerIndex)
 	sendTeamUpdate(teamIndex);
 
 	// send time update to new player if we're counting down
-	if (timeLimit > 0.0f && player[playerIndex].type != ComputerPlayer) {
+	if (timeLimit > 0.0f) {
 		float timeLeft = timeLimit - (TimeKeeper::getCurrent() - gameStartTime);
 		if (timeLeft < 0.0f) {
 			// oops
@@ -3469,10 +3466,10 @@ static void removePlayer(int playerIndex)
 
 		// if last active player on team then remove team's flag
 		if (teamNum != int(RogueTeam) &&
-		(player[playerIndex].type == TankPlayer ||
-		player[playerIndex].type == ComputerPlayer) &&
-		team[teamNum].team.activeSize == 0 &&
-		(gameStyle & int(TeamFlagGameStyle)))
+				(player[playerIndex].type == TankPlayer ||
+				player[playerIndex].type == ComputerPlayer) &&
+				team[teamNum].team.activeSize == 0 &&
+				(gameStyle & int(TeamFlagGameStyle)))
 			zapFlag(teamNum - 1);
 
 		// send team update

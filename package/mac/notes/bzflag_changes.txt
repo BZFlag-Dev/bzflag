@@ -277,22 +277,6 @@ network.cxx
 playing.cxx
 ************
 
-1384: ROBOT is undefined, so
-
-      #ifdef ROBOT
-      // blow up robots on victim's team if shot was genocide
-      if (killerPlayer && victimPlayer && shotId >= 0) {
-	      const ShotPath* shot = killerPlayer->getShot(int(shotId));
-	      if (shot && shot->getFlag() == GenocideFlag)
-		for (int i = 0; i < numRobots; i++)
-		  if (victimPlayer != robots[i] &&
-			  victimPlayer->getTeam() == robots[i]->getTeam() &&
-			  robots[i]->getTeam() != RogueTeam)
-		      gotBlowedUp(robots[i], GenocideEffect, killerPlayer->getId());
-      }
-      #endif
-
-
 3193:
 
 #ifndef macintosh

@@ -8,6 +8,4 @@ Using GUSI 2.0...
 	Dang MSL... added to prefix #define __NO_WIDE_CHAR
 	Compiled bzfs!!!
 
-2. Added to prefix #define ROBOTS - had to for undefined vars
-
-3. GUSISignal.cp 413 put in debugger break when exit is called
+2. GUSISignal.cp 413 put in debugger break when exit is called

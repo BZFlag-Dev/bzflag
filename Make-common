@@ -43,7 +43,6 @@ GCDEFS  =						\
 	-DVERSION=$(VERSION)				\
 	$(TIMEBOMB)					\
 	$(DEBUG_RENDERING)				\
-	$(ROBOTS)					\
 	-DINSTALL_DATA_DIR=\"$(INSTALL_DATA_DIR)\"	\
 	$(NULL)
 GCINCS	= -I$(DEPTH)/include
@@ -61,7 +60,6 @@ GCXXDEFS  =						\
 	-DVERSION=$(VERSION)				\
 	$(TIMEBOMB)					\
 	$(DEBUG_RENDERING)				\
-	$(ROBOTS)					\
 	-DINSTALL_DATA_DIR=\"$(INSTALL_DATA_DIR)\"	\
 	$(NULL)
 GCXXINCS  = -I$(DEPTH)/include
