@@ -80,6 +80,7 @@ bool BundleMgr::getLocaleList(std::vector<std::string> *list) {
   do {
 	  
 #if (defined(_WIN32) || defined(WIN32))
+    char fileName[255], *end = NULL;
 
     // Prepare the wildcarded file path to search for and copy it to fileName
     sprintf(fileName, "%s\\l10n\\bzflag_*.po", bundlePath.c_str());
