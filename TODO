@@ -15,7 +15,11 @@ THESE ARE LOWER PRIORITY
 
 * Create a new MsgThrottle message sent from client to server
   to inform server to throttle MsgPlayerUpdates from other clients
-  to X. X is set in bzflag.bzc. To help laggy players
+  to X. X is set in bzflag.bzc. Server uses PlayerInfo.lastState to 
+  batch send PlayerUpdates after throttle time has passed. 
+  Clients timestamp updates themselves, to catch out of order
+  packets, but server restamps timestamps to get consistent
+  times for all messages.
 
 * create new 64x64, 48x48, 32x32, 16x16 official bzflag icons.
   Should feature the BZFlag tank. The large ones should include
