@@ -1,5 +1,7 @@
 recent bugs
 ------------
+- bullets now travel through the top of a block instead of reflecting off.
+  The bullets appear to be half(or more) submerged into the block.
 
 - texture method doesn't seem to be settable from the gui, sometimes -
   switching to the experimental quality mode dropped textures (looked just
