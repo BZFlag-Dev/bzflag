@@ -3070,11 +3070,11 @@ static void parseCommand(const char *message, int t)
   } else if (strncmp(message + 1, "replay", 6) == 0) {
     handleReplayCmd(playerData, message);
 
-	} else if (strncmp(message + 1, "reloadmasterban", 6) == 0) {
-		handleReloadMasterBanCmd(playerData, message);
+  } else if (strncmp(message + 1, "masterbanreload", 15) == 0) {
+    handleReloadMasterBanCmd(playerData, message);
 
-	} else if (strncmp(message + 1, "flushmasterban", 6) == 0) {
-		handleFlushMasterBanCmd(playerData, message);
+  } else if (strncmp(message + 1, "masterbanflush", 14) == 0) {
+    handleFlushMasterBanCmd(playerData, message);
 
   } else {
     char reply[MessageLen];
