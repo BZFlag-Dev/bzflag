@@ -63,7 +63,7 @@ bzflag_SOURCES =			\
 	bzflag.ico
 
 noinst_HEADERS = \
-	buildDate.cc	\
+	buildDate.cxx	\
 	stars.cxx
 
 if WIN32
