@@ -227,7 +227,6 @@ const GLfloat* SceneNode::getVertex (int) const
 
 void SceneNode::enableInvertView()
 {
-//  glDisable(GL_CULL_FACE);
   OpenGLGState::setCullFace(GL_FRONT);
   if (!OpenGLGState::getInvertCull()) {
     glPolygonMode(GL_BACK, GL_LINE);
@@ -246,7 +245,6 @@ void SceneNode::disableInvertView()
   glLineWidth(1.0f);
   glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
   OpenGLGState::setCullFace(GL_BACK);
-//  glEnable(GL_CULL_FACE);
   return;
 }
 

@@ -867,8 +867,6 @@ void Player::setLandingSpeed(float velocity)
   if (velocity > 0.0f) {
     velocity = 0.0f;
   }
-  // use a fixed decompression rate
-  dimensionsRate[2] = 1.0f / squishTime;
 
   // Setup so that a drop height of BZDB_GRAVITY squishes
   // by a factor of 1/11, when BZDB_SQUISHFACTOR is set to 1
@@ -887,7 +885,15 @@ void Player::setLandingSpeed(float velocity)
   if (flagType == Flags::Bouncy) {
     k = k * 4.0f;
   }
-  dimensionsScale[2] = 1.0f / (1.0f + (k * (velocity * velocity)));
+  const float newZscale = 1.0f / (1.0f + (k * (velocity * velocity)));
+
+  // don't update if the tank is still recovering
+  // from a spawn effect or a larger fall.
+  if (newZscale < dimensionsScale[2]) {
+    dimensionsScale[2] = newZscale;
+    // use a fixed decompression rate
+    dimensionsRate[2] = 1.0f / squishTime;
+  }
 
   return;
 }
@@ -895,7 +901,6 @@ void Player::setLandingSpeed(float velocity)
 
 void Player::spawnEffect()
 {
-  return; // would need bzfs spawn algo adjustment
   const float squishiness = BZDB.eval(StateDatabase::BZDB_SQUISHFACTOR);
   if (squishiness > 0.0f) {
     const float effectTime = BZDB.eval(StateDatabase::BZDB_FLAGEFFECTTIME);

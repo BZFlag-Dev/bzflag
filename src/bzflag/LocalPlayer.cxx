@@ -387,6 +387,9 @@ void			LocalPlayer::doUpdateMotion(float dt)
   const PhysicsDriver* phydrv = PHYDRVMGR.getDriver(driverId);
   if (phydrv != NULL) {
     const float* v = phydrv->getVelocity();
+
+    newVelocity[2] += v[2];
+    
     if (phydrv->getIsIce()) {
       const float iceTime = phydrv->getIceTime();
       doSlideMotion(dt, iceTime, newAngVel, newVelocity);
@@ -407,12 +410,6 @@ void			LocalPlayer::doUpdateMotion(float dt)
         newVelocity[0] -= av * dy;
         newVelocity[1] += av * dx;
       }
-    }
-
-    newVelocity[2] += v[2];
-    // play the jump sound
-    if (v[2] > 0.0f) {
-      playLocalSound(SFX_BOUNCE);
     }
   }
   lastObstacle = NULL;
@@ -541,10 +538,10 @@ void			LocalPlayer::doUpdateMotion(float dt)
 	 searchStep *= 0.5f, i++) {
       // get intermediate position
       const float t = searchTime + searchStep;
-      newAzimuth = tmpAzimuth + t * newAngVel;
-      newPos[0] = tmpPos[0] + t * newVelocity[0];
-      newPos[1] = tmpPos[1] + t * newVelocity[1];
-      newPos[2] = tmpPos[2] + t * newVelocity[2];
+      newAzimuth = tmpAzimuth + (t * newAngVel);
+      newPos[0] = tmpPos[0] + (t * newVelocity[0]);
+      newPos[1] = tmpPos[1] + (t * newVelocity[1]);
+      newPos[2] = tmpPos[2] + (t * newVelocity[2]);
       if ((newPos[2] < groundLimit) && (newVelocity[2] < 0)) {
 	newPos[2] = groundLimit;
       }
@@ -596,7 +593,7 @@ void			LocalPlayer::doUpdateMotion(float dt)
     }
 
     // check for being on a building
-    if ((newPos[2] > 0.0) && (normal[2] > 0.001f)) {
+    if ((newPos[2] > 0.0f) && (normal[2] > 0.001f)) {
       if (location != Dead && location != Exploding && expelled) {
 	location = OnBuilding;
 	lastObstacle = obstacle;
@@ -687,7 +684,9 @@ void			LocalPlayer::doUpdateMotion(float dt)
     if (getFlag() == Flags::PhantomZone) {
       // change zoned state
       setStatus(getStatus() ^ PlayerState::FlagActive);
-      playLocalSound(SFX_PHANTOM);
+      if (gettingSound) {
+        playLocalSound(SFX_PHANTOM);
+      }
     } else {
       // teleport
       const int source = World::getWorld()->getTeleporter(teleporter, face);
@@ -697,8 +696,8 @@ void			LocalPlayer::doUpdateMotion(float dt)
       }
 
       int outFace;
-      const Teleporter* outPort = World::getWorld()->
-	getTeleporter(target, outFace);
+      const Teleporter* outPort =
+        World::getWorld()->getTeleporter(target, outFace);
       teleporter->getPointWRT(*outPort, face, outFace,
 			      newPos, newVelocity, newAzimuth,
 			      newPos, newVelocity, &newAzimuth);
@@ -712,42 +711,6 @@ void			LocalPlayer::doUpdateMotion(float dt)
     }
   }
 
-  // deal with drop sounds and effects
-  if (entryDrop) {
-    // because the starting position that the server sends can result
-    // in an initial InAir condition, we use this bool to avoid having
-    // a false jump mess with the spawnEffect()
-    // FIXME: this isn't a clean way to do it
-    if ((oldLocation == InAir) == (location == InAir)) {
-      entryDrop = false;
-    }
-  } else {
-    const bool justLanded =
-      (oldLocation == InAir && (location == OnGround || location == OnBuilding));
-
-    if (justLanded) {
-      setLandingSpeed(oldVelocity[2]);
-    }
-    if (gettingSound) {
-      // play landing sound if we weren't on something and now we are
-      if (justLanded) {
-	playLocalSound(SFX_LAND);
-      }
-      else if (location == OnGround && oldPosition[2] == 0.0f && newPos[2] < 0.f) {
-	playLocalSound(SFX_BURROW);
-      }
-    }
-  }
-
-  // set falling status
-  if (location == OnGround || location == OnBuilding ||
-      (location == InBuilding && newPos[2] == 0.0f)) {
-    setStatus(getStatus() & ~short(PlayerState::Falling));
-  }
-  else if (location == InAir || location == InBuilding) {
-    setStatus(getStatus() | short(PlayerState::Falling));
-  }
-
   // setup the physics driver
   setPhysicsDriver(-1);
   if ((lastObstacle != NULL) &&
@@ -758,6 +721,47 @@ void			LocalPlayer::doUpdateMotion(float dt)
     if (phydrv != NULL) {
       setPhysicsDriver(driverId);
     }
+  }
+
+  // deal with drop sounds and effects
+  if (entryDrop) {
+    // because the starting position that the server sends can result
+    // in an initial InAir condition, we use this bool to avoid having
+    // a false jump mess with the spawnEffect()
+    // FIXME: this isn't a clean way to do it  
+    if ((oldLocation == InAir) == (location == InAir)) {
+      entryDrop = false;
+    }
+  }
+  
+  const bool justLanded =
+    (oldLocation == InAir) &&
+    ((location == OnGround) || (location == OnBuilding));
+
+  if (justLanded) {
+    setLandingSpeed(oldVelocity[2]);
+  }
+  if (gettingSound) {
+    const PhysicsDriver* phydrv = PHYDRVMGR.getDriver(getPhysicsDriver());
+    if ((phydrv != NULL) && (phydrv->getVelocity()[2] > 0.0f)) {
+      playLocalSound(SFX_BOUNCE);
+    }
+    else if (justLanded && !entryDrop) {
+      playLocalSound(SFX_LAND);
+    }
+    else if ((location == OnGround) &&
+             (oldPosition[2] == 0.0f) && (newPos[2] < 0.f)) {
+      playLocalSound(SFX_BURROW);
+    }
+  }
+
+  // set falling status
+  if (location == OnGround || location == OnBuilding ||
+      (location == InBuilding && newPos[2] == 0.0f)) {
+    setStatus(getStatus() & ~short(PlayerState::Falling));
+  }
+  else if (location == InAir || location == InBuilding) {
+    setStatus(getStatus() | short(PlayerState::Falling));
   }
 
   // compute firing status
@@ -1268,10 +1272,12 @@ void			LocalPlayer::doJump()
   setVelocity(newVelocity);
   location = InAir;
 
-  if (flag == Flags::Wings) {
-    playLocalSound(SFX_FLAP);
-  } else {
-    playLocalSound(SFX_JUMP);
+  if (gettingSound) {
+    if (flag == Flags::Wings) {
+      playLocalSound(SFX_FLAP);
+    } else {
+      playLocalSound(SFX_JUMP);
+    }
   }
 
   wantJump = false;
