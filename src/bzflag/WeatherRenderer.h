@@ -65,6 +65,7 @@ protected:
 	bool						doPuddles;
 	bool						doLineRain;
 	bool						doBillBoards;
+	bool						spinRain;
 	float						rainStartZ;
 	float						rainEndZ;
 	float						maxPuddleTime;

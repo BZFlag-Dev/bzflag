@@ -27,6 +27,8 @@
 #include "MediaFile.h"
 #include "ErrorHandler.h"
 
+#include "OSFile.h"
+
 /*const int NO_VARIANT = (-1); */
 
 // initialize the singleton
@@ -86,8 +88,9 @@ int TextureManager::getTextureID( const char* name, bool reportFail )
     DEBUG2("Could not get texture ID; no provided name\n");
     return -1;
   }
+  OSFile	osFilename(name);
 
-  std::string texName = name;
+  std::string texName = osFilename.getOSName();
   // see if we have the texture
   TextureNameMap::iterator it = textureNames.find(texName);
   if (it != textureNames.end()) {
@@ -247,19 +250,7 @@ int TextureManager::addTexture( const char* name, OpenGLTexture *texture )
 OpenGLTexture* TextureManager::loadTexture(FileTextureInit &init, bool reportFail)
 {
   int width, height;
-  std::string nameToTry = "";
-
-  if (BZDB.isSet("altImageDir")) {
-    nameToTry = BZDB.get("altImageDir");
-#ifdef WIN32
-    nameToTry += '\\';
-#else
-    nameToTry += '/';
-#endif
-    nameToTry += init.name;
-  } else {
-    nameToTry = init.name;
-  }
+  std::string nameToTry = init.name;
   unsigned char* image = NULL;
   if (nameToTry.size() && nameToTry.c_str())
     image = MediaFile::readImage(nameToTry, &width, &height);

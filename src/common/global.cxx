@@ -88,6 +88,7 @@ const struct GlobalDBItem globalDBItems[] = {
   { "_rainSpread",		"none",				false, StateDatabase::Locked},
   { "_rainSpeed",		"none",				false, StateDatabase::Locked},
   { "_rainSpeedMod",		"none",				false, StateDatabase::Locked},
+  { "_rainSpins",			"none",			false, StateDatabase::Locked},
   { "_rainStartZ",		"none",				false, StateDatabase::Locked},
   { "_rainTexture",		"none",				false, StateDatabase::Locked},
   { "_rainTopColor",		"none",				false, StateDatabase::Locked},

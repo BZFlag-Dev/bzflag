@@ -60,6 +60,7 @@ WeatherRenderer::WeatherRenderer()
 
 	doPuddles = true;
 	doLineRain = true;
+	spinRain = false;
 
 	rainStartZ = -1;
 	rainEndZ = 0;
@@ -94,6 +95,7 @@ WeatherRenderer::WeatherRenderer()
 	BZDB.addCallback("_rainPuddleColor",bzdbCallBack,this);
 	BZDB.addCallback("_rainPuddleTexture",bzdbCallBack,this);
 	BZDB.addCallback("_rainTexture",bzdbCallBack,this);
+	BZDB.addCallback("_rainSpins",bzdbCallBack,this);
 }
 
 WeatherRenderer::~WeatherRenderer()
@@ -113,6 +115,7 @@ WeatherRenderer::~WeatherRenderer()
 	BZDB.removeCallback("_rainPuddleColor",bzdbCallBack,this);
 	BZDB.removeCallback("_rainPuddleTexture",bzdbCallBack,this);
 	BZDB.removeCallback("_rainTexture",bzdbCallBack,this);
+	BZDB.removeCallback("_rainSpins",bzdbCallBack,this);
 }
 
 void WeatherRenderer::init ( void )
@@ -165,6 +168,7 @@ void WeatherRenderer::set ( void )
 		maxPuddleTime = 1.5F;
 		puddleSpeed = 1.0f;
 		puddleColor[0] = puddleColor[1] = puddleColor[2] = puddleColor[3] = 1.0f;
+		spinRain = true;
 
 		rainSpread  = 500.0f;
 
@@ -203,6 +207,7 @@ void WeatherRenderer::set ( void )
 				gstate.setTexture(tm.getTextureID("raindrop"));
 				rainSpeed = -50.0f;
 				rainSpeedMod = 25.0f;
+				spinRain = false;
 			}
 			else if (rainType == "frog")
 			{
@@ -303,6 +308,9 @@ void WeatherRenderer::set ( void )
 
 		if (dbItemSet("_rainMaxPuddleTime"))
 			maxPuddleTime = BZDB.eval("_rainMaxPuddleTime");
+
+		if (dbItemSet("_rainSpins"))
+			spinRain = BZDB.evalInt("_rainSpins") == 1;
 
 		// update the actual puddle material
 		OpenGLMaterial puddleMaterial(puddleColor, puddleColor, 0.0f);
@@ -766,10 +774,11 @@ void WeatherRenderer::drawDrop ( rain &drop, const SceneRenderer& sr )
 		glTranslatef(drop.pos[0],drop.pos[1],drop.pos[2]);
 		if (doBillBoards)
 			sr.getViewFrustum().executeBillboard();
-		else
+		else if (spinRain)
 			glRotatef(lastRainTime*10.0f * rainSpeed*0.85f,0,1,0);
 
-		glRotatef(lastRainTime*10.0f * rainSpeed,0,0,1);
+		if (spinRain)
+			glRotatef(lastRainTime*10.0f * rainSpeed,0,0,1);
 
 		if (1)
 			dropList.execute();
