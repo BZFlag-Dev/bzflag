@@ -504,10 +504,18 @@ void			SegmentedShotStrategy::addShot(
 }
 
 void			SegmentedShotStrategy::radarRender() const
-{
-  glBegin(GL_POINTS);
-    glVertex2fv(getPath().getPosition());
-  glEnd();
+{	// Display lines for shots
+	const float* vel = getPath().getVelocity();
+	const float d = 1.0f / hypotf(vel[0], hypotf(vel[1], vel[2]));
+	const float *orig = getPath().getPosition();
+	float dir[3];
+	dir[0] = vel[0] * d * 10.0f;
+	dir[1] = vel[1] * d * 10.0f;
+	dir[2] = vel[2] * d * 10.0f;
+	glBegin(GL_LINES);
+	glVertex2fv(orig);
+	glVertex2f(orig[0] + dir[0], orig[1] + dir[1]);
+	glEnd();
 }
 
 void			SegmentedShotStrategy::makeSegments(ObstacleEffect e)
@@ -1235,10 +1243,18 @@ void			GuidedMissileStrategy::expire()
 }
 
 void			GuidedMissileStrategy::radarRender() const
-{
-  glBegin(GL_POINTS);
-    glVertex2fv(getPath().getPosition());
-  glEnd();
+{	// Display lines for shots
+	const float* vel = getPath().getVelocity();
+	const float d = 1.0f / hypotf(vel[0], hypotf(vel[1], vel[2]));
+	const float *orig = getPath().getPosition();
+	float dir[3];
+	dir[0] = vel[0] * d * 10.0f;
+	dir[1] = vel[1] * d * 10.0f;
+	dir[2] = vel[2] * d * 10.0f;
+	glBegin(GL_LINES);
+	glVertex2fv(orig);
+	glVertex2f(orig[0] + dir[0], orig[1] + dir[1]);
+	glEnd();
 }
 
 //
