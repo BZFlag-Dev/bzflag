@@ -262,127 +262,155 @@ SOURCE=..\..\src\geometry\WallSceneNode.cxx
 # PROP Default_Filter "h;hpp;hxx;hm;inl"
 # Begin Source File
 
-SOURCE=..\include\BillboardSceneNode.h
+SOURCE=..\..\include\BillboardSceneNode.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\include\BoltSceneNode.h
+SOURCE=..\..\include\BoltSceneNode.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\include\bzfgl.h
+SOURCE=..\..\include\BZDBCache.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\include\common.h
+SOURCE=..\..\include\bzfgl.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\include\EighthDBaseSceneNode.h
+SOURCE=..\..\include\bzfio.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\include\EighthDBoxSceneNode.h
+SOURCE=..\..\include\CallbackList.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\include\EighthDimSceneNode.h
+SOURCE=..\..\include\common.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\include\EighthDPyrSceneNode.h
+SOURCE=.\config.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\include\FlagSceneNode.h
+SOURCE=..\..\include\EighthDBaseSceneNode.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\include\FlagWarpSceneNode.h
+SOURCE=..\..\include\EighthDBoxSceneNode.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\include\global.h
+SOURCE=..\..\include\EighthDimSceneNode.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\include\LaserSceneNode.h
+SOURCE=..\..\include\EighthDPyrSceneNode.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\include\OpenGLGState.h
+SOURCE=..\..\include\FlagSceneNode.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\include\OpenGLLight.h
+SOURCE=..\..\include\FlagWarpSceneNode.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\include\OpenGLMaterial.h
+SOURCE=..\..\include\global.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\include\OpenGLTexture.h
+SOURCE=..\..\include\LaserSceneNode.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\include\PolyWallSceneNode.h
+SOURCE=..\..\include\OpenGLGState.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\include\PTSceneNode.h
+SOURCE=..\..\include\OpenGLLight.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\include\QuadWallSceneNode.h
+SOURCE=..\..\include\OpenGLMaterial.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\include\Ray.h
+SOURCE=..\..\include\OpenGLTexture.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\include\RenderNode.h
+SOURCE=..\..\include\PolyWallSceneNode.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\include\SceneNode.h
+SOURCE=..\..\include\PTSceneNode.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\include\SceneRenderer.h
+SOURCE=..\..\include\QuadWallSceneNode.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\include\ShellSceneNode.h
+SOURCE=..\..\include\Ray.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\include\ShotSceneNode.h
+SOURCE="C:\Program Files\Microsoft SDK\include\Reason.h"
 # End Source File
 # Begin Source File
 
-SOURCE=..\include\SphereSceneNode.h
+SOURCE=..\..\include\RenderNode.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\include\TankSceneNode.h
+SOURCE=..\..\include\SceneNode.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\include\TracerSceneNode.h
+SOURCE=..\..\include\SceneRenderer.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\include\TriWallSceneNode.h
+SOURCE=..\..\include\ShellSceneNode.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\include\ViewFrustum.h
+SOURCE=..\..\include\ShotSceneNode.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\include\WallSceneNode.h
+SOURCE=..\..\include\Singleton.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\include\SphereSceneNode.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\include\StateDatabase.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\include\TankSceneNode.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\include\TracerSceneNode.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\include\TriWallSceneNode.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\include\ViewFrustum.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\include\WallSceneNode.h
 # End Source File
 # End Group
 # End Target

@@ -105,11 +105,35 @@ SOURCE=..\..\src\mediafile\SGIImageFile.cxx
 # PROP Default_Filter "h;hpp;hxx;hm;inl"
 # Begin Source File
 
+SOURCE=..\..\src\mediafile\AudioFile.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\include\bzfio.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\include\common.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\config.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\include\FileManager.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\src\mediafile\ImageFile.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\include\MediaFile.h
+SOURCE=..\..\include\MediaFile.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\include\Pack.h
 # End Source File
 # Begin Source File
 
@@ -118,6 +142,22 @@ SOURCE=..\..\src\mediafile\PNGImageFile.h
 # Begin Source File
 
 SOURCE=..\..\src\mediafile\SGIImageFile.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\include\Singleton.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\mediafile\WaveAudioFile.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\zlib\zconf.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\zlib\zlib.h
 # End Source File
 # End Group
 # End Target

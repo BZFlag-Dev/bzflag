@@ -186,6 +186,10 @@ SOURCE=..\..\include\BZDBCache.h
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\include\BzfEvent.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\include\bzfio.h
 # End Source File
 # Begin Source File
@@ -198,7 +202,7 @@ SOURCE=..\..\include\CallbackList.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\include\CommandManager.h
+SOURCE=..\..\include\CommandManager.h
 # End Source File
 # Begin Source File
 
@@ -251,6 +255,10 @@ SOURCE=..\..\include\SceneDatabase.h
 # Begin Source File
 
 SOURCE=..\..\include\ShotUpdate.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\include\Singleton.h
 # End Source File
 # Begin Source File
 

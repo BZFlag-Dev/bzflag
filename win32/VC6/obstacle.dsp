@@ -119,19 +119,23 @@ SOURCE=..\..\src\obstacle\WallObstacle.cxx
 # PROP Default_Filter "h;hpp;hxx;hm;inl"
 # Begin Source File
 
-SOURCE=..\include\BaseBuilding.h
+SOURCE=..\..\include\BaseBuilding.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\include\BoxBuilding.h
+SOURCE=..\..\include\BoxBuilding.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\include\bzfgl.h
+SOURCE=..\..\include\BZDBCache.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\include\bzfio.h
+SOURCE=..\..\include\bzfgl.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\include\bzfio.h
 # End Source File
 # Begin Source File
 
@@ -139,7 +143,23 @@ SOURCE=..\include\BzfString.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\include\common.h
+SOURCE=..\..\include\CallbackList.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\include\common.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\config.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\include\global.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\include\Intersect.h
 # End Source File
 # Begin Source File
 
@@ -147,47 +167,55 @@ SOURCE=..\include\Intersect.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\include\Obstacle.h
+SOURCE=..\..\include\Obstacle.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\include\OpenGLGState.h
+SOURCE=..\..\include\OpenGLGState.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\include\PyramidBuilding.h
+SOURCE=..\..\include\PyramidBuilding.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\include\QuadWallSceneNode.h
+SOURCE=..\..\include\QuadWallSceneNode.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\include\Ray.h
+SOURCE=..\..\include\Ray.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\include\RenderNode.h
+SOURCE=..\..\include\RenderNode.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\include\SceneNode.h
+SOURCE=..\..\include\SceneNode.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\include\Teleporter.h
+SOURCE=..\..\include\Singleton.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\include\TriWallSceneNode.h
+SOURCE=..\..\include\StateDatabase.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\include\WallObstacle.h
+SOURCE=..\..\include\Teleporter.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\include\WallSceneNode.h
+SOURCE=..\..\include\TriWallSceneNode.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\include\WallObstacle.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\include\WallSceneNode.h
 # End Source File
 # End Group
 # End Target

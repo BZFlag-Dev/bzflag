@@ -119,35 +119,35 @@ SOURCE=..\..\src\ogl\RenderNode.cxx
 # PROP Default_Filter "h;hpp;hxx;hm;inl"
 # Begin Source File
 
-SOURCE=..\include\bzfgl.h
-# End Source File
-# Begin Source File
-
 SOURCE=..\include\bzfio.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\include\common.h
+SOURCE=..\..\include\common.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\include\OpenGLDisplayList.h
+SOURCE=.\config.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\include\OpenGLGState.h
+SOURCE=..\..\include\OpenGLDisplayList.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\include\OpenGLLight.h
+SOURCE=..\..\include\OpenGLGState.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\include\OpenGLMaterial.h
+SOURCE=..\..\include\OpenGLLight.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\include\OpenGLTexFont.h
+SOURCE=..\..\include\OpenGLMaterial.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\include\OpenGLTexFont.h
 # End Source File
 # Begin Source File
 
@@ -155,7 +155,11 @@ SOURCE=..\..\include\OpenGLTexture.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\include\RenderNode.h
+SOURCE="C:\Program Files\Microsoft SDK\include\Reason.h"
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\include\RenderNode.h
 # End Source File
 # Begin Source File
 

@@ -103,47 +103,47 @@ SOURCE=..\..\src\scene\ZSceneDatabase.cxx
 # PROP Default_Filter "h;hpp;hxx;hm;inl"
 # Begin Source File
 
-SOURCE=..\include\BSPSceneDatabase.h
+SOURCE=..\..\include\BSPSceneDatabase.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\include\bzfgl.h
+SOURCE=..\..\include\common.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\include\common.h
+SOURCE=.\config.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\include\OpenGLGState.h
+SOURCE=..\..\include\OpenGLGState.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\include\RenderNode.h
+SOURCE=..\..\include\RenderNode.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\include\SceneDatabase.h
+SOURCE=..\..\include\SceneDatabase.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\include\SceneNode.h
+SOURCE=..\..\include\SceneNode.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\include\SphereSceneNode.h
+SOURCE=..\..\include\SphereSceneNode.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\include\ViewFrustum.h
+SOURCE=..\..\include\ViewFrustum.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\include\WallSceneNode.h
+SOURCE=..\..\include\WallSceneNode.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\include\ZSceneDatabase.h
+SOURCE=..\..\include\ZSceneDatabase.h
 # End Source File
 # End Group
 # End Target

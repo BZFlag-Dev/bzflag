@@ -135,23 +135,27 @@ SOURCE=..\..\src\platform\WinWindow.cxx
 # PROP Default_Filter "h;hpp;hxx;hm;inl"
 # Begin Source File
 
-SOURCE=..\include\BzfDisplay.h
+SOURCE=..\..\include\Bundle.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\include\BzfEvent.h
+SOURCE=..\..\include\BzfDisplay.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\include\bzfgl.h
+SOURCE=..\..\include\BzfEvent.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\include\bzfio.h
+SOURCE=..\..\include\bzfgl.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\include\BzfMedia.h
+SOURCE=..\..\include\bzfio.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\include\BzfMedia.h
 # End Source File
 # Begin Source File
 
@@ -159,31 +163,39 @@ SOURCE=..\include\BzfString.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\include\BzfVisual.h
+SOURCE=..\..\include\BzfVisual.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\include\BzfWindow.h
+SOURCE=..\..\include\BzfWindow.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\include\common.h
+SOURCE=..\..\include\common.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\include\ErrorHandler.h
+SOURCE=.\config.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\include\OpenGLGState.h
+SOURCE=..\..\include\ErrorHandler.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\include\Pack.h
+SOURCE=..\..\include\MediaFile.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\include\PlatformFactory.h
+SOURCE=..\..\include\OpenGLGState.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\include\Pack.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\include\PlatformFactory.h
 # End Source File
 # Begin Source File
 
@@ -191,7 +203,7 @@ SOURCE=..\include\resource.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\include\TimeKeeper.h
+SOURCE=..\..\include\TimeKeeper.h
 # End Source File
 # Begin Source File
 

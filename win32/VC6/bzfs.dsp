@@ -183,11 +183,15 @@ SOURCE=..\..\src\bzfs\AccessControlList.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\include\Address.h
+SOURCE=..\..\include\Address.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\include\bzfio.h
+SOURCE=..\..\include\BZDBCache.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\include\bzfio.h
 # End Source File
 # Begin Source File
 
@@ -195,11 +199,11 @@ SOURCE=..\..\src\bzfs\bzfs.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\include\BzfString.h
+SOURCE=..\..\include\bzsignal.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\include\CallbackList.h
+SOURCE=..\..\include\CallbackList.h
 # End Source File
 # Begin Source File
 
@@ -207,11 +211,23 @@ SOURCE=..\..\src\bzfs\CmdLineOptions.h
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\include\CommandManager.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\src\bzfs\commands.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\include\common.h
+SOURCE=..\..\include\common.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\config.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\include\ConfigFileManager.h
 # End Source File
 # Begin Source File
 
@@ -243,7 +259,7 @@ SOURCE=..\..\src\bzfs\CustomWorld.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\include\Flag.h
+SOURCE=..\..\include\Flag.h
 # End Source File
 # Begin Source File
 
@@ -251,19 +267,19 @@ SOURCE=..\..\src\bzfs\FlagInfo.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\include\global.h
+SOURCE=..\..\include\global.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\include\md5.h
+SOURCE=..\..\include\md5.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\include\multicast.h
+SOURCE=..\..\include\multicast.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\include\Pack.h
+SOURCE=..\..\include\Pack.h
 # End Source File
 # Begin Source File
 
@@ -275,7 +291,7 @@ SOURCE=..\..\src\bzfs\Permissions.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\include\Ping.h
+SOURCE=..\..\include\Ping.h
 # End Source File
 # Begin Source File
 
@@ -283,7 +299,7 @@ SOURCE=..\..\src\bzfs\PlayerInfo.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\include\PlayerState.h
+SOURCE=..\..\include\PlayerState.h
 # End Source File
 # Begin Source File
 
@@ -291,15 +307,19 @@ SOURCE=..\include\Protocol.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\include\ShotUpdate.h
+SOURCE=..\..\include\ShotUpdate.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\include\StateDatabase.h
+SOURCE=..\..\include\Singleton.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\include\Team.h
+SOURCE=..\..\include\StateDatabase.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\include\Team.h
 # End Source File
 # Begin Source File
 
@@ -307,11 +327,15 @@ SOURCE=..\..\src\bzfs\TextChunkManager.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\include\TimeBomb.h
+SOURCE=..\..\include\TextUtils.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\include\TimeKeeper.h
+SOURCE=..\..\include\TimeBomb.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\include\TimeKeeper.h
 # End Source File
 # Begin Source File
 
@@ -323,7 +347,11 @@ SOURCE=..\..\src\bzfs\VotingArbiter.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\include\WordFilter.h
+SOURCE=..\..\include\VotingBooth.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\include\WordFilter.h
 # End Source File
 # Begin Source File
 

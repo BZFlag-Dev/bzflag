@@ -115,11 +115,27 @@ SOURCE=..\..\include\Address.h
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\include\Bundle.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\include\bzfio.h
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\include\bzsignal.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\include\CallbackList.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\include\common.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\config.h
 # End Source File
 # Begin Source File
 
@@ -144,6 +160,14 @@ SOURCE=..\..\include\Pack.h
 # Begin Source File
 
 SOURCE=..\..\include\Ping.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\include\Singleton.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\include\StateDatabase.h
 # End Source File
 # Begin Source File
 

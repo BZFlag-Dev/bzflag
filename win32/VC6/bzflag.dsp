@@ -321,11 +321,11 @@ SOURCE=..\..\include\CommandsStandard.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\include\CommandsStandard.h
+SOURCE=..\..\include\common.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\include\common.h
+SOURCE=.\config.h
 # End Source File
 # Begin Source File
 
@@ -533,10 +533,6 @@ SOURCE=..\..\include\SceneRenderer.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\include\SceneRenderer.h
-# End Source File
-# Begin Source File
-
 SOURCE=..\..\src\bzflag\ServerLink.h
 # End Source File
 # Begin Source File
@@ -558,6 +554,10 @@ SOURCE=..\..\src\bzflag\ShotStrategy.h
 # Begin Source File
 
 SOURCE=..\..\include\ShotUpdate.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\include\Singleton.h
 # End Source File
 # Begin Source File
 
@@ -585,15 +585,15 @@ SOURCE=..\..\include\Teleporter.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\src\bzflag\texture.h
+SOURCE=..\..\include\texture.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\include\TextureManager.h
 # End Source File
 # Begin Source File
 
 SOURCE=..\..\include\TextUtils.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\include\TextUtils.h
 # End Source File
 # Begin Source File
 
