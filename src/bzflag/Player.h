@@ -372,17 +372,6 @@ inline bool  Player::isAutoPilot() const
   return (autoPilot);
 }
 
-inline void* Player::pack(void* buf)
-{
-  setDeadReckoning();
-  return state.pack(buf);
-}
-
-inline void Player::setAutoPilot(bool _autoPilot)
-{
-  autoPilot = _autoPilot;
-}
-
 inline void Player::setDeadReckoning()
 {
   // save stuff for dead reckoning
@@ -402,6 +391,17 @@ inline void Player::setDeadReckoning()
   inputZSpeed = state.velocity[2];
   inputAzimuth = state.azimuth;
   inputAngVel = state.angVel;
+}
+
+inline void* Player::pack(void* buf)
+{
+  setDeadReckoning();
+  return state.pack(buf);
+}
+
+inline void Player::setAutoPilot(bool _autoPilot)
+{
+  autoPilot = _autoPilot;
 }
 
 #endif // BZF_PLAYER_H

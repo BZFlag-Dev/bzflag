@@ -548,6 +548,8 @@ void			ServerLink::sendKilled(const PlayerId& killer, int reason,
   send(MsgKilled, sizeof(msg), msg);
 }
 
+
+#ifndef BUILDING_BZADMIN
 void			ServerLink::sendPlayerUpdate(Player* player)
 {
   char msg[PlayerUpdatePLen];
@@ -558,6 +560,7 @@ void			ServerLink::sendPlayerUpdate(Player* player)
   buf = player->pack(buf);
   send(MsgPlayerUpdate, sizeof(msg), msg);
 }
+#endif
 
 void			ServerLink::sendBeginShot(const FiringInfo& info)
 {

@@ -62,7 +62,11 @@ class ServerLink {
     void		sendGrabFlag(int flagIndex);
     void		sendDropFlag(const float* position);
     void		sendKilled(const PlayerId&, int reason, int shotId);
+  // FIXME -- This is very ugly, but required to build bzadmin with gcc 2.9.5.
+  //          It should be changed to something cleaner.
+#ifndef BUILDING_BZADMIN
     void		sendPlayerUpdate(Player*);
+#endif
     void		sendBeginShot(const FiringInfo&);
     void		sendEndShot(const PlayerId&, int shotId, int reason);
     void		sendAlive();
