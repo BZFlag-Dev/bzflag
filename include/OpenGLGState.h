@@ -41,6 +41,7 @@ public:
 						kDstAlpha, kOneMinusDstAlpha,
 						kSrcColor, kOneMinusSrcColor,
 						kDstColor, kOneMinusDstColor };
+	enum FogMode { kExp, kExp2, kFLinear };
 
 	GState();
 
@@ -69,6 +70,13 @@ public:
 
 	bool				clipping;
 	float				clipPlane[4];
+
+	bool				fog;
+	float				fogColor[4];
+	FogMode				fogMode;
+	float				fogDensity;
+	float				fogStart;
+	float				fogEnd;
 };
 
 //
@@ -208,6 +216,12 @@ public:
 	void				setClipping(bool);
 	void				setClipPlane(float[4]);
 	void				setClipPlane(float, float, float, float);
+	void				setFog(bool);
+	void				setFogColor(float[4]);
+	void				setFogMode(GState::FogMode = GState::kFLinear);
+	void				setFogDensity(float);
+	void				setFogStart(float);
+	void				setFogEnd(float);
 
 	// get current builder state
 	OpenGLTexture		getTexture() const;
@@ -231,6 +245,12 @@ public:
 	bool				getForceDithering() const;
 	bool				getClipping() const;
 	const float*		getClipPlane() const;
+	bool				getFog() const;
+	const float*		getFogColor() const;
+	GState::FogMode		getFogMode() const;
+	float				getFogDensity() const;
+	float				getFogStart() const;
+	float				getFogEnd() const;
 
 	// return a gstate having the current state of the builder
 	OpenGLGState		getState() const;
@@ -384,6 +404,45 @@ void					OpenGLGStateBuilder::setClipPlane(float a, float b, float c, float d)
 }
 
 inline
+void					OpenGLGStateBuilder::setFog(bool fog)
+{
+	data->fog = fog;
+}
+
+inline
+void					OpenGLGStateBuilder::setFogColor(float fogColor[4])
+{
+	data->fogColor[0] = fogColor[0];
+	data->fogColor[1] = fogColor[1];
+	data->fogColor[2] = fogColor[2];
+	data->fogColor[3] = fogColor[3];
+}
+
+inline
+void					OpenGLGStateBuilder::setFogMode(GState::FogMode fogMode)
+{
+	data->fogMode = fogMode;
+}
+
+inline
+void					OpenGLGStateBuilder::setFogDensity(float fogDensity)
+{
+	data->fogDensity = fogDensity;
+}
+
+inline
+void					OpenGLGStateBuilder::setFogStart(float fogStart)
+{
+	data->fogStart = fogStart;
+}
+
+inline
+void					OpenGLGStateBuilder::setFogEnd(float fogEnd)
+{
+	data->fogEnd = fogEnd;
+}
+
+inline
 OpenGLTexture			OpenGLGStateBuilder::getTexture() const
 {
 	return data->texture;
@@ -507,6 +566,42 @@ inline
 const float*			OpenGLGStateBuilder::getClipPlane() const
 {
 	return data->clipPlane;
+}
+
+inline
+bool					OpenGLGStateBuilder::getFog() const
+{
+	return data->fog;
+}
+
+inline
+const float*			OpenGLGStateBuilder::getFogColor() const
+{
+	return data->fogColor;
+}
+
+inline
+GState::FogMode			OpenGLGStateBuilder::getFogMode() const
+{
+	return data->fogMode;
+}
+
+inline
+float					OpenGLGStateBuilder::getFogDensity() const
+{
+	return data->fogDensity;
+}
+
+inline
+float					OpenGLGStateBuilder::getFogStart() const
+{
+	return data->fogStart;
+}
+
+inline
+float					OpenGLGStateBuilder::getFogEnd() const
+{
+	return data->fogEnd;
 }
 
 #endif // BZF_OPENGL_GSTATE_H

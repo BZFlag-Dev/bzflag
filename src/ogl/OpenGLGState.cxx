@@ -321,6 +321,25 @@ void					OpenGLGStateRep::initState()
 			glEnable(GL_CLIP_PLANE0 + i);
 		}
 	}
+
+	// fog
+	if (currentState->fog) {
+		if (currentState->fogMode == GState::kExp)
+			glFogi(GL_FOG_MODE, GL_EXP);
+		else if (currentState->fogMode == GState::kExp2)
+			glFogi(GL_FOG_MODE, GL_EXP2);
+		else if (currentState->fogMode == GState::kFLinear)
+			glFogi(GL_FOG_MODE, GL_LINEAR);
+		glFogfv(GL_FOG_COLOR, currentState->fogColor);
+		glHint(GL_FOG_HINT, GL_DONT_CARE);
+		glFogf(GL_FOG_DENSITY, currentState->fogDensity);
+		glFogf(GL_FOG_START, currentState->fogStart);
+		glFogf(GL_FOG_END, currentState->fogEnd);
+		glEnable(GL_FOG);
+	}
+	else {
+		glDisable(GL_FOG);
+	}
 }
 
 void					OpenGLGStateRep::resetState()
@@ -488,6 +507,11 @@ void					OpenGLGStateRep::doSetState()
 	if (clipping != currentState->clipping) {
 		// FIXME - count clip planes
 		glDisable(GL_CLIP_PLANE0);
+	}
+
+	// fog
+	if (fog != currentState->fog) {
+		glDisable(GL_FOG);
 	}
 
 	// record most recent rep
