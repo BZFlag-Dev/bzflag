@@ -1,7 +1,7 @@
 bin_PROGRAMS = bzwtransform
 
 bzwtransform_SOURCES = \
-	bzwtransform.cxx
+	bzwTransform.cxx
 
 EXTRA_DIST = \
 	input.bzt
