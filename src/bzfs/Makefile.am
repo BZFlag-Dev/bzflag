@@ -6,12 +6,18 @@ MAINTAINERCLEANFILES = \
 bzfs_SOURCES = \
 	AccessControlList.cxx \
 	AccessControlList.h \
-	TextChunkManager.cxx \
-	TextChunkManager.h \
-	WorldInfo.cxx \
-	WorldInfo.h \
+	CmdLineOptions.cxx \
+	CmdLineOptions.h \
+	FlagInfo.cxx \
+	FlagInfo.h \
 	Permissions.cxx \
 	Permissions.h \
+	TextChunkManager.cxx \
+	TextChunkManager.h \
+	VotingPoll.cxx \
+	VotingPoll.h \
+	WorldInfo.cxx \
+	WorldInfo.h \
 	WorldWeapons.cxx \
 	WorldWeapons.h \
 	bzfs.cxx
