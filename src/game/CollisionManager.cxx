@@ -455,7 +455,6 @@ void CollisionManager::load ()
   // do the type/height sort
   qsort(FullList.list, FullList.count, sizeof(Obstacle*), compareObstacles);
 
-
   // generate the octree
   setExtents (&FullList);
   root = new ColDetNode (0, gridExtents, &FullList);
@@ -594,38 +593,48 @@ ColDetNode::ColDetNode(unsigned char _depth,
   point[2] = 0.5f * (testExts.maxs[2] + testExts.mins[2]);
 
   // find all of the intersecting nodes
+  //
+  // the mesh obstacles will be the last in the list, so we
+  // record whether or not any of their faces have intersected
+  // with cell along the way (in the collisionState variable,
+  // which must be cleared before leaving).
+  //
   fullList.count = 0;
+  const char* faceType = MeshFace::getClassName();
+  const char* meshType = MeshObstacle::getClassName();
   for (i = 0; i < _list->count; i++) {
     Obstacle* obs = _list->list[i];
-    if (obs->getType() != MeshObstacle::getClassName()) {
-      if (obs->inBox (pos, 0.0f, size[0], size[1], size[2])) {
-	fullList.list[fullList.count] = obs;
-	fullList.count++;
-      }
-    } else if (testExts.touches(obs->getExtents())) {
-      // add a mesh if any of its faces are in the node,
-      // or if it passes the 'point containment' test.
-      MeshObstacle* mesh = (MeshObstacle*) obs;
-      bool needCheck = true;
-      for (int j = 0; j < fullList.count; j++) {
-	Obstacle* tmpObs = fullList.list[j];
-	if (tmpObs->getType() == MeshFace::getClassName()) {
-	  MeshFace* face = (MeshFace*) tmpObs;
-	  if (face->getMesh() == mesh) {
-	    fullList.list[fullList.count] = (Obstacle*) mesh;
-	    fullList.count++;
-	    needCheck = false;
-	    break;
-	  }
-	}
-      }
-      if (needCheck && mesh->containsPointNoOctree (point)) {
-	fullList.list[fullList.count] = (Obstacle*) mesh;
-	fullList.count++;
+    const char* obsType = obs->getType();
+    if (testExts.touches(obs->getExtents())) {
+      if (obsType != meshType) {
+        if (obs->inBox (pos, 0.0f, size[0], size[1], size[2])) {
+          // add this obstacle to the list
+          fullList.list[fullList.count] = obs;
+          fullList.count++;
+          if (obsType == faceType) {
+            // record this face's hit in its mesh obstacle
+            MeshFace* face = (MeshFace*) obs;
+            MeshObstacle* mesh = face->getMesh();
+            if (mesh != NULL) {
+              mesh->collisionState = true;
+            }
+          }
+        }
+      } else {
+        MeshObstacle* mesh = (MeshObstacle*) obs;
+        if (mesh->collisionState) {
+          fullList.list[fullList.count] = (Obstacle*) mesh;
+          fullList.count++;
+          mesh->collisionState = false;
+        }
+        else if (mesh->containsPointNoOctree (point)) {
+          fullList.list[fullList.count] = (Obstacle*) mesh;
+          fullList.count++;
+        }
       }
     }
-  }
-
+  }          
+          
   // count will remain as the total numbers of
   // scene nodes that intersect with this cell
   count = fullList.count;
@@ -719,18 +728,27 @@ void ColDetNode::resizeCell ()
 {
   int i;
   Extents absExts;
-
-  for (i = 0; i < fullList.count; i++) {
-    Obstacle* obs = fullList.list[i];
-    const Extents& obsExts = obs->getExtents();
-    absExts.expandToBox(obsExts);
+  
+  if (childCount > 0) {
+    // use lower children's extents
+    for (i = 0; i < childCount; i++) {
+      absExts.expandToBox(children[i]->getExtents());
+    }
+  } else {
+    // check all of the obstacles
+    for (i = 0; i < fullList.count; i++) {
+      const Obstacle* obs = fullList.list[i];
+      absExts.expandToBox(obs->getExtents());
+    }
   }
-
+  
   for (i = 0; i < 3; i++) {
-    if (absExts.mins[i] > extents.mins[i])
+    if (absExts.mins[i] > extents.mins[i]) {
       extents.mins[i] = absExts.mins[i];
-    if (absExts.maxs[i] < extents.maxs[i])
+    }
+    if (absExts.maxs[i] < extents.maxs[i]) {
       extents.maxs[i] = absExts.maxs[i];
+    }
   }
 
   return;
