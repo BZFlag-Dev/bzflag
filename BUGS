@@ -27,6 +27,9 @@ critical bugs
 recent bugs
 ------------
 
+- thief sound is too dang loud.  the players are all gonna go deaf if someone
+  doesn't tone that puppy down a bit.
+
 - Flaghelp falls into the radar area when radar is 'bigger'
 
 - Address Exception reported when unpacking a FlagType in MsgFlagUpdate on
