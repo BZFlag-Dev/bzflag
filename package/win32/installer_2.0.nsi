@@ -11,7 +11,7 @@
 ;General
 
 	!define VER_MAJOR 2.0
-	!define VER_MINOR .1
+	!define VER_MINOR .1b1
 
 	;Name and file
 	Name "BZFlag ${VER_MAJOR}${VER_MINOR}: - Setup"
@@ -20,10 +20,10 @@
 	OutFile "..\..\dist\bzflag_installer_${VER_MAJOR}${VER_MINOR}.exe"
 
 	;Default installation folder
-	InstallDir "$PROGRAMFILES\bzflag_2"
+	InstallDir "$PROGRAMFILES\BZFlag${VER_MAJOR}${VER_MINOR}"
 
 	;Get installation folder from registry if available
-	InstallDirRegKey HKCU "Software\bzflag_2" ""
+	InstallDirRegKey HKCU "Software\BZFlag${VER_MAJOR}${VER_MINOR}" ""
 
 ;--------------------------------
 ;Interface Settings
