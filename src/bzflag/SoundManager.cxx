@@ -117,7 +117,7 @@ void			SoundManager::speedSoundReceiver(float vx, float vy, float vz)
 }
 
 void			SoundManager::playWorldSound(std::string sound, float x, float y,
-								float z, bool important = false)
+								float z, bool important)
 {
 	sendJob(important ? SQC_IWORLD_SFX : SQC_WORLD_SFX, sound, "", false,
 				0, x, y, z, 0);
@@ -130,7 +130,7 @@ void			SoundManager::playLocalSound(std::string sound)
 
 void			SoundManager::addJob(std::string jobname, AudioJob& job)
 {
-	jobs.insert(pair<std::string, AudioJob>(jobname, job));
+	jobs.insert(std::pair<std::string, AudioJob>(jobname, job));
 }
 
 void			SoundManager::removeJob(std::string jobname)

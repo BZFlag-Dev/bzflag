@@ -54,7 +54,7 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 LINK32=link.exe
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:windows /machine:I386
-# ADD LINK32 dsound.lib winmm.lib wsock32.lib glu32.lib opengl32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:windows /machine:I386
+# ADD LINK32 vorbis.lib ogg.lib vorbisenc.lib vorbisfile.lib dsound.lib winmm.lib wsock32.lib glu32.lib opengl32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:windows /machine:I386
 
 !ELSEIF  "$(CFG)" == "bzflag - Win32 Debug"
 
@@ -80,7 +80,7 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 LINK32=link.exe
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:windows /debug /machine:I386 /pdbtype:sept
-# ADD LINK32 dsound.lib winmm.lib wsock32.lib glu32.lib opengl32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:windows /debug /machine:I386 /pdbtype:sept
+# ADD LINK32 vorbis.lib ogg.lib vorbisenc.lib vorbisfile.lib dsound.lib winmm.lib wsock32.lib glu32.lib opengl32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:windows /debug /machine:I386 /pdbtype:sept
 
 !ENDIF 
 
@@ -125,10 +125,6 @@ SOURCE=..\src\bzflag\playing.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\src\bzflag\Region.cxx
-# End Source File
-# Begin Source File
-
 SOURCE=..\src\bzflag\RemotePlayer.cxx
 # End Source File
 # Begin Source File
@@ -149,7 +145,7 @@ SOURCE=..\src\bzflag\ShotStrategy.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\src\bzflag\sound.cxx
+SOURCE=..\src\bzflag\SoundManager.cxx
 # End Source File
 # Begin Source File
 
@@ -246,6 +242,10 @@ SOURCE=..\src\bzflag\ShotStrategy.h
 # Begin Source File
 
 SOURCE=..\src\bzflag\sound.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\src\bzflag\SoundManager.h
 # End Source File
 # Begin Source File
 

@@ -98,6 +98,10 @@ SOURCE=..\src\mediafile\MediaFile.cxx
 # End Source File
 # Begin Source File
 
+SOURCE=..\src\mediafile\OggAudioFile.cxx
+# End Source File
+# Begin Source File
+
 SOURCE=..\src\mediafile\PNGImageFile.cxx
 # End Source File
 # Begin Source File
@@ -123,6 +127,10 @@ SOURCE=..\src\mediafile\ImageFile.h
 # Begin Source File
 
 SOURCE=..\include\MediaFile.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\src\mediafile\OggAudioFile.h
 # End Source File
 # Begin Source File
 

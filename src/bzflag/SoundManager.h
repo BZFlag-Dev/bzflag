@@ -19,14 +19,16 @@
 #include <string>
 #include <map>
 #include <vector>
+#ifndef WIN32
 #include <multimap.h>
+#endif
 
 #define SOUNDMGR (SoundManager::getInstance())
 
 const float			SpeedOfSound = 343.0;				// meters/sec
 const float			MinEventDist = 20.0 * TankRadius;	// meters
 const int			MaxEvents = 30;
-const float			InterAuralDistance = 0.1;			// meters
+const float			InterAuralDistance = 0.1f;			// meters
 
 // sound queue commands
 #define SQC_CLEAR		0		// no data

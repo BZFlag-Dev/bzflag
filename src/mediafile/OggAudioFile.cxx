@@ -10,6 +10,7 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
+#include <iostream>
 #include "OggAudioFile.h"
 
 OggAudioFile::OggAudioFile(std::istream* in) : AudioFile(in)
@@ -24,7 +25,7 @@ OggAudioFile::OggAudioFile(std::istream* in) : AudioFile(in)
 
 	ov_open_callbacks(in, &file, NULL, 0, cb);
 	if (!&file) {
-		cerr << "OggAudioFile() failed: call to ov_open_callbacks failed\n";
+		std::cerr << "OggAudioFile() failed: call to ov_open_callbacks failed\n";
 		open = false;
 	}
 	else {
@@ -60,7 +61,7 @@ bool		OggAudioFile::read(void* buffer, int numFrames)
 size_t	OAFRead(void* ptr, size_t size, size_t nmemb, void* datasource)
 {
 	std::istream *in = (std::istream*) datasource;
-	in->read(ptr, size * nmemb);
+	in->read((char*)ptr, size * nmemb);
 	return size * nmemb;
 }
 
