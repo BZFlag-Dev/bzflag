@@ -51,7 +51,8 @@ Section "BZFlag (required)"
 	; make the data dir
 	SetOutPath $INSTDIR\data
 	File ..\..\..\data\*.*	
-	File ..\..\..\misc\hix.bzw	
+	File ..\..\..\misc\hix.bzw
+	File ..\..\..\misc\bzfs.conf	
 
 	; make the l10n dir
 	SetOutPath $INSTDIR\data\l10n
