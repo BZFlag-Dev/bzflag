@@ -172,7 +172,7 @@ void CollisionManager::load (std::vector<BoxBuilding>     &boxes,
     for (y=0 ; y < GridSizeY; y++) {
       Cells[x][y].pos[0] = Offx + (Sx * (float)x);
       Cells[x][y].pos[1] = Offy + (Sy * (float)y);
-      Cells[x][y].pos[2] = 0.0f;
+      Cells[x][y].pos[2] = -0.1f;
       Cells[x][y].count = 1;    // fake the count for getCells()
     }
   }
