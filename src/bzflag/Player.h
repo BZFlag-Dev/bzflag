@@ -137,7 +137,6 @@ private:
   bool			notResponding;
   bool			autoPilot;
   static OpenGLTexture* tankTexture;
-  static int		totalCount;
   bool			hunted;
   PlayerId		id;			// my credentials
 

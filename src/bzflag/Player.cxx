@@ -29,7 +29,6 @@ static const float	MaxUpdateTime = 1.0f;		// seconds
 //
 
 OpenGLTexture*		Player::tankTexture = NULL;
-int			Player::totalCount = 0;
 
 Player::Player(const PlayerId& _id, TeamColor _team,
 	       const char* name, const char* _email, const PlayerType _type) :
@@ -72,7 +71,6 @@ Player::Player(const PlayerId& _id, TeamColor _team,
     pausedSphere = new SphereSceneNode(state.pos,
 				       1.5f * BZDBCache::tankRadius);
     pausedSphere->setColor(0.0f, 0.0f, 0.0f, 0.5f);
-    totalCount++;
   }
 
 }
