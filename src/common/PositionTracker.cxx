@@ -116,7 +116,7 @@ bool PositionTracker::forget(unsigned short int token, const std::string id, std
   return true;
 }
 
-double PositionTracker::distanceBetween(unsigned short int from, unsigned short int to, std::string fromGroup, std::string toGroup) const
+double PositionTracker::distanceBetween(unsigned short int from, unsigned short int to, std::string fromGroup, std::string toGroup)
 {
   std::cout << from << to << fromGroup << toGroup;
 
