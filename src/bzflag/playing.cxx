@@ -1752,7 +1752,10 @@ static void		doAutoPilot(float &rotation, float &speed)
 	if (fabs(rotation) < BZDB->eval(StateDatabase::BZDB_LOCKONANGLE)) {
 	  const Obstacle *building = NULL;
 	  float d = distance;
-	  if (myTank->getFlag() != Flags::SuperBullet)
+
+	  const float *velocity = myTank->getVelocity();
+
+	  if ((myTank->getFlag() != Flags::SuperBullet) && (velocity[0] > 3.0f) || (velocity[1] > 3.0f))
 	    building = ShotStrategy::getFirstBuilding(tankRay, -0.5f, d);
 	  if (building) {
 	    if ((d > 20.f) && (d < 50.0f) 
@@ -1777,8 +1780,7 @@ static void		doAutoPilot(float &rotation, float &speed)
 	if (World::getWorld()->allowJumping() || (myTank->getFlag() == Flags::Jumping)) {
 	//teach autopilot bad habits
 	  for (t = 0; t < curMaxPlayers; t++) {
-	    if (t == myTank->getId() || !player[t] || !player[t]->isAlive() ||
-	        player[t]->isPaused())
+	    if (t == myTank->getId() || !player[t])
 	      continue;
 	    const int maxShots = player[t]->getMaxShots();
 	    for (int s = 0; s < maxShots; s++) {
