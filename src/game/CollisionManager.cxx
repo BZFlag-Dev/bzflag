@@ -470,7 +470,7 @@ void CollisionManager::load ()
   }
   for (i = 0; i < 3; i++) {
     DEBUG2 ("  world extent[%i] = %f, %f\n", i,
-	    worldExtents.mins[i], worldExtents.maxs[i+3]);
+	    worldExtents.mins[i], worldExtents.maxs[i]);
   }
   DEBUG2 ("ColDet Octree leaf nodes  = %i\n", leafNodes);
   DEBUG2 ("ColDet Octree total nodes = %i\n", totalNodes);
