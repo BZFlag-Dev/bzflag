@@ -2,7 +2,7 @@ noinst_LIBRARIES = libCommon.a
 
 AM_CFLAGS = -D_XOPEN_SOURCE
 
-AM_CPPFLAGS = -I$(top_srcdir)/include
+AM_CPPFLAGS = -I$(top_srcdir)/include $(CURL_CFLAGS)
 
 libCommon_a_SOURCES  =			\
 	AutoCompleter.cxx		\
