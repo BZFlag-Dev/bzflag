@@ -326,8 +326,8 @@ void FontManager::drawString(float x, float y, float z, int faceID, float size,
 	// still have a translated matrix, these coordinates are
 	// with respect to the string just drawn
 	glBegin(GL_LINES);
-	glVertex2f(0, -1.0f);
-	glVertex2f(width, -1.0f);
+	glVertex2f(0, 0.0f);
+	glVertex2f(width, 0.0f);
 	glEnd();
       }
       glDepthMask(depthMask);

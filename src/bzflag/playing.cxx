@@ -5459,8 +5459,9 @@ void			startPlaying(BzfDisplay* _display,
   tmpString += (const char*)glGetString(GL_RENDERER);
   controlPanel->addMessage(tmpString);
 
-	// get current MOTD
-  controlPanel->addMessage("MOTD: "+motd.get("http://bzflag.org/motd.php"));
+  // get current MOTD
+  controlPanel->addMessage(ColorStrings[UnderlineColor] + "MOTD: " +
+                           motd.get("http://bzflag.org/motd.php"));
   
   //inform user of silencePlayers on startup
   for (unsigned int j = 0; j < silencePlayers.size(); j ++){
