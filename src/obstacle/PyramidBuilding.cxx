@@ -102,10 +102,18 @@ bool			PyramidBuilding::isInside(const float* p,
 bool			PyramidBuilding::isInside(const float* p, float a,
 						float dx, float dy) const
 {
-  const float s = shrinkFactor(p[2]);
-  return (s > 0.0)
-  &&     ((p[2]+BZDBCache::tankHeight) >= getPosition()[2])
-  &&     testRectRect(getPosition(), getRotation(), s * getWidth(), s * getBreadth(), p, a, dx, dy);
+  // Tank is below pyramid ?
+  if (p[2] + BZDBCache::tankHeight < getPosition()[2])
+    return false;
+  // Tank is above pyramid ?
+  if (p[2] > getPosition()[2] + getHeight())
+    return false;
+  // Could be inside. Then check collision with the rectangle at object height
+  // This is a rectangle reduced by shrinking but pass the height that we are
+  // not so sure where collision can be
+  const float s = shrinkFactor(p[2], BZDBCache::tankHeight);
+  return testRectRect(getPosition(), getRotation(),
+		      s * getWidth(), s * getBreadth(), p, a, dx, dy);
 }
 
 bool			PyramidBuilding::isCrossing(const float* p, float a,
@@ -217,29 +225,36 @@ void			PyramidBuilding::getCorner(int index,
   }
 }
 
-float			PyramidBuilding::shrinkFactor(float z) const
+float			PyramidBuilding::shrinkFactor(float z,
+						      float height) const
 {
+  float shrink;
+
+ // Remove heights bias
   const float *pos = getPosition();
   z -= pos[2];
+  // Normalize heights
+  z /= getHeight();
 
-  if (getZFlip()){
-	  if (z < 0.0f)
-		return 0.0f;
-	  if (z == 0.0f)
-		  return 0.01f; // hack for the tip since we only test the bottom of a tank.
-	  if (z > getHeight())
-		return 0.0f;
-  }else{
-	  if (z < 0.0f)
-		return 0.0f;
-	  if (z > getHeight())
-		return 0.0f;
+  // if flipped the bigger intersection is at top of obiect
+  if (getZFlip()) {
+    // Normalize the object height, we have not done yet
+    height /= getHeight();
+    z += height;
   }
 
-  float shrink = (getHeight() - z) / getHeight();
+  // shrink is that
+  if (getZFlip()) {
+    shrink = z;
+  } else {
+    shrink = 1.0 - z;
+  }
 
-  if (getZFlip())
-	  shrink = 1.0f - shrink;
+  // clamp in 0 .. 1
+  if (shrink < 0.0)
+    shrink = 0.0;
+  else if (shrink > 1.0)
+    shrink = 1.0;
 
   return shrink;
 }

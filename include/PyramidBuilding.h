@@ -48,7 +48,8 @@ class PyramidBuilding : public Obstacle {
     void		getCorner(int index, float* pos) const;
 
   protected:
-    float		shrinkFactor(float z) const;
+    // compute minimum shrinking for height between z and z + height 
+    float		shrinkFactor(float z, float height = 0.0) const;
 
   private:
     static std::string	typeName;
