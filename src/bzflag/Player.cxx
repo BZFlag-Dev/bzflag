@@ -144,7 +144,12 @@ void			Player::getMuzzle(float* m) const
   //       as well, we do not use BZDB_MUZZLEFRONT, but the
   //       0.1f value listed in global.cxx is added on to the
   //       scaled version of tankRadius.
-  const float front = (dimensionsScale[0] * BZDBCache::tankRadius) + 0.1f;
+  float front = (dimensionsScale[0] * BZDBCache::tankRadius);
+  if (dimensionsRate[0] > 0.0f) {
+    front = front + (dimensionsRate[0] * 0.1f);
+  }
+  front = front + 0.1f;
+  
   m[0] = state.pos[0] + (front * forward[0]);
   m[1] = state.pos[1] + (front * forward[1]);
   const float height = BZDB.eval(StateDatabase::BZDB_MUZZLEHEIGHT);
