@@ -14,7 +14,7 @@
 
 #include <math.h>
 #include <string.h>
-#include <vector.h>
+#include <vector>
 
 #include "TimeKeeper.h"
 #include "Pack.h"
