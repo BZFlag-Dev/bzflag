@@ -20,6 +20,7 @@
 #include "SceneDatabase.h"
 #include "OpenGLMaterial.h"
 #include "BZDBCache.h"
+#include "TextureManager.h"
 
 // for dead reckoning
 static const float	MaxUpdateTime = 1.0f;		// seconds
@@ -139,13 +140,6 @@ void			Player::setAngularVelocity(float _angVel)
   state.angVel = _angVel;
 }
 
-void			Player::setTexture(const OpenGLTexture& _texture)
-{
-  if (!tankTexture)
-    tankTexture = new OpenGLTexture;
-  *tankTexture = _texture;
-}
-
 void			Player::changeTeam(TeamColor _team)
 {
   static const GLfloat	tankSpecular[3] = { 0.1f, 0.1f, 0.1f };
@@ -167,6 +161,11 @@ void			Player::changeTeam(TeamColor _team)
   else {
     emissive = tankEmissive;
     shininess = tankShininess;
+  }
+
+  if (tankTexture == NULL) {
+    TextureManager &tm = TextureManager::instance();
+    tankTexture = tm.getTexture(TX_TANK);
   }
 
   // change color of tank

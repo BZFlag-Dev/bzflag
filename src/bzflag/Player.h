@@ -74,8 +74,6 @@ public:
   void		setHidden(bool hidden = true);
   void		setInvisible(bool invisible = true);
 
-  static void		setTexture(const OpenGLTexture&);
-
   bool		isAlive() const;
   bool		isPaused() const;
   bool		isFlagActive() const;

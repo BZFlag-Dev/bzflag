@@ -5334,9 +5334,6 @@ static bool		joinGame(const StartupInfo* info,
     return false;
   }
 
-  // set tank textures
-  Player::setTexture(*tankTexture);
-
   if (!negotiateFlags(serverLink)) {
     leaveGame();
     return false;
