@@ -4,6 +4,7 @@
 BZFlag 2.0.1
 ------------
 
+* New Kick/Ban options using slot numbers (rendered in client) - Julio Jimenez
 * Added EndShot cheat detection - Julio Jimenez
 * Avoid spawning on top of tanks with SR or BU -  Daniel Remenak
 * Add fine-grained permissions control of polling - Daniel Remenak
