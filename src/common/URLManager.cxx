@@ -165,7 +165,7 @@ URLManager::URLManager()
 	if (result)
 			DEBUG1("Something wrong with CURL; Error: %d",result);
 
-	result = curl_easy_setopt((CURL*)easyHandle, CURLOPT_TIMEOUT, 10);
+	result = curl_easy_setopt((CURL*)easyHandle, CURLOPT_TIMEOUT, 30);
 	if (result)
 	  DEBUG1("Something wrong with CURL; Error: %d",result);
 

@@ -167,6 +167,7 @@ static void             joinInternetGame2();
 static void             cleanWorldCache();
 static void             markOld(std::string &fileName);
 void	                leaveGame();
+void			drawFrame(const float dt);
 extern void		dumpResources(BzfDisplay*, SceneRenderer&);
 static void		setRobotTarget(RobotPlayer* robot);
 extern void		doAutoPilot(float &rotation, float &speed);
@@ -1381,6 +1382,9 @@ static bool isUrlCached()
   unsigned int readSize;
 
   if (worldUrl.size()) {
+    HUDDialogStack::get()->setFailedMessage
+      (("Loading world from " + worldUrl).c_str());
+    drawFrame(0.0f);
     URLManager& urlMgr = URLManager::instance();
     gotFromURL = urlMgr.getURL(worldUrl, (void **) &worldDatabase, readSize);
   }
@@ -1389,8 +1393,11 @@ static bool isUrlCached()
     md5.update((unsigned char *)worldDatabase, readSize);
     md5.finalize();
     std::string digest = md5.hexdigest();
-    if (digest != md5Digest)
+    if (digest != md5Digest) {
       gotFromURL = false;
+      HUDDialogStack::get()->setFailedMessage("Download from URL failed");
+      drawFrame(0.0f);
+    }
   }
   if (gotFromURL) {
     cleanWorldCache();
@@ -1401,6 +1408,8 @@ static bool isUrlCached()
       delete cacheOut;
     } else {
       gotFromURL = false;
+      HUDDialogStack::get()->setFailedMessage("Problem writing cache");
+      drawFrame(0.0f);
     }
     URLManager::instance().freeURLData((void *)worldDatabase);
   }
@@ -1410,7 +1419,8 @@ static bool isUrlCached()
 static void loadCachedWorld()
 {
   std::istream *cachedWorld = FILEMGR.createDataInStream(worldCachePath, true);
-  HUDDialogStack::get()->setFailedMessage("Loading world from cache...");
+  HUDDialogStack::get()->setFailedMessage("Loading world into memory ...");
+  drawFrame(0.0f);
   cachedWorld->seekg(0, std::ios::end);
   std::streampos size = cachedWorld->tellg();
   unsigned long charSize = std::streamoff(size);
