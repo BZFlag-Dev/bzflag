@@ -1691,33 +1691,6 @@ static TeamColor autoTeamSelect(TeamColor t)
 
   std::vector<TeamSize>::iterator it;
 
-  // if you come with a 1-1-x-x try to add a player to these 1 to have team
-  if ((teams[0].current == 1) && (teams[1].current == 1)) {
-    // remove teams full
-    it = teams.begin();
-    while (it < teams.end())
-      if (it->current == it->max) {
-	teams.erase(it);
-	it = teams.begin();
-      } else {
-	it++;
-      }
-    // if there is still a team with 1 player select all 1 tank team
-    // to choose from
-    if (teams.size() > 0)
-      if (teams[0].current == 1) {
-	it = teams.begin();
-	while (it < teams.end())
-	  if (it->current == 0) {
-	    teams.erase(it);
-	    it = teams.begin();
-	  } else {
-	    it++;
-	  }
-      }
-    return teamSelect(t, teams);
-  }
-
   int maxTeamSize = teams[0].current;
 
   // remove teams full
@@ -1738,7 +1711,19 @@ static TeamColor autoTeamSelect(TeamColor t)
       break;
     }
 
-  if (unBalanced) {
+  // if you come with a 1-1-x-x try to add a player to these 1 to have team
+  // if there are still 2 teams with 1 player select all 1 tank team
+  // to choose from
+  if ((maxTeamSize == 1) && (teams.size() >= 2) && (teams[1].current == 1)) {
+    it = teams.begin();
+    while (it < teams.end())
+      if (it->current) {
+	it++;
+      } else {
+	teams.erase(it);
+	it = teams.begin();
+      }
+  } else if (unBalanced) {
     // remove bigger teams
     it = teams.begin();
     while (it < teams.end())
@@ -1748,16 +1733,28 @@ static TeamColor autoTeamSelect(TeamColor t)
       } else {
 	it++;
       }
-    // Search for the second biggest team to this and remove the lowers
-    int secondTeamSize = teams[0].current;
-    it = teams.begin();
-    while (it < teams.end())
-      if (it->current < secondTeamSize) {
-	teams.erase(it);
-	it = teams.begin();
-      } else {
-	it++;
-      }
+    // Search for the lowest existing team and remove uppers. If there
+    // are non empty non full 2nd team don't start a new team but
+    // try to balance the lower
+    if (teams[0].current) {
+      it = teams.begin();
+      while (it < teams.end())
+	if (it->current) {
+	  it++;
+	} else {
+	  teams.erase(it);
+	  it = teams.begin();
+	}
+      int lowerTeam = teams[teams.size() - 1].current;
+      it = teams.begin();
+      while (it < teams.end())
+	if (it->current == lowerTeam) {
+	  it++;
+	} else {
+	  teams.erase(it);
+	  it = teams.begin();
+	}
+    }
   }
   return teamSelect(t, teams);
 }
