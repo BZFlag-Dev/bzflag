@@ -28,6 +28,7 @@ static double		qpcFrequency = 0.0;
 TimeKeeper		TimeKeeper::currentTime;
 TimeKeeper		TimeKeeper::tickTime;
 TimeKeeper		TimeKeeper::sunExplodeTime;
+TimeKeeper		TimeKeeper::sunGenesisTime;
 TimeKeeper		TimeKeeper::nullTime;
 
 const TimeKeeper&	TimeKeeper::getCurrent(void)
@@ -88,6 +89,12 @@ const TimeKeeper& TimeKeeper::getSunExplodeTime(void)
 {
   sunExplodeTime.seconds = 10000.0 * 365 * 24 * 60 * 60;
   return sunExplodeTime;
+}
+
+const TimeKeeper& TimeKeeper::getSunGenesisTime(void)
+{
+  sunGenesisTime.seconds = -10000.0 * 365 * 24 * 60 * 60;
+  return sunGenesisTime;
 }
 
 const TimeKeeper& TimeKeeper::getNullTime(void)

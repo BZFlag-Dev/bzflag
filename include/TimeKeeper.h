@@ -39,8 +39,9 @@ class TimeKeeper {
     TimeKeeper&		operator=(const TimeKeeper&);
 
     float		operator-(const TimeKeeper&) const;
-    TimeKeeper&		operator+=(float);
     bool		operator<=(const TimeKeeper&) const;
+    TimeKeeper&		operator+=(float);
+    TimeKeeper&		operator+=(const TimeKeeper&) ;
 
     /** returns how many seconds have elapsed since epoch, Jan 1, 1970 */
     float               getSeconds(void) const;
@@ -55,6 +56,8 @@ class TimeKeeper {
 
     /** returns a timekeeper representing +Inf */
     static const TimeKeeper&	getSunExplodeTime(void);
+    /** returns a timekeeper representing -Inf */
+    static const TimeKeeper&	getSunGenesisTime(void);
     /** returns a timekeeper representing an unset timekeeper */
     static const TimeKeeper&	getNullTime(void);
 
@@ -63,6 +66,7 @@ private:
     static TimeKeeper	currentTime;
     static TimeKeeper	tickTime;
     static TimeKeeper	sunExplodeTime;
+    static TimeKeeper	sunGenesisTime;
     static TimeKeeper	nullTime;
 };
 
@@ -100,6 +104,11 @@ inline float		TimeKeeper::operator-(const TimeKeeper& t) const
 inline TimeKeeper&	TimeKeeper::operator+=(float dt)
 {
   seconds += double(dt);
+  return *this;
+}
+inline TimeKeeper&	TimeKeeper::operator+=(const TimeKeeper& t)
+{
+  seconds += double(t.seconds);
   return *this;
 }
 
