@@ -61,6 +61,37 @@ MTL=midl.exe
 # Name "makehtml - Win32 Debug"
 # Begin Source File
 
+SOURCE=..\man\bzadmin.6s
+
+!IF  "$(CFG)" == "makehtml - Win32 Release"
+
+# Begin Custom Build - Running $(OutDir)\man2html on $(InputPath)
+OutDir=.\Release
+ProjDir=.
+InputPath=..\man\bzadmin.6s
+
+"$(ProjDir)\..\doc\bzadmin.html" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+	$(OutDir)\man2html < $(InputPath) > $(ProjDir)\..\doc\bzadmin.html
+
+# End Custom Build
+
+!ELSEIF  "$(CFG)" == "makehtml - Win32 Debug"
+
+# Begin Custom Build - Running $(OutDir)\man2html on $(InputPath)
+OutDir=.\Debug
+ProjDir=.
+InputPath=..\man\bzadmin.6s
+
+"$(ProjDir)\..\doc\bzadmin.html" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+	$(OutDir)\man2html < $(InputPath) > $(ProjDir)\..\doc\bzadmin.html
+
+# End Custom Build
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
 SOURCE=..\man\bzflag.6s
 
 !IF  "$(CFG)" == "makehtml - Win32 Release"
@@ -86,37 +117,6 @@ InputPath=..\man\bzflag.6s
 
 "$(ProjDir)\..\doc\bzflag.html" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
 	$(OutDir)\man2html < $(InputPath) > $(ProjDir)\..\doc\bzflag.html
-
-# End Custom Build
-
-!ENDIF 
-
-# End Source File
-# Begin Source File
-
-SOURCE=..\man\bzfls.6s
-
-!IF  "$(CFG)" == "makehtml - Win32 Release"
-
-# Begin Custom Build - Running $(OutDir)\man2html on $(InputPath)
-OutDir=.\Release
-ProjDir=.
-InputPath=..\man\bzfls.6s
-
-"$(ProjDir)\..\doc\bzfls.html" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	$(OutDir)\man2html < $(InputPath) > $(ProjDir)\..\doc\bzfls.html
-
-# End Custom Build
-
-!ELSEIF  "$(CFG)" == "makehtml - Win32 Debug"
-
-# Begin Custom Build - Running $(OutDir)\man2html on $(InputPath)
-OutDir=.\Debug
-ProjDir=.
-InputPath=..\man\bzfls.6s
-
-"$(ProjDir)\..\doc\bzfls.html" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	$(OutDir)\man2html < $(InputPath) > $(ProjDir)\..\doc\bzfls.html
 
 # End Custom Build
 
