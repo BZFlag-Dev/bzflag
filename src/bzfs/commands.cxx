@@ -1129,7 +1129,8 @@ void handlePollCmd(int t, const char *message)
   // only need to do this once
   static VotingArbiter *arbiter = (VotingArbiter *)BZDB.getPointer("poll");
 
-  DEBUG2("Arbiter was acquired with address 0x%x\n", (unsigned int)arbiter);
+  //DEBUG2("Arbiter was acquired with address 0x%p\n", arbiter);
+  DEBUG2("Arbiter was acquired\n");
 
   /* make sure that there is not a poll active already */
   if (arbiter->knowsPoll()) {
