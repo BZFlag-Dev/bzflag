@@ -312,7 +312,9 @@ void			GUIOptionsMenu::resize(int width, int height)
     ((HUDuiList*)list[i++])->setIndex(static_cast<int>(BZDB.eval("killerhighlight")));
     ((HUDuiList*)list[i++])->setIndex(static_cast<int>(BZDB.eval("pulseRate") * 5) - 1);
     ((HUDuiList*)list[i++])->setIndex(static_cast<int>(BZDB.eval("pulseDepth") * 10) - 1);
+#if defined(DEBUG_RENDERING)
     ((HUDuiList*)list[i++])->setIndex(BZDB.isTrue("showTreads") ? 1 : 0);
+#endif    
   }
 }
 
@@ -422,11 +424,13 @@ void			GUIOptionsMenu::callback(HUDuiControl* w, void* data)
 	BZDB.set("pulseDepth", string_util::format("%f", (float)(list->getIndex() + 1) / 10.0f));
 	break;
       }
+#if defined(DEBUG_RENDERING)
     case 'T':
       {
         BZDB.set("showTreads", list->getIndex() ? "1" : "0");
 	break;
       }
+#endif    
   }
 }
 
