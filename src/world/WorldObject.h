@@ -18,12 +18,10 @@ class WorldObject {
 public:
   WorldObject() { };
   virtual ~WorldObject() { };
-  
+
   virtual std::string myToken() const = 0;
-  static std::istream& operator>>(std::istream& o, const WorldObject&) const;
+  static std::istream& operator>>(std::istream& o, WorldObject&);
   static std::ostream& operator<<(std::ostream& o, const WorldObject&) const;
 }
 
 #endif //__WORLDOBJECT_H__
-
-
