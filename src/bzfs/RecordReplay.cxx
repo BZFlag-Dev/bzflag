@@ -142,8 +142,11 @@ static bool savePlayerStates ();
 static bool saveVariableStates ();
 static bool resetStates ();
 
+static bool setVariables (void *data);
+static bool preloadVariables ();
+
 // saves straight to a file, or into the buffer
-static bool routePacket (u16 code, int len, const void * data, u16 mode);
+static bool routePacket (u16 code, int len, const void *data, u16 mode);
 
 static RRpacket *newRRpacket (u16 mode, u16 code, int len, const void *data);
 static RRpacket *delRRpacket (RRbuffer *b);         // delete from the tail
@@ -592,6 +595,11 @@ static bool replayReset()
   ReplayOffset = 0;
   ReplayPos = NULL;
 
+  // reset the local view of the players' state
+  for (int i = MaxPlayers; i < curMaxPlayers; i++) {
+    player[i].setReplayState (ReplayNone);
+  }
+  
   return true;
 }
 
@@ -614,6 +622,29 @@ bool Replay::kill()
 }
 
 
+static bool preloadVariables ()
+{
+  RRpacket *p = ReplayBuf.tail;
+  
+  // find the first BZDB update packet in the first state update block
+  while ((p != NULL) && (p->code != MsgSetVar) &&
+         ((p->mode == FakePacket) || (p->mode == HiddenPacket))) {
+    p = p->next;
+  }
+  if ((p == NULL) || (p->mode != FakePacket) || (p->code != MsgSetVar)) {
+    return false;
+  }
+  
+  // load the variables into BZDB
+  do {
+    setVariables (p->data);
+    p = p->next;
+  } while ((p != NULL) && (p->mode == FakePacket) && (p->code == MsgSetVar));
+  
+  return true;
+}
+
+
 bool Replay::loadFile(int playerIndex, const char *filename)
 {
   ReplayHeader header;
@@ -629,11 +660,14 @@ bool Replay::loadFile(int playerIndex, const char *filename)
   
   if (badFilename (filename)) {
     sendMessage (ServerPlayer, playerIndex,
-                 "Files must be with the local directory");
+                 "Files must be in the recordings directory");
     return false;
   }
   
   replayReset();
+  if (Replaying) {
+    resetStates ();
+  }
   
   ReplayFile = openFile (filename, "rb");
   if (ReplayFile == NULL) {
@@ -670,11 +704,20 @@ bool Replay::loadFile(int playerIndex, const char *filename)
     }
   }
 
-  ReplayPos = ReplayBuf.tail; // setup the initial position
-
   if (ReplayBuf.tail == NULL) {
     snprintf (buffer, MessageLen, "No valid data: %s", name.c_str());
     sendMessage (ServerPlayer, playerIndex, buffer, true);
+    replayReset ();
+    return false;
+  }
+  
+  ReplayPos = ReplayBuf.tail; // setup the initial position
+
+  if (!preloadVariables()) {
+    snprintf (buffer, MessageLen, "Could not preload variables: %s",
+              name.c_str());
+    sendMessage (ServerPlayer, playerIndex, buffer, true);
+    replayReset ();
     return false;
   }
 
@@ -800,9 +843,6 @@ bool Replay::play(int playerIndex)
 
   // reset the replay observers' view of state  
   resetStates ();
-  for (int i = MaxPlayers; i < curMaxPlayers; i++) {
-    player[i].setReplayState (ReplayNone);
-  }
 
   sendMessage (ServerPlayer, playerIndex, "Starting replay");
   
@@ -864,9 +904,6 @@ bool Replay::skip(int playerIndex, int seconds)
   if (p != ReplayPos) {
     // reset the replay observers' view of state  
     resetStates();
-    for (int i = MaxPlayers; i < curMaxPlayers; i++) {
-      player[i].setReplayState (ReplayNone);
-    }
   }
   
   RRtime newOffset = getRRtime() - p->timestamp;
@@ -906,8 +943,14 @@ bool Replay::sendPackets () {
     
     DEBUG4 ("sendPackets(): mode = %i, len = %4i, code = %s, data = %p\n",
             (int)p->mode, p->len, msgString (p->code), p->data);
+            
 
     if (p->mode != HiddenPacket) {
+      // set the database variables if this is MsgSetVar
+      if (p->code == MsgSetVar) {
+        setVariables (p->data);
+      }
+    
       // send message to all replay observers
       for (i = MaxPlayers; i < curMaxPlayers; i++) {
         PlayerInfo &pi = player[i];
@@ -1010,6 +1053,45 @@ void Replay::sendHelp (int playerIndex)
   sendMessage(ServerPlayer, playerIndex, "  /replay skip [+/-seconds]");
   return;
 }
+
+
+static bool
+setVariables (void *data)
+{
+  // copied this function from [playing.cxx]
+
+  uint16_t numVars;
+  uint8_t nameLen, valueLen;
+  
+  char name[MaxPacketLen];
+  char value[MaxPacketLen];
+
+  data = nboUnpackUShort(data, numVars);
+  for (int i = 0; i < numVars; i++) { 
+    data = nboUnpackUByte(data, nameLen);
+    data = nboUnpackString(data, name, nameLen);
+    name[nameLen] = '\0';
+
+    data = nboUnpackUByte(data, valueLen);
+    data = nboUnpackString(data, value, valueLen);
+    value[valueLen] = '\0';
+    
+    if (strcmp (name, "poll") == 0) {
+      // do not save the poll state, it can
+      // lead to SEGV's when players leave
+      // and there is no ongoing poll
+      // [see bzfs.cxx removePlayer()]
+      continue;
+    }
+    
+    BZDB.set(name, value);
+    // FIXME - the following two required again?
+    BZDB.setPersistent(name, false);
+    BZDB.setPermission(name, StateDatabase::Locked);
+  }
+  return true;
+}
+
 
 /****************************************************************************/
 
@@ -1161,6 +1243,11 @@ resetStates ()
     if (player[i].isPlaying()) {
       directMessage(i, MsgReplayReset, (char*)buf-(char*)bufStart, bufStart);
     }
+  }
+
+  // reset the local view of the players' state
+  for (i = MaxPlayers; i < curMaxPlayers; i++) {
+    player[i].setReplayState (ReplayNone);
   }
 
   return true;
@@ -1491,7 +1578,7 @@ loadHeader (ReplayHeader *h, FILE *f)
       (fread (h->world, h->worldSize, 1, f) <= 0)) {
     return false;
   }
-
+  
   bool replaced = false;  
   if (replaceFlagTypes (h)) {
     replaced = true;
@@ -1833,7 +1920,7 @@ getRRtime ()
 
 #else //_WIN32
 
-  // FIXME - use QPC if availabe? (10ms[pat] good enough?)
+  // FIXME - use QPC if available? (10ms[pat] good enough?)
   //       - during rollovers, check time() against the
   //         current value to see if a rollover was missed?
   

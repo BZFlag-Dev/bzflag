@@ -160,7 +160,9 @@ void broadcastMessage(uint16_t code, int len, const void *msg)
 //
 static void onGlobalChanged(const std::string& msg, void*)
 {
-  // NOTE:  /set and /reset are blocked when in replay mode
+  // This Callback is removed in replay mode. As
+  // well, the /set and /reset commands are blocked.
+  
   std::string name  = msg;
   std::string value = BZDB.get(msg);
   void *bufStart = getDirectMessageBuffer();
@@ -3616,6 +3618,13 @@ int main(int argc, char **argv)
   if (clOptions->replayServer) {
 
     Replay::init();
+
+    // disable the BZDB callbacks    
+    for (unsigned int gi = 0; gi < numGlobalDBItems; ++gi) {
+      assert(globalDBItems[gi].name != NULL);
+      BZDB.removeCallback(std::string(globalDBItems[gi].name), 
+                          onGlobalChanged, (void*) NULL);
+    }
     
     // maxPlayers is sent in the world data to the client.
     // the client then uses this to setup it's players
