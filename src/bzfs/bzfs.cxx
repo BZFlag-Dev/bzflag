@@ -85,6 +85,8 @@ const int udpBufSize = 128000;
 #include "md5.h"
 #include "ShotUpdate.h"
 #include "WordFilter.h"
+#include "ConfigFileManager.h"
+#include "CommandManager.h"
 
 /* bzfs class specific headers */
 #include "TextChunkManager.h"
@@ -212,6 +214,8 @@ struct CmdLineOptions
 
   std::string		reportFile;
   std::string		reportPipe;
+
+  std::string		bzdbVars;
 };
 
 enum ClientState {
@@ -5250,6 +5254,7 @@ static const char *usageString =
 "[-tk] "
 "[-tkkr <percent>] "
 "[-ttl <ttl>] "
+"[-vars <filename>]"
 "[-version] "
 "[-world <filename>]"
 "[-speedtol <tolerance>]"
@@ -5319,6 +5324,7 @@ static const char *extraUsageString =
 "\t-tk: player does not die when killing a teammate\n"
 "\t-tkkr: team killer to wins percentage (1-100) above which player is kicked\n"
 "\t-ttl: time-to-live for pings (default=8)\n"
+"\t-vars: file to read for worlds configuration variables\n"
 "\t-version: print version and exit\n"
 "\t-world: world file to load\n"
 "\t-speedtol: multiplyers over normal speed to auto kick at. defaults to 1.25, should not be less then 1.0\n"
@@ -5435,6 +5441,22 @@ static bool setRequiredFlag(FlagInfo& flag, FlagDesc *desc)
   flag.required = true;
   flag.flag.desc = desc;
   return true;
+}
+
+static std::string cmdSet(const std::string&, const CommandManager::ArgList& args)
+{
+  switch (args.size()) {
+    case 2:
+      if (BZDB->isSet(args[0])) {
+        BZDB->set(args[0], args[1], StateDatabase::Server);
+        return std::string();
+      }
+      else
+	return "variable " + args[0] + " does not exist";
+
+    default:
+      return "usage: set <name> <value>";
+  }
 }
 
 static char **parseConfFile( const char *file, int &ac)
@@ -6032,6 +6054,13 @@ static void parse(int argc, char **argv, CmdLineOptions &options)
       printVersion();
       exit(0);
     }
+    else if (strcmp(argv[i], "-vars") == 0) {
+      if (++i == argc) {
+	fprintf(stderr, "argument expected for \"%s\"\n", argv[i]);
+	usage(argv[0]);
+      }
+      options.bzdbVars = argv[i];
+    }
     else if (strcmp(argv[i], "-passwd") == 0 || strcmp(argv[i], "-password") == 0) {
       if (++i == argc) {
 	fprintf(stderr, "argument expected for \"%s\"\n", argv[i]);
@@ -6342,6 +6371,11 @@ int main(int argc, char **argv)
 
   // parse arguments
   parse(argc, argv, *clOptions);
+
+  if (clOptions->bzdbVars.length() > 0) {
+    CMDMGR->add("set", cmdSet, "set [<name> <value>]");
+    CFGMGR->read(clOptions->bzdbVars);
+  }
 
   /* load the bad word filter if it was set */
   if (clOptions->filterFilename.length() != 0) {
