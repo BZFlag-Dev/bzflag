@@ -1,4 +1,4 @@
-SUBDIRS = l10n alternate fonts
+SUBDIRS = l10n fonts
 
 EXTRA_DIST =			\
 	blue_basetop.png	\
