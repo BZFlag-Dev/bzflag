@@ -349,6 +349,8 @@ static void		parse(int argc, char** argv)
     if (strcmp(argv[i], "-a") == 0 ||
 		strcmp(argv[i], "-anonymous") == 0) {
       anonymous = true;
+    } else if (strcmp(argv[i], "-debug") == 0) {
+      debugLevel++;
     } else if (strcmp(argv[i], "-d") == 0 ||
 		strcmp(argv[i], "-directory") == 0) {
       if (++i == argc) {
@@ -359,8 +361,6 @@ static void		parse(int argc, char** argv)
 	BZDB.unset("directory");
       else
 	BZDB.set("directory", argv[i]);
-    } else if (strcmp(argv[i], "-debug") == 0) {
-      debugLevel++;
     } else if (strcmp(argv[i], "-e") == 0 || strcmp(argv[i], "-echo") == 0) {
       echoToConsole = true;
     } else if (strcmp(argv[i], "-ea") == 0 || strcmp(argv[i], "-echoAnsi") == 0) {
