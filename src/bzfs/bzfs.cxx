@@ -2827,16 +2827,16 @@ static void captureFlag(int playerIndex, TeamColor teamCaptured)
   buf = nboPackUShort(buf, uint16_t(teamCaptured));
   broadcastMessage(MsgCaptureFlag, (char*)buf-(char*)bufStart, bufStart);
 
-  GameKeeper::Player *otherData;
   // everyone on losing team is dead
-  for (int i = 0; i < curMaxPlayers; i++)
-    if ((otherData = GameKeeper::Player::getPlayerByIndex(i))
-	&& teamIndex == int(otherData->player.getTeam()) &&
-	otherData->player.isAlive()) {
-      otherData->player.setDead();
-      zapFlagByPlayer(i);
-      otherData->player.setRestartOnBase(true);
+  for (int i = 0; i < curMaxPlayers; i++) {
+    GameKeeper::Player *p = GameKeeper::Player::getPlayerByIndex(i);
+    if ((p == NULL) || (teamIndex != (int)p->player.getTeam())) {
+      continue;
     }
+    p->player.setDead();
+    p->player.setRestartOnBase(true);
+    zapFlagByPlayer(i);
+  }
 
   // update score (rogues can't capture flags)
   int winningTeam = (int)NoTeam;
