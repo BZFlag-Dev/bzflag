@@ -3630,7 +3630,7 @@ static void addClient(int acceptSocket)
     if (player[playerIndex].state == PlayerAccept)
       break;
   }
-  // close the old connection
+  // close the old connection FIXME hope it's the right one
   close(player[playerIndex].fd);
   // accept game connection
   AddrLen addr_len = sizeof(player[playerIndex].taddr);
@@ -5200,7 +5200,11 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
       buf = nboUnpackString(buf, player[t].callSign, CallSignLen);
       buf = nboUnpackString(buf, player[t].email, EmailLen);
       addPlayer(t);
-      DEBUG1("Player %s [%d] has joined\n", player[t].callSign, t);
+      DEBUG1("Player %s [%d] has joined from %s:%d on %i\n",
+	  player[t].callSign, t,
+	  inet_ntoa(player[t].taddr.sin_addr),
+	  ntohs(player[t].taddr.sin_port),
+	  player[t].fd);
       break;
     }
 
