@@ -793,7 +793,8 @@ TankSceneNode::LowTankRenderNode::LowTankRenderNode(
 
 TankSceneNode::LowTankRenderNode::~LowTankRenderNode()
 {
-  // do nothing
+  // release the lists to be nice
+  freeParts();
 }
 
 GLuint			TankSceneNode::LowTankRenderNode::
@@ -853,7 +854,8 @@ TankSceneNode::MedTankRenderNode::MedTankRenderNode(
 
 TankSceneNode::MedTankRenderNode::~MedTankRenderNode()
 {
-  // do nothing
+  // release the lists to be nice
+  freeParts();
 }
 
 GLuint			TankSceneNode::MedTankRenderNode::
@@ -912,7 +914,8 @@ TankSceneNode::HighTankRenderNode::HighTankRenderNode(
 
 TankSceneNode::HighTankRenderNode::~HighTankRenderNode()
 {
-  // do nothing
+  // release the lists to be nice
+  freeParts();
 }
 
 GLuint			TankSceneNode::HighTankRenderNode::
