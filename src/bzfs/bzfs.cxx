@@ -5472,7 +5472,7 @@ static std::string cmdSet(const std::string&, const CommandManager::ArgList& arg
  */
 int main(int argc, char **argv)
 {
-  VotingPoll *votingpoll;
+  VotingPoll *votingpoll = (VotingPoll *)NULL;
   
   setvbuf(stdout, (char *)NULL, _IOLBF, 0);
   setvbuf(stderr, (char *)NULL, _IOLBF, 0);
@@ -5789,7 +5789,7 @@ int main(int argc, char **argv)
     }
 
     // manage voting poll for collective kicks/bans
-    if (clOptions->voteTime > 0) {
+    if ((clOptions->voteTime > 0) && (votingpoll != NULL)) {
       if (votingpoll->isClosed() && votingpoll->isSuccessful()) {
 	char message[256];
 	memset(message, 0, 256);
