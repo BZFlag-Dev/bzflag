@@ -1,4 +1,4 @@
-;/* bzflag
+/* bzflag
  * Copyright (c) 1993 - 2002 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
@@ -59,21 +59,12 @@ SceneVisitorRender::Job::Job(const OpenGLGState& _gstate) :
 //
 
 SceneVisitorRender::SceneVisitorRender() :
-								nameArea("area"),
-								nameTime("time"),
-								nameFrame("frame"),
 								nameMask("mask"),
-								nameDebug("displayDebug"),
 								nameLighting("renderLighting"),
 								dummyParams("dummy", 0, 0, 1)
 {
 	// create resetter visitor
 	resetter = new SceneVisitorRenderReset;
-
-	// some built-in paramters
-	getParams().pushFloat(nameArea, 1.0f);
-	getParams().pushFloat(nameFrame, 0.0f);
-	getParams().pushFloat(nameTime, 0.0f);
 
 	// default gstate
 	gstateStack.push_back(OpenGLGState());
@@ -88,6 +79,7 @@ SceneVisitorRender::SceneVisitorRender() :
 	textureXFormIndexStack.push_back(0);
 
 	// default primitive parameters
+	stippleStack.push_back(&dummyParams);
 	colorStack.push_back(&dummyParams);
 	texcoordStack.push_back(&dummyParams);
 	normalStack.push_back(&dummyParams);
@@ -104,52 +96,9 @@ SceneVisitorRender::~SceneVisitorRender()
 	delete resetter;
 }
 
-void					SceneVisitorRender::setArea(float size)
-{
-	getParams().setFloat(nameArea, size);
-}
-
-void					SceneVisitorRender::setTime(float t)
-{
-	getParams().setFloat(nameTime, t);
-}
-
-void					SceneVisitorRender::setFrame(float n)
-{
-	getParams().setFloat(nameFrame, n);
-}
-
-const SceneVisitorRender::Instruments*
-						SceneVisitorRender::instrGet() const
-{
-	return &instruments;
-}
-
-bool					SceneVisitorRender::descend(SceneNodeGroup* n)
-{
-	++instruments.nNodes;
-	return SceneVisitor::descend(n);
-}
-
 bool					SceneVisitorRender::traverse(SceneNode* node)
 {
-	// if debugging then flush rendering pipeline for accurate timing
-	const bool debug = BZDB->isTrue(nameDebug);
-	if (debug)
-		glFinish();
-
-	// initialize instruments
 	TimeKeeper t(TimeKeeper::getCurrent());
-	instruments.time        = 0.0f;
-	instruments.nNodes      = 0;
-	instruments.nTransforms = 0;
-	instruments.nPoints     = 0;
-	instruments.nLines      = 0;
-	instruments.nTriangles  = 0;
-
-	// done if nothing to traverse
-	if (node == NULL)
-		return false;
 
 	// first matrix is the identity
 	matrixList.push_back(modelXFormStack.back());
@@ -169,7 +118,7 @@ bool					SceneVisitorRender::traverse(SceneNode* node)
 	resetter->traverse(node);
 
 	// collect primitives
-	const bool result = node->visit(this);
+	const bool result = SceneVisitorBaseRender::traverse(node);
 
 	// sort 'em
 	sort();
@@ -185,11 +134,11 @@ bool					SceneVisitorRender::traverse(SceneNode* node)
 
 	// flush pipeline again so we get the time required to actually
 	// draw everything, not just to shove it down the pipeline.
-	if (debug)
+	if (isDebugging())
 		glFinish();
 
 	// record the elapsed time
-	instruments.time = TimeKeeper::getCurrent() - t;
+	getInstr()->time = TimeKeeper::getCurrent() - t;
 
 	return result;
 }
@@ -263,6 +212,7 @@ void					SceneVisitorRender::draw()
 	glEnableClientState(GL_VERTEX_ARRAY);
 	// FIXME -- init() should become unnecessary with consistent use of gstates
 	OpenGLGState::init();
+	setStipple(1.0f);
 
 	// initialize indices
 	unsigned int xformView       = 0xffffffff;
@@ -272,6 +222,7 @@ void					SceneVisitorRender::draw()
 	unsigned int enabledLights   = 0;
 
 	// initialize pointers
+	const SceneNodeVFFloat* pStipple  = NULL;
 	const SceneNodeVFFloat* pColor    = NULL;
 	const SceneNodeVFFloat* pTexcoord = NULL;
 	const SceneNodeVFFloat* pNormal   = NULL;
@@ -302,15 +253,12 @@ void					SceneVisitorRender::draw()
 				glLightfv(GL_LIGHT0 + j, GL_DIFFUSE,  light.diffuse);
 				glLightfv(GL_LIGHT0 + j, GL_SPECULAR, light.specular);
 				glLightfv(GL_LIGHT0 + j, GL_POSITION, light.position);
-/*
-				glLightfv(GL_LIGHT0 + numLights, GL_SPOT_DIRECTION, n->getSpotDirection());
-				glLightf(GL_LIGHT0 + numLights, GL_SPOT_EXPONENT, n->getSpotExponent());
-				glLightf(GL_LIGHT0 + numLights, GL_SPOT_CUTOFF, n->getSpotCutoff());
-				const float* atten = n->getAttenuation();
-				glLightf(GL_LIGHT0 + numLights, GL_CONSTANT_ATTENUATION, atten[0]);
-				glLightf(GL_LIGHT0 + numLights, GL_LINEAR_ATTENUATION, atten[1]);
-				glLightf(GL_LIGHT0 + numLights, GL_QUADRATIC_ATTENUATION, atten[2]);
-*/
+				glLightfv(GL_LIGHT0 + numLights, GL_SPOT_DIRECTION, light.spotDirection);
+				glLightf(GL_LIGHT0 + numLights, GL_SPOT_EXPONENT, light.spotExponent);
+				glLightf(GL_LIGHT0 + numLights, GL_SPOT_CUTOFF, light.spotCutoff);
+				glLightf(GL_LIGHT0 + numLights, GL_CONSTANT_ATTENUATION, light.attenuation[0]);
+				glLightf(GL_LIGHT0 + numLights, GL_LINEAR_ATTENUATION, light.attenuation[1]);
+				glLightf(GL_LIGHT0 + numLights, GL_QUADRATIC_ATTENUATION, light.attenuation[2]);
 			}
 
 			if (numLights < enabledLights)
@@ -330,26 +278,35 @@ void					SceneVisitorRender::draw()
 			glMatrixMode(GL_TEXTURE);
 			glLoadMatrixf(matrixList[xformTexture].get());
 			matrixModeChanged = true;
-			++instruments.nTransforms;
+			++getInstr()->nTransforms;
 		}
 		if (job.xformProjection != xformProjection) {
 			xformProjection = job.xformProjection;
 			glMatrixMode(GL_PROJECTION);
 			glLoadMatrixf(matrixList[xformProjection].get());
 			matrixModeChanged = true;
-			++instruments.nTransforms;
+			++getInstr()->nTransforms;
 		}
 		if (matrixModeChanged)
 			glMatrixMode(GL_MODELVIEW);
 		if (job.xformView != xformView) {
 			xformView = job.xformView;
 			glLoadMatrixf(matrixList[xformView].get());
-			++instruments.nTransforms;
+			++getInstr()->nTransforms;
 		}
 
 		// prepare for primitive
 		unsigned int numItems;
 		job.gstate.setState();
+		if (pStipple != job.stipple) {
+			pStipple = job.stipple;
+			if (pStipple->getNum() == 0) {
+				setStipple(1.0f);
+			}
+			else {
+				setStipple(pStipple->get()[0]);
+			}
+		}
 		if (pColor != job.color) {
 			pColor = job.color;
 			numItems = pColor->getNum();
@@ -415,6 +372,7 @@ void					SceneVisitorRender::draw()
 	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 	glDisableClientState(GL_NORMAL_ARRAY);
 	glDisableClientState(GL_VERTEX_ARRAY);
+	setStipple(1.0f);
 	if (lighting) {
 		glDisable(GL_COLOR_MATERIAL);
 		glDisable(GL_LIGHTING);
@@ -532,12 +490,15 @@ bool					SceneVisitorRender::visit(SceneNodeGeometry* n)
 	n->setBundle(SceneNodeGeometry::kComputedIndex);
 
 	// check which arrays are used
+	const bool hasStipple = (n->stipple->getNum()    > 0);
 	const bool hasColor   = (n->color->getNum()    > 0);
 	const bool hasTexture = (n->texcoord->getNum() > 0);
 	const bool hasNormal  = (n->normal->getNum()   > 0);
 	const bool hasVertex  = (n->vertex->getNum()   > 0);
 
 	// push state
+	if (hasStipple)
+		stippleStack.push_back(n->stipple);
 	if (hasColor)
 		colorStack.push_back(n->color);
 	if (hasTexture)
@@ -554,6 +515,8 @@ bool					SceneVisitorRender::visit(SceneNodeGeometry* n)
 	const bool result = descend(n);
 
 	// pop state
+	if (hasStipple)
+		stippleStack.pop_back();
 	if (hasColor)
 		colorStack.pop_back();
 	if (hasTexture)
@@ -647,6 +610,7 @@ bool					SceneVisitorRender::visit(SceneNodePrimitive* n)
 	job.depth           = -aaBoundingBox[0][2];
 	job.gstate          = gstateStack.back();
 	job.compare         = job.gstate.getState();
+	job.stipple         = stippleStack.back();
 	job.color           = colorStack.back();
 	job.texcoord        = texcoordStack.back();
 	job.normal          = normalStack.back();
@@ -663,34 +627,34 @@ bool					SceneVisitorRender::visit(SceneNodePrimitive* n)
 	const unsigned int num  = n->index.getNum();
 	switch (n->type.get()) {
 		case SceneNodePrimitive::Points:
-			instruments.nPoints += num;
+			getInstr()->nPoints += num;
 			break;
 
 		case SceneNodePrimitive::Lines:
-			instruments.nLines += (num >> 1);
+			getInstr()->nLines += (num >> 1);
 			break;
 
 		case SceneNodePrimitive::LineStrip:
-			instruments.nLines += num - 1;
+			getInstr()->nLines += num - 1;
 			break;
 
 		case SceneNodePrimitive::LineLoop:
-			instruments.nLines += num;
+			getInstr()->nLines += num;
 			break;
 
 		case SceneNodePrimitive::Triangles:
-			instruments.nTriangles += num / 3;
+			getInstr()->nTriangles += num / 3;
 			break;
 
 		case SceneNodePrimitive::TriangleStrip:
-			instruments.nTriangles += num - 2;
+			getInstr()->nTriangles += num - 2;
 			break;
 
 		case SceneNodePrimitive::TriangleFan:
-			instruments.nTriangles += num - 2;
+			getInstr()->nTriangles += num - 2;
 			break;
 	}
-	++instruments.nNodes;
+	++getInstr()->nNodes;
 
 	return true;
 }
@@ -705,10 +669,14 @@ bool					SceneVisitorRender::visit(SceneNodeLight* n)
 
 	// save light state
 	LightInfo light;
-	memcpy(light.ambient,  n->getAmbientColor(),  sizeof(light.ambient));
-	memcpy(light.diffuse,  n->getDiffuseColor(),  sizeof(light.diffuse));
-	memcpy(light.specular, n->getSpecularColor(), sizeof(light.specular));
-	memcpy(light.position, position,              sizeof(light.position));
+	memcpy(light.ambient,       n->getAmbientColor(),  sizeof(light.ambient));
+	memcpy(light.diffuse,       n->getDiffuseColor(),  sizeof(light.diffuse));
+	memcpy(light.specular,      n->getSpecularColor(), sizeof(light.specular));
+	memcpy(light.position,      position,              sizeof(light.position));
+	memcpy(light.spotDirection, n->getSpotDirection(), sizeof(light.spotDirection));
+	light.spotExponent        = n->getSpotExponent();
+	light.spotCutoff          = n->getSpotCutoff();
+	memcpy(light.attenuation,   n->getAttenuation(),   sizeof(light.attenuation));
 	lightStack.push_back(light);
 	lightIndexStack.push_back(0xffffffff);
 	lightSetIndexStack.push_back(0xffffffff);

@@ -20,11 +20,6 @@
 #include <assert.h>
 #include <iostream>
 
-static const BzfString s_renderSmoothing("renderSmoothing");
-static const BzfString s_renderBlending("renderBlending");
-static const BzfString s_renderLighting("renderLighting");
-static const BzfString s_renderTexturing("renderTexturing");
-
 //
 // ViewItemModel
 //
@@ -34,13 +29,6 @@ ViewItemModel::ViewItemModel() : pixelProjection(false)
 	// prep projection
 	projection = new SceneNodeMatrixTransform;
 	projection->type.set(SceneNodeTransform::Projection);
-
-	// prep renderer
-	SceneVisitorParams& params = render.getParams();
-	params.pushFloat(s_renderSmoothing, 0.0f);
-	params.pushFloat(s_renderBlending, 0.0f);
-	params.pushFloat(s_renderLighting, 0.0f);
-	params.pushFloat(s_renderTexturing, 0.0f);
 }
 
 ViewItemModel::~ViewItemModel()
@@ -99,13 +87,6 @@ bool					ViewItemModel::onPreRender(
 void					ViewItemModel::onPostRender(
 								float, float, float w, float h)
 {
-	// prep renderer
-	SceneVisitorParams& params = render.getParams();
-	params.setFloat(s_renderSmoothing, BZDB->isTrue(s_renderSmoothing) ? 1.0f : 0.0f);
-	params.setFloat(s_renderBlending, BZDB->isTrue(s_renderBlending) ? 1.0f : 0.0f);
-	params.setFloat(s_renderLighting, BZDB->isTrue(s_renderLighting) ? 1.0f : 0.0f);
-	params.setFloat(s_renderTexturing, BZDB->isTrue(s_renderTexturing) ? 1.0f : 0.0f);
-
 	// draw
 	render.setArea(w * h);
 	render.traverse(projection);

@@ -36,6 +36,7 @@ CXXFILES =				\
 	SceneVisitorParams.cxx		\
 	SceneVisitorFind.cxx		\
 	SceneVisitorFindAll.cxx		\
+	SceneVisitorBaseRender.cxx	\
 	SceneVisitorRender.cxx		\
 	SceneVisitorSimpleRender.cxx	\
 	SceneReader.cxx 		\

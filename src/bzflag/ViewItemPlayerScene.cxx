@@ -12,6 +12,7 @@
 
 #include "ViewItemPlayerScene.h"
 #include "SceneManager.h"
+#include "StateDatabase.h"
 #include "bzfgl.h"
 #include <assert.h>
 #include <math.h>
@@ -30,6 +31,11 @@ ViewItemPlayerScene::ViewItemPlayerScene()
 	builder.setDepthMask(false);
 	builder.setForceBlending(true);
 	fadeGState = builder.getState();
+	builder.reset();
+	builder.setStipple(true);
+	builder.setDepthFunc(GState::kAlways);
+	builder.setDepthMask(false);
+	fadeStippleGState = builder.getState();
 
 	// prep renderer
 	SCENEMGR->initParams(getRenderer().getParams());
@@ -64,8 +70,16 @@ void					ViewItemPlayerScene::onPostRender(
 	// draw fade rectangle
 	const float* fade = SCENEMGR->getFade();
 	if (fade[3] != 0.0f) {
-		fadeGState.setState();
-		glColor4fv(fade);
+		static const BzfString s_renderBlending("renderBlending");
+		if (BZDB->isTrue(s_renderBlending)) {
+			fadeGState.setState();
+			glColor4fv(fade);
+		}
+		else {
+			fadeStippleGState.setState();
+			glColor3fv(fade);
+			getRenderer().setStipple(fade[3]);
+		}
 		glRectf(0.0f, 0.0f, w, h);
 	}
 }

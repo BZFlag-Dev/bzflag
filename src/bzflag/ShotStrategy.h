@@ -25,12 +25,14 @@
 #include "Obstacle.h"
 #include "Teleporter.h"
 #include "Ray.h"
+#include "TimeKeeper.h"
 #include <vector>
 
 class BaseLocalPlayer;
 class SceneNode;
 class SceneNodeGroup;
 class SceneNodeTransform;
+class SceneNodeParameters;
 
 class ShotStrategy {
 public:
@@ -238,8 +240,10 @@ private:
 	SceneNode*			teamSceneNode;
 	SceneNode*			rogueSceneNode;
 	SceneNodeTransform*	transformSceneNode;
+	SceneNodeParameters*	parametersSceneNode;
 	float				radius;
 	float				radius2;
+	TimeKeeper			startTime;
 };
 
 //

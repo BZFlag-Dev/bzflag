@@ -121,9 +121,11 @@ BzfString				SceneDatabaseBuilder::makeBuffer(const World* world)
 	primitives +=	"<choice><mask t=\"renderBlending\">1 2</mask>\n"
 					  "<gstate>\n"
 					    "<shading model=\"flat\" />\n"
-					    "<stipple alpha=\"0.5\" />\n";
-	primitives +=	    primitives2;
-	primitives +=	  "</gstate>\n"
+					    "<stipple mask=\"on\" />\n"
+					    "<geometry><stipple>0.5</stipple>\n";
+	primitives +=	      primitives2;
+	primitives +=	    "</geometry>\n"
+					  "</gstate>\n"
 					  "<gstate>\n"
 					    "<shading model=\"flat\" />\n"
 					    "<blending src=\"sa\" dst=\"1-sa\" />\n"
@@ -138,9 +140,11 @@ BzfString				SceneDatabaseBuilder::makeBuffer(const World* world)
 	unlighted +=	"<choice><mask t=\"renderBlending\">1 2</mask>\n"
 					  "<gstate>\n"
 					    "<shading model=\"flat\" />\n"
-					    "<stipple alpha=\"0.5\" />\n";
-	unlighted +=	    primitives3;
-	unlighted +=	  "</gstate>\n"
+					    "<stipple mask=\"on\" />\n"
+					    "<geometry><stipple>0.5</stipple>\n";
+	unlighted +=	      primitives3;
+	unlighted +=	    "</geometry>\n"
+					  "</gstate>\n"
 					  "<gstate>\n"
 					    "<shading model=\"flat\" />\n"
 					    "<blending src=\"sa\" dst=\"1-sa\" />\n"

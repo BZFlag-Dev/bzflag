@@ -320,6 +320,12 @@ int main(int argc, char** argv)
 	window->makeCurrent();
 	resize(w, h);
 
+	// turn on features
+	BZDB->set("renderBlending", "1");
+	BZDB->set("renderSmoothing", "1");
+	BZDB->set("renderLighting", "1");
+	BZDB->set("renderTexturing", "1");
+
 	// create renderer
 	renderer = new RendererType;
 

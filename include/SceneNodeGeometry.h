@@ -22,6 +22,7 @@ class SceneNodeGeometryBundle {
 public:
 	SceneNodeGeometryBundle();
 
+	SceneNodeVFFloat	stipple;					// 1-vector
 	SceneNodeVFFloat	color;						// 4-vector * n
 	SceneNodeVFFloat	texcoord;					// 2-vector * n
 	SceneNodeVFFloat	normal;						// 3-vector * n
@@ -31,7 +32,7 @@ public:
 class SceneNodeGeometry : public SceneNodeGroup {
 public:
 	static const unsigned int kComputedIndex;
-	enum Property { Color, TexCoord, Normal, Vertex };
+	enum Property { Stipple, Color, TexCoord, Normal, Vertex };
 
 	SceneNodeGeometry();
 
@@ -65,6 +66,7 @@ public:
 	virtual bool		visit(SceneVisitor*);
 
 	// current bundle fields (note that these are pointers)
+	SceneNodeVFFloat*	stipple;					// 1-vector
 	SceneNodeVFFloat*	color;						// 4-vector * n
 	SceneNodeVFFloat*	texcoord;					// 2-vector * n
 	SceneNodeVFFloat*	normal;						// 3-vector * n
@@ -88,10 +90,12 @@ private:
 	Bundles				bundles;
 	BundlePtrs			scratch;
 	unsigned int		currentScratch;
+	IndirectionTable	stippleTable;
 	IndirectionTable	colorTable;
 	IndirectionTable	texcoordTable;
 	IndirectionTable	normalTable;
 	IndirectionTable	vertexTable;
+	SceneNodeVFFloat*	currentStipple;
 	SceneNodeVFFloat*	currentColor;
 	SceneNodeVFFloat*	currentTexcoord;
 	SceneNodeVFFloat*	currentNormal;

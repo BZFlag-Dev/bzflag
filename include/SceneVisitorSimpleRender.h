@@ -13,35 +13,15 @@
 #ifndef BZF_SCENE_VISITOR_SIMPLE_RENDER_H
 #define BZF_SCENE_VISITOR_SIMPLE_RENDER_H
 
-#include "SceneVisitor.h"
+#include "SceneVisitorBaseRender.h"
 #include "OpenGLGState.h"
 #include "Matrix.h"
 #include <vector>
 
-class SceneVisitorSimpleRender : public SceneVisitor {
+class SceneVisitorSimpleRender : public SceneVisitorBaseRender {
 public:
 	SceneVisitorSimpleRender();
 	virtual ~SceneVisitorSimpleRender();
-
-	// set the viewport size (in pixels)
-	void				setArea(float size);
-
-	// set the current time and frame
-	void				setTime(float t);
-	void				setFrame(float frameNumber);
-
-	// instrumentation methods.  counts are reset with each call to
-	// traverse().
-	struct Instruments {
-	public:
-		float			time;
-		unsigned int	nNodes;
-		unsigned int	nTransforms;
-		unsigned int	nPoints;
-		unsigned int	nLines;
-		unsigned int	nTriangles;
-	};
-	const Instruments*	instrGet() const;
 
 	// SceneVisitor overrides
 	virtual bool		traverse(SceneNode*);
@@ -54,10 +34,6 @@ public:
 	virtual bool		visit(SceneNodePrimitive*);
 	virtual bool		visit(SceneNodeSelector*);
 
-protected:
-	// SceneVisitor overrides
-	virtual bool		descend(SceneNodeGroup*);
-
 private:
 	typedef std::vector<OpenGLGState> GStateStack;
 	typedef std::vector<Matrix> XFormStack;
@@ -68,6 +44,7 @@ private:
 	XFormStack			modelXFormStack;
 	XFormStack			projectionXFormStack;
 	XFormStack			textureXFormStack;
+	GeometryStack		stippleStack;
 	GeometryStack		colorStack;
 	GeometryStack		texcoordStack;
 	GeometryStack		normalStack;
@@ -78,8 +55,6 @@ private:
 	int					numLights;
 	int					maxLights;
 	bool				lighting;
-
-	Instruments			instruments;
 };
 
 #endif

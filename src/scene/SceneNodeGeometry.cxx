@@ -21,6 +21,7 @@
 //
 
 SceneNodeGeometryBundle::SceneNodeGeometryBundle() :
+								stipple("stipple", 0, 0, 1),
 								color("color", 0, 0, 4),
 								texcoord("texcoord", 0, 0, 2),
 								normal("normal", 0, 0, 3),
@@ -58,6 +59,7 @@ SceneNodeGeometry::~SceneNodeGeometry()
 void					SceneNodeGeometry::setBundle(unsigned int index)
 {
 	if (index == kComputedIndex) {
+		stipple  = currentStipple;
 		color    = currentColor;
 		texcoord = currentTexcoord;
 		normal   = currentNormal;
@@ -65,6 +67,7 @@ void					SceneNodeGeometry::setBundle(unsigned int index)
 	}
 	else {
 		assert(index < bundles.size());
+		stipple  = &(bundles[stippleTable[index]].stipple);
 		color    = &(bundles[colorTable[index]].color);
 		texcoord = &(bundles[texcoordTable[index]].texcoord);
 		normal   = &(bundles[normalTable[index]].normal);
@@ -88,6 +91,7 @@ void					SceneNodeGeometry::pushBundle()
 	// add bundle
 	const unsigned int index = bundles.size();
 	bundles.push_back(SceneNodeGeometryBundle());
+	stippleTable.push_back(index);
 	colorTable.push_back(index);
 	texcoordTable.push_back(index);
 	normalTable.push_back(index);
@@ -106,6 +110,7 @@ void					SceneNodeGeometry::pushBundle()
 void					SceneNodeGeometry::popBundle()
 {
 	bundles.pop_back();
+	stippleTable.pop_back();
 	colorTable.pop_back();
 	texcoordTable.pop_back();
 	normalTable.pop_back();
@@ -121,6 +126,7 @@ void					SceneNodeGeometry::popBundle()
 void					SceneNodeGeometry::clearBundles()
 {
 	bundles.clear();
+	stippleTable.clear();
 	colorTable.clear();
 	texcoordTable.clear();
 	normalTable.clear();
@@ -139,6 +145,10 @@ void					SceneNodeGeometry::refBundle(
 
 	IndirectionTable* table;
 	switch (property) {
+		case Stipple:
+			table = &stippleTable;
+			break;
+
 		case Color:
 			table = &colorTable;
 			break;
@@ -182,6 +192,9 @@ unsigned int			SceneNodeGeometry::getBundleRef(
 	assert(current != kComputedIndex);
 
 	switch (property) {
+		case Stipple:
+			return stippleTable[current];
+
 		case Color:
 			return colorTable[current];
 
@@ -273,6 +286,7 @@ void					SceneNodeGeometry::addScratchBundle()
 void					SceneNodeGeometry::setScratchBundle()
 {
 	if (current == kComputedIndex) {
+		currentStipple  = &(scratch[currentScratch]->stipple);
 		currentColor    = &(scratch[currentScratch]->color);
 		currentTexcoord = &(scratch[currentScratch]->texcoord);
 		currentNormal   = &(scratch[currentScratch]->normal);
@@ -300,10 +314,12 @@ void					SceneNodeGeometry::compute(
 {
 	// special case -- no bundles
 	if (bundles.size() == 0) {
+		currentStipple  = &(scratch[currentScratch]->stipple);
 		currentColor    = &(scratch[currentScratch]->color);
 		currentTexcoord = &(scratch[currentScratch]->texcoord);
 		currentNormal   = &(scratch[currentScratch]->normal);
 		currentVertex   = &(scratch[currentScratch]->vertex);
+		currentStipple->resize(0);
 		currentColor->resize(0);
 		currentTexcoord->resize(0);
 		currentNormal->resize(0);
@@ -320,6 +336,16 @@ void					SceneNodeGeometry::compute(
 
 	// interpolate, checking for special case of interpolating a
 	// field with itself.
+	GET_T(bundles[0].stipple.getInterpolationParameter());
+	if (exact || stippleTable[index] == stippleTable[index + 1]) {
+		currentStipple = &(bundles[stippleTable[index]].stipple);
+	}
+	else {
+		currentStipple = &(scratch[currentScratch]->stipple);
+		interpolate(*currentStipple, t, bundles[stippleTable[index]].stipple,
+								bundles[stippleTable[index + 1]].stipple);
+	}
+
 	GET_T(bundles[0].color.getInterpolationParameter());
 	if (exact || colorTable[index] == colorTable[index + 1]) {
 		currentColor = &(bundles[colorTable[index]].color);

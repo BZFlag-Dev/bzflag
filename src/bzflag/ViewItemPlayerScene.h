@@ -33,6 +33,7 @@ protected:
 
 private:
 	OpenGLGState		fadeGState;
+	OpenGLGState		fadeStippleGState;
 };
 
 class ViewItemPlayerSceneReader : public ViewItemSceneReader {

@@ -13,37 +13,17 @@
 #ifndef BZF_SCENE_VISITOR_RENDER_H
 #define BZF_SCENE_VISITOR_RENDER_H
 
-#include "SceneVisitor.h"
+#include "SceneVisitorBaseRender.h"
 #include "OpenGLGState.h"
 #include "BoundingBox.h"
 #include "BzfString.h"
 #include "Matrix.h"
 #include <vector>
 
-class SceneVisitorRender : public SceneVisitor {
+class SceneVisitorRender : public SceneVisitorBaseRender {
 public:
 	SceneVisitorRender();
 	virtual ~SceneVisitorRender();
-
-	// set the viewport size (in pixels)
-	void				setArea(float size);
-
-	// set the current time and frame
-	void				setTime(float t);
-	void				setFrame(float frameNumber);
-
-	// instrumentation methods.  counts are reset with each call to
-	// traverse().
-	struct Instruments {
-	public:
-		float			time;
-		unsigned int	nNodes;
-		unsigned int	nTransforms;
-		unsigned int	nPoints;
-		unsigned int	nLines;
-		unsigned int	nTriangles;
-	};
-	const Instruments*	instrGet() const;
 
 	// SceneVisitor overrides
 	virtual bool		traverse(SceneNode*);
@@ -55,10 +35,6 @@ public:
 	virtual bool		visit(SceneNodeParameters*);
 	virtual bool		visit(SceneNodePrimitive*);
 	virtual bool		visit(SceneNodeSelector*);
-
-protected:
-	// SceneVisitor overrides
-	virtual bool		descend(SceneNodeGroup*);
 
 private:
 	void				sort();
@@ -80,6 +56,7 @@ private:
 		float					depth;
 		OpenGLGState			gstate;
 		const GState*			compare;
+		const SceneNodeVFFloat*	stipple;
 		const SceneNodeVFFloat*	color;
 		const SceneNodeVFFloat*	texcoord;
 		const SceneNodeVFFloat*	normal;
@@ -98,18 +75,16 @@ private:
 	typedef std::vector<float> ShininessStack;
 	typedef std::vector<SceneNodeGeometry*> GeometryNodeStack;
 
-	BzfString			nameArea, nameTime, nameFrame, nameMask;
-	BzfString			nameDebug;
-	BzfString			nameLighting;
-    Instruments			instruments;
-
     struct LightInfo {
     public:
 		float			ambient[4];
 		float			diffuse[4];
 		float			specular[4];
 		float			position[4];
-		// FIXME -- other light stuff
+		float			spotDirection[3];
+		float			spotExponent;
+		float			spotCutoff;
+		float			attenuation[3];
     };
     typedef std::vector<unsigned int> IndexStack;
     typedef std::vector<LightInfo> LightStack;
@@ -124,6 +99,8 @@ private:
     typedef std::vector<Job> JobList;
     enum CullingState { kCullOld, kCullDirty, kCullNo, kCullYes };
 
+	BzfString			nameMask, nameLighting;
+
     SceneNodeVFFloat	dummyParams;
 	GStateStack			gstateStack;
 	XFormStack			modelXFormStack;
@@ -132,6 +109,7 @@ private:
     IndexStack			modelXFormIndexStack;
     IndexStack			projectionXFormIndexStack;
     IndexStack			textureXFormIndexStack;
+	GeometryStack		stippleStack;
 	GeometryStack		colorStack;
 	GeometryStack		texcoordStack;
 	GeometryStack		normalStack;

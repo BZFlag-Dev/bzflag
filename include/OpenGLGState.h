@@ -59,7 +59,7 @@ public:
 	Func				depthFunc;
 	bool				depthMask;
 	float				pointSize;
-	float				stipple;
+	bool				stipple;
 	int					pass;
 
 	bool				forceTexture;
@@ -196,7 +196,7 @@ public:
 	void				setDepthFunc(GState::Func = GState::kAlways);
 	void				setDepthMask(bool enabled = true);
 	void				setPointSize(float size = 1.0f);
-	void				setStipple(float alpha = 1.0f);
+	void				setStipple(bool stipple = false);
 	void				setPass(int = 0);
 	void				setForceTexture(bool);
 	void				setForceBlending(bool);
@@ -217,7 +217,7 @@ public:
 	GState::Func		getDepthFunc() const;
 	bool				getDepthMask() const;
 	float				getPointSize() const;
-	float				getStipple() const;
+	bool				getStipple() const;
 	int					getPass() const;
 	bool				getForceTexture() const;
 	bool				getForceBlending() const;
@@ -316,14 +316,9 @@ void					OpenGLGStateBuilder::setPointSize(float size)
 }
 
 inline
-void					OpenGLGStateBuilder::setStipple(float alpha)
+void					OpenGLGStateBuilder::setStipple(bool enabled)
 {
-	if (alpha < 0.0f)
-		data->stipple = 0.0f;
-	else if (alpha > 1.0f)
-		data->stipple = 1.0f;
-	else
-		data->stipple = alpha;
+	data->stipple = enabled;
 }
 
 inline
@@ -435,7 +430,7 @@ float					OpenGLGStateBuilder::getPointSize() const
 }
 
 inline
-float					OpenGLGStateBuilder::getStipple() const
+bool					OpenGLGStateBuilder::getStipple() const
 {
 	return data->stipple;
 }

@@ -1,4 +1,4 @@
-;/* bzflag
+/* bzflag
  * Copyright (c) 1993 - 2002 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
@@ -18,11 +18,6 @@
 
 SceneVisitorSimpleRender::SceneVisitorSimpleRender() : numLights(0)
 {
-	// some built-in paramters
-	getParams().pushFloat("area", 1.0f);
-	getParams().pushFloat("frame", 0.0f);
-	getParams().pushFloat("time", 0.0f);
-
 	// default gstate
 	gstateStack.push_back(OpenGLGState());
 
@@ -41,53 +36,8 @@ SceneVisitorSimpleRender::~SceneVisitorSimpleRender()
 	// do nothing
 }
 
-void					SceneVisitorSimpleRender::setArea(float size)
-{
-	getParams().setFloat("area", size);
-}
-
-void					SceneVisitorSimpleRender::setTime(float t)
-{
-	getParams().setFloat("time", t);
-}
-
-void					SceneVisitorSimpleRender::setFrame(float n)
-{
-	getParams().setFloat("frame", n);
-}
-
-const SceneVisitorSimpleRender::Instruments*
-						SceneVisitorSimpleRender::instrGet() const
-{
-	return &instruments;
-}
-
-bool					SceneVisitorSimpleRender::descend(SceneNodeGroup* n)
-{
-	++instruments.nNodes;
-	return SceneVisitor::descend(n);
-}
-
 bool					SceneVisitorSimpleRender::traverse(SceneNode* node)
 {
-	// if debugging then flush rendering pipeline for accurate timing
-	const bool debug = BZDB->isTrue("displayDebug");
-	if (debug)
-		glFinish();
-
-	// initialize instruments
-	TimeKeeper t(TimeKeeper::getCurrent());
-	instruments.time        = 0.0f;
-	instruments.nNodes      = 0;
-	instruments.nTransforms = 0;
-	instruments.nPoints     = 0;
-	instruments.nLines      = 0;
-	instruments.nTriangles  = 0;
-
-	// done if nothing to traverse
-	if (node == NULL)
-		return false;
-
 	// should we use lighting?
 	lighting = BZDB->isTrue("renderLighting");
 
@@ -102,7 +52,7 @@ bool					SceneVisitorSimpleRender::traverse(SceneNode* node)
 	OpenGLGState::init();
 
 	// draw
-	const bool result = node->visit(this);
+	const bool result = SceneVisitorBaseRender::traverse(node);
 
 	// restore state
 	glPopMatrix();
@@ -111,14 +61,6 @@ bool					SceneVisitorSimpleRender::traverse(SceneNode* node)
 	glMatrixMode(GL_TEXTURE);
 	glPopMatrix();
 	glMatrixMode(GL_MODELVIEW);
-
-	// flush pipeline again so we get the time required to actually
-	// draw everything, not just to shove it down the pipeline.
-	if (debug)
-		glFinish();
-
-	// record the elapsed time
-	instruments.time = TimeKeeper::getCurrent() - t;
 
 	return result;
 }
@@ -207,7 +149,7 @@ bool					SceneVisitorSimpleRender::visit(SceneNodeBaseTransform* n)
 	glMatrixMode(GL_MODELVIEW);
 
 	// descend
-	++instruments.nTransforms;
+	++getInstr()->nTransforms;
 	const bool result = descend(n);
 
 	// pop stack
@@ -225,18 +167,24 @@ bool					SceneVisitorSimpleRender::visit(SceneNodeGeometry* n)
 	n->setBundle(SceneNodeGeometry::kComputedIndex);
 
 	// get arrays
+	const SceneNodeVFFloat* stipple = n->stipple;
 	const SceneNodeVFFloat* color   = n->color;
 	const SceneNodeVFFloat* texture = n->texcoord;
 	const SceneNodeVFFloat* normal  = n->normal;
 	const SceneNodeVFFloat* vertex  = n->vertex;
 
 	// check which arrays are used
+	const bool hasStipple = (stipple->getNum() > 0);
 	const bool hasColor   = (color->getNum()   > 0);
 	const bool hasTexture = (texture->getNum() > 0);
 	const bool hasNormal  = (normal->getNum()  > 0);
 	const bool hasVertex  = (vertex->getNum()  > 0);
 
 	// set rendering state
+	if (hasStipple) {
+		stippleStack.push_back(stipple);
+		setStipple(stipple->get()[0]);
+	}
 	if (hasColor) {
 		colorStack.push_back(color);
 		if (color->getNum() == 4) {
@@ -286,6 +234,13 @@ bool					SceneVisitorSimpleRender::visit(SceneNodeGeometry* n)
 	const bool result = descend(n);
 
 	// restore rendering state
+	if (hasStipple) {
+		stippleStack.pop_back();
+		if (stippleStack.empty())
+			setStipple(1.0f);
+		else
+			setStipple(stippleStack.back()->get()[0]);
+	}
 	if (hasColor) {
 		colorStack.pop_back();
 		if (colorStack.empty()) {
@@ -359,34 +314,34 @@ bool					SceneVisitorSimpleRender::visit(SceneNodePrimitive* n)
 	const unsigned int type = n->type.get();
 	switch (type) {
 		case SceneNodePrimitive::Points:
-			instruments.nPoints += num;
+			getInstr()->nPoints += num;
 			break;
 
 		case SceneNodePrimitive::Lines:
-			instruments.nLines += (num >> 1);
+			getInstr()->nLines += (num >> 1);
 			break;
 
 		case SceneNodePrimitive::LineStrip:
-			instruments.nLines += num - 1;
+			getInstr()->nLines += num - 1;
 			break;
 
 		case SceneNodePrimitive::LineLoop:
-			instruments.nLines += num;
+			getInstr()->nLines += num;
 			break;
 
 		case SceneNodePrimitive::Triangles:
-			instruments.nTriangles += num / 3;
+			getInstr()->nTriangles += num / 3;
 			break;
 
 		case SceneNodePrimitive::TriangleStrip:
-			instruments.nTriangles += num - 2;
+			getInstr()->nTriangles += num - 2;
 			break;
 
 		case SceneNodePrimitive::TriangleFan:
-			instruments.nTriangles += num - 2;
+			getInstr()->nTriangles += num - 2;
 			break;
 	}
-	++instruments.nNodes;
+	++getInstr()->nNodes;
 
 	// render
 	const unsigned int* index = n->index.get();

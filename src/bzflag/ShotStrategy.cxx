@@ -25,6 +25,7 @@
 #include "SceneNodeGroup.h"
 #include "SceneNodeTransform.h"
 #include "SceneNodeMatrixTransform.h"
+#include "SceneNodeParameters.h"
 #include "SceneManager.h"
 #include "Matrix.h"
 #include "bzfgl.h"
@@ -1322,7 +1323,8 @@ void					GuidedMissileStrategy::radarRender() const
 ShockWaveStrategy::ShockWaveStrategy(ShotPath* path) :
 								ShotStrategy(path),
 								radius(ShockInRadius),
-								radius2(ShockInRadius * ShockInRadius)
+								radius2(ShockInRadius * ShockInRadius),
+								startTime(TimeKeeper::getCurrent())
 {
 	// setup shot
 	FiringInfo& f = getFiringInfo(path);
@@ -1334,10 +1336,21 @@ ShockWaveStrategy::ShockWaveStrategy(ShotPath* path) :
 
 	// make/get scene nodes
 	transformSceneNode = new SceneNodeTransform;
-	// FIXME -- need a parameters node set to animate shot at proper speed
+	transformSceneNode->scale.push(ShockOutRadius,
+								ShockOutRadius,
+								ShockOutRadius);
+	parametersSceneNode = new SceneNodeParameters;
+	transformSceneNode->pushChild(parametersSceneNode);
+	parametersSceneNode->unref();
 	teamSceneNode  = findShotModel(team, "SW");
 	rogueSceneNode = findShotModel(RogueTeam, "SW");
 	// FIXME -- error if not found
+
+	// prep parameter node
+	parametersSceneNode->src.push("zero");
+	parametersSceneNode->dst.push("t");
+	parametersSceneNode->scale.push(1.0f / getPath().getLifetime());
+	parametersSceneNode->bias.push(0.0f);
 }
 
 ShockWaveStrategy::~ShockWaveStrategy()
@@ -1391,12 +1404,15 @@ void					ShockWaveStrategy::addShot(
 	const float* pos = path.getPosition();
 	transformSceneNode->translate.set(pos, 3);
 
+	// set parameters
+	parametersSceneNode->bias.set(0, TimeKeeper::getCurrent() - startTime);
+
 	// choose model
-	transformSceneNode->clearChildren();
+	parametersSceneNode->clearChildren();
 	if (colorblind)
-		transformSceneNode->pushChild(rogueSceneNode);
+		parametersSceneNode->pushChild(rogueSceneNode);
 	else
-		transformSceneNode->pushChild(teamSceneNode);
+		parametersSceneNode->pushChild(teamSceneNode);
 
 	// add to group
 	group->pushChild(transformSceneNode);

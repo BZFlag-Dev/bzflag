@@ -32,7 +32,7 @@ class SceneNodeFieldReader {
 								const ConfigReader::Values& values) = 0;
 		virtual bool		close(ConfigReader* reader) = 0;
 		virtual bool		read(ConfigReader* reader, const BzfString& data) = 0;
-		virtual const char*		getName() const = 0;
+		virtual const char*	getName() const = 0;
 };
 
 //
@@ -50,14 +50,14 @@ class SceneNodeScalarReader : public SceneNodeFieldReader {
 								const ConfigReader::Values& values);
 		virtual bool		close(ConfigReader* reader);
 		virtual bool		read(ConfigReader* reader, const BzfString& data);
-		virtual const char*		getName() const;
+		virtual const char*	getName() const;
 
 	private:
-		T						parse(const char*, char**) const;
+		T					parse(const char*, char**) const;
 
 	private:
-		bool					done;
-		SceneNodeScalarField<T>*		field;
+		bool				done;
+		SceneNodeScalarField<T>*	field;
 };
 
 template <class T>
@@ -141,7 +141,7 @@ const char*				SceneNodeScalarReader<T>::getName() const
 }
 
 inline
-unsigned int				SceneNodeScalarReader<unsigned int>::parse(
+unsigned int			SceneNodeScalarReader<unsigned int>::parse(
 								const char* src, char** end) const
 {
 	return static_cast<unsigned int>(strtoul(src, end, 10));
@@ -224,15 +224,15 @@ class SceneNodeVectorReader : public SceneNodeFieldReader {
 								const ConfigReader::Values& values);
 		virtual bool		close(ConfigReader* reader);
 		virtual bool		read(ConfigReader* reader, const BzfString& data);
-		virtual const char*		getName() const;
+		virtual const char*	getName() const;
 
 	private:
-		T						parse(const char*, char**) const;
+		T					parse(const char*, char**) const;
 
 	private:
 		typedef std::vector<T> Buffer;
-		Buffer					buffer;
-		SceneNodeVectorField<T>*		field;
+		Buffer				buffer;
+		SceneNodeVectorField<T>*	field;
 };
 
 template <class T>
@@ -336,7 +336,7 @@ const char*				SceneNodeVectorReader<T>::getName() const
 }
 
 inline
-unsigned int				SceneNodeVectorReader<unsigned int>::parse(
+unsigned int			SceneNodeVectorReader<unsigned int>::parse(
 								const char* src, char** end) const
 {
 	return static_cast<unsigned int>(strtoul(src, end, 10));
@@ -378,12 +378,12 @@ class SceneNodeGStateReader : public SceneNodeFieldReader {
 								const ConfigReader::Values& values);
 		virtual bool		close(ConfigReader* reader);
 		virtual bool		read(ConfigReader* reader, const BzfString& data);
-		virtual const char*		getName() const;
+		virtual const char*	getName() const;
 
 	private:
-		SceneNodeGState*		node;
-		OpenGLGStateBuilder		builder;
-		BzfString				active;
+		SceneNodeGState*	node;
+		OpenGLGStateBuilder	builder;
+		BzfString			active;
 };
 
 SceneNodeGStateReader::SceneNodeGStateReader(SceneNodeGState* _node) :
@@ -634,16 +634,15 @@ bool					SceneNodeGStateReader::open(
 	}
 
 	else if (tag == "stipple") {
-		float alpha = 1.0f;
-		index = values.find("alpha");
+		bool mask = false;
+		index = values.find("mask");
 		if (index != values.end()) {
-			alpha = (float)atof(index->second.c_str());
-			if (alpha < 0.0f)
-				alpha = 0.0f;
-			else if (alpha > 1.0f)
-				alpha = 1.0f;
+			if (index->second == "on")
+				mask = true;
+			else if (index->second == "off")
+				mask = false;
 		}
-		builder.setStipple(alpha);
+		builder.setStipple(mask);
 	}
 
 	else if (tag == "pass") {
@@ -697,16 +696,16 @@ class SceneNodeGeometryReader : public SceneNodeFieldReader {
 								const ConfigReader::Values& values);
 		virtual bool		close(ConfigReader* reader);
 		virtual bool		read(ConfigReader* reader, const BzfString& data);
-		virtual const char*		getName() const;
+		virtual const char*	getName() const;
 
 	private:
-		SceneNodeVFFloat*		getField() const;
+		SceneNodeVFFloat*	getField() const;
 
 	private:
-		SceneNodeGeometry*				node;
-		SceneNodeGeometry::Property		property;
+		SceneNodeGeometry*	node;
+		SceneNodeGeometry::Property	property;
 		SceneNodeFieldReader*	fieldReader;
-		unsigned int				count;
+		unsigned int		count;
 };
 
 SceneNodeGeometryReader::SceneNodeGeometryReader(
@@ -744,10 +743,11 @@ bool					SceneNodeGeometryReader::open(
 		// refer to the previous bundle's field (if any) until we
 		// actually read the field
 		if (count > 1) {
-			node->refBundle(SceneNodeGeometry::Color, count - 2);
+			node->refBundle(SceneNodeGeometry::Stipple,  count - 2);
+			node->refBundle(SceneNodeGeometry::Color,    count - 2);
 			node->refBundle(SceneNodeGeometry::TexCoord, count - 2);
-			node->refBundle(SceneNodeGeometry::Normal, count - 2);
-			node->refBundle(SceneNodeGeometry::Vertex, count - 2);
+			node->refBundle(SceneNodeGeometry::Normal,   count - 2);
+			node->refBundle(SceneNodeGeometry::Vertex,   count - 2);
 		}
 	}
 	else {
@@ -857,6 +857,9 @@ const char*				SceneNodeGeometryReader::getName() const
 SceneNodeVFFloat*		SceneNodeGeometryReader::getField() const
 {
 	switch (property) {
+		case SceneNodeGeometry::Stipple:
+			return node->stipple;
+
 		case SceneNodeGeometry::Color:
 			return node->color;
 
@@ -996,6 +999,7 @@ bool					SceneReader::open(ConfigReader* reader,
 		if (!push(reader, values, node))
 			return false;
 
+		addReader(new SceneNodeGeometryReader(node, SceneNodeGeometry::Stipple));
 		addReader(new SceneNodeGeometryReader(node, SceneNodeGeometry::Color));
 		addReader(new SceneNodeGeometryReader(node, SceneNodeGeometry::TexCoord));
 		addReader(new SceneNodeGeometryReader(node, SceneNodeGeometry::Normal));

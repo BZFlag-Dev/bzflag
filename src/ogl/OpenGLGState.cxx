@@ -32,7 +32,7 @@ GState::GState() :texture(),
 								depthFunc(kAlways),
 								depthMask(true),
 								pointSize(1.0f),
-								stipple(1.0f),
+								stipple(false),
 								pass(0),
 								forceTexture(false),
 								forceBlending(false),
@@ -83,14 +83,10 @@ private:
 	GLenum				oglBlendingDst;
 	GLenum				oglAlphaFunc;
 	GLenum				oglDepthFunc;
-	unsigned int		oglPolygonStipple;
-	unsigned int		oglLineStipple;
 
 	static bool			initialized;
 	static OpenGLGStateRep* defaultState;
 	static OpenGLGStateRep* currentState;
-	static const GLuint		polygonStipples[][32];
-	static const GLushort	lineStipples[];
 
 	static TimeKeeper	instrTime;
 	static OpenGLGState::Instruments	instruments;
@@ -101,55 +97,6 @@ OpenGLGStateRep*		OpenGLGStateRep::defaultState = NULL;
 OpenGLGStateRep*		OpenGLGStateRep::currentState = NULL;
 TimeKeeper				OpenGLGStateRep::instrTime;
 OpenGLGState::Instruments	OpenGLGStateRep::instruments;
-const GLuint			OpenGLGStateRep::polygonStipples[][32] =
-{
-#define REPMASK(__s1,__s2,__s3,__s4) { __s1, __s2, __s3, __s4, __s1, __s2, __s3, __s4, __s1, __s2, __s3, __s4, __s1, __s2, __s3, __s4, __s1, __s2, __s3, __s4, __s1, __s2, __s3, __s4, __s1, __s2, __s3, __s4, __s1, __s2, __s3, __s4 }
-	REPMASK(0x00000000, 0x00000000, 0x00000000, 0x00000000),
-
-	REPMASK(0x88888888, 0x00000000, 0x00000000, 0x00000000),
-	REPMASK(0x88888888, 0x00000000, 0x22222222, 0x00000000),
-	REPMASK(0xaaaaaaaa, 0x00000000, 0x22222222, 0x00000000),
-	REPMASK(0xaaaaaaaa, 0x00000000, 0xaaaaaaaa, 0x00000000),
-
-	REPMASK(0xaaaaaaaa, 0x44444444, 0xaaaaaaaa, 0x00000000),
-	REPMASK(0xaaaaaaaa, 0x44444444, 0xaaaaaaaa, 0x11111111),
-	REPMASK(0xaaaaaaaa, 0x55555555, 0xaaaaaaaa, 0x11111111),
-	REPMASK(0xaaaaaaaa, 0x55555555, 0xaaaaaaaa, 0x55555555),
-
-	REPMASK(0xeeeeeeee, 0x55555555, 0xaaaaaaaa, 0x55555555),
-	REPMASK(0xeeeeeeee, 0x55555555, 0xbbbbbbbb, 0x55555555),
-	REPMASK(0xffffffff, 0x55555555, 0xbbbbbbbb, 0x55555555),
-	REPMASK(0xffffffff, 0x55555555, 0xffffffff, 0x55555555),
-
-	REPMASK(0xffffffff, 0xdddddddd, 0xffffffff, 0x55555555),
-	REPMASK(0xffffffff, 0xdddddddd, 0xffffffff, 0x77777777),
-	REPMASK(0xffffffff, 0xffffffff, 0xffffffff, 0x77777777),
-	REPMASK(0xffffffff, 0xffffffff, 0xffffffff, 0xffffffff),
-#undef REPMASK
-};
-const GLushort			OpenGLGStateRep::lineStipples[] =
-{
-	0x0000,
-	0x0001,
-	0x0101,
-	0x0111,
-	0x1111,
-
-	0x1115,
-	0x1515,
-	0x1555,
-	0x5555,
-
-	0x5557,
-	0x5757,
-	0x5777,
-	0x7777,
-
-	0x777f,
-	0x7f7f,
-	0x7fff,
-	0xffff
-};
 
 OpenGLGStateRep::OpenGLGStateRep() : GState(), refCount(1)
 {
@@ -243,14 +190,6 @@ void					OpenGLGStateRep::freeze()
 	oglBlendingDst    = mapBlendDst[blendingDst];
 	oglAlphaFunc      = mapFunc[alphaFunc];
 	oglDepthFunc      = mapFunc[depthFunc];
-	oglPolygonStipple = static_cast<unsigned int>(
-							countof(polygonStipples) * stipple);
-	oglLineStipple    = static_cast<unsigned int>(
-							countof(lineStipples) * stipple);
-	if (oglPolygonStipple == countof(polygonStipples))
-		oglPolygonStipple = countof(polygonStipples) - 1;
-	if (oglLineStipple == countof(lineStipples))
-		oglLineStipple = countof(lineStipples) - 1;
 }
 
 void					OpenGLGStateRep::initState()
@@ -271,6 +210,8 @@ void					OpenGLGStateRep::initState()
 	glDisable(GL_COLOR_MATERIAL);
 	glEnable(GL_NORMALIZE);
 	glEnable(GL_SCISSOR_TEST);
+	glDisable(GL_LINE_STIPPLE);
+	glDisable(GL_POLYGON_STIPPLE);
 
 	// texturing
 	if (currentState->texture.isValid() && !currentState->forceTexture) {
@@ -348,19 +289,12 @@ void					OpenGLGStateRep::initState()
 	glPointSize(currentState->pointSize);
 
 	// stipple
-	if (currentState->oglLineStipple != countof(lineStipples) - 1) {
-		glLineStipple(1, lineStipples[currentState->oglLineStipple]);
+	if (currentState->stipple) {
 		glEnable(GL_LINE_STIPPLE);
-	}
-	else {
-		glDisable(GL_LINE_STIPPLE);
-	}
-	if (currentState->oglPolygonStipple != countof(polygonStipples) - 1) {
-		glPolygonStipple(reinterpret_cast<const GLubyte*>(
-						polygonStipples[currentState->oglPolygonStipple]));
 		glEnable(GL_POLYGON_STIPPLE);
 	}
 	else {
+		glDisable(GL_LINE_STIPPLE);
 		glDisable(GL_POLYGON_STIPPLE);
 	}
 }
@@ -514,30 +448,17 @@ void					OpenGLGStateRep::doSetState()
 	}
 
 	// stipple
-	bool stipple = false;
-	if (oglLineStipple != currentState->oglLineStipple) {
-		stipple = true;
-		if (oglLineStipple != countof(lineStipples) - 1) {
-			glLineStipple(1, lineStipples[oglLineStipple]);
+	if (stipple != currentState->stipple) {
+		++instruments.nStipple;
+		if (stipple) {
 			glEnable(GL_LINE_STIPPLE);
-		}
-		else {
-			glDisable(GL_LINE_STIPPLE);
-		}
-	}
-	if (oglPolygonStipple != currentState->oglPolygonStipple) {
-		stipple = true;
-		if (oglPolygonStipple != countof(polygonStipples) - 1) {
-			glPolygonStipple(reinterpret_cast<const GLubyte*>(
-								polygonStipples[oglPolygonStipple]));
 			glEnable(GL_POLYGON_STIPPLE);
 		}
 		else {
+			glDisable(GL_LINE_STIPPLE);
 			glDisable(GL_POLYGON_STIPPLE);
 		}
 	}
-	if (stipple)
-		++instruments.nStipple;
 
 	// record most recent rep
 	ref();

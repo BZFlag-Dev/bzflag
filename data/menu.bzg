@@ -9,31 +9,47 @@
 # IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
 # WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 
-<geometry>
-	<color>
-		0 0 0 0.75
-	</color>
-	<vertex>
-		0 0 0
-		1 0 0
-		0 1 0
-		1 1 0
-	</vertex>
-	<choice>
-		<mask t="renderBlending">1 2</mask>
+<choice>
+	<mask t="renderBlending">1 2</mask>
+
+	# stippled
+	<geometry>
+		<stipple>
+			0.75
+		</stipple>
+		<color>
+			0 0 0 1
+		</color>
+		<vertex>
+			0 0 0
+			1 0 0
+			0 1 0
+			1 1 0
+		</vertex>
 		<gstate>
-			# stippled
 			<shading model="flat" />
-			<stipple alpha="0.75" />
 			<depth func="1" write="off" />
+			<stipple mask="on" />
 			<primitive type="tstrip">
 				<index>
 					0 1 2 3
 				</index>
 			</primitive>
 		</gstate>
+	</geometry>
+
+	# blended
+	<geometry>
+		<color>
+			0 0 0 0.75
+		</color>
+		<vertex>
+			0 0 0
+			1 0 0
+			0 1 0
+			1 1 0
+		</vertex>
 		<gstate>
-			# blended
 			<shading model="flat" />
 			<blending src="sa" dst="1-sa" />
 			<depth func="1" write="off" />
@@ -43,5 +59,5 @@
 				</index>
 			</primitive>
 		</gstate>
-	</choice>
-</geometry>
+	</geometry>
+</choice>
