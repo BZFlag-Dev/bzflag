@@ -1,6 +1,10 @@
 recent bugs
 ------------
 
+- Tank/base stuck problem has reappeared with server spawning.
+  LocalPlayer::doUpdateMotion is foobared.
+
+
 - bzfls.pl doesn't properly list multiple servers from the same ip (brlcad.org
   is a good example)
 
