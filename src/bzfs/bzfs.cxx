@@ -1377,7 +1377,6 @@ static void patchMessage(PlayerId fromId, PlayerId toId, const void *msg)
     case MsgAddPlayer:
     case MsgCaptureFlag:
     case MsgEnter:
-    case MsgGMUpdate:
     case MsgPlayerUpdate:
     case MsgRemovePlayer:
     case MsgScoreOver:
@@ -1387,31 +1386,39 @@ static void patchMessage(PlayerId fromId, PlayerId toId, const void *msg)
       patchPlayerId(fromId, toId, msg, 4);
       break;
       ;;
-    case MsgScore:
-      if (len == 12)
-        patchPlayerId(fromId, toId, msg, 4);
-      ;;
     case MsgAlive:
       if (len == 32)
         patchPlayerId(fromId, toId, msg, 4);
       ;;
+    case MsgDropFlag:
+    case MsgGrabFlag:
+      if (len > 28)
+	// server version
+        patchPlayerId(fromId, toId, msg, 4);
+        patchPlayerId(fromId, toId, msg, 20);
+      break;
+      ;;
     case MsgFlagUpdate:
       patchPlayerId(fromId, toId, msg, 12);
+      break;
+      ;;
+    case MsgGMUpdate:
+      patchPlayerId(fromId, toId, msg, 4);
+      patchPlayerId(fromId, toId, msg, 42);
       break;
       ;;
     case MsgKilled:
     case MsgMessage:
       patchPlayerId(fromId, toId, msg, 4);
       if (len > 16)
+	// server version
         patchPlayerId(fromId, toId, msg, 12);
       break;
       ;;
-    case MsgDropFlag:
-    case MsgGrabFlag:
-      if (len > 28)
+    case MsgScore:
+      if (len == 12)
+	// server version
         patchPlayerId(fromId, toId, msg, 4);
-        patchPlayerId(fromId, toId, msg, 20);
-      break;
       ;;
     case MsgAccept:
     case MsgClientVersion:
