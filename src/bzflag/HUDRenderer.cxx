@@ -278,6 +278,7 @@ void			HUDRenderer::resize(boolean firstTime)
   setMinorFontSize(w, vh);
   setHeadingFontSize(w, vh);
   setComposeFontSize(w, vh);
+  setLabelsFontSize(w, vh);
 
   // set compose control positions and sizes
   {
@@ -399,6 +400,18 @@ void			HUDRenderer::setComposeFontSize(int, int height)
     composeFont = TextureFont::getTextureFont(TextureFont::Fixed, True);
   composeTypeIn->setFont(composeFont);
   composeTypeIn->setFontSize(s, s);
+}
+
+void			HUDRenderer::setLabelsFontSize(int, int height)
+{
+  const float s = (float)height / 64.0f;
+  if (s > 20.0f)
+    labelsFont = TextureFont::getTextureFont(TextureFont::HelveticaBold, True);
+  else if (s > 10.0f)
+    labelsFont = TextureFont::getTextureFont(TextureFont::FixedBold, True);
+  else
+    labelsFont = TextureFont::getTextureFont(TextureFont::Fixed, True);
+  labelsFont.setSize(s, s);
 }
 
 void			HUDRenderer::setColor(float r, float g, float b)
@@ -693,11 +706,11 @@ void			HUDRenderer::render(SceneRenderer& renderer)
     renderNotPlaying(renderer);
 }
 
-void			HUDRenderer::renderAlerts(SceneRenderer& renderer)
+void			HUDRenderer::renderAlerts(void)
 {
-  const float centerx = 0.5f * (float)renderer.getWindow().getWidth();
+  const float centerx = 0.5f * (float)window.getWidth();
 
-  float y = (float)renderer.getWindow().getViewHeight() + -majorFont.getSpacing() + -alertFont.getSpacing();
+  float y = (float)window.getViewHeight() + -majorFont.getSpacing() + -alertFont.getSpacing();
   for (int i = 0; i < MaxAlerts; i++) {
     if (alertClock[i].isOn()) {
       hudColor3fv(alertColor[i]);
@@ -707,7 +720,7 @@ void			HUDRenderer::renderAlerts(SceneRenderer& renderer)
   }
 }
 
-void			HUDRenderer::renderStatus(SceneRenderer& renderer)
+void			HUDRenderer::renderStatus(void)
 {
   LocalPlayer* player = LocalPlayer::getMyTank();
   if (!player || !World::getWorld()) return;
@@ -715,7 +728,7 @@ void			HUDRenderer::renderStatus(SceneRenderer& renderer)
   char buffer[60];
   const float h = majorFont.getSpacing();
   float x = 0.25f * h;
-  float y = (float)renderer.getWindow().getViewHeight() - h;
+  float y = (float)window.getViewHeight() - h;
   TeamColor teamIndex = player->getTeam();
   FlagId flag = player->getFlag();
 
@@ -729,8 +742,7 @@ void			HUDRenderer::renderStatus(SceneRenderer& renderer)
   // print flag if player has one in upper right
   if (flag != NoFlag) {
     sprintf(buffer, "%s", Flag::getName(flag));
-    x = (float)renderer.getWindow().getWidth() -
-			0.25f * h - majorFont.getWidth(buffer);
+    x = (float)window.getWidth() - 0.25f * h - majorFont.getWidth(buffer);
     if (Flag::getType(flag) == FlagSticky)
       hudColor3fv(warningColor);
     else
@@ -742,8 +754,7 @@ void			HUDRenderer::renderStatus(SceneRenderer& renderer)
     time(&timeNow);
     userTime = *localtime(&timeNow);
     sprintf(buffer, "%2d:%2.2d", userTime.tm_hour, userTime.tm_min);
-    x = (float)renderer.getWindow().getWidth() -
-			0.25f * h - majorFont.getWidth(buffer);
+    x = (float)window.getWidth() - 0.25f * h - majorFont.getWidth(buffer);
     if (Flag::getType(flag) == FlagSticky)
       hudColor3fv(warningColor);
     else
@@ -808,8 +819,7 @@ void			HUDRenderer::renderStatus(SceneRenderer& renderer)
     strcat(buffer,roamingLabel.getString());
   }
 
-  x = 0.5f * ((float)renderer.getWindow().getWidth() -
-					majorFont.getWidth(buffer));
+  x = 0.5f * ((float)window.getWidth() - majorFont.getWidth(buffer));
   hudColor3fv(statusColor);
   majorFont.draw(buffer, x, y);
 }
@@ -831,18 +841,18 @@ int HUDRenderer::teamScoreCompare(const void* _c, const void* _d)
   return (d->won-d->lost) - (c->won-c->lost);
 }
 
-void			HUDRenderer::renderScoreboard(SceneRenderer& renderer)
+void			HUDRenderer::renderScoreboard(void)
 {
   int i, j;
 
   LocalPlayer* myTank = LocalPlayer::getMyTank();
   if (!myTank || !World::getWorld()) return;
 
-  const float x1 = 0.01f * renderer.getWindow().getWidth();
+  const float x1 = 0.01f * window.getWidth();
   const float x2 = x1 + scoreLabelWidth;
   const float x3 = x2 + scoreLabelWidth;
-  const float x5 = (1.0f - 0.01f) * renderer.getWindow().getWidth() - teamScoreLabelWidth;
-  const float y0 = (float)renderer.getWindow().getViewHeight() -
+  const float x5 = (1.0f - 0.01f) * window.getWidth() - teamScoreLabelWidth;
+  const float y0 = (float)window.getViewHeight() -
       majorFont.getSpacing() - alertFont.getSpacing() * 2.0f + alertFont.getDescent();
   hudColor3fv(messageColor);
   minorFont.draw(scoreLabel, x1, y0);
@@ -903,11 +913,46 @@ void			HUDRenderer::renderScoreboard(SceneRenderer& renderer)
   delete[] teams;
 }
 
-void			HUDRenderer::renderCracks(SceneRenderer& renderer)
+void			HUDRenderer::renderTankLabels(SceneRenderer& renderer)
+{
+  if (!World::getWorld()) return;
+
+  int offset = window.getViewHeight() - window.getHeight();
+  const int curMaxPlayers = World::getWorld()->getCurMaxPlayers();
+
+  GLint view[]={window.getOriginX(), window.getOriginY(),
+                window.getWidth(), window.getHeight()};
+  const GLfloat *projf = renderer.getViewFrustum().getProjectionMatrix();
+  const GLfloat *modelf = renderer.getViewFrustum().getViewMatrix();
+
+  // convert to doubles
+  GLdouble proj[16], model[16];
+  for (int j=0; j < 16 ; j++) {
+    proj[j] = projf[j];
+    model[j] = modelf[j];
+  }
+
+  for (int i = 0; i < curMaxPlayers; i++) {
+    RemotePlayer *pl = World::getWorld()->getPlayer(i);
+    if (pl && pl->isAlive()) {
+      const char *name = pl->getCallSign();
+      int len = strlen(name);
+      double x, y, z;
+      hudSColor3fv(Team::getRadarColor(pl->getTeam()));
+      gluProject(pl->getPosition()[0], pl->getPosition()[1],
+                 pl->getPosition()[2], model, proj, view, &x, &y, &z);
+      if (z >= 0.0 && z <= 1.0)
+        labelsFont.draw(name, len, float(x) - labelsFont.getWidth(name) / 2,
+                        float(y) + offset - labelsFont.getHeight());
+    }
+  }
+}
+
+void			HUDRenderer::renderCracks(void)
 {
   glPushMatrix();
-  glTranslatef(GLfloat(renderer.getWindow().getWidth() >> 1),
-		GLfloat(renderer.getWindow().getViewHeight() >> 1), 0.0f);
+  glTranslatef(GLfloat(window.getWidth() >> 1),
+               GLfloat(window.getViewHeight() >> 1), 0.0f);
   glLineWidth(3.0);
   hudColor3f(1.0f, 1.0f, 1.0f);
   glBegin(GL_LINES);
@@ -935,10 +980,10 @@ void			HUDRenderer::renderCompose(SceneRenderer&)
   OpenGLGState::resetState();
 }
 
-void			HUDRenderer::renderTimes(SceneRenderer& renderer)
+void			HUDRenderer::renderTimes(void)
 {
-  const int centerx = renderer.getWindow().getWidth() >> 1;
-  const int centery = renderer.getWindow().getViewHeight() >> 1;
+  const int centerx = window.getWidth() >> 1;
+  const int centery = window.getViewHeight() >> 1;
 
   // draw frames per second
   if (fps > 0.0f) {
@@ -962,11 +1007,11 @@ void			HUDRenderer::renderTimes(SceneRenderer& renderer)
 void			HUDRenderer::renderPlaying(SceneRenderer& renderer)
 {
   // get view metrics
-  const int width = renderer.getWindow().getWidth();
-  const int height = renderer.getWindow().getHeight();
-  const int viewHeight = renderer.getWindow().getViewHeight();
-  const int ox = renderer.getWindow().getOriginX();
-  const int oy = renderer.getWindow().getOriginY();
+  const int width = window.getWidth();
+  const int height = window.getHeight();
+  const int viewHeight = window.getViewHeight();
+  const int ox = window.getOriginX();
+  const int oy = window.getOriginY();
   const int centerx = width >> 1;
   const int centery = viewHeight >> 1;
   int i;
@@ -982,22 +1027,22 @@ void			HUDRenderer::renderPlaying(SceneRenderer& renderer)
 
   // draw cracks
   if (showCracks)
-    renderCracks(renderer);
+    renderCracks();
 
   // draw status line
-  renderStatus(renderer);
+  renderStatus();
 
   // draw alert messages
-  renderAlerts(renderer);
+  renderAlerts();
 
   // show player scoreboard
   float x, y;
-  if (renderer.getScore()) renderScoreboard(renderer);
+  if (renderer.getScore()) renderScoreboard();
 
   // draw flag help
   if (flagHelpClock.isOn()) {
     hudColor3fv(messageColor);
-    flagHelpY = (float) ((renderer.getWindow().getViewHeight() >> 1) - maxMotionSize);
+    flagHelpY = (float) ((window.getViewHeight() >> 1) - maxMotionSize);
     y = flagHelpY - minorFont.getAscent();
     const char* flagHelpBase = flagHelp[flagHelpIndex].getString();
     for (i = 0; i < flagHelpLines; i++) {
@@ -1009,7 +1054,7 @@ void			HUDRenderer::renderPlaying(SceneRenderer& renderer)
   }
 
   // draw times
-  renderTimes(renderer);
+  renderTimes();
 
   // draw message composition
   if (showCompose)
@@ -1236,11 +1281,11 @@ void			HUDRenderer::renderNotPlaying(SceneRenderer& renderer)
   extern boolean gameOver;
 
   // get view metrics
-  const int width = renderer.getWindow().getWidth();
-  const int height = renderer.getWindow().getHeight();
-  const int viewHeight = renderer.getWindow().getViewHeight();
-  const int ox = renderer.getWindow().getOriginX();
-  const int oy = renderer.getWindow().getOriginY();
+  const int width = window.getWidth();
+  const int height = window.getHeight();
+  const int viewHeight = window.getViewHeight();
+  const int ox = window.getOriginX();
+  const int oy = window.getOriginY();
 
   // use one-to-one pixel projection
   glScissor(ox, oy + height - viewHeight, width, viewHeight);
@@ -1253,19 +1298,19 @@ void			HUDRenderer::renderNotPlaying(SceneRenderer& renderer)
 
   // draw cracks
   if (showCracks)
-    renderCracks(renderer);
+    renderCracks();
 
   // draw status line
-  renderStatus(renderer);
+  renderStatus();
 
   // draw alert messages
-  renderAlerts(renderer);
+  renderAlerts();
 
   // show player scoreboard
-  renderScoreboard(renderer);
+  renderScoreboard();
 
   // draw times
-  renderTimes(renderer);
+  renderTimes();
 
   // draw message composition
   if (showCompose)
@@ -1301,11 +1346,11 @@ void			HUDRenderer::renderRoaming(SceneRenderer& renderer)
   extern boolean gameOver;
 
   // get view metrics
-  const int width = renderer.getWindow().getWidth();
-  const int height = renderer.getWindow().getHeight();
-  const int viewHeight = renderer.getWindow().getViewHeight();
-  const int ox = renderer.getWindow().getOriginX();
-  const int oy = renderer.getWindow().getOriginY();
+  const int width = window.getWidth();
+  const int height = window.getHeight();
+  const int viewHeight = window.getViewHeight();
+  const int ox = window.getOriginX();
+  const int oy = window.getOriginY();
 
   // use one-to-one pixel projection
   glScissor(ox, oy + height - viewHeight, width, viewHeight);
@@ -1317,13 +1362,16 @@ void			HUDRenderer::renderRoaming(SceneRenderer& renderer)
   glLoadIdentity();
 
   // draw alert messages
-  renderAlerts(renderer);
+  renderAlerts();
 
   // show player scoreboard
-  if (renderer.getScore()) renderScoreboard(renderer);
+  if (renderer.getScore()) renderScoreboard();
+
+  // show tank labels
+  if (renderer.getLabels()) renderTankLabels(renderer);
 
   // draw times
-  renderTimes(renderer);
+  renderTimes();
 
   // draw message composition
   if (showCompose)
@@ -1340,7 +1388,7 @@ void			HUDRenderer::renderRoaming(SceneRenderer& renderer)
     }
   }
 
-  renderStatus(renderer);
+  renderStatus();
 
   // restore graphics state
   glPopMatrix();

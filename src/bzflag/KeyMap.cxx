@@ -27,6 +27,7 @@ const BzfKeyEvent	BzfKeyMap::defaults1[] = {
 				{ '\t', 0, 0 },
 				{ 'b', 0, 0 },
 				{ 's', 0, 0 },
+				{ 'l', 0, 0 },
 				{ 'f', 0, 0 },
 				{ '=', 0, 0 },
 				{ '-', 0, 0 },
@@ -40,7 +41,8 @@ const BzfKeyEvent	BzfKeyMap::defaults1[] = {
 const BzfKeyEvent	BzfKeyMap::defaults2[] = {
 				{ '\r', 0, 0 },
 				{ ' ', 0, 0 },
-				{ 'l', 0, 0 },
+				{ 'i', 0, 0 },
+				{ 0, 0, 0 },
 				{ 0, 0, 0 },
 				{ 0, 0, 0 },
 				{ 0, 0, 0 },
@@ -74,7 +76,8 @@ const char*		BzfKeyMap::keyName[] = {
 				"sendRecipientKey",
 				"jumpKey",
 				"binocularsKey",
-				"scoreKey",
+                                "scoreKey",
+				"labelsKey",
 				"flagHelpKey",
 				"timeForwardKey",
 				"timeBackwardKey",
@@ -141,6 +144,7 @@ void			BzfKeyMap::resetAll()
   reset(Jump);
   reset(Binoculars);
   reset(Score);
+  reset(Labels);
   reset(FlagHelp);
   reset(TimeForward);
   reset(TimeBackward);

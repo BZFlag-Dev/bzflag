@@ -1051,6 +1051,13 @@ static void		doKeyPlaying(const BzfKeyEvent& key, boolean pressed)
     }
   }
 
+  else if (keymap.isMappedTo(BzfKeyMap::Labels, key)) {
+    // toggle tank labels in roaming mode
+    if (pressed) {
+      sceneRenderer->setLabels(!sceneRenderer->getLabels());
+    }
+  }
+
   else if (keymap.isMappedTo(BzfKeyMap::FlagHelp, key)) {
     // toggle flag help
     if (pressed) {

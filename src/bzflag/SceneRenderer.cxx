@@ -391,6 +391,16 @@ void			SceneRenderer::setScore(boolean _showScore)
   showScore = _showScore;
 }
 
+boolean			SceneRenderer::getLabels() const
+{
+  return showLabels;
+}
+
+void			SceneRenderer::setLabels(boolean _showLabels)
+{
+  showLabels = _showLabels;
+}
+
 boolean			SceneRenderer::getShowFlagHelp() const
 {
   return showFlagHelp;

@@ -675,6 +675,7 @@ void			dumpResources(BzfDisplay* display,
   db.addValue("startcode", ServerStartMenu::getSettings());
   db.addValue("showflaghelp", renderer.getShowFlagHelp() ? "yes" : "no");
   db.addValue("showscore", renderer.getScore() ? "yes" : "no");
+  db.addValue("showlabels", renderer.getLabels() ? "yes" : "no");
 
   db.addValue("joystick", startupInfo.joystick ? "yes" : "no");
   db.addValue("joystickname", startupInfo.joystickName);
@@ -1128,6 +1129,8 @@ int			main(int argc, char** argv)
       renderer.setShowFlagHelp(db.getValue("showflaghelp") == "yes");
     if (db.hasValue("showscore"))
       renderer.setScore(db.getValue("showscore") == "yes");
+    if (db.hasValue("showscore"))
+      renderer.setLabels(db.getValue("showlabels") == "yes");
 
     if (db.hasValue("enhancedradar"))
       renderer.setEnhancedRadar(db.getValue("enhancedradar") == "yes");

@@ -2,6 +2,8 @@
 			     BZFlag release notes
 
 * add new updates here without heading until a release
+
+* optional tank labels for roaming - Frank Thilo, Tim Riker
 * new GUI options menu - Frank Thilo
 * exclude observers from /idlestats list - Frank Thilo
 * server based scoring - Dave Brosius, Tim Riker

@@ -157,6 +157,8 @@ class SceneRenderer {
     void		setShowFlagHelp(boolean showFlagHelp);
     boolean		getScore() const;
     void		setScore(boolean showScore);
+    boolean		getLabels() const;
+    void		setLabels(boolean showLabels);
 
   private:
     // disallowed -- don't want to deal with potential state problems
@@ -224,6 +226,7 @@ class SceneRenderer {
     OpenGLGState	flareGState;
     boolean		showFlagHelp;
     boolean		showScore;
+    boolean		showLabels;
 
     static SceneRenderer* instance;
 };

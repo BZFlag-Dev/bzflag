@@ -99,16 +99,17 @@ class HUDRenderer {
     void		hudColor3fv(const GLfloat*);
     void		hudColor4fv(const GLfloat*);
     void		hudSColor3fv(const GLfloat*);
-    void		renderAlerts(SceneRenderer&);
-    void		renderStatus(SceneRenderer&);
-    void		renderCracks(SceneRenderer&);
+    void		renderAlerts(void);
+    void		renderStatus(void);
+    void		renderCracks(void);
     void		renderOptions(SceneRenderer&);
     void		renderCompose(SceneRenderer&);
-    void		renderScoreboard(SceneRenderer&);
+    void		renderScoreboard(void);
+    void		renderTankLabels(SceneRenderer&);
     void		renderPlaying(SceneRenderer&);
     void		renderNotPlaying(SceneRenderer&);
     void		renderRoaming(SceneRenderer&);
-    void		renderTimes(SceneRenderer&);
+    void		renderTimes(void);
     void		drawPlayerScore(const Player*,
 					float x1, float x2, float x3, float y);
     void		drawDeadPlayerScore(const Player*,
@@ -125,6 +126,7 @@ class HUDRenderer {
     void		setMinorFontSize(int width, int height);
     void		setHeadingFontSize(int width, int height);
     void		setComposeFontSize(int width, int height);
+    void		setLabelsFontSize(int width, int height);
 
     void		resize(boolean firstTime);
     static void		resizeCallback(void*);
@@ -154,6 +156,7 @@ class HUDRenderer {
     OpenGLTexFont	minorFont;
     OpenGLTexFont	headingFont;
     OpenGLTexFont	composeFont;
+    OpenGLTexFont	labelsFont;
     boolean		playing;
     boolean		roaming;
     boolean		dim;

@@ -635,6 +635,7 @@ KeyboardMapMenu::KeyboardMapMenu() : defaultKey(this), editing(BzfKeyMap::LastKe
   controls.append(createLabel(NULL, "Jump:"));
   controls.append(createLabel(NULL, "Binoculars:"));
   controls.append(createLabel(NULL, "Toggle Score:"));
+  controls.append(createLabel(NULL, "Tank Labels:"));
   controls.append(createLabel(NULL, "Flag Help:"));
   controls.append(createLabel(NULL, "Time Forward:"));
   controls.append(createLabel(NULL, "Time Backward:"));
@@ -1620,6 +1621,7 @@ Help1Menu::Help1Menu() : HelpMenu("Controls")
   list.append(createLabel("send message to nemesis"));
   list.append(createLabel("send message to recipient"));
   list.append(createLabel("toggle score sheet"));
+  list.append(createLabel("toggle tank labels"));
   list.append(createLabel("set time of day backward"));
   list.append(createLabel("set time of day forward"));
   list.append(createLabel("pause/resume"));
@@ -1654,7 +1656,8 @@ void			Help1Menu::resize(int width, int height)
 				BzfKeyMap::SendAll,
 				BzfKeyMap::SendNemesis,
 				BzfKeyMap::SendRecipient,
-				BzfKeyMap::Score,
+                                BzfKeyMap::Score,
+				BzfKeyMap::Labels,
 				BzfKeyMap::TimeForward,
 				BzfKeyMap::TimeBackward,
 				BzfKeyMap::Pause,
