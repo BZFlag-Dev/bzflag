@@ -540,6 +540,10 @@ but instead, you steal his flag.
 .TP
 .B Useless (US)
 It's useless!
+.TP
+.B Wings (WG)
+Tank can drive around in the air.  This can be useful when jumping
+or falling.
 .RE
 .PP
 A brief description of each bad superflag with the flag's code
@@ -585,6 +589,9 @@ Tank is not allowed to jump.
 .TP
 .B Trigger Happy (TR)
 Tank can't stop shooting.  Watch out for that richochet.
+.TP
+.B Reverse Controls (RC)
+Tank driving controls are reversed from their usual behavior.
 .SS Observing
 If a server is full or if you just want to watch a battle without interfering
 in it, you can use the observer mode. To join a server as an observer, select
