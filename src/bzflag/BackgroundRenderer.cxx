@@ -615,20 +615,21 @@ void			BackgroundRenderer::drawSky(SceneRenderer& renderer)
 void			BackgroundRenderer::drawGround()
 {
   // draw ground
-	if (invert){
-		if (useColorTexture[1])
-		   glColor3f(1,1,1);
-		else
-	      glColor3fv(groundColorInv[styleIndex]);
-	}
-	else{
-		if (useColorTexture[0])
-		  glColor3f(1,1,1);
-		else
-	      glColor3fv(groundColor[styleIndex]);
-	}
   glNormal3f(0.0f, 0.0f, 1.0f);
-  groundGState[styleIndex].setState();
+  if (invert){
+    if (useColorTexture[1])
+      glColor3f(1,1,1);
+    else
+      glColor3fv(groundColorInv[styleIndex]);
+    invGroundGState[styleIndex].setState();
+  }
+  else{
+    if (useColorTexture[0])
+      glColor3f(1,1,1);
+    else
+      glColor3fv(groundColor[styleIndex]);
+    groundGState[styleIndex].setState();
+  }
 
   simpleGroundList[styleIndex].execute();
 }
