@@ -2,6 +2,7 @@
 
 			     BZFlag release notes
 
+* Initial Docbook documentation - Sean Morrison
 * Persistent bans with -banfile <filename> - Lars Luthman
 * Stream Rolling collision detection is now compressed in height - Alfredo Tupone
 * Rendering options are actuated immediately - Alfredo Tupone
