@@ -35,6 +35,7 @@
 
   <chapter id="history">
     <sect1>
+      <title>The History of BZFlag</title>
 
       <para>BZFlag began back in 1992 while I was a Masters student at the
       Cornell Program of Computer Graphics. I was an intern at SGI for the
@@ -107,6 +108,18 @@
 
       <note>crs claims the first release was the first week of 1993 so we are
       over 10 years old now.</note>
+    </sect1>
+    
+    <sect1>
+
+      <title>Previous versions of the BZFlag website</title>
+
+      <itemizedlist>
+        <listitem><ulink url="http://web.archive.org/web/*/http://reality.sgi.com/crs/bzflag.html">http://web.archive.org/web/*/http://reality.sgi.com/crs/bzflag.html</ulink></listitem>
+        <listitem><ulink url="http://web.archive.org/web/*/http://bzflag.linuxgames.com/">http://web.archive.org/web/*/http://bzflag.linuxgames.com/</ulink></listitem>
+        <listitem><ulink url="http://web.archive.org/web/*/http://bzflag.sourceforge.net/">http://web.archive.org/web/*/http://bzflag.sourceforge.net/</ulink></listitem>
+        <listitem><ulink url="http://web.archive.org/web/*/http://BZFlag.org/">http://web.archive.org/web/*/http://BZFlag.org/</ulink></listitem>
+      </itemizedlist>
     </sect1>
   </chapter>
 </book>
