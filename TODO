@@ -1,15 +1,43 @@
-to do list for bzflag
----------------------
+to do / idea list for bzflag
+----------------------------
 
-* encapsulate stuff requiring platform #ifdef's:
-   networking API into libNet.a.
-   file system stuff (dir delimiter, etc.)
+* new UDP-only network code:
+   Use a single port only; provide better lag statistics
+   (latency and jitter). Should pack several small messages into
+   one UDP packet to reduce header overhead. For clients with
+   low bandwidth, an automatic throttling of bulk messages could
+   reduce lag.
+
+* player database in bzfls:
+   The idea is to allow players to register their callsign. 
+   Whoever want to use that callsign has to authenticate himself
+   (implemented by a simple public key scheme). Furthermore, a
+   karma system, where each player can rate another player.
+   'Nice' players should get high karma value this way, whereas
+   cheaters get bad karma. Servers can be set up to require a minum
+   karma level.
+
+* client-side world cache to speed up joining;
+   could be based on MD5 hashes (+ size?)
+
+* split bzfs.cxx into several files, make bzfs more modular 
+
+* server should probably track approx. player position;
+   can detect some cheats this way; server knows where to drop
+   flag when client crashes
+
+* add ability to change server settings at runtime,
+   e.g. switch flags on/off
+
+* get rid of hardcoded game parameters, most importantly
+   WorldSize, but most others in src/game/global.h should also
+   be specified by the server.
+
+* encourage server admins to provide an email contact by adding
+   an option to bzfs
 
 * windows makefiles
    currently have microsoft visual c++ projects only
-
-* auto-generated dependency support in makefiles
-   manual dependencies cause too much trouble
 
 * move robots to separate binaries and allow either the
    client or server to exec them. Have a server option
@@ -39,11 +67,8 @@ to do list for bzflag
    provide a means for players to gather before and after
    a game.  basic text chat facilities.  allows players
    to wait for enough players for a game and to discuss
-   strategy, etc.  could build this into bzfs easily.
+   strategy, etc. Would also be useful for timed matches, e.g.
+   in a tournament.
 
 * spectator mode. Possibly only through a relay server
   so as to not load down the normal server.
-
-* one tcp port. Tim Riker is working on this code. 1.7e4
-  should include playerid mangling support to get ready
-  for this patch.
