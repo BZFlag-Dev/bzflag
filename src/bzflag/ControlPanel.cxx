@@ -190,11 +190,6 @@ ControlPanel::~ControlPanel()
 
 void			ControlPanel::render()
 {
-int          msgRowOffset;		// These are used for line-wrap and may be
-unsigned int lineCharWidth;		//  better suited for a {} group below.
-BzfString    curMsgPos;			// Current position in display message
-float        curMsgY;				// Current Y offset for this message
-
   if (!resized) resize();
   if (!exposed && !changedMessage && !changedStatus && !changedCounts)
     return;
@@ -347,30 +342,47 @@ float        curMsgY;				// Current Y offset for this message
     //  maxLines             = Max messages lines that can be displayed
     //  maxScrollPages       = This number * maxLines is the total maximum
     //                         lines of messages (and scrollback)
-
-      // The font is fixed, so getWidth() returns the same for any char.
-    lineCharWidth=(int)(messageAreaPixels[2] / (messageFont.getWidth("-")));
+    // The font is fixed, so getWidth() returns the same for any char.
+    const int lineCharWidth=(int)(messageAreaPixels[2] / (messageFont.getWidth("-")));
 
     i=messages.getLength()-1;
     if (messagesOffset>0) {
-		if (i-messagesOffset > 0) i-=messagesOffset;
-		else i=0;
-	}
+	if (i-messagesOffset > 0) i-=messagesOffset;
+	else i=0;
+    }
     for (j = 0; i>=0 && j<maxLines; i--) {
       glColor3fv(messages[i].color);
-      curMsgPos = messages[i].string;
-      msgRowOffset = (int)(strlen(curMsgPos)/lineCharWidth);	// 0, 1, ...
-      curMsgY = fy + (lineHeight * msgRowOffset);
-      do {
-        messageFont.draw(curMsgPos, fx, curMsgY);
-        curMsgY -= lineHeight;
-        if (strlen(curMsgPos) > lineCharWidth) {
-          curMsgPos = curMsgPos+lineCharWidth;
-        }
-        else break;
-        j++;
-      } while (1);
-      fy += (lineHeight * (msgRowOffset+1));
+
+      // get message and its length
+      const char* msg = messages[i].string.getString();
+      int lineLen = messages[i].string.getLength();
+
+      // compute lines in message
+      const int numLines = (lineLen + lineCharWidth - 1) / lineCharWidth;
+
+      // draw each line
+      int y = numLines - 1;
+      while (lineLen > 0) {
+	assert(y >= 0);
+
+	// how many characters will fit?
+	int n = lineLen;
+	if (n > lineCharWidth)
+	  n = lineCharWidth;
+
+	// only draw message if inside message area
+	if (j + y < maxLines)
+	  messageFont.draw(msg, n, fx, fy + y * lineHeight);
+
+	// account for portion drawn (or skipped)
+	msg += n;
+	lineLen -= n;
+
+	// next line
+	y--;
+      }
+      j += numLines;
+      fy += (lineHeight * numLines);
     }
   }
 
