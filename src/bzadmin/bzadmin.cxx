@@ -37,6 +37,21 @@ using namespace std;
 
 int main(int argc, char** argv) {
 
+#ifdef _WIN32
+  // startup winsock
+  {
+    static const int major = 2, minor = 2;
+    WSADATA wsaData;
+    if (WSAStartup(MAKEWORD(major, minor), &wsaData)) {
+      return 1;
+    }
+    if (LOBYTE(wsaData.wVersion) != major ||
+	HIBYTE(wsaData.wVersion) != minor) {
+      WSACleanup();
+      return 1;
+    }
+  }
+#endif
   // command line options
   string uiName("curses");
 
