@@ -2,8 +2,8 @@ recent bugs
 ------------
 
 - players gets stuck for no reason, can't move or turn, but can shoot.
-  Seen on xmission, also seen on brlcad (FFA). Was stuck after each respawn,
-  could jump vertically, though. Had to restart client toget unstuck.
+  Seen on xmission (CTF), also seen on brlcad (FFA). Was stuck after each respawn,
+  could jump vertically, sometimes, but could shoot. Had to restart client toget unstuck.
 
 - Can only see flag and lights of thief tank
 
@@ -11,6 +11,8 @@ recent bugs
 
 - Shots that bounce off the ground occasionally reflect in the wrong
   direction - x/y flipped
+  Actually i think sometimes the bullet misses the bounce against the ground
+  and travels unabatted downward, making it look like an odd angle.
 
 - tanks only check their bottoms as regards hit detection against pyramids
 
