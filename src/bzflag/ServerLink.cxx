@@ -625,8 +625,19 @@ void			ServerLink::sendUDPlinkRequest()
   if ((urecvfd = socket(AF_INET, SOCK_DGRAM, 0)) < 0) {
 	return; // we cannot comply
   }
-  // TODO try our tcp port first
-  // TODO then do this stuff
+#if 1
+  AddrLen addr_len = sizeof(serv_addr);
+  if (getsockname(fd, (struct sockaddr*)&serv_addr, (socklen_t*) &addr_len) < 0) {
+    printError("Error: getsockname() failed, cannot get TCP port?");
+    return;
+  }
+  if (bind(urecvfd, (struct sockaddr *) &serv_addr, sizeof(serv_addr)) != 0) {
+    printError("Error: getsockname() failed, cannot get TCP port?");
+    return;  // we cannot get udp connection, bail out
+  }
+
+#else
+  // TODO if nobody complains kill this old port 17200 code
   for (int port=17200; port < 65000; port++) {
 	::memset((unsigned char *)&serv_addr, 0, sizeof(serv_addr));
 	serv_addr.sin_family = AF_INET;
@@ -635,15 +646,6 @@ void			ServerLink::sendUDPlinkRequest()
 	if (bind(urecvfd, (struct sockaddr *) &serv_addr, sizeof(serv_addr)) == 0) {
 		break;
 	}
-  }
-#if !defined(_WIN32)
-  // TODO this should not be needed even on windows
-  AddrLen addr_len = sizeof(serv_addr);
-  if (getsockname(urecvfd, (struct sockaddr*)&serv_addr, (socklen_t*) &addr_len) < 0) {
-	close(urecvfd);
-	urecvfd = 0;
-	printError("Error: getsockname() failed, cannot open UDP socket.");
-	return;  // we cannot get connection, bail out
   }
 #endif
   localPort = ntohs(serv_addr.sin_port);
@@ -664,27 +666,21 @@ void			ServerLink::sendUDPlinkRequest()
   send(MsgUDPLinkRequest, sizeof(msg), msg);
 }
 
-// This concludes an UDP network endpoint setup
-void			ServerLink::setUDPRemotePort()
+// heard back from server that we can send udp
+void			ServerLink::enableOutboundUDP()
 {
-  struct sockaddr_in existing_addr;
-  AddrLen addr_len = sizeof(existing_addr);
-
-  if (getsockname(fd, (struct sockaddr*)&existing_addr, (socklen_t*) &addr_len) < 0) {
-	printError("GETSOCKNAME: Unable to get my address");
-	return;  // we cannot get
-  }
-
-  std::vector<std::string> args;
-  args.push_back(inet_ntoa(existing_addr.sin_addr));
-  char info[10];
-  sprintf(info,"%d", ntohs(existing_addr.sin_port));
-  args.push_back(info);
-  sprintf(info,"%d", urecvfd);
-  args.push_back(info);
-  printError("Server sent UDP request, UDP up. Info: [{1}:{2}:{3}]", &args);
-
   ulinkup = true;
+  printError("Server got our UDP, using UDP to server");
+}
+// confirm that server can send us UDP
+void			ServerLink::confirmIncomingUDP()
+{
+  // This is really a hack. enableOutboundUDP will be setting this
+  // but frequently the udp handshake will finish first so might as
+  // well start with udp as soon as we can
+  ulinkup = true;
+
+  printError("Got server's UDP packet back, server using UDP");
   send(MsgUDPLinkEstablished, 0, NULL);
 }
 

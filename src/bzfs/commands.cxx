@@ -434,9 +434,10 @@ void handlePlayerlistCmd(int t, const char *)
 
   for (int i = 0; i < curMaxPlayers; i++) {
     if (player[i].state > PlayerInLimbo) {
-      sprintf(reply,"[%d]%-16s: %s%s",i,player[i].callSign,
+      sprintf(reply,"[%d]%-16s: %s%s%s",i,player[i].callSign,
 	      player[i].peer.getDotNotation().c_str(),
-	      player[i].ulinkup ? " udp" : "");
+	      player[i].udpin ? " udp" : "",
+	      player[i].udpout ? "+" : "");
       sendMessage(ServerPlayer, t, reply, true);
     }
   }

@@ -7,7 +7,7 @@ THESE SHOULD HAPPEN BEFORE THE NEXT RELEASE:
 
 * fix TCP/UDP negotiation for fw'ed clients to handle:
    to and from both do not work - working?
-   to server works, from does not - needs work
+   to server works, from does not - working?
    to and from both work - working?
    from server works, to does not - would NOT work with NAT
 
@@ -39,9 +39,8 @@ THESE ARE LOWER PRIORITY
 * support gameinfo requests as one time udp packets and include all the
   same information that bzfls tracks.  We should allow server info, player and
   score lists over udp from any udp address, not just a "connected" player.
-  bzfls should use this udp to confirm server availability before falling back
-  to tcp pipe for the same msgs.  Make bcast traffic and serverlist traffic less
-  blocking.
+
+* Make bcast traffic and serverlist traffic less blocking. (ie: same select() call)
 
 * listen all the time on udp for bcast game info replies when in Find Servers
 

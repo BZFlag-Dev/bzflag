@@ -74,7 +74,8 @@ class ServerLink {
 
     static ServerLink*	getServer(); // const
     static void		setServer(ServerLink*);
-    void		setUDPRemotePort();
+    void		enableOutboundUDP();
+    void		confirmIncomingUDP();
 
   private:
     State		state;

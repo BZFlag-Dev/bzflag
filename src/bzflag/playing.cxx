@@ -2774,8 +2774,14 @@ static void		handleServerMessage(bool human, uint16_t code,
 
   switch (code) {
 
+    case MsgUDPLinkEstablished:
+      // server got our initial UDP packet
+      serverLink->enableOutboundUDP();
+      break;
+
     case MsgUDPLinkRequest:
-      serverLink->setUDPRemotePort();
+      // we got server's initial UDP packet
+      serverLink->confirmIncomingUDP();
       break;
 
     case MsgSuperKill:

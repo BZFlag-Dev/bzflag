@@ -125,13 +125,10 @@ const uint16_t		RejectBadCallsign = 0x0006;
 const uint16_t		RejectRepeatCallsign = 0x0007;
 
 // request for additional UDP link
-
 const uint16_t		MsgUDPLinkRequest = 0x6f66;		// 'of'
 const uint16_t		MsgUDPLinkEstablished = 0x6f67;		// 'og'
-//const uint16_t		MsgUDPLinkUpdate = 0x6f68;		// 'oh'
 
 // server control message
-
 const uint16_t		MsgServerControl = 0x6f69;		// 'oi'
 
 // lag ping sent by server to client and reply from client

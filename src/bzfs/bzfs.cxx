@@ -643,7 +643,7 @@ static void pwrite(int playerIndex, const void *b, int l)
 #endif
 
   // Check if UDP Link is used instead of TCP, if so jump into puwrite
-  if (p.ulinkup) {
+  if (p.udpout) {
     // only send bulk messages by UDP
     switch (code) {
       case MsgShotBegin:
@@ -651,7 +651,6 @@ static void pwrite(int playerIndex, const void *b, int l)
       case MsgPlayerUpdate:
       case MsgGMUpdate:
       case MsgLagPing:
-      case MsgUDPLinkEstablished:
 	puwrite(playerIndex,b,l);
 	return;
     }
@@ -776,27 +775,18 @@ static void onGlobalChanged(const std::string& msg, void*)
 
 static void sendUDPupdate(int playerIndex)
 {
+  // confirm inbound UDP with a TCP message
+  directMessage(playerIndex, MsgUDPLinkEstablished, 0, getDirectMessageBuffer());
+  // request/test outbound UDP with a UDP back to where we got client's packet
   directMessage(playerIndex, MsgUDPLinkRequest, 0, getDirectMessageBuffer());
 }
-
-//static void sendUDPseqno(int playerIndex)
-//{
-//  unsigned short seqno = player[playerIndex].lastRecvPacketNo;
-//  void *buf, *bufStart = getDirectMessageBuffer();
-//  buf = nboPackUShort(bufStart, seqno);
-//  // send it
-//  directMessage(playerIndex, MsgUDPLinkUpdate, (char*)buf-(char*)bufStart, bufStart);
-//}
 
 static void createUDPcon(int t, int remote_port) {
   if (remote_port == 0)
     return;
 
   player[t].uaddr.sin_port = htons(remote_port);
-
-  // show some message on the console
-  DEBUG3("Player %s [%d] UDP link requested, remote %s:%d\n",
-      player[t].callSign, t, inet_ntoa(player[t].uaddr.sin_addr), remote_port);
+  player[t].udpin = true;
 
   // init the queues
   player[t].uqueue = player[t].dqueue = NULL;
@@ -844,7 +834,7 @@ static int uread(int *playerIndex, int *nopackets, int& n,
   PlayerInfo *pPlayerInfo;
   PlayerId pi;
   for (pi = 0, pPlayerInfo = player; pi < curMaxPlayers; pi++, pPlayerInfo++) {
-    if ((pPlayerInfo->ulinkup) &&
+    if ((pPlayerInfo->udpin) &&
 	(pPlayerInfo->uaddr.sin_port == uaddr.sin_port) &&
 	(memcmp(&pPlayerInfo->uaddr.sin_addr, &uaddr.sin_addr, sizeof(uaddr.sin_addr)) == 0)) {
       break;
@@ -857,31 +847,22 @@ static int uread(int *playerIndex, int *nopackets, int& n,
     tmpbuf = nboUnpackUShort(tmpbuf, code);
     if ((len == 1) && (code == MsgUDPLinkRequest)) {
       tmpbuf = nboUnpackUByte(tmpbuf, pi);
-      if ((pi <= curMaxPlayers) && !player[pi].ulinkup) {
+      if ((pi <= curMaxPlayers) && !player[pi].udpin) {
 	if (memcmp(&player[pi].uaddr.sin_addr, &uaddr.sin_addr, sizeof(uaddr.sin_addr)) == 0) {
-	  DEBUG2("Player %s [%d] uread() udp up %s:%d actual %d\n",
+	  DEBUG2("Player %s [%d] inbound UDP up %s:%d actual %d\n",
 	      player[pi].callSign, pi, inet_ntoa(player[pi].uaddr.sin_addr),
 	      ntohs(player[pi].uaddr.sin_port),
 	      ntohs(uaddr.sin_port));
 	  createUDPcon(pi, ntohs(uaddr.sin_port));
 	} else {
-	  DEBUG2("Player %s [%d] uread() udp rejected %s:%d\n",
+	  DEBUG2("Player %s [%d] inbound UDP rejected %s:%d different IP than %s:%d\n",
 	      player[pi].callSign, pi, inet_ntoa(player[pi].uaddr.sin_addr),
-	      ntohs(player[pi].uaddr.sin_port));
+	      ntohs(player[pi].uaddr.sin_port),
+	      inet_ntoa(uaddr.sin_addr), ntohs(uaddr.sin_port));
 	  pi = curMaxPlayers;
 	}
       } else {
 	pi = curMaxPlayers;
-      }
-    } else if ((len == 0) && (code == MsgUDPLinkEstablished)) {
-      for (pi = 0, pPlayerInfo = player; pi < curMaxPlayers; pi++, pPlayerInfo++) {
-	if ((pPlayerInfo->uaddr.sin_port == uaddr.sin_port) &&
-	    (memcmp(&pPlayerInfo->uaddr.sin_addr, &uaddr.sin_addr, sizeof(uaddr.sin_addr)) == 0)) {
-	  pPlayerInfo->ulinkup = true;
-          DEBUG3("Player %s [%d] UDP confirmed\n", pPlayerInfo->callSign, pi);
-  	  // directMessage(pi, MsgUDPLinkEstablished, 0, getDirectMessageBuffer());
-	  break;
-	}
       }
     }
   }
@@ -893,8 +874,8 @@ static int uread(int *playerIndex, int *nopackets, int& n,
     DEBUG2("uread() discard packet! %s:%d choices p(l) h:p", inet_ntoa(uaddr.sin_addr), ntohs(uaddr.sin_port));
     for (pi = 0, pPlayerInfo = player; pi < curMaxPlayers; pi++, pPlayerInfo++) {
       if (pPlayerInfo->fd != -1) {
-	DEBUG3(" %d(%d) %s:%d",
-	    pi, pPlayerInfo->ulinkup,
+	DEBUG3(" %d(%d-%d) %s:%d",
+	    pi, pPlayerInfo->udpin, pPlayerInfo->udpout,
 	    inet_ntoa(pPlayerInfo->uaddr.sin_addr),
 	    ntohs(pPlayerInfo->uaddr.sin_port));
       }
@@ -1357,7 +1338,7 @@ static bool serverStart()
 
   // udp socket
   int n;
-    // we open a udp socket on the same port if alsoUDP
+  // we open a udp socket on the same port if alsoUDP
   if ((udpSocket = socket(AF_INET, SOCK_DGRAM, 0)) < 0) {
       nerror("couldn't make udp connect socket");
       return false;
@@ -3063,7 +3044,8 @@ void removePlayer(int playerIndex, const char *reason, bool notify)
   memset(&player[playerIndex].uaddr, 0, sizeof(player[playerIndex].uaddr));
 
   // no UDP connection anymore
-  player[playerIndex].ulinkup = false;
+  player[playerIndex].udpin = false;
+  player[playerIndex].udpout = false;
   player[playerIndex].toBeKicked = false;
   player[playerIndex].udplen = 0;
 
@@ -4219,7 +4201,8 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
     }
 
     case MsgUDPLinkEstablished:
-      // handled inside uread()
+      player[t].udpout = true;
+      DEBUG2("Player %s [%d] outbound UDP up\n", player[t].callSign, t);
       break;
 
     case MsgNewRabbit: {

@@ -914,22 +914,22 @@ enters a game.  Clients must be prepared to handle them in any order.
 
 UDP negotiation:
 
-  this is broken at present as it only tests one direction.
-  also bots don't do it right
+  solo bots don't do this, they should use the existing player's connection
 
   MsgUDPLinkRequest = 0x6f66;		// 'of'
 
   MsgUDPLinkEstablished = 0x6f67;	// 'og'
 
-  not used at present
-  MsgUDPLinkUpdate = 0x6f68;		// 'oh'
-
   if client has udp enabled
     player sends MsgUDPLinkRequest with player number over udp
 
   if request has valid player number and is from same address
-    server sends MsgUDPLinkRequest over back over udp
-      FIXME should also send MsgUDPLinkEstablished over tcp to handle clients
-      that can send but not receive udp
+    server sends MsgUDPLinkEstablished over tcp to confirm inbound
+    server sends MsgUDPLinkRequest back over udp to test outbound
 
-  player responds with MsgUDPLinkEstablished accepting request over udp
+  player gets MsgUDPLinkEstablished and starts sending udp
+
+  player gets MsgUDPLinkRequest and sends MsgUDPLinkEstablished over udp
+
+  server gets MsgUDPLinkEstablished
+    server can now send over udp

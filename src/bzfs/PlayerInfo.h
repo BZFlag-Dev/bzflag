@@ -115,7 +115,8 @@ struct PlayerInfo {
     char *outmsg;
 
     // UDP connection
-    bool ulinkup;
+    bool udpin; // udp inbound up, player is sending us udp
+    bool udpout; // udp outbound up, we can send udp
     struct sockaddr_in uaddr;
     // TCP connection
     struct sockaddr_in taddr;
