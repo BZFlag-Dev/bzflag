@@ -57,7 +57,7 @@ int NetHandler::getUdpSocket() {
 }
 
 int NetHandler::udpReceive(char *buffer, struct sockaddr *uaddr) {
-  AddrLen recvlen = sizeof(uaddr);
+  AddrLen recvlen = sizeof(*uaddr);
   int n;
   while (true) {
     n = recvfrom(udpSocket, buffer, MaxPacketLen, 0, uaddr, &recvlen);
