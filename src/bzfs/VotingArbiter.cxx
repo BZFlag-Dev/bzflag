@@ -14,7 +14,7 @@
 
 #ifdef _WIN32
 #  pragma warning( 4:4786)
-#  define sprintf _snprintf
+#  define snprintf _snprintf
 #endif
 
 #include "VotingArbiter.h"
