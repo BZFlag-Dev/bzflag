@@ -31,10 +31,15 @@
 template <>
 URLManager* Singleton<URLManager>::_instance = (URLManager*)0;
 
-
+#ifdef HAVE_CURL
 static size_t writeFunction(void *ptr, size_t size, size_t nmemb, void *stream);
+#endif // HAVE_CURL
 
+#ifdef HAVE_CURL
 bool URLManager::getURL ( const std::string URL, std::string &data )
+#else
+bool URLManager::getURL ( const std::string, std::string&)
+#endif // HAVE_CURL
 {
 	if (theData)
 		free (theData);
@@ -85,7 +90,11 @@ bool URLManager::getURL ( const std::string URL, std::string &data )
 	return false;
 }
 
+#ifdef HAVE_CURL
 bool URLManager::getURL ( const std::string URL, void **data, unsigned int& size )
+#else
+bool URLManager::getURL (const std::string, void **, unsigned int&)
+#endif // HAVE_CURL
 {
 	if (theData)
 		free (theData);
@@ -190,11 +199,13 @@ void URLManager::collectData(char* ptr, int len)
 	theData = newData;
 }
 
+#ifdef HAVE_CURL
 static size_t writeFunction(void *ptr, size_t size, size_t nmemb,void *stream)
 {
 	int len = size * nmemb;
 	((URLManager *)stream)->collectData((char *)ptr, len);
 	return len;
 }
+#endif // HAVE_CURL
 
 
