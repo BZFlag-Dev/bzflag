@@ -1047,7 +1047,7 @@ void			HUDRenderer::renderPlaying(SceneRenderer& renderer)
   // draw heading strip
   if (True /* always draw heading strip */) {
     // first clip to area
-    glScissor(ox + centerx - maxMotionSize, oy + centery + maxMotionSize - 5,
+    glScissor(ox + centerx - maxMotionSize, oy + height - viewHeight + centery + maxMotionSize - 5,
 		2 * maxMotionSize, 15 + (int)(headingFont.getSpacing() + 0.5f));
 
     // draw heading mark
@@ -1118,7 +1118,7 @@ void			HUDRenderer::renderPlaying(SceneRenderer& renderer)
     OpenGLGState::resetState();
 
     // draw markers (give 'em a little more space on the sides)
-    glScissor(ox + centerx - maxMotionSize - 8, oy + centery + maxMotionSize,
+    glScissor(ox + centerx - maxMotionSize - 8, oy + height - viewHeight + centery + maxMotionSize,
 		2 * maxMotionSize + 16, 10);
     glPushMatrix();
     glTranslatef((float)centerx, (float)(centery + maxMotionSize), 0.0f);
@@ -1159,7 +1159,7 @@ void			HUDRenderer::renderPlaying(SceneRenderer& renderer)
   // draw altitude strip
   if (altitudeTape) {
     // clip to area
-    glScissor(ox + centerx + maxMotionSize - 5, oy + centery - maxMotionSize,
+    glScissor(ox + centerx + maxMotionSize - 5, oy + height - viewHeight + centery - maxMotionSize,
 		(int)altitudeLabelMaxWidth + 15, 2 * maxMotionSize);
 
     // draw altitude mark
