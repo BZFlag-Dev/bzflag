@@ -2318,17 +2318,20 @@ static void sendQueryGame(int playerIndex)
   buf = nboPackUShort(buf, team[2].team.size);
   buf = nboPackUShort(buf, team[3].team.size);
   buf = nboPackUShort(buf, team[4].team.size);
+  buf = nboPackUShort(buf, team[5].team.size);
   buf = nboPackUShort(buf, pingReply.rogueMax);
   buf = nboPackUShort(buf, pingReply.redMax);
   buf = nboPackUShort(buf, pingReply.greenMax);
   buf = nboPackUShort(buf, pingReply.blueMax);
   buf = nboPackUShort(buf, pingReply.purpleMax);
+  buf = nboPackUShort(buf, pingReply.observerMax);
   buf = nboPackUShort(buf, pingReply.shakeWins);
   // 1/10ths of second
   buf = nboPackUShort(buf, pingReply.shakeTimeout);
   buf = nboPackUShort(buf, pingReply.maxPlayerScore);
   buf = nboPackUShort(buf, pingReply.maxTeamScore);
   buf = nboPackUShort(buf, pingReply.maxTime);
+  buf = nboPackUShort(buf, (uint16_t)clOptions->timeElapsed);
 
   // send it
   directMessage(playerIndex, MsgQueryGame, (char*)buf-(char*)bufStart, bufStart);

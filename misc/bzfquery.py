@@ -101,7 +101,7 @@ class Server :
 			struct.unpack( '4s4sb' , header )
 		if magic != 'BZFS' :
 			raise Exception( 'Not a bzflag server.' )
-		if self.protocol not in [ '1910' ] :
+		if self.protocol not in [ '0014' ] :
 			raise Exception( 'Not compatible with server.' )
 
 	def cmd( self , command ) :
@@ -124,19 +124,21 @@ class Server :
 	def queryGame( self ) :
 
 		data = self.cmd( 'qg' )
-		data = struct.unpack( '>18H' , data )
+		data = struct.unpack( '>21H' , data )
 		style , maxPlayers , maxShots , rogueSize , \
-			redSize , greenSize , blueSize , purpleSize , rogueMax , \
-			redMax , greenMax , blueMax , purpleMax , shakeWins , \
-			shakeTimeout , maxPlayerScore , maxTeamScore , maxTime \
+			redSize , greenSize , blueSize , purpleSize , obsSize, \
+			rogueMax , redMax , greenMax , blueMax , purpleMax , obsMax, \
+			shakeWins , shakeTimeout , maxPlayerScore , maxTeamScore , \
+			maxTime , elapsedTime \
 			= data
 		style = decodeStyle( style )
 		teams = {
-			'rogue'  : ( rogueSize  , rogueMax ) ,
-			'red'    : ( redSize    , redMax ) ,
-			'green'  : ( greenSize  , greenMax ) ,
-			'blue'   : ( blueSize   , blueMax ) ,
-			'purple' : ( purpleSize , purpleMax ) ,
+			'rogue'    : ( rogueSize  , rogueMax ) ,
+			'red'      : ( redSize    , redMax ) ,
+			'green'    : ( greenSize  , greenMax ) ,
+			'blue'     : ( blueSize   , blueMax ) ,
+			'purple'   : ( purpleSize , purpleMax ) ,
+			'observer' : ( obsSize    , obsMax ) ,
 		}
 		infos = {
 			'style' : style ,
@@ -145,7 +147,8 @@ class Server :
 			'maxTeamScore' : maxTeamScore ,
 			'maxPlayers' : maxPlayers ,
 			'maxShots' : maxShots ,
-			'maxTime' : maxTime / 10.
+			'maxTime' : maxTime / 10 ,
+			'elapsedTime' : elapsedTime / 10 ,
 		}
 		if 'shaking' in style :
 			infos[ 'shake' ] = { 'wins' : shakeWins , 'timeout' : shakeTimeout / 10. }
@@ -220,6 +223,7 @@ def getAndPrintStat( hostname , port ) :
 	print 'Max player score: %d' % game[ 'maxPlayerScore' ]
 	print 'Max team score: %d' % game[ 'maxTeamScore' ]
 	print 'Max time: %g' % game[ 'maxTime' ]
+	print 'Time elapsed: %g' % game[ 'elapsedTime' ]
 
 	teams , players = s.queryPlayers()
 	print

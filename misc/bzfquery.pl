@@ -57,7 +57,7 @@ die $! unless sysread(S, $buffer, 9) == 9;
 
 # quit if version isn't valid
 die "not a bzflag server" if ($magic ne "BZFS");
-die "incompatible version" if ($protocol ne "1910");
+die "incompatible version" if ($protocol ne "0014");
 
 # quit if rejected
 die "rejected by server" if ($id == 255);
@@ -66,12 +66,12 @@ die "rejected by server" if ($id == 255);
 print S pack("n2", 0, 0x7167);
 
 # get reply
-die $! unless sysread(S, $buffer, 40) == 40;
+die $! unless sysread(S, $buffer, 46) == 46;
 ($len,$code,$style,$maxPlayers,$maxShots,
-	$rogueSize,$redSize,$greenSize,$blueSize,$purpleSize,
-	$rogueMax,$redMax,$greenMax,$blueMax,$purpleMax,
+	$rogueSize,$redSize,$greenSize,$blueSize,$purpleSize,$obsSize,
+	$rogueMax,$redMax,$greenMax,$blueMax,$purpleMax,$obsMax,
 	$shakeWins,$shakeTimeout,
-	$maxPlayerScore,$maxTeamScore,$maxTime) = unpack("n20", $buffer);
+	$maxPlayerScore,$maxTeamScore,$maxTime,$timeElapsed) = unpack("n23", $buffer);
 die $! unless $code == 0x7167;
 
 # print info
@@ -87,16 +87,18 @@ print " handicap" if $style & 0x0100;
 print " rabbit-hunt" if $style & 0x0200;
 print "\n";
 print "maxPlayers: $maxPlayers\nmaxShots: $maxShots\n";
-print "team sizes: $rogueSize $redSize $greenSize $blueSize $purpleSize" .
-	" (rogue red green blue purple)\n";
-print "max sizes:  $rogueMax $redMax $greenMax $blueMax $purpleMax\n";
+print "team sizes: $rogueSize $redSize $greenSize $blueSize $purpleSize $obsSize" .
+	" (rogue red green blue purple observer)\n";
+print "max sizes:  $rogueMax $redMax $greenMax $blueMax $purpleMax $obsMax\n";
 if ($style & 0x0040) {
   print "wins to shake bad flag: $shakeWins\n";
   print "time to shake bad flag: " . $shakeTimeout / 10 . "\n";
 }
 print "max player score: $maxPlayerScore\n";
 print "max team score: $maxTeamScore\n";
-print "max time: " . $maxTime / 10 . "\n\n";
+print "max time: " . $maxTime / 10 . "\n";
+
+print "time elapsed: " . $timeElapsed / 10 . "\n\n";
 
 # send players request
 print S pack("n2", 0, 0x7170);

@@ -19,13 +19,9 @@
 #include <stdio.h>
 #include <string.h>
 
-/* protocol version should only be updated when the networking protocol
- * changes in a backwards incompatible way.  when the protocol really
- * is broken, the version should be set to match the release version that
- * broke it
- */
+// opaque version number increments on protocol incompatibility
 #ifndef BZ_PROTO_VERSION
-#define BZ_PROTO_VERSION	"0013"
+#define BZ_PROTO_VERSION	"0014"
 #endif
 
 #ifndef BZ_MAJOR_VERSION
@@ -37,7 +33,7 @@
 #endif
 
 #ifndef BZ_REV
-#define BZ_REV			23
+#define BZ_REV			24
 #endif
 
 #ifndef BZ_CONFIG_DIR_VERSION

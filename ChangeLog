@@ -4,6 +4,7 @@
 BZFlag 1.12.0  (was 1.11.x)
 ---------------------------
 
+* Observer counts and match times added to game queries - David Vuorio
 * Central authentication - Tim Riker
 * Cheat client flag obfuscation and hiding - Alfredo Tupone
 * Added strong authentication via Kerberos - Alfredo Tupone
