@@ -49,6 +49,7 @@ typedef __int64 s64;
 #include "DirectoryNames.h"
 #include "NetHandler.h"
 #include "md5.h"
+#include "Score.h"
 
 // bzfs specific headers
 #include "CmdLineOptions.h"
@@ -208,6 +209,7 @@ extern int numFlagsInAir;
 extern FlagInfo *flag;
 extern PlayerInfo player[MaxPlayers + ReplayObservers];
 extern PlayerAccessInfo accessInfo[MaxPlayers + ReplayObservers];
+extern Score *score[MaxPlayers  + ReplayObservers];
 extern u16 curMaxPlayers;
 extern TeamInfo team[NumTeams];
 extern char *worldDatabase;
@@ -1394,6 +1396,8 @@ savePlayersState ()
       PlayerInfo *pPlayer = &player[i];
       buf = nboPackUByte(bufStart, i);
       buf = pPlayer->packUpdate(buf);
+      buf = score[i]->pack(buf);
+      buf = pPlayer->packId(buf);
       routePacket (MsgAddPlayer, 
                    (char*)buf - (char*)bufStart, bufStart, StatePacket);
       // Part of MsgAdminInfo

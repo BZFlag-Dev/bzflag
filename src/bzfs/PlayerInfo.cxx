@@ -78,9 +78,6 @@ bool PlayerInfo::exist() {
 void PlayerInfo::signingOn() {
   state = PlayerDead;
   flag = -1;
-  wins = 0;
-  losses = 0;
-  tks = 0;  
 };
 
 bool PlayerInfo::isAlive() {
@@ -111,13 +108,14 @@ bool PlayerInfo::isHuman() {
 void *PlayerInfo::packUpdate(void *buf) {
   buf = nboPackUShort(buf, uint16_t(type));
   buf = nboPackUShort(buf, uint16_t(team));
-  buf = nboPackUShort(buf, uint16_t(wins));
-  buf = nboPackUShort(buf, uint16_t(losses));
-  buf = nboPackUShort(buf, uint16_t(tks));
+  return buf;
+};
+
+void *PlayerInfo::packId(void *buf) {
   buf = nboPackString(buf, callSign, CallSignLen);
   buf = nboPackString(buf, email, EmailLen);
   return buf;
-};
+}
 
 void PlayerInfo::unpackEnter(void *buf) {
   // data: type, team, name, email
@@ -260,47 +258,6 @@ int PlayerInfo::getFlag() const {
 
 void PlayerInfo::setFlag(int _flag) {
   flag = _flag;
-};
-
-void PlayerInfo::dumpScore() {
-  if (state > PlayerInLimbo)
-    std::cout << wins << '-' << losses << ' ' << callSign << std::endl;
-};
-
-float PlayerInfo::scoreRanking() {
-  int sum = wins + losses;
-  if (sum == 0)
-    return 0.5;
-  float average = (float)wins/(float)sum;
-  // IIRC that is how wide is the gaussian
-  float penalty = (1.0f - 0.5f / sqrt((float)sum));
-  return average * penalty;
-};
-
-bool PlayerInfo::setAndTestTK(float tkKickRatio) {
-  tks++;
-  return (tks >= 3) && (tkKickRatio > 0) && // arbitrary 3
-    ((wins == 0) || (tks * 100 / wins > tkKickRatio));
-};
-
-void PlayerInfo::setOneMoreLoss() {
-  losses++;
-};
-
-void PlayerInfo::setOneMoreWin() {
-  wins++;
-};
-
-void *PlayerInfo::packScore(void *buf) {
-  buf = nboPackUByte(buf, playerIndex);
-  buf = nboPackUShort(buf, wins);
-  buf = nboPackUShort(buf, losses);
-  buf = nboPackUShort(buf, tks);
-  return buf;
-};
-
-bool PlayerInfo::scoreReached(int score) {
-  return wins - losses >= score;
 };
 
 bool PlayerInfo::isFlagTransitSafe() {

@@ -15,6 +15,7 @@
 #include "DelayQueue.h"
 #include "RejoinList.h"
 #include "FlagHistory.h"
+#include "Score.h"
 
 const int udpBufSize = 128000;
 
@@ -53,6 +54,8 @@ PlayerState lastState[MaxPlayers  + ReplayObservers];
 DelayQueue delayq[MaxPlayers  + ReplayObservers];
 // FlagHistory
 FlagHistory flagHistory[MaxPlayers  + ReplayObservers];
+// Score
+Score *score[MaxPlayers  + ReplayObservers] = {NULL};
 // team info
 TeamInfo team[NumTeams];
 // num flags in flag list
@@ -323,6 +326,8 @@ static void sendPlayerUpdate(int playerIndex, int index)
   PlayerInfo *pPlayer = &player[playerIndex];
   buf = nboPackUByte(bufStart, playerIndex);
   buf = pPlayer->packUpdate(buf);
+  buf = score[playerIndex]->pack(buf);
+  buf = pPlayer->packId(buf);
   
   if (playerIndex == index) {
     // send all players info about player[playerIndex]
@@ -1245,7 +1250,10 @@ static void dumpScore()
     	         Team::getName(TeamColor(i));
   std::cout << "\n#players\n";
   for (i = 0; i < curMaxPlayers; i++)
-    player[i].dumpScore();
+    if (player[i].isPlaying()) {
+      score[i]->dump();
+      std::cout << ' ' << player[i].getCallSign() << std::endl;
+    }
   std::cout << "#end\n";
 }
 #endif
@@ -1637,6 +1645,7 @@ static void addPlayer(int playerIndex)
 
   // player is signing on (has already connected via addClient).
   player[playerIndex].signingOn();
+  score[playerIndex] = new Score();
   // update team state and if first player on team,
   // add team's flag and reset it's score
   bool resetTeamFlag = false;
@@ -1962,12 +1971,12 @@ static void dropAssignedFlag(int playerIndex) {
 
 // Take into account the quality of player wins/(wins+loss)
 // Try to penalize winning casuality 
-static float rabbitRank (PlayerInfo& player) {
+static float rabbitRank (Score *score) {
   if (clOptions->rabbitSelection == RandomRabbitSelection)
     return (float)bzfrand();
   
   // otherwise do score-based ranking
-  return player.scoreRanking();
+  return score->ranking();
 }
 
 static void anointNewRabbit(int killerId = NoPlayer)
@@ -1986,7 +1995,7 @@ static void anointNewRabbit(int killerId = NoPlayer)
   if (rabbitIndex == NoPlayer) {
     for (i = 0; i < curMaxPlayers; i++) {
       if (i != oldRabbit && player[i].canBeRabbit()) {
-	float ratio = rabbitRank(player[i]);
+	float ratio = rabbitRank(score[i]);
 	if (ratio > topRatio) {
 	  topRatio = ratio;
 	  rabbitIndex = i;
@@ -1998,7 +2007,7 @@ static void anointNewRabbit(int killerId = NoPlayer)
   if (rabbitIndex == NoPlayer) {
     for (i = 0; i < curMaxPlayers; i++) {
       if (player[i].canBeRabbit(true)) {
-	float ratio = rabbitRank(player[i]);
+	float ratio = rabbitRank(score[i]);
 	if (ratio > topRatio) {
 	  topRatio = ratio;
 	  rabbitIndex = i;
@@ -2076,6 +2085,7 @@ void removePlayer(int playerIndex, const char *reason, bool notify)
     delete netPlayer;
     delete lagInfo[playerIndex];
     lagInfo[playerIndex] = NULL;
+    delete score[playerIndex];
   }
 
   // player is outta here.  if player never joined a team then
@@ -2341,8 +2351,8 @@ static void playerKilled(int victimIndex, int killerIndex, int reason,
 
   //update tk-score
   if ((victimIndex != killerIndex) && teamkill) {
-    bool isTk = killer->setAndTestTK((float)clOptions->teamKillerKickRatio);
-    if (isTk) {
+    score[killerIndex]->tK();
+    if (score[killerIndex]->isTK()) {
        char message[MessageLen];
        strcpy(message, "You have been automatically kicked for team killing" );
        sendMessage(ServerPlayer, killerIndex, message, true);
@@ -2374,33 +2384,35 @@ static void playerKilled(int victimIndex, int killerIndex, int reason,
 
   // change the player score
   bufStart = getDirectMessageBuffer();
-  victim->setOneMoreLoss();
+  score[victimIndex]->killedBy();
   if (killer) {
     if (victimIndex != killerIndex) {
       if (teamkill) {
         if (clOptions->teamKillerDies)
           playerKilled(killerIndex, killerIndex, reason, -1);
         else
-          killer->setOneMoreLoss();
+          score[killerIndex]->killedBy();
       } else
-        killer->setOneMoreWin();
+        score[killerIndex]->kill();
     }
 
     buf = nboPackUByte(bufStart, 2);
-    buf = killer->packScore(buf);
+    buf = nboPackUByte(buf, killerIndex);
+    buf = score[killerIndex]->pack(buf);
   }
   else {
     buf = nboPackUByte(bufStart, 1);
   }
 
-  buf = victim->packScore(buf);
+  buf = nboPackUByte(buf, victimIndex);
+  buf = score[victimIndex]->pack(buf);
   broadcastMessage(MsgScore, (char*)buf-(char*)bufStart, bufStart);
 
   // see if the player reached the score limit
   if (clOptions->maxPlayerScore != 0
       && killerIndex != InvalidPlayer
       && killerIndex != ServerPlayer
-      && killer->scoreReached(clOptions->maxPlayerScore)) {
+      && score[killerIndex]->reached()) {
     void *buf, *bufStart = getDirectMessageBuffer();
     buf = nboPackUByte(bufStart, killerIndex);
     buf = nboPackUShort(buf, uint16_t(NoTeam));
@@ -3770,6 +3782,7 @@ int main(int argc, char **argv)
   } else {
     DEBUG1("Running a private server with the following settings:\n");
   }
+  Score::setTeamKillRatio(clOptions->teamKillerKickRatio);
   // print networking info
   DEBUG1("\tlistening on %s:%i\n",
       serverAddress.getDotNotation().c_str(), clOptions->wksPort);

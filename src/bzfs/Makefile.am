@@ -47,6 +47,8 @@ bzfs_SOURCES = \
 	RecordReplay.h \
 	RejoinList.cxx \
 	RejoinList.h \
+	Score.h	\
+	Score.cxx	\
 	SpawnPosition.cxx \
 	SpawnPosition.h \
 	TeamBases.cxx \

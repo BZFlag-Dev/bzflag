@@ -78,6 +78,7 @@ public:
   bool        isBot();
   bool        isHuman();
   void       *packUpdate(void *buf);
+  void       *packId(void *buf);
   void        unpackEnter(void *buf);
   const char *getCallSign() const;
   bool        isCallSignReadable();
@@ -95,13 +96,6 @@ public:
   bool        haveFlag() const;
   int         getFlag() const;
   void        setFlag(int flag);
-  void        dumpScore();
-  float       scoreRanking();
-  bool        setAndTestTK(float tkKickRatio);
-  void        setOneMoreLoss();
-  void        setOneMoreWin();
-  void       *packScore(void *buf);
-  bool        scoreReached(int score);
   bool        isFlagTransitSafe();
   const char *getClientVersion();
   void       *setClientVersion(size_t length, void *buf);
@@ -139,8 +133,6 @@ private:
     bool wasRabbit;
     // flag index player has
     int flag;
-    // player's score
-    int wins, losses, tks;
 
     TimeKeeper lastFlagDropTime;
 
