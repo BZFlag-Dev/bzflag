@@ -1234,7 +1234,11 @@ void			GuidedMissileStrategy::update(float dt)
   Ray ray = Ray(nextPos, newDirection);
 
   // Changed: GM leave smoke trail, call add puff every 3 updates
-  if ((++renderTimes % 3) == 0) addShotPuff(nextPos);
+	if (!BZDB.isTrue("SupressGMSmoke"))
+	{
+		if ((++renderTimes % 3) == 0)
+			addShotPuff(nextPos);
+	}
 
   // get next position
   float shotSpeed = BZDB.eval(StateDatabase::BZDB_SHOTSPEED);
