@@ -92,7 +92,7 @@ const struct CommandListItem commandList[] = {
   { "screenshot", &cmdScreenshot, "screenshot:  take a screenshot" },
 #endif
   { "time",	&cmdTime,	"time {forward|backward}:  adjust the current time" },
-  { "roam",	&cmdRoam,	"roam {rotate|translate|zoom|cycle} <args>:  roam around" },
+  { "roam",	&cmdRoam,	"roam {zoom|cycle} <args>:  roam around" },
   { "silence",	&cmdSilence,	"silence:  silence/unsilence a player" },
   { "servercommand",	&cmdServerCommand,	"servercommand:  quick admin" },
   { "scrollpanel",	&cmdScrollPanel,	"scrollpanel {up|down}:  scroll message panel" },
