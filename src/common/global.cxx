@@ -68,6 +68,7 @@ const GlobalDBItem				globalDBItems[] = {
 	{ "_shockInRadius",		"_tankLength",			false, StateDatabase::Locked},
 	{ "_shockOutRadius",		"60.0",				false, StateDatabase::Locked},
 	{ "_shotTailLength",		"4.0",				false, StateDatabase::Locked},
+	{ "_shotRadius",		"0.5",				false, StateDatabase::Locked},
 	{ "_shotRange",			"350.0",			false, StateDatabase::Locked},
 	{ "_shotSpeed",			"100.0",			false, StateDatabase::Locked},
 	{ "_shotsKeepVerticalVelocity",	"0",				false, StateDatabase::Locked},
