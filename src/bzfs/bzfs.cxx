@@ -4467,7 +4467,8 @@ int main(int argc, char **argv)
 	      player = GameKeeper::Player::getPlayerByIndex(i);
 
 	      // the server gets to capture the flag -- send some bogus player id
-	      buf = nboPackUByte(bufStart, curMaxPlayers);
+	      // curMaxPlayers should never exceed 255, so this should be a safe cast
+	      buf = nboPackUByte(bufStart, (uint8_t)curMaxPlayers);
 	      buf = player->player.packVirtualFlagCapture(buf);
 	      directMessage(i, MsgCaptureFlag, (char*)buf - (char*)bufStart, bufStart);
 
