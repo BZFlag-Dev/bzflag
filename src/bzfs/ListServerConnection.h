@@ -12,6 +12,9 @@
 
 // Provide BZFS with a list server connection
 
+#ifndef __LISTSERVERCONNECTION_H__
+#define __LISTSERVERCONNECTION_H__
+
 #include "Address.h"
 #include "Ping.h"
 #include "TimeKeeper.h"
@@ -67,3 +70,13 @@ inline bool ListServerLink::isConnected()
 {
   return (linkSocket != NotConnected);
 }
+
+#endif //__LISTSERVERCONNECTION_H__
+
+// Local Variables: ***
+// mode:C++ ***
+// tab-width: 8 ***
+// c-basic-offset: 2 ***
+// indent-tabs-mode: t ***
+// End: ***
+// ex: shiftwidth=2 tabstop=8

@@ -239,3 +239,11 @@ const float SpawnPosition::distanceFrom(const float* farPos) const
   float dz = farPos[2] - testPos[2];
   return (float)sqrt(dx*dx + dy*dy + dz*dz);
 }
+
+// Local Variables: ***
+// mode:C++ ***
+// tab-width: 8 ***
+// c-basic-offset: 2 ***
+// indent-tabs-mode: t ***
+// End: ***
+// ex: shiftwidth=2 tabstop=8
