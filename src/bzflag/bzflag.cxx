@@ -624,7 +624,7 @@ void			dumpResources(BzfDisplay* display,
   db.addValue("smooth",   renderer.useSmoothing() ? "yes" : "no");
   db.addValue("lighting", renderer.useLighting() ? "yes" : "no");
   db.addValue("texture",  renderer.useTexture() ?
- 		configFilterValues[OpenGLTexture::getFilter()] : "no");
+		configFilterValues[OpenGLTexture::getFilter()] : "no");
   db.addValue("shadows",  renderer.useShadows() ? "yes" : "no");
 
   GLint value;
@@ -939,8 +939,8 @@ int			main(int argc, char** argv)
 #if defined(_MACOSX_)
     else
     {
-        extern char *GetMacOSXDataPath(void);
-        PlatformFactory::getMedia()->setMediaDirectory(GetMacOSXDataPath());
+	extern char *GetMacOSXDataPath(void);
+	PlatformFactory::getMedia()->setMediaDirectory(GetMacOSXDataPath());
     }
 #endif
 

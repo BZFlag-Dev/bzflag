@@ -368,8 +368,8 @@ public:
     while ((pSep = strchr(pStart, ',')) != NULL) {
       *pSep = 0;
       if (convert(pStart, mask)) {
-        ban(mask, period);
-        added = true;
+	ban(mask, period);
+	added = true;
       }
       *pSep = ',';
       pStart = pSep + 1;
@@ -387,10 +387,10 @@ public:
     bool found = false;
     for (int i = 0; i < numBans; i++) {
       if (banList[i].addr.s_addr == ipAddr.s_addr) {
-        banList.remove(i);
-        i--;
-        numBans--;
-        found = true;
+	banList.remove(i);
+	i--;
+	numBans--;
+	found = true;
       }
     }
     return found;
@@ -410,7 +410,7 @@ public:
     while ((pSep = strchr(pStart, ',')) != NULL) {
       *pSep = 0;
       if (convert(pStart, mask))
-        success|=unban(mask);
+	success|=unban(mask);
       *pSep = ',';
       pStart = pSep + 1;
     }
@@ -435,14 +435,14 @@ public:
 	  }
 
       if ((ntohl(mask.s_addr) & 0x00ffffff) == 0x00ffffff)
-        mask.s_addr = htonl((ntohl(mask.s_addr) & 0xff000000) | (ntohl(ipAddr.s_addr) & 0x00ffffff));
+	mask.s_addr = htonl((ntohl(mask.s_addr) & 0xff000000) | (ntohl(ipAddr.s_addr) & 0x00ffffff));
       else if ((ntohl(mask.s_addr) & 0x0000ffff) == 0x0000ffff)
-        mask.s_addr = htonl((ntohl(mask.s_addr) & 0xffff0000) | (ntohl(ipAddr.s_addr) & 0x0000ffff));
+	mask.s_addr = htonl((ntohl(mask.s_addr) & 0xffff0000) | (ntohl(ipAddr.s_addr) & 0x0000ffff));
       else if ((ntohl(mask.s_addr) & 0x000000ff) == 0x000000ff)
-        mask.s_addr = htonl((ntohl(mask.s_addr) & 0xffffff00) | (ntohl(ipAddr.s_addr) & 0x000000ff));
+	mask.s_addr = htonl((ntohl(mask.s_addr) & 0xffffff00) | (ntohl(ipAddr.s_addr) & 0x000000ff));
 
       if (mask.s_addr == ipAddr.s_addr)
-        return false;
+	return false;
     }
     return true;
   }
@@ -498,16 +498,16 @@ private:
     for (int i = 0; i < 3; i++) {
       pPeriod = strchr(ip, '.');
       if (pPeriod) {
-        *pPeriod = 0;
-        if (strcmp("*", ip) == 0)
-          b[i] = 255;
-        else
-          b[i] = atoi(ip);
-        *pPeriod = '.';
-        ip = pPeriod + 1;
+	*pPeriod = 0;
+	if (strcmp("*", ip) == 0)
+	  b[i] = 255;
+	else
+	  b[i] = atoi(ip);
+	*pPeriod = '.';
+	ip = pPeriod + 1;
       }
       else
-        return false;
+	return false;
     }
     if (strcmp("*", ip) == 0)
       b[3] = 255;
@@ -515,7 +515,7 @@ private:
       b[3] = atoi(ip);
 
     mask.s_addr= htonl(((unsigned int)b[0] << 24) |
-        ((unsigned int)b[1] << 16) | ((unsigned int)b[2] << 8) | (unsigned int)b[3]);
+	((unsigned int)b[1] << 16) | ((unsigned int)b[2] << 8) | (unsigned int)b[3]);
     return true;
   }
 
@@ -1671,7 +1671,7 @@ static void pwrite(int playerIndex, const void *b, int l)
       case MsgPlayerUpdate:
       case MsgGMUpdate:
       case MsgLagPing:
-        puwrite(playerIndex,b,l);
+	puwrite(playerIndex,b,l);
 	goto unpatch;
     }
   }
@@ -1792,7 +1792,7 @@ int countMessage(int playerIndex, uint16_t code, int len, int direction)
   else {
     player[playerIndex].perSecondTime[direction] = now;
     if (player[playerIndex].perSecondMaxMsg[direction] <
-        player[playerIndex].perSecondCurrentMsg[direction])
+	player[playerIndex].perSecondCurrentMsg[direction])
       player[playerIndex].perSecondMaxMsg[direction] =
 	  player[playerIndex].perSecondCurrentMsg[direction];
     if (player[playerIndex].perSecondMaxBytes[direction] <
@@ -2120,7 +2120,7 @@ static void sendPlayerUpdate(int playerIndex, int index)
     // send all players info about player[playerIndex]
     for (int i = 0; i < maxPlayers; i++)
       if (player[i].state > PlayerInLimbo && i != playerIndex)
-        directMessage(i, MsgAddPlayer, (char*)buf - (char*)bufStart - PlayerIdPLen, bufStart);
+	directMessage(i, MsgAddPlayer, (char*)buf - (char*)bufStart - PlayerIdPLen, bufStart);
     // append playerid which will not be mangled so new clients can adapt
     directMessage(index, MsgAddPlayer, (char*)buf - (char*)bufStart, bufStart);
   } else
@@ -2827,9 +2827,9 @@ static WorldInfo *defineWorldFromFile(const char *filename)
   if (gameStyle & TeamFlagGameStyle) {
     for (int i = RedTeam; i <= PurpleTeam; i++) {
       if ((maxTeam[i] > 0) && !hasBase[i]) {
-        cerr << "base was not defined for team " << i << " capture the flag game style removed." << endl;
-        gameStyle &= (~TeamFlagGameStyle);
-        break;
+	cerr << "base was not defined for team " << i << " capture the flag game style removed." << endl;
+	gameStyle &= (~TeamFlagGameStyle);
+	break;
       }
     }
   }
@@ -3007,73 +3007,73 @@ static WorldInfo *defineTeamWorld()
       }
       const int numBoxes = int((0.5 + 0.4 * bzfrand()) * CitySize * CitySize);
       for (i = 0; i < numBoxes;) {
-        if (randomHeights)
-          h = BoxHeight * (2.0f * (float)bzfrand() + 0.5f);
-        float x=WorldSize * ((float)bzfrand() - 0.5f);
-        float y=WorldSize * ((float)bzfrand() - 0.5f);
-        // don't place near center and bases
-        if (hypotf(fabs(x-basePos[1][0]),fabs(y-basePos[1][1])) > BoxBase*4 &&
-            hypotf(fabs(-x-basePos[1][0]),fabs(-y-basePos[1][1])) > BoxBase*4 &&
-            hypotf(fabs(x),fabs(y)) > WorldSize/12)
+	if (randomHeights)
+	  h = BoxHeight * (2.0f * (float)bzfrand() + 0.5f);
+	float x=WorldSize * ((float)bzfrand() - 0.5f);
+	float y=WorldSize * ((float)bzfrand() - 0.5f);
+	// don't place near center and bases
+	if (hypotf(fabs(x-basePos[1][0]),fabs(y-basePos[1][1])) > BoxBase*4 &&
+	    hypotf(fabs(-x-basePos[1][0]),fabs(-y-basePos[1][1])) > BoxBase*4 &&
+	    hypotf(fabs(x),fabs(y)) > WorldSize/12)
 	  if ((numTeams <= 2) || (hypotf(fabs(x-basePos[2][0]),fabs(y-basePos[2][1])) > BoxBase*4 &&
-              hypotf(fabs(-x-basePos[2][0]),fabs(-y-basePos[2][1])) > BoxBase*4)) {
-            float angle=2.0f * M_PI * (float)bzfrand();
-            world->addBox(x,y,0.0f, angle, BoxBase, BoxBase, h);
-            world->addBox(-x,-y,0.0f, angle, BoxBase, BoxBase, h);
-            i+=2;
+	      hypotf(fabs(-x-basePos[2][0]),fabs(-y-basePos[2][1])) > BoxBase*4)) {
+	    float angle=2.0f * M_PI * (float)bzfrand();
+	    world->addBox(x,y,0.0f, angle, BoxBase, BoxBase, h);
+	    world->addBox(-x,-y,0.0f, angle, BoxBase, BoxBase, h);
+	    i+=2;
 	    if (numTeams > 2) {
-              world->addBox(y,-x,0.0f, angle, BoxBase, BoxBase, h);
-              world->addBox(-y,x,0.0f, angle, BoxBase, BoxBase, h);
-              i+=2;
+	      world->addBox(y,-x,0.0f, angle, BoxBase, BoxBase, h);
+	      world->addBox(-y,x,0.0f, angle, BoxBase, BoxBase, h);
+	      i+=2;
 	    }
-          }
+	  }
       }
 
       // make pyramids
       h = PyrHeight;
       const int numPyrs = int((0.5 + 0.4 * bzfrand()) * CitySize * CitySize * 2);
       for (i = 0; i < numPyrs; i++) {
-        if (randomHeights)
-          h = PyrHeight * (2.0f * (float)bzfrand() + 0.5f);
-        float x=WorldSize * ((float)bzfrand() - 0.5f);
-        float y=WorldSize * ((float)bzfrand() - 0.5f);
-        // don't place near center or bases
-        if (hypotf(fabs(x-basePos[1][0]),fabs(y-basePos[1][1])) > PyrBase*4 &&
-            hypotf(fabs(-x-basePos[1][0]),fabs(-y-basePos[1][1])) > PyrBase*4 &&
-            hypotf(fabs(x),fabs(y)) > WorldSize/12)
+	if (randomHeights)
+	  h = PyrHeight * (2.0f * (float)bzfrand() + 0.5f);
+	float x=WorldSize * ((float)bzfrand() - 0.5f);
+	float y=WorldSize * ((float)bzfrand() - 0.5f);
+	// don't place near center or bases
+	if (hypotf(fabs(x-basePos[1][0]),fabs(y-basePos[1][1])) > PyrBase*4 &&
+	    hypotf(fabs(-x-basePos[1][0]),fabs(-y-basePos[1][1])) > PyrBase*4 &&
+	    hypotf(fabs(x),fabs(y)) > WorldSize/12)
 	  if ((numTeams <= 2) || (hypotf(fabs(x-basePos[2][0]),fabs(y-basePos[2][1])) > PyrBase*4 &&
-              hypotf(fabs(-x-basePos[2][0]),fabs(-y-basePos[2][1])) > PyrBase*4)) {
-            float angle=2.0f * M_PI * (float)bzfrand();
-            world->addPyramid(x,y, 0.0f, angle,PyrBase, PyrBase, h);
-            world->addPyramid(-x,-y, 0.0f, angle,PyrBase, PyrBase, h);
-            i+=2;
+	      hypotf(fabs(-x-basePos[2][0]),fabs(-y-basePos[2][1])) > PyrBase*4)) {
+	    float angle=2.0f * M_PI * (float)bzfrand();
+	    world->addPyramid(x,y, 0.0f, angle,PyrBase, PyrBase, h);
+	    world->addPyramid(-x,-y, 0.0f, angle,PyrBase, PyrBase, h);
+	    i+=2;
 	    if (numTeams > 2) {
-              world->addPyramid(y,-x,0.0f, angle, PyrBase, PyrBase, h);
-              world->addPyramid(-y,x,0.0f, angle, PyrBase, PyrBase, h);
-              i+=2;
+	      world->addPyramid(y,-x,0.0f, angle, PyrBase, PyrBase, h);
+	      world->addPyramid(-y,x,0.0f, angle, PyrBase, PyrBase, h);
+	      i+=2;
 	    }
-          }
+	  }
       }
 
       // make teleporters
       if (useTeleporters) {
 	int numLinks, teamFactor;
-        int numTeleporters = (8 + int(8 * (float)bzfrand()));
+	int numTeleporters = (8 + int(8 * (float)bzfrand()));
 	if (numTeams > 2)
 	  teamFactor = 4;
 	else
 	  teamFactor = 2;
 	numTeleporters -= numTeleporters % teamFactor;
 	numLinks = 2 * numTeleporters / teamFactor;
-        int (*linked)[2] = (int(*)[2])new int[numLinks];
-        for (i = 0; i < numTeleporters;) {
-          const float x = (WorldSize - 4.0f * TeleBreadth) * ((float)bzfrand() - 0.5f);
-          const float y = (WorldSize - 4.0f * TeleBreadth) * ((float)bzfrand() - 0.5f);
-          const float rotation = 2.0f * M_PI * (float)bzfrand();
+	int (*linked)[2] = (int(*)[2])new int[numLinks];
+	for (i = 0; i < numTeleporters;) {
+	  const float x = (WorldSize - 4.0f * TeleBreadth) * ((float)bzfrand() - 0.5f);
+	  const float y = (WorldSize - 4.0f * TeleBreadth) * ((float)bzfrand() - 0.5f);
+	  const float rotation = 2.0f * M_PI * (float)bzfrand();
 
-          // if too close to building then try again
-          if (world->inBuilding(NULL, x, y, 0, 1.75f * TeleBreadth))
-            continue;
+	  // if too close to building then try again
+	  if (world->inBuilding(NULL, x, y, 0, 1.75f * TeleBreadth))
+	    continue;
 	  // if to close to a base then try again
 	  if (((maxTeam[1] > 0) || (maxTeam[2] > 0)) &&
 	      (hypotf(fabs(x-basePos[1][0]),fabs(y-basePos[1][1])) <= BaseSize*4 ||
@@ -3085,24 +3085,24 @@ static WorldInfo *defineTeamWorld()
 	    continue;
 
 	  linked[i/teamFactor][0] = linked[i/teamFactor][1] = 0;
-          if ((maxTeam[1] > 0) || (maxTeam[2] > 0)) {
-            world->addTeleporter(x, y, 0.0f, rotation, 0.5f*TeleWidth,
-                TeleBreadth, 2.0f*TeleHeight, TeleWidth);
+	  if ((maxTeam[1] > 0) || (maxTeam[2] > 0)) {
+	    world->addTeleporter(x, y, 0.0f, rotation, 0.5f*TeleWidth,
+		TeleBreadth, 2.0f*TeleHeight, TeleWidth);
 	    i++;
 	  }
-          if ((maxTeam[3] > 0) || (maxTeam[4] > 0)) {
-            world->addTeleporter(y, -x, 0.0f, rotation + M_PI / 2, 0.5f*TeleWidth,
-                TeleBreadth, 2.0f*TeleHeight, TeleWidth);
+	  if ((maxTeam[3] > 0) || (maxTeam[4] > 0)) {
+	    world->addTeleporter(y, -x, 0.0f, rotation + M_PI / 2, 0.5f*TeleWidth,
+		TeleBreadth, 2.0f*TeleHeight, TeleWidth);
 	    i++;
 	  }
-          if ((maxTeam[1] > 0) || (maxTeam[2] > 0)) {
-            world->addTeleporter(-x, -y, 0.0f, rotation + M_PI, 0.5f*TeleWidth,
-                TeleBreadth, 2.0f*TeleHeight, TeleWidth);
+	  if ((maxTeam[1] > 0) || (maxTeam[2] > 0)) {
+	    world->addTeleporter(-x, -y, 0.0f, rotation + M_PI, 0.5f*TeleWidth,
+		TeleBreadth, 2.0f*TeleHeight, TeleWidth);
 	    i++;
 	  }
-          if ((maxTeam[3] > 0) || (maxTeam[4] > 0)) {
-            world->addTeleporter(-y, x, 0.0f, rotation + M_PI * 3 / 2, 0.5f*TeleWidth,
-                TeleBreadth, 2.0f*TeleHeight, TeleWidth);
+	  if ((maxTeam[3] > 0) || (maxTeam[4] > 0)) {
+	    world->addTeleporter(-y, x, 0.0f, rotation + M_PI * 3 / 2, 0.5f*TeleWidth,
+		TeleBreadth, 2.0f*TeleHeight, TeleWidth);
 	    i++;
 	  }
 	}
@@ -3185,70 +3185,70 @@ static WorldInfo *defineTeamWorld()
       const float xmin = -0.5f * ((2.0f * BoxBase + AvenueSize) * (CitySize - 1));
       const float ymin = -0.5f * ((2.0f * BoxBase + AvenueSize) * (CitySize - 1));
       for (int j = 0; j <= CitySize/2; j++)
-        for (int i = 0; i < CitySize/2; i++)
+	for (int i = 0; i < CitySize/2; i++)
       if (i != CitySize/2 || j != CitySize/2) {
-        float h = BoxHeight;
-        if (randomHeights)
-          h *= 2.0f * (float)bzfrand() + 0.5f;
-        world->addBox(
-            xmin + float(i) * (2.0f * BoxBase + AvenueSize),
-            ymin + float(j) * (2.0f * BoxBase + AvenueSize), 0.0f,
-            randomBoxes ? (0.5f * M_PI * ((float)bzfrand() - 0.5f)) : 0.0f,
-            BoxBase, BoxBase, h);
-        world->addBox(
-            -1.0f * (xmin + float(i) * (2.0f * BoxBase + AvenueSize)),
-            -1.0f * (ymin + float(j) * (2.0f * BoxBase + AvenueSize)), 0.0f,
-            randomBoxes ? (0.5f * M_PI * ((float)bzfrand() - 0.5f)) : 0.0f,
-            BoxBase, BoxBase, h);
-        world->addBox(
-            -1.0f * (ymin + float(j) * (2.0f * BoxBase + AvenueSize)),
-            xmin + float(i) * (2.0f * BoxBase + AvenueSize), 0.0f,
-            randomBoxes ? (0.5f * M_PI * ((float)bzfrand() - 0.5f)) : 0.0f,
-            BoxBase, BoxBase, h);
-        world->addBox(
-            ymin + float(j) * (2.0f * BoxBase + AvenueSize),
-            -1.0f * (xmin + float(i) * (2.0f * BoxBase + AvenueSize)), 0.0f,
-            randomBoxes ? (0.5f * M_PI * ((float)bzfrand() - 0.5f)) : 0.0f,
-            BoxBase, BoxBase, h);
+	float h = BoxHeight;
+	if (randomHeights)
+	  h *= 2.0f * (float)bzfrand() + 0.5f;
+	world->addBox(
+	    xmin + float(i) * (2.0f * BoxBase + AvenueSize),
+	    ymin + float(j) * (2.0f * BoxBase + AvenueSize), 0.0f,
+	    randomBoxes ? (0.5f * M_PI * ((float)bzfrand() - 0.5f)) : 0.0f,
+	    BoxBase, BoxBase, h);
+	world->addBox(
+	    -1.0f * (xmin + float(i) * (2.0f * BoxBase + AvenueSize)),
+	    -1.0f * (ymin + float(j) * (2.0f * BoxBase + AvenueSize)), 0.0f,
+	    randomBoxes ? (0.5f * M_PI * ((float)bzfrand() - 0.5f)) : 0.0f,
+	    BoxBase, BoxBase, h);
+	world->addBox(
+	    -1.0f * (ymin + float(j) * (2.0f * BoxBase + AvenueSize)),
+	    xmin + float(i) * (2.0f * BoxBase + AvenueSize), 0.0f,
+	    randomBoxes ? (0.5f * M_PI * ((float)bzfrand() - 0.5f)) : 0.0f,
+	    BoxBase, BoxBase, h);
+	world->addBox(
+	    ymin + float(j) * (2.0f * BoxBase + AvenueSize),
+	    -1.0f * (xmin + float(i) * (2.0f * BoxBase + AvenueSize)), 0.0f,
+	    randomBoxes ? (0.5f * M_PI * ((float)bzfrand() - 0.5f)) : 0.0f,
+	    BoxBase, BoxBase, h);
       }
 
       // add teleporters
       if (useTeleporters) {
-        const float xoff = BoxBase + 0.5f * AvenueSize;
-        const float yoff = BoxBase + 0.5f * AvenueSize;
-        world->addTeleporter( xmin - xoff,  ymin - yoff, 0.0f, 1.25f * M_PI,
-        0.5f * TeleWidth, TeleBreadth, 2.0f * TeleHeight, TeleWidth);
-        world->addTeleporter( xmin - xoff, -ymin + yoff, 0.0f, 0.75f * M_PI,
-        0.5f * TeleWidth, TeleBreadth, 2.0f * TeleHeight, TeleWidth);
-        world->addTeleporter(-xmin + xoff,  ymin - yoff, 0.0f, 1.75f * M_PI,
-        0.5f * TeleWidth, TeleBreadth, 2.0f * TeleHeight, TeleWidth);
-        world->addTeleporter(-xmin + xoff, -ymin + yoff, 0.0f, 0.25f * M_PI,
-        0.5f * TeleWidth, TeleBreadth, 2.0f * TeleHeight, TeleWidth);
-        world->addTeleporter(-3.5f * TeleBreadth, -3.5f * TeleBreadth, 0.0f, 1.25f * M_PI,
-        0.5f * TeleWidth, TeleBreadth, 2.0f * TeleHeight, TeleWidth);
-        world->addTeleporter(-3.5f * TeleBreadth,  3.5f * TeleBreadth, 0.0f, 0.75f * M_PI,
-        0.5f * TeleWidth, TeleBreadth, 2.0f * TeleHeight, TeleWidth);
-        world->addTeleporter( 3.5f * TeleBreadth, -3.5f * TeleBreadth, 0.0f, 1.75f * M_PI,
-        0.5f * TeleWidth, TeleBreadth, 2.0f * TeleHeight, TeleWidth);
-        world->addTeleporter( 3.5f * TeleBreadth,  3.5f * TeleBreadth, 0.0f, 0.25f * M_PI,
-        0.5f * TeleWidth, TeleBreadth, 2.0f * TeleHeight, TeleWidth);
+	const float xoff = BoxBase + 0.5f * AvenueSize;
+	const float yoff = BoxBase + 0.5f * AvenueSize;
+	world->addTeleporter( xmin - xoff,  ymin - yoff, 0.0f, 1.25f * M_PI,
+	0.5f * TeleWidth, TeleBreadth, 2.0f * TeleHeight, TeleWidth);
+	world->addTeleporter( xmin - xoff, -ymin + yoff, 0.0f, 0.75f * M_PI,
+	0.5f * TeleWidth, TeleBreadth, 2.0f * TeleHeight, TeleWidth);
+	world->addTeleporter(-xmin + xoff,  ymin - yoff, 0.0f, 1.75f * M_PI,
+	0.5f * TeleWidth, TeleBreadth, 2.0f * TeleHeight, TeleWidth);
+	world->addTeleporter(-xmin + xoff, -ymin + yoff, 0.0f, 0.25f * M_PI,
+	0.5f * TeleWidth, TeleBreadth, 2.0f * TeleHeight, TeleWidth);
+	world->addTeleporter(-3.5f * TeleBreadth, -3.5f * TeleBreadth, 0.0f, 1.25f * M_PI,
+	0.5f * TeleWidth, TeleBreadth, 2.0f * TeleHeight, TeleWidth);
+	world->addTeleporter(-3.5f * TeleBreadth,  3.5f * TeleBreadth, 0.0f, 0.75f * M_PI,
+	0.5f * TeleWidth, TeleBreadth, 2.0f * TeleHeight, TeleWidth);
+	world->addTeleporter( 3.5f * TeleBreadth, -3.5f * TeleBreadth, 0.0f, 1.75f * M_PI,
+	0.5f * TeleWidth, TeleBreadth, 2.0f * TeleHeight, TeleWidth);
+	world->addTeleporter( 3.5f * TeleBreadth,  3.5f * TeleBreadth, 0.0f, 0.25f * M_PI,
+	0.5f * TeleWidth, TeleBreadth, 2.0f * TeleHeight, TeleWidth);
 
-        world->addLink(0, 14);
-        world->addLink(1, 7);
-        world->addLink(2, 12);
-        world->addLink(3, 5);
-        world->addLink(4, 10);
-        world->addLink(5, 3);
-        world->addLink(6, 8);
-        world->addLink(7, 1);
-        world->addLink(8, 6);
-        world->addLink(9, 0);
-        world->addLink(10, 4);
-        world->addLink(11, 2);
-        world->addLink(12, 2);
-        world->addLink(13, 4);
-        world->addLink(14, 0);
-        world->addLink(15, 6);
+	world->addLink(0, 14);
+	world->addLink(1, 7);
+	world->addLink(2, 12);
+	world->addLink(3, 5);
+	world->addLink(4, 10);
+	world->addLink(5, 3);
+	world->addLink(6, 8);
+	world->addLink(7, 1);
+	world->addLink(8, 6);
+	world->addLink(9, 0);
+	world->addLink(10, 4);
+	world->addLink(11, 2);
+	world->addLink(12, 2);
+	world->addLink(13, 4);
+	world->addLink(14, 0);
+	world->addLink(15, 6);
       }
     }
     return world;
@@ -3387,13 +3387,13 @@ static boolean defineWorld()
   if (gameStyle & TeamFlagGameStyle) {
     for (int i = 1; i < NumTeams; i++) {
       if (!randomCTF || (maxTeam[i] > 0)) {
-        buf = nboPackUShort(buf, WorldCodeBase);
-        buf = nboPackUShort(buf, uint16_t(i));
-        buf = nboPackVector(buf, basePos[i]);
-        buf = nboPackFloat(buf, baseRotation[i]);
-        buf = nboPackFloat(buf, baseSize[i][0]);
-        buf = nboPackFloat(buf, baseSize[i][1]);
-        buf = nboPackVector(buf, safetyBasePos[i]);
+	buf = nboPackUShort(buf, WorldCodeBase);
+	buf = nboPackUShort(buf, uint16_t(i));
+	buf = nboPackVector(buf, basePos[i]);
+	buf = nboPackFloat(buf, baseRotation[i]);
+	buf = nboPackFloat(buf, baseSize[i][0]);
+	buf = nboPackFloat(buf, baseSize[i][1]);
+	buf = nboPackVector(buf, safetyBasePos[i]);
       }
     }
   }
@@ -3513,8 +3513,8 @@ static void acceptClient()
   if (gameOver) {
     for (playerIndex = 0; playerIndex < maxPlayers; playerIndex++) {
       if (player[playerIndex].state >= PlayerInLimbo) {
-        serverAddr.sin_port = htons(0);
-        break;
+	serverAddr.sin_port = htons(0);
+	break;
       }
     }
   }
@@ -3708,7 +3708,7 @@ static void addPlayer(int playerIndex)
   int numobservers = 0;
   for (i=0;i<MaxPlayers;i++) {
     if (i != playerIndex && player[i].state > PlayerInLimbo &&
-        player[i].Observer)
+	player[i].Observer)
       numobservers++;
   }
 
@@ -3717,7 +3717,7 @@ static void addPlayer(int playerIndex)
       (t == RogueTeam && !(gameStyle & RoguesGameStyle)) ||
       (!player[playerIndex].Observer &&
        (team[int(t)].team.activeSize >= maxTeam[int(t)] ||
-        numplayers >= softmaxPlayers)) ||
+	numplayers >= softmaxPlayers)) ||
       (player[playerIndex].Observer && numobservers >= maxObservers)) {
     uint16_t code = RejectBadRequest;
     if (player[playerIndex].type != TankPlayer &&
@@ -3728,7 +3728,7 @@ static void addPlayer(int playerIndex)
     else if (t == RogueTeam && !(gameStyle & RoguesGameStyle))
       code = RejectNoRogues;
     else if (!player[playerIndex].Observer && numplayers >= softmaxPlayers ||
-             player[playerIndex].Observer && numobservers >= maxObservers)   
+	     player[playerIndex].Observer && numobservers >= maxObservers)   
       code = RejectServerFull;
     else if (team[int(t)].team.activeSize >= maxTeam[int(t)]) {
       // if team is full then check if server is full
@@ -4089,10 +4089,10 @@ static void removePlayer(int playerIndex)
       // do not simply zap team flag
       Flag &carriedflag = flag[flagid].flag;
       if (carriedflag.id >= FirstTeamFlag && carriedflag.id <= LastTeamFlag) {
-        dropFlag(playerIndex, carriedflag.position);
+	dropFlag(playerIndex, carriedflag.position);
       }
       else {
-        zapFlag(flagid);
+	zapFlag(flagid);
       }
     }
 
@@ -4546,17 +4546,17 @@ static void calcLag(int playerIndex, float timepassed)
       pl.lagcount - pl.laglastwarn > 2 * pl.lagwarncount) {
     char message[MessageLen];
     sprintf(message,"*** Server Warning: your lag is too high (%d ms) ***",
-        int(pl.lagavg * 1000));
+	int(pl.lagavg * 1000));
     sendMessage(playerIndex, pl.id, pl.team,message);
     pl.laglastwarn = pl.lagcount;
     pl.lagwarncount++;;
     if (pl.lagwarncount++ > maxlagwarn) {
       // drop the player
       sprintf(message,"You have been kicked due to excessive lag (you have been warned %d times).",
-        maxlagwarn);
+	maxlagwarn);
       sendMessage(playerIndex, pl.id, pl.team, message);
       DEBUG1("*** Player %s [%d] was lag-kicked\n",
-              player[playerIndex].callSign, playerIndex);
+	      player[playerIndex].callSign, playerIndex);
       removePlayer(playerIndex);
     }
   }
@@ -4696,21 +4696,21 @@ static void parseCommand(const char *message, int t)
       // get someone to can do virtual capture
       int j;
       for (j=0;j<maxPlayers;j++) {
-        if (player[j].state > PlayerInLimbo)
-          break;
+	if (player[j].state > PlayerInLimbo)
+	  break;
       }
       if (j < maxPlayers) {
-        for (int i=0;i<maxPlayers;i++) {
-          if (player[i].playedEarly) {
-            char msg[PlayerIdPLen + 4];
-            void *buf = msg;
-            buf = player[j].id.pack(buf);
-            buf = nboPackUShort(buf, uint16_t(int(player[i].team)-1));
-            buf = nboPackUShort(buf, uint16_t(1+((int(player[i].team))%4)));
-            directMessage(i,MsgCaptureFlag, sizeof(msg), msg);
-            player[i].playedEarly = false;
-          }
-        }
+	for (int i=0;i<maxPlayers;i++) {
+	  if (player[i].playedEarly) {
+	    char msg[PlayerIdPLen + 4];
+	    void *buf = msg;
+	    buf = player[j].id.pack(buf);
+	    buf = nboPackUShort(buf, uint16_t(int(player[i].team)-1));
+	    buf = nboPackUShort(buf, uint16_t(1+((int(player[i].team))%4)));
+	    directMessage(i,MsgCaptureFlag, sizeof(msg), msg);
+	    player[i].playedEarly = false;
+	  }
+	}
       }
     }
     // reset all flags
@@ -4809,7 +4809,7 @@ static void parseCommand(const char *message, int t)
     char kickmessage[MessageLen];
     for (int i = 0; i < maxPlayers; i++) {
       if ((player[i].fd != NotConnected) && (!acl.validate( player[i].taddr.sin_addr))) {
-        player[i].toBeKicked = false;
+	player[i].toBeKicked = false;
 	sprintf(kickmessage,"Your were banned from this server by %s", player[t].callSign);
 	sendMessage(i, player[i].id, player[i].team, kickmessage);
 	removePlayer(i);
@@ -4846,12 +4846,12 @@ static void parseCommand(const char *message, int t)
   else if (strncmp(message+1,"lagstats",8) == 0) {
     for (int i = 0; i < maxPlayers; i++) {
       if (player[i].state > PlayerInLimbo) {
-        char reply[MessageLen];
+	char reply[MessageLen];
 	sprintf(reply,"%-12s : %4dms (%d)%s",player[i].callSign,
-            int(player[i].lagavg*1000),player[i].lagcount,
-            player[i].doespings ? "" : " (old)");
-        if (player[i].doespings && player[i].pingslost>0)
-          sprintf(reply+strlen(reply)," %d lost",player[i].pingslost);
+	    int(player[i].lagavg*1000),player[i].lagcount,
+	    player[i].doespings ? "" : " (old)");
+	if (player[i].doespings && player[i].pingslost>0)
+	  sprintf(reply+strlen(reply)," %d lost",player[i].pingslost);
 	    sendMessage(t,player[t].id,player[t].team,reply);
       }
     }
@@ -4861,10 +4861,10 @@ static void parseCommand(const char *message, int t)
     TimeKeeper now=TimeKeeper::getCurrent();
     for (int i = 0; i < maxPlayers; i++) {
       if (player[i].state > PlayerInLimbo) {
-        char reply[MessageLen];
-        sprintf(reply,"%-12s : %4ds",player[i].callSign,
-                int(now-player[i].lastupdate));
-        sendMessage(t,player[t].id,player[t].team,reply);
+	char reply[MessageLen];
+	sprintf(reply,"%-12s : %4ds",player[i].callSign,
+		int(now-player[i].lastupdate));
+	sendMessage(t,player[t].id,player[t].team,reply);
       }
     }
   }
@@ -4886,19 +4886,19 @@ static void parseCommand(const char *message, int t)
 	  strcat( reply, flag );
 	  fhIt.inc();
 	}
-        sendMessage(t,player[t].id,player[t].team,reply);
+	sendMessage(t,player[t].id,player[t].team,reply);
       }
   }
   // /playerlist dumps a list of players with IPs etc.
   else if (player[t].Admin && strncmp(message+1,"playerlist",10) == 0) {
     for (int i = 0; i < maxPlayers; i++) {
       if (player[i].state > PlayerInLimbo) {
-        char reply[MessageLen];
+	char reply[MessageLen];
 	sprintf(reply,"[%d]%-12s: %s:%d%s%s",i,player[i].callSign,
 	    inet_ntoa(player[i].id.serverHost), ntohs(player[i].id.port),
 	    player[i].ulinkup ? " udp" : "",
 	    player[i].knowId ? " id" : "");
-        sendMessage(t,player[t].id,player[t].team,reply);
+	sendMessage(t,player[t].id,player[t].team,reply);
       }
     }
   }
@@ -5006,7 +5006,7 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
       // player moved before countdown started
       if (timeLimit>0.0f && !countdownActive)
       {
-        player[t].playedEarly = true;
+	player[t].playedEarly = true;
       }
       // data: position, forward-vector
       float pos[3], fwd[3];
@@ -5019,7 +5019,7 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
     // player declaring self destroyed
     case MsgKilled: {
       if (player[t].Observer)
-        break;
+	break;
       // data: id of killer, shot id of killer
       PlayerId killer;
       int16_t shot;
@@ -5061,13 +5061,13 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
       // data: firing info
       // special case -- don't unpack firing info cos we just pass it on
       if (!player[t].Observer)
-        shotFired(t, buf, int(len));
+	shotFired(t, buf, int(len));
       break;
 
     // shot ended prematurely
     case MsgShotEnd: {
       if (player[t].Observer)
-        break;
+	break;
       // data: shooter id, shot number, reason
       PlayerId sourcePlayer;
       int16_t shot;
@@ -5082,7 +5082,7 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
     // player score changed
     case MsgScore: {
       if (player[t].Observer)
-        break;
+	break;
       // data: wins, losses
       uint16_t wins, losses;
       buf = nboUnpackUShort(buf, wins);
@@ -5094,7 +5094,7 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
     // player teleported
     case MsgTeleport: {
       if (player[t].Observer)
-        break;
+	break;
       uint16_t from, to;
       buf = nboUnpackUShort(buf, from);
       buf = nboUnpackUShort(buf, to);
@@ -5173,9 +5173,9 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
       player[t].doespings = true;
       if (pingseqno == player[t].pingseqno)
       {
-        float dt = TimeKeeper::getCurrent() - player[t].lastping;
-        calcLag(t, dt);
-        player[t].pingpending = false;
+	float dt = TimeKeeper::getCurrent() - player[t].lastping;
+	calcLag(t, dt);
+	player[t].pingpending = false;
       }
       break;
     }
@@ -5187,7 +5187,7 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
     case MsgAudio:
     case MsgVideo:
       if (player[t].Observer)
-        break;
+	break;
       if (player[t].multicastRelay)
 	relayPlayerPacket(t, len, rawbuf);
       break;
@@ -5652,8 +5652,8 @@ static void parse(int argc, char **argv)
       }
       maxObservers = atoi(argv[i]);
       if (maxObservers < 0) {
-        cerr << "using minimum number of 0 observers" << endl;
-        maxObservers=0;
+	cerr << "using minimum number of 0 observers" << endl;
+	maxObservers=0;
       }
     }
     else if (strcmp(argv[i], "-mp") == 0) {
@@ -5663,9 +5663,9 @@ static void parse(int argc, char **argv)
 	usage(argv[0]);
       }
       if (playerCountArg == 0)
-        playerCountArg = i;
+	playerCountArg = i;
       else
-        playerCountArg2 = i;
+	playerCountArg2 = i;
     }
     else if (strcmp(argv[i], "-ms") == 0) {
       // set maximum number of shots
@@ -5898,8 +5898,8 @@ static void parse(int argc, char **argv)
     }
     else if (strcmp(argv[i], "-maxidle") == 0) {
       if (++i == argc) {
-        cerr << "argument expected for " << argv[i] << endl;
-        usage(argv[0]);
+	cerr << "argument expected for " << argv[i] << endl;
+	usage(argv[0]);
       }
       idlekickthresh = (float) atoi(argv[i]);
     }
@@ -6235,7 +6235,7 @@ int main(int argc, char **argv)
     // check for list server socket connected
     for (i = 0; i < listServerLinksCount; i++)
       if (listServerLinks[i].socket != NotConnected)
-        FD_SET(listServerLinks[i].socket, &write_set);
+	FD_SET(listServerLinks[i].socket, &write_set);
 
     // find timeout when next flag would hit ground
     TimeKeeper tm = TimeKeeper::getCurrent();
@@ -6258,8 +6258,8 @@ int main(int argc, char **argv)
     for (int p=0;p<maxPlayers;p++)
     {
       if (player[p].state == PlayerAlive &&
-          player[p].trypings && player[p].nextping - tm < waitTime)
-        waitTime = player[p].nextping - tm;
+	  player[p].trypings && player[p].nextping - tm < waitTime)
+	waitTime = player[p].nextping - tm;
     }
 
     // minmal waitTime
@@ -6301,16 +6301,16 @@ int main(int argc, char **argv)
     if (idlekickthresh > 0) {
       TimeKeeper now = TimeKeeper::getCurrent();
       for (int i=0;i<maxPlayers;i++) {
-        if (!player[i].Observer && player[i].state == PlayerDead &&
-            (now - player[i].lastupdate >
-              (now-player[i].lastmsg < idlekickthresh ?
-               3 * idlekickthresh : idlekickthresh))) {
-          DEBUG1("kicking idle player %s (%d)\n",player[i].callSign,
-                 int(now - player[i].lastupdate));
-          char message[MessageLen]="You were kicked because of idling too long";
-          sendMessage(i, player[i].id, player[i].team, message);
-          removePlayer(i);
-        }
+	if (!player[i].Observer && player[i].state == PlayerDead &&
+	    (now - player[i].lastupdate >
+	      (now-player[i].lastmsg < idlekickthresh ?
+	       3 * idlekickthresh : idlekickthresh))) {
+	  DEBUG1("kicking idle player %s (%d)\n",player[i].callSign,
+		 int(now - player[i].lastupdate));
+	  char message[MessageLen]="You were kicked because of idling too long";
+	  sendMessage(i, player[i].id, player[i].team, message);
+	  removePlayer(i);
+	}
       }
     }
 
@@ -6320,14 +6320,14 @@ int main(int argc, char **argv)
       static TimeKeeper lastbroadcast = TimeKeeper::getCurrent();
       if (TimeKeeper::getCurrent() - lastbroadcast > 900) // every 15 minutes
       {
-        char message[MessageLen];
-        strncpy(message, advertisemsg, MessageLen);
+	char message[MessageLen];
+	strncpy(message, advertisemsg, MessageLen);
 
-        for (int i=0; i<maxPlayers; i++)
-          if (player[i].state > PlayerInLimbo)
-            sendMessage(i, player[i].id, player[i].team, message);
+	for (int i=0; i<maxPlayers; i++)
+	  if (player[i].state > PlayerInLimbo)
+	    sendMessage(i, player[i].id, player[i].team, message);
 
-        lastbroadcast = TimeKeeper::getCurrent();
+	lastbroadcast = TimeKeeper::getCurrent();
       }
     }
 
@@ -6371,25 +6371,25 @@ int main(int argc, char **argv)
     for (int j=0;j<maxPlayers;j++)
     {
       if (player[j].trypings &&
-          player[j].state == PlayerAlive && player[j].nextping-tm < 0)
+	  player[j].state == PlayerAlive && player[j].nextping-tm < 0)
       {
-        player[j].pingseqno = (player[j].pingseqno + 1) % 10000;
-        if (player[j].pingpending) // ping lost
-        {
-          player[j].pingslost++;
-          // got no response to first 3 pings? give up forever
-          if (player[j].pingssent >= 3 && !player[j].doespings)
-            player[j].trypings = false;
-        }
-        char  buffer[2];
-        void *buf = (void*)buffer;
-        buf = nboPackUShort(buf, player[j].pingseqno);
-        directMessage(j, MsgLagPing, sizeof(buffer), buffer);
-        player[j].pingpending = true;
-        player[j].lastping = tm;
-        player[j].nextping = tm;
-        player[j].nextping += 10.0f;
-        player[j].pingssent++;
+	player[j].pingseqno = (player[j].pingseqno + 1) % 10000;
+	if (player[j].pingpending) // ping lost
+	{
+	  player[j].pingslost++;
+	  // got no response to first 3 pings? give up forever
+	  if (player[j].pingssent >= 3 && !player[j].doespings)
+	    player[j].trypings = false;
+	}
+	char  buffer[2];
+	void *buf = (void*)buffer;
+	buf = nboPackUShort(buf, player[j].pingseqno);
+	directMessage(j, MsgLagPing, sizeof(buffer), buffer);
+	player[j].pingpending = true;
+	player[j].lastping = tm;
+	player[j].nextping = tm;
+	player[j].nextping += 10.0f;
+	player[j].pingssent++;
       }
     }
 
@@ -6461,9 +6461,9 @@ int main(int argc, char **argv)
       for (i = 0; i < maxPlayers; i++) {
 	// check the initial contact port.  if any activity or
 	// we've waited a while, then shut it down
-        if (player[i].state == PlayerAccept &&
-            (FD_ISSET(player[i].fd, &read_set) ||
-            tm - player[i].time > DisconnectTimeout))
+	if (player[i].state == PlayerAccept &&
+	    (FD_ISSET(player[i].fd, &read_set) ||
+	    tm - player[i].time > DisconnectTimeout))
 	  shutdownAcceptClient(i);
       }
 

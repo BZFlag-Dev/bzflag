@@ -49,54 +49,54 @@ boolean MacDisplay::getEvent (BzfEvent &bzf_event) const {
   if (gotEvent) {
     switch (eventRec.what) {
       case mouseDown:
-        bzf_event.type = BzfEvent::KeyDown;
-        bzf_event.keyDown.ascii = 0;
-        bzf_event.keyDown.shift = 0;
+	bzf_event.type = BzfEvent::KeyDown;
+	bzf_event.keyDown.ascii = 0;
+	bzf_event.keyDown.shift = 0;
 
-        // Emulate a 3-button mouse with modifier keys
+	// Emulate a 3-button mouse with modifier keys
 
-        if (eventRec.modifiers      & controlKey)
-          bzf_event.keyDown.button = BzfKeyEvent::RightMouse;
-        else if (eventRec.modifiers & optionKey)
-          bzf_event.keyDown.button = BzfKeyEvent::RightMouse;
-        else
-          bzf_event.keyDown.button = BzfKeyEvent::LeftMouse;
+	if (eventRec.modifiers      & controlKey)
+	  bzf_event.keyDown.button = BzfKeyEvent::RightMouse;
+	else if (eventRec.modifiers & optionKey)
+	  bzf_event.keyDown.button = BzfKeyEvent::RightMouse;
+	else
+	  bzf_event.keyDown.button = BzfKeyEvent::LeftMouse;
 
-        break;
+	break;
 
       case mouseUp:
-        bzf_event.type = BzfEvent::KeyUp;
-        bzf_event.keyUp.ascii = 0;
-        bzf_event.keyUp.shift = 0;
+	bzf_event.type = BzfEvent::KeyUp;
+	bzf_event.keyUp.ascii = 0;
+	bzf_event.keyUp.shift = 0;
 
-        if (eventRec.modifiers      & controlKey)
-          bzf_event.keyUp.button = BzfKeyEvent::MiddleMouse;
-        else if (eventRec.modifiers & optionKey)
-          bzf_event.keyUp.button = BzfKeyEvent::RightMouse;
-        else
-          bzf_event.keyUp.button = BzfKeyEvent::LeftMouse;
-        break;
+	if (eventRec.modifiers      & controlKey)
+	  bzf_event.keyUp.button = BzfKeyEvent::MiddleMouse;
+	else if (eventRec.modifiers & optionKey)
+	  bzf_event.keyUp.button = BzfKeyEvent::RightMouse;
+	else
+	  bzf_event.keyUp.button = BzfKeyEvent::LeftMouse;
+	break;
 
 	  case keyDown:
-        bzf_event.type = BzfEvent::KeyDown;
-        getKey (bzf_event.keyDown, eventRec);
-        break;
+	bzf_event.type = BzfEvent::KeyDown;
+	getKey (bzf_event.keyDown, eventRec);
+	break;
 
       case keyUp:
-        bzf_event.type = BzfEvent::KeyUp;
-        getKey (bzf_event.keyUp, eventRec);
-        break;
+	bzf_event.type = BzfEvent::KeyUp;
+	getKey (bzf_event.keyUp, eventRec);
+	break;
 
       case autoKey:
-        bzf_event.type = BzfEvent::KeyDown;
-        getKey (bzf_event.keyDown, eventRec);
-        break;
+	bzf_event.type = BzfEvent::KeyDown;
+	getKey (bzf_event.keyDown, eventRec);
+	break;
 
       case updateEvt:
-        bzf_event.type = BzfEvent::Redraw;
-        BeginUpdate((WindowPtr)eventRec.message);
-        EndUpdate((WindowPtr)eventRec.message);
-        break;
+	bzf_event.type = BzfEvent::Redraw;
+	BeginUpdate((WindowPtr)eventRec.message);
+	EndUpdate((WindowPtr)eventRec.message);
+	break;
 
       //case diskEvt:
       //  break;
@@ -105,20 +105,20 @@ boolean MacDisplay::getEvent (BzfEvent &bzf_event) const {
 
 
       case osEvt:
-        switch( (eventRec.message >> 24) & 0x000000FF) {
-          case suspendResumeMessage:
+	switch( (eventRec.message >> 24) & 0x000000FF) {
+	  case suspendResumeMessage:
 //             gInBackground = (eventRec.message & resumeFlag) != 1;
 //             gSleepTime = gInBackground ? MAC_BG_SLEEP : MAC_FG_SLEEP;
 //             gMouseGrabbed = !gInBackground;
 //             if (!gInBackground)
 //              SetCursor (&qd.arrow);
-            break;
-        }
-        break;
+	    break;
+	}
+	break;
 
       case kHighLevelEvent:
-        AEProcessAppleEvent(&eventRec);
-        break;
+	AEProcessAppleEvent(&eventRec);
+	break;
     }
 
     //SIOUXHandleOneEvent (&eventRec);
@@ -147,46 +147,46 @@ void MacDisplay::getKey (BzfKeyEvent &bzf_key, EventRecord &event_rec) const {
     switch ( (event_rec.message << 16) >> 24 ) {
       // These are the f-key codes on my apple extended keyboard
       case 113: // F15
-        bzf_key.button = BzfKeyEvent::Pause;
-        break;
+	bzf_key.button = BzfKeyEvent::Pause;
+	break;
       //case 107: // F14
       //case 105: // F13
       case 111: // F12
-        bzf_key.button = BzfKeyEvent::F12;
-        break;
+	bzf_key.button = BzfKeyEvent::F12;
+	break;
       case 103: // F11
-        bzf_key.button = BzfKeyEvent::F11;
-        break;
+	bzf_key.button = BzfKeyEvent::F11;
+	break;
       case 109: // F10
-        bzf_key.button = BzfKeyEvent::F10;
-        break;
+	bzf_key.button = BzfKeyEvent::F10;
+	break;
       case 101: // F9
-        bzf_key.button = BzfKeyEvent::F9;
-        break;
+	bzf_key.button = BzfKeyEvent::F9;
+	break;
       case 100: // F8
-        bzf_key.button = BzfKeyEvent::F8;
-        break;
+	bzf_key.button = BzfKeyEvent::F8;
+	break;
       case 98: // F7
-        bzf_key.button = BzfKeyEvent::F7;
-        break;
+	bzf_key.button = BzfKeyEvent::F7;
+	break;
       case 97: // F6
-        bzf_key.button = BzfKeyEvent::F6;
-        break;
+	bzf_key.button = BzfKeyEvent::F6;
+	break;
       case 96: // F5
-        bzf_key.button = BzfKeyEvent::F5;
-        break;
+	bzf_key.button = BzfKeyEvent::F5;
+	break;
       case 118: // F4
-        bzf_key.button = BzfKeyEvent::F4;
-        break;
+	bzf_key.button = BzfKeyEvent::F4;
+	break;
       case 99: // F3
-        bzf_key.button = BzfKeyEvent::F3;
-        break;
+	bzf_key.button = BzfKeyEvent::F3;
+	break;
       case 120: // F2
-        bzf_key.button = BzfKeyEvent::F2;
-        break;
+	bzf_key.button = BzfKeyEvent::F2;
+	break;
       case 122: // F1
-        bzf_key.button = BzfKeyEvent::F1;
-        break;
+	bzf_key.button = BzfKeyEvent::F1;
+	break;
     }
     break;
 

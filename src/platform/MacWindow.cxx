@@ -26,7 +26,7 @@ struct Settings
     Capture_Display = true;
     Switch_Display = true;
     Window_Size = CGSizeMake(CGDisplayPixelsWide(kCGDirectMainDisplay),
-        CGDisplayPixelsHigh(kCGDirectMainDisplay));
+	CGDisplayPixelsHigh(kCGDirectMainDisplay));
     Display_Hz = 60;
     VBL_Synch = false; //CAPS-LOCK overrides
     depth = 24;
@@ -93,15 +93,15 @@ class GLContext
       long num_pixel_formats;
 
       CGLError err = CGLChoosePixelFormat(GetPixelFormat(display_id, 24),
-          &pixel_format, &num_pixel_formats);
+	  &pixel_format, &num_pixel_formats);
 
       if (err || !pixel_format)
-        return false;
+	return false;
 
       err = CGLCreateContext(pixel_format, NULL, &cgl_context);
 
       if (err)
-        return false;
+	return false;
 
       CGLDestroyPixelFormat(pixel_format);
       pixel_format = NULL;
@@ -109,27 +109,27 @@ class GLContext
       err = CGLSetCurrentContext(cgl_context);
 
       if (err)
-        return false;
+	return false;
 
       err = CGLSetFullScreen(cgl_context);
 
       if (err)
-        return false;
+	return false;
 
       bounds = display_rect;
 
       if (settings.VBL_Synch)
-        SetVBLSynch(true);
+	SetVBLSynch(true);
 
       return true;
     }
 
     void Reset() {
       if (cgl_context) {
-        CGLSetCurrentContext(NULL);
-        CGLClearDrawable(cgl_context);
-        CGLDestroyContext(cgl_context);
-        cgl_context = NULL;
+	CGLSetCurrentContext(NULL);
+	CGLClearDrawable(cgl_context);
+	CGLDestroyContext(cgl_context);
+	cgl_context = NULL;
       }
     }
 
@@ -164,12 +164,12 @@ class GLContext
     void Flush() {
       glFinish();
       if (cgl_context)
-        CGLFlushDrawable(cgl_context);
+	CGLFlushDrawable(cgl_context);
     }
 
     void Process() {
       if (!cgl_context)
-        return;
+	return;
 
       static float t0 = get_time();
 
@@ -178,7 +178,7 @@ class GLContext
       bool vbl_synch = false;
 
       if (settings.VBL_Synch != vbl_synch)
-        SetVBLSynch(vbl_synch);
+	SetVBLSynch(vbl_synch);
 
       float t1 = fabs(sin(t));
 
@@ -351,7 +351,7 @@ void Display(void)
 }
 
 MacWindow::MacWindow(const MacDisplay *display, MacVisual *visual) :
-                        BzfWindow(display)
+			BzfWindow(display)
 {
   GLboolean ok;
   int argc = 0;
@@ -457,7 +457,7 @@ void MacWindow::getMouse(int &x, int &y) const {
   GetPort(&savedPort);
   //SetPort(window);
   GetMouse(&tmpMouse);  // returns mouse location in coords of local
-                          // window which must be set
+			  // window which must be set
   x = tmpMouse.h;
   y = tmpMouse.v;
   SetPort(savedPort);

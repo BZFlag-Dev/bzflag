@@ -731,34 +731,34 @@ void			HUDRenderer::renderStatus(SceneRenderer& renderer)
   if (!roaming) {
     switch (player->getFiringStatus()) {
       case LocalPlayer::Deceased:
-        strcat(buffer, "Dead");
-        break;
+	strcat(buffer, "Dead");
+	break;
   
       case LocalPlayer::Ready:
-        if (flag != NoFlag && Flag::getType(flag) == FlagSticky &&
-                  World::getWorld()->allowShakeTimeout()) {
-          /* have a bad flag -- show time left 'til we shake it */
-          statusColor = yellowColor;
-          sprintf(buffer, "%.1f", player->getFlagShakingTime());
-        }
-        else {
-          statusColor = greenColor;
-          strcat(buffer, "Ready");
-        }
-        break;
+	if (flag != NoFlag && Flag::getType(flag) == FlagSticky &&
+		  World::getWorld()->allowShakeTimeout()) {
+	  /* have a bad flag -- show time left 'til we shake it */
+	  statusColor = yellowColor;
+	  sprintf(buffer, "%.1f", player->getFlagShakingTime());
+	}
+	else {
+	  statusColor = greenColor;
+	  strcat(buffer, "Ready");
+	}
+	break;
   
       case LocalPlayer::Loading:
-        statusColor = redColor;
-        sprintf(buffer, "Reloaded in %.1f", player->getReloadTime());
-        break;
+	statusColor = redColor;
+	sprintf(buffer, "Reloaded in %.1f", player->getReloadTime());
+	break;
   
       case LocalPlayer::Sealed:
-        strcat(buffer, "Sealed");
-        break;
+	strcat(buffer, "Sealed");
+	break;
   
       case LocalPlayer::Zoned:
-        strcat(buffer, "Zoned");
-        break;
+	strcat(buffer, "Zoned");
+	break;
     }
   }
 
@@ -1328,8 +1328,8 @@ void			HUDRenderer::drawPlayerScore(const Player* player,
   FlagId flagid=player->getFlag();
   if (flagid != NoFlag) {
     sprintf(flag,"%s",
-            Flag::getType(flagid) == FlagNormal ?
-            Flag::getName(flagid) : Flag::getAbbreviation(flagid));
+	    Flag::getType(flagid) == FlagNormal ?
+	    Flag::getName(flagid) : Flag::getAbbreviation(flagid));
   }
 
   // indicate tanks which are paused or not responding

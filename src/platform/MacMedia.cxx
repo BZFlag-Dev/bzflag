@@ -131,11 +131,11 @@ void    MacMedia::writeAudioFrames(const float *samples, int numFrames)
   if (numSamples > 0) {
     for (int j = 0; j < numSamples; j++)
       if (samples[j] < -32767.0f)
-        buffer[j] = -32767;
+	buffer[j] = -32767;
       else if (samples[j] > 32767.0f)
-        buffer[j] = 32767;
+	buffer[j] = 32767;
       else
-        buffer[j] = short(samples[j]);
+	buffer[j] = short(samples[j]);
     writeAudio();
   }
 }
