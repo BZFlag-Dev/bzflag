@@ -34,7 +34,13 @@ MAINTAINERCLEANFILES = \
 	mkinstalldirs \
 	Makefile.in
 
-deb: dist
+debian-cvs: dist
 	-rm -rf $(distdir)
 	GZIP=$(GZIP_ENV) $(TAR) zxf $(distdir).tar.gz
 	(cd $(distdir) && debian/buildsnap cvs)
+
+debian-release: debian/changelog dist
+	-rm -rf $(distdir)
+	GZIP=$(GZIP_ENV) $(TAR) zxf $(distdir).tar.gz
+	cp debian/changelog $(distdir)/debian/
+	(cd $(distdir) && debian/buildsnap release)
