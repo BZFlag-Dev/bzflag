@@ -38,7 +38,7 @@
 #endif
 
 #ifndef BZ_BUILD_TYPE
-#define BZ_BUILD_TYPE		"PRERELEASE"
+#define BZ_BUILD_TYPE		"RELEASE"
 #endif
 
 // Build Date will be defined at link time, can be different for each exe
