@@ -33,17 +33,20 @@ WorldWeapons::WorldWeapons()
 
 WorldWeapons::~WorldWeapons()
 {
-  for (std::vector<Weapon*>::iterator it = weapons.begin(); it != weapons.end(); ++it) {
+  for (std::vector<Weapon*>::iterator it = weapons.begin();
+       it != weapons.end(); ++it) {
     Weapon *w = *it;
     delete w;
   }
   weapons.clear();
 }
 
+
 float WorldWeapons::nextTime ()
 {
   TimeKeeper nextShot = TimeKeeper::getSunExplodeTime();
-  for (std::vector<Weapon*>::iterator it = weapons.begin(); it != weapons.end(); ++it) {
+  for (std::vector<Weapon*>::iterator it = weapons.begin();
+       it != weapons.end(); ++it) {
     Weapon *w = *it;
     if (w->nextTime <= nextShot) {
       nextShot = w->nextTime;
@@ -52,11 +55,13 @@ float WorldWeapons::nextTime ()
   return (nextShot - TimeKeeper::getCurrent());
 }
 
+
 void WorldWeapons::fire()
 {
   TimeKeeper nowTime = TimeKeeper::getCurrent();
   
-  for (std::vector<Weapon*>::iterator it = weapons.begin(); it != weapons.end(); ++it) {
+  for (std::vector<Weapon*>::iterator it = weapons.begin();
+       it != weapons.end(); ++it) {
     Weapon *w = *it;
     if (w->nextTime <= nowTime) {
 
@@ -91,7 +96,10 @@ void WorldWeapons::fire()
   }
 }
 
-void WorldWeapons::add(const FlagType *type, const float *origin, float direction, float initdelay, const std::vector<float> &delay, TimeKeeper &sync)
+
+void WorldWeapons::add(const FlagType *type, const float *origin, float direction,
+                       float initdelay, const std::vector<float> &delay,
+                       TimeKeeper &sync)
 {
   Weapon *w = new Weapon();
   w->type = type;

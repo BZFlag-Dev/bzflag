@@ -1568,7 +1568,9 @@ void handleRecordCmd(int t, const char * message)
 
     // get the filename
     sscanf (buf, "%s", filename);
-    
+
+    // FIXME - do this a little better? use quotations for strings?
+    while ((*buf != '\0') && !isspace (*buf)) buf++; // eat filename
     while ((*buf != '\0') && isspace (*buf)) buf++; // eat whitespace
 
     if (*buf == '\0') {

@@ -3856,17 +3856,16 @@ int main(int argc, char **argv)
       }
     }
     
-    // get time for the next world weapons shot
-    if (wWeapons.count() > 0) {
-      float nextTime = wWeapons.nextTime ();
+    // get time for the next replay packet (if active)
+    if (Replay::enabled()) {
+      float nextTime = Replay::nextTime ();
       if (nextTime < waitTime) {
         waitTime = nextTime;
       }
     }
-
-    // get time for the next replay packet (if active)
-    if (Replay::enabled()) {
-      float nextTime = Replay::nextTime ();
+    // get time for the next world weapons shot, but not in replay mode
+    else if (wWeapons.count() > 0) {
+      float nextTime = wWeapons.nextTime ();
       if (nextTime < waitTime) {
         waitTime = nextTime;
       }

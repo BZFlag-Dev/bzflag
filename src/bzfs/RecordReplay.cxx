@@ -65,7 +65,8 @@ typedef struct RRpacket {
   u16 mode;
   u16 code;
   u32 len;
-  u32 prev_len;
+  u32 nextFilePos;
+  u32 prevFilePos;
   RRtime timestamp;
   char *data;
 } RRpacket;
@@ -101,7 +102,7 @@ static const int ReplayHeaderSize = sizeof(ReplayHeader) - (2 * sizeof(char*));
 // Local Variables
 // ---------------
 
-static const u32 ReplayMagic       = 0x425A7272; // "BZrr"
+static const u32 ReplayMagic       = 0x7272425A; // "rrBZ"
 static const u32 ReplayVersion     = 0x0001;
 static const u32 DefaultMaxBytes   = (16 * 1024 * 1024); // 16 Mbytes
 static const u32 DefaultUpdateRate = (10 * 1000000); // seconds
@@ -110,16 +111,18 @@ static std::string RecordDir = getRecordDirName();
 
 static bool Recording = false;
 static RecordType RecordMode = BufferedRecord;
+static RRtime RecordStartTime = 0;
 static RRtime RecordUpdateTime = 0;
 static RRtime RecordUpdateRate = 0;
 static u32 RecordMaxBytes = DefaultMaxBytes;
 static u32 RecordFileBytes = 0;
 static u32 RecordFilePackets = 0;
-static u32 RecordFilePrevLen = 0;
+static u32 RecordFilePrevPos = 0;
 
 static bool Replaying = false;
 static bool ReplayMode = false;
 static RRtime ReplayOffset = 0;
+static long ReplayFileStart = 0;
 static RRpacket *ReplayPos = NULL;
 
 static TimeKeeper StartTime;
@@ -150,8 +153,8 @@ static bool routePacket (u16 code, int len, const void *data, u16 mode);
 
 static RRpacket *nextPacket ();
 static RRpacket *prevPacket ();
-static RRpacket *nextStatePacket (int seconds);
-static RRpacket *prevStatePacket (int seconds);
+static RRpacket *nextStatePacket ();
+static RRpacket *prevStatePacket ();
 
 static bool savePacket (RRpacket *p, FILE *f);
 static RRpacket *loadPacket (FILE *f);            // makes a new packet
@@ -170,8 +173,10 @@ static bool makeDirExist (const char *dirname);
 static bool makeDirExistMsg (const char *dirname, int playerIndex);
 
 static RRpacket *newPacket (u16 mode, u16 code, int len, const void *data);
-static RRpacket *delPacket (RRbuffer *b);         // delete from the tail
-static void addPacket (RRbuffer *b, RRpacket *p); // add to head
+static void addHeadPacket (RRbuffer *b, RRpacket *p); // add to the head
+static void addTailPacket (RRbuffer *b, RRpacket *p); // add to the tail
+static RRpacket *delTailPacket (RRbuffer *b);         // delete from the tail
+static RRpacket *delHeadPacket (RRbuffer *b);         // delete from the head
 static void freeBuffer (RRbuffer *buf);           // clean it out
 static void initPacket (u16 mode, u16 code, int len, const void *data,
                           RRpacket *p);             // copy params into packet
@@ -220,7 +225,8 @@ static bool recordReset ()
   RecordMode = BufferedRecord;
   RecordFileBytes = 0;
   RecordFilePackets = 0;
-  RecordFilePrevLen = 0;
+  RecordFilePrevPos = 0;
+  RecordStartTime = 0;
   RecordUpdateTime = 0;
   
   return true;
@@ -289,7 +295,7 @@ bool Record::setDirectory (const char *dirname)
   
   if (!makeDirExist (RecordDir.c_str())) {
     // they've been warned, leave it at that
-    printf ("Could not open or create record directory: %s\n",
+    DEBUG1 ("Could not open or create -recdir directory: %s\n",
             RecordDir.c_str());
     return false;
   }
@@ -384,6 +390,8 @@ bool Record::saveFile (int playerIndex, const char *filename)
     sendMessage (ServerPlayer, playerIndex, buffer, true);
     return false;
   }
+  
+  RecordStartTime = getRRtime ();
 
   snprintf (buffer, MessageLen, "Recording to file: %s", name.c_str());
   sendMessage (ServerPlayer, playerIndex, buffer, true);
@@ -419,12 +427,13 @@ bool Record::saveBuffer (int playerIndex, const char *filename, int seconds)
   // setup the beginning position for the recording
 
   if (seconds != 0) { 
+    DEBUG3 ("Record: saving %i seconds to %s\n", seconds, name.c_str());
     // start the first update that happened at least 'seconds' ago
     p = RecordBuf.head;
+    RRtime usecs = (RRtime)seconds * (RRtime)1000000;
     while (p != NULL) {
       if ((p->mode == StatePacket) && (p->code == MsgTeamUpdate)) {
         RRtime diff = RecordBuf.head->timestamp - p->timestamp;
-        RRtime usecs = (RRtime)seconds * (RRtime)1000000;
         if (diff >= usecs) {
           break;
         }
@@ -472,7 +481,7 @@ bool Record::saveBuffer (int playerIndex, const char *filename, int seconds)
   RecordFile = NULL;
   RecordFileBytes = 0;
   RecordFilePackets = 0;
-  RecordFilePrevLen = 0;
+  RecordFilePrevPos = 0;
   
   snprintf (buffer, MessageLen, "Record buffer saved to: %s", name.c_str());
   sendMessage (ServerPlayer, playerIndex, buffer, true);
@@ -522,14 +531,14 @@ routePacket (u16 code, int len, const void * data, u16 mode)
   if (RecordMode == BufferedRecord) {
     RRpacket *p = newPacket (mode, code, len, data);
     p->timestamp = getRRtime();
-    addPacket (&RecordBuf, p);
+    addHeadPacket (&RecordBuf, p);
     DEBUG4 ("routeRRpacket(): mode = %i, len = %4i, code = %s, data = %p\n",
             (int)p->mode, p->len, msgString (p->code), p->data);
 
     if (RecordBuf.byteCount > RecordMaxBytes) {
       RRpacket *p;
       DEBUG4 ("routePacket: deleting until State Update\n");
-      while (((p = delPacket (&RecordBuf)) != NULL) &&
+      while (((p = delTailPacket (&RecordBuf)) != NULL) &&
              !(p->mode && (p->code == MsgTeamUpdate))) {
         delete[] p->data;
         delete p;
@@ -576,7 +585,7 @@ void Record::sendHelp (int playerIndex)
   sendMessage(ServerPlayer, playerIndex, "  /record rate <seconds>");
   sendMessage(ServerPlayer, playerIndex, "  /record stats");
   sendMessage(ServerPlayer, playerIndex, "  /record list");
-  sendMessage(ServerPlayer, playerIndex, "  /record save <filename>");
+  sendMessage(ServerPlayer, playerIndex, "  /record save <filename> [seconds]");
   sendMessage(ServerPlayer, playerIndex, "  /record file <filename>");
   return;
 }
@@ -596,6 +605,7 @@ static bool replayReset()
   ReplayMode = true;
   Replaying = false;
   ReplayOffset = 0;
+  ReplayFileStart = 0;
   ReplayPos = NULL;
 
   // reset the local view of the players' state
@@ -703,7 +713,7 @@ bool Replay::loadFile(int playerIndex, const char *filename)
       break;
     }
     else {
-      addPacket (&ReplayBuf, p);
+      addHeadPacket (&ReplayBuf, p);
     }
   }
 
@@ -868,10 +878,11 @@ bool Replay::skip(int playerIndex, int seconds)
   }
 
   p = ReplayPos;
+  RRtime nowtime = p->timestamp;
 
   if (seconds != 0) {
-    RRtime target = (getRRtime() - ReplayOffset) + 
-                    ((RRtime)seconds * (RRtime)1000000);
+
+    RRtime target = p->timestamp + ((RRtime)seconds * (RRtime)1000000);
 
     if (seconds > 0) {
       while (p != NULL) {
@@ -910,10 +921,10 @@ bool Replay::skip(int playerIndex, int seconds)
   }
   
   RRtime newOffset = getRRtime() - p->timestamp;
-  RRtime diff = ReplayOffset - newOffset;
   ReplayOffset = newOffset;
   ReplayPos = p;
   
+  RRtime diff = p->timestamp - nowtime;
   char buffer[MessageLen];
   sprintf (buffer, "Skipping %.3f seconds (asked %i)",
            (float)diff/1000000.0f, seconds);
@@ -1095,18 +1106,39 @@ static RRpacket *
 nextPacket ()
 {
   if (ReplayPos == NULL) {
-    ReplayPos = ReplayBuf.tail;
-    return NULL;
-  }
-  else if (ReplayPos->next == NULL) {
-    // FIXME - load more file here
     ReplayPos = ReplayBuf.head;
     return NULL;
   }
-  else {
+  else if (ReplayPos->next != NULL) {
     RRpacket *tmp = ReplayPos;
     ReplayPos = ReplayPos->next;
     return tmp;
+  }
+  else {
+    // try to load a file packet
+    if (ReplayPos->nextFilePos > 0) {
+      fseek (ReplayFile, ReplayPos->nextFilePos, SEEK_SET);
+    }
+    else {
+      ReplayPos = ReplayBuf.head;
+      return NULL;
+    }
+      
+    RRpacket *p = loadPacket (ReplayFile);
+    if (p != NULL) {
+      RRpacket *tail = delTailPacket (&ReplayBuf);
+      if (tail != NULL) {
+        delete[] tail->data;
+        delete tail;
+      }
+      addHeadPacket (&ReplayBuf, p);
+      return p;
+    }
+    else {
+      return NULL;
+    }
+    ReplayPos = ReplayBuf.head;
+    return p;
   }
 }
 
@@ -1118,35 +1150,49 @@ prevPacket ()
     ReplayPos = ReplayBuf.tail;
     return NULL;
   }
-  else if (ReplayPos->prev == NULL) {
-    // FIXME - load more file here
-    ReplayPos = ReplayBuf.tail;
-    return NULL;
-  }
-  else {
+  else if(ReplayPos->prev != NULL) {
     ReplayPos = ReplayPos->prev;
     return ReplayPos;
+  }
+  else {
+    // try to load a file packet
+    if (ReplayPos->prevFilePos > 0) {
+      fseek (ReplayFile, ReplayPos->prevFilePos, SEEK_SET);
+    }
+    else {
+      ReplayPos = ReplayBuf.tail;
+      return NULL;
+    }
+    
+    RRpacket *p = loadPacket (ReplayFile);
+    if (p != NULL) {
+      RRpacket *head = delHeadPacket (&ReplayBuf);
+      if (head != NULL) {
+        delete[] head->data;
+        delete head;
+      }
+      addTailPacket (&ReplayBuf, p);
+      return p;
+    }
+    else {
+      ReplayPos = ReplayBuf.tail;
+      return NULL;
+    }
+    ReplayPos = ReplayBuf.tail;
+    return p;
   }
 }
 
 
 static RRpacket *
-nextStatePacket (int seconds)
+nextStatePacket ()
 {
-  RRtime target = (getRRtime() - ReplayOffset) + 
-                  ((RRtime)seconds * (RRtime)1000000);
 
   RRpacket *p = nextPacket();
   
-  while (p != NULL) {
-    if ((p->timestamp >= target) && ((p == ReplayPos) || 
-        ((p->mode == StatePacket) && (p->code == MsgTeamUpdate)))) {
-      break;
-    }
+  while ((p != NULL) && 
+         !((p->mode == StatePacket) && (p->code == MsgTeamUpdate))) {
     p = nextPacket();
-  }
-  if (p == NULL) {
-    ReplayPos = ReplayBuf.head;
   }
   
   return p;
@@ -1154,22 +1200,13 @@ nextStatePacket (int seconds)
 
 
 static RRpacket *
-prevStatePacket (int seconds)
+prevStatePacket ()
 {
-  RRtime target = (getRRtime() - ReplayOffset) -
-                  ((RRtime)seconds * (RRtime)1000000);
-
-  RRpacket *p = nextPacket();
+  RRpacket *p = prevPacket();
   
-  while (p != NULL) {
-    if ((p->timestamp <= target) && 
-        ((p->mode == StatePacket) && (p->code == MsgTeamUpdate))) {
-      break;
-    }
+  while ((p != NULL) && 
+         !((p->mode == StatePacket) && (p->code == MsgTeamUpdate))) {
     p = prevPacket();
-  }
-  if (p == NULL) {
-    ReplayPos = ReplayBuf.tail;
   }
   
   return p;
@@ -1177,8 +1214,8 @@ prevStatePacket (int seconds)
   // FIXME
   nextPacket ();
   prevPacket ();
-  nextStatePacket (1);
-  prevStatePacket (2);
+  nextStatePacket ();
+  prevStatePacket ();
 }
 
 
@@ -1433,7 +1470,8 @@ savePacket (RRpacket *p, FILE *f)
   buf = nboPackUShort (bufStart, p->mode);
   buf = nboPackUShort (buf, p->code);
   buf = nboPackUInt (buf, p->len);
-  buf = nboPackUInt (buf, RecordFilePrevLen);
+  buf = nboPackUInt (buf, p->nextFilePos); //FIXME
+  buf = nboPackUInt (buf, RecordFilePrevPos);
   buf = nboPackUInt (buf, (u32) (p->timestamp >> 32));        // msb
   buf = nboPackUInt (buf, (u32) (p->timestamp & 0xFFFFFFFF)); // lsb
 
@@ -1444,7 +1482,7 @@ savePacket (RRpacket *p, FILE *f)
 
   RecordFileBytes += p->len + RRpacketHdrSize;
   RecordFilePackets++;
-  RecordFilePrevLen = p->len;
+  RecordFilePrevPos = ftell (f);
 
   return true;  
 }
@@ -1471,7 +1509,8 @@ loadPacket (FILE *f)
   buf = nboUnpackUShort (bufStart, p->mode);
   buf = nboUnpackUShort (buf, p->code);
   buf = nboUnpackUInt (buf, p->len);
-  buf = nboUnpackUInt (buf, p->prev_len);
+  buf = nboUnpackUInt (buf, p->nextFilePos);
+  buf = nboUnpackUInt (buf, p->prevFilePos);
   buf = nboUnpackUInt (buf, timeMsb);
   buf = nboUnpackUInt (buf, timeLsb);
   p->timestamp = ((RRtime)timeMsb << 32) + (RRtime)timeLsb;
@@ -1697,6 +1736,10 @@ loadHeader (ReplayHeader *h, FILE *f)
     return false;
   }
   
+  // remember where the header ends
+  ReplayFileStart = ftell (f);
+  
+  // do the worldDatabase or flagTypes need to be replaced?
   bool replaced = false;  
   if (replaceFlagTypes (h)) {
     replaced = true;
@@ -1910,7 +1953,7 @@ packFlagTypes (char *flags, u32 *flagsSize)
 static void
 initPacket (u16 mode, u16 code, int len, const void *data, RRpacket *p)
 {
-  // RecordFilePrevLen takes care of p->prev_len
+  // RecordFilePrevPos takes care of p->prevFilePos
   p->mode = mode;
   p->code = code;
   p->len = len;
@@ -1937,7 +1980,7 @@ newPacket (u16 mode, u16 code, int len, const void *data)
 
 
 static void
-addPacket (RRbuffer *b, RRpacket *p)
+addHeadPacket (RRbuffer *b, RRpacket *p)
 {
   if (b->head != NULL) {
     b->head->next = p;
@@ -1956,8 +1999,28 @@ addPacket (RRbuffer *b, RRpacket *p)
 }
 
 
+static void
+addTailPacket (RRbuffer *b, RRpacket *p)
+{
+  if (b->tail != NULL) {
+    b->tail->prev = p;
+  }
+  else {
+    b->head = p;
+  }
+  p->next = b->tail;
+  p->prev = NULL;
+  b->tail = p;
+  
+  b->byteCount = b->byteCount + (p->len + RRpacketHdrSize);
+  b->packetCount++;
+  
+  return;
+}
+
+
 static RRpacket *
-delPacket (RRbuffer *b)
+delTailPacket (RRbuffer *b)
 {
   RRpacket *p = b->tail;
 
@@ -1976,6 +2039,32 @@ delPacket (RRbuffer *b)
   else {
     b->head = NULL;
     b->tail = NULL;
+  }
+  
+  return p;
+}
+
+
+static RRpacket *
+delHeadPacket (RRbuffer *b)
+{
+  RRpacket *p = b->head;
+
+  if (p == NULL) {
+    return NULL;
+  }
+  
+  b->byteCount = b->byteCount - (p->len + RRpacketHdrSize);
+  b->packetCount--;
+
+  b->head = p->prev;
+    
+  if (p->prev != NULL) {
+    p->prev->next = NULL;
+  }
+  else {
+    b->tail = NULL;
+    b->head = NULL;
   }
   
   return p;
