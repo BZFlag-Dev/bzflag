@@ -973,7 +973,7 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
       parse(ac, av, options, true); // true - from a world file
       
       for (int i = 0; i < ac; i++)
-        delete[] av[i];
+        free(av[i]);
       delete[] av;
 
       options.numAllowedFlags = 0; // FIXME - Huh, does a reset?
