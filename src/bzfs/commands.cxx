@@ -323,7 +323,7 @@ void handleKickCmd(int t, const char *message)
     char kickmessage[MessageLen];
     sprintf(kickmessage,"You were kicked off the server by %s", player[t].callSign);
     sendMessage(ServerPlayer, i, kickmessage, true);
-    if (argv.size() >= 2){
+    if (argv.size() > 2){
       sprintf(kickmessage, " reason given : %s",argv[2].c_str());
       sendMessage(ServerPlayer, i, kickmessage, true);
     }
