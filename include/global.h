@@ -91,7 +91,6 @@ const float		TeleBreadth =	4.0f * TeleUnit;// meters
 const float		TeleHeight =	9.0f * TeleUnit;// meters
 
 // tank performance info
-const float		TankSpeed =	25.0f;		// meters/sec
 const float		TankAngVel =	M_PI / 4.0f;	// radians/sec
 const float		ShotSpeed =	100.0f;		// meters/sec
 const float		ShotRange =	350.0f;		// meters
@@ -182,7 +181,7 @@ struct GlobalDBItem {
     bool			persistent;
     StateDatabase::Permission	permission;
 };
-extern GlobalDBItem		globalDBItems[3];
+extern GlobalDBItem		globalDBItems[4];
 
 #endif // BZF_GLOBAL_H
 // ex: shiftwidth=2 tabstop=8

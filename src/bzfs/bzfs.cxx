@@ -3713,7 +3713,7 @@ static void grabFlag(int playerIndex, int flagIndex)
     return;
 
   //last Pos might be lagged by TankSpeed so include in calculation
-  const float radius2 = (TankSpeed + TankRadius + FlagRadius) * (TankSpeed + TankRadius + FlagRadius);
+  const float radius2 = (BZDB->eval(StateDatabase::BZDB_TANKSPEED) + TankRadius + FlagRadius) * (BZDB->eval(StateDatabase::BZDB_TANKSPEED) + TankRadius + FlagRadius);
   const float* tpos = player[playerIndex].lastState.pos;
   const float* fpos = flag[flagIndex].flag.position;
   const float delta = (tpos[0] - fpos[0]) * (tpos[0] - fpos[0]) +
@@ -3962,7 +3962,7 @@ static void shotFired(int playerIndex, void *buf, int len)
   }
 
   float shotSpeed = ShotSpeed;
-  float tankSpeed = TankSpeed;
+  float tankSpeed = BZDB->eval(StateDatabase::BZDB_TANKSPEED);
   float lifetime = ReloadTime;
   if (firingInfo.flag == Flags::ShockWave) {
       shotSpeed = 0.0f;
@@ -4011,8 +4011,8 @@ static void shotFired(int playerIndex, void *buf, int len)
     front *= ObeseFactor;
 
   float delta = dx*dx + dy*dy + dz*dz;
-  if (delta > (TankSpeed * VelocityAd + front) *
-	      (TankSpeed * VelocityAd + front)) {
+  if (delta > (BZDB->eval(StateDatabase::BZDB_TANKSPEED) * VelocityAd + front) *
+	      (BZDB->eval(StateDatabase::BZDB_TANKSPEED) * VelocityAd + front)) {
     DEBUG2("Player %s [%d] shot origination %f %f %f too far from tank %f %f %f: distance=%f\n",
 	    shooter.callSign, playerIndex,
 	    shot.pos[0], shot.pos[1], shot.pos[2],
@@ -5121,7 +5121,7 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
 	float curPlanarSpeedSqr = state.velocity[0]*state.velocity[0] +
 				  state.velocity[1]*state.velocity[1];
 
-	float maxPlanarSpeedSqr = TankSpeed*TankSpeed;
+	float maxPlanarSpeedSqr = BZDB->eval(StateDatabase::BZDB_TANKSPEED)*BZDB->eval(StateDatabase::BZDB_TANKSPEED);
 
 	bool logOnly = false;
 
