@@ -5829,9 +5829,10 @@ static void parseCommand(const char *message, int t)
     for (int i = 0; i < curMaxPlayers; i++) {
       if (player[i].state > PlayerInLimbo && !player[i].Observer) {
 	char reply[MessageLen];
-	sprintf(reply,"%-16s : %4dms (%d)%s", player[i].callSign,
+	sprintf(reply,"%-16s : %4dms (%d)%s %s", player[i].callSign,
 	    int(player[i].lagavg*1000), player[i].lagcount,
-	    player[i].doespings ? "" : " (old)");
+            player[i].doespings ? "" : " (old)",
+            player[i].accessInfo.verified ? "(R)" : "");
 	if (player[i].doespings && player[i].pingslost>0)
 	  sprintf(reply+strlen(reply), " %d lost", player[i].pingslost);
 	    sendMessage(t,player[t].id, player[t].team, reply, true);
