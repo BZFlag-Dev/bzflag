@@ -47,6 +47,10 @@ public:
     static void    updateLatency(float &waitTime);
     static void    dumpScore();
     static int     anointRabbit(int oldRabbit);
+    static std::vector<int> allowed(PlayerAccessInfo::AccessPerm right,
+				    int targetPlayer = -1);
+
+    void          *packAdminInfo(void *buf);
 
     // players 
     PlayerInfo       *player;

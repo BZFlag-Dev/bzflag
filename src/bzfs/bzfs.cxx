@@ -435,30 +435,22 @@ void sendIPUpdate(int targetPlayer = -1, int playerIndex = -1) {
   // targetPlayer = -1: send to all players with the PLAYERLIST permission
   // playerIndex = -1: send info about all players
 
+  GameKeeper::Player *playerData;
+  if (playerIndex >= 0) {
+    playerData = GameKeeper::Player::getPlayerByIndex(playerIndex);
+    if (!playerData || !playerData->player->isPlaying())
+      return;
+  }
+
   // send to who?
-  std::vector<int> receivers;
-  if (targetPlayer != -1
-      && accessInfo[targetPlayer].hasPerm(PlayerAccessInfo::playerList))
-    {
-    receivers.push_back(targetPlayer);
-  }
-  else {
-    for (int i = 0; i < curMaxPlayers; ++i) {
-      if (player[i].isPlaying() && 
-	  accessInfo[i].hasPerm(PlayerAccessInfo::playerList))
-	receivers.push_back(i);
-    }
-  }
+  std::vector<int> receivers
+    = GameKeeper::Player::allowed(PlayerAccessInfo::playerList, targetPlayer);
 
   // pack and send the message(s)
   void *buf, *bufStart = getDirectMessageBuffer();
-  NetHandler *handler = NetHandler::getHandler(playerIndex);
-  if (handler) {
+  if (playerIndex >= 0) {
     buf = nboPackUByte(bufStart, 1);
-    buf = nboPackUByte(buf, handler->sizeOfIP());
-    buf = nboPackUByte(buf, playerIndex);
-    buf = nboPackUByte(buf, accessInfo[playerIndex].getPlayerProperties());
-    buf = handler->packAdminInfo(buf);
+    buf = playerData->packAdminInfo(buf);
     for (unsigned int i = 0; i < receivers.size(); ++i) {
       directMessage(receivers[i], MsgAdminInfo,
 		    (char*)buf - (char*)bufStart, bufStart);
@@ -467,8 +459,7 @@ void sendIPUpdate(int targetPlayer = -1, int playerIndex = -1) {
       Record::addPacket (MsgAdminInfo,
                          (char*)buf - (char*)bufStart, bufStart, HiddenPacket);
     }
-  }
-  else {
+  } else {
     int i, numPlayers = 0;
     for (i = 0; i <= int(ObserverTeam); i++)
       numPlayers += team[i].team.size;
@@ -476,15 +467,14 @@ void sendIPUpdate(int targetPlayer = -1, int playerIndex = -1) {
     int c = 0;
     buf = nboPackUByte(bufStart, 0); // will be overwritten later
     for (i = 0; i < curMaxPlayers; ++i) {
+      playerData = GameKeeper::Player::getPlayerByIndex(i);
+      if (!playerData)
+	continue;
       if (player[i].isPlaying()) {
-	NetHandler *handler = NetHandler::getHandler(i);
-	buf = nboPackUByte(buf, handler->sizeOfIP());
-	buf = nboPackUByte(buf, i);
-	buf = nboPackUByte(buf, accessInfo[i].getPlayerProperties());
-	buf = handler->packAdminInfo(buf);
+	buf = playerData->packAdminInfo(buf);
 	++c;
       }
-      if (c == ipsPerPackage || i + 1 == curMaxPlayers) {
+      if (c == ipsPerPackage || ((i + 1 == curMaxPlayers) && c)) {
 	int size = (char*)buf - (char*)bufStart;
 	buf = nboPackUByte(bufStart, c);
 	c = 0;

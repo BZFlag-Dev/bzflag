@@ -126,6 +126,36 @@ int GameKeeper::Player::anointRabbit(int oldRabbit)
   return rabbitIndex;
 }
 
+void *GameKeeper::Player::packAdminInfo(void *buf)
+{
+  buf = nboPackUByte(buf, netHandler->sizeOfIP());
+  buf = nboPackUByte(buf, playerIndex);
+  buf = nboPackUByte(buf, accessInfo->getPlayerProperties());
+  buf = netHandler->packAdminInfo(buf);
+  return buf;
+}
+
+std::vector<int> GameKeeper::Player::allowed(PlayerAccessInfo::AccessPerm
+					     right,
+					     int targetPlayer)
+{
+  std::vector<int> receivers;
+  Player* playerData;
+
+  if (targetPlayer != -1) {
+    if ((playerData = playerList[targetPlayer]) &&
+	playerData->accessInfo->hasPerm(right))
+      receivers.push_back(targetPlayer);
+  } else {
+    for (int i = 0; i < PlayerSlot; i++)
+      if ((playerData = playerList[i]) &&
+	  playerData->accessInfo->hasPerm(right))
+	receivers.push_back(i);
+  }
+
+  return receivers;
+}
+
 // Local Variables: ***
 // mode:C++ ***
 // tab-width: 8 ***
