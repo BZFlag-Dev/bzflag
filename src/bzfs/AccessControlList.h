@@ -207,17 +207,21 @@ public:
     banFile = filename;
   }
 
-  /** This function loads a banlist from the ban file, if it has been set. */
+  /** This function loads a banlist from the ban file, if it has been set.
+      It only returns @c false if the file exist but is not in the correct
+      format, otherwise @c true is returned. */
   bool load() {
   
     // try to open the ban file
     std::ifstream is(banFile.c_str());
-    if (!is.good())
-      return false;
+    if (!is.good()) 
+      // file does not exist, but that's OK, we'll create it later if needed
+      return true;
   
     // try to read ban entries
     std::string ipAddress, bannedBy, reason, tmp;
     long banEnd;
+    is>>std::ws;
     while (!is.eof()) {
       is>>ipAddress;
       std::string::size_type n;
