@@ -188,8 +188,7 @@ void			LocalPlayer::doUpdateMotion(float dt)
       // clearing velocity and newAngVel for when we resume (if paused)
       dt = 0.0f;
       newAngVel = oldAngVel;
-    }
-    else if (location == Exploding) {
+    } else if (location == Exploding) {
       // see if explosing time has expired
       if (lastTime - getExplodeTime() >= BZDB.eval(StateDatabase::BZDB_EXPLODETIME)) {
 	dt -= (lastTime - getExplodeTime()) - BZDB.eval(StateDatabase::BZDB_EXPLODETIME);
@@ -203,8 +202,8 @@ void			LocalPlayer::doUpdateMotion(float dt)
       // can't control explosion motion
       newVelocity[2] += BZDB.eval(StateDatabase::BZDB_GRAVITY) * dt;
       newAngVel = 0.0f;	// or oldAngVel to spin while exploding
-    }
-    else {
+    } else if (location == OnGround || location == OnBuilding ||
+	  (location == InBuilding && oldPosition[2] == groundLimit)) {
       // full control
       float speed = desiredSpeed;
 
@@ -220,8 +219,7 @@ void			LocalPlayer::doUpdateMotion(float dt)
 	if ((oldAngVel * desiredAngVel < 0.0f) || (NEAR_ZERO(desiredAngVel, ZERO_TOLERANCE))) {
 	  newAngVel = desiredAngVel;
 	}
-      }
-      else { // mouse or joystick
+      } else { // mouse or joystick
 	newAngVel = desiredAngVel;
       }
 
@@ -229,37 +227,33 @@ void			LocalPlayer::doUpdateMotion(float dt)
       doMomentum(dt, speed, newAngVel);
 
       // compute velocity so far
-      if (location == OnGround || location == OnBuilding ||
-	  (location == InBuilding && oldPosition[2] == groundLimit)) {
-	newVelocity[0] = speed * cosf(oldAzimuth + 0.5f * dt * newAngVel);
-	newVelocity[1] = speed * sinf(oldAzimuth + 0.5f * dt * newAngVel);
-	newVelocity[2] = 0.0f;
+      newVelocity[0] = speed * cosf(oldAzimuth + 0.5f * dt * newAngVel);
+      newVelocity[1] = speed * sinf(oldAzimuth + 0.5f * dt * newAngVel);
+      newVelocity[2] = 0.0f;
 
-	if ((oldPosition[2] < 0.0f) && (getFlag() == Flags::Burrow))
-	  newVelocity[2] += 4 * BZDB.eval(StateDatabase::BZDB_GRAVITY) * dt;
-	else if (oldPosition[2] > groundLimit)
-	  newVelocity[2] += BZDB.eval(StateDatabase::BZDB_GRAVITY) * dt;
-      }
-      else {
-	// can't control motion in air
+      if ((oldPosition[2] < 0.0f) && (getFlag() == Flags::Burrow))
+	newVelocity[2] += 4 * BZDB.eval(StateDatabase::BZDB_GRAVITY) * dt;
+      else if (oldPosition[2] > groundLimit)
 	newVelocity[2] += BZDB.eval(StateDatabase::BZDB_GRAVITY) * dt;
-	newAngVel = oldAngVel;
-      }
-
-      // below the ground: however I got there, creep up
-      if (oldPosition[2] < groundLimit) {
-#ifdef _MSC_VER
-	newVelocity[2] = max(newVelocity[2], -oldPosition[2] / 2.0f + 0.5f);
-#else
-	newVelocity[2] = std::max(newVelocity[2], -oldPosition[2] / 2.0f + 0.5f);
-#endif
-      }
-
-      // now apply outside forces
-      doForces(dt, newVelocity, newAngVel);
 
       // save speed for next update
       lastSpeed = speed;
+    } else {
+      // can't control motion in air
+      newVelocity[2] += BZDB.eval(StateDatabase::BZDB_GRAVITY) * dt;
+      newAngVel = oldAngVel;
+    }
+
+    // now apply outside forces
+    doForces(dt, newVelocity, newAngVel);
+
+    // below the ground: however I got there, creep up
+    if (oldPosition[2] < groundLimit) {
+#ifdef _MSC_VER
+      newVelocity[2] = max(newVelocity[2], -oldPosition[2] / 2.0f + 0.5f);
+#else
+      newVelocity[2] = std::max(newVelocity[2], -oldPosition[2] / 2.0f + 0.5f);
+#endif
     }
   }
 
@@ -281,44 +275,44 @@ void			LocalPlayer::doUpdateMotion(float dt)
   if (location != Dead && location != Exploding) {
     location = OnGround;
 
-    // anti-stuck code is usefule only when alive
+    // anti-stuck code is useful only when alive
     // then only any 100 frames while stucked, take an action
 
-  // try to see if we are stuck on a building
-  obstacle = getHitBuilding(newPos, newAzimuth, newPos, newAzimuth, phased,
-			    expelled);
-  if (obstacle && expelled) {
-    stuckingFrameCount++;
-    stucked = true;
-  } else {
-    stuckingFrameCount = 0;
-  }
+    // try to see if we are stuck on a building
+    obstacle = getHitBuilding(newPos, newAzimuth, newPos, newAzimuth, phased,
+			      expelled);
+    if (obstacle && expelled) {
+      stuckingFrameCount++;
+      stucked = true;
+    } else {
+      stuckingFrameCount = 0;
+    }
 
-  if (stuckingFrameCount > 100) {
-    stuckingFrameCount = 0;
-    // we are using a maximum value on time for frame to avoid lagging problem
-    setDesiredSpeed(0.25f);
-    float deltaTime = dt > 0.1f ? 0.1f : dt;
-    float normalStuck[3];
-    obstacle->getNormal(newPos, normalStuck);
-    // use all the given speed to exit
-    float movementMax = desiredSpeed * deltaTime;
+    if (stuckingFrameCount > 100) {
+      stuckingFrameCount = 0;
+      // we are using a maximum value on time for frame to avoid lagging problem
+      setDesiredSpeed(0.25f);
+      float deltaTime = dt > 0.1f ? 0.1f : dt;
+      float normalStuck[3];
+      obstacle->getNormal(newPos, normalStuck);
+      // use all the given speed to exit
+      float movementMax = desiredSpeed * deltaTime;
 
-    newVelocity[0] = movementMax * normalStuck[0];
-    newVelocity[1] = movementMax * normalStuck[1];
-    if ((World::getWorld()->allowJumping() || (getFlag() == Flags::Jumping)) &&
-        (getFlag() != Flags::NoJumping))
-      newVelocity[2] = movementMax * normalStuck[2];
-    else
-      newVelocity[2] = 0.0f;
+      newVelocity[0] = movementMax * normalStuck[0];
+      newVelocity[1] = movementMax * normalStuck[1];
+      if ((World::getWorld()->allowJumping() || (getFlag() == Flags::Jumping)) &&
+	  (getFlag() != Flags::NoJumping))
+	newVelocity[2] = movementMax * normalStuck[2];
+      else
+	newVelocity[2] = 0.0f;
 
-    // exit will be in the normal direction
-    newPos[0] += newVelocity[0];
-    newPos[1] += newVelocity[1];
-    newPos[2] += newVelocity[2];
-    // compute time for all other kind of movements
-    timeStep -= deltaTime;
-  }
+      // exit will be in the normal direction
+      newPos[0] += newVelocity[0];
+      newPos[1] += newVelocity[1];
+      newPos[2] += newVelocity[2];
+      // compute time for all other kind of movements
+      timeStep -= deltaTime;
+    }
   }
 
   for (int numSteps = 0; numSteps < MaxSteps; numSteps++) {
@@ -393,11 +387,11 @@ void			LocalPlayer::doUpdateMotion(float dt)
 	getHitBuilding(tmpPos, tmpAzimuth, newPos, newAzimuth, phased,
 		       searchExpelled);
 
-      // if no hit then search latter half of time step
-      if (!searchObstacle || !searchExpelled) searchTime = t;
-
-      // if we hit a building then record which one and where
-      else if (searchObstacle) {
+      if (!searchObstacle || !searchExpelled) {
+        // if no hit then search latter half of time step
+	searchTime = t;
+      } else if (searchObstacle) {
+        // if we hit a building then record which one and where
 	obstacle = searchObstacle;
 	expelled = searchExpelled;
 	hitAzimuth = newAzimuth;
@@ -436,8 +430,7 @@ void			LocalPlayer::doUpdateMotion(float dt)
       if (location != Dead && location != Exploding && expelled)
 	location = OnBuilding;
       newVelocity[2] = 0.0f;
-    }
-    else {
+    } else {
       // get component of velocity in normal direction (in horizontal plane)
       float mag = normal[0] * newVelocity[0] + normal[1] * newVelocity[1];
 
@@ -491,12 +484,10 @@ void			LocalPlayer::doUpdateMotion(float dt)
       setStatus(getStatus() | int(PlayerState::CrossingWall));
     else
       setStatus(getStatus() & ~int(PlayerState::CrossingWall));
-  }
-  else if (World::getWorld()->crossingTeleporter(newPos, newAzimuth,
+  } else if (World::getWorld()->crossingTeleporter(newPos, newAzimuth,
 						 0.5f * BZDB.eval(StateDatabase::BZDB_TANKLENGTH), 0.5f * BZDB.eval(StateDatabase::BZDB_TANKWIDTH), crossingPlane)) {
     setStatus(getStatus() | int(PlayerState::CrossingWall));
-  }
-  else {
+  } else {
     setStatus(getStatus() & ~int(PlayerState::CrossingWall));
   }
 
@@ -516,9 +507,8 @@ void			LocalPlayer::doUpdateMotion(float dt)
     if (getFlag() == Flags::PhantomZone) {
       // change zoned state
       setStatus(getStatus() ^ PlayerState::FlagActive);
-      playLocalSound( SFX_PHANTOM );
-    }
-    else {
+      playLocalSound(SFX_PHANTOM);
+    } else {
       // teleport
       const int source = World::getWorld()->getTeleporter(teleporter, face);
       const int target = World::getWorld()->getTeleportTarget(source);
@@ -537,11 +527,11 @@ void			LocalPlayer::doUpdateMotion(float dt)
   }
 
   if (gettingSound) {
-  // play landing sound if we weren't on something and now we are
-  if (oldLocation == InAir && (location == OnGround || location == OnBuilding))
-    playLocalSound(SFX_LAND);
-  else if (location == OnGround && oldPosition[2] == 0.0f && newPos[2] < 0.f)
-    playLocalSound(SFX_BURROW);
+    // play landing sound if we weren't on something and now we are
+    if (oldLocation == InAir && (location == OnGround || location == OnBuilding))
+      playLocalSound(SFX_LAND);
+    else if (location == OnGround && oldPosition[2] == 0.0f && newPos[2] < 0.f)
+      playLocalSound(SFX_BURROW);
   }
 
   // set falling status
@@ -590,16 +580,16 @@ void			LocalPlayer::doUpdateMotion(float dt)
     antidoteFlag->waveFlag(dt, 0.0f);
 
   if (gettingSound) {
-  if (oldPosition[0] != newPos[0] || oldPosition[1] != newPos[1] ||
-      oldPosition[2] != newPos[2] || oldAzimuth != newAzimuth)
-    moveSoundReceiver(newPos[0], newPos[1], newPos[2], newAzimuth,
-		      (NEAR_ZERO(dt, ZERO_TOLERANCE) || teleporter != NULL && getFlag() != Flags::PhantomZone));
-  if (NEAR_ZERO(dt, ZERO_TOLERANCE))
-    speedSoundReceiver(newVelocity[0], newVelocity[1], newVelocity[2]);
-  else
-    speedSoundReceiver((newPos[0] - oldPosition[0]) / dt,
-		       (newPos[1] - oldPosition[1]) / dt,
-		       (newPos[2] - oldPosition[2]) / dt);
+    if (oldPosition[0] != newPos[0] || oldPosition[1] != newPos[1] ||
+	oldPosition[2] != newPos[2] || oldAzimuth != newAzimuth)
+      moveSoundReceiver(newPos[0], newPos[1], newPos[2], newAzimuth,
+			(NEAR_ZERO(dt, ZERO_TOLERANCE) || teleporter != NULL && getFlag() != Flags::PhantomZone));
+    if (NEAR_ZERO(dt, ZERO_TOLERANCE))
+      speedSoundReceiver(newVelocity[0], newVelocity[1], newVelocity[2]);
+    else
+      speedSoundReceiver((newPos[0] - oldPosition[0]) / dt,
+			 (newPos[1] - oldPosition[1]) / dt,
+			 (newPos[2] - oldPosition[2]) / dt);
   }
 }
 
@@ -823,7 +813,7 @@ void			LocalPlayer::setDesiredSpeed(float fracOfMaxSpeed)
     fracOfMaxSpeed *= BZDB.eval(StateDatabase::BZDB_THIEFVELAD);
   } else if ((flag == Flags::Burrow) && (getPosition()[2] < 0.0f)) {
     fracOfMaxSpeed *= BZDB.eval(StateDatabase::BZDB_BURROWSPEEDAD);
-   }
+  }
 
   // set desired speed
   desiredSpeed = fracOfMaxSpeed * BZDB.eval(StateDatabase::BZDB_TANKSPEED);
