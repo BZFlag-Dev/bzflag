@@ -697,7 +697,7 @@ static bool noMulticastRelay = false;
 static PingPacket pingReply;
 // highest fd used
 static int maxFileDescriptor;
-// players list
+// players list FIXME should be resized based on maxPlayers
 static PlayerInfo player[MaxPlayers];
 // players + observers
 static uint16_t softmaxPlayers = MaxPlayers;
@@ -1583,8 +1583,7 @@ static int puwrite(int playerIndex, const void *b, int l)
 
     // dump other errors and continue
     nerror("error on UDP write");
-    DEBUG2("player is %d (%s)\n", playerIndex, p.callSign);
-    DEBUG2("%d bytes\n", n);
+    DEBUG2("player is %d (%s) %d bytes\n", playerIndex, p.callSign, n);
 
     // we may actually run into not enough buffer space here
     // but as the link is unreliable anyway we never treat it as
@@ -1815,8 +1814,8 @@ static void pwrite(int playerIndex, const void *b, int l)
       // are the network is down or too unreliable to that player.
       // FIXME -- is 20kB to big?  to small?
       if (newCapacity >= 20 * 1024) {
-	DEBUG2("dropping unresponsive player %d (%s) with %d bytes queued\n",
-	    playerIndex, p.callSign, p.outmsgSize + l);
+	DEBUG2("Player %s [%d] drop, unresponsive with %d bytes queued\n",
+	    p.callSign, playerIndex, p.outmsgSize + l);
 	DEBUG4("REMOVE: CAPACITY\n");
 	removePlayer(playerIndex);
 	goto unpatch;
@@ -2073,8 +2072,8 @@ static int uread(int *playerIndex, int *nopackets)
 	if (!pPlayerInfo->ulinkup &&
 	    (pPlayerInfo->uaddr.sin_port == uaddr.sin_port) &&
 	    (memcmp(&pPlayerInfo->uaddr.sin_addr, &uaddr.sin_addr, sizeof(uaddr.sin_addr)) == 0)) {
-	  DEBUG2("uread() exact udp up for player %d %s:%d\n",
-	      pi, inet_ntoa(pPlayerInfo->uaddr.sin_addr),
+	  DEBUG2("Player %s [%d] uread() exact udp up %s:%d\n",
+	      pPlayerInfo->callSign, pi, inet_ntoa(pPlayerInfo->uaddr.sin_addr),
 	      ntohs(pPlayerInfo->uaddr.sin_port));
 	  pPlayerInfo->ulinkup = true;
 	  break;
@@ -2086,8 +2085,8 @@ static int uread(int *playerIndex, int *nopackets)
       for (pi = 0, pPlayerInfo = player; pi < curMaxPlayers; pi++, pPlayerInfo++) {
 	if (!pPlayerInfo->ulinkup &&
 	    memcmp(&uaddr.sin_addr, &pPlayerInfo->uaddr.sin_addr, sizeof(uaddr.sin_addr)) == 0) {
-	  DEBUG2("uread() fuzzy udp up for player %d %s:%d actual port %d\n",
-	      pi, inet_ntoa(pPlayerInfo->uaddr.sin_addr),
+	  DEBUG2("Player %s [%d] uread() fuzzy udp up %s:%d actual port %d\n",
+	      pPlayerInfo->callSign, pi, inet_ntoa(pPlayerInfo->uaddr.sin_addr),
 	      ntohs(pPlayerInfo->uaddr.sin_port), ntohs(uaddr.sin_port));
 	  pPlayerInfo->uaddr.sin_port = uaddr.sin_port;
 	  pPlayerInfo->ulinkup = true;
@@ -2116,8 +2115,8 @@ static int uread(int *playerIndex, int *nopackets)
 
     *playerIndex = pi;
     pPlayerInfo = &player[pi];
-    DEBUG4("uread() player %d %s:%d len %d from %s:%d on %i\n",
-	pi, inet_ntoa(pPlayerInfo->uaddr.sin_addr),
+    DEBUG4("Player %s [%d] uread() %s:%d len %d from %s:%d on %i\n",
+	pPlayerInfo->callSign, pi, inet_ntoa(pPlayerInfo->uaddr.sin_addr),
 	ntohs(pPlayerInfo->uaddr.sin_port), n, inet_ntoa(uaddr.sin_addr),
 	ntohs(uaddr.sin_port), udpSocket);
 
@@ -3608,9 +3607,6 @@ static void acceptClient()
     nerror("accepting on wks");
     return;
   }
-  DEBUG1("accept() from %s:%d on %i\n",
-      inet_ntoa(clientAddr.sin_addr), ntohs(clientAddr.sin_port), fd);
-
   // don't buffer info, send it immediately
   setNoDelay(fd);
   BzfNetwork::setNonBlocking(fd);
@@ -3641,6 +3637,10 @@ static void acceptClient()
   for (playerIndex = 0; playerIndex < maxPlayers; playerIndex++)
     if (player[playerIndex].state == PlayerNoExist)
       break;
+
+  DEBUG1("Player [%d] accept() from %s:%d on %i\n", playerIndex,
+      inet_ntoa(clientAddr.sin_addr), ntohs(clientAddr.sin_port), fd);
+
   // full? reject by returning bogus port
   if (playerIndex == maxPlayers)
     serverAddr.sin_port = htons(0);
@@ -3649,6 +3649,7 @@ static void acceptClient()
     curMaxPlayers = playerIndex+1;
 
   // record what port we accepted on
+  // FIXME what should we do if playerIndex > MaxPlayers ?
   player[playerIndex].time = TimeKeeper::getCurrent();
   player[playerIndex].fd = fd;
   player[playerIndex].state = PlayerAccept;
@@ -4101,10 +4102,10 @@ static void resetFlag(int flagIndex)
     pFlagInfo->flag.position[0] = (WorldSize - BaseSize) * ((float)bzfrand() - 0.5f);
     pFlagInfo->flag.position[1] = (WorldSize - BaseSize) * ((float)bzfrand() - 0.5f);
     pFlagInfo->flag.position[2] = 0.0f;
-    int topmosttype = world->inBuilding(&obj, pFlagInfo->flag.position[0], 
+    int topmosttype = world->inBuilding(&obj, pFlagInfo->flag.position[0],
 					pFlagInfo->flag.position[1],pFlagInfo->flag.position[2], r);
     while (topmosttype != NOT_IN_BUILDING) {
-	if ((clOptions.flagsOnBuildings && (topmosttype == IN_BOX)) 
+	if ((clOptions.flagsOnBuildings && (topmosttype == IN_BOX))
 		&& (obj->pos[2] < (pFlagInfo->flag.position[2] + flagHeight)) && ((obj->pos[2] + obj->size[2]) > pFlagInfo->flag.position[2])
 		&& (world->inRect(obj->pos, obj->rotation, obj->size, pFlagInfo->flag.position[0], pFlagInfo->flag.position[1], 0.0f)))
 		 {
@@ -4115,7 +4116,7 @@ static void resetFlag(int flagIndex)
           pFlagInfo->flag.position[1] = (WorldSize - BaseSize) * ((float)bzfrand() - 0.5f);
           pFlagInfo->flag.position[2] = 0.0f;
 	}
-        topmosttype = world->inBuilding(&obj, pFlagInfo->flag.position[0], 
+        topmosttype = world->inBuilding(&obj, pFlagInfo->flag.position[0],
 					     pFlagInfo->flag.position[1],pFlagInfo->flag.position[2], r);
     }
   }
@@ -6876,7 +6877,7 @@ int main(int argc, char **argv)
 	sprintf(message,"Try another server, Bye!");
 	sendMessage(i, player[i].id, player[i].team, message);
 
-	DEBUG1("*** Kicking Player - no UDP [%d]\n",i);
+	DEBUG1("Player %s [%d] kicked, no UDP\n",player[i].callSign,i);
 	removePlayer(i);
       }
     }
