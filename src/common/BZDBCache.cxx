@@ -131,9 +131,9 @@ void BZDBCache::clientCallback(const std::string& name, void *)
   else if (name == "pulseDepth")
     pulseDepth = BZDB.eval("pulseDepth");
   else if (name == "showCollisionGrid")
-    showCollisionGrid = BZDB.eval("showCollisionGrid");
+    showCollisionGrid = BZDB.isTrue("showCollisionGrid");
   else if (name == "showCullingGrid")
-    showCullingGrid = BZDB.eval("showCullingGrid");
+    showCullingGrid = BZDB.isTrue("showCullingGrid");
 }
 
 void BZDBCache::serverCallback(const std::string& name, void *)
