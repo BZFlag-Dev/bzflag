@@ -3256,6 +3256,14 @@ static void		handleServerMessage(bool human, uint16_t code,
 	restartOnBase = true;
       }
 
+      //kill all my robots if they are on the captured team
+      for (int r = 0; r < numRobots; r++) {
+        if (robots[r]->getTeam() == capturedTeam) {
+	  gotBlowedUp(robots[r], GotCaptured, robots[r]->getId());
+	}
+      }
+
+
       // everybody who's alive on capture team will be blowing up
       // but we're not going to get an individual notification for
       // each of them, so add an explosion for each now.  don't
