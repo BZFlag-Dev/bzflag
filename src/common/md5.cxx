@@ -112,7 +112,7 @@ void MD5::update (uint1 *input, uint4 input_length) {
   memcpy(buffer+buffer_index, input+input_index, input_length-input_index);
 }
 
-
+#ifdef UNUSED  // we do not need file operations
 
 // MD5 update for files.
 // Like above, except that it works on files (and uses above as a primitive.)
@@ -171,7 +171,7 @@ void MD5::update(ifstream& stream){
 
 }
 
-
+#endif // #ifdef unused
 
 
 
@@ -219,6 +219,8 @@ void MD5::finalize (){
 
 
 
+#ifdef UNUSED  // don't need file operations
+
 MD5::MD5(FILE *file){
 
   init();  // must be called be all constructors
@@ -244,6 +246,8 @@ MD5::MD5(ifstream& stream){
   update (stream);
   finalize();
 }
+
+#endif // #ifdef UNUSED
 
 
 

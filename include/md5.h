@@ -49,17 +49,21 @@ public:
 // methods for controlled operation:
   MD5              ();  // simple initializer
   void  update     (unsigned char *input, unsigned int input_length);
+#ifdef UNUSED
   void  update     (istream& stream);
   void  update     (FILE *file);
   void  update     (ifstream& stream);
+#endif
   void  finalize   ();
 
 // constructors for special circumstances.  All these constructors finalize
 // the MD5 context.
   MD5              (unsigned char *string); // digest string, finalize
+#ifdef UNUSED
   MD5              (istream& stream);       // digest stream, finalize
   MD5              (FILE *file);            // digest file, close, finalize
   MD5              (ifstream& stream);      // digest stream, close, finalize
+#endif
 
 // methods to acquire finalized result
   unsigned char    *raw_digest ();  // digest as a 16-byte binary array
