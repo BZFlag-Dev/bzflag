@@ -372,8 +372,7 @@ void Player::updateTrackMarks()
 {
   const float minSpeed = 0.1f; // relative speed slop
 
-  if (isAlive() && !isFalling() &&
-      ((getFlag() != Flags::PhantomZone) || !isFlagActive())) {
+  if (isAlive() && !isFalling() && !isPhantomZoned()) {
     const float lifeTime = TimeKeeper::getCurrent() - lastTrackDraw;
     if (lifeTime > TrackMarks::updateTime) {
       bool drawMark = true;
@@ -526,7 +525,7 @@ void Player::updateTranslucency(float dt)
   }
 
   // set the tankNode color
-  if ((flagType == Flags::PhantomZone) && isFlagActive()) {
+  if (isPhantomZoned()) {
     color[3] = 0.25f; // barely visible, regardless of teleporter proximity
   }
   else if (alpha == 0.0f) {
@@ -725,7 +724,7 @@ void Player::setVisualTeam (TeamColor visualTeam)
     color[1] = _color[1];
     color[2] = _color[2];
   }
-  color[3] = (getFlag() == Flags::PhantomZone) && isFlagActive() ? 0.5f : 1.0f;
+  color[3] = isPhantomZoned() ? 0.5f : 1.0f;
   tankNode->setColor(color);
   tankNode->setMaterial(OpenGLMaterial(tankSpecular, emissive, shininess));
   tankNode->setTexture(tankTexture);

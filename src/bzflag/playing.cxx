@@ -3128,14 +3128,18 @@ static void		checkEnvironment()
     const float myRadius = myTank->getRadius();
     for (i = 0; i < curMaxPlayers; i++) {
       if (player[i] && !player[i]->isPaused() &&
-	  (player[i]->getFlag() == Flags::Steamroller ||
-	   (myPos[2] < 0.0f && player[i]->isAlive() &&
-	    player[i]->getFlag() != Flags::PhantomZone))) {
+	  ((player[i]->getFlag() == Flags::Steamroller) ||
+	   ((myPos[2] < 0.0f) && player[i]->isAlive() && 
+	    !player[i]->isPhantomZoned()))) {
 	const float* pos = player[i]->getPosition();
 	if (pos[2] < 0.0f) continue;
-	if (!(flagd == Flags::PhantomZone && myTank->isFlagActive())) {
-	  const float radius = myRadius + BZDB.eval(StateDatabase::BZDB_SRRADIUSMULT) * player[i]->getRadius();
-	  if (hypot(hypot(myPos[0] - pos[0], myPos[1] - pos[1]), (myPos[2] - pos[2]) * 2.0f) < radius) {
+	if (!myTank->isPhantomZoned()) {
+	  const float radius = myRadius +
+	    BZDB.eval(StateDatabase::BZDB_SRRADIUSMULT) * player[i]->getRadius();
+          const float distSquared =
+            hypot(hypot(myPos[0] - pos[0],
+                        myPos[1] - pos[1]), (myPos[2] - pos[2]) * 2.0f);
+	  if (distSquared < radius) {
 	    gotBlowedUp(myTank, GotRunOver, player[i]->getId());
 	  }
 	}
@@ -3452,9 +3456,7 @@ static void		setRobotTarget(RobotPlayer* robot)
 	((robot->getTeam() == RogueTeam && !World::getWorld()->allowRabbit())
 	 || player[j]->getTeam() != robot->getTeam())) {
 
-      if ((player[j]->getFlag() == Flags::PhantomZone
-	   && player[j]->isFlagActive()) &&
-	  (robot->getFlag() != Flags::PhantomZone || !robot->isFlagActive()))
+      if (player[j]->isPhantomZoned() && !robot->isPhantomZoned())         
 	continue;
 
       if (World::getWorld()->allowTeamFlags() &&
@@ -3587,11 +3589,16 @@ static void		checkEnvironment(RobotPlayer* tank)
     const float myRadius = tank->getRadius();
     if (((myTank->getFlag() == Flags::Steamroller) ||
 	 ((tank->getFlag() == Flags::Burrow) && myTank->isAlive() &&
-	  myTank->getFlag() != Flags::PhantomZone)) && !myTank->isPaused()) {
+	  !myTank->isPhantomZoned()))
+        && !myTank->isPaused()) {
       const float* pos = myTank->getPosition();
       if (pos[2] >= 0.0f) {
-	const float radius = myRadius + BZDB.eval(StateDatabase::BZDB_SRRADIUSMULT) * myTank->getRadius();
-	if (hypot(hypot(myPos[0] - pos[0], myPos[1] - pos[1]), myPos[2] - pos[2]) < radius) {
+	const float radius = myRadius +
+	  (BZDB.eval(StateDatabase::BZDB_SRRADIUSMULT) * myTank->getRadius());
+        const float distSquared =
+          hypot(hypot(myPos[0] - pos[0],
+                      myPos[1] - pos[1]), (myPos[2] - pos[2]) * 2.0f);
+	if (distSquared < radius) {
 	  gotBlowedUp(tank, GotRunOver, myTank->getId());
 	  dead = true;
 	}
@@ -3600,12 +3607,16 @@ static void		checkEnvironment(RobotPlayer* tank)
     for (i = 0; !dead && i < curMaxPlayers; i++) {
       if (player[i] && !player[i]->isPaused() &&
 	  ((player[i]->getFlag() == Flags::Steamroller) ||
-	   ((tank->getFlag() == Flags::Burrow) && player[i]->isAlive()) &&
-	   (player[i]->getFlag() != Flags::PhantomZone))) {
+	   ((tank->getFlag() == Flags::Burrow) && player[i]->isAlive() &&
+	    !player[i]->isPhantomZoned()))) {
 	const float* pos = player[i]->getPosition();
 	if (pos[2] < 0.0f) continue;
-	const float radius = myRadius + BZDB.eval(StateDatabase::BZDB_SRRADIUSMULT) * player[i]->getRadius();
-	if (hypot(hypot(myPos[0] - pos[0], myPos[1] - pos[1]), myPos[2] - pos[2]) < radius) {
+	const float radius = myRadius +
+	  (BZDB.eval(StateDatabase::BZDB_SRRADIUSMULT) * player[i]->getRadius());
+        const float distSquared = 
+          hypot(hypot(myPos[0] - pos[0],
+                      myPos[1] - pos[1]), (myPos[2] - pos[2]) * 2.0f);
+	if (distSquared < radius) {
 	  gotBlowedUp(tank, GotRunOver, player[i]->getId());
 	  dead = true;
 	}
@@ -4524,9 +4535,7 @@ void drawFrame(const float dt)
     // turn blanking and inversion on/off as appropriate
     sceneRenderer->setBlank(myTank && (myTank->isPaused() ||
 				       myTank->getFlag() == Flags::Blindness));
-    sceneRenderer->setInvert(myTank &&
-			     myTank->getFlag() == Flags::PhantomZone &&
-			     myTank->isFlagActive());
+    sceneRenderer->setInvert(myTank && myTank->isPhantomZoned());
 
     // turn on scene dimming when showing menu, when we're dead
     // and no longer exploding, or when we are in a building.

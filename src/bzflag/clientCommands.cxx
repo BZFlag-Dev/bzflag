@@ -185,9 +185,8 @@ std::string cmdDrop(const std::string&, const CommandManager::ArgList& args)
     return "usage: drop";
   if (myTank != NULL) {
     FlagType* flag = myTank->getFlag();
-    if (flag != Flags::Null && !myTank->isPaused() &&
-	flag->endurance != FlagSticky &&
-	!(flag == Flags::PhantomZone && myTank->isFlagActive()) &&
+    if ((flag != Flags::Null) && !myTank->isPaused() &&
+	(flag->endurance != FlagSticky) && !myTank->isPhantomZoned() &&
 	!(flag == Flags::OscillationOverthruster &&
 	  myTank->getLocation() == LocalPlayer::InBuilding)) {
       serverLink->sendDropFlag(myTank->getPosition());

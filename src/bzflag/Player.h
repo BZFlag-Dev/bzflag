@@ -99,6 +99,7 @@ public:
   bool		isFlagActive() const;
   bool		isTeleporting() const;
   bool		isExploding() const;
+  bool		isPhantomZoned() const;
   bool		isCrossingWall() const;
   bool		isNotResponding() const;
   void		resetNotResponding();
@@ -434,6 +435,11 @@ inline bool		Player::isTeleporting() const
 inline bool		Player::isExploding() const
 {
   return (state.status & short(PlayerState::Exploding)) != 0;
+}
+
+inline bool		Player::isPhantomZoned() const
+{
+  return (isFlagActive() && (getFlag() == Flags::PhantomZone));
 }
 
 inline bool		Player::isCrossingWall() const

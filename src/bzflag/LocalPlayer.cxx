@@ -262,13 +262,14 @@ void			LocalPlayer::doUpdateMotion(float dt)
   float newAngVel = 0.0f;
 
   // if was teleporting and exceeded teleport time then not teleporting anymore
-  if (isTeleporting() && getTeleportTime() - lastTime >= BZDB.eval(StateDatabase::BZDB_TELEPORTTIME))
+  if (isTeleporting() &&
+      ((getTeleportTime() - lastTime) >= BZDB.eval(StateDatabase::BZDB_TELEPORTTIME)))
     setStatus(getStatus() & ~short(PlayerState::Teleporting));
 
   // phased means we can pass through buildings
-  const bool phased = (location == Dead || location == Exploding ||
+  const bool phased = ((location == Dead) || (location == Exploding) ||
 		       (getFlag() == Flags::OscillationOverthruster) ||
-		       (getFlag() == Flags::PhantomZone && isFlagActive()));
+		       isPhantomZoned());
 
   float groundLimit = 0.0f;
   if (getFlag() == Flags::Burrow)
@@ -784,7 +785,7 @@ void			LocalPlayer::doUpdateMotion(float dt)
     firingStatus = (getFlag() == Flags::PhantomZone) ? Zoned : Sealed;
     break;
   default:
-    if (getFlag() == Flags::PhantomZone && isFlagActive())
+    if (isPhantomZoned()) 
       firingStatus = Zoned;
     else if (getReloadTime() > 0.0f)
       firingStatus = Loading;
@@ -1113,8 +1114,7 @@ bool			LocalPlayer::fireShot()
   if (i == numShots) return false;
 
   // make sure we're allowed to shoot
-  if (!isAlive() || isPaused() || location == InBuilding) // ||
-      //(getFlag() == Flags::PhantomZone && isFlagActive()))
+  if (!isAlive() || isPaused() || (location == InBuilding))
     return false;
 
   // prepare shot
@@ -1419,27 +1419,19 @@ bool			LocalPlayer::checkHit(const Player* source,
     // short circuit test if shot can't possibly hit.
     // only superbullet or shockwave can kill zoned dude
     const FlagType* shotFlag = shot->getFlag();
-    if (getFlag() == Flags::PhantomZone && isFlagActive() &&
-	shotFlag != Flags::SuperBullet && shotFlag != Flags::ShockWave &&
-	shotFlag != Flags::PhantomZone)
+    if (isPhantomZoned() &&
+	(shotFlag != Flags::ShockWave) &&
+	(shotFlag != Flags::SuperBullet) &&
+	(shotFlag != Flags::PhantomZone))
       continue;
 
     // laser can't hit a cloaked tank
-    if (getFlag() == Flags::Cloaking && shotFlag == Flags::Laser)
+    if ((getFlag() == Flags::Cloaking) && (shotFlag == Flags::Laser))
       continue;
 
     // zoned shots only kill zoned tanks
-    if (shotFlag == Flags::PhantomZone){ // zoned shot
-      if (getFlag() != Flags::PhantomZone) { // I don't have PZ
-	continue; // no way
-      } else { // I have PZ
-	if (!isFlagActive()) { // not zoned, can't get shot
-	  continue;
-	} else {
-	  // do nothing - I am zoned, I can get shot
-	}
-      }
-
+    if ((shotFlag == Flags::PhantomZone) && !isPhantomZoned()) {
+      continue;
     }
 
     // test myself against shot
