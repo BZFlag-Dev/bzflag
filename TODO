@@ -32,7 +32,7 @@ THESE ARE LOWER PRIORITY
 
 * move version functions to buildDate.cxx
 
-* remove -port and add support for server.example.com:port
+* remove -port and -callsign from bzflag and add support for callsign@server.example.com:port
 
 * split -public <desc> into -public, -description <desc>, and -email <contact>
 
