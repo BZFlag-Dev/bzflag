@@ -14,7 +14,8 @@ recent bugs
   in a row, which was intended to be illegal, and high scoring tanks get bypassed.
   Was playing on ducati where a player was consistantly in #1 slot, but NEVER 
   was rabbit. (The latter probaby happens when all players have a negative
-  score, the formula does not work well then).
+  score, the formula does not work well then). Nope: Top player was 44-31 or there
+  abouts.
 
 - Address Exception reported when unpacking a FlagType in MsgFlagUpdate on client
   in Rabbit game. The reported message buffer address was bad (ie 0xbfffd7ed)
