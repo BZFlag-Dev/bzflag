@@ -32,6 +32,7 @@ FlagInfo              *FlagInfo::flagList      = NULL;
 std::vector<FlagType*> FlagInfo::allowedFlags;
 int                    FlagInfo::numExtraFlags = 0;
 int                    FlagInfo::numFlags      = 0;
+int                    FlagInfo::numFlagsInAir;
 
 FlagInfo::FlagInfo()
 {
@@ -97,6 +98,7 @@ void FlagInfo::addFlag()
   const float maxGrabs     = BZDB.eval(StateDatabase::BZDB_MAXFLAGGRABS);
 
   // flag in now entering game
+  numFlagsInAir++;
   flag.status          = FlagComing;
 
   // compute drop time
@@ -133,6 +135,7 @@ void *FlagInfo::pack(void *buf)
 
 void FlagInfo::dropFlag(float pos[3], float landingPos[3], bool vanish)
 {
+  numFlagsInAir++;
   player                  = -1;
   flag.status             = vanish ? FlagGoing : FlagInAir;
 
@@ -196,6 +199,50 @@ int FlagInfo::teamIndex()
 int FlagInfo::getIndex()
 {
   return flagIndex;
+}
+
+float FlagInfo::getNextDrop(TimeKeeper &tm)
+{
+  // find timeout when next flag would hit ground
+  float waitTime = 3.0f;
+  if (numFlagsInAir > 0) {
+    for (int i = 0; i < numFlags; i++) {
+      FlagInfo &flag = flagList[i];
+      if (flag.flag.status != FlagNoExist &&
+	  flag.flag.status != FlagOnTank &&
+	  flag.flag.status != FlagOnGround &&
+	  flag.dropDone - tm < waitTime)
+	waitTime = flag.dropDone - tm;
+    }
+  }
+  return waitTime;
+}
+
+bool FlagInfo::landing(const TimeKeeper &tm)
+{
+  if (numFlagsInAir <= 0)
+    return false;
+
+  bool land = false;
+  if (flag.status == FlagInAir || flag.status == FlagComing) {
+    if (dropDone - tm <= 0.0f) {
+      flag.status = FlagOnGround;
+      numFlagsInAir--;
+      land        = true;
+    }
+  } else if (flag.status == FlagGoing) {
+    if (dropDone - tm <= 0.0f) {
+      flag.status = FlagNoExist;
+      numFlagsInAir--;
+      land        = true;
+    }
+  }
+  return land;
+}
+
+void FlagInfo::setNoFlagInAir()
+{
+  numFlagsInAir = 0;
 }
 
 // Local Variables: ***

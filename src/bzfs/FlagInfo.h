@@ -35,11 +35,14 @@ public:
   void grab(int playerIndex);
   int  teamIndex();
   int  getIndex();
+  bool landing(const TimeKeeper &tm);
 
   static void setSize(int _numFlags);
   static void setAllowed(std::vector<FlagType*> allowed);
   static void setExtra(int extra);
   static int  lookupFirstTeamFlag(int teamindex);
+  static float getNextDrop(TimeKeeper &tm);
+  static void  setNoFlagInAir();
 
   static FlagInfo *flagList;
 
@@ -51,8 +54,6 @@ public:
     int grabs;
     // true if flag must be in game
     bool required;
-    // time flag will land
-    TimeKeeper dropDone;
     // number of shots on this flag
     int numShots;
 
@@ -61,6 +62,10 @@ private:
   static std::vector<FlagType*> allowedFlags;
   static int                    numExtraFlags;
   static int                    numFlags;
+  static int                    numFlagsInAir;
+
+  // time flag will land
+  TimeKeeper                    dropDone;
 };
 #else
 class FlagInfo;

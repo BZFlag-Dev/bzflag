@@ -79,7 +79,6 @@ PlayerState lastState[MaxPlayers  + ReplayObservers];
 TeamInfo team[NumTeams];
 // num flags in flag list
 int numFlags;
-static int numFlagsInAir;
 bool done = false;
 // true if hit time/score limit
 bool gameOver = true;
@@ -1191,7 +1190,7 @@ static bool defineWorld()
     team[i].team.won = 0;
     team[i].team.lost = 0;
   }
-  numFlagsInAir = 0;
+  FlagInfo::setNoFlagInAir();
   for (i = 0; i < numFlags; i++)
     resetFlag(FlagInfo::flagList[i]);
 
@@ -1892,7 +1891,6 @@ void resetFlag(FlagInfo &flag)
 	flag.flag.status = FlagOnGround;
     } else {
       // flag in now entering game
-      numFlagsInAir++;
       flag.addFlag();
     }
   }
@@ -1922,10 +1920,7 @@ void zapFlag(FlagInfo &flag)
   }
 
   // if flag was flying then it flies no more
-  if (flag.flag.status == FlagInAir ||
-      flag.flag.status == FlagComing ||
-      flag.flag.status == FlagGoing)
-    numFlagsInAir--;
+  flag.landing(TimeKeeper::getSunExplodeTime());
 
   // reset flag status
   resetFlag(flag);
@@ -2500,9 +2495,6 @@ static void dropFlag(int playerIndex, float pos[3])
     return;
   int flagTeam = drpFlag.flag.type->flagTeam;
   bool isTeamFlag = (flagTeam != ::NoTeam);
-
-  // okay, go ahead and drop it
-  numFlagsInAir++;
 
   // limited flags that have been fired should be disposed of
   bool limited = clOptions->flagLimit[drpFlag.flag.type] != -1;
@@ -4040,16 +4032,9 @@ int main(int argc, char **argv)
     if (countdownActive && clOptions->timeLimit > 0.0f)
 	waitTime = 1.0f;
 #endif
-    if (numFlagsInAir > 0) {
-      for (i = 0; i < numFlags; i++) {
-	FlagInfo &flag = FlagInfo::flagList[i];
-	if (flag.flag.status != FlagNoExist &&
-	    flag.flag.status != FlagOnTank &&
-	    flag.flag.status != FlagOnGround &&
-	    flag.dropDone - tm < waitTime)
-	  waitTime = flag.dropDone - tm;
-      }
-    }
+    float dropTime = FlagInfo::getNextDrop(tm);
+    if (dropTime < waitTime)
+      waitTime = dropTime;
 
     // get time for next Player internal action
     GameKeeper::Player::updateLatency(waitTime);
@@ -4382,24 +4367,13 @@ int main(int argc, char **argv)
     }
 
     // if any flags were in the air, see if they've landed
-    if (numFlagsInAir > 0) {
-      for (i = 0; i < numFlags; i++) {
-	FlagInfo &flag = FlagInfo::flagList[i];
-	if (flag.flag.status == FlagInAir ||
-	    flag.flag.status == FlagComing) {
-	  if (flag.dropDone - tm <= 0.0f) {
-	    flag.flag.status = FlagOnGround;
-	    numFlagsInAir--;
-	    sendFlagUpdate(flag);
-	  }
-	} else if (flag.flag.status == FlagGoing) {
-	  if (flag.dropDone - tm <= 0.0f) {
-	    flag.flag.status = FlagNoExist;
-	    numFlagsInAir--;
-	    resetFlag(flag);
-	  }
-	}
-      }
+    for (i = 0; i < numFlags; i++) {
+      FlagInfo &flag = FlagInfo::flagList[i];
+      if (flag.landing(tm))
+	if (flag.flag.status == FlagOnGround)
+	  sendFlagUpdate(flag);
+	else
+	  resetFlag(flag);
     }
 
     // check team flag timeouts
@@ -4429,7 +4403,6 @@ int main(int argc, char **argv)
 	  FlagInfo &flag = FlagInfo::flagList[i];
 	  if (flag.flag.type == Flags::Null) {
 	    // flag in now entering game
-	    numFlagsInAir++;
 	    flag.addFlag();
 	    sendFlagUpdate(flag);
 	    break;
