@@ -4,7 +4,8 @@ to do list for BZFlag
 THESE SHOULD HAPPEN BEFORE THE NEXT RELEASE:
 
 * Fix and/or close outstanding bugs in sf tracker that do not require
-  breaking protocol.
+  breaking protocol.  In particular -- fix the high priority (10) ones
+  for 1.10.4 patch release.
 
 
 THESE ARE LOWER PRIORITY
