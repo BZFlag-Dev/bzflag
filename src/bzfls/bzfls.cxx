@@ -650,7 +650,9 @@ static void serverStop()
 static void checkList(const TimeKeeper& time)
 {
   Server* scan = serverList;
+  int serverCount = 0;
   while (scan) {
+    serverCount++;
     // get the next server in list
     Server* next = scan->getNext();
 
@@ -669,6 +671,8 @@ static void checkList(const TimeKeeper& time)
     // next server
     scan = next;
   }
+  if (debug >= 5)
+    fprintf(stderr, "checkList: %d current servers\n", serverCount);
 }
 
 // check if server at address is accessible and responsive
