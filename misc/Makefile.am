@@ -26,6 +26,7 @@ EXTRA_DIST =				\
 	tar				\
 	touchcopyright			\
 	touchversion			\
+	vars.txt			\
 	ws.sh
 
 MAINTAINERCLEANFILES =	\
