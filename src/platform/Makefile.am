@@ -165,6 +165,8 @@ libPlatform_a_SOURCES =				\
 	WinPlatformFactory.h			\
 	WinDisplay.cxx				\
 	WinDisplay.h				\
+	WinJoystick.cxx				\
+	WinJoystick.h				\
 	WinVisual.cxx				\
 	WinVisual.h				\
 	WinWindow.cxx				\
@@ -226,6 +228,8 @@ EXTRA_libPlatform_a_SOURCES =		\
 	WinPlatformFactory.h		\
 	WinDisplay.cxx			\
 	WinDisplay.h			\
+	WinJoystick.cxx			\
+	WinJoystick.h			\
 	WinVisual.cxx			\
 	WinVisual.h			\
 	WinWindow.cxx			\
