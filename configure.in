@@ -277,22 +277,6 @@ LIBDIR="\$(top_srcdir)/lib"
 AC_SUBST(LIBDIR)
 
 AC_OUTPUT(Makefile
-	src/Makefile
-	src/bzfrelay/Makefile
-	src/common/Makefile
-	src/net/Makefile
-	src/bzfs/Makefile
-	src/bzfls/Makefile
-	src/geometry/Makefile
-	src/geometry/models/Makefile
-	src/geometry/models/hitank/Makefile
-	src/geometry/models/medtank/Makefile
-	src/geometry/models/lowtank/Makefile
-	src/obstacle/Makefile
-	src/ogl/Makefile
-	src/scene/Makefile
-	src/platform/Makefile
-	src/bzflag/Makefile
 	data/Makefile
 	data/l10n/Makefile
 	debian/Makefile
@@ -314,4 +298,20 @@ AC_OUTPUT(Makefile
 	package/win32/src/bzfinst/Makefile
 	package/win32/src/bzfuinst/Makefile
 	package/win32/src/makedb/Makefile
-	win32/Makefile)
+	win32/Makefile
+	src/Makefile
+	src/bzfrelay/Makefile
+	src/common/Makefile
+	src/net/Makefile
+	src/bzfs/Makefile
+	src/bzfls/Makefile
+	src/geometry/Makefile
+	src/geometry/models/Makefile
+	src/geometry/models/hitank/Makefile
+	src/geometry/models/medtank/Makefile
+	src/geometry/models/lowtank/Makefile
+	src/obstacle/Makefile
+	src/ogl/Makefile
+	src/scene/Makefile
+	src/platform/Makefile
+	src/bzflag/Makefile)
