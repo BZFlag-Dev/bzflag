@@ -141,6 +141,22 @@ PlayerID here is a connection tracker for the server. If the server has no
 slots open it will just MsgSuperKill
 
 
+getting game parameters
+-----------------------
+
+The server keeps track of all important game parameters, such as acceleration
+values, max speeds, and certain flag characteristics (laser reload, etc).
+Send them to the client on join or update (if the admin changes it).
+
+  <--   MsgSetVar
+	u8  name length
+	u8  value length
+	... name data
+	... value data
+
+note that these strings are _not_ null terminated within the packet. The
+reciever is expected to terminate the strings as appropriate.
+
 message super kill
 ------------------
   <--   MsgSuperKill
@@ -163,10 +179,10 @@ getting the world
         u16 max players (includes observers)
         u16 max shots per player
         u16 max number of flags (includes team flags)
-        u32 linear acceleration
-        u32 angular acceleration
-        u26 bad flag shake time 
-        u32 bad flag shake win count
+--------u32 linear acceleration
+--------u32 angular acceleration
+--------u26 bad flag shake time 
+--------u32 bad flag shake win count
         u32 server time
         ... world model name
 

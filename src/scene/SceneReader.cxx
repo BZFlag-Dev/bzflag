@@ -276,6 +276,16 @@ bool					SceneNodeGStateReader::parse(XMLTree::iterator xml)
 								&OpenGLGStateBuilder::setPass)));
 	}
 
+	else if (xml->value == "clipping") {
+		float plane[4];
+		xml->getAttribute("clip", xmlParseEnum(s_xmlEnumBool, xmlSetMethod(&builder, &OpenGLGStateBuilder::setClipping)));
+		xml->getAttribute("a", xmlStrToFloat(xmlSetVar(plane[0])));
+		xml->getAttribute("b", xmlStrToFloat(xmlSetVar(plane[1])));
+		xml->getAttribute("c", xmlStrToFloat(xmlSetVar(plane[2])));
+		xml->getAttribute("d", xmlStrToFloat(xmlSetVar(plane[3])));
+		builder.setClipPlane(plane);
+	}
+
 	else {
 		return false;
 	}

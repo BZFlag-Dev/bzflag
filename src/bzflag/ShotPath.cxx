@@ -56,12 +56,12 @@ FiringInfo::FiringInfo(const BaseLocalPlayer& tank, int id)
 	tank.getMuzzle(shot.pos);
 	const float* dir = tank.getForward();
 	const float* tankVel = tank.getVelocity();
-	shot.vel[0] = tankVel[0] + atof(BZDB->get("shotSpeed").c_str()) * dir[0];
-	shot.vel[1] = tankVel[1] + atof(BZDB->get("shotSpeed").c_str()) * dir[1];
-	shot.vel[2] = tankVel[2] + atof(BZDB->get("shotSpeed").c_str()) * dir[2];
+	shot.vel[0] = tankVel[0] + atof(BZDB->get("_shotSpeed").c_str()) * dir[0];
+	shot.vel[1] = tankVel[1] + atof(BZDB->get("_shotSpeed").c_str()) * dir[1];
+	shot.vel[2] = tankVel[2] + atof(BZDB->get("_shotSpeed").c_str()) * dir[2];
 	shot.dt = 0.0f;
 	flag = tank.getFlag();
-	lifetime = atof(BZDB->get("reloadTime").c_str());
+	lifetime = atof(BZDB->get("_reloadTime").c_str());
 }
 
 void*					FiringInfo::pack(void* buf) const
@@ -88,7 +88,7 @@ void*					FiringInfo::unpack(void* buf)
 
 ShotPath::ShotPath(const FiringInfo& info) :
 								firingInfo(info),
-								reloadTime(atof(BZDB->get("reloadTime").c_str())),
+								reloadTime(atof(BZDB->get("_reloadTime").c_str())),
 								startTime(TimeKeeper::getTick()),
 								currentTime(TimeKeeper::getTick()),
 								expiring(false),

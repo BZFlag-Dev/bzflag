@@ -764,22 +764,22 @@ static std::string	cmdRoam(const std::string&,
 		if(args.size() != 2)
 			return "usage: roam translate {left|right|forward|backward|up|down|stop}";
 		if(args[1] == "left") {
-			myTank->roamDPos[1] = 4.0f * atof(BZDB->get("tankSpeed").c_str());
+			myTank->roamDPos[1] = 4.0f * atof(BZDB->get("_tankSpeed").c_str());
 		}
 		else if(args[1] == "right") {
-			myTank->roamDPos[1] = -4.0f * atof(BZDB->get("tankSpeed").c_str());
+			myTank->roamDPos[1] = -4.0f * atof(BZDB->get("_tankSpeed").c_str());
 		}
 		else if(args[1] == "forward") {
-			myTank->roamDPos[0] = 4.0f * atof(BZDB->get("tankSpeed").c_str());
+			myTank->roamDPos[0] = 4.0f * atof(BZDB->get("_tankSpeed").c_str());
 		}
 		else if(args[1] == "backward") {
-			myTank->roamDPos[0] = -4.0f * atof(BZDB->get("tankSpeed").c_str());
+			myTank->roamDPos[0] = -4.0f * atof(BZDB->get("_tankSpeed").c_str());
 		}
 		else if(args[1] == "up") {
-			myTank->roamDPos[2] = 4.0f * atof(BZDB->get("tankSpeed").c_str());
+			myTank->roamDPos[2] = 4.0f * atof(BZDB->get("_tankSpeed").c_str());
 		}
 		else if(args[1] == "down") {
-			myTank->roamDPos[2] = -4.0f * atof(BZDB->get("tankSpeed").c_str());
+			myTank->roamDPos[2] = -4.0f * atof(BZDB->get("_tankSpeed").c_str());
 		}
 		else if(args[1] == "stop") {
 			myTank->roamDTheta  = 0.0f;
@@ -1452,7 +1452,7 @@ static void				handleServerMessage(bool human, uint16_t code,
 				float explodePos[3];
 				explodePos[0] = pos[0];
 				explodePos[1] = pos[1];
-				explodePos[2] = pos[2] + atof(BZDB->get("muzzleHeight").c_str());
+				explodePos[2] = pos[2] + atof(BZDB->get("_muzzleHeight").c_str());
 				addTankExplosion(explodePos);
 			}
 			if (killerLocal) {
@@ -1637,6 +1637,22 @@ static void				handleServerMessage(bool human, uint16_t code,
 			if (isRemotePlayer(id))
 		  	 	player[id]->changeScore(wins - player[id]->getWins(),
 			   							losses - player[id]->getLosses());
+			break;
+		}
+
+		case MsgSetVar: {
+			uint8_t namel, valuel;
+			msg = nboUnpackUByte(msg, namel);
+			msg = nboUnpackUByte(msg, valuel);
+			char* name = new char[namel + 1];
+			char* value = new char[valuel + 1];
+			msg = nboUnpackString(msg, name, namel);
+			name[namel] = '\0';
+			msg = nboUnpackString(msg, value, valuel);
+			value[valuel] = '\0';
+			BZDB->set(name, value);
+			delete[] name;
+			delete[] value;
 			break;
 		}
 
@@ -1866,10 +1882,10 @@ static float				minSafeRange(float angleCosOffBoresight,
 	static const float		SafeAngle = 0.5f;				// cos(angle)
 
 	// don't ever place within this range
-	static const float		MinRange = 2.5f * atof(BZDB->get("shotSpeed").c_str());	// meters
+	static const float		MinRange = 2.5f * atof(BZDB->get("_shotSpeed").c_str());	// meters
 
 	// anything beyond this range is okay at any angle
-	static const float		MaxRange = 5.0f * atof(BZDB->get("shotSpeed").c_str());	// meters
+	static const float		MaxRange = 5.0f * atof(BZDB->get("_shotSpeed").c_str());	// meters
 
 	// if more than SafeAngle off boresight then MinRange is okay
 	if (angleCosOffBoresight < SafeAngle)
@@ -1905,8 +1921,8 @@ static void				restartPlaying()
 		do {
 			if (restartOnBase) {
 				const float* base = world->getBase(int(myTank->getTeam()));
-				const float x = (base[4] - 2.0f * atof(BZDB->get("tankRadius").c_str())) * ((float)bzfrand() - 0.5f);
-				const float y = (base[5] - 2.0f * atof(BZDB->get("tankRadius").c_str())) * ((float)bzfrand() - 0.5f);
+				const float x = (base[4] - 2.0f * atof(BZDB->get("_tankRadius").c_str())) * ((float)bzfrand() - 0.5f);
+				const float y = (base[5] - 2.0f * atof(BZDB->get("_tankRadius").c_str())) * ((float)bzfrand() - 0.5f);
 				startPoint[0] = base[0] + x * cosf(base[3]) - y * sinf(base[3]);
 				startPoint[1] = base[1] + x * sinf(base[3]) + y * cosf(base[3]);
 				if(base[2] != 0) {
@@ -1917,16 +1933,16 @@ static void				restartPlaying()
 			}
 			else {
 				if (world->allowTeamFlags()) {
-					startPoint[0] = 0.4f * atof(BZDB->get("worldSize").c_str()) * ((float)bzfrand() - 0.5f);
-					startPoint[1] = 0.4f * atof(BZDB->get("worldSize").c_str()) * ((float)bzfrand() - 0.5f);
+					startPoint[0] = 0.4f * atof(BZDB->get("_worldSize").c_str()) * ((float)bzfrand() - 0.5f);
+					startPoint[1] = 0.4f * atof(BZDB->get("_worldSize").c_str()) * ((float)bzfrand() - 0.5f);
 				}
 				else {
-					startPoint[0] = (atof(BZDB->get("worldSize").c_str()) - 2.0f * atof(BZDB->get("tankRadius").c_str())) * ((float)bzfrand() - 0.5f);
-					startPoint[1] = (atof(BZDB->get("worldSize").c_str()) - 2.0f * atof(BZDB->get("tankRadius").c_str())) * ((float)bzfrand() - 0.5f);
+					startPoint[0] = (atof(BZDB->get("_worldSize").c_str()) - 2.0f * atof(BZDB->get("_tankRadius").c_str())) * ((float)bzfrand() - 0.5f);
+					startPoint[1] = (atof(BZDB->get("_worldSize").c_str()) - 2.0f * atof(BZDB->get("_tankRadius").c_str())) * ((float)bzfrand() - 0.5f);
 				}
 			}
 			startAzimuth = 2.0f * M_PI * (float)bzfrand();
-		} while (world->inBuilding(startPoint, 2.0f * atof(BZDB->get("tankRadius").c_str())));
+		} while (world->inBuilding(startPoint, 2.0f * atof(BZDB->get("_tankRadius").c_str())));
 
 		// get info on my tank
 		const TeamColor myColor = myTank->getTeam();
@@ -1954,8 +1970,8 @@ static void				restartPlaying()
 				const Ray ray(shot->getPosition(), shot->getVelocity());
 				const float t = Intersect::timeRayHitsBlock(
 								ray, startPoint, startAzimuth,
-								4.0f * atof(BZDB->get("tankLength").c_str()), 4.0f * atof(BZDB->get("tankWidth").c_str()),
-								2.0f * atof(BZDB->get("tankHeight").c_str()));
+								4.0f * atof(BZDB->get("_tankLength").c_str()), 4.0f * atof(BZDB->get("_tankWidth").c_str()),
+								2.0f * atof(BZDB->get("_tankHeight").c_str()));
 				if (t >= 0.0f && t < MinShotImpact) {
 					located = false;
 					break;
@@ -2032,7 +2048,7 @@ static void				updateFlags(float dt)
 				const float* pos = tank->getPosition();
 				flag.position[0] = pos[0];
 				flag.position[1] = pos[1];
-				flag.position[2] = pos[2] + atof(BZDB->get("tankHeight").c_str());
+				flag.position[2] = pos[2] + atof(BZDB->get("_tankHeight").c_str());
 			}
 		}
 		world->updateFlag(i, dt);
@@ -2055,7 +2071,7 @@ bool					addExplosion(const float* _pos,
 
 	// choose number of explosion billboards
 	int boom = 1;
-	if (size >= 3.0f * atof(BZDB->get("tankLength").c_str()))
+	if (size >= 3.0f * atof(BZDB->get("_tankLength").c_str()))
 		boom += static_cast<int>(bzfrand() * 4.0) + 3;
 
 	// make the explosions
@@ -2092,19 +2108,19 @@ bool					addExplosion(const float* _pos,
 
 void					addTankExplosion(const float* pos)
 {
-	addExplosion(pos, 3.5f * atof(BZDB->get("tankLength").c_str()), 1.2f);
+	addExplosion(pos, 3.5f * atof(BZDB->get("_tankLength").c_str()), 1.2f);
 }
 
 void					addShotExplosion(const float* pos)
 {
 	// only play explosion sound if you see an explosion
-	if (addExplosion(pos, 1.2f * atof(BZDB->get("tankLength").c_str()), 0.8f))
+	if (addExplosion(pos, 1.2f * atof(BZDB->get("_tankLength").c_str()), 0.8f))
 		SOUNDMGR->playWorldSound("boom", pos[0], pos[1], pos[2]);
 }
 
 void					addShotPuff(const float* pos)
 {
-	addExplosion(pos, 0.3f * atof(BZDB->get("tankLength").c_str()), 0.8f);
+	addExplosion(pos, 0.3f * atof(BZDB->get("_tankLength").c_str()), 0.8f);
 }
 
 static void				updateExplosions(float dt)
@@ -2178,7 +2194,7 @@ static void				handleFlagDropped(Player* tank, int reason)
 				float explodePos[3];
 				explodePos[0] = pos[0];
 				explodePos[1] = pos[1];
-				explodePos[2] = pos[2] + atof(BZDB->get("muzzleHeight").c_str());
+				explodePos[2] = pos[2] + atof(BZDB->get("_muzzleHeight").c_str());
 				addTankExplosion(explodePos);
 			}
 		}
@@ -2264,7 +2280,7 @@ static bool				gotBlowedUp(BaseLocalPlayer* tank,
 			float explodePos[3];
 			explodePos[0] = pos[0];
 			explodePos[1] = pos[1];
-			explodePos[2] = pos[2] + atof(BZDB->get("muzzleHeight").c_str());
+			explodePos[2] = pos[2] + atof(BZDB->get("_muzzleHeight").c_str());
 			addTankExplosion(explodePos);
 		}
 
@@ -2315,7 +2331,7 @@ static void				checkEnvironment()
 			// grab any and all flags i'm driving over
 			const float* tpos = myTank->getPosition();
 			const float radius = myTank->getRadius();
-			const float radius2 = (radius + atof(BZDB->get("flagRadius").c_str())) * (radius + atof(BZDB->get("flagRadius").c_str()));
+			const float radius2 = (radius + atof(BZDB->get("_flagRadius").c_str())) * (radius + atof(BZDB->get("_flagRadius").c_str()));
 			for (int i = 0; i < numFlags; i++) {
 				if (world->getFlag(i).id == NoFlag || world->getFlag(i).status != FlagOnGround)
 					continue;
@@ -2332,7 +2348,7 @@ static void				checkEnvironment()
 		// identify closest flag
 		const float* tpos = myTank->getPosition();
 		std::string message("Closest Flag: ");
-		float minDist = atof(BZDB->get("identifyRange").c_str()) * atof(BZDB->get("identifyRange").c_str());
+		float minDist = atof(BZDB->get("_identifyRange").c_str()) * atof(BZDB->get("_identifyRange").c_str());
 		int closestFlag = -1;
 		for (int i = 0; i < numFlags; i++) {
 			if (world->getFlag(i).id == NoFlag ||
@@ -2401,7 +2417,7 @@ static void				checkEnvironment()
 		  !player[i]->isPaused()) {
 				const float* pos = player[i]->getPosition();
 				if (!(flagId == PhantomZoneFlag && myTank->isFlagActive())) {
-					const float radius = myRadius + atof(BZDB->get("srRadiusMult").c_str()) * player[i]->getRadius();
+					const float radius = myRadius + atof(BZDB->get("_srRadiusMult").c_str()) * player[i]->getRadius();
 					if (hypot(hypot(myPos[0] - pos[0], myPos[1] - pos[1]), myPos[2] - pos[2]) < radius)
 						gotBlowedUp(myTank, GotRunOver, player[i]->getId());
 				}
@@ -2642,7 +2658,7 @@ static bool				enterServer(ServerLink* serverLink, World* world,
 	if (serverLink->read(code, len, msg, -1) < 0) {
 		goto failed;
 	}
-	while (code == MsgAddPlayer || code == MsgTeamUpdate || code == MsgFlagUpdate) {
+	while (code == MsgAddPlayer || code == MsgTeamUpdate || code == MsgFlagUpdate || code == MsgSetVar) {
 		void* buf = msg;
 		switch (code) {
 			case MsgAddPlayer: {
@@ -2674,6 +2690,21 @@ static bool				enterServer(ServerLink* serverLink, World* world,
 				buf = nboUnpackUShort(buf, flag);
 				buf = world->getFlag(int(flag)).unpack(buf);
 				world->initFlag(int(flag));
+				break;
+			}
+			case MsgSetVar: {
+				uint8_t namel, valuel;
+				buf = nboUnpackUByte(buf, namel);
+				buf = nboUnpackUByte(buf, valuel);
+				char* name = new char[namel + 1];
+				char* value = new char[valuel + 1];
+				buf = nboUnpackString(buf, name, namel);
+				name[namel] = '\0';
+				buf = nboUnpackString(buf, value, valuel);
+				value[valuel] = '\0';
+				BZDB->set(name, value);
+				delete[] name;
+				delete[] value;
 				break;
 			}
 		}
@@ -2762,14 +2793,14 @@ static void				leaveGame()
 	float eyePoint[3], targetPoint[3];
 	eyePoint[0] = 0.0f;
 	eyePoint[1] = 0.0f;
-	eyePoint[2] = 0.0f + atof(BZDB->get("muzzleHeight").c_str());
+	eyePoint[2] = 0.0f + atof(BZDB->get("_muzzleHeight").c_str());
 	targetPoint[0] = eyePoint[0] - 1.0f;
 	targetPoint[1] = eyePoint[1] + 0.0f;
 	targetPoint[2] = eyePoint[2] + 0.0f;
 	SCENEMGR->getView().setProjection(60.0f,
 								static_cast<float>(wWindow) /
 									static_cast<float>(hWindow),
-								1.1f, 2.0f * atof(BZDB->get("worldSize").c_str()));
+								1.1f, 2.0f * atof(BZDB->get("_worldSize").c_str()));
 	SCENEMGR->getView().setView(eyePoint, targetPoint);
 
 	// reset some flags
@@ -3166,8 +3197,8 @@ static void				playingLoop()
 			myTank->roamPos[0] += dt * (c * myTank->roamDPos[0] - s * myTank->roamDPos[1]);
 			myTank->roamPos[1] += dt * (c * myTank->roamDPos[1] + s * myTank->roamDPos[0]);
 			myTank->roamPos[2] += dt * myTank->roamDPos[2];
-			if(myTank->roamPos[2] < atof(BZDB->get("muzzleHeight").c_str()))
-				myTank->roamPos[2] = atof(BZDB->get("muzzleHeight").c_str());
+			if(myTank->roamPos[2] < atof(BZDB->get("_muzzleHeight").c_str()))
+				myTank->roamPos[2] = atof(BZDB->get("_muzzleHeight").c_str());
 			myTank->roamTheta  += dt * myTank->roamDTheta;
 			myTank->roamPhi    += dt * myTank->roamDPhi;
 			myTank->roamZoom   += dt * myTank->roamDZoom;
@@ -3362,7 +3393,7 @@ static void				playingLoop()
 					float eye[3], focus[3];
 					eye[0]   = pos[0];
 					eye[1]   = pos[1];
-					eye[2]   = pos[2] + atof(BZDB->get("muzzleHeight").c_str());
+					eye[2]   = pos[2] + atof(BZDB->get("_muzzleHeight").c_str());
 					focus[0] = eye[0] + dir[0];
 					focus[1] = eye[1] + dir[1];
 					focus[2] = eye[2] + dir[2];
@@ -3372,7 +3403,7 @@ static void				playingLoop()
 					SCENEMGR->getView().setProjection(fov,
 									static_cast<float>(wWindow) /
 										static_cast<float>(hWindow),
-									1.1f, 2.0f * atof(BZDB->get("worldSize").c_str()));
+									1.1f, 2.0f * atof(BZDB->get("_worldSize").c_str()));
 					SCENEMGR->getView().setOffset(0.0f, 0.0f);
 				}
 				else if(BZDB->get("playerType") == "observer") {
@@ -3396,7 +3427,7 @@ static void				playingLoop()
 					    // camera following target
 					    eye[0] = target->getPosition()[0] - targetTankDir[0] * 40;
 					    eye[1] = target->getPosition()[1] - targetTankDir[1] * 40;
-					    eye[2] = target->getPosition()[2] + atof(BZDB->get("muzzleHeight").c_str()) * 6;
+					    eye[2] = target->getPosition()[2] + atof(BZDB->get("_muzzleHeight").c_str()) * 6;
 					    focus[0] = target->getPosition()[0];
 					    focus[1] = target->getPosition()[1];
 					    focus[2] = target->getPosition()[2];
@@ -3405,7 +3436,7 @@ static void				playingLoop()
 					    // target's view
 					    eye[0] = target->getPosition()[0];
 					    eye[1] = target->getPosition()[1];
-					    eye[2] = target->getPosition()[2] + atof(BZDB->get("muzzleHeight").c_str());
+					    eye[2] = target->getPosition()[2] + atof(BZDB->get("_muzzleHeight").c_str());
 					    focus[0] = eye[0] + targetTankDir[0];
 					    focus[1] = eye[1] + targetTankDir[1];
 					    focus[2] = eye[2] + targetTankDir[2];
@@ -3446,7 +3477,7 @@ static void				playingLoop()
 					SCENEMGR->getView().setProjection(fov,
 									static_cast<float>(wWindow) /
 										static_cast<float>(hWindow),
-									1.1f, 2.0f * atof(BZDB->get("worldSize").c_str()));
+									1.1f, 2.0f * atof(BZDB->get("_worldSize").c_str()));
 					SCENEMGR->getView().setOffset(0.0f, 0.0f);
 				}
 			}

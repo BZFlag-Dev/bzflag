@@ -769,9 +769,6 @@ int						main(int argc, char** argv)
 		}
 		BZDB->setPersistent(globalDBItems[i].name, globalDBItems[i].persistent);
 		BZDB->setPermission(globalDBItems[i].name, globalDBItems[i].permission);
-		if (globalDBItems[i].callback != NULL)
-			BZDB->addCallback(globalDBItems[i].name,
-								globalDBItems[i].callback, NULL);
 	}
 
 	// other default DB entries

@@ -66,6 +66,9 @@ public:
 	bool				forceBlending;
 	bool				forceSmoothing;
 	bool				forceDithering;
+
+	bool				clipping;
+	float				clipPlane[4];
 };
 
 //
@@ -202,6 +205,9 @@ public:
 	void				setForceBlending(bool);
 	void				setForceSmoothing(bool);
 	void				setForceDithering(bool);
+	void				setClipping(bool);
+	void				setClipPlane(float[4]);
+	void				setClipPlane(float, float, float, float);
 
 	// get current builder state
 	OpenGLTexture		getTexture() const;
@@ -223,6 +229,8 @@ public:
 	bool				getForceBlending() const;
 	bool				getForceSmoothing() const;
 	bool				getForceDithering() const;
+	bool				getClipping() const;
+	const float*		getClipPlane() const;
 
 	// return a gstate having the current state of the builder
 	OpenGLGState		getState() const;
@@ -352,6 +360,30 @@ void					OpenGLGStateBuilder::setForceDithering(bool force)
 }
 
 inline
+void					OpenGLGStateBuilder::setClipping(bool _clipping)
+{
+	data->clipping = _clipping;
+}
+
+inline
+void					OpenGLGStateBuilder::setClipPlane(float _clipPlane[4])
+{
+	data->clipPlane[0] = _clipPlane[0];
+	data->clipPlane[1] = _clipPlane[1];
+	data->clipPlane[2] = _clipPlane[2];
+	data->clipPlane[3] = _clipPlane[3];
+}
+
+inline
+void					OpenGLGStateBuilder::setClipPlane(float a, float b, float c, float d)
+{
+	data->clipPlane[0] = a;
+	data->clipPlane[1] = b;
+	data->clipPlane[2] = c;
+	data->clipPlane[3] = d;
+}
+
+inline
 OpenGLTexture			OpenGLGStateBuilder::getTexture() const
 {
 	return data->texture;
@@ -463,6 +495,18 @@ inline
 bool					OpenGLGStateBuilder::getForceDithering() const
 {
 	return data->forceDithering;
+}
+
+inline
+bool					OpenGLGStateBuilder::getClipping() const
+{
+	return data->clipping;
+}
+
+inline
+const float*			OpenGLGStateBuilder::getClipPlane() const
+{
+	return data->clipPlane;
 }
 
 #endif // BZF_OPENGL_GSTATE_H

@@ -22,6 +22,7 @@ class ShotPath;
 class SceneNode;
 class SceneNodeGroup;
 class SceneNodeTransform;
+class SceneNodeGState;
 
 const int				PlayerUpdatePLen = PlayerIdPLen + 34;
 
@@ -129,7 +130,9 @@ private:
 	// scene nodes
 	SceneNode*				teamPlayerSceneNode;
 	SceneNode*				roguePlayerSceneNode;
+	SceneNode*				blackhatSceneNode;
 	SceneNodeTransform*		transformSceneNode;
+	SceneNodeGState*		gStateSceneNode;
 	// need a black sphere for paused or not responding
 	// need a clip plane if isCrossingWall().
 

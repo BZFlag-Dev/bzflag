@@ -71,13 +71,6 @@ features are now permitted and encouraged:
   exceptions		-- use where appropriate
   standard C++ library	-- use where appropriate (AList is gone)
 
-The BzfString class still exists and, for now, it should be used
-instead of std::string.  Contributions using std::string directly
-will not be accepted (unless your contribution is to completely
-replace all uses of BzfString with std::string;  it would be
-easiest to typedef std::string BzfString and fix the necessary
-code).
-
 Exception handling is used in BZFlag in some places.  However,
 do not use exception specifications on function/method declarations.
 And be sure you don't leak any memory if exceptions are thrown.
@@ -217,9 +210,12 @@ necessary.
 
 Sounds
 ======
-Sounds are stored as 22.050KHz 16 bit signed integer Ogg Vorbis files.
-To create, make an appropriate wav then oggenc with no arguments other
-than -o output.ogg
+Sounds are stored as 22.050KHz Ogg Vorbis files. To create, make an
+appropriate wav then oggenc with no arguments other than -o output.ogg
+Note that version 1.0rc3 of the ogg vorbis libraries has a significant
+bug regarding very small files (such as those used for sound effects).
+The version in xiph CVS works, and we are assured a new release is coming
+soon.
 
 The State Database
 ==================
@@ -541,6 +537,8 @@ methods in an OpenGLGStateBuilder.  In summary:
   <point size="{s}" />				draw points of size s
   <stipple alpha="{a}" />			set stipple with given opacity
   <pass number="{n}" />				draw on pass n
+  <clipping clip="true|false" a="[0-9\.]*" b=[0-9\.]*" c="..." d="..." />
+  						set clipping plane
 You can also add `force="true|false"' to texture, blending, and smoothing.
 Using "true" forces the gstate to override globally disabled rendering
 state.  So, for example, if you absolutely have to have smoothing on

@@ -408,6 +408,8 @@ void					SceneVisitorRender::draw()
 		for (unsigned int j = 0; j < enabledLights; ++j)
 			glDisable(GL_LIGHT0 + j);
 	}
+	for (unsigned int j = 0; j < GL_MAX_CLIP_PLANES; ++j)
+		glDisable(GL_CLIP_PLANE0 + j);
 	if (!frontCCW)
 		glFrontFace(GL_CCW);
 	glMatrixMode(GL_PROJECTION);

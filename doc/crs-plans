@@ -230,7 +230,6 @@ aren't really organized or anything.
 
 newly missing things:
   animations
-    flag waving
     flares from guided missile
   flag warp
   grid lines on ground (can probably drop these)
@@ -246,7 +245,7 @@ newly missing things:
   debug rendering
   LOD on tank models (models are there but LOD node is not)
   keyboard motion
-  roaming, freezing, snapping
+  freezing
   console scrolling
   OO building insides
   IDL crossing teleporter
@@ -318,8 +317,6 @@ should have compose history in message buffer
 should allow interior editing in edit control and message compose
 
 derive all SceneVisitorRender types from a single base class
-
-replace SGI image format with BMP files?
 
 in bzgview search for lights
   enable one automatically if none found and there are normals

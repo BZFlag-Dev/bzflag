@@ -958,7 +958,7 @@ void audioLoop(void*)
 	audioBufferSize = MPLATFORM->getAudioBufferChunkSize() << 1;
 
 	// initialize
-	timeSizeOfWorld = 1.414 * atof(BZDB->get("worldSize").c_str()) / SpeedOfSound;
+	timeSizeOfWorld = 1.414 * atof(BZDB->get("_worldSize").c_str()) / SpeedOfSound;
 	for (int i = 0; i < MaxEvents; i++) {
 		events[i].samples = NULL;
 		events[i].busy = false;

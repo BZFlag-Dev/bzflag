@@ -298,6 +298,29 @@ void					OpenGLGStateRep::initState()
 		glDisable(GL_LINE_STIPPLE);
 		glDisable(GL_POLYGON_STIPPLE);
 	}
+
+	// clipping
+	if (currentState->clipping) {
+		// FIXME count clip planes, as to allow nested clipping gstates
+		GLdouble plane[4];
+		plane[0] = currentState->clipPlane[0];
+		plane[1] = currentState->clipPlane[1];
+		plane[2] = currentState->clipPlane[2];
+		plane[3] = currentState->clipPlane[3];
+		// find the first available clip plane
+		bool found = false;
+		unsigned int i;
+		for (i = 0; i < GL_MAX_CLIP_PLANES; ++i) {
+			if (!glIsEnabled(GL_CLIP_PLANE0 + i)) {
+				found = true;
+				break;
+			}
+		}
+		if (found) {
+			glClipPlane(GL_CLIP_PLANE0 + i, plane);
+			glEnable(GL_CLIP_PLANE0 + i);
+		}
+	}
 }
 
 void					OpenGLGStateRep::resetState()
@@ -459,6 +482,12 @@ void					OpenGLGStateRep::doSetState()
 			glDisable(GL_LINE_STIPPLE);
 			glDisable(GL_POLYGON_STIPPLE);
 		}
+	}
+
+	// clipping
+	if (clipping != currentState->clipping) {
+		// FIXME - count clip planes
+		glDisable(GL_CLIP_PLANE0);
 	}
 
 	// record most recent rep

@@ -317,6 +317,29 @@ static int kingIndex = 0;
 static void removePlayer(PlayerId playerId);
 static void resetFlag(int flagIndex);
 
+static void directMessage(PlayerId, uint16_t, int, const void *);
+static char *getDirectMessageBuffer();
+
+//
+// global variable callback
+//
+static void onGlobalChanged(const std::string& msg, void*)
+{
+	std::string name  = msg;
+	std::string value = BZDB->get(msg);
+	void *bufStart = getDirectMessageBuffer();
+	void *buf = bufStart;
+	buf = nboPackUByte(buf, name.length());
+	buf = nboPackUByte(buf, value.length());
+	buf = nboPackString(buf, name.c_str(), name.length());
+	buf = nboPackString(buf, value.c_str(), value.length());
+	for (unsigned int playerId = 0; playerId < maxPlayers; playerId++) {
+		if((player[playerId].fd != NotConnected) && (player[playerId].state == PlayerAlive)) {
+			directMessage(playerId, MsgSetVar, name.length() + value.length() + 2, bufStart);
+		}
+	}
+}
+
 //
 // rest of server (no more classes, just functions)
 //
@@ -1764,6 +1787,19 @@ static void addPlayer(PlayerId playerId)
 	player[playerId].wins = 0;
 	player[playerId].losses = 0;
 
+	// send game parameters
+	for (unsigned int i = 0; i < countof(globalDBItems); i++) {
+		std::string name = globalDBItems[i].name;
+		std::string value = BZDB->get(name);
+		void* bufStart = getDirectMessageBuffer();
+		void* buf = bufStart;
+		buf = nboPackUByte(buf, name.length());
+		buf = nboPackUByte(buf, value.length());
+		buf = nboPackString(buf, name.c_str(), name.length());
+		buf = nboPackString(buf, value.c_str(), value.length());
+		directMessage(playerId, MsgSetVar, name.length() + value.length() + 2, bufStart);
+	}
+
 	// update team state and if first active player on team,
 	// add team's flag and reset it's score
 	bool resetTeamFlag = false;
@@ -1878,9 +1914,9 @@ static Real getSafeFlagRadius(FlagId id)
 {
 	// compute safety radius.  flag should not be within this distance
 	// of any building.
-	Real r = atof(BZDB->get("tankRadius").c_str());
+	Real r = atof(BZDB->get("_tankRadius").c_str());
 	if (id == ObesityFlag)
-		r *= R_(2.0) * atof(BZDB->get("obeseFactor").c_str());
+		r *= R_(2.0) * atof(BZDB->get("_obeseFactor").c_str());
 	return r;
 }
 
@@ -1954,10 +1990,10 @@ static bool addFlag(int flagIndex)
 	numFlagsInAir++;
 
 	// compute drop time
-	const float flightTime = 2.0f * sqrtf(-2.0f * atof(BZDB->get("flagAltitude").c_str()) / atof(BZDB->get("gravity").c_str()));
+	const float flightTime = 2.0f * sqrtf(-2.0f * atof(BZDB->get("_flagAltitude").c_str()) / atof(BZDB->get("_gravity").c_str()));
 	flag[flagIndex].flag.flightTime = 0.0f;
 	flag[flagIndex].flag.flightEnd = flightTime;
-	flag[flagIndex].flag.initialVelocity = -0.5f * atof(BZDB->get("gravity").c_str()) * flightTime;
+	flag[flagIndex].flag.initialVelocity = -0.5f * atof(BZDB->get("_gravity").c_str()) * flightTime;
 	flag[flagIndex].dropDone = TimeKeeper::getCurrent();
 	flag[flagIndex].dropDone += flightTime;
 
@@ -2335,7 +2371,7 @@ static void dropFlag(PlayerId playerId, FlagDropReason reason, float pos[3])
 	numFlagsInAir++;
 
 	// flags are dropped from the top of the tank
-	pos[2] += atof(BZDB->get("tankHeight").c_str());
+	pos[2] += atof(BZDB->get("_tankHeight").c_str());
 
 	// get landing position
 	Vec3 landingPos = pos;
@@ -2416,16 +2452,16 @@ static void dropFlag(PlayerId playerId, FlagDropReason reason, float pos[3])
 	pFlagInfo->flag.position[2] = pFlagInfo->flag.landingPosition[2];
 	pFlagInfo->flag.launchPosition[0] = pos[0];
 	pFlagInfo->flag.launchPosition[1] = pos[1];
-	pFlagInfo->flag.launchPosition[2] = pos[2] + atof(BZDB->get("tankHeight").c_str());
+	pFlagInfo->flag.launchPosition[2] = pos[2] + atof(BZDB->get("_tankHeight").c_str());
 
 	// compute flight info -- flight time depends depends on start and end
 	// altitudes and desired height above start altitude.
 	const float thrownAltitude = (pFlagInfo->flag.id == ShieldFlag) ?
-								atof(BZDB->get("shieldFlight").c_str()) * atof(BZDB->get("flagAltitude").c_str()) : atof(BZDB->get("flagAltitude").c_str());
+								atof(BZDB->get("_shieldFlight").c_str()) * atof(BZDB->get("_flagAltitude").c_str()) : atof(BZDB->get("_flagAltitude").c_str());
 	const float maxAltitude = pos[2] + thrownAltitude;
-	const float upTime = sqrtf(-2.0f * thrownAltitude / atof(BZDB->get("gravity").c_str()));
+	const float upTime = sqrtf(-2.0f * thrownAltitude / atof(BZDB->get("_gravity").c_str()));
 	const float downTime = sqrtf(-2.0f * (maxAltitude -
-								pFlagInfo->flag.landingPosition[2]) / atof(BZDB->get("gravity").c_str()));
+								pFlagInfo->flag.landingPosition[2]) / atof(BZDB->get("_gravity").c_str()));
 	const float flightTime = upTime + downTime;
 
 	// set flight info
@@ -2433,7 +2469,7 @@ static void dropFlag(PlayerId playerId, FlagDropReason reason, float pos[3])
 	pFlagInfo->dropDone += flightTime;
 	pFlagInfo->flag.flightTime = 0.0f;
 	pFlagInfo->flag.flightEnd = flightTime;
-	pFlagInfo->flag.initialVelocity = -atof(BZDB->get("gravity").c_str()) * upTime;
+	pFlagInfo->flag.initialVelocity = -atof(BZDB->get("_gravity").c_str()) * upTime;
 
 	// player no longer has flag -- send MsgDropFlag
 	player[playerId].flag = -1;
@@ -3804,9 +3840,7 @@ int main(int argc, char **argv)
 		}
 		BZDB->setPersistent(globalDBItems[i].name, globalDBItems[i].persistent);
 		BZDB->setPermission(globalDBItems[i].name, globalDBItems[i].permission);
-		if (globalDBItems[i].callback != NULL)
-			BZDB->addCallback(globalDBItems[i].name,
-								globalDBItems[i].callback, NULL);
+		BZDB->addCallback(std::string(globalDBItems[i].name), onGlobalChanged, (void*) NULL);
 	}
 
 	// parse arguments

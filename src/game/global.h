@@ -210,7 +210,6 @@ public:
 	const char*				value;
 	bool					persistent;
 	StateDatabase::Permission	permission;
-	StateDatabase::Callback	callback;
 };
 extern GlobalDBItem			globalDBItems[48];
 
