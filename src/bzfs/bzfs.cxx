@@ -3702,12 +3702,6 @@ static void addPlayer(int playerIndex)
 	sendPlayerUpdate(i, playerIndex);
   }
 
-  // if necessary force multicast relaying
-  if (noMulticastRelay) {
-    directMessage(playerIndex, MsgNetworkRelay, 0, getDirectMessageBuffer());
-    player[playerIndex].multicastRelay = True;
-  }
-
   // if new player connection was closed (because of an error) then stop here
   if (player[playerIndex].fd == NotConnected)
     return;
@@ -3718,6 +3712,12 @@ static void addPlayer(int playerIndex)
 
   // send update of info for team just joined
   sendTeamUpdate(teamIndex);
+
+  // if necessary force multicast relaying
+  if (noMulticastRelay) {
+    directMessage(playerIndex, MsgNetworkRelay, 0, getDirectMessageBuffer());
+    player[playerIndex].multicastRelay = True;
+  }
 
   // send time update to new player if we're counting down
   if (timeLimit > 0.0f && player[playerIndex].type != ComputerPlayer) {
