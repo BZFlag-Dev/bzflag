@@ -9,8 +9,14 @@ libMac_a_SOURCES =			\
 	MacVisual.h			\
 	MacWindow.cxx			\
 	MacWindow.h			\
-	SDLMain.h			\
-	SDLMain.m
+	SDLMain.h
+
+libMac_a_LIBADD = SDLMain.o
+
+all: SDLMain.o
+
+SDLMain.o:
+	$(COMPILE) -c -o $@ `test -f 'SDLMain.m' || echo '$(srcdir)/'`SDLMain.m
 
 AM_CPPFLAGS = $(SDL_CFLAGS) -I$(top_srcdir)/src/platform
 
@@ -25,4 +31,5 @@ MAINTAINERCLEANFILES = Makefile.in
 EXTRA_DIST =				\
 	BZFlag-Info.plist		\
 	MacBZFlag.icns			\
+	SDLMain.m			\
 	mkplist.cxx
