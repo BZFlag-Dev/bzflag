@@ -269,32 +269,32 @@ bool Capture::saveFile (int playerIndex, const char *filename)
   Capturing = true;
   CaptureMode = StraightToFile;
 
-  sprintf ("Caturing to %s", filename);
+  sprintf (buffer, "Caturing to %s", filename);
   sendMessage (ServerPlayer, playerIndex, buffer);
   
   CaptureFile = fopen (filename, "wb");
   if (CaptureFile == NULL) {
     Capture::init();
-    sprintf ("Could not open for writing: %s", filename);
+    sprintf (buffer, "Could not open for writing: %s", filename);
     sendMessage (ServerPlayer, playerIndex, buffer);
     return false;
   }
   
   if (!saveHeader (&header, CaptureFile)) {
     Capture::init();
-    sprintf ("Could not save header: %s", filename);
+    sprintf (buffer, "Could not save header: %s", filename);
     sendMessage (ServerPlayer, playerIndex, buffer);
     return false;
   }
   
   if (!saveStates ()) {
     Capture::init();
-    sprintf ("Could not save states: %s", filename);
+    sprintf (buffer, "Could not save states: %s", filename);
     sendMessage (ServerPlayer, playerIndex, buffer);
     return false;
   }
 
-  sprintf ("Capturing to file: %s", filename);
+  sprintf (buffer, "Capturing to file: %s", filename);
   sendMessage (ServerPlayer, playerIndex, buffer);
   
   return true;
@@ -314,14 +314,14 @@ bool Capture::saveBuffer (int playerIndex, const char *filename)
   CaptureFile = fopen (filename, "wb");
   if (CaptureFile == NULL) {
     Capture::init();
-    sprintf ("Could not open for writing: %s", filename);
+    sprintf (buffer, "Could not open for writing: %s", filename);
     sendMessage (ServerPlayer, playerIndex, buffer);
     return false;
   }
   
   if (!saveHeader (&header, CaptureFile)) {
     Capture::init();
-    sprintf ("Could not save header: %s", filename);
+    sprintf (buffer, "Could not save header: %s", filename);
     sendMessage (ServerPlayer, playerIndex, buffer);
     return false;
   }
@@ -337,7 +337,7 @@ bool Capture::saveBuffer (int playerIndex, const char *filename)
   CaptureFilePackets = 0;
   CaptureFilePrevLen = 0;
   
-  sprintf ("Captured buffer saved to: %s", filename);
+  sprintf (buffer, "Captured buffer saved to: %s", filename);
   sendMessage (ServerPlayer, playerIndex, buffer);
   
   return true;
@@ -484,13 +484,13 @@ bool Replay::loadFile(int playerIndex, const char * filename)
   
   ReplayFile = fopen (filename, "rb");
   if (ReplayFile == NULL) {
-    sprintf ("Could not open: %s", filename);
+    sprintf (buffer, "Could not open: %s", filename);
     sendMessage (ServerPlayer, playerIndex, buffer);
     return false;
   }
   
   if (!loadHeader (&header, ReplayFile)) {
-    sprintf ("Could not open header: %s", filename);
+    sprintf (buffer, "Could not open header: %s", filename);
     sendMessage (ServerPlayer, playerIndex, buffer);
     return false;
   }
@@ -507,12 +507,12 @@ bool Replay::loadFile(int playerIndex, const char * filename)
   }
 
   if (ReplayBuf.tail == NULL) {
-    sprintf ("No valid data: %s", filename);
+    sprintf (buffer, "No valid data: %s", filename);
     sendMessage (ServerPlayer, playerIndex, buffer);
     return false;
   }
 
-  sprintf ("Loaded file: %s", filename);
+  sprintf (buffer, "Loaded file: %s", filename);
   sendMessage (ServerPlayer, playerIndex, buffer);
   
   return true;
@@ -590,6 +590,11 @@ bool Replay::sendPackets () {
     int i;
 
     p = delCRpacket (&ReplayBuf);
+    
+    if (p == NULL) { // notify here?
+      Replaying = false;
+      return false;
+    }
 
     DEBUG3 ("sendPackets(): len = %4i, code = %s, data = %p\n",
             p->len, print_msg_code (p->code), p->data);
@@ -939,11 +944,7 @@ delCRpacket (CRbuffer *b)
 {
   CRpacket *p = b->tail;
 
-  if (b->tail == NULL) {
-    b->head = NULL;
-    b->tail = NULL;
-    b->byteCount = 0;
-    b->packetCount = 0;
+  if (p == NULL) {
     return NULL;
   }
   
@@ -957,13 +958,7 @@ delCRpacket (CRbuffer *b)
   }
   else {
     b->head = NULL;
-  }
-
-  if (b->head == b->tail) {
-    b->head = NULL;
     b->tail = NULL;
-    b->byteCount = 0;
-    b->packetCount = 0;
   }
   
   return p;
