@@ -119,6 +119,11 @@ typedef struct AddressSet {
     struct in_addr	mask;
 } AddressSet;
 
+/* srosa/SGI -- have no idea where socklen_t comes from. */
+#if defined(sgi)
+#define socklen_t int
+#endif
+
 static const char*	pname;			/* name of app */
 static int		done;			/* != 0 to quit */
 static int		debugLevel;		/* amount of logging */
