@@ -6129,14 +6129,17 @@ static void parse(int argc, char **argv, CmdLineOptions &options)
   }
 
 
-  for (std::map<std::string, FlagDesc*>::iterator it2 = FlagDesc::getFlagMap().begin(); 
-       it2 != FlagDesc::getFlagMap().end(); ++it2) {
-    if (options.flagCount[it2->second] > 0) {
+  for (std::map<std::string, FlagDesc*>::iterator it2 = FlagDesc::getFlagMap().begin(); it2 != FlagDesc::getFlagMap().end(); ++it2) {
+    FlagDesc *fDesc = it2->second;
+
+    if ((fDesc != Flags::Null) && (fDesc->flagTeam == NoTeam)) {
+      if (options.flagCount[it2->second] > 0) {
 	  for (int j = 0; j < options.flagCount[it2->second]; j++) {
 		  if (setRequiredFlag(flag[f], it2->second))
 			f++;
 	  }
 	  options.gameStyle |= int(SuperFlagGameStyle);
+      }
     }
   }
   for (; f < numFlags; f++) {
