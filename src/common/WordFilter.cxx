@@ -686,7 +686,7 @@ unsigned int WordFilter::loadFromFile(const std::string &fileName, bool verbose)
   unsigned int totalAdded=0;
   std::ifstream filterStream(fileName.c_str());
 
-  if (!filterStream) {
+  if ((!filterStream) && (verbose))  {
     std::cerr << "Warning: '" << fileName << "' bad word filter file not found" << std::endl;
     return 0;
   }
@@ -733,10 +733,8 @@ unsigned int WordFilter::loadFromFile(const std::string &fileName, bool verbose)
     }
 
     bool added = addToFilter(filterWord, "", true);
-    if (!added) {
-      if (verbose) {
+    if ((!added) && (verbose)) {
 	std::cout << std::endl << "Word is already added: " << filterWord << std::endl;
-      }
     }
     totalAdded++;
 
