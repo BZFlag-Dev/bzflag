@@ -74,7 +74,7 @@ extern uint16_t curMaxPlayers;
 
 // externs that ghost needs
 extern void removePlayer(int playerIndex, const char *reason, bool notify=true);
-
+extern void playerKilled(int victimIndex, int killerIndex, int reason, int16_t shotIndex, const FlagType* flagType, int phydrv);
 // externs that shutdownserver requires
 extern bool done;
 
@@ -803,14 +803,14 @@ static void handleKillCmd(GameKeeper::Player *playerData, const char *message)
   std::vector<std::string> argv = TextUtils::tokenize(message, " \t", 3, true);
 
   if (argv.size() < 2) {
-    sendMessage(ServerPlayer, t, "Syntax: /kill <PlayerName/\"Player Name\"> [reason]");
+    sendMessage(ServerPlayer, t, "Syntax: /kill <#slot | PlayerName | \"Player Name\">  [reason]");
     sendMessage(ServerPlayer, t, "	Please keep in mind that reason is displayed to the user.");
     return;
   }
 
-  i = GameKeeper::Player::getPlayerIDByName(argv[1]);
+  i = getSlotNumber(argv[1]);
 
-  if ((i < curMaxPlayers) && (i >= 0)) {
+  if (i >= 0) {
     char killmessage[MessageLen];
 
     // admins can override antiperms
@@ -831,16 +831,8 @@ static void handleKillCmd(GameKeeper::Player *playerData, const char *message)
       snprintf(killmessage, MessageLen, " reason given : %s",argv[2].c_str());
       sendMessage(ServerPlayer, i, killmessage);
     }
-
-  playerData->player.setDead();
-  void *buf, *bufStart = getDirectMessageBuffer();
-  buf = nboPackUByte(bufStart, i);
-  buf = nboPackUByte(buf, t);
-  buf = nboPackShort(buf, 0);  
-  buf = nboPackShort(buf, -1);
-  buf = Flags::Null->pack(buf);
-  broadcastMessage(MsgKilled, (char*)buf-(char*)bufStart, bufStart);
-
+    // kill the player
+    playerKilled(i, t, 0, -1, Flags::Null, -1);
 
   } else {
     char errormessage[MessageLen];

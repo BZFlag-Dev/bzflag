@@ -139,7 +139,7 @@ void sendMessage(int playerIndex, PlayerId dstPlayer, const char *message);
 void sendFilteredMessage(int playerIndex, PlayerId dstPlayer, const char *message);
 void sendPlayerMessage(GameKeeper::Player* playerData, PlayerId dstPlayer,
 		       const char *message);
-
+void playerKilled(int victimIndex, int killerIndex, int reason, int16_t shotIndex, const FlagType* flagType, int phydrv);
 void removePlayer(int playerIndex, const char *reason, bool notify=true);
 void resetFlag(FlagInfo &flag);
 static void dropFlag(GameKeeper::Player &playerData, float pos[3]);
@@ -2595,7 +2595,7 @@ static void checkTeamScore(int playerIndex, int teamIndex)
 //   It is taken as the index of the udp table when called by incoming message
 //   It is taken by killerIndex when autocalled, but only if != -1
 // killer could be InvalidPlayer or a number within [0 curMaxPlayer)
-static void playerKilled(int victimIndex, int killerIndex, int reason,
+void playerKilled(int victimIndex, int killerIndex, int reason,
 			int16_t shotIndex, const FlagType* flagType, int phydrv)
 {
   GameKeeper::Player *killerData = NULL;
