@@ -23,6 +23,8 @@ MAINTAINERCLEANFILES = Makefile.in
 AM_CPPFLAGS = $(SDL_CFLAGS) -I$(top_srcdir)/src/platform
 
 EXTRA_DIST =				\
+	BZFlag-Info.plist		\
 	BZFlag_Prefix.h			\
 	MacBZFlag.icns			\
-	main.m
+	main.m				\
+	mkplist.cxx
