@@ -2128,6 +2128,21 @@ static void pausePlayer(int playerIndex, bool paused)
   broadcastMessage(MsgPause, (char*)buf-(char*)bufStart, bufStart);
 }
 
+static void autopilotPlayer(int playerIndex, bool autopilot)
+{
+  GameKeeper::Player *playerData
+    = GameKeeper::Player::getPlayerByIndex(playerIndex);
+  if (!playerData)
+    return;
+
+  playerData->player.setAutoPilot(autopilot);
+
+  void *buf, *bufStart = getDirectMessageBuffer();
+  buf = nboPackUByte(bufStart, playerIndex);
+  buf = nboPackUByte(buf, autopilot);
+  broadcastMessage(MsgAutoPilot, (char*)buf-(char*)bufStart, bufStart);
+}
+
 static void zapFlagByPlayer(int playerIndex)
 {
   GameKeeper::Player *playerData
@@ -3646,6 +3661,13 @@ possible attack from %s\n",
       uint8_t pause;
       nboUnpackUByte(buf, pause);
       pausePlayer(t, pause != 0);
+      break;
+    }
+
+    case MsgAutoPilot: {
+      uint8_t autopilot;
+      nboUnpackUByte(buf, autopilot);
+      autopilotPlayer(t, autopilot != 0);
       break;
     }
 

@@ -193,7 +193,6 @@ private:
 private:
   // data not communicated with other players
   bool			notResponding;
-  bool			autoPilot;
   bool			hunted;
 
   // credentials
@@ -246,6 +245,9 @@ private:
 
   // highly dynamic data
   PlayerState		state;
+
+  // additional state
+  bool                  autoPilot;
 
   // computable highly dynamic data
   float			forward[3];		// forward unit vector
@@ -445,6 +447,16 @@ inline bool		Player::isPaused() const
   return (state.status & short(PlayerState::Paused)) != 0;
 }
 
+inline bool		Player::isAutoPilot() const
+{
+  return autoPilot;
+}
+
+inline void		Player::setAutoPilot(bool autopilot)
+{
+  autoPilot = autopilot;
+}
+
 inline bool		Player::isFalling() const
 {
   return (state.status & short(PlayerState::Falling)) != 0;
@@ -493,16 +505,6 @@ inline bool		Player::isHunted() const
 inline void		Player::setHunted(bool _hunted)
 {
   hunted = _hunted;
-}
-
-inline bool		Player::isAutoPilot() const
-{
-  return autoPilot;
-}
-
-inline void		Player::setAutoPilot(bool _autoPilot)
-{
-  autoPilot = _autoPilot;
 }
 
 inline bool		Player::isAdmin() const

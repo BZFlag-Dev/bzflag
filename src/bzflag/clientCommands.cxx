@@ -294,9 +294,6 @@ std::string cmdAutoPilot(const std::string&, const CommandManager::ArgList& args
   if (args.size() != 0)
     return "usage: autopilot";
 
-  char messageBuffer[MessageLen];
-  memset(messageBuffer, 0, MessageLen);
-
   if (BZDB.isTrue(StateDatabase::BZDB_DISABLEBOTS)) {
     hud->setAlert(0, "autopilot not allowed on this server", 1.0f, true);
     return std::string();
@@ -305,9 +302,8 @@ std::string cmdAutoPilot(const std::string&, const CommandManager::ArgList& args
   if (myTank != NULL && myTank->getTeam() != ObserverTeam) {
     if (myTank->isAutoPilot()) {
 
-      myTank->setAutoPilot(false);
+      myTank->activateAutoPilot(false);
       hud->setAlert(0, "autopilot disabled", 1.0f, true);
-      strcpy(messageBuffer, "[ROGER] Releasing Controls of " );
 
       // grab mouse
       if (shouldGrabMouse()) mainWindow->grabMouse();
@@ -321,9 +317,8 @@ std::string cmdAutoPilot(const std::string&, const CommandManager::ArgList& args
 	LastAutoPilotEnable = TimeKeeper::getCurrent();
 
 	// enable autopilot
-	myTank->setAutoPilot(true);
+	myTank->activateAutoPilot();
 	hud->setAlert(0, "autopilot enabled", 1.0f, true);
-	strcpy(messageBuffer, "[ROGER] Taking Controls of " );
 
 	// ungrab mouse
 	mainWindow->ungrabMouse();
@@ -333,13 +328,6 @@ std::string cmdAutoPilot(const std::string&, const CommandManager::ArgList& args
       }
 
     }
-
-    strcat(messageBuffer, myTank->getCallSign());
-    void* buf = messageMessage;
-    buf = nboPackUByte(buf, AllPlayers);
-    buf = nboPackString(buf, messageBuffer, MessageLen);
-    serverLink->send(MsgMessage, sizeof(messageMessage), messageMessage);
-
   }
 
   return std::string();

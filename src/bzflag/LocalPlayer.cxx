@@ -1180,6 +1180,18 @@ void			LocalPlayer::setPause(bool pause)
   }
 }
 
+void			LocalPlayer::activateAutoPilot(bool autopilot)
+{
+  if (autopilot && !isAutoPilot()) {
+    setAutoPilot();
+    server->sendAutoPilot(true);
+  }
+  else if (!autopilot && isAutoPilot()) {
+    setAutoPilot(false);
+    server->sendAutoPilot(false);
+  }
+}
+
 bool			LocalPlayer::fireShot()
 {
   if (! (firingStatus == Ready || firingStatus == Zoned))

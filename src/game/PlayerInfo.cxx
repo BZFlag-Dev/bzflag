@@ -26,7 +26,7 @@ TimeKeeper PlayerInfo::now = TimeKeeper::getCurrent();
 PlayerInfo::PlayerInfo(int _playerIndex) :
   playerIndex(_playerIndex), state(PlayerInLimbo), flag(-1),
   spamWarns(0), lastMsgTime(now), paused(false),
-  pausedSince(TimeKeeper::getNullTime()), tracker(0)
+  pausedSince(TimeKeeper::getNullTime()), autopilot(false), tracker(0)
 {
   notResponding = false;
   memset(email, 0, EmailLen);
@@ -299,6 +299,10 @@ bool PlayerInfo::canBeRabbit(bool relaxing) {
 void PlayerInfo::setPaused(bool _paused) {
   paused = _paused;
   pausedSince = now;
+};
+
+void PlayerInfo::setAutoPilot(bool _autopilot) {
+  autopilot = _autopilot;
 };
 
 bool PlayerInfo::isTooMuchIdling(float kickThresh) {

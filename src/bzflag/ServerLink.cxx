@@ -711,6 +711,12 @@ void			ServerLink::sendPaused(bool paused)
   send(MsgPause, 1, &p);
 }
 
+void			ServerLink::sendAutoPilot(bool autopilot)
+{
+  uint8_t p = autopilot;
+  send(MsgAutoPilot, 1, &p);
+}
+
 void			ServerLink::sendUDPlinkRequest()
 {
   if ((server_abilities & CanDoUDP) != CanDoUDP)

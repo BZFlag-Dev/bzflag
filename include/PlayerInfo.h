@@ -74,6 +74,7 @@ public:
   void	setAlive();
   void	setDead();
   bool	isPaused();
+  bool	isAutoPilot();
   bool	isBot();
   bool	isHuman();
   void       *packUpdate(void *buf);
@@ -99,7 +100,8 @@ public:
   const char *getClientVersion();
   std::string getIdleStat();
   bool	canBeRabbit(bool relaxing = false);
-  void	setPaused(bool pauses);
+  void	setPaused(bool paused);
+  void	setAutoPilot(bool autopilot);
   bool	isTooMuchIdling(float kickThresh);
   bool	hasStartedToNotRespond();
   void	hasSent(char message[]);
@@ -154,6 +156,8 @@ private:
 
   bool paused;
   TimeKeeper pausedSince;
+
+  bool autopilot;
 
   bool notResponding;
 
@@ -224,6 +228,10 @@ inline bool PlayerInfo::isDead() {
 
 inline bool PlayerInfo::isPaused() {
   return paused;
+}
+
+inline bool PlayerInfo::isAutoPilot() {
+  return autopilot;
 }
 
 inline bool PlayerInfo::isBot() {

@@ -1797,6 +1797,19 @@ static void		handleServerMessage(bool human, uint16_t code,
       break;
     }
 
+    case MsgAutoPilot: {
+      PlayerId id;
+      msg = nboUnpackUByte(msg, id);
+      uint8_t autopilot;
+      nboUnpackUByte(msg, autopilot);
+      Player* tank = lookupPlayer(id);
+      if (!tank) break;
+      tank->setAutoPilot(autopilot);
+      addMessage(tank, autopilot ? "Roger taking controls" : "Roger releasing controls");
+      break;
+    }
+
+
     case MsgKilled: {
       PlayerId victim, killer;
       int16_t shotId, reason;

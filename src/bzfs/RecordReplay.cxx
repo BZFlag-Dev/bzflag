@@ -2281,6 +2281,7 @@ static const char *msgString(u16 code)
       STRING_CASE (MsgAlive);
       STRING_CASE (MsgAdminInfo);
       STRING_CASE (MsgAddPlayer);
+      STRING_CASE (MsgAutoPilot);
       STRING_CASE (MsgCaptureFlag);
       STRING_CASE (MsgDropFlag);
       STRING_CASE (MsgEnter);

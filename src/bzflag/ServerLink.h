@@ -92,6 +92,7 @@ class ServerLink {
     void		sendTransferFlag(const PlayerId&, const PlayerId&);
     void		sendNewRabbit();
     void		sendPaused(bool paused);
+    void		sendAutoPilot(bool autopilot);
     void		sendUDPlinkRequest();
 
     static ServerLink*	getServer(); // const

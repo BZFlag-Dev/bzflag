@@ -1612,6 +1612,8 @@ void			HUDRenderer::drawPlayerScore(const Player* player,
     playerInfo += "[p]";
   else if (player->isNotResponding())
     playerInfo += "[nr]";
+  else if (player->isAutoPilot())
+    playerInfo += "[auto]";
 
   FontManager &fm = FontManager::instance();
   fm.setDimFactor(dimFactor);
