@@ -104,7 +104,7 @@ const char*			getProtocolVersion()
 	return protVersion;
 }
 
-const char*		getAppVersion()w
+const char*		getAppVersion()
 {
 	if (!appVersion[0])
 		sprintf(appVersion,"%d.%d.%d-%s-%s%d",BZ_MAJOR_VERSION,BZ_MINOR_VERSION,BZ_REV,BZ_BUILD_OS,BZ_BUILD_SOURCE,BZ_BUILD_DATE);
