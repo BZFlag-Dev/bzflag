@@ -171,7 +171,8 @@ HUDRenderer::HUDRenderer(const BzfDisplay* _display,
 				drawTime(-1.0),
 				restartLabel(restartLabelFormat),
 				roamingLabel("observing"),
-				showCompose(false)
+				showCompose(false),
+				showCracks(true)
 {
   int i;
 

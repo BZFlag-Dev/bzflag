@@ -64,6 +64,7 @@ BackgroundRenderer::BackgroundRenderer(const SceneRenderer&) :
 				style(0),
 				gridSpacing(60.0f),	// meters
 				gridCount(4.0f),
+				doTeamBases(true),
 				mountainsAvailable(false),
 				numMountainTextures(0),
 				mountainsGState(NULL),

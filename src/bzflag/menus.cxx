@@ -2612,6 +2612,7 @@ int			ServerMenu::cacheAddedNum = 0;
 ServerMenu::ServerMenu() : defaultKey(this),
 				pingInSocket(-1),
 				pingBcastSocket(-1),
+				selectedIndex(0),
 				numListServers(0)
 {
   // add controls
