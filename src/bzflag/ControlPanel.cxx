@@ -64,19 +64,6 @@ ControlPanel::ControlPanel(MainWindow& _mainWindow, SceneRenderer& renderer, Res
 
   blend = renderer.useBlending();
 
-  const float iWidth = 256.0f;
-  const float iHeight = 62.0f;
-  const float dx = 1.0f / iWidth;
-  const float dy = 1.0f / iHeight;
-  radarAreaUV[0] = dx * 5.0f;
-  radarAreaUV[1] = dy * 5.0f;
-  radarAreaUV[2] = dx * 42.0f;
-  radarAreaUV[3] = dy * 42.0f;
-  messageAreaUV[0] = dx * 52.0f;
-  messageAreaUV[1] = dy * 5.0f;
-  messageAreaUV[2] = dx * 199.0f;
-  messageAreaUV[3] = dy * 42.0f;
-
   background[0] = 0;
   background[1] = 0;
   background[2] = 0;
@@ -85,6 +72,23 @@ ControlPanel::ControlPanel(MainWindow& _mainWindow, SceneRenderer& renderer, Res
   if (resources->hasValue( "opacity" ))
 	  background[3] = (float) atof(resources->getValue( "opacity" ));
 
+  const float iWidth = 256.0f;
+  const float iHeight = 64.0f;
+  const float dx = 1.0f / iWidth;
+  const float dy = 1.0f / iHeight;
+  float iSpace;
+  if (background[3] == 1.0f)
+    iSpace = 0.0f;
+  else
+    iSpace = 5.0f;
+  radarAreaUV[0] = dx * iSpace;
+  radarAreaUV[1] = dy * iSpace;
+  radarAreaUV[2] = dx * (iHeight - (iSpace * 2.0f));
+  radarAreaUV[3] = dy * (iHeight - (iSpace * 2.0f));
+  messageAreaUV[0] = dx * iHeight;
+  messageAreaUV[1] = dy * iSpace;
+  messageAreaUV[2] = dx * (iWidth - iHeight - iSpace);
+  messageAreaUV[3] = dy * (iHeight - (iSpace * 2.0f));
 
   // other initialization
   width = 1;
@@ -142,21 +146,21 @@ void			ControlPanel::render(SceneRenderer& renderer)
   const float margin = lineHeight / 4.0f;
   float fx = messageAreaPixels[0] + margin;
   float fy = messageAreaPixels[1] + margin + messageFont.getDescent() + 1.0f;
-  glScissor(x + messageAreaPixels[0] + 1,
-      y + messageAreaPixels[1] + 1,
-      messageAreaPixels[2] - (int)margin - 1,
-      messageAreaPixels[3] - (int)margin - 1);
+  glScissor(x + messageAreaPixels[0],
+      y + messageAreaPixels[1],
+      messageAreaPixels[2],
+      messageAreaPixels[3]);
 
   OpenGLGState::resetState();
   // nice blended messages background
-  if(renderer.useBlending())
+  if(renderer.useBlending() && (background[3] != 1.0f))
     glEnable(GL_BLEND);
   glColor4f(background[0], background[1], background[2], background[3] );
-  glRecti(messageAreaPixels[0] + 1,
-      messageAreaPixels[1] + 1,
-      messageAreaPixels[0] + messageAreaPixels[2] - 1,
-      messageAreaPixels[1] + messageAreaPixels[3] - 1);
-  if(renderer.useBlending())
+  glRecti(messageAreaPixels[0],
+      messageAreaPixels[1],
+      messageAreaPixels[0] + messageAreaPixels[2],
+      messageAreaPixels[1] + messageAreaPixels[3]);
+  if(renderer.useBlending() && (background[3] != 1.0f))
     glDisable(GL_BLEND);
 
   // draw messages
@@ -193,9 +197,9 @@ void			ControlPanel::render(SceneRenderer& renderer)
     const int numLines = (lineLen + lineCharWidth - 1) / lineCharWidth;
 
     // draw each line
-    int y = numLines - 1;
+    int msgy = numLines - 1;
     while (lineLen > 0) {
-      assert(y >= 0);
+      assert(msgy >= 0);
 
       // how many characters will fit?
       int n = lineLen;
@@ -203,47 +207,47 @@ void			ControlPanel::render(SceneRenderer& renderer)
 	n = lineCharWidth;
 
       // only draw message if inside message area
-      if (j + y < maxLines)
-	messageFont.draw(msg, n, fx, fy + y * lineHeight);
+      if (j + msgy < maxLines)
+	messageFont.draw(msg, n, fx, fy + msgy * lineHeight);
 
       // account for portion drawn (or skipped)
       msg += n;
       lineLen -= n;
 
       // next line
-      y--;
+      msgy--;
     }
     j += numLines;
     fy += (lineHeight * numLines);
   }
-  glScissor(x + messageAreaPixels[0] + 0,
-      y + messageAreaPixels[1] + 0,
-      messageAreaPixels[2] - (int)margin + 2,
-      messageAreaPixels[3] - (int)margin + 2);
+  glScissor(x + messageAreaPixels[0] - 1,
+      y + messageAreaPixels[1] - 1,
+      messageAreaPixels[2] + 2,
+      messageAreaPixels[3] + 2);
   OpenGLGState::resetState();
 
   //  nice border
   glColor3f(teamColor[0], teamColor[1], teamColor[2] );
   glBegin(GL_LINE_LOOP); {
-    glVertex2f((float) (x + messageAreaPixels[0] + 1),
-	(float) (y + messageAreaPixels[1] + 1));
-    glVertex2f((float) (x + messageAreaPixels[0] + messageAreaPixels[2] - (int)margin),
-	(float) (y + messageAreaPixels[1] + 1));
-    glVertex2f((float) (x + messageAreaPixels[0] + messageAreaPixels[2] - (int)margin),
-	(float) (y + messageAreaPixels[1] + messageAreaPixels[3] - (int)margin));
-    glVertex2f((float) (x + messageAreaPixels[0] + 1),
-	(float) (y + messageAreaPixels[1] + messageAreaPixels[3] - (int)margin));
+    glVertex2f((float) (x + messageAreaPixels[0] - 1),
+	(float) (y + messageAreaPixels[1] - 1));
+    glVertex2f((float) (x + messageAreaPixels[0] - 1 + messageAreaPixels[2] + 1),
+	(float) (y + messageAreaPixels[1] - 1));
+    glVertex2f((float) (x + messageAreaPixels[0] - 1 + messageAreaPixels[2] + 1),
+	(float) (y + messageAreaPixels[1] - 1 + messageAreaPixels[3] + 1));
+    glVertex2f((float) (x + messageAreaPixels[0] - 1),
+	(float) (y + messageAreaPixels[1] - 1 + messageAreaPixels[3] + 1));
   } glEnd();
   // some engines miss the corners
   glBegin(GL_POINTS); {
-    glVertex2f((float) (x + messageAreaPixels[0] + 1),
-	(float) (y + messageAreaPixels[1] + 1));
-    glVertex2f((float) (x + messageAreaPixels[0] + messageAreaPixels[2] - (int)margin),
-	(float) (y + messageAreaPixels[1] + 1));
-    glVertex2f((float) (x + messageAreaPixels[0] + messageAreaPixels[2] - (int)margin),
-	(float) (y + messageAreaPixels[1] + messageAreaPixels[3] - (int)margin));
-    glVertex2f((float) (x + messageAreaPixels[0] + 1),
-       	(float) (y + messageAreaPixels[1] + messageAreaPixels[3] - (int)margin));
+    glVertex2f((float) (x + messageAreaPixels[0] - 1),
+	(float) (y + messageAreaPixels[1] - 1));
+    glVertex2f((float) (x + messageAreaPixels[0] - 1 + messageAreaPixels[2] + 1),
+	(float) (y + messageAreaPixels[1] - 1));
+    glVertex2f((float) (x + messageAreaPixels[0] - 1 + messageAreaPixels[2] + 1),
+	(float) (y + messageAreaPixels[1] - 1 + messageAreaPixels[3] + 1));
+    glVertex2f((float) (x + messageAreaPixels[0] - 1),
+       	(float) (y + messageAreaPixels[1] - 1 + messageAreaPixels[3] + 1));
   } glEnd();
 
   glPopMatrix();
@@ -255,15 +259,16 @@ void			ControlPanel::resize()
   float w = (float)window.getWidth();
   const float h = (float)window.getHeight() / 3;
 
-  // compute areas in pixels
-  radarAreaPixels[0] = (int)(w * radarAreaUV[0]);
-  radarAreaPixels[1] = (int)(h * radarAreaUV[1]);
-  radarAreaPixels[2] = (int)(w * radarAreaUV[2]);
-  radarAreaPixels[3] = (int)(h * radarAreaUV[3]);
-  messageAreaPixels[0] = (int)(w * messageAreaUV[0]);
-  messageAreaPixels[1] = (int)(h * messageAreaUV[1]);
-  messageAreaPixels[2] = (int)(w * messageAreaUV[2]);
-  messageAreaPixels[3] = (int)(h * messageAreaUV[3]);
+  // compute areas in pixels x,y,w,h
+  // leave off 1 pixel for the border
+  radarAreaPixels[0] = (int)(w * radarAreaUV[0]) + 1;
+  radarAreaPixels[1] = (int)(h * radarAreaUV[1]) + 1;
+  radarAreaPixels[2] = (int)(w * radarAreaUV[2]) - 2;
+  radarAreaPixels[3] = (int)(h * radarAreaUV[3]) - 2;
+  messageAreaPixels[0] = (int)(w * messageAreaUV[0] + 1);
+  messageAreaPixels[1] = (int)(h * messageAreaUV[1] + 1);
+  messageAreaPixels[2] = (int)(w * messageAreaUV[2] - 2);
+  messageAreaPixels[3] = (int)(h * messageAreaUV[3] - 2);
 
   // if radar connected then resize it
   if (radarRenderer)

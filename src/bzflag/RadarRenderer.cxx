@@ -195,11 +195,11 @@ void			RadarRenderer::render(SceneRenderer& renderer,
   glScissor(ox + x - 2, oy + y - 2, w + 4, h + 4);
 
   // draw nice blended background
-  if(renderer.useBlending())
+  if(renderer.useBlending() && (background[3] != 1.0f))
     glEnable(GL_BLEND);
   glColor4fv(background);
   glRectf((float) x, (float) y, (float)(x + w), (float)(y + h));
-  if(renderer.useBlending())
+  if(renderer.useBlending() && (background[3] != 1.0f))
     glDisable(GL_BLEND);
   // draw nice border
   OpenGLGState::resetState();
