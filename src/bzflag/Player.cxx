@@ -344,6 +344,19 @@ void*			Player::unpack(void* buf)
   return buf;
 }
 
+bool			Player::validTeamTarget(const Player *possibleTarget) const
+{
+  TeamColor myTeam = getTeam();
+  TeamColor targetTeam = possibleTarget->getTeam();
+  if (myTeam != targetTeam)
+    return true;
+
+  if (myTeam != RogueTeam)
+    return false;
+
+  return !World::getWorld()->allowRabbit();
+}
+
 bool			Player::getDeadReckoning(
 				float* predictedPos, float* predictedAzimuth,
 				float* predictedVel) const

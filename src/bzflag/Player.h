@@ -86,6 +86,7 @@ class Player {
     bool		isAutoPilot() const;
     void		setAutoPilot(bool = true);
 
+    bool		validTeamTarget(const Player *possibleTarget) const;
 
     // returns true iff dead reckoning is too different from the
     // current tank state.

@@ -1686,7 +1686,7 @@ static void		doMotion()
 	if (t != myTank->getId() && player[t] &&
 	    player[t]->isAlive() && !player[t]->isPaused() &&
 	    !player[t]->isNotResponding() &&
-	    (myTank->getTeam() == RogueTeam || player[t]->getTeam() != myTank->getTeam())) {
+	    myTank->validTeamTarget(player[t])) {
 	  const float *tp = player[t]->getPosition();
 	  float d = hypotf(tp[0] - pos[0], tp[1] - pos[1]);
 	  if (d < distance) {
@@ -1719,7 +1719,6 @@ static void		doMotion()
         else
           speed = 1.0f;
  
-        //fire too, why not?
         TimeKeeper now = TimeKeeper::getCurrent();
 	if (now - lastShot >= 0.5f) {
 	  if (fabs(rotation) < BZDB->eval(StateDatabase::BZDB_TARGETINGANGLE)) {
@@ -1728,7 +1727,6 @@ static void		doMotion()
 	    distance += BZDB->eval(StateDatabase::BZDB_TANKLENGTH);
 	    const Obstacle *building = ShotStrategy::getFirstBuilding(tankRay, -0.5f, distance);
 	    if (!building) {
-	       // for some reason Roger likes to shoot himself(rico) if right next to a building, help!!
 	       myTank->fireShot();
 	       lastShot = now;
 	    }
