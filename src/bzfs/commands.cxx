@@ -978,6 +978,10 @@ void handleReportCmd(GameKeeper::Player *playerData, const char *message)
       sprintf(reply, "Your report has been filed. Thank you.");
       std::string temp = std::string("**\"") + playerData->player.getCallSign() + "\" reports: " +
                          (message + 8);
+      if (temp.size() <= (unsigned) MessageLen) {
+        sendMessage (ServerPlayer, AdminPlayers, temp.c_str());
+        return;
+      }
       std::vector<std::string> words = string_util::tokenize(temp, " \t");
       while (temp.size() > 0 && words.size() > 0) {
         std::string temp2;
@@ -986,7 +990,7 @@ void handleReportCmd(GameKeeper::Player *playerData, const char *message)
             temp2 += words[0] + " ";
             words.erase(words.begin());
         }
-        sendMessage (t, AdminPlayers, temp2.c_str());
+        sendMessage (ServerPlayer, AdminPlayers, temp2.c_str());
       }
       sendMessage (ServerPlayer, AdminPlayers, message);
       DEBUG1("Player %s [%d] has filed a report (time: %s).\n",
