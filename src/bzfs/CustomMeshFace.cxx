@@ -110,9 +110,6 @@ bool CustomMeshFace::read(const char *cmd, std::istream& input)
 
 void CustomMeshFace::write(MeshObstacle *mesh) const
 {
-//  printf ("CustomMeshFace->write(%p)\n", mesh);
-//  printf (" vertices = %i, normals = %i, texcoords = %i, texture = %s\n",
-//          vertices.size(), normals.size(), texcoords.size(), material.texture.c_str());
   mesh->addFace(vertices, normals, texcoords, material);
   return;
 }
