@@ -290,22 +290,16 @@ if (packetStream) {
 
 #if defined(NETWORK_STATS)
   const float dt = TimeKeeper::getCurrent() - startTime;
-  std::cerr << "Server network statistics:" << std::endl;
-  std::cerr << "  elapsed time    : " << dt << std::endl;
-  std::cerr << "  bytes sent      : " << bytesSent << " (" <<
-		(float)bytesSent / dt << "/sec)" << std::endl;
-  std::cerr << "  packets sent    : " << packetsSent << " (" <<
-		(float)packetsSent / dt << "/sec)" << std::endl;
+  DEBUG1("Server network statistics:\n");
+  DEBUG1("  elapsed time    : %f\n", dt);
+  DEBUG1("  bytes sent      : %d (%f/sec)\n", bytesSent, (float)bytesSent / dt);
+  DEBUG1("  packets sent    : %d (%f/sec)\n", packetsSent, (float)packetsSent / dt);
   if (packetsSent != 0)
-    std::cerr << "  bytes/packet    : " <<
-		(float)bytesSent / (float)packetsSent << std::endl;
-  std::cerr << "  bytes received  : " << bytesReceived << " (" <<
-		(float)bytesReceived / dt << "/sec)" << std::endl;
-  std::cerr << "  packets received: " << packetsReceived << " (" <<
-		(float)packetsReceived / dt << "/sec)" << std::endl;
+    DEBUG1("  bytes/packet    : %f\n", (float)bytesSent / (float)packetsSent);
+  DEBUG1("  bytes recieved  : %d (%f/sec)\n", bytesReceived, (float)bytesReceived / dt);
+  DEBUG1("  packets received: %d (%f/sec)\n", packetsReceived, (float)packetsReceived / dt);
   if (packetsReceived != 0)
-    std::cerr << "  bytes/packet    : " <<
-		(float)bytesReceived / (float)packetsReceived << std::endl;
+    DEBUG1("  bytes/packet    : %f\n", (float)bytesReceived / (float)packetsReceived);
 #endif
 }
 

@@ -32,6 +32,13 @@
 #include <stdarg.h>
 #include <stdio.h>
 
+extern int debugLevel;
+// Like verbose debug messages?
+#define DEBUG1 if (debugLevel >= 1) printf
+#define DEBUG2 if (debugLevel >= 2) printf
+#define DEBUG3 if (debugLevel >= 3) printf
+#define DEBUG4 if (debugLevel >= 4) printf
+
 /* near zero by some epsilon convenience define since relying on
 * the floating point unit for proper equivalence is not safe
 */

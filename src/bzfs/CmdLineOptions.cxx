@@ -495,7 +495,7 @@ void parse(int argc, char **argv, CmdLineOptions &options)
 	fprintf(stderr, "bad argument \"%s\"\n", argv[i]);
 	usage(argv[0]);
       }
-      options.debug += count;
+      debugLevel += count;
     } else if (strcmp(argv[i], "-density") ==0) {
       if (i+1 != argc && isdigit(*argv[i+1])) {
 	options.citySize = atoi(argv[i+1]);
@@ -1163,7 +1163,7 @@ void parse(int argc, char **argv, CmdLineOptions &options)
   }
 
   // debugging
-  if (options.debug >= 1) {
+  if (debugLevel >= 1) {
     // print style
     fprintf(stderr, "style: %x\n", options.gameStyle);
     if (options.gameStyle & int(TeamFlagGameStyle))

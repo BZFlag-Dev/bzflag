@@ -78,6 +78,7 @@ struct tm		userTime;
 static StartupInfo	startupInfo;
 bool			echoToConsole = false;
 bool			echoAnsi = false;
+int			debugLevel = 0;
 
 static BzfDisplay*	display = NULL;
 
@@ -348,6 +349,8 @@ static void		parse(int argc, char** argv)
 	BZDB.unset("directory");
       else
 	BZDB.set("directory", argv[i]);
+    } else if (strcmp(argv[i], "-dbg") == 0) {
+      debugLevel++;
     } else if (strcmp(argv[i], "-e") == 0 || strcmp(argv[i], "-echo") == 0) {
       echoToConsole = true;
     } else if (strcmp(argv[i], "-ea") == 0 || strcmp(argv[i], "-echoAnsi") == 0) {

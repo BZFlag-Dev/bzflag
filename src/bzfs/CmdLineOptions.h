@@ -72,8 +72,7 @@ struct CmdLineOptions
     publicizeServer(false), filterFilename(""),
     filterCallsigns(false), filterChat(false), filterSimple(false), voteTime(60),
     vetoTime(20), votesRequired(3), votePercentage(50.1f),
-    voteRepeatTime(300), autoTeam(false), citySize(5),
-    debug(0)
+    voteRepeatTime(300), autoTeam(false), citySize(5)
   {
     int i;
     for (FlagTypeMap::iterator it = FlagType::getFlagMap().begin();
@@ -169,8 +168,6 @@ struct CmdLineOptions
   /* city options */
   int			citySize;
   int			numTeamFlags[NumTeams];
-
-  int			debug;
 };
 
 

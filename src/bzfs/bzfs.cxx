@@ -70,6 +70,7 @@ uint16_t maxRealPlayers = MaxPlayers;
 uint16_t maxPlayers = MaxPlayers;
 // highest active id
 uint16_t curMaxPlayers = 0;
+int debugLevel = 0;
 
 static float maxWorldHeight = 0.0f;
 
@@ -4567,7 +4568,7 @@ int main(int argc, char **argv)
   /* load the bad word filter if it was set */
   if (clOptions->filterFilename.length() != 0) {
     if (clOptions->filterChat || clOptions->filterCallsigns) {
-      if (clOptions->debug >= 1) {
+      if (debugLevel >= 1) {
 	unsigned int count;
 	DEBUG1("Loading %s\n", clOptions->filterFilename.c_str());
 	count = clOptions->filter.loadFromFile(clOptions->filterFilename, true);

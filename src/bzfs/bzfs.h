@@ -22,12 +22,6 @@ static const char copyright[] = "Copyright (c) 1993 - 2004 Tim Riker";
 // to dump score info to stdout
 #define PRINTSCORE to include code to dump score info to stdout
 
-// Like verbose debug messages?
-#define DEBUG1 if (clOptions->debug >= 1) printf
-#define DEBUG2 if (clOptions->debug >= 2) printf
-#define DEBUG3 if (clOptions->debug >= 3) printf
-#define DEBUG4 if (clOptions->debug >= 4) printf
-
 #define SERVERLOGINMSG true
 
 
