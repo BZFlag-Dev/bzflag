@@ -265,7 +265,7 @@ void			HUDuiControl::renderFocus()
   float fh2 = 0;// = floorf(0.5f * fontHeight);
 
   if (gstate->isTextured()) { // asumes there are w/h fames of animation h x h in each image
-    float imageSize = arrow->getHeight();
+    float imageSize = (float)arrow->getHeight();
     int uFrames = 1;
     if (imageSize != 0)
       uFrames = int(arrow->getWidth()/imageSize); // 4;
