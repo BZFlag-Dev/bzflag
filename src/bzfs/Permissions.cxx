@@ -394,9 +394,25 @@ void parsePermissionString(const std::string &permissionString, std::bitset<Play
 
   while (permStream >> word) {
     makeupper(word);
-    PlayerAccessInfo::AccessPerm perm = permFromName(word);
-    if (perm != PlayerAccessInfo::lastPerm)
-      perms.set(perm);
+    if (word[0] != '#') {
+      // regular permission
+      PlayerAccessInfo::AccessPerm perm = permFromName(word);
+      if (perm != PlayerAccessInfo::lastPerm) {
+        perms.set(perm);
+      }
+    } else {
+      // referenced group
+      std::string refname = word.c_str() + 1;
+      PlayerAccessMap::iterator refgroup = groupAccess.find(refname);
+      if (refgroup != groupAccess.end()) {
+        for (int i = 0; i < PlayerAccessInfo::lastPerm; i++) {
+          PlayerAccessInfo::AccessPerm perm = (PlayerAccessInfo::AccessPerm)i;
+          if (refgroup->second.hasPerm(perm) == true) {
+            perms.set(perm);
+          }
+        }
+      }
+    }
   }
 }
 
@@ -447,6 +463,20 @@ bool PlayerAccessInfo::readGroupsFile(const std::string &filename)
 
   std::string line;
   while (std::getline(in, line)) {
+
+    // check for a comment string
+    bool skip = true;
+    for (std::string::size_type i = 0; i < line.size(); i++) {
+      const char c = line[i];
+      if (!TextUtils::isWhitespace(c)) {
+        if (c != '#') {
+          skip = false;
+        }
+        break;
+      }
+    }
+    if (skip) continue;
+  
     std::string::size_type colonpos = line.find(':');
     if (colonpos != std::string::npos) {
       std::string name = line.substr(0, colonpos);
