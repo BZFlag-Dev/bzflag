@@ -539,9 +539,12 @@ float roamZoom = 60.0f, roamDZoom = 0.0f;
 
 void setRoamingLabel(bool force)
 {
-  if (!player)
+  if (!player) {
     return;
-  char *winner;
+  }
+
+  std::string playerString = "";
+  
   if (roamTrackTank == -1) {
     int oldWinner = roamTrackWinner;
     if (roamTrackWinner == -1) {
@@ -556,38 +559,50 @@ void setRoamingLabel(bool force)
 	bestScore = player[i]->getScore();
       }
     }
-    if (!force && roamTrackWinner == oldWinner)
+    if (!force && roamTrackWinner == oldWinner) {
       return;
-    winner = "Winner ";
-  } else {
-    winner = "";
+    }
+    playerString = "Winner ";
   }
+
   if (player[roamTrackWinner]) {
+    const Player* tracked = player[roamTrackWinner];
+    if (BZDB.isTrue("colorful")) {
+      int color = tracked->getTeam();
+      if (color < 0 || color > 4) {
+        color = 5;
+      }
+      playerString += ColorStrings[color];
+    }
+    playerString += tracked->getCallSign();
+    const FlagType* flag = tracked->getFlag();
+    if (flag != Flags::Null) {
+      playerString += " " + ColorStrings[ResetColor] + "(" + flag->flagAbbv + ")";
+    }
+
     switch (roamView) {
-      case roamViewTrack:
-	hud->setRoamingLabel(std::string("Tracking ") + winner +
-			     player[roamTrackWinner]->getCallSign());
+      case roamViewTrack: {
+	hud->setRoamingLabel(std::string("Tracking ") + playerString);
 	break;
-
-      case roamViewFollow:
-	hud->setRoamingLabel(std::string("Following ") + winner +
-			     player[roamTrackWinner]->getCallSign());
+      }
+      case roamViewFollow: {
+	hud->setRoamingLabel(std::string("Following ") + playerString);
 	break;
-
-      case roamViewFP:
-	hud->setRoamingLabel(std::string("Driving with ") + winner +
-			     player[roamTrackWinner]->getCallSign());
+      }
+      case roamViewFP: {
+	hud->setRoamingLabel(std::string("Driving with ") + playerString);
 	break;
-
-      case roamViewFlag:
+      }
+      case roamViewFlag: {
 	hud->setRoamingLabel(std::string("Tracking ") +
 			     world->getFlag(roamTrackFlag).type->flagName +
 			     " Flag");
 	break;
-
-      default:
+      }
+      default: {
 	hud->setRoamingLabel(std::string("Roaming"));
 	break;
+      }
     }
   } else {
     hud->setRoamingLabel("Roaming");
