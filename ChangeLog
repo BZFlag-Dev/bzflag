@@ -4,6 +4,8 @@
 BZFlag 2.0.1
 ------------
 
+* A /say command for server messages - Julio Jimenez, Frank Evers
+* rejoin permission for avoiding _rejoinTime limit - Frank Evers, Julio Jimenez
 * A player will auto ghost if they use global authentication - Steve Krenzel
 * Server announces who started a countdown - Angelina Carlton
 * Fixed server start menu for windows - Daniel Remenak
