@@ -181,21 +181,23 @@ const bool SpawnPosition::isFacing(const float *enemyPos, const float enemyAzimu
 const bool SpawnPosition::isImminentlyDangerous() const
 {
   for (int i = 0; i < curMaxPlayers; i++) {
-    if (player[i].isAlive() && areFoes(player[i].getTeam(), team)) {
-      const FlagInfo *finfo =&flag[player[i].getFlag()];
-      const FlagType *ftype = finfo->flag.type;
+    if (player[i].isAlive()) {
       float *enemyPos = lastState[i].pos;
       float enemyAngle = lastState[i].azimuth;
-      // check for dangerous flags, etc
-      // FIXME: any more?
-      if (ftype == Flags::Laser) {  // don't spawn in the line of sight of an L
-	if (isFacing(enemyPos, enemyAngle, M_PI / 9)) { // he's looking within 20 degrees of spawn point
-	  return true;	// eek, don't spawn here
-	}
-      } else if (ftype == Flags::ShockWave) {  // don't spawn next to a SW
-	if (distanceFrom(enemyPos) < safeSWRadius) { // too close to SW
-	  return true;	// eek, don't spawn here
-	}
+      if (player[i].getFlag() >= 0) {
+	// check for dangerous flags
+      	const FlagInfo *finfo =&flag[player[i].getFlag()];
+      	const FlagType *ftype = finfo->flag.type;
+  	// FIXME: any more?
+      	if (ftype == Flags::Laser) {  // don't spawn in the line of sight of an L
+	  if (isFacing(enemyPos, enemyAngle, M_PI / 9)) { // he's looking within 20 degrees of spawn point
+	    return true;	// eek, don't spawn here
+	  }
+      	} else if (ftype == Flags::ShockWave) {  // don't spawn next to a SW
+	  if (distanceFrom(enemyPos) < safeSWRadius) { // too close to SW
+	    return true;	// eek, don't spawn here
+	  }
+        }
       }
       // don't spawn in the line of sight of a normal-shot tank within a certain distance
       if (distanceFrom(enemyPos) < safeDistance) { // within danger zone?
