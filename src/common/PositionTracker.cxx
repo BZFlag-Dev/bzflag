@@ -192,7 +192,7 @@ bool PositionTracker::update(unsigned short int token, long int id, const float 
 
 bool PositionTracker::addWaypoint(const double from[3], const double to[3], double distance)
 {
-  unsigned short int fromToken, toToken;
+  unsigned short int fromToken = 0, toToken = 0;
   bool updated;
   bool foundPoint;
   unsigned int i;
