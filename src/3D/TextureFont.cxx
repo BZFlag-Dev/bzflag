@@ -468,13 +468,13 @@ void BitmapFont::drawString(float scale, GLfloat color[3], const char *str,
 
     charToUse -= space;
 
-    const int dx = float(fontMetrics[charToUse].fullWidth);
+    const float dx = float(fontMetrics[charToUse].fullWidth);
     if (charToUse == 0) {
       glBitmap(0, 0, 0, 0, dx, 0, 0);
     } else {
       const int h = fontMetrics[charToUse].endY - fontMetrics[charToUse].startY;
       const int w = fontMetrics[charToUse].endX - fontMetrics[charToUse].startX;
-      glBitmap(w, h, -fontMetrics[charToUse].initialDist, 0, dx, 0, bitmaps[charToUse]);
+      glBitmap(w, h, float(-fontMetrics[charToUse].initialDist), 0, dx, 0, bitmaps[charToUse]);
     }
   }
   if (color[0] >= 0)
