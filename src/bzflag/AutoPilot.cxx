@@ -365,8 +365,6 @@ bool navigate( float &rotation, float &speed)
   if ((TimeKeeper::getCurrent() - lastNavChange) < 1.0f)
     return true;
 
-formatDebug("navigating\n");
-
   LocalPlayer *myTank = LocalPlayer::getMyTank();
   const float *pos = myTank->getPosition();
   float myAzimuth = myTank->getAngle();
