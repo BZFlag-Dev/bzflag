@@ -30,6 +30,9 @@
 #include "StdOutUI.h"
 #include "UIMap.h"
 
+// causes persistent rebuilding to obtain build versioning
+#include "version.h"
+
 using namespace std;
 
 
