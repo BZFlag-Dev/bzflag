@@ -912,6 +912,8 @@ LAGWARN	/lagwarn
 .br 
 LISTPERMS	not implemented
 .br 
+MUTE	/mute
+.br
 PLAYERLIST	/playerlist
 .br 
 POLL	/poll
@@ -949,8 +951,12 @@ SHUTDOWNSERVER	/shutdownserver
 SPAWN	join game as a player. observers don't need this flag.
 .br 
 SUPERKILL	/superkill
+.br
+TALK    allows all players to send messages
 .br 
 UNBAN	/unban /hostunban
+.br
+UNMUTE	/unmute
 .br 
 VETO	/veto
 .br 
@@ -1050,6 +1056,22 @@ the internet. Local bans are unaffected. This command requires the UNBAN permisi
 
 Forces the server to flush any bans from the master server, efectly removing them.
 Local bans are unaffected. This command requires the UNBAN permision.
+
+.TP
+.B /mute 
+
+Allows a server admin to remove the ability for a player to communicate with
+other players. Once muted the player may only talk to admins on the server.
+usage: /mute <playername>
+This command removes the TALK permission that is enabled by default for all 
+players. (disabling TALK by default would let you run a "silent" server)
+
+.TP
+.B /unmute
+
+Allows a server admin to restore the TALK permission to a previously muted
+player. 
+usage: /unmute <playername>
 
 .SH "Worlds"
 BZFlag worlds come in two varieties, randomly generated ones, and

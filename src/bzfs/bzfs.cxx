@@ -139,7 +139,7 @@ void sendMessage(int playerIndex, PlayerId dstPlayer, const char *message);
 void sendFilteredMessage(int playerIndex, PlayerId dstPlayer, const char *message);
 void sendPlayerMessage(GameKeeper::Player* playerData, PlayerId dstPlayer,
 		       const char *message);
-void playerKilled(int victimIndex, int killerIndex, int reason, int16_t shotIndex, const FlagType* flagType, int phydrv);
+
 void removePlayer(int playerIndex, const char *reason, bool notify=true);
 void resetFlag(FlagInfo &flag);
 static void dropFlag(GameKeeper::Player &playerData, float pos[3]);
@@ -1498,8 +1498,7 @@ void sendPlayerMessage(GameKeeper::Player *playerData, PlayerId dstPlayer,
   return;
 }
 
-
-void sendFilteredMessage(int playerIndex, PlayerId dstPlayer, const char *message)
+void sendFilteredMessage(int sendingPlayer, PlayerId recipientPlayer, const char *message)
 {
   const char* msg = message;
 
@@ -1514,9 +1513,29 @@ void sendFilteredMessage(int playerIndex, PlayerId dstPlayer, const char *messag
     msg = filtered;
   }
 
-  sendMessage(playerIndex, dstPlayer, msg);
-}
+  // check that the player has the talk permission
+  GameKeeper::Player *senderData = GameKeeper::Player::getPlayerByIndex(sendingPlayer);
 
+  if (!senderData) {
+    return;
+  }
+  if(!senderData->accessInfo.hasPerm(PlayerAccessInfo::talk)) {
+
+    // if the player were sending to is an admin
+    GameKeeper::Player *recipientData = GameKeeper::Player::getPlayerByIndex(recipientPlayer);
+
+    // don't care if they're real, just care if they're an admin
+    if (recipientData && recipientData->accessInfo.isAdmin()) {
+      sendMessage(sendingPlayer, recipientPlayer, msg);
+      return;
+    }
+
+    sendMessage(ServerPlayer, sendingPlayer, "We're sorry, your not allowed to talk!");
+    return; //bail out
+  }
+
+  sendMessage(sendingPlayer, recipientPlayer, msg);
+}
 
 void sendMessage(int playerIndex, PlayerId dstPlayer, const char *message)
 {
@@ -1564,6 +1583,7 @@ void sendMessage(int playerIndex, PlayerId dstPlayer, const char *message)
     for (unsigned int i = 0; i < admins.size(); ++i)
       directMessage(admins[i], MsgMessage, len, bufStart);
   } else {
+    // message to all players
     broadcastMessage(MsgMessage, len, bufStart);
     broadcast = true;
   }
@@ -1572,7 +1592,6 @@ void sendMessage(int playerIndex, PlayerId dstPlayer, const char *message)
     Record::addPacket (MsgMessage, len, bufStart, HiddenPacket);
   }
 }
-
 
 static void rejectPlayer(int playerIndex, uint16_t code, const char *reason)
 {
@@ -2576,7 +2595,7 @@ static void checkTeamScore(int playerIndex, int teamIndex)
 //   It is taken as the index of the udp table when called by incoming message
 //   It is taken by killerIndex when autocalled, but only if != -1
 // killer could be InvalidPlayer or a number within [0 curMaxPlayer)
-void playerKilled(int victimIndex, int killerIndex, int reason,
+static void playerKilled(int victimIndex, int killerIndex, int reason,
 			int16_t shotIndex, const FlagType* flagType, int phydrv)
 {
   GameKeeper::Player *killerData = NULL;
@@ -4102,7 +4121,6 @@ static void doStuffOnPlayer(GameKeeper::Player &playerData)
 
 }
 
-
 void initGroups()
 {
   // reload the databases
@@ -4121,6 +4139,7 @@ void initGroups()
     info.explicitAllows[PlayerAccessInfo::lagStats] = true;
     info.explicitAllows[PlayerAccessInfo::privateMessage] = true;
     info.explicitAllows[PlayerAccessInfo::spawn] = true;
+    info.explicitAllows[PlayerAccessInfo::talk] = true;
     groupAccess["EVERYONE"] = info;
   }
   itr = groupAccess.find("VERIFIED");

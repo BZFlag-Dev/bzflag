@@ -74,7 +74,7 @@ extern uint16_t curMaxPlayers;
 
 // externs that ghost needs
 extern void removePlayer(int playerIndex, const char *reason, bool notify=true);
-extern void playerKilled(int victimIndex, int killerIndex, int reason, int16_t shotIndex, const FlagType* flagType, int phydrv);
+
 // externs that shutdownserver requires
 extern bool done;
 
@@ -99,6 +99,208 @@ extern int countdownDelay;
 // externs that identify and password requires
 extern void sendIPUpdate(int targetPlayer, int playerIndex);
 extern void sendPlayerInfo(void);
+
+static void handleMuteCmd(GameKeeper::Player *playerData, const char *message)
+{ 
+  size_t callsignStart=0, callsignEnd=0, messageStart=0;
+  int from = playerData->getIndex();
+  int to;
+  int t = playerData->getIndex();
+  std::string message2;
+
+  if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::mute)) {
+    sendMessage(ServerPlayer, t, "You do not have permission to run the mute command");
+    return;
+  }
+ 
+  // start looking for the noisy player to be muted
+  std::string arguments = &message[5]; 
+  std::string noisy_player = std::string("");
+
+  // skip any leading whitespace
+  callsignStart = 0;
+  while ((callsignStart < arguments.size()) &&
+	 (isspace(arguments[callsignStart]))) {
+    callsignStart++;
+  }
+
+  // make sure there was _some_ whitespace after /msg
+  if (callsignStart == 0) {
+    sendMessage(ServerPlayer, from, "Usage: /mute \"some callsign\"");
+    return;
+  }
+
+  // find the player name, optionally quoted
+  if ( arguments[callsignStart] == '"' ) {
+    callsignStart++;
+
+    // find the trailing quote
+    bool foundQuote = false;
+    callsignEnd = callsignStart;
+    while ((callsignEnd + 1 < arguments.size()) &&
+	   (!foundQuote)) {
+      callsignEnd++;
+      if (arguments[callsignEnd] == '"') {
+	foundQuote = true;
+	messageStart = callsignEnd + 1;
+	callsignEnd--;
+      }
+    }
+
+    // no quote means a mismatch
+    if (!foundQuote) {
+      sendMessage(ServerPlayer, from, "Quote mismatch?");
+      sendMessage(ServerPlayer, from, "Usage: /mute \"some callsign\"");
+      return;
+    }
+
+  } else {
+    // unquoted callsign
+
+    // find the first matching name (not the longest for sake of performance)
+    bool foundCallsign = false;
+    callsignEnd = callsignStart;
+    while ((callsignEnd + 1 < arguments.size()) &&
+	   (!foundCallsign)) {
+      callsignEnd++;
+      if (!isspace(arguments[callsignEnd])) {
+	continue;
+      }
+
+      // we have a space
+      noisy_player = arguments.substr(callsignStart, callsignEnd - callsignStart);
+      messageStart = callsignEnd;
+
+      to = GameKeeper::Player::getPlayerIDByName(noisy_player);
+      if (to < curMaxPlayers) {
+	callsignEnd--;
+	foundCallsign = true;
+      }
+    }
+  }
+
+  noisy_player = arguments.substr(callsignStart, callsignEnd - callsignStart + 1);
+  to = GameKeeper::Player::getPlayerIDByName(noisy_player);
+
+  // valid callsign 
+  if ((to < 0) || (to >= curMaxPlayers)) {
+    message2 = TextUtils::format("\"%s\" is not here.  No such callsign.", noisy_player.c_str());
+    sendMessage(ServerPlayer, from, message2.c_str());
+    return;
+  }
+  
+  // mute the player
+  GameKeeper::Player *muteeData = GameKeeper::Player::getPlayerByIndex(to);
+  if (muteeData) {
+    muteeData->accessInfo.revokePerm(PlayerAccessInfo::talk);
+  }
+  
+  // confirm player is muted
+  message2 = TextUtils::format("player id %d \"%s\" is now muted.", to, noisy_player.c_str());
+  sendMessage(ServerPlayer, from, message2.c_str());  
+}
+
+static void handleUnmuteCmd(GameKeeper::Player *playerData, const char *message)
+{
+  size_t callsignStart=0, callsignEnd=0, messageStart=0;
+  int from = playerData->getIndex();
+  int to;
+  int t = playerData->getIndex();
+  std::string message2;
+
+  if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::mute)) {
+    sendMessage(ServerPlayer, t, "You do not have permission to run the unmute command");
+    return;
+  }
+ 
+  // start looking for the lucky player to be unmuted
+  std::string arguments = &message[7];
+  std::string happy_player = std::string("");
+
+  // skip any leading whitespace
+  callsignStart = 0;
+  while ((callsignStart < arguments.size()) &&
+	 (isspace(arguments[callsignStart]))) {
+    callsignStart++;
+  }
+
+  // make sure there was _some_ whitespace after /msg
+  if (callsignStart == 0) {
+    sendMessage(ServerPlayer, from, "Usage: /unmute \"some callsign\"");
+    return;
+  }
+
+  // find the player name, optionally quoted
+  if ( arguments[callsignStart] == '"' ) {
+    callsignStart++;
+
+    // find the trailing quote
+    bool foundQuote = false;
+    callsignEnd = callsignStart;
+    while ((callsignEnd + 1 < arguments.size()) &&
+	   (!foundQuote)) {
+      callsignEnd++;
+      if (arguments[callsignEnd] == '"') {
+	foundQuote = true;
+	messageStart = callsignEnd + 1;
+	callsignEnd--;
+      }
+    }
+
+    // no quote means a mismatch
+    if (!foundQuote) {
+      sendMessage(ServerPlayer, from, "Quote mismatch?");
+      sendMessage(ServerPlayer, from, "Usage: /unmute \"some callsign\"");
+      return;
+    }
+
+  } else {
+    // unquoted callsign
+
+    // find the first matching name (not the longest for sake of performance)
+    bool foundCallsign = false;
+    callsignEnd = callsignStart;
+    while ((callsignEnd + 1 < arguments.size()) &&
+	   (!foundCallsign)) {
+      callsignEnd++;
+      if (!isspace(arguments[callsignEnd])) {
+	continue;
+      }
+
+      // we have a space
+      happy_player = arguments.substr(callsignStart, callsignEnd - callsignStart);
+      messageStart = callsignEnd;
+
+      to = GameKeeper::Player::getPlayerIDByName(happy_player);
+      if (to < curMaxPlayers) {
+	callsignEnd--;
+	foundCallsign = true;
+      }
+    }
+  }
+
+  happy_player = arguments.substr(callsignStart, callsignEnd - callsignStart + 1);
+  to = GameKeeper::Player::getPlayerIDByName(happy_player);
+
+  // valid callsign 
+  if ((to < 0) || (to >= curMaxPlayers)) {
+    message2 = TextUtils::format("\"%s\" is not here.  No such callsign.", happy_player.c_str());
+    sendMessage(ServerPlayer, from, message2.c_str());
+    return;
+  }
+  
+  // unmute the player
+  /// so don't change it
+  GameKeeper::Player *unmuteData = GameKeeper::Player::getPlayerByIndex(to);
+  if (unmuteData) {
+    unmuteData->accessInfo.grantPerm(PlayerAccessInfo::talk);
+  }
+  
+  // confirm player is unmuted
+  message2 = TextUtils::format("player id %d \"%s\" is now unmuted.", to, happy_player.c_str());
+  sendMessage(ServerPlayer, from, message2.c_str());  
+
+}
 
 class NoDigit {
 public:
@@ -127,6 +329,7 @@ int getSlotNumber(std::string player) {
 
   return slot;
 }
+
 static void handleUptimeCmd(GameKeeper::Player *playerData, const char *)
 {
   float rawTime;
@@ -293,7 +496,7 @@ static void handleMsgCmd(GameKeeper::Player *playerData, const char *message)
   to = GameKeeper::Player::getPlayerIDByName(recipient);
 
   // valid callsign
-  if (to >= curMaxPlayers) {
+  if ((to < 0) || (to >= curMaxPlayers)) {
     message2 = TextUtils::format("\"%s\" is not here.  No such callsign.", recipient.c_str());
     sendMessage(ServerPlayer, from, message2.c_str());
     return;
@@ -598,14 +801,14 @@ static void handleKillCmd(GameKeeper::Player *playerData, const char *message)
   std::vector<std::string> argv = TextUtils::tokenize(message, " \t", 3, true);
 
   if (argv.size() < 2) {
-    sendMessage(ServerPlayer, t, "Syntax: /kill <#slot | PlayerName | \"Player Name\">  [reason]");
+    sendMessage(ServerPlayer, t, "Syntax: /kill <PlayerName/\"Player Name\"> [reason]");
     sendMessage(ServerPlayer, t, "	Please keep in mind that reason is displayed to the user.");
     return;
   }
 
-  i = getSlotNumber(argv[1]);
+  i = GameKeeper::Player::getPlayerIDByName(argv[1]);
 
-  if (i >= 0) {
+  if ((i < curMaxPlayers) && (i >= 0)) {
     char killmessage[MessageLen];
 
     // admins can override antiperms
@@ -626,8 +829,16 @@ static void handleKillCmd(GameKeeper::Player *playerData, const char *message)
       snprintf(killmessage, MessageLen, " reason given : %s",argv[2].c_str());
       sendMessage(ServerPlayer, i, killmessage);
     }
-    // kill the player
-    playerKilled(i, t, 0, -1, Flags::Null, -1);
+
+  playerData->player.setDead();
+  void *buf, *bufStart = getDirectMessageBuffer();
+  buf = nboPackUByte(bufStart, i);
+  buf = nboPackUByte(buf, t);
+  buf = nboPackShort(buf, 0);  
+  buf = nboPackShort(buf, -1);
+  buf = Flags::Null->pack(buf);
+  broadcastMessage(MsgKilled, (char*)buf-(char*)bufStart, bufStart);
+
 
   } else {
     char errormessage[MessageLen];
@@ -1443,12 +1654,11 @@ static void handleRemovegroupCmd(GameKeeper::Player *playerData, const char *mes
 
     makeupper(settie);
     makeupper(group);
-    if (userExists(settie)) {
+    if (userExists(settie)) { 
       if (!playerData->accessInfo.canSet(group)) {
 	sendMessage(ServerPlayer, t, "You do not have permission to remove this group");
       } else {
 	PlayerAccessInfo &info = PlayerAccessInfo::getUserInfo(settie);
-
 	if (info.removeGroup(group)) {
 	  sendMessage(ServerPlayer, t, "Group Remove successful");
 	  int getID = GameKeeper::Player::getPlayerIDByName(settie);
@@ -2496,7 +2706,13 @@ void parseServerCommand(const char *message, int t)
     handleIdlestatsCmd(playerData, message);
 
   } else if (strncasecmp(message+1, "flaghistory", 11 ) == 0) {
-    handleFlaghistoryCmd(playerData, message);
+    handleFlaghistoryCmd(playerData, message); 
+
+  } else if (strncasecmp(message+1, "mute", 4 ) == 0 ) {
+    handleMuteCmd(playerData, message);
+
+  } else if (strncasecmp(message+1, "unmute", 6 ) == 0 ) {
+    handleUnmuteCmd(playerData, message);
 
   } else if (strncasecmp(message+1, "playerlist", 10) == 0) {
     handlePlayerlistCmd(playerData, message);

@@ -205,7 +205,8 @@ bool PlayerAccessInfo::canSet(const std::string& group) {
   return hasGroup(group) && hasPerm(PlayerAccessInfo::setPerms);
 }
 
-bool PlayerAccessInfo::hasPerm(PlayerAccessInfo::AccessPerm right) {
+bool PlayerAccessInfo::hasPerm(PlayerAccessInfo::AccessPerm right) 
+{
   if (Admin && (right != hideAdmin))
     return true;
   if (explicitDenys.test(right))
@@ -219,6 +220,18 @@ bool PlayerAccessInfo::hasPerm(PlayerAccessInfo::AccessPerm right) {
       return true;
   }
   return false;
+}
+// grant and revoke perms used with /mute and /unmute
+void PlayerAccessInfo::grantPerm(PlayerAccessInfo::AccessPerm right) 
+{
+  explicitAllows.set(right);
+  explicitDenys.reset(right);
+}
+
+void PlayerAccessInfo::revokePerm(PlayerAccessInfo::AccessPerm right) 
+{
+  explicitAllows.reset(right);
+  explicitDenys.set(right);
 }
 
 bool userExists(const std::string &nick)
@@ -310,6 +323,7 @@ std::string nameFromPerm(PlayerAccessInfo::AccessPerm perm)
     case PlayerAccessInfo::lagwarn: return "lagwarn";
     case PlayerAccessInfo::listPerms: return "listPerms";
     case PlayerAccessInfo::masterBan: return "masterban";
+    case PlayerAccessInfo::mute: return "mute";
     case PlayerAccessInfo::playerList: return "playerList";
     case PlayerAccessInfo::poll: return "poll";
     case PlayerAccessInfo::pollBan: return "pollBan";
@@ -333,7 +347,9 @@ std::string nameFromPerm(PlayerAccessInfo::AccessPerm perm)
     case PlayerAccessInfo::shutdownServer: return "shutdownServer";
     case PlayerAccessInfo::spawn: return "spawn";
     case PlayerAccessInfo::superKill: return "superKill";
+    case PlayerAccessInfo::talk: return "talk";				      
     case PlayerAccessInfo::unban: return "unban";
+    case PlayerAccessInfo::unmute: return "unmute";
     case PlayerAccessInfo::veto: return "veto";
     case PlayerAccessInfo::viewReports: return "viewReports";
     case PlayerAccessInfo::vote: return "vote";
@@ -369,6 +385,7 @@ PlayerAccessInfo::AccessPerm permFromName(const std::string &name)
   if (name == "LAGWARN") return PlayerAccessInfo::lagwarn;
   if (name == "LISTPERMS") return PlayerAccessInfo::listPerms;
   if (name == "MASTERBAN") return PlayerAccessInfo::masterBan;
+  if (name == "MUTE") return PlayerAccessInfo::mute;
   if (name == "PLAYERLIST") return PlayerAccessInfo::playerList;
   if (name == "POLL") return PlayerAccessInfo::poll;
   if (name == "POLLBAN") return PlayerAccessInfo::pollBan;
@@ -392,7 +409,9 @@ PlayerAccessInfo::AccessPerm permFromName(const std::string &name)
   if (name == "SHUTDOWNSERVER") return PlayerAccessInfo::shutdownServer;
   if (name == "SPAWN") return PlayerAccessInfo::spawn;
   if (name == "SUPERKILL") return PlayerAccessInfo::superKill;
+  if (name == "TALK") return PlayerAccessInfo::talk;
   if (name == "UNBAN") return PlayerAccessInfo::unban;
+  if (name == "UNMUTE") return PlayerAccessInfo::unmute;
   if (name == "VETO") return PlayerAccessInfo::veto;
   if (name == "VIEWREPORTS") return PlayerAccessInfo::viewReports;
   if (name == "VOTE") return PlayerAccessInfo::vote;

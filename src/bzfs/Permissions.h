@@ -67,6 +67,7 @@ public:
       lagwarn,
       listPerms,
       masterBan,
+      mute,
       playerList,
       poll,
       pollBan,
@@ -90,13 +91,15 @@ public:
       shutdownServer,
       spawn,
       superKill,
+      talk,
       unban,
+      unmute,
       veto,
       viewReports,
       vote,
       // just so we know how many rights there
       // are this dosn't do anything really, just
-      // make sure it's the last real right
+      // make sure it's the last real right 
       lastPerm
     };
 
@@ -122,6 +125,9 @@ public:
   bool	canSet(const std::string& group);
 
   bool	hasPerm(AccessPerm right);
+  void	grantPerm(AccessPerm right);
+  void	revokePerm(AccessPerm right);
+
   bool	isRegistered() const;
   bool	isIdentifyRequired();
   bool	isAllowedToEnter();
