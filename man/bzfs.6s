@@ -1303,21 +1303,27 @@ the object. An example would be:
 .br
 \fB  texcoord\fR 0.1 0.75   # add a texture coordinate  (\fBrepeatable\fR)
 .br
-\fB  shift\fR 0 0 0          # (\fBrepeatable\fR)
+\fB  shift\fR 0 0 0           # (\fBrepeatable\fR)
 .br
-\fB  scale\fR 1 1 1          # (\fBrepeatable\fR)
+\fB  scale\fR 1 1 1           # (\fBrepeatable\fR)
 .br
-\fB  shear\fR 0 0 0          # (\fBrepeatable\fR)
+\fB  shear\fR 0 0 0           # (\fBrepeatable\fR)
 .br
-\fB  spin\fR angle nx ny nz  # (\fBrepeatable\fR)
+\fB  spin\fR angle nx ny nz   # (\fBrepeatable\fR)
 .br
-\fB  phydrv\fR example_phydrv  # assign a physics driver
+\fB  phydrv\fR example_phydrv # assign a physics driver
+.br
+\fB  smoothbounce\fR          # ricochets use normals
+.br
+\fB  noclusters\fR            # render each mesh face individually
+.br
+                        # (this can be useful for occluders)
 .br
 \fB  face\fR  # start a face   (\fBrepeatable\fR)
 .br
     # faces must be convex polygons
 .br
-\fB    vertices\fR 1 4 0 3 5   # list of vertices
+\fB    vertices\fR 1 4 0 3 5   # list of vertices (requires at least three)
 .br
 \fB    normals\fR 2 6 0 4 7    # list of normals              (optional)
 .br
@@ -1351,15 +1357,17 @@ the object. An example would be:
 .br
 \fB  rotation\fR 0.0
 .br
-\fB  shift\fR 0 0 0          # (\fBrepeatable\fR)
+\fB  shift\fR 0 0 0            # (\fBrepeatable\fR)
 .br
-\fB  scale\fR 1 1 1          # (\fBrepeatable\fR)
+\fB  scale\fR 1 1 1            # (\fBrepeatable\fR)
 .br
-\fB  shear\fR 0 0 0          # (\fBrepeatable\fR)
+\fB  shear\fR 0 0 0            # (\fBrepeatable\fR)
 .br
-\fB  spin\fR angle nx ny nz  # (\fBrepeatable\fR)
+\fB  spin\fR angle nx ny nz    # (\fBrepeatable\fR)
 .br
 \fB  phydrv\fR example_phydrv  # assign a physics driver
+.br
+\fB  smoothbounce\fR           # ricochets use normals
 .br
 \fBend\fR
 .br
@@ -1383,15 +1391,17 @@ the object. An example would be:
 .br
 \fB  rotation\fR 0.0
 .br
-\fB  shift\fR 0 0 0          # (\fBrepeatable\fR)
+\fB  shift\fR 0 0 0            # (\fBrepeatable\fR)
 .br
-\fB  scale\fR 1 1 1          # (\fBrepeatable\fR)
+\fB  scale\fR 1 1 1            # (\fBrepeatable\fR)
 .br
-\fB  shear\fR 0 0 0          # (\fBrepeatable\fR)
+\fB  shear\fR 0 0 0            # (\fBrepeatable\fR)
 .br
-\fB  spin\fR angle nx ny nz  # (\fBrepeatable\fR)
+\fB  spin\fR angle nx ny nz    # (\fBrepeatable\fR)
 .br
 \fB  phydrv\fR example_phydrv  # assign a physics driver
+.br
+\fB  smoothbounce\fR           # ricochets use normals
 .br
 \fBend\fR
 .br
@@ -1415,15 +1425,17 @@ the object. An example would be:
 .br
 \fB  rotation\fR 0.0
 .br
-\fB  shift\fR 0 0 0          # (\fBrepeatable\fR)
+\fB  shift\fR 0 0 0            # (\fBrepeatable\fR)
 .br
-\fB  scale\fR 1 1 1          # (\fBrepeatable\fR)
+\fB  scale\fR 1 1 1            # (\fBrepeatable\fR)
 .br
-\fB  shear\fR 0 0 0          # (\fBrepeatable\fR)
+\fB  shear\fR 0 0 0            # (\fBrepeatable\fR)
 .br
-\fB  spin\fR angle nx ny nz  # (\fBrepeatable\fR)
+\fB  spin\fR angle nx ny nz    # (\fBrepeatable\fR)
 .br
 \fB  phydrv\fR example_phydrv  # assign a physics driver
+.br
+\fB  smoothbounce\fR           # ricochets use normals
 .br
 \fBend\fR
 .br
@@ -1445,13 +1457,13 @@ the object. An example would be:
 .br
 \fB  vertex\fR 0.0 5.0 10.0
 .br
-\fB  shift\fR 0 0 0          # (\fBrepeatable\fR)
+\fB  shift\fR 0 0 0            # (\fBrepeatable\fR)
 .br
-\fB  scale\fR 1 1 1          # (\fBrepeatable\fR)
+\fB  scale\fR 1 1 1            # (\fBrepeatable\fR)
 .br
-\fB  shear\fR 0 0 0          # (\fBrepeatable\fR)
+\fB  shear\fR 0 0 0            # (\fBrepeatable\fR)
 .br
-\fB  spin\fR angle nx ny nz  # (\fBrepeatable\fR)
+\fB  spin\fR angle nx ny nz    # (\fBrepeatable\fR)
 .br
 \fB  phydrv\fR example_phydrv  # assign a physics driver
 .br
