@@ -3053,13 +3053,13 @@ static boolean		enterServer(ServerLink* serverLink, World* world,
 	    tmpbuf = nboUnpackString(tmpbuf, email, EmailLen);
 	    if (tmpbuf < msg + len) {
 	      PlayerId id;
-	      fprintf(stderr, "id test %p %p %p %8.8x %8.8x\n", myTank, tmpbuf, msg,
+	      //fprintf(stderr, "id test %p %p %p %8.8x %8.8x ", myTank, tmpbuf, msg,
 		  *(int *)tmpbuf, *((int *)tmpbuf + 1));
 	      tmpbuf = id.unpack(tmpbuf);
 	      myTank->id.serverHost = id.serverHost;
 	      myTank->id.port = id.port;
 	      myTank->id.number = id.number;
-	      fprintf(stderr, "id test %p\n", myTank);
+	      //fprintf(stderr, "%p\n", myTank);
   	      serverLink->send(MsgIdAck, 0, NULL);
 	    }
 	  }
