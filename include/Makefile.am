@@ -22,6 +22,7 @@ noinst_HEADERS =		\
 	CommandsStandard.h	\
 	common.h		\
 	ConfigFileManager.h	\
+	Country.h		\
 	EighthDBaseSceneNode.h	\
 	EighthDBoxSceneNode.h	\
 	EighthDimSceneNode.h	\
@@ -34,7 +35,9 @@ noinst_HEADERS =		\
 	global.h		\
 	Intersect.h		\
 	KeyManager.h		\
+	Language.h		\
 	LaserSceneNode.h	\
+	Locale.h		\
 	md5.h			\
 	multicast.h		\
 	network.h		\
