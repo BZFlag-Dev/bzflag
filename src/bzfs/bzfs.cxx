@@ -5540,8 +5540,11 @@ static std::string cmdSet(const std::string&, const CommandManager::ArgList& arg
   switch (args.size()) {
     case 2:
       if (BZDB->isSet(args[0])) {
-        BZDB->set(args[0], args[1], StateDatabase::Server);
-        return args[0] + " set";
+	if (BZDB->getPermission(args[0]) == StateDatabase::ReadWrite) {
+	  BZDB->set(args[0], args[1], StateDatabase::Server);
+	  return args[0] + " set";
+	}
+	return "variable " + args[0] + " is not writeable";
       }
       else
 	return "variable " + args[0] + " does not exist";
