@@ -313,10 +313,10 @@ void			HUDuiControl::renderLabel()
 {
   std::string theLabel = getLabel();
   if (theLabel.length() > 0 && getFont().isValid()) {
-    trueLabelWidth = getFont().getWidth(theLabel);
+    trueLabelWidth = getFont().getWidth(theLabel) + getFont().getWidth("99");
     const float dx = (desiredLabelWidth > trueLabelWidth)
       ? desiredLabelWidth : trueLabelWidth;
-    font.draw(theLabel, x - dx - 2.0f * fontHeight, y);
+    font.draw(theLabel, x - dx, y);
   }
 }
 

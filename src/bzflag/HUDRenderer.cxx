@@ -270,20 +270,6 @@ void			HUDRenderer::resize(bool firstTime)
   setHeadingFontSize(w, vh);
   setComposeFontSize(w, vh);
   setLabelsFontSize(w, vh);
-
-  // set compose control positions and sizes
-  {
-    OpenGLTexFont font = composeTypeIn->getFont();
-    if (font.isValid()) {
-      const float dx = font.getWidth(composeTypeIn->getLabel()) + 2.0f;
-      const float dy = font.getDescent() + 1.0f;
-      const float x = dx + font.getSpacing();
-      const float y = dy;
-      composeTypeIn->setLabelWidth(dx);
-      composeTypeIn->setPosition(x, y);
-      composeTypeIn->setSize(window.getWidth() - x - dy, font.getSpacing());
-    }
-  }
 }
 
 int			HUDRenderer::getNoMotionSize() const
@@ -524,6 +510,14 @@ void			HUDRenderer::setComposing(const std::string &prompt,
     composeTypeIn->setFocus();
 
     OpenGLTexFont font = composeTypeIn->getFont();
+    if (font.isValid()) {
+      const float x = font.getWidth(composeTypeIn->getLabel()) + font.getWidth("99");
+      const float y = font.getDescent() + 1.0f;
+      composeTypeIn->setLabelWidth(x);
+      composeTypeIn->setPosition(x, y);
+      // FIXME what is this supposed to do?
+      composeTypeIn->setSize(window.getWidth() - x, font.getSpacing());
+    }
   }
   else {
     HUDui::setFocus(NULL);
