@@ -13,6 +13,7 @@
 #include "CommandsStandard.h"
 #include "CommandManager.h"
 #include "StateDatabase.h"
+#include "KeyManager.h"
 #include <stdio.h>
 #include <ctype.h>
 
@@ -151,6 +152,77 @@ static std::string		cmdUnset(const std::string&,
   return std::string();
 }
 
+
+static void			onBindCB(const std::string& name, bool press,
+					 const std::string& cmd, void* userData)
+{
+  std::string& result = *reinterpret_cast<std::string*>(userData);
+  result += name;
+  result += (press ? " down " : " up ");
+  result += cmd;
+  result += "\n";
+}
+
+static std::string		cmdBind(const std::string&,
+					const CommandManager::ArgList& args)
+{
+  if (args.size() == 0) {
+    std::string result;
+    KEYMGR->iterate(&onBindCB, &result);
+    return result;
+  } else if (args.size() < 3) {
+    return "usage: bind <button-name> {up|down} <command> <args>...";
+  }
+
+  BzfKeyEvent key;
+  if (!KEYMGR->stringToKeyEvent(args[0], key))
+    return std::string("bind error: unknown button name \"") + args[0] + "\"";
+
+  bool down;
+  if (args[1] == "up")
+    down = false;
+  else if (args[1] == "down")
+    down = true;
+  else
+    return std::string("bind error: illegal state \"") + args[1] + "\"";
+
+  std::string cmd = args[2];
+  for (unsigned int i = 3; i < args.size(); ++i) {
+    cmd += " ";
+    cmd += args[i];
+  }
+
+  // ignore attempts to modify Esc.  we reserve that for the menu
+  if (key.ascii != 27)
+    KEYMGR->bind(key, down, cmd);
+
+  return std::string();
+}
+
+static std::string		cmdUnbind(const std::string&,
+					  const CommandManager::ArgList& args)
+{
+  if (args.size() != 2)
+    return "usage: unbind <button-name> {up|down}";
+
+  BzfKeyEvent key;
+  if (!KEYMGR->stringToKeyEvent(args[0], key))
+    return std::string("bind error: unknown button name \"") + args[0] + "\"";
+
+  bool down;
+  if (args[1] == "up")
+    down = false;
+  else if (args[1] == "down")
+    down = true;
+  else
+    return std::string("bind error: illegal state \"") + args[1] + "\"";
+
+  if (key.ascii != 27)
+    KEYMGR->unbind(key, down);
+
+  return std::string();
+}
+
 static std::string		cmdToggle(const std::string&,
 					  const CommandManager::ArgList& args)
 {
@@ -180,7 +252,9 @@ static const CommandListItem commandList[] = {
   { "print",	&cmdPrint,	"print ...:  print arguments; $name is replaced by value of variable \"name\"" },
   { "set",	&cmdSet,	"set [<name> <value>]:  set a variable or print all set variables" },
   { "unset",	&cmdUnset,	"unset <name>:  unset a variable" },
-  { "toggle",	&cmdToggle,	"toggle <name>:  toggle truth value of a variable" },
+  { "bind",	&cmdBind,	"bind <button-name> {up|down} <command> <args>...: bind a key" },
+  { "unbind",	&cmdUnbind,	"unbind <button-name> {up|down}:  unbind a key" },
+  { "toggle",	&cmdToggle,	"toggle <name>:  toggle truth value of a variable" }
 };
 // FIXME -- may want a cmd to cycle through a list
 
