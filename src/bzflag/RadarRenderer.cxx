@@ -134,7 +134,7 @@ void			RadarRenderer::drawShot(const ShotPath* shot)
 void RadarRenderer::drawTank(float x, float y, float z)
 {
   // Does not change with height.
-  GLfloat s = TankRadius > 1.5f + 2.0f * ps ? TankRadius : 1.5 + 2.0f * ps;
+  GLfloat s = TankRadius > 1.5f + 2.0f * ps ? TankRadius : 1.5f + 2.0f * ps;
   glRectf(x - s, y - s, x + s, y + s);
 
   // Changes with height.
