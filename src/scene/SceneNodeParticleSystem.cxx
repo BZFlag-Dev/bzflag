@@ -13,8 +13,7 @@
 #include "SceneNodeGeometry.h"
 #include "SceneVisitor.h"
 #include "SceneVisitorParams.h"
-#include "Matrix.h"
-#include <math.h>
+#include "math3D.h"
 #include <iostream>
 
 //
@@ -292,7 +291,8 @@ bool SceneNodeParticleSystem::update(float time, ParticleSystemUpdate flag, floa
 	texcoords.clear();
 	index.clear();
 
-	const float* m = matrix.get();
+	float m[16];
+	matrix.get(m);
 	for(unsigned int i = 0; i < particles.size(); i++) {
 		const float* p = particles[i].location;
 		size = particles[i].size / 4;

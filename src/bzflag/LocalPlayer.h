@@ -15,7 +15,7 @@
 
 #include "Player.h"
 #include "ShotPath.h"
-#include "Ray.h"
+#include "math3D.h"
 #include "BzfEvent.h"
 
 class Obstacle;

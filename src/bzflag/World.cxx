@@ -14,7 +14,7 @@
 #include "World.h"
 #include "global.h"
 #include "Pack.h"
-#include "Ray.h"
+#include "math3D.h"
 #include "Protocol.h"
 #include "DeadPlayer.h"
 #include "RemotePlayer.h"

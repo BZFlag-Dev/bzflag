@@ -186,24 +186,22 @@ Ray						Intersect::rayMinusRay(
 
 float					Intersect::rayClosestToOrigin(const Ray& r)
 {
-	const float* d = r.getDirection();
-	if (d[0] == 0.0 && d[1] == 0.0 && d[2] == 0.0) return 0.0;
-
-	const float* p = r.getOrigin();
-	return -(p[0] * d[0] + p[1] * d[1] + p[2] * d[2]) /
-				(d[0] * d[0] + d[1] * d[1] + d[2] * d[2]);
+	float len2 = r.getDirection().length2();
+	if (len2 == 0.0f)
+		return 0.0f;
+	else
+		return -(r.getOrigin() * r.getDirection()) / len2;
 }
 
 float					Intersect::rayAtDistanceFromOrigin(
 								const Ray& r, float radius)
 {
-	const float* d = r.getDirection();
-	if (d[0] == 0.0 && d[1] == 0.0 && d[2] == 0.0) return 0.0f;
+	const float a = r.getDirection().length2();
+	if (a == 0.0f)
+		return 0.0f;
 
-	const float* p = r.getOrigin();
-	const float a = d[0] * d[0] + d[1] * d[1] + d[2] * d[2];
-	const float b = -(p[0] * d[0] + p[1] * d[1] + p[2] * d[2]);
-	const float c = p[0] * p[0] + p[1] * p[1] + p[2] * p[2] - radius * radius;
+	const float b = -(r.getOrigin() * r.getDirection());
+	const float c = r.getOrigin().length2() - radius * radius;
 	const float disc = b * b - a * c;
 	if (disc < 0.0f) return -1.0f;				// misses sphere
 	const float d1_2 = sqrtf(disc);
@@ -297,24 +295,20 @@ float					Intersect::timeRayHitsBlock(
 								float angle, float dx,
 								float dy, float dz)
 {
-	// get names for ray info
-	const float* p2 = r.getOrigin();
-	const float* d = r.getDirection();
-
 	// translate origin
 	float pa[2];
-	pa[0] = p2[0] - p1[0];
-	pa[1] = p2[1] - p1[1];
+	pa[0] = r.getOrigin()[0] - p1[0];
+	pa[1] = r.getOrigin()[1] - p1[1];
 
 	// rotate
 	float pb[3], db[3];
 	const float c = cosf(-angle), s = sinf(-angle);
 	pb[0] = c * pa[0] - s * pa[1];
 	pb[1] = c * pa[1] + s * pa[0];
-	pb[2] = p2[2] - p1[2];
-	db[0] = c * d[0] - s * d[1];
-	db[1] = c * d[1] + s * d[0];
-	db[2] = d[2];
+	pb[2] = r.getOrigin()[2] - p1[2];
+	db[0] = c * r.getDirection()[0] - s * r.getDirection()[1];
+	db[1] = c * r.getDirection()[1] + s * r.getDirection()[0];
+	db[2] = r.getDirection()[2];
 
 	// find t
 	return timeRayHitsOrigBox(pb, db, dx, dy, dz);
@@ -370,24 +364,20 @@ float					Intersect::timeAndSideRayHitsRect(
 								const float* p1, float angle,
 								float dx, float dy, int& side)
 {
-	// get names for ray info
-	const float* p2 = r.getOrigin();
-	const float* d = r.getDirection();
-
 	// translate origin
 	float pa[2];
-	pa[0] = p2[0] - p1[0];
-	pa[1] = p2[1] - p1[1];
+	pa[0] = r.getOrigin()[0] - p1[0];
+	pa[1] = r.getOrigin()[1] - p1[1];
 
 	// rotate
 	float pb[3], db[3];
 	const float c = cosf(-angle), s = sinf(-angle);
 	pb[0] = c * pa[0] - s * pa[1];
 	pb[1] = c * pa[1] + s * pa[0];
-	pb[2] = p2[2] - p1[2];
-	db[0] = c * d[0] - s * d[1];
-	db[1] = c * d[1] + s * d[0];
-	db[2] = d[2];
+	pb[2] = r.getOrigin()[2] - p1[2];
+	db[0] = c * r.getDirection()[0] - s * r.getDirection()[1];
+	db[1] = c * r.getDirection()[1] + s * r.getDirection()[0];
+	db[2] = r.getDirection()[2];
 
 	// find t and side
 	return timeAndSideRayHitsOrigRect(pb, db, dx, dy, side);

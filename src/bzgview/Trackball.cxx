@@ -124,7 +124,7 @@ Trackball::Quaternion&	Trackball::Quaternion::operator *= (const Quaternion& q)
 Trackball::Trackball()
 {
 	reset();
-	resize(0, 0);
+	resize(1, 1);
 }
 
 Trackball::~Trackball()
@@ -201,10 +201,12 @@ void					Trackball::reset()
 	delta[0] = 1.0f;
 	delta[1] = delta[2] = delta[3] = 0.0f;
 	xlate[0] = xlate[1] = xlate[2] = 0.0f;
+	fov = 45.0f;
 	spinning = false;
 	turning = false;
 	panning = false;
 	trucking = false;
+	zooming = false;
 }
 
 void					Trackball::resize(int w, int h)
@@ -213,6 +215,7 @@ void					Trackball::resize(int w, int h)
 	wdy = h >> 1;
 	wx = wdx;
 	wy = wdy;
+	aspect = (float)h / (float)w;
 }
 
 void					Trackball::getMatrix(float* m) const
@@ -221,6 +224,28 @@ void					Trackball::getMatrix(float* m) const
 	m[12] = xlate[0];
 	m[13] = xlate[1];
 	m[14] = xlate[2];
+}
+
+void					Trackball::getProjection(
+								float* m, float n, float f) const
+{
+	float a = static_cast<float>(tanf(0.5 * fov * (M_PI / 180.0)));
+	m[0]  = aspect * n / a;
+	m[1]  = 0.0f;
+	m[2]  = 0.0f;
+	m[3]  = 0.0f;
+	m[4]  = 0.0f;
+	m[5]  = n / a;
+	m[6]  = 0.0f;
+	m[7]  = 0.0f;
+	m[8]  = 0.0f;
+	m[9]  = 0.0f;
+	m[10] = -(f + n) / (f - n);
+	m[11] = -1.0f;
+	m[12] = 0.0f;
+	m[13] = 0.0f;
+	m[14] = -2.0f * f * n / (f - n);
+	m[15] = 0.0f;
 }
 
 #define MAXHISTORY countof(history)
@@ -233,10 +258,17 @@ bool					Trackball::onEvent(const BzfEvent& event, bool& redraw)
 				x0 = x;
 				y0 = y;
 				if (event.keyDown.shift & BzfKeyEvent::ShiftKey) {
-					// pan
-					panning = true;
-					xlate0[0] = xlate[0];
-					xlate0[1] = xlate[1];
+					if (event.keyDown.shift & BzfKeyEvent::ControlKey) {
+						// zoom
+						zooming = true;
+						fov0 = fov;
+					}
+					else {
+						// pan
+						panning = true;
+						xlate0[0] = xlate[0];
+						xlate0[1] = xlate[1];
+					}
 				}
 				else if (event.keyDown.shift & BzfKeyEvent::ControlKey) {
 					// zoom
@@ -282,6 +314,7 @@ bool					Trackball::onEvent(const BzfEvent& event, bool& redraw)
 				else {
 					panning = false;
 					trucking = false;
+					zooming = false;
 				}
 				return true;
 			}
@@ -306,11 +339,20 @@ bool					Trackball::onEvent(const BzfEvent& event, bool& redraw)
 				redraw = true;
 			}
 			else if (panning) {
-				xlate[0] = xlate0[0] + 4.0f * (x - x0);
-				xlate[1] = xlate0[1] + 4.0f * (y - y0);
+				float s = tanf(fov * M_PI / 180.0f);
+				xlate[0] = xlate0[0] + s * 4.0f * (x - x0);
+				xlate[1] = xlate0[1] + s * 4.0f * (y - y0);
 			}
 			else if (trucking) {
 				xlate[2] = xlate0[2] - 4.0f * (y - y0);
+			}
+			else if (zooming) {
+				fov = fov0 - 50.0f * (y - y0);
+				if (fov < 0.1f)
+					fov = 0.1f;
+				else if (fov > 85.0f)
+					fov = 85.0f;
+				redraw = true;
 			}
 			return true;
 

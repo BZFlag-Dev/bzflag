@@ -12,7 +12,7 @@
 
 #include "SceneBuilder.h"
 #include "World.h"
-#include "Matrix.h"
+#include "math3D.h"
 #include "ErrorHandler.h"
 #include "SceneNodes.h"
 #include "SceneReader.h"
@@ -256,22 +256,22 @@ void					SceneDatabaseBuilder::prepMatrix(
 	m.setTranslate(pos[0], pos[1], pos[2] + dz);
 	Matrix x;
 	x.setRotate(0.0f, 0.0f, 1.0f, o.getRotation() * 180.0f / M_PI);
-	m.mult(x);
+	m *= x;
 }
 
 void					SceneDatabaseBuilder::prepNormalMatrix(
 								const Matrix& x, Matrix& n)
 {
 	n = x;
-	n.inverse();
+	n.invert();
 	n.transpose();
 }
 
 void					SceneDatabaseBuilder::addVertex(
 								const Matrix& m, const float* v)
 {
-	float v1[3];
-	m.transform3(v1, v);
+	Vec3 v1(v[0], v[1], v[2]);
+	v1.xformPoint(m);
 	vertex += string_util::format("%f %f %f\n", v1[0], v1[1], v1[2]);
 	++nVertex;
 }
@@ -289,8 +289,7 @@ void					SceneDatabaseBuilder::addVertex(
 void					SceneDatabaseBuilder::addNormal(
 								const Matrix& m, const float* n)
 {
-	float n1[3];
-	m.transform3(n1, n);
+	Vec3 n1 = m * Vec3(n[0], n[1], n[2]);
 	normal += string_util::format("%f %f %f\n", n1[0], n1[1], n1[2]);
 }
 
@@ -321,7 +320,7 @@ void					SceneDatabaseBuilder::addWall(const WallObstacle& o)
 	prepMatrix(o, 0.0f, m);
 	Matrix x;
 	x.setScale(1.0f, dy, dz);
-	m.mult(x);
+	m *= x;
 	prepNormalMatrix(m, x);
 
 	unsigned int i;
@@ -429,7 +428,7 @@ void					SceneDatabaseBuilder::addBox(const BoxBuilding& o)
 	prepMatrix(o, 0.0f, m);
 	Matrix x;
 	x.setScale(dx, dy, dz);
-	m.mult(x);
+	m *= x;
 	prepNormalMatrix(m, x);
 
 	unsigned int i;
@@ -497,7 +496,7 @@ void					SceneDatabaseBuilder::addPyramid(const PyramidBuilding& o)
 	prepMatrix(o, 0.0f, m);
 	Matrix x;
 	x.setScale(dx, dy, dz);
-	m.mult(x);
+	m *= x;
 	prepNormalMatrix(m, x);
 
 	color +=	"0.25 0.25 0.63 1\n"
@@ -584,7 +583,7 @@ void					SceneDatabaseBuilder::addBase(const BaseBuilding& o)
 	prepMatrix(o, dz == 0.0f ? 0.04f : 0.0f, m);
 	Matrix x;
 	x.setScale(dx, dy, dz);
-	m.mult(x);
+	m *= x;
 	prepNormalMatrix(m, x);
 
 	color += string_util::format("%f %f %f 1 %f %f %f 1 %f %f %f 1 %f %f %f 1\n",

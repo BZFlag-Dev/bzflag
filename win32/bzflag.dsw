@@ -47,6 +47,12 @@ Package=<4>
     Begin Project Dependency
     Project_Dep_Name ui
     End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name math
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name shape
+    End Project Dependency
 }}}
 
 ###############################################################################
@@ -70,6 +76,9 @@ Package=<4>
     End Project Dependency
     Begin Project Dependency
     Project_Dep_Name game
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name math
     End Project Dependency
 }}}
 
@@ -104,6 +113,12 @@ Package=<4>
     Begin Project Dependency
     Project_Dep_Name mplatform
     End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name math
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name net
+    End Project Dependency
 }}}
 
 ###############################################################################
@@ -133,6 +148,18 @@ Package=<4>
 ###############################################################################
 
 Project: "geometry"=.\geometry.dsp - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+}}}
+
+###############################################################################
+
+Project: "math"=.\math.dsp - Package Owner=<4>
 
 Package=<5>
 {{{
@@ -220,6 +247,18 @@ Package=<4>
 ###############################################################################
 
 Project: "scene"=.\scene.dsp - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+}}}
+
+###############################################################################
+
+Project: "shape"=.\shape.dsp - Package Owner=<4>
 
 Package=<5>
 {{{

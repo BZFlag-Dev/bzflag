@@ -131,17 +131,18 @@ void					ViewFrustum::setOffset(
 	projectionMatrix[8]  = projectionMatrix[12] / focalPlane;
 }
 
-const float*				ViewFrustum::getTransform()
+const Matrix&			ViewFrustum::getTransform()
 {
 	// this matrix undoes the coordinate transform that setView() does.
 	//
 	// note that, as formatted, the matrix is transposed wrt to how
 	// the matrix is used (due to the OpenGL matrix layout).
-	static const float matrix[] = {
-		1.0f, 0.0f, 0.0f, 0.0f,
-		0.0f, 0.0f, 1.0f, 0.0f,
-		0.0f, 1.0f, 0.0f, 0.0f,
-		0.0f, 0.0f, 0.0f, 1.0f
+	static const Real raw_matrix[] = {
+		R_(1.0), R_(0.0), R_(0.0), R_(0.0),
+		R_(0.0), R_(0.0), R_(1.0), R_(0.0),
+		R_(0.0), R_(1.0), R_(0.0), R_(0.0),
+		R_(0.0), R_(0.0), R_(0.0), R_(1.0)
 	};
+	static const Matrix matrix = RealMatrix(raw_matrix);
 	return matrix;
 }

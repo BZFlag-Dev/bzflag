@@ -18,13 +18,15 @@ COMMONPREF = src
 include $(DEPTH)/Make-common
 
 SUBDIRS =				\
-	zlib				\
 	bzfrelay			\
+	common				\
 	game				\
+	zlib				\
 	platform			\
 	net				\
-	common				\
 	bzfls				\
+	math				\
+	shape				\
 	bzfs				\
 	mediafile			\
 	geometry			\

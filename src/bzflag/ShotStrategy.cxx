@@ -26,7 +26,7 @@
 #include "SceneNodeMatrixTransform.h"
 #include "SceneNodeParameters.h"
 #include "SceneManager.h"
-#include "Matrix.h"
+#include "math3D.h"
 #include "bzfgl.h"
 
 //
@@ -334,7 +334,7 @@ void					SegmentedShotStrategy::update(float dt)
 					case ShotPathSegment::Ricochet: {
 						// play ricochet sound.  ricochet of local player's shots
 						// are important, others are not.
-						const float* pos = segments[segment].ray.getOrigin();
+						const Real* pos = segments[segment].ray.getOrigin().get();
 						playWorldSound(SFX_RICOCHET, pos[0], pos[1], pos[2],
 				getPath().getPlayer() == LocalPlayer::getMyTank()->getId());
 						break;
@@ -352,10 +352,9 @@ void					SegmentedShotStrategy::update(float dt)
 		setExpiring();
 
 		ShotPathSegment& segment = segments[numSegments - 1];
-		const float* dir = segment.ray.getDirection();
-		const float speed = hypotf(dir[0], hypotf(dir[1], dir[2]));
 		float pos[3];
-		segment.ray.getPoint(segment.end - segment.start - 1.0f / speed, pos);
+		segment.ray.getPoint(segment.end - segment.start - 1.0f /
+								segment.ray.getDirection().length(), pos);
 		/* NOTE -- comment out to not explode when shot expires */
 		addShotExplosion(pos);
 	}
@@ -365,7 +364,7 @@ void					SegmentedShotStrategy::update(float dt)
 		float p[3];
 		segments[segment].ray.getPoint(currentTime - segments[segment].start, p);
 		setPosition(p);
-		setVelocity(segments[segment].ray.getDirection());
+		setVelocity(segments[segment].ray.getDirection().get());
 	}
 }
 
@@ -418,7 +417,7 @@ float					SegmentedShotStrategy::checkHit(const BaseLocalPlayer* tank,
 	lastTankPositionRaw[0] = tankLastMotionRaw.getOrigin()[0];
 	lastTankPositionRaw[1] = tankLastMotionRaw.getOrigin()[1];
 	lastTankPositionRaw[2] = tankLastMotionRaw.getOrigin()[2] + 0.5f * TankHeight;
-	Ray tankLastMotion(lastTankPositionRaw, tankLastMotionRaw.getDirection());
+	Ray tankLastMotion = Ray(Vec3(lastTankPositionRaw), tankLastMotionRaw.getDirection());
 
 	// if bounding box of tank and entire shot doesn't overlap then no hit
 	const float (*tankBBox)[3] = tank->getLastMotionBBox();
@@ -830,24 +829,25 @@ SceneNode*				LaserStrategy::createSegment(int index) const
 	const ShotPathSegment& segment = getSegments()[index];
 	const float t = segment.end - segment.start;
 	const Ray& ray = segment.ray;
-	const float* pos = ray.getOrigin();
-	const float* dir = ray.getDirection();
-	const float len = hypotf(dir[0], hypotf(dir[1], dir[2]));
+	const Real* pos = ray.getOrigin().get();
+	const Real* dir = ray.getDirection().get();
+	const float len = ray.getDirection().length();
 
 	// compute transform.  maps origin to ray.getOrigin() and 1,0,0
 	// to ray.getOrigin() + t * ray.getDirection().
 	Matrix matrix, tmp;
 	matrix.setTranslate(pos[0], pos[1], pos[2]);
 	tmp.setRotate(0.0f, 0.0f, 1.0f, atan2f(dir[1], dir[0]) * 180.0f / M_PI);
-	matrix.mult(tmp);
+	matrix *= tmp;
 	tmp.setRotate(0.0f, 1.0f, 0.0f, -asinf(dir[2] / len) * 180.0f / M_PI);
-	matrix.mult(tmp);
+	matrix *= tmp;
 	tmp.setScale(t * len, 1.0f, 1.0f);
-	matrix.mult(tmp);
+	matrix *= tmp;
 
 	// set transform
+	float m[16];
 	SceneNodeMatrixTransform* xform = new SceneNodeMatrixTransform;
-	xform->matrix.set(matrix.get(), 16);
+	xform->matrix.set(matrix.get(m), 16);
 
 	// put model under transform (all segments share the same model)
 	xform->pushChild(model);
@@ -883,8 +883,8 @@ void					LaserStrategy::radarRender() const
 	glBegin(GL_LINES);
 		for (int i = 0; i < numSegments; i++) {
 			const ShotPathSegment& segment = segments[i];
-			const float* origin = segment.ray.getOrigin();
-			const float* direction = segment.ray.getDirection();
+			const Real* origin = segment.ray.getOrigin().get();
+			const Real* direction = segment.ray.getDirection().get();
 			const float dt = segment.end - segment.start;
 			glVertex2fv(origin);
 			glVertex2f(origin[0] + dt * direction[0], origin[1] + dt * direction[1]);
@@ -1167,7 +1167,7 @@ float					GuidedMissileStrategy::checkHit(const BaseLocalPlayer* tank,
 	lastTankPositionRaw[0] = tankLastMotionRaw.getOrigin()[0];
 	lastTankPositionRaw[1] = tankLastMotionRaw.getOrigin()[1];
 	lastTankPositionRaw[2] = tankLastMotionRaw.getOrigin()[2] + 0.5f * TankHeight;
-	Ray tankLastMotion(lastTankPositionRaw, tankLastMotionRaw.getDirection());
+	Ray tankLastMotion = Ray(Vec3(lastTankPositionRaw), tankLastMotionRaw.getDirection());
 
 	// check each segment
 	const int numSegments = segments.size();
@@ -1179,12 +1179,7 @@ float					GuidedMissileStrategy::checkHit(const BaseLocalPlayer* tank,
 		const Ray& ray = segments[i].ray;
 
 		// construct ray with correct velocity
-		float speed[3];
-		const float* dir = ray.getDirection();
-		speed[0] = ShotSpeed * dir[0];
-		speed[1] = ShotSpeed * dir[1];
-		speed[2] = ShotSpeed * dir[2];
-		Ray speedRay(ray.getOrigin(), speed);
+		Ray speedRay(ray.getOrigin(), ShotSpeed * ray.getDirection());
 
 		// construct relative shot ray:  origin and velocity relative to
 		// my tank as a function of time (t=0 is start of the interval).

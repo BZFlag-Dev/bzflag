@@ -11,8 +11,6 @@
  */
 
 #include "BoundingBox.h"
-#include "Matrix.h"
-#include <string.h>
 
 //
 // BoundingBox
@@ -20,23 +18,18 @@
 
 BoundingBox::BoundingBox()
 {
-	set(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f);
+	set(R_(0.0), R_(0.0), R_(0.0), R_(0.0), R_(0.0), R_(0.0));
 }
 
-BoundingBox::BoundingBox(const float* minXYZ, const float* maxXYZ)
+BoundingBox::BoundingBox(const Real* minXYZ, const Real* maxXYZ)
 {
 	set(minXYZ[0], minXYZ[1], minXYZ[2], maxXYZ[0], maxXYZ[1], maxXYZ[2]);
 }
 
-BoundingBox::BoundingBox(float xMin, float yMin, float zMin,
-								float xMax, float yMax, float zMax)
+BoundingBox::BoundingBox(Real xMin, Real yMin, Real zMin,
+								Real xMax, Real yMax, Real zMax)
 {
 	set(xMin, yMin, zMin, xMax, yMax, zMax);
-}
-
-BoundingBox::BoundingBox(const BoundingBox& box)
-{
-	memcpy(p, box.p, sizeof(p));
 }
 
 BoundingBox::~BoundingBox()
@@ -44,26 +37,20 @@ BoundingBox::~BoundingBox()
 	// do nothing
 }
 
-BoundingBox&			BoundingBox::operator=(const BoundingBox& box)
-{
-	memcpy(p, box.p, sizeof(p));
-	return *this;
-}
-
 void					BoundingBox::set(
-								const float* minXYZ, const float* maxXYZ)
+								const Real* minXYZ, const Real* maxXYZ)
 {
 	set(minXYZ[0], minXYZ[1], minXYZ[2], maxXYZ[0], maxXYZ[1], maxXYZ[2]);
 }
 
 void					BoundingBox::set(
-								float xMin, float yMin, float zMin,
-								float xMax, float yMax, float zMax)
+								Real xMin, Real yMin, Real zMin,
+								Real xMax, Real yMax, Real zMax)
 {
 	// center
-	p[0][0] = 0.5f * (xMin + xMax);
-	p[0][1] = 0.5f * (yMin + yMax);
-	p[0][2] = 0.5f * (zMin + zMax);
+	p[0][0] = R_(0.5) * (xMin + xMax);
+	p[0][1] = R_(0.5) * (yMin + yMax);
+	p[0][2] = R_(0.5) * (zMin + zMax);
 
 	// +x face center
 	p[1][0] = xMax;
@@ -83,18 +70,18 @@ void					BoundingBox::set(
 
 void					BoundingBox::transform(const Matrix& m)
 {
-	m.transform3(p[0], p[0]);
-	m.transform3(p[1], p[1]);
-	m.transform3(p[2], p[2]);
-	m.transform3(p[3], p[3]);
+	p[0].xformPoint(m);
+	p[1].xformPoint(m);
+	p[2].xformPoint(m);
+	p[3].xformPoint(m);
 }
 
-void					BoundingBox::get(float* minXYZ, float* maxXYZ) const
+void					BoundingBox::get(Real* minXYZ, Real* maxXYZ) const
 {
 	// compute largest x, y, z
-	float x = (p[1][0] - p[0][0] > 0.0f) ? p[1][0] - p[0][0] : p[0][0] - p[1][0];
-	float y = (p[1][1] - p[0][1] > 0.0f) ? p[1][1] - p[0][1] : p[0][1] - p[1][1];
-	float z = (p[1][2] - p[0][2] > 0.0f) ? p[1][2] - p[0][2] : p[0][2] - p[1][2];
+	Real x = (p[1][0] - p[0][0] > 0.0f) ? p[1][0] - p[0][0] : p[0][0] - p[1][0];
+	Real y = (p[1][1] - p[0][1] > 0.0f) ? p[1][1] - p[0][1] : p[0][1] - p[1][1];
+	Real z = (p[1][2] - p[0][2] > 0.0f) ? p[1][2] - p[0][2] : p[0][2] - p[1][2];
 	x += (p[2][0] - p[0][0] > 0.0f) ? p[2][0] - p[0][0] : p[0][0] - p[2][0];
 	y += (p[2][1] - p[0][1] > 0.0f) ? p[2][1] - p[0][1] : p[0][1] - p[2][1];
 	z += (p[2][2] - p[0][2] > 0.0f) ? p[2][2] - p[0][2] : p[0][2] - p[2][2];

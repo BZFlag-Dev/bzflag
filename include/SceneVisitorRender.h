@@ -16,59 +16,57 @@
 #include "SceneVisitorBaseRender.h"
 #include "OpenGLGState.h"
 #include "BoundingBox.h"
+#include "math3D.h"
 #include <string>
-#include "Matrix.h"
 #include <vector>
 
 class SceneVisitorRender : public SceneVisitorBaseRender {
 public:
-						SceneVisitorRender();
-	virtual 				~SceneVisitorRender();
+	SceneVisitorRender();
+	virtual ~SceneVisitorRender();
 
 	// SceneVisitor overrides
-	virtual bool				traverse(SceneNode*);
-	virtual bool				visit(SceneNodeAnimate*);
-	virtual bool				visit(SceneNodeBaseTransform*);
-	virtual bool				visit(SceneNodeGState*);
-	virtual bool				visit(SceneNodeGeometry*);
-	virtual bool				visit(SceneNodeLight*);
-	virtual bool				visit(SceneNodeParameters*);
-	virtual bool				visit(SceneNodeParticleSystem*);
-	virtual bool				visit(SceneNodePrimitive*);
-	virtual bool				visit(SceneNodeSelector*);
+	virtual bool		traverse(SceneNode*);
+	virtual bool		visit(SceneNodeAnimate*);
+	virtual bool		visit(SceneNodeBaseTransform*);
+	virtual bool		visit(SceneNodeGState*);
+	virtual bool		visit(SceneNodeGeometry*);
+	virtual bool		visit(SceneNodeLight*);
+	virtual bool		visit(SceneNodeParameters*);
+	virtual bool		visit(SceneNodeParticleSystem*);
+	virtual bool		visit(SceneNodePrimitive*);
+	virtual bool		visit(SceneNodeSelector*);
 
 private:
-	void					sort();
-	void					draw();
+	void				sort();
+	void				draw();
 
-	void					computeFrustum();
-	bool					isCulled(const float aabb[2][3]) const;
-	void					setPlane(unsigned int index, const float* p,
-							const float* v1, const float* v2);
-	bool					insidePlane(const float* plane,
-							float x, float y, float z) const;
+	void				computeFrustum();
+	bool				isCulled(const Real aabb[2][3]) const;
+	void				setPlane(unsigned int index, const Vec3& p,
+								const Vec3& v1, const Vec3& v2);
 
 	struct Job {
 	public:
 		Job(const OpenGLGState&);
 
 	public:
-		SceneNodePrimitive*		primitive;
+		SceneNodePrimitive*			primitive;
 		SceneNodeParticleSystem*	particle;
-		float				depth;
-		OpenGLGState			gstate;
-		const GState*			compare;
+		float						depth;
+		OpenGLGState				gstate;
+		const GState*				compare;
 		const SceneNodeVFFloat*		stipple;
 		const SceneNodeVFFloat*		color;
 		const SceneNodeVFFloat*		texcoord;
 		const SceneNodeVFFloat*		normal;
 		const SceneNodeVFFloat*		vertex;
-		unsigned int			xformView;
-		unsigned int			xformProjection;
-		unsigned int			xformTexture;
-		unsigned int			lightSet;
+		unsigned int				xformView;
+		unsigned int				xformProjection;
+		unsigned int				xformTexture;
+		unsigned int				lightSet;
 	};
-	static bool				jobLess(const Job&, const Job&);
+	static bool			jobLess(const Job&, const Job&);
 
 private:
 	typedef std::vector<OpenGLGState>	GStateStack;
@@ -79,62 +77,62 @@ private:
 
 	struct LightInfo {
 	public:
-		float				ambient[4];
-		float				diffuse[4];
-		float				specular[4];
-		float				position[4];
-		float				spotDirection[3];
-		float				spotExponent;
-		float				spotCutoff;
-		float				attenuation[3];
+		float			ambient[4];
+		float			diffuse[4];
+		float			specular[4];
+		float			position[4];
+		float			spotDirection[3];
+		float			spotExponent;
+		float			spotCutoff;
+		float			attenuation[3];
 	};
 	typedef std::vector<unsigned int>	IndexStack;
 	typedef std::vector<LightInfo>		LightStack;
 	typedef std::vector<LightInfo>		LightList;
 	struct LightSet {
 	public:
-		unsigned int			size;
-		unsigned int			index[8];
+		unsigned int	size;
+		unsigned int	index[8];
 	};
-	typedef std::vector<LightSet>		LightSetList;
+	typedef std::vector<LightSet>	LightSetList;
 	typedef std::vector<Matrix>		MatrixList;
 	typedef std::vector<Job>		JobList;
 	enum CullingState { kCullOld, kCullDirty, kCullNo, kCullYes };
 
-	std::string				nameMask, nameLighting;
+	std::string			nameMask, nameLighting;
 
-	SceneNodeVFFloat			dummyParams;
-	GStateStack				gstateStack;
-	XFormStack				modelXFormStack;
-	XFormStack				projectionXFormStack;
-	XFormStack				textureXFormStack;
-	IndexStack				modelXFormIndexStack;
-	IndexStack				projectionXFormIndexStack;
-	IndexStack				textureXFormIndexStack;
-	GeometryStack				stippleStack;
-	GeometryStack				colorStack;
-	GeometryStack				texcoordStack;
-	GeometryStack				normalStack;
-	GeometryStack				vertexStack;
-	GeometryNodeStack			geometryStack;
-	LightStack				lightStack;
-	IndexStack				lightIndexStack;
-	IndexStack				lightSetIndexStack;
-	unsigned int				maxLights;
+	SceneNodeVFFloat	dummyParams;
+	GStateStack			gstateStack;
+	XFormStack			modelXFormStack;
+	XFormStack			projectionXFormStack;
+	XFormStack			textureXFormStack;
+	IndexStack			modelXFormIndexStack;
+	IndexStack			projectionXFormIndexStack;
+	IndexStack			textureXFormIndexStack;
+	GeometryStack		stippleStack;
+	GeometryStack		colorStack;
+	GeometryStack		texcoordStack;
+	GeometryStack		normalStack;
+	GeometryStack		vertexStack;
+	GeometryNodeStack	geometryStack;
+	LightStack			lightStack;
+	IndexStack			lightIndexStack;
+	IndexStack			lightSetIndexStack;
+	unsigned int		maxLights;
 
-	MatrixList					matrixList;
-	LightList					lightList;
-	LightSetList				lightSetList;
+	MatrixList			matrixList;
+	LightList			lightList;
+	LightSetList		lightSetList;
 
-	BoundingBox				boundingBox;
-	float					aaBoundingBox[2][3];
-	CullingState				boundingBoxCull;
-	bool					frustumDirty;
-	float					frustum[6][4];
-	unsigned int				frustumDir[6][3];
+	BoundingBox			boundingBox;
+	Real				aaBoundingBox[2][3];
+	CullingState		boundingBoxCull;
+	bool				frustumDirty;
+	Plane				frustum[6];
+	unsigned int		frustumDir[6][3];
 
-	SceneVisitor*				resetter;
-	JobList					jobs;
+	SceneVisitor*		resetter;
+	JobList				jobs;
 };
 
 #endif

@@ -13,8 +13,7 @@
 #include "SceneNodeTransform.h"
 #include "SceneVisitor.h"
 #include "SceneVisitorParams.h"
-#include "Matrix.h"
-#include <math.h>
+#include "math3D.h"
 
 //
 // SceneNodeTransform
@@ -75,7 +74,7 @@ void					SceneNodeTransform::get(
 						t1 * v[1] + t2 * v[4],
 						t1 * v[2] + t2 * v[5]);
 		}
-		matrix.mult(x);
+		matrix *= x;
 	}
 
 	// translation C
@@ -93,7 +92,7 @@ void					SceneNodeTransform::get(
 						t1 * v[1] + t2 * v[4],
 						t1 * v[2] + t2 * v[5]);
 		}
-		matrix.mult(c);
+		matrix *= c;
 
 		// prepare for inverse
 		c[12] = -c[12];
@@ -117,7 +116,7 @@ void					SceneNodeTransform::get(
 						t1 * v[2] + t2 * v[6],
 						t1 * v[3] + t2 * v[7]);
 		}
-		matrix.mult(x);
+		matrix *= x;
 	}
 
 	// rotation SO
@@ -136,7 +135,7 @@ void					SceneNodeTransform::get(
 						t1 * v[2] + t2 * v[6],
 						t1 * v[3] + t2 * v[7]);
 		}
-		matrix.mult(so);
+		matrix *= so;
 
 		// prepare for inverse (transpose is inverse of orthonormal transform)
 		so.transpose();
@@ -157,19 +156,19 @@ void					SceneNodeTransform::get(
 						t1 * v[1] + t2 * v[4],
 						t1 * v[2] + t2 * v[5]);
 		}
-		matrix.mult(x);
+		matrix *= x;
 	}
 
 	// rotation -SO
 	if (scaleOrientation.getNum() > 0)
-		matrix.mult(so);
+		matrix *= so;
 
 	// translation -C
 	if (center.getNum() > 0)
-		matrix.mult(c);
+		matrix *= c;
 
 	// apply transform
-	m.mult(matrix);
+	m *= matrix;
 }
 
 bool					SceneNodeTransform::visit(SceneVisitor* visitor)

@@ -13,8 +13,7 @@
 #include "SceneNodeLOD.h"
 #include "SceneVisitor.h"
 #include "SceneVisitorParams.h"
-#include "Matrix.h"
-#include <math.h>
+#include "math3D.h"
 
 //
 // SceneNodeLOD
@@ -39,30 +38,31 @@ unsigned int				SceneNodeLOD::get(
 								const Matrix& proj,
 								const SceneVisitorParams&)
 {
-	float d;
-
 	// if no sphere or no ranges then no children
 	if (sphere.getNum() < 4 || range.getNum() == 0)
 		return 0;
 
 	// transform origin
-	const float* p  = sphere.get();
-	const float* vm = view.get();
-	const float* pm = proj.get();
-	float x = p[0] * vm[0] + p[1] * vm[4] + p[2] * vm[8]  + vm[12];
-	float y = p[0] * vm[1] + p[1] * vm[5] + p[2] * vm[9]  + vm[13];
-	float z = p[0] * vm[2] + p[1] * vm[6] + p[2] * vm[10] + vm[14];
-	float w = x    * pm[3] + y    * pm[7] + z    * pm[11] + pm[15];
-	z       = x    * pm[2] + y    * pm[6] + z    * pm[10] + pm[14];
+	Vec3 v(sphere.get());
+	v.xformPoint(view);
+	Real w = v[0] * proj[3] + v[1] * proj[7] + v[2] * proj[11] + proj[15];
+	Real z = v[0] * proj[2] + v[1] * proj[6] + v[2] * proj[10] + proj[14];
 
 	// compute range value
+	float d;
 	if (type.get() == Depth) {
-		d = z / w;
+		d = static_cast<float>(z / w);
 	}
 	else {
 		// FIXME -- this doesn't handle non-uniform scale or skew correctly
-		d = p[3] * hypotf(vm[0], hypotf(vm[1], vm[2])) / w;
-		d = p[3] * hypotf(vm[4], hypotf(vm[5], vm[6])) / w;
+		d = static_cast<float>(sphere.get()[3] *
+								sqrtr(view[0] * view[0] +
+									view[1] * view[1] +
+									view[2] * view[2]) / w);
+		d = static_cast<float>(sphere.get()[3] *
+								sqrtr(view[4] * view[4] +
+									view[5] * view[5] +
+									view[6] * view[6]) / w);
 	}
 
 	// find ranges that match

@@ -24,7 +24,7 @@
 #define BZF_OBSTACLE_H
 
 #include "common.h"
-#include "Ray.h"
+#include "math3D.h"
 #include <string>
 
 class WallSceneNode;

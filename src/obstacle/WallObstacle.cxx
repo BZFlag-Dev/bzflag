@@ -42,12 +42,14 @@ std::string				WallObstacle::getClassName() // const
 
 float					WallObstacle::intersect(const Ray& r) const
 {
-	const float* o = r.getOrigin();
-	const float* d = r.getDirection();
-	const float dot = -(d[0] * plane[0] + d[1] * plane[1] + d[2] * plane[2]);
-	if (dot == 0.0f) return -1.0f;
-	float t = (o[0] * plane[0] + o[1] * plane[1] + o[2] * plane[2] +
-														plane[3]) / dot;
+	const float dot = -(r.getDirection()[0] * plane[0] +
+						r.getDirection()[1] * plane[1] +
+						r.getDirection()[2] * plane[2]);
+	if (dot == 0.0f)
+		return -1.0f;
+	float t = (r.getOrigin()[0] * plane[0] +
+				r.getOrigin()[1] * plane[1] +
+				r.getOrigin()[2] * plane[2] + plane[3]) / dot;
 	return t;
 }
 

@@ -142,6 +142,10 @@ SOURCE=..\include\FileManager.h
 # End Source File
 # Begin Source File
 
+SOURCE=..\include\mathr.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\include\StateDatabase.h
 # End Source File
 # Begin Source File

@@ -17,8 +17,6 @@ TARGETS  = $(LIBDIR)/libGeometry.a
 CXXFILES =				\
 	BoundingBox.cxx			\
 	Intersect.cxx			\
-	Matrix.cxx			\
-	Ray.cxx				\
 	ViewFrustum.cxx			\
 	$(NULL)
 

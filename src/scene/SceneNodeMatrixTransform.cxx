@@ -12,8 +12,7 @@
 
 #include "SceneNodeMatrixTransform.h"
 #include "SceneVisitor.h"
-#include "Matrix.h"
-#include <string.h>
+#include "math3D.h"
 
 //
 // SceneNodeMatrixTransform
@@ -38,12 +37,13 @@ void					SceneNodeMatrixTransform::get(
 								Matrix& m,
 								const SceneVisitorParams&)
 {
-	// convert values to matrix
-	Matrix cMatrix;
-	cMatrix.set(matrix.get());
+	if (matrix.isDirty()) {
+		matrix.clearDirty();
+		xform = FloatMatrix(matrix.get());
+	}
 
 	// apply transform
-	m.mult(cMatrix);
+	m *= xform;
 }
 
 bool					SceneNodeMatrixTransform::visit(SceneVisitor* visitor)

@@ -15,7 +15,7 @@
 
 #include "SceneVisitorBaseRender.h"
 #include "OpenGLGState.h"
-#include "Matrix.h"
+#include "math3D.h"
 #include <vector>
 
 class SceneVisitorSimpleRender : public SceneVisitorBaseRender {

@@ -18,10 +18,10 @@
 #define BZF_KEYMANAGER_H
 
 #include "common.h"
-#include "BzfEvent.h"
 #include <string>
-#include "CallbackList.h"
 #include <map>
+#include "BzfEvent.h"
+#include "CallbackList.h"
 
 #define KEYMGR (KeyManager::getInstance())
 

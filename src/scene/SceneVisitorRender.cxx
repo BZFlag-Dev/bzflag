@@ -282,29 +282,29 @@ void					SceneVisitorRender::draw()
 		if (job.xformTexture != xformTexture) {
 			xformTexture = job.xformTexture;
 			glMatrixMode(GL_TEXTURE);
-			glLoadMatrixf(matrixList[xformTexture].get());
+			glLoadMatrixr(matrixList[xformTexture].get());
 			matrixModeChanged = true;
 			++getInstr()->nTransforms;
 		}
 		if (job.xformProjection != xformProjection) {
 			xformProjection = job.xformProjection;
 			glMatrixMode(GL_PROJECTION);
-			glLoadMatrixf(matrixList[xformProjection].get());
+			glLoadMatrixr(matrixList[xformProjection].get());
 			matrixModeChanged = true;
 			++getInstr()->nTransforms;
 
 			// should compute the sign of the adjoint but we're
 			// expecting a very specific kind of matrix so we
 			// can take a shortcut.
-			const float* m = matrixList[xformProjection].get();
-			frontCCW = ((m[0] < 0.0f) == (m[5] < 0.0f));
+			const Real* m = matrixList[xformProjection].get();
+			frontCCW = ((m[0] < R_(0.0)) == (m[5] < R_(0.0)));
 			glFrontFace(frontCCW ? GL_CCW : GL_CW);
 		}
 		if (matrixModeChanged)
 			glMatrixMode(GL_MODELVIEW);
 		if (job.xformView != xformView) {
 			xformView = job.xformView;
-			glLoadMatrixf(matrixList[xformView].get());
+			glLoadMatrixr(matrixList[xformView].get());
 			++getInstr()->nTransforms;
 		}
 
@@ -765,10 +765,9 @@ bool					SceneVisitorRender::visit(SceneNodeParticleSystem* n)
 	}
 
 	// update our particle system
-	Matrix matrix;
-	matrix.set(ViewFrustum::getTransform());
-	matrix.mult(modelXFormStack.back());
-	matrix.inverse();
+	Matrix matrix = ViewFrustum::getTransform();
+	matrix *= modelXFormStack.back();
+	matrix.invert();
 	n->update(getParams().getFloat("time"), matrix);
 
 	Job job(gstateStack.back());
@@ -799,16 +798,12 @@ bool					SceneVisitorRender::visit(SceneNodeLight* n)
 {
 	n->compute(getParams());
 
-	// transform light position by current modelview matrix
-	float position[4];
-	modelXFormStack.back().transform4(position, n->getPosition());
-
 	// save light state
 	LightInfo light;
 	memcpy(light.ambient,       n->getAmbientColor(),  sizeof(light.ambient));
 	memcpy(light.diffuse,       n->getDiffuseColor(),  sizeof(light.diffuse));
 	memcpy(light.specular,      n->getSpecularColor(), sizeof(light.specular));
-	memcpy(light.position,      position,              sizeof(light.position));
+	modelXFormStack.back().xformPoint(light.position, n->getPosition());
 	memcpy(light.spotDirection, n->getSpotDirection(), sizeof(light.spotDirection));
 	light.spotExponent        = n->getSpotExponent();
 	light.spotCutoff          = n->getSpotCutoff();
@@ -831,56 +826,35 @@ bool					SceneVisitorRender::visit(SceneNodeLight* n)
 void					SceneVisitorRender::computeFrustum()
 {
 	// clip coordinates to transform
-	static const float s_lbn[4] = { -1.0f, -1.0f, -1.0f, 1.0f };
-	static const float s_lbf[4] = { -1.0f, -1.0f,  1.0f, 1.0f };
-	static const float s_rtn[4] = {  1.0f,  1.0f, -1.0f, 1.0f };
-	static const float s_rtf[4] = {  1.0f,  1.0f,  1.0f, 1.0f };
-	static const float s_xv[3]  = {  1.0f,  0.0f,  0.0f };
-	static const float s_yv[3]  = {  0.0f,  1.0f,  0.0f };
+	static const Real s_lbn[3] = { R_(-1.0), R_(-1.0), R_(-1.0) };
+	static const Real s_lbf[3] = { R_(-1.0), R_(-1.0), R_( 1.0) };
+	static const Real s_rtn[3] = { R_( 1.0), R_( 1.0), R_(-1.0) };
+	static const Real s_rtf[3] = { R_( 1.0), R_( 1.0), R_( 1.0) };
+	static const Real s_xv[3]  = { R_( 1.0), R_( 0.0), R_( 0.0) };
+	static const Real s_yv[3]  = { R_( 0.0), R_( 1.0), R_( 0.0) };
 
 	// compute inverse of projection matrix.  note if the matrix is
-	// inside-out from the expected and invert it.
+	// inside-out from the expected and, if so, invert it.
 	// FIXME -- this isn't a general purpose solution
 	Matrix matrix(projectionXFormStack.back());
-	float* p = matrix.get();
-	const bool xFlip = (p[0] < 0.0f);
-	const bool yFlip = (p[5] < 0.0f);
+	const bool xFlip = (matrix[0] < R_(0.0));
+	const bool yFlip = (matrix[5] < R_(0.0));
 	if (xFlip)
-		p[0] = -p[0];
+		matrix[0] = -matrix[0];
 	if (yFlip)
-		p[5] = -p[5];
-	matrix.inverse();
+		matrix[5] = -matrix[5];
+	matrix.invert();
 
 	// transform points from clip coordinates to eye coordinates
-	float lbn[4], lbf[4], rtn[4], rtf[4];
-	matrix.transform4(lbn, s_lbn);
-	matrix.transform4(lbf, s_lbf);
-	matrix.transform4(rtn, s_rtn);
-	matrix.transform4(rtf, s_rtf);
-	lbn[3] = 1.0f / lbn[3];
-	lbf[3] = 1.0f / lbf[3];
-	rtn[3] = 1.0f / rtn[3];
-	rtf[3] = 1.0f / rtf[3];
-	lbn[0] *= lbn[3];
-	lbn[1] *= lbn[3];
-	lbn[2] *= lbn[3];
-	lbf[0] *= lbf[3];
-	lbf[1] *= lbf[3];
-	lbf[2] *= lbf[3];
-	rtn[0] *= rtn[3];
-	rtn[1] *= rtn[3];
-	rtn[2] *= rtn[3];
-	rtf[0] *= rtf[3];
-	rtf[1] *= rtf[3];
-	rtf[2] *= rtf[3];
+	Vec3 lbn(s_lbn), lbf(s_lbf), rtn(s_rtn), rtf(s_rtf);
+	lbn.xformPoint(matrix, R_(1.0));
+	lbf.xformPoint(matrix, R_(1.0));
+	rtn.xformPoint(matrix, R_(1.0));
+	rtf.xformPoint(matrix, R_(1.0));
 
-	float lbv[3], rtv[3];
-	lbv[0] = lbf[0] - lbn[0];
-	lbv[1] = lbf[1] - lbn[1];
-	lbv[2] = lbf[2] - lbn[2];
-	rtv[0] = rtf[0] - rtn[0];
-	rtv[1] = rtf[1] - rtn[1];
-	rtv[2] = rtf[2] - rtn[2];
+	Vec3 lbv(lbf), rtv(rtf);
+	lbv -= lbn;
+	rtv -= rtn;
 
 	// compute frustum planes
 	setPlane(0, lbn, s_yv, s_xv);
@@ -896,18 +870,14 @@ void					SceneVisitorRender::computeFrustum()
 
 void					SceneVisitorRender::setPlane(
 								unsigned int index,
-								const float* p,
-								const float* v1, const float* v2)
+								const Vec3& p,
+								const Vec3& v1, const Vec3& v2)
 {
-	float* plane = frustum[index];
-
 	// compute normal
-	plane[0] = v1[1] * v2[2] - v1[2] * v2[1];
-	plane[1] = v1[2] * v2[0] - v1[0] * v2[2];
-	plane[2] = v1[0] * v2[1] - v1[1] * v2[0];
+	Vec3 normal = v1 % v2;
 
-	// finish plane equation
-	plane[3] = -(p[0] * plane[0] + p[1] * plane[1] + p[2] * plane[2]);
+	// set plane
+	frustum[index].set(normal, p);
 
 	// compute plane's normal direction.  for each component, the
 	// direction is 1 if the component is >= 0.0 and 0 otherwise.
@@ -923,46 +893,39 @@ void					SceneVisitorRender::setPlane(
 	// against the plane.  if the point is in the negative half-
 	// space then the entire box must be too.
 	unsigned int* dir = frustumDir[index];
-	dir[0] = (plane[0] >= 0.0f) ? 1 : 0;
-	dir[1] = (plane[1] >= 0.0f) ? 1 : 0;
-	dir[2] = (plane[2] >= 0.0f) ? 1 : 0;
-}
-
-inline
-bool					SceneVisitorRender::insidePlane(const float* plane,
-								float x, float y, float z) const
-{
-	return (plane[0] * x + plane[1] * y + plane[2] * z + plane[3] >= 0.0f);
+	dir[0] = (normal[0] >= R_(0.0)) ? 1 : 0;
+	dir[1] = (normal[1] >= R_(0.0)) ? 1 : 0;
+	dir[2] = (normal[2] >= R_(0.0)) ? 1 : 0;
 }
 
 bool					SceneVisitorRender::isCulled(
-								const float aabb[2][3]) const
+								const Real aabb[2][3]) const
 {
 	// compare with frustum
-	if (!insidePlane(frustum[0], aabb[frustumDir[0][0]][0],
-								aabb[frustumDir[0][1]][1],
-								aabb[frustumDir[0][2]][2]))
+	if (frustum[0].distance(Vec3(aabb[frustumDir[0][0]][0],
+								 aabb[frustumDir[0][1]][1],
+								 aabb[frustumDir[0][2]][2])) < R_(0.0))
 		return true;
-	if (!insidePlane(frustum[2], aabb[frustumDir[2][0]][0],
-								aabb[frustumDir[2][1]][1],
-								aabb[frustumDir[2][2]][2]))
+	if (frustum[2].distance(Vec3(aabb[frustumDir[2][0]][0],
+								 aabb[frustumDir[2][1]][1],
+								 aabb[frustumDir[2][2]][2])) < R_(0.0))
 		return true;
-	if (!insidePlane(frustum[3], aabb[frustumDir[3][0]][0],
-								aabb[frustumDir[3][1]][1],
-								aabb[frustumDir[3][2]][2]))
+	if (frustum[3].distance(Vec3(aabb[frustumDir[3][0]][0],
+								 aabb[frustumDir[3][1]][1],
+								 aabb[frustumDir[3][2]][2])) < R_(0.0))
 		return true;
-	if (!insidePlane(frustum[4], aabb[frustumDir[4][0]][0],
-								aabb[frustumDir[4][1]][1],
-								aabb[frustumDir[4][2]][2]))
+	if (frustum[4].distance(Vec3(aabb[frustumDir[4][0]][0],
+								 aabb[frustumDir[4][1]][1],
+								 aabb[frustumDir[4][2]][2])) < R_(0.0))
 		return true;
-	if (!insidePlane(frustum[5], aabb[frustumDir[5][0]][0],
-								aabb[frustumDir[5][1]][1],
-								aabb[frustumDir[5][2]][2]))
+	if (frustum[5].distance(Vec3(aabb[frustumDir[5][0]][0],
+								 aabb[frustumDir[5][1]][1],
+								 aabb[frustumDir[5][2]][2])) < R_(0.0))
 		return true;
 /* skip far plane
-	if (!insidePlane(frustum[1], aabb[frustumDir[1][0]][0],
-								aabb[frustumDir[1][1]][1],
-								aabb[frustumDir[1][2]][2]))
+	if (frustum[1].distance(Vec3(aabb[frustumDir[1][0]][0],
+								 aabb[frustumDir[1][1]][1],
+								 aabb[frustumDir[1][2]][2])) < R_(0.0))
 		return true;
 */
 

@@ -16,7 +16,7 @@
 #include "common.h"
 #include <assert.h>
 #include <deque>
-#include "Matrix.h"
+#include "math3D.h"
 #include "SceneNode.h"
 
 class SceneVisitorParams;

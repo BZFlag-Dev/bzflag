@@ -13,33 +13,30 @@
 #ifndef BZF_BOUNDING_BOX_H
 #define BZF_BOUNDING_BOX_H
 
-class Matrix;
+#include "math3D.h"
 
 class BoundingBox {
 public:
 	BoundingBox();
-	BoundingBox(const float* minXYZ, const float* maxXYZ);
-	BoundingBox(float xMin, float yMin, float zMin,
-							float xMax, float yMax, float zMax);
-	BoundingBox(const BoundingBox&);
+	BoundingBox(const Real* minXYZ, const Real* maxXYZ);
+	BoundingBox(Real xMin, Real yMin, Real zMin,
+							Real xMax, Real yMax, Real zMax);
 	~BoundingBox();
 
-	BoundingBox&		operator=(const BoundingBox&);
-
 	// set a box's axis-aligned extents
-	void				set(const float* minXYZ, const float* maxXYZ);
-	void				set(float xMin, float yMin, float zMin,
-							float xMax, float yMax, float zMax);
+	void				set(const Real* minXYZ, const Real* maxXYZ);
+	void				set(Real xMin, Real yMin, Real zMin,
+							Real xMax, Real yMax, Real zMax);
 
 	// transform a bounding box
 	void				transform(const Matrix&);
 
 	// get the box's axis-aligned extents
-	void				get(float* minXYZ, float* maxXYZ) const;
+	void				get(Real* minXYZ, Real* maxXYZ) const;
 
 private:
 	// p is: center, +x face center, +y face center, +z face center
-	float				p[4][3];
+	Vec3				p[4];
 };
 
 #endif

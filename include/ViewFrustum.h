@@ -18,6 +18,7 @@
 #define BZF_VIEW_FRUSTUM_H
 
 #include "common.h"
+#include "math3D.h"
 
 class ViewFrustum {
 public:
@@ -40,7 +41,7 @@ public:
 							float m_near, float m_far);
 	void				setOffset(float eyeOffset, float focalPlane);
 
-	static const float*	getTransform();
+	static const Matrix&	getTransform();
 
 private:
 	float				eye[3];

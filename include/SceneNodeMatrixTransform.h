@@ -14,6 +14,7 @@
 #define BZF_SCENE_NODE_MATRIX_TRANSFORM_H
 
 #include "SceneNodeBaseTransform.h"
+#include "math3D.h"
 
 class SceneNodeMatrixTransform : public SceneNodeBaseTransform {
 public:
@@ -31,6 +32,9 @@ public:
 
 protected:
 	virtual ~SceneNodeMatrixTransform();
+
+private:
+	Matrix				xform;
 };
 
 #endif

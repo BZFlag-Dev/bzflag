@@ -29,6 +29,7 @@ DEPLIBS =				\
 	$(LIBDIR)/libGeometry.a		\
 	$(LIBDIR)/libPlatform.a		\
 	$(LIBDIR)/libNet.a		\
+	$(LIBDIR)/libMath.a		\
 	$(LIBDIR)/libCommon.a		\
 	$(LIBDIR)/libz.a		\
 	$(NULL)

@@ -12,9 +12,8 @@
 
 #include "SceneNodeBillboard.h"
 #include "SceneVisitor.h"
-#include "Matrix.h"
+#include "math3D.h"
 #include "ViewFrustum.h"
-#include <math.h>
 
 //
 // SceneNodeBillboard
@@ -96,28 +95,26 @@ fprintf(stderr, "r2: %f %f\n", c, s);
 */
 	// FIXME -- this is too specific.  make a general billboard and use axis.
 	if (turn.get() && axis.getNum() == 3) {
-		float* matrix = m.get();
-		float x = hypotf(matrix[0], hypotf(matrix[4], matrix[8]));
-		float y = hypotf(matrix[1], hypotf(matrix[5], matrix[9]));
-		float z = hypotf(matrix[2], hypotf(matrix[6], matrix[10]));
-		matrix[0]  =  x;
-		matrix[1]  =  0.0f;
-		matrix[2]  =  0.0f;
-		matrix[4]  =  0.0f;
-		matrix[5]  =  y;
-		matrix[6]  =  0.0f;
-		matrix[8]  =  0.0f;
-		matrix[9]  =  0.0f;
-		matrix[10] =  z;
+		Real x = sqrtr(m[0] * m[0] + m[4] * m[4] + m[8] * m[8]);
+		Real y = sqrtr(m[1] * m[1] + m[5] * m[5] + m[9] * m[9]);
+		Real z = sqrtr(m[2] * m[2] + m[6] * m[6] + m[10] * m[10]);
+		m[0]   =  x;
+		m[1]   =  R_(0.0);
+		m[2]   =  R_(0.0);
+		m[4]   =  R_(0.0);
+		m[5]   =  y;
+		m[6]   =  R_(0.0);
+		m[8]   =  R_(0.0);
+		m[9]   =  R_(0.0);
+		m[10]  =  z;
 
 		// undo view frustum coordinate transform
-		m.mult(ViewFrustum::getTransform());
+		m *= ViewFrustum::getTransform();
 	}
 	if (center.get()) {
-		float* matrix = m.get();
-		matrix[12] = 0.0f;
-		matrix[13] = 0.0f;
-		matrix[14] = 0.0f;
+		m[12] = R_(0.0);
+		m[13] = R_(0.0);
+		m[14] = R_(0.0);
 	}
 }
 

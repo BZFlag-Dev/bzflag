@@ -94,14 +94,6 @@ SOURCE=..\src\geometry\Intersect.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\src\geometry\Matrix.cxx
-# End Source File
-# Begin Source File
-
-SOURCE=..\src\geometry\Ray.cxx
-# End Source File
-# Begin Source File
-
 SOURCE=..\src\geometry\ViewFrustum.cxx
 # End Source File
 # End Group
@@ -115,14 +107,6 @@ SOURCE=..\include\BoundingBox.h
 # Begin Source File
 
 SOURCE=..\include\Intersect.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\include\Matrix.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\include\Ray.h
 # End Source File
 # Begin Source File
 

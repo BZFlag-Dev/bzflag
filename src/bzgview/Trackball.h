@@ -13,6 +13,7 @@ public:
 	void				reset();
 	void				resize(int w, int h);
 	void				getMatrix(float*) const;
+	void				getProjection(float*, float n, float f) const;
 	bool				isSpinning() const;
 	bool				onEvent(const BzfEvent&, bool& redraw);
 	void				spin();
@@ -53,12 +54,14 @@ private:
 	unsigned int		pHistory;
 	float				x0, y0, x, y;
 	long				wx, wy, wdx, wdy;
+	float				aspect;
 	short				normcount;
-	bool				spinning, turning, panning, trucking;
+	bool				spinning, turning, panning, trucking, zooming;
 	Quaternion			base, rot;
 	float				delta[4];
 	float				xlate[3];
 	float				xlate0[3];
+	float				fov, fov0;
 	TimeKeeper			lastMove;
 };
 

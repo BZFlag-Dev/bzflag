@@ -24,7 +24,7 @@
 #include "ShotPath.h"
 #include "Obstacle.h"
 #include "Teleporter.h"
-#include "Ray.h"
+#include "math3D.h"
 #include "TimeKeeper.h"
 #include <vector>
 

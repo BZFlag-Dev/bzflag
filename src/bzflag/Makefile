@@ -58,6 +58,7 @@ DEPLIBS =				\
 	$(LIBDIR)/libMediaFile.a	\
 	$(LIBDIR)/libObstacle.a		\
 	$(LIBDIR)/libGeometry.a		\
+	$(LIBDIR)/libMath.a		\
 	$(LIBDIR)/libCommon.a		\
 	$(LIBDIR)/libz.a		\
 	$(NULL)

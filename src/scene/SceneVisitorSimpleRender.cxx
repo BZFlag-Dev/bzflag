@@ -146,7 +146,7 @@ bool					SceneVisitorSimpleRender::visit(SceneNodeBaseTransform* n)
 
 	// load the new matrix
 	glMatrixMode(mode);
-	glLoadMatrixf(stack->back().get());
+	glLoadMatrixr(stack->back().get());
 	glMatrixMode(GL_MODELVIEW);
 
 	// choose front faces
@@ -155,8 +155,8 @@ bool					SceneVisitorSimpleRender::visit(SceneNodeBaseTransform* n)
 		// should compute the sign of the adjoint but we're
 		// expecting a very specific kind of matrix so we
 		// can take a shortcut.
-		const float* p = stack->back().get();
-		frontCCW = ((p[0] < 0.0f) == (p[5] < 0.0f));
+		const Matrix& m = stack->back();
+		frontCCW = ((m[0] < R_(0.0)) == (m[5] < R_(0.0)));
 		if (!frontCCW)
 			glFrontFace(GL_CW);
 	}
@@ -172,7 +172,7 @@ bool					SceneVisitorSimpleRender::visit(SceneNodeBaseTransform* n)
 	// pop stack
 	stack->pop_back();
 	glMatrixMode(mode);
-	glLoadMatrixf(stack->back().get());
+	glLoadMatrixr(stack->back().get());
 	glMatrixMode(GL_MODELVIEW);
 
 	return result;
@@ -323,10 +323,9 @@ bool					SceneVisitorSimpleRender::visit(SceneNodeGeometry* n)
 bool					SceneVisitorSimpleRender::visit(SceneNodeParticleSystem* n)
 {
 	// update the particle system
-	Matrix matrix;
-	matrix.set(ViewFrustum::getTransform());
-	matrix.mult(modelXFormStack.back());
-	matrix.inverse();
+	Matrix matrix = ViewFrustum::getTransform();
+	matrix *= modelXFormStack.back();
+	matrix.invert();
 	n->update(getParams().getFloat("time"), matrix);
 
 	// set client state

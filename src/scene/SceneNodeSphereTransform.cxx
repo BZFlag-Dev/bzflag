@@ -13,8 +13,7 @@
 #include "SceneNodeSphereTransform.h"
 #include "SceneVisitor.h"
 #include "SceneVisitorParams.h"
-#include "Matrix.h"
-#include <math.h>
+#include "math3D.h"
 
 //
 // SceneNodeSphereTransform
@@ -76,7 +75,7 @@ void					SceneNodeSphereTransform::get(
 						t1 * v[1] + t2 * v[4],
 						t1 * v[2] + t2 * v[5]);
 		}
-		matrix.mult(x);
+		matrix *= x;
 	}
 
 	// azimuth
@@ -92,7 +91,7 @@ void					SceneNodeSphereTransform::get(
 			const float* v = azimuth.get() + index;
 			x.setRotate(0.0f, 0.0f, 1.0f, t1 * v[0] + t2 * v[1]);
 		}
-		matrix.mult(x);
+		matrix *= x;
 	}
 
 	// altitude
@@ -108,7 +107,7 @@ void					SceneNodeSphereTransform::get(
 			const float* v = altitude.get() + index;
 			x.setRotate(0.0f, -1.0f, 0.0f, t1 * v[0] + t2 * v[1]);
 		}
-		matrix.mult(x);
+		matrix *= x;
 	}
 
 	// twist
@@ -124,7 +123,7 @@ void					SceneNodeSphereTransform::get(
 			const float* v = twist.get() + index;
 			x.setRotate(1.0f, 0.0f, 0.0f, t1 * v[0] + t2 * v[1]);
 		}
-		matrix.mult(x);
+		matrix *= x;
 	}
 
 	// radius
@@ -141,11 +140,11 @@ void					SceneNodeSphereTransform::get(
 			const float r = t1 * v[0] + t2 * v[1];
 			x.setScale(r, r, r);
 		}
-		matrix.mult(x);
+		matrix *= x;
 	}
 
 	// apply transform
-	m.mult(matrix);
+	m *= matrix;
 }
 
 bool					SceneNodeSphereTransform::visit(SceneVisitor* visitor)

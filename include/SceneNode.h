@@ -86,6 +86,17 @@ public:
 							multNum(_multNum),
 							interpolationParameter(_interpolationParameter)
 							{ }
+	SceneNodeVectorField(const SceneNodeVectorField& f) :
+							SceneNodeField(f),
+							dirty(f.dirty),
+							dirtyPtr((f.dirtyPtr == &f.dirty) ?
+													&dirty : f.dirtyPtr),
+							minNum(f.minNum),
+							maxNum(f.maxNum),
+							multNum(f.multNum),
+							interpolationParameter(f.interpolationParameter),
+							values(f.values)
+							{ }
 	~SceneNodeVectorField() { }
 
 	void				setInterpolationParameter(const std::string& param)
@@ -123,6 +134,8 @@ public:
 
 	void				clearDirty()
 							{ *dirtyPtr = false; }
+	bool				isDirty() const
+							{ return *dirtyPtr; }
 
 	const T*			get() const
 							{ return &values[0]; }

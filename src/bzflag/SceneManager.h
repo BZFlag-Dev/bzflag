@@ -13,6 +13,7 @@
 #ifndef BZF_SCENE_MANAGER_H
 #define BZF_SCENE_MANAGER_H
 
+#include "common.h"
 #include <string>
 #include "ViewFrustum.h"
 #include "bzfio.h"

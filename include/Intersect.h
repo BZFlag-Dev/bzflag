@@ -17,8 +17,7 @@
 #ifndef BZF_INTERSECT_H
 #define BZF_INTERSECT_H
 
-#include "common.h"
-#include "Ray.h"
+#include "math3D.h"
 
 class Intersect {
 public:

@@ -25,8 +25,6 @@ static SceneNode* scene = NULL;
 static SceneNodeMatrixTransform* camera;
 static SceneNodeMatrixTransform* orientation;
 static Trackball trackball;
-static double fov = 45.0;
-static double aspect = 1.0;
 static float t = 0.0f;
 static float frame = 0.0f;
 static bool useLight = false;
@@ -75,29 +73,11 @@ void operator delete[] (void * p) throw()
 static void render()
 {
 	// prep dynamic nodes
-	float m[16];
+	float m[16], p[16];
 	trackball.getMatrix(m);
 	orientation->matrix.set(m, 16);
-
-	float n = 1.0f, f = 3000.0f;
-	float a = static_cast<float>(1.0 / tan(0.5 * fov));
-	m[0]  = aspect * n / a;
-	m[1]  = 0.0f;
-	m[2]  = 0.0f;
-	m[3]  = 0.0f;
-	m[4]  = 0.0f;
-	m[5]  = n / a;
-	m[6]  = 0.0f;
-	m[7]  = 0.0f;
-	m[8]  = 0.0f;
-	m[9]  = 0.0f;
-	m[10] = -(f + n) / (f - n);
-	m[11] = -1.0f;
-	m[12] = 0.0f;
-	m[13] = 0.0f;
-	m[14] = -2.0f * f * n / (f - n);
-	m[15] = 0.0f;
-	camera->matrix.set(m, 16);
+	trackball.getProjection(p, 1.0f, 3000.0f);
+	camera->matrix.set(p, 16);
 
 	// update clocks
 	TimeKeeper oldTick(TimeKeeper::getTick());
@@ -137,51 +117,21 @@ static void resize(int w, int h)
 {
 	wx = w >> 1;
 	wy = h >> 1;
-	aspect = (double)h / (double)w;
 	trackball.resize(w, h);
 	glViewport(0, 0, w, h);
 	glScissor(0, 0, w, h);
 }
 
-static bool handleEvent(const BzfEvent& event, bool& redraw)
+static bool handleEvent(const BzfEvent& event, bool& /*redraw*/)
 {
-	static bool zoom = false;
-	static float x, y, x0, y0, fov0;
 	switch (event.type) {
 		case BzfEvent::KeyDown:
-			if (event.keyDown.button == BzfKeyEvent::LeftMouse &&
-		  event.keyDown.shift & BzfKeyEvent::ShiftKey &&
-		  event.keyDown.shift & BzfKeyEvent::ControlKey) {
-				// zoom
-				x0 = x;
-				y0 = y;
-				zoom = true;
-				fov0 = fov;
-				return true;
-			}
 			break;
 
 		case BzfEvent::KeyUp:
-			if (event.keyUp.button == BzfKeyEvent::LeftMouse) {
-				if (zoom) {
-					zoom = false;
-					return true;
-				}
-			}
 			break;
 
 		case BzfEvent::MouseMove:
-			x = (float)(event.mouseMove.x - wx) / wx;
-			y = -(float)(event.mouseMove.y - wy) / wy;
-			if (zoom) {
-				fov = fov0 - (y - y0);
-				if (fov < 1.0f)
-					fov = 1.0f;
-				else if (fov > 80.0f)
-					fov = 80.0f;
-				redraw = true;
-				return true;
-			}
 			break;
 
 		default:
@@ -331,8 +281,9 @@ int main(int argc, char** argv)
 	// turn on features
 	BZDB->set("renderBlending", "1");
 	BZDB->set("renderSmoothing", "1");
-	BZDB->set("renderLighting", "1");
 	BZDB->set("renderTexturing", "1");
+//	if (useLight)
+		BZDB->set("renderLighting", "1");
 
 	// create renderer
 	renderer = new RendererType;
@@ -367,8 +318,7 @@ int main(int argc, char** argv)
 								frame = 0.0f;
 								break;
 							case 'r':
-								fov = 45.0;
-								aspect = 1.0;
+								trackball.reset();
 								break;
 							default:
 								//printf("key %d\n", event.keyUp.ascii);

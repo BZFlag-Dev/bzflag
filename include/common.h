@@ -25,6 +25,8 @@
 #if defined(_WIN32)
 // turn off bogus `this used in base member initialization list'
 #pragma warning(disable: 4355)
+// turn off `decorated name length exceeded'
+#pragma warning(disable: 4503)
 // turn off stupid `identifier truncated in debug info'
 #pragma warning(disable: 4786)
 // turn off `forcing value to bool'

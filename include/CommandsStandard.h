@@ -13,6 +13,8 @@
 #ifndef BZF_COMMANDS_STANDARD_H
 #define BZF_COMMANDS_STANDARD_H
 
+#include "common.h"
+
 class CommandsStandard {
 public:
 	static void			add();
