@@ -127,7 +127,8 @@ SpawnPosition::SpawnPosition(int playerId, bool onGroundOnly, bool notNearEdges)
       }
 
       // check if spot is safe enough
-      if (foundspot && !isImminentlyDangerous()) {
+      bool dangerous = isImminentlyDangerous();
+      if (foundspot && !dangerous) {
 	float enemyAngle;
 	float dist = enemyProximityCheck(enemyAngle);
 	if (dist > bestDist) { // best so far
@@ -141,6 +142,8 @@ SpawnPosition::SpawnPosition(int playerId, bool onGroundOnly, bool notNearEdges)
 	  foundspot = false;
 	  minProximity *= 0.99f; // relax requirements a little
 	}
+      } else if (dangerous) {
+	foundspot = false;
       }
     }
     delete building;
