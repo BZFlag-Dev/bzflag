@@ -1624,6 +1624,10 @@ void handleViewReportsCmd(int t, const char * /*message*/)
     sendMessage(ServerPlayer, t, line.c_str());
   } 
   std::ifstream ifs(clOptions->reportFile.c_str(), std::ios::in);
+	if (ifs.fail()) {
+    sendMessage(ServerPlayer, t, "Error reading from report file.");
+		return;
+	}
   while (std::getline(ifs, line))
     sendMessage(ServerPlayer, t, line.c_str());
 }
