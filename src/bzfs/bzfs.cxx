@@ -2929,7 +2929,7 @@ static void getSpawnLocation( int playerId, float* pos, float *azimuth)
         int lastType = type;
 	int retriesRemaining = 1000; // don't climb forever
         while (type != NOT_IN_BUILDING) {
-          pos[2] = building->pos[2] + building->size[2]f;
+          pos[2] = building->pos[2] + building->size[2];
           lastType = type;
           type = world->inBuilding(&building, pos[0], pos[1], pos[2],
                                    tankRadius, BZDBCache::tankHeight);
@@ -2950,8 +2950,8 @@ static void getSpawnLocation( int playerId, float* pos, float *azimuth)
       }
 
       // simple check for a hanging server
-      if (--nearInfiniteFailsafe-- <= 0) {
-	sendMessage(ServerPlayer, playerID, "Server is shutting down due to fatal player spawn issues..\n");
+      if (--nearInfiniteFailsafe <= 0) {
+	sendMessage(ServerPlayer, playerId, "Server is shutting down due to fatal player spawn issues..\n");
 	DEBUG1("ERROR: getSpawnLocation seems to be stuck .. shutting down\n");
 	exit(1);
       }
