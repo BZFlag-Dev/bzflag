@@ -121,6 +121,7 @@ class ColDetNode {
 
     int getCount() const;
     const ObsList* getList() const;
+    const Extents& getExtents() const;
     float getInTime() const;
     float getOutTime() const;
 
@@ -159,6 +160,11 @@ inline int ColDetNode::getCount() const
 inline const ObsList* ColDetNode::getList() const
 {
   return &fullList;
+}
+
+inline const Extents& ColDetNode::getExtents() const
+{
+  return extents;
 }
 
 inline float ColDetNode::getInTime() const
