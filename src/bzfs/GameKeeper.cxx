@@ -30,7 +30,7 @@ GameKeeper::Player::Player(int _playerIndex):
   flagHistory(&::flagHistory[_playerIndex]), score(NULL),
   playerIndex(_playerIndex)
 {
-  GameKeeper::Player::playerList[playerIndex] = this;
+  playerList[playerIndex] = this;
 
   player->initPlayer(playerIndex);
   lastState->order       = 0;
@@ -50,12 +50,12 @@ GameKeeper::Player::~Player()
   delete score;
   ::lagInfo[playerIndex] = NULL;
   ::score[playerIndex]   = NULL;
-  GameKeeper::Player::playerList[playerIndex] = NULL;
+  playerList[playerIndex] = NULL;
 }
 
 GameKeeper::Player *GameKeeper::Player::getPlayerByIndex(int _playerIndex)
 {
-  return GameKeeper::Player::playerList[_playerIndex];
+  return playerList[_playerIndex];
 }
 
 void GameKeeper::Player::updateLatency(float &waitTime)
