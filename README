@@ -114,7 +114,7 @@ You should have BZFlag in the system directory ready to run.
 
 If you have not admin privileges on your platform, you can install files in a
 directory that you own; for this to work, you have to append to the configure
-command with the prefix option.
+command the prefix option.
 E.g.:
 ../bzflag/configure --prefix=YourHomeDirectoryHere
 At "make install" all bzflag exe files will be installed in the subdir bin of
@@ -124,7 +124,7 @@ make install-strip
 instead of just make install; this will remove any debug information from the
 binaries, and make those shorter.
 
-For additiona information on installing, see INSTALL file.
+For additional information on installing, see INSTALL file.
 
 Some platforms may be different.  See the README file appropriate to
 your system for more information:
