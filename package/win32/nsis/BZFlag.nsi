@@ -48,6 +48,9 @@ Section "BZFlag (required)"
 	File ..\..\..\src\bzadmin\bzadmin.exe
 	File ..\..\..\src\bzfs\bzfs.exe
 
+	; add in libcurl dll
+	File ..\..\..\libcurl.dll
+
 	; make the data dir
 	SetOutPath $INSTDIR\data
 	File ..\..\..\data\*.*
