@@ -62,7 +62,7 @@ bool		OggAudioFile::read(void* buffer, int numFrames)
 #endif
 	ogg_int64_t pcmoff = ov_pcm_tell(&file);
 	std::cout << "requested: " << numFrames << "\n";
-	std::cout << "actual:    " << pcmoff  - oldoff << "\n\n";
+	std::cout << "actual:    " << (pcmoff  - oldoff) << "\n\n";
 	if (frames < 0) {
 		if (frames == OV_HOLE)
 			// OV_HOLE is non-fatal
