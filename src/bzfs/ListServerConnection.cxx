@@ -206,8 +206,8 @@ void ListServerLink::read()
 	    sendMessage(ServerPlayer, playerIndex, "Global login rejected. "
 			"This callsign is registered locally on this server.");
 	    sendMessage(ServerPlayer, playerIndex, "If the local account is yours, "
-			"either /identify then /deregister and reconnnect, "
-			"or ask an admin to add you to the  LOCAL.GLOBAL group.");
+			"/identify, /deregister and reconnnect, "
+			"or ask an admin for the LOCAL.GLOBAL group.");
 	    sendMessage(ServerPlayer, playerIndex, "If it is not yours, please ask an admin "
 			"to deregister it so that you may use your global callsign.");
 	  }
