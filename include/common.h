@@ -20,13 +20,6 @@
 // this should always be the very FIRST header
 #include "config.h"
 
-#if (_MSC_VER)
-// turn off bogus `this used in base member initialization list'
-#  pragma warning(disable: 4786)
-#  pragma warning(disable: 4503)
-#  pragma warning(disable: 4355)
-#endif // _MSC_VER
-
 #ifdef _WIN32
 #include "win32.h"
 #endif
@@ -37,7 +30,6 @@
 #include <stdarg.h>
 #include <stdio.h>
 
-#include "config.h"
 #include "bzfio.h"
 
 extern int debugLevel;

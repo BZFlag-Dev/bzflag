@@ -13,7 +13,6 @@
 #ifndef BZF_MEDIA_FILE_H
 #define BZF_MEDIA_FILE_H
 
-#include <string>
 #include "common.h"
 #include "bzfio.h"
 

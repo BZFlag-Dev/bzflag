@@ -12,7 +12,6 @@
 
 #include "common.h"
 #include "PNGImageFile.h"
-#include <string>
 #include <iostream>
 #include "Pack.h"
 #include "../zlib/zconf.h"

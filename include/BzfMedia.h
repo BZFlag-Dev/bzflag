@@ -14,9 +14,6 @@
 #define	__BZFMEDIA_H__
 
 #include "common.h"
-#include <string>
-#include <stdio.h>
-
 
 static const std::string	DEFAULT_MEDIA_DIR = "data";
 

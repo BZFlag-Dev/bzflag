@@ -17,7 +17,6 @@
 #pragma warning(4:4786)
 #endif
 
-#include <string>
 #include "common.h"
 #include "bzfio.h"
 #include "Singleton.h"
