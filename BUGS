@@ -1,12 +1,6 @@
 recent bugs
 ------------
 
-- -cr CTF worlds will not send properly to the client, it never gets a worldendcode
-   it seems to have something to do with the new map binary formats ( the bases specificly )
-
-- when burrowed, the ground gets chopped off by the near clip plane, leaving
-  the bottom 1/3 of the screen or so with artifacts
-
 - tanks only check their bottoms as regards hit detection against pyramids
 
 - resetting key map doesn't seem to fully erase the current bindings before
