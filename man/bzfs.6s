@@ -874,79 +874,79 @@ The available permissions are as follows:
 .\" Use one tab between permission and description
 .ta 2i T .5i
 
-IDLESTATS	/idlestats
+ACTIONMESSAGE	/me
 .br
-LAGSTATS	/lagstats
+ADMINMESSAGERECEIVE	player receives messages sent to admin channel
 .br
-FLAGMOD	/flag
-.br
-FLAGHISTORY	/flaghistory
-.br
-LAGWARN	/lagwarn
-.br
-KICK	/kick
+ADMINMESSAGESEND	player may send messages on the admin channel
 .br
 BAN	/ban /hostban
 .br
 BANLIST	/banlist /hostbanlist
 .br
-UNBAN	/unban /hostunban
-.br
 COUNTDOWN	/countdown
 .br
 ENDGAME	/endgame
 .br
-SETVAR	/set /reset
+FLAGHISTORY	/flaghistory
 .br
-SHUTDOWNSERVER	/shutdownserver
+FLAGMOD	/flag
 .br
-SUPERKILL	/superkill
-.br
-PLAYERLIST	/playerlist
+IDLESTATS	/idlestats
 .br
 INFO	not implemented
 .br
+KICK	/kick
+.br
+LAGSTATS	/lagstats
+.br
+LAGWARN	/lagwarn
+.br
 LISTPERMS	not implemented
 .br
-SHOWOTHERS	not implemented
-.br
-REJOIN	allows instant rejoin, regardless of _rejoinTime
-.br
-REMOVEPERMS	/removegroup
-.br
-SAY	/say
-.br
-SETPERMS	/setgroup
-.br
-SETALL	use of all set/remove commands
-.br
-SETPASSWORD	not implemented
-.br
-SPAWN	join game as a player. observers don't need this flag.
+PLAYERLIST	/playerlist
 .br
 POLL	/poll
 .br
 POLLBAN	/poll ban
 .br
+POLLFLAGRESET	/poll flagreset
+.br
 POLLKICK	/poll kick
 .br
 POLLSET	/poll set
 .br
-POLLFLAGRESET	/poll flagreset
+PRIVATEMESSAGE	/msg
 .br
-VOTE	/vote
+REJOIN	allows instant rejoin, regardless of _rejoinTime
 .br
-VETO	/veto
+REMOVEPERMS	/removegroup
 .br
 REQUIREIDENTIFY	user must /identify when using this locally registered callsign
 .br
-PRIVATEMESSAGE	/msg
+SAY	/say
 .br
-ACTIONMESSAGE	/me
+SETALL	use of all set/remove commands
 .br
-ADMINMESSAGESEND	player may send messages on the admin channel
+SETPERMS	/setgroup
 .br
-ADMINMESSAGERECEIVE	player receives messages sent to admin channel
+SETPASSWORD	not implemented
+.br
+SETVAR	/set /reset
+.br
+SHOWOTHERS	not implemented
+.br
+SHUTDOWNSERVER	/shutdownserver
+.br
+SPAWN	join game as a player. observers don't need this flag.
+.br
+SUPERKILL	/superkill
+.br
+UNBAN	/unban /hostunban
+.br
+VETO	/veto
+.br
+VOTE	/vote
 
 .TP
 .B /register {password}
