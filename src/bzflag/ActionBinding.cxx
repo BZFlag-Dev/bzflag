@@ -58,18 +58,6 @@ ActionBinding::ActionBinding() {
   wayToBindActions.insert(std::make_pair(std::string("drive reverse"), both));
   // End movement keys
 
-  wayToBindActions.insert(std::make_pair(std::string("roam rotate stop"),
-					 release));
-  wayToBindActions.insert(std::make_pair(std::string("roam rotate left"), both));
-  wayToBindActions.insert(std::make_pair(std::string("roam rotate right"), both));
-  wayToBindActions.insert(std::make_pair(std::string("roam rotate up"), both));
-  wayToBindActions.insert(std::make_pair(std::string("roam rotate down"), both));
-  wayToBindActions.insert(std::make_pair(std::string("roam translate left"), both));
-  wayToBindActions.insert(std::make_pair(std::string("roam translate right"), both));
-  wayToBindActions.insert(std::make_pair(std::string("roam translate forward"), both));
-  wayToBindActions.insert(std::make_pair(std::string("roam translate backward"), both));
-  wayToBindActions.insert(std::make_pair(std::string("roam translate up"), both));
-  wayToBindActions.insert(std::make_pair(std::string("roam translate down"), both));
   wayToBindActions.insert(std::make_pair(std::string("roam cycle subject backward"),
 					 press));
   wayToBindActions.insert(std::make_pair(std::string("roam cycle subject forward"), press));
@@ -132,22 +120,6 @@ ActionBinding::ActionBinding() {
   // End default movement keys
 
 
-  defaultBinding.insert(std::make_pair(std::string("Ctrl+Left Arrow"), std::string("roam rotate left")));
-  defaultBinding.insert(std::make_pair(std::string("Ctrl+Right Arrow"),
-				       std::string("roam rotate right")));
-  defaultBinding.insert(std::make_pair(std::string("Ctrl+Up Arrow"), std::string("roam rotate up")));
-  defaultBinding.insert(std::make_pair(std::string("Ctrl+Down Arrow"), std::string("roam rotate down")));
-  defaultBinding.insert(std::make_pair(std::string("Shift+Left Arrow"),
-				       std::string("roam translate left")));
-  defaultBinding.insert(std::make_pair(std::string("Shift+Right Arrow"),
-				       std::string("roam translate right")));
-  defaultBinding.insert(std::make_pair(std::string("Shift+Up Arrow"),
-				       std::string("roam translate forward")));
-  defaultBinding.insert(std::make_pair(std::string("Shift+Down Arrow"),
-				       std::string("roam translate backward")));
-  defaultBinding.insert(std::make_pair(std::string("Alt+Up Arrow"), std::string("roam translate up")));
-  defaultBinding.insert(std::make_pair(std::string("Alt+Down Arrow"),
-				       std::string("roam translate down")));
   defaultBinding.insert(std::make_pair(std::string("F6"), std::string("roam cycle subject backward")));
   defaultBinding.insert(std::make_pair(std::string("F7"), std::string("roam cycle subject forward")));
   defaultBinding.insert(std::make_pair(std::string("F8"), std::string("roam cycle type forward")));

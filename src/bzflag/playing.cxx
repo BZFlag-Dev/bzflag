@@ -536,11 +536,13 @@ void setRoamingLabel(bool force)
 }
 
 static enum {None, Left, Right, Up, Down} keyboardMovement;
+static int shiftKeyStatus;
 
 static bool		doKeyCommon(const BzfKeyEvent& key, bool pressed)
 {
   keyboardMovement = None;
-  const std::string cmd = KEYMGR.get(key, pressed);
+  shiftKeyStatus   = key.shift;
+  std::string cmd = KEYMGR.get(key, pressed);
   if (key.ascii == 27) {
     if (pressed) {
       mainMenu->createControls();
@@ -568,6 +570,12 @@ static bool		doKeyCommon(const BzfKeyEvent& key, bool pressed)
       return true;
     }
   }
+  if (cmd.empty()) {
+    // Check for driving keys
+    BzfKeyEvent cleanKey = key;
+    cleanKey.shift = 0;
+    cmd = KEYMGR.get(cleanKey, pressed);
+  }
   if (!cmd.empty()) {
     if (cmd=="fire")
       fireButton = pressed;
@@ -585,6 +593,23 @@ static bool		doKeyCommon(const BzfKeyEvent& key, bool pressed)
       if (!result.empty())
 	std::cerr << result << std::endl;
     }
+    if (myTank)
+      switch (keyboardMovement) {
+      case Left:
+	myTank->setKey(BzfKeyEvent::Left, pressed);
+	break;
+      case Right:
+	myTank->setKey(BzfKeyEvent::Right, pressed);
+	break;
+      case Up:
+	myTank->setKey(BzfKeyEvent::Up, pressed);
+	break;
+      case Down:
+	myTank->setKey(BzfKeyEvent::Down, pressed);
+	break;
+      case None:
+	break;
+      }
     return true;
 
   } else {
@@ -719,24 +744,6 @@ static void		doKeyPlaying(const BzfKeyEvent& key, bool pressed)
 	  if (BZDB.isTrue("allowInputChange"))
 	    myTank->setInputMethod(LocalPlayer::Keyboard);
     } 
-    if (myTank->getInputMethod() == LocalPlayer::Keyboard) {
-      switch (keyboardMovement) {
-      case Left:
-	myTank->setKey(BzfKeyEvent::Left, pressed);
-	break;
-      case Right:
-	myTank->setKey(BzfKeyEvent::Right, pressed);
-	break;
-      case Up:
-	myTank->setKey(BzfKeyEvent::Up, pressed);
-	break;
-      case Down:
-	myTank->setKey(BzfKeyEvent::Down, pressed);
-	break;
-      case None:
-	break;
-      }
-    }
   }
 }
 
@@ -747,17 +754,9 @@ static void doKey(const BzfKeyEvent& key, bool pressed) {
     doKeyPlaying(key, pressed);
 }
 
-static float getKeyValue(bool pressed)
-{
-  if (pressed)
-    return 1;
-  return 0;
-}
-
 static void		doMotion()
 {
   float rotation = 0.0f, speed = 1.0f;
-  bool pressed = myTank->getKeyPressed();
   const int noMotionSize = hud->getNoMotionSize();
   const int maxMotionSize = hud->getMaxMotionSize();
 
@@ -801,54 +800,16 @@ static void		doMotion()
   if (myTank->isAutoPilot()) {
     doAutoPilot(rotation, speed);
   } else if (myTank->getInputMethod() == LocalPlayer::Keyboard) {
-    rotation = myTank->getKeyboardAngVel();
-    speed = myTank->getKeyboardSpeed();
 
+    rotation = (float)myTank->getRotation();
+    speed    = (float)myTank->getSpeed();
     /* see if controls are reversed */
-    int keyButton = myTank->getKeyButton();
     if (myTank->getFlag() == Flags::ReverseControls) {
-      switch (keyButton) {
-	case BzfKeyEvent::Left:
-	  keyButton = BzfKeyEvent::Right;
-	  break;
-	case BzfKeyEvent::Right:
-	  keyButton = BzfKeyEvent::Left;
-	  break;
-	case BzfKeyEvent::Up:
-	  keyButton = BzfKeyEvent::Down;
-	  break;
-	case BzfKeyEvent::Down:
-	  keyButton = BzfKeyEvent::Up;
-	  break;
-      }
+      rotation = -rotation;
+      speed    = -speed;
     }
-
-    switch (keyButton) {
-      case BzfKeyEvent::Left:
-	if (pressed || rotation > 0.0f) {
-	  rotation = getKeyValue(myTank->getKeyPressed());
-	}
-	break;
-      case BzfKeyEvent::Right:
-	if (pressed || rotation < 0.0f) {
-	  rotation = - getKeyValue(myTank->getKeyPressed());
-	}
-	break;
-      case BzfKeyEvent::Up:
-	if (pressed || speed > 0.0f) {
-	  speed = getKeyValue(myTank->getKeyPressed());
-	}
-	break;
-      case BzfKeyEvent::Down:
-	if (pressed || speed < 0.0f) {
-	  speed = - getKeyValue(myTank->getKeyPressed()) / 2.0f;
-	}
-	break;
-    }
-
-    myTank->setKeyboardAngVel(rotation);
-    myTank->setKeyboardSpeed(speed);
-    myTank->resetKey();
+    if (speed < 0.0f)
+      speed /= 2.0;
 
     if (BZDB.isTrue("displayBinoculars"))
       rotation *= 0.2f;
@@ -4190,6 +4151,30 @@ static void		playingLoop()
 
     // move roaming camera
     if (roaming) {
+      if (myTank) {
+	if (!shiftKeyStatus) {
+	  roamDPos[0] = (float)(4 * myTank->getSpeed())
+	    * BZDB.eval(StateDatabase::BZDB_TANKSPEED);
+	  roamDPos[1] = 0.0;
+	  roamDPos[2] = 0.0;
+	  roamDTheta  = roamZoom * (float)myTank->getRotation();
+	  roamDPhi    = 0.0;
+	} else if (shiftKeyStatus & 1) {
+	  roamDPos[0] = 0.0;
+	  roamDPos[1] = 0.0;
+	  roamDPos[2] = 0.0;
+	  roamDTheta  = 0.0;
+	  roamDPhi    =  -2.0f * roamZoom / 3.0f * (float)myTank->getSpeed();
+	} else if (shiftKeyStatus & 2) {
+	  roamDPos[0] = 0.0;
+	  roamDPos[1] = (float)(4 * myTank->getRotation())
+	    * BZDB.eval(StateDatabase::BZDB_TANKSPEED);
+	  roamDPos[2] = (float)(4 * myTank->getSpeed())
+	    * BZDB.eval(StateDatabase::BZDB_TANKSPEED);
+	  roamDTheta  = 0.0;
+	  roamDPhi    = 0.0;
+	}
+      }
       float c, s;
       c = cosf(roamTheta * M_PI / 180.0f);
       s = sinf(roamTheta * M_PI / 180.0f);

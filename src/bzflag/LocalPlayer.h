@@ -97,14 +97,9 @@ public:
   void		setInputMethod(std::string newInput);
   static std::string	getInputMethodName(InputMethod whatInput);
   bool		queryInputChange();
-  void		setKeyboardSpeed(float speed);
-  void		setKeyboardAngVel(float angVel);
-  float		getKeyboardSpeed() const;
-  float		getKeyboardAngVel() const;
   void		setKey(int button, bool pressed);
-  bool		getKeyPressed() const;
-  int		getKeyButton() const;
-  void		resetKey();
+  int           getRotation();
+  int           getSpeed();
   bool		isSpawning();
   void		setSpawning( bool spawn );
 
@@ -155,14 +150,12 @@ private:
   static LocalPlayer*	mainPlayer;
   InputMethod	inputMethod;
   bool		inputChanged;
-  float		keyboardSpeed;
-  float		keyboardAngVel;
-  int		keyButton;
-  bool		keyPressed;
   int           stuckingFrameCount;
   bool		spawning;
   int		wingsFlapCount;
   float		handicap;
+  int           rotation;
+  int           speed;
 };
 
 
@@ -223,48 +216,6 @@ inline bool LocalPlayer::queryInputChange()
   return returnVal;
 }
 
-inline void LocalPlayer::setKeyboardSpeed(float speed)
-{
-  keyboardSpeed = speed;
-}
-
-inline void LocalPlayer::setKeyboardAngVel(float angVel)
-{
-  keyboardAngVel = angVel;
-}
-
-inline float LocalPlayer::getKeyboardSpeed() const
-{
-  return keyboardSpeed;
-}
-
-inline float LocalPlayer::getKeyboardAngVel() const
-{
-  return keyboardAngVel;
-}
-
-inline void LocalPlayer::setKey(int button, bool pressed)
-{
-  keyButton = button;
-  keyPressed = pressed;
-}
-
-inline void LocalPlayer::resetKey()
-{
-  keyButton = BzfKeyEvent::NoButton;
-  keyPressed = false;
-}
-
-inline bool LocalPlayer::getKeyPressed() const
-{
-  return keyPressed;
-}
-
-inline int LocalPlayer::getKeyButton() const
-{
-  return keyButton;
-}
-
 inline bool LocalPlayer::isSpawning()
 {
   return spawning;
@@ -275,6 +226,13 @@ inline void LocalPlayer::setSpawning( bool spawn )
   spawning = spawn;
 }
 
+inline int LocalPlayer::getRotation() {
+  return rotation;
+}
+
+inline int LocalPlayer::getSpeed() {
+  return speed;
+}
 
 #endif /* __LOCALPLAYER_H__ */
 

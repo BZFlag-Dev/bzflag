@@ -47,7 +47,9 @@ LocalPlayer::LocalPlayer(const PlayerId& id,
   stuckingFrameCount(0),
   spawning(false),
   wingsFlapCount(0),
-  handicap(0.0f)
+  handicap(0.0f),
+  rotation(0),
+  speed(0)
 {
   // initialize shots array to no shots fired
   const int numShots = World::getWorld()->getMaxShots();
@@ -838,9 +840,8 @@ void			LocalPlayer::restart(const float* pos, float _azimuth)
   move(pos, _azimuth);
   setVelocity(zero);
   setAngularVelocity(0.0f);
-  setKeyboardSpeed(0.0f);
-  setKeyboardAngVel(0.0f);
-  resetKey();
+  rotation = 0;
+  speed    = 0;
   doUpdateMotion(0.0f);
   updateHandicap();
 
@@ -1367,6 +1368,35 @@ std::string		LocalPlayer::getInputMethodName(InputMethod whatInput)
       break;
     default:
       return std::string("Unnamed Device");
+  }
+}
+
+void LocalPlayer::setKey(int button, bool pressed) {
+  switch (button) {
+  case BzfKeyEvent::Left:
+    if (pressed)
+      rotation = 1;
+    else if (rotation == 1)
+      rotation = 0;
+    break;
+  case BzfKeyEvent::Right:
+    if (pressed)
+      rotation = -1;
+    else if (rotation == -1)
+      rotation = 0;
+    break;
+  case BzfKeyEvent::Up:
+    if (pressed)
+      speed = 1;
+    else if (speed == 1)
+      speed = 0;
+    break;
+  case BzfKeyEvent::Down:
+    if (pressed)
+      speed = -1;
+    else if (speed == -1)
+      speed = 0;
+    break;
   }
 }
 
