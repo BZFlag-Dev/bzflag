@@ -11,18 +11,33 @@
  */
 
 #include "PlatformFactory.h"
+#ifdef HAVE_SDL
+#include "SDL.h"
+#endif
+#include "ErrorHandler.h"
 
 PlatformFactory*	PlatformFactory::instance = 0;
 BzfMedia*		PlatformFactory::media = 0;
 
 PlatformFactory::PlatformFactory()
 {
-  // do nothing
+#ifdef HAVE_SDL
+  Uint32 flags = 0;
+#ifdef DEBUG
+  flags |= SDL_INIT_NOPARACHUTE;
+#endif
+  if (SDL_Init(flags) == -1) {
+    printFatalError("Could not initialize SDL: %s.\n", SDL_GetError());
+    exit(-1);
+  }; 
+#endif
 }
 
 PlatformFactory::~PlatformFactory()
 {
-  // do nothing
+#ifdef HAVE_SDL
+  SDL_Quit();
+#endif
 }
 
 BzfMedia*		PlatformFactory::getMedia()

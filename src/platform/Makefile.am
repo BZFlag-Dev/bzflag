@@ -171,6 +171,8 @@ EXTRA_libPlatform_a_SOURCES =		\
 	WinMedia.cxx			\
 	WinMedia.h
 
+AM_CPPFLAGS = $(SDL_CFLAGS)
+
 EXTRA_DIST = NewMedia.cxx NewMedia.h
 
 MAINTAINERCLEANFILES = \
