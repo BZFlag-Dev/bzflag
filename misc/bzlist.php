@@ -17,27 +17,49 @@
 // This is a simple script that reports current public servers
 // and creates links to server stats via bzfquery.pl.
 
+
 $listserver = 'http://db.bzflag.org/db/?action=LIST';
 $bzfquery = './bzfquery.pl';
+
+?><!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<title>temp</title>
+</head>
+<body>
+<?
+if($_GET["hostport"]) {
+  ?>
+  <table border=0 cellpadding=0 cellspacing=0>
+    <tr>
+      <td><? print "$_GET[hostport] Stats:"; ?></td>
+    </tr>
+    <tr><td>&nbsp;</td></tr>
+    <tr>
+      <td><pre><? system("$bzfquery $hostport"); ?></pre></td>
+    </tr>
+  </table>
+  <?
+}
 
 $fp = fopen("$listserver", "r");
 if ($fp) {
 ?>
-<pre><table border=0 cellpadding=0 cellspacing=0>
+<table border=0 cellpadding=0 cellspacing=0>
   <tr>
     <td width=300>Server Name</td>
     <td width=125>Server Address</td>
     <td>Server Description (short)</td>
   </tr>
-  <tr><td colspan=3>&nbsp;</td></tr>
+  <!-- <tr><td colspan=3>&nbsp;</td></tr> -->
 <?
   while (!feof($fp)) {
     $buffer = fgets($fp, 1024);
     $array = preg_split('/\s+/', $buffer);
     $count = count($array);
-    list($bzhost, $bzport) = split(":", $array[0], 2);
-    $LINK = "<a href=$_SERVER[PHP_SELF]?bzhost=$bzhost&bzport=$bzport>$bzhost:$bzport</a>";
-    if (($bzhost)|($bzport)) {
+    $LINK = "<a href=\"$_SERVER[PHP_SELF]?hostport=$array[0]\">$array[0]</a>";
+    if (($array[0])) {
       print "<tr>";
       print "<td>$LINK</td>";
       print "<td>$array[3]</td>";
@@ -52,23 +74,15 @@ if ($fp) {
       print "</tr>\n";
     }
   }
-  print "</table></pre><br>";
+  print "</table>\n";
   fclose ($fp);
-}
+} ?>
 
-if(($_GET["bzhost"])&&($_GET["bzport"])) {
-  ?>
-  <br><table border=0 cellpadding=0 cellspacing=0>
-    <tr>
-      <td><? print "$_GET[bzhost]:$_GET[bzport] Stats:"; ?></td>
-    </tr>
-    <tr><td>&nbsp;</td></tr>
-    <tr>
-      <td><pre><? system("$bzfquery $_GET[bzhost] $_GET[bzport]"); ?></pre></td>
-    </tr>
-  </table>
-  <?
-}
+<p><a href="http://validator.w3.org/check?uri=referer"><img border="0" src="http://www.w3.org/Icons/valid-html401" alt="Valid HTML 4.01!" height="31" width="88"></a></p>
+</body>
+</html>
+
+<?
 
 # Local Variables: ***
 # mode:php ***
