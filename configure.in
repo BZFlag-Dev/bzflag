@@ -257,7 +257,11 @@ fi
 
 AC_ARG_WITH(SDL, [  --with-SDL              use Simple DirectMedia Layer])
 if test x$with_SDL = xyes; then
-  AM_PATH_SDL(,, with_SDL=no)
+  AM_PATH_SDL(1.2.5,, with_SDL=no)
+  if test x$with_SDL = xno; then
+     AC_MSG_WARN([could not find an appropriate SDL version. \
+BZflag will build without SDL])
+  fi
 fi
 if test x$with_SDL = xyes; then
   AC_DEFINE(HAVE_SDL, 1, [Using SDL])
