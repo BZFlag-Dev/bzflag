@@ -2243,23 +2243,23 @@ static void addPlayer(int playerIndex)
   // automatically assign the player's team
   if ((clOptions->autoTeam) || (t == AutomaticTeam)) {
     std::vector<TeamColor> minIndex;
-    int mostEmpty = softmaxPlayers;
+    int sizeOfSmallestTeam = softmaxPlayers;
 
     for (int i = (int)RogueTeam; i < (int)ObserverTeam; i++) {
       // if the team is valid and not full
       if ((clOptions->maxTeam[i] > 0) && 
 	  (team[i].team.size < softmaxPlayers) &&
-	  (team[i].team.size <= mostEmpty)) {
-	if (team[i].team.size < mostEmpty) {
+	  (team[i].team.size <= sizeOfSmallestTeam)) {
+	if (team[i].team.size < sizeOfSmallestTeam) {
 	  minIndex.clear();
-	  mostEmpty = team[i].team.size;
+	  sizeOfSmallestTeam = team[i].team.size;
 	}
 	minIndex.push_back((TeamColor)i);
       }
     } // end iteration over teams
 
 #if 0
-    std::cout << "Found " << minIndex.size() << " equally empty (" << mostEmpty << ") teams; softmax is " << softmaxPlayers << std::endl;
+    std::cout << "Found " << minIndex.size() << " equally empty (" << sizeOfSmallestTeam << ") teams; softmax is " << softmaxPlayers << std::endl;
     for (int i = 0; i < minIndex.size(); i++) {
       std::cout << "  Team " << minIndex[i] << " has maxteam of " << clOptions->maxTeam[i] << std::endl;
     }
