@@ -1240,7 +1240,6 @@ shiess                  # de - shit
 sheiss                  # de - shit
 shiesse                 # de - shit
 sheisse                 # de - shit
-vig dischen swaenen     # de - you fucking bastard
 
 
 # Greek
@@ -1783,7 +1782,7 @@ rejuego			# es - prostitute (mexican/guatemalan slang)
 remame			# es - cunt (mexican slang)
 rene			# es - nigger (mexican slang)
 riata			# es - dick (mexican slang)
-rul			# es - asshole (mexican slang)
+# rul			# es - asshole (mexican slang)
 sacale la leche         # es - make her cum (lit. take the milk out of her)
 taconera  		# es - prostitute (lit. high-heeler)
 trastero		# es - asshole (lit. anus)
@@ -1884,7 +1883,7 @@ chraa
 ayir
 atouche
 futkretzn
-pimmel
+
 
 # Local Variables: ***
 # mode:Text ***
