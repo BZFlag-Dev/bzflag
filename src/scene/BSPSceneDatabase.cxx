@@ -267,7 +267,9 @@ void			BSPSceneIterator::resetFrustum(
 void			BSPSceneIterator::reset()
 {
   stack.clear();
-  stack.push_back(BSPSceneIteratorItem(db->root));
+  if (db->root != NULL) {
+    stack.push_back(BSPSceneIteratorItem(db->root));
+  }
 }
 
 SceneNode*		BSPSceneIterator::getNext()
