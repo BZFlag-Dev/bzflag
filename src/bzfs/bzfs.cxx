@@ -12,6 +12,7 @@
 #include "bzfs.h"
 #include "NetHandler.h"
 #include "LagInfo.h"
+#include "DelayQueue.h"
 
 const int udpBufSize = 128000;
 
@@ -46,6 +47,8 @@ LagInfo *lagInfo[MaxPlayers + ReplayObservers] = {NULL};
 PlayerAccessInfo accessInfo[MaxPlayers + ReplayObservers];
 // Last known position, vel, etc
 PlayerState lastState[MaxPlayers  + ReplayObservers];
+// DelayQueue for "Lag Flag"
+DelayQueue delayq[MaxPlayers  + ReplayObservers];
 // team info
 TeamInfo team[NumTeams];
 // num flags in flag list
@@ -518,9 +521,6 @@ static bool serverStart()
     close(wksSocket);
     return false;
   }
-  for (int i = 0; i < (MaxPlayers + ReplayObservers); i++) {	// no connections
-    player[i].resetComm();
-  }
 
   listServerLinksCount = 0;
   publicize();
@@ -567,8 +567,8 @@ static void relayPlayerPacket(int index, uint16_t len, const void *rawbuf, uint1
       if ((code == MsgPlayerUpdate) && pi.haveFlag() && 
           (flag[pi.getFlag()].flag.type == Flags::Lag)) {
         // delay sending to this player
-        pi.delayQueueAddPacket(len+4, rawbuf,
-			       BZDB.eval(StateDatabase::BZDB_FAKELAG));
+	delayq[i].addPacket(len+4, rawbuf,
+			    BZDB.eval(StateDatabase::BZDB_FAKELAG));
       } 
       else {
         // send immediately
@@ -1314,7 +1314,7 @@ static void acceptClient()
   send(fd, (const char*)buffer, sizeof(buffer), 0);
 
   // FIXME add new client server welcome packet here when client code is ready
-  player[playerIndex].initPlayer(clientAddr, playerIndex);
+  player[playerIndex].initPlayer(playerIndex);
 
   new NetHandler(&player[playerIndex], clientAddr, playerIndex, fd);
   lastState[playerIndex].order = 0;
@@ -1579,6 +1579,8 @@ static void addPlayer(int playerIndex)
   player[playerIndex].resetPlayer
     ((clOptions->gameStyle & TeamFlagGameStyle) != 0);
   lagInfo[playerIndex] = new LagInfo(&player[playerIndex]);
+  delayq[playerIndex].dequeuePackets();
+
 
   // accept player
   void *buf, *bufStart = getDirectMessageBuffer();
@@ -2026,6 +2028,7 @@ void removePlayer(int playerIndex, const char *reason, bool notify)
 	   player[playerIndex].getCallSign(), playerIndex, reason);
     accessInfo[playerIndex].removePlayer();
     wasPlaying = player[playerIndex].removePlayer();
+    delayq[playerIndex].dequeuePackets();
     NetHandler *netPlayer = NetHandler::getHandler(playerIndex);
 #ifdef NETWORK_STATS
     if (wasPlaying)
@@ -2603,7 +2606,7 @@ static void dropFlag(int playerIndex, float pos[3])
   drpFlag.flag.initialVelocity = -BZDB.eval(StateDatabase::BZDB_GRAVITY) * upTime;
   
   // removed any delayed packets (in case it was a "Lag Flag")
-  player[playerIndex].delayQueueDequeuePackets();
+  delayq[playerIndex].dequeuePackets();
 
   // player no longer has flag -- send MsgDropFlag
   player[playerIndex].resetFlag();
@@ -2983,6 +2986,8 @@ static void handleCommand(int t, const void *rawbuf)
     // player joining
     case MsgEnter: {
       player[t].unpackEnter(buf);
+      DEBUG1("Player %s [%d] has joined from %s\n",
+	     player[t].getCallSign(), t, handler->getTargetIP());
       addPlayer(t);
       break;
     }
@@ -3873,7 +3878,7 @@ int main(int argc, char **argv)
     // get time for next delayed packet (Lag Flag)
     for (p = 0; p < curMaxPlayers; p++) {
       if (player[p].isPlaying()) {
-        float nextTime = player[p].delayQueueNextPacketTime();
+        float nextTime = delayq[p].nextPacketTime();
         if (nextTime < waitTime) {
           waitTime = nextTime;
         }
@@ -3939,7 +3944,7 @@ int main(int argc, char **argv)
     for (p = 0; p < curMaxPlayers; p++) {
       void *data;
       int length;
-      if (player[p].delayQueueGetPacket(&length, &data)) {
+      if (delayq[p].getPacket(&length, &data)) {
         pwrite (p, data, length);
         free (data);
       }

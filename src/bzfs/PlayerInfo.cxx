@@ -24,23 +24,20 @@
 
 #define MAX_FLAG_HISTORY (10)
 
-void PlayerInfo::initPlayer(const struct sockaddr_in& clientAddr,
-			    int _playerIndex) {
-  playerIndex      = _playerIndex;
-  AddrLen addr_len = sizeof(clientAddr);
+PlayerInfo::PlayerInfo() {
+  state = PlayerNoExist;
+}
 
-  // store address information for player
-  memcpy(&taddr, &clientAddr, addr_len);
+void PlayerInfo::initPlayer(int _playerIndex) {
+  playerIndex      = _playerIndex;
 
   state = PlayerInLimbo;
   paused = false;
   pausedSince = TimeKeeper::getNullTime();
-};
+}
 
 void PlayerInfo::resetPlayer(bool ctf) {
   wasRabbit = false;
-
-  delayq.dequeuePackets();
 
   lastupdate = TimeKeeper::getCurrent();
   lastmsg	 = TimeKeeper::getCurrent();
@@ -58,8 +55,6 @@ bool PlayerInfo::removePlayer() {
 
   bool wasPlaying = state > PlayerInLimbo;
 
-  delayq.dequeuePackets();
-
   callSign[0] = 0;
 
   flagHistory.clear();
@@ -75,11 +70,6 @@ void PlayerInfo::setRestartOnBase(bool on) {
 
 bool PlayerInfo::shouldRestartAtBase() {
   return restartOnBase;
-};
-
-void PlayerInfo::resetComm() {
-    state = PlayerNoExist;
-    delayq.init();
 };
 
 bool PlayerInfo::isPlaying() {
@@ -145,9 +135,6 @@ void PlayerInfo::unpackEnter(void *buf) {
   buf = nboUnpackString(buf, email, EmailLen);
   cleanCallSign();
   cleanEMail();
-  DEBUG1("Player %s [%d] has joined from %s:%d\n",
-	 callSign, playerIndex, inet_ntoa(taddr.sin_addr),
-	 ntohs(taddr.sin_port));
 };
 
 const char *PlayerInfo::getCallSign() const {
@@ -322,23 +309,6 @@ bool PlayerInfo::scoreReached(int score) {
 
 bool PlayerInfo::isFlagTransitSafe() {
   return TimeKeeper::getCurrent() - lastFlagDropTime >= 2.0f;
-};
-
-void PlayerInfo::delayQueueAddPacket(int length, const void *data,
-				     float time) {
-  delayq.addPacket(length, data, time);
-};
-
-bool PlayerInfo::delayQueueGetPacket(int *length, void **data) {
-  return delayq.getPacket(length, data);
-};
-
-void PlayerInfo::delayQueueDequeuePackets() {
-  delayq.dequeuePackets();
-};
-
-float PlayerInfo::delayQueueNextPacketTime() {
-  return delayq.nextPacketTime();
 };
 
 const char *PlayerInfo::getClientVersion() {

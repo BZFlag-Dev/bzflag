@@ -24,14 +24,10 @@
 #endif
 
 // bzflag library headers
-#include "global.h"
 #include "TimeKeeper.h"
-#include "Address.h"
-#include "PlayerState.h"
 #include "Team.h"
 #include "Protocol.h"
 #include "Flag.h"
-#include "DelayQueue.h"
 
 // bzfs-specific headers
 
@@ -65,14 +61,13 @@ struct TeamInfo {
 
 class PlayerInfo {
 public:
-  void        initPlayer(const struct sockaddr_in& clientAddr,
-			 int _playerIndex);
+  PlayerInfo();
+  void        initPlayer(int _playerIndex);
   void        resetPlayer(bool ctf);
   // return false if player was not really in 
   bool        removePlayer();
   void        setRestartOnBase(bool on);
   bool        shouldRestartAtBase();
-  void        resetComm();
   bool        isPlaying();
   bool        exist();
   void        signingOn();
@@ -108,10 +103,6 @@ public:
   void       *packScore(void *buf);
   bool        scoreReached(int score);
   bool        isFlagTransitSafe();
-  void        delayQueueAddPacket(int length, const void *data, float time);
-  bool        delayQueueGetPacket(int *length, void **data);
-  void        delayQueueDequeuePackets();
-  float       delayQueueNextPacketTime();
   const char *getClientVersion();
   void       *setClientVersion(size_t length, void *buf);
   std::string getIdleStat();
@@ -136,8 +127,6 @@ private:
 
     bool restartOnBase;
 
-    // peer's network address
-    Address peer;
     // current state of player
     ClientState state;
     // type of player
@@ -156,12 +145,6 @@ private:
     int wins, losses, tks;
 
     TimeKeeper lastFlagDropTime;
-
-    // TCP connection
-    struct sockaddr_in taddr;
-
-    // DelayQueue for "Lag Flag"
-    DelayQueue delayq;
 
     std::string clientVersion;
 
