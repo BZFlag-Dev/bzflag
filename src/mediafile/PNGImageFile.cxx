@@ -14,6 +14,7 @@
 #include "PNGImageFile.h"
 #include <iostream>
 #include "Pack.h"
+#include "bzfio.h"
 #include "../zlib/zconf.h"
 #include "../zlib/zlib.h"
 
@@ -119,6 +120,8 @@ PNGImageFile::PNGImageFile(std::istream* stream) : ImageFile(stream), palette(NU
 
 
   init(channels, width, height);
+
+  DEBUG4("Read PNG: Width %d, Height %d, Bit depth %d, Color depth %d, Filter Method %d, Interlace Method %d.\n", width, height, bitDepth, colorDepth, filterMethod, interlaceMethod); 
 }
 
 /*
@@ -277,9 +280,6 @@ bool PNGImageFile::expand()
 
 bool PNGImageFile::expand()
 {
-  if ((bitDepth == 8) && (colorDepth != 3))
-    return true;
-
   unsigned char *pData = getLineBuffer();
 
   int width = getWidth();
@@ -325,9 +325,9 @@ bool PNGImageFile::expand()
 
 	for (int i = width-1; i >= 0; i--) {
 	  PNGRGB &rgb = palette->get(*(pData+i));
-	  *(pData + width*3 + 1) = rgb.red;
-	  *(pData + width*3 + 2) = rgb.green;
-	  *(pData + width*3 + 3) = rgb.blue;
+	  *(pData + i*3 + 1) = rgb.red;
+	  *(pData + i*3 + 2) = rgb.green;
+	  *(pData + i*3 + 3) = rgb.blue;
 	}
       }
     }

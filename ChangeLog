@@ -4,9 +4,10 @@
 BZFlag 2.0.1
 ------------
 
-* add SPAWN permission, remove -requireidentify -  Steve Krenzel, Tim Riker
+* Fixed loading of colormapped PNGs - Daniel Remenak
+* Add SPAWN permission, remove -requireidentify - Steve Krenzel, Tim Riker
 * A /say command for server messages - Julio Jimenez, Frank Evers
-* rejoin permission for avoiding _rejoinTime limit - Frank Evers, Julio Jimenez
+* Rejoin permission for avoiding _rejoinTime limit - Frank Evers, Julio Jimenez
 * A player will auto ghost if they use global authentication - Steve Krenzel
 * Server announces who started a countdown - Angelina Carlton
 * Fixed server start menu for windows - Daniel Remenak
