@@ -539,6 +539,11 @@ void SceneNodeParticleSystem::update(Real newTime)
 {
 	Real timeDifference = newTime - currentTime;
 	currentTime = newTime;
+	// it sometimes has problems with long delays between updates
+	// and the expire function. If this is the first update, don't
+	// do anything
+	if(timeDifference > 0.5)
+		return;
 	expire(timeDifference);
 	triggerEmitters(timeDifference);
 	applyMotion(timeDifference);
