@@ -24,6 +24,7 @@
 #include "World.h"
 #include "BundleMgr.h"
 #include "Bundle.h"
+#include "Flag.h"
 #include "OpenGLGState.h"
 #include "StateDatabase.h"
 #include "texture.h"

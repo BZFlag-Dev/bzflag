@@ -23,6 +23,7 @@
 #include "OpenGLTexFont.h"
 #include "TimeKeeper.h"
 #include "HUDui.h"
+#include "Flag.h"
 #include <string>
 
 class BzfDisplay;

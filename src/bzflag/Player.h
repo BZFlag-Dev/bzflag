@@ -20,6 +20,7 @@
 #include "ShotPath.h"
 #include "OpenGLTexture.h"
 #include "PlayerState.h"
+#include "Flag.h"
 
 class ShotPath;
 class SceneDatabase;
