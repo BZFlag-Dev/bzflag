@@ -5521,22 +5521,37 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
   
 	float maxPlanarSpeedSqr = TankSpeed*TankSpeed;
   
+	bool logOnly = false; 
+
 	// if tank is not driving cannot be sure it didn't toss (V) in flight
 	// if tank is not alive cannot be sure it didn't just toss (V)
-	if ((flag[player[t].flag].flag.id == VelocityFlag)
-	||  (player[t].lastState.pos[2] != state.pos[2])
-	||  ((state.status & PlayerState::Alive) == 0))
+	if (flag[player[t].flag].flag.id == VelocityFlag)
 	  maxPlanarSpeedSqr *= VelocityAd*VelocityAd;
+	else {
+	  // If player is moving vertically, or not alive the speed checks seem to be problematic
+	  // If this happens, just log it for now, but don't actually kick
+	  if ((player[t].lastState.pos[2] != state.pos[2])
+	  ||  (player[t].lastState.velocity[2] != state.velocity[2])
+	  ||  ((state.status & PlayerState::Alive) == 0)) {
+	    logOnly = true;
+	  }
+	}
   
-	// tanks can get faster than allowed, probably due to floating point
-	if (curPlanarSpeedSqr > (10.0f + maxPlanarSpeedSqr)) {
-	  char message[MessageLen];
-	  DEBUG1("kicking Player %s [%d]: tank too fast (tank: %f, allowed: %f)\n",
+	if (curPlanarSpeedSqr > (1.0f + maxPlanarSpeedSqr)) {
+	  if (logOnly) {
+		DEBUG1("Logging Player %s [%d]: tank too fast (tank: %f, allowed: %f){Dead or v[z] != 0}\n",
 		 player[t].callSign, t,
 		 sqrt(curPlanarSpeedSqr), sqrt(maxPlanarSpeedSqr));
-	  strcpy( message, "Autokick: Tank moving too fast, Update your client." );
-	  sendMessage(t, player[t].id, player[t].team, message);
-	  removePlayer(t, "too fast");
+	  }
+	  else {
+		char message[MessageLen];
+		DEBUG1("kicking Player %s [%d]: tank too fast (tank: %f, allowed: %f)\n",
+		 player[t].callSign, t,
+		 sqrt(curPlanarSpeedSqr), sqrt(maxPlanarSpeedSqr));
+		strcpy( message, "Autokick: Tank moving too fast, Update your client." );
+		sendMessage(t, player[t].id, player[t].team, message);
+		removePlayer(t, "too fast");
+	  }
 	  break;
 	}
       }
