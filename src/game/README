@@ -1,0 +1,12 @@
+Included here should be the core logic of bzflag.  The aspects of the
+game that are potentially useful to other clients should be put here
+instead of into the application front-end.  The game lib is a middle
+layer sitting between the generic common functionality that is
+application-agnostic and the logic and appearance specific to a single
+particular application.
+
+If your code is not bzflag-specific, or could potentially be used in
+another application, it probably doesn't belong in here.  If your code
+cannot really be used in another client without modification, perhaps
+specific to rendering or presentation, it probably doesn't belong in
+here.

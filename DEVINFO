@@ -255,24 +255,10 @@ server), use BZDB. If you wanted an object broker, use a freakin'
 global.
 
 
-Details -- common
-=================
-common.h	-- basic types and function declarations
-ErrorHandler	-- a central place for printing errors (using printError())
-TimeBomb	-- used for expiring development releases
-
-
-Details -- geometry
-===================
-Intersect	-- 2D and 3D intersection functions
-Ray		-- a 3D ray
-ViewFrustum	-- a 3D viewing frustum
-
-
-Details -- net
-==============
-Contains stuff for network handling.  This is in flux.  All platform
-specific network code should end up in here.
+Details
+=======
+See the source directory for more details on what belongs and is in
+each directory.
 
 
 Details -- obstacle

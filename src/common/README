@@ -1,0 +1,5 @@
+This directory should only contain code that is not specific to bzflag
+logic and could probably even be used in other applications without
+modification.  In general, this includes generic interfaces such as
+singletons, error handlers, and time keeping facilities.
+
