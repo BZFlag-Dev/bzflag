@@ -183,7 +183,7 @@ WorldInfo *defineWorldFromFile(const char *filename)
       }
     }
   }
-  
+
   // clean up
   emptyWorldFileObjectList(list);
   world->finishWorld();
