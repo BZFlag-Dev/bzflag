@@ -140,7 +140,7 @@ class World {
     float		shakeTimeout;
     int			shakeWins;
     uint32_t		epochOffset;
-    float		bases[NumTeams][9];
+    float		bases[NumTeams][7];
     std::vector<BoxBuilding>		boxes;
     std::vector<PyramidBuilding>	pyramids;
     std::vector<BaseBuilding>		basesR;
@@ -187,7 +187,7 @@ class WorldBuilder {
     void		setTeleporterTarget(int source, int target);
     void		setBase(TeamColor team,
 				const float* pos, float rotation,
-				float w, float b, const float* safety);
+				float w, float b, float h);
 
   private:
     void		preGetWorld();

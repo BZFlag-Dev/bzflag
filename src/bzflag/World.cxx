@@ -72,8 +72,6 @@ World::World() : gameStyle(PlainGameStyle),
     bases[i][4] = 0.0f;
     bases[i][5] = 0.0f;
     bases[i][6] = 0.0f;
-    bases[i][7] = 0.0f;
-    bases[i][8] = 0.0f;
   }
 }
 
@@ -166,7 +164,7 @@ TeamColor		World::whoseBase(const float* pos) const
     float ry = (float) (sinf(atanf(ny/nx)-bases[i][3]) * sqrt((ny * ny) + (nx * nx)));
     if(fabsf(rx) < bases[i][4] &&
        fabsf(ry) < bases[i][5]) {
-      float nz = (bases[i][2] > 0) ? (bases[i][2] + 1) : 0;
+      float nz = bases[i][2] + bases[i][6];
       float rz = pos[2] - nz;
       if(fabsf(rz) < 0.1) { // epsilon kludge
 	return TeamColor(i);
@@ -804,7 +802,7 @@ void*			WorldBuilder::unpack(void* buf)
 	buf = nboUnpackFloat(buf, data[9]);
 	BaseBuilding base(data, data[3], data +4, team);
 	append(base);
-	setBase(TeamColor(team), data, data[3], data[4], data[5], data + 7);
+	setBase(TeamColor(team), data, data[3], data[4], data[5], data[6]);
 	break;
       }
 
@@ -976,7 +974,7 @@ void			WorldBuilder::setTeleporterTarget(int src, int tgt)
 
 void			WorldBuilder::setBase(TeamColor team,
 					const float* pos, float rotation,
-					float w, float b, const float* safety)
+					      float w, float b, float h)
 {
   int teamIndex = int(team);
   world->bases[teamIndex][0] = pos[0];
@@ -985,9 +983,7 @@ void			WorldBuilder::setBase(TeamColor team,
   world->bases[teamIndex][3] = rotation;
   world->bases[teamIndex][4] = w;
   world->bases[teamIndex][5] = b;
-  world->bases[teamIndex][6] = safety[0];
-  world->bases[teamIndex][7] = safety[1];
-  world->bases[teamIndex][8] = safety[2];
+  world->bases[teamIndex][6] = h;
 }
 
 
