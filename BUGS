@@ -1,11 +1,6 @@
 recent bugs
 ------------
 
-- There is no OnBase status. Should there be? Box tops are assumed to be
-  greater than 0. But bases, which act in the code like buildings, often 
-  are not. This causes Burrow tanks to get stuck on bases, because they
-  don't release they are on a building and shouldn't fall.
-
 - Observer controls get confused sometimes. To see, push control and arrows
   to spin. While keys are down, push alt. Now release all. You continue spinning
   un aided. Now stop yourself. Now alt doesn't work. Bagheera reports he gets
@@ -17,6 +12,12 @@ recent bugs
   string instead of only the first seven characters)  the server should
   be able to kick unacceptable clients, and not rely on clients to remove
   themselves.
+
+- There is no OnBase status. Should there be? Box tops are assumed to be
+  greater than 0. But bases, which act in the code like buildings, often 
+  are not. This causes Burrow tanks to get stuck on bases, because they
+  don't release they are on a building and shouldn't fall.
+  NOTE: This is fixed. I wonder if it will fix the below bug 10/15
 
 - players gets stuck for no reason, can't move or turn, but can shoot.
   Seen on xmission (CTF), also seen on brlcad (FFA). Was stuck after each respawn,

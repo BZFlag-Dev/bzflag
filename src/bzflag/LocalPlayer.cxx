@@ -603,7 +603,7 @@ void			LocalPlayer::doUpdateMotion(float dt)
       obstacle->getNormal(newPos, normal);
 
     // check for being on a building
-    if (newPos[2] > 0.0f && normal[2] > 0.001f) {
+    if (normal[2] > 0.001f) {
       if (location != Dead && location != Exploding && expelled)
 	location = OnBuilding;
       newVelocity[2] = 0.0f;
