@@ -35,6 +35,8 @@ static const char copyright[] = "Copyright (c) 1993 - 2003 Tim Riker";
 #include "TimeKeeper.h"
 #include "TimeBomb.h"
 
+float		WorldSize =	DEFAULT_WORLD;					// meters
+
 // Like verbose debug messages?
 #define DEBUG1 if (debug >= 1) printf
 #define DEBUG2 if (debug >= 2) printf
