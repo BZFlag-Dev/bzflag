@@ -150,7 +150,7 @@ bool			PingPacket::write(int fd,
 }
 
 bool			PingPacket::isRequest(int fd,
-				struct sockaddr_in* addr, int* minReplyTTL)
+				struct sockaddr_in* addr)
 {
   if (fd < 0) return false;
   char buffer[6];
@@ -160,27 +160,18 @@ bool			PingPacket::isRequest(int fd,
   if (size < 2) return false;
   msg = nboUnpackUShort(msg, len);
   msg = nboUnpackUShort(msg, code);
-  if (minReplyTTL && size == 6 && len == 2 && code == MsgPingCodeRequest) {
-    uint16_t ttl;
-    msg = nboUnpackUShort(msg, ttl);
-    *minReplyTTL = (int)ttl;
-  }
-  else if (minReplyTTL) {
-    *minReplyTTL = 0;
-  }
   return code == MsgPingCodeRequest;
 }
 
 bool			PingPacket::sendRequest(int fd,
-					const struct sockaddr_in* addr,
-					int replyMinTTL)
+					const struct sockaddr_in* addr)
 {
   if (fd < 0 || !addr) return false;
   char buffer[6];
   void *msg = buffer;
   msg = nboPackUShort(msg, 2);
   msg = nboPackUShort(msg, MsgPingCodeRequest);
-  msg = nboPackUShort(msg, (uint16_t)replyMinTTL);
+  msg = nboPackUShort(msg, (uint16_t) 0);
   return sendMulticast(fd, buffer, sizeof(buffer), addr) == sizeof(buffer);
 }
 

@@ -62,7 +62,6 @@ bzfs \- BZFlag game server
 [\fB\-timemanual\fR]
 [\fB\-tk\fR]
 [\fB\-tkkr \fIpercent\fR]
-[\fB\-ttl \fIttl\fR]
 [\fB\-userdb \fIfile\fR]
 [\fB\-vars \fIfile\fR]
 [\fB\-version\fR]
@@ -337,12 +336,6 @@ stay alive.
 Kicks players whose team killing to normal kill ratio is greater than
 \fIpercent\fR [1-100]. A start up grace period is given to players.
 .TP
-\fB-ttl\fI time-to-live\fR
-Sets the maximum number of hops a ``ping'' reply will take.  This
-effectively limits the range of the server in the network.
-Clients more than \fItime-to-live\fR hops away will not receive notification
-of the server's existence.
-.TP
 \fB-userdb\fI file\fR
 Load group associations from file
 .TP
@@ -412,12 +405,9 @@ client, the firewall must accept connections from the client to this port
 and forward them to the server.  See \fBbzfrelay\fR for a BZFlag firewall
 relay.
 .PP
-Clients can search for servers by sending and receiving multicast UDP
-packets.  For a client to discover a server, there must be
-a multicast route between them with fewer hops than the default TTL
-(time-to-live) which is 8 or whatever the TTL was set to using the
-\fB-ttl\fR option to \fBbzflag\fR.  However, a client can still connect
-to a server beyond the multicast TTL.  Clients can also find servers
+Clients can search for servers by sending broadcast UDP
+packets.  But they must be on the same local area network for this to work.
+Clients can also find servers
 advertised using \fI-public\fR by querying \fBbzfls\fR servers.
 .PP
 Game information is relayed through the server. Some communication between

@@ -3139,7 +3139,7 @@ void			ServerMenu::show()
   // also try broadcast
   pingBcastSocket = openBroadcast(BroadcastPort, NULL, &pingBcastAddr);
   if (pingBcastSocket != -1)
-    PingPacket::sendRequest(pingBcastSocket, &pingBcastAddr, 1);
+    PingPacket::sendRequest(pingBcastSocket, &pingBcastAddr);
 
   // listen for echos
   addPlayingCallback(&playingCB, this);

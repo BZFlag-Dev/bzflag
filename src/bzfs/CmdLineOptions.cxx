@@ -99,7 +99,6 @@ const char *usageString =
 #endif
 "[-tk] "
 "[-tkkr <percent>] "
-"[-ttl <ttl>] "
 "[-userdb <user permissions file>]"
 "[-vars <filename>]"
 "[-version] "
@@ -174,7 +173,6 @@ const char *extraUsageString =
 #endif
 "\t-tk: player does not die when killing a teammate\n"
 "\t-tkkr: team killer to wins percentage (1-100) above which player is kicked\n"
-"\t-ttl: time-to-live for pings (default=8)\n"
 "\t-userdb: file to read for user access permissions\n"
 "\t-vars: file to read for worlds configuration variables\n"
 "\t-vetoTime: maximum seconds an authorized user has to cancel a poll (default is 20)\n"
@@ -866,21 +864,6 @@ void parse(int argc, char **argv, CmdLineOptions &options)
       if (options.teamKillerKickRatio < 0) {
 	 options.teamKillerKickRatio = 0;
 	 fprintf(stderr, "disabling team killer kick ratio");
-      }
-    } else if (strcmp(argv[i], "-ttl") == 0) {
-      // use a different ttl
-      if (++i == argc) {
-	fprintf(stderr, "argument expected for -ttl\n");
-	usage(argv[0]);
-      }
-      options.pingTTL = atoi(argv[i]);
-      if (options.pingTTL < 0) {
-	options.pingTTL = 0;
-	fprintf(stderr, "using minimum ttl of %i\n", options.pingTTL);
-      }
-      else if (options.pingTTL > MaximumTTL) {
-	options.pingTTL = MaximumTTL;
-	fprintf(stderr, "using maximum ttl of %i\n", options.pingTTL);
       }
     } else if (strcmp(argv[i], "-userdb") == 0) {
       if (++i == argc) {

@@ -51,10 +51,8 @@ class PingPacket {
     bool		readFromFile(istream& in);
     static void		repackHexPlayerCounts(char*, int* counts);
 
-    static bool	isRequest(int fd, struct sockaddr_in*,
-						int* minReplyTTL = NULL);
-    static bool	sendRequest(int fd, const struct sockaddr_in*,
-						int minReplyTTL = 0);
+    static bool	isRequest(int fd, struct sockaddr_in*);
+    static bool	sendRequest(int fd, const struct sockaddr_in*);
 
   public:
     ServerId		serverId;

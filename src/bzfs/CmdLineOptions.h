@@ -51,7 +51,7 @@ struct CmdLineOptions
     advertisemsg(NULL), worldFile(NULL), pingInterface(NULL), publicizedTitle(NULL),
     listServerURL(DefaultListServerURL), password(NULL), maxShots(1), maxTeamScore(0), maxPlayerScore(0),
     maxObservers(3), numExtraFlags(0), teamKillerKickRatio(0), numAllowedFlags(0), shakeWins(0), shakeTimeout(0), teamFlagTimeout(30),
-    pingTTL(DefaultTTL), maxlagwarn(10000), lagwarnthresh(-1.0), idlekickthresh(-1.0), timeLimit(0.0f),
+    maxlagwarn(10000), lagwarnthresh(-1.0), idlekickthresh(-1.0), timeLimit(0.0f),
     timeElapsed(0.0f), linearAcceleration(0.0f), angularAcceleration(0.0f), useGivenPort(false),
     useFallbackPort(false), requireUDP(false), randomBoxes(false), randomCTF(false),
     flagsOnBuildings(false), oneGameOnly(false), timeManualStart(false), randomHeights(false), useTeleporters(false),
@@ -95,7 +95,6 @@ struct CmdLineOptions
   uint16_t		shakeWins;
   uint16_t		shakeTimeout;
   int			teamFlagTimeout;
-  int			pingTTL;
   int			maxlagwarn;
 
   float			lagwarnthresh;

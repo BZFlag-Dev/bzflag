@@ -2089,9 +2089,8 @@ static void acceptClient()
 static void respondToPing()
 {
   // get and discard ping packet
-  int minReplyTTL;
   struct sockaddr_in addr;
-  if (!PingPacket::isRequest(udpSocket, &addr, &minReplyTTL)) return;
+  if (!PingPacket::isRequest(udpSocket, &addr)) return;
 
   // if I'm ignoring pings and the ping is not from a connected host
   // then ignore the ping.
