@@ -205,6 +205,10 @@ SOURCE=..\..\src\geometry\models\tank\medium_turret.cxx
 # End Group
 # Begin Source File
 
+SOURCE=..\..\src\geometry\AnimatedTreads.cxx
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\src\geometry\BillboardSceneNode.cxx
 # End Source File
 # Begin Source File
@@ -270,6 +274,10 @@ SOURCE=..\..\src\geometry\ShellSceneNode.cxx
 # Begin Source File
 
 SOURCE=..\..\src\geometry\SphereSceneNode.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\geometry\TankGeometryMgr.cxx
 # End Source File
 # Begin Source File
 
@@ -434,6 +442,10 @@ SOURCE=..\..\include\StateDatabase.h
 # Begin Source File
 
 SOURCE=..\..\include\TankSceneNode.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\include\TankGeometryMgr.h
 # End Source File
 # Begin Source File
 
