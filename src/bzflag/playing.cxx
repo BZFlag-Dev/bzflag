@@ -1367,7 +1367,6 @@ bool			ServerCommandKey::keyRelease(const BzfKeyEvent& key)
 
 #if defined(DEBUG)
 #define FREEZING
-#define SNAPPING
 #endif
 #if defined(FREEZING)
 static bool		motionFreeze = false;
@@ -1615,30 +1614,6 @@ static void		doKeyPlaying(const BzfKeyEvent& key, bool pressed)
 
   if (doKeyCommon(key, pressed)) return;
 
-#if defined(SNAPPING)
-  static int snap = 0;
-  if (key.button == BzfKeyEvent::F11 && pressed) {
-    // snapshot
-    char filename[80];
-    sprintf(filename, "bzfi%04d.raw", snap++);
-    FILE* f = fopen(filename, "w");
-    if (f) {
-      int w = mainWindow->getWidth();
-      int h = mainWindow->getHeight();
-      unsigned char* b = (unsigned char*)malloc(w * h * 3);
-      //glReadPixels(0, 0, w, h, GL_RED, GL_UNSIGNED_BYTE, b + 0 * w * h);
-      //glReadPixels(0, 0, w, h, GL_GREEN, GL_UNSIGNED_BYTE, b + 1 * w * h);
-      //glReadPixels(0, 0, w, h, GL_BLUE, GL_UNSIGNED_BYTE, b + 2 * w * h);
-      // use something like netpbm and the following command to get usable images
-      // rawtoppm -rgb 640 480 bzfi0000.raw | pnmflip -tb | pnmtojpeg --quality=100 > test.jpg
-      glReadPixels(0, 0, w, h, GL_RGB, GL_UNSIGNED_BYTE, b);
-      fwrite(b, 3 * w * h, 1, f);
-      free(b);
-      fclose(f);
-      fprintf(stderr, "%s: %dx%d\n", filename, w, h);
-    }
-  }
-#endif
 #if defined(FREEZING)
   if (key.ascii == '`' && pressed) {
     // toggle motion freeze
@@ -2209,6 +2184,37 @@ static std::string cmdSend(const std::string&, const CommandManager::ArgList& ar
   return std::string();
 }
 
+static std::string cmdScreenshot(const std::string&, const CommandManager::ArgList& args)
+{
+  static int snap = 0;
+  if (args.size() != 0)
+    return "usage: screenshot";
+
+  std::fstream f;
+  std::string filename = string_util::format("bzfi%04d.raw", snap++);
+  f.open(filename.c_str(), std::ios::out | std::ios::binary);
+  if (f.is_open()) {
+    int w = mainWindow->getWidth(), h = mainWindow->getHeight();
+    // use something like netpbm and the following command to get usable images
+    // rawtoppm -rgb 640 480 bzfi0000.raw | pnmflip -tb | pnmtopng -compression 9 > test.png
+    unsigned char* b = new unsigned char[w * h * 3];
+    glReadPixels(0, 0, w, h, GL_RGB, GL_UNSIGNED_BYTE, b);
+    // apply gamma correction - FIXME
+/*    unsigned char *ptr = b;
+    for(int i = 0; i < w * h * 3; i++) {
+      *ptr = gammaTable[*ptr];
+      ptr++;
+    }*/
+    f.write(reinterpret_cast<char*>(b), w * h * 3);
+    delete [] b;
+    f.close();
+    char notify[128];
+    snprintf(notify, 128, "%s: %dx%d", filename.c_str(), w, h);
+    controlPanel->addMessage(notify);
+  }
+  return std::string();
+}
+
 struct CommandListItem {
   const char* name;
   CommandManager::CommandFunction func;
@@ -2222,7 +2228,8 @@ static const CommandListItem commandList[] = {
   { "identify",	&cmdIdentify,	"identify:  identify/lock-on-to player in view" },
   { "destruct", &cmdDestruct,	"destruct:  self destruct" },
   { "pause",	&cmdPause,	"pause:  pause/resume" },
-  { "send",	&cmdSend,	"send {all|team|nemesis|recipient}:  start composing a message" }
+  { "send",	&cmdSend,	"send {all|team|nemesis|recipient}:  start composing a message" },
+  { "screenshot", &cmdScreenshot, "screenshot:  take a screenshot" }
 };
 
 static void		doEvent(BzfDisplay* display)
