@@ -282,6 +282,8 @@
 
 
 				d.writeln("</p></body></html>");
+
+				d.close();
 				return false;
 			}
 		</script>
@@ -502,7 +504,7 @@
 					<legend>Mandatory Flags</legend>
 					<table width="100%">
 						<tr>
-							<td align="right">(good)</td><td><input type="text" name="good_mand_flags" value="0" size="3"/></td>
+							<td align="right">(good)</td><td><input type="text" name="good_mand_flag" value="0" size="3"/></td>
 						</tr>
 						<tr>
 							<td align="right">(V)</td><td><input type="text" name="v_mand_flag" value="0" size="3"/></td>
@@ -551,7 +553,7 @@
 					<legend>Forbidden Optional Flags</legend>
 					<table width="100%">
 						<tr>
-							<td align="right">(bad)</td><td><input type="checkbox" name="bad_forbid_flags"/></td>
+							<td align="right">(bad)</td><td><input type="checkbox" name="bad_forbid_flag"/></td>
 						</tr>
 						<tr>
 							<td align="right">(V)</td><td><input type="checkbox" name="v_forbid_flag"/></td>
