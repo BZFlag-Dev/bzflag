@@ -37,6 +37,7 @@ void ViewItemColorMask::setMask(bool _r, bool _g, bool _b, bool _a)
 bool ViewItemColorMask::onPreRender(float, float, float, float)
 {
 	glColorMask(r, g, b, a);
+	return true;
 }
 
 void ViewItemColorMask::onPostRender(float, float, float, float)
