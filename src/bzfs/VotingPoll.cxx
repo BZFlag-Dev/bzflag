@@ -25,7 +25,16 @@
 
 /* public: */
 
-VotingPoll::VotingPoll() 
+VotingPoll::VotingPoll(unsigned short int voteTime, 
+		       unsigned short int vetoTime,
+		       unsigned short int votesRequired,
+		       float votePercentage,
+		       unsigned short int voteRepeatTime)
+  : _voteTime(voteTime), 
+    _vetoTime(vetoTime),
+    _votesRequired(votesRequired),
+    _votePercentage(votePercentage),
+    _voteRepeatTime(voteRepeatTime)
 {
   return;
 }

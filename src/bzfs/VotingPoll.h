@@ -38,16 +38,20 @@ class VotingPoll
    
 
  protected:
-
   
  public:
   
-  VotingPoll();
+  VotingPoll(unsigned short int voteTime=60, 
+	     unsigned short int vetoTime=20,
+	     unsigned short int votesRequired=3,
+	     float votePercentage=50.1,
+	     unsigned short int voteRepeatTime=300);
   ~VotingPoll(void);
 
   inline VotingBooth *getBooth(void) {
     return _votingBooth;
   }
+  
 
 };
 
