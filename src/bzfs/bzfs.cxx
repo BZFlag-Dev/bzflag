@@ -306,7 +306,7 @@ static int uread(int *playerIndex, int *nopackets, int& n,
     tmpbuf = nboUnpackUShort(tmpbuf, code);
     if ((len == 1) && (code == MsgUDPLinkRequest)) {
       tmpbuf = nboUnpackUByte(tmpbuf, pi);
-      if ((pi <= curMaxPlayers) && (pPlayerInfo->setUdpIn(uaddr, pi))) {
+      if ((pi <= curMaxPlayers) && (player[pi].setUdpIn(uaddr, pi))) {
 	if (uaddr.sin_port)
 	  // send client the message that we are ready for him
 	  sendUDPupdate(pi);
