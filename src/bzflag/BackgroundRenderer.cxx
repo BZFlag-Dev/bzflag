@@ -671,6 +671,12 @@ void BackgroundRenderer::drawSky(SceneRenderer& renderer, bool mirror)
   glLoadIdentity();
   renderer.getViewFrustum().executeOrientation();
 
+  if (mirror) {
+    glEnable(GL_CLIP_PLANE0);
+    const GLdouble plane[4] = {0.0, 0.0, +1.0, 0.0};
+    glClipPlane(GL_CLIP_PLANE0, plane);
+  }
+  
   if (sunDirection[2] > -0.009f) {
     sunGState.setState();
     glColor3fv(renderer.getSunScaledColor());
@@ -678,18 +684,9 @@ void BackgroundRenderer::drawSky(SceneRenderer& renderer, bool mirror)
   }
 
   if (doStars) {
-    if (mirror) {
-      glEnable(GL_CLIP_PLANE0);
-      const GLdouble plane[4] = {0.0, 0.0, +1.0, 0.0};
-      glClipPlane(GL_CLIP_PLANE0, plane);
-    }
     starGState[starGStateIndex].setState();
     starXFormList.execute();
-    if (mirror) {
-      glDisable(GL_CLIP_PLANE0);
-    }
   }
-
 
   if (moonDirection[2] > -0.009f) {
     moonGState[doStars ? 1 : 0].setState();
@@ -697,6 +694,10 @@ void BackgroundRenderer::drawSky(SceneRenderer& renderer, bool mirror)
  //   if (useMoonTexture)
  //     glEnable(GL_TEXTURE_2D);
     moonList.execute();
+  }
+  
+  if (mirror) {
+    glDisable(GL_CLIP_PLANE0);
   }
 
   glPopMatrix();
