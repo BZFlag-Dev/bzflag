@@ -1361,10 +1361,8 @@ static void patchMessage(PlayerId fromId, PlayerId toId, const void *msg)
   switch (code) {
     case MsgAddPlayer:
     case MsgCaptureFlag:
-    case MsgDropFlag:
     case MsgEnter:
     case MsgGMUpdate:
-    case MsgGrabFlag:
     case MsgPlayerUpdate:
     case MsgRemovePlayer:
     case MsgScoreOver:
@@ -1391,6 +1389,13 @@ static void patchMessage(PlayerId fromId, PlayerId toId, const void *msg)
       patchPlayerId(fromId, toId, msg, 4);
       if (len > 16)
         patchPlayerId(fromId, toId, msg, 12);
+      break;
+      ;;
+    case MsgDropFlag:
+    case MsgGrabFlag:
+      if (len > 28)
+        patchPlayerId(fromId, toId, msg, 4);
+        patchPlayerId(fromId, toId, msg, 20);
       break;
       ;;
     case MsgAccept:
