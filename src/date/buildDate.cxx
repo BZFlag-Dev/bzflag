@@ -16,6 +16,7 @@
 #include <stdio.h>
 #include <string.h>
 #include "config.h"
+#include "version.h"
 
 // opaque version number increments on protocol incompatibility
 #ifndef BZ_PROTO_VERSION
