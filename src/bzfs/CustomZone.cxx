@@ -35,6 +35,30 @@ CustomZone::CustomZone()
 }
 
 
+// make a safety zone for all team flags
+void CustomZone::addFlagSafety(float x, float y, WorldInfo* worldInfo)
+{
+  pos[0] = x;
+  pos[1] = y;
+  pos[2] = 0.0f;
+  size[0] = 0.0f;
+  size[1] = 0.0f;
+  size[2] = 0.0f;
+  rotation = 0.0f;
+
+  // add the qualifiers
+  for (int team = 0; team < CtfTeams; team++) {
+    std::string qual = EntryZones::getSafetyPrefix();
+    qual += std::string(Team::getName((TeamColor) team));
+    qualifiers.push_back(qual);
+  }
+  
+  worldInfo->addZone(this);
+  
+  return;
+}
+               
+
 bool CustomZone::read(const char *cmd, std::istream& input) {
   if (strcmp(cmd, "flag") == 0) {
     std::string args, flag;
@@ -110,14 +134,15 @@ void CustomZone::getRandomPoint(float *pt) const
 {
   float x = (float)((bzfrand() * (2.0f * size[0])) - size[0]);
   float y = (float)((bzfrand() * (2.0f * size[1])) - size[1]);
-  pt[2] = (float)(bzfrand() * size[2]);
 
-  pt[0] = x * cosf(rotation) - y * sinf(rotation);
-  pt[1] = x * sinf(rotation) + y * cosf(rotation);
+  const float cos_val = cosf(rotation);
+  const float sin_val = sinf(rotation);
+  pt[0] = (x * cos_val) - (y * sin_val);
+  pt[1] = (x * sin_val) + (y * cos_val);
 
   pt[0] += pos[0];
   pt[1] += pos[1];
-  pt[2] += pos[2];
+  pt[2] = pos[2];
 }
 
 float CustomZone::getDistToPoint (const float *_pos) const

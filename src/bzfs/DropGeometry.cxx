@@ -19,18 +19,21 @@
 // system headers
 #include <stdlib.h>
 
-// common implementation headers
-#include "BZDBCache.h"
-#include "Obstacle.h"
-#include "CollisionManager.h"
+// common headers
 #include "Intersect.h"
+#include "Obstacle.h"
+#include "MeshFace.h"
+#include "BaseBuilding.h"
+#include "ObstacleMgr.h"
+#include "CollisionManager.h"
 #include "PhysicsDriver.h"
 #include "WorldInfo.h"
-#include "ObstacleMgr.h"
-#include "MeshFace.h"
+#include "BZDBCache.h"
 
 
-// cheezy holding list
+//
+// Datatype Definitions
+//
 class HoldingList {
   public:
     HoldingList();
@@ -38,153 +41,149 @@ class HoldingList {
     void copy(const ObsList* list);
   public:
     int size;
-    ObsList olist;
+    int count;
+    Obstacle** list;
 };
-static HoldingList ilist; // ray intersection list
+
+//
+// Function Prototypes
+//
+static int compareAscending(const void* a, const void* b);
+static int compareDescending(const void* a, const void* b);
+static bool isDeathLanding(const Obstacle* landing);
+static bool isOpposingTeam(const Obstacle* obs, int team);
+static bool isValidLanding(const Obstacle* obs, const Ray& ray);
+static bool isValidClearance(const float pos[3], float radius,
+                             float height, int team);
+static bool dropIt(float pos[3], float minZ, float maxZ,
+                   float radius, float height, int team);
 
 
-// prototypes
-static int compareByTopHeight(const void* a, const void* b);
-bool regularDrop(float pos[3], float minZ, float maxZ,
-                 float height, const WorldInfo* world);
+/******************************************************************************/
 
-
-static inline bool isGroundValid(const float pos[3],
-                                 float radius, float height)
+bool DropGeometry::dropPlayer(float pos[3], float minZ, float maxZ)
 {
-  const ObsList* olist = COLLISIONMGR.cylinderTest(pos, radius, height);
-
-  // invalid if it touches a building
-  for (int i = 0; i < olist->count; i++) {
-    const Obstacle* obs = olist->list[i];
-    if (obs->inCylinder(pos, radius, height)) {
-      return false;
-    }
-  }
-  return true;
-}
-
-
-static inline bool isValidLanding(const Obstacle* landing, const float pos[3],
-                                  float radius, float height)
-{
-  const ObsList* olist = COLLISIONMGR.cylinderTest(pos, radius, height);
-
-  const float landZ = landing->getExtents().maxs[2];
-
-  // invalid if it touches a building
-  for (int i = 0; i < olist->count; i++) {
-    const Obstacle* obs = olist->list[i];
-    if (obs->getExtents().maxs[2] <= landZ) {
-      continue; // do not check the landing
-    }
-    if (obs->inCylinder(pos, radius, height)) {
-      return false;
-    }
-  }
-
-  return true;
-}
-
-
-bool DropGeometry::dropPlayer(float pos[3], float minZ, float maxZ,
-                              const WorldInfo* world)
-{
+  // fudge-it to avoid spawn stickiness on obstacles
   const float fudge = 0.001f;
   const float tankHeight = BZDBCache::tankHeight + fudge;
-  bool value = regularDrop(pos, minZ, maxZ, tankHeight, world);
+  bool value = dropIt(pos, minZ, maxZ, BZDBCache::tankRadius, tankHeight, -1);
   pos[2] += fudge;
   return value;
 }
 
                  
-bool DropGeometry::dropFlag(float pos[3], float minZ, float maxZ,
-                              const WorldInfo* world)
+bool DropGeometry::dropFlag(float pos[3], float minZ, float maxZ)
 {
   const float flagHeight = BZDB.eval(StateDatabase::BZDB_FLAGHEIGHT);
-  return regularDrop(pos, minZ, maxZ, flagHeight, world);
+  return dropIt(pos, minZ, maxZ, BZDBCache::tankRadius, flagHeight, -1);
 }
 
-                 
-bool regularDrop(float pos[3], float minZ, float maxZ,
-                 float height, const WorldInfo* world)
+
+bool DropGeometry::dropTeamFlag(float pos[3], float minZ, float maxZ,
+                                int team)
 {
-  // adjust the minimum level
-  const float waterLevel = world->getWaterLevel();
-  if ((waterLevel > 0.0f) && (waterLevel > minZ)) {
-    minZ = waterLevel;
-  }
+  const float flagHeight = BZDB.eval(StateDatabase::BZDB_FLAGHEIGHT);
+  return dropIt(pos, minZ, maxZ, BZDBCache::tankRadius, flagHeight, team);
+}
 
-  // use a downwards ray to hit the onFlatTop() buildings
-  const float maxHeight = COLLISIONMGR.getWorldExtents().maxs[2];
-  const float dir[3] = {0.0f, 0.0f, -1.0f};
-  const float org[3] = {pos[0], pos[1], maxHeight + 1.0f};
-  Ray ray(org, dir);
 
-  const float radius = BZDBCache::tankRadius;
-
-  // is a simple ground landing good enough?  
-  if (minZ <= 0.0f) {
-    pos[2] = 0.0f;
-    if (isGroundValid(pos, radius, height)) {
+/******************************************************************************/
+                 
+static inline bool isDeathLanding(const Obstacle* obs)
+{
+  if (obs->getType() == MeshFace::getClassName()) {
+    const MeshFace* face = (const MeshFace*) obs;
+    int driver = face->getPhysicsDriver();
+    const PhysicsDriver* phydrv = PHYDRVMGR.getDriver(driver);
+    if ((phydrv != NULL) && (phydrv->getIsDeath())) {
       return true;
     }
   }
-
-  // list of all possible landings
-  const ObsList* olist = COLLISIONMGR.rayTest(&ray, MAXFLOAT);
-  ilist.copy(olist); // copy the list, so that COLLISIONMGR can be re-used
-  qsort(ilist.olist.list, ilist.olist.count, sizeof(Obstacle*),
-        compareByTopHeight); // sort by top height (lowest first)
-
-  // check for a raised landing  
-  for (int i = 0; i < ilist.olist.count; i++) {
-    const Obstacle* obs = ilist.olist.list[i];
-
-    // make sure that it's within the limits    
-    const float zTop = obs->getExtents().maxs[2];
-    if (zTop > maxZ) {
-      return false; // no more obstacles to check
-    }
-    if (zTop < minZ) {
-      continue;
-    }
-    pos[2] = zTop;
-    
-    // must be a flattop buildings
-    if (!obs->isFlatTop()) {
-      continue;
-    }
-    // drivethrough buildings are not potential landings
-    if (obs->isDriveThrough()) {
-      continue;
-    }
-
-    // death buildings are not potential landings
-    if (obs->getType() == MeshFace::getClassName()) {
-      const MeshFace* face = (const MeshFace*) obs;
-      int driver = face->getPhysicsDriver();
-      const PhysicsDriver* phydrv = PHYDRVMGR.getDriver(driver);
-      if ((phydrv != NULL) && (phydrv->getIsDeath())) {
-        return false;
-      }
-    }
-  
-    // make sure that it intersects
-    if (obs->intersect(ray) < 0.0f) {
-      continue;
-    }
-    
-    if (isValidLanding(obs, pos, radius, height)) {
-      return true;
-    }
-  }
-
   return false;
 }
 
 
-static int compareByTopHeight(const void* a, const void* b)
+static inline bool isOpposingTeam(const Obstacle* obs, int team)
+{
+  if (team < 0) {
+    return false;
+  }
+
+  if (obs->getType() != BaseBuilding::getClassName()) {
+    return false;
+  }
+
+  const BaseBuilding* base = (const BaseBuilding*) obs;
+  if (base->getTeam() == team) {
+    return false;
+  }
+
+  return true;
+}
+
+
+static inline bool isValidLanding(const Obstacle* obs, const Ray& ray)
+{
+  // must be a flattop buildings
+  if (!obs->isFlatTop()) {
+    return false;
+  }
+  // drivethrough buildings are not potential landings
+  if (obs->isDriveThrough()) {
+    return false;
+  }
+
+  // death buildings are not potential landings
+  if (isDeathLanding(obs)) {
+    return false;
+  }
+
+  // make sure that it intersects
+  if (obs->intersect(ray) < 0.0f) {
+    return false;
+  }
+
+  return true;
+}
+
+
+static bool isValidClearance(const float pos[3], float radius,
+                             float height, int team)
+{
+  // team flags do not get clearance checks
+  // (this is where you could add in some
+  //  smarts to check for wedged flags)
+  if (team >= 0) {
+    radius = 0.0f;
+  }
+
+  const ObsList* olist = COLLISIONMGR.cylinderTest(pos, radius, height);
+
+  // invalid if it touches a building
+  for (int i = 0; i < olist->count; i++) {
+    const Obstacle* obs = olist->list[i];
+    const float zTop = obs->getExtents().maxs[2];
+    if (zTop > pos[2]) {
+      if (obs->inCylinder(pos, radius, height)) {
+        return false;
+      }
+    } else {
+      // do not check coplanars unless they are fatal
+      if (isDeathLanding(obs) || isOpposingTeam(obs, team)) {
+        const float fudge = 0.001f; // dig in a little to make sure
+        const float testPos[3] = {pos[0], pos[1], pos[2] - fudge};
+        if (obs->inCylinder(testPos, radius, height + fudge)) {
+          return false;
+        }
+      }
+    }
+  }
+
+  return true;
+}
+
+
+static int compareAscending(const void* a, const void* b)
 {
   const Obstacle* obsA = *((const Obstacle**)a);
   const Obstacle* obsB = *((const Obstacle**)b);
@@ -200,29 +199,138 @@ static int compareByTopHeight(const void* a, const void* b)
 }
 
 
+static int compareDescending(const void* a, const void* b)
+{
+  const Obstacle* obsA = *((const Obstacle**)a);
+  const Obstacle* obsB = *((const Obstacle**)b);
+  const float topA = obsA->getExtents().maxs[2];
+  const float topB = obsB->getExtents().maxs[2];
+  if (topA < topB) {
+    return +1;
+  } else if (topA > topB) {
+    return -1;
+  } else {
+    return 0;
+  }
+}
+
+
+/******************************************************************************/
+
+static bool dropIt(float pos[3], float minZ, float maxZ,
+                   float radius, float height, int team)
+{
+  int i;
+  
+  // special case, just check the ground
+  if (maxZ <= 0.0f) {
+    pos[2] = 0.0f;
+    if (isValidClearance(pos, radius, height, team)) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  // adjust the position to the minimum level
+  if (pos[2] < minZ) {
+    pos[2] = minZ;
+  }
+
+  // use a downwards ray to hit the onFlatTop() buildings
+  const float maxHeight = COLLISIONMGR.getWorldExtents().maxs[2];
+  const float dir[3] = {0.0f, 0.0f, -1.0f};
+  const float org[3] = {pos[0], pos[1], maxHeight + 1.0f};
+  Ray ray(org, dir);
+  
+  // list of  possible landings
+  HoldingList rayList; // ray intersection list
+  const ObsList* olist = COLLISIONMGR.rayTest(&ray, MAXFLOAT);
+  rayList.copy(olist); // copy the list, so that COLLISIONMGR can be re-used
+  
+  const float startZ = pos[2];
+        
+  // are we in the clear?
+  if (isValidClearance(pos, radius, height, team)) {
+    // sort from highest to lowest
+    qsort(rayList.list, rayList.count, sizeof(Obstacle*), compareDescending);
+    // no interference, try dropping
+    for (i = 0; i < rayList.count; i++) {
+      const Obstacle* obs = rayList.list[i];
+      const float zTop = obs->getExtents().maxs[2];
+      // make sure that it's within the limits
+      if ((zTop > startZ) || (zTop > maxZ)) {
+        continue;
+      }
+      if (zTop < minZ) {
+        return false;
+      }
+      pos[2] = zTop;
+      
+      if (isValidLanding(obs, ray) &&
+          isValidClearance(pos, radius, height, team)) {
+        return true;
+      }
+    }
+    // check the ground
+    if (minZ <= 0.0f) {
+      pos[2] = 0.0f;
+      if (isValidClearance(pos, radius, height, team)) {
+        return true;
+      }
+    }
+  } else {
+    // sort from lowest to highest
+    qsort(rayList.list, rayList.count, sizeof(Obstacle*), compareAscending);
+    // we're blocked, try climbing
+    for (i = 0; i < rayList.count; i++) {
+      const Obstacle* obs = rayList.list[i];
+      const float zTop = obs->getExtents().maxs[2];
+      // make sure that it's within the limits
+      if ((zTop < startZ) || (zTop < minZ)) {
+        continue;
+      }
+      if (zTop > maxZ) {
+        return false;
+      }
+      pos[2] = zTop;
+      
+      if (isValidLanding(obs, ray) &&
+          isValidClearance(pos, radius, height, team)) {
+        return true;
+      }
+    }
+  }
+  
+  return false;
+}
+
+
+/******************************************************************************/
+                 
 HoldingList::HoldingList()
 {
-  size = 0;
-  olist.count = size;
-  olist.list = NULL;
+  size = count = 0;
+  list = NULL;
   return;
 }
 
 HoldingList::~HoldingList()
 {
-  delete olist.list;
+  delete list;
   return;
 }
   
-void HoldingList::copy(const ObsList* list)
+void HoldingList::copy(const ObsList* olist)
 {
-  if (list->count > size) {
-    delete olist.list;
-    size = list->count;
-    olist.list = new Obstacle*[size];
+  if (olist->count > size) {
+    // increase the list size
+    delete list;
+    size = olist->count;
+    list = new Obstacle*[size];
   }
-  olist.count = list->count;
-  memcpy(olist.list, list->list, olist.count * sizeof(Obstacle*));
+  count = olist->count;
+  memcpy(list, olist->list, count * sizeof(Obstacle*));
   return;
 }
 

@@ -33,6 +33,7 @@
 #include "TimeBomb.h"
 #include "ConfigFileManager.h"
 #include "bzsignal.h"
+#include "CustomZone.h"
 
 // implementation-specific bzfs-specific headers
 #include "RejoinList.h"
@@ -1034,7 +1035,7 @@ static WorldInfo *defineTeamWorld()
 			   0.5f * teleWidth, teleBreadth, 2.0f * teleHeight, teleWidth, false);
       world->addTeleporter( 3.5f * teleBreadth,  3.5f * teleBreadth, 0.0f, (float)(0.25 * M_PI),
 			   0.5f * teleWidth, teleBreadth, 2.0f * teleHeight, teleWidth, false);
-//
+
       world->addLink(0, 14);
       world->addLink(1, 7);
       world->addLink(2, 12);
@@ -1054,15 +1055,49 @@ static WorldInfo *defineTeamWorld()
     }
   }
 
-  // get rid of unneeded bases
+  // generate the required bases
   for (t = RedTeam; t <= PurpleTeam; t++) {
     if (clOptions->maxTeam[t] == 0) {
       bases.erase(t);
     } else {
-      const float *pos  = bases[t].getBasePosition(0);
-      const float  size = 0.5f * BZDB.eval(StateDatabase::BZDB_BASESIZE);
-      world->addBase(pos[0], pos[1], pos[2], 0.0f,
-		     size, size, 0.0f, t, false, false);
+      CustomZone zone;
+      float p[3] = {0.0f, 0.0f, 0.0f};
+      const float size[3] = {baseSize * 0.5f, baseSize * 0.5f, 0.0f};
+      const float safeOff = 0.5f * (baseSize + pyrBase);
+      switch (t) {
+        case RedTeam: {
+          p[0] = (-worldSize + baseSize) / 2.0f;
+          p[1] = 0.0f;
+          world->addBase(p, 0.0f, size, t, false, false);
+          zone.addFlagSafety(p[0] + safeOff, p[1] - safeOff, world);
+          zone.addFlagSafety(p[0] + safeOff, p[1] + safeOff, world);
+          break;
+        }
+        case GreenTeam: {
+          p[0] = (worldSize - baseSize) / 2.0f;
+          p[1] = 0.0f;
+          world->addBase(p, 0.0f, size, t, false, false);
+          zone.addFlagSafety(p[0] - safeOff, p[1] - safeOff, world);
+          zone.addFlagSafety(p[0] - safeOff, p[1] + safeOff, world);
+          break;
+        }
+        case BlueTeam: {
+          p[0] = 0.0f;
+          p[1] = (-worldSize + baseSize) / 2.0f;
+          world->addBase(p, 0.0f, size, t, false, false);
+          zone.addFlagSafety(p[0] - safeOff, p[1] + safeOff, world);
+          zone.addFlagSafety(p[0] + safeOff, p[1] + safeOff, world);
+          break;
+        }
+        case PurpleTeam: {
+          p[0] = 0.0f;
+          p[1] = (worldSize - baseSize) / 2.0f;
+          world->addBase(p, 0.0f, size, t, false, false);
+          zone.addFlagSafety(p[0] - safeOff, p[1] - safeOff, world);
+          zone.addFlagSafety(p[0] + safeOff, p[1] - safeOff, world);
+          break;
+        }
+      }
     }
   }
 
@@ -1956,18 +1991,23 @@ void resetFlag(FlagInfo &flag)
 
   } else {
     // random position (not in a building)
-    float worldSize = BZDBCache::worldSize;
+    const float waterLevel = world->getWaterLevel();
+    float minZ = 0.0f;
+    if (waterLevel > minZ) {
+      minZ = waterLevel;
+    }
     float maxZ = MAXFLOAT;
     if (!clOptions->flagsOnBuildings) {
       maxZ = 0.0f;
     }      
+    float worldSize = BZDBCache::worldSize;
     do {
       if (!world->getZonePoint(std::string(flag.flag.type->flagAbbv), flagPos)) {
 	flagPos[0] = (worldSize - baseSize) * ((float)bzfrand() - 0.5f);
 	flagPos[1] = (worldSize - baseSize) * ((float)bzfrand() - 0.5f);
-	flagPos[2] = 0.0f;
+	flagPos[2] = world->getMaxWorldHeight() * (float)bzfrand();
       }
-    } while (!DropGeometry::dropFlag(flagPos, 0.0f, maxZ, world));
+    } while (!DropGeometry::dropFlag(flagPos, minZ, maxZ));
   }
 
   bool teamIsEmpty = true;
@@ -2613,7 +2653,8 @@ static void grabFlag(int playerIndex, FlagInfo &flag)
 
 static void dropFlag(GameKeeper::Player &playerData, float pos[3])
 {
-  const float flagHeight = BZDB.eval(StateDatabase::BZDB_FLAGHEIGHT);
+  assert(world != NULL);
+  
   const float size = BZDBCache::worldSize;
   if (pos[0] < -size || pos[0] > size)
     pos[0] = 0.0;
@@ -2622,10 +2663,6 @@ static void dropFlag(GameKeeper::Player &playerData, float pos[3])
   if (pos[2] > maxWorldHeight)
     pos[2] = maxWorldHeight;
 
-  assert(world != NULL);
-  const Obstacle* container;
-  int topmosttype = NOT_IN_BUILDING;
-  const Obstacle* topmost = 0;
   // player wants to drop flag.  we trust that the client won't tell
   // us to drop a sticky flag until the requirements are satisfied.
   const int flagIndex = playerData.player.getFlag();
@@ -2641,112 +2678,55 @@ static void dropFlag(GameKeeper::Player &playerData, float pos[3])
   bool limited = clOptions->flagLimit[drpFlag.flag.type] != -1;
   if (limited && drpFlag.numShots > 0) drpFlag.grabs = 0;
 
-  topmosttype = world->cylinderInBuilding(&container, pos, 0, flagHeight);
-
-  // the tank is inside a building - find the roof
-  if (topmosttype != NOT_IN_BUILDING) {
-    topmost = container;
-    int tmp;
-    for (float i = container->getPosition()[2] + container->getSize()[2];
-	 (tmp = world->cylinderInBuilding(&container,
-					  pos[0], pos[1], i, 0, flagHeight)) !=
-	   NOT_IN_BUILDING; i += 0.1f) {
-      topmosttype = tmp;
-      topmost = container;
-    }
-  } else {
-    // the tank is _not_ inside a building - find the floor
-    for (float i = pos[2]; ; i -= 0.1f) {
-      topmosttype = world->cylinderInBuilding
-	(&topmost, pos[0], pos[1], i, 0, flagHeight);
-      if (topmosttype != NOT_IN_BUILDING)
-	break;
-      if (i < 0)
-	break;
-    }
-  }
-  // if topmosttype is NOT_IN_BUILDING position has reached ground
 
   const float waterLevel = world->getWaterLevel();
-  float obstacleTop = 0.0f;
-  if (topmosttype != NOT_IN_BUILDING) {
-    obstacleTop = topmost->getPosition()[2] + topmost->getSize()[2];
+  float minZ = 0.0f;
+  if (waterLevel > minZ) {
+    minZ = waterLevel;
   }
+  float maxZ = MAXFLOAT;
+  if (!clOptions->flagsOnBuildings) {
+    maxZ = 0.0f;
+  }      
 
-  // note: sticky/bad flags should always have grabs=1
+  float landing[3] = {pos[0], pos[1], pos[2]};
+  bool safelyDropped =
+        DropGeometry::dropTeamFlag(landing, minZ, maxZ, flagTeam);
 
   bool vanish;
-  if (isTeamFlag)
-    vanish = false;
-  else if (--drpFlag.grabs == 0)
-    vanish = true;
-  else if (topmosttype == NOT_IN_BUILDING && (waterLevel <= 0.0f))
-    vanish = false;
-  else if (clOptions->flagsOnBuildings && (obstacleTop > waterLevel) &&
-	   ((topmosttype == NOT_IN_BUILDING) ||
-	    (topmost->isFlatTop() && !topmost->isDriveThrough())))
-    vanish = false;
-  else
-    vanish = true;
 
-  float landingPos[3] = {pos[0], pos[1], obstacleTop};
+  if (isTeamFlag) {
+    vanish = false;
+  } else if (--drpFlag.grabs == 0) {
+    vanish = true;
+  } else {
+    vanish = !safelyDropped;
+  }
 
   // With Team Flag, we should absolutely go for finding a landing
   // position, while, for other flags, we could stay with default, or
   // just let them vanish
-  if (isTeamFlag) {
-    if (topmosttype == IN_BASE) {
-      // figure out landing spot -- if flag in a Bad Place
-      // when dropped, move to safety position or make it going
-      BaseBuilding *landingBase = (BaseBuilding *)topmost;
-      TeamColor     teamBase    = (TeamColor)landingBase->getTeam();
-      if (teamBase != flagTeam) {
-	std::string teamName = Team::getName((TeamColor) flagTeam);
-	if (!world->getSafetyPoint(teamName, pos, landingPos)) {
-	  bases[teamBase].getSafetyZone(landingPos[0],
-					landingPos[1],
-					landingPos[2]);
-	  topmosttype = world->cylinderInBuilding
-	    (&container, landingPos, BZDBCache::tankRadius,
-	     flagHeight);
-	  if ((topmosttype != NOT_IN_BUILDING) || (landingPos[2] <= waterLevel)) {
-	    TeamBases &teamBases = bases[flagTeam];
-	    const TeamBase &base = teamBases.getRandomBase(flagIndex);
-	    landingPos[0] = base.position[0];
-	    landingPos[1] = base.position[1];
-	    landingPos[2] = base.position[2] + base.size[2];
-	  }
-	}
-      }
-    } else if ((topmosttype == NOT_IN_BUILDING) && (waterLevel <= 0.0f)) {
-      // use default landing position
-    } else if (clOptions->flagsOnBuildings && (obstacleTop > waterLevel)
-	       && (topmosttype == IN_BOX_NOTDRIVETHROUGH)) {
-      // use default landing position
-    } else {
-      // people were cheating by dropping their flag above the nearest
-      // convenient building which makes it fly all the way back to
-      // your own base.  make it fly to the center of the board.
-      std::string teamName = Team::getName ((TeamColor) flagTeam);
-      if (!world->getSafetyPoint(teamName, pos, landingPos)) {
-	const float pos[3] = {0.0f, 0.0f, 0.0f};
-	topmosttype = world->cylinderInBuilding
-	  (&container, pos, BZDBCache::tankRadius,
-	   flagHeight);
-	if ((topmosttype == NOT_IN_BUILDING) && (waterLevel <= 0.0f)) {
-	  landingPos[0] = 0.0f;
-	  landingPos[1] = 0.0f;
-	  landingPos[2] = 0.0f;
-	} else {// oh well, whatcha gonna do?
-	  TeamBases &teamBases = bases[flagTeam];
-	  const TeamBase &base = teamBases.getRandomBase(flagIndex);
-	  landingPos[0] = base.position[0];
-	  landingPos[1] = base.position[1];
-	  landingPos[2] = base.position[2] + base.size[2];
-	}
+  if (isTeamFlag && !safelyDropped) {
+    // figure out landing spot -- if flag in a Bad Place
+    // when dropped, move to safety position or make it going
+    std::string teamName = Team::getName((TeamColor) flagTeam);
+    if (!world->getSafetyPoint(teamName, pos, landing)) {
+      // try the center
+      landing[0] = landing[1] = landing[2] = 0.0f;
+      bool safelyDropped =
+        DropGeometry::dropTeamFlag(landing, minZ, maxZ, flagTeam);
+      if (!safelyDropped) {
+        // ok, we give up, send it home
+        TeamBases &teamBases = bases[flagTeam];
+        const TeamBase &base = teamBases.getRandomBase(flagIndex);
+        landing[0] = base.position[0];
+        landing[1] = base.position[1];
+        landing[2] = base.position[2] + base.size[2];
       }
     }
-
+  }
+    
+  if (isTeamFlag) {
     // if it is a team flag, check if there are any players left in
     // that team - if not, start the flag timeout
     if (team[drpFlag.flag.type->flagTeam].team.size == 0) {
@@ -2755,7 +2735,7 @@ static void dropFlag(GameKeeper::Player &playerData, float pos[3])
     }
   }
 
-  drpFlag.dropFlag(pos, landingPos, vanish);
+  drpFlag.dropFlag(pos, landing, vanish);
 
   // removed any delayed packets (in case it was a "Lag Flag")
   playerData.delayq.dequeuePackets();

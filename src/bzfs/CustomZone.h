@@ -22,10 +22,14 @@
 class CustomZone : public WorldFileLocation {
   public:
     CustomZone();
+
     virtual bool read(const char *cmd, std::istream&);
     virtual void writeToWorld(WorldInfo*) const;
     virtual bool usesGroupDef() { return false; }
 
+    // make a safety zone for all team flags (on the ground)
+    void addFlagSafety(float x, float y, WorldInfo* worldInfo);
+               
     const QualifierList &getQualifiers() const;
     float getArea() const;
     void getRandomPoint(float *pt) const;

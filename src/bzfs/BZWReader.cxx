@@ -359,7 +359,6 @@ WorldInfo* BZWReader::defineWorldFromFile()
 
   // make local bases
   unsigned int i;
-  const float safety[] = { 0.0f, 0.0f, 0.0f };
   const ObstacleList& baseList = OBSTACLEMGR.getBases();
   for (i = 0; i < baseList.size(); i++) {
     const BaseBuilding* base = (const BaseBuilding*) baseList[i];
@@ -368,7 +367,7 @@ WorldInfo* BZWReader::defineWorldFromFile()
       bases[color] = TeamBases((TeamColor)color);
     }
     bases[color].addBase(base->getPosition(), base->getSize(),
-			 base->getRotation(), safety);
+			 base->getRotation());
   }
 
   // add objects

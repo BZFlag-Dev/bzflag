@@ -32,7 +32,6 @@ TeamBases::TeamBases(TeamColor team, bool initDefault)
       return;
 
     float worldSize = BZDBCache::worldSize;
-    float pyrBase = BZDB.eval(StateDatabase::BZDB_PYRBASE);
     float baseSize = BZDB.eval(StateDatabase::BZDB_BASESIZE);
 
     teamBases.resize(1);
@@ -42,29 +41,21 @@ TeamBases::TeamBases(TeamColor team, bool initDefault)
       case RedTeam:
 	teamBase.position[0] = (-worldSize + baseSize) / 2.0f;
 	teamBase.position[1] = 0.0f;
-	teamBase.safetyZone[0] = teamBase.position[0] + 0.5f * baseSize + pyrBase;
-	teamBase.safetyZone[1] = teamBase.position[1] + 0.5f * baseSize + pyrBase;
       break;
 
       case GreenTeam:
 	teamBase.position[0] = (worldSize - baseSize) / 2.0f;
 	teamBase.position[1] = 0.0f;
-	teamBase.safetyZone[0] = teamBase.position[0] - 0.5f * baseSize - pyrBase;
-	teamBase.safetyZone[1] = teamBase.position[1] - 0.5f * baseSize - pyrBase;
       break;
 
       case BlueTeam:
 	teamBase.position[0] = 0.0f;
 	teamBase.position[1] = (-worldSize + baseSize) / 2.0f;
-	teamBase.safetyZone[0] = teamBase.position[0] - 0.5f * baseSize - pyrBase;
-	teamBase.safetyZone[1] = teamBase.position[1] + 0.5f * baseSize + pyrBase;
       break;
 
       case PurpleTeam:
 	teamBase.position[0] = 0.0f;
 	teamBase.position[1] = (worldSize - baseSize) / 2.0f;
-	teamBase.safetyZone[0] = teamBase.position[0] + 0.5f * baseSize + pyrBase;
-	teamBase.safetyZone[1] = teamBase.position[1] - 0.5f * baseSize - pyrBase;
       break;
 
       default:
@@ -77,12 +68,11 @@ TeamBases::TeamBases(TeamColor team, bool initDefault)
     teamBase.size[0] = baseSize / 2.0f;
     teamBase.size[1] = baseSize / 2.0f;
     teamBase.size[2] = 0.0f;
-    teamBase.safetyZone[2] = teamBase.position[2];
 }
 
-void TeamBases::addBase( const float *position, const float *size, float rotation, const float *safetyZone )
+void TeamBases::addBase( const float *position, const float *size, float rotation )
 {
-  TeamBase base(position, size, rotation, safetyZone);
+  TeamBase base(position, size, rotation);
   teamBases.push_back(base);
 }
 
@@ -127,26 +117,15 @@ float TeamBases::findBaseZ( float x, float y, float z ) const
   return -1.0f;
 }
 
-void TeamBases::getSafetyZone( float &x, float &y, float &z ) const
-{
-  int baseIndex = (int) (teamBases.size() * bzfrand());
-  const TeamBase &base = teamBases[baseIndex];
-
-  x = base.safetyZone[0];
-  y = base.safetyZone[1];
-  z = base.safetyZone[2];
-}
-
 const TeamBase &TeamBases::getRandomBase( int id )
 {
   return teamBases[id % teamBases.size()];
 }
 
-TeamBase::TeamBase(const float *pos, const float *siz, float rot, const float *safety)
+TeamBase::TeamBase(const float *pos, const float *siz, float rot)
 {
   memcpy(&position, pos, sizeof position);
   memcpy(&size, siz, sizeof size);
-  memcpy(&safetyZone, safety, sizeof safetyZone);
   rotation = rot;
 }
 

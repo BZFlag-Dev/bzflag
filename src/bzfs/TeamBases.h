@@ -25,12 +25,11 @@ class TeamBase
 { // This class represents one base
 public:
   TeamBase() {}
-  TeamBase(const float *pos, const float *siz, float rot, const float *safety);
+  TeamBase(const float *pos, const float *siz, float rot);
   void getRandomPosition( float &x, float &y, float &z ) const;
   float position[3];
   float size[3];
   float rotation;
-  float safetyZone[3];
 };
 
 
@@ -40,13 +39,12 @@ public:
 
   TeamBases();
   TeamBases(TeamColor team, bool initDefault = false);
-  void addBase( const float *position, const float *size, float rotation, const float *safetyZone );
+  void addBase( const float *position, const float *size, float rotation );
   int size() const;
   TeamColor getTeam() const;
   const float *getBasePosition( int base ) const;
   float findBaseZ( float x, float y, float z ) const;
   const TeamBase& getRandomBase( int id );
-  void getSafetyZone( float &x, float &y, float &z ) const;
 
 private:
   typedef std::vector<TeamBase> TeamBaseList;

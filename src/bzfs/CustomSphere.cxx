@@ -89,8 +89,7 @@ bool CustomSphere::read(const char *cmd, std::istream& input)
       std::cout << "couldn't find PhysicsDriver: " << drvname << std::endl;
     }
   }
-  else if ((strcasecmp(cmd, "ricosuavez") == 0) ||
-	   (strcasecmp(cmd, "smoothbounce") == 0)) {
+  else if (strcasecmp(cmd, "smoothbounce") == 0) {
     smoothBounce = true;
   }
   else if (strcasecmp(cmd, "flatshading") == 0) {

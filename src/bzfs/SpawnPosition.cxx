@@ -80,11 +80,17 @@ SpawnPosition::SpawnPosition(int playerId, bool onGroundOnly, bool notNearEdges)
       }
       tries++;
 
+      const float waterLevel = world->getWaterLevel();
+      float minZ = 0.0f;
+      if (waterLevel > minZ) {
+        minZ = waterLevel;
+      }
       float maxZ = maxWorldHeight;
       if (onGroundOnly) {
         maxZ = 0.0f;
       }
-      if (DropGeometry::dropPlayer(testPos, 0.0f, maxZ, world)) {
+      
+      if (DropGeometry::dropPlayer(testPos, minZ, maxZ)) {
         foundspot = true;
       }
 

@@ -133,12 +133,10 @@ void WorldInfo::addTeleporter(float x, float y, float z, float r,
   OBSTACLEMGR.addWorldObstacle(tele);
 }
 
-void WorldInfo::addBase(float x, float y, float z, float r,
-			float w, float d, float h, int color,
+void WorldInfo::addBase(const float pos[3], float r,
+			const float size[3], int color,
 			bool /* drive */, bool /* shoot */)
 {
-  const float pos[3] = {x, y, z};
-  const float size[3] = {w, d, h};
   BaseBuilding* base = new BaseBuilding(pos, r, size, color);
   OBSTACLEMGR.addWorldObstacle(base);
 }
@@ -370,7 +368,7 @@ InBuildingType WorldInfo::classifyHit (const Obstacle* obstacle) const
   }
   else {
     // FIXME - choke here?
-    printf ("*** Unknown obstacle type in WorldInfo::boxInBuilding()\n");
+    printf ("*** Unknown obstacle type in WorldInfo::classifyHit()\n");
     return IN_BASE;
   }
 }
@@ -378,17 +376,10 @@ InBuildingType WorldInfo::classifyHit (const Obstacle* obstacle) const
 
 bool WorldInfo::getZonePoint(const std::string &qualifier, float *pt) const
 {
-  const Obstacle* loc;
-  InBuildingType type;
-
-  if (!entryZones.getZonePoint(qualifier, pt))
+  if (!entryZones.getZonePoint(qualifier, pt)) {
     return false;
+  }
 
-  type = cylinderInBuilding(&loc, pt[0], pt[1], 0.0f, 1.0f, pt[2]);
-  if (type == NOT_IN_BUILDING)
-    pt[2] = 0.0f;
-  else
-    pt[2] = loc->getPosition()[2] + loc->getSize()[2];
   return true;
 }
 
@@ -396,17 +387,10 @@ bool WorldInfo::getZonePoint(const std::string &qualifier, float *pt) const
 bool WorldInfo::getSafetyPoint(const std::string &qualifier,
 			       const float *pos, float *pt) const
 {
-  const Obstacle *loc;
-  InBuildingType type;
-
-  if (!entryZones.getSafetyPoint(qualifier, pos, pt))
+  if (!entryZones.getSafetyPoint(qualifier, pos, pt)) {
     return false;
-
-  type = cylinderInBuilding(&loc, pt[0], pt[1], 0.0f, 1.0f, pt[2]);
-  if (type == NOT_IN_BUILDING)
-    pt[2] = 0.0f;
-  else
-    pt[2] = loc->getPosition()[2] + loc->getSize()[2];
+  }
+  
   return true;
 }
 

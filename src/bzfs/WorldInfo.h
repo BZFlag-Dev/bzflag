@@ -87,8 +87,7 @@ public:
   void addTeleporter(float x, float y, float z, float r,
 		     float w, float d, float h, float b,
 		     bool horizontal, bool drive = false, bool shoot = false);
-  void addBase(float x, float y, float z, float r,
-	       float w, float d, float h,
+  void addBase(const float pos[3], float r, const float size[3],
 	       int color, bool drive = false, bool shoot = false);
 
   float getWaterLevel() const;

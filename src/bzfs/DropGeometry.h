@@ -19,12 +19,9 @@ class WorldInfo;
 
 namespace DropGeometry {
 
-  bool dropFlag (float pos[3], float minZ, float maxZ,
-		 const WorldInfo* world);
-  bool dropPlayer (float pos[3], float minZ, float maxZ,
-		   const WorldInfo* world);
-  bool dropTeamFlag (float pos[3], float minZ, float maxZ,
-		     const WorldInfo* world, int team);
+  bool dropFlag (float pos[3], float minZ, float maxZ);
+  bool dropPlayer (float pos[3], float minZ, float maxZ);
+  bool dropTeamFlag (float pos[3], float minZ, float maxZ, int team);
 }
 
 
