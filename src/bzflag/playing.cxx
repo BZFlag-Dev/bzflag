@@ -5569,7 +5569,7 @@ static void		playingLoop()
 	}
 	else {
 	  if (myTank->getFlag() == WideAngleFlag) fov = 120.0f;
-	  else fov = (BZDB->isTrue("displayBinoculars") ? 15.0f : 45.0f);
+	  else fov = (BZDB->isTrue("displayBinoculars") ? 15.0f : 60.0f);
 	}
       }
       fov *= M_PI / 180.0f;
