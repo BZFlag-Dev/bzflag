@@ -1008,7 +1008,7 @@ an admin to veto a poll.
 Forces the server to flush any bans from the master server, and reload bans from the
 the internet. Local bans are unaffected. This command requires the UNBAN permision.
 
-TP
+.TP
 .B /masterbanflush
 
 Forces the server to flush any bans from the master server, efectly removing them.
