@@ -1,6 +1,9 @@
 recent bugs
 ------------
 
+- Robots are forced onto the observer team if no slots are available.
+  They should just be rejected
+
 - Server handles MsgKilled correctly, but client displays it as 'killed by
   unknown>; killer id is -1=InvalidPlayer, why not ServerPlayer?
 
