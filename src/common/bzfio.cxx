@@ -56,11 +56,12 @@ void formatDebug(const char* fmt, ...)
     vsnprintf(buffer, 8192, fmt, args);
     va_end(args);
     #if defined(_MSC_VER)
+      if (doTimestamp) 
+	      W32_DEBUG_TRACE(tsbuf);
       W32_DEBUG_TRACE(buffer);
     #else
-      if (doTimestamp) {
+      if (doTimestamp)
         std::cout << timestamp (tsbuf);
-      }
       std::cout << buffer;
     #endif
   }
