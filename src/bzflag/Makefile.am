@@ -82,6 +82,7 @@ LDADD =	\
 	../geometry/libGeometry.a	\
 	../mediafile/libMediaFile.a	\
 	../zlib/libz.a			\
+	../3D/lib3D.a			\
 	$(RESOURCE)			\
 	$(GLIBS)
 # This is required to hook in ogg/vorbis libraries
@@ -97,6 +98,7 @@ LDADD =	\
 	../geometry/libGeometry.a	\
 	../mediafile/libMediaFile.a	\
 	../zlib/libz.a			\
+	../3D/lib3D.a			\
 	$(RESOURCE)			\
 	$(GLIBS)
 # This is required to hook in ogg/vorbis libraries
