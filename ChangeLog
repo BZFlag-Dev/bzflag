@@ -2,6 +2,7 @@
 
 			     BZFlag release notes
 
+* World object and -worldsize paramaters - Jeff Myers
 * Server side world parm (bzdb) file [clo] - Dave Brosius
 * MsgTeamUpdate, MsgFlagUpdate coalesced - Dave Brosius
 * Burrow Flag - Dave Brosius
