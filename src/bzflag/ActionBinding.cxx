@@ -132,9 +132,9 @@ ActionBinding::ActionBinding() {
 				       std::string("drive reverse")));
   // End default movement keys
 
-  defaultBinding.insert(std::make_pair(std::string("Wheel Up"),
+  defaultBinding.insert(std::make_pair(std::string("Shift+Wheel Up"),
 				       std::string("radarZoom in")));
-  defaultBinding.insert(std::make_pair(std::string("Wheel Down"),
+  defaultBinding.insert(std::make_pair(std::string("Shift+Wheel Down"),
 				       std::string("radarZoom out")));
 
 
@@ -146,8 +146,12 @@ ActionBinding::ActionBinding() {
   defaultBinding.insert(std::make_pair(std::string("F11"), std::string("roam zoom normal")));
   defaultBinding.insert(std::make_pair(std::string("O"), std::string("servercommand")));
   defaultBinding.insert(std::make_pair(std::string("F"), std::string("toggle displayFlagHelp")));
-  defaultBinding.insert(std::make_pair(std::string("Page Up"), std::string("scrollpanel up")));
-  defaultBinding.insert(std::make_pair(std::string("Page Down"), std::string("scrollpanel down")));
+  defaultBinding.insert(std::make_pair(std::string("Page Up"),
+				       std::string("scrollpanel up")));
+  defaultBinding.insert(std::make_pair(std::string("Wheel Up"),
+				       std::string("scrollpanel up")));
+  defaultBinding.insert(std::make_pair(std::string("Wheel Down"),
+				       std::string("scrollpanel down")));
   defaultBinding.insert(std::make_pair(std::string("1"), std::string("set displayRadarRange 0.25")));
   defaultBinding.insert(std::make_pair(std::string("2"), std::string("set displayRadarRange 0.5")));
   defaultBinding.insert(std::make_pair(std::string("3"), std::string("set displayRadarRange 1.0")));
