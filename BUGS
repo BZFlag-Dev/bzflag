@@ -15,6 +15,15 @@ critical bugs
   starts firing all the shots over and over. Seen on Mac and Windows.  Happens
   every time on the mac client.
 
+- bunny hunt issues.  observed the player selection consistently toggle
+  between the best player (score-wise) and one of the worst players non-stop
+  for several (10+) minutes without choosing many intermediate players that
+  not only had better scores and were not dead and were not previously bunny
+  and had a much better value for 	killCount * (killCount - deathCount)
+  mac suspects valid players are getting skipped altogether for some reason..
+	need to test that theory.
+
+
 recent bugs
 ------------
 
