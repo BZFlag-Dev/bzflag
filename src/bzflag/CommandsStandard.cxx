@@ -112,6 +112,7 @@ static std::string		cmdPrint(const std::string&,
     }
   }
 
+  std::cout << "printing \"" << result << "\"" << std::endl;
   return result;
 }
 
@@ -132,18 +133,33 @@ static std::string		cmdSet(const std::string&,
 				       const CommandManager::ArgList& args)
 {
   switch (args.size()) {
-    case 0: {
-      std::string result;
-      BZDB.iterate(&onSetCB, &result);
-      return result;
-    }
 
+    case 0: 
+      {
+	// print out all values that are set
+	std::string result;
+	BZDB.iterate(&onSetCB, &result);
+	return result;
+      }
+    case 1:
+      {
+	// the string was set to nothing, so just print value
+        if (BZDB.isSet(args[0])) {
+	  return args[0] + " is " + BZDB.get(args[0]);
+	} else {
+	  return "variable " + args[0] + " does not exist";
+	}
+      }
     case 2:
-      BZDB.set(args[0], args[1], StateDatabase::User);
-      return std::string();
-
+      {
+	// set variable to value
+	BZDB.set(args[0], args[1], StateDatabase::User);
+	return std::string();
+      }
     default:
-      return "usage: set <name> <value>";
+      {
+	return "usage: set <name> [<value>]";
+      }
   }
 }
 
