@@ -2659,7 +2659,7 @@ static bool areFoes(TeamColor team1, TeamColor team2)
          (team1==RogueTeam && !(clOptions->gameStyle & int(RabbitChaseGameStyle)));
 }
 
-static float enemyProximityCheck(TeamColor team, float *pos)
+static float enemyProximityCheck(TeamColor team, float *pos, float &enemyAngle)
 {
   float worstDist = 1e12f; // huge number
 
@@ -2670,8 +2670,10 @@ static float enemyProximityCheck(TeamColor team, float *pos)
         float x = enemyPos[0] - pos[0];
         float y = enemyPos[1] - pos[1];
         float distSq = x * x + y * y;
-        if (distSq < worstDist)
+        if (distSq < worstDist) {
           worstDist = distSq;
+	  enemyAngle = player[i].lastState.azimuth;
+	}
       }
     }
   }
@@ -2683,6 +2685,8 @@ static void getSpawnLocation(int playerId, float* spawnpos, float *azimuth)
 {
   const float tankRadius = BZDB.eval(StateDatabase::BZDB_TANKRADIUS);
   const TeamColor team = player[playerId].team;
+  *azimuth = (float)bzfrand() * 2.0f * M_PI;
+
   if (player[playerId].restartOnBase &&
       (team >= RedTeam) && (team <= PurpleTeam) && 
       (bases.find(team) != bases.end())) {
@@ -2774,12 +2778,14 @@ static void getSpawnLocation(int playerId, float* spawnpos, float *azimuth)
 
       // check if spot is safe enough
       if (foundspot) {
-        float dist = enemyProximityCheck(team, pos);
+	float enemyAngle;
+        float dist = enemyProximityCheck(team, pos, enemyAngle);
         if (dist > bestDist) { // best so far
           bestDist = dist;
           spawnpos[0] = pos[0];
           spawnpos[1] = pos[1];
           spawnpos[2] = pos[2];
+	  *azimuth = fmod((enemyAngle + M_PI), 2.0f * M_PI);
         }
         if (bestDist < minProximity) { // not good enough, keep looking
           foundspot = false;
@@ -2788,7 +2794,6 @@ static void getSpawnLocation(int playerId, float* spawnpos, float *azimuth)
       }
     }
   }
-  *azimuth = (float)bzfrand() * 2.0f * M_PI;
 }
 
 static void sendWorld(int playerIndex, uint32_t ptr)
