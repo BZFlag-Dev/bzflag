@@ -475,7 +475,8 @@ boolean			ComposeDefaultKey::keyRelease(const BzfKeyEvent& key)
 	hud->setComposeString(BzfString());
       return True;
     }
-    else if (key.button == BzfKeyEvent::Left || key.button==BzfKeyEvent::Right) {
+    else if ((key.shift == BzfKeyEvent::ShiftKey || hud->getComposeString().isNull()) &&
+             (key.button == BzfKeyEvent::Left || key.button == BzfKeyEvent::Right)) {
       const Player *recipient = myTank->getRecipient();
       if(!recipient) {
 	for (int i = 0; i < curMaxPlayers; i++) {
