@@ -972,15 +972,15 @@ void parse(int argc, char **argv, CmdLineOptions &options)
   }
 
   if (options.gameStyle & int(RabbitChaseGameStyle)) {
-      for (int i = 0; i < NumTeams; i++)
-	      options.maxTeam[i] = 0;
-      options.maxTeam[RogueTeam] = maxPlayers;
+    for (int i = RedTeam; i <= PurpleTeam; i++)
+      options.maxTeam[i] = 0;
   }
 
   // make table of allowed extra flags
   if (options.numExtraFlags > 0) {
     // now count how many aren't disallowed
-    for (std::map<std::string,FlagType*>::iterator it = FlagType::getFlagMap().begin(); it != FlagType::getFlagMap().end(); ++it)
+    for (std::map<std::string,FlagType*>::iterator it = FlagType::getFlagMap().begin();
+	it != FlagType::getFlagMap().end(); ++it)
       if (!options.flagDisallowed[it->second])
 	options.numAllowedFlags++;
 
@@ -992,7 +992,8 @@ void parse(int argc, char **argv, CmdLineOptions &options)
     // otherwise make table of allowed flags
     else {
       allowedFlags.clear();
-      for (std::map<std::string,FlagType*>::iterator it = FlagType::getFlagMap().begin(); it != FlagType::getFlagMap().end(); ++it) {
+      for (std::map<std::string,FlagType*>::iterator it = FlagType::getFlagMap().begin();
+	  it != FlagType::getFlagMap().end(); ++it) {
 	FlagType *fDesc = it->second;
 	if ((fDesc == Flags::Null) || (fDesc->flagTeam != ::NoTeam))
 	  continue;
