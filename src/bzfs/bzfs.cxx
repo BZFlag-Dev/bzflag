@@ -3999,7 +3999,7 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
     // shot fired
     case MsgShotBegin:
       // Sanity check
-      if (len == 39)
+      if (len == 39) //wow thats bad
 	shotFired(t, buf, int(len));
       break;
 
