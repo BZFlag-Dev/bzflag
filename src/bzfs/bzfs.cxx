@@ -4190,6 +4190,8 @@ static void parseCommand(const char *message, int t)
     for (i = 0; i < curMaxPlayers; i++)
       removePlayer(i, "/superkill");
     gameOver = true;
+    if (clOptions->timeManualStart)
+      countdownActive = false;
   // /gameover command allows operator to end the game
   } else if (hasPerm(t, endGame) && strncmp(message + 1, "gameover", 8) == 0) {
     void *buf, *bufStart = getDirectMessageBuffer();
@@ -4197,6 +4199,8 @@ static void parseCommand(const char *message, int t)
     buf = nboPackUShort(buf, uint16_t(NoTeam));
     broadcastMessage(MsgScoreOver, (char*)buf-(char*)bufStart, bufStart);
     gameOver = true;
+    if (clOptions->timeManualStart)
+      countdownActive = false;
 #ifdef TIMELIMIT
   // /countdown starts timed game, if start is manual, everyone is allowed to
   } else if ((hasPerm(t, countdown) || clOptions->timeManualStart) &&
