@@ -110,9 +110,11 @@ public:
   void        setReplayState(PlayerReplayState state);
   void        updateIdleTime();
   PlayerReplayState getReplayState();
+  static void setCurrentTime(TimeKeeper tm);
 
   void setTrackerID(unsigned short int t);
   unsigned short int trackerID();
+  static TimeKeeper now;
 
 private:
 
