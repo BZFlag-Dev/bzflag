@@ -18,7 +18,9 @@ extern LocalPlayer*	myTank;
 extern HUDRenderer*	hud;
 
 void setFlagHelp(const std::string& name, void*)
-{ 
+{
+  if (myTank == NULL)
+    return;
   static const float FlagHelpDuration = 60.0f;
   if (BZDB->isTrue(name))
     hud->setFlagHelp(myTank->getFlag(), FlagHelpDuration);
