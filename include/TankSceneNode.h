@@ -167,7 +167,6 @@ class TankSceneNode : public SceneNode {
 	void		makeRightTread();
       private:
 	static GLuint	parts[4];
-	friend class TankSceneNode;
     };
     class MedTankRenderNode : public TankRenderNode {
       public:
@@ -183,7 +182,6 @@ class TankSceneNode : public SceneNode {
 	void		makeRightTread();
       private:
 	static GLuint	parts[4];
-	friend class TankSceneNode;
     };
     class HighTankRenderNode : public TankRenderNode {
       public:
@@ -199,7 +197,6 @@ class TankSceneNode : public SceneNode {
 	void		makeRightTread();
       private:
 	static GLuint	parts[4];
-	friend class TankSceneNode;
     };
     friend class TankRenderNode;
 
