@@ -140,6 +140,10 @@ SOURCE=..\..\src\3D\3DOptionsManager.cxx
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\src\3D\BitmapFont.cxx
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\src\3D\DisplayListManager.cxx
 # End Source File
 # Begin Source File
@@ -149,6 +153,10 @@ SOURCE=..\..\src\3D\DrawablesManager.cxx
 # Begin Source File
 
 SOURCE=..\..\src\3D\FontManager.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\3D\ImageFont.cxx
 # End Source File
 # Begin Source File
 
@@ -169,6 +177,10 @@ SOURCE=..\..\include\3DOptionsManager.h
 # Begin Source File
 
 SOURCE=..\..\include\AnsiCodes.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\3D\BitmapFont.h
 # End Source File
 # Begin Source File
 
@@ -216,6 +228,10 @@ SOURCE=..\..\include\global.h
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\src\3D\ImageFont.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\include\MediaFile.h
 # End Source File
 # Begin Source File
@@ -236,7 +252,7 @@ SOURCE=..\..\include\StateDatabase.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\include\TextureFont.h
+SOURCE=..\..\src\3D\TextureFont.h
 # End Source File
 # Begin Source File
 
