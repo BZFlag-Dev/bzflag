@@ -18,6 +18,7 @@
 #include "BZDBCache.h"
 
 bool  BZDBCache::displayMainFlags;
+bool  BZDBCache::enhancedRadar;
 
 
 float BZDBCache::maxLOD;
@@ -26,6 +27,8 @@ float BZDBCache::tankHeight;
 void BZDBCache::init()
 {
   BZDB->addCallback("displayMainFlags", clientCallback, NULL);
+  BZDB->addCallback("enhancedradar", clientCallback, NULL);
+
   BZDB->addCallback(StateDatabase::BZDB_MAXLOD, serverCallback, NULL);
   BZDB->addCallback(StateDatabase::BZDB_TANKHEIGHT, serverCallback, NULL);
 }
@@ -34,6 +37,8 @@ void BZDBCache::clientCallback(const std::string& name, void *)
 {
   if (name == "displayMainFlags")
     displayMainFlags = BZDB->isTrue("displayMainFlags");
+  else if (name == "enhancedradar")
+    enhancedRadar = BZDB->isTrue("enhancedradar");
 }
 
 void BZDBCache::serverCallback(const std::string& name, void *)

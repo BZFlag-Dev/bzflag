@@ -23,6 +23,7 @@ public:
 	static void init();
 
 	static bool  displayMainFlags;
+	static bool  enhancedRadar;
 
 	static float maxLOD;
 	static float tankHeight;

@@ -28,6 +28,7 @@
 #include "OpenGLGState.h"
 #include "HUDRenderer.h"
 #include "StateDatabase.h"
+#include "BZDBCache.h"
 
 FlashClock flashTank;
 static bool toggleTank = false;
@@ -342,7 +343,7 @@ void			RadarRenderer::render(SceneRenderer& renderer,
       const ShotPath* shot = myTank->getShot(i);
       if (shot) {
         const float cs = colorScale(shot->getPosition()[2],
-				    muzzleHeight, BZDB->isTrue("enhancedradar"));
+		muzzleHeight, BZDBCache::enhancedRadar);
         glColor3f(1.0f * cs, 1.0f * cs, 1.0f * cs);
         shot->radarRender();
       }
@@ -355,7 +356,7 @@ void			RadarRenderer::render(SceneRenderer& renderer,
       const ShotPath* shot = worldWeapons->getShot(i);
       if (shot) {
         const float cs = colorScale(shot->getPosition()[2],
-				    muzzleHeight, BZDB->isTrue("enhancedradar"));
+		muzzleHeight, BZDBCache::enhancedRadar);
         glColor3f(1.0f * cs, 1.0f * cs, 1.0f * cs);
         shot->radarRender();
       }
@@ -430,7 +431,7 @@ void			RadarRenderer::render(SceneRenderer& renderer,
             else
               shotcolor = Team::getRadarColor(player->getTeam());
             const float cs = colorScale(shot->getPosition()[2],
-	        muzzleHeight, BZDB->isTrue("enhancedradar"));
+		    muzzleHeight, BZDBCache::enhancedRadar);
             glColor3f(shotcolor[0] * cs, shotcolor[1] * cs, shotcolor[2] * cs);
           }
           else
@@ -450,7 +451,7 @@ void			RadarRenderer::render(SceneRenderer& renderer,
 	  continue;
         if (flag.desc->flagTeam != NoTeam)
 	  continue;
-        const float cs = colorScale(flag.position[2], muzzleHeight, BZDB->isTrue("enhancedradar"));
+        const float cs = colorScale(flag.position[2], muzzleHeight, BZDBCache::enhancedRadar);
         const float *flagcolor = flag.desc->getColor();
         glColor3f(flagcolor[0] * cs, flagcolor[1] * cs, flagcolor[2] * cs);
         drawFlag(flag.position[0], flag.position[1], flag.position[2]);
@@ -464,7 +465,7 @@ void			RadarRenderer::render(SceneRenderer& renderer,
       if (flag.desc->flagTeam == NoTeam)
 	continue;
       // Flags change color by height
-      const float cs = colorScale(flag.position[2], muzzleHeight, BZDB->isTrue("enhancedradar"));
+      const float cs = colorScale(flag.position[2], muzzleHeight, BZDBCache::enhancedRadar);
       const float *flagcolor = flag.desc->getColor();
       glColor3f(flagcolor[0] * cs, flagcolor[1] * cs, flagcolor[2] * cs);
       // always draw team flags
@@ -585,8 +586,6 @@ float			RadarRenderer::transScale(const Obstacle& o)
 
 void			RadarRenderer::makeList(bool smoothingOn, SceneRenderer&)
 {
-  const bool enhancedRadar = BZDB->isTrue("enhancedradar");
-
   // antialias if smoothing is on.
   if (smoothingOn) {
     glEnable(GL_BLEND);
@@ -612,7 +611,7 @@ void			RadarRenderer::makeList(bool smoothingOn, SceneRenderer&)
   glEnd();
 
   // don't blend the polygons if enhanced radar disabled
-  if (smoothingOn && enhancedRadar == false) glDisable(GL_BLEND);
+  if (smoothingOn && BZDBCache::enhancedRadar == false) glDisable(GL_BLEND);
 
   // draw box buildings.
   const std::vector<BoxBuilding>& boxes = world.getBoxes();
@@ -620,7 +619,7 @@ void			RadarRenderer::makeList(bool smoothingOn, SceneRenderer&)
   glBegin(GL_QUADS);
   for (i = 0; i < count; i++) {
     const BoxBuilding& box = boxes[i];
-    const float cs = colorScale(box.getPosition()[2], box.getHeight(), enhancedRadar);
+    const float cs = colorScale(box.getPosition()[2], box.getHeight(), BZDBCache::enhancedRadar);
     glColor4f(0.25f * cs, 0.5f * cs, 0.5f * cs, transScale(box));
     const float c = cosf(box.getRotation());
     const float s = sinf(box.getRotation());
@@ -640,7 +639,7 @@ void			RadarRenderer::makeList(bool smoothingOn, SceneRenderer&)
   glBegin(GL_QUADS);
   for (i = 0; i < count; i++) {
     const PyramidBuilding& pyr = pyramids[i];
-    const float cs = colorScale(pyr.getPosition()[2], pyr.getHeight(), enhancedRadar);
+    const float cs = colorScale(pyr.getPosition()[2], pyr.getHeight(), BZDBCache::enhancedRadar);
     glColor4f(0.25f * cs, 0.5f * cs, 0.5f * cs, transScale(pyr));
     const float c = cosf(pyr.getRotation());
     const float s = sinf(pyr.getRotation());
@@ -660,7 +659,7 @@ void			RadarRenderer::makeList(bool smoothingOn, SceneRenderer&)
     count = boxes.size();
     for (i = 0; i < count; i++) {
       const BoxBuilding& box = boxes[i];
-      const float cs = colorScale(box.getPosition()[2], box.getHeight(), enhancedRadar);
+      const float cs = colorScale(box.getPosition()[2], box.getHeight(), BZDBCache::enhancedRadar);
       glColor4f(0.25f * cs, 0.5f * cs, 0.5f * cs, transScale(box));
       const float c = cosf(box.getRotation());
       const float s = sinf(box.getRotation());
@@ -678,7 +677,7 @@ void			RadarRenderer::makeList(bool smoothingOn, SceneRenderer&)
     count = pyramids.size();
     for (i = 0; i < count; i++) {
       const PyramidBuilding& pyr = pyramids[i];
-      const float cs = colorScale(pyr.getPosition()[2], pyr.getHeight(), enhancedRadar);
+      const float cs = colorScale(pyr.getPosition()[2], pyr.getHeight(), BZDBCache::enhancedRadar);
       glColor4f(0.25f * cs, 0.5f * cs, 0.5f * cs, transScale(pyr));
       const float c = cosf(pyr.getRotation());
       const float s = sinf(pyr.getRotation());
@@ -726,7 +725,7 @@ void			RadarRenderer::makeList(bool smoothingOn, SceneRenderer&)
   glBegin(GL_LINES);
   for (i = 0; i < count; i++) {
     const Teleporter& tele = teleporters[i];
-    const float cs = colorScale(tele.getPosition()[2], tele.getHeight(), enhancedRadar);
+    const float cs = colorScale(tele.getPosition()[2], tele.getHeight(), BZDBCache::enhancedRadar);
     glColor4f(1.0f * cs, 1.0f * cs, 0.25f * cs, transScale(tele));
     const float w = tele.getBreadth();
     const float c = w * cosf(tele.getRotation());

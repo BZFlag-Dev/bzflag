@@ -67,6 +67,7 @@
 #include "CommandsStandard.h"
 #include "KeyManager.h"
 #include "ServerListCache.h"
+#include "BZDBCache.h"
 
 #ifdef _WIN32
 #define PATH_MAX MAX_PATH
@@ -1149,7 +1150,7 @@ void			GUIOptionsMenu::resize(int width, int height)
   SceneRenderer* renderer = getSceneRenderer();
   if (renderer) {
     int i = 1;
-    ((HUDuiList*)list[i++])->setIndex(BZDB->isTrue("enhancedradar") ? 1 : 0);
+    ((HUDuiList*)list[i++])->setIndex(BZDBCache::enhancedRadar ? 1 : 0);
     ((HUDuiList*)list[i++])->setIndex(BZDB->isTrue("bigfont") ? 1 : 0);
     ((HUDuiList*)list[i++])->setIndex((int)(10.0f * renderer->getPanelOpacity()));
     ((HUDuiList*)list[i++])->setIndex(BZDB->isTrue("coloredradarshots") ? 1 : 0);
