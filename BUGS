@@ -1,13 +1,6 @@
 recent bugs
 ------------
 
-- hit detection on pyramids computed it's not completely fixed: algorithms is:
-  normalize pyramid dimension and position to be with center at (0,0,0) 
-  range (-1 .. 1, -1 .. 1, 0 .. 1),
-  move starting ray position at inside of box (-1 .. 1, -1 .. 1, 0 .. 1),
-  compute ray intersect to pyramid planes and checking for what's earlier.
-  What is missing is the restriction of intersection actually being on pyramids
-
 - new list server takes way too long (3-5 seconds) to respond.
   Taking some measurement from receiving request to sending result:
   bzfls.pl on Tim's     : 1.8 sec
