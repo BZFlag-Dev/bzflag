@@ -97,7 +97,6 @@
 #include "URLManager.h"
 #include "TrackMarks.h"
 #include "md5.h"
-#include "FlagSceneNode.h"
 #include "PhysicsDriver.h"
 #include "FlagSceneNode.h"
 #include "ObstacleMgr.h"
