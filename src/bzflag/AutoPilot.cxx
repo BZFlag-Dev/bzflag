@@ -286,7 +286,8 @@ RemotePlayer *findBestTarget()
     &&  (!player[t]->isNotResponding()) 
     &&  (myTank->validTeamTarget(player[t]))) {
 
-      if((player[t]->getFlag() == Flags::PhantomZone && player[t]->isFlagActive()) ||
+      if((player[t]->getFlag() == Flags::PhantomZone && player[t]->isFlagActive() &&
+					(myTank->getFlag() != Flags::ShockWave || myTank->getFlag() != Flags::SuperBullet)) ||
     		 (player[t]->getFlag() == Flags::Cloaking && myTank->getFlag() == Flags::Laser))
         continue;
 
@@ -611,8 +612,8 @@ bool fireAtTank()
 	    myTank->validTeamTarget(player[t])) {
 
 	  if ((player[t]->getFlag() == Flags::PhantomZone) 
-	  &&  (player[t]->isFlagActive()) && (myTank->getFlag() == Flags::PhantomZone &&
-   	       !myTank->isFlagActive()) || (myTank->getFlag() != Flags::PhantomZone))
+	  &&  (player[t]->isFlagActive()) && ((myTank->getFlag() == Flags::PhantomZone &&
+   	       !myTank->isFlagActive()) || (myTank->getFlag() != Flags::PhantomZone)))
 	    continue;
 
 	  const float *tp = player[t]->getPosition();
