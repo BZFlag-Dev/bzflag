@@ -113,6 +113,7 @@ void handlePasswordCmd(int t, const char *message)
 
 void handleSetCmd(int t, const char *message)
 {
+  char message2[MessageLen];
   if (!accessInfo[t].hasPerm(PlayerAccessInfo::setVar)
       && !accessInfo[t].hasPerm(PlayerAccessInfo::setAll)) {
     sendMessage(ServerPlayer, t, "You do not have permission to run the set command");
@@ -123,6 +124,8 @@ void handleSetCmd(int t, const char *message)
     return;
   }
   sendMessage(ServerPlayer, t, CMDMGR.run(message+1).c_str());
+  snprintf(message2, MessageLen, "Variable Modification Notice by %s of %s", player[t].getCallSign(), message+1); 
+  sendMessage(ServerPlayer, AllPlayers, message2, true);
   return;
 }
 
