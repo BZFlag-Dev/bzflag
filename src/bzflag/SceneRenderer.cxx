@@ -174,8 +174,9 @@ void SceneRenderer::setWindow(MainWindow* _window) {
   // check if we're running OpenGL 1.1.  if so we'll use the fog hack
   // to fade the screen;  otherwise fall back on a full screen blended
   // polygon.
-  if (version != NULL && strncmp(version, "1.1", 3) == 0)
+  if (version != NULL && strncmp(version, "1.1", 3) == 0) {
     useFogHack = true;
+  }
 
   // prepare context with stuff that'll never change
   glLightModeli(GL_LIGHT_MODEL_LOCAL_VIEWER, GL_FALSE);
@@ -635,19 +636,39 @@ void SceneRenderer::render(bool _lastFrame, bool _sameFrame,
   if (mirror) {
     drawGround = false;
     
+    // flip for the reflection drawing
     frustum.flipVertical();
     OpenGLGState::setInvertCull(true);
   
-    const bool oldDimming = useDimming;
-    useDimming = true;
-    
     // the reflected scene
     renderScene(_lastFrame, _sameFrame, fullWindow);
 
-    useDimming = oldDimming;
-
+    // flip back
     frustum.flipVertical();
     OpenGLGState::setInvertCull(false);
+
+    // darken the reflection
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+    glDisable(GL_CULL_FACE);
+    // if low quality then use stipple -- it's probably much faster
+    if (BZDBCache::blend && (useQualityValue >= 2)) {
+      const GLfloat mirrorDim[4] = {0.0f, 0.0f, 0.0f, 0.5f};
+      glColor4fv(mirrorDim);
+      glEnable(GL_BLEND);
+      glRectf(1.0f, 1.0f, -1.0f, -1.0f);
+      glDisable(GL_BLEND);
+    } else {
+      const GLfloat mirrorDim[4] = {0.0f, 0.0f, 0.0f, 1.0f};
+      glColor4fv(mirrorDim);
+      OpenGLGState::setStipple(0.5f);
+      glEnable(GL_POLYGON_STIPPLE);
+      glRectf(1.0f, 1.0f, -1.0f, -1.0f);
+      glDisable(GL_POLYGON_STIPPLE);
+    }
+    glEnable(GL_CULL_FACE);
 
     clearZbuffer = false;
   }
@@ -987,6 +1008,7 @@ void SceneRenderer::renderScene(bool /*_lastFrame*/, bool /*_sameFrame*/,
     glDisable(GL_STENCIL_TEST);
   }
 }
+
 
 void			SceneRenderer::notifyStyleChange()
 {
