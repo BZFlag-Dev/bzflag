@@ -1369,7 +1369,8 @@ static void		handleServerMessage(boolean human, uint16_t code,
 	  if (killerLocal == myTank && victimPlayer != myTank)
 	    hud->setAlert(1, "Don't shoot teammates!!!", 3.0f, True);
 	  // teammate
-	  killerLocal->changeScore(0, 1);
+	  if (killerLocal != victimPlayer)
+	    killerLocal->changeScore(0, 1);
 	}
 	else
 	  // enemy
