@@ -3,6 +3,13 @@ bzflag (@VERSION@) unstable; urgency=medium
   * CVS Build
  -- Tim Riker <Tim@Rikers.org>  @DATE@
 
+bzflag (1.10.6.20040516) unstable; urgency=medium
+
+  * upstream release
+  * CanNotDuplicate Closes: #120399, #179785, #226826
+  * Add menu icon Closes: #194008
+ -- Tim Riker <Tim@Rikers.org>  Sat, 16 May 2004 01:10:06 -0500
+
 bzflag (1.10.2.20031223) unstable; urgency=medium
 
   * Release Manager: see below, network api changed, stable/testing/unstable
