@@ -121,11 +121,11 @@ void*			Flag::pack(void* buf) const
 void*			Flag::unpack(void* buf)
 {
   uint16_t data;
-  char abbv[3] = {0,0,0};
+  unsigned char abbv[3] = {0,0,0};
 
   buf = nboUnpackUByte(buf, abbv[0]);
   buf = nboUnpackUByte(buf, abbv[1]);
-  desc = Flag::getDescFromAbbreviation(abbv);
+  desc = Flag::getDescFromAbbreviation((const char *)abbv);
 
   buf = nboUnpackUShort(buf, data); status = FlagStatus(data);
   buf = nboUnpackUShort(buf, data); type = FlagType(data);
@@ -146,7 +146,7 @@ FlagDesc* Flag::getDescFromAbbreviation(const char* abbreviation)
   if (i == FlagDesc::flagMap.end())
     return Flags::Null;
   else
-    return *i;
+    return i->second;
 }
 
 FlagSet&		Flag::getGoodFlags()
