@@ -10,6 +10,10 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
+#ifdef _WIN32
+#pragma warning(4:4786)
+#endif
+
 #include <iostream>
 
 #include <config.h>
@@ -172,9 +176,7 @@ void ActionBinding::associate(std::string key,
   if (!wayToBindActions.count(action))
     return;
   PressStatusBind newStatusBind = wayToBindActions[action];
-  for (index = bindingTable.begin(); index != bindingTable.end(); ++index) {
-    if (index->first != key)
-      continue;
+  for (index = bindingTable.lower_bound( key ); index != bindingTable.upper_bound( key ); ++index) {
     if (newStatusBind == both) {
       if (keyBind)
 	unbind(index->second, key);
