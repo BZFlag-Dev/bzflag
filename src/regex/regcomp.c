@@ -154,7 +154,7 @@ static char nuls[10];		/* place to point scanner in event of error */
 #define	SETERROR(e)	seterr(p, (e))
 #define	REQUIRE(co, e)	{if (!(co)) SETERROR(e);}
 #define	MUSTSEE(c, e)	(REQUIRE(MORE() && PEEK() == (c), e))
-#define	MUSTEAT(c, e)	(REQUIRE(MORE() && GETNEXT() == (c), e))
+#define	MUSTEAT(c, e)	REQUIRE(MORE() && GETNEXT() == (c), e)
 #define	MUSTNOTSEE(c, e)	(REQUIRE(!MORE() || PEEK() != (c), e))
 #define	EMIT(op, sopnd)	doemit(p, (sop)(op), (size_t)(sopnd))
 #define	INSERT(op, pos)	doinsert(p, (sop)(op), HERE()-(pos)+1, pos)
