@@ -275,6 +275,9 @@ static void		sendSound(SoundCommand* s)
 void			moveSoundReceiver(float x, float y, float z, float t,
 							int discontinuity)
 {
+  if (soundLevel <= 0) {
+    return;
+  }
   SoundCommand s;
   s.cmd = discontinuity ? SQC_JUMP_POS : SQC_SET_POS;
   s.code = 0;
@@ -300,6 +303,9 @@ void			speedSoundReceiver(float vx, float vy, float vz)
 void			playWorldSound(int soundCode,
 				float x, float y, float z, bool important)
 {
+  if (soundLevel <= 0) {
+    return;
+  }
   SoundCommand s;
   if (soundSamples[soundCode].length == 0) return;
   s.cmd = important ? SQC_IWORLD_SFX : SQC_WORLD_SFX;
@@ -313,6 +319,9 @@ void			playWorldSound(int soundCode,
 
 void			playLocalSound(int soundCode)
 {
+  if (soundLevel <= 0) {
+    return;
+  }
   SoundCommand s;
   if (soundSamples[soundCode].length == 0) return;
   s.cmd = SQC_LOCAL_SFX;
@@ -327,6 +336,9 @@ void			playLocalSound(int soundCode)
 void			playFixedSound(int soundCode,
 						float x, float y, float z)
 {
+  if (soundLevel <= 0) {
+    return;
+  }
   SoundCommand s;
   if (soundSamples[soundCode].length == 0) return;
   s.cmd = SQC_FIXED_SFX;
