@@ -1,5 +1,9 @@
 recent bugs
 ------------
+
+- Team flags are selected as part of the random superflags bunch.
+  Run a bzfs +s 40 to see
+
 - When a rabbit pauses and no other players are in the game, the server will
   choose the pauser as the rabbit again. Then the player will again request
   that the server choose a different player, thus leading to a happy

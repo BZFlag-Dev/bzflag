@@ -1,9 +1,6 @@
 to do list for bzflag
 ---------------------
 
-* remove artificial flag ids from system, use abbreviations as sole
-  flag identifier. Convert servers flag management to maps vs. arrays.
-
 * allow /dev/dsp* on Linux to be selected someplace. command line,
   environment var, config file, who knows. ;-)
 
