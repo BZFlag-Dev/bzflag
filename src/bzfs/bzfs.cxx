@@ -2154,11 +2154,6 @@ static void rejectPlayer(int playerIndex, uint16_t code)
 
 static void addPlayer(int playerIndex)
 {
-  for (PlayerId playerid = 0; playerid < curMaxPlayers; playerid++) {
-    if ((player[playerid].state != PlayerNoExist) && (playerid != playerIndex)) {
-      break;
-    }
-  }
   // strip leading blanks
   char *sp = player[playerIndex].callSign, *tp = sp;
   while (*sp==' ')
