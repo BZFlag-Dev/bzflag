@@ -408,9 +408,9 @@ class WorldFileObstacle : public WorldFileObject {
 
 WorldFileObstacle::WorldFileObstacle()
 {
-   pos[0] = pos[1] = pos[2] = 0.0f;
-   rotation = 0.0f;
-   size[0] = size[1] = size[2] = 1.0f;
+	pos[0] = pos[1] = pos[2] = 0.0f;
+	rotation = 0.0f;
+	size[0] = size[1] = size[2] = 1.0f;
 }
 
 bool WorldFileObstacle::read(const char *cmd, istream& input)
@@ -617,8 +617,7 @@ static void emptyWorldFileObjectList(WorldFileObjectList& list)
 }
 
 // WorldInfo
-WorldInfo::WorldInfo() :
-    database(NULL)
+WorldInfo::WorldInfo() : database(NULL)
 {
 	// do nothing
 }
@@ -1055,12 +1054,11 @@ void disassemblePacket(int playerIndex, void *msg, int *nopackets)
 		ilength = length;
 		if (length == 0xffff)
 			break;
-		else
-			if (ilength > 1024) {
-				fprintf(stderr,"* RECEIVE PACKET BUFFER OVERFLOW ATTEMPT: %d sent %d Bytes\n",
-		    playerIndex, ilength);
-				break;
-			}
+		else if (ilength > 1024) {
+			fprintf(stderr,"* RECEIVE PACKET BUFFER OVERFLOW ATTEMPT: %d sent %d Bytes\n",
+					playerIndex, ilength);
+			break;
+		}
 		buf = (unsigned char *)nboUnpackUShort(buf, seqno);
 		UDEBUG("SEQ RECV %d Enqueing now...\n",seqno);
 		enqueuePacket(playerIndex, RECEIVE, seqno, buf, length);
@@ -1337,8 +1335,8 @@ static void pwrite(int playerIndex, const void *b, int l)
 		case MsgShotEnd:
 		case MsgPlayerUpdate:
 		case MsgGMUpdate:
-		  puwrite(playerIndex,b,l);
-		  return;
+			puwrite(playerIndex,b,l);
+			return;
 		}
 	}
 
@@ -1369,7 +1367,7 @@ static void pwrite(int playerIndex, const void *b, int l)
 			// FIXME -- is 20kB to big?  to small?
 			if (newCapacity >= 20 * 1024) {
 				fprintf(stderr, "dropping unresponsive player %d (%s) with %d bytes queued\n",
-		    playerIndex, p.callSign, p.outmsgSize + l);
+						playerIndex, p.callSign, p.outmsgSize + l);
 				UMDEBUG("REMOVE: CAPACITY\n");
 				removePlayer(playerIndex);
 				return;
@@ -1463,7 +1461,7 @@ static void createUDPcon(int t, int remote_port) {
 
 	// show some message on the console
 	UMDEBUG("UDP link created, remote %d %04x, local %d\n",
-      remote_port,ntohl(addr.sin_addr.s_addr), wksPort);
+			remote_port,ntohl(addr.sin_addr.s_addr), wksPort);
 
 	// init the queues
 	player[t].uqueue = player[t].dqueue = NULL;
@@ -1521,8 +1519,8 @@ static int uread(int *playerIndex, int *nopackets)
 		int pi;
 		for (pi = 0, pPlayerInfo = player; pi < MaxPlayers; pi++, pPlayerInfo++) {
 			if ((pPlayerInfo->ulinkup) &&
-		  (pPlayerInfo->uaddr.sin_port == uaddr.sin_port) &&
-		  (memcmp(&pPlayerInfo->uaddr.sin_addr, &uaddr.sin_addr, sizeof(uaddr.sin_addr)) == 0)) {
+					(pPlayerInfo->uaddr.sin_port == uaddr.sin_port) &&
+					(memcmp(&pPlayerInfo->uaddr.sin_addr, &uaddr.sin_addr, sizeof(uaddr.sin_addr)) == 0)) {
 				break;
 			}
 		}
@@ -1530,11 +1528,11 @@ static int uread(int *playerIndex, int *nopackets)
 			// didn't find player so test for exact match new player
 			for (pi = 0, pPlayerInfo = player; pi < MaxPlayers; pi++, pPlayerInfo++) {
 				if (!pPlayerInfo->ulinkup &&
-		    (pPlayerInfo->uaddr.sin_port == uaddr.sin_port) &&
-		    (memcmp(&pPlayerInfo->uaddr.sin_addr, &uaddr.sin_addr, sizeof(uaddr.sin_addr)) == 0)) {
+						(pPlayerInfo->uaddr.sin_port == uaddr.sin_port) &&
+						(memcmp(&pPlayerInfo->uaddr.sin_addr, &uaddr.sin_addr, sizeof(uaddr.sin_addr)) == 0)) {
 					UMDEBUG("uread() exact udp up for player %d %s:%d\n",
-		      pi, inet_ntoa(pPlayerInfo->uaddr.sin_addr),
-		      ntohs(pPlayerInfo->uaddr.sin_port));
+							pi, inet_ntoa(pPlayerInfo->uaddr.sin_addr),
+							ntohs(pPlayerInfo->uaddr.sin_port));
 					pPlayerInfo->ulinkup = true;
 					break;
 				}
@@ -1544,10 +1542,10 @@ static int uread(int *playerIndex, int *nopackets)
 			// still didn't find player so test for just address not port (ipmasq fw etc.)
 			for (pi = 0, pPlayerInfo = player; pi < MaxPlayers; pi++, pPlayerInfo++) {
 				if (!pPlayerInfo->ulinkup &&
-		    memcmp(&uaddr.sin_addr, &pPlayerInfo->uaddr.sin_addr, sizeof(uaddr.sin_addr)) == 0) {
+						memcmp(&uaddr.sin_addr, &pPlayerInfo->uaddr.sin_addr, sizeof(uaddr.sin_addr)) == 0) {
 					UMDEBUG("uread() fuzzy udp up for player %d %s:%d actual port %d\n",
-		      pi, inet_ntoa(pPlayerInfo->uaddr.sin_addr),
-		      ntohs(pPlayerInfo->uaddr.sin_port), ntohs(uaddr.sin_port));
+							pi, inet_ntoa(pPlayerInfo->uaddr.sin_addr),
+							ntohs(pPlayerInfo->uaddr.sin_port), ntohs(uaddr.sin_port));
 					pPlayerInfo->uaddr.sin_port = uaddr.sin_port;
 					pPlayerInfo->ulinkup = true;
 					break;
@@ -1563,9 +1561,9 @@ static int uread(int *playerIndex, int *nopackets)
 			for (pi = 0, pPlayerInfo = player; pi < MaxPlayers; pi++, pPlayerInfo++) {
 				if (pPlayerInfo->fd != -1) {
 					UMDEBUG(" %d(%d) %s:%d",
-		      pi, pPlayerInfo->ulinkup,
-		      inet_ntoa(pPlayerInfo->uaddr.sin_addr),
-		      ntohs(pPlayerInfo->uaddr.sin_port));
+							pi, pPlayerInfo->ulinkup,
+							inet_ntoa(pPlayerInfo->uaddr.sin_addr),
+							ntohs(pPlayerInfo->uaddr.sin_port));
 				}
 			}
 			UMDEBUG("\n");
@@ -1837,19 +1835,19 @@ static void sendMessageToListServerForReal(int index)
 		// pretend there are no players if the game is over
 		if (gameOver)
 			sprintf(msg, "%s %s 0 0 0 0 0\n\n",
-		  link.nextMessage,
-		  publicizedAddress.c_str());
+					link.nextMessage,
+					publicizedAddress.c_str());
 		else
 			sprintf(msg, "%s %s %d %d %d %d %d\n\n", link.nextMessage,
-		  publicizedAddress.c_str(),
-		  team[0].team.activeSize,
-		  team[1].team.activeSize,
-		  team[2].team.activeSize,
-		  team[3].team.activeSize,
-		  team[4].team.activeSize);
+					publicizedAddress.c_str(),
+					team[0].team.activeSize,
+					team[1].team.activeSize,
+					team[2].team.activeSize,
+					team[3].team.activeSize,
+					team[4].team.activeSize);
 	}
 	if (debug >= 3) {
-      std::cerr << msg;
+		std::cerr << msg;
 	}
 	send(link.socket, msg, strlen(msg), 0);
 
@@ -2178,7 +2176,7 @@ static void serverStop()
 		if (nfound > 0)
 			for (i = 0; i < listServerLinksCount; ++i)
 				if (listServerLinks[i].socket != NotConnected &&
-		    FD_ISSET(listServerLinks[i].socket, &write_set))
+						FD_ISSET(listServerLinks[i].socket, &write_set))
 					sendMessageToListServerForReal(i);
 	} while (true);
 
@@ -2211,7 +2209,7 @@ static bool startPlayerPacketRelay(int playerIndex)
 		// force all players to start relaying.
 		for (int i = 0; i < maxPlayers; i++)
 			if (i != playerIndex &&
-		  player[i].state > PlayerInLimbo && !player[i].multicastRelay) {
+					player[i].state > PlayerInLimbo && !player[i].multicastRelay) {
 				directMessage(i, MsgNetworkRelay, 0, getDirectMessageBuffer());
 				player[i].multicastRelay = true;
 			}
@@ -2359,7 +2357,7 @@ static bool readWorldStream(istream& input, const char *location, WorldFileObjec
 			if (!object->read(buffer, input)) {
 				// unknown token
 				std::cerr << location << "(" << line << ") : " <<
-				       "invalid object parameter \"" << buffer << "\"" << std::endl;
+						"invalid object parameter \"" << buffer << "\"" << std::endl;
 				delete object;
 				return false;
 			}
@@ -2607,25 +2605,25 @@ static WorldInfo *defineTeamWorld()
 					if (randomHeights)
 						h *= 2.0f * (float)bzfrand() + 0.5f;
 					world->addBox(
-		      xmin + float(i) * (2.0f * BoxBase + AvenueSize),
-		      ymin + float(j) * (2.0f * BoxBase + AvenueSize), 0.0f,
-		      randomBoxes ? (0.5f * M_PI * ((float)bzfrand() - 0.5f)) : 0.0f,
-		      BoxBase, BoxBase, h);
+							xmin + float(i) * (2.0f * BoxBase + AvenueSize),
+							ymin + float(j) * (2.0f * BoxBase + AvenueSize), 0.0f,
+							randomBoxes ? (0.5f * M_PI * ((float)bzfrand() - 0.5f)) : 0.0f,
+							BoxBase, BoxBase, h);
 					world->addBox(
-		      -1.0f * (xmin + float(i) * (2.0f * BoxBase + AvenueSize)),
-		      -1.0f * (ymin + float(j) * (2.0f * BoxBase + AvenueSize)), 0.0f,
-		      randomBoxes ? (0.5f * M_PI * ((float)bzfrand() - 0.5f)) : 0.0f,
-		      BoxBase, BoxBase, h);
+							-1.0f * (xmin + float(i) * (2.0f * BoxBase + AvenueSize)),
+							-1.0f * (ymin + float(j) * (2.0f * BoxBase + AvenueSize)), 0.0f,
+							randomBoxes ? (0.5f * M_PI * ((float)bzfrand() - 0.5f)) : 0.0f,
+							BoxBase, BoxBase, h);
 					world->addBox(
-		      -1.0f * (ymin + float(j) * (2.0f * BoxBase + AvenueSize)),
-		      xmin + float(i) * (2.0f * BoxBase + AvenueSize), 0.0f,
-		      randomBoxes ? (0.5f * M_PI * ((float)bzfrand() - 0.5f)) : 0.0f,
-		      BoxBase, BoxBase, h);
+							-1.0f * (ymin + float(j) * (2.0f * BoxBase + AvenueSize)),
+							xmin + float(i) * (2.0f * BoxBase + AvenueSize), 0.0f,
+							randomBoxes ? (0.5f * M_PI * ((float)bzfrand() - 0.5f)) : 0.0f,
+							BoxBase, BoxBase, h);
 					world->addBox(
-		      ymin + float(j) * (2.0f * BoxBase + AvenueSize),
-		      -1.0f * (xmin + float(i) * (2.0f * BoxBase + AvenueSize)), 0.0f,
-		      randomBoxes ? (0.5f * M_PI * ((float)bzfrand() - 0.5f)) : 0.0f,
-		      BoxBase, BoxBase, h);
+							ymin + float(j) * (2.0f * BoxBase + AvenueSize),
+							-1.0f * (xmin + float(i) * (2.0f * BoxBase + AvenueSize)), 0.0f,
+							randomBoxes ? (0.5f * M_PI * ((float)bzfrand() - 0.5f)) : 0.0f,
+							BoxBase, BoxBase, h);
 				}
 
 		// add teleporters
@@ -2633,21 +2631,21 @@ static WorldInfo *defineTeamWorld()
 			const float xoff = BoxBase + 0.5f * AvenueSize;
 			const float yoff = BoxBase + 0.5f * AvenueSize;
 			world->addTeleporter( xmin - xoff,  ymin - yoff, 0.0f, 1.25f * M_PI,
-  		  0.5f * TeleWidth, TeleBreadth, 2.0f * TeleHeight, TeleWidth);
+					0.5f * TeleWidth, TeleBreadth, 2.0f * TeleHeight, TeleWidth);
 			world->addTeleporter( xmin - xoff, -ymin + yoff, 0.0f, 0.75f * M_PI,
-		  0.5f * TeleWidth, TeleBreadth, 2.0f * TeleHeight, TeleWidth);
+					0.5f * TeleWidth, TeleBreadth, 2.0f * TeleHeight, TeleWidth);
 			world->addTeleporter(-xmin + xoff,  ymin - yoff, 0.0f, 1.75f * M_PI,
-		  0.5f * TeleWidth, TeleBreadth, 2.0f * TeleHeight, TeleWidth);
+					0.5f * TeleWidth, TeleBreadth, 2.0f * TeleHeight, TeleWidth);
 			world->addTeleporter(-xmin + xoff, -ymin + yoff, 0.0f, 0.25f * M_PI,
-		  0.5f * TeleWidth, TeleBreadth, 2.0f * TeleHeight, TeleWidth);
+					0.5f * TeleWidth, TeleBreadth, 2.0f * TeleHeight, TeleWidth);
 			world->addTeleporter(-3.5f * TeleBreadth, -3.5f * TeleBreadth, 0.0f, 1.25f * M_PI,
-		  0.5f * TeleWidth, TeleBreadth, 2.0f * TeleHeight, TeleWidth);
+					0.5f * TeleWidth, TeleBreadth, 2.0f * TeleHeight, TeleWidth);
 			world->addTeleporter(-3.5f * TeleBreadth,  3.5f * TeleBreadth, 0.0f, 0.75f * M_PI,
-		  0.5f * TeleWidth, TeleBreadth, 2.0f * TeleHeight, TeleWidth);
+					0.5f * TeleWidth, TeleBreadth, 2.0f * TeleHeight, TeleWidth);
 			world->addTeleporter( 3.5f * TeleBreadth, -3.5f * TeleBreadth, 0.0f, 1.75f * M_PI,
-		  0.5f * TeleWidth, TeleBreadth, 2.0f * TeleHeight, TeleWidth);
+					0.5f * TeleWidth, TeleBreadth, 2.0f * TeleHeight, TeleWidth);
 			world->addTeleporter( 3.5f * TeleBreadth,  3.5f * TeleBreadth, 0.0f, 0.25f * M_PI,
-		  0.5f * TeleWidth, TeleBreadth, 2.0f * TeleHeight, TeleWidth);
+					0.5f * TeleWidth, TeleBreadth, 2.0f * TeleHeight, TeleWidth);
 
 			world->addLink(0, 14);
 			world->addLink(1, 7);
@@ -2692,10 +2690,10 @@ static WorldInfo *defineRandomWorld()
 	for (i = 0; i < CitySize * CitySize; i++) {
 		if (randomHeights)
 			h = BoxHeight * ( 2.0f * (float)bzfrand() + 0.5f );
-			world->addBox(WorldSize * ((float)bzfrand() - 0.5f),
-		  WorldSize * ((float)bzfrand() - 0.5f),
-		  0.0f, 2.0f * M_PI * (float)bzfrand(),
-		  BoxBase, BoxBase, h);
+		world->addBox(WorldSize * ((float)bzfrand() - 0.5f),
+				WorldSize * ((float)bzfrand() - 0.5f),
+				0.0f, 2.0f * M_PI * (float)bzfrand(),
+				BoxBase, BoxBase, h);
 	}
 
 	// make pyramids
@@ -2703,10 +2701,10 @@ static WorldInfo *defineRandomWorld()
 	for (i = 0; i < CitySize * CitySize; i++) {
 		if (randomHeights)
 			h = PyrHeight * ( 2.0f * (float)bzfrand() + 0.5f);
-			world->addPyramid(WorldSize * ((float)bzfrand() - 0.5f),
-		  WorldSize * ((float)bzfrand() - 0.5f),
-		  0.0f, 2.0f * M_PI * (float)bzfrand(),
-		  PyrBase, PyrBase, h);
+		world->addPyramid(WorldSize * ((float)bzfrand() - 0.5f),
+				WorldSize * ((float)bzfrand() - 0.5f),
+				0.0f, 2.0f * M_PI * (float)bzfrand(),
+				PyrBase, PyrBase, h);
 	}
 
 	if (useTeleporters) {
@@ -2722,7 +2720,7 @@ static WorldInfo *defineRandomWorld()
 				continue;
 
 			world->addTeleporter(x, y, 0.0f, rotation,
-		  0.5f*TeleWidth, TeleBreadth, 2.0f*TeleHeight, TeleWidth);
+					0.5f*TeleWidth, TeleBreadth, 2.0f*TeleHeight, TeleWidth);
 			linked[i][0] = linked[i][1] = 0;
 			i++;
 		}
@@ -2763,22 +2761,14 @@ static bool defineWorld()
 	delete[] worldDatabase;
 
 	// make world and add buildings
-   if (gameStyle & TeamFlagGameStyle)
-   {
-      world = defineTeamWorld();
-   }
-   else if (worldFile)
-   {
-      world = defineWorldFromFile(worldFile);
-   }
-   else
-   {
-      world = defineRandomWorld();
-   }
-   if (world == NULL)
-   {
-      return false;
-   }
+	if (gameStyle & TeamFlagGameStyle)
+		world = defineTeamWorld();
+	else if (worldFile)
+		world = defineWorldFromFile(worldFile);
+	else
+		world = defineRandomWorld();
+	if (world == NULL)
+		return false;
 
 	// package up world
 	world->packDatabase();
@@ -2846,8 +2836,8 @@ static TeamColor whoseBase(float x, float y, float z)
 		float rx = (float)(cosf(atanf(ny/nx)-baseRotation[i]) * sqrt((ny * ny) + (nx * nx)));
 		float ry = (float)(sinf(atanf(ny/nx)-baseRotation[i]) * sqrt((ny * ny) + (nx * nx)));
 		if (fabsf(rx) < baseSize[i][0] &&
-		fabsf(ry) < baseSize[i][1] &&
-		basePos[i][2] <= z) {
+				fabsf(ry) < baseSize[i][1] &&
+				basePos[i][2] <= z) {
 			if(basePos[i][2] > highest) {
 				highest = basePos[i][2];
 				highestteam = i;
@@ -2883,8 +2873,8 @@ static void dumpScore()
 		for (int j = 0; j < maxPlayers; j++)
 			if (player[j].state > PlayerInLimbo && int(player[j].team) == i) {
 				std::cout << player[j].wins << " " <<
-		    player[j].losses << " " <<
-		    player[j].callSign << std::endl;
+						player[j].losses << " " <<
+						player[j].callSign << std::endl;
 			}
 
 	std::cout << "#end" << std::endl;
@@ -2903,7 +2893,7 @@ static void acceptClient()
 		return;
 	}
 	fprintf(stderr, "accept() from %s:%d on %i\n",
-      inet_ntoa(clientAddr.sin_addr), ntohs(clientAddr.sin_port), fd);
+			inet_ntoa(clientAddr.sin_addr), ntohs(clientAddr.sin_port), fd);
 
 	// don't buffer info, send it immediately
 	setNoDelay(fd);
@@ -2968,7 +2958,7 @@ static void addClient(int acceptSocket)
 	// accept game connection
 	AddrLen addr_len = sizeof(player[playerIndex].taddr);
 	player[playerIndex].fd = accept(acceptSocket,
-      (struct sockaddr *)&player[playerIndex].taddr, &addr_len);
+			(struct sockaddr *)&player[playerIndex].taddr, &addr_len);
 
 	// see if accept worked
 	if (player[playerIndex].fd == NotConnected) {
@@ -3235,8 +3225,8 @@ static void addPlayer(int playerIndex)
 
 #ifdef SERVERLOGINMSG
 	sprintf(message,"BZFlag server %d.%d%c%d, http://BZFlag.org/",
-      (VERSION / 10000000) % 100, (VERSION / 100000) % 100,
-      (char)('a' - 1 + (VERSION / 1000) % 100), VERSION % 1000);
+			(VERSION / 10000000) % 100, (VERSION / 100000) % 100,
+			(char)('a' - 1 + (VERSION / 1000) % 100), VERSION % 1000);
 	sendMessage(playerIndex, player[playerIndex].id, player[playerIndex].team, message);
 
 	if (servermsg && (strlen(servermsg) > 0)) {
@@ -3314,7 +3304,7 @@ static void resetFlag(int flagIndex)
 		// random position (not in a building)
 		float r = TankRadius;
 		if (pFlagInfo->flag.id == ObesityFlag)
-       r *= 2.0f * ObeseFactor;
+			r *= 2.0f * ObeseFactor;
 		do {
 			pFlagInfo->flag.position[0] = (WorldSize - BaseSize) * ((float)bzfrand() - 0.5f);
 			pFlagInfo->flag.position[1] = (WorldSize - BaseSize) * ((float)bzfrand() - 0.5f);
@@ -3365,8 +3355,8 @@ static void zapFlag(int flagIndex)
 
 	// if flag was flying then it flies no more
 	if (flag[flagIndex].flag.status == FlagInAir ||
-      flag[flagIndex].flag.status == FlagComing ||
-      flag[flagIndex].flag.status == FlagGoing)
+			flag[flagIndex].flag.status == FlagComing ||
+			flag[flagIndex].flag.status == FlagGoing)
 		numFlagsInAir--;
 
 	// reset flag status
@@ -3625,7 +3615,7 @@ static void playerKilled(int victimIndex, int killerIndex,
 	// and MsgScore reply of the killer; should give us a good approximation
 	//  of the killer's round trip time
 	if (victimIndex != killerIndex &&            // suicide doesn't change score twice
-      !player[killerIndex].lagkillerpending) { // two rapid kills
+			!player[killerIndex].lagkillerpending) { // two rapid kills
 		player[killerIndex].lagkillerpending = true;
 		player[killerIndex].lagkillertime = TimeKeeper::getCurrent();
 	}
@@ -3668,8 +3658,8 @@ static void grabFlag(int playerIndex, int flagIndex)
 {
 	// player wants to take possession of flag
 	if (player[playerIndex].state != PlayerAlive ||
-      player[playerIndex].flag != -1 ||
-      flag[flagIndex].flag.status != FlagOnGround)
+			player[playerIndex].flag != -1 ||
+			flag[flagIndex].flag.status != FlagOnGround)
 		return;
 	// okay, player can have it
 	flag[flagIndex].flag.status = FlagOnTank;
@@ -3775,7 +3765,7 @@ static void dropFlag(int playerIndex, float pos[3])
 	// compute flight info -- flight time depends depends on start and end
 	// altitudes and desired height above start altitude.
 	const float thrownAltitude = (pFlagInfo->flag.id == ShieldFlag) ?
-      ShieldFlight * FlagAltitude : FlagAltitude;
+			ShieldFlight * FlagAltitude : FlagAltitude;
 	const float maxAltitude = pos[2] + thrownAltitude;
 	const float upTime = sqrtf(-2.0f * thrownAltitude / Gravity);
 	const float downTime = sqrtf(-2.0f * (maxAltitude - pos[2]) / Gravity);
@@ -3806,8 +3796,8 @@ static void captureFlag(int playerIndex, TeamColor teamCaptured)
 	// team base, or player's own flag in enemy base.
 	int flagIndex = int(player[playerIndex].flag);
 	if (flagIndex < 0 ||
-      int(flag[flagIndex].flag.id) < int(FirstTeamFlag) ||
-      int(flag[flagIndex].flag.id) > int(LastTeamFlag))
+			int(flag[flagIndex].flag.id) < int(FirstTeamFlag) ||
+			int(flag[flagIndex].flag.id) > int(LastTeamFlag))
 		return;
 
 	// player no longer has flag and put flag back at it's base
@@ -3881,12 +3871,12 @@ static void scoreChanged(int playerIndex, uint16_t wins, uint16_t losses)
 			killer.lagcount++;
 			// warn players from time to time whose lag is > threshold (-lagwarn)
 			if (lagwarnthresh > 0 && killer.lagavg > lagwarnthresh &&
-		  killer.lagcount-killer.laglastwarn > 5 + 2 * killer.lagwarncount) {
+					killer.lagcount-killer.laglastwarn > 5 + 2 * killer.lagwarncount) {
 				char message[MessageLen];
 				sprintf(message,"*** Server Warning: your lag is too high (%d ms) ***",
-		    int(killer.lagavg * 1000));
+						int(killer.lagavg * 1000));
 				sendMessage(playerIndex, player[playerIndex].id,
-		    player[playerIndex].team,message);
+						player[playerIndex].team,message);
 				killer.laglastwarn = killer.lagcount;
 				killer.lagwarncount++;;
 				if (killer.lagwarncount++ > maxlagwarn) {
@@ -3913,7 +3903,7 @@ static void scoreChanged(int playerIndex, uint16_t wins, uint16_t losses)
 
 	// see if the player reached the score limit
 	if (maxPlayerScore != 0 &&
-      player[playerIndex].wins - player[playerIndex].losses >= maxPlayerScore) {
+			player[playerIndex].wins - player[playerIndex].losses >= maxPlayerScore) {
 		void *buf, *bufStart = getDirectMessageBuffer();
 		buf = player[playerIndex].id.pack(bufStart);
 		buf = nboPackUShort(buf, uint16_t(NoTeam));
@@ -3937,9 +3927,9 @@ static void acquireRadio(int playerIndex, uint16_t flags)
 	// ignore request if player wants a radio already in use, or if a rogue
 	// player asks for a team broadcast radio, or if the player is dead
 	if (player[playerIndex].state != PlayerAlive ||
-      ((flags & RadioToAll) && broadcastRadio != InvalidPlayer) ||
-      (!(flags & RadioToAll) && player[playerIndex].team == RogueTeam) ||
-      team[int(player[playerIndex].team)].radio != InvalidPlayer)
+			((flags & RadioToAll) && broadcastRadio != InvalidPlayer) ||
+			(!(flags & RadioToAll) && player[playerIndex].team == RogueTeam) ||
+			team[int(player[playerIndex].team)].radio != InvalidPlayer)
 		return;
 	if (flags & RadioToAll)
 		broadcastRadio = playerIndex;
@@ -4015,7 +4005,7 @@ static void parseCommand(const char *message, int t)
 		} else if (strncmp(message + 6, "up", 2) == 0) {
 			for (int i = 0; i < numFlags; i++) {
 				if (int(flag[i].flag.id) < int(FirstTeamFlag) ||
-		    int(flag[i].flag.id) > int(LastTeamFlag)) {
+						int(flag[i].flag.id) > int(LastTeamFlag)) {
 					// see if someone had grabbed flag.  tell 'em to drop it.
 					const int playerIndex = flag[i].player;
 					if (playerIndex != -1) {
@@ -4039,11 +4029,11 @@ static void parseCommand(const char *message, int t)
 			for (int i = 0; i < numFlags; i++) {
 				char message[MessageLen]; // FIXME
 				sprintf(message, "%d p:%d r:%d g:%d i:%s s:%d p:%3.1fx%3.1fx%3.1f", i, flag[i].player,
-		    flag[i].required, flag[i].grabs, Flag::getAbbreviation(flag[i].flag.id),
-		    flag[i].flag.status,
-		    flag[i].flag.position[0],
-		    flag[i].flag.position[1],
-		    flag[i].flag.position[2]);
+						flag[i].required, flag[i].grabs, Flag::getAbbreviation(flag[i].flag.id),
+						flag[i].flag.status,
+						flag[i].flag.position[0],
+						flag[i].flag.position[1],
+						flag[i].flag.position[2]);
 				sendMessage(t, player[t].id, player[t].team, message);
 			}
 		}
@@ -4378,11 +4368,11 @@ static void printVersion(ostream& out)
 	out << copyright << std::endl;
 
 	out << "BZFlag server, version " <<
-      (VERSION / 10000000) % 100 << "." <<
-      (VERSION / 100000) % 100 <<
-      (char)('a' - 1 + (VERSION / 1000) % 100) <<
-      VERSION % 1000 <<
-      std::endl;
+			(VERSION / 10000000) % 100 << "." <<
+			(VERSION / 100000) % 100 <<
+			(char)('a' - 1 + (VERSION / 1000) % 100) <<
+			VERSION % 1000 <<
+			std::endl;
 
 	out << "  protocol " << ServerVersion[4] << ".";
 	if (ServerVersion[5] != '0')
@@ -4584,64 +4574,64 @@ static void parse(int argc, char **argv)
 	// parse command line
 	int playerCountArg = 0;
 	for (i = 1; i < argc; i++) {
-      if (strcmp(argv[i], "-noudp") == 0) {
-		UMDEBUG("Setup: Server will use only TCP for connections\n");
-		alsoUDP = false;
-      } else
-      if (strcmp(argv[i], "-requireudp") == 0) {
-		UMDEBUG("Setup: Server requires (UDP) clients!\n");
-		requireUDP = true;
-      } else
-      if (strcmp(argv[i], "-srvmsg") == 0) {
-		 if (++i == argc) {
-		   std::cerr << "argument expected for -srvmsg" << std::endl;
-		   usage(argv[0]);
-		 }
-		 servermsg = argv[i];
-      } else
-      if (strcmp(argv[i], "-world") == 0) {
-		 if (++i == argc) {
-		   std::cerr << "argument expected for -world" << std::endl;
-		   usage(argv[0]);
-		 }
-		 worldFile = argv[i];
-      }
-      else if (strcmp(argv[i], "+f") == 0) {
-      // add required flag
-      if (++i == argc) {
-		std::cerr << "argument expected for +f" << std::endl;
-		usage(argv[0]);
-      }
-      if (strcmp(argv[i], "good") == 0) {
-		flagCount[VelocityFlag]++;
-		flagCount[QuickTurnFlag]++;
-		flagCount[OscOverthrusterFlag]++;
-		flagCount[RapidFireFlag]++;
-		flagCount[MachineGunFlag]++;
-		flagCount[GuidedMissileFlag]++;
-		flagCount[LaserFlag]++;
-		flagCount[RicochetFlag]++;
-		flagCount[SuperBulletFlag]++;
-		flagCount[InvisibleBulletFlag]++;
-		flagCount[StealthFlag]++;
-		flagCount[TinyFlag]++;
-		flagCount[NarrowFlag]++;
-		flagCount[ShieldFlag]++;
-		flagCount[SteamrollerFlag]++;
-		flagCount[ShockWaveFlag]++;
-		flagCount[PhantomZoneFlag]++;
-		flagCount[GenocideFlag]++;
-		flagCount[JumpingFlag]++;
-		flagCount[IdentifyFlag]++;
-		flagCount[CloakingFlag]++;
-      }
-      else {
-		if ((f = lookupFlag(argv[i])) == int(NoFlag)) {
-		  std::cerr << "invalid flag `" << argv[i] << "'" << std::endl;
-		  usage(argv[0]);
+		if (strcmp(argv[i], "-noudp") == 0) {
+			UMDEBUG("Setup: Server will use only TCP for connections\n");
+			alsoUDP = false;
 		}
-		flagCount[f]++;
-      }
+		else if (strcmp(argv[i], "-requireudp") == 0) {
+			UMDEBUG("Setup: Server requires (UDP) clients!\n");
+			requireUDP = true;
+		}
+		else if (strcmp(argv[i], "-srvmsg") == 0) {
+			if (++i == argc) {
+				std::cerr << "argument expected for -srvmsg" << std::endl;
+				usage(argv[0]);
+			}
+			servermsg = argv[i];
+		}
+		else if (strcmp(argv[i], "-world") == 0) {
+			if (++i == argc) {
+				std::cerr << "argument expected for -world" << std::endl;
+				usage(argv[0]);
+			}
+			worldFile = argv[i];
+		}
+		else if (strcmp(argv[i], "+f") == 0) {
+			// add required flag
+			if (++i == argc) {
+				std::cerr << "argument expected for +f" << std::endl;
+				usage(argv[0]);
+			}
+			if (strcmp(argv[i], "good") == 0) {
+				flagCount[VelocityFlag]++;
+				flagCount[QuickTurnFlag]++;
+				flagCount[OscOverthrusterFlag]++;
+				flagCount[RapidFireFlag]++;
+				flagCount[MachineGunFlag]++;
+				flagCount[GuidedMissileFlag]++;
+				flagCount[LaserFlag]++;
+				flagCount[RicochetFlag]++;
+				flagCount[SuperBulletFlag]++;
+				flagCount[InvisibleBulletFlag]++;
+				flagCount[StealthFlag]++;
+				flagCount[TinyFlag]++;
+				flagCount[NarrowFlag]++;
+				flagCount[ShieldFlag]++;
+				flagCount[SteamrollerFlag]++;
+				flagCount[ShockWaveFlag]++;
+				flagCount[PhantomZoneFlag]++;
+				flagCount[GenocideFlag]++;
+				flagCount[JumpingFlag]++;
+				flagCount[IdentifyFlag]++;
+				flagCount[CloakingFlag]++;
+			}
+			else {
+				if ((f = lookupFlag(argv[i])) == int(NoFlag)) {
+					std::cerr << "invalid flag `" << argv[i] << "'" << std::endl;
+					usage(argv[0]);
+				}
+				flagCount[f]++;
+			}
 		}
 		else if (strcmp(argv[i], "+r") == 0) {
 			// all shots ricochet style
@@ -5150,13 +5140,13 @@ static void parse(int argc, char **argv)
 			std::cerr << "  jumping allowed" << std::endl;
 		if (gameStyle & int(InertiaGameStyle))
 			std::cerr << "  inertia: " << linearAcceleration << "," <<
-		  angularAcceleration << std::endl;
+					angularAcceleration << std::endl;
 		if (gameStyle & int(RicochetGameStyle))
 			std::cerr << "  all shots ricochet" << std::endl;
 		if (gameStyle & int(ShakableGameStyle))
 			std::cerr << "  shakable bad flags: timeout=" <<
-		  0.1f * float(shakeTimeout) <<
-		  ", wins=" << shakeWins << std::endl;
+					0.1f * float(shakeTimeout) <<
+					", wins=" << shakeWins << std::endl;
 		if (gameStyle & int(AntidoteGameStyle))
 			std::cerr << "  antidote flags" << std::endl;
 	}
@@ -5199,11 +5189,11 @@ int main(int argc, char **argv)
 			return 1;
 		}
 		if (LOBYTE(wsaData.wVersion) != major ||
-		HIBYTE(wsaData.wVersion) != minor) {
+				HIBYTE(wsaData.wVersion) != minor) {
 			fprintf(stderr, "Version mismatch in winsock;"
-		  "  got %d.%d.  Terminating.\n",
-		  (int)LOBYTE(wsaData.wVersion),
-		  (int)HIBYTE(wsaData.wVersion));
+					"  got %d.%d.  Terminating.\n",
+					(int)LOBYTE(wsaData.wVersion),
+					(int)HIBYTE(wsaData.wVersion));
 			WSACleanup();
 			return 1;
 		}
@@ -5319,15 +5309,15 @@ int main(int argc, char **argv)
 		if (numFlagsInAir > 0) {
 			for (i = 0; i < numFlags; i++)
 				if (flag[i].flag.status != FlagNoExist &&
-					flag[i].flag.status != FlagOnTank &&
-					flag[i].flag.status != FlagOnGround &&
-					flag[i].dropDone - tm < waitTime)
+						flag[i].flag.status != FlagOnTank &&
+						flag[i].flag.status != FlagOnGround &&
+						flag[i].dropDone - tm < waitTime)
 					waitTime = flag[i].dropDone - tm;
-    	}
+		}
 
 		// minmal waitTime
 		if (waitTime < 0.0f)
-		  waitTime = 0.0f;
+			waitTime = 0.0f;
 
 		// we have no pending packets
 		nfound = 0;
@@ -5446,7 +5436,7 @@ int main(int argc, char **argv)
 			//fprintf(stderr, "chkmsg nfound,read,write %i,%08lx,%08lx\n", nfound, read_set, write_set);
 			// first check initial contacts
 			if (FD_ISSET(wksSocket, &read_set))
-			  acceptClient();
+				acceptClient();
 
 			// now check pings
 			if (pingInSocket != -1 && FD_ISSET(pingInSocket, &read_set))
