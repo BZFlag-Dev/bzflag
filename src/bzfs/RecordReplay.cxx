@@ -9,6 +9,13 @@
  * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
+ 
+// TODO
+// - convert to packet lists to  STL lists ?
+// - compression (piped and/or inline)
+// - modify bzflag client to search for highest PlayerID first
+//   for name matching (so that messages aren't sent to ghosts)
+// - improve skipping
 
 
 // interface header 
@@ -334,6 +341,7 @@ bool Record::setRate (int playerIndex, int seconds)
 bool Record::sendStats (int playerIndex)
 {
   char buffer[MessageLen];
+  float saveTime = 0.0f;
   
   if (Recording) {
     sendMessage (ServerPlayer, playerIndex, "Recording enabled");
@@ -343,12 +351,20 @@ bool Record::sendStats (int playerIndex)
   }
    
   if (RecordMode == BufferedRecord) {
-    snprintf (buffer, MessageLen, "  buffered: %i bytes, %i packets, time = %i",
-             RecordBuf.byteCount, RecordBuf.packetCount, 0);
+    if ((RecordBuf.tail != NULL) && (RecordBuf.head != NULL)) {
+      RRtime diff = RecordBuf.head->timestamp - RecordBuf.tail->timestamp;
+      saveTime = (float)diff / 1000000.0f;
+    }
+    snprintf (buffer, MessageLen,
+              "  buffered: %i bytes / %i packets / %.3f seconds",
+              RecordBuf.byteCount, RecordBuf.packetCount, saveTime);
   }
   else {
-    snprintf (buffer, MessageLen, "  saved: %i bytes, %i packets, time = %i",
-             RecordFileBytes, RecordFilePackets, 0);   
+    RRtime diff = getRRtime() - RecordStartTime;
+    saveTime = (float)diff / 1000000.0f;
+    snprintf (buffer, MessageLen,
+              "  saved: %i bytes / %i packets / %.3f seconds",
+              RecordFileBytes, RecordFilePackets, saveTime);   
   }
   sendMessage (ServerPlayer, playerIndex, buffer, true);
 
@@ -714,7 +730,6 @@ bool Replay::loadFile(int playerIndex, const char *filename)
   }
 
   // preload the buffer 
-  // FIXME - this should be a moving window, for big files, mmap() ?
   while (ReplayBuf.byteCount < 5000 /*FIXME - RecordMaxBytes*/) {
     p = loadPacket (ReplayFile);
     if (p == NULL) {
@@ -861,6 +876,11 @@ bool Replay::play(int playerIndex)
   if (ReplayPos != NULL) {
     ReplayOffset = getRRtime () - ReplayPos->timestamp;
   }
+  else {
+    sendMessage (ServerPlayer, playerIndex, "Internal replay error");
+    replayReset ();
+    return false;
+  }
 
   // reset the replay observers' view of state  
   resetStates ();
@@ -884,6 +904,8 @@ bool Replay::skip(int playerIndex, int seconds)
   }
   
   if (seconds == 0) {
+    // just skip the time offset to the next packet,
+    // resetStates() is not required
     ReplayOffset = getRRtime() - ReplayPos->timestamp;
     return true;
   }
@@ -891,32 +913,32 @@ bool Replay::skip(int playerIndex, int seconds)
   RRpacket *p = ReplayPos;
   RRtime nowtime = p->timestamp;
   RRtime target = nowtime + ((RRtime)seconds * (RRtime)1000000);
-  u32 nowFilePos = p->nextFilePos;   // for keeping track
   
   if (seconds > 0) {
     do {
       p = nextStatePacket ();
     } while ((p != NULL) && (p->timestamp < target));
+    if (p == NULL) {
+      sendMessage (ServerPlayer, playerIndex, "skipped to the end");
+    }
   }
   else {
     do {
       p = prevStatePacket ();
     } while ((p != NULL) && (p->timestamp > target));
+    if (p == NULL) {
+      sendMessage (ServerPlayer, playerIndex, "skipped to the beginning");
+    }
   }      
    
-  if (p == NULL) {
-    sendMessage (ServerPlayer, playerIndex, "can't skip, no data available");
-    return false;
-  }
+  // reset the replay observers' view of state  
+  resetStates();
+
+  // setup the new time offset  
+  ReplayOffset = getRRtime() - ReplayPos->timestamp;
   
-  if (ReplayPos->nextFilePos != nowFilePos) {
-    // reset the replay observers' view of state  
-    resetStates();
-  }
-  
-  ReplayOffset = getRRtime() - p->timestamp;
-  
-  RRtime diff = p->timestamp - nowtime;
+  // print the amount of time skipped
+  RRtime diff = ReplayPos->timestamp - nowtime;
   char buffer[MessageLen];
   snprintf (buffer, MessageLen, "Skipping %.3f seconds (asked %i)",
            (float)diff/1000000.0f, seconds);
@@ -1764,12 +1786,62 @@ loadHeader (ReplayHeader *h, FILE *f)
   }
 
   if (replaced) {  
-    // FIXME - PRINT A BIG WARNING HERE? KICK EVERYONE?
     sendMessage (ServerPlayer, AllPlayers,
                  "An incompatible recording has been loaded");
     sendMessage (ServerPlayer, AllPlayers,
                  "Please rejoin or face the consequences (client crashes)");
   }
+  /* 
+   * FIXME
+   *
+   * Ok, this is where it gets a bit borked. The bzflag client
+   * has dynamic arrays for some of its objects (players, flags, 
+   * shots, etc...) If the client array is too small, there will
+   * be memory overruns. The maxPlayers problem is already dealt
+   * with, because it is set to (MaxPlayers + ReplayObservers)
+   * as soon as the -replay flag is used. The rest of them are 
+   * still an issue.
+   *
+   * Here are a few of options:
+   *
+   * 1) make the command line option  -replay <filename>, and
+   *    only allow loading of world DB's that match the one
+   *    from the command line file. This is probably how this
+   *    feature will get used for the most part anyways.
+   *
+   * 2) kick all observers off of the server if an incompatible
+   *    record file is loaded (with an appropriate warning). 
+   *    then they can reload with the original DB upon rejoining
+   *    (DB with modified maxPlayers).
+   *
+   * 3) make fixed sized arrays on the client side
+   *    (but what if someone really needs 1000 flags?)
+   *
+   * 4) implement a world reload feature on the client side, 
+   *    so that if the server sends a MsgGetWorld to the client
+   *    when it isn't expecting one, it reaquires and regenerates
+   *    its world DB. this would be the slick way to do it.
+   *
+   * 5) implement a resizing command, but that's icky.
+   * 
+   * 6) leave it be, and let clients fall where they may.
+   *
+   * 7) MAC: get to the client to use STL, so segv's aren't a problem
+   *         (and kick 'em anyways, to force a map reload)
+   *
+   *
+   * maxPlayers [from WorldBuilder.cxx]
+   *   world->players = new RemotePlayer*[world->maxPlayers];
+   *
+   * maxFlags [from WorldBuilder.cxx]
+   *   world->flags = new Flag[world->maxFlags];
+   *   world->flagNodes = new FlagSceneNode*[world->maxFlags];
+   *   world->flagWarpNodes = new FlagWarpSceneNode*[world->maxFlags];  
+   *
+   * maxShots [from RemotePlayer.cxx]
+   *   numShots = World::getWorld()->getMaxShots();
+   *   shots = new RemoteShotPath*[numShots];
+   */
   
   return true;
 }
@@ -1825,55 +1897,6 @@ replaceFlagTypes (ReplayHeader *h)
 }
 
 
-/* 
- * Ok, this is where it gets a bit borked. The bzflag client
- * has dynamic arrays for some of its objects (players, flags, 
- * shots, etc...) If the client array is too small, there will
- * be memory overruns. The maxPlayers problem is already dealt
- * with, because it is set to (MaxPlayers + ReplayObservers)
- * as soon as the -replay flag is used. The rest of them are 
- * still an issue.
- *
- * Here are a few of options:
- *
- * 1) make the command line option  -replay <filename>, and
- *    only allow loading of world DB's that match the one
- *    from the command line file. This is probably how this
- *    feature will get used for the most part anyways.
- *
- * 2) kick all observers off of the server if an incompatible
- *    record file is loaded (with an appropriate warning). 
- *    then they can reload with the original DB upon rejoining
- *    (DB with modified maxPlayers).
- *
- * 3) make fixed sized arrays on the client side
- *    (but what if someone really needs 1000 flags?)
- *
- * 4) implement a world reload feature on the client side, 
- *    so that if the server sends a MsgGetWorld to the client
- *    when it isn't expecting one, it reaquires and regenerates
- *    its world DB. this would be the slick way to do it.
- *
- * 5) implement a resizing command, but that's icky.
- * 
- * 6) leave it be, and let clients fall where they may.
- *
- * 7) MAC: get to the client to use STL, so segv's aren't a problem
- *         (and kick 'em anyways, to force a map reload)
- *
- *
- * maxPlayers [from WorldBuilder.cxx]
- *   world->players = new RemotePlayer*[world->maxPlayers];
- *
- * maxFlags [from WorldBuilder.cxx]
- *   world->flags = new Flag[world->maxFlags];
- *   world->flagNodes = new FlagSceneNode*[world->maxFlags];
- *   world->flagWarpNodes = new FlagWarpSceneNode*[world->maxFlags];  
- *
- * maxShots [from RemotePlayer.cxx]
- *   numShots = World::getWorld()->getMaxShots();
- *   shots = new RemoteShotPath*[numShots];
- */
 static bool
 replaceWorldDatabase (ReplayHeader *h)
 {
