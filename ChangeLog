@@ -4,6 +4,7 @@
 BZFlag 1.7e5
 ------------
 
+* new HUD! - David Trowbridge, Tim Riker, many others
 * added temporary bans (minutes) - Dave Brosius
 * Can now build entire win32 installer from VC Workspace - Dave Brosius
 * non-listserver connection gave 0.0.0.0 as host: fixed - Dave Brosius
