@@ -4058,17 +4058,16 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
       player[t].lasttimestamp = timestamp;
       player[t].lastupdate = now;
 
-      //Don't kick players up to 5 seconds after a world parm has changed, 5-> BZBB var?
-      if (now - lastWorldParmChange > 5.0f) {
+      //Don't kick players up to 10 seconds after a world parm has changed, 5-> BZBB var?
+      static const float heightFudge = 1.1f; /* 10% */
+      if (now - lastWorldParmChange > 10.0f) {
 	float gravity = BZDB.eval(StateDatabase::BZDB_GRAVITY);
 	if (gravity < 0.0f) {
-	  float maxTankHeight = maxWorldHeight + 1.08f * ((BZDB.eval(StateDatabase::BZDB_JUMPVELOCITY)*BZDB.eval(StateDatabase::BZDB_JUMPVELOCITY)) / (2.0f * -gravity));
+	  float maxTankHeight = maxWorldHeight + heightFudge * ((BZDB.eval(StateDatabase::BZDB_JUMPVELOCITY)*BZDB.eval(StateDatabase::BZDB_JUMPVELOCITY)) / (2.0f * -gravity));
 
 	  if (state.pos[2] > maxTankHeight) {
-	    char message[MessageLen];
-	    DEBUG1("kicking Player %s [%d] jump too high [max: %f height: %f]\n", player[t].callSign, t, maxTankHeight, state.pos[2]);
-	    strcpy(message, "Autokick: Out of world bounds, Jump too high, Update your client." );
-	    sendMessage(ServerPlayer, t, message, true);
+	    DEBUG1("Kicking Player %s [%d] jumped too high [max: %f height: %f]\n", player[t].callSign, t, maxTankHeight, state.pos[2]);
+	    sendMessage(ServerPlayer, t, "Autokick: Player location was too high.", true);
 	    removePlayer(t, "too high");
 	    break;
 	  }
@@ -4076,30 +4075,28 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
 
 	// make sure the player is still in the map
 	// test all the map bounds + some fudge factor, just in case
-	float	fudge = 5.0f;
+	static const float positionFudge = 10.0f; /* linear distance */
 	bool InBounds = true;
 	float worldSize = BZDB.eval(StateDatabase::BZDB_WORLDSIZE);
-	if ( (state.pos[1] >= worldSize*0.5f + fudge) || (state.pos[1] <= -worldSize*0.5f - fudge)) {
-	  std::cout << "y position (" << state.pos[1] << ") is out of bounds (" << worldSize * 0.5f << " + " << fudge << ")" << std::endl;
+	if ( (state.pos[1] >= worldSize*0.5f + positionFudge) || (state.pos[1] <= -worldSize*0.5f - positionFudge)) {
+	  std::cout << "y position (" << state.pos[1] << ") is out of bounds (" << worldSize * 0.5f << " + " << positionFudge << ")" << std::endl;
 	  InBounds = false;
-	} else if ( (state.pos[0] >= worldSize*0.5f + fudge) || (state.pos[0] <= -worldSize*0.5f - fudge)) {
-	  std::cout << "x position (" << state.pos[0] << ") is out of bounds (" << worldSize * 0.5f << " + " << fudge << ")" << std::endl;
+	} else if ( (state.pos[0] >= worldSize*0.5f + positionFudge) || (state.pos[0] <= -worldSize*0.5f - positionFudge)) {
+	  std::cout << "x position (" << state.pos[0] << ") is out of bounds (" << worldSize * 0.5f << " + " << positionFudge << ")" << std::endl;
        	  InBounds = false;
 	}
 
-	if (state.pos[2]<BZDB.eval(StateDatabase::BZDB_BURROWDEPTH) + -0.5) {
-	  std::cout << "z depth (" << state.pos[2] << ") is less than burrow depth (" << BZDB.eval(StateDatabase::BZDB_BURROWDEPTH) << " + -0.5)" << std::endl;
+	static const float burrowFudge = 1.0f; /* linear distance */
+	if (state.pos[2]<BZDB.eval(StateDatabase::BZDB_BURROWDEPTH) - burrowFudge) {
+	  std::cout << "z depth (" << state.pos[2] << ") is less than burrow depth (" << BZDB.eval(StateDatabase::BZDB_BURROWDEPTH) << " - " << burrowFudge << ")" << std::endl;
 	  InBounds = false;
 	}
 
-
-	// kick em cus they are cheating
+	// kick em cus they are most likely cheating or using a buggy client
 	if (!InBounds)
 	{
-	  char message[MessageLen];
-	  DEBUG1("kicking Player %s [%d] Out of map bounds at position (%.2f,%.2f,%.2f)\n", player[t].callSign, t, state.pos[0], state.pos[1], state.pos[2]);
-	  strcpy(message, "Autokick: Out of world bounds, XY pos out of bounds, Don't cheat." );
-	  sendMessage(ServerPlayer, t, message, true);
+	  DEBUG1("Kicking Player %s [%d] Out of map bounds at position (%.2f,%.2f,%.2f)\n", player[t].callSign, t, state.pos[0], state.pos[1], state.pos[2]);
+	  sendMessage(ServerPlayer, t, "Autokick: Player location was outside the playing area.", true);
 	  removePlayer(t, "Out of map bounds");
 	}
 
@@ -4120,12 +4117,13 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
 	    // if tank is not driving cannot be sure it didn't toss (V) in flight
 	    // if tank is not alive cannot be sure it didn't just toss (V)
   	    if (flag[player[t].flag].flag.type == Flags::Velocity)
-	      maxPlanarSpeedSqr *= BZDB.eval(StateDatabase::BZDB_VELOCITYAD)*BZDB.eval(StateDatabase::BZDB_VELOCITYAD);
+	      maxPlanarSpeedSqr *= BZDB.eval(StateDatabase::BZDB_VELOCITYAD) * BZDB.eval(StateDatabase::BZDB_VELOCITYAD);
 	    else if (flag[player[t].flag].flag.type == Flags::Thief)
 	      maxPlanarSpeedSqr *= BZDB.eval(StateDatabase::BZDB_THIEFVELAD) * BZDB.eval(StateDatabase::BZDB_THIEFVELAD);
 	    else {
-	      // If player is moving vertically, or not alive the speed checks seem to be problematic
-	      // If this happens, just log it for now, but don't actually kick
+	      // If player is moving vertically, or not alive the speed checks
+	      // seem to be problematic. If this happens, just log it for now, 
+	      // but don't actually kick
 	      if ((player[t].lastState.pos[2] != state.pos[2])
 	      ||  (player[t].lastState.velocity[2] != state.velocity[2])
 	      ||  ((state.status & PlayerState::Alive) == 0)) {
@@ -4133,8 +4131,8 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
 	      }
 	    }
 
-	    // allow a 5% tolerance level for speed
-	    float realtol = 1.0f;
+	    // allow a 10% tolerance level for speed if -speedtol is not sane
+	    float realtol = 1.1f;
 	    if (speedTolerance > 1.0f)
 	      realtol = speedTolerance;
 	    maxPlanarSpeedSqr *= realtol;
@@ -4145,12 +4143,10 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
 		sqrt(curPlanarSpeedSqr), sqrt(maxPlanarSpeedSqr));
 	      }
 	      else {
-		char message[MessageLen];
-		DEBUG1("kicking Player %s [%d] tank too fast (tank: %f, allowed: %f)\n",
-		player[t].callSign, t,
-		sqrt(curPlanarSpeedSqr), sqrt(maxPlanarSpeedSqr));
-		strcpy(message, "Autokick: Tank moving too fast, Update your client." );
-		sendMessage(ServerPlayer, t, message, true);
+		DEBUG1("Kicking Player %s [%d] tank too fast (tank: %f, allowed: %f)\n",
+		       player[t].callSign, t,
+		       sqrt(curPlanarSpeedSqr), sqrt(maxPlanarSpeedSqr));
+		sendMessage(ServerPlayer, t, "Autokick: Player tank is moving too fast.", true);
 		removePlayer(t, "too fast");
 	      }
 	      break;
