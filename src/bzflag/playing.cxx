@@ -2303,9 +2303,8 @@ static void		addMessage(const Player* player,
 #endif
       fullMessage += ColorStrings[DefaultColor];
       fullMessage += ": ";
-
-      fullMessage += msg;
     }
+    fullMessage += msg;
   } else {
     std::string cleanMsg;
     char *tmpstr;
