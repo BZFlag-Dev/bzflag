@@ -31,6 +31,7 @@
 			function buildConfig()
 			{
 				var d;
+				var commentWritten;
 				try
 				{
 					var console = window.open("","_blank","width=600,height=300,resizable");
@@ -357,8 +358,13 @@
 						d.writeln("-sw " + mainform.bad_flag_shake_wins.value + "<br/><br/>");
 					}
 
-					d.writeln("#Mandatory flags<br/>");
+					commentWritten = false;
 					if (mainform.good_mand_flag.value > 0) {
+						if (!commentWritten) {
+							d.writeln("#Mandatory flags<br/>");
+							commentWritten = true;
+						}
+
 						d.write("+f good");
 						if (mainform.good_mand_flag.value > 1)
 							d.write("{"+mainform.good_mand_flag.value+"}");
@@ -366,6 +372,10 @@
 					}
 
 					if (mainform.bad_mand_flag.value > 0) {
+						if (!commentWritten) {
+							d.writeln("#Mandatory flags<br/>");
+							commentWritten = true;
+						}
 						d.write("+f bad");
 						if (mainform.bad_mand_flag.value > 1)
 							d.write("{"+mainform.bad_mand_flag.value+"}");
@@ -376,6 +386,10 @@
 						var el = flags[i].toLowerCase() + "_mand_flag";
 						var cnt = mainform.elements[el].value;
 						if (cnt > 0) {
+							if (!commentWritten) {
+								d.writeln("#Mandatory flags<br/>");
+								commentWritten = true;
+							}
 							d.write("+f " + flags[i]);
 							if (cnt > 1)
 								d.write("{"+cnt+"}");
@@ -384,26 +398,43 @@
 					}
 					d.writeln("<br/><br/>");
 
-					d.writeln("#Forbidden flags<br/>");
-					if (mainform.bad_forbid_flag.checked > 0)
+					commentWritten = false;
+					if (mainform.bad_forbid_flag.checked > 0) {
+						if (!commentWritten) {
+							d.writeln("#Forbidden flags<br/>");
+							commentWritten = true;
+						}
 						d.write("-f bad ");
+					}
 
-					if (mainform.good_forbid_flag.checked > 0)
+					if (mainform.good_forbid_flag.checked > 0) {
+						if (!commentWritten) {
+							d.writeln("#Forbidden flags<br/>");
+							commentWritten = true;
+						}
 						d.write("-f good ");
+					}
 
 					for (var i = 0; i < flags.length; i++) {
 						var el = flags[i].toLowerCase() + "_forbid_flag";
 						if (mainform.elements[el].checked) {
+							if (!commentWritten) {
+								d.writeln("#Forbidden flags<br/>");
+								commentWritten = true;
+							}
 							d.write("-f " + flags[i] + " ");
 						}
 					}
 					d.writeln("<br/><br/>");
 
-					d.writeln("#Flag Shot Limits<br/>");
-
+					commentWritten = false;
 					for (var i = 0; i < flags.length; i++) {
 						var el = flags[i].toLowerCase() + "_limit_flag";
 						if (mainform.elements[el].value.length > 0) {
+							if (!commentWritten) {
+								d.writeln("#Flag Shot Limits<br/>");
+								commentWritten = true;
+							}
 							d.write("-sl " + flags[i] + " " + mainform.elements[el].value + " ");
 						}
 					}
