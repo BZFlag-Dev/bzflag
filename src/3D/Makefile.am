@@ -18,7 +18,7 @@ lib3D_a_SOURCES =		\
 	TextureManager.cxx	\
 	BitmapFont.h		\
 	ImageFont.h		\
-	TextureFont.h		\
+	TextureFont.h
 
 EXTRA_DIST = \
 	README
