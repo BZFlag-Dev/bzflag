@@ -12,6 +12,9 @@
 
 static const char copyright[] = "Copyright (c) 1993 - 2003 Tim Riker";
 
+#include <string>
+#include <vector>
+#include <deque>
 #include <stdio.h>
 #include <stdlib.h>
 #include "bzsignal.h"
@@ -84,12 +87,12 @@ static const char copyright[] = "Copyright (c) 1993 - 2003 Tim Riker";
 #include "BundleMgr.h"
 #include "Bundle.h"
 
-#define MAX_MESSAGE_HISTORY (10)
+#define MAX_MESSAGE_HISTORY (20)
 
 static const float	FlagHelpDuration = 60.0f;
 
 static StartupInfo	startupInfo;
-static BzfKeyMap		keymap;
+static BzfKeyMap	keymap;
 static MainMenu*	mainMenu;
 static ServerLink*	serverLink = NULL;
 static PlayerLink*	playerLink = NULL;
@@ -142,7 +145,7 @@ int			killerHighlight = 0;
 
 static char		messageMessage[PlayerIdPLen + 2 + MessageLen];
 
-static std::vector<std::string>	messageHistory;
+static std::deque<std::string> messageHistory;
 static unsigned int	messageHistoryIndex = 0;
 static std::vector<std::string>	silencePlayers;
 
@@ -439,19 +442,16 @@ bool			ComposeDefaultKey::keyPress(const BzfKeyEvent& key)
 	int i, mhLen = messageHistory.size();
 	for (i = 0; i < mhLen; i++) {
 	  if (messageHistory[i] == message) {
-	    std::string tmp = messageHistory[0];
-	    messageHistory.insert(messageHistory.begin(), messageHistory[messageHistory.size() - 1]);
-	    messageHistory.pop_back();
+	    messageHistory.erase(messageHistory.begin() + i);
+	    messageHistory.push_front(message);
 	    break;
 	  }
 	}
 	if (i == mhLen) {
 	  if (mhLen >= MAX_MESSAGE_HISTORY) {
-	    std::vector<std::string>::iterator it = messageHistory.begin();
-	    for(int j = 0; j < mhLen - 1; j++) it++;
-	    messageHistory.erase(it);
+	    messageHistory.pop_back();
 	  }
-	  messageHistory.insert(messageHistory.begin(), message);
+	  messageHistory.push_front(message);
 	}
 
 	char messageBuffer[MessageLen];
@@ -646,7 +646,7 @@ bool			SilenceDefaultKey::keyPress(const BzfKeyEvent& key)
 	  addMessage(NULL, message);
 	} else {
 	  // exists and in list --> remove from list
-	  silencePlayers.erase(silencePlayers.begin()+inListPos);
+	  silencePlayers.erase(silencePlayers.begin() + inListPos);
 	  std::string message = "Unsilenced ";
 	  message += (name); 
 	  addMessage(NULL, message);
@@ -655,7 +655,7 @@ bool			SilenceDefaultKey::keyPress(const BzfKeyEvent& key)
 	// person does not exist, but may be in silence list
 	if (isInList) {
 	  // does not exist but is in list --> remove 
-	  silencePlayers.erase(silencePlayers.begin()+inListPos);  
+	  silencePlayers.erase(silencePlayers.begin() + inListPos);
 	  std::string message = "Unsilenced ";
 	  message += (name); 
 	  if (strcmp (name, "*") == 0) {
