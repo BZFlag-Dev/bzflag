@@ -59,6 +59,7 @@
 #include "KeyManager.h"
 #include "callbacks.h"
 #include "ServerListCache.h"
+#include "BZDBCache.h"
 
 extern std::vector<std::string>& getSilenceList();
 const char*		argv0;
@@ -803,6 +804,7 @@ int			main(int argc, char** argv)
     BZDB->setPermission(globalDBItems[gi].name, globalDBItems[gi].permission);
   }
 
+  BZDBCache::init();
   Flags::init();
 
   if (getenv("BZFLAGID")) {

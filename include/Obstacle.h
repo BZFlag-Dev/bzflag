@@ -77,10 +77,7 @@ class Obstacle {
 				float oWidth, float oBreadth, float oHeight,
 				float* normal) const;
 
-    static void callback(const std::string &name, void *userData);
-
   protected:
-    static float	tankHeight;
     float		pos[3];
     float		angle;
     float		width;

@@ -16,6 +16,7 @@
 #include "global.h"
 #include "Intersect.h"
 #include "QuadWallSceneNode.h"
+#include "BZDBCache.h"
 
 std::string		BaseBuilding::typeName("BaseBuilding");
 
@@ -60,7 +61,7 @@ void			BaseBuilding::getNormal(const float *p, float *n) const
 bool			BaseBuilding::isInside(const float *p, float radius) const
 {
   return (p[2] < (getPosition()[2] + getHeight()))
-  &&     ((p[2]+tankHeight) > getPosition()[2])
+  &&     ((p[2]+BZDBCache::tankHeight) > getPosition()[2])
   &&     testRectCircle(getPosition(), getRotation(), getWidth(), getBreadth(), p, radius);
 }
 
@@ -68,7 +69,7 @@ bool			BaseBuilding::isInside(const float *p, float angle,
 			float dx, float dy) const
 {
   return (p[2] < (getPosition()[2] + getHeight()))
-  &&     ((p[2]+tankHeight) >= getPosition()[2])
+  &&     ((p[2]+BZDBCache::tankHeight) >= getPosition()[2])
   &&     testRectRect(getPosition(), getRotation(), getWidth(), getBreadth(), p, angle, dx, dy);
 }
 

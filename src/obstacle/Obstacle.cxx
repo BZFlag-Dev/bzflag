@@ -17,8 +17,6 @@
 #include "Intersect.h"
 #include "StateDatabase.h"
 
-float Obstacle::tankHeight = 0.0f;
-
 Obstacle::Obstacle()
 {
   memset(pos, 0, sizeof(float) * 3);
@@ -28,11 +26,6 @@ Obstacle::Obstacle()
   height = 0;
   driveThrough = false;
   shootThrough = false;
-
-  if (tankHeight == 0.0f) {
-    tankHeight = BZDB->eval(StateDatabase::BZDB_TANKHEIGHT);
-    BZDB->addCallback(StateDatabase::BZDB_TANKHEIGHT, callback, this);
-  }
 }
 
 Obstacle::Obstacle(const float* _pos, float _angle,
@@ -49,24 +42,12 @@ Obstacle::Obstacle(const float* _pos, float _angle,
   driveThrough = drive;
   shootThrough = shoot;
   ZFlip = false;
-
-  if (tankHeight == 0.0f) {
-    tankHeight = BZDB->eval(StateDatabase::BZDB_TANKHEIGHT);
-    BZDB->addCallback(StateDatabase::BZDB_TANKHEIGHT, callback, this);
-  }
 }
 
 Obstacle::~Obstacle()
 {
   // do nothing
 }
-
-void Obstacle::callback(const std::string &name, void *)
-{
-  if (name == StateDatabase::BZDB_TANKHEIGHT)
-    tankHeight = BZDB->eval(StateDatabase::BZDB_TANKHEIGHT);
-}
-
 
 bool			Obstacle::isDriveThrough() const
 {
