@@ -48,6 +48,7 @@
 #define SFX_BURROW	26		/* burrow sound */
 #define SFX_MESSAGE_PRIVATE	27	/* private message received */
 #define SFX_MESSAGE_TEAM	28	/* team message received */
+#define SFX_MESSAGE_ADMIN	29	/* admin message received */
 
 /* prepare sound effects generator and shut it down */
 void			openSound(const char* pname);

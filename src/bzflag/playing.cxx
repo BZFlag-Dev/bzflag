@@ -2124,6 +2124,15 @@ static void		handleServerMessage(bool human, uint16_t code,
       } else {
 	// team / admin message
 	if (toAdmin) {
+
+	  // play a sound on a private message not from self or server
+	  if (!fromServer) {
+	    static TimeKeeper lastMsg = TimeKeeper::getSunGenesisTime();
+	    if (TimeKeeper::getTick() - lastMsg > 2.0f)
+	      playLocalSound( SFX_MESSAGE_ADMIN );
+	    lastMsg = TimeKeeper::getTick();
+	  }
+
 	  fullMsg += "[Admin] ";
 	}
 
