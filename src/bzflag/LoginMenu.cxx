@@ -68,8 +68,8 @@ void LoginMenu::execute()
   HUDuiControl* focus = HUDui::getFocus();
   if (focus == login) {
     // Initializing Authentication
-    ClientAuthentication::init(username->getString().c_str(),
-			       password->getString().c_str());
+    ClientAuthentication::login(username->getString().c_str(),
+				password->getString().c_str());
   }
 }
 

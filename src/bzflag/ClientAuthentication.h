@@ -31,7 +31,8 @@
 
 class ClientAuthentication {
  public:
-  static void init(const char *username, const char *password);
+  static void login(const char *username, const char *password);
+  static void logout();
   static void sendCredential(ServerLink &serverLink);
 private:
 #ifdef HAVE_KRB5
