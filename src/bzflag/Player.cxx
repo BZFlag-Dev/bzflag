@@ -124,8 +124,6 @@ Player::Player(const PlayerId& _id, TeamColor _team,
 
   lastTrackDraw = TimeKeeper::getCurrent();
 
-  buildExplosionMatrix();
-
   return;
 }
 
@@ -210,25 +208,10 @@ void Player::move(const float* _pos, float _azimuth)
   }
 
   // update forward vector (always in horizontal plane)
-   if (!isAlive() && isExploding()) {
-	  float f[3];
+	forward[0] = cosf(state.azimuth);
+	forward[1] = sinf(state.azimuth);
+	forward[2] = 0.0f;
 
-	  f[0] = forward[0] * explosionMatrix[0][0] + forward[1] * explosionMatrix[0][1] +
-				   forward[2] * explosionMatrix[0][2] + forward[3] * explosionMatrix[0][3];
-	  f[1] = forward[0] * explosionMatrix[1][0] + forward[1] * explosionMatrix[1][1] +
-				   forward[2] * explosionMatrix[1][2] + forward[3] * explosionMatrix[1][3];
-	  f[2] = forward[0] * explosionMatrix[2][0] + forward[1] * explosionMatrix[2][1] +
-				   forward[2] * explosionMatrix[2][2] + forward[3] * explosionMatrix[2][3];
-	  float d = hypotf(f[0], hypotf(f[1], f[2]));
-	  forward[0] = f[0] / d;
-	  forward[1] = f[1] / d;
-	  forward[2] = f[2] / d;
-	  state.azimuth = acosf(forward[0]);
-  } else {
-	  forward[0] = cosf(state.azimuth);
-	  forward[1] = sinf(state.azimuth);
-	  forward[2] = 0.0f;
-  }
 
   // compute teleporter proximity
   if (World::getWorld()) {
@@ -532,33 +515,6 @@ bool Player::hitObstacleResizing()
   }
 
   return false;
-}
-
-void Player::buildExplosionMatrix()
-{
-	double a = (2.0 * M_PI * bzfrand() - M_PI) / 50.0;
-	double b = (2.0 * M_PI * bzfrand() - M_PI) / 50.0;
-	double c = (2.0 * M_PI * bzfrand() - M_PI) / 50.0;
-	
-    explosionMatrix[0][0] = float(cos(b) * cos(c));
-	explosionMatrix[0][1] = float(cos(b) * sin(c));
-	explosionMatrix[0][2] = float(-sin(b));
-	explosionMatrix[0][3] = 0.0f;
-
-    explosionMatrix[1][0] = float(cos(c) * sin(a) * sin(b) - cos(a) * sin(c));
-	explosionMatrix[1][1] = float(cos(a) * cos(c) * sin(a) * sin(b) * sin(c));
-	explosionMatrix[1][2] = float(cos(b) * sin(a));
-	explosionMatrix[1][3] = 0.0f;
-
-    explosionMatrix[2][0] = float(cos(a) * cos(c) * sin(b) + sin(a) * sin(c));
-	explosionMatrix[2][1] = float(-cos(c) * sin(a) + cos(a) * sin(b) * sin(c));
-	explosionMatrix[2][2] = float(cos(a) * cos(b));
-	explosionMatrix[2][3] = 0.0f;
-
-    explosionMatrix[3][0] = 0.0f;
-	explosionMatrix[3][1] = 0.0f;
-	explosionMatrix[3][2] = 0.0f;
-	explosionMatrix[3][3] = 1.0f;
 }
 
 void Player::updateTranslucency(float dt)

@@ -197,7 +197,6 @@ private:
   void updateJumpJets(float dt);
   void updateTrackMarks();
   bool hitObstacleResizing();
-  void buildExplosionMatrix();
 private:
   // data not communicated with other players
   bool			notResponding;
@@ -243,7 +242,6 @@ private:
   float			alphaTarget;		// current tank translucency
   TimeKeeper		explodeTime;		// time I started exploding
   TimeKeeper		teleportTime;		// time I started teleporting
-  float			explosionMatrix[4][4];  //transform the viewport by this when exploding
   short			fromTeleporter;		// teleporter I entered
   short			toTeleporter;		// teleporter I exited
   float			teleporterProximity;	// how close to a teleporter
