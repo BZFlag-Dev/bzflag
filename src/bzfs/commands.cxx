@@ -110,6 +110,7 @@ int getTarget(const char *victimname) {
 
 void handlePartCmd(GameKeeper::Player *playerData, const char *message)
 {
+/* This is busted  -> removePlayer(t, "%s", message + 6);  
   std::string message2;
 
   message2 = string_util::format("%s has quit \"%s\" ",
@@ -120,7 +121,8 @@ void handlePartCmd(GameKeeper::Player *playerData, const char *message)
 
   // now to kick the player
   int t = playerData->getIndex(); 
-  removePlayer(t, "%s", message + 6);    
+  removePlayer(t, "%s", message + 6);  
+*/
 }
 
 
