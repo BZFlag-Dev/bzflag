@@ -1,6 +1,12 @@
 recent bugs
 ------------
 
+- the last shot fired with a shot-limited flag doesn't carry the flag
+  type (or is dropped by the server?)...e.g. if I have G, limited to
+  5 shots, and kill someone with the fifth shot, only that player dies
+  because the flag was dropped by the time the kill was scored...
+  even though the shot was fired while I still had the flag.
+
 - spin inversion bug, fix in MeshTransform.cxx (around line 300)
   during the next protocol breakage
 
