@@ -194,8 +194,22 @@ BZAdminClient::ServerCode BZAdminClient::checkMessage() {
       if (ui != NULL)
 	ui->addedPlayer(p);
       if (messageMask[MsgAddPlayer]) {
-	lastMessage.first = std::string("*** '") + callsign + 
-	  "' joined the game.";
+  std::string joinMsg = std::string("*** \'") + callsign + "\' joined the game as a";
+  if (players[p].team == RedTeam)
+  	joinMsg += " red tank.";
+ 	else if (players[p].team == GreenTeam)
+ 		joinMsg += " green tank.";
+	else if (players[p].team == BlueTeam)
+		joinMsg += " blue tank.";
+	else if (players[p].team == PurpleTeam)
+		joinMsg += " purple tank.";
+	else if (players[p].team == RogueTeam)
+		joinMsg += " rogue tank.";
+	else if (players[p].team == ObserverTeam)
+		joinMsg += "n observer.";
+	else
+		joinMsg += " tank of an unknown team."; //this shouldn't happen too often
+	lastMessage.first = joinMsg;
       }
       break;
       
