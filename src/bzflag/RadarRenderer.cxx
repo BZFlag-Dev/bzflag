@@ -373,7 +373,7 @@ void			RadarRenderer::render(SceneRenderer& renderer,
 			     Flags::Colorblindness ? RogueTeam : player->getTeam()));
       }
       // If this tank is hunted flash it on the radar
-      if (player->isHunted()) {
+      if (player->isHunted() && myTank->getFlag() != Flags::Colorblindness) {
 	if (flashTank.isOn()) {
 	  if (!toggleTank) {
 	    float flashcolor[3];
