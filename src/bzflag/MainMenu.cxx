@@ -65,7 +65,7 @@ void	  MainMenu::createControls()
   label = createLabel("Up/Down arrows to move, Enter to select, Esc to dismiss");
   list.push_back(label);
 
-  join = createLabel("Join");
+  join = createLabel("Join Game");
   list.push_back(join);
 
   options = createLabel("Options");
