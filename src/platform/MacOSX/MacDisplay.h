@@ -8,9 +8,6 @@
 #include "bzfgl.h"
 
 #include <Carbon/Carbon.h>
-#include <OpenGL/OpenGL.h>
-#include <OpenGL/gl.h>
-#include <OpenGL/glu.h>
 
 #define MAC_FG_SLEEP 3 /* ticks to sleep when in foreground */
 #define MAC_BG_SLEEP 4 /* ticks to sleep when in background */

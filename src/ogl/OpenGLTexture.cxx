@@ -16,11 +16,7 @@
 #include <windows.h>
 #endif
 
-#if defined(__APPLE__)
-#  include <OpenGL/glu.h>
-#else
-#  include <GL/glu.h>
-#endif
+#include "bzfgl.h"
 #include "common.h"
 #include "OpenGLTexture.h"
 #include "OpenGLGState.h"

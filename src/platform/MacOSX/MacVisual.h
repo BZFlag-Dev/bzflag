@@ -17,8 +17,7 @@
 #ifndef BZF_MACVISUAL_H
 #define BZF_MACVISUAL_H
 
-#include <OpenGL/OpenGL.h>
-
+#include "bzfgl.h"
 #include "BzfVisual.h"
 #include "MacVisual.h"
 #include "MacDisplay.h"

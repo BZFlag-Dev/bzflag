@@ -19,9 +19,6 @@
 
 #include "common.h"
 #include "bzfgl.h"
-#if defined(__APPLE__)
-#include <OpenGL/gl.h>
-#endif
 
 class OpenGLTexture;
 class OpenGLMaterial;

@@ -2,9 +2,8 @@
 #define  BZF_WINWINDOW_H
 
 #include <Carbon/Carbon.h>
-#include <OpenGL/OpenGL.h>
-#include <OpenGL/gl.h>
-#include <OpenGL/glu.h>
+
+#include "bzfgl.h"
 
 #include "BzfWindow.h"
 #include "MacDisplay.h"
