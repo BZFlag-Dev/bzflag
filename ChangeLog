@@ -3,6 +3,8 @@
 
 BZFlag 2.0.1
 ------------
+
+* Fixed antikick so that it actually prevents most kicks - Sean Morrison
 * ctf make restarting on base even when dead - Anonymous 
 * Fixed weirdness on Console Panel when disabling chat display - Alfredo Tupone
 * Fixed a segfault with SDL and no audio - Alfredo Tupone
