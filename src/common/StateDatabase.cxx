@@ -74,6 +74,7 @@ StateDatabase* Singleton<StateDatabase>::_instance = (StateDatabase*)0;
 
 
 const std::string StateDatabase::BZDB_AGILITYADVEL	= std::string("_agilityAdVel");
+const std::string StateDatabase::BZDB_AGILITYADANGVEL	= std::string("_agilityAdAngVel");
 const std::string StateDatabase::BZDB_AGILITYDODGECOUNT	= std::string("_agilityDodgeCount");
 const std::string StateDatabase::BZDB_AGILITYTIMEWINDOW	= std::string("_agilityTimeWindow");
 const std::string StateDatabase::BZDB_AGILITYVELDELTA	= std::string("_agilityVelDelta");

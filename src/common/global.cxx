@@ -9,7 +9,7 @@
  * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
-#if (_MSC_VER)
+#if defined(_MSC_VER)
 // turn off bogus `this used in base member initialization list'
 #  pragma warning(disable: 4786)
 #endif
@@ -18,10 +18,11 @@
 
 
 const struct GlobalDBItem globalDBItems[] = {
-  { "_agilityAdVel",		"2.0",				false, StateDatabase::Locked},
+  { "_agilityAdVel",		"_velocityAd*0.9",		false, StateDatabase::Locked},
+  { "_agilityAdAngVel",		"_angularAd*0.9",		false, StateDatabase::Locked},
   { "_agilityDodgeCount",	"5.0",				false, StateDatabase::Locked},
   { "_agilityTimeWindow",	"2.0",				false, StateDatabase::Locked},
-  { "_agilityVelDelta",		"0.5",				false, StateDatabase::Locked},
+  { "_agilityVelDelta",		"0.4",				false, StateDatabase::Locked},
   { "_angleTolerance",		"0.01",				false, StateDatabase::Locked},
   { "_angularAd",		"1.5",				false, StateDatabase::Locked},
   { "_avenueSize",		"2.0*_boxBase",			false, StateDatabase::Locked},
