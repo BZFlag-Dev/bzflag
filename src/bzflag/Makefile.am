@@ -192,6 +192,7 @@ REGEX = \
 endif
 
 LDADD =	\
+	../date/libDate.a	\
 	../3D/lib3D.a			\
 	../net/libNet.a			\
 	../common/libCommon.a		\
@@ -214,9 +215,6 @@ LDADD =	\
 #	$(ALIBS)
 
 AM_CPPFLAGS = -I$(top_srcdir)/include $(X_CFLAGS) $(SDL_CFLAGS)
-
-
-bzflag_LDFLAGS = ../date/buildDate.o
 
 bzflag.res: $(top_srcdir)/win32/bzflag.rc $(top_srcdir)/win32/bzflag.ico
 	windres --include-dir=$(top_srcdir)/win32/ -i $(top_srcdir)/win32/bzflag.rc -o bzflag.res \

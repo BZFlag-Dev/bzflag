@@ -2,10 +2,10 @@
 
 AC_INIT(src/bzflag/bzflag.cxx)
 
-# sed magic to get version numbers from include/version.h
-MAJOR_VERSION=`sed -e 's/#.*define.*BZ_MAJOR_VERSION[^0-9]*\(.*\)/\1/' -e t -e d < \$srcdir/include/version.h`
-MINOR_VERSION=`sed -e 's/#.*define.*BZ_MINOR_VERSION[^0-9]*\(.*\)/\1/' -e t -e d < \$srcdir/include/version.h`
-REV=`sed -e 's/#.*define.*BZ_REV[^0-9]*\(.*\)/\1/' -e t -e d < \$srcdir/include/version.h`
+# sed magic to get version numbers from src/date/buildDate.cxx
+MAJOR_VERSION=`sed -e 's/#.*define.*BZ_MAJOR_VERSION[^0-9]*\(.*\)/\1/' -e t -e d < \$srcdir/src/date/buildDate.cxx`
+MINOR_VERSION=`sed -e 's/#.*define.*BZ_MINOR_VERSION[^0-9]*\(.*\)/\1/' -e t -e d < \$srcdir/src/date/buildDate.cxx`
+REV=`sed -e 's/#.*define.*BZ_REV[^0-9]*\(.*\)/\1/' -e t -e d < \$srcdir/src/date/buildDate.cxx`
 
 CONF_DATE=`date +%Y%m%d`
 echo "BZFlag-$MAJOR_VERSION.$MINOR_VERSION.$REV.$CONF_DATE"

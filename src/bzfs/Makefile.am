@@ -116,10 +116,9 @@ ZLIB = -lz
 endif
 
 LDADD = \
+	../date/libDate.a	\
 	../obstacle/libObstacle.a	\
 	../game/libGame.a	\
 	../net/libNet.a		\
 	../common/libCommon.a	\
 	$(REGEX) $(ZLIB) $(CURL_LIBS) $(KRB5_LIBS)
-
-bzfs_LDFLAGS = ../date/buildDate.o

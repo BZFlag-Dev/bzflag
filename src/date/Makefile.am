@@ -1,7 +1,4 @@
-noinst_HEADERS =	\
-	buildDate.cxx
-
-DISTCLEANFILES = buildDate.o
+noinst_LIBRARIES = libDate.a
 
 MAINTAINERCLEANFILES = \
 	Makefile.in
@@ -9,5 +6,9 @@ MAINTAINERCLEANFILES = \
 EXTRA_DIST = \
 	README
 
+libDate_a_SOURCES  =			\
+	buildDate.cxx
+
 all-local:
-	$(CXX) -c -o buildDate.o $(srcdir)/buildDate.cxx
+	#$(CXX) -c -o buildDate.o $(srcdir)/buildDate.cxx
+	touch buildDate.cxx
