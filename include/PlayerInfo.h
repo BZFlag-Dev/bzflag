@@ -128,8 +128,6 @@ public:
   void        setReplayState(PlayerReplayState state);
   void        updateIdleTime();
   PlayerReplayState getReplayState();
-  
-  TimeKeeper lastupdate;
 private:
   void        cleanCallSign();
   void        cleanEMail();
@@ -177,6 +175,7 @@ private:
 
     // idle kick
     TimeKeeper lastmsg;
+    TimeKeeper lastupdate;
 
     std::vector<FlagType*> flagHistory;
 
