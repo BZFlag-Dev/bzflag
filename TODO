@@ -5,22 +5,19 @@ THESE SHOULD HAPPEN BEFORE THE NEXT RELEASE:
 
 * .bzf/ on *ix should be a directory with db and cache/ entries
 
-* benchmark calls to BZDB to insure there are close to 0 per
-  frame redraw. Convert any existing to callbacks.
-
 * Make world filter work on client side as well as server side
   using a local world filter, search user dir for word filter first.
   then search app dir for global filter. This will help people who 
   want stricter lists then some servers have, and parents who can not
   monitor what server there children log into.
-
-* shorten laser to like 1.25 normal shot
+  ( learner is looking at this )
 
 THESE SHOULD HAPPEN BEFORE THE NEXT RELEASE BUT NOONE WILL STEP UP FOR THEM
 
 * perhaps add a team id to shots, so that if i die while i have
   bullets live, and I change teams because of my death, i don't
   get penalized for team killing.
+  ( Jeff Myers will look at )
 
 * support gameinfo requests as one time udp packets (if udp)
   This should function like the old broadcast server locator
@@ -33,8 +30,13 @@ THESE SHOULD HAPPEN BEFORE THE NEXT RELEASE BUT NOONE WILL STEP UP FOR THEM
   using the left and right arrow keys to change between them.
   boroadcast for LAN servers only happens when on the LAN seting
   to minimise trafic, and difirentiate the servers.
+  ( atupone was looking into it ).
 
 THESE ARE LOWER PRIORITY
+
+* shorten laser to like 1.25 normal shot
+    ( this is not a simple change, and it should be evaluated for play
+      ballance issues )
 
 * server should send less frequent updates for "distant" players
 
