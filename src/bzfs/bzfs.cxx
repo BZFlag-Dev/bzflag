@@ -2316,6 +2316,9 @@ static void addPlayer(int playerIndex)
   player[playerIndex].jitteravg = 0;
   player[playerIndex].jitteralpha = 1;
 
+  player[playerIndex].lostavg = 0;
+  player[playerIndex].lostalpha = 1;
+
   player[playerIndex].lasttimestamp = 0.0f;
   player[playerIndex].lastupdate = TimeKeeper::getCurrent();
   player[playerIndex].lastmsg	 = TimeKeeper::getCurrent();
@@ -2324,7 +2327,6 @@ static void addPlayer(int playerIndex)
   player[playerIndex].nextping += 10.0;
   player[playerIndex].pingpending = false;
   player[playerIndex].pingseqno = 0;
-  player[playerIndex].packetslost = 0;
   player[playerIndex].pingssent = 0;
 
 #ifdef TIMELIMIT
@@ -3570,45 +3572,56 @@ static void shotEnded(const PlayerId& id, int16_t shotIndex, uint16_t reason)
   broadcastMessage(MsgShotEnd, (char*)buf-(char*)bufStart, bufStart);
 }
 
-// update lag for player. Two cases:
-// timepassed>=0: ping packet round trip time, update lagavg
-// timepassed<0:  use jitter from MsgPlayerUpdate, update jitteravg
-//
-// jitter could be used for fast update of lagavg, too, but isn't for now
-// (and the lagwarning code would have to be redone or palyers would get
-//  the warnings too rapidly)
-static void updateLag(int playerIndex, float timepassed, float jitter = 0.0f)
+
+
+// updateLagLost: update % lost/out of order packets
+// updated on lost/received LagPing echo and lost/ooo/received
+// MsgPlayerUpdate
+static void updateLagLost(int playerIndex, bool lost=true)
 {
   PlayerInfo &pl=player[playerIndex];
-  if (timepassed >= 0.0f) {
-    // time is smoothed exponentially using a dynamic smoothing factor
-    pl.lagavg = pl.lagavg*(1-pl.lagalpha) + pl.lagalpha*timepassed;
-    pl.lagalpha = pl.lagalpha / (0.9f + pl.lagalpha);
-    pl.lagcount++;
-    // warn players from time to time whose lag is > threshold (-lagwarn)
-    if (clOptions->lagwarnthresh > 0 && pl.lagavg > clOptions->lagwarnthresh &&
-	pl.lagcount - pl.laglastwarn > 2 * pl.lagwarncount) {
-      char message[MessageLen];
-      sprintf(message,"*** Server Warning: your lag is too high (%d ms) ***",
-	  int(pl.lagavg * 1000));
+  pl.lostavg = pl.lostavg*(1-pl.lostalpha) + pl.lostalpha*lost;
+  pl.lostalpha = pl.lostalpha / (0.99f + pl.lostalpha);
+}
+
+// update absolute latency based on LagPing messages
+static void updateLag(int playerIndex, float timepassed)
+{
+  PlayerInfo &pl=player[playerIndex];
+  // time is smoothed exponentially using a dynamic smoothing factor
+  pl.lagavg = pl.lagavg*(1-pl.lagalpha) + pl.lagalpha*timepassed;
+  pl.lagalpha = pl.lagalpha / (0.9f + pl.lagalpha);
+  pl.lagcount++;
+  // warn players from time to time whose lag is > threshold (-lagwarn)
+  if (clOptions->lagwarnthresh > 0 && pl.lagavg > clOptions->lagwarnthresh &&
+      pl.lagcount - pl.laglastwarn > 2 * pl.lagwarncount) {
+    char message[MessageLen];
+    sprintf(message,"*** Server Warning: your lag is too high (%d ms) ***",
+        int(pl.lagavg * 1000));
+    sendMessage(ServerPlayer, playerIndex, message, true);
+    pl.laglastwarn = pl.lagcount;
+    pl.lagwarncount++;;
+    if (pl.lagwarncount++ > clOptions->maxlagwarn) {
+      // drop the player
+      sprintf(message,"You have been kicked due to excessive lag (you have been warned %d times).",
+        clOptions->maxlagwarn);
       sendMessage(ServerPlayer, playerIndex, message, true);
-      pl.laglastwarn = pl.lagcount;
-      pl.lagwarncount++;;
-      if (pl.lagwarncount++ > clOptions->maxlagwarn) {
-	// drop the player
-	sprintf(message,"You have been kicked due to excessive lag (you have been warned %d times).",
-	  clOptions->maxlagwarn);
-	sendMessage(ServerPlayer, playerIndex, message, true);
-	removePlayer(playerIndex, "lag");
-      }
+      removePlayer(playerIndex, "lag");
     }
   }
-  else {
-    // time is smoothed exponentially using a dynamic smoothing factor
-    pl.jitteravg = pl.jitteravg*(1-pl.jitteralpha) + pl.jitteralpha*fabs(jitter);
-    pl.jitteralpha = pl.jitteralpha / (0.9f + pl.jitteralpha);
-  }
+  updateLagLost(playerIndex, false);
 }
+
+// updateLagJitter: update jitter based on timestamps in MsgPlayerUpdate
+static void updateLagJitter(int playerIndex, float jitter)
+{
+  PlayerInfo &pl=player[playerIndex];
+  // time is smoothed exponentially using a dynamic smoothing factor
+  pl.jitteravg = pl.jitteravg*(1-pl.jitteralpha) + pl.jitteralpha*fabs(jitter);
+  pl.jitteralpha = pl.jitteralpha / (0.99f + pl.jitteralpha);
+  updateLagLost(playerIndex, false);
+}
+
 
 static void sendTeleport(int playerIndex, uint16_t from, uint16_t to)
 {
@@ -4047,13 +4060,13 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
 
       // packet got lost (or out ouf order): count
       if (state.order - player[t].lastState.order > 1)
-	player[t].packetslost++;
+        updateLagLost(t);
 
       TimeKeeper now = TimeKeeper::getCurrent();
       // don't calc jitter if more than 2 seconds between packets
       if (player[t].lasttimestamp > 0.0f && timestamp-player[t].lasttimestamp < 2.0f) {
 	const float jitter = fabs(now - player[t].lastupdate - (timestamp - player[t].lasttimestamp));
-	updateLag(t, -1.0f, jitter);
+	updateLagJitter(t, jitter);
       }
       player[t].lasttimestamp = timestamp;
       player[t].lastupdate = now;
@@ -4823,7 +4836,7 @@ int main(int argc, char **argv)
       {
 	player[j].pingseqno = (player[j].pingseqno + 1) % 10000;
 	if (player[j].pingpending) // ping lost
-	  player[j].packetslost++;
+          updateLagLost(j);
 
 	void *buf, *bufStart = getDirectMessageBuffer();
 	buf = nboPackUShort(bufStart, player[j].pingseqno);

@@ -376,12 +376,12 @@ void handleLagstatsCmd(int t, const char *)
 
   for (int i = 0; i < curMaxPlayers; i++) {
     if (player[i].state > PlayerInLimbo && player[i].type == TankPlayer) {
-      sprintf(reply,"%-16s : %3dms (%d) +- %2dms %s", player[i].callSign,
-	      int(player[i].lagavg*1000), player[i].lagcount,
+      sprintf(reply,"%-16s : %3d +- %2dms %s", player[i].callSign,
+	      int(player[i].lagavg*1000),
 	      int(player[i].jitteravg*1000),
 	      player[i].accessInfo.verified ? "(R)" : "");
-      if (player[i].packetslost>0)
-	sprintf(reply+strlen(reply), " %d lost/ooo", player[i].packetslost);
+      if (player[i].lostavg>=0.01f)
+	sprintf(reply+strlen(reply), " %d%% lost/ooo", int(player[i].lostavg*100));
       sendMessage(ServerPlayer, t, reply, true);
     }
   }

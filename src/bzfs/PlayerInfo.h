@@ -136,11 +136,11 @@ struct PlayerInfo {
 
 
     // lag measurement
-    float lagavg, jitteravg, lagalpha, jitteralpha;
+    float lagavg, jitteravg, lostavg, lagalpha, jitteralpha, lostalpha;
     int lagcount, laglastwarn, lagwarncount;
     bool pingpending;
     TimeKeeper nextping, lastping;
-    int pingseqno, packetslost, pingssent;
+    int pingseqno, pingssent;
 
     // idle kick + jitter measurement
     float lasttimestamp;
