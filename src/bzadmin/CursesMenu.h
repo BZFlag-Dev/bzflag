@@ -16,6 +16,7 @@
 /* bzflag special common - 1st one */
 #include "common.h"
 
+#include <map>
 #include <string>
 #include <vector>
 
@@ -271,6 +272,15 @@ public:
   /** This function updates the menu if neccessary. */
   void rebuild();
   
+  /** Return a reference to the map of message types that will cause the menu
+      to redraw itself. If the associated @c bool is true, the menu will also
+      be completely rebuilt (menu items can be removed or added). */
+  std::map<uint16_t, bool>& getUpdateTypes();
+  
+  /** This function updates the menu if @c msgType is in the set of message
+      types that will cause the menu to update. */
+  void handleNewPacket(uint16_t msgType);
+  
 protected:
 
   std::string header;
@@ -281,6 +291,7 @@ protected:
   BZAdminClient& client;
   const PlayerIdMap& players;
   bool dirty;
+  std::map<uint16_t, bool> updateOnMsg;
 };
 
 #endif

@@ -417,6 +417,20 @@ void CursesMenu::rebuild() {
 }
 
 
+std::map<uint16_t, bool>& CursesMenu::getUpdateTypes() {
+  return updateOnMsg;
+}
+
+
+void CursesMenu::handleNewPacket(uint16_t msgType) {
+  std::map<uint16_t, bool>::const_iterator iter = updateOnMsg.find(msgType);
+  if (iter != updateOnMsg.end()) {
+    if (iter->second)
+      forceUpdate();
+    showMenu();
+  }
+}
+
 
 // Local Variables: ***
 // mode:C++ ***

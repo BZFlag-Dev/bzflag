@@ -143,6 +143,7 @@ void CursesUI::outputMessage(const std::string& msg, ColorCode color) {
 
 void CursesUI::handleNewPacket(uint16_t code) {
   BZAdminUI::handleNewPacket(code);
+  menu.handleNewPacket(code);
 }
 
 
@@ -429,9 +430,15 @@ void CursesUI::initPlayerMenu(CursesMenu& menu) {
   PlayerIdMap::const_iterator it;
   for (it = menu.players.begin(); it != menu.players.end(); ++it)
     menu.addItem(new PlayerCMItem(menu.players, it->first));
-  menu.addItem(new CommandCMItem("Reload playerlist", "/playerlist", true));
   menu.addItem(new SubmenuCMItem("Back to main menu",
 				 &CursesUI::initMainMenu));
+  std::map<uint16_t, bool>& updateTypes(menu.getUpdateTypes());
+  updateTypes.clear();
+  updateTypes[MsgAddPlayer] = true;
+  updateTypes[MsgRemovePlayer] = true;
+  updateTypes[MsgScore] = false;
+  updateTypes[MsgKilled] = false;
+  updateTypes[MsgAdminInfo] = false;
 }
 
 
@@ -440,6 +447,7 @@ void CursesUI::initBanMenu(CursesMenu& menu) {
   menu.clear();
   menu.addItem(new SubmenuCMItem("Not implemented - go back",
 				  &CursesUI::initMainMenu));
+  menu.getUpdateTypes().clear();
 }
 
 
@@ -449,6 +457,9 @@ void CursesUI::initServerVarMenu(CursesMenu& menu) {
   BZDB.iterate(&CursesUI::addBZDBCMItem, &menu);
   menu.addItem(new SubmenuCMItem("Back to main menu",
 				 &CursesUI::initMainMenu));
+  std::map<uint16_t, bool>& updateTypes(menu.getUpdateTypes());
+  updateTypes.clear();
+  updateTypes[MsgSetVar] = false;
 }
 
 
@@ -466,6 +477,7 @@ void CursesUI::initFilterMenu(CursesMenu& menu) {
     menu.addItem(new FilterCMItem(iter->first, menu.client));
   menu.addItem(new SubmenuCMItem("Back to main menu",
 				 &CursesUI::initMainMenu));
+  menu.getUpdateTypes().clear();
 }
 
 
