@@ -45,6 +45,8 @@ class HoldingList {
     Obstacle** list;
 };
 
+static HoldingList rayList; // ray intersection list
+
 //
 // Function Prototypes
 //
@@ -236,7 +238,6 @@ static bool dropIt(float pos[3], float minZ, float maxZ,
   Ray ray(org, dir);
 
   // list of  possible landings
-  HoldingList rayList; // ray intersection list
   const ObsList* olist = COLLISIONMGR.rayTest(&ray, MAXFLOAT);
   rayList.copy(olist); // copy the list, so that COLLISIONMGR can be re-used
 
@@ -316,7 +317,7 @@ HoldingList::HoldingList()
 
 HoldingList::~HoldingList()
 {
-  delete list;
+  delete[] list;
   return;
 }
 
@@ -324,7 +325,7 @@ void HoldingList::copy(const ObsList* olist)
 {
   if (olist->count > size) {
     // increase the list size
-    delete list;
+    delete[] list;
     size = olist->count;
     list = new Obstacle*[size];
   }
