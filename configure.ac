@@ -37,13 +37,19 @@ case $host_os in
      *) irix=false;;
 esac
 AM_CONDITIONAL(IRIX, $irix)
-AM_CONDITIONAL(MACOS, test x$host_os = xmacos)
 
 case $host_os in
      cygwin|mingw32|windows**) win32=true;;
      *) win32=false;;
 esac
 AM_CONDITIONAL(WIN32, $win32)
+
+case $host_os in
+   macos|darwin*) macos=true;;
+   *) macos=false;;
+esac
+
+AM_CONDITIONAL(MACOS, $macos)
 
 case $host_os in
    linux-gnu)
@@ -66,7 +72,7 @@ case $host_os in
 	else
 	   CONFIG=irix-mips2;
 	fi;;
-   macos)
+   macos|darwin*)
 	CONFIG=macosx;;
    cygwin|mingw32|windows*)
 	CONFIG=config-win32;;
@@ -111,7 +117,7 @@ case $host_os in
 esac
 
 case $host_os in
-     macos)
+     macos|darwin*)
 	LDFLAGS="$LDFLAGS -framework Carbon -framework OpenGL -framework AGL";;
      irix)
 	if test x$host_cpu = xmips64; then
@@ -169,7 +175,7 @@ case $host_os in
 	elif test sun_gcc; then
 	   CXXFLAGS="$CXXFLAGS -fno-exceptions -fno-rtti"
 	fi;;
-     macos)
+     macos|darwin*)
 	CPPFLAGS="$CPPFLAGS -D_MACOSX_ -D_BSD_SOCKLEN_T_=int";
 	CPPFLAGS="$CPPFLAGS -Wall -W";
 	CFLAGS="$CFLAGS -ansi";
@@ -203,7 +209,7 @@ if test x$enable_debug = xyes; then
 	CFLAGS="$CFLAGS -g";
 	CXXFLAGS="$CXXFLAGS -g";
 	CPPFLAGS="$CPPFLAGS -DDEBUG";;
-     macos)
+     macos|darwin*)
 	CFLAGS="$CFLAGS -g";
 	CXXFLAGS="$CXXFLAGS -g";
 	CPPFLAGS="$CPPFLAGS -DDEBUG";;
@@ -226,7 +232,7 @@ else
 		CFLAGS="$CFLAGS -O";
 		CXXFLAGS="$CXXFLAGS -O";
 		CPPFLAGS="$CPPFLAGS -DNDEBUG";;
-	 macos)
+	 macos|darwin*)
 		CFLAGS="$CFLAGS -O2";
 		CXXFLAGS="$CXXFLAGS -O2";
 		CPPFLAGS="$CPPFLAGS -DNDEBUG";
