@@ -20,7 +20,6 @@
 -file ../../data/helvbr.rgb helvbr.rgb
 -file ../../data/missile.rgb missile.rgb
 -file ../../data/mountain.rgb mountain.rgb
--file ../../data/panel.rgb panel.rgb
 -file ../../data/pbolt.rgb pbolt.rgb
 -file ../../data/plaser.rgb plaser.rgb
 -file ../../data/pyrwall.rgb pyrwall.rgb
