@@ -184,7 +184,7 @@ Server::Server(const char* inNamePort,
   strcpy(address,"000.000.000.000");
 
   // extract name and port from nameport
-  char* delimiter = strchr(inNamePort, ':');
+  const char* delimiter = strchr(inNamePort, ':');
   if (delimiter) {
     nameport = strdup(inNamePort);
     name = (char *)malloc(delimiter - inNamePort + 1);
@@ -741,7 +741,7 @@ static boolean scheduleServerTest(Server* server)
 static Server* findServer(const char* inNamePort)
 {
   char *nameport;
-  char* delimiter = strchr(inNamePort, ':');
+  const char* delimiter = strchr(inNamePort, ':');
   if (delimiter)
     nameport = strdup(inNamePort);
   else {
@@ -776,7 +776,7 @@ static int addServer(const char* inNamePort, const char* version,
   if (strncmp(version, "BZFS", 4) != 0)
     return 1;
   char *nameport;
-  char* delimiter = strchr(inNamePort, ':');
+  const char* delimiter = strchr(inNamePort, ':');
   if (delimiter)
     nameport = strdup(inNamePort);
   else {
