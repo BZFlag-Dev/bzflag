@@ -36,16 +36,11 @@
 
 /* from playing.h */
 StartupInfo* getStartupInfo();
-typedef void (*JoinGameCallback)(bool success, void* data);
-void joinGame(JoinGameCallback, void* userData);
-typedef void (*ConnectStatusCallback)(std::string& str);
-void setConnectStatusCB(ConnectStatusCallback);
-void drawFrame(const float dt);
+void joinGame();
 
 JoinMenu* JoinMenu::activeMenu = NULL;
 
-JoinMenu::JoinMenu() : oldErrorCallback(NULL),
-		       serverStartMenu(NULL), serverMenu(NULL)
+JoinMenu::JoinMenu() : serverStartMenu(NULL), serverMenu(NULL)
 {
   // cache font face ID
   int fontFace = MainMenu::getFontFace();
@@ -161,14 +156,12 @@ void JoinMenu::show()
   port->setString(buffer);
 
   // clear status
-  oldErrorCallback = NULL;
   setStatus("");
 }
 
 void JoinMenu::dismiss()
 {
   loadInfo();
-  setConnectStatusCB(NULL);
   activeMenu = NULL;
 }
 
@@ -222,56 +215,7 @@ void JoinMenu::execute()
     setStatus("Trying...");
 
     // schedule attempt to join game
-    oldErrorCallback = setErrorCallback(joinErrorCallback);
-    setConnectStatusCB(&connectStatusCallback);
-    joinGame(&joinGameCallback, this);
-  }
-}
-
-void JoinMenu::joinGameCallback(bool okay, void* _self)
-{
-  JoinMenu* self = (JoinMenu*)_self;
-  if (okay) {
-    // it worked!  pop all the menus.
-    HUDDialogStack* stack = HUDDialogStack::get();
-    while (stack->isActive()) stack->pop();
-  } else {
-    // failed.  let user know.
-    self->setStatus("Connection failed.");
-  }
-  setErrorCallback(self->oldErrorCallback);
-  self->oldErrorCallback = NULL;
-}
-
-void JoinMenu::connectStatusCallback(std::string& str)
-{
-  static TimeKeeper prev = TimeKeeper::getNullTime();
-  JoinMenu* self = activeMenu;
-
-  self->setFailedMessage(str.c_str());
-
-  // limit framerate to 2 fps - if you can't draw 2 fps you're screwed anyhow
-  // if we draw too many fps then people with fast connections and slow computers
-  // will have a problem on their hands, since we aren't multithreading
-
-  const float dt = TimeKeeper::getCurrent() - prev;
-
-  if (dt >= 0.5f) {
-    // render that puppy
-    drawFrame(dt);
-    prev = TimeKeeper::getCurrent();
-  }
-}
-
-void JoinMenu::joinErrorCallback(const char* msg)
-{
-  JoinMenu* self = activeMenu;
-
-  self->setFailedMessage(msg);
-
-  // also forward to old callback if it's not this callback
-  if (self->oldErrorCallback && self->oldErrorCallback != &JoinMenu::joinErrorCallback) {
-    (*self->oldErrorCallback)(msg);
+    joinGame();
   }
 }
 
@@ -302,7 +246,6 @@ void JoinMenu::setStatus(const char* msg, const std::vector<std::string> *)
   const float width = fm.getStrLength(status->getFontFace(),
 		status->getFontSize(), status->getString());
   status->setPosition(center - 0.5f * width, status->getY());
-  if (!oldErrorCallback) joinErrorCallback("");
 }
 
 void JoinMenu::teamCallback(HUDuiControl*, void*)

@@ -48,9 +48,6 @@ class JoinMenu : public HUDDialog {
 
   private:
     static void		teamCallback(HUDuiControl*, void*);
-    static void		joinGameCallback(bool, void*);
-    static void		connectStatusCallback(std::string& str);
-    static void		joinErrorCallback(const char* msg);
     TeamColor		getTeam() const;
     void		setTeam(TeamColor);
     void		setStatus(const char*, const std::vector<std::string> *parms = NULL);
@@ -69,7 +66,6 @@ class JoinMenu : public HUDDialog {
     HUDuiLabel*		findServer;
     HUDuiLabel*		connectLabel;
     HUDuiLabel*		failedMessage;
-    ErrorCallback	oldErrorCallback;
     ServerStartMenu*	serverStartMenu;
     ServerMenu*		serverMenu;
     static JoinMenu*	activeMenu;

@@ -123,9 +123,6 @@ static SceneDatabaseBuilder* sceneBuilder = NULL;
 static Team*		teams = NULL;
 int			numFlags = 0;
 static bool             joinRequested    = false;
-static JoinGameCallback	joinGameCallback = NULL;
-static void*		joinGameUserData = NULL;
-static ConnectStatusCallback connectCallback = NULL;
 bool			admin = false; // am I an admin?
 static bool		serverError = false;
 static bool		serverDied = false;
@@ -453,35 +450,21 @@ static void		callPlayingCallbacks()
   }
 }
 
-void			joinGame(JoinGameCallback cb, void* data)
+void			joinGame()
 {
+  if (joiningGame) {
+    if (worldBuilder) {
+      delete worldBuilder;
+      worldBuilder = NULL;
+    }
+    if (worldDatabase) {
+      delete[] worldDatabase;
+      worldDatabase = NULL;
+    }
+    HUDDialogStack::get()->setFailedMessage("Download stopped by user action");
+    joiningGame      = false;
+  }
   joinRequested    = true;
-  joinGameCallback = cb;
-  joinGameUserData = data;
-}
-
-void		        setConnectStatusCB(ConnectStatusCallback cb)
-{
-  connectCallback = cb;
-}
-
-//
-// print status reports while trying to join server
-//
-
-inline void		connectStatusCB(std::string str)
-{
-  if (connectCallback)
-    (*connectCallback)(str);
-}
-
-//
-// handle joining status when server provided on command line
-//
-
-void			joinGameHandler(bool okay, void*)
-{
-  if (!okay) printError("Connection failed.");
 }
 
 //
@@ -871,22 +854,6 @@ static void		doKeyPlaying(const BzfKeyEvent& key, bool pressed)
 }
 
 static void doKey(const BzfKeyEvent& key, bool pressed) {
-  if (joiningGame && pressed) {
-    if (worldBuilder) {
-      delete worldBuilder;
-      worldBuilder = NULL;
-    }
-    if (worldDatabase) {
-      delete[] worldDatabase;
-      worldDatabase = NULL;
-    }
-    printError("Download stopped by user action");
-    if (joinGameCallback) {
-      (*joinGameCallback)(false, joinGameUserData);
-      joinGameCallback = NULL;
-    }
-    joiningGame      = false;
-  }
   if (!myTank)
     doKeyNotPlaying(key, pressed);
   else
@@ -1442,7 +1409,7 @@ static bool isUrlCached()
 static void loadCachedWorld()
 {
   std::istream *cachedWorld = FILEMGR.createDataInStream(worldCachePath, true);
-  connectStatusCB("Loading world from cache...");
+  HUDDialogStack::get()->setFailedMessage("Loading world from cache...");
   cachedWorld->seekg(0, std::ios::end);
   std::streampos size = cachedWorld->tellg();
   unsigned long charSize = std::streamoff(size);
@@ -1460,12 +1427,9 @@ static void loadCachedWorld()
       delete worldBuilder;
     worldBuilder = NULL;
     delete[] worldDatabase;
-    printError("Error on md5. Remove offending file.");
+    HUDDialogStack::get()->setFailedMessage
+      ("Error on md5. Remove offending file.");
     remove(worldCachePath.c_str());
-    if (joinGameCallback) {
-      (*joinGameCallback)(false, joinGameUserData);
-      joinGameCallback = NULL;
-    }
     joiningGame      = false;
     return;
   }
@@ -1477,11 +1441,8 @@ static void loadCachedWorld()
       delete worldBuilder;
     worldBuilder = NULL;
     delete[] worldDatabase;
-    printError("Error downloading world database.");
-    if (joinGameCallback) {
-      (*joinGameCallback)(false, joinGameUserData);
-      joinGameCallback = NULL;
-    }
+    HUDDialogStack::get()->setFailedMessage
+      ("Error downloading world database.");
     joiningGame      = false;
     return;
   }
@@ -1492,11 +1453,10 @@ static void loadCachedWorld()
   if (worldBuilder)
     delete worldBuilder;
   worldBuilder = NULL;
-  connectStatusCB("Preparing to enter server...");
-  if (joinGameCallback) {
-    (*joinGameCallback)(true, joinGameUserData);
-    joinGameCallback = NULL;
-  }
+  // it worked!  pop all the menus.
+  HUDDialogStack* stack = HUDDialogStack::get();
+  while (stack->isActive())
+    stack->pop();
   joinInternetGame2();
   joiningGame = false;
 }
@@ -1521,11 +1481,9 @@ static void dumpMissingFlag(char *buf, uint16_t len)
 
   std::vector<std::string> args;
   args.push_back(flags);
-  printError("Flags not supported by this client: {1}", &args);
-  if (joinGameCallback) {
-    (*joinGameCallback)(false, joinGameUserData);
-    joinGameCallback = NULL;
-  }
+  HUDDialogStack::get()->setFailedMessage
+    (TextUtils::format("Flags not supported by this client: {1}",
+		       &args).c_str());
 }
 
 static bool processWorldChunk(void *buf, uint16_t len, int bytesLeft)
@@ -1534,9 +1492,10 @@ static bool processWorldChunk(void *buf, uint16_t len, int bytesLeft)
   int doneSize  = worldPtr + len;
   if (cacheOut)
     cacheOut->write((char *)buf, len);
-  connectStatusCB(TextUtils::format
+  HUDDialogStack::get()->setFailedMessage
+    (TextUtils::format
 		  ("Downloading World (%2d%% complete/%d kb remaining)...",
-		   (100 * doneSize / totalSize), bytesLeft / 1024));
+		   (100 * doneSize / totalSize), bytesLeft / 1024).c_str());
   return bytesLeft == 0;
 }
 
@@ -1596,7 +1555,7 @@ static void		handleServerMessage(bool human, uint16_t code,
     worldBuilder = new WorldBuilder;
     worldBuilder->gameSetting(msg);
     serverLink->send(MsgWantWHash, 0, NULL);
-    connectStatusCB("Requesting World Hash...");
+    HUDDialogStack::get()->setFailedMessage("Requesting World Hash...");
     break;
   }
 
@@ -1619,7 +1578,7 @@ static void		handleServerMessage(bool human, uint16_t code,
     }
     isCacheTemp = hexDigest[0] == 't';
     delete [] hexDigest;
-    connectStatusCB("Downloading World...");
+    HUDDialogStack::get()->setFailedMessage("Downloading World...");
     {
       char msg[MaxPacketLen];
       // ask for world
@@ -3986,10 +3945,7 @@ static void joinInternetGame()
   // open server
   Address serverAddress(startupInfo.serverName);
   if (serverAddress.isAny()) {
-    if (joinGameCallback) {
-      (*joinGameCallback)(false, joinGameUserData);
-      joinGameCallback = NULL;
-    }
+    HUDDialogStack::get()->setFailedMessage("Server not found");
     return;
   }
   ServerLink* _serverLink = new ServerLink(serverAddress,
@@ -4018,11 +3974,7 @@ static void joinInternetGame()
   admin = false;
 
   if (!serverLink) {
-    printError("Memory error");
-    if (joinGameCallback) {
-      (*joinGameCallback)(false, joinGameUserData);
-      joinGameCallback = NULL;
-    }
+    HUDDialogStack::get()->setFailedMessage("Memory error");
     return;
   }
 
@@ -4034,7 +3986,7 @@ static void joinInternetGame()
 	static char versionError[] = "Incompatible server version XXXXXXXX";
 	strncpy(versionError + strlen(versionError) - 8,
 		serverLink->getVersion(), 8);
-	printError(versionError);
+	HUDDialogStack::get()->setFailedMessage(versionError);
 	break;
       }
 
@@ -4042,38 +3994,38 @@ static void joinInternetGame()
       case ServerLink::Refused:{
 	std::string banMessage = "Server Refused connection due to ban: ";
 	banMessage += serverLink->getRejectionMessage();
-	printError(banMessage);
+	HUDDialogStack::get()->setFailedMessage(banMessage.c_str());
 	break;
       }
 
       case ServerLink::Rejected:
 	// the server is probably full or the game is over.  if not then
 	// the server is having network problems.
-	printError("Game is full or over.  Try again later.");
+	HUDDialogStack::get()->setFailedMessage
+	  ("Game is full or over.  Try again later.");
 	break;
 
       case ServerLink::SocketError:
-	printError("Error connecting to server.");
+	HUDDialogStack::get()->setFailedMessage("Error connecting to server.");
 	break;
 
       case ServerLink::CrippledVersion:
 	// can't connect to (otherwise compatible) non-crippled server
-	printError("Cannot connect to full version server.");
+	HUDDialogStack::get()->setFailedMessage
+	  ("Cannot connect to full version server.");
 	break;
 
       default:
-	printError(TextUtils::format("Internal error connecting to server (error code %d).", serverLink->getState()));
+	HUDDialogStack::get()->setFailedMessage
+	  (TextUtils::format
+	   ("Internal error connecting to server (error code %d).",
+	    serverLink->getState()).c_str());
 	break;
-    }
-
-    if (joinGameCallback) {
-      (*joinGameCallback)(false, joinGameUserData);
-      joinGameCallback = NULL;
     }
     return;
   }
 
-  connectStatusCB("Connection Established...");
+  HUDDialogStack::get()->setFailedMessage("Connection Established...");
 
   sendFlagNegotiation();
   joiningGame = true;
@@ -5607,7 +5559,6 @@ void			startPlaying(BzfDisplay* _display,
   // pop up main menu
   if (startupInfo.autoConnect &&
       startupInfo.callsign[0] && startupInfo.serverName[0]) {
-    joinGameCallback = &joinGameHandler;
     joinRequested    = true;
     controlPanel->addMessage("Trying...");
   } else {

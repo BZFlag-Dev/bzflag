@@ -114,6 +114,11 @@ void HUDDialogStack::resize(void* _self)
 			getMainWindow()->getHeight());
 }
 
+void HUDDialogStack::setFailedMessage(const char *msg)
+{
+  if (isActive())
+    stack[stack.size() - 1]->setFailedMessage(msg);
+}
 
 // Local Variables: ***
 // mode: C++ ***

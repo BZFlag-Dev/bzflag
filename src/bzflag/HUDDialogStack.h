@@ -32,6 +32,7 @@ public:
   void pop();
 
   void render();
+  void setFailedMessage(const char *msg);
 
   HUDDialogStack();
   ~HUDDialogStack();
