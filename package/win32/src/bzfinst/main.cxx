@@ -356,7 +356,7 @@ static BOOL CALLBACK	finishProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM)
       case WM_COMMAND:
 	switch (LOWORD(wParam)) {
 	  case IDCANCEL:
-	    if (readmeName &&
+	    if (readmeName &&F
 		SendMessage(GetDlgItem(dialogPage, IDC_README),
 						BM_GETCHECK, 0, 0)) {
 		ShellExecute(NULL, "open", readmeName,
