@@ -3,9 +3,6 @@ to do list for BZFlag
 
 THESE SHOULD HAPPEN BEFORE THE NEXT RELEASE:
 
-* disableSet disableFlagReset disableBan disableKick should be converted to
-  permissions instead of command line options
-
 * command line options that have -set <name> <value> equivalents should be
   reviewed and possibly eliminated
 
