@@ -2509,7 +2509,7 @@ void resetFlag(int flagIndex)
     // invalid flag
     return;
   }
-
+  float flagHeight = BZDB->eval(StateDatabase::BZDB_FLAGHEIGHT);
   FlagInfo *pFlagInfo = &flag[flagIndex];
   // reset a flag's info
   pFlagInfo->player = -1;
@@ -2541,10 +2541,12 @@ void resetFlag(int flagIndex)
 					pFlagInfo->flag.position[1],
 					pFlagInfo->flag.position[2],
 					r,
-					BZDB->eval(StateDatabase::BZDB_FLAGHEIGHT));
+					flagHeight);
     while (topmosttype != NOT_IN_BUILDING) {
-      if ((clOptions->flagsOnBuildings && (topmosttype == IN_BOX))
-	  && (obj->pos[2] < (pFlagInfo->flag.position[2] + BZDB->eval(StateDatabase::BZDB_FLAGHEIGHT))) && ((obj->pos[2] + obj->size[2]) > pFlagInfo->flag.position[2])
+      if ((clOptions->flagsOnBuildings
+	   && ((topmosttype == IN_BOX) || (topmosttype == IN_BASE)))
+	  && (obj->pos[2] < (pFlagInfo->flag.position[2] + flagHeight))
+	  && ((obj->pos[2] + obj->size[2]) > pFlagInfo->flag.position[2])
           && (world->inRect(obj->pos, obj->rotation, obj->size, pFlagInfo->flag.position[0], pFlagInfo->flag.position[1], 0.0f)))
       {
         pFlagInfo->flag.position[2] = obj->pos[2] + obj->size[2];
@@ -2560,7 +2562,7 @@ void resetFlag(int flagIndex)
 				      pFlagInfo->flag.position[1],
 				      pFlagInfo->flag.position[2],
 				      r,
-				      BZDB->eval(StateDatabase::BZDB_FLAGHEIGHT));
+				      flagHeight);
     }
   }
 
