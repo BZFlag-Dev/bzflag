@@ -21,7 +21,7 @@
 #
 
 %define name bzflag
-%define version 1.7d.9
+%define version 1.7e.000
 %define release 1
 
 %define bzbasedir	/usr/X11R6/lib/X11/bzflag

@@ -1,7 +1,13 @@
 
-                             bzflag 1.7 release notes
+                             BZFlag release notes
 
-bzflag 1.7d release 9
+BZFlag 1.7e release 000
+-----------------------
+
+* Tim Riker <Tim@Rikers.org> now maintainer
+* build now 3 digits so alpha sorts work (until we hit 1.10? ;-)
+
+BZFlag 1.7d release 9
 ---------------------
 
 * fixed bug in parsing arguments in bzfls
@@ -9,7 +15,7 @@ bzflag 1.7d release 9
 * improved win32 config file location (Daniel Leonard)
 
 
-bzflag 1.7d release 8
+BZFlag 1.7d release 8
 ---------------------
 
 * fixed bug in bzfs that caused the player table to fill up
@@ -22,7 +28,7 @@ bzflag 1.7d release 8
 * gave flag help messsages more space to avoid overlapping target box
 
 
-bzflag 1.7d release 7
+BZFlag 1.7d release 7
 ---------------------
 
 * added sym link for bzfs in RPM spec file
@@ -41,7 +47,7 @@ bzflag 1.7d release 7
 * added -3dfx and -no3dfx bzflag options to set/unset MESA_GLX_FX
 
 
-bzflag 1.7d release 6
+BZFlag 1.7d release 6
 ---------------------
 
 * now allows user to configure a non-optimized build (e.g. make linux-noopt)
@@ -62,7 +68,7 @@ bzflag 1.7d release 6
 * added man pages for bzfls and bzfrelay
 
 
-bzflag 1.7d release 5
+BZFlag 1.7d release 5
 ---------------------
 
 * now allows user to configure a debug build (e.g. make linux-i386-debug)
@@ -92,7 +98,7 @@ bzflag 1.7d release 5
 * config file on win32 now saved in a consistent location
 
 
-bzflag 1.7d release 4
+BZFlag 1.7d release 4
 ---------------------
 
 * changed LICENSE to the GNU GPL version 2
@@ -104,7 +110,7 @@ bzflag 1.7d release 4
 * fixed ref count bug in bzfls
 
 
-bzflag 1.7d release 3
+BZFlag 1.7d release 3
 ---------------------
 
 * fixed truncation of server list reads
@@ -118,7 +124,7 @@ bzflag 1.7d release 3
 * re-fixed bzfls query reading-freed-memory bug (regressed somehow)
 
 
-bzflag 1.7d release 2
+BZFlag 1.7d release 2
 ---------------------
 
 * fixed reading-freed-memory bug in client querying of bzfls
@@ -126,7 +132,7 @@ bzflag 1.7d release 2
 * fixed bug in ServerLink::read();  now won't try to recv() zero bytes
 
 
-bzflag 1.7d release 1
+BZFlag 1.7d release 1
 ---------------------
 
 * starting from 1.7c release 2 patch 3
@@ -136,7 +142,7 @@ bzflag 1.7d release 1
 * fixed badly matched braces that broke multicast code
 
 
-bzflag 1.7c release 2 patch 3
+BZFlag 1.7c release 2 patch 3
 -----------------------------
 
 * fixed byte-order problem in bzfrelay (Tim Riker)
@@ -145,13 +151,13 @@ bzflag 1.7c release 2 patch 3
 * fixed bug in linux multicast support
 
 
-bzflag 1.7c release 2 patch 2
+BZFlag 1.7c release 2 patch 2
 -----------------------------
 
 * final solaris sound support (Andrew White)
 
 
-bzflag 1.7c release 2 patch 1
+BZFlag 1.7c release 2 patch 1
 -----------------------------
 
 * added solaris to configuration list
@@ -161,7 +167,7 @@ bzflag 1.7c release 2 patch 1
 * added stacked stereo patch (Stea Greene)
 
 
-bzflag 1.7c release 2
+BZFlag 1.7c release 2
 ---------------------
 
 first official open source release.
@@ -185,7 +191,7 @@ first official open source release.
 * fixed broadcasting and multicasting on linux
 
 
-bzflag 1.7c release 1
+BZFlag 1.7c release 1
 ---------------------
 
 preliminary open source release.

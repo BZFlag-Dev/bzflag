@@ -574,7 +574,7 @@ static void		closingRelay(Relay* relay, int sendReject)
 
   /* send client a rejection if requested */
   if (sendReject)
-    send(relay->fdSrc, (SendType)"BZFS107d\000\000", 10, 0);
+    send(relay->fdSrc, (SendType)"BZFS107e\000\000", 10, 0);
 }
 
 static void		createRelay(struct sockaddr_in* serverAddr,
