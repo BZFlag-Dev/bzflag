@@ -168,13 +168,13 @@ const Obstacle*		ShotStrategy::getFirstBuilding(const Ray& ray,
     std::vector<WallObstacle>::const_iterator it = walls.begin();
     while (it != walls.end()) {
       const WallObstacle& wall = *it;
-	  if (!wall.isShootThrough()){
-      const float wallt = wall.intersect(ray);
-      if (wallt > min && wallt < t) {
-	t = wallt;
-	closestObstacle = &wall;
-	  }
-	  }
+      if (!wall.isShootThrough()) {
+	const float wallt = wall.intersect(ray);
+	if (wallt > min && wallt < t) {
+	  t = wallt;
+	  closestObstacle = &wall;
+	}
+      }
       it++;
     }
   }
