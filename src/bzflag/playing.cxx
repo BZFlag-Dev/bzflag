@@ -151,7 +151,7 @@ static bool		grabMouseAlways = false;
 int			killerHighlight = 0;
 FlashClock		pulse;
 
-static char		messageMessage[PlayerIdPLen + 2 + MessageLen];
+static char		messageMessage[PlayerIdPLen + MessageLen];
 
 static std::deque<std::string> messageHistory;
 static unsigned int	messageHistoryIndex = 0;
@@ -185,7 +185,7 @@ static const char*	blowedUpMessage[] = {
 			};
 static bool		gotBlowedUp(BaseLocalPlayer* tank,
 					BlowedUpReason reason,
-					const PlayerId& killer,
+					PlayerId killer,
 					int shotId = -1);
 
 #ifdef ROBOT
@@ -383,7 +383,7 @@ static void		hangup(int sig)
 // misc utility routines
 //
 
-Player*			lookupPlayer(const PlayerId& id)
+Player*			lookupPlayer(PlayerId id)
 {
   // check my tank first
   if (myTank->getId() == id)
@@ -396,7 +396,7 @@ Player*			lookupPlayer(const PlayerId& id)
   return NULL;
 }
 
-static int		lookupPlayerIndex(const PlayerId& id)
+static int		lookupPlayerIndex(PlayerId id)
 {
   // check my tank first
   if (myTank->getId() == id)
@@ -426,7 +426,7 @@ static Player*		getPlayerByName(const char* name)
   return NULL;
 }
 
-static BaseLocalPlayer*	getLocalPlayer(const PlayerId& id)
+static BaseLocalPlayer*	getLocalPlayer(PlayerId id)
 {
   if (myTank->getId() == id) return myTank;
 #ifdef ROBOT
@@ -437,9 +437,26 @@ static BaseLocalPlayer*	getLocalPlayer(const PlayerId& id)
   return NULL;
 }
 
+static TeamColor      	PlayerIdToTeam(PlayerId id)
+{
+	if (id >= 246 && id<=250)
+		return TeamColor(250 - id);
+	else
+		return NoTeam;
+}
+
+static PlayerId	      	TeamToPlayerId(TeamColor team)
+{
+	if (team == NoTeam)
+		return NoPlayer;
+	else
+		return 250-team;
+}
+
+
 static ServerLink*	lookupServer(const Player* player)
 {
-  const PlayerId& id = player->getId();
+  PlayerId id = player->getId();
   if (myTank->getId() == id) return serverLink;
 #ifdef ROBOT
   for (int i = 0; i < numRobots; i++)
@@ -536,7 +553,7 @@ bool			ComposeDefaultKey::keyPress(const BzfKeyEvent& key)
 	char messageBuffer[MessageLen];
 	memset(messageBuffer, 0, MessageLen);
 	strncpy(messageBuffer, message.c_str(), MessageLen);
-	nboPackString(messageMessage + PlayerIdPLen + 2, messageBuffer, MessageLen);
+	nboPackString(messageMessage + PlayerIdPLen, messageBuffer, MessageLen);
 	serverLink->send(MsgMessage, sizeof(messageMessage), messageMessage);
       }
     }
@@ -619,9 +636,8 @@ bool			ComposeDefaultKey::keyRelease(const BzfKeyEvent& key)
       }
       recipient = myTank->getRecipient();
       if (recipient) {
-	void* buf = messageMessage;
+        void* buf = messageMessage;
 	buf = nboPackUByte(buf, recipient->getId());
-	buf = nboPackUShort(buf, uint16_t(RogueTeam));
 	std::string composePrompt = "Send to ";
 	composePrompt += recipient->getCallSign();
 	composePrompt += ": ";
@@ -1183,15 +1199,12 @@ bool			ServerCommandKey::keyPress(const BzfKeyEvent& key)
 	addMessage(NULL, displayMsg);
 
       void* buf = messageMessage;
-      buf = nboPackUInt(buf, 0);
-      buf = nboPackShort(buf, 0);
-      buf = nboPackShort(buf, 0);
-      buf = nboPackUShort(buf, uint16_t(RogueTeam));
+      buf = nboPackUByte(buf, ServerPlayer);
     
       char messageBuffer[MessageLen];
       memset(messageBuffer, 0, MessageLen);
       strncpy(messageBuffer, sendMsg.c_str(), MessageLen);
-      nboPackString(messageMessage + PlayerIdPLen + 2, messageBuffer, MessageLen);
+      buf = nboPackString(buf, messageBuffer, MessageLen);
       serverLink->send(MsgMessage, sizeof(messageMessage), messageMessage);
     }
   } 	
@@ -1846,28 +1859,21 @@ static void		doKeyPlaying(const BzfKeyEvent& key, bool pressed)
     if (pressed) {
       std::string composePrompt;
       if (keymap.isMappedTo(BzfKeyMap::SendAll, key)) {
-	void* buf = messageMessage;
-	buf = nboPackUInt(buf, 0);
-	buf = nboPackShort(buf, 0);
-	buf = nboPackShort(buf, 0);
-	buf = nboPackUShort(buf, uint16_t(RogueTeam));
+        void* buf = messageMessage;
+        buf = nboPackUByte(buf, AllPlayers);
 	composePrompt = "Send to all: ";
       }
       else if (keymap.isMappedTo(BzfKeyMap::SendTeam, key)) {
-	void* buf = messageMessage;
-	buf = nboPackUInt(buf, 0);
-	buf = nboPackShort(buf, 0);
-	buf = nboPackShort(buf, 0);
-	buf = nboPackUShort(buf, uint16_t(myTank->getTeam()));
+        void* buf = messageMessage;
+        buf = nboPackUByte(buf, TeamToPlayerId(myTank->getTeam()));
 	composePrompt = "Send to teammates: ";
       }
       else if (keymap.isMappedTo(BzfKeyMap::SendNemesis, key)) {
 	const Player *nemesis = myTank->getNemesis();
 	if (!nemesis) return;
 
-	void* buf = messageMessage;
+        void* buf = messageMessage;
 	buf = nboPackUByte(buf, nemesis->getId());
-	buf = nboPackUShort(buf, uint16_t(RogueTeam));
 	composePrompt = "Send to ";
 	composePrompt += nemesis->getCallSign();
 	composePrompt += ": ";
@@ -1884,18 +1890,14 @@ static void		doKeyPlaying(const BzfKeyEvent& key, bool pressed)
 	}
 	recipient = myTank->getRecipient();
 	if (recipient) {
-	  void* buf = messageMessage;
+          void* buf = messageMessage;
 	  buf = nboPackUByte(buf, recipient->getId());
-	  buf = nboPackUShort(buf, uint16_t(RogueTeam));
 	  composePrompt = "Send to ";
 	  composePrompt += recipient->getCallSign();
 	  composePrompt += ": ";
 	}
       }
 
-      // to send to a player use:
-      //   buf = nboPackUByte(buf, myTank->getId());
-      //   buf = nboPackUShort(buf, uint16_t(RogueTeam));
       messageHistoryIndex = 0;
       hud->setComposing(composePrompt);
       HUDui::setDefaultKey(&composeKeyHandler);
@@ -2032,15 +2034,12 @@ static void		doKeyPlaying(const BzfKeyEvent& key, bool pressed)
       char name[32];
       int msgno = (key.button - BzfKeyEvent::F1) + 1;
       void* buf = messageMessage;
-      buf = nboPackUInt(buf, 0);
-      buf = nboPackShort(buf, 0);
-      buf = nboPackShort(buf, 0);
       if (key.shift == BzfKeyEvent::ControlKey) {
-	sprintf(name, "quickTeamMessage%d", msgno);
-	buf = nboPackUShort(buf, uint16_t(myTank->getTeam()));
+        sprintf(name, "quickTeamMessage%d", msgno);
+        buf = nboPackUByte(buf, TeamToPlayerId(myTank->getTeam()));
       } else {
-	sprintf(name, "quickMessage%d", msgno);
-	buf = nboPackUShort(buf, uint16_t(RogueTeam));
+        sprintf(name, "quickMessage%d", msgno);
+        buf = nboPackUByte(buf, AllPlayers);
       }
       if (resources->hasValue(name)) {
 	char messageBuffer[MessageLen];
@@ -2048,8 +2047,7 @@ static void		doKeyPlaying(const BzfKeyEvent& key, bool pressed)
 	strncpy(messageBuffer,
 		resources->getValue(name).c_str(),
 		MessageLen);
-	nboPackString(messageMessage + PlayerIdPLen + 2,
-		      messageBuffer, MessageLen);
+	nboPackString(buf, messageBuffer, MessageLen);
 	serverLink->send(MsgMessage, sizeof(messageMessage), messageMessage);
       }
     }
@@ -2472,8 +2470,7 @@ void			notifyBzfKeyMapChanged()
 // server message handling
 //
 
-static Player*		addPlayer(const PlayerId& id, void* msg,
-							int showMessage)
+static Player*		addPlayer(PlayerId id, void* msg, int showMessage)
 {
   uint16_t team, type, wins, losses;
   char callsign[CallSignLen];
@@ -3155,19 +3152,21 @@ static void		handleServerMessage(bool human, uint16_t code,
     case MsgMessage: {
       PlayerId src;
       PlayerId dst;
-      uint16_t team;
       msg = nboUnpackUByte(msg, src);
       msg = nboUnpackUByte(msg, dst);
-      msg = nboUnpackUShort(msg, team);
       Player* srcPlayer = lookupPlayer(src);
       Player* dstPlayer = lookupPlayer(dst);
-      std::string srcName;
-      std::string dstName;
+      TeamColor dstTeam = PlayerIdToTeam(dst);
+      bool toAll = (dst == AllPlayers);
+      bool fromServer = (src == ServerPlayer);
 
-      if (srcPlayer == NULL) {
-	srcName = "(UNKNOWN)";
-      } else
-	srcName = srcPlayer->getCallSign();
+      const std::string srcName = srcPlayer ?
+        srcPlayer->getCallSign() :
+        fromServer ? "SERVER" : "(UNKNOWN)";
+      const std::string dstName = dstPlayer ?
+        dstPlayer->getCallSign() : "(UNKNOWN)";
+
+      std::string fullMsg;
 
       bool ignore = false;
       unsigned int i;
@@ -3191,11 +3190,6 @@ static void		handleServerMessage(bool human, uint16_t code,
 	break;
       }
 
-      if (dstPlayer == NULL) {
-	dstName = "(UNKNOWN)";
-      } else
-	dstName = dstPlayer->getCallSign();
-
       // CLIENTQUERY hack
       if (!strncmp((char*)msg,"CLIENTQUERY",strlen("CLIENTQUERY"))) {
 	char messageBuffer[MessageLen];
@@ -3206,31 +3200,28 @@ static void		handleServerMessage(bool human, uint16_t code,
 	if (startupInfo.useUDPconnection)
 	  strcat(messageBuffer,"+UDP");
 
-	char response[PlayerIdPLen + 2 + MessageLen];
+	char response[PlayerIdPLen + MessageLen];
 	void* buf = response;
 	buf = nboPackUByte(buf, src);
-	buf = nboPackUShort( buf, uint16_t(RogueTeam));
 	nboPackString(buf, messageBuffer, MessageLen);
 	serverLink->send(MsgMessage, sizeof(response), response);
 	const char *oldcolor = NULL;
-        if (int(team) == int(RogueTeam) || srcPlayer->getTeam() == NoTeam)
-          oldcolor = ColorStrings [RogueTeam];
+        if (dstTeam == RogueTeam || srcPlayer->getTeam() == NoTeam)
+          oldcolor = ColorStrings[RogueTeam];
         else
-          oldcolor = ColorStrings [srcPlayer->getTeam()];
+          oldcolor = ColorStrings[srcPlayer->getTeam()];
 
         addMessage(srcPlayer,"[Sent versioninfo per request]", false, oldcolor);
 	break;
       }
 
-      OpenGLTexFont::stripAnsiCodes ((char*) msg, strlen ((char*) msg));
+      OpenGLTexFont::stripAnsiCodes((char*) msg, strlen ((char*) msg));
 
       std::string text = BundleMgr::getCurrentBundle()->getLocalString(std::string((char*)msg));
 
-      if (srcPlayer == myTank || dstPlayer == myTank || (!dstPlayer &&
-	  (int(team) == int(RogueTeam) ||
-	  int(team) == int(myTank->getTeam())))) {
+      if (toAll || srcPlayer == myTank || dstPlayer == myTank ||
+          dstTeam == myTank->getTeam()) {
 	// message is for me
-	std::string fullMsg;
 	std::string colorStr;
 
 	if (srcPlayer && srcPlayer->getTeam() != NoTeam)
@@ -3241,12 +3232,12 @@ static void		handleServerMessage(bool human, uint16_t code,
 	fullMsg += colorStr;
 
 	// direct message to or from me
-	if (dstPlayer) {
+        if (dstPlayer) {
+          if (fromServer && (text == "You are now an administrator!" || text == "Password Accepted, welcome back."))
+	      admin = true;
 	  // talking to myself? that's strange
 	  if (dstPlayer==myTank && srcPlayer==myTank) {
 	    fullMsg=text;
-	    if (fullMsg == "You are now an administrator!" || fullMsg == "Password Accepted, welcome back.")
-	      admin = true;
 	  }
 	  else {
 	    if (killerHighlight == 0)
@@ -3275,10 +3266,10 @@ static void		handleServerMessage(bool human, uint16_t code,
 	}
 	else {
 	  // team message
-	  if (int(team) != int(RogueTeam)) {
+	  if (dstTeam != NoTeam) {
 #ifdef BWSUPPORT
 	    fullMsg = "[to ";
-	    fullMsg += Team::getName(TeamColor(team));
+	    fullMsg += Team::getName(TeamColor(dstTeam));
 	    fullMsg += "] ";
 #else
 	    fullMsg += "[Team] ";
@@ -3292,9 +3283,9 @@ static void		handleServerMessage(bool human, uint16_t code,
 	}
         const char *oldcolor = NULL;
         if (srcPlayer && srcPlayer->getTeam() != NoTeam)
-          oldcolor = ColorStrings [srcPlayer->getTeam()];
+          oldcolor = ColorStrings[srcPlayer->getTeam()];
         else
-          oldcolor = ColorStrings [RogueTeam];
+          oldcolor = ColorStrings[RogueTeam];
         addMessage(NULL, fullMsg, false, oldcolor);
 
 	if (!srcPlayer || srcPlayer!=myTank)
@@ -3793,7 +3784,7 @@ static void		handleFlagDropped(Player* tank)
 
 static bool		gotBlowedUp(BaseLocalPlayer* tank,
 					BlowedUpReason reason,
-					const PlayerId& killer,
+					PlayerId killer,
 					int shotId)
 {
   if (Observer || !tank->isAlive())

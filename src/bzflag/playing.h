@@ -73,7 +73,7 @@ StartupInfo*		getStartupInfo();
 BzfKeyMap&			getBzfKeyMap();
 void			notifyBzfKeyMapChanged();
 bool			setVideoFormat(int, bool test = false);
-Player*			lookupPlayer(const PlayerId& id);
+Player*			lookupPlayer(PlayerId id);
 void			startPlaying(BzfDisplay* display,
 				SceneRenderer&,
 				ResourceDatabase&,
