@@ -2479,11 +2479,11 @@ static WorldInfo *defineRandomWorld()
   float h = BoxHeight;
   for (i = 0; i < CitySize * CitySize; i++) {
     if (randomHeights)
-      h = BoxHeight * 2.0f * (float)bzfrand() + 0.5f;
-    world->addBox(WorldSize * ((float)bzfrand() - 0.5f),
-	WorldSize * ((float)bzfrand() - 0.5f),
-	0.0f, 2.0f * M_PI * (float)bzfrand(),
-	BoxBase, BoxBase, h);
+      h = BoxHeight * ( 2.0f * (float)bzfrand() + 0.5f );
+      world->addBox(WorldSize * ((float)bzfrand() - 0.5f),
+	  WorldSize * ((float)bzfrand() - 0.5f),
+	  0.0f, 2.0f * M_PI * (float)bzfrand(),
+	  BoxBase, BoxBase, h);
   }
 
   // make pyramids
