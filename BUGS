@@ -1,7 +1,9 @@
 recent bugs
 ------------
 
-- robots are driving straight thru the middle of buildings on xmission(hix)
+- robots sometimes drive straight through buildings (seen on xmission(hix))
+   the code to generate the cells of open space are susceptible
+   to roundoff error, causing this effect.
 
 - votingarbiter is confused by a player name with an embedded space
 
@@ -71,9 +73,3 @@ http://SourceForge.net/tracker/?group_id=3248&atid=103248
    can sometimes get stuck on a pyramid or in a corner.  also
    picking up the obese flag close to a building can cause you
    to get stuck.
-
-* robots are just too stupid
-
-* robots can sometimes go through buildings
-   the code to generate the cells of open space are susceptible
-   to roundoff error, causing an open cell inside a building.
