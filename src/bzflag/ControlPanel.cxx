@@ -666,7 +666,7 @@ void			ControlPanel::setMessagesMode(int _messageMode)
   if (messageMode == MessageAll)
     for (int i = 0; i < MessageModeCount; i++)
       unRead[i] = false;
-  else
+  else if (messageMode >= MessageChat)
     unRead[messageMode] = false;
   invalidate();
 }
