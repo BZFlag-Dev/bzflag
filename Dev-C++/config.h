@@ -14,7 +14,6 @@
 
 #ifndef _DEVCPP_CONFIG
 #define _DEVCPP_CONFIG
-
 #if defined(WIN32) && !defined(_WIN32)
 #define _WIN32
 #endif
@@ -50,7 +49,7 @@
 #define SNAPPING 1
 
 /* Enable score dumping for BZFS */
-#define PRINTSCORE 1
+//#define PRINTSCORE 1 //already defined in bzfs.h (10/26/2004)
 
 /* find a matching function for count() */
 #define HAVE_STD_COUNT 1
