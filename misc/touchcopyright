@@ -7,32 +7,35 @@ NEWCOPYRIGHTTEXT='Copyright (c) 1993 - 2003'
 #
 # update copyright in all files
 #
-
 # bzflag top-level dir
 for root in . .. ; do
-  if [ -r $root/config ] ; then
+  if [ -r $root/bzflag.lsm.in ] ; then
     break
   fi
 done
 
-if [ -r $root/bin/bzfs ] ; then
-  echo "$0 should be run only after a make pristine!"
+if [ -r $root/include/config.h ] ; then
+  echo "$0 should be run only after a make maintianer-clean!"
   exit 1
 fi
-
-rm -f updatecopyright.tmp
-files=`find $root -type f | grep -v updatecopyright`
+myname=touchcopyright
+tmpfile=$root/$myname.tmp
+rm -f $tmpfile
+files=`find $root -type f | grep -v $myname`
 
 # do replacement
 for file in $files; do
+  echo -e -n "$file\r"
   if [ ! -w ${file} ]; then
     echo "${file} not found or not writable."
     continue
   fi
-  sed -e "s/${OLDCOPYRIGHTTEXT}/${NEWCOPYRIGHTTEXT}/" < ${file} > updatecopyright.tmp
-  mv updatecopyright.tmp ${file}
+  # cat to the file, not move to preserve permissions
+  if sed -e "s/${OLDCOPYRIGHTTEXT}/${NEWCOPYRIGHTTEXT}/" < ${file} > $tmpfile ; then
+    cat $tmpfile > ${file}
+  fi
 done
-rm -f updatecopyright.tmp
+rm -f $tmpfile
 
 # Local Variables: ***
 # mode:sh ***
