@@ -6554,10 +6554,9 @@ int main(int argc, char **argv)
 	  if (player[j].pingssent >= 3 && !player[j].doespings)
 	    player[j].trypings = false;
 	}
-	char  buffer[2];
-	void *buf = (void*)buffer;
-	buf = nboPackUShort(buf, player[j].pingseqno);
-	directMessage(j, MsgLagPing, sizeof(buffer), buffer);
+	void *buf, *bufStart = getDirectMessageBuffer();
+	buf = nboPackUShort(bufStart, player[j].pingseqno);
+	directMessage(j, MsgLagPing, (char*)buf - (char*)bufStart, bufStart);
 	player[j].pingpending = true;
 	player[j].lastping = tm;
 	player[j].nextping = tm;
