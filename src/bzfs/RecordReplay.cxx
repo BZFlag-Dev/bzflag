@@ -1662,6 +1662,7 @@ static inline int osStat(const char *dir, struct stat *buf)
 static inline int osMkDir(const char *dir, int mode)
 {
 #ifdef _WIN32
+  mode = mode;
   return mkdir(dir);
 #else
   return mkdir(dir, mode);
