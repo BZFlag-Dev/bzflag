@@ -1959,6 +1959,8 @@ void resetFlag(FlagInfo &flag)
 				   obj->getSize(),
 				   flagPos[0], flagPos[1], 0.0f))) {
 	flagPos[2] = obj->getPosition()[2] + obj->getSize()[2];
+	// avoid inf-looping from cumulative rounding errors
+	break;
       } else {
 	flagPos[0] = (worldSize - baseSize) * ((float)bzfrand() - 0.5f);
 	flagPos[1] = (worldSize - baseSize) * ((float)bzfrand() - 0.5f);
