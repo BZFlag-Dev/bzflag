@@ -122,13 +122,13 @@ static std::vector<std::string> tokenize(const std::string& in, const std::strin
 			}
 			
 			if (!useQuotes){
-				currentToken << currentChar;
+				currentToken << char(currentChar);
 			} else {
 
 				switch (currentChar){
 				case '\\' : // found a slash
 					if (foundSlash){
-						currentToken << currentChar;
+						currentToken << char(currentChar);
 						foundSlash = false;
 					} else {
 						foundSlash = true;
@@ -136,7 +136,7 @@ static std::vector<std::string> tokenize(const std::string& in, const std::strin
 					break;
 				case '\"' : // found a quote
 					if (foundSlash){ // found \"
-						currentToken << currentChar;
+						currentToken << char(currentChar);
 						foundSlash = false;
 					} else { // found unescaped "
 						if (inQuote){ // exiting a quote
@@ -160,7 +160,7 @@ static std::vector<std::string> tokenize(const std::string& in, const std::strin
 						currentToken << '\\';
 						foundSlash = false;
 					}
-					currentToken << currentChar;
+					currentToken << char(currentChar);
 					break;
 				}
 			}
