@@ -43,14 +43,6 @@ public:
 						CrippledVersion = 5
 	};
 
-	enum Abilities {
-						Nothing = 0,
-						CanDoUDP = 1,
-						SendScripts = 2,
-						SendTextures = 4,
-						HasMessageLink = 8
-	};
-
 	ServerLink(const Address& serverAddress, int port = ServerPort);
 	~ServerLink();
 
@@ -58,6 +50,7 @@ public:
 	int					getSocket() const;		// file descriptor actually
 	const PlayerId&		getId() const;
 	const char*			getVersion() const;
+	void				enableUDPCon();
 
 	void				send(uint16_t code, uint16_t len, const void* msg);
 	// if millisecondsToBlock < 0 then block forever
@@ -76,8 +69,6 @@ public:
 	void				sendAlive(const float* pos, const float* fwd);
 	void				sendTeleport(int from, int to);
 	void				sendNewScore(int wins, int losses);
-	void                sendUDPlinkRequest();
-	void				enableUDPCon();
 
 	void*				getPacketFromServer(uint16_t* length, uint16_t* seqno);
 	void				enqueuePacket(int op, int rseqno, void *msg, int n);
@@ -88,19 +79,13 @@ public:
 
 	static ServerLink*	getServer(); // const
 	static void			setServer(ServerLink*);
-	void				setUDPRemotePort(unsigned short port);
 
 	void				sendClientVersion();
 private:
 	State				state;
-	int					fd;
-
-	uint32_t			remoteAddress;
-	int					usendfd;
-	struct sockaddr     usendaddr;
-	int 				urecvfd;
-	struct sockaddr     urecvaddr;
-	bool 				ulinkup;
+	int					tcpfd;
+	int					udpfd;
+	struct sockaddr		servaddr;
 
 	PlayerId			id;
 	char				version[9];
@@ -128,7 +113,7 @@ inline ServerLink::State ServerLink::getState() const
 
 inline int				ServerLink::getSocket() const
 {
-	return fd;
+	return tcpfd;
 }
 
 inline const PlayerId&	ServerLink::getId() const

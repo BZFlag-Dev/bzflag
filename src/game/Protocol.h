@@ -81,10 +81,7 @@ const uint16_t			MsgTeleport = 0x7470;					// 'tp'
 const uint16_t			MsgTeamUpdate = 0x7475;					// 'tu'
 
 // request for additional UDP link
-const uint16_t			MsgUDPLinkRequest = 0x6f66;				// 'of'
 const uint16_t			MsgUDPLinkEstablished = 0x6f67;			// 'og'
-const uint16_t			MsgUDPLinkUpdate = 0x6f68;				// 'oh'
-const uint16_t			MsgClientVersion = 0x6f6a;				// 'oj'
 
 // server control message
 const uint16_t			MsgServerControl = 0x6f69;				// 'oi'

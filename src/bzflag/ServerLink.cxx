@@ -21,8 +21,6 @@
 #include "ErrorHandler.h"
 #include "network.h"
 
-#define INTERNALVERSION 0x17a0
-
 #if !defined(_WIN32)
 #include <unistd.h>
 #endif
@@ -94,7 +92,8 @@ ServerLink*				ServerLink::server = NULL;
 
 ServerLink::ServerLink(const Address& serverAddress, int port) :
 								state(SocketError),		// assume failure
-								fd(-1)					// assume failure
+								tcpfd(-1),				// assume failure
+								udpfd(-1)				// assume failure
 {
 	int i;
 	char cServerVersion[128];
@@ -106,16 +105,9 @@ ServerLink::ServerLink(const Address& serverAddress, int port) :
 	int off = 0;
 #endif
 
-	// standard server has no special abilities;
-	server_abilities = Nothing;
-
 	// queue is empty
-
-	urecvfd = -1;
 	uqueue = NULL;
 	dqueue = NULL;
-
-	ulinkup = false;
 
 	lastSendPacketNo = lastRecvPacketNo = currentRecvSeq = 0;
 
@@ -133,9 +125,6 @@ ServerLink::ServerLink(const Address& serverAddress, int port) :
 	addr.sin_addr = serverAddress;
 
 	UDEBUG("Remote %s\n", inet_ntoa(addr.sin_addr));
-
-	// for UDP, used later
-	remoteAddress = addr.sin_addr.s_addr;
 
 #if !defined(_WIN32)
 	PLATFORM->signalCatch(kSigALRM, timeout);
@@ -174,8 +163,6 @@ ServerLink::ServerLink(const Address& serverAddress, int port) :
 	sprintf(cServerVersion,"Server version: '%8s'",version);
 	printError(cServerVersion);
 
-	// FIXME is it ok to try UDP always?
-	server_abilities |= CanDoUDP;
 	if (strncmp(version, ServerVersion, 7) != 0) {
 		state = BadVersion;
 		return;
@@ -190,12 +177,12 @@ ServerLink::ServerLink(const Address& serverAddress, int port) :
 		return;
 	}
 
-	fd = query;
+	tcpfd = query;
 
 	// turn on TCP no delay
 	p = getprotobyname("tcp");
 	if (p)
-		setsockopt(fd, p->p_proto, TCP_NODELAY, (SSOType)&off, sizeof(off));  // changed
+		setsockopt(tcpfd, p->p_proto, TCP_NODELAY, (SSOType)&off, sizeof(off));  // changed
 
 	state = Okay;
 #if defined(NETWORK_STATS)
@@ -215,22 +202,22 @@ ServerLink::ServerLink(const Address& serverAddress, int port) :
 ServerLink::~ServerLink()
 {
 	if (state != Okay) return;
-	shutdown(fd, 2);
-	closesocket(fd);
+	shutdown(tcpfd, 2);
+	closesocket(tcpfd);
+	tcpfd = -1;
 
-	if (urecvfd >= 0)
-		closesocket(urecvfd);
+	if (udpfd >= 0) {
+		closesocket(udpfd);
+		udpfd = -1;
+	}
 
-	urecvfd = -1;
-	ulinkup = false;
-
-// FIXME -- packet recording
-if (packetStream) {
-	long dt = (long)((TimeKeeper::getCurrent() - packetStartTime) * 10000.0f);
-	fwrite(&endPacket, sizeof(endPacket), 1, packetStream);
-	fwrite(&dt, sizeof(dt), 1, packetStream);
-	fclose(packetStream);
-}
+	// FIXME -- packet recording
+	if (packetStream) {
+		long dt = (long)((TimeKeeper::getCurrent() - packetStartTime) * 10000.0f);
+		fwrite(&endPacket, sizeof(endPacket), 1, packetStream);
+		fwrite(&dt, sizeof(dt), 1, packetStream);
+		fclose(packetStream);
+	}
 
 #if defined(NETWORK_STATS)
 	const float dt = TimeKeeper::getCurrent() - startTime;
@@ -282,11 +269,12 @@ void					ServerLink::send(uint16_t code, uint16_t len,
 		case MsgGMUpdate:
 		case MsgAudio:
 		case MsgVideo:
+		case MsgUDPLinkEstablished:
 			needForSpeed = true;
 			break;
 	}
 
-	if (needForSpeed && (urecvfd>=0) && ulinkup ) {
+	if (needForSpeed && (udpfd >= 0)) {
 		uint32_t length;
 		int n;
 
@@ -312,8 +300,8 @@ void					ServerLink::send(uint16_t code, uint16_t len,
 #ifdef TESTLINK
 		if ((random()%TESTQUALTIY) != 0)
 #endif
-		n = sendto(urecvfd, (const char *)tobesend,
-						length, 0, &usendaddr, sizeof(usendaddr));
+		n = sendto(udpfd, (const char *)tobesend,
+						length, 0, &servaddr, sizeof(servaddr));
 		// we don't care about errors yet
 		if (tobesend)
 			free((unsigned char *)tobesend);
@@ -322,7 +310,7 @@ void					ServerLink::send(uint16_t code, uint16_t len,
 
 	//printError("TCP Send: %02x",code);
 
-	int r = ::send(fd, (const char*)msgbuf, len + 4, 0);
+	int r = ::send(tcpfd, (const char*)msgbuf, len + 4, 0);
 	(void)r; // silence g++
 #if defined(_WIN32)
 	if (r == SOCKET_ERROR) {
@@ -496,13 +484,13 @@ int						ServerLink::read(uint16_t& code, uint16_t& len,
 
 	if (state != Okay) return -1;
 
-	if ((urecvfd >= 0) && ulinkup) {
+	if (udpfd >= 0) {
 		int n, num_packets;
 		uint16_t lseqno;
 
-		AddrLen recvlen = sizeof(urecvaddr);
+		AddrLen recvlen = sizeof(servaddr);
 		unsigned char ubuf[8192];
-		n = recvfrom(urecvfd, (char *)ubuf, 8192, 0, &urecvaddr, &recvlen);
+		n = recvfrom(udpfd, (char *)ubuf, 8192, 0, &servaddr, &recvlen);
 		if (n>0) {
 			disassemblePacket(ubuf, &num_packets);
 		}
@@ -536,8 +524,8 @@ int						ServerLink::read(uint16_t& code, uint16_t& len,
 	// only check server
 	fd_set read_set;
 	FD_ZERO(&read_set);
-	FD_SET(fd, &read_set);
-	int nfound = select(fd+1, (fd_set*)&read_set, NULL, NULL,
+	FD_SET(tcpfd, &read_set);
+	int nfound = select(tcpfd+1, (fd_set*)&read_set, NULL, NULL,
 						(struct timeval*)(blockTime >= 0 ? &timeout : NULL));
 	if (nfound == 0) return 0;
 	if (nfound < 0) return -1;
@@ -553,16 +541,16 @@ int						ServerLink::read(uint16_t& code, uint16_t& len,
 
 
 	int rlen = 0;
-	rlen = recv(fd, (char*)headerBuffer, 4, 0);
+	rlen = recv(tcpfd, (char*)headerBuffer, 4, 0);
 
 	int tlen = rlen;
 	while (rlen >= 1 && tlen < 4) {
 		FD_ZERO(&read_set);
-		FD_SET(fd, &read_set);
-		nfound = select(fd+1, (fd_set*)&read_set, NULL, NULL, NULL);
+		FD_SET(tcpfd, &read_set);
+		nfound = select(tcpfd+1, (fd_set*)&read_set, NULL, NULL, NULL);
 		if (nfound == 0) continue;
 		if (nfound < 0) return -1;
-		rlen = recv(fd, (char*)headerBuffer + tlen, 4 - tlen, 0);
+		rlen = recv(tcpfd, (char*)headerBuffer + tlen, 4 - tlen, 0);
 		if (rlen >= 0) tlen += rlen;
 	}
 	if (tlen < 4) return -1;
@@ -578,7 +566,7 @@ int						ServerLink::read(uint16_t& code, uint16_t& len,
 
 	//printError("Code is %02x",code);
 	if (len > 0)
-		rlen = recv(fd, (char*)msg, int(len), 0);
+		rlen = recv(tcpfd, (char*)msg, int(len), 0);
 	else
 		rlen = 0;
 #if defined(NETWORK_STATS)
@@ -590,11 +578,11 @@ int						ServerLink::read(uint16_t& code, uint16_t& len,
 	tlen = rlen;
 	while (rlen >= 1 && tlen < int(len)) {
 		FD_ZERO(&read_set);
-		FD_SET(fd, &read_set);
-		nfound = select(fd+1, (fd_set*)&read_set, 0, 0, NULL);
+		FD_SET(tcpfd, &read_set);
+		nfound = select(tcpfd+1, (fd_set*)&read_set, 0, 0, NULL);
 		if (nfound == 0) continue;
 		if (nfound < 0) return -1;
-		rlen = recv(fd, (char*)msg + tlen, int(len) - tlen, 0);
+		rlen = recv(tcpfd, (char*)msg + tlen, int(len) - tlen, 0);
 		if (rlen >= 0) tlen += rlen;
 #if defined(NETWORK_STATS)
 		if (rlen >= 0) bytesReceived += rlen;
@@ -612,6 +600,53 @@ if (packetStream) {
 	fwrite(msg, len, 1, packetStream);
 }
 	return 1;
+}
+
+void					ServerLink::enableUDPCon()
+{
+	struct sockaddr_in my_addr;
+	AddrLen addr_len = sizeof(my_addr);
+
+	if (getsockname(tcpfd, (struct sockaddr *)&my_addr, &addr_len) < 0) {
+		printError("enableUDPCon: Unable to get my address");
+		return;
+	}
+
+	addr_len = sizeof(servaddr);
+	if (getpeername(tcpfd, (struct sockaddr *)&servaddr, &addr_len) < 0) {
+		printError("enableUDPCon: Unable to get server address");
+		return;
+	}
+
+	struct sockaddr_in *servaddr_in = (struct sockaddr_in *)&servaddr;
+	printError("UDP connection attempting on: (%d) [%s:%d] -> [%s:%d]",
+			udpfd, inet_ntoa(my_addr.sin_addr), ntohs(my_addr.sin_port),
+			inet_ntoa(servaddr_in->sin_addr), ntohs(servaddr_in->sin_port));
+
+	if ((udpfd = socket(AF_INET, SOCK_DGRAM, 0)) < 0) {
+		return;
+	}
+	// use same ports/addresses as tcp
+  	if (bind(udpfd, (struct sockaddr *)&my_addr, sizeof(my_addr)) != 0) {
+		printError("Error: Unable to bind UDP socket");
+		closesocket(udpfd);
+		udpfd = -1;
+		return;
+	}
+
+	if (BzfNetwork::setNonBlocking(udpfd) < 0) {
+		printError("Error: Unable to set NonBlocking for UDP receive socket");
+		closesocket(udpfd);
+		udpfd = -1;
+		return;
+	}
+
+	char msg[1];
+	void* buf = msg;
+	buf = nboPackUByte(buf, id);
+	// this goes via udp to confirm our addr on the server end
+	send(MsgUDPLinkEstablished, sizeof(msg), msg);
+	return;
 }
 
 void					ServerLink::sendEnter(PlayerType type,
@@ -640,11 +675,6 @@ void					ServerLink::sendPlayerUpdate(const Player* player)
 	buf = nboPackUByte(buf, player->getId());
 	buf = player->pack(buf);
 	send(MsgPlayerUpdate, sizeof(msg), msg);
-}
-
-void					ServerLink::enableUDPCon()
-{
-	if ((server_abilities & CanDoUDP) == CanDoUDP) sendUDPlinkRequest();
 }
 
 void					ServerLink::sendCaptureFlag(TeamColor team)
@@ -725,87 +755,4 @@ void					ServerLink::sendNewScore(int wins, int losses)
 	buf = nboPackUShort(buf, uint16_t(wins));
 	buf = nboPackUShort(buf, uint16_t(losses));
 	send(MsgScore, sizeof(msg), msg);
-}
-
-void					ServerLink::sendUDPlinkRequest()
-{
-	char msg[2];
-	unsigned short localPort;
-	void* buf = msg;
-
-	struct sockaddr_in serv_addr;
-
-	sendClientVersion();
-
-	if ((urecvfd = socket(AF_INET, SOCK_DGRAM, 0)) < 0) {
-		return; // we cannot comply
-	}
-	for (int portno=17200; portno < 65000; portno++) {
-  		::memset((unsigned char *)&serv_addr, 0, sizeof(serv_addr));
-  		serv_addr.sin_family = AF_INET;
-  		serv_addr.sin_addr.s_addr = htonl(INADDR_ANY);
-  		serv_addr.sin_port = htons(portno);
-  		if (bind(urecvfd, (struct sockaddr *) &serv_addr, sizeof(serv_addr)) == 0) {
-				break;
-  		}
-	}
-#if !defined(_WIN32)
-	AddrLen addr_len = sizeof(serv_addr);
-	if (getsockname(urecvfd, (struct sockaddr*)&serv_addr, &addr_len) < 0) {
-		close(urecvfd);
-		urecvfd = 0;
-    		printError("Error: getsockname() failed, cannot open UDP socket.");
-		return;  // we cannot get connection, bail out
-	}
-#endif
-	localPort = ntohs(serv_addr.sin_port);
-	memcpy((char *)&urecvaddr,(char *)&serv_addr, sizeof(serv_addr));
-
-	printError("Network: Created local UDP downlink port %d",localPort);
-
-	buf = nboPackUShort(buf, uint16_t(localPort));
-
-	send(MsgUDPLinkRequest, sizeof(msg), msg);
-
-	if (BzfNetwork::setNonBlocking(urecvfd) < 0) {
-		printError("Error: Unable to set NonBlocking for UDP receive socket");
-	}
-}
-
-// This concludes an UDP network endpoint setup
-void					ServerLink::setUDPRemotePort(unsigned short portno)
-{
-	char msg[2];
-	void* buf = msg;
-
-	struct sockaddr_in serv_addr, existing_addr;
-	AddrLen addr_len = sizeof(existing_addr);
-
-	if (getsockname(fd, (struct sockaddr*)&existing_addr, &addr_len) < 0) {
-		printError("GETSOCKNAME: Unable to get my address");
-		return;  // we cannot get
-	}
-
-	serv_addr.sin_family = AF_INET;
-	serv_addr.sin_addr.s_addr = remoteAddress;
-	serv_addr.sin_port = htons(portno);
-	memcpy((unsigned char *)&usendaddr,(unsigned char *)&serv_addr, sizeof(serv_addr));
-
-	printError("Server did send endpoint information, UDP connection up");
-	printError("More Info: [%s:%d:%d]", inet_ntoa(serv_addr.sin_addr), portno, urecvfd);
-
-	buf = nboPackUShort(buf, 0);  // empty
-
-	send(MsgUDPLinkEstablished, sizeof(msg), msg);
-
-	ulinkup = true;
-}
-
-// Send Client Version Number
-void 					ServerLink::sendClientVersion()
-{
-	char msg[2];
-	void* buf = msg;
-	buf = nboPackUShort(buf, INTERNALVERSION);
-	send(MsgClientVersion, sizeof(msg), msg);
 }

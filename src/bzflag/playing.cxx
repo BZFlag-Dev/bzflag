@@ -1086,13 +1086,6 @@ static void				handleServerMessage(bool human, uint16_t code,
 	bool checkScores = false;
 	switch (code) {
 
-		case MsgUDPLinkRequest:
-			uint16_t portNo;
-			msg = nboUnpackUShort(msg, portNo);
-			printError("Server sent downlink endpoint information, port %d",portNo);
-     		serverLink->setUDPRemotePort(portNo);
-			break;
-
 		case MsgSuperKill:
 			printError("Server forced a disconnect");
 			serverError = true;
@@ -2388,8 +2381,7 @@ static bool				enterServer(ServerLink* serverLink, World* world,
 	if (serverLink->read(code, len, msg, -1) < 0) {
 		goto failed;
 	}
-	while (code == MsgAddPlayer || code == MsgTeamUpdate ||
-		 code == MsgFlagUpdate || code == MsgUDPLinkRequest) {
+	while (code == MsgAddPlayer || code == MsgTeamUpdate || code == MsgFlagUpdate) {
 		void* buf = msg;
 		switch (code) {
 			case MsgAddPlayer: {
@@ -2426,10 +2418,6 @@ static bool				enterServer(ServerLink* serverLink, World* world,
 				world->initFlag(int(flag));
 				break;
 			}
-			case MsgUDPLinkRequest:
-				printError("*** Received UDP Link Granted");
-				// internally
-				break;
 		}
 
 		if (time(0)>timeout) goto failed;

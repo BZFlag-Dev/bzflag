@@ -677,3 +677,9 @@ their predicted course only when the target changes, these message will be
 fairly rare.  Note that different players may have different ideas of where the
 target is and that that may cause slightly different courses.  This is
 generally not a problem.
+
+UDP code
+------------
+
+const uint16_t			MsgUDPLinkEstablished = 0x6f67;			// 'og'
+ len + code + playerid   -- starts up server udp for this player
