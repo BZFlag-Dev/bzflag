@@ -187,7 +187,7 @@ void ZSceneDatabase::addShadowNodes(SceneRenderer& renderer)
   int i;
   const float* sunDir = renderer.getSunDirection();
   
-  if (sun == NULL) {
+  if (sunDir == NULL) {
     // no sun = no shadows, simple
     return;
   }
