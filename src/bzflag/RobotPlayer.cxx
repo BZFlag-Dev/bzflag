@@ -161,6 +161,9 @@ float			RobotPlayer::getTargetPriority(const
   const float* p2 = _target->getPosition();
 
   float basePriority = 1.0f;
+  // give bonus to non-paused player
+  if (!_target->isPaused())
+    basePriority += 2.0f;
   // give bonus to non-deadzone targets
   if (obstacleList) {
     float nearest[2];
