@@ -72,7 +72,6 @@ const int udpBufSize = 128000;
 #ifdef __BEOS__
 #undef private
 #endif
-#include <algorithm>
 #include <string>
 #include <sstream>
 #include <stdlib.h>
@@ -98,8 +97,8 @@ const int udpBufSize = 128000;
 #include "md5.h"
 #include "ShotUpdate.h"
 
-#include "./TextChunkManager.h"
-#include "./AccessControlList.h"
+#include "TextChunkManager.h"
+#include "AccessControlList.h"
 
 float	WorldSize = DEFAULT_WORLD;
 bool    gotWorld = false;
