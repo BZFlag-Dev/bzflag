@@ -54,36 +54,25 @@ ShotPath::ShotPath(const FiringInfo& info) :
   // each flag should be a flyweight object derived from a
   // base Flag class with a virtual makeShotStrategy() member.
   // just remember -- it's only a game.
-  if (Flag::getShotType( firingInfo.flag) == NormalShot)
-      strategy = new NormalShotStrategy(this);
+  if (firingInfo.flag->flagShot == NormalShot)
+    strategy = new NormalShotStrategy(this);
   else {
-	  switch (firingInfo.flag) {
-	    case RapidFireFlag:
-	      strategy = new RapidFireStrategy(this);
-	      break;
-	    case MachineGunFlag:
-	      strategy = new MachineGunStrategy(this);
-	      break;
-	    case GuidedMissileFlag:
-	      strategy = new GuidedMissileStrategy(this);
-	      break;
-	    case LaserFlag:
-	      strategy = new LaserStrategy(this);
-	      break;
-	    case RicochetFlag:
-	      strategy = new RicochetStrategy(this);
-	      break;
-	    case SuperBulletFlag:
-	      strategy = new SuperBulletStrategy(this);
-	      break;
-	    case ShockWaveFlag:
-	      strategy = new ShockWaveStrategy(this);
-	      break;
-	    default:
-	      // shouldn't happen
-	      assert(0);
-	      break;
-	  }
+    if (firingInfo.flag == Flags::RapidFire)
+      strategy = new RapidFireStrategy(this);
+    else if (firingInfo.flag == Flags::MachineGun)
+      strategy = new MachineGunStrategy(this);
+    else if (firingInfo.flag == Flags::GuidedMissile)
+      strategy = new GuidedMissileStrategy(this);
+    else if (firingInfo.flag == Flags::Laser)
+      strategy = new LaserStrategy(this);
+    else if (firingInfo.flag == Flags::Ricochet)
+      strategy = new RicochetStrategy(this);
+    else if (firingInfo.flag == Flags::SuperBullet)
+      strategy = new SuperBulletStrategy(this);
+    else if (firingInfo.flag == Flags::ShockWave)
+      strategy = new ShockWaveStrategy(this);
+    else
+      assert(0);    // shouldn't happen
   }
 }
 

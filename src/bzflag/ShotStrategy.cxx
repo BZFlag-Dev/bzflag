@@ -469,8 +469,8 @@ float			SegmentedShotStrategy::checkHit(const BaseLocalPlayer* tank,
 
   // get tank radius
   float radius = TankRadius;
-  if (tank->getFlag() == ObesityFlag) radius *= ObeseFactor;
-  else if (tank->getFlag() == TinyFlag) radius *= TinyFactor;
+  if (tank->getFlag() == Flags::Obesity)   radius *= ObeseFactor;
+  else if (tank->getFlag() == Flags::Tiny) radius *= TinyFactor;
   const float radius2 = radius * radius;
 
   // tank is positioned from it's bottom so shift position up by
@@ -491,7 +491,7 @@ float			SegmentedShotStrategy::checkHit(const BaseLocalPlayer* tank,
   const int numSegments = segments.size();
   for (int i = lastSegment; i <= segment && i < numSegments; i++) {
     // can never hit your own first laser segment
-    if (i == 0 && getPath().getFlag() == LaserFlag &&
+    if (i == 0 && getPath().getFlag() == Flags::Laser &&
 	getPath().getPlayer() == tank->getId())
       continue;
 
@@ -512,7 +512,7 @@ float			SegmentedShotStrategy::checkHit(const BaseLocalPlayer* tank,
 
     // get hit time
     float t;
-    if (tank->getFlag() == NarrowFlag) {
+    if (tank->getFlag() == Flags::Narrow) {
       // find closest approach to narrow box around tank.  width of box
       // is shell radius so you can actually hit narrow tank head on.
       static float origin[3] = { 0.0f, 0.0f, 0.0f };
@@ -864,7 +864,7 @@ LaserStrategy::LaserStrategy(ShotPath* path) :
   const int numSegments = getSegments().size();
   laserNodes = new LaserSceneNode*[numSegments];
   const LocalPlayer* myTank = LocalPlayer::getMyTank();
-  TeamColor tmpTeam = (myTank->getFlag() == ColorblindnessFlag) ? RogueTeam : team;
+  TeamColor tmpTeam = (myTank->getFlag() == Flags::Colorblindness) ? RogueTeam : team;
   for (int i = 0; i < numSegments; i++) {
     const ShotPathSegment& segment = getSegments()[i];
     const float t = segment.end - segment.start;
@@ -1175,8 +1175,8 @@ float			GuidedMissileStrategy::checkHit(const BaseLocalPlayer* tank,
 
   // get tank radius
   float radius = TankRadius;
-  if (tank->getFlag() == ObesityFlag) radius *= ObeseFactor;
-  else if (tank->getFlag() == TinyFlag) radius *= TinyFactor;
+  if (tank->getFlag() == Flags::Obesity)   radius *= ObeseFactor;
+  else if (tank->getFlag() == Flags::Tiny) radius *= TinyFactor;
   const float radius2 = radius * radius;
 
   // tank is positioned from it's bottom so shift position up by
@@ -1211,7 +1211,7 @@ float			GuidedMissileStrategy::checkHit(const BaseLocalPlayer* tank,
 
     // get closest approach time
     float t;
-    if (tank->getFlag() == NarrowFlag) {
+    if (tank->getFlag() == Flags::Narrow) {
       // find closest approach to narrow box around tank.  width of box
       // is shell radius so you can actually hit narrow tank head on.
       static float origin[3] = { 0.0f, 0.0f, 0.0f };
@@ -1375,7 +1375,7 @@ void			ShockWaveStrategy::update(float dt)
   shockNode->move(getPath().getPosition(), radius);
   Player* p = lookupPlayer(getPath().getPlayer());
   const LocalPlayer* myTank = LocalPlayer::getMyTank();
-  TeamColor team = p && !(myTank->getFlag() == ColorblindnessFlag) ? p->getTeam() : RogueTeam;
+  TeamColor team = p && !(myTank->getFlag() == Flags::Colorblindness) ? p->getTeam() : RogueTeam;
   const float* c = Team::getRadarColor(team);
   shockNode->setColor(c[0], c[1], c[2], 0.75f - 0.5f * frac);
 
