@@ -877,7 +877,7 @@ char *getDirectMessageBuffer()
 
 // FIXME? 4 bytes before msg must be valid memory, will get filled in with len+code
 // usually, the caller gets a buffer via getDirectMessageBuffer(), but for example
-// for MsgBeginShot the receiving buffer gets used directly
+// for MsgShotBegin the receiving buffer gets used directly
 static void directMessage(int playerIndex, uint16_t code, int len, const void *msg)
 {
   if (player[playerIndex].fd == NotConnected)
@@ -913,7 +913,7 @@ static void onGlobalChanged(const std::string& msg, void*)
   buf = nboPackString(buf, name.c_str(), name.length());
   buf = nboPackUByte(buf, value.length());
   buf = nboPackString(buf, value.c_str(), value.length());
-  broadcastMessage( MsgSetVar, (char*)buf - (char*)bufStart, bufStart);
+  broadcastMessage(MsgSetVar, (char*)buf - (char*)bufStart, bufStart);
 }
 
 static void sendUDPupdate(int playerIndex)
@@ -2679,7 +2679,7 @@ void sendMessage(int playerIndex, PlayerId targetPlayer, const char *message, bo
   buf = nboPackString(buf, message, MessageLen);
 
   if (targetPlayer <= LastRealPlayer)
-    directMessage( targetPlayer, MsgMessage, (char*)buf-(char*)bufStart, bufStart);
+    directMessage(targetPlayer, MsgMessage, (char*)buf-(char*)bufStart, bufStart);
   else
     broadcastMessage(MsgMessage, (char*)buf-(char*)bufStart, bufStart);
 }
@@ -3612,7 +3612,7 @@ static void grabFlag(int playerIndex, int flagIndex)
   std::vector<FlagDesc*> *pFH = &player[playerIndex].flagHistory;
   if (pFH->size() >= MAX_FLAG_HISTORY)
     pFH->erase(pFH->begin());
-  pFH->push_back( flag[flagIndex].flag.desc );
+  pFH->push_back(flag[flagIndex].flag.desc );
 }
 
 static void dropFlag(int playerIndex, float pos[3])
@@ -4002,8 +4002,8 @@ static void parseCommand(const char *message, int t)
     }
 
   // set sets a world configuration variable that gets sent to all clients
-  } else if ((hasPerm(t, setVar) || hasPerm(t, setAll)) && strncmp( message + 1, "set", 3) == 0) {
-    sendMessage( ServerPlayer, t, CMDMGR->run(message+1).c_str());
+  } else if ((hasPerm(t, setVar) || hasPerm(t, setAll)) && strncmp(message + 1, "set", 3) == 0) {
+    sendMessage(ServerPlayer, t, CMDMGR->run(message+1).c_str());
   // /shutdownserver terminates the server
   } else if (hasPerm(t, shutdownServer) &&
 	    strncmp(message + 1, "shutdownserver", 8) == 0) {
@@ -4229,10 +4229,10 @@ static void parseCommand(const char *message, int t)
 	while (fhIt != player[i].flagHistory.end()) {
 	  FlagDesc * fDesc = (FlagDesc*)(*fhIt);
 	  if (fDesc->flagType == FlagNormal)
-	    sprintf( flag, "(*%c) ", fDesc->flagName[0] );
+	    sprintf(flag, "(*%c) ", fDesc->flagName[0] );
 	  else
-	    sprintf( flag, "(%s) ", fDesc->flagAbbv );
-	  strcat( reply, flag );
+	    sprintf(flag, "(%s) ", fDesc->flagAbbv );
+	  strcat(reply, flag );
 	  fhIt++;
 	}
 	sendMessage(ServerPlayer, t, reply, true);
@@ -5247,18 +5247,18 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
 	if ((from == InvalidPlayer) || (to == InvalidPlayer))
 		break;
 
-	zapFlag(player[to].flag);
-	char msg[2*PlayerIdPLen + 2 + FlagPLen];
-	void *buf = msg;
-	buf = nboPackUByte(buf, from);
+        zapFlag(player[to].flag);
+
+        void *bufStart = getDirectMessageBuffer();
+	void *buf = nboPackUByte(bufStart, from);
 	buf = nboPackUByte(buf, to);
 	int flagIndex = player[from].flag;
 	buf = nboPackUShort(buf, uint16_t(flagIndex));
 	flag[flagIndex].flag.owner = to;
 	player[to].flag = flagIndex;
 	player[from].flag = -1;
-	buf = flag[flagIndex].flag.pack(buf);
-	broadcastMessage(MsgTransferFlag, sizeof(msg), msg);
+        buf = flag[flagIndex].flag.pack(buf);
+	broadcastMessage(MsgTransferFlag, (char*)buf - (char*)bufStart, bufStart);
 	break;
     }
 
