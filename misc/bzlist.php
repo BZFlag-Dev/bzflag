@@ -104,13 +104,12 @@ function dump ($server) {
   echo "style:";
   if ($server['style'] & 0x0001) echo " CTF";
   if ($server['style'] & 0x0002) echo " flags";
-  if ($server['style'] & 0x0004) echo " rogues";
   if ($server['style'] & 0x0008) echo " jumping";
   if ($server['style'] & 0x0010) echo " inertia";
   if ($server['style'] & 0x0020) echo " ricochet";
   if ($server['style'] & 0x0040) echo " shaking";
   if ($server['style'] & 0x0080) echo " antidote";
-  if ($server['style'] & 0x0100) echo " time-sync";
+  if ($server['style'] & 0x0100) echo " handicap";
   if ($server['style'] & 0x0200) echo " rabbit-hunt";
   echo "\n";
   echo "maxPlayers: " . $server['maxPlayers'] . "\n";

@@ -57,13 +57,12 @@ def s2n( s ) :
 styles = [
 	( 'CTF'         , 0x0001 ) ,
 	( 'flags'       , 0x0002 ) ,
-	( 'rogues'      , 0x0004 ) ,
 	( 'jumping'     , 0x0008 ) ,
 	( 'inertia'     , 0x0010 ) ,
 	( 'ricochet'    , 0x0020 ) ,
 	( 'shaking'     , 0x0040 ) ,
 	( 'antidote'    , 0x0080 ) ,
-	( 'time-sync'   , 0x0100 ) ,
+	( 'handicap'    , 0x0100 ) ,
 	( 'rabbit-hunt' , 0x0200 )
 ]
 
