@@ -13,6 +13,8 @@ BZFlag 1.7e3
 * world file rad -> deg - TimR
 * add player flag display to HUD - TimR (prompted by Colin Bayer)
 * random height pyramids too - TimR
+* dim rogue color when blind - Colin Bayer
+* colorize shots on radar - Colin Bayer
 
 BZFlag 1.7e2
 ------------
