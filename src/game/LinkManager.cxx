@@ -63,7 +63,7 @@ void LinkManager::makeLinkName(int number, std::string& name)
 {
   name = "/t";
   char buffer[8];
-  sprintf(buffer, "%i", (number / 2) * 2);
+  sprintf(buffer, "%i", (number / 2));
   name += buffer;
   name += ":";
   if ((number % 2) == 0) {
