@@ -30,13 +30,13 @@ RobotPlayer::RobotPlayer(const PlayerId& _id, const char* _name,
 				ServerLink* _server,
 				const char* _email = "anonymous") :
 				LocalPlayer(_id, _name, _email),
-				server(_server),
 				target(NULL),
 				pathIndex(0),
 				timeSinceShot(0.0f),
 				timerForShot(0.0f)
 {
   gettingSound = false;
+  server       = _server;
 }
 
 void			RobotPlayer::doUpdate(float dt)

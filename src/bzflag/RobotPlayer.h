@@ -55,7 +55,6 @@ class RobotPlayer : public LocalPlayer {
 				const float targetPoint[2], int mailbox);
 
   private:
-    ServerLink*		server;
     const Player*	target;
     std::vector<RegionPoint>	path;
     int			pathIndex;
