@@ -5,9 +5,7 @@ bzadmin \- a text based client for BZFlag
 .sS
 .B bzadmin
 [\fB\-help\fR]
-[\fB\-stdboth\fR]
-[\fB\-stdin\fR]
-[\fB\-stdout \fR]
+[\fB\-ui \fR{\fIcurses\fR | \fIstdboth\fR | \fIstdin\fR | \fIstdout\fR}]
 [\fB\-team \fR{\fIred\fR | \fIgreen\fR | \fIblue\fR | \fIpurple\fR | \fIrogue\fR}]
 \fIcallsign@hostname\fR:[\fIport\fR] [\fIcommand\fR] [\fIcommand\fR] ...
 .SH DESCRIPTION
@@ -41,18 +39,19 @@ is a player).
 .B -help
 Show a simple help text.
 .TP
-.B -stdboth
-Turns off the curses interface and uses the standard in and standard out
-streams instead. This can be useful for scripting and other things.
-.TP
-\fB-stdin\fR
-Turns off the curses interface and reads commands from the standard in
-stream instead. Anything that is sent from the server will be ignored.
-.TP
-\fB-stdout\fR
-Turns off the curses interface and writes the messages from the server
-to the standard out stream. The user can't send any commands or messages
-with this mode.
+\fB\-ui \fR{\fIcurses\fR | \fIstdboth\fR | \fIstdin\fR | \fIstdout\fR}
+Select the user interface that you want. The curses interface is the default,
+and it is described above.
+.br
+The stdin interface reads user commands from the standard in stream 
+and sends them to the server. All server output is ignored.
+.br
+The stdout interface prints all server output to the standard out stream.
+All user input is ignored.
+.br
+The stdboth interface is a combination of stdin and stdout - it prints
+server output to the standard out stream, and reads user commands from
+the standard in stream.
 .TP
 \fB\-team \fR{\fIred\fR | \fIgreen\fR | \fIblue\fR | \fIpurple\fR | \fIrogue\fR}
 Select the team for your client. This will only affect which team messages
@@ -68,7 +67,8 @@ default value is 5154.
 \fIcommand\fR
 You can specify messages and commands to send to the server on the
 command line. If any such commands are specified, bzadmin will
-exit as soon as those commands has been sent.
+exit as soon as those commands has been sent, without starting 
+an user interface.
 .RE
 .SS Examples
 .RS
@@ -81,7 +81,7 @@ Join the game on localhost, port 5155, using the callsign '@admin'.
 .br
 Connect to the server at localhost and ban the IP 192.168.0.2.
 .TP
-\fBbzadmin -stdout spy@bzserver.xy | grep magicword\fR
+\fBbzadmin -ui stdout spy@bzserver.xy | grep magicword\fR
 Connect to bzserver.xy and print all server messages that contain 'magicword'.
 .RE
 .SH SEE ALSO
