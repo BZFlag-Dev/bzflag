@@ -3,6 +3,11 @@
 
 * add new updates here without heading until a release
 
+BZFlag 1.7g1
+-------------------------------------------------------
+* inline editing of text fields (<- ->) Dave Brosius, Frank Thilo
+* extend admin command -> /flag reset unused - Dave Brosius
+
 BZFlag 1.7g0 "Holy Dancing Monkeys" (was 1.7e7)
 -------------------------------------------------------
 
