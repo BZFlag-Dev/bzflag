@@ -617,9 +617,11 @@ WordFilter::WordFilter(const WordFilter& filter)
 /** destructor releases the compiled bad words */
 WordFilter::~WordFilter(void)
 {
+  std::set<filter_t, expressionCompare>::iterator i;
+  
   // delete compiled words
   for (int j = 0; j < MAX_FILTER_SETS; ++j) {
-    for (std::set<filter_t, expressionCompare>::iterator i = filters[j].begin();
+    for (i = filters[j].begin();
 	 i != filters[j].end();
 	 ++i) {
       if (i->compiled) {
@@ -628,7 +630,7 @@ WordFilter::~WordFilter(void)
     }
   }
   // delete compiled prefixes
-  for (std::set<filter_t, expressionCompare>::iterator i = prefixes.begin();
+  for (i = prefixes.begin();
        i != prefixes.end();
        ++i) {
     if (i->compiled) {
@@ -636,7 +638,7 @@ WordFilter::~WordFilter(void)
     }
   }
   // delete compiled suffixes
-  for (std::set<filter_t, expressionCompare>::iterator i = suffixes.begin();
+  for (i = suffixes.begin();
        i != suffixes.end();
        ++i) {
     if (i->compiled) {
