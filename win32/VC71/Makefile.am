@@ -15,6 +15,7 @@ EXTRA_DIST =	\
 	obstacle.vcproj	\
 	ogl.vcproj	\
 	platform.vcproj	\
+	regex.vcproj	\
 	scene.vcproj	\
 	zlib.vcproj
 
