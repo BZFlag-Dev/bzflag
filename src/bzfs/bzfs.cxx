@@ -3768,7 +3768,7 @@ static void updateLag(int playerIndex, float timepassed)
   pl.lagalpha = pl.lagalpha / (0.9f + pl.lagalpha);
   pl.lagcount++;
   // warn players from time to time whose lag is > threshold (-lagwarn)
-  if (clOptions->lagwarnthresh > 0 && pl.lagavg > clOptions->lagwarnthresh &&
+  if (pl.team != ObserverTeam && clOptions->lagwarnthresh > 0 && pl.lagavg > clOptions->lagwarnthresh &&
       pl.lagcount - pl.laglastwarn > 2 * pl.lagwarncount) {
     char message[MessageLen];
     sprintf(message,"*** Server Warning: your lag is too high (%d ms) ***",
