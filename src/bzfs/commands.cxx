@@ -627,10 +627,13 @@ static void handleKillCmd(GameKeeper::Player *playerData, const char *message)
       sprintf(killmessage, " reason given : %s",argv[2].c_str());
       sendMessage(ServerPlayer, i, killmessage);
     }
+
+  playerData->player.setDead();
   void *buf, *bufStart = getDirectMessageBuffer();
   buf = nboPackUByte(bufStart, i);
   buf = nboPackUByte(buf, t);
-  buf = nboPackShort(buf, 0);
+  buf = nboPackShort(buf, 0);  
+  buf = nboPackShort(buf, -1);
   buf = Flags::Null->pack(buf);
   broadcastMessage(MsgKilled, (char*)buf-(char*)bufStart, bufStart);
 
