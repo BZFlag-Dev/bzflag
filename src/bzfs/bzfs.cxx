@@ -70,6 +70,7 @@ const int udpBufSize = 128000;
 #include "multicast.h"
 #include "Ping.h"
 #include "TimeBomb.h"
+#include "../src/bzflag/ShotPath.h" //ShotPath.h should be moved to include directory
 
 static void sendMessage(int playerIndex, const PlayerId& targetPlayer, TeamColor targetTeam, const char *message);
 
@@ -5072,10 +5073,13 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
 
     // shot fired
     case MsgShotBegin:
-      // data: firing info
-      // special case -- don't unpack firing info cos we just pass it on
-      if (!player[t].Observer)
-	shotFired(t, buf, int(len));
+      
+      if (!player[t].Observer) {
+	unsigned short shotFlag;
+	nboUnpackUShort(&(((byte *)buf)[ShotUpdatePLen]), shotFlag);
+	if ((shotFlag == 0) || ((player[t].flag != -1) && (shotFlag == flag[player[t].flag].flag.id)))
+		shotFired(t, buf, int(len));
+      }
       break;
 
     // shot ended prematurely
