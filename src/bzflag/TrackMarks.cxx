@@ -16,31 +16,33 @@
 
 // System headers
 #include <math.h>
-#include <string>
 #include <list>
 
 // Interface header
 #include "TrackMarks.h"
 
 // Common interface headers
-#include "TimeKeeper.h"
 #include "StateDatabase.h"
 #include "BZDBCache.h"
-#include "Ray.h"
 #include "CollisionManager.h"
 #include "PhysicsDriver.h"
+#include "Ray.h"
 #include "bzfgl.h"
 #include "TextureManager.h"
+#include "SceneDatabase.h"
 #include "SceneRenderer.h"
+#include "SceneNode.h"
 #include "OpenGLGState.h"
 #include "OpenGLMaterial.h"
 
 
 using namespace TrackMarks;
 
+
 enum TrackType {
-  treads = 0,
-  puddle = 1
+  TreadsTrack = 0,
+  PuddleTrack = 1,
+  SmokeTrack  = 2
 };
 
 enum TrackSides {
@@ -49,21 +51,57 @@ enum TrackSides {
   BothTreads = (LeftTread | RightTread)
 };
 
-typedef struct {
-  float pos[3];
-  float angle;
-  float scale;
-  char sides;
-  int phydrv;
-  TimeKeeper startTime;
-} TrackEntry;
+
+class TrackEntry {
+  public:
+    ~TrackEntry();
+      
+  public:
+    float pos[3];
+    float angle;
+    float scale;
+    char sides;
+    int phydrv;
+    float lifeTime;
+    class TrackSceneNode* sceneNode;
+};
+
+class TrackRenderNode : public RenderNode {
+  public:
+    TrackRenderNode(const TrackEntry* te, TrackType type);
+    ~TrackRenderNode();
+    void render();
+    void renderShadow() { return; }
+    const GLfloat* getPosition() const { return te->pos; }
+
+  private:
+    TrackType type;
+    const TrackEntry* te;
+};
+
+class TrackSceneNode : public SceneNode {
+  public:
+    TrackSceneNode(const TrackEntry*, TrackType, const OpenGLGState*);
+    ~TrackSceneNode();
+    bool isTranslucent() const { return false; }
+    void addRenderNodes(SceneRenderer&);
+    void update(); // set the sphere properties
+
+  private:
+    TrackType type;
+    const TrackEntry* te;
+    const OpenGLGState* gstate;
+    TrackRenderNode renderNode;
+};
 
 
 // Local Variables
 //////////////////
 
-static std::list<TrackEntry> TreadsList;
+static std::list<TrackEntry> SmokeList;
 static std::list<TrackEntry> PuddleList;
+static std::list<TrackEntry> TreadsGroundList;
+static std::list<TrackEntry> TreadsObstacleList;
 static float TrackFadeTime = 5.0f;
 static float UserFadeScale = 1.0f;
 static AirCullStyle AirCull = FullAirCull;
@@ -75,9 +113,11 @@ static const float TreadInside = 0.875f;
 static const float TreadMiddle = 0.5f * (TreadOutside + TreadInside);
 static const float TreadMarkWidth = 0.2f;
 
-static OpenGLGState treadsState;
-static OpenGLGState puddleState;
+static OpenGLGState smokeGState;
+static const char smokeTexture[] = "smoke";
+static OpenGLGState puddleGState;
 static const char puddleTexture[] = "puddle";
+static OpenGLGState treadsGState;
 
 static float TextureHeightOffset = 0.05f;
 
@@ -85,13 +125,20 @@ static float TextureHeightOffset = 0.05f;
 // Function Prototypes
 //////////////////////
 
-//static void bzdbCallback(const std::string& name, void* data);
 static void setup();
 static void initContext(void* data);
-static void drawPuddle(const TrackEntry& te, float lifetime);
-static void drawTreads(const TrackEntry& te, float lifetime);
+static void drawSmoke(const TrackEntry& te);
+static void drawPuddle(const TrackEntry& te);
+static void drawTreads(const TrackEntry& te);
 static bool onBuilding(const float pos[3]);
+static void updateList(std::list<TrackEntry>& list, float dt);
+static void addEntryToList(std::list<TrackEntry>& list,
+                           TrackEntry& te, TrackType type);
 
+
+//
+// TrackMarks
+//
 
 void TrackMarks::init()
 {
@@ -115,8 +162,10 @@ void TrackMarks::kill()
 
 void TrackMarks::clear()
 {
-  TreadsList.clear();
+  SmokeList.clear();
   PuddleList.clear();
+  TreadsGroundList.clear();
+  TreadsObstacleList.clear();
   return;
 }
 
@@ -162,30 +211,56 @@ AirCullStyle TrackMarks::getAirCulling()
 }
 
 
+static void addEntryToList(std::list<TrackEntry>& list,
+                           TrackEntry& te, TrackType type)
+{
+  // push the entry
+  list.push_back(te);
+
+  // make a sceneNode for the BSP rendering, if not on the ground
+  if (!BZDBCache::zbuffer && (te.pos[2] != TextureHeightOffset)) {
+    const OpenGLGState* gstate = NULL;
+    if (type == TreadsTrack) {
+      gstate = &treadsGState;
+    } else if (type == PuddleTrack) {
+      gstate = &puddleGState;
+    } else if (type == SmokeTrack) {
+      gstate = &smokeGState;
+    } else {
+      return;
+    }
+    TrackEntry& ptr = *list.rbegin();
+    ptr.sceneNode = new TrackSceneNode(&ptr, type, gstate);
+  }
+  return;
+}
+
+
 bool TrackMarks::addMark(const float pos[3], float scale, float angle,
 			 int phydrv)
 {
   TrackEntry te;
   TrackType type;
+  te.lifeTime = 0.0f;
+  te.sceneNode = NULL;
 
   // determine the track mark type
   if ((pos[2] <= 0.1f) && BZDB.get(StateDatabase::BZDB_MIRROR) != "none") {
-    type = puddle;
+    type = PuddleTrack;
     if (pos[2] < 0.0f) {
       scale = 0.0f; // single puddle, like Narrow tanks
     }
   } else {
-    type = treads;
+    type = TreadsTrack;
     if (scale < 0.01f) {
-      return false; // Narrow tanks don't draw treads
+      return false; // Narrow tanks don't draw tread marks
     }
     if (pos[2] < 0.0f) {
-      return false; // Burrowed tanks don't draw treads
+      return false; // Burrowed tanks don't draw tread marks
     }
   }
 
   // copy some parameters
-  te.startTime = TimeKeeper::getCurrent();
   te.pos[0] = pos[0];
   te.pos[1] = pos[1];
   if (pos[2] < 0.0f) {
@@ -210,48 +285,46 @@ bool TrackMarks::addMark(const float pos[3], float scale, float angle,
     }
   }
 
-  if (type == puddle) {
+  if (type == PuddleTrack) {
     // Puddle track marks
-    PuddleList.push_back(te);
+    addEntryToList(PuddleList, te, type);
   }
   else {
     // Treads track marks
-    if ((AirCull & InitAirCull) == 0) {
+    if (pos[2] == 0.0f) {
+      // no culling required
+      te.sides = BothTreads;
+      addEntryToList(TreadsGroundList, te, type);
+    }
+    else if ((AirCull & InitAirCull) == 0) {
       // do not cull the air marks
       te.sides = BothTreads;
-      TreadsList.push_back(te);
-    } 
+      addEntryToList(TreadsObstacleList, te, type);
+    }
     else {
       // cull based on track mark support
-      if (pos[2] == 0.0f) {
-        // no culling required
-        te.sides = BothTreads;
-        TreadsList.push_back(te);
+      te.sides = 0;
+      float markPos[3];
+      markPos[2] = pos[2];
+      const float dx = -sinf(angle) * TreadMiddle;
+      const float dy = +cosf(angle) * TreadMiddle;
+      // left tread
+      markPos[0] = pos[0] + dx;
+      markPos[1] = pos[1] + dy;
+      if (onBuilding(markPos)) {
+        te.sides |= LeftTread;
       }
-      else {
-        te.sides = 0;
-        float markPos[3];
-        markPos[2] = pos[2];
-        const float dx = -sinf(angle) * TreadMiddle;
-        const float dy = +cosf(angle) * TreadMiddle;
-        // left tread
-        markPos[0] = pos[0] + dx;
-        markPos[1] = pos[1] + dy;
-        if (onBuilding(markPos)) {
-          te.sides |= LeftTread;
-        }
-        // right tread
-        markPos[0] = pos[0] - dx;
-        markPos[1] = pos[1] - dy;
-        if (onBuilding(markPos)) {
-          te.sides |= RightTread;
-        }
-        // add if required
-        if (te.sides != 0) {
-          TreadsList.push_back(te);
-        } else {
-          return false;
-        }
+      // right tread
+      markPos[0] = pos[0] - dx;
+      markPos[1] = pos[1] - dy;
+      if (onBuilding(markPos)) {
+        te.sides |= RightTread;
+      }
+      // add if required
+      if (te.sides != 0) {
+        addEntryToList(TreadsObstacleList, te, type);
+      } else {
+        return false;
       }
     }
   }
@@ -282,11 +355,22 @@ static bool onBuilding(const float pos[3])
 
 static void updateList(std::list<TrackEntry>& list, float dt)
 {
-  const TimeKeeper cullTime = TimeKeeper::getSunGenesisTime();
-  
-  std::list<TrackEntry>::iterator it;
-  for (it = list.begin(); it != list.end(); it++) {
+  std::list<TrackEntry>::iterator it = list.begin();
+  while (it != list.end()) {
     TrackEntry& te = *it;
+
+    // increase the lifeTime
+    te.lifeTime += dt;
+
+    // see if this mark has expired
+    std::list<TrackEntry>::iterator next = it;
+    next++;
+    if (te.lifeTime > TrackFadeTime) {
+      list.erase(it);
+      it = next;
+      continue;
+    }
+    it = next;
 
     // update for the Physics Driver
     const PhysicsDriver* phydrv = PHYDRVMGR.getDriver(te.phydrv);
@@ -338,7 +422,7 @@ static void updateList(std::list<TrackEntry>& list, float dt)
         }
         // cull this node
         if (te.sides == 0) {
-          te.startTime = cullTime;
+          te.lifeTime = MAXFLOAT;
         }
       }
     }
@@ -350,85 +434,60 @@ static void updateList(std::list<TrackEntry>& list, float dt)
 
 void TrackMarks::update(float dt)
 {
-  updateList(TreadsList, dt);
-  updateList(PuddleList, dt);
-  return;
-}
-
-
-void TrackMarks::render()
-{
   TrackFadeTime = BZDB.eval(StateDatabase::BZDB_TRACKFADE);
   TrackFadeTime = TrackFadeTime * UserFadeScale;
-
-  if ((TrackFadeTime <= 0.0f) || !BZDBCache::zbuffer) {
-    clear();
-    return;
-  }
-
-  TimeKeeper nowTime = TimeKeeper::getCurrent();
-
-  std::list<TrackEntry>::iterator it;
-
-  // draw treads
-  treadsState.setState();
-  it = TreadsList.begin();
-  while (it != TreadsList.end()) {
-    std::list<TrackEntry>::iterator next = it;
-    next++;
-    TrackEntry& te = *it;
-    float timeDiff = nowTime - te.startTime;
-    if (timeDiff > TrackFadeTime) {
-      TreadsList.erase(it);
-      it = next;
-      continue;
-    }
-    it = next;
-    drawTreads(te, timeDiff);
-  }
-
-  // draw puddles
-  puddleState.setState();
-  it = PuddleList.begin();
-  while (it != PuddleList.end()) {
-    std::list<TrackEntry>::iterator next = it;
-    next++;
-    TrackEntry& te = *it;
-    float timeDiff = nowTime - te.startTime;
-    if (timeDiff > TrackFadeTime) {
-      PuddleList.erase(it);
-      it = next;
-      continue;
-    }
-    it = next;
-    drawPuddle(te, timeDiff);
-  }
-
+  
+  updateList(SmokeList, dt);
+  updateList(PuddleList, dt);
+  updateList(TreadsGroundList, dt);
+  updateList(TreadsObstacleList, dt);
+  
   return;
 }
 
 
 static void setup()
 {
-  TextureManager &tm = TextureManager::instance();
-  int puddleTexId = tm.getTextureID(puddleTexture, false);
-  
   OpenGLGStateBuilder gb;
   
+  int puddleTexId = -1;
+  if (BZDBCache::texture) {
+    TextureManager &tm = TextureManager::instance();
+    puddleTexId = tm.getTextureID(puddleTexture, false);
+  }
   gb.reset();
   gb.setShading(GL_FLAT);
   gb.setAlphaFunc(GL_GEQUAL, 0.1f);
   gb.setBlending(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
   gb.enableMaterial(false); // no lighting
-  gb.setTexture(puddleTexId);
-  puddleState = gb.getState();
+  if (puddleTexId >= 0) {
+    gb.setTexture(puddleTexId);
+  }
+  puddleGState = gb.getState();
+  
+  int smokeTexId = -1;
+  if (BZDBCache::texture) {
+    TextureManager &tm = TextureManager::instance();
+    smokeTexId = tm.getTextureID(smokeTexture, false);
+  }
+  gb.reset();
+  gb.setShading(GL_FLAT);
+  gb.setAlphaFunc(GL_GEQUAL, 0.1f);
+  gb.setBlending(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+  gb.enableMaterial(false); // no lighting
+  if (smokeTexId >= 0) {
+    gb.setTexture(smokeTexId);
+  }
+  smokeGState = gb.getState();
   
   gb.reset();
   gb.setShading(GL_FLAT);
   gb.setAlphaFunc(GL_GEQUAL, 0.1f);
   gb.setBlending(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
   gb.enableMaterial(false); // no lighting
-  treadsState = gb.getState();
+  treadsGState = gb.getState();
+  
+  return;
 }
   
 
@@ -439,9 +498,89 @@ static void initContext(void* /*data*/)
 }
 
 
-static void drawPuddle(const TrackEntry& te, float lifetime)
+void TrackMarks::notifyStyleChange()
 {
-  const float ratio = (lifetime / TrackFadeTime);
+  setup();
+  return;
+}
+
+
+void TrackMarks::renderGroundTracks()
+{
+  if (TrackFadeTime <= 0.0f) {
+    clear();
+    return;
+  }
+
+  std::list<TrackEntry>::iterator it;
+
+  // disable the zbuffer for drawing on the ground
+  if (BZDBCache::zbuffer) {
+    glDepthMask(GL_FALSE);
+    glDisable(GL_DEPTH_TEST);
+  }
+  
+  // draw ground treads
+  treadsGState.setState();
+  for (it = TreadsGroundList.begin(); it != TreadsGroundList.end(); it++) {
+    drawTreads(*it);
+  }
+
+  // draw puddles
+  puddleGState.setState();
+  for (it = PuddleList.begin(); it != PuddleList.end(); it++) {
+    drawPuddle(*it);
+  }
+  
+  // re-enable the zbuffer
+  if (BZDBCache::zbuffer) {
+    glDepthMask(GL_TRUE);
+    glEnable(GL_DEPTH_TEST);
+  }
+
+  return;
+}
+
+
+void TrackMarks::renderObstacleTracks()
+{
+  if (!BZDBCache::zbuffer) {
+    return; // this is not for the BSP rendering
+  }
+
+  if (TrackFadeTime <= 0.0f) {
+    clear();
+    return;
+  }
+
+  std::list<TrackEntry>::iterator it;
+
+  // disable the zbuffer writing (these are the last things drawn)
+  // this helps to avoid the zbuffer fighting/flickering effect
+  glDepthMask(GL_FALSE);
+  
+  // draw treads
+  treadsGState.setState();
+  for (it = TreadsObstacleList.begin(); it != TreadsObstacleList.end(); it++) {
+    drawTreads(*it);
+  }
+
+  // draw smoke
+  smokeGState.setState();
+  for (it = SmokeList.begin(); it != SmokeList.end(); it++) {
+    drawSmoke(*it);
+  }
+
+  // re-enable the zbuffer writing
+  glDepthMask(GL_TRUE);
+  
+  return;
+}
+
+
+static void drawPuddle(const TrackEntry& te)
+{
+  const float ratio = (te.lifeTime / TrackFadeTime);
   const float scale = 2.0f * ratio;
   const float offset = te.scale * TreadMiddle;
 
@@ -497,9 +636,9 @@ static void drawPuddle(const TrackEntry& te, float lifetime)
 }
 
 
-static void drawTreads(const TrackEntry& te, float lifetime)
+static void drawTreads(const TrackEntry& te)
 {
-  const float ratio = (lifetime / TrackFadeTime);
+  const float ratio = (te.lifeTime / TrackFadeTime);
 
   glColor4f(0.0f, 0.0f, 0.0f, 1.0f - ratio);
 
@@ -520,6 +659,152 @@ static void drawTreads(const TrackEntry& te, float lifetime)
   }
   glPopMatrix();
 
+  return;
+}
+
+
+static void drawSmoke(const TrackEntry& te)
+{
+  const float ratio = (te.lifeTime / TrackFadeTime);
+
+  glColor4f(0.0f, 0.0f, 0.0f, 1.0f - ratio);
+
+  glPushMatrix();
+  {
+    glTranslatef(te.pos[0], te.pos[1], te.pos[2]);
+    glRotatef(te.angle, 0.0f, 0.0f, 1.0f);
+    glScalef(1.0f, te.scale, 1.0f);
+
+    const float halfWidth = 0.5f * TreadMarkWidth;
+
+    if ((te.sides & LeftTread) != 0) {
+      glRectf(-halfWidth, +TreadInside, +halfWidth, +TreadOutside);
+    }
+    if ((te.sides & RightTread) != 0) {
+      glRectf(-halfWidth, -TreadOutside, +halfWidth, -TreadInside);
+    }
+  }
+  glPopMatrix();
+
+  return;
+}
+
+
+void TrackMarks::addSceneNodes(SceneDatabase* scene)
+{
+  // Depth Buffer does not need to use SceneNodes
+  if (BZDBCache::zbuffer) {
+    return;
+  }
+  
+  // do not add track marks that are drawn by renderGroundTracks
+  std::list<TrackEntry>::iterator it;
+
+  // tread track marks on obstacles
+  for (it = TreadsObstacleList.begin(); it != TreadsObstacleList.end(); it++) {
+    const TrackEntry& te = *it;
+    if (te.sceneNode != NULL) {
+      te.sceneNode->update();
+      scene->addDynamicNode(te.sceneNode);
+    }
+  }
+      
+  // smoke track marks in the air
+  for (it = SmokeList.begin(); it != SmokeList.end(); it++) {
+    const TrackEntry& te = *it;
+    if (te.sceneNode != NULL) {
+      te.sceneNode->update();
+      scene->addDynamicNode(te.sceneNode);
+    }
+  }
+      
+  return;
+}
+
+
+//
+// TrackEntry
+//
+
+TrackEntry::~TrackEntry()
+{
+  delete sceneNode;
+  return;
+}
+
+
+//
+// TrackRenderNode
+//
+
+TrackRenderNode::TrackRenderNode(const TrackEntry* _te, TrackType _type)
+{
+  te = _te;
+  type = _type;
+  return;
+}
+  
+
+TrackRenderNode::~TrackRenderNode()
+{
+  return;
+}
+
+
+void TrackRenderNode::render()
+{ 
+  if (type == TreadsTrack) {
+    drawTreads(*te);
+  } else if (type == PuddleTrack) {
+    drawPuddle(*te);
+  } else if (type == SmokeTrack) {
+    drawSmoke(*te);
+  }
+  return;
+};
+
+
+//
+// TrackSceneNode
+//
+
+TrackSceneNode::TrackSceneNode(const TrackEntry* _te, TrackType _type,
+                               const OpenGLGState* _gstate) :
+                                 renderNode(_te, _type)
+{
+  te = _te;
+  type = _type;
+  gstate = _gstate;
+  return;
+}
+                               
+TrackSceneNode::~TrackSceneNode()
+{
+  return;
+}
+
+void TrackSceneNode::addRenderNodes(SceneRenderer& renderer)
+{
+  renderer.addRenderNode(&renderNode, gstate);
+  return;
+}
+
+void TrackSceneNode::update()
+{
+  // update the position
+  setCenter(te->pos);
+
+  // update the radius squared (for culling)
+  float radius;
+  if (type == TreadsTrack) {
+    radius = (te->scale * TreadOutside);
+  } else if (type == PuddleTrack) {
+    radius = (te->scale * (TreadMiddle + 1.0f));
+  } else if (type == SmokeTrack) {
+    radius = (te->scale * TreadOutside);
+  }
+  setRadius(radius * radius);
+  
   return;
 }
 

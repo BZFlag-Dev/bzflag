@@ -1171,6 +1171,7 @@ void Player::doDeadReckoning()
     inputVel[2] = 0.0f;
   }
 
+  // the importance level of the remote sounds
   const bool remoteImportant = false;
 
   // check for a landing

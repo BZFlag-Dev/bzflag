@@ -14,13 +14,18 @@
 #define BZF_TRACKS_H
 
 
+class SceneDatabase;
+
 namespace TrackMarks {
 
   void init();
   void kill();
   void clear();
-  void render();
   void update(float dt);
+  void addSceneNodes(SceneDatabase* scene);
+  void notifyStyleChange();
+  void renderGroundTracks();   // zbuffer is not used
+  void renderObstacleTracks(); // zbuffer is used
 
   bool addMark(const float pos[3], float scale, float angle, int phydrv);
 

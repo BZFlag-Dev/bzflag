@@ -162,7 +162,7 @@ private:
   SceneRenderer&	operator=(const SceneRenderer&);
 
   void		getLights();
-  void		getObstacles();
+  void		getRenderNodes();
 
   void		doRender();
   void		renderDepthComplexity();

@@ -193,10 +193,10 @@ bool			SceneNode::cull(const ViewFrustum& view) const
   // greater than radius of object then cull.
   for (int i = 0; i < 5; i++) {
     const GLfloat* norm = view.getSide(i);
-    const GLfloat d = sphere[0] * norm[0] +
-		      sphere[1] * norm[1] +
-		      sphere[2] * norm[2] + norm[3];
-    if (d < 0.0f && d * d > sphere[3]) return true;
+    const GLfloat d = (sphere[0] * norm[0]) +
+		      (sphere[1] * norm[1]) +
+		      (sphere[2] * norm[2]) + norm[3];
+    if ((d < 0.0f) && ((d * d) > sphere[3])) return true;
   }
   return false;
 }

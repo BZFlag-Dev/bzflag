@@ -128,7 +128,7 @@ SceneRenderer::SceneRenderer() :
   lightsCount = 0;
   dynamicLights = 0;
 
-  // init the track manager
+  // init the track mark manager
   TrackMarks::init();
 
   return;
@@ -650,7 +650,7 @@ void SceneRenderer::render(bool _lastFrame, bool _sameFrame,
   lastFrame = _lastFrame;
   sameFrame = _sameFrame;
 
-  // update the SceneNode and Background styles
+  // update the SceneNode, Background, and TrackMark styles
   if (needStyleUpdate) {
     if (scene) {
       scene->updateNodeStyles();
@@ -658,6 +658,7 @@ void SceneRenderer::render(bool _lastFrame, bool _sameFrame,
     if (background) {
       background->notifyStyleChange();
     }
+    TrackMarks::notifyStyleChange();
     needStyleUpdate = false;
   }
 
@@ -670,6 +671,11 @@ void SceneRenderer::render(bool _lastFrame, bool _sameFrame,
   // make sure there is something to render on
   if (!window) {
     return;
+  }
+
+  // get the track mark sceneNodes (only for BSP)
+  if (scene) {
+    TrackMarks::addSceneNodes(scene);
   }
 
   // turn on fog for teleporter blindness if close to a teleporter
@@ -753,7 +759,7 @@ void SceneRenderer::renderScene(bool /*_lastFrame*/, bool /*_sameFrame*/,
   getLights();
 
   // get the obstacle sceneNodes and shadowNodes
-  getObstacles();
+  getRenderNodes();
 
   // prepare transforms
   // note -- lights should not be positioned before view is set
@@ -938,23 +944,34 @@ void SceneRenderer::renderScene(bool /*_lastFrame*/, bool /*_sameFrame*/,
 
 void SceneRenderer::doRender()
 {
+  const bool notMirror = (!mirror || !clearZbuffer);
+  
+  // render the ground tank tracks
+  if (notMirror) {
+    TrackMarks::renderGroundTracks();
+  }
+
   // NOTE -- this should go into a separate thread
   // now draw each render node list
   OpenGLGState::renderLists();
-
-  // render the tank tracks
-  TrackMarks::render();
 
   // render the environmental conditions
   if (background) {
     background->renderEnvironment(*this);
   }
 
-  // finally draw all the stuff in the ordered list.  turn
+  // draw all the stuff in the ordered list.  turn
   // off depth buffer updates for potentially transparent stuff.
   glDepthMask(GL_FALSE);
   orderedList.render();
   glDepthMask(GL_TRUE);
+
+  // render the ground tank tracks
+  if (notMirror) {
+    TrackMarks::renderObstacleTracks();
+  }
+  
+  return;
 }
 
 
@@ -1048,7 +1065,7 @@ void SceneRenderer::renderDepthComplexity()
 }
 
 
-void SceneRenderer::getObstacles()
+void SceneRenderer::getRenderNodes()
 {
   // get the nodes to draw
   if (!blank) {
