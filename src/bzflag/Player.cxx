@@ -404,9 +404,9 @@ void			Player::addShots(SceneDatabase* scene,
   }
 }
 
-void*			Player::unpack(void* buf)
+void*			Player::unpack(void* buf, uint16_t code)
 {
-  buf = state.unpack(buf);
+  buf = state.unpack(buf, code);
   setDeadReckoning();
   return buf;
 }

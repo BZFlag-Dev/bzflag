@@ -114,8 +114,8 @@ public:
   void		endShot(int index, bool isHit = false,
 			bool showExplosion = false);
 
-  void*		pack(void*);
-  void*		unpack(void*);
+  void*		pack(void*, uint16_t& code);
+  void*		unpack(void*, uint16_t code);
 
   void		setDeadReckoning();
 
@@ -384,10 +384,10 @@ inline void		Player::setAutoPilot(bool _autoPilot)
   autoPilot = _autoPilot;
 }
 
-inline void*		Player::pack(void* buf)
+inline void*		Player::pack(void* buf, uint16_t& code)
 {
   setDeadReckoning();
-  return state.pack(buf);
+  return state.pack(buf, code);
 }
 
 

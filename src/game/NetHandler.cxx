@@ -379,6 +379,7 @@ int NetHandler::pwrite(const void *b, int l) {
     case MsgShotBegin:
     case MsgShotEnd:
     case MsgPlayerUpdate:
+    case MsgPlayerUpdateSmall:
     case MsgGMUpdate:
     case MsgLagPing:
       udpSend(b, l);

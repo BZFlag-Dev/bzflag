@@ -599,10 +599,12 @@ void			ServerLink::sendPlayerUpdate(Player* player)
   char msg[PlayerUpdatePLen];
   const float timeStamp = TimeKeeper::getCurrent() - TimeKeeper::getNullTime();
   void* buf = msg;
+  uint16_t code;
   buf = nboPackFloat(buf, timeStamp);
   buf = nboPackUByte(buf, player->getId());
-  buf = player->pack(buf);
-  send(MsgPlayerUpdate, sizeof(msg), msg);
+  // code will be MsgPlayerUpdate or MsgPlayerUpdateSmall
+  buf = player->pack(buf, code);
+  send(code, sizeof(msg), msg);
 }
 #endif
 

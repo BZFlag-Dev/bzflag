@@ -30,8 +30,8 @@ public:
     };
 
     PlayerState();
-    void*		pack(void*);
-    void*		unpack(void*);
+    void*		pack(void*, uint16_t& code);
+    void*		unpack(void*, uint16_t code);
 
     long		order;			// packet ordering
     short		status;			// see PStatus enum

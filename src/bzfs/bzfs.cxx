@@ -570,8 +570,8 @@ static void relayPlayerPacket(int index, uint16_t len, const void *rawbuf, uint1
     PlayerInfo& pi = player[i];
     
     if (i != index && pi.isPlaying()) {
-      if ((code == MsgPlayerUpdate) && pi.haveFlag() && 
-          (flag[pi.getFlag()].flag.type == Flags::Lag)) {
+      if (((code == MsgPlayerUpdate) ||(code == MsgPlayerUpdateSmall))
+          && pi.haveFlag() && (flag[pi.getFlag()].flag.type == Flags::Lag)) {
         // delay sending to this player
 	delayq[i].addPacket(len+4, rawbuf,
 			    BZDB.eval(StateDatabase::BZDB_FAKELAG));
@@ -3410,14 +3410,15 @@ static void handleCommand(int t, const void *rawbuf)
     }
 
     // player is sending his position/speed (bulk data)
-    case MsgPlayerUpdate: {
+    case MsgPlayerUpdate:
+    case MsgPlayerUpdateSmall: {
       float timestamp;
       PlayerId id;
       PlayerState state;
 
       buf = nboUnpackFloat(buf, timestamp);
       buf = nboUnpackUByte(buf, id);
-      buf = state.unpack(buf);
+      buf = state.unpack(buf, code);
 
       // silently drop old packet
       if (state.order <= lastState[t].order)
@@ -4495,7 +4496,8 @@ int main(int argc, char **argv)
 	    nboUnpackUByte(buf, t);
 	    break;
 	  }
-	  case MsgPlayerUpdate: {
+	  case MsgPlayerUpdate:
+	  case MsgPlayerUpdateSmall: {
 	    float timestamp;
 	    buf = nboUnpackFloat(buf, timestamp);
 	    buf = nboUnpackUByte(buf, t);

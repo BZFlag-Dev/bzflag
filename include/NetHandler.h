@@ -39,7 +39,7 @@ struct MessageCount {
   uint16_t maxSize;
 };
 // does not include MsgNull
-#define MessageTypes 42
+#define MessageTypes 43
 #endif
 
 /** This class is a client that connects to a BZFlag client and has

@@ -2181,6 +2181,7 @@ static void		handleServerMessage(bool human, uint16_t code,
   
     // inter-player relayed message
   case MsgPlayerUpdate:
+  case MsgPlayerUpdateSmall:
   case MsgGMUpdate:
   case MsgAudio:
   case MsgVideo:
@@ -2200,7 +2201,8 @@ static void		handlePlayerMessage(uint16_t code, uint16_t,
 					    void* msg)
 {
   switch (code) {
-  case MsgPlayerUpdate: {
+  case MsgPlayerUpdate: 
+  case MsgPlayerUpdateSmall: {
     float timestamp; // could be used to enhance deadreckoning, but isn't for now
     PlayerId id;
     int32_t order;
@@ -2211,7 +2213,7 @@ static void		handlePlayerMessage(uint16_t code, uint16_t,
     nboUnpackInt(msg, order); // peek! don't update the msg pointer
     if (order <= tank->getOrder()) break;
     short oldStatus = tank->getStatus();
-    tank->unpack(msg);
+    tank->unpack(msg, code);
     short newStatus = tank->getStatus();
     if ((oldStatus & short(PlayerState::Paused)) !=
 	(newStatus & short(PlayerState::Paused)))
