@@ -106,8 +106,8 @@ public:
 #if defined(USE_THREADS)
     pthread_t         thread;
     static pthread_mutex_t mutex;
-#endif
     int               refCount;
+#endif
   };
   class Flag {
   };

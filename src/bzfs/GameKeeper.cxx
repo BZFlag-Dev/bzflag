@@ -47,8 +47,8 @@ GameKeeper::Player::Player(int _playerIndex,
   int result = pthread_create(&thread, NULL, tcpRx, (void *)this);
   if (result)
     std::cerr << "Could not create thread" << std::endl;
-#endif
   refCount         = 1;
+#endif
 }
 
 GameKeeper::Player::~Player()
@@ -243,7 +243,9 @@ void GameKeeper::Player::clean()
   Player* playerData;
   for (int i = 0; i < PlayerSlot; i++)
     if ((playerData = playerList[i]) && playerData->closed
+#if defined(USE_THREADS)
 	&& !playerData->refCount
+#endif
 	)
       delete playerData;  
 }

@@ -1339,7 +1339,7 @@ static void acceptClient()
   PlayerId playerIndex;
 
   // find open slot in players list
-  PlayerId minPlayerId = 0, maxPlayerId = (PlayerId)maxPlayers;
+  PlayerId minPlayerId = 0, maxPlayerId = (PlayerId)MaxPlayers;
   if (Replay::enabled()) {
      minPlayerId = MaxPlayers;
      maxPlayerId = MaxPlayers + ReplayObservers;
