@@ -13,10 +13,6 @@ AC_CANONICAL_SYSTEM
 AM_INIT_AUTOMAKE(bzflag, $MAJOR_VERSION.$MINOR_VERSION.$REV.$CONF_DATE)
 AM_CONFIG_HEADER(include/config.h)
 
-# Let the C++ code know about OS and user
-AC_DEFINE_UNQUOTED(BZ_BUILD_OS, "$host_os", [BZFlag System Environment])
-AC_DEFINE_UNQUOTED(BZ_BUILD_USER, "`whoami`", [User who compiled BZFlag])
-
 #Checks for programs.
 AC_PROG_MAKE_SET
 AC_PROG_CC
@@ -35,6 +31,14 @@ AM_CONDITIONAL(HASPOD2MAN, test $HASPOD2MAN = yes)
 echo -n "checking for artificial intelligence for robots..." 1>&6
 echo " warning: not found" 1>&6
 
+# Let the C++ code know about OS and user
+AC_DEFINE_UNQUOTED(BZ_BUILD_OS, "$host_os", [BZFlag System Environment])
+AC_CHECK_PROG(HASWHOAMI, whoami, yes, no)
+if test $HASWHOAMI = yes; then
+  AC_DEFINE_UNQUOTED(BZ_BUILD_USER, "`whoami`", [User who compiled BZFlag])
+else
+  AC_DEFINE_UNQUOTED(BZ_BUILD_USER, "anonymous", [User who compiled BZFlag])
+fi
 
 #Checks for headers
 AC_CHECK_HEADERS([stdlib.h stdio.h string.h])
