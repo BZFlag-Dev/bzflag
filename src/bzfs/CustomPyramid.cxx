@@ -10,18 +10,17 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifdef _MSC_VER
-#pragma warning( 4: 4786 )
-#endif
+#include "common.h"
 
-// class-interface header
+/* interface header */
 #include "CustomPyramid.h"
 
-// common-interface headers
+/* system implementation headers */
+#include <math.h>
+
+/* common implementation headers */
 #include "StateDatabase.h"
 
-// implementation-specific headers
-#include <math.h>
 
 CustomPyramid::CustomPyramid()
 {
@@ -49,7 +48,7 @@ void CustomPyramid::write(WorldInfo *world) const
 }
 
 // Local variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***

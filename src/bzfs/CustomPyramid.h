@@ -13,8 +13,10 @@
 #ifndef __CUSTOMPYRAMID_H__
 #define __CUSTOMPYRAMID_H__
 
-// bzfs-specific headers
+/* interface header */
 #include "WorldFileObstacle.h"
+
+/* local interface header */
 #include "WorldInfo.h"
 
 
@@ -30,7 +32,7 @@ class CustomPyramid : public WorldFileObstacle {
 #endif  /* __CUSTOMPYRAMID_H__ */
 
 // Local variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***

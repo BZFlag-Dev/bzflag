@@ -13,11 +13,15 @@
 #ifndef __CUSTOMGATE_H__
 #define __CUSTOMGATE_H__
 
-// system headers
+#include "common.h"
+
+/* interface header */
+#include "WorldFileObstacle.h"
+
+/* system interface headers */
 #include <iostream>
 
-// bzfs-specific headers
-#include "WorldFileObstacle.h"
+/* local interface headers */
 #include "WorldInfo.h"
 
 

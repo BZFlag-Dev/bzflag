@@ -13,15 +13,17 @@
 #ifndef __CUSTOMWEAPON_H__
 #define __CUSTOMWEAPON_H__
 
-// system headers
+#include "common.h"
+
+/* system interface headers */
 #include <iostream>
 #include <vector>
 
-// common-interface headers
+/* common interface headers */
 #include "Flag.h"
 #include "TimeKeeper.h"
 
-// bzfs-specific headers
+/* local interface headers */
 #include "WorldFileObstacle.h"
 #include "WorldInfo.h"
 
@@ -42,7 +44,7 @@ class CustomWeapon : public WorldFileObstacle {
 #endif  /* __CUSTOMWEAPON_H__ */
 
 // Local variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***

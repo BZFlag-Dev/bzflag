@@ -13,11 +13,15 @@
 #ifndef __CUSTOMLINK_H__
 #define __CUSTOMLINK_H__
 
-// system headers
+#include "common.h"
+
+/* interface header */
+#include "WorldFileObject.h"
+
+/* system interface headers */
 #include <iostream>
 
-// bzfs-specific headers
-#include "WorldFileObject.h"
+/* local interface headers */
 #include "WorldInfo.h"
 
 
@@ -35,7 +39,7 @@ class CustomLink : public WorldFileObject {
 #endif  /* __CUSTOMLINK_H__ */
 
 // Local variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***

@@ -10,21 +10,18 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifdef _MSC_VER
-#pragma warning( 4: 4786 )
-#endif
-
-// class interface header
+/* interface header */
 #include "CustomBase.h"
 
-// bzfs-specific headers
+/* local implementation headers */
 #include "CmdLineOptions.h"
 #include "TeamBases.h"
 
-// external dependancies
+/* FIXME - external dependancies */
 extern const int CtfTeams;
 extern CmdLineOptions *clOptions;
 extern BasesList bases;
+
 
 CustomBase::CustomBase()
 {

@@ -13,11 +13,15 @@
 #ifndef __CUSTOMWORLD_H__
 #define __CUSTOMWORLD_H__
 
-// system headers
+#include "common.h"
+
+/* interface header */
+#include "WorldFileObject.h"
+
+/* system interface headers */
 #include <iostream>
 
-// bzfs-specific headers
-#include "WorldFileObject.h"
+/* local interface headers */
 #include "WorldInfo.h"
 
 
@@ -35,7 +39,7 @@ protected:
 #endif  /* __CUSTOMWORLD_H__ */
 
 // Local variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***

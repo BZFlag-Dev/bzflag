@@ -10,20 +10,16 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifdef _MSC_VER
-#pragma warning( 4: 4786 )
-#endif
-
-// class interface header
+/* interface header */
 #include "CustomWeapon.h"
 
-// bzfs-specific headers
-#include "WorldWeapons.h"
-
-// system headers
+/* system headers */
 #include <sstream>
 
-// external dependancies
+/* local implementation headers */
+#include "WorldWeapons.h"
+
+/* FIXME - external dependancies */
 extern WorldWeapons  wWeapons;
 
 

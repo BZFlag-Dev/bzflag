@@ -10,14 +10,10 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifdef _MSC_VER
-#pragma warning( 4: 4786 )
-#endif
-
-// class interface header
+/* interface header */
 #include "CustomLink.h"
 
-// system headers
+/* system implementation headers */
 #include <string.h>
 
 

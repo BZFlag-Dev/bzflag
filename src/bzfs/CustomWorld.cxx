@@ -10,19 +10,16 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifdef _MSC_VER
-#pragma warning( 4: 4786 )
-#endif
-
-// class-interface header
+/* interface header */
 #include "CustomWorld.h"
 
-// system headers
+/* system implementation headers */
 #include <string.h>
 
-// common-iterface headers
+/* common implementation headers */
 #include "StateDatabase.h"
 #include "TextUtils.h"
+
 
 CustomWorld::CustomWorld()
 {
@@ -53,7 +50,7 @@ void CustomWorld::write(WorldInfo*) const
 }
 
 // Local variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***

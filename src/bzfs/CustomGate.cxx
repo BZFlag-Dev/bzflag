@@ -10,18 +10,14 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifdef _MSC_VER
-#pragma warning( 4: 4786 )
-#endif
-
 /* interface header */
 #include "CustomGate.h"
 
+/* system implementation headers */
+#include <math.h>
+
 /* common interface headers */
 #include "StateDatabase.h"
-
-/* implementation-specific headers */
-#include <math.h>
 
 
 CustomGate::CustomGate()
