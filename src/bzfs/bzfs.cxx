@@ -4509,7 +4509,8 @@ static void grabFlag(int playerIndex, int flagIndex)
   const float* fpos = flag[flagIndex].flag.position;
   if ((fabs(tpos[2] - fpos[2]) < 0.1f) && ((tpos[0] - fpos[0]) * (tpos[0] - fpos[0]) +
 	(tpos[1] - fpos[1]) * (tpos[1] - fpos[1]) > radius2)) {
-    DEBUG2("player %d tried to grab distant flag\n", playerIndex);
+    DEBUG2("p[%d] %f %f %f tried to grab distant flag %f %f %f\n", playerIndex,
+	tpos[0], tpos[1], tpos[2], fpos[0], fpos[1], fpos[2]);
     return;
   }
 
@@ -4704,20 +4705,22 @@ static void shotFired(int playerIndex, void *buf, int len)
 
   // verify playerId
   if (firingInfo.shot.player != player[playerIndex].id) {
-    DEBUG2("shot playerid mismatch\n");
+    DEBUG2("p[%d] shot playerid mismatch\n", playerIndex);
     return;
   }
 
   // verify player flag
   if ((firingInfo.flag != NullFlag) && (firingInfo.flag != flag[player[playerIndex].flag].flag.id)) {
-    DEBUG2("shot flag mismatch %d %d\n", firingInfo.flag, flag[player[playerIndex].flag].flag.id);
+    DEBUG2("p[%d] shot flag mismatch %d %d\n", playerIndex, firingInfo.flag,
+	flag[player[playerIndex].flag].flag.id);
     firingInfo.flag = NullFlag;
     repack = true;
   }
 
   // verify shot number
   if ((firingInfo.shot.id & 0xff) > clOptions.maxShots - 1) {
-    DEBUG2("shot id out of range %d %d\n", firingInfo.shot.id & 0xff, clOptions.maxShots);
+    DEBUG2("p[%d] shot id out of range %d %d\n", playerIndex,
+	firingInfo.shot.id & 0xff, clOptions.maxShots);
     return;
   }
 
@@ -4739,14 +4742,14 @@ static void shotFired(int playerIndex, void *buf, int len)
 
   // verify lifetime
   if (fabs(firingInfo.lifetime - lifetime) > Epsilon) {
-    DEBUG2("shot lifetime mismatch %f %f\n", firingInfo.lifetime, lifetime);
+    DEBUG2("p[%d] shot lifetime mismatch %f %f\n", playerIndex, firingInfo.lifetime, lifetime);
     return;
   }
 
   // verify velocity
   if (hypotf(firingInfo.shot.vel[0], hypotf(firingInfo.shot.vel[1],
       firingInfo.shot.vel[2])) > shotSpeed * 1.01f) {
-    DEBUG2("shot over speed %f %f\n", hypotf(firingInfo.shot.vel[0],
+    DEBUG2("p[%d] shot over speed %f %f\n", playerIndex, hypotf(firingInfo.shot.vel[0],
 	  hypotf(firingInfo.shot.vel[1], firingInfo.shot.vel[2])), shotSpeed);
     return;
   }
@@ -4759,7 +4762,7 @@ static void shotFired(int playerIndex, void *buf, int len)
 
   float delta = dx*dx + dy*dy + dz*dz;
   if (delta > (TankSpeed * TankSpeed * VelocityAd * VelocityAd)) {
-    DEBUG2("shot origination %f %f %f to far from tank %f %f %f\n",
+    DEBUG2("p[%d] shot origination %f %f %f to far from tank %f %f %f\n", playerIndex,
 	    firingInfo.shot.pos[0], firingInfo.shot.pos[1], firingInfo.shot.pos[2],
 	    player[playerIndex].lastState.pos[0],
 	    player[playerIndex].lastState.pos[1],
