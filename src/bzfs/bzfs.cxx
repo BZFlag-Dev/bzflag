@@ -3389,7 +3389,7 @@ static void captureFlag(int playerIndex, TeamColor teamCaptured)
   for (int i = 0; i < curMaxPlayers; i++)
     if (player[i].fd != NotConnected &&
 	flag[flagIndex].flag.type->flagTeam == int(player[i].team) &&
-	player[i].state == PlayerAlive) {
+	player[i].state >= PlayerDead) {
       player[i].state = PlayerDead;
       player[i].restartOnBase = true;
     }
