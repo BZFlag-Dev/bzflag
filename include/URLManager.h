@@ -36,6 +36,7 @@ class URLManager : public Singleton<URLManager> {
     bool getURLHeader(const std::string& URL);
 
     bool getFileTime(time_t &t);
+    const char* getErrorString() const;
 
     void setProgressFunc(int (*func)(void* clientp,
 				     double dltotal, double dlnow,
@@ -56,10 +57,9 @@ class URLManager : public Singleton<URLManager> {
     bool beginGet(const std::string URL);
 
   private:
-    // this is CURL specific
-    void *easyHandle;
+    void *easyHandle; // this is CURL specific (used as 'CURL*')
 
-    bool lastCallFailed;
+    int errorCode;
     void *theData;
     unsigned int theLen;
 };

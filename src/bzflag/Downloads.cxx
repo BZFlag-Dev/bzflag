@@ -281,7 +281,8 @@ static bool getAndCacheURL(const std::string& url)
     result = true;
   }
   else {
-    std::string msg = ColorStrings[RedColor] + "* failure *";
+    std::string msg = ColorStrings[RedColor] + "failure: ";
+    msg += URLMGR.getErrorString();
     addMessage(NULL, msg);
     result = false;
   }

@@ -1409,18 +1409,19 @@ int curlProgressFunc(void* /*clientp*/,
 		     double dltotal, double dlnow,
 		     double /*ultotal*/, double /*ulnow*/)
 {
-  // download aborted?
+  // FIXME: beaucoup cheeze here in the aborting style
+  //        we should be using async dns and multi-curl
+
+  // abort the download?
   BzfEvent event;
   if (display->isEventPending()) {
     if (display->peekEvent(event)) {
       switch (event.type) {
 	case BzfEvent::Quit:
-	  addMessage(NULL, "download aborted");
 	  return 1;		    // terminate the curl call
 	case BzfEvent::KeyDown:
 	  display->getEvent(event); // flush the event
 	  if (event.keyDown.ascii == 27) {
-            addMessage(NULL, "download aborted");
             return 1;		    // terminate the curl call
           }
           break;
@@ -1435,6 +1436,7 @@ int curlProgressFunc(void* /*clientp*/,
 	case BzfEvent::Unmap:
 	case BzfEvent::Redraw:
 	case BzfEvent::Resize:
+	  // leave the event, it might be important
 	  break;
       }
     }
