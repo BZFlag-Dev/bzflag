@@ -34,7 +34,9 @@ XDisplay::Rep::Rep(const char* displayName) :
 				display(NULL),
 				screen(0)
 #ifdef XIJOYSTICK
-				,devices(NULL)
+				,devices(NULL),
+				buttonPressType(0),
+				buttonReleaseType(0)
 #endif
 {
   // open display
