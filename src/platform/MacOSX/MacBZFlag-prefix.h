@@ -15,8 +15,6 @@
 
 /* so that socklen_t is defined in bzfrelay.c */
 #define _BSD_SOCKLEN_T_
-/* BZFlag version */
-#define BZVERSION 10901000
 /* enable robots */
 #define ROBOT
 
