@@ -186,10 +186,10 @@ struct CmdLineOptions
     teamKillerDies(true), printScore(false), publicizeServer(false), publicizedAddressGiven(false), debug(0)
   {
     int i;
-    for (i = int(FirstFlag); i <= int(LastFlag); i++) {
-	flagCount[i] = 0;
-	flagLimit[i] = -1;
-	flagDisallowed[i] = false;
+    for (std::map<std::string, FlagDesc*>::iterator it = FlagDesc::flagMap.begin(); it != FlagDesc::flagMap.end(); ++it) {
+	flagCount[it->second] = 0;
+	flagLimit[it->second] = -1;
+	flagDisallowed[it->second] = false;
     }
 
     for (i = 0; i < NumTeams; i++)
@@ -249,9 +249,10 @@ struct CmdLineOptions
   int			debug;
 
   uint16_t		maxTeam[NumTeams];
-  int			flagCount[LastFlag + 1];//
-  int			flagLimit[LastFlag + 1]; // # shots allowed / flag
-  bool			flagDisallowed[LastFlag + 1];//
+  std::map<FlagDesc*,int> flagCount;
+  std::map<FlagDesc*,int> flagLimit; // # shots allowed / flag
+  std::map<FlagDesc*,bool> flagDisallowed;
+
   AccessControlList	acl;
   TextChunkManager	textChunker;
   BadWordList		bwl;
@@ -461,7 +462,7 @@ static FlagInfo *flag = NULL;
 static int numFlags;
 static int numFlagsInAir;
 // types of extra flags allowed
-static FlagId *allowedFlags = NULL;
+static std::set<FlagDesc*> allowedFlags;
 static bool done = false;
 // true if hit time/score limit
 static bool gameOver = true;
