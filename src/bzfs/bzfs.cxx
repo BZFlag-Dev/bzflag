@@ -3010,6 +3010,11 @@ static void sendTeleport(int playerIndex, uint16_t from, uint16_t to)
 // parse player comands (messages with leading /)
 static void parseCommand(const char *message, int t)
 {
+  if (!message) {
+    std::cerr << "WARNING: parseCommand was given a null message?!" << std::endl;
+    return;
+  }
+
   GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(t);
   if (!playerData)
     return;
