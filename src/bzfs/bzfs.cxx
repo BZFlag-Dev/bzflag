@@ -355,6 +355,10 @@ void sendIPUpdate(int targetPlayer = -1, int playerIndex = -1) {
       directMessage(receivers[i], MsgAdminInfo,
 		    (char*)buf - (char*)bufStart, bufStart);
     }
+    if (Capture::enabled()) {
+      Capture::addPacket (MsgAdminInfo, (char*)buf - (char*)bufStart,
+                          bufStart, HiddenPacket);
+    }
   }
   else {
     int i, numPlayers = 0;
@@ -3207,6 +3211,7 @@ static void handleCommand(int t, const void *rawbuf)
       // data: target player/team, message string
       PlayerId targetPlayer;
       char message[MessageLen];
+      void *bufcopy = buf; // copy for replay packet
       buf = nboUnpackUByte(buf, targetPlayer);
       buf = nboUnpackString(buf, message, sizeof(message));
       message[MessageLen - 1] = '\0';
@@ -3220,6 +3225,9 @@ static void handleCommand(int t, const void *rawbuf)
 	  pos++;
 	}
 	parseCommand(message, t);
+	if (Capture::enabled()) {
+	  Capture::addPacket (MsgMessage, len, bufcopy, HiddenPacket);
+	}
       } else if (targetPlayer == AdminPlayers
 		 && accessInfo[t].hasPerm(PlayerAccessInfo::adminMessages)) {
 	sendMessage (t, AdminPlayers, message, true);			
