@@ -1,6 +1,14 @@
 recent bugs
 ------------
 
+- Sometimes letters can go missing from the status line of the HUD.
+  Like "Cloaking" turning into "loaking", "Brad2901" turning into "rad"
+  Alignment is correct for the new strings (e.g. "loaking" is centered)
+  so it's not just a rendering problem. Only observed with PL's 
+  W32VC71 1.11.27 build, so it may be a build problem, or VC problem.
+  Seems to be rather erratic also, but I've heard it from two people
+  and one sent me a screenshot.
+
 - Record/Replay does not immediately reassign flags to players after a
   state reset, you have to wait until the first MsgGrabFlag.
 
