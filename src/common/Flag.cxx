@@ -73,6 +73,7 @@ namespace Flags {
   FlagType *WideAngle;
   FlagType *NoJumping;
   FlagType *TriggerHappy;
+  FlagType *ReverseControls;
 
   void init()
   {
@@ -139,6 +140,8 @@ namespace Flags {
 						    "Burrow (+BU):  Tank burrows underground, impervious to normal shots, but can be steamrolled by anyone!");
     Wings                   = new FlagType( "Wings", "WG", FlagUnstable, NormalShot, FlagGood, NoTeam,
 						    "Wings (+WG):  Tank can drive in air.");
+    ReverseControls             = new FlagType( "ReverseControls", "RC", FlagSticky, NormalShot, FlagBad, NoTeam,
+						    "Reverse controls (-RC):  Tank driving controls are reversed.");
     Colorblindness          = new FlagType( "Colorblindness", "CB", FlagSticky, NormalShot, FlagBad, NoTeam,
 						    "ColorBlindness (-CB):  Can't tell team colors.  Don't shoot teammates!");
     Obesity                 = new FlagType( "Obesity", "O", FlagSticky, NormalShot, FlagBad, NoTeam,

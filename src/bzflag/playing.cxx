@@ -1011,6 +1011,11 @@ static void		doMotion()
     } // getInputMethod == Joystick
   } // mainWindow->Joystick
 
+  /* see if controls are reversed */
+  if (myTank->getFlag() == Flags::ReverseControls) {
+    mx = -mx;
+    my = -my;
+  }
 
 #if defined(FREEZING)
   if (motionFreeze) return;
@@ -1022,8 +1027,26 @@ static void		doMotion()
     rotation = myTank->getKeyboardAngVel();
     speed = myTank->getKeyboardSpeed();
 
-    switch (myTank->getKeyButton())
-      {
+    /* see if controls are reversed */
+    int keyButton = myTank->getKeyButton();
+    if (myTank->getFlag() == Flags::ReverseControls) {
+      switch (keyButton) {
+	case BzfKeyEvent::Left:
+	  keyButton = BzfKeyEvent::Right;
+	  break;
+	case BzfKeyEvent::Right:
+	  keyButton = BzfKeyEvent::Left;
+	  break;
+	case BzfKeyEvent::Up:
+	  keyButton = BzfKeyEvent::Down;
+	  break;
+	case BzfKeyEvent::Down:
+	  keyButton = BzfKeyEvent::Up;
+	  break;
+      }
+    }
+
+    switch (keyButton) {
       case BzfKeyEvent::Left:
 	if (pressed || rotation > 0.0f) {
 	  rotation = getKeyValue(myTank->getKeyPressed());
@@ -1044,7 +1067,7 @@ static void		doMotion()
 	  speed = - getKeyValue(myTank->getKeyPressed()) / 2.0f;
 	}
 	break;
-      }
+    }
 
     myTank->setKeyboardAngVel(rotation);
     myTank->setKeyboardSpeed(speed);
@@ -5454,7 +5477,7 @@ void			startPlaying(BzfDisplay* _display,
 #endif /* !defined(_WIN32) */
 
   std::string videoFormat;
-  int format;
+  int format = -1;
   if (BZDB.isSet("resolution")) {
     videoFormat = BZDB.get("resolution");
     if (videoFormat.length() != 0) {
