@@ -14,6 +14,11 @@
 #include <fstream>
 #include "OggAudioFile.h"
 
+//This fix uses a dangerous static variable which means only one OggAudioFile can be constructed at a time, which in this case is
+//ok, but should be fixed with a better solution.
+
+static int fileSize;
+
 OggAudioFile::OggAudioFile(std::istream* in) : AudioFile(in)
 {
 	stream = -1;
@@ -23,6 +28,10 @@ OggAudioFile::OggAudioFile(std::istream* in) : AudioFile(in)
 	cb.seek_func = OAFSeek;
 	cb.close_func = OAFClose;
 	cb.tell_func = OAFTell;
+
+	in->seekg (0, std::ios::end);
+	fileSize = in->tellg();
+	in->seekg (0, std::ios::beg);
 
 	if(ov_open_callbacks(in, &file, NULL, 0, cb) < 0) {
 		std::cout << "OggAudioFile() failed: call to ov_open_callbacks failed\n";
@@ -63,12 +72,14 @@ size_t	OAFRead(void* ptr, size_t size, size_t nmemb, void* datasource)
 {
 	std::istream *in = (std::istream*) datasource;
 	std::streampos pos1 = in->tellg();
-	in->read((char*)ptr, size * nmemb);
-	std::streampos pos2 = in->tellg();
-	size_t bytesRead = streamoff(pos2) - streamoff(pos1);
-	if(in->eof() && bytesRead == 0)
+	int readSize = size * nmemb;
+	if ((readSize + pos1) > fileSize)
+		readSize = fileSize - pos1;
+	if (readSize == 0)
 		return 0;
-	return bytesRead;
+
+	in->read((char*)ptr, readSize);
+	return readSize;
 }
 
 int		OAFSeek(void* datasource, ogg_int64_t offset, int whence)
