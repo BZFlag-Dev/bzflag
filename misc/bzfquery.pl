@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 #
-# bzflag 
+# bzflag
 # Copyright (c) 1993 - 2003 Tim Riker
 #
 # This package is free software;  you can redistribute it and/or
@@ -127,9 +127,9 @@ print "\n";
 @playerType = ("tank", "observer", "robot tank");
 for (1..$numPlayers) {
 
-$bytesRead =  sysread(S, $buffer, 180); 
+$bytesRead =  sysread(S, $buffer, 180);
 while ($bytesRead != 180 && $bytesRead != 0){
- $bytesRead += sysread(S, $buffer, 180-$bytesRead) 
+ $bytesRead += sysread(S, $buffer, 180-$bytesRead)
 }
 if ($bytesRead == undef || $bytesRead < 180){ die $!; }
 

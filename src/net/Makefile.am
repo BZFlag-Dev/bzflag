@@ -9,4 +9,4 @@ libNet_a_SOURCES =			\
 	Ping.cxx			\
 	multicast.cxx			\
 	udpnetwork.cxx			\
-	network.cxx			
+	network.cxx

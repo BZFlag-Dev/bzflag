@@ -18,4 +18,4 @@ libMediaFile_a_SOURCES =	\
 	SGIImageFile.cxx	\
 	SGIImageFile.h		\
 	WaveAudioFile.cxx	\
-	WaveAudioFile.h	
+	WaveAudioFile.h

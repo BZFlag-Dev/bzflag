@@ -62,7 +62,7 @@ Flag status is common to a few message types:
 	float	flight time
 	float	flight end time
 	float	initial velocity
-	
+
 `Position,' `launch,' `landing,' `flight time,' `flight end,' and `initial velocity'
 are all floating point numbers.  `Flag id' is the type of flag,enumerated in FlagId.
 
@@ -906,7 +906,7 @@ enters a game.  Clients must be prepared to handle them in any order.
 	client just echoes the message back to the server. The time
 	between sending and receiving the message in the server is
 	considered to be the current lag ot the respective player.
-	
+
 	The two byte sequence number is included to be able to deal with
 	lost or severely delayed messages. On each ping sent by the server,
 	the sequence number is incremented (modulo 10000). The server

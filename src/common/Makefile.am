@@ -17,7 +17,7 @@ libCommon_a_SOURCES  =			\
 	StateDatabase.cxx		\
 	bzsignal.c
 
-EXTRA_DIST = Ping.cxx 
+EXTRA_DIST = Ping.cxx
 
 MAINTAINERCLEANFILES = \
 	Makefile.in

@@ -240,7 +240,7 @@ before the pause takes effect cancels the pause request.
 .PP
 The
 .IR Delete
-key initiates a self destruct sequence. You will see a countdown that 
+key initiates a self destruct sequence. You will see a countdown that
 can be stopped by pressing
 .IR Delete
 once more. Otherwise, you tank will self destruct. This can be useful if
@@ -560,7 +560,7 @@ in it, you can use the observer mode. To join a server as an observer, use
 .IR @
 as the first letter of your callsign. The maximum number of observers can be
 restricted by the server admin, so you might still not be able to join a
-full server. 
+full server.
 .PP
 When in observer mode, you can freely roam the world. Using the
 arrow keys you can rotate the camera in every direction. Holding shift and
@@ -580,7 +580,7 @@ lets you toggle the display of tank labels.
 Repeatedly pressing
 .IR F8
 cycles through different roaming modes: \fIfree\fR, \fItracking\fR,
-\fIfollowing\fR, \fIfirst person (driving with)\fR and \fItracking team flag\fR. 
+\fIfollowing\fR, \fIfirst person (driving with)\fR and \fItracking team flag\fR.
 In \fItracking\fR mode, the camera will automatically look at a tank. You can cycle through
 available tanks with the
 .IR F6
@@ -588,16 +588,16 @@ and
 .IR F7
 keys. In \fIfollow\fR mode, the camera is positioned right behind the
 targeted tank, whereas you actually look from within the tank when using
-\fIfirst person\fR mode. The last mode, \fItrack team flag\fR is only available in capture-the-flag games and 
+\fIfirst person\fR mode. The last mode, \fItrack team flag\fR is only available in capture-the-flag games and
 will track the team flags. Again, use
 .IR F6
 and
 .IR F7
 to choose which flag to track. One special option that can be used with \fIfollow\fR, \fItracking\fR,
-and \fIfirst person\fR modes is that you can choose to do it with the winning tank. 
+and \fIfirst person\fR modes is that you can choose to do it with the winning tank.
 This is selected by cycling through the tanks until you see the \fRwinner\fR option. In this mode,
 you will always be engaged with whomever has the best score (and is alive).
-The default is \fIdrive with winner\fR mode. 
+The default is \fIdrive with winner\fR mode.
 .RE
 .SH User Commands
 .RS

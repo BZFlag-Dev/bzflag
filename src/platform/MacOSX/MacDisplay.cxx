@@ -82,7 +82,7 @@ bool MacDisplay::getEvent (BzfEvent &bzf_event) const {
 								 sizeof(::UInt32),
 								 NULL,
 								 &eventModifiers);
-	
+
 	  status = GetEventParameter(eventRef,
 								 ::kEventParamMouseButton,
 								 ::typeMouseButton,
@@ -90,7 +90,7 @@ bool MacDisplay::getEvent (BzfEvent &bzf_event) const {
 								 sizeof(::EventMouseButton),
 								 NULL,
 								 &eventButtons);
-	
+
 	  status = GetEventParameter(eventRef,
 								 ::kEventParamMouseDelta,
 								 ::typeHIPoint,
@@ -98,7 +98,7 @@ bool MacDisplay::getEvent (BzfEvent &bzf_event) const {
 								 sizeof(::HIPoint),
 								 NULL,
 								 &eventDelta);
-	
+
 	  switch(eventKind) {
 		case ::kEventMouseDown:
 		case ::kEventMouseUp:

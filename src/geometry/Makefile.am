@@ -28,4 +28,4 @@ libGeometry_a_SOURCES  =		\
 	FlagSceneNode.cxx		\
 	FlagWarpSceneNode.cxx		\
 	TankSceneNode.cxx		\
-	BillboardSceneNode.cxx		
+	BillboardSceneNode.cxx

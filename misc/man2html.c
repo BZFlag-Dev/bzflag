@@ -9,12 +9,12 @@
    Usage: man2html < program.man > program.html
 */
 
- 
+
 
 #include <stdio.h>
 #include <ctype.h>
 #include <string.h>
- 
+
 int in_tt = 0;
 int next_line_dd = 0;
 int need_undl = 0;
@@ -23,10 +23,10 @@ int need_re = 0;
 int fill_mode = 1;
 int current_BI = 0;
 int skip_nl = 0;
- 
+
 int
 process_line();
- 
+
 
 char *
 get_token(char *inp, char *buf)
@@ -38,7 +38,7 @@ get_token(char *inp, char *buf)
     inp++;
   if (*inp == 0)
     return 0;
- 
+
   while (*inp)
   {
     switch (*inp)
@@ -64,7 +64,7 @@ get_token(char *inp, char *buf)
   *buf = 0;
   return inp;
 }
- 
+
 void
 clean(char *cp)
 {
@@ -296,7 +296,7 @@ clean(char *cp)
   *rp = 0;
   strcpy(ocp, foo);
 }
- 
+
 un_bi()
 {
   if (current_BI)
@@ -305,7 +305,7 @@ un_bi()
     current_BI = 0;
   }
 }
- 
+
 int
 process_line_til_regular()
 {
@@ -314,7 +314,7 @@ process_line_til_regular()
     process_line();
   return 0;
 }
- 
+
 void
 bol()
 {
@@ -323,14 +323,14 @@ bol()
     printf("<dd>");
   next_line_dd = 0;
 }
- 
+
 void
 eol()
 {
   if (!fill_mode)
     printf("<br>");
 }
- 
+
 void
 twoggle(char *a, char *b, char *l)
 {
@@ -356,7 +356,7 @@ twoggle(char *a, char *b, char *l)
   eol();
   got_regular_line = 1;
 }
- 
+
 int
 process_line()
 {
@@ -364,7 +364,7 @@ process_line()
   char token[1000];
   if (fgets(buf, 1000, stdin) == 0)
     return 0;
- 
+
   skip_nl = 0;
   if (buf[0] != '.')
   {
@@ -378,7 +378,7 @@ process_line()
     eol();
     return 1;
   }
- 
+
   if (sscanf(buf, "%s %[^\n]", cmd, buf) == 1)
     buf[0] = 0;
   if (strcmp(cmd, "..") == 0)
@@ -617,10 +617,10 @@ process_line()
  return 0;
     } while (buf[0] != '.' || buf[1] != '.');
   }
- 
+
   return 1;
 }
- 
+
 
 main()
 {
@@ -628,5 +628,5 @@ main()
   printf("</ul>\n<!--#exec cmd=\"trailer\" -->\n");
   return 0;
 }
- 
- 
+
+

@@ -73,7 +73,7 @@ const int color_map [8] = {
 };
 
 
-// Constant for blinking text  
+// Constant for blinking text
 
 #define BLINK_DEPTH	(0.5f)
 #define BLINK_RATE	(0.25f)
@@ -493,18 +493,18 @@ float			OpenGLTexFont::getWidth(const char* s, int length) const
 {
   char * str;
   float dx = 0.0f;
-  
+
   str = strdup (s);
   stripAnsiCodes (str, length);
   length = strlen (str);
-  
+
   for (int i = 0; i < length; i++) {
     if ((str[i] >= 32) && (str[i] < 127))
       dx += rep->glyph[str[i] - 32].advance;
   }
 
   free (str);
-    
+
   return width * dx;
 }
 
@@ -631,7 +631,7 @@ void			OpenGLTexFont::draw(const char* string, int length,
 	// compared to the texture mapped version
 
 	glRasterPos3f(xpos + 1.0f, y + 1.0f, z);
-	
+
         xmove = bitmapRep->drawChar (c);
 
 	if (underline == true) {

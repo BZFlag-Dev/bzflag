@@ -12,4 +12,4 @@ libObstacle_a_SOURCES =			\
 	BaseBuilding.cxx		\
 	PyramidBuilding.cxx		\
 	Teleporter.cxx			\
-	WallObstacle.cxx		
+	WallObstacle.cxx

@@ -5,7 +5,7 @@ endif
 libSceneDB_a_SOURCES =			\
 	SceneDatabase.cxx		\
 	ZSceneDatabase.cxx		\
-	BSPSceneDatabase.cxx		
+	BSPSceneDatabase.cxx
 
 MAINTAINERCLEANFILES = \
 	Makefile.in

@@ -33,7 +33,7 @@ use strict;
 #Options[xmission]: gauge,noinfo,noborder,noarrow,transparent,growright
 #Title[xmission]: Players on xmission.bzflag.org:5155
 #MaxBytes[xmission]: 12
-#YLegend[xmission]: players 
+#YLegend[xmission]: players
 #ShortLegend[xmission]: &nbsp;
 #LegendI[xmission]: Players:
 #LegendO[xmission]: MaxPlayers:

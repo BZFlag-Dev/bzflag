@@ -1,5 +1,5 @@
 
-	
+
 			     BZFlag release notes
 
 * Add back PNG support from 1.8 - Dave Brosius, Sean Morrison
@@ -36,7 +36,7 @@ BZFlag 1.7g2 "Steely Eyed Banana" (was 1.7g1)
 * E-mail field fixes - Lars Luthman
 * colorized console - Dave R (Trepan), David Trowbridge
 * automake/autoconf - Tupone Alfredo, David Trowbridge, Tim Riker
-* check for unknown message types - Frank Thilo 
+* check for unknown message types - Frank Thilo
 * check incoming TCP for oversized messages and dump player - Frank Thilo
 * multiline server and ad messages with '\n' - Lars Luthman
 * -speedtol server option: specify tolerance for speed kick - Jeff Myers
@@ -80,7 +80,7 @@ BZFlag 1.7g0 "Holy Dancing Monkeys" (was 1.7e7)
 * self destruct key, for stuck tanks - Dave Brosius
 * team killers die - Tim Riker
 * increase max player and robot counts - Tim Riker
-* Fix 'Change Key Mapping' arrowkeys - Andrew Greig 
+* Fix 'Change Key Mapping' arrowkeys - Andrew Greig
 * show the time in upper right if no flag
 * opacity in config - Dave Brosius, Tim Riker
 * [UN]SILENCE - Dave Brosius, Tim Riker
