@@ -414,7 +414,9 @@ static char **parseConfFile( const char *file, int &ac)
       errorHandler.fatalError(std::string("could not find bzflag configuration file"), 0);
     }
 
+    confStrm.seekg(0, std::ifstream::beg);
     while (confStrm.good()) {
+      confStrm.getline(buffer,1024);
       std::string line = buffer;
       int startPos = line.find_first_not_of("\t \r\n");
       while ((startPos >= 0) && (line.at(startPos) != '#')) {
@@ -430,8 +432,7 @@ static char **parseConfFile( const char *file, int &ac)
 	tokens.push_back(line.substr(startPos,endPos-startPos));
 	startPos = line.find_first_not_of("\t \r\n", endPos+1);
       }
-      confStrm.getline(buffer,1024);
-    }
+   }
   } else {
 	errorHandler.fatalError(std::string("could not find bzflag configuration file"), 0);
   }
