@@ -986,7 +986,7 @@ static void		doMotion()
 
   // mouse is default steering method; query mouse pos always, not doing so
   // can lead to stuttering movement with X and software rendering (uncertain why)
-  int mx, my;
+  int mx = 0, my = 0;
   mainWindow->getMousePosition(mx, my);
 
   // determine if joystick motion should be used instead of mouse motion
@@ -1000,7 +1000,7 @@ static void		doMotion()
       // if the joystick is not active, and we're not forced to some other input method,
       // see if it's moved and autoswitch
       if (BZDB.isTrue("allowInputChange")) {
-	int jx, jy;
+	int jx = 0, jy = 0;
 	mainWindow->getJoyPosition(jx, jy);
 	// if we aren't using the joystick, but it's moving, start using it
 	if ((jx < -noMotionSize * 2) || (jx > noMotionSize * 2)
