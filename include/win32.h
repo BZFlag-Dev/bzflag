@@ -58,7 +58,6 @@ typedef unsigned int	uint32_t;
 #  pragma warning(disable: 4355)
 
 // missing functions
-#  define hypotf	(float)hypot
 #  define snprintf	_snprintf
 
 #  define PATH_MAX	MAX_PATH

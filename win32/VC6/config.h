@@ -43,6 +43,24 @@
 /* Use modern template for std::count */
 #define HAVE_STD_COUNT 1
 
+/* We have float math functions */
+#define HAVE_ASINF 1
+#define HAVE_ATAN2F 1
+#define HAVE_ATANF 1
+#define HAVE_COSF 1
+#define HAVE_EXPF 1
+#define HAVE_FABSF 1
+#define HAVE_FLOORF 1
+#define HAVE_FMODF 1
+#define HAVE_LOGF 1
+#define HAVE_POWF 1
+#define HAVE_SINF 1
+#define HAVE_SQRTF 1
+#define HAVE_TANF 1
+
+/* but we don't have this one */
+/* #undef HAVE_HYPOTF */
+
 // define our OS
 #ifndef BZ_BUILD_OS
   #if defined(_MSC_VER) && (_MSC_VER == 1100)
