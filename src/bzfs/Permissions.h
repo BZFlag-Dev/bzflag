@@ -30,6 +30,8 @@
 class PlayerAccessInfo
 {
 public:
+  PlayerAccessInfo();
+
   // player access info
   enum AccessPerm
     {
@@ -68,8 +70,7 @@ public:
 		// make sure it's the last real right
     };
 
-  void        reset(const char* callSign);
-  void        removePlayer();
+  void        setName(const char* callSign);
 
   std::string getName();
 

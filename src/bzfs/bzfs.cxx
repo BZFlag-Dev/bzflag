@@ -72,8 +72,6 @@ static PingPacket pingReply;
 static int maxFileDescriptor;
 // players list FIXME should be resized based on maxPlayers
 PlayerInfo player[MaxPlayers + ReplayObservers];
-// player access
-PlayerAccessInfo accessInfo[MaxPlayers + ReplayObservers];
 // Last known position, vel, etc
 PlayerState lastState[MaxPlayers  + ReplayObservers];
 // team info
@@ -1480,12 +1478,10 @@ void sendMessage(int playerIndex, PlayerId targetPlayer, const char *message)
         directMessage(i, MsgMessage, len, bufStart);
   } else if (targetPlayer == AdminPlayers){
     // admin messages
-    for (int i = 0; i < curMaxPlayers; i++) {
-      if (player[i].isPlaying()
-	  && accessInfo[i].hasPerm(PlayerAccessInfo::adminMessages)) {
-	directMessage(i, MsgMessage, len, bufStart);
-      }
-    }  
+    std::vector<int> admins
+      = GameKeeper::Player::allowed(PlayerAccessInfo::adminMessages);
+    for (unsigned int i = 0; i < admins.size(); ++i)
+      directMessage(admins[i], MsgMessage, len, bufStart);
   } else {
     broadcastMessage(MsgMessage, len, bufStart);
     broadcast = true;
@@ -1694,11 +1690,6 @@ static void addPlayer(int playerIndex)
                  "This team is full.  Try another team.");
     return ;
   }
-  accessInfo[playerIndex].reset(player[playerIndex].getCallSign());
-  player[playerIndex].resetPlayer
-    ((clOptions->gameStyle & TeamFlagGameStyle) != 0);
-
-
   // accept player
   void *buf, *bufStart = getDirectMessageBuffer();
   buf = nboPackUByte(bufStart, playerIndex);
@@ -1711,18 +1702,20 @@ static void addPlayer(int playerIndex)
   }
 
   // abort if we hung up on the client
-  if (!NetHandler::exists(playerIndex))
+  GameKeeper::Player *playerData
+    = GameKeeper::Player::getPlayerByIndex(playerIndex);
+  if (!playerData)
     return;
 
   // player is signing on (has already connected via addClient).
-  player[playerIndex].signingOn();
+  playerData->signingOn((clOptions->gameStyle & TeamFlagGameStyle) != 0);
   // update team state and if first player on team,
   // add team's flag and reset it's score
   bool resetTeamFlag = false;
-  int teamIndex = int(player[playerIndex].getTeam());
+  int teamIndex = int(playerData->player->getTeam());
   team[teamIndex].team.size++;
   if (team[teamIndex].team.size == 1
-      && Team::isColorTeam(player[playerIndex].getTeam())) {
+      && Team::isColorTeam((TeamColor)teamIndex)) {
     team[teamIndex].team.won = 0;
     team[teamIndex].team.lost = 0;
     if (clOptions->gameStyle & int(TeamFlagGameStyle)) {
@@ -1738,12 +1731,10 @@ static void addPlayer(int playerIndex)
   // send new player updates on each player, all existing flags, and all teams.
   // don't send robots any game info.  watch out for connection being closed
   // because of an error.
-  if (!player[playerIndex].isBot()) {
+  if (!playerData->player->isBot()) {
     int i;
-    if (NetHandler::exists(playerIndex)) {
-      sendTeamUpdate(playerIndex);
-      sendFlagUpdate(-1, playerIndex);
-    }
+    sendTeamUpdate(playerIndex);
+    sendFlagUpdate(-1, playerIndex);
     for (i = 0; i < curMaxPlayers && NetHandler::exists(playerIndex); i++)
       if (player[i].isPlaying() && i != playerIndex)
 	sendPlayerUpdate(i, playerIndex);
@@ -1842,9 +1833,11 @@ static void addPlayer(int playerIndex)
     sendMessage(ServerPlayer, playerIndex, "You are in observer mode.");
 #endif
 
-  if (accessInfo[playerIndex].isRegistered()) {
+
+  if (NetHandler::exists(playerIndex)
+      && playerData->accessInfo.isRegistered()) {
     // nick is in the DB send him a message to identify.
-    if (accessInfo[playerIndex].isIdentifyRequired())
+    if (playerData->accessInfo.isIdentifyRequired())
       sendMessage(ServerPlayer, playerIndex, "This callsign is registered.  You must identify yourself before playing.");
     else
       sendMessage(ServerPlayer, playerIndex, "This callsign is registered.");
@@ -2309,13 +2302,18 @@ static void sendQueryPlayers(int playerIndex)
 
 static void playerAlive(int playerIndex)
 {
-  // ignore multiple MsgAlive; also observer should not send MsgAlive; diagnostic?
-  if (!player[playerIndex].isDead() ||
-      player[playerIndex].isObserver())
+  GameKeeper::Player *playerData
+    = GameKeeper::Player::getPlayerByIndex(playerIndex);
+  if (!playerData)
+    return;
+
+  // ignore multiple MsgAlive; also observer should not send MsgAlive;
+  // diagnostic?
+  if (!playerData->player->isDead() || playerData->player->isObserver())
     return;
 
   // make sure the user identifies themselves if required.
-  if (!accessInfo[playerIndex].isAllowedToEnter()) {
+  if (!playerData->accessInfo.isAllowedToEnter()) {
     sendMessage(ServerPlayer, playerIndex, "This callsign is registered.  You must identify yourself before playing or use a different callsign.");
     removePlayer(playerIndex, "unidentified");
     return;
@@ -3394,7 +3392,8 @@ static void handleCommand(int t, const void *rawbuf)
 	}
 	parseCommand(message, t);
       } else if (targetPlayer == AdminPlayers
-		 && accessInfo[t].hasPerm(PlayerAccessInfo::adminMessages)) {
+		 && playerData->accessInfo.hasPerm
+		 (PlayerAccessInfo::adminMessages)) {
 	sendMessage (t, AdminPlayers, message);			
       }
       // check if the target player is invalid

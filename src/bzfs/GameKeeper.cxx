@@ -14,15 +14,13 @@
 #include "GameKeeper.h"
 
 extern PlayerInfo       player[PlayerSlot];
-// player lag info
-extern PlayerAccessInfo accessInfo[PlayerSlot];
 extern PlayerState      lastState[PlayerSlot];
 
 GameKeeper::Player *GameKeeper::Player::playerList[PlayerSlot] = {NULL};
 
 GameKeeper::Player::Player(int _playerIndex,
 			   const struct sockaddr_in &clientAddr, int fd):
-  player(&::player[_playerIndex]), accessInfo(&::accessInfo[_playerIndex]),
+  player(&::player[_playerIndex]),
   lastState(&::lastState[_playerIndex]),
   playerIndex(_playerIndex)
 {
@@ -39,7 +37,6 @@ GameKeeper::Player::Player(int _playerIndex,
 GameKeeper::Player::~Player()
 {
   bool wasPlaying = player->isPlaying();
-  accessInfo->removePlayer();
   player->removePlayer();
   flagHistory.clear();
   delete lagInfo;
@@ -130,7 +127,7 @@ void *GameKeeper::Player::packAdminInfo(void *buf)
 {
   buf = nboPackUByte(buf, netHandler->sizeOfIP());
   buf = nboPackUByte(buf, playerIndex);
-  buf = nboPackUByte(buf, accessInfo->getPlayerProperties());
+  buf = nboPackUByte(buf, accessInfo.getPlayerProperties());
   buf = netHandler->packAdminInfo(buf);
   return buf;
 }
@@ -144,16 +141,41 @@ std::vector<int> GameKeeper::Player::allowed(PlayerAccessInfo::AccessPerm
 
   if (targetPlayer != -1) {
     if ((playerData = playerList[targetPlayer]) &&
-	playerData->accessInfo->hasPerm(right))
+	playerData->accessInfo.hasPerm(right))
       receivers.push_back(targetPlayer);
   } else {
     for (int i = 0; i < PlayerSlot; i++)
       if ((playerData = playerList[i]) &&
-	  playerData->accessInfo->hasPerm(right))
+	  playerData->accessInfo.hasPerm(right))
 	receivers.push_back(i);
   }
 
   return receivers;
+}
+
+void GameKeeper::Player::signingOn(bool ctf)
+{
+  accessInfo.setName(player->getCallSign());
+  player->resetPlayer(ctf);
+  player->signingOn();
+}
+
+int GameKeeper::Player::getPlayerIDByName(const std::string &name)
+{
+  Player* playerData;
+  for (int i = 0; i < PlayerSlot; i++)
+    if ((playerData = playerList[i]) &&
+	(playerData->accessInfo.getName() == name))
+      return i;
+  return -1;
+}
+
+void GameKeeper::Player::reloadAccessDatabase()
+{
+  Player* playerData;
+  for (int i = 0; i < PlayerSlot; i++)
+    if ((playerData = playerList[i]))
+      playerData->accessInfo.reloadInfo();
 }
 
 // Local Variables: ***

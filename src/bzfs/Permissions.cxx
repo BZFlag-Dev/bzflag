@@ -31,25 +31,16 @@ PasswordMap	passwordDatabase;
 
 void setUserPassword(const std::string &nick, const std::string &pass);
 
-void PlayerAccessInfo::reset(const char* callSign) {
-  regName = callSign;
-  makeupper(regName);
-
-  explicitAllows.reset();
-  explicitDenys.reset();
-  verified = false;
-  loginTime = TimeKeeper::getCurrent();
-  loginAttempts = 0;
-  groups.clear();
+PlayerAccessInfo::PlayerAccessInfo()
+  : verified(false), loginTime(TimeKeeper::getCurrent()), loginAttempts (0),
+    Admin(false), passwordAttempts(0)
+{
   groups.push_back("DEFAULT");
-  Admin = false;
-  passwordAttempts = 0;
 }
 
-void PlayerAccessInfo::removePlayer() {
-  verified      = false;
-  loginAttempts = 0;
-  regName.empty();
+void PlayerAccessInfo::setName(const char* callSign) {
+  regName = callSign;
+  makeupper(regName);
 }
 
 bool PlayerAccessInfo::isAccessVerified() const {

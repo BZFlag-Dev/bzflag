@@ -49,8 +49,11 @@ public:
     static int     anointRabbit(int oldRabbit);
     static std::vector<int> allowed(PlayerAccessInfo::AccessPerm right,
 				    int targetPlayer = -1);
+    static int     getPlayerIDByName(const std::string &name);
+    static void    reloadAccessDatabase();
 
     void          *packAdminInfo(void *buf);
+    void           signingOn(bool ctf);
 
     // players 
     PlayerInfo       *player;
@@ -59,7 +62,7 @@ public:
     // player lag info
     LagInfo          *lagInfo;
     // player access
-    PlayerAccessInfo *accessInfo;
+    PlayerAccessInfo  accessInfo;
     // Last known position, vel, etc
     PlayerState      *lastState;
     // DelayQueue for "Lag Flag"
