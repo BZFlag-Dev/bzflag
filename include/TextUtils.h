@@ -57,9 +57,9 @@ class string_util {
     static std::vector<std::string> string_util::tokenize(std::string& in, std::string delims){
       std::vector<std::string> out;
 
-      int startPos = in.find_first_not_of(delims);
+      unsigned int startPos = in.find_first_not_of(delims);
       while (startPos != std::string::npos){
-	int endPos = in.find_first_of(delims,startPos);
+	unsigned int endPos = in.find_first_of(delims,startPos);
 	if (endPos == std::string::npos) {
 	  out.push_back(in.substr(startPos));
 	  break;
