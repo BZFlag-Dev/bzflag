@@ -27,6 +27,8 @@ recent bugs
   1.7: Player [0] accept() from 208.186.182.172:53470 on 7
        Player [0] shutdownAcceptClient: close(7)
 
+- rendering options like textures and shadows do not immediately take
+  effect; need to call notifystylechange()?
 
 older bugs in BZFlag
 --------------------
