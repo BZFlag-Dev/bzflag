@@ -47,13 +47,13 @@ static void cfvec3ListToArray(const std::vector<cfvec3>& list,
   for (int i = 0; i < count; i++) {
     memcpy (array[i], list[i].data, sizeof(fvec3));
   }
-  return;  
-}                              
+  return;
+}
 
 MeshObstacle::MeshObstacle(const std::vector<char>& checkTypesL,
                            const std::vector<cfvec3>& checkList,
                            const std::vector<cfvec3>& verticeList,
-                           const std::vector<cfvec3>& normalList, 
+                           const std::vector<cfvec3>& normalList,
                            const std::vector<cfvec2>& texcoordList,
                            int _faceCount, bool drive, bool shoot)
 {
@@ -76,7 +76,7 @@ MeshObstacle::MeshObstacle(const std::vector<char>& checkTypesL,
   faces = new MeshFace*[faceSize];
   driveThrough = drive;
   shootThrough = shoot;
-  
+
   return;
 }
 
@@ -99,7 +99,7 @@ bool MeshObstacle::addFace(const std::vector<int>& _vertices,
       ((_texcoords.size() > 0) && (_texcoords.size() != count))) {
     return false;
   }
-  
+
   // validate the indices
   for (i = 0; i < _vertices.size(); i++) {
     if (_vertices[i] >= vertexCount) {
@@ -117,7 +117,7 @@ bool MeshObstacle::addFace(const std::vector<int>& _vertices,
     }
   }
 
-  // use the indicies to makes lists of pointers  
+  // use the indicies to makes lists of pointers
   float **v = new float*[_vertices.size()];
   float **n = NULL;
   float **t = NULL;
@@ -136,15 +136,15 @@ bool MeshObstacle::addFace(const std::vector<int>& _vertices,
       t[i] = (float*)texcoords[_texcoords[i]];
     }
   }
-  MeshFace* face = new MeshFace(this, count, v, n, t, _material, 
+  MeshFace* face = new MeshFace(this, count, v, n, t, _material,
                                 driveThrough, shootThrough);
   faces[faceCount] = face;
   faceCount++;
-  
+
   return true;
 }
 
-                            
+
 MeshObstacle::~MeshObstacle()
 {
   delete[] checkTypes;
@@ -168,7 +168,7 @@ void MeshObstacle::finalize()
   for (f = 0; f < faceCount; f++) {
     faces[f]->edges = NULL;
   }
-  
+
   // set the extents
   mins[0] = mins[1] = mins[2] = +MAXFLOAT;
   maxs[0] = maxs[1] = maxs[2] = -MAXFLOAT;
@@ -182,7 +182,7 @@ void MeshObstacle::finalize()
       }
     }
   }
-    
+
   // setup fake obstacle parameters
   pos[0] = (maxs[0] + mins[0]) / 2.0f;
   pos[1] = (maxs[1] + mins[1]) / 2.0f;
@@ -192,7 +192,7 @@ void MeshObstacle::finalize()
   size[2] = (maxs[2] - mins[2]);
   angle = 0.0f;
   ZFlip = false;
-  
+
   return;
 }
 
@@ -218,8 +218,8 @@ bool MeshObstacle::isValid() const
       return false;
     }
   }
-*/  
-  
+*/
+
   // now check the vertices
   for (int v = 0; v < vertexCount; v++) {
     for (int a = 0; a < 3; a++) {
@@ -368,7 +368,7 @@ void *MeshObstacle::pack(void *buf)
   if (isShootThrough())
     stateByte |= _SHOOT_THRU;
   buf = nboPackUByte(buf, stateByte);
-  
+
   return buf;
 }
 
@@ -376,7 +376,7 @@ void *MeshObstacle::pack(void *buf)
 void *MeshObstacle::unpack(void *buf)
 {
   int i;
-  
+
   buf = nboUnpackInt(buf, checkCount);
   checkTypes = new char[checkCount];
   checkPoints = new fvec3[checkCount];
@@ -405,7 +405,7 @@ void *MeshObstacle::unpack(void *buf)
     buf = nboUnpackFloat(buf, texcoords[i][0]);
     buf = nboUnpackFloat(buf, texcoords[i][1]);
   }
-  
+
   buf = nboUnpackInt(buf, faceCount);
   faceSize = faceCount;
   faces = new MeshFace*[faceCount];
@@ -413,7 +413,7 @@ void *MeshObstacle::unpack(void *buf)
     faces[i] = new MeshFace(this);
     buf = faces[i]->unpack(buf);
   }
-  
+
   // unpack the state byte
   unsigned char stateByte;
   buf = nboUnpackUByte(buf, stateByte);
@@ -421,9 +421,9 @@ void *MeshObstacle::unpack(void *buf)
     driveThrough = true;
   if (stateByte & _SHOOT_THRU)
     shootThrough = true;
-    
+
   finalize();
-    
+
   return buf;
 }
 
@@ -451,12 +451,12 @@ void MeshObstacle::print(std::ostream& out, int level)
     out << "# faces = " << faceCount << std::endl;
     out << "# checks = " << checkCount << std::endl;
     out << "# vertices = " << vertexCount << std::endl;
-    out << "# normals = " << normalCount << std::endl; 
+    out << "# normals = " << normalCount << std::endl;
     out << "# texcoords = " << texcoordCount << std::endl;
     out << "# mins = " << mins[0] << " " << mins[1] << " " << mins[2] << std::endl;
     out << "# maxs = " << maxs[0] << " " << maxs[1] << " " << maxs[2] << std::endl;
   }
-    
+
   int i;
   for (i = 0; i < checkCount; i++) {
     if (checkTypes[i] == CheckInside) {
@@ -468,11 +468,11 @@ void MeshObstacle::print(std::ostream& out, int level)
         << checkPoints[i][2] << " # " << i << std::endl;
   }
   for (i = 0; i < vertexCount; i++) {
-    out << "  vertex " << vertices[i][0] << " " << vertices[i][1] << " " 
+    out << "  vertex " << vertices[i][0] << " " << vertices[i][1] << " "
                        << vertices[i][2] << " # " << i << std::endl;
   }
   for (i = 0; i < normalCount; i++) {
-    out << "  normal " << normals[i][0] << " " << normals[i][1] << " " 
+    out << "  normal " << normals[i][0] << " " << normals[i][1] << " "
                        << normals[i][2] << " # " << i << std::endl;;
   }
   for (i = 0; i < texcoordCount; i++) {
@@ -485,7 +485,7 @@ void MeshObstacle::print(std::ostream& out, int level)
   }
 
   out << "end" << std::endl;
-  
+
   return;
 }
 

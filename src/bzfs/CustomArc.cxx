@@ -45,7 +45,7 @@ CustomArc::CustomArc()
   materials[Outside].texture = "boxwall";
   materials[StartFace].texture = "wall";
   materials[EndFace].texture = "wall";
-  
+
   return;
 }
 
@@ -60,7 +60,7 @@ bool CustomArc::read(const char *cmd, std::istream& input)
 {
   bool materror;
   MeshMaterial modedMat;
-  
+
   if (strcasecmp(cmd, "divisions") == 0) {
     input >> divisions;
   }
@@ -102,9 +102,9 @@ bool CustomArc::parseSideMaterials(const char* cmd, std::istream& input,
   //       as a block terminator at the BZWReader level.
   const char* sideNames[6] =
     { "top", "bottom", "inside", "outside", "startside", "endside" };
-    
+
   error = false;
-  
+
   for (int n = 0; n < 6; n++) {
     if (strcasecmp (cmd, sideNames[n]) == 0) {
       std::string line, matcmd;
@@ -123,7 +123,7 @@ bool CustomArc::parseSideMaterials(const char* cmd, std::istream& input,
       return true;
     }
   }
-  
+
   return false;
 }
 
@@ -133,31 +133,31 @@ void CustomArc::write(WorldInfo *world) const
   bool isPie = false;    // has no inside edge
   bool isCircle = false; // angle of 360 degrees
   const float minSize = 1.0e-6f; // cheezy / lazy
-  
+
   // absolute the sizes
   float sz[3];
   sz[0] = fabsf(size[0]);
   sz[1] = fabsf(size[1]);
   sz[2] = fabsf(size[2]);
-  
+
   // validity checking
   if ((sz[0] < minSize) || (sz[1] < minSize) || (sz[2] < minSize) ||
       (ratio < 0.0f) || (ratio > 1.0f)) {
     return;
   }
-  
+
   float r = rotation;
   float a = angle * (M_PI / 180.f); // convert to radians
 
   // limit angle and rotation to [0, (M_PI * 2)]
-/*  
+/*
   if (a < 0.0f) {
     // put us on the positive side
     a = a - (M_PI * 2.0f) * floorf (a / (M_PI * 2.0f));
   } else {
     a = fmodf(a, M_PI * 2.0f);
   }
-  
+
   if (a < 0.0f) {
     r = r + a;
     a = fabsf(a);
@@ -175,9 +175,9 @@ void CustomArc::write(WorldInfo *world) const
   if (fabsf (M_PI - fmodf (a + M_PI, M_PI * 2.0f)) < minSize) {
     isCircle = true;
   }
-  
+
   // FIXME - check angle vs. divisions
-  // setup the radii  
+  // setup the radii
   float inrad = sz[0] * (1.0f - ratio);
   float outrad = sz[0];
   if (inrad > outrad) {
@@ -192,13 +192,13 @@ void CustomArc::write(WorldInfo *world) const
     isPie = true;
   }
   const float squish = sz[1] / sz[0];
-  
+
   if (isPie) {
     makePie(isCircle, a, r, sz[2], outrad, squish, world);
   } else {
     makeRing(isCircle, a, r, sz[2], inrad, outrad, squish, world);
   }
-  
+
   return;
 }
 
@@ -208,21 +208,21 @@ void CustomArc::makePie(bool isCircle, float a, float r,
                         WorldInfo* world) const
 {
   int i;
-  
+
   // setup the coordinates
   std::vector<char> checkTypes;
   std::vector<cfvec3> checkPoints;
   std::vector<cfvec3> vertices;
   std::vector<cfvec3> normals;
   std::vector<cfvec2> texcoords;
-  
+
   const float astep = a / (float) divisions;
-  
+
   for (i = 0; i < (divisions + 1); i++) {
     float ang = r + (astep * (float)i);
     float cos_val = cos(ang);
     float sin_val = sin(ang);
-    
+
     // vertices and normals
     if (!isCircle || (i != divisions)) {
       cfvec3 v, n;
@@ -244,7 +244,7 @@ void CustomArc::makePie(bool isCircle, float a, float r,
         normals.push_back(n);
       }
     }
-    
+
     // texture coordinates (around the edge)
     cfvec2 t;
     t[0] = (float) i / (float) divisions;
@@ -266,7 +266,7 @@ void CustomArc::makePie(bool isCircle, float a, float r,
     texcoords.push_back(t);
   }
 
-  // the central coordinates  
+  // the central coordinates
   cfvec3 v;
   v[0] = pos[0];
   v[1] = pos[1];
@@ -283,12 +283,12 @@ void CustomArc::makePie(bool isCircle, float a, float r,
   if (!isCircle) {
     fcount = fcount + 2; // add the start and end faces
   }
-  
+
   MeshObstacle* mesh =
     new MeshObstacle(checkTypes, checkPoints, vertices, normals, texcoords,
                      fcount, driveThrough, shootThrough);
-                     
-  // now make the faces                 
+
+  // now make the faces
   int vlen, nlen;
   if (isCircle) {
     vlen = divisions * 2;
@@ -297,20 +297,20 @@ void CustomArc::makePie(bool isCircle, float a, float r,
     vlen = (divisions + 1) * 2;
     nlen = (divisions + 1);
   }
-  
+
   const int vtop = vlen + 1;
   const int vbot = vlen;
   const int tmid = ((divisions + 1) * 3);
-  
+
   std::vector<int> vlist;
   std::vector<int> nlist;
   std::vector<int> tlist;
-  
+
   for (i = 0; i < divisions; i++) {
 
 // handy macros
-#define PV(x) (((x) + (i * 2)) % vlen)  
-#define PN(x) (((x) + i) % nlen)  
+#define PV(x) (((x) + (i * 2)) % vlen)
+#define PN(x) (((x) + i) % nlen)
 #define PTO(x) ((x) + (i * 2))                     // outside edge
 #define PTC(x) (((divisions + 1) * 2) + (x) + i)   // around the disc
 #define PTCI(x) (((divisions + 1) * 3) - (x) - i - 1)
@@ -345,12 +345,12 @@ void CustomArc::makePie(bool isCircle, float a, float r,
     push4Ints(tlist, 0, tc + 0, tc + 1, 1);
     addFace(mesh, vlist, nlist, tlist, materials[EndFace]);
   }
-  
 
-  // add the mesh  
+
+  // add the mesh
   mesh->finalize();
   world->addMesh(mesh);
-                 
+
   return;
 }
 
@@ -360,7 +360,7 @@ void CustomArc::makeRing(bool isCircle, float a, float r,
                          float squish, WorldInfo* world) const
 {
   int i;
-  
+
   // setup the coordinates
   std::vector<char> checkTypes;
   std::vector<cfvec3> checkPoints;
@@ -369,12 +369,12 @@ void CustomArc::makeRing(bool isCircle, float a, float r,
   std::vector<cfvec2> texcoords;
 
   const float astep = a / (float) divisions;
-  
+
   for (i = 0; i < (divisions + 1); i++) {
     float ang = r + (astep * (float)i);
     float cos_val = cos(ang);
     float sin_val = sin(ang);
-    
+
     // vertices and normals
     if (!isCircle || (i != divisions)) {
       cfvec3 v, n;
@@ -407,7 +407,7 @@ void CustomArc::makeRing(bool isCircle, float a, float r,
         normals.push_back(n);
       }
     }
-    
+
     // texture coordinates
     cfvec2 t;
     // inside texcoord
@@ -418,18 +418,18 @@ void CustomArc::makeRing(bool isCircle, float a, float r,
     t[1] = 1.0f;
     texcoords.push_back(t);
   }
-  
+
   // setup the face count
   int fcount = (divisions * 4);
   if (!isCircle) {
     fcount = fcount + 2; // add the start and end faces
   }
-  
+
   MeshObstacle* mesh =
     new MeshObstacle(checkTypes, checkPoints, vertices, normals, texcoords,
                      fcount, driveThrough, shootThrough);
-                     
-  // now make the faces                 
+
+  // now make the faces
   int vlen, nlen;
   if (isCircle) {
     vlen = divisions * 4;
@@ -438,17 +438,17 @@ void CustomArc::makeRing(bool isCircle, float a, float r,
     vlen = (divisions + 1) * 4;
     nlen = (divisions + 1) * 2;
   }
-  
+
   std::vector<int> vlist;
   std::vector<int> nlist;
   std::vector<int> tlist;
-  
+
   for (i = 0; i < divisions; i++) {
 
 // handy macros
-#define RV(x) (((x) + (i * 4)) % vlen)  
-#define RN(x) (((x) + (i * 2)) % nlen)  
-#define RT(x) ((x) + (i * 2))  
+#define RV(x) (((x) + (i * 4)) % vlen)
+#define RN(x) (((x) + (i * 2)) % nlen)
+#define RT(x) ((x) + (i * 2))
 #define RIT(x) ((divisions + ((x)%2))*2 - ((x) + (i * 2)))
 
     // inside
@@ -487,10 +487,10 @@ void CustomArc::makeRing(bool isCircle, float a, float r,
     addFace(mesh, vlist, nlist, tlist, materials[EndFace]);
   }
 
-  // add the mesh  
+  // add the mesh
   mesh->finalize();
   world->addMesh(mesh);
-                 
+
   return;
 }
 

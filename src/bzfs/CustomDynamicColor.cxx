@@ -39,7 +39,7 @@ CustomDynamicColor::~CustomDynamicColor()
 bool CustomDynamicColor::read(const char *cmd, std::istream& input)
 {
   int channel = -1;
-  
+
   if (strcasecmp ("red", cmd) == 0) {
     channel = 0;
   }
@@ -57,23 +57,23 @@ bool CustomDynamicColor::read(const char *cmd, std::istream& input)
     return WorldFileObject::read(cmd, input);
   }
 
-  // in case WorldFileObject() at a later date  
+  // in case WorldFileObject() at a later date
   if (channel < 0) {
     std::cout << "unknown color channel" << std::endl;
     return false;
   }
-  
+
   std::string args;
   std::string command;
   std::getline(input, args);
   std::istringstream parms(args);
-  
+
   if (!(parms >> command)) {
     std::cout << "missing parameter type for "
               << cmd << " channel" << std::endl;
     return false;
   }
-  
+
   if (strcasecmp (command.c_str(), "limits") == 0) {
     float min, max;
     if (!((parms >> min) && (parms >> max))) {
@@ -85,7 +85,7 @@ bool CustomDynamicColor::read(const char *cmd, std::istream& input)
   else if (strcasecmp (command.c_str(), "sinusoid") == 0) {
     float data[3];
     if (!((parms >> data[0]) && (parms >> data[1]) && (parms >> data[2]))) {
-      std::cout << "missing sinusoid parameters for " << cmd << " channel" 
+      std::cout << "missing sinusoid parameters for " << cmd << " channel"
                 << std::endl;
       return false;
     }

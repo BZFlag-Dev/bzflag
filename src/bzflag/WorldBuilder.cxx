@@ -101,7 +101,7 @@ void* WorldBuilder::unpack(void* buf)
   if (world->waterLevel >= 0.0f) {
     buf = world->waterMaterial.unpack(buf);
   }
-  
+
   // unpack dynamic colors
   DYNCOLORMGR.clear();
   buf = DYNCOLORMGR.unpack(buf);
@@ -118,7 +118,7 @@ void* WorldBuilder::unpack(void* buf)
     switch (code) {
 
       case WorldCodeTetra: {
-      
+
         // a good double check, but a bogus length
 	if (len != WorldCodeTetraSize) {
           delete[] uncompressedWorld;
@@ -134,7 +134,7 @@ void* WorldBuilder::unpack(void* buf)
 	break;
       }
       case WorldCodeMesh: {
-      
+
         // a good double check, but a bogus length
 	if (len != WorldCodeMeshSize) {
           delete[] uncompressedWorld;

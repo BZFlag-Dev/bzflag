@@ -38,12 +38,12 @@ class MeshObstacle : public Obstacle {
                  int faceCount, bool drive, bool shoot);
 
     bool addFace (const std::vector<int>& vertices,
-                  const std::vector<int>& normals, 
+                  const std::vector<int>& normals,
                   const std::vector<int>& texcoords,
                   const MeshMaterial& material);
 
     ~MeshObstacle();
-    
+
     void finalize();
 
     enum CheckType {
@@ -74,7 +74,7 @@ class MeshObstacle : public Obstacle {
                       const float* pos2, float azimuth2,
                       float halfWidth, float halfBreadth,
                       float height, float* normal) const;
-				      
+
     const char *getCheckTypes() const;
     const fvec3 *getCheckPoints() const;
     const fvec3 *getVertices() const;
@@ -86,11 +86,11 @@ class MeshObstacle : public Obstacle {
     void *pack(void*);
     void *unpack(void*);
     int packSize();
-    
+
     void print(std::ostream& out, int level);
-    
+
   private:
-  
+
     static const char* typeName;
     int checkCount;
     char* checkTypes;
@@ -103,7 +103,7 @@ class MeshObstacle : public Obstacle {
     fvec2* texcoords;
     int faceCount, faceSize;
     MeshFace** faces;
-    
+
     fvec3 mins, maxs;
 };
 

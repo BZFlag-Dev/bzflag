@@ -280,7 +280,7 @@ SceneDatabase*		SceneDatabaseBuilder::make(const World* world)
     addBase(db, *baseScan);
     ++baseScan;
   }
-  
+
   // add the water level node
   addWaterLevel(db, world);
 
@@ -294,12 +294,12 @@ void SceneDatabaseBuilder::addWaterLevel(SceneDatabase* db,
   const float level = world->getWaterLevel();
   plane[3] = level;
 
-  // don't draw it if it isn't active  
+  // don't draw it if it isn't active
   if (level < 0.0f) {
     return;
   }
 
-  // setup the vertex and texture coordinates  
+  // setup the vertex and texture coordinates
   float size = BZDB.eval(StateDatabase::BZDB_WORLDSIZE);
   GLfloat3Array v(4);
   GLfloat3Array n(0);
@@ -309,19 +309,19 @@ void SceneDatabaseBuilder::addWaterLevel(SceneDatabase* db,
   v[0][2] = v[1][2] = v[2][2] = v[3][2] = level;
   t[0][0] = t[0][1] = t[1][1] = t[3][0] = 0.0f;
   t[1][0] = t[2][0] = t[2][1] = t[3][1] = 2.0f;
-  
+
   MeshPolySceneNode* node =
     new MeshPolySceneNode(plane, v, n, t);
-    
-  // setup the material  
+
+  // setup the material
   const MeshMaterial* mat = world->getWaterMaterial();
   MeshSceneNodeGenerator::setupNodeMaterial(node, mat);
 
   db->addStaticNode(node);
-    
+
   return;
 }
-						
+
 void			SceneDatabaseBuilder::addWall(SceneDatabase* db,
 						const WallObstacle& o)
 {
@@ -521,7 +521,7 @@ void			SceneDatabaseBuilder::addTetra(SceneDatabase* db,
       node->setLightedModulateColor(color);
       node->setUseColorTexture(false);
     }
-    
+
     node->setMaterial(tetraMaterial);
     node->setTexture(tetraTexture);
     int texmat = o.getTextureMatrix(realPart);

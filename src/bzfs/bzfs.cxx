@@ -3527,7 +3527,7 @@ static void handleCommand(int t, const void *rawbuf)
 	  InBounds = false;
 	} else if ( (state.pos[0] >= worldSize*0.5f + positionFudge) || (state.pos[0] <= -worldSize*0.5f - positionFudge)) {
 	  std::cout << "x position (" << state.pos[0] << ") is out of bounds (" << worldSize * 0.5f << " + " << positionFudge << ")" << std::endl;
-    	  InBounds = false;
+ 	  InBounds = false;
 	}
 
 	static const float burrowFudge = 1.0f; /* linear distance */
@@ -3948,10 +3948,10 @@ int main(int argc, char **argv)
   if (clOptions->filterFilename.length() != 0) {
     if (clOptions->filterChat || clOptions->filterCallsigns) {
       if (debugLevel >= 1) {
- 	unsigned int count;
- 	DEBUG1("Loading %s\n", clOptions->filterFilename.c_str());
- 	count = clOptions->filter.loadFromFile(clOptions->filterFilename, true);
- 	DEBUG1("Loaded %u words\n", count);
+	unsigned int count;
+	DEBUG1("Loading %s\n", clOptions->filterFilename.c_str());
+	count = clOptions->filter.loadFromFile(clOptions->filterFilename, true);
+	DEBUG1("Loaded %u words\n", count);
       } else {
 	clOptions->filter.loadFromFile(clOptions->filterFilename, false);
       }
@@ -4274,9 +4274,9 @@ int main(int argc, char **argv)
 		pollAction = action;
 	      // a poll that exists and is closed has ended successfully
 	      if(action != "flagreset")
-	   	sprintf(message, "The poll is now closed and was successful.  %s is scheduled to be %s.", target.c_str(), pollAction.c_str());
+		sprintf(message, "The poll is now closed and was successful.  %s is scheduled to be %s.", target.c_str(), pollAction.c_str());
 	      else
-	   	sprintf(message, "The poll is now closed and was successful.  Currently unused flags are scheduled to be reset.");
+		sprintf(message, "The poll is now closed and was successful.  Currently unused flags are scheduled to be reset.");
 	      sendMessage(ServerPlayer, AllPlayers, message);
 	      announcedClosure = true;
 	    }
@@ -4324,9 +4324,9 @@ int main(int argc, char **argv)
 		pollAction = action;
 	      }
 	      if (action != "flagreset")
-	   	sprintf(message, "%s has been %s", target.c_str(), pollAction.c_str());
+		sprintf(message, "%s has been %s", target.c_str(), pollAction.c_str());
 	      else
-	   	sprintf(message, "All unused flags have now been reset.");
+		sprintf(message, "All unused flags have now been reset.");
 	      sendMessage(ServerPlayer, AllPlayers, message);
 
 	      /* regardless of whether or not the player was found, if the poll
@@ -4362,7 +4362,7 @@ int main(int argc, char **argv)
 		  sprintf(message, "/poll %s", action.c_str());
 		  removePlayer(v, message);
 		}
-  	      } else if (action == "set") {
+	      } else if (action == "set") {
 		CMDMGR.run(string_util::format("/set %s", target.c_str()));
 	      } else if (action == "flagreset") {
 		CMDMGR.run("flag reset unused");

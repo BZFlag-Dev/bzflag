@@ -94,7 +94,7 @@ ShotPath *findWorstBullet(float &minDistance)
       if (shot->getFlag() == Flags::InvisibleBullet && myTank->getFlag() != Flags::Seer)
         continue; //Theoretically Roger could triangulate the sound
       if (player[t]->getFlag() == Flags::PhantomZone && player[t]->isFlagActive() &&
-  		!(myTank->getFlag() == Flags::PhantomZone && myTank->isFlagActive()))
+		!(myTank->getFlag() == Flags::PhantomZone && myTank->isFlagActive()))
 	continue;
       if (shot->getFlag() == Flags::Laser && myTank->getFlag() == Flags::Cloaking)
 	continue; //cloaked tanks can't die from lasers
@@ -285,19 +285,19 @@ RemotePlayer *findBestTarget()
     &&  (myTank->validTeamTarget(player[t]))) {
 
       if((player[t]->getFlag() == Flags::PhantomZone && player[t]->isFlagActive() &&
-  		(!(myTank->getFlag() == Flags::PhantomZone && myTank->isFlagActive()) ||
+		(!(myTank->getFlag() == Flags::PhantomZone && myTank->isFlagActive()) ||
 					(myTank->getFlag() != Flags::ShockWave && myTank->getFlag() != Flags::SuperBullet))) ||
 		 (player[t]->getFlag() == Flags::Cloaking && myTank->getFlag() == Flags::Laser))
         continue;
 
       //perform a draft that has us chase the proposed opponent if they have our flag
       if (World::getWorld()->allowTeamFlags() &&
-  	  (myTank->getTeam() == RedTeam && player[t]->getFlag() == Flags::RedTeam) ||
-  	  (myTank->getTeam() == GreenTeam && player[t]->getFlag() == Flags::GreenTeam) ||
-  	  (myTank->getTeam() == BlueTeam && player[t]->getFlag() == Flags::BlueTeam) ||
+	  (myTank->getTeam() == RedTeam && player[t]->getFlag() == Flags::RedTeam) ||
+	  (myTank->getTeam() == GreenTeam && player[t]->getFlag() == Flags::GreenTeam) ||
+	  (myTank->getTeam() == BlueTeam && player[t]->getFlag() == Flags::BlueTeam) ||
 				(myTank->getTeam() == PurpleTeam && player[t]->getFlag() == Flags::PurpleTeam)) {
 	target = player[t];
-  	break;
+	break;
       }
 
       float d = TargetingUtils::getTargetDistance(pos, player[t]->getPosition());
@@ -567,7 +567,7 @@ bool fireAtTank()
 
 	  if ((player[t]->getFlag() == Flags::PhantomZone)
 	  &&  (player[t]->isFlagActive()) &&
-  	(!(myTank->getFlag() == Flags::PhantomZone && myTank->isFlagActive()) ||
+	(!(myTank->getFlag() == Flags::PhantomZone && myTank->isFlagActive()) ||
 	  (myTank->getFlag() != Flags::ShockWave && myTank->getFlag() != Flags::SuperBullet)))
 	    continue;
 

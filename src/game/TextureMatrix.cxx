@@ -183,7 +183,7 @@ void TextureMatrix::setRotateParams (float freq, float uCenter, float vCenter)
 }
 
 
-void TextureMatrix::setScaleParams (float uFreq, float vFreq, 
+void TextureMatrix::setScaleParams (float uFreq, float vFreq,
                                     float uCenter, float vCenter,
                                     float _uScale, float _vScale)
 {
@@ -219,17 +219,17 @@ void TextureMatrix::update (float t)
   matrix[(3*4) + 0] = (c * (ru - tu)) - (s * (rv - tv)) - ru;
   matrix[(3*4) + 1] = (s * (ru - tu)) + (c * (rv - tv)) - rv;
 
-/*  
+/*
   matrix[(3*4) + 0] -= fmodf(t * uShiftFreq, 1.0f);
   matrix[(3*4) + 1] -= fmodf(t * vShiftFreq, 1.0f);
 
-  
+
   float uScale = 1.0f;
   if (uScaleFreq != 0.0f) {
     uScale = fmodf(t * uScaleFreq, 1.0f);
     uScale = (1.5f - (0.5f * cos ((M_PI * 2.0f) * uScale))) / uScale;
   }
-  
+
   float vScale = 1.0f;
   if (vScaleFreq != 0.0f) {
     vScale = fmodf(t * vScaleFreq, 1.0f);
@@ -243,7 +243,7 @@ void TextureMatrix::update (float t)
   matrix[(1*4) + 1] = vScale;
   matrix[(3*4) + 0] = (uScale * (uScaleCenter - uShift)) - uScaleCenter;
   matrix[(3*4) + 1] = (vScale * (vScaleCenter - vShift)) - vScaleCenter;
-*/  
+*/
   return;
 }
 
@@ -301,9 +301,9 @@ void TextureMatrix::print(std::ostream& out, int /*level*/)
   if ((uShiftFreq != 0.0f) || (vShiftFreq != 0.0f)) {
     out << "  shift " << uShiftFreq << " " << vShiftFreq << std::endl;
   }
-  if ((rotateFreq != 0.0f) || 
+  if ((rotateFreq != 0.0f) ||
       (uRotateCenter != 0.0f) || (vRotateCenter != 0.0f)) {
-    out << "  shift " << rotateFreq << " " 
+    out << "  shift " << rotateFreq << " "
                       << uRotateCenter << " " << vRotateCenter << std::endl;
   }
   if ((uScaleFreq != 0.0f) || (vScaleFreq != 0.0f) ||
@@ -313,9 +313,9 @@ void TextureMatrix::print(std::ostream& out, int /*level*/)
                       << uScale << " " << vScale << " "
                       << uScaleCenter << " " << vScaleCenter << std::endl;
   }
-  
-  out << "end" << std::endl << std::endl;  
-  
+
+  out << "end" << std::endl << std::endl;
+
   return;
 }
 

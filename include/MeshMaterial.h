@@ -27,17 +27,17 @@ class MeshMaterial {
   public:
     MeshMaterial();
     MeshMaterial(const MeshMaterial& material);
-    
+
     bool operator==(const MeshMaterial& material);
     MeshMaterial& operator=(const MeshMaterial& material);
-    
+
     void reset();
     bool copyDiffs(const MeshMaterial& moded, const MeshMaterial& orig);
-    
+
     void *pack(void *);
     void *unpack(void *);
     int packSize();
-    
+
     void print(std::ostream& out, int level);
 
     // data

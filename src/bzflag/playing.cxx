@@ -2671,7 +2671,7 @@ static bool		gotBlowedUp(BaseLocalPlayer* tank,
 	Player *killerPlayer = lookupPlayer(killer);
 	if (!killerPlayer) {
 	  blowedUpNotice = "Killed by the server";
-	} else { 
+	} else {
 
 	  // matching the team-display style of other kill messages
 	  TeamColor team = killerPlayer->getTeam();
@@ -3144,9 +3144,9 @@ static void		setRobotTarget(RobotPlayer* robot)
         continue;
 
       if (World::getWorld()->allowTeamFlags() &&
-   	  (robot->getTeam() == RedTeam && player[j]->getFlag() == Flags::RedTeam) ||
-   	  (robot->getTeam() == GreenTeam && player[j]->getFlag() == Flags::GreenTeam) ||
-   	  (robot->getTeam() == BlueTeam && player[j]->getFlag() == Flags::BlueTeam) ||
+	  (robot->getTeam() == RedTeam && player[j]->getFlag() == Flags::RedTeam) ||
+	  (robot->getTeam() == GreenTeam && player[j]->getFlag() == Flags::GreenTeam) ||
+	  (robot->getTeam() == BlueTeam && player[j]->getFlag() == Flags::BlueTeam) ||
 	  (robot->getTeam() == PurpleTeam && player[j]->getFlag() == Flags::PurpleTeam)) {
 	bestTarget = player[j];
 	break;

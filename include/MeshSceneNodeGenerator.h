@@ -23,7 +23,7 @@ class MeshPolySceneNode;
 class MeshSceneNodeGenerator {
 
   friend class SceneDatabaseBuilder;
-  
+
   public:
     ~MeshSceneNodeGenerator();
     WallSceneNode* getNextNode(float, float, bool);
@@ -33,7 +33,7 @@ class MeshSceneNodeGenerator {
     MeshSceneNodeGenerator(const MeshObstacle*);
 
   private:
-    bool makeTexcoords(const float* plane, 
+    bool makeTexcoords(const float* plane,
                        const GLfloat3Array& vertices,
                        GLfloat2Array& texcoords);
     int faceNumber;

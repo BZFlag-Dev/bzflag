@@ -73,7 +73,7 @@ class TetraBuilding : public Obstacle {
     int            getTextureMatrix(int plane) const;
     const float*   getTexCoords(int plane, int vertex) const;
     const float*   getNormals(int plane, int vertex) const;
-    
+
     void *pack(void*);
     void *unpack(void*);
     int packSize();
@@ -99,7 +99,7 @@ class TetraBuilding : public Obstacle {
 
     /** return true if test[testNumber] was a separation axis */
     bool checkTest(int testNumber) const;
-    
+
     // static data for tank collision tests
     typedef struct {
       float normal[3];

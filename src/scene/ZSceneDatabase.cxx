@@ -228,7 +228,7 @@ SceneNode* ZSceneIterator::getNextLight()
   return NULL;
 }
 
-void     		ZSceneIterator::drawCuller()
+void  		ZSceneIterator::drawCuller()
 {
   if (octree) {
     octree->draw ();

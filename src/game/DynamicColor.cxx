@@ -140,7 +140,7 @@ DynamicColor::DynamicColor()
 {
   // setup the channels
   for (int c = 0; c < 4; c++) {
-    // the parameters are setup so that all channels 
+    // the parameters are setup so that all channels
     // are at 1.0f, and that there are no variations
     color[c] = 1.0f;
     channels[c].minValue = 0.0f;
@@ -159,7 +159,7 @@ DynamicColor::~DynamicColor()
 void DynamicColor::finalize()
 {
   const ChannelParams& p = channels[3]; // the alpha channel
-  if ((p.sinusoids.size() == 0) && 
+  if ((p.sinusoids.size() == 0) &&
       (p.clampUps.size() == 0) &&
       (p.clampDowns.size() == 0)) {
     // not using any functions
@@ -195,10 +195,10 @@ void DynamicColor::setLimits(int channel, float min, float max)
   else if (max > 1.0f) {
     max = 1.0f;
   }
-  
+
   channels[channel].minValue = min;
   channels[channel].maxValue = max;
-  
+
   return;
 }
 
@@ -252,7 +252,7 @@ void DynamicColor::update (float t)
     unsigned int i;
     bool clampUp = false;
     bool clampDown = false;
-    
+
     // check for active clampUp
     for (i = 0; i < channel.clampUps.size(); i++) {
       const clampParams& clamp = channel.clampUps[i];
@@ -266,7 +266,7 @@ void DynamicColor::update (float t)
         break;
       }
     }
-      
+
     // check for active clampDown
     for (i = 0; i < channel.clampDowns.size(); i++) {
       const clampParams& clamp = channel.clampDowns[i];
@@ -283,7 +283,7 @@ void DynamicColor::update (float t)
 
     // the amount of 'max' in the resultant channel's value
     float factor = 1.0f;
-    
+
     // check the clamps
     if (clampUp && clampDown) {
       factor = 0.5f;
@@ -305,12 +305,12 @@ void DynamicColor::update (float t)
       factor = 0.5f + (0.5f * value);
       if (factor < 0.0f) {
         factor = 0.0f;
-      } 
+      }
       else if (factor > 1.0f) {
         factor = 1.0f;
       }
     }
-    
+
     color[c] = (channel.minValue * (1.0f - factor)) +
                (channel.maxValue * factor);
   }
@@ -415,35 +415,35 @@ int DynamicColor::packSize()
 void DynamicColor::print(std::ostream& out, int /*level*/)
 {
   const char *colorStrings[4] = { "red", "green", "blue", "alpha" };
-    
+
   out << "dynamicColor" << std::endl;
   for (int c = 0; c < 4; c++) {
     const char *colorStr = colorStrings[c];
     const ChannelParams& p = channels[c];
     if ((p.minValue != 0.0f) || (p.maxValue != 1.0f)) {
-      out << "  " << colorStr << " limits " 
+      out << "  " << colorStr << " limits "
           << p.minValue << " " << p.maxValue << std::endl;
     }
     unsigned int i;
     for (i = 0; i < p.sinusoids.size(); i++) {
       const sinusoidParams& f = p.sinusoids[i];
-      out << "  " << colorStr << " sinusoid " 
+      out << "  " << colorStr << " sinusoid "
           << f.period << " " << f.offset << " " << f.weight << std::endl;
     }
     for (i = 0; i < p.clampUps.size(); i++) {
       const clampParams& f = p.clampUps[i];
-      out << "  " << colorStr << " clampup " 
+      out << "  " << colorStr << " clampup "
           << f.period << " " << f.offset << " " << f.width << std::endl;
     }
     for (i = 0; i < p.clampDowns.size(); i++) {
       const clampParams& f = p.clampDowns[i];
-      out << "  " << colorStr << " clampdown " 
+      out << "  " << colorStr << " clampdown "
           << f.period << " " << f.offset << " " << f.width << std::endl;
     }
   }
 
   out << "end" << std::endl << std::endl;
-  
+
   return;
 }
 

@@ -34,9 +34,9 @@ MeshFace::MeshFace(MeshObstacle* _mesh)
   return;
 }
 
-                   
+
 MeshFace::MeshFace(MeshObstacle* _mesh, int _vertexCount,
-                   float** _vertices, float** _normals,   
+                   float** _vertices, float** _normals,
                    float** _texcoords, const MeshMaterial& _material,
                    bool drive, bool shoot)
 {
@@ -48,9 +48,9 @@ MeshFace::MeshFace(MeshObstacle* _mesh, int _vertexCount,
   material = _material;
   driveThrough = drive;
   shootThrough = shoot;
-  
+
   finalize();
-  
+
   return;
 }
 
@@ -60,7 +60,7 @@ void MeshFace::finalize()
   float maxCrossSqr = 0.0f;
   float bestCross[3] = { 0.0f, 0.0f, 0.0f };
   int bestSet[3] = { -1, -1, -1 };
-  
+
   // find the best vertices for making the plane
   int i, j, k;
   for (i = 0; i < (vertexCount - 2); i++) {
@@ -81,13 +81,13 @@ void MeshFace::finalize()
       }
     }
   }
-  
+
   if (maxCrossSqr < +1.0e-20f) {
     DEBUG1("invalid mesh face\n");
     print(std::cerr, 3);
     vertexCount = 0;
     return;
-  } 
+  }
 
   // make the plane
   float scale = 1.0f / sqrtf (maxCrossSqr);
@@ -97,7 +97,7 @@ void MeshFace::finalize()
   p[1] = bestCross[1] * scale;
   p[2] = bestCross[2] * scale;
   p[3] = -((p[0] * vert[0]) + (p[1] * vert[1]) + (p[2] * vert[2]));
-  
+
   // see if the whole face is convex
   int v, a;
   for (v = 0; v < vertexCount; v++) {
@@ -113,7 +113,7 @@ void MeshFace::finalize()
       return;
     }
   }
-  
+
   // setup extents
   mins[0] = mins[1] = mins[2] = +MAXFLOAT;
   maxs[0] = maxs[1] = maxs[2] = -MAXFLOAT;
@@ -127,7 +127,7 @@ void MeshFace::finalize()
       }
     }
   }
-  
+
   // setup fake obstacle parameters
   pos[0] = (maxs[0] + mins[0]) / 2.0f;
   pos[1] = (maxs[1] + mins[1]) / 2.0f;
@@ -137,7 +137,7 @@ void MeshFace::finalize()
   size[2] = (maxs[2] - mins[2]);
   angle = 0.0f;
   ZFlip = false;
-  
+
   return;
 }
 
@@ -403,9 +403,9 @@ void *MeshFace::unpack(void *buf)
   }
   // material
   buf = material.unpack(buf);
-  
+
   finalize();
-  
+
   return buf;
 }
 
@@ -417,12 +417,12 @@ int MeshFace::packSize()
   fullSize += sizeof(int) * vertexCount;
   if (useNormals()) {
     fullSize += sizeof(int) * vertexCount;
-  }    
+  }
   if (useTexcoords()) {
     fullSize += sizeof(int) * vertexCount;
-  }    
+  }
   fullSize += material.packSize();
-  
+
   return fullSize;
 }
 
@@ -431,12 +431,12 @@ void MeshFace::print(std::ostream& out, int level)
 {
   int i;
   out << "  face" << std::endl;
-  
+
   if (level > 1) {
     out << "  # plane normal = " << plane[0] << " " << plane[1] << " "
                                  << plane[2] << " " << plane[3] << std::endl;
   }
-  
+
   out << "    vertices";
   for (i = 0; i < vertexCount; i++) {
     int index = (fvec3*)vertices[i] - mesh->getVertices();
@@ -479,11 +479,11 @@ void MeshFace::print(std::ostream& out, int level)
     }
     out << std::endl;
   }
-  
+
   material.print(out, level);
-  
+
   out << "  endface" << std::endl;
-  
+
   return;
 }
 

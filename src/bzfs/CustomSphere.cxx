@@ -48,7 +48,7 @@ CustomSphere::~CustomSphere()
 bool CustomSphere::read(const char *cmd, std::istream& input)
 {
   bool materror;
-  
+
   if (strcasecmp(cmd, "divisions") == 0) {
     input >> divisions;
   }
@@ -81,24 +81,24 @@ void CustomSphere::write(WorldInfo *world) const
   float sz[3];
   const float minSize = 1.0e-6f; // cheezy / lazy
 
-  // absolute the sizes  
+  // absolute the sizes
   sz[0] = fabsf(size[0]);
   sz[1] = fabsf(size[1]);
   sz[2] = fabsf(size[2]);
-  
+
   // validity checking
   if ((divisions < 1) ||
       (sz[0] < minSize) || (sz[1] < minSize) || (sz[2] < minSize)) {
     return;
   }
-  
+
   // setup the coordinates
   std::vector<char> checkTypes;
   std::vector<cfvec3> checkPoints;
   std::vector<cfvec3> vertices;
   std::vector<cfvec3> normals;
   std::vector<cfvec2> texcoords;
-  
+
   // the center vertices
   v[0] = pos[0];
   v[1] = pos[1];
@@ -125,7 +125,7 @@ void CustomSphere::write(WorldInfo *world) const
     for (j = 0; j < (4 * (i + 1)); j++) {
       float h_angle = ((M_PI * 2.0f) *
                       (float)j / (float)(4 * (i + 1)));
-      float v_angle = ((M_PI / 2.0f) * 
+      float v_angle = ((M_PI / 2.0f) *
                       (float)(divisions - i - 1) / (float)(divisions));
       float delta[3];
       delta[0] = sz[0] * (cos(h_angle) * cos(v_angle));
@@ -166,7 +166,7 @@ void CustomSphere::write(WorldInfo *world) const
       }
     }
   }
-  
+
   // the closing strip of texture coordinates
 //  const int texStripOffset = (2 * ringOffset) + (divisions * 4) + 1;
   const int texStripOffset = texcoords.size();
@@ -188,7 +188,7 @@ void CustomSphere::write(WorldInfo *world) const
   }
 
   // add the checkpoint (one is sufficient)
-  
+
   v[0] = pos[0];
   v[1] = pos[1];
   v[2] = pos[2];
@@ -200,7 +200,7 @@ void CustomSphere::write(WorldInfo *world) const
   MeshObstacle* mesh =
     new MeshObstacle(checkTypes, checkPoints, vertices, normals, texcoords,
                      faceCount, driveThrough, shootThrough);
-                     
+
   // add the faces to the mesh
   std::vector<int> vlist;
   std::vector<int> nlist;
@@ -208,7 +208,7 @@ void CustomSphere::write(WorldInfo *world) const
 
   int k = (divisions - 1);
   const int ringOffset = 1 + (((k*k)+k)*2);
-  
+
   for (q = 0; q < 4; q++) {
     for (i = 0; i < divisions; i++) {
       for (j = 0; j < (i + 1); j++) {
@@ -231,21 +231,21 @@ void CustomSphere::write(WorldInfo *world) const
         } else {
           a = 0;
         }
-        
+
         // setup 'b'
         b = 1 + (((i*i)+i)*2) + (q*(i+1)) + j;
-        
+
         // setup 'c'
         if (lastStrip) {
           c = 1 + (((i*i)+i)*2);
         } else {
           c = b + 1;
         }
-        
+
         // setup 'd' for the down-pointing triangle
         int k = (i + 1);
         d = 1 + (((k*k)+k)*2) + (q*(k+1)) + (j + 1);
-        
+
 
         // top hemisphere
         a = a * 2;
@@ -270,7 +270,7 @@ void CustomSphere::write(WorldInfo *world) const
           ta = texStripOffset + (i * 2);
           tc = texStripOffset + ((i + 1) * 2);
         }
-        
+
         push3Ints(vlist, a, b, c);
         if (useNormals) push3Ints(nlist, a, b, c);
         push3Ints(tlist, ta, b, tc);
@@ -306,11 +306,11 @@ void CustomSphere::write(WorldInfo *world) const
       }
     }
   }
-  
-  // add the mesh  
+
+  // add the mesh
   mesh->finalize();
   world->addMesh(mesh);
-  
+
   return;
 }
 

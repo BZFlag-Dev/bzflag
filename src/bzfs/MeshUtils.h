@@ -60,8 +60,8 @@ static inline void addFace (MeshObstacle* mesh,
   normalsList.clear();
   texcoordsList.clear();
   return;
-}                     
-                     
+}
+
 
 #endif  /* __MESH_UTILS_H__ */
 

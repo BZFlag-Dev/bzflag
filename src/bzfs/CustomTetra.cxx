@@ -179,7 +179,7 @@ void CustomTetra::write(WorldInfo *world) const
                   useColor, colors,
                   useNormals, normals,
                   useTexCoords, texCoords,
-                  textureMatrices, textures, 
+                  textureMatrices, textures,
                   driveThrough, shootThrough);
 }
 

@@ -658,7 +658,7 @@ bool testRectInRect(const float* p1, float angle1, float dx1, float dy1,
 
 
 // FIXME - there's no really good reason to finish this,
-//         but I will anyways, might make the culling 
+//         but I will anyways, might make the culling
 //         0.05% more efficent.
 // return true if polygon touches the axis aligned box
 bool testPolygonInAxisBox(int pointCount, const float (*points)[3],

@@ -649,7 +649,7 @@ bool			World::writeWorld(std::string filename)
       out << "end" << std::endl << std::endl;
     }
   }
-  
+
   // Write water level
   {
     if (waterLevel >= 0.0f) {
@@ -659,7 +659,7 @@ bool			World::writeWorld(std::string filename)
       out << "end" << std::endl;
     }
   }
-  
+
   // Write dynamic colors
   DYNCOLORMGR.print(out, 1);
 

@@ -119,7 +119,7 @@ void handlePartCmd(GameKeeper::Player *playerData, const char *message)
   sendMessage(ServerPlayer, AllPlayers, message2.c_str());
 
   // now to kick the player
-  int t = playerData->getIndex(); 
+  int t = playerData->getIndex();
   removePlayer(t, message + 6);
 }
 
@@ -1602,7 +1602,7 @@ void handlePollCmd(GameKeeper::Player *playerData, const char *message)
 
     if ((cmd =="set") && (clOptions->disableSet)) {
 	sprintf(reply,"%s, /poll set is not available on this server", callsign.c_str());
-   	sendMessage(ServerPlayer, t, reply);
+	sendMessage(ServerPlayer, t, reply);
 	return;
 	}
     if ((cmd =="flagreset") && (clOptions->disableFlagReset)) {

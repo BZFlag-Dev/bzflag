@@ -374,7 +374,7 @@ int WallSceneNode::splitWall(const GLfloat* splitPlane,
   const float fudgeFactor = 0.1f;
   const unsigned char BACK_SIDE = (1 << 0);
   const unsigned char FRONT_SIDE = (1 << 1);
-  
+
   // arrays for tracking each vertex's side
   // and distance from the splitting plane
   // (assuming stack allocation with be faster then heap, might be wrong)
@@ -391,7 +391,7 @@ int WallSceneNode::splitWall(const GLfloat* splitPlane,
     array = staticArray;
     dists = staticDists;
   }
-  
+
   // determine on which side of the plane each point lies
   int bothCount = 0;
   int backCount = 0;
@@ -417,7 +417,7 @@ int WallSceneNode::splitWall(const GLfloat* splitPlane,
     dists[i] = d; // save for later
   }
 
-  // see if we need to split  
+  // see if we need to split
   if ((frontCount == 0) || (frontCount == bothCount)) {
     if (count > staticSize) {
       delete[] array;
@@ -425,7 +425,7 @@ int WallSceneNode::splitWall(const GLfloat* splitPlane,
     }
     return -1; // node is on the back side
   }
-  
+
   if ((backCount == 0) || (backCount == bothCount)) {
     if (count > staticSize) {
       delete[] array;
@@ -438,7 +438,7 @@ int WallSceneNode::splitWall(const GLfloat* splitPlane,
   int firstFront = -1, firstBack = -1;
 
   for (i = 0; i < count; i++) {
-    
+
     const int next = (i + 1) % count; // the next index
 
     if (array[next] & FRONT_SIDE) {
@@ -452,8 +452,8 @@ int WallSceneNode::splitWall(const GLfloat* splitPlane,
       }
     }
   }
-  
-  // get the last old front and back points  
+
+  // get the last old front and back points
   int lastFront = (firstFront + frontCount - 1) % count;
   int lastBack = (firstBack + backCount - 1) % count;
 
@@ -510,7 +510,7 @@ int WallSceneNode::splitWall(const GLfloat* splitPlane,
     memcpy(uvFront[frontIndex], texcoords[i], sizeof(GLfloat[2]));
     frontIndex++;
   }
-  
+
   // fill in the old back side vertices
   const int endBack = (lastBack + 1) % count;
   for (i = firstBack; i != endBack; i = (i + 1) % count) {
@@ -518,17 +518,17 @@ int WallSceneNode::splitWall(const GLfloat* splitPlane,
     memcpy(uvBack[backIndex], texcoords[i], sizeof(GLfloat[2]));
     backIndex++;
   }
-  
+
   // make new nodes
   front = new PolyWallSceneNode(vertexFront, uvFront);
   back = new PolyWallSceneNode(vertexBack, uvBack);
-  
+
   // free the arrays, if required
   if (count > staticSize) {
     delete[] array;
     delete[] dists;
   }
-  
+
   return 0; // generated new front and back nodes
 }
 
@@ -548,7 +548,7 @@ void WallSceneNode::splitEdge(float d1, float d2,
   p[0] = p1[0] + (t1 * (p2[0] - p1[0]));
   p[1] = p1[1] + (t1 * (p2[1] - p1[1]));
   p[2] = p1[2] + (t1 * (p2[2] - p1[2]));
-  
+
   // compute texture coordinate
   uv[0] = uv1[0] + (t1 * (uv2[0] - uv1[0]));
   uv[1] = uv1[1] + (t1 * (uv2[1] - uv1[1]));

@@ -37,7 +37,7 @@ class MeshFace : public Obstacle {
              float** _texcoords, const MeshMaterial& _material,
              bool drive, bool shoot);
     ~MeshFace();
-    
+
     void finalize();
 
     const char* getType() const;
@@ -63,7 +63,7 @@ class MeshFace : public Obstacle {
                       const float* pos2, float azimuth2,
                       float halfWidth, float halfBreadth,
                       float height, float* normal) const;
-                      
+
     int getVertexCount() const;
     bool useNormals() const;
     bool useTexcoords() const;
@@ -72,16 +72,16 @@ class MeshFace : public Obstacle {
     const float *getTexcoord(int index) const;
     const float *getPlane() const;
     const MeshMaterial *getMaterial() const;
-				      
+
     void *pack(void*);
     void *unpack(void*);
     int packSize();
-    
+
     void print(std::ostream& out, int level);
 
   private:
     static const char* typeName;
-    
+
     class MeshObstacle* mesh;
     int vertexCount;
     float** vertices;

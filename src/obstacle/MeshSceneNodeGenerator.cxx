@@ -62,14 +62,14 @@ WallSceneNode* MeshSceneNodeGenerator::getNextNode(float /*uRepeats*/,
   tEdge[0] = tCorner[0] - base[0];
   tEdge[1] = tCorner[1] - base[1];
   tEdge[2] = tCorner[2] - base[2];
-  
+
   // vertices
   const int vertexCount = face->getVertexCount();
   GLfloat3Array vertices(vertexCount);
   for (i = 0; i < vertexCount; i++) {
     memcpy (vertices[i], face->getVertex(i), sizeof(float[3]));
   }
-  
+
   // normals
   int normalCount = 0;
   if (face->useNormals()) {
@@ -79,7 +79,7 @@ WallSceneNode* MeshSceneNodeGenerator::getNextNode(float /*uRepeats*/,
   for (i = 0; i < normalCount; i++) {
     memcpy (normals[i], face->getNormal(i), sizeof(float[3]));
   }
-  
+
   // texcoords
   GLfloat2Array texcoords(vertexCount);
   if (face->useTexcoords()) {
@@ -92,19 +92,19 @@ WallSceneNode* MeshSceneNodeGenerator::getNextNode(float /*uRepeats*/,
 
   MeshPolySceneNode* node =
     new MeshPolySceneNode(face->getPlane(), vertices, normals, texcoords);
-    
+
   const MeshMaterial* mat = face->getMaterial();
   setupNodeMaterial(node, mat);
-  
+
   faceNumber++;
-  
+
   return node;
 }
 
 
 void MeshSceneNodeGenerator::setupNodeMaterial(MeshPolySceneNode* node,
                                                const MeshMaterial* mat)
-{    
+{
   TextureManager &tm = TextureManager::instance();
   OpenGLMaterial glMaterial(mat->specular, mat->emission, mat->shininess);
 
@@ -123,7 +123,7 @@ void MeshSceneNodeGenerator::setupNodeMaterial(MeshPolySceneNode* node,
 
   // NOTE: the diffuse color is used, and not the ambient color
   //       could use the ambient color for non-lighted,and diffuse
-  //       for lighted 
+  //       for lighted
   const DynamicColor* dyncol = DYNCOLORMGR.getColor(mat->dynamicColor);
   const GLfloat* dc = dyncol->getColor();
   node->setDynamicColor(dc);
@@ -132,7 +132,7 @@ void MeshSceneNodeGenerator::setupNodeMaterial(MeshPolySceneNode* node,
   node->setLightedColor(mat->diffuse);
   node->setLightedModulateColor(mat->diffuse);
   node->setMaterial(glMaterial);
-  node->setTexture(faceTexture);  
+  node->setTexture(faceTexture);
   if (mat->useColorOnTexture || !gotSpecifiedTexture) {
     // modulate with the color if asked to, or
     // if the specified texture was not available
@@ -142,7 +142,7 @@ void MeshSceneNodeGenerator::setupNodeMaterial(MeshPolySceneNode* node,
   }
   node->setTextureMatrix(mat->textureMatrix);
 
-  // deal with the blending setting 
+  // deal with the blending setting
   bool alpha = false;
   const ImageInfo& imageInfo = tm.getInfo(faceTexture);
   if (((dc != NULL) && dyncol->canHaveAlpha()) || // FIXME - don't include color here?
@@ -150,7 +150,7 @@ void MeshSceneNodeGenerator::setupNodeMaterial(MeshPolySceneNode* node,
     alpha = true;
   }
 //  node->setBlending(alpha);
-  
+
   // the current color can also affect the blending
   if (dc) {
     const float color[4] = { 1.0f, 1.0f, 1.0f, 0.0f }; // alpha value != 1.0f
@@ -182,7 +182,7 @@ bool MeshSceneNodeGenerator::makeTexcoords(const float* plane,
   } else {
     return false;
   }
-  
+
   len = vec3dot(y, y);
   if (len > 0.0f) {
     len = 1 / len;
@@ -192,7 +192,7 @@ bool MeshSceneNodeGenerator::makeTexcoords(const float* plane,
   } else {
     return false;
   }
-  
+
   const float uvScale = 4.0f;
 
   texcoords[0][0] = 0.0f;
@@ -204,7 +204,7 @@ bool MeshSceneNodeGenerator::makeTexcoords(const float* plane,
     texcoords[i][0] = vec3dot(delta, x) / uvScale;
     texcoords[i][1] = vec3dot(delta, y) / uvScale;
   }
-  
+
   return true;
 }
 

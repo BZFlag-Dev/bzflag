@@ -81,7 +81,7 @@ class RenderNodeGStateList {
     // no copying (cos that'd be slow)
 			RenderNodeGStateList(const RenderNodeGStateList&);
     RenderNodeGStateList& operator=(const RenderNodeGStateList&);
-    
+
     void		grow();
 
   private:

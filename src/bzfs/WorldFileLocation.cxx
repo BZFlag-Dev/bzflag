@@ -33,7 +33,7 @@ WorldFileLocation::WorldFileLocation()
 
 bool WorldFileLocation::read(const char *cmd, std::istream& input)
 {
-  if ((strcasecmp(cmd, "pos") == 0) || 
+  if ((strcasecmp(cmd, "pos") == 0) ||
       (strcasecmp(cmd, "position") == 0)) {
     input >> pos[0] >> pos[1] >> pos[2];
   } else if (strcasecmp(cmd, "size") == 0){
@@ -41,7 +41,7 @@ bool WorldFileLocation::read(const char *cmd, std::istream& input)
   }
   else if ((strcasecmp(cmd, "rot") == 0) ||
            (strcasecmp(cmd, "rotation") == 0)) {
-    
+
     std::string args;
     std::getline(input, args);
     std::istringstream parms(args);
@@ -52,7 +52,7 @@ bool WorldFileLocation::read(const char *cmd, std::istream& input)
     }
     // convert to radians
     rotation = rotation * (M_PI / 180.0f);
-    
+
     // check if we have a rotation normal
     std::string tmpStr;
     if (parms >> tmpStr) {
@@ -62,7 +62,7 @@ bool WorldFileLocation::read(const char *cmd, std::istream& input)
       } else {
 	normal[0] = (float)atof(tmpStr.c_str());
       }
-      
+
       if (!((parms >> normal[1]) && (parms >> normal[2]))) {
         input.putback('\n');
         return false;

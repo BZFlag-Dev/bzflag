@@ -46,18 +46,18 @@ class DynamicColor {
 
     bool canHaveAlpha() const;
     const float* getColor() const;
-    
+
     void* pack(void*);
     void* unpack(void*);
     int packSize();
-    
+
     void print(std::ostream& out, int level);
 
   private:
     static const float minPeriod;
-  
+
     float color[4];
-    
+
     typedef struct {
       float minValue, maxValue;
       float totalWeight; // tally of sinusoid weights
@@ -65,9 +65,9 @@ class DynamicColor {
       std::vector<clampParams> clampUps;
       std::vector<clampParams> clampDowns;
     } ChannelParams;
-    
+
     ChannelParams channels[4];
-    
+
     bool possibleAlpha;
 };
 
@@ -93,7 +93,7 @@ class DynamicColorManager {
     void* pack(void*);
     void* unpack(void*);
     int packSize();
-    
+
     void print(std::ostream& out, int level);
 
   private:

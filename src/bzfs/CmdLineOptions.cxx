@@ -980,7 +980,7 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
       options.timeLimit = (float)atof(argv[i]);
       if (options.timeLimit <= 0.0f) {
 	// league matches are 30 min
-	options.timeLimit = 1800.0f; 
+	options.timeLimit = 1800.0f;
       }
       std::cerr << "using time limit of " << (int)options.timeLimit << " seconds" << std::endl;
       options.timeElapsed = options.timeLimit;
@@ -1082,7 +1082,7 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
   if (options.gameStyle & int(RabbitChaseGameStyle)) {
     for (int i = RedTeam; i <= PurpleTeam; i++) {
       if (options.maxTeam[i] > 0 && options.maxTeam[RogueTeam] != maxRealPlayers)
-   	std::cout << "only rogues are allowed in Rabbit Style; zeroing out " << Team::getName((TeamColor) i) << std::endl;
+	std::cout << "only rogues are allowed in Rabbit Style; zeroing out " << Team::getName((TeamColor) i) << std::endl;
       options.maxTeam[i] = 0;
 	}
   }

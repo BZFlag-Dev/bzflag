@@ -78,8 +78,8 @@ void WorldInfo::addPyramid(float x, float y, float z, float r, float w, float d,
   pyramids.push_back (pyr);
 }
 
-void WorldInfo::addTetra(const float vertices[4][3], const bool visible[4],  
-                         const bool useColor[4], const float colors[4][4],   
+void WorldInfo::addTetra(const float vertices[4][3], const bool visible[4],
+                         const bool useColor[4], const float colors[4][4],
                          const bool useNormals[4], const float normals[4][3][3],
                          const bool useTexCoords[4], const float texCoords[4][3][2],
                          const int textureMatrices[4], const std::string textures[4],
@@ -469,7 +469,7 @@ int WorldInfo::packDatabase(const BasesList* baseList)
     texmat->setShiftParams(0.05f, 0.0f);
     waterMaterial.textureMatrix = TEXMATRIXMGR.addMatrix(texmat);
   }
-  
+
   databaseSize =
     (2 + 2 + WorldCodeBaseSize) * numBases +
     (2 + 2 + WorldCodeWallSize) * walls.size() +
@@ -477,7 +477,7 @@ int WorldInfo::packDatabase(const BasesList* baseList)
     (2 + 2 + WorldCodePyramidSize) * pyramids.size() +
     (2 + 2 + WorldCodeTeleporterSize) * teleporters.size() +
     (2 + 2 + WorldCodeLinkSize) * 2 * teleporters.size() +
-    worldWeapons.packSize() + entryZones.packSize() + 
+    worldWeapons.packSize() + entryZones.packSize() +
     DYNCOLORMGR.packSize() + TEXMATRIXMGR.packSize();
   // add water level size
   databaseSize += sizeof(float);
@@ -487,7 +487,7 @@ int WorldInfo::packDatabase(const BasesList* baseList)
   // tetra sizes are variable
   for (tetra_it = tetras.begin(); tetra_it != tetras.end(); ++tetra_it) {
     TetraBuilding &tetra = *tetra_it;
-    databaseSize = databaseSize + (2 + 2); 
+    databaseSize = databaseSize + (2 + 2);
     databaseSize = databaseSize + tetra.packSize();
   }
   // meshes have variable sizes
@@ -500,7 +500,7 @@ int WorldInfo::packDatabase(const BasesList* baseList)
   void *databasePtr = database;
 
   unsigned char	bitMask;
-  
+
   // add water level
   databasePtr = nboPackFloat(databasePtr, waterLevel);
   if (waterLevel >= 0.0f) {
@@ -512,7 +512,7 @@ int WorldInfo::packDatabase(const BasesList* baseList)
 
   // add texture matrices
   databasePtr = TEXMATRIXMGR.pack(databasePtr);
-  
+
   // add meshes
   for (mesh_it = meshes.begin(); mesh_it != meshes.end(); ++mesh_it) {
     MeshObstacle &mesh = **mesh_it;

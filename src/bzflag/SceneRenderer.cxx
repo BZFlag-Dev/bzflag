@@ -555,7 +555,7 @@ void			SceneRenderer::render(
 
   lastFrame = _lastFrame;
   sameFrame = _sameFrame;
-  
+
   // update the dynamic colors
   DYNCOLORMGR.update();
 

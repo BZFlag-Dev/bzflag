@@ -36,7 +36,7 @@ class CustomArc : public WorldFileObstacle {
     void makePie(bool isCircle, float angle, float rot,
                  float height, float radius, float squish,
                  WorldInfo* world) const;
-    void makeRing(bool isCircle, float angle, float rot, 
+    void makeRing(bool isCircle, float angle, float rot,
                   float height, float inrad, float outrad,
                   float squish, WorldInfo* world) const;
     enum {
@@ -47,7 +47,7 @@ class CustomArc : public WorldFileObstacle {
       StartFace,
       EndFace
     };
-    
+
     int divisions;
     float angle;
     float ratio;

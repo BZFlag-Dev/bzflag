@@ -101,7 +101,7 @@ bool MeshMaterial::copyDiffs(const MeshMaterial& moded,
                              const MeshMaterial& orig)
 {
   bool changed = false;
-  
+
   if (orig.texture != moded.texture) {
     texture = moded.texture;
     changed = true;
@@ -146,11 +146,11 @@ bool MeshMaterial::copyDiffs(const MeshMaterial& moded,
     useColorOnTexture = moded.useColorOnTexture;
     changed = true;
   }
-  
+
   return changed;
-}                            
- 
-                           
+}
+
+
 static void* pack4Float(void *buf, const float values[4])
 {
   int i;
@@ -205,13 +205,13 @@ void* MeshMaterial::unpack(void* buf)
   useTexture =  useTextureAlpha= useColorOnTexture = false;
   if (stateByte & (1 << 0)) {
     useTexture = true;
-  } 
+  }
   if (stateByte & (1 << 1)) {
     useTextureAlpha = true;
-  } 
+  }
   if (stateByte & (1 << 2)) {
     useColorOnTexture = true;
-  } 
+  }
   char textureStr[256];
   unsigned char len;
   buf = nboUnpackUByte(buf, len);
@@ -231,7 +231,7 @@ void* MeshMaterial::unpack(void* buf)
 
 int MeshMaterial::packSize()
 {
-  const int basicSize = (2 * sizeof(unsigned char)) + 
+  const int basicSize = (2 * sizeof(unsigned char)) +
                         sizeof(int) + sizeof(int) +
                         (4 * sizeof(float[4])) + sizeof(float);
   unsigned char len = (unsigned char)texture.size();

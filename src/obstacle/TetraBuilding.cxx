@@ -60,7 +60,7 @@ static inline void makeNormal (const float* p1, const float* p2,
   return;
 }
 inline bool TetraBuilding::checkTest (int testNumber) const
-{ 
+{
   int i;
   const planeTest* pt = &axisTests[testNumber];
   const float* td = pt->tetraDists;
@@ -71,12 +71,12 @@ inline bool TetraBuilding::checkTest (int testNumber) const
     if (td[i] < minT) minT = td[i];
     if (td[i] > maxT) maxT = td[i];
   }
-  
+
   if ((minT > pt->boxDist) || (maxT < -pt->boxDist)) {
     return true;
   } else {
     return false;
-  }  
+  }
 }
 
 static bool makePlane (const float* p1, const float* p2,
@@ -107,7 +107,7 @@ TetraBuilding::TetraBuilding()
       colors[v][c] = 1.0f;
     }
   }
-  return;    
+  return;
 }
 
 
@@ -134,7 +134,7 @@ TetraBuilding::TetraBuilding(
   }
   driveThrough = drive;
   shootThrough = shoot;
-  
+
   finalize();
 
   return;
@@ -154,13 +154,13 @@ void TetraBuilding::finalize()
   }
   float cross[3];
   vec3cross(cross, edge[0], edge[1]);
-  
+
   const float dot = vec3dot (cross, edge[2]);
 
   // swap vertices 1 & 2 if we are out of order
   if (dot < 0.0f) {
     bool tmpBool;
-    
+
     float tmpVertex[3];
     memcpy (tmpVertex, vertices[1], sizeof(tmpVertex));
     memcpy (vertices[1], vertices[2], sizeof(vertices[1]));
@@ -173,34 +173,34 @@ void TetraBuilding::finalize()
     tmpBool = useColor[1];
     useColor[1] = useColor[2];
     useColor[2] = tmpBool;
-    
+
     float tmpColor[4];
     memcpy (tmpColor, colors[1], sizeof(tmpColor));
     memcpy (colors[1], colors[2], sizeof(colors[1]));
     memcpy (colors[2], tmpColor, sizeof(colors[2]));
-    
+
     tmpBool = useNormals[1];
     useNormals[1] = useNormals[2];
     useNormals[2] = tmpBool;
-    
+
     float tmpNormals[4][3];
     memcpy (tmpNormals, normals[1], sizeof(tmpNormals));
     memcpy (normals[1], normals[2], sizeof(normals[1]));
     memcpy (normals[2], tmpNormals, sizeof(normals[2]));
-    
+
     tmpBool = useTexCoords[1];
     useTexCoords[1] = useTexCoords[2];
     useTexCoords[2] = tmpBool;
-    
+
     float tmpTexCoords[3][2];
     memcpy (tmpTexCoords, texCoords[1], sizeof(tmpTexCoords));
     memcpy (texCoords[1], texCoords[2], sizeof(texCoords[1]));
     memcpy (texCoords[2], tmpTexCoords, sizeof(texCoords[2]));
-    
+
     int tmpInt = textureMatrices[1];
     textureMatrices[1] = textureMatrices[2];
     textureMatrices[2] = tmpInt;
-    
+
     std::string tmpString = textures[1];
     textures[1] = textures[2];
     textures[2] = tmpString;
@@ -459,7 +459,7 @@ bool TetraBuilding::inBox(const float* p, float angle,
 {
 //  angle = sqrtf ((dx * dx) + (dy * dy));
 //  return inCylinder (p, angle, height);
-  
+
   static const float axisNormals[3][3] = {
     { 1.0f, 0.0f, 0.0f },
     { 0.0f, 1.0f, 0.0f },
@@ -472,7 +472,7 @@ bool TetraBuilding::inBox(const float* p, float angle,
     return false;
   }
   tn++;
-  
+
   // translate both objects so that the
   // box is axis aligned and at the origin
   float newVerts[4][3];
@@ -487,7 +487,7 @@ bool TetraBuilding::inBox(const float* p, float angle,
     newVerts[v][1] = (cosVal * sy) + (sinVal * sx);
     newVerts[v][2] = vertices[v][2] - (p[2] + halfHeight);
   }
-  
+
   // check the remaining 2 box plane tests (X & Y axis)
   projectTetra (axisTests[tn].tetraDists, axisNormals[0], newVerts);
   axisTests[tn].boxDist = boxSizes[0];
@@ -509,7 +509,7 @@ bool TetraBuilding::inBox(const float* p, float angle,
   makeNormal (newVerts[0], newVerts[3], newVerts[2], newNorms[1]);
   makeNormal (newVerts[0], newVerts[1], newVerts[3], newNorms[2]);
   makeNormal (newVerts[0], newVerts[2], newVerts[1], newNorms[3]);
-  
+
   // check the 4 tetrahedron plane tests
   projectOrigBox (&axisTests[tn].boxDist, newNorms[0], boxSizes);
   projectTetra (axisTests[tn].tetraDists, newNorms[0], newVerts);
@@ -534,7 +534,7 @@ bool TetraBuilding::inBox(const float* p, float angle,
   // check for edge collisions  (3E * 6E = 18 expensive tests)
   float testNorm[3];
   for (a = 0; a < 3; a++) {
-    
+
     vec3sub(testNorm, newVerts[0], newVerts[1]);
     vec3cross(axisTests[tn].normal, axisNormals[a], testNorm);
     projectOrigBox (&axisTests[tn].boxDist, axisTests[tn].normal, boxSizes);
@@ -548,14 +548,14 @@ bool TetraBuilding::inBox(const float* p, float angle,
     projectTetra (axisTests[tn].tetraDists, axisTests[tn].normal, newVerts);
     if (checkTest(tn)) return false;
     tn++;
-        
+
     vec3sub(testNorm, newVerts[0], newVerts[3]);
     vec3cross(axisTests[tn].normal, axisNormals[a], testNorm);
     projectOrigBox (&axisTests[tn].boxDist, axisTests[tn].normal, boxSizes);
     projectTetra (axisTests[tn].tetraDists, axisTests[tn].normal, newVerts);
     if (checkTest(tn)) return false;
     tn++;
-        
+
     vec3sub(testNorm, newVerts[1], newVerts[2]);
     vec3cross(axisTests[tn].normal, axisNormals[a], testNorm);
     projectOrigBox (&axisTests[tn].boxDist, axisTests[tn].normal, boxSizes);
@@ -569,7 +569,7 @@ bool TetraBuilding::inBox(const float* p, float angle,
     projectTetra (axisTests[tn].tetraDists, axisTests[tn].normal, newVerts);
     if (checkTest(tn)) return false;
     tn++;
-        
+
     vec3sub(testNorm, newVerts[3], newVerts[1]);
     vec3cross(axisTests[tn].normal, axisNormals[a], testNorm);
     projectOrigBox (&axisTests[tn].boxDist, axisTests[tn].normal, boxSizes);
@@ -577,8 +577,8 @@ bool TetraBuilding::inBox(const float* p, float angle,
     if (checkTest(tn)) return false;
     tn++;
   }
-      
-  return true;  
+
+  return true;
 }
 
 
@@ -727,13 +727,13 @@ static void unpack4Bools (unsigned char byte, bool bools[4])
 void *TetraBuilding::pack(void* buf)
 {
   int v;
-  
+
   // pack the vertices
   for (v = 0; v < 4; v++) {
     buf = nboPackVector(buf, vertices[v]);
   }
-  
-  // pack the visibility byte  
+
+  // pack the visibility byte
   unsigned char visibleByte;
   pack4Bools (&visibleByte, visible);
   buf = nboPackUByte(buf, visibleByte);
@@ -745,7 +745,7 @@ void *TetraBuilding::pack(void* buf)
   if (isShootThrough())
     stateByte |= _SHOOT_THRU;
   buf = nboPackUByte(buf, stateByte);
-  
+
   // pack the texture matrices
   for (v = 0; v < 4; v++) {
     buf = nboPackInt(buf, textureMatrices[v]);
@@ -789,7 +789,7 @@ void *TetraBuilding::pack(void* buf)
       }
     }
   }
-  
+
   // pack the texture strings
   for (v = 0; v < 4; v++) {
     unsigned char length = textures[v].size();
@@ -804,13 +804,13 @@ void *TetraBuilding::pack(void* buf)
 void *TetraBuilding::unpack(void* buf)
 {
   int v;
-  
+
   // unpack the vertices
   for (v = 0; v < 4; v++) {
     buf = nboUnpackVector(buf, vertices[v]);
   }
-  
-  // unpack the visibility byte  
+
+  // unpack the visibility byte
   unsigned char visibleByte;
   buf = nboUnpackUByte(buf, visibleByte);
   unpack4Bools (visibleByte, visible);
@@ -822,7 +822,7 @@ void *TetraBuilding::unpack(void* buf)
     driveThrough = true;
   if (stateByte & _SHOOT_THRU)
     shootThrough = true;
-  
+
   // unpack the texture matrices
   for (v = 0; v < 4; v++) {
     buf = nboUnpackInt(buf, textureMatrices[v]);
@@ -842,7 +842,7 @@ void *TetraBuilding::unpack(void* buf)
                                // likely isn't a real problem
         } else {
           colors[v][c] = ((float)bytecolor) / 255.0f;
-        }        
+        }
       }
     }
   }
@@ -871,7 +871,7 @@ void *TetraBuilding::unpack(void* buf)
       }
     }
   }
-  
+
   // unpack the texture strings
   for (v = 0; v < 4; v++) {
     char textureStr[256];
@@ -882,14 +882,14 @@ void *TetraBuilding::unpack(void* buf)
     textures[v] = textureStr;
   }
 
-/*  
+/*
   printf ("TETRA: %s %s %s %s\n", textures[0].c_str(),textures[1].c_str(),textures[2].c_str(),textures[3].c_str());
   printf ("  v0 = %f,%f,%f, texmats = %i, %i, %i, %i\n",
           vertices[0][0],vertices[0][1],vertices[0][2],
           textureMatrices[0],textureMatrices[1],textureMatrices[2],textureMatrices[3]);
   printf ("  useColorByte = 0x%02X, useNormalsByte = 0x%02X, useTexCoordsByte = 0x%02X\n",
           useColorByte, useNormalsByte, useTexCoordsByte);
-*/          
+*/
 
   finalize();
 
@@ -910,21 +910,21 @@ int TetraBuilding::packSize()
   // texture matrices
   fullSize = fullSize + sizeof(int[4]);
   // colors
-  fullSize = fullSize + sizeof(unsigned char); 
+  fullSize = fullSize + sizeof(unsigned char);
   for (v = 0; v < 4; v++) {
     if (useColor[v]) {
       fullSize = fullSize + sizeof(unsigned char[4]);
     }
   }
   // normals
-  fullSize = fullSize + sizeof(unsigned char); 
+  fullSize = fullSize + sizeof(unsigned char);
   for (v = 0; v < 4; v++) {
     if (useNormals[v]) {
       fullSize = fullSize + sizeof(float[3][3]);
     }
   }
   // texcoords
-  fullSize = fullSize + sizeof(unsigned char); 
+  fullSize = fullSize + sizeof(unsigned char);
   for (v = 0; v < 4; v++) {
     if (useTexCoords[v]) {
       fullSize = fullSize + sizeof(float[3][2]);
@@ -935,7 +935,7 @@ int TetraBuilding::packSize()
     fullSize = fullSize + sizeof(unsigned char);
     fullSize = fullSize + textures[v].size();
   }
-  
+
   return fullSize;
 }
 

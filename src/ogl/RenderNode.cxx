@@ -149,9 +149,9 @@ void RenderNodeGStateList::sort(const GLfloat* e)
 		    ((p[1] - e[1]) * (p[1] - e[1])) +
 		    ((p[2] - e[2]) * (p[2] - e[2]));
   }
-  
+
   qsort (list, count, sizeof(Item), distCompare);
-  
+
   return;
 }
 

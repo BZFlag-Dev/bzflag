@@ -358,7 +358,7 @@ restart:
   return NULL;
 }
 
-void     		BSPSceneIterator::drawCuller()
+void  		BSPSceneIterator::drawCuller()
 {
   return;
 }

@@ -33,7 +33,7 @@ CustomMesh::~CustomMesh()
     std::cout << "discarded incomplete mesh face" << std::endl;
     delete face;
   }
-  
+
   std::vector<CustomMeshFace*>::iterator face_it;
   for (face_it = faces.begin(); face_it != faces.end(); face_it++) {
     CustomMeshFace* face = *face_it;
@@ -47,7 +47,7 @@ CustomMesh::~CustomMesh()
 bool CustomMesh::read(const char *cmd, std::istream& input)
 {
   bool materror;
-  
+
   if (strcasecmp(cmd, "endface") == 0) {
     if (face == NULL) {
       std::cout << "extra 'endface' keyword found" << std::endl;
@@ -112,7 +112,7 @@ bool CustomMesh::read(const char *cmd, std::istream& input)
 void CustomMesh::write(WorldInfo *world) const
 {
   MeshObstacle* mesh = new MeshObstacle(
-    checkTypes, checkPoints, vertices, normals, texcoords, 
+    checkTypes, checkPoints, vertices, normals, texcoords,
     faces.size(), driveThrough, shootThrough);
 
   std::vector<CustomMeshFace*>::const_iterator face_it;
@@ -122,9 +122,9 @@ void CustomMesh::write(WorldInfo *world) const
   }
 
   mesh->finalize();
-  
+
   world->addMesh(mesh);
-  
+
   return;
 }
 

@@ -43,20 +43,20 @@ bool parseMaterial(const char* cmd, std::istream& input,
     input >> material.dynamicColor;
   }
   else if (strcasecmp(cmd, "ambient") == 0) {
-    input >> material.ambient[0] >> material.ambient[1] >> 
+    input >> material.ambient[0] >> material.ambient[1] >>
              material.ambient[2] >> material.ambient[3];
   }
   else if ((strcasecmp(cmd, "diffuse") == 0) || // currently used by bzflag
            (strcasecmp(cmd, "color") == 0)) {
-    input >> material.diffuse[0] >> material.diffuse[1] >> 
+    input >> material.diffuse[0] >> material.diffuse[1] >>
              material.diffuse[2] >> material.diffuse[3];
   }
   else if (strcasecmp(cmd, "specular") == 0) {
-    input >> material.specular[0] >> material.specular[1] >> 
+    input >> material.specular[0] >> material.specular[1] >>
              material.specular[2] >> material.specular[3];
   }
   else if (strcasecmp(cmd, "emission") == 0) {
-    input >> material.emission[0] >> material.emission[1] >> 
+    input >> material.emission[0] >> material.emission[1] >>
              material.emission[2] >> material.emission[3];
   }
   else if (strcasecmp(cmd, "shininess") == 0) {

@@ -1,22 +1,22 @@
-// 
+//
 // 3DS2BZW
-// 
+//
 // Author: Dave Rodgers (bzaka: trepan)
 // Date: Aug 26, 2004
-// 
+//
 // Utility program to convert 3DS model
 // files into BZFlag 1.12 meshy goodness.
-// 
+//
 // To use the program, you might type this:
-// 
+//
 // ./3ds2bzw model.3ds > model.bzw
-// 
+//
 // NOTE: this program requires lib3ds to
 // compile. to compile the program,
 // use something like this:
-// 
+//
 // gcc -O3 -W -Wall -o 3ds2bzw 3ds2bzw.c -l3ds -lm
-// 
+//
 
 
 #include <stdio.h>
@@ -186,7 +186,7 @@ main (int argc, char **argv)
           printf ("    texcoords %i %i %i\n", points[0], points[1],
                   points[2]);
 
-          // BZ isn't ready for these, yet... 
+          // BZ isn't ready for these, yet...
           // printf (" #texture %s\n", material->texture2_map.name);
           // printf (" #texture %s\n", material->texture1_mask.name);
           // printf (" #texture %s\n", material->texture2_mask.name);

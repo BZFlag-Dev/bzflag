@@ -27,7 +27,7 @@ class TextureMatrix {
     const float* getMatrix();
     void setShiftParams (float uFreq, float vFreq);
     void setRotateParams (float freq, float uCenter, float vCenter);
-    void setScaleParams (float uFreq, float vFreq, 
+    void setScaleParams (float uFreq, float vFreq,
                          float uCenter, float vCenter,
                          float uSize, float vSize);
     void update(float time);
@@ -35,9 +35,9 @@ class TextureMatrix {
     void* pack(void*);
     void* unpack(void*);
     int packSize();
-    
+
     void print(std::ostream& out, int level);
-  
+
   private:
     float matrix[16];
     float uPos, vPos; // time invariant
@@ -62,7 +62,7 @@ class TextureMatrixManager {
     void* pack(void*);
     void* unpack(void*);
     int packSize();
-    
+
     void print(std::ostream& out, int level);
 
   private:

@@ -78,10 +78,10 @@ class OpenGLGStateState {
       public:
 	bool		hasTexture;
 	bool		hasTextureReplace;
-	bool        	hasTextureMatrix;
+	bool     	hasTextureMatrix;
 	bool		hasMaterial;
-	int    		texture;
-	int         	textureMatrix;
+	int 		texture;
+	int      	textureMatrix;
 	OpenGLMaterial	material;
     };
 

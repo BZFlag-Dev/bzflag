@@ -284,13 +284,13 @@ bool                    TriWallSceneNode::inAxisBox(const float* boxMins,
       (mins[2] > boxMaxs[2]) || (maxs[2] < boxMins[2])) {
     return false;
   }
-  
+
   // NOTE: inefficient
   float vertices[3][3];
   memcpy (vertices[0], nodes[0]->getVertex(0), sizeof(float[3]));
   memcpy (vertices[1], nodes[0]->getVertex(1), sizeof(float[3]));
   memcpy (vertices[2], nodes[0]->getVertex(2), sizeof(float[3]));
-  
+
   return testPolygonInAxisBox (3, vertices, getPlane(), boxMins, boxMaxs);
 }
 

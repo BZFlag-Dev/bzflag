@@ -40,7 +40,7 @@ class CustomMesh : public WorldFileObstacle {
   private:
 
     MeshMaterial material; // holds current defaults
-    
+
     std::vector<char> checkTypes;
     std::vector<cfvec3> checkPoints;
     std::vector<cfvec3> vertices;

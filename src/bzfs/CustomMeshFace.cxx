@@ -43,7 +43,7 @@ static void getIntList (std::istream& input, std::vector<int>& list)
     list.push_back(value);
   }
   input.putback('\n');
-  
+
   return;
 }
 
@@ -51,7 +51,7 @@ static void getIntList (std::istream& input, std::vector<int>& list)
 bool CustomMeshFace::read(const char *cmd, std::istream& input)
 {
   bool materror;
-  
+
   if (strcasecmp(cmd, "vertices") == 0) {
     getIntList (input, vertices);
     if (vertices.size() < 3) {
