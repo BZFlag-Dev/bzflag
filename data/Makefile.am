@@ -4,8 +4,8 @@ EXTRA_DIST = $(wildcard *.rgb) $(wildcard *.wav) \
 	$(wildcard *.fti) $(wildcard *.ftr) $(wildcard l10n/*.po)
 
 install-data-local:
-	$(mkinstalldirs) $(DESTDIR)$(pkgdatadir)/bzflag
-	$(INSTALL_DATA) $(EXTRA_DIST) $(DESTDIR)$(pkgdatadir)/bzflag
+	$(mkinstalldirs) $(DESTDIR)$(datadir)/bzflag
+	$(INSTALL_DATA) $(EXTRA_DIST) $(DESTDIR)$(datadir)/bzflag
 
 uninstall-local:
-	cd $(DESTDIR)$(pkgdatadir)/bzflag; rm -rf *
+	cd $(DESTDIR)$(datadir)/bzflag; rm -rf *
