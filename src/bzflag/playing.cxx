@@ -4744,7 +4744,8 @@ std::string		getCacheDirectoryName()
     }
   }
 
-  name += "\\My Bzflag Files\\bzflag-cache";
+  // yes your suposed to have the "my" in front of it. I know it's silly, but it's the MS way.
+  name += "\\My BZFlag Files\\cache";
   mkdir(name.c_str());
   return name;
 

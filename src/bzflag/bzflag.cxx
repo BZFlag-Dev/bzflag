@@ -269,7 +269,9 @@ static std::string	getConfigFileName()
   }
 
   // append the config file name
-  name += "\\My Bzflag Files\\bzflag19.bzc";
+  // yes it seems silly but the windows way is to have "my" in front of any folder you make in the my docs dir
+  // todo: make this stuff go into the application data dir.
+  name += "\\My BZFlag Files\\bzflag19.bzc";
   return name;
 
 #elif defined(macintosh)
