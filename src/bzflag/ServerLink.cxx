@@ -338,6 +338,8 @@ int			ServerLink::read(uint16_t& code, uint16_t& len,
       buf = nboUnpackUShort(buf, len);
       buf = nboUnpackUShort(buf, code);
       UDEBUG("<** UDP Packet Code %x Len %x\n",code, len);
+      if (len > MaxPacketLen)
+	return -1;
       memcpy((char *)msg,(char *)buf, len);
       return 1;
     }
@@ -399,6 +401,8 @@ int			ServerLink::read(uint16_t& code, uint16_t& len,
   buf = nboUnpackUShort(buf, code);
 
   //printError("Code is %02x",code);
+  if (len > MaxPacketLen)
+    return -1;
   if (len > 0)
     rlen = recv(fd, (char*)msg, int(len), 0);
   else
