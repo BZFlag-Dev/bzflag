@@ -562,6 +562,7 @@ void			LocalPlayer::doUpdateMotion(float dt)
       // save teleport info
       setTeleport(lastTime, source, target);
       server->sendTeleport(source, target);
+      if (gettingSound)
       playLocalSound(SFX_TELEPORT);
     }
   }
