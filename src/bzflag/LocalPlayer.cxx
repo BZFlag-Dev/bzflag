@@ -1063,23 +1063,25 @@ bool			LocalPlayer::doEndShot(int id, bool isHit, float* pos)
 
 void			LocalPlayer::jump()
 {
+  FlagType* flag = getFlag();
+
   // can't jump while burrowed
   if (getPosition()[2] < 0.0f)
     return;
 
-  if (getFlag() == Flags::Wings) {
+  if (flag == Flags::Wings) {
     if (wingsFlapCount <= 0) return;
     wingsFlapCount--;
   } else if (location != OnGround && location != OnBuilding) {
     // can't jump unless on the ground or a building
-    if (getFlag() != Flags::Wings)
+    if (flag != Flags::Wings)
       return;
     if (wingsFlapCount <= 0)
       return;
      wingsFlapCount--;
-  } else if ((getFlag() != Flags::Bouncy)
-    &&       ((getFlag() != Flags::Jumping && !World::getWorld()->allowJumping()) ||
-	      (getFlag() == Flags::NoJumping))) {
+  } else if ((flag != Flags::Bouncy)
+    &&       ((flag != Flags::Jumping && !World::getWorld()->allowJumping()) ||
+	      (flag == Flags::NoJumping))) {
     return;
   }
 
@@ -1089,17 +1091,22 @@ void			LocalPlayer::jump()
   float newVelocity[3];
   newVelocity[0] = oldVelocity[0];
   newVelocity[1] = oldVelocity[1];
-  if (getFlag() == Flags::Wings)
+  if (flag == Flags::Wings) {
     newVelocity[2] = BZDB.eval(StateDatabase::BZDB_WINGSJUMPVELOCITY);
-  else if (getFlag() == Flags::Bouncy) {
+  } else if (flag == Flags::Bouncy) {
     const float factor = 0.25f + ((float)bzfrand() * 0.75f);
     newVelocity[2] = factor * BZDB.eval(StateDatabase::BZDB_JUMPVELOCITY);
-  }
-  else
+  }  else {
     newVelocity[2] = BZDB.eval(StateDatabase::BZDB_JUMPVELOCITY);
+  }
   setVelocity(newVelocity);
   location = InAir;
-  playLocalSound(SFX_JUMP);
+
+  if (flag == Flags::Wings) {
+    playLocalSound(SFX_FLAP);
+  } else {
+    playLocalSound(SFX_JUMP);
+  }
 }
 
 void			LocalPlayer::setTarget(const Player* _target)
