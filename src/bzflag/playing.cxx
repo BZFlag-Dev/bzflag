@@ -2249,7 +2249,8 @@ static std::string cmdScreenshot(const std::string&, const CommandManager::ArgLi
     f.write(&tempByte, 1);
     crc = crc32(crc, (unsigned char*) &tempByte, 1);
     tempByte = 0;
-    for (int i = 0; i < 3; i++) { //(data) Last three tags are compression (only 0 allowed), filtering (only 0 allowed), and interlacing (we don't use it, so it's 0)
+    int i;
+    for (i = 0; i < 3; i++) { //(data) Last three tags are compression (only 0 allowed), filtering (only 0 allowed), and interlacing (we don't use it, so it's 0)
       f.write(&tempByte, 1);
       crc = crc32(crc, (unsigned char*) &tempByte, 1);
     }

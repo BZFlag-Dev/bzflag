@@ -2849,7 +2849,7 @@ void removePlayer(int playerIndex, const char *reason, bool notify)
   }
 }
 
-static boolean enemyProximityCheck(int team, float *pos, float safeDist)
+static bool enemyProximityCheck(int team, float *pos, float safeDist)
 {
   safeDist*= safeDist;
   for (int i = 0; i < curMaxPlayers; i++) {
