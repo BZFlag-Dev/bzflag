@@ -1390,7 +1390,7 @@ static void acceptClient()
 
     std::string rejectionMessage;
 
-    rejectionMessage = "REFUSED:";
+    rejectionMessage = BanRefusalString;
     if (info.reason.size())
       rejectionMessage += info.reason;
     else

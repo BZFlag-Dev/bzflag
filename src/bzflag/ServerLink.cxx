@@ -217,7 +217,7 @@ ServerLink::ServerLink(const Address& serverAddress, int port, int) :
   if (strcmp(version, getServerVersion()) != 0) {
     state = BadVersion;
 
-    if (strcmp(version, "REFUSED:") == 0) {
+    if (strcmp(version, BanRefusalString) == 0) {
       state = Refused;
       char message[512];
       int len = recv(query, (char*)message, 512, 0);
