@@ -1724,7 +1724,7 @@ static int uread(int *playerIndex, int *nopackets)
 	if (!pPlayerInfo->ulinkup &&
 	    (pPlayerInfo->uaddr.sin_port == uaddr.sin_port) &&
 	    (memcmp(&pPlayerInfo->uaddr.sin_addr, &uaddr.sin_addr, sizeof(uaddr.sin_addr)) == 0)) {
-	  DEBUG3("uread() exact udp up for player %d %s:%d\n",
+	  DEBUG1("uread() exact udp up for player %d %s:%d\n",
 	      pi, inet_ntoa(pPlayerInfo->uaddr.sin_addr),
 	      ntohs(pPlayerInfo->uaddr.sin_port));
 	  pPlayerInfo->ulinkup = true;
@@ -1737,7 +1737,7 @@ static int uread(int *playerIndex, int *nopackets)
       for (pi = 0, pPlayerInfo = player; pi < MaxPlayers; pi++, pPlayerInfo++) {
 	if (!pPlayerInfo->ulinkup &&
 	    memcmp(&uaddr.sin_addr, &pPlayerInfo->uaddr.sin_addr, sizeof(uaddr.sin_addr)) == 0) {
-	  DEBUG3("uread() fuzzy udp up for player %d %s:%d actual port %d\n",
+	  DEBUG1("uread() fuzzy udp up for player %d %s:%d actual port %d\n",
 	      pi, inet_ntoa(pPlayerInfo->uaddr.sin_addr),
 	      ntohs(pPlayerInfo->uaddr.sin_port), ntohs(uaddr.sin_port));
 	  pPlayerInfo->uaddr.sin_port = uaddr.sin_port;
@@ -1751,7 +1751,7 @@ static int uread(int *playerIndex, int *nopackets)
     n = recv(udpSocket, (char *)ubuf, MaxPacketLen, 0);
     if (pi == MaxPlayers) {
       // no match, discard packet
-      DEBUG3("uread() discard packet! %s:%d choices p(l) h:p", inet_ntoa(uaddr.sin_addr), ntohs(uaddr.sin_port));
+      DEBUG2("uread() discard packet! %s:%d choices p(l) h:p", inet_ntoa(uaddr.sin_addr), ntohs(uaddr.sin_port));
       for (pi = 0, pPlayerInfo = player; pi < MaxPlayers; pi++, pPlayerInfo++) {
 	if (pPlayerInfo->fd != -1) {
 	  DEBUG3(" %d(%d) %s:%d",
@@ -4260,8 +4260,10 @@ static void parseCommand(const char *message, int t)
     for (int i = 0; i < maxPlayers; i++)
       if (player[i].fd != NotConnected) {
 	char reply[MessageLen];
-	sprintf(reply,"%-12s : %4dms (%d)",player[i].callSign,
-		int(player[i].lagavg*1000),player[i].lagcount);
+	sprintf(reply,"[%d]%-12s:%4dms(%d) %s:%d%s",i,player[i].callSign,
+		int(player[i].lagavg*1000),player[i].lagcount,
+		inet_ntoa(player[i].id.serverHost), ntohs(player[i].id.port),
+		player[i].ulinkup ? " udp" : "");
 	sendMessage(t,player[t].id,player[t].team,reply);
       }
   }
