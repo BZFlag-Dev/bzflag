@@ -22,6 +22,5 @@ MAINTAINERCLEANFILES = Makefile.in
 
 EXTRA_DIST =				\
 	BZFlag_Prefix.h			\
-	MacBZFlag-prefix.h		\
 	MacBZFlag.icns			\
 	main.m
