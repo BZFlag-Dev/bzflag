@@ -15,7 +15,7 @@ use strict;
 
 # example mrtg.conf entries
 
-#Target[bzflag]: `/home/bzflag/bzflag-1.7/misc/mrtg-bzflag.pl`
+#Target[bzflag]: `/home/bzflag/bzflag/misc/mrtg-bzflag.pl`
 #Options[bzflag]: gauge,nopercent,noinfo,noborder,noarrow,transparent,growright
 #Title[bzflag]: BZFlag Players / Servers
 #MaxBytes[bzflag]: 100
@@ -29,9 +29,9 @@ use strict;
 #Legend4[bzflag]: Maximal 5 Minute Servers
 #PageTop[bzflag]: <h1>BZFlag Players / Servers</h1>
 
-#Target[xmission]: `/home/bzflag/bzflag-1.7/misc/mrtg-bzflag.pl xmission.bzflag.org:5155`
+#Target[xmission]: `/home/bzflag/bzflag/misc/mrtg-bzflag.pl xmission.bzflag.org:5154`
 #Options[xmission]: gauge,noinfo,noborder,noarrow,transparent,growright
-#Title[xmission]: Players on xmission.bzflag.org:5155
+#Title[xmission]: Players on xmission.bzflag.org:5154
 #MaxBytes[xmission]: 12
 #YLegend[xmission]: players
 #ShortLegend[xmission]: &nbsp;
@@ -47,7 +47,7 @@ use Socket;
 use LWP::UserAgent;
 use File::stat;
 
-my $cacheFile = '/tmp/mrtg-bzflag.tmp';
+my $cacheFile = '/tmp/mrtg-bzflagdb.tmp';
 my @lines;
 
 if (-d $cacheFile && time() - stat($cacheFile)->mtime < 60) {
@@ -57,7 +57,7 @@ if (-d $cacheFile && time() - stat($cacheFile)->mtime < 60) {
 } else {
   my $ua = new LWP::UserAgent;
   $ua->timeout(5);
-  my $req = HTTP::Request->new('GET', 'http://list.bzflag.org:5156/');
+  my $req = HTTP::Request->new('GET', 'http://db.bzflag.org/db/?action=LIST');
   my $res = $ua->request($req);
   @lines = split("\n",$res->content);
   open(CACHEFILE, ">$cacheFile") or die;
@@ -70,17 +70,15 @@ my $totalPlayers = 0;
 for my $line (@lines) {
   my ($serverport, $version, $flags, $ip, $comments) = split(" ",$line,5);
   # not "(A4)18" to handle old dumb perl
-  my ($style,$maxPlayers,$maxShots,
-      $rogueSize,$redSize,$greenSize,$blueSize,$purpleSize,
-      $rogueMax,$redMax,$greenMax,$blueMax,$purpleMax,
-      $shakeWins,$shakeTimeout,
-      $maxPlayerScore,$maxTeamScore,$maxTime) =
-      unpack("A4A4A4A4A4A4A4A4A4A4A4A4A4A4A4A4A4A4", $flags);
+  my ($style, $maxShots, $shakeWins, $shakeTimeout, $maxPlayerScore, $maxTeamScore, $maxTime,
+      $maxPlayers, $rogueSize, $rogueMax, $redSize, $redMax, $greenSize, $greenMax,
+      $blueSize, $blueMax, $purpleSize, $purpleMax, $observerSize, $observerMax) =
+      unpack("A4A4A4A4A4A4A4A2A2A2A2A2A2A2A2A2A2A2A2A2", $flags);
   my $playerSize = hex($rogueSize) + hex($redSize) + hex($greenSize)
-      + hex($blueSize) + hex($purpleSize);
+      + hex($blueSize) + hex($purpleSize) + hex($observerSize);
   if (($#ARGV == 0) && ($serverport eq $ARGV[0])) {
     my $playerMax = hex($rogueMax) + hex($redMax) + hex($greenMax)
-        + hex($blueMax) + hex($purpleMax);
+        + hex($blueMax) + hex($purpleMax) + hex($observerMax);
     $playerMax = hex($maxPlayers) if (hex($maxPlayers) < $playerMax);
     print("$playerSize\n$playerMax\nunknown uptime\nplayers on $ARGV[0]\n");
     exit(0);
