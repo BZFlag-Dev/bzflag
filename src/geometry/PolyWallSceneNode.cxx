@@ -200,7 +200,7 @@ void			PolyWallSceneNode::addRenderNodes(
 				SceneRenderer& renderer)
 {
   node->setStyle(getStyle());
-  renderer.addRenderNode(node, &getGState());
+  renderer.addRenderNode(node, getWallGState());
 }
 
 void			PolyWallSceneNode::addShadowNodes(

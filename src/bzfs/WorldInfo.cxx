@@ -212,7 +212,8 @@ void WorldInfo::makeWaterMaterial()
   // the texture matrix
   TextureMatrix* texmat = new TextureMatrix;
   texmat->setName("defaultWaterLevel");
-  texmat->setShiftParams(0.05f, 0.0f);
+  texmat->setDynamicShift(0.05f, 0.0f);
+  texmat->finalize();
   int texmatIndex = TEXMATRIXMGR.addMatrix(texmat);
 
   // the material

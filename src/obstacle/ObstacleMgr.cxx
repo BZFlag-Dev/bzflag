@@ -27,6 +27,8 @@
 #include "MeshTransform.h"
 #include "ObstacleModifier.h"
 #include "StateDatabase.h"
+#include "PhysicsDriver.h"
+#include "BzMaterial.h"
 
 // obstacle headers
 #include "Obstacle.h"
@@ -49,21 +51,34 @@
 //
 
 
+void GroupInstance::init()
+{
+  modifyTeam = false;
+  team = 0;
+  modifyColor = false;
+  tint[0] = tint[1] = tint[2] = tint[3] = 1.0f;
+  modifyPhysicsDriver = false;
+  phydrv = -1;
+  modifyMaterial = false;
+  material = NULL;
+  driveThrough = false;
+  shootThrough = false;
+  
+  return;
+}
+
+
 GroupInstance::GroupInstance(const std::string& _groupdef)
 {
   groupdef = _groupdef;
-  modifyTeam = false;
-  modifyColor = false;
-  modifyPhysicsDriver = false;
+  init();
   return;
 }
 
 
 GroupInstance::GroupInstance()
 {
-  modifyTeam = false;
-  modifyColor = false;
-  modifyPhysicsDriver = false;
+  init();
   return;
 }
 
@@ -78,6 +93,19 @@ void GroupInstance::setTransform(const MeshTransform& _transform)
 {
   transform = _transform;
   return;
+}
+
+
+void GroupInstance::setName(const std::string& _name)
+{
+  name = _name;
+  return;
+}
+
+
+const std::string& GroupInstance::getName() const
+{
+  return name;
 }
 
 
@@ -105,6 +133,28 @@ void GroupInstance::setPhysicsDriver(int _phydrv)
 }
 
 
+void GroupInstance::setMaterial(const BzMaterial* _material)
+{
+  material = _material;
+  modifyMaterial = true;
+  return;
+}
+
+
+void GroupInstance::setDriveThrough()
+{
+  driveThrough = true;
+  return;
+}
+
+
+void GroupInstance::setShootThrough()
+{
+  shootThrough = true;
+  return;
+}
+                
+
 const std::string& GroupInstance::getGroupDef() const
 {
   return groupdef;
@@ -120,12 +170,16 @@ const MeshTransform& GroupInstance::getTransform() const
 void* GroupInstance::pack(void* buf)
 {
   buf = nboPackStdString(buf, groupdef);
+  buf = nboPackStdString(buf, name);
   buf = transform.pack(buf);
 
   uint8_t bits = 0;
   if (modifyTeam)	   bits |= (1 << 0);
   if (modifyColor)	   bits |= (1 << 1);
   if (modifyPhysicsDriver) bits |= (1 << 2);
+  if (modifyMaterial)	   bits |= (1 << 3);
+  if (driveThrough)	   bits |= (1 << 4);
+  if (shootThrough)	   bits |= (1 << 5);
   buf = nboPackUByte(buf, bits);
 
   if (modifyTeam) {
@@ -138,6 +192,10 @@ void* GroupInstance::pack(void* buf)
   if (modifyPhysicsDriver) {
     buf = nboPackInt(buf, phydrv);
   }
+  if (modifyMaterial) {
+    int matindex = MATERIALMGR.getIndex(material);
+    buf = nboPackInt(buf, (int32_t) matindex);
+  }
 
   return buf;
 }
@@ -146,6 +204,7 @@ void* GroupInstance::pack(void* buf)
 void* GroupInstance::unpack(void* buf)
 {
   buf = nboUnpackStdString(buf, groupdef);
+  buf = nboUnpackStdString(buf, name);
   buf = transform.unpack(buf);
 
   uint8_t bits;
@@ -153,6 +212,9 @@ void* GroupInstance::unpack(void* buf)
   modifyTeam =		((bits & (1 << 0)) == 0) ? false : true;
   modifyColor =		((bits & (1 << 1)) == 0) ? false : true;
   modifyPhysicsDriver = ((bits & (1 << 2)) == 0) ? false : true;
+  modifyMaterial =	((bits & (1 << 3)) == 0) ? false : true;
+  driveThrough =	((bits & (1 << 4)) == 0) ? false : true;
+  shootThrough =	((bits & (1 << 5)) == 0) ? false : true;
 
   if (modifyTeam) {
     uint16_t tmpTeam;
@@ -168,7 +230,12 @@ void* GroupInstance::unpack(void* buf)
     buf = nboUnpackInt(buf, inPhyDrv);
     phydrv = int(inPhyDrv);
   }
-
+  if (modifyMaterial) {
+    int32_t matindex;
+    buf = nboUnpackInt(buf, matindex);
+    material = MATERIALMGR.getMaterial(matindex);
+  }
+  
   return buf;
 }
 
@@ -177,6 +244,7 @@ int GroupInstance::packSize()
 {
   int fullSize = 0;
   fullSize += nboStdStringPackSize(groupdef);
+  fullSize += nboStdStringPackSize(name);
   fullSize += transform.packSize();
   fullSize += sizeof(uint8_t);
   if (modifyTeam) {
@@ -188,6 +256,9 @@ int GroupInstance::packSize()
   if (modifyPhysicsDriver) {
     fullSize += sizeof(int32_t);
   }
+  if (modifyMaterial) {
+    fullSize += sizeof(int32_t);
+  }
   return fullSize;
 }
 
@@ -195,6 +266,11 @@ int GroupInstance::packSize()
 void GroupInstance::print(std::ostream& out, const std::string& indent) const
 {
   out << indent << "group " << groupdef << std::endl;
+  
+  if (name.size() > 0) {
+    out << indent << "  name " << name << std::endl;
+  }
+
   transform.printTransforms(out, indent);
   if (modifyTeam) {
     out << indent << "  team " << team << std::endl;
@@ -205,9 +281,31 @@ void GroupInstance::print(std::ostream& out, const std::string& indent) const
 			       << std::endl;
   }
   if (modifyPhysicsDriver) {
-    out << indent << "  phydrv " << phydrv << std::endl;
+    const PhysicsDriver* driver = PHYDRVMGR.getDriver(phydrv);
+    if (driver != NULL) {
+      out << indent << "  phydrv ";
+      if (driver->getName().size() > 0) {
+        out << driver->getName();
+      } else {
+        out << phydrv;
+      }
+      out << std::endl;
+    }
   }
-  out << indent << "end" << std::endl << std::endl;
+  if (modifyMaterial) {
+    out << indent << "  matref ";
+    MATERIALMGR.printReference(out, material);
+    out << std::endl;
+  }
+  if (driveThrough) {
+    out << indent << "  driveThrough " << phydrv << std::endl;
+  }
+  if (shootThrough) {
+    out << indent << "  shootTHrough " << phydrv << std::endl;
+  }
+
+  out << indent << "end" << std::endl;
+  
   return;
 }
 

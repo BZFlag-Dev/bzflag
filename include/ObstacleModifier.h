@@ -16,6 +16,8 @@
 
 class Obstacle;
 class GroupInstance;
+class BzMaterial;
+
 
 class ObstacleModifier {
   public:
@@ -23,16 +25,22 @@ class ObstacleModifier {
     ObstacleModifier(const ObstacleModifier& obsMod,
 		     const GroupInstance& grpinst);
     ~ObstacleModifier();
+    void init();		     
 
     void execute(Obstacle* obstacle) const;
 
   private:
-    bool modifyTeam;
+    bool modifyTeam; // only for bases
     int team;
-    bool modifyColor;
+    bool modifyColor; // modify by tinting
     float tint[4];
-    bool modifyPhysicsDriver;
+    bool modifyPhysicsDriver; // only replaces valid physics drivers
     int phydrv;
+    bool modifyMaterial; // swaps the whole thing
+    const BzMaterial* material;
+
+    bool driveThrough;
+    bool shootThrough;
 };
 
 

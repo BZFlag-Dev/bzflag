@@ -32,11 +32,11 @@ class WallSceneNode : public SceneNode {
 			WallSceneNode();
 			~WallSceneNode();
 
-    const GLfloat*	getColor() const { return color; }
-    const GLfloat*	getModulateColor() const { return modulateColor; }
-    const GLfloat*	getLightedColor() const { return lightedColor; }
-    const GLfloat*	getLightedModulateColor() const
-				{ return lightedModulateColor; }
+    const GLfloat*	getColor() const;
+    const GLfloat*	getDynamicColor() const;
+    const GLfloat*	getModulateColor() const;
+    const GLfloat*	getLightedColor() const;
+    const GLfloat*	getLightedModulateColor() const;
     GLfloat		getDistance(const GLfloat*) const;
     virtual void	getExtents (float* mins, float* maxs) const;
     virtual bool	inAxisBox (const float* mins, const float* maxs) const;
@@ -76,9 +76,9 @@ class WallSceneNode : public SceneNode {
     void		setPlane(const GLfloat[4]);
     int			pickLevelOfDetail(const SceneRenderer&) const;
 
-    int			getStyle() const { return style; }
-    const OpenGLGState&	getGState() const { return gstate; }
-    OpenGLGState*	getGState(int) { return &gstate; }
+    int			getStyle() const;
+    const OpenGLGState*	getGState() const { return &gstate; }
+    const OpenGLGState*	getWallGState() const;
 
     static int		splitWall(const GLfloat* plane,
 				const GLfloat3Array& vertices,
@@ -115,10 +115,41 @@ class WallSceneNode : public SceneNode {
 // WallSceneNode
 //
 
-inline int		WallSceneNode::getNumLODs() const
+inline int WallSceneNode::getNumLODs() const
 {
   return numLODs;
 }
+
+inline const GLfloat* WallSceneNode::getColor() const
+{
+  return color;
+}
+inline const GLfloat* WallSceneNode::getDynamicColor() const
+{
+  return dynamicColor;
+}
+inline const GLfloat* WallSceneNode::getModulateColor() const
+{
+  return modulateColor;
+}
+inline const GLfloat* WallSceneNode::getLightedColor() const
+{
+  return lightedColor;
+}
+inline const GLfloat* WallSceneNode::getLightedModulateColor() const
+{
+  return lightedModulateColor;
+}
+
+inline int WallSceneNode::getStyle() const
+{
+  return style;
+}
+inline const OpenGLGState* WallSceneNode::getWallGState() const
+{
+  return &gstate;
+}
+
 
 #endif // BZF_WALL_SCENE_NODE_H
 

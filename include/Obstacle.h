@@ -38,6 +38,9 @@ class MeshTransform;
 */
 
 class Obstacle {
+
+  friend class ObstacleModifier;
+
   public:
 
   /** The default constructor. It sets all values to 0

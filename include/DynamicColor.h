@@ -59,7 +59,8 @@ class DynamicColor {
     typedef struct sequenceList {
       float period;
       float offset;
-      std::vector<char> list;
+      char* list;
+      unsigned int count;
     } sequenceParams;
 
     typedef struct {

@@ -522,6 +522,8 @@ bool Teleporter::getHitNormal(const float* pos1, float azimuth1,
 
 void* Teleporter::pack(void* buf) const
 {
+  buf = nboPackStdString(buf, name);
+  
   buf = nboPackVector(buf, pos);
   buf = nboPackFloat(buf, angle);
   buf = nboPackVector(buf, origSize);
@@ -541,6 +543,8 @@ void* Teleporter::pack(void* buf) const
 
 void* Teleporter::unpack(void* buf)
 {
+  buf = nboUnpackStdString(buf, name);
+  
   buf = nboUnpackVector(buf, pos);
   buf = nboUnpackFloat(buf, angle);
   buf = nboUnpackVector(buf, size);
@@ -564,6 +568,7 @@ void* Teleporter::unpack(void* buf)
 int Teleporter::packSize() const
 {
   int fullSize = 0;
+  fullSize += nboStdStringPackSize(name);
   fullSize += sizeof(float[3]); // pos
   fullSize += sizeof(float);    // rotation
   fullSize += sizeof(float[3]); // size
@@ -577,6 +582,9 @@ int Teleporter::packSize() const
 void Teleporter::print(std::ostream& out, const std::string& indent) const
 {
   out << indent << "teleporter" << std::endl;
+  if (name.size() > 0) {
+    out << indent << "  name " << name << std::endl;
+  }
   const float *pos = getPosition();
   out << indent << "  position " << pos[0] << " " << pos[1] << " "
 				 << pos[2] << std::endl;
@@ -585,7 +593,7 @@ void Teleporter::print(std::ostream& out, const std::string& indent) const
   out << indent << "  rotation " << ((getRotation() * 180.0) / M_PI)
 				 << std::endl;
   out << indent << "  border " << getBorder() << std::endl;
-  out << indent << "end" << std::endl << std::endl;
+  out << indent << "end" << std::endl;
   return;
 }
 

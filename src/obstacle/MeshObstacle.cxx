@@ -699,7 +699,7 @@ void MeshObstacle::print(std::ostream& out, const std::string& indent) const
     faces[f]->print(out, indent);
   }
 
-  out << indent << "end" << std::endl << std::endl;
+  out << indent << "end" << std::endl;
 
   return;
 }

@@ -75,7 +75,7 @@ class SceneNode {
 
     virtual int getRenderNodeCount() { return 0; }
     virtual RenderNode*	getRenderNode(int) { return NULL; }
-    virtual OpenGLGState* getGState(int) { return NULL; }
+    virtual const OpenGLGState* getGState() const { return NULL; }
 
 
     static void		setColorOverride(bool = true);

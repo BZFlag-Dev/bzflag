@@ -150,7 +150,7 @@ void ListServerLink::closeLink()
 void ListServerLink::read()
 {
   if (isConnected()) {
-    char    buf[2048];
+    char buf[2048];
     int bytes = recv(linkSocket, buf, sizeof(buf)-1, 0);
     // TODO don't close unless we've got it all
     closeLink();

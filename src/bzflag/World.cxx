@@ -485,14 +485,16 @@ void		World::makeLinkMaterial()
     params[1] = 2.0f * (params[0] / 3.0f); // blue
     dyncol->addSinusoid(2, params);
     dyncol->setName(name);
+    dyncol->finalize();
     dyncolId = DYNCOLORMGR.addColor (dyncol);
   }
 
   int texmatId = TEXMATRIXMGR.findMatrix(name);
   if (texmatId < 0) {
     TextureMatrix* texmat = new TextureMatrix;
-    texmat->setShiftParams(0.0f, -0.05f);
+    texmat->setDynamicShift(0.0f, -0.05f);
     texmat->setName(name);
+    texmat->finalize();
     texmatId = TEXMATRIXMGR.addMatrix (texmat);
   }
 

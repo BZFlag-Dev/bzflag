@@ -311,14 +311,20 @@ int MeshPolySceneNode::split(const float* splitPlane,
 void MeshPolySceneNode::addRenderNodes(SceneRenderer& renderer)
 {
   node->setStyle(getStyle());
-  renderer.addRenderNode(node, &getGState());
+  const GLfloat* dyncol = getDynamicColor();
+  if ((dyncol == NULL) || (dyncol[3] != 0.0f)) {
+    renderer.addRenderNode(node, getWallGState());
+  }
   return;
 }
 
 
 void MeshPolySceneNode::addShadowNodes(SceneRenderer& renderer)
 {
-  renderer.addShadowNode(node);
+  const GLfloat* dyncol = getDynamicColor();
+  if ((dyncol == NULL) || (dyncol[3] != 0.0f)) {
+    renderer.addShadowNode(node);
+  }
   return;
 }
 

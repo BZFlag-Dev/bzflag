@@ -29,7 +29,7 @@ EighthDimShellNode::EighthDimShellNode(SceneNode* node, bool _ownTheNode)
   sceneNode = node;
   ownTheNode = _ownTheNode;
 
-  const OpenGLGState* gs = node->getGState(0);
+  const OpenGLGState* gs = node->getGState();
   if (gs == NULL) {
     renderNodeCount = 0;
     renderNodes = NULL;
@@ -79,7 +79,7 @@ bool EighthDimShellNode::cull(const ViewFrustum&) const
 
 void EighthDimShellNode::notifyStyleChange()
 {
-  const OpenGLGState* gs = sceneNode->getGState(0);
+  const OpenGLGState* gs = sceneNode->getGState();
   if (gs == NULL) { // safety
     return;
   }

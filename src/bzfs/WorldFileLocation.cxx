@@ -82,12 +82,12 @@ bool WorldFileLocation::read(const char *cmd, std::istream& input)
     transform.addShear(data);
   }
   else if (strcasecmp ("spin", cmd) == 0) {
-    float data[4];
-    if (!(input >> data[0] >> data[1] >> data[2] >> data[3])) {
+    float angle, normal[3];
+    if (!(input >> angle >> normal[0] >> normal[1] >> normal[2])) {
       std::cout << "parameters errors " << std::endl;
       return false;
     }
-    transform.addSpin(data[0], &data[1]);
+    transform.addSpin(angle, normal);
   }
   else if (strcasecmp ("xform", cmd) == 0) {
     std::string name;

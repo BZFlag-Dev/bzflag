@@ -274,7 +274,7 @@ void			TriWallSceneNode::addRenderNodes(
 {
   const int lod = pickLevelOfDetail(renderer);
   nodes[lod]->setStyle(getStyle());
-  renderer.addRenderNode(nodes[lod], &getGState());
+  renderer.addRenderNode(nodes[lod], getWallGState());
 }
 
 

@@ -22,6 +22,7 @@
 #include "ObstacleMgr.h"
 #include "ParseColor.h"
 #include "PhysicsDriver.h"
+#include "BzMaterial.h"
 
 
 CustomGroup::CustomGroup(const std::string& groupdef)
@@ -74,7 +75,19 @@ bool CustomGroup::read(const char *cmd, std::istream& input) {
       group->setPhysicsDriver(phydrv);
     }
   }
-  else if (!WorldFileLocation::read(cmd, input)) {
+  else if (strcasecmp(cmd, "matref") == 0) {
+    std::string name;
+    if (!(input >> name)) {
+      std::cout << "missing matref parameter" << std::endl;
+    }
+    const BzMaterial* matref = MATERIALMGR.findMaterial(name);
+    if ((matref == NULL) && (name != "-1")) {
+      std::cout << "couldn't find reference material: " << name << std::endl;
+    } else {
+      group->setMaterial(matref);
+    }
+  }
+  else if (!WorldFileObstacle::read(cmd, input)) {
     return false;
   }
 
@@ -99,6 +112,16 @@ void CustomGroup::writeToGroupDef(GroupDefinition *grpdef) const
   xform.append(transform);
 
   group->setTransform(xform);
+
+
+  if (driveThrough) {
+    group->setDriveThrough();
+  }
+  if (shootThrough) {
+    group->setShootThrough();
+  }
+
+  group->setName(name);
 
   // make the group instance
   if (group->getGroupDef().size() > 0) {

@@ -630,7 +630,7 @@ void SphereObstacle::print(std::ostream& out, const std::string& indent) const
     out << indent << "  flatshading" << std::endl;
   }
 
-  out << indent << "end" << std::endl << std::endl;
+  out << indent << "end" << std::endl;
 
   return;
 }

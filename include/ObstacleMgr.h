@@ -36,6 +36,7 @@ class ConeObstacle;
 class SphereObstacle;
 class TetraBuilding;
 class ObstacleModifier;
+class BzMaterial;
 
 
 //
@@ -51,12 +52,19 @@ class GroupInstance {
     GroupInstance(const std::string& groupdef);
     GroupInstance();
     ~GroupInstance();
+    void init();
 
+    void setName(const std::string& name);
     void setTeam(int team);
     void setTint(const float tint[4]);
     void setPhysicsDriver(int phydrv);
     void setTransform(const MeshTransform&);
+    void setMaterial(const BzMaterial*);
+    void setDriveThrough();
+    void setShootThrough();
 
+    const std::string& getName() const;
+    
     const std::string& getGroupDef() const;
     const MeshTransform& getTransform() const;
 
@@ -68,14 +76,19 @@ class GroupInstance {
 
   private:
     std::string groupdef;
-    MeshTransform transform;
 
+    std::string name;
+    MeshTransform transform;
     bool modifyTeam;
     int team;
     bool modifyColor;
     float tint[4];
     bool modifyPhysicsDriver;
     int phydrv;
+    bool modifyMaterial;
+    const BzMaterial* material;
+    bool driveThrough;
+    bool shootThrough;
 };
 
 

@@ -171,49 +171,72 @@ DynamicColor::DynamicColor()
     color[c] = 1.0f;
     channels[c].minValue = 0.0f;
     channels[c].maxValue = 1.0f;
+    channels[c].sequence.count = 0;
+    channels[c].sequence.list = NULL;
   }
   possibleAlpha = false;
   name = "";
+  
   return;
 }
 
 
 DynamicColor::~DynamicColor()
 {
+  // sanitize the sequence value
+  for (int c = 0; c < 4; c++) {
+    sequenceParams& seq = channels[c].sequence;
+    delete[] seq.list;
+  }
+  return;
 }
 
 
 void DynamicColor::finalize()
 {
-  // check if there might be translucency
-  const ChannelParams& p = channels[3]; // the alpha channel
-  if ((p.sinusoids.size() == 0) &&
-      (p.clampUps.size() == 0) &&
-      (p.clampDowns.size() == 0) &&
-      (p.sequence.list.size() == 0)) {
-    // not using any functions
-    if (p.maxValue != 1.0f) {
-      possibleAlpha = true;
-    } else {
-      possibleAlpha = false;
-    }
-  } else {
-    // functions are used
-    if ((p.minValue != 1.0f) || (p.maxValue != 1.0f)) {
-      possibleAlpha = true;
-    } else {
-      possibleAlpha = false;
+  // sanitize the sequence value, and check for alpha middle values
+  bool noAlphaSeqMid = true;
+  for (int c = 0; c < 4; c++) {
+    sequenceParams& seq = channels[c].sequence;
+    for (unsigned int i = 0; i < seq.count; i++) {
+      if (seq.list[i] < colorMin) {
+	seq.list[i] = colorMin;
+      } else if (seq.list[i] > colorMax) {
+	seq.list[i] = colorMax;
+      } else if ((c == 3) && (seq.list[i] == colorMid)) {
+        noAlphaSeqMid = false;
+      }
     }
   }
 
-  // sanitize the sequence value
-  for (int i = 0; i < 4; i++) {
-    std::vector<char>& list = channels[i].sequence.list;
-    for (unsigned int j = 0; j < list.size(); j++) {
-      if (list[j] < colorMin) {
-	list[j] = colorMin;
-      } else if (list[j] > colorMax) {
-	list[j] = colorMax;
+  // check if there might be translucency
+  possibleAlpha = true;
+  const ChannelParams& p = channels[3]; // the alpha channel
+  
+  if ((p.minValue == 1.0f) && (p.maxValue == 1.0f)) {
+    // opaque regardless of functions
+    possibleAlpha = false;
+  }
+  else {
+
+    // check the a special sequence case
+    const sequenceParams& seq = p.sequence;
+    if ((seq.count > 0) &&
+        (noAlphaSeqMid && (p.minValue == 0.0f) && (p.maxValue == 1.0f))) {
+      // transparency, not translucency
+      possibleAlpha = false;
+    }
+    else {
+
+      // check for the common case
+      if ((p.sinusoids.size() == 0) &&
+          (p.clampUps.size() == 0) &&
+          (p.clampDowns.size() == 0) &&
+          (p.sequence.count == 0)) {
+        // not using any functions
+        if (p.maxValue == 1.0f) {
+          possibleAlpha = false;
+        }
       }
     }
   }
@@ -272,14 +295,21 @@ void DynamicColor::setSequence(int channel,float period, float offset,
 				std::vector<char>& list)
 {
   sequenceParams& seq = channels[channel].sequence;
-  if (period < minPeriod) {
-    seq.list.clear();
-  } else {
+
+  delete[] seq.list;
+  seq.list = NULL;
+  seq.count = 0;
+  
+  if (period >= minPeriod) {
     seq.period = period;
     seq.offset = offset;
-    seq.list.clear();
-    seq.list = list;
+    seq.count = list.size();
+    seq.list = new char[seq.count];
+    for (unsigned int i = 0; i < seq.count; i++) {
+      seq.list[i] = list[i];
+    }
   }
+  
   return;
 }
 
@@ -337,9 +367,8 @@ void DynamicColor::update (float t)
 
     // sequence rules over the clamps
     const sequenceParams& seq = channel.sequence;
-    const unsigned int seqSize = (const unsigned int)seq.list.size();
-    if (seqSize > 0) {
-      const float fullPeriod = (float)seqSize * seq.period;
+    if (seq.count > 0) {
+      const float fullPeriod = (float)seq.count * seq.period;
       float indexTime = (t - seq.offset);
       if (indexTime < 0.0f) {
 	indexTime -= fullPeriod * floorf(indexTime / fullPeriod);
@@ -454,13 +483,13 @@ void * DynamicColor::pack(void *buf) const
       buf = nboPackFloat (buf, p.clampDowns[i].width);
     }
     // sequence
-    const unsigned int seqSize = (const unsigned int)p.sequence.list.size();
-    buf = nboPackUInt (buf, seqSize);
-    if (seqSize > 0) {
-      buf = nboPackFloat (buf, p.sequence.period);
-      buf = nboPackFloat (buf, p.sequence.offset);
-      for (i = 0; i < seqSize; i++) {
-	buf = nboPackUByte (buf, (uint8_t)p.sequence.list[i]);
+    const sequenceParams& seq = p.sequence;
+    buf = nboPackUInt (buf, seq.count);
+    if (seq.count > 0) {
+      buf = nboPackFloat (buf, seq.period);
+      buf = nboPackFloat (buf, seq.offset);
+      for (i = 0; i < seq.count; i++) {
+	buf = nboPackUByte (buf, (uint8_t)seq.list[i]);
       }
     }
   }
@@ -507,17 +536,19 @@ void * DynamicColor::unpack(void *buf)
     }
     // sequence
     buf = nboUnpackUInt (buf, size);
-    p.sequence.list.resize(size);
+    sequenceParams& seq = p.sequence;
+    seq.count = size;
     if (size > 0) {
-      buf = nboUnpackFloat (buf, p.sequence.period);
-      buf = nboUnpackFloat (buf, p.sequence.offset);
+      buf = nboUnpackFloat (buf, seq.period);
+      buf = nboUnpackFloat (buf, seq.offset);
+      seq.list = new char[size];
       for (i = 0; i < size; i++) {
 	uint8_t value;
 	buf = nboUnpackUByte (buf, value);
-	p.sequence.list[i] = value;
+	seq.list[i] = value;
       }
     } else {
-      p.sequence.period = 0.0f;
+      seq.list = NULL;
     }
   }
 
@@ -539,9 +570,10 @@ int DynamicColor::packSize() const
     fullSize += sizeof(uint32_t);
     fullSize += (int)(channels[c].clampDowns.size() * (sizeof(clampParams)));
     fullSize += sizeof(uint32_t);
-    if (channels[c].sequence.list.size() > 0) {
+    const sequenceParams& seq = channels[c].sequence;
+    if (seq.count > 0) {
       fullSize += sizeof(float) * 2; // period and offset
-      fullSize += (int)channels[c].sequence.list.size() * sizeof(char);
+      fullSize += seq.count * sizeof(char);
     }
   }
   return fullSize;
@@ -566,10 +598,10 @@ void DynamicColor::print(std::ostream& out, const std::string& /*indent*/) const
 	  << p.minValue << " " << p.maxValue << std::endl;
     }
     unsigned int i;
-    if (p.sequence.list.size() > 0) {
+    if (p.sequence.count > 0) {
       out << "  " << colorStr << " sequence " << p.sequence.period << " "
 					      << p.sequence.offset;
-      for (i = 0; i < p.sequence.list.size(); i++) {
+      for (i = 0; i < p.sequence.count; i++) {
 	out << " " << (int)p.sequence.list[i];
       }
       out << std::endl;

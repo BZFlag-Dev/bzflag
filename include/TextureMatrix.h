@@ -23,27 +23,25 @@ class TextureMatrix {
   public:
     TextureMatrix();
     ~TextureMatrix();
+    
+    void finalize();
+    
     const float* getMatrix() const;
     bool setName (const std::string& name);
 
-    // the static parameters (multiples)
-    void addStaticShift (float x, float y);
-    void addStaticSpin (float angle);
-    void addStaticScale (float uSize, float vSize);
-
-    // the dynamic parameters (singles)
-    void seyDynamicShift (float uFreq, float vFreq);
-    void setDynamicSpin (float freq, float uCenter, float vCenter);
-    void setDynamicScale (float uFreq, float vFreq,
-			  float uCenter, float vCenter,
-			  float uSize, float vSize);
+    // the static parameters
+    void setStaticSpin (float rotation);
+    void setStaticShift (float u, float v);
+    void setStaticScale (float u, float v);
+    void setStaticCenter (float u, float v);
 
     // the dynamic parameters
-    void setShiftParams (float uFreq, float vFreq);
-    void setRotateParams (float freq, float uCenter, float vCenter);
-    void setScaleParams (float uFreq, float vFreq,
-			 float uCenter, float vCenter,
-			 float uSize, float vSize);
+    void setDynamicSpin (float freq);
+    void setDynamicShift (float uFreq, float vFreq);
+    void setDynamicScale (float uFreq, float vFreq,
+			  float uSize, float vSize);
+    void setDynamicCenter (float u, float v);
+
     void update(float time);
     const std::string& getName() const;
 
@@ -55,15 +53,28 @@ class TextureMatrix {
 
   private:
     std::string name;
-    float matrix[16];
-    float uPos, vPos; // time invariant
-    float uSize, vSize; // time invariant
+    // time invariant
+    bool useStatic;
+    float staticMatrix[3][2];
+    float rotation;
+    float uFixedShift, vFixedShift;
+    float uFixedScale, vFixedScale;
+    float uFixedCenter, vFixedCenter;
+    // time varying
+    bool useDynamic;
+    float spinFreq;
     float uShiftFreq, vShiftFreq;
-    float rotateFreq, uRotateCenter, vRotateCenter;
     float uScaleFreq, vScaleFreq;
     float uScale, vScale;
-    float uScaleCenter, vScaleCenter;
+    float uCenter, vCenter;
+    // the final result
+    float matrix[4][4];
 };
+
+inline const float* TextureMatrix::getMatrix() const
+{
+  return (const float*) matrix;
+}
 
 
 class TextureMatrixManager {

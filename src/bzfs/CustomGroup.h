@@ -22,11 +22,11 @@
 
 /* local interface headers */
 #include "WorldInfo.h"
-#include "WorldFileLocation.h"
+#include "WorldFileObstacle.h"
 
 class GroupInstance;
 
-class CustomGroup : public WorldFileLocation {
+class CustomGroup : public WorldFileObstacle {
   public:
     CustomGroup(const std::string& groupdef);
     ~CustomGroup();

@@ -978,6 +978,12 @@ must come before they are used). The list of world types consists of:
 .br
 .B	physics
 .br
+.B	weapon
+.br
+.B	zone
+.br
+.B	link
+.br
 .B	mesh
 .br
 .B	arc
@@ -994,13 +1000,11 @@ must come before they are used). The list of world types consists of:
 .br
 .B	teleporter
 .br
-.B	link
-.br
 .B	base
 .br
-.B	weapon
+.B	define
 .br
-.B	zone
+.B	group
 .br
 
 Each object is described by placing the type on one line, the word \fIend\fR on a following line,
@@ -1023,6 +1027,10 @@ Material properties may be set on several types of objects, including
 meshes, mesh faces, arcs, cones, spheres, and tetras. Here are the properties:
 .br
 
+\fBmaterial\fR
+.br
+\fB  name\fR example_material
+.br
 \fB  texture\fR filename     # set working texture (without PNG extension)
 .br
 \fB  addtexture\fR filename  # add texture (without PNG extension)
@@ -1056,6 +1064,14 @@ meshes, mesh faces, arcs, cones, spheres, and tetras. Here are the properties:
 \fB  shininess\fR 0.0             # shininess
 .br
 \fB  resetmat\fR                  # restore default values
+.br
+\fBend\fR                  # restore default values
+.br
+
+Materials may also be setup using a material reference within
+the object. An example would be:
+.br
+\fBmatref\fR example_material
 .br
 
 
@@ -1098,7 +1114,7 @@ Sets how high the water is, in a matter of units.
 .br
 \fB  name\fR example_waterlevel
 .br
-\fB  height\fR -1 # anything below 0 turns it off
+\fB  height\fR -1.0 # anything below 0 turns it off
 .br
 \fBend\fR
 .br
@@ -1114,11 +1130,21 @@ Sets how high the water is, in a matter of units.
 .br
   #   \fBred\fR, \fBgreen\fR, \fBblue\fR, \fBalpha\fR
 .br
-  # there are 4 types of commands per channel:
+  # there are 5 types of commands per channel:
 .br
-  #   \fBlimits\fR, \fBsinusoid\fR, \fBclampUp\fR, \fBclampDown\fR
+  #   \fBlimits\fR, \fBsinusoid\fR, \fBclampUp\fR, \fBclampDown\fR, \fBsequence\fR
 .br
-  # except for "limits", the commands are \fBrepeatable\fR
+  # except for "limits" and "sequence", the commands are \fBrepeatable\fR
+.br
+  # if a sequence is used, then clampUps and clampDowns have no effect
+.br
+  # sequences can use three states (0, 1, 2). 
+.br
+  #   0 - equivalent to an active clampDown
+.br
+  #   1 - equivalent to active clampUp and clampDown
+.br
+  #   2 - equivalent to an active clampUp
 .br
   # if both clampUp and clampDown are active, the value is (min+max)/2
 .br
@@ -1134,6 +1160,8 @@ Sets how high the water is, in a matter of units.
 .br
 \fB  alpha clampDown\fR 0.2 0.5 0.5  # period, offset, width
 .br
+\fB  red sequence\fR 0.0 0.0 0 2 1 1 2 0 ... # period, offset, list of states
+.br
 \fBend\fR
 .br
 
@@ -1144,11 +1172,19 @@ Sets how high the water is, in a matter of units.
 .br
 \fB  name\fR example_texmat
 .br
-\fB  shift\fR 0.1 0.2              # u/v freqs
+\fB  scale\fR 0.0 0.0       # u/v freqs, u/v scales
 .br
-\fB  rotate\fR 0.2 0.5 0.5         # rotation freq, u/v centers
+\fB  spin\fR 0.0            # rotation freq 
 .br
-\fB  scale\fR 0.1 0.2 2 3 0.5 0.5  # u/v freqs, u/v scales, u/v centers
+\fB  shift\fR 0.0 0.0       # u/v freqs
+.br
+\fB  center\fR 0.5 0.5	    # dynamic u/v center (for spin and scale)
+.br
+\fB  fixedscale\fR 0.0 0.0  # time invariant u/v scale
+.br
+\fB  fixedspin\fR 0.0       # time invariant rotation
+.br
+\fB  fixedshift\fR 0.0 0.0  # time invariant u/v shift
 .br
 \fBend\fR
 .br
@@ -1160,11 +1196,11 @@ Sets how high the water is, in a matter of units.
 .br
 \fB  name\fR example_phydrv
 .br
-\fB  linear\fR 0.0 0.0 0.0  # x/y/z linear velocities
+\fB  linear\fR 0.0 0.0 0.0   # x/y/z linear velocities
 .br
-\fB  angular\fR 0.0 0.0 0.0   # rotation freq, x/y coordinates
+\fB  angular\fR 0.0 0.0 0.0  # rotation freq, x/y coordinates
 .br
-\fB  slide\fR 0.0             # time until max velocity  (t > 0.0 for any sliding)
+\fB  slide\fR 0.0            # time until max velocity  (> 0.0 enables)
 .br
 \fB  death\fR Message goes here.
 .br
@@ -1190,25 +1226,27 @@ Sets how high the water is, in a matter of units.
 .br
 \fB  inside\fR 5.5 4.5 1.2  # add an inside point  (\fBrepeatable\fR)
 .br
-\fB  outside\fR 0 0 1000  # add an outside point  (\fBrepeatable\fR)
+\fB  outside\fR 0 0 1000    # add an outside point  (\fBrepeatable\fR)
 .br
 \fB  vertex\fR 100 200 300  # add a vertex  (\fBrepeatable\fR)
 .br
-\fB  normal\fR 1.0 0 0  # add a normal  (\fBrepeatable\fR)
+\fB  normal\fR 1.0 0 0      # add a normal  (\fBrepeatable\fR)
 .br
-\fB  texcoord\fR 0.1 0.75  # add a texture coordinate  (\fBrepeatable\fR)
+\fB  texcoord\fR 0.1 0.75   # add a texture coordinate  (\fBrepeatable\fR)
 .br
-\fB  reset\fR  # restore default values
+\fB  phydrv\fR example_phydrv  # assign a physics driver
 .br
 \fB  face\fR  # start a face  (\fBrepeatable\fR)
 .br
     # faces must be convex polygons
 .br
-\fB    vertices\fR 1 2 4 3 5  # list of vertices
+\fB    vertices\fR 1 2 4 3 5    # list of vertices
 .br
-\fB    normals\fR 3 5 4 6 7  # list of normals
+\fB    normals\fR 3 5 4 6 7     # list of normals
 .br
 \fB    texcoords\fR 10 3 2 4 9  # list of texture coordinates
+.br
+\fB    phydrv\fR example_phydrv  # assign a physics driver
 .br
 \fB  endface\fR  # end the face
 .br
@@ -1222,19 +1260,21 @@ Sets how high the water is, in a matter of units.
 .br
 \fB  name\fR example_arc
 .br
-\fB  divisions 16\fR  # number of subdivisions
+\fB  divisions 16\fR   # number of subdivisions
 .br
-\fB  flatshading\fR   # flat shading  (smooth is default)
+\fB  flatshading\fR    # flat shading  (smooth is default)
 .br
-\fB  angle 360\fR     # the sweep angle
+\fB  angle 360\fR      # the sweep angle
 .br
-\fB  ratio 1\fR       # (outrad - inrad) / outrad
+\fB  ratio 1\fR        # (outrad - inrad) / outrad
 .br
 \fB  position\fR 0.0 0.0 0.0
 .br
 \fB  size\fR 10 10 10
 .br
 \fB  rotation\fR 0.0
+.br
+\fB  phydrv\fR example_phydrv  # assign a physics driver
 .br
 \fBend\fR
 .br
@@ -1246,17 +1286,19 @@ Sets how high the water is, in a matter of units.
 .br
 \fB  name\fR example_cone
 .br
-\fB  divisions 16\fR  # number of subdivisions
+\fB  divisions 16\fR   # number of subdivisions
 .br
-\fB  flatshading\fR   # flat shading  (smooth is default)
+\fB  flatshading\fR    # flat shading  (smooth is default)
 .br
-\fB  angle 360\fR     # the sweep angle
+\fB  angle 360\fR      # the sweep angle
 .br
 \fB  position\fR 0.0 0.0 0.0
 .br
 \fB  size\fR 10 10 10
 .br
 \fB  rotation\fR 0.0
+.br
+\fB  phydrv\fR example_phydrv  # assign a physics driver
 .br
 \fBend\fR
 .br
@@ -1268,17 +1310,19 @@ Sets how high the water is, in a matter of units.
 .br
 \fB  name\fR example_sphere
 .br
-\fB  divisions 4\fR  # number of subdivisions
+\fB  divisions 4\fR    # number of subdivisions
 .br
-\fB  flatshading\fR  # flat shading  (smooth is default)
+\fB  flatshading\fR    # flat shading  (smooth is default)
 .br
 \fB  position\fR 0.0 0.0 10.0
 .br
 \fB  size\fR 10 10 10
 .br
-\fB  radius 10\fR    #  sets all size values to this value
+\fB  radius 10\fR      #  sets all size values to this value
 .br
 \fB  rotation\fR 0.0
+.br
+\fB  phydrv\fR example_phydrv  # assign a physics driver
 .br
 \fBend\fR
 .br
@@ -1305,6 +1349,8 @@ Sets how high the water is, in a matter of units.
 # planes are numbered according to their opposite vertex
 .br
 \fB  visible\fR 1 1 0 1
+.br
+\fB  phydrv\fR example_phydrv  # assign a physics driver
 .br
 \fBend\fR
 .br

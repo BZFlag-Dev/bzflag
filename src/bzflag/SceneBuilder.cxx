@@ -502,7 +502,7 @@ void SceneDatabaseBuilder::addPyramid(SceneDatabase* db, PyramidBuilding& o)
 
 void SceneDatabaseBuilder::addBase(SceneDatabase *db, BaseBuilding &o)
 {
-  WallSceneNode *node;
+  WallSceneNode* node;
   ObstacleSceneNodeGenerator* nodeGen = new BaseSceneNodeGenerator(&o);
 
   TextureManager &tm = TextureManager::instance();

@@ -375,7 +375,7 @@ void BSPSceneDatabase::nodeAddRenderNodes(Node* node)
 	nodeAddRenderNodes(back);
       }
       if (!snode->cull(*frustum)) {
-	snode->addRenderNodes(*renderer);
+        snode->addRenderNodes(*renderer);
       }
       if (front) {
 	nodeAddRenderNodes(front);
@@ -387,7 +387,7 @@ void BSPSceneDatabase::nodeAddRenderNodes(Node* node)
 	nodeAddRenderNodes(front);
       }
       if (!snode->cull(*frustum)) {
-	snode->addRenderNodes(*renderer);
+        snode->addRenderNodes(*renderer);
       }
       if (back) {
 	nodeAddRenderNodes(back);
