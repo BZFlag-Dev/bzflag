@@ -60,6 +60,7 @@ namespace Flags {
   FlagType *Seer;
   FlagType *Thief;
   FlagType *Burrow;
+  FlagType *Wings;
   FlagType *Colorblindness;
   FlagType *Obesity;
   FlagType *LeftTurnOnly;
@@ -136,6 +137,8 @@ namespace Flags {
 						    "THief (+TH):  Steal flags.  Small and fast but can't kill.");
     Burrow                  = new FlagType( "Burrow", "BU", FlagUnstable, NormalShot, FlagGood, NoTeam,
 						    "Burrow (+BU):  Tank burrows underground, impervious to normal shots, but can be steamrolled by anyone!");
+    Wings                   = new FlagType( "Wings", "WG", FlagUnstable, NormalShot, FlagGood, NoTeam,
+						    "Wings (+WG):  Tank can drive in air.");
     Colorblindness          = new FlagType( "Colorblindness", "CB", FlagSticky, NormalShot, FlagBad, NoTeam,
 						    "ColorBlindness (-CB):  Can't tell team colors.  Don't shoot teammates!");
     Obesity                 = new FlagType( "Obesity", "O", FlagSticky, NormalShot, FlagBad, NoTeam,

@@ -202,8 +202,9 @@ void			LocalPlayer::doUpdateMotion(float dt)
       // can't control explosion motion
       newVelocity[2] += BZDB.eval(StateDatabase::BZDB_GRAVITY) * dt;
       newAngVel = 0.0f;	// or oldAngVel to spin while exploding
-    } else if (location == OnGround || location == OnBuilding ||
-	  (location == InBuilding && oldPosition[2] == groundLimit)) {
+    } else if ((location == OnGround) 
+      ||       (location == OnBuilding) 
+      ||       (location == InBuilding && oldPosition[2] == groundLimit)) {
       // full control
       float speed = desiredSpeed;
 
@@ -242,9 +243,35 @@ void			LocalPlayer::doUpdateMotion(float dt)
       // save speed for next update
       lastSpeed = speed;
     } else {
-      // can't control motion in air
-      newVelocity[2] += BZDB.eval(StateDatabase::BZDB_GRAVITY) * dt;
-      newAngVel = oldAngVel;
+      // can't control motion in air unless have wings
+      if (getFlag() == Flags::Wings) {
+        float speed = desiredSpeed;
+        if (inputMethod == Keyboard) {
+	  /* the larger the oldAngVel contribution, the more slowly an
+	   * angular velocity converges to the desired "max" velocity; the
+	   * contribution of the desired and old velocity should add up to
+	   * one for a linear convergence rate.
+	   */
+	  newAngVel = oldAngVel*0.8f + desiredAngVel*0.2f;
+
+	  // instant stop
+	  if ((oldAngVel * desiredAngVel < 0.0f) || (NEAR_ZERO(desiredAngVel, ZERO_TOLERANCE))) {
+	    newAngVel = desiredAngVel;
+	  }
+	} 
+	else { // mouse or joystick
+	  newAngVel = desiredAngVel;
+	}
+        // compute velocity so far
+        newVelocity[0] = speed * cosf(oldAzimuth + 0.5f * dt * newAngVel);
+        newVelocity[1] = speed * sinf(oldAzimuth + 0.5f * dt * newAngVel);
+	newVelocity[2] += BZDB.eval(StateDatabase::BZDB_GRAVITY) * dt;
+        lastSpeed = speed;
+      }
+      else {
+        newVelocity[2] += BZDB.eval(StateDatabase::BZDB_GRAVITY) * dt;
+        newAngVel = oldAngVel;
+      }
     }
 
     // now apply outside forces

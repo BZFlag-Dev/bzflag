@@ -445,6 +445,7 @@ Help6Menu::Help6Menu() : HelpMenu("Flags III")
   list.push_back(createLabel("Steal flags.  Small and fast but can't kill.", "Thief (TH)"));
   list.push_back(createLabel("Tank burrows underground, impervious to normal shots, but can be steamrolled by anyone!", 
 			     "Burrow (BU)"));
+  list.push_back(createLabel("Tanks can drive in air", "Wings (WG)"));
   list.push_back(createLabel("", ""));
   list.push_back(createLabel("", "Bad Flags:"));
   list.push_back(createLabel("can't identify tanks", "Colorblindness (CB)"));
