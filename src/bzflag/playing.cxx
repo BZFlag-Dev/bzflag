@@ -4453,13 +4453,8 @@ static void		addObstacle(std::vector<BzfRegion*>& rgnList, const Obstacle& obsta
     return;
 
   const float a = obstacle.getRotation();
-  // FIXME -- this is too generous;  robots will be able to come within
-  //	0.49*TankWidth of a building at any orientation which means they
-  //	could penetrate buildings.  it's either this or have robots go
-  //	dead when they (or the target) moves within a dead-zone.
-  const float tankWidth = BZDB->eval(StateDatabase::BZDB_TANKWIDTH);
-  const float w = obstacle.getWidth() + 0.49f * tankWidth;
-  const float h = obstacle.getBreadth() + 0.49f * tankWidth;
+  const float w = obstacle.getWidth();
+  const float h = obstacle.getBreadth();
   const float xx =  w * cosf(a);
   const float xy =  w * sinf(a);
   const float yx = -h * sinf(a);
