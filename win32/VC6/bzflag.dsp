@@ -446,6 +446,10 @@ SOURCE=..\..\src\bzflag\ShotStrategy.cxx
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\src\bzflag\ShotStatistics.cxx
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\src\bzflag\SilenceDefaultKey.cxx
 # End Source File
 # Begin Source File

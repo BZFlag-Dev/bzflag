@@ -119,6 +119,7 @@ bzflag_SOURCES =			\
 	ShotStatsDefaultKey.cxx		\
 	ShotStatsDefaultKey.h		\
 	ShotStatistics.h		\
+	ShotStatistics.cxx		\
 	ShotStrategy.cxx		\
 	ShotStrategy.h			\
 	SilenceDefaultKey.cxx		\

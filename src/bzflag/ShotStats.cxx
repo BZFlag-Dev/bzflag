@@ -46,26 +46,24 @@ ShotStats::ShotStats() : HUDDialog()
   // add title
   createLabel("Shot Statistics", list);
 
-  columns = 16;
+  // key
+  createLabel("Shots Hit/Fired", list);
+
+  columns = 11;
   rows = 0;
 
   // section headings
   createLabel("\nPlayer", list);
   createLabel("\nHit%", list);
-  createLabel("Total\nFired", list);
-  createLabel("Total\nHit", list);
-  createLabel("Norm.\nFired", list);
-  createLabel("Norm.\nHit", list);
-  createLabel("GM\nFired", list);
-  createLabel("GM\nHit", list);
-  createLabel("Laser\nFired", list);
-  createLabel("Laser\nHit", list);
-  createLabel("SB\nFired", list);
-  createLabel("SB\nHit", list);
-  createLabel("SW\nFired", list);
-  createLabel("SW\nHit", list);
-  createLabel("Thief\nFired", list);
-  createLabel("Thief\nHit", list);
+  createLabel("\nTotal", list);
+  createLabel("\nNorm", list);
+  createLabel("\nGM", list);
+  createLabel("\nLaser", list);
+  createLabel("Super\nBullet", list);
+  createLabel("Shock\nWave", list);
+  createLabel("\nThief", list);
+  createLabel("Fave.\nFlag", list);
+  createLabel("Best\nFlag", list);
   ++rows;
 
   // my statistics first
@@ -101,36 +99,32 @@ void ShotStats::addStats(Player* player, std::vector<HUDuiControl*>& list)
 
   const ShotStatistics* stats = player->getShotStatistics();
   createLabel(player->getCallSign(), list);
+
   sprintf(buffer, "%2d%%", stats->getTotalPerc());
   createLabel(buffer, list);
-  sprintf(buffer, "%d", stats->getTotalFired());
+  sprintf(buffer, "%d/%d", stats->getTotalHit(), stats->getTotalFired());
   createLabel(buffer, list);
-  sprintf(buffer, "%d", stats->getTotalHit());
+  sprintf(buffer, "%d/%d", stats->getNormalHit(), stats->getNormalFired());
   createLabel(buffer, list);
-  sprintf(buffer, "%d", stats->getNormalFired());
+  sprintf(buffer, "%d/%d", stats->getGMHit(), stats->getGMFired());
   createLabel(buffer, list);
-  sprintf(buffer, "%d", stats->getNormalHit());
+  sprintf(buffer, "%d/%d", stats->getLHit(), stats->getLFired());
   createLabel(buffer, list);
-  sprintf(buffer, "%d", stats->getGMFired());
+  sprintf(buffer, "%d/%d", stats->getSBHit(), stats->getSBFired());
   createLabel(buffer, list);
-  sprintf(buffer, "%d", stats->getGMHit());
+  sprintf(buffer, "%d/%d", stats->getSWHit(), stats->getSWFired());
   createLabel(buffer, list);
-  sprintf(buffer, "%d", stats->getLFired());
+  sprintf(buffer, "%d/%d", stats->getTHHit(), stats->getTHFired());
   createLabel(buffer, list);
-  sprintf(buffer, "%d", stats->getLHit());
+
+  strcpy(buffer, stats->getFavoriteFlag()->flagAbbv);
+  if (buffer == "") buffer = "None";
   createLabel(buffer, list);
-  sprintf(buffer, "%d", stats->getSBFired());
+
+  strcpy(buffer, stats->getBestFlag()->flagAbbv);
+  if (buffer == "") buffer = "None";
   createLabel(buffer, list);
-  sprintf(buffer, "%d", stats->getSBHit());
-  createLabel(buffer, list);
-  sprintf(buffer, "%d", stats->getSWFired());
-  createLabel(buffer, list);
-  sprintf(buffer, "%d", stats->getSWHit());
-  createLabel(buffer, list);
-  sprintf(buffer, "%d", stats->getTHFired());
-  createLabel(buffer, list);
-  sprintf(buffer, "%d", stats->getTHHit());
-  createLabel(buffer, list);
+
   ++rows;
 
   delete[] buffer;
@@ -178,17 +172,27 @@ void			ShotStats::resize(int width, int height)
   float y = titleY;
   title->setPosition(x, y);
 
-  for (int i = 1; i < (int)list.size(); ++i) {
-    // determine row & column (i - 1 to account for title)
-    int row = (i - 1) / columns;
-    int column = (i - 1) - (columns * row) + 1;
+  // center key
+  HUDuiLabel* key = (HUDuiLabel*)list[1];
+  key->setFontSize(fontSize);
+  const float keyCenter = ((columns / 2) + 4) * columnWidth;
+  const float keyWidth = fm.getStrLength(getFontFace(), fontSize, key->getString());
+  const float keyY = titleY - 2 * fm.getStrHeight(getFontFace(), fontSize, " ");
+  y = keyY;
+  x = keyCenter - 0.5f * keyWidth;
+  key->setPosition(x, y);
+
+  for (int i = 2; i < (int)list.size(); ++i) {
+    // determine row & column (i - 2 to account for title & key)
+    int row = (i - 2) / columns;
+    int column = (i - 2) - (columns * row) + 1;
     // account for 3 extra columns in player name
     if (column > 1)
       column = column + 3;
 
     // find coordinates corresponding to this row & column
     x = column * columnWidth;
-    y = titleY - (row + 1) * rowHeight;
+    y = keyY - (row + 1) * rowHeight;
     // headings take up an additional row (embedded newlines)
     if (row > 0) y -= rowHeight;
 

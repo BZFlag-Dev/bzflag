@@ -23,15 +23,8 @@
 class ShotStatistics {
 public:
 
-  ShotStatistics() : 
-      normalFired(0), normalHit(0),
-      guidedMissileFired(0), guidedMissileHit(0),
-      laserFired(0), laserHit(0),
-      superBulletFired(0), superBulletHit(0),
-      shockWaveFired(0), shockWaveHit(0),
-      thiefFired(0), thiefHit(0)
-      {};
-  ~ShotStatistics() {};
+  ShotStatistics();
+  ~ShotStatistics();
 
   // raw stats returns
   int         getNormalFired() const;
@@ -46,11 +39,13 @@ public:
   int         getSWHit() const;
   int         getTHFired() const;
   int         getTHHit() const;
-  
+
   // stats processing
   int         getTotalFired() const;
   int         getTotalHit() const;
   int         getTotalPerc() const;
+  FlagType*   getFavoriteFlag() const;
+  FlagType*   getBestFlag() const;
 
   // tally functions
   void	      recordFire(FlagType* flag);
@@ -130,41 +125,6 @@ inline int ShotStatistics::getTotalHit() const {
          shockWaveHit + thiefHit;
 }
 
-inline int ShotStatistics::getTotalPerc() const {
-  if (getTotalFired() == 0)
-    return 100;
-  return (int)(100 * ((float)getTotalHit() / (float)getTotalFired()));
-}
-
-inline void ShotStatistics::recordFire(FlagType* flag) {
-  if (flag == Flags::GuidedMissile)
-    guidedMissileFired++;
-  else if (flag == Flags::Laser)
-    laserFired++;
-  else if (flag == Flags::SuperBullet)
-    superBulletFired++;
-  else if (flag == Flags::ShockWave)
-    shockWaveFired++;
-  else if (flag == Flags::Thief)
-    thiefFired++;
-  else
-    normalFired++;
-}
-
-inline void ShotStatistics::recordHit(FlagType* flag) {
-  if (flag == Flags::GuidedMissile)
-    guidedMissileHit++;
-  else if (flag == Flags::Laser)
-    laserHit++;
-  else if (flag == Flags::SuperBullet)
-    superBulletHit++;
-  else if (flag == Flags::ShockWave)
-    shockWaveHit++;
-  else if (flag == Flags::Thief)
-    thiefHit++;
-  else
-    normalHit++;
-}
 #endif // __SHOTSTATISTICS_H__
 
 // Local Variables: ***
