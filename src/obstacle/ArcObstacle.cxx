@@ -573,18 +573,10 @@ void *ArcObstacle::pack(void *buf)
   
   // pack the state byte
   unsigned char stateByte = 0;
-  if (isDriveThrough()) {
-    stateByte |= (1 << 0);
-  }
-  if (isShootThrough()) {
-    stateByte |= (1 << 1);
-  }
-  if (smoothBounce) {
-    stateByte |= (1 << 2);
-  }
-  if (useNormals) {
-    stateByte |= (1 << 3);
-  }
+  stateByte |= isDriveThrough() ? (1 << 0) : 0;
+  stateByte |= isShootThrough() ? (1 << 1) : 0;
+  stateByte |= smoothBounce     ? (1 << 2) : 0;
+  stateByte |= useNormals       ? (1 << 3) : 0;
   buf = nboPackUByte(buf, stateByte);
   
   return buf;
@@ -613,18 +605,10 @@ void *ArcObstacle::unpack(void *buf)
   // unpack the state byte
   unsigned char stateByte;
   buf = nboUnpackUByte(buf, stateByte);
-  if (stateByte & (1 << 0)) {
-    driveThrough = true;
-  }
-  if (stateByte & (1 << 1)) {
-    shootThrough = true;
-  }
-  if (stateByte & (1 << 2)) {
-    smoothBounce = true;
-  }
-  if (stateByte & (1 << 3)) {
-    useNormals = true;
-  }
+  driveThrough = (stateByte & (1 << 0)) != 0;
+  shootThrough = (stateByte & (1 << 1)) != 0;
+  smoothBounce = (stateByte & (1 << 2)) != 0;
+  useNormals   = (stateByte & (1 << 3)) != 0;
   
   finalize();
   

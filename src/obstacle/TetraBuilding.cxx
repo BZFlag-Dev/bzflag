@@ -316,12 +316,8 @@ void *TetraBuilding::pack(void* buf)
 
   // pack the state byte
   unsigned char stateByte = 0;
-  if (isDriveThrough()) {
-    stateByte |= _DRIVE_THRU;
-  }
-  if (isShootThrough()) {
-    stateByte |= _SHOOT_THRU;
-  }
+  stateByte |= isDriveThrough() ? (1 << 0) : 0;
+  stateByte |= isShootThrough() ? (1 << 1) : 0;
   buf = nboPackUByte(buf, stateByte);
 
   // pack the vertices
@@ -371,12 +367,8 @@ void *TetraBuilding::unpack(void* buf)
   // unpack the state byte
   unsigned char stateByte;
   buf = nboUnpackUByte(buf, stateByte);
-  if (stateByte & _DRIVE_THRU) {
-    driveThrough = true;
-  }
-  if (stateByte & _SHOOT_THRU) {
-    shootThrough = true;
-  }
+  driveThrough = (stateByte & (1 << 0)) != 0;
+  shootThrough = (stateByte & (1 << 1)) != 0;
 
   // unpack the vertices
   for (v = 0; v < 4; v++) {

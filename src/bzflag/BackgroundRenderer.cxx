@@ -473,8 +473,9 @@ void			BackgroundRenderer::render(SceneRenderer& renderer)
     // the ground gets illuminated).  this is necessary because lighting is
     // performed only at a vertex, and the ground's vertices are a few
     // kilometers away.
-    if (BZDBCache::blend && BZDBCache::lighting)
+    if (BZDBCache::blend && BZDBCache::lighting) {
       drawGroundReceivers(renderer);
+    }
 
     if (renderer.useQuality() > 1) {
       // light the mountains (so that they get dark when the sun goes down).
@@ -760,6 +761,7 @@ void			BackgroundRenderer::drawGroundReceivers(
 
     // draw ground receiver, computing lighting at each vertex ourselves
     glBegin(GL_TRIANGLE_FAN);
+    {
       // point under light
       float d = pos[2];
       float I = B / (atten[0] + d * (atten[1] + d * atten[2]));
@@ -775,10 +777,13 @@ void			BackgroundRenderer::drawGroundReceivers(
       glColor3f(I * color[0] > 1.0f ? 1.0f : I * color[0],
 		I * color[1] > 1.0f ? 1.0f : I * color[1],
 		I * color[2] > 1.0f ? 1.0f : I * color[2]);
-      for (j = 0; j <= receiverSlices; j++)
+      for (j = 0; j <= receiverSlices; j++) {
 	glVertex2f(receiverRingSize * angle[j][0],
 		   receiverRingSize * angle[j][1]);
+      }
+    }
     glEnd();
+    
     for (i = 1; i < receiverRings; i++) {
       const GLfloat innerSize = receiverRingSize * GLfloat(i * i);
       const GLfloat outerSize = receiverRingSize * GLfloat((i + 1) * (i + 1));
@@ -811,12 +816,14 @@ void			BackgroundRenderer::drawGroundReceivers(
       if (outerColor[2] > 1.0f) outerColor[2] = 1.0f;
 
       glBegin(GL_QUAD_STRIP);
+      {
 	for (j = 0; j <= receiverSlices; j++) {
 	  glColor3fv(innerColor);
 	  glVertex2f(angle[j][0] * innerSize, angle[j][1] * innerSize);
 	  glColor3fv(outerColor);
 	  glVertex2f(angle[j][0] * outerSize, angle[j][1] * outerSize);
 	}
+      }
       glEnd();
     }
 

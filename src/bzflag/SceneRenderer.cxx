@@ -332,7 +332,10 @@ bool			SceneRenderer::useWireframe() const
 void			SceneRenderer::setHiddenLine(bool on)
 {
   useHiddenLineOn = on && BZDBCache::zbuffer && canUseHiddenLine;
-  if (!useHiddenLineOn) { depthRange = 0; return; }
+  if (!useHiddenLineOn) {
+    depthRange = 0;
+    return;
+  }
 #if defined(GL_VERSION_1_1)
   glPolygonOffset(1.0f, 2.0f);
 #elif defined(GL_EXT_polygon_offset)
@@ -596,7 +599,9 @@ void			SceneRenderer::render(
   TEXMATRIXMGR.update();
 
   // make sure there is something to render on
-  if (!window) return;
+  if (!window) {
+    return;
+  }
 
   // avoid OpenGL calls as long as possible -- there's a good
   // chance we're waiting on the vertical retrace.
@@ -674,8 +679,10 @@ void			SceneRenderer::render(
 
   // turn on fog for teleporter blindness if close to a teleporter
   float teleporterProximity = 0.0f;
-  if (!blank && LocalPlayer::getMyTank() && (LocalPlayer::getMyTank()->getTeam() != ObserverTeam))
+  if (!blank && LocalPlayer::getMyTank() && 
+      (LocalPlayer::getMyTank()->getTeam() != ObserverTeam)) {
     teleporterProximity = LocalPlayer::getMyTank()->getTeleporterProximity();
+  }
 
   float worldSize = BZDBCache::worldSize;
   bool reallyUseFogHack = useFogHack && (useQualityValue >= 2);
@@ -757,8 +764,9 @@ void			SceneRenderer::render(
   }
 
   // draw rest of background
-  if (background)
+  if (background) {
     background->render(*this);
+  }
 
   if (!blank) {
     if (lighting) {
@@ -770,7 +778,9 @@ void			SceneRenderer::render(
 
     frustum.executeProjection();
 
-    if (BZDBCache::zbuffer) glEnable(GL_DEPTH_TEST);
+    if (BZDBCache::zbuffer) {
+      glEnable(GL_DEPTH_TEST);
+    }
 
     if (useHiddenLineOn) {
 #if defined(GL_VERSION_1_1)
@@ -811,7 +821,9 @@ void			SceneRenderer::render(
       }
     }
 
-    if (BZDBCache::zbuffer) glDisable(GL_DEPTH_TEST);
+    if (BZDBCache::zbuffer) {
+      glDisable(GL_DEPTH_TEST);
+    }
 
     // FIXME -- must do post-rendering: flare lights, etc.
     // flare lights are in world coordinates.  trace ray to that world
@@ -821,12 +833,14 @@ void			SceneRenderer::render(
   }
 
   // back to original state
-  if (!useHiddenLineOn && useWireframeOn)
+  if (!useHiddenLineOn && useWireframeOn) {
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+  }
   glPopMatrix();
 
-  if ((reallyUseFogHack && (teleporterProximity > 0.0f || useDimming)))
+  if ((reallyUseFogHack && (teleporterProximity > 0.0f || useDimming))) {
     glDisable(GL_FOG);
+  }
 
   if (!reallyUseFogHack) {
     float density = 0.0f;
