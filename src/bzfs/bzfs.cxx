@@ -4598,7 +4598,14 @@ int main(int argc, char **argv)
 		  removePlayer(v, message);
 		}
 	      } else if (action == "set") {
-		CMDMGR.run(TextUtils::format("/set %s", target.c_str()));
+		std::vector<std::string> args = TextUtils::tokenize(target.c_str(), " ", 2, true);
+		if (args.size() < 2) {
+		  DEBUG1("Poll set taking action: no action taken, not enough parameters (%s).",
+			 (args.size() > 0 ? args[0].c_str() : "No parameters."));
+		}
+		DEBUG1("Poll set taking action: setting %s to %s", 
+		       args[0].c_str(), args[1].c_str());
+		BZDB.set(args[0], args[1], StateDatabase::User);
 	      } else if (action == "flagreset") {
 		CMDMGR.run("flag reset unused");
 	      }
