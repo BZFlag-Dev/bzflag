@@ -89,7 +89,7 @@ void			World::init()
 
 void			World::done()
 {
-  flagTexture = NULL;
+  flagTexture = 0;
 }
 
 void			World::setFlagTexture(FlagSceneNode* flag)
