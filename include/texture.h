@@ -22,10 +22,6 @@
 #include "OpenGLTexture.h"
 #include "OpenGLTexFont.h"
 
-
-unsigned char*		getTextureImage(const std::string& file,
-				int& width, int& height, int& depth);
-
 class TextureFont {
   public:
     enum Font {

@@ -22,17 +22,6 @@
 
 void			printFatalError(const char* fmt, ...);
 
-unsigned char*		getTextureImage(const std::string& file,
-				int& width, int& height, int&)
-{
-  if (file.length() == 0) return NULL;
-  std::vector<std::string> args;
-  args.push_back(file);
-  printError("loading {1}", &args );
-  return MediaFile::readImage( file, &width, &height);
-}
-
-
 unsigned char*		getTextImage(const std::string& file,
 				int& width, int& height)
 {

@@ -46,7 +46,6 @@ ControlPanelMessage::ControlPanelMessage(const std::string& _string)
 //
 const int		ControlPanel::maxScrollPages = 4;
 int			ControlPanel::messagesOffset = 0;
-extern void		printMissingDataDirectoryError(const char*);
 
 ControlPanel::ControlPanel(MainWindow& _mainWindow, SceneRenderer& renderer) :
 				window(_mainWindow),
