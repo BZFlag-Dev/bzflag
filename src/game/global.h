@@ -190,6 +190,7 @@ enum FlagId {
 						CloakingFlag,			// make you invisible out window
 						MasqueradeFlag,			// makes tank look like teammate
 						ThiefFlag,				// can steal another's flag
+						SeerFlag,				// see cloak, stealth and masquerade as normal
 
 						// the bad super flags
 						ColorblindnessFlag,		// can't see team colors

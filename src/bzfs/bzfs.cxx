@@ -3226,6 +3226,7 @@ static void parse(int argc, char **argv)
 				flagCount[CloakingFlag]++;
 				flagCount[MasqueradeFlag]++;
 				flagCount[ThiefFlag]++;
+				flagCount[SeerFlag]++;
 			}
 			else {
 				if ((f = lookupFlag(argv[i])) == int(NoFlag)) {
@@ -3695,6 +3696,8 @@ static void parse(int argc, char **argv)
 				if (setRequiredFlag(flag[f], MasqueradeFlag))
 					f++;
 				if (setRequiredFlag(flag[f], ThiefFlag))
+					f++;
+				if (setRequiredFlag(flag[f], SeerFlag))
 					f++;
 			}
 			else {

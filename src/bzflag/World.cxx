@@ -29,6 +29,7 @@
 #include "SceneNodeGroup.h"
 #include "SceneNodeTransform.h"
 #include "SceneManager.h"
+#include "LocalPlayer.h"
 
 //
 // World
@@ -521,6 +522,9 @@ void					World::addFlagsSceneNodes(SceneNodeGroup* group)
 {
 	if (!flagNodes)
 		return;
+
+	LocalPlayer* myTank = LocalPlayer::getMyTank();
+
 	for (int i = 0; i < maxFlags; i++) {
 		if (flags[i].status == FlagNoExist)
 			continue;
@@ -528,7 +532,7 @@ void					World::addFlagsSceneNodes(SceneNodeGroup* group)
 		// skip flag on a tank that isn't alive.  also skip Cloaking
 		// flags on tanks.
 		if (flags[i].status == FlagOnTank) {
-			if (flags[i].id == CloakingFlag)
+			if ((flags[i].id == CloakingFlag) && (myTank->getFlag() != SeerFlag))
 				continue;
 
 			int id = flags[i].owner;

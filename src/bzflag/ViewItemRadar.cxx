@@ -215,7 +215,7 @@ void					ViewItemRadar::onPostRender(
 		// draw other tanks (and any flags on them)
 		for (i = 0; i < maxPlayers; i++) {
 			RemotePlayer* player = world->getPlayer(i);
-			if (!player || !player->isAlive() || player->getFlag() == StealthFlag)
+			if (!player || !player->isAlive() || ((player->getFlag() == StealthFlag) && (myTank->getFlag() != SeerFlag)))
 				continue;
 
 			// tank is dim if not active

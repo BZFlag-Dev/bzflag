@@ -3294,10 +3294,10 @@ static void				playingLoop()
 					for (i = 0; i < maxPlayers; i++) {
 						Player* p = player[i];
 						if (p != NULL) {
-							const bool masqueraded = (p->getFlag() == MasqueradeFlag);
+							const bool masqueraded = (p->getFlag() == MasqueradeFlag) && (myTank->getFlag() != SeerFlag);
 							p->updateSparks(dt);
 							p->addShotsSceneNodes(dynamicGroup, colorblind);
-							if (p->getFlag() != CloakingFlag) {
+							if ((p->getFlag() != CloakingFlag) || (myTank->getFlag() == SeerFlag)) {
 								if(!(myTank->RoamView == LocalPlayer::RoamViewFP && myTank->roamTrackTank == i)) {
 										p->addPlayerSceneNode(dynamicGroup, colorblind, masqueraded, myTank->getTeam());
 								}
