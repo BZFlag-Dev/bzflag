@@ -443,17 +443,19 @@ void			RadarRenderer::render(SceneRenderer& renderer,
 
     // draw flags not on tanks.
     const int maxFlags = world.getMaxFlags();
-    for (i = 0; i < maxFlags; i++) {
-      // draw normal flags
-      const Flag& flag = world.getFlag(i);
-      if (flag.status == FlagNoExist || flag.status == FlagOnTank)
-	continue;
-      if (flag.desc->flagTeam != NoTeam)
-	continue;
-      const float cs = colorScale(flag.position[2], muzzleHeight, BZDB->isTrue("enhancedradar"));
-      const float *flagcolor = flag.desc->getColor();
-      glColor3f(flagcolor[0] * cs, flagcolor[1] * cs, flagcolor[2] * cs);
-      drawFlag(flag.position[0], flag.position[1], flag.position[2]);
+    if (BZDB->isTrue("displayRadarFlags")) {
+      for (i = 0; i < maxFlags; i++) {
+        // draw normal flags
+        const Flag& flag = world.getFlag(i);
+        if (flag.status == FlagNoExist || flag.status == FlagOnTank)
+	  continue;
+        if (flag.desc->flagTeam != NoTeam)
+	  continue;
+        const float cs = colorScale(flag.position[2], muzzleHeight, BZDB->isTrue("enhancedradar"));
+        const float *flagcolor = flag.desc->getColor();
+        glColor3f(flagcolor[0] * cs, flagcolor[1] * cs, flagcolor[2] * cs);
+        drawFlag(flag.position[0], flag.position[1], flag.position[2]);
+      }
     }
     for (i = 0; i < maxFlags; i++) {
       // draw team flags
@@ -474,7 +476,7 @@ void			RadarRenderer::render(SceneRenderer& renderer,
 		LocalPlayer::getMyTank()->getAntidoteLocation();
     if (antidotePos) {
       glColor3f(1.0f, 1.0f, 0.0f);
-      drawFlag(antidotePos[0], antidotePos[1], antidotePos[2]);
+      drawFlag(antidotePos[0], antidotePos[1], antidotePos[2], true);
     }
 
     // draw these markers above all others always centered
