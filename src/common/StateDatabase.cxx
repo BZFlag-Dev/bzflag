@@ -44,13 +44,13 @@ void	debugLookups(const std::string &name)
 
   TimeKeeper now = TimeKeeper::getCurrent();
   if (now - last > 20.0f) {
-    std::map<int,std::string> order;
+    std::multimap<int,std::string> order;
     for (it = cnts.begin(); it != cnts.end(); it++) {
-      order[-it->second] = it->first;
+      order.insert(pair<int,std::string>(-it->second, it->first));
       it->second = 0;
     }
 
-    for (std::map<int,std::string>::iterator it2 = order.begin(); it2 != order.end(); ++it2) {
+    for (std::multimap<int,std::string>::iterator it2 = order.begin(); it2 != order.end(); ++it2) {
       char data[100];
       sprintf(data, "%s = %d", it2->second.c_str(), -it2->first);
       std::cout << data << std::endl;
