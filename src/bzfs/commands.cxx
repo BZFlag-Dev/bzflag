@@ -17,7 +17,7 @@
 // interface header
 #include "commands.h"
 
-// implementation-specific system headers
+// system implementation headers
 #include <vector>
 #include <string>
 #ifdef HAVE_CSTDIO
@@ -31,23 +31,24 @@
 #include <string.h>
 #endif
 
-// implementation-specific bzflag headers
-#include "global.h"
+// common implementation headers
 #include "Address.h"
-#include "version.h"
 #include "CommandManager.h"
-
-// implementation-specific bzfs-specific headers
-#include "VotingArbiter.h"
-#include "Permissions.h"
-#include "CmdLineOptions.h"
-#include "PlayerInfo.h"
-#include "NetHandler.h"
-#include "RecordReplay.h"
 #include "LagInfo.h"
+#include "NetHandler.h"
+#include "PlayerInfo.h"
+#include "VotingArbiter.h"
+#include "global.h"
+#include "version.h"
+
+// local implementation headers
+#include "CmdLineOptions.h"
 #include "FlagHistory.h"
-#include "PackVars.h"
 #include "FlagInfo.h"
+#include "PackVars.h"
+#include "Permissions.h"
+#include "RecordReplay.h"
+
 
 #if defined(_WIN32)
 #define popen _popen
@@ -365,9 +366,21 @@ void handleKickCmd(GameKeeper::Player *playerData, const char *message)
   const char *victimname = argv[1].c_str();
 
   i = getTarget(victimname);
-  
+
   if (i < curMaxPlayers) {
     char kickmessage[MessageLen];
+
+    // admins can override antiperms
+    if (!playerData->accessInfo.isAdmin()) {
+      // otherwise make sure the player is not protected with an antiperm
+      GameKeeper::Player *p = GameKeeper::Player::getPlayerByIndex(i);
+      if ((p != NULL) && (p->accessInfo.hasPerm(PlayerAccessInfo::antikick))) {
+	sprintf(kickmessage, "%s is protected from being kicked.", p->player.getCallSign());
+	sendMessage(ServerPlayer, i, kickmessage);
+	return;
+      }
+    }
+
     sprintf(kickmessage, "You were kicked off the server by %s",
 	    playerData->player.getCallSign());
     sendMessage(ServerPlayer, i, kickmessage);
@@ -445,6 +458,18 @@ void handleBanCmd(GameKeeper::Player *playerData, const char *message)
       for (int i = 0; i < curMaxPlayers; i++) {
 	NetHandler *handler = NetHandler::getHandler(i);
 	if (handler && !clOptions->acl.validate(handler->getIPAddress())) {
+
+	  // admins can override antiperms
+	  if (!playerData->accessInfo.isAdmin()) {
+	    // make sure this player isn't protected
+	    GameKeeper::Player *p = GameKeeper::Player::getPlayerByIndex(i);
+	    if ((p != NULL) && (p->accessInfo.hasPerm(PlayerAccessInfo::antiban))) {
+	      sprintf(kickmessage, "%s is protected from being banned (skipped).", p->player.getCallSign());
+	      sendMessage(ServerPlayer, t, kickmessage);
+	      continue;
+	    }
+	  }
+
 	  sprintf(kickmessage,"You were banned from this server by %s",
 		  playerData->player.getCallSign());
 	  sendMessage(ServerPlayer, i, kickmessage);
@@ -504,6 +529,18 @@ void handleHostBanCmd(GameKeeper::Player *playerData, const char *message)
       NetHandler *netHandler = NetHandler::getHandler(i);
       if (netHandler && netHandler->getHostname()
 	  && (!clOptions->acl.hostValidate(netHandler->getHostname()))) {
+
+	// admins can override antiperms
+	if (!playerData->accessInfo.isAdmin()) {
+	  // make sure this player isn't protected
+	  GameKeeper::Player *p = GameKeeper::Player::getPlayerByIndex(i);
+	  if ((p != NULL) && (p->accessInfo.hasPerm(PlayerAccessInfo::antiban))) {
+	    sprintf(kickmessage, "%s is protected from being banned (skipped).");
+	    sendMessage(ServerPlayer, t, kickmessage);
+	    continue;
+	  }
+	}
+
 	sprintf(kickmessage,"You were banned from this server by %s",
 		playerData->player.getCallSign());
 	sendMessage(ServerPlayer, i, kickmessage);
@@ -864,22 +901,36 @@ void handleDeregisterCmd(GameKeeper::Player *playerData, const char *message)
     sendMessage(ServerPlayer, t, "Your callsign has been deregistered");
   } else if (strlen(message) > 12
 	     && playerData->accessInfo.hasPerm(PlayerAccessInfo::setAll)) {
+    char reply[MessageLen];
+
     // removing someone else's
     std::string name = message + 12;
     makeupper(name);
     if (userExists(name)) {
+
+      // admins can override antiperms
+      if (!playerData->accessInfo.isAdmin()) {
+	// make sure this player isn't protected
+	int v = getTarget(name.c_str());
+	GameKeeper::Player *p = GameKeeper::Player::getPlayerByIndex(v);
+	if ((p != NULL) && (p->accessInfo.hasPerm(PlayerAccessInfo::antideregister))) {
+	  sprintf(reply, "%s is protected from being deregistered.", p->player.getCallSign());
+	  sendMessage(ServerPlayer, t, reply);
+	  return;
+	}
+      }
+
       PasswordMap::iterator itr1 = passwordDatabase.find(name);
       PlayerAccessMap::iterator itr2 = userDatabase.find(name);
       passwordDatabase.erase(itr1);
       userDatabase.erase(itr2);
       PlayerAccessInfo::updateDatabases();
-      char text[MessageLen];
-      sprintf(text, "%s has been deregistered", name.c_str());
-      sendMessage(ServerPlayer, t, text);
+
+      sprintf(reply, "%s has been deregistered", name.c_str());
+      sendMessage(ServerPlayer, t, reply);
     } else {
-      char text[MessageLen];
-      sprintf(text, "user %s does not exist", name.c_str());
-      sendMessage(ServerPlayer, t, text);
+      sprintf(reply, "user %s does not exist", name.c_str());
+      sendMessage(ServerPlayer, t, reply);
     }
   } else if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::setAll)) {
     sendMessage(ServerPlayer, t, "You do not have permission to deregister this user");
@@ -1304,6 +1355,33 @@ void handlePollCmd(GameKeeper::Player *playerData, const char *message)
 	return;
       }
       targetIP = NetHandler::getHandler(v)->getTargetIP();
+
+      // admins can override antiperms
+      if (!playerData->accessInfo.isAdmin()) {
+	// otherwise make sure the player is not protected with an antiperm
+	GameKeeper::Player *p = GameKeeper::Player::getPlayerByIndex(v);
+	if (p != NULL) {
+	  if (p->accessInfo.hasPerm(PlayerAccessInfo::antipoll)) {
+	    sprintf(reply, "%s is protected from being polled against.", p->player.getCallSign());
+	    sendMessage(ServerPlayer, t, reply);
+	    return;
+	  }
+	  if (cmd == "ban") {
+	    if (p->accessInfo.hasPerm(PlayerAccessInfo::antipollban)) {
+	      sprintf(reply, "%s is protected from being poll banned.", p->player.getCallSign());
+	      sendMessage(ServerPlayer, t, reply);
+	      return;
+	    }
+	  } else if (cmd == "kick") {
+	    if (p->accessInfo.hasPerm(PlayerAccessInfo::antipollkick)) {
+	      sprintf(reply, "%s is protected from being poll kicked.", p->player.getCallSign());
+	      sendMessage(ServerPlayer, t, reply);
+	      return;
+	    }
+	  }
+	}
+      } // end admin check
+      
     }
 
     /* create and announce the new poll */
@@ -1558,10 +1636,10 @@ void handleViewReportsCmd(GameKeeper::Player *playerData, const char *)
     sendMessage(ServerPlayer, t, line.c_str());
   } 
   std::ifstream ifs(clOptions->reportFile.c_str(), std::ios::in);
-	if (ifs.fail()) {
+  if (ifs.fail()) {
     sendMessage(ServerPlayer, t, "Error reading from report file.");
-		return;
-	}
+    return;
+  }
   while (std::getline(ifs, line))
     sendMessage(ServerPlayer, t, line.c_str());
 }
