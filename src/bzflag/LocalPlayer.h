@@ -163,6 +163,7 @@ private:
 	int						flagShakingWins;
 	float					flagAntidotePos[3];
 	SceneNodeTransform*		antidoteFlag;
+	SceneNode*				rainSceneNode;
 	float					desiredSpeed;
 	float					desiredAngVel;
 	float					lastSpeed;

@@ -14,6 +14,7 @@
 #define BZF_SCENE_VISITOR_RENDER_H
 
 #include "SceneVisitorBaseRender.h"
+#include "SceneNodeParticleSystem.h"
 #include "OpenGLGState.h"
 #include "BoundingBox.h"
 #include "math3D.h"
@@ -33,6 +34,7 @@ public:
 	virtual bool		visit(SceneNodeGeometry*);
 	virtual bool		visit(SceneNodeLight*);
 	virtual bool		visit(SceneNodeParameters*);
+	virtual bool		visit(Particle*);
 	virtual bool		visit(SceneNodeParticleSystem*);
 	virtual bool		visit(SceneNodePrimitive*);
 	virtual bool		visit(SceneNodeSelector*);
@@ -52,7 +54,7 @@ private:
 
 	public:
 		SceneNodePrimitive*			primitive;
-		SceneNodeParticleSystem*	particle;
+		Particle*					particle;
 		float						depth;
 		OpenGLGState				gstate;
 		const GState*				compare;

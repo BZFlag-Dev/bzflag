@@ -3161,6 +3161,9 @@ static void				playingLoop()
 					// add flags
 					world->addFlagsSceneNodes(dynamicGroup);
 
+					// add weather effects
+					world->addWeatherSceneNodes(dynamicGroup);
+
 					// add other tanks and shells
 					const bool colorblind = (myTank->getFlag() == ColorblindnessFlag);
 					for (i = 0; i < maxPlayers; i++) {

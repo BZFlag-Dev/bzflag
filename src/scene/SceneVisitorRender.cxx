@@ -377,14 +377,14 @@ void					SceneVisitorRender::draw()
 		unsigned int num;
 		unsigned int type;
 		unsigned int *index;
-		if(job.primitive != NULL) {
+		if (job.primitive != NULL) {
 			num   = job.primitive->index.getNum();
 			type  = job.primitive->type.get();
 			index = (unsigned int *) job.primitive->index.get();
 		}
-		else if(job.particle != NULL) {
+		else if (job.particle != NULL) {
 			num   = job.particle->index.getNum();
-			type  = job.particle->type;
+			type  = GL_TRIANGLE_STRIP;
 			index = (unsigned int *) job.particle->index.get();
 		}
 		else {
@@ -638,7 +638,7 @@ bool					SceneVisitorRender::visit(SceneNodePrimitive* n)
 	// prepare job
 	Job job(gstateStack.back());
 	job.primitive       = n;
-	job.particle        = NULL;
+	job.particle		= NULL;
 	job.depth           = -aaBoundingBox[0][2];
 	job.gstate          = gstateStack.back();
 	job.compare         = job.gstate.getState();
@@ -691,13 +691,110 @@ bool					SceneVisitorRender::visit(SceneNodePrimitive* n)
 	return true;
 }
 
+bool					SceneVisitorRender::visit(Particle* n)
+{
+	// bounding box handled by parent
+
+	// save transforms that haven't been added to a list yet
+	if (modelXFormIndexStack.back() == 0xffffffff) {
+		modelXFormIndexStack.back() = matrixList.size();
+		matrixList.push_back(modelXFormStack.back());
+	}
+	if (projectionXFormIndexStack.back() == 0xffffffff) {
+		projectionXFormIndexStack.back() = matrixList.size();
+		matrixList.push_back(projectionXFormStack.back());
+	}
+	if (textureXFormIndexStack.back() == 0xffffffff) {
+		textureXFormIndexStack.back() = matrixList.size();
+		matrixList.push_back(textureXFormStack.back());
+	}
+
+	// save lights that haven't been added to the list yet
+	unsigned int numLights = lightIndexStack.size();
+	if(numLights > maxLights)
+		numLights = maxLights;
+	unsigned int i = numLights;
+	while(i-- > 0 && lightIndexStack[i] == 0xffffffff) {
+		lightIndexStack[i] = lightList.size();
+		lightList.push_back(lightStack[i]);
+	}
+
+	// save light set if it hasn't been added to the list yet
+	if(lightSetIndexStack.back() == 0xffffffff) {
+		// create set
+		LightSet lights;
+		lights.size = 0;
+		for(i = 0; i < numLights; ++i)
+			lights.index[lights.size++] = lightIndexStack[i];
+
+		// add to list
+		lightSetIndexStack.back() = lightSetList.size();
+		lightSetList.push_back(lights);
+	}
+
+	Job job(gstateStack.back());
+	job.primitive		= NULL;
+	job.particle		= n;
+	job.depth			= -aaBoundingBox[0][2];
+	job.gstate			= gstateStack.back();
+	job.compare			= job.gstate.getState();
+	job.stipple			= stippleStack.back();
+	job.color			= (n->color);
+	job.texcoord		= texcoordStack.back();
+	job.normal			= (n->normal);
+	job.vertex			= (n->vertex);
+	job.xformView		= modelXFormIndexStack.back();
+	job.xformProjection	= projectionXFormIndexStack.back();
+	job.xformTexture	= textureXFormIndexStack.back();
+	job.lightSet		= lightSetIndexStack.back();
+
+	jobs.push_back(job);
+
+	// count
+	getInstr()->nTriangles += 2;
+	++getInstr()->nNodes;
+
+	return true;
+}
+
 bool					SceneVisitorRender::visit(SceneNodeParticleSystem* n)
 {
-	// skip if the emitter isn't going
-	if(n->isStopped())
+	XFormStack* stack;
+	IndexStack* indexStack;
+
+	// update the particle system
+	n->update(getParams().getFloat("time"));
+
+	// skip if there are no particles to draw
+	if(n->particles.size() == 0)
 		return true;
 
-	n->type = 7; // GL_QUADS
+	// what kind of matrix?
+	switch(n->type.get()) {
+		case SceneNodeBaseTransform::ModelView:
+			stack      = &modelXFormStack;
+			indexStack = &modelXFormIndexStack;
+
+			// bounding box must be retransformed
+			boundingBoxCull = kCullDirty;
+			break;
+
+		case SceneNodeBaseTransform::Projection:
+			stack      = &projectionXFormStack;
+			indexStack = &projectionXFormIndexStack;
+
+			// view frustum must be recomputed
+			frustumDirty = true;
+			break;
+
+		case SceneNodeBaseTransform::Texture:
+			stack      = &textureXFormStack;
+			indexStack = &textureXFormIndexStack;
+			break;
+
+		default:
+			return descend(n);
+	}
 
 	// handle bounding box
 	switch(boundingBoxCull) {
@@ -722,76 +819,33 @@ bool					SceneVisitorRender::visit(SceneNodeParticleSystem* n)
 
 		case kCullYes:
 			return true;
-
+			
 		case kCullNo:
 			break;
 	}
 
-	// save transforms that haven't been added to a list yet
-	if (modelXFormIndexStack.back() == 0xffffffff) {
-		modelXFormIndexStack.back() = matrixList.size();
-		matrixList.push_back(modelXFormStack.back());
-	}
-	if (projectionXFormIndexStack.back() == 0xffffffff) {
-		projectionXFormIndexStack.back() = matrixList.size();
-		matrixList.push_back(projectionXFormStack.back());
-	}
-	if (textureXFormIndexStack.back() == 0xffffffff) {
-		textureXFormIndexStack.back() = matrixList.size();
-		matrixList.push_back(textureXFormStack.back());
+	// verify that we're not trying to access a non-existant matrix
+	unsigned int level = n->up.get();
+	if (level >= stack->size()) {
+		// FIXME -- should note the error
+		return descend(n);
 	}
 
-	// save lights that haven't been added to the list yet
-	unsigned int numLights = lightIndexStack.size();
-	if (numLights > maxLights)
-		numLights = maxLights;
-	unsigned int i = numLights;
-	while (i-- > 0 && lightIndexStack[i] == 0xffffffff) {
-		lightIndexStack[i] = lightList.size();
-		lightList.push_back(lightStack[i]);
-	}
+	// push a copy of the old matrix
+	stack->push_back((*stack)[stack->size() - 1 - level]);
+	indexStack->push_back(0xffffffff);
 
-	// save light set if it hasn't been added to the list yet
-	if (lightSetIndexStack.back() == 0xffffffff) {
-		// create set
-		LightSet lights;
-		lights.size = 0;
-		for (i = 0; i < numLights; ++i)
-			lights.index[lights.size++] = lightIndexStack[i];
+	// let node modify new matrix
+	n->get(stack->back(), getParams());
 
-		// add to list
-		lightSetIndexStack.back() = lightSetList.size();
-		lightSetList.push_back(lights);
-	}
+	// descend
+	const bool result = descend(n);
 
-	// update our particle system
-	Matrix matrix = ViewFrustum::getTransform();
-	matrix *= modelXFormStack.back();
-	matrix.invert();
-	n->update(getParams().getFloat("time"), matrix);
+	// pop stack
+	stack->pop_back();
+	indexStack->pop_back();
 
-	Job job(gstateStack.back());
-	job.primitive		= NULL;
-	job.particle		= n;
-	job.depth		= -aaBoundingBox[0][2];
-	job.gstate		= gstateStack.back();
-	job.compare		= job.gstate.getState();
-	job.stipple		= stippleStack.back();
-	job.color		= &(n->colors);
-	job.texcoord		= &(n->texcoords);
-	job.normal		= normalStack.back();
-	job.vertex		= &(n->verteces);
-	job.xformView		= modelXFormIndexStack.back();
-	job.xformProjection	= projectionXFormIndexStack.back();
-	job.xformTexture	= textureXFormIndexStack.back();
-	job.lightSet		= lightSetIndexStack.back();
-
-	jobs.push_back(job);
-
-	// count
-	getInstr()->nQuads += n->particles.size();
-
-	return true;
+	return result;
 }
 
 bool					SceneVisitorRender::visit(SceneNodeLight* n)

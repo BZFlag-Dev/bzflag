@@ -20,6 +20,7 @@ CXXFILES =				\
 	SceneNodeBillboard.cxx		\
 	SceneNodeBaseTransform.cxx	\
 	SceneNodeChoice.cxx		\
+	SceneNodeFieldReader.cxx	\
 	SceneNodeGState.cxx		\
 	SceneNodeGeometry.cxx		\
 	SceneNodeGroup.cxx		\

@@ -13,186 +13,507 @@
 #include "SceneNodeGeometry.h"
 #include "SceneVisitor.h"
 #include "SceneVisitorParams.h"
+#include "SceneReader.h"
+#include "SceneNodeFieldReader.h"
 #include "math3D.h"
 #include <iostream>
 
 //
 // Particle
 //
-void Particle::setParent(SceneNodeParticleSystem *parent_)
+Particle::Particle() :
+			ttl(10),
+			position(0, 0, 0),
+			direction(0, 0, 0),
+			index("index", 0, 0, 1)
 {
-	parent = parent_;
+	// set sizes - we're using quads
+	color  = new SceneNodeVFFloat("color", 0, 0, 4);
+	color->resize(16);
+	normal = new SceneNodeVFFloat("normal", 0, 0, 3);
+	normal->resize(3);
+	vertex = new SceneNodeVFFloat("vertex", 0, 0, 3);
+	vertex->resize(12);
+	index.resize(4);
+
+	// set normal
+	normal->set(0, 0.0f);
+	normal->set(1, 1.0f);
+	normal->set(2, 0.0f);
+
+	index.set((unsigned int) 0,  0);
+	index.set(1,  1);
+	index.set(2,  2);
+	index.set(3,  3);
 }
 
-void Particle::create(SceneNodeParticleSystem *parent_, float /*timeCounter*/)
+Particle::~Particle()
 {
-	float randomYaw;
-	float randomPitch;
-	float newSpeed;
-	float temp;
-
-	parent = parent_;
-
-	age = 0.0;
-	dyingAge = (parent->life) + (parent->lifeCounter);
-
-	color[0] = parent->startColor[0];
-	color[1] = parent->startColor[1];
-	color[2] = parent->startColor[2];
-	color[3] = parent->startColor[3];
-	colorCounter[0] = (parent->endColor[0]-color[0]) / dyingAge;
-	colorCounter[1] = (parent->endColor[1]-color[1]) / dyingAge;
-	colorCounter[2] = (parent->endColor[2]-color[2]) / dyingAge;
-	colorCounter[3] = (parent->endColor[3]-color[3]) / dyingAge;
-
-	size = parent->startSize + parent->sizeCounter;
-	sizeCounter = (parent->endSize-size) / dyingAge;
-
-	location[0] = parent->location[0];
-	location[1] = parent->location[1];
-	location[2] = parent->location[2];
-
-	temp = (bzfrand() * ((float) (parent->spreadMax - parent->spreadMin))) + parent->spreadMin;
-	location[0] += temp / parent->spreadFactor;
-	temp = (bzfrand() * ((float) (parent->spreadMax - parent->spreadMin))) + parent->spreadMin;
-	location[1] += temp / parent->spreadFactor;
-	temp = (bzfrand() * ((float) (parent->spreadMax - parent->spreadMin))) + parent->spreadMin;
-	location[2] += temp / parent->spreadFactor;
-
-	randomPitch = bzfrand() * M_PI * 2.0;
-	randomYaw = (M_PI / 180.0) * bzfrand() * parent->fieldAngle;
-
-	velocity[0] = (cosf(randomPitch) * (parent->velocity[0]));
-	velocity[1] = (sinf(randomPitch) * cosf(randomYaw) * (parent->velocity[1]));
-	velocity[2] = (sinf(randomPitch) * sinf(randomYaw) * (parent->velocity[2]));
-
-	newSpeed = parent->speed + parent->speedCounter;
-	velocity[0] *= newSpeed;
-	velocity[1] *= newSpeed;
-	velocity[2] *= newSpeed;
+	delete color;
+	delete normal;
+	delete vertex;
 }
 
-bool Particle::update(float timeCounter)
+void Particle::setColor(Real cr, Real cg, Real cb, Real ca)
 {
-	static float attractLocation[3];
-	static float attractNormal[3];
-
-	age += timeCounter;
-	if(age >= dyingAge) {
-		age = -1.0;
-		return false;
+	for (int i = 0; i < 4; i++) {
+		color->set((i * 4) + 0, cr);
+		color->set((i * 4) + 1, cg);
+		color->set((i * 4) + 2, cb);
+		color->set((i * 4) + 3, ca);
 	}
-
-	previousLocation[0] = location[0];
-	previousLocation[1] = location[1];
-	previousLocation[2] = location[2];
-
-	location[0] += velocity[0] * timeCounter;
-	location[1] += velocity[1] * timeCounter;
-	location[2] += velocity[2] * timeCounter;
-
-	velocity[0] += (parent->gravity[0] * timeCounter);
-	velocity[1] += (parent->gravity[1] * timeCounter);
-	velocity[2] += (parent->gravity[2] * timeCounter);
-
-	if(parent->isAttracting()) {
-		attractLocation[0] = parent->location[0];
-		attractLocation[1] = parent->location[1];
-		attractLocation[2] = parent->location[2];
-
-		attractNormal[0] = attractLocation[0] - location[0];
-		attractNormal[1] = attractLocation[1] - location[1];
-		attractNormal[2] = attractLocation[2] - location[2];
-
-		velocity[0] += attractNormal[0] * 5.0 * timeCounter;
-		velocity[1] += attractNormal[1] * 5.0 * timeCounter;
-		velocity[2] += attractNormal[2] * 5.0 * timeCounter;
-	}
-
-	color[0] += colorCounter[0] * timeCounter;
-	color[1] += colorCounter[1] * timeCounter;
-	color[2] += colorCounter[2] * timeCounter;
-	color[3] += colorCounter[3] * timeCounter;
-
-	size += sizeCounter * timeCounter;
-
-	return true;
 }
 
-Particle Particle::operator = (const Particle &p)
+void Particle::getColor(Real& cr, Real& cg, Real& cb, Real& ca)
 {
-	previousLocation[0] = p.previousLocation[0];
-	previousLocation[1] = p.previousLocation[1];
-	previousLocation[2] = p.previousLocation[2];
-	location[0] = p.location[0];
-	location[1] = p.location[1];
-	location[2] = p.location[2];
-	velocity[0] = p.velocity[0];
-	velocity[1] = p.velocity[1];
-	velocity[2] = p.velocity[2];
-	color[0] = p.color[0];
-	color[1] = p.color[1];
-	color[2] = p.color[2];
-	color[3] = p.color[3];
-	colorCounter[0] = p.colorCounter[0];
-	colorCounter[1] = p.colorCounter[1];
-	colorCounter[2] = p.colorCounter[2];
-	colorCounter[3] = p.colorCounter[3];
-	size = p.size;
-	sizeCounter = p.sizeCounter;
-	age = p.age;
-	dyingAge = p.dyingAge;
-	parent = p.parent;
-	return *this;
+	cr = color->get(0);
+	cg = color->get(1);
+	cb = color->get(2);
+	ca = color->get(3);
+}
+
+void Particle::setSize(Real _w, Real _h)
+{
+	w = _w;
+	h = _h;
+}
+
+void Particle::calculate()
+{
+	// upper left
+	vertex->set(0,  position[0] - w);
+	vertex->set(1,  position[1]);
+	vertex->set(2,  position[2] + h);
+	// lower left
+	vertex->set(3,  position[0] - w);
+	vertex->set(4,  position[1]);
+	vertex->set(5,  position[2] - h);
+	// upper right
+	vertex->set(6,  position[0] + w);
+	vertex->set(7,  position[1]);
+	vertex->set(8,  position[2] + h);
+	// lower right
+	vertex->set(9,  position[0] + w);
+	vertex->set(10, position[1]);
+	vertex->set(11, position[2] - h);
+}
+
+bool Particle::visit(SceneVisitor* visitor)
+{
+	return visitor->visit(this);
+}
+
+Particle* Particle::clone()
+{
+	Particle* newp = new Particle();
+	newp->setSize(w, h);
+	newp->color->set(*color);
+	newp->ttl = ttl;
+	newp->position = position;
+	newp->direction = direction;
+	newp->calculate();
+	return newp;
+}
+
+//
+// ParticleAffector
+//
+ParticleAffector::ParticleAffector()
+{
+}
+
+ParticleAffector::~ParticleAffector()
+{
+}
+
+void		ParticleAffector::parse(XMLTree::iterator)
+{
+}
+
+//
+// ParticleAffectorLinearForce
+//
+ParticleAffectorLinearForce::ParticleAffectorLinearForce() :
+								force("force", 0, 0, 3)
+{
+}
+
+ParticleAffectorLinearForce::~ParticleAffectorLinearForce()
+{
+}
+
+void	ParticleAffectorLinearForce::affectParticles(SceneNodeParticleSystem* system, Real time)
+{
+	SceneNodeParticleSystem::ParticleList::iterator it;
+	Vec3 forceVector, scaledVector;
+
+	forceVector[0] = force.get(0);
+	forceVector[1] = force.get(1);
+	forceVector[2] = force.get(2);
+	scaledVector = forceVector * time;
+	
+	for (it = system->particles.begin(); it != system->particles.end(); it++) {
+		Particle* p = static_cast<Particle*> (*it);
+		if (application == Add) {
+			p->direction += scaledVector;
+		}
+		else {
+			p->direction = (p->direction + forceVector) * 0.5;
+		}
+	}
+}
+
+void	ParticleAffectorLinearForce::parse(XMLTree::iterator xml)
+{
+	static const XMLParseEnumList<Application> s_enumForceApplication[] = {
+		{"average",	Average},
+		{"add",		Add}
+	};
+
+	if (xml->value == "application") {
+		xml->getAttribute("method", xmlParseEnum(s_enumForceApplication,
+										xmlSetVar(application)));
+	}
+	else if (xml->value == "force") {
+		SceneNodeVectorReader<float> reader(&force);
+		reader.parse(xml);
+	}
+}
+
+ParticleAffector* ParticleAffectorLinearForce::clone()
+{
+	ParticleAffector *newp = new ParticleAffectorLinearForce;
+	((ParticleAffectorLinearForce*) newp)->application = application;
+	((ParticleAffectorLinearForce*) newp)->force.set(force);
+	return newp;
+}
+
+//
+// ParticleAffectorFactory
+//
+ParticleAffector*	ParticleAffectorFactory::create(const std::string& typespecifier) const
+{
+	if (typespecifier == "linearforce") {
+		return new ParticleAffectorLinearForce();
+	}
+	return NULL;
+}
+
+//
+// ParticleEmitter
+//
+ParticleEmitter::ParticleEmitter() :
+							position("position", 0, 0, 3),
+							rate("rate"),
+							direction("direction", 0, 0, 3),
+							up("up", 0, 0, 3),
+							angle("angle"),
+							minSpeed("minvelocity"),
+							maxSpeed("maxvelocity"),
+							minTTL("mintimetolive"),
+							maxTTL("maxtimetolive"),
+							colorStart("mincolor", 0, 0, 4),
+							colorEnd("maxcolor", 0, 0, 4)
+{
+}
+
+ParticleEmitter::~ParticleEmitter()
+{
+}
+
+void			ParticleEmitter::createPosition(Vec3& pos)
+{
+	if (position.getNum() == 0) {
+		pos = Vec3(0, 0, 0);
+	}
+	else {
+		pos[0] = position.get()[0];
+		pos[1] = position.get()[1];
+		pos[2] = position.get()[2];
+	}
+}
+
+void			ParticleEmitter::createDirection(Vec3& dir)
+{
+	if (angle.get() != 0) {
+		Real newangle = bzfrand() * angle.get();
+		Vec3 vup; vup[0] = up.get()[0]; vup[1] = up.get()[1]; vup[2] = up.get()[2];
+		//
+		// FIXME
+	}
+	else {
+		dir[0] = direction.get()[0];
+		dir[1] = direction.get()[1];
+		dir[2] = direction.get()[2];
+	}
+}
+
+void			ParticleEmitter::createVelocity(Vec3& vel)
+{
+	if (minSpeed.get() != maxSpeed.get()) {
+		vel *= (minSpeed.get() + (bzfrand() * (maxSpeed.get() - minSpeed.get())));
+	}
+	else {
+		vel *= minSpeed.get();
+	}
+}
+
+void			ParticleEmitter::createTTL(Real& ttl)
+{
+	if (minTTL.get() != maxTTL.get()) {
+		ttl = (minTTL.get() + (bzfrand() * (maxTTL.get() - minTTL.get())));
+	}
+	else {
+		ttl = minTTL.get();
+	}
+}
+
+void			ParticleEmitter::createColor(SceneNodeVFFloat& col)
+{
+	if (!((colorStart.get(0) == colorEnd.get(0)) &&
+		  (colorStart.get(1) == colorEnd.get(1)) &&
+		  (colorStart.get(2) == colorEnd.get(2)) &&
+		  (colorStart.get(3) == colorEnd.get(3)))) {
+		col.set(colorStart.get(0) + (bzfrand() * (colorEnd.get(0) - colorStart.get(0))), 0);
+		col.set(colorStart.get(1) + (bzfrand() * (colorEnd.get(1) - colorStart.get(1))), 1);
+		col.set(colorStart.get(2) + (bzfrand() * (colorEnd.get(2) - colorStart.get(2))), 2);
+		col.set(colorStart.get(3) + (bzfrand() * (colorEnd.get(3) - colorStart.get(3))), 3);
+	}
+	else {
+		col = colorStart;
+	}
+}
+
+unsigned short	ParticleEmitter::createConstantEmissionCount(Real time)
+{
+	static Real remainder = 0;
+	unsigned short intRequest;
+
+	remainder += rate.get() * time;
+	intRequest = (unsigned short) remainder;
+	remainder -= intRequest;
+	return intRequest;
+}
+
+void			ParticleEmitter::parse(XMLTree::iterator xml)
+{
+	if (xml->value == "position") {
+		SceneNodeVectorReader<float> reader(&position);
+		reader.parse(xml);
+	}
+	else if (xml->value == "rate") {
+		SceneNodeScalarReader<float> reader(&rate);
+		reader.parse(xml);
+	}
+	else if (xml->value == "direction") {
+		SceneNodeVectorReader<float> reader(&direction);
+		reader.parse(xml);
+	}
+	else if (xml->value == "up") {
+		SceneNodeVectorReader<float> reader(&up);
+		reader.parse(xml);
+	}
+	else if (xml->value == "angle") {
+		SceneNodeScalarReader<float> reader(&angle);
+		reader.parse(xml);
+	}
+	else if (xml->value == "velocity") {
+		SceneNodeScalarReader<float> reader(&minSpeed);
+		reader.parse(xml);
+		maxSpeed = minSpeed;
+	}
+	else if (xml->value == "minvelocity") {
+		SceneNodeScalarReader<float> reader(&minSpeed);
+		reader.parse(xml);
+	}
+	else if (xml->value == "maxvelocity") {
+		SceneNodeScalarReader<float> reader(&maxSpeed);
+		reader.parse(xml);
+	}
+	else if (xml->value == "timetolive") {
+		SceneNodeScalarReader<float> reader(&minTTL);
+		reader.parse(xml);
+		maxTTL = minTTL;
+	}
+	else if (xml->value == "mintimetolive") {
+		SceneNodeScalarReader<float> reader(&minTTL);
+		reader.parse(xml);
+	}
+	else if (xml->value == "maxtimetolive") {
+		SceneNodeScalarReader<float> reader(&maxTTL);
+		reader.parse(xml);
+	}
+	else if (xml->value == "color") {
+		SceneNodeVectorReader<float> reader(&colorStart);
+		reader.parse(xml);
+		colorEnd = colorStart;
+	}
+	else if (xml->value == "mincolor") {
+		SceneNodeVectorReader<float> reader(&colorStart);
+		reader.parse(xml);
+	}
+	else if (xml->value == "maxcolor") {
+		SceneNodeVectorReader<float> reader(&colorEnd);
+		reader.parse(xml);
+	}
+}
+
+//
+// ParticleEmitterPoint
+//
+
+ParticleEmitterPoint::ParticleEmitterPoint()
+{
+}
+
+ParticleEmitterPoint::~ParticleEmitterPoint()
+{
+}
+
+Particle*		ParticleEmitterPoint::createParticle()
+{
+	Particle*	p = new Particle;
+	createDirection(p->direction);
+	createPosition(p->position);
+	createColor(*(p->color));
+	createTTL(p->ttl);
+	return p;
+}
+
+void			ParticleEmitterPoint::parse(XMLTree::iterator xml)
+{
+	ParticleEmitter::parse(xml);
+}
+
+unsigned int	ParticleEmitterPoint::getCount(Real time)
+{
+	return createConstantEmissionCount(time);
+}
+
+ParticleEmitter*	ParticleEmitterPoint::clone()
+{
+	ParticleEmitter* newp = new ParticleEmitterPoint;
+	newp->position.set(position);
+	newp->rate.set(rate.get());
+	newp->direction.set(direction);
+	newp->up.set(up);
+	newp->angle.set(angle.get());
+	newp->minSpeed.set(minSpeed.get());
+	newp->maxSpeed.set(maxSpeed.get());
+	newp->minTTL.set(minTTL.get());
+	newp->maxTTL.set(maxTTL.get());
+	newp->colorStart.set(colorStart);
+	newp->colorEnd.set(colorEnd);
+	return newp;
+}
+
+//
+// ParticleEmitterBox
+//
+ParticleEmitterBox::ParticleEmitterBox() :
+								size("size", 0, 0, 3)
+{
+}
+
+ParticleEmitterBox::~ParticleEmitterBox()
+{
+}
+
+Particle*		ParticleEmitterBox::createParticle()
+{
+	Particle*	p = new Particle;
+	createDirection(p->direction);
+	if (position.getNum() == 0) {
+		if (size.getNum() == 0) {
+			p->position = Vec3(0, 0, 0);
+		}
+		else {
+			p->position[0] = ((rand() % 2) ? bzfrand() * size.get(0) : -bzfrand() * size.get(0));
+			p->position[1] = ((rand() % 2) ? bzfrand() * size.get(1) : -bzfrand() * size.get(1));
+			p->position[2] = ((rand() % 2) ? bzfrand() * size.get(2) : -bzfrand() * size.get(2));
+		}
+	}
+	else {
+		if (size.getNum() == 0) {
+			p->position[0] = position.get()[0];
+			p->position[1] = position.get()[1];
+			p->position[2] = position.get()[2];
+		}
+		else {
+			Real xo, yo, zo;
+			xo = ((rand() % 2) ? bzfrand() * size.get(0) : -bzfrand() * size.get(0));
+			yo = ((rand() % 2) ? bzfrand() * size.get(1) : -bzfrand() * size.get(1));
+			zo = ((rand() % 2) ? bzfrand() * size.get(2) : -bzfrand() * size.get(2));
+			p->position[0] = position.get()[0] + xo;
+			p->position[1] = position.get()[1] + yo;
+			p->position[2] = position.get()[2] + zo;
+		}
+	}
+	// position
+	createColor(*(p->color));
+	createTTL(p->ttl);
+	return p;
+}
+
+void			ParticleEmitterBox::parse(XMLTree::iterator xml)
+{
+	ParticleEmitter::parse(xml);
+	if (xml->value == "size") {
+		SceneNodeVectorReader<float> reader(&size);
+		reader.parse(xml);
+	}
+}
+
+ParticleEmitter*	ParticleEmitterBox::clone()
+{
+	ParticleEmitter* newp = new ParticleEmitterBox;
+	newp->position.set(position);
+	newp->rate.set(rate.get());
+	newp->direction.set(direction);
+	newp->up.set(up);
+	newp->angle.set(angle.get());
+	newp->minSpeed.set(minSpeed.get());
+	newp->maxSpeed.set(maxSpeed.get());
+	newp->minTTL.set(minTTL.get());
+	newp->maxTTL.set(maxTTL.get());
+	newp->colorStart.set(colorStart);
+	newp->colorEnd.set(colorEnd);
+	((ParticleEmitterBox*) newp)->size.set(size);
+	return newp;
+}
+
+unsigned int	ParticleEmitterBox::getCount(Real time)
+{
+	return createConstantEmissionCount(time);
+}
+
+//
+// ParticleEmitterFactory
+//
+
+ParticleEmitter*	ParticleEmitterFactory::create(const std::string& typespecifier) const
+{
+	if (typespecifier == "point") {
+		return new ParticleEmitterPoint();
+	}
+	else if (typespecifier == "box") {
+		return new ParticleEmitterBox();
+	}
+	return NULL;
 }
 
 //
 // SceneNodeParticleSystem
 //
 
-SceneNodeParticleSystem::SceneNodeParticleSystem():
-			index("snpsindex", 0, 0, 1),
-			colors("snpscolors", 0, 0, 4),
-			verteces("snpsverteces", 0, 0, 3),
-			texcoords("snpstexcoords", 0, 0, 2),
-			locationV("location", 0, 0, 3),
-			velocityV("velocity", 0, 0, 3),
-			startColorV("startcolor", 0, 0, 4),
-			endColorV("endcolor", 0, 0, 4),
-			startSizeV("startsize", 0),
-			endSizeV("endsize", 0),
-			gravityV("gravity", 0, 0, 3),
-			speedV("speed", 0.0),
-			lifeV("life", 0.0),
-			fieldAngleV("fieldangle", 90.0),
-			attractionPercentV("attraction", 0.0),
-			creationSpeedV("creationspeed", 0),
-			burstSizeV("burstsize", 0),
-			spreadMinV("spreadmin", 0),
-			spreadMaxV("spreadmax", 0),
-			spreadFactorV("spreadfactor", 0)
+SceneNodeParticleSystem::SceneNodeParticleSystem() :
+									quota("quota"),
+									width("width"),
+									height("height")
 {
-	attracting = false;
-	stopped = false;
-	particlesPerSecond = 0;
-	particlesAlive = 0;
-	startSize = 0;
-	sizeCounter = 0;
-	endSize = 0;
-	speed = 0;
-	speedCounter = 0;
-	life = 0;
-	lifeCounter = 0;
-	fieldAngle = 0;
-	age = 0;
-	lastUpdate = 0;
-	emissionResidue = 0;
-	spreadMin = 0;
-	spreadMax = 0;
-	spreadFactor = 1.0;
-	attractionPercent = 0;
-	burstCreated = false;
-	action = CreateConstant;
+	axis.resize(3);
+	axis.set(0, 0.0f); axis.set(1, 0.0f); axis.set(2, 0.0f);
+	turn.set(true);
 }
 
 SceneNodeParticleSystem::~SceneNodeParticleSystem()
@@ -204,140 +525,28 @@ bool SceneNodeParticleSystem::visit(SceneVisitor* visitor)
 	return visitor->visit(this);
 }
 
-bool SceneNodeParticleSystem::update(float newTime, const Matrix& matrix)
+bool SceneNodeParticleSystem::descend(SceneVisitor* visitor, const SceneVisitorParams&)
 {
-	if(stopped)
-		return false;
-
-	float time = newTime - currentTime;
-	currentTime = newTime;
-
-	// recompute counter values
-	sizeCounter = (endSize - startSize) / life;
-	speedCounter = speed / life;
-	lifeCounter = 0;
-
-	if(action == CreateConstant) {
-		return update(time, UpdateAndCreate, 0, matrix);
+	for (ParticleList::const_iterator index = particles.begin();
+							index != particles.end(); ++index) {
+		if (!(*index)->visit(visitor))
+			return false;
 	}
-	else if(action == CreateBurst) {
-		if(!burstCreated) {
-			// keep in mind that this is not really
-			// particles per second, but really the
-			// total particles to create. I'm just
-			// too lazy to use a different variable
-			update(time, OnlyCreate, particlesPerSecond, matrix);
-			burstCreated = true;
-		}
-		return update(time, OnlyUpdate, 0, matrix);
-	}
-	else {
-		return true;
-	}
-}
-
-bool SceneNodeParticleSystem::update(float time, ParticleSystemUpdate flag, float numToCreate, const Matrix& matrix)
-{
-	// valid values for flag are OnlyUpdate, UpdateAndCreate, and OnlyCreate
-	unsigned int particlesCreated;
-	float timeCounter;
-	float particlesNeeded = numToCreate;
-	bool itsAlive;
-	bool killed = true;
-	float size;
-	int numkilled = 0;
-
-	timeCounter = time;
-
-	if(flag == OnlyUpdate || flag == UpdateAndCreate) {
-		for(unsigned int i = 0; i < particles.size(); i++) {
-			itsAlive = particles[i].update(timeCounter);
-			if(killed) {
-				if(itsAlive) {
-					killed = false;
-				}
-				else {
-					numkilled++;
-					particles.pop_front();
-					i--;
-				}
-			}
-		}
-	}
-	if(flag == OnlyCreate || flag == UpdateAndCreate) {
-		particlesNeeded += particlesPerSecond * timeCounter + emissionResidue;
-		particlesCreated = (unsigned int) particlesNeeded;
-		
-		if(!stopped) {
-			emissionResidue = particlesNeeded - particlesCreated;
-		}
-		else {
-			emissionResidue = particlesNeeded;
-			particlesCreated = 0;
-		}
-		if(particlesCreated < 1) {
-			previousLocation[0] = location[0];
-			previousLocation[1] = location[1];
-			previousLocation[2] = location[2];
-		}
-		for(unsigned int i = 0; i < particlesCreated; i++) {
-			Particle temp;
-			temp.create(this, timeCounter);
-			particles.push_back(temp);
-		}
-	}
-	verteces.clear();
-	colors.clear();
-	texcoords.clear();
-	index.clear();
-
-	float m[16];
-	matrix.get(m);
-	for(unsigned int i = 0; i < particles.size(); i++) {
-		const float* p = particles[i].location;
-		size = particles[i].size / 4;
-		verteces.push(p[0] + size * ( m[0] - m[8]));
-		verteces.push(p[1] + size * ( m[1] - m[9]));
-		verteces.push(p[2] + size * ( m[2] - m[10]));
-		verteces.push(p[0] + size * ( m[0] + m[8]));
-		verteces.push(p[1] + size * ( m[1] + m[9]));
-		verteces.push(p[2] + size * ( m[2] + m[10]));
-		verteces.push(p[0] + size * (-m[0] + m[8]));
-		verteces.push(p[1] + size * (-m[1] + m[9]));
-		verteces.push(p[2] + size * (-m[2] + m[10]));
-		verteces.push(p[0] + size * (-m[0] - m[8]));
-		verteces.push(p[1] + size * (-m[1] - m[9]));
-		verteces.push(p[2] + size * (-m[2] - m[10]));
-
-		texcoords.push(1.0f, 0.0f);
-		texcoords.push(1.0f, 1.0f);
-		texcoords.push(0.0f, 1.0f);
-		texcoords.push(0.0f, 0.0f);
-		for(int j = 0; j < 4; j++) {
-			colors.push(particles[i].color[0]);
-			colors.push(particles[i].color[1]);
-			colors.push(particles[i].color[2]);
-			colors.push(particles[i].color[3]);
-			index.push((i * 4) + j);
-		}
-	}
-
 	return true;
 }
 
-unsigned int SceneNodeParticleSystem::activeParticles()
+void SceneNodeParticleSystem::update(Real newTime)
 {
-	return particles.size();
-}
+	Real timeDifference = newTime - currentTime;
+	currentTime = newTime;
+	expire(timeDifference);
+	triggerEmitters(timeDifference);
+	applyMotion(timeDifference);
+	triggerAffectors(timeDifference);
 
-bool SceneNodeParticleSystem::isAttracting()
-{
-	return attracting;
-}
-
-bool SceneNodeParticleSystem::isStopped()
-{
-	return stopped;
+	for (ParticleList::iterator it = particles.begin(); it != particles.end(); ++it) {
+		(*it)->calculate();
+	}
 }
 
 void SceneNodeParticleSystem::getBoundingBox(BoundingBox* box)
@@ -347,34 +556,34 @@ void SceneNodeParticleSystem::getBoundingBox(BoundingBox* box)
 	if(boundingBoxDirty) {
 		boundingBoxDirty = false;
 
-		// find first particle with some vertices
-		std::deque<Particle>::iterator index;
-
 		if(particles.size() == 0) {
 			boundingBox.set(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f);
 		}
 		else {
+			ParticleList::iterator i = particles.begin();
+			Particle* p = static_cast<Particle*> (*i);
+
 			// find extents over all particles
-			float xMin = index->location[0];
-			float yMin = index->location[1];
-			float zMin = index->location[2];
+			float xMin = p->position[0];
+			float yMin = p->position[1];
+			float zMin = p->position[2];
 			float xMax = xMin;
 			float yMax = yMin;
 			float zMax = zMin;
-			for(index = particles.begin(); index != particles.end(); ++index) {
-				const float *v = index->location;
-				if(xMin > v[0])
-					xMin = v[0];
-				if(xMax < v[0])
-					xMax = v[0];
-				if(yMin > v[1])
-					yMin = v[1];
-				if(yMax < v[1])
-					yMax = v[1];
-				if(zMin > v[2])
-					zMin = v[2];
-				if(zMax < v[2])
-					zMax = v[2];
+			for(; i!= particles.end(); ++i) {
+				p = static_cast<Particle*> (*i);
+				if(xMin > p->position[0])
+					xMin = p->position[0];
+				if(xMax < p->position[0])
+					xMax = p->position[0];
+				if(yMin > p->position[1])
+					yMin = p->position[1];
+				if(yMax < p->position[1])
+					yMax = p->position[1];
+				if(zMin > p->position[2])
+					zMin = p->position[2];
+				if(zMax < p->position[2])
+					zMax = p->position[2];
 			}
 			boundingBox.set(xMin, yMin, zMin, xMax, yMax, zMax);
 		}
@@ -384,56 +593,97 @@ void SceneNodeParticleSystem::getBoundingBox(BoundingBox* box)
 
 SceneNodeParticleSystem SceneNodeParticleSystem::operator = (const SceneNodeParticleSystem &p)
 {
-	particles = p.particles;
-	previousLocation[0] = p.previousLocation[0];
-	previousLocation[1] = p.previousLocation[1];
-	previousLocation[2] = p.previousLocation[2];
-	location[0] = p.location[0];
-	location[1] = p.location[1];
-	location[2] = p.location[2];
-	velocity[0] = p.velocity[0];
-	velocity[1] = p.velocity[1];
-	velocity[2] = p.velocity[2];
-	startSize = p.startSize;
-	sizeCounter = p.sizeCounter;
-	endSize = p.endSize;
-	startColor[0] = p.startColor[0];
-	startColor[1] = p.startColor[1];
-	startColor[2] = p.startColor[2];
-	startColor[3] = p.startColor[3];
-	colorCounter[0] = p.colorCounter[0];
-	colorCounter[1] = p.colorCounter[1];
-	colorCounter[2] = p.colorCounter[2];
-	colorCounter[3] = p.colorCounter[3];
-	endColor[0] = p.endColor[0];
-	endColor[1] = p.endColor[1];
-	endColor[2] = p.endColor[2];
-	endColor[3] = p.endColor[3];
-	speed = p.speed;
-	speedCounter = p.speedCounter;
-	life = p.life;
-	lifeCounter = p.lifeCounter;
-	fieldAngle = p.fieldAngle;
-	spreadMin = p.spreadMin;
-	spreadMax = p.spreadMax;
-	spreadFactor = p.spreadFactor;
-	gravity[0] = p.gravity[0];
-	gravity[1] = p.gravity[1];
-	gravity[2] = p.gravity[2];
-	attractionPercent = p.attractionPercent;
-	attracting = p.attracting;
-	stopped = p.stopped;
-	particlesPerSecond = p.particlesPerSecond;
-	type = p.type;
-	index = p.index;
-	colors = p.colors;
-	texcoords = p.texcoords;
-	age = p.age;
-	lastUpdate = p.lastUpdate;
-	emissionResidue = p.emissionResidue;
-	currentTime = p.currentTime;
+	for (unsigned int i = 0; i < p.particles.size(); i++) {
+		particles.push_back(p.particles[i]->clone());
+	}
+	for (unsigned int i = 0; i < p.affectors.size(); i++) {
+		affectors.push_back(p.affectors[i]->clone());
+	}
+	for (unsigned int i = 0; i < p.emitters.size(); i++) {
+		emitters.push_back(p.emitters[i]->clone());
+	}
+	quota = p.quota;
+	width = p.width;
+	height = p.height;
 	boundingBoxDirty = p.boundingBoxDirty;
 	boundingBox = p.boundingBox;
+	currentTime = p.currentTime;
 	return *this;
 }
+
+void					SceneNodeParticleSystem::expire(Real time)
+{
+	ParticleList::iterator i;
+	Particle* p;
+
+	for (i = particles.begin(); i != particles.end(); i++) {
+		p = static_cast<Particle*>(*i);
+		if (p != NULL) {
+			if (p->ttl < time) {
+				delete p;
+				particles.erase(i);
+			}
+			else {
+				p->ttl -= time;
+			}
+		}
+	}
+}
+
+void					SceneNodeParticleSystem::applyMotion(Real time)
+{
+	ParticleList::iterator i;
+	Particle* p;
+
+	for (i = particles.begin(); i != particles.end(); i++) {
+		p = static_cast<Particle*>(*i);
+		p->position += (p->direction * time);
+	}
+}
+
+void					SceneNodeParticleSystem::triggerAffectors(Real time)
+{
+	AffectorList::iterator i;
+
+	for (i = affectors.begin(); i != affectors.end(); i++) {
+		(*i)->affectParticles(this, time);
+	}
+}
+
+void					SceneNodeParticleSystem::triggerEmitters(Real time)
+{
+	EmitterList::iterator i;
+	std::vector<unsigned int> requestedParticles;
+	unsigned int totalReq, emissionAllowed;
+
+	emissionAllowed = quota.get() - particles.size();
+	totalReq = 0;
+	int pos;
+
+	if (requestedParticles.size() != emitters.size())
+		requestedParticles.resize(emitters.size());
+
+	for (i = emitters.begin(), pos = 0; i != emitters.end(); ++i, ++pos) {
+		requestedParticles[pos] = (*i)->getCount(time);
+		totalReq += requestedParticles[pos];
+	}
+
+
+	if (totalReq > emissionAllowed) {
+		Real ratio = ((Real) emissionAllowed) / ((Real) totalReq);
+		for(unsigned int j = 0; j < requestedParticles.size(); j++) {
+			requestedParticles[j] = (unsigned int) (((Real) requestedParticles[j]) * ratio);
+		}
+	}
+
+	for (i = emitters.begin(), pos = 0; i != emitters.end(); ++i, ++pos) {
+		for (unsigned int j = 0; j < requestedParticles[pos]; j++) {
+			Particle* p = (*i)->createParticle();
+			p->setSize(width.get(), height.get());
+			particles.push_back(p);
+			// translate particle into world space?
+		}
+	}
+}
+
 // ex: shiftwidth=4 tabstop=4

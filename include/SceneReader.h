@@ -14,6 +14,7 @@
 #define BZF_SCENE_READER_H
 
 #include "XMLTree.h"
+#include "SceneNode.h"
 #include <map>
 #include <vector>
 

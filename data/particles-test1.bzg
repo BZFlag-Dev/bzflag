@@ -1,0 +1,35 @@
+<!--
+# bzflag
+# Copyright (c) 1993 - 2002 Tim Riker
+#
+# This package is free software;  you can redistribute it and/or
+# modify it under the terms of the license found in the file
+# named LICENSE that should have accompanied this file.
+#
+# THIS PACKAGE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
+# IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
+# WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+-->
+
+<gstate>
+	<particlesystem>
+		<quota>10000</quota>
+		<width>0.1</width>
+		<height>0.2</height>
+
+		<affector type="linearforce">
+			<force>0 0 -4</force>
+			<application method="add"/>
+		</affector>
+		<emitter type="box">
+			<position>0 0 5</position>
+			<rate>200</rate>
+			<timetolive>5</timetolive>
+			<direction>0 -0.5 -1</direction>
+			<velocity>1</velocity>
+			<angle>0</angle>
+			<color>1 1 1 1</color>
+			<size>3.0 3.0 0.25</size>
+		</emitter>
+	</particlesystem>
+</gstate>

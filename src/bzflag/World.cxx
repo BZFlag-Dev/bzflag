@@ -18,6 +18,7 @@
 #include "Protocol.h"
 #include "DeadPlayer.h"
 #include "RemotePlayer.h"
+#include "StateDatabase.h"
 /* XXX
 #include "EighthDBoxSceneNode.h"
 #include "EighthDPyrSceneNode.h"
@@ -62,6 +63,8 @@ World::World() : gameStyle(PlainGameStyle),
 	deadPlayers = new DeadPlayer*[maxDeadPlayers];
 	for (int i = 0; i < maxDeadPlayers; i++)
 		deadPlayers[i] = NULL;
+	transformSceneNode	= new SceneNodeTransform;
+	rainSceneNode		= SCENEMGR->find("rain");
 }
 
 World::~World()
@@ -582,6 +585,29 @@ void					World::addDeadPlayer(Player* dyingPlayer)
 		deadPlayers[i] = deadPlayers[i - 1];
 	deadPlayers[0] = new DeadPlayer(*dyingPlayer);
 }
+
+void					World::addWeatherSceneNodes(SceneNodeGroup* group)
+{
+	const float* eye = SCENEMGR->getView().getEye();
+	const float* direction = SCENEMGR->getView().getDirection();
+	float origin[3];
+
+	// compute origin (draw 12m in front of tank)
+	origin[0] = eye[0] + (direction[0] * 12);
+	origin[1] = eye[1] + (direction[1] * 12);
+	origin[2] = eye[2] + (direction[2] * 12);
+	
+	if (BZDB->get("weather") == "raining") {
+		transformSceneNode->clearChildren();
+		transformSceneNode->translate.clear();
+		transformSceneNode->translate.push(origin[0], origin[1], origin[2]);
+		transformSceneNode->pushChild(rainSceneNode);
+		group->pushChild(transformSceneNode);
+	}
+	else {
+	}
+}
+
 
 //
 // WorldBuilder

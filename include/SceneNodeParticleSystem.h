@@ -18,114 +18,185 @@
 #include <deque>
 #include "math3D.h"
 #include "SceneNode.h"
+#include "SceneNodeBillboard.h"
+#include "XMLTree.h"
 
 class SceneVisitorParams;
 class SceneNodeParticleSystem;			// predeclaration for Particle class
 
-class Particle {
+class Particle : public SceneNode {
 public:
-	float			previousLocation[3];
-	float			location[3];
-	float			velocity[3];
-
-	float			color[4];
-	float			colorCounter[4];
-	float			size;
-	float			sizeCounter;
-	float			age;
-	float			dyingAge;
-
-	void			setParent(SceneNodeParticleSystem *parent_);
-	void			create(SceneNodeParticleSystem *parent_, float timeCounter);
-	bool			update(float timeCounter);
-
-	Particle		operator = (const Particle&);
-private:
-	SceneNodeParticleSystem	*parent;
-};
-
-enum ParticleSystemUpdate { UpdateAndCreate, OnlyUpdate, OnlyCreate };
-enum ParticleSystemType { CreateConstant, CreateBurst };
-
-class SceneNodeParticleSystem : public SceneNode {
-public:
-				SceneNodeParticleSystem();
+	Particle();
+	virtual ~Particle();
+	void				setColor(Real cr, Real cg, Real cb, Real ca);
+	void				getColor(Real& cr, Real& cg, Real& cb, Real& ca);
+	void				setSize(Real _w, Real _h);
+	void				calculate();
 
 	// SceneNode overrides
 	virtual bool		visit(SceneVisitor*);
 
-	std::deque<Particle>	particles;
+	virtual Particle*	clone();
 
-	float			previousLocation[3];
-	float			location[3];
-	float			velocity[3];
-
-	float			startSize;
-	float			sizeCounter;
-	float			endSize;
-
-	float			startColor[4];
-	float			colorCounter[4];
-	float			endColor[4];
-
-	float			speed;
-	float			speedCounter;
-
-	float			life;
-	float			lifeCounter;
-
-	float			fieldAngle;
-
-	int			spreadMin;
-	int			spreadMax;
-	float			spreadFactor;
-
-	float			gravity[3];
-	float			attractionPercent;
-
-	bool			attracting;
-	bool			stopped;
-	ParticleSystemType	action;
-
-	unsigned int		particlesPerSecond;
-
-	// fields
-	unsigned int		type;
-	SceneNodeVFUInt		index;
+	Real				ttl;
+	Vec3				position;
+	Vec3				direction;
+	Real				w, h;
 
 	// visitor stuff
-	SceneNodeVFFloat	colors;
-	SceneNodeVFFloat	verteces;
-	SceneNodeVFFloat	texcoords;
+	SceneNodeVFFloat*	color;
+	SceneNodeVFFloat*	normal;
+	SceneNodeVFFloat*	vertex;
+	SceneNodeVFUInt		index;
 
-	// reader temporaries
-	SceneNodeVFFloat	locationV;
-	SceneNodeVFFloat	velocityV;
-	SceneNodeVFFloat	startColorV;
-	SceneNodeVFFloat	endColorV;
-	SceneNodeSFFloat	startSizeV;
-	SceneNodeSFFloat	endSizeV;
-	SceneNodeVFFloat	gravityV;
-	SceneNodeSFFloat	speedV;
-	SceneNodeSFFloat	lifeV;
-	SceneNodeSFFloat	fieldAngleV;
-	SceneNodeSFFloat	attractionPercentV;
-	SceneNodeSFUInt		creationSpeedV;
-	SceneNodeSFUInt		burstSizeV;
-	SceneNodeSFUInt		spreadMinV;
-	SceneNodeSFUInt		spreadMaxV;
-	SceneNodeSFFloat	spreadFactorV;
+protected:
+};
 
-//	Property		property;
+class ParticleAffector {
+public:
+						ParticleAffector();
+	virtual				~ParticleAffector();
 
-	Matrix			transformation;
+	virtual void		affectParticles(SceneNodeParticleSystem* system, Real time) = 0;
+	virtual void		parse(XMLTree::iterator);
 
-	// particle functions
-	bool			update(float newTime, const Matrix&);
-	bool			update(float time, ParticleSystemUpdate flag, float numToCreate, const Matrix&);
-	unsigned int		activeParticles();
-	bool			isAttracting();
-	bool			isStopped();
+	virtual ParticleAffector*	clone() = 0;
+
+protected:
+};
+
+class ParticleAffectorLinearForce : public ParticleAffector {
+public:
+						ParticleAffectorLinearForce();
+	virtual				~ParticleAffectorLinearForce();
+
+	virtual void		affectParticles(SceneNodeParticleSystem* system, Real time);
+	virtual void		parse(XMLTree::iterator);
+
+	virtual ParticleAffector*	clone();
+
+protected:
+	enum Application {
+		Average,
+		Add
+	};
+
+	Application			application;
+	SceneNodeVFFloat	force;
+};
+
+class ParticleAffectorColorFader : public ParticleAffector {
+public:
+						ParticleAffectorColorFader();
+	virtual				~ParticleAffectorColorFader();
+
+	virtual void		affectParticles(SceneNodeParticleSystem* system, Real time);
+	virtual void		parse(XMLTree::iterator);
+
+	virtual ParticleAffector*	clone();
+
+protected:
+	SceneNodeVFFloat delta;
+};
+
+class ParticleAffectorFactory {
+public:
+	ParticleAffector*	create(const std::string&) const;
+};
+
+class ParticleEmitter {
+public:
+						ParticleEmitter();
+	virtual 			~ParticleEmitter();
+
+	virtual Particle*	createParticle() = 0;
+	virtual void		parse(XMLTree::iterator);
+
+	virtual ParticleEmitter*	clone() = 0;
+
+	virtual unsigned int	getCount(Real time) = 0;
+
+	SceneNodeVFFloat	position;
+	SceneNodeSFFloat	rate;
+	SceneNodeVFFloat	direction;
+	SceneNodeVFFloat	up;
+	SceneNodeSFFloat	angle;
+	SceneNodeSFFloat	minSpeed;
+	SceneNodeSFFloat	maxSpeed;
+	SceneNodeSFFloat	minTTL;
+	SceneNodeSFFloat	maxTTL;
+	SceneNodeVFFloat	colorStart;
+	SceneNodeVFFloat	colorEnd;
+
+protected:
+	void				createPosition(Vec3& pos);
+	void				createDirection(Vec3& dir);
+	void				createVelocity(Vec3& vel);
+	void				createTTL(Real& ttl);
+	void				createColor(SceneNodeVFFloat& col);
+	unsigned short		createConstantEmissionCount(Real time);
+};
+
+class ParticleEmitterPoint : public ParticleEmitter {
+public:
+						ParticleEmitterPoint();
+	virtual				~ParticleEmitterPoint();
+
+	virtual Particle*	createParticle();
+	virtual void		parse(XMLTree::iterator);
+
+	virtual ParticleEmitter*	clone();
+
+	virtual unsigned int	getCount(Real time);
+};
+
+class ParticleEmitterBox : public ParticleEmitter {
+public:
+						ParticleEmitterBox();
+	virtual				~ParticleEmitterBox();
+
+	virtual Particle*	createParticle();
+	virtual void		parse(XMLTree::iterator);
+
+	virtual ParticleEmitter*	clone();
+
+	virtual unsigned int	getCount(Real time);
+
+protected:
+	SceneNodeVFFloat	size;
+};
+
+class ParticleEmitterFactory {
+public:
+	ParticleEmitter*	create(const std::string&) const;
+};
+
+class SceneNodeParticleSystem : public SceneNodeBillboard {
+public:
+				SceneNodeParticleSystem();
+
+	typedef std::deque<Particle*>			ParticleList;
+	typedef std::deque<ParticleAffector *>	AffectorList;
+	typedef std::deque<ParticleEmitter *>	EmitterList;
+
+	ParticleList		particles;
+	AffectorList		affectors;
+	EmitterList			emitters;
+
+	void				setQuota(unsigned int _quota);
+	unsigned int		getQuota();
+	void				update(Real newTime);
+
+	// SceneNode overrides
+	virtual bool		visit(SceneVisitor*);
+
+	// SceneNodeGroup overrides
+	virtual bool		descend(SceneVisitor*, const SceneVisitorParams&);
+
+	SceneNodeSFUInt		quota;
+	SceneNodeSFFloat	width;
+	SceneNodeSFFloat	height;
+
 
 	// get the axis-aligned bounding box around all particles.  if there
 	// are no particles then the box is point at the origin.
@@ -136,20 +207,16 @@ public:
 protected:
 	virtual			~SceneNodeParticleSystem();
 
-	unsigned int		particlesAlive;
+	void			expire(Real time);
+	void			applyMotion(Real time);
+	void			triggerAffectors(Real time);
+	void			triggerEmitters(Real time);
 
-	float			age;
-	float			lastUpdate;
-	float			emissionResidue;
-
-	float			currentTime;
 private:
 	bool			boundingBoxDirty;
 	BoundingBox		boundingBox;
 
-	// keep track of whether or not we've created
-	// the particles when in burst mode
-	bool			burstCreated;
+	Real			currentTime;
 };
 
 #endif

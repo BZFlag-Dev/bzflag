@@ -160,6 +160,7 @@ LocalPlayer::LocalPlayer(PlayerId id,
 	for (int i = 0; i < numShots; i++)
 		shots[i] = NULL;
 	keyboardMoving = false;
+	rainSceneNode = SCENEMGR->find("rain");
 }
 
 LocalPlayer::~LocalPlayer()

@@ -31,6 +31,7 @@ public:
 	virtual bool		visit(SceneNodeGeometry*);
 	virtual bool		visit(SceneNodeLight*);
 	virtual bool		visit(SceneNodeParameters*);
+	virtual bool		visit(Particle*);
 	virtual bool		visit(SceneNodeParticleSystem*);
 	virtual bool		visit(SceneNodePrimitive*);
 	virtual bool		visit(SceneNodeSelector*);

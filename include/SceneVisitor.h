@@ -53,8 +53,10 @@ public:
 							{ return visit(static_cast<SceneNodeGroup*>(n)); }
 	virtual bool		visit(SceneNodeParameters* n)
 							{ return visit(static_cast<SceneNodeGroup*>(n)); }
-	virtual bool		visit(SceneNodeParticleSystem* )
+	virtual bool		visit(Particle* )
 							{ return true; }
+	virtual bool		visit(SceneNodeParticleSystem* n)
+							{ return visit(static_cast<SceneNodeBillboard*>(n)); }
 	virtual bool		visit(SceneNodePrimitive* n)
 							{ return visit(static_cast<SceneNode*>(n)); }
 	virtual bool		visit(SceneNodeSelector* n)

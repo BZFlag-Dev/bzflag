@@ -37,6 +37,7 @@ class FlagSceneNode;
 class FlagWarpSceneNode;
 class EighthDimSceneNode;
 */
+class SceneNode;
 class SceneNodeBillboard;
 class SceneNodeGroup;
 class SceneNodeGeometry;
@@ -110,6 +111,8 @@ public:
     void				reviveDeadPlayer(Player* revivedPlayer);
     void				addDeadPlayer(Player* dyingPlayer);
 
+	void				addWeatherSceneNodes(SceneNodeGroup*);
+
     static World*		getWorld();
     static void			setWorld(World*);
 
@@ -150,6 +153,8 @@ private:
 	DeadPlayer**		deadPlayers;
 	Flag*				flags;
 	FlagNode*			flagNodes;
+	SceneNode*			rainSceneNode;
+	SceneNodeTransform*	transformSceneNode;
 /*
     FlagSceneNode**		flagNodes;
     FlagWarpSceneNode**	flagWarpNodes;

@@ -12,376 +12,10 @@
 
 #include "SceneReader.h"
 #include "SceneNodes.h"
+#include "SceneNodeFieldReader.h"
 #include "OpenGLTexture.h"
 #include <string.h>
 #include <ctype.h>
-
-//
-// SceneNodeFieldReader
-//
-
-class SceneNodeFieldReader {
-public:
-	SceneNodeFieldReader() { }
-	virtual ~SceneNodeFieldReader() { }
-
-	virtual bool		parse(XMLTree::iterator);
-	virtual const char*	getName() const = 0;
-
-protected:
-	virtual void		parseBegin(XMLTree::iterator) { }
-	virtual void		parseData(XMLTree::iterator, const std::string&) { }
-	virtual void		parseEnd(XMLTree::iterator) { }
-};
-
-bool					SceneNodeFieldReader::parse(XMLTree::iterator xml)
-{
-	parseBegin(xml);
-	XMLTree::sibling_iterator scan = xml.begin();
-	XMLTree::sibling_iterator end  = xml.end();
-	for (; scan != end; ++scan) {
-		if (scan->type != XMLNode::Data)
-			throw XMLIOException(scan->position,
-								"fields may not have children");
-		parseData(scan, scan->value);
-	}
-	parseEnd(xml);
-	return true;
-}
-
-
-//
-// SceneNodeScalarReader<T>
-//
-
-template <class T>
-class SceneNodeScalarReader : public SceneNodeFieldReader {
-public:
-	SceneNodeScalarReader(SceneNodeScalarField<T>*);
-	virtual ~SceneNodeScalarReader() { }
-
-	virtual const char*	getName() const;
-
-protected:
-	virtual void		parseBegin(XMLTree::iterator);
-	virtual void		parseData(XMLTree::iterator, const std::string&);
-	virtual void		parseEnd(XMLTree::iterator);
-
-private:
-	T					parseValue(const char*, char**) const;
-
-private:
-	bool				done;
-	SceneNodeScalarField<T>*	field;
-};
-
-template <class T>
-SceneNodeScalarReader<T>::SceneNodeScalarReader(
-								SceneNodeScalarField<T>* _field) :
-								field(_field)
-{
-	// do nothing
-}
-
-template <class T>
-void					SceneNodeScalarReader<T>::parseBegin(XMLTree::iterator)
-{
-	done = false;
-}
-
-template <class T>
-void					SceneNodeScalarReader<T>::parseData(
-								XMLTree::iterator xml, const std::string& data)
-{
-	// skip whitespace
-	const char* scan = data.c_str();
-	while (*scan != '\0' && isspace(*scan))
-		++scan;
-
-	// read values until there are no more
-	while (*scan != '\0') {
-		// parse
-		char* end;
-		T value = parseValue(scan, &end);
-
-		// check for parse errors
-		if (end == scan)
-			throw XMLIOException(xml->position,
-								string_util::format(
-									"error reading value in `%s' field",
-									field->getName()));
-		if (done)
-			throw XMLIOException(xml->position,
-								string_util::format(
-									"more than one value in `%s' field",
-									field->getName()));
-
-		// append index
-		field->set(value);
-		done = true;
-
-		// prep for next token
-		scan = end;
-		while (*scan != '\0' && isspace(*scan))
-			++scan;
-	}
-}
-
-template <class T>
-void					SceneNodeScalarReader<T>::parseEnd(
-								XMLTree::iterator xml)
-{
-	if (!done)
-		throw XMLIOException(xml->position,
-								string_util::format(
-									"expected a value in `%s' field",
-									field->getName()));
-}
-
-template <class T>
-const char*				SceneNodeScalarReader<T>::getName() const
-{
-	return field->getName();
-}
-
-inline
-unsigned int			SceneNodeScalarReader<unsigned int>::parseValue(
-								const char* src, char** end) const
-{
-	return static_cast<unsigned int>(strtoul(src, end, 10));
-}
-
-inline
-bool					SceneNodeScalarReader<bool>::parseValue(
-								const char* src, char** end) const
-{
-	if (strcmp(src, "true") == 0) {
-		if (isspace(src[4]) || src[4] == '\0') {
-			*end = const_cast<char*>(src) + 4;
-			return true;
-		}
-	}
-	else if (strcmp(src, "false") == 0) {
-		if (isspace(src[5]) || src[5] == '\0') {
-			*end = const_cast<char*>(src) + 5;
-			return false;
-		}
-	}
-	*end = const_cast<char*>(src);
-	return false;
-}
-
-inline
-float					SceneNodeScalarReader<float>::parseValue(
-								const char* src, char** end) const
-{
-	return static_cast<float>(strtod(src, end));
-}
-
-inline
-void					SceneNodeScalarReader<std::string>::parseBegin(
-								XMLTree::iterator)
-{
-	field->set("");
-	done = false;
-}
-
-inline
-void					SceneNodeScalarReader<std::string>::parseData(
-								XMLTree::iterator, const std::string& data)
-{
-	// skip leading whitespace
-	const char* scan = data.c_str();
-	while (*scan != '\0' && isspace(*scan))
-		++scan;
-
-	// prepend space if not empty
-	std::string buffer = field->get();
-	if (buffer.size() > 0)
-		buffer += " ";
-
-	// append data
-	buffer += scan;
-	field->set(buffer);
-	done = true;
-}
-
-
-//
-// SceneNodeVectorReader<T>
-//
-
-template <class T>
-class SceneNodeVectorReader : public SceneNodeFieldReader {
-public:
-	SceneNodeVectorReader(SceneNodeVectorField<T>*);
-	virtual ~SceneNodeVectorReader() { }
-
-	virtual const char*	getName() const;
-
-protected:
-	virtual void		parseBegin(XMLTree::iterator);
-	virtual void		parseData(XMLTree::iterator, const std::string&);
-	virtual void		parseEnd(XMLTree::iterator);
-
-private:
-	T					parseValue(const char*, char**) const;
-
-private:
-	typedef std::vector<T> Buffer;
-	Buffer				buffer;
-	SceneNodeVectorField<T>*	field;
-};
-
-template <class T>
-SceneNodeVectorReader<T>::SceneNodeVectorReader(
-								SceneNodeVectorField<T>* _field) :
-								buffer(),
-								field(_field)
-{
-	// do nothing
-}
-
-template <class T>
-void					SceneNodeVectorReader<T>::parseBegin(
-								XMLTree::iterator xml)
-{
-	buffer.clear();
-	xml->getAttribute("t", xmlSetMethod(field, &SceneNodeVectorField<T>::
-											setInterpolationParameter));
-}
-
-template <class T>
-void					SceneNodeVectorReader<T>::parseData(
-								XMLTree::iterator xml,
-								const std::string& data)
-{
-	// skip whitespace
-	const char* scan = data.c_str();
-	while (*scan != '\0' && isspace(*scan))
-		++scan;
-
-	// read values until there are no more
-	while (*scan != '\0') {
-		// parse
-		char* end;
-		T value = parseValue(scan, &end);
-
-		// check for parse errors
-		if (end == scan)
-			throw XMLIOException(xml->position,
-								string_util::format(
-									"error reading value in `%s'",
-									field->getName()));
-
-		// append index
-		buffer.push_back(value);
-
-		// prep for next token
-		scan  = end;
-		while (*scan != '\0' && isspace(*scan))
-			++scan;
-	}
-}
-
-template <class T>
-void					SceneNodeVectorReader<T>::parseEnd(
-								XMLTree::iterator xml)
-{
-	// make sure we satisfy field constraints
-	if (buffer.size() < field->getMinNum())
-		throw XMLIOException(xml->position, string_util::format(
-							"not enough values in `%s' (got %u, expected %u)",
-								field->getName(),
-								field->getMinNum(),
-								buffer.size()));
-	if (buffer.size() > field->getMaxNum())
-		throw XMLIOException(xml->position, string_util::format(
-							"too many values in `%s' (got %u, expected %u)",
-								field->getName(),
-								field->getMaxNum(),
-								buffer.size()));
-	if (buffer.size() % field->getMultNum() != 0)
-		throw XMLIOException(xml->position, string_util::format(
-							"wrong multiple of values in `%s' (got %u of %u)",
-								field->getName(),
-								buffer.size() % field->getMultNum(),
-								field->getMultNum()));
-
-	// swap
-	field->swap(buffer);
-}
-
-template <class T>
-const char*				SceneNodeVectorReader<T>::getName() const
-{
-	return field->getName();
-}
-
-inline
-unsigned int			SceneNodeVectorReader<unsigned int>::parseValue(
-								const char* src, char** end) const
-{
-	return static_cast<unsigned int>(strtoul(src, end, 10));
-}
-
-inline
-float					SceneNodeVectorReader<float>::parseValue(
-								const char* src, char** end) const
-{
-	return static_cast<float>(strtod(src, end));
-}
-
-inline
-void					SceneNodeVectorReader<std::string>::parseData(
-								XMLTree::iterator,
-								const std::string& data)
-{
-	// skip leading whitespace
-	const char* scan = data.c_str();
-	while (*scan != '\0' && isspace(*scan))
-		++scan;
-
-	// values are delimited by (unescaped) commas
-	while (*scan != '\0') {
-		// find the first unescaped comma
-		std::string value;
-		while (*scan != '\0') {
-			if (*scan == '\\') {
-				switch (*++scan) {
-					case '\0':
-						// trailing backslash.  discard.
-						break;
-
-					case ',':
-					case '\\':
-					default:
-						// add literal
-						value += *scan;
-						break;
-				}
-				++scan;
-			}
-			else if (*scan == ',') {
-				// end of value.  discard comma.
-				++scan;
-				break;
-			}
-			else {
-				// literal
-				value += *scan;
-				++scan;
-			}
-		}
-
-		// add value
-		buffer.push_back(value);
-
-		// skip leading whitespace of next value
-		while (*scan != '\0' && isspace(*scan))
-			++scan;
-	}
-}
 
 //
 // SceneNodeParticleSystemReader
@@ -410,55 +44,31 @@ SceneNodeParticleSystemReader::SceneNodeParticleSystemReader(SceneNodeParticleSy
 
 SceneNodeParticleSystemReader::~SceneNodeParticleSystemReader()
 {
-	node->stopped = false;
-	// kludge: copy fields from SceneNode scalars/vectors into real variables
-	// this looks -really- gross
-	// TODO: switch everything to SceneNodeVFFloats and similar types instead
-	// of basic arrays and scalars.
-	node->location[0] = node->locationV.get()[0];
-	node->location[1] = node->locationV.get()[1];
-	node->location[2] = node->locationV.get()[2];
-	node->velocity[0] = node->velocityV.get()[0];
-	node->velocity[1] = node->velocityV.get()[1];
-	node->velocity[2] = node->velocityV.get()[2];
-	node->startColor[0] = node->startColorV.get()[0];
-	node->startColor[1] = node->startColorV.get()[1];
-	node->startColor[2] = node->startColorV.get()[2];
-	node->startColor[3] = node->startColorV.get()[3];
-	node->endColor[0] = node->endColorV.get()[0];
-	node->endColor[1] = node->endColorV.get()[1];
-	node->endColor[2] = node->endColorV.get()[2];
-	node->endColor[3] = node->endColorV.get()[3];
-	node->startSize = node->startSizeV.get();
-	node->endSize = node->endSizeV.get();
-	node->gravity[0] = node->gravityV.get()[0];
-	node->gravity[1] = node->gravityV.get()[1];
-	node->gravity[2] = node->gravityV.get()[2];
-	node->speed = node->speedV.get();
-	node->life = node->lifeV.get();
-	node->fieldAngle = node->fieldAngleV.get();
-	node->attractionPercent = node->attractionPercentV.get();
-	if(node->action == CreateBurst) {
-		node->particlesPerSecond = node->burstSizeV.get();
-	}
-	else {
-		node->particlesPerSecond = node->creationSpeedV.get();
-	}
 }
 
 bool SceneNodeParticleSystemReader::parse(XMLTree::iterator xml = NULL)
 {
-	static const XMLParseEnumList<ParticleSystemType> s_enumMethod[] = {
-		{ "burst",	CreateBurst },
-		{ "continuous",	CreateConstant },
-		{ NULL, 	CreateConstant }
-	};
+	if (xml->value == "emitter") {
+		std::string type;
+		xml->getAttribute("type", type);
 
-	if(xml->value == "attracting") {
-		xml->getAttribute("state", xmlParseEnum(s_xmlEnumBool, xmlSetVar(node->attracting)));
+		ParticleEmitterFactory factory;
+		ParticleEmitter* emitter = factory.create(type);
+		for (XMLTree::sibling_iterator scan = xml.begin(); scan != xml.end(); ++scan) {
+			emitter->parse(scan);
+		}
+		node->emitters.push_back(emitter);
 	}
-	else if(xml->value == "method") {
-		xml->getAttribute("action", xmlParseEnum(s_enumMethod, xmlSetVar(node->action)));
+	else if(xml->value == "affector") {
+		std::string type;
+		xml->getAttribute("type", type);
+
+		ParticleAffectorFactory factory;
+		ParticleAffector* affector = factory.create(type);
+		for (XMLTree::sibling_iterator scan = xml.begin(); scan != xml.end(); ++scan) {
+			affector->parse(scan);
+		}
+		node->affectors.push_back(affector);
 	}
 	else {
 		return false;
@@ -1042,22 +652,9 @@ void					SceneReader::parseNode(XMLTree::iterator xml)
 	else if (xml->value == "particlesystem") {
 		SceneNodeParticleSystem* node = new SceneNodeParticleSystem;
 		push(xml, node);
-		addReader(new SceneNodeVectorReader<float>(&node->locationV));
-		addReader(new SceneNodeVectorReader<float>(&node->velocityV));
-		addReader(new SceneNodeVectorReader<float>(&node->startColorV));
-		addReader(new SceneNodeVectorReader<float>(&node->endColorV));
-		addReader(new SceneNodeScalarReader<float>(&node->startSizeV));
-		addReader(new SceneNodeScalarReader<float>(&node->endSizeV));
-		addReader(new SceneNodeVectorReader<float>(&node->gravityV));
-		addReader(new SceneNodeScalarReader<float>(&node->speedV));
-		addReader(new SceneNodeScalarReader<float>(&node->lifeV));
-		addReader(new SceneNodeScalarReader<float>(&node->fieldAngleV));
-		addReader(new SceneNodeScalarReader<float>(&node->attractionPercentV));
-		addReader(new SceneNodeScalarReader<unsigned int>(&node->creationSpeedV));
-		addReader(new SceneNodeScalarReader<unsigned int>(&node->burstSizeV));
-		addReader(new SceneNodeScalarReader<unsigned int>(&node->spreadMinV));
-		addReader(new SceneNodeScalarReader<unsigned int>(&node->spreadMaxV));
-		addReader(new SceneNodeScalarReader<float>(&node->spreadFactorV));
+		addReader(new SceneNodeScalarReader<unsigned int>(&node->quota));
+		addReader(new SceneNodeScalarReader<float>(&node->width));
+		addReader(new SceneNodeScalarReader<float>(&node->height));
 		addReader(new SceneNodeParticleSystemReader(node));
 	}
 

@@ -157,9 +157,9 @@ private:
 	short					localLosses;			// local player lost this many
 
 	// highly dynamic data
-	short					status;					// see PStatus enum
 	float					pos[3];					// position of tank
 	float					azimuth;				// orientation of tank
+	short					status;					// see PStatus enum
 	float					velocity[3];			// velocity of tank
 	float					angVel;					// angular velocity of tank
 

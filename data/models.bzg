@@ -450,4 +450,9 @@
   <!--  shock wave shots -->
   <!INCLUDE "shot-SW.bzg" />
 
+  <!-- weather -->
+  <group id="rain">
+    <!INCLUDE "rain.bzg" />
+  </group>
+
 </group>

@@ -320,47 +320,97 @@ bool					SceneVisitorSimpleRender::visit(SceneNodeGeometry* n)
 	return result;
 }
 
+bool					SceneVisitorSimpleRender::visit(Particle* n)
+{
+	const unsigned int* index = n->index.get();
+	const float* vertex = n->vertex->get();
+	const float* color = n->color->get();
+	getInstr()->nTriangles += 2;
+	++getInstr()->nNodes;
+	glVertexPointer(3, GL_FLOAT, 0, vertex);
+	glColor4fv(color);
+	glEnableClientState(GL_VERTEX_ARRAY);
+	glDrawElements(GL_TRIANGLE_STRIP, 4, GL_UNSIGNED_INT, index);
+	return true;
+}
+
 bool					SceneVisitorSimpleRender::visit(SceneNodeParticleSystem* n)
 {
-	// update the particle system
-	Matrix matrix = ViewFrustum::getTransform();
-	matrix *= modelXFormStack.back();
-	matrix.invert();
-	n->update(getParams().getFloat("time"), matrix);
+	// FIXME
+	n->update(getParams().getFloat("time"));
 
-	// set client state
-	glColorPointer(4, GL_FLOAT, 0, n->colors.get());
-	glTexCoordPointer(2, GL_FLOAT, 0, n->texcoords.get());
-	glVertexPointer(3, GL_FLOAT, 0, n->verteces.get());
-	glEnableClientState(GL_COLOR_ARRAY);
-	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-	glEnableClientState(GL_VERTEX_ARRAY);
+	// push state
+	XFormStack* stack;
+	GLenum mode;
+	
+	// what kind of matrix?
+	switch (n->type.get()) {
+		case SceneNodeBaseTransform::ModelView:
+			stack = &modelXFormStack;
+			mode  = GL_MODELVIEW;
+			break;
 
-	// draw
-	const unsigned int* index = n->index.get();
-	glDrawElements(GL_QUADS, 4 * n->particles.size(), GL_UNSIGNED_INT, index);
+		case SceneNodeBaseTransform::Projection:
+			stack = &projectionXFormStack;
+			mode  = GL_PROJECTION;
+			break;
 
-	// restore client state
-	if (colorStack.empty()) {
-		glDisableClientState(GL_COLOR_ARRAY);
+		case SceneNodeBaseTransform::Texture:
+			stack = &textureXFormStack;
+			mode  = GL_TEXTURE;
+			break;
+
+		default:
+			return descend(n);
 	}
-	else if (colorStack.back()->getNum() == 4) {
-		glColor4fv(colorStack.back()->get());
-		glDisableClientState(GL_COLOR_ARRAY);
-	}
-	else {
-		glColorPointer(4, GL_FLOAT, 0, colorStack.back()->get());
-	}
-	if (texcoordStack.empty())
-		glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-	else
-		glTexCoordPointer(2, GL_FLOAT, 0, texcoordStack.back()->get());
-	if (vertexStack.empty())
-		glDisableClientState(GL_VERTEX_ARRAY);
-	else
-		glVertexPointer(3, GL_FLOAT, 0, vertexStack.back()->get());
 
-	return true;
+	// verify that we're not trying to access a non-existant matrix
+	unsigned int level = n->up.get();
+	if (level >= stack->size()) {
+		// FIXME -- should note the error
+		return descend(n);
+	}
+
+	// push a copy of the old matrix
+	stack->push_back((*stack)[stack->size() - 1 - level]);
+
+	// let node modify new matrix
+	n->get(stack->back(), getParams());
+
+	// load the new matrix
+	glMatrixMode(mode);
+	glLoadMatrixr(stack->back().get());
+	glMatrixMode(GL_MODELVIEW);
+
+	// choose front faces
+	bool frontCCW = true;
+	if (mode == GL_PROJECTION) {
+		// should compute the sign of the adjoint but we're
+		// expecting a very specific kind of matrix so we
+		// can take a shortcut.
+		const Matrix& m = stack->back();
+		frontCCW = ((m[0] < R_(0.0)) == (m[5] < R_(0.0)));
+		if (!frontCCW)
+			glFrontFace(GL_CW);
+	}
+
+	// descend
+	++getInstr()->nTransforms;
+	const bool result = descend(n);
+
+	// pop state
+
+	// restore front faces
+	if (!frontCCW)
+		glFrontFace(GL_CCW);
+
+	// pop stack
+	stack->pop_back();
+	glMatrixMode(mode);
+	glLoadMatrixr(stack->back().get());
+	glMatrixMode(GL_MODELVIEW);
+
+	return result;
 }
 
 bool					SceneVisitorSimpleRender::visit(SceneNodePrimitive* n)
