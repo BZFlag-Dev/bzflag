@@ -3137,8 +3137,8 @@ static void		checkEnvironment()
 	  const float radius = myRadius +
 	    BZDB.eval(StateDatabase::BZDB_SRRADIUSMULT) * player[i]->getRadius();
           const float distSquared =
-            hypot(hypot(myPos[0] - pos[0],
-                        myPos[1] - pos[1]), (myPos[2] - pos[2]) * 2.0f);
+            (float)hypot(hypot(myPos[0] - pos[0],
+                               myPos[1] - pos[1]), (myPos[2] - pos[2]) * 2.0f);
 	  if (distSquared < radius) {
 	    gotBlowedUp(myTank, GotRunOver, player[i]->getId());
 	  }
@@ -3596,8 +3596,8 @@ static void		checkEnvironment(RobotPlayer* tank)
 	const float radius = myRadius +
 	  (BZDB.eval(StateDatabase::BZDB_SRRADIUSMULT) * myTank->getRadius());
         const float distSquared =
-          hypot(hypot(myPos[0] - pos[0],
-                      myPos[1] - pos[1]), (myPos[2] - pos[2]) * 2.0f);
+          (float)hypot(hypot(myPos[0] - pos[0],
+                             myPos[1] - pos[1]), (myPos[2] - pos[2]) * 2.0f);
 	if (distSquared < radius) {
 	  gotBlowedUp(tank, GotRunOver, myTank->getId());
 	  dead = true;
@@ -3614,8 +3614,8 @@ static void		checkEnvironment(RobotPlayer* tank)
 	const float radius = myRadius +
 	  (BZDB.eval(StateDatabase::BZDB_SRRADIUSMULT) * player[i]->getRadius());
         const float distSquared = 
-          hypot(hypot(myPos[0] - pos[0],
-                      myPos[1] - pos[1]), (myPos[2] - pos[2]) * 2.0f);
+          (float)hypot(hypot(myPos[0] - pos[0],
+                             myPos[1] - pos[1]), (myPos[2] - pos[2]) * 2.0f);
 	if (distSquared < radius) {
 	  gotBlowedUp(tank, GotRunOver, player[i]->getId());
 	  dead = true;
