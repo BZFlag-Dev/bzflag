@@ -25,11 +25,11 @@
 
 /* public: */
 
-bool VotingPoll::isOpen(void) {
+bool VotingPoll::isOpen(void) const{
   return false;
 }
 
-bool VotingPoll::allowSuffrage() {
+bool VotingPoll::allowSuffrage() const{
   return (this->isOpen());
 }
 
@@ -40,7 +40,7 @@ bool VotingPoll::voteNo() {
   return false;
 }
 
-bool VotingPoll::isSuccessful(void) {
+bool VotingPoll::isSuccessful(void) const{
   return false;
 }
 
