@@ -295,7 +295,7 @@ void JoinMenu::resize(int width, int height)
     list[i]->setFontSize(fontSize);
     list[i]->setPosition(x, y);
     y -= 1.0f * h;
-    if (i <= 2 || i == 7) y -= 0.5f * h;
+    if (i <= 2 || i == 8) y -= 0.5f * h;
   }
 }
 
