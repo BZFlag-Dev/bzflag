@@ -46,6 +46,18 @@
 ;Languages
  
 	!insertmacro MUI_LANGUAGE "English"
+	!insertmacro MUI_LANGUAGE "Italian"
+	!insertmacro MUI_LANGUAGE "German"
+
+;--------------------------------
+;Reserve Files
+  
+  ;These files should be inserted before other files in the data block
+  ;Keep these lines before any File command
+  ;Only for solid compression (by default, solid compression is enabled for BZIP2 and LZMA)
+  
+  !insertmacro MUI_RESERVEFILE_LANGDLL
+
 
 ;--------------------------------
 ;Installer Sections
@@ -80,14 +92,30 @@ Section "BZFlag Server" SecBZFS
 	File ..\..\src\bzfs\bzfs.exe
 SectionEnd
 
+;--------------------------------
+;Installer Functions
+
+Function .onInit
+
+  !insertmacro MUI_LANGDLL_DISPLAY
+
+FunctionEnd
 
 ;--------------------------------
 ;Descriptions
 
 	;Language strings
 	LangString DESC_SecCore ${LANG_ENGLISH} "Files required to run BZFlag"
+	LangString DESC_SecCore ${LANG_ITALIAN} " Lime richieste per fare funzionare BZFlag"
+	LangString DESC_SecCore ${LANG_GERMAN} "Akten erfordert, um BZFlag laufen zu lassen"
+
 	LangString DESC_SecBZAdmin ${LANG_ENGLISH} "Administraton tool for BZFlag Servers"
+	LangString DESC_SecBZAdmin ${LANG_ITALIAN} "Attrezzo di Administraton per gli assistenti di BZFlag"
+	LangString DESC_SecBZAdmin ${LANG_GERMAN} " Administraton Werkzeug für BZFlag Bediener"
+
 	LangString DESC_SecBZFS ${LANG_ENGLISH} "The BZFlag server aplication ( BZFS )"
+	LangString DESC_SecBZFS ${LANG_ITALIAN} "Il aplication dell'assistente di BZFlag (BZFS)"
+	LangString DESC_SecBZFS ${LANG_GERMAN} "Das BZFlag Bediener aplication (BZFS)"
 
 	;Assign language strings to sections
 	!insertmacro MUI_FUNCTION_DESCRIPTION_BEGIN
