@@ -74,7 +74,7 @@ AC_ARG_WITH(curses, [  --with-curses           Force the use of curses over ncur
 dnl AM_PATH_SDL([MINIMUM-VERSION, [ACTION-IF-FOUND [, ACTION-IF-NOT-FOUND]]])
 dnl Test for SDL, and define SDL_CFLAGS and SDL_LIBS
 dnl
-AC_DEFUN(AM_PATH_SDL,
+AC_DEFUN([AM_PATH_SDL],
 [dnl 
 dnl Get the cflags and libraries from the sdl-config script
 dnl
@@ -250,7 +250,7 @@ dnl -------
 dnl set my_cv_curl_vers to the version of libcurl or NONE
 dnl if libcurl is not found or is too old
 
-AC_DEFUN(MY_CURL,[
+AC_DEFUN([MY_CURL],[
  AC_CACHE_VAL(my_cv_curl_vers,[
  my_cv_curl_vers=NONE
  dnl check is the plain-text version of the required version
