@@ -117,7 +117,20 @@ class BackgroundRenderer {
     OpenGLDisplayList	cloudsList;
 
 	// stuff for rain
-	OpenGLGState	rainGState;
+	OpenGLGState				rainGState;
+	std::vector<std::string>	rainTextures;
+	float						rainColor[4][2];
+	float						rainSize[2];
+	int						rainDensity;
+	float						rainSpeed;
+	float						rainSpeedMod;
+	typedef struct {
+		float    pos[3];
+		float	 speed;
+		int		 texture;
+	}rain;
+	std::vector<rain>			raindrops;
+	float						lastRainTime;
 
     // stuff for sun shadows
     bool		doShadows;

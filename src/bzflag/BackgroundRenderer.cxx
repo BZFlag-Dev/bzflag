@@ -23,6 +23,7 @@
 #include "daylight.h"
 #include "MainWindow.h"
 #include "SceneNode.h"
+#include "TimeKeeper.h"
 
 //static     bool         useMoonTexture = false;
 
@@ -194,12 +195,13 @@ BackgroundRenderer::BackgroundRenderer(const SceneRenderer&) :
     cloudsGState = gstate.getState();
   }
 
+  // rain stuff
   gstate.reset();
- // gstate.setShading();
+  gstate.setShading();
   gstate.setBlending((GLenum)GL_SRC_ALPHA, (GLenum)GL_ONE_MINUS_SRC_ALPHA);
   gstate.setMaterial(rainMaterial);
  // gstate.setTexture(cloudsTexture);
-  //gstate.setAlphaFunc();
+  gstate.setAlphaFunc();
   rainGState = gstate.getState();
 
   // make mountain stuff
@@ -407,6 +409,45 @@ void			BackgroundRenderer::setCelestial(
     starList.execute();
     glPopMatrix();
   starXFormList.end();
+
+  // rain stuff
+  rainDensity = 0;
+
+  if (BZDB.isSet("RAIN_DESNSITY"))
+  {
+	  rainDensity = BZDB.eval("RAIN_DESNSITY");
+	  rainColor[0][0] = 0.75f;   rainColor[1][0] = 0.75f;   rainColor[2][0] = 0.75f;   rainColor[3][0] = 0.75f; 
+	  rainColor[0][1] = 0.0f;   rainColor[1][1] = 0.0f;   rainColor[2][1] = 0.0f;   rainColor[3][1] = 0.0f; 
+	  rainSize[0] = 0.0f; rainSize[1] = 10.0f;
+	  if (BZDB.isSet("RAIN_SPEED"))
+		  rainSpeed = BZDB.eval("RAIN_SPEED");
+	  else
+		  rainSpeed = 100.0f;
+
+	  if (BZDB.isSet("RAIN_SPEED_MOD"))
+		  rainSpeedMod = BZDB.eval("RAIN_SPEED_MOD");
+	  else
+		  rainSpeedMod = 20;
+
+	  // seed the clouds
+	  float rainSpread  = 500.0f;
+	  if (BZDB.isSet("RAIN_SPREAD"))
+		  rainSpread = BZDB.eval("RAIN_SPREAD");
+
+	  float rainHeight  = 120.0f * BZDBCache::tankHeight;	// same as the clouds
+
+	  for ( int drops = 0; drops< rainDensity; drops++)
+	  {
+		  rain drop;
+		  drop.speed = rainSpeed + ((bzfrand()*2.0f -1.0f)*rainSpeedMod);
+		  drop.pos[0] = ((bzfrand()*2.0f -1.0f)*rainSpread);
+		  drop.pos[1] = ((bzfrand()*2.0f -1.0f)*rainSpread);
+		  drop.pos[2] = ((bzfrand())*rainHeight);
+		  raindrops.push_back(drop);
+	  }
+	  lastRainTime = TimeKeeper::getCurrent().getSeconds();
+  }
+
 }
 
 void			BackgroundRenderer::addCloudDrift(GLfloat uDrift,
@@ -514,15 +555,40 @@ void			BackgroundRenderer::renderEnvironment(SceneRenderer& renderer)
 	if (renderer.useQuality() < 3)
 		return;
 
-	return; // just a hook for now
-	if (!blank) {
+	if (!blank && rainDensity != 0) {
+
+		float frameTime = TimeKeeper::getCurrent().getSeconds()-lastRainTime;
+		lastRainTime = TimeKeeper::getCurrent().getSeconds();
+
+		float rainSpread  = 1000.0f;
+		float rainHeight  = 120.0f * BZDBCache::tankHeight;	// same as the clouds
+
 		rainGState.setState();
 		glMatrixMode(GL_MODELVIEW);
 		glPushMatrix();	
 			glBegin(GL_LINES);
-				glVertex3f(100,100,100);
-				glVertex3f(0,0,0);
+				
+			std::vector<rain>::iterator itr = raindrops.begin();
+			while (itr != raindrops.end())
+			{
+				glColor4f(rainColor[0][0],rainColor[1][0],rainColor[2][0],rainColor[3][0]);
+				glVertex3fv(itr->pos);
+
+				glColor4f(rainColor[0][1],rainColor[1][1],rainColor[2][1],rainColor[3][1]);
+				glVertex3f(itr->pos[0],itr->pos[1],itr->pos[2]+ rainSize[1]);
+
+				itr->pos[2] -= itr->speed * frameTime;
+				if ( itr->pos[2] < 0)
+				{
+					itr->pos[2] = rainHeight;
+					itr->speed = rainSpeed + ((bzfrand()*2.0f -1.0f)*rainSpeedMod);
+					itr->pos[0] = ((bzfrand()*2.0f -1.0f)*rainSpread);
+					itr->pos[1] = ((bzfrand()*2.0f -1.0f)*rainSpread);
+				}
+				itr++;
+			}
 			glEnd();
+		glColor4f(1,1,1,1);
 		glPopMatrix();
 	}
 }
