@@ -55,7 +55,8 @@ const char*				Flag::flagName[] = {
 								"Wide Angle",
 								"No Jumping",
 								"Long Reload",
-								"USeless flag"
+								"Antagonize",
+								"USeless flag",
 						};
 
 const char*				Flag::flagAbbv[] = {
@@ -99,7 +100,8 @@ const char*				Flag::flagAbbv[] = {
 								"WA",						// wide angle
 								"NJ",						// no jumping
 								"LR",						// long reload
-								"US"						// useless flag
+								"AN",						// antagonize
+								"US",						// useless flag
 						};
 
 const char*				Flag::flagHelp[] = {
@@ -157,7 +159,8 @@ const char*				Flag::flagHelp[] = {
 "Wide Angle (-WA):  Fish-eye lens distorts view.",
 "No Jumping (-NJ):  Tank cannot jump.",
 "Long Reload (-LR):  Tank takes twice as long to reload.",
-"You have found the useless flag. Use it wisely"
+"Antagonize (-AN): Tank sends taunts to other players involuntarily",
+"You have found the useless flag. Use it wisely",
 						};
 
 void*					Flag::pack(void* buf) const
@@ -225,6 +228,7 @@ FlagType				Flag::getType(FlagId id)
 		case WideAngleFlag:
 		case NoJumpingFlag:
 		case LongReloadFlag:
+		case AntagonizeFlag:
 			return FlagSticky;
 		default:
 			return FlagUnstable;

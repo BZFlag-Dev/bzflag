@@ -67,6 +67,7 @@ static const char copyright[] = "Copyright (c) 1993 - 2002 Tim Riker";
 #include "CallbackList.h"
 #include "bzfgl.h"
 #include "SoundManager.h"
+#include "Antagonize.h"
 #include <iostream>
 
 
@@ -1694,56 +1695,63 @@ static void				handleServerMessage(bool human, uint16_t code,
 			  const std::string dstName=dstPlayer ?
 			  dstPlayer->getCallSign() : "(UNKNOWN)";
 
-			if (toAll || srcPlayer == myTank || dstPlayer == myTank ||
-				dstTeam == myTank->getTeam()) {
-				// message is for me
-				std::string fullMsg;
+			std::string fullMsg;
 
-				// direct message to or from me
-				if (dstPlayer) {
-					// talking to myself? that's strange
-					if (dstPlayer==myTank && srcPlayer==myTank) {
-						fullMsg=(const char*)msg;
-					} else {
-						fullMsg="[";
-						if (srcPlayer == myTank) {
-							fullMsg += "->";
-							fullMsg += dstName;
+			if (strncmp( (const char *) msg, "ANTAGONIZE:", 11 ) == 0) 
+				fullMsg = Antagonize::display( srcPlayer, (char *) msg );
+			else {
+
+				if (toAll || srcPlayer == myTank || dstPlayer == myTank ||
+					dstTeam == myTank->getTeam()) {
+					// message is for me
+
+					// direct message to or from me
+					if (dstPlayer) {
+						// talking to myself? that's strange
+						if (dstPlayer==myTank && srcPlayer==myTank) {
+							fullMsg=(const char*)msg;
 						} else {
-							fullMsg += srcName;
-							fullMsg += "->";
-							if (srcPlayer)
-								myTank->setNemesis(srcPlayer);
+							fullMsg="[";
+							if (srcPlayer == myTank) {
+								fullMsg += "->";
+								fullMsg += dstName;
+							} else {
+								fullMsg += srcName;
+								fullMsg += "->";
+								if (srcPlayer)
+									myTank->setNemesis(srcPlayer);
+							}
+							fullMsg += "] ";
+							fullMsg += (const char*)msg;
 						}
-						fullMsg += "] ";
+					}
+					else {
+						if (dstTeam != NoTeam) {
+#ifdef BWSUPPORT
+							fullMsg = "[to ";
+							fullMsg += Team::getName(TeamColor(dstteam));
+							fullMsg += "] ";
+#else
+							fullMsg = "[Team] ";
+#endif
+						}
+						fullMsg += srcName;
+						fullMsg += ": ";
 						fullMsg += (const char*)msg;
 					}
 				}
-				else {
-					if (dstTeam != NoTeam) {
-#ifdef BWSUPPORT
-						fullMsg = "[to ";
-						fullMsg += Team::getName(TeamColor(dstteam));
-						fullMsg += "] ";
-#else
-						fullMsg = "[Team] ";
-#endif
-					}
-					fullMsg += srcName;
-					fullMsg += ": ";
-					fullMsg += (const char*)msg;
-				}
-				const GLfloat* msgColor;;
-				if (srcPlayer)
-					msgColor = Team::getRadarColor(srcPlayer->getTeam());
-				else
-					msgColor = Team::getRadarColor(RogueTeam);
-				addMessage(NULL, fullMsg, msgColor);
-
-				// HUD one line display
-				if (!srcPlayer || srcPlayer!=myTank)
-					MSGMGR->insert("alertInfo", fullMsg, NULL);
 			}
+
+			const GLfloat* msgColor;;
+			if (srcPlayer)
+				msgColor = Team::getRadarColor(srcPlayer->getTeam());
+			else
+				msgColor = Team::getRadarColor(RogueTeam);
+			addMessage(NULL, fullMsg, msgColor);
+
+			// HUD one line display
+			if (!srcPlayer || srcPlayer!=myTank)
+				MSGMGR->insert("alertInfo", fullMsg, NULL);
 			break;
 		}
 
@@ -3680,6 +3688,10 @@ static void				playingLoop()
 		// send my data
 		if (serverLink && myTank->isDeadReckoningWrong()) {
 			serverLink->sendPlayerUpdate(myTank);
+		}
+
+		if (myTank && (myTank->getFlag() == AntagonizeFlag)) {
+			Antagonize::broadcast(myTank->getId());
 		}
 	}
 }

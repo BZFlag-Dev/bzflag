@@ -182,13 +182,13 @@ enum FlagId {
 												// but isn't)
 						NoJumpingFlag,			// tank cannot jump
 						LongReloadFlag,			// tank takes twice as long to reload
+						AntagonizeFlag,			// tank sends taunts to other players involuntarily
 
 						// the goofy super flags
 						UselessFlag,			// you'll have to figure it out for yourself
-
 						// special flags for size of team and super-flag sets
 						FirstFlag =			RedFlag,
-						LastBadFlag =		LongReloadFlag,
+						LastBadFlag =		AntagonizeFlag,
 						LastFlag =			UselessFlag,
 						FirstTeamFlag =		RedFlag,
 						LastTeamFlag =		PurpleFlag,
