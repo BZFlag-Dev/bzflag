@@ -2,6 +2,7 @@
 
 			     BZFlag release notes
 
+* Added client-side automatic team selection - Alfredo Tupone, Sean Morrison
 * Calc jitter based on client timestamps in MsgPlayerUpdate packets - Frank Thilo
 * Add /reset var server cmd - Dave Brosius
 * Add /set var value server cmd - Dave Brosius

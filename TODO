@@ -7,10 +7,6 @@ Void.
 
 THESE ARE LOWER PRIORITY
 
-* Apply the auto-team patch.  It is a rather nice and trivial modification
-  to have, but it breaks team negotiation protocol.
-  The next protocol breaking release is the next one (1.12)!
-
 * Try to build bzadmin on Win32 using PDCurses (it works with the X11
   version of PDCurses). It currently works with stdin/stdout.
 
