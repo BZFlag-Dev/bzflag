@@ -82,6 +82,8 @@ WeatherRenderer::WeatherRenderer ()
 
   puddleColor[0] = puddleColor[1] = puddleColor[2] = puddleColor[3] = 1.0f;
 
+  dropList = puddleList =  INVALID_GL_LIST_ID;
+
   gridSize = 200;
 
   keyFactor = 1.0f / gridSize;
