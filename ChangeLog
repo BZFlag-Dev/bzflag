@@ -3,6 +3,7 @@
 
 BZFlag 2.0.1
 ------------
+* bzadmin wipes argv to hide possible password - Tim Riker
 
 
 BZFlag 2.0.0  "Falcor's Despair" (2004-01-17)
