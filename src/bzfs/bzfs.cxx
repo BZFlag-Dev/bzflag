@@ -78,7 +78,7 @@ const int udpBufSize = 128000;
 #include "multicast.h"
 #include "Ping.h"
 #include "TimeBomb.h"
-#include "../../include/md5.h"
+#include "md5.h"
 #include "ShotUpdate.h"
 
 typedef enum { NOT_IN_BUILDING, IN_BASE, IN_BOX, IN_PYRAMID, IN_TELEPORTER } InBuildingType;
