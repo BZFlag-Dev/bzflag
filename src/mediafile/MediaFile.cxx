@@ -19,7 +19,7 @@
 
 void ConvertPath(const std::string &path)
 {
-	std::replace(const_cast<std::string &>(path).begin(), const_cast<std::string &>(path).end(), '/', '\\');
+  std::replace(path.begin(), path.end(), '/', '\\');
 }
 
 #endif
@@ -140,7 +140,7 @@ do {							\
 } while (0)
 
 unsigned char*		MediaFile::readImage(
-				const std::string& filename,
+				std::string filename,
 				int* width, int* height)
 {
 #ifdef WIN32
