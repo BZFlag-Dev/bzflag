@@ -31,6 +31,12 @@ $title    = $_GET['title'];
 $enableDebug	= 0;
 $debugFile 	= "/dev/null";
 
+# for banning.  provide key => value pairs where the key is either an
+# ip address
+$banlist = array( "68.109.43.46" => "knightmare.kicks-ass.net",
+		  "127.0.0.1" => "localhost");
+
+
 # log function
 if ($enableDebug) {
   function debug ($filename, $message) {
@@ -46,6 +52,13 @@ if ($enableDebug) {
 } else {
   function debug ($filename, $message) {
   }
+}
+
+# ignore banned servers outright
+if ($banlist[$_SERVER['REMOTE_ADDR']] != "") {
+  # reject the connection attempt
+  debug($debugFile, "Connection rejected from $_SERVER['REMOTE_ADDR]");
+  die("Connection attempt rejected.  See #bzflag on irc.freenode.net");
 }
 
 debug($debugFile, "Connecting to the database");
@@ -83,6 +96,7 @@ $timeout = 1800;    # timeout in seconds
 $staletime = time() - $timeout;
 mysql_query("DELETE FROM servers WHERE lastmod < $staletime", $link)
      or die("Could not drop old items" . mysql_error());
+
 
 header("Content-type: text/plain");
 # Do stuff based on what the 'action' is...
