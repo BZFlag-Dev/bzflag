@@ -1,6 +1,10 @@
 recent bugs
 ------------
 
+- Killed tanks continue drifting and leave tank bits floating around on the
+  modified gravity ducati.  players seem to continue forwarding after landing
+  until X time as if gravity was unchanged.
+
 - Observer controls get confused sometimes. To see, push control and arrows
   to spin. While keys are down, push alt. Now release all. You continue spinning
   un aided. Now stop yourself. Now alt doesn't work. Bagheera reports he gets
