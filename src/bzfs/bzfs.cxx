@@ -70,7 +70,6 @@ uint16_t maxRealPlayers = MaxPlayers;
 uint16_t maxPlayers = MaxPlayers;
 // highest active id
 uint16_t curMaxPlayers = 0;
-int debugLevel = 0;
 
 #ifdef HAVE_ADNS_H
 adns_state adnsState;
@@ -4638,6 +4637,8 @@ static std::string cmdReset(const std::string&, const CommandManager::ArgList& a
 int main(int argc, char **argv)
 {
   VotingArbiter *votingarbiter = (VotingArbiter *)NULL;
+
+  debugLevel = 0;
 
   setvbuf(stdout, (char *)NULL, _IOLBF, 0);
   setvbuf(stderr, (char *)NULL, _IOLBF, 0);

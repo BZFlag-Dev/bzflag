@@ -82,7 +82,6 @@ struct tm		userTime;
 static StartupInfo	startupInfo;
 bool			echoToConsole = false;
 bool			echoAnsi = false;
-int			debugLevel = 0;
 
 static BzfDisplay*	display = NULL;
 
@@ -744,6 +743,8 @@ int			main(int argc, char** argv)
   WordFilter *filter = (WordFilter *)NULL;
 
   argv0 = argv[0];
+
+  debugLevel = 0;
 
   // init libs
 

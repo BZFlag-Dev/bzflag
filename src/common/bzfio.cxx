@@ -14,6 +14,8 @@
 #include "bzfio.h"
 #include "common.h"
 
+int debugLevel = 0;
+
 void formatDebug(const char* fmt, ...)
 {
   if (debugLevel >= 1) {

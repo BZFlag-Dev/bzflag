@@ -27,9 +27,6 @@
 // causes persistent rebuilding to obtain build versioning
 #include "version.h"
 
-int debugLevel = 0;
-
-
 #ifdef _WIN32
 void Player::setDeadReckoning()
 {
@@ -47,6 +44,7 @@ int main(int argc, char** argv) {
   {
     static const int major = 2, minor = 2;
     WSADATA wsaData;
+    debugLevel = 0;
     if (WSAStartup(MAKEWORD(major, minor), &wsaData)) {
       return 1;
     }
