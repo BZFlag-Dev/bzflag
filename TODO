@@ -23,6 +23,10 @@ THESE SHOULD HAPPEN BEFORE THE NEXT RELEASE:
 
 THESE ARE LOWER PRIORITY
 
+* Teach Roger how to avoid driving into the water on maps that have
+  waterlevels set.  Probably needs to know not to drive into deadly
+  physics drivers too.
+
 * if libcurl is going to be the path forward:
   * convert to multi from simple
   * use curl_multi_fdset so it's non-blocking
