@@ -27,6 +27,7 @@
 #include "StateDatabase.h"
 #include "TextUtils.h"
 #include "version.h"
+#include "Team.h"
 
 
 BZAdminClient::BZAdminClient(std::string callsign, std::string host,
@@ -194,21 +195,9 @@ BZAdminClient::ServerCode BZAdminClient::checkMessage() {
       if (ui != NULL)
 	ui->addedPlayer(p);
       if (messageMask[MsgAddPlayer]) {
-  std::string joinMsg = std::string("*** \'") + callsign + "\' joined the game as a";
-  if (players[p].team == RedTeam)
-  	joinMsg += " red tank.";
- 	else if (players[p].team == GreenTeam)
- 		joinMsg += " green tank.";
-	else if (players[p].team == BlueTeam)
-		joinMsg += " blue tank.";
-	else if (players[p].team == PurpleTeam)
-		joinMsg += " purple tank.";
-	else if (players[p].team == RogueTeam)
-		joinMsg += " rogue tank.";
-	else if (players[p].team == ObserverTeam)
-		joinMsg += "n observer.";
-	else
-		joinMsg += " tank of an unknown team."; //this shouldn't happen too often
+      Team temp;
+  std::string joinMsg = std::string("*** \'") + callsign + "\' joined the game as " +
+		temp.getName(players[p].team) + ".";
 	lastMessage.first = joinMsg;
       }
       break;
