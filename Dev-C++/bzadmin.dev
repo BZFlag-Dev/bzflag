@@ -1,7 +1,7 @@
 [Project]
 FileName=bzadmin.dev
 Name=bzadmin
-UnitCount=42
+UnitCount=41
 Type=1
 Ver=1
 ObjFiles=
@@ -11,7 +11,7 @@ PrivateResource=
 ResourceIncludes=
 MakeIncludes=
 Compiler=-Wall -Werror -W_@@_
-CppCompiler=-Wall -Werror -W_@@_
+CppCompiler=-DHAVE_ASINF -DHAVE_ATAN2F -DHAVE_ATANF -DHAVE_COSF -DHAVE_EXPF -DHAVE_FABSF -DHAVE_FLOORF -DHAVE_FMODF -DHAVE_LOGF -DHAVE_POWF -DHAVE_SINF -DHAVE_SQRTF -DHAVE_TANF -Wall -Werror -W_@@_
 Linker=-lstdc++ -lwsock32 -lwinmm_@@_
 IsCpp=1
 Icon=
@@ -40,16 +40,6 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit2]
-FileName=..\src\bzadmin\AutoCompleter.cxx
-CompileCpp=1
-Folder=Source Files/UI
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit3]
 FileName=..\src\bzadmin\bzadmin.cxx
 CompileCpp=1
 Folder=Source Files/BZAdmin
@@ -59,7 +49,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit4]
+[Unit3]
 FileName=..\src\bzadmin\BZAdminClient.cxx
 CompileCpp=1
 Folder=Source Files/BZAdmin
@@ -69,7 +59,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=$(CPP) -c BZAdminClient.cxx -o ../src/bzadmin/BZAdminClient.o $(CXXFLAGS)
 
-[Unit5]
+[Unit4]
 FileName=..\src\bzadmin\BZAdminUI.cxx
 CompileCpp=1
 Folder=Source Files/BZAdmin
@@ -79,17 +69,17 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit7]
-FileName=..\src\bzadmin\StdBothUI.cxx
+[Unit5]
+FileName=..\src\bzadmin\OptionParser.cxx
 CompileCpp=1
-Folder=Source Files/UI
+Folder=Source Files/BZAdmin
 Compile=1
 Link=1
 Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit8]
+[Unit7]
 FileName=..\src\bzadmin\StdInUI.cxx
 CompileCpp=1
 Folder=Source Files/UI
@@ -99,7 +89,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit9]
+[Unit8]
 FileName=..\src\bzadmin\StdOutUI.cxx
 CompileCpp=1
 Folder=Source Files/UI
@@ -109,7 +99,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit10]
+[Unit9]
 FileName=..\src\bzadmin\UIMap.h
 CompileCpp=1
 Folder=Header Files/UI
@@ -119,17 +109,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit11]
-FileName=..\src\bzadmin\AutoCompleter.h
-CompileCpp=1
-Folder=Header Files/UI
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit12]
+[Unit10]
 FileName=..\src\bzadmin\BZAdminClient.h
 CompileCpp=1
 Folder=Header Files/BZAdmin
@@ -139,7 +119,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit13]
+[Unit11]
 FileName=..\src\bzadmin\BZAdminUI.h
 CompileCpp=1
 Folder=Header Files/UI
@@ -149,7 +129,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit14]
+[Unit12]
 FileName=..\src\bzadmin\colors.h
 CompileCpp=1
 Folder=Header Files/BZAdmin
@@ -159,7 +139,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit15]
+[Unit13]
 FileName=..\src\bzadmin\curses_wrapper.h
 CompileCpp=1
 Folder=Header Files/UI
@@ -169,7 +149,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit16]
+[Unit14]
 FileName=..\src\bzadmin\CursesMenu.h
 CompileCpp=1
 Folder=Header Files/UI
@@ -179,7 +159,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit17]
+[Unit15]
 FileName=..\src\bzadmin\CursesUI.h
 CompileCpp=1
 Folder=Header Files/UI
@@ -189,7 +169,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit18]
+[Unit16]
 FileName=..\src\bzadmin\OptionParser.h
 CompileCpp=1
 Folder=Header Files/BZAdmin
@@ -199,7 +179,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit19]
+[Unit17]
 FileName=..\src\bzadmin\PlayerInfo.h
 CompileCpp=1
 Folder=Header Files/Common
@@ -209,7 +189,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit20]
+[Unit18]
 FileName=..\src\bzadmin\StdBothUI.h
 CompileCpp=1
 Folder=Header Files/UI
@@ -219,7 +199,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit21]
+[Unit19]
 FileName=..\src\bzadmin\StdInUI.h
 CompileCpp=1
 Folder=Header Files/UI
@@ -229,7 +209,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit22]
+[Unit20]
 FileName=..\src\bzadmin\StdOutUI.h
 CompileCpp=1
 Folder=Header Files/UI
@@ -239,7 +219,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit23]
+[Unit21]
 FileName=config.h
 CompileCpp=1
 Folder=Header Files
@@ -249,8 +229,28 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit24]
+[Unit22]
 FileName=..\src\net\Ping.cxx
+CompileCpp=1
+Folder=Source Files/Net
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit23]
+FileName=..\src\net\Address.cxx
+CompileCpp=1
+Folder=Source Files/Net
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit24]
+FileName=..\src\net\AdnsHandler.cxx
 CompileCpp=1
 Folder=Source Files/Net
 Compile=1
@@ -278,36 +278,6 @@ ProductVersion=
 AutoIncBuildNr=0
 
 [Unit25]
-FileName=..\src\net\Address.cxx
-CompileCpp=1
-Folder=Source Files/Net
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit6]
-FileName=..\src\bzadmin\OptionParser.cxx
-CompileCpp=1
-Folder=Source Files/BZAdmin
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit26]
-FileName=..\src\net\AdnsHandler.cxx
-CompileCpp=1
-Folder=Source Files/Net
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit27]
 FileName=..\src\net\multicast.cxx
 CompileCpp=1
 Folder=Source Files/Net
@@ -317,7 +287,17 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit28]
+[Unit6]
+FileName=..\src\bzadmin\StdBothUI.cxx
+CompileCpp=1
+Folder=Source Files/UI
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit26]
 FileName=..\src\net\network.cxx
 CompileCpp=1
 Folder=Source Files/Net
@@ -327,7 +307,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit29]
+[Unit27]
 FileName=..\src\net\Pack.cxx
 CompileCpp=1
 Folder=Source Files/Net
@@ -337,7 +317,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit30]
+[Unit28]
 FileName=..\src\bzflag\ServerLink.cxx
 CompileCpp=1
 Folder=Source Files/Net
@@ -347,7 +327,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit31]
+[Unit29]
 FileName=..\src\common\StateDatabase.cxx
 CompileCpp=1
 Folder=Source Files/Common
@@ -357,7 +337,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit32]
+[Unit30]
 FileName=..\src\common\TimeKeeper.cxx
 CompileCpp=1
 Folder=Source Files/Common
@@ -367,7 +347,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit33]
+[Unit31]
 FileName=..\src\common\ErrorHandler.cxx
 CompileCpp=1
 Folder=Source Files/Common
@@ -377,7 +357,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit34]
+[Unit32]
 FileName=..\src\common\bzfio.cxx
 CompileCpp=1
 Folder=Source Files/Common
@@ -387,7 +367,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit35]
+[Unit33]
 FileName=..\src\common\BundleMgr.cxx
 CompileCpp=1
 Folder=Source Files/Common
@@ -397,7 +377,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit36]
+[Unit34]
 FileName=..\src\common\Bundle.cxx
 CompileCpp=1
 Folder=Source Files/Common
@@ -407,7 +387,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit37]
+[Unit35]
 FileName=..\src\common\PlayerState.cxx
 CompileCpp=1
 Folder=Source Files/Common
@@ -417,7 +397,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit38]
+[Unit36]
 FileName=..\src\date\buildDate.cxx
 CompileCpp=1
 Folder=Source Files/Common
@@ -427,7 +407,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit39]
+[Unit37]
 FileName=..\src\common\ShotUpdate.cxx
 CompileCpp=1
 Folder=Source Files/Common
@@ -437,7 +417,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit40]
+[Unit38]
 FileName=..\src\common\Flag.cxx
 CompileCpp=1
 Folder=Source Files/Common
@@ -447,8 +427,28 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit41]
+[Unit39]
 FileName=..\src\common\Team.cxx
+CompileCpp=1
+Folder=Source Files/Common
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit40]
+FileName=..\src\bzflag\ServerLink.h
+CompileCpp=1
+Folder=Header Files/Common
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit41]
+FileName=..\src\common\AutoCompleter.cxx
 CompileCpp=1
 Folder=Source Files/Common
 Compile=1

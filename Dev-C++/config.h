@@ -61,6 +61,9 @@
 #define HAVE_STRICMP 1
 #endif
 
+/* find a matching function for count() */
+#define HAVE_STD_COUNT 1
+
 /* all that floating point math nonsense; GCC already has all of this crap */
 #define HAVE_ASINF 1
 #define HAVE_ATAN2F 1

@@ -4,8 +4,8 @@ Name=bzfs
 Ver=1
 IsCpp=1
 Type=1
-Compiler=-DHAVE_KRB5=1 -DHAVE_CURL=1 -DBUILD_REGEX=1 -D__GNUWIN32__ -D_CONSOLE -DWIN32 -D_MBCS_@@_ -Wall -Werror -W_@@_
-CppCompiler=-DHAVE_KRB5=1 -DHAVE_CURL=1 -DBUILD_REGEX=1 -D__GNUWIN32__ -D_CONSOLE -DWIN32 -D_MBCS_@@_ -Wall -Werror -W_@@_
+Compiler=-DHAVE_STD_COUNT=1 -DBUILD_REGEX=1 -D__GNUWIN32__ -D_CONSOLE -DWIN32 -D_MBCS_@@_ -Wall -Werror -W_@@_
+CppCompiler=-DHAVE_ASINF -DHAVE_ATAN2F -DHAVE_ATANF -DHAVE_COSF -DHAVE_EXPF -DHAVE_FABSF -DHAVE_FLOORF -DHAVE_FMODF -DHAVE_LOGF -DHAVE_POWF -DHAVE_SINF -DHAVE_SQRTF -DHAVE_TANF -DHAVE_STD_COUNT=1 -DBUILD_REGEX=1 -D__GNUWIN32__ -D_CONSOLE -DWIN32 -D_MBCS_@@_ -Wall -Werror -W_@@_
 Includes=..\include;..\win32;.
 Linker=-lstdc++ -lws2_32 -lwinmm -lkernel32 -luser32 -lgdi32 -lwinspool -lcomdlg32 -ladvapi32 -lshell32 -lole32 -loleaut32 -luuid_@@_
 Libs=
@@ -2005,7 +2005,7 @@ Compile=1
 Link=1
 Priority=1000
 OverrideBuildCmd=1
-BuildCmd=$(CPP) -c ../src/common/URLManager.cxx -o ../src/bzfs/URLManager.o -I"C:/Dev-Cpp/include/c++/backward"  -I"C:/Dev-Cpp/include"  -I"C:/Dev-Cpp/include/c++"  -I"C:/Dev-Cpp/include/c++/mingw32"  -I"../include"  -I"../win32"  -I"."  -DBUILD_REGEX=1 -D__GNUWIN32__ -D_CONSOLE -DWIN32 -D_MBCS -Wall -W -fexpensive-optimizations -O3
+BuildCmd=$(CPP) -c ../src/common/URLManager.cxx -o ../src/bzfs/URLManager.o -I"C:/Dev-Cpp/include/c++/backward"  -I"C:/Dev-Cpp/include"  -I"C:/Dev-Cpp/include/c++"  -I"C:/Dev-Cpp/include/c++/mingw32"  -I"../include"  -I"../win32"  -I"." -DHAVE_ASINF -DHAVE_ATAN2F -DHAVE_ATANF -DHAVE_COSF -DHAVE_EXPF -DHAVE_FABSF -DHAVE_FLOORF -DHAVE_FMODF -DHAVE_LOGF -DHAVE_POWF -DHAVE_SINF -DHAVE_SQRTF -DHAVE_TANF  -DBUILD_REGEX=1 -D__GNUWIN32__ -D_CONSOLE -DWIN32 -D_MBCS -Wall -W -fexpensive-optimizations -O3
 
 [Unit197]
 FileName=..\src\bzfs\Authentication.cxx

@@ -18,7 +18,8 @@ uses shouldn't matter as long as it is reasonably up to date (at this time, 3.2.
 a good minimum for best performance, let alone error less compilation).
 
 All of the project files instruct the compiler to optimize to a mild extent, so
-compilation might be a small bit slower than normal compilation, but it is worth it.
+compilation might be a small bit slower than normal compilation, but it is worth it and not
+very noticeable or annoying.
 
 SDL is needed for the current building style, which is considerably smaller
 than DirectX SDK, and is available from:
@@ -39,5 +40,5 @@ Explorer, on Windows), it will fail to create a makefile and therefore cannot co
 This bug may not happen all the time, but it is present.
 
 If you want to use the given project file to compile BZAdmin using
-PDCurses (http://pdcurses.sf.net), make sure your PDCurses lib file is
-named "libcurses.a" so it links correctly (named exactly like the ncurses lib).
+PDCurses (http://pdcurses.sf.net) or NCurses, or any other Curses interface, make sure your
+Curses lib file is named "libcurses.a" so it links correctly (named exactly like the ncurses lib).
