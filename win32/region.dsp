@@ -41,7 +41,7 @@ RSC=rc.exe
 # PROP Intermediate_Dir "Release"
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_MBCS" /D "_LIB" /YX /FD /c
-# ADD CPP /nologo /W3 /vmg /GX /O2 /I "..\include" /D "NDEBUG" /D "_LIB" /D "WIN32" /D "_MBCS" /D VERSION=10801001 /FD /c
+# ADD CPP /nologo /W3 /vmg /GX /O2 /I "..\include" /I "..\src\game" /D "NDEBUG" /D "_LIB" /D "WIN32" /D "_MBCS" /D VERSION=10801001 /FD /c
 # SUBTRACT CPP /YX
 # ADD BASE RSC /l 0x409 /d "NDEBUG"
 # ADD RSC /l 0x409 /d "NDEBUG"
@@ -65,7 +65,7 @@ LIB32=link.exe -lib
 # PROP Intermediate_Dir "Debug"
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_MBCS" /D "_LIB" /YX /FD /GZ /c
-# ADD CPP /nologo /W3 /Gm /vmg /GX /ZI /Od /I "..\include" /D "_LIB" /D "_DEBUG" /D "WIN32" /D "_MBCS" /D VERSION=10801001 /Fd"Debug/region.pdb" /FD /GZ /c
+# ADD CPP /nologo /W3 /Gm /vmg /GX /ZI /Od /I "..\include" /I "..\src\game" /D "_LIB" /D "_DEBUG" /D "WIN32" /D "_MBCS" /D VERSION=10801001 /Fd"Debug/region.pdb" /FD /GZ /c
 # ADD BASE RSC /l 0x409 /d "_DEBUG"
 # ADD RSC /l 0x409 /d "_DEBUG"
 BSC32=bscmake.exe
@@ -90,7 +90,31 @@ SOURCE=..\src\region\Region.cxx
 # End Source File
 # Begin Source File
 
+SOURCE=..\src\bzfs\RegionManagerBase.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\src\bzfs\RegionManagerFlagSpawn.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\src\bzfs\RegionManagerObstacle.cxx
+# End Source File
+# Begin Source File
+
 SOURCE=..\src\region\RegionReader.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\src\bzfs\RegionReaderBase.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\src\bzfs\RegionReaderFlagSpawn.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\src\bzfs\RegionReaderObstacle.cxx
 # End Source File
 # Begin Source File
 
@@ -106,7 +130,31 @@ SOURCE=..\include\Region.h
 # End Source File
 # Begin Source File
 
+SOURCE=..\src\bzfs\RegionManagerBase.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\src\bzfs\RegionManagerFlagSpawn.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\src\bzfs\RegionManagerObstacle.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\include\RegionReader.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\src\bzfs\RegionReaderBase.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\src\bzfs\RegionReaderFlagSpawn.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\src\bzfs\RegionReaderObstacle.h
 # End Source File
 # Begin Source File
 

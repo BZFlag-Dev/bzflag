@@ -92,30 +92,6 @@ SOURCE=..\src\bzfs\bzfs.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\src\bzfs\RegionManagerBase.cxx
-# End Source File
-# Begin Source File
-
-SOURCE=..\src\bzfs\RegionManagerFlagSpawn.cxx
-# End Source File
-# Begin Source File
-
-SOURCE=..\src\bzfs\RegionManagerObstacle.cxx
-# End Source File
-# Begin Source File
-
-SOURCE=..\src\bzfs\RegionReaderBase.cxx
-# End Source File
-# Begin Source File
-
-SOURCE=..\src\bzfs\RegionReaderFlagSpawn.cxx
-# End Source File
-# Begin Source File
-
-SOURCE=..\src\bzfs\RegionReaderObstacle.cxx
-# End Source File
-# Begin Source File
-
 SOURCE=..\src\bzfs\WorldFile.cxx
 # End Source File
 # Begin Source File
@@ -138,30 +114,6 @@ SOURCE=..\src\bzfs\WorldStandardTeam.cxx
 # Begin Group "Header Files"
 
 # PROP Default_Filter "h;hpp;hxx;hm;inl"
-# Begin Source File
-
-SOURCE=..\src\bzfs\RegionManagerBase.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\src\bzfs\RegionManagerFlagSpawn.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\src\bzfs\RegionManagerObstacle.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\src\bzfs\RegionReaderBase.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\src\bzfs\RegionReaderFlagSpawn.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\src\bzfs\RegionReaderObstacle.h
-# End Source File
 # Begin Source File
 
 SOURCE=..\src\bzfs\WorldFile.h

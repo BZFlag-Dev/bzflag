@@ -87,10 +87,10 @@ Package=<4>
     Project_Dep_Name collision
     End Project Dependency
     Begin Project Dependency
-    Project_Dep_Name region
+    Project_Dep_Name shape
     End Project Dependency
     Begin Project Dependency
-    Project_Dep_Name shape
+    Project_Dep_Name region
     End Project Dependency
 }}}
 
