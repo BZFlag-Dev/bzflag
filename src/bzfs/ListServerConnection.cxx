@@ -50,7 +50,7 @@ ListServerLink::ListServerLink(std::string listServerURL, std::string publicized
   // parse default list server URL if we need to; assume default works
   if (useDefault) {
     BzfNetwork::parseURL(DefaultListServerURL, protocol, hostname, port, pathname);
-    DEBUG1("Provided list server URL (%s) is invalid.  Using default of %s.", listServerURL.c_str(), DefaultListServerURL);
+    DEBUG1("Provided list server URL (%s) is invalid.  Using default of %s.\n", listServerURL.c_str(), DefaultListServerURL);
   }
 
   // add to list

@@ -662,7 +662,7 @@ void handleReportCmd(int t, const char *message)
       sprintf(reply, "The /report command is disabled on this server.");
     } else {
       sprintf(reply, "Your report has been filed. Thank you.");
-      DEBUG1("Player %s [%d] has filed a report (time: %s).", player[t].callSign, t, timeStr);
+      DEBUG1("Player %s [%d] has filed a report (time: %s).\n", player[t].callSign, t, timeStr);
     }
   }
   sendMessage(ServerPlayer, t, reply, true);
