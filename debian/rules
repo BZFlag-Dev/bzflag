@@ -16,11 +16,11 @@ build-stamp:
 	# compile for i486 cause GL on i386 is hopeless
 	echo DEB_BUILD_OPTIONS=$(DEB_BUILD_OPTIONS)
 ifneq (,$(findstring debug,$(DEB_BUILD_OPTIONS)))
-	./configure --quiet --prefix=/usr --enable-debug
+	./configure --prefix=/usr --enable-debug
 else
 	case "$(DEB_BUILD_ARCH)" in \
-		i386) ./configure --quiet --prefix=/usr --host=i486-pc-linux-gnu ;; \
-		*) ./configure --quiet --prefix=/usr ;; \
+		i386) ./configure --prefix=/usr --host=i486-pc-linux-gnu ;; \
+		*) ./configure --prefix=/usr ;; \
 	esac
 endif
 
