@@ -592,6 +592,7 @@ if test "x$with_kerberos" = "xyes" ; then
     AC_MSG_ERROR([Kerberos build support was requested, but Kerberos support was not found])
   fi
 fi
+AM_CONDITIONAL(HAVE_KRB5, test x$have_krb5 = xyes)
 
 LIBDIR="\$(top_srcdir)/lib"
 AC_SUBST(LIBDIR)

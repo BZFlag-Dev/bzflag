@@ -106,7 +106,9 @@ static const char copyright[] = "Copyright (c) 1993 - 2004 Tim Riker";
 // get our interface
 #include "playing.h"
 
+#ifdef HAVE_KRB5
 #include "ClientAuthentication.h"
+#endif
 
 static const float	FlagHelpDuration = 60.0f;
 static StartupInfo	startupInfo;
@@ -4044,8 +4046,10 @@ static void joinInternetGame()
     return;
   }
 
+#ifdef HAVE_KRB5
   // Sending our credential to the server
   ClientAuthentication::sendCredential(*serverLink);
+#endif
 
   // use parallel UDP if desired and using server relay
   if (startupInfo.useUDPconnection)

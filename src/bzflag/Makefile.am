@@ -5,6 +5,13 @@ endif
 MAINTAINERCLEANFILES = \
 	Makefile.in
 
+if HAVE_KRB5
+KRB5 =	ClientAuthentication.cxx	\
+	ClientAuthentication.h		\
+	LoginMenu.cxx			\
+	LoginMenu.h
+endif
+
 bzflag_SOURCES =			\
 	ActionBinding.cxx		\
 	ActionBinding.h			\
@@ -15,8 +22,6 @@ bzflag_SOURCES =			\
 	BackgroundRenderer.h		\
 	BaseLocalPlayer.cxx		\
 	BaseLocalPlayer.h		\
-	ClientAuthentication.cxx	\
-	ClientAuthentication.h		\
 	ComposeDefaultKey.cxx		\
 	ComposeDefaultKey.h		\
 	ControlPanel.cxx		\
@@ -65,8 +70,6 @@ bzflag_SOURCES =			\
 	ListServer.h			\
 	LocalPlayer.cxx			\
 	LocalPlayer.h			\
-	LoginMenu.cxx			\
-	LoginMenu.h			\
 	MainMenu.cxx			\
 	MainMenu.h			\
 	MainWindow.cxx			\
@@ -158,7 +161,8 @@ bzflag_SOURCES =			\
 	sound.cxx			\
 	sound.h				\
 	stars.cxx			\
-	stars.h
+	stars.h				\
+	$(KRB5)
 
 
 if WIN32
