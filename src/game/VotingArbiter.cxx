@@ -38,7 +38,7 @@ void VotingArbiter::updatePollers(void)
 bool VotingArbiter::isPollerWaiting(std::string name) const
 {
   for (unsigned int i = 0; i < _pollers.size(); i++) {
-    if (_pollers[i].name == name) {
+    if (compare_nocase(_pollers[i].name, name) == 0) {
       return true;
     }
   }
@@ -173,7 +173,7 @@ bool VotingArbiter::hasSuffrage(std::string player) const
   }
 
   // has this player already voted?
-  if (_votingBooth->hasVoted(player)) {
+  if (_votingBooth->hasVoted(string_util::tolower(player))) {
     return false;
   }
 
@@ -196,7 +196,7 @@ bool VotingArbiter::voteYes(std::string player)
     return false;
   }
 
-  return (_votingBooth->vote(player, "yes"));
+  return (_votingBooth->vote(string_util::tolower(player), "yes"));
 }
 
 bool VotingArbiter::voteNo(std::string player)
@@ -210,7 +210,7 @@ bool VotingArbiter::voteNo(std::string player)
     return false;
   }
 
-  return (_votingBooth->vote(player, "no"));
+  return (_votingBooth->vote(string_util::tolower(player), "no"));
 }
 
 unsigned long int VotingArbiter::getYesCount(void) const
@@ -314,7 +314,7 @@ bool VotingArbiter::retractVote(std::string player)
   if (_votingBooth == NULL) {
     return false;
   }
-  return _votingBooth->retractVote(player);
+  return _votingBooth->retractVote(string_util::tolower(player));
 }
 
 
