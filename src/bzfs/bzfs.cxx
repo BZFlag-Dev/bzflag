@@ -376,7 +376,7 @@ static void sendPlayerUpdate(GameKeeper::Player *playerData, int index)
   }
 }
 
-void sendPlayerInfo(void) {
+void sendPlayerInfo() {
   void *buf, *bufStart = getDirectMessageBuffer();
   int i, numPlayers = 0;
   for (i = 0; i <= int(ObserverTeam); i++)
@@ -1964,6 +1964,8 @@ static void addPlayer(int playerIndex)
   }
 
   dropAssignedFlag(playerIndex);
+
+  sendPlayerInfo();
 }
 
 
