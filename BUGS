@@ -4,9 +4,6 @@ recent bugs
 - server has been reported to segfault (gethostname fails?) when chrooted 
   and run as a private server (ask tegan for more details if needed)
 
-- server does not compensate for no response to lag updates from clients
-  leaving their lagstat at zero instead of gravitating towards infinity
-
 - XIJoystick does not compile
 
 - time limiter does not take jumping into consideration when holding Agility
