@@ -40,11 +40,11 @@
 #endif
 
 #ifndef BZ_REV
-#define BZ_REV                  5
+#define BZ_REV                  6
 #endif
 
 #ifndef BZ_BUILD_TYPE
-#define BZ_BUILD_TYPE		"MAINTENANCE"
+#define BZ_BUILD_TYPE		"RELEASE"
 #endif
 
 // Build Date will be defined at link time, can be different for each exe
@@ -122,7 +122,7 @@ inline const char*		getAppVersion()
 #endif //_GETBUILD_DATE_
 
 // Local Variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***
