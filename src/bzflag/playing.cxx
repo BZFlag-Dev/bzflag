@@ -665,8 +665,8 @@ class SilenceDefaultKey : public HUDuiDefaultKey {
 };
 
 SilenceDefaultKey::SilenceDefaultKey()
-{ 
-   
+{
+
 }
 bool			SilenceDefaultKey::keyPress(const BzfKeyEvent& key)
 {
@@ -715,12 +715,12 @@ bool			SilenceDefaultKey::keyPress(const BzfKeyEvent& key)
       if (silenceMe) {
 	name = silenceMe->getCallSign();
       }
-    }	
+    }
     else if (message.size() > 0) {
       // typed in name
       name = message.c_str();
     }
-	
+
     // if name is NULL we skip
     if (name != NULL) {
       // bad indent :)
@@ -738,89 +738,89 @@ bool			SilenceDefaultKey::keyPress(const BzfKeyEvent& key)
 	// we know this person exists
 	if (!isInList) {
 	  // exists and not in silence list
-	  silencePlayers.push_back(name); 
+	  silencePlayers.push_back(name);
 	  std::string message = "Silenced ";
-	  message += (name); 
+	  message += (name);
 	  addMessage(NULL, message);
 	} else {
 	  // exists and in list --> remove from list
 	  silencePlayers.erase(silencePlayers.begin() + inListPos);
 	  std::string message = "Unsilenced ";
-	  message += (name); 
+	  message += (name);
 	  addMessage(NULL, message);
 	}
       } else {
 	// person does not exist, but may be in silence list
 	if (isInList) {
-	  // does not exist but is in list --> remove 
+	  // does not exist but is in list --> remove
 	  silencePlayers.erase(silencePlayers.begin() + inListPos);
 	  std::string message = "Unsilenced ";
-	  message += (name); 
+	  message += (name);
 	  if (strcmp (name, "*") == 0) {
 	    // to make msg fancier
 	    message = "Unblocked Msgs";
 	  }
 	  addMessage(NULL, message);
 	} else {
-	  // does not exist and not in list -- duh 
+	  // does not exist and not in list -- duh
 	  if (name != NULL) {
 	    if (strcmp (name,"*") == 0) {
 	      // check for * case
-	      silencePlayers.push_back(name); 
+	      silencePlayers.push_back(name);
 	      std::string message = "Silenced All Msgs";
-	      addMessage(NULL, message); 
+	      addMessage(NULL, message);
 	    } else {
-	      std::string message = name; 
-	      message += (" Does not exist"); 
-	      addMessage(NULL, message); 
+	      std::string message = name;
+	      message += (" Does not exist");
+	      addMessage(NULL, message);
 	    }
-	  } 
-	} 
-      }  
-    } 
+	  }
+	}
+      }
+    }
   }
-  
+
   hud->setComposing(std::string());
 
   HUDui::setDefaultKey(NULL);
   return true;
-} 
+}
 
 bool			SilenceDefaultKey::keyRelease(const BzfKeyEvent& key)
 {
-  if (!myTank->isKeyboardMoving()) { 
+  if (!myTank->isKeyboardMoving()) {
 
-    if (key.button == BzfKeyEvent::Up || key.button==BzfKeyEvent::Down 
-		||key.button==BzfKeyEvent::Left||key.button==BzfKeyEvent::Right) { 
+    if (key.button == BzfKeyEvent::Up || key.button==BzfKeyEvent::Down
+		||key.button==BzfKeyEvent::Left||key.button==BzfKeyEvent::Right) {
       const Player *recipient = myTank->getRecipient();
-      if (!recipient) { 
-	for (int i = 0; i < curMaxPlayers; i++) { 
-	  if (player[i]) { 
+      if (!recipient) {
+	for (int i = 0; i < curMaxPlayers; i++) {
+	  if (player[i]) {
 	    myTank->setRecipient(player[i]);
-	    break; 
-	  } 
-	} 
+	    break;
+	  }
+	}
       }
-      else {  
+      else {
 	const PlayerId id = recipient->getId();
 	int rindex = lookupPlayerIndex(id);
-	if (key.button == BzfKeyEvent::Up || 
-		key.button== BzfKeyEvent::Right) { 
-	  for (int i = rindex-1; i >= 0; i--) { 
-	    if (player[i]) { 
+	if (key.button == BzfKeyEvent::Up ||
+		key.button== BzfKeyEvent::Right) {
+	  for (int i = rindex-1; i >= 0; i--) {
+	    if (player[i]) {
 	      myTank->setRecipient(player[i]);
 	      break;
-	    } 
-	  } 
-	  if (recipient == myTank->getRecipient()) { 
-	    for (int i = curMaxPlayers-1; i >=0; i--) { 
-	      if (player[i]) { 
+	    }
+	  }
+	  if (recipient == myTank->getRecipient()) {
+	    for (int i = curMaxPlayers-1; i >=0; i--) {
+	      if (player[i]) {
 		myTank->setRecipient(player[i]);
 		break;
-	      } 
-	    } 
-	  }  
-	}  
+	      }
+	    }
+	  }
+	}
 	else
 	{
 	  for (int i = rindex+1; i < curMaxPlayers; i++) {
@@ -893,12 +893,12 @@ class ServerCommandKey : public HUDuiDefaultKey {
       CountDown,
       SuperKill,
       Shutdown,
-      Register, 
+      Register,
       Identify,
       Setpass,
       Grouplist,
       Groupperms,
-      Password, // leave this as the last item 
+      Password, // leave this as the last item
     };
 
     Mode mode;
@@ -906,7 +906,7 @@ class ServerCommandKey : public HUDuiDefaultKey {
     const int numModes;
     const int numNonAdminModes;
     static const Mode nonAdminModes[7];
-  
+
 
 };
 
@@ -914,7 +914,7 @@ const ServerCommandKey::Mode ServerCommandKey::nonAdminModes [7]= {LagStats, Idl
 
 // note the important numModes and numNonAdminModes values inited here
 ServerCommandKey::ServerCommandKey(): mode(Kick), startIndex(-1), numModes(30), numNonAdminModes(7)
-{ 
+{
   if (!admin) mode = nonAdminModes[0];
 }
 
@@ -936,12 +936,12 @@ void			ServerCommandKey::init()
 
 void			ServerCommandKey::updatePrompt()
 {
-  std::string composePrompt, banPattern; 
+  std::string composePrompt, banPattern;
   // decide what should be on the composing prompt
   const Player * recipient = myTank->getRecipient();
   if (mode >= Kick && mode <= Ghost){ // more complicated modes here
     if (recipient) {
- 
+
       switch (mode){
       case Kick:
 	composePrompt = "Kick -> ";
@@ -957,59 +957,59 @@ void			ServerCommandKey::updatePrompt()
 	hud->setComposing(composePrompt, true);
 	*/
 	break;
-      
-      case Setgroup: composePrompt = "Set players group "; 
+
+      case Setgroup: composePrompt = "Set players group ";
 	composePrompt = composePrompt +  " -> " + recipient->getCallSign() + " :";
-	hud->setComposing(composePrompt, true); 
+	hud->setComposing(composePrompt, true);
 	break;
       case Removegroup: composePrompt = "Remove player from group ";
 	composePrompt = composePrompt +  " -> " + recipient->getCallSign() + " :";
-	hud->setComposing(composePrompt, true); 
+	hud->setComposing(composePrompt, true);
 	break;
       case Ghost: composePrompt = "Ghost player [enter your pass] ";
 	composePrompt = composePrompt +  " -> " + recipient->getCallSign() + " :";
-	hud->setComposing(composePrompt, true); 
+	hud->setComposing(composePrompt, true);
 	break;
       case Showgroup: composePrompt = "Show player's groups ";
 	composePrompt = composePrompt +  " -> " + recipient->getCallSign();
-	hud->setComposing(composePrompt, false); 
+	hud->setComposing(composePrompt, false);
 	break;
 
       default : /* shouldn't happen */ break;
 
       }
-    
+
 
     } else { // no recipient -- we are in editing mode -- kick or ban
-    
+
       switch (mode){
       case Kick:
-	hud->setComposing("Kick :", true); 
+	hud->setComposing("Kick :", true);
 	break;
       case BanIp: case Ban1: case Ban2: case Ban3:
-	hud->setComposing("Ban :", true); 
+	hud->setComposing("Ban :", true);
 	break;
-      case Setgroup: composePrompt = "Set player's group :";  	
-	hud->setComposing(composePrompt, true); 
+      case Setgroup: composePrompt = "Set player's group :";
+	hud->setComposing(composePrompt, true);
 	break;
-      case Removegroup: composePrompt = "Remove player from group :"; 
-	hud->setComposing(composePrompt, true); 
+      case Removegroup: composePrompt = "Remove player from group :";
+	hud->setComposing(composePrompt, true);
 	break;
-      case Ghost: composePrompt = "Ghost :"; 
-	hud->setComposing(composePrompt, true); 
+      case Ghost: composePrompt = "Ghost :";
+	hud->setComposing(composePrompt, true);
 	break;
-      case Showgroup: composePrompt = "Show players group :"; 
-	hud->setComposing(composePrompt, true); 
+      case Showgroup: composePrompt = "Show players group :";
+	hud->setComposing(composePrompt, true);
       break;
 
       default: /* shouldn't happen */ break;
-      }	
+      }
 
     }
 
   } else { // not kick or ban stuff -- should be less complicated
     switch (mode){
-    
+
     case Unban: hud->setComposing("Unban :", true); break;
     case Banlist: hud->setComposing("Show ban list", false); break;
     case Playerlist: hud->setComposing("Show player list", false); break;
@@ -1041,7 +1041,7 @@ void			ServerCommandKey::updatePrompt()
 
   }
 
-} 
+}
 
 // return the right ban pattern 123.32.12.* for example depending on the
 // mode of the class. Returns an empty string on errors.
@@ -1049,18 +1049,18 @@ std::string		ServerCommandKey::makePattern(const InAddr& address)
 {
   const char *  c = inet_ntoa(address);
   if (c == NULL) return "";
-  std::string dots  = c; 
+  std::string dots  = c;
   std::vector<std::string> dotChunks = string_util::tokenize(dots,".");
   if (dotChunks.size() != 4) return "";
 
   switch (mode){
   case BanIp:
     return dots;
-  case Ban1: 
+  case Ban1:
     return dotChunks[0] +"."+ dotChunks[1] + "." + dotChunks[2] + ".*";
-  case Ban2:  
+  case Ban2:
     return dotChunks[0] +"."+ dotChunks[1] + ".*.*";
-  case Ban3: 
+  case Ban3:
     return dotChunks[0] +".*.*.*";
   default:
     ;
@@ -1110,11 +1110,11 @@ bool			ServerCommandKey::keyPress(const BzfKeyEvent& key)
     const Player * troll = myTank->getRecipient();
     if (mode >= Kick && mode <=Ghost){ // handle more complicated modes
       if (troll) { // cases where we select recipient with keys
-    
+
 	name = troll->getCallSign();
-	
+
 	switch (mode){
-	
+
 	case Kick:
 	  sendMsg="/kick " + name;
 	  break;
@@ -1124,36 +1124,36 @@ bool			ServerCommandKey::keyPress(const BzfKeyEvent& key)
 	   * temporarily break ban-by-name for playerid->ubyte
 	  banPattern = makePattern(troll->id.serverHost);
 	  sendMsg="/ban " + banPattern;
-	  
+
 	  if (message != ""){ // add ban length if something is there
 	    sendMsg = sendMsg + " " + message;
 	  }
 	  */
 	  break;
 
-	case Setgroup: 
-	  sendMsg = "/setgroup"; 
-	  sendMsg = sendMsg + " \"" +name+ "\"" +" " + message; 
-	  break;
-	case Removegroup: 
-	  sendMsg = "/removegroup"; 
-	  sendMsg = sendMsg + " \"" +name+ "\"" +" " + message; 
-	  break;
-	case Ghost: 
-	  sendMsg = "/ghost"; 
+	case Setgroup:
+	  sendMsg = "/setgroup";
 	  sendMsg = sendMsg + " \"" +name+ "\"" +" " + message;
 	  break;
-	case Showgroup: 
-	  sendMsg = "/showgroup"; 
+	case Removegroup:
+	  sendMsg = "/removegroup";
+	  sendMsg = sendMsg + " \"" +name+ "\"" +" " + message;
+	  break;
+	case Ghost:
+	  sendMsg = "/ghost";
+	  sendMsg = sendMsg + " \"" +name+ "\"" +" " + message;
+	  break;
+	case Showgroup:
+	  sendMsg = "/showgroup";
 	  sendMsg = sendMsg + " \"" +name+ "\"";
 	  break;
 
 	default: /* shouldn't happen */ break;
 
-	}  
+	}
 
       } else { // no recipient -- editing mode
-	
+
 	switch (mode){
 	  case Kick:  sendMsg="/kick"; break;
 	  case BanIp: sendMsg="/ban"; break;
@@ -1165,7 +1165,7 @@ bool			ServerCommandKey::keyPress(const BzfKeyEvent& key)
 	  default: /* shouldn't happen */ break;
 	}
 	if (message != "") sendMsg = sendMsg + " " + message;
-	
+
       }
     } else { // handle less complicated messages
       switch (mode){
@@ -1191,12 +1191,12 @@ bool			ServerCommandKey::keyPress(const BzfKeyEvent& key)
 	case Setpass: sendMsg = "/setpass "+ message; break;
 	case Grouplist: sendMsg = "/grouplist"; break;
 	case Groupperms: sendMsg = "/groupperms"; break;
-	
+
 	default: /* shouldn't happen */ break;
       }
 
     }
-    
+
     // send the message on its way if it isn't empty
     if (sendMsg != ""){
       displayMsg = "-> \"" + sendMsg + "\"";
@@ -1205,58 +1205,58 @@ bool			ServerCommandKey::keyPress(const BzfKeyEvent& key)
 
       void* buf = messageMessage;
       buf = nboPackUByte(buf, ServerPlayer);
-    
+
       char messageBuffer[MessageLen];
       memset(messageBuffer, 0, MessageLen);
       strncpy(messageBuffer, sendMsg.c_str(), MessageLen);
       buf = nboPackString(buf, messageBuffer, MessageLen);
       serverLink->send(MsgMessage, sizeof(messageMessage), messageMessage);
     }
-  } 	
+  }
 
   hud->setComposing(std::string());
   //myTank->setRecipient(NULL);
   HUDui::setDefaultKey(NULL);
   return true;
-} 
+}
 
 bool			ServerCommandKey::keyRelease(const BzfKeyEvent& key)
 {
-  if (!myTank->isKeyboardMoving()) { 
+  if (!myTank->isKeyboardMoving()) {
 
-    if (key.button == BzfKeyEvent::Up || key.button==BzfKeyEvent::Down 
-		||key.button==BzfKeyEvent::Left||key.button==BzfKeyEvent::Right) { 
+    if (key.button == BzfKeyEvent::Up || key.button==BzfKeyEvent::Down
+		||key.button==BzfKeyEvent::Left||key.button==BzfKeyEvent::Right) {
       const Player *recipient = myTank->getRecipient();
-      
+
       if (recipient) {  // handle selecting another player if <-- or --> hit
 	const PlayerId id = recipient->getId();
 	int rindex = lookupPlayerIndex(id);
 
-	if (key.button== BzfKeyEvent::Left) {  
-	  for (int i = rindex-1; i >= 0; i--) { 
+	if (key.button== BzfKeyEvent::Left) {
+	  for (int i = rindex-1; i >= 0; i--) {
 	    if (i == startIndex && startIndex != -1){
 	      myTank->setRecipient(NULL);
 	      startIndex = -1;
 	      break;
 	    }
-	    if (player[i]) { 
+	    if (player[i]) {
 	      myTank->setRecipient(player[i]);
 	      break;
-	    } 
-	  } 
-	  if (recipient == myTank->getRecipient()) { 
+	    }
+	  }
+	  if (recipient == myTank->getRecipient()) {
 	    for (int i = curMaxPlayers-1; i >=0; i--) {
 	      if (i == startIndex && startIndex != -1){
 		myTank->setRecipient(NULL);
 		startIndex = -1;
 		break;
 	      }
-	      if (player[i]) { 
+	      if (player[i]) {
 		myTank->setRecipient(player[i]);
 		break;
-	      } 
-	    } 
-	  }  
+	      }
+	    }
+	  }
 	} else if (key.button == BzfKeyEvent::Right) {
 	  for (int i = rindex+1; i < curMaxPlayers; i++) {
 	    if (i == startIndex && startIndex != -1){
@@ -1285,14 +1285,14 @@ bool			ServerCommandKey::keyRelease(const BzfKeyEvent& key)
 	}
 
       } else { // there is no recipient so choose one if <-- or --> hit
-	if (!recipient && (key.button == BzfKeyEvent::Left ||key.button == BzfKeyEvent::Right) ) { 
-	  for (int i = 0; i < curMaxPlayers; i++) { 
-	    if (player[i]) { 
+	if (!recipient && (key.button == BzfKeyEvent::Left ||key.button == BzfKeyEvent::Right) ) {
+	  for (int i = 0; i < curMaxPlayers; i++) {
+	    if (player[i]) {
 	      startIndex = i; // we pretend a null player is at this pos
 	      myTank->setRecipient(player[i]);
-	      break; 
-	    } 
-	  } 
+	      break;
+	    }
+	  }
 	}
       }
 
@@ -1306,7 +1306,7 @@ bool			ServerCommandKey::keyRelease(const BzfKeyEvent& key)
       } else {
 	maxModes = numNonAdminModes;
       }
-    
+
       if (key.button == BzfKeyEvent::Down){
 	int newMode = mode;
 	if (!admin){
@@ -1339,7 +1339,7 @@ bool			ServerCommandKey::keyRelease(const BzfKeyEvent& key)
 	    }
 	  }
 	  if (!foundIt) newMode = 0;
-	}	
+	}
 
 	newMode--;
 	if (newMode < 0) newMode = maxModes -1;
@@ -1347,8 +1347,8 @@ bool			ServerCommandKey::keyRelease(const BzfKeyEvent& key)
 	// if no recipient skip Ban1,2,3 -- applies to admin mode
 	if (!recipient && (mode >= Ban1 && mode <= Ban3))
 	  mode = BanIp;
-      } 
-      
+      }
+
       //update composing prompt
       updatePrompt();
       return false;
@@ -1480,13 +1480,13 @@ static bool		doKeyCommon(const BzfKeyEvent& key, bool pressed)
     }
     return true;
   } else if (hud->getHunt()) {
-    if (key.button == BzfKeyEvent::Down || 
+    if (key.button == BzfKeyEvent::Down ||
         keymap.isMappedTo(BzfKeyMap::Identify, key)) {
       if (pressed) {
         hud->setHuntPosition(hud->getHuntPosition()+1);
       }
       return true;
-    } else if (key.button == BzfKeyEvent::Up || 
+    } else if (key.button == BzfKeyEvent::Up ||
                keymap.isMappedTo(BzfKeyMap::DropFlag, key)) {
       if (pressed) {
         hud->setHuntPosition(hud->getHuntPosition()-1);
@@ -1924,7 +1924,7 @@ static void		doKeyPlaying(const BzfKeyEvent& key, bool pressed)
 
       messageHistoryIndex = 0;
       serverCommandKeyHandler.init();
-      HUDui::setDefaultKey(&serverCommandKeyHandler);      
+      HUDui::setDefaultKey(&serverCommandKeyHandler);
     }
   }
 
@@ -2865,7 +2865,7 @@ static void		handleServerMessage(bool human, uint16_t code,
 	  if (victimPlayer == myTank)
 	    playerStr += ColorStrings[ResetColor];
 	  playerStr += ColorStrings[WhiteColor];
-	  
+
 	  // Give more informative kill messages
 	  switch (shot->getFlag())
 	  {
@@ -2961,7 +2961,7 @@ static void		handleServerMessage(bool human, uint16_t code,
 	  updateFlag(myTank->getFlag());
 	}
       }
-      else if (myTank->getTeam() != RabbitTeam && tank && 
+      else if (myTank->getTeam() != RabbitTeam && tank &&
 	       tank->getTeam() != myTank->getTeam() &&
 	       int(world->getFlag(flagIndex).id) == int(myTank->getTeam())) {
 	hud->setAlert(1, "Flag Alert!!!", 3.0f, true);
@@ -3093,7 +3093,7 @@ static void		handleServerMessage(bool human, uint16_t code,
 
 	addMessage(rabbit, "is now the rabbit", true);
       }
-      
+
       break;
     }
 
@@ -3194,7 +3194,7 @@ static void		handleServerMessage(bool human, uint16_t code,
       unsigned int i;
       for (i = 0; i < silencePlayers.size(); i++) {
 	const char *silenceCallSign = silencePlayers[i].c_str();
-	if ((strcmp(srcName.c_str(), silenceCallSign) == 0) 
+	if ((strcmp(srcName.c_str(), silenceCallSign) == 0)
 	    || (strcmp( "*", silenceCallSign) == 0)) {
 	  ignore = true;
 	  break;
@@ -3248,7 +3248,7 @@ static void		handleServerMessage(bool human, uint16_t code,
 	  colorStr += ColorStrings[srcPlayer->getTeam()];
 	else
 	  colorStr += ColorStrings[RogueTeam];
-	
+
 	fullMsg += colorStr;
 
 	// direct message to or from me
@@ -5953,7 +5953,7 @@ static void		playingLoop()
       if (myTank->isAlive() && !myTank->isPaused()) {
 	doMotion();
 	if (hud->getHunting()) setHuntTarget(); //spot hunt target
-	if (fireButton && myTank->getFlag() == MachineGunFlag && !Observer) 
+	if (fireButton && myTank->getFlag() == MachineGunFlag && !Observer)
 	  myTank->fireShot();
       }
       else {
