@@ -1730,6 +1730,40 @@ static void		handleServerMessage(bool human, uint16_t code,
       break;
     }
 
+    case MsgAdminInfo: {
+    
+      if (BZDB.isTrue("noIpInfo")) {
+        break;
+      }
+    
+      uint8_t playerId, count, addrlen;
+      Address addr;
+      
+      msg = nboUnpackUByte(msg, count);
+
+      for (int i = 0; i < count; i++) {
+        msg = nboUnpackUByte(msg, addrlen);
+        msg = nboUnpackUByte(msg, playerId);
+        msg = addr.unpack(msg);
+
+        int playerIndex = lookupPlayerIndex(playerId);        
+	Player* player = getPlayerByIndex(playerIndex);
+	
+	if (player != NULL) {
+          std::string message = ColorStrings[CyanColor];
+          message += "IPINFO: ";
+          message += ColorStrings[RedColor];
+          message += player->getCallSign();
+          message += ColorStrings[GreenColor];
+          message += " from ";
+          message += ColorStrings[BlueColor];
+          message += addr.getDotNotation();
+          addMessage(NULL, message);
+        }
+      }
+      break;
+    }
+
     case MsgRemovePlayer: {
       PlayerId id;
       msg = nboUnpackUByte(msg, id);
@@ -5830,13 +5864,13 @@ void			startPlaying(BzfDisplay* _display,
   tmpString = ColorStrings[GreenColor] + "Author: Chris Schoeneman <crs23@bigfoot.com>";
   controlPanel->addMessage(tmpString);
   // print maintainer
-  tmpString = ColorStrings[BlueColor] + "Maintainer: Tim Riker <Tim@Rikers.org>";
+  tmpString = ColorStrings[CyanColor] + "Maintainer: Tim Riker <Tim@Rikers.org>";
   controlPanel->addMessage(tmpString);
   // print GL renderer
-  tmpString = ColorStrings[PurpleColor];
+  tmpString = ColorStrings[BlueColor];
   tmpString += (const char*)glGetString(GL_RENDERER);
   controlPanel->addMessage(tmpString);
-
+  // print audio driver
   PlatformFactory::getMedia()->audioDriver(tmpString);
   if (tmpString != "") {
     tmpString = ColorStrings[PurpleColor] + "Audio Driver : " + tmpString;
