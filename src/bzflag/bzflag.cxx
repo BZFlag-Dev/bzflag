@@ -643,7 +643,6 @@ void			dumpResources(BzfDisplay* display,
   }
 
   BZDB->set("quality", configQualityValues[renderer.useQuality()]);
-  db.addValue("quality", configQualityValues[renderer.useQuality()]);
   if (display->getResolution() != -1 &&
       display->getResolution(display->getResolution())) {
     BZDB->set("resolution", display->getResolution(display->getResolution())->name);
@@ -1103,8 +1102,8 @@ int			main(int argc, char** argv)
     if (BZDB->isSet("texture")) {
       OpenGLTexture::setFilter(BZDB->get("texture"));
     }
-    if (db.hasValue("quality")) {
-      std::string value = db.getValue("quality");
+    if (BZDB->isSet("quality")) {
+      std::string value = BZDB->get("quality");
       for (int i = 0; i < (int)(sizeof(configQualityValues) /
 				sizeof(configQualityValues[0])); i++)
 	if (value == configQualityValues[i]) {
