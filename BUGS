@@ -1,6 +1,11 @@
 recent bugs
 ------------
 
+- tank begins driving backwards on spawn (perhaps only with keyboard,
+  perhaps only with mac)
+
+- "`" key halts the client movement until pressed again (sdl only?)
+
 - player counts do not seem to get updated on list server
 
 - tabbed msg area does not properly fill in corners and bottom outline
