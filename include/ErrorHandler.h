@@ -30,6 +30,7 @@ typedef void		(*ErrorCallback)(const char*);
 
 ErrorCallback		setErrorCallback(ErrorCallback);
 void			printError(const std::string &fmt, const std::vector<std::string> *parms = NULL);
+void			printFatalError(const char* fmt, ...);
 
 #endif // BZF_ERROR_HANDLER_H
 
