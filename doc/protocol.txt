@@ -210,7 +210,8 @@ MsgSuperKill, MsgReject, or MsgAccept.
 	... avatar
 
   <--   MsgAccept
-	u16 length = 0
+	u16 length = 1
+	u8	playerid
 	u16 0x6163
 
 	or

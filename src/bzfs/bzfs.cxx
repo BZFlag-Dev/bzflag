@@ -3128,7 +3128,9 @@ static void addPlayer(int playerIndex)
 
 
 	// accept player
-	directMessage(playerIndex, MsgAccept, 0, getDirectMessageBuffer());
+	void *buf, *bufStart = getDirectMessageBuffer();
+	buf = nboPackUByte( bufStart, playerIndex );
+	directMessage(playerIndex, MsgAccept, (char*)buf-(char*)bufStart, bufStart);
 
 	// abort if we hung up on the client
 	if (player[playerIndex].fd == NotConnected)
@@ -4116,7 +4118,9 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
 		case MsgNetworkRelay:
 			if (startPlayerPacketRelay(t)) {
 				player[t].multicastRelay = true;
-				directMessage(t, MsgAccept, 0, getDirectMessageBuffer());
+				void *buf, *bufStart = getDirectMessageBuffer();
+				buf = nboPackUByte( bufStart, t );
+				directMessage(t, MsgAccept, (char*)buf-(char*)bufStart, bufStart);
 			}
 			else {
 				directMessage(t, MsgReject, 0, getDirectMessageBuffer());

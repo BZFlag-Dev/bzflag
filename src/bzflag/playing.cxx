@@ -2432,6 +2432,11 @@ static bool				enterServer(ServerLink* serverLink, World* world,
 		}
 		return false;
 	}
+	else if (code == MsgAccept) {
+		uint8_t id;
+		nboUnpackUByte(msg, id);
+		myTank->setId(id);
+	}
 
 	// get updates
 	if (serverLink->read(code, len, msg, -1) < 0) {
