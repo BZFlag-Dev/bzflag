@@ -12,7 +12,9 @@
 
 #include "BzfMedia.h"
 #include "TimeKeeper.h"
+#ifndef HAVE_SDL
 #include "wave.h"
+#endif
 #include "MediaFile.h"
 #include <string.h>
 
