@@ -2540,11 +2540,6 @@ static void acceptClient()
   buffer[8] = (uint8_t)playerIndex;
   send(fd, (const char*)buffer, sizeof(buffer), 0);
 
-  if (playerIndex == maxPlayers) { // full?
-    DEBUG2("acceptClient: close(%d)\n", fd);
-    close(fd);
-    return;
-  }
 
   // FIXME add new client server welcome packet here when client code is ready
 
