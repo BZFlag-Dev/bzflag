@@ -56,6 +56,16 @@ class RenderNodeList {
     RenderNode**	list;
 };
 
+inline void RenderNodeList::append(RenderNode* node)
+{
+  if (count == size) {
+    grow();
+  }
+  list[count++] = node;
+}
+
+
+
 class RenderNodeGStateList {
   public:
 			RenderNodeGStateList();
@@ -89,6 +99,18 @@ class RenderNodeGStateList {
     int			size;
     Item*		list;
 };
+
+inline void RenderNodeGStateList::append(RenderNode* node,
+                                         const OpenGLGState* gstate)
+{
+  if (count == size) {
+    grow();
+  }
+  list[count].node = node;
+  list[count].gstate = gstate;
+  list[count].depth = 0.0f;
+  count++;
+}
 
 #endif // BZF_RENDER_NODE_H
 

@@ -124,6 +124,7 @@ public:
   const GLfloat*	getSunColor() const;
   const GLfloat*	getSunScaledColor() const;
   GLfloat		getSunBrightness() const;
+  const GLfloat*	getSunDirection() const;
   void		enableSun(bool = true);
   const GLfloat*	getCelestialTransform() const;
 

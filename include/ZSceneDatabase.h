@@ -41,7 +41,7 @@ class ZSceneDatabase : public SceneDatabase {
     void		drawCuller();
 
   private:
-    void		setupCullList(const ViewFrustum*);
+    void		setupCullList();
     void                makeCuller();
     
   private:

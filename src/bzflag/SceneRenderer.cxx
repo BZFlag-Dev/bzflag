@@ -860,6 +860,15 @@ void			SceneRenderer::doRender()
   glDepthMask(GL_TRUE);
 }
 
+const GLfloat* 		SceneRenderer::getSunDirection() const
+{
+  if (background) {
+    return background->getSunDirection();
+  } else {
+    return NULL;
+  }
+}
+
 
 // Local Variables: ***
 // mode: C++ ***

@@ -29,6 +29,8 @@ static int CullListSize = 0;
 static int CullListCount = 0;
 static SceneNode** CullList = NULL;
 static const Frustum* CullFrustum = NULL;
+static int ShadowCount = 0;
+static const float (*ShadowPlanes)[4] = NULL;
 
 static OccluderManager OcclMgr;
 
@@ -170,6 +172,93 @@ int Octree::getFrustumList (SceneNode** list, int listSize,
   root->getFrustumList ();
 
   OcclMgr.select(CullList, CullListCount);
+
+  return CullListCount;
+}
+
+
+int Octree::getShadowList (SceneNode** list, int listSize,
+                           const Frustum* frustum, const float* sun) const
+{
+  if (!root) {
+    return 0;
+  }
+
+  // we project the frustum onto the ground plane, and then
+  // use those lines to generate planes in the direction of
+  // the sun's light. that is the potential shadow volume.
+  
+  // The frustum planes are as follows:
+  // 0: front
+  // 1: left
+  // 2: right
+  // 3: bottom
+  // 4: top
+
+  int planeCount = 0;
+  float planes[4][4];
+  const float* eye = frustum->getEye();
+
+  // FIXME: As a first cut, i'll be assuming that the frustum
+  //        top points towards Z (not an observer). Also, this
+  //        should be split into a setupShadowVolume() function
+  
+  if (frustum->getUp()[2] > 0.999999) {
+    planeCount = 2;
+    float edge[2];
+    // left edge
+    edge[0] = -frustum->getSide(1)[1];
+    edge[1] = +frustum->getSide(1)[0];
+    planes[0][0] =  (edge[1] * sun[2]);
+    planes[0][1] = -(edge[0] * sun[2]);
+    planes[0][2] =  (edge[0] * sun[1]) - (edge[1] * sun[0]);
+    planes[0][3] = -((planes[0][0] * eye[0]) + (planes[0][1] * eye[1]));
+    // right edge
+    edge[0] = -frustum->getSide(2)[1];
+    edge[1] = +frustum->getSide(2)[0];
+    planes[1][0] =  (edge[1] * sun[2]);
+    planes[1][1] = -(edge[0] * sun[2]);
+    planes[1][2] =  (edge[0] * sun[1]) - (edge[1] * sun[0]);
+    planes[1][3] = -((planes[1][0] * eye[0]) + (planes[1][1] * eye[1]));
+    // only use the bottom edge if we have some height (about one jump's worth)
+    if (eye[2] > 20.0f) {
+      // bottom edge
+      edge[0] = -frustum->getSide(3)[1];
+      edge[1] = +frustum->getSide(3)[0];
+      planes[2][0] =  (edge[1] * sun[2]);
+      planes[2][1] = -(edge[0] * sun[2]);
+      planes[2][2] =  (edge[0] * sun[1]) - (edge[1] * sun[0]);
+      const float hlen = sqrtf ((frustum->getSide(3)[0] * frustum->getSide(3)[0]) +
+                                (frustum->getSide(3)[1] * frustum->getSide(3)[1]));
+      const float slope = frustum->getSide(3)[2] / hlen;
+      float point[2];
+      point[0] = eye[0] + (eye[2] * frustum->getSide(3)[0] * slope);
+      point[1] = eye[1] + (eye[2] * frustum->getSide(3)[1] * slope);
+      planes[2][3] = -((planes[2][0] * point[0]) + (planes[2][1] * point[1]));
+      planeCount++;
+    }
+  } else {
+    planeCount = 0;
+  }
+  
+  // FIXME - testing hack
+  if (listSize > CullListSize) {
+    printf ("Octree::getShadowList() Internal error! (%i vs %i)\n",
+            listSize, CullListSize);
+    exit (1);
+  }
+
+  CullList = list;
+  CullListCount = 0;
+  ShadowCount = planeCount;
+  ShadowPlanes = planes;
+
+  // update the occluders before using them
+  // FIXME: use occluders later?  OcclMgr.update(CullFrustum);
+
+  // get the nodes
+  DEBUG4 ("Octree::getFrustumList: root count = %i\n", root->getCount());
+  root->getShadowList ();
 
   return CullListCount;
 }
@@ -518,12 +607,70 @@ void OctreeNode::getFullyVisible () const
   }
 */
 
+
+void OctreeNode::getShadowList () const
+{
+  IntersectLevel level = testAxisBoxOcclusion (mins, maxs, 
+                                               ShadowPlanes, ShadowCount);
+  if (level == Outside) {
+    return;
+  }
+
+  if (level == Contained) {
+    getFullyShadow ();
+    return;
+  }
+
+  // this cell is only partially contained within the shadow
+  // volume we'll have to test all of its sub-cells as well.
+
+  if (childCount > 0) {
+    for (int i = 0; i < childCount; i++) {
+      children[i]->getShadowList ();
+    }
+  }
+  else {
+    for (int i = 0; i < listSize; i++) {
+      SceneNode* node = list[i];
+      if (node->octreeState == SceneNode::OctreeCulled) {
+        addCullListNode (node);
+        node->octreeState = SceneNode::OctreePartial;
+      }
+    }
+  }
+
+  return;
+}
+
+
+void OctreeNode::getFullyShadow () const
+{
+  if ((childCount > 0) && (((depth + 1) % fullListBreak) != 0)) {
+    for (int i = 0; i < childCount; i++) {
+      children[i]->getFullyShadow ();
+    }
+  }
+  else {
+    for (int i = 0; i < listSize; i++) {
+      SceneNode* node = list[i];
+      SceneNode::CullState& state = node->octreeState;
+      if (state == SceneNode::OctreeCulled) {
+        addCullListNode (node);
+      }
+      state = SceneNode::OctreeVisible;
+    }
+  }
+  return;
+}
+
+
 void OctreeNode::getExtents(float* _mins, float* _maxs) const
 {
   memcpy (_mins, mins, 3 * sizeof(float));
   memcpy (_maxs, maxs, 3 * sizeof(float));
   return;
 }
+
 
 void OctreeNode::draw ()
 {
@@ -606,6 +753,7 @@ void OctreeNode::draw ()
 
   return;
 }
+
 
 // Local Variables: ***
 // mode:C++ ***

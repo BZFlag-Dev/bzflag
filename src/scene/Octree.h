@@ -28,8 +28,11 @@ class Octree {
     ~Octree();
 
     void addNodes (SceneNode** list, int listSize, int depth, int elements);
+
     int getFrustumList (SceneNode** list, int listSize,
                         const Frustum* frustum) const;
+    int getShadowList (SceneNode** list, int listSize,
+                       const Frustum* frustum, const float* sun) const;
     void clear ();
     void draw () const;
 
@@ -56,7 +59,9 @@ class OctreeNode {
     ~OctreeNode();
 
     void getFrustumList () const;
+    void getShadowList () const;
     void getFullyVisible () const;
+    void getFullyShadow () const;
     OctreeNode* getChild (int child);
 
     int getCount() const;    // number of nodes in this and subnodes

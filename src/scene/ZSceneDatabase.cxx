@@ -10,10 +10,6 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-/*
- *
- */
-
 #include <string.h>
 #include "common.h"
 #include "SceneNode.h"
@@ -124,12 +120,12 @@ void ZSceneDatabase::updateNodeStyles()
 }
 
 
-void ZSceneDatabase::setupCullList(const ViewFrustum* frustum)
+void ZSceneDatabase::setupCullList()
 
 {
   const int currentDepth = BZDB.evalInt(StateDatabase::BZDB_CULLDEPTH);
   const int currentElements = BZDB.evalInt(StateDatabase::BZDB_CULLELEMENTS);
-
+  
   if ((culledList == NULL) || 
       (currentDepth != cullDepth) || (currentElements != cullElements)) {
 
@@ -150,12 +146,8 @@ void ZSceneDatabase::setupCullList(const ViewFrustum* frustum)
       culledCount = staticCount;
     }
   }
-
-  // cull if we're supposed to
-  if (octree) {
-    culledCount = octree->getFrustumList (
-                    culledList, staticCount, (const Frustum *) frustum);
-  }
+  
+  return;
 }
 
 
@@ -183,8 +175,7 @@ void ZSceneDatabase::addLights(SceneRenderer& renderer)
 {
   // add the lights from the dynamic nodes
   for (int i = 0; i < dynamicCount; i++) {
-    SceneNode* node = dynamicList[i];
-    node->addLight(renderer);
+    dynamicList[i]->addLight(renderer);
   }
   
   return;
@@ -194,12 +185,37 @@ void ZSceneDatabase::addLights(SceneRenderer& renderer)
 void ZSceneDatabase::addShadowNodes(SceneRenderer& renderer)
 {
   int i;
-  for (i = 0; i < staticCount; i++) {
-    staticList[i]->addShadowNodes(renderer);
+  const float* sun = renderer.getSunDirection();
+  
+  if (sun == NULL) {
+    // no sun = no shadows, simple
+    return;
   }
+
+  // see if we need an octree, or if it needs to be rebuilt  
+  setupCullList();
+  
+  // cull if we're supposed to
+  if (octree) {
+    const ViewFrustum& vf = renderer.getViewFrustum();
+    const Frustum* frustum = (const Frustum*) &vf;
+    culledCount = octree->getShadowList (culledList, staticCount,
+                                         frustum, sun);
+  }
+  
+  // add the static nodes
+  for (i = 0; i < culledCount; i++) {
+    SceneNode* node = culledList[i];
+    node->addShadowNodes(renderer);
+    node->octreeState = SceneNode::OctreeCulled;
+  }
+  
+  // add the dynamic nodes
   for (i = 0; i < dynamicCount; i++) {
     dynamicList[i]->addShadowNodes(renderer);
   }
+  
+  return;
 }
 
 
@@ -210,7 +226,13 @@ void ZSceneDatabase::addRenderNodes(SceneRenderer& renderer)
   const float* eye = frustum.getEye();
 
   // see if we need an octree, or if it needs to be rebuilt  
-  setupCullList(&frustum);
+  setupCullList();
+  
+  // cull if we're supposed to
+  if (octree) {
+    culledCount = octree->getFrustumList (
+                    culledList, staticCount, (const Frustum *) &frustum);
+  }
   
   // add the static nodes
   for (i = 0; i < culledCount; i++) {
@@ -218,7 +240,7 @@ void ZSceneDatabase::addRenderNodes(SceneRenderer& renderer)
     //       all static nodes are WallSceneNodes. You can
     //       then use getPlaneRaw(), and skip the 'if (plane)'
     //       test.
-    SceneNode* node = culledList[i];
+    WallSceneNode* node = (WallSceneNode*) culledList[i];
     
     const float* plane = node->getPlane();
     if (plane) {

@@ -40,15 +40,6 @@ void RenderNodeList::clear()
 }
 
 
-void RenderNodeList::append(RenderNode* node)
-{
-  if (count == size) {
-    grow();
-  }
-  list[count++] = node;
-}
-
-
 void RenderNodeList::render() const
 {
   for (int i = 0; i < count; i++) {
@@ -88,19 +79,6 @@ RenderNodeGStateList::~RenderNodeGStateList()
 void RenderNodeGStateList::clear()
 {
   count = 0;
-}
-
-
-void RenderNodeGStateList::append(RenderNode* node,
-						const OpenGLGState* gstate)
-{
-  if (count == size) {
-    grow();
-  }
-  list[count].node = node;
-  list[count].gstate = gstate;
-  list[count].depth = 0.0f;
-  count++;
 }
 
 
