@@ -69,7 +69,6 @@ Compiling and Installation
 To build sources checked out directly from CVS you need to start by running
 these commands inside the CVS directory:
 
-  % touch NEWS
   % aclocal
   % autoheader --add-missing
   % automake
