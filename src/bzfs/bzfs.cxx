@@ -2898,10 +2898,11 @@ static void getSpawnLocation( int playerId, float* pos, float *azimuth)
     player[playerId].restartOnBase = false;
   }
   else {
-    const bool onGroundOnly = !clOptions->respawnOnBuildings;
+    bool onGroundOnly = !clOptions->respawnOnBuildings;
     const float size = BZDB.eval(StateDatabase::BZDB_WORLDSIZE);
     WorldInfo::ObstacleLocation *building;
 
+    int attempts = 20;
     bool foundspot = false;
     while (!foundspot) {
       pos[0] = ((float)bzfrand() - 0.5f) * (size - 2.0f * tankRadius);
@@ -2936,6 +2937,8 @@ static void getSpawnLocation( int playerId, float* pos, float *azimuth)
           foundspot = true;
         }
       }
+      if (--attempts == 0)
+	onGroundOnly = true;
     }
   }
 
