@@ -11,67 +11,74 @@
  */
 
 #include "common.h"
+
+/* system headers */
 #include <assert.h>
-#include <vector>
-#include <string>
+#include <ctype.h>
+#include <fstream>
+#include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <ctype.h>
+#include <string>
+#include <sys/types.h>
 #include <time.h>
-#include <sys/types.h>
+#include <vector>
 #if defined(_WIN32)
-#include <shlobj.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <direct.h>
-
+#  include <shlobj.h>
+#  include <sys/types.h>
+#  include <sys/stat.h>
+#  include <direct.h>
 #elif !defined(macintosh)
-#include <pwd.h>
-#include <dirent.h>
+#  include <pwd.h>
+#  include <dirent.h>
 #endif /* defined(_WIN32) */
-#include <stdarg.h>
-#include "bzfSDL.h"
-#include "bzfio.h"
-#include <fstream>
-#include "bzfgl.h"
-#include "ErrorHandler.h"
-#include "OpenGLGState.h"
-#include "SceneRenderer.h"
-#include "MainWindow.h"
+
+/* common headers */
 #include "Address.h"
-#include "Protocol.h"
-#include "playing.h"
-#include "TimeBomb.h"
-#include "Team.h"
-#include "sound.h"
-#include "ConfigFileManager.h"
-#include "DirectoryNames.h"
-#include "CommandsStandard.h"
+#include "BZDBCache.h"
+#include "BundleMgr.h"
 #include "BzfDisplay.h"
+#include "BzfMedia.h"
 #include "BzfVisual.h"
 #include "BzfWindow.h"
-#include "BzfMedia.h"
-#include "PlatformFactory.h"
-#include "BundleMgr.h"
-#include "World.h"
-#include "StateDatabase.h"
-#include "FileManager.h"
 #include "CommandManager.h"
-#include "KeyManager.h"
-#include "callbacks.h"
-#include "ServerListCache.h"
-#include "BZDBCache.h"
-#include "WordFilter.h"
-#include "TextUtils.h"
-#include "ParseColor.h"
-#include "ActionBinding.h"
-#include "ServerStartMenu.h"
+#include "CommandsStandard.h"
+#include "ConfigFileManager.h"
+#include "DirectoryNames.h"
+#include "ErrorHandler.h"
+#include "FileManager.h"
 #include "FontManager.h"
+#include "KeyManager.h"
 #include "OSFile.h"
+#include "OpenGLGState.h"
+#include "ParseColor.h"
+#include "PlatformFactory.h"
+#include "Protocol.h"
+#include "SceneRenderer.h"
+#include "ServerListCache.h"
+#include "StateDatabase.h"
+#include "Team.h"
+#include "TextUtils.h"
 #include "TextureManager.h"
+#include "TimeBomb.h"
+#include "WordFilter.h"
+#include "World.h"
+#include "bzfSDL.h"
+#include "bzfgl.h"
+#include "bzfio.h"
+
+/* local headers */
+#include "ActionBinding.h"
+#include "MainWindow.h"
+#include "ServerStartMenu.h"
+#include "callbacks.h"
+#include "playing.h"
+#include "sound.h"
+
 // invoke incessant rebuilding for build versioning
 #include "version.h"
+
 
 int beginendCount = 0;
 
@@ -97,6 +104,7 @@ struct DefaultDBItem {
   StateDatabase::Permission	permission;
   StateDatabase::Callback	callback;
 };
+
 static DefaultDBItem	defaultDBItems[] = {
   { "udpnet",			"1",			true,	StateDatabase::ReadWrite,	NULL },
   { "timedate",			"0",			true,	StateDatabase::ReadWrite,	NULL },
