@@ -626,6 +626,8 @@ void			dumpResources(BzfDisplay* display,
   else {
     BZDB->unset("port");
   }
+  if (strlen(startupInfo.multicastInterface) != 0)
+    BZDB->set("interface", startupInfo.multicastInterface);
   BZDB->set("list", startupInfo.listServerURL);
   if (isSoundOpen()) {
     BZDB->set("volume", string_util::format("%d", getSoundVolume()));
@@ -829,6 +831,11 @@ int			main(int argc, char** argv)
     }
     if (BZDB->isSet("port")) {
       startupInfo.serverPort = atoi(BZDB->get("port").c_str());
+    }
+    if (BZDB->isSet("interface")) {
+      strncpy(startupInfo.multicastInterface, BZDB->get("interface").c_str(),
+				sizeof(startupInfo.multicastInterface) - 1);
+      startupInfo.multicastInterface[sizeof(startupInfo.multicastInterface) - 1] = '\0';
     }
 
     // key mapping
