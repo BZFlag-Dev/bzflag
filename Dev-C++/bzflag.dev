@@ -9,8 +9,8 @@ CppCompiler=-D_DEVCPP=1 -D__GNUWIN32__ -D_WINDOWS -DWIN32 -D_MBCS_@@_ -Wall -Wer
 Includes=..\Dev-C++;..\include;..\Dev-C++
 Linker=-lmingw32 -lstdc++ -lsdl -lws2_32 -ldsound -lwinmm -lglu32 -lopengl32 -lkernel32 -luser32 -lgdi32 -lwinspool -lcomdlg32 -ladvapi32 -lshell32 -lole32 -loleaut32 -luuid -lodbc32 -lodbccp32_@@_
 Libs=
-UnitCount=344
-Folders="Header Files","Header Files/bzflag","Header Files/common","Header Files/net","Header Files/regex","Header Files/zlib","Resource Files","Source Files","Source Files/bzflag","Source Files/common","Source Files/models","Source Files/net","Source Files/regex","Source Files/zlib"
+UnitCount=427
+Folders="Header Files","Header Files/3d","Header Files/bzflag","Header Files/bzflag/menus","Header Files/common","Header Files/game","Header Files/geometry","Header Files/mediafile","Header Files/net","Header Files/obstacle","Header Files/ogl","Header Files/platform","Header Files/regex","Header Files/scene","Header Files/zlib","Resource Files","Source Files","Source Files/3d","Source Files/bzflag","Source Files/bzflag/menus","Source Files/common","Source Files/game","Source Files/geometry","Source Files/mediafile","Source Files/models","Source Files/net","Source Files/obstacle","Source Files/ogl","Source Files/platform","Source Files/regex","Source Files/scene","Source Files/zlib"
 ObjFiles=
 PrivateResource=bzflag_private.rc
 ResourceIncludes=
@@ -4238,26 +4238,6 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit420]
-FileName=..\src\obstacle\ObstacleGroup.cxx
-CompileCpp=1
-Folder=Source Files/obstacle
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit421]
-FileName=..\include\ObstacleGroup.h
-CompileCpp=1
-Folder=Header Files/obstacle
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit422]
 FileName=..\include\MeshTransform.h
 CompileCpp=1
 Folder=Header Files/game
@@ -4267,7 +4247,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit423]
+[Unit421]
 FileName=..\src\game\MeshTransform.cxx
 CompileCpp=1
 Folder=Source Files/game
@@ -4277,7 +4257,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit424]
+[Unit422]
 FileName=..\include\version.h
 CompileCpp=1
 Folder=Header Files/common
@@ -4287,43 +4267,62 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit341]
-FileName=..\src\game\MeshTransform.cxx
-CompileCpp=1
-Folder=Source Files/bzflag
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit342]
+[Unit423]
 FileName=..\src\obstacle\ObstacleList.cxx
 CompileCpp=1
-Folder=Source Files/common
+Folder=Source Files/obstacle
 Compile=1
 Link=1
 Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit343]
+[Unit424]
+FileName=..\include\ObstacleList.h
+CompileCpp=1
+Folder=Header Files/obstacle
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit425]
 FileName=..\src\obstacle\ObstacleMgr.cxx
 CompileCpp=1
-Folder=Source Files/common
+Folder=Source Files/obstacle
 Compile=1
 Link=1
 Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit344]
+[Unit426]
+FileName=..\include\ObstacleMgr.h
+CompileCpp=1
+Folder=Header Files/obstacle
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit427]
 FileName=..\src\obstacle\ObstacleModifier.cxx
 CompileCpp=1
-Folder=Source Files/common
+Folder=Source Files/obstacle
 Compile=1
 Link=1
 Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
+[Unit428]
+FileName=..\include\ObstacleModifier.h
+CompileCpp=1
+Folder=Header Files/obstacle
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
