@@ -83,7 +83,6 @@ SceneRenderer::SceneRenderer(MainWindow& _window) :
 				maxMotionFactor(5),
 				useFogHack(false),
 				viewType(Normal),
-				maxLOD(32767),
 				inOrder(false),
 				style(0),
 				sceneIterator(NULL),
@@ -200,11 +199,6 @@ int			SceneRenderer::useQuality() const
 SceneRenderer::ViewType	SceneRenderer::getViewType() const
 {
   return viewType;
-}
-
-int			SceneRenderer::getMaxLOD() const
-{
-  return maxLOD;
 }
 
 void			SceneRenderer::setZBufferSplit(bool on)
@@ -374,12 +368,6 @@ void			SceneRenderer::setDim(bool on)
 void			SceneRenderer::setViewType(ViewType _viewType)
 {
   viewType = _viewType;
-}
-
-void			SceneRenderer::setMaxLOD(int _maxLOD)
-{
-  if (_maxLOD < 0) maxLOD = 0;
-  else maxLOD = _maxLOD;
 }
 
 void			SceneRenderer::setExposed()

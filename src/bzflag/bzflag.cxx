@@ -1145,9 +1145,6 @@ int			main(int argc, char** argv)
 	}
     }
 
-    if (db.hasValue("maxlod"))
-      renderer.setMaxLOD(atoi(db.getValue("maxlod").c_str()));
-
     if (db.hasValue("startcode"))
       ServerStartMenu::setSettings(db.getValue("startcode").c_str());
     if (db.hasValue("showflaghelp"))
