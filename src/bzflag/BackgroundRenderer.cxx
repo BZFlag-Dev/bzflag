@@ -465,7 +465,8 @@ void			BackgroundRenderer::render(SceneRenderer& renderer)
   // the ground or is drawn back to front and is occluded by everything
   // drawn after it.  also use projection with very far clipping plane.
 
-  drawGroundGrid(renderer);
+  if (BZDB.eval("useQuality") < 3)
+    drawGroundGrid(renderer);
 
   if (!blank) {
     if (doTeamBases) drawTeamBases();

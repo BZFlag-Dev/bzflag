@@ -27,6 +27,7 @@
 #include "StateDatabase.h"
 #include "texture.h"
 #include <string.h>
+#include "TextUtils.h"
 
 const GLint		SceneRenderer::SunLight = 0;	// also for the moon
 
@@ -246,6 +247,8 @@ void			SceneRenderer::setQuality(int value)
     TankSceneNode::setMaxLOD(3);
   else
     TankSceneNode::setMaxLOD(2);
+
+  BZDB.set("useQuality",string_util::format("%d",value));
 }
 
 bool			SceneRenderer::useDepthComplexity() const
