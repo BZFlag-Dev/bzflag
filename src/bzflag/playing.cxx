@@ -1461,7 +1461,7 @@ static bool		doKeyCommon(const BzfKeyEvent& key, bool pressed)
   if (!cmd.empty()) {
     std::string result = CMDMGR->run(cmd);
     if (!result.empty())
-      std::cerr << result;
+      std::cerr << result << std::endl;
     return true;
   }
   if (keymap.isMappedTo(BzfKeyMap::TimeForward, key)) {
@@ -2204,6 +2204,24 @@ static void		doMotion()
   myTank->setDesiredSpeed(speed);
 }
 
+static std::string cmdJump(const std::string&, const CommandManager::ArgList& args)
+{
+  if (args.size() != 0)
+    return "usage: jump";
+  if (myTank != NULL)
+    myTank->jump();
+  return std::string();
+}
+
+struct CommandListItem {
+  const char* name;
+  CommandManager::CommandFunction func;
+  const char* help;
+};
+
+static const CommandListItem commandList[] = {
+  { "jump",	&cmdJump,	"jump:  make player jump" }
+};
 
 static void		doEvent(BzfDisplay* display)
 {
@@ -6273,6 +6291,10 @@ void			startPlaying(BzfDisplay* _display,
   sceneRenderer = &renderer;
   resources = &_resources;
   mainWindow = &sceneRenderer->getWindow();
+  
+  // register some commands
+  for (unsigned int j = 0; j < countof(commandList); ++j)
+    CMDMGR->add(commandList[i].name, commandList[i].func, commandList[i].help);
 
   // make control panel
   ControlPanel _controlPanel(*mainWindow, *sceneRenderer);
