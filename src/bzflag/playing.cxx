@@ -4924,6 +4924,7 @@ static void		playingLoop()
 	BzfKeyEvent::BZ_Mouse_Button_7,
 	BzfKeyEvent::BZ_Mouse_Button_8,
 	BzfKeyEvent::BZ_Mouse_Button_9,
+	BzfKeyEvent::BZ_Mouse_Button_10,
 	BzfKeyEvent::F1,
 	BzfKeyEvent::F2,
 	BzfKeyEvent::F3,
