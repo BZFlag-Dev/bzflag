@@ -6204,7 +6204,7 @@ static void parse(int argc, char **argv, CmdLineOptions &options)
     }
     else if (strcmp(argv[i], "-sl") == 0) {
       // add required flag
-      if (i +2 == argc) {
+      if (i +2 >= argc) {
 	fprintf(stderr, "2 arguments expected for -sl\n");
 	usage(argv[0]);
       }
@@ -6231,6 +6231,10 @@ static void parse(int argc, char **argv, CmdLineOptions &options)
 	  int x = 10;
 	  if (isdigit(argv[i][0])){
 	    x = atoi(argv[i]);
+	    if (x < 1){
+	      fprintf(stderr, "can only limit to 1 or more shots\n");
+	      usage(argv[0]);
+	    }
 	  } else {
 	    fprintf(stderr, "invalid shot limit \"%s\"\n", argv[i]);
 	    usage(argv[0]);
