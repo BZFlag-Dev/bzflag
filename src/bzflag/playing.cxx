@@ -877,7 +877,7 @@ static void		doKeyPlaying(const BzfKeyEvent& key, boolean pressed)
 	  }
 	  else if(roamView == roamViewTrack || roamView == roamViewFollow ||
 	        roamView == roamViewFP) {
-	    if (!player[roamTrackTank]->isAlive()) {
+	    if ((player[roamTrackTank] != NULL) && (!player[roamTrackTank]->isAlive())) {
 	      bool found = false;
 	      for(int i = 0; i < maxPlayers; i++) {
 		if(player[i] && player[i]->isAlive()) {
@@ -2032,8 +2032,9 @@ static void		handleServerMessage(boolean human, uint16_t code,
       else {
 	FlagId fID = world->getFlag(flagIndex).id;
 	if (((fID >= RedFlag) && (fID <= PurpleFlag)) 
-	    && (fID != tank->getTeam()) 
+	    && (int(fID) != int(tank->getTeam())) 
 	    && ((tank && (tank->getTeam() == myTank->getTeam())))) {
+          hud->setAlert(1, "Team Grab!!!", 3.0f, False);
 	  const float* pos = tank->getPosition();
 	  playWorldSound(SFX_TEAMGRAB, pos[0], pos[1], pos[2], false);
 	}
@@ -2646,7 +2647,6 @@ static void		restartPlaying()
   myTank->restart(bestStartPoint, startAzimuth);
   if (!Observer)
     serverLink->sendAlive(myTank->getPosition(), myTank->getForward());
-  serverLink->sendAlive(myTank->getPosition(), myTank->getForward());
   restartOnBase = False;
   firstLife = False;
   mainWindow->warpMouse();
