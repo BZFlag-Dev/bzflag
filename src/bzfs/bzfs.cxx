@@ -453,7 +453,6 @@ static void createUDPcon(int t, int remote_port) {
   return;
 }
 
-
 static bool realPlayer(const PlayerId& id)
 {
   return id<=curMaxPlayers && player[id].state>PlayerInLimbo;
@@ -2675,9 +2674,11 @@ static void anointNewRabbit(int killerId = NoPlayer)
 
   if (clOptions->rabbitSelection == KillerRabbitSelection)
     // check to see if the rabbit was just killed by someone; if so, make them the rabbit if they're still around.
-    if (killerId != oldRabbit && !player[killerId].paused && !player[killerId].notResponding && (player[killerId].state == PlayerAlive) && player[killerId].team != ObserverTeam)
+    if (killerId != oldRabbit && realPlayer(killerId) && !player[killerId].paused
+	&& !player[killerId].notResponding && (player[killerId].state == PlayerAlive)
+	&& player[killerId].team != ObserverTeam)
       rabbitIndex = killerId;
-
+  
   if (rabbitIndex == NoPlayer) {
     for (i = 0; i < curMaxPlayers; i++) {
       if (i != oldRabbit && !player[i].paused && !player[i].notResponding && (player[i].state == PlayerAlive) && (player[i].team != ObserverTeam)) {
