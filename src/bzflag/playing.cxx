@@ -187,7 +187,7 @@ static bool		gotBlowedUp(BaseLocalPlayer* tank,
 					int shotId = -1);
 
 #ifdef ROBOT
-static void		handleMyTankKilled();
+static void		handleMyTankKilled(int reason);
 static ServerLink*	robotServer[MAX_ROBOTS];
 static RobotPlayer*	robots[MAX_ROBOTS];
 static int		numRobots = 0;
@@ -2756,9 +2756,10 @@ static void		handleServerMessage(bool human, uint16_t code,
 
     case MsgKilled: {
       PlayerId victim, killer;
-      int16_t shotId;
+      int16_t shotId, reason;
       msg = nboUnpackUByte(msg, victim);
       msg = nboUnpackUByte(msg, killer);
+      msg = nboUnpackShort(msg, reason);
       msg = nboUnpackShort(msg, shotId);
       int victimIndex = lookupPlayerIndex(victim);
       int killerIndex = lookupPlayerIndex(killer);
@@ -2771,7 +2772,7 @@ static void		handleServerMessage(bool human, uint16_t code,
 	// uh oh, i'm dead
 	if (myTank->isAlive()) {
 	  serverLink->sendDropFlag(myTank->getPosition());
-	  handleMyTankKilled();
+	  handleMyTankKilled(reason);
 	}
       }
 #endif
@@ -2784,8 +2785,10 @@ static void		handleServerMessage(bool human, uint16_t code,
       else if (victimPlayer) {
 	victimPlayer->setExplode(TimeKeeper::getTick());
 	const float* pos = victimPlayer->getPosition();
-	playWorldSound(SFX_EXPLOSION, pos[0], pos[1], pos[2],
-						killerLocal == myTank);
+	if (reason == GotRunOver)
+	  playWorldSound(SFX_RUNOVER, pos[0], pos[1], pos[2], killerLocal == myTank);
+	else
+	  playWorldSound(SFX_EXPLOSION, pos[0], pos[1], pos[2], killerLocal == myTank);
 	float explodePos[3];
 	explodePos[0] = pos[0];
 	explodePos[1] = pos[1];
@@ -3744,11 +3747,14 @@ static void		addExplosions(SceneDatabase* scene)
 }
 
 #ifdef ROBOT
-static void		handleMyTankKilled()
+static void		handleMyTankKilled(int reason)
 {
   // blow me up
   myTank->explodeTank();
-  playLocalSound(SFX_DIE);
+  if (reason == GotRunOver)
+	playLocalSound(SFX_RUNOVER);
+  else
+	playLocalSound(SFX_DIE);
 
   // i lose a point
   myTank->changeScore(0, 1);
@@ -3832,7 +3838,7 @@ static bool		gotBlowedUp(BaseLocalPlayer* tank,
 
     // tell server I'm dead if it won't already know
     if (reason == GotShot || reason == GotRunOver || reason == GenocideEffect)
-      lookupServer(tank)->sendKilled(killer, shotId);
+      lookupServer(tank)->sendKilled(killer, reason, shotId);
   }
 
   // print reason if it's my tank

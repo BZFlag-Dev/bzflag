@@ -4806,7 +4806,7 @@ static void checkTeamScore(int playerIndex, int teamIndex)
   }
 }
 
-static void playerKilled(int victimIndex, int killerIndex,
+static void playerKilled(int victimIndex, int killerIndex, int reason,
 			int16_t shotIndex)
 {
   // victim has been destroyed.  keep score.
@@ -4835,6 +4835,7 @@ static void playerKilled(int victimIndex, int killerIndex,
   void *buf, *bufStart = getDirectMessageBuffer();
   buf = nboPackUByte(bufStart, victimIndex);
   buf = nboPackUByte(buf, killerIndex);
+  buf = nboPackShort(buf, reason);
   buf = nboPackShort(buf, shotIndex);
   broadcastMessage(MsgKilled, (char*)buf-(char*)bufStart, bufStart);
 
@@ -4860,7 +4861,7 @@ static void playerKilled(int victimIndex, int killerIndex,
 	if ((player[victimIndex].team != RogueTeam)
 	    && (player[victimIndex].team == player[killerIndex].team)) {
 	  if (clOptions.teamKillerDies)
-	    playerKilled(killerIndex, killerIndex, -1);
+	    playerKilled(killerIndex, killerIndex, reason, -1);
 	  else
 	    player[killerIndex].losses++;
 	} else
@@ -6121,10 +6122,11 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
 	break;
       // data: id of killer, shot id of killer
       PlayerId killer;
-      int16_t shot;
+      int16_t shot, reason;
       buf = nboUnpackUByte(buf, killer);
+      buf = nboUnpackShort(buf, reason);
       buf = nboUnpackShort(buf, shot);
-      playerKilled(t, lookupPlayer(killer), shot);
+      playerKilled(t, lookupPlayer(killer), reason, shot);
       break;
     }
 

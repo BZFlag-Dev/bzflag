@@ -43,6 +43,7 @@
 #define SFX_TEAMGRAB	21		/* grabbed an opponents team flag */
 #define	SFX_HUNT	22		/* hunting sound */
 #define SFX_HUNT_SELECT	23		/* hunt target selected */
+#define SFX_RUNOVER     24              /* steamroller sound */
 
 /* prepare sound effects generator and shut it down */
 void			openSound(const char* pname);

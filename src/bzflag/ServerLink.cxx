@@ -660,12 +660,13 @@ void			ServerLink::sendDropFlag(const float* position)
   send(MsgDropFlag, sizeof(msg), msg);
 }
 
-void			ServerLink::sendKilled(const PlayerId& killer,
+void			ServerLink::sendKilled(const PlayerId& killer, int reason,
 								int shotId)
 {
-  char msg[PlayerIdPLen + 2];
+  char msg[PlayerIdPLen + 4];
   void* buf = msg;
   buf = nboPackUByte(buf, killer);
+  buf = nboPackUShort(buf, int16_t(reason));
   buf = nboPackShort(buf, int16_t(shotId));
   send(MsgKilled, sizeof(msg), msg);
 }

@@ -163,7 +163,7 @@ player to server messages:
 			--> /id,/ position, forward-vector
 			<== MsgAlive
   MsgKilled		player says he's been killed
-			--> /id,/ killer-id, killer-shot-id
+			--> /id,/ killer-id, reason, killer-shot-id
 			<== MsgKilled
   MsgGrabFlag		player wants to grab flag
 			--> /id,/ flag
@@ -225,7 +225,7 @@ server to player messages:
   MsgAlive		player is alive
 			<== id, position, forward-vector
   MsgKilled		player is dead
-			<== id (victim id), killer-id, killer-shot-id
+			<== id (victim id), killer-id, reason, killer-shot-id
   MsgGrabFlag		notification that flag is grabbed
 			<== id (grabber), flag, flag-info
   MsgDropFlag		notification that flag is in air

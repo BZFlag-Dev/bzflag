@@ -68,7 +68,7 @@ class ServerLink {
     void		sendCaptureFlag(TeamColor);
     void		sendGrabFlag(int flagIndex);
     void		sendDropFlag(const float* position);
-    void		sendKilled(const PlayerId&, int shotId);
+    void		sendKilled(const PlayerId&, int reason, int shotId);
     void		sendBeginShot(const FiringInfo&);
     void		sendEndShot(const PlayerId&, int shotId, int reason);
     void		sendAlive(const float* pos, const float* fwd);
