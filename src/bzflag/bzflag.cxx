@@ -68,7 +68,6 @@ struct tm		userTime;
 static StartupInfo	startupInfo;
 bool			echoToConsole = false;
 bool			echoClean = false;
-ResourceDatabase	db;
 
 static BzfDisplay*	display = NULL;
 
@@ -232,7 +231,7 @@ static std::string	getConfigFileName()
     name += std::string(pwent->pw_dir);
     name += "/";
   }
-  name += ".bzflag";
+  name += ".bzflag19";
 
   // add in hostname on UNIX
   if (getenv("HOST")) {
@@ -266,11 +265,11 @@ static std::string	getConfigFileName()
   }
 
   // append the config file name
-  name += "\\bzflag.bzc";
+  name += "\\bzflag19.bzc";
   return name;
 
 #elif defined(macintosh)
-  return "bzflag.bzc";
+  return "bzflag19.bzc";
 #endif /* !defined(_WIN32) & !defined(macintosh) */
 }
 
@@ -283,7 +282,7 @@ static std::string	getConfigFileName2()
     name += std::string(pwent->pw_dir);
     name += "/";
   }
-  name += ".bzflag";
+  name += ".bzflag19";
   return name;
 }
 #endif
@@ -782,13 +781,6 @@ void			dumpResources(BzfDisplay* display,
 
   BZDB->set("serverCacheAge", string_util::format("%1d", (long)ServerMenu::getMaxCacheAge()));
 
-  // save configuration
-  {
-    ofstream resourceStream(getConfigFileName().c_str());
-    if (resourceStream)
-      resourceStream << db;
-  }
-
   ServerMenu::saveCache();
 }
 
@@ -877,22 +869,10 @@ int			main(int argc, char** argv)
 
   // read resources
   {
-    ifstream resourceStream(getConfigFileName().c_str(), ios::in);
-    if (resourceStream) {
-      startupInfo.hasConfiguration = true;
-      resourceStream >> db;
-      CFGMGR->read(getConfigFileName());
-    }
+    CFGMGR->read(getConfigFileName());
 
 #if !defined(_WIN32) & !defined(macintosh)
-    else {
-      ifstream resourceStream2(getConfigFileName2().c_str(), ios::in);
-      if (resourceStream2) {
-	startupInfo.hasConfiguration = true;
-	resourceStream2 >> db;
-        CFGMGR->read(getConfigFileName2());
-      }
-    }
+    CFGMGR->read(getConfigFileName2());
 #endif
   }
 

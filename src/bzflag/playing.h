@@ -61,7 +61,6 @@ struct PlayingCallbackItem {
 class BzfDisplay;
 class MainWindow;
 class SceneRenderer;
-class ResourceDatabase;
 class Player;
 
 BzfDisplay*		getDisplay();

@@ -67,8 +67,6 @@ bool				ConfigFileManager::parse(std::istream& stream)
 
 bool				ConfigFileManager::read(std::string filename)
 {
-  // FIXME - temporarily add '19' on the end of the file name
-  filename.append("19");
   std::istream* stream = FILEMGR->createDataInStream(filename);
   if (stream == NULL)
     return false;
@@ -84,8 +82,6 @@ void				ConfigFileManager::read(std::istream& stream)
 
 bool				ConfigFileManager::write(std::string filename)
 {
-  // FIXME - temporarily add '19' on the end of the file name
-  filename.append("19");
   std::ostream* stream = FILEMGR->createDataOutStream(filename);
   if (stream == NULL)
     return false;
