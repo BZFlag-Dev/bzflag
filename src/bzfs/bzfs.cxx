@@ -5140,7 +5140,7 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
 
 	/* Pack a message with the list of missing flags */
 	buf = bufStart = getDirectMessageBuffer();
-	for (m_it = missingFlags.begin(); m_it != missingFlags.end(); ++it)
+	for (m_it = missingFlags.begin(); m_it != missingFlags.end(); ++m_it)
 	  buf = (*m_it)->pack(buf);
 	directMessage(t, MsgNegotiateFlags, (char*)buf-(char*)bufStart, bufStart);
 	break;
