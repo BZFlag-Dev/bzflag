@@ -2061,6 +2061,10 @@ void removePlayer(int playerIndex, const char *reason, bool notify)
     // send team update
     sendTeamUpdate(-1, teamNum);
 
+    // delete this player before 'fixing' the count
+    delete playerData;
+    playerData = NULL;
+    
     fixTeamCount();
 
     // tell the list server the new number of players
