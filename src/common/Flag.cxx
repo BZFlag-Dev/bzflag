@@ -61,7 +61,7 @@ Flag::Desc	Flag::descriptions[] =
 	Desc( "Narrow", "N", FlagUnstable, NormalShot, FlagGood,
 		"Narrow (+N):  Tank is super thin.  Very hard to hit from front but is normal size from side.  Can get through small openings."),
 	Desc( "Shield", "SH", FlagUnstable, NormalShot, FlagGood,
-		"SHield (+SH):  Getting hit only drops flag.  Flag flys an extra-long time."),
+		"SHield (+SH):  Getting hit only drops flag.  Flag flies an extra-long time."),
 	Desc( "Steamroller", "SR", FlagUnstable, NormalShot, FlagGood, 
 		"SteamRoller (+SR):  Destroys tanks you touch but you have to get really close."),
 	Desc( "Shock Wave", "SW", FlagUnstable, SpecialShot, FlagGood, 
