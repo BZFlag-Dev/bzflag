@@ -80,7 +80,8 @@ class BzfKeyEvent {
 			BZ_Mouse_Button_6,
 			BZ_Mouse_Button_7,
 			BZ_Mouse_Button_8,
-			BZ_Mouse_Button_9
+			BZ_Mouse_Button_9,
+			Tab
     };
     enum {
 			ShiftKey = 1,
