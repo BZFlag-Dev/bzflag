@@ -107,6 +107,7 @@ void			MainWindow::setFullscreen()
 {
   isFullscreen = true;
   window->setFullscreen();
+  window->create();
   resize();
 }
 
