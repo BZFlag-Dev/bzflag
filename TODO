@@ -7,6 +7,13 @@ THESE SHOULD HAPPEN BEFORE THE NEXT RELEASE:
 
 THESE ARE LOWER PRIORITY
 
+* ban both the player's name in addition to their IP case insensitively.
+  (at least on a poll ban)
+
+* keep track of the last messages sent by a player in the last N
+  seconds and auto-silence them if they spam any specific message
+  within that time frame.
+
 * need to test for AR so that SGI build uses -o instead of cru
 
 * extend player name cycling (like on /kick and /ban) to /poll kick and
