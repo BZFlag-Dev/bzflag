@@ -543,13 +543,9 @@ static void setRoamingLabel()
         break;
 
       case roamViewFlag:
-        {
-          char buf[10];
-          sprintf(buf,"%d",roamTrackFlag);
         hud->setRoamingLabel(BzfString("Tracking ") +
                              Flag::getName(world->getFlag(roamTrackFlag).id) +
-                             " " + buf + " Flag");
-        }
+                             " Flag");
         break;
 
       default:
