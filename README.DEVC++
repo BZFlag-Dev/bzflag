@@ -17,6 +17,10 @@ files, so older versions may not necessarily work. The version of MinGW32 that D
 uses shouldn't matter as long as it is reasonably up to date (at this time, 3.2.x is
 a good minimum for best performance, let alone error less compilation).
 
+The default build is no Kerberos library or libcurl, but to enable these, all you do is
+uncomment their #define's in the config.h file. You may have to provide -D options on the
+command line for BZFlag defining these as well, but this may or may not be necessary.
+
 All of the project files instruct the compiler to optimize to a mild extent, so
 compilation might be a small bit slower than normal compilation, but it is worth it and not
 very noticeable or annoying.
