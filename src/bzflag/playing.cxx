@@ -1365,7 +1365,7 @@ static bool removePlayer (PlayerId id)
 static bool isCached(char *hexDigest)
 {
   std::istream *cachedWorld;
-  bool cached    = false;;
+  bool cached    = false;
   worldCachePath = getCacheDirName();
   worldCachePath += hexDigest;
   worldCachePath += ".bwc";
@@ -1419,7 +1419,7 @@ static bool isUrlCached()
 static void loadCachedWorld()
 {
   std::istream *cachedWorld = FILEMGR.createDataInStream(worldCachePath, true);
-  HUDDialogStack::get()->setFailedMessage("Loading world into memory ...");
+  HUDDialogStack::get()->setFailedMessage("Loading world into memory...");
   drawFrame(0.0f);
   cachedWorld->seekg(0, std::ios::end);
   std::streampos size = cachedWorld->tellg();
@@ -1429,6 +1429,8 @@ static void loadCachedWorld()
   cachedWorld->read(worldDatabase, charSize);
   delete cachedWorld;
 
+  HUDDialogStack::get()->setFailedMessage("Verifying world integrity...");
+  drawFrame(0.0f);
   MD5 md5;
   md5.update((unsigned char *)worldDatabase, charSize);
   md5.finalize();
@@ -1439,22 +1441,23 @@ static void loadCachedWorld()
     worldBuilder = NULL;
     delete[] worldDatabase;
     HUDDialogStack::get()->setFailedMessage
-      ("Error on md5. Remove offending file.");
+      ("Error on md5. Removing offending file.");
     remove(worldCachePath.c_str());
-    joiningGame      = false;
+    joiningGame = false;
     return;
   }
 
   // make world
+  HUDDialogStack::get()->setFailedMessage("Preparing world...");
+  drawFrame(0.0f);
   if (!worldBuilder->unpack(worldDatabase)) {
     // world didn't make for some reason
     if (worldBuilder)
       delete worldBuilder;
     worldBuilder = NULL;
     delete[] worldDatabase;
-    HUDDialogStack::get()->setFailedMessage
-      ("Error downloading world database.");
-    joiningGame      = false;
+    HUDDialogStack::get()->setFailedMessage("Error unpacking world database.");
+    joiningGame = false;
     return;
   }
   delete[] worldDatabase;
@@ -1464,11 +1467,13 @@ static void loadCachedWorld()
   if (worldBuilder)
     delete worldBuilder;
   worldBuilder = NULL;
+  HUDDialogStack::get()->setFailedMessage("Entering game...");
+  drawFrame(0.0f);
+  joinInternetGame2();
   // it worked!  pop all the menus.
   HUDDialogStack* stack = HUDDialogStack::get();
   while (stack->isActive())
     stack->pop();
-  joinInternetGame2();
   joiningGame = false;
 }
 
