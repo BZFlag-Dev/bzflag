@@ -76,6 +76,7 @@ void	      WinJoystick::getJoy(int& x, int& y) const
   JOYINFOEX joyInfo;
   // we're only interested in position
   joyInfo.dwFlags = JOY_RETURNX | JOY_RETURNY | JOY_USEDEADZONE;
+  joyInfo.dwSize = sizeof(joyInfo);
 
   // check for errors
   if (joyGetPosEx(JoystickID, &joyInfo) != JOYERR_NOERROR) {
@@ -98,28 +99,29 @@ unsigned long WinJoystick::getJoyButtons() const
   if (!inited)
     return 0;
 
-  // FIXME - Should use joyGetPosEx and JOYINFOEX, to get the rest of the buttons,
-  // but wasn't working for me.
-  JOYINFO joyInfo;
+  JOYINFOEX joyInfo;
+  // we're only interested in buttons
+  joyInfo.dwFlags = JOY_RETURNBUTTONS;
+  joyInfo.dwSize = sizeof(joyInfo);
 
   // check for errors
-  if (joyGetPos(JoystickID, &joyInfo) != JOYERR_NOERROR) {
+  if (joyGetPosEx(JoystickID, &joyInfo) != JOYERR_NOERROR) {
     printError("Could not get extended info from joystick");
     return 0;
   }
 
-  unsigned long retbuts = joyInfo.wButtons;  
+  unsigned long retbuts = joyInfo.dwButtons;  
   unsigned long buttons = 0;
   if (retbuts & JOY_BUTTON1)  buttons = buttons | 0x00001;
   if (retbuts & JOY_BUTTON2)  buttons = buttons | 0x00002;
   if (retbuts & JOY_BUTTON3)  buttons = buttons | 0x00004;
   if (retbuts & JOY_BUTTON4)  buttons = buttons | 0x00008;
-/*  if (retbuts & JOY_BUTTON5)  buttons = buttons | 0x00010;
+  if (retbuts & JOY_BUTTON5)  buttons = buttons | 0x00010;
   if (retbuts & JOY_BUTTON6)  buttons = buttons | 0x00020;
   if (retbuts & JOY_BUTTON7)  buttons = buttons | 0x00040;
   if (retbuts & JOY_BUTTON8)  buttons = buttons | 0x00080;
   if (retbuts & JOY_BUTTON9)  buttons = buttons | 0x00100;
-  if (retbuts & JOY_BUTTON10) buttons = buttons | 0x00200; */
+  if (retbuts & JOY_BUTTON10) buttons = buttons | 0x00200;
 
   return buttons;
 }
