@@ -117,10 +117,12 @@ const float		(*BaseLocalPlayer::getLastMotionBBox() const)[3]
   return bbox;
 }
 
+/* BEGIN MASSIVE_NASTY_COMMENT_BLOCK 
+// This massive nasty comment block is for client-side spawning!
 //
 // local update utility functions
 //
-/* BEGIN MASSIVE_NASTY_COMMENT_BLOCK
+
 static float		minSafeRange(float angleCosOffBoresight)
 {
   // anything farther than this much from dead-center is okay to
