@@ -20,7 +20,9 @@
 
 /* common interface headers */
 #include "global.h"
+#ifndef BUILDING_BZADMIN
 #include "bzfgl.h"
+#endif
 #include "TimeKeeper.h"
 #include "Address.h"
 #include "Flag.h"
@@ -211,8 +213,10 @@ private:
   TankSceneNode*	tankNode;
   TankIDLSceneNode*	tankIDLNode;
   SphereSceneNode*	pausedSphere;
+#ifndef BUILDING_BZADMIN
   GLfloat		color[4];
   GLfloat		teleAlpha;
+#endif
   std::string		userTexture;
   static int		tankTexture;
   static int		tankOverideTexture;

@@ -18,7 +18,9 @@
 #define	BZF_SCENE_DATABASE_H
 
 #include "common.h"
+#ifndef BUILDING_BZADMIN
 #include "bzfgl.h"
+#endif
 
 class ViewFrustum;
 class SceneNode;
