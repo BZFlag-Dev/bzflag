@@ -2112,7 +2112,7 @@ void handleDateCmd(GameKeeper::Player *playerData, const char * /*message*/)
 {
   int t = playerData->getIndex();
   if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::date)) {
-    sendMessage(ServerPlayer, t, "You do not have permission to run the /replay command");
+    sendMessage(ServerPlayer, t, "You do not have permission to run the /date command");
     return;
   }
   time_t now = time(NULL);
