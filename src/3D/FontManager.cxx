@@ -211,8 +211,11 @@ void FontManager::drawString(float x, float y, float z, int faceID, float size, 
 
   TextureFont* pFont = getClosestSize(faceID, size);
 
-  if (!pFont)
+  if (!pFont) {
+    DEBUG2("Could not find applicable font size for rendering; font face ID %d,
+	    requested size %f\n", faceID, size);
     return;
+  }
 
   float scale = size / (float)pFont->getSize();
 
@@ -225,8 +228,8 @@ void FontManager::drawString(float x, float y, float z, int faceID, float size, 
 
   // sane defaults
   bool bright = true;
-  bool blink = false;	  //FIXME: blinking
-  bool underline = false; //FIXME: underline
+  bool blink = false;
+  bool underline = false;
   // negatives are invalid, we use them to signal "no change"
   GLfloat color[3] = {-1.0f, -1.0f, -1.0f}; 
 
@@ -372,8 +375,11 @@ float FontManager::getStrLength(int faceID, float size, std::string text)
 
   TextureFont* pFont = getClosestSize(faceID, size);
 
-  if (!pFont)
+  if (!pFont) {
+    DEBUG2("Could not find applicable font size for sizing; font face ID %d,
+	    requested size %f\n", faceID, size);
     return 0;
+  }
 
   float scale = size / (float)pFont->getSize();
 
