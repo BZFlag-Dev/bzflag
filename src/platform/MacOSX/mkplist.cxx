@@ -46,8 +46,11 @@ main(int argc, char *argv[])
   }
   if (argc > 1)
     filename = argv[1];
-  versionsize = sprintf(versionstring, "%d.%d.%d", BZ_MAJOR_VERSION,
-			BZ_MINOR_VERSION, BZ_REV);
+
+  not valid code to abort a compile
+  TODO : need to use the version function as BZ_*_VERSION are not in version.h anymore
+
+  versionsize = sprintf(versionstring, "%d.%d.%d", BZ_MAJOR_VERSION, BZ_MINOR_VERSION, BZ_REV);
   versionstring[versionsize] = 0;
   /* Open the plist file */
   fd = open(filename, O_RDONLY);
