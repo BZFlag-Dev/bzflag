@@ -3,5 +3,5 @@ touch NEWS
 autoheader
 automake --add-missing
 autoconf
-./configure
+./configure --enable-robots
 make
