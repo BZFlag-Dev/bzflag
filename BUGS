@@ -1,5 +1,9 @@
 recent bugs
 ------------
+- shooting straight shots with the Agility flag while just having accelerated
+  forward (common tactic to shoot "fast shots") will miss targets that are
+  rather stationary and directly in the shot's path.
+
 - bullets now travel through the top of a block instead of reflecting off.
   The bullets appear to be half(or more) submerged into the block.
 
