@@ -675,7 +675,7 @@ void			dumpResources(BzfDisplay* display,
 
   BZDB->set("radarsize", string_util::format("%d", renderer.getRadarSize()));
 
-  BZDB->set("mouseboxsize", string_util::format("%f", renderer.getMaxMotionFactor()));
+  BZDB->set("mouseboxsize", string_util::format("%d", renderer.getMaxMotionFactor()));
 
   BZDB->set("underline", OpenGLTexFont::getUnderlineColor());
 
