@@ -13,7 +13,9 @@ AC_SUBST(VERSIONNUM)
 #Checks for programs.
 AC_PROG_MAKE_SET
 AC_PROG_CC
+CFLAGS=
 AC_PROG_CXX
+CXXFLAGS=
 AC_PROG_RANLIB
 
 #Checks for types
