@@ -34,7 +34,7 @@ class RadarRenderer {
 						const World& world, ResourceDatabase *resources);
 			~RadarRenderer();
 
-	void		setControlColor(const GLfloat *color = NULL);
+    void		setControlColor(const GLfloat *color = NULL);
 
     int			getX() const;
     int			getY() const;
@@ -72,7 +72,7 @@ class RadarRenderer {
     const World&	world;
     int			x, y;
     int			w, h;
-    float       ps;
+    float		ps;
     float		range;
     GLfloat		background[4];
     boolean		blend;
@@ -80,7 +80,7 @@ class RadarRenderer {
     boolean		jammed;
     double		decay;
     GLuint		list;
-	GLfloat		teamColor[3];
+    GLfloat		teamColor[3];
     unsigned char	*noise;
     OpenGLTexture	*noiseTexture;
     static const float	colorFactor;

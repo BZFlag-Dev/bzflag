@@ -48,11 +48,13 @@ class MainWindow {
     int			getHeight() const;
     int			getViewHeight() const;
     boolean		getFullscreen();
+    boolean		getFullView() const;
 
     void		setQuit();
     void		setPosition(int x, int y);
     void		setSize(int width, int height);
     void		setMinSize(int width, int height);
+    void		setFullView(boolean);
     void		setFullscreen();
     void		setNoMouseGrab();
 
@@ -88,6 +90,7 @@ class MainWindow {
     boolean		quit;
     Quadrant		quadrant;
     boolean		isFullscreen;
+    boolean		isFullView;
     boolean		allowMouseGrab;
     int			zoomFactor;
     int			trueWidth, trueHeight;
@@ -131,6 +134,11 @@ inline int		MainWindow::getHeight() const
 inline int		MainWindow::getViewHeight() const
 {
   return viewHeight;
+}
+
+inline boolean		MainWindow::getFullView() const
+{
+  return isFullView;
 }
 
 #endif // BZF_MAIN_WINDOW_H

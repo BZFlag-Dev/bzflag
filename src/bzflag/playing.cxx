@@ -3643,7 +3643,8 @@ static void		leaveGame()
   targetPoint[1] = eyePoint[1] + 0.0f;
   targetPoint[2] = eyePoint[2] + 0.0f;
   sceneRenderer->getViewFrustum().setProjection(60.0f * M_PI / 180.0f,
-      1.1f, 1.5f * WorldSize, mainWindow->getWidth(), mainWindow->getHeight());
+      1.1f, 1.5f * WorldSize, mainWindow->getWidth(),
+      mainWindow->getHeight(), mainWindow->getViewHeight());
   sceneRenderer->getViewFrustum().setView(eyePoint, targetPoint);
 
   // reset some flags
@@ -4291,7 +4292,8 @@ static void		playingLoop()
       sceneRenderer->getViewFrustum().setProjection(fov,
 	  1.1f, 1.5f * WorldSize,
 	  mainWindow->getWidth(),
-	  mainWindow->getHeight());
+	  mainWindow->getHeight(),
+	  mainWindow->getViewHeight());
       sceneRenderer->getViewFrustum().setView(eyePoint, targetPoint);
 
       // add dynamic nodes
@@ -4518,7 +4520,8 @@ static void		playingLoop()
 	  const int y = mainWindow->getOriginY();
 	  const int w = mainWindow->getWidth();
 	  const int h = mainWindow->getHeight();
-	  sceneRenderer->getViewFrustum().setProjection(fov, 1.1f, 1.5f * WorldSize, w, h);
+	  const int vh = mainWindow->getViewHeight();
+	  sceneRenderer->getViewFrustum().setProjection(fov, 1.1f, 1.5f * WorldSize, w, h, vh);
 	  sceneRenderer->render();
 
 	  // set entire window
@@ -4870,7 +4873,8 @@ static void		findFastConfiguration()
   sceneRenderer->getViewFrustum().setProjection(45.0f * M_PI / 180.0f,
 					1.1f, 1.5f * WorldSize,
 					mainWindow->getWidth(),
-					mainWindow->getHeight());
+					mainWindow->getHeight(),
+					mainWindow->getViewHeight());
   sceneRenderer->getViewFrustum().setView(eyePoint, targetPoint);
 
   // add a big wall in front of where we're looking.  this is important

@@ -68,13 +68,13 @@ ControlPanel::ControlPanel(MainWindow& _mainWindow, SceneRenderer& renderer, Res
   background[1] = 0;
   background[2] = 0;
 
-  if (resources->hasValue( "opacity" ))
+  if (resources->hasValue( "opacity" )) {
     background[3] = (float) atof(resources->getValue( "opacity" ));
-  else
+    window.setFullView(background[3] != 1.0f);
+  } else
     background[3] = 0.3f;
 
   // other initialization
-  blanking = 0;
   radarAreaPixels[0] = 0;
   radarAreaPixels[1] = 0;
   radarAreaPixels[2] = 0;

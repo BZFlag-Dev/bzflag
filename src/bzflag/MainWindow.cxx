@@ -24,6 +24,7 @@ MainWindow::MainWindow(BzfWindow* _window) :
 				quit(False),
 				quadrant(FullWindow),
 				isFullscreen(False),
+				isFullView(True),
 				allowMouseGrab(True),
 				zoomFactor(1),
 				width(0),
@@ -112,6 +113,11 @@ void			MainWindow::setFullscreen()
   resize();
 }
 
+void			MainWindow::setFullView(boolean _isFullView)
+{
+  isFullView = _isFullView;
+}
+
 void			MainWindow::setNoMouseGrab()
 {
   allowMouseGrab = False;
@@ -130,7 +136,10 @@ void			MainWindow::setQuadrant(Quadrant _quadrant)
     case FullWindow:
       width = inWidth;
       height = inHeight;
-      viewHeight = height >> 1;
+      if (isFullView)
+        viewHeight = height;
+      else
+        viewHeight = inHeight * 3 / 4;
       xOrigin = 0;
       yOrigin = 0;
       break;

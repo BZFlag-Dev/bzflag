@@ -30,7 +30,7 @@ ViewFrustum::ViewFrustum()
   ::memcpy(projectionMatrix, identity, sizeof(projectionMatrix));
   ::memcpy(deepProjectionMatrix, identity, sizeof(deepProjectionMatrix));
 
-  setProjection(M_PI/4.0, 1.0, 100.0, 1, 1);
+  setProjection(M_PI/4.0, 1.0, 100.0, 1, 1, 1);
   setView(defaultEye, defaultTarget);
 }
 
@@ -151,7 +151,7 @@ void			ViewFrustum::setView(const GLfloat* _eye,
 
 void			ViewFrustum::setProjection(GLfloat fov, GLfloat _m_near,
 						GLfloat _m_far, GLint width,
-						GLint height)
+						GLint height, GLint viewHeight)
 {
   // do easy stuff
   m_near = _m_near;
@@ -160,10 +160,11 @@ void			ViewFrustum::setProjection(GLfloat fov, GLfloat _m_near,
 
   // compute projectionMatrix
   const GLfloat s = 1.0f / tanf(fov / 2.0f);
+  const GLfloat fracHeight = 1.0f - GLfloat(viewHeight) / GLfloat(height);
   projectionMatrix[0] = s;
-  projectionMatrix[5] = (1.0f) * s * GLfloat(width) / GLfloat(height);
+  projectionMatrix[5] = (1.0f - fracHeight) * s * GLfloat(width) / GLfloat(viewHeight);
   projectionMatrix[8] = 0.0f;
-  projectionMatrix[9] = 0.0;
+  projectionMatrix[9] = -fracHeight;
   projectionMatrix[10] = -(m_far + m_near) / (m_far - m_near);
   projectionMatrix[11] = -1.0f;
   projectionMatrix[12] = 0.0f;

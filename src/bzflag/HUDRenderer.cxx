@@ -243,7 +243,7 @@ void			HUDRenderer::resize(boolean firstTime)
 {
   // get important metrics
   const int w = firstTime ? MinX : window.getWidth();
-  const int h = firstTime ? MinY : window.getHeight();
+  const int h = firstTime ? MinY : window.getViewHeight();
 
   // compute good targeting box sizes
   {
@@ -286,7 +286,7 @@ void			HUDRenderer::resize(boolean firstTime)
       const float dx = font.getWidth(composeTypeIn->getLabel()) + 2.0f;
       const float dy = font.getDescent() + 4.0f;
       const float x = dx + dy + 2.0f * font.getSpacing();
-      const float y = dy + window.getHeight() / 3;
+      const float y = dy + window.getViewHeight() / 3;
       composeTypeIn->setLabelWidth(dx);
       composeTypeIn->setPosition(x, y);
       composeTypeIn->setSize(w - x - dy, font.getSpacing());
@@ -696,7 +696,7 @@ void			HUDRenderer::renderAlerts(SceneRenderer& renderer)
 {
   const float centerx = 0.5f * (float)renderer.getWindow().getWidth();
 
-  float y = (float)renderer.getWindow().getHeight() + -majorFont.getSpacing() + -alertFont.getSpacing();
+  float y = (float)renderer.getWindow().getViewHeight() + -majorFont.getSpacing() + -alertFont.getSpacing();
   for (int i = 0; i < MaxAlerts; i++) {
     if (alertClock[i].isOn()) {
       hudColor3fv(alertColor[i]);
@@ -713,7 +713,8 @@ void			HUDRenderer::renderStatus(SceneRenderer& renderer)
 
   char buffer[60];
   const float h = majorFont.getSpacing();
-  float x = 0.25f * h, y = (float)renderer.getWindow().getHeight() - h;
+  float x = 0.25f * h;
+  float y = (float)renderer.getWindow().getViewHeight() - h;
   TeamColor teamIndex = player->getTeam();
   FlagId flag = player->getFlag();
 
@@ -840,7 +841,7 @@ void			HUDRenderer::renderScoreboard(SceneRenderer& renderer)
   const float x2 = x1 + scoreLabelWidth;
   const float x3 = x2 + scoreLabelWidth;
   const float x5 = (1.0f - 0.01f) * renderer.getWindow().getWidth() - teamScoreLabelWidth;
-  const float y0 = (float)renderer.getWindow().getHeight() -
+  const float y0 = (float)renderer.getWindow().getViewHeight() -
       majorFont.getSpacing() - alertFont.getSpacing() * 2.0f + alertFont.getDescent();
   hudColor3fv(messageColor);
   minorFont.draw(scoreLabel, x1, y0);
@@ -905,7 +906,7 @@ void			HUDRenderer::renderCracks(SceneRenderer& renderer)
 {
   glPushMatrix();
   glTranslatef(GLfloat(renderer.getWindow().getWidth() >> 1),
-		GLfloat(renderer.getWindow().getHeight() >> 1), 0.0f);
+		GLfloat(renderer.getWindow().getViewHeight() >> 1), 0.0f);
   glLineWidth(3.0);
   hudColor3f(1.0f, 1.0f, 1.0f);
   glBegin(GL_LINES);
@@ -936,7 +937,7 @@ void			HUDRenderer::renderCompose(SceneRenderer&)
 void			HUDRenderer::renderTimes(SceneRenderer& renderer)
 {
   const int centerx = renderer.getWindow().getWidth() >> 1;
-  const int centery = renderer.getWindow().getHeight() >> 1;
+  const int centery = renderer.getWindow().getViewHeight() >> 1;
 
   // draw frames per second
   if (fps > 0.0f) {
@@ -962,18 +963,18 @@ void			HUDRenderer::renderPlaying(SceneRenderer& renderer)
   // get view metrics
   const int width = renderer.getWindow().getWidth();
   const int height = renderer.getWindow().getHeight();
+  const int viewHeight = renderer.getWindow().getViewHeight();
   const int ox = renderer.getWindow().getOriginX();
   const int oy = renderer.getWindow().getOriginY();
   const int centerx = width >> 1;
-  const int centery = height >> 1;
+  const int centery = viewHeight >> 1;
   int i;
 
   // use one-to-one pixel projection
-  glScissor(ox, oy,
-		width, renderer.getWindow().getHeight());
+  glScissor(ox, oy + height - viewHeight, width, viewHeight);
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
-  glOrtho(0.0, width, 0.0, height, -1.0, 1.0);
+  glOrtho(0.0, width, viewHeight - height, viewHeight, -1.0, 1.0);
   glMatrixMode(GL_MODELVIEW);
   glPushMatrix();
   glLoadIdentity();
@@ -995,7 +996,7 @@ void			HUDRenderer::renderPlaying(SceneRenderer& renderer)
   // draw flag help
   if (flagHelpClock.isOn()) {
     hudColor3fv(messageColor);
-    flagHelpY = (float) ((renderer.getWindow().getHeight() >> 1) - maxMotionSize);
+    flagHelpY = (float) ((renderer.getWindow().getViewHeight() >> 1) - maxMotionSize);
     y = flagHelpY - minorFont.getAscent();
     const char* flagHelpBase = flagHelp[flagHelpIndex].getString();
     for (i = 0; i < flagHelpLines; i++) {
@@ -1236,14 +1237,15 @@ void			HUDRenderer::renderNotPlaying(SceneRenderer& renderer)
   // get view metrics
   const int width = renderer.getWindow().getWidth();
   const int height = renderer.getWindow().getHeight();
+  const int viewHeight = renderer.getWindow().getViewHeight();
   const int ox = renderer.getWindow().getOriginX();
   const int oy = renderer.getWindow().getOriginY();
 
   // use one-to-one pixel projection
-  glScissor(ox, oy, width, height);
+  glScissor(ox, oy + height - viewHeight, width, viewHeight);
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
-  glOrtho(0.0, width, 0.0, height, -1.0, 1.0);
+  glOrtho(0.0, width, viewHeight - height, viewHeight, -1.0, 1.0);
   glMatrixMode(GL_MODELVIEW);
   glPushMatrix();
   glLoadIdentity();
@@ -1299,15 +1301,16 @@ void			HUDRenderer::renderRoaming(SceneRenderer& renderer)
 
   // get view metrics
   const int width = renderer.getWindow().getWidth();
-  const int height = renderer.getWindow().getHeight();
+  const int height = renderer.getWindow().getViewHeight();
+  const int viewHeight = renderer.getWindow().getViewHeight();
   const int ox = renderer.getWindow().getOriginX();
   const int oy = renderer.getWindow().getOriginY();
 
   // use one-to-one pixel projection
-  glScissor(ox, oy, width, height);
+  glScissor(ox, oy + height - viewHeight, width, viewHeight);
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
-  glOrtho(0.0, width, 0.0, height, -1.0, 1.0);
+  glOrtho(0.0, width, viewHeight - height, viewHeight, -1.0, 1.0);
   glMatrixMode(GL_MODELVIEW);
   glPushMatrix();
   glLoadIdentity();
