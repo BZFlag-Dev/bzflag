@@ -69,7 +69,10 @@ Bundle *BundleMgr::getBundle(const std::string &locale, bool setcur /*= true*/)
     path += "_" + locale;
   path += ".po";
 
-#ifdef __APPLE__
+  /* FIXME -- this needs to be in libplatform not here -- causes libcommon
+   * to require corefoundation framework
+   */
+#if defined(__APPLE__)
   // This is MacOS X. Use the CoreFoundation resource location API
   // to find the correct language resource if 'default' is specified.
   if (locale.length() == 7 && locale.compare("default") == 0) {
