@@ -68,7 +68,7 @@ const float smallWorldSize = 2000.0f;
 // or dropped us for some reason.
 static const float ListServerReAddTime = 30.0f * 60.0f;
 
-static const float FlagHalfLife = 45.0f;
+static const float FlagHalfLife = 10.0f;
 // do NOT change
 int NotConnected = -1;
 int InvalidPlayer = -1;
@@ -4433,7 +4433,7 @@ int main(int argc, char **argv)
     return 2;
   }
 
-  TimeKeeper lastSuperFlagInsertion = TimeKeeper::getCurrent();
+  TimeKeeper nextSuperFlagInsertion = TimeKeeper::getCurrent();
   const float flagExp = -logf(0.5f) / FlagHalfLife;
 
   // load up the access permissions & stuff
@@ -4942,20 +4942,18 @@ int main(int argc, char **argv)
     }
 
     // maybe add a super flag (only if game isn't over)
-    if (!gameOver && clOptions->numExtraFlags > 0) {
-      float t = expf(-flagExp * (tm - lastSuperFlagInsertion));
-      if ((float)bzfrand() > t) {
-	// find an empty slot for an extra flag
-	for (i = numFlags - clOptions->numExtraFlags; i < numFlags; i++) {
-	  FlagInfo &flag = *FlagInfo::get(i);
-	  if (flag.flag.type == Flags::Null) {
-	    // flag in now entering game
-	    flag.addFlag();
-	    sendFlagUpdate(flag);
-	    break;
-	  }
+    if (!gameOver && clOptions->numExtraFlags > 0 && nextSuperFlagInsertion<=tm) {
+      // randomly choose next flag respawn time; halflife distribution
+      float r = bzfrand() + 0.01; // small offset, we do not want to wait forever
+      nextSuperFlagInsertion += -logf(r) / flagExp;
+      for (i = numFlags - clOptions->numExtraFlags; i < numFlags; i++) {
+	FlagInfo &flag = *FlagInfo::get(i);
+	if (flag.flag.type == Flags::Null) {
+	  // flag in now entering game
+	  flag.addFlag();
+	  sendFlagUpdate(flag);
+	  break;
 	}
-	lastSuperFlagInsertion = tm;
       }
     }
 
