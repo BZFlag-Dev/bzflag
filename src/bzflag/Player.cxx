@@ -227,9 +227,6 @@ void			Player::setTeleport(const TimeKeeper& t,
 
 void			Player::updateTank(float dt)
 {
-  static bool oldOOstate = false;
-  static bool newOOstate = false;
-  
   // copy the current dimensions to the old dimensions
   memcpy (oldDimensions, dimensions, sizeof(float[3]));
   
