@@ -4,6 +4,7 @@ libCommon_a_SOURCES  =		 	\
 	Bundle.cxx			\
 	BundleMgr.cxx			\
 	ErrorHandler.cxx		\
+	FileManager.cxx			\
 	Flag.cxx			\
 	md5.cxx				\
 	ShotUpdate.cxx			\

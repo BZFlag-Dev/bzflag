@@ -25,6 +25,7 @@ noinst_HEADERS =		\
 	EighthDimSceneNode.h	\
 	EighthDPyrSceneNode.h	\
 	ErrorHandler.h		\
+	FileManager.h		\
 	Flag.h			\
 	FlagSceneNode.h		\
 	FlagWarpSceneNode.h	\
