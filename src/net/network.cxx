@@ -529,9 +529,12 @@ bool			BzfNetwork::parseURL(const std::string& url,
 
       if(mungedurl[0] == ':') {
 	pos++;
-	for(; isdigit(mungedurl[pos]); pos++);
-	mungedurl[pos] = '\0';
-	port = atoi(mungedurl.c_str() + 1);
+	char portString[10];
+	int i = 0;
+	for(; isdigit(mungedurl[pos]) && i < 9; pos++)
+	  portString[i++] = mungedurl[pos];
+	portString[i] = '\0';
+	port = atoi(portString);
       }
 
       mungedurl = mungedurl.substr(pos);

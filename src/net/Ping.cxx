@@ -247,6 +247,7 @@ void			PingPacket::packHex(char* buf) const
   buf = packHex16(buf, maxPlayerScore);
   buf = packHex16(buf, maxTeamScore);
   buf = packHex16(buf, maxTime);
+  *buf = 0;
 }
 
 void			PingPacket::unpackHex(char* buf)

@@ -36,6 +36,8 @@ struct ListServerLink {
     int port;
     int socket;
     const char *nextMessage;
+    std::string hostname;
+    std::string pathname;
 };
 
 // Command Line Options
@@ -830,15 +832,12 @@ static void sendMessageToListServerForReal(int index)
 
     // send ADD message
     if (clOptions->http) {
-      char myGameInfo[1024];
-      strncpy(myGameInfo, gameInfo, 1024);
-      int myGameInfoLen = strlen(myGameInfo);
-      myGameInfo[myGameInfoLen -2] = 0;
-      sprintf(msg, "GET %s?action=ADD&nameport=%s&version=%s&gameinfo=%s&title=%s\n", 
-	      "http://db.bzflag.org/db/",
+      sprintf(msg, "GET http://%s%s?action=ADD&nameport=%s&version=%s&gameinfo=%s&title=%s\n", 
+	      link.hostname.c_str(),
+	      link.pathname.c_str(),
 	      clOptions->publicizedAddress.c_str(),
 	      getServerVersion(),
-	      myGameInfo,
+	      gameInfo,
 	      clOptions->publicizedTitle);
     } else {
       sprintf(msg, "%s %s %s %s %.*s %.256s\n\n", link.nextMessage,
@@ -852,8 +851,9 @@ static void sendMessageToListServerForReal(int index)
   else if (strcmp(link.nextMessage, "REMOVE") == 0) {
     // send REMOVE
     if (clOptions->http) {
-      sprintf(msg, "GET %s?action=REMOVE&nameport=%s\n", 
-	      "http://db.bzflag.org/db/",
+      sprintf(msg, "GET http://%s%s?action=REMOVE&nameport=%s\n", 
+	      link.hostname.c_str(),
+	      link.pathname.c_str(),
 	      clOptions->publicizedAddress.c_str());
     } else {
       sprintf(msg, "%s %s\n\n", link.nextMessage,
@@ -864,12 +864,14 @@ static void sendMessageToListServerForReal(int index)
     // pretend there are no players if the game is over
     if (clOptions->http) {
       if (gameOver)
-	sprintf(msg, "GET %s?action=SETNUM&nameport=%s&players=0:0:0:0:0\n", 
-		"http://db.bzflag.org/db/",
+	sprintf(msg, "GET http://%s%s?action=SETNUM&nameport=%s&players=0:0:0:0:0\n", 
+		link.hostname.c_str(),
+		link.pathname.c_str(),
 		clOptions->publicizedAddress.c_str());
       else
-	sprintf(msg, "GET %s?action=SETNUM&nameport=%s&players=%d:%d:%d:%d:%d\n", 
-		"http://db.bzflag.org/db/",
+	sprintf(msg, "GET http://%s%s?action=SETNUM&nameport=%s&players=%d:%d:%d:%d:%d\n", 
+		link.hostname.c_str(),
+		link.pathname.c_str(),
 		clOptions->publicizedAddress.c_str(),
 		team[0].team.size,
 		team[1].team.size,
@@ -941,6 +943,8 @@ static void publicize()
       listServerLinks[listServerLinksCount].address = address;
       listServerLinks[listServerLinksCount].port = port;
       listServerLinks[listServerLinksCount].socket  = NotConnected;
+      listServerLinks[listServerLinksCount].pathname = pathname;
+      listServerLinks[listServerLinksCount].hostname = hostname;
       listServerLinksCount++;
     }
 
