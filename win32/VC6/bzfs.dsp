@@ -211,6 +211,10 @@ SOURCE=..\..\src\bzfs\ListServerConnection.cxx
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\src\bzfs\MasterBanList.cxx
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\src\bzfs\ParseMaterial.cxx
 # End Source File
 # Begin Source File
@@ -428,6 +432,10 @@ SOURCE=..\..\include\LagInfo.h
 # Begin Source File
 
 SOURCE=..\..\src\bzfs\ListServerConnection.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\bzfs\MasterBanList.h
 # End Source File
 # Begin Source File
 
