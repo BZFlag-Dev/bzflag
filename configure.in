@@ -128,7 +128,6 @@ if test "x$with_kerberos" = "xyes" ; then
 fi
 AC_LANG_RESTORE
 AC_CHECK_HEADERS( \
-	AGL/agl.h \
 	GL/glx.h \
 	X11/Xlib.h \
 	linux/input.h \
@@ -345,7 +344,7 @@ fi
 
 case $host_os in
      macos|darwin*)
-	LIBS="$LIBS -framework Carbon -framework OpenGL -framework AGL"
+	LIBS="$LIBS -framework Carbon -framework OpenGL"
 	;;
      irix)
 	if test x$host_cpu = xmips64; then
@@ -570,9 +569,9 @@ fi;
 
 # Check for functions
 AC_CHECK_FUNCS(\
+	CGLGetCurrentContext \
 	Sleep \
 	WaitForSingleObject \
-	aglGetCurrentContext \
 	asinf \
 	atan2f \
 	atanf \

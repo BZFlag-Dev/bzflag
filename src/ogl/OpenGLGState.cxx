@@ -1507,9 +1507,8 @@ void bzMatrixMode(GLenum mode)
 #ifdef _WIN32
 #  define GET_CURRENT_CONTEXT wglGetCurrentContext
 #else
-#  ifdef HAVE_AGL_AGL_H
-#    include <AGL/agl.h>
-#    define GET_CURRENT_CONTEXT aglGetCurrentContext
+#  ifdef HAVE_CGLGETCURRENTCONTEXT
+#    define GET_CURRENT_CONTEXT CGLGetCurrentContext
 #  else
 #    include <GL/glx.h>
 #    define GET_CURRENT_CONTEXT glXGetCurrentContext
