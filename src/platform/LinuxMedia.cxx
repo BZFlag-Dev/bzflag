@@ -118,8 +118,10 @@ boolean			LinuxMedia::openAudio()
 
 boolean			LinuxMedia::checkForAudioHardware()
 {
-  if (!access("/dev/dsp", W_OK)) return True;
-  return False;
+  boolean flag=False;
+  if (!access("/dev/dsp", W_OK)) flag=True;
+  if (!access("/dev/sound/dsp", W_OK)) flag=True;
+  return flag;
 }
 
 boolean			LinuxMedia::openIoctl(
@@ -176,8 +178,11 @@ boolean			LinuxMedia::openAudioHardware()
   // open device (but don't wait for it)
   audioPortFd = open("/dev/dsp", O_WRONLY | O_NDELAY, 0);
   if (audioPortFd == -1) {
-    fprintf(stderr, "Failed to open audio device /dev/dsp (%d)\n", errno);
-    return False;
+    audioPortFd = open("/dev/sound/dsp", O_WRONLY | O_NDELAY, 0);
+    if (audioPortFd == -1) {
+      fprintf(stderr, "Failed to open audio device /dev/dsp or /dev/sound/dsp (%d)\n", errno);
+      return False;
+	}
   }
 
   // back to blocking I/O

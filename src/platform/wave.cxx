@@ -249,8 +249,11 @@ int main(int argc, char *argv[]) {
 
   fd = open("/dev/dsp", O_WRONLY, 0);
   if (fd == -1) {
-    fprintf(stderr, "Failed to open /dev/dsp\n");
-    return -1;
+    fd = open("/dev/sound/dsp", O_WRONLY, 0);
+    if (fd == -1) {
+      fprintf(stderr, "Failed to open /dev/dsp or /dev/sound/dsp\n");
+      return -1;
+    }
   }
 #if BYTE_ORDER == BIG_ENDIAN
   sndformat=AFMT_S16_BE;
