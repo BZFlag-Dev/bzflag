@@ -810,6 +810,192 @@ HUDuiLabel*		KeyboardMapMenu::createLabel(
   return label;
 }
 
+
+//
+// GUIOptionsMenu
+//
+
+class GUIOptionsMenu : public HUDDialog {
+  public:
+			GUIOptionsMenu();
+			~GUIOptionsMenu();
+
+    HUDuiDefaultKey*	getDefaultKey()
+				{ return MenuDefaultKey::getInstance(); }
+    void		execute();
+    void		resize(int width, int height);
+    static void		callback(HUDuiControl* w, void* data);
+
+  private:
+};
+
+GUIOptionsMenu::GUIOptionsMenu()
+{
+  // add controls
+  HUDuiControlList& list = getControls();
+
+  HUDuiLabel* label = new HUDuiLabel;
+  label->setFont(MainMenu::getFont());
+  label->setString("GUI Options");
+  list.append(label);
+
+  HUDuiList* option = new HUDuiList;
+  option->setFont(MainMenu::getFont());
+  option->setLabel("Enhanced radar:");
+  option->setCallback(callback, (void*)"e");
+  BzfStringAList* options = &option->getList();
+  options->append(BzfString("Off"));
+  options->append(BzfString("On"));
+  option->update();
+  list.append(option);
+
+  option = new HUDuiList;
+  option->setFont(MainMenu::getFont());
+  option->setLabel("Controlpanel & Score FontSize:");
+  option->setCallback(callback, (void*)"w");
+  options = &option->getList();
+  options->append(BzfString("normal"));
+  options->append(BzfString("bigger"));
+  option->update();
+  list.append(option);
+
+  // set Radar Translucency
+  option = new HUDuiList;
+  option->setFont(MainMenu::getFont());
+  option->setLabel("Radar & Panel Opacity:");
+  option->setCallback(callback, (void*)"y");
+  options = &option->getList();
+  options->append(BzfString("[O----------]"));
+  options->append(BzfString("[-O---------]"));
+  options->append(BzfString("[--O--------]"));
+  options->append(BzfString("[---O-------]"));
+  options->append(BzfString("[----O------]"));
+  options->append(BzfString("[-----O-----]"));
+  options->append(BzfString("[------O----]"));
+  options->append(BzfString("[-------O---]"));
+  options->append(BzfString("[--------O--]"));
+  options->append(BzfString("[---------O-]"));
+  options->append(BzfString("[----------O]"));
+  option->update();
+  list.append(option);
+
+  option = new HUDuiList;
+  option->setFont(MainMenu::getFont());
+  option->setLabel("Colored shots on radar:");
+  option->setCallback(callback, (void*)"z");
+  options = &option->getList();
+  options->append(BzfString("Off"));
+  options->append(BzfString("On"));
+  option->update();
+  list.append(option);
+
+  // set radar shot length
+  option = new HUDuiList;
+  option->setFont(MainMenu::getFont());
+  option->setLabel("Radar Shot Length:");
+  option->setCallback(callback, (void*)"l");
+  options = &option->getList();
+  options->append(BzfString("[O---]"));
+  options->append(BzfString("[-O--]"));
+  options->append(BzfString("[--O-]"));
+  options->append(BzfString("[---O]"));
+  option->update();
+  list.append(option);
+
+  // set control order
+  const int count = list.getLength();
+  list[0]->setNext(list[0]);
+  list[0]->setPrev(list[0]);
+  list[1]->setPrev(list[count - 1]);
+  list[1]->setNext(list[2]);
+  for (int j = 2; j < count - 1; j++) {
+    list[j]->setPrev(list[j - 1]);
+    list[j]->setNext(list[j + 1]);
+  }
+  list[count - 1]->setPrev(list[count - 2]);
+  list[count - 1]->setNext(list[1]);
+
+  // set initial focus
+  setFocus(list[1]);
+}
+
+GUIOptionsMenu::~GUIOptionsMenu()
+{
+}
+
+void			GUIOptionsMenu::execute()
+{
+}
+
+void			GUIOptionsMenu::resize(int width, int height)
+{
+  // use a big font for title, smaller font for the rest
+  const float titleFontWidth = (float)height / 10.0f;
+  const float titleFontHeight = (float)height / 10.0f;
+  const float fontWidth = (float)height / 30.0f;
+  const float fontHeight = (float)height / 30.0f;
+
+  // reposition title
+  HUDuiControlList& list = getControls();
+  HUDuiLabel* title = (HUDuiLabel*)list[0];
+  title->setFontSize(titleFontWidth, titleFontHeight);
+  const OpenGLTexFont& titleFont = title->getFont();
+  const float titleWidth = titleFont.getWidth(title->getString());
+  float x = 0.5f * ((float)width - titleWidth);
+  float y = (float)height - titleFont.getHeight();
+  title->setPosition(x, y);
+
+  // reposition options
+  x = 0.5f * ((float)width + 0.5f * titleWidth);
+  y -= 0.6f * titleFont.getHeight();
+  const int count = list.getLength();
+  for (int i = 1; i < count; i++) {
+    list[i]->setFontSize(fontWidth, fontHeight);
+    list[i]->setPosition(x, y);
+    y -= 1.0f * list[i]->getFont().getHeight();
+  }
+
+  // load current settings
+  SceneRenderer* renderer = getSceneRenderer();
+  if (renderer) {
+    int i = 1;
+    ((HUDuiList*)list[i++])->setIndex(renderer->useEnhancedRadar() ? 1 : 0);
+    ((HUDuiList*)list[i++])->setIndex(renderer->useBigFont() ? 1 : 0);
+    ((HUDuiList*)list[i++])->setIndex((int)(10.0f * renderer->getPanelOpacity()));
+    ((HUDuiList*)list[i++])->setIndex(renderer->useColoredShots() ? 1 : 0);
+    ((HUDuiList*)list[i++])->setIndex(renderer->getRadarShotLength());
+  }
+}
+
+void			GUIOptionsMenu::callback(HUDuiControl* w, void* data)
+{
+  HUDuiList* list = (HUDuiList*)w;
+
+  SceneRenderer* sceneRenderer = getSceneRenderer();
+  switch (((const char*)data)[0]) {
+    case 'e':
+      sceneRenderer->setEnhancedRadar(list->getIndex() != 0);
+      break;
+
+    case 'w':
+      sceneRenderer->setBigFont(list->getIndex() != 0);
+      break;
+
+    case 'y':
+      sceneRenderer->setPanelOpacity(((float)list->getIndex()) / 10.0f);
+      break;
+
+    case 'z':
+      sceneRenderer->setColoredShots(list->getIndex() != 0);
+      break;
+
+    case 'l':
+      sceneRenderer->setRadarShotLength(list->getIndex());
+      break;
+  }
+}
+
+
 //
 // OptionsMenu
 //
@@ -831,11 +1017,14 @@ class OptionsMenu : public HUDDialog {
   private:
     HUDuiControl*	videoFormat;
     HUDuiControl*	keyMapping;
+    HUDuiControl*	guiOptions;
     FormatMenu*		formatMenu;
     KeyboardMapMenu*	keyboardMapMenu;
+    GUIOptionsMenu*	guiOptionsMenu;
 };
 
-OptionsMenu::OptionsMenu() : formatMenu(NULL), keyboardMapMenu(NULL)
+OptionsMenu::OptionsMenu() : formatMenu(NULL), keyboardMapMenu(NULL),
+                             guiOptionsMenu(NULL)
 {
   // add controls
   HUDuiControlList& list = getControls();
@@ -1035,11 +1224,6 @@ OptionsMenu::OptionsMenu() : formatMenu(NULL), keyboardMapMenu(NULL)
   option->update();
   list.append(option);
 
-  keyMapping = label = new HUDuiLabel;
-  label->setFont(MainMenu::getFont());
-  label->setLabel("Change Key Mapping");
-  list.append(label);
-
   option = new HUDuiList;
   option->setFont(MainMenu::getFont());
   option->setLabel("UDP network connection:");
@@ -1050,15 +1234,15 @@ OptionsMenu::OptionsMenu() : formatMenu(NULL), keyboardMapMenu(NULL)
   option->update();
   list.append(option);
 
-  option = new HUDuiList;
-  option->setFont(MainMenu::getFont());
-  option->setLabel("Enhanced radar: ");
-  option->setCallback(callback, (void*)"e");
-  options = &option->getList();
-  options->append(BzfString("Off"));
-  options->append(BzfString("On"));
-  option->update();
-  list.append(option);
+  keyMapping = label = new HUDuiLabel;
+  label->setFont(MainMenu::getFont());
+  label->setLabel("Change Key Mapping");
+  list.append(label);
+
+  guiOptions = label = new HUDuiLabel;
+  label->setFont(MainMenu::getFont());
+  label->setLabel("GUI Options");
+  list.append(label);
 
   // set control order
   const int count = list.getLength();
@@ -1081,6 +1265,7 @@ OptionsMenu::~OptionsMenu()
 {
   delete formatMenu;
   delete keyboardMapMenu;
+  delete guiOptionsMenu;
 }
 
 void			OptionsMenu::execute()
@@ -1093,6 +1278,10 @@ void			OptionsMenu::execute()
   else if (focus == keyMapping) {
     if (!keyboardMapMenu) keyboardMapMenu = new KeyboardMapMenu;
     HUDDialogStack::get()->push(keyboardMapMenu);
+  }
+  else if (focus == guiOptions) {
+    if (!guiOptionsMenu) guiOptionsMenu = new GUIOptionsMenu;
+    HUDDialogStack::get()->push(guiOptionsMenu);
   }
 }
 
@@ -1158,9 +1347,7 @@ void			OptionsMenu::resize(int width, int height)
     const StartupInfo* info = getStartupInfo();
 
     // mind the ++i !
-    ((HUDuiList*)list[++i])->setIndex(info->useUDPconnection ? 1 : 0);
-
-    ((HUDuiList*)list[++i])->setIndex(renderer->useEnhancedRadar() ? 1 : 0);
+    ((HUDuiList*)list[+i])->setIndex(info->useUDPconnection ? 1 : 0);
 
     if (!renderer->useTexture())
       tex->setIndex(0);
@@ -1254,10 +1441,6 @@ void			OptionsMenu::callback(HUDuiControl* w, void* data)
     case 'r':
       // do nothing -- wait for enter or t key
       break;
-
-    case 'e':
-      sceneRenderer->setEnhancedRadar(list->getIndex() != 0);
-      break;
   }
 }
 
@@ -1271,6 +1454,7 @@ float			OptionsMenu::indexToGamma(int index)
     // map index 5 to gamma 1.0 and index 0 to gamma 0.5
     return powf(2.0f, (float)index / 5.0f - 1.0f);
 }
+
 
 //
 // HelpMenu

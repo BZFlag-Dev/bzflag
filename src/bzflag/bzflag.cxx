@@ -681,6 +681,18 @@ void			dumpResources(BzfDisplay* display,
 
   db.addValue("enhancedradar", renderer.useEnhancedRadar() ? "yes" : "no");
 
+  db.addValue("coloredradarshots", renderer.useColoredShots() ? "yes" : "no");
+
+  int length = renderer.getRadarShotLength();
+  char lengthbuf[10];
+  sprintf(lengthbuf,"%d",length);
+  db.addValue("linedradarshots", lengthbuf);
+
+  char panelbuf[20];
+  sprintf(panelbuf, "%f", renderer.getPanelOpacity());
+  db.addValue("panelopacity", panelbuf);
+  db.addValue("bigfont", renderer.useBigFont() ? "yes" : "no");
+
   // don't save these configurations
   db.removeValue("window");
   db.removeValue("multisample");
@@ -1119,6 +1131,17 @@ int			main(int argc, char** argv)
 
     if (db.hasValue("enhancedradar"))
       renderer.setEnhancedRadar(db.getValue("enhancedradar") == "yes");
+    if (db.hasValue("coloredradarshots"))
+      renderer.setColoredShots(db.getValue("coloredradarshots") == "yes");
+    if (db.hasValue("linedradarshots")) {
+      int length = atoi(db.getValue("linedradarshots"));
+      renderer.setRadarShotLength(length);
+    }
+    if (db.hasValue("panelopacity")) {
+      renderer.setPanelOpacity((float)atof(db.getValue("panelopacity")));
+    if (db.hasValue("bigfont"))
+      renderer.setBigFont(db.getValue("bigfont") == "yes");
+    }
   }
 
   // grab the mouse only if allowed

@@ -86,6 +86,10 @@ SceneRenderer::SceneRenderer(MainWindow& _window) :
 				useWireframeOn(False),
 				useHiddenLineOn(False),
 				useEnhancedRadarOn(True),
+				useColoredShotsOn(True),
+				radarShotLength(0),
+				panelOpacity(0.3),
+                                useBigFontOn(False),
 				useFogHack(False),
 				viewType(Normal),
 				maxLOD(32767),
@@ -413,15 +417,60 @@ boolean			SceneRenderer::useHiddenLine() const
   return useHiddenLineOn;
 }
 
-void            SceneRenderer::setEnhancedRadar(boolean _setEnhancedRadar)
+void			SceneRenderer::setEnhancedRadar(boolean _setEnhancedRadar)
 {
-    useEnhancedRadarOn = _setEnhancedRadar;
+  useEnhancedRadarOn = _setEnhancedRadar;
+  notifyStyleChange();
+}
+
+boolean			SceneRenderer::useEnhancedRadar() const
+{
+    return useEnhancedRadarOn;
+}
+
+void			SceneRenderer::setPanelOpacity(float opacity)
+{
+  panelOpacity = opacity;
+  notifyStyleChange();
+}
+
+float			SceneRenderer::getPanelOpacity() const
+{
+  return panelOpacity;
+}
+
+void			SceneRenderer::setColoredShots(boolean _setColoredShots)
+{
+    useColoredShotsOn = _setColoredShots;
     notifyStyleChange();
 }
 
-boolean         SceneRenderer::useEnhancedRadar() const
+boolean		SceneRenderer::useColoredShots() const
 {
-    return useEnhancedRadarOn;
+    return useColoredShotsOn;
+}
+
+void			SceneRenderer::setRadarShotLength(int length)
+{
+    radarShotLength = length;
+    notifyStyleChange();
+}
+
+int			SceneRenderer::getRadarShotLength() const
+{
+    return radarShotLength;
+}
+
+void            SceneRenderer::setBigFont(boolean _setBigFont)
+{
+    useBigFontOn = _setBigFont;
+    notifyStyleChange();
+    window.getWindow()->callResizeCallbacks();
+}
+
+boolean			SceneRenderer::useBigFont() const
+{
+  return useBigFontOn;
 }
 
 void			SceneRenderer::setDim(boolean on)

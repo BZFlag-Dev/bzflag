@@ -25,13 +25,11 @@
 class SceneRenderer;
 class World;
 class ShotPath;
-class ResourceDatabase;
-
 
 class RadarRenderer {
   public:
 			RadarRenderer(const SceneRenderer&,
-						const World& world, ResourceDatabase *resources);
+						const World& world);
 			~RadarRenderer();
 
     void		setControlColor(const GLfloat *color = NULL);

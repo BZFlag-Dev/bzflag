@@ -26,6 +26,7 @@
 #include "playing.h"
 #include "PlayerLink.h"
 #include "Team.h"
+#include "SceneRenderer.h"
 
 static OpenGLTexture*	boltTexture[NumTeams];
 static OpenGLTexture*	laserTexture[NumTeams];
@@ -521,18 +522,22 @@ void			SegmentedShotStrategy::addShot(
 
 void			SegmentedShotStrategy::radarRender() const
 {
-  // Display lines with a dot for shots
-  const float* vel = getPath().getVelocity();
-  const float d = 1.0f / hypotf(vel[0], hypotf(vel[1], vel[2]));
   const float *orig = getPath().getPosition();
-  float dir[3];
-  dir[0] = vel[0] * d * ShotTailLength;
-  dir[1] = vel[1] * d * ShotTailLength;
-  dir[2] = vel[2] * d * ShotTailLength;
-  glBegin(GL_LINES);
-  glVertex2fv(orig);
-  glVertex2f(orig[0] + dir[0], orig[1] + dir[1]);
-  glEnd();
+  const int length = getSceneRenderer()->getRadarShotLength();
+
+  // Display lines
+  if (length > 0) {
+    const float* vel = getPath().getVelocity();
+    const float d = 1.0f / hypotf(vel[0], hypotf(vel[1], vel[2]));
+    float dir[3];
+    dir[0] = vel[0] * d * ShotTailLength * length;
+    dir[1] = vel[1] * d * ShotTailLength * length;
+    dir[2] = vel[2] * d * ShotTailLength * length;
+    glBegin(GL_LINES);
+    glVertex2fv(orig);
+    glVertex2f(orig[0] + dir[0], orig[1] + dir[1]);
+    glEnd();
+  }
   glBegin(GL_POINTS);
   glVertex2fv(orig);
   glEnd();
@@ -1266,18 +1271,22 @@ void			GuidedMissileStrategy::expire()
 
 void			GuidedMissileStrategy::radarRender() const
 {
-  // Display lines with a dot for shots
-  const float* vel = getPath().getVelocity();
-  const float d = 1.0f / hypotf(vel[0], hypotf(vel[1], vel[2]));
   const float *orig = getPath().getPosition();
-  float dir[3];
-  dir[0] = vel[0] * d * ShotTailLength;
-  dir[1] = vel[1] * d * ShotTailLength;
-  dir[2] = vel[2] * d * ShotTailLength;
-  glBegin(GL_LINES);
-  glVertex2fv(orig);
-  glVertex2f(orig[0] + dir[0], orig[1] + dir[1]);
-  glEnd();
+  const int length = getSceneRenderer()->getRadarShotLength();
+
+  // Display lines
+  if (length > 0) {
+    const float* vel = getPath().getVelocity();
+    const float d = 1.0f / hypotf(vel[0], hypotf(vel[1], vel[2]));
+    float dir[3];
+    dir[0] = vel[0] * d * ShotTailLength * length;
+    dir[1] = vel[1] * d * ShotTailLength * length;
+    dir[2] = vel[2] * d * ShotTailLength * length;
+    glBegin(GL_LINES);
+    glVertex2fv(orig);
+    glVertex2f(orig[0] + dir[0], orig[1] + dir[1]);
+    glEnd();
+  }
   glBegin(GL_POINTS);
   glVertex2fv(orig);
   glEnd();

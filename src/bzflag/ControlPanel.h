@@ -20,7 +20,6 @@
 #include "OpenGLGState.h"
 #include "BzfString.h"
 #include "AList.h"
-#include "resources.h"
 
 class RadarRenderer;
 class SceneRenderer;
@@ -36,7 +35,7 @@ BZF_DEFINE_ALIST(ControlPanelMessageList, ControlPanelMessage);
 
 class ControlPanel {
   public:
-			ControlPanel(MainWindow&, SceneRenderer&, ResourceDatabase *_resources);
+			ControlPanel(MainWindow&, SceneRenderer&);
 			~ControlPanel();
 
 	void		setControlColor(const GLfloat *color = NULL);

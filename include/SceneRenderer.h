@@ -74,6 +74,10 @@ class SceneRenderer {
     boolean		useWireframe() const;
     boolean		useHiddenLine() const;
     boolean		useEnhancedRadar() const;
+    boolean		useColoredShots() const;
+    int			getRadarShotLength() const;
+    float		getPanelOpacity() const;
+    boolean		useBigFont() const;
     boolean		isLastFrame() const;
     boolean		isSameFrame() const;
     ViewType		getViewType() const;
@@ -93,6 +97,10 @@ class SceneRenderer {
     void		setWireframe(boolean on);
     void		setHiddenLine(boolean on);
     void		setEnhancedRadar(boolean on);
+    void		setColoredShots(boolean on);
+    void		setRadarShotLength(int l);
+    void		setPanelOpacity(float opacity);
+    void		setBigFont(boolean on);
     void		setDim(boolean on);
     void		setViewType(ViewType);
     void		setMaxLOD(int maxLOD);
@@ -189,7 +197,11 @@ class SceneRenderer {
     boolean		useDepthComplexityOn;
     boolean		useWireframeOn;
     boolean		useHiddenLineOn;
-    int			useEnhancedRadarOn;
+    boolean		useEnhancedRadarOn;
+    boolean		useColoredShotsOn;
+    int			radarShotLength;
+    float		panelOpacity;
+    boolean		useBigFontOn;
     boolean		useFogHack;
     boolean		useZBufferOn;
     boolean		useStencilOn;

@@ -24,12 +24,11 @@
 #include "Team.h"
 #include "Flag.h"
 #include "OpenGLGState.h"
-#include "resources.h"
 
 const float		RadarRenderer::colorFactor = 40.0f;
 
 RadarRenderer::RadarRenderer(const SceneRenderer& renderer,
-						const World& _world, ResourceDatabase *resources) :
+			     const World& _world) :
 				world(_world),
 				x(0),
 				y(0),
@@ -45,10 +44,6 @@ RadarRenderer::RadarRenderer(const SceneRenderer& renderer,
   background[0] = 0.0f;
   background[1] = 0.0f;
   background[2] = 0.0f;
-  background[3] = 0.5f;
-
-  if (resources->hasValue( "opacity" ))
-	  background[3] = (float) atof(resources->getValue( "opacity" ));
 
   blend = renderer.useBlending();
   smooth = True;
@@ -188,6 +183,7 @@ void			RadarRenderer::render(SceneRenderer& renderer,
 							boolean blank)
 {
   const boolean smoothingOn = smooth && renderer.useSmoothing();
+  background[3] = renderer.getPanelOpacity();
 
   // if opaque then clear
   const int ox = renderer.getWindow().getOriginX();
@@ -393,14 +389,18 @@ void			RadarRenderer::render(SceneRenderer& renderer,
       for (int j = 0; j < maxShots; j++) {
 	const ShotPath* shot = player->getShot(j);
         if (shot && shot->getFlag() != InvisibleBulletFlag) {
-	  const float *shotcolor;
-          if (myTank->getFlag() == ColorblindnessFlag)
-            shotcolor = Team::getRadarColor(RogueTeam);
+          const float *shotcolor;
+          if ( renderer.useColoredShots() ) {
+            if (myTank->getFlag() == ColorblindnessFlag)
+              shotcolor = Team::getRadarColor(RogueTeam);
+            else
+              shotcolor = Team::getRadarColor(player->getTeam());
+            const float cs = colorScale(shot->getPosition()[2],
+                MuzzleHeight, renderer.useEnhancedRadar());
+            glColor3f(shotcolor[0] * cs, shotcolor[1] * cs, shotcolor[2] * cs);
+          }
           else
-            shotcolor = Team::getRadarColor(player->getTeam());
-          const float cs = colorScale(shot->getPosition()[2],
-              MuzzleHeight, renderer.useEnhancedRadar());
-          glColor3f(shotcolor[0] * cs, shotcolor[1] * cs, shotcolor[2] * cs);
+            glColor3f(1.0f, 1.0f, 1.0f);
           shot->radarRender();
 	}
       }

@@ -51,7 +51,7 @@ const int		ControlPanel::maxScrollPages = 4;
 int				ControlPanel::messagesOffset = 0;
 extern void		printMissingDataDirectoryError(const char*);
 
-ControlPanel::ControlPanel(MainWindow& _mainWindow, SceneRenderer& renderer, ResourceDatabase *resources) :
+ControlPanel::ControlPanel(MainWindow& _mainWindow, SceneRenderer& renderer) :
 				window(_mainWindow),
 				resized(False),
 				numBuffers(2),
@@ -67,12 +67,6 @@ ControlPanel::ControlPanel(MainWindow& _mainWindow, SceneRenderer& renderer, Res
   background[0] = 0;
   background[1] = 0;
   background[2] = 0;
-
-  if (resources->hasValue( "opacity" )) {
-    background[3] = (float) atof(resources->getValue( "opacity" ));
-    window.setFullView(background[3] != 1.0f);
-  } else
-    background[3] = 0.3f;
 
   // other initialization
   radarAreaPixels[0] = 0;
@@ -104,6 +98,8 @@ void			ControlPanel::setControlColor(const GLfloat *color)
 
 void			ControlPanel::render(SceneRenderer& renderer)
 {
+  background[3] = renderer.getPanelOpacity();
+
   if (!resized) resize();
 
   int i, j;
@@ -264,7 +260,8 @@ void			ControlPanel::resize()
     radarRenderer->setShape(radarAreaPixels[0], radarAreaPixels[1],
 				radarAreaPixels[2], radarAreaPixels[3]);
 
-  const float fontSize = (float)messageAreaPixels[3] / 12.4444f;
+  const float addSize = SceneRenderer::getInstance()->useBigFont() ? 5.0f : 0.0f;
+  const float fontSize = addSize + (float)messageAreaPixels[3] / 12.4444f;
   if (fontSize > 10.0f)
     messageFont = TextureFont::getTextureFont(TextureFont::FixedBold, True);
   else
@@ -275,6 +272,7 @@ void			ControlPanel::resize()
 
   // note that we've been resized at least once
   resized = True;
+  window.setFullView(background[3] != 1.0f);
   expose();
 }
 
