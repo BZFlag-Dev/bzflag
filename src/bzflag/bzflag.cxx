@@ -877,6 +877,22 @@ int			main(int argc, char** argv)
     // ignore window name in config file (it's used internally)
     BZDB.unset("_window");
     BZDB.unset("_multisample");
+
+    // set time from BZDB
+    if (BZDB.isSet("fixedTime")) {
+      int hours, minutes, seconds;
+      char dbTime[256];
+      strcpy(dbTime,BZDB.get("fixedTime").c_str());
+      if (sscanf(dbTime, "%d:%d:%d", &hours, &minutes, &seconds) != 3 ||
+	  hours < 0 || hours > 23 ||
+	  minutes < 0 || minutes > 59 ||
+	  seconds < 0 || seconds > 59) {
+	printFatalError("Invalid argument for fixedTime = %s", dbTime);
+      }
+      userTime.tm_sec = seconds;
+      userTime.tm_min = minutes;
+      userTime.tm_hour = hours;
+    }
   }
 
   // use UDP? yes
