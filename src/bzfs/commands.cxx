@@ -657,7 +657,7 @@ static void handleBanCmd(GameKeeper::Player *playerData, const char *message)
 			   reason.c_str())) {
       clOptions->acl.save();
 
-      sendMessage(ServerPlayer, AllPlayers, "IP pattern added to banlist");
+      sendMessage(ServerPlayer, t, "IP pattern added to banlist");
 
       char kickmessage[MessageLen];
       GameKeeper::Player *otherPlayer;
@@ -743,7 +743,7 @@ static void handleHostBanCmd(GameKeeper::Player *playerData, const char *message
     clOptions->acl.save();
 #ifdef HAVE_ADNS_H
 
-    sendMessage(ServerPlayer, AllPlayers, "Host pattern added to banlist");
+    sendMessage(ServerPlayer, t, "Host pattern added to banlist");
 
     char kickmessage[MessageLen];
     for (int i = 0; i < curMaxPlayers; i++) {
