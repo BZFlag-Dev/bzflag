@@ -334,6 +334,8 @@ public:
 
   void filter(char *input)
   {
+    if (badWords.size() == 0) // all words allowed -> skip processing
+      return;
     std::string line = input;
     int startPos = line.find_first_not_of("\t \r\n");
     while (startPos >= 0) {
@@ -355,7 +357,6 @@ private:
     }
   };
   std::set<std::string, BadLess> badWords;
-
 };
 
 struct CmdLineOptions
@@ -366,7 +367,7 @@ struct CmdLineOptions
     listServerURL(DefaultListServerURL), password(NULL), maxShots(1), maxTeamScore(0), maxPlayerScore(0),
     maxObservers(3), numExtraFlags(0), teamKillerKickRatio(0), numAllowedFlags(0), shakeWins(0), shakeTimeout(0),
     pingTTL(DefaultTTL), maxlagwarn(10000), lagwarnthresh(-1.0), idlekickthresh(-1.0), timeLimit(0.0f),
-    timeElapsed(0.0f), linearAcceleration(0.0f), angularAcceleration(0.0f), useGivenPort(false),
+    timeElapsed(0.0f), timeManualStart(false), linearAcceleration(0.0f), angularAcceleration(0.0f), useGivenPort(false),
     useFallbackPort(false), alsoUDP(true), requireUDP(false), randomBoxes(false), randomCTF(false),
     flagsOnBuildings(false), oneGameOnly(false), randomHeights(false), useTeleporters(false),
     teamKillerDies(true), printScore(false), publicizeServer(false), publicizedAddressGiven(false), debug(0)
@@ -423,6 +424,7 @@ struct CmdLineOptions
   bool			randomCTF;
   bool			flagsOnBuildings;
   bool			oneGameOnly;
+  bool			timeManualStart;
   bool			randomHeights;
   bool			useTeleporters;
   bool			teamKillerDies;
@@ -3719,7 +3721,7 @@ static void addClient(int acceptSocket)
       gameOver = false;
 #ifdef TIMELIMIT
       gameStartTime = TimeKeeper::getCurrent();
-      if (clOptions.timeLimit > 0.0f) {
+      if (clOptions.timeLimit > 0.0f && !clOptions.timeManualStart) {
         clOptions.timeElapsed = 0.0f;
         countdownActive = true;
       }
@@ -5612,6 +5614,7 @@ static const char *usageString =
 "[-t] "
 #ifdef TIMELIMIT
 "[-time <seconds>] "
+"[-timemanual] "
 #endif
 "[-tk] "
 "[-tkkr <percent>] "
@@ -5668,6 +5671,7 @@ static const char *extraUsageString =
 "\t-t: allow teleporters\n"
 #ifdef TIMELIMIT
 "\t-time: set time limit on each game\n"
+"\t-timemanual: countdown for timed games has to be started with /countdown\n"
 #endif
 "\t-tk: player does not die when killing a teammate\n"
 "\t-tkkr: team killer to wins percentage (1-100) above which player is kicked\n"
@@ -6002,7 +6006,7 @@ static void parse(int argc, char **argv, CmdLineOptions &options)
 		char **av;
 		av = parseConfFile(argv[i], ac);
 		// Theoretically we could merge the options specified in the conf file after parsing
-		// the cmd line options. But for now just overright them on the spot
+		// the cmd line options. But for now just override them on the spot
 	        //	parse(ac, av, confOptions);
 		parse(ac, av, options);
 
@@ -6284,7 +6288,6 @@ static void parse(int argc, char **argv, CmdLineOptions &options)
     }
 #ifdef TIMELIMIT
     else if (strcmp(argv[i], "-time") == 0) {
-      // allow teleporters
       if (++i == argc) {
 	fprintf(stderr, "argument expected for -time\n");
 	usage(argv[0]);
@@ -6295,6 +6298,9 @@ static void parse(int argc, char **argv, CmdLineOptions &options)
       }
       fprintf(stderr, "using time limit of %i seconds\n", (int)options.timeLimit);
       options.timeElapsed = options.timeLimit;
+    }
+    else if (strcmp(argv[i], "-timemanual") == 0) {
+      options.timeManualStart = true;
     }
 #endif
     else if (strcmp(argv[i], "-tk") == 0) {
