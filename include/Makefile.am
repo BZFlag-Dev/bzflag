@@ -36,6 +36,7 @@ noinst_HEADERS =		\
 	md5.h			\
 	multicast.h		\
 	network.h		\
+	MediaFile.h		\
 	Obstacle.h		\
 	OpenGLDisplayList.h	\
 	OpenGLGState.h		\
