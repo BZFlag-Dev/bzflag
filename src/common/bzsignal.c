@@ -16,6 +16,9 @@
 /* modified from "UNIX Network Programming" */
 SIG_PF bzSignal(int signo, SIG_PF func)
 {
+#ifdef _WIN32
+  return signal(signo, func);
+#else // _WIN32
   struct sigaction act, oact;
 
   act.sa_handler = func;
@@ -39,4 +42,5 @@ SIG_PF bzSignal(int signo, SIG_PF func)
   if (sigaction(signo, &act, &oact) < 0)
     return SIG_ERR;
   return oact.sa_handler;
+#endif // _WIN32
 }
