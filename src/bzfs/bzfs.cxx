@@ -3259,6 +3259,12 @@ static void removePlayer(int playerIndex, const char *reason, bool notify)
 
   player[playerIndex].state = PlayerNoExist;
 
+  // if there is an active poll, cancel any vote this player may have made
+  VotingArbiter *arbiter = (VotingArbiter *)BZDB->getPointer("poll");
+  if ((arbiter != NULL) && (arbiter->knowsPoll())) {
+    arbiter->retractVote(player[playerIndex].callSign);
+  }
+
   if (clOptions->gameStyle & int(RabbitChaseGameStyle))
     if (playerIndex == rabbitIndex)
       anointNewRabbit();
