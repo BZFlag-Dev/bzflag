@@ -3,14 +3,6 @@ PORTING guide for bzflag
 Follow these steps to port bzflag to a new platform.  Say the
 new platform is named `foo'.
 
-  * in Makefile:
-    * add `@echo "  make foo"' to config-sys rule
-    * add foo rule similar to other platform rules
-
-  * in configs/
-    * copy config-new to config-foo
-    * edit config-foo as appropriate for the platform
-
   * in src/platform/:
     * implement the following files, as necessary, using an appropriate
       prefix instead of Foo.  it may be possible to use existing files
@@ -64,4 +56,3 @@ when code is updated for some, but not all, platforms.
 Inherently non-portable code is under src/platform.  It
 encapsulates windowing and audio subsystems.  (It also includes
 code to read image and audio files, for historical reasons.)
-
