@@ -43,14 +43,7 @@
 #define	_REGEX_H_
 
 /* From #include <sys/cdefs.h> */
-#if !defined(__P)
-#  if defined(USE_PROTOTYPES) || defined(_WIN32)
-#	define __P(args)       args
-#  else
-#	define __P(args)       ()
-#	define const		/**/
-#  endif
-#endif
+
 #ifdef __cplusplus
 #  define __BEGIN_DECLS   extern "C" {
 #  define __END_DECLS     }
@@ -121,11 +114,10 @@ typedef struct {
 #define	REG_BACKR	02000	/* force use of backref code */
 
 __BEGIN_DECLS
-int	regcomp __P((regex_t *, const char *, int));
-size_t	regerror __P((int, const regex_t *, char *, size_t));
-int	regexec __P((const regex_t *,
-	    const char *, size_t, regmatch_t [], int));
-void	regfree __P((regex_t *));
+int	regcomp (regex_t *, const char *, int);
+size_t	regerror (int, const regex_t *, char *, size_t);
+int	regexec (const regex_t *, const char *, size_t, regmatch_t [], int);
+void	regfree (regex_t *);
 __END_DECLS
 
 #endif /* !_REGEX_H_ */
