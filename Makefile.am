@@ -7,7 +7,6 @@ package: FORCE
 FORCE:
 
 EXTRA_DIST = \
-	acconfig.h \
 	autogen.sh \
 	BUGS \
 	bzflag.lsm \
