@@ -1068,7 +1068,7 @@ void			GUIOptionsMenu::resize(int width, int height)
   if (renderer) {
     int i = 1;
     ((HUDuiList*)list[i++])->setIndex(BZDB->isTrue("enhancedradar") ? 1 : 0);
-    ((HUDuiList*)list[i++])->setIndex(renderer->useBigFont() ? 1 : 0);
+    ((HUDuiList*)list[i++])->setIndex(BZDB->isTrue("bigfont") ? 1 : 0);
     ((HUDuiList*)list[i++])->setIndex((int)(10.0f * renderer->getPanelOpacity()));
     ((HUDuiList*)list[i++])->setIndex(BZDB->isTrue("coloredradarshots") ? 1 : 0);
     ((HUDuiList*)list[i++])->setIndex(static_cast<int>(BZDB->eval("linedradarshots")));
@@ -1092,7 +1092,7 @@ void			GUIOptionsMenu::callback(HUDuiControl* w, void* data)
       break;
 
     case 'w':
-      sceneRenderer->setBigFont(list->getIndex() != 0);
+      BZDB->set("bigfont", list->getIndex() ? "yes" : "no");
       break;
 
     case 'y':

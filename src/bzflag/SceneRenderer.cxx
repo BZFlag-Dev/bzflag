@@ -81,7 +81,6 @@ SceneRenderer::SceneRenderer(MainWindow& _window) :
 				panelOpacity(0.3f),
 				radarSize(4),
 				maxMotionFactor(5),
-				useBigFontOn(false),
 				useFogHack(false),
 				viewType(Normal),
 				maxLOD(32767),
@@ -371,18 +370,6 @@ void			SceneRenderer::setMaxMotionFactor(int factor)
 int			SceneRenderer::getMaxMotionFactor() const
 {
   return maxMotionFactor;
-}
-
-void			SceneRenderer::setBigFont(bool _setBigFont)
-{
-    useBigFontOn = _setBigFont;
-    notifyStyleChange();
-    window.getWindow()->callResizeCallbacks();
-}
-
-bool			SceneRenderer::useBigFont() const
-{
-  return useBigFontOn;
 }
 
 void			SceneRenderer::setDim(bool on)

@@ -283,7 +283,7 @@ void			HUDRenderer::setMajorFontSize(int, int height)
 
 void			HUDRenderer::setMinorFontSize(int, int height)
 {
-  const float add = SceneRenderer::getInstance()->useBigFont() ? 5.0f : 0.0f;
+  const float add = BZDB->isTrue("bigfont") ? 5.0f : 0.0f;
   const float s = add + (float)height / 48.0f;
   if (s > 20.0f)
     minorFont = TextureFont::getTextureFont(TextureFont::HelveticaBold, true);

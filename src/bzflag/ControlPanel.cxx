@@ -322,7 +322,7 @@ void			ControlPanel::resize()
     radarRenderer->setShape(radarAreaPixels[0], radarAreaPixels[1],
                             radarAreaPixels[2], radarAreaPixels[3]);
 
-  const bool useBigFont = messageAreaPixels[2] / (SceneRenderer::getInstance()->useBigFont() ? 60.0f : 80.0f) > 10.0f;
+  const bool useBigFont = messageAreaPixels[2] / (BZDB->isTrue("bigfont") ? 60.0f : 80.0f) > 10.0f;
   const float fontSize = useBigFont ? 11.0f : 7.0f;
   if (useBigFont)
     messageFont = TextureFont::getTextureFont(TextureFont::FixedBold, true);

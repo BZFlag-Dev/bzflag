@@ -11,6 +11,9 @@ recent bugs
 
 -src/bzflag/ShotStrategy.cxx SegmentedShotStrategy::makeSegments will not handle shots that bounce 'down', it presenly ends them. it should make them bounce when they hit the gound.
 
+- a number of places that used to be notified on menu changes (such as BigFont)
+  no longer do, due to the move to BZDB. We need to add callbacks for these
+  in BZDB
 
 older bugs in BZFlag
 --------------------

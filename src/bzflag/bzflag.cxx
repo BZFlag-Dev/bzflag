@@ -695,8 +695,6 @@ void			dumpResources(BzfDisplay* display,
   BZDB->set("mouseboxsize", string_util::format("%f", renderer.getMaxMotionFactor()));
   db.addValue("mouseboxsize", string_util::format("%f", renderer.getMaxMotionFactor()));
 
-  BZDB->set("bigfont", renderer.useBigFont() ? "yes" : "no");
-  db.addValue("bigfont", renderer.useBigFont() ? "yes" : "no");
   BZDB->set("colorful", renderer.getConsoleColorization() ? "yes" : "no");
   db.addValue("colorful", renderer.getConsoleColorization() ? "yes" : "no");
   BZDB->set("underline", OpenGLTexFont::getUnderlineColor());
@@ -1168,8 +1166,6 @@ int			main(int argc, char** argv)
       renderer.setRadarSize(atoi(db.getValue("radarsize").c_str()));
     if (db.hasValue("mouseboxsize"))
       renderer.setMaxMotionFactor(atoi(db.getValue("mouseboxsize").c_str()));
-    if (db.hasValue("bigfont"))
-      renderer.setBigFont(db.getValue("bigfont") == "yes");
     if (db.hasValue("colorful"))
       renderer.setConsoleColorization(db.getValue("colorful") == "yes");
     if (db.hasValue("underline"))
