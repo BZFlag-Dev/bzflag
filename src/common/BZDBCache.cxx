@@ -5,6 +5,7 @@
 #include <string>
 #include "BZDBCache.h"
 
+float BZDBCache::maxLOD;
 float BZDBCache::tankHeight;
 
 void BZDBCache::init()
@@ -14,7 +15,9 @@ void BZDBCache::init()
 
 void BZDBCache::callback(const std::string &name, void *)
 {
-  if (name == StateDatabase::BZDB_TANKHEIGHT)
+  if (name == StateDatabase::BZDB_MAXLOD)
+	  maxLOD = BZDB->eval(StateDatabase::BZDB_MAXLOD);
+  else if (name == StateDatabase::BZDB_TANKHEIGHT)
     tankHeight = BZDB->eval(StateDatabase::BZDB_TANKHEIGHT);
 }
 

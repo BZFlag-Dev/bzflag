@@ -102,9 +102,6 @@ class SceneNode {
     virtual void	addRenderNodes(SceneRenderer&);
     virtual void	addShadowNodes(SceneRenderer&);
 
-    static void		callback(const std::string &name, void *userData);
-    static int		maxLOD; // cache of BZDB value
-
   private:
 			SceneNode(const SceneNode&);
     SceneNode&		operator=(const SceneNode&);

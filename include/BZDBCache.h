@@ -11,6 +11,7 @@ public:
 	static void init();
 
 
+	static float maxLOD;
 	static float tankHeight;
 
 

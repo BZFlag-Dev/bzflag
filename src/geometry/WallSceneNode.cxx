@@ -18,6 +18,7 @@
 #include "SceneRenderer.h"
 #include "PolyWallSceneNode.h"
 #include "StateDatabase.h"
+#include "BZDBCache.h"
 
 WallSceneNode::WallSceneNode() : numLODs(0),
 				elementAreas(NULL),
@@ -142,7 +143,7 @@ int			WallSceneNode::pickLevelOfDetail(
   // bump up LOD if view point is close to wall.
 
   // limit lod to maximum allowed
-  if (bestLOD > maxLOD) bestLOD = maxLOD;
+  if (bestLOD > BZDBCache::maxLOD) bestLOD = maxLOD;
 
   // return highest level required -- note that we don't care about
   // the view point because, being flat, the wall would always
