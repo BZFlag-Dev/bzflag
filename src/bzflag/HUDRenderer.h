@@ -121,7 +121,7 @@ protected:
   void		renderRoaming(SceneRenderer&);
   void		renderTimes(void);
   void		drawPlayerScore(const Player*,
-				float x1, float x2, float x3, float y);
+				float x1, float x2, float x3, float xs, float y);
   void		drawTeamScore(int team, float x, float y);
 
   void		makeCrack(float crackpattern[HUDNumCracks][(1 << HUDCrackLevels) + 1][2], int n, int l, float a);

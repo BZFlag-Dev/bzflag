@@ -144,7 +144,7 @@ DisplayMenu::DisplayMenu() : formatMenu(NULL)
   if (value == 0) {
     options->push_back(std::string("Not available"));
   } else {
-    options->push_back(std::string("Off"));
+    options->push_back(std::string("Off  (SLOWER)"));
     options->push_back(std::string("On"));
   }
   option->update();

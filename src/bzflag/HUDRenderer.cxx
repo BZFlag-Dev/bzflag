@@ -861,6 +861,9 @@ void			HUDRenderer::renderScoreboard(void)
     fm.drawString(x5, y0, 0, minorFontFace, minorFontSize, bdl->getLocalString(teamScoreLabel));
   const float dy = fm.getStrHeight(minorFontFace, minorFontSize, " ");
   int y = (int)(y0 - dy);
+  
+  // make room for the status marker
+  const float xs = x3 - fm.getStrLength(minorFontFace, minorFontSize, "+|");
 
   // print non-observing players sorted by score, print observers last
   int plrCount = 0;
@@ -918,19 +921,19 @@ void			HUDRenderer::renderScoreboard(void)
     if (myTurn) {
       setHuntIndicator(false); // don't hunt myself
       // if i have greater score than remote player draw my name here
-      drawPlayerScore(myTank, x1, x2, x3, (float)y);
+      drawPlayerScore(myTank, x1, x2, x3, xs, (float)y);
       drewMyScore = true;
       y -= (int)dy;
     }
     if(getHunt() && getHuntPosition() == i) setHuntIndicator(true);// set hunt indicator back to normal
-    drawPlayerScore(player, x1, x2, x3, (float)y);//then draw the remote player
+    drawPlayerScore(player, x1, x2, x3, xs, (float)y);//then draw the remote player
     y -= (int)dy;
   }
   if (!huntPlayerAlive && getHunting()) setHunting(false); //stop hunting if hunted player is dead
   if (!drewMyScore && (myTank->getTeam() != ObserverTeam)) {
     setHuntIndicator(false); // don't hunt myself
     // if my score is smaller or equal to last remote player draw my score here
-    drawPlayerScore(myTank, x1, x2, x3, (float)y);
+    drawPlayerScore(myTank, x1, x2, x3, xs, (float)y);
     y -= (int)dy;
     drewMyScore = true;
   }
@@ -939,12 +942,12 @@ void			HUDRenderer::renderScoreboard(void)
   y -= (int)dy;
   for (i = curMaxPlayers - 1; i >= curMaxPlayers - obsCount; --i) {
     RemotePlayer* player = World::getWorld()->getPlayer(players[i]);
-    drawPlayerScore(player, x1, x2, x3, (float)y);
+    drawPlayerScore(player, x1, x2, x3, xs, (float)y);
     y -= (int)dy;
   }
   if (!drewMyScore) {
     // if I am an observer, list my name
-    drawPlayerScore(myTank, x1, x2, x3, (float)y);
+    drawPlayerScore(myTank, x1, x2, x3, xs, (float)y);
   }
 
   delete[] players;
@@ -1527,7 +1530,7 @@ void			HUDRenderer::renderRoaming(SceneRenderer& renderer)
 }
 
 void			HUDRenderer::drawPlayerScore(const Player* player,
-					float x1, float x2, float x3, float y)
+                            float x1, float x2, float x3, float xs, float y)
 {
   // score
   char score[40], kills[40];
@@ -1544,24 +1547,38 @@ void			HUDRenderer::drawPlayerScore(const Player* player,
   else
     strcpy(kills, "");
 
-  // dim the font if we're dim
-  std::string playerInfo = dim ? ColorStrings[DimColor] : "";
-  // color
+
+  // team color
   TeamColor teamIndex = player->getTeam();
-  if (teamIndex < RogueTeam)
+  if (teamIndex < RogueTeam) {
     teamIndex = RogueTeam;
+  }
+
+  // dim the font if we're dim
+  const std::string dimString = dim ? ColorStrings[DimColor] : "";
+  
+  // authentication status
+  std::string statusInfo = dimString;
+  if (BZDBCache::colorful) {
+    statusInfo += ColorStrings[CyanColor];
+  } else {
+    statusInfo += ColorStrings[teamIndex];;
+  }
+  if (player->isAdmin()) {
+    statusInfo += '@';
+  } else if (player->isVerified()) {
+    statusInfo += '+';
+  } else if (player->isRegistered()) {
+    statusInfo += '-';
+  } else {
+    statusInfo = ""; // don't print
+  }
+
+  std::string playerInfo = dimString;
+  // team color
   playerInfo += ColorStrings[teamIndex];
-  // status
-  if (player->isAdmin())
-    playerInfo += '@';
-  else if (player->isVerified())
-    playerInfo += '+';
-  else if (player->isRegistered())
-    playerInfo += '-';
-  else
-    playerInfo += ' ';
   // callsign
-  playerInfo += ColorStrings[teamIndex] + player->getCallSign();
+  playerInfo += player->getCallSign();
   // email in parenthesis
   if (player->getEmailAddress()[0] != '\0')
     playerInfo += (std::string(" (") + player->getEmailAddress()) + ")";
@@ -1606,6 +1623,9 @@ void			HUDRenderer::drawPlayerScore(const Player* player,
     fm.drawString(x2, y, 0, minorFontFace, minorFontSize, kills);
   }
   fm.drawString(x3, y, 0, minorFontFace, minorFontSize, playerInfo);
+  if (statusInfo.size() > 0) {
+    fm.drawString(xs, y, 0, minorFontFace, minorFontSize, statusInfo);
+  }
 
   // draw hunting status
   const float x4 = x2 + (scoreLabelWidth - huntArrowWidth);
