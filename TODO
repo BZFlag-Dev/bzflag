@@ -9,6 +9,9 @@ THESE SHOULD HAPPEN BEFORE THE NEXT RELEASE:
 
 THESE ARE LOWER PRIORITY
 
+* extend player name cycling (like on /kick and /ban) to /poll kick and
+  /poll ban
+
 * reject ADDs on list server where players > maxplayers ditto for each team.
 
 * /identify reply should list groups you are in
