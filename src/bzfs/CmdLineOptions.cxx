@@ -493,8 +493,6 @@ static char **parseWorldOptions (const char *file, int &ac)
 
 void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
 {
-  delete[] flag;  flag = NULL;
-
   // prepare flag counts
   int i;
   bool allFlagsOut = false;
@@ -1131,83 +1129,47 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
     numFlags += options.flagCount[it->second];
   }
 
-  flag = new FlagInfo[numFlags];
+  FlagInfo::setSize(numFlags);
 
-  // prep flags
-  for (i = 0; i < numFlags; i++) {
-    flag[i].flag.type = Flags::Null;
-    flag[i].flag.status = FlagNoExist;
-    flag[i].flag.endurance = FlagNormal;
-    flag[i].flag.owner = NoPlayer;
-    flag[i].flag.position[0] = 0.0f;
-    flag[i].flag.position[1] = 0.0f;
-    flag[i].flag.position[2] = 0.0f;
-    flag[i].flag.launchPosition[0] = 0.0f;
-    flag[i].flag.launchPosition[1] = 0.0f;
-    flag[i].flag.launchPosition[2] = 0.0f;
-    flag[i].flag.landingPosition[0] = 0.0f;
-    flag[i].flag.landingPosition[1] = 0.0f;
-    flag[i].flag.landingPosition[2] = 0.0f;
-    flag[i].flag.flightTime = 0.0f;
-    flag[i].flag.flightEnd = 0.0f;
-    flag[i].flag.initialVelocity = 0.0f;
-    flag[i].player = -1;
-    flag[i].grabs = 0;
-    flag[i].required = false;
-  }
   int f = 0;
   if (options.gameStyle & TeamFlagGameStyle) {
     if (options.maxTeam[RedTeam] > 0) {
       for (int n = 0; n < options.numTeamFlags[RedTeam]; n++) {
-        flag[f].required = true;
-        flag[f].flag.type = Flags::RedTeam;
-        flag[f].flag.endurance = FlagNormal;
-        f++;
+        FlagInfo::flagList[f++].setRequiredFlag(Flags::RedTeam);
       }
     }
     if (options.maxTeam[GreenTeam] > 0) {
       for (int n = 0; n < options.numTeamFlags[GreenTeam]; n++) {
-        flag[f].required = true;
-        flag[f].flag.type = Flags::GreenTeam;
-        flag[f].flag.endurance = FlagNormal;
-        f++;
+        FlagInfo::flagList[f++].setRequiredFlag(Flags::GreenTeam);
       }
     }
     if (options.maxTeam[BlueTeam] > 0) {
       for (int n = 0; n < options.numTeamFlags[BlueTeam]; n++) {
-        flag[f].required = true;
-        flag[f].flag.type = Flags::BlueTeam;
-        flag[f].flag.endurance = FlagNormal;
-        f++;
+        FlagInfo::flagList[f++].setRequiredFlag(Flags::BlueTeam);
       }
     }
     if (options.maxTeam[PurpleTeam] > 0) {
       for (int n = 0; n < options.numTeamFlags[PurpleTeam]; n++) {
-        flag[f].required = true;
-        flag[f].flag.type = Flags::PurpleTeam;
-        flag[f].flag.endurance = FlagNormal;
-        f++;
+        FlagInfo::flagList[f++].setRequiredFlag(Flags::PurpleTeam);
       }
     }
   }
 
 
-  for (FlagTypeMap::iterator it2 = FlagType::getFlagMap().begin(); it2 != FlagType::getFlagMap().end(); ++it2) {
+  if (f < numFlags)
+    options.gameStyle |= int(SuperFlagGameStyle);
+  for (FlagTypeMap::iterator it2 = FlagType::getFlagMap().begin();
+       it2 != FlagType::getFlagMap().end(); ++it2) {
     FlagType *fDesc = it2->second;
 
     if ((fDesc != Flags::Null) && (fDesc->flagTeam == NoTeam)) {
-      if (options.flagCount[it2->second] > 0) {
-	for (int j = 0; j < options.flagCount[it2->second]; j++) {
-	  if (setRequiredFlag(flag[f], it2->second))
-	    f++;
-	}
-	options.gameStyle |= int(SuperFlagGameStyle);
+      for (int j = 0; j < options.flagCount[fDesc]; j++) {
+	FlagInfo::flagList[f++].setRequiredFlag(fDesc);
       }
     }
   }
   for (; f < numFlags; f++) {
-    flag[f].required = allFlagsOut;
-    options.gameStyle |= int(SuperFlagGameStyle);
+    FlagInfo::flagList[f].required = allFlagsOut;
   }
 
   // debugging

@@ -285,18 +285,18 @@ void handleFlagCmd(GameKeeper::Player *playerData, const char *message)
     bool onlyUnused = strncmp(message + 11, " unused", 7) == 0;
     for (int i = 0; i < numFlags; i++) {
       // see if someone had grabbed flag,
-      const int playerIndex = flag[i].player;
+      const int playerIndex = FlagInfo::flagList[i].player;
       otherData	= GameKeeper::Player::getPlayerByIndex(playerIndex);
       if (otherData && (!onlyUnused)) {
 	// tell 'em to drop it.
-	flag[i].player = -1;
-	flag[i].flag.status = FlagNoExist;
+	FlagInfo::flagList[i].player = -1;
+	FlagInfo::flagList[i].flag.status = FlagNoExist;
 	otherData->player.resetFlag();
 
 	void *buf, *bufStart = getDirectMessageBuffer();
 	buf = nboPackUByte(bufStart, playerIndex);
 	buf = nboPackUShort(buf, uint16_t(i));
-	buf = flag[i].flag.pack(buf);
+	buf = FlagInfo::flagList[i].flag.pack(buf);
 	broadcastMessage(MsgDropFlag, (char*)buf - (char*)bufStart, bufStart);
 
       }
@@ -306,24 +306,24 @@ void handleFlagCmd(GameKeeper::Player *playerData, const char *message)
 
   } else if (strncmp(message + 6, "up", 2) == 0) {
     for (int i = 0; i < numFlags; i++) {
-      if (flag[i].flag.type->flagTeam != ::NoTeam) {
+      if (FlagInfo::flagList[i].flag.type->flagTeam != ::NoTeam) {
 	// see if someone had grabbed flag.  tell 'em to drop it.
-	const int playerIndex = flag[i].player;
+	const int playerIndex = FlagInfo::flagList[i].player;
 	otherData	= GameKeeper::Player::getPlayerByIndex(playerIndex);
 	if (otherData) {
-	  flag[i].player = -1;
-	  flag[i].flag.status = FlagNoExist;
+	  FlagInfo::flagList[i].player = -1;
+	  FlagInfo::flagList[i].flag.status = FlagNoExist;
 	  otherData->player.resetFlag();
 
 	  void *buf, *bufStart = getDirectMessageBuffer();
 	  buf = nboPackUByte(bufStart, playerIndex);
 	  buf = nboPackUShort(buf, uint16_t(i));
-	  buf = flag[i].flag.pack(buf);
+	  buf = FlagInfo::flagList[i].flag.pack(buf);
 	  broadcastMessage(MsgDropFlag, (char*)buf - (char*)bufStart, bufStart);
 	}
-	flag[i].flag.status = FlagGoing;
-	if (!flag[i].required)
-	  flag[i].flag.type = Flags::Null;
+	FlagInfo::flagList[i].flag.status = FlagGoing;
+	if (!FlagInfo::flagList[i].required)
+	  FlagInfo::flagList[i].flag.type = Flags::Null;
 	sendFlagUpdate(i);
       }
     }
@@ -331,12 +331,14 @@ void handleFlagCmd(GameKeeper::Player *playerData, const char *message)
   } else if (strncmp(message + 6, "show", 4) == 0) {
     for (int i = 0; i < numFlags; i++) {
       char message[MessageLen];
-      sprintf(message, "%d p:%d r:%d g:%d i:%s s:%d p:%3.1fx%3.1fx%3.1f", i, flag[i].player,
-	      flag[i].required, flag[i].grabs, flag[i].flag.type->flagAbbv,
-	      flag[i].flag.status,
-	      flag[i].flag.position[0],
-	      flag[i].flag.position[1],
-	      flag[i].flag.position[2]);
+      sprintf(message, "%d p:%d r:%d g:%d i:%s s:%d p:%3.1fx%3.1fx%3.1f", i,
+	      FlagInfo::flagList[i].player, FlagInfo::flagList[i].required,
+	      FlagInfo::flagList[i].grabs,
+	      FlagInfo::flagList[i].flag.type->flagAbbv,
+	      FlagInfo::flagList[i].flag.status,
+	      FlagInfo::flagList[i].flag.position[0],
+	      FlagInfo::flagList[i].flag.position[1],
+	      FlagInfo::flagList[i].flag.position[2]);
       sendMessage(ServerPlayer, t, message);
     }
   } else {

@@ -209,7 +209,6 @@ static const char *msgString (u16 code);
 
 extern char hexDigest[50];
 extern int numFlags;
-extern FlagInfo *flag;
 extern u16 curMaxPlayers;
 extern TeamInfo team[NumTeams];
 extern char *worldDatabase;
@@ -1332,7 +1331,7 @@ saveFlagsState () // look at sendFlagUpdate() in bzfs.cxx ... very similar
   
   for (flagIndex = 0; flagIndex < numFlags; flagIndex++) {
 
-    if (flag[flagIndex].flag.status != FlagNoExist) {
+    if (FlagInfo::flagList[flagIndex].flag.status != FlagNoExist) {
       if ((length + sizeof(u16) + FlagPLen) > MaxPacketLen - 2*sizeof(u16)) {
         // packet length overflow
         nboPackUShort(bufStart, cnt);
@@ -1345,7 +1344,7 @@ saveFlagsState () // look at sendFlagUpdate() in bzfs.cxx ... very similar
       }
 
       buf = nboPackUShort(buf, flagIndex);
-      buf = flag[flagIndex].flag.pack(buf);
+      buf = FlagInfo::flagList[flagIndex].flag.pack(buf);
       length += sizeof(u16)+FlagPLen;
       cnt++;
     }

@@ -22,8 +22,17 @@
 
 /** FlagInfo describes a flag as it pertains to the world.
  */
-struct FlagInfo {
-  public:
+class FlagInfo {
+public:
+
+  FlagInfo();
+
+  void setRequiredFlag(FlagType *desc);
+
+  static void setSize(int numFlags);
+
+  static FlagInfo *flagList;
+
     // flag info
     Flag flag;
     // player index who has flag
@@ -37,15 +46,8 @@ struct FlagInfo {
     // number of shots on this flag
     int numShots;
 };
-
-extern FlagInfo *flag;
-
-
-bool setRequiredFlag(FlagInfo& flag, FlagType *desc);
-
-
 #else
-struct FlagInfo;
+class FlagInfo;
 #endif
 
 // Local Variables: ***

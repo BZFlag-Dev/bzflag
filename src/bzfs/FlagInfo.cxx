@@ -26,13 +26,41 @@
 /* public */
 
 // flags list
-FlagInfo *flag = NULL;
+FlagInfo *FlagInfo::flagList = NULL;
 
-bool setRequiredFlag(FlagInfo& flag, FlagType *desc)
+FlagInfo::FlagInfo()
 {
-  flag.required = true;
-  flag.flag.type = desc;
-  return true;
+  // prep flag
+  flag.type               = Flags::Null;
+  flag.status             = FlagNoExist;
+  flag.endurance          = FlagNormal;
+  flag.owner              = NoPlayer;
+  flag.position[0]        = 0.0f;
+  flag.position[1]        = 0.0f;
+  flag.position[2]        = 0.0f;
+  flag.launchPosition[0]  = 0.0f;
+  flag.launchPosition[1]  = 0.0f;
+  flag.launchPosition[2]  = 0.0f;
+  flag.landingPosition[0] = 0.0f;
+  flag.landingPosition[1] = 0.0f;
+  flag.landingPosition[2] = 0.0f;
+  flag.flightTime         = 0.0f;
+  flag.flightEnd          = 0.0f;
+  flag.initialVelocity    = 0.0f;
+  player                  = -1;
+  grabs                   = 0;
+}
+
+void FlagInfo::setSize(int numFlags)
+{
+  delete[] flagList;
+  flagList = new FlagInfo[numFlags];
+}
+
+void FlagInfo::setRequiredFlag(FlagType *desc)
+{
+  required = true;
+  flag.type = desc;
 }
 
 
