@@ -2909,7 +2909,7 @@ static WorldInfo *defineWorldFromFile(const char *filename)
 {
   // open file
 #ifdef _WIN32
-  ifstream input(filename, ios::in|ios::nocreate);
+	ifstream input(filename, ios::in);//|ios::nocreate);
 #else
   ifstream input(filename, ios::in);
 #endif

@@ -25,12 +25,7 @@
 
 /* insert any other broken OS conditionals here */
 #if !defined(_WIN32)
-#else
-#if defined(_WIN32)	// nocreate is defined in here for windows
-	#include <IOS.H>
 #endif
-#endif
-
 #include <iostream>
 using namespace std;
 
