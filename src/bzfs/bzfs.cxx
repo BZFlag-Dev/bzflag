@@ -4658,8 +4658,10 @@ static void shotFired(int playerIndex, void *buf, int len)
   firingInfo.unpack(buf);
 
   // verify playerId
-  if (firingInfo.shot.player != player[playerIndex].id)
+  if (firingInfo.shot.player != player[playerIndex].id) {
+    DEBUG2("shot playerid mismatch\n");
     return;
+  }
 
   // verify player flag
   if ((firingInfo.flag != NullFlag) && (firingInfo.flag != player[playerIndex].flag)) {
@@ -4672,6 +4674,7 @@ static void shotFired(int playerIndex, void *buf, int len)
   //  return;
 
   float shotSpeed = ShotSpeed;
+  float tankSpeed = TankSpeed;
   float lifetime = ReloadTime;
   switch (firingInfo.flag) {
     case LaserFlag:
@@ -4690,17 +4693,27 @@ static void shotFired(int playerIndex, void *buf, int len)
       shotSpeed = 0.0f;
       lifetime *= ShockAdLife;
       break;
+    case VelocityFlag:
+      tankSpeed *= VelocityAd;
     default:
       break;
   }
+  // FIXME, we should look at the actual TankSpeed ;-)
+  shotSpeed += tankSpeed;
 
   // verify lifetime
-  if (firingInfo.lifetime != lifetime)
+  if (firingInfo.lifetime != lifetime) {
+    DEBUG2("shot lifetime mismatch %f %f\n", firingInfo.lifetime, lifetime);
     return;
+  }
 
   // verify velocity
-  if (hypotf(firingInfo.shot.vel[0], hypotf(firingInfo.shot.vel[1], firingInfo.shot.vel[2])) != shotSpeed)
+  if (hypotf(firingInfo.shot.vel[0], hypotf(firingInfo.shot.vel[1],
+      firingInfo.shot.vel[2])) > shotSpeed * 1.01f) {
+    DEBUG2("shot over speed %f %f\n", hypotf(firingInfo.shot.vel[0],
+	  hypotf(firingInfo.shot.vel[1], firingInfo.shot.vel[2])), shotSpeed);
     return;
+  }
 
   // FIXME verify position
 
