@@ -40,7 +40,7 @@
 # PyrBase      8.20
 # PyrHeight   10.25
 #
-#box
+#pyramid
 #position     x     y     0.0
 #rotation     deg
 #size         8.20  8.20  10.25
@@ -52,14 +52,6 @@
 #rotation deg -- not yet supported
 #size 30.0 30.0 0.0 -- height not yet supported
 #color <team number>
-#end
-
-# Minimal world
-
-#pyramid
-#position -200.0 -200.0 0.0
-#rotation 2.0
-#size     5.0 7.0 10.0
 #end
 
 # top of the world
@@ -390,23 +382,112 @@ from 15
 to 13
 end
 
+# red team base
 base
 position -370.0 0.0 0.0
 size 30.0 30.0 30.0
 color 1
 end
+# green team base
 base
 position 370.0 0.0 0.0
 size 30.0 30.0 30.0
 color 2
 end
+# blue team base
 base
 position 0.0 -370.0 0.0
 size 30.0 30.0 30.0
 color 3
 end
+# purple team base
 base
 position 0.0 370.0 0.0
 size 30.0 30.0 30.0
 color 4
+end
+
+# pyramids around red base
+pyramid
+position -350.0 -40.0 0.0
+rotation 0.0
+size     10.0 10.0 10.0
+end
+pyramid
+position -350.0 40.0 0.0
+rotation 0.0
+size     10.0 10.0 10.0
+end
+pyramid
+position -330.0 -20.0 0.0
+rotation 0.0
+size     10.0 10.0 10.0
+end
+pyramid
+position -330.0 20.0 0.0
+rotation 0.0
+size     10.0 10.0 10.0
+end
+# pyramids around green base
+pyramid
+position 350.0 -40.0 0.0
+rotation 0.0
+size     10.0 10.0 10.0
+end
+pyramid
+position 350.0 40.0 0.0
+rotation 0.0
+size     10.0 10.0 10.0
+end
+pyramid
+position 330.0 -20.0 0.0
+rotation 0.0
+size     10.0 10.0 10.0
+end
+pyramid
+position 330.0 20.0 0.0
+rotation 0.0
+size     10.0 10.0 10.0
+end
+# pyramids around blue base
+pyramid
+position -40.0 -350.0 0.0
+rotation 0.0
+size     10.0 10.0 10.0
+end
+pyramid
+position 40.0 -350.0 0.0
+rotation 0.0
+size     10.0 10.0 10.0
+end
+pyramid
+position -20.0 -330.0 0.0
+rotation 0.0
+size     10.0 10.0 10.0
+end
+pyramid
+position 20.0 -330.0 0.0
+rotation 0.0
+size     10.0 10.0 10.0
+end
+# pyramids around purple base
+pyramid
+position -40.0 350.0 0.0
+rotation 0.0
+size     10.0 10.0 10.0
+end
+pyramid
+position 40.0 350.0 0.0
+rotation 0.0
+size     10.0 10.0 10.0
+end
+pyramid
+position -20.0 330.0 0.0
+rotation 0.0
+size     10.0 10.0 10.0
+end
+pyramid
+position 20.0 330.0 0.0
+rotation 0.0
+size     10.0 10.0 10.0
 end
