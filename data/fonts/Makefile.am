@@ -12,6 +12,7 @@ EXTRA_DIST = \
 	TogaSansBold_32.png	\
 	TogaSerifBold_16.png	\
 	TogaSerifBold_32.png	\
+	VeraMonoBold_6.png	\
 	VeraMonoBold_8.png	\
 	VeraMonoBold_12.png	\
 	VeraMonoBold_16.png	\
