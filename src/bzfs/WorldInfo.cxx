@@ -135,6 +135,11 @@ void WorldInfo::addLink(int from, int to)
   }
 }
 
+void WorldInfo::addZone(const CustomZone *zone)
+{
+  entryZones.addZone( zone );
+}
+
 float WorldInfo::getMaxWorldHeight()
 {
   return maxHeight;
@@ -242,6 +247,16 @@ InBuildingType WorldInfo::inBuilding(ObstacleLocation **location,
   if (location != NULL)
     *location = (ObstacleLocation *)NULL;
   return NOT_IN_BUILDING;
+}
+
+bool WorldInfo::getZonePoint(const std::string &qualifier, float *pt)
+{
+  return entryZones.getZonePoint(qualifier, pt);
+}
+
+void WorldInfo::finishWorld()
+{
+  entryZones.calculateQualifierLists();
 }
 
 int WorldInfo::packDatabase()

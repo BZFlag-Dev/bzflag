@@ -147,6 +147,14 @@ SOURCE=..\..\src\bzfs\CustomWorld.cxx
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\src\bzfs\CustomZone.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\bzfs\EntryZones.cxx
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\src\bzfs\FlagInfo.cxx
 # End Source File
 # Begin Source File
@@ -272,6 +280,14 @@ SOURCE=..\..\src\bzfs\CustomWeapon.h
 # Begin Source File
 
 SOURCE=..\..\src\bzfs\CustomWorld.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\bzfs\CustomZone.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\bzfs\EntryZones.h
 # End Source File
 # Begin Source File
 

@@ -9,34 +9,44 @@
  * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
-#ifndef __WORLDFILELOCATION_H__
-#define __WORLDFILELOCATION_H__
+#ifndef __CUSTOMZONE_H__
+#define __CUSTOMZONE_H__
 
-// system headers
-#include <iostream>
+/* interface header */
+#include "WorldFileLocation.h"
 
-// bzfs-specific headers
-#include "WorldFileObject.h"
+/* local implementation headers */
+#include "WorldInfo.h"
+#include "EntryZones.h"
 
 
-class WorldFileLocation : public WorldFileObject {
+class CustomZone : public WorldFileLocation {
 public:
-  WorldFileLocation();
+  CustomZone();
   virtual bool read(const char *cmd, std::istream&);
   virtual void write(WorldInfo*) const;
 
+  const QualifierList &getQualifiers() const;
+  float getArea() const;
+  void getRandomPoint(float *pt) const;
 protected:
-  float pos[3];
-  float rotation;
-  float size[3];
+  QualifierList qualifiers;
 };
 
-inline void WorldFileLocation::write(WorldInfo*) const {}
+inline const QualifierList& CustomZone::getQualifiers() const
+{
+  return qualifiers;
+}
 
-#endif /* __WORLDFILELOCATION_H__ */
+inline float CustomZone::getArea() const
+{
+  return size[0] * size[1] * size[2];
+}
+
+#endif  /* __CUSTOMZONE_H__ */
 
 // Local variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***

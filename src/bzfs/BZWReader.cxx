@@ -22,6 +22,7 @@
 #include "CustomBase.h"
 #include "CustomWeapon.h"
 #include "CustomWorld.h"
+#include "CustomZone.h"
 
 extern CmdLineOptions *clOptions;
 extern BasesList bases;
@@ -99,6 +100,8 @@ bool readWorldStream(std::istream& input, const char *location, std::vector<Worl
       newObject = new CustomBase;
     } else if (strcasecmp(buffer, "weapon") == 0) {
       newObject = new CustomWeapon;
+    } else if (strcasecmp(buffer, "zone") == 0) {
+      newObject = new CustomZone;
     } else if (strcasecmp(buffer, "world") == 0) {
       if (!gotWorld) {
 	newObject = new CustomWorld();
@@ -183,5 +186,6 @@ WorldInfo *defineWorldFromFile(const char *filename)
   
   // clean up
   emptyWorldFileObjectList(list);
+  world->finishWorld();
   return world;
 }

@@ -24,6 +24,10 @@ bzfs_SOURCES = \
 	CustomWeapon.h \
 	CustomWorld.cxx \
 	CustomWorld.h \
+	CustomZone.cxx \
+	CustomZone.h \
+	EntryZones.cxx \
+	EntryZones.h \
 	FlagInfo.cxx \
 	FlagInfo.h \
 	ListServerConnection.cxx \

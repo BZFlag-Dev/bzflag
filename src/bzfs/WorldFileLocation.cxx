@@ -13,9 +13,10 @@
 #ifdef _MSC_VER
 #pragma warning( 4: 4786 )
 #endif
-
+#include "common.h"
 #include <math.h>
 
+#include "WorldFileObject.h"
 #include "WorldFileLocation.h"
 
 WorldFileLocation::WorldFileLocation()

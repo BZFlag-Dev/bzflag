@@ -16,8 +16,7 @@
 #include <iostream>
 #include <vector>
 
-// bzfs-specific headers
-#include "WorldInfo.h"
+class WorldInfo;
 
 
 class WorldFileObject {

@@ -17,7 +17,13 @@
 
 /* system interface headers */
 #include <vector>
+#include <string>
+#include "EntryZones.h"
 
+class WorldFileLocation;
+class CustomZone;
+
+typedef std::vector<std::string> QualifierList;
 
 typedef enum { NOT_IN_BUILDING, IN_BASE, IN_BOX_NOTDRIVETHROUGH, IN_BOX_DRIVETHROUGH, IN_PYRAMID, IN_TELEPORTER } InBuildingType;
 
@@ -77,7 +83,11 @@ public:
   void addTeleporter(float x, float y, float z, float r, float w, float d, float h, float b, bool drive = false, bool shoot = false);
   void addBase(float x, float y, float z, float r, float w, float d, float h, bool drive = false, bool shoot = false);
   void addLink(int from, int to);
+  void addZone(const CustomZone *zone);
+  void addEntryZone( QualifierList &qualifiers, WorldFileLocation *zone );
   float getMaxWorldHeight();
+  bool getZonePoint(const std::string &qualifier, float *pt);
+  void finishWorld();
   int packDatabase();
   void *getDatabase() const;
   int getDatabaseSize() const;
@@ -110,6 +120,7 @@ private:
   ObstacleLocationList bases;
   PyramidList	       pyramids;
   TeleporterList       teleporters;
+  EntryZones	       entryZones;
   char *database;
   int databaseSize;
 };

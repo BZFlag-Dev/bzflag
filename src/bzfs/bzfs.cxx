@@ -2718,16 +2718,22 @@ static void getSpawnLocation(int playerId, float* spawnpos, float *azimuth)
     float pos[3];
     bool foundspot = false;
     while (!foundspot) {
-      if (clOptions->gameStyle & TeamFlagGameStyle) {
-        // don't spawn close to map edges in CTF mode
-        pos[0] = ((float)bzfrand() - 0.5f) * size * 0.6f;
-        pos[1] = ((float)bzfrand() - 0.5f) * size * 0.6f;
+      if (world->getZonePoint(std::string(Team::getName(team)), pos)) {
+	if (onGroundOnly)
+	  pos[2] = 0.0f;
       }
       else {
-        pos[0] = ((float)bzfrand() - 0.5f) * (size - 2.0f * tankRadius);
-        pos[1] = ((float)bzfrand() - 0.5f) * (size - 2.0f * tankRadius);
+        if (clOptions->gameStyle & TeamFlagGameStyle) {
+          // don't spawn close to map edges in CTF mode
+          pos[0] = ((float)bzfrand() - 0.5f) * size * 0.6f;
+          pos[1] = ((float)bzfrand() - 0.5f) * size * 0.6f;
+	}
+        else {
+          pos[0] = ((float)bzfrand() - 0.5f) * (size - 2.0f * tankRadius);
+          pos[1] = ((float)bzfrand() - 0.5f) * (size - 2.0f * tankRadius);
+	}
+        pos[2] = onGroundOnly ? 0.0f : ((float)bzfrand() * maxWorldHeight);
       }
-      pos[2] = onGroundOnly ? 0.0f : ((float)bzfrand() * maxWorldHeight);
       tries++;
 
       int type = world->inBuilding(&building, pos[0], pos[1], pos[2],
