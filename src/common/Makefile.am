@@ -5,6 +5,7 @@ AM_CFLAGS = -D_XOPEN_SOURCE
 AM_CPPFLAGS = -I$(top_srcdir)/include
 
 libCommon_a_SOURCES  =			\
+	AutoCompleter.cxx		\
 	BZDBCache.cxx			\
 	Bundle.cxx			\
 	BundleMgr.cxx			\

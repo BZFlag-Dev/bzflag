@@ -4,6 +4,7 @@ noinst_HEADERS =			\
 	Address.h			\
 	AdnsHandler.h			\
 	AnsiCodes.h			\
+	AutoCompleter.h 		\
 	BaseSceneNodeGenerator.h	\
 	BoxSceneNodeGenerator.h		\
 	BSPSceneDatabase.h		\
