@@ -733,6 +733,7 @@ int			myMain(int argc, char** argv)
 int			main(int argc, char** argv)
 #endif /* defined(_WIN32) */
 {
+  initDebug();
   WordFilter *filter = (WordFilter *)NULL;
 
   argv0 = argv[0];
@@ -1288,6 +1289,7 @@ int			main(int argc, char** argv)
   delete platformFactory;
   delete bm;
 
+  termDebug();
   // clean up singletons
   //  delete FILEMGR;
   //  delete CMDMGR;
