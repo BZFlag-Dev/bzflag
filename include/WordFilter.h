@@ -14,11 +14,11 @@
 #define bzfrand()	((double)rand() / ((double)RAND_MAX + 1.0))
 
 /* WordFilter will load a list of words and phrases from a file or one at
- * a time or manually.	
+ * a time or manually.
  *
  * Loading from file assumes that words/phrases are listed one per line;
- * comments are possible using the shell-style "#" delimiter.	 Words are 
- * matched case-insensitive; punctuation and non-newline white-space are 
+ * comments are possible using the shell-style "#" delimiter.	 Words are
+ * matched case-insensitive; punctuation and non-newline white-space are
  * always ignored with the default filter.
  *
  * By default (aggressive filtering), the filter will match many
@@ -55,9 +55,9 @@
  * only root words need to be provided.	 For foreign languages, it may be
  * necessary to list all tenses of certain verbs, unless the rules can be
  * strictly and simply quantified.
- * 
+ *
  * There is also a simple filter mode which is not as resource intensive and
- * performs a literal match with the filter words (so you have to specify 
+ * performs a literal match with the filter words (so you have to specify
  * absolutely everything you want to filter and all variations).	It is still
  * case-insensitive and ignores punctuation.
  */

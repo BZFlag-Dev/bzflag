@@ -24,10 +24,10 @@ public:
 	BundleMgr(const std::string &path, const std::string &bundleName);
 	BundleMgr::~BundleMgr();
 	Bundle *getBundle(const std::string &locale, bool setcur = true);
-	
+
 	static Bundle *getCurrentBundle();
 	static bool getLocaleList(std::vector<std::string> *list);
-	
+
 private:
 	BundleMgr(const BundleMgr &xBundleMgr);
 	BundleMgr& operator=(const BundleMgr &xBundleMgr);

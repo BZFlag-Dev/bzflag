@@ -186,8 +186,8 @@ class string_util {
       return result;
     }
     // get a vector of strings from a string, using all of chars of the delims
-    // string as separators 
-    static std::vector<std::string> string_util::tokenize(std::string in, std::string delims){  
+    // string as separators
+    static std::vector<std::string> string_util::tokenize(std::string in, std::string delims){
       std::vector<std::string> out;
       std::ostringstream outputString;
       std::istringstream inStream (in);
