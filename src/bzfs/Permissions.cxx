@@ -71,6 +71,8 @@ bool removeGroup(PlayerAccessInfo& info, const std::string &group)
 
 bool hasPerm(PlayerAccessInfo& info, AccessPerm right)
 {
+  if (!info.verified)
+    return false
   if (info.explicitDenys.test(right))
     return false;
   if (info.explicitAllows.test(right))
