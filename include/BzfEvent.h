@@ -50,6 +50,8 @@ class BzfKeyEvent {
     enum Button {
 			NoButton = 0,
 			Pause,
+
+			/* Arrows + Home/End pad */
 			Home,
 			End,
 			Left,
@@ -59,7 +61,27 @@ class BzfKeyEvent {
 			PageUp,
 			PageDown,
 			Insert,
+			/* Ascii character */
 			Delete,
+			/* Numeric keypad */
+			Kp0,
+			Kp1,
+			Kp2,
+			Kp3,
+			Kp4,
+			Kp5,
+			Kp6,
+			Kp7,
+			Kp8,
+			Kp9,
+			Kp_Period,
+			Kp_Divide,
+			Kp_Multiply,
+			Kp_Minus,
+			Kp_Plus,
+			Kp_Enter,
+			Kp_Equals,
+			/* Function keys */
 			F1,
 			F2,
 			F3,
@@ -72,6 +94,16 @@ class BzfKeyEvent {
 			F10,
 			F11,
 			F12,
+			/* Miscellaneous function keys */
+			Help,
+			Print,
+			Sysreq,
+			Break,
+			Menu,
+			Power,
+			Euro,
+			Undo,
+			/* Mouse buttons */
 			LeftMouse,
 			MiddleMouse,
 			RightMouse,
@@ -82,6 +114,7 @@ class BzfKeyEvent {
 			MouseButton8,
 			MouseButton9,
 			MouseButton10,
+			/* Joystick buttons */
 			BZ_Button_1,
 			BZ_Button_2,
 			BZ_Button_3,

@@ -228,96 +228,168 @@ bool SDLDisplay::getKey(const SDL_Event& sdlEvent, BzfKeyEvent& key) const
   SDLKey sym     = sdlEvent.key.keysym.sym;
   SDLMod mod     = sdlEvent.key.keysym.mod;
 
-  if (unicode != 0) {
-    char ch;
-    if ((unicode & 0xFF80) == 0) {
-      ch = unicode & 0x7F;
-    }
-    else {
-      return false;
-    }
-    key.ascii = ch;
+  key.ascii = 0;
+  switch (sym) {
+  case SDLK_PAUSE:
+    key.button = BzfKeyEvent::Pause;
+    break;
+  case SDLK_HOME:
+    key.button = BzfKeyEvent::Home;
+    break;
+  case SDLK_END:
+    key.button = BzfKeyEvent::End;
+    break;
+  case SDLK_LEFT:
+    key.button = BzfKeyEvent::Left;
+    break;
+  case SDLK_RIGHT:
+    key.button = BzfKeyEvent::Right;
+    break;
+  case SDLK_UP:
+    key.button = BzfKeyEvent::Up;
+    break;
+  case SDLK_DOWN:
+    key.button = BzfKeyEvent::Down;
+    break;
+  case SDLK_PAGEUP:
+    key.button = BzfKeyEvent::PageUp;
+    break;
+  case SDLK_PAGEDOWN:
+    key.button = BzfKeyEvent::PageDown;
+    break;
+  case SDLK_INSERT:
+    key.button = BzfKeyEvent::Insert;
+    break;
+  case SDLK_DELETE:
+    key.button = BzfKeyEvent::Delete;
+    break;
+  case SDLK_F1:
+    key.button = BzfKeyEvent::F1;
+    break;
+  case SDLK_F2:
+    key.button = BzfKeyEvent::F2;
+    break;
+  case SDLK_F3:
+    key.button = BzfKeyEvent::F3;
+    break;
+  case SDLK_F4:
+    key.button = BzfKeyEvent::F4;
+    break;
+  case SDLK_F5:
+    key.button = BzfKeyEvent::F5;
+    break;
+  case SDLK_F6:
+    key.button = BzfKeyEvent::F6;
+    break;
+  case SDLK_F7:
+    key.button = BzfKeyEvent::F7;
+    break;
+  case SDLK_F8:
+    key.button = BzfKeyEvent::F8;
+    break;
+  case SDLK_F9:
+    key.button = BzfKeyEvent::F9;
+    break;
+  case SDLK_F10:
+    key.button = BzfKeyEvent::F10;
+    break;
+  case SDLK_F11:
+    key.button = BzfKeyEvent::F11;
+    break;
+  case SDLK_F12:
+    key.button = BzfKeyEvent::F12;
+    break;
+  case SDLK_KP0:
+    key.button = BzfKeyEvent::Kp0;
+    break;
+  case SDLK_KP1:
+    key.button = BzfKeyEvent::Kp1;
+    break;
+  case SDLK_KP2:
+    key.button = BzfKeyEvent::Kp2;
+    break;
+  case SDLK_KP3:
+    key.button = BzfKeyEvent::Kp3;
+    break;
+  case SDLK_KP4:
+    key.button = BzfKeyEvent::Kp4;
+    break;
+  case SDLK_KP5:
+    key.button = BzfKeyEvent::Kp5;
+    break;
+  case SDLK_KP6:
+    key.button = BzfKeyEvent::Kp6;
+    break;
+  case SDLK_KP7:
+    key.button = BzfKeyEvent::Kp7;
+    break;
+  case SDLK_KP8:
+    key.button = BzfKeyEvent::Kp8;
+    break;
+  case SDLK_KP9:
+    key.button = BzfKeyEvent::Kp9;
+    break;
+  case SDLK_KP_PERIOD:
+    key.button = BzfKeyEvent::Kp_Period;
+    break;
+  case SDLK_KP_DIVIDE:
+    key.button = BzfKeyEvent::Kp_Divide;
+    break;
+  case SDLK_KP_MULTIPLY:
+    key.button = BzfKeyEvent::Kp_Multiply;
+    break;
+  case SDLK_KP_MINUS:
+    key.button = BzfKeyEvent::Kp_Minus;
+    break;
+  case SDLK_KP_PLUS:
+    key.button = BzfKeyEvent::Kp_Plus;
+    break;
+  case SDLK_KP_ENTER:
+    key.button = BzfKeyEvent::Kp_Enter;
+    break;
+  case SDLK_KP_EQUALS:
+    key.button = BzfKeyEvent::Kp_Equals;
+    break;
+  case SDLK_HELP:
+    key.button = BzfKeyEvent::Help;
+    break;
+  case SDLK_PRINT:
+    key.button = BzfKeyEvent::Print;
+    break;
+  case SDLK_SYSREQ:
+    key.button = BzfKeyEvent::Sysreq;
+    break;
+  case SDLK_BREAK:
+    key.button = BzfKeyEvent::Break;
+    break;
+  case SDLK_MENU:
+    key.button = BzfKeyEvent::Menu;
+    break;
+  case SDLK_POWER:
+    key.button = BzfKeyEvent::Power;
+    break;
+  case SDLK_EURO:
+    key.button = BzfKeyEvent::Euro;
+    break;
+  case SDLK_UNDO:
+    key.button = BzfKeyEvent::Undo;
+    break;
+  default:
     key.button = BzfKeyEvent::NoButton;
-    if (sym == SDLK_DELETE) {
-      key.ascii  = 0;
-      key.button = BzfKeyEvent::Delete;
-    }
-  } else {
-    key.ascii = 0;
-    switch (sym) {
-    case SDLK_PAUSE:
-      key.button = BzfKeyEvent::Pause;
-      break;
-    case SDLK_HOME:
-      key.button = BzfKeyEvent::Home;
-      break;
-    case SDLK_END:
-      key.button = BzfKeyEvent::End;
-      break;
-    case SDLK_LEFT:
-      key.button = BzfKeyEvent::Left;
-      break;
-    case SDLK_RIGHT:
-      key.button = BzfKeyEvent::Right;
-      break;
-    case SDLK_UP:
-      key.button = BzfKeyEvent::Up;
-      break;
-    case SDLK_DOWN:
-      key.button = BzfKeyEvent::Down;
-      break;
-    case SDLK_PAGEUP:
-      key.button = BzfKeyEvent::PageUp;
-      break;
-    case SDLK_PAGEDOWN:
-      key.button = BzfKeyEvent::PageDown;
-      break;
-    case SDLK_INSERT:
-      key.button = BzfKeyEvent::Insert;
-      break;
-    case SDLK_DELETE:
-      key.button = BzfKeyEvent::Delete;
-      break;
-    case SDLK_F1:
-      key.button = BzfKeyEvent::F1;
-      break;
-    case SDLK_F2:
-      key.button = BzfKeyEvent::F2;
-      break;
-    case SDLK_F3:
-      key.button = BzfKeyEvent::F3;
-      break;
-    case SDLK_F4:
-      key.button = BzfKeyEvent::F4;
-      break;
-    case SDLK_F5:
-      key.button = BzfKeyEvent::F5;
-      break;
-    case SDLK_F6:
-      key.button = BzfKeyEvent::F6;
-      break;
-    case SDLK_F7:
-      key.button = BzfKeyEvent::F7;
-      break;
-    case SDLK_F8:
-      key.button = BzfKeyEvent::F8;
-      break;
-    case SDLK_F9:
-      key.button = BzfKeyEvent::F9;
-      break;
-    case SDLK_F10:
-      key.button = BzfKeyEvent::F10;
-      break;
-    case SDLK_F11:
-      key.button = BzfKeyEvent::F11;
-      break;
-    case SDLK_F12:
-      key.button = BzfKeyEvent::F12;
-      break;
-    default:
-      return false;
-    }
+    break;
   }
+
+  if (key.button == BzfKeyEvent::NoButton)
+    if (unicode) {
+      if ((unicode & 0xFF80))
+	return false;
+      key.ascii = unicode & 0x7F;
+    } else {
+      if ((sym >= SDLK_FIRST) && (sym <= SDLK_DELETE))
+	key.ascii = sym;
+      else
+	return false;
+    }
 
   key.shift = 0;
   if (mod & KMOD_SHIFT)
