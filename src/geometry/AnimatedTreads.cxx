@@ -19,29 +19,29 @@
 using namespace TankGeometryUtils;
 
 
-const static int treadCount = 64;
+static const int treadCount = 64;
 
-const static float fullLength = 6.0f;
+static const float fullLength = 6.0f;
 
-const static float treadHeight = 1.4f;
-const static float treadInside = 0.875f;
-const static float treadOutside = 1.4f;
-const static float treadThickness = 0.2f;
-const static float treadWidth = treadOutside - treadInside;
-const static float treadRadius = 0.5f * treadHeight;
-const static float treadYCenter = treadInside + (0.5f * treadWidth);
-const static float treadLength = ((fullLength - (2.0f * treadRadius)) * 2.0f) +
+static const float treadHeight = 1.4f;
+static const float treadInside = 0.875f;
+static const float treadOutside = 1.4f;
+static const float treadThickness = 0.2f;
+static const float treadWidth = treadOutside - treadInside;
+static const float treadRadius = 0.5f * treadHeight;
+static const float treadYCenter = treadInside + (0.5f * treadWidth);
+static const float treadLength = ((fullLength - (2.0f * treadRadius)) * 2.0f) +
                                  (M_PI * 2.0f * treadRadius);
-const static float treadTexCoordLen = (float)treadCount;
-const static float treadTexCoordScale = treadLength / treadTexCoordLen;
+static const float treadTexCoordLen = (float)treadCount;
+static const float treadTexCoordScale = treadLength / treadTexCoordLen;
 
-const static float wheelRadius = 0.45f;
-const static float wheelWidth = treadWidth * 0.9f;
-const static float wheelSpacing = (fullLength - treadHeight) / 3.0f;
-const static float wheelTexCoordLen = 1.0f;
+static const float wheelRadius = 0.45f;
+static const float wheelWidth = treadWidth * 0.9f;
+static const float wheelSpacing = (fullLength - treadHeight) / 3.0f;
+static const float wheelTexCoordLen = 1.0f;
 
-const static float wheelInsideTexRad = 0.4f;
-const static float wheelOutsideTexRad = 0.5f;
+static const float wheelInsideTexRad = 0.4f;
+static const float wheelOutsideTexRad = 0.5f;
 
 
 
