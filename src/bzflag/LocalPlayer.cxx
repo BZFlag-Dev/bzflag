@@ -597,7 +597,16 @@ void			LocalPlayer::doUpdateMotion(float dt)
     newPos[0] = tmpPos[0] + timeStep * newVelocity[0];
     newPos[1] = tmpPos[1] + timeStep * newVelocity[1];
     newPos[2] = tmpPos[2] + timeStep * newVelocity[2];
-    if (newPos[2]<groundLimit && newVelocity[2]<0) newPos[2] = groundLimit;
+    if (newPos[2]<groundLimit && newVelocity[2]<0) {
+      // Hit lower limit, stop falling
+      newPos[2] = groundLimit;
+      if (location == Exploding) {
+	// tank pieces reach the ground, friction
+	// stop them, & mainly player view
+	newPos[0] = tmpPos[0];
+	newPos[1] = tmpPos[1];
+      }
+    }
 
     // see if we hit anything.  if not then we're done.
     obstacle = getHitBuilding(tmpPos, tmpAzimuth, newPos, newAzimuth, phased,
