@@ -1,6 +1,7 @@
 noinst_HEADERS =		\
 	3DOptionsManager.h	\
 	Address.h		\
+	AdnsHandler.h		\
 	BSPSceneDatabase.h	\
 	BZDBCache.h		\
 	BaseBuilding.h		\
