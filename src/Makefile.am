@@ -1,2 +1,2 @@
-SUBDIRS = net common obstacle platform ogl scene geometry bzflag bzfs bzfls \
-	bzfrelay
+SUBDIRS = bzrelay common net bzfs bzfls \
+	geometry obstacle ogl scene platform bzflag
