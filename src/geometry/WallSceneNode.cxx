@@ -340,7 +340,7 @@ int			WallSceneNode::splitWall(const GLfloat* plane,
   // no count how many vertices are on either side of the plane
   // (including vertices created when splitting)
   int frontCount = 0, backCount = 0;
-  bool prevInFront = initInFront, inFront;
+  bool prevInFront = initInFront != 0, inFront;
   for (j = count - 1, i = 0; i < count; j = i, i++) {
     GLfloat d = vertex[i][0] * plane[0] + vertex[i][1] * plane[1] +
 					vertex[i][2] * plane[2] + plane[3];
@@ -374,7 +374,7 @@ int			WallSceneNode::splitWall(const GLfloat* plane,
   // fill in new polygons
   frontCount = 0;
   backCount = 0;
-  prevInFront = initInFront;
+  prevInFront = initInFront != 0;
   for (j = count - 1, i = 0; i < count; j = i, i++) {
     GLfloat d = vertex[i][0] * plane[0] + vertex[i][1] * plane[1] +
 					vertex[i][2] * plane[2] + plane[3];

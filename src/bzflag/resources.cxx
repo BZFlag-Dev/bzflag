@@ -133,9 +133,9 @@ ostream&		operator<<(ostream& s, const ResourceDatabase& db)
   const int count = db.names.size();
   for (int i = 0; i < count; i++) {
     int length = db.names[i].length();
-    s << db.names[i] << "\t";
+    s << db.names[i].c_str() << "\t";
     for (; length < 24; length += 8) s << "\t";
-    s << db.values[i] << endl;
+    s << db.values[i].c_str() << endl;
   }
   return s;
 }

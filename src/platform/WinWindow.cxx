@@ -362,11 +362,11 @@ void			WinWindow::getGammaRamps(WORD* ramps)
   PROC proc = wglGetProcAddress("wglGetDeviceGammaRamp3DFX");
   if (proc != NULL) {
     GammaRamp3DFX wglGetDeviceGammaRamp3DFX = (GammaRamp3DFX)proc;
-    has3DFXGamma = wglGetDeviceGammaRamp3DFX(hDCChild, ramps + 3 * 256);
+    has3DFXGamma = wglGetDeviceGammaRamp3DFX(hDCChild, ramps + 3 * 256) != FALSE;
   }
 
   // get device gamma ramps
-  hasGamma = GetDeviceGammaRamp(hDCChild, ramps);
+  hasGamma = GetDeviceGammaRamp(hDCChild, ramps) != FALSE;
 }
 
 void			WinWindow::setGammaRamps(const WORD* ramps)

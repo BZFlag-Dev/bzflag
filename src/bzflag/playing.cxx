@@ -3442,7 +3442,7 @@ static std::string	getCacheDirectoryName()
   }
 
   name += "\\bzflag-cache";
-  mkdir(name.getString());
+  mkdir(name.c_str());
   return name;
 
 #elif defined(macintosh)
@@ -3499,7 +3499,7 @@ static void cleanWorldCache()
 	  std::string pattern = worldPath + "/*.bwc";
 
 	  WIN32_FIND_DATA findData;
-	  HANDLE h = FindFirstFile(pattern, &findData);
+	  HANDLE h = FindFirstFile(pattern.c_str(), &findData);
 	  if (h != INVALID_HANDLE_VALUE) {
 	    FILETIME oldestTime = findData.ftLastAccessTime;
 	    oldestFile = strdup(findData.cFileName);
@@ -3560,7 +3560,7 @@ static void markOld(std::string &fileName)
 {
 #ifdef _WIN32
   FILETIME ft;
-  HANDLE h = CreateFile(fileName, FILE_WRITE_ATTRIBUTES|FILE_WRITE_EA, 0, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+  HANDLE h = CreateFile(fileName.c_str(), FILE_WRITE_ATTRIBUTES|FILE_WRITE_EA, 0, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
   if (h != INVALID_HANDLE_VALUE) {
 
     SYSTEMTIME st;
