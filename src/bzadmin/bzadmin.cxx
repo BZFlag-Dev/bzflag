@@ -89,8 +89,7 @@ int main(int argc, char** argv) {
     return 1;
   }
   if (clOptions.showHelp) {
-	char szVersion[128]
-    cout<<"bzadmin "<<getAppVerstion()<<endl;
+    cout<<"bzadmin "<<getAppVersion()<<endl;
     op.printUsage(cout, argv[0]);
     cout<<"CALLSIGN@HOST[:PORT] [COMMAND] [COMMAND] ..."<<endl<<endl;
     op.printHelp(cout);
