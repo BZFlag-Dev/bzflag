@@ -1,10 +1,6 @@
 recent bugs
 ------------
 
-- In a non jump world, if you drive into a pyramid and building at the same
-  time, your tank will make a small jump (hop) backwards (in air). Probably
-  do to the unsticky fix. Perhaps we can live with this.
-
 - Player continues to see the locked on me message after death until 
   shooter locked onto a different target. (Nidhoggr reported this)
 

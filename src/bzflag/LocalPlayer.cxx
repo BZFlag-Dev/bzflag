@@ -565,7 +565,8 @@ void			LocalPlayer::doUpdateMotion(float dt)
     // exit will be in the normal direction
     newPos[0] += movementMax * normalStuck[0];
     newPos[1] += movementMax * normalStuck[1];
-    newPos[2] += movementMax * normalStuck[2];
+    if (World::getWorld()->allowJumping() || (getFlag() == Flags::Jumping))
+      newPos[2] += movementMax * normalStuck[2];
     // compute time for all other kind of movements
     timeStep -= deltaTime;
   }
