@@ -13,11 +13,19 @@ build-stamp:
 	dh_testdir
 
 	# Add here commands to compile the package.
+ifneq (,$(findstring debug,$(DEB_BUILD_OPTIONS)))
 	case $(DEB_BUILD_ARCH) in \
 		i386) $(MAKE) linux-i386;; \
 		powerpc) $(MAKE) linux-ppc;; \
 		*) $(MAKE) linux;; \
 	esac
+else
+	case $(DEB_BUILD_ARCH) in \
+		i386) $(MAKE) linux-i386-debug;; \
+		powerpc) $(MAKE) linux-ppc-debug;; \
+		*) $(MAKE) linux-debug;; \
+	esac
+endif
 	$(MAKE) INSTALL_DATA_DIR=/usr/share/bzflag all
 
 	touch build-stamp
@@ -68,7 +76,9 @@ bzflag: build
 	dh_installinfo -p$@
 #	dh_undocumented -p$@
 	dh_installchangelogs -p$@
+ifneq (,$(findstring debug,$(DEB_BUILD_OPTIONS)))
 	dh_strip -p$@
+endif
 	dh_link -p$@
 	dh_compress -p$@
 	dh_fixperms -p$@
@@ -103,7 +113,9 @@ bzflag-server: build
 	dh_installinfo -p$@
 #	dh_undocumented -p$@ bzfquery.pl.6
 	dh_installchangelogs -p$@
+ifneq (,$(findstring debug,$(DEB_BUILD_OPTIONS)))
 	dh_strip -p$@
+endif
 	dh_link -p$@
 	dh_compress -p$@
 	dh_fixperms -p$@
