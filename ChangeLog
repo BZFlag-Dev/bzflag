@@ -4,8 +4,9 @@
 BZFlag 1.10.4
 -------------
 
+* Specify a world file on the Start Server menu gui - Sean Morrison
+* Server sends warning to privmsg sender to an invalid target - Lars Luthman
 * bots now fully handle collision check - Tupone Alfredo
-* Server sends warning to sender of privmsg to an invalid target - Lars Luthman
 * -filterCallsigns filters email too now - Lars Luthman
 * allow multiple team flags per team thru -c 5 - Dave Brosius
 * -maxidle handles idle / paused players the same - Frank Thilo
@@ -48,8 +49,8 @@ BZFlag 1.10.4
 * Base wall and top textures - Jeff Myers
 * Hunter name used for kill, lock, and info messages - Jeff Myers
 * Increase resolution of textures to look better - Jeff Myers
-* Merge texture mode into quality setting - Jeff Myers
-* Add experimental quality for enhanced effects- Jeff Myers
+* Merge texture mode into quality seting - Jeff Myers
+* Add experimental quality setting for enhanced effects- Jeff Myers
 
 BZFlag 1.10.2
 -------------
