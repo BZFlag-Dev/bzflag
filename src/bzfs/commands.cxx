@@ -767,10 +767,20 @@ void handleSetpassCmd(int t, const char *message)
   }
 
   std::string pass;
-  if (strlen(message) < 9) {
+  if (strlen(message) < 10) {
     sendMessage(ServerPlayer, t, "Not enough parameters: usage /setpass PASSWORD");
   } else {
-    pass = message + 9;
+    size_t startPosition = 9;
+    /* skip any leading whitespace */
+    while ((startPosition < strlen(message)) &&
+	   (isspace(message[startPosition]))) {
+      startPosition++;
+    }
+    /* sanity -- make sure it was not /setpasss */
+    if (startPosition == 9) {
+      sendMessage(ServerPlayer, t, "Invalid format: usage /setpass PASSWORD");
+    }
+    pass = message + startPosition;
     setUserPassword(player[t].regName.c_str(), pass);
     updateDatabases();
     char text[MessageLen];
@@ -1077,7 +1087,7 @@ void handlePollCmd(int t, const char *message)
   /* find the start of the command */
   size_t startPosition = 0;
   while ((startPosition < arguments.size()) &&
-	 (isWhitespace(arguments[startPosition]))) {
+	 (isspace(arguments[startPosition]))) {
     startPosition++;
   }
 
@@ -1086,7 +1096,7 @@ void handlePollCmd(int t, const char *message)
   /* find the end of the command */
   size_t endPosition = startPosition + 1;
   while ((endPosition < arguments.size()) &&
-	 (!isWhitespace(arguments[endPosition]))) {
+	 (!isspace(arguments[endPosition]))) {
     endPosition++;
   }
 
@@ -1114,7 +1124,7 @@ void handlePollCmd(int t, const char *message)
     /* find the start of the player name */
     startPosition = 0;
     while ((startPosition < arguments.size()) &&
-	   (isWhitespace(arguments[startPosition]))) {
+	   (isspace(arguments[startPosition]))) {
       startPosition++;
     }
     // do not include a starting quote, if given
@@ -1127,7 +1137,7 @@ void handlePollCmd(int t, const char *message)
     /* find the end of the player name */
     endPosition = arguments.size() - 1;
     while ((endPosition > 0) &&
-	   (isWhitespace(arguments[endPosition]))) {
+	   (isspace(arguments[endPosition]))) {
       endPosition--;
     }
     // do not include a trailing quote, if given
@@ -1269,12 +1279,12 @@ void handleVoteCmd(int t, const char *message)
   /* find the start of the vote answer */
   size_t startPosition = 0;
   while ((startPosition < voteCmd.size()) &&
-	 (isWhitespace(voteCmd[startPosition]))) {
+	 (isspace(voteCmd[startPosition]))) {
     startPosition++;
   }
 
   /* stash the answer ('yes', 'no', etc) in lowercase to simplify comparison */
-  for (size_t i = startPosition;  i < voteCmd.size() && !isWhitespace(voteCmd[i]); i++) {
+  for (size_t i = startPosition;  i < voteCmd.size() && !isspace(voteCmd[i]); i++) {
     answer += tolower(voteCmd[i]);
   }
 
