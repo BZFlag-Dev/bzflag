@@ -105,7 +105,7 @@ void RadarRenderer::drawTank(float x, float y, float z, bool realSize)
   const float tankRadius = BZDBCache::tankRadius;
 
   // 'ps' is pixel scale, see below
-  float minSize = 1.5f + (2.0f * ps);
+  float minSize = (2.1f * ps);
   GLfloat size;
   if (tankRadius < minSize) {
     size = minSize;
@@ -121,10 +121,9 @@ void RadarRenderer::drawTank(float x, float y, float z, bool realSize)
   else if (realSize) {
     float halfWidth = 0.5f * BZDBCache::tankWidth;
     float halfLength = 0.5f * BZDBCache::tankLength;
-    if (halfWidth < minSize) {
+    // maintain the aspect ratio if it isn't square
+    if ((halfWidth < minSize) ||  (halfLength < minSize)) {
       halfWidth = minSize;
-    }
-    if (halfLength < minSize) {
       halfLength = minSize;
     }
     glRectf(x - halfWidth, y - halfLength, x + halfWidth, y + halfLength);
