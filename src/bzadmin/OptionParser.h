@@ -80,6 +80,37 @@ protected:
   protected:
     T& var;
   };
+  
+  /** This is a specialization for @c string variables. It copies the 
+      entire parameter instead of just the first word (which the
+      stream operator would have done). */
+  class VariableParser<string> : public Parser {
+  public:
+    VariableParser(string& variable, const string& usageText, 
+		   const string& helpText) 
+      : Parser(usageText, helpText), var(variable) { }
+    virtual int parse(char** argv) {
+      var = argv[0];
+      return 1;
+    }
+  protected:
+    string& var;
+  };
+  
+  /** This is a specialization for @c bool variables. It does not
+      take a parameter, but just sets the variable to @c true. */
+  class VariableParser<bool> : public Parser {
+  public:
+    VariableParser(bool& variable, const string& usageText, 
+		   const string& helpText) 
+      : Parser(usageText, helpText), var(variable) { }
+    virtual int parse(char**) {
+      var = true;
+      return 0;
+    }
+  protected:
+    bool& var;
+  };
 
   map<string, Parser*> parsers;
   vector<string> parameters;
@@ -94,20 +125,6 @@ bool OptionParser::registerVariable(const string& option, T& variable,
   VariableParser<T>* parser = new VariableParser<T>(variable, usage, help);
   parsers[option] = parser;
   return true;
-}
-
-
-template<>
-int OptionParser::VariableParser<string>::parse(char** argv) {
-  var = argv[0];
-  return 1;
-}
-
-
-template<>
-int OptionParser::VariableParser<bool>::parse(char**) {
-  var = true;
-  return 0;
 }
 
 
