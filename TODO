@@ -10,6 +10,12 @@ THESE SHOULD HAPPEN BEFORE THE NEXT RELEASE:
 * describe rabbit hunt in man page (and in-game help?)
 
 * support gameinfo requests as one time udp packets (if udp)
+  This should function like the old broadcast server locator
+  and include all the same information that bzfls tracks.
+  We should allow server info, player and score lists over udp
+  from any udp address, not just a "connected" player.
+  bzfls should use this udp to confirm server availability
+  before falling back to tcp pipe for the same msgs.
 
 THESE ARE LOWER PRIORITY
 
