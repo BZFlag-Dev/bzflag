@@ -69,6 +69,8 @@ bzflag_SOURCES =			\
 	MainWindow.h			\
 	MenuDefaultKey.h		\
 	MenuDefaultKey.cxx		\
+	motd.h				\
+	motd.cxx				\
 	OptionsMenu.cxx			\
 	OptionsMenu.h			\
 	Player.cxx			\
