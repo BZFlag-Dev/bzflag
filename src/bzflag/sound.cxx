@@ -379,7 +379,7 @@ typedef struct {
 } SoundEvent;
 
 /* list of events currently pending */
-static SoundEvent	events[MaxEvents];		
+static SoundEvent	events[MaxEvents];
 static int		portUseCount;
 static double		endTime;
 

@@ -37,7 +37,7 @@ class HUDDialog {
     HUDuiControl*		getFocus() const;
     void			setFocus(HUDuiControl*);
 
-    
+
 
   protected:
     const HUDuiControlList&	getControls() const { return list; }

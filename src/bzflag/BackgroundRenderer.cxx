@@ -680,7 +680,7 @@ void			BackgroundRenderer::drawGroundGrid(
       glVertex2f(x0 + i, y0 + yhalf);
     }
   glEnd();
-	
+
   /* z lines */
   if (doShadows) glColor3f(0.5f, 0.75f, 0.0f);
   else glColor3f(0.3f, 0.4f, 0.0f);
@@ -1089,7 +1089,7 @@ void			BackgroundRenderer::doInitDisplayLists()
 	glTexCoord2f(uvScale * cloudRepeats * squareShape[1][0],
 		     uvScale * cloudRepeats * squareShape[1][1]);
 	glVertex3fv(cloudsInner[1]);
-	
+
 	glColor4f(1.0f, 1.0f, 1.0f, minAlpha);
 	glTexCoord2f(cloudRepeats * squareShape[2][0],
 		     cloudRepeats * squareShape[2][1]);
@@ -1098,7 +1098,7 @@ void			BackgroundRenderer::doInitDisplayLists()
 	glTexCoord2f(uvScale * cloudRepeats * squareShape[2][0],
 		     uvScale * cloudRepeats * squareShape[2][1]);
 	glVertex3fv(cloudsInner[2]);
-	
+
 	glColor4f(1.0f, 1.0f, 1.0f, minAlpha);
 	glTexCoord2f(cloudRepeats * squareShape[3][0],
 		     cloudRepeats * squareShape[3][1]);
@@ -1107,7 +1107,7 @@ void			BackgroundRenderer::doInitDisplayLists()
 	glTexCoord2f(uvScale * cloudRepeats * squareShape[3][0],
 		     uvScale * cloudRepeats * squareShape[3][1]);
 	glVertex3fv(cloudsInner[3]);
-	
+
 	glColor4f(1.0f, 1.0f, 1.0f, minAlpha);
 	glTexCoord2f(cloudRepeats * squareShape[0][0],
 		     cloudRepeats * squareShape[0][1]);

@@ -19,8 +19,8 @@
 
 #include "PlatformFactory.h"
 
-class MacPlatformFactory : public PlatformFactory 
-{  
+class MacPlatformFactory : public PlatformFactory
+{
   public:
 			MacPlatformFactory();
 			~MacPlatformFactory();

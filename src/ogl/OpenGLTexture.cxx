@@ -72,7 +72,7 @@ OpenGLTexture::Rep::Rep(int _width, int _height,
 				repeat(_repeat),
 				internalFormat(_internalFormat),
 				maxFilter(_maxFilter)
-				
+
 {
   // check for texture object extension
   if (hasTextureObject < 0) {

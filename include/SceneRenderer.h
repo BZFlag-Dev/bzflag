@@ -73,6 +73,7 @@ class SceneRenderer {
     boolean		useDepthComplexity() const;
     boolean		useWireframe() const;
     boolean		useHiddenLine() const;
+    boolean		useEnhancedRadar() const;
     boolean		isLastFrame() const;
     boolean		isSameFrame() const;
     ViewType		getViewType() const;
@@ -91,6 +92,7 @@ class SceneRenderer {
     void		setDepthComplexity(boolean on);
     void		setWireframe(boolean on);
     void		setHiddenLine(boolean on);
+    void		setEnhancedRadar(boolean on);
     void		setDim(boolean on);
     void		setViewType(ViewType);
     void		setMaxLOD(int maxLOD);
@@ -187,6 +189,7 @@ class SceneRenderer {
     boolean		useDepthComplexityOn;
     boolean		useWireframeOn;
     boolean		useHiddenLineOn;
+    int			useEnhancedRadarOn;
     boolean		useFogHack;
     boolean		useZBufferOn;
     boolean		useStencilOn;

@@ -28,7 +28,7 @@ class ViewFrustum {
 			ViewFrustum();
 			~ViewFrustum();
 
-    const GLfloat*	getEye() const;	
+    const GLfloat*	getEye() const;
     const GLfloat*	getDirection() const;
     const GLfloat*	getUp() const;
     const GLfloat*	getRight() const;

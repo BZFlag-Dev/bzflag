@@ -324,7 +324,7 @@ void			OpenGLGStateState::resetOpenGLState() const
   }
   if (sorted.hasMaterial) {
     glDisable(GL_LIGHTING);
-    glDisable(GL_COLOR_MATERIAL);	
+    glDisable(GL_COLOR_MATERIAL);
   }
   if (unsorted.hasBlending) {
     glDisable(GL_BLEND);
@@ -385,13 +385,13 @@ void			OpenGLGStateState::setOpenGLState(
       else {
 	sorted.material.execute();
 	glEnable(GL_LIGHTING);
-	glEnable(GL_COLOR_MATERIAL);	
+	glEnable(GL_COLOR_MATERIAL);
       }
     }
     else {
       if (oldState->sorted.hasMaterial) {
 	glDisable(GL_LIGHTING);
-	glDisable(GL_COLOR_MATERIAL);	
+	glDisable(GL_COLOR_MATERIAL);
       }
     }
 
@@ -1026,7 +1026,7 @@ void			OpenGLGState::initGLState()
   glDisable(GL_TEXTURE_2D);
   glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
   glDisable(GL_LIGHTING);
-  glDisable(GL_COLOR_MATERIAL);	
+  glDisable(GL_COLOR_MATERIAL);
   glDisable(GL_BLEND);
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
   glDisable(GL_LINE_SMOOTH);

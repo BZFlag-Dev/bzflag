@@ -7,7 +7,7 @@ bzflag.cxx :660
   ifstream resourceStream(getConfigFileName(), ios::in | ios::nocreate);
   ios::nocreate is not part of the Nov97 ANSI C++ Draft. See for yourself:
   http://www.cygnus.com/misc/wp/nov97/lib-iostreams.html#lib.iostreams.base
-  
+
   I put this:
 #ifdef __MWERKS__ // identifies metrowerks compiler
 		ifstream resourceStream(getConfigFileName(), ios::in | ios::nocreate);
@@ -19,7 +19,7 @@ bzflag.cxx :672
 	getConfigFile2 () is undefined...
 
 #if !defined(_WIN32) & !defined(macintosh)
-	
+
 bzflag.cxx 112:
 	we dont't have that home-directory stuff...
 #if !defined(_WIN32) & !defined(macintosh)
@@ -34,16 +34,16 @@ bzflag.cxx 773:
 bzflag.cxx 780:
 #elif defined( macintosh )
 	char *username = "mac user"; // temporary fix only, need system api call here later
-	
+
 *********************************
 Compiler Warnings in bzflag.cxx:
 *********************************
-	
+
 	These functions need prototypes, I just put them at top of bzflag.cxx for now.
 
 void	dumpResources(BzfDisplay* display, SceneRenderer& renderer);
 void	printFatalError(const char* fmt, ...);
-				
+
 ok, bzflag.cxx compiles! Probably some run-time issues will arise, however
 
 ********************************

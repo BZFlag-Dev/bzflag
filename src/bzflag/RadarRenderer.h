@@ -19,6 +19,7 @@
 #define	BZF_RADAR_RENDERER_H
 
 #include "common.h"
+#include "Obstacle.h"
 
 class SceneRenderer;
 class World;
@@ -42,7 +43,7 @@ class RadarRenderer {
 
     void		render(SceneRenderer&, boolean blank = False);
     void		freeList();
-    void		makeList(boolean);
+    void		makeList(boolean, SceneRenderer&);
 
   private:
     // no copying
@@ -53,6 +54,9 @@ class RadarRenderer {
     void		makeNoiseTexture();
     void		drawShot(const ShotPath*);
     void		drawTank(float x, float y, float z, float ps);
+
+    static float	colorScale(const Obstacle& o, boolean enhanced);
+    static float	transScale(const Obstacle& o);
 
     void		doInitContext();
     static void		initContext(void*);
@@ -70,6 +74,8 @@ class RadarRenderer {
     GLuint		list;
     unsigned char	*noise;
     OpenGLTexture	*noiseTexture;
+    static const float	colorFactor;
+    static const float	transFactor;
 };
 
 //

@@ -41,7 +41,7 @@ void MacInitSIOUXSettings ();
 void MacInitToolbox ();
 void MacWaitForArgs ();
 
- 
+
 bool gInBackground     = false;
 bool gSleepTime        = 60;
 RgnHandle   gCursorRgn = 0;
@@ -52,7 +52,7 @@ AEEventHandlerUPP gQuitUPP;
 int    argc;
 char **argv;
 
-pascal OSErr MacAEOpenDocs (AppleEvent *event, AppleEvent *reply, SInt32 handlerRef) { 
+pascal OSErr MacAEOpenDocs (AppleEvent *event, AppleEvent *reply, SInt32 handlerRef) {
 
   return noErr;
 
@@ -75,21 +75,21 @@ void MacLaunchServer (int argc, const char **argv) {
 //  AEAddressDesc address;
 //  TargetID targetID;
 //  LaunchParamBlockRec launchRecord;
-  
+
   FSSpec server;
   int i;
-  
+
   printf ("server args\n");
-  
+
   for (i = 0; i < argc; i++)
     printf ("%s ", argv[i]);
-    
+
   printf ("\n");
-  
+
   __path2fss(SERVER_PATH, &server);
   FinderLaunch(1, &server);
-  
-  
+
+
 }
 
 // Wait for an apple event to send command-line args
@@ -97,28 +97,28 @@ void MacWaitForArgs () {
 
   int wait = 0;
   UnsignedWide t1, t0;
-  
+
   Microseconds (&t0);
-  
+
   // Wait for 1 second
   while (wait < 1) {
-  
+
     MacOneEvent ();
-    
+
     Microseconds (&t1);
     wait = (t1.lo - t0.lo) / 1000000;
   }
 }
 
 void MacInitAppleEvents () {
-  
+
   OSErr	osErr;
-  
-  gOpenDocsUPP  = NewAEEventHandlerProc ((ProcPtr) MacAEOpenDocs);  
+
+  gOpenDocsUPP  = NewAEEventHandlerProc ((ProcPtr) MacAEOpenDocs);
   gQuitUPP      = NewAEEventHandlerProc ((ProcPtr) MacAEQuit);
-  
+
 	osErr = AEInstallEventHandler (kCoreEventClass, kAEOpenDocuments,  gOpenDocsUPP, 0L,false);
-														
+
 	osErr = AEInstallEventHandler (kCoreEventClass, kAEQuitApplication,  gQuitUPP, 0L,false);
 
 }
@@ -132,12 +132,12 @@ void MacInitSIOUXSettings () {
   SIOUXSetTitle ("\pDebug output");
 }
 
-void MacInitToolbox () 
+void MacInitToolbox ()
 {
 	MaxApplZone ();
 	MoreMasters ();
 	MoreMasters ();
-	
+
 	InitGraf((Ptr) &qd.thePort);
 	InitFonts();
 	InitWindows();
@@ -157,30 +157,30 @@ void MacOneEvent () {
 
   gotEvent = WaitNextEvent(everyEvent,&eventRec,gSleepTime,gCursorRgn);
   if (gotEvent) {
-    
+
     switch (eventRec.what) {
-    
+
       case updateEvt:
   			BeginUpdate((WindowPtr)eventRec.message);
         EndUpdate((WindowPtr)eventRec.message);
   		  break;
-  		  
+
   		case osEvt:
-  		
+
   		  switch( (eventRec.message >> 24) & 0x000000FF) {
-    		  
+
     		    case suspendResumeMessage:
   				     gInBackground = (eventRec.message & resumeFlag) != 1;
-  				     gSleepTime = gInBackground ? MAC_BG_SLEEP : MAC_FG_SLEEP;		
-  			    break;  		  
+  				     gSleepTime = gInBackground ? MAC_BG_SLEEP : MAC_FG_SLEEP;
+  			    break;
     		}
         break;
-      
+
       case kHighLevelEvent:
         AEProcessAppleEvent(&eventRec);
         break;
     }
-    
+
     SIOUXHandleOneEvent (&eventRec);
   }
 }
@@ -193,21 +193,21 @@ int main () {
   MacInitToolbox ();
   MacInitAppleEvents ();
   MacWaitForArgs ();
-  
-  
-  
+
+
+
   MacInitSIOUXSettings ();
   MacInitGUSIHook ();
-  
-  
+
+
   argc = ccommand (&argv);
-  
-  
-  
+
+
+
 //  atexit (MyExit);
- 
-  
+
+
   bzf_main (argc, argv);
 
   return 0;
-} 
+}

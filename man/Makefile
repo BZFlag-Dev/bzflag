@@ -33,13 +33,13 @@ sourceform:
 	sed -e 's/\.\([1-8]\)s$$/.\1/' |			\
 	xargs -l10 $(MAKE) $(MFLAGS)
 
-# generate packed compiled nroff 
+# generate packed compiled nroff
 packed: sourceform
 	$(PRINTSRC) |						\
 	sed -e 's/\.[1-8]s$$/\.z/' |				\
 	xargs -l10 $(MAKE) $(MFLAGS)
 
-# generate gzipped compiled nroff 
+# generate gzipped compiled nroff
 gzipped: sourceform
 	$(PRINTSRC) |						\
 	sed -e 's/\.[1-8]s$$/\.gz/' |				\

@@ -195,7 +195,7 @@ BZFS_PORT " on all interfaces.\n"
 
 static void		printl(int level, int priority, const char* msg, ...)
 {
-  va_list args; 
+  va_list args;
 
   /* filter out unwanted messages */
   if (debugLevel < level)
@@ -278,7 +278,7 @@ static int		stringToAddress(struct in_addr* addr, const char* string)
     memcpy(addr, hp->h_addr_list[0], sizeof(*addr));
     return 0;
   }
-  
+
   addr->s_addr = inet_addr(string);
   if (addr->s_addr == INADDR_NONE)
     return -1;
@@ -1309,7 +1309,7 @@ parseServerArg:
   /* start listening */
   if (startListening(&listenOn, &reconnectOn) < 0)
     done = 1;
- 
+
   /* main loop */
   while (!done) {
     /* prepare select bitfields */

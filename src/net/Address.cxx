@@ -29,7 +29,7 @@
 // Address
 //
 
-#ifndef GUSI_20 
+#ifndef GUSI_20
   Address			Address::localAddress("");
 #endif
 

@@ -326,7 +326,7 @@ static void		parse(int argc, char** argv,
 	usage();
       }
       if (strlen(argv[i]) >= sizeof(startupInfo.multicastInterface))
-	printFatalError("Interface name too long.");	
+	printFatalError("Interface name too long.");
       else
 	strcpy(startupInfo.multicastInterface, argv[i]);
     }
@@ -588,7 +588,7 @@ static void		parse(int argc, char** argv,
     }
     else if (i == argc-1) {
       if (strlen(argv[i]) >= sizeof(startupInfo.serverName)) {
-	printFatalError("Server name too long.  Ignoring.");	
+	printFatalError("Server name too long.  Ignoring.");
       }
       else {
 	strcpy(startupInfo.serverName, argv[i]);
@@ -612,7 +612,7 @@ void			dumpResources(BzfDisplay* display,
 {
   // collect new configuration
 
-  db.addValue("udpnet", startupInfo.useUDPconnection ? "yes" : "no");	
+  db.addValue("udpnet", startupInfo.useUDPconnection ? "yes" : "no");
   db.addValue("callsign", startupInfo.callsign);
   db.addValue("team", Team::getName(startupInfo.team));
   db.addValue("server", startupInfo.serverName);
@@ -692,6 +692,8 @@ void			dumpResources(BzfDisplay* display,
   db.addValue("joystick", startupInfo.joystick ? "yes" : "no");
   db.addValue("joystickname", startupInfo.joystickName);
 
+  db.addValue("enhancedradar", renderer.useEnhancedRadar() ? "yes" : "no");
+
   // don't save these configurations
   db.removeValue("window");
   db.removeValue("multisample");
@@ -739,7 +741,7 @@ int			main(int argc, char** argv)
   // init libs
 
   //init_packetcompression();
-  
+
   // check time bomb
   if (timeBombBoom()) {
     printFatalError("This release expired on %s. \n"
@@ -882,8 +884,8 @@ int			main(int argc, char** argv)
 			startupInfo.useUDPconnection=false;
 		}
 	}
-        
-   
+
+
     // ignore window name in config file (it's used internally)
     db.removeValue("window");
     db.removeValue("multisample");
@@ -1119,6 +1121,9 @@ int			main(int argc, char** argv)
       renderer.setShowFlagHelp(db.getValue("showflaghelp") == "yes");
     if (db.hasValue("showscore"))
       renderer.setScore(db.getValue("showscore") == "yes");
+
+    if (db.hasValue("enhancedradar"))
+      renderer.setEnhancedRadar(db.getValue("enhancedradar") == "yes");
   }
 
   // grab the mouse only if allowed

@@ -158,8 +158,8 @@ Contributions
 Patched should be entered into the patch tracking system on
 http://sourceforge.net/projects/bzflag/  If you like you may also
 send mail to either the BZFlag development mailing list, or
-Tim@Rikers.org (the development mailing list is prefered) to discuess 
-contributions to the official BZFlag source code.  Small changes can be 
+Tim@Rikers.org (the development mailing list is prefered) to discuss
+contributions to the official BZFlag source code.  Small changes can be
 attached to the mail in 'cvs diff' format.
 
 
@@ -232,7 +232,7 @@ way. To stress test the new way the Client now always forces to relay
 even if Multicasting is available. Please use an older client if you
 need to run multicasting.
 
-This release is compatible with older networking. If this clients connects 
+This release is compatible with older networking. If this clients connects
 to an older server the normal TCP based networking is used. Also if an older
 client connects to a new server the same happens. Only if a newer client
 and a new server connect the new protocol is engaged. You can see it on
@@ -254,9 +254,9 @@ a) you are behind a NAT router that is not forwarding UDP port 17200 to your
 
 b) you are behind a firewall or a desktop firewall (e.g. ZoneAlarm) that is
    blocking incoming UDP traffic. Please reconfigure the firewall or disable
-   ZoneAlert for the game, for more intelligent desktop firewalls alike 
+   ZoneAlert for the game, for more intelligent desktop firewalls alike
    AtGuard just set them up to let UDP port 17200 to 17220 through.
 
 CU on the battlefield
-	
+
 	Onkel Frank

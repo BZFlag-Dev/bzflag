@@ -19,7 +19,7 @@
 #endif
 
 class MacWindow : public BzfWindow {
-  
+
   public:
 			MacWindow(const MacDisplay*, MacVisual*);
 			~MacWindow();
@@ -47,7 +47,7 @@ class MacWindow : public BzfWindow {
     void	setGamma(float);
     float	getGamma() const;
     boolean	hasGammaControl() const;
-    
+
     void    makeCurrent();
     void    swapBuffers();
     void	makeContext();
@@ -58,11 +58,11 @@ class MacWindow : public BzfWindow {
 
 #ifdef USE_DSP
 	CGrafPtr  window;
-#else    
+#else
     WindowPtr  window;
 #endif
     AGLContext context;
-    
+
 };
 
 #endif // BZF_WINWINDOW_H

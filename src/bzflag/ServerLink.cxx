@@ -155,7 +155,7 @@ ServerLink::ServerLink(const Address& serverAddress, int port, int number) :
 	const boolean okay = (WaitForSingleObject(hConnected, 5000) == WAIT_OBJECT_0);
 	if(!okay)
 		TerminateThread(hThread ,1);
-	
+
 	// Do some cleanup
 	CloseHandle(hConnected);
 	CloseHandle(hThread);
@@ -168,7 +168,7 @@ ServerLink::ServerLink(const Address& serverAddress, int port, int number) :
   i = recv(query, (char*)version, 8, 0);
   if (i < 8)
     goto done;
-  
+
   sprintf(cServerVersion,"Server version: '%8s'",version);
   printError(cServerVersion);
 
@@ -222,14 +222,14 @@ ServerLink::ServerLink(const Address& serverAddress, int port, int number) :
   int nfound = select(fd+1, NULL, (fd_set*)&read_set, NULL,
 			(struct timeval*)(blockTime >= 0 ? &timeout : NULL));
 */
-  
+
 //  printf ("select\n");
 //  printf("waiting...");
 //  wait = 100000000;
 //  while(wait > 0)
 //    wait--;
 //  printf("done\n");
-  
+
   if (err < 0) {
     close(fd);
     fd = -1;
@@ -416,7 +416,7 @@ void			ServerLink::enqueuePacket(int op, int rseqno, void *msg, int n)
 	}
 
 	if (op == SEND) {
-		moving=uqueue; 
+		moving=uqueue;
 	} else {
 		moving=dqueue;
 		// did the last packet wrap around or is OOB?
@@ -455,7 +455,7 @@ void			ServerLink::disqueuePacket(int op, int /*rseqno*/)
 	}
 }
 
-void* 			ServerLink::assembleSendPacket(uint32_t* length) 
+void* 			ServerLink::assembleSendPacket(uint32_t* length)
 {
 	struct PacketQueue *moving = uqueue;
 	unsigned char *assemblybuffer;
@@ -463,21 +463,21 @@ void* 			ServerLink::assembleSendPacket(uint32_t* length)
  	unsigned char *buf;
 
 	if (!moving) {
-		*length = 0;	
+		*length = 0;
 		return NULL;
 	}
 
 	in = n = 8192;
 
 	assemblybuffer= (unsigned char *)malloc(n);
-	
+
 	buf = assemblybuffer;
   	buf = (unsigned char *)nboPackUShort(buf, 0xfeed);
   	buf = (unsigned char *)nboPackUShort(buf, lastRecvPacketNo);
   	buf = (unsigned char *)nboPackUShort(buf, moving->length);
   	buf = (unsigned char *)nboPackUShort(buf, moving->seqno);
 	n-=8;
-	n-= moving->length; 
+	n-= moving->length;
 	if (n>2) {
 		memcpy((unsigned char *)buf, (unsigned char *)moving->data, moving->length);
 		buf += moving->length;
@@ -490,7 +490,7 @@ void* 			ServerLink::assembleSendPacket(uint32_t* length)
 		*length=0;
 		return assemblybuffer;
 	}
-		
+
   	buf = (unsigned char *)nboPackUShort(buf, 0xffff);
 	n-=2;
 	*length = (in - n);
@@ -500,7 +500,7 @@ void* 			ServerLink::assembleSendPacket(uint32_t* length)
 	return assemblybuffer;
 }
 
-void 			ServerLink::disassemblePacket(void *msg, int *nopacket) 
+void 			ServerLink::disassemblePacket(void *msg, int *nopacket)
 {
 	unsigned short marker;
 	unsigned short usdata;
@@ -538,16 +538,16 @@ int			ServerLink::read(uint16_t& code, uint16_t& len,
 
   code = MsgNull;
   len = 0;
- 
+
   if (state != Okay) return -1;
 
   if ((urecvfd >= 0) && ulinkup) {
     int n, num_packets;
     uint16_t lseqno;
-    
+
     AddrLen recvlen = sizeof(urecvaddr);
     unsigned char ubuf[8192];
-    n = recvfrom(urecvfd, (char *)ubuf, 8192, 0, &urecvaddr, &recvlen);	
+    n = recvfrom(urecvfd, (char *)ubuf, 8192, 0, &urecvaddr, &recvlen);
     if (n>0) {
 		disassemblePacket(ubuf, &num_packets);
     }
@@ -595,11 +595,11 @@ int			ServerLink::read(uint16_t& code, uint16_t& len,
 
   // get packet header -- keep trying until we get 4 bytes or an error
   char headerBuffer[4];
- 
-  
+
+
   int rlen = 0;
   rlen = recv(fd, (char*)headerBuffer, 4, 0);
-  
+
   int tlen = rlen;
   while (rlen >= 1 && tlen < 4) {
     FD_ZERO(&read_set);
@@ -620,7 +620,7 @@ int			ServerLink::read(uint16_t& code, uint16_t& len,
   void* buf = headerBuffer;
   buf = nboUnpackUShort(buf, len);
   buf = nboUnpackUShort(buf, code);
-  
+
   //printError("Code is %02x",code);
   if (len > 0)
     rlen = recv(fd, (char*)msg, int(len), 0);
@@ -773,7 +773,7 @@ void			ServerLink::sendUDPlinkRequest()
   char msg[2];
   unsigned short localPort;
   void* buf = msg;
- 
+
   struct sockaddr_in serv_addr;
 
   sendClientVersion();
@@ -782,7 +782,7 @@ void			ServerLink::sendUDPlinkRequest()
 	return; // we cannot comply
   }
   for (int portno=17200; portno < 65000; portno++) {
-  	::memset((unsigned char *)&serv_addr, 0, sizeof(serv_addr)); 
+  	::memset((unsigned char *)&serv_addr, 0, sizeof(serv_addr));
   	serv_addr.sin_family = AF_INET;
   	serv_addr.sin_addr.s_addr = htonl(INADDR_ANY);
   	serv_addr.sin_port = htons(portno);

@@ -39,7 +39,7 @@ Description: bzfs - BZFlag game server and proxy
  ing a player's system or one without graphics).  Terminat-
  ing the server terminates the game in progress.
  .
- bzrelay  is  a firewall tunnel for bzfs. It uses TCP and 
- allows you and your firewalled company of friends to beat 
+ bzrelay  is  a firewall tunnel for bzfs. It uses TCP and
+ allows you and your firewalled company of friends to beat
  into submission other BZFlag players.
  .

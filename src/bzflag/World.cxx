@@ -500,7 +500,7 @@ void			World::addFlags(SceneDatabase* scene)
       if (j < maxPlayers && !(players[j]->getStatus() & Player::Alive))
 	continue;
     }
-	
+
     scene->addDynamicNode(flagNodes[i]);
 
     // add warp if coming/going and hovering

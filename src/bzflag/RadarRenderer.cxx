@@ -24,6 +24,9 @@
 #include "Flag.h"
 #include "OpenGLGState.h"
 
+const float		RadarRenderer::colorFactor = 20.0f;
+const float		RadarRenderer::transFactor = 20.0f;
+
 RadarRenderer::RadarRenderer(const SceneRenderer& renderer,
 						const World& _world) :
 				world(_world),
@@ -122,7 +125,11 @@ void			RadarRenderer::drawShot(const ShotPath* shot)
 void			RadarRenderer::drawTank(float x, float y,
 						float z, float ps)
 {
+  // Changes with height.
   GLfloat s = 2.5f + ps * (2.0f + 2.5f * z / (4.0f * BoxHeight));
+
+  // Does not change with height.
+  GLfloat t = 2.5f + ps * (2.0f + 2.5f/(4.0f * BoxHeight));
 
   glBegin(GL_LINE_STRIP);
   glVertex2f(x-s,y);
@@ -133,7 +140,7 @@ void			RadarRenderer::drawTank(float x, float y,
   glEnd();
 
   s = 1.5f + ps * (2.0f + 2.0f * z / (4.0f * BoxHeight));
-  glRectf(x - s, y - s, x + s, y + s);
+  glRectf(x - t, y - t, x + t, y + t );
 }
 
 void			RadarRenderer::render(SceneRenderer& renderer,
@@ -260,19 +267,8 @@ void			RadarRenderer::render(SceneRenderer& renderer,
     glPushMatrix();
     glTranslatef(-pos[0], -pos[1], 0.0f);
 
-    // draw buildings and stuff
-    if (list == 0) {
-      list = glGenLists(2);
-
-      glNewList(list, GL_COMPILE);
-      makeList(False);
-      glEndList();
-
-      glNewList(list + 1, GL_COMPILE);
-      makeList(True);
-      glEndList();
-    }
-    glCallList(smoothingOn ? list + 1 : list);
+    // Redraw buildings
+    makeList(smoothingOn, renderer);
 
     // antialiasing on for lines and points unless we're multisampling,
     // in which case it's automatic and smoothing makes them look worse.
@@ -326,7 +322,7 @@ void			RadarRenderer::render(SceneRenderer& renderer,
       else {
 	if (player->isPaused() || player->isNotResponding()) {
 	  const float dimfactor=0.4f;
-	  const float *color = Team::getRadarColor(myTank->getFlag() == 
+	  const float *color = Team::getRadarColor(myTank->getFlag() ==
 	    ColorblindnessFlag ? RogueTeam : player->getTeam());
 	  float dimmedcolor[3];
 	  dimmedcolor[0] = color[0] * dimfactor;
@@ -450,8 +446,60 @@ void			RadarRenderer::render(SceneRenderer& renderer,
   glPopMatrix();
 }
 
-void			RadarRenderer::makeList(boolean smoothingOn)
+float			RadarRenderer::colorScale(const Obstacle& o, boolean enhancedRadar)
 {
+  float scaleColor;
+  if (enhancedRadar == True) {
+    const LocalPlayer* myTank = LocalPlayer::getMyTank();
+
+    // Scale color so that objects that are close to tank's level are opaque
+    const float zTank = myTank->getPosition()[2];
+    const float zObstacle = o.getPosition()[2];
+    const float hObstacle = o.getHeight();
+    if (zTank >= (zObstacle + hObstacle))
+      scaleColor = 1.0f - (zTank - (zObstacle + hObstacle)) / colorFactor;
+    else if (zTank <= zObstacle)
+      scaleColor = 1.0f - (zObstacle - zTank) / colorFactor;
+    else
+      scaleColor = 1.0f;
+
+    // Can't get blacker than black!
+    if (scaleColor < 0.5f)
+      scaleColor = 0.5f;
+  }
+  else {
+    scaleColor = 1.0f;
+  }
+
+  return scaleColor;
+}
+
+float			RadarRenderer::transScale(const Obstacle& o)
+{
+  float scaleColor;
+  const LocalPlayer* myTank = LocalPlayer::getMyTank();
+
+  // Scale color so that objects that are close to tank's level are opaque
+  const float zTank = myTank->getPosition()[2];
+  const float zObstacle = o.getPosition()[2];
+  const float hObstacle = o.getHeight();
+  if (zTank >= (zObstacle + hObstacle))
+    scaleColor = 1.0f - (zTank - (zObstacle + hObstacle)) / colorFactor;
+  else if (zTank <= zObstacle)
+    scaleColor = 1.0f - (zObstacle - zTank) / colorFactor;
+  else
+    scaleColor = 1.0f;
+
+  if (scaleColor < 0.5f)
+    scaleColor = 0.5f;
+
+  return scaleColor;
+}
+
+void			RadarRenderer::makeList(boolean smoothingOn, SceneRenderer& renderer)
+{
+  const boolean enhancedRadar = renderer.useEnhancedRadar();
+
   // antialias if smoothing is on.
   if (smoothingOn) {
     glEnable(GL_BLEND);
@@ -476,30 +524,17 @@ void			RadarRenderer::makeList(boolean smoothingOn)
   }
   glEnd();
 
-  // draw team bases
-  if (world.allowTeamFlags()) {
-    for (i = 1; i < NumTeams; i++) {
-      const float* base = world.getBase(i);
-      glColor3fv(Team::getRadarColor(TeamColor(i)));
-      glBegin(GL_LINE_LOOP);
-	glVertex2f(base[0] - base[4], base[1] - base[5]);
-	glVertex2f(base[0] + base[4], base[1] - base[5]);
-	glVertex2f(base[0] + base[4], base[1] + base[5]);
-	glVertex2f(base[0] - base[4], base[1] + base[5]);
-      glEnd();
-    }
-  }
-
-  // don't blend the polygons
-  if (smoothingOn) glDisable(GL_BLEND);
+  // don't blend the polygons if enhanced radar disabled
+  if (smoothingOn && enhancedRadar == False) glDisable(GL_BLEND);
 
   // draw box buildings.
   const BoxBuildings& boxes = world.getBoxes();
   count = boxes.getLength();
-  glColor3f(0.25f, 0.5f, 0.5f);
   glBegin(GL_QUADS);
   for (i = 0; i < count; i++) {
     const BoxBuilding& box = boxes[i];
+    const float cs = colorScale(box, enhancedRadar);
+    glColor4f(0.25f * cs, 0.5f * cs, 0.5f * cs, transScale(box));
     const float c = cosf(box.getRotation());
     const float s = sinf(box.getRotation());
     const float wx = c * box.getWidth(), wy = s * box.getWidth();
@@ -518,6 +553,8 @@ void			RadarRenderer::makeList(boolean smoothingOn)
   glBegin(GL_QUADS);
   for (i = 0; i < count; i++) {
     const PyramidBuilding& pyr = pyramids[i];
+    const float cs = colorScale(pyr, enhancedRadar);
+    glColor4f(0.25f * cs, 0.5f * cs, 0.5f * cs, transScale(pyr));
     const float c = cosf(pyr.getRotation());
     const float s = sinf(pyr.getRotation());
     const float wx = c * pyr.getWidth(), wy = s * pyr.getWidth();
@@ -536,6 +573,8 @@ void			RadarRenderer::makeList(boolean smoothingOn)
     count = boxes.getLength();
     for (i = 0; i < count; i++) {
       const BoxBuilding& box = boxes[i];
+      const float cs = colorScale(box, enhancedRadar);
+      glColor4f(0.25f * cs, 0.5f * cs, 0.5f * cs, transScale(box));
       const float c = cosf(box.getRotation());
       const float s = sinf(box.getRotation());
       const float wx = c * box.getWidth(), wy = s * box.getWidth();
@@ -552,6 +591,8 @@ void			RadarRenderer::makeList(boolean smoothingOn)
     count = pyramids.getLength();
     for (i = 0; i < count; i++) {
       const PyramidBuilding& pyr = pyramids[i];
+      const float cs = colorScale(pyr, enhancedRadar);
+      glColor4f(0.25f * cs, 0.5f * cs, 0.5f * cs, transScale(pyr));
       const float c = cosf(pyr.getRotation());
       const float s = sinf(pyr.getRotation());
       const float wx = c * pyr.getWidth(), wy = s * pyr.getWidth();
@@ -562,6 +603,28 @@ void			RadarRenderer::makeList(boolean smoothingOn)
       glVertex2f(pos[0] + wx - hx, pos[1] + wy - hy);
       glVertex2f(pos[0] + wx + hx, pos[1] + wy + hy);
       glVertex2f(pos[0] - wx + hx, pos[1] - wy + hy);
+      glEnd();
+    }
+  }
+
+  // draw team bases
+  if(world.allowTeamFlags()) {
+    for(i = 1; i < NumTeams; i++) {
+      const float *base = world.getBase(i);
+      glColor3fv(Team::getRadarColor(TeamColor(i)));
+      glBegin(GL_LINE_LOOP);
+      glVertex2f(base[0] + hypotf(base[4], base[5]) * cosf(M_PI / 2.0f -
+		 base[3] + 5.0f / 4.0f * M_PI), base[1] + hypotf(base[4], base[5]) *
+		 sinf(M_PI / 2.0f - base[3] + 5.0f / 4.0f * M_PI));
+      glVertex2f(base[0] + hypotf(base[4], base[5]) * cosf(M_PI / 2.0f -
+		 base[3] + 3.0f / 4.0f * M_PI), base[1] + hypotf(base[4], base[5]) *
+		 sinf(M_PI / 2.0f - base[3] + 3.0f / 4.0f * M_PI));
+      glVertex2f(base[0] + hypotf(base[4], base[5]) * cosf(M_PI / 2.0f -
+		 base[3] + 1.0f / 4.0f * M_PI), base[1] + hypotf(base[4], base[5]) *
+		 sinf(M_PI / 2.0f - base[3] + 1.0f / 4.0f * M_PI));
+      glVertex2f(base[0] + hypotf(base[4], base[5]) * cosf(M_PI / 2.0f -
+		 base[3] + 7.0f / 4.0f * M_PI), base[1] + hypotf(base[4], base[5]) *
+		 sinf(M_PI / 2.0f - base[3] + 7.0f / 4.0f * M_PI));
       glEnd();
     }
   }
@@ -578,6 +641,8 @@ void			RadarRenderer::makeList(boolean smoothingOn)
   glBegin(GL_LINES);
   for (i = 0; i < count; i++) {
     const Teleporter& tele = teleporters[i];
+    const float cs = colorScale(tele, enhancedRadar);
+    glColor4f(1.0f * cs, 1.0f * cs, 0.25f * cs, transScale(tele));
     const float w = tele.getBreadth();
     const float c = w * cosf(tele.getRotation());
     const float s = w * sinf(tele.getRotation());

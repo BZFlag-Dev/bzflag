@@ -43,7 +43,7 @@ void			getSunColor(const float sunDir[3], GLfloat color[3],
 
 // make sky colors given sun direction.  sun direction should be normalized.
 // sky is filled with the colors for the zenith, horizon towards sun, and
-// horizon away from sun, respectively.  
+// horizon away from sun, respectively.
 void			getSkyColor(const float sunDir[3], GLfloat sky[4][3]);
 
 // True if sun is high enough to cast shadows.  sun direction should be

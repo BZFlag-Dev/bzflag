@@ -293,7 +293,7 @@ a message, you can enter a blank message or press Delete, Escape, or
 Control-C.  Be careful with the Escape key;  pressing Escape once will
 cancel the message, pressing it again will show the main menu.  Backspace
 will delete the most recently typed character.  The Tab key doesn't add
-a tab to the message but instead causes the tank to jump (as usual).  
+a tab to the message but instead causes the tank to jump (as usual).
 .SS Scoring
 An individual's score is the difference between that player's wins and
 losses.  A win is scored for each enemy tank destroyed.  A loss is

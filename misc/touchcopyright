@@ -14,7 +14,7 @@ root=".."
 if [ -r ../bin/bzfs ] ; then
  echo "$0 should be run only after a make pristine!"
  exit 1
-fi 
+fi
 
 rm -f updatecopyright.tmp
 files=`find $root -type f | grep -v updatecopyright`

@@ -31,6 +31,7 @@ BZFlag 1.7e3
 * patch playerIds to prepare for one tcp port - Tim Riker
 * missile sound effect - Dave Brosius
 * udp first then multicast, IRIX fix? (use -i <> for multicast) - Tim Riker
+* enhanced radar - Jeremiah
 
 
 BZFlag 1.7e2

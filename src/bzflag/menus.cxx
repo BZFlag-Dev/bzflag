@@ -1069,6 +1069,16 @@ OptionsMenu::OptionsMenu() : formatMenu(NULL), keyboardMapMenu(NULL)
   option->update();
   list.append(option);
 
+  option = new HUDuiList;
+  option->setFont(MainMenu::getFont());
+  option->setLabel("Enhanced radar: ");
+  option->setCallback(callback, (void*)"e");
+  options = &option->getList();
+  options->append(BzfString("Off"));
+  options->append(BzfString("On"));
+  option->update();
+  list.append(option);
+
   // set control order
   const int count = list.getLength();
   list[0]->setNext(list[0]);
@@ -1164,17 +1174,17 @@ void			OptionsMenu::resize(int width, int height)
     // sound
     ((HUDuiList*)list[i++])->setIndex(getSoundVolume());
 
-	const StartupInfo* info = getStartupInfo();
+    const StartupInfo* info = getStartupInfo();
 
-	// mind the ++i !
-   ((HUDuiList*)list[++i])->setIndex(info->useUDPconnection ? 1 : 0);
+    // mind the ++i !
+    ((HUDuiList*)list[++i])->setIndex(info->useUDPconnection ? 1 : 0);
 
+    ((HUDuiList*)list[++i])->setIndex(renderer->useEnhancedRadar() ? 1 : 0);
 
     if (!renderer->useTexture())
       tex->setIndex(0);
     else
       tex->setIndex(OpenGLTexture::getFilter());
-
   }
 }
 
@@ -1238,7 +1248,7 @@ void			OptionsMenu::callback(HUDuiControl* w, void* data)
 		info->useUDPconnection = (list->getIndex() != 0);
 	}
       break;
-	
+
     case 'g': {
       BzfWindow* window = getMainWindow()->getWindow();
       if (window->hasGammaControl())
@@ -1263,6 +1273,10 @@ void			OptionsMenu::callback(HUDuiControl* w, void* data)
     case 'r':
       // do nothing -- wait for enter or t key
       break;
+
+    case 'e':
+      sceneRenderer->setEnhancedRadar(list->getIndex() != 0);
+	  break;
   }
 }
 

@@ -85,6 +85,7 @@ SceneRenderer::SceneRenderer(MainWindow& _window) :
 				useDepthComplexityOn(False),
 				useWireframeOn(False),
 				useHiddenLineOn(False),
+				useEnhancedRadarOn(True),
 				useFogHack(False),
 				viewType(Normal),
 				maxLOD(32767),
@@ -410,6 +411,18 @@ void			SceneRenderer::setHiddenLine(boolean on)
 boolean			SceneRenderer::useHiddenLine() const
 {
   return useHiddenLineOn;
+}
+
+void            SceneRenderer::setEnhancedRadar(boolean _setEnhancedRadar)
+{
+    useEnhancedRadarOn = _setEnhancedRadar;
+    notifyStyleChange();
+
+}
+
+boolean         SceneRenderer::useEnhancedRadar() const
+{
+    return useEnhancedRadarOn;
 }
 
 void			SceneRenderer::setDim(boolean on)

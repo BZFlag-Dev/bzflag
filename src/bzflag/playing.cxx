@@ -407,7 +407,7 @@ static float		roamZoom = 60.0f, roamDZoom;
 
 static void		showKeyboardStatus()
 {
-  if (myTank->isKeyboardMoving()) 
+  if (myTank->isKeyboardMoving())
     controlPanel->addMessage("Keyboard movement");
   else if (mainWindow->joystick())
     controlPanel->addMessage("Joystick movement");
@@ -789,10 +789,10 @@ static void		doKeyPlaying(const BzfKeyEvent& key, boolean pressed)
       }
     }
   }
-  else if (key.ascii == 0 && 
+  else if (key.ascii == 0 &&
            key.button >= BzfKeyEvent::F1 &&
            key.button <= BzfKeyEvent::F10 &&
-           (key.shift & (BzfKeyEvent::ControlKey + 
+           (key.shift & (BzfKeyEvent::ControlKey +
                          BzfKeyEvent::AltKey)) != 0) {
     // [Ctrl]-[Fx] is message to team
     // [Alt]-[Fx] is message to all
@@ -813,7 +813,7 @@ static void		doKeyPlaying(const BzfKeyEvent& key, boolean pressed)
       if (resources->hasValue(name)) {
         char messageBuffer[MessageLen];
         memset(messageBuffer, 0, MessageLen);
-        strncpy(messageBuffer, 
+        strncpy(messageBuffer,
                 resources->getValue(name).getString(),
                 MessageLen);
         nboPackString(messageMessage + PlayerIdPLen + 2,
@@ -823,7 +823,7 @@ static void		doKeyPlaying(const BzfKeyEvent& key, boolean pressed)
     }
   }
   else if (keymap.isMappedTo(BzfKeyMap::SlowKeyboardMotion, key)) {
-    if (myTank->isKeyboardMoving()) 
+    if (myTank->isKeyboardMoving())
       myTank->setSlowKeyboard(pressed);
   }
   // Might be a direction key. Save it for later.
@@ -909,7 +909,7 @@ static void		doMotion()
                                 BzfKeyEvent::F8,
                                 BzfKeyEvent::F9
       };
- 
+
       static unsigned long old_buttons = 0;
       unsigned long new_buttons = mainWindow->getJoyButtonSet();
       if (old_buttons != new_buttons)
@@ -920,7 +920,7 @@ static void		doMotion()
             ev.ascii = 0;
             ev.shift = 0;
             doKeyPlaying(ev, (new_buttons&(1<<j)) != 0);
-          } 
+          }
       old_buttons = new_buttons;
     } else
       mainWindow->getMousePosition(mx, my);
@@ -1342,7 +1342,7 @@ static void		handleServerMessage(boolean human, uint16_t code,
 	  printError("Server sent downlink endpoint information, port %d",portNo);
 	  playerLink->setPortForUPD(portNo);
       break;
- 
+
     case MsgSuperKill:
       printError("Server forced a disconnect");
       serverError = True;
@@ -1589,7 +1589,7 @@ static void		handleServerMessage(boolean human, uint16_t code,
 	}
       }
 
-#ifdef ROBOT    
+#ifdef ROBOT
       // blow up robots on victim's team if shot was genocide
       if (killerPlayer && victimPlayer && shotId >= 0) {
 	const ShotPath* shot = killerPlayer->getShot(int(shotId));
@@ -1808,7 +1808,7 @@ static void		handleServerMessage(boolean human, uint16_t code,
 	  int(team) == int(myTank->getTeam())))) {
 	// message is for me
 	BzfString fullMsg;
-	if (dstPlayer) 
+	if (dstPlayer)
 	  fullMsg = "[direct] ";
 	else if (int(team) != int(RogueTeam)) {
 #ifdef BWSUPPORT
@@ -3298,7 +3298,7 @@ static boolean		joinGame(const StartupInfo* info,
     printError("Using multicast relay");
 	if (startupInfo.useUDPconnection)
 		playerLink->enableUDPConIfRelayed();
-	else 
+	else
 		printError("No UDP connection, see Options to enable.");
   }
 
@@ -3490,7 +3490,7 @@ static void		playingLoop()
     roamDPos[0] = roamDPos[1] = roamDPos[2] = 0.0f;
     roamDTheta = roamDPhi = roamDZoom = 0.0f;
 #endif
-//#ifndef macintosh    
+//#ifndef macintosh
     while (!mainWindow->getQuit() && display->isEventPending())
       doEvent(display);
 
@@ -4109,6 +4109,7 @@ static void		timeConfigurations()
   sceneRenderer->setQuality(0);
   sceneRenderer->setDithering(True);
   sceneRenderer->setShadows(False);
+  sceneRenderer->setEnhancedRadar(False);
   OpenGLTexture::setFilter(OpenGLTexture::Off);
   timeConfiguration(True);
 
@@ -4178,6 +4179,7 @@ static void		timeConfigurations()
   sceneRenderer->setQuality(2);
   sceneRenderer->setDithering(True);
   sceneRenderer->setShadows(True);
+  sceneRenderer->setEnhancedRadar(True);
   OpenGLTexture::setFilter(OpenGLTexture::LinearMipmapLinear);
   if (timeConfiguration(True) < MaxFrameTime) return;
   if (timeConfiguration(False) < MaxFrameTime) return;
@@ -4354,6 +4356,7 @@ void			startPlaying(BzfDisplay* _display,
     sceneRenderer->setQuality(0);
     sceneRenderer->setDithering(False);
     sceneRenderer->setShadows(False);
+    sceneRenderer->setEnhancedRadar(False);
     OpenGLTexture::setFilter(OpenGLTexture::Off);
   }
 

@@ -31,11 +31,11 @@ class BaseLocalPlayer : public Player {
     void		update();
     Ray			getLastMotion() const;
 #ifdef __MWERKS__
-    const float	(*getLastMotionBBox() )[3] const; 
+    const float	(*getLastMotionBBox() )[3] const;
 #else
     const float		(*getLastMotionBBox() const)[3];
 #endif
-   
+
     virtual void	explodeTank() = 0;
     virtual boolean	checkHit(const Player* source,
 				const ShotPath*& hit, float& minTime) const = 0;

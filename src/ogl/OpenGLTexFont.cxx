@@ -295,7 +295,7 @@ void			OpenGLTexFont::BitmapRep::createGlyph(int index)
 	if (srcData[(int)(xInvScale * ((float)b + 1.0f))] >= IT) data |= 0x40u;
       case 1:
 	if (srcData[(int)(xInvScale * ((float)b + 0.0f))] >= IT) data |= 0x80u;
-	*dstData++ = data;	
+	*dstData++ = data;
     }
   }
 }

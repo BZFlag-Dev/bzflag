@@ -369,7 +369,7 @@ void			XWindow::setFullscreen()
     if (XF86VidModeQueryExtension(display->getDisplay(), &eventbase, &errorbase)) {
       int dotclock;
       XF86VidModeModeLine modeline;
-	
+
       XF86VidModeGetModeLine(display->getDisplay(), display->getScreen(), &dotclock, &modeline);
       xsh.base_width=modeline.hdisplay;
       xsh.base_height=modeline.vdisplay;
@@ -687,7 +687,7 @@ void			XWindow::initJoystick(char* joystickName)
       break;
     }
   }
-    
+
   if (v && v->num_axes >= 2) {
     int maxX = v->axes[0].max_value;
     int minX = v->axes[0].min_value;
@@ -702,7 +702,7 @@ void			XWindow::initJoystick(char* joystickName)
     XCloseDevice(display->getDisplay(), device);
     device = NULL;
   }
-    
+
   int bPress = -1;
   int bRelease = -1;
   if (device) {
@@ -753,7 +753,7 @@ void                  XWindow::getJoy(int& x, int& y) const
   }
 
   XFreeDeviceState(state);
- 
+
   x = (x*scaleX)/10000 + constX;
   y = (y*scaleY)/10000 + constY;
 

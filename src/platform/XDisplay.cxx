@@ -19,7 +19,7 @@
 #ifdef XIJOYSTICK
 #include <stdlib.h>
 static int	ioErrorHandler(Display*)
-{ 
+{
   abort();
   return 0;
 }

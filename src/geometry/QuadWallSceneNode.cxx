@@ -229,7 +229,7 @@ void			QuadWallSceneNode::init(const GLfloat base[3],
 				base, uEdge, vEdge,
 				getPlane(), uOffset, vOffset,
 				uRepeats, vRepeats);
-	
+
       }
       area /= (float)uElements;
     }
@@ -242,7 +242,7 @@ void			QuadWallSceneNode::init(const GLfloat base[3],
 				base, uEdge, vEdge,
 				getPlane(), uOffset, vOffset,
 				uRepeats, vRepeats);
-	
+
       }
       area /= (float)vElements;
     }

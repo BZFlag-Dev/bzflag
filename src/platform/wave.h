@@ -18,7 +18,7 @@
 /* A very simple wav file reader */
 
 #define	WAV_FORMAT_UNKNOWN		(0x0000)
-#define	WAV_FORMAT_PCM			(0x0001) 
+#define	WAV_FORMAT_PCM			(0x0001)
 #define	WAV_FORMAT_ADPCM		(0x0002)
 #define	WAV_FORMAT_ALAW			(0x0006)
 #define	WAV_FORMAT_MULAW		(0x0007)
@@ -29,7 +29,7 @@
 #define	IBM_FORMAT_ALAW			(0x0102)
 #define	IBM_FORMAT_ADPCM         	(0x0103)
 
-/* 
+/*
    Open the given filename as a wav file. Read the header and return the
    parameters in the rest of the arguments.
    Returns an open FILE if successful or NULL for error.

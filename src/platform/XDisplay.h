@@ -54,10 +54,10 @@ class XDisplay : public BzfDisplay {
 #ifdef XIJOYSTICK
         XDeviceInfo*	getDevices() const { return devices; }
         int		getNDevices() const { return ndevices; }
-	void		setButtonPressType(int& type) { 
-                          buttonPressType = type; 
+	void		setButtonPressType(int& type) {
+                          buttonPressType = type;
                         }
-        void		setButtonReleaseType(int& type) { 
+        void		setButtonReleaseType(int& type) {
                           buttonReleaseType = type;
                         }
 	int		getButtonPressType() const

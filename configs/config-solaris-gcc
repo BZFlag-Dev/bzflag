@@ -24,6 +24,6 @@ CONFIG	= solaris-gcc
 #
 CC    = gcc
 CXX   = g++
-PCOPTS   = 
+PCOPTS   =
 PCXXOPTS = -fno-exceptions -fno-rtti
 

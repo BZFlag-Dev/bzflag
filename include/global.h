@@ -252,7 +252,7 @@ const float		JumpVelocity =	19.0f;		// m/s
 const float		IdentityRange =	50.0f;		// meters
 const float		ObeseFactor =	2.5f;		// 250% normal size
 const float		WideAngleAng =	M_PI / 1.8f;	// 100 degree fov
-const float		MomentumLinAcc=	1.0f;		// 
+const float		MomentumLinAcc=	1.0f;		//
 const float		MomentumAngAcc=	1.0f;		//
 const float		MagnetPower =	0.0f;		// off
 

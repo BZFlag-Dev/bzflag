@@ -16,7 +16,7 @@
 #
 # empty define, used to terminate lists
 #
-NULL = 
+NULL =
 
 #
 # target directories
@@ -38,7 +38,7 @@ LCFLAGS	= $(LCDEFS) $(LCINCS) $(LCOPTS)
 PCFLAGS	= $(PCDEFS) $(PCINCS) $(PCOPTS)
 GCFLAGS	= $(GCDEFS) $(GCINCS) $(GCOPTS)
 
-GCOPTS	= 
+GCOPTS	=
 GCDEFS  =						\
 	-DVERSION=$(VERSION)				\
 	$(TIMEBOMB)					\
@@ -93,7 +93,7 @@ LDF	= $(LD) $(LDFLAGS)
 # Rule macros for nonterminal makefiles that iterate over subdirectories,
 # making the current target.  Set SUBDIRS to the relevant list of kids.
 #
-# Set NOSUBMESG to any value to suppress a warning that subdirectories 
+# Set NOSUBMESG to any value to suppress a warning that subdirectories
 # are not present.
 #
 SUBDIR_MAKERULE= \

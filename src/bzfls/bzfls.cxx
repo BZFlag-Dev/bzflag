@@ -231,7 +231,7 @@ Server::~Server()
   if (prev)
     prev->next = next;
   else if (this == serverList)
-    serverList = next; 
+    serverList = next;
   if (next)
     next->prev = prev;
 }

@@ -61,7 +61,7 @@ usb_joystick::usb_joystick(const char *name)
 
 	if ((fd = open(name, O_RDONLY | O_NONBLOCK))<0)
 		return;
-	
+
 	if ((rd = hid_get_report_desc(fd)) == 0) {
 		close(fd);
 		return;

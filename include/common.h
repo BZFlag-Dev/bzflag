@@ -124,11 +124,11 @@ typedef uint_t		uint32_t;
   #ifdef __MWERKS__
     #include "strcasecmp.h"
   #endif
-  
+
   #ifndef setenv
     #define setenv(a,b,c)
   #endif
-  
+
   #ifndef putenv
     #define putenv(a)
   #endif

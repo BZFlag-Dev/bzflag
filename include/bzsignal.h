@@ -17,12 +17,12 @@
 typedef void (*SIG_PF)(int);
 #endif
 
-#ifdef __cplusplus 
+#ifdef __cplusplus
 extern "C" {
-#endif 
+#endif
 
 SIG_PF bzSignal(int signo, SIG_PF func);
 
-#ifdef __cplusplus 
+#ifdef __cplusplus
 }
 #endif

@@ -10,7 +10,7 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-/* 
+/*
  * includes platform specific network files and adds missing stuff
  *
  * unfortunately this can include far more than necessary
@@ -56,7 +56,7 @@
 
     #define O_NDELAY O_NONBLOCK
 
-    #define hstrerror(x) "hstrerror is broken" 
+    #define hstrerror(x) "hstrerror is broken"
   #endif
 #endif
 

@@ -121,7 +121,7 @@ class XWindow : public BzfWindow {
     unsigned long*	colormapPixels;
     float		gammaVal;
     static XWindow*	first;
-    
+
 #ifdef XIJOYSTICK
     XDevice*		device;
     int			scaleX, constX;

@@ -84,7 +84,7 @@ int			inet_aton(const char* cp, struct in_addr* pin)
 }
 
 // win32 apparently cannot lookup error messages for us
-static const struct { int code; const char* msg; } netErrorCodes[] = { 
+static const struct { int code; const char* msg; } netErrorCodes[] = {
 	/* 10004 */{WSAEINTR,		"The (blocking) call was canceled via WSACancelBlockingCall"},
 	/* 10009 */{WSAEBADF,		"Bad file handle"},
 	/* 10013 */{WSAEACCES,		"The requested address is a broadcast address, but the appropriate flag was not set"},
