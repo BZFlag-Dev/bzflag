@@ -219,7 +219,8 @@ const char* FontManager::getFaceName(int faceID)
   return fontFaces[faceID].begin()->second->getFaceName();
 }
 
-void FontManager::drawString(float x, float y, float z, int faceID, float size, std::string text)
+void FontManager::drawString(float x, float y, float z, int faceID, float size,
+			     const std::string &text)
 {
   if (text.size() == 0)
     return;
@@ -366,12 +367,15 @@ void FontManager::drawString(float x, float y, float z, int faceID, float size, 
   }
 }
 
-void FontManager::drawString(float x, float y, float z, std::string face, float size, std::string text)
+void FontManager::drawString(float x, float y, float z,
+			     const std::string &face, float size,
+			     const std::string &text)
 {
   drawString(x, y, z, getFaceID(face), size, text);
 }
 
-float FontManager::getStrLength(int faceID, float size, std::string text, bool alreadyStripped)
+float FontManager::getStrLength(int faceID, float size,	std::string text,
+				bool alreadyStripped)
 {
   if (text.size() == 0)
     return 0;
@@ -398,12 +402,14 @@ float FontManager::getStrLength(int faceID, float size, std::string text, bool a
   return pFont->getStrLength(scale, text.c_str());
 }
 
-float FontManager::getStrLength(std::string face, float size, std::string text, bool alreadyStripped)
+float FontManager::getStrLength(const std::string &face, float size,
+				const std::string &text, bool alreadyStripped)
 {
   return getStrLength(getFaceID(face), size, text, alreadyStripped);
 }
 
-float FontManager::getStrHeight(int faceID, float size, std::string text)
+float FontManager::getStrHeight(int faceID, float size,
+				const std::string &text)
 {
   int lines = 1;
 
@@ -420,7 +426,8 @@ float FontManager::getStrHeight(int faceID, float size, std::string text)
   return (lines * size * 1.5f);
 }
 
-float FontManager::getStrHeight(std::string face, float size, std::string text)
+float FontManager::getStrHeight(std::string face, float size,
+				const std::string &text)
 {
   return getStrHeight(getFaceID(face), size, text);
 }

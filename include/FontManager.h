@@ -43,14 +43,18 @@ public:
   int getNumFaces(void);
   const char* getFaceName(int faceID);
 
-  void drawString(float x, float y, float z, int faceID, float size, std::string text);
-  void drawString(float x, float y, float z, std::string face, float size, std::string text);
+  void drawString(float x, float y, float z, int faceID, float size,
+		  const std::string &text);
+  void drawString(float x, float y, float z, const std::string &face,
+		  float size, const std::string &text);
 
-  float getStrLength(int faceID, float size, std::string text, bool alreadyStripped = false);
-  float getStrLength(std::string face, float size, std::string text, bool alreadyStripped = false);
+  float getStrLength(int faceID, float size, std::string text,
+		     bool alreadyStripped = false);
+  float getStrLength(const std::string &face, float size,
+		     const std::string &text, bool alreadyStripped = false);
 
-  float getStrHeight(int faceID, float size, std::string text);
-  float getStrHeight(std::string face, float size, std::string text);
+  float getStrHeight(int faceID, float size, const std::string &text);
+  float getStrHeight(std::string face, float size, const std::string &text);
 
   void unloadAll(void);
 

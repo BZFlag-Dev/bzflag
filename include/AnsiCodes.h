@@ -80,7 +80,7 @@ static std::string ColorStrings[14] = {
 };
 
 // strip ANSI codes from a string
-inline std::string stripAnsiCodes(const std::string text)
+inline std::string stripAnsiCodes(const std::string &text)
 {
   std::string str = "";
 
