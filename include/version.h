@@ -107,7 +107,7 @@ inline const char*		getAppVersion()
     std::ostringstream	appVersionStream;
     // TODO add current platform, release, cpu, etc
     appVersionStream << BZ_MAJOR_VERSION << "." << BZ_MINOR_VERSION << "." << BZ_REV << "." << BZ_BUILD_DATE
-	<< "-" << BZ_BUILD_TYPE << " " << BZ_BUILD_OS;
+	<< "-" << BZ_BUILD_TYPE << "-" << BZ_BUILD_OS;
     appVersion = appVersionStream.str();
   }
   return appVersion.c_str();

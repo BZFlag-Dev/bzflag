@@ -24,7 +24,7 @@ class BoxBuilding : public Obstacle {
   public:
 			BoxBuilding();
 			BoxBuilding(const float* pos, float rotation,
-				float width, float breadth, float height, bool drive = false, bool shoot = false);
+				float width, float breadth, float height, bool drive = false, bool shoot = false, bool invisible = false);
 			~BoxBuilding();
 
     std::string		getType() const;
@@ -39,6 +39,7 @@ class BoxBuilding : public Obstacle {
     bool		isCrossing(const float* p, float angle,
 				float halfWidth, float halfBreadth,
 				float* plane) const;
+    inline bool         isInvisible() const;
     bool		getHitNormal(
 				const float* pos1, float azimuth1,
 				const float* pos2, float azimuth2,
@@ -50,6 +51,9 @@ class BoxBuilding : public Obstacle {
     void		getCorner(int index, float* pos) const;
 
     static std::string	typeName;
+
+ private:
+    bool noNodes;
 };
 
 class BoxSceneNodeGenerator : public ObstacleSceneNodeGenerator {
@@ -65,6 +69,16 @@ class BoxSceneNodeGenerator : public ObstacleSceneNodeGenerator {
   private:
     const BoxBuilding*	box;
 };
+
+
+//
+// BoxBuilding
+//
+
+bool BoxBuilding::isInvisible() const {
+  return noNodes;
+}
+
 
 #endif // BZF_BOX_BUILDING_H
 // ex: shiftwidth=2 tabstop=8

@@ -619,6 +619,8 @@ void			RadarRenderer::makeList(bool smoothingOn, SceneRenderer&)
   glBegin(GL_QUADS);
   for (i = 0; i < count; i++) {
     const BoxBuilding& box = boxes[i];
+    if (box.isInvisible())
+      continue;
     const float cs = colorScale(box.getPosition()[2], box.getHeight(), BZDBCache::enhancedRadar);
     glColor4f(0.25f * cs, 0.5f * cs, 0.5f * cs, transScale(box));
     const float c = cosf(box.getRotation());
@@ -659,6 +661,8 @@ void			RadarRenderer::makeList(bool smoothingOn, SceneRenderer&)
     count = boxes.size();
     for (i = 0; i < count; i++) {
       const BoxBuilding& box = boxes[i];
+      if (box.isInvisible())
+	continue;
       const float cs = colorScale(box.getPosition()[2], box.getHeight(), BZDBCache::enhancedRadar);
       glColor4f(0.25f * cs, 0.5f * cs, 0.5f * cs, transScale(box));
       const float c = cosf(box.getRotation());

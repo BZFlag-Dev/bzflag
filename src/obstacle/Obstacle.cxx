@@ -190,5 +190,19 @@ ObstacleSceneNodeGenerator::~ObstacleSceneNodeGenerator()
 {
   // do nothing
 }
+
+//
+// EmptySceneNodeGenerator
+//
+
+EmptySceneNodeGenerator::~EmptySceneNodeGenerator() {
+
+}
+
+WallSceneNode* EmptySceneNodeGenerator::getNextNode(float, float, bool) {
+  return NULL;
+}
+
 // ex: shiftwidth=2 tabstop=8
+
 

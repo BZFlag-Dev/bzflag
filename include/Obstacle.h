@@ -110,6 +110,14 @@ class ObstacleSceneNodeGenerator {
     int			node;
 };
 
+class EmptySceneNodeGenerator : public ObstacleSceneNodeGenerator {
+  public:
+    virtual		~EmptySceneNodeGenerator();
+
+    virtual WallSceneNode* getNextNode(float uRepeats, float vRepeats,
+				       bool lod);
+};
+
 //
 // Obstacle
 //

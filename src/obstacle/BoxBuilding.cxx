@@ -20,13 +20,14 @@
 
 std::string		BoxBuilding::typeName("BoxBuilding");
 
-BoxBuilding::BoxBuilding() : Obstacle()
+BoxBuilding::BoxBuilding() : Obstacle(), noNodes(false)
 {
   // do nothing
 }
 
-BoxBuilding::BoxBuilding(const float* p, float a, float w, float b, float h, bool drive, bool shoot) :
-				Obstacle(p, a, w, b, h,drive,shoot)
+BoxBuilding::BoxBuilding(const float* p, float a, float w, float b, float h, 
+			 bool drive, bool shoot, bool invisible) :
+  Obstacle(p, a, w, b, h,drive,shoot), noNodes(invisible)
 {
   // do nothing
 }
@@ -141,7 +142,10 @@ bool			BoxBuilding::getHitNormal(
 
 ObstacleSceneNodeGenerator*	BoxBuilding::newSceneNodeGenerator() const
 {
-  return new BoxSceneNodeGenerator(this);
+  if (noNodes)
+    return new EmptySceneNodeGenerator();
+  else
+    return new BoxSceneNodeGenerator(this);
 }
 
 void			BoxBuilding::getCorner(int index, float* pos) const
