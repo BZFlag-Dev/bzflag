@@ -567,7 +567,7 @@ void setRoamingLabel(bool force)
 
   if (player[roamTrackWinner]) {
     const Player* tracked = player[roamTrackWinner];
-    if (BZDB.isTrue("colorful")) {
+    if (BZDBCache::colorful) {
       int color = tracked->getTeam();
       if (color < 0 || color > 4) {
         color = 5;
@@ -575,9 +575,24 @@ void setRoamingLabel(bool force)
       playerString += ColorStrings[color];
     }
     playerString += tracked->getCallSign();
+
     const FlagType* flag = tracked->getFlag();
     if (flag != Flags::Null) {
-      playerString += " " + ColorStrings[ResetColor] + "(" + flag->flagAbbv + ")";
+      if (BZDBCache::colorful) {
+        playerString += ColorStrings[CyanColor] + " / ";
+        if (flag->flagTeam != NoTeam) {
+          playerString += ColorStrings[flag->flagTeam];
+        } else {
+          playerString += ColorStrings[WhiteColor];
+        }
+      } else {
+        playerString += " / ";
+      }
+      if (flag->endurance == FlagNormal) {
+        playerString += flag->flagName;
+      } else {
+        playerString += flag->flagAbbv;
+      }
     }
 
     switch (roamView) {
