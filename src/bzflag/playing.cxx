@@ -2701,11 +2701,47 @@ static void		updateFlag(FlagType* flag)
 			flag != Flags::Null && flag->endurance == FlagSticky);
 }
 
+
 void			notifyBzfKeyMapChanged()
 {
-  // eww - FIXME as soon as keys can be bound to multiple commands
-  hud->setRestartKeyLabel("Right Mouse");
+  std::string restartLabel = "Right Mouse";
+  std::vector<std::string> keys = KEYMGR->getKeysFromCommand("restart", false);
+
+  if (keys.size() == 0) {
+    // found nothing on down binding, so try up
+    keys = KEYMGR->getKeysFromCommand("identify", true);
+    if (keys.size() == 0) {
+      std::cerr << "There does not appear to be any key bound to enter the game" << std::endl;
+    }
+  }
+
+  if (keys.size() >= 1) {
+    // display single letter keys as a quoted lowercase letter
+    if (keys[0].size() == 1) {
+      restartLabel = '\"';
+      restartLabel += tolower(keys[0][0]);
+      restartLabel += '\"';
+    } else {
+      restartLabel = keys[0];
+    }
+  }
+
+  // only show the first 2 keys found to keep things simple
+  if (keys.size() > 1) {
+    restartLabel.append(" or ");
+    // display single letter keys as quoted lowercase letter
+    if (keys[1].size() == 1) {
+      restartLabel += '\"';
+      restartLabel += tolower(keys[1][0]);
+      restartLabel += '\"';
+    } else {
+      restartLabel.append(keys[1]);
+    }
+  }
+
+  hud->setRestartKeyLabel(restartLabel);
 }
+
 
 //
 // server message handling
