@@ -2306,9 +2306,11 @@ void resetFlag(int flagIndex)
       r *= 2.0f * BZDB.eval(StateDatabase::BZDB_OBESEFACTOR);
     ObstacleLocation *obj;
     float worldSize = BZDB.eval(StateDatabase::BZDB_WORLDSIZE);
-    pFlagInfo->flag.position[0] = (worldSize - baseSize) * ((float)bzfrand() - 0.5f);
-    pFlagInfo->flag.position[1] = (worldSize - baseSize) * ((float)bzfrand() - 0.5f);
-    pFlagInfo->flag.position[2] = 0.0f;
+    if (!world->getZonePoint( std::string(pFlagInfo->flag.type->flagAbbv), pFlagInfo->flag.position)) {
+      pFlagInfo->flag.position[0] = (worldSize - baseSize) * ((float)bzfrand() - 0.5f);
+      pFlagInfo->flag.position[1] = (worldSize - baseSize) * ((float)bzfrand() - 0.5f);
+      pFlagInfo->flag.position[2] = 0.0f;
+    }
     int topmosttype = world->inBuilding(&obj,
 					pFlagInfo->flag.position[0],
 					pFlagInfo->flag.position[1],

@@ -40,7 +40,12 @@ inline const QualifierList& CustomZone::getQualifiers() const
 
 inline float CustomZone::getArea() const
 {
-  return size[0] * size[1] * size[2];
+  float h;
+  if (size[2] < 1.0f)
+    h = 1.0f;
+  else
+    h = size[2];
+  return size[0] * size[1] * h;
 }
 
 #endif  /* __CUSTOMZONE_H__ */
