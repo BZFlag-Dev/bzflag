@@ -29,6 +29,7 @@
 
 // flags list
 FlagInfo *FlagInfo::flagList = NULL;
+std::vector<FlagType*> FlagInfo::allowedFlags;
 
 FlagInfo::FlagInfo()
 {
@@ -61,6 +62,11 @@ void FlagInfo::setSize(int numFlags)
     flagList[i].flagIndex = i;
 }
 
+void FlagInfo::setAllowed(std::vector<FlagType*> allowed)
+{
+  allowedFlags = allowed;
+}
+
 void FlagInfo::setRequiredFlag(FlagType *desc)
 {
   required = true;
@@ -84,6 +90,10 @@ void FlagInfo::addFlag()
   dropDone               = TimeKeeper::getCurrent();
   dropDone              += flightTime;
 	
+  if (flag.type == Flags::Null)
+    // pick a random flag
+    flag.type = allowedFlags[(int)(allowedFlags.size() * (float)bzfrand())];
+
   // decide how sticky the flag will be
   if (flag.type->flagQuality == FlagBad)
     flag.endurance = FlagSticky;

@@ -33,6 +33,7 @@ public:
   void dropFlag(float pos[3], float landingPos[3], bool vanish);
 
   static void setSize(int numFlags);
+  static void setAllowed(std::vector<FlagType*> allowed);
 
   static FlagInfo *flagList;
 
@@ -51,7 +52,7 @@ public:
 
 private:
   int flagIndex;
-
+  static std::vector<FlagType*> allowedFlags;
 };
 #else
 class FlagInfo;

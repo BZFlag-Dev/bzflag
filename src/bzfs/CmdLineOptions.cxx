@@ -41,7 +41,6 @@ extern std::string groupsFile;
 extern std::string userDatabaseFile;
 extern uint16_t maxPlayers;
 extern uint16_t maxRealPlayers;
-extern std::vector<FlagType*> allowedFlags;
 
 const char *usageString =
 "[-a <vel> <rot>] "
@@ -1105,6 +1104,8 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
 
     // otherwise make table of allowed flags
     else {
+      // types of extra flags allowed
+      std::vector<FlagType*> allowedFlags;
       allowedFlags.clear();
       for (FlagTypeMap::iterator it = FlagType::getFlagMap().begin();
 	  it != FlagType::getFlagMap().end(); ++it) {
@@ -1114,6 +1115,8 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
 	if (!options.flagDisallowed[it->second])
 	  allowedFlags.push_back(it->second);
       }
+      // Loading allowedFlags vector
+      FlagInfo::setAllowed(allowedFlags);
     }
   }
 

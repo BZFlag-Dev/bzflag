@@ -79,8 +79,6 @@ TeamInfo team[NumTeams];
 // num flags in flag list
 int numFlags;
 static int numFlagsInAir;
-// types of extra flags allowed
-std::vector<FlagType*> allowedFlags;
 bool done = false;
 // true if hit time/score limit
 bool gameOver = true;
@@ -1746,11 +1744,6 @@ static void addFlag(int flagIndex)
 
   // flag in now entering game
   numFlagsInAir++;
-
-  if (FlagInfo::flagList[flagIndex].flag.type == Flags::Null)
-    // pick a random flag
-    FlagInfo::flagList[flagIndex].flag.type
-      = allowedFlags[(int)(allowedFlags.size() * (float)bzfrand())];
 
   FlagInfo::flagList[flagIndex].addFlag();
 
