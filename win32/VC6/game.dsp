@@ -144,6 +144,10 @@ SOURCE=..\..\src\game\CommandsStandard.cxx
 
 SOURCE=..\..\src\game\VotingArbiter.cxx
 # End Source File
+# Begin Source File
+
+SOURCE=..\..\src\game\NetHandler.cxx
+# End Source File
 # End Group
 # Begin Group "Header Files"
 
@@ -155,6 +159,10 @@ SOURCE=..\..\src\game\CommandsStandard.h
 # Begin Source File
 
 SOURCE=..\..\include\VotingArbiter.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\include\NetHandler.h
 # End Source File
 # End Group
 # End Target

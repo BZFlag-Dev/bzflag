@@ -295,7 +295,7 @@ SOURCE=..\..\src\bzfs\CustomZone.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\src\bzfs\DelayQueue.h
+SOURCE=..\..\include\DelayQueue.h
 # End Source File
 # Begin Source File
 
@@ -335,7 +335,7 @@ SOURCE=..\..\src\bzfs\PackVars.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\src\bzfs\Permissions.h
+SOURCE=..\..\include\Permissions.h
 # End Source File
 # Begin Source File
 
@@ -343,7 +343,7 @@ SOURCE=..\..\include\Ping.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\src\bzfs\PlayerInfo.h
+SOURCE=..\..\include\PlayerInfo.h
 # End Source File
 # Begin Source File
 
