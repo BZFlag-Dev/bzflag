@@ -38,8 +38,8 @@ public:
   void freeList ( int list );
   bool callList ( int list );
 
-  void clearLists ( void );
-  void rebuildLists ( void );
+  void release( void );
+  void aquire ( void );
 protected:
   friend class Singleton<DisplayListManager>;
 

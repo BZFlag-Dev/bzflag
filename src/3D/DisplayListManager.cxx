@@ -87,7 +87,7 @@ bool DisplayListManager::callList ( int list )
   return true;
 }
 
-void DisplayListManager::clearLists ( void )
+void DisplayListManager::release ( void )
 {
   displayListMap::iterator  it = lists.begin();
 
@@ -99,7 +99,7 @@ void DisplayListManager::clearLists ( void )
   }
 }
 
-void DisplayListManager::rebuildLists ( void )
+void DisplayListManager::aquire ( void )
 {
   displayListMap::iterator  it = lists.begin();
 
