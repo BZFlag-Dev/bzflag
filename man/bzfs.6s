@@ -9,6 +9,7 @@ bzfs \- BZFlag game server
 [\fB\-b\fR]
 [\fB\-badwords \fIbadwordfile\fR]
 [\fB\-ban \fIip\fR{,ip}*]
+[\fB\-ban \fIip\fR[\fI,ip\fR]...]
 [\fB\-banfile \fIfilename\fR]
 [\fB\-c\fR]
 [\fB\-cache \fIworldCacheURL\fR]

@@ -21,6 +21,16 @@ bzfquery.pl - Contact a bzflag server and print the game status
 
 B<bzfquery.pl> I<servername> [I<port>]
 
+=head1 DESCRIPTION
+
+Generate a report to standard output describing the status of a bzflag game.
+The report includes a player count, team listings, score, and the flags
+controlling game option and state.
+
+=head1 SEE ALSO
+
+L<bzflag(6)>, L<bzadmin(6)>
+
 =cut
 
 use Socket;
