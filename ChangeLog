@@ -22,6 +22,8 @@ BZFlag 1.7e1
 * Triple buffering support (actually n way buffering) - XiGraphics
 * Joystick support - XiGraphics
 * teleporter shot handling improved - chestal
+* udp network code reworking to select() on one server port - TimR
+* rogue tank placement on enter - chestal
 
 
 BZFlag 1.7e release 000

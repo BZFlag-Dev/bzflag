@@ -1930,7 +1930,8 @@ static void		restartPlaying()
       if (!located) break;
 
       // test against living enemy tanks
-      if (!player[i]->isAlive() || player[i]->getTeam() == myColor) continue;
+      if (!player[i]->isAlive() ||
+          (myColor != RogueTeam  && player[i]->getTeam() == myColor)) continue;
 
       // compute enemy position in my local coordinate system
       const float* enemyPos = player[i]->getPosition();
