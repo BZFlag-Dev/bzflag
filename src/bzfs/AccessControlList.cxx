@@ -292,7 +292,7 @@ bool AccessControlList::load() {
       return false;
     is>>banEnd;
     if (banEnd != 0) {
-      banEnd -= long(time(NULL) - TimeKeeper::getCurrent().getSeconds());
+      banEnd -= long(time(NULL) + TimeKeeper::getCurrent().getSeconds());
       banEnd /= 60;
       if (banEnd == 0)
 	banEnd = -1;
@@ -533,4 +533,3 @@ void AccessControlList::expire() {
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-
