@@ -1,3 +1,5 @@
+SUBDIRS = MacOSX
+
 if LINUX
 libPlatform_a_SOURCES =				\
 	PlatformFactory.cxx			\
