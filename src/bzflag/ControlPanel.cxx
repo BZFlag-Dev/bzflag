@@ -234,7 +234,6 @@ void			ControlPanel::render(SceneRenderer& renderer)
 	glColor3f(0.5f, 0.5f, 0.5f);
       }
 
-      // FIXME: need a menu config option to toggle which side
       if (tabsOnRight) {
 	// draw the tabs on the right side
 	fm.drawString(messageAreaPixels[0] + messageAreaPixels[2] - totalTabWidth + drawnTabWidth + floorf(fontSize * 2.0f),
