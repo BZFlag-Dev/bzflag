@@ -51,7 +51,7 @@ struct CmdLineOptions
     advertisemsg(NULL), worldFile(NULL), pingInterface(NULL), 
     publicizedTitle(NULL), listServerURL(DefaultListServerURL), password(NULL),
     maxShots(1), maxTeamScore(0), maxPlayerScore(0),
-    maxObservers(3), numExtraFlags(0), teamKillerKickRatio(0),
+    numExtraFlags(0), teamKillerKickRatio(0),
     numAllowedFlags(0), shakeWins(0), shakeTimeout(0),
     teamFlagTimeout(30), maxlagwarn(10000), lagwarnthresh(-1.0),
     idlekickthresh(-1.0), timeLimit(0.0f), timeElapsed(0.0f),
@@ -94,7 +94,6 @@ struct CmdLineOptions
   uint16_t		maxShots;
   int			maxTeamScore;
   int			maxPlayerScore;
-  int			maxObservers;
   int			numExtraFlags;
   int			teamKillerKickRatio; // if players tk*100/wins > teamKillerKickRatio -> kicked
   int			numAllowedFlags;

@@ -2740,8 +2740,8 @@ int			ServerItem::getPlayerCount() const
   // if null ping we return a 0 player count
   if (&ping != 0)
     return ping.rogueCount + ping.redCount + ping.greenCount +
-                               ping.blueCount + ping.purpleCount;
-   else return 0;
+	ping.blueCount + ping.purpleCount + ping.observerCount;
+  else return 0;
 }
 
 
@@ -2934,7 +2934,7 @@ void			ServerMenu::pick()
   char buf[60];
   std::vector<HUDuiControl*>& list = getControls();
 
-  const uint16_t maxes [] = { ping.maxPlayers,ping.redMax,ping.greenMax,ping.blueMax,
+  const uint8_t maxes [] = { ping.maxPlayers,ping.redMax,ping.greenMax,ping.blueMax,
 			      ping.purpleMax, ping.rogueMax };
 
   // if this is a cached item set the player counts to "?/max count"
@@ -2957,9 +2957,8 @@ void			ServerMenu::pick()
       }
     }
   } else {  // not an old item, set players #s to info we have
-    sprintf(buf, "%d/%d", ping.rogueCount + ping.redCount +
-                          ping.greenCount + ping.blueCount +
-                          ping.purpleCount, ping.maxPlayers);
+    sprintf(buf, "%d/%d", ping.rogueCount + ping.redCount + ping.greenCount +
+	ping.blueCount + ping.purpleCount + ping.observerCount, ping.maxPlayers);
     ((HUDuiLabel*)list[1])->setLabel(buf);
 
     if (ping.redMax >= ping.maxPlayers)

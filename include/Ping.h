@@ -47,8 +47,8 @@ class PingPacket {
     void		packHex(char*) const;
     void		unpackHex(char*);
     void		zeroPlayerCounts();
-  void		writeToFile(std::ostream& out) const;
-  bool		readFromFile(std::istream& in);
+    void		writeToFile(std::ostream& out) const;
+    bool		readFromFile(std::istream& in);
     static void		repackHexPlayerCounts(char*, int* counts);
 
     static bool	isRequest(int fd, struct sockaddr_in*);
@@ -58,29 +58,33 @@ class PingPacket {
     ServerId		serverId;
     Address		sourceAddr;
     uint16_t		gameStyle;
-    uint16_t		maxPlayers;
     uint16_t		maxShots;
-    uint16_t		rogueCount;
-    uint16_t		redCount;
-    uint16_t		greenCount;
-    uint16_t		blueCount;
-    uint16_t		purpleCount;
-    uint16_t		rogueMax;
-    uint16_t		redMax;
-    uint16_t		greenMax;
-    uint16_t		blueMax;
-    uint16_t		purpleMax;
     uint16_t		shakeWins;
     uint16_t		shakeTimeout;		// 1/10ths of second
     uint16_t		maxPlayerScore;
     uint16_t		maxTeamScore;
     uint16_t		maxTime;		// seconds
+    uint8_t		maxPlayers;
+    uint8_t		rogueCount;
+    uint8_t		rogueMax;
+    uint8_t		redCount;
+    uint8_t		redMax;
+    uint8_t		greenCount;
+    uint8_t		greenMax;
+    uint8_t		blueCount;
+    uint8_t		blueMax;
+    uint8_t		purpleCount;
+    uint8_t		purpleMax;
+    uint8_t		observerCount;
+    uint8_t		observerMax;
 
   private:
     static int		hex2bin(char);
     static char		bin2hex(int);
     static char*	packHex16(char*, uint16_t);
     static char*	unpackHex16(char*, uint16_t&);
+    static char*	packHex8(char*, uint8_t);
+    static char*	unpackHex8(char*, uint8_t&);
 
   private:
     static const int	PacketSize;

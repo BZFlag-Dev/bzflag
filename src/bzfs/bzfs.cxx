@@ -817,6 +817,7 @@ static void sendMessageToListServerForReal(int index)
       pingReply.greenCount = team[2].team.size;
       pingReply.blueCount = team[3].team.size;
       pingReply.purpleCount = team[4].team.size;
+      pingReply.observerCount = team[5].team.size;
     }
     else {
       pingReply.rogueCount = 0;
@@ -824,6 +825,7 @@ static void sendMessageToListServerForReal(int index)
       pingReply.greenCount = 0;
       pingReply.blueCount = 0;
       pingReply.purpleCount = 0;
+      pingReply.observerCount = 0;
     }
 
     // encode ping reply as ascii hex digits plus NULL
@@ -859,6 +861,7 @@ static void sendMessageToListServerForReal(int index)
       pingReply.greenCount = team[2].team.size;
       pingReply.blueCount = team[3].team.size;
       pingReply.purpleCount = team[4].team.size;
+      pingReply.observerCount = team[5].team.size;
 
       // encode ping reply as ascii hex digits
       char gameInfo[PingPacketHexPackedSize];
@@ -2127,6 +2130,7 @@ static void respondToPing()
   pingReply.greenCount = team[2].team.size;
   pingReply.blueCount = team[3].team.size;
   pingReply.purpleCount = team[4].team.size;
+  pingReply.observerCount = team[5].team.size;
   pingReply.write(udpSocket, &addr);
 }
 
@@ -2298,10 +2302,6 @@ static void addPlayer(int playerIndex)
 	 return;
    } else if (t == RogueTeam && !(clOptions->gameStyle & RoguesGameStyle)) {
      rejectPlayer(playerIndex, RejectNoRogues);
-     return;
-   } else if (((t != ObserverTeam) && (numplayers >= softmaxPlayers)) ||
-	      ((t == ObserverTeam) && (numobservers >= clOptions->maxObservers))) {
-     rejectPlayer(playerIndex, RejectServerFull);
      return;
    } else if (team[int(t)].team.size >= clOptions->maxTeam[int(t)]) {
      for (int i = RogueTeam; i < NumTeams; i++) {
@@ -4402,6 +4402,7 @@ int main(int argc, char **argv)
   pingReply.greenMax = clOptions->maxTeam[2];
   pingReply.blueMax = clOptions->maxTeam[3];
   pingReply.purpleMax = clOptions->maxTeam[4];
+  pingReply.observerMax = clOptions->maxTeam[5];
   pingReply.shakeWins = clOptions->shakeWins;
   pingReply.shakeTimeout = clOptions->shakeTimeout;
 #ifdef TIMELIMIT
