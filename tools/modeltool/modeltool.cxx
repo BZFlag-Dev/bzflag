@@ -147,7 +147,10 @@ void readMTL ( CModel &model, std::string file )
 {
 	FILE *fp = fopen(file.c_str(),"rb");
 	if (!fp)
+	{
+		printf ("Could not open MTL file %s\n", file.c_str());
 		return;
+	}
 
 	fseek(fp,0,SEEK_END);
 	int size = ftell(fp);
@@ -247,7 +250,7 @@ void readOBJ ( CModel &model, std::string file )
 
 	FILE *fp = fopen(file.c_str(),"r");
 	if (!fp) {
-	  printf ("Could not open %s\n", file.c_str());
+	  printf ("Could not open OBJ file %s\n", file.c_str());
 		return;
 	}
 
