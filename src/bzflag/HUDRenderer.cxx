@@ -99,11 +99,7 @@ std::string		HUDRenderer::killLabel("Kills");
 std::string		HUDRenderer::teamScoreSpacingLabel("888 (888-888) 888");
 std::string		HUDRenderer::teamScoreLabel("Team Score");
 std::string		HUDRenderer::playerLabel("Player");
-#if defined(__APPLE__)
-std::string		HUDRenderer::restartLabelFormat("Press %s or \"i\" to start");
-#else
 std::string		HUDRenderer::restartLabelFormat("Press %s to start");
-#endif
 std::string		HUDRenderer::resumeLabel("Press Pause to resume");
 std::string		HUDRenderer::autoPilotLabel("AutoPilot on");
 std::string		HUDRenderer::cancelDestructLabel("Press Destruct to cancel");
