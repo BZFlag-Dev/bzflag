@@ -171,6 +171,11 @@ void			WinWindow::setFullscreen()
   MoveWindow(hwndChild, 0, 0, width, height, FALSE);
 }
 
+void			WinWindow::iconify()
+{
+  ShowWindow(hwnd, SW_MINIMIZE);
+}
+
 void			WinWindow::warpMouse(int x, int y)
 {
   SetCursorPos(x, y);
