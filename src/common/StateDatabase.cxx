@@ -19,7 +19,7 @@
 #include <assert.h>
 #include <ctype.h>
 #include <stack>
-#include <stdexcept>
+#include <limits>
 #include <iostream>
 #include <math.h>
 
@@ -154,14 +154,16 @@ float			StateDatabase::eval(const std::string& name) const
 
   for (std::vector<std::string>::iterator i = variables.begin(); i != variables.end(); i++)
     if (*i == name)
-      throw std::runtime_error("circular reference in eval(" + name + ")\n");
+      return std::numeric_limits<float>::signaling_NaN();
+// riker says exceptions are bad, but in the future they may not be
+//      throw std::runtime_error("circular reference in eval(" + name + ")\n");
 	
   variables.push_back(name);
 
   Map::const_iterator index = items.find(name);
   if (index == items.end() || !index->second.isSet)
-    throw std::runtime_error("BZDB:" + name + " not found\n");
-//    return NaN;
+    return std::numeric_limits<float>::signaling_NaN();
+//    throw std::runtime_error("BZDB:" + name + " not found\n");
   Expression pre, inf;
   std::string value = index->second.value;
   value >> inf;

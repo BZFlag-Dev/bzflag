@@ -189,7 +189,7 @@ case $host_os in
 	AC_DEFINE(XF86VIDMODE_EXT, 1, [XFree86 Video Mode Extension])
 	AC_DEFINE(XIJOYSTICK, 1, [XInput Joystick Handling])
 	CPPFLAGS="$CPPFLAGS -Wall -W"
-	CFLAGS="$CFLAGS -ansi";
+	CFLAGS="$CFLAGS -ansi -fno-exceptions";
 	CXXFLAGS="$CXXFLAGS";
 	case $host_vendor in
 	     pc)  CPPFLAGS="$CPPFLAGS -mcpu=$host_cpu";;
@@ -202,14 +202,14 @@ case $host_os in
 	AC_DEFINE(XF86VIDMODE_EXT, 1, [XFree86 Video Mode Extension])
 	AC_DEFINE(XIJOYSTICK, 1, [XInput Joystick Handling])
 	CPPFLAGS="$CPPFLAGS -Wall -W -mcpu=$host_cpu"
-	CFLAGS="$CFLAGS -ansi";
+	CFLAGS="$CFLAGS -ansi -fno-exceptions";
 	CXXFLAGS="$CXXFLAGS";;
      mingw32)
 	CPPFLAGS="$CPPFLAGS -D_POSIX_SOURCE";
 	CPPFLAGS="$CPPFLAGS -I\$(top_srcdir)/include"
 	AC_DEFINE(HALF_RATE_AUDIO, 1, [Half rate Audio])
 	CPPFLAGS="$CPPFLAGS -Wall -W -mcpu=$host_cpu";
-	CFLAGS="$CFLAGS -ansi";
+	CFLAGS="$CFLAGS -ansi -fno-exceptions";
 	CXXFLAGS="$CXXFLAGS";;
      solaris*)
 	AC_DEFINE(SUN_OGL_NO_VERTEX_MACROS, [], [Sun OpenGL No Macro Vertex])
@@ -225,7 +225,7 @@ case $host_os in
 	CPPFLAGS="$CPPFLAGS -I\$(top_srcdir)/include"
 	AC_DEFINE(_BSD_SOCKLEN_T_, int, [BSD Socket Length])
 	CPPFLAGS="$CPPFLAGS -Wall -W";
-	CFLAGS="$CFLAGS -ansi";
+	CFLAGS="$CFLAGS -ansi -fno-exceptions";
 	CXXFLAGS="$CXXFLAGS";;
      windows**)
 	CPPFLAGS="$CPPFLAGS /D \"WIN32\" /D \"_MBCS\"";
@@ -275,7 +275,7 @@ else
 		CFLAGS="$CFLAGS -O2";
 		CXXFLAGS="$CXXFLAGS -O2";
 		CXXFLAGS="$CXXFLAGS -ffast-math -fomit-frame-pointer";
-		CXXFLAGS="$CXXFLAGS -fexpensive-optimizations";;
+		CXXFLAGS="$CXXFLAGS -fexpensive-optimizations -fno-exceptions";;
 	 solaris*)
 		CFLAGS="$CFLAGS -O";
 		CXXFLAGS="$CXXFLAGS -O";;
@@ -283,7 +283,7 @@ else
 		CFLAGS="$CFLAGS -O2";
 		CXXFLAGS="$CXXFLAGS -O2";
 		CXXFLAGS="$CXXFLAGS -ffast-math -fomit-frame-pointer";
-		CXXFLAGS="$CXXFLAGS -fexpensive-optimizations";;
+		CXXFLAGS="$CXXFLAGS -fexpensive-optimizations -fno-exceptions";;
 	 windows**)
 		CPPFLAGS="$CPPFLAGS /MT /O2 ";;
 	 irix)
@@ -291,7 +291,7 @@ else
 		   CFLAGS="$CFLAGS -O3";
 		   CXXFLAGS="$CXXFLAGS -O3";
 		   CPPFLAGS="$CPPFLAGS -ffast-math -fomit-frame-pointer";
-		   CPPFLAGS="$CPPFLAGS -fexpensive-optimizations";
+		   CPPFLAGS="$CPPFLAGS -fexpensive-optimizations -fno-exceptions";
 		else
 		   CFLAGS="$CFLAGS -O2";
 		   CXXFLAGS="$CXXFLAGS -O2";
@@ -299,7 +299,7 @@ else
 	 beos)
 		CFLAGS="$CFLAGS -O2";
 		CXXFLAGS="$CXXFLAGS -O2";
-		CXXFLAGS="$CXXFLAGS -ffast-math -fomit-frame-pointer";;
+		CXXFLAGS="$CXXFLAGS -ffast-math -fomit-frame-pointer -fno-exceptions";;
      esac;
      AC_DEFINE(NDEBUG, 1, [Debugging disabled])
 fi;
