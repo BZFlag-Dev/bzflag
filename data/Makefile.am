@@ -1,8 +1,7 @@
 SUBDIRS = l10n
 
-EXTRA_DIST = $(wildcard $(srcdir)/*.rgb) $(wildcard $(srcdir)*.wav) \
-	$(wildcard $(srcdir)*.fti) $(wildcard $(srcdir)*.ftr) \
-	$(wildcard l10n/$(srcdir)/*.po)
+EXTRA_DIST = $(wildcard $(srcdir)/*.rgb) $(wildcard $(srcdir)/*.wav) \
+	$(wildcard $(srcdir)/*.fti) $(wildcard $(srcdir)/*.ftr)
 
 install-data-local:
 	$(mkinstalldirs) $(DESTDIR)$(datadir)/bzflag
