@@ -350,7 +350,7 @@ void			 PingPacket::zeroPlayerCounts()
 
 // serialize packet to file -- note lack of error checking
 // must write to a binary file if we use plain "pack"
-void			 PingPacket::writeToFile (ofstream& out) const
+void			 PingPacket::writeToFile (ostream& out) const
 {
   if (!out) return;
 
@@ -364,7 +364,7 @@ void			 PingPacket::writeToFile (ofstream& out) const
 
 // de serialize packet from file
 // must read from a binary file if we use plain "unpack"
-bool			 PingPacket::readFromFile(ifstream& in)
+bool			 PingPacket::readFromFile(istream& in)
 {
   if (!in) return false;
 

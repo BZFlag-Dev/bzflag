@@ -110,8 +110,8 @@ class ServerStartMenu : public HUDDialog {
 
 class ServerItem {
   public:
-    void		writeToFile(ofstream& out) const; // serialize out
-    bool		readFromFile(ifstream& in); // serialize in
+    void		writeToFile(ostream& out) const; // serialize out
+    bool		readFromFile(istream& in); // serialize in
     void		setUpdateTime(); // set last updated to now
     int			getPlayerCount() const;
     time_t		getAgeMinutes() const;

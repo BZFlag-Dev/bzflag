@@ -10,6 +10,7 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
+#include "FileManager.h"
 #include "menus.h"
 #include "ServerListCache.h"
 #include "playing.h"
@@ -77,11 +78,11 @@ void			ServerListCache::saveCache()
 
   char buffer[MAX_STRING+1];
 
-  ofstream outFile (fileName.c_str(), ios::out|ios::binary);
+  ostream* outFile = FILEMGR->createDataOutStream(fileName, true, true);
   int lenCpy = MAX_STRING;
   bool doWeed = (cacheAddedNum >0); // weed out as many items as were added
 
-  if (outFile){
+  if (outFile != NULL){
     for (SRV_STR_MAP::iterator iter = serverCache.begin(); iter != serverCache.end(); iter++){
       // weed out after 30 days *if* if we should
       if (doWeed && iter->second.getAgeMinutes() > 60*24*30) {
@@ -94,14 +95,14 @@ void			ServerListCache::saveCache()
       memset(&buffer,0, sizeof(buffer));
       lenCpy = (iter->first).size() < MAX_STRING ? (iter->first).size() : MAX_STRING;
       strncpy(&buffer[0],(iter->first.c_str()),lenCpy);
-      outFile.write(buffer,sizeof(buffer));
+      outFile->write(buffer,sizeof(buffer));
 
       ServerItem x = iter->second;
       // write out the serverinfo -- which is mapped by index
-      (iter->second).writeToFile(outFile);
+      (iter->second).writeToFile(*outFile);
 
     }
-    outFile.close();
+    delete outFile;
   }
 }
 
