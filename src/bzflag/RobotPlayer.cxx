@@ -199,7 +199,7 @@ void			RobotPlayer::doUpdateMotion(float dt)
   float velocity[3];
   velocity[0] = (position[0] - oldPosition[0]) / dt0;
   velocity[1] = (position[1] - oldPosition[1]) / dt0;
-  velocity[2] = getVelocity()[2] + Gravity * dt0;
+  velocity[2] = getVelocity()[2] + BZDB->eval(StateDatabase::BZDB_GRAVITY) * dt0;
   position[2] += dt0 * velocity[2];
   if (position[2] <= 0.0f) {
     position[2] = 0.0f;
@@ -282,7 +282,7 @@ void			RobotPlayer::explodeTank()
   float newVelocity[3];
   newVelocity[0] = oldVelocity[0];
   newVelocity[1] = oldVelocity[1];
-  newVelocity[2] = -0.5f * Gravity * ExplodeTime;
+  newVelocity[2] = -0.5f * BZDB->eval(StateDatabase::BZDB_GRAVITY) * ExplodeTime;
   setVelocity(newVelocity);
   target = NULL;
   path.clear();

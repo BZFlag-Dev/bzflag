@@ -27,6 +27,12 @@ const std::string StateDatabase::BZDB_WORLDSIZE		= std::string("_worldSize");
 const std::string StateDatabase::BZDB_BASESIZE		= std::string("_baseSize");
 const std::string StateDatabase::BZDB_TANKLENGTH	= std::string("_tankLength");
 const std::string StateDatabase::BZDB_TANKWIDTH		= std::string("_tankWidth");
+const std::string StateDatabase::BZDB_TANKHEIGHT	= std::string("_tankHeight");
+const std::string StateDatabase::BZDB_MUZZLEHEIGHT	= std::string("_muzzleHeight");
+const std::string StateDatabase::BZDB_MUZZLEFRONT	= std::string("_muzzleFront");
+const std::string StateDatabase::BZDB_SHOTRADIUS	= std::string("_shotRadius");
+const std::string StateDatabase::BZDB_SHOTLENGTH	= std::string("_shotLength");
+const std::string StateDatabase::BZDB_SHOTTAILLENGTH	= std::string("_shotTailLength");
 
 //
 // StateDatabase::Item

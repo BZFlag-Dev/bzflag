@@ -123,6 +123,12 @@ public:
   static const std::string	BZDB_BASESIZE;
   static const std::string	BZDB_TANKLENGTH;
   static const std::string	BZDB_TANKWIDTH;
+  static const std::string	BZDB_TANKHEIGHT;
+  static const std::string	BZDB_MUZZLEHEIGHT;
+  static const std::string	BZDB_MUZZLEFRONT;
+  static const std::string	BZDB_SHOTRADIUS;
+  static const std::string	BZDB_SHOTLENGTH;
+  static const std::string	BZDB_SHOTTAILLENGTH;
 
 private:
   StateDatabase();

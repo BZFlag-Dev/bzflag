@@ -408,7 +408,7 @@ bool			Player::getDeadReckoning(
       *predictedAzimuth = inputAzimuth;
 
     // update z with Newtownian integration (like LocalPlayer)
-    ((Player*)this)->inputZSpeed += Gravity * (dt - dt2);
+    ((Player*)this)->inputZSpeed += BZDB->eval(StateDatabase::BZDB_GRAVITY) * (dt - dt2);
     ((Player*)this)->inputPos[2] += inputZSpeed * (dt - dt2);
   }
   else {

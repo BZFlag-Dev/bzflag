@@ -392,7 +392,7 @@ void			World::initFlag(int index)
     pos[0] = flag.position[0];
     pos[1] = flag.position[1];
     pos[2] = 0.5f * flag.flightEnd * (flag.initialVelocity +
-	0.25f * Gravity * flag.flightEnd) + flag.position[2];
+	0.25f * BZDB->eval(StateDatabase::BZDB_GRAVITY) * flag.flightEnd) + flag.position[2];
     flagWarpNodes[index]->move(pos);
     flagWarpNodes[index]->setSizeFraction(0.0f);
   }
@@ -431,7 +431,7 @@ void			World::updateFlag(int index, float dt)
 	flag.position[2] = (1.0f - t) * flag.launchPosition[2] +
 				t * flag.landingPosition[2] +
 				flag.flightTime * (flag.initialVelocity +
-					0.5f * Gravity * flag.flightTime);
+					0.5f * BZDB->eval(StateDatabase::BZDB_GRAVITY) * flag.flightTime);
       }
       break;
 
@@ -446,13 +446,13 @@ void			World::updateFlag(int index, float dt)
       else if (flag.flightTime >= 0.5f * flag.flightEnd) {
 	// falling
 	flag.position[2] = flag.flightTime * (flag.initialVelocity +
-	    0.5f * Gravity * flag.flightTime) + flag.landingPosition[2];
+	    0.5f * BZDB->eval(StateDatabase::BZDB_GRAVITY) * flag.flightTime) + flag.landingPosition[2];
 	alpha = 1.0f;
       }
       else {
 	// hovering
 	flag.position[2] = 0.5f * flag.flightEnd * (flag.initialVelocity +
-	    0.25f * Gravity * flag.flightEnd) + flag.landingPosition[2];
+	    0.25f * BZDB->eval(StateDatabase::BZDB_GRAVITY) * flag.flightEnd) + flag.landingPosition[2];
 
 	// flag is fades in during first half of hovering period
 	// and is opaque during the second half.  flag warp grows
@@ -483,13 +483,13 @@ void			World::updateFlag(int index, float dt)
       else if (flag.flightTime < 0.5f * flag.flightEnd) {
 	// rising
 	flag.position[2] = flag.flightTime * (flag.initialVelocity +
-	    0.5f * Gravity * flag.flightTime) + flag.landingPosition[2];
+	    0.5f * BZDB->eval(StateDatabase::BZDB_GRAVITY) * flag.flightTime) + flag.landingPosition[2];
 	alpha = 1.0f;
       }
       else {
 	// hovering
 	flag.position[2] = 0.5f * flag.flightEnd * (flag.initialVelocity +
-	    0.25f * Gravity * flag.flightEnd) + flag.landingPosition[2];
+	    0.25f * BZDB->eval(StateDatabase::BZDB_GRAVITY) * flag.flightEnd) + flag.landingPosition[2];
 
 	// flag is opaque during first half of hovering period
 	// and fades out during the second half.  flag warp grows

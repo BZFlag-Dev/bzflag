@@ -17,7 +17,8 @@ libCommon_a_SOURCES  =			\
 	PlayerState.cxx			\
 	StateDatabase.cxx		\
 	WordFilter.cxx			\
-	bzsignal.c
+	bzsignal.c			\
+	global.cxx
 
 EXTRA_DIST = Ping.cxx
 

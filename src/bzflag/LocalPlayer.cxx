@@ -20,6 +20,7 @@
 #include "sound.h"
 #include "Flag.h"
 #include "BzfEvent.h"
+#include "StateDatabase.h"
 #include "CommandManager.h"
 
 //
@@ -266,7 +267,7 @@ void			LocalPlayer::doUpdateMotion(float dt)
       }
 
       // can't control explosion motion
-      newVelocity[2] += Gravity * dt;
+      newVelocity[2] += BZDB->eval(StateDatabase::BZDB_GRAVITY) * dt;
       newAngVel = 0.0f;	// or oldAngVel to spin while exploding
     }
     else {
@@ -285,13 +286,13 @@ void			LocalPlayer::doUpdateMotion(float dt)
 	newVelocity[2] = 0.0f;
 
 	if ((oldPosition[2] < 0.0f) && (getFlag() == Flags::Burrow))
-	  newVelocity[2] += 4 * Gravity * dt;
+	  newVelocity[2] += 4 * BZDB->eval(StateDatabase::BZDB_GRAVITY) * dt;
 	else if (oldPosition[2] > groundLimit)
-	  newVelocity[2] += Gravity * dt;
+	  newVelocity[2] += BZDB->eval(StateDatabase::BZDB_GRAVITY) * dt;
       }
       else {
 	// can't control motion in air
-	newVelocity[2] += Gravity * dt;
+	newVelocity[2] += BZDB->eval(StateDatabase::BZDB_GRAVITY) * dt;
 	newAngVel = oldAngVel;
       }
 
@@ -900,7 +901,7 @@ void			LocalPlayer::explodeTank()
   float newVelocity[3];
   newVelocity[0] = oldVelocity[0];
   newVelocity[1] = oldVelocity[1];
-  newVelocity[2] = -0.5f * Gravity * ExplodeTime;
+  newVelocity[2] = -0.5f * BZDB->eval(StateDatabase::BZDB_GRAVITY) * ExplodeTime;
   setVelocity(newVelocity);
   location = Exploding;
   target = NULL;		// lose lock when dead

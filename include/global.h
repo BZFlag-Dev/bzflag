@@ -19,6 +19,7 @@
 
 #include <math.h>
 #include "common.h"
+#include "StateDatabase.h"
 
 // values affecting struct and class layout
 const int		CallSignLen = 32;	// including terminating NUL
@@ -58,7 +59,6 @@ const float		Infinity =	MAXFLOAT;	// arbitrary
 #define	DEFAULT_GRAVITY	-9.81f
 #define DEFAULT_WORLD	800
 // universe info
-const float	Gravity =	DEFAULT_GRAVITY;		// meters/sec/sec
 extern float	WorldSize;							// meters
 const float		BaseSize =	60.0f;					// meters
 
@@ -176,6 +176,15 @@ const float		BurrowAngAd = 0.5f;
 #define _FLIP_Z		0x04
 
 const int mapVersion = 1;
+
+struct GlobalDBItem {
+  public:
+    const char*			name;
+    const char*			value;
+    bool			persistent;
+    StateDatabase::Permission	permission;
+};
+extern GlobalDBItem		globalDBItems[1];
 
 #endif // BZF_GLOBAL_H
 // ex: shiftwidth=2 tabstop=8

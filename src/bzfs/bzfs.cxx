@@ -2539,7 +2539,7 @@ static bool defineWorld()
       return false;
    }
 
-   maxTankHeight = world->getMaxWorldHeight() + 1.0f + ((JumpVelocity*JumpVelocity) / (2.0f * -Gravity));
+   maxTankHeight = world->getMaxWorldHeight() + 1.0f + ((JumpVelocity*JumpVelocity) / (2.0f * -BZDB->eval(StateDatabase::BZDB_GRAVITY)));
 
    // package up world
   world->packDatabase();
@@ -3115,10 +3115,10 @@ static void addFlag(int flagIndex)
   numFlagsInAir++;
 
   // compute drop time
-  const float flightTime = 2.0f * sqrtf(-2.0f * FlagAltitude / Gravity);
+  const float flightTime = 2.0f * sqrtf(-2.0f * FlagAltitude / BZDB->eval(StateDatabase::BZDB_GRAVITY));
   flag[flagIndex].flag.flightTime = 0.0f;
   flag[flagIndex].flag.flightEnd = flightTime;
-  flag[flagIndex].flag.initialVelocity = -0.5f * Gravity * flightTime;
+  flag[flagIndex].flag.initialVelocity = -0.5f * BZDB->eval(StateDatabase::BZDB_GRAVITY) * flightTime;
   flag[flagIndex].dropDone = TimeKeeper::getCurrent();
   flag[flagIndex].dropDone += flightTime;
 
@@ -3863,8 +3863,8 @@ static void dropFlag(int playerIndex, float pos[3])
   const float thrownAltitude = (pFlagInfo->flag.desc == Flags::Shield) ?
       ShieldFlight * FlagAltitude : FlagAltitude;
   const float maxAltitude = pos[2] + thrownAltitude;
-  const float upTime = sqrtf(-2.0f * thrownAltitude / Gravity);
-  const float downTime = sqrtf(-2.0f * (maxAltitude - pos[2]) / Gravity);
+  const float upTime = sqrtf(-2.0f * thrownAltitude / BZDB->eval(StateDatabase::BZDB_GRAVITY));
+  const float downTime = sqrtf(-2.0f * (maxAltitude - pos[2]) / BZDB->eval(StateDatabase::BZDB_GRAVITY));
   const float flightTime = upTime + downTime;
 
   // set flight info
@@ -3872,7 +3872,7 @@ static void dropFlag(int playerIndex, float pos[3])
   pFlagInfo->dropDone += flightTime;
   pFlagInfo->flag.flightTime = 0.0f;
   pFlagInfo->flag.flightEnd = flightTime;
-  pFlagInfo->flag.initialVelocity = -Gravity * upTime;
+  pFlagInfo->flag.initialVelocity = -BZDB->eval(StateDatabase::BZDB_GRAVITY) * upTime;
 
   // player no longer has flag -- send MsgDropFlag
   player[playerIndex].flag = -1;
@@ -6334,13 +6334,25 @@ int main(int argc, char **argv)
 
   clOptions = new CmdLineOptions();
 
+  // set default DB entries
+  for (unsigned int i = 0; i < countof(globalDBItems); ++i) {
+    assert(globalDBItems[i].name != NULL);
+    if (globalDBItems[i].value != NULL) {
+      BZDB->set(globalDBItems[i].name, globalDBItems[i].value);
+      BZDB->setDefault(globalDBItems[i].name, globalDBItems[i].value);
+    }
+    BZDB->setPersistent(globalDBItems[i].name, globalDBItems[i].persistent);
+    BZDB->setPermission(globalDBItems[i].name, globalDBItems[i].permission);
+    // FIXME: callback for resending on change
+  }
+
   // parse arguments
   parse(argc, argv, *clOptions);
 
   /* load the bad word filter if it was set */
   if (clOptions->filterFilename.length() != 0) {
     if (clOptions->filterChat || clOptions->filterCallsigns) {
-      if (clOptions->debug >= 1) {    
+      if (clOptions->debug >= 1) {
 	unsigned int count;
 	DEBUG1("Loading %s\n", clOptions->filterFilename.c_str());
 	count = clOptions->filter.loadFromFile(clOptions->filterFilename, true);
@@ -6351,7 +6363,6 @@ int main(int argc, char **argv)
     } else {
       DEBUG1("Bad word filter specified without -filterChat or -filterCallsigns\n");
     }
-    
   }
 
   if (clOptions->pingInterface)
