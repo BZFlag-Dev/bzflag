@@ -1734,7 +1734,7 @@ static void		doAutoPilot(float &rotation, float &speed)
 	  speed = -0.5f;
       }
 
-      if (World::getWorld()->allowJumping() || (myTank->getFlag() == Flags::Jumping)) {
+      if ((myTank->getFlag() != Flags::Narrow) && (World::getWorld()->allowJumping() || (myTank->getFlag()) == Flags::Jumping)) {
       //teach autopilot bad habits
 	for (t = 0; t < curMaxPlayers; t++) {
 	  if (t == myTank->getId() || !player[t])
