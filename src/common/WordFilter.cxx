@@ -315,7 +315,7 @@ WordFilter::WordFilter()
   
   /* SUFFIXES */
 
-#if 0
+#if 1
   // noun
   fix.word = "dom";
   suffixes.insert(fix);
@@ -497,12 +497,20 @@ bool WordFilter::addToFilter(const std::string &word, const std::string &express
   } else {
     /* base case */
     filter_t newFilter;
-    
+
     newFilter.word = word;
     newFilter.expression = expression;
     newFilter.compiled = getCompiledExpression(expression);
     
-    filters[tolower(newFilter.word[0])].insert(newFilter);
+    /* check if the word is already added */
+    if (filters[tolower(word[0])].find(newFilter) != \
+	filters[word[0]].end()) {
+      std::cout << std::endl << "Word is already added: " << word << std::endl;
+      return false;
+
+    } else {
+      filters[tolower(word[0])].insert(newFilter);
+    }
   }
 
   return true;
@@ -608,7 +616,7 @@ void WordFilter::outputWords(void) const
     for (std::set<filter_t, expressionCompare>::iterator j = filters[i].begin(); \
 	 j != filters[i].end(); \
 	 ++j) {
-      std::cout << count++ << ": " << j->word << std::endl;
+      std::cout << "[" << i << "] " << count++ << ": " << j->word << std::endl;
     }
   }
   
@@ -637,17 +645,41 @@ int main (int argc, char *argv[])
   
   WordFilter filter;
   filter.addToFilter("fuck", true);
-  filter.addToFilter("test");
+  filter.addToFilter("test", false);
+  filter.addToFilter("a");
+  filter.addToFilter("b");
+  filter.addToFilter("c");
+  filter.addToFilter("d");
+  filter.addToFilter("e");
+  filter.addToFilter("f");
+  filter.addToFilter("g");
+  filter.addToFilter("h");
+  filter.addToFilter("i");
+  filter.addToFilter("j");
+  filter.addToFilter("k");
+  filter.addToFilter("l");
+  filter.addToFilter("m");
+  filter.addToFilter("n");
+  filter.addToFilter("o");
+  filter.addToFilter("p");
+  filter.addToFilter("q");
+  filter.addToFilter("r");
+  filter.addToFilter("s");
+  filter.addToFilter("t");
+  filter.addToFilter("u");
+  filter.addToFilter("v");
+  filter.addToFilter("w");
+  filter.addToFilter("x");
+  filter.addToFilter("y");
+  filter.addToFilter("z");
 
-  filter.outputWords();
-  filter.outputFilter();
+  //  filter.outputWords();
+  //  filter.outputFilter();
 
-  char message3[1024] = " This test is a fucKing simple test; you're NOT a beezeebitch!! ";
-  std::cout << "PRE  SIMPLE " << message3 << std::endl;
-  filter.filter(message3, true);
-  std::cout << "POST SIMPLE " << message3 << std::endl;
-
-  exit(0);
+  char message[1024] = " This test is a fucKing simple test; you're NOT a beezee b i t c h!! ";
+  std::cout << "PRE  SIMPLE " << message << std::endl;
+  filter.filter(message, true);
+  std::cout << "POST SIMPLE " << message << std::endl;
 
   std::cout << "Loading file" << std::endl;
   filter.loadFromFile(argv[1]);
@@ -655,29 +687,30 @@ int main (int argc, char *argv[])
   filter.addToFilter("test", true);
   std::cout << "Number of words in filter: " << filter.wordCount() << std::endl;
 
-  char message[1024] = " This test is a fucKing simple test; you're NOT a beezeebitch!! ";
-  std::cout << message << std::endl;
-  filter.filter(message, true);
-  std::cout << message << std::endl;
-  
   char message2[1024] = "f  u  c  k  !  fuuukking test ; you're NOT a beezeecun+y!!  Phuck you b1tch! ";
+  char message3[1024] = "f  u  c  k  !  fuuukking test ; you're NOT a beezeecun+y!!  Phuck you b1tch! ";
   char message4[1024] = "f  u  c  k  !  fuuukking test ; you're NOT a beezeecun+y!!  Phuck you b1tch! ";
   char message5[1024] = "f  u  c  k  !  fuuukking test ; you're NOT a beezeecun+y!!  Phuck you b1tch! ";
   char message6[1024] = "f  u  c  k  !  fuuukking test ; you're NOT a beezeecun+y!!  Phuck you b1tch! ";
-  char message7[1024] = "f  u  c  k  !  fuuukking test ; you're NOT a beezeecun+y!!  Phuck you b1tch! ";
-  std::cout << message2 << std::endl;
+  std::cout << "PRE  AGGRESSIVE " << message2 << std::endl;
+
   filter.filter(message2);
-  std::cout << message2 << std::endl;
+  std::cout << "POST AGGRESSIVE " << message2 << std::endl;
+
+  exit(0);
+
+  filter.filter(message3);
+  std::cout << "POST AGGRESSIVE " << message3 << std::endl;
+
   filter.filter(message4);
-  std::cout << message4 << std::endl;
-  filter.filter(message5);
-  std::cout << message5 << std::endl;
-  filter.filter(message6);
-  std::cout << message6 << std::endl;
-  filter.filter(message7);
-  std::cout << message7 << std::endl;
+  std::cout << "POST AGGRESSIVE " << message4 << std::endl;
   
-  //  filter.outputWords();
+  filter.filter(message5);
+  std::cout << "POST AGGRESSIVE " << message5 << std::endl;
+
+  filter.filter(message6);
+  std::cout << "POST AGGRESSIVE " << message6 << std::endl;
+
   return 0;
 }
 #endif
