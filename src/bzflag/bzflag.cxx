@@ -621,12 +621,10 @@ void			dumpResources(BzfDisplay* display,
   BZDB->set("team", Team::getName(startupInfo.team));
   BZDB->set("server", startupInfo.serverName);
   if (startupInfo.serverPort != ServerPort) {
-    char buf[20];
-    sprintf(buf, "%d", startupInfo.serverPort);
-    db.addValue("port", buf);
+    BZDB->set("port", string_util::format("%d", startupInfo.serverPort));
   }
   else {
-    db.removeValue("port");
+    BZDB->unset("port");
   }
   if (strlen(startupInfo.multicastInterface) != 0)
     db.addValue("interface", startupInfo.multicastInterface);
@@ -837,8 +835,8 @@ int			main(int argc, char** argv)
 					sizeof(startupInfo.serverName) - 1);
       startupInfo.serverName[sizeof(startupInfo.serverName) - 1] = '\0';
     }
-    if (db.hasValue("port")) {
-      startupInfo.serverPort = atoi(db.getValue("port").c_str());
+    if (BZDB->isSet("port")) {
+      startupInfo.serverPort = atoi(BZDB->get("port").c_str());
     }
     if (db.hasValue("interface")) {
       strncpy(startupInfo.multicastInterface, db.getValue("interface").c_str(),
