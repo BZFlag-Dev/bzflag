@@ -289,7 +289,7 @@ bool VotingArbiter::isPollSureToFail(void) const
   return false;
 }
 
-unsigned long int VotingArbiter::timeRemaining(void) const
+unsigned short int VotingArbiter::timeRemaining(void) const
 {
   if (_votingBooth == NULL) {
     return 0;
@@ -304,7 +304,7 @@ unsigned long int VotingArbiter::timeRemaining(void) const
   if (remaining < 0.0f) {
     return 0;
   }
-  return (unsigned int)remaining;
+  return (unsigned short int)remaining;
 }
 
 bool VotingArbiter::retractVote(std::string player) 
