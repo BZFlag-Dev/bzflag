@@ -191,32 +191,32 @@ SceneDatabase*		SceneDatabaseBuilder::make(const World* world)
   // FIXME -- when making BSP tree, try several shuffles for best tree
 
   // add nodes to database
-  std::vector<WallObstacle> walls = world->getWalls();
-  std::vector<WallObstacle>::iterator wallScan = walls.begin();
+  const std::vector<WallObstacle> &walls = world->getWalls();
+  std::vector<WallObstacle>::const_iterator wallScan = walls.begin();
   while (wallScan != walls.end()) {
     addWall(db, *wallScan);
     ++wallScan;
   }
-  std::vector<BoxBuilding> boxes = world->getBoxes();
-  std::vector<BoxBuilding>::iterator boxScan = boxes.begin();
+  const std::vector<BoxBuilding> &boxes = world->getBoxes();
+  std::vector<BoxBuilding>::const_iterator boxScan = boxes.begin();
   while (boxScan != boxes.end()) {
     addBox(db, *boxScan);
     ++boxScan;
   }
-  std::vector<Teleporter> teleporters = world->getTeleporters();
-  std::vector<Teleporter>::iterator teleporterScan = teleporters.begin();
+  const std::vector<Teleporter> &teleporters = world->getTeleporters();
+  std::vector<Teleporter>::const_iterator teleporterScan = teleporters.begin();
   while (teleporterScan != teleporters.end()) {
     addTeleporter(db, *teleporterScan);
     ++teleporterScan;
   }
-  std::vector<PyramidBuilding> pyramids = world->getPyramids();
-  std::vector<PyramidBuilding>::iterator pyramidScan = pyramids.begin();
+  const std::vector<PyramidBuilding> &pyramids = world->getPyramids();
+  std::vector<PyramidBuilding>::const_iterator pyramidScan = pyramids.begin();
   while (pyramidScan != pyramids.end()) {
     addPyramid(db, *pyramidScan);
     ++pyramidScan;
   }
-  std::vector<BaseBuilding> baseBuildings = world->getBases();
-  std::vector<BaseBuilding>::iterator baseScan = baseBuildings.begin();
+  const std::vector<BaseBuilding> &baseBuildings = world->getBases();
+  std::vector<BaseBuilding>::const_iterator baseScan = baseBuildings.begin();
   while (baseScan != baseBuildings.end()) {
     addBase(db, *baseScan);
     ++baseScan;
