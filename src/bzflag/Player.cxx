@@ -588,24 +588,21 @@ void			Player::setDeadReckoning(float timestamp)
     - deltaTime;
 
   float alpha;
-  if (deadReckoningState == 0) {
+  if (deadReckoningState < 10) {
     // Initialization
-    alpha     = 1.0f;
-  } else if (deadReckoningState == 1) {
-    alpha     = 0.5f;
+    alpha = 1.0 / float(deadReckoningState + 1);
   } else {
-    alpha     = 0.1f;
+    // Stable
+    alpha = 0.01f;
   }
   // alpha filtering
   deltaTime = deltaTime + offset * alpha;
   // this should take into account the initialization of filter so
   // that average is really smoothed
-  if (deadReckoningState == 0) {
-    deadReckoningState = 1;
-    offset    = 0.0f;
-  } else if (deadReckoningState == 1) {
-    deadReckoningState = 2;
-  }
+  if (deadReckoningState == 0)
+    offset = 0.0f;
+  if (deadReckoningState < 10)
+    ++deadReckoningState;
 
   // save stuff for dead reckoning
   inputTime = TimeKeeper::getTick();
