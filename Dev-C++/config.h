@@ -15,7 +15,7 @@
 #ifndef _DEVCPP_CONFIG
 #define _DEVCPP_CONFIG
 #if defined(WIN32) && !defined(_WIN32)
-#define _WIN32
+#   define _WIN32
 #endif
 //__GNUC_PATCHLEVEL__ was introduced with GCC 3.x, so ifndef, this thing is old!
 #ifndef __GNUC_PATCHLEVEL__
@@ -74,12 +74,8 @@
 /* Define to 1 if you have regex stuff available */
 /* undef HAVE_REGEX_H */
 
-#ifndef DEBUG
-  #ifdef _DEBUG
-    #define DEBUG 1
-  #else
-    #define DEBUG 0
-  #endif
+#if !defined(DEBUG) && defined(_DEBUG)
+#   define DEBUG 1
 #endif
 
 // define our OS
