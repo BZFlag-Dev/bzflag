@@ -90,6 +90,7 @@ bzfs \- BZFlag game server
 [\fB\-timemanual\fR]
 [\fB\-tk\fR]
 [\fB\-tkkr \fIpercent\fR]
+[\fB\-ts \fI[micros]\fR]
 [\fB\-userdb \fIfile\fR]
 [\fB\-vars \fIfile\fR]
 [\fB\-version\fR]
@@ -458,6 +459,10 @@ stay alive.
 \fB\-tkkr \fIpercent\fR
 Kicks players whose team killing to normal kill ratio is greater than
 \fIpercent\fR [1\-100]. A start up grace period is given to players.
+.TP 
+\fB\-ts \fR[\fImicros\fR]
+Include timestamp information in DEBUG output - useful for logging.
+If \fImicros\fR is specified, microseconds will be added to the timestamp.
 .TP 
 \fB\-userdb \fIfile\fR
 Load group associations from file
