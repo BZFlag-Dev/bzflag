@@ -20,7 +20,7 @@ const int ReplayObservers = 16;
 
 enum ReplayPacketMode {
   RealPacket   = 0, // broadcasted during replay
-  FakePacket   = 1, // broadcasted to those you aren't yet stateful
+  StatePacket  = 1, // broadcasted to those you aren't yet stateful
   HiddenPacket = 2  // never broadcasted (stored for admin. purposes)
 };
 
@@ -90,7 +90,7 @@ namespace Replay {
 // - To avoid having to track game state, we're simply going to
 //   take snapshots of the player and flag states periodically.
 //   These state packets will only be saved if there have been
-//   broadcasted packets, so that idle servers won't neccesarily
+//   broadcasted packets, so that idle servers won't necessarily
 //   have massive files if they're saving straight to a file.
 //
 // - Ideally, it would be nice to be able to set replay mode for

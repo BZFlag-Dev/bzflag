@@ -148,31 +148,33 @@ static bool preloadVariables ();
 // saves straight to a file, or into the buffer
 static bool routePacket (u16 code, int len, const void *data, u16 mode);
 
-static RRpacket *newRRpacket (u16 mode, u16 code, int len, const void *data);
-static RRpacket *delRRpacket (RRbuffer *b);         // delete from the tail
-static void addRRpacket (RRbuffer *b, RRpacket *p); // add to head
-static void freeRRbuffer (RRbuffer *buf);           // clean it out
-static void initRRpacket (u16 mode, u16 code, int len, const void *data,
-                          RRpacket *p);             // copy params into packet
+static RRpacket *nextPacket ();
+static RRpacket *prevPacket ();
+static RRpacket *nextStatePacket ();
+static RRpacket *prevStatePacket ();
 
-static bool saveRRpacket (RRpacket *p, FILE *f);
-static RRpacket *loadRRpacket (FILE *f);            // makes a new packet
-
-static FILE *openFile (const char *filename, const char *mode);
-static FILE *openWriteFile (int playerIndex, const char *filename);
-
-static bool badFilename (const char *name);
-static bool makeDirExist (const char *dirname);
-static bool makeDirExistMsg (const char *dirname, int playerIndex);
+static bool savePacket (RRpacket *p, FILE *f);
+static RRpacket *loadPacket (FILE *f);            // makes a new packet
 
 static bool saveHeader (int playerIndex, FILE *f);
 static bool loadHeader (ReplayHeader *h, FILE *f);
 static bool replaceFlagTypes (ReplayHeader *h);
 static bool replaceWorldDatabase (ReplayHeader *h);
-static void getWorldParamPtrs (char* world,
-                               char* &maxPlayers, char* &timeStamp);
 static bool flagIsActive (FlagType *type);
 static bool packFlagTypes (char *flags, u32 *flagsSize);
+
+static FILE *openFile (const char *filename, const char *mode);
+static FILE *openWriteFile (int playerIndex, const char *filename);
+static bool badFilename (const char *name);
+static bool makeDirExist (const char *dirname);
+static bool makeDirExistMsg (const char *dirname, int playerIndex);
+
+static RRpacket *newPacket (u16 mode, u16 code, int len, const void *data);
+static RRpacket *delPacket (RRbuffer *b);         // delete from the tail
+static void addPacket (RRbuffer *b, RRpacket *p); // add to head
+static void freeBuffer (RRbuffer *buf);           // clean it out
+static void initPacket (u16 mode, u16 code, int len, const void *data,
+                          RRpacket *p);             // copy params into packet
 
 static RRtime getRRtime ();
 
@@ -211,7 +213,7 @@ static bool recordReset ()
     fclose (RecordFile);
     RecordFile = NULL;
   }
-  freeRRbuffer (&RecordBuf);
+  freeBuffer (&RecordBuf);
 
   Recording = false;
   RecordMode = BufferedRecord;
@@ -419,7 +421,7 @@ bool Record::saveBuffer (int playerIndex, const char *filename, int seconds)
     // start the first update that happened at least 'seconds' ago
     p = RecordBuf.head;
     while (p != NULL) {
-      if ((p->mode == FakePacket) && (p->code == MsgTeamUpdate)) {
+      if ((p->mode == StatePacket) && (p->code == MsgTeamUpdate)) {
         RRtime diff = RecordBuf.head->timestamp - p->timestamp;
         RRtime usecs = (RRtime)seconds * (RRtime)1000000;
         if (diff >= usecs) {
@@ -433,7 +435,7 @@ bool Record::saveBuffer (int playerIndex, const char *filename, int seconds)
   if ((seconds == 0) || (p == NULL)) {
     // save the whole buffer from the first update
     p = RecordBuf.tail;
-    while (!((p->mode == FakePacket) && (p->code == MsgTeamUpdate))) {
+    while (!((p->mode == StatePacket) && (p->code == MsgTeamUpdate))) {
       p = p->next;
     }
     
@@ -461,7 +463,7 @@ bool Record::saveBuffer (int playerIndex, const char *filename, int seconds)
   // Save the packets
   
   while (p != NULL) {
-    saveRRpacket (p, RecordFile);
+    savePacket (p, RecordFile);
     p = p->next;
   }
   
@@ -517,16 +519,16 @@ routePacket (u16 code, int len, const void * data, u16 mode)
   }
   
   if (RecordMode == BufferedRecord) {
-    RRpacket *p = newRRpacket (mode, code, len, data);
+    RRpacket *p = newPacket (mode, code, len, data);
     p->timestamp = getRRtime();
-    addRRpacket (&RecordBuf, p);
+    addPacket (&RecordBuf, p);
     DEBUG4 ("routeRRpacket(): mode = %i, len = %4i, code = %s, data = %p\n",
             (int)p->mode, p->len, msgString (p->code), p->data);
 
     if (RecordBuf.byteCount > RecordMaxBytes) {
       RRpacket *p;
       DEBUG4 ("routePacket: deleting until State Update\n");
-      while (((p = delRRpacket (&RecordBuf)) != NULL) &&
+      while (((p = delPacket (&RecordBuf)) != NULL) &&
              !(p->mode && (p->code == MsgTeamUpdate))) {
         delete[] p->data;
         delete p;
@@ -536,8 +538,8 @@ routePacket (u16 code, int len, const void * data, u16 mode)
   else {
     RRpacket p;
     p.timestamp = getRRtime();
-    initRRpacket (mode, code, len, data, &p);
-    saveRRpacket (&p, RecordFile);
+    initPacket (mode, code, len, data, &p);
+    savePacket (&p, RecordFile);
     DEBUG4 ("routeRRpacket(): mode = %i, len = %4i, code = %s, data = %p\n",
             (int)p.mode, p.len, msgString (p.code), p.data);
   }
@@ -588,7 +590,7 @@ static bool replayReset()
     fclose (ReplayFile);
     ReplayFile = NULL;
   }
-  freeRRbuffer (&ReplayBuf);
+  freeBuffer (&ReplayBuf);
   
   ReplayMode = true;
   Replaying = false;
@@ -628,10 +630,10 @@ static bool preloadVariables ()
   
   // find the first BZDB update packet in the first state update block
   while ((p != NULL) && (p->code != MsgSetVar) &&
-         ((p->mode == FakePacket) || (p->mode == HiddenPacket))) {
+         ((p->mode == StatePacket) || (p->mode == HiddenPacket))) {
     p = p->next;
   }
-  if ((p == NULL) || (p->mode != FakePacket) || (p->code != MsgSetVar)) {
+  if ((p == NULL) || (p->mode != StatePacket) || (p->code != MsgSetVar)) {
     return false;
   }
   
@@ -639,7 +641,7 @@ static bool preloadVariables ()
   do {
     setVariables (p->data);
     p = p->next;
-  } while ((p != NULL) && (p->mode == FakePacket) && (p->code == MsgSetVar));
+  } while ((p != NULL) && (p->mode == StatePacket) && (p->code == MsgSetVar));
   
   return true;
 }
@@ -695,12 +697,12 @@ bool Replay::loadFile(int playerIndex, const char *filename)
   // preload the buffer 
   // FIXME - this should be a moving window, for big files, mmap() ?
   while (ReplayBuf.byteCount < RecordMaxBytes) {
-    p = loadRRpacket (ReplayFile);
+    p = loadPacket (ReplayFile);
     if (p == NULL) {
       break;
     }
     else {
-      addRRpacket (&ReplayBuf, p);
+      addPacket (&ReplayBuf, p);
     }
   }
 
@@ -1093,6 +1095,38 @@ setVariables (void *data)
 }
 
 
+static RRpacket *
+nextPacket ()
+{
+  return NULL;
+}
+
+
+static RRpacket *
+prevPacket ()
+{
+  return NULL;
+}
+
+
+static RRpacket *
+nextStatePacket ()
+{
+  return NULL;
+}
+
+
+static RRpacket *
+prevStatePacket ()
+{
+  nextPacket ();
+  prevPacket ();
+  nextStatePacket ();
+  prevStatePacket ();
+  return NULL;
+}
+
+
 /****************************************************************************/
 
 // State Management Functions
@@ -1116,7 +1150,7 @@ saveTeamStates ()
   }
   
   routePacket (MsgTeamUpdate, 
-               (char*)buf - (char*)bufStart,  bufStart, FakePacket);
+               (char*)buf - (char*)bufStart,  bufStart, StatePacket);
   
   return true;
 }
@@ -1140,7 +1174,7 @@ saveFlagStates () // look at sendFlagUpdate() in bzfs.cxx ... very similar
         // packet length overflow
         nboPackUShort(bufStart, cnt);
         routePacket (MsgFlagUpdate, 
-                     (char*)buf - (char*)bufStart, bufStart, FakePacket);
+                     (char*)buf - (char*)bufStart, bufStart, StatePacket);
 
         cnt = 0;
         length = sizeof(u16);
@@ -1157,7 +1191,7 @@ saveFlagStates () // look at sendFlagUpdate() in bzfs.cxx ... very similar
   if (cnt > 0) {
     nboPackUShort(bufStart, cnt);
     routePacket (MsgFlagUpdate,
-                 (char*)buf - (char*)bufStart, bufStart, FakePacket);
+                 (char*)buf - (char*)bufStart, bufStart, StatePacket);
   }
   
   return true;
@@ -1182,7 +1216,7 @@ savePlayerStates ()
       buf = nboPackUByte(bufStart, i);
       buf = pPlayer->packUpdate(buf);
       routePacket (MsgAddPlayer, 
-                   (char*)buf - (char*)bufStart, bufStart, FakePacket);
+                   (char*)buf - (char*)bufStart, bufStart, StatePacket);
       // Part of MsgAdminInfo
       NetHandler *handler = NetHandler::getHandler(i);
       adminPtr = nboPackUByte(adminPtr, handler->sizeOfIP());
@@ -1270,7 +1304,7 @@ packVars (const std::string& key, void *data)
   if ((pairLen + pvd.len) > (int)(MaxPacketLen - 2*sizeof(u16))) {
     nboPackUShort(pvd.bufStart, pvd.count);
     pvd.count = 0;
-    routePacket (MsgSetVar, pvd.len, pvd.bufStart, FakePacket);
+    routePacket (MsgSetVar, pvd.len, pvd.bufStart, StatePacket);
     pvd.buf = nboPackUShort(pvd.bufStart, 0); //placeholder
     pvd.len = sizeof(u16);
   }
@@ -1301,7 +1335,7 @@ saveVariableStates ()
   BZDB.iterate (packVars, &pvd);
   if (pvd.len > 0) {
     nboPackUShort(pvd.bufStart, pvd.count);
-    routePacket (MsgSetVar, pvd.len, pvd.bufStart, FakePacket);
+    routePacket (MsgSetVar, pvd.len, pvd.bufStart, StatePacket);
   }
   return true;
 }
@@ -1315,7 +1349,7 @@ saveVariableStates ()
 // types, so everything is saved in network byte order.
                           
 static bool
-saveRRpacket (RRpacket *p, FILE *f)
+savePacket (RRpacket *p, FILE *f)
 {
   char bufStart[RRpacketHdrSize];
   void *buf;
@@ -1345,7 +1379,7 @@ saveRRpacket (RRpacket *p, FILE *f)
 
 
 static RRpacket *
-loadRRpacket (FILE *f)
+loadPacket (FILE *f)
 {
   RRpacket *p;
   char bufStart[RRpacketHdrSize];
@@ -1701,26 +1735,19 @@ replaceFlagTypes (ReplayHeader *h)
 static bool
 replaceWorldDatabase (ReplayHeader *h)
 {
-  char *nowPlayersPtr, *nowTimeStampPtr;
-  char *hdrPlayersPtr, *hdrTimeStampPtr;
-  unsigned short nowMaxPlayers, hdrMaxPlayers;
+  const int timeStampOffset = sizeof(unsigned short)*9 + sizeof(float)*3;
+  const int maxPlayersOffset = sizeof(unsigned short)*4 + sizeof(float)*1;
+  char *hdrTimeStampPtr = h->world + timeStampOffset;
+  char *hdrMaxPlayersPtr = h->world + maxPlayersOffset;
+  char *nowTimeStampPtr = worldDatabase + timeStampOffset;
   unsigned int nowTimeStamp, hdrTimeStamp;
 
-  getWorldParamPtrs (worldDatabase, nowPlayersPtr, nowTimeStampPtr);
-  getWorldParamPtrs (h->world, hdrPlayersPtr, hdrTimeStampPtr);
-  
-  // save the originals
-  nboUnpackUShort (nowPlayersPtr, nowMaxPlayers);  
+  // save the originals timeStamps
   nboUnpackUInt (nowTimeStampPtr, nowTimeStamp);  
-  nboUnpackUShort (hdrPlayersPtr, hdrMaxPlayers);  
   nboUnpackUInt (hdrTimeStampPtr, hdrTimeStamp);  
-  DEBUG3 ("Current maxPlayers = %i\n", (int)nowMaxPlayers);
-  DEBUG3 ("Current timeStamp  = 0x%X\n", nowTimeStamp);
-  DEBUG3 ("Header maxPlayers  = %i\n", (int)hdrMaxPlayers);
-  DEBUG3 ("Header timeStamp   = 0x%X\n", hdrTimeStamp);
   
-  // setup the header params like the current world to compare
-  nboPackUShort (hdrPlayersPtr, nowMaxPlayers);  
+  // setup the header timeStamp and maxPlayers to compare
+  nboPackUShort (hdrMaxPlayersPtr, MaxPlayers + ReplayObservers);  
   nboPackUInt (hdrTimeStampPtr, nowTimeStamp);  
 
   if ((h->worldSize != worldDatabaseSize) ||
@@ -1736,7 +1763,6 @@ replaceWorldDatabase (ReplayHeader *h)
     worldDatabaseSize = h->worldSize;
     
     // setup for the hash
-    nboPackUShort (hdrPlayersPtr, hdrMaxPlayers);  
     nboPackUInt (hdrTimeStampPtr, 0);  
     
     MD5 md5;
@@ -1746,8 +1772,7 @@ replaceWorldDatabase (ReplayHeader *h)
     hexDigest[0] = h->realHash[0];
     strncpy (hexDigest + 1, hash.c_str(), sizeof (hexDigest) - 1);
 
-    // revert to the header time, and reset maxPlayers
-    nboPackUShort (hdrPlayersPtr, MaxPlayers + ReplayObservers);  
+    // revert to the header timeStamp
     nboPackUInt (hdrTimeStampPtr, hdrTimeStamp);  
     
     delete[] oldWorld;
@@ -1757,15 +1782,6 @@ replaceWorldDatabase (ReplayHeader *h)
   delete[] h->world;
   return false;    // the world was not replaced
 }
-
-
-static void
-getWorldParamPtrs (char* world, char* &maxPlayers, char* &timeStamp)
-{
-  maxPlayers = world + sizeof(unsigned short)*4 + sizeof(float)*1;
-  timeStamp = maxPlayers + sizeof(unsigned short)*5 + sizeof(float)*2;
-  return;
-}  
 
 
 static bool
@@ -1808,7 +1824,7 @@ packFlagTypes (char *flags, u32 *flagsSize)
 // Buffer Functions
 
 static void
-initRRpacket (u16 mode, u16 code, int len, const void *data, RRpacket *p)
+initPacket (u16 mode, u16 code, int len, const void *data, RRpacket *p)
 {
   // RecordFilePrevLen takes care of p->prev_len
   p->mode = mode;
@@ -1819,7 +1835,7 @@ initRRpacket (u16 mode, u16 code, int len, const void *data, RRpacket *p)
 
 
 static RRpacket *
-newRRpacket (u16 mode, u16 code, int len, const void *data)
+newPacket (u16 mode, u16 code, int len, const void *data)
 {
   RRpacket *p = new RRpacket;
   
@@ -1830,14 +1846,14 @@ newRRpacket (u16 mode, u16 code, int len, const void *data)
   if (data != NULL) {
     memcpy (p->data, data, len);
   }
-  initRRpacket (mode, code, len, p->data, p);
+  initPacket (mode, code, len, p->data, p);
 
   return p;
 }
 
 
 static void
-addRRpacket (RRbuffer *b, RRpacket *p)
+addPacket (RRbuffer *b, RRpacket *p)
 {
   if (b->head != NULL) {
     b->head->next = p;
@@ -1857,7 +1873,7 @@ addRRpacket (RRbuffer *b, RRpacket *p)
 
 
 static RRpacket *
-delRRpacket (RRbuffer *b)
+delPacket (RRbuffer *b)
 {
   RRpacket *p = b->tail;
 
@@ -1883,7 +1899,7 @@ delRRpacket (RRbuffer *b)
 
 
 static void
-freeRRbuffer (RRbuffer *b)
+freeBuffer (RRbuffer *b)
 {
   RRpacket *p, *ptmp;
 
