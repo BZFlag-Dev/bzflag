@@ -6756,6 +6756,7 @@ int main(int argc, char **argv)
       if (timeLeft <= 0.0f) {
 	timeLeft = 0.0f;
 	gameOver = true;
+	countdownActive = false;
       }
       if (timeLeft == 0.0f || newTimeElapsed - clOptions.timeElapsed >= 30.0f) {
 	void *buf, *bufStart = getDirectMessageBuffer();
