@@ -61,7 +61,7 @@ BZFlag 1.10.4
 * Add experimental quality setting for enhanced effects- Jeff Myers
 * Tunf off tank LOD, and ground grid for experimental quality - Jeff Myers
 * Add sides to the body of the hightank model - Jeff Myers
-* Increase flag segementation slightly for high quality, increase masivly for experimental quality - Jeff Myers
+* Increase flag segementation slightly for high quality, increase massively for experimental quality - Jeff Myers
 * Increase moon segments for exp. quality - Jeff Myers
 * Replace flag texture with one from pyBZFlag - Jeff Myers
 * Use a geometry based flagpole in exp. quality with a setable width from BZDB - Jeff Myers
