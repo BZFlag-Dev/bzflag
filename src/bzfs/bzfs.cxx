@@ -1977,7 +1977,7 @@ static void addPlayer(int playerIndex)
     }
 
     void *buf, *bufStart = getDirectMessageBuffer();
-    buf = nboPackUInt(bufStart, (uint32_t)timeLeft);
+    buf = nboPackInt(bufStart, (int32_t)timeLeft);
     result = directMessage(*playerData, MsgTimeUpdate,
 			   (char*)buf-(char*)bufStart, bufStart);
     if (result == -1)
@@ -4625,7 +4625,7 @@ int main(int argc, char **argv)
 	    for (int i = 0; i < curMaxPlayers; i++) {
 	      void *buf, *bufStart = getDirectMessageBuffer();
 	      player = GameKeeper::Player::getPlayerByIndex(i);
-	      if (!player) continue;
+	      if (!player || player->player.isObserver()) continue;
 
 	      // the server gets to capture the flag -- send some bogus player id
 	      // curMaxPlayers should never exceed 255, so this should be a safe cast
