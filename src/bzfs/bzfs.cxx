@@ -3441,8 +3441,20 @@ static void addFlag(int flagIndex)
 static void randomFlag(int flagIndex)
 {
   // pick a random flag
-  flag[flagIndex].flag.id = allowedFlags[int(clOptions.numAllowedFlags * (float)bzfrand())];
-  flag[flagIndex].flag.type = Flag::getType(flag[flagIndex].flag.id);
+  //FIXME for now just save an iterator that loops over all flags in order
+  static std::set<FlagDesc*>::iterator randomIt = allowedFlags.end();
+
+  if (randomIt == allowedFlags.end()) {
+    randomIt = allowedFlags.begin();
+  }
+  else {
+    randomIt++;
+    if (randomIt == allowedFlags.end()) {
+      randomIt = allowedFlags.begin();
+    }
+  }
+
+  flag[flagIndex].flag.desc = *randomIt;
   addFlag(flagIndex);
 }
 
@@ -3462,12 +3474,11 @@ static void resetFlag(int flagIndex)
 
   // if it's a random flag, reset flag id
   if (flagIndex >= numFlags - clOptions.numExtraFlags)
-    pFlagInfo->flag.id = NullFlag;
+    pFlagInfo->flag.desc = Flags::Null;
 
   // reposition flag
-  if (int(pFlagInfo->flag.id) >= int(FirstTeamFlag) &&
-	int(pFlagInfo->flag.id) <= int(LastTeamFlag)) {
-    int teamIndex = int(pFlagInfo->flag.id);
+  if (pFlagInfo->flag.desc->flagTeam != ::NoTeam) {
+    int teamIndex = pFlagInfo->flag.desc->flagTeam;
     pFlagInfo->flag.position[0] = basePos[teamIndex][0];
     pFlagInfo->flag.position[1] = basePos[teamIndex][1];
     pFlagInfo->flag.position[2] = basePos[teamIndex][2];
@@ -3477,7 +3488,7 @@ static void resetFlag(int flagIndex)
   } else {
     // random position (not in a building)
     float r = TankRadius;
-    if (pFlagInfo->flag.id == ObesityFlag)
+    if (pFlagInfo->flag.desc == Flags::Obesity)
        r *= 2.0f * ObeseFactor;
     WorldInfo::ObstacleLocation *obj;
     pFlagInfo->flag.position[0] = (WorldSize - BaseSize) * ((float)bzfrand() - 0.5f);
@@ -3504,13 +3515,13 @@ static void resetFlag(int flagIndex)
 
   // required flags mustn't just disappear
   if (pFlagInfo->required) {
-    if (int(pFlagInfo->flag.id) >= FirstTeamFlag &&
-	int(pFlagInfo->flag.id) <= LastTeamFlag)
-      if (team[int(pFlagInfo->flag.id)].team.activeSize == 0)
+    if (pFlagInfo->flag.desc->flagTeam != ::NoTeam) {
+      if (team[pFlagInfo->flag.desc->flagTeam].team.activeSize == 0)
 	pFlagInfo->flag.status = FlagNoExist;
       else
 	pFlagInfo->flag.status = FlagOnGround;
-    else if (pFlagInfo->flag.id == NullFlag)
+    }
+    else if (pFlagInfo->flag.desc == Flags::Null)
       randomFlag(flagIndex);
     else
       addFlag(flagIndex);
