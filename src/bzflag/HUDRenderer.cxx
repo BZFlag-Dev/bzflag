@@ -10,6 +10,17 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
+// system headers
+#if !defined(__APPLE__)
+#include <malloc.h>
+#endif
+#include <stdio.h>
+#include <stdlib.h>
+#include <ctype.h>
+#include <string.h>
+#include <time.h>
+
+// class headers
 #include "common.h"
 #include "bzfgl.h"
 #include "global.h"
@@ -27,14 +38,8 @@
 #include "OpenGLGState.h"
 #include "StateDatabase.h"
 #include "texture.h"
-#if !defined(__APPLE__)
-#include <malloc.h>
-#endif
-#include <stdio.h>
-#include <stdlib.h>
-#include <ctype.h>
-#include <string.h>
-#include <time.h>
+#include "TextUtils.h"
+
 
 //
 // FlashClock
@@ -563,32 +568,64 @@ void			HUDRenderer::setTimeLeft(int _timeLeft)
   timeSet = TimeKeeper::getTick();
 }
 
+/* FIXME - makeHelpString should return an array of strings instead of
+ * using implicit null chars.
+ */
 std::string		HUDRenderer::makeHelpString(const char* help) const
 {
   if (!help) return std::string();
 
+  static const float spaceWidth = minorFont.getWidth(" ");
+
   // find sections of string not more than maxWidth pixels wide
-  // and put them into a std::string separated by NUL's.
-  const float maxWidth = (float)window.getWidth() * 0.85f;
+  // and put them into a std::string separated by \0's.
+  const float maxWidth = (float)window.getWidth() * 0.75f;
   std::string msg;
   std::string text = BundleMgr::getCurrentBundle()->getLocalString(help);
-  const char* scan = text.c_str();
-  while (*scan) {
-    // FIXME should break at previous space, not after word that passes maxWidth
-    // find next blank (can only break lines at spaces)
-    const char* base = scan;
-    do {
-      while (*scan && isspace(*scan)) scan++;
-      while (*scan && !isspace(*scan)) scan++;
-    } while (*scan && minorFont.getWidth(base, scan - base) < maxWidth);
 
-    // add chunk and NUL separator
-    msg.append(base, scan - base);
-    msg.append("", 1);
+  char c;
+  float wordWidth;
+  std::string word = "";
+  float currentLineWidth = 0.0f;
+  unsigned int position = 0;
+  while (position < text.size()) {
+    c = text[position];
+    // when we hit a space, append the previous word
+    if (c == ' ') {
+      if (word.size() == 0) {
+	position++;
+	continue;
+      }
 
-    // skip over blanks
-    while (*scan && isspace(*scan)) scan++;
+      wordWidth = minorFont.getWidth(word);
+      msg += c;
+      if (wordWidth + currentLineWidth + spaceWidth < maxWidth) {
+	currentLineWidth += wordWidth;
+      } else {
+	msg += '\0';
+	currentLineWidth = 0.0f;
+      }
+      msg.append(word);
+      word.clear();
+
+    } else {
+      word += c;
+    }
+    position++;
   }
+
+  if (word.size() > 0) {
+    wordWidth = minorFont.getWidth(word);
+    if (wordWidth + currentLineWidth + spaceWidth >= maxWidth) {
+      msg += '\0';
+    }
+    msg += ' ';
+    msg.append(word);
+  }
+
+  // append terminating null so line counts are correct
+  msg += '\0';
+
   return msg;
 }
 
