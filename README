@@ -84,10 +84,10 @@ steps:
   % make
 
 The first make configures the build for the named platform.
-The second make actually does the build.  Doing make without
-configuring for a platform lists the available platforms.
-You can also append `-debug' to a platform name to configure
-a debug build.
+The second make actually does the build of bzflag, bzfs, etc.
+Doing make without configuring for a platform lists the
+available platforms. You can also append `-debug' to a
+platform name to configure a debug build.
 
 Some platforms may be different.  See the README file
 appropriate to your system for more information:
@@ -102,11 +102,6 @@ appropriate to your system for more information:
 After a successful build, run bzflag using:
 
   % ./bin/bzflag
-
-The first make configures the build for a particular platform.
-The second builds bzflag, bzfs, etc.  If you enter `make'
-without having configured a platform, you'll get a list of
-available platforms.
 
 bzflag is built into ./bin;  ./bin/bzflag runs bzflag and
 it will automatically look in ./data for the data files.
