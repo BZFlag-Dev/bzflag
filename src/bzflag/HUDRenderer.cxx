@@ -30,6 +30,7 @@
 #include <stdlib.h>
 #include <ctype.h>
 #include <string.h>
+#include <time.h>
 
 //
 // FlashClock
@@ -723,6 +724,19 @@ void			HUDRenderer::renderStatus(SceneRenderer& renderer)
   // print flag if player has one in upper right
   if (flag != NoFlag) {
     sprintf(buffer, "%s", Flag::getName(flag));
+    x = (float)renderer.getWindow().getWidth() -
+			0.25f * h - majorFont.getWidth(buffer);
+    if (Flag::getType(flag) == FlagSticky)
+      hudColor3fv(warningColor);
+    else
+      hudColor3fv(messageColor);
+    majorFont.draw(buffer, x, y);
+  } else {
+    time_t timeNow;
+    struct tm userTime;
+    time(&timeNow);
+    userTime = *localtime(&timeNow);
+    sprintf(buffer, "%2d:%2.2d", userTime.tm_hour, userTime.tm_min);
     x = (float)renderer.getWindow().getWidth() -
 			0.25f * h - majorFont.getWidth(buffer);
     if (Flag::getType(flag) == FlagSticky)
