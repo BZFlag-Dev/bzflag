@@ -17,6 +17,10 @@
 
 bzfquery.pl - Contact a bzflag server and print the game status
 
+=head1 SYNOPSIS
+
+B<bzfquery.pl> I<servername> [I<port>]
+
 =cut
 
 use Socket;
