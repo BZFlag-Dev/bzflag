@@ -105,6 +105,15 @@ THESE ARE LOWER PRIORITY
 * remove all DNS lookups from client when contacting a server IP
   supplied from the list server
 
+* add http proxy support in client for contacting list server. Should follow
+  the environment variable http_proxy where a sample might be
+  http_proxy=http://user:password@proxy.example.com:8080/
+
+* add http connect proxy support in client and bzadmin for talking tcp to game
+  servers.  This would use "HTTP CONNECT" like https clients to get to the tcp
+  port on a game server. Note that performance will suck and udp will not be
+  available.
+
 * allow /dev/dsp* on Linux to be selected someplace. command line,
   environment var, config file, who knows. ;-)
 
