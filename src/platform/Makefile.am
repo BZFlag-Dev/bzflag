@@ -31,7 +31,6 @@ libPlatform_a_SOURCES =				\
 	LinuxPlatformFactory.h			\
 	LinuxDisplay.cxx			\
 	LinuxDisplay.h				\
-	LinuxJoystick.h				\
 	LinuxMedia.cxx				\
 	LinuxMedia.h				\
 	USBJoystick.cxx				\
