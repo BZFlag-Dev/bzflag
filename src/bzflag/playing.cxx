@@ -1776,6 +1776,17 @@ static void		handleServerMessage(bool human, uint16_t code,
 	    if (killerPlayer == myTank) {
 	      hud->setAlert(1, "Don't shoot teammates!!!", 3.0f, true);
 	      playLocalSound( SFX_KILL_TEAM );
+	      if (myTank->isAutoPilot()) {
+	        char meaculpa[MessageLen];
+	        memset(meaculpa, 0, MessageLen);
+	        strncpy(meaculpa,
+		        "sorry, i'm just a silly machine",
+		        MessageLen);
+		char *buf = messageMessage;
+		buf = (char*)nboPackUByte(buf, victimPlayer->getId());
+	        nboPackString(buf, meaculpa, MessageLen-1);
+	        serverLink->send(MsgMessage, sizeof(messageMessage), messageMessage);
+	      }
 	    }
 	    // teammate
 	    killerLocal->changeScore(0, 1, 1);
