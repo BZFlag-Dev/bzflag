@@ -147,6 +147,7 @@ static std::vector<BillboardSceneNode*>	prototypeExplosions;
 static int		savedVolume = -1;
 static bool		grabMouseAlways = false;
 FlashClock		pulse;
+static bool             wasRabbit = false;
 
 static char		messageMessage[PlayerIdPLen + MessageLen];
 
@@ -3029,8 +3030,7 @@ static void		handleServerMessage(bool human, uint16_t code,
       static const float zero[3] = { 0.0f, 0.0f, 0.0f };
       Player* tank = getPlayerByIndex(playerIndex);
       if (tank == myTank) {
-	if (World::getWorld()->allowRabbit())
-	  myTank->changeTeam(RogueTeam);
+	wasRabbit = tank->getTeam() == RabbitTeam;
         myTank->restart(pos, forward);
         firstLife = false;
         mainWindow->warpMouse();
@@ -3101,20 +3101,24 @@ static void		handleServerMessage(bool human, uint16_t code,
 	killerLocal->endShot(shotId, true);
       }
       if (victimPlayer && killerLocal != victimPlayer) {
-	if (victimPlayer->getTeam() == killerLocal->getTeam() &&
-	    ((killerLocal->getTeam() != RogueTeam)
-	     || (World::getWorld()->allowRabbit())) &&
-	    (killerLocal->getTeam() != RabbitTeam)) {
-	  if (killerLocal == myTank) {
-	    hud->setAlert(1, "Don't shoot teammates!!!", 3.0f, true);
-	    playLocalSound( SFX_KILL_TEAM );
-	  }
-	  // teammate
-	  killerLocal->changeScore(0, 1, 1);
-	}
-	else
+	if (killerPlayer == myTank && wasRabbit) {
 	  // enemy
 	  killerLocal->changeScore(1, 0, 0);
+	} else {
+	  if (victimPlayer->getTeam() == killerLocal->getTeam() &&
+	      ((killerLocal->getTeam() != RogueTeam)
+	       || (World::getWorld()->allowRabbit()))) {
+	    if (killerPlayer == myTank) {
+	      hud->setAlert(1, "Don't shoot teammates!!!", 3.0f, true);
+	      playLocalSound( SFX_KILL_TEAM );
+	    }
+	    // teammate
+	    killerLocal->changeScore(0, 1, 1);
+	  } else {
+	    // enemy
+	    killerLocal->changeScore(1, 0, 0);
+	  }
+	}
       }
     }
 
@@ -3394,6 +3398,7 @@ static void		handleServerMessage(bool human, uint16_t code,
     if (rabbit != NULL) {
       rabbit->changeTeam(RabbitTeam);
       if (rabbit == myTank) {
+	wasRabbit = true;
 	if (myTank->isPaused())
 	  serverLink->sendNewRabbit();
 	else {
@@ -3402,8 +3407,9 @@ static void		handleServerMessage(bool human, uint16_t code,
 	}
 	hud->setHunting(false);
       } else if (myTank->getTeam() != ObserverTeam) {
-	if (myTank->isPaused())
-	  myTank->changeTeam(RogueTeam);
+	myTank->changeTeam(RogueTeam);
+	if (myTank->isPaused() || myTank->isAlive())
+	  wasRabbit = false;
 	rabbit->setHunted(true);
 	hud->setHunting(true);
       }
