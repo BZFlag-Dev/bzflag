@@ -4154,7 +4154,6 @@ static void handleVoteCmd(int t, const char *message)
   /* XXX answer arrays should be static const but it'll do for now */
   static const unsigned int yesCount = 8;
   char yesAnswers[8][5];
-  memset(yesAnswers, 0, 8 * 5 * sizeof(char));
   sprintf(yesAnswers[0], "y");
   sprintf(yesAnswers[1], "1");
   sprintf(yesAnswers[2], "yes");
@@ -4166,7 +4165,6 @@ static void handleVoteCmd(int t, const char *message)
 
   static const unsigned int noCount = 7;
   char noAnswers[7][5];
-  memset(noAnswers, 0, 7 * 5 * sizeof(char));
   sprintf(noAnswers[0], "n");
   sprintf(noAnswers[1], "0");
   sprintf(noAnswers[2], "no");
@@ -5753,9 +5751,6 @@ int main(int argc, char **argv)
     if ((clOptions->voteTime > 0) && (votingarbiter != NULL)) {
       if (votingarbiter->knowsPoll()) {
 	char message[256];
-	memset(message, 0, 256);
-	sprintf(message, "DEBUG: poll time remaining: %ld", votingarbiter->timeRemaining());
-	sendMessage(ServerPlayer, AllPlayers, message, true);
 
 	std::string person = votingarbiter->getPollPlayer();
 	std::string action = votingarbiter->getPollAction();
@@ -5764,14 +5759,12 @@ int main(int argc, char **argv)
 	  if (votingarbiter->isPollSuccessful()) {
 	    if (!announcedClosure) {
 	      // a poll that exists and is closed has ended successfully
-	      memset(message, 0, 256);
 	      sprintf(message, "The poll is now closed.  %s is scheduled to be %s.", person.c_str(), action == "ban" ? "banned for 10 minutes" : "kicked");
 	      sendMessage(ServerPlayer, AllPlayers, message, true);
 	      announcedClosure = true;
 	    }
 	  } else {
 	    if (!announcedClosure) {
-	      memset(message, 0, 256);
 	      sprintf(message, "The poll to %s %s was not successful", action.c_str(), person.c_str());
 	      sendMessage(ServerPlayer, AllPlayers, message, true);
 	      announcedClosure = true;
@@ -5788,7 +5781,6 @@ int main(int argc, char **argv)
 	    /* maybe successful, maybe not */
 	    if (votingarbiter->isPollSuccessful()) {
 	      // perform the action of the poll, if any
-	      memset(message, 0, 256);
 	      sprintf(message, "%s has been %s", person.c_str(), action == "ban" ? "banned for 10 minutes." : "kicked.");
 	      sendMessage(ServerPlayer, AllPlayers, message, true);
 
@@ -5826,7 +5818,6 @@ int main(int argc, char **argv)
 	} else {
 	  // the poll may get enough votes early
 	  if (votingarbiter->isPollSuccessful()) {
-	    memset(message, 0, 256);
 	    sprintf(message, "Enough votes were collected to %s %s early.", action.c_str(), person.c_str());
 	    sendMessage(ServerPlayer, AllPlayers, message, true);
 
