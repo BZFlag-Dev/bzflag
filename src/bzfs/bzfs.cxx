@@ -1942,12 +1942,17 @@ void resetFlag(int flagIndex)
     }
     
     float deadUnder = BZDB.eval(StateDatabase::BZDB_DEADUNDER);
+    if (deadUnder >= 0.0f) {
+      // precautionary measure
+      clOptions->flagsOnBuildings = true;
+    }
+    
     int topmosttype = world->inBuilding(&obj,
 					pFlagInfo->flag.position[0],
 					pFlagInfo->flag.position[1],
 					pFlagInfo->flag.position[2],
-					r,
-					flagHeight);
+					r, flagHeight);
+					
     while ((topmosttype != NOT_IN_BUILDING) || (pFlagInfo->flag.position[2] <= deadUnder)) {
       if ((clOptions->flagsOnBuildings
 	  && ((topmosttype == IN_BOX_NOTDRIVETHROUGH) || (topmosttype == IN_BASE)))
