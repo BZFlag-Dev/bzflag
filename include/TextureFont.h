@@ -53,8 +53,10 @@ public:
 
   void free(void);
 
-protected:
+private:
   void preLoadLists(void);
+  bool fmtRead(OSFile &file, std::string expectedLeft, std::string &retval);
+
   unsigned int	listIDs[128];
   trFontMetrics	fontMetrics[128];
 

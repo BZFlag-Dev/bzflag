@@ -509,11 +509,7 @@ void CTextToolView::OnFontSavefontfiles()
 
 	  int iNumChars = '}' - ' ';
 
-		fprintf(fp,"NumChars: %d\nTextureWidth: %d\nTextureHeight: %d\nTextZStep: %d\n\n",iNumChars,m_iMaxTextureWidth,iPictureY,m_iTextureZStep);
-	//  fwrite(&iNumChars,sizeof(int),1,fp);
-	//  fwrite(&m_iMaxTextureWidth,sizeof(int),1,fp);
-	//  fwrite(&iPictureY,sizeof(int),1,fp);
-	//  fwrite(&m_iTextureZStep,sizeof(int),1,fp);
+	  fprintf(fp,"NumChars: %d\nTextureWidth: %d\nTextureHeight: %d\nTextZStep: %d\n\n",iNumChars,m_iMaxTextureWidth,iPictureY,m_iTextureZStep);
 
 	  for (int iChar = 0; iChar <= iNumChars; iChar++)
 	  {
@@ -527,10 +523,9 @@ void CTextToolView::OnFontSavefontfiles()
 		  rFontMetrics.iStartY = m_arGlyphExtents[iChar].iStartY;
 		  rFontMetrics.iEndY = m_arGlyphExtents[iChar].iEndY;
 
-			fprintf(fp,"Char: %c\nInitalDist: %d\nWidth: %d\nWhitespace: %d\n",iChar,rFontMetrics.iInitalDist,rFontMetrics.iCharWidth,rFontMetrics.iWhiteSpaceDist);
-			fprintf(fp,"StartX: %d\nEndX: %d\nStartY: %d\nEndY: %d\n\n",rFontMetrics.iStartX,rFontMetrics.iEndX,rFontMetrics.iStartY,rFontMetrics.iEndY);
+		  fprintf(fp,"Char: %c\nInitialDist: %d\nWidth: %d\nWhitespace: %d\n",iChar+32,rFontMetrics.iInitalDist,rFontMetrics.iCharWidth,rFontMetrics.iWhiteSpaceDist);
+		  fprintf(fp,"StartX: %d\nEndX: %d\nStartY: %d\nEndY: %d\n\n",rFontMetrics.iStartX,rFontMetrics.iEndX,rFontMetrics.iStartY,rFontMetrics.iEndY);
 
-		  //fwrite(&rFontMetrics,sizeof(rFontMetrics),1,fp);
 	  }
 	  fclose(fp);
 	}

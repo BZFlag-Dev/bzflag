@@ -54,6 +54,32 @@ const char* TextureFont::getFaceName()
   return faceName.c_str();
 }
 
+/* read values in Key: Value form from font metrics (.fmt) files */
+bool TextureFont::fmtRead(OSFile &file, std::string expectedLeft, std::string &retval)
+{
+  std::string tmpBuf;
+  static int line = 0;
+
+  DEBUG2("Looking for %s\n",expectedLeft.c_str());
+
+  // allow for blank lines with native or foreign linebreaks, comment lines
+  while (tmpBuf.size() == 0 || tmpBuf[0] == '#' || tmpBuf[0] == 10 || tmpBuf[0] == 13) {
+    tmpBuf = file.readLine();
+    // keep a line counter
+    line++;
+    DEBUG2("Got %s, line %d\n",tmpBuf.c_str(), line);
+  }
+
+  if (tmpBuf.substr(0, tmpBuf.find(":")) == expectedLeft) {
+    retval = tmpBuf.substr(tmpBuf.find(":") + 1, tmpBuf.size());
+    return true;
+  } else {
+    DEBUG2("Unexpected line in font metrics file %s, line %d (expected %s)\n",
+      file.getFileName(), line, expectedLeft.c_str());
+    return false;
+  }
+}
+
 bool TextureFont::load(OSFile &file)
 {	
   const char *extension = file.getExtension();
@@ -64,13 +90,41 @@ bool TextureFont::load(OSFile &file)
   if (!file.open("rb"))
     return false;
 
-  file.read(&numberOfCharacters, sizeof(int));
-  file.read(&textureXSize, sizeof(int));
-  file.read(&textureYSize, sizeof(int));
-  file.read(&textureZStep, sizeof(int));
-  
-  for (int i = 0; i < numberOfCharacters; i++) {
-    file.read(&fontMetrics[i], sizeof(trFontMetrics));
+  std::string tmpBuf;
+
+  if (!fmtRead(file, "NumChars", tmpBuf)) return false;
+  sscanf(tmpBuf.c_str(), " %d", &numberOfCharacters);
+  if (!fmtRead(file, "TextureWidth", tmpBuf)) return false;
+  sscanf(tmpBuf.c_str(), " %d", &textureXSize);
+  if (!fmtRead(file, "TextureHeight", tmpBuf)) return false;
+  sscanf(tmpBuf.c_str(), " %d", &textureYSize);
+  if (!fmtRead(file, "TextZStep", tmpBuf)) return false;
+  sscanf(tmpBuf.c_str(), " %d", &textureZStep);
+
+  int i;
+  for (i = 0; i < numberOfCharacters; i++) {
+    // check character
+    if (!fmtRead(file, "Char", tmpBuf)) return false;
+    if (tmpBuf[1] != (i + 32)) {
+      DEBUG2("Unexpected character: %c, in font metrics file %s (expected %c).\n",
+	tmpBuf[1], file.getFileName(), i + 32);
+      return false;
+    }
+    // read metrics
+    if (!fmtRead(file, "InitialDist", tmpBuf)) return false;
+    sscanf(tmpBuf.c_str(), " %d", &fontMetrics[i].initialDist);
+    if (!fmtRead(file, "Width", tmpBuf)) return false;
+    sscanf(tmpBuf.c_str(), " %d", &fontMetrics[i].charWidth);
+    if (!fmtRead(file, "Whitespace", tmpBuf)) return false;
+    sscanf(tmpBuf.c_str(), " %d", &fontMetrics[i].whiteSpaceDist);
+    if (!fmtRead(file, "StartX", tmpBuf)) return false;
+    sscanf(tmpBuf.c_str(), " %d", &fontMetrics[i].startX);
+    if (!fmtRead(file, "EndX", tmpBuf)) return false;
+    sscanf(tmpBuf.c_str(), " %d", &fontMetrics[i].endX);
+    if (!fmtRead(file, "StartY", tmpBuf)) return false;
+    sscanf(tmpBuf.c_str(), " %d", &fontMetrics[i].startY);
+    if (!fmtRead(file, "EndY", tmpBuf)) return false;
+    sscanf(tmpBuf.c_str(), " %d", &fontMetrics[i].endY);
   }
 
   file.close();
