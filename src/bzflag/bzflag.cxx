@@ -967,12 +967,11 @@ int			main(int argc, char** argv)
     }
   }
   if (!startupInfo.hasConfiguration) {
-		findConfigFile();
-    if (CFGMGR.read(getCurrentConfigFileName()))
-		{
+    findConfigFile();
+    if (CFGMGR.read(getCurrentConfigFileName())) {
       startupInfo.hasConfiguration = true;
-			updateConfigFile();
-		}
+      updateConfigFile();
+    }
   }
 
   if (startupInfo.hasConfiguration)
