@@ -1,6 +1,10 @@
 to do list for bzflag
 ---------------------
 
+* create new 64x64, 48x48, 32x32, 16x16 official bzflag icons.
+  Should feature the BZFlag tank. The large ones should include
+  the BZFlag logo. All should feature transparency.
+
 * convert server to use 5154 as the default port, because IANA rocks!
 
 * remove -noudp option
