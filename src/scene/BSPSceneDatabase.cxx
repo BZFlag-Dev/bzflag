@@ -35,6 +35,21 @@ BSPSceneDatabase::Node::Node(bool _dynamic, SceneNode* _node):
   // do nothing
 }
 
+void BSPSceneDatabase::Node::addShadowNodes(SceneRenderer& renderer)
+{
+  // dive into the child BSP nodes
+  if (front != NULL) {
+    front->addShadowNodes(renderer);
+  }
+  if (back != NULL) {
+    back->addShadowNodes(renderer);
+  }
+  // render the SceneNode's shadows
+  if (node != NULL) {
+    node->addShadowNodes(renderer);
+  }
+}
+
 //
 // BSPSceneDatabase
 //
@@ -88,6 +103,11 @@ void			BSPSceneDatabase::addDynamicSphere(SphereSceneNode* n)
     for (int i = 0; i < numParts; i++)
       addDynamicNode(parts[i]);
   }
+}
+
+void			BSPSceneDatabase::addShadowNodes(SceneRenderer& renderer)
+{
+  root->addShadowNodes(renderer);
 }
 
 void			BSPSceneDatabase::removeDynamicNodes()

@@ -80,6 +80,18 @@ void			ZSceneDatabase::addDynamicSphere(SphereSceneNode* n)
   addDynamicNode(n);
 }
 
+void			ZSceneDatabase::addShadowNodes(SceneRenderer& renderer)
+{
+  int i;
+  for (i = 0; i < staticCount; i++) {
+    staticList[i]->addShadowNodes(renderer);
+  }
+  for (i = 0; i < dynamicCount; i++) {
+    dynamicList[i]->addShadowNodes(renderer);
+  }
+}
+
+
 void			ZSceneDatabase::removeDynamicNodes()
 {
   dynamicCount = 0;

@@ -23,6 +23,7 @@
 class ViewFrustum;
 class SceneNode;
 class SphereSceneNode;
+class SceneRenderer;
 
 // NOTE -- SceneDatabase owns all static nodes added to it,
 //	dynamic nodes are the responsibility of the client.
@@ -46,6 +47,7 @@ class SceneDatabase {
     virtual void	addStaticNode(SceneNode*) = 0;
     virtual void	addDynamicNode(SceneNode*) = 0;
     virtual void	addDynamicSphere(SphereSceneNode*) = 0;
+    virtual void	addShadowNodes(SceneRenderer &renderer) = 0;
     virtual void	removeDynamicNodes() = 0;
     virtual void	removeAllNodes() = 0;
     virtual bool	isOrdered() = 0;

@@ -35,6 +35,7 @@ class BSPSceneDatabase : public SceneDatabase {
     void		addStaticNode(SceneNode*);
     void		addDynamicNode(SceneNode*);
     void		addDynamicSphere(SphereSceneNode*);
+    void		addShadowNodes(SceneRenderer &renderer);
     void		removeDynamicNodes();
     void		removeAllNodes();
     bool		isOrdered();
@@ -47,6 +48,7 @@ class BSPSceneDatabase : public SceneDatabase {
     class Node {
       public:
 			Node(bool dynamic, SceneNode* node);
+			void addShadowNodes(SceneRenderer& renderer);
       public:
 	bool		dynamic;
 	int		count;

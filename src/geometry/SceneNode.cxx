@@ -147,9 +147,6 @@ void			SceneNode::setSphere(const GLfloat _sphere[4])
 
 void			SceneNode::getRenderNodes(SceneRenderer& renderer)
 {
-  if (BZDBCache::shadows) {
-    addShadowNodes(renderer);
-  }
   if (!cull(renderer.getViewFrustum())) {
     if (!renderer.testAndSetStyle(styleMailbox)) {
       notifyStyleChange(renderer);

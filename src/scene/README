@@ -27,8 +27,3 @@ Notes on the Octree  (trepan)
 13. Parent octree cells should swallow 'only-child' cells
 14. Add a limit to the total number of octree nodes? (so that silly map
     makers don't have their computer eaten alive by the bzflag client)
-15. Shadow nodes are getting clipped because of the odd projection
-    matrix that they use to cast themselves up on the ground. This could
-    be fixed by adding all of the shadow nodes before the Octree culls
-    their sources (the same is done now in SceneNode::getRenderNodes())
-

@@ -29,6 +29,7 @@ class ZSceneDatabase : public SceneDatabase {
     void		addStaticNode(SceneNode*);
     void		addDynamicNode(SceneNode*);
     void		addDynamicSphere(SphereSceneNode*);
+    void		addShadowNodes(SceneRenderer &renderer);
     void		removeDynamicNodes();
     void		removeAllNodes();
     bool		isOrdered();
