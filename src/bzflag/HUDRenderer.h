@@ -210,8 +210,9 @@ class HUDRenderer {
 
     float		flagHelpY;
     FlashClock		flagHelpClock;
-    int			flagHelpIndex;
+    FlagDesc*		flagHelpDesc;
     int			flagHelpLines;
+    std::string		flagHelpText;
 
     bool		showOptions;
     bool		showCompose;

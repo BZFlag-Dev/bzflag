@@ -175,7 +175,7 @@ HUDRenderer::HUDRenderer(const BzfDisplay* _display,
     marker[i].color[1] = 0.0f;
     marker[i].color[2] = 0.0f;
   }
-  flagHelpIndex = 0;
+  flagHelpDesc = NULL;
 
   // initialize clocks
   globalClock.setClock(-1.0f, 0.8f, 0.4f);
@@ -301,10 +301,6 @@ void			HUDRenderer::setMinorFontSize(int, int height)
   const float spacing = minorFont.getWidth("");
   scoreLabelWidth += spacing;
   killsLabelWidth += spacing;
-
-  // make flag help messages
-  for (int i = 0; i < int(LastFlag) - int(FirstFlag) + 1; i++)
-	  flagHelp[i] = makeHelpString(Flag::getHelp((FlagId)i));
 }
 
 void			HUDRenderer::setHeadingFontSize(int, int height)
@@ -489,15 +485,18 @@ void			HUDRenderer::setComposing(const std::string &prompt,
   }
 }
 
-void			HUDRenderer::setFlagHelp(FlagId id, float duration)
+void			HUDRenderer::setFlagHelp(FlagDesc* desc, float duration)
 {
-  flagHelpIndex = id;
+  flagHelpDesc = desc;
   flagHelpClock.setClock(duration);
+
+  // Generate the formatted help for this flag
+  flagHelpText = makeHelpString(desc->flagHelp);
 
   // count the number of lines in the help message
   flagHelpLines = 0;
-  const int helpLength = flagHelp[flagHelpIndex].size();
-  const char* helpMsg = flagHelp[flagHelpIndex].c_str();
+  const int helpLength = flagHelpText.size();
+  const char* helpMsg = flagHelpText.c_str();
   for (int i = 0; i < helpLength; i++)
     if (helpMsg[i] == '\0')
       flagHelpLines++;
@@ -702,7 +701,7 @@ void			HUDRenderer::renderStatus(void)
   float x = 0.25f * h;
   float y = (float)window.getViewHeight() - h;
   TeamColor teamIndex = player->getTeam();
-  FlagId flag = player->getFlag();
+  FlagDesc* flag = player->getFlag();
 
   // print player name and score in upper left corner in team (radar) color
   if (!roaming && (!playerHasHighScore || scoreClock.isOn())) {
@@ -712,10 +711,10 @@ void			HUDRenderer::renderStatus(void)
   }
 
   // print flag if player has one in upper right
-  if (flag != NoFlag) {
-    sprintf(buffer, "%s", BundleMgr::getCurrentBundle()->getLocalString(Flag::getName(flag)).c_str());
+  if (flag != Flags::Null) {
+    sprintf(buffer, "%s", BundleMgr::getCurrentBundle()->getLocalString(flag->flagName).c_str());
     x = (float)window.getWidth() - 0.25f * h - majorFont.getWidth(buffer);
-    if (Flag::getType(flag) == FlagSticky)
+    if (flag->flagType == FlagSticky)
       hudColor3fv(warningColor);
     else
       hudColor3fv(messageColor);
@@ -727,7 +726,7 @@ void			HUDRenderer::renderStatus(void)
     userTime = *localtime(&timeNow);
     sprintf(buffer, "%2d:%2.2d", userTime.tm_hour, userTime.tm_min);
     x = (float)window.getWidth() - 0.25f * h - majorFont.getWidth(buffer);
-    if (Flag::getType(flag) == FlagSticky)
+    if (flag->flagType == FlagSticky)
       hudColor3fv(warningColor);
     else
       hudColor3fv(messageColor);
@@ -759,8 +758,8 @@ void			HUDRenderer::renderStatus(void)
 	break;
 
       case LocalPlayer::Ready:
-	if (flag != NoFlag && Flag::getType(flag) == FlagSticky &&
-		  World::getWorld()->allowShakeTimeout()) {
+	if (flag != Flags::Null && flag->flagType == FlagSticky &&
+	    World::getWorld()->allowShakeTimeout()) {
 	  /* have a bad flag -- show time left 'til we shake it */
 	  statusColor = yellowColor;
 	  sprintf(buffer, bdl->getLocalString("%.1f").c_str(), player->getFlagShakingTime());
@@ -1349,7 +1348,7 @@ void			HUDRenderer::renderPlaying(SceneRenderer& renderer)
     hudColor3fv(messageColor);
     flagHelpY = (float) ((window.getViewHeight() >> 1) - maxMotionSize);
     y = flagHelpY - minorFont.getAscent();
-    const char* flagHelpBase = flagHelp[flagHelpIndex].c_str();
+    const char* flagHelpBase = flagHelpText.c_str();
     for (i = 0; i < flagHelpLines; i++) {
       y -= minorFont.getSpacing();
       minorFont.draw(flagHelpBase, (float)(centerx - minorFont.getWidth(flagHelpBase)/2.0), y);
@@ -1512,11 +1511,11 @@ void			HUDRenderer::drawPlayerScore(const Player* player,
 
   // "Purple Team" is longest possible string for flag indicator
   char flag[12]="";
-  FlagId flagid=player->getFlag();
-  if (flagid != NoFlag) {
+  FlagDesc* flagd = player->getFlag();
+  if (flagd != Flags::Null) {
     sprintf(flag,"/%s",
-	    Flag::getType(flagid) == FlagNormal ?
-	    Flag::getName(flagid) : Flag::getAbbreviation(flagid));
+	    flagd->flagType == FlagNormal ?
+	    flagd->flagName : flagd->flagAbbv);
   }
 
   // indicate tanks which are paused or not responding
@@ -1540,10 +1539,10 @@ void			HUDRenderer::drawPlayerScore(const Player* player,
   }
   minorFont.draw(player->getCallSign(), x3, y);
   minorFont.draw(email, x3 + callSignWidth, y);
-  if ((flagid == ShockWaveFlag)   ||
-      (flagid == GenocideFlag)    ||
-      (flagid == LaserFlag)       ||
-      (flagid == GuidedMissileFlag)) {
+  if ((flagd == Flags::ShockWave)   ||
+      (flagd == Flags::Genocide)    ||
+      (flagd == Flags::Laser)       ||
+      (flagd == Flags::GuidedMissile)) {
     GLfloat white_color[3] = {1.0f, 1.0f, 1.0f};
     hudSColor3fv(white_color);
     minorFont.draw(flag, x3 + callSignWidth + emailWidth, y);
