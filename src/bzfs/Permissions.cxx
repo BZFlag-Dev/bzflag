@@ -257,6 +257,9 @@ void setUserPassword(const std::string &nick, const std::string &pass)
   makeupper(str1);
   if (pass.size() == 0) {
     passwordDatabase[str1] = "*";
+  } else if (pass = "*") {
+    // never encode *, this would change the person's password from NULL to *.
+    passwordDatabase[str1] = "*";
   } else {
     // assume it's already a hash when length is 32 (FIXME?)
     passwordDatabase[str1] = pass.size()==32 ? pass : MD5(pass).hexdigest();
