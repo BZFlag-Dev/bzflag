@@ -136,7 +136,7 @@ bool			PingPacket::waitForReply(int fd,
 bool			PingPacket::write(int fd,
 					const struct sockaddr_in* addr) const
 {
-  char buffer[PacketSize];
+  char buffer[PacketSize] = {0};
   void* buf = buffer;
   buf = nboPackUShort(buf, PacketSize - 4);
   buf = nboPackUShort(buf, MsgPingCodeReply);
