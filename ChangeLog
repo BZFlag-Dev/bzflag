@@ -4,6 +4,7 @@
 BZFlag 2.0.1
 ------------
 
+* Fixed server start menu for windows - Daniel Remenak
 * Message spam fixed - Alfredo Tupone
 * Fixed no flag on building - Alfredo Tupone
 * Fixed MsgQueryPlayer eventually sending AddPlayer to all - Alfredo Tupone
