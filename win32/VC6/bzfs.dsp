@@ -123,6 +123,10 @@ SOURCE=..\..\src\bzfs\commands.cxx
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\src\bzfs\CustomArc.cxx
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\src\bzfs\CustomBase.cxx
 # End Source File
 # Begin Source File
@@ -155,11 +159,19 @@ SOURCE=..\..\src\bzfs\CustomPyramid.cxx
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\src\bzfs\CustomSphere.cxx
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\src\bzfs\CustomTetra.cxx
 # End Source File
 # Begin Source File
 
 SOURCE=..\..\src\bzfs\CustomTextureMatrix.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\bzfs\CustomWaterLevel.cxx
 # End Source File
 # Begin Source File
 
@@ -192,6 +204,10 @@ SOURCE=..\..\src\bzfs\GameKeeper.cxx
 # Begin Source File
 
 SOURCE=..\..\src\bzfs\ListServerConnection.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\bzfs\ParseMaterial.cxx
 # End Source File
 # Begin Source File
 
@@ -307,6 +323,10 @@ SOURCE=..\..\include\ConfigFileManager.h
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\src\bzfs\CustomArc.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\src\bzfs\CustomBase.h
 # End Source File
 # Begin Source File
@@ -339,6 +359,10 @@ SOURCE=..\..\src\bzfs\CustomPyramid.h
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\src\bzfs\CustomSphere.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\src\bzfs\CustomTetra.h
 # End Source File
 # Begin Source File
@@ -348,6 +372,10 @@ SOURCE=..\..\src\bzfs\CustomTextureMatrix.h
 # Begin Source File
 
 SOURCE=..\..\src\bzfs\CustomWeapon.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\bzfs\CustomWaterLevel.h
 # End Source File
 # Begin Source File
 
@@ -399,6 +427,10 @@ SOURCE=..\..\include\md5.h
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\include\MeshUtils.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\include\multicast.h
 # End Source File
 # Begin Source File
@@ -408,6 +440,10 @@ SOURCE=..\..\include\Pack.h
 # Begin Source File
 
 SOURCE=..\..\src\bzfs\PackVars.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\bzfs\ParseMaterial.h
 # End Source File
 # Begin Source File
 
