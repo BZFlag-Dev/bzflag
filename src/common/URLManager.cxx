@@ -348,7 +348,7 @@ bool URLManager::getURL(const std::string&, void **, unsigned int&)
 {
   return false;
 }
-bool URLManager::getFileTime(const std::string&, time_t &)
+bool URLManager::getFileTime(time_t&)
 {
   return false;
 }
