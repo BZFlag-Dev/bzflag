@@ -4,6 +4,7 @@
 BZFlag 1.10.0 "Break the world" (was 1.9.x)
 -------------------------------------------
 
+* control spawn on buildings with -sb - Frank Thilo
 * Initial Docbook documentation - Sean Morrison
 * Persistent bans with -banfile <filename> - Lars Luthman
 * Stream Rolling collision detection is now compressed in height - Alfredo Tupone
