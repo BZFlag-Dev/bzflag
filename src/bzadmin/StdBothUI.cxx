@@ -13,9 +13,11 @@
 #ifdef _WIN32
 #pragma warning( 4: 4786)
 #endif
-
 #include <iostream>
 #ifdef _WIN32
+#include <stdlib.h>
+#include <winsock2.h>
+#include <ws2tcpip.h>
 #else
 #include <sys/select.h>
 #endif
@@ -43,7 +45,11 @@ bool StdBothUI::checkCommand(string& str) {
   tv.tv_sec = 0;
   tv.tv_usec = 0;
   if (select(1, &rfds, NULL, NULL, &tv) > 0) {
+#ifdef _WIN32
+    std::cin >> buffer[pos];
+#else
     read(0, &buffer[pos], 1);
+#endif
     if (buffer[pos] == '\n' || pos == MessageLen - 1) {
       buffer[pos] = '\0';
       str = buffer;
