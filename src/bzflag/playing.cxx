@@ -443,7 +443,7 @@ static BaseLocalPlayer*	getLocalPlayer(PlayerId id)
 
 static TeamColor	PlayerIdToTeam(PlayerId id)
 {
-	if (id >= 245 && id<=250)
+	if (id >= 244 && id<=250)
 		return TeamColor(250 - id);
 	else
 		return NoTeam;
