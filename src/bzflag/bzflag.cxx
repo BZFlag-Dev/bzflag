@@ -364,7 +364,7 @@ static void		usage()
 	" [-echoClean]"
 	" [-geometry <geometry-spec>]"
 	" [-interface <interface>]"
-	" [-joystick {yes|no}]"
+	" [-joystick {1|0}]"
 	" [-joystickname <name>]"
 	" [-latitude <latitude>] [-longitude <longitude>]"
 	" [-list <server-list-url>] [-nolist]"
