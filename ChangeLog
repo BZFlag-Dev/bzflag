@@ -13,6 +13,7 @@ BZFlag 1.11
 * Bots aim better, try to evade shots - Frank Thilo
 * No Jumping and Trigger Happy flags - Nils McCarthy
 * bans based on hostmask (/hostban, ...) when adns is available - Nils McCarthy
+* server option to disallow autopilot - Nils McCarthy
 
 BZFlag 1.10.4 "not a smurf"
 ---------------------------
