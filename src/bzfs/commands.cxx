@@ -1175,19 +1175,22 @@ void handleVoteCmd(int t, const char *message)
   yesAnswers.push_back("1");
   yesAnswers.push_back("yes");
   yesAnswers.push_back("yea");
-  yesAnswers.push_back("si");
-  yesAnswers.push_back("ja");
-  yesAnswers.push_back("oui");
-  yesAnswers.push_back("sim");
+  yesAnswers.push_back("si"); // spanish+
+  yesAnswers.push_back("ja");  // german
+  yesAnswers.push_back("oui"); // french
+  yesAnswers.push_back("sim"); // portuguese
+  yesAnswers.push_back("tak"); // polish
 
   std::vector<std::string> noAnswers;
   noAnswers.push_back("n");
   noAnswers.push_back("0");
   noAnswers.push_back("no");
   noAnswers.push_back("nay");
-  noAnswers.push_back("nein");
-  noAnswers.push_back("non");
-  noAnswers.push_back("nao");
+  noAnswers.push_back("nein"); // german
+  noAnswers.push_back("nien"); // german misspelled
+  noAnswers.push_back("non"); // french
+  noAnswers.push_back("nao"); // portuguese
+  noAnswers.push_back("nie"); // polish
 
   // see if the vote response is a valid yes or no answer
   int vote=-1;
