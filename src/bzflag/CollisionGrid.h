@@ -10,11 +10,6 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
  
-
-// FIXME - returned cell lists will likely contain
-//         the same obstacle more then once, find
-//         a fast way to avoid repetitive testing?
-
 #ifndef	__COLLISION_GRID__
 #define	__COLLISION_GRID__
 
@@ -31,20 +26,18 @@
 #include "Teleporter.h"
 #include "Obstacle.h"
 
+
 const int GridSizeX = 32;
 const int GridSizeY = 32;
 
-typedef struct {
-  int count;
-  float pos[3]; // center of cell
-  std::vector<const Obstacle *> objs;
-} CollisionCell;
 
-typedef std::vector<const CollisionCell *> CellList;
+typedef std::vector<const Obstacle *> ObstacleList;
+
 
 class CollisionGrid {
 
   public:
+
     CollisionGrid();
     ~CollisionGrid();
     
@@ -56,15 +49,29 @@ class CollisionGrid {
     void clear ();
 
     float getWorldSize () const; // to see if we need to reload
+
     
-    CellList getCells (const float *pos, float radius) const;
-    CellList getCells (const float* pos, float angle, float dx, float dy) const;
-    CellList getCells (const float* oldPos, float oldAngle,
-                       const float* pos, float angle,
-                       float dx, float dy) const;
-                       
+    ObstacleList getObstacles (const float *pos, float radius) const;
+    ObstacleList getObstacles (const float* pos, float angle,
+                               float dx, float dy) const;
+    ObstacleList getObstacles (const float* oldPos, float oldAngle,
+                               const float* pos, float angle,
+                               float dx, float dy) const;
+
   private:
-    CollisionCell Cells[GridSizeX][GridSizeY];
+
+    typedef struct {
+      int count;
+      float pos[3]; // center of cell
+      std::vector<const Obstacle *> objs;
+    } GridCell;
+
+    typedef std::vector<const GridCell *> CellList;
+
+    CellList CollisionGrid::getCells (const float *pos, float radius) const;    
+
+    GridCell Cells[GridSizeX][GridSizeY];
+    
     float WorldSize;
     float Sx;
     float Sy;

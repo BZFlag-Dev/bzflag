@@ -23,6 +23,8 @@
 #include "Obstacle.h"
 
 
+
+
 CollisionGrid::CollisionGrid ()
 {
 }
@@ -50,7 +52,8 @@ float CollisionGrid::getWorldSize () const
   return WorldSize;
 }
 
-CellList CollisionGrid::getCells (const float *pos, float radius) const
+CollisionGrid::CellList
+CollisionGrid::getCells (const float *pos, float radius) const
 {
   // We're going to play this one fast and loose.
   // Just see which cells the maximal box intersects,
@@ -77,30 +80,50 @@ CellList CollisionGrid::getCells (const float *pos, float radius) const
   }
   
   // make the list
-  CellList list;
+  CellList clist;
   
   for (int x = minX; x <= maxX; x++) {
     for (int y = minY; y <= maxY; y++) {
       if (Cells[x][y].count > 0) {
-        list.push_back(&Cells[x][y]);
+        clist.push_back(&Cells[x][y]);
       }
     }
   }
   
-  return list;
+  return clist;
 }
 
-CellList CollisionGrid::getCells (const float* pos, float angle, float dx, float dy) const
+ObstacleList CollisionGrid::getObstacles (const float *pos, float radius) const
+{
+  ObstacleList olist;
+
+  CellList clist = getCells (pos, radius);
+  
+  for (CellList::const_iterator cit = clist.begin();
+       cit != clist.end(); cit++) {
+    const GridCell* cell = *cit;
+    for (ObstacleList::const_iterator oit = cell->objs.begin();
+         oit != cell->objs.end(); oit++) {
+      // FIXME - make sure there are no duplicates?
+      olist.push_back(*oit);
+    }
+  }
+
+  return olist;  
+}
+
+ObstacleList CollisionGrid::getObstacles (const float* pos, float angle,
+                                          float dx, float dy) const
 {
   angle = angle;  // remove warnings
 
   float radius = sqrtf (dx*dx + dy*dy);
-  return getCells (pos, radius);
+  return getObstacles (pos, radius);
 }
 
-CellList CollisionGrid::getCells (const float* oldPos, float oldAngle,
-                                  const float* pos, float angle,
-                                  float dx, float dy) const
+ObstacleList CollisionGrid::getObstacles (const float* oldPos, float oldAngle,
+                                          const float* pos, float angle,
+                                          float dx, float dy) const
 {
   // FIXME - sort of a bogus call, this particular
   // style of collision detection is only used to 
@@ -111,7 +134,7 @@ CellList CollisionGrid::getCells (const float* oldPos, float oldAngle,
   oldAngle = oldAngle;
   
   float radius = sqrtf (dx*dx + dy*dy);
-  return getCells (pos, radius);
+  return getObstacles (pos, radius);
 }                                  
 
 void CollisionGrid::load (std::vector<BoxBuilding>     &boxes,
@@ -155,7 +178,7 @@ void CollisionGrid::load (std::vector<BoxBuilding>     &boxes,
     float radius = sqrtf (dx*dx + dy*dy);
     CellList list = getCells (box->getPosition(), radius);
     for (cit = list.begin(); cit != list.end(); cit++) {
-      CollisionCell* cell = (CollisionCell*) (*cit);
+      GridCell* cell = (GridCell*) (*cit);
       if (box->isInside(cell->pos, 0.0f, Hx, Hy)) {
         cell->objs.push_back( &(*it_box) );
       }
@@ -171,7 +194,7 @@ void CollisionGrid::load (std::vector<BoxBuilding>     &boxes,
     float radius = sqrtf (dx*dx + dy*dy);
     CellList list = getCells (pyr->getPosition(), radius);
     for (cit = list.begin(); cit != list.end(); cit++) {
-      CollisionCell* cell = (CollisionCell*) (*cit);
+      GridCell* cell = (GridCell*) (*cit);
       if (pyr->isInside(cell->pos, 0.0f, Hx, Hy)) {
         cell->objs.push_back( &(*it_pyr) );
       }
@@ -187,7 +210,7 @@ void CollisionGrid::load (std::vector<BoxBuilding>     &boxes,
     float radius = sqrtf (dx*dx + dy*dy);
     CellList list = getCells (tele->getPosition(), radius);
     for (cit = list.begin(); cit != list.end(); cit++) {
-      CollisionCell* cell = (CollisionCell*) (*cit);
+      GridCell* cell = (GridCell*) (*cit);
       if (tele->isInside(cell->pos, 0.0f, Hx, Hy)) {
         cell->objs.push_back( &(*it_tele) );
       }
@@ -203,7 +226,7 @@ void CollisionGrid::load (std::vector<BoxBuilding>     &boxes,
     float radius = sqrtf (dx*dx + dy*dy);
     CellList list = getCells (base->getPosition(), radius);
     for (cit = list.begin(); cit != list.end(); cit++) {
-      CollisionCell* cell = (CollisionCell*) (*cit);
+      GridCell* cell = (GridCell*) (*cit);
       if (base->isInside(cell->pos, 0.0f, Hx, Hy)) {
         cell->objs.push_back( &(*it_base) );
       }

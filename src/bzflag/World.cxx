@@ -181,18 +181,13 @@ TeamColor		World::whoseBase(const float* pos) const
 
 const Obstacle*		World::inBuilding(const float* pos, float radius) const
 {
-  CellList list = collisionGrid.getCells (pos, radius);
-  
-  for (CellList::const_iterator cit = list.begin(); cit != list.end(); cit++) {
-    const CollisionCell* cell = (*cit);
-    
-    std::vector<const Obstacle*>::const_iterator obs_it = cell->objs.begin();
-    while (obs_it != cell->objs.end()) {
-      const Obstacle& obs = *(*obs_it);
-      if (obs.isInside(pos, radius)) {
-        return &obs;
-      }
-      obs_it++;
+  // check everything but walls
+  ObstacleList olist = collisionGrid.getObstacles (pos, radius);
+  for (ObstacleList::const_iterator oit = olist.begin();
+       oit != olist.end(); oit++) {
+    const Obstacle* obs = *oit;
+    if (obs->isInside(pos, radius)) {
+      return obs;
     }
   }
 
@@ -212,18 +207,13 @@ const Obstacle*		World::hitBuilding(const float* pos, float angle,
     wallScan++;
   }
 
-  CellList list = collisionGrid.getCells (pos, angle, dx, dy);
-  
-  for (CellList::const_iterator cit = list.begin(); cit != list.end(); cit++) {
-    const CollisionCell* cell = (*cit);
-    
-    std::vector<const Obstacle*>::const_iterator obs_it = cell->objs.begin();
-    while (obs_it != cell->objs.end()) {
-      const Obstacle& obs = *(*obs_it);
-      if (!obs.isDriveThrough() && obs.isInside(pos, angle, dx, dy)) {
-        return &obs;
-      }
-      obs_it++;
+  // check everything else
+  ObstacleList olist = collisionGrid.getObstacles (pos, angle, dx, dy);
+  for (ObstacleList::const_iterator oit = olist.begin();
+       oit != olist.end(); oit++) {
+    const Obstacle* obs = *oit;
+    if (!obs->isDriveThrough() && obs->isInside(pos, angle, dx, dy)) {
+      return obs;
     }
   }
 
@@ -244,17 +234,15 @@ const Obstacle*		World::hitBuilding(const float* oldPos, float oldAngle,
     wallScan++;
   }
 
-  CellList list = collisionGrid.getCells (oldPos, oldAngle, pos, angle, dx, dy);
-  
-  for (CellList::const_iterator cit = list.begin(); cit != list.end(); cit++) {
-    const CollisionCell* cell = (*cit);
-    std::vector<const Obstacle*>::const_iterator obs_it = cell->objs.begin();
-    while (obs_it != cell->objs.end()) {
-      const Obstacle& obs = *(*obs_it);
-      if (!obs.isDriveThrough() && obs.isInside(oldPos, oldAngle, pos, angle, dx, dy)) {
-        return &obs;
-      }
-      obs_it++;
+  // check everything else
+  ObstacleList olist = 
+    collisionGrid.getObstacles (oldPos, oldAngle, pos, angle, dx, dy);
+  for (ObstacleList::const_iterator oit = olist.begin();
+       oit != olist.end(); oit++) {
+    const Obstacle* obs = *oit;
+    if (!obs->isDriveThrough() &&
+        obs->isInside(oldPos, oldAngle, pos, angle, dx, dy)) {
+      return obs;
     }
   }
 
