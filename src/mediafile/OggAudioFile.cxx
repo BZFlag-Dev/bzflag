@@ -65,9 +65,10 @@ size_t	OAFRead(void* ptr, size_t size, size_t nmemb, void* datasource)
 	std::streampos pos1 = in->tellg();
 	in->read((char*)ptr, size * nmemb);
 	std::streampos pos2 = in->tellg();
-	if(in->eof())
+	size_t bytesRead = pos2 - pos1;
+	if(in->eof() && bytesRead == 0)
 		return 0;
-	return pos2 - pos1;
+	return bytesRead;
 }
 
 int		OAFSeek(void* datasource, ogg_int64_t offset, int whence)
