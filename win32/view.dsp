@@ -90,7 +90,15 @@ SOURCE=..\src\view\View.cxx
 # End Source File
 # Begin Source File
 
+SOURCE=..\src\view\ViewItemAccum.cxx
+# End Source File
+# Begin Source File
+
 SOURCE=..\src\view\ViewItemBuffer.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\src\view\ViewItemColorMask.cxx
 # End Source File
 # Begin Source File
 
