@@ -27,7 +27,8 @@ BZF_DEFINE_ALIST(RegionAzimuthList, float);
 class RobotPlayer : public BaseLocalPlayer {
   public:
 			RobotPlayer(const PlayerId&,
-				const char* name, ServerLink*);
+				const char* name, ServerLink*,
+				const char* _email = "anonymous");
 			~RobotPlayer();
 
     float		getTargetPriority(const Player*) const;

@@ -23,8 +23,9 @@
 #include <math.h>
 
 RobotPlayer::RobotPlayer(const PlayerId& _id, const char* _name,
-				ServerLink* _server) :
-				BaseLocalPlayer(_id, _name, "anonymous"),
+				ServerLink* _server,
+				const char* _email = "anonymous") :
+				BaseLocalPlayer(_id, _name, _email),
 				server(_server),
 				target(NULL),
 				pathIndex(0),

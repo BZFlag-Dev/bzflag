@@ -2617,10 +2617,11 @@ static void		addRobots(boolean useMulticastRelay)
 {
   uint16_t code, len;
   char msg[MaxPacketLen];
+  char callsign[CallSignLen];
 
   for (int j = 0; j < numRobots;) {
-    robots[j] = new RobotPlayer(robotServer[j]->getId(),
-					"robot", robotServer[j]);
+    snprintf(callsign, CallSignLen, "%s%d", myTank->getCallSign(), j);
+    robots[j] = new RobotPlayer(robotServer[j]->getId(), callsign, robotServer[j], myTank->getEmailAddress());
     if (world->allowRogues())
       robots[j]->setTeam((TeamColor)((int)RogueTeam + (int)(bzfrand() *
 					(int)(PurpleTeam - RogueTeam + 1))));
