@@ -11,10 +11,6 @@ critical bugs
   displayed wrong).  resetting key map doesn't seem to fully erase the current
   bindings before reapplying defaults (same bug as above?)
 
-- if client unsticks itself, the reverse impulse can be too fast resulting in
-  a too fast autokick.  reverse impulse needs to take normal into consideration
-  as well as the max world velocity, etc.
-
 - Sometimes when you pick up MG, the tank automatically, and constantly
   starts firing all the shots over and over. Seen on Mac and Windows.  Happens
   every time on the mac client.

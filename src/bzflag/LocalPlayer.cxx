@@ -555,18 +555,24 @@ void			LocalPlayer::doUpdateMotion(float dt)
 			    expelled);
   if (obstacle && expelled) {
     // we are using a maximum value on time for frame to avoid lagging problem
+    setDesiredSpeed(0.25f);
     float deltaTime = dt > 0.1f ? 0.1f : dt;
     float normalStuck[3];
     obstacle->getNormal(newPos, normalStuck);
     // use all the given speed to exit
-    float movementMax
-      = hypotf(newVelocity[0], hypotf(newVelocity[1], newVelocity[2]))
-      * deltaTime;
-    // exit will be in the normal direction
-    newPos[0] += movementMax * normalStuck[0];
-    newPos[1] += movementMax * normalStuck[1];
+    float movementMax = desiredSpeed * deltaTime;
+
+    newVelocity[0] = movementMax * normalStuck[0];
+    newVelocity[1] = movementMax * normalStuck[1];
     if (World::getWorld()->allowJumping() || (getFlag() == Flags::Jumping))
-      newPos[2] += movementMax * normalStuck[2];
+      newVelocity[2] = movementMax * normalStuck[2];
+    else
+      newVelocity[2] = 0.0f;
+
+    // exit will be in the normal direction
+    newPos[0] += newVelocity[0];
+    newPos[1] += newVelocity[1];
+    newPos[2] += newVelocity[2];
     // compute time for all other kind of movements
     timeStep -= deltaTime;
   }
