@@ -102,7 +102,7 @@ void ShockWaveStrategy::radarRender() const
   const float* shotPos = getPath().getPosition();
   glBegin(GL_LINE_LOOP);
   for (int i = 0; i < sides; i++) {
-    const float angle = (float)(2.0 * M_PI * float(i) / float(sides));
+    const float angle = (float)(2.0 * M_PI * double(i) / double(sides));
     glVertex2f(shotPos[0] + radius * cosf(angle),
 	       shotPos[1] + radius * sinf(angle));
   }

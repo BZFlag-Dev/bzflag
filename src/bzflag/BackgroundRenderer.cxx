@@ -866,7 +866,7 @@ void BackgroundRenderer::drawGroundReceivers(SceneRenderer& renderer)
 
   if (!init) {
     init = true;
-    const float receiverSliceAngle = (float)(2.0 * M_PI / float(receiverSlices));
+    const float receiverSliceAngle = (float)(2.0 * M_PI / double(receiverSlices));
     for (int i = 0; i <= receiverSlices; i++) {
       angle[i][0] = cosf((float)i * receiverSliceAngle);
       angle[i][1] = sinf((float)i * receiverSliceAngle);

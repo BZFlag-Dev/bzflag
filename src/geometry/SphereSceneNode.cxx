@@ -182,9 +182,9 @@ SphereSceneNode::SphereRenderNode::SphereRenderNode(
     // high resolution sphere
     int i, j;
     for (i = 0; i <= SphereRes; i++) {
-      const float phi = (const float)(M_PI * (0.5f - float(i) / SphereRes));
+      const float phi = (const float)(M_PI * (0.5f - double(i) / SphereRes));
       for (j = 0; j < NumSlices; j++) {
-	const float theta = (const float)(2.0 * M_PI * float(j) / NumSlices);
+	const float theta = (const float)(2.0 * M_PI * double(j) / NumSlices);
 	geom[NumSlices * i + j][0] = cosf(theta) * cosf(phi);
 	geom[NumSlices * i + j][1] = sinf(theta) * cosf(phi);
 	geom[NumSlices * i + j][2] = sinf(phi);
@@ -193,9 +193,9 @@ SphereSceneNode::SphereRenderNode::SphereRenderNode(
 
     // low resolution sphere
     for (i = 0; i <= SphereLowRes; i++) {
-      const float phi = (const float)(M_PI * (0.5f - float(i) / SphereLowRes));
+      const float phi = (const float)(M_PI * (0.5 - double(i) / SphereLowRes));
       for (j = 0; j < SphereLowRes; j++) {
-	const float theta = (const float)(2.0 * M_PI * float(j) / SphereLowRes);
+	const float theta = (const float)(2.0 * M_PI * double(j) / SphereLowRes);
 	lgeom[SphereLowRes * i + j][0] = cosf(theta) * cosf(phi);
 	lgeom[SphereLowRes * i + j][1] = sinf(theta) * cosf(phi);
 	lgeom[SphereLowRes * i + j][2] = sinf(phi);
