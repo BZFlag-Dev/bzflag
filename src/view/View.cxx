@@ -46,6 +46,7 @@ float					ViewColor::colors[][3] = {
 								{ 0.0f, 0.0f, 1.0f },
 								{ 1.0f, 0.0f, 1.0f },
 								{ 1.0f, 1.0f, 0.0f },
+								{ 1.0f, 1.0f, 1.0f },
 								{ 1.0f, 1.0f, 0.0f }
 						};
 ViewColor::Source		ViewColor::myTeam = Rogue;
@@ -67,8 +68,9 @@ void					ViewColor::update()
 {
 	// choose source color
 	Source tmpSource = source;
-	if (tmpSource == MyTeam)
+	if (tmpSource == MyTeam) {
 		tmpSource = myTeam;
+	}
 	const float* src = colors[tmpSource];
 
 	// compute scaled and shifted color
@@ -82,6 +84,8 @@ void					ViewColor::update()
 	color[1] = CLAMP(color[1], 0.0f, 1.0f);
 	color[2] = CLAMP(color[2], 0.0f, 1.0f);
 #undef CLAMP
+
+	set();
 }
 
 void					ViewColor::setColor(Source src, const float* color)
@@ -94,11 +98,8 @@ void					ViewColor::setColor(Source src, const float* color)
 
 void					ViewColor::setMyTeam(Source src)
 {
-	if (src == MyTeam)
-		src = Rogue;
 	if (src != myTeam) {
 		myTeam = src;
-		View::setColorsDirty();
 	}
 }
 

@@ -747,4 +747,9 @@ void					ServerLink::sendNewScore(int wins, int losses)
 	buf = nboPackUShort(buf, uint16_t(losses));
 	send(MsgScore, sizeof(msg), msg);
 }
+
+void					ServerLink::sendNewKing()
+{
+	send(MsgNewKing, 0, NULL);
+}
 // ex: shiftwidth=4 tabstop=4

@@ -39,7 +39,7 @@ public:
 	void				update();
 	void				set() const;
 
-	enum Source { Black, White, Red, Green, Blue, Purple, Rogue, MyTeam };
+	enum Source { Black, White, Red, Green, Blue, Purple, Rogue, King, MyTeam };
 	static void			setColor(Source, const float*);
 	static void			setMyTeam(Source);
 
@@ -53,7 +53,7 @@ public:
 	float				shift[3];
 
 private:
-	static float		colors[8][3];
+	static float		colors[9][3];
 	static Source		myTeam;
 };
 
@@ -90,7 +90,7 @@ public:
 protected:
 	virtual ~View();
 
-	const ViewState&	getState() const { return state; }
+	ViewState&	getState() { return state; }
 
 	// prepare drawing transformations, do pre-child rendering and
 	// return true or don't modify rendering state and return false.

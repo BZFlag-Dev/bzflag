@@ -280,6 +280,7 @@ bool					ViewReader::parseStandardTags(
 		{ "blue",   ViewColor::Blue },
 		{ "purple", ViewColor::Purple },
 		{ "rogue",  ViewColor::Rogue },
+		{ "king",   ViewColor::King },
 		{ NULL, ViewColor::Black }
 	};
 

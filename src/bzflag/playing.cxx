@@ -1462,7 +1462,7 @@ static void				handleServerMessage(bool human, uint16_t code,
 				}
 				if (killerLocal != victimPlayer) {
 					if (victimPlayer->getTeam() == killerLocal->getTeam() &&
-						killerLocal->getTeam() != RogueTeam) {
+						((killerLocal->getTeam() != RogueTeam)  || (World::getWorld()->allowKing()))) {
 						if (killerLocal == myTank) {
 							 MSGMGR->insert("alertInfo",
 										"Don't shoot teammates!!!", warningColor);
@@ -1477,6 +1477,10 @@ static void				handleServerMessage(bool human, uint16_t code,
 					}
 				}
 			}
+
+			if (World::getWorld()->allowKing())
+				victimPlayer->changeTeam( RogueTeam );
+
 			// handle my personal score against other players
 			if ((killerPlayer == myTank || victimPlayer == myTank) &&
 				!(killerPlayer == myTank && victimPlayer == myTank)) {
@@ -1724,6 +1728,31 @@ static void				handleServerMessage(bool human, uint16_t code,
 		case MsgShotUpdate:
 			handlePlayerMessage(code, 0, msg);
 			break;
+
+		case MsgNewKing: {
+			PlayerId id;
+			msg = nboUnpackUByte(msg, id);
+			Player *king = lookupPlayer(id);
+
+			for (int i = 0; i < maxPlayers; i++) {
+				if (!player[i] || (player[i]->getTeam() == RogueTeam)) continue;
+
+				if (player[i] != king)
+					player[i]->changeTeam( RogueTeam );
+			}
+
+			if (king != NULL) {
+				king->changeTeam( KingTeam );
+				if (king == myTank) {
+					ViewColor::setMyTeam(ViewColor::King);
+					MSGMGR->insert("alertInfo", "You are the King of the Hill", NULL);
+				}
+				else {
+					ViewColor::setMyTeam(ViewColor::Rogue);
+				}
+			}
+			break;
+		}
 	}
 
 	if (checkScores)
@@ -2832,6 +2861,10 @@ static bool				joinGame(ServerLink* _serverLink)
 		case PurpleTeam:
 			ViewColor::setMyTeam(ViewColor::Purple);
 			break;
+
+		case KingTeam:
+			cout << "setting king team\n";
+			ViewColor::setMyTeam(ViewColor::King);
 	}
 
 	// hack:  force color updates in view.  this will cause the team
@@ -3089,6 +3122,10 @@ static void				playingLoop()
 				const FlagId flagId = myTank->getFlag();
 				if (flagId >= FirstTeamFlag && flagId <= LastTeamFlag)
 					serverLink->sendDropFlag(DropReasonDropped, myTank->getPosition());
+
+				//Kings can't pause
+				if (World::getWorld()->allowKing())
+				  serverLink->sendNewKing();
 
 				// now actually pause
 				myTank->setPause(true);

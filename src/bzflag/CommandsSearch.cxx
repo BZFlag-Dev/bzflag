@@ -209,6 +209,8 @@ void					CommandsSearch::onServerName(
 		// game style
 		if (ping.gameStyle & TeamFlagGameStyle)
 			BZDB->set("_serverStyle", "Capture-the-Flag");
+		else if (ping.gameStyle & KingoftheHillGameStyle)
+			BZDB->set("_serverStyle", "King-of-the-Hill");
 		else
 			BZDB->set("_serverStyle", "Deathmatch");
 		if (ping.gameStyle & SuperFlagGameStyle)

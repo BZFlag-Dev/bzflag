@@ -33,14 +33,15 @@ enum PlayerType {
 };
 
 // team info
-const unsigned int		NumTeams = 5;
+const unsigned int		NumTeams = 6;
 enum TeamColor {
 						NoTeam = -1,
 						RogueTeam = 0,
 						RedTeam = 1,
 						GreenTeam = 2,
 						BlueTeam = 3,
-						PurpleTeam = 4
+						PurpleTeam = 4,
+						KingTeam = 5
 };
 
 // epsilon and very far for ray intersections
@@ -118,7 +119,8 @@ enum GameStyle {
 						RicochetGameStyle =		0x0020,		// all shots ricochet
 						ShakableGameStyle =		0x0040,		// can drop bad flags
 						AntidoteGameStyle =		0x0080,		// anti-bad flags
-						TimeSyncGameStyle =		0x0100		// time sync'd to srvr
+						TimeSyncGameStyle =		0x0100,		// time sync'd to srvr
+						KingoftheHillGameStyle= 0x0200		// king of the hill};
 };
 
 // flag stuff

@@ -17,6 +17,7 @@
 #include "SceneNodeTransform.h"
 #include "SceneManager.h"
 #include "ShotPath.h"
+#include "StateDatabase.h"
 #include "playing.h"
 
 // for dead reckoning
@@ -152,7 +153,7 @@ void					Player::unrefNodes()
 
 void					Player::changeTeam(TeamColor _team)
 {
-	static const char* teamSuffix = "yrgbp";
+	static const char* teamSuffix = "yrgbpk";
 
 	// set team
 	team = _team;
@@ -162,6 +163,7 @@ void					Player::changeTeam(TeamColor _team)
 	teamPlayerSceneNode = SCENEMGR->find(string_util::format(
 								"player-%c", teamSuffix[team]));
 	roguePlayerSceneNode = SCENEMGR->find("player-y");
+
 	// FIXME -- error if not found
 }
 

@@ -69,7 +69,7 @@ public:
 	void				sendAlive(const float* pos, const float* fwd);
 	void				sendTeleport(int from, int to);
 	void				sendNewScore(int wins, int losses);
-
+	void				sendNewKing();
 	void*				getPacketFromServer(uint16_t* length, uint16_t* seqno);
 	void				enqueuePacket(int op, int rseqno, void *msg, int n);
 	void				disqueuePacket(int op, int rseqno);

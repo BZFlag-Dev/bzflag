@@ -237,6 +237,7 @@ static void				onColorChangeCB(const std::string&, void*)
 	ViewColor::setColor(ViewColor::Blue,   Team::getRadarColor(BlueTeam));
 	ViewColor::setColor(ViewColor::Purple, Team::getRadarColor(PurpleTeam));
 	ViewColor::setColor(ViewColor::Rogue,  Team::getRadarColor(RogueTeam));
+	ViewColor::setColor(ViewColor::King,   Team::getRadarColor(KingTeam));
 }
 
 
@@ -960,6 +961,7 @@ int						main(int argc, char** argv)
 	BZDB->addCallback("colorRadarGreen",  onColorChangeCB, NULL);
 	BZDB->addCallback("colorRadarBlue",   onColorChangeCB, NULL);
 	BZDB->addCallback("colorRadarPurple", onColorChangeCB, NULL);
+	BZDB->addCallback("colorRadarKing",   onColorChangeCB, NULL);
 	onColorChangeCB(std::string(), NULL);
 
 	// start playing

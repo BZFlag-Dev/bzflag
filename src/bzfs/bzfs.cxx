@@ -269,7 +269,7 @@ bool randomHeights;
 bool useTeleporters;
 // true if -g on cmd line
 static bool oneGameOnly;
-static int gameStyle;
+static int gameStyle = 0;
 static PlayerId maxPlayers = MaxPlayers;
 // max simulataneous per player
 static uint16_t maxShots;
@@ -311,6 +311,7 @@ static const char *worldFile = NULL;
 static float lagwarnthresh = -1.0;
 static int maxlagwarn = 10000;
 static char *password = NULL;
+static int kingIndex = 0;
 
 static void removePlayer(PlayerId playerId);
 static void resetFlag(int flagIndex);
@@ -1800,6 +1801,14 @@ static void addPlayer(PlayerId playerId)
 	// send update of info for team just joined
 	sendTeamUpdate(teamIndex);
 
+	if (gameStyle & int(KingoftheHillGameStyle)) {
+		// send king information
+		char msg[PlayerIdPLen];
+		void *buf, *bufStart = msg;
+		buf = nboPackUByte( bufStart, kingIndex );
+		directMessage( playerId, MsgNewKing, (char*)buf-(char*)bufStart, bufStart);
+	}
+
 	// send time update to new player if we're counting down
 	if (timeLimit > 0.0f) {
 		float timeLeft = timeLimit - (TimeKeeper::getCurrent() - gameStartTime);
@@ -1841,6 +1850,28 @@ static void addPlayer(PlayerId playerId)
 	}
 #endif
 }
+
+static void annointNewKing()
+{
+	float topRatio = -100000.0f;
+	kingIndex = 0;
+
+	for (int i = 0; i < maxPlayers; i++) {
+		if ((i != kingIndex) && (player[i].fd != NotConnected) && (player[i].state == PlayerAlive)) {
+			float ratio = (player[i].wins - player[i].losses) * (player[i].wins / 10.0f);
+			if (ratio > topRatio) {
+				topRatio = ratio;
+				kingIndex = i;
+			}
+		}
+	}
+
+	char msg[PlayerIdPLen];
+	void *buf, *bufStart = msg;
+	buf = nboPackUByte( bufStart, kingIndex );
+	broadcastMessage( MsgNewKing, (char*)buf-(char*)bufStart, bufStart);
+}
+
 
 static Real getSafeFlagRadius(FlagId id)
 {
@@ -2123,6 +2154,10 @@ static void removePlayer(PlayerId playerId)
 	// tell the list server the new number of players
 	sendMessageToListServer("SETNUM");
 
+	if (gameStyle & int(KingoftheHillGameStyle)) {
+		if (playerId == kingIndex)
+			annointNewKing();
+	}
 	// anybody left?
 	int i;
 	for (i = 0; i < maxPlayers; i++)
@@ -2222,34 +2257,40 @@ static void playerKilled(int victimIndex, int killerIndex,
 	if (player[victimIndex].flag != -1)
 		zapFlag(player[victimIndex].flag);
 
-	// change the team scores -- rogues don't have team scores.  don't
-	// change team scores for individual player's kills in capture the
-	// flag mode.
-	int winningTeam = (int)NoTeam;
-	if (!(gameStyle & TeamFlagGameStyle)) {
-		if (player[victimIndex].team == player[killerIndex].team) {
-			if (player[killerIndex].team != RogueTeam)
-				if (killerIndex == victimIndex)
-					team[int(player[victimIndex].team)].team.lost += 1;
-				else
-					team[int(player[victimIndex].team)].team.lost += 2;
-		}
-		else {
-			if (player[killerIndex].team != RogueTeam) {
-				winningTeam = int(player[killerIndex].team);
-				team[winningTeam].team.won++;
-			}
-			if (player[victimIndex].team != RogueTeam)
-				team[int(player[victimIndex].team)].team.lost++;
-			sendTeamUpdate(int(player[killerIndex].team));
-		}
-		sendTeamUpdate(int(player[victimIndex].team));
+	if (gameStyle & int(KingoftheHillGameStyle)) {
+		if (victimIndex == kingIndex)
+			annointNewKing();
 	}
+	else {
+		// change the team scores -- rogues don't have team scores.  don't
+		// change team scores for individual player's kills in capture the
+		// flag mode.
+		int winningTeam = (int)NoTeam;
+		if (!(gameStyle & TeamFlagGameStyle)) {
+			if (player[victimIndex].team == player[killerIndex].team) {
+				if (player[killerIndex].team != RogueTeam)
+					if (killerIndex == victimIndex)
+						team[int(player[victimIndex].team)].team.lost += 1;
+					else
+						team[int(player[victimIndex].team)].team.lost += 2;
+			}
+			else {
+				if (player[killerIndex].team != RogueTeam) {
+					winningTeam = int(player[killerIndex].team);
+					team[winningTeam].team.won++;
+				}
+				if (player[victimIndex].team != RogueTeam)
+					team[int(player[victimIndex].team)].team.lost++;
+				sendTeamUpdate(int(player[killerIndex].team));
+			}
+			sendTeamUpdate(int(player[victimIndex].team));
+		}
 #ifdef PRINTSCORE
-	dumpScore();
+		dumpScore();
 #endif
-	if (winningTeam != (int)NoTeam)
-		checkTeamScore(killerIndex, winningTeam);
+		if (winningTeam != (int)NoTeam)
+			checkTeamScore(killerIndex, winningTeam);
+	}
 }
 
 static void grabFlag(PlayerId playerId, int flagIndex)
@@ -2762,6 +2803,11 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
 			break;
 		}
 
+		case MsgNewKing: {
+			annointNewKing();
+			break;
+		}
+
 		// player score changed
 		case MsgScore: {
 			// data: wins, losses
@@ -2894,6 +2940,7 @@ static void extraUsage(const char *pname)
 	std::cout << "\t -h: use random building heights" << std::endl;
 	std::cout << "\t -i: listen on <interface>" << std::endl;
 	std::cout << "\t -j: allow jumping" << std::endl;
+	std::cout << "\t -king: king of the hill style" << std::endl;	
 	std::cout << "\t -mp: maximum players total or per team" << std::endl;
 	std::cout << "\t -mps: set player score limit on each game" << std::endl;
 	std::cout << "\t -ms: maximum simultaneous shots per player" << std::endl;
@@ -3147,6 +3194,11 @@ static void parse(int argc, char **argv)
 		else if (strcmp(argv[i], "-c") == 0) {
 			// capture the flag style
 			gameStyle |= int(TeamFlagGameStyle);
+			if (gameStyle | int(KingoftheHillGameStyle)) {
+				gameStyle &= ~int(KingoftheHillGameStyle);
+				std::cerr << "Capture the flag incompatible with King of the Hill" << std::endl;
+				std::cerr << "Capture the flag assumed" << std::endl;
+			}
 		}
 		else if (strncmp(argv[i], "-d", 2) == 0) {
 			// increase debug level
@@ -3204,6 +3256,15 @@ static void parse(int argc, char **argv)
 			// allow jumping
 			gameStyle |= int(JumpingGameStyle);
 		}
+		else if (strcmp(argv[i], "-king") == 0) {
+			// king of the hill style
+			gameStyle |= int(KingoftheHillGameStyle)|int(RoguesGameStyle);
+			if (gameStyle & int(TeamFlagGameStyle)) {
+				gameStyle &= ~int(TeamFlagGameStyle);
+				std::cerr << "King of the Hill incompatible with Capture the flag" << std::endl;
+				std::cerr << "King of the Hill assumed" << std::endl;
+			}
+		}		
 		else if (strcmp(argv[i], "-mp") == 0) {
 			// set maximum number of players
 			if (++i == argc) {
@@ -3422,6 +3483,14 @@ static void parse(int argc, char **argv)
 	if (playerCountArg > 0 && !parsePlayerCount(argv[playerCountArg]))
 		usage(argv[0]);
 
+	if (gameStyle & int(KingoftheHillGameStyle)) {
+		
+		for (int i = 0; i < NumTeams; i++) {
+			maxTeam[RogueTeam] += maxTeam[i];
+			maxTeam[i] = 0;
+		}
+	}
+
 	// make table of allowed extra flags
 	if (numExtraFlags > 0) {
 		// first disallow flags inconsistent with game style
@@ -3568,6 +3637,8 @@ static void parse(int argc, char **argv)
 		std::cerr << "style: " << std::ios::hex << gameStyle << std::ios::dec << std::endl;
 		if (gameStyle & int(TeamFlagGameStyle))
 			std::cerr << "  capture the flag" << std::endl;
+		if (gameStyle & int(KingoftheHillGameStyle))
+			std::cerr << "  king of the hill" << std::endl;
 		if (gameStyle & int(SuperFlagGameStyle))
 			std::cerr << "  super flags allowed" << std::endl;
 		if (gameStyle & int(RoguesGameStyle))

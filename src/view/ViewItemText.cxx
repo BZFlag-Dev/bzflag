@@ -184,6 +184,7 @@ void					ViewItemText::onPostRender(
 
 	// draw
 	OpenGLGState::resetState();
+	getState().color.update();
 	getState().color.set();
 	for (index = lines.begin(); index != lines.end(); ++index) {
 		float wLine = font.getWidth(*index);

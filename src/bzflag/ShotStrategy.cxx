@@ -193,7 +193,7 @@ const Teleporter*		ShotStrategy::getFirstTeleporter(const Ray& ray,
 SceneNode*				ShotStrategy::findShotModel(
 								TeamColor team, const std::string& flag)
 {
-	static const char* suffix = "yrgbp";
+	static const char* suffix = "yrgbpk";
 
 	SceneNode* node = NULL;
 	if (!flag.empty()) {

@@ -21,7 +21,8 @@ float					Team::tankColor[NumTeams][3] = {
 								{ 1.0f, 0.0f, 0.0f },
 								{ 0.0f, 1.0f, 0.0f },
 								{ 0.2f, 0.2f, 1.0f },
-								{ 1.0f, 0.0f, 1.0f }
+								{ 1.0f, 0.0f, 1.0f },
+								{ 1.0f, 1.0f, 1.0f }
 						};
 float					Team::radarColor[NumTeams][3] = {
 //								{ 1.0f, 1.0f, 0.0f },
@@ -33,7 +34,8 @@ float					Team::radarColor[NumTeams][3] = {
 								{ 1.0f, 0.25f, 0.25f },	//red
 								{ 0.5f, 1.0f, 0.5f },	//green
 								{ 0.5f, 0.5, 1.0f },	// blue is hard to see
-								{ 1.0f, 0.25f, 1.0f }	//purple
+								{ 1.0f, 0.25f, 1.0f },	//purple
+								{ 1.0f, 1.0f, 1.0f }	//king
 						};
 // taken from old console team messge colors
 //static const GLfloat    teamMsgColor[][3] = {
@@ -75,12 +77,14 @@ void					Team::init()
 	BZDB->addCallback("colorTeamGreen",   onColorChange, NULL);
 	BZDB->addCallback("colorTeamBlue",    onColorChange, NULL);
 	BZDB->addCallback("colorTeamPurple",  onColorChange, NULL);
+	BZDB->addCallback("colorTeamKing",    onColorChange, NULL);
 
 	BZDB->addCallback("colorRadarRogue",  onColorChange, NULL);
 	BZDB->addCallback("colorRadarRed",    onColorChange, NULL);
 	BZDB->addCallback("colorRadarGreen",  onColorChange, NULL);
 	BZDB->addCallback("colorRadarBlue",   onColorChange, NULL);
 	BZDB->addCallback("colorRadarPurple", onColorChange, NULL);
+	BZDB->addCallback("colorRadarKing",   onColorChange, NULL);
 }
 
 std::string				Team::getName(TeamColor team) // const
@@ -91,6 +95,7 @@ std::string				Team::getName(TeamColor team) // const
 		case GreenTeam: return "Green Team";
 		case BlueTeam: return "Blue Team";
 		case PurpleTeam: return "Purple Team";
+		case KingTeam: return "King";
 		default: return "Invalid team";
 	}
 }
@@ -103,6 +108,7 @@ std::string				Team::getEnumName(TeamColor team) // const
 		case GreenTeam: return "green";
 		case BlueTeam: return "blue";
 		case PurpleTeam: return "purple";
+		case KingTeam: return "king";
 		default: return "invalid";
 	}
 }
@@ -119,6 +125,8 @@ TeamColor				Team::getEnum(const std::string& name)
 		return BlueTeam;
 	else if (name == "purple")
 		return PurpleTeam;
+	else if (name == "king")
+		return KingTeam;
 	else
 		return NoTeam;
 }
@@ -147,6 +155,8 @@ void					Team::onColorChange(const std::string& name, void*)
 		color = tankColor[BlueTeam];
 	else if (name == "colorTeamPurple")
 		color = tankColor[PurpleTeam];
+	else if (name == "colorTeamKing")
+		color = tankColor[KingTeam];
 	else if (name == "colorRadarRogue")
 		color = radarColor[RogueTeam];
 	else if (name == "colorRadarRed")
@@ -157,6 +167,8 @@ void					Team::onColorChange(const std::string& name, void*)
 		color = radarColor[BlueTeam];
 	else if (name == "colorRadarPurple")
 		color = radarColor[PurpleTeam];
+	else if (name == "colorRadarKing")
+		color = radarColor[KingTeam];
 	else
 		return;
 

@@ -432,6 +432,12 @@
     <ref id="player" />
   </geometry>
 
+  <!--  king player -->
+  <geometry id="player-k">
+    <color>1 1 1 1</color>
+    <ref id="player" />
+  </geometry>
+
   <!--  get flag -->
   <!INCLUDE "flag.bzg" />
 

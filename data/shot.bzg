@@ -44,26 +44,26 @@
 <billboard id="shot_textured">
   <axis>0 0 0</axis>
   <geometry>
-	<color>
+    <color>
       1 1 1 1
-	</color>
-	<texcoord>
+    </color>
+    <texcoord>
       0 0
       0 1
       1 0
       1 1
-	</texcoord>
-	<vertex>
+    </texcoord>
+    <vertex>
       -1.0 0.0 -1.0
       -1.0 0.0  1.0
        1.0 0.0 -1.0
        1.0 0.0  1.0
-	</vertex>
-	<primitive type="tstrip">
+    </vertex>
+    <primitive type="tstrip">
       <index>
     	1 0 3 2
       </index>
-	</primitive>
+    </primitive>
   </geometry>
 </billboard>
 
@@ -271,3 +271,46 @@
     </gstate>
   </choice>
 </choice>
+
+<!--  king shot -->
+<choice id="shot-k">
+  <mask t="renderBlending">1 2</mask>
+  <geometry id="shot-k-simple">
+	<color>
+      1 1 1 1
+      1 1 1 1
+      1 1 1 1
+      1 1 1 1
+      1 1 1 1
+      1 1 1 1
+      1 1 1 1
+      1 1 1 1
+      1 1 1 1
+      1 1 1 1
+      1 1 1 1
+      1 1 1 1
+      1 1 1 1
+      1 1 1 1
+      1 1 1 1
+      1 1 1 1
+      1 1 0 1
+      1 1 1 1
+	</color>
+    <gstate>
+      <shading model="smooth" />
+      <culling cull="false" />
+      <ref id="shot_simple" />
+    </gstate>
+  </geometry>
+  <choice>
+    <mask t="renderTexturing">1 2</mask>
+    <ref id="shot-k-simple" />
+    <gstate>
+      <texture repeat="false" rgba="true" filename="kbolt" />
+      <blending src="sa" dst="1-sa" />
+      <culling cull="false" />
+      <ref id="shot_textured" />
+    </gstate>
+  </choice>
+</choice>
+

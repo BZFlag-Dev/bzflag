@@ -285,17 +285,19 @@
     Rogues have no teammates (not even other rogues), so they cannot shoot
     teammates and they don't have a team score.&#x0a;
     &#x0a;
-    There are two styles of play, determined by the server configuration:
-    capture-the-flag and free-for-all.  In free-for-all the object is simply to get the
-    highest score by shooting opponents.  The object in capture-the-flag is to
-    capture enemy flags while preventing opponents from capturing yours.  In this
-    style, each team (but not rogues) has a team base and each team with at least
+    There are three styles of play, determined by the server configuration:
+    capture-the-flag, king-of-the-hill and free-for-all.  In free-for-all the 
+	object is simply to get the highest score by shooting opponents.  
+	The object in king-of-the-hill is to be the highest score so that you have the white tank, 
+	then everyone is against you. The object in capture-the-flag 
+	is to capture enemy flags while preventing opponents from capturing yours.  
+	In this style, each team (but not rogues) has a team base and each team with at least
     one player has a team flag which has the color of the team.  To capture a flag,
     you must grab it and bring it back to your team base (you must be on the ground
     in your base to register the capture).  Capturing a flag destroys all the players
     on that team and gives your team score a bonus;  the players will restart on
     their team base.  Taking your flag onto an enemy base counts as a capture against
-    your team but not for the enemy team.&#x0a;
+    your team but not for the enemy team. &#x0a;
     &#x0a;
     The world environment contains an outer wall and several buildings.
     You cannot go outside the outer wall (you can't even jump over it).
