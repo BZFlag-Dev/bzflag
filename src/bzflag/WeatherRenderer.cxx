@@ -32,11 +32,12 @@
 #include "BZDBCache.h"
 #include "TimeKeeper.h"
 #include "TextUtils.h"
+#include "ParseColor.h"
 
 // local impl headers
 #include "SceneRenderer.h"
 
-void bzdbCallBack(const std::string& name, void* userData)
+void bzdbCallBack(const std::string& /*name*/, void* userData)
 {
 	((WeatherRenderer*)userData)->set();
 }
@@ -274,10 +275,10 @@ void WeatherRenderer::set ( void )
 			rainEndZ = BZDB.eval("_rainEndZ");
 
 		if (dbItemSet("_rainBaseColor"))
-			BZDB.evalTriplet("_rainBaseColor",rainColor[0]);
+			parseColorString(BZDB.get("_rainBaseColor").c_str(), rainColor[0]);
 
 		if (dbItemSet("_rainTopColor"))
-			BZDB.evalTriplet("_rainTopColor",rainColor[1]);
+			parseColorString(BZDB.get("_rainTopColor").c_str(), rainColor[1]);
 
 		if (dbItemSet("_useRainPuddles"))
 			doPuddles = BZDB.evalInt("_useRainPuddles") == 1;
@@ -289,7 +290,7 @@ void WeatherRenderer::set ( void )
 			doBillBoards = BZDB.evalInt("_useRainBillboards") == 1;
 
 		if (dbItemSet("_rainPuddleColor"))
-			BZDB.evalTriplet("_rainPuddleColor",puddleColor);
+			parseColorString(BZDB.get("_rainPuddleColor").c_str(), puddleColor);
 
 		if (dbItemSet("_rainPuddleSpeed"))
 			puddleSpeed = BZDB.eval("rainPuddleSpeed");
