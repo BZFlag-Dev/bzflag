@@ -613,8 +613,7 @@ bool			World::writeWorld(std::string filename)
     // Write BZDB server variables that aren't defaults
     BZDB.iterate (writeBZDBvar, &out);
 
-    out << "end" << std::endl;
-    out << std::endl;
+    out << "end" << std::endl << std::endl;
   }
 
   // Write World object
@@ -631,8 +630,7 @@ bool			World::writeWorld(std::string filename)
       if (flagHeight != atof(BZDB.getDefault(StateDatabase::BZDB_FLAGHEIGHT).c_str())) {
 	out << "\tflagHeight " << flagHeight << std::endl;
       }
-      out << "end" << std::endl;
-      out << std::endl;
+      out << "end" << std::endl << std::endl;
     }
   }
 
@@ -655,8 +653,7 @@ bool			World::writeWorld(std::string filename)
           out << "\tshootthrough" << std::endl;
       }
 
-      out << "end" << std::endl;
-      out << std::endl;
+      out << "end" << std::endl << std::endl;
     }
   }
 
@@ -677,8 +674,7 @@ bool			World::writeWorld(std::string filename)
         if (box.isShootThrough())
 	  out << "\tshootthrough" << std::endl;
       }
-      out << "end" << std::endl;
-      out << std::endl;
+      out << "end" << std::endl << std::endl;
     }
   }
 
@@ -706,8 +702,7 @@ bool			World::writeWorld(std::string filename)
         if (pyr.isShootThrough())
 	  out << "\tshootthrough" << std::endl;
       }
-      out << "end" << std::endl;
-      out << std::endl;
+      out << "end" << std::endl << std::endl;
     }
   }
 
@@ -721,8 +716,7 @@ bool			World::writeWorld(std::string filename)
       out << "\tsize " << tele.getWidth() << " " << tele.getBreadth() << " " << tele.getHeight() << std::endl;
       out << "\trotation " << ((tele.getRotation() * 180.0) / M_PI) << std::endl;
       out << "\tborder " << tele.getBorder() << std::endl;
-      out << "end" << std::endl;
-      out << std::endl;
+      out << "end" << std::endl << std::endl;
     }
   }
 
@@ -739,8 +733,7 @@ bool			World::writeWorld(std::string filename)
       else {
         out << "\tto " << to << std::endl;
       }
-      out << "end" << std::endl;
-      out << std::endl;
+      out << "end" << std::endl << std::endl;
     }
   }
 
@@ -762,8 +755,7 @@ bool			World::writeWorld(std::string filename)
         }
         out << std::endl;
       }
-      out << "end" << std::endl;
-      out << std::endl;
+      out << "end" << std::endl << std::endl;
     }
   }
 
@@ -799,8 +791,7 @@ bool			World::writeWorld(std::string filename)
         }
         out << std::endl;
       }
-      out << "end" << std::endl;
-      out << std::endl;
+      out << "end" << std::endl << std::endl;
     }
   }
 

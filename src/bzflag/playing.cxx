@@ -279,11 +279,9 @@ void        warnAboutMainFlags()
     std::vector<std::string> keys = KEYMGR.getKeysFromCommand("toggleFlags main", true);
 
     if (keys.size() != 0) {
-      showFlagsMsg += "hit \"";
-      showFlagsMsg += ColorStrings[WhiteColor];
+      showFlagsMsg += "hit \"" + ColorStrings[WhiteColor];
       showFlagsMsg += tolower(keys[0][0]);
-      showFlagsMsg += ColorStrings[YellowColor];
-      showFlagsMsg += "\"";
+      showFlagsMsg += ColorStrings[YellowColor] + "\"";
     } else {
       showFlagsMsg += " bind a key to Toggle Flags on Field";
     }
@@ -299,11 +297,9 @@ void        warnAboutRadarFlags()
     std::vector<std::string> keys = KEYMGR.getKeysFromCommand("toggleFlags radar", true);
 
     if (keys.size() != 0) {
-      showFlagsMsg += "hit \"";
-      showFlagsMsg += ColorStrings[WhiteColor];
+      showFlagsMsg += "hit \"" + ColorStrings[WhiteColor];
       showFlagsMsg += tolower(keys[0][0]);
-      showFlagsMsg += ColorStrings[YellowColor];
-      showFlagsMsg += "\"";
+      showFlagsMsg += ColorStrings[YellowColor] + "\"";
     } else {
       showFlagsMsg += " bind a key to Toggle Flags on Radar";
     }
@@ -992,8 +988,7 @@ void		addMessage(const Player* player, const std::string& msg,
       fullMessage += Team::getName(player->getTeam());
       fullMessage += ")";
 #endif
-      fullMessage += ColorStrings[DefaultColor];
-      fullMessage += ": ";
+      fullMessage += ColorStrings[DefaultColor] + ": ";
     }
     fullMessage += msg;
   } else {
@@ -1226,8 +1221,7 @@ static Player*		addPlayer(PlayerId id, void* msg, int showMessage)
     }
     if (!player[i]) {
       std::string name(callsign);
-      name += ": ";
-      name += message;
+      name += ": " + message;
       message = name;
     }
     addMessage(player[i], message);
@@ -1594,8 +1588,7 @@ static void		handleServerMessage(bool human, uint16_t code,
 	message += "destroyed by ";
 	if (killerPlayer->getTeam() == victimPlayer->getTeam() &&
 	    killerPlayer->getTeam() != RogueTeam)
-	  message += "teammate ";
-	message += ColorStrings[killerPlayer->getTeam()];
+	  message += "teammate " + ColorStrings[killerPlayer->getTeam()];
 	message += killerPlayer->getCallSign();
 	addMessage(victimPlayer, message);
       }
@@ -2074,13 +2067,9 @@ static void		handleServerMessage(bool human, uint16_t code,
 	    fullMsg += ColorStrings[UnderlineColor];
 	  fullMsg += "[";
 	  if (srcPlayer == myTank) {
-	    fullMsg += "->";
-	    fullMsg += dstName;
-	    fullMsg += colorStr;
+	    fullMsg += "->" + dstName + colorStr;
 	  } else {
-	    fullMsg += srcName;
-	    fullMsg += colorStr;
-	    fullMsg += "->";
+	    fullMsg += srcName + colorStr + "->";
 	    if (srcPlayer)
 	      myTank->setRecipient(srcPlayer);
 
@@ -2092,11 +2081,7 @@ static void		handleServerMessage(bool human, uint16_t code,
 	      lastMsg = TimeKeeper::getTick();
 	    }
 	  } 
-	  fullMsg += "]";
-	  fullMsg += ColorStrings[ResetColor];
-	  fullMsg += " ";
-	  fullMsg += ColorStrings[CyanColor];
-	  fullMsg += text;
+	  fullMsg += "]" + ColorStrings[ResetColor] + " " + ColorStrings[CyanColor] + text;
 	} 
       } else {
 	// team / admin message
@@ -2130,11 +2115,7 @@ static void		handleServerMessage(bool human, uint16_t code,
 	    lastMsg = TimeKeeper::getTick();
 	  }
 	}
-	fullMsg += srcName;
-	fullMsg += colorStr;
-	fullMsg += ": ";
-	fullMsg += ColorStrings[CyanColor];
-	fullMsg += text;
+	fullMsg += srcName + colorStr + ": " + ColorStrings[CyanColor] + text;
       }
       std::string oldcolor = "";
       if (!srcPlayer || srcPlayer->getTeam() == NoTeam)
@@ -5412,16 +5393,13 @@ void			startPlaying(BzfDisplay* _display,
   }
 
   // print copyright
-  tmpString = ColorStrings[RogueColor];
-  tmpString += copyright;
+  tmpString = ColorStrings[RogueColor] + copyright;
   controlPanel->addMessage(tmpString);
   // print author
-  tmpString = ColorStrings[GreenColor];
-  tmpString += "Author: Chris Schoeneman <crs23@bigfoot.com>";
+  tmpString = ColorStrings[GreenColor] + "Author: Chris Schoeneman <crs23@bigfoot.com>";
   controlPanel->addMessage(tmpString);
   // print maintainer
-  tmpString = ColorStrings[BlueColor];
-  tmpString += "Maintainer: Tim Riker <Tim@Rikers.org>";
+  tmpString = ColorStrings[BlueColor] + "Maintainer: Tim Riker <Tim@Rikers.org>";
   controlPanel->addMessage(tmpString);
   // print GL renderer
   tmpString = ColorStrings[PurpleColor];
