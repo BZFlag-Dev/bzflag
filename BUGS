@@ -1,6 +1,11 @@
 recent bugs
 ------------
 
+- noticed an odd behavior where the windows client behaves differently from
+  the other platforms on certain servers.  upon respawn onto the group on a map
+  such as the german hix map, there would be a pause and then a little "hop"
+  before driving or shooting could begin
+
 - sending bzfs a single byte udp packet sends bzfs into lala land. (trepan)
 
 - bzfrelay is probably broken for current net protocol. Should be just
