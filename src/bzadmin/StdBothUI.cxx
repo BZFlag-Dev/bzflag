@@ -47,7 +47,7 @@ unsigned long __stdcall winInput(void *that)
 // add this UI to the map
 UIAdder StdBothUI::uiAdder("stdboth", &StdBothUI::creator);
 
-StdBothUI::StdBothUI() : atEOF(false) {
+StdBothUI::StdBothUI(BZAdminClient& c) : BZAdminUI(c), atEOF(false) {
 #ifdef _WIN32
   unsigned long tid;
   console = GetStdHandle(STD_INPUT_HANDLE);
@@ -121,8 +121,8 @@ bool StdBothUI::checkCommand(std::string& str) {
 #endif
 
 
-BZAdminUI* StdBothUI::creator(const PlayerIdMap&, PlayerId) {
-  return new StdBothUI();
+BZAdminUI* StdBothUI::creator(BZAdminClient& client) {
+  return new StdBothUI(client);
 }
 
 // Local Variables: ***

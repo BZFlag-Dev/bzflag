@@ -23,6 +23,11 @@
 UIAdder StdInUI::uiAdder("stdin", &StdInUI::creator);
 
 
+StdInUI::StdInUI(BZAdminClient& c) : BZAdminUI(c) {
+
+}
+
+
 bool StdInUI::checkCommand(std::string& str) {
   if (std::cin.eof()) {
     str = "/quit";
@@ -35,8 +40,8 @@ bool StdInUI::checkCommand(std::string& str) {
 }
 
 
-BZAdminUI* StdInUI::creator(const PlayerIdMap&, PlayerId) {
-  return new StdInUI();
+BZAdminUI* StdInUI::creator(BZAdminClient& client) {
+  return new StdInUI(client);
 }
 
 // Local Variables: ***

@@ -129,7 +129,7 @@ int main(int argc, char** argv) {
   }
 
   // create UI and run the main loop
-  BZAdminUI*  ui = uiIter->second(client.getPlayers(), client.getMyId());
+  BZAdminUI*  ui = uiIter->second(client);
   client.setUI(ui);
   client.runLoop();
   delete ui;

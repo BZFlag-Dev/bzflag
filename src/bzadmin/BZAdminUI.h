@@ -16,9 +16,12 @@
 #include <string>
 
 #include "Address.h"
+//#include "BZAdminClient.h"
 #include "colors.h"
 #include "global.h"
 
+
+class BZAdminClient;
 
 /** This class is an abstract base class for all bzadmin interfaces.
     All subclasses should register themselves in the UIMap. This should
@@ -29,11 +32,16 @@
 class BZAdminUI {
 public:
   
+  /** This constructor just sets the BZAdminClient reference. */
+  BZAdminUI(BZAdminClient& c) : client(c) { }
+  
   /** Need a virtual destructor so subclasses get to do their cleanups. */
   virtual ~BZAdminUI() { }
 
-  /** This function prints a message in the main window. */
+  /** This function prints the message. */
   virtual void outputMessage(const std::string&, ColorCode) { }
+  /** This function is called by the client when a new packet has arrived. */
+  virtual void handleNewPacket(uint16_t);
   /** See if the user has entered a command, if it has, store it in str and
       return true. */
   virtual bool checkCommand(std::string&) { return false; }
@@ -45,6 +53,9 @@ public:
       or 0 for public messages). */
   virtual PlayerId getTarget() const { return AllPlayers; }
 
+protected:
+
+  BZAdminClient& client;
 };
 
 #endif

@@ -16,11 +16,14 @@
 #include <map>
 #include <string>
 
-#include "BZAdminUI.h"
 #include "colors.h"
 #include "PlayerInfo.h"
 #include "ServerLink.h"
 #include "UIMap.h"
+
+
+class BZAdminUI;
+
 
 /** This class is a client that connects to a BZFlag server and has
     functions for sending and receiving messages. If you give it
@@ -60,15 +63,12 @@ public:
       in @c str, negative numbers for errors. A color suggestion will be stored
       in @c colorCode.
   */
-  ServerCode getServerString(std::string& str, ColorCode& colorCode);
-
-  /** Checks for new packets from the server, ignores them or stores a
-      text message in @c str. Tells @c ui about new or removed players. Returns
-      0 if no interesting packets have arrived, 1 if a message has been stored
-      in @c str, negative numbers for errors.
-  */
-  ServerCode getServerString(std::string& str);
-
+  ServerCode checkMessage();
+  
+  /** Returns the std::string that the client built from the last received
+      message. */
+  std::pair<std::string, ColorCode> getLastMessage() const;
+  
   /** This function returns @c true if this object has a valid connection
       to a server, @c false if it doesn't. */
   bool isValid() const;
@@ -133,6 +133,7 @@ protected:
   PlayerIdMap players;
   TeamColor myTeam;
   ServerLink sLink;
+  std::pair<std::string, ColorCode> lastMessage;
   bool valid;
   std::map<uint16_t, bool> messageMask;
   std::map<TeamColor, ColorCode> colorMap;

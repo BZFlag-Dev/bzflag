@@ -21,9 +21,11 @@
 UIAdder CursesUI::uiAdder("curses", &CursesUI::creator);
 
 
-CursesUI::CursesUI(const PlayerIdMap& p, PlayerId m) :
-  menuState(0), menu(p), players(p), me(m), maxHistory(20), 
-  currentHistory(0), maxBufferSize(300), scrollOffset(0) {
+CursesUI::CursesUI(BZAdminClient& c) :
+  BZAdminUI(c),
+  menuState(0), menu(c.getPlayers()), client(c), players(c.getPlayers()), 
+  me(c.getMyId()), maxHistory(20), currentHistory(0), 
+  maxBufferSize(300), scrollOffset(0) {
 
   // initialize ncurses
   initscr();
@@ -122,6 +124,11 @@ void CursesUI::outputMessage(const std::string& msg, ColorCode color) {
     wattroff(mainWin, COLOR_PAIR(color));
     wrefresh(mainWin);
   }
+}
+
+
+void CursesUI::handleNewPacket(uint16_t code) {
+  BZAdminUI::handleNewPacket(code);
 }
 
 
@@ -442,9 +449,8 @@ void CursesUI::initFilterMenu(CursesMenu& menu) {
 }
 
 
-BZAdminUI* CursesUI::creator(const PlayerIdMap& players,
-			     PlayerId me) {
-  return new CursesUI(players, me);
+BZAdminUI* CursesUI::creator(BZAdminClient& client) {
+  return new CursesUI(client);
 }
 
 // Local Variables: ***

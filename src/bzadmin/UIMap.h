@@ -21,9 +21,11 @@
 #include "Singleton.h"
 
 
+class BZAdminClient;
+
+
 /** The function type that creates interface objects. */
-typedef BZAdminUI* (*UICreator)(const PlayerIdMap& players,
-				PlayerId me);
+typedef BZAdminUI* (*UICreator)(BZAdminClient&);
 
 
 /** This class maps strings to BZAdmin interfaces (subclasses of

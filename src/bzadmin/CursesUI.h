@@ -38,7 +38,7 @@ protected:
 
   /** The parameters to this constructor are a map of all players and the
       local player's PlayerId. */
-  CursesUI(const PlayerIdMap& p, PlayerId m);
+  CursesUI(BZAdminClient& c);
 
 public:
 
@@ -46,7 +46,10 @@ public:
 
   /** This function prints a message in the main window. */
   virtual void outputMessage(const std::string& msg, ColorCode color);
-
+  
+  /** This function is called by the client when a new packet has arrived. */
+  virtual void handleNewPacket(uint16_t msgType);
+  
   /** See if the user has entered a command, if it has, store it in str and
       return true. */
   virtual bool checkCommand(std::string& str);
@@ -63,7 +66,7 @@ public:
 
   /** This function returns a pointer to a dynamically allocated
       CursesUI object. */
-  static BZAdminUI* creator(const PlayerIdMap& players, PlayerId me);
+  static BZAdminUI* creator(BZAdminClient& client);
 
 protected:
 
@@ -119,6 +122,7 @@ protected:
   int menuState;
   CursesMenu menu;
   
+  BZAdminClient& client;
   std::string cmd;
   const PlayerIdMap& players;
   PlayerIdMap::const_iterator targetIter;

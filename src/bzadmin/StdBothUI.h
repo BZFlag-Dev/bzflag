@@ -17,6 +17,9 @@
 #include "UIMap.h"
 
 
+class BZAdminClient;
+
+
 /** This interface is a combination of StdInUI and StdOutUI. It reads commands
     from stdin and prints the output from the server to stdout. This
     requires polling of the stdin file descriptor, which isn't defined in
@@ -24,13 +27,13 @@
     systems. It should work on most UNIX-like systems though. */
 class StdBothUI : public BZAdminUI {
 public:
-  StdBothUI();
+  StdBothUI(BZAdminClient& c);
   virtual void outputMessage(const std::string& msg, ColorCode color);
   virtual bool checkCommand(std::string& str);
 
   /** This function returns a pointer to a dynamically allocated
       StdBothUI object. */
-  static BZAdminUI* creator(const PlayerIdMap& players, PlayerId me);
+  static BZAdminUI* creator(BZAdminClient&);
 
  protected:
 
