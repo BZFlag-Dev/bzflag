@@ -790,10 +790,10 @@ static void		doKeyPlaying(const BzfKeyEvent& key, boolean pressed)
     }
   }
   else if (key.ascii == 0 &&
-           key.button >= BzfKeyEvent::F1 &&
-           key.button <= BzfKeyEvent::F10 &&
-           (key.shift & (BzfKeyEvent::ControlKey +
-                         BzfKeyEvent::AltKey)) != 0) {
+	   key.button >= BzfKeyEvent::F1 &&
+	   key.button <= BzfKeyEvent::F10 &&
+	   (key.shift & (BzfKeyEvent::ControlKey +
+	                 BzfKeyEvent::AltKey)) != 0) {
     // [Ctrl]-[Fx] is message to team
     // [Alt]-[Fx] is message to all
     if (pressed) {
@@ -804,21 +804,21 @@ static void		doKeyPlaying(const BzfKeyEvent& key, boolean pressed)
       buf = nboPackShort(buf, 0);
       buf = nboPackShort(buf, 0);
       if (key.shift == BzfKeyEvent::ControlKey) {
-        sprintf(name, "quickTeamMessage%d", msgno);
-        buf = nboPackUShort(buf, uint16_t(myTank->getTeam()));
+	sprintf(name, "quickTeamMessage%d", msgno);
+	buf = nboPackUShort(buf, uint16_t(myTank->getTeam()));
       } else {
-        sprintf(name, "quickMessage%d", msgno);
-        buf = nboPackUShort(buf, uint16_t(RogueTeam));
+	sprintf(name, "quickMessage%d", msgno);
+	buf = nboPackUShort(buf, uint16_t(RogueTeam));
       }
       if (resources->hasValue(name)) {
-        char messageBuffer[MessageLen];
-        memset(messageBuffer, 0, MessageLen);
-        strncpy(messageBuffer,
-                resources->getValue(name).getString(),
-                MessageLen);
-        nboPackString(messageMessage + PlayerIdPLen + 2,
-                      messageBuffer, MessageLen);
-        serverLink->send(MsgMessage, sizeof(messageMessage), messageMessage);
+	char messageBuffer[MessageLen];
+	memset(messageBuffer, 0, MessageLen);
+	strncpy(messageBuffer,
+	        resources->getValue(name).getString(),
+	        MessageLen);
+	nboPackString(messageMessage + PlayerIdPLen + 2,
+	              messageBuffer, MessageLen);
+	serverLink->send(MsgMessage, sizeof(messageMessage), messageMessage);
       }
     }
   }
@@ -835,9 +835,9 @@ static void		doKeyPlaying(const BzfKeyEvent& key, boolean pressed)
       case BzfKeyEvent::Right:
       case BzfKeyEvent::Up:
       case BzfKeyEvent::Down:
-        myTank->setKeyboardMoving(True);
-        showKeyboardStatus();
-        break;
+	myTank->setKeyboardMoving(True);
+	showKeyboardStatus();
+	break;
       }
     if (myTank->isKeyboardMoving())
       myTank->setKey(key.button, pressed);
@@ -897,30 +897,30 @@ static void		doMotion()
       mainWindow->getJoyPosition(mx, my);
 
       static const BzfKeyEvent::Button button_map[] = { BzfKeyEvent::LeftMouse,
-                                BzfKeyEvent::MiddleMouse,
-                                BzfKeyEvent::RightMouse,
-                                BzfKeyEvent::F1,
-                                BzfKeyEvent::F2,
-                                BzfKeyEvent::F3,
-                                BzfKeyEvent::F4,
-                                BzfKeyEvent::F5,
-                                BzfKeyEvent::F6,
-                                BzfKeyEvent::F7,
-                                BzfKeyEvent::F8,
-                                BzfKeyEvent::F9
+	                        BzfKeyEvent::MiddleMouse,
+	                        BzfKeyEvent::RightMouse,
+	                        BzfKeyEvent::F1,
+	                        BzfKeyEvent::F2,
+	                        BzfKeyEvent::F3,
+	                        BzfKeyEvent::F4,
+	                        BzfKeyEvent::F5,
+	                        BzfKeyEvent::F6,
+	                        BzfKeyEvent::F7,
+	                        BzfKeyEvent::F8,
+	                        BzfKeyEvent::F9
       };
 
       static unsigned long old_buttons = 0;
       unsigned long new_buttons = mainWindow->getJoyButtonSet();
       if (old_buttons != new_buttons)
-        for (int j = 0; j<12; j++)
-          if ((old_buttons & (1<<j)) != (new_buttons & (1<<j))) {
-            BzfKeyEvent ev;
-            ev.button = button_map[j];
-            ev.ascii = 0;
-            ev.shift = 0;
-            doKeyPlaying(ev, (new_buttons&(1<<j)) != 0);
-          }
+	for (int j = 0; j<12; j++)
+	  if ((old_buttons & (1<<j)) != (new_buttons & (1<<j))) {
+	    BzfKeyEvent ev;
+	    ev.button = button_map[j];
+	    ev.ascii = 0;
+	    ev.shift = 0;
+	    doKeyPlaying(ev, (new_buttons&(1<<j)) != 0);
+	  }
       old_buttons = new_buttons;
     } else
       mainWindow->getMousePosition(mx, my);
@@ -1054,8 +1054,8 @@ static void		doEvent(BzfDisplay* display)
 
     case BzfEvent::MouseMove:
       if (myTank && myTank->isAlive() && myTank->isKeyboardMoving()) {
-        myTank->setKeyboardMoving(False);
-        showKeyboardStatus();
+	myTank->setKeyboardMoving(False);
+	showKeyboardStatus();
       }
       break;
   }
@@ -1804,14 +1804,12 @@ static void		handleServerMessage(boolean human, uint16_t code,
       msg = nboUnpackUShort(msg, team);
       Player* srcPlayer = lookupPlayer(src);
       Player* dstPlayer = lookupPlayer(dst);
-      if (dstPlayer == myTank || (!dstPlayer && /*srcPlayer != myTank &&*/
+      if (srcPlayer == myTank || dstPlayer == myTank || (!dstPlayer &&
 	  (int(team) == int(RogueTeam) ||
 	  int(team) == int(myTank->getTeam())))) {
 	// message is for me
 	BzfString fullMsg;
-	if (dstPlayer)
-	  fullMsg = "[direct] ";
-	else if (int(team) != int(RogueTeam)) {
+	if (int(team) != int(RogueTeam)) {
 #ifdef BWSUPPORT
 	  fullMsg = "[to ";
 	  fullMsg += Team::getName(TeamColor(team));
@@ -1819,6 +1817,24 @@ static void		handleServerMessage(boolean human, uint16_t code,
 #else
 	  fullMsg = "[Team] ";
 #endif
+	}
+	if (dstPlayer) {
+	  if (dstPlayer==myTank && srcPlayer==myTank) {
+	    fullMsg=(const char*)msg;
+	  } else {
+	    fullMsg="[";
+	    if (srcPlayer == myTank) {
+	      fullMsg += "->";
+	      fullMsg += dstPlayer ? dstPlayer->getCallSign() : "(UNKNOWN)";
+	    } else {
+	      fullMsg += srcPlayer ? srcPlayer->getCallSign() : "(UNKNOWN)";
+	      fullMsg += "->";
+	    }
+	    fullMsg += "] ";
+	    fullMsg += (const char*)msg;
+	  }
+	  addMessage(NULL, fullMsg, Team::getRadarColor(RogueTeam));
+	  break;
 	}
 	if (!srcPlayer) {
 	  /* may unkown not harm us */
@@ -2002,7 +2018,7 @@ static void		doMessages()
 //
 
 static float		minSafeRange(float angleCosOffBoresight,
-                                     double fractionOfTries)
+	                             double fractionOfTries)
 {
   // anything farther than this much from dead-center is okay to
   // place at MinRange
@@ -3658,12 +3674,12 @@ static void		playingLoop()
 #if defined(ROAMING)
       if (roaming) {
 #ifdef FOLLOWTANK
-        eyePoint[0] = myTankPos[0] - myTankDir[0] * 20;
-        eyePoint[1] = myTankPos[1] - myTankDir[1] * 20;
-        eyePoint[2] = myTankPos[2] + MuzzleHeight * 3;
-        targetPoint[0] = eyePoint[0] + myTankDir[0];
-        targetPoint[1] = eyePoint[1] + myTankDir[1];
-        targetPoint[2] = eyePoint[2] + myTankDir[2];
+	eyePoint[0] = myTankPos[0] - myTankDir[0] * 20;
+	eyePoint[1] = myTankPos[1] - myTankDir[1] * 20;
+	eyePoint[2] = myTankPos[2] + MuzzleHeight * 3;
+	targetPoint[0] = eyePoint[0] + myTankDir[0];
+	targetPoint[1] = eyePoint[1] + myTankDir[1];
+	targetPoint[2] = eyePoint[2] + myTankDir[2];
 #else
 	float dir[3];
 	dir[0] = cosf(roamPhi * M_PI / 180.0f) * cosf(roamTheta * M_PI / 180.0f);
