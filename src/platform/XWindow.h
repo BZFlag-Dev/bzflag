@@ -91,7 +91,7 @@ class XWindow : public BzfWindow {
 #endif
 
 #ifdef XIJOYSTICK
-    void		initJoystick(const char* joystickName);
+    void		initJoystick(char* joystickName);
     boolean		joystick() const;
     void		getJoy(int& x, int& y) const;
 #endif
