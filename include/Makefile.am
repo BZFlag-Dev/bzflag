@@ -59,6 +59,7 @@ noinst_HEADERS =		\
 	PlayerInfo.h		\
 	PlayerState.h		\
 	PolyWallSceneNode.h	\
+	PositionTracker.h	\
 	Protocol.h		\
 	PyramidBuilding.h	\
 	QuadWallSceneNode.h	\

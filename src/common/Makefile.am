@@ -15,6 +15,7 @@ libCommon_a_SOURCES  =			\
 	KeyManager.cxx			\
 	Language.cxx			\
 	PlayerState.cxx			\
+	PositionTracker.cxx		\
 	ShotUpdate.cxx			\
 	StateDatabase.cxx		\
 	Team.cxx			\
