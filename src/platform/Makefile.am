@@ -16,6 +16,8 @@ libPlatform_a_SOURCES =				\
 	SDLMedia.cxx				\
 	SDLMedia.h				\
 	usbjoy.cxx				\
+	SDLDisplay.h				\
+	SDLDisplay.cxx				\
 	XDisplay.cxx				\
 	XDisplay.h				\
 	XVisual.cxx				\
