@@ -47,6 +47,8 @@ THESE ARE LOWER PRIORITY
   * convert to multi from simple
   * use curl_multi_fdset so it's non-blocking
   * implement list server access in curl
+  until these are done, TimRiker recommends disabling curl
+  on all public builds.
 
 * sdl build does not set the application icon .. kinda important for
   the folks with icons
