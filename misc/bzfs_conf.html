@@ -123,6 +123,11 @@
 						d.writeln("#Team killer to wins percentage (1-100) above which player is kicked<br/>");
 						d.writeln("-tkkr " + mainform.team_killer_kick_ratio.value + "<br/><br/>");
 					}
+
+					if (mainform.bad_words.value.length > 0) {
+						d.writeln("#Bad Words filter file specification<br/>");
+						d.writeln("-badwords " + mainform.bad_words.value + "<br/><br/>");
+					}
 	
 					if (mainform.advertisement_message.value.length > 0) {
 						d.writeln("#Message that is broadcast every 15 minutes<br/>");
@@ -375,6 +380,8 @@
 					<tr>
 						<td>Team Killer Kick Ratio</td>
 						<td><input type="text" name="team_killer_kick_ratio" value="0" size="30"/></td>
+						<td>Bad Word File</td>
+						<td><input type="file" name="bad_words"/></td>
 					</tr>
 					<tr span="2">
 						<td>Advertisement Message</td>
