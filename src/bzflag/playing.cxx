@@ -2998,6 +2998,8 @@ static void		handleServerMessage(bool human, uint16_t code,
       static const float zero[3] = { 0.0f, 0.0f, 0.0f };
       Player* tank = getPlayerByIndex(playerIndex);
       if (tank == myTank) {
+	if (World::getWorld()->allowRabbit())
+	  myTank->changeTeam(RogueTeam);
         myTank->restart(pos, forward);
         firstLife = false;
         mainWindow->warpMouse();
@@ -3069,7 +3071,9 @@ static void		handleServerMessage(bool human, uint16_t code,
       }
       if (victimPlayer && killerLocal != victimPlayer) {
 	if (victimPlayer->getTeam() == killerLocal->getTeam() &&
-	    ((killerLocal->getTeam() != RogueTeam) || (World::getWorld()->allowRabbit()))) {
+	    ((killerLocal->getTeam() != RogueTeam)
+	     || (World::getWorld()->allowRabbit())) &&
+	    (killerLocal->getTeam() != RabbitTeam)) {
 	  if (killerLocal == myTank) {
 	    hud->setAlert(1, "Don't shoot teammates!!!", 3.0f, true);
 	    playLocalSound( SFX_KILL_TEAM );
@@ -3367,7 +3371,8 @@ static void		handleServerMessage(bool human, uint16_t code,
 	}
 	hud->setHunting(false);
       } else if (myTank->getTeam() != ObserverTeam) {
-	myTank->changeTeam(RogueTeam);
+	if (myTank->isPaused())
+	  myTank->changeTeam(RogueTeam);
 	rabbit->setHunted(true);
 	hud->setHunting(true);
       }
