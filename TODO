@@ -3,6 +3,9 @@ to do list for BZFlag
 
 THESE SHOULD HAPPEN BEFORE THE NEXT RELEASE:
 
+* bzflag should display errors from DB. if you put an invalid char
+  in your password, then you no longer get a list of servers
+
 * bzadmin needs to handle central registration. get a cookie from
   db and present it to a server. Might add full LIST support while
   we're at it.
