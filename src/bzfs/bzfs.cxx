@@ -2569,7 +2569,6 @@ static void sendTeamUpdate(int teamIndex, int index = -1)
     directMessage(index, MsgTeamUpdate, (char*)buf - (char*)bufStart, bufStart);
 }
 
-// FIXME - can be simplified with the new playerid now!?
 static void sendPlayerUpdate(int playerIndex, int index)
 {
   void *buf, *bufStart = getDirectMessageBuffer();
@@ -2582,8 +2581,6 @@ static void sendPlayerUpdate(int playerIndex, int index)
   buf = nboPackUShort(buf, uint16_t(pPlayer->tks));
   buf = nboPackString(buf, pPlayer->callSign, CallSignLen);
   buf = nboPackString(buf, pPlayer->email, EmailLen);
-  // this playerid is for the player itself to get our playerid (hack)
-  buf = nboPackUByte(buf, playerIndex);
   if (playerIndex == index) {
     // send all players info about player[playerIndex]
     for (int i = 0; i < curMaxPlayers; i++)
