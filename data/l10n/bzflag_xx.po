@@ -478,6 +478,9 @@ msgstr ""
 msgid "Max player score: {1}"
 msgstr ""
 
+msgid "Page {1} of {2}"
+msgstr ""
+
 # Super Flags
 
 msgid "High Speed"

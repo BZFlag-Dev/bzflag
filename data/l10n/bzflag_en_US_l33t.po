@@ -455,6 +455,9 @@ msgstr "m@x T34M 5c0r3: {1}"
 msgid "Max player score: {1}"
 msgstr "M@X Pl4YeR $C0re: {1}"
 
+msgid "Page {1} of {2}"
+msgstr "p@g3 {1} 0f {2}"
+
 # Super Flags
 
 msgid "High Speed"

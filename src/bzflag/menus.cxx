@@ -411,9 +411,12 @@ void			FormatMenu::setSelected(int index)
     // change page label
     if (numFormats > NumItems) {
       char msg[50];
-      sprintf(msg, "Page %d of %d\n", newPage + 1, (numFormats +
-						NumItems - 1) / NumItems);
-      pageLabel->setString(msg);
+      std::vector<std::string> args;
+      sprintf(msg, "%d", newPage + 1);
+      args.push_back(msg);
+      sprintf(msg, "%d", (numFormats + NumItems - 1) / NumItems);
+      args.push_back(msg);
+      pageLabel->setString("Page {1} of {2}", &args);
     }
   }
 
@@ -2324,9 +2327,12 @@ void			ServerMenu::setSelected(int index)
     // change page label
     if (servers.size() > NumItems) {
       char msg[50];
-      sprintf(msg, "Page %d of %d\n", newPage + 1, (servers.size() +
-						NumItems - 1) / NumItems);
-      pageLabel->setString(msg);
+      std::vector<std::string> args;
+      sprintf(msg, "%d", newPage + 1);
+      args.push_back(msg);
+      sprintf(msg, "%d", (servers.size() + NumItems - 1) / NumItems);
+      args.push_back(msg);
+      pageLabel->setString("Page {1} of {2}", &args);
     }
   }
 
