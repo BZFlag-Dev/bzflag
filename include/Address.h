@@ -43,7 +43,7 @@ class Address {
     boolean		operator==(const Address&) const;
     boolean		operator!=(const Address&) const;
     boolean		isAny() const;
-    BzfString		getDotNotation() const;
+    char*		getDotNotation() const;
 
     void*		pack(void*) const;
     void*		unpack(void*);

@@ -93,9 +93,9 @@ boolean			Address::isAny() const
   return addr.s_addr == htonl(INADDR_ANY);
 }
 
-BzfString		Address::getDotNotation() const
+char *			Address::getDotNotation() const
 {
-  return BzfString(inet_ntoa(addr));
+  return inet_ntoa(addr);
 }
 
 #if !defined(_WIN32)
