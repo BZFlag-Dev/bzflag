@@ -32,6 +32,7 @@ noinst_HEADERS =		\
 	FlagWarpSceneNode.h	\
 	global.h		\
 	Intersect.h		\
+	KeyManager.h		\
 	LaserSceneNode.h	\
 	md5.h			\
 	multicast.h		\

@@ -8,6 +8,7 @@ libCommon_a_SOURCES  =			\
 	ErrorHandler.cxx		\
 	FileManager.cxx			\
 	Flag.cxx			\
+	KeyManager.cxx			\
 	md5.cxx				\
 	ShotUpdate.cxx			\
 	Team.cxx			\
