@@ -7,7 +7,6 @@ BZFlag 1.11
 * Record/Replay feature - Dave Rodgers
 * Random teleporter destinations - Dave Rodgers
 * Added Lag bad flag - Dave Rodgers
-* Support for building BZAdmin with PDCurses on Windows - Daniel Remenak
 * Poll to reset flags and Poll-cheating prevention - Ian Agar
 * Flag and Tank Entry Zones - Dave Brosius
 * Added MAC's Agility (aka Dodge) flag - Sean Morrison
@@ -21,7 +20,6 @@ BZFlag 1.11
 * No Jumping and Trigger Happy flags - Nils McCarthy
 * server option to disallow autopilot - Nils McCarthy
 * SDL interface to audio/video/input - Tupone Alfredo
-* Correctly read PNG textures with multiple IDAT chunks - Daniel Remenak
 * /clientquery (was CLIENTQUERY) moved to server - Daniel Remenak
 * "Leave Game" menu item to leave a game without quitting - Daniel Remenak
 * Allow user to force input device to that of their choosing - Daniel Remenak
@@ -35,6 +33,8 @@ BZFlag 1.11
 BZFlag 1.10.6
 -------------
 
+* Support for building BZAdmin with PDCurses on Windows - Daniel Remenak
+* Correctly read PNG textures with multiple IDAT chunks - Daniel Remenak
 * Add support for aggressive filtering on more platforms - Sean Morrison
 * bans based on hostmask (/hostban, ...) when adns is available - Nils McCarthy
 * Fixed bug that allowed empty callsigns - Frank Thilo
