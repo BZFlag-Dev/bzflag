@@ -15,11 +15,11 @@
 /* private */
 
 /* protected */
-bool Country::isValid(int country)
+bool Country::isValid(int)
 {
   return false;
 }
-bool Country::isValid(std::string country)
+bool Country::isValid(std::string)
 {
   return false;
 }
@@ -60,39 +60,39 @@ int Country::number(int country)
   // XXX - validate number
   return country;
 }
-int Country::number(std::string country)
+int Country::number(std::string)
 {
   return 0;
 }
-std::string Country::iso2(int country)
+std::string Country::iso2(int)
 {
   return "";
 }
-std::string Country::iso2(std::string country)
+std::string Country::iso2(std::string)
 {
   return "";
 }
-std::string Country::iso3(int country)
+std::string Country::iso3(int)
 {
   return "";
 }
-std::string Country::iso3(std::string country)
+std::string Country::iso3(std::string)
 {
   return "";
 }
-std::string Country::englishName(int country)
+std::string Country::englishName(int)
 {
   return "";
 }
-std::string Country::englishName(std::string country)
+std::string Country::englishName(std::string)
 {
   return "";
 }
-std::string Country::frenchName(int country)
+std::string Country::frenchName(int)
 {
   return "";
 }
-std::string Country::frenchName(std::string coutnry)
+std::string Country::frenchName(std::string)
 {
   return "";
 }

@@ -33,7 +33,7 @@ Language::~Language()
 {
 }
 
-bool Language::addLanguage(Language& language)
+bool Language::addLanguage(Language&)
 {
 
   return false;
@@ -146,39 +146,39 @@ int Language::number(int country)
   // XXX - validate number
   return country;
 }
-int Language::number(std::string country)
+int Language::number(std::string)
 {
   return 0;
 }
-std::string Language::iso2(int country)
+std::string Language::iso2(int)
 {
   return "";
 }
-std::string Language::iso2(std::string country)
+std::string Language::iso2(std::string)
 {
   return "";
 }
-std::string Language::iso3(int country)
+std::string Language::iso3(int)
 {
   return "";
 }
-std::string Language::iso3(std::string country)
+std::string Language::iso3(std::string)
 {
   return "";
 }
-std::string Language::englishName(int country)
+std::string Language::englishName(int)
 {
   return "";
 }
-std::string Language::englishName(std::string country)
+std::string Language::englishName(std::string)
 {
   return "";
 }
-std::string Language::frenchName(int country)
+std::string Language::frenchName(int)
 {
   return "";
 }
-std::string Language::frenchName(std::string coutnry)
+std::string Language::frenchName(std::string)
 {
   return "";
 }
