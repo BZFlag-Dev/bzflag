@@ -115,10 +115,6 @@ SOURCE=..\..\src\bzfs\BZWReader.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\src\bzfs\RecordReplay.cxx
-# End Source File
-# Begin Source File
-
 SOURCE=..\..\src\bzfs\CmdLineOptions.cxx
 # End Source File
 # Begin Source File
@@ -167,11 +163,11 @@ SOURCE=..\..\src\bzfs\EntryZones.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\src\bzfs\FlagInfo.cxx
+SOURCE=..\..\src\bzfs\FlagHistory.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\src\bzfs\FlagHistory.cxx
+SOURCE=..\..\src\bzfs\FlagInfo.cxx
 # End Source File
 # Begin Source File
 
@@ -184,6 +180,10 @@ SOURCE=..\..\src\bzfs\ListServerConnection.cxx
 # Begin Source File
 
 SOURCE=..\..\src\bzfs\Permissions.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\bzfs\RecordReplay.cxx
 # End Source File
 # Begin Source File
 
@@ -267,10 +267,6 @@ SOURCE=..\..\include\CallbackList.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\src\bzfs\RecordReplay.h
-# End Source File
-# Begin Source File
-
 SOURCE=..\..\src\bzfs\CmdLineOptions.h
 # End Source File
 # Begin Source File
@@ -343,11 +339,11 @@ SOURCE=..\..\include\Flag.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\src\bzfs\FlagInfo.h
+SOURCE=..\..\src\bzfs\FlagHistory.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\src\bzfs\FlagHistory.h
+SOURCE=..\..\src\bzfs\FlagInfo.h
 # End Source File
 # Begin Source File
 
@@ -396,6 +392,10 @@ SOURCE=..\..\include\PlayerInfo.h
 # Begin Source File
 
 SOURCE=..\..\include\PlayerState.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\bzfs\RecordReplay.h
 # End Source File
 # Begin Source File
 
