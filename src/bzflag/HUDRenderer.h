@@ -196,6 +196,8 @@ private:
   float		autoPilotWidth;
   float		cancelDestructLabelWidth;
   float		gameOverLabelWidth;
+  float		huntArrowWidth;
+  float		huntedArrowWidth;
   std::string	restartLabel;
   std::string	roamingLabel;
 

@@ -242,6 +242,9 @@ void			HUDRenderer::setMinorFontSize(int, int height)
     break;
   }
 
+  huntArrowWidth = fm.getStrLength(minorFontFace, minorFontSize, "-> ");
+  huntedArrowWidth = fm.getStrLength(minorFontFace, minorFontSize, "Hunt->");
+
   scoreLabelWidth = fm.getStrLength(minorFontFace, minorFontSize, scoreSpacingLabel);
   killsLabelWidth = fm.getStrLength(minorFontFace, minorFontSize, killLabel);
   teamScoreLabelWidth = fm.getStrLength(minorFontFace, minorFontSize, teamScoreSpacingLabel);
@@ -1556,10 +1559,8 @@ void			HUDRenderer::drawPlayerScore(const Player* player,
 
   FontManager &fm = FontManager::instance();
 
-  const float huntArrow = fm.getStrLength(minorFontFace, minorFontSize, "-> ");
-  const float huntedArrow = fm.getStrLength(minorFontFace, minorFontSize, "Hunt->");
-  const float x4 = x2 + (scoreLabelWidth - huntArrow);
-  const float x5 = x2 + (scoreLabelWidth - huntedArrow);
+  const float x4 = x2 + (scoreLabelWidth - huntArrowWidth);
+  const float x5 = x2 + (scoreLabelWidth - huntedArrowWidth);
   const float callSignWidth = fm.getStrLength(minorFontFace, minorFontSize, player->getCallSign());
   const float emailWidth = fm.getStrLength(minorFontFace, minorFontSize, email);
   const float flagWidth = fm.getStrLength(minorFontFace, minorFontSize, flag.c_str());
