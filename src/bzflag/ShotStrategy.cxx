@@ -556,8 +556,8 @@ void			SegmentedShotStrategy::addShot(
 void			SegmentedShotStrategy::radarRender() const
 {
   const float *orig = getPath().getPosition();
-  const int length = static_cast<int>(BZDB.eval("linedradarshots"));
-  const int size = static_cast<int>(BZDB.eval("sizedradarshots"));
+  const int length = BZDBCache::linedRadarShots;
+  const int size   = BZDBCache::sizedRadarShots;
 
   // Display leading lines
   if (length > 0) {
@@ -1455,8 +1455,8 @@ void			GuidedMissileStrategy::expire()
 void			GuidedMissileStrategy::radarRender() const
 {
   const float *orig = getPath().getPosition();
-  const int length = static_cast<int>(BZDB.eval("linedradarshots"));
-  const int size = static_cast<int>(BZDB.eval("sizedradarshots"));
+  const int length = BZDBCache::linedRadarShots;
+  const int size   = BZDBCache::sizedRadarShots;
 
   // Display leading lines
   if (length > 0) {

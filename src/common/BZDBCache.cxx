@@ -25,6 +25,8 @@ float BZDBCache::maxLOD;
 float BZDBCache::tankHeight;
 float BZDBCache::flagRadius;
 float BZDBCache::tankRadius;
+int   BZDBCache::linedRadarShots;
+int   BZDBCache::sizedRadarShots;
 
 void BZDBCache::init()
 {
@@ -61,6 +63,8 @@ void BZDBCache::serverCallback(const std::string& name, void *)
 
 void BZDBCache::update() {
   tankRadius = BZDB.eval(StateDatabase::BZDB_TANKRADIUS);
+  linedRadarShots = static_cast<int>(BZDB.eval("linedradarshots"));
+  sizedRadarShots = static_cast<int>(BZDB.eval("sizedradarshots"));
 }
 
 

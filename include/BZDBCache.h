@@ -29,6 +29,8 @@ public:
 	static float tankHeight;
 	static float flagRadius;
 	static float tankRadius;
+	static int   linedRadarShots;
+	static int   sizedRadarShots;
 
 public:
   /** public method to update cached variable
