@@ -1706,21 +1706,7 @@ static void		doKeyPlaying(const BzfKeyEvent& key, bool pressed)
   }
   //  else
 
-  if (keymap.isMappedTo(BzfKeyMap::ScrollBackward, key)) {
-    // scroll message list backward
-    if (pressed) {
-      controlPanel->setMessagesOffset(2,1);
-    }
-  }
-
-  else if (keymap.isMappedTo(BzfKeyMap::ScrollForward, key)) {
-    // scroll message list forward
-    if (pressed) {
-      controlPanel->setMessagesOffset(-2,1);
-    }
-  }
-
-  else if (keymap.isMappedTo(BzfKeyMap::ShortRange, key)) {
+  if (keymap.isMappedTo(BzfKeyMap::ShortRange, key)) {
     // smallest radar range
     if (pressed) radar->setRange(RadarLowRangeFactor*WorldSize);
   }
@@ -2201,6 +2187,20 @@ static std::string cmdServerCommand(const std::string&, const CommandManager::Ar
   return std::string();
 }
 
+static std::string cmdScrollPanel(const std::string&, const CommandManager::ArgList& args)
+{
+  if (args.size() != 1)
+    return "usage: scrollpanel {up|down}\n";
+  if (args[0] == "up") {
+    controlPanel->setMessagesOffset(2,1);
+  } else if (args[0] == "down") {
+    controlPanel->setMessagesOffset(-2,1);
+  } else {
+    return "usage: scrollpanel {up|down}\n";
+  }
+  return std::string();
+}
+
 struct CommandListItem {
   const char* name;
   CommandManager::CommandFunction func;
@@ -2221,7 +2221,8 @@ static const CommandListItem commandList[] = {
   { "time",	&cmdTime,	"time {forward|backward}:  adjust the current time" },
   { "roam",	&cmdRoam,	"roam {rotate|translate|zoom|cycle} <args>:  roam around" },
   { "silence",	&cmdSilence,	"silence:  silence/unsilence a player" },
-  { "servercommand",	&cmdServerCommand,	"servercommand:  quick admin" }
+  { "servercommand",	&cmdServerCommand,	"servercommand:  quick admin" },
+  { "scrollpanel",	&cmdScrollPanel,	"scrollpanel {up|down}:  scroll message panel" }
 };
 
 static void		doEvent(BzfDisplay* display)

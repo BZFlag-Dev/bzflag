@@ -164,7 +164,9 @@ static const char*	bindingList[] = {
   "bind F11 down \"roam zoom normal\"",
   "bind F11 up \"roam zoom stop\"",
   "bind O down servercommand",
-  "bind F down \"toggle displayFlagHelp\""
+  "bind F down \"toggle displayFlagHelp\"",
+  "bind \"Page Up\" down \"scrollpanel up\"",
+  "bind \"Page Down\" down \"scrollpanel down\""
 };
 
 #ifdef ROBOT
