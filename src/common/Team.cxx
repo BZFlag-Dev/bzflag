@@ -67,6 +67,7 @@ const char*  Team::getImagePrefix(TeamColor team)
   case GreenTeam: return "g";
   case BlueTeam: return "b";
   case PurpleTeam: return "p";
+  case RabbitTeam: return "w";
   default: return "y";
   }
 }
