@@ -35,15 +35,15 @@ public:
   Player(const PlayerId&, TeamColor,
 	 const char* callsign, const char* emailAddress,
 	 const PlayerType);
-  virtual		~Player();
+  virtual	~Player();
 
-  PlayerId		getId() const;
-  TeamColor		getTeam() const;
-  void			setTeam(TeamColor);
-  const char*		getCallSign() const;
-  const char*		getEmailAddress() const;
-  const PlayerType    getPlayerType() const;
-  FlagType*		getFlag() const;
+  PlayerId	getId() const;
+  TeamColor	getTeam() const;
+  void		setTeam(TeamColor);
+  const char*	getCallSign() const;
+  const char*	getEmailAddress() const;
+  PlayerType	getPlayerType() const;
+  FlagType*	getFlag() const;
   long		getOrder() const;
   short		getStatus() const;
   const float*	getPosition() const;
@@ -216,7 +216,7 @@ inline const char*	Player::getEmailAddress() const
   return email;
 }
 
-inline const PlayerType	Player::getPlayerType() const
+inline PlayerType	Player::getPlayerType() const
 {
   return type;
 }
