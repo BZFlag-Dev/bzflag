@@ -21,11 +21,12 @@
 #include "StateDatabase.h"
 
   //Modifiers for Normal, Obese. Tiny and Thin
-static const GLfloat styleFactors[4][3] = {
+static const GLfloat styleFactors[5][3] = {
 			{ 1.0f, 1.0f, 1.0f },
 			{ ObeseFactor, ObeseFactor, 1.0f },
 			{ TinyFactor, TinyFactor, 1.0f },
-			{ 1.0f, 0.0f, 1.0f }
+			{ 1.0f, 0.0f, 1.0f },
+			{ ThiefTinyFactor, ThiefTinyFactor, 1.0f }
 		};
 
 // parts: body, turret, barrel, left tread, right tread
