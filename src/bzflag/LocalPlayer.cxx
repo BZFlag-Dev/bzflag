@@ -128,7 +128,8 @@ LocalPlayer::LocalPlayer(const PlayerId& id,
 				insideBuilding(NULL),
 				anyShotActive(False),
 				magnify(0),
-				target(NULL)
+				target(NULL),
+				nemesis(NULL)
 {
   // initialize shots array to no shots fired
   const int numShots = World::getWorld()->getMaxShots();
@@ -841,6 +842,12 @@ void			LocalPlayer::setTarget(const Player* _target)
 {
   target = _target;
 }
+
+void			LocalPlayer::setNemesis(const Player* _nemesis)
+{
+	nemesis = _nemesis;
+}
+
 
 void			LocalPlayer::explodeTank()
 {

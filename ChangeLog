@@ -6,6 +6,7 @@ BZFlag 1.7e3
 
 * ::memset() instead of bzero() - Björn Augustsson
 * win32 audio thread fix for win2k - crs
+* send to nemesis - Dave Brosius
 
 BZFlag 1.7e2
 ------------

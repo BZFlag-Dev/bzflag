@@ -86,7 +86,7 @@ class HUDRenderer {
     boolean		getComposing() const;
     BzfString		getComposeString() const;
 
-    void		setComposing(const char* prompt);
+    void		setComposing(const BzfString &prompt);
 
     void		render(SceneRenderer&);
 

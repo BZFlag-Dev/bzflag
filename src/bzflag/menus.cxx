@@ -1462,6 +1462,7 @@ void			Help1Menu::resize(int width, int height)
 				BzfKeyMap::FlagHelp,
 				BzfKeyMap::SendTeam,
 				BzfKeyMap::SendAll,
+				BzfKeyMap::SendNemesis,
 				BzfKeyMap::Score,
 				BzfKeyMap::TimeForward,
 				BzfKeyMap::TimeBackward,

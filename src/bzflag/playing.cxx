@@ -371,7 +371,7 @@ boolean			ComposeDefaultKey::keyPress(const BzfKeyEvent& key)
     }
   }
 
-  hud->setComposing(NULL);
+  hud->setComposing(BzfString());
   HUDui::setDefaultKey(NULL);
   return True;
 }
@@ -694,10 +694,11 @@ static void		doKeyPlaying(const BzfKeyEvent& key, boolean pressed)
   }
 
   else if (keymap.isMappedTo(BzfKeyMap::SendAll, key) ||
-	   keymap.isMappedTo(BzfKeyMap::SendTeam, key)) {
+	   keymap.isMappedTo(BzfKeyMap::SendTeam, key) ||
+	   keymap.isMappedTo(BzfKeyMap::SendNemesis, key)) {
     // start composing a message
     if (pressed) {
-      const char* composePrompt;
+      BzfString composePrompt;
       if (keymap.isMappedTo(BzfKeyMap::SendAll, key)) {
 	void* buf = messageMessage;
 	buf = nboPackUInt(buf, 0);
@@ -706,7 +707,7 @@ static void		doKeyPlaying(const BzfKeyEvent& key, boolean pressed)
 	buf = nboPackUShort(buf, uint16_t(RogueTeam));
 	composePrompt = "Send to all: ";
       }
-      else {
+      else if (keymap.isMappedTo(BzfKeyMap::SendTeam, key)) {
 	void* buf = messageMessage;
 	buf = nboPackUInt(buf, 0);
 	buf = nboPackShort(buf, 0);
@@ -714,7 +715,18 @@ static void		doKeyPlaying(const BzfKeyEvent& key, boolean pressed)
 	buf = nboPackUShort(buf, uint16_t(myTank->getTeam()));
 	composePrompt = "Send to teammates: ";
       }
-	
+      else {
+	const Player *nemesis = myTank->getNemesis();
+	if (!nemesis) return;
+
+	void* buf = messageMessage;
+	buf = nemesis->getId().pack(buf);
+	buf = nboPackUShort( buf, uint16_t(RogueTeam));
+	composePrompt = "Send to ";
+	composePrompt += nemesis->getCallSign();
+	composePrompt += ": ";
+      }
+
       // to send to a player use:
       //   buf = myTank->getId().pack(buf);
       //   buf = nboPackUShort(buf, uint16_t(RogueTeam));
@@ -1384,10 +1396,13 @@ static void		handleServerMessage(boolean human, uint16_t code,
 #endif
       if (victimLocal) {
 	// uh oh, local player is dead
-	if (victimLocal->isAlive())
+	if (victimLocal->isAlive()){
 	  gotBlowedUp(victimLocal, GotKilledMsg, killer);
+	}
+	myTank->setNemesis(killerPlayer);
       }
       else if (victimPlayer) {
+	myTank->setNemesis( victimPlayer);
 	victimPlayer->setExplode(TimeKeeper::getTick());
 	const float* pos = victimPlayer->getPosition();
 	playWorldSound(SFX_EXPLOSION, pos[0], pos[1], pos[2],
@@ -2387,6 +2402,8 @@ static void		setTarget()
 
   if (lockedOn) {
     myTank->setTarget(bestTarget);
+    myTank->setNemesis(bestTarget);
+
     BzfString msg("Locked on ");
     msg += bestTarget->getCallSign();
     msg += " (";

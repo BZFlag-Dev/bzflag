@@ -96,6 +96,9 @@ class LocalPlayer : public BaseLocalPlayer {
     void		setMagnify(int zoom);
     void		setTarget(const Player*);
 
+    void		setNemesis(const Player*);
+    const Player*	getNemesis() const;
+
     void		restart(const float* pos, float azimuth);
     boolean		checkHit(const Player* source, const ShotPath*& hit,
 							float& minTime) const;
@@ -137,6 +140,7 @@ class LocalPlayer : public BaseLocalPlayer {
     boolean		anyShotActive;
     int			magnify;
     const Player*	target;
+    const Player*	nemesis;
     static LocalPlayer*	mainPlayer;
 };
 
@@ -162,6 +166,11 @@ inline int		LocalPlayer::getMagnify() const
 inline const Player*	LocalPlayer::getTarget() const
 {
   return target;
+}
+
+inline const Player*	LocalPlayer::getNemesis() const
+{
+	return nemesis;
 }
 
 inline const Obstacle*	LocalPlayer::getContainingBuilding() const

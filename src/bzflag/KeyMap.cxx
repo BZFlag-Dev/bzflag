@@ -22,6 +22,7 @@ const BzfKeyEvent	BzfKeyMap::defaults1[] = {
 				{ '3', 0, 0 },
 				{ 'n', 0, 0 },
 				{ 'm', 0, 0 },
+				{ ',', 0, 0 },
 				{ '\t', 0, 0 },
 				{ 'b', 0, 0 },
 				{ 's', 0, 0 },
@@ -37,6 +38,7 @@ const BzfKeyEvent	BzfKeyMap::defaults1[] = {
 const BzfKeyEvent	BzfKeyMap::defaults2[] = {
 				{ 0, 0, 0 },
 				{ ' ', 0, 0 },
+				{ 0, 0, 0 },
 				{ 0, 0, 0 },
 				{ 0, 0, 0 },
 				{ 0, 0, 0 },
@@ -63,6 +65,7 @@ const char*		BzfKeyMap::keyName[] = {
 				"longRangeKey",
 				"sendAllKey",
 				"sendTeamKey",
+				"sendNemesisKey",
 				"jumpKey",
 				"binocularsKey",
 				"scoreKey",
@@ -125,6 +128,7 @@ void			BzfKeyMap::resetAll()
   reset(LongRange);
   reset(SendAll);
   reset(SendTeam);
+  reset(SendNemesis);
   reset(Jump);
   reset(Binoculars);
   reset(Score);

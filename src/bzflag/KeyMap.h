@@ -32,6 +32,7 @@ class BzfKeyMap {
 			LongRange,
 			SendAll,
 			SendTeam,
+			SendNemesis,
 			Jump,
 			Binoculars,
 			Score,
