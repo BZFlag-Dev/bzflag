@@ -112,12 +112,12 @@ enum PlayerState {
 
 struct ConnectInfo {
   public:
-    // addr/port of initial connection
-    struct sockaddr_in addr;
+    // what fd we accepted on
+    int accept;
+    // what fd we're listening on
+    int listen;
     // time accepted
     TimeKeeper time;
-    // are we still waiting?
-    int waiting;
 };
 
 struct PacketQueue {
@@ -1502,33 +1502,7 @@ static void pwrite(int playerIndex, const void* b, int l)
   }
 }
 
-// a hack to handle old clients
-// old clients use <serverip><serverport><number> as id
-// where serverip etc is as seen from the client
-// new clients use <clientip><clientport><number> as id
-// where clientip etc is as seen from the server
-// here we patch up the msg to what the old client wants to see
-static void patchPlayerId(int playerIndex, void *msg, int offset)
-{
-  PlayerId id;
-  short code = ntohs(*(short *)msg + 1);
-
-  fprintf(stderr, "patchPlayerId fixup:%c%c %08x:%u:%u -> ", code >> 8, code & 0xff,
-      ntohl(*(int *)((char *)msg + offset)),
-      ntohs(*((short *)((char *)msg + offset + 4))),
-      ntohs(*((short *)((char *)msg + offset + 6))));
-  id.unpack((char *)msg + offset);
-  if (id == player[playerIndex].id) {
-    player[playerIndex].perceivedId.pack((char *)msg + offset);
-  }
-  fprintf(stderr, "%08x:%u:%u\n",
-      ntohl(*(int *)((char *)msg + offset)),
-      ntohs(*((short *)((char *)msg + offset + 4))),
-      ntohs(*((short *)((char *)msg + offset + 6))));
-}
-
-static void directMessage(int playerIndex, uint16_t code,
-					int len, const void* msg)
+static void directMessage(int playerIndex, uint16_t code, int len, const void* msg)
 {
   if (player[playerIndex].fd == NotConnected)
     return;
@@ -1539,30 +1513,6 @@ static void directMessage(int playerIndex, uint16_t code,
   buf = nboPackUShort(buf, uint16_t(len));
   buf = nboPackUShort(buf, code);
   buf = nboPackString(buf, msg, len);
-  switch (code) {
-    case MsgScoreOver:
-    case MsgAddPlayer:
-    case MsgRemovePlayer:
-    case MsgGrabFlag:
-    case MsgDropFlag:
-    case MsgCaptureFlag:
-    case MsgShotBegin:
-    case MsgShotEnd:
-    case MsgScore:
-    case MsgAlive:
-    case MsgTeleport:
-    case MsgPlayerUpdate:
-    case MsgGMUpdate:
-      patchPlayerId(playerIndex, msgbuf, 4);
-      ;;
-    case MsgFlagUpdate:
-      patchPlayerId(playerIndex, msgbuf, 12);
-      ;;
-    case MsgMessage:
-      patchPlayerId(playerIndex, msgbuf, 4);
-      patchPlayerId(playerIndex, msgbuf, 12);
-      ;;
-  }
   pwrite(playerIndex, msgbuf, len + 4);
 }
 
@@ -1940,9 +1890,8 @@ static boolean serverStart()
     player[i].outmsgSize = 0;
     player[i].outmsgOffset = 0;
     player[i].outmsgCapacity = 0;
-    player[i].knowId = False;
-    reconnect[i].waiting = False;
-    memset((char *)&reconnect[i].addr, 0, sizeof(reconnect[i].addr)); 
+    reconnect[i].accept = NotConnected;
+    reconnect[i].listen = NotConnected;
   }
 
   listServerLinksCount = 0;
@@ -2696,9 +2645,6 @@ static void acceptClient()
 {
   // client (not a player yet) is requesting service.
   // accept incoming connection on our well known port
-  // may be new player or an old client reconnecting
-  int playerIndex;
-  int wantPlayer = False;
   struct sockaddr_in addr;
   AddrLen addr_len = sizeof(addr);
   int fd = accept(wksSocket, (struct sockaddr*)&addr, &addr_len);
@@ -2713,22 +2659,16 @@ static void acceptClient()
   setNoDelay(fd);
   BzfNetwork::setNonBlocking(fd);
 
-  // look for reconnecting player
-  for (playerIndex = 0; playerIndex < maxPlayers; playerIndex++) {
-    if (reconnect[playerIndex].waiting &&
-        reconnect[playerIndex].addr.sin_addr.s_addr == addr.sin_addr.s_addr ) {
-      if (debug > 2)
-        fprintf(stderr, "old client reconnect from %s:%d\n", inet_ntoa(addr.sin_addr), ntohs(addr.sin_port));
-      reconnect[playerIndex].waiting = False;
-      if (player[playerIndex].fd != NotConnected)
-	close(player[playerIndex].fd);
-      player[playerIndex].fd = fd;
-      return;
-    }
-  }
+  // find open slot in players list
+  int playerIndex;
+  for (playerIndex = 0; playerIndex < maxPlayers; playerIndex++)
+    if (player[playerIndex].fd == NotConnected &&
+	reconnect[playerIndex].accept == NotConnected &&
+	reconnect[playerIndex].listen == NotConnected)
+      break;
 
   // game is over;  no new players until everyone quits
-  playerIndex = 0;
+  int gameListen = NotConnected;
   if (gameOver) {
     for (int i = 0; i < maxPlayers; i++)
       if (player[i].fd != NotConnected) {
@@ -2736,39 +2676,69 @@ static void acceptClient()
 	break;
       }
   }
+  if (playerIndex < maxPlayers) {
+    // create a new socket to listen for reconnection
+    addr.sin_family = AF_INET;
+    // any open port
+    addr.sin_port = 0;
+    addr.sin_addr.s_addr = htonl(INADDR_ANY);
+    addr_len = sizeof(addr);
+    if ((gameListen = socket(AF_INET, SOCK_STREAM, 0)) == -1 ||
+	bind(gameListen, (const struct sockaddr*)&addr, sizeof(addr)) == -1 ||
+	getsockname(gameListen, (struct sockaddr*)&addr, &addr_len) == -1 ||
+	listen(gameListen, 1) == -1) {
+      nerror("creating client listen socket");
+      if (gameListen != -1) close(gameListen);
+      gameListen = NotConnected;
+    }
+  }
+
+  // record what port we accepted on and are now listening on.
+  reconnect[playerIndex].time = TimeKeeper::getCurrent();
+  reconnect[playerIndex].listen = gameListen;
+  reconnect[playerIndex].accept = fd;
+  if (reconnect[playerIndex].listen > maxFileDescriptor)
+    maxFileDescriptor = reconnect[playerIndex].listen;
+  if (reconnect[playerIndex].accept > maxFileDescriptor)
+    maxFileDescriptor = reconnect[playerIndex].accept;
 
   // if don't want another player or couldn't make socket then refuse
   // connection by returning an obviously bogus port (port zero).
-  if (playerIndex == 0)
-    wantPlayer=True;
+  if (reconnect[playerIndex].listen == NotConnected)
+    addr.sin_port = htons(0);
 
   // send server version and which port to reconnect to
   char buffer[8 + sizeof(addr.sin_port)];
   memcpy(buffer, ServerVersion, 8);
-  if (wantPlayer) {
-    unsigned short int port;
-    port = htons(wksPort);
-    memcpy(buffer + 8, &port, sizeof(port));
-  } else
-    memset(buffer + 8, 0, sizeof(addr.sin_port));
+  memcpy(buffer + 8, &addr.sin_port, sizeof(addr.sin_port));
   send(fd, (const char*)buffer, sizeof(buffer), 0);
 
   // don't wait for client to reconnect here in case the client
   // is badly behaved and would cause us to hang on accept().
   // this also goes even if we're rejecting the connection.
+}
 
-  // find open slot in players list
-  for (playerIndex = 0; playerIndex < maxPlayers; playerIndex++)
-   if (player[playerIndex].fd == NotConnected &&
-       reconnect[playerIndex].waiting == False)
-     break;
+static void addClient(int playerIndex)
+{
+  // accept game connection
+  struct sockaddr_in addr;
+  AddrLen addr_len = sizeof(addr);
+  player[playerIndex].fd = accept(reconnect[playerIndex].listen,
+				(struct sockaddr*)&addr, &addr_len);
+  if (player[playerIndex].fd == NotConnected)
+    nerror("accepting client connection");
 
-  // record time and address for reconnects
-  reconnect[playerIndex].time = TimeKeeper::getCurrent();
-  reconnect[playerIndex].waiting = True;
-  memcpy(&reconnect[playerIndex].addr, &addr, sizeof(addr));
+  // done with listen socket
+  close(reconnect[playerIndex].listen);
+  reconnect[playerIndex].listen = NotConnected;
 
-  player[playerIndex].fd = fd;
+  // see if accept worked
+  if (player[playerIndex].fd == NotConnected)
+    return;
+
+  // turn off packet buffering and set socket non-blocking
+  setNoDelay(player[playerIndex].fd);
+  BzfNetwork::setNonBlocking(player[playerIndex].fd);
 
   // now add client
   player[playerIndex].state = PlayerInLimbo;
@@ -2800,7 +2770,15 @@ static void acceptClient()
 
 static void shutdownAcceptClient(int playerIndex)
 {
-  // FIXME
+  // close socket that client initially contacted us on
+  close(reconnect[playerIndex].accept);
+  reconnect[playerIndex].accept = NotConnected;
+
+  // if we're still listening on reconnect port then give up
+  if (reconnect[playerIndex].listen != NotConnected) {
+    close(reconnect[playerIndex].listen);
+    reconnect[playerIndex].listen = NotConnected;
+  }
 }
 
 static void respondToPing(boolean broadcast = False)
@@ -3686,10 +3664,7 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void* rawbuf)
     case MsgEnter: {		// player joining
       // data: id, type, team, name, email
       uint16_t type, team;
-      buf = player[t].perceivedId.unpack(buf);
-      player[t].id.number = player[t].perceivedId.number;
-      player[t].id.port = reconnect[t].addr.sin_port;
-      memcpy(&player[t].id.serverHost, &reconnect[t].addr.sin_addr.s_addr, sizeof(player[t].id.serverHost));
+      buf = player[t].id.unpack(buf);
       buf = nboUnpackUShort(buf, type);
       buf = nboUnpackUShort(buf, team);
       player[t].type = PlayerType(type);
@@ -3697,8 +3672,7 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void* rawbuf)
       buf = nboUnpackString(buf, player[t].callSign, CallSignLen);
       buf = nboUnpackString(buf, player[t].email, EmailLen);
       addPlayer(t);
-      UMDEBUG("Player %s [%d] has joined (%8x:%d:%d)\n",
-	  player[t].callSign, t, ntohl(*(int *)&player[t].id.serverHost), ntohs(player[t].id.port), ntohs(player[t].id.number));
+      UMDEBUG("Player %s [%d] has joined\n", player[t].callSign, t);
       break;
     }
 
@@ -4760,6 +4734,10 @@ int main(int argc, char** argv)
 	if (player[i].outmsgSize > 0)
 	  FD_SET(player[i].fd, &write_set);
       }
+      if (reconnect[i].accept != NotConnected)
+	FD_SET(reconnect[i].accept, &read_set);
+      if (reconnect[i].listen != NotConnected)
+	FD_SET(reconnect[i].listen, &read_set);
     }
     FD_SET(wksSocket, &read_set);	// always listen for connections
     if (pingInSocket != -1)
@@ -4936,14 +4914,8 @@ int main(int argc, char** argv)
     if (nfound > 0) {
       //fprintf(stderr, "chkmsg nfound,read,write %i,%08lx,%08lx\n", nfound, read_set, write_set);
       // first check initial contacts
-      if (FD_ISSET(wksSocket, &read_set)) {
+      if (FD_ISSET(wksSocket, &read_set))
 	acceptClient();
-	// FIXME ugly hack, for some reason we are losing the first read! TimR
-        for (i = 0; i < maxPlayers; i++)
-	  if (player[i].fd != NotConnected)
-            FD_SET(player[i].fd, &read_set);
-      }
-	
 
       // now check pings
       if (pingInSocket != -1 && FD_ISSET(pingInSocket, &read_set))
@@ -4955,12 +4927,18 @@ int main(int argc, char** argv)
       if (relayInSocket != -1 && FD_ISSET(relayInSocket, &read_set))
 	relayPlayerPacket();
 
-      // check the initial contact.  if any activity or
-      // we've waited a while, then shut it down
+      // check for players that were accepted
       for (i = 0; i < maxPlayers; i++) {
-        if (reconnect[i].waiting &&
-	    player[i].fd != NotConnected &&
-	    tm - reconnect[i].time > DisconnectTimeout)
+	// first check for clients that are reconnecting
+	if (reconnect[i].listen != NotConnected &&
+		FD_ISSET(reconnect[i].listen, &read_set))
+	  addClient(i);
+
+	// now check the initial contact port.  if any activity or
+	// we've waited a while, then shut it down
+	if (reconnect[i].accept != NotConnected &&
+	 	(FD_ISSET(reconnect[i].accept, &read_set) ||
+		tm - reconnect[i].time > DisconnectTimeout))
 	  shutdownAcceptClient(i);
       }
 
