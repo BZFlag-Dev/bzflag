@@ -20,6 +20,7 @@
 // system implementation headers
 #include <vector>
 #include <string>
+#include <sstream>
 #ifdef HAVE_CSTDIO
 #include <cstdio>
 #else
@@ -416,33 +417,21 @@ static void handleCountdownCmd(GameKeeper::Player *playerData, const char *messa
 
   // if the timelimit is not set .. don't countdown
   if (clOptions->timeLimit > 1.0f) {
-
-    // skip spaces to tell the difference between an atoi of nothing and of 0
-    int spaceSkip = 0;
-    while ((strlen(message+10+spaceSkip) > 0) &&
-	   TextUtils::isWhitespace(message[10+spaceSkip])) {
-      spaceSkip++;
-    }
-    // otherwise, see if a time was given as an argument
-    std::string time = &message[10+spaceSkip];
-
-    // default is 10 seconds
-    countdownDelay = 10;
-    if (time.size() > 0) {
-      countdownDelay = atoi(time.c_str());
-    }
+    std::istringstream timespec(message+10);
+    if (!(timespec >> countdownDelay))
+      countdownDelay = 10;
 
     // limit/sanity check
-    const int MAX_DELAY = 120;
-    if (countdownDelay > MAX_DELAY) {
-      sendMessage(ServerPlayer, t, TextUtils::format("Countdown set to %d instead of %d", MAX_DELAY, countdownDelay).c_str());
-      countdownDelay = MAX_DELAY;
+    const int max_delay = 120;
+    if (countdownDelay > max_delay) {
+      sendMessage(ServerPlayer, t, TextUtils::format("Countdown set to %d instead of %d", max_delay, countdownDelay).c_str());
+      countdownDelay = max_delay;
     } else if (countdownDelay < 0) {
       sendMessage(ServerPlayer, t, TextUtils::format("Countdown set to 0 instead of %d", countdownDelay).c_str());
       countdownDelay = 0;
     }
 
-    sendMessage(ServerPlayer, AllPlayers, TextUtils::format("Team scores reset, countdown Started by %s.",playerData->player.getCallSign()).c_str());
+    sendMessage(ServerPlayer, AllPlayers, TextUtils::format("Team scores reset, countdown started by %s.",playerData->player.getCallSign()).c_str());
 
     // let everyone know what's going on
     int timeArray[4];

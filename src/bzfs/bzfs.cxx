@@ -4522,12 +4522,12 @@ int main(int argc, char **argv)
 
     // players see a countdown
     if (countdownDelay >= 0) {
-      static  TimeKeeper timePrevious = TimeKeeper::getCurrent();
-      if (readySetGo == -1) {
+      static TimeKeeper timePrevious = tm;
+      if (readySetGo == -1)
 	readySetGo = countdownDelay;
-      }
-      if (TimeKeeper::getCurrent() - timePrevious > 1.0f) {
-	timePrevious = TimeKeeper::getCurrent();
+
+      if (tm - timePrevious > 1.0f) {
+	timePrevious = tm;
 	if (readySetGo == 0) {
 	  sendMessage(ServerPlayer, AllPlayers, "The match has started!...Good Luck Teams!");
 	  countdownDelay = -1; // reset back to "unset"
@@ -4535,14 +4535,14 @@ int main(int argc, char **argv)
 	  countdownActive = true;
 
 	  // start server's clock
-	  gameStartTime = TimeKeeper::getCurrent();
+	  gameStartTime = tm;
 	  clOptions->timeElapsed = 0.0f;
 
 	  // start client's clock
-	  char msg[2];
+	  char msg[4];
 	  void *buf = msg;
 	  nboPackInt(buf, (int32_t)(int)clOptions->timeLimit);
-	  broadcastMessage(MsgTimeUpdate, sizeof(msg), msg);
+	  broadcastMessage(MsgTimeUpdate, sizeof msg, msg);
 
 	  // kill any players that are playing already
 	  GameKeeper::Player *player;
@@ -4574,9 +4574,9 @@ int main(int argc, char **argv)
 	  }
 
 	} else {
-	  if ((readySetGo == countdownDelay) && (countdownDelay > 0)) {
+	  if ((readySetGo == countdownDelay) && (countdownDelay > 0))
 	    sendMessage(ServerPlayer, AllPlayers, "Start your engines!......");
-	  }
+
 	  sendMessage(ServerPlayer, AllPlayers, TextUtils::format("%i...", readySetGo).c_str());
 	  --readySetGo;
 	}
