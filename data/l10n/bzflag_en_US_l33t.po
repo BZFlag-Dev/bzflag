@@ -242,7 +242,7 @@ msgstr "5cr0ll pH0rW@Rd:"
 msgid "Slow Keyboard Motion:"
 msgstr "5l0w keYBO@rd M0t10n:"
 
-msgid "loading" 
+msgid "loading {1}" 
 msgstr "L04D1nG {1}"
 
 msgid "controls tank motion" 
@@ -392,6 +392,9 @@ msgstr "Pr3s$ 3n+ER tO $EleC+ 4nD + +0 T35t 4 FoRM4+. e5C +0 3X1+."
 msgid "Free-style"
 msgstr "FR33-$+yl3"
 
+msgid "Capture-the-Flag"
+msgstr "C4PtuRe-+h3-phl49"
+
 msgid "Super Flags"
 msgstr "SUper PHL49$"
 
@@ -401,8 +404,8 @@ msgstr "@NT1d0T3 FL495"
 msgid "Jumping"
 msgstr "jUMPIn9"
 
-msgid "Richochet"
-msgstr "RichOcHE+"
+msgid "Ricochet"
+msgstr "RicOcHE+"
 
 msgid "Trying..."
 msgstr "TRY1n9..."

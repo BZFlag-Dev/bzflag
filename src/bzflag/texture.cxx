@@ -27,7 +27,7 @@ unsigned char*		getTextureImage(const std::string& file,
   Bundle *bdl = World::getBundleMgr()->getBundle(World::getLocale());
 
   if (file.length() == 0) return NULL;
-  printError(bdl->formatMessage( "loading", 1, &file ).c_str());
+  printError(bdl->formatMessage( "loading {1}", 1, &file ).c_str());
   return PlatformFactory::getMedia()->readImage(file, width, height, depth);
 }
 
@@ -37,7 +37,7 @@ unsigned char*		getTextImage(const std::string& file,
   Bundle *bdl = World::getBundleMgr()->getBundle(World::getLocale());
 
   if (file.length() == 0) return NULL;
-  printError(bdl->formatMessage( "loading", 1, &file ).c_str());
+  printError(bdl->formatMessage( "loading {1}", 1, &file ).c_str());
   int depth;
   unsigned char* image = PlatformFactory::getMedia()->
 			readImage(file, width, height, depth);
