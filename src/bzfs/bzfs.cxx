@@ -4402,7 +4402,7 @@ static void addPlayer(int playerIndex)
   player[playerIndex].accessInfo.explicitAllows.reset();
   player[playerIndex].accessInfo.explicitDenys.reset();
   player[playerIndex].accessInfo.verified = false;
-  player[playerIndex].accessInfo.loginTime = 0;// put some time shit here
+  player[playerIndex].accessInfo.loginTime = TimeKeeper::getCurrent();
   player[playerIndex].accessInfo.loginAttempts = 0;
   player[playerIndex].accessInfo.groups.push_back("DEFAULT");
 
@@ -4571,8 +4571,9 @@ static void addPlayer(int playerIndex)
   if (userExists(player[playerIndex].regName)) {
     // nick is in the DB send him a message to identify
     sendMessage(playerIndex, player[playerIndex].id, player[playerIndex].team,
-		"This callsign is owned by someone else, if this is your callsign "
-		"please identify with the /identify <your password> command");
+		"This callsign is registered.");
+    sendMessage(playerIndex, player[playerIndex].id, player[playerIndex].team,
+		"Identify with /identify <your password>");
   }
 }
 
@@ -5933,7 +5934,7 @@ static void parseCommand(const char *message, int t)
 
 	  DEBUG1("Identify %s\n",player[t].regName.c_str());
 	} else {
-	  player[t].accessInfo.loginTime++;
+	  player[t].accessInfo.loginAttempts++;
 	  sendMessage(t, player[t].id, player[t].team, "Identify Failed, please make sure"
 		      " your password was correct");
 	}
