@@ -292,7 +292,7 @@ std::string nameFromPerm(PlayerAccessInfo::AccessPerm perm)
     case PlayerAccessInfo::date: return "date";
     case PlayerAccessInfo::vote: return "vote";
     case PlayerAccessInfo::shortBan: return "shortBan";
-    default: return "";
+    default: return string_util::format("UNKNOWN_PERMISSION: %d", (int)perm).c_str();
   };
 }
 
