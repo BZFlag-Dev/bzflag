@@ -50,8 +50,7 @@ extern int debugLevel;
 #endif
 
 // Might we be BSDish? sys/param.h has BSD defined if so
-// the NetBSD define check should not really be there, but recent i386 NetBSDs fail to define __unix__
-#if (defined(__unix__) || defined(unix) || defined(__APPLE__) || defined(__NetBSD__)) && !defined(USG)
+#ifdef HAVE_SYS_PARAM_H
 #include <sys/param.h>
 #endif
 
