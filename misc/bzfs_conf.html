@@ -33,6 +33,7 @@
 				mainform.randomly_orient_buildings.disabled = mainform.world_type.checked;
 				mainform.random_building_heights.disabled = mainform.world_type.checked;
 				mainform.balanced_ctf_map.disabled = (mainform.world_type.checked) || freeForAll || rabbit;
+				mainform.rabbit_selection.disabled = !rabbit;
 
 				return true;
 			}
@@ -258,7 +259,7 @@
 					}
 					else if (mainform.game_style.value == 'rc') {
 						d.writeln("#Rabbit chase game style<br/>");
-						d.writeln("-rabbit<br/><br/>");
+						d.writeln("-rabbit " + mainform.rabbit_selection.value + "<br/><br/>");
 					}
 
 					if (mainform.flags_on_buildings.checked) {
@@ -743,6 +744,14 @@
 						<tr>
 							<td>Auto Team Assignment</td>
 							<td><input type="checkbox" name="auto_team" title="Server auto balances game by picking teams for joining players"/>
+							<td>Rabbit Selection</td>
+							<td>
+								<select name="rabbit_selection" value="score" title="Rabbit Selection Algorithm" disabled>
+									<option value="score">Top Score</option>
+									<option value="killer">Reverse Tag (killer)</option>
+									<option value="random">Random</option>
+								</select>
+							</td>
 						</tr>
 					</table>
 				</fieldset>

@@ -2639,6 +2639,10 @@ void zapFlag(int flagIndex)
 // Take into account the quality of player wins/(wins+loss)
 // Try to penalize winning casuality 
 static float rabbitRank (PlayerInfo& player) {
+  if (clOptions->rabbitSelection == RandomRabbitSelection)
+    return bzfrand();
+  
+  // otherwise do score-based ranking
   int sum = player.wins + player.losses;
   if (sum == 0)
     return 0.5;
@@ -2648,13 +2652,19 @@ static float rabbitRank (PlayerInfo& player) {
   return average * penalty;
 }
 
-static void anointNewRabbit()
+static void anointNewRabbit(int killerId = NoPlayer)
 {
   float topRatio = -100000.0f;
   int i;
   int oldRabbit = rabbitIndex;
   rabbitIndex = NoPlayer;
 
+  if (clOptions->rabbitSelection == KillerRabbitSelection)
+    // check to see if the rabbit was just killed by someone; if so, make them the rabbit if they're still around.
+    if (killerId != oldRabbit && !player[killerId].paused && !player[killerId].notResponding && (player[killerId].state == PlayerAlive) && player[killerId].team != ObserverTeam)
+      rabbitIndex = killerId;
+
+  if (rabbitIndex == NoPlayer)
   for (i = 0; i < curMaxPlayers; i++) {
     if (i != oldRabbit && !player[i].paused && !player[i].notResponding && (player[i].state == PlayerAlive) && (player[i].team != ObserverTeam)) {
       float ratio = rabbitRank(player[i]);
@@ -3236,7 +3246,7 @@ static void playerKilled(int victimIndex, int killerIndex, int reason,
 
   if (clOptions->gameStyle & int(RabbitChaseGameStyle)) {
     if (victimIndex == rabbitIndex)
-      anointNewRabbit();
+      anointNewRabbit(killerIndex);
   } else {
     // change the team scores -- rogues don't have team scores.  don't
     // change team scores for individual player's kills in capture the

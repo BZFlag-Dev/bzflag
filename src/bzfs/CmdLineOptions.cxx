@@ -79,7 +79,7 @@ const char *usageString =
 "[-publiclist <list-server-url>] "
 "[-q] "
 "[+r] "
-"[-rabbit] "
+"[-rabbit {score|killer|random}] "
 "[-reportfile <filename>] "
 "[-reportpipe <filename>] "
 "[-requireudp] "
@@ -154,7 +154,7 @@ const char *extraUsageString =
 "\t-publiclist <list-server-url>\n"
 "\t-q: don't listen for or respond to pings\n"
 "\t+r: all shots ricochet\n"
-"\t-rabbit: rabbit chase style\n"
+"\t-rabbit {score|killer|random}: rabbit chase style\n"
 "\t-reportfile <filename>: the file to store reports in\n"
 "\t-reportpipe <filename>: the program to pipe reports through\n"
 "\t-requireudp: require clients to use udp\n"
@@ -719,6 +719,20 @@ void parse(int argc, char **argv, CmdLineOptions &options)
 	options.gameStyle &= ~int(TeamFlagGameStyle);
 	fprintf(stderr, "Rabbit Chase incompatible with Capture the flag\n");
 	fprintf(stderr, "Rabbit Chase assumed\n");
+      }
+      if (++i == argc) {
+	fprintf(stderr, "-rabbit expects one of {score|killer|random} as an argument.\n");
+	usage(argv[0]);
+      }
+      if (strcmp(argv[i], "score") == 0)
+	options.rabbitSelection = ScoreRabbitSelection;
+      else if (strcmp(argv[i], "killer") == 0)
+	options.rabbitSelection = KillerRabbitSelection;
+      else if (strcmp(argv[i], "random") == 0)
+	options.rabbitSelection = RandomRabbitSelection;
+      else {
+	fprintf(stderr, "Valid arguments for -rabbit are score, killer, or random.\n");
+	usage(argv[0]);
       }
     } else if (strcmp(argv[i], "-reportfile") == 0) {
       if (++i == argc) {

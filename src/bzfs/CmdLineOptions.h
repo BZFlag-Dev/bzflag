@@ -39,6 +39,12 @@ const int MaxShots = 10;
 extern const char *usageString;
 extern const char *extraUsageString;
 
+// rabbit selection algorithms
+enum RabbitSelection {
+  ScoreRabbitSelection,		// default method based on score
+  KillerRabbitSelection,  	// anoint whoever manages to kill the rabbit
+  RandomRabbitSelection		// pick the new rabbit out of a hat
+};
 
 /** CmdLineOptions is a container for any of the bzfs options that may
  * be provided via the command line.
@@ -46,7 +52,7 @@ extern const char *extraUsageString;
 struct CmdLineOptions
 {
   CmdLineOptions()
-  : wksPort(ServerPort), gameStyle(PlainGameStyle), servermsg(NULL),
+  : wksPort(ServerPort), gameStyle(PlainGameStyle), rabbitSelection(ScoreRabbitSelection), servermsg(NULL),
     advertisemsg(NULL), worldFile(NULL), pingInterface(NULL),
     listServerURL(DefaultListServerURL), password(NULL),
     publicizedTitle(""), publicizedAddress(""),
@@ -80,6 +86,7 @@ struct CmdLineOptions
 
   int			wksPort;
   int			gameStyle;
+  int			rabbitSelection;
 
   const char		*servermsg;
   const char		*advertisemsg;
