@@ -67,7 +67,7 @@ static bool translucentMaterial(const BzMaterial* mat)
     if (faceTexture >= 0) {
       const ImageInfo& imageInfo = tm.getInfo(faceTexture);
       if (imageInfo.alpha && mat->getUseTextureAlpha(0)) {
-        return true;
+	return true;
       }
     }
   }
@@ -83,10 +83,10 @@ static bool translucentMaterial(const BzMaterial* mat)
     translucentColor = true;
   }
 
-  // is the color used?  
+  // is the color used?
   if (translucentColor) {
     if (((faceTexture >= 0) && mat->getUseColorOnTexture(0)) ||
-        (faceTexture < 0)) {
+	(faceTexture < 0)) {
       // modulate with the color if asked to, or
       // if the specified texture was not available
       return true;
@@ -119,14 +119,14 @@ static int sortByMaterial(const void* a, const void *b)
   const MeshFace* faceB = *((const MeshFace**)b);
   const bool noClusterA = faceA->noClusters();
   const bool noClusterB = faceB->noClusters();
-  
+
   if (noClusterA && !noClusterB) {
     return -1;
   }
   if (noClusterB && !noClusterA) {
     return +1;
   }
-  
+
   if (faceA->getMaterial() > faceB->getMaterial()) {
     return +1;
   } else {
@@ -142,7 +142,7 @@ void MeshSceneNodeGenerator::setupFacesAndFrags()
   //       MeshFragments. it would be good to rename all
   //       of the MeshFragment files and classes to match
   //       with the MeshCluster naming convention.
-  
+
   // only using regular MeshFaces?
   const bool noMeshClusters = BZDB.isTrue("noMeshClusters");
   if (mesh->noClusters() || noMeshClusters || !BZDBCache::zbuffer) {
@@ -152,10 +152,10 @@ void MeshSceneNodeGenerator::setupFacesAndFrags()
       mn.faces.push_back(mesh->getFace(i));
       nodes.push_back(mn);
     }
-    
+
     return;
-  } 
-  
+  }
+
 
   // build up a list of faces and fragments
   const MeshFace** sortList = new const MeshFace*[faceCount];
@@ -170,13 +170,13 @@ void MeshSceneNodeGenerator::setupFacesAndFrags()
     }
   }
   qsort(sortList, count, sizeof(MeshFace*), sortByMaterial);
-  
+
   // make the faces and fragments
   int first = 0;
   while (first < count) {
     const MeshFace* firstFace = sortList[first];
     const BzMaterial* firstMat = firstFace->getMaterial();
-    
+
     // see if this face needs to be drawn individually
     if (translucentMaterial(firstMat) || firstFace->noClusters()) {
       MeshNode mn;
@@ -187,13 +187,13 @@ void MeshSceneNodeGenerator::setupFacesAndFrags()
       continue;
     }
 
-    // collate similar materials    
+    // collate similar materials
     int last = first + 1;
     while (last < count) {
       const MeshFace* lastFace = sortList[last];
       const BzMaterial* lastMat = lastFace->getMaterial();
       if (lastMat != firstMat) {
-        break;
+	break;
       }
       last++;
     }
@@ -208,11 +208,11 @@ void MeshSceneNodeGenerator::setupFacesAndFrags()
       MeshNode mn;
       mn.isFace = false;
       for (int i = first; i < last; i++) {
-        mn.faces.push_back(sortList[i]);
+	mn.faces.push_back(sortList[i]);
       }
       nodes.push_back(mn);
     }
-    
+
     first = last;
   }
 
@@ -235,7 +235,7 @@ WallSceneNode* MeshSceneNodeGenerator::getNextNode(bool /*lod*/)
     if (currentNode >= (int)nodes.size()) {
       return NULL;
     }
-    
+
     mn = &nodes[currentNode];
     if (mn->isFace) {
       face = mn->faces[0];
@@ -244,7 +244,7 @@ WallSceneNode* MeshSceneNodeGenerator::getNextNode(bool /*lod*/)
       face = NULL;
       mat = mn->faces[0]->getMaterial();
     }
-    
+
     if (invisibleMaterial(mat)) {
       currentNode++;
       continue;
@@ -254,7 +254,7 @@ WallSceneNode* MeshSceneNodeGenerator::getNextNode(bool /*lod*/)
       currentNode++;
       continue;
     }
-    
+
     break; // break the loop if we haven't used 'continue'
   }
 
@@ -273,7 +273,7 @@ WallSceneNode* MeshSceneNodeGenerator::getNextNode(bool /*lod*/)
   setupNodeMaterial(node, mat);
 
   currentNode++;
-  
+
   return node;
 }
 
@@ -281,7 +281,7 @@ WallSceneNode* MeshSceneNodeGenerator::getNextNode(bool /*lod*/)
 MeshPolySceneNode* MeshSceneNodeGenerator::getMeshPolySceneNode(const MeshFace* face)
 {
   int i;
-  
+
   // vertices
   const int vertexCount = face->getVertexCount();
   GLfloat3Array vertices(vertexCount);
@@ -311,13 +311,13 @@ MeshPolySceneNode* MeshSceneNodeGenerator::getMeshPolySceneNode(const MeshFace* 
 
   MeshPolySceneNode* node =
     new MeshPolySceneNode(face->getPlane(), vertices, normals, texcoords);
-    
+
   return node;
 }
 
 
 void MeshSceneNodeGenerator::setupNodeMaterial(WallSceneNode* node,
-                                               const BzMaterial* mat)
+					       const BzMaterial* mat)
 {
   TextureManager &tm = TextureManager::instance();
   OpenGLMaterial glMaterial(mat->getSpecular(), mat->getEmission(), mat->getShininess());
@@ -387,8 +387,8 @@ void MeshSceneNodeGenerator::setupNodeMaterial(WallSceneNode* node,
 
 
 bool MeshSceneNodeGenerator::makeTexcoords(const float* plane,
-                                           const GLfloat3Array& vertices,
-                                           GLfloat2Array& texcoords)
+					   const GLfloat3Array& vertices,
+					   GLfloat2Array& texcoords)
 {
   float x[3], y[3];
 
@@ -426,7 +426,7 @@ bool MeshSceneNodeGenerator::makeTexcoords(const float* plane,
     texcoords[i][0] = vec3dot(delta, x) / uvScale;
     texcoords[i][1] = vec3dot(delta, y) / uvScale;
   }
-  
+
   return true;
 }
 

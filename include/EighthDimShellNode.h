@@ -34,7 +34,7 @@ class EighthDimShellNode : public SceneNode {
   protected:
     class ShellRenderNode : public RenderNode {
       public:
-        ShellRenderNode(RenderNode *renderNode);
+	ShellRenderNode(RenderNode *renderNode);
 	~ShellRenderNode();
 	void render();
 	void renderShadow();
@@ -46,7 +46,7 @@ class EighthDimShellNode : public SceneNode {
   private:
     bool ownTheNode;
     SceneNode* sceneNode;
-    
+
     int renderNodeCount;
     ShellRenderNode** renderNodes;
 };

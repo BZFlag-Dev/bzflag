@@ -101,7 +101,7 @@ class RenderNodeGStateList {
 };
 
 inline void RenderNodeGStateList::append(RenderNode* node,
-                                         const OpenGLGState* gstate)
+					 const OpenGLGState* gstate)
 {
   if (count == size) {
     grow();

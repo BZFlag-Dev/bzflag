@@ -24,12 +24,12 @@ Filter::Filter()
 
 void Filter::load()
 {
-  FilterItem               filterItem;
+  FilterItem	       filterItem;
   std::vector<std::string> tokenList;
-  std::string              ip;
-  char                     row[256];
-  int                      sep;
-  struct in_addr           addr;
+  std::string	      ip;
+  char		     row[256];
+  int		      sep;
+  struct in_addr	   addr;
 
   // try to open the filter file
   std::ifstream is("filter.txt");
@@ -45,8 +45,8 @@ void Filter::load()
   while (!is.eof()) {
     is.getline(row, sizeof(row));
     tokenList = TextUtils::tokenize(row, " ", 3, false);
-    ip                   = tokenList[0];
-    sep                  = ip.find("/");
+    ip		   = tokenList[0];
+    sep		  = ip.find("/");
 
     inet_aton(ip.substr(sep + 1, ip.size()).c_str(), &addr);
     filterItem.netMask   = addr.s_addr;
@@ -57,7 +57,7 @@ void Filter::load()
     filterItem.principal = tokenList[1];
     if (tokenList[2] == "ACCEPT")
       filterItem.action = ACCEPT;
-    else if (tokenList[2] == "DROP") 
+    else if (tokenList[2] == "DROP")
       filterItem.action = DROP;
     filterList.push_back(filterItem);
   }
@@ -70,9 +70,9 @@ void Filter::clear()
 
 Filter::Action Filter::check(GameKeeper::Player &player, int &index)
 {
-  Action         action = STOP;
+  Action	 action = STOP;
   FilterItem     filterItem;
-  int            addr = player.netHandler->getIPAddress().s_addr;
+  int	    addr = player.netHandler->getIPAddress().s_addr;
 
   for (unsigned int i = index; i < filterList.size(); i++) {
     filterItem   = filterList[i];

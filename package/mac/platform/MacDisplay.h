@@ -20,7 +20,7 @@ class MacDisplay : public BzfDisplay {
 		MacDisplay (const char *name, const char *videoFormat);
 		~MacDisplay () {};
 
-		boolean isValid           () const { return is_valid;   }
+		boolean isValid	   () const { return is_valid;   }
 		boolean isEventPending    () const {
 
 		    EventRecord eventRec;

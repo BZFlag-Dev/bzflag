@@ -126,8 +126,8 @@ void ZSceneDatabase::setupCullList()
 {
   const int currentDepth = BZDB.evalInt(StateDatabase::BZDB_CULLDEPTH);
   const int currentElements = BZDB.evalInt(StateDatabase::BZDB_CULLELEMENTS);
-  
-  if ((culledList == NULL) || 
+
+  if ((culledList == NULL) ||
       (currentDepth != cullDepth) || (currentElements != cullElements)) {
 
     cullDepth = currentDepth;
@@ -141,13 +141,13 @@ void ZSceneDatabase::setupCullList()
     }
     else {
       if (culledList != staticList) {
-        delete culledList;
+	delete culledList;
       }
       culledList = staticList;
       culledCount = staticCount;
     }
   }
-  
+
   return;
 }
 
@@ -178,7 +178,7 @@ void ZSceneDatabase::addLights(SceneRenderer& renderer)
   for (int i = 0; i < dynamicCount; i++) {
     dynamicList[i]->addLight(renderer);
   }
-  
+
   return;
 }
 
@@ -187,35 +187,35 @@ void ZSceneDatabase::addShadowNodes(SceneRenderer& renderer)
 {
   int i;
   const float* sunDir = renderer.getSunDirection();
-  
+
   if (sunDir == NULL) {
     // no sun = no shadows, simple
     return;
   }
 
-  // see if we need an octree, or if it needs to be rebuilt  
+  // see if we need an octree, or if it needs to be rebuilt
   setupCullList();
-  
+
   // cull if we're supposed to
   if (octree) {
     const ViewFrustum& vf = renderer.getViewFrustum();
     const Frustum* frustum = (const Frustum*) &vf;
     culledCount = octree->getShadowList (culledList, staticCount,
-                                         frustum, sunDir);
+					 frustum, sunDir);
   }
-  
+
   // add the static nodes
   for (i = 0; i < culledCount; i++) {
     SceneNode* node = culledList[i];
     node->addShadowNodes(renderer);
     node->octreeState = SceneNode::OctreeCulled;
   }
-  
+
   // add the dynamic nodes
   for (i = 0; i < dynamicCount; i++) {
     dynamicList[i]->addShadowNodes(renderer);
   }
-  
+
   return;
 }
 
@@ -226,50 +226,50 @@ void ZSceneDatabase::addRenderNodes(SceneRenderer& renderer)
   const ViewFrustum& frustum = renderer.getViewFrustum();
   const float* eye = frustum.getEye();
 
-  // see if we need an octree, or if it needs to be rebuilt  
+  // see if we need an octree, or if it needs to be rebuilt
   setupCullList();
-  
+
   // cull if we're supposed to
   if (octree) {
     culledCount = octree->getFrustumList (
-                    culledList, staticCount, (const Frustum *) &frustum);
+		    culledList, staticCount, (const Frustum *) &frustum);
   }
 
   const Frustum* frustumPtr = (const Frustum *) &frustum;
-  
+
   // add the static nodes
   for (i = 0; i < culledCount; i++) {
     SceneNode* node = culledList[i];
-    
+
     const float* plane = node->getPlane();
 
     if (plane != NULL) {
-      // see if our eye is behind the plane 
+      // see if our eye is behind the plane
       if (((eye[0] * plane[0]) + (eye[1] * plane[1]) + (eye[2] * plane[2]) +
-           plane[3]) <= 0.0f) {
-        node->octreeState = SceneNode::OctreeCulled;
-        continue;
+	   plane[3]) <= 0.0f) {
+	node->octreeState = SceneNode::OctreeCulled;
+	continue;
       }
     }
-    
+
     // if the Visibility culler tells us that we're
     // fully visible, then skip the extents test
     if (node->octreeState != SceneNode::OctreeVisible) {
       float mins[3], maxs[3];
       node->getExtents(mins, maxs);
       if (testAxisBoxInFrustum(mins, maxs, frustumPtr) == Outside) {
-        node->octreeState = SceneNode::OctreeCulled;
-        continue;
+	node->octreeState = SceneNode::OctreeCulled;
+	continue;
       }
     }
-    
+
     // add the node
     node->addRenderNodes(renderer);
-    
+
     // clear the state
     node->octreeState = SceneNode::OctreeCulled;
   }
-  
+
   // add the dynamic nodes
   for (i = 0; i < dynamicCount; i++) {
     SceneNode* node = dynamicList[i];
@@ -277,7 +277,7 @@ void ZSceneDatabase::addRenderNodes(SceneRenderer& renderer)
       node->addRenderNodes(renderer);
     }
   }
-  
+
   return;
 }
 

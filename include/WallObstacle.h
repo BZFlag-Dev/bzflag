@@ -33,12 +33,12 @@ class WallObstacle : public Obstacle {
     float		intersect(const Ray&) const;
     void		getNormal(const float* p, float* n) const;
 
-    bool                inCylinder(const float* p, float radius, float height) const;
-    bool                inBox(const float* p, float angle,
-                              float halfWidth, float halfBreadth, float height) const;
-    bool                inMovingBox(const float* oldP, float oldAngle,
-                                    const float *newP, float newAngle,
-                                    float halfWidth, float halfBreadth, float height) const;
+    bool		inCylinder(const float* p, float radius, float height) const;
+    bool		inBox(const float* p, float angle,
+			      float halfWidth, float halfBreadth, float height) const;
+    bool		inMovingBox(const float* oldP, float oldAngle,
+				    const float *newP, float newAngle,
+				    float halfWidth, float halfBreadth, float height) const;
 
     bool		getHitNormal(
 				const float* pos1, float azimuth1,
@@ -47,7 +47,7 @@ class WallObstacle : public Obstacle {
 				float height,
 				float* normal) const;
 
-    std::string	        userTextures[1];
+    std::string		userTextures[1];
 
   private:
     float		plane[4];

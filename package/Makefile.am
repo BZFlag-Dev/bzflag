@@ -46,7 +46,7 @@ ARCH  = `uname -m | sed -e 's/i.86/i386/'`
 endif
 endif
 
-RPM        = rpm
+RPM	= rpm
 RPMBASEDIR = tmp
 RPMDIR     = $(RPM)/$(RPMBASEDIR)
 RPMRC      = rpmrc

@@ -43,7 +43,7 @@ class OccluderManager {
     void select(SceneNode** list, int listCount);
 
     IntersectLevel occlude(const float* mins, const float* maxs,
-                           unsigned int score);
+			   unsigned int score);
     bool occludePeek(const float* mins, const float* maxs);
 
     int getOccluderCount () const;

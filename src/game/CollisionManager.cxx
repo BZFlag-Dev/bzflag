@@ -38,12 +38,12 @@ static int leafNodes = 0;
 static int totalNodes = 0;
 static int totalElements = 0;
 
-static ObsList       	FullList;  // the complete list of obstacles
-static SplitObsList  	SplitList; // the complete split list of obstacles
-static ObsList       	FullPad;   // for returning a full list of obstacles
-static SplitObsList 	SplitPad;  // for returning a split list of obstacles
+static ObsList	FullList;  // the complete list of obstacles
+static SplitObsList	SplitList; // the complete split list of obstacles
+static ObsList	FullPad;   // for returning a full list of obstacles
+static SplitObsList	SplitPad;  // for returning a split list of obstacles
 
-static ColDetNodeList 	RayList;   // for returning a list a ray hit nodes
+static ColDetNodeList	RayList;   // for returning a list a ray hit nodes
 
 
 /* static functions */
@@ -76,11 +76,11 @@ static void squeezeChildren (ColDetNode** children)
     if (children[dst] == NULL) {
       // replace with the next non-NULL
       for (int src = (dst + 1); src < 8; src++) {
-        if (children[src] != NULL) {
-          children[dst] = children[src];
-          children[src] = NULL;
-          break;
-        }
+	if (children[src] != NULL) {
+	  children[dst] = children[src];
+	  children[src] = NULL;
+	  break;
+	}
       }
     }
   }
@@ -178,7 +178,7 @@ bool CollisionManager::needReload () const
 
 
 const ObsList* CollisionManager::axisBoxTest (const float* _mins,
-                                              const float* _maxs) const
+					      const float* _maxs) const
 {
   FullPad.count = 0;
 
@@ -195,7 +195,7 @@ const ObsList* CollisionManager::axisBoxTest (const float* _mins,
 
 
 const ObsList* CollisionManager::cylinderTest (const float *pos,
-                                               float radius, float height) const
+					       float radius, float height) const
 {
   float tmpMins[3], tmpMaxs[3];
   tmpMins[0] = pos[0] - radius;
@@ -220,7 +220,7 @@ const ObsList* CollisionManager::cylinderTest (const float *pos,
 
 
 const ObsList* CollisionManager::boxTest (const float* pos, float /*angle*/,
-                                          float dx, float dy, float dz) const
+					  float dx, float dy, float dz) const
 {
   float radius = sqrtf (dx*dx + dy*dy);
   return cylinderTest (pos, radius, dz);
@@ -228,9 +228,9 @@ const ObsList* CollisionManager::boxTest (const float* pos, float /*angle*/,
 
 
 const ObsList* CollisionManager::movingBoxTest (
-                                  const float* oldPos, float /*oldAngle*/,
-                                  const float* pos, float /*angle*/,
-                                  float dx, float dy, float dz) const
+				  const float* oldPos, float /*oldAngle*/,
+				  const float* pos, float /*angle*/,
+				  float dx, float dy, float dz) const
 {
   float newpos[3];
 
@@ -251,12 +251,12 @@ const ObsList* CollisionManager::movingBoxTest (
 const ObsList* CollisionManager::rayTest (const Ray* ray, float timeLeft) const
 {
   FullPad.count = 0;
-  
+
   RayList.count = 0;
 
   // get the list
   root->rayTest (ray, timeLeft + 0.1f);
-  
+
   // clear the collisionState on the obstacles
   for (int i = 0; i < FullPad.count; i++) {
     FullPad.list[i]->collisionState = false;
@@ -274,14 +274,14 @@ static int compareRayNodes (const void *a, const void *b)
 }
 
 
-const ColDetNodeList* CollisionManager::rayTestNodes (const Ray* ray, 
-                                                      float timeLeft) const
+const ColDetNodeList* CollisionManager::rayTestNodes (const Ray* ray,
+						      float timeLeft) const
 {
   RayList.count = 0;
 
   // get the list
   root->rayTestNodes (ray, timeLeft + 0.1f);
-  
+
   // sort the list of node
   qsort (RayList.list, RayList.count, sizeof(ColDetNode*), compareRayNodes);
 
@@ -290,10 +290,10 @@ const ColDetNodeList* CollisionManager::rayTestNodes (const Ray* ray,
 
 
 void CollisionManager::load (std::vector<MeshObstacle*>    &meshes,
-                             std::vector<BoxBuilding*>     &boxes,
-                             std::vector<BaseBuilding*>    &bases,
-                             std::vector<PyramidBuilding*> &pyrs,
-                             std::vector<Teleporter*>      &teles)
+			     std::vector<BoxBuilding*>     &boxes,
+			     std::vector<BaseBuilding*>    &bases,
+			     std::vector<PyramidBuilding*> &pyrs,
+			     std::vector<Teleporter*>      &teles)
 {
   // clean out the cell lists
   clear();
@@ -311,7 +311,7 @@ void CollisionManager::load (std::vector<MeshObstacle*>    &meshes,
     fullCount += mesh->getFaceCount() + 1; // one for the mesh itself
   }
   fullCount += (int)(boxes.size() + bases.size() +
-                     pyrs.size() + (teles.size() * 3)); // 2 MeshFace links
+		     pyrs.size() + (teles.size() * 3)); // 2 MeshFace links
 
   // get the memory for the full list and the scratch pad
   FullPad.list = new Obstacle*[fullCount];
@@ -356,8 +356,8 @@ void CollisionManager::load (std::vector<MeshObstacle*>    &meshes,
   // generate the octree
   setExtents (&FullList);
   root = new ColDetNode (0, mins, maxs, &FullList);
-  
-  
+
+
   leafNodes = 0;
   totalNodes = 0;
   totalElements = 0;
@@ -370,7 +370,7 @@ void CollisionManager::load (std::vector<MeshObstacle*>    &meshes,
   DEBUG2 ("ColDet Octree leaf nodes  = %i\n", leafNodes);
   DEBUG2 ("ColDet Octree total nodes = %i\n", totalNodes);
   DEBUG2 ("ColDet Octree total elements = %i\n", totalElements);
-  
+
   // setup the ray list
   RayList.list = new ColDetNode*[leafNodes];
   RayList.count = 0;
@@ -407,10 +407,10 @@ void CollisionManager::setExtents (ObsList *list)
     obs->getExtents (obsMins, obsMaxs);
     for (int a = 0; a < 3; a++) {
       if (obsMins[a] < mins[a]) {
-        mins[a] = obsMins[a];
+	mins[a] = obsMins[a];
       }
       if (obsMaxs[a] > maxs[a]) {
-        maxs[a] = obsMaxs[a];
+	maxs[a] = obsMaxs[a];
       }
     }
   }
@@ -454,8 +454,8 @@ void CollisionManager::draw (DrawLinesFunc drawLinesFunc)
 //
 
 ColDetNode::ColDetNode(unsigned char _depth,
-                       const float* _mins, const float* _maxs,
-                       ObsList *_list)
+		       const float* _mins, const float* _maxs,
+		       ObsList *_list)
 {
   int i;
 
@@ -500,8 +500,8 @@ ColDetNode::ColDetNode(unsigned char _depth,
     Obstacle* obs = _list->list[i];
     if (obs->getType() != MeshObstacle::getClassName()) {
       if (obs->inBox (pos, 0.0f, size[0], size[1], size[2])) {
-        fullList.list[fullList.count] = obs;
-        fullList.count++;
+	fullList.list[fullList.count] = obs;
+	fullList.count++;
       }
     } else {
       // add a mesh if any of its faces are in the node,
@@ -509,22 +509,22 @@ ColDetNode::ColDetNode(unsigned char _depth,
       MeshObstacle* mesh = (MeshObstacle*) obs;
       bool needCheck = true;
       for (int j = 0; j < fullList.count; j++) {
-        Obstacle* tmpObs = fullList.list[j];
-        if (tmpObs->getType() == MeshFace::getClassName()) {
-          MeshFace* face = (MeshFace*) tmpObs;
-          if (face->getMesh() == mesh) {
-            fullList.list[fullList.count] = (Obstacle*) mesh;
-            fullList.count++;
-            needCheck = false;
-            break;
-          }
-        }
+	Obstacle* tmpObs = fullList.list[j];
+	if (tmpObs->getType() == MeshFace::getClassName()) {
+	  MeshFace* face = (MeshFace*) tmpObs;
+	  if (face->getMesh() == mesh) {
+	    fullList.list[fullList.count] = (Obstacle*) mesh;
+	    fullList.count++;
+	    needCheck = false;
+	    break;
+	  }
+	}
       }
       if (needCheck && mesh->containsPointNoOctree (point)) {
-        fullList.list[fullList.count] = (Obstacle*) mesh;
-        fullList.count++;
+	fullList.list[fullList.count] = (Obstacle*) mesh;
+	fullList.count++;
       }
-    }      
+    }
   }
 
   // count will remain as the total numbers of
@@ -533,7 +533,7 @@ ColDetNode::ColDetNode(unsigned char _depth,
 
   // resize the list to save space
   fullList.list = (Obstacle**) realloc (fullList.list,
-                                        fullList.count * sizeof (Obstacle*));
+					fullList.count * sizeof (Obstacle*));
 
   // return if this is a leaf node
   if (((int)depth >= maxDepth) || (fullList.count <= minElements)) {
@@ -592,23 +592,23 @@ void ColDetNode::makeChildren ()
     for (side[1] = 0; side[1] < 2; side[1]++) {
       for (side[2] = 0; side[2] < 2; side[2]++) {
 
-        // calculate the child's extents
-        for (int a = 0; a < 3; a++) {
-          cmins[a] = extentSet[side[a]+0][a];
-          cmaxs[a] = extentSet[side[a]+1][a];
-        }
+	// calculate the child's extents
+	for (int a = 0; a < 3; a++) {
+	  cmins[a] = extentSet[side[a]+0][a];
+	  cmaxs[a] = extentSet[side[a]+1][a];
+	}
 
-        int kid = side[0] + (2 * side[1]) + (4 * side[2]);
+	int kid = side[0] + (2 * side[1]) + (4 * side[2]);
 
-        children[kid] = new ColDetNode (depth, cmins, cmaxs, &fullList);
+	children[kid] = new ColDetNode (depth, cmins, cmaxs, &fullList);
 
-        if (children[kid]->getCount() == 0) {
-          delete children[kid];
-          children[kid] = NULL;
-        }
-        else {
-          childCount++;
-        }
+	if (children[kid]->getCount() == 0) {
+	  delete children[kid];
+	  children[kid] = NULL;
+	}
+	else {
+	  childCount++;
+	}
       }
     }
   }
@@ -631,12 +631,12 @@ void ColDetNode::resizeCell ()
     obs->getExtents (tmpMins, tmpMaxs);
     for (int a = 0; a < 3; a++) {
       if (tmpMins[a] < absMins[a])
-        absMins[a] = tmpMins[a];
+	absMins[a] = tmpMins[a];
       if (tmpMaxs[a] > absMaxs[a])
-        absMaxs[a] = tmpMaxs[a];
+	absMaxs[a] = tmpMaxs[a];
     }
   }
-  
+
   for (i = 0; i < 3; i++) {
     if (absMins[i] > mins[i])
       mins[i] = absMins[i];
@@ -662,8 +662,8 @@ void ColDetNode::axisBoxTest (const float* _mins, const float* _maxs) const
     for (i = 0; i < fullList.count; i++) {
       Obstacle* obs = fullList.list[i];
       if (obs->collisionState == false) {
-        obs->collisionState = true;
-        addToFullPadList (obs);
+	obs->collisionState = true;
+	addToFullPadList (obs);
       }
     }
   }
@@ -678,7 +678,7 @@ void ColDetNode::axisBoxTest (const float* _mins, const float* _maxs) const
 
 
 void ColDetNode::boxTest (const float* pos, float angle,
-                          float dx, float dy, float dz) const
+			  float dx, float dy, float dz) const
 {
   int i;
 
@@ -694,8 +694,8 @@ void ColDetNode::boxTest (const float* pos, float angle,
     for (i = 0; i < fullList.count; i++) {
       Obstacle* obs = fullList.list[i];
       if (obs->collisionState == false) {
-        obs->collisionState = true;
-        addToFullPadList (obs);
+	obs->collisionState = true;
+	addToFullPadList (obs);
       }
     }
   }
@@ -720,8 +720,8 @@ void ColDetNode::rayTest (const Ray* ray, float timeLeft) const
     for (int i = 0; i < fullList.count; i++) {
       Obstacle* obs = fullList.list[i];
       if (obs->collisionState == false) {
-        obs->collisionState = true;
-        addToFullPadList (obs);
+	obs->collisionState = true;
+	addToFullPadList (obs);
       }
     }
   }
@@ -757,7 +757,7 @@ void ColDetNode::rayTestNodes (const Ray* ray, float timeLeft) const
 
 /*
 void ColDetNode::boxTestSplit (const float* pos, float angle,
-                               float dx, float dy, float dz) const
+			       float dx, float dy, float dz) const
 {
   pos = pos;
   angle = dx =dy =dz;
@@ -789,7 +789,7 @@ void ColDetNode::draw(DrawLinesFunc drawLinesFunc)
   float points[5][3];
   const float* extents[2] = { mins, maxs };
 
-  // pick a color  
+  // pick a color
   int hasMeshObs = 0;
   int hasNormalObs = 0;
   for (x = 0; x < fullList.count; x++) {

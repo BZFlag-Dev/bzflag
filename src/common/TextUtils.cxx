@@ -199,31 +199,31 @@ namespace TextUtils
     for (int i=0;  i < (int) text.size(); i++) {
       char c = text[i];
       if (isAlphanumeric(c)) {
-        destination+=c;
+	destination+=c;
       } else if (isWhitespace(c)) {
-        destination+='+';
+	destination+='+';
       } else {
-        destination+='%';
-        sprintf(hex, "%-2.2X", c);
-        destination.append(hex);
+	destination+='%';
+	sprintf(hex, "%-2.2X", c);
+	destination.append(hex);
       }
     }
     return destination;
   }
-  
-  
+
+
   std::string escape(const std::string &text, char escaper)
   {
     std::string destination;
     for (int i = 0; i < (int) text.size(); i++) {
       char c = text[i];
       if (!isAlphanumeric(c))
-        destination += escaper;
+	destination += escaper;
       destination += c;
     }
     return destination;
   }
-  
+
   std::string unescape(const std::string &text, char escaper)
   {
     const int len = (int) text.size();
@@ -231,29 +231,29 @@ namespace TextUtils
     for (int i = 0; i < len; i++) {
       char c = text[i];
       if (c == escaper) {
-        if (i < len - 1)
-          destination += text[++i];
-        else
-          // Should print an error
-          ;
+	if (i < len - 1)
+	  destination += text[++i];
+	else
+	  // Should print an error
+	  ;
       } else {
-        destination += c;
+	destination += c;
       }
     }
     return destination;
   }
-  
+
   int unescape_lookup(const std::string &text, char escaper, char sep)
   {
     int position = -1;
     for (int i = 0; i < (int) text.size(); i++) {
       char c = text[i];
       if (c == sep) {
-        position = i;
-        break;
+	position = i;
+	break;
       }
       if (c == escaper)
-        i++;
+	i++;
     }
     return position;
   }

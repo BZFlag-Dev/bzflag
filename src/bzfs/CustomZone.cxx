@@ -46,7 +46,7 @@ bool CustomZone::read(const char *cmd, std::istream& input) {
       FlagType *type;
 
       if (flag == "good") {
-        FlagSet &fs = Flag::getGoodFlags();
+	FlagSet &fs = Flag::getGoodFlags();
 	for (FlagSet::iterator it = fs.begin(); it != fs.end(); ++it) {
 	  FlagType *f = *it;
 	  if (f->endurance != FlagNormal) { // Null and Team flags
@@ -64,10 +64,10 @@ bool CustomZone::read(const char *cmd, std::istream& input) {
 	}
       }
       else {
-        type = Flag::getDescFromAbbreviation(flag.c_str());
-        if (type == Flags::Null)
-          return false;
-        qualifiers.push_back(flag);
+	type = Flag::getDescFromAbbreviation(flag.c_str());
+	if (type == Flags::Null)
+	  return false;
+	qualifiers.push_back(flag);
       }
     }
     input.putback('\n');
@@ -83,10 +83,10 @@ bool CustomZone::read(const char *cmd, std::istream& input) {
 
     while (parms >> color) {
       if ((color < 0) || (color >= CtfTeams))
-        return false;
+	return false;
       std::string qual = std::string(Team::getName((TeamColor)color));
       if (strcmp(cmd, "safety") == 0) {
-        qual = EntryZones::getSafetyPrefix() + qual;
+	qual = EntryZones::getSafetyPrefix() + qual;
       }
       qualifiers.push_back(qual);
     }

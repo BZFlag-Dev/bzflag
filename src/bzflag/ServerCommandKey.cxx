@@ -294,7 +294,7 @@ bool			ServerCommandKey::keyPress(const BzfKeyEvent& key)
 	default: /* shouldn't happen */ break;
 	}
 
-        if (message != "") sendMsg = sendMsg + " " + message;
+	if (message != "") sendMsg = sendMsg + " " + message;
 
       }
     } else { // handle less complicated messages

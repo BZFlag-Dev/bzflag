@@ -81,11 +81,11 @@ class OpenGLGStateState {
       public:
 	bool		hasTexture;
 	bool		hasTextureReplace;
-	bool     	hasTextureMatrix;
-	bool     	hasSphereMap;
+	bool	hasTextureMatrix;
+	bool	hasSphereMap;
 	bool		hasMaterial;
-	int 		texture;
-	int      	textureMatrix;
+	int		texture;
+	int	textureMatrix;
 	OpenGLMaterial	material;
     };
 
@@ -200,7 +200,7 @@ bool			OpenGLGStateState::Sorted::operator==(
   if ((hasTextureMatrix != s.hasTextureMatrix) ||
       (textureMatrix != s.textureMatrix))
     return false;
-  if (hasSphereMap != s.hasSphereMap) 
+  if (hasSphereMap != s.hasSphereMap)
     return false;
   if (hasMaterial != s.hasMaterial || material != s.material)
     return false;
@@ -431,7 +431,7 @@ void			OpenGLGStateState::setOpenGLState(
     if (sorted.hasTexture) {
       if (oldState->sorted.hasTexture) {
 	if (sorted.texture != oldState->sorted.texture)
-          tm.bind(sorted.texture);
+	  tm.bind(sorted.texture);
       }
       else {
 	tm.bind(sorted.texture);
@@ -446,39 +446,39 @@ void			OpenGLGStateState::setOpenGLState(
 	glDisable(GL_TEXTURE_2D);
 	if (oldState->sorted.hasTextureReplace) {
 	  glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
-        }
+	}
       }
     }
 
     // texture transformation matrix
     if (sorted.hasTextureMatrix) {
       if (sorted.textureMatrix != oldState->sorted.textureMatrix) {
-        glMatrixMode(GL_TEXTURE);
-        glLoadMatrixf(TEXMATRIXMGR.getMatrix(sorted.textureMatrix)->getMatrix());
-        glMatrixMode(GL_MODELVIEW);
+	glMatrixMode(GL_TEXTURE);
+	glLoadMatrixf(TEXMATRIXMGR.getMatrix(sorted.textureMatrix)->getMatrix());
+	glMatrixMode(GL_MODELVIEW);
       }
     }
     else {
       if (oldState->sorted.hasTextureMatrix) {
-        glMatrixMode(GL_TEXTURE);
-        glLoadIdentity();
-        glMatrixMode(GL_MODELVIEW);
+	glMatrixMode(GL_TEXTURE);
+	glLoadIdentity();
+	glMatrixMode(GL_MODELVIEW);
       }
     }
-    
+
     // spherical texture mapping
     if (sorted.hasSphereMap) {
       if (!oldState->sorted.hasSphereMap) {
-        glTexGenf(GL_S, GL_TEXTURE_GEN_MODE, GL_SPHERE_MAP);
-        glTexGenf(GL_T, GL_TEXTURE_GEN_MODE, GL_SPHERE_MAP);
-        glEnable(GL_TEXTURE_GEN_S);
-        glEnable(GL_TEXTURE_GEN_T);
+	glTexGenf(GL_S, GL_TEXTURE_GEN_MODE, GL_SPHERE_MAP);
+	glTexGenf(GL_T, GL_TEXTURE_GEN_MODE, GL_SPHERE_MAP);
+	glEnable(GL_TEXTURE_GEN_S);
+	glEnable(GL_TEXTURE_GEN_T);
       }
     }
     else {
       if (oldState->sorted.hasSphereMap) {
-        glDisable(GL_TEXTURE_GEN_S);
-        glDisable(GL_TEXTURE_GEN_T);
+	glDisable(GL_TEXTURE_GEN_S);
+	glDisable(GL_TEXTURE_GEN_T);
       }
     }
 
@@ -630,7 +630,7 @@ void			OpenGLGStateState::setOpenGLState(
       glDisable(GL_TEXTURE_GEN_S);
       glDisable(GL_TEXTURE_GEN_T);
     }
-    
+
     // lighting and material
     if (sorted.hasMaterial) {
       sorted.material.execute();
@@ -1170,15 +1170,15 @@ void			OpenGLGState::initGLState()
   setCullFace(GL_BACK);
 }
 
-void                    OpenGLGState::setInvertCull(bool value)
+void		    OpenGLGState::setInvertCull(bool value)
 {
   invertCull = value;
 }
 
-bool                    OpenGLGState::getInvertCull()
+bool		    OpenGLGState::getInvertCull()
 {
   return invertCull;
-} 
+}
 
 
 //

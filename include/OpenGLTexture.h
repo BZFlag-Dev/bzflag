@@ -70,8 +70,8 @@ class OpenGLTexture {
     void		execute();
 
     float		getAspectRatio() const;
-    int                 getWidth() const;
-    int                 getHeight() const;
+    int		 getWidth() const;
+    int		 getHeight() const;
 
     static Filter	getFilter();
     static std::string	getFilterName();

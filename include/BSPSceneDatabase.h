@@ -45,7 +45,7 @@ class BSPSceneDatabase : public SceneDatabase {
     void		addLights(SceneRenderer& renderer);
     void		addShadowNodes(SceneRenderer &renderer);
     void		addRenderNodes(SceneRenderer& renderer);
-    
+
     void		drawCuller();
 
   private:
@@ -64,7 +64,7 @@ class BSPSceneDatabase : public SceneDatabase {
     void		nodeAddLights(Node*);
     void		nodeAddShadowNodes(Node*);
     void		nodeAddRenderNodes(Node*);
-    
+
     // returns true if the node would have been deleted
     bool		insertStatic(int, Node*, SceneNode*, bool dontFree);
     void		insertDynamic(int, Node*, SceneNode*);

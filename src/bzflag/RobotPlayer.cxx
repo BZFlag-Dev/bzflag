@@ -147,7 +147,7 @@ void			RobotPlayer::doUpdate(float dt)
   if (getFiringStatus() != Ready)
     return;
 
-  bool        shoot   = false;
+  bool	shoot   = false;
   const float azimuth = getAngle();
   // Allow shooting only if angle is near and timer has elapsed
   if ((int)path.size() != 0 && timerForShot <= 0.0f) {
@@ -162,7 +162,7 @@ void			RobotPlayer::doUpdate(float dt)
       azimuthDiff -= 2.0f * M_PI;
     else
       if (azimuthDiff < -M_PI)
-        azimuthDiff += 2.0f * M_PI;
+	azimuthDiff += 2.0f * M_PI;
 
     const float targetdistance = hypotf(p1[0] - p2[0], p1[1] - p2[1]) -
       BZDB.eval(StateDatabase::BZDB_MUZZLEFRONT) - tankRadius;
@@ -171,7 +171,7 @@ void			RobotPlayer::doUpdate(float dt)
       (targetdistance - BZDBCache::tankLength);
     // only shoot if we miss by less than half a tanklength and no building inbetween
     if (missby < 0.5f * BZDBCache::tankLength &&
-        p1[2] < shotRadius) {
+	p1[2] < shotRadius) {
       float pos[3] = {getPosition()[0], getPosition()[1],
 		      getPosition()[2] +  BZDB.eval(StateDatabase::BZDB_MUZZLEHEIGHT)};
       float dir[3] = {cosf(azimuth), sinf(azimuth), 0.0f};
@@ -232,51 +232,51 @@ void			RobotPlayer::doUpdateMotion(float dt)
     {
       Player *p = 0;
       if (t < World::getWorld()->getCurMaxPlayers())
-        p = World::getWorld()->getPlayer(t);
+	p = World::getWorld()->getPlayer(t);
       else
-        p = LocalPlayer::getMyTank();
+	p = LocalPlayer::getMyTank();
       if (!p || p->getId() == getId())
-        continue;
+	continue;
       const int maxShots = p->getMaxShots();
       for (int s = 0; s < maxShots; s++) {
-        ShotPath* shot = p->getShot(s);
-        if (!shot || shot->isExpired())
-          continue;
-        // ignore invisible bullets completely for now (even when visible)
-        if (shot->getFlag() == Flags::InvisibleBullet)
-          continue;
+	ShotPath* shot = p->getShot(s);
+	if (!shot || shot->isExpired())
+	  continue;
+	// ignore invisible bullets completely for now (even when visible)
+	if (shot->getFlag() == Flags::InvisibleBullet)
+	  continue;
 
-        const float* shotPos = shot->getPosition();
-        if ((fabs(shotPos[2] - position[2]) > BZDBCache::tankHeight) && (shot->getFlag() != Flags::GuidedMissile))
-          continue;
-        const float dist = TargetingUtils::getTargetDistance(position, shotPos);
-        if (dist < 150.0f) {
-          const float *shotVel = shot->getVelocity();
-          float shotAngle = atan2f(shotVel[1], shotVel[0]);
-          float shotUnitVec[2] = {cos(shotAngle), sin(shotAngle)};
+	const float* shotPos = shot->getPosition();
+	if ((fabs(shotPos[2] - position[2]) > BZDBCache::tankHeight) && (shot->getFlag() != Flags::GuidedMissile))
+	  continue;
+	const float dist = TargetingUtils::getTargetDistance(position, shotPos);
+	if (dist < 150.0f) {
+	  const float *shotVel = shot->getVelocity();
+	  float shotAngle = atan2f(shotVel[1], shotVel[0]);
+	  float shotUnitVec[2] = {cos(shotAngle), sin(shotAngle)};
 
-          float trueVec[2] = {(position[0]-shotPos[0])/dist,(position[1]-shotPos[1])/dist};
-          float dotProd = trueVec[0]*shotUnitVec[0]+trueVec[1]*shotUnitVec[1];
+	  float trueVec[2] = {(position[0]-shotPos[0])/dist,(position[1]-shotPos[1])/dist};
+	  float dotProd = trueVec[0]*shotUnitVec[0]+trueVec[1]*shotUnitVec[1];
 
-          if (dotProd > 0.97f) {
-            float rotation;
-            float rotation1 = (shotAngle + M_PI/2.0f) - azimuth;
-            if (rotation1 < -1.0f * M_PI) rotation1 += 2.0f * M_PI;
-            if (rotation1 > 1.0f * M_PI) rotation1 -= 2.0f * M_PI;
+	  if (dotProd > 0.97f) {
+	    float rotation;
+	    float rotation1 = (shotAngle + M_PI/2.0f) - azimuth;
+	    if (rotation1 < -1.0f * M_PI) rotation1 += 2.0f * M_PI;
+	    if (rotation1 > 1.0f * M_PI) rotation1 -= 2.0f * M_PI;
 
-            float rotation2 = (shotAngle - M_PI/2.0f) - azimuth;
-            if (rotation2 < -1.0f * M_PI) rotation2 += 2.0f * M_PI;
-            if (rotation2 > 1.0f * M_PI) rotation2 -= 2.0f * M_PI;
+	    float rotation2 = (shotAngle - M_PI/2.0f) - azimuth;
+	    if (rotation2 < -1.0f * M_PI) rotation2 += 2.0f * M_PI;
+	    if (rotation2 > 1.0f * M_PI) rotation2 -= 2.0f * M_PI;
 
-            if (fabs(rotation1) < fabs(rotation2))
-              rotation = rotation1;
-            else
-              rotation = rotation2;
-            setDesiredSpeed(1.0f);
-            setDesiredAngVel(rotation);
-            evading = true;
-          }
-        }
+	    if (fabs(rotation1) < fabs(rotation2))
+	      rotation = rotation1;
+	    else
+	      rotation = rotation2;
+	    setDesiredSpeed(1.0f);
+	    setDesiredAngVel(rotation);
+	    evading = true;
+	  }
+	}
       }
     }
 
@@ -376,7 +376,7 @@ float			RobotPlayer::getTargetPriority(const
     - 0.5f * hypotf(p2[0] - p1[0], p2[1] - p1[1]) / worldSize;
 }
 
-void                    RobotPlayer::setObstacleList(std::vector<BzfRegion*>*
+void		    RobotPlayer::setObstacleList(std::vector<BzfRegion*>*
 						     _obstacleList)
 {
   obstacleList = _obstacleList;

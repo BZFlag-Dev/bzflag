@@ -101,13 +101,13 @@ class World {
 
     TeamColor		whoseBase(const float* pos) const;
     const Obstacle*	inBuilding(const float* pos, float radius,
-                                   float tankHeight) const;
+				   float tankHeight) const;
     const Obstacle*	inBuilding(const float* pos, float angle,
-                                   float tankWidth, float tankBreadth,
-                                   float tankHeight) const;
+				   float tankWidth, float tankBreadth,
+				   float tankHeight) const;
     const Obstacle*	hitBuilding(const float* pos, float angle,
-                                    float tankWidth, float tankBreadth,
-                                    float tankHeight) const;
+				    float tankWidth, float tankBreadth,
+				    float tankHeight) const;
     const Obstacle*	hitBuilding(const float* oldPos, float oldAngle,
 				    const float* pos, float angle,
 				    float tankWidth, float tankBreadth,
@@ -154,7 +154,7 @@ class World {
     World&		operator=(const World&);
 
     void		freeFlags();
-    
+
 
   private:
     typedef struct { float p[7]; } BaseParms;
@@ -182,7 +182,7 @@ class World {
     std::vector<ArcObstacle*>		arcs;
     std::vector<ConeObstacle*>		cones;
     std::vector<SphereObstacle*>	spheres;
-    std::vector<Weapon>		        weapons;
+    std::vector<Weapon>			weapons;
     std::vector<EntryZone>		entryZones;
     std::vector<int>			teleportTargets;
     Team		team[NumTeams];

@@ -85,7 +85,7 @@ class TankSceneNode : public SceneNode {
 
     void		setDimensions(const float size[3]);
     void		ignoreDimensions();
-    
+
     void		setNormal();
     void		setObese();
     void		setTiny();
@@ -95,7 +95,7 @@ class TankSceneNode : public SceneNode {
     void		setExplodeFraction(float t);
     void		setInTheCockpit(bool value);
     void		rebuildExplosion();
-    
+
     void		addTreadOffsets(float left, float right);
 
     // hidden still renders shadow (turns off cloaked)
@@ -125,9 +125,9 @@ class TankSceneNode : public SceneNode {
 	void		renderLeftParts();
 	void		renderRightParts();
 	void		renderLights();
-        void		setupPartColor(TankGeometryEnums::TankPart part);
-        bool		setupTextureMatrix(TankGeometryEnums::TankPart part);
-    
+	void		setupPartColor(TankGeometryEnums::TankPart part);
+	bool		setupTextureMatrix(TankGeometryEnums::TankPart part);
+
       protected:
 	const TankSceneNode* sceneNode;
 	TankGeometryEnums::TankLOD drawLOD;

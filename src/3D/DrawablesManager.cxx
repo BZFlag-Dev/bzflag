@@ -88,13 +88,13 @@ void DrawablesManager::drawAll ( void )
       drawablesPriortiyList::iterator oIt = tIt->second.begin();
       while (oIt != tIt->second.end())
       {
-        drawablesList::iterator iIt = oIt->second.begin();
-        while (iIt != oIt->second.end())
-        {
-          iIt->item->draw(tIt->first,pIt->first,oIt->first,iIt->param);
-          iIt++;
-        }
-        oIt++;
+	drawablesList::iterator iIt = oIt->second.begin();
+	while (iIt != oIt->second.end())
+	{
+	  iIt->item->draw(tIt->first,pIt->first,oIt->first,iIt->param);
+	  iIt++;
+	}
+	oIt++;
       }
       tIt++;
     }

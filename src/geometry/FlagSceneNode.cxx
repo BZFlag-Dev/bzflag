@@ -30,8 +30,8 @@
 // FIXME (SceneRenderer.cxx is in src/bzflag)
 #include "SceneRenderer.h"
 
-int	                flagChunks = 8;		// draw flag as 8 quads
-bool                    geoPole = false;        // draw the pole as quads
+int			flagChunks = 8;		// draw flag as 8 quads
+bool		    geoPole = false;	// draw the pole as quads
 
 const float		FlagSceneNode::RippleSpeed1 = 2.4f * M_PI;
 const float		FlagSceneNode::RippleSpeed2 = 1.724f * M_PI;
@@ -183,7 +183,7 @@ void			FlagSceneNode::FlagRenderNode::render()
     myColor4fv(sceneNode->color);
 
     if (!BZDBCache::blend &&
-        (sceneNode->transparent || sceneNode->texturing))
+	(sceneNode->transparent || sceneNode->texturing))
       myStipple(sceneNode->color[3]);
 
     if (sceneNode->billboard) {
@@ -239,10 +239,10 @@ void			FlagSceneNode::FlagRenderNode::render()
 
     if (geoPole) {
       glBegin(GL_QUADS);
-        glVertex3f(-poleWidth, 0.0f, 0.0f);
-        glVertex3f(poleWidth, 0.0f, 0.0f);
-        glVertex3f(poleWidth, base + Height, 0.0f);
-        glVertex3f(-poleWidth, base + Height, 0.0f);
+	glVertex3f(-poleWidth, 0.0f, 0.0f);
+	glVertex3f(poleWidth, 0.0f, 0.0f);
+	glVertex3f(poleWidth, base + Height, 0.0f);
+	glVertex3f(-poleWidth, base + Height, 0.0f);
       glEnd();
     } else {
       glBegin(GL_LINE_STRIP);

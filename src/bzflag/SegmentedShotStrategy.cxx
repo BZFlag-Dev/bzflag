@@ -369,8 +369,8 @@ void			SegmentedShotStrategy::makeSegments(ObstacleEffect e)
     // if hit outer wall with ricochet and hit is above top of wall
     // then ignore hit.
     if (!teleporter && building && (e == Reflect) &&
-        (building->getType() == WallObstacle::getClassName()) &&
-        ((o[2] + t * d[2]) > building->getHeight())) {
+	(building->getType() == WallObstacle::getClassName()) &&
+	((o[2] + t * d[2]) > building->getHeight())) {
       t = timeLeft;
     }
 
@@ -399,70 +399,70 @@ void			SegmentedShotStrategy::makeSegments(ObstacleEffect e)
       int source = World::getWorld()->getTeleporter(teleporter, face);
       int target = World::getWorld()->getTeleportTarget(source);
       if (target == randomTeleporter) {
-        unsigned int tmp = path.getShotId() + i;
-        tmp = (tmp * 1103515245 + 12345) >> 8; // from POSIX rand() example
-        tmp = tmp % (2 * World::getWorld()->getTeleporters().size());
-        target = tmp;
+	unsigned int tmp = path.getShotId() + i;
+	tmp = (tmp * 1103515245 + 12345) >> 8; // from POSIX rand() example
+	tmp = tmp % (2 * World::getWorld()->getTeleporters().size());
+	target = tmp;
       }
 
       int outFace;
       const Teleporter* outTeleporter =
-                    World::getWorld()->getTeleporter(target, outFace);
+		    World::getWorld()->getTeleporter(target, outFace);
       o[0] += t * d[0];
       o[1] += t * d[1];
       o[2] += t * d[2];
       teleporter->getPointWRT(*outTeleporter, face, outFace,
-                                            o, d, 0.0f, o, d, NULL);
+					    o, d, 0.0f, o, d, NULL);
       reason = ShotPathSegment::Teleport;
     }
     else if (building) {
       // hit building -- can bounce off or stop, buildings ignored for Through
       switch (e) {
-        case Stop:
-          timeLeft = 0.0f;
-        break;
+	case Stop:
+	  timeLeft = 0.0f;
+	break;
 
       case Reflect: {
-        // move origin to point of reflection
-        o[0] += t * d[0];
-        o[1] += t * d[1];
-        o[2] += t * d[2];
+	// move origin to point of reflection
+	o[0] += t * d[0];
+	o[1] += t * d[1];
+	o[2] += t * d[2];
 
-        // reflect direction about normal to building
-        float normal[3];
-        building->get3DNormal(o, normal);
-        reflect(d, normal);
-        reason = ShotPathSegment::Ricochet;
-        }
-        break;
+	// reflect direction about normal to building
+	float normal[3];
+	building->get3DNormal(o, normal);
+	reflect(d, normal);
+	reason = ShotPathSegment::Ricochet;
+	}
+	break;
 
       case Through:
-        assert(0);
+	assert(0);
       }
     }
     else if (hitGround)	// we hit the ground
     {
       switch (e) {
-        case Stop:
-        case Through:
-          timeLeft = 0.0f;
-          break;
+	case Stop:
+	case Through:
+	  timeLeft = 0.0f;
+	  break;
 
-        case Reflect: {
-          // move origin to point of reflection
-          o[0] += t * d[0];
-          o[1] += t * d[1];
-          o[2] += t * d[2];
+	case Reflect: {
+	  // move origin to point of reflection
+	  o[0] += t * d[0];
+	  o[1] += t * d[1];
+	  o[2] += t * d[2];
 
-          // reflect direction about normal to building
-          float normal[3];
-          normal[0] = 0.0f;
-          normal[1] = 0.0f;
-          normal[2] = 1.0f;
-          reflect(d, normal);
-          reason = ShotPathSegment::Ricochet;
-          break;
-        }
+	  // reflect direction about normal to building
+	  float normal[3];
+	  normal[0] = 0.0f;
+	  normal[1] = 0.0f;
+	  normal[2] = 1.0f;
+	  reflect(d, normal);
+	  reason = ShotPathSegment::Ricochet;
+	  break;
+	}
       }
     }
   }

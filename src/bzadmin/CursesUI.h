@@ -79,7 +79,7 @@ protected:
       It is useful to do this when the window has been resized (because
       the terminal has been resized, or because the menu has been toggled).
       @param numberOfMessages The last @c numberOfMessages messages from the
-                              buffer will be written to the window.
+			      buffer will be written to the window.
   */
   void updateMainWinFromBuffer(unsigned int numberOfMessages);
 

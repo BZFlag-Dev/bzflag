@@ -100,8 +100,8 @@ public:
   static std::string	getInputMethodName(InputMethod whatInput);
   bool		queryInputChange();
   void		setKey(int button, bool pressed);
-  int           getRotation();
-  int           getSpeed();
+  int	   getRotation();
+  int	   getSpeed();
   bool		isSpawning();
   void		setSpawning( bool spawn );
 
@@ -126,7 +126,7 @@ protected:
   void		doFriction(float dt, const float *oldVelocity, float *newVelocity);
   void		doForces(float dt, float* velocity, float& angVel);
   LocalShotPath**	shots;
-  bool          gettingSound;
+  bool	  gettingSound;
   ServerLink*	server;
 
 private:
@@ -151,15 +151,15 @@ private:
   static LocalPlayer*	mainPlayer;
   InputMethod	inputMethod;
   bool		inputChanged;
-  int           stuckFrameCount;
+  int	   stuckFrameCount;
   bool		spawning;
   int		wingsFlapCount;
   float		handicap;
-  bool          left;
-  bool          right;
-  bool          up;
-  bool          down;
-  bool          entryDrop; // first drop since entering
+  bool	  left;
+  bool	  right;
+  bool	  up;
+  bool	  down;
+  bool	  entryDrop; // first drop since entering
   bool		wantJump;
   bool		jumpPressed;
 };

@@ -40,10 +40,10 @@ documentation and/or software.
 // it is not meant to be fast or secure
 //
 // usage: 1) feed it blocks of uchars with update()
-//        2) finalize()
-//        3) get hexdigest() string
+//	2) finalize()
+//	3) get hexdigest() string
 //      or
-//        MD5(std::string).hexdigest()
+//	MD5(std::string).hexdigest()
 //
 // assumes that char is 8 bit and int is 32 bit
 class MD5

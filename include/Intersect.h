@@ -90,22 +90,22 @@ float			timeAndSideRayHitsRect(const Ray& r,
 
 // return true if polygon touches the axis aligned box
 bool			testPolygonInAxisBox(int pointCount,
-                                             const float (*points)[3],
-                                             const float* plane,
-                                             const float* boxMins,
-                                             const float* boxMaxs);
+					     const float (*points)[3],
+					     const float* plane,
+					     const float* boxMins,
+					     const float* boxMaxs);
 
 // return level of axis box intersection with Frumstum
 // possible values are Outside, Partial, and Contained.
 // the frustum plane normals point inwards
-IntersectLevel          testAxisBoxInFrustum(const float* boxMins,
+IntersectLevel	  testAxisBoxInFrustum(const float* boxMins,
 					     const float* boxMaxs,
 					     const Frustum* frustum);
 
 // return true if the axis aligned bounding box
 // is contained within all of the planes.
 // the occluder plane normals point inwards
-IntersectLevel          testAxisBoxOcclusion(const float* boxMins,
+IntersectLevel	  testAxisBoxOcclusion(const float* boxMins,
 					     const float* boxMaxs,
 					     const float (*planes)[4],
 					     int planeCount);
@@ -114,24 +114,24 @@ IntersectLevel          testAxisBoxOcclusion(const float* boxMins,
 // axis aligned bounding box defined by the mins
 // and maxs. it will also fill in enterTime and
 // leaveTime if there is an intersection.
-bool                   textRayInAxisBox(const Ray& ray,
-                                        const float* boxMins,
-                                        const float* boxMaxs,
-                                        float& enterTime, float& leaveTime);
+bool		   textRayInAxisBox(const Ray& ray,
+					const float* boxMins,
+					const float* boxMaxs,
+					float& enterTime, float& leaveTime);
 
 
 // return true if the ray hits the box
 // if it does hit, set the inTime value
 bool testRayHitsAxisBox(const Ray* ray,
-                        const float mins[3], const float maxs[3],
-                        float* inTime);
+			const float mins[3], const float maxs[3],
+			float* inTime);
 
 // return true if the ray hits the box
 // if it does hit, set the inTime and outTime values
 bool testRayHitsAxisBox(const Ray* ray,
-                        const float mins[3], const float maxs[3],
-                        float* inTime, float* outTime);
-                        
+			const float mins[3], const float maxs[3],
+			float* inTime, float* outTime);
+
 
 #endif // BZF_INTERSECT_H
 

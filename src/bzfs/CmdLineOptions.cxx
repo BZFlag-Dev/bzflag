@@ -332,15 +332,15 @@ static bool parsePlayerCount(const char *argv, CmdLineOptions &options)
 	if (count < 0) {
 	  options.maxTeam[i] = 0;
 	} else {
-          if (count > maxRealPlayers) {
-            if (i == ObserverTeam && count > MaxPlayers)
-              options.maxTeam[i] = MaxPlayers;
-            else
-              options.maxTeam[i] = maxRealPlayers;
+	  if (count > maxRealPlayers) {
+	    if (i == ObserverTeam && count > MaxPlayers)
+	      options.maxTeam[i] = MaxPlayers;
+	    else
+	      options.maxTeam[i] = maxRealPlayers;
 	  } else {
 	    options.maxTeam[i] = uint8_t(count);
 	  }
-        }
+	}
       } // end if tail != scan
       while (*tail && *tail != ',') tail++;
       scan = tail + 1;
@@ -386,7 +386,7 @@ static bool parsePlayerCount(const char *argv, CmdLineOptions &options)
     // limit max team size to max players
     for (int i = 0; i < CtfTeams ; i++) {
       if (options.maxTeam[i] > maxRealPlayers)
-        options.maxTeam[i] = maxRealPlayers;
+	options.maxTeam[i] = maxRealPlayers;
     }
   } // end check if comm-separated list
 
@@ -463,8 +463,8 @@ static char **parseWorldOptions (const char *file, int &ac)
       std::string line = buffer;
       int startPos = line.find_first_not_of("\t \r\n");
       if (strncmp ("options", line.c_str() + startPos, 7) == 0) {
-        confStrm.getline(buffer,1024);
-        break;
+	confStrm.getline(buffer,1024);
+	break;
       }
       confStrm.getline(buffer,1024);
     }
@@ -473,11 +473,11 @@ static char **parseWorldOptions (const char *file, int &ac)
       std::string line = buffer;
       int startPos = line.find_first_not_of("\t \r\n");
       if (strncmp ("end", line.c_str() + startPos, 3) == 0) {
-        break;
+	break;
       }
 
       while ((startPos >= 0) && (line.at(startPos) != '#')) {
-        int endPos;
+	int endPos;
 	if (line.at(startPos) == '"') {
 	  startPos++;
 	  endPos = line.find_first_of('"', startPos);
@@ -530,7 +530,7 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
     } else if (strcmp(argv[i], "-admsg") == 0) {
       checkArgc(1, i, argc, argv[i]);
       if ((options.advertisemsg != "") || (strlen (argv[i]) == 0)) {
-        options.advertisemsg += "\\n";
+	options.advertisemsg += "\\n";
       }
       options.advertisemsg += argv[i];
     } else if (strcmp(argv[i], "-autoTeam") == 0) {
@@ -560,8 +560,8 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
 	std::cerr << "Capture the flag assumed" << std::endl;
       }
       if (!teamFlagsAdded) {
-        for (int t = RedTeam; t <= PurpleTeam; t++)
-          options.numTeamFlags[t] += 1;
+	for (int t = RedTeam; t <= PurpleTeam; t++)
+	  options.numTeamFlags[t] += 1;
 	teamFlagsAdded = true;
       }
     } else if (strcmp(argv[i], "-cache") == 0) {
@@ -581,7 +581,7 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
       parse(ac, av, options);
 
       for (int i = 0; i < ac; i++)
-        free(av[i]);
+	free(av[i]);
       delete[] av;
 
       options.numAllowedFlags = 0;
@@ -597,8 +597,8 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
 	std::cerr << "Capture the flag assumed" << std::endl;
       }
       if (!teamFlagsAdded) {
-        for (int t = RedTeam; t <= PurpleTeam; t++)
-          options.numTeamFlags[t] += 1;
+	for (int t = RedTeam; t <= PurpleTeam; t++)
+	  options.numTeamFlags[t] += 1;
 	teamFlagsAdded = true;
       }
     } else if (strcmp(argv[i], "-density") ==0) {
@@ -765,7 +765,7 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
       BZDB.setBool(StateDatabase::BZDB_NORADAR, true);
     } else if (strcmp(argv[i],"-masterBanURL") == 0){
       /* if this is the first master ban url, override the default
-       * list.  otherwise just keep adding urls. 
+       * list.  otherwise just keep adding urls.
        */
       if (!options.masterBanListOverridden) {
 	options.masterBanListURL.clear();
@@ -843,7 +843,7 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
       options.publicizeServer = true;
     } else if (strcmp(argv[i], "-publiclist") == 0) {
       /* if this is the first -publiclist, override the default list
-       * server.  otherwise just keep adding urls. 
+       * server.  otherwise just keep adding urls.
        */
       if (!options.listServerOverridden) {
 	options.listServerURL.clear();
@@ -933,8 +933,8 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
       checkArgc(2, i, argc, argv[i]);
       name = argv[i];
       if (!BZDB.isSet(name)) {
-        std::cerr << "Unknown BZDB variable: " << name << std::endl;
-        exit (1);
+	std::cerr << "Unknown BZDB variable: " << name << std::endl;
+	exit (1);
       }
       i++;
       value = argv[i];
@@ -977,7 +977,7 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
     } else if (strcmp(argv[i], "-srvmsg") == 0) {
       checkArgc(1, i, argc, argv[i]);
       if ((options.servermsg != "") || (strlen (argv[i]) == 0)) {
-        options.servermsg += "\\n";
+	options.servermsg += "\\n";
       }
       options.servermsg += argv[i];
     } else if (strcmp(argv[i], "-st") == 0) {
@@ -1066,13 +1066,13 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
       parse(ac, av, options, true); // true - from a world file
 
       for (int i = 0; i < ac; i++)
-        free(av[i]);
+	free(av[i]);
       delete[] av;
 
       options.numAllowedFlags = 0; // FIXME - Huh, does a reset?
 
       if (options.useTeleporters)
-        std::cerr << "-t is meaningless when using a custom world, ignoring" << std::endl;
+	std::cerr << "-t is meaningless when using a custom world, ignoring" << std::endl;
     } else if (strcmp(argv[i], "-worldsize") == 0) {
       checkArgc(1, i, argc, argv[i]);
       BZDB.set(StateDatabase::BZDB_WORLDSIZE, TextUtils::format("%d",atoi(argv[i])*2));
@@ -1174,7 +1174,7 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
   if (options.gameStyle & TeamFlagGameStyle) {
     for (int col = RedTeam; col <= PurpleTeam; col++)
       if (options.maxTeam[col] > 0)
-        numFlags += options.numTeamFlags[col];
+	numFlags += options.numTeamFlags[col];
   }
   for (FlagTypeMap::iterator it = FlagType::getFlagMap().begin();
        it != FlagType::getFlagMap().end(); ++it) {
@@ -1187,12 +1187,12 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
   if (options.gameStyle & TeamFlagGameStyle) {
     if (options.maxTeam[RedTeam] > 0) {
       for (int n = 0; n < options.numTeamFlags[RedTeam]; n++) {
-        FlagInfo::get(f++)->setRequiredFlag(Flags::RedTeam);
+	FlagInfo::get(f++)->setRequiredFlag(Flags::RedTeam);
       }
     }
     if (options.maxTeam[GreenTeam] > 0) {
       for (int n = 0; n < options.numTeamFlags[GreenTeam]; n++) {
-        FlagInfo::get(f++)->setRequiredFlag(Flags::GreenTeam);
+	FlagInfo::get(f++)->setRequiredFlag(Flags::GreenTeam);
       }
     }
     if (options.maxTeam[BlueTeam] > 0) {

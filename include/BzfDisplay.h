@@ -30,13 +30,13 @@ class BzfDisplay {
     virtual bool	isEventPending() const = 0;
     virtual bool	getEvent(BzfEvent&) const = 0;
 
-    virtual bool        hasGetKeyMode() {return false;};
-    virtual void        getModState(bool &shift, bool &control, bool &alt) {
+    virtual bool	hasGetKeyMode() {return false;};
+    virtual void	getModState(bool &shift, bool &control, bool &alt) {
       shift = false; control = false; alt = false;};
 
     int			getWidth() const;
     int			getHeight() const;
-    void                setFullScreenFormat(int);
+    void		setFullScreenFormat(int);
 
     void		setPassthroughSize(int w, int h);
     int			getPassthroughWidth() const;
@@ -80,7 +80,7 @@ class BzfDisplay {
     int			currentResolution;
     ResInfo**		resolutions;
   protected:
-    int                 modeIndex;
+    int		 modeIndex;
 };
 
 #endif // BZF_DISPLAY_H

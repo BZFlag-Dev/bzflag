@@ -30,7 +30,7 @@ class WinJoystick : public BzfJoystick {
     bool	joystick() const;
     void	getJoy(int& x, int& y);
     unsigned long getJoyButtons();
-    void        getJoyDevices(std::vector<std::string> &list) const;
+    void	getJoyDevices(std::vector<std::string> &list) const;
 
   private:
     unsigned int JoystickID;

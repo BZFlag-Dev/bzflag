@@ -84,28 +84,28 @@ const std::string StateDatabase::BZDB_AGILITYADVEL	= std::string("_agilityAdVel"
 const std::string StateDatabase::BZDB_AGILITYTIMEWINDOW	= std::string("_agilityTimeWindow");
 const std::string StateDatabase::BZDB_AGILITYVELDELTA	= std::string("_agilityVelDelta");
 const std::string StateDatabase::BZDB_ANGLETOLERANCE    = std::string("_angleTolerance");
-const std::string StateDatabase::BZDB_ANGULARAD         = std::string("_angularAd");
-const std::string StateDatabase::BZDB_AVENUESIZE        = std::string("_avenueSize");
-const std::string StateDatabase::BZDB_BASESIZE          = std::string("_baseSize");
+const std::string StateDatabase::BZDB_ANGULARAD	 = std::string("_angularAd");
+const std::string StateDatabase::BZDB_AVENUESIZE	= std::string("_avenueSize");
+const std::string StateDatabase::BZDB_BASESIZE	  = std::string("_baseSize");
 const std::string StateDatabase::BZDB_BOXBASE		= std::string("_boxBase");
-const std::string StateDatabase::BZDB_BOXHEIGHT         = std::string("_boxHeight");
+const std::string StateDatabase::BZDB_BOXHEIGHT	 = std::string("_boxHeight");
 const std::string StateDatabase::BZDB_BURROWDEPTH       = std::string("_burrowDepth");
 const std::string StateDatabase::BZDB_BURROWSPEEDAD     = std::string("_burrowSpeedAd");
 const std::string StateDatabase::BZDB_BURROWANGULARAD   = std::string("_burrowAngularAd");
 const std::string StateDatabase::BZDB_COLDETDEPTH       = std::string("_coldetDepth");
 const std::string StateDatabase::BZDB_COLDETELEMENTS    = std::string("_coldetElements");
-const std::string StateDatabase::BZDB_CULLDEPTH         = std::string("_cullDepth");
+const std::string StateDatabase::BZDB_CULLDEPTH	 = std::string("_cullDepth");
 const std::string StateDatabase::BZDB_CULLELEMENTS      = std::string("_cullElements");
 const std::string StateDatabase::BZDB_CULLOCCLUDERS     = std::string("_cullOccluders");
 const std::string StateDatabase::BZDB_DISABLEBOTS       = std::string("_disableBots");
 const std::string StateDatabase::BZDB_EXPLODETIME       = std::string("_explodeTime");
-const std::string StateDatabase::BZDB_FAKELAG           = std::string("_fakeLag");
+const std::string StateDatabase::BZDB_FAKELAG	   = std::string("_fakeLag");
 const std::string StateDatabase::BZDB_FLAGALTITUDE      = std::string("_flagAltitude");
 const std::string StateDatabase::BZDB_FLAGEFFECTTIME    = std::string("_flagEffectTime");
-const std::string StateDatabase::BZDB_FLAGHEIGHT        = std::string("_flagHeight");
+const std::string StateDatabase::BZDB_FLAGHEIGHT	= std::string("_flagHeight");
 const std::string StateDatabase::BZDB_FLAGPOLEWIDTH     = std::string("_flagPoleWidth");
 const std::string StateDatabase::BZDB_FLAGPOLESIZE      = std::string("_flagPoleSize");
-const std::string StateDatabase::BZDB_FLAGRADIUS        = std::string("_flagRadius");
+const std::string StateDatabase::BZDB_FLAGRADIUS	= std::string("_flagRadius");
 const std::string StateDatabase::BZDB_FRICTION		= std::string("_friction");
 const std::string StateDatabase::BZDB_GMISSILEANG	= std::string("_gMissileAng");
 const std::string StateDatabase::BZDB_GMISSILEADLIFE    = std::string("_gMissileAdLife");
@@ -131,19 +131,19 @@ const std::string StateDatabase::BZDB_MGUNADRATE	= std::string("_mGunAdRate");
 const std::string StateDatabase::BZDB_MGUNADLIFE	= std::string("_mGunAdLife");
 const std::string StateDatabase::BZDB_MUZZLEFRONT	= std::string("_muzzleFront");
 const std::string StateDatabase::BZDB_MUZZLEHEIGHT	= std::string("_muzzleHeight");
-const std::string StateDatabase::BZDB_NOCLIMB           = std::string("_noClimb");
-const std::string StateDatabase::BZDB_NORADAR           = std::string("_noRadar");
-const std::string StateDatabase::BZDB_NOSHADOWS         = std::string("_noShadows");
+const std::string StateDatabase::BZDB_NOCLIMB	   = std::string("_noClimb");
+const std::string StateDatabase::BZDB_NORADAR	   = std::string("_noRadar");
+const std::string StateDatabase::BZDB_NOSHADOWS	 = std::string("_noShadows");
 const std::string StateDatabase::BZDB_NOSMALLPACKETS    = std::string("_noSmallPackets");
 const std::string StateDatabase::BZDB_NOTRESPONDINGTIME = std::string("_notRespondingTime");
 const std::string StateDatabase::BZDB_OBESEFACTOR       = std::string("_obeseFactor");
 const std::string StateDatabase::BZDB_PAUSEDROPTIME	= std::string("_pauseDropTime");
 const std::string StateDatabase::BZDB_POSITIONTOLERANCE = std::string("_positionTolerance");
-const std::string StateDatabase::BZDB_PYRBASE           = std::string("_pyrBase");
-const std::string StateDatabase::BZDB_PYRHEIGHT         = std::string("_pyrHeight");
-const std::string StateDatabase::BZDB_REJOINTIME        = std::string("_rejoinTime");
-const std::string StateDatabase::BZDB_RELOADTIME        = std::string("_reloadTime");
-const std::string StateDatabase::BZDB_RFIREADVEL        = std::string("_rFireAdVel");
+const std::string StateDatabase::BZDB_PYRBASE	   = std::string("_pyrBase");
+const std::string StateDatabase::BZDB_PYRHEIGHT	 = std::string("_pyrHeight");
+const std::string StateDatabase::BZDB_REJOINTIME	= std::string("_rejoinTime");
+const std::string StateDatabase::BZDB_RELOADTIME	= std::string("_reloadTime");
+const std::string StateDatabase::BZDB_RFIREADVEL	= std::string("_rFireAdVel");
 const std::string StateDatabase::BZDB_RFIREADRATE       = std::string("_rFireAdRate");
 const std::string StateDatabase::BZDB_RFIREADLIFE       = std::string("_rFireAdLife");
 const std::string StateDatabase::BZDB_SHIELDFLIGHT      = std::string("_shieldFlight");
@@ -151,44 +151,44 @@ const std::string StateDatabase::BZDB_SHOCKADLIFE       = std::string("_shockAdL
 const std::string StateDatabase::BZDB_SHOCKINRADIUS     = std::string("_shockInRadius");
 const std::string StateDatabase::BZDB_SHOCKOUTRADIUS    = std::string("_shockOutRadius");
 const std::string StateDatabase::BZDB_SHOTRADIUS	= std::string("_shotRadius");
-const std::string StateDatabase::BZDB_SHOTRANGE         = std::string("_shotRange");
-const std::string StateDatabase::BZDB_SHOTSPEED         = std::string("_shotSpeed");
+const std::string StateDatabase::BZDB_SHOTRANGE	 = std::string("_shotRange");
+const std::string StateDatabase::BZDB_SHOTSPEED	 = std::string("_shotSpeed");
 const std::string StateDatabase::BZDB_SHOTTAILLENGTH	= std::string("_shotTailLength");
 const std::string StateDatabase::BZDB_SHOTSKEEPVERTICALV= std::string("_shotsKeepVerticalVelocity");
 const std::string StateDatabase::BZDB_SRRADIUSMULT	= std::string("_srRadiusMult");
 const std::string StateDatabase::BZDB_SQUISHFACTOR	= std::string("_squishFactor");
 const std::string StateDatabase::BZDB_SQUISHTIME	= std::string("_squishTime");
-const std::string StateDatabase::BZDB_SYNCTIME	        = std::string("_syncTime");
+const std::string StateDatabase::BZDB_SYNCTIME		= std::string("_syncTime");
 const std::string StateDatabase::BZDB_SYNCLOCATION      = std::string("_syncLocation");
-const std::string StateDatabase::BZDB_TANKANGVEL        = std::string("_tankAngVel");
+const std::string StateDatabase::BZDB_TANKANGVEL	= std::string("_tankAngVel");
 const std::string StateDatabase::BZDB_TANKEXPLOSIONSIZE = std::string("_tankExplosionSize");
 const std::string StateDatabase::BZDB_TANKHEIGHT	= std::string("_tankHeight");
 const std::string StateDatabase::BZDB_TANKLENGTH	= std::string("_tankLength");
-const std::string StateDatabase::BZDB_TANKRADIUS        = std::string("_tankRadius");
-const std::string StateDatabase::BZDB_TANKSPEED         = std::string("_tankSpeed");
+const std::string StateDatabase::BZDB_TANKRADIUS	= std::string("_tankRadius");
+const std::string StateDatabase::BZDB_TANKSPEED	 = std::string("_tankSpeed");
 const std::string StateDatabase::BZDB_TANKWIDTH		= std::string("_tankWidth");
 const std::string StateDatabase::BZDB_TARGETINGANGLE	= std::string("_targetingAngle");
 const std::string StateDatabase::BZDB_TELEBREADTH       = std::string("_teleportBreadth");
-const std::string StateDatabase::BZDB_TELEHEIGHT        = std::string("_teleportHeight");
+const std::string StateDatabase::BZDB_TELEHEIGHT	= std::string("_teleportHeight");
 const std::string StateDatabase::BZDB_TELEPORTTIME      = std::string("_teleportTime");
-const std::string StateDatabase::BZDB_TELEWIDTH         = std::string("_teleportWidth");
+const std::string StateDatabase::BZDB_TELEWIDTH	 = std::string("_teleportWidth");
 const std::string StateDatabase::BZDB_THIEFADLIFE	= std::string("_thiefAdLife");
 const std::string StateDatabase::BZDB_THIEFADRATE       = std::string("_thiefAdRate");
 const std::string StateDatabase::BZDB_THIEFADSHOTVEL    = std::string("_thiefAdShotVel");
 const std::string StateDatabase::BZDB_THIEFTINYFACTOR   = std::string("_thiefTinyFactor");
-const std::string StateDatabase::BZDB_THIEFVELAD        = std::string("_thiefVelAd");
+const std::string StateDatabase::BZDB_THIEFVELAD	= std::string("_thiefVelAd");
 const std::string StateDatabase::BZDB_THIEFDROPTIME     = std::string("_thiefDropTime");
-const std::string StateDatabase::BZDB_TINYFACTOR        = std::string("_tinyFactor");
-const std::string StateDatabase::BZDB_TRACKFADE         = std::string("_trackFade");
+const std::string StateDatabase::BZDB_TINYFACTOR	= std::string("_tinyFactor");
+const std::string StateDatabase::BZDB_TRACKFADE	 = std::string("_trackFade");
 const std::string StateDatabase::BZDB_UPDATETHROTTLERATE= std::string("_updateThrottleRate");
-const std::string StateDatabase::BZDB_VELOCITYAD        = std::string("_velocityAd");
-const std::string StateDatabase::BZDB_WALLHEIGHT        = std::string("_wallHeight");
-const std::string StateDatabase::BZDB_WEAPONS           = std::string("_weapons");
+const std::string StateDatabase::BZDB_VELOCITYAD	= std::string("_velocityAd");
+const std::string StateDatabase::BZDB_WALLHEIGHT	= std::string("_wallHeight");
+const std::string StateDatabase::BZDB_WEAPONS	   = std::string("_weapons");
 const std::string StateDatabase::BZDB_WIDEANGLEANG      = std::string("_wideAngleAng");
 const std::string StateDatabase::BZDB_WINGSGRAVITY      = std::string("_wingsGravity");
 const std::string StateDatabase::BZDB_WINGSJUMPCOUNT    = std::string("_wingsJumpCount");
 const std::string StateDatabase::BZDB_WINGSJUMPVELOCITY = std::string("_wingsJumpVelocity");
-const std::string StateDatabase::BZDB_WORLDSIZE         = std::string("_worldSize");
+const std::string StateDatabase::BZDB_WORLDSIZE	 = std::string("_worldSize");
 
 //
 // StateDatabase::Item
@@ -241,22 +241,22 @@ void			StateDatabase::set(const std::string& name,
 }
 
 void		     StateDatabase::setInt(const std::string& name,
-                                           const int& value,
-                                           Permission access)
+					   const int& value,
+					   Permission access)
 {
   set(name,TextUtils::format("%d",value),access);
 }
 
 void		    StateDatabase::setBool(const std::string& name,
-                                           const bool& value,
-                                           Permission access)
+					   const bool& value,
+					   Permission access)
 {
   set(name,value ? std::string("1") : std::string("0"),access);
 }
 
 void		   StateDatabase::setFloat(const std::string& name,
-                                           const float& value,
-                                           Permission access)
+					   const float& value,
+					   Permission access)
 {
   set(name,TextUtils::format("%f",value),access);
 }
@@ -514,7 +514,7 @@ void			StateDatabase::write(Callback callback, void* userData) const
   }
 }
 
-void                     StateDatabase::setDebug(bool print) {
+void		     StateDatabase::setDebug(bool print) {
   debug = print;
 }
 

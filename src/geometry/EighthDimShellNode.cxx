@@ -27,7 +27,7 @@ EighthDimShellNode::EighthDimShellNode(SceneNode* node, bool _ownTheNode)
 {
   sceneNode = node;
   ownTheNode = _ownTheNode;
-  
+
   renderNodeCount = sceneNode->getRenderNodeCount();
   if (renderNodeCount > 0) {
     renderNodes = new ShellRenderNode*[renderNodeCount];
@@ -35,15 +35,15 @@ EighthDimShellNode::EighthDimShellNode(SceneNode* node, bool _ownTheNode)
     for (int i = 0; i < renderNodeCount; i++) {
       RenderNode* rnode = node->getRenderNode(i);
       if (rnode != NULL) {
-        renderNodes[count] = new ShellRenderNode(rnode);
-        count++;
+	renderNodes[count] = new ShellRenderNode(rnode);
+	count++;
       }
     }
     renderNodeCount = count;
   } else {
     renderNodes = NULL;
   }
-  
+
   return;
 }
 
@@ -76,7 +76,7 @@ void EighthDimShellNode::notifyStyleChange()
 void EighthDimShellNode::addRenderNodes(SceneRenderer& renderer)
 {
   for (int i = 0; i < renderNodeCount; i++) {
-    
+
     OpenGLGState* gstate = sceneNode->getGState(i);
     if ((renderNodes[i] != NULL) && (gstate != NULL)) {
       renderer.addRenderNode(renderNodes[i], gstate);
@@ -108,9 +108,9 @@ void EighthDimShellNode::ShellRenderNode::render()
   SceneNode::enableInvertView();
 
   renderNode->render();
-  
+
   SceneNode::disableInvertView();
-  
+
   return;
 }
 

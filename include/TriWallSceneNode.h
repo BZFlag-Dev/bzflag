@@ -35,11 +35,11 @@ class TriWallSceneNode : public WallSceneNode {
     void		addRenderNodes(SceneRenderer&);
     void		addShadowNodes(SceneRenderer&);
 
-    void                getExtents(float* mins, float* maxs) const;
-    bool                inAxisBox (const float* mins,
-                                   const float* maxs) const;
-    int                 getVertexCount () const;
-    const               GLfloat* getVertex (int vertex) const;
+    void		getExtents(float* mins, float* maxs) const;
+    bool		inAxisBox (const float* mins,
+				   const float* maxs) const;
+    int		 getVertexCount () const;
+    const	       GLfloat* getVertex (int vertex) const;
 
     bool		cull(const ViewFrustum&) const;
 

@@ -241,7 +241,7 @@ bool			WinDisplay::getEvent(BzfEvent& event) const
     case WM_QUIT:
     case WM_SYSCOMMAND:
       if (msg.wParam != SC_CLOSE)
-          break;
+	  break;
       event.type = BzfEvent::Quit;
       break;
 
@@ -393,12 +393,12 @@ bool			WinDisplay::doSetResolution(int index)
   Resolution& format = resolutions[index];
   DEVMODE dm;
   memset(&dm, 0, sizeof(dm));
-  dm.dmSize             = sizeof(dm);
-  dm.dmPelsWidth        = format.width;
+  dm.dmSize	     = sizeof(dm);
+  dm.dmPelsWidth	= format.width;
   dm.dmPelsHeight       = format.height;
   dm.dmBitsPerPel       = format.depth;
   dm.dmDisplayFrequency = format.refresh;
-  dm.dmFields           = DM_PELSWIDTH | DM_PELSHEIGHT | DM_BITSPERPEL;
+  dm.dmFields	   = DM_PELSWIDTH | DM_PELSHEIGHT | DM_BITSPERPEL;
   if (dm.dmDisplayFrequency != 0)
     dm.dmFields |= DM_DISPLAYFREQUENCY;
 

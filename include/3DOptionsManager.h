@@ -36,18 +36,18 @@ typedef enum
 
 typedef struct
 {
-  bool                textures[3];
+  bool		textures[3];
   textureFilterModes  filterMode;
   renderQuality       quality;
-  bool                blending;
-  bool                dither;
-  bool                smoothing;
-  bool                shadows;
-  bool                lighting;
-  bool                dethBuffer;
-  bool                hardware;
-  bool                stencel;
-  bool                hudViewport;
+  bool		blending;
+  bool		dither;
+  bool		smoothing;
+  bool		shadows;
+  bool		lighting;
+  bool		dethBuffer;
+  bool		hardware;
+  bool		stencel;
+  bool		hudViewport;
 }renderOptions;
 
 class OptionsManager : public Singleton<OptionsManager>

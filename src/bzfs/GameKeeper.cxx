@@ -47,7 +47,7 @@ GameKeeper::Player::Player(int _playerIndex,
   int result = pthread_create(&thread, NULL, tcpRx, (void *)this);
   if (result)
     std::cerr << "Could not create thread" << std::endl;
-  refCount         = 1;
+  refCount	 = 1;
 #endif
 }
 
@@ -131,7 +131,7 @@ int GameKeeper::Player::anointRabbit(int oldRabbit)
 	  }
 	} else {
 	  if (goodRabbit) {
-	    select             = true;
+	    select	     = true;
 	    goodRabbitSelected = true;
 	  } else {
 	    if (ratio > topRatio)
@@ -248,7 +248,7 @@ void GameKeeper::Player::clean()
 	&& !playerData->refCount
 #endif
 	)
-      delete playerData;  
+      delete playerData;
 }
 
 int GameKeeper::Player::getFreeIndex(int min, int max)

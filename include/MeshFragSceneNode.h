@@ -30,7 +30,7 @@
 //   used as occluders, and can not be culled as a simple plane
 //
 // - The lists are all GL_TRIANGLE lists
-//       
+//
 
 class MeshFace;
 
@@ -48,21 +48,21 @@ class MeshFragSceneNode : public WallSceneNode {
     // virtual functions from WallSceneNode
     void getExtents(float* mins, float* maxs) const;
     bool inAxisBox(const float* mins, const float* maxs) const;
-      
+
     int getRenderNodeCount() { return 1; }
     RenderNode*	getRenderNode(int) { return renderNode; }
-    
+
   protected:
     class Geometry : public RenderNode {
       public:
-        Geometry(MeshFragSceneNode* node);
-        ~Geometry();
-        
+	Geometry(MeshFragSceneNode* node);
+	~Geometry();
+
 	void render();
 	void renderShadow();
 	void setStyle(int _style) { style = _style; }
 	const GLfloat* getPosition() { return sceneNode->getSphere(); }
-	
+
       private:
 	void drawV() const; // draw with just vertices
 	void drawVT() const; // draw with texcoords
@@ -76,10 +76,10 @@ class MeshFragSceneNode : public WallSceneNode {
 
   private:
     Geometry* renderNode;
-    
+
     GLint faceCount;
     const MeshFace** faces;
-    
+
     GLint arrayCount;
     GLfloat* vertices;
     GLfloat* normals;

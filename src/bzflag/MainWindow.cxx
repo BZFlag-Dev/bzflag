@@ -261,18 +261,18 @@ void			MainWindow::getJoyPosition(int& mx, int& my) const
   my = ((height >> 1) * my) / (900);
 }
 
-unsigned long                  MainWindow::getJoyButtonSet() const
+unsigned long		  MainWindow::getJoyButtonSet() const
 {
   return joystick->getJoyButtons();
 }
 
-void                    MainWindow::getJoyDevices(std::vector<std::string>
+void		    MainWindow::getJoyDevices(std::vector<std::string>
 						  &list) const
 {
   joystick->getJoyDevices(list);
 }
 
-void	                MainWindow::initJoystick(std::string &joystickName) {
+void			MainWindow::initJoystick(std::string &joystickName) {
   joystick->initJoystick(joystickName.c_str());
 };
 

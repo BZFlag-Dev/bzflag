@@ -166,17 +166,17 @@ void OpenGLLight::setImportance(const ViewFrustum& frustum)
     importance = MAXFLOAT;
     return;
   }
-  
+
   // This is not an exact test, the real culling shape should
   // be a frustum with extended in all directions by maxDist.
   // The hard edges on the frustum are bogus zones.
-  
+
   // check if the light is in front of the front viewing plane
   bool sphereCull = true;
   const GLfloat* p = frustum.getDirection();
   const float fd = (p[0] * pos[0]) +
-                   (p[1] * pos[1]) +
-                   (p[2] * pos[2]) + p[3];
+		   (p[1] * pos[1]) +
+		   (p[2] * pos[2]) + p[3];
 
   // cull against the frustum planes
   // (right, left, up, and down)
@@ -185,11 +185,11 @@ void OpenGLLight::setImportance(const ViewFrustum& frustum)
     for (int i = 1; i < 5; i++) {
       const float* p = frustum.getSide(i);
       const float len = (p[0] * pos[0]) +
-                        (p[1] * pos[1]) +
-                        (p[2] * pos[2]) + p[3];
+			(p[1] * pos[1]) +
+			(p[2] * pos[2]) + p[3];
       if (len < -maxDist) {
-        importance = -1.0f;
-        return;
+	importance = -1.0f;
+	return;
       }
     }
   }
@@ -203,7 +203,7 @@ void OpenGLLight::setImportance(const ViewFrustum& frustum)
   };
   float dist = (v[0] * v[0]) + (v[1] * v[1]) + (v[2] * v[2]);
   dist = sqrtf(dist);
-  
+
   // do a sphere cull if requested
   if (sphereCull && (dist > maxDist)) {
     importance = -1.0f;
@@ -216,7 +216,7 @@ void OpenGLLight::setImportance(const ViewFrustum& frustum)
   } else {
     importance = 1.0f / dist;
   }
-  
+
   return;
 }
 

@@ -213,15 +213,15 @@ void BeOSMedia::audioplay_callback(void *cookie, void *buffer, size_t bufferSize
     //DBG(("audio CB: acquire(%d), error 0x%08lx\n\n", len, err));
     if (err < B_OK) {
       if (err == B_TIMED_OUT) {
-        DBG(("audio callback: timed out.\n"));
-        /* tell we are late */
-        if (s->checkLowWater) {
-          //write_port(s->audioQueuePort, 'Late', NULL, 0);
-          s->checkLowWater = false;
-          release_sem(s->lowWaterSem);
-        }
-        return;
-        continue;
+	DBG(("audio callback: timed out.\n"));
+	/* tell we are late */
+	if (s->checkLowWater) {
+	  //write_port(s->audioQueuePort, 'Late', NULL, 0);
+	  s->checkLowWater = false;
+	  release_sem(s->lowWaterSem);
+	}
+	return;
+	continue;
       }
       s->audioHasQuit = 1;
       s->soundPlayer->SetHasData(false);
@@ -239,7 +239,7 @@ void BeOSMedia::audioplay_callback(void *cookie, void *buffer, size_t bufferSize
 
     MYASSERT(s->audioOutputIndex >= 0);
     MYASSERT(s->audioOutputIndex < AUDIO_BUFFER_SIZE);
-    
+
     amount = len;
     DBG(("AUDIO: reading %8ld bytes from %p\n", amount, &((unsigned char *)s->outputBuffer)[s->audioOutputIndex]));
     memcpy(buf, &((unsigned char *)s->outputBuffer)[s->audioOutputIndex], amount);
@@ -409,7 +409,7 @@ void					BeOSMedia::writeAudioFrames(
 
     MYASSERT(audioInputIndex >= 0);
     MYASSERT(audioInputIndex < AUDIO_BUFFER_SIZE);
-  
+
   // convert the samples to a format we can handle:
   // float [-1:1]
 /*
@@ -427,7 +427,7 @@ void					BeOSMedia::writeAudioFrames(
     }
 #endif
   }*/
-  
+
 #ifdef DEBUG_TO_WAV
   //write(debugWav, samples, size);
 #endif
@@ -496,16 +496,16 @@ void					BeOSMedia::writeAudioFrames(
       dst = (SAMPTYPE *)(&((unsigned char *)outputBuffer)[audioInputIndex]);
       DBG(("AUDIO: piping %8ld bytes at %p\n", len - amount, dst));
       for (int i = (len-amount)/sizeof(SAMPTYPE); i; i--) {
-        float v = MAX(MIN(((float *)(buf+amount))[i], 32767.0f), -32767.0f);
-        dst[i] = (SAMPTYPE) v;
+	float v = MAX(MIN(((float *)(buf+amount))[i], 32767.0f), -32767.0f);
+	dst[i] = (SAMPTYPE) v;
 #ifndef NO_FLOAT
-        dst[i] = dst[i] / 32767;
+	dst[i] = dst[i] / 32767;
 #endif
-        //dst[i] = MAX(MIN(dst[i], 1.0f), -1.0f);
+	//dst[i] = MAX(MIN(dst[i], 1.0f), -1.0f);
       }
       audioInputIndex += len - amount;
       if (audioInputIndex >= AUDIO_BUFFER_SIZE)
-        audioInputIndex %= AUDIO_BUFFER_SIZE;
+	audioInputIndex %= AUDIO_BUFFER_SIZE;
     }
 #endif
     release_sem_etc(audioOutputSem, len, 0);

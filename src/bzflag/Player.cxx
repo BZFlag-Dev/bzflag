@@ -89,20 +89,20 @@ Player::Player(const PlayerId& _id, TeamColor _team,
   dimensions[0] = 0.5f * BZDBCache::tankLength;
   dimensions[1] = 0.5f * BZDBCache::tankWidth;
   dimensions[2] = BZDBCache::tankHeight;
-  for (int i = 0; i < 3; i++) {  
+  for (int i = 0; i < 3; i++) {
     dimensionsRate[i] = 0.0f;
     dimensionsScale[i] = 1.0f;
     dimensionsTarget[i] = 1.0f;
   }
   useDimensions = false;
-  
+
   // setup alpha properties
   alpha = 1.0f;
   alphaRate = 0.0f;
   alphaTarget = 1.0f;
-  
+
   lastTrackDraw = TimeKeeper::getCurrent();
-  
+
   return;
 }
 
@@ -155,7 +155,7 @@ void Player::getMuzzle(float* m) const
     front = front + (dimensionsRate[0] * 0.1f);
   }
   front = front + 0.1f;
-  
+
   m[0] = state.pos[0] + (front * forward[0]);
   m[1] = state.pos[1] + (front * forward[1]);
   const float height = BZDB.eval(StateDatabase::BZDB_MUZZLEHEIGHT);
@@ -264,27 +264,27 @@ void Player::updateTank(float dt, bool local)
   updateDimensions(dt, local);
   updateTreads(dt);
   updateTranslucency(dt);
-  
+
   if (isAlive() && ((state.status & PlayerState::Falling) == 0)) {
     if ((TimeKeeper::getCurrent() - lastTrackDraw) > 0.050f) {
       bool drawMark = true;
       float markPos[3];
       markPos[2] = state.pos[2];
       if (inputSpeed > +0.001f) {
-        // draw the mark at the back of the treads
-        markPos[0] = state.pos[0] - (forward[0] * dimensions[0]);
-        markPos[1] = state.pos[1] - (forward[1] * dimensions[0]);
+	// draw the mark at the back of the treads
+	markPos[0] = state.pos[0] - (forward[0] * dimensions[0]);
+	markPos[1] = state.pos[1] - (forward[1] * dimensions[0]);
       } else if (inputSpeed < -0.001f) {
-        // draw the mark at the front of the treads
-        markPos[0] = state.pos[0] + (forward[0] * dimensions[0]);
-        markPos[1] = state.pos[1] + (forward[1] * dimensions[0]);
+	// draw the mark at the front of the treads
+	markPos[0] = state.pos[0] + (forward[0] * dimensions[0]);
+	markPos[1] = state.pos[1] + (forward[1] * dimensions[0]);
       } else {
-        drawMark = false;
+	drawMark = false;
       }
       if (drawMark) {
-        TrackMarks::addMark(markPos, dimensionsScale[1],
-                            state.azimuth, state.phydrv);
-        lastTrackDraw = TimeKeeper::getCurrent();
+	TrackMarks::addMark(markPos, dimensionsScale[1],
+			    state.azimuth, state.phydrv);
+	lastTrackDraw = TimeKeeper::getCurrent();
       }
     }
   }
@@ -301,7 +301,7 @@ void Player::updateDimensions(float dt, bool local)
   memcpy (oldRates, dimensionsRate, sizeof(float[3]));
   memcpy (oldScales, dimensionsScale, sizeof(float[3]));
   memcpy (oldDimensions, dimensions, sizeof(float[3]));
-  
+
   // update the dimensions
   bool resizing = false;
   for (int i = 0; i < 3; i++) {
@@ -309,22 +309,22 @@ void Player::updateDimensions(float dt, bool local)
       resizing = true;
       dimensionsScale[i] += (dt * dimensionsRate[i]);
       if (dimensionsRate[i] < 0.0f) {
-        if (dimensionsScale[i] < dimensionsTarget[i]) {
-          dimensionsScale[i] = dimensionsTarget[i];
-          dimensionsRate[i] = 0.0f;
-        }
+	if (dimensionsScale[i] < dimensionsTarget[i]) {
+	  dimensionsScale[i] = dimensionsTarget[i];
+	  dimensionsRate[i] = 0.0f;
+	}
       } else {
-        if (dimensionsScale[i] > dimensionsTarget[i]) {
-          dimensionsScale[i] = dimensionsTarget[i];
-          dimensionsRate[i] = 0.0f;
-        }
+	if (dimensionsScale[i] > dimensionsTarget[i]) {
+	  dimensionsScale[i] = dimensionsTarget[i];
+	  dimensionsRate[i] = 0.0f;
+	}
       }
     } else {
       // safety play, should not be required
       dimensionsScale[i] = dimensionsTarget[i];
     }
   }
-  
+
   // set the actual dimensions based on the scale
   dimensions[0] = dimensionsScale[0] * (0.5f * BZDBCache::tankLength);
   dimensions[1] = dimensionsScale[1] * (0.5f * BZDBCache::tankWidth);
@@ -350,7 +350,7 @@ void Player::updateDimensions(float dt, bool local)
   } else {
     useDimensions = true;
   }
-  
+
   return;
 }
 
@@ -358,7 +358,7 @@ void Player::updateDimensions(float dt, bool local)
 bool Player::hitObstacleResizing()
 {
   const float* dims = dimensions;
-  
+
   // check walls
   const World* world = World::getWorld();
   if (world) {
@@ -367,7 +367,7 @@ bool Player::hitObstacleResizing()
     while (wallScan != walls.end()) {
       const WallObstacle& wall = **wallScan;
       if (wall.inBox(getPosition(), getAngle(), dims[0], dims[1], dims[2])) {
-        return true;
+	return true;
       }
       wallScan++;
     }
@@ -376,13 +376,13 @@ bool Player::hitObstacleResizing()
   // check everything else
   const ObsList* olist =
     COLLISIONMGR.boxTest(getPosition(), getAngle(), dims[0], dims[1], dims[2]);
-  
+
   for (int i = 0; i < olist->count; i++) {
     const Obstacle* obs = olist->list[i];
     const bool onTop = obs->isFlatTop() &&
       ((obs->getPosition()[2] + obs->getHeight()) <= getPosition()[2]);
     if (!obs->isDriveThrough() && !onTop &&
-        obs->inBox(getPosition(), getAngle(), dims[0], dims[1], dims[2])) {
+	obs->inBox(getPosition(), getAngle(), dims[0], dims[1], dims[2])) {
       return true;
     }
   }
@@ -398,21 +398,21 @@ void Player::updateTranslucency(float dt)
     alpha += dt * alphaRate;
     if (alphaRate < 0.0f) {
       if (alpha < alphaTarget) {
-        alpha = alphaTarget;
-        alphaRate = 0.0f;
+	alpha = alphaTarget;
+	alphaRate = 0.0f;
       }
     } else {
       if (alpha > alphaTarget) {
-        alpha = alphaTarget;
-        alphaRate = 0.0f;
+	alpha = alphaTarget;
+	alphaRate = 0.0f;
       }
     }
   }
-    
+
   // set the tankNode color
   if ((flagType == Flags::PhantomZone) && isFlagActive()) {
     color[3] = 0.25f; // barely visible, regardless of teleporter proximity
-  } 
+  }
   else if (alpha == 0.0f) {
     color[3] = 0.0f;
   }
@@ -420,12 +420,12 @@ void Player::updateTranslucency(float dt)
     teleporterProximity =
       World::getWorld()->getProximity(state.pos, BZDBCache::tankRadius);
     color[3] = alpha * (1.0f - (0.75f * teleporterProximity));
-  } 
+  }
   tankNode->setColor(color);
-  
+
   return;
 }
-  
+
 
 void Player::updateTreads(float dt)
 {
@@ -446,7 +446,7 @@ void Player::updateTreads(float dt)
   const float rightOff = dt * (speedFactor + angularFactor);
   tankNode->addTreadOffsets(leftOff, rightOff);
 
-  return;  
+  return;
 }
 
 
@@ -473,8 +473,8 @@ void Player::setFlag(FlagType* _flag)
   updateFlagEffect(flagType);
   return;
 }
-  
-  
+
+
 void Player::updateFlagEffect(FlagType* effectFlag)
 {
   float FlagEffectTime = BZDB.eval(StateDatabase::BZDB_FLAGEFFECTTIME);
@@ -602,7 +602,7 @@ void Player::setVisualTeam (TeamColor visualTeam)
 
 
 void Player::addToScene(SceneDatabase* scene, TeamColor effectiveTeam,
-                        bool inCockpit, bool showIDL)
+			bool inCockpit, bool showIDL)
 {
   if (!isAlive() && !isExploding()) {
     return;
@@ -621,16 +621,16 @@ void Player::addToScene(SceneDatabase* scene, TeamColor effectiveTeam,
     else if (flagType == Flags::Narrow) tankNode->setNarrow();
     else if (flagType == Flags::Thief) tankNode->setThief();
     else tankNode->setNormal();
-  } 
+  }
   else {
     tankNode->setDimensions(dimensionsScale);
   }
-  
+
   tankNode->setInTheCockpit(inCockpit);
 
   // reset the clipping plane
   tankNode->setClipPlane(NULL);
-  
+
   if (isAlive()) {
     tankNode->setExplodeFraction(0.0f);
     scene->addDynamicNode(tankNode);
@@ -639,15 +639,15 @@ void Player::addToScene(SceneDatabase* scene, TeamColor effectiveTeam,
       // get which plane to compute IDL against
       GLfloat plane[4];
       const GLfloat a = atan2f(forward[1], forward[0]);
-      const Obstacle* obstacle = 
-        World::getWorld()->hitBuilding(state.pos, a, 
-                                       dimensions[0], dimensions[1],
-                                       dimensions[2]);
+      const Obstacle* obstacle =
+	World::getWorld()->hitBuilding(state.pos, a,
+				       dimensions[0], dimensions[1],
+				       dimensions[2]);
       if (obstacle && obstacle->isCrossing(state.pos, a,
-                                           dimensions[0], dimensions[1],
+					   dimensions[0], dimensions[1],
 					   dimensions[2], plane) ||
 	  World::getWorld()->crossingTeleporter(state.pos, a,
-                                                dimensions[0], dimensions[1],
+						dimensions[0], dimensions[1],
 						dimensions[2], plane)) {
 	// stick in interdimensional lights node
 	if (showIDL) {
@@ -658,7 +658,7 @@ void Player::addToScene(SceneDatabase* scene, TeamColor effectiveTeam,
 	// add clipping plane to tank node
 	if (!inCockpit) {
 	  tankNode->setClipPlane(plane);
-        }
+	}
       }
     }
     else if ((getFlag() == Flags::Burrow) && (getPosition()[2] < 0.0f)) {
@@ -670,8 +670,8 @@ void Player::addToScene(SceneDatabase* scene, TeamColor effectiveTeam,
     } // isCrossingWall()
   }   // isAlive()
   else if (isExploding() && state.pos[2] > ZERO_TOLERANCE) {
-    float t = (TimeKeeper::getTick() - explodeTime) / 
-              BZDB.eval(StateDatabase::BZDB_EXPLODETIME);
+    float t = (TimeKeeper::getTick() - explodeTime) /
+	      BZDB.eval(StateDatabase::BZDB_EXPLODETIME);
     if (t > 1.0f) {
       // FIXME
       //      setStatus(DeadStatus);
@@ -683,10 +683,10 @@ void Player::addToScene(SceneDatabase* scene, TeamColor effectiveTeam,
     tankNode->setExplodeFraction(t);
     scene->addDynamicNode(tankNode);
   }
-  
+
   if (isAlive() && (isPaused() || isNotResponding())) {
-    pausedSphere->move(state.pos, 
-                       1.5f * BZDBCache::tankRadius * dimensionsScale[0]);
+    pausedSphere->move(state.pos,
+		       1.5f * BZDBCache::tankRadius * dimensionsScale[0]);
     scene->addDynamicSphere(pausedSphere);
   }
 }
@@ -708,7 +708,7 @@ bool Player::needsToBeRendered(bool cloaked, bool showTreads)
   else {
     tankNode->setHidden(false); // show all
   }
-  
+
   return true;
 }
 
@@ -729,10 +729,10 @@ void Player::setLandingSpeed(float velocity)
   }
   // use a fixed decompression rate
   dimensionsRate[2] = 1.0f / squishTime;
-  
+
   // Setup so that a drop height of BZDB_GRAVITY squishes
   // by a factor of 1/11, when BZDB_SQUISHFACTOR is set to 1
-  // 
+  //
   // G = gravity;  V = velocity;  D = fall distance; K = factor
   //
   // V = sqrt (2 * D * G)
@@ -748,7 +748,7 @@ void Player::setLandingSpeed(float velocity)
     k = k * 4.0f;
   }
   dimensionsScale[2] = 1.0f / (1.0f + (k * (velocity * velocity)));
-  
+
   return;
 }
 
@@ -974,7 +974,7 @@ void Player::doDeadReckoning()
   if (getFlag() == Flags::Burrow) {
     groundLimit = BZDB.eval(StateDatabase::BZDB_BURROWDEPTH);
   }
-    
+
   if (predictedPos[2] < groundLimit) {
     predictedPos[2] = groundLimit;
     predictedVel[2] = 0.0f;
@@ -989,7 +989,7 @@ void Player::doDeadReckoning()
   }
   oldZSpeed = inputZSpeed;
   oldStatus = inputStatus;
-  
+
   move(predictedPos, predictedAzimuth);
   setVelocity(predictedVel);
 }
@@ -1016,7 +1016,7 @@ void Player::setDeadReckoning(float timestamp)
       offset = (offset > 0) ? maxToleratedJitter : -maxToleratedJitter;
       // and discard, but before adjust delta a little
       discardUpdate = true;
-    } 
+    }
     else if (offset > 0) {
       // fast alignment to the packet that take less travel time
       // that's for trying to have less lag
@@ -1042,7 +1042,7 @@ void Player::setDeadReckoning(float timestamp)
   // Future the state based on offset
   if (inputStatus & PlayerState::Paused) {
     // don't move when paused
-  } 
+  }
   else if (inputStatus & PlayerState::Falling) {
     // no control when falling
     float vx = fabsf(inputSpeed) * cosf(inputSpeedAzimuth);
@@ -1104,8 +1104,8 @@ void Player::setDeadReckoning()
   inputPos[1] = state.pos[1];
   inputPos[2] = state.pos[2];
   inputSpeed = hypotf(state.velocity[0], state.velocity[1]);
-  
-  const float xspeed = cosf(state.azimuth) * state.velocity[0]; 
+
+  const float xspeed = cosf(state.azimuth) * state.velocity[0];
   const float yspeed = sinf(state.azimuth) * state.velocity[1];
   if ((xspeed + yspeed) < 0.0f) {
     inputSpeed = -inputSpeed;
@@ -1116,7 +1116,7 @@ void Player::setDeadReckoning()
   } else {
     inputSpeedAzimuth = 0.0f;
   }
-  
+
   inputZSpeed = state.velocity[2];
   inputAzimuth = state.azimuth;
   inputAngVel = state.angVel;

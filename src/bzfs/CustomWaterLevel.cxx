@@ -69,7 +69,7 @@ void CustomWaterLevel::write(WorldInfo* world) const
   } else {
     world->addWaterLevel(height, NULL); // build the material later
   }
-  
+
   return;
 }
 

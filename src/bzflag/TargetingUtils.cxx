@@ -24,7 +24,7 @@ void TargetingUtils::getUnitVector( const float *src, const float *target, float
   unitVector[2] = 0.0f;
 
   float len = (float) sqrt(unitVector[0] * unitVector[0] +
-	                   unitVector[1] * unitVector[1]);
+			   unitVector[1] * unitVector[1]);
   unitVector[0] /= len;
   unitVector[1] /= len;
 }
@@ -37,7 +37,7 @@ float TargetingUtils::getTargetDistance( const float *src, const float *target )
   vec[1] = target[1] - src[1];
 
   return (float) sqrt(vec[0] * vec[0] +
-	              vec[1] * vec[1]);
+		      vec[1] * vec[1]);
 }
 
 float TargetingUtils::getTargetAzimuth( const float *src, const float *target )

@@ -246,7 +246,7 @@ GUIOptionsMenu::GUIOptionsMenu()
   option->createSlider(10);
   option->update();
   list.push_back(option);
-  
+
 
   initNavigation(list, 1, list.size()-1);
 }
@@ -313,7 +313,7 @@ void			GUIOptionsMenu::resize(int width, int height)
     int j = 0;
     for (itr = options->begin(); itr != options->end(); itr++) {
       if (uColor == (*itr)) {
-        ((HUDuiList*)list[i])->setIndex(j);
+	((HUDuiList*)list[i])->setIndex(j);
 	break;
       }
       j++;
@@ -435,13 +435,13 @@ void			GUIOptionsMenu::callback(HUDuiControl* w, void* data)
       }
     case 'T':
       {
-        BZDB.set("showTreads", list->getIndex() ? "1" : "0");
+	BZDB.set("showTreads", list->getIndex() ? "1" : "0");
 	break;
       }
     case 'm':
       {
-        int fade = list->getIndex();
-        TrackMarks::setUserFade(float(fade) / 10.0f);
+	int fade = list->getIndex();
+	TrackMarks::setUserFade(float(fade) / 10.0f);
 	break;
       }
   }

@@ -37,7 +37,7 @@ class CustomSphere : public WorldFileObstacle {
       MaterialCount
     };
     static const char* sideNames[MaterialCount];
-    
+
     int divisions;
     float texsize[2];
     bool hemisphere;

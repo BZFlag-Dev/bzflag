@@ -212,10 +212,10 @@ TriWallSceneNode::TriWallSceneNode(const GLfloat base[3],
     const float* point = getVertex(i);
     for (j = 0; j < 3; j++) {
       if (point[j] < mins[j]) {
-        mins[j] = point[j];
+	mins[j] = point[j];
       }
       if (point[j] > maxs[j]) {
-        maxs[j] = point[j];
+	maxs[j] = point[j];
       }
     }
   }
@@ -265,7 +265,7 @@ int			TriWallSceneNode::split(const float* _plane,
 				SceneNode*& front, SceneNode*& back) const
 {
   return WallSceneNode::splitWall(_plane, nodes[0]->vertex, nodes[0]->uv,
-                                  front, back);
+				  front, back);
 }
 
 
@@ -285,7 +285,7 @@ void			TriWallSceneNode::addShadowNodes(
 }
 
 
-void                    TriWallSceneNode::getExtents(float* _mins, float* _maxs) const
+void		    TriWallSceneNode::getExtents(float* _mins, float* _maxs) const
 {
   memcpy (_mins, mins, 3 * sizeof(float));
   memcpy (_maxs, maxs, 3 * sizeof(float));
@@ -293,8 +293,8 @@ void                    TriWallSceneNode::getExtents(float* _mins, float* _maxs)
 }
 
 
-bool                    TriWallSceneNode::inAxisBox(const float* boxMins,
-                                                    const float* boxMaxs) const
+bool		    TriWallSceneNode::inAxisBox(const float* boxMins,
+						    const float* boxMaxs) const
 {
   if ((mins[0] > boxMaxs[0]) || (maxs[0] < boxMins[0]) ||
       (mins[1] > boxMaxs[1]) || (maxs[1] < boxMins[1]) ||
@@ -312,13 +312,13 @@ bool                    TriWallSceneNode::inAxisBox(const float* boxMins,
 }
 
 
-int                     TriWallSceneNode::getVertexCount () const
+int		     TriWallSceneNode::getVertexCount () const
 {
   return 3;
 }
 
 
-const GLfloat*          TriWallSceneNode::getVertex (int vertex) const
+const GLfloat*	  TriWallSceneNode::getVertex (int vertex) const
 {
   return nodes[0]->getVertex(vertex);
 }

@@ -33,7 +33,7 @@ static const float treadWidth = treadOutside - treadInside;
 static const float treadRadius = 0.5f * treadHeight;
 static const float treadYCenter = treadInside + (0.5f * treadWidth);
 static const float treadLength = ((fullLength - treadHeight) * 2.0f) +
-                                 (M_PI * treadHeight);
+				 (M_PI * treadHeight);
 static const float treadTexCoordLen = (float)treadCount;
 
 static const float wheelRadius = treadRadius - (0.7f * treadThickness);
@@ -70,15 +70,15 @@ static void buildCasing(float Yoffset)
 {
   const float yLeft = Yoffset + (0.5f * casingWidth);
   const float yRight = Yoffset - (0.5f * casingWidth);
-  
+
   glShadeModel(GL_FLAT);
-  {  
+  {
     const float xc = wheelSpacing * 1.5f;
     const float zb = treadThickness;
     const float zt = treadHeight - treadThickness;
     const float ty = 0.25f; // effective, the texture scale factor
     const float tx = (2.0f * ty) * (xc / (zt - zb));
-    
+
     // the left and right quad surface
     glBegin(GL_QUADS);
     {
@@ -106,7 +106,7 @@ static void buildCasing(float Yoffset)
     glEnd();
   }
   glShadeModel(GL_SMOOTH);
-  
+
   return;
 }
 
@@ -137,7 +137,7 @@ static void buildTread(float Yoffset, int divisions)
 
   // the outside of the tread
   glBegin(GL_QUAD_STRIP);
-  {  
+  {
     // first curve
     for (i = 0; i < ((divisions / 2) + 1); i++) {
       const float ang = (astep * (float)i) - (M_PI / 2.0f);
@@ -182,12 +182,12 @@ static void buildTread(float Yoffset, int divisions)
     doVertex3f(x, yRight, z);
     doTexCoord2f(tx4, ty0);
     doVertex3f(x, yLeft, z);
-  }  
+  }
   glEnd();
-  
+
   // the inside of the tread
   glBegin(GL_QUAD_STRIP);
-  {  
+  {
     // first curve
     for (i = 0; i < ((divisions / 2) + 1); i++) {
       const float ang = (astep * (float)i) - (M_PI / 2.0f);
@@ -232,29 +232,29 @@ static void buildTread(float Yoffset, int divisions)
     doVertex3f(x, yLeft, z);
     doTexCoord2f(tx4, ty2);
     doVertex3f(x, yRight, z);
-  }  
+  }
   glEnd();
 
   glShadeModel(GL_FLAT);
-  {  
+  {
     // the right edge
     doNormal3f(0.0f, -1.0f, 0.0f);
     glBegin(GL_QUAD_STRIP);
-    {  
+    {
       // first outside curve
       for (i = 0; i < ((divisions / 2) + 1); i++) {
-        const float ang = (astep * (float)i) - (M_PI / 2.0f);
-        const float cos_val = cosf(ang);
-        const float sin_val = sinf(ang);
-        tx = tx0 + ((tx1 - tx0) * ((float)i * divScale));
-        doTexCoord2f(tx, ty2);
-        x = (cos_val * (treadRadius - treadThickness)) + (wheelSpacing * 1.5f);
-        z = (sin_val * (treadRadius - treadThickness)) + treadRadius;
-        doVertex3f(x, yRight, z);
-        doTexCoord2f(tx, ty1);
-        x = (cos_val * treadRadius) + (wheelSpacing * 1.5f);
-        z = (sin_val * treadRadius) + treadRadius;
-        doVertex3f(x, yRight, z);
+	const float ang = (astep * (float)i) - (M_PI / 2.0f);
+	const float cos_val = cosf(ang);
+	const float sin_val = sinf(ang);
+	tx = tx0 + ((tx1 - tx0) * ((float)i * divScale));
+	doTexCoord2f(tx, ty2);
+	x = (cos_val * (treadRadius - treadThickness)) + (wheelSpacing * 1.5f);
+	z = (sin_val * (treadRadius - treadThickness)) + treadRadius;
+	doVertex3f(x, yRight, z);
+	doTexCoord2f(tx, ty1);
+	x = (cos_val * treadRadius) + (wheelSpacing * 1.5f);
+	z = (sin_val * treadRadius) + treadRadius;
+	doVertex3f(x, yRight, z);
       }
       // top edge
       doTexCoord2f(tx2, ty2);
@@ -266,18 +266,18 @@ static void buildTread(float Yoffset, int divisions)
       doVertex3f(x, yRight, z);
       // second outside curve
       for (i = 0; i < ((divisions / 2) + 1); i++) {
-        const float ang = (astep * (float)i) + (M_PI / 2.0f);
-        const float cos_val = cosf(ang);
-        const float sin_val = sinf(ang);
-        tx = tx2 + ((tx3 - tx2) * ((float)i * divScale));
-        doTexCoord2f(tx, ty2);
-        x = (cos_val * (treadRadius - treadThickness)) - (wheelSpacing * 1.5f);
-        z = (sin_val * (treadRadius - treadThickness)) + treadRadius;
-        doVertex3f(x, yRight, z);
-        doTexCoord2f(tx, ty1);
-        x = (cos_val * treadRadius) - (wheelSpacing * 1.5f);
-        z = (sin_val * treadRadius) + treadRadius;
-        doVertex3f(x, yRight, z);
+	const float ang = (astep * (float)i) + (M_PI / 2.0f);
+	const float cos_val = cosf(ang);
+	const float sin_val = sinf(ang);
+	tx = tx2 + ((tx3 - tx2) * ((float)i * divScale));
+	doTexCoord2f(tx, ty2);
+	x = (cos_val * (treadRadius - treadThickness)) - (wheelSpacing * 1.5f);
+	z = (sin_val * (treadRadius - treadThickness)) + treadRadius;
+	doVertex3f(x, yRight, z);
+	doTexCoord2f(tx, ty1);
+	x = (cos_val * treadRadius) - (wheelSpacing * 1.5f);
+	z = (sin_val * treadRadius) + treadRadius;
+	doVertex3f(x, yRight, z);
       }
       // bottom edge
       doTexCoord2f(tx4, ty2);
@@ -287,27 +287,27 @@ static void buildTread(float Yoffset, int divisions)
       doTexCoord2f(tx4, ty1);
       z = 0.0f;
       doVertex3f(x, yRight, z);
-    }  
+    }
     glEnd();
-    
+
     // the left edge
     doNormal3f(0.0f, +1.0f, 0.0f);
     glBegin(GL_QUAD_STRIP);
-    {  
+    {
       // first outside curve
       for (i = 0; i < ((divisions / 2) + 1); i++) {
-        const float ang = (astep * (float)i) - (M_PI / 2.0f);
-        const float cos_val = cosf(ang);
-        const float sin_val = sinf(ang);
-        tx = tx0 + ((tx1 - tx0) * ((float)i * divScale));
-        doTexCoord2f(tx, ty4);
-        x = (cos_val * treadRadius) + (wheelSpacing * 1.5f);
-        z = (sin_val * treadRadius) + treadRadius;
-        doVertex3f(x, yLeft, z);
-        doTexCoord2f(tx, ty3);
-        x = (cos_val * (treadRadius - treadThickness)) + (wheelSpacing * 1.5f);
-        z = (sin_val * (treadRadius - treadThickness)) + treadRadius;
-        doVertex3f(x, yLeft, z);
+	const float ang = (astep * (float)i) - (M_PI / 2.0f);
+	const float cos_val = cosf(ang);
+	const float sin_val = sinf(ang);
+	tx = tx0 + ((tx1 - tx0) * ((float)i * divScale));
+	doTexCoord2f(tx, ty4);
+	x = (cos_val * treadRadius) + (wheelSpacing * 1.5f);
+	z = (sin_val * treadRadius) + treadRadius;
+	doVertex3f(x, yLeft, z);
+	doTexCoord2f(tx, ty3);
+	x = (cos_val * (treadRadius - treadThickness)) + (wheelSpacing * 1.5f);
+	z = (sin_val * (treadRadius - treadThickness)) + treadRadius;
+	doVertex3f(x, yLeft, z);
       }
       // top edge
       doTexCoord2f(tx2, ty4);
@@ -319,18 +319,18 @@ static void buildTread(float Yoffset, int divisions)
       doVertex3f(x, yLeft, z);
       // second outside curve
       for (i = 0; i < ((divisions / 2) + 1); i++) {
-        const float ang = (astep * (float)i) + (M_PI / 2.0f);
-        const float cos_val = cosf(ang);
-        const float sin_val = sinf(ang);
-        tx = tx2 + ((tx3 - tx2) * ((float)i * divScale));
-        doTexCoord2f(tx, ty4);
-        x = (cos_val * treadRadius) - (wheelSpacing * 1.5f);
-        z = (sin_val * treadRadius) + treadRadius;
-        doVertex3f(x, yLeft, z);
-        doTexCoord2f(tx, ty3);
-        x = (cos_val * (treadRadius - treadThickness)) - (wheelSpacing * 1.5f);
-        z = (sin_val * (treadRadius - treadThickness)) + treadRadius;
-        doVertex3f(x, yLeft, z);
+	const float ang = (astep * (float)i) + (M_PI / 2.0f);
+	const float cos_val = cosf(ang);
+	const float sin_val = sinf(ang);
+	tx = tx2 + ((tx3 - tx2) * ((float)i * divScale));
+	doTexCoord2f(tx, ty4);
+	x = (cos_val * treadRadius) - (wheelSpacing * 1.5f);
+	z = (sin_val * treadRadius) + treadRadius;
+	doVertex3f(x, yLeft, z);
+	doTexCoord2f(tx, ty3);
+	x = (cos_val * (treadRadius - treadThickness)) - (wheelSpacing * 1.5f);
+	z = (sin_val * (treadRadius - treadThickness)) + treadRadius;
+	doVertex3f(x, yLeft, z);
       }
       // bottom edge
       doTexCoord2f(tx4, ty4);
@@ -340,11 +340,11 @@ static void buildTread(float Yoffset, int divisions)
       doTexCoord2f(tx4, ty3);
       z = treadThickness;
       doVertex3f(x, yLeft, z);
-    }  
+    }
     glEnd();
   }
   glShadeModel(GL_SMOOTH);
-  
+
   return;
 }
 
@@ -389,34 +389,34 @@ static void buildWheel(const float pos[3], float angle, int divisions)
     glBegin(GL_TRIANGLE_FAN);
     {
       for (i = 0; i < divisions; i++) {
-        const float ang = astep * (float)i;
-        const float cos_val = cosf(-ang);
-        const float sin_val = sinf(-ang);
-        tx = 0.5f + (cosf(angle - ang) * wheelInsideTexRad);
-        ty = 0.5f + (sinf(angle - ang) * wheelInsideTexRad);
-        doTexCoord2f(tx, ty);
-        x = (cos_val * wheelRadius) + pos[0];
-        z = (sin_val * wheelRadius) + pos[2];
-        doVertex3f(x, yLeft, z);
-        
+	const float ang = astep * (float)i;
+	const float cos_val = cosf(-ang);
+	const float sin_val = sinf(-ang);
+	tx = 0.5f + (cosf(angle - ang) * wheelInsideTexRad);
+	ty = 0.5f + (sinf(angle - ang) * wheelInsideTexRad);
+	doTexCoord2f(tx, ty);
+	x = (cos_val * wheelRadius) + pos[0];
+	z = (sin_val * wheelRadius) + pos[2];
+	doVertex3f(x, yLeft, z);
+
       }
     }
     glEnd();
-    
+
     // the right face
     doNormal3f(0.0f, -1.0f, 0.0f);
     glBegin(GL_TRIANGLE_FAN);
     {
       for (i = 0; i < divisions; i++) {
-        const float ang = astep * (float)i;
-        const float cos_val = cosf(+ang);
-        const float sin_val = sinf(+ang);
-        tx = 0.5f + (cosf(angle + ang) * 0.4f);
-        ty = 0.5f + (sinf(angle + ang) * 0.4f);
-        doTexCoord2f(tx, ty);
-        x = (cos_val * wheelRadius) + pos[0];
-        z = (sin_val * wheelRadius) + pos[2];
-        doVertex3f(x, yRight, z);
+	const float ang = astep * (float)i;
+	const float cos_val = cosf(+ang);
+	const float sin_val = sinf(+ang);
+	tx = 0.5f + (cosf(angle + ang) * 0.4f);
+	ty = 0.5f + (sinf(angle + ang) * 0.4f);
+	doTexCoord2f(tx, ty);
+	x = (cos_val * wheelRadius) + pos[0];
+	z = (sin_val * wheelRadius) + pos[2];
+	doVertex3f(x, yRight, z);
       }
     }
     glEnd();

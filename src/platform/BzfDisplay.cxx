@@ -39,8 +39,8 @@ BzfDisplay::BzfDisplay() : passWidth(640), passHeight(480),
 				numResolutions(0),
 				defaultResolution(-1),
 				currentResolution(-1),
-			        resolutions(NULL),
-			        modeIndex(-1)
+				resolutions(NULL),
+				modeIndex(-1)
 {
   // do nothing
 }

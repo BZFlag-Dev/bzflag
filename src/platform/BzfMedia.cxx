@@ -471,11 +471,11 @@ float*			BzfMedia::doReadSound(const std::string& filename,
 #endif
 
 // Setting Audio Driver
-void        BzfMedia::setDriver(std::string) {
+void	BzfMedia::setDriver(std::string) {
 };
 
 // Setting Audio Device
-void        BzfMedia::setDevice(std::string) {
+void	BzfMedia::setDevice(std::string) {
 };
 
 // Local Variables: ***

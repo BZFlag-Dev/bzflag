@@ -73,7 +73,7 @@ bool URLManager::getURL ( const std::string, std::string&)
 		DEBUG1("Something wrong with CURL; Error: %d",result);
 		return false;
 	}
-	
+
 	if (!theData)
 		return false;
 
@@ -81,7 +81,7 @@ bool URLManager::getURL ( const std::string, std::string&)
 	memcpy(newData,theData,theLen);
 
 	newData[theLen] = 0;
-	
+
 	data = newData;
 	free(newData);
 
@@ -135,7 +135,7 @@ bool URLManager::getURL (const std::string, void **, unsigned int&)
 	memcpy(*data,theData,theLen);
 	size = theLen;
 	return true;
-#endif 
+#endif
 	return false;
 }
 

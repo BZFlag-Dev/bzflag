@@ -35,7 +35,7 @@ const char* CustomArc::sideNames[MaterialCount] = {
   "startside",
   "endside"
 };
-    
+
 
 CustomArc::CustomArc()
 {
@@ -103,7 +103,7 @@ bool CustomArc::read(const char *cmd, std::istream& input)
     }
   }
   else if ((strcasecmp(cmd, "ricosuavez") == 0) ||
-           (strcasecmp(cmd, "smoothbounce") == 0)) {
+	   (strcasecmp(cmd, "smoothbounce") == 0)) {
     smoothBounce = true;
   }
   else if (strcasecmp(cmd, "flatshading") == 0) {
@@ -115,7 +115,7 @@ bool CustomArc::read(const char *cmd, std::istream& input)
     }
   }
   else if (parseMaterialsByName(cmd, input, materials, sideNames,
-                                MaterialCount, materror)) {
+				MaterialCount, materror)) {
     if (materror) {
       return false;
     }
@@ -136,9 +136,9 @@ void CustomArc::write(WorldInfo *world) const
     mats[i] = MATERIALMGR.addMaterial(&materials[i]);
   }
   ArcObstacle* arc = new ArcObstacle(pos, size, rotation, angle, ratio,
-                                     texsize, useNormals, divisions, mats,
-                                     phydrv,
-                                     smoothBounce, driveThrough, shootThrough);
+				     texsize, useNormals, divisions, mats,
+				     phydrv,
+				     smoothBounce, driveThrough, shootThrough);
   if (arc->isValid()) {
     arc->getMesh()->setIsLocal(true);
     world->addArc(arc);

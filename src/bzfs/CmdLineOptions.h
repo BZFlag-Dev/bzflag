@@ -52,9 +52,9 @@ struct CmdLineOptions
   CmdLineOptions()
   : wksPort(ServerPort), gameStyle(PlainGameStyle),
     rabbitSelection(ScoreRabbitSelection), msgTimer(0), spamWarnMax(0),
-    servermsg(""), advertisemsg(""), worldFile(""), 
-    pingInterface(""), password(""), 
-    listServerOverridden(false), publicizedTitle(""), publicizedAddress(""), 
+    servermsg(""), advertisemsg(""), worldFile(""),
+    pingInterface(""), password(""),
+    listServerOverridden(false), publicizedTitle(""), publicizedAddress(""),
     suppressMasterBanList(false), masterBanListOverridden(false),
     maxShots(1), maxTeamScore(0), maxPlayerScore(0),
     numExtraFlags(0), teamKillerKickRatio(0),
@@ -111,7 +111,7 @@ struct CmdLineOptions
   bool			suppressMasterBanList;
   bool			masterBanListOverridden;
   std::vector<std::string>		masterBanListURL;
-  
+
   uint16_t		maxShots;
   int			maxTeamScore;
   int			maxPlayerScore;
@@ -188,8 +188,8 @@ struct CmdLineOptions
   int			citySize;
   int			numTeamFlags[NumTeams];
 
-  std::string           cacheURL;
-  std::string           cacheOut;
+  std::string	   cacheURL;
+  std::string	   cacheOut;
 };
 
 

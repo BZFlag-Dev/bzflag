@@ -26,15 +26,15 @@ class AdnsHandler {
   ~AdnsHandler();
 
   // return true if host is resolved
-  bool        checkDNSResolution();
+  bool	checkDNSResolution();
   const char *getHostname();
   static void startupResolver();
  private:
-  int               index;
+  int	       index;
   // peer's network hostname (malloc/free'd)
-  char             *hostname;
+  char	     *hostname;
   // adns query state for while we're looking up hostname
-  adns_query        adnsQuery;
+  adns_query	adnsQuery;
   static adns_state adnsState;
 };
 

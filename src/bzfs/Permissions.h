@@ -86,34 +86,34 @@ public:
 		// make sure it's the last real right
     };
 
-  void        setName(const char* callSign);
+  void	setName(const char* callSign);
 
   std::string getName();
 
-  bool        isAccessVerified() const;
-  bool        gotAccessFailure();
-  void        setLoginFail();
-  bool        passwordAttemptsMax();
-  bool        isPasswordMatching(const char* pwd);
-  void        setPasswd(const std::string& pwd);
-  void        setAdmin();
-  bool        isAdmin() const;
+  bool	isAccessVerified() const;
+  bool	gotAccessFailure();
+  void	setLoginFail();
+  bool	passwordAttemptsMax();
+  bool	isPasswordMatching(const char* pwd);
+  void	setPasswd(const std::string& pwd);
+  void	setAdmin();
+  bool	isAdmin() const;
 
-  void        setPermissionRights();
-  void        reloadInfo();
+  void	setPermissionRights();
+  void	reloadInfo();
 
-  bool        hasGroup(const std::string& group);
-  bool        addGroup(const std::string &group);
-  bool        removeGroup(const std::string& group);
-  bool        canSet(const std::string& group);
+  bool	hasGroup(const std::string& group);
+  bool	addGroup(const std::string &group);
+  bool	removeGroup(const std::string& group);
+  bool	canSet(const std::string& group);
 
-  bool        hasPerm(AccessPerm right);
-  bool        isRegistered() const;
-  bool        isIdentifyRequired();
-  bool        isAllowedToEnter();
+  bool	hasPerm(AccessPerm right);
+  bool	isRegistered() const;
+  bool	isIdentifyRequired();
+  bool	isAllowedToEnter();
   uint8_t     getPlayerProperties();
-  void        storeInfo(const char* pwd);
-  bool        exists();
+  void	storeInfo(const char* pwd);
+  bool	exists();
   static PlayerAccessInfo &getUserInfo(const std::string &nick);
   static bool readGroupsFile(const std::string &filename);
   static bool readPermsFile(const std::string &filename);
@@ -126,7 +126,7 @@ private:
   bool				verified;
   TimeKeeper			loginTime;
   int				loginAttempts;
-  bool                          Admin;
+  bool			  Admin;
 
   // number of times they have tried to /password
   int passwordAttempts;

@@ -43,9 +43,9 @@ class DXJoystick : public BzfJoystick {
     bool	joystick() const;
     void	getJoy(int& x, int& y);
     unsigned long getJoyButtons();
-    void        getJoyDevices(std::vector<std::string> &list) const;
-    bool        ffHasRumble() const;
-    void        ffRumble(int count,
+    void	getJoyDevices(std::vector<std::string> &list) const;
+    bool	ffHasRumble() const;
+    void	ffRumble(int count,
 			 float delay, float duration,
 			 float strong_motor, float weak_motor=0.0f);
 

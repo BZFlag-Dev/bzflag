@@ -43,7 +43,7 @@
 #define SFX_TEAMGRAB	21		/* grabbed an opponents team flag */
 #define	SFX_HUNT	22		/* hunting sound */
 #define SFX_HUNT_SELECT	23		/* hunt target selected */
-#define SFX_RUNOVER     24              /* steamroller sound */
+#define SFX_RUNOVER     24	      /* steamroller sound */
 #define SFX_THIEF       25		/* thief sound */
 #define SFX_BURROW	26		/* burrow sound */
 #define SFX_MESSAGE_PRIVATE	27	/* private message received */

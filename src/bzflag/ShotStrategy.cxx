@@ -105,8 +105,8 @@ const Obstacle* ShotStrategy::getFirstBuilding(const Ray& ray,
     if (!wall.isShootThrough()) {
       const float wallt = wall.intersect(ray);
       if (wallt > min && wallt < t) {
-        t = wallt;
-        closestObstacle = &wall;
+	t = wallt;
+	closestObstacle = &wall;
       }
     }
     it++;
@@ -120,19 +120,19 @@ const Obstacle* ShotStrategy::getFirstBuilding(const Ray& ray,
     if (!obs->isShootThrough()) {
       const float timet = obs->intersect(ray);
       if (obs->getType() == Teleporter::getClassName()) {
-        const Teleporter* tele = (const Teleporter*) obs;
-        int face;
+	const Teleporter* tele = (const Teleporter*) obs;
+	int face;
 	if ((timet > min) && (timet < t) &&
-            (tele->isTeleported(ray, face) < 0.0f)) {
+	    (tele->isTeleported(ray, face) < 0.0f)) {
 	  t = timet;
 	  closestObstacle = obs;
-        }
+	}
       }
       else {
 	if ((timet > min) && (timet < t)) {
 	  t = timet;
 	  closestObstacle = obs;
-        }
+	}
       }
     }
   }
@@ -144,7 +144,7 @@ void ShotStrategy::reflect(float* v, const float* n) // const
 {
   // normal is assumed to be normalized, v needn't be
   float d = -2.0f * ((n[0] * v[0]) + (n[1] * v[1]) + (n[2] * v[2]));
-  
+
   if (d >= 0.0f) {
     // normal reflection
     v[0] += d * n[0];
@@ -164,7 +164,7 @@ void ShotStrategy::reflect(float* v, const float* n) // const
     v[1] *= scale;
     v[2] *= scale;
   }
-  
+
   return;
 }
 

@@ -90,7 +90,7 @@ int DynamicColorManager::findColor(const std::string& dyncol) const
   else {
     for (int i = 0; i < (int)colors.size(); i++) {
       if (colors[i]->getName() == dyncol) {
-        return i;
+	return i;
       }
     }
     return -1;
@@ -306,12 +306,12 @@ void DynamicColor::update (float t)
       const clampParams& clamp = channel.clampUps[i];
       float upTime = (t - clamp.offset);
       if (upTime < 0.0f) {
-        upTime -= clamp.period * floorf(upTime / clamp.period);
+	upTime -= clamp.period * floorf(upTime / clamp.period);
       }
       upTime = fmodf (upTime, clamp.period);
       if (upTime < clamp.width) {
-        clampUp = true;
-        break;
+	clampUp = true;
+	break;
       }
     }
 
@@ -320,12 +320,12 @@ void DynamicColor::update (float t)
       const clampParams& clamp = channel.clampDowns[i];
       float downTime = (t - clamp.offset);
       if (downTime < 0.0f) {
-        downTime -= clamp.period * floorf(downTime / clamp.period);
+	downTime -= clamp.period * floorf(downTime / clamp.period);
       }
       downTime = fmodf (downTime, clamp.period);
       if (downTime < clamp.width) {
-        clampDown = true;
-        break;
+	clampDown = true;
+	break;
       }
     }
 
@@ -346,21 +346,21 @@ void DynamicColor::update (float t)
     else if (channel.sinusoids.size() > 0) {
       float value = 0.0f;
       for (i = 0; i < channel.sinusoids.size(); i++) {
-        const sinusoidParams& s = channel.sinusoids[i];
-        value += s.weight * cosf (((t - s.offset) / s.period) * (M_PI * 2.0f));
+	const sinusoidParams& s = channel.sinusoids[i];
+	value += s.weight * cosf (((t - s.offset) / s.period) * (M_PI * 2.0f));
       }
       // center the factor
       factor = 0.5f + (0.5f * value);
       if (factor < 0.0f) {
-        factor = 0.0f;
+	factor = 0.0f;
       }
       else if (factor > 1.0f) {
-        factor = 1.0f;
+	factor = 1.0f;
       }
     }
 
     color[c] = (channel.minValue * (1.0f - factor)) +
-               (channel.maxValue * factor);
+	       (channel.maxValue * factor);
   }
 
   return;
@@ -374,7 +374,7 @@ void * DynamicColor::pack(void *buf)
   for (int c = 0; c < 4; c++) {
     ChannelParams& p = channels[c];
     unsigned int i;
-    
+
     buf = nboPackFloat (buf, p.minValue);
     buf = nboPackFloat (buf, p.maxValue);
 
@@ -408,11 +408,11 @@ void * DynamicColor::pack(void *buf)
 void * DynamicColor::unpack(void *buf)
 {
   buf = nboUnpackStdString(buf, name);
-    
+
   for (int c = 0; c < 4; c++) {
     ChannelParams& p = channels[c];
     unsigned int i, size;
-    
+
     buf = nboUnpackFloat (buf, p.minValue);
     buf = nboUnpackFloat (buf, p.maxValue);
 
@@ -479,23 +479,23 @@ void DynamicColor::print(std::ostream& out, int /*level*/)
     const ChannelParams& p = channels[c];
     if ((p.minValue != 0.0f) || (p.maxValue != 1.0f)) {
       out << "  " << colorStr << " limits "
-          << p.minValue << " " << p.maxValue << std::endl;
+	  << p.minValue << " " << p.maxValue << std::endl;
     }
     unsigned int i;
     for (i = 0; i < p.sinusoids.size(); i++) {
       const sinusoidParams& f = p.sinusoids[i];
       out << "  " << colorStr << " sinusoid "
-          << f.period << " " << f.offset << " " << f.weight << std::endl;
+	  << f.period << " " << f.offset << " " << f.weight << std::endl;
     }
     for (i = 0; i < p.clampUps.size(); i++) {
       const clampParams& f = p.clampUps[i];
       out << "  " << colorStr << " clampup "
-          << f.period << " " << f.offset << " " << f.width << std::endl;
+	  << f.period << " " << f.offset << " " << f.width << std::endl;
     }
     for (i = 0; i < p.clampDowns.size(); i++) {
       const clampParams& f = p.clampDowns[i];
       out << "  " << colorStr << " clampdown "
-          << f.period << " " << f.offset << " " << f.width << std::endl;
+	  << f.period << " " << f.offset << " " << f.width << std::endl;
     }
   }
 

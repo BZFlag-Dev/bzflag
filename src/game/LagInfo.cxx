@@ -40,7 +40,7 @@ void LagInfo::getLagStats(char* msg) {
     return;
 
   // don't wait for ping to come back
-  int lag          = int(lagavg * 1000);
+  int lag	  = int(lagavg * 1000);
   if (pingpending) {
     float timepassed = info->now - lastping;
     int lastLag      = int((lagavg * (1 - lagalpha) + lagalpha * timepassed)

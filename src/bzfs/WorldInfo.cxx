@@ -126,8 +126,8 @@ void WorldInfo::addTeleporter(float x, float y, float z, float r, float w, float
 }
 
 void WorldInfo::addBase(float x, float y, float z, float r,
-                        float w, float d, float h, int color,
-                        bool /* drive */, bool /* shoot */)
+			float w, float d, float h, int color,
+			bool /* drive */, bool /* shoot */)
 {
   if ((z + h) > maxHeight)
     maxHeight = z+h;
@@ -214,7 +214,7 @@ void WorldInfo::addZone(const CustomZone *zone)
 }
 
 void WorldInfo::addWeapon(const FlagType *type, const float *origin, float direction,
-                          float initdelay, const std::vector<float> &delay, TimeKeeper &sync)
+			  float initdelay, const std::vector<float> &delay, TimeKeeper &sync)
 {
   worldWeapons.add(type, origin, direction, initdelay, delay, sync);
 }
@@ -246,7 +246,7 @@ void WorldInfo::makeWaterMaterial()
   material.setUseSphereMap(false);
   waterMatRef = MATERIALMGR.addMaterial(&material);
 
-  return;  
+  return;
 }
 
 float WorldInfo::getWaterLevel() const
@@ -273,13 +273,13 @@ WorldWeapons& WorldInfo::getWorldWeapons()
   return worldWeapons;
 }
 
-void                    WorldInfo::loadCollisionManager()
+void		    WorldInfo::loadCollisionManager()
 {
   COLLISIONMGR.load(meshes, boxes, bases, pyramids, teleporters);
   return;
 }
 
-void                    WorldInfo::checkCollisionManager()
+void		    WorldInfo::checkCollisionManager()
 {
   if (COLLISIONMGR.needReload()) {
     // reload the collision grid
@@ -318,8 +318,8 @@ bool WorldInfo::rectHitCirc(float dx, float dy, const float *p, float r) const
   return true;
 }
 
-bool WorldInfo::inRect(const float *p1, float angle, const float *size, 
-                       float x, float y, float r) const
+bool WorldInfo::inRect(const float *p1, float angle, const float *size,
+		       float x, float y, float r) const
 {
   // translate origin
   float pa[2];
@@ -338,8 +338,8 @@ bool WorldInfo::inRect(const float *p1, float angle, const float *size,
 
 
 InBuildingType WorldInfo::inCylinderNoOctree(Obstacle **location,
-                                             float x, float y, float z,
-                                             float radius, float height) const
+					     float x, float y, float z,
+					     float radius, float height) const
 {
   if (height < Epsilon) {
     height = Epsilon;
@@ -352,7 +352,7 @@ InBuildingType WorldInfo::inCylinderNoOctree(Obstacle **location,
     BaseBuilding* base = *base_it;
     if (base->inCylinder(pos, radius, height)) {
       if (location != NULL) {
-        *location = base;
+	*location = base;
       }
       return IN_BASE;
     }
@@ -362,13 +362,13 @@ InBuildingType WorldInfo::inCylinderNoOctree(Obstacle **location,
     BoxBuilding* box = *box_it;
     if (box->inCylinder(pos, radius, height)) {
       if (location != NULL) {
-        *location = box;
+	*location = box;
       }
       if (box->isDriveThrough()) {
-        return IN_BOX_DRIVETHROUGH;
+	return IN_BOX_DRIVETHROUGH;
       }
       else {
-        return IN_BOX_NOTDRIVETHROUGH;
+	return IN_BOX_NOTDRIVETHROUGH;
       }
     }
   }
@@ -377,7 +377,7 @@ InBuildingType WorldInfo::inCylinderNoOctree(Obstacle **location,
     PyramidBuilding* pyr = *pyr_it;
     if (pyr->inCylinder(pos, radius, height)) {
       if (location != NULL) {
-        *location = pyr;
+	*location = pyr;
       }
       return IN_PYRAMID;
     }
@@ -387,7 +387,7 @@ InBuildingType WorldInfo::inCylinderNoOctree(Obstacle **location,
     TetraBuilding* tetra = *tetra_it;
     if (tetra->inCylinder(pos, radius, height)) {
       if (location != NULL) {
-        *location = tetra;
+	*location = tetra;
       }
       return IN_TETRA;
     }
@@ -397,7 +397,7 @@ InBuildingType WorldInfo::inCylinderNoOctree(Obstacle **location,
     Teleporter* tele = *tele_it;
     if (tele->inCylinder(pos, radius, height)) {
       if (location != NULL) {
-        *location = tele;
+	*location = tele;
       }
       return IN_TELEPORTER;
     }
@@ -412,8 +412,8 @@ InBuildingType WorldInfo::inCylinderNoOctree(Obstacle **location,
 
 
 InBuildingType WorldInfo::cylinderInBuilding(const Obstacle **location,
-				             const float* pos, float radius,
-                                             float height) const
+					     const float* pos, float radius,
+					     float height) const
 {
   if (height < Epsilon) {
     height = Epsilon;
@@ -435,16 +435,16 @@ InBuildingType WorldInfo::cylinderInBuilding(const Obstacle **location,
 }
 
 InBuildingType WorldInfo::cylinderInBuilding(const Obstacle **location,
-				             float x, float y, float z, float radius,
-                                             float height) const
+					     float x, float y, float z, float radius,
+					     float height) const
 {
   const float pos[3] = {x, y, z};
   return cylinderInBuilding (location, pos, radius, height);
 }
 
 InBuildingType WorldInfo::boxInBuilding(const Obstacle **location,
-				        const float* pos, float angle,
-				        float width, float breadth, float height) const
+					const float* pos, float angle,
+					float width, float breadth, float height) const
 {
   if (height < Epsilon) {
     height = Epsilon;
@@ -521,7 +521,7 @@ bool WorldInfo::getZonePoint(const std::string &qualifier, float *pt) const
 }
 
 bool WorldInfo::getSafetyPoint(const std::string &qualifier,
-                               const float *pos, float *pt) const
+			       const float *pos, float *pt) const
 {
   const Obstacle *loc;
   InBuildingType type;
@@ -626,7 +626,7 @@ int WorldInfo::packDatabase(const BasesList* baseList)
       databasePtr = nboPackUShort(databasePtr, WorldCodeMesh);
       databasePtr = mesh.pack(databasePtr);
       if (debugLevel > 3) {
-        mesh.print(std::cout, 3);
+	mesh.print(std::cout, 3);
       }
     }
   }
@@ -758,7 +758,7 @@ int WorldInfo::packDatabase(const BasesList* baseList)
   uLongf gzDBlen = databaseSize + (databaseSize/512) + 12;
   char* gzDB = new char[gzDBlen];
   int code = compress2 ((Bytef*)gzDB, &gzDBlen,
-                        (Bytef*)database, databaseSize, 9);
+			(Bytef*)database, databaseSize, 9);
   if (code != Z_OK) {
     printf ("Could not create compressed world database: %i\n", code);
     exit (1);
@@ -772,7 +772,7 @@ int WorldInfo::packDatabase(const BasesList* baseList)
   delete[] oldDB;
 
   DEBUG1 ("Map size: uncompressed = %i, compressed = %i\n",
-           uncompressedSize, databaseSize);
+	   uncompressedSize, databaseSize);
 
   return 1;
 }

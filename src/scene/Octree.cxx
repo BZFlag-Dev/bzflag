@@ -59,11 +59,11 @@ inline static void squeezeChildren (OctreeNode** children)
     if (children[dst] == NULL) {
       // replace with the next non-NULL
       for (int src = (dst + 1); src < 8; src++) {
-        if (children[src] != NULL) {
-          children[dst] = children[src];
-          children[src] = NULL;
-          break;
-        }
+	if (children[src] != NULL) {
+	  children[dst] = children[src];
+	  children[src] = NULL;
+	  break;
+	}
       }
     }
   }
@@ -110,16 +110,16 @@ void Octree::clear ()
 void Octree::addNodes (SceneNode** list, int listSize, int depth, int elements)
 {
   int i;
-  
+
   if (root) {
     clear();
   }
-  
+
   // just in case
   for (i = 0; i < listSize; i++) {
     list[i]->octreeState = SceneNode::OctreeCulled;
   }
-  
+
   maxDepth = depth;
   minElements = elements;
 
@@ -134,12 +134,12 @@ void Octree::addNodes (SceneNode** list, int listSize, int depth, int elements)
 
   // making babies
   root = new OctreeNode(0, mins, maxs, list, listSize);
-  
+
   leafNodes = 0;
   totalNodes = 0;
   totalElements = 0;
   root->tallyStats();
-  
+
   DEBUG2 ("Octree scene nodes = %i\n", listSize);
   for (i = 0; i < 3; i++) {
     DEBUG2 ("  extent[%i] = %f, %f\n", i, mins[i], maxs[i]);
@@ -153,7 +153,7 @@ void Octree::addNodes (SceneNode** list, int listSize, int depth, int elements)
 
 
 int Octree::getFrustumList (SceneNode** list, int listSize,
-                            const Frustum* frustum) const
+			    const Frustum* frustum) const
 {
   if (!root) {
     return 0;
@@ -162,7 +162,7 @@ int Octree::getFrustumList (SceneNode** list, int listSize,
   // FIXME - testing hack
   if (listSize > CullListSize) {
     printf ("Octree::getFrustumList() Internal error! (%i vs %i)\n",
-            listSize, CullListSize);
+	    listSize, CullListSize);
     exit (1);
   }
 
@@ -184,7 +184,7 @@ int Octree::getFrustumList (SceneNode** list, int listSize,
 
 
 int Octree::getShadowList (SceneNode** list, int listSize,
-                           const Frustum* frustum, const float* sunDir) const
+			   const Frustum* frustum, const float* sunDir) const
 {
   if (!root) {
     return 0;
@@ -193,7 +193,7 @@ int Octree::getShadowList (SceneNode** list, int listSize,
   // we project the frustum onto the ground plane, and then
   // use those lines to generate planes in the direction of
   // the sun's light. that is the potential shadow volume.
-  
+
   // The frustum planes are as follows:
   // 0: front
   // 1: left
@@ -206,9 +206,9 @@ int Octree::getShadowList (SceneNode** list, int listSize,
   const float* eye = frustum->getEye();
 
   // FIXME: As a first cut, i'll be assuming that the frustum
-  //        top points towards Z. Also, this should be split
-  //        into a setupShadowVolume() function
-  
+  //	top points towards Z. Also, this should be split
+  //	into a setupShadowVolume() function
+
   if (frustum->getUp()[2] > 0.999999) {
     planeCount = 2;
     float edge[2];
@@ -235,7 +235,7 @@ int Octree::getShadowList (SceneNode** list, int listSize,
       planes[2][1] = -(edge[0] * sunDir[2]);
       planes[2][2] =  (edge[0] * sunDir[1]) - (edge[1] * sunDir[0]);
       const float hlen = sqrtf ((frustum->getSide(3)[0] * frustum->getSide(3)[0]) +
-                                (frustum->getSide(3)[1] * frustum->getSide(3)[1]));
+				(frustum->getSide(3)[1] * frustum->getSide(3)[1]));
       const float slope = frustum->getSide(3)[2] / hlen;
       float point[2];
       point[0] = eye[0] + (eye[2] * frustum->getSide(3)[0] * slope);
@@ -246,11 +246,11 @@ int Octree::getShadowList (SceneNode** list, int listSize,
   } else {
     planeCount = 0;
   }
-  
+
   // FIXME - testing hack
   if (listSize > CullListSize) {
     printf ("Octree::getShadowList() Internal error! (%i vs %i)\n",
-            listSize, CullListSize);
+	    listSize, CullListSize);
     exit (1);
   }
 
@@ -271,7 +271,7 @@ int Octree::getShadowList (SceneNode** list, int listSize,
 
 
 void Octree::getExtents (float* mins, float* maxs,
-                         SceneNode** list, int listSize)
+			 SceneNode** list, int listSize)
 {
   int i;
 
@@ -287,10 +287,10 @@ void Octree::getExtents (float* mins, float* maxs,
     node->getExtents(nodeMin, nodeMax);
     for (int a = 0; a < 3; a++) {
       if (nodeMin[a] < mins[a]) {
-        mins[a] = nodeMin[a];
+	mins[a] = nodeMin[a];
       }
       if (nodeMax[a] > maxs[a]) {
-        maxs[a] = nodeMax[a];
+	maxs[a] = nodeMax[a];
       }
     }
   }
@@ -350,8 +350,8 @@ void Octree::draw () const
 //
 
 OctreeNode::OctreeNode(unsigned char _depth,
-                       const float* _mins, const float *_maxs,
-                       SceneNode** _list, int _listSize)
+		       const float* _mins, const float *_maxs,
+		       SceneNode** _list, int _listSize)
 {
   int i;
 
@@ -443,23 +443,23 @@ void OctreeNode::makeChildren ()
     for (side[1] = 0; side[1] < 2; side[1]++) {
       for (side[2] = 0; side[2] < 2; side[2]++) {
 
-        // calculate the child's extents
-        for (int a = 0; a < 3; a++) {
-          cmins[a] = extentSet[side[a]+0][a];
-          cmaxs[a] = extentSet[side[a]+1][a];
-        }
+	// calculate the child's extents
+	for (int a = 0; a < 3; a++) {
+	  cmins[a] = extentSet[side[a]+0][a];
+	  cmaxs[a] = extentSet[side[a]+1][a];
+	}
 
-        int kid = side[0] + (2 * side[1]) + (4 * side[2]);
+	int kid = side[0] + (2 * side[1]) + (4 * side[2]);
 
-        children[kid] = new OctreeNode (depth, cmins, cmaxs, list, count);
+	children[kid] = new OctreeNode (depth, cmins, cmaxs, list, count);
 
-        if (children[kid]->getCount() == 0) {
-          delete children[kid];
-          children[kid] = NULL;
-        }
-        else {
-          childCount++;
-        }
+	if (children[kid]->getCount() == 0) {
+	  delete children[kid];
+	  children[kid] = NULL;
+	}
+	else {
+	  childCount++;
+	}
       }
     }
   }
@@ -482,9 +482,9 @@ void OctreeNode::resizeCell()
     node->getExtents (tmpMins, tmpMaxs);
     for (int a = 0; a < 3; a++) {
       if (tmpMins[a] < absMins[a])
-        absMins[a] = tmpMins[a];
+	absMins[a] = tmpMins[a];
       if (tmpMaxs[a] > absMaxs[a])
-        absMaxs[a] = tmpMaxs[a];
+	absMaxs[a] = tmpMaxs[a];
     }
   }
   for (i = 0; i < 3; i++) {
@@ -537,8 +537,8 @@ void OctreeNode::getFrustumList () const
     for (int i = 0; i < listSize; i++) {
       SceneNode* node = list[i];
       if (node->octreeState == SceneNode::OctreeCulled) {
-        addCullListNode (node);
-        node->octreeState = SceneNode::OctreePartial;
+	addCullListNode (node);
+	node->octreeState = SceneNode::OctreePartial;
       }
     }
   }
@@ -559,7 +559,7 @@ void OctreeNode::getFullyVisible () const
       SceneNode* node = list[i];
       SceneNode::CullState& state = node->octreeState;
       if (state == SceneNode::OctreeCulled) {
-        addCullListNode (node);
+	addCullListNode (node);
       }
       state = SceneNode::OctreeVisible;
     }
@@ -592,12 +592,12 @@ void OctreeNode::getFullyVisible () const
     } else {
       static int i;
       for (i = 0; i < working->getListSize(); i++) {
-        static SceneNode* node;
-        node = working->getList()[i];
-        if (node->octreeState == SceneNode::OctreeCulled) {
-          addCullListNode (node);
-        }
-        node->octreeState = SceneNode::OctreeVisible;
+	static SceneNode* node;
+	node = working->getList()[i];
+	if (node->octreeState == SceneNode::OctreeCulled) {
+	  addCullListNode (node);
+	}
+	node->octreeState = SceneNode::OctreeVisible;
       }
       level--;
       working = nodeStack[level].node;
@@ -608,8 +608,8 @@ void OctreeNode::getFullyVisible () const
 
 void OctreeNode::getShadowList () const
 {
-  IntersectLevel level = testAxisBoxOcclusion (mins, maxs, 
-                                               ShadowPlanes, ShadowCount);
+  IntersectLevel level = testAxisBoxOcclusion (mins, maxs,
+					       ShadowPlanes, ShadowCount);
   if (level == Outside) {
     return;
   }
@@ -631,8 +631,8 @@ void OctreeNode::getShadowList () const
     for (int i = 0; i < listSize; i++) {
       SceneNode* node = list[i];
       if (node->octreeState == SceneNode::OctreeCulled) {
-        addCullListNode (node);
-        node->octreeState = SceneNode::OctreePartial;
+	addCullListNode (node);
+	node->octreeState = SceneNode::OctreePartial;
       }
     }
   }
@@ -653,7 +653,7 @@ void OctreeNode::getFullyShadow () const
       SceneNode* node = list[i];
       SceneNode::CullState& state = node->octreeState;
       if (state == SceneNode::OctreeCulled) {
-        addCullListNode (node);
+	addCullListNode (node);
       }
       state = SceneNode::OctreeVisible;
     }
@@ -674,7 +674,7 @@ void OctreeNode::tallyStats()
 {
   totalNodes++;
   totalElements += listSize;
-  
+
   if (childCount > 0) {
     for (int i = 0; i < childCount; i++) {
       children[i]->tallyStats();
@@ -682,7 +682,7 @@ void OctreeNode::tallyStats()
   } else {
     leafNodes++;
   }
-    
+
   return;
 }
 
@@ -712,16 +712,16 @@ void OctreeNode::draw ()
       break;
     case Partial:
       if (!occludeCull) {
-        color = blue;
+	color = blue;
       } else {
-        color = green;
+	color = green;
       }
       break;
     case Contained:
       if (!occludeCull) {
-        color = red;
+	color = red;
       } else {
-        color = yellow;
+	color = yellow;
       }
       break;
   }

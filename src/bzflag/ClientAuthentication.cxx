@@ -24,14 +24,14 @@
 
 #ifdef HAVE_KRB5
 krb5_context      ClientAuthentication::context      = NULL;
-krb5_ccache       ClientAuthentication::cc           = NULL;
-krb5_creds        ClientAuthentication::creds;
+krb5_ccache       ClientAuthentication::cc	   = NULL;
+krb5_creds	ClientAuthentication::creds;
 krb5_creds       *ClientAuthentication::new_creds;
 krb5_principal    ClientAuthentication::client;
 krb5_principal    ClientAuthentication::server;
 #endif
-char              ClientAuthentication::principalName[128];
-bool              ClientAuthentication::authentication = false;
+char	      ClientAuthentication::principalName[128];
+bool	      ClientAuthentication::authentication = false;
 
 #ifdef HAVE_KRB5
 void ClientAuthentication::login(const char *username, const char *password)
@@ -58,7 +58,7 @@ void ClientAuthentication::login(const char *username, const char *)
     err("bzflag:", retval, "while initializing krb5");
   // Getting a default cache specifically for bzflag
   std::string ccfile = "FILE:" + getConfigDirName() + "krb5_cc";
-  // Getting credential cache 
+  // Getting credential cache
   if (!retval)
     if ((retval = krb5_cc_resolve(context, ccfile.c_str(), &cc)))
       err("bzflag:", retval, "getting credentials cache");
@@ -149,8 +149,8 @@ void ClientAuthentication::sendCredential(ServerLink&)
   krb5_error_code retval;
   /* Get credentials for server */
   memset((char*)&creds, 0, sizeof(creds));
-  memcpy(&creds.client, &client, sizeof(client)); 
-  memcpy(&creds.server, &server, sizeof(server)); 
+  memcpy(&creds.client, &client, sizeof(client));
+  memcpy(&creds.server, &server, sizeof(server));
   /* Get credentials for server */
   if ((retval = krb5_get_credentials(context, KRB5_GC_CACHED, cc, &creds,
 				     &new_creds)))

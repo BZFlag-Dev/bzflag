@@ -91,8 +91,8 @@ private:
   typedef std::map<std::string, ImageInfo> TextureNameMap;
   typedef std::map<int, ImageInfo*> TextureIDMap;
 
-  int            lastImageID;
-  int            lastBoundID;
+  int	    lastImageID;
+  int	    lastBoundID;
   TextureIDMap   textureIDs;
   TextureNameMap textureNames;
 

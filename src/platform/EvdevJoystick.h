@@ -64,10 +64,10 @@ class EvdevJoystick : public BzfJoystick {
     bool	joystick() const;
     void	getJoy(int& x, int& y);
     unsigned long getJoyButtons();
-    void        getJoyDevices(std::vector<std::string> &list) const;
+    void	getJoyDevices(std::vector<std::string> &list) const;
 
-    bool        ffHasRumble() const;
-    void        ffRumble(int count,
+    bool	ffHasRumble() const;
+    void	ffRumble(int count,
 			 float delay, float duration,
 			 float strong_motor, float weak_motor=0.0f);
 
@@ -83,17 +83,17 @@ class EvdevJoystick : public BzfJoystick {
     static bool collectJoystickBits(int fd, struct EvdevJoystickInfo &info);
     static bool isJoystick(struct EvdevJoystickInfo &info);
 
-    void        poll();
-    void        setButton(int button_num, int state);
-    int         mapButton(int bit_num);
-    void        ffResetRumble();
+    void	poll();
+    void	setButton(int button_num, int state);
+    int	 mapButton(int bit_num);
+    void	ffResetRumble();
 
     std::map<std::string,EvdevJoystickInfo> joysticks;
 
-    EvdevJoystickInfo*          currentJoystick;
-    int                         joystickfd;
-    int                         buttons;
-    struct ff_effect*           ff_rumble;
+    EvdevJoystickInfo*	  currentJoystick;
+    int			 joystickfd;
+    int			 buttons;
+    struct ff_effect*	   ff_rumble;
 };
 
 #endif // BZF_EVDEV_JOY_H

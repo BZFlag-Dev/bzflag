@@ -56,7 +56,7 @@ class MacMedia : public BzfMedia {
   //  CmpSoundHeader header;
     ExtSoundHeader header;
     SndCallBackUPP callback;
-    OSErr          error;
+    OSErr	  error;
 
     void (*audio_proc)(void*);
 

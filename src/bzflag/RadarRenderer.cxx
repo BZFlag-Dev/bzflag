@@ -636,7 +636,7 @@ void			RadarRenderer::makeList(bool smoothingOn, SceneRenderer&)
       int vertexCount = face->getVertexCount();
       glBegin(GL_TRIANGLE_FAN);
       for (int v = 0; v < vertexCount; v++) {
-        glVertex2f(face->getVertex(v)[0], face->getVertex(v)[1]);
+	glVertex2f(face->getVertex(v)[0], face->getVertex(v)[1]);
       }
       glEnd();
     }
@@ -692,22 +692,22 @@ void			RadarRenderer::makeList(bool smoothingOn, SceneRenderer&)
   if(world.allowTeamFlags()) {
     for(i = 1; i < NumTeams; i++) {
       for (int j = 0;;j++) {
-        const float *base = world.getBase(i, j);
+	const float *base = world.getBase(i, j);
 	if (base == NULL)
 	  break;
-        glColor3fv(Team::getRadarColor(TeamColor(i)));
-        glBegin(GL_LINE_LOOP);
-        const float beta = atan2f(base[5], base[4]);
-        const float r = hypotf(base[4], base[5]);
-        glVertex2f(base[0] + r * cosf(base[3] + beta),
+	glColor3fv(Team::getRadarColor(TeamColor(i)));
+	glBegin(GL_LINE_LOOP);
+	const float beta = atan2f(base[5], base[4]);
+	const float r = hypotf(base[4], base[5]);
+	glVertex2f(base[0] + r * cosf(base[3] + beta),
 		   base[1] + r * sinf(base[3] + beta));
-        glVertex2f(base[0] + r * cosf(base[3] - beta + M_PI),
+	glVertex2f(base[0] + r * cosf(base[3] - beta + M_PI),
 		   base[1] + r * sinf(base[3] - beta + M_PI));
-        glVertex2f(base[0] + r * cosf(base[3] + beta + M_PI),
+	glVertex2f(base[0] + r * cosf(base[3] + beta + M_PI),
 		   base[1] + r * sinf(base[3] + beta + M_PI));
-        glVertex2f(base[0] + r * cosf(base[3] - beta),
+	glVertex2f(base[0] + r * cosf(base[3] - beta),
 		   base[1] + r * sinf(base[3] - beta));
-        glEnd();
+	glEnd();
       }
     }
   }

@@ -396,7 +396,7 @@ void CTextToolView::OnFontSavefontfiles()
 #define	  PNGTAG(t_) ((((int)t_[0]) << 24) | \
 		      (((int)t_[1]) << 16) | \
 		      (((int)t_[2]) <<  8) | \
-		        (int)t_[3])
+			(int)t_[3])
 
 	  // IHDR chunk
 	  temp = htonl((int) 13);       //(length) IHDR is always 13 bytes long
@@ -404,16 +404,16 @@ void CTextToolView::OnFontSavefontfiles()
 	  temp = htonl(PNGTAG("IHDR")); //(tag) IHDR
 	  f->write((char*) &temp, 4);
 	  crc = crc32(crc, (unsigned char*) &temp, 4);
-	  temp = htonl(w);              //(data) Image width
+	  temp = htonl(w);	      //(data) Image width
 	  f->write((char*) &temp, 4);
 	  crc = crc32(crc, (unsigned char*) &temp, 4);
-	  temp = htonl(h);	        //(data) Image height
+	  temp = htonl(h);		//(data) Image height
 	  f->write((char*) &temp, 4);
 	  crc = crc32(crc, (unsigned char*) &temp, 4);
-	  tempByte = 8;                 //(data) Image bitdepth (8 bits/sample = 24 bits/pixel)
+	  tempByte = 8;		 //(data) Image bitdepth (8 bits/sample = 24 bits/pixel)
 	  f->write(&tempByte, 1);
 	  crc = crc32(crc, (unsigned char*) &tempByte, 1);
-	  tempByte = 6;                 //(data) Color type: RGBA = 6
+	  tempByte = 6;		 //(data) Color type: RGBA = 6
 	  f->write(&tempByte, 1);
 	  crc = crc32(crc, (unsigned char*) &tempByte, 1);
 	  tempByte = 0;
@@ -450,19 +450,19 @@ void CTextToolView::OnFontSavefontfiles()
 	  unsigned char* bz = new unsigned char[zlength]; //just like b, but compressed; might get bigger, so give it room
 	  // compress b into bz
 	  compress2(bz, &zlength, reinterpret_cast<const unsigned char*>(b), blength, 5);
-	  temp = htonl(zlength);                          //(length) IDAT length after compression
+	  temp = htonl(zlength);			  //(length) IDAT length after compression
 	  f->write((char*) &temp, 4);
-	  temp = htonl(PNGTAG("IDAT"));                   //(tag) IDAT
+	  temp = htonl(PNGTAG("IDAT"));		   //(tag) IDAT
 	  f->write((char*) &temp, 4);
 	  crc = crc32(crc = 0, (unsigned char*) &temp, 4);
 	  f->write(reinterpret_cast<char*>(bz), zlength);  //(data) This line of pixels, compressed
 	  crc = htonl(crc32(crc, bz, zlength));
-	  f->write((char*) &crc, 4);                       //(crc) write crc
+	  f->write((char*) &crc, 4);		       //(crc) write crc
 
 	  // tEXt chunk containing bzflag build/version
 	  temp = htonl(28);//(length) tEXt is "Software\0BZFlag TextTool-W32"
 	  f->write((char*) &temp, 4);
-	  temp = htonl(PNGTAG("tEXt"));                   //(tag) tEXt
+	  temp = htonl(PNGTAG("tEXt"));		   //(tag) tEXt
 	  f->write((char*) &temp, 4);
 	  crc = crc32(crc = 0, (unsigned char*) &temp, 4);
 	  strcpy(b, "Software"); //(data) Keyword
@@ -474,10 +474,10 @@ void CTextToolView::OnFontSavefontfiles()
 	  strcpy((char*) b, "BZFlag TextTool-W32");       //(data) Text contents (build/version)
 	  f->write(reinterpret_cast<char*>(b), strlen(reinterpret_cast<const char*>(b)));
 	  crc = htonl(crc32(crc, reinterpret_cast<const unsigned char*>(b), strlen(b)));
-	  f->write((char*) &crc, 4);                       //(crc) write crc
+	  f->write((char*) &crc, 4);		       //(crc) write crc
 
 	  // IEND chunk
-	  temp = htonl((int) 0);        //(length) IEND is always 0 bytes long
+	  temp = htonl((int) 0);	//(length) IEND is always 0 bytes long
 	  f->write((char*) &temp, 4);
 	  temp = htonl(PNGTAG("IEND")); //(tag) IEND
 	  f->write((char*) &temp, 4);

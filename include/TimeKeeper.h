@@ -45,7 +45,7 @@ public:
   TimeKeeper&		operator+=(const TimeKeeper&) ;
 
   /** returns how many seconds have elapsed since epoch, Jan 1, 1970 */
-  float               getSeconds(void) const;
+  float	       getSeconds(void) const;
 
   /** returns a timekeeper representing the current time */
   static const TimeKeeper&	getCurrent(void);

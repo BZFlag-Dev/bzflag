@@ -22,7 +22,7 @@ Teleporter::Teleporter(const float* p, float a, float w,
 		       float b, float h,float _border, bool _horizontal,
 		       bool drive, bool shoot) :
 		       Obstacle(p, a, w, horizontal ? b : b + 2 * _border,
-		                horizontal ? h : h + _border,drive,shoot),
+				horizontal ? h : h + _border,drive,shoot),
 		       border(_border), horizontal(_horizontal)
 {
   makeLinks();
@@ -34,7 +34,7 @@ Teleporter::~Teleporter()
 {
   delete backLink;
   delete frontLink;
-  return;  
+  return;
 }
 
 
@@ -53,9 +53,9 @@ const char* Teleporter::getClassName() // const
 void Teleporter::makeLinks()
 {
   int i;
-  
+
   // make the new pointers to floats,
-  // the MeshFace will delete[] them 
+  // the MeshFace will delete[] them
   float **fvrts = new float*[4];
   float **bvrts = new float*[4];
   float **ftxcds = new float*[4];
@@ -67,7 +67,7 @@ void Teleporter::makeLinks()
     btxcds[i] = texcoords[i];
   }
 
-  // get the basics  
+  // get the basics
   const float* p = getPosition();
   const float a = getRotation();
   const float w = getWidth();
@@ -91,12 +91,12 @@ void Teleporter::makeLinks()
   texcoords[2][1] = ytxcd;
   texcoords[3][0] = 0.0f;
   texcoords[3][1] = ytxcd;
-  
+
   const float cos_val = cosf(a);
   const float sin_val = sinf(a);
-  
+
   if (!horizontal) {
-    const float params[4][2] = 
+    const float params[4][2] =
       {{-1.0f, 0.0f}, {1.0f, 0.0f}, {1.0f, 1.0f}, {-1.0f, 1.0f}};
     float wlen[2] = { (cos_val * w), (sin_val * w) };
     float blen[2] = { (-sin_val * (b - br)), (cos_val * (b - br)) };
@@ -107,8 +107,8 @@ void Teleporter::makeLinks()
       bvrts[i][2] = p[2] + ((h - br) * params[i][1]);
     }
     backLink = new MeshFace(NULL, 4, bvrts, NULL, btxcds,
-                            NULL, -1, false, false, true, true);
-    backLink->finalize();  
+			    NULL, -1, false, false, true, true);
+    backLink->finalize();
 
     for (i = 0; i < 4 ;i++) {
       fvrts[i][0] = p[0] - (wlen[0] + (blen[0] * params[i][0]));
@@ -116,8 +116,8 @@ void Teleporter::makeLinks()
       fvrts[i][2] = p[2] + ((h - br) * params[i][1]);
     }
     frontLink = new MeshFace(NULL, 4, fvrts, NULL, ftxcds,
-                             NULL, -1, false, false, true, true);
-    frontLink->finalize();  
+			     NULL, -1, false, false, true, true);
+    frontLink->finalize();
   }
   else {
     float xlen = w - br;
@@ -135,19 +135,19 @@ void Teleporter::makeLinks()
     bvrts[3][1] = p[1] + ((cos_val * ylen) + (sin_val * -xlen));
     bvrts[3][2] = p[2] + h - br;
     backLink = new MeshFace(NULL, 4, bvrts, NULL, btxcds,
-                            NULL, -1, false, false, true, true);
+			    NULL, -1, false, false, true, true);
     backLink->finalize();
-    
+
     for (i = 0; i < 4; i++) {
       memcpy(fvrts[i], bvrts[3 - i], sizeof(float[3])); // reverse order
       fvrts[i][2] = p[2] + h; // change the height
     }
     frontLink = new MeshFace(NULL, 4, fvrts, NULL, ftxcds,
-                             NULL, -1, false, false, true, true);
-    frontLink->finalize();  
+			     NULL, -1, false, false, true, true);
+    frontLink->finalize();
   }
-  
-  return;  
+
+  return;
 }
 
 
@@ -211,7 +211,7 @@ bool Teleporter::inCylinder(const float* p, float radius, float height) const
 
 
 bool Teleporter::inBox(const float* p, float a,
-                       float dx, float dy, float dz) const
+		       float dx, float dy, float dz) const
 {
   if ((p[2] < getHeight() + getPosition()[2] - getBorder())
 	  && (p[2]+dz) >= getPosition()[2]) {
@@ -240,7 +240,7 @@ bool Teleporter::inBox(const float* p, float a,
 
 
 bool Teleporter::inMovingBox(const float* /* oldP */, float /*oldAngle */,
-                             const float* p, float a,
+			     const float* p, float a,
 			     float dx, float dy, float dz) const
 {
   return inBox (p, a, dx, dy, dz);

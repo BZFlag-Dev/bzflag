@@ -548,7 +548,7 @@ void MacWindow::setGamma(float value)
 				       settings.greenMin, settings.greenMax, 1.0 / value, //green
 				       settings.blueMin, settings.blueMax, 1.0 / value); //blue
 }
-float MacWindow::getGamma()        const { return settings.gamma;   }
+float MacWindow::getGamma()	const { return settings.gamma;   }
 bool MacWindow::hasGammaControl() const { return true; }
 
 void MacWindow::makeContext() {}

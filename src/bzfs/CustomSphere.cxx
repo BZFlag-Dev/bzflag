@@ -28,8 +28,8 @@
 
 
 const char* CustomSphere::sideNames[MaterialCount] = { "edge", "bottom" };
-    
-    
+
+
 CustomSphere::CustomSphere()
 {
   divisions = 4;
@@ -69,7 +69,7 @@ bool CustomSphere::read(const char *cmd, std::istream& input)
     size[0] = size[1] = size[2] = radius;
   }
   else if ((strcasecmp(cmd, "hemi") == 0) ||
-           (strcasecmp(cmd, "hemisphere") == 0)) {
+	   (strcasecmp(cmd, "hemisphere") == 0)) {
     hemisphere = true;
   }
   else if (strcasecmp(cmd, "texsize") == 0) {
@@ -89,7 +89,7 @@ bool CustomSphere::read(const char *cmd, std::istream& input)
     }
   }
   else if ((strcasecmp(cmd, "ricosuavez") == 0) ||
-           (strcasecmp(cmd, "smoothbounce") == 0)) {
+	   (strcasecmp(cmd, "smoothbounce") == 0)) {
     smoothBounce = true;
   }
   else if (strcasecmp(cmd, "flatshading") == 0) {
@@ -101,7 +101,7 @@ bool CustomSphere::read(const char *cmd, std::istream& input)
     }
   }
   else if (parseMaterialsByName(cmd, input, materials, sideNames,
-                                MaterialCount, materror)) {
+				MaterialCount, materror)) {
     if (materror) {
       return false;
     }
@@ -122,9 +122,9 @@ void CustomSphere::write(WorldInfo *world) const
     mats[i] = MATERIALMGR.addMaterial(&materials[i]);
   }
   SphereObstacle* sphere = new SphereObstacle(pos, size, rotation, texsize,
-                                              useNormals, hemisphere, divisions, mats,
-                                              phydrv,
-                                              smoothBounce, driveThrough, shootThrough);
+					      useNormals, hemisphere, divisions, mats,
+					      phydrv,
+					      smoothBounce, driveThrough, shootThrough);
 
   if (sphere->isValid()) {
     sphere->getMesh()->setIsLocal(true);

@@ -39,7 +39,7 @@
 #  define Byte		z_Byte
 #  define uInt		z_uInt
 #  define uLong		z_uLong
-#  define Bytef	        z_Bytef
+#  define Bytef		z_Bytef
 #  define charf		z_charf
 #  define intf		z_intf
 #  define uIntf		z_uIntf
@@ -116,7 +116,7 @@
 #endif
 
 /* The memory requirements for deflate are (in bytes):
-            (1 << (windowBits+2)) +  (1 << (memLevel+9))
+	    (1 << (windowBits+2)) +  (1 << (memLevel+9))
  that is: 128K for windowBits=15  +  128K for memLevel = 8  (default values)
  plus a few kilobytes for small objects. For example, if you want to reduce
  the default memory requirements from 256K to 128K, compile with
@@ -128,7 +128,7 @@
  for small objects.
 */
 
-                        /* Type declarations */
+			/* Type declarations */
 
 #ifndef OF /* function prototypes */
 #  ifdef STDC
@@ -181,8 +181,8 @@
 #      define ZEXPORTRVA __declspec(dllexport) WINAPIV
 #    else
 #      if defined (_Windows) && defined (__DLL__)
-#        define ZEXPORT _export
-#        define ZEXPORTVA _export
+#	define ZEXPORT _export
+#	define ZEXPORTVA _export
 #      endif
 #    endif
 #  endif
@@ -241,9 +241,9 @@ typedef uLong FAR uLongf;
 #  define z_off_t  off_t
 #endif
 #ifndef SEEK_SET
-#  define SEEK_SET        0       /* Seek from beginning of file.  */
-#  define SEEK_CUR        1       /* Seek from current position.  */
-#  define SEEK_END        2       /* Set file pointer to EOF plus "offset" */
+#  define SEEK_SET	0       /* Seek from beginning of file.  */
+#  define SEEK_CUR	1       /* Seek from current position.  */
+#  define SEEK_END	2       /* Set file pointer to EOF plus "offset" */
 #endif
 #ifndef z_off_t
 #  define  z_off_t long

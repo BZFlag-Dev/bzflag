@@ -47,12 +47,12 @@ class ActionBinding : public Singleton<ActionBinding> {
 
   /** They are to constant association
    */
-  WayToBindActions                                wayToBindActions;
-  BindingTable                                    defaultBinding;
+  WayToBindActions				wayToBindActions;
+  BindingTable				    defaultBinding;
 
   /** Current value for binding key to action
    */
-  BindingTable                                    bindingTable;
+  BindingTable				    bindingTable;
 
  private:
   ActionBinding();

@@ -287,9 +287,9 @@ void			DisplayMenu::resize(int width, int height)
     ((HUDuiList*)list[i++])->setIndex(BZDB.isTrue("smooth"));
     if (BZDBCache::lighting) {
       if (BZDB.isTrue("tesselation")) {
-        ((HUDuiList*)list[i++])->setIndex(2);
+	((HUDuiList*)list[i++])->setIndex(2);
       } else {
-        ((HUDuiList*)list[i++])->setIndex(1);
+	((HUDuiList*)list[i++])->setIndex(1);
       }
     } else {
       ((HUDuiList*)list[i++])->setIndex(0);

@@ -46,7 +46,7 @@ float			Frustum::getEyeDepth(const float* p) const
 }
 
 void			Frustum::setView(const float* _eye,
-                                         const float* _target)
+					 const float* _target)
 {
   // set eye and target points
   eye[0] = _eye[0];
@@ -226,7 +226,7 @@ void			Frustum::flipVertical()
   setView(eye, target);
   projectionMatrix[5] = -projectionMatrix[5];
   deepProjectionMatrix[5] = -deepProjectionMatrix[5];
-  
+
   return;
 }
 

@@ -174,8 +174,8 @@ bool			PyramidBuilding::inBox(const float* p, float a,
 }
 
 bool			PyramidBuilding::inMovingBox(const float*, float,
-                                             const float* p, float angle,
-                                             float dx, float dy, float dz) const
+					     const float* p, float angle,
+					     float dx, float dy, float dz) const
 {
   return inBox (p, angle, dx, dy, dz);
 }
@@ -186,7 +186,7 @@ bool			PyramidBuilding::isCrossing(const float* p, float a,
   // if not inside or contained then not crossing
   if (!inBox(p, a, dx, dy, height) ||
       testRectInRect(getPosition(), getRotation(),
-                     getWidth(), getBreadth(), p, a, dx, dy))
+		     getWidth(), getBreadth(), p, a, dx, dy))
     return false;
   if (!plane) return true;
 

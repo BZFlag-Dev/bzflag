@@ -23,7 +23,7 @@ namespace TrackMarks {
   void update(float dt);
 
   bool addMark(const float pos[3], float scale, float angle, int phydrv);
-  
+
   void setUserFade(float);
   float getUserFade();
 }

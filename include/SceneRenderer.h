@@ -144,8 +144,8 @@ public:
 		       bool sameFrame = false,
 		       bool fullWindow = false);
   void		renderScene(bool lastFrame = true,
-		            bool sameFrame = false,
-		            bool fullWindow = false);
+			    bool sameFrame = false,
+			    bool fullWindow = false);
   void		notifyStyleChange();
   void		addRenderNode(RenderNode* node, const OpenGLGState*);
   void		addShadowNode(RenderNode* node);
@@ -163,7 +163,7 @@ private:
 
   void		getLights();
   void		getObstacles();
-  
+
   void		doRender();
   void		renderDepthComplexity();
   void		renderPreDimming();
@@ -192,7 +192,7 @@ private:
   SceneDatabase*	scene;
   BackgroundRenderer*	background;
   static const GLint	SunLight;
-  
+
   static const float dimDensity;
   static const GLfloat dimnessColor[4];
   static const GLfloat blindnessColor[4];
@@ -313,7 +313,7 @@ inline bool			SceneRenderer::isSameFrame() const
 }
 
 inline void SceneRenderer::addRenderNode(RenderNode* node,
-                                         const OpenGLGState* gstate)
+					 const OpenGLGState* gstate)
 {
   if (inOrder || gstate->isBlended()) {
     // nodes will be drawn in the same order received

@@ -81,7 +81,7 @@ const BzMaterial* BzMaterialManager::findMaterial(const std::string& target) con
   else {
     for (unsigned int i = 0; i < materials.size(); i++) {
       if (target == materials[i]->getName()) {
-        return materials[i];
+	return materials[i];
       }
     }
     return NULL;
@@ -152,12 +152,12 @@ void BzMaterialManager::print(std::ostream& out, int level) const
 
 
 void BzMaterialManager::printReference(std::ostream& out,
-                                       const BzMaterial* mat) const
+				       const BzMaterial* mat) const
 {
   if (mat == NULL) {
     out << "-1";
     return;
-  }	
+  }
   int index = getIndex(mat);
   if (index == -1) {
     out << "-1";
@@ -202,7 +202,7 @@ void BzMaterial::reset()
   delete[] shaders;
   shaders = NULL;
   shaderCount = 0;
-  
+
   return;
 }
 
@@ -228,9 +228,9 @@ BzMaterial::BzMaterial(const BzMaterial& m)
 BzMaterial& BzMaterial::operator=(const BzMaterial& m)
 {
   int i;
-  
+
   name = m.name;
-  
+
   dynamicColor = m.dynamicColor;
   memcpy (ambient, m.ambient, sizeof(ambient));
   memcpy (diffuse, m.diffuse, sizeof(diffuse));
@@ -248,8 +248,8 @@ BzMaterial& BzMaterial::operator=(const BzMaterial& m)
   for (i = 0; i < textureCount; i++) {
     textures[i] = m.textures[i];
   }
-  
-  delete[] shaders;  
+
+  delete[] shaders;
   shaderCount = m.shaderCount;
   if (shaderCount > 0) {
     shaders = new ShaderInfo[shaderCount];
@@ -259,7 +259,7 @@ BzMaterial& BzMaterial::operator=(const BzMaterial& m)
   for (i = 0; i < shaderCount; i++) {
     shaders[i] = m.shaders[i];
   }
-  
+
   return *this;
 }
 
@@ -267,7 +267,7 @@ BzMaterial& BzMaterial::operator=(const BzMaterial& m)
 bool BzMaterial::operator==(const BzMaterial& m) const
 {
   int i;
-  
+
   if ((dynamicColor != m.dynamicColor) ||
       (memcmp (ambient, m.ambient, sizeof(float[4])) != 0) ||
       (memcmp (diffuse, m.diffuse, sizeof(float[4])) != 0) ||
@@ -282,15 +282,15 @@ bool BzMaterial::operator==(const BzMaterial& m) const
   }
   for (i = 0; i < textureCount; i++) {
     if ((textures[i].name != m.textures[i].name) ||
-        (textures[i].matrix != m.textures[i].matrix) ||
-        (textures[i].combineMode != m.textures[i].combineMode) ||
-        (textures[i].useAlpha != m.textures[i].useAlpha) ||
-        (textures[i].useColor != m.textures[i].useColor) ||
-        (textures[i].useSphereMap != m.textures[i].useSphereMap)) {
+	(textures[i].matrix != m.textures[i].matrix) ||
+	(textures[i].combineMode != m.textures[i].combineMode) ||
+	(textures[i].useAlpha != m.textures[i].useAlpha) ||
+	(textures[i].useColor != m.textures[i].useColor) ||
+	(textures[i].useSphereMap != m.textures[i].useSphereMap)) {
       return false;
     }
   }
-  
+
   if (shaderCount != m.shaderCount) {
     return false;
   }
@@ -299,7 +299,7 @@ bool BzMaterial::operator==(const BzMaterial& m) const
       return false;
     }
   }
-  
+
   return true;
 }
 
@@ -329,14 +329,14 @@ void* BzMaterial::pack(void* buf)
   int i;
 
   buf = nboPackStdString(buf, name);
-  
+
   buf = nboPackInt(buf, dynamicColor);
   buf = pack4Float(buf, ambient);
   buf = pack4Float(buf, diffuse);
   buf = pack4Float(buf, specular);
   buf = pack4Float(buf, emission);
   buf = nboPackFloat(buf, shininess);
-  
+
   buf = nboPackUByte(buf, textureCount);
   for (i = 0; i < textureCount; i++) {
     const TextureInfo* texinfo = &textures[i];
@@ -370,14 +370,14 @@ void* BzMaterial::unpack(void* buf)
   int i;
 
   buf = nboUnpackStdString(buf, name);
-  
+
   buf = nboUnpackInt(buf, dynamicColor);
   buf = unpack4Float(buf, ambient);
   buf = unpack4Float(buf, diffuse);
   buf = unpack4Float(buf, specular);
   buf = unpack4Float(buf, emission);
   buf = nboUnpackFloat(buf, shininess);
-  
+
   unsigned char tCount;
   buf = nboUnpackUByte(buf, tCount);
   textureCount = tCount;
@@ -402,7 +402,7 @@ void* BzMaterial::unpack(void* buf)
       texinfo->useSphereMap = true;
     }
   }
-  
+
   unsigned char sCount;
   buf = nboUnpackUByte(buf, sCount);
   shaderCount = sCount;
@@ -428,37 +428,37 @@ int BzMaterial::packSize()
     textureSize += sizeof(int);
     textureSize += sizeof(unsigned char);
   }
-  
+
   int shaderSize = sizeof(unsigned char);
   for (i = 0; i < shaderCount; i++) {
     shaderSize += nboStdStringPackSize(shaders[i].name);
   }
-  
+
   return nboStdStringPackSize(name) + colorSize + textureSize + shaderSize;
 }
 
 
 static void printColor(std::ostream& out, const char *name,
-                       const float color[4], const float reference[4])
+		       const float color[4], const float reference[4])
 {
   if (memcmp(color, reference, sizeof(float[4])) != 0) {
-    out << name << color[0] << " " << color[1] << " " 
-                << color[2] << " " << color[3] << std::endl;
+    out << name << color[0] << " " << color[1] << " "
+		<< color[2] << " " << color[3] << std::endl;
   }
   return;
 }
-                       
+
 
 void BzMaterial::print(std::ostream& out, int /*level*/) const
 {
   int i;
-  
+
   out << "material" << std::endl;
-  
+
   if (name.size() > 0) {
     out << "  name " << name << std::endl;
   }
-  
+
   if (dynamicColor != defaultMaterial.dynamicColor) {
     out << "  dyncol ";
     const DynamicColor* dyncol = DYNCOLORMGR.getColor(dynamicColor);
@@ -484,9 +484,9 @@ void BzMaterial::print(std::ostream& out, int /*level*/) const
       out << "    texmat ";
       const TextureMatrix* texmat = TEXMATRIXMGR.getMatrix(texinfo->matrix);
       if ((texmat != NULL) && (texmat->getName().size() > 0)) {
-        out << texmat->getName();
+	out << texmat->getName();
       } else {
-        out << texinfo->matrix;
+	out << texinfo->matrix;
       }
       out << std::endl;
     }
@@ -508,7 +508,7 @@ void BzMaterial::print(std::ostream& out, int /*level*/) const
   }
 
   out << "end" << std::endl << std::endl;
-  
+
   return;
 }
 
@@ -588,7 +588,7 @@ void BzMaterial::addTexture(const std::string& name)
   texinfo->useAlpha = true;
   texinfo->useColor = true;
   texinfo->useSphereMap = false;
-  
+
   return;
 }
 
@@ -599,7 +599,7 @@ void BzMaterial::setTexture(const std::string& name)
   } else {
     textures[textureCount - 1].name = name;
   }
-  
+
   return;
 }
 
@@ -652,7 +652,7 @@ void BzMaterial::clearTextures()
   return;
 }
 
-    
+
 void BzMaterial::setShader(const std::string& name)
 {
   if (shaderCount <= 0) {
@@ -660,7 +660,7 @@ void BzMaterial::setShader(const std::string& name)
   } else {
     shaders[shaderCount - 1].name = name;
   }
-  
+
   return;
 }
 
@@ -690,7 +690,7 @@ void BzMaterial::clearShaders()
 /****************************************************************************/
 //
 // Parameter retrieval
-//     
+//
 
 const std::string& BzMaterial::getName() const
 {
@@ -727,7 +727,7 @@ float BzMaterial::getShininess() const
   return shininess;
 }
 
-    
+
 int BzMaterial::getTextureCount() const
 {
   return textureCount;

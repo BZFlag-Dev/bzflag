@@ -34,7 +34,7 @@ libCommon_a_SOURCES  =			\
 	bzsignal.c			\
 	global.cxx			\
 	md5.cxx			\
-	URLManager.cxx		
+	URLManager.cxx
 
 MAINTAINERCLEANFILES = \
 	Makefile.in

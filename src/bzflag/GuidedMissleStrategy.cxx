@@ -208,7 +208,7 @@ void GuidedMissileStrategy::update(float dt)
       addShotPuff (nextPos);
     }
   }
-  
+
   // get next position
   float shotSpeed = BZDB.eval(StateDatabase::BZDB_SHOTSPEED);
   ray.getPoint(dt * shotSpeed, nextPos);

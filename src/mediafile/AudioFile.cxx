@@ -29,7 +29,7 @@ AudioFile::~AudioFile()
 void		AudioFile::init(int _framesPerSecond, int _numChannels,
 				int _numFrames, int _sampWidth)
 {
-  open            = true;
+  open	    = true;
   framesPerSecond = _framesPerSecond;
   numChannels     = _numChannels;
   numFrames       = _numFrames;

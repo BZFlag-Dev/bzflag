@@ -44,7 +44,7 @@ bool WorldFileLocation::read(const char *cmd, std::istream& input)
     }
   }
   else if ((strcasecmp(cmd, "rot") == 0) ||
-           (strcasecmp(cmd, "rotation") == 0)) {
+	   (strcasecmp(cmd, "rotation") == 0)) {
 
     std::string args;
     std::getline(input, args);
@@ -61,13 +61,13 @@ bool WorldFileLocation::read(const char *cmd, std::istream& input)
     std::string tmpStr;
     if (parms >> tmpStr) {
       if (tmpStr[0] == '#') {
-        return true;
+	return true;
       } else {
 	normal[0] = (float)atof(tmpStr.c_str());
       }
 
       if (!((parms >> normal[1]) && (parms >> normal[2]))) {
-        return false;
+	return false;
       }
     }
   }

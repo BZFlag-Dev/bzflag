@@ -104,11 +104,11 @@ float BzfRegion::getDistance(const float p[2], float nearest[2]) const
   //compute distance from any edge
   const float* p1 = corners[count - 1].get();
   const float* p2 = NULL;
-  float        d[2];
-  float        m[2];
-  float        t;
-  float        edgeSquareDist;
-  float        x, y;
+  float	d[2];
+  float	m[2];
+  float	t;
+  float	edgeSquareDist;
+  float	x, y;
   for (int c = 0; c < count; c++) {
     p2   = corners[c].get();
     d[0] = p2[0] - p1[0];

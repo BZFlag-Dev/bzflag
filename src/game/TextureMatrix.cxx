@@ -21,12 +21,12 @@
 
 
 // NOTE: Here are some extra features that might be worth implementing:
-// 
+//
 // - CLAMPS, CLAMPT: allow texture clamps
 // - GL_REPLACE: already implemented in the scene node files
 // - glTexGen() modes (sphere, object_linear, eye_linear, reflection)
 // - glTexSubImage2D() - would be handy to have this in TextureManager
-// 
+//
 
 
 //
@@ -95,7 +95,7 @@ int TextureMatrixManager::findMatrix(const std::string& texmat) const
   else {
     for (int i = 0; i < (int)matrices.size(); i++) {
       if (matrices[i]->getName() == texmat) {
-        return i;
+	return i;
       }
     }
     return -1;
@@ -171,7 +171,7 @@ TextureMatrix::TextureMatrix()
   for (int row = 0; row < 4; row++) {
     for (int col = 0; col < 4; col++) {
       if (row == col) {
-        matrix[(col*4) + row] = 1.0f;
+	matrix[(col*4) + row] = 1.0f;
 	  } else {
 	    matrix[(col*4) + row] = 0.0f;
 	  }
@@ -185,7 +185,7 @@ TextureMatrix::TextureMatrix()
   uScaleFreq = vScaleFreq = 0.0f;
   uScale = vScale = 1.0f;
   uScaleCenter = vScaleCenter = 0.0f;
-  
+
   name = "";
 }
 
@@ -242,8 +242,8 @@ void TextureMatrix::setRotateParams (float freq, float uCenter, float vCenter)
 
 
 void TextureMatrix::setScaleParams (float uFreq, float vFreq,
-                                    float uCenter, float vCenter,
-                                    float _uScale, float _vScale)
+				    float uCenter, float vCenter,
+				    float _uScale, float _vScale)
 {
   uScaleFreq = uFreq;
   vScaleFreq = vFreq;
@@ -309,7 +309,7 @@ void TextureMatrix::update (float t)
 void * TextureMatrix::pack(void *buf)
 {
   buf = nboPackStdString (buf, name);
-  
+
   buf = nboPackFloat (buf, uShiftFreq);
   buf = nboPackFloat (buf, vShiftFreq);
 
@@ -370,14 +370,14 @@ void TextureMatrix::print(std::ostream& out, int /*level*/)
   if ((rotateFreq != 0.0f) ||
       (uRotateCenter != 0.0f) || (vRotateCenter != 0.0f)) {
     out << "  rotate " << rotateFreq << " "
-                      << uRotateCenter << " " << vRotateCenter << std::endl;
+		      << uRotateCenter << " " << vRotateCenter << std::endl;
   }
   if ((uScaleFreq != 0.0f) || (vScaleFreq != 0.0f) ||
       (uScale != 1.0f) || (vScale != 1.0f) ||
       (uScaleCenter != 0.0f) || (vScaleCenter != 0.0f)) {
     out << "  scale " << uScaleFreq << " " << vScaleFreq << " "
-                      << uScale << " " << vScale << " "
-                      << uScaleCenter << " " << vScaleCenter << std::endl;
+		      << uScale << " " << vScale << " "
+		      << uScaleCenter << " " << vScaleCenter << std::endl;
   }
 
   out << "end" << std::endl << std::endl;

@@ -13,18 +13,18 @@ typedef struct inflate_blocks_state FAR inflate_blocks_statef;
 
 extern inflate_blocks_statef * inflate_blocks_new OF((
     z_streamp z,
-    check_func c,               /* check function */
-    uInt w));                   /* window size */
+    check_func c,	       /* check function */
+    uInt w));		   /* window size */
 
 extern int inflate_blocks OF((
     inflate_blocks_statef *,
     z_streamp ,
-    int));                      /* initial return code */
+    int));		      /* initial return code */
 
 extern void inflate_blocks_reset OF((
     inflate_blocks_statef *,
     z_streamp ,
-    uLongf *));                  /* check value on output */
+    uLongf *));		  /* check value on output */
 
 extern int inflate_blocks_free OF((
     inflate_blocks_statef *,

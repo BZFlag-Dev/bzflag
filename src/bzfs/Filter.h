@@ -40,8 +40,8 @@ class Filter {
   Action check(GameKeeper::Player &player, int &index);
 private:
   struct FilterItem {
-    int         hostId;
-    int         netMask;
+    int	 hostId;
+    int	 netMask;
     std::string principal;
     Action      action;
   };

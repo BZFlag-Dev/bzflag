@@ -51,7 +51,7 @@
 #if defined (macintosh)
   #ifdef GUSI_20
     #define getsockname(a,b,c)       getsockname(a,b,(unsigned int *)c)
-    #define accept(a,b,c)            accept(a,b,(unsigned int *)c)
+    #define accept(a,b,c)	    accept(a,b,(unsigned int *)c)
     #define recvfrom(a,b,c,d,e,f)    recvfrom(a, (void*)b, (unsigned long)c, d, e, (unsigned int*)f)
 
     #define MAXHOSTNAMELEN 255

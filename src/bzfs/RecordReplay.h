@@ -42,7 +42,7 @@ namespace Record {
   extern bool enabled ();
 
   extern bool addPacket (uint16_t code, int len, const void * data,
-                         uint16_t mode = RealPacket);
+			 uint16_t mode = RealPacket);
 
   extern void sendHelp (int playerIndex);
 };

@@ -21,12 +21,12 @@
 #include "BzMaterial.h"
 
 extern bool parseMaterials(const char* cmd, std::istream& input,
-                           BzMaterial* materials, int materialCount,
-                           bool& error);
+			   BzMaterial* materials, int materialCount,
+			   bool& error);
 
 extern bool parseMaterialsByName(const char* cmd, std::istream& input,
-                                 BzMaterial* materials, const char** names,
-                                 int materialCount, bool& error);
+				 BzMaterial* materials, const char** names,
+				 int materialCount, bool& error);
 
 #endif  /* __PARSE_MATERIAL_H__ */
 

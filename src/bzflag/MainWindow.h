@@ -80,8 +80,8 @@ class MainWindow {
     void		getMousePosition(int& mx, int& my) const;
     void		getJoyPosition(int& mx, int& my) const;
     unsigned long	getJoyButtonSet() const;
-    void                getJoyDevices(std::vector<std::string> &list) const;
-    void	        initJoystick(std::string &joystickName);
+    void		getJoyDevices(std::vector<std::string> &list) const;
+    void		initJoystick(std::string &joystickName);
 
   private:
     // no copying
@@ -98,7 +98,7 @@ class MainWindow {
     bool		isFullscreen;
     bool		isFullView;
     bool		allowMouseGrab;
-    bool                grabEnabled;
+    bool		grabEnabled;
     int			zoomFactor;
     int			trueWidth, trueHeight;
     int			xOrigin, yOrigin;

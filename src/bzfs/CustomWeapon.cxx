@@ -53,11 +53,11 @@ bool CustomWeapon::read(const char *cmd, std::istream& input) {
 
     while (parms >> d) {
       if (d < minWeaponDelay) {
-        std::cout << "skipping weapon delay of " << d << " seconds" << std::endl;
-        continue;
+	std::cout << "skipping weapon delay of " << d << " seconds" << std::endl;
+	continue;
       }
       else {
-        delay.push_back(d);
+	delay.push_back(d);
       }
     }
     input.putback('\n');

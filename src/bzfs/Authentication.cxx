@@ -17,7 +17,7 @@
 // because kebos dosn't asume anyone else but them has defines.
 #ifdef MAXHOSTNAMELEN
 #undef MAXHOSTNAMELEN
-#endif 
+#endif
 
 /* system implementation headers */
 #ifdef HAVE_KRB5
@@ -32,13 +32,13 @@
 #include "DirectoryNames.h"
 
 #ifdef HAVE_KRB5
-krb5_context   Authentication::context        = NULL;
-krb5_ccache    Authentication::cc             = NULL;
+krb5_context   Authentication::context	= NULL;
+krb5_ccache    Authentication::cc	     = NULL;
 krb5_principal Authentication::client;
 krb5_creds     Authentication::my_creds;
-char           Authentication::ccfile[MAXPATHLEN+6]; // FILE:path+\0
+char	   Authentication::ccfile[MAXPATHLEN+6]; // FILE:path+\0
 #endif
-bool           Authentication::authentication = false;
+bool	   Authentication::authentication = false;
 
 Authentication::Authentication() : trusted(false)
 {
@@ -92,7 +92,7 @@ void Authentication::init(const char *address, int port, const char *password)
     com_err("bzfs:", retval, "setting default credential cache");
   unlink(ccfile+strlen("FILE:"));
 
-  // Getting credential cache 
+  // Getting credential cache
   if (!retval && (retval = krb5_cc_default(context, &cc)))
     com_err("bzfs:", retval, "getting credentials cache");
 
@@ -111,9 +111,9 @@ void Authentication::init(const char *address, int port, const char *password)
   intPassword[127] = 0;
   // Get credentials for server
   if (!retval && (retval = krb5_get_init_creds_password(context, &my_creds,
- 							client, intPassword,
- 							krb5_prompter_posix,
- 							NULL, 0, NULL, NULL)))
+							client, intPassword,
+							krb5_prompter_posix,
+							NULL, 0, NULL, NULL)))
     com_err("bzfs:", retval, "getting credential");
 
   // Store credentials in cache
@@ -145,7 +145,7 @@ void Authentication::setPrincipalName(char *buf, int len)
 
 #ifdef HAVE_KRB5
   krb5_error_code retval;
-  char            remotePrincipal[1024];
+  char	    remotePrincipal[1024];
 
   buf[len] = 0;
   snprintf(remotePrincipal, 1024, "%s@BZFLAG.ORG", name);
@@ -161,13 +161,13 @@ void Authentication::verifyCredential(char *buf, int len)
   if (!authentication)
     return;
 
-  krb5_creds        creds;
+  krb5_creds	creds;
   krb5_error_code   retval;
   krb5_creds       *new_creds;
 
   memset((char*)&creds, 0, sizeof(creds));
-  memcpy(&creds.client, &client, sizeof(client)); 
-  memcpy(&creds.server, &server, sizeof(server)); 
+  memcpy(&creds.client, &client, sizeof(client));
+  memcpy(&creds.server, &server, sizeof(server));
 
   creds.second_ticket.length = len;
   creds.second_ticket.data   = buf;

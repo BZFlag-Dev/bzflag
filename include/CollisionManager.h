@@ -64,13 +64,13 @@ class CollisionManager {
     ~CollisionManager();
 
     void load (std::vector<MeshObstacle*>    &meshes,
-               std::vector<BoxBuilding*>     &boxes,
-               std::vector<BaseBuilding*>    &bases,
-               std::vector<PyramidBuilding*> &pyrs,
-               std::vector<Teleporter*>      &teles);
+	       std::vector<BoxBuilding*>     &boxes,
+	       std::vector<BaseBuilding*>    &bases,
+	       std::vector<PyramidBuilding*> &pyrs,
+	       std::vector<Teleporter*>      &teles);
 
     // some basics
-    bool needReload() const;         // octree parameter has changed
+    bool needReload() const;	 // octree parameter has changed
     int getObstacleCount() const;    // total number of obstacles
     float getMaxWorldHeight() const; // maximum Z level in the world
 
@@ -80,14 +80,14 @@ class CollisionManager {
 
     // test against a cylinder
     const ObsList* cylinderTest (const float *pos,
-                                 float radius, float height) const;
+				 float radius, float height) const;
     // test against a box
     const ObsList* boxTest (const float* pos, float angle,
-                            float dx, float dy, float dz) const;
+			    float dx, float dy, float dz) const;
     // test against a moving box
     const ObsList* movingBoxTest (const float* oldPos, float oldAngle,
-                                  const float* pos, float angle,
-                                  float dx, float dy, float dz) const;
+				  const float* pos, float angle,
+				  float dx, float dy, float dz) const;
     // test against a Ray
     const ObsList* rayTest (const Ray* ray, float timeLeft) const;
 
@@ -96,14 +96,14 @@ class CollisionManager {
 
     // test against a box and return a split list
     //const SplitObsList *boxTestSplit (const float* pos, float angle,
-    //                                  float dx, float dy, float dz) const;
+    //				  float dx, float dy, float dz) const;
 
     // drawing function
     void draw (DrawLinesFunc drawLinesFunc);
 
   private:
 
-    void clear ();                  // reset the state
+    void clear ();		  // reset the state
     void setExtents(ObsList* list); // gather the extents
 
     class ColDetNode* root;   // the root of the octree
@@ -120,8 +120,8 @@ extern CollisionManager COLLISIONMGR;
 class ColDetNode {
   public:
     ColDetNode(unsigned char depth,
-               const float* mins, const float* maxs,
-               ObsList *fullList);
+	       const float* mins, const float* maxs,
+	       ObsList *fullList);
     ~ColDetNode();
 
     int getCount() const;
@@ -138,7 +138,7 @@ class ColDetNode {
     // this fills in the SplitList return list
     // (FIXME: not yet implemented, boxTestSplit might be useful for radar)
     //void boxTestSplit (const float* pos, float angle, float dx, float dy, float dz) const;
-    
+
     void tallyStats();
     void draw(DrawLinesFunc drawLinesFunc);
 

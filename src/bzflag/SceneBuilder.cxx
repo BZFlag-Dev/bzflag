@@ -267,7 +267,7 @@ SceneDatabase*		SceneDatabaseBuilder::make(const World* world)
 
 
 void SceneDatabaseBuilder::addWaterLevel(SceneDatabase* db,
-                                         const World* world)
+					 const World* world)
 {
   float plane[4] = { 0.0f, 0.0f, 1.0f, 0.0f };
   const float level = world->getWaterLevel();
@@ -475,7 +475,7 @@ void SceneDatabaseBuilder::addPyramid(SceneDatabase* db, PyramidBuilding& o)
   SceneNode* inode =
     new EighthDPyrSceneNode(o.getPosition(), obstacleSize, o.getRotation());
   o.addInsideSceneNode(inode);
-  
+
   delete nodeGen;
 }
 
@@ -525,9 +525,9 @@ void SceneDatabaseBuilder::addBase(SceneDatabase *db, BaseBuilding &o)
   // 2. getNextNode() returns the top texture(0), and the 4 sides(1-4)
   // 3. getNextNode() returns the top texture(0), and the 4 sides(1-4), and the bottom(5)
   while ((node = ( ((part % 5) == 0) ? nodeGen->getNextNode(1,1, boxLOD) :
-                                      nodeGen->getNextNode(o.getBreadth(),
-                                                           o.getHeight(),
-                                                           boxLOD)))) {
+				      nodeGen->getNextNode(o.getBreadth(),
+							   o.getHeight(),
+							   boxLOD)))) {
     if ((part % 5) != 0) {
       node->setColor(boxColors[part - 2]);
       node->setModulateColor(boxModulateColors[part - 2]);
@@ -539,8 +539,8 @@ void SceneDatabaseBuilder::addBase(SceneDatabase *db, BaseBuilding &o)
     }
     else{
       if (useColorTexture[1]) {  // only set the texture if we have one and are using it
-        node->setTexture(baseTopTexture);
-        node->setUseColorTexture(useColorTexture[1]);
+	node->setTexture(baseTopTexture);
+	node->setUseColorTexture(useColorTexture[1]);
       }
     }
     part++;
@@ -555,7 +555,7 @@ void SceneDatabaseBuilder::addBase(SceneDatabase *db, BaseBuilding &o)
   SceneNode* inode = new
     EighthDBaseSceneNode(o.getPosition(), obstacleSize, o.getRotation());
   o.addInsideSceneNode(inode);
-  
+
   delete nodeGen;
 }
 
@@ -569,7 +569,7 @@ void			SceneDatabaseBuilder::addTeleporter(SceneDatabase* db,
   ObstacleSceneNodeGenerator* nodeGen = new TeleporterSceneNodeGenerator(&o);
 
   TextureManager &tm = TextureManager::instance();
-  int             teleporterTexture = -1;
+  int	     teleporterTexture = -1;
 
   bool  useColorTexture = false;
 
@@ -587,33 +587,33 @@ void			SceneDatabaseBuilder::addTeleporter(SceneDatabase* db,
 							teleporterLOD))) {
     if (o.isHorizontal ()) {
       if (part >= 0 && part <= 15) {
-        node->setColor (teleporterColors[0]);
-        node->setModulateColor (teleporterModulateColors[0]);
-        node->setLightedColor (teleporterLightedColors[0]);
-        node->setLightedModulateColor (teleporterLightedModulateColors[0]);
-        node->setMaterial (teleporterMaterial);
-        node->setTexture (teleporterTexture);
-        node->setUseColorTexture (useColorTexture);
+	node->setColor (teleporterColors[0]);
+	node->setModulateColor (teleporterModulateColors[0]);
+	node->setLightedColor (teleporterLightedColors[0]);
+	node->setLightedModulateColor (teleporterLightedModulateColors[0]);
+	node->setMaterial (teleporterMaterial);
+	node->setTexture (teleporterTexture);
+	node->setUseColorTexture (useColorTexture);
       }
     }
     else {
       if (part >= 0 && part <= 1) {
-        node->setColor (teleporterColors[0]);
-        node->setModulateColor (teleporterModulateColors[0]);
-        node->setLightedColor (teleporterLightedColors[0]);
-        node->setLightedModulateColor (teleporterLightedModulateColors[0]);
-        node->setMaterial (teleporterMaterial);
-        node->setTexture (teleporterTexture);
-        node->setUseColorTexture (useColorTexture);
+	node->setColor (teleporterColors[0]);
+	node->setModulateColor (teleporterModulateColors[0]);
+	node->setLightedColor (teleporterLightedColors[0]);
+	node->setLightedModulateColor (teleporterLightedModulateColors[0]);
+	node->setMaterial (teleporterMaterial);
+	node->setTexture (teleporterTexture);
+	node->setUseColorTexture (useColorTexture);
       }
       else if (part >= 2 && part <= 11) {
-        node->setColor (teleporterColors[1]);
-        node->setModulateColor (teleporterModulateColors[1]);
-        node->setLightedColor (teleporterLightedColors[1]);
-        node->setLightedModulateColor (teleporterLightedModulateColors[1]);
-        node->setMaterial (teleporterMaterial);
-        node->setTexture (teleporterTexture);
-        node->setUseColorTexture (useColorTexture);
+	node->setColor (teleporterColors[1]);
+	node->setModulateColor (teleporterModulateColors[1]);
+	node->setLightedColor (teleporterLightedColors[1]);
+	node->setLightedModulateColor (teleporterLightedModulateColors[1]);
+	node->setMaterial (teleporterMaterial);
+	node->setTexture (teleporterTexture);
+	node->setUseColorTexture (useColorTexture);
       }
     }
 
@@ -627,11 +627,11 @@ void			SceneDatabaseBuilder::addTeleporter(SceneDatabase* db,
   linkNode = MeshSceneNodeGenerator::getMeshPolySceneNode(o.getBackLink());
   MeshSceneNodeGenerator::setupNodeMaterial(linkNode, mat);
   db->addStaticNode(linkNode, false);
-  
+
   linkNode = MeshSceneNodeGenerator::getMeshPolySceneNode(o.getFrontLink());
   MeshSceneNodeGenerator::setupNodeMaterial(linkNode, mat);
   db->addStaticNode(linkNode, false);
-  
+
   delete nodeGen;
 }
 

@@ -10,7 +10,7 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#define IDI_BZICON                      101
+#define IDI_BZICON		      101
 
 /*
  * Local Variables: ***

@@ -34,7 +34,7 @@ class BzfJoystick {
     virtual bool	joystick() const;
     virtual void	getJoy(int& x, int& y);
     virtual unsigned long getJoyButtons();
-    virtual void        getJoyDevices(std::vector<std::string> &list) const;
+    virtual void	getJoyDevices(std::vector<std::string> &list) const;
 
     /* Force feedback support. Currently we only support 'rumble' force
      * feedback- a motor in the controller vibrates it, as tactile feedback
@@ -56,8 +56,8 @@ class BzfJoystick {
      * one effect is supported at a time, so using a count of zero will cancel
      * any rumble that may be in progress.
      */
-    virtual bool        ffHasRumble() const;
-    virtual void        ffRumble(int count,
+    virtual bool	ffHasRumble() const;
+    virtual void	ffRumble(int count,
 				 float delay, float duration,
 				 float strong_motor, float weak_motor=0.0f);
 };

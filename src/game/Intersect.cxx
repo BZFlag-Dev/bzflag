@@ -68,7 +68,7 @@ static float getNormalOrigRect(const float* p, float dx, float dy)
 
 
 void getNormalRect(const float* p1, const float* p2,
-                   float angle, float dx, float dy, float* n)
+		   float angle, float dx, float dy, float* n)
 {
   // translate origin
   float pa[2];
@@ -123,7 +123,7 @@ bool testOrigRectCircle(float dx, float dy, const float* p, float r)
 
 
 bool testRectCircle(const float* p1, float angle,
-                    float dx, float dy, const float* p2, float r)
+		    float dx, float dy, const float* p2, float r)
 {
   // translate origin
   float pa[2];
@@ -186,7 +186,7 @@ float rayAtDistanceFromOrigin(const Ray& r, float radius)
 
 // block covers interval x=[-dx,dx], y=[-dy,dy], z=[0.0,dz]
 static float timeRayHitsOrigBox(const float* p, const float* v,
-                                float dx, float dy, float dz)
+				float dx, float dy, float dz)
 {
   float tx, ty, tz;
 
@@ -260,7 +260,7 @@ static float timeRayHitsOrigBox(const float* p, const float* v,
 
 
 float timeRayHitsBlock(const Ray& r, const float* p1,
-                       float angle, float dx, float dy, float dz)
+		       float angle, float dx, float dy, float dz)
 {
   // get names for ray info
   const float* p2 = r.getOrigin();
@@ -289,8 +289,8 @@ float timeRayHitsBlock(const Ray& r, const float* p1,
 /** Computing ray travel time to the plane described by 3 points
  */
 static float timeRayHitsPlane(const float pb[3], const float db[3],
-                              const float x1[3], const float x2[3],
-                              const float x3[3])
+			      const float x1[3], const float x2[3],
+			      const float x3[3])
 {
   float u[3], v[3], d[3];
   int i;
@@ -339,7 +339,7 @@ static float timeRayHitsPlane(const float pb[3], const float db[3],
 
 
 float timeRayHitsPyramids(const Ray& r, const float* p1, float angle,
-                          float dx, float dy, float dz, bool flipZ)
+			  float dx, float dy, float dz, bool flipZ)
 {
 
   const float epsilon = 1.0e-3f;
@@ -466,7 +466,7 @@ float timeRayHitsPyramids(const Ray& r, const float* p1, float angle,
 
 // rect covers interval x=[-dx,dx], y=[-dy,dy]
 float timeAndSideRayHitsOrigRect(const float* p, const float* v,
-                                 float dx, float dy, int& side)
+				 float dx, float dy, int& side)
 {
   // check if inside
   if (fabsf(p[0]) <= dx && fabsf(p[1]) <= dy) {
@@ -510,7 +510,7 @@ float timeAndSideRayHitsOrigRect(const float* p, const float* v,
 
 
 float timeAndSideRayHitsRect(const Ray& r, const float* p1, float angle,
-                             float dx, float dy, int& side)
+			     float dx, float dy, int& side)
 {
   // get names for ray info
   const float* p2 = r.getOrigin();
@@ -537,7 +537,7 @@ float timeAndSideRayHitsRect(const Ray& r, const float* p1, float angle,
 
 
 static bool testOrigRectRect(const float* p, float angle,
-                             float dx1, float dy1, float dx2, float dy2)
+			     float dx1, float dy1, float dx2, float dy2)
 {
   static const float	box[4][2] =	{ {  1.0,  1.0 }, {  1.0, -1.0 },
 					  { -1.0, -1.0 }, { -1.0,  1.0 } };
@@ -611,7 +611,7 @@ static bool testOrigRectRect(const float* p, float angle,
 
 
 bool testRectRect(const float* p1, float angle1, float dx1, float dy1,
-                  const float* p2, float angle2, float dx2, float dy2)
+		  const float* p2, float angle2, float dx2, float dy2)
 {
   // translate origin
   float pa[2];
@@ -630,7 +630,7 @@ bool testRectRect(const float* p1, float angle1, float dx1, float dy1,
 
 
 bool testRectInRect(const float* p1, float angle1, float dx1, float dy1,
-                    const float* p2, float angle2, float dx2, float dy2)
+		    const float* p2, float angle2, float dx2, float dy2)
 {
   static const float	box[4][2] =	{ {  1.0,  1.0 }, {  1.0, -1.0 },
 					  { -1.0, -1.0 }, { -1.0,  1.0 } };
@@ -658,10 +658,10 @@ bool testRectInRect(const float* p1, float angle1, float dx1, float dy1,
 
 
 static inline void projectAxisBox(const float* dir,
-                                  const float* mins, const float* maxs,
-                                  float* minDist, float* maxDist)
+				  const float* mins, const float* maxs,
+				  float* minDist, float* maxDist)
 {
-  static float i[3]; 
+  static float i[3];
   static float o[3];
 
   // find the extreme corners
@@ -674,10 +674,10 @@ static inline void projectAxisBox(const float* dir,
       o[t] = maxs[t];
     }
   }
-  
-  float idist = (i[0] * dir[0]) + (i[1] * dir[1]) + (i[2] * dir[2]); 
-  float odist = (o[0] * dir[0]) + (o[1] * dir[1]) + (o[2] * dir[2]); 
-  
+
+  float idist = (i[0] * dir[0]) + (i[1] * dir[1]) + (i[2] * dir[2]);
+  float odist = (o[0] * dir[0]) + (o[1] * dir[1]) + (o[2] * dir[2]);
+
   if (idist < odist) {
     *minDist = idist;
     *maxDist = odist;
@@ -685,14 +685,14 @@ static inline void projectAxisBox(const float* dir,
     *minDist = odist;
     *maxDist = idist;
   }
-  
+
   return;
 }
 
 
-static inline void projectPolygon(const float* dir,      
-                                  int count, const float (*points)[3],
-                                  float* minDist, float* maxDist)
+static inline void projectPolygon(const float* dir,
+				  int count, const float (*points)[3],
+				  float* minDist, float* maxDist)
 {
   float mind = MAXFLOAT;
   float maxd = -MAXFLOAT;
@@ -710,7 +710,7 @@ static inline void projectPolygon(const float* dir,
 
   *minDist = mind;
   *maxDist = maxd;
-  
+
   return;
 }
 
@@ -718,8 +718,8 @@ static inline void projectPolygon(const float* dir,
 // return true if polygon touches the axis aligned box
 // *** assumes that an extents test has already been done ***
 bool testPolygonInAxisBox(int pointCount, const float (*points)[3],
-                          const float* plane,
-                          const float* boxMins, const float* boxMaxs)
+			  const float* plane,
+			  const float* boxMins, const float* boxMaxs)
 {
   int t;
   static float i[3]; // inside point  (assuming partial)
@@ -735,17 +735,17 @@ bool testPolygonInAxisBox(int pointCount, const float (*points)[3],
       o[t] = boxMaxs[t];
     }
   }
-  const float icross = (plane[0] * i[0]) + 
-                       (plane[1] * i[1]) +
-                       (plane[2] * i[2]) + plane[3];
-  const float ocross = (plane[0] * o[0]) + 
-                       (plane[1] * o[1]) +
-                       (plane[2] * o[2]) + plane[3];
-  if ((icross * ocross) > 0.0f) { 
+  const float icross = (plane[0] * i[0]) +
+		       (plane[1] * i[1]) +
+		       (plane[2] * i[2]) + plane[3];
+  const float ocross = (plane[0] * o[0]) +
+		       (plane[1] * o[1]) +
+		       (plane[2] * o[2]) + plane[3];
+  if ((icross * ocross) > 0.0f) {
     // same polarity means that the plane doesn't cut the box
     return false;
   }
-  
+
   // test the edges
   const float axisNormals[3][3] =
     {{1.0f, 0.0f, 0.0f}, {0.0f, 1.0f, 0.0f}, {0.0f, 0.0f, 1.0f}};
@@ -761,10 +761,10 @@ bool testPolygonInAxisBox(int pointCount, const float (*points)[3],
       cross[0] = (edge[1] * axis[2]) - (edge[2] * axis[1]);
       cross[1] = (edge[2] * axis[0]) - (edge[0] * axis[2]);
       cross[2] = (edge[0] * axis[1]) - (edge[1] * axis[0]);
-      const float length = 
-        (cross[0] * cross[0]) + (cross[1] * cross[1]) + (cross[2] * cross[2]);
+      const float length =
+	(cross[0] * cross[0]) + (cross[1] * cross[1]) + (cross[2] * cross[2]);
       if (length < 0.001f) {
-        continue;
+	continue;
       }
       // find the projected distances
       float boxMinDist, boxMaxDist;
@@ -773,11 +773,11 @@ bool testPolygonInAxisBox(int pointCount, const float (*points)[3],
       projectPolygon(cross, pointCount, points, &polyMinDist, &polyMaxDist);
       // check if this is a separation axis
       if ((boxMinDist > polyMaxDist) || (boxMaxDist < polyMinDist)) {
-        return false;
+	return false;
       }
     }
   }
-  
+
   return true;
 }
 
@@ -786,8 +786,8 @@ bool testPolygonInAxisBox(int pointCount, const float (*points)[3],
 // possible values are Outside, Partial, and Contained.
 // the frustum plane normals point inwards
 IntersectLevel testAxisBoxInFrustum(const float* boxMins,
-                                    const float* boxMaxs,
-                                    const Frustum* frustum)
+				    const float* boxMaxs,
+				    const Frustum* frustum)
 {
   // FIXME - use a sphere vs. cone test first?
 
@@ -799,7 +799,7 @@ IntersectLevel testAxisBoxInFrustum(const float* boxMins,
   IntersectLevel result = Contained;
 
   // FIXME - 0 is the near clip plane, not that useful really?
-  //         OpenGL should easily clip the few items sneak in
+  //	 OpenGL should easily clip the few items sneak in
 
   for (s = 1 /* NOTE: not 0 */; s < 5; s++) {
 
@@ -810,11 +810,11 @@ IntersectLevel testAxisBoxInFrustum(const float* boxMins,
     // on the normal vector for the plane
     for (t = 0; t < 3; t++) {
       if (p[t] > 0.0f) {
-        i[t] = boxMaxs[t];
-        o[t] = boxMins[t];
+	i[t] = boxMaxs[t];
+	o[t] = boxMins[t];
       } else {
-        i[t] = boxMins[t];
-        o[t] = boxMaxs[t];
+	i[t] = boxMins[t];
+	o[t] = boxMaxs[t];
       }
     }
     // check the inside length
@@ -838,9 +838,9 @@ IntersectLevel testAxisBoxInFrustum(const float* boxMins,
 // is contained within all of the planes.
 // the occluder plane normals point inwards
 IntersectLevel testAxisBoxOcclusion(const float* boxMins,
-                                    const float* boxMaxs,
-                                    const float (*planes)[4],
-                                    int planeCount)
+				    const float* boxMaxs,
+				    const float (*planes)[4],
+				    int planeCount)
 {
   static int s, t;
   static float i[3]; // inside point  (assuming partial)
@@ -858,11 +858,11 @@ IntersectLevel testAxisBoxOcclusion(const float* boxMins,
     // on the normal vector for the plane
     for (t = 0; t < 3; t++) {
       if (p[t] > 0.0f) {
-        i[t] = boxMaxs[t];
-        o[t] = boxMins[t];
+	i[t] = boxMaxs[t];
+	o[t] = boxMins[t];
       } else {
-        i[t] = boxMins[t];
-        o[t] = boxMaxs[t];
+	i[t] = boxMins[t];
+	o[t] = boxMaxs[t];
       }
     }
 
@@ -873,9 +873,9 @@ IntersectLevel testAxisBoxOcclusion(const float* boxMins,
     }
 
     // FIXME - if we don't do occlusion by SceneNode,
-    //         then ditch the partial test. This will
-    //         save an extra dot product, and reduce
-    //         the likely number of loops
+    //	 then ditch the partial test. This will
+    //	 save an extra dot product, and reduce
+    //	 the likely number of loops
 
     // check the outside length
     len = (p[0] * o[0]) + (p[1] * o[1]) + (p[2] * o[2]) + p[3];
@@ -890,28 +890,28 @@ IntersectLevel testAxisBoxOcclusion(const float* boxMins,
 // return true if the ray hits the box
 // if it does hit, set the inTime value
 bool testRayHitsAxisBox(const Ray* ray,
-                        const float mins[3], const float maxs[3],
-                        float* inTime)
+			const float mins[3], const float maxs[3],
+			float* inTime)
 {
-  int a;  
+  int a;
   const float* const o = ray->getOrigin();
   const float* const v = ray->getDirection();
   const float* extents[2] = { mins, maxs };
   int zone[3];
   bool inside = true;
 
-  // setup the zones  
-  for (a = 0; a < 3; a++) {  
+  // setup the zones
+  for (a = 0; a < 3; a++) {
     if (o[a] < mins[a]) {
       if (v[a] <= 0.0f) {
-        return false;
+	return false;
       }
       zone[a] = 0;
       inside = false;
     }
     else if (o[a] > maxs[a]) {
       if (v[a] >= 0.0f) {
-        return false;
+	return false;
       }
       zone[a] = 1;
       inside = false;
@@ -920,10 +920,10 @@ bool testRayHitsAxisBox(const Ray* ray,
       zone[a] = -1;
     }
   }
-  
+
   int hitPlane;
   float hitTime[3];
-  
+
   if (inside) {
     *inTime = 0.0f;
   }
@@ -931,12 +931,12 @@ bool testRayHitsAxisBox(const Ray* ray,
     // calculate the hitTimes
     for (a = 0; a < 3; a++) {
       if (zone[a] < 0) {
-        hitTime[a] = -1.0f;
+	hitTime[a] = -1.0f;
       } else {
-        hitTime[a] = (extents[zone[a]][a] - o[a]) / v[a];
+	hitTime[a] = (extents[zone[a]][a] - o[a]) / v[a];
       }
     }
-    
+
     // use the largest hitTime
     hitPlane = 0;
     if (hitTime[1] > hitTime[0]) {
@@ -945,7 +945,7 @@ bool testRayHitsAxisBox(const Ray* ray,
     if (hitTime[2] > hitTime[hitPlane]) {
       hitPlane = 2;
     }
-    
+
     // check the hitPlane
     const float useTime = hitTime[hitPlane];
     if (useTime < 0.0f) {
@@ -953,15 +953,15 @@ bool testRayHitsAxisBox(const Ray* ray,
     }
     for (a = 0; a < 3; a++) {
       if (a != hitPlane) {
-        const float hitDist = o[a] + (useTime * v[a]);
-        if ((hitDist < mins[a]) || (hitDist > maxs[a])) {
-          return false;
-        }
+	const float hitDist = o[a] + (useTime * v[a]);
+	if ((hitDist < mins[a]) || (hitDist > maxs[a])) {
+	  return false;
+	}
       }
     }
     *inTime = useTime;
   }
-  
+
   return true;
 }
 
@@ -969,17 +969,17 @@ bool testRayHitsAxisBox(const Ray* ray,
 // return true if the ray hits the box
 // if it does hit, set the inTime and outTime values
 bool testRayHitsAxisBox(const Ray* ray,
-                        const float mins[3], const float maxs[3],
-                        float* inTime, float* outTime)
+			const float mins[3], const float maxs[3],
+			float* inTime, float* outTime)
 {
   if (!testRayHitsAxisBox(ray, mins, maxs, inTime)) {
     return false;
   }
-  
-  int a;  
+
+  int a;
   const float* const o = ray->getOrigin();
   const float* const v = ray->getDirection();
-  
+
   // calculate the hitTimes for the outTime
   float hitTime[3];
   for (a = 0; a < 3; a++) {
@@ -993,7 +993,7 @@ bool testRayHitsAxisBox(const Ray* ray,
       hitTime[a] = (maxs[a] - o[a]) / v[a];
     }
   }
-  
+
   // use the smallest hitTime
   int hitPlane = 0;
   if (hitTime[1] < hitTime[0]) {
@@ -1003,10 +1003,10 @@ bool testRayHitsAxisBox(const Ray* ray,
     hitPlane = 2;
   }
   *outTime = hitTime[hitPlane];
-  
+
   return true;
-}                        
-                        
+}
+
 
 // Local Variables: ***
 // mode:C++ ***

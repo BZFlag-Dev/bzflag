@@ -30,20 +30,20 @@ class BaseBuilding : public Obstacle {
     static const char*	getClassName(); // const
 
     bool		isFlatTop() const;
-    
+
     float		intersect(const Ray &) const;
     void		getNormal(const float *p, float *n) const;
     void		get3DNormal(const float* p, float* n) const;
 
-    bool                inCylinder(const float* p, float radius, float height) const;
-    bool                inBox(const float* p, float angle,
-                              float halfWidth, float halfBreadth, float height) const;
-    bool                inMovingBox(const float* oldP, float oldAngle,
-                                    const float *newP, float newAngle,
-                                    float halfWidth, float halfBreadth, float height) const;
-    bool                isCrossing(const float* p, float angle,
-                                   float halfWidth, float halfBreadth, float height,
-                                   float* plane) const;
+    bool		inCylinder(const float* p, float radius, float height) const;
+    bool		inBox(const float* p, float angle,
+			      float halfWidth, float halfBreadth, float height) const;
+    bool		inMovingBox(const float* oldP, float oldAngle,
+				    const float *newP, float newAngle,
+				    float halfWidth, float halfBreadth, float height) const;
+    bool		isCrossing(const float* p, float angle,
+				   float halfWidth, float halfBreadth, float height,
+				   float* plane) const;
 
     bool		getHitNormal(const float *pos1, float azimuth1,
 				const float *pos2, float azimuth2,
@@ -52,7 +52,7 @@ class BaseBuilding : public Obstacle {
 				float *normal) const;
     void		getCorner(int index, float *pos) const;
     int			getTeam() const;
-    std::string	        userTextures[2];
+    std::string		userTextures[2];
  private:
     static const char*	typeName;
     int team;

@@ -17,7 +17,7 @@
 #include "StateDatabase.h"
 #include "KeyManager.h"
 
-static const int        MaximumLineLength = 1024;
+static const int	MaximumLineLength = 1024;
 
 // initialize the singleton
 template <>

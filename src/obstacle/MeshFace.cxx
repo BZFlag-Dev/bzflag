@@ -48,9 +48,9 @@ MeshFace::MeshFace(MeshObstacle* _mesh)
 
 
 MeshFace::MeshFace(MeshObstacle* _mesh, int _vertexCount,
-                   float** _vertices, float** _normals, float** _texcoords,
-                   const BzMaterial* _bzMaterial, int physics,
-                   bool _noclusters, bool bounce, bool drive, bool shoot)
+		   float** _vertices, float** _normals, float** _texcoords,
+		   const BzMaterial* _bzMaterial, int physics,
+		   bool _noclusters, bool bounce, bool drive, bool shoot)
 {
   mesh = _mesh;
   vertexCount = _vertexCount;
@@ -79,24 +79,24 @@ void MeshFace::finalize()
   float maxCrossSqr = 0.0f;
   float bestCross[3] = { 0.0f, 0.0f, 0.0f };
   int bestSet[3] = { -1, -1, -1 };
-  
+
   // find the best vertices for making the plane
   int i, j, k;
   for (i = 0; i < (vertexCount - 2); i++) {
     for (j = i; j < (vertexCount - 1); j++) {
       for (k = j; k < (vertexCount - 0); k++) {
-        float edge1[3], edge2[3], cross[3];
-        vec3sub(edge1, vertices[k], vertices[j]);
-        vec3sub(edge2, vertices[i], vertices[j]);
-        vec3cross(cross, edge1, edge2);
-        const float lenSqr = vec3dot(cross, cross);
-        if (lenSqr > maxCrossSqr) {
-          maxCrossSqr = lenSqr;
-          bestSet[0] = i;
-          bestSet[1] = j;
-          bestSet[2] = k;
-          memcpy (bestCross, cross, sizeof(float[3]));
-        }
+	float edge1[3], edge2[3], cross[3];
+	vec3sub(edge1, vertices[k], vertices[j]);
+	vec3sub(edge2, vertices[i], vertices[j]);
+	vec3cross(cross, edge1, edge2);
+	const float lenSqr = vec3dot(cross, cross);
+	if (lenSqr > maxCrossSqr) {
+	  maxCrossSqr = lenSqr;
+	  bestSet[0] = i;
+	  bestSet[1] = j;
+	  bestSet[2] = k;
+	  memcpy (bestCross, cross, sizeof(float[3]));
+	}
       }
     }
   }
@@ -117,7 +117,7 @@ void MeshFace::finalize()
   plane[1] = bestCross[1] * scale;
   plane[2] = bestCross[2] * scale;
   plane[3] = -vec3dot(plane, vert);
-  
+
   // see if the whole face is convex
   int v, a;
   for (v = 0; v < vertexCount; v++) {
@@ -130,22 +130,22 @@ void MeshFace::finalize()
       vertexCount = 0;
       DEBUG1("non-convex mesh face\n");
       if (debugLevel >= 3) {
-        print(std::cerr, 3);
+	print(std::cerr, 3);
       }
       return;
     }
   }
-  
+
   // setup extents
   mins[0] = mins[1] = mins[2] = +MAXFLOAT;
   maxs[0] = maxs[1] = maxs[2] = -MAXFLOAT;
   for (v = 0; v < vertexCount; v++) {
     for (a = 0; a < 3; a++) {
       if (vertices[v][a] < mins[a]) {
-        mins[a] = vertices[v][a];
+	mins[a] = vertices[v][a];
       }
       if (vertices[v][a] > maxs[a]) {
-        maxs[a] = vertices[v][a];
+	maxs[a] = vertices[v][a];
       }
     }
   }
@@ -270,12 +270,12 @@ float MeshFace::intersect(const Ray& ray) const
   // to see if the intersection point is contained within
   // the face.
   //
-  //  L - line unit vector          Lo - line origin
+  //  L - line unit vector	  Lo - line origin
   //  N - plane normal unit vector  d  - plane offset
-  //  P - point in question         t - time
+  //  P - point in question	 t - time
   //
-  //  (N dot P) + d = 0                      { plane equation }
-  //  P = (t * L) + Lo                       { line equation }
+  //  (N dot P) + d = 0		      { plane equation }
+  //  P = (t * L) + Lo		       { line equation }
   //  t (N dot L) + (N dot Lo) + d = 0
   //
   //  t = - (d + (N dot Lo)) / (N dot L)     { time of impact }
@@ -286,15 +286,15 @@ float MeshFace::intersect(const Ray& ray) const
 
   // get the time until the shot would hit each plane
   const float linedot = (plane[0] * dir[0]) +
-                        (plane[1] * dir[1]) +
-                        (plane[2] * dir[2]);
+			(plane[1] * dir[1]) +
+			(plane[2] * dir[2]);
   if (linedot >= -0.001f) {
     // shot is either parallel, or going through backwards
     return -1.0f;
   }
   const float origindot = (plane[0] * origin[0]) +
-                          (plane[1] * origin[1]) +
-                          (plane[2] * origin[2]);
+			  (plane[1] * origin[1]) +
+			  (plane[2] * origin[2]);
   // linedot should be safe to divide with now
   hitTime = - (plane[3] + origindot) / linedot;
   if (hitTime < 0.0f) {
@@ -310,8 +310,8 @@ float MeshFace::intersect(const Ray& ray) const
   // now test against the edge planes
   for (int q = 0; q < vertexCount; q++) {
     float d = (edgePlanes[q][0] * point[0]) +
-              (edgePlanes[q][1] * point[1]) +
-              (edgePlanes[q][2] * point[2]) + edgePlanes[q][3];
+	      (edgePlanes[q][1] * point[1]) +
+	      (edgePlanes[q][2] * point[2]) + edgePlanes[q][3];
     if (d > 0.001f) {
       return -1.0f;
     }
@@ -349,13 +349,13 @@ void MeshFace::get3DNormal(const float* p, float* n) const
       int next = (i + 1) % vertexCount;
       twinAreas[i] = areas[i] + areas[next];
       if (twinAreas[i] < 1.0e-10f) {
-        memcpy (n, normals[next], sizeof(float[3]));
-        delete[] areas;
-        delete[] twinAreas;
-        return;
+	memcpy (n, normals[next], sizeof(float[3]));
+	delete[] areas;
+	delete[] twinAreas;
+	return;
       }
       if (twinAreas[i] < smallestArea) {
-        smallestArea = twinAreas[i];
+	smallestArea = twinAreas[i];
       }
     }
     float normal[3] = {0.0f, 0.0f, 0.0f};
@@ -381,7 +381,7 @@ void MeshFace::get3DNormal(const float* p, float* n) const
     delete[] areas;
     delete[] twinAreas;
   }
-  
+
   return;
 }
 
@@ -401,7 +401,7 @@ void MeshFace::getNormal(const float* /*p*/, float* n) const
 
 
 bool MeshFace::getHitNormal(const float* /*oldPos*/, float /*oldAngle*/,
-                            const float* /*newPos*/, float /*newAngle*/,
+			    const float* /*newPos*/, float /*newAngle*/,
 			    float /*dx*/, float /*dy*/, float /*height*/,
 			    float* normal) const
 {
@@ -419,15 +419,15 @@ bool MeshFace::inCylinder(const float* p,float radius, float height) const
 
 
 bool MeshFace::inBox(const float* p, float angle,
-                     float dx, float dy, float height) const
+		     float dx, float dy, float height) const
 {
   int i;
-  
+
   // Z axis separation test
   if ((mins[2] > (p[2] + height)) || (maxs[2] < p[2])) {
     return false;
   }
-  
+
   // translate the face so that the box is an origin box
   // centered at 0,0,0  (this assumes that it is cheaper
   // to move the polygon then the box, tris and quads will
@@ -449,7 +449,7 @@ bool MeshFace::inBox(const float* p, float angle,
   pln[1] = (cos_val * plane[1]) + (sin_val * plane[0]);
   pln[2] = plane[2];
   pln[3] = plane[3] + vec3dot(plane, p);
-  
+
   // testPolygonInAxisBox() expects us to have already done all of the
   // separation tests with respect to the box planes. we could not do
   // the X and Y axis tests until we'd found the translated vertices,
@@ -499,7 +499,7 @@ bool MeshFace::inBox(const float* p, float angle,
   boxMaxs[2] = height;
 
   bool hit = testPolygonInAxisBox(vertexCount, v, pln, boxMins, boxMaxs);
-  
+
   delete[] v;
 
   return hit;
@@ -507,8 +507,8 @@ bool MeshFace::inBox(const float* p, float angle,
 
 
 bool MeshFace::inMovingBox(const float* oldPos, float /*oldAngle*/,
-                           const float* newPos, float newAngle,
-                           float dx, float dy, float height) const
+			   const float* newPos, float newAngle,
+			   float dx, float dy, float height) const
 {
   // expand the box with respect to Z axis motion
   float pos[3];
@@ -520,14 +520,14 @@ bool MeshFace::inMovingBox(const float* oldPos, float /*oldAngle*/,
     pos[2] = newPos[2];
   }
   height = height + fabsf(oldPos[2] - newPos[2]);
-  
+
   return inBox(pos, newAngle, dx, dy, height);
 }
 
 
 bool MeshFace::isCrossing(const float* /*p*/, float /*angle*/,
-                          float /*dx*/, float /*dy*/, float /*height*/,
-                          float* _plane) const
+			  float /*dx*/, float /*dy*/, float /*height*/,
+			  float* _plane) const
 {
   if (_plane != NULL) {
     memcpy(_plane, plane, sizeof(float[4]));
@@ -547,14 +547,14 @@ void *MeshFace::pack(void *buf)
   stateByte |= smoothBounce     ? (1 << 4) : 0;
   stateByte |= noclusters       ? (1 << 5) : 0;
   buf = nboPackUByte(buf, stateByte);
-  
+
   // vertices
   buf = nboPackInt(buf, vertexCount);
   for (int i = 0; i < vertexCount; i++) {
     int index = (fvec3*)vertices[i] - mesh->getVertices();
     buf = nboPackInt(buf, index);
   }
-  
+
   // normals
   if (useNormals()) {
     for (int i = 0; i < vertexCount; i++) {
@@ -562,7 +562,7 @@ void *MeshFace::pack(void *buf)
       buf = nboPackInt(buf, index);
     }
   }
-  
+
   // texcoords
   if (useTexcoords()) {
     for (int i = 0; i < vertexCount; i++) {
@@ -574,7 +574,7 @@ void *MeshFace::pack(void *buf)
   // material
   int matindex = MATERIALMGR.getIndex(bzMaterial);
   buf = nboPackInt(buf, matindex);
-  
+
   // physics driver
   buf = nboPackInt(buf, phydrv);
 
@@ -595,7 +595,7 @@ void *MeshFace::unpack(void *buf)
   shootThrough = (stateByte & (1 << 3)) != 0;
   smoothBounce = (stateByte & (1 << 4)) != 0;
   noclusters   = (stateByte & (1 << 5)) != 0;
-  
+
   // vertices
   buf = nboUnpackInt(buf, vertexCount);
   vertices = new float*[vertexCount];
@@ -632,7 +632,7 @@ void *MeshFace::unpack(void *buf)
 
   // physics driver
   buf = nboUnpackInt(buf, phydrv);
-  
+
   finalize();
 
   return buf;
@@ -664,7 +664,7 @@ void MeshFace::print(std::ostream& out, int level)
 
   if (level > 1) {
     out << "  # plane normal = " << plane[0] << " " << plane[1] << " "
-                                 << plane[2] << " " << plane[3] << std::endl;
+				 << plane[2] << " " << plane[3] << std::endl;
   }
 
   out << "    vertices";
@@ -689,7 +689,7 @@ void MeshFace::print(std::ostream& out, int level)
     if (level > 1) {
       out << " #";
       for (i = 0; i < vertexCount; i++) {
-        out << " " << normals[i][0] <<  " " << normals[i][1] << " " << normals[i][2];
+	out << " " << normals[i][0] <<  " " << normals[i][1] << " " << normals[i][2];
       }
     }
     out << std::endl;
@@ -704,7 +704,7 @@ void MeshFace::print(std::ostream& out, int level)
     if (level > 1) {
       out << " #";
       for (i = 0; i < vertexCount; i++) {
-        out << " " << texcoords[i][0] <<  " " << texcoords[i][1];
+	out << " " << texcoords[i][0] <<  " " << texcoords[i][1];
       }
     }
     out << std::endl;
@@ -713,7 +713,7 @@ void MeshFace::print(std::ostream& out, int level)
   out << "    refmat ";
   MATERIALMGR.printReference(out, bzMaterial);
   out  << std::endl;
-  
+
   if (phydrv >= 0) {
     out << "    phydrv ";
     const PhysicsDriver* driver = PHYDRVMGR.getDriver(phydrv);
@@ -724,7 +724,7 @@ void MeshFace::print(std::ostream& out, int level)
     }
     out << std::endl;
   }
-  
+
   if (noclusters && !mesh->noClusters()) {
     out << "    noclusters" << std::endl;
   }

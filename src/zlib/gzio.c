@@ -60,7 +60,7 @@ typedef struct gz_stream {
 
 
 local gzFile gz_open      OF((const char *path, const char *mode, int  fd));
-local int do_flush        OF((gzFile file, int flush));
+local int do_flush	OF((gzFile file, int flush));
 local int    get_byte     OF((gz_stream *s));
 local void   check_header OF((gz_stream *s));
 local int    destroy      OF((gz_stream *s));
@@ -109,15 +109,15 @@ local gzFile gz_open (path, mode, fd)
 
     s->path = (char*)ALLOC(strlen(path)+1);
     if (s->path == NULL) {
-        return destroy(s), (gzFile)Z_NULL;
+	return destroy(s), (gzFile)Z_NULL;
     }
     strcpy(s->path, path); /* do this early for debugging */
 
     s->mode = '\0';
     do {
-        if (*p == 'r') s->mode = 'r';
-        if (*p == 'w' || *p == 'a') s->mode = 'w';
-        if (*p >= '0' && *p <= '9') {
+	if (*p == 'r') s->mode = 'r';
+	if (*p == 'w' || *p == 'a') s->mode = 'w';
+	if (*p >= '0' && *p <= '9') {
 	    level = *p - '0';
 	} else if (*p == 'f') {
 	  strategy = Z_FILTERED;
@@ -131,30 +131,30 @@ local gzFile gz_open (path, mode, fd)
 
     if (s->mode == 'w') {
 #ifdef NO_DEFLATE
-        err = Z_STREAM_ERROR;
+	err = Z_STREAM_ERROR;
 #else
-        err = deflateInit2(&(s->stream), level,
-                           Z_DEFLATED, -MAX_WBITS, DEF_MEM_LEVEL, strategy);
-        /* windowBits is passed < 0 to suppress zlib header */
+	err = deflateInit2(&(s->stream), level,
+			   Z_DEFLATED, -MAX_WBITS, DEF_MEM_LEVEL, strategy);
+	/* windowBits is passed < 0 to suppress zlib header */
 
-        s->stream.next_out = s->outbuf = (Byte*)ALLOC(Z_BUFSIZE);
+	s->stream.next_out = s->outbuf = (Byte*)ALLOC(Z_BUFSIZE);
 #endif
-        if (err != Z_OK || s->outbuf == Z_NULL) {
-            return destroy(s), (gzFile)Z_NULL;
-        }
+	if (err != Z_OK || s->outbuf == Z_NULL) {
+	    return destroy(s), (gzFile)Z_NULL;
+	}
     } else {
-        s->stream.next_in  = s->inbuf = (Byte*)ALLOC(Z_BUFSIZE);
+	s->stream.next_in  = s->inbuf = (Byte*)ALLOC(Z_BUFSIZE);
 
-        err = inflateInit2(&(s->stream), -MAX_WBITS);
-        /* windowBits is passed < 0 to tell that there is no zlib header.
-         * Note that in this case inflate *requires* an extra "dummy" byte
-         * after the compressed stream in order to complete decompression and
-         * return Z_STREAM_END. Here the gzip CRC32 ensures that 4 bytes are
-         * present after the compressed stream.
-         */
-        if (err != Z_OK || s->inbuf == Z_NULL) {
-            return destroy(s), (gzFile)Z_NULL;
-        }
+	err = inflateInit2(&(s->stream), -MAX_WBITS);
+	/* windowBits is passed < 0 to tell that there is no zlib header.
+	 * Note that in this case inflate *requires* an extra "dummy" byte
+	 * after the compressed stream in order to complete decompression and
+	 * return Z_STREAM_END. Here the gzip CRC32 ensures that 4 bytes are
+	 * present after the compressed stream.
+	 */
+	if (err != Z_OK || s->inbuf == Z_NULL) {
+	    return destroy(s), (gzFile)Z_NULL;
+	}
     }
     s->stream.avail_out = Z_BUFSIZE;
 
@@ -162,19 +162,19 @@ local gzFile gz_open (path, mode, fd)
     s->file = fd < 0 ? F_OPEN(path, fmode) : (FILE*)fdopen(fd, fmode);
 
     if (s->file == NULL) {
-        return destroy(s), (gzFile)Z_NULL;
+	return destroy(s), (gzFile)Z_NULL;
     }
     if (s->mode == 'w') {
-        /* Write a very simple .gz header:
-         */
-        fprintf(s->file, "%c%c%c%c%c%c%c%c%c%c", gz_magic[0], gz_magic[1],
-             Z_DEFLATED, 0 /*flags*/, 0,0,0,0 /*time*/, 0 /*xflags*/, OS_CODE);
+	/* Write a very simple .gz header:
+	 */
+	fprintf(s->file, "%c%c%c%c%c%c%c%c%c%c", gz_magic[0], gz_magic[1],
+	     Z_DEFLATED, 0 /*flags*/, 0,0,0,0 /*time*/, 0 /*xflags*/, OS_CODE);
 	s->startpos = 10L;
 	/* We use 10L instead of ftell(s->file) to because ftell causes an
-         * fflush on some systems. This version of the library doesn't use
-         * startpos anyway in write mode, so this initialization is not
-         * necessary.
-         */
+	 * fflush on some systems. This version of the library doesn't use
+	 * startpos anyway in write mode, so this initialization is not
+	 * necessary.
+	 */
     } else {
 	check_header(s); /* skip the .gz header */
 	s->startpos = (ftell(s->file) - s->stream.avail_in);
@@ -397,23 +397,23 @@ int ZEXPORT gzread (file, buf, len)
 	    len -= s->stream.avail_out;
 	    s->stream.total_in  += (uLong)len;
 	    s->stream.total_out += (uLong)len;
-            if (len == 0) s->z_eof = 1;
+	    if (len == 0) s->z_eof = 1;
 	    return (int)len;
 	}
-        if (s->stream.avail_in == 0 && !s->z_eof) {
+	if (s->stream.avail_in == 0 && !s->z_eof) {
 
-            errno = 0;
-            s->stream.avail_in = fread(s->inbuf, 1, Z_BUFSIZE, s->file);
-            if (s->stream.avail_in == 0) {
-                s->z_eof = 1;
+	    errno = 0;
+	    s->stream.avail_in = fread(s->inbuf, 1, Z_BUFSIZE, s->file);
+	    if (s->stream.avail_in == 0) {
+		s->z_eof = 1;
 		if (ferror(s->file)) {
 		    s->z_err = Z_ERRNO;
 		    break;
 		}
-            }
-            s->stream.next_in = s->inbuf;
-        }
-        s->z_err = inflate(&(s->stream), Z_NO_FLUSH);
+	    }
+	    s->stream.next_in = s->inbuf;
+	}
+	s->z_err = inflate(&(s->stream), Z_NO_FLUSH);
 
 	if (s->z_err == Z_STREAM_END) {
 	    /* Check CRC and original size */
@@ -423,9 +423,9 @@ int ZEXPORT gzread (file, buf, len)
 	    if (getLong(s) != s->crc) {
 		s->z_err = Z_DATA_ERROR;
 	    } else {
-	        (void)getLong(s);
-                /* The uncompressed length returned by above getlong() may
-                 * be different from s->stream.total_out) in case of
+		(void)getLong(s);
+		/* The uncompressed length returned by above getlong() may
+		 * be different from s->stream.total_out) in case of
 		 * concatenated .gz files. Check for such files:
 		 */
 		check_header(s);
@@ -503,17 +503,17 @@ int ZEXPORT gzwrite (file, buf, len)
 
     while (s->stream.avail_in != 0) {
 
-        if (s->stream.avail_out == 0) {
+	if (s->stream.avail_out == 0) {
 
-            s->stream.next_out = s->outbuf;
-            if (fwrite(s->outbuf, 1, Z_BUFSIZE, s->file) != Z_BUFSIZE) {
-                s->z_err = Z_ERRNO;
-                break;
-            }
-            s->stream.avail_out = Z_BUFSIZE;
-        }
-        s->z_err = deflate(&(s->stream), Z_NO_FLUSH);
-        if (s->z_err != Z_OK) break;
+	    s->stream.next_out = s->outbuf;
+	    if (fwrite(s->outbuf, 1, Z_BUFSIZE, s->file) != Z_BUFSIZE) {
+		s->z_err = Z_ERRNO;
+		break;
+	    }
+	    s->stream.avail_out = Z_BUFSIZE;
+	}
+	s->z_err = deflate(&(s->stream), Z_NO_FLUSH);
+	if (s->z_err != Z_OK) break;
     }
     s->crc = crc32(s->crc, (const Bytef *)buf, len);
 
@@ -549,7 +549,7 @@ int ZEXPORTVA gzprintf (gzFile file, const char *format, /* args */ ...)
 #else /* not ANSI C */
 
 int ZEXPORTVA gzprintf (file, format, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10,
-	               a11, a12, a13, a14, a15, a16, a17, a18, a19, a20)
+		       a11, a12, a13, a14, a15, a16, a17, a18, a19, a20)
     gzFile file;
     const char *format;
     int a1, a2, a3, a4, a5, a6, a7, a8, a9, a10,
@@ -616,28 +616,28 @@ local int do_flush (file, flush)
     s->stream.avail_in = 0; /* should be zero already anyway */
 
     for (;;) {
-        len = Z_BUFSIZE - s->stream.avail_out;
+	len = Z_BUFSIZE - s->stream.avail_out;
 
-        if (len != 0) {
-            if ((uInt)fwrite(s->outbuf, 1, len, s->file) != len) {
-                s->z_err = Z_ERRNO;
-                return Z_ERRNO;
-            }
-            s->stream.next_out = s->outbuf;
-            s->stream.avail_out = Z_BUFSIZE;
-        }
-        if (done) break;
-        s->z_err = deflate(&(s->stream), flush);
+	if (len != 0) {
+	    if ((uInt)fwrite(s->outbuf, 1, len, s->file) != len) {
+		s->z_err = Z_ERRNO;
+		return Z_ERRNO;
+	    }
+	    s->stream.next_out = s->outbuf;
+	    s->stream.avail_out = Z_BUFSIZE;
+	}
+	if (done) break;
+	s->z_err = deflate(&(s->stream), flush);
 
 	/* Ignore the second of two consecutive flushes: */
 	if (len == 0 && s->z_err == Z_BUF_ERROR) s->z_err = Z_OK;
 
-        /* deflate has finished flushing only when it hasn't used up
-         * all the available space in the output buffer:
-         */
-        done = (s->stream.avail_out != 0 || s->z_err == Z_STREAM_END);
+	/* deflate has finished flushing only when it hasn't used up
+	 * all the available space in the output buffer:
+	 */
+	done = (s->stream.avail_out != 0 || s->z_err == Z_STREAM_END);
 
-        if (s->z_err != Z_OK && s->z_err != Z_STREAM_END) break;
+	if (s->z_err != Z_OK && s->z_err != Z_STREAM_END) break;
     }
     return  s->z_err == Z_STREAM_END ? Z_OK : s->z_err;
 }
@@ -713,7 +713,7 @@ z_off_t ZEXPORT gzseek (file, offset, whence)
 	/* map to fseek */
 	s->stream.avail_in = 0;
 	s->stream.next_in = s->inbuf;
-        if (fseek(s->file, offset, SEEK_SET) < 0) return -1L;
+	if (fseek(s->file, offset, SEEK_SET) < 0) return -1L;
 
 	s->stream.total_in = s->stream.total_out = (uLong)offset;
 	return offset;
@@ -798,8 +798,8 @@ local void putLong (file, x)
 {
     int n;
     for (n = 0; n < 4; n++) {
-        fputc((int)(x & 0xff), file);
-        x >>= 8;
+	fputc((int)(x & 0xff), file);
+	x >>= 8;
     }
 }
 
@@ -837,11 +837,11 @@ int ZEXPORT gzclose (file)
 #ifdef NO_DEFLATE
 	return Z_STREAM_ERROR;
 #else
-        err = do_flush (file, Z_FINISH);
-        if (err != Z_OK) return destroy((gz_stream*)file);
+	err = do_flush (file, Z_FINISH);
+	if (err != Z_OK) return destroy((gz_stream*)file);
 
-        putLong (s->file, s->crc);
-        putLong (s->file, s->stream.total_in);
+	putLong (s->file, s->crc);
+	putLong (s->file, s->stream.total_in);
 #endif
     }
     return destroy((gz_stream*)file);
@@ -862,8 +862,8 @@ const char*  ZEXPORT gzerror (file, errnum)
     gz_stream *s = (gz_stream*)file;
 
     if (s == NULL) {
-        *errnum = Z_STREAM_ERROR;
-        return (const char*)ERR_MSG(Z_STREAM_ERROR);
+	*errnum = Z_STREAM_ERROR;
+	return (const char*)ERR_MSG(Z_STREAM_ERROR);
     }
     *errnum = s->z_err;
     if (*errnum == Z_OK) return (const char*)"";

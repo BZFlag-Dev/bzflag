@@ -127,17 +127,17 @@ SceneRenderer::SceneRenderer() :
   lights = new OpenGLLight*[lightsSize];
   lightsCount = 0;
   dynamicLights = 0;
-  
+
   // init the track manager
   TrackMarks::init();
-  
+
   return;
 }
 
 
 void SceneRenderer::setWindow(MainWindow* _window) {
   window = _window;
-  
+
   // get visual info
   window->getWindow()->makeCurrent();
   GLint bits;
@@ -207,7 +207,7 @@ SceneRenderer::~SceneRenderer()
 {
   // free database
   delete scene;
-  
+
   // free lights list
   delete[] lights;
 
@@ -624,7 +624,7 @@ static int sortLights (const void* a, const void* b)
       return 0;
     }
   }
-  
+
   // sort by grounded state
   const bool groundedA = lightA->getOnlyGround();
   const bool groundedB = lightB->getOnlyGround();
@@ -645,11 +645,11 @@ static int sortLights (const void* a, const void* b)
 
 
 void SceneRenderer::render(bool _lastFrame, bool _sameFrame,
-                           bool fullWindow)
+			   bool fullWindow)
 {
   lastFrame = _lastFrame;
   sameFrame = _sameFrame;
-  
+
   // update the SceneNode and Background styles
   if (needStyleUpdate) {
     if (scene) {
@@ -674,7 +674,7 @@ void SceneRenderer::render(bool _lastFrame, bool _sameFrame,
 
   // turn on fog for teleporter blindness if close to a teleporter
   teleporterProximity = 0.0f;
-  if (!blank && LocalPlayer::getMyTank() && 
+  if (!blank && LocalPlayer::getMyTank() &&
       (LocalPlayer::getMyTank()->getTeam() != ObserverTeam)) {
     teleporterProximity = LocalPlayer::getMyTank()->getTeleporterProximity();
   }
@@ -684,14 +684,14 @@ void SceneRenderer::render(bool _lastFrame, bool _sameFrame,
 
   clearZbuffer = true;
   drawGround = true;
-  
+
   if (mirror) {
     drawGround = false;
-    
+
     // flip for the reflection drawing
     frustum.flipVertical();
     OpenGLGState::setInvertCull(true);
-  
+
     // the reflected scene
     renderScene(_lastFrame, _sameFrame, fullWindow);
 
@@ -705,7 +705,7 @@ void SceneRenderer::render(bool _lastFrame, bool _sameFrame,
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
     glDisable(GL_CULL_FACE);
-    
+
     float mirrorColor[4];
     if (!parseColorString(BZDB.get(StateDatabase::BZDB_MIRROR), mirrorColor)) {
       mirrorColor[0] = mirrorColor[1] = mirrorColor[2] = 0.0f;
@@ -714,7 +714,7 @@ void SceneRenderer::render(bool _lastFrame, bool _sameFrame,
       // probably a mistake
       mirrorColor[3] = 0.5f;
     }
-    
+
     // if low quality then use stipple -- it's probably much faster
     if (BZDBCache::blend && (useQualityValue >= 2)) {
       glColor4fv(mirrorColor);
@@ -733,16 +733,16 @@ void SceneRenderer::render(bool _lastFrame, bool _sameFrame,
 
     clearZbuffer = false;
   }
-  
+
   // the real scene
   renderScene(_lastFrame, _sameFrame, fullWindow);
-  
+
   return;
 }
 
 
 void SceneRenderer::renderScene(bool /*_lastFrame*/, bool /*_sameFrame*/,
-                                bool fullWindow)
+				bool fullWindow)
 {
   int i;
 
@@ -751,10 +751,10 @@ void SceneRenderer::renderScene(bool /*_lastFrame*/, bool /*_sameFrame*/,
 
   // get a list of the dynamic lights
   getLights();
-  
+
   // get the obstacle sceneNodes and shadowNodes
   getObstacles();
-  
+
   // prepare transforms
   // note -- lights should not be positioned before view is set
   frustum.executeDeepProjection();
@@ -768,7 +768,7 @@ void SceneRenderer::renderScene(bool /*_lastFrame*/, bool /*_sameFrame*/,
   }
 
   bool reallyUseFogHack = useFogHack && (useQualityValue >= 2);
-       
+
   if (reallyUseFogHack) {
     renderPreDimming();
   }
@@ -803,7 +803,7 @@ void SceneRenderer::renderScene(bool /*_lastFrame*/, bool /*_sameFrame*/,
     if (exposed || useHiddenLineOn || --depthRange < 0) {
       depthRange = numDepthRanges - 1;
       if (clearZbuffer) {
-        glClear(GL_DEPTH_BUFFER_BIT);
+	glClear(GL_DEPTH_BUFFER_BIT);
       }
       exposed = false;
     }
@@ -931,7 +931,7 @@ void SceneRenderer::renderScene(bool /*_lastFrame*/, bool /*_sameFrame*/,
   if (useDepthComplexityOn) {
     renderDepthComplexity();
   }
-  
+
   return;
 }
 
@@ -942,7 +942,7 @@ void SceneRenderer::doRender()
   // now draw each render node list
   OpenGLGState::renderLists();
 
-  // render the tank tracks  
+  // render the tank tracks
   TrackMarks::render();
 
   // render the environmental conditions
@@ -961,7 +961,7 @@ void SceneRenderer::doRender()
 void SceneRenderer::renderPreDimming()
 {
   float worldSize = BZDBCache::worldSize;
-  
+
   if (useDimming) {
     const float density = dimDensity;
     glFogi(GL_FOG_MODE, GL_LINEAR);
@@ -971,8 +971,8 @@ void SceneRenderer::renderPreDimming()
     glEnable(GL_FOG);
   }
   else if (teleporterProximity > 0.0f && useFogHack) {
-    const float density = (teleporterProximity > 0.75f) ? 1.0f 
-                          : (teleporterProximity / 0.75f);
+    const float density = (teleporterProximity > 0.75f) ? 1.0f
+			  : (teleporterProximity / 0.75f);
     glFogi(GL_FOG_MODE, GL_LINEAR);
     glFogf(GL_FOG_START, -density * 1000.0f * worldSize);
     glFogf(GL_FOG_END, (1.0f - density) * 1000.0f * worldSize);
@@ -993,7 +993,7 @@ void SceneRenderer::renderPostDimming()
   }
   else if (teleporterProximity > 0.0f) {
     density = (teleporterProximity > 0.75f) ?
-                      1.0f : teleporterProximity / 0.75f;
+		      1.0f : teleporterProximity / 0.75f;
     color = blindnessColor;
   }
   if (density > 0.0f && color != NULL) {
@@ -1032,7 +1032,7 @@ void SceneRenderer::renderDepthComplexity()
     { 1.0f, 0.0f, 0.0f }  // red -- 7 or more
   };
   static const int numColors = countof(depthColors);
-  
+
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
   glMatrixMode(GL_MODELVIEW);
@@ -1043,7 +1043,7 @@ void SceneRenderer::renderDepthComplexity()
     glRectf(-1.0f, -1.0f, 1.0f, 1.0f);
   }
   glDisable(GL_STENCIL_TEST);
-  
+
   return;
 }
 
@@ -1084,15 +1084,15 @@ void SceneRenderer::getLights()
 
     lightsCount = 0;
     dynamicLights = 0;
-    
+
     if (scene && !blank && BZDBCache::lighting) {
       // get the potential dynamic lights
       scene->addLights(*this);
-      
+
       // calculate the light importances
       int i;
       for (i = 0; i < lightsCount; i++) {
-        lights[i]->setImportance(frustum);
+	lights[i]->setImportance(frustum);
       }
 
       // sort by cull state, grounded state, and importance
@@ -1102,21 +1102,21 @@ void SceneRenderer::getLights()
       // (negative values indicate culled lights)
       int unculledCount = 0;
       for (i = 0; i < lightsCount; i++) {
-        // any value below 0.0f is culled
-        if (lights[i]->getImportance() >= 0.0f) {
-          unculledCount++;
-          if (!lights[i]->getOnlyGround()) {
-            dynamicLights++;
-          }
-        }
+	// any value below 0.0f is culled
+	if (lights[i]->getImportance() >= 0.0f) {
+	  unculledCount++;
+	  if (!lights[i]->getOnlyGround()) {
+	    dynamicLights++;
+	  }
+	}
       }
-      
+
       // set the total light count to the number of unculled lights
       lightsCount = unculledCount;
 
-      // limit the dynamic OpenGL light count      
+      // limit the dynamic OpenGL light count
       if (dynamicLights > maxLights) {
-        dynamicLights = maxLights;
+	dynamicLights = maxLights;
       }
     }
   }
@@ -1131,8 +1131,8 @@ void SceneRenderer::disableLights(const float mins[3], const float maxs[3])
     const float* pos = lights[i]->getPosition();
     const float dist = lights[i]->getMaxDist();
     if ((pos[0] < (mins[0] - dist)) || (pos[0] > (maxs[0] + dist)) ||
-        (pos[1] < (mins[1] - dist)) || (pos[1] > (maxs[1] + dist)) ||
-        (pos[2] < (mins[2] - dist)) || (pos[2] > (maxs[2] + dist))) {
+	(pos[1] < (mins[1] - dist)) || (pos[1] > (maxs[1] + dist)) ||
+	(pos[2] < (mins[2] - dist)) || (pos[2] > (maxs[2] + dist))) {
       lights[i]->enableLight(i + reservedLights, false);
     }
   }
@@ -1163,7 +1163,7 @@ const RenderNodeList& SceneRenderer::getShadowList() const
 }
 
 
-const GLfloat* 		SceneRenderer::getSunDirection() const
+const GLfloat*		SceneRenderer::getSunDirection() const
 {
   if (background) {
     return background->getSunDirection();

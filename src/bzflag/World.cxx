@@ -120,13 +120,13 @@ void			World::done()
   flagTexture = 0;
 }
 
-void                    World::loadCollisionManager()
+void		    World::loadCollisionManager()
 {
   COLLISIONMGR.load(meshes, boxes, basesR, pyramids, teleporters);
   return;
 }
 
-void                    World::checkCollisionManager()
+void		    World::checkCollisionManager()
 {
   if (COLLISIONMGR.needReload()) {
     // reload the collision grid
@@ -188,10 +188,10 @@ TeamColor		World::whoseBase(const float* pos) const
       float rx = (float) (cosf(atanf(ny / nx) - it->p[3]) * sqrt((ny * ny) + (nx * nx)));
       float ry = (float) (sinf(atanf(ny / nx) - it->p[3]) * sqrt((ny * ny) + (nx * nx)));
       if(fabsf(rx) < it->p[4] &&
-         fabsf(ry) < it->p[5]) {
-        float nz = it->p[2] + it->p[6];
-        float rz = pos[2] - nz;
-        if(fabsf(rz) < 0.1) { // epsilon kludge
+	 fabsf(ry) < it->p[5]) {
+	float nz = it->p[2] + it->p[6];
+	float rz = pos[2] - nz;
+	if(fabsf(rz) < 0.1) { // epsilon kludge
 	  return TeamColor(i);
 	}
       }
@@ -202,7 +202,7 @@ TeamColor		World::whoseBase(const float* pos) const
 }
 
 const Obstacle*		World::inBuilding(const float* pos,
-                                          float radius, float height) const
+					  float radius, float height) const
 {
   // check everything but walls
   const ObsList* olist = COLLISIONMGR.cylinderTest (pos, radius, height);
@@ -217,7 +217,7 @@ const Obstacle*		World::inBuilding(const float* pos,
 }
 
 const Obstacle*		World::inBuilding(const float* pos, float angle,
-                                           float dx, float dy, float dz) const
+					   float dx, float dy, float dz) const
 {
   // check everything but the walls
   const ObsList* olist = COLLISIONMGR.boxTest (pos, angle, dx, dy, dz);
@@ -234,7 +234,7 @@ const Obstacle*		World::inBuilding(const float* pos, float angle,
 
 
 const Obstacle*		World::hitBuilding(const float* pos, float angle,
-                                           float dx, float dy, float dz) const
+					   float dx, float dy, float dz) const
 {
   // check walls
   std::vector<WallObstacle*>::const_iterator wallScan = walls.begin();
@@ -306,10 +306,10 @@ const Obstacle*		World::hitBuilding(const float* oldPos, float oldAngle,
   }
 
   float vel[3];
-  vel[0] = pos[0] - oldPos[0];  
-  vel[1] = pos[1] - oldPos[1];  
+  vel[0] = pos[0] - oldPos[0];
+  vel[1] = pos[1] - oldPos[1];
   vel[2] = pos[2] - oldPos[2];
-  
+
   bool goingDown = false;
   if (vel[2] <= 0.0f) {
     goingDown = true;
@@ -318,51 +318,51 @@ const Obstacle*		World::hitBuilding(const float* oldPos, float oldAngle,
   // get the list of potential hits from the collision manager
   const ObsList* olist =
     COLLISIONMGR.movingBoxTest (oldPos, oldAngle, pos, angle, dx, dy, dz);
-    
+
   // make a list of the actual hits, or return
   // immediately if a non-mesh obstacle intersects
   int hitCount = 0;
   for (int i = 0; i < olist->count; i++) {
     const Obstacle* obs = olist->list[i];
     if (!obs->isDriveThrough()
-        && obs->inMovingBox(oldPos, oldAngle, pos, angle, dx, dy, dz)) {
+	&& obs->inMovingBox(oldPos, oldAngle, pos, angle, dx, dy, dz)) {
       if (obs->getType() != MeshFace::getClassName()) {
-        return obs;
+	return obs;
       } else {
-        const MeshFace* face = (const MeshFace*) obs;
-        const float facePos2 = face->getPosition()[2];
-        if (face->isUpPlane() && 
-            (!goingDown || (oldPos[2] < (facePos2 - 1.0e-3f)))) {
-          continue;
-        }
-        else if (face->isDownPlane() && ((oldPos[2] >= facePos2) || goingDown)) {
-          continue;
-        }
-        else {
-          // add the face to the hitlist
-          olist->list[hitCount] = (Obstacle*) obs;
-          hitCount++;
-          // compute its dot product and stick it in the scratchPad
-          const float* p = face->getPlane();
-          const float dot = (vel[0] * p[0]) + (vel[1] * p[1]) + (vel[2] * p[2]);
-          face->scratchPad = dot;
-        }
+	const MeshFace* face = (const MeshFace*) obs;
+	const float facePos2 = face->getPosition()[2];
+	if (face->isUpPlane() &&
+	    (!goingDown || (oldPos[2] < (facePos2 - 1.0e-3f)))) {
+	  continue;
+	}
+	else if (face->isDownPlane() && ((oldPos[2] >= facePos2) || goingDown)) {
+	  continue;
+	}
+	else {
+	  // add the face to the hitlist
+	  olist->list[hitCount] = (Obstacle*) obs;
+	  hitCount++;
+	  // compute its dot product and stick it in the scratchPad
+	  const float* p = face->getPlane();
+	  const float dot = (vel[0] * p[0]) + (vel[1] * p[1]) + (vel[2] * p[2]);
+	  face->scratchPad = dot;
+	}
       }
     }
   }
 
-  // sort the list by type and dot product  
+  // sort the list by type and dot product
   qsort (olist->list, hitCount, sizeof(Obstacle*), sortHitNormal);
-  
+
   if (hitCount > 0) {
     const MeshFace* face = (const MeshFace*) olist->list[0];
     if (face->isUpPlane() || (face->scratchPad < 0.0f) || !directional) {
 //      printf ("pos: <%10.10f> [%10.10f, %10.10f]  ", /*, %10.10f <%10.10f>   ", oldPos[2], pos[2],*/
-//              face->getPosition()[2], face->getPlane()[2], face->getPlane()[3]);
+//	      face->getPosition()[2], face->getPlane()[2], face->getPlane()[3]);
       if (face->isUpPlane()) {
-//        printf ("UpPlane\n");
+//	printf ("UpPlane\n");
       } else {
-//        printf ("Not UpPlane\n");
+//	printf ("Not UpPlane\n");
       }
       return face;
     }
@@ -452,7 +452,7 @@ void			World::freeFlags()
 void			World::freeInsideNodes() const
 {
   unsigned int i;
-  int j;  
+  int j;
   for (i = 0; i < boxes.size(); i++) {
     Obstacle* obs = (Obstacle*) boxes[i];
     for (j = 0; j < obs->getInsideSceneNodeCount(); j++) {
@@ -488,7 +488,7 @@ void			World::freeInsideNodes() const
 void		World::makeLinkMaterial()
 {
   const std::string name = "LinkMaterial";
-  
+
   linkMaterial = MATERIALMGR.findMaterial(name);
   if (linkMaterial != NULL) {
     return;
@@ -510,9 +510,9 @@ void		World::makeLinkMaterial()
     params[1] = 2.0f * (params[0] / 3.0f); // blue
     dyncol->addSinusoid(2, params);
     dyncol->setName(name);
-    dyncolId = DYNCOLORMGR.addColor (dyncol);  
+    dyncolId = DYNCOLORMGR.addColor (dyncol);
   }
-  
+
   int texmatId = TEXMATRIXMGR.findMatrix(name);
   if (texmatId < 0) {
     TextureMatrix* texmat = new TextureMatrix;
@@ -736,8 +736,8 @@ static void writeBZDBvar (const std::string& name, void *userData)
     if (BZDB.get(name).find(' ') != std::string::npos) {
       qmark = '"';
     }
-    (*out) << "  -set " << name << " " 
-                        << qmark << BZDB.get(name) << qmark << std::endl;
+    (*out) << "  -set " << name << " "
+			<< qmark << BZDB.get(name) << qmark << std::endl;
   }
   return;
 }
@@ -761,16 +761,16 @@ bool			World::writeWorld(std::string filename)
     out << "options" << std::endl;
 
     // FIXME - would be nice to get a few other thing
-    //         -fb, -sb, rabbit style, a real -mp, etc... (also, flags?)
+    //	 -fb, -sb, rabbit style, a real -mp, etc... (also, flags?)
 
     if (allowTeamFlags()) {
       out << "  -c" << std::endl;
       out << "  -mp 2,";
       for (int i = RedTeam; i <= PurpleTeam; i++) {
-        if (getBase(i,0) != NULL)
-          out << "2,";
-        else
-          out << "0,";
+	if (getBase(i,0) != NULL)
+	  out << "2,";
+	else
+	  out << "0,";
       }
       out << "2" << std::endl;
     }
@@ -784,7 +784,7 @@ bool			World::writeWorld(std::string filename)
       out << "  -handicap" << std::endl;
     if (allowInertia()) {
       out << "  -a " << getLinearAcceleration() << " "
-                     << getAngularAcceleration() << std::endl;
+		     << getAngularAcceleration() << std::endl;
     }
     if (allowAntidote()) {
       out << "  -sa" << std::endl;
@@ -844,7 +844,7 @@ bool			World::writeWorld(std::string filename)
 
   // Write mesh objects
   unsigned int i;
-  
+
   if (BZDB.isTrue("saveAsMeshes")) {
     // Write all of the meshes
     for (i = 0; i < meshes.size(); i++) {
@@ -856,7 +856,7 @@ bool			World::writeWorld(std::string filename)
     for (i = 0; i < meshes.size(); i++) {
       MeshObstacle* mesh = meshes[i];
       if (!mesh->getIsLocal()) {
-        mesh->print(out, 1);
+	mesh->print(out, 1);
       }
     }
 
@@ -897,12 +897,12 @@ bool			World::writeWorld(std::string filename)
       out << "\trotation " << ((base.getRotation() * 180.0) / M_PI) << std::endl;
       out << "\tcolor " << base.getTeam() << std::endl;
       if (base.isDriveThrough() && base.isShootThrough())
-        out << "\tpassable" << std::endl;
+	out << "\tpassable" << std::endl;
       else{
-        if (base.isDriveThrough())
-          out << "\tdrivethrough" << std::endl;
-        if (base.isShootThrough())
-          out << "\tshootthrough" << std::endl;
+	if (base.isDriveThrough())
+	  out << "\tdrivethrough" << std::endl;
+	if (base.isShootThrough())
+	  out << "\tshootthrough" << std::endl;
       }
 
       out << "end" << std::endl << std::endl;
@@ -919,11 +919,11 @@ bool			World::writeWorld(std::string filename)
       out << "\tsize " << box.getWidth() << " " << box.getBreadth() << " " << box.getHeight() << std::endl;
       out << "\trotation " << ((box.getRotation() * 180.0) / M_PI) << std::endl;
       if (box.isDriveThrough() && box.isShootThrough())
-        out << "\tpassable" << std::endl;
+	out << "\tpassable" << std::endl;
       else{
-        if (box.isDriveThrough())
+	if (box.isDriveThrough())
 	  out << "\tdrivethrough" << std::endl;
-        if (box.isShootThrough())
+	if (box.isShootThrough())
 	  out << "\tshootthrough" << std::endl;
       }
       out << "end" << std::endl << std::endl;
@@ -939,7 +939,7 @@ bool			World::writeWorld(std::string filename)
       const float *pos = pyr.getPosition();
       float height = pyr.getHeight();
       if (pyr.getZFlip())
-        height = -height;
+	height = -height;
       out << "\tposition " << pos[0] << " " << pos[1] << " " << pos[2]
 	  << std::endl;
       out << "\tsize " << pyr.getWidth() << " " << pyr.getBreadth() << " "
@@ -947,11 +947,11 @@ bool			World::writeWorld(std::string filename)
       out << "\trotation " << ((pyr.getRotation() * 180.0) / M_PI)
 	  << std::endl;
       if (pyr.isDriveThrough()&&pyr.isShootThrough())
-        out << "\tpassable" << std::endl;
+	out << "\tpassable" << std::endl;
       else{
-        if (pyr.isDriveThrough())
+	if (pyr.isDriveThrough())
 	  out << "\tdrivethrough" << std::endl;
-        if (pyr.isShootThrough())
+	if (pyr.isShootThrough())
 	  out << "\tshootthrough" << std::endl;
       }
       out << "end" << std::endl << std::endl;
@@ -980,10 +980,10 @@ bool			World::writeWorld(std::string filename)
       out << "link" << std::endl;
       out << "\tfrom " << from << std::endl;
       if (to == randomTeleporter) {
-        out << "\tto random" << std::endl;
+	out << "\tto random" << std::endl;
       }
       else {
-        out << "\tto " << to << std::endl;
+	out << "\tto " << to << std::endl;
       }
       out << "end" << std::endl << std::endl;
     }
@@ -995,17 +995,17 @@ bool			World::writeWorld(std::string filename)
       Weapon weapon = *it;
       out << "weapon" << std::endl;
       if (weapon.type != Flags::Null) {
-        out << "\ttype " << weapon.type->flagAbbv << std::endl;
+	out << "\ttype " << weapon.type->flagAbbv << std::endl;
       }
       out << "\tposition " << weapon.pos[0] << " " << weapon.pos[1] << " " << weapon.pos[2] << std::endl;
       out << "\trotation " << ((weapon.dir * 180.0) / M_PI) << std::endl;
       out << "\tinitdelay " << weapon.initDelay << std::endl;
       if (weapon.delay.size() > 0) {
-        out << "\tdelay";
-        for (std::vector<float>::iterator dit = weapon.delay.begin(); dit != weapon.delay.end(); ++dit) {
-          out << " " << (float)*dit;
-        }
-        out << std::endl;
+	out << "\tdelay";
+	for (std::vector<float>::iterator dit = weapon.delay.begin(); dit != weapon.delay.end(); ++dit) {
+	  out << " " << (float)*dit;
+	}
+	out << std::endl;
       }
       out << "end" << std::endl << std::endl;
     }
@@ -1020,28 +1020,28 @@ bool			World::writeWorld(std::string filename)
       out << "\tsize " << zone.size[0] << " " << zone.size[1] << " " << zone.size[2] << std::endl;
       out << "\trotation " << ((zone.rot * 180.0) / M_PI) << std::endl;
       if (zone.flags.size() > 0) {
-        out << "\tflag";
-        std::vector<FlagType*>::iterator fit;
-        for (fit = zone.flags.begin(); fit != zone.flags.end(); ++fit) {
-          out << " " << (*fit)->flagAbbv;
-        }
-        out << std::endl;
+	out << "\tflag";
+	std::vector<FlagType*>::iterator fit;
+	for (fit = zone.flags.begin(); fit != zone.flags.end(); ++fit) {
+	  out << " " << (*fit)->flagAbbv;
+	}
+	out << std::endl;
       }
       if (zone.teams.size() > 0) {
-        out << "\tteam";
-        std::vector<TeamColor>::iterator tit;
-        for (tit = zone.teams.begin(); tit != zone.teams.end(); ++tit) {
-          out << " " << (*tit);
-        }
-        out << std::endl;
+	out << "\tteam";
+	std::vector<TeamColor>::iterator tit;
+	for (tit = zone.teams.begin(); tit != zone.teams.end(); ++tit) {
+	  out << " " << (*tit);
+	}
+	out << std::endl;
       }
       if (zone.safety.size() > 0) {
-        out << "\tsafety";
-        std::vector<TeamColor>::iterator sit;
-        for (sit = zone.safety.begin(); sit != zone.safety.end(); ++sit) {
-          out << " " << (*sit);
-        }
-        out << std::endl;
+	out << "\tsafety";
+	std::vector<TeamColor>::iterator sit;
+	for (sit = zone.safety.begin(); sit != zone.safety.end(); ++sit) {
+	  out << " " << (*sit);
+	}
+	out << std::endl;
       }
       out << "end" << std::endl << std::endl;
     }
@@ -1069,29 +1069,29 @@ static void drawLines (int count, const float (*vertices)[3], int color)
     color = colorCount - 1;
   }
   glColor4fv (colors[color]);
-  
+
   glBegin (GL_LINE_STRIP);
   for (int i = 0; i < count; i++) {
     glVertex3fv (vertices[i]);
   }
   glEnd ();
-  
+
   return;
 }
 
 void			World::drawCollisionGrid()
 {
   GLboolean usingTextures;
-  
+
   glGetBooleanv (GL_TEXTURE_2D, &usingTextures);
   glDisable (GL_TEXTURE_2D);
-  
+
   COLLISIONMGR.draw (drawLines);
-  
+
   if (usingTextures) {
     glEnable (GL_TEXTURE_2D);
   }
-  
+
   return;
 }
 

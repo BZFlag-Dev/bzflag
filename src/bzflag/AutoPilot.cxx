@@ -89,10 +89,10 @@ ShotPath *findWorstBullet(float &minDistance)
     for (int s = 0; s < maxShots; s++) {
       ShotPath* shot = player[t]->getShot(s);
       if (!shot || shot->isExpired())
-        continue;
+	continue;
 
       if (shot->getFlag() == Flags::InvisibleBullet && myTank->getFlag() != Flags::Seer)
-        continue; //Theoretically Roger could triangulate the sound
+	continue; //Theoretically Roger could triangulate the sound
       if (player[t]->getFlag() == Flags::PhantomZone && player[t]->isFlagActive() &&
 		!(myTank->getFlag() == Flags::PhantomZone && myTank->isFlagActive()))
 	continue;
@@ -204,19 +204,19 @@ bool	avoidBullet(float &rotation, float &speed)
     if (zCross > 0.0f) { //if i am to the left of the shot from shooter pov
       rotation = rotation1;
       if (fabs(rotation1) < fabs(rotation2))
-        speed = 1.0f;
+	speed = 1.0f;
       else if (dotProd > 0.98f)
-        speed = -0.5f;
+	speed = -0.5f;
       else
-        speed = 0.5f;
+	speed = 0.5f;
     } else {
       rotation = rotation2;
       if (fabs(rotation2) < fabs(rotation1))
-        speed = 1.0f;
+	speed = 1.0f;
       else if (dotProd > 0.98f)
-        speed = -0.5f;
+	speed = -0.5f;
       else
-        speed = 0.5f;
+	speed = 0.5f;
     }
     return true;
   }
@@ -244,7 +244,7 @@ bool	stuckOnWall(float &rotation, float &speed)
   float myAzimuth = myTank->getAngle();
 
   const bool phased = myTank->getFlag() == Flags::OscillationOverthruster
-	              || ((myTank->getFlag() == Flags::PhantomZone) && myTank->isFlagActive());
+		      || ((myTank->getFlag() == Flags::PhantomZone) && myTank->isFlagActive());
 
   if (!phased && (TargetingUtils::getOpenDistance(pos, myAzimuth) < 5.0f)) {
     lastStuckTime = TimeKeeper::getCurrent();
@@ -256,9 +256,9 @@ bool	stuckOnWall(float &rotation, float &speed)
       float leftDistance = TargetingUtils::getOpenDistance( pos, myAzimuth + (M_PI/4.0f));
       float rightDistance = TargetingUtils::getOpenDistance( pos, myAzimuth - (M_PI/4.0f));
       if (leftDistance > rightDistance)
-        rotation = 1.0f;
+	rotation = 1.0f;
       else
-        rotation = -1.0f;
+	rotation = -1.0f;
       speed = -0.5f;
     }
     stuckRot = rotation;
@@ -288,7 +288,7 @@ RemotePlayer *findBestTarget()
 		(!(myTank->getFlag() == Flags::PhantomZone && myTank->isFlagActive()) ||
 					(myTank->getFlag() != Flags::ShockWave && myTank->getFlag() != Flags::SuperBullet))) ||
 		 (player[t]->getFlag() == Flags::Cloaking && myTank->getFlag() == Flags::Laser))
-        continue;
+	continue;
 
       //perform a draft that has us chase the proposed opponent if they have our flag
       if (World::getWorld()->allowTeamFlags() &&
@@ -303,12 +303,12 @@ RemotePlayer *findBestTarget()
       float d = TargetingUtils::getTargetDistance(pos, player[t]->getPosition());
       bool isObscured = TargetingUtils::isLocationObscured( pos, player[t]->getPosition());
       if (isObscured) //demote the priority of obscured enemies
-        d *= 1.25f;
+	d *= 1.25f;
 
       if (d < distance) {
-        if ((player[t]->getFlag() != Flags::Stealth)
+	if ((player[t]->getFlag() != Flags::Stealth)
 	||  (myTank->getFlag() == Flags::Seer)
-        ||  ((!isObscured) &&
+	||  ((!isObscured) &&
 	     (TargetingUtils::getTargetAngleDifference(pos, myAzimuth, player[t]->getPosition()) <= 30.0f))) {
 	  target = player[t];
 	  distance = d;
@@ -366,13 +366,13 @@ bool chasePlayer(float &rotation, float &speed)
 
       float leftDistance = TargetingUtils::getOpenDistance( pos, myAzimuth + (M_PI/6.0f));
       if (leftDistance > (2.0f * d)) {
-        speed = 0.5f;
+	speed = 0.5f;
 	rotation = -0.5f;
 	return true;
       }
       float rightDistance = TargetingUtils::getOpenDistance( pos, myAzimuth - (M_PI/6.0f));
       if (rightDistance > (2.0f * d)) {
-        speed = 0.5f;
+	speed = 0.5f;
 	rotation = 0.5f;
 	return true;
       }
@@ -380,12 +380,12 @@ bool chasePlayer(float &rotation, float &speed)
       //Never did good in math, he should really see if he can reach the building
       //based on jumpvel and gravity, but settles for assuming 20-50 is a good range
       if ((d > 20.0f) && (d < 50.0f) && (building->getType() == BoxBuilding::typeName)) {
-        float jumpVel = BZDB.eval(StateDatabase::BZDB_JUMPVELOCITY);
-        float maxJump = (jumpVel * jumpVel) / (2 * -BZDBCache::gravity);
+	float jumpVel = BZDB.eval(StateDatabase::BZDB_JUMPVELOCITY);
+	float maxJump = (jumpVel * jumpVel) / (2 * -BZDBCache::gravity);
 
-        if (((building->getPosition()[2] - pos[2] + building->getHeight())) < maxJump) {
-          speed = d / 50.0f;
-          myTank->setJump();
+	if (((building->getPosition()[2] - pos[2] + building->getHeight())) < maxJump) {
+	  speed = d / 50.0f;
+	  myTank->setJump();
 	  return true;
 	}
       }
@@ -451,8 +451,8 @@ bool lookForFlag(float &rotation, float &speed)
 	dist *= 1.25f;
 
       if ((dist < 200.0f) && (dist < minDist)) {
-        minDist = dist;
-        closestFlag = i;
+	minDist = dist;
+	closestFlag = i;
       }
     }
   }
@@ -561,7 +561,7 @@ bool fireAtTank()
     if (now - lastShot >= (1.0f / World::getWorld()->getMaxShots())) {
       bool hasSWTarget = false;
       for (int t = 0; t < curMaxPlayers; t++) {
-        if (t != myTank->getId() && player[t] &&
+	if (t != myTank->getId() && player[t] &&
 	    player[t]->isAlive() && !player[t]->isPaused() &&
 	    !player[t]->isNotResponding()) {
 
@@ -573,12 +573,12 @@ bool fireAtTank()
 
 	  const float *tp = player[t]->getPosition();
 	  float enemyPos[3];
-          //toss in some lag adjustment/future prediction - 300 millis
-          memcpy(enemyPos,tp,sizeof(enemyPos));
-          const float *tv = player[t]->getVelocity();
-          enemyPos[0] += 0.3f * tv[0];
-          enemyPos[1] += 0.3f * tv[1];
-          enemyPos[2] += 0.3f * tv[2];
+	  //toss in some lag adjustment/future prediction - 300 millis
+	  memcpy(enemyPos,tp,sizeof(enemyPos));
+	  const float *tv = player[t]->getVelocity();
+	  enemyPos[0] += 0.3f * tv[0];
+	  enemyPos[1] += 0.3f * tv[1];
+	  enemyPos[2] += 0.3f * tv[2];
 	  if (enemyPos[2] < 0.0f)
 	    enemyPos[2] = 0.0f;
 	  float dist = TargetingUtils::getTargetDistance( pos, enemyPos );
@@ -593,8 +593,8 @@ bool fireAtTank()
 	}
       }
       if (hasSWTarget) {
-        myTank->fireShot();
-        lastShot = TimeKeeper::getTick();
+	myTank->fireShot();
+	lastShot = TimeKeeper::getTick();
 	return true;
       }
     }
@@ -606,7 +606,7 @@ bool fireAtTank()
       float closeErrorLimit = errorLimit * 2.0f;
 
       for (int t = 0; t < curMaxPlayers; t++) {
-        if (t != myTank->getId() && player[t] &&
+	if (t != myTank->getId() && player[t] &&
 	    player[t]->isAlive() && !player[t]->isPaused() &&
 	    !player[t]->isNotResponding() &&
 	    myTank->validTeamTarget(player[t])) {
@@ -618,12 +618,12 @@ bool fireAtTank()
 
 	  const float *tp = player[t]->getPosition();
 	  float enemyPos[3];
-          //toss in some lag adjustment/future prediction - 300 millis
-          memcpy(enemyPos,tp,sizeof(enemyPos));
-          const float *tv = player[t]->getVelocity();
-          enemyPos[0] += 0.3f * tv[0];
-          enemyPos[1] += 0.3f * tv[1];
-          enemyPos[2] += 0.3f * tv[2];
+	  //toss in some lag adjustment/future prediction - 300 millis
+	  memcpy(enemyPos,tp,sizeof(enemyPos));
+	  const float *tv = player[t]->getVelocity();
+	  enemyPos[0] += 0.3f * tv[0];
+	  enemyPos[1] += 0.3f * tv[1];
+	  enemyPos[2] += 0.3f * tv[2];
 	  if (enemyPos[2] < 0.0f)
 	    enemyPos[2] = 0.0f;
 
@@ -636,14 +636,14 @@ bool fireAtTank()
 	    ||  ((dist < (2.0f * BZDB.eval(StateDatabase::BZDB_SHOTSPEED))) && (targetDiff < closeErrorLimit))) {
 	      bool isTargetObscured;
 	      if (myTank->getFlag() != Flags::SuperBullet)
-	        isTargetObscured = TargetingUtils::isLocationObscured( pos, enemyPos );
+		isTargetObscured = TargetingUtils::isLocationObscured( pos, enemyPos );
 	      else
-	        isTargetObscured = false;
+		isTargetObscured = false;
 
 	      if (!isTargetObscured) {
-	        myTank->fireShot();
-	        lastShot = now;
-	        t = curMaxPlayers;
+		myTank->fireShot();
+		lastShot = now;
+		t = curMaxPlayers;
 		return true;
 	      }
 	    }
@@ -675,7 +675,7 @@ void	doAutoPilot(float &rotation, float &speed)
   if (!avoidBullet(rotation, speed)) {
     if (!stuckOnWall(rotation, speed)) {
       if (!chasePlayer(rotation, speed)) {
-        if (!lookForFlag(rotation, speed)) {
+	if (!lookForFlag(rotation, speed)) {
 	  navigate(rotation, speed);
 	}
       }

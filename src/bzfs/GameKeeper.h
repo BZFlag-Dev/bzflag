@@ -54,7 +54,7 @@ public:
 	   tcpCallback _clientCallback);
     ~Player();
 
-    int            getIndex();
+    int	    getIndex();
     static int     getFreeIndex(int min, int max);
     static Player *getPlayerByIndex(int _playerIndex);
     static int     count();
@@ -66,47 +66,47 @@ public:
     static int     getPlayerIDByName(const std::string &name);
     static void    reloadAccessDatabase();
 
-    bool           loadEnterData(void *buf,
+    bool	   loadEnterData(void *buf,
 				 uint16_t &rejectCode,
 				 char *rejectMsg);
-    void          *packAdminInfo(void *buf);
-    void          *packPlayerUpdate(void *buf);
-    void           signingOn(bool ctf);
-    void           close();
+    void	  *packAdminInfo(void *buf);
+    void	  *packPlayerUpdate(void *buf);
+    void	   signingOn(bool ctf);
+    void	   close();
     static void    clean();
-    void           handleTcpPacket(fd_set *set);
+    void	   handleTcpPacket(fd_set *set);
 #if defined(USE_THREADS)
-    void           handleTcpPacketT();
+    void	   handleTcpPacketT();
 #endif
     static void    passTCPMutex();
     static void    freeTCPMutex();
 
     // players
-    PlayerInfo        player;
+    PlayerInfo	player;
     // Net Handler
     NetHandler       *netHandler;
     // player lag info
-    LagInfo           lagInfo;
+    LagInfo	   lagInfo;
     // player access
     PlayerAccessInfo  accessInfo;
     // Last known position, vel, etc
     PlayerState      *lastState;
     // DelayQueue for "Lag Flag"
-    DelayQueue        delayq;
+    DelayQueue	delayq;
     // FlagHistory
     FlagHistory       flagHistory;
     // Score
-    Score             score;
+    Score	     score;
     Authentication    authentication;
   private:
     static Player    *playerList[PlayerSlot];
-    int               playerIndex;
-    bool              closed;
+    int	       playerIndex;
+    bool	      closed;
     tcpCallback       clientCallback;
 #if defined(USE_THREADS)
-    pthread_t         thread;
+    pthread_t	 thread;
     static pthread_mutex_t mutex;
-    int               refCount;
+    int	       refCount;
 #endif
   };
   class Flag {

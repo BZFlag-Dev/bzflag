@@ -108,7 +108,7 @@ void ControlPanelMessage::breakLines(float maxLength, int fontFace, float fontSi
 	} else {
 	  n++;
 	}
-        if (TextUtils::isWhitespace(msg[n])) {
+	if (TextUtils::isWhitespace(msg[n])) {
 	  lastWhitespace = n;
 	  // Tabs break out into their own message.  These get dealt with
 	  // in ::render, which will increment x instead of y.
@@ -153,12 +153,12 @@ ControlPanel::ControlPanel(MainWindow& _mainWindow, SceneRenderer& renderer) :
 				messageMode(MessageAll)
 {
   setControlColor();
-  
+
   // make sure we're notified when MainWindow resizes or is exposed
   window.getWindow()->addResizeCallback(resizeCallback, this);
   window.getWindow()->addExposeCallback(exposeCallback, this);
   BZDB.addCallback(StateDatabase::BZDB_NORADAR, bzdbCallback, this);
-  
+
   // other initialization
   radarAreaPixels[0] = 0;
   radarAreaPixels[1] = 0;
@@ -195,7 +195,7 @@ ControlPanel::~ControlPanel()
   window.getWindow()->removeResizeCallback(resizeCallback, this);
   window.getWindow()->removeExposeCallback(exposeCallback, this);
   BZDB.removeCallback(StateDatabase::BZDB_NORADAR, bzdbCallback, this);
-  
+
   extern bool echoToConsole;
   extern bool echoAnsi;
   if (echoToConsole && echoAnsi) {
@@ -340,17 +340,17 @@ void			ControlPanel::render(SceneRenderer& renderer)
 
   // draw messages
   //
-  // It works by first breaking the string into a vector of strings (done 
-  //  elsewhere), each of which will fit the control panel, and tallying 
+  // It works by first breaking the string into a vector of strings (done
+  //  elsewhere), each of which will fit the control panel, and tallying
   //  the number of lines, then moving up the proper number of lines and
-  //  displaying downward -- that is, it kinda backtracks for each line 
+  //  displaying downward -- that is, it kinda backtracks for each line
   //  that will wrap.
   //
   //  messageAreaPixels[2] = Width of Message Window in Pixels
-  //  maxLines             = Max messages lines that can be displayed
+  //  maxLines	     = Max messages lines that can be displayed
   //  maxScrollPages       = This number * maxLines is the total maximum
-  //                         lines of messages (and scrollback). It is
-  //                         stored as a BZDB parameter.
+  //			 lines of messages (and scrollback). It is
+  //			 stored as a BZDB parameter.
 
   glScissor(x + messageAreaPixels[0],
 	    y + messageAreaPixels[1],
@@ -496,9 +496,9 @@ void			ControlPanel::render(SceneRenderer& renderer)
   // border for radar
   if (!BZDB.isTrue(StateDatabase::BZDB_NORADAR)) {
     glScissor(x + radarAreaPixels[0] - 1,
-              y + radarAreaPixels[1] - 1,
-              radarAreaPixels[2] + 2,
-              radarAreaPixels[3] + 2);
+	      y + radarAreaPixels[1] - 1,
+	      radarAreaPixels[2] + 2,
+	      radarAreaPixels[3] + 2);
 
     OpenGLGState::resetState();
 
@@ -506,23 +506,23 @@ void			ControlPanel::render(SceneRenderer& renderer)
     glColor3f(teamColor[0], teamColor[1], teamColor[2] );
     glBegin(GL_LINE_LOOP); {
       glVertex2f((float) (x + radarAreaPixels[0] - 0.9f),
-          (float) (y + radarAreaPixels[1] - 1));
+	  (float) (y + radarAreaPixels[1] - 1));
       glVertex2f((float) (x + radarAreaPixels[0] - 1 + radarAreaPixels[2] + 1.1f),
-          (float) (y + radarAreaPixels[1] - 1));
+	  (float) (y + radarAreaPixels[1] - 1));
       glVertex2f((float) (x + radarAreaPixels[0] - 1 + radarAreaPixels[2] + 1.1f),
-          (float) (y + radarAreaPixels[1] - 1 + radarAreaPixels[3] + 1.1f));
+	  (float) (y + radarAreaPixels[1] - 1 + radarAreaPixels[3] + 1.1f));
       glVertex2f((float) (x + radarAreaPixels[0] - 0.9f),
-          (float) (y + radarAreaPixels[1] - 1 + radarAreaPixels[3] + 1.1f));
+	  (float) (y + radarAreaPixels[1] - 1 + radarAreaPixels[3] + 1.1f));
     } glEnd();
     glBegin(GL_POINTS); {
       glVertex2f((float) (x + radarAreaPixels[0] - 0.9f),
-          (float) (y + radarAreaPixels[1] - 1));
+	  (float) (y + radarAreaPixels[1] - 1));
       glVertex2f((float) (x + radarAreaPixels[0] - 1 + radarAreaPixels[2] + 1.1f),
-          (float) (y + radarAreaPixels[1] - 1));
+	  (float) (y + radarAreaPixels[1] - 1));
       glVertex2f((float) (x + radarAreaPixels[0] - 1 + radarAreaPixels[2] + 1.1f),
-          (float) (y + radarAreaPixels[1] - 1 + radarAreaPixels[3] + 1.1f));
+	  (float) (y + radarAreaPixels[1] - 1 + radarAreaPixels[3] + 1.1f));
       glVertex2f((float) (x + radarAreaPixels[0] - 0.9f),
-          (float) (y + radarAreaPixels[1] - 1 + radarAreaPixels[3] + 1.1f));
+	  (float) (y + radarAreaPixels[1] - 1 + radarAreaPixels[3] + 1.1f));
     } glEnd();
   }
 
@@ -550,10 +550,10 @@ void			ControlPanel::resize()
   radarAreaPixels[0] = radarAreaPixels[1] = (int)radarSpace + 1;
   radarAreaPixels[2] = radarAreaPixels[3] = (int)(radarSize - (radarSpace * 2.0f)) - 2;
 
-  messageAreaPixels[0] = (int)radarSize + 1;                    // X coord
-  messageAreaPixels[1] = radarAreaPixels[1];                    // Y coord
+  messageAreaPixels[0] = (int)radarSize + 1;		    // X coord
+  messageAreaPixels[1] = radarAreaPixels[1];		    // Y coord
   messageAreaPixels[2] = (int)(w - radarSize - radarSpace) - 2; // Width
-  messageAreaPixels[3] = radarAreaPixels[3];                    // Height
+  messageAreaPixels[3] = radarAreaPixels[3];		    // Height
   if (BZDB.isTrue(StateDatabase::BZDB_NORADAR)) {
     messageAreaPixels[0] = (int)radarSpace + 1;
     messageAreaPixels[2] = (int)(w - (radarSpace * 2.0f)) - 2;
@@ -602,7 +602,7 @@ void			ControlPanel::resize()
   lineHeight = fm.getStrHeight(fontFace, fontSize, " ");
 
   maxLines = int(messageAreaPixels[3] / lineHeight);
-  
+
   margin = lineHeight / 4.0f;
 
   // rewrap all the lines
@@ -687,7 +687,7 @@ void			ControlPanel::addMessage(const std::string& line,
 {
   ControlPanelMessage item(line);
   item.breakLines(messageAreaPixels[2] - 2 * margin, fontFace, fontSize);
-  
+
   int maxScrollPages = BZDB.evalInt("scrollPages");
   if (maxScrollPages <= 0) {
     maxScrollPages = atoi(BZDB.getDefault("scrollPages").c_str());

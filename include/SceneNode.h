@@ -56,9 +56,9 @@ class SceneNode {
     virtual		~SceneNode();
 
     const GLfloat*	getSphere() const;
-    virtual void        getExtents(float* mins, float* maxs) const;
-    virtual bool        inAxisBox (const float* mins, const float* maxs) const;
-    virtual int         getVertexCount () const;
+    virtual void	getExtents(float* mins, float* maxs) const;
+    virtual bool	inAxisBox (const float* mins, const float* maxs) const;
+    virtual int	 getVertexCount () const;
     virtual const GLfloat* getVertex (int vertex) const;
     virtual bool	isTranslucent() const;
     virtual void	notifyStyleChange();
@@ -72,7 +72,7 @@ class SceneNode {
 				SceneNode*& front, SceneNode*& back) const;
     virtual void	addShadowNodes(SceneRenderer&);
     virtual void	addRenderNodes(SceneRenderer&);
-    
+
 
     static void enableInvertView();
     static void disableInvertView();
@@ -80,7 +80,7 @@ class SceneNode {
     virtual int getRenderNodeCount() { return 0; }
     virtual RenderNode*	getRenderNode(int) { return NULL; }
     virtual OpenGLGState* getGState(int) { return NULL; }
-    
+
 
     static void		setColorOverride(bool = true);
     static void		glColor3f(GLfloat r, GLfloat g, GLfloat b)
@@ -120,7 +120,7 @@ class SceneNode {
     };
 
     /** This boolean is used by the Octree code.
-        Someone else can 'friend'ify it later.
+	Someone else can 'friend'ify it later.
     */
     CullState octreeState;
 
@@ -146,11 +146,11 @@ class SceneNode {
 
   protected:
     GLfloat		plane[4];	// unit normal, distance to origin
-    bool                noPlane;
+    bool		noPlane;
   private:
     GLfloat		sphere[4];
 #ifdef __MINGW32__
-    static bool         colorOverride;
+    static bool	 colorOverride;
 #else
     static void		(__stdcall *color3f)(GLfloat, GLfloat, GLfloat);
     static void		(__stdcall *color4f)(GLfloat, GLfloat, GLfloat, GLfloat);

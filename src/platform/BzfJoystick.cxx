@@ -53,18 +53,18 @@ void			BzfJoystick::getJoy(int& x, int& y)
   x = y = 0;
 }
 
-void                    BzfJoystick::getJoyDevices(std::vector<std::string>
+void		    BzfJoystick::getJoyDevices(std::vector<std::string>
 						 &list) const
 {
   list.clear();
 }
 
-bool                    BzfJoystick::ffHasRumble() const
+bool		    BzfJoystick::ffHasRumble() const
 {
   return false;
 }
 
-void                    BzfJoystick::ffRumble(int, float, float, float, float)
+void		    BzfJoystick::ffRumble(int, float, float, float, float)
 {
 }
 

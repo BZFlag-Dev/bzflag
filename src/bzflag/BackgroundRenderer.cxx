@@ -39,7 +39,7 @@
 #include "SceneRenderer.h"
 #include "WeatherRenderer.h"
 
-//static     bool         useMoonTexture = false;
+//static     bool	 useMoonTexture = false;
 
 static const GLfloat	squareShape[4][2] =
 				{ {  1.0f,  1.0f }, { -1.0f,  1.0f },
@@ -223,13 +223,13 @@ BackgroundRenderer::BackgroundRenderer(const SceneRenderer&) :
       sprintf (text, "mountain%d", numMountainTextures + 1);
       mountainTexture = tm.getTextureID (text, false);
       if (mountainTexture >= 0) {
-        const ImageInfo & info = tm.getInfo (mountainTexture);
-        height = info.y;
-        width += info.x;
-        numMountainTextures++;
+	const ImageInfo & info = tm.getInfo (mountainTexture);
+	height = info.y;
+	width += info.x;
+	numMountainTextures++;
       }
       else {
-        done = true;
+	done = true;
       }
     }
 
@@ -244,28 +244,28 @@ BackgroundRenderer::BackgroundRenderer(const SceneRenderer&) :
       gstate.setAlphaFunc ();
 
       if (numMountainTextures > 1) {
-        width -= 2 * numMountainTextures;
+	width -= 2 * numMountainTextures;
       }
       // find power of two at least as large as height
       int scaledHeight = 1;
       while (scaledHeight < height) {
-        scaledHeight <<= 1;
+	scaledHeight <<= 1;
       }
 
       // choose minimum width
       int minWidth = scaledHeight;
       if (minWidth > scaledHeight) {
-        minWidth = scaledHeight;
+	minWidth = scaledHeight;
       }
       mountainsMinWidth = minWidth;
 
       // prepare each texture
       mountainsGState = new OpenGLGState[numMountainTextures];
       for (i = 0; i < numMountainTextures; i++) {
-        char text[256];
-        sprintf (text, "mountain%d", i + 1);
-        gstate.setTexture (tm.getTextureID (text));
-        mountainsGState[i] = gstate.getState ();
+	char text[256];
+	sprintf (text, "mountain%d", i + 1);
+	gstate.setTexture (tm.getTextureID (text));
+	mountainsGState[i] = gstate.getState ();
       }
       mountainsList = new OpenGLDisplayList[numMountainTextures];
     }
@@ -276,7 +276,7 @@ BackgroundRenderer::BackgroundRenderer(const SceneRenderer&) :
 
   // recreate display lists when context is recreated
   OpenGLGState::registerContextInitializer(initDisplayLists, (void*)this);
-  
+
   notifyStyleChange();
 }
 
@@ -300,7 +300,7 @@ void			BackgroundRenderer::notifyStyleChange()
     else
       styleIndex = 0;
   }
-      
+
   // some stuff is drawn only for certain states
   cloudsVisible = (styleIndex >= 2 && cloudsAvailable && BZDBCache::blend);
   mountainsVisible = (styleIndex >= 2 && mountainsAvailable);
@@ -317,7 +317,7 @@ void			BackgroundRenderer::notifyStyleChange()
   gridGState = gstate.getState();
 }
 
-void                BackgroundRenderer::resize() {
+void		BackgroundRenderer::resize() {
   resizeSky();
   doInitDisplayLists();
 }
@@ -399,12 +399,12 @@ void			BackgroundRenderer::setCelestial(
     glVertex3f(2.0f * worldSize, 0.0f, -moonRadius);
       for (int i = 0; i < moonSegements-1; i++) {
 	const float angle = 0.5f * M_PI * float(i-(moonSegements/2)-1) / (moonSegements/2.0f);
-        float sinAngle = sinf(angle);
-        float cosAngle = cosf(angle);
-        // glTexCoord2f(coverage*cosAngle,sinAngle);
+	float sinAngle = sinf(angle);
+	float cosAngle = cosf(angle);
+	// glTexCoord2f(coverage*cosAngle,sinAngle);
 	glVertex3f(2.0f * worldSize, coverage * moonRadius * cosAngle,moonRadius * sinAngle);
 
-        // glTexCoord2f(cosAngle,sinAngle);
+	// glTexCoord2f(cosAngle,sinAngle);
 	glVertex3f(2.0f * worldSize, moonRadius * cosAngle,moonRadius * sinAngle);
       }
     // glTexCoord2f(0,1);
@@ -436,7 +436,7 @@ void			BackgroundRenderer::addCloudDrift(GLfloat uDrift,
 }
 
 void BackgroundRenderer::renderSky(SceneRenderer& renderer, bool fullWindow,
-                                   bool mirror)
+				   bool mirror)
 {
   if (renderer.useQuality() > 0) {
     drawSky(renderer, mirror);
@@ -556,14 +556,14 @@ void BackgroundRenderer::renderGroundEffects(SceneRenderer& renderer)
 
       // draw clouds
       if (cloudsVisible) {
-        cloudsGState.setState();
-        glMatrixMode(GL_TEXTURE);
-        glPushMatrix();
-        glTranslatef(cloudDriftU, cloudDriftV, 0.0f);
-        cloudsList.execute();
-        glLoadIdentity();	// maybe works around bug in some systems
-        glPopMatrix();
-        glMatrixMode(GL_MODELVIEW);
+	cloudsGState.setState();
+	glMatrixMode(GL_TEXTURE);
+	glPushMatrix();
+	glTranslatef(cloudDriftU, cloudDriftV, 0.0f);
+	cloudsList.execute();
+	glLoadIdentity();	// maybe works around bug in some systems
+	glPopMatrix();
+	glMatrixMode(GL_MODELVIEW);
       }
     }
   }
@@ -689,7 +689,7 @@ void BackgroundRenderer::drawSky(SceneRenderer& renderer, bool mirror)
       glDisable(GL_CLIP_PLANE0);
     }
   }
-  
+
 
   if (moonDirection[2] > -0.009f) {
     moonGState[doStars ? 1 : 0].setState();
@@ -720,7 +720,7 @@ void			BackgroundRenderer::drawGround()
     else if (BZDB.isSet("GroundOverideColor")) {
       float color[3];
       sscanf(BZDB.get("GroundOverideColor").c_str(),"%f %f %f",
-             &color[0], &color[1], &color[2]);
+	     &color[0], &color[1], &color[2]);
       glColor3fv(color);
     }
     else {
@@ -829,7 +829,7 @@ void			BackgroundRenderer::drawGroundReceivers(
   int i, j;
   for (int k = 0; k < count; k++) {
     const OpenGLLight& light = renderer.getLight(k);
-    
+
     const GLfloat* pos = light.getPosition();
     const GLfloat* lightColor = light.getColor();
     const GLfloat* atten = light.getAttenuation();
@@ -837,7 +837,7 @@ void			BackgroundRenderer::drawGroundReceivers(
     // point under light
     float d = pos[2];
     float I = B / (atten[0] + d * (atten[1] + d * atten[2]));
-    
+
     // if I is too low, don't bother drawing anything
     if (I < 0.02f) {
       continue;
@@ -845,7 +845,7 @@ void			BackgroundRenderer::drawGroundReceivers(
 
     // move to the light's position
     glTranslatef(pos[0], pos[1], 0.0f);
-    
+
     // modulate light color by ground color
     float color[3];
     if (invert) {
@@ -879,7 +879,7 @@ void			BackgroundRenderer::drawGroundReceivers(
       }
     }
     glEnd();
-    
+
     for (i = 1; i < receiverRings; i++) {
       const GLfloat innerSize = receiverRingSize * GLfloat(i * i);
       const GLfloat outerSize = receiverRingSize * GLfloat((i + 1) * (i + 1));

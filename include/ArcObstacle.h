@@ -36,13 +36,13 @@ class ArcObstacle : public Obstacle {
       EndFace,
       MaterialCount
     };
-    
+
     ArcObstacle();
     ArcObstacle(const float* _pos, const float* _size,
-                float _rotation, float _angle, float _ratio,
-                const float _texsize[4], bool _useNormals,
-                int _divisions, const BzMaterial* mats[MaterialCount],
-                int physics, bool bounce, bool drive, bool shoot);
+		float _rotation, float _angle, float _ratio,
+		const float _texsize[4], bool _useNormals,
+		int _divisions, const BzMaterial* mats[MaterialCount],
+		int physics, bool bounce, bool drive, bool shoot);
     ~ArcObstacle();
     MeshObstacle* getMesh();
 
@@ -58,18 +58,18 @@ class ArcObstacle : public Obstacle {
 
     bool inCylinder(const float* p, float radius, float height) const;
     bool inBox(const float* p, float angle,
-               float halfWidth, float halfBreadth, float height) const;
+	       float halfWidth, float halfBreadth, float height) const;
     bool inMovingBox(const float* oldP, float oldAngle,
-                     const float *newP, float newAngle,
-                     float halfWidth, float halfBreadth, float height) const;
+		     const float *newP, float newAngle,
+		     float halfWidth, float halfBreadth, float height) const;
     bool isCrossing(const float* p, float angle,
-                    float halfWidth, float halfBreadth, float height,
-                    float* plane) const;
+		    float halfWidth, float halfBreadth, float height,
+		    float* plane) const;
 
     bool getHitNormal(const float* pos1, float azimuth1,
-                      const float* pos2, float azimuth2,
-                      float halfWidth, float halfBreadth,
-                      float height, float* normal) const;
+		      const float* pos2, float azimuth2,
+		      float halfWidth, float halfBreadth,
+		      float height, float* normal) const;
 
     void *pack(void*);
     void *unpack(void*);
@@ -80,15 +80,15 @@ class ArcObstacle : public Obstacle {
   private:
     void finalize();
     void makePie(bool isCircle, float a, float r, float h,
-                 float radius, float squish, float texsz[4]);
+		 float radius, float squish, float texsz[4]);
     void makeRing(bool isCircle, float a, float r, float h,
-                  float inrad, float outrad, float squish,
-                  float texsz[4]);
+		  float inrad, float outrad, float squish,
+		  float texsz[4]);
   private:
     static const char* typeName;
 
     MeshObstacle* mesh;
-    
+
     int divisions;
     float sweepAngle;
     float ratio;

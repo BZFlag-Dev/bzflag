@@ -90,7 +90,7 @@ bool			SDLMedia::openAudio()
   desired.channels   = 2;
   desired.samples    = audioBufferSize >> 1; // In stereo samples
   desired.callback   = &fillAudioWrapper;
-  desired.userdata   = (void *) this;        // To handle Wrap of func
+  desired.userdata   = (void *) this;	// To handle Wrap of func
 
   /* Open the audio device, forcing the desired format */
   if (SDL_OpenAudio(&desired, NULL) < 0) {
@@ -176,7 +176,7 @@ int			SDLMedia::getAudioBufferChunkSize() const
 void SDLMedia::fillAudio (Uint8 * stream, int len)
 {
   userCallback();
-  Uint8* soundBuffer        = stream;
+  Uint8* soundBuffer	= stream;
 
   int transferSize = (audioBufferSize - sampleToSend) * 2;
   if (transferSize > len)
@@ -188,7 +188,7 @@ void SDLMedia::fillAudio (Uint8 * stream, int len)
 	 transferSize);
   sampleToSend    += transferSize / 2;
   soundBuffer     += transferSize;
-  len             -= transferSize;
+  len	     -= transferSize;
 
 }
 
@@ -233,7 +233,7 @@ void			SDLMedia::writeAudioFrames(
 }
 
 // Setting Audio Driver
-void        SDLMedia::setDriver(std::string driverName) {
+void	SDLMedia::setDriver(std::string driverName) {
   char envAssign[256];
   std::string envVar = "SDL_AUDIODRIVER=" + driverName;
   strncpy(envAssign, envVar.c_str(), 255);
@@ -242,7 +242,7 @@ void        SDLMedia::setDriver(std::string driverName) {
 };
 
 // Setting Audio Device
-void        SDLMedia::setDevice(std::string deviceName) {
+void	SDLMedia::setDevice(std::string deviceName) {
   char envAssign[256];
   std::string envVar = "SDL_PATH_DSP=" + deviceName;
   strncpy(envAssign, envVar.c_str(), 255);
@@ -254,15 +254,15 @@ float*	    SDLMedia::doReadSound(const std::string &filename, int &numFrames,
 				  int &rate) const
 {
   SDL_AudioSpec wav_spec;
-  Uint32        wav_length;
-  Uint8        *wav_buffer;
-  int           ret;
+  Uint32	wav_length;
+  Uint8	*wav_buffer;
+  int	   ret;
   SDL_AudioCVT  wav_cvt;
   int16_t      *cvt16;
-  int           i;
+  int	   i;
 
-  float        *data = NULL;
-  rate        = defaultAudioRate;
+  float	*data = NULL;
+  rate	= defaultAudioRate;
   if (SDL_LoadWAV(filename.c_str(), &wav_spec, &wav_buffer, &wav_length)) {
     /* Build AudioCVT */
     ret = SDL_BuildAudioCVT(&wav_cvt,

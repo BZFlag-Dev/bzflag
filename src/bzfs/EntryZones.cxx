@@ -89,7 +89,7 @@ bool EntryZones::getZonePoint(const std::string &qualifier, float *pt) const
 }
 
 bool EntryZones::getSafetyPoint( const std::string &qualifier,
-                                 const float *pos, float *pt ) const
+				 const float *pos, float *pt ) const
 {
   std::string safetyString = EntryZones::getSafetyPrefix() + qualifier;
 
@@ -139,9 +139,9 @@ static int matchTeamColor(const char *teamText)
 }
 
 void EntryZones::makeSplitLists (int zone,
-                                 std::vector<FlagType*> &flags,
-                                 std::vector<TeamColor> &teams,
-                                 std::vector<TeamColor> &safety) const
+				 std::vector<FlagType*> &flags,
+				 std::vector<TeamColor> &teams,
+				 std::vector<TeamColor> &safety) const
 {
   flags.clear();
   teams.clear();
@@ -155,21 +155,21 @@ void EntryZones::makeSplitLists (int zone,
       const std::pair<int,float> &p = *vit;
       int zoneIndex = p.first;
       if (zoneIndex == zone) {
-        int team;
-        FlagType *type = Flag::getDescFromAbbreviation(mit->first.c_str());
-        if (type != Flags::Null) {
-          flags.push_back (type);
-        }
-        else if ((team = matchTeamColor(mit->first.c_str())) != -1) {
-          teams.push_back ((TeamColor)team);
-        }
-        else if ((mit->first.c_str()[0] == getSafetyPrefix()[0]) &&
-                 ((team = matchTeamColor(mit->first.c_str()+1)) != -1)) {
-          safety.push_back ((TeamColor)team);
-        }
-        else {
-          printf ("EntryZones::makeSplitLists() ERROR on (%s)\n", mit->first.c_str());
-        }
+	int team;
+	FlagType *type = Flag::getDescFromAbbreviation(mit->first.c_str());
+	if (type != Flags::Null) {
+	  flags.push_back (type);
+	}
+	else if ((team = matchTeamColor(mit->first.c_str())) != -1) {
+	  teams.push_back ((TeamColor)team);
+	}
+	else if ((mit->first.c_str()[0] == getSafetyPrefix()[0]) &&
+		 ((team = matchTeamColor(mit->first.c_str()+1)) != -1)) {
+	  safety.push_back ((TeamColor)team);
+	}
+	else {
+	  printf ("EntryZones::makeSplitLists() ERROR on (%s)\n", mit->first.c_str());
+	}
       }
     }
   }
@@ -205,7 +205,7 @@ void * EntryZones::pack(void *buf) const
     void *bufStart = buf;
     buf = nboPackUShort(buf, 0); // place-holder
     buf = nboPackUShort(buf, WorldCodeZone);
-    buf = z.pack (buf);                         // 12 + 12 + 4
+    buf = z.pack (buf);			 // 12 + 12 + 4
     buf = nboPackUShort(buf, flags.size());     // 30
     buf = nboPackUShort(buf, teams.size());     // 32
     buf = nboPackUShort(buf, safety.size());    // 34

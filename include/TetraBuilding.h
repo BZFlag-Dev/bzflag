@@ -28,32 +28,32 @@ class TetraBuilding : public Obstacle {
 
     TetraBuilding();
     TetraBuilding(const float vertices[4][3], const float normals[4][3][3],
-                  const float texCoords[4][3][2], const bool useNormals[4],
-                  const bool useTexCoords[4], const BzMaterial* materials[4],
-                  bool drive = false, bool shoot = false);
+		  const float texCoords[4][3][2], const bool useNormals[4],
+		  const bool useTexCoords[4], const BzMaterial* materials[4],
+		  bool drive = false, bool shoot = false);
     ~TetraBuilding();
     MeshObstacle* getMesh();
-    
+
     void		finalize();
 
     const char*		getType() const;
     static const char*	getClassName(); // const
-    bool                isValid() const;
-    void                getExtents(float* mins, float* maxs) const;
+    bool		isValid() const;
+    void		getExtents(float* mins, float* maxs) const;
 
     float		intersect(const Ray&) const;
     void		getNormal(const float* p, float* n) const;
     void		get3DNormal(const float* p, float* n) const;
 
-    bool                inCylinder(const float* p, float radius, float height) const;
-    bool                inBox(const float* p, float angle,
-                              float halfWidth, float halfBreadth, float height) const;
-    bool                inMovingBox(const float* oldP, float oldAngle,
-                                    const float *newP, float newAngle,
-                                    float halfWidth, float halfBreadth, float height) const;
-    bool                isCrossing(const float* p, float angle,
-                                   float halfWidth, float halfBreadth, float height,
-                                   float* plane) const;
+    bool		inCylinder(const float* p, float radius, float height) const;
+    bool		inBox(const float* p, float angle,
+			      float halfWidth, float halfBreadth, float height) const;
+    bool		inMovingBox(const float* oldP, float oldAngle,
+				    const float *newP, float newAngle,
+				    float halfWidth, float halfBreadth, float height) const;
+    bool		isCrossing(const float* p, float angle,
+				   float halfWidth, float halfBreadth, float height,
+				   float* plane) const;
 
     bool		getHitNormal(
 				const float* pos1, float azimuth1,
@@ -69,15 +69,15 @@ class TetraBuilding : public Obstacle {
     int packSize();
 
     void print(std::ostream& out, int level);
-    
+
   private:
     void checkVertexOrder();
-  
+
   private:
     static const char*	typeName;
 
     MeshObstacle* mesh;
-    
+
     float vertices[4][3];
     float normals[4][3][3];
     float texcoords[4][3][2];

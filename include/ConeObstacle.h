@@ -34,13 +34,13 @@ class ConeObstacle : public Obstacle {
       EndFace,
       MaterialCount
     };
-    
+
     ConeObstacle();
     ConeObstacle(const float* _pos, const float* _size,
-                float _rotation, float _angle,
-                const float _texsize[2], bool _useNormals,
-                int _divisions, const BzMaterial* mats[MaterialCount],
-                int physics, bool bounce, bool drive, bool shoot);
+		float _rotation, float _angle,
+		const float _texsize[2], bool _useNormals,
+		int _divisions, const BzMaterial* mats[MaterialCount],
+		int physics, bool bounce, bool drive, bool shoot);
     ~ConeObstacle();
     MeshObstacle* getMesh();
 
@@ -55,18 +55,18 @@ class ConeObstacle : public Obstacle {
 
     bool inCylinder(const float* p, float radius, float height) const;
     bool inBox(const float* p, float angle,
-               float halfWidth, float halfBreadth, float height) const;
+	       float halfWidth, float halfBreadth, float height) const;
     bool inMovingBox(const float* oldP, float oldAngle,
-                     const float *newP, float newAngle,
-                     float halfWidth, float halfBreadth, float height) const;
+		     const float *newP, float newAngle,
+		     float halfWidth, float halfBreadth, float height) const;
     bool isCrossing(const float* p, float angle,
-                    float halfWidth, float halfBreadth, float height,
-                    float* plane) const;
+		    float halfWidth, float halfBreadth, float height,
+		    float* plane) const;
 
     bool getHitNormal(const float* pos1, float azimuth1,
-                      const float* pos2, float azimuth2,
-                      float halfWidth, float halfBreadth,
-                      float height, float* normal) const;
+		      const float* pos2, float azimuth2,
+		      float halfWidth, float halfBreadth,
+		      float height, float* normal) const;
 
     void *pack(void*);
     void *unpack(void*);
@@ -81,7 +81,7 @@ class ConeObstacle : public Obstacle {
     static const char* typeName;
 
     MeshObstacle* mesh;
-    
+
     int divisions;
     float sweepAngle;
     int phydrv;

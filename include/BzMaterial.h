@@ -36,7 +36,7 @@ class BzMaterial {
 
     //
     // Parameter setting
-    //     
+    //
 
     bool setName(const std::string&);
 
@@ -56,14 +56,14 @@ class BzMaterial {
     void setUseColorOnTexture(bool);
     void setUseSphereMap(bool);
     void clearTextures(); // remove all textures
-    
+
     void addShader(const std::string&);
     void setShader(const std::string&);
     void clearShaders(); // remove all shaders
-    
+
     //
     // Parameter getting
-    //     
+    //
 
     const std::string& getName() const;
 
@@ -73,7 +73,7 @@ class BzMaterial {
     const float* getSpecular() const;
     const float* getEmission() const;
     float getShininess() const;
-    
+
     int getTextureCount() const;
     const std::string& getTexture(int) const;
     int getTextureMatrix(int) const;
@@ -94,9 +94,9 @@ class BzMaterial {
     int packSize();
 
     void print(std::ostream& out, int level) const;
-    
+
     static const BzMaterial* getDefault();
-    
+
     // data
   private:
     std::string name;
@@ -126,13 +126,13 @@ class BzMaterial {
       bool useSphereMap;
     } TextureInfo;
     TextureInfo* textures;
-    
+
     int shaderCount;
     typedef struct {
       std::string name;
     } ShaderInfo;
     ShaderInfo* shaders;
-    
+
   private:
     static std::string nullString;
     static BzMaterial defaultMaterial;

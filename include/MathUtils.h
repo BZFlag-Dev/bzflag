@@ -36,11 +36,11 @@
 #define FP_ONE_BITS 0x3F800000
 
 // r = 1/p
-#define FP_INV(r,p)                                                          \
-{                                                                            \
-    int _i = 2 * FP_ONE_BITS - *(int *)&(p);                                 \
-    r = *(float *)&_i;                                                       \
-    r = r * (2.0f - (p) * r);                                                \
+#define FP_INV(r,p)							  \
+{									    \
+    int _i = 2 * FP_ONE_BITS - *(int *)&(p);				 \
+    r = *(float *)&_i;						       \
+    r = r * (2.0f - (p) * r);						\
 }
 
 /////////////////////////////////////////////////
@@ -51,33 +51,33 @@
 
 float   __two = 2.0f;
 
-#define FP_INV2(r,p)                     \
-{                                        \
+#define FP_INV2(r,p)		     \
+{					\
     __asm { mov     eax,0x7F000000    }; \
     __asm { sub     eax,dword ptr [p] }; \
     __asm { mov     dword ptr [r],eax }; \
     __asm { fld     dword ptr [p]     }; \
     __asm { fmul    dword ptr [r]     }; \
-    __asm { fsubr   [__two]           }; \
+    __asm { fsubr   [__two]	   }; \
     __asm { fmul    dword ptr [r]     }; \
     __asm { fstp    dword ptr [r]     }; \
 }
 
-#define FP_EXP(e,p)                                                          \
-{                                                                            \
-    int _i;                                                                  \
-    e = -1.44269504f * (float)0x00800000 * (p);                              \
-    _i = (int)e + 0x3F800000;                                                \
-    e = *(float *)&_i;                                                       \
+#define FP_EXP(e,p)							  \
+{									    \
+    int _i;								  \
+    e = -1.44269504f * (float)0x00800000 * (p);			      \
+    _i = (int)e + 0x3F800000;						\
+    e = *(float *)&_i;						       \
 }
 
-#define FP_NORM_TO_BYTE(i,p)                                                 \
-{                                                                            \
-    float _n = (p) + 1.0f;                                                   \
-    i = *(int *)&_n;                                                         \
-    if (i >= 0x40000000)     i = 0xFF;                                       \
-    else if (i <=0x3F800000) i = 0;                                          \
-    else i = ((i) >> 15) & 0xFF;                                             \
+#define FP_NORM_TO_BYTE(i,p)						 \
+{									    \
+    float _n = (p) + 1.0f;						   \
+    i = *(int *)&_n;							 \
+    if (i >= 0x40000000)     i = 0xFF;				       \
+    else if (i <=0x3F800000) i = 0;					  \
+    else i = ((i) >> 15) & 0xFF;					     \
 }
 
 inline unsigned long FP_NORM_TO_BYTE2(float p)

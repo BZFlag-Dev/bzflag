@@ -26,23 +26,23 @@ public:
 
   /** Resetting lag value
   */
-  void        reset();
+  void	reset();
   /** Getting lag value
   */
-  int         getLag();
+  int	 getLag();
   /** Get a printable version of lag statistics
   */
-  void        getLagStats(char* msg);
+  void	getLagStats(char* msg);
   /** functions to be called whenever a playerUpdate or ping message arrives
    */
-  int         updatePingLag(void *buf, bool &warn, bool &kick);
-  void        updateLag(float timestamp, bool ooo);
+  int	 updatePingLag(void *buf, bool &warn, bool &kick);
+  void	updateLag(float timestamp, bool ooo);
   /** get the ping seqno, if need to send one now!
    */
-  int         getNextPingSeqno(bool &warn, bool &kick);
+  int	 getNextPingSeqno(bool &warn, bool &kick);
   /** update the latency
    */
-  void        updateLatency(float &waitTime);
+  void	updateLatency(float &waitTime);
   /** set the threshold for warning/kicking
    */
   static void setThreshold(float _threshold, float _max);
@@ -55,15 +55,15 @@ private:
   float       lagalpha;
   float       jitteralpha;
   float       lostalpha;
-  int         lagcount;
-  int         laglastwarn;
-  int         lagwarncount;
-  bool        pingpending;
+  int	 lagcount;
+  int	 laglastwarn;
+  int	 lagwarncount;
+  bool	pingpending;
   TimeKeeper  nextping;
   TimeKeeper  lastping;
   TimeKeeper  lastupdate;
-  int         pingseqno;
-  int         pingssent;
+  int	 pingseqno;
+  int	 pingssent;
   // jitter measurement
   float       lasttimestamp;
 

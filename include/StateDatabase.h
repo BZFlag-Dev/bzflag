@@ -72,16 +72,16 @@ public:
 				    Permission access = Client);
 
   void			     setInt(const std::string& name,
-                                    const int& value,
-                                    Permission access = Client);
+				    const int& value,
+				    Permission access = Client);
 
   void			    setBool(const std::string& name,
-                                    const bool& value,
-                                    Permission access = Client);
+				    const bool& value,
+				    Permission access = Client);
 
   void			   setFloat(const std::string& name,
-                                    const float& value,
-                                    Permission access = Client);
+				    const float& value,
+				    Permission access = Client);
   /** allow setting name/pointer pairs.  this allows simple object
    * pointer storage into the bzdb via pointer address serialization.
    */
@@ -185,11 +185,11 @@ public:
   /** tell the state database whether it should print debug info to stdout
    * now and then.
    */
-  void                          setDebug(bool print);
+  void			  setDebug(bool print);
 
   /** do we want debug output?
    */
-  bool                          getDebug() const;
+  bool			  getDebug() const;
 
 
   static const std::string	BZDB_AGILITYADVEL;
@@ -377,7 +377,7 @@ private:
   float				evaluate(Expression e) const;
   typedef std::map<std::string,float> EvalMap;
   EvalMap			evalCache;
-  bool                          debug;
+  bool			  debug;
 };
 
 inline bool StateDatabase::getDebug() const

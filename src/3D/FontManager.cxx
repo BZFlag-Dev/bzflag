@@ -228,7 +228,7 @@ int FontManager::getFaceID(std::string faceName)
       faceItr = faceNames.find(faceName);
       if (faceItr == faceNames.end()) {
 	// hell we are outta luck, you just get the first one
-        DEBUG4("Requested font %s not found, trying first-loaded\n", faceName.c_str());
+	DEBUG4("Requested font %s not found, trying first-loaded\n", faceName.c_str());
 	faceItr = faceNames.begin();
 	if (faceItr == faceNames.end()) {
 	  DEBUG2("No fonts loaded\n");

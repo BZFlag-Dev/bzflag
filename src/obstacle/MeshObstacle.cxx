@@ -44,7 +44,7 @@ MeshObstacle::MeshObstacle()
 
 
 static void cfvec3ListToArray(const std::vector<cfvec3>& list,
-                              int& count, fvec3* &array)
+			      int& count, fvec3* &array)
 {
   count = list.size();
   array = new fvec3[count];
@@ -55,12 +55,12 @@ static void cfvec3ListToArray(const std::vector<cfvec3>& list,
 }
 
 MeshObstacle::MeshObstacle(const std::vector<char>& checkTypesL,
-                           const std::vector<cfvec3>& checkList,
-                           const std::vector<cfvec3>& verticeList,
-                           const std::vector<cfvec3>& normalList,
-                           const std::vector<cfvec2>& texcoordList,
-                           int _faceCount, bool _noclusters,
-                           bool bounce, bool drive, bool shoot)
+			   const std::vector<cfvec3>& checkList,
+			   const std::vector<cfvec3>& verticeList,
+			   const std::vector<cfvec3>& normalList,
+			   const std::vector<cfvec2>& texcoordList,
+			   int _faceCount, bool _noclusters,
+			   bool bounce, bool drive, bool shoot)
 {
   unsigned int i;
   // copy the info
@@ -94,11 +94,11 @@ MeshObstacle::MeshObstacle(const std::vector<char>& checkTypesL,
 
 
 bool MeshObstacle::addFace(const std::vector<int>& _vertices,
-                           const std::vector<int>& _normals,
-                           const std::vector<int>& _texcoords,
-                           const BzMaterial* _material, int phydrv,
-                           bool _noclusters,
-                           bool bounce, bool drive, bool shoot)
+			   const std::vector<int>& _normals,
+			   const std::vector<int>& _texcoords,
+			   const BzMaterial* _material, int phydrv,
+			   bool _noclusters,
+			   bool bounce, bool drive, bool shoot)
 {
   // protect the face list from overrun
   if (faceCount >= faceSize) {
@@ -150,16 +150,16 @@ bool MeshObstacle::addFace(const std::vector<int>& _vertices,
       t[i] = (float*)texcoords[_texcoords[i]];
     }
   }
-  
+
   // override the flags if they are set for the whole mesh
   _noclusters = _noclusters|| noclusters;
   bounce = bounce || smoothBounce;
   drive = drive || driveThrough;
   shoot = shoot || shootThrough;
-  
+
   // make the face
   MeshFace* face = new MeshFace(this, count, v, n, t, _material, phydrv,
-                                _noclusters, bounce, drive, shoot);
+				_noclusters, bounce, drive, shoot);
 
   // check its validity
   if (face->isValid()) {
@@ -204,10 +204,10 @@ void MeshObstacle::finalize()
   for (f = 0; f < faceCount; f++) {
     for (int a = 0; a < 3; a++) {
       if (faces[f]->mins[a] < mins[a]) {
-        mins[a] = faces[f]->mins[a];
+	mins[a] = faces[f]->mins[a];
       }
       if (faces[f]->maxs[a] > maxs[a]) {
-        maxs[a] = faces[f]->maxs[a];
+	maxs[a] = faces[f]->maxs[a];
       }
     }
   }
@@ -253,7 +253,7 @@ bool MeshObstacle::isValid() const
   for (int v = 0; v < vertexCount; v++) {
     for (int a = 0; a < 3; a++) {
       if (fabsf(vertices[v][a]) > maxExtent) {
-        return false;
+	return false;
       }
     }
   }
@@ -283,7 +283,7 @@ bool MeshObstacle::containsPointNoOctree(const float point[3]) const
   if (checkCount <= 0) {
     return false;
   }
-  
+
   int c, f;
   float dir[3];
   bool hasOutsides = false;
@@ -291,18 +291,18 @@ bool MeshObstacle::containsPointNoOctree(const float point[3]) const
   for (c = 0; c < checkCount; c++) {
     if (checkTypes[c] == CheckInside) {
       vec3sub (dir, checkPoints[c], point);
-      Ray ray(point, dir); 
+      Ray ray(point, dir);
       bool hitFace = false;
       for (f = 0; f < faceCount; f++) {
-        const MeshFace* face = faces[f];
-        const float hittime = face->intersect(ray);
-        if ((hittime > 0.0f) && (hittime <= 1.0f)) {
-          hitFace = true;
-          break;
-        }
+	const MeshFace* face = faces[f];
+	const float hittime = face->intersect(ray);
+	if ((hittime > 0.0f) && (hittime <= 1.0f)) {
+	  hitFace = true;
+	  break;
+	}
       }
       if (!hitFace) {
-        return true;
+	return true;
       }
     }
     else if (checkTypes[c] == CheckOutside) {
@@ -311,15 +311,15 @@ bool MeshObstacle::containsPointNoOctree(const float point[3]) const
       Ray ray(checkPoints[c], dir);
       bool hitFace = false;
       for (f = 0; f < faceCount; f++) {
-        const MeshFace* face = faces[f];
-        const float hittime = face->intersect(ray);
-        if ((hittime > 0.0f) && (hittime <= 1.0f)) {
-          hitFace = true;
-          break;
-        }
+	const MeshFace* face = faces[f];
+	const float hittime = face->intersect(ray);
+	if ((hittime > 0.0f) && (hittime <= 1.0f)) {
+	  hitFace = true;
+	  break;
+	}
       }
       if (!hitFace) {
-        return false;
+	return false;
       }
     }
     else {
@@ -327,7 +327,7 @@ bool MeshObstacle::containsPointNoOctree(const float point[3]) const
       exit (1);
     }
   }
-  
+
   return hasOutsides;
 }
 
@@ -363,7 +363,7 @@ void MeshObstacle::getNormal(const float* p, float* n) const
     n[1] = 0.0f;
     n[2] = 1.0f;
   }
-  
+
   return;
 }
 
@@ -381,7 +381,7 @@ bool MeshObstacle::getHitNormal(const float* /*oldPos*/, float /*oldAngle*/,
 
 
 bool MeshObstacle::inCylinder(const float* p,
-                               float /*radius*/, float height) const
+			       float /*radius*/, float height) const
 {
   const float mid[3] = { p[0], p[1], p[2] + (0.5f * height) };
   return containsPoint(mid);
@@ -389,7 +389,7 @@ bool MeshObstacle::inCylinder(const float* p,
 
 
 bool MeshObstacle::inBox(const float* p, float /*angle*/,
-                         float /*dx*/, float /*dy*/, float height) const
+			 float /*dx*/, float /*dy*/, float height) const
 {
   const float mid[3] = { p[0], p[1], p[2] + (0.5f * height) };
   return containsPoint(mid);
@@ -397,8 +397,8 @@ bool MeshObstacle::inBox(const float* p, float /*angle*/,
 
 
 bool MeshObstacle::inMovingBox(const float*, float,
-                               const float* p, float /*angle*/,
-                               float /*dx*/, float /*dy*/, float height) const
+			       const float* p, float /*angle*/,
+			       float /*dx*/, float /*dy*/, float height) const
 {
   const float mid[3] = { p[0], p[1], p[2] + (0.5f * height) };
   return containsPoint(mid);
@@ -406,8 +406,8 @@ bool MeshObstacle::inMovingBox(const float*, float,
 
 
 bool MeshObstacle::isCrossing(const float* /*p*/, float /*angle*/,
-                               float /*dx*/, float /*dy*/, float /*height*/,
-                               float* /*plane*/) const
+			       float /*dx*/, float /*dy*/, float /*height*/,
+			       float* /*plane*/) const
 {
   return false; // the MeshFaces should handle this case
 }
@@ -520,7 +520,7 @@ int MeshObstacle::packSize()
   if (isLocal) {
     return 0;
   }
-  
+
   int fullSize = 5 * sizeof(int);
   fullSize += sizeof(char) * checkCount;
   fullSize += sizeof(fvec3) * checkCount;
@@ -556,7 +556,7 @@ void MeshObstacle::print(std::ostream& out, int level)
     out << "# mins = " << mins[0] << " " << mins[1] << " " << mins[2] << std::endl;
     out << "# maxs = " << maxs[0] << " " << maxs[1] << " " << maxs[2] << std::endl;
   }
-  
+
   if (noclusters) {
     out << "  noclusters" << std::endl;
   }

@@ -29,7 +29,7 @@ ImageFile::~ImageFile()
 void			ImageFile::init(int _numChannels,
 					int _width, int _height)
 {
-  open        = true;
+  open	= true;
   numChannels = _numChannels;
   width       = _width;
   height      = _height;

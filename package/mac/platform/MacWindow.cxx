@@ -189,8 +189,8 @@ void MacWindow::ungrabMouse () { gMouseGrabbed = false; }
 void MacWindow::showMouse   () { /*ShowCursor ();*/ }
 void MacWindow::hideMouse   () { /*HideCursor ();*/ }
 
-void	  MacWindow::setGamma(float)         {}
-float	  MacWindow::getGamma()        const { return 0.0;   }
+void	  MacWindow::setGamma(float)	 {}
+float	  MacWindow::getGamma()	const { return 0.0;   }
 boolean	MacWindow::hasGammaControl() const { return false; }
 
 void MacWindow::makeContext() {}

@@ -85,7 +85,7 @@ class BzfMedia {
 
     // register a callback for audio processing. The passed procedure will be
     // called whenever audio needs to be filled
-    virtual void        startAudioCallback(bool (*)(void)) {};
+    virtual void	startAudioCallback(bool (*)(void)) {};
 
     // returns true if audio is running via callback
     virtual bool	hasAudioCallback() const {return false;};
@@ -122,8 +122,8 @@ class BzfMedia {
     virtual void	audioSleep(bool checkLowWater,
 				double maxTime = -1.0) = 0;
 
-    virtual void        setDriver(std::string driverName);
-    virtual void        setDevice(std::string deviceName);
+    virtual void	setDriver(std::string driverName);
+    virtual void	setDevice(std::string deviceName);
 
   protected:
     // return default extensions for image and sound files

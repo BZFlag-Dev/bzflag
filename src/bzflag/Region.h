@@ -19,7 +19,7 @@
 #include <vector>
 
 
-const float             maxDistance = 1.0e6;
+const float	     maxDistance = 1.0e6;
 
 class RegionPoint {
   public:

@@ -93,7 +93,7 @@ class HUDuiControl {
     HUDuiCallback	cb;
     void*		userData;
     static OpenGLGState* gstate;
-    static int          arrow;
+    static int	  arrow;
     static int		arrowFrame;
     static TimeKeeper	lastTime;
     static int		totalCount;

@@ -66,8 +66,8 @@ bool			WallObstacle::inCylinder(const float* p, float r, float /* height */) con
 }
 
 bool			WallObstacle::inBox(const float* p, float angle,
-				            float halfWidth, float halfBreadth,
-				            float /* height */) const
+					    float halfWidth, float halfBreadth,
+					    float /* height */) const
 {
   const float xWidth = cosf(angle);
   const float yWidth = sinf(angle);
@@ -94,8 +94,8 @@ bool			WallObstacle::inBox(const float* p, float angle,
 }
 
 bool			WallObstacle::inMovingBox(const float* /* oldP */, float /* oldAngle */,
-                                       const float* p, float angle,
-                                       float halfWidth, float halfBreadth, float height) const
+				       const float* p, float angle,
+				       float halfWidth, float halfBreadth, float height) const
 
 {
   return inBox (p, angle, halfWidth, halfBreadth, height);

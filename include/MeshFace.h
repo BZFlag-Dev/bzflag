@@ -35,9 +35,9 @@ class MeshFace : public Obstacle {
   public:
     MeshFace(class MeshObstacle* mesh);
     MeshFace(MeshObstacle* _mesh, int _vertexCount,
-             float** _vertices, float** _normals, float** _texcoords,
-             const BzMaterial* _bzMaterial, int physics,
-             bool noclusters, bool smoothBounce, bool drive, bool shoot);
+	     float** _vertices, float** _normals, float** _texcoords,
+	     const BzMaterial* _bzMaterial, int physics,
+	     bool noclusters, bool smoothBounce, bool drive, bool shoot);
     ~MeshFace();
 
     void finalize();
@@ -54,18 +54,18 @@ class MeshFace : public Obstacle {
 
     bool inCylinder(const float* p, float radius, float height) const;
     bool inBox(const float* p, float angle,
-               float halfWidth, float halfBreadth, float height) const;
+	       float halfWidth, float halfBreadth, float height) const;
     bool inMovingBox(const float* oldP, float oldAngle,
-                     const float *newP, float newAngle,
-                     float halfWidth, float halfBreadth, float height) const;
+		     const float *newP, float newAngle,
+		     float halfWidth, float halfBreadth, float height) const;
     bool isCrossing(const float* p, float angle,
-                    float halfWidth, float halfBreadth, float height,
-                    float* plane) const;
+		    float halfWidth, float halfBreadth, float height,
+		    float* plane) const;
 
     bool getHitNormal(const float* pos1, float azimuth1,
-                      const float* pos2, float azimuth2,
-                      float halfWidth, float halfBreadth,
-                      float height, float* normal) const;
+		      const float* pos2, float azimuth2,
+		      float halfWidth, float halfBreadth,
+		      float height, float* normal) const;
 
     MeshObstacle* getMesh() const;
     int getVertexCount() const;
@@ -89,13 +89,13 @@ class MeshFace : public Obstacle {
 
     void setLink(const MeshFace* link);
     const MeshFace* getLink() const;
-    
+
     void *pack(void*);
     void *unpack(void*);
     int packSize();
 
     void print(std::ostream& out, int level);
-    
+
   public:
     mutable float scratchPad;
 
@@ -117,8 +117,8 @@ class MeshFace : public Obstacle {
     fvec4* edgePlanes;
 
     MeshFace* edges; // edge 0 is between vertex 0 and 1, etc...
-                     // not currently used for anything
-                     
+		     // not currently used for anything
+
     enum {
       XPlane    = (1 << 0),
       YPlane    = (1 << 1),
@@ -129,19 +129,19 @@ class MeshFace : public Obstacle {
     } PlaneBits;
 
     char planeBits;
-    
-    
+
+
     enum {
       LinkToFace      = (1 << 0),
       LinkFromFace    = (1 << 1),
-      BaseFace        = (1 << 2),
-      IcyFace         = (1 << 3),
+      BaseFace	= (1 << 2),
+      IcyFace	 = (1 << 3),
       StickyFace      = (1 << 5),
       DeathFace       = (1 << 6),
       PortalFace      = (1 << 7)
     } SpecialBits;
 
-    // combining all types into one struct, because I'm lazy    
+    // combining all types into one struct, because I'm lazy
     typedef struct {
       // linking data
       const MeshFace* linkFace;
@@ -156,7 +156,7 @@ class MeshFace : public Obstacle {
       // base data
       TeamColor teamColor;
     } SpecialData;
-    
+
     uint16_t specialState;
     SpecialData* specialData;
 };

@@ -36,15 +36,15 @@ class PyramidBuilding : public Obstacle {
     void		getNormal(const float* p, float* n) const;
     void		get3DNormal(const float* p, float* n) const;
 
-    bool                inCylinder(const float* p, float radius, float height) const;
-    bool                inBox(const float* p, float angle,
-                              float halfWidth, float halfBreadth, float height) const;
-    bool                inMovingBox(const float* oldP, float oldAngle,
-                                    const float *newP, float newAngle,
-                                    float halfWidth, float halfBreadth, float height) const;
-    bool                isCrossing(const float* p, float angle,
-                                   float halfWidth, float halfBreadth, float height,
-                                   float* plane) const;
+    bool		inCylinder(const float* p, float radius, float height) const;
+    bool		inBox(const float* p, float angle,
+			      float halfWidth, float halfBreadth, float height) const;
+    bool		inMovingBox(const float* oldP, float oldAngle,
+				    const float *newP, float newAngle,
+				    float halfWidth, float halfBreadth, float height) const;
+    bool		isCrossing(const float* p, float angle,
+				   float halfWidth, float halfBreadth, float height,
+				   float* plane) const;
 
     bool		getHitNormal(
 				const float* pos1, float azimuth1,
@@ -55,7 +55,7 @@ class PyramidBuilding : public Obstacle {
 
     void		getCorner(int index, float* pos) const;
 
-    std::string	        userTextures[1];
+    std::string		userTextures[1];
 
   protected:
     // compute minimum shrinking for height between z and z + height

@@ -147,7 +147,7 @@ static std::string		cmdSet(const std::string&,
     case 1:
       {
 	// the string was set to nothing, so just print value
-        if (BZDB.isSet(args[0])) {
+	if (BZDB.isSet(args[0])) {
 	  return args[0] + " is " + BZDB.get(args[0]);
 	} else {
 	  return "variable " + args[0] + " does not exist";

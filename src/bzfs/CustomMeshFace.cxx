@@ -27,8 +27,8 @@
 
 
 CustomMeshFace::CustomMeshFace(const BzMaterial& _material, int physics,
-                               bool _noclusters, 
-                               bool bounce, bool drive, bool shoot)
+			       bool _noclusters,
+			       bool bounce, bool drive, bool shoot)
 {
   phydrv = physics;
   noclusters = _noclusters;
@@ -95,7 +95,7 @@ bool CustomMeshFace::read(const char *cmd, std::istream& input)
     }
   }
   else if ((strcasecmp(cmd, "ricosuavez") == 0) ||
-           (strcasecmp(cmd, "smoothbounce") == 0)) {
+	   (strcasecmp(cmd, "smoothbounce") == 0)) {
     smoothBounce = true;
   }
   else if (strcasecmp(cmd, "noclusters") == 0) {
@@ -128,7 +128,7 @@ void CustomMeshFace::write(MeshObstacle *mesh) const
 {
   const BzMaterial* matref = MATERIALMGR.addMaterial(&material);
   mesh->addFace(vertices, normals, texcoords, matref, phydrv,
-                noclusters, smoothBounce, driveThrough, shootThrough);
+		noclusters, smoothBounce, driveThrough, shootThrough);
   return;
 }
 

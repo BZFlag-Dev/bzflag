@@ -35,7 +35,7 @@ MacDisplay::MacDisplay (const char *name, const char *videoFormat) {
 	// get the main monitor device, needs fix for multiple monitors
 
 	screen_device = LMGetMainDevice();
-	pixMap        = (**screen_device).gdPMap;
+	pixMap	= (**screen_device).gdPMap;
 	screen_depth  = (**pixMap).pixelSize;
     screen_width  = (**pixMap).bounds.right;
     screen_height = (**pixMap).bounds.bottom;
@@ -46,12 +46,12 @@ MacDisplay::MacDisplay (const char *name, const char *videoFormat) {
     cursor_region = NewRgn();
 }
 
-static int           event_cnt = 0;
+static int	   event_cnt = 0;
 
 boolean MacDisplay::getEvent (BzfEvent &bzf_event) const {
 
   EventRecord eventRec;
-	int         gotEvent = false;
+	int	 gotEvent = false;
 
 	bzf_event.type = (BzfEvent::Type)-1;
 

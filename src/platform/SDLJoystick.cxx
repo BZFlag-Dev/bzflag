@@ -109,7 +109,7 @@ unsigned long		SDLJoystick::getJoyButtons()
   return buttons;
 }
 
-void                    SDLJoystick::getJoyDevices(std::vector<std::string>
+void		    SDLJoystick::getJoyDevices(std::vector<std::string>
 						 &list) const
 {
   int numJoystick = SDL_NumJoysticks();

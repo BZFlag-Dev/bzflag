@@ -40,36 +40,36 @@ TeamBases::TeamBases(TeamColor team, bool initDefault)
     switch (team)
     {
       case RedTeam:
-        teamBase.position[0] = (-worldSize + baseSize) / 2.0f;
+	teamBase.position[0] = (-worldSize + baseSize) / 2.0f;
 	teamBase.position[1] = 0.0f;
-        teamBase.safetyZone[0] = teamBase.position[0] + 0.5f * baseSize + pyrBase;
-        teamBase.safetyZone[1] = teamBase.position[1] + 0.5f * baseSize + pyrBase;
+	teamBase.safetyZone[0] = teamBase.position[0] + 0.5f * baseSize + pyrBase;
+	teamBase.safetyZone[1] = teamBase.position[1] + 0.5f * baseSize + pyrBase;
       break;
 
       case GreenTeam:
 	teamBase.position[0] = (worldSize - baseSize) / 2.0f;
 	teamBase.position[1] = 0.0f;
-        teamBase.safetyZone[0] = teamBase.position[0] - 0.5f * baseSize - pyrBase;
-        teamBase.safetyZone[1] = teamBase.position[1] - 0.5f * baseSize - pyrBase;
+	teamBase.safetyZone[0] = teamBase.position[0] - 0.5f * baseSize - pyrBase;
+	teamBase.safetyZone[1] = teamBase.position[1] - 0.5f * baseSize - pyrBase;
       break;
 
       case BlueTeam:
 	teamBase.position[0] = 0.0f;
 	teamBase.position[1] = (-worldSize + baseSize) / 2.0f;
-        teamBase.safetyZone[0] = teamBase.position[0] - 0.5f * baseSize - pyrBase;
-        teamBase.safetyZone[1] = teamBase.position[1] + 0.5f * baseSize + pyrBase;
+	teamBase.safetyZone[0] = teamBase.position[0] - 0.5f * baseSize - pyrBase;
+	teamBase.safetyZone[1] = teamBase.position[1] + 0.5f * baseSize + pyrBase;
       break;
 
       case PurpleTeam:
 	teamBase.position[0] = 0.0f;
 	teamBase.position[1] = (worldSize - baseSize) / 2.0f;
-        teamBase.safetyZone[0] = teamBase.position[0] + 0.5f * baseSize + pyrBase;
-        teamBase.safetyZone[1] = teamBase.position[1] - 0.5f * baseSize - pyrBase;
+	teamBase.safetyZone[0] = teamBase.position[0] + 0.5f * baseSize + pyrBase;
+	teamBase.safetyZone[1] = teamBase.position[1] - 0.5f * baseSize - pyrBase;
       break;
 
       default:
-        // no valid team, should throw here if we could
-        break;
+	// no valid team, should throw here if we could
+	break;
     }
 
     teamBase.position[2] = 0.0f;

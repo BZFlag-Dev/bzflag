@@ -137,9 +137,9 @@ void MeshPolySceneNode::Geometry::drawVTN() const
 //
 
 MeshPolySceneNode::MeshPolySceneNode(const float _plane[4],
-                                     const GLfloat3Array& vertices,
-                                     const GLfloat3Array& normals,
-                                     const GLfloat2Array& texcoords)
+				     const GLfloat3Array& vertices,
+				     const GLfloat3Array& normals,
+				     const GLfloat2Array& texcoords)
 {
   int i, j;
   const int count = vertices.getSize();
@@ -223,10 +223,10 @@ MeshPolySceneNode::MeshPolySceneNode(const float _plane[4],
     const float* point = vertices[i];
     for (j = 0; j < 3; j++) {
       if (point[j] < mins[j]) {
-        mins[j] = point[j];
+	mins[j] = point[j];
       }
       if (point[j] > maxs[j]) {
-        maxs[j] = point[j];
+	maxs[j] = point[j];
       }
     }
   }
@@ -276,7 +276,7 @@ void MeshPolySceneNode::getExtents (float* _mins, float* _maxs) const
 
 
 bool MeshPolySceneNode::inAxisBox (const float* boxMins,
-                                   const float* boxMaxs) const
+				   const float* boxMaxs) const
 {
   if ((mins[0] > boxMaxs[0]) || (maxs[0] < boxMins[0]) ||
       (mins[1] > boxMaxs[1]) || (maxs[1] < boxMins[1]) ||
@@ -285,16 +285,16 @@ bool MeshPolySceneNode::inAxisBox (const float* boxMins,
   }
 
   return testPolygonInAxisBox (getVertexCount(), getVertices(), getPlane(),
-                               boxMins, boxMaxs);
+			       boxMins, boxMaxs);
 }
 
 
 int MeshPolySceneNode::split(const float* splitPlane,
-                             SceneNode*& front, SceneNode*& back) const
+			     SceneNode*& front, SceneNode*& back) const
 {
   if (node->normals.getSize() > 0) {
     return splitWallVTN(splitPlane, node->vertices, node->normals, node->texcoords,
-                        front, back);
+			front, back);
   }
   else {
     return splitWallVT(splitPlane, node->vertices, node->texcoords, front, back);
@@ -318,10 +318,10 @@ void MeshPolySceneNode::addShadowNodes(SceneRenderer& renderer)
 
 
 int MeshPolySceneNode::splitWallVTN(const GLfloat* splitPlane,
-                                    const GLfloat3Array& vertices,
-                                    const GLfloat3Array& normals,
-                                    const GLfloat2Array& texcoords,
-                                    SceneNode*& front, SceneNode*& back) const
+				    const GLfloat3Array& vertices,
+				    const GLfloat3Array& normals,
+				    const GLfloat2Array& texcoords,
+				    SceneNode*& front, SceneNode*& back) const
 {
   int i;
   const int count = vertices.getSize();
@@ -352,8 +352,8 @@ int MeshPolySceneNode::splitWallVTN(const GLfloat* splitPlane,
   int frontCount = 0;
   for (i = 0; i < count; i++) {
     const GLfloat d = (vertices[i][0] * splitPlane[0]) +
-                      (vertices[i][1] * splitPlane[1]) +
-                      (vertices[i][2] * splitPlane[2]) + splitPlane[3];
+		      (vertices[i][1] * splitPlane[1]) +
+		      (vertices[i][2] * splitPlane[2]) + splitPlane[3];
     if (d < -fudgeFactor) {
       array[i] = BACK_SIDE;
       backCount++;
@@ -394,12 +394,12 @@ int MeshPolySceneNode::splitWallVTN(const GLfloat* splitPlane,
     const int next = (i + 1) % count; // the next index
     if (array[next] & FRONT_SIDE) {
       if (!(array[i] & FRONT_SIDE)) {
-        firstFront = next;
+	firstFront = next;
       }
     }
     if (array[next] & BACK_SIDE) {
       if (!(array[i] & BACK_SIDE)) {
-        firstBack = next;
+	firstBack = next;
       }
     }
   }
@@ -432,10 +432,10 @@ int MeshPolySceneNode::splitWallVTN(const GLfloat* splitPlane,
   if (firstFront != lastBack) {
     GLfloat splitVertex[3], splitNormal[3], splitUV[2];
     splitEdgeVTN(dists[firstFront], dists[lastBack],
-                 vertices[firstFront], vertices[lastBack],
-                 normals[firstFront], normals[lastBack],
-                 texcoords[firstFront], texcoords[lastBack],
-                 splitVertex, splitNormal, splitUV);
+		 vertices[firstFront], vertices[lastBack],
+		 normals[firstFront], normals[lastBack],
+		 texcoords[firstFront], texcoords[lastBack],
+		 splitVertex, splitNormal, splitUV);
     memcpy(vertexFront[0], splitVertex, sizeof(GLfloat[3]));
     memcpy(normalFront[0], splitNormal, sizeof(GLfloat[3]));
     memcpy(uvFront[0], splitUV, sizeof(GLfloat[2]));
@@ -448,10 +448,10 @@ int MeshPolySceneNode::splitWallVTN(const GLfloat* splitPlane,
   if (firstBack != lastFront) {
     GLfloat splitVertex[3], splitNormal[3], splitUV[2];
     splitEdgeVTN(dists[firstBack], dists[lastFront],
-                 vertices[firstBack], vertices[lastFront],
-                 normals[firstBack], normals[lastFront],
-                 texcoords[firstBack], texcoords[lastFront],
-                 splitVertex, splitNormal, splitUV);
+		 vertices[firstBack], vertices[lastFront],
+		 normals[firstBack], normals[lastFront],
+		 texcoords[firstBack], texcoords[lastFront],
+		 splitVertex, splitNormal, splitUV);
     memcpy(vertexBack[0], splitVertex, sizeof(GLfloat[3]));
     memcpy(normalBack[0], splitNormal, sizeof(GLfloat[3]));
     memcpy(uvBack[0], splitUV, sizeof(GLfloat[2]));
@@ -495,10 +495,10 @@ int MeshPolySceneNode::splitWallVTN(const GLfloat* splitPlane,
 
 
 void MeshPolySceneNode::splitEdgeVTN(float d1, float d2,
-                                     const GLfloat* p1, const GLfloat* p2,
-                                     const GLfloat* n1, const GLfloat* n2,
-                                     const GLfloat* uv1, const GLfloat* uv2,
-                                     GLfloat* p, GLfloat* n, GLfloat* uv) const
+				     const GLfloat* p1, const GLfloat* p2,
+				     const GLfloat* n1, const GLfloat* n2,
+				     const GLfloat* uv1, const GLfloat* uv2,
+				     GLfloat* p, GLfloat* n, GLfloat* uv) const
 {
   // compute fraction along edge where split occurs
   float t1 = (d2 - d1);
@@ -534,9 +534,9 @@ void MeshPolySceneNode::splitEdgeVTN(float d1, float d2,
 
 
 int MeshPolySceneNode::splitWallVT(const GLfloat* splitPlane,
-                                   const GLfloat3Array& vertices,
-                                   const GLfloat2Array& texcoords,
-                                   SceneNode*& front, SceneNode*& back) const
+				   const GLfloat3Array& vertices,
+				   const GLfloat2Array& texcoords,
+				   SceneNode*& front, SceneNode*& back) const
 {
   int i;
   const int count = vertices.getSize();
@@ -567,8 +567,8 @@ int MeshPolySceneNode::splitWallVT(const GLfloat* splitPlane,
   int frontCount = 0;
   for (i = 0; i < count; i++) {
     const GLfloat d = (vertices[i][0] * splitPlane[0]) +
-                      (vertices[i][1] * splitPlane[1]) +
-                      (vertices[i][2] * splitPlane[2]) + splitPlane[3];
+		      (vertices[i][1] * splitPlane[1]) +
+		      (vertices[i][2] * splitPlane[2]) + splitPlane[3];
     if (d < -fudgeFactor) {
       array[i] = BACK_SIDE;
       backCount++;
@@ -609,12 +609,12 @@ int MeshPolySceneNode::splitWallVT(const GLfloat* splitPlane,
     const int next = (i + 1) % count; // the next index
     if (array[next] & FRONT_SIDE) {
       if (!(array[i] & FRONT_SIDE)) {
-        firstFront = next;
+	firstFront = next;
       }
     }
     if (array[next] & BACK_SIDE) {
       if (!(array[i] & BACK_SIDE)) {
-        firstBack = next;
+	firstBack = next;
       }
     }
   }
@@ -647,9 +647,9 @@ int MeshPolySceneNode::splitWallVT(const GLfloat* splitPlane,
   if (firstFront != lastBack) {
     GLfloat splitVertex[3], splitUV[2];
     splitEdgeVT(dists[firstFront], dists[lastBack],
-                vertices[firstFront], vertices[lastBack],
-                texcoords[firstFront], texcoords[lastBack],
-                splitVertex, splitUV);
+		vertices[firstFront], vertices[lastBack],
+		texcoords[firstFront], texcoords[lastBack],
+		splitVertex, splitUV);
     memcpy(vertexFront[0], splitVertex, sizeof(GLfloat[3]));
     memcpy(uvFront[0], splitUV, sizeof(GLfloat[2]));
     frontIndex++; // bump up the head
@@ -660,9 +660,9 @@ int MeshPolySceneNode::splitWallVT(const GLfloat* splitPlane,
   if (firstBack != lastFront) {
     GLfloat splitVertex[3], splitUV[2];
     splitEdgeVT(dists[firstBack], dists[lastFront],
-                vertices[firstBack], vertices[lastFront],
-                texcoords[firstBack], texcoords[lastFront],
-                splitVertex, splitUV);
+		vertices[firstBack], vertices[lastFront],
+		texcoords[firstBack], texcoords[lastFront],
+		splitVertex, splitUV);
     memcpy(vertexBack[0], splitVertex, sizeof(GLfloat[3]));
     memcpy(uvBack[0], splitUV, sizeof(GLfloat[2]));
     backIndex++; // bump up the head
@@ -702,9 +702,9 @@ int MeshPolySceneNode::splitWallVT(const GLfloat* splitPlane,
 
 
 void MeshPolySceneNode::splitEdgeVT(float d1, float d2,
-                                    const GLfloat* p1, const GLfloat* p2,
-                                    const GLfloat* uv1, const GLfloat* uv2,
-                                    GLfloat* p, GLfloat* uv) const
+				    const GLfloat* p1, const GLfloat* p2,
+				    const GLfloat* uv1, const GLfloat* uv2,
+				    GLfloat* p, GLfloat* uv) const
 {
   // compute fraction along edge where split occurs
   float t1 = (d2 - d1);

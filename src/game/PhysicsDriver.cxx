@@ -90,7 +90,7 @@ int PhysicsDriverManager::findDriver(const std::string& dyncol) const
   else {
     for (int i = 0; i < (int)drivers.size(); i++) {
       if (drivers[i]->getName() == dyncol) {
-        return i;
+	return i;
       }
     }
     return -1;
@@ -275,18 +275,18 @@ void PhysicsDriver::print(std::ostream& out, int /*level*/)
   if (name.size() > 0) {
     out << "  name " << name << std::endl;
   }
-  
+
   const float* v = velocity;
   if ((v[0] != 0.0f) || (v[1] != 0.0f) || (v[2] != 0.0f)) {
     out << "  velocity " << v[0] << " " << v[1] << " " << v[2] << std::endl;
   }
-  
+
   if (angularVel != 0.0f) {
     const float* ap = angularPos;
-    out << "  angular " << angularVel << " " 
-                        << ap[0] << " " << ap[1] << std::endl;
+    out << "  angular " << angularVel << " "
+			<< ap[0] << " " << ap[1] << std::endl;
   }
-  
+
   out << "end" << std::endl << std::endl;
 
   return;

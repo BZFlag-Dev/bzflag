@@ -29,11 +29,11 @@ class SDLJoystick : public BzfJoystick {
     bool	joystick() const;
     void	getJoy(int& x, int& y);
     unsigned long getJoyButtons();
-    void        getJoyDevices(std::vector<std::string> &list) const;
+    void	getJoyDevices(std::vector<std::string> &list) const;
 
   private:
-    SDL_Joystick                *joystickID;
-    int                         joystickButtons;
+    SDL_Joystick		*joystickID;
+    int			 joystickButtons;
 };
 
 #endif // BZF_SDLJOY_H

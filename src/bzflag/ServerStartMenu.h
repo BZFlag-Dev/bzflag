@@ -44,7 +44,7 @@ private:
   void setStatus(const char*, const std::vector<std::string> *parms = NULL);
   void loadSettings();
   void scanWorldFiles (const std::string& searchDir,
-                       std::vector<std::string>* items);
+		       std::vector<std::string>* items);
 
 private:
   float center;

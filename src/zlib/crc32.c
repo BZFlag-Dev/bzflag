@@ -43,7 +43,7 @@ local void make_crc_table()
 {
   uLong c;
   int n, k;
-  uLong poly;            /* polynomial exclusive-or pattern */
+  uLong poly;	    /* polynomial exclusive-or pattern */
   /* terms of polynomial defining this crc (except x^32): */
   static const Byte p[] = {0,1,2,4,5,7,8,10,11,12,16,22,23,26};
 

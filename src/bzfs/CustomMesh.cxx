@@ -32,7 +32,7 @@ CustomMesh::CustomMesh()
   driveThrough = false;
   shootThrough = false;
   material.setTexture("mesh");
-  
+
   return;
 }
 
@@ -76,7 +76,7 @@ bool CustomMesh::read(const char *cmd, std::istream& input)
       delete face;
     }
     face = new CustomMeshFace (material, phydrv, noclusters,
-                               smoothBounce, driveThrough, shootThrough);
+			       smoothBounce, driveThrough, shootThrough);
   }
   else if (strcasecmp(cmd, "inside") == 0) {
     cfvec3 inside;
@@ -127,7 +127,7 @@ bool CustomMesh::read(const char *cmd, std::istream& input)
     }
   }
   else if ((strcasecmp(cmd, "ricosuavez") == 0) ||
-           (strcasecmp(cmd, "smoothbounce") == 0)) {
+	   (strcasecmp(cmd, "smoothbounce") == 0)) {
     smoothBounce = true;
   }
   else if (strcasecmp(cmd, "noclusters") == 0) {
@@ -153,7 +153,7 @@ void CustomMesh::write(WorldInfo *world) const
   MeshObstacle* mesh = new MeshObstacle(
     checkTypes, checkPoints, vertices, normals, texcoords, faces.size(),
     noclusters, smoothBounce, driveThrough, shootThrough);
-    
+
   std::vector<CustomMeshFace*>::const_iterator face_it;
   for (face_it = faces.begin(); face_it != faces.end(); face_it++) {
     const CustomMeshFace* face = *face_it;

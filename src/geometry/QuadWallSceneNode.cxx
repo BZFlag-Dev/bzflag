@@ -129,7 +129,7 @@ void			QuadWallSceneNode::Geometry::renderShadow()
   glVertex3fv(vertex[0]);
   glVertex3fv(vertex[last + ds]);
   glVertex3fv(vertex[ds]);
-  glEnd();								
+  glEnd();
 }
 
 void			QuadWallSceneNode::Geometry::drawV() const
@@ -318,10 +318,10 @@ void			QuadWallSceneNode::init(const GLfloat base[3],
     const float* point = getVertex(i);
     for (j = 0; j < 3; j++) {
       if (point[j] < mins[j]) {
-        mins[j] = point[j];
+	mins[j] = point[j];
       }
       if (point[j] > maxs[j]) {
-        maxs[j] = point[j];
+	maxs[j] = point[j];
       }
     }
   }
@@ -372,15 +372,15 @@ void			QuadWallSceneNode::addShadowNodes(
   renderer.addShadowNode(shadowNode);
 }
 
-void                    QuadWallSceneNode::getExtents(float* _mins, float* _maxs) const
+void		    QuadWallSceneNode::getExtents(float* _mins, float* _maxs) const
 {
   memcpy (_mins, mins, 3 * sizeof(float));
   memcpy (_maxs, maxs, 3 * sizeof(float));
   return;
 }
 
-bool                    QuadWallSceneNode::inAxisBox(const float* boxMins,
-                                                     const float* boxMaxs) const
+bool		    QuadWallSceneNode::inAxisBox(const float* boxMins,
+						     const float* boxMaxs) const
 {
   if ((mins[0] > boxMaxs[0]) || (maxs[0] < boxMins[0]) ||
       (mins[1] > boxMaxs[1]) || (maxs[1] < boxMins[1]) ||
@@ -398,12 +398,12 @@ bool                    QuadWallSceneNode::inAxisBox(const float* boxMins,
   return testPolygonInAxisBox (4, vertices, getPlane(), boxMins, boxMaxs);
 }
 
-int                     QuadWallSceneNode::getVertexCount () const
+int		     QuadWallSceneNode::getVertexCount () const
 {
   return 4;
 }
 
-const GLfloat*          QuadWallSceneNode::getVertex (int vertex) const
+const GLfloat*	  QuadWallSceneNode::getVertex (int vertex) const
 {
   // re-map these to a counter-clockwise order
   const int order[4] = {0, 1, 3, 2};

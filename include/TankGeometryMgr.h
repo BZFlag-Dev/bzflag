@@ -80,9 +80,9 @@ namespace TankGeometryMgr {
   void deleteLists();
 
   GLuint getPartList(TankGeometryEnums::TankShadow shadow,
-                     TankGeometryEnums::TankPart part,
-                     TankGeometryEnums::TankSize size,
-                     TankGeometryEnums::TankLOD lod);
+		     TankGeometryEnums::TankPart part,
+		     TankGeometryEnums::TankSize size,
+		     TankGeometryEnums::TankLOD lod);
 
   const float* getScaleFactor(TankGeometryEnums::TankSize size);
 }
@@ -122,7 +122,7 @@ namespace TankGeometryUtils {
   void buildHighTurret (void);
   void buildHighLCasing (void);
   void buildHighRCasing (void);
-  
+
   void buildHighLTread (int divs);
   void buildHighRTread (int divs);
   void buildHighLWheel (int wheel, float angle, int divs);

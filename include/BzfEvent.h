@@ -166,10 +166,10 @@ class BzfEvent {
 	BzfKeyEvent	keyDown;
     };
     BzfEvent() :
-        type(Unset),
-        window((BzfWindow*)NULL)
+	type(Unset),
+	window((BzfWindow*)NULL)
     {
-        mouseMove.x=mouseMove.y=resize.width=resize.height=keyUp.ascii=keyUp.button=keyUp.shift=0;
+	mouseMove.x=mouseMove.y=resize.width=resize.height=keyUp.ascii=keyUp.button=keyUp.shift=0;
     }
 };
 

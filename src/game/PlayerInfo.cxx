@@ -148,7 +148,7 @@ void PlayerInfo::cleanCallSign() {
     if (isprint(*sp) && (*sp != '\'') && (*sp != '"')) {
       // override modified clients that might send non-space whitespace
       if (isspace(*sp)) {
-        *sp = ' ';
+	*sp = ' ';
       }
       *tp++ = *sp;
     }
@@ -344,7 +344,7 @@ void PlayerInfo::updateIdleTime() {
   lastupdate = now;
 };
 
-void        PlayerInfo::setReplayState(PlayerReplayState state) {
+void	PlayerInfo::setReplayState(PlayerReplayState state) {
   replayState = state;
 }
 

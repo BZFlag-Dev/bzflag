@@ -96,16 +96,16 @@ void WorldWeapons::fire()
       buf = firingInfo.pack(bufStart);
 
       if (BZDB.isTrue(StateDatabase::BZDB_WEAPONS)) {
-        broadcastMessage(MsgShotBegin, (char *)buf - (char *)bufStart, bufStart);
+	broadcastMessage(MsgShotBegin, (char *)buf - (char *)bufStart, bufStart);
       }
 
       //Set up timer for next shot, and eat any shots that have been missed
       while (w->nextTime <= nowTime) {
-        w->nextTime += w->delay[w->nextDelay];
-        w->nextDelay++;
-        if (w->nextDelay == (int)w->delay.size()) {
-          w->nextDelay = 0;
-        }
+	w->nextTime += w->delay[w->nextDelay];
+	w->nextDelay++;
+	if (w->nextDelay == (int)w->delay.size()) {
+	  w->nextDelay = 0;
+	}
       }
     }
   }
@@ -113,8 +113,8 @@ void WorldWeapons::fire()
 
 
 void WorldWeapons::add(const FlagType *type, const float *origin, float direction,
-                       float initdelay, const std::vector<float> &delay,
-                       TimeKeeper &sync)
+		       float initdelay, const std::vector<float> &delay,
+		       TimeKeeper &sync)
 {
   Weapon *w = new Weapon();
   w->type = type;
@@ -151,8 +151,8 @@ void * WorldWeapons::pack(void *buf) const
     void *bufStart = buf;
     buf = nboPackUShort(buf, 0); // place-holder
     buf = nboPackUShort(buf, WorldCodeWeapon);
-    buf = w->type->pack (buf);                  //  2
-    buf = nboPackVector(buf, w->origin);        // 14
+    buf = w->type->pack (buf);		  //  2
+    buf = nboPackVector(buf, w->origin);	// 14
     buf = nboPackFloat(buf, w->direction);      // 18
     buf = nboPackFloat(buf, w->initDelay);      // 22
     buf = nboPackUShort(buf, w->delay.size());  // 24

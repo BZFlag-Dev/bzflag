@@ -71,7 +71,7 @@ bool CustomDynamicColor::read(const char *cmd, std::istream& input)
 
   if (!(parms >> command)) {
     std::cout << "missing parameter type for "
-              << cmd << " channel" << std::endl;
+	      << cmd << " channel" << std::endl;
     return false;
   }
 
@@ -87,7 +87,7 @@ bool CustomDynamicColor::read(const char *cmd, std::istream& input)
     float data[3];
     if (!(parms >> data[0] >> data[1] >> data[2])) {
       std::cout << "missing sinusoid parameters for " << cmd << " channel"
-                << std::endl;
+		<< std::endl;
       return false;
     }
     color->addSinusoid(channel, data);
@@ -96,7 +96,7 @@ bool CustomDynamicColor::read(const char *cmd, std::istream& input)
     float data[3];
     if (!(parms >> data[0] >> data[1] >> data[2])) {
       std::cout << "missing clampup parameters for " << cmd << " channel"
-                << std::endl;
+		<< std::endl;
       return false;
     }
     color->addClampUp(channel, data);
@@ -105,7 +105,7 @@ bool CustomDynamicColor::read(const char *cmd, std::istream& input)
     float data[3];
     if (!(parms >> data[0] >> data[1] >> data[2])) {
       std::cout << "missing clampdown parameters for " << cmd << " channel"
-                << std::endl;
+		<< std::endl;
       return false;
     }
     color->addClampDown(channel, data);

@@ -23,7 +23,7 @@
 #include "playing.h"
 
 static BzfJoystick*     getJoystick();
-static bool             useForceFeedback(const char *type = "Rumble");
+static bool	     useForceFeedback(const char *type = "Rumble");
 
 
 static BzfJoystick*     getJoystick()
@@ -35,7 +35,7 @@ static BzfJoystick*     getJoystick()
     return NULL;
 }
 
-static bool             useForceFeedback(const char *type)
+static bool	     useForceFeedback(const char *type)
 {
   BzfJoystick* js = getJoystick();
 

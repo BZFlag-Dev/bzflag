@@ -313,7 +313,7 @@ char*			PingPacket::packHex16(char* buf, uint16_t v)
   *buf++ = bin2hex((v >> 12) & 0xf);
   *buf++ = bin2hex((v >>  8) & 0xf);
   *buf++ = bin2hex((v >>  4) & 0xf);
-  *buf++ = bin2hex( v        & 0xf);
+  *buf++ = bin2hex( v	& 0xf);
   return buf;
 }
 
@@ -331,7 +331,7 @@ char*			PingPacket::unpackHex16(char* buf, uint16_t& v)
 char*			PingPacket::packHex8(char* buf, uint8_t v)
 {
   *buf++ = bin2hex((v >>  4) & 0xf);
-  *buf++ = bin2hex( v        & 0xf);
+  *buf++ = bin2hex( v	& 0xf);
   return buf;
 }
 

@@ -102,7 +102,7 @@ void*	PlayerState::pack(void* buf, uint16_t& code)
   if ((status & OnDriver) != 0) {
     buf = nboPackInt(buf, phydrv);
   }
-  
+
   return buf;
 }
 
@@ -147,7 +147,7 @@ void*	PlayerState::unpack(void* buf, uint16_t code)
   } else {
     phydrv = -1;
   }
-  
+
   return buf;
 }
 

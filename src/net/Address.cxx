@@ -112,7 +112,7 @@ std::string		Address::getDotNotation() const
   return std::string(inet_ntoa(addr[0]));
 }
 
-uint8_t		        Address::getIPVersion() const {
+uint8_t			Address::getIPVersion() const {
   return 4;
 }
 

@@ -110,7 +110,7 @@ int getTarget(const char *victimname) {
   return i;
 }
 
-// function for uptime conversion 
+// function for uptime conversion
 
 int convertTime(float raw, int convertedTimes[])
 {
@@ -175,7 +175,7 @@ void handleUptimeCmd(GameKeeper::Player *playerData, const char *)
   int t = playerData->getIndex();
   char reply[MessageLen] = {0};
   int temp[4];
-  
+
   rawTime = TimeKeeper::getCurrent() - TimeKeeper::getStartTime();
   convertTime(rawTime,temp);
   sprintf(reply,"%s.", printTime(temp).c_str());
@@ -189,13 +189,13 @@ void handleServerQueryCmd(GameKeeper::Player *playerData, const char *)
 	 playerData->player.getCallSign(), t);
 
   sendMessage(ServerPlayer, t,
-              TextUtils::format("BZFS Version: %s", getAppVersion()).c_str());
+	      TextUtils::format("BZFS Version: %s", getAppVersion()).c_str());
   return;
- 
-}  
-  
 
-  
+}
+
+
+
 void handlePartCmd(GameKeeper::Player *playerData, const char *message)
 {
   std::string message2;
@@ -583,7 +583,7 @@ void handleKickCmd(GameKeeper::Player *playerData, const char *message)
 
   if (argv.size() < 2) {
     sendMessage(ServerPlayer, t, "Syntax: /kick <PlayerName/\"Player Name\"> [reason]");
-    sendMessage(ServerPlayer, t, "        Please keep in mind that reason is displayed to the user.");
+    sendMessage(ServerPlayer, t, "	Please keep in mind that reason is displayed to the user.");
     return;
   }
 
@@ -660,7 +660,7 @@ void handleBanCmd(GameKeeper::Player *playerData, const char *message)
 
   if (argv.size() < 2) {
     sendMessage(ServerPlayer, t, "Syntax: /ban <ip> [duration] [reason]");
-    sendMessage(ServerPlayer, t, "        Please keep in mind that reason is displayed to the user.");
+    sendMessage(ServerPlayer, t, "	Please keep in mind that reason is displayed to the user.");
   } else {
     std::string ip = argv[1];
     std::string reason;
@@ -669,13 +669,13 @@ void handleBanCmd(GameKeeper::Player *playerData, const char *message)
     // set the ban time
     if (argv.size() >= 3) {
       int specifiedDuration = TextUtils::parseDuration(argv[2]);
-      if ((durationInt > 0) && 
-          ((specifiedDuration > durationInt) || (specifiedDuration <= 0)) &&
-          !playerData->accessInfo.hasPerm(PlayerAccessInfo::ban)) {
-        sendMessage (ServerPlayer, t, "You only have SHORTBAN privileges,"
-                                      " using default ban time");
+      if ((durationInt > 0) &&
+	  ((specifiedDuration > durationInt) || (specifiedDuration <= 0)) &&
+	  !playerData->accessInfo.hasPerm(PlayerAccessInfo::ban)) {
+	sendMessage (ServerPlayer, t, "You only have SHORTBAN privileges,"
+				      " using default ban time");
       } else {
-        durationInt = specifiedDuration;
+	durationInt = specifiedDuration;
       }
     }
 
@@ -746,7 +746,7 @@ void handleHostBanCmd(GameKeeper::Player *playerData, const char *message)
 
   if( argv.size() < 2 ){
     sendMessage(ServerPlayer, t, "Syntax: /hostban <host pattern> [duration] [reason]");
-    sendMessage(ServerPlayer, t, "        Please keep in mind that reason is displayed to the user.");
+    sendMessage(ServerPlayer, t, "	Please keep in mind that reason is displayed to the user.");
   }
   else {
     std::string hostpat = argv[1];
@@ -756,13 +756,13 @@ void handleHostBanCmd(GameKeeper::Player *playerData, const char *message)
     // set the ban time
     if (argv.size() >= 3) {
       int specifiedDuration = TextUtils::parseDuration(argv[2]);
-      if ((durationInt > 0) && 
-          ((specifiedDuration > durationInt) || (specifiedDuration <= 0)) &&
-          !playerData->accessInfo.hasPerm(PlayerAccessInfo::ban)) {
-        sendMessage (ServerPlayer, t, "You only have SHORTBAN privileges,"
-                                      " using default ban time");
+      if ((durationInt > 0) &&
+	  ((specifiedDuration > durationInt) || (specifiedDuration <= 0)) &&
+	  !playerData->accessInfo.hasPerm(PlayerAccessInfo::ban)) {
+	sendMessage (ServerPlayer, t, "You only have SHORTBAN privileges,"
+				      " using default ban time");
       } else {
-        durationInt = specifiedDuration;
+	durationInt = specifiedDuration;
       }
     }
 
@@ -1005,23 +1005,23 @@ void handleReportCmd(GameKeeper::Player *playerData, const char *message)
       sendMessage(ServerPlayer, t, "The report command is disabled on this server");
     } else {
       std::string temp = std::string("**\"") + playerData->player.getCallSign() + "\" reports: " +
-                         (message + 8);
+			 (message + 8);
       if (temp.size() <= (unsigned) MessageLen) {
-        sendMessage (ServerPlayer, AdminPlayers, temp.c_str());
-        return;
+	sendMessage (ServerPlayer, AdminPlayers, temp.c_str());
+	return;
       }
       const std::vector<std::string> words = TextUtils::tokenize(temp, " \t");
       unsigned int cur = 0;
       const unsigned int wordsize = words.size();
       while (cur != wordsize) {
-        std::string temp2;
-        while (temp2.size() <= (unsigned) MessageLen &&
-               cur != wordsize &&
-               (temp2.size() + words[cur].size()) <= (unsigned) MessageLen) {
-            temp2 += words[cur] + " ";
-            ++cur;
-        }
-        sendMessage (ServerPlayer, AdminPlayers, temp2.c_str());
+	std::string temp2;
+	while (temp2.size() <= (unsigned) MessageLen &&
+	       cur != wordsize &&
+	       (temp2.size() + words[cur].size()) <= (unsigned) MessageLen) {
+	    temp2 += words[cur] + " ";
+	    ++cur;
+	}
+	sendMessage (ServerPlayer, AdminPlayers, temp2.c_str());
       }
       sendMessage (ServerPlayer, AdminPlayers, message);
       DEBUG1("Player %s [%d] has filed a report (time: %s).\n",
@@ -1307,8 +1307,8 @@ void handleShowgroupCmd(GameKeeper::Player *playerData, const char *message)
 	itr++;
       }
       while (line.size() > (unsigned int)MessageLen) {
-        sendMessage(ServerPlayer, t, line.substr(0, MessageLen).c_str());
-        line.erase(line.begin(), line.begin() + (MessageLen - 1));
+	sendMessage(ServerPlayer, t, line.substr(0, MessageLen).c_str());
+	line.erase(line.begin(), line.begin() + (MessageLen - 1));
       }
       sendMessage(ServerPlayer, t, line.c_str());
     } else {
@@ -1973,9 +1973,9 @@ void handleClientqueryCmd(GameKeeper::Player *playerData, const char * message)
     for (i = 0; i < curMaxPlayers;i++) {
       target = GameKeeper::Player::getPlayerByIndex(i);
       if (target && strcmp(target->player.getCallSign(), name.c_str()) == 0) {
-        sendMessage(i, t, TextUtils::format("Version: %s",
+	sendMessage(i, t, TextUtils::format("Version: %s",
 		     target->player.getClientVersion()).c_str());
-        return;
+	return;
       }
     }
     sendMessage(ServerPlayer, t, "Player not found.");
@@ -1984,7 +1984,7 @@ void handleClientqueryCmd(GameKeeper::Player *playerData, const char * message)
   sendMessage(ServerPlayer, AllPlayers, "[Sent version information per request]");
   // send server's own version string just for kicks
   sendMessage(ServerPlayer, t,
-              TextUtils::format("BZFS Version: %s", getAppVersion()).c_str());
+	      TextUtils::format("BZFS Version: %s", getAppVersion()).c_str());
   // send all players' version strings
   // is faking a message from the remote client rude?
   // did that so that /clientquery and CLIENTQUERY look about the same.
@@ -2200,13 +2200,13 @@ void handleMasterBanCmd(GameKeeper::Player *playerData, const char *message)
       sendMessage(ServerPlayer, t, "Permission to ban and unban is required to reload the master ban list.");
       return;
     }
-    
+
     if (clOptions->publicizeServer && !clOptions->suppressMasterBanList) {
       MasterBanList	banList;
-      
+
       clOptions->acl.purgeMasters();
       sendMessage(ServerPlayer, t, "Previous master ban list entries have been flushed.");
-      
+
       for (std::vector<std::string>::const_iterator i = clOptions->masterBanListURL.begin(); i != clOptions->masterBanListURL.end(); i++) {
 	std::string reloadmsg = TextUtils::format("Reloaded master ban list from %s\n", i->c_str());
 	clOptions->acl.merge(banList.get(i->c_str()));
@@ -2217,17 +2217,17 @@ void handleMasterBanCmd(GameKeeper::Player *playerData, const char *message)
     } else {
       sendMessage(ServerPlayer, t, "No action taken.");
     }
-    
+
   } else if (cmd == "flush") {
     if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::unban)) {
       sendMessage(ServerPlayer, t, "You do not have permission to reload the master ban list.");
       sendMessage(ServerPlayer, t, "Permission to unban is required to flush the master ban list.");
       return;
     }
-    
+
     clOptions->acl.purgeMasters();
     sendMessage(ServerPlayer, t, "The master ban list has been flushed.");
-    
+
   } else if (cmd == "list") {
     std::vector<std::pair<std::string, std::string> > bans = clOptions->acl.listMasterBans();
 

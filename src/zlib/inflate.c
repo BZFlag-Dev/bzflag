@@ -33,19 +33,19 @@ struct internal_state {
 
   /* mode dependent information */
   union {
-    uInt method;        /* if FLAGS, method byte */
+    uInt method;	/* if FLAGS, method byte */
     struct {
-      uLong was;                /* computed check value */
-      uLong need;               /* stream check value */
-    } check;            /* if CHECK, check values to compare */
-    uInt marker;        /* if BAD, inflateSync's marker bytes count */
-  } sub;        /* submode */
+      uLong was;		/* computed check value */
+      uLong need;	       /* stream check value */
+    } check;	    /* if CHECK, check values to compare */
+    uInt marker;	/* if BAD, inflateSync's marker bytes count */
+  } sub;	/* submode */
 
   /* mode independent information */
-  int  nowrap;          /* flag for no wrapper */
-  uInt wbits;           /* log2(window size)  (8..15, defaults to 15) */
+  int  nowrap;	  /* flag for no wrapper */
+  uInt wbits;	   /* log2(window size)  (8..15, defaults to 15) */
   inflate_blocks_statef
-    *blocks;            /* current inflate_blocks state */
+    *blocks;	    /* current inflate_blocks state */
 
 };
 
@@ -164,17 +164,17 @@ int f;
       NEEDBYTE
       if (((z->state->sub.method = NEXTBYTE) & 0xf) != Z_DEFLATED)
       {
-        z->state->mode = BAD;
-        z->msg = (char*)"unknown compression method";
-        z->state->sub.marker = 5;       /* can't try inflateSync */
-        break;
+	z->state->mode = BAD;
+	z->msg = (char*)"unknown compression method";
+	z->state->sub.marker = 5;       /* can't try inflateSync */
+	break;
       }
       if ((z->state->sub.method >> 4) + 8 > z->state->wbits)
       {
-        z->state->mode = BAD;
-        z->msg = (char*)"invalid window size";
-        z->state->sub.marker = 5;       /* can't try inflateSync */
-        break;
+	z->state->mode = BAD;
+	z->msg = (char*)"invalid window size";
+	z->state->sub.marker = 5;       /* can't try inflateSync */
+	break;
       }
       z->state->mode = FLAG;
     case FLAG:
@@ -182,16 +182,16 @@ int f;
       b = NEXTBYTE;
       if (((z->state->sub.method << 8) + b) % 31)
       {
-        z->state->mode = BAD;
-        z->msg = (char*)"incorrect header check";
-        z->state->sub.marker = 5;       /* can't try inflateSync */
-        break;
+	z->state->mode = BAD;
+	z->msg = (char*)"incorrect header check";
+	z->state->sub.marker = 5;       /* can't try inflateSync */
+	break;
       }
       Tracev((stderr, "inflate: zlib header ok\n"));
       if (!(b & PRESET_DICT))
       {
-        z->state->mode = BLOCKS;
-        break;
+	z->state->mode = BLOCKS;
+	break;
       }
       z->state->mode = DICT4;
     case DICT4:
@@ -221,20 +221,20 @@ int f;
       r = inflate_blocks(z->state->blocks, z, r);
       if (r == Z_DATA_ERROR)
       {
-        z->state->mode = BAD;
-        z->state->sub.marker = 0;       /* can try inflateSync */
-        break;
+	z->state->mode = BAD;
+	z->state->sub.marker = 0;       /* can try inflateSync */
+	break;
       }
       if (r == Z_OK)
-        r = f;
+	r = f;
       if (r != Z_STREAM_END)
-        return r;
+	return r;
       r = f;
       inflate_blocks_reset(z->state->blocks, z, &z->state->sub.check.was);
       if (z->state->nowrap)
       {
-        z->state->mode = DONE;
-        break;
+	z->state->mode = DONE;
+	break;
       }
       z->state->mode = CHECK4;
     case CHECK4:
@@ -255,10 +255,10 @@ int f;
 
       if (z->state->sub.check.was != z->state->sub.check.need)
       {
-        z->state->mode = BAD;
-        z->msg = (char*)"incorrect data check";
-        z->state->sub.marker = 5;       /* can't try inflateSync */
-        break;
+	z->state->mode = BAD;
+	z->msg = (char*)"incorrect data check";
+	z->state->sub.marker = 5;       /* can't try inflateSync */
+	break;
       }
       Tracev((stderr, "inflate: zlib check ok\n"));
       z->state->mode = DONE;

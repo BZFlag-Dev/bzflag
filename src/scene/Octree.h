@@ -30,9 +30,9 @@ class Octree {
     void addNodes (SceneNode** list, int listSize, int depth, int elements);
 
     int getFrustumList (SceneNode** list, int listSize,
-                        const Frustum* frustum) const;
+			const Frustum* frustum) const;
     int getShadowList (SceneNode** list, int listSize,
-                       const Frustum* frustum, const float* sunDir) const;
+		       const Frustum* frustum, const float* sunDir) const;
     void clear ();
     void draw () const;
 
@@ -40,7 +40,7 @@ class Octree {
   private: // methods
 
     void getExtents(float* mins, float* maxs,
-                    SceneNode** list, int listSize);
+		    SceneNode** list, int listSize);
 
   private: // data
 
@@ -54,8 +54,8 @@ class OctreeNode {
   public:
 
     OctreeNode(unsigned char depth,
-               const float* mins, const float* maxs,
-               SceneNode** list, int listSize);
+	       const float* mins, const float* maxs,
+	       SceneNode** list, int listSize);
     ~OctreeNode();
 
     void getFrustumList () const;

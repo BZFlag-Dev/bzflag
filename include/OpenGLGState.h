@@ -71,10 +71,10 @@ class OpenGLGState {
 				OpenGLContextInitializer,
 				void* userData = NULL);
     static void		initContext();
-    
+
     static void		setInvertCull(bool value);
     static bool		getInvertCull();
-    
+
     static void		setCullFace(GLenum face);
 
   private:

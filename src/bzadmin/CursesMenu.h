@@ -54,9 +54,9 @@ public:
   /** This is the function that displays the menu item in the terminal.
       @param menuWin  the curses window to display the item in
       @param line     the line in the window that the item should be
-                      displayed on
+		      displayed on
       @param col      the column in the window where the left edge of the
-                      item should be
+		      item should be
       @param width    the width of the item (in characters)
       @param selected true if this item is selected, false if it is not
   */
@@ -69,9 +69,9 @@ public:
       it should return @c false.
       @param c    the key code
       @param str  if the menu item wants to send a command to the server it
-                  should be stored here
+		  should be stored here
       @param menu this is the menu that the item lives in, the menu item is
-                  allowed to modify it (e.g. to clear it and add new menu
+		  allowed to modify it (e.g. to clear it and add new menu
 		  items if we want to go to a submenu)
       @return     true if a command should be sent to the server, false if not
   */

@@ -37,19 +37,19 @@
 #endif
 
 #ifndef BZ_REV
-#define BZ_REV                  21
+#define BZ_REV			21
 #endif
 
 #ifndef BZ_CONFIG_DIR_VERSION
-#define BZ_CONFIG_DIR_VERSION "1.12"
+#define BZ_CONFIG_DIR_VERSION	"1.12"
 #endif
 
 #ifndef BZ_CONFIG_FILE_NAME
-#define BZ_CONFIG_FILE_NAME "config.cfg"
+#define BZ_CONFIG_FILE_NAME	"config.cfg"
 #endif
 
 #ifndef BZ_CONFIG_FILE_VERSION
-#define BZ_CONFIG_FILE_VERSION 2
+#define BZ_CONFIG_FILE_VERSION	2
 #endif
 
 
@@ -73,29 +73,29 @@ inline int getBuildDate()
 
   // we want it not as a name but a number
   if (strcmp(monthStr, "Jan") == 0)
-          month = 1;
+    month = 1;
   else if (strcmp(monthStr, "Feb") == 0)
-          month = 2;
+    month = 2;
   else if (strcmp(monthStr, "Mar") == 0)
-          month = 3;
+    month = 3;
   else if (strcmp(monthStr, "Apr") == 0)
-          month = 4;
+    month = 4;
   else if (strcmp(monthStr, "May") == 0)
-          month = 5;
+    month = 5;
   else if (strcmp(monthStr, "Jun") == 0)
-          month = 6;
+    month = 6;
   else if (strcmp(monthStr, "Jul") == 0)
-          month = 7;
+    month = 7;
   else if (strcmp(monthStr, "Aug") == 0)
-          month = 8;
+    month = 8;
   else if (strcmp(monthStr, "Sep") == 0)
-          month = 9;
+    month = 9;
   else if (strcmp(monthStr, "Oct") == 0)
-          month = 10;
+    month = 10;
   else if (strcmp(monthStr, "Nov") == 0)
-          month = 11;
+    month = 11;
   else if (strcmp(monthStr, "Dec") == 0)
-          month = 12;
+    month = 12;
 
   return (year*10000) + (month*100)+ day;
 }

@@ -38,10 +38,10 @@ class WallSceneNode : public SceneNode {
     const GLfloat*	getLightedModulateColor() const
 				{ return lightedModulateColor; }
     GLfloat		getDistance(const GLfloat*) const;
-    virtual void        getExtents (float* mins, float* maxs) const;
-    virtual bool        inAxisBox (const float* mins, const float* maxs) const;
-    
-    bool	        isTranslucent() const;
+    virtual void	getExtents (float* mins, float* maxs) const;
+    virtual bool	inAxisBox (const float* mins, const float* maxs) const;
+
+    bool		isTranslucent() const;
 
     void		setColor(GLfloat r, GLfloat g,
 				GLfloat b, GLfloat a = 1.0f);
@@ -69,7 +69,7 @@ class WallSceneNode : public SceneNode {
 
     void		copyStyle(WallSceneNode*);
 
-    void                setUseColorTexture(bool use){useColorTexture=use;}
+    void		setUseColorTexture(bool use){useColorTexture=use;}
   protected:
     int			getNumLODs() const;
     void		setNumLODs(int, float* elementAreas);
@@ -86,14 +86,14 @@ class WallSceneNode : public SceneNode {
 				SceneNode*& front, SceneNode*& back); // const
 
   protected:
-    GLfloat             mins[3]; // extents of the axis aligned bounding box
-    GLfloat             maxs[3];
+    GLfloat	     mins[3]; // extents of the axis aligned bounding box
+    GLfloat	     maxs[3];
 
   private:
     static void splitEdge(float d1, float d2,
-                          const GLfloat* p1, const GLfloat* p2,
-                          const GLfloat* uv1, const GLfloat* uv2,
-                          GLfloat* p, GLfloat* uv); //const
+			  const GLfloat* p1, const GLfloat* p2,
+			  const GLfloat* uv1, const GLfloat* uv2,
+			  GLfloat* p, GLfloat* uv); //const
 
   private:
     int			numLODs;
@@ -108,7 +108,7 @@ class WallSceneNode : public SceneNode {
     bool		wantBlending;
     bool		wantSphereMap;
     OpenGLGState	gstate;
-    bool                useColorTexture;
+    bool		useColorTexture;
 };
 
 //

@@ -65,7 +65,7 @@ boolean MacMedia::openAudio () {
 
 	header.numChannels   = 2;
   header.sampleRate    = rate22050hz;
-  header.encode        = extSH;
+  header.encode	= extSH;
   header.sampleSize    = 16;
   header.numFrames     = CHUNK_SIZE;
 

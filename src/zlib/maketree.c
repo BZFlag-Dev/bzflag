@@ -33,7 +33,7 @@ void maketree(uInt b, inflate_huft *t)
   while (1)
   {
     e = t[i].exop;
-    if (e && (e & (16+64)) == 0)        /* table pointer */
+    if (e && (e & (16+64)) == 0)	/* table pointer */
     {
       fprintf(stderr, "maketree: cannot initialize sub-tables!\n");
       exit(1);

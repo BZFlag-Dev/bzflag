@@ -38,7 +38,7 @@
 
 
 
-bool             EvdevJoystick::isEvdevAvailable()
+bool	     EvdevJoystick::isEvdevAvailable()
 {
   /* Test whether this driver should be used without actually
    * loading it. Will return false if no event devices can be
@@ -70,7 +70,7 @@ EvdevJoystick::~EvdevJoystick()
   delete ff_rumble;
 }
 
-void             EvdevJoystick::scanForJoysticks(std::map<std::string,
+void	     EvdevJoystick::scanForJoysticks(std::map<std::string,
 							EvdevJoystickInfo> &joysticks)
 {
   joysticks.clear();
@@ -113,9 +113,9 @@ void             EvdevJoystick::scanForJoysticks(std::map<std::string,
     /* Yay, add it to our map.
      *
      * FIXME: we can't handle multiple joysticks with the same name yet.
-     *        This could be fixed by disambiguating jsname if it already
-     *        exists in 'joysticks', but the user would still have a hard
-     *        time knowing which device to pick.
+     *	This could be fixed by disambiguating jsname if it already
+     *	exists in 'joysticks', but the user would still have a hard
+     *	time knowing which device to pick.
      */
     joysticks[jsname] = info;
   }
@@ -123,7 +123,7 @@ void             EvdevJoystick::scanForJoysticks(std::map<std::string,
   closedir(inputdir);
 }
 
-bool                    EvdevJoystick::collectJoystickBits(int fd, struct EvdevJoystickInfo &info)
+bool		    EvdevJoystick::collectJoystickBits(int fd, struct EvdevJoystickInfo &info)
 {
   /* Collect all the bitfields we're interested in from an event device
    * at the given file descriptor.
@@ -209,7 +209,7 @@ bool			EvdevJoystick::joystick() const
   return currentJoystick != NULL;
 }
 
-void                    EvdevJoystick::poll()
+void		    EvdevJoystick::poll()
 {
   /* Read as many input events as are available, and update our current state
    */
@@ -232,7 +232,7 @@ void                    EvdevJoystick::poll()
   }
 }
 
-int                     EvdevJoystick::mapButton(int bit_num)
+int		     EvdevJoystick::mapButton(int bit_num)
 {
   /* Given an evdev button number, map it back to a small integer that most
    * people would consider the button's actual number. This also ensures
@@ -258,7 +258,7 @@ int                     EvdevJoystick::mapButton(int bit_num)
   return -1;
 }
 
-void                    EvdevJoystick::setButton(int button_num, int state)
+void		    EvdevJoystick::setButton(int button_num, int state)
 {
 
   if (button_num >= 0) {
@@ -319,7 +319,7 @@ unsigned long		EvdevJoystick::getJoyButtons()
   }
 }
 
-void                    EvdevJoystick::getJoyDevices(std::vector<std::string>
+void		    EvdevJoystick::getJoyDevices(std::vector<std::string>
 						 &list) const
 {
   std::map<std::string,EvdevJoystickInfo>::const_iterator i;
@@ -327,20 +327,20 @@ void                    EvdevJoystick::getJoyDevices(std::vector<std::string>
     list.push_back(i->first);
 }
 
-bool                    EvdevJoystick::ffHasRumble() const
+bool		    EvdevJoystick::ffHasRumble() const
 {
 #ifdef HAVE_FF_EFFECT_RUMBLE
   if (!currentJoystick)
     return false;
   else
     return test_bit(EV_FF, currentJoystick->evbit) &&
-           test_bit(FF_RUMBLE, currentJoystick->ffbit);
+	   test_bit(FF_RUMBLE, currentJoystick->ffbit);
 #else
   return false;
 #endif
 }
 
-void                    EvdevJoystick::ffResetRumble()
+void		    EvdevJoystick::ffResetRumble()
 {
 #ifdef HAVE_FF_EFFECT_RUMBLE
   /* Erase old effects before closing a device,
@@ -371,7 +371,7 @@ void                    EvdevJoystick::ffResetRumble()
 }
 
 #ifdef HAVE_FF_EFFECT_RUMBLE
-void                    EvdevJoystick::ffRumble(int count,
+void		    EvdevJoystick::ffRumble(int count,
 						float delay, float duration,
 						float strong_motor,
 						float weak_motor)

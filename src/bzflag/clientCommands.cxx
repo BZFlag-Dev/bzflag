@@ -530,16 +530,16 @@ std::string cmdScreenshot(const std::string&, const CommandManager::ArgList& arg
     temp = htonl(PNGTAG("IHDR")); //(tag) IHDR
     f->write((char*) &temp, 4);
     crc = crc32(crc, (unsigned char*) &temp, 4);
-    temp = htonl(w);              //(data) Image width
+    temp = htonl(w);	      //(data) Image width
     f->write((char*) &temp, 4);
     crc = crc32(crc, (unsigned char*) &temp, 4);
-    temp = htonl(h);              //(data) Image height
+    temp = htonl(h);	      //(data) Image height
     f->write((char*) &temp, 4);
     crc = crc32(crc, (unsigned char*) &temp, 4);
-    tempByte = 8;                 //(data) Image bitdepth (8 bits/sample = 24 bits/pixel)
+    tempByte = 8;		 //(data) Image bitdepth (8 bits/sample = 24 bits/pixel)
     f->write(&tempByte, 1);
     crc = crc32(crc, (unsigned char*) &tempByte, 1);
-    tempByte = 2;                 //(data) Color type: RGB = 2
+    tempByte = 2;		 //(data) Color type: RGB = 2
     f->write(&tempByte, 1);
     crc = crc32(crc, (unsigned char*) &tempByte, 1);
     tempByte = 0;
@@ -558,7 +558,7 @@ std::string cmdScreenshot(const std::string&, const CommandManager::ArgList& arg
       glReadPixels(0, i, w, 1, GL_RGB, GL_UNSIGNED_BYTE, b + line + 1); //capture line
       // apply gamma correction if necessary
       if (gammaAdjust) {
-        unsigned char *ptr = b + line + 1;
+	unsigned char *ptr = b + line + 1;
 	for (int i = 1; i < w * 3 + 1; i++) {
 	  *ptr = gammaTable[*ptr];
 	  ptr++;
@@ -570,34 +570,34 @@ std::string cmdScreenshot(const std::string&, const CommandManager::ArgList& arg
     unsigned char* bz = new unsigned char[zlength]; //just like b, but compressed; might get bigger, so give it room
     // compress b into bz
     compress2(bz, &zlength, b, blength, 5);
-    temp = htonl(zlength);                          //(length) IDAT length after compression
+    temp = htonl(zlength);			  //(length) IDAT length after compression
     f->write((char*) &temp, 4);
-    temp = htonl(PNGTAG("IDAT"));                   //(tag) IDAT
+    temp = htonl(PNGTAG("IDAT"));		   //(tag) IDAT
     f->write((char*) &temp, 4);
     crc = crc32(crc = 0, (unsigned char*) &temp, 4);
     f->write(reinterpret_cast<char*>(bz), zlength);  //(data) This line of pixels, compressed
     crc = htonl(crc32(crc, bz, zlength));
-    f->write((char*) &crc, 4);                       //(crc) write crc
+    f->write((char*) &crc, 4);		       //(crc) write crc
 
     // tEXt chunk containing bzflag build/version
     temp = htonl((int) 9 + strlen(getAppVersion()));//(length) tEXt is 9 + strlen(getAppVersion())
     f->write((char*) &temp, 4);
-    temp = htonl(PNGTAG("tEXt"));                   //(tag) tEXt
+    temp = htonl(PNGTAG("tEXt"));		   //(tag) tEXt
     f->write((char*) &temp, 4);
     crc = crc32(crc = 0, (unsigned char*) &temp, 4);
     strcpy(reinterpret_cast<char*>(b), "Software"); //(data) Keyword
     f->write(reinterpret_cast<char*>(b), strlen(reinterpret_cast<const char*>(b)));
     crc = crc32(crc, b, strlen(reinterpret_cast<const char*>(b)));
-    tempByte = 0;			            //(data) Null character separator
+    tempByte = 0;				    //(data) Null character separator
     f->write(&tempByte, 1);
     crc = crc32(crc, (unsigned char*) &tempByte, 1);
-    strcpy((char*) b, getAppVersion());             //(data) Text contents (build/version)
+    strcpy((char*) b, getAppVersion());	     //(data) Text contents (build/version)
     f->write(reinterpret_cast<char*>(b), strlen(reinterpret_cast<const char*>(b)));
     crc = htonl(crc32(crc, b, strlen(reinterpret_cast<const char*>(b))));
-    f->write((char*) &crc, 4);                       //(crc) write crc
+    f->write((char*) &crc, 4);		       //(crc) write crc
 
     // IEND chunk
-    temp = htonl((int) 0);        //(length) IEND is always 0 bytes long
+    temp = htonl((int) 0);	//(length) IEND is always 0 bytes long
     f->write((char*) &temp, 4);
     temp = htonl(PNGTAG("IEND")); //(tag) IEND
     f->write((char*) &temp, 4);

@@ -267,7 +267,7 @@ ServerStartMenu::~ServerStartMenu()
 }
 
 void ServerStartMenu::scanWorldFiles (const std::string& searchDir,
-                                      std::vector<std::string>* items)
+				      std::vector<std::string>* items)
 {
 #ifdef _WIN32
   std::vector<std::string> pattern;
@@ -295,7 +295,7 @@ void ServerStartMenu::scanWorldFiles (const std::string& searchDir,
       file = contents->d_name;
       if (file.length() > 4) {
 	suffix = file.substr(file.length()-4, 4);
-        if (TextUtils::compare_nocase(suffix, ".bzw") == 0) {
+	if (TextUtils::compare_nocase(suffix, ".bzw") == 0) {
 	  worldFiles[file] = searchDir + file;
 	  items->push_back(file);
 	}

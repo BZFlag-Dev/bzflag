@@ -117,7 +117,7 @@ void			CallbackList<F>::doIterate(Callback callback,
     // stop if a callback returns false.
     if (index->first != NULL)
       if (!callback(index->first, index->second, userData))
-        break;
+	break;
   }
 
   // now remove the dummy item

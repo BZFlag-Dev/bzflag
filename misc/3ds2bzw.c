@@ -139,23 +139,23 @@ main (int argc, char **argv)
     for (i = 0; i < mesh->points; i++) {
       Lib3dsPoint *point = &(mesh->pointL[i]);
       printf ("  vertex %f %f %f  # %i\n",
-              point->pos[0], point->pos[1], point->pos[2], i);
+	      point->pos[0], point->pos[1], point->pos[2], i);
     }
 
     // normals
     if (Normals) {
       Lib3dsVector *normals = (Lib3dsVector *)
-          malloc (3 * mesh->faces * sizeof (Lib3dsVector));
+	  malloc (3 * mesh->faces * sizeof (Lib3dsVector));
       lib3ds_mesh_calculate_normals (mesh, normals);
       for (i = 0; i < (mesh->faces * 3); i++) {
-        if (Invert) {
-          printf ("  normal %f %f %f  # %i\n",
-                  -normals[i][0], -normals[i][1], -normals[i][2], i);
-        }
-        else {
-          printf ("  normal %f %f %f  # %i\n",
-                  normals[i][0], normals[i][1], normals[i][2], i);
-        }
+	if (Invert) {
+	  printf ("  normal %f %f %f  # %i\n",
+		  -normals[i][0], -normals[i][1], -normals[i][2], i);
+	}
+	else {
+	  printf ("  normal %f %f %f  # %i\n",
+		  normals[i][0], normals[i][1], normals[i][2], i);
+	}
       }
       free (normals);
     }
@@ -163,8 +163,8 @@ main (int argc, char **argv)
     // texcoords
     if (Textures) {
       for (i = 0; i < mesh->texels; i++) {
-        Lib3dsTexel *texel = &(mesh->texelL[i]);
-        printf ("  texcoord %f %f  # %i\n", (*texel)[0], (*texel)[1], i);
+	Lib3dsTexel *texel = &(mesh->texelL[i]);
+	printf ("  texcoord %f %f  # %i\n", (*texel)[0], (*texel)[1], i);
       }
     }
 
@@ -175,45 +175,45 @@ main (int argc, char **argv)
       printf ("  face  # material = %s\n", face->material);
       printf ("    vertices %i %i %i\n", points[0], points[1], points[2]);
       if (Normals) {
-        printf ("    normals %i %i %i\n", (i * 3) + 0, (i * 3) + 1,
-                (i * 3) + 2);
+	printf ("    normals %i %i %i\n", (i * 3) + 0, (i * 3) + 1,
+		(i * 3) + 2);
       }
       Lib3dsMaterial *mat =
-          lib3ds_file_material_by_name (File3DS, face->material);
+	  lib3ds_file_material_by_name (File3DS, face->material);
       if (mat) {
-        if (Textures && (mesh->texels != 0)) {
-          printf ("    texture %s\n", mat->texture1_map.name);
-          printf ("    texcoords %i %i %i\n", points[0], points[1],
-                  points[2]);
+	if (Textures && (mesh->texels != 0)) {
+	  printf ("    texture %s\n", mat->texture1_map.name);
+	  printf ("    texcoords %i %i %i\n", points[0], points[1],
+		  points[2]);
 
-          // BZ isn't ready for these, yet...
-          // printf (" #texture %s\n", material->texture2_map.name);
-          // printf (" #texture %s\n", material->texture1_mask.name);
-          // printf (" #texture %s\n", material->texture2_mask.name);
-        }
-        if (Colors) {
-          Lib3dsRgba *ambient = &mat->ambient;
-          Lib3dsRgba *diffuse = &mat->diffuse;
-          if (ColorSwap) {
-            ambient = &mat->diffuse;
-            diffuse = &mat->ambient;
-          }
-          if (Ambient) {
-            printf ("    ambient %f %f %f %f\n", (*ambient)[0],
-                    (*ambient)[1], (*ambient)[2], (*ambient)[3]);
-          }
-          if (Diffuse) {
-            printf ("    diffuse %f %f %f %f\n", (*diffuse)[0],
-                    (*diffuse)[1], (*diffuse)[2], (*diffuse)[3]);
-          }
-          if (Specular) {
-            printf ("    specular %f %f %f %f\n", mat->specular[0],
-                    mat->specular[1], mat->specular[2], mat->specular[3]);
-          }
-          if (Shininess) {
-            printf ("    shininess %f\n", mat->shininess);
-          }
-        }
+	  // BZ isn't ready for these, yet...
+	  // printf (" #texture %s\n", material->texture2_map.name);
+	  // printf (" #texture %s\n", material->texture1_mask.name);
+	  // printf (" #texture %s\n", material->texture2_mask.name);
+	}
+	if (Colors) {
+	  Lib3dsRgba *ambient = &mat->ambient;
+	  Lib3dsRgba *diffuse = &mat->diffuse;
+	  if (ColorSwap) {
+	    ambient = &mat->diffuse;
+	    diffuse = &mat->ambient;
+	  }
+	  if (Ambient) {
+	    printf ("    ambient %f %f %f %f\n", (*ambient)[0],
+		    (*ambient)[1], (*ambient)[2], (*ambient)[3]);
+	  }
+	  if (Diffuse) {
+	    printf ("    diffuse %f %f %f %f\n", (*diffuse)[0],
+		    (*diffuse)[1], (*diffuse)[2], (*diffuse)[3]);
+	  }
+	  if (Specular) {
+	    printf ("    specular %f %f %f %f\n", mat->specular[0],
+		    mat->specular[1], mat->specular[2], mat->specular[3]);
+	  }
+	  if (Shininess) {
+	    printf ("    shininess %f\n", mat->shininess);
+	  }
+	}
       }
       printf ("  endface\n");
     }

@@ -47,7 +47,7 @@ BSPSceneDatabase::BSPSceneDatabase() :
 				root(NULL),
 				depth(0)
 {
-  
+
   memset(eye, 0, sizeof(GLfloat) * 3);
 }
 
@@ -148,10 +148,10 @@ void BSPSceneDatabase::release(Node* node)
 
 
 bool BSPSceneDatabase::insertStatic(int level, Node* root,
-                                    SceneNode* node, bool dontFree)
+				    SceneNode* node, bool dontFree)
 {
   bool wouldFree = false;
-  
+
   // dynamic nodes should only be inserted after all static nodes
   assert(root->dynamic == 0);
 
@@ -166,9 +166,9 @@ bool BSPSceneDatabase::insertStatic(int level, Node* root,
 
       // done with split node so get rid of it
       if (dontFree) {
-        wouldFree = true;
+	wouldFree = true;
       } else {
-        delete node;
+	delete node;
       }
       break;
     case 1:
@@ -202,7 +202,7 @@ bool BSPSceneDatabase::insertStatic(int level, Node* root,
     }
     root->count++;
   }
-  
+
   return wouldFree;
 }
 
@@ -319,7 +319,7 @@ void BSPSceneDatabase::setNodeStyle(Node *node)
   }
   // add this node's style
   node->node->notifyStyleChange();
-  
+
   return;
 }
 
@@ -369,28 +369,28 @@ void BSPSceneDatabase::nodeAddRenderNodes(Node* node)
   const GLfloat* plane = snode->getPlane();
   if (plane) {
     if (((plane[0] * eye[0]) + (plane[1] * eye[1]) +
-         (plane[2] * eye[2]) + plane[3]) >= 0.0f) {
+	 (plane[2] * eye[2]) + plane[3]) >= 0.0f) {
       // eye is in front so render:  back, node, front
       if (back) {
-        nodeAddRenderNodes(back);
+	nodeAddRenderNodes(back);
       }
       if (!snode->cull(*frustum)) {
-        snode->addRenderNodes(*renderer);
+	snode->addRenderNodes(*renderer);
       }
       if (front) {
-        nodeAddRenderNodes(front);
+	nodeAddRenderNodes(front);
       }
     }
     else {
       // eye is in back so render:  front, node, back
       if (front) {
-        nodeAddRenderNodes(front);
+	nodeAddRenderNodes(front);
       }
       if (!snode->cull(*frustum)) {
-        snode->addRenderNodes(*renderer);
+	snode->addRenderNodes(*renderer);
       }
       if (back) {
-        nodeAddRenderNodes(back);
+	nodeAddRenderNodes(back);
       }
     }
   }
@@ -406,11 +406,11 @@ void BSPSceneDatabase::nodeAddRenderNodes(Node* node)
       nodeAddRenderNodes(front);
     }
   }
-	        
+
   return;
 }
-            
-            
+
+
 void BSPSceneDatabase::drawCuller()
 {
   return;

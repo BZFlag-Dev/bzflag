@@ -85,7 +85,7 @@ public:
   const ShotStatistics*	getShotStatistics() const;
 
   void		addToScene(SceneDatabase*, TeamColor effectiveTeam,
-                           bool inCockpit, bool showIDL);
+			   bool inCockpit, bool showIDL);
   virtual void	addShots(SceneDatabase*, bool colorblind) const;
   void		setLandingSpeed(float velocity);
   void		spawnEffect();
@@ -171,8 +171,8 @@ private:
   SphereSceneNode*	pausedSphere;
   GLfloat		color[4];
   std::string		userTexture;
-  static int            tankTexture;
-  static int            tankOverideTexture;
+  static int	    tankTexture;
+  static int	    tankOverideTexture;
   TeamColor		lastVisualTeam;
   TimeKeeper	lastTrackDraw;
 
@@ -181,8 +181,8 @@ private:
 
   char			callSign[CallSignLen];	// my pseudonym
   char			email[EmailLen];	// my email address
-  PlayerType		type;                   // Human/Computer
-  
+  PlayerType		type;		   // Human/Computer
+
   // relatively stable data
   FlagType*		flagType;		// flag type I'm holding
   float			dimensions[3];		// current tank dimensions
@@ -223,14 +223,14 @@ private:
   float			inputAzimuth;		// direction tank is pointing
   float			inputSpeedAzimuth;	// direction of speed
   float			inputAngVel;		// tank turn rate
-  float                 deltaTime;              // average difference between
+  float		 deltaTime;	      // average difference between
 						// time source and
 						// time destination
-  float                 offset;                 // time offset on last
+  float		 offset;		 // time offset on last
 						// measurement
-  int                   deadReckoningState;     // 0 -> not received any sample
-                                                // 1 -> 1 sample rx
-                                                // 2 -> 2 or more sample rx
+  int		   deadReckoningState;     // 0 -> not received any sample
+						// 1 -> 1 sample rx
+						// 2 -> 2 or more sample rx
   float			oldZSpeed;		// old tank vertical speed
   int			oldStatus;		// old tank status bits
 };

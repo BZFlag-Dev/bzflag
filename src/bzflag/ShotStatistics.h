@@ -27,23 +27,23 @@ public:
   ~ShotStatistics();
 
   // raw stats returns
-  int         getNormalFired() const;
-  int         getNormalHit() const;
-  int         getGMFired() const;
-  int         getGMHit() const;
-  int         getLFired() const;
-  int         getLHit() const;
-  int         getSBFired() const;
-  int         getSBHit() const;
-  int         getSWFired() const;
-  int         getSWHit() const;
-  int         getTHFired() const;
-  int         getTHHit() const;
+  int	 getNormalFired() const;
+  int	 getNormalHit() const;
+  int	 getGMFired() const;
+  int	 getGMHit() const;
+  int	 getLFired() const;
+  int	 getLHit() const;
+  int	 getSBFired() const;
+  int	 getSBHit() const;
+  int	 getSWFired() const;
+  int	 getSWHit() const;
+  int	 getTHFired() const;
+  int	 getTHHit() const;
 
   // stats processing
-  int         getTotalFired() const;
-  int         getTotalHit() const;
-  int         getTotalPerc() const;
+  int	 getTotalFired() const;
+  int	 getTotalHit() const;
+  int	 getTotalPerc() const;
   FlagType*   getFavoriteFlag() const;
   FlagType*   getBestFlag() const;
 
@@ -117,12 +117,12 @@ inline int ShotStatistics::getTHHit() const {
 
 inline int ShotStatistics::getTotalFired() const {
   return normalFired + guidedMissileFired + laserFired + superBulletFired +
-         shockWaveFired + thiefFired;
+	 shockWaveFired + thiefFired;
 }
 
 inline int ShotStatistics::getTotalHit() const {
   return normalHit + guidedMissileHit + laserHit + superBulletHit +
-         shockWaveHit + thiefHit;
+	 shockWaveHit + thiefHit;
 }
 
 #endif // __SHOTSTATISTICS_H__

@@ -12,9 +12,9 @@
 
 #define VC_EXTRALEAN		// Exclude rarely-used stuff from Windows headers
 
-#include <afxwin.h>         // MFC core and standard components
-#include <afxext.h>         // MFC extensions
-#include <afxdisp.h>        // MFC Automation classes
+#include <afxwin.h>	 // MFC core and standard components
+#include <afxext.h>	 // MFC extensions
+#include <afxdisp.h>	// MFC Automation classes
 
 #if _MSC_VER > 1100 // VC6 or newer
 #include <afxdtctl.h>		// MFC support for Internet Explorer 4 Common Controls

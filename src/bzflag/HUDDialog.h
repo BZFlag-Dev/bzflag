@@ -44,7 +44,7 @@ class HUDDialog {
     virtual void		execute() = 0;
     virtual void		dismiss() { }
     virtual void		resize(int _width, int _height);
-    virtual void                setFailedMessage(const char *) {;};
+    virtual void		setFailedMessage(const char *) {;};
 
     HUDuiControl*		getFocus() const;
     void			setFocus(HUDuiControl*);

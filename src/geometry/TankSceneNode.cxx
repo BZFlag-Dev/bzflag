@@ -42,9 +42,9 @@ const int		TankSceneNode::numLOD = 3;
 int			TankSceneNode::maxLevel = numLOD;
 
 TankSceneNode::TankSceneNode(const GLfloat pos[3], const GLfloat forward[3]) :
-                                leftTreadOffset(0.0f), rightTreadOffset(0.0f), 
-                                leftWheelOffset(0.0f), rightWheelOffset(0.0f), 
-                                useDimensions(false), useOverride(false),
+				leftTreadOffset(0.0f), rightTreadOffset(0.0f),
+				leftWheelOffset(0.0f), rightWheelOffset(0.0f),
+				useDimensions(false), useOverride(false),
 				hidden(false), cloaked(false),
 				clip(false), inTheCockpit(false),
 				tankRenderNode(this),
@@ -66,7 +66,7 @@ TankSceneNode::TankSceneNode(const GLfloat pos[3], const GLfloat forward[3]) :
   color[3] = 1.0f;
   setColor(1.0f, 1.0f, 1.0f);
   setExplodeFraction(0.0f);
-  
+
   rebuildExplosion();
 
   shadowRenderNode.setShadow();
@@ -152,7 +152,7 @@ void TankSceneNode::addTreadOffsets(float left, float right)
   const float wheelScale = TankGeometryUtils::getWheelScale();
   const float treadScale = TankGeometryUtils::getTreadScale();
   const float treadTexLen = TankGeometryUtils::getTreadTexLen();
-  
+
   leftTreadOffset += left * treadScale;
   leftTreadOffset = fmodf (leftTreadOffset, treadTexLen);
   leftWheelOffset += left * wheelScale;
@@ -162,7 +162,7 @@ void TankSceneNode::addTreadOffsets(float left, float right)
   rightTreadOffset = fmodf (rightTreadOffset, treadTexLen);
   rightWheelOffset += right * wheelScale;
   rightWheelOffset = fmodf (rightWheelOffset, 360.0f);
-  
+
   return;
 }
 
@@ -206,7 +206,7 @@ void TankSceneNode::addRenderNodes(SceneRenderer& renderer)
   const GLfloat* sphere = getSphere();
   const ViewFrustum& view = renderer.getViewFrustum();
   const float size = sphere[3] *
-                     (view.getAreaFactor() /getDistance(view.getEye()));
+		     (view.getAreaFactor() /getDistance(view.getEye()));
 
   // set the level of detail
   TankLOD mode = LowTankLOD;
@@ -222,7 +222,7 @@ void TankSceneNode::addRenderNodes(SceneRenderer& renderer)
     }
   }
   else {
-    // do BSP users a favor  
+    // do BSP users a favor
     if ((maxLevel == -1) || ((maxLevel > 0) && (size > 25.0f))) {
       mode = MedTankLOD;
     } else {
@@ -230,10 +230,10 @@ void TankSceneNode::addRenderNodes(SceneRenderer& renderer)
     }
   }
   tankRenderNode.setTankLOD(mode);
-      
+
   // set the tank's scaling size
   tankRenderNode.setTankSize(tankSize);
-    
+
   // if drawing in sorted order then decide which order
   if (sort || transparent) {
     const GLfloat* eye = view.getEye();
@@ -250,7 +250,7 @@ void TankSceneNode::addRenderNodes(SceneRenderer& renderer)
     const bool left = (leftDot > 0.0f);
 
     const bool above = eye[2] > sphere[2];
-    
+
     tankRenderNode.sortOrder(above, towards, left);
   }
 
@@ -713,7 +713,7 @@ void TankSceneNode::TankRenderNode::render()
     // and let useDimensions and glScalef() handle the scaling
     drawSize = Normal;
   }
-  
+
   explodeFraction = sceneNode->explodeFraction;
   isExploding = (explodeFraction != 0.0f);
   color = sceneNode->color;
@@ -729,10 +729,10 @@ void TankSceneNode::TankRenderNode::render()
   }
 
   const GLfloat* sphere = sceneNode->getSphere();
-  
+
   // save the MODELVIEW matrix
   glPushMatrix();
-  
+
   glTranslatef(sphere[0], sphere[1], sphere[2]);
   glRotatef(sceneNode->azimuth, 0.0f, 0.0f, 1.0f);
   glRotatef(sceneNode->elevation, 0.0f, 1.0f, 0.0f);
@@ -741,7 +741,7 @@ void TankSceneNode::TankRenderNode::render()
     glScalef(dims[0], dims[1], dims[2]);
     glEnable(GL_NORMALIZE);
   }
-  
+
   // disable the dynamic lights, if it might help
   const bool switchLights = BZDBCache::lighting && (drawLOD == HighTankLOD);
   if (switchLights) {
@@ -774,11 +774,11 @@ void TankSceneNode::TankRenderNode::render()
     renderPart(RightCasing);
     if (drawLOD == HighTankLOD) {
       for (int i = 0; i < 4; i++) {
-        if (isShadow && ((i == 1) || (i == 2)) && !isExploding) {
-          continue;
-        }
-        renderPart((TankPart)(LeftWheel0 + i));
-        renderPart((TankPart)(RightWheel0 + i));
+	if (isShadow && ((i == 1) || (i == 2)) && !isExploding) {
+	  continue;
+	}
+	renderPart((TankPart)(LeftWheel0 + i));
+	renderPart((TankPart)(RightWheel0 + i));
       }
       renderPart(LeftTread);
       renderPart(RightTread);
@@ -792,11 +792,11 @@ void TankSceneNode::TankRenderNode::render()
   if (switchLights) {
     RENDERER.reenableLights();
   }
-  
+
   if (sceneNode->useDimensions) {
     glDisable(GL_NORMALIZE);
   }
-  
+
   // restore the MODELVIEW matrix
   glPopMatrix();
 
@@ -832,7 +832,7 @@ void TankSceneNode::TankRenderNode::renderLeftParts()
     for (int i = 0; i < 4; i++) {
       // don't need the middle two wheels for shadows
       if (isShadow && ((i == 1) || (i == 2)) && !isExploding) {
-        continue;
+	continue;
       }
       renderPart((TankPart)(LeftWheel0 + i));
     }
@@ -849,7 +849,7 @@ void TankSceneNode::TankRenderNode::renderRightParts()
     for (int i = 0; i < 4; i++) {
       // don't need the middle two wheels for shadows
       if (isShadow && ((i == 1) || (i == 2)) && !isExploding) {
-        continue;
+	continue;
       }
       renderPart((TankPart)(RightWheel0 + i));
     }
@@ -864,13 +864,13 @@ void TankSceneNode::TankRenderNode::renderParts()
   if (!above) {
     renderTopParts();
   }
-  
+
   if (left) {
     renderRightParts();
   } else {
     renderLeftParts();
   }
-  
+
   if (!sceneNode->inTheCockpit) {
     renderPart(Body);
   }
@@ -880,15 +880,15 @@ void TankSceneNode::TankRenderNode::renderParts()
   } else {
     renderRightParts();
   }
-  
+
   if (sceneNode->inTheCockpit) {
     renderPart(Body);
   }
-  
+
   if (above) {
     renderTopParts();
   }
-  
+
   return;
 }
 
@@ -907,13 +907,13 @@ void TankSceneNode::TankRenderNode::renderPart(TankPart part)
     glRotatef(spin[3] * explodeFraction, spin[0], spin[1], spin[2]);
     glTranslatef(-cog[0], -cog[1], -cog[2]);
   }
-  
+
   // setup the animation texture matrix
   bool usingTexMat = false;
   if (!isShadow && (drawLOD == HighTankLOD) && (part >= BasicTankParts)) {
     usingTexMat = setupTextureMatrix(part);
   }
- 
+
   // set color
   if (!isShadow) {
     setupPartColor(part);
@@ -923,7 +923,7 @@ void TankSceneNode::TankRenderNode::renderPart(TankPart part)
   GLuint list;
   TankShadow shadow = isShadow ? ShadowOn : ShadowOff;
   list = TankGeometryMgr::getPartList(shadow, part, drawSize, drawLOD);
-  
+
   // draw the part
   glCallList(list);
 
@@ -937,7 +937,7 @@ void TankSceneNode::TankRenderNode::renderPart(TankPart part)
     glLoadIdentity();
     glMatrixMode(GL_MODELVIEW);
   }
-  
+
   // restore modelview transform
   if (isExploding) {
     glPopMatrix();
@@ -949,12 +949,12 @@ void TankSceneNode::TankRenderNode::setupPartColor(TankPart part)
 {
   const GLfloat white[4] = {1.0f, 1.0f, 1.0f, 1.0f};
   const GLfloat* clr = color;
-  
+
   // do not use color modulation with tank textures
   if (BZDBCache::texture) {
     clr = white;
   }
-  
+
   switch (part) {
     case Body: {
       myColor4f(clr[0], clr[1], clr[2], alpha);
@@ -1000,7 +1000,7 @@ void TankSceneNode::TankRenderNode::setupPartColor(TankPart part)
 bool TankSceneNode::TankRenderNode::setupTextureMatrix(TankPart part)
 {
   bool usingTexMat = true;
-  
+
   switch (part) {
     case LeftTread: {
       glMatrixMode(GL_TEXTURE);
@@ -1045,7 +1045,7 @@ bool TankSceneNode::TankRenderNode::setupTextureMatrix(TankPart part)
       break;
     }
   }
-  
+
   return usingTexMat;
 }
 
@@ -1065,16 +1065,16 @@ void TankSceneNode::TankRenderNode::renderLights()
     const float* scale = TankGeometryMgr::getScaleFactor(sceneNode->tankSize);
     myColor3fv(lights[0]);
     glVertex3f(lights[0][3] * scale[0],
-               lights[0][4] * scale[1],
-               lights[0][5] * scale[2]);
+	       lights[0][4] * scale[1],
+	       lights[0][5] * scale[2]);
     myColor3fv(lights[1]);
     glVertex3f(lights[1][3] * scale[0],
-               lights[1][4] * scale[1],
-               lights[1][5] * scale[2]);
+	       lights[1][4] * scale[1],
+	       lights[1][5] * scale[2]);
     myColor3fv(lights[2]);
     glVertex3f(lights[2][3] * scale[0],
-               lights[2][4] * scale[1],
-               lights[2][5] * scale[2]);
+	       lights[2][4] * scale[1],
+	       lights[2][5] * scale[2]);
   }
   glEnd();
 

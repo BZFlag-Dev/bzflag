@@ -65,9 +65,9 @@ WallSceneNode*		BoxSceneNodeGenerator::getNextNode(
     case 6:							//This is the bottom polygon
       //Don't generate the bottom polygon if on the ground (or lower)
       if (box->getPosition()[2] > 0.0f) {
-        box->getCorner(0, base);
-        box->getCorner(3, sCorner);
-        box->getCorner(1, tCorner);
+	box->getCorner(0, base);
+	box->getCorner(3, sCorner);
+	box->getCorner(1, tCorner);
       }
       else
 	return NULL;

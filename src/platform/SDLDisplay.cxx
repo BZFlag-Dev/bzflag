@@ -122,8 +122,8 @@ bool SDLDisplay::getEvent(BzfEvent& _event) const
   switch (event.type) {
 
   case SDL_MOUSEMOTION:
-    _event.type        = BzfEvent::MouseMove;
-    mx                 = event.motion.x;
+    _event.type	= BzfEvent::MouseMove;
+    mx		 = event.motion.x;
 #ifdef __APPLE__
     /* deal with a SDL bug when in windowed mode related to
      * Cocoa coordinate system of (0,0) in bottom-left corner.
@@ -134,14 +134,14 @@ bool SDLDisplay::getEvent(BzfEvent& _event) const
       my = base_height - 1 - event.motion.y;
     }
 #else
-    my                 = event.motion.y;
+    my		 = event.motion.y;
 #endif
     _event.mouseMove.x = mx;
     _event.mouseMove.y = my;
     break;
 
   case SDL_MOUSEBUTTONDOWN:
-    _event.type          = BzfEvent::KeyDown;
+    _event.type	  = BzfEvent::KeyDown;
     _event.keyDown.ascii = 0;
     _event.keyDown.shift = 0;
     if (shift)
@@ -251,7 +251,7 @@ bool SDLDisplay::getEvent(BzfEvent& _event) const
     break;
 
   case SDL_VIDEORESIZE:
-    _event.type          = BzfEvent::Resize;
+    _event.type	  = BzfEvent::Resize;
     _event.resize.width  = event.resize.w;
     _event.resize.height = event.resize.h;
     break;
@@ -274,8 +274,8 @@ bool SDLDisplay::getEvent(BzfEvent& _event) const
 void SDLDisplay::getModState(bool &shift, bool &ctrl, bool &alt) {
   SDLMod mode = SDL_GetModState();
   shift       = ((mode & KMOD_SHIFT) != 0);
-  ctrl        = ((mode & KMOD_CTRL) != 0);
-  alt         = ((mode & KMOD_ALT) != 0);
+  ctrl	= ((mode & KMOD_CTRL) != 0);
+  alt	 = ((mode & KMOD_ALT) != 0);
 }
 
 bool SDLDisplay::getKey(const SDL_Event& sdlEvent, BzfKeyEvent& key) const

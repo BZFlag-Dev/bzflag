@@ -35,7 +35,7 @@ class HUDuiTextureLabel : public HUDuiLabel {
 
   private:
     OpenGLGState	gstate;
-    int  		texture;
+    int		texture;
 };
 
 inline int HUDuiTextureLabel::getTexture() {

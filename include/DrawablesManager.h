@@ -33,7 +33,7 @@ public:
 // TODO, staticly allocate some of the stuff
 typedef struct
 {
-  void          *param;
+  void	  *param;
   BaseDrawable  *item;
 }drawableItem;
 

@@ -43,7 +43,7 @@ void MacWaitForArgs ();
 
 
 bool gInBackground     = false;
-bool gSleepTime        = 60;
+bool gSleepTime	= 60;
 RgnHandle   gCursorRgn = 0;
 
 AEEventHandlerUPP gOpenDocsUPP;
@@ -150,7 +150,7 @@ void MacInitToolbox ()
 void MacOneEvent () {
 
   EventRecord eventRec;
-  int         gotEvent;
+  int	 gotEvent;
 
   if (!gCursorRgn)
     gCursorRgn = NewRgn();

@@ -55,7 +55,7 @@ bool CustomTextureMatrix::read(const char *cmd, std::istream& input)
   else if (strcasecmp ("scale", cmd) == 0) {
     float uFreq, vFreq, uCenter, vCenter, uScale, vScale;
     if (!(input >> uFreq >> vFreq >> uCenter >> vCenter
-                >> uScale >> vScale)) {
+		>> uScale >> vScale)) {
       return false;
     }
     texmat->setScaleParams (uFreq, vFreq, uCenter, vCenter, uScale, vScale);

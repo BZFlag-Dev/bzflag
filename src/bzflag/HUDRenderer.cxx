@@ -981,14 +981,14 @@ void			HUDRenderer::renderTankLabels(SceneRenderer& renderer)
 	fm.drawString(float(x) - fm.getStrLength(labelsFontFace, labelsFontSize, name) / 2.0f,
 		      float(y) + offset - fm.getStrHeight(labelsFontFace, labelsFontSize, name),
 		      0, labelsFontFace, labelsFontSize, name);
-        FlagType* flag = pl->getFlag();
+	FlagType* flag = pl->getFlag();
 	if (flag != Flags::Null) {
-          std::string flagStr = "(";
-          flagStr += flag->endurance == FlagNormal ? flag->flagName : flag->flagAbbv;
-          flagStr += ")";
-          const char *fname = flagStr.c_str();
+	  std::string flagStr = "(";
+	  flagStr += flag->endurance == FlagNormal ? flag->flagName : flag->flagAbbv;
+	  flagStr += ")";
+	  const char *fname = flagStr.c_str();
 	  fm.drawString(float(x) - fm.getStrLength(labelsFontFace, labelsFontSize, fname) / 2.0f,
-			float(y) + offset - 
+			float(y) + offset -
 			(2.0f * fm.getStrHeight(labelsFontFace, labelsFontSize, fname)),
 			0, labelsFontFace, labelsFontSize, fname);
 	}
@@ -1244,7 +1244,7 @@ void			HUDRenderer::renderBox(SceneRenderer&)
       glEnable(GL_BLEND);
     }
     // NOTE: before I (Steve Krenzel) made changes, minMark was always 0, which appears
-    // to have made basey always equal 0, maybe I overlooked something 
+    // to have made basey always equal 0, maybe I overlooked something
     GLfloat basey = maxMotionSize * (altitude - 5.0f * float(minMark)) /
 								altitudeOffset;
     if (!smooth) basey = floorf(basey);
@@ -1286,7 +1286,7 @@ void			HUDRenderer::renderBox(SceneRenderer&)
       hudColor4f(hudColor[0], hudColor[1], hudColor[2], 1.0f - basey);
       for (i = minMark; i <= maxMark; i++) {
 	sprintf(buf, "%d", i * 5);
-        fm.drawString(x, y, 0, headingFontFace, headingFontSize, std::string(buf));
+	fm.drawString(x, y, 0, headingFontFace, headingFontSize, std::string(buf));
 	y += altitudeMarkSpacing;
       }
     }

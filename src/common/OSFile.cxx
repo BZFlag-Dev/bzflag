@@ -629,7 +629,7 @@ bool OSDir::getNextFile ( OSFile &oFile, const char* fileMask, bool bRecursive )
 	if (info->namePos == -1)
 	{
 		info->nameList.clear();
-        //FIXME -- just do the #ifdef'ing here?
+	//FIXME -- just do the #ifdef'ing here?
 		windowsAddFileStack(getFullOSPath(),realMask.c_str(),bRecursive);
 		linuxAddFileStack(getFullOSPath(),realMask.c_str(),bRecursive);
 
@@ -683,7 +683,7 @@ bool OSDir::windowsAddFileStack(std::string pathName, std::string fileMask, bool
 		while (!bDone)
 		{
 			if ((strlen(fileInfo.name) >0) && (strcmp(fileInfo.name,".") != 0) &&
-                (strcmp(fileInfo.name,"..") != 0))
+		(strcmp(fileInfo.name,"..") != 0))
 			{
 				FilePath = pathName;
 				FilePath += "\\";
@@ -723,7 +723,7 @@ static int match_multi (const char **mask, const char **string)
 	str = *string;
 
 	while ((*msk != '\0') && (*msk == '*'))
-		msk++;                      /* get rid of multiple '*'s */
+		msk++;		      /* get rid of multiple '*'s */
 
 	if (*msk == '\0')				/* '*' was last, auto-match */
 		return +1;
@@ -737,10 +737,10 @@ static int match_multi (const char **mask, const char **string)
 		{
 			*mask = msk;
 			*string = str;
-			return 0;                 /* matched this segment */
+			return 0;		 /* matched this segment */
 		}
 		else if (*str == '\0')
-			return -1;                /* can't match */
+			return -1;		/* can't match */
 		else
 		{
 			if ((*msk == '?') || (*msk == *str))

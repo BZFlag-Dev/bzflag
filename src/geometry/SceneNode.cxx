@@ -37,7 +37,7 @@ void			(*SceneNode::stipple)(GLfloat);
 SceneNode::SceneNode()
 {
   static bool init = false;
-  
+
   if (!init) {
     init = true;
     setColorOverride(false);
@@ -46,7 +46,7 @@ SceneNode::SceneNode()
 
   setCenter(0.0f, 0.0f, 0.0f);
   setRadius(0.0f);
-  
+
   noPlane = true;
   octreeState = OctreeCulled;
   return;
@@ -111,7 +111,7 @@ void			SceneNode::setColorOverride(bool on)
   }
 }
 
-void		        SceneNode::getExtents(float* mins, float* maxs) const
+void			SceneNode::getExtents(float* mins, float* maxs) const
 {
   const float radius = sqrtf (sphere[3]);
   for (int i = 0; i < 3; i++) {
@@ -121,7 +121,7 @@ void		        SceneNode::getExtents(float* mins, float* maxs) const
   return;
 }
 
-bool	                SceneNode::isTranslucent() const
+bool			SceneNode::isTranslucent() const
 {
   return false;
 }

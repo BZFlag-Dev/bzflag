@@ -9,7 +9,7 @@
  * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
- 
+
 static const char copyright[] = "Copyright (c) 1993 - 2004 Tim Riker";
 
 #include "common.h"
@@ -123,12 +123,12 @@ HUDRenderer*		hud = NULL;
 static SceneDatabaseBuilder* sceneBuilder = NULL;
 static Team*		teams = NULL;
 int			numFlags = 0;
-static bool             joinRequested    = false;
+static bool	     joinRequested    = false;
 bool			admin = false; // am I an admin?
 static bool		serverError = false;
 static bool		serverDied = false;
 bool			fireButton = false;
-bool             	roamButton = false;
+bool		roamButton = false;
 static bool		firstLife = false;
 static bool		showFPS = false;
 static bool		showDrawTime = false;
@@ -149,7 +149,7 @@ static std::vector<BillboardSceneNode*>	prototypeExplosions;
 int			savedVolume = -1;
 static bool		grabMouseAlways = false;
 FlashClock		pulse;
-static bool             wasRabbit = false;
+static bool	     wasRabbit = false;
 static bool		justJoined = false;
 
 MessageOfTheDay		motd;
@@ -163,11 +163,11 @@ static void*		handleMsgSetVars(void *msg);
 void			handleFlagDropped(Player* tank);
 static void		handlePlayerMessage(uint16_t, uint16_t, void*);
 static void		handleFlagTransferred(Player* fromTank, Player* toTank, int flagIndex);
-static void             enteringServer(void *buf);
-static void             joinInternetGame2();
-static void             cleanWorldCache();
-static void             markOld(std::string &fileName);
-void	                leaveGame();
+static void	     enteringServer(void *buf);
+static void	     joinInternetGame2();
+static void	     cleanWorldCache();
+static void	     markOld(std::string &fileName);
+void			leaveGame();
 void			drawFrame(const float dt);
 extern void		dumpResources(BzfDisplay*, SceneRenderer&);
 static void		setRobotTarget(RobotPlayer* robot);
@@ -209,15 +209,15 @@ static ServerLink*	robotServer[MAX_ROBOTS];
 extern struct tm	userTime;
 static double		userTimeEpochOffset;
 
-static bool             entered = false;
-static bool             joiningGame   = false;
+static bool	     entered = false;
+static bool	     joiningGame   = false;
 static WorldBuilder    *worldBuilder  = NULL;
 static std::string      worldUrl;
 static std::string      worldCachePath;
 static std::string      md5Digest;
-static uint32_t         worldPtr      = 0;
-static char            *worldDatabase = NULL;
-static bool             isCacheTemp;
+static uint32_t	 worldPtr      = 0;
+static char	    *worldDatabase = NULL;
+static bool	     isCacheTemp;
 static std::ostream    *cacheOut = NULL;
 
 StartupInfo::StartupInfo() : hasConfiguration(false),
@@ -299,7 +299,7 @@ bool		shouldGrabMouse()
 // some simple global functions
 //
 
-void        warnAboutMainFlags()
+void	warnAboutMainFlags()
 {
   // warning message for hidden flags
   if (!BZDBCache::displayMainFlags){
@@ -318,7 +318,7 @@ void        warnAboutMainFlags()
   }
 }
 
-void        warnAboutRadarFlags()
+void	warnAboutRadarFlags()
 {
   if (!BZDB.isTrue("displayRadarFlags")){
     std::string showFlagsMsg = ColorStrings[YellowColor];
@@ -336,7 +336,7 @@ void        warnAboutRadarFlags()
   }
 }
 
-void        warnAboutConsoleAndRadar()
+void	warnAboutConsoleAndRadar()
 {
   if (!BZDB.isTrue("displayConsoleAndRadar")){
     std::string message = ColorStrings[YellowColor];
@@ -548,7 +548,7 @@ void setRoamingLabel(bool force)
   }
 
   std::string playerString = "";
-  
+
   if (roamTrackTank == -1) {
     int oldWinner = roamTrackWinner;
     if (roamTrackWinner == -1) {
@@ -574,7 +574,7 @@ void setRoamingLabel(bool force)
     if (BZDBCache::colorful) {
       int color = tracked->getTeam();
       if (color < 0 || color > 4) {
-        color = 5;
+	color = 5;
       }
       playerString += ColorStrings[color];
     }
@@ -583,19 +583,19 @@ void setRoamingLabel(bool force)
     const FlagType* flag = tracked->getFlag();
     if (flag != Flags::Null) {
       if (BZDBCache::colorful) {
-        playerString += ColorStrings[CyanColor] + " / ";
-        if (flag->flagTeam != NoTeam) {
-          playerString += ColorStrings[flag->flagTeam];
-        } else {
-          playerString += ColorStrings[WhiteColor];
-        }
+	playerString += ColorStrings[CyanColor] + " / ";
+	if (flag->flagTeam != NoTeam) {
+	  playerString += ColorStrings[flag->flagTeam];
+	} else {
+	  playerString += ColorStrings[WhiteColor];
+	}
       } else {
-        playerString += " / ";
+	playerString += " / ";
       }
       if (flag->endurance == FlagNormal) {
-        playerString += flag->flagName;
+	playerString += flag->flagName;
       } else {
-        playerString += flag->flagAbbv;
+	playerString += flag->flagAbbv;
       }
     }
 
@@ -735,27 +735,27 @@ static bool		doKeyCommon(const BzfKeyEvent& key, bool pressed)
 	return true;
 
       // for testing forced recreation of OpenGL context
-#if defined(DEBUG_RENDERING)      
+#if defined(DEBUG_RENDERING)
       case 'X':
-        if (pressed && ((shiftKeyStatus & BzfKeyEvent::AltKey) != 0)) {
-          // destroy OpenGL context
-          getMainWindow()->getWindow()->freeContext();
+	if (pressed && ((shiftKeyStatus & BzfKeyEvent::AltKey) != 0)) {
+	  // destroy OpenGL context
+	  getMainWindow()->getWindow()->freeContext();
 
-          // recreate OpenGL context
-          getMainWindow()->getWindow()->makeContext();
+	  // recreate OpenGL context
+	  getMainWindow()->getWindow()->makeContext();
 
-          // force a redraw (mainly for control panel)
-          getMainWindow()->getWindow()->callExposeCallbacks();
+	  // force a redraw (mainly for control panel)
+	  getMainWindow()->getWindow()->callExposeCallbacks();
 
-          // cause sun/moon to be repositioned immediately
-          lastEpochOffset = epochOffset - 5.0;
+	  // cause sun/moon to be repositioned immediately
+	  lastEpochOffset = epochOffset - 5.0;
 
-          // reload display lists and textures and initialize other state
-          OpenGLGState::initContext();
-        }
-        return true;
+	  // reload display lists and textures and initialize other state
+	  OpenGLGState::initContext();
+	}
+	return true;
 #endif // DEBUG_RENDERING
-        
+
       case ']':
       case '}':
 	// plus 30 seconds
@@ -826,7 +826,7 @@ static void		doKeyPlaying(const BzfKeyEvent& key, bool pressed)
       key.button >= BzfKeyEvent::F1 &&
       key.button <= BzfKeyEvent::F10 &&
       (key.shift & (BzfKeyEvent::ControlKey +
-       		    BzfKeyEvent::AltKey)) != 0 && !haveBinding) {
+		    BzfKeyEvent::AltKey)) != 0 && !haveBinding) {
     // [Ctrl]-[Fx] is message to team
     // [Alt]-[Fx] is message to all
     if (pressed) {
@@ -1355,8 +1355,8 @@ static bool removePlayer (PlayerId id)
   player[playerIndex] = NULL;
 
   while ((playerIndex >= 0)
-         &&     (playerIndex+1 == curMaxPlayers)
-         &&     (player[playerIndex] == NULL))
+	 &&     (playerIndex+1 == curMaxPlayers)
+	 &&     (player[playerIndex] == NULL))
     {
       playerIndex--;
       curMaxPlayers--;
@@ -1384,7 +1384,7 @@ static bool isCached(char *hexDigest)
 
 static bool isUrlCached()
 {
-  bool         gotFromURL = false;
+  bool	 gotFromURL = false;
   unsigned int readSize;
 
   if (worldUrl.size()) {
@@ -1469,7 +1469,7 @@ static void loadCachedWorld()
   delete[] worldDatabase;
 
   // return world
-  world = worldBuilder->getWorld();    
+  world = worldBuilder->getWorld();
   if (worldBuilder)
     delete worldBuilder;
   worldBuilder = NULL;
@@ -1785,7 +1785,7 @@ static void		handleServerMessage(bool human, uint16_t code,
 	  myTank->setSpawning(false);
 	} else {
 	  playWorldSound(SFX_POP, pos[0], pos[1], pos[2], true);
-        }
+	}
       }
 
       break;
@@ -2705,7 +2705,7 @@ void			addShotPuff(const float* pos)
 }
 
 // update events from outside if they should be checked
-void                   updateEvents()
+void		   updateEvents()
 {
   if (mainWindow && display) {
     while (display->isEventPending() && !CommandsStandard::isQuit())
@@ -2900,8 +2900,8 @@ static bool		gotBlowedUp(BaseLocalPlayer* tank,
 
     // tell server I'm dead in case it doesn't already know
     if (reason == GotShot || reason == GotRunOver ||
-        reason == GenocideEffect || reason == SelfDestruct ||
-        reason == WaterDeath)
+	reason == GenocideEffect || reason == SelfDestruct ||
+	reason == WaterDeath)
       lookupServer(tank)->sendKilled(killer, reason, shotId);
   }
 
@@ -2930,7 +2930,7 @@ static bool		gotBlowedUp(BaseLocalPlayer* tank,
 	    blowedUpNotice += killerPlayer->getCallSign();
 	    blowedUpNotice += " (";
 	    if (World::getWorld()->allowRabbit() && killerPlayer->getTeam() != RabbitTeam) {
-              blowedUpNotice+= "Hunter";
+	      blowedUpNotice+= "Hunter";
 	    } else {
 	      blowedUpNotice += Team::getName(killerPlayer->getTeam());
 	    }
@@ -3381,7 +3381,7 @@ static void		makeObstacleList()
     const int numBases = bases.size();
     for (i = 0; i < numBases; i++) {
       if ((bases[i]->getHeight() != 0.0f) || (bases[i]->getPosition()[2] != 0.0f))
-        addObstacle(obstacleList, *bases[i]);
+	addObstacle(obstacleList, *bases[i]);
     }
   }
 }
@@ -3399,7 +3399,7 @@ static void		setRobotTarget(RobotPlayer* robot)
       if ((player[j]->getFlag() == Flags::PhantomZone
 	   && player[j]->isFlagActive()) &&
 	  (robot->getFlag() != Flags::PhantomZone || !robot->isFlagActive()))
-        continue;
+	continue;
 
       if (World::getWorld()->allowTeamFlags() &&
 	  (robot->getTeam() == RedTeam && player[j]->getFlag() == Flags::RedTeam) ||
@@ -3911,7 +3911,7 @@ void		leaveGame()
   updateDaylight(epochOffset, *sceneRenderer);
   lastEpochOffset = epochOffset;
   BZDB.set(StateDatabase::BZDB_SYNCTIME,
-           BZDB.getDefault(StateDatabase::BZDB_SYNCTIME));
+	   BZDB.getDefault(StateDatabase::BZDB_SYNCTIME));
 
   // delete world
   World::setWorld(NULL);
@@ -3947,9 +3947,9 @@ void		leaveGame()
   targetPoint[1] = eyePoint[1] + 0.0f;
   targetPoint[2] = eyePoint[2] + 0.0f;
   sceneRenderer->getViewFrustum().setProjection(60.0f * M_PI / 180.0f,
-						NearPlane, FarPlaneScale * worldSize, 
+						NearPlane, FarPlaneScale * worldSize,
 						mainWindow->getWidth(),
-						mainWindow->getHeight(), 
+						mainWindow->getHeight(),
 						mainWindow->getViewHeight());
   sceneRenderer->getViewFrustum().setView(eyePoint, targetPoint);
 
@@ -4326,7 +4326,7 @@ void			drawFrame(const float dt)
       const bool showTreads = BZDB.isTrue("showTreads");
       const bool cloaked = myTank->getFlag() == Flags::Cloaking;
       if (myTank->needsToBeRendered(cloaked, showTreads)) {
-        myTank->addToScene(scene, myTank->getTeam(), true, showTreads);
+	myTank->addToScene(scene, myTank->getTeam(), true, showTreads);
       }
 
       // add my shells
@@ -4346,7 +4346,7 @@ void			drawFrame(const float dt)
       // add other tanks and shells
       for (i = 0; i < curMaxPlayers; i++) {
 	if (player[i]) {
-          const bool colorblind = (myTank->getFlag() == Flags::Colorblindness);
+	  const bool colorblind = (myTank->getFlag() == Flags::Colorblindness);
 	  player[i]->addShots(scene, colorblind);
 
 	  TeamColor effectiveTeam = RogueTeam;
@@ -4355,24 +4355,24 @@ void			drawFrame(const float dt)
 		&& (myTank->getFlag() != Flags::Seer)
 		&& (myTank->getTeam() != ObserverTeam)) {
 	      effectiveTeam = myTank->getTeam();
-            }
+	    }
 	    else {
 	      effectiveTeam = player[i]->getTeam();
-            }
+	    }
 	  }
 
-          const bool cloaked = (player[i]->getFlag() == Flags::Cloaking) &&
-                               (myTank->getFlag() != Flags::Seer);
-          const bool following = roaming && (roamView == roamViewFP) && 
-                                 (roamTrackWinner == i);
-          const bool showPlayer = !following || showTreads;
-          const bool inCockpit = following && showTreads;
-                               
-          // add player tank if required
-          if (player[i]->needsToBeRendered(cloaked, showPlayer)) {
-            player[i]->addToScene(scene, effectiveTeam, inCockpit, showPlayer);
-          }
-        }
+	  const bool cloaked = (player[i]->getFlag() == Flags::Cloaking) &&
+			       (myTank->getFlag() != Flags::Seer);
+	  const bool following = roaming && (roamView == roamViewFP) &&
+				 (roamTrackWinner == i);
+	  const bool showPlayer = !following || showTreads;
+	  const bool inCockpit = following && showTreads;
+
+	  // add player tank if required
+	  if (player[i]->needsToBeRendered(cloaked, showPlayer)) {
+	    player[i]->addToScene(scene, effectiveTeam, inCockpit, showPlayer);
+	  }
+	}
       }
 
       // add explosions
@@ -4381,19 +4381,19 @@ void			drawFrame(const float dt)
       // if inside a building, add some eighth dimension scene nodes.
       const Obstacle* obs = myTank->getContainingBuilding();
       if (obs != NULL) {
-        // use the parent MeshObstacle instead of the MeshFace
-        // (if available, some mesh faces do not have parents)
-        if (obs->getType() == MeshFace::getClassName()) {
-          const MeshFace* face = (const MeshFace*) obs;
-          const MeshObstacle* mesh = face->getMesh();
-          if (mesh != NULL) {
-            obs = (const Obstacle*) mesh;
-          }
-        }
-        // add the inside nodes
-        for (int n = 0; n < obs->getInsideSceneNodeCount(); n++) {
-          scene->addDynamicNode(obs->getInsideSceneNodeList()[n]);
-        }
+	// use the parent MeshObstacle instead of the MeshFace
+	// (if available, some mesh faces do not have parents)
+	if (obs->getType() == MeshFace::getClassName()) {
+	  const MeshFace* face = (const MeshFace*) obs;
+	  const MeshObstacle* mesh = face->getMesh();
+	  if (mesh != NULL) {
+	    obs = (const Obstacle*) mesh;
+	  }
+	}
+	// add the inside nodes
+	for (int n = 0; n < obs->getInsideSceneNodeCount(); n++) {
+	  scene->addDynamicNode(obs->getInsideSceneNodeList()[n]);
+	}
       }
     }
 
@@ -4418,7 +4418,7 @@ void			drawFrame(const float dt)
       const Obstacle* obs;
       obs = world->inBuilding(clipPos, myTank->getAngle(), hnp, 0.0f, 0.0f);
       if (obs != NULL) {
-        insideDim = true;
+	insideDim = true;
       }
     }
     sceneRenderer->setDim(HUDDialogStack::get()->isActive() || insideDim ||
@@ -4607,9 +4607,9 @@ void			drawFrame(const float dt)
 	const int w = mainWindow->getWidth();
 	const int h = mainWindow->getHeight();
 	const int vh = mainWindow->getViewHeight();
-	sceneRenderer->getViewFrustum().setProjection(fov, NearPlane, 
-	                                              FarPlaneScale * worldSize,
-	                                              w, h, vh);
+	sceneRenderer->getViewFrustum().setProjection(fov, NearPlane,
+						      FarPlaneScale * worldSize,
+						      w, h, vh);
 	sceneRenderer->render();
 
 	// set entire window
@@ -4693,7 +4693,7 @@ void			drawFrame(const float dt)
     if (scene) {
       scene->removeDynamicNodes();
     }
-    
+
   } else {
     // wait around a little to avoid spinning the CPU when iconified
     media->sleep(0.05f);
@@ -4715,7 +4715,7 @@ static void		playingLoop()
   // start timing
   TimeKeeper::setTick();
   updateDaylight(epochOffset, *sceneRenderer);
-  
+
 
   // main loop
   while (!CommandsStandard::isQuit()) {
@@ -4826,7 +4826,7 @@ static void		playingLoop()
     float syncTime = BZDB.eval(StateDatabase::BZDB_SYNCTIME);
     if (syncTime < 0.0f) {
       if (!BZDB.isSet("fixedTime")) {
-        epochOffset += (double)dt;
+	epochOffset += (double)dt;
       }
       epochOffset += (double)(50.0f * dt * clockAdjust);
     } else {
@@ -4993,7 +4993,7 @@ static void		playingLoop()
     }
     for (i = 0; i < curMaxPlayers; i++) {
       if (player[i]) {
-        player[i]->updateTank(dt, false);
+	player[i]->updateTank(dt, false);
       }
     }
 
@@ -5015,7 +5015,7 @@ static void		playingLoop()
     if (world) {
       world->getWorldWeapons()->updateShots(dt);
     }
-    
+
     // update track marks
     TrackMarks::update(dt);
 
@@ -5031,12 +5031,12 @@ static void		playingLoop()
 	doMotion();
 	if (hud->getHunting()) {
 	  setHuntTarget(); //spot hunt target
-        }
+	}
 	if (myTank->getTeam() != ObserverTeam &&
 	    ((fireButton && myTank->getFlag() == Flags::MachineGun) ||
 	     (myTank->getFlag() == Flags::TriggerHappy))) {
 	  myTank->fireShot();
-        }
+	}
       } else {
 	int mx, my;
 	mainWindow->getMousePosition(mx, my);
@@ -5615,7 +5615,7 @@ void			startPlaying(BzfDisplay* _display,
     controlPanel->addMessage(ColorStrings[UnderlineColor] + ColorStrings[WhiteColor] +
 			     "MOTD: " + motd.get(BZDB.get("motdServer")));
   }
-  
+
   // inform user of silencePlayers on startup
   for (unsigned int j = 0; j < silencePlayers.size(); j ++){
     std::string aString = silencePlayers[j];

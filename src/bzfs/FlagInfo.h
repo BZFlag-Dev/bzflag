@@ -61,13 +61,13 @@ public:
 private:
   int flagIndex;
   static std::vector<FlagType*> allowedFlags;
-  static int                    numExtraFlags;
-  static int                    numFlags;
-  static int                    numFlagsInAir;
-  static FlagInfo              *flagList;
+  static int		    numExtraFlags;
+  static int		    numFlags;
+  static int		    numFlagsInAir;
+  static FlagInfo	      *flagList;
 
   // time flag will land
-  TimeKeeper                    dropDone;
+  TimeKeeper		    dropDone;
 };
 #else
 class FlagInfo;

@@ -24,7 +24,7 @@
 
 
 bool parseMaterials(const char* cmd, std::istream& input,
-                    BzMaterial* materials, int materialCount, bool& error)
+		    BzMaterial* materials, int materialCount, bool& error)
 {
   int i;
   error = false;
@@ -40,7 +40,7 @@ bool parseMaterials(const char* cmd, std::istream& input,
       std::cout << "couldn't find reference material: " << name << std::endl;
     } else {
       for (i = 0; i < materialCount; i++) {
-        materials[i] = *matref;
+	materials[i] = *matref;
       }
     }
   }
@@ -68,19 +68,19 @@ bool parseMaterials(const char* cmd, std::istream& input,
     error = !parseColorStream(input, ambient);
     if (!error) {
       for (i = 0; i < materialCount; i++) {
-        materials[i].setAmbient(ambient);
+	materials[i].setAmbient(ambient);
       }
     } else {
       std::cout << "bad " << cmd << " specification" << std::endl;
     }
   }
   else if ((strcasecmp(cmd, "diffuse") == 0) || // currently used by bzflag
-           (strcasecmp(cmd, "color") == 0)) {
+	   (strcasecmp(cmd, "color") == 0)) {
     float diffuse[4];
     error = !parseColorStream(input, diffuse);
     if (!error) {
       for (i = 0; i < materialCount; i++) {
-        materials[i].setDiffuse(diffuse);
+	materials[i].setDiffuse(diffuse);
       }
     } else {
       std::cout << "bad " << cmd << " specification" << std::endl;
@@ -91,7 +91,7 @@ bool parseMaterials(const char* cmd, std::istream& input,
     error = !parseColorStream(input, specular);
     if (!error) {
       for (i = 0; i < materialCount; i++) {
-        materials[i].setSpecular(specular);
+	materials[i].setSpecular(specular);
       }
     } else {
       std::cout << "bad " << cmd << " specification" << std::endl;
@@ -102,7 +102,7 @@ bool parseMaterials(const char* cmd, std::istream& input,
     error = !parseColorStream(input, emission);
     if (!error) {
       for (i = 0; i < materialCount; i++) {
-        materials[i].setEmission(emission);
+	materials[i].setEmission(emission);
       }
     } else {
       std::cout << "bad " << cmd << " specification" << std::endl;
@@ -206,8 +206,8 @@ bool parseMaterials(const char* cmd, std::istream& input,
 
 
 bool parseMaterialsByName(const char* cmd, std::istream& input,
-                          BzMaterial* materials, const char** names,
-                          int materialCount, bool& error)
+			  BzMaterial* materials, const char** names,
+			  int materialCount, bool& error)
 {
   error = false;
 
@@ -217,15 +217,15 @@ bool parseMaterialsByName(const char* cmd, std::istream& input,
       std::getline(input, line);
       std::istringstream parms(line);
       if (!(parms >> matcmd)) {
-        error = true;
+	error = true;
       } else {
-        // put the material command string back into the stream
-        for (int i = 0; i < (int)(line.size() - matcmd.size()); i++) {
-          input.putback(line[line.size() - i]);
-        }
-        if (!parseMaterials(matcmd.c_str(), input, &materials[n], 1, error)) {
-          error = true;
-        }
+	// put the material command string back into the stream
+	for (int i = 0; i < (int)(line.size() - matcmd.size()); i++) {
+	  input.putback(line[line.size() - i]);
+	}
+	if (!parseMaterials(matcmd.c_str(), input, &materials[n], 1, error)) {
+	  error = true;
+	}
       }
       return true;
     }

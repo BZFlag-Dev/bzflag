@@ -164,7 +164,7 @@ unsigned char*		MediaFile::readImage(
     // get the image size
     int dx = *width  = file->getWidth();
     int dy = *height = file->getHeight();
-    int dz =           file->getNumChannels();
+    int dz =	   file->getNumChannels();
 
     // make buffer for final image
     image = new unsigned char[dx * dy * 4];
@@ -244,7 +244,7 @@ float*		MediaFile::readSound(
   float* audio = NULL;
   if (file != NULL) {
     // get the audio info
-    *rate           = file->getFramesPerSecond();
+    *rate	   = file->getFramesPerSecond();
     int numChannels = file->getNumChannels();
     int numFrames   = file->getNumFrames();
     int sampleWidth = file->getSampleWidth();

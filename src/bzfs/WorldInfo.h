@@ -79,7 +79,7 @@ public:
   void addZone(const CustomZone *zone);
   void addEntryZone( QualifierList &qualifiers, WorldFileLocation *zone );
   void addWeapon(const FlagType *type, const float *origin, float direction,
-                 float initdelay, const std::vector<float> &delay, TimeKeeper &sync);
+		 float initdelay, const std::vector<float> &delay, TimeKeeper &sync);
   void addWaterLevel (float level, const BzMaterial* matref);
   float getWaterLevel() const;
   float getMaxWorldHeight() const;
@@ -109,8 +109,8 @@ public:
    * can therefore be used before it has been setup.
    */
   InBuildingType inCylinderNoOctree(Obstacle **location,
-                                    float x, float y, float z,
-                                    float r, float height) const;
+				    float x, float y, float z,
+				    float r, float height) const;
 
   /** check collision between world object and a cylinder.
    * return value is kind of collision.
@@ -118,8 +118,8 @@ public:
    * Checking is quite raw
    */
   InBuildingType cylinderInBuilding(const Obstacle **obstacle,
-			            float x, float y, float z,
-			            float radius, float height = 0.0f) const;
+				    float x, float y, float z,
+				    float radius, float height = 0.0f) const;
 
   /** check collision between world object and a cylinder.
    * return value is kind of collision.
@@ -127,8 +127,8 @@ public:
    * Checking is quite raw
    */
   InBuildingType cylinderInBuilding(const Obstacle **obstacle,
-			            const float* pos,
-			            float radius, float height = 0.0f) const;
+				    const float* pos,
+				    float radius, float height = 0.0f) const;
 
   /** check collision between world object and a Z-axis aligned box.
    * return value is kind of collision.
@@ -145,7 +145,7 @@ public:
   void checkCollisionManager();
 
   bool inRect(const float *p1, float angle, const float *size,
-                         float x, float y, float r) const;
+			 float x, float y, float r) const;
 
 private:
 
@@ -155,19 +155,19 @@ private:
   float waterLevel;
   const BzMaterial* waterMatRef;
 
-  std::vector<WallObstacle*> 	walls;
-  std::vector<MeshObstacle*> 	meshes;
-  std::vector<ArcObstacle*> 	arcs;
-  std::vector<ConeObstacle*> 	cones;
-  std::vector<SphereObstacle*> 	spheres;
-  std::vector<TetraBuilding*> 	tetras;
+  std::vector<WallObstacle*>	walls;
+  std::vector<MeshObstacle*>	meshes;
+  std::vector<ArcObstacle*>	arcs;
+  std::vector<ConeObstacle*>	cones;
+  std::vector<SphereObstacle*>	spheres;
+  std::vector<TetraBuilding*>	tetras;
   std::vector<BoxBuilding*>     boxes;
   std::vector<BaseBuilding*>	bases;
   std::vector<PyramidBuilding*> pyramids;
-  std::vector<Teleporter*> 	teleporters;
+  std::vector<Teleporter*>	teleporters;
 
   EntryZones	       entryZones;
-  WorldWeapons         worldWeapons;
+  WorldWeapons	 worldWeapons;
   std::vector<int> teleportTargets;
 
   char *database;

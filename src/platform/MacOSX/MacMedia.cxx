@@ -47,7 +47,7 @@ bool MacMedia::openAudio() {
 
   header.numChannels   = 2;
   header.sampleRate    = rate22050hz;
-  header.encode        = extSH;
+  header.encode	= extSH;
   header.sampleSize    = 16;
   header.numFrames     = CHUNK_SIZE;
 
@@ -89,17 +89,17 @@ bool MacMedia::isAudioTooEmpty () const {
 
 void MacMedia::writeAudio(void) {
   OSErr iErr = noErr;
-  SndCommand                        playCmd;
-  SndCommand                        callBack;
+  SndCommand			playCmd;
+  SndCommand			callBack;
 
   header.samplePtr = (char*)buffer;
 
   playCmd.cmd = bufferCmd;
-  playCmd.param1 = 0;          // unused
+  playCmd.param1 = 0;	  // unused
   playCmd.param2 = (long)&header;
 
   callBack.cmd = callBackCmd;
-  callBack.param1 = 0;          // which buffer to fill, 0 buffer, 1, 0, ...
+  callBack.param1 = 0;	  // which buffer to fill, 0 buffer, 1, 0, ...
 
 
   channel->callBack = gCarbonSndCallBackUPP;

@@ -69,7 +69,7 @@ CGrafPtr dsSetupScreen( int width, int height )
 	gDSpTheContextAttributes.displayWidth			    = width;
 	gDSpTheContextAttributes.displayHeight			= height;
 	gDSpTheContextAttributes.colorNeeds				= kDSpColorNeeds_Require;
-	gDSpTheContextAttributes.pageCount                  = 1;
+	gDSpTheContextAttributes.pageCount		  = 1;
 
 	theError = DSpFindBestContext( &gDSpTheContextAttributes, &gDSpTheContext );
 	if( theError )
@@ -158,7 +158,7 @@ void dsShutdownScreen(CGrafPtr theFrontBuffer)
 */
 AGLContext dsSetupAGL(AGLDrawable win)
 {
-	GLint          attrib[] = { AGL_RGBA, AGL_DOUBLEBUFFER, AGL_NONE };
+	GLint	  attrib[] = { AGL_RGBA, AGL_DOUBLEBUFFER, AGL_NONE };
 	AGLPixelFormat fmt;
 	AGLContext     ctx;
 	GLboolean      ok;

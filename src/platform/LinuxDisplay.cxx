@@ -97,7 +97,7 @@ XDisplayMode::ResInfo**	LinuxDisplayMode::init(XDisplay* _display,
   int current;
   for (current = 0; current < numResolutions; current++) {
     const XF86VidModeModeInfo* r = resolutions[current];
-    if (dotclock        == (int)r->dotclock &&
+    if (dotclock	== (int)r->dotclock &&
 	mode.hdisplay   == r->hdisplay &&
 	mode.hsyncstart == r->hsyncstart &&
 	mode.hsyncend   == r->hsyncend &&

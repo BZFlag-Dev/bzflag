@@ -44,7 +44,7 @@ private:
   ~DisplayListManager();
   void rebuildLists();
 
-  int               lastID;
+  int	       lastID;
   displayListMap    lists;
 };
 

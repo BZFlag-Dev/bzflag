@@ -87,7 +87,7 @@ void	      DXJoystick::initJoystick(const char* joystickName)
    * because we're greedy.
    */
 
-  success = device->SetCooperativeLevel(WinWindow::getHandle(), 
+  success = device->SetCooperativeLevel(WinWindow::getHandle(),
 					DISCL_BACKGROUND | DISCL_EXCLUSIVE);
 
   if (success != DI_OK) {
@@ -119,10 +119,10 @@ void	      DXJoystick::initJoystick(const char* joystickName)
   DIPROPRANGE range;
   range.diph.dwSize       = sizeof(range);
   range.diph.dwHeaderSize = sizeof(range.diph);
-  range.diph.dwObj        = DIJOFS_X;
-  range.diph.dwHow        = DIPH_BYOFFSET;
-  range.lMin              = -1000;
-  range.lMax              = +1000;
+  range.diph.dwObj	= DIJOFS_X;
+  range.diph.dwHow	= DIPH_BYOFFSET;
+  range.lMin	      = -1000;
+  range.lMax	      = +1000;
 
   success = device->SetProperty(DIPROP_RANGE, &range.diph);
 
@@ -184,7 +184,7 @@ unsigned long DXJoystick::getJoyButtons()
     if (state.rgbButtons[i] & 0x80)
       buttons |= (1 << i);
   }
-  
+
   return buttons;
 }
 
@@ -219,7 +219,7 @@ bool	      DXJoystick::ffHasRumble() const
 {
   if (!device)
     return false;
-  
+
   DIDEVCAPS caps;
   caps.dwSize = sizeof(DIDEVCAPS);
 

@@ -59,7 +59,7 @@ struct FiringInfo {
     void*		unpack(void*);
 
   public:
-    float               timeSent;
+    float	       timeSent;
     ShotUpdate		shot;
     FlagType*		flagType;			// flag when fired
     float		lifetime;		// lifetime of shot (s)

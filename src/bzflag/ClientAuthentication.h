@@ -22,7 +22,7 @@
 	// because kebos dosn't asume anyone else but them has defines.
 	#ifdef MAXHOSTNAMELEN
 		#undef MAXHOSTNAMELEN
-	#endif 
+	#endif
 #include <krb5.h>
 #endif
 
@@ -39,15 +39,15 @@ private:
   static krb5_context      context;
   static krb5_ccache       cc;
   static krb5_auth_context auth_context;
-  static krb5_data         packet;
-  static krb5_data         inbuf;
-  static krb5_creds        creds;
+  static krb5_data	 packet;
+  static krb5_data	 inbuf;
+  static krb5_creds	creds;
   static krb5_creds       *new_creds;
   static krb5_principal    client;
   static krb5_principal    server;
 #endif
-  static char              principalName[128];
-  static bool              authentication;
+  static char	      principalName[128];
+  static bool	      authentication;
 };
 
 #endif

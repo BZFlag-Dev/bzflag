@@ -43,7 +43,7 @@ bool CustomTetra::read(const char *cmd, std::istream& input)
     // keep on chugging
     return true;
   }
-    
+
   bool materror;
   if (vertexCount == 0) {
     // try to parse all 4 materials
@@ -60,7 +60,7 @@ bool CustomTetra::read(const char *cmd, std::istream& input)
       return !materror;
     }
   }
-    
+
   if (strcasecmp(cmd, "vertex") == 0) {
     if (vertexCount >= 4) {
       std::cout << "Extra tetrahedron vertex" << std::endl;
@@ -84,8 +84,8 @@ bool CustomTetra::read(const char *cmd, std::istream& input)
     else {
       useNormals[vertexCount - 1] = true;
       for (int v = 0; v < 3; v++) {
-        float* normal = normals[vertexCount - 1][v];
-        input >> normal[0] >> normal[1] >> normal[2];
+	float* normal = normals[vertexCount - 1][v];
+	input >> normal[0] >> normal[1] >> normal[2];
       }
     }
   }
@@ -101,8 +101,8 @@ bool CustomTetra::read(const char *cmd, std::istream& input)
     else {
       useTexcoords[vertexCount - 1] = true;
       for (int v = 0; v < 3; v++) {
-        float* texcoord = texcoords[vertexCount - 1][v];
-        input >> texcoord[0] >> texcoord[1];
+	float* texcoord = texcoords[vertexCount - 1][v];
+	input >> texcoord[0] >> texcoord[1];
       }
     }
   }
@@ -118,7 +118,7 @@ void CustomTetra::write(WorldInfo *world) const
 {
   if (vertexCount < 4) {
     std::cout << "Not creating tetrahedron, not enough vertices ("
-              << vertexCount << ")" << std::endl;
+	      << vertexCount << ")" << std::endl;
     return;
   }
 
@@ -127,8 +127,8 @@ void CustomTetra::write(WorldInfo *world) const
     mats[i] = MATERIALMGR.addMaterial(&materials[i]);
   }
   TetraBuilding* tetra = new TetraBuilding(vertices, normals, texcoords,
-                                           useNormals, useTexcoords,
-                                           mats, driveThrough, shootThrough);
+					   useNormals, useTexcoords,
+					   mats, driveThrough, shootThrough);
   if (tetra->isValid()) {
     tetra->getMesh()->setIsLocal(true);
     world->addTetra(tetra);
@@ -136,7 +136,7 @@ void CustomTetra::write(WorldInfo *world) const
     std::cout << "Error generating tetra obstacle." << std::endl;
     delete tetra;
   }
-  
+
   return;
 }
 

@@ -72,8 +72,8 @@ void			WallSceneNode::setPlane(const GLfloat _plane[4])
 {
   // get normalization factor
   const float n = 1.0f / sqrtf((_plane[0] * _plane[0]) +
-				               (_plane[1] * _plane[1]) +
-				               (_plane[2] * _plane[2]));
+					       (_plane[1] * _plane[1]) +
+					       (_plane[2] * _plane[2]));
 
   // store normalized plane equation
   plane[0] = n * _plane[0];
@@ -375,9 +375,9 @@ void			WallSceneNode::setColor()
 }
 
 int WallSceneNode::splitWall(const GLfloat* splitPlane,
-                             const GLfloat3Array& vertices,
-                             const GLfloat2Array& texcoords,
-                             SceneNode*& front, SceneNode*& back) // const
+			     const GLfloat3Array& vertices,
+			     const GLfloat2Array& texcoords,
+			     SceneNode*& front, SceneNode*& back) // const
 {
   int i;
   const int count = vertices.getSize();
@@ -408,8 +408,8 @@ int WallSceneNode::splitWall(const GLfloat* splitPlane,
   int frontCount = 0;
   for (i = 0; i < count; i++) {
     const GLfloat d = (vertices[i][0] * splitPlane[0]) +
-                      (vertices[i][1] * splitPlane[1]) +
-                      (vertices[i][2] * splitPlane[2]) + splitPlane[3];
+		      (vertices[i][1] * splitPlane[1]) +
+		      (vertices[i][2] * splitPlane[2]) + splitPlane[3];
     if (d < -fudgeFactor) {
       array[i] = BACK_SIDE;
       backCount++;
@@ -453,12 +453,12 @@ int WallSceneNode::splitWall(const GLfloat* splitPlane,
 
     if (array[next] & FRONT_SIDE) {
       if (!(array[i] & FRONT_SIDE)) {
-        firstFront = next;
+	firstFront = next;
       }
     }
     if (array[next] & BACK_SIDE) {
       if (!(array[i] & BACK_SIDE)) {
-        firstBack = next;
+	firstBack = next;
       }
     }
   }
@@ -489,9 +489,9 @@ int WallSceneNode::splitWall(const GLfloat* splitPlane,
   if (firstFront != lastBack) {
     GLfloat splitVertex[3], splitUV[2];
     splitEdge(dists[firstFront], dists[lastBack],
-              vertices[firstFront], vertices[lastBack],
-              texcoords[firstFront], texcoords[lastBack],
-              splitVertex, splitUV);
+	      vertices[firstFront], vertices[lastBack],
+	      texcoords[firstFront], texcoords[lastBack],
+	      splitVertex, splitUV);
     memcpy(vertexFront[0], splitVertex, sizeof(GLfloat[3]));
     memcpy(uvFront[0], splitUV, sizeof(GLfloat[2]));
     frontIndex++; // bump up the head
@@ -502,9 +502,9 @@ int WallSceneNode::splitWall(const GLfloat* splitPlane,
   if (firstBack != lastFront) {
     GLfloat splitVertex[3], splitUV[2];
     splitEdge(dists[firstBack], dists[lastFront],
-              vertices[firstBack], vertices[lastFront],
-              texcoords[firstBack], texcoords[lastFront],
-              splitVertex, splitUV);
+	      vertices[firstBack], vertices[lastFront],
+	      texcoords[firstBack], texcoords[lastFront],
+	      splitVertex, splitUV);
     memcpy(vertexBack[0], splitVertex, sizeof(GLfloat[3]));
     memcpy(uvBack[0], splitUV, sizeof(GLfloat[2]));
     backIndex++; // bump up the head
@@ -544,9 +544,9 @@ int WallSceneNode::splitWall(const GLfloat* splitPlane,
 
 
 void WallSceneNode::splitEdge(float d1, float d2,
-                              const GLfloat* p1, const GLfloat* p2,
-                              const GLfloat* uv1, const GLfloat* uv2,
-                              GLfloat* p, GLfloat* uv) // const
+			      const GLfloat* p1, const GLfloat* p2,
+			      const GLfloat* uv1, const GLfloat* uv2,
+			      GLfloat* p, GLfloat* uv) // const
 {
   // compute fraction along edge where split occurs
   float t1 = (d2 - d1);

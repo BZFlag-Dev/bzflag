@@ -33,10 +33,10 @@ SphereObstacle::SphereObstacle()
 
 
 SphereObstacle::SphereObstacle(const float* _pos, const float* _size,
-                         float _rotation, const float _texsize[2], 
-                         bool _useNormals, bool _hemisphere,
-                         int _divisions, const BzMaterial* mats[MaterialCount],
-                         int physics, bool bounce, bool drive, bool shoot)
+			 float _rotation, const float _texsize[2],
+			 bool _useNormals, bool _hemisphere,
+			 int _divisions, const BzMaterial* mats[MaterialCount],
+			 int physics, bool bounce, bool drive, bool shoot)
 {
   mesh = NULL;
 
@@ -53,7 +53,7 @@ SphereObstacle::SphereObstacle(const float* _pos, const float* _size,
   hemisphere = _hemisphere;
   phydrv = physics;
   smoothBounce = bounce;
-  useNormals = _useNormals;  
+  useNormals = _useNormals;
   memcpy(texsize, _texsize, sizeof(texsize));
   memcpy(materials, mats, sizeof(materials));
 
@@ -100,7 +100,7 @@ void SphereObstacle::finalize()
   float sz[3], texsz[2];
   const float minSize = 1.0e-6f; // cheezy / lazy
   int factor = 2;
-  
+
   // setup the multiplying factor
   if (hemisphere) {
     factor = 1;
@@ -110,23 +110,23 @@ void SphereObstacle::finalize()
   sz[0] = fabsf(size[0]);
   sz[1] = fabsf(size[1]);
   sz[2] = fabsf(size[2]);
-  
+
   // adjust the texture sizes
   memcpy (texsz, texsize, sizeof(float[2]));
   if (texsz[0] < 0.0f) {
     // unless you want to do elliptic integrals, here's
     // the Ramanujan approximation for the circumference
     // of an ellipse  (it will be rounded anyways)
-    const float circ = 
+    const float circ =
       M_PI * ((3.0f * (sz[0] + sz[1])) -
-              sqrtf ((sz[0] + (3.0f * sz[1])) * (sz[1] + (3.0f * sz[0]))));
+	      sqrtf ((sz[0] + (3.0f * sz[1])) * (sz[1] + (3.0f * sz[0]))));
     // make sure it's an integral number so that the edges line up
     texsz[0] = -floorf(circ / texsz[0]);
   }
   if (texsz[1] < 0.0f) {
     texsz[1] = -((2.0f * sz[2]) / texsz[1]);
   }
-  
+
 
   // validity checking
   if ((divisions < 1) || (texsz[0] < minSize) || (texsz[1] < minSize) ||
@@ -185,8 +185,8 @@ void SphereObstacle::finalize()
     for (j = 0; j < (4 * (i + 1)); j++) {
       float h_angle = ((M_PI * 2.0f) * (float)j / (float)(4 * (i + 1)));
       h_angle = h_angle + getRotation();
-      float v_angle = ((M_PI / 2.0f) * 
-                       (float)(divisions - i - 1) / (float)(divisions));
+      float v_angle = ((M_PI / 2.0f) *
+		       (float)(divisions - i - 1) / (float)(divisions));
       float unit[3];
       unit[0] = cosf(h_angle) * cosf(v_angle);
       unit[1] = sinf(h_angle) * cosf(v_angle);
@@ -198,40 +198,40 @@ void SphereObstacle::finalize()
       vertices.push_back(v);
       // normal
       if (useNormals) {
-        n[0] = unit[0] / sz[0];
-        n[1] = unit[1] / sz[1];
-        n[2] = unit[2] / sz[2];
-        const float len = 1.0f / sqrtf(vec3dot(n.data, n.data));
-        n[0] = n[0] * len;
-        n[1] = n[1] * len;
-        n[2] = n[2] * len;
-        normals.push_back(n);
+	n[0] = unit[0] / sz[0];
+	n[1] = unit[1] / sz[1];
+	n[2] = unit[2] / sz[2];
+	const float len = 1.0f / sqrtf(vec3dot(n.data, n.data));
+	n[0] = n[0] * len;
+	n[1] = n[1] * len;
+	n[2] = n[2] * len;
+	normals.push_back(n);
       }
       // texcoord
       t[0] = (float)j / (float)(4 * (i + 1));
       t[0] = t[0] * texsz[0];
       t[1] = (float)(divisions - i - 1) / (float)divisions;
       if (!hemisphere) {
-        t[1] = 0.5f + (0.5f * t[1]);
+	t[1] = 0.5f + (0.5f * t[1]);
       }
       t[1] = t[1] * texsz[1];
       texcoords.push_back(t);
 
       // the bottom hemisphere
       if (!hemisphere) {
-        if (i != (divisions - 1)) {
-          // vertex
-          v[2] = (2 * pos[2]) - v[2];
-          vertices.push_back(v);
-          // normal
-          if (useNormals) {
-            n[2] = -n[2];
-            normals.push_back(n);
-          }
-          // texcoord
-          t[1] = texsz[1] - t[1];
-          texcoords.push_back(t);
-        }
+	if (i != (divisions - 1)) {
+	  // vertex
+	  v[2] = (2 * pos[2]) - v[2];
+	  vertices.push_back(v);
+	  // normal
+	  if (useNormals) {
+	    n[2] = -n[2];
+	    normals.push_back(n);
+	  }
+	  // texcoord
+	  t[1] = texsz[1] - t[1];
+	  texcoords.push_back(t);
+	}
       }
     }
   }
@@ -256,12 +256,12 @@ void SphereObstacle::finalize()
     // the bottom hemisphere
     if (!hemisphere) {
       if (i != (divisions - 1)) {
-        t[1] = texsz[1] - t[1];
-        texcoords.push_back(t);
+	t[1] = texsz[1] - t[1];
+	texcoords.push_back(t);
       }
     }
   }
-  
+
   // the bottom texcoords for hemispheres
   const int bottomTexOffset = texcoords.size();
   if (hemisphere) {
@@ -277,8 +277,8 @@ void SphereObstacle::finalize()
   // make the mesh
   int faceCount = (divisions * divisions) * 8;
   mesh = new MeshObstacle(checkTypes, checkPoints,
-                          vertices, normals, texcoords, faceCount,
-                          false, smoothBounce, driveThrough, shootThrough);
+			  vertices, normals, texcoords, faceCount,
+			  false, smoothBounce, driveThrough, shootThrough);
 
   // add the faces to the mesh
   std::vector<int> vlist;
@@ -296,103 +296,103 @@ void SphereObstacle::finalize()
   for (q = 0; q < 4; q++) {
     for (i = 0; i < divisions; i++) {
       for (j = 0; j < (i + 1); j++) {
-        int a, b, c, d, ta, tc;
-        // a, b, c form the upwards pointing triangle
-        // b, c, d form the downwards pointing triangle
-        // ta and tc are the texcoords for a and c
-        const bool lastStrip = ((q == 3) && (j == i));
-        const bool lastCircle = (i == (divisions - 1));
+	int a, b, c, d, ta, tc;
+	// a, b, c form the upwards pointing triangle
+	// b, c, d form the downwards pointing triangle
+	// ta and tc are the texcoords for a and c
+	const bool lastStrip = ((q == 3) && (j == i));
+	const bool lastCircle = (i == (divisions - 1));
 
-        // setup 'a'
-        if (i > 0) {
-          if (lastStrip) {
-            int k = (i - 1);
-            a = 1 + (((k*k)+k)*2);
-          } else {
-            int k = (i - 1);
-            a = 1 + (((k*k)+k)*2) + (q*(k+1)) + j;
-          }
-        } else {
-          a = 0;
-        }
+	// setup 'a'
+	if (i > 0) {
+	  if (lastStrip) {
+	    int k = (i - 1);
+	    a = 1 + (((k*k)+k)*2);
+	  } else {
+	    int k = (i - 1);
+	    a = 1 + (((k*k)+k)*2) + (q*(k+1)) + j;
+	  }
+	} else {
+	  a = 0;
+	}
 
-        // setup 'b'
-        b = 1 + (((i*i)+i)*2) + (q*(i+1)) + j;
+	// setup 'b'
+	b = 1 + (((i*i)+i)*2) + (q*(i+1)) + j;
 
-        // setup 'c'
-        if (lastStrip) {
-          c = 1 + (((i*i)+i)*2);
-        } else {
-          c = b + 1;
-        }
+	// setup 'c'
+	if (lastStrip) {
+	  c = 1 + (((i*i)+i)*2);
+	} else {
+	  c = b + 1;
+	}
 
-        // setup 'd' for the down-pointing triangle
-        int k = (i + 1);
-        d = 1 + (((k*k)+k)*2) + (q*(k+1)) + (j + 1);
+	// setup 'd' for the down-pointing triangle
+	int k = (i + 1);
+	d = 1 + (((k*k)+k)*2) + (q*(k+1)) + (j + 1);
 
 
-        // top hemisphere
-        a = a * factor;
-        if (!lastCircle) {
-          b = b * factor;
-          c = c * factor;
-        } else {
-          b = b + ringOffset;
-          c = c + ringOffset;
-        }
-        if (i != (divisions - 2)) {
-          d = d * factor;
-        } else {
-          d = d + ringOffset;
-        }
+	// top hemisphere
+	a = a * factor;
+	if (!lastCircle) {
+	  b = b * factor;
+	  c = c * factor;
+	} else {
+	  b = b + ringOffset;
+	  c = c + ringOffset;
+	}
+	if (i != (divisions - 2)) {
+	  d = d * factor;
+	} else {
+	  d = d + ringOffset;
+	}
 
-        // deal with the last strip of texture coordinates
-        if (!lastStrip) {
-          ta = a;
-          tc = c;
-        } else {
-          ta = texStripOffset + (i * factor);
-          tc = texStripOffset + ((i + 1) * factor);
-        }
+	// deal with the last strip of texture coordinates
+	if (!lastStrip) {
+	  ta = a;
+	  tc = c;
+	} else {
+	  ta = texStripOffset + (i * factor);
+	  tc = texStripOffset + ((i + 1) * factor);
+	}
 
-        push3Ints(vlist, a, b, c);
-        if (useNormals) push3Ints(nlist, a, b, c);
-        push3Ints(tlist, ta, b, tc);
-        addFace(mesh, vlist, nlist, tlist, materials[Edge], phydrv);
-        if (!lastCircle) {
-          push3Ints(vlist, b, d, c);
-          if (useNormals) push3Ints(nlist, b, d, c);
-          push3Ints(tlist, b, d, tc);
-          addFace(mesh, vlist, nlist, tlist, materials[Edge], phydrv);
-        }
+	push3Ints(vlist, a, b, c);
+	if (useNormals) push3Ints(nlist, a, b, c);
+	push3Ints(tlist, ta, b, tc);
+	addFace(mesh, vlist, nlist, tlist, materials[Edge], phydrv);
+	if (!lastCircle) {
+	  push3Ints(vlist, b, d, c);
+	  if (useNormals) push3Ints(nlist, b, d, c);
+	  push3Ints(tlist, b, d, tc);
+	  addFace(mesh, vlist, nlist, tlist, materials[Edge], phydrv);
+	}
 
-        // bottom hemisphere
-        if (!hemisphere) {
-          a = a + 1;
-          ta = ta + 1;
-          if (!lastCircle) {
-            b = b + 1;
-            c = c + 1;
-            tc = tc + 1;
-          }
-          if (i != (divisions - 2)) {
-            d = d + 1;
-          }
-          push3Ints(vlist, a, c, b);
-          if (useNormals) push3Ints(nlist, a, c, b);
-          push3Ints(tlist, ta, tc, b);
-          addFace(mesh, vlist, nlist, tlist, materials[Edge], phydrv);
-          if (!lastCircle) {
-            push3Ints(vlist, b, c, d);
-            if (useNormals) push3Ints(nlist, b, c, d);
-            push3Ints(tlist, b, tc, d);
-            addFace(mesh, vlist, nlist, tlist, materials[Edge], phydrv);
-          }
-        }
+	// bottom hemisphere
+	if (!hemisphere) {
+	  a = a + 1;
+	  ta = ta + 1;
+	  if (!lastCircle) {
+	    b = b + 1;
+	    c = c + 1;
+	    tc = tc + 1;
+	  }
+	  if (i != (divisions - 2)) {
+	    d = d + 1;
+	  }
+	  push3Ints(vlist, a, c, b);
+	  if (useNormals) push3Ints(nlist, a, c, b);
+	  push3Ints(tlist, ta, tc, b);
+	  addFace(mesh, vlist, nlist, tlist, materials[Edge], phydrv);
+	  if (!lastCircle) {
+	    push3Ints(vlist, b, c, d);
+	    if (useNormals) push3Ints(nlist, b, c, d);
+	    push3Ints(tlist, b, tc, d);
+	    addFace(mesh, vlist, nlist, tlist, materials[Edge], phydrv);
+	  }
+	}
       }
     }
   }
-  
+
   // add the bottom disc
   if (hemisphere) {
     const int k = (divisions - 1);
@@ -438,7 +438,7 @@ void SphereObstacle::getNormal(const float*, float*) const
 }
 
 bool SphereObstacle::getHitNormal(const float*, float, const float*, float,
-			        float, float, float, float*) const
+				float, float, float, float*) const
 {
   assert(false);
   return false;
@@ -457,15 +457,15 @@ bool SphereObstacle::inBox(const float*, float, float, float, float) const
 }
 
 bool SphereObstacle::inMovingBox(const float*, float, const float*, float,
-                               float, float, float) const
+			       float, float, float) const
 {
   assert(false);
   return false;
 }
 
 bool SphereObstacle::isCrossing(const float* /*p*/, float /*angle*/,
-                              float /*dx*/, float /*dy*/, float /*height*/,
-                              float* /*_plane*/) const
+			      float /*dx*/, float /*dy*/, float /*height*/,
+			      float* /*_plane*/) const
 {
   assert(false);
   return false;
@@ -479,7 +479,7 @@ void *SphereObstacle::pack(void *buf)
   buf = nboPackFloat(buf, angle);
   buf = nboPackInt(buf, divisions);
   buf = nboPackInt(buf, phydrv);
-  
+
   int i;
   for (i = 0; i < 2; i++) {
     buf = nboPackFloat(buf, texsize[i]);
@@ -488,7 +488,7 @@ void *SphereObstacle::pack(void *buf)
     int matindex = MATERIALMGR.getIndex(materials[i]);
     buf = nboPackInt(buf, matindex);
   }
-  
+
   // pack the state byte
   unsigned char stateByte = 0;
   stateByte |= isDriveThrough() ? (1 << 0) : 0;
@@ -519,7 +519,7 @@ void *SphereObstacle::unpack(void *buf)
     buf = nboUnpackInt(buf, matindex);
     materials[i] = MATERIALMGR.getMaterial(matindex);
   }
-  
+
   // unpack the state byte
   unsigned char stateByte;
   buf = nboUnpackUByte(buf, stateByte);
@@ -528,7 +528,7 @@ void *SphereObstacle::unpack(void *buf)
   smoothBounce = (stateByte & (1 << 2)) != 0;
   useNormals   = (stateByte & (1 << 3)) != 0;
   hemisphere   = (stateByte & (1 << 4)) != 0;
-  
+
   finalize();
 
   return buf;
@@ -538,7 +538,7 @@ void *SphereObstacle::unpack(void *buf)
 int SphereObstacle::packSize()
 {
   int fullSize = 0;
-  fullSize += sizeof(float[3]); 
+  fullSize += sizeof(float[3]);
   fullSize += sizeof(float[3]);
   fullSize += sizeof(float);
   fullSize += sizeof(int);
@@ -553,9 +553,9 @@ int SphereObstacle::packSize()
 void SphereObstacle::print(std::ostream& out, int /*level*/)
 {
   int i;
-  
+
   out << "sphere" << std::endl;
-  
+
   out << "  position " << pos[0] << " " << pos[1] << " " << pos[2] << std::endl;
   out << "  size " << size[0] << " " << size[1] << " " << size[2] << std::endl;
   out << "  rotation " << ((angle * 180.0) / M_PI) << std::endl;
@@ -563,7 +563,7 @@ void SphereObstacle::print(std::ostream& out, int /*level*/)
   if (hemisphere) {
     out << "  hemisphere" << std::endl;
   }
-  
+
   out << "  texsize " << texsize[0] << " " << texsize[1] << std::endl;
 
   const char* sideNames[MaterialCount] =
@@ -597,9 +597,9 @@ void SphereObstacle::print(std::ostream& out, int /*level*/)
   if (!useNormals) {
     out << "  flatshading" << std::endl;
   }
-  
+
   out << "end" << std::endl << std::endl;
-  
+
   return;
 }
 

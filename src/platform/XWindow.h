@@ -81,7 +81,7 @@ class XWindow : public BzfWindow {
     XWindow*		next;
     XVisualInfo		visual;
     unsigned long*	colormapPixels;
-    XSizeHints*         xsh;
+    XSizeHints*	 xsh;
     float		gammaVal;
     static XWindow*	first;
 };

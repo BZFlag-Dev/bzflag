@@ -23,7 +23,7 @@
 #ifdef HAVE_KRB5
 	#ifdef MAXHOSTNAMELEN
 		#undef MAXHOSTNAMELEN
-	#endif 
+	#endif
 #include <krb5.h>
 #endif
 
@@ -67,10 +67,10 @@ class ServerLink {
     int			read(uint16_t& code, uint16_t& len, void* msg,
 						int millisecondsToBlock = 0);
 
-    void                sendEnter(PlayerType, TeamColor,
-                                  const char* name, const char* email);
-    bool                readEnter(std::string& reason,
-                                  uint16_t& code, uint16_t& rejcode);
+    void		sendEnter(PlayerType, TeamColor,
+				  const char* name, const char* email);
+    bool		readEnter(std::string& reason,
+				  uint16_t& code, uint16_t& rejcode);
 
     void		sendCaptureFlag(TeamColor);
     void		sendGrabFlag(int flagIndex);
@@ -81,7 +81,7 @@ class ServerLink {
 #endif
     void		sendKilled(const PlayerId&, int reason, int shotId);
   // FIXME -- This is very ugly, but required to build bzadmin with gcc 2.9.5.
-  //          It should be changed to something cleaner.
+  //	  It should be changed to something cleaner.
 #ifndef BUILDING_BZADMIN
     void		sendPlayerUpdate(Player*);
 #endif
@@ -114,11 +114,11 @@ class ServerLink {
     static ServerLink*	server;
     int			server_abilities;
 
-    std::string         rejectionMessage;
+    std::string	 rejectionMessage;
 
-    int                 udpLength;
-    char               *udpBufferPtr;                 
-    char                ubuf[MaxPacketLen];
+    int		 udpLength;
+    char	       *udpBufferPtr;
+    char		ubuf[MaxPacketLen];
 };
 
 #define SEND 1

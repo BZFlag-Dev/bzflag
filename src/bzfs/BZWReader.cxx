@@ -97,7 +97,7 @@ void BZWReader::readToken(char *buffer, int n)
 
 
 bool BZWReader::readWorldStream(std::vector<WorldFileObject*>& wlist,
-                                WorldInfo *world)
+				WorldInfo *world)
 {
   int line = 1;
   char buffer[1024];
@@ -128,12 +128,12 @@ bool BZWReader::readWorldStream(std::vector<WorldFileObject*>& wlist,
       // ignore comment
     } else if (strcasecmp(buffer, "end") == 0) {
       if (object) {
-        if (object != fakeObject) {
-          if (object->writeImmediately()) {
-            object->write(world);
-          } else {
+	if (object != fakeObject) {
+	  if (object->writeImmediately()) {
+	    object->write(world);
+	  } else {
 	    wlist.push_back(object);
-          }
+	  }
 	}
 	object = NULL;
       } else {
@@ -185,7 +185,7 @@ bool BZWReader::readWorldStream(std::vector<WorldFileObject*>& wlist,
       newObject = fakeObject;
     } else if (object) {
       if (object != fakeObject) {
-        if (!object->read(buffer, *input)) {
+	if (!object->read(buffer, *input)) {
 	  // unknown token
 	  errorHandler->warning(std::string("unknown object parameter \"") + std::string(buffer) + std::string("\" - skipping"), line);
 	  // delete object;
@@ -196,7 +196,7 @@ bool BZWReader::readWorldStream(std::vector<WorldFileObject*>& wlist,
       // unknown token
       errorHandler->warning(std::string("invalid object type \"") + std::string(buffer) + std::string("\" - skipping"), line);
       if (object != fakeObject)
-        delete object;
+	delete object;
      // return false;
     }
 

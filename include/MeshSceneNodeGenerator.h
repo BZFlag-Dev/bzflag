@@ -32,12 +32,12 @@ class MeshSceneNodeGenerator {
     WallSceneNode* getNextNode(bool lod);
 
     static void setupNodeMaterial(WallSceneNode* node,
-                                  const BzMaterial* mat);
+				  const BzMaterial* mat);
     static MeshPolySceneNode* getMeshPolySceneNode(const MeshFace* face);
-      
+
     static bool makeTexcoords(const float* plane,
-                              const GLfloat3Array& vertices,
-                              GLfloat2Array& texcoords);
+			      const GLfloat3Array& vertices,
+			      GLfloat2Array& texcoords);
 
   protected:
     MeshSceneNodeGenerator(const MeshObstacle*);
@@ -48,7 +48,7 @@ class MeshSceneNodeGenerator {
   private:
     int currentNode;
     const MeshObstacle* mesh;
-    
+
     typedef struct {
       bool isFace;
       std::vector<const MeshFace*> faces;

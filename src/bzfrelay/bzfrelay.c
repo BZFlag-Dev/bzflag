@@ -152,14 +152,14 @@ static const char*	usageString = "usage: %s [-f] [-s <address[:port]>] "
 				"[-a <addr> <mask>] "
 				"[-r <addr> <mask>] <server-addr[:port]>\n";
 static const char*	helpString =
-"\t-f:                run in foreground, log to stderr\n"
-"\t                   (otherwise background, log to syslog)\n"
-"\t-s:                listen on given address and port instead\n"
-"\t                   of port " BZFS_PORT " on all interfaces\n"
-"\t-p:                listen for reconnections on given port\n"
-"\t                   instead of port " RECONNECT_PORT "\n"
-"\t-a:                allow clients at given addresses\n"
-"\t-r:                reject clients at given addresses\n"
+"\t-f:		run in foreground, log to stderr\n"
+"\t		   (otherwise background, log to syslog)\n"
+"\t-s:		listen on given address and port instead\n"
+"\t		   of port " BZFS_PORT " on all interfaces\n"
+"\t-p:		listen for reconnections on given port\n"
+"\t		   instead of port " RECONNECT_PORT "\n"
+"\t-a:		allow clients at given addresses\n"
+"\t-r:		reject clients at given addresses\n"
 "\tserver-addr:port:  address (and port) of bzfs server\n"
 "\n"
 "The -s option specifies the address to listen for clients on.  The\n"
@@ -627,18 +627,18 @@ static void		createRelay(struct sockaddr_in* serverAddr,
   }
 
   /* initialize relay object */
-  relay->status         = CONNECTING;
-  relay->fdSrc          = fdSrc;
-  relay->fdDst          = -1;
+  relay->status	 = CONNECTING;
+  relay->fdSrc	  = fdSrc;
+  relay->fdDst	  = -1;
   relay->fdOldSrc       = -1;
   relay->fdOldDst       = -1;
-  relay->srcMark        = relay->srcToDstBuffer;
-  relay->dstMark        = relay->dstToSrcBuffer;
+  relay->srcMark	= relay->srcToDstBuffer;
+  relay->dstMark	= relay->dstToSrcBuffer;
   relay->srcToDstFilled = 0;
   relay->dstToSrcFilled = 0;
   relay->srcToDstBytes  = 0;
   relay->dstToSrcBytes  = 0;
-  relay->srcAddr        = addr.sin_addr;
+  relay->srcAddr	= addr.sin_addr;
   sprintf(relay->srcName, "%s:%d",
 		inet_ntoa(addr.sin_addr), ntohs(addr.sin_port));
   gettimeofday(&relay->startTime, &tz);
@@ -825,7 +825,7 @@ static void		readHello(Relay* relay, struct sockaddr_in* serverAddr)
 							relay->srcName);
       printl(DL_DEBUG, BZFR_LOG_INFO, "server accepted %s on port %d",
 							relay->srcName, port);
-      addr          = *serverAddr;
+      addr	  = *serverAddr;
       addr.sin_port = htons(port);
       fdDst = createConnectingSocket(&addr);
       if (fdDst < 0) {
@@ -958,7 +958,7 @@ static void		readFromServer(Relay* relay)
 
   /* prepare to send data to client */
   else if (n > 0) {
-    relay->dstMark        = relay->dstToSrcBuffer;
+    relay->dstMark	= relay->dstToSrcBuffer;
     relay->dstToSrcFilled = n;
   }
 }
@@ -975,7 +975,7 @@ static void		readFromClient(Relay* relay)
 
   /* prepare to send data to server */
   else if (n > 0) {
-    relay->srcMark        = relay->srcToDstBuffer;
+    relay->srcMark	= relay->srcToDstBuffer;
     relay->srcToDstFilled = n;
   }
 }
@@ -987,7 +987,7 @@ static void		writeToServer(Relay* relay)
 
   /* update output queue and record bytes sent */
   if (n > 0) {
-    relay->srcMark        += n;
+    relay->srcMark	+= n;
     relay->srcToDstFilled -= n;
     relay->srcToDstBytes  += n;
   }
@@ -1000,7 +1000,7 @@ static void		writeToClient(Relay* relay)
 
   /* update output queue and record bytes sent */
   if (n > 0) {
-    relay->dstMark        += n;
+    relay->dstMark	+= n;
     relay->dstToSrcFilled -= n;
     relay->dstToSrcBytes  += n;
   }

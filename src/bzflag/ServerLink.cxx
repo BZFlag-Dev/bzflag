@@ -220,13 +220,13 @@ ServerLink::ServerLink(const Address& serverAddress, int port, int) :
       char message[512];
       int len = recv(query, (char*)message, 512, 0);
       if (len > 0) {
-        message[len - 1] = 0;
+	message[len - 1] = 0;
       } else {
-        message[0] = 0;
+	message[0] = 0;
       }
       rejectionMessage = message;
     }
-    
+
     goto done;
   }
 
@@ -553,7 +553,7 @@ void			ServerLink::sendEnter(PlayerType type,
 }
 
 bool ServerLink::readEnter (std::string& reason,
-                            uint16_t& code, uint16_t& rejcode)
+			    uint16_t& code, uint16_t& rejcode)
 {
   // wait for response
   uint16_t len;

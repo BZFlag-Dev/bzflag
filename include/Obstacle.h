@@ -43,15 +43,15 @@ class Obstacle {
   Obstacle();
 
   /** This function initializes the Obstacle with the given parameters.
-      @param pos         The position of the obstacle in world coordinates
+      @param pos	 The position of the obstacle in world coordinates
       @param rotation    The rotation around the obstacle's Z axis
       @param hwidth      Half the X size of the obstacle
       @param hbreadth    Half the Y size of the obstacle
       @param height      The Z size of the obstacle
       @param drive       @c true if the obstacle is drivethtrough, i.e. tanks
-                         can pass through it
+			 can pass through it
       @param shoot       @c true if the obstacle is shootthrough, i.e. bullets
-                         can pass through it
+			 can pass through it
   */
   Obstacle(const float* pos, float rotation, float hwidth, float hbreadth,
 	   float height, bool drive = false, bool shoot = false);
@@ -112,23 +112,23 @@ class Obstacle {
   /** This function checks if a tank, approximated as a box rotated around its
       Z axis, intersects this obstacle. */
   virtual bool inBox(const float* p, float angle,
-                     float halfWidth, float halfBreadth, float height) const = 0;
+		     float halfWidth, float halfBreadth, float height) const = 0;
 
   /** This function checks if a tank, approximated as a box rotated around its
       Z axis, intersects this obstacle. It also factors in the difference
       between the old Z location and the new Z location */
   virtual bool inMovingBox(const float* oldP, float oldAngle,
-                           const float* newP, float newAngle,
-                           float halfWidth, float halfBreadth, float height) const = 0;
+			   const float* newP, float newAngle,
+			   float halfWidth, float halfBreadth, float height) const = 0;
 
   /** This function checks if a horizontal rectangle crosses the surface of
       this obstacle.
-      @param p           The position of the centre of the rectangle
+      @param p	   The position of the centre of the rectangle
       @param angle       The rotation of the rectangle
       @param halfWidth   Half the width of the rectangle
       @param halfBreadth Half the breadth of the rectangle
       @param plane       The tangent plane of the obstacle where it's
-                         intersected by the rectangle will be stored here
+			 intersected by the rectangle will be stored here
   */
   virtual bool isCrossing(const float* p, float angle,
 			  float halfWidth, float halfBreadth, float height,
@@ -136,17 +136,17 @@ class Obstacle {
 
   /** This function checks if a box moving from @c pos1 to @c pos2 will hit
       this obstacle, and if it does what the surface normal at the hitpoint is.
-      @param pos1         The original position of the box
+      @param pos1	 The original position of the box
       @param azimuth1     The original rotation of the box
-      @param pos2         The position of the box at the hit
+      @param pos2	 The position of the box at the hit
       @param azimuth2     The rotation of the box at the hit
       @param halfWidth    Half the width of the box
       @param halfBreadth  Half the breadth of the box
       @param height       The height of the box
       @param normal       The surface normal of this obstacle at the hit point
-                          will be stored here
-      @returns            @c true if the box hits this obstacle, @c false
-                          otherwise
+			  will be stored here
+      @returns	    @c true if the box hits this obstacle, @c false
+			  otherwise
   */
   virtual bool getHitNormal(const float* pos1, float azimuth1,
 			    const float* pos2, float azimuth2,
@@ -190,21 +190,21 @@ class Obstacle {
   /** This function checks if a moving horizontal rectangle will hit a
       box-shaped obstacle, and if it does, computes the obstacle's normal
       at the hitpoint.
-      @param pos1        The original position of the rectangle
+      @param pos1	The original position of the rectangle
       @param azimuth1    The original rotation of the rectangle
-      @param pos2        The final position of the rectangle
+      @param pos2	The final position of the rectangle
       @param azimuth2    The final rotation of the rectangle
       @param halfWidth   Half the width of the rectangle
       @param halfBreadth Half the breadth of the rectangle
-      @param oPos        The position of the obstacle
+      @param oPos	The position of the obstacle
       @param oAzimuth    The rotation of the obstacle
       @param oWidth      Half the width of the obstacle
       @param oBreadth    Half the breadth of the obstacle
       @param oHeight     The height of the obstacle
       @param normal      The surface normal of the obstacle at the hitpoint
-                         will be stored here
-      @returns           The time of the hit, where 0 is the time when the
-                         rectangle is at @c pos1 and 1 is the time when it's
+			 will be stored here
+      @returns	   The time of the hit, where 0 is the time when the
+			 rectangle is at @c pos1 and 1 is the time when it's
 			 at @c pos2, and -1 means "no hit"
   */
   float getHitNormal(const float* pos1, float azimuth1,
@@ -221,7 +221,7 @@ class Obstacle {
     bool driveThrough;
     bool shootThrough;
     bool ZFlip;
-    
+
   private:
     int insideNodeCount;
     SceneNode** insideNodes;

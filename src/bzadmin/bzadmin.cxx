@@ -142,8 +142,8 @@ int main(int argc, char** argv) {
   if (op.getParameters().size() > 1) {
     for (unsigned int i = 1; i < op.getParameters().size(); ++i) {
       if (op.getParameters()[i] == "/quit") {
-        client.waitForServer();
-        return 0;
+	client.waitForServer();
+	return 0;
       }
       client.sendMessage(op.getParameters()[i], AllPlayers);
     }

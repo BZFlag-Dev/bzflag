@@ -83,7 +83,7 @@ namespace TextUtils {
   int parseDuration(const std::string &duration);
 
   // C h a r a c t e r  c o m p a r i s o n
-  
+
   /** compare_nocase is strait from Stroustrup.  This implementation uses
    * strings instead of char arrays and includes a maxlength bounds check.
    * It compares two strings and returns 0 if equal, <0 if s1 is less than
@@ -96,10 +96,10 @@ namespace TextUtils {
     int i=0;
     while (p1 != s1.end() && p2 != s2.end()) {
       if (i >= maxlength) {
-        return 0;
+	return 0;
       }
       if (::tolower(*p1) != ::tolower(*p2)) {
-        return (::tolower(*p1) < ::tolower(*p2)) ? -1 : 1;
+	return (::tolower(*p1) < ::tolower(*p2)) ? -1 : 1;
       }
       ++p1;
       ++p2;
@@ -107,22 +107,22 @@ namespace TextUtils {
     }
     return (s2.size() == s1.size()) ? 0 : (s1.size() < s2.size()) ? -1 : 1; // size is unsigned
   }
-  
-  
-  
+
+
+
   /** utility function returns truthfully whether
    * given character is a letter.
    */
   inline bool isAlphabetic(const char c)
   {
     if (( c > 64 && c < 91) ||
-        ( c > 96 && c < 123)) {
+	( c > 96 && c < 123)) {
       return true;
     }
     return false;
   }
-  
-  
+
+
   /** utility function returns truthfully whether
    * given character is a number.
    */
@@ -133,8 +133,8 @@ namespace TextUtils {
     }
     return false;
   }
-  
-  
+
+
   /** utility function returns truthfully whether
    * a given character is printable whitespace.
    * this includes newline, carriage returns, tabs
@@ -143,28 +143,28 @@ namespace TextUtils {
   inline bool isWhitespace(const char c)
   {
     if ((( c >= 9 ) && ( c <= 13 )) ||
-        (c == 32)) {
+	(c == 32)) {
       return true;
     }
     return false;
   }
-  
-  
+
+
   /** utility function returns truthfully whether
    * a given character is punctuation.
    */
   inline bool isPunctuation(const char c)
   {
     if (( c > 32 && c < 48) ||
-        ( c > 57 && c < 65) ||
-        ( c > 90 && c < 97) ||
-        ( c > 122 && c < 127)) {
+	( c > 57 && c < 65) ||
+	( c > 90 && c < 97) ||
+	( c > 122 && c < 127)) {
       return true;
     }
     return false;
   }
-  
-  
+
+
   /** utility function returns truthfully whether
    * given character is an alphanumeric.  this is
    * strictly letters and numbers.
@@ -176,8 +176,8 @@ namespace TextUtils {
     }
     return false;
   }
-  
-  
+
+
   /** utility function returns truthfully whether
    * given character is printable.  this includes
    * letters, numbers, and punctuation.
@@ -190,8 +190,8 @@ namespace TextUtils {
     }
     return false;
   }
-  
-  
+
+
   /** utility function returns truthfully whether
    * given character is printable.  this includes
    * letters, numbers, punctuation, and whitespace
@@ -203,11 +203,11 @@ namespace TextUtils {
     }
     return true;
   }
-  
-  
-  
+
+
+
   // S t r i n g  i t e r a t i o n
-  
+
   /** utility method that returns the position of the
    * first alphanumeric character from a string
    */
@@ -215,17 +215,17 @@ namespace TextUtils {
   {
     if (input.size() == 0) {
       return -1;
-  
+
     }
-  
+
     int i = 0;
     while (!isAlphanumeric(input[i]) && (i < max)) {
       i++;
     }
     return i;
   }
-  
-  
+
+
   /** utility method that returns the position of the
    * first non-alphanumeric character from a string
    */
@@ -234,15 +234,15 @@ namespace TextUtils {
     if (input.size() == 0) {
       return -1;
     }
-  
+
     int i = 0;
     while (isAlphanumeric(input[i]) && (i < max)) {
       i++;
     }
     return i;
   }
-  
-  
+
+
   /** utility method that returns the position of the
    * first printable character from a string
    */
@@ -251,15 +251,15 @@ namespace TextUtils {
     if (input.size() == 0) {
       return -1;
     }
-  
+
     int i = 0;
     while (!isPrintable(input[i]) && (i < max)) {
       i++;
     }
     return i;
   }
-  
-  
+
+
   /** utility method that returns the position of the
    * first non-printable character from a string
    */
@@ -268,15 +268,15 @@ namespace TextUtils {
     if (input.size() == 0) {
       return -1;
     }
-  
+
     int i = 0;
     while (isPrintable(input[i]) && (i < max)) {
       i++;
     }
     return i;
   }
-  
-  
+
+
   /** utility method that returns the position of the
    * first visible character from a string
    */
@@ -285,15 +285,15 @@ namespace TextUtils {
     if (input.size() == 0) {
       return -1;
     }
-  
+
     int i = 0;
     while (isVisible(input[i]) && (i < max)) {
       i++;
     }
     return i;
   }
-  
-  
+
+
   /** utility method that returns the position of the
    * first non visible character from a string (control
    * codes or whitespace
@@ -303,15 +303,15 @@ namespace TextUtils {
     if (input.size() == 0) {
       return -1;
     }
-  
+
     int i = 0;
     while (!isVisible(input[i]) && (i < max)) {
       i++;
     }
     return i;
   }
-  
-  
+
+
   /** utility method that returns the position of the
    * first alphabetic character from a string
    */
@@ -319,17 +319,17 @@ namespace TextUtils {
   {
     if (input.size() == 0) {
       return -1;
-  
+
     }
-  
+
     int i = 0;
     while (!isAlphabetic(input[i]) && (i < max)) {
       i++;
     }
     return i;
   }
-  
-  
+
+
   /** utility method that returns the position of the
    * first printable character from a string
    */
@@ -338,18 +338,18 @@ namespace TextUtils {
     if (input.size() == 0) {
       return -1;
     }
-  
+
     int i = 0;
     while (isAlphabetic(input[i]) && (i < max)) {
       i++;
     }
     return i;
   }
-  
+
   /** url-encodes a string
    */
   std::string url_encode(const std::string &text);
-  
+
   /** escape a string
    */
   std::string escape(const std::string &text, char escaper);
@@ -357,7 +357,7 @@ namespace TextUtils {
   /** un-escape a string
    */
   std::string unescape(const std::string &text, char escaper);
-  
+
   /** lookup for an un-escaped separator
    */
   int unescape_lookup(const std::string &text, char escaper, char sep);

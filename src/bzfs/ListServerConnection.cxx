@@ -284,7 +284,7 @@ void ListServerLink::sendMessage(std::string message)
       closeLink();
     } else {
       nextMessageType = ListServerLink::NONE;
-      phase           = ListServerLink::WRITTEN;
+      phase	   = ListServerLink::WRITTEN;
     }
   } else {
     closeLink();

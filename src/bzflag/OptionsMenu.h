@@ -47,9 +47,9 @@ private:
   HUDuiControl*	displaySetting;
   GUIOptionsMenu*	guiOptionsMenu;
   SaveWorldMenu*	saveWorldMenu;
-  InputMenu*            inputMenu;
-  AudioMenu*            audioMenu;
-  DisplayMenu*          displayMenu;
+  InputMenu*	    inputMenu;
+  AudioMenu*	    audioMenu;
+  DisplayMenu*	  displayMenu;
 };
 
 

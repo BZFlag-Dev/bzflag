@@ -38,13 +38,13 @@ TetraBuilding::TetraBuilding()
 
 
 TetraBuilding::TetraBuilding(const float _vertices[4][3],
-                             const float _normals[4][3][3],
-                             const float _texcoords[4][3][2],
-                             const bool _useNormals[4],
-                             const bool _useTexcoords[4],
-                             const BzMaterial* _materials[4],
-                             bool drive, bool shoot)
-{ 
+			     const float _normals[4][3][3],
+			     const float _texcoords[4][3][2],
+			     const bool _useNormals[4],
+			     const bool _useTexcoords[4],
+			     const BzMaterial* _materials[4],
+			     bool drive, bool shoot)
+{
   mesh = NULL;
 
   // tetra specific parameters
@@ -89,19 +89,19 @@ void TetraBuilding::finalize()
   center[2] *= 0.25f;
   checkPoints.push_back(center);
   checkTypes.push_back(MeshObstacle::CheckInside);
-  
+
   for (i = 0; i < 4; i++) {
     verts.push_back(vertices[i]);
   }
-  
+
   mesh = new MeshObstacle(checkTypes, checkPoints, verts, norms, texcds,
-                          4, false, false, driveThrough, shootThrough);
-  
+			  4, false, false, driveThrough, shootThrough);
+
   // add the faces to the mesh
   std::vector<int> vlist;
   std::vector<int> nlist;
   std::vector<int> tlist;
-  
+
   push3Ints(vlist, 0, 2, 1);
   addFace(mesh, vlist, nlist, tlist, materials[0], -1);
   push3Ints(vlist, 0, 1, 3);
@@ -110,7 +110,7 @@ void TetraBuilding::finalize()
   addFace(mesh, vlist, nlist, tlist, materials[2], -1);
   push3Ints(vlist, 2, 0, 3);
   addFace(mesh, vlist, nlist, tlist, materials[3], -1);
-  
+
   // wrap it up
   mesh->setIsLocal(true);
   mesh->finalize();
@@ -126,7 +126,7 @@ void TetraBuilding::finalize()
   size[2] = maxs[2] - mins[2];
   angle = 0.0f;
   ZFlip = false;
-  
+
   return;
 }
 
@@ -163,7 +163,7 @@ void TetraBuilding::checkVertexOrder()
     memcpy (tmpTexcoords, texcoords[1], sizeof(tmpTexcoords));
     memcpy (texcoords[1], texcoords[2], sizeof(texcoords[1]));
     memcpy (texcoords[2], tmpTexcoords, sizeof(texcoords[2]));
-    
+
     bool tmpBool = useNormals[1];
     useNormals[1] = useNormals[2];
     useNormals[2] = tmpBool;
@@ -263,7 +263,7 @@ bool TetraBuilding::inBox(const float*, float, float, float, float) const
 
 
 bool TetraBuilding::inMovingBox(const float*, float, const float*, float,
-                              float, float, float) const
+			      float, float, float) const
 {
   assert(false);
   return false;
@@ -271,8 +271,8 @@ bool TetraBuilding::inMovingBox(const float*, float, const float*, float,
 
 
 bool TetraBuilding::isCrossing(const float* /*p*/, float /*angle*/,
-                          float /*dx*/, float /*dy*/, float /*height*/,
-                          float* /*_plane*/) const
+			  float /*dx*/, float /*dy*/, float /*height*/,
+			  float* /*_plane*/) const
 {
   assert(false);
   return false;
@@ -332,7 +332,7 @@ void *TetraBuilding::pack(void* buf)
   for (v = 0; v < 4; v++) {
     if (useNormals[v]) {
       for (int i = 0; i < 3; i++) {
-        buf = nboPackVector(buf, normals[v][i]);
+	buf = nboPackVector(buf, normals[v][i]);
       }
     }
   }
@@ -344,12 +344,12 @@ void *TetraBuilding::pack(void* buf)
   for (v = 0; v < 4; v++) {
     if (useTexcoords[v]) {
       for (int i = 0; i < 3; i++) {
-        buf = nboPackFloat(buf, texcoords[v][i][0]);
-        buf = nboPackFloat(buf, texcoords[v][i][1]);
+	buf = nboPackFloat(buf, texcoords[v][i][0]);
+	buf = nboPackFloat(buf, texcoords[v][i][1]);
       }
     }
   }
-  
+
   // pack the materials
   for (v = 0; v < 4; v++) {
     int matindex = MATERIALMGR.getIndex(materials[v]);
@@ -382,7 +382,7 @@ void *TetraBuilding::unpack(void* buf)
   for (v = 0; v < 4; v++) {
     if (useNormals[v]) {
       for (int i = 0; i < 3; i++) {
-        buf = nboUnpackVector(buf, normals[v][i]);
+	buf = nboUnpackVector(buf, normals[v][i]);
       }
     }
   }
@@ -394,12 +394,12 @@ void *TetraBuilding::unpack(void* buf)
   for (v = 0; v < 4; v++) {
     if (useTexcoords[v]) {
       for (int i = 0; i < 3; i++) {
-        buf = nboUnpackFloat(buf, texcoords[v][i][0]);
-        buf = nboUnpackFloat(buf, texcoords[v][i][1]);
+	buf = nboUnpackFloat(buf, texcoords[v][i][0]);
+	buf = nboUnpackFloat(buf, texcoords[v][i][1]);
       }
     }
   }
-  
+
   // unpack the materials
   for (v = 0; v < 4; v++) {
     int matindex;
@@ -437,7 +437,7 @@ int TetraBuilding::packSize()
   }
   // materials
   fullSize = fullSize + sizeof(int[4]);
-  
+
   return fullSize;
 }
 
@@ -451,20 +451,20 @@ void TetraBuilding::print(std::ostream& out, int /*level*/)
   // write the vertex information
   for (i = 0; i < 4; i++) {
     const float* vertex = vertices[i];
-    out << "\tvertex " << vertex[0] << " " << vertex[1] << " " 
-                       << vertex[2] << std::endl;
+    out << "\tvertex " << vertex[0] << " " << vertex[1] << " "
+		       << vertex[2] << std::endl;
     if (useNormals[i]) {
       for (int j = 0; j < 3; j++) {
-        const float* normal = normals[i][j];
-        out << "\tnormal " << normal[0] << " " << normal[1] << " "
-                           << normal[2] << std::endl;
+	const float* normal = normals[i][j];
+	out << "\tnormal " << normal[0] << " " << normal[1] << " "
+			   << normal[2] << std::endl;
       }
     }
     if (useTexcoords[i]) {
       for (int j = 0; j < 3; j++) {
-        const float* texcoord = texcoords[i][j];
-        out << "\tnormal " << texcoord[0] << " " << texcoord[1] << " "
-                           << texcoord[2] << std::endl;
+	const float* texcoord = texcoords[i][j];
+	out << "\tnormal " << texcoord[0] << " " << texcoord[1] << " "
+			   << texcoord[2] << std::endl;
       }
     }
     MATERIALMGR.printReference(out, materials[i]);
@@ -482,7 +482,7 @@ void TetraBuilding::print(std::ostream& out, int /*level*/)
     }
   }
   out << "end" << std::endl << std::endl;
-  
+
   return;
 }
 

@@ -454,7 +454,7 @@ void AccessControlList::purgeMasters(void) {
       hItr++;
   }
 }
-  
+
 
 std::vector<std::pair<std::string, std::string> > AccessControlList::listMasterBans(void) const {
   std::vector<std::pair<std::string, std::string> >bans;

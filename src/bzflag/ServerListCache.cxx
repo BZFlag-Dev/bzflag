@@ -97,9 +97,9 @@ void			ServerListCache::saveCache()
     for (SRV_STR_MAP::iterator iter = serverCache.begin(); iter != serverCache.end(); iter++){
       // weed out after 30 days *if* if we should
       if (doWeed && iter->second.getAgeMinutes() > 60*24*30) {
-        cacheAddedNum --;
-        doWeed = (cacheAddedNum > 0);
-        continue;
+	cacheAddedNum --;
+	doWeed = (cacheAddedNum > 0);
+	continue;
       }
 
       // write out the index of the map

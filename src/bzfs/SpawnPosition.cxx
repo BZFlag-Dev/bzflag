@@ -71,77 +71,77 @@ SpawnPosition::SpawnPosition(int playerId, bool onGroundOnly, bool notNearEdges)
     bool foundspot = false;
     while (!foundspot) {
       if (!world->getZonePoint(std::string(Team::getName(team)), testPos)) {
-        if (notNearEdges) {
-          // don't spawn close to map edges in CTF mode
-          testPos[0] = ((float)bzfrand() - 0.5f) * size * 0.6f;
-          testPos[1] = ((float)bzfrand() - 0.5f) * size * 0.6f;
+	if (notNearEdges) {
+	  // don't spawn close to map edges in CTF mode
+	  testPos[0] = ((float)bzfrand() - 0.5f) * size * 0.6f;
+	  testPos[1] = ((float)bzfrand() - 0.5f) * size * 0.6f;
 	} else {
-          testPos[0] = ((float)bzfrand() - 0.5f) * (size - 2.0f * tankRadius);
-          testPos[1] = ((float)bzfrand() - 0.5f) * (size - 2.0f * tankRadius);
+	  testPos[0] = ((float)bzfrand() - 0.5f) * (size - 2.0f * tankRadius);
+	  testPos[1] = ((float)bzfrand() - 0.5f) * (size - 2.0f * tankRadius);
 	}
-        testPos[2] = onGroundOnly ? 0.0f : ((float)bzfrand() * maxWorldHeight);
+	testPos[2] = onGroundOnly ? 0.0f : ((float)bzfrand() * maxWorldHeight);
       }
       tries++;
 
       int type = world->boxInBuilding(&building, testPos, azimuth,
-                                      tankWidth, tankLength, tankHeight);
+				      tankWidth, tankLength, tankHeight);
 
       if (onGroundOnly) {
-        if (type == NOT_IN_BUILDING) {
-          foundspot = true;
-        }
+	if (type == NOT_IN_BUILDING) {
+	  foundspot = true;
+	}
       } else {
-        if ((type == NOT_IN_BUILDING) && (testPos[2] > 0.0f)) {
-          testPos[2] = 0.0f;
-          //Find any intersection regardless of z
-          type = world->boxInBuilding(&building, testPos, azimuth,
-                                      tankWidth, tankLength, maxWorldHeight);
-        }
+	if ((type == NOT_IN_BUILDING) && (testPos[2] > 0.0f)) {
+	  testPos[2] = 0.0f;
+	  //Find any intersection regardless of z
+	  type = world->boxInBuilding(&building, testPos, azimuth,
+				      tankWidth, tankLength, maxWorldHeight);
+	}
 
-        // in a building? try climbing on roof until on top
-        int lastType = type;
-        const Obstacle* lastObs = NULL;
+	// in a building? try climbing on roof until on top
+	int lastType = type;
+	const Obstacle* lastObs = NULL;
 	int retriesRemaining = 100; // don't climb forever
-        while (type != NOT_IN_BUILDING) {
-          testPos[2] = building->getPosition()[2] + building->getHeight() + 0.0001f;
-          tries++;
-          lastType = type;
-          lastObs = building;
-          type = world->boxInBuilding(&building, testPos, azimuth,
-                                      tankWidth, tankLength, tankHeight);
+	while (type != NOT_IN_BUILDING) {
+	  testPos[2] = building->getPosition()[2] + building->getHeight() + 0.0001f;
+	  tries++;
+	  lastType = type;
+	  lastObs = building;
+	  type = world->boxInBuilding(&building, testPos, azimuth,
+				      tankWidth, tankLength, tankHeight);
 	  if (--retriesRemaining <= 0) {
 	    DEBUG1("Warning: getSpawnLocation had to climb too many buildings\n");
 	    break;
 	  }
-        }
-        // ok, when not on top of pyramid, tetra, or teleporter
-        if ((lastType == NOT_IN_BUILDING) || ((lastObs != NULL) &&
-            (lastObs->isFlatTop() && !lastObs->isDriveThrough()))) {
-          foundspot = true;
-        }
-//        if ((lastType != IN_PYRAMID) && (lastType != IN_TETRA) &&
-//            (lastType != IN_TELEPORTER)) {
-//          foundspot = true;
-//        }
-        // only try up in the sky so many times
-        if (--inAirAttempts <= 0) {
-          onGroundOnly = true;
-        }
+	}
+	// ok, when not on top of pyramid, tetra, or teleporter
+	if ((lastType == NOT_IN_BUILDING) || ((lastObs != NULL) &&
+	    (lastObs->isFlatTop() && !lastObs->isDriveThrough()))) {
+	  foundspot = true;
+	}
+//	if ((lastType != IN_PYRAMID) && (lastType != IN_TETRA) &&
+//	    (lastType != IN_TELEPORTER)) {
+//	  foundspot = true;
+//	}
+	// only try up in the sky so many times
+	if (--inAirAttempts <= 0) {
+	  onGroundOnly = true;
+	}
       }
 
       // check every now and then if we have already used up 10ms of time
       if (tries >= 50) {
-        tries = 0;
-        if (TimeKeeper::getCurrent() - start > 0.01f) {
-          if (bestDist < 0.0f) { // haven't found a single spot
-            //Just drop the sucka in, and pray
-            pos[0] = testPos[0];
-            pos[1] = testPos[1];
-            pos[2] = maxWorldHeight;
+	tries = 0;
+	if (TimeKeeper::getCurrent() - start > 0.01f) {
+	  if (bestDist < 0.0f) { // haven't found a single spot
+	    //Just drop the sucka in, and pray
+	    pos[0] = testPos[0];
+	    pos[1] = testPos[1];
+	    pos[2] = maxWorldHeight;
 	    DEBUG1("Warning: getSpawnLocation ran out of time, just dropping the sucker in\n");
-          }
-          break;
-        }
+	  }
+	  break;
+	}
       }
 
       // check if spot is safe enough
@@ -215,7 +215,7 @@ const bool SpawnPosition::isImminentlyDangerous() const
 	  if (distanceFrom(enemyPos) < safeSWRadius) { // too close to SW
 	    return true;	// eek, don't spawn here
 	  }
-        }
+	}
       }
       // don't spawn in the line of sight of a normal-shot tank within a certain distance
       if (distanceFrom(enemyPos) < safeDistance) { // within danger zone?
@@ -245,11 +245,11 @@ const float SpawnPosition::enemyProximityCheck(float &enemyAngle) const
 	&& areFoes(playerData->player.getTeam(), team)) {
       float *enemyPos = lastState[i].pos;
       if (fabs(enemyPos[2] - testPos[2]) < 1.0f) {
-        float x = enemyPos[0] - testPos[0];
-        float y = enemyPos[1] - testPos[1];
-        float distSq = x * x + y * y;
-        if (distSq < worstDist) {
-          worstDist  = distSq;
+	float x = enemyPos[0] - testPos[0];
+	float y = enemyPos[1] - testPos[1];
+	float distSq = x * x + y * y;
+	if (distSq < worstDist) {
+	  worstDist  = distSq;
 	  enemyAngle = lastState[i].azimuth;
 	  noEnemy    = false;
 	}

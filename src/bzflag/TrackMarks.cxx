@@ -40,7 +40,7 @@ enum TrackType {
   treads = 0,
   puddle = 1
 };
-  
+
 typedef struct {
   float pos[3];
   float angle;
@@ -85,12 +85,12 @@ static void drawTreads(const TrackEntry& te, float lifetime);
 void TrackMarks::init()
 {
   clear();
-  
+
   TextureManager &tm = TextureManager::instance();
   int puddleTexId = tm.getTextureID(puddleTexture, false);
-  
+
   OpenGLGStateBuilder gb;
-  
+
   gb.reset();
   gb.setShading(GL_FLAT);
   gb.setAlphaFunc(GL_GEQUAL, 0.1f);
@@ -98,16 +98,16 @@ void TrackMarks::init()
   gb.enableMaterial(false); // no lighting
   gb.setTexture(puddleTexId);
   puddleState = gb.getState();
-  
+
   gb.reset();
   gb.setShading(GL_FLAT);
   gb.setAlphaFunc(GL_GEQUAL, 0.1f);
   gb.setBlending(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
   gb.enableMaterial(false); // no lighting
   treadsState = gb.getState();
-  
+
   setUserFade(BZDB.eval("userTrackFade"));
-  
+
   return;
 }
 
@@ -138,7 +138,7 @@ void TrackMarks::setUserFade(float value)
 
   UserFadeScale = value;
   BZDB.setFloat("userTrackFade", value);
-  
+
   return;
 }
 
@@ -150,11 +150,11 @@ float TrackMarks::getUserFade()
 
 
 bool TrackMarks::addMark(const float pos[3], float scale, float angle,
-                         int phydrv)
+			 int phydrv)
 {
   TrackEntry te;
   TrackType type;
-  
+
   if ((pos[2] <= 0.1f) && BZDB.get(StateDatabase::BZDB_MIRROR) != "none") {
     type = puddle;
   } else {
@@ -163,7 +163,7 @@ bool TrackMarks::addMark(const float pos[3], float scale, float angle,
       return false; // Narrow tanks don't draw treads
     }
   }
-  
+
   te.startTime = TimeKeeper::getCurrent();
   memcpy (te.pos, pos, sizeof(float[3]));
   if (pos[2] > 0.0f) {
@@ -191,26 +191,26 @@ static void updateList(std::list<TrackEntry>& list, float dt)
     if (te.phydrv >= 0) {
       const PhysicsDriver* phydrv = PHYDRVMGR.getDriver(te.phydrv);
       if (phydrv != NULL) {
-        const float* v = phydrv->getVelocity();
-        te.pos[0] += (v[0] * dt);
-        te.pos[1] += (v[1] * dt);
-        
-        const float av = phydrv->getAngularVel();
-        if (av != 0.0f) {
-          const float* ap = phydrv->getAngularPos();
-          const float da = (av * dt);
-          const float cos_val = cosf(da);
-          const float sin_val = sinf(da);
-          const float dx = te.pos[0] - ap[0];
-          const float dy = te.pos[1] - ap[1];
-          te.pos[0] = ap[0] + ((cos_val * dx) - (sin_val * dy));
-          te.pos[1] = ap[1] + ((cos_val * dy) + (sin_val * dx));
-          te.angle += da * (180.0f / M_PI);
-        }
+	const float* v = phydrv->getVelocity();
+	te.pos[0] += (v[0] * dt);
+	te.pos[1] += (v[1] * dt);
+
+	const float av = phydrv->getAngularVel();
+	if (av != 0.0f) {
+	  const float* ap = phydrv->getAngularPos();
+	  const float da = (av * dt);
+	  const float cos_val = cosf(da);
+	  const float sin_val = sinf(da);
+	  const float dx = te.pos[0] - ap[0];
+	  const float dy = te.pos[1] - ap[1];
+	  te.pos[0] = ap[0] + ((cos_val * dx) - (sin_val * dy));
+	  te.pos[1] = ap[1] + ((cos_val * dy) + (sin_val * dx));
+	  te.angle += da * (180.0f / M_PI);
+	}
       }
     }
   }
-  
+
   return;
 }
 
@@ -227,7 +227,7 @@ void TrackMarks::render()
 {
   TrackFadeTime = BZDB.eval(StateDatabase::BZDB_TRACKFADE);
   TrackFadeTime = TrackFadeTime * UserFadeScale;
-  
+
   if ((TrackFadeTime <= 0.0f) || !BZDBCache::zbuffer) {
     clear();
     return;
@@ -236,11 +236,11 @@ void TrackMarks::render()
   TimeKeeper nowTime = TimeKeeper::getCurrent();
 
   std::list<TrackEntry>::iterator it;
-  
+
   // draw treads
   treadsState.setState();
   it = TreadsList.begin();
-  while (it != TreadsList.end()) {  
+  while (it != TreadsList.end()) {
     std::list<TrackEntry>::iterator next = it;
     next++;
     TrackEntry& te = *it;
@@ -253,11 +253,11 @@ void TrackMarks::render()
     it = next;
     drawTreads(te, timeDiff);
   }
-    
+
   // draw puddles
   puddleState.setState();
   it = PuddleList.begin();
-  while (it != PuddleList.end()) {  
+  while (it != PuddleList.end()) {
     std::list<TrackEntry>::iterator next = it;
     next++;
     TrackEntry& te = *it;
@@ -280,7 +280,7 @@ static void drawPuddle(const TrackEntry& te, float lifetime)
   const float ratio = (lifetime / TrackFadeTime);
   const float scale = 2.0f * ratio;
   const float offset = te.scale * TreadMiddle;
-    
+
   glColor4f(1.0f, 1.0f, 1.0f, 1.0f - ratio);
 
   glPushMatrix();
@@ -299,7 +299,7 @@ static void drawPuddle(const TrackEntry& te, float lifetime)
       glVertex3f(+1.0f, +1.0f, 0.0f);
       glTexCoord2f(0.0f, 1.0f);
       glVertex3f(-1.0f, +1.0f, 0.0f);
-    } 
+    }
     glEnd();
   }
   glPopMatrix();
@@ -315,15 +315,15 @@ static void drawPuddle(const TrackEntry& te, float lifetime)
 
       glBegin(GL_QUADS);
       {
-        glTexCoord2f(0.0f, 0.0f);
-        glVertex3f(-1.0f, -1.0f, 0.0f);
-        glTexCoord2f(1.0f, 0.0f);
-        glVertex3f(+1.0f, -1.0f, 0.0f);
-        glTexCoord2f(1.0f, 1.0f);
-        glVertex3f(+1.0f, +1.0f, 0.0f);
-        glTexCoord2f(0.0f, 1.0f);
-        glVertex3f(-1.0f, +1.0f, 0.0f);
-      } 
+	glTexCoord2f(0.0f, 0.0f);
+	glVertex3f(-1.0f, -1.0f, 0.0f);
+	glTexCoord2f(1.0f, 0.0f);
+	glVertex3f(+1.0f, -1.0f, 0.0f);
+	glTexCoord2f(1.0f, 1.0f);
+	glVertex3f(+1.0f, +1.0f, 0.0f);
+	glTexCoord2f(0.0f, 1.0f);
+	glVertex3f(-1.0f, +1.0f, 0.0f);
+      }
       glEnd();
     }
     glPopMatrix();
@@ -336,15 +336,15 @@ static void drawPuddle(const TrackEntry& te, float lifetime)
 static void drawTreads(const TrackEntry& te, float lifetime)
 {
   const float ratio = (lifetime / TrackFadeTime);
-  
+
   glColor4f(0.0f, 0.0f, 0.0f, 1.0f - ratio);
-  
+
   glPushMatrix();
   {
     glTranslatef(te.pos[0], te.pos[1], te.pos[2]);
     glRotatef(te.angle, 0.0f, 0.0f, 1.0f);
     glScalef(1.0f, te.scale, 1.0f);
-    
+
     const float halfWidth = 0.5f * TreadMarkWidth;
 
     glBegin(GL_QUADS);
@@ -358,11 +358,11 @@ static void drawTreads(const TrackEntry& te, float lifetime)
       glVertex3f(-halfWidth, -TreadOutside, 0.0f);
       glVertex3f(+halfWidth, -TreadOutside, 0.0f);
       glVertex3f(+halfWidth, -TreadInside, 0.0f);
-    } 
+    }
     glEnd();
   }
   glPopMatrix();
-  
+
   return;
 }
 

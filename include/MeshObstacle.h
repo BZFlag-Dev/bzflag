@@ -31,18 +31,18 @@ class MeshObstacle : public Obstacle {
   public:
     MeshObstacle();
     MeshObstacle(const std::vector<char>& checkTypes,
-                 const std::vector<cfvec3>& checkPoints,
-                 const std::vector<cfvec3>& vertices,
-                 const std::vector<cfvec3>& normals,
-                 const std::vector<cfvec2>& texcoords,
-                 int faceCount, bool noclusters,
-                 bool bounce, bool drive, bool shoot);
+		 const std::vector<cfvec3>& checkPoints,
+		 const std::vector<cfvec3>& vertices,
+		 const std::vector<cfvec3>& normals,
+		 const std::vector<cfvec2>& texcoords,
+		 int faceCount, bool noclusters,
+		 bool bounce, bool drive, bool shoot);
 
     bool addFace (const std::vector<int>& vertices,
-                  const std::vector<int>& normals,
-                  const std::vector<int>& texcoords,
-                  const BzMaterial* bzMaterial, int physics,
-                  bool noclusters, bool bounce, bool drive, bool shoot);
+		  const std::vector<int>& normals,
+		  const std::vector<int>& texcoords,
+		  const BzMaterial* bzMaterial, int physics,
+		  bool noclusters, bool bounce, bool drive, bool shoot);
 
     ~MeshObstacle();
 
@@ -66,19 +66,19 @@ class MeshObstacle : public Obstacle {
 
     bool inCylinder(const float* p, float radius, float height) const;
     bool inBox(const float* p, float angle,
-               float halfWidth, float halfBreadth, float height) const;
+	       float halfWidth, float halfBreadth, float height) const;
     bool inMovingBox(const float* oldP, float oldAngle,
-                     const float *newP, float newAngle,
-                     float halfWidth, float halfBreadth, float height) const;
+		     const float *newP, float newAngle,
+		     float halfWidth, float halfBreadth, float height) const;
     bool isCrossing(const float* p, float angle,
-                    float halfWidth, float halfBreadth, float height,
-                    float* plane) const;
+		    float halfWidth, float halfBreadth, float height,
+		    float* plane) const;
 
     bool getHitNormal(const float* pos1, float azimuth1,
-                      const float* pos2, float azimuth2,
-                      float halfWidth, float halfBreadth,
-                      float height, float* normal) const;
-                      
+		      const float* pos2, float azimuth2,
+		      float halfWidth, float halfBreadth,
+		      float height, float* normal) const;
+
     bool containsPoint(const float point[3]) const;
     bool containsPointNoOctree(const float point[3]) const;
 
@@ -94,7 +94,7 @@ class MeshObstacle : public Obstacle {
     const MeshFace* getFace(int face) const;
     bool useSmoothBounce() const;
     bool noClusters() const;
-    
+
     void setIsLocal(bool);
     bool getIsLocal() const;
 
@@ -108,7 +108,7 @@ class MeshObstacle : public Obstacle {
 
     static const char* typeName;
     bool isLocal; // generated on the client side
-    
+
     int checkCount;
     char* checkTypes;
     fvec3* checkPoints;

@@ -128,16 +128,16 @@ static DefaultDBItem	defaultDBItems[] = {
   { "displayFlagHelp",		"1",			true,	StateDatabase::ReadWrite,	setFlagHelp },
   { "displayConsoleAndRadar",	"1",			false,	StateDatabase::ReadWrite,	NULL },
   { "displayRadarRange",	"0.5",			false,	StateDatabase::ReadWrite,	NULL },
-  { "displayFOV",	        "60.0",			false,  StateDatabase::ReadWrite,	NULL },
+  { "displayFOV",		"60.0",			false,  StateDatabase::ReadWrite,	NULL },
   { "roamZoomMax",		"120",			false,	StateDatabase::ReadWrite,	NULL },
   { "roamZoomMin",		"15",			false,	StateDatabase::ReadWrite,	NULL },
   { "maxQuality",		"3",			false,	StateDatabase::ReadWrite,	NULL },
-  { "groundTexRepeat",		"0.1",                  true,	StateDatabase::ReadWrite,	NULL },
-  { "groundHighResTexRepeat",	"0.05",                 true,	StateDatabase::ReadWrite,	NULL },
-  { "boxWallTexRepeat",		"1.5",                  true,	StateDatabase::ReadWrite,	NULL },
-  { "boxWallHighResTexRepeat",	"5.0",                  true,	StateDatabase::ReadWrite,	NULL },
-  { "pyrWallTexRepeat",		"3.0",                  true,	StateDatabase::ReadWrite,	NULL },
-  { "pyrWallHighResTexRepeat",	"8.0",                  true,	StateDatabase::ReadWrite,	NULL },
+  { "groundTexRepeat",		"0.1",		  true,	StateDatabase::ReadWrite,	NULL },
+  { "groundHighResTexRepeat",	"0.05",		 true,	StateDatabase::ReadWrite,	NULL },
+  { "boxWallTexRepeat",		"1.5",		  true,	StateDatabase::ReadWrite,	NULL },
+  { "boxWallHighResTexRepeat",	"5.0",		  true,	StateDatabase::ReadWrite,	NULL },
+  { "pyrWallTexRepeat",		"3.0",		  true,	StateDatabase::ReadWrite,	NULL },
+  { "pyrWallHighResTexRepeat",	"8.0",		  true,	StateDatabase::ReadWrite,	NULL },
   { "allowInputChange",		"1",			true,	StateDatabase::ReadWrite,	NULL },
   { "pulseDepth",		"0.4",			true,	StateDatabase::ReadWrite,	NULL },
   { "pulseRate",		"1.0",			true,	StateDatabase::ReadWrite,	NULL },
@@ -147,12 +147,12 @@ static DefaultDBItem	defaultDBItems[] = {
 
   // default texture names
   { "stdGroundTexture",		"std_ground",		true,	StateDatabase::ReadWrite,	NULL },
-  { "zoneGroundTexture",	"zone_ground",          true,	StateDatabase::ReadWrite,	NULL },
-  { "boxWallTexture",	        "boxwall",              true,	StateDatabase::ReadWrite,	NULL },
-  { "boxTopTexture",	        "roof",                 true,	StateDatabase::ReadWrite,	NULL },
-  { "pyrWallTexture",	        "pyrwall",              true,	StateDatabase::ReadWrite,	NULL },
-  { "cautionTexture",	        "caution",              true,	StateDatabase::ReadWrite,	NULL },
-  { "waterTexture",	        "water",                true,	StateDatabase::ReadWrite,	NULL },
+  { "zoneGroundTexture",	"zone_ground",	  true,	StateDatabase::ReadWrite,	NULL },
+  { "boxWallTexture",		"boxwall",	      true,	StateDatabase::ReadWrite,	NULL },
+  { "boxTopTexture",		"roof",		 true,	StateDatabase::ReadWrite,	NULL },
+  { "pyrWallTexture",		"pyrwall",	      true,	StateDatabase::ReadWrite,	NULL },
+  { "cautionTexture",		"caution",	      true,	StateDatabase::ReadWrite,	NULL },
+  { "waterTexture",		"water",		true,	StateDatabase::ReadWrite,	NULL },
 
   // default fonts
   { "consoleFont",		"VeraMonoBold",		true,	StateDatabase::ReadWrite,	NULL },
@@ -160,23 +160,23 @@ static DefaultDBItem	defaultDBItems[] = {
   { "serifFont",		"TogaSerifBold",	true,	StateDatabase::ReadWrite,	NULL },
 
   // team based object sufixes
-  { "tankTexture",	        "tank",                 true,	StateDatabase::ReadWrite,	NULL },
-  { "boltTexture",	        "bolt",                 true,	StateDatabase::ReadWrite,	NULL },
-  { "laserTexture",	        "laser",                true,	StateDatabase::ReadWrite,	NULL },
-  { "baseTopTexture",	        "basetop",              true,	StateDatabase::ReadWrite,	NULL },
-  { "baseWallTexture",	        "basewall",             true,	StateDatabase::ReadWrite,	NULL },
+  { "tankTexture",		"tank",		 true,	StateDatabase::ReadWrite,	NULL },
+  { "boltTexture",		"bolt",		 true,	StateDatabase::ReadWrite,	NULL },
+  { "laserTexture",		"laser",		true,	StateDatabase::ReadWrite,	NULL },
+  { "baseTopTexture",		"basetop",	      true,	StateDatabase::ReadWrite,	NULL },
+  { "baseWallTexture",		"basewall",	     true,	StateDatabase::ReadWrite,	NULL },
 
   // team prefixes
-  { "redTeamPrefix",	        "red_",                 true,	StateDatabase::ReadWrite,	NULL },
-  { "blueTeamPrefix",	        "blue_",                true,	StateDatabase::ReadWrite,	NULL },
-  { "greenTeamPrefix",	        "green_",               true,	StateDatabase::ReadWrite,	NULL },
-  { "purpleTeamPrefix",	        "purple_",              true,	StateDatabase::ReadWrite,	NULL },
-  { "rabbitTeamPrefix",	        "rabbit_",              true,	StateDatabase::ReadWrite,	NULL },
-  { "hunterTeamPrefix",	        "hunter_",              true,	StateDatabase::ReadWrite,	NULL },
-  { "rogueTeamPrefix",	        "rogue_",               true,	StateDatabase::ReadWrite,	NULL },
+  { "redTeamPrefix",		"red_",		 true,	StateDatabase::ReadWrite,	NULL },
+  { "blueTeamPrefix",		"blue_",		true,	StateDatabase::ReadWrite,	NULL },
+  { "greenTeamPrefix",		"green_",	       true,	StateDatabase::ReadWrite,	NULL },
+  { "purpleTeamPrefix",		"purple_",	      true,	StateDatabase::ReadWrite,	NULL },
+  { "rabbitTeamPrefix",		"rabbit_",	      true,	StateDatabase::ReadWrite,	NULL },
+  { "hunterTeamPrefix",		"hunter_",	      true,	StateDatabase::ReadWrite,	NULL },
+  { "rogueTeamPrefix",		"rogue_",	       true,	StateDatabase::ReadWrite,	NULL },
 
   // type prefixes
-  { "superPrefix",	        "super_",               true,	StateDatabase::ReadWrite,	NULL }
+  { "superPrefix",		"super_",	       true,	StateDatabase::ReadWrite,	NULL }
 
 };
 
@@ -367,21 +367,21 @@ void updateConfigFile(void)
     // iconify
     BzfKeyEvent key;
     if (KEYMGR.stringToKeyEvent("F4", key)
-        && (KEYMGR.get(key, true) == ""))
+	&& (KEYMGR.get(key, true) == ""))
       KEYMGR.bind(key, true, "iconify");
     // toggle console & radar
     if (KEYMGR.stringToKeyEvent("F3", key)
-        && (KEYMGR.get(key, true) == ""))
+	&& (KEYMGR.get(key, true) == ""))
       KEYMGR.bind(key, true, "toggleConsoleAndRadar");
     // controlpanel tabs - all or nothing
     if (KEYMGR.stringToKeyEvent("Shift+F1", key)
-        && (KEYMGR.get(key, true) == "")
+	&& (KEYMGR.get(key, true) == "")
 	&& KEYMGR.stringToKeyEvent("Shift+F2", key)
-        && (KEYMGR.get(key, true) == "")
+	&& (KEYMGR.get(key, true) == "")
 	&& KEYMGR.stringToKeyEvent("Shift+F3", key)
-        && (KEYMGR.get(key, true) == "")
+	&& (KEYMGR.get(key, true) == "")
 	&& KEYMGR.stringToKeyEvent("Shift+F4", key)
-        && (KEYMGR.get(key, true) == "")) {
+	&& (KEYMGR.get(key, true) == "")) {
       KEYMGR.stringToKeyEvent("Shift+F1", key);
       KEYMGR.bind(key, true, "messagepanel all");
       KEYMGR.stringToKeyEvent("Shift+F2", key);
@@ -396,7 +396,7 @@ void updateConfigFile(void)
 
   case 1: // 1.11.20
     if (KEYMGR.stringToKeyEvent("Tab", key)
-        && (KEYMGR.get(key, false) == ""))
+	&& (KEYMGR.get(key, false) == ""))
       KEYMGR.bind(key, false, "jump");
     break; // no action, current version
 
@@ -405,7 +405,7 @@ void updateConfigFile(void)
 
   default: // hm, we don't know about this one...
     printError(TextUtils::format("Config file is tagged version \"%d\", "
-                                   "which was not expected (too new perhaps). "
+				   "which was not expected (too new perhaps). "
 				   "Trying to load anyhow.", configVersion));
     break;
   }
@@ -851,7 +851,7 @@ static void createCacheSignature ()
 {
   // This file is to be used by archiving and mirroring tools avoid
   // this directory (and any of its sub-directories). Please see:
-  //         < http://www.brynosaurus.com/cachedir/ >
+  //	 < http://www.brynosaurus.com/cachedir/ >
 
   const char cacheSignature[] = "Signature: 8a477f597d28d172789f06886806bc55\n";
   const char cacheComment[] =

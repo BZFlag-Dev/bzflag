@@ -20,7 +20,7 @@
 #ifdef HAVE_KRB5
 	#ifdef MAXHOSTNAMELEN
 		#undef MAXHOSTNAMELEN
-	#endif 
+	#endif
 #include <krb5.h>
 #endif
 #include <string>
@@ -31,22 +31,22 @@ class Authentication {
 
   static void cleanUp();
   static void init(const char *address, int port, const char *password);
-  void        setPrincipalName(char *buf, int len);
-  void        verifyCredential(char *buf, int len);
-  bool        isTrusted() {return trusted;};
+  void	setPrincipalName(char *buf, int len);
+  void	verifyCredential(char *buf, int len);
+  bool	isTrusted() {return trusted;};
   std::string getPrincipal() {return principalName;};
 private:
 #ifdef HAVE_KRB5
   static krb5_context   context;
   static krb5_ccache    cc;
   static krb5_principal client;
-  krb5_principal        server;
+  krb5_principal	server;
   static krb5_creds     my_creds;
-  static char           ccfile[MAXPATHLEN+6]; // FILE:path+\0
+  static char	   ccfile[MAXPATHLEN+6]; // FILE:path+\0
 #endif
-  static bool           authentication;
-  bool                  trusted;
-  std::string           principalName;
+  static bool	   authentication;
+  bool		  trusted;
+  std::string	   principalName;
 };
 
 #endif

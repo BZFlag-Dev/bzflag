@@ -27,7 +27,7 @@ class SdlPlatformFactory : public PlatformFactory {
   BzfDisplay*		createDisplay(const char* name, const char*);
   BzfVisual*		createVisual(const BzfDisplay*);
   BzfWindow*		createWindow(const BzfDisplay*, BzfVisual*);
-  BzfMedia*	        createMedia();
+  BzfMedia*		createMedia();
   BzfJoystick*		createJoystick();
 
  private:
