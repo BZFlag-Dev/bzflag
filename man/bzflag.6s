@@ -79,7 +79,8 @@ there, the game looks for data files in the current directory, then
 in the default installation location \fIINSTALL_DATA_DIR\fR.
 .TP
 .B -debug
-Increase debugging level. More -debug are use, more debugging info are obtained
+Increase debugging level. Use multiple \fB-debug\fR options to obtain more
+debugging info.
 .TP
 .B -echo
 Copies all message window output to the shell.
