@@ -28,10 +28,12 @@
 #include "Protocol.h"
 #include "GameKeeper.h"
 
+// FIXME remove externs!
 extern Address serverAddress;
 extern PingPacket getTeamCounts();
 extern uint16_t curMaxPlayers;
 extern int getTarget(const char *victimname);
+extern void sendMessage(int playerIndex, PlayerId targetPlayer, const char *message);
 
 ListServerLink::ListServerLink(std::string listServerURL, std::string publicizedAddress, std::string publicizedTitle)
 {
@@ -173,10 +175,12 @@ void ListServerLink::read()
         while (*group && !isspace(*group)) group++;
         while (*group && isspace(*group)) *group++ = 0;
 	if (getTarget(callsign) < curMaxPlayers) {
-	  GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(getTarget(callsign));
+	  int playerIndex = getTarget(callsign);
+	  GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(playerIndex);
 	  // TODO this will crash if there is no group database
 	  playerData->accessInfo.setPermissionRights();
 	  DEBUG3("Got: \"%s\" \"%s\" %d\n", callsign, group, getTarget(callsign));
+	  sendMessage(ServerPlayer, playerIndex, "Global login approved!");
 	}
 	//TODO see what groups we got back
       }
@@ -313,7 +317,7 @@ void ListServerLink::addMe(PingPacket pingInfo,
     publicizedTitle.c_str(),
     getAppVersion(),
     hostname.c_str());
-  sendMessage(msg);
+  sendLSMessage(msg);
 }
 
 void ListServerLink::removeMe(std::string publicizedAddress)
@@ -330,10 +334,10 @@ void ListServerLink::removeMe(std::string publicizedAddress)
     publicizedAddress.c_str(),
     getAppVersion(),
     hostname.c_str());
-  sendMessage(msg);
+  sendLSMessage(msg);
 }
 
-void ListServerLink::sendMessage(std::string message)
+void ListServerLink::sendLSMessage(std::string message)
 {
   const int bufsize = 4096;
   char msg[bufsize];

@@ -64,7 +64,7 @@ private:
     // messages to send, used by sendQueuedMessages
     void addMe(PingPacket pingInfo, std::string publicizedAddress, std::string publicizedTitle);
     void removeMe(std::string publicizedAddress);
-    void sendMessage(std::string message);
+    void sendLSMessage(std::string message);
 };
 
 inline bool ListServerLink::isConnected()
