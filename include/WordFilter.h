@@ -15,6 +15,7 @@
 
 #include "common.h"
 
+/* system interface headers */
 #include <string>
 #include <vector>
 #include <set>
@@ -35,7 +36,7 @@
 #  define regex_t void
 #endif
 
-#include "common.h"
+/* common interface headers */
 #include "TextUtils.h"
 
 
