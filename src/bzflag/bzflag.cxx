@@ -60,6 +60,7 @@
 #include "callbacks.h"
 #include "ServerListCache.h"
 #include "BZDBCache.h"
+#include "WordFilter.h"
 
 extern std::vector<std::string>& getSilenceList();
 const char*		argv0;
@@ -348,6 +349,7 @@ static void		usage()
 	" [-3dfx]"
 	" [-no3dfx]"
 	" [-anonymous]"
+	" [-badwords <filterfile>]"
 	" [-callsign <call-sign>]"
 	" [-directory <data-directory>]"
 	" [-echo]"
@@ -658,16 +660,24 @@ static void		parse(int argc, char** argv)
 	args.push_back(argv[i]);
 	printError("Ignoring Finder argument \"{1}\"", &args);
 	// ignore process serial number argument for MacOS X
-    } else if (strncmp(argv[i], "-badwords", 8)) {
-    } else if (strncmp(argv[i], "-filterChat", 11)) {
-    } else if (strncmp(argv[i], "-filterCallsigns", 16)) {
+    } else if (strncmp(argv[i], "-badwords", 9) == 0) {
+      printFatalError("Enteterd badwords section %s.", argv[i-1]);
+      if (++i == argc) {
+	printFatalError("Missing bad word filter filename argument for %s.", argv[i-1]);
+	usage();
+      }
+      BZDB->set("filterFilename", argv[i], StateDatabase::ReadOnly);
     } else if (i == argc-1) {
       if (strlen(argv[i]) >= sizeof(startupInfo.serverName)) {
 	printFatalError("Server name too long.  Ignoring.");
       }
       else {
-	strcpy(startupInfo.serverName, argv[i]);
-	startupInfo.autoConnect = true;
+	if (strncmp(argv[i], "-", 1) == 0) {
+	  memset(startupInfo.serverName, 0, sizeof(char) * 80);
+	} else {
+	  strcpy(startupInfo.serverName, argv[i]);
+	  startupInfo.autoConnect = true;
+	}
       }
     } else {
       usage();
@@ -779,6 +789,8 @@ int			myMain(int argc, char** argv)
 int			main(int argc, char** argv)
 #endif /* defined(_WIN32) */
 {
+  WordFilter *filter = (WordFilter *)NULL;
+
   argv0 = argv[0];
 
   // init libs
@@ -921,6 +933,23 @@ int			main(int argc, char** argv)
 
   // parse arguments
   parse(argc, argv);
+
+  // load the bad word filter, if it was set
+  if (BZDB->isSet("filterFilename")) {
+    std::string filterFilename = BZDB->get("filterFilename");
+    if (filterFilename.length() != 0) {
+      unsigned int count;
+      filter = new WordFilter();
+      std::cout << "Loading " << filterFilename << std::endl;
+      count = filter->loadFromFile(filterFilename, true);
+      std::cout << "Loaded " << count << " words" << std::endl;
+
+      // stash the filter into the database for retrieval later
+      BZDB->setPointer("filter", (void *)filter, StateDatabase::ReadOnly);
+    } else {
+      printError("A proper file name was not given for the -badwords argument");
+    }
+  }
 
   // get email address if not anonymous
   std::string email;
@@ -1213,6 +1242,7 @@ int			main(int argc, char** argv)
   CFGMGR->write(getConfigFileName());
 
   // shut down
+  if (filter != NULL) delete filter; filter = NULL;
   display->setDefaultResolution();
   delete pmainWindow;
   delete window;

@@ -96,6 +96,7 @@ static const char copyright[] = "Copyright (c) 1993 - 2003 Tim Riker";
 #include "Bundle.h"
 #include "CommandsStandard.h"
 #include "BZDBCache.h"
+#include "WordFilter.h"
 
 #define MAX_MESSAGE_HISTORY (20)
 
@@ -2716,6 +2717,8 @@ static void		handleServerMessage(bool human, uint16_t code,
   std::vector<std::string> args;
   char buf[50];
   bool checkScores = false;
+  static WordFilter *wordfilter = (WordFilter *)BZDB->getPointer("filter");
+
   switch (code) {
 
     case MsgUDPLinkRequest:
@@ -2758,30 +2761,30 @@ static void		handleServerMessage(bool human, uint16_t code,
       Player* player = lookupPlayer(id);
 
       // make a message
-      std::string msg;
+      std::string msg2;
       if (team == (uint16_t)NoTeam) {
 	// a player won
 	if (player) {
-	  msg = player->getCallSign();
-	  msg += " (";
-	  msg += Team::getName(player->getTeam());
-	  msg += ")";
+	  msg2 = player->getCallSign();
+	  msg2 += " (";
+	  msg2 += Team::getName(player->getTeam());
+	  msg2 += ")";
 	}
 	else {
-	  msg = "[unknown player]";
+	  msg2 = "[unknown player]";
 	}
       }
       else {
 	// a team won
-	msg = Team::getName(TeamColor(team));
+	msg2 = Team::getName(TeamColor(team));
       }
-      msg += " won the game";
+      msg2 += " won the game";
 
       gameOver = true;
       hud->setTimeLeft(-1);
       myTank->explodeTank();
-      controlPanel->addMessage(msg);
-      hud->setAlert(0, msg.c_str(), 10.0f, true);
+      controlPanel->addMessage(msg2);
+      hud->setAlert(0, msg2.c_str(), 10.0f, true);
 #ifdef ROBOT
       for (int i = 0; i < numRobots; i++)
 	robots[i]->explodeTank();
@@ -3430,13 +3433,13 @@ static void		handleServerMessage(bool human, uint16_t code,
       }
       if (ignore) {
 	// to verify working
-	std::string msg = "Ignored Msg";
+	std::string msg2 = "Ignored Msg";
 	if (silencePlayers[i] != "*") {
-	  msg = msg + " from " + silencePlayers[i];
+	  msg2 = msg2 + " from " + silencePlayers[i];
 	} else {
 	  //if * just echo a generic Ignored
 	}
-	addMessage(NULL,msg);
+	addMessage(NULL,msg2);
 	break;
       }
 
@@ -3465,6 +3468,11 @@ static void		handleServerMessage(bool human, uint16_t code,
 
       OpenGLTexFont::stripAnsiCodes((char*) msg, strlen ((char*) msg));
 
+      // if filtering is turned on, filter away the goo
+      if (wordfilter != NULL) {
+	wordfilter->filter((char *)msg);
+      }
+      
       std::string text = BundleMgr::getCurrentBundle()->getLocalString(std::string((char*)msg));
 
       if (toAll || srcPlayer == myTank || dstPlayer == myTank ||
