@@ -275,7 +275,7 @@ void ServerStartMenu::scanWorldFiles (const std::string& searchDir,
   std::vector<std::string> pattern;
   pattern.push_back(searchDir + "*.bzw");
   pattern.push_back(searchDir + "*.map");
-  for (int i=0; i<pattern.size(); i++) {
+  for (unsigned int i=0; i<pattern.size(); i++) {
     WIN32_FIND_DATA findData;
     HANDLE h = FindFirstFile(pattern[i].c_str(), &findData);
     if (h != INVALID_HANDLE_VALUE) {
