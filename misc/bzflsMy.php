@@ -1,5 +1,17 @@
 <?php
 
+// bzflsMy.php
+//
+// Copyright (c) 1993 - 2003 Tim Riker
+//
+// This package is free software;  you can redistribute it and/or
+// modify it under the terms of the license found in the file
+// named COPYING that should have accompanied this file.
+//
+// THIS PACKAGE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
+// IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
+// WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+
 $dbhost  = "localhost";
 $dbuname = "bzflag";
 $dbpass  = "";
@@ -16,7 +28,7 @@ $gameinfo = $_GET['gameinfo'];
 $title    = $_GET['title'];
 
 # Connect to the server database.
-$link = mysql_connect($dbhost, $dbuname, $dbpass) 
+$link = mysql_connect($dbhost, $dbuname, $dbpass)
      or die("Could not connect: " . mysql_error());
 if (!mysql_select_db($dbname)) {
   mysql_create_db($dbname) or die("Could not create db: " . mysql_error());
