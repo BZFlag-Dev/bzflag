@@ -336,17 +336,15 @@ void sendTeamUpdate(int playerIndex = -1, int teamIndex1 = -1, int teamIndex2 = 
 }
 
 
-static void sendPlayerUpdate(int playerIndex, int index)
+static void sendPlayerUpdate(GameKeeper::Player *playerData, int index)
 {
-  GameKeeper::Player *playerData
-    = GameKeeper::Player::getPlayerByIndex(playerIndex);
-  if (!playerData)
+  if (!playerData->player.isPlaying())
     return;
 
   void *bufStart = getDirectMessageBuffer();
   void *buf      = playerData->packPlayerUpdate(bufStart);
   
-  if (playerIndex == index) {
+  if (playerData->getIndex() == index) {
     // send all players info about player[playerIndex]
     broadcastMessage(MsgAddPlayer, (char*)buf - (char*)bufStart, bufStart);
   } else {
@@ -1610,9 +1608,13 @@ static void addPlayer(int playerIndex)
     int i;
     sendTeamUpdate(playerIndex);
     sendFlagUpdate(-1, playerIndex);
+    GameKeeper::Player *otherData;
     for (i = 0; i < curMaxPlayers && NetHandler::exists(playerIndex); i++)
-      if (realPlayer(i) && i != playerIndex)
-	sendPlayerUpdate(i, playerIndex);
+      if (i != playerIndex) {
+	otherData = GameKeeper::Player::getPlayerByIndex(i);
+	if (otherData)
+	  sendPlayerUpdate(otherData, playerIndex);
+      }
   }
 
   // if new player connection was closed (because of an error) then stop here
@@ -1621,7 +1623,7 @@ static void addPlayer(int playerIndex)
 
   // send MsgAddPlayer to everybody -- this concludes MsgEnter response
   // to joining player
-  sendPlayerUpdate(playerIndex, playerIndex);
+  sendPlayerUpdate(playerData, playerIndex);
 
   // send update of info for team just joined
   sendTeamUpdate(-1, teamIndex);
@@ -2177,9 +2179,12 @@ static void sendQueryPlayers(int playerIndex)
   // now send the teams and players
   if (NetHandler::exists(playerIndex))
     sendTeamUpdate(playerIndex);
-  for (i = 0; i < curMaxPlayers && NetHandler::exists(playerIndex); i++)
-    if (realPlayer(i))
-      sendPlayerUpdate(i, playerIndex);
+  GameKeeper::Player *otherData;
+  for (i = 0; i < curMaxPlayers && NetHandler::exists(playerIndex); i++) {
+    otherData = GameKeeper::Player::getPlayerByIndex(i);
+    if (otherData)
+      sendPlayerUpdate(otherData, playerIndex);
+  }
 }
 
 static void playerAlive(int playerIndex)
