@@ -4908,7 +4908,7 @@ static void parseCommand(const char *message, int t)
   else if (strncmp(message+1,"idlestats",9) == 0) {
     TimeKeeper now=TimeKeeper::getCurrent();
     for (int i = 0; i < curMaxPlayers; i++) {
-      if (player[i].state > PlayerInLimbo) {
+      if (player[i].state > PlayerInLimbo && !player[i].Observer) {
 	char reply[MessageLen];
 	sprintf(reply,"%-12s : %4ds",player[i].callSign,
 		int(now-player[i].lastupdate));
