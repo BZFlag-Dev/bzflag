@@ -98,6 +98,9 @@ static float flagHeight = FlagAltitude;
 // meters
 //float WorldSize = 800.0f;
 
+#define MAX_FLAG_HISTORY (10)
+BZF_DEFINE_ALIST(FlagHistoryList, int);
+
 // custom server login message
 static char *servermsg = NULL;
 
@@ -204,6 +207,7 @@ struct PlayerInfo {
     bool lagkillerpending;
     TimeKeeper lagkillertime;
 
+ 	FlagHistoryList	flagHistory;
 #ifdef NETWORK_STATS
     // message stats bloat
     TimeKeeper perSecondTime[2];
@@ -3922,6 +3926,8 @@ static void removePlayer(int playerIndex)
     player[playerIndex].outmsg = NULL;
   }
 
+  player[playerIndex].flagHistory.removeAll();
+
   // can we turn off relaying now?
   if (player[playerIndex].multicastRelay) {
     player[playerIndex].multicastRelay = False;
@@ -4188,6 +4194,11 @@ static void grabFlag(int playerIndex, int flagIndex)
   buf = nboPackUShort(buf, uint16_t(flagIndex));
   buf = flag[flagIndex].flag.pack(buf);
   broadcastMessage(MsgGrabFlag, (char*)buf-(char*)bufStart, bufStart);
+
+  FlagHistoryList *pFH = &player[playerIndex].flagHistory;
+  if (pFH->getLength() >= MAX_FLAG_HISTORY)
+	  pFH->remove( 0 );
+  pFH->append( flag[flagIndex].flag.id );
 }
 
 static void dropFlag(int playerIndex, float pos[3])
@@ -4605,6 +4616,23 @@ static void parseCommand(const char *message, int t)
 	    sendMessage(t,player[t].id,player[t].team,reply);
       }
     }
+  }
+  // /flaghistory gives history of what flags player has carried
+  else if (strncmp(message+1, "flaghistory", 11 ) == 0) {
+    for (int i = 0; i < maxPlayers; i++)
+      if (player[i].fd != NotConnected) {
+		char reply[MessageLen];
+		char flag[MessageLen];
+		sprintf(reply,"%-12s : ",player[i].callSign );
+		FlagHistoryListIterator fhIt(player[i].flagHistory);
+   
+		while (!fhIt.isDone()) {
+			sprintf( flag, "(%s) ", Flag::getAbbreviation((FlagId)fhIt.getItem()) );
+			strcat( reply, flag );
+			fhIt.inc();
+		}
+        sendMessage(t,player[t].id,player[t].team,reply);
+	  }
   }
   // /playerlist dumps a list of players with IPs etc.
   else if (player[t].Admin && strncmp(message+1,"playerlist",10) == 0) {
