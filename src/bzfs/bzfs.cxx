@@ -4205,12 +4205,15 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
 	if ((from == InvalidPlayer) || (to == InvalidPlayer))
 		break;
 
+	int flagIndex = player[from].flag;
+	if (flagIndex == -1)
+	  return;
+
         zapFlag(player[to].flag);
 
         void *bufStart = getDirectMessageBuffer();
 	void *buf = nboPackUByte(bufStart, from);
 	buf = nboPackUByte(buf, to);
-	int flagIndex = player[from].flag;
 	buf = nboPackUShort(buf, uint16_t(flagIndex));
 	flag[flagIndex].flag.owner = to;
 	flag[flagIndex].player = to;
