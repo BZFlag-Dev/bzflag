@@ -20,31 +20,13 @@ your preference.  You will need to set and export two environment
 variables.  For simplicity, the example below also smashes in the
 CFLAGS and CXXFLAGS as the compiler "name"..
 
-# for a bourne-shell environment:
-./configure CC="cc -OPT:Olimit=65536 -DEFAULT:abi=n32:isa=mips4:proc=r10k -LANG:std -FE:template_in_elf_section -no_auto_include" CXX="CC -OPT:Olimit=65536 -DEFAULT:abi=n32:isa=mips4:proc=r10k -LANG:std -FE:template_in_elf_section -no_auto_include"
-make
-
-# for a c-shell environment
-./configure CC="cc -OPT:Olimit=65536 -DEFAULT:abi=n32:isa=mips4:proc=r10k -LANG:std -FE:template_in_elf_section -no_auto_include" CXX="CC -OPT:Olimit=65536 -DEFAULT:abi=n32:isa=mips4:proc=r10k -LANG:std -FE:template_in_elf_section -no_auto_include"
+# to use the MIPSPro compiler
+./configure  CC="cc" CXX="CC" CXXFLAGS="-O2 -OPT:Olimit=32768 -DEFAULT:abi=o32:isa=mips3:proc=r5k -LANG:std -F:template_in_elf_section -no_auto_include -ptused -prelink" CFLAGS="-O2 -OPT:Olimit=32768 -DEFAULT:abi=o32:isa=mips3:proc=r5k -LANG:std -no_autoinclude -ptused -prelink"
 make
 
 If you try to boost the optimization to -O3, it is likely that the
-compiler will crash.
-
-During the build, it is also very likely that the build will hang.
-Perhaps when it gets to src/net/multicast.cxx, for example.  This
-appears to be related to C++ optimization bugs in the MIPSPro 7.3
-compiler.  To get around this problem, abort the hung compilation and:
-
-cd src/net/
-CC -OPT:Olimit=32768 -DEFAULT:abi=o32:isa=mips3:proc=r5k -LANG:std -FE:template_in_elf_section -no_auto_include -DHAVE_CONFIG_H -I. -I../../include -c -o multicast.o `test -f 'multicast.cxx' || echo './'`multicast.cxx
-cd ../..
-make
-
-You should then be compiling again.  You may have similar issues with
-other files..  Repeat the above example compile line for those files
-by replacing multicast with the corresponding file name.  Some files
-will simply take a very long time to compile, so be patient. ;)
+compiler will crash.  Some files will simply take a very long time to
+compile no matter what optimization level, so be patient. ;)
 
 The next hurdle to overcome will be a link error for 2 of then
 executables (bzfs & bzflag) that link against libraries that contain
@@ -55,20 +37,21 @@ binaries.
 This issue is merely a problem of figuring out the proper compiler
 options, so if you know what is missing, please let one of the devs
 who deals with the IRIX build know.  The work-around is very easy.
-Replace the name of the library with the missing symbols (libCommon.a
-or libGLKit.a for example) with all of the object files that comprised
-it.  When the build fails for linking bzfs, for example, do this:
+Replace the name of the libraries with the missing symbols
+(libCommon.a, libPlatform.a, and libGLKit.a for example) with all of
+the object files that comprised it.  When the build fails for linking
+bzfs, for example, do this:
 
 cd src/bzfs
-CC -O2 -OPT:Olimit=32768 -DEFAULT:abi=o32:isa=mips3:proc=r5k -LANG:std -FE:template_in_elf_section -no_auto_include      -o bzfs ../date/buildDate.o AccessControlList.o CmdLineOptions.o  CustomBase.o CustomBox.o CustomGate.o  CustomLink.o CustomPyramid.o  CustomWeapon.o CustomWorld.o FlagInfo.o  Permissions.o TeamBases.o  TextChunkManager.o VotingArbiter.o  WorldFileObject.o WorldFileObstacle.o  WorldInfo.o WorldWeapons.o commands.o  bzfs.o ../net/libNet.a             ../common/*.o   ../regex/libregex.a -lm -lsocket 
+CC -O2 -OPT:Olimit=32768 -DEFAULT:abi=o32:isa=mips3:proc=r5k -LANG:std -FE:template_in_elf_section -no_auto_include      -o bzfs ../date/buildDate.o AccessControlList.o CmdLineOptions.o  CustomBase.o CustomBox.o CustomGate.o  CustomLink.o CustomPyramid.o  CustomWeapon.o CustomWorld.o FlagInfo.o  Permissions.o TeamBases.o  TextChunkManager.o VotingArbiter.o  WorldFileObject.o WorldFileObstacle.o  WorldInfo.o WorldWeapons.o commands.o  bzfs.o ../net/*.o             ../common/*.o   ../regex/libregex.a -lm -lsocket 
 cd ../..
 make
 
-Basically copy-paste the link line that fails, and replace libCommon.a
-(and libGLKit if you see it) with *.o.  The pre-linker will kick in
-again and build some more, and the link should complete.  You should
-then be able to return to the top-level of the source tree and
-continue compiling.  You'll need to do this for both bzflag and bzfs.
+Basically copy-paste the link line that fails, and replace the
+libSomething.a names with *.o.  The pre-linker will kick in again and
+build some more, and the link should complete.  You should then be
+able to return to the top-level of the source tree and continue
+compiling.  You'll need to do this for both bzflag and bzfs.
 
 The last problem that you may encounter on older IRIX systems is a
 problem in the curses.h header.  The header uses a symbol name that is
