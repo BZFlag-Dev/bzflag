@@ -337,12 +337,11 @@ MeshObstacle* ConeObstacle::makeMesh()
   // wrap it up
   mesh->finalize();
 
-  if (mesh->isValid()) {
-    return mesh;
-  } else {
+  if (!mesh->isValid()) {
     delete mesh;
-    return NULL;
+    mesh = NULL;
   }
+  return mesh;
 }
 
 
