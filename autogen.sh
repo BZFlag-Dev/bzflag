@@ -5,6 +5,11 @@ autoheader
 automake --add-missing
 autoconf
 
-echo BZFlag sources are now prepared. To build here, run:
-echo " ./configure --enable-robots"
-echo " make"
+if [ -z "$1" ] ; then
+ echo BZFlag sources are now prepared. To build here, run:
+ echo " ./configure --enable-robots"
+ echo " make"
+else
+ ./configure --enable-robots
+ make
+fi
