@@ -9,10 +9,13 @@ THESE SHOULD HAPPEN BEFORE THE NEXT RELEASE:
 THESE ARE LOWER PRIORITY
 
 * server should pick client enter position.
-  ## Server has no idea about players shots, this is a key to picking a safe
-  entry location. This isn't a simple change. ##
-  however, it should be changed soon even if the server does a poor job
-  fixing the effectiveness can be done later without changing the clients
+  - Server has no idea about players shots, this is a key to picking a safe
+    entry location. This isn't a simple change. 
+  - However, it should be changed soon even if the server does a poor job
+    fixing the effectiveness can be done later without changing the clients
+  - Perhaps we could just pick a location without regard to other tanks,
+    but have the player blink in for 3 seconds where no shooting or killing
+    can happen.
 
 * StateDatabase should probably have min max values for eval values
 
