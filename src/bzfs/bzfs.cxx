@@ -2929,6 +2929,8 @@ static void shotFired(int playerIndex, void *buf, int len)
   const float tankSpeedMult = BZDB.eval(StateDatabase::BZDB_VELOCITYAD);
   float tankSpeed	   = maxTankSpeed;
   float lifetime = BZDB.eval(StateDatabase::BZDB_RELOADTIME);
+  if (clOptions->gameStyle & HandicapGameStyle)
+    tankSpeed *= HandicapSpeedAdj;
   if (firingInfo.flagType == Flags::ShockWave) {
     shotSpeed = 0.0f;
     tankSpeed = 0.0f;
