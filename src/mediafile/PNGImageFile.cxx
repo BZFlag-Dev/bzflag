@@ -34,7 +34,13 @@ const unsigned char PNGImageFile::FILTER_UP = 2;
 const unsigned char PNGImageFile::FILTER_AVERAGE = 3;
 const unsigned char PNGImageFile::FILTER_PAETH = 4;
 
-PNGImageFile::PNGImageFile(std::istream* stream) : ImageFile(stream)
+/* 
+PNGImageFile::PNGImageFile(std::istream* stream)
+
+  validates that the file is in fact a png file and initializes the size information for it
+*/
+
+PNGImageFile::PNGImageFile(std::istream* stream) : ImageFile(stream), palette(NULL)
 {
 	lineBuffers[0] = NULL;
 	lineBuffers[1] = NULL;
@@ -66,7 +72,6 @@ PNGImageFile::PNGImageFile(std::istream* stream) : ImageFile(stream)
 	switch (colorDepth) {
 		case 0:
 			lineBufferSize = ((width * bitDepth)/8)+1;
-			realBufferSize = width + 1;
 			channels = 1;
 		break;
 
@@ -92,9 +97,10 @@ PNGImageFile::PNGImageFile(std::istream* stream) : ImageFile(stream)
 	}
 
 	realBufferSize = channels * width + 1;
-	lineBuffers[0] = new unsigned char[realBufferSize];
-	lineBuffers[1] = new unsigned char[realBufferSize];
-	memset(lineBuffers[1], 0, realBufferSize);
+	int allocSize = realBufferSize > lineBufferSize ? realBufferSize : lineBufferSize;
+	lineBuffers[0] = new unsigned char[allocSize];
+	lineBuffers[1] = new unsigned char[allocSize];
+	memset(lineBuffers[1], 0, allocSize);
 	activeBufferIndex = 0;
 
 	//Temporary
@@ -109,18 +115,39 @@ PNGImageFile::PNGImageFile(std::istream* stream) : ImageFile(stream)
 	init(channels, width, height);
 }
 
+/* 
+PNGImageFile::~PNGImageFile()
+
+  cleans up memory buffers
+*/
+
 PNGImageFile::~PNGImageFile()
 {
+	if (palette)
+		delete palette;
 	if (lineBuffers[0] != NULL)
 		delete lineBuffers[0];
 	if (lineBuffers[1] != NULL)
 		delete lineBuffers[1];
 }
 
+/* 
+std::string	PNGImageFile::getExtension()
+
+  returns the expected file extension of .png for files
+*/
+
 std::string				PNGImageFile::getExtension()
 {
 	return ".png";
 }
+
+/* 
+bool PNGImageFile::read(void* buffer)
+
+  parses the file looking for PLTE or IDAT entries and converts to 8 bit data
+  in 1, 2, 3, or 4 channels
+*/
 
 bool					PNGImageFile::read(void* buffer)
 {
@@ -130,7 +157,7 @@ bool					PNGImageFile::read(void* buffer)
 	c = PNGChunk::readChunk(getStream());
 	while ((c->getType() != PNGChunk::IDAT) && (c->getType() != PNGChunk::IEND)) {
 		if (c->getType() == PNGChunk::PLTE)
-			readPalette(c);
+			palette = readPalette(c);
 		delete c;
 		c = PNGChunk::readChunk(getStream());
 	}
@@ -189,6 +216,12 @@ bool					PNGImageFile::read(void* buffer)
 	return true;
 }
 
+/* 
+PNGPalette* PNGImageFile::readPalette(PNGChunk *c)
+
+  Code to parse a PLTE chunk
+*/
+
 PNGPalette* PNGImageFile::readPalette(PNGChunk *c)
 {
 	int numColors = c->getLength() / sizeof(PNGRGB);
@@ -205,46 +238,84 @@ PNGPalette* PNGImageFile::readPalette(PNGChunk *c)
 	return p;
 }
 
+/* 
+unsigned char *PNGImageFile::getLineBuffer(bool active)
+
+  This is the buffer that holds one line of data. As filters may use the previous line
+  to filter with, you can ask for the non active one, as well
+*/
+
 unsigned char *PNGImageFile::getLineBuffer(bool active)
 {
 	return lineBuffers[active ? activeBufferIndex : (1 - activeBufferIndex)];
 }
+
+/* 
+void PNGImageFile::switchLineBuffers()
+
+  Change buffers from the active to unactive. In this way you always have the last line available
+  for filtering.
+*/
 
 void PNGImageFile::switchLineBuffers()
 {
 	activeBufferIndex = 1 - activeBufferIndex;
 }
 
+/* 
+bool PNGImageFile::expand()
+
+  Expand data to 8 bits. If the original data is indexed color, convert to rgb data.
+*/
+
 bool PNGImageFile::expand()
 {
 	if ((bitDepth == 8) && (colorDepth != 3))
 		return true;
+
+	unsigned char *pData = getLineBuffer();
 
 	int width = getWidth();
 	switch (bitDepth)
 	{
 		case 1:
 		{
+			for (int i = width-1; i >= 0; i--) {
+				int byteOffset = i/8;
+				int bit = 7 - i%8;
+				if (*(pData+byteOffset) & bit)
+					*(pData+i) = 0xFF;
+				else
+					*(pData+i) = 0x00;
+			}
 		}
 		break;
 
 		case 2:
 		{
+			for (int i = width-1; i >= 0; i--) {
+				int byteOffset = i/4;
+				int bitShift = 6-2*(i%4);
+				*(pData+i) = (((*(pData+byteOffset)) >> bitShift) & 0x03) << 6;
+			}
 		}
 		break;
 
 		case 4:
 		{
-		}
-		break;
-
-		case 8:
-		{
+			for (int i = width-1; i >= 0; i--) {
+				int byteOffset = i/2;
+				int bitShift = 4-4*(i%2);
+				*(pData+i) = (((*(pData+byteOffset)) >> bitShift) & 0x0F) << 4;
+			}
 		}
 		break;
 
 		case 16:
 		{
+			for (int i = 0; i < width; i++) {
+				*(pData+i) = (*pData + 2*i);
+			}
 		}
 		break;
 
@@ -253,10 +324,25 @@ bool PNGImageFile::expand()
 	}
 
 	if (colorDepth == 3) {
+		if (palette == NULL)
+			return FALSE;
+
+		for (int i = width-1; i >= 0; i--) {
+			PNGRGB &rgb = palette->get(*(pData+i));
+			*(pData + width*3) = rgb.red;
+			*(pData + width*3 + 1) = rgb.green;
+			*(pData + width*3 + 2) = rgb.blue;
+		}
 	}
 
 	return true;
 }
+
+/* 
+bool PNGImageFile::filter()
+
+  Filter a line, based on the first byte found in line.
+*/
 
 bool PNGImageFile::filter()
 {
@@ -269,10 +355,11 @@ bool PNGImageFile::filter()
 
 		case FILTER_SUB:
 		{
-			unsigned char last[3] = {0, 0, 0};
+			unsigned char last[4] = {0, 0, 0, 0};
+			int channels = getNumChannels();
 			for (int i = 1; i < lineBufferSize; i++) {
-				*(pData+i) += last[i%3];
-				last[i%3] = *(pData+i);
+				*(pData+i) += last[i%channels];
+				last[i%channels] = *(pData+i);
 			}
 			return true;
 			break;
@@ -293,7 +380,40 @@ bool PNGImageFile::filter()
 }
 
 
+/* 
+PNGRGB::PNGRGB()
 
+  Default constructor for RGB value as found in a palette
+*/
+
+PNGRGB::PNGRGB()
+{
+	red = 0;
+	green = 0;
+	blue = 0;
+}
+
+/* 
+PNGRGB::PNGRGB()
+
+  Initializing constructor for RGB value as found in a palette
+*/
+
+PNGRGB::PNGRGB(unsigned char r, unsigned char g, unsigned char b)
+{
+	red = r;
+	green = g;
+	blue = b;
+}
+
+
+
+	
+/* 
+PNGPalette::PNGPalette(int nc)
+
+  Constructor for a PNG palette
+*/
 
 PNGPalette::PNGPalette(int nc)
 {
@@ -302,21 +422,54 @@ PNGPalette::PNGPalette(int nc)
 	colors = new PNGRGB[nc];
 }
 
+/* 
+PNGPalette::~PNGPalette()
+
+  Destructor for a PNG palette
+*/
+
 PNGPalette::~PNGPalette()
 {
 	delete [] colors;
 }
+
+/* 
+void PNGPalette::add(PNGRGB& color)
+
+  Add a rgb value to end of palette
+*/
 
 void PNGPalette::add(PNGRGB& color)
 {
 	colors[curColor++] = color;
 }
 
+/* 
+PNGRGB& PNGPalette::get(int index)
+
+  Retrieve rgb value in palette at index 'index'. Returns black if invalid entry
+*/
+
+PNGRGB& PNGPalette::get(int index)
+{
+	static PNGRGB unknown(0,0,0);
+
+	if ((index >= 0) && (index < numColors))
+		return colors[index];
+
+	return unknown;
+}
+
 int PNGChunk::IHDR = 'IHDR';
-int PNGChunk::sRGB = 'sRGB';
 int PNGChunk::PLTE = 'PLTE';
 int PNGChunk::IDAT = 'IDAT';
 int PNGChunk::IEND = 'IEND';
+
+/* 
+PNGChunk *PNGChunk::readChunk(std::istream *stream)
+
+  Static factory function for parsing and creating an arbitrary PNG chunk
+*/
 
 PNGChunk *PNGChunk::readChunk(std::istream *stream)
 {
@@ -334,10 +487,22 @@ PNGChunk *PNGChunk::readChunk(std::istream *stream)
 	return c;
 }
 
+/* 
+PNGChunk *PNGChunk::readChunk(std::istream *stream)
+
+  Default (private) constructor for a png chunk
+*/
+
 PNGChunk::PNGChunk()
 : length(0), type(0), data(NULL), crc(0)
 {
 }
+
+/* 
+PNGChunk *PNGChunk::readChunk(std::istream *stream)
+
+  Default destructor
+*/
 
 PNGChunk::~PNGChunk()
 {
@@ -345,15 +510,33 @@ PNGChunk::~PNGChunk()
 		delete[] data;
 }
 
+/* 
+int PNGChunk::getLength()
+
+  returns data length
+*/
+
 int PNGChunk::getLength()
 {
 	return length;
 }
 
+/* 
+int PNGChunk::getType()
+
+  returns chunk type
+*/
+
 int PNGChunk::getType()
 {
 	return type;
 }
+
+/* 
+unsigned char *PNGChunk::getData()
+
+  returns chunk data
+*/
 
 unsigned char *PNGChunk::getData()
 {

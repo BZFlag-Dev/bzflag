@@ -41,6 +41,7 @@ private:
 	static const unsigned char		FILTER_AVERAGE;
 	static const unsigned char		FILTER_PAETH;
 
+	PNGPalette*						palette;
 	unsigned char					bitDepth;
 	unsigned char					colorDepth;
 	unsigned char					compressionMethod;
@@ -55,6 +56,8 @@ private:
 class PNGRGB
 {
 public:
+	PNGRGB();
+	PNGRGB(unsigned char r, unsigned char g, unsigned char b);
 	unsigned char red;
 	unsigned char green;
 	unsigned char blue;
@@ -66,6 +69,7 @@ public:
 	PNGPalette( int numColors );
 	~PNGPalette();
 	void add( PNGRGB &color );
+	PNGRGB& get(int index);
 private:
 	int		curColor;
 	int		numColors;
@@ -82,7 +86,6 @@ public:
 	unsigned char* getData();
 
 	static int		IHDR;
-	static int		sRGB;
 	static int		PLTE;
 	static int		IDAT;
 	static int		IEND;
