@@ -6408,6 +6408,8 @@ static void parse(int argc, char **argv, CmdLineOptions &options)
     options.flagDisallowed[int(GenocideFlag)] = true;
     options.flagCount[int(ColorblindnessFlag)] = 0;
     options.flagDisallowed[int(ColorblindnessFlag)] = true;
+    options.flagCount[int(MasqueradeFlag)] = 0;
+    options.flagDisallowed[int(MasqueradeFlag)] = true;
   }
 
   if (options.gameStyle & int(RabbitChaseGameStyle)) {

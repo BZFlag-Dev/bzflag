@@ -83,7 +83,7 @@ class TankSceneNode : public SceneNode {
     void		addRenderNodes(SceneRenderer&);
     void		addShadowNodes(SceneRenderer&);
 
-    void		setColorblind(bool on);
+    void		setColorOverride(const GLfloat *override);
     void		setNormal();
     void		setObese();
     void		setTiny();
@@ -201,10 +201,11 @@ class TankSceneNode : public SceneNode {
   private:
     GLfloat		azimuth, elevation;
     GLfloat		baseRadius;
-    bool		colorblind, hidden, invisible;
+    bool		useOverride, hidden, invisible;
     bool		transparent, sort, blending;
     float		explodeFraction;
     bool		clip;
+    GLfloat		colorOverride[4];
     GLfloat		color[4];
     GLdouble		clipPlane[4];
     TankRenderNode::Style style;

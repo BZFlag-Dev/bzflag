@@ -240,12 +240,12 @@ void			Player::updateSparks(float /*dt*/)
 }
 
 void			Player::addPlayer(SceneDatabase* scene,
-						bool colorblind,
+						const float* colorOverride,
 						bool showIDL)
 {
   if (!isAlive() && !isExploding()) return;
   tankNode->move(state.pos, forward);
-  tankNode->setColorblind(colorblind);
+  tankNode->setColorOverride(colorOverride);
   if (isAlive()) {
     if (flag == ObesityFlag) tankNode->setObese();
     else if (flag == TinyFlag) tankNode->setTiny();

@@ -5328,6 +5328,7 @@ static void		playingLoop()
 {
   static const float	defaultPos[3] = { 0.0f, 0.0f, 0.0f };
   static const float	defaultDir[3] = { 1.0f, 0.0f, 0.0f };
+  static const GLfloat  colorblindColor[3] = { 0.25f, 0.25f, 0.25f };
   const float* myTankPos;
   const float* myTankDir;
   GLfloat eyePoint[3];
@@ -5684,13 +5685,20 @@ static void		playingLoop()
 	// add flags
 	world->addFlags(scene);
 
+	const GLfloat *override = NULL;
+	if (myTank->getFlag() == ColorblindnessFlag)
+	  override = colorblindColor;
+
 	// add other tanks and shells
 	const bool colorblind = (myTank->getFlag() == ColorblindnessFlag);
 	for (i = 0; i < curMaxPlayers; i++)
 	  if (player[i]) {
 	    player[i]->updateSparks(dt);
 	    player[i]->addShots(scene, colorblind);
-	    player[i]->addPlayer(scene, colorblind, true);
+	    if (!colorblind && player[i]->getFlag() == MasqueradeFlag) {
+	       override = Team::getTankColor(myTank->getTeam());
+	    }
+	    player[i]->addPlayer(scene, override, true);
 	    if (player[i]->getFlag() == CloakingFlag)
 	      player[i]->setInvisible();
 	    else

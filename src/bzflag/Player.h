@@ -64,7 +64,7 @@ class Player {
 
     void		setId(PlayerId&);
 
-    void		addPlayer(SceneDatabase*, bool colorblind,
+    void		addPlayer(SceneDatabase*, const float* colorOverride,
 							bool showIDL);
     void		addShots(SceneDatabase*, bool colorblind) const;
     void		setHidden(bool hidden = true);
