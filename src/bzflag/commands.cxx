@@ -257,6 +257,11 @@ std::string cmdAutoPilot(const std::string&, const CommandManager::ArgList& args
   char messageBuffer[MessageLen];
   memset(messageBuffer, 0, MessageLen);
 
+  if (BZDB.isTrue("_disableBots")) {
+	  hud->setAlert(0, "autopilot not allowed on this server", 1.0f, true);
+	  return std::string();
+  }
+
   if (myTank != NULL && myTank->getTeam() != ObserverTeam) {
     if (myTank->isAutoPilot()) {
       myTank->setAutoPilot(false);
