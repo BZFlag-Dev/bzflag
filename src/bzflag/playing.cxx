@@ -83,7 +83,6 @@
 #include "ShotStats.h"
 #include "ComposeDefaultKey.h"
 #include "SilenceDefaultKey.h"
-#include "ServerCommandKey.h"
 #include "Roster.h"
 #include "FlashClock.h"
 #include "CommandsStandard.h"
@@ -810,37 +809,12 @@ static bool		doKeyCommon(const BzfKeyEvent& key, bool pressed)
   return false;
 }
 
-static void		doKeyNotPlaying(const BzfKeyEvent& key, bool pressed)
+static void doKeyNotPlaying(const BzfKeyEvent&, bool, bool)
 {
-  // handle key
-  bool action = false;
-  if (HUDDialogStack::get()->isActive()) {
-    if (pressed)
-      action = HUDui::keyPress(key);
-    else
-      action = HUDui::keyRelease(key);
-  }
-  if (!action)
-    doKeyCommon(key, pressed);
 }
 
-static void		doKeyPlaying(const BzfKeyEvent& key, bool pressed)
+static void doKeyPlaying(const BzfKeyEvent& key, bool pressed, bool haveBinding)
 {
-  static ServerCommandKey serverCommandKeyHandler;
-
-  const std::string cmd = KEYMGR.get(key, pressed);
-  if (cmd == "jump") {
-    myTank->setJumpPressed(pressed);
-  }
-
-  if (HUDui::getFocus())
-    if ((pressed && HUDui::keyPress(key)) ||
-	(!pressed && HUDui::keyRelease(key))) {
-      return;
-    }
-
-  bool haveBinding = doKeyCommon(key, pressed);
-
 #if defined(FREEZING)
   if (key.ascii == '`' && pressed && !haveBinding && key.shift) {
     // toggle motion freeze
@@ -880,9 +854,8 @@ static void		doKeyPlaying(const BzfKeyEvent& key, bool pressed)
 	serverLink->send(MsgMessage, sizeof(messageMessage), messageMessage);
       }
     }
-  }
-  // Might be a direction key. Save it for later.
-  else if (myTank->isAlive()) {
+  } else if (myTank->isAlive()) {
+    // Might be a direction key. Save it for later.
     if ((myTank->getInputMethod() != LocalPlayer::Keyboard) && pressed) {
       if (keyboardMovement != None)
 	if (BZDB.isTrue("allowInputChange"))
@@ -892,10 +865,25 @@ static void		doKeyPlaying(const BzfKeyEvent& key, bool pressed)
 }
 
 static void doKey(const BzfKeyEvent& key, bool pressed) {
+  if (myTank) {
+    const std::string cmd = KEYMGR.get(key, pressed);
+    if (cmd == "jump") {
+      myTank->setJumpPressed(pressed);
+    }
+  }
+
+  if (HUDui::getFocus())
+    if ((pressed && HUDui::keyPress(key)) ||
+	(!pressed && HUDui::keyRelease(key))) {
+      return;
+    }
+
+  bool haveBinding = doKeyCommon(key, pressed);
+
   if (!myTank)
-    doKeyNotPlaying(key, pressed);
+    doKeyNotPlaying(key, pressed, haveBinding);
   else
-    doKeyPlaying(key, pressed);
+    doKeyPlaying(key, pressed, haveBinding);
 }
 
 static void		doMotion()
