@@ -1115,7 +1115,6 @@ static int uread(int *playerIndex, int *nopackets)
 
   PlayerInfo *pPlayerInfo;
   if ((n = recvfrom(udpSocket, (char *)ubuf, MaxPacketLen, MSG_PEEK, (struct sockaddr*)&uaddr, &recvlen)) != -1) {
-    uint16_t len, lseqno;
     int pi;
     for (pi = 0, pPlayerInfo = player; pi < curMaxPlayers; pi++, pPlayerInfo++) {
       if ((pPlayerInfo->ulinkup) &&
@@ -1185,7 +1184,6 @@ static int uread(int *playerIndex, int *nopackets)
 	memcpy(pPlayerInfo->udpmsg,ubuf,clen);
 	pPlayerInfo->udplen = clen;
       }
-      DEBUG4("GOT UDP READ %d Bytes [%d]\n",len, lseqno);
       return pPlayerInfo->udplen;
     }
   }
