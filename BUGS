@@ -7,7 +7,9 @@ recent bugs
   fall through to the bottom when their selected target is down below.
 
 - Robots don't take elevated bases into consideration.  The spawn
-  inside them and move around as if they were flat. See MrAC's playground.
+  inside them and move around as if they were flat. 
+  http://bzflag.mebigfatguy.com/robobase.bzw
+  start as bzfs -world c:\robobase.bzw -fb -j -c
 
 - doc/guide/NetworkProtocol.xml is not up to date
 
