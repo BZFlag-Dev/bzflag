@@ -4062,10 +4062,10 @@ static void handlePollCmd(int t, const char *message)
         arbiter->setAvailableVoters(available);
 
         // keep track of who is allowed to vote
-        for (i=0; i < curMaxPlayers; i++) {
+        for (int j=0; j < curMaxPlayers; j++) {
 	  // anyone on the server (even observers) are eligible to vote
-	  if (player[i].fd != NotConnected) {
-	    arbiter->grantSuffrage(player[i].callSign);
+	  if (player[j].fd != NotConnected) {
+	    arbiter->grantSuffrage(player[j].callSign);
 	  }
 	}
 
@@ -4143,9 +4143,9 @@ static void handleVoteCmd(int t, const char *message)
   std::string answer;
   std::string voteCmd = &message[5];
 
-  int startPos = voteCmd.find_first_not_of(" \t");
+  unsigned int startPos = voteCmd.find_first_not_of(" \t");
   if (startPos != std::string::npos) {
-    int endPos = voteCmd.find_first_of(" \t", startPos);
+    unsigned int endPos = voteCmd.find_first_of(" \t", startPos);
     if (endPos == std::string::npos)
       endPos = voteCmd.length();
     answer = voteCmd.substr(startPos, endPos-startPos);
@@ -4227,7 +4227,7 @@ static void handleVoteCmd(int t, const char *message)
   }
 }
 
-static void handleVetoCmd(int t, const char *message)
+static void handleVetoCmd(int t, const char * /*message*/)
 {
     char reply[MessageLen];
     if (!hasPerm(t, PlayerAccessInfo::veto)) {
