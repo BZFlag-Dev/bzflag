@@ -4219,6 +4219,33 @@ static bool		joinGame(const StartupInfo* info,
   fireButton = false;
   firstLife = true;
 
+	if (!BZDBCache::displayMainFlags){
+		std::string showFlagsMsg = "Flags on field hidden, to show them ";
+		std::vector<std::string> keys = KEYMGR.getKeysFromCommand("toggle displayMainFlags", true);
+
+		if (keys.size() != 0) {
+  			showFlagsMsg += "hit \"";
+				showFlagsMsg += tolower(keys[0][0]);
+				showFlagsMsg += "\"";
+		} else {
+			showFlagsMsg += " bind a key to Toggle Flags on Field";
+		}
+		addMessage(NULL, showFlagsMsg);
+	}
+	if (!BZDB.isTrue("displayRadarFlags")){
+		std::string showFlagsMsg = "Flags on radar hidden, to show them ";
+		std::vector<std::string> keys = KEYMGR.getKeysFromCommand("toggle displayRadarFlags", true);
+
+		if (keys.size() != 0) {
+  			showFlagsMsg += "hit \"";
+				showFlagsMsg += tolower(keys[0][0]);
+				showFlagsMsg += "\"";
+		} else {
+			showFlagsMsg += " bind a key to Toggle Flags on Radar";
+		}
+		addMessage(NULL, showFlagsMsg);
+	}
+  
   return true;
 }
 
