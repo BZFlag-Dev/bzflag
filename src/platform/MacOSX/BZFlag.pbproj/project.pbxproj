@@ -2055,6 +2055,30 @@
 			settings = {
 			};
 		};
+		14D0ED6204F890D900A80164 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = VotingBooth.cxx;
+			refType = 4;
+		};
+		14D0ED6304F890D900A80164 = {
+			fileRef = 14D0ED6204F890D900A80164;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		14D0ED6404F8911100A80164 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = VotingBooth.h;
+			refType = 4;
+		};
+		14D0ED6504F8911100A80164 = {
+			fileRef = 14D0ED6404F8911100A80164;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
 //140
 //141
 //142
@@ -3089,6 +3113,7 @@
 				1401FCCB04B57C2200A80164,
 				14ACDFC104B666F700A80164,
 				7B79F0B104BA74F400FEBA07,
+				14D0ED6404F8911100A80164,
 			);
 			isa = PBXGroup;
 			name = include;
@@ -4940,6 +4965,7 @@
 				14ACDFBF04B665F900A80164,
 				7B79F0AF04BA74BD00FEBA07,
 				14B98BB904E1CBD500A80164,
+				14D0ED6204F890D900A80164,
 			);
 			isa = PBXGroup;
 			path = common;
@@ -6302,6 +6328,7 @@
 				1495362A049CEBF900A80164,
 				14ACDFC204B666F700A80164,
 				7B79F0B204BA74F400FEBA07,
+				14D0ED6504F8911100A80164,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -6340,6 +6367,7 @@
 				14ACDFC004B665F900A80164,
 				7B79F0B004BA74BD00FEBA07,
 				14B98BBA04E1CBD500A80164,
+				14D0ED6304F890D900A80164,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
