@@ -148,13 +148,30 @@ const Obstacle* ShotStrategy::getFirstBuilding(const Ray& ray,
 void ShotStrategy::reflect(float* v, const float* n) // const
 {
   // normal is assumed to be normalized, v needn't be
-  float d = -2.0f * (n[0] * v[0] + n[1] * v[1] + n[2] * v[2]);
-  d = fabsf(d); // allows for refraction by inverted normals
-  v[0] += d * n[0];
-  v[1] += d * n[1];
-  v[2] += d * n[2];
+  float d = -2.0f * ((n[0] * v[0]) + (n[1] * v[1]) + (n[2] * v[2]));
+  
+  if (d >= 0.0f) {
+    // normal reflection
+    v[0] += d * n[0];
+    v[1] += d * n[1];
+    v[2] += d * n[2];
+  } else {
+    // refraction due to inverted normal (still using the 2X factor)
+    float oldSpeed = sqrtf((v[0] * v[0]) + (v[1] * v[1]) + (v[2] * v[2]));
+    d = -2.0f * d; // now using 4X refraction factor
+    v[0] += d * n[0];
+    v[1] += d * n[1];
+    v[2] += d * n[2];
+    // keep the same speed as the incoming vector
+    float newSpeed = sqrtf((v[0] * v[0]) + (v[1] * v[1]) + (v[2] * v[2]));
+    const float scale = (oldSpeed / newSpeed);
+    v[0] *= scale;
+    v[1] *= scale;
+    v[2] *= scale;
+  }
+  
+  return;
 }
-
 
 const Teleporter* ShotStrategy::getFirstTeleporter(const Ray& ray,
 						   float min, float& t, int& f) const

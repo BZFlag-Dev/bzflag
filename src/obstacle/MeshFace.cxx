@@ -276,6 +276,7 @@ void MeshFace::get3DNormal(const float* p, float* n) const
     memcpy (n, plane, sizeof(float[3]));
   }
   else {
+    // FIXME: this isn't quite right
     // normal smoothing to fake curved surfaces
     int i;
     // calculate the triangle ares
