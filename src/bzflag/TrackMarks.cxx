@@ -16,7 +16,6 @@
 
 // System headers
 #include <math.h>
-#include <list>
 
 // Interface header
 #include "TrackMarks.h"
@@ -52,10 +51,18 @@ enum TrackSides {
 };
 
 
+//
+// Helper Classes  (TrackEntry, TrackList, TrackRenderNode, TrackSceneNode)
+//
+
 class TrackEntry {
   public:
     ~TrackEntry();
+    TrackEntry* getNext();
       
+  protected:
+    TrackEntry* next;
+    TrackEntry* prev;
   public:
     float pos[3];
     float angle;
@@ -64,7 +71,69 @@ class TrackEntry {
     int phydrv;
     float lifeTime;
     class TrackSceneNode* sceneNode;
+    
+  friend class TrackList;
 };
+
+inline TrackEntry* TrackEntry::getNext()
+{
+  return next;
+}
+
+
+class TrackList {
+  public:
+    TrackList() { start = end = NULL; }
+    ~TrackList() { clear(); }
+
+    void clear();
+
+    TrackEntry* getStart() { return start; }
+    TrackEntry* getEnd() { return end; }
+    
+    void addNode(TrackEntry&);
+    TrackEntry* removeNode(TrackEntry*); // return the next entry
+
+  private:
+    TrackEntry* start;
+    TrackEntry* end;
+};
+
+inline void TrackList::addNode(TrackEntry& te)
+{
+  TrackEntry* copy = new TrackEntry;
+  *copy = te;
+  copy->next = NULL;
+  if (end == NULL) {
+    copy->prev = NULL;
+    start = end = copy;
+  } else {
+    copy->prev = end;
+    end->next = copy;
+    end = copy;
+  }
+  return;
+}
+
+inline TrackEntry* TrackList::removeNode(TrackEntry* te)
+{
+  TrackEntry* const next = te->next;
+  TrackEntry* const prev = te->prev;
+  if (next != NULL) {
+    next->prev = prev;
+  } else {
+    end = prev;
+  }
+  if (prev != NULL) {
+    prev->next = next;
+  } else {
+    start = next;
+  }
+  delete te; // delete it (and its sceneNode, in ~TrackEntry())
+  return next;
+}
+
+
 
 class TrackRenderNode : public RenderNode {
   public:
@@ -78,6 +147,7 @@ class TrackRenderNode : public RenderNode {
     TrackType type;
     const TrackEntry* te;
 };
+
 
 class TrackSceneNode : public SceneNode {
   public:
@@ -95,13 +165,14 @@ class TrackSceneNode : public SceneNode {
 };
 
 
+//
 // Local Variables
-//////////////////
+//
 
-static std::list<TrackEntry> SmokeList;
-static std::list<TrackEntry> PuddleList;
-static std::list<TrackEntry> TreadsGroundList;
-static std::list<TrackEntry> TreadsObstacleList;
+static TrackList SmokeList;
+static TrackList PuddleList;
+static TrackList TreadsGroundList;
+static TrackList TreadsObstacleList;
 static float TrackFadeTime = 5.0f;
 static float UserFadeScale = 1.0f;
 static AirCullStyle AirCull = FullAirCull;
@@ -122,8 +193,9 @@ static OpenGLGState treadsGState;
 static float TextureHeightOffset = 0.05f;
 
 
+//
 // Function Prototypes
-//////////////////////
+//
 
 static void setup();
 static void initContext(void* data);
@@ -131,11 +203,12 @@ static void drawSmoke(const TrackEntry& te);
 static void drawPuddle(const TrackEntry& te);
 static void drawTreads(const TrackEntry& te);
 static bool onBuilding(const float pos[3]);
-static void updateList(std::list<TrackEntry>& list, float dt);
-static void addEntryToList(std::list<TrackEntry>& list,
+static void updateList(TrackList& list, float dt);
+static void addEntryToList(TrackList& list,
                            TrackEntry& te, TrackType type);
 
 
+/****************************************************************************/
 //
 // TrackMarks
 //
@@ -211,11 +284,11 @@ AirCullStyle TrackMarks::getAirCulling()
 }
 
 
-static void addEntryToList(std::list<TrackEntry>& list,
+static void addEntryToList(TrackList& list,
                            TrackEntry& te, TrackType type)
 {
   // push the entry
-  list.push_back(te);
+  list.addNode(te);
 
   // make a sceneNode for the BSP rendering, if not on the ground
   if (!BZDBCache::zbuffer && (te.pos[2] != TextureHeightOffset)) {
@@ -229,8 +302,8 @@ static void addEntryToList(std::list<TrackEntry>& list,
     } else {
       return;
     }
-    TrackEntry& ptr = *list.rbegin();
-    ptr.sceneNode = new TrackSceneNode(&ptr, type, gstate);
+    TrackEntry* copy = list.getEnd();
+    copy->sceneNode = new TrackSceneNode(copy, type, gstate);
   }
   return;
 }
@@ -353,23 +426,18 @@ static bool onBuilding(const float pos[3])
 }
 
 
-static void updateList(std::list<TrackEntry>& list, float dt)
+static void updateList(TrackList& list, float dt)
 {
-  std::list<TrackEntry>::iterator it = list.begin();
-  while (it != list.end()) {
-    // setup the next iterator (handy for deleting)
-    std::list<TrackEntry>::iterator next = it;
-    next++;
-
-    TrackEntry& te = *it;
+  TrackEntry* ptr = list.getStart();
+  while (ptr != NULL) {
+    TrackEntry& te = *ptr;
     
     // increase the lifeTime
     te.lifeTime += dt;
 
     // see if this mark has expired
     if (te.lifeTime > TrackFadeTime) {
-      list.erase(it);
-      it = next;
+      ptr = list.removeNode(ptr);
       continue;
     }
 
@@ -423,14 +491,13 @@ static void updateList(std::list<TrackEntry>& list, float dt)
         }
         // cull this node
         if (te.sides == 0) {
-          list.erase(it);
-          it = next;
+          ptr = list.removeNode(ptr);
           continue;
         }
       }
     }
 
-    it = next;
+    ptr = ptr->getNext();
   }
 
   return;
@@ -517,7 +584,7 @@ void TrackMarks::renderGroundTracks()
     return;
   }
 
-  std::list<TrackEntry>::iterator it;
+  TrackEntry* ptr;
 
   // disable the zbuffer for drawing on the ground
   if (BZDBCache::zbuffer) {
@@ -527,14 +594,14 @@ void TrackMarks::renderGroundTracks()
   
   // draw ground treads
   treadsGState.setState();
-  for (it = TreadsGroundList.begin(); it != TreadsGroundList.end(); it++) {
-    drawTreads(*it);
+  for (ptr = TreadsGroundList.getStart(); ptr != NULL; ptr = ptr->getNext()) {
+    drawTreads(*ptr);
   }
 
   // draw puddles
   puddleGState.setState();
-  for (it = PuddleList.begin(); it != PuddleList.end(); it++) {
-    drawPuddle(*it);
+  for (ptr = PuddleList.getStart(); ptr != NULL; ptr = ptr->getNext()) {
+    drawPuddle(*ptr);
   }
   
   // re-enable the zbuffer
@@ -558,22 +625,22 @@ void TrackMarks::renderObstacleTracks()
     return;
   }
 
-  std::list<TrackEntry>::iterator it;
-
+  TrackEntry* ptr;
+  
   // disable the zbuffer writing (these are the last things drawn)
   // this helps to avoid the zbuffer fighting/flickering effect
   glDepthMask(GL_FALSE);
   
   // draw treads
   treadsGState.setState();
-  for (it = TreadsObstacleList.begin(); it != TreadsObstacleList.end(); it++) {
-    drawTreads(*it);
+  for (ptr = TreadsObstacleList.getStart(); ptr != NULL; ptr = ptr->getNext()) {
+    drawTreads(*ptr);
   }
 
   // draw smoke
   smokeGState.setState();
-  for (it = SmokeList.begin(); it != SmokeList.end(); it++) {
-    drawSmoke(*it);
+  for (ptr = SmokeList.getStart(); ptr != NULL; ptr = ptr->getNext()) {
+    drawSmoke(*ptr);
   }
 
   // re-enable the zbuffer writing
@@ -706,8 +773,9 @@ void TrackMarks::addSceneNodes(SceneDatabase* scene)
   std::list<TrackEntry>::iterator it;
 
   // tread track marks on obstacles
-  for (it = TreadsObstacleList.begin(); it != TreadsObstacleList.end(); it++) {
-    const TrackEntry& te = *it;
+  TrackEntry* ptr;
+  for (ptr = TreadsObstacleList.getStart(); ptr != NULL; ptr = ptr->getNext()) {
+    const TrackEntry& te = *ptr;
     if (te.sceneNode != NULL) {
       te.sceneNode->update();
       scene->addDynamicNode(te.sceneNode);
@@ -715,8 +783,8 @@ void TrackMarks::addSceneNodes(SceneDatabase* scene)
   }
       
   // smoke track marks in the air
-  for (it = SmokeList.begin(); it != SmokeList.end(); it++) {
-    const TrackEntry& te = *it;
+  for (ptr = SmokeList.getStart(); ptr != NULL; ptr = ptr->getNext()) {
+    const TrackEntry& te = *ptr;
     if (te.sceneNode != NULL) {
       te.sceneNode->update();
       scene->addDynamicNode(te.sceneNode);
@@ -727,6 +795,7 @@ void TrackMarks::addSceneNodes(SceneDatabase* scene)
 }
 
 
+/****************************************************************************/
 //
 // TrackEntry
 //
@@ -734,6 +803,23 @@ void TrackMarks::addSceneNodes(SceneDatabase* scene)
 TrackEntry::~TrackEntry()
 {
   delete sceneNode;
+  return;
+}
+
+
+//
+// TrackList
+//
+
+void TrackList::clear()
+{
+  TrackEntry* te = start;
+  while (te != NULL) {
+    TrackEntry* next = te->next;
+    delete te;
+    te = next;
+  }
+  start = end = NULL;
   return;
 }
 
