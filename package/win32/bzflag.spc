@@ -3,14 +3,17 @@
 #-file ../../bin/bzfls.exe bzfls.exe
 -file bin/bzfuinst.exe bzfuinst.exe
 -pushdir data
+-file ../../data/config.bzc config.bzc
 -file ../../data/menu.bzc menu.bzc
 -file ../../data/view.bzc view.bzc
 -file ../../data/background.bzg background.bzg
+-file ../../data/basicconsole.bzg basicconsole.bzg
 -file ../../data/clouds.bzg clouds.bzg
 -file ../../data/console.bzg console.bzg
 -file ../../data/explosion.bzg explosion.bzg
 -file ../../data/flag.bzg flag.bzg
 -file ../../data/ground.bzg ground.bzg
+-file ../../data/logo.bzg logo.bzg
 -file ../../data/menu.bzg menu.bzg
 -file ../../data/menuptr.bzg menuptr.bzg
 -file ../../data/models.bzg models.bzg
