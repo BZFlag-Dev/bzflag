@@ -448,13 +448,13 @@ void			LocalPlayer::doUpdateMotion(float dt)
   // see if we're crossing a wall
   if (location == InBuilding && getFlag() == Flags::OscillationOverthruster) {
     if (insideBuilding->isCrossing(newPos, newAzimuth,
-			0.5f * TankLength, 0.5f * TankWidth, NULL))
+			0.5f * BZDB->eval(StateDatabase::BZDB_TANKLENGTH), 0.5f * TankWidth, NULL))
       setStatus(getStatus() | int(PlayerState::CrossingWall));
     else
       setStatus(getStatus() & ~int(PlayerState::CrossingWall));
   }
   else if (World::getWorld()->crossingTeleporter(newPos, newAzimuth,
-			0.5f * TankLength, 0.5f * TankWidth, crossingPlane)) {
+			0.5f * BZDB->eval(StateDatabase::BZDB_TANKLENGTH), 0.5f * TankWidth, crossingPlane)) {
 	  setStatus(getStatus() | int(PlayerState::CrossingWall));
   }
   else {
@@ -563,7 +563,7 @@ void			LocalPlayer::doUpdateMotion(float dt)
 const Obstacle*		LocalPlayer::getHitBuilding(const float* p, float a,
 				bool phased, bool& expelled) const
 {
-  float length = 0.5f * TankLength;
+  float length = 0.5f * BZDB->eval(StateDatabase::BZDB_TANKLENGTH);
   float width = 0.5f * TankWidth;
   if (getFlag() == Flags::Obesity) {
     length *= ObeseFactor;
@@ -597,7 +597,7 @@ bool			LocalPlayer::getHitNormal(const Obstacle* o,
 				const float* pos2, float azimuth2,
 				float* normal) const
 {
-  float length = 0.5f * TankLength;
+  float length = 0.5f * BZDB->eval(StateDatabase::BZDB_TANKLENGTH);
   float width = 0.5f * TankWidth;
   if (getFlag() == Flags::Obesity) {
     length *= ObeseFactor;

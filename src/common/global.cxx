@@ -13,6 +13,7 @@
 #include "global.h"
 
 
-GlobalDBItem globalDBItems[1] = {
-  { "_gravity",		"-9.81",	false,	StateDatabase::Locked }
+GlobalDBItem globalDBItems[2] = {
+  { "_gravity",		"-9.81",	false,	StateDatabase::Locked },
+  { "_tankLength",	"6.0",		false,	StateDatabase::Locked }
 };

@@ -63,10 +63,9 @@ extern float	WorldSize;							// meters
 const float		BaseSize =	60.0f;					// meters
 
 // rough tank geometry
-const float		TankLength =	6.0f;		// meters
 const float		TankWidth =	2.8f;		// meters
 const float		TankHeight =	2.05f;		// meters
-const float		TankRadius =	0.72f*TankLength;// meters
+const float		TankRadius =	4.32f;// meters
 const float		MuzzleHeight =	1.57f;		// meters
 const float		MuzzleFront =	TankRadius+0.1f;// meters
 
@@ -83,7 +82,7 @@ const float		PyrBase =	4.0f*TankHeight;// meters
 const float		PyrHeight =	5.0f*TankHeight;// meters
 
 // box geometry
-const float		BoxBase =	5.0f*TankLength;// meters
+const float		BoxBase =	30.0f;// meters
 const float		BoxHeight =	6.0f*MuzzleHeight;// meters
 
 // teleporter geometry (My God, it's full of stars...)
@@ -153,7 +152,7 @@ const float		TinyFactor =	0.4f;		// 40% normal size
 const float		ShieldFlight =	2.7f;		// flag goes 170% higher
 const float		SRRadiusMult =	2.0;		// 200% normal radius
 const float		ShockAdLife =	0.20f;		// 20% normal lifetime
-const float		ShockInRadius =	TankLength;	// size of tank
+const float		ShockInRadius =	6.0f;	// size of tank
 const float		ShockOutRadius=	2.0f * BoxBase;	// size of building
 const float		JumpVelocity =	19.0f;		// m/s
 const float		IdentityRange =	50.0f;		// meters
@@ -184,7 +183,7 @@ struct GlobalDBItem {
     bool			persistent;
     StateDatabase::Permission	permission;
 };
-extern GlobalDBItem		globalDBItems[1];
+extern GlobalDBItem		globalDBItems[2];
 
 #endif // BZF_GLOBAL_H
 // ex: shiftwidth=2 tabstop=8

@@ -3659,7 +3659,7 @@ static void		restartPlaying()
 	// larger than the actual tank size to give some leeway.
 	const Ray ray(shot->getPosition(), shot->getVelocity());
 	const float t = timeRayHitsBlock(ray, startPoint, startAzimuth,
-				4.0f * TankLength, 4.0f * TankWidth,
+				4.0f * BZDB->eval(StateDatabase::BZDB_TANKLENGTH), 4.0f * TankWidth,
 				2.0f * TankHeight);
 	if (t >= 0.0f && t < MinShotImpact) {
 	  located = false;
@@ -3774,13 +3774,13 @@ bool			addExplosion(const float* _pos,
   newExplosion->setSize(size);
   newExplosion->setDuration(duration);
   newExplosion->setAngle(2.0f * M_PI * (float)bzfrand());
-  newExplosion->setLightScaling(size / TankLength);
+  newExplosion->setLightScaling(size / BZDB->eval(StateDatabase::BZDB_TANKLENGTH));
   newExplosion->setLightFadeStartTime(0.7f * duration);
 
   // add copy to list of current explosions
   explosions.push_back(newExplosion);
 
-  if (size < (3.0f * TankLength)) return true; // shot explosion
+  if (size < (3.0f * BZDB->eval(StateDatabase::BZDB_TANKLENGTH))) return true; // shot explosion
 
   int boom = (int) (bzfrand() * 8.0) + 3;
   while (boom--) {
@@ -3797,7 +3797,7 @@ bool			addExplosion(const float* _pos,
   newExplosion->setSize(size);
   newExplosion->setDuration(duration);
   newExplosion->setAngle(2.0f * M_PI * (float)bzfrand());
-  newExplosion->setLightScaling(size / TankLength);
+  newExplosion->setLightScaling(size / BZDB->eval(StateDatabase::BZDB_TANKLENGTH));
   newExplosion->setLightFadeStartTime(0.7f * duration);
 
   // add copy to list of current explosions
@@ -3809,19 +3809,19 @@ bool			addExplosion(const float* _pos,
 
 void			addTankExplosion(const float* pos)
 {
-  addExplosion(pos, 3.5f * TankLength, 1.2f);
+  addExplosion(pos, 3.5f * BZDB->eval(StateDatabase::BZDB_TANKLENGTH), 1.2f);
 }
 
 void			addShotExplosion(const float* pos)
 {
   // only play explosion sound if you see an explosion
-  if (addExplosion(pos, 1.2f * TankLength, 0.8f))
+  if (addExplosion(pos, 1.2f * BZDB->eval(StateDatabase::BZDB_TANKLENGTH), 0.8f))
     playWorldSound(SFX_SHOT_BOOM, pos[0], pos[1], pos[2]);
 }
 
 void			addShotPuff(const float* pos)
 {
-  addExplosion(pos, 0.3f * TankLength, 0.8f);
+  addExplosion(pos, 0.3f * BZDB->eval(StateDatabase::BZDB_TANKLENGTH), 0.8f);
 }
 
 // update events from outside if they should be checked

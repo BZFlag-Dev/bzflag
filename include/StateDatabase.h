@@ -119,8 +119,6 @@ public:
   static StateDatabase* getInstance();
 
   static const std::string	BZDB_GRAVITY;
-  static const std::string	BZDB_WORLDSIZE;
-  static const std::string	BZDB_BASESIZE;
   static const std::string	BZDB_TANKLENGTH;
   static const std::string	BZDB_TANKWIDTH;
   static const std::string	BZDB_TANKHEIGHT;

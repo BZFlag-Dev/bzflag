@@ -47,7 +47,7 @@ TankSceneNode::TankSceneNode(const GLfloat pos[3], const GLfloat forward[3]) :
 {
   // prepare geometry
   move(pos, forward);
-  baseRadius = 0.25f * (TankLength * TankLength +
+  baseRadius = 0.25f * (BZDB->eval(StateDatabase::BZDB_TANKLENGTH) * BZDB->eval(StateDatabase::BZDB_TANKLENGTH) +
 			TankWidth * TankWidth + TankHeight * TankHeight);
   setRadius(baseRadius);
 
@@ -266,7 +266,7 @@ TankIDLSceneNode::TankIDLSceneNode(const TankSceneNode* _tank) :
 {
   static const GLfloat defaultPlane[4] = { 1.0f, 0.0f, 0.0f, 0.0f };
   move(defaultPlane);
-  setRadius(4.0f * TankLength * TankLength);
+  setRadius(4.0f * BZDB->eval(StateDatabase::BZDB_TANKLENGTH) * BZDB->eval(StateDatabase::BZDB_TANKLENGTH));
 
   OpenGLGStateBuilder builder(gstate);
   builder.setCulling(GL_NONE);
@@ -289,9 +289,9 @@ void			TankIDLSceneNode::move(const GLfloat _plane[4])
 
   // compute new sphere
   const GLfloat* s = tank->getSphere();
-  setCenter(s[0] + 1.5f * TankLength * plane[0],
-	    s[1] + 1.5f * TankLength * plane[1],
-	    s[2] + 1.5f * TankLength * plane[2]);
+  setCenter(s[0] + 1.5f * BZDB->eval(StateDatabase::BZDB_TANKLENGTH) * plane[0],
+	    s[1] + 1.5f * BZDB->eval(StateDatabase::BZDB_TANKLENGTH) * plane[1],
+	    s[2] + 1.5f * BZDB->eval(StateDatabase::BZDB_TANKLENGTH) * plane[2]);
 }
 
 void			TankIDLSceneNode::notifyStyleChange(
@@ -431,7 +431,7 @@ void			TankIDLSceneNode::IDLRenderNode::render()
 	      sphere[2] * _plane[2] + _plane[3]);
 
   // compute projection point -- one TankLength in from plane
-  const GLfloat pd = -1.0f * TankLength - plane[3];
+  const GLfloat pd = -1.0f * BZDB->eval(StateDatabase::BZDB_TANKLENGTH) - plane[3];
   GLfloat origin[3];
   origin[0] = pd * plane[0];
   origin[1] = pd * plane[1];

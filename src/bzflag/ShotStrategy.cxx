@@ -523,7 +523,7 @@ float			SegmentedShotStrategy::checkHit(const BaseLocalPlayer* tank,
       // is shell radius so you can actually hit narrow tank head on.
       static float origin[3] = { 0.0f, 0.0f, 0.0f };
       t = timeRayHitsBlock(relativeRay, origin, tank->getAngle(),
-			0.5f * TankLength, ShotRadius, TankHeight);
+			0.5f * BZDB->eval(StateDatabase::BZDB_TANKLENGTH), ShotRadius, TankHeight);
     }
     else {
       // find time when shot hits sphere around tank
@@ -1311,7 +1311,7 @@ float			GuidedMissileStrategy::checkHit(const BaseLocalPlayer* tank,
       // is shell radius so you can actually hit narrow tank head on.
       static float origin[3] = { 0.0f, 0.0f, 0.0f };
       t = timeRayHitsBlock(relativeRay, origin, tank->getAngle(),
-		      0.5f * TankLength, ShotRadius, TankHeight);
+		      0.5f * BZDB->eval(StateDatabase::BZDB_TANKLENGTH), ShotRadius, TankHeight);
     }
     else {
       // find time when shot hits sphere around tank
