@@ -1590,9 +1590,6 @@ copy debug\*.pdb ..\..\*.pdb
 				RelativePath="..\..\src\bzflag\TargetingUtils.h">
 			</File>
 			<File
-				RelativePath="..\..\src\bzflag\texture.h">
-			</File>
-			<File
 				RelativePath="..\..\include\TextureManager.h">
 			</File>
 			<File
