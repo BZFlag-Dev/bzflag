@@ -304,20 +304,23 @@ void			RobotPlayer::explodeTank()
   // NOTE -- code taken directly from LocalPlayer
   float gravity      = BZDB.eval(StateDatabase::BZDB_GRAVITY);
   float explodeTime  = BZDB.eval(StateDatabase::BZDB_EXPLODETIME);
-  float explodeTime2 = explodeTime * explodeTime;
-  float tMax2;
+  // Limiting max height increment to this value (the old default value)
   const float zMax  = 49.0f;
   setExplode(TimeKeeper::getTick());
   const float* oldVelocity = getVelocity();
   float newVelocity[3];
+  float maxSpeed;
   newVelocity[0] = oldVelocity[0];
   newVelocity[1] = oldVelocity[1];
   if (gravity < 0) {
-    tMax2 = - 2.0f * zMax / gravity;
-    if (explodeTime2 > tMax2)
-      newVelocity[2] = - sqrtf(tMax2) * gravity;
-    else
-      newVelocity[2] = - 0.5f * gravity * explodeTime;
+    // comparing 2 speed:
+    //   to have a simmetric path (ending at same height as starting)
+    //   to reach the acme of parabola, under the max height established
+    // take the less
+    newVelocity[2] = - 0.5f * gravity * explodeTime;
+    maxSpeed       = sqrtf(- 2.0f * zMax * gravity);
+    if (newVelocity[2] > maxSpeed)
+      newVelocity[2] = maxSpeed;
   } else {
     newVelocity[2] = oldVelocity[2];
   }
