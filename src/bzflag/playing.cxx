@@ -6502,7 +6502,7 @@ static void		playingLoop()
 	for (i = 0; i < numFlags; i++) {
 	  Flag& flag = world->getFlag(i);
 	  if ((flag.type->flagTeam == myTank->getTeam())
-	  &&  (flag.owner != myTank->getId())) {
+	      &&  (flag.status != FlagOnTank || flag.owner != myTank->getId())) {
 	    const float* flagPos = flag.position;
 	    hud->setMarkerHeading(0, atan2f(flagPos[1] - myPos[1],
 					    flagPos[0] - myPos[0]));
