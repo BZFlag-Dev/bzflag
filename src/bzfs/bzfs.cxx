@@ -2052,7 +2052,7 @@ static void relayPlayerPacket(int index, uint16_t len, const void *rawbuf)
 {
 	// relay packet to all players
 	for (int i = 0; i < maxPlayers; i++)
-		if (i != index)
+		if ((i != index) && (player[i].state > PlayerInLimbo))
 			pwrite(i, rawbuf, len + 4);
 }
 
