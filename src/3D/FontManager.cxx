@@ -102,7 +102,6 @@ FontManager::~FontManager()
 
 void FontManager::rebuild(void)	// rebuild all the lists
 {
-  FontFaceList::iterator faceItr = fontFaces.begin();
 
   /* FIXME - this comment block is the "right" code, but
    * on Windows at least, switching resolutions messes
@@ -112,6 +111,8 @@ void FontManager::rebuild(void)	// rebuild all the lists
    * This is not good, and should be fixed, but the
    * problem is probably related to the GL context and
    * is much deeper, so we work around it for now.
+  FontFaceList::iterator faceItr = fontFaces.begin();
+
   while (faceItr != fontFaces.end()) {
     FontSizeMap::iterator itr = faceItr->begin();
     while (itr != faceItr->end()) {
