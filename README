@@ -260,3 +260,13 @@ b) you are behind a firewall or a desktop firewall (e.g. ZoneAlarm) that is
 CU on the battlefield
 
 	Onkel Frank
+
+Testing
+=======
+
+If you have rendering problems you might want to try setting:
+
+LIBGL_ALWAYS_INDIRECT=1
+
+On many systems this will force software rendering. It will greatly reduce
+the performance, but may solve rendering issues.
