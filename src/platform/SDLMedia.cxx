@@ -158,7 +158,7 @@ bool			SDLMedia::startAudioThread(
 
 void			SDLMedia::stopAudioThread()
 {
-  SDL_KillThread(ThreadId);
+  SDL_WaitThread(ThreadId, NULL);
 }
 
 bool			SDLMedia::hasAudioThread() const
