@@ -200,16 +200,16 @@ inline bool isPrintable(const char c)
 // S t r i n g  i t e r a t i o n
 
 /** utility method that returns the position of the
- * first printable character from a string
+ * first alphanumeric character from a string
  */
 inline int firstAlphanumeric(const std::string &input, unsigned short int max=4096)
 {
   if (input.size() == 0) {
     return -1;
+
   }
 
   int i = 0;
-  /* range of printable characters, with failsafe */
   while (!isAlphanumeric(input[i]) && (i < max)) {
     i++;
   }
@@ -218,7 +218,7 @@ inline int firstAlphanumeric(const std::string &input, unsigned short int max=40
 
 
 /** utility method that returns the position of the
- * first printable character from a string
+ * first non-alphanumeric character from a string
  */
 inline int firstNonalphanumeric(const std::string &input, unsigned short int max=4096)
 {
@@ -227,7 +227,6 @@ inline int firstNonalphanumeric(const std::string &input, unsigned short int max
   }
 
   int i = 0;
-  /* range of printable characters, with failsafe */
   while (isAlphanumeric(input[i]) && (i < max)) {
     i++;
   }
@@ -245,7 +244,6 @@ inline int firstPrintable(const std::string &input, unsigned short int max=4096)
   }
 
   int i = 0;
-  /* range of printable characters, with failsafe */
   while (!isPrintable(input[i]) && (i < max)) {
     i++;
   }
@@ -263,7 +261,6 @@ inline int firstNonprintable(const std::string &input, unsigned short int max=40
   }
 
   int i = 0;
-  /* range of non-printable characters, with failsafe */
   while (isPrintable(input[i]) && (i < max)) {
     i++;
   }
@@ -281,12 +278,12 @@ inline int firstVisible(const std::string &input, unsigned short int max=4096)
   }
 
   int i = 0;
-  /* range of printable characters, with failsafe */
   while (isVisible(input[i]) && (i < max)) {
     i++;
   }
   return i;
 }
+
 
 /** utility method that returns the position of the
  * first non visible character from a string (control
@@ -299,11 +296,45 @@ inline int firstNonvisible(const std::string &input, unsigned short int max=4096
   }
 
   int i = 0;
-  /* range of printable characters, with failsafe */
   while (!isVisible(input[i]) && (i < max)) {
     i++;
   }
 	 return i;
+}
+
+
+/** utility method that returns the position of the
+* first alphabetic character from a string
+*/
+inline int firstAlphabetic(const std::string &input, unsigned short int max=4096)
+{
+  if (input.size() == 0) {
+    return -1;
+
+  }
+
+  int i = 0;
+  while (!isAlphabetic(input[i]) && (i < max)) {
+    i++;
+  }
+  return i;
+}
+
+
+/** utility method that returns the position of the
+* first printable character from a string
+*/
+inline int firstNonalphabetic(const std::string &input, unsigned short int max=4096)
+{
+  if (input.size() == 0) {
+    return -1;
+  }
+
+  int i = 0;
+  while (isAlphabetic(input[i]) && (i < max)) {
+    i++;
+  }
+  return i;
 }
 
 
