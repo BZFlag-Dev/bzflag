@@ -1,20 +1,11 @@
-// MD5.CC - source code for the C++/object oriented translation and 
-//          modification of MD5.
+/* MD5
+ converted to C++ class by Frank Thilo (thilo@unix-ag.org)
+ for bzflag (http://www.bzflag.org)
 
-// Translation and modification (c) 1995 by Mordechai T. Abzug 
+   based on:
 
-// This translation/ modification is provided "as is," without express or 
-// implied warranty of any kind.
-
-// The translator/ modifier does not claim (1) that MD5 will do what you think 
-// it does; (2) that this translation/ modification is accurate; or (3) that 
-// this software is "merchantible."  (Language for this disclaimer partially 
-// copied from the disclaimer below).
-
-/* based on:
-
-   MD5.H - header file for MD5C.C
-   MDDRIVER.C - test driver for MD2, MD4 and MD5
+   md5.h and md5.c
+   reference implemantion of RFC 1321
 
    Copyright (C) 1991-2, RSA Data Security, Inc. Created 1991. All
 rights reserved.
@@ -39,76 +30,61 @@ documentation and/or software.
 
 */
 
-#include <stdio.h>
-#include <fstream>
+#ifndef BZF_MD5_H
+#define BZF_MD5_H
+
+#include <string>
 #include <iostream>
 
-class MD5 {
-
+// a small class for calculating MD5 hashes of strings or byte arrays
+// it is not meant to be fast or secure
+//
+// usage: 1) feed it blocks of uchars with update()
+//        2) finalize()
+//        3) get hexdigest() string
+//      or
+//        MD5(std::string).hexdigest()
+//
+// assumes that char is 8 bit and int is 32 bit
+class MD5
+{
 public:
-// methods for controlled operation:
-  MD5              ();  // simple initializer
-  void  update     (unsigned char *input, unsigned int input_length);
-#ifdef UNUSED
-  void  update     (istream& stream);
-  void  update     (FILE *file);
-  void  update     (ifstream& stream);
-#endif
-  void  finalize   ();
+  typedef unsigned int size_type; // must be 32bit
 
-// constructors for special circumstances.  All these constructors finalize
-// the MD5 context.
-  MD5              (unsigned char *string); // digest string, finalize
-#ifdef UNUSED
-  MD5              (istream& stream);       // digest stream, finalize
-  MD5              (FILE *file);            // digest file, close, finalize
-  MD5              (ifstream& stream);      // digest stream, close, finalize
-#endif
-
-// methods to acquire finalized result
-  unsigned char    *raw_digest ();  // digest as a 16-byte binary array
-  char *            hex_digest ();  // digest as a 33-byte ascii-hex string
-  friend std::ostream&   operator<< (std::ostream&, MD5 context);
-
-
+  MD5();
+  MD5(const std::string& text);
+  void update(const unsigned char *buf, size_type length);
+  void update(const char *buf, size_type length);
+  MD5& finalize();
+  std::string hexdigest() const;
+  friend std::ostream& operator<<(std::ostream&, MD5 md5);
 
 private:
+  void init();
+  typedef unsigned char uint1; //  8bit
+  typedef unsigned int uint4;  // 32bit
+  static const int blocksize = 64;
 
-// first, some types:
-  typedef unsigned       int uint4; // assumes integer is 4 words long
-  typedef unsigned short int uint2; // assumes short integer is 2 words long
-  typedef unsigned      char uint1; // assumes char is 1 word long
+  void transform(const uint1 block[blocksize]);
+  static void decode(uint4 output[], const uint1 input[], size_type len);
+  static void encode(uint1 output[], const uint4 input[], size_type len);
 
-// next, the private data:
-  uint4 state[4];
-  uint4 count[2];     // number of *bits*, mod 2^64
-  uint1 buffer[64];   // input buffer
-  uint1 digest[16];
-  uint1 finalized;
+  bool finalized;
+  uint1 buffer[blocksize]; // bytes that didn't fit in last 64 byte chunk
+  uint4 count[2];   // 64bit counter for number of bits (lo, hi)
+  uint4 state[4];   // digest so far
+  uint1 digest[16]; // the result
 
-// last, the private methods, mostly static:
-  void init             ();               // called by all constructors
-  void transform        (uint1 *buffer);  // does the real update work.  Note 
-                                          // that length is implied to be 64.
-
-  static void encode    (uint1 *dest, uint4 *src, uint4 length);
-  static void decode    (uint4 *dest, uint1 *src, uint4 length);
-  static void memcpy    (uint1 *dest, uint1 *src, uint4 length);
-  static void memset    (uint1 *start, uint1 val, uint4 length);
-
-  static inline uint4  rotate_left (uint4 x, uint4 n);
-  static inline uint4  F           (uint4 x, uint4 y, uint4 z);
-  static inline uint4  G           (uint4 x, uint4 y, uint4 z);
-  static inline uint4  H           (uint4 x, uint4 y, uint4 z);
-  static inline uint4  I           (uint4 x, uint4 y, uint4 z);
-  static inline void   FF  (uint4& a, uint4 b, uint4 c, uint4 d, uint4 x, 
-			    uint4 s, uint4 ac);
-  static inline void   GG  (uint4& a, uint4 b, uint4 c, uint4 d, uint4 x, 
-			    uint4 s, uint4 ac);
-  static inline void   HH  (uint4& a, uint4 b, uint4 c, uint4 d, uint4 x, 
-			    uint4 s, uint4 ac);
-  static inline void   II  (uint4& a, uint4 b, uint4 c, uint4 d, uint4 x, 
-			    uint4 s, uint4 ac);
-
+  // low level logic operations
+  static inline uint4 F(uint4 x, uint4 y, uint4 z);
+  static inline uint4 G(uint4 x, uint4 y, uint4 z);
+  static inline uint4 H(uint4 x, uint4 y, uint4 z);
+  static inline uint4 I(uint4 x, uint4 y, uint4 z);
+  static inline uint4 rotate_left(uint4 x, int n);
+  static inline void FF(uint4 &a, uint4 b, uint4 c, uint4 d, uint4 x, uint4 s, uint4 ac);
+  static inline void GG(uint4 &a, uint4 b, uint4 c, uint4 d, uint4 x, uint4 s, uint4 ac);
+  static inline void HH(uint4 &a, uint4 b, uint4 c, uint4 d, uint4 x, uint4 s, uint4 ac);
+  static inline void II(uint4 &a, uint4 b, uint4 c, uint4 d, uint4 x, uint4 s, uint4 ac);
 };
 
+#endif
