@@ -33,7 +33,20 @@ The input window is where you type your messages. It also supports tab
 completion of commands and callsigns. You can clear the input window
 with the key combination \fBCtrl-U\fR, and you can generate a \fB/kick\fR
 command for the current target with the F5 key (if the current target
-is a player).
+is a player). You can also generate a ban command for the current target with
+the F6 key, but this only works if you are an admin and the server has sent
+you that players IP address (as a response to a \fB/playerlist\fR command).
+.PP
+The curses user interface also has a simple menu system where you can edit
+the server variables (if you are an admin) and see a player list. If you are
+an admin you can also see the IP addresses in the player list, if you have
+sent a \fB/playerlist\fR command. The menu shows up when you hit the F2 key.
+It only covers the upper half of the screen, so you can still see what's 
+going on in the game. You can navigate through the menu with the up and 
+down arrow keys, and use the enter key to select submenus and other menu
+items. If you hit F2 again the command prompt will regain keyboard focus,
+but the menu will still be visible. If you hit F2 a third time the menu will
+go away.
 .SS Options
 .RS
 .TP 15
