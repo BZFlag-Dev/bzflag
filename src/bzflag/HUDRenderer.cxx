@@ -1487,7 +1487,7 @@ void			HUDRenderer::drawPlayerScore(const Player* player,
   char flag[12]="";
   FlagId flagid=player->getFlag();
   if (flagid != NoFlag) {
-    sprintf(flag,"%s",
+    sprintf(flag,"/%s",
 	    Flag::getType(flagid) == FlagNormal ?
 	    Flag::getName(flagid) : Flag::getAbbreviation(flagid));
   }
