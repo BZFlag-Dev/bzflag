@@ -5,25 +5,50 @@ Building on IRIX will work with either the SGI MIPS compiler or the
 GNU gcc3 compiler.  The GNU compiler is available for download from
 SGI freeware.  BZFlag is not presently tested in 64bit-compilation
 mode, and -o32 mode is no longer supported; the default -n32 is
-supported and functional.
+supported and functional.  The -o32 mode "should" work by simply
+changing the -DEFAULT option to be abi=o32 instead of abi=n32; best
+of luck regardless.
 
 Note that the gcc-3.2.2 version picked up some 6.5.18-isms, so you may
-need to track down the older 3.1 release (or compile 3.2 yourself)
+need to track down the older 3.1 release (or compile 3.2 yourself) if
+you are using gcc to compile.
 
 If both the GNU compiler and the SGI MIPS compiler are installed on
 the same system, the GNU compiler will be used by default.  To use the
 SGI MIPS compiler, you will need to inform the configuration script of
 your preference.  You will need to set and export two environment
-variables:
+variables.  For simplicity, the example below also smashes in the
+CFLAGS and CXXFLAGS as the compiler "name"..
 
-# for a bourne-shell environment:
-./configure CC="cc -OPT:Olimit=65536 -DEFAULT:abi=n32:isa=mips4:proc=r10k -LANG:std -J2 -FE:template_in_elf_section -no_auto_include" CXX="CC -OPT:Olimit=65536 -DEFAULT:abi=n32:isa=mips4:proc=r10k -LANG:std -J2 -FE:template_in_elf_section -no_auto_include"
+# to use the MIPSPro compiler
+./configure  CC="cc" CXX="CC" CXXFLAGS="-O2 -OPT:Olimit=32768 -DEFAULT:abi=o32:isa=mips3:proc=r5k -LANG:std -F:template_in_elf_section -no_auto_include -ptused -prelink" CFLAGS="-O2 -OPT:Olimit=32768 -DEFAULT:abi=o32:isa=mips3:proc=r5k -LANG:std -no_autoinclude -ptused -prelink"
 make
 
-# for a c-shell environment
-./configure CC="cc -OPT:Olimit=65536 -DEFAULT:abi=n32:isa=mips4:proc=r10k -LANG:std -J2 -FE:template_in_elf_section -no_auto_include" CXX="CC -OPT:Olimit=65536 -DEFAULT:abi=n32:isa=mips4:proc=r10k -LANG:std -J2 -FE:template_in_elf_section -no_auto_include"
-make
+If you try to boost the optimization to -O3, it is likely that the
+compiler will crash.  Some files will simply take a very long time to
+compile no matter what optimization level, so be patient. ;)
 
+The -LANG:std, -ptused, and -prelink options are necessary for it to
+build properly.  Without them, there will be serious problems linking
+the binaries with the template instantiations.
+
+The last problem that you may encounter on older IRIX systems is a
+problem in the curses.h header.  This problem will cause bzadmin to
+fail to build properly.  If you have no need for bzadmin, you can
+ignore the failure.  Otherwise, the workaround is simple..  The header
+uses a symbol name that is not valid with the CC C++ compiler:
+
+cc-1084 CC: ERROR File = /usr/include/curses.h, Line = 611
+  The indicated declaration has an invalid combination of type specifiers.
+
+                syncok(WINDOW *, int bool),
+
+The relatively simple work around involves actually editing the
+curses.h file.  Copy the /usr/include/curses.h file to the bzflag
+include/ directory.  Edit the file and replace "int bool" with "int
+b".  The edited file should take precedence over the system header.
+Save the file, and restart make and the build should succeed.  Best of
+luck.
 
 See the generic install instructions in README for more details.
 
