@@ -145,7 +145,7 @@ bool	stuckOnWall(float &rotation, float &speed)
   const float *pos = myTank->getPosition();
   float myAzimuth = myTank->getAngle();
 
-  if (bzfrand() > 0.90) {
+  if (bzfrand() > 0.8f) {
     // Every once in a while, do something nuts
     speed = bzfrand() * 1.5f - 0.5f;
     rotation = bzfrand() * 2.0f - 1.0f;
@@ -315,13 +315,6 @@ bool lookForFlag( float &rotation, float &speed)
   const float *pos = myTank->getPosition();
   World *world = World::getWorld();
   int closestFlag = -1;
-  if ((myTank->getFlag() == Flags::Useless)
-  ||  (myTank->getFlag() == Flags::MachineGun)
-  ||  (myTank->getFlag() == Flags::PhantomZone)
-  ||  (myTank->getFlag() == Flags::Identify)) {
-    serverLink->sendDropFlag(myTank->getPosition());
-    handleFlagDropped(myTank);
-  }
 
   if (myTank->getFlag() != Flags::Null)
     return false;
@@ -474,8 +467,22 @@ bool fireAtTank()
   return false;
 }
 
+void    dropHardFlags()
+{
+  LocalPlayer *myTank = LocalPlayer::getMyTank();
+  FlagType *type = myTank->getFlag();
+  if ((type == Flags::Useless)
+  ||  (type == Flags::MachineGun)
+  ||  (type == Flags::PhantomZone)
+  ||  (type == Flags::Identify)) {
+    serverLink->sendDropFlag(myTank->getPosition());
+    handleFlagDropped(myTank);
+  }
+}
+
 void	doAutoPilot(float &rotation, float &speed)
 {
+  dropHardFlags();
   if (!avoidBullet(rotation, speed)) {
     if (!stuckOnWall(rotation, speed)) {
       if (!chasePlayer(rotation, speed)) {
