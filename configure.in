@@ -25,6 +25,10 @@ AC_PROG_CXX
 CXXFLAGS=
 AC_PROG_LN_S
 AC_PROG_RANLIB
+AC_CHECK_PROG(HASPOD2MAN, pod2man, yes, no)
+if test $HASPOD2MAN = no; then
+	AC_MSG_ERROR(could not find pod2man)
+fi
 
 # Just for kicks
 echo -n "checking for artificial intelligence for robots..." 1>&6
