@@ -3501,7 +3501,7 @@ static void handleCommand(int t, uint16_t code, uint16_t len,
       bool warn;
       bool kick;
       int lag = player[t].updatePingLag(buf, clOptions->lagwarnthresh,
-					clOptions->maxlagwarn, warn, kick);
+					(float)clOptions->maxlagwarn, warn, kick);
       if (warn) {
 	char message[MessageLen];
 	sprintf(message,"*** Server Warning: your lag is too high (%d ms) ***",
