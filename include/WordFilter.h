@@ -22,6 +22,7 @@
 #include <string>
 #include <vector>
 #include <set>
+#include <string.h>
 
 // work around an ugly STL bug in BeOS
 // FIXME someone test whether it is still needed
