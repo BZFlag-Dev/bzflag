@@ -972,8 +972,9 @@ void handleSetgroupCmd(int t, const char *message)
 
     if (userExists(settie)) {
       bool canset = true;
-      if (!hasPerm(t, PlayerAccessInfo::setAll) && !hasPerm(t, PlayerAccessInfo::setPerms)) {
-	canset = hasGroup(player[t].accessInfo, group.c_str());
+      if (!hasPerm(t, PlayerAccessInfo::setAll)) {
+	canset = hasGroup(player[t].accessInfo, group.c_str())
+	  && hasPerm(t, PlayerAccessInfo::setPerms);
       }
       if (!canset) {
 	sendMessage(ServerPlayer, t, "You do not have permission to set this group");
@@ -1017,8 +1018,9 @@ void handleRemovegroupCmd(int t, const char *message)
     makeupper(group);
     if (userExists(settie)) {
       bool canset = true;
-      if (!hasPerm(t, PlayerAccessInfo::setAll) && !hasPerm(t, PlayerAccessInfo::setPerms)) {
-	canset = hasGroup(player[t].accessInfo, group.c_str());
+      if (!hasPerm(t, PlayerAccessInfo::setAll)) {
+	canset = hasGroup(player[t].accessInfo, group.c_str())
+	  && hasPerm(t, PlayerAccessInfo::setPerms);
       }
       if (!canset) {
 	sendMessage(ServerPlayer, t, "You do not have permission to remove this group");
