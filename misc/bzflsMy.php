@@ -80,6 +80,27 @@ if ($banlist[$_SERVER['REMOTE_ADDR']] != "") {
   die("Connection attempt rejected.  See #bzflag on irc.freenode.net");
 }
 
+if (!array_key_exists("action", $_GET)) {
+  header("Content-type: text/html");
+  die('<html>
+<head>
+<title>Entry form</title>
+</head>
+<body>
+    <h1>Enter your post</h1>
+    <form action="" method="get">
+        <p>
+        action <input type="text" name="action" size="80"><br>
+        email  <input type="text" name="email" size="80"><br>
+        callsign  <input type="text" name="callsign" size="80"><br>
+        password  <input type="text" name="password" size="80"><br>
+        <input type="submit" value="Post entry">
+        <input type="reset" value="Clear form">
+    
+</p></form></body></html>');
+}
+ 
+header("Content-type: text/plain");
 debug($debugFile, "Connecting to the database");
 
 # Connect to the server database persistently.
@@ -90,6 +111,8 @@ if (!mysql_select_db($dbname)) {
 
   mysql_create_db($dbname) or die("Could not create db: " . mysql_error());
 }
+
+# FIXME something quicker to test for the table?
 $result = mysql_query("SELECT * FROM servers", $link);
 
 # If the servers table does not exist, create it.
@@ -109,7 +132,9 @@ if (!$result) {
 }
 
 # if the registered players table does not exist, create .
+# FIXME something quicker to test for the table?
 $result = mysql_query("SELECT * FROM players", $link);
+
 if (!$result) {
   debug($debugFile, "Registered players table did not exist, creating a new one");
   
@@ -136,24 +161,25 @@ mysql_query("DELETE FROM servers WHERE lastmod < $staletime", $link)
      or die("Could not drop old items" . mysql_error());
 
 # remove all inactive registered players from the table
-$timeout = 2592000; # timeout in seconds, defaults to 30d
+# FIXME this should not happen on every request
+$timeout = 31536000; # timeout in seconds, 365 days
 $staletime = time() - $timeout;
 mysql_query("DELETE FROM players WHERE lastmod < $staletime", $link)
      or die ("Could not remove inactive players" . mysql_error());
 
 # remove all players who have not confirmed registration
-$timeout = 259200;  # timeout in seconds, defaults to 72h
+# FIXME this should not happen on every request
+$timeout = 259200;  # timeout in seconds, 72h
 $staletime = time() - $timeout;
 mysql_query("DELETE FROM players WHERE lastmod < $staletime AND randtext != NULL", $link)
      or die ("Could not remove inactive players" . mysql_error());
 
 
-header("Content-type: text/plain");
+
 # Do stuff based on what the 'action' is...
-#
-#  -- LIST --
-# Same as LIST in the old bzfls
-if (!array_key_exists("action", $_GET) || $action == "LIST" ) {
+if ($action == "LIST" ) {
+  #  -- LIST --
+  # Same as LIST in the old bzfls
   debug($debugFile, "Fetching LIST");
 
   if ($version)
@@ -172,13 +198,12 @@ if (!array_key_exists("action", $_GET) || $action == "LIST" ) {
     print "$line\n";
   }
 } elseif ($action == "ADD") {
-
+  #  -- ADD --
+  # Server either requests to be added to DB, or to issue a keep-alive so that it
+  # does not get dropped due to a timeout...
   debug($debugFile, "Attempting to ADD $nameport $version $gameinfo $title");
 
-#  -- ADD --
-# Server either requests to be added to DB, or to issue a keep-alive so that it
-# does not get dropped due to a timeout...
-# Filter out badly formatted or buggy versions
+  # Filter out badly formatted or buggy versions
   print "trying ADD $nameport $version $gameinfo $title\n";
   $pos = strpos($version, "BZFS");
   if ($pos === false || $pos > 0)
@@ -244,11 +269,9 @@ if (!array_key_exists("action", $_GET) || $action == "LIST" ) {
   debug($debugFile, "ADD complete");
 
   print "ADD complete\n";
-}
-
-#  -- REMOVE --
-# Server requests to be removed from the DB.
-elseif ($action == "REMOVE") {
+} elseif ($action == "REMOVE") {
+  #  -- REMOVE --
+  # Server requests to be removed from the DB.
   debug($debugFile, "REMOVE request from $nameport");
 
   $split = explode(":", $nameport);
@@ -268,11 +291,9 @@ elseif ($action == "REMOVE") {
 
   $result = mysql_query("DELETE FROM servers WHERE nameport = '$nameport'", $link)
     or die ("Invalid query: ". mysql_error());
-} 
-
-#  -- REG --
-# Registers a player onto the players database.
-elseif ($action == "REG") {
+} elseif ($action == "REGISTER") {
+  #  -- REGISTER --
+  # Registers a player onto the players database.
   # see if there is an existing entry
   $result = mysql_query("SELECT * FROM players WHERE email = '$email'", $link)
     or die ("Invalid query: ". mysql_error());
@@ -310,11 +331,9 @@ elseif ($action == "REG") {
   or die ("Invalid query: ". mysql_error());
   print("Registration SUCCESSFUL: ");
   print("You will receive an email informing you on how to complete your account registration\n");
-} 
-
-#  -- REG_CONF --
-# Confirms a registration
-elseif ($action == "REG_CONF") {
+} elseif ($action == "CONFIRM") {
+  #  -- CONFIRM --
+  # Confirms a registration
   $result = mysql_query("SELECT randtext FROM players WHERE email='$email'", $link)
     or die ("Invalid query: " . mysql_error());
   $row = mysql_fetch_row($result);
@@ -331,11 +350,9 @@ elseif ($action == "REG_CONF") {
       print("Your account has been successfully activated");
     }
   }
-} 
-
-#  -- AUTH --
-# A player authenticates
-elseif ($action == "AUTH") {
+} elseif ($action == "AUTH") {
+  #  -- AUTH --
+  # A player authenticates
   $result = mysql_query("SELECT password FROM players WHERE callsign='$callsign'", $link)
     or die ("Invalid query: " . mysql_error());
   $row = mysql_fetch_row($result);
@@ -346,11 +363,9 @@ elseif ($action == "AUTH") {
     setcookie("BZPlayerAuth", md5($pwd), time()+60);
     print("Authentication SUCCESSFUL");
   }
-} 
-
-#  -- JOIN --
-# Server to handle a joining player
-elseif ($action == "JOIN") {
+} elseif ($action == "JOIN") {
+  #  -- JOIN --
+  # Server to handle a joining player
   $result = mysql_query("SELECT password FROM players WHERE callsign='$callsign'", $link)
     or die ("Invalid query: " . mysql_error());
   $row = mysql_fetch_row($result);
@@ -359,19 +374,15 @@ elseif ($action == "JOIN") {
     print ("OK");
   else
     print ("FAIL");
-} 
-
-#  -- QUIT --
-# Server to handle a disconnecting player
-elseif ($action == "QUIT") {
+} elseif ($action == "QUIT") {
+  #  -- QUIT --
+  # Server to handle a disconnecting player
   $result = mysql_query("UPDATE players SET lastmod=" . time() .
                         ", playtime=playtime+$conntime WHERE callsign='$callsign'", $link)
     or die ("Invalid query: " . mysql_error());
-} 
-
-#  -- KARMA_ADJ --
-# Set's a player's karma
-elseif ($action == "KARMA_ADJ") {
+} elseif ($action == "KARMA_ADJ") {
+  #  -- KARMA_ADJ --
+  # Set's a player's karma
   $result = mysql_query("SELECT assignments FROM players WHERE callsign='$callsign' " .
                         "AND password='$password'", $link)
     or die ("Invalid query: " . mysql_error());
@@ -407,25 +418,19 @@ elseif ($action == "KARMA_ADJ") {
       print ("Karma adjustment SUCCESSFUL");
     }
   }
-} 
-
-#  -- KARMA_LIST --
-# Views the karma for a particular player
-elseif ($action == "KARMA_LIST") {
+} elseif ($action == "KARMA_LIST") {
+  #  -- KARMA_LIST --
+  # Views the karma for a particular player
   $result = mysql_query("SELECT karma,provisional FROM players WHERE callsign='$callsign'", $link)
     or die ("Invalid query: " . mysql_error());
   $row = mysql_fetch_row($result);
   print_r($row);
-} 
-
-else {
+} else {
   print "Unknown command: '$action'\n";
 }
 
-
 # make sure the connection to mysql is severed
 if ($link) {
-
   # for a transaction commit just in case
   debug($debugFile, "Commiting any pending transactions");
   mysql_query("COMMIT", $link);
