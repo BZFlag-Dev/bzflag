@@ -219,9 +219,6 @@ copy debug\*.pdb ..\..\*.pdb
 				RelativePath="..\..\src\bzflag\clientCommands.cxx">
 			</File>
 			<File
-				RelativePath="..\..\src\bzflag\CollisionGrid.cxx">
-			</File>
-			<File
 				RelativePath="..\..\src\bzflag\ControlPanel.cxx">
 				<FileConfiguration
 					Name="Debug|Win32">
@@ -948,9 +945,6 @@ copy debug\*.pdb ..\..\*.pdb
 			</File>
 			<File
 				RelativePath="..\..\src\bzflag\callbacks.h">
-			</File>
-			<File
-				RelativePath="..\..\src\bzflag\CollisionGrid.h">
 			</File>
 			<File
 				RelativePath="..\..\src\bzflag\commands.h">

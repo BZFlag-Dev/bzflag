@@ -233,7 +233,7 @@ void CollisionManager::load (std::vector<BoxBuilding>     &boxes,
   
   for (x=0; x<GridSizeX; x++) {
     for (y=0; y<GridSizeY; y++) {
-      Cells[x][y].count = Cells[x][y].objs.size();
+      Cells[x][y].count = (int)Cells[x][y].objs.size();
       DEBUG4 ("Cell(%4i)  objs = %2i  [%.3f, %.3f, %.3f]\n",
               GridSizeY*x + y, Cells[x][y].count,
               Cells[x][y].pos[0], Cells[x][y].pos[1], Cells[x][y].pos[2]);
