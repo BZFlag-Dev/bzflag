@@ -16,6 +16,7 @@
 #include "CustomSphere.h"
 
 /* system headers */
+#include <sstream>
 #include <vector>
 #include "math.h"
 
@@ -33,7 +34,8 @@ CustomSphere::CustomSphere()
   divisions = 4;
   pos[2] = 10.0f;
   size[0] = size[1] = size[2] = 10.0f;
-  material.texture = "boxwall";
+  materials[Edge].texture = "boxwall";
+  materials[Bottom].texture = "roof";
   texsize[0] = texsize[1] = -4.0f;
   hemisphere = false;
   useNormals = true;
@@ -51,6 +53,7 @@ CustomSphere::~CustomSphere()
 bool CustomSphere::read(const char *cmd, std::istream& input)
 {
   bool materror;
+  MeshMaterial modedMat;
 
   if (strcasecmp(cmd, "divisions") == 0) {
     if (!(input >> divisions)) {
@@ -80,7 +83,16 @@ bool CustomSphere::read(const char *cmd, std::istream& input)
   else if (strcasecmp(cmd, "flatshading") == 0) {
     useNormals = false;
   }
-  else if (parseMaterial(cmd, input, material, materror)) {
+  else if (parseMaterial(cmd, input, modedMat, materror)) {
+    if (materror) {
+      return false;
+    }
+    MeshMaterial defMat; // default material
+    for (int i = 0; i < MaterialCount; i++) {
+      materials[i].copyDiffs(modedMat, defMat);
+    }
+  }
+  else if (parseSideMaterials(cmd, input, materror)) {
     if (materror) {
       return false;
     }
@@ -90,6 +102,39 @@ bool CustomSphere::read(const char *cmd, std::istream& input)
   }
 
   return true;
+}
+
+
+bool CustomSphere::parseSideMaterials(const char* cmd, std::istream& input,
+                                      bool& error)
+{
+  const char* sideNames[MaterialCount] =
+    { "edge", "bottom" };
+
+  error = false;
+
+  for (int n = 0; n < MaterialCount; n++) {
+    if (strcasecmp (cmd, sideNames[n]) == 0) {
+      std::string line, matcmd;
+      std::getline(input, line);
+      std::istringstream parms(line);
+      if (!(parms >> matcmd)) {
+        error = true;
+      } else {
+        // put the material command string back into the stream
+        for (int i = 0; i < (int)(line.size() - matcmd.size()); i++) {
+          input.putback(line[line.size() - i]);
+        }
+        if (!parseMaterial(matcmd.c_str(), input, materials[n], error)) {
+          error = true;
+        }
+      }
+      input.putback('\n');
+      return true;
+    }
+  }
+
+  return false;
 }
 
 
@@ -172,10 +217,10 @@ void CustomSphere::write(WorldInfo *world) const
   // the rest of the vertices
   for (i = 0; i < divisions; i++) {
     for (j = 0; j < (4 * (i + 1)); j++) {
-      float h_angle = ((M_PI * 2.0f) *
-                      (float)j / (float)(4 * (i + 1)));
-      float v_angle = ((M_PI / 2.0f) *
-                      (float)(divisions - i - 1) / (float)(divisions));
+      float h_angle = ((M_PI * 2.0f) * (float)j / (float)(4 * (i + 1)));
+      h_angle = h_angle + rotation;
+      float v_angle = ((M_PI / 2.0f) * 
+                       (float)(divisions - i - 1) / (float)(divisions));
       float unit[3];
       unit[0] = cos(h_angle) * cos(v_angle);
       unit[1] = sin(h_angle) * cos(v_angle);
@@ -250,12 +295,28 @@ void CustomSphere::write(WorldInfo *world) const
       }
     }
   }
+  
+  // the bottom texcoords for hemispheres
+  const int bottomTexOffset = texcoords.size();
+  if (hemisphere) {
+    const float astep = (M_PI * 2.0f) / (float) (divisions * 4);
+    for (i = 0; i < (divisions * 4); i++) {
+      float ang = astep * (float)i;
+      cfvec2 t;
+      t[0] = texsz[0] * (0.5f + (0.5f * cos(ang)));
+      t[1] = texsz[1] * (0.5f + (0.5f * sin(ang)));
+      texcoords.push_back(t);
+    }
+  }
 
   // add the checkpoint (one is sufficient)
 
   v[0] = pos[0];
   v[1] = pos[1];
   v[2] = pos[2];
+  if (hemisphere) {
+    v[2] = v[2] + (size[2] / 2.0f);
+  }
   checkPoints.push_back(v);
   checkTypes.push_back(MeshObstacle::CheckInside);
 
@@ -343,12 +404,12 @@ void CustomSphere::write(WorldInfo *world) const
         push3Ints(vlist, a, b, c);
         if (useNormals) push3Ints(nlist, a, b, c);
         push3Ints(tlist, ta, b, tc);
-        addFace(mesh, vlist, nlist, tlist, material);
+        addFace(mesh, vlist, nlist, tlist, materials[Edge]);
         if (!lastCircle) {
           push3Ints(vlist, b, d, c);
           if (useNormals) push3Ints(nlist, b, d, c);
           push3Ints(tlist, b, d, tc);
-          addFace(mesh, vlist, nlist, tlist, material);
+          addFace(mesh, vlist, nlist, tlist, materials[Edge]);
         }
 
         // bottom hemisphere
@@ -366,16 +427,28 @@ void CustomSphere::write(WorldInfo *world) const
           push3Ints(vlist, a, c, b);
           if (useNormals) push3Ints(nlist, a, c, b);
           push3Ints(tlist, ta, tc, b);
-          addFace(mesh, vlist, nlist, tlist, material);
+          addFace(mesh, vlist, nlist, tlist, materials[Edge]);
           if (!lastCircle) {
             push3Ints(vlist, b, c, d);
             if (useNormals) push3Ints(nlist, b, c, d);
             push3Ints(tlist, b, tc, d);
-            addFace(mesh, vlist, nlist, tlist, material);
+            addFace(mesh, vlist, nlist, tlist, materials[Edge]);
           }
         }
       }
     }
+  }
+  
+  // add the bottom disc
+  if (hemisphere) {
+    const int k = (divisions - 1);
+    const int offset = 1 + (((k*k)+k)*2);
+    for (i = 0; i < (divisions * 4); i++) {
+      const int v = (divisions * 4) - i - 1;
+      vlist.push_back(v + offset);
+      tlist.push_back(i + bottomTexOffset);
+    }
+    addFace(mesh, vlist, nlist, tlist, materials[Bottom]);
   }
 
   // add the mesh

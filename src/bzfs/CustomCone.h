@@ -46,7 +46,7 @@ class CustomCone : public WorldFileObstacle {
     float texsize[2];
     bool useNormals;
     bool smoothBounce;
-    MeshMaterial materials[4];
+    MeshMaterial materials[MaterialCount];
 };
 
 
