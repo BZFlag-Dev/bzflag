@@ -118,8 +118,9 @@ die $! unless sysread(S, $buffer, 14) == 14;
 ($len,$code,$team,$size,$aSize,$won,$lost) = unpack("n7", $buffer);
 die $! unless $code == 0x7475;
 $score = $won - $lost;
-print "$teamName[$team] team:\n";
-print "  $aSize players\n  score: $score ($won wins, $lost losses)\n";
+print "$teamName[$team] team:";
+print " $aSize players";
+print " score: $score ($won wins, $lost losses)\n";
 }
 print "\n";
 
@@ -127,13 +128,14 @@ print "\n";
 @playerType = ("tank", "observer", "robot tank");
 for (1..$numPlayers) {
 die $! unless sysread(S, $buffer, 180) == 180;
-($len,$code,$pAddr,$pPort,$pNum,$type,$team,$won,$lost,$sign,$email) =
-					unpack("n2Nn2 n4A32A128", $buffer);
+($len,$code,$pAddrA,$pAddrB,$pAddrC,$pAddrD,$pPort,$pNum,$type,$team,$won,$lost,$sign,$email) =
+					unpack("n2C4n2 n4A32A128", $buffer);
 die $! unless $code == 0x6170;
 $score = $won - $lost;
-print "player $sign ($teamName[$team] team) is a $playerType[$type]:\n";
-print "  $email\n";
-print "  score: $score ($won wins, $lost losses)\n";
+print "player $sign ($email)($teamName[$team] team) is a $playerType[$type]:";
+print " score: $score ($won wins, $lost losses)";
+print " ${pAddrA}.${pAddrB}.${pAddrC}.${pAddrD}:$pPort";
+print "\n";
 }
 
 # close socket
@@ -141,4 +143,3 @@ close(S);
 
 # done
 exit 0;
-
