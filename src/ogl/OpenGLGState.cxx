@@ -19,8 +19,6 @@
 #include "OpenGLMaterial.h"
 #include "RenderNode.h"
 
-static GLenum		MY_GL_REPLACE = GL_MODULATE;
-
 
 // for tracking glBegin/End pairs; see include/bzfgl.h
 #ifdef DEBUG
@@ -439,7 +437,7 @@ void			OpenGLGStateState::setOpenGLState(
 	glEnable(GL_TEXTURE_2D);
       }
       if (!oldState->sorted.hasTextureReplace && sorted.hasTextureReplace) {
-	glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, MY_GL_REPLACE);
+	glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
       }
     }
     else {
@@ -601,7 +599,7 @@ void			OpenGLGStateState::setOpenGLState(
       tm.bind(sorted.texture);
       glEnable(GL_TEXTURE_2D);
       if (sorted.hasTextureReplace)
-	glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, MY_GL_REPLACE);
+	glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
     }
     else {
       glDisable(GL_TEXTURE_2D);
@@ -1083,21 +1081,6 @@ void			OpenGLGState::initStipple(void*)
 
 void			OpenGLGState::init()
 {
-  // choose texture replace enum
-#if defined(GL_EXT_texture)
-  // IMPACT, RE, RE2, and VTX known not to support GL_REPLACE_EXT.
-  // doesn't matter... they wouldn't go any faster.
-  const char* renderer = (const char*)glGetString(GL_RENDERER);
-  if (strncmp(renderer, "IMPACT", 6) != 0 &&
-      strncmp(renderer, "REC/", 4) != 0 &&
-      strncmp(renderer, "RE/", 3) != 0 &&
-      strncmp(renderer, "REV/", 2) != 0 &&
-      strstr((const char*)glGetString(GL_EXTENSIONS), "GL_EXT_texture"))
-    MY_GL_REPLACE = GL_REPLACE_EXT;
-#elif defined(GL_VERSION_1_1)
-  MY_GL_REPLACE = GL_REPLACE;
-#endif
-
   // initialize GL state to what we expect
   initGLState();
 

@@ -24,6 +24,10 @@
 #  include <GL/glu.h>
 #endif
 
+#ifndef GL_VERSION_1_1
+# error OpenGL version 1.1 functionality is required
+#endif
+
 /* These will track glBegin/End pairs to make sure that they match */
 #ifdef DEBUG
 #include <assert.h>

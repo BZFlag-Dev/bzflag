@@ -37,7 +37,7 @@ class EighthDimShellNode : public SceneNode {
 	ShellRenderNode(RenderNode *renderNode);
 	~ShellRenderNode();
 	void render();
-	void renderShadow();
+	void renderShadow() { return; }
 	const GLfloat* getPosition() const { return renderNode->getPosition(); }
       private:
 	RenderNode* renderNode;

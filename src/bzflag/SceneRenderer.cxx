@@ -177,11 +177,7 @@ void SceneRenderer::setWindow(MainWindow* _window) {
 #endif
 
   // can only do hidden line if polygon offset is available
-#if defined(GL_VERSION_1_1)
   canUseHiddenLine = true;
-#elif defined(GL_EXT_polygon_offset)
-  canUseHiddenLine = (extensions != NULL && strstr(extensions, "GL_EXT_polygon_offset") != NULL);
-#endif
 
   // check if we're running OpenGL 1.1.  if so we'll use the fog hack
   // to fade the screen;  otherwise fall back on a full screen blended
@@ -381,11 +377,7 @@ void SceneRenderer::setHiddenLine(bool on)
     depthRange = 0;
     return;
   }
-#if defined(GL_VERSION_1_1)
   glPolygonOffset(1.0f, 2.0f);
-#elif defined(GL_EXT_polygon_offset)
-  glPolygonOffsetEXT(1.0f, 0.000004f);
-#endif
 }
 
 
@@ -811,18 +803,24 @@ void SceneRenderer::renderScene(bool /*_lastFrame*/, bool /*_sameFrame*/,
 
   if (useDepthComplexityOn) {
     glEnable(GL_STENCIL_TEST);
-    glClear(GL_STENCIL_BUFFER_BIT);
+    if (!mirror || (clearZbuffer)) {
+      glClear(GL_STENCIL_BUFFER_BIT);
+    }
     glStencilFunc(GL_ALWAYS, 0, 0xf);
     glStencilOp(GL_KEEP, GL_INCR, GL_INCR);
   }
   if (useHiddenLineOn) {
-    glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-    glClear(GL_COLOR_BUFFER_BIT);
+    if (!mirror || (clearZbuffer)) {
+      glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+      glClear(GL_COLOR_BUFFER_BIT);
+    }
     glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
   }
   else if (useWireframeOn) {
-    glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-    glClear(GL_COLOR_BUFFER_BIT);
+    if (!mirror || (clearZbuffer)) {
+      glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+      glClear(GL_COLOR_BUFFER_BIT);
+    }
     glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
   }
 
@@ -889,11 +887,7 @@ void SceneRenderer::renderScene(bool /*_lastFrame*/, bool /*_sameFrame*/,
     }
 
     if (useHiddenLineOn) {
-#if defined(GL_VERSION_1_1)
       glEnable(GL_POLYGON_OFFSET_FILL);
-#elif defined(GL_EXT_polygon_offset)
-      glEnable(GL_POLYGON_OFFSET_EXT);
-#endif
     }
 
     if (scene && useCullingTreeOn) {
@@ -911,11 +905,7 @@ void SceneRenderer::renderScene(bool /*_lastFrame*/, bool /*_sameFrame*/,
 
 
     if (useHiddenLineOn) {
-#if defined(GL_VERSION_1_1)
       glDisable(GL_POLYGON_OFFSET_FILL);
-#elif defined(GL_EXT_polygon_offset)
-      glDisable(GL_POLYGON_OFFSET_EXT);
-#endif
       glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
       glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
       doRender();

@@ -505,11 +505,9 @@ void			LocalPlayer::doUpdateMotion(float dt)
     if (!obstacle || !expelled) break;
 
     float obstacleTop = obstacle->getPosition()[2] + obstacle->getHeight();
-    if ((oldLocation != InAir)
-    &&  (obstacle->getType() != WallObstacle::getClassName())
-    &&  (obstacle->getType() != PyramidBuilding::getClassName())
-    &&  (obstacleTop != tmpPos[2])
-    &&  (obstacleTop < (tmpPos[2] + BZDB.eval(StateDatabase::BZDB_MAXBUMPHEIGHT)))) {
+    if ((oldLocation != InAir) && obstacle->isFlatTop() &&
+        (obstacleTop != tmpPos[2]) &&
+        (obstacleTop < (tmpPos[2] + BZDB.eval(StateDatabase::BZDB_MAXBUMPHEIGHT)))) {
       newPos[0] = oldPosition[0];
       newPos[1] = oldPosition[1];
       newPos[2] = obstacleTop;

@@ -151,12 +151,6 @@ void EighthDimShellNode::ShellRenderNode::render()
 }
 
 
-void EighthDimShellNode::ShellRenderNode::renderShadow()
-{
-  return;
-}
-
-
 // Local Variables: ***
 // mode:C++ ***
 // tab-width: 8 ***

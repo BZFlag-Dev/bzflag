@@ -126,6 +126,10 @@ void RenderNodeGStateList::sort(const GLfloat* e)
     const float dy = (p[1] - e[1]);
     const float dz = (p[2] - e[2]);
     list[i].depth = ((dx * dx) + (dy * dy) + (dz * dz));
+    // FIXME - dirty hack (they are all really getSphere())
+    //if (list[i].depth < p[3]) {
+    //  list[i].depth = -1.0f;
+    //}
   }
 
   // sort from farthest to closest
