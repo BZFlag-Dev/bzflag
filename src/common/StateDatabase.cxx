@@ -46,7 +46,7 @@ void	_debugLookups(const std::string &name)
   if (now - last > interval) {
     std::multimap<int,std::string> order;
     for (it = cnts.begin(); it != cnts.end(); it++) {
-      order.insert(pair<int,std::string>(-it->second, it->first));
+      order.insert(std::pair<int,std::string>(-it->second, it->first));
       it->second = 0;
     }
 
