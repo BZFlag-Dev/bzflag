@@ -3633,9 +3633,6 @@ static void enteringServer(void *buf)
   // send my version string
   serverLink->sendVersionString();
 
-  // Sending our credential to the server
-  ClientAuthentication::sendCredential(*serverLink);
-
   // add robot tanks
 #if defined(ROBOT)
   addRobots();
@@ -4024,6 +4021,9 @@ static void joinInternetGame()
     }
     return;
   }
+
+  // Sending our credential to the server
+  ClientAuthentication::sendCredential(*serverLink);
 
   HUDDialogStack::get()->setFailedMessage("Connection Established...");
 
