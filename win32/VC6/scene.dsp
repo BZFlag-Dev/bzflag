@@ -173,7 +173,7 @@ SOURCE=.\config.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\include\Octree.h
+SOURCE=..\..\src\scene\Octree.h
 # End Source File
 # Begin Source File
 
