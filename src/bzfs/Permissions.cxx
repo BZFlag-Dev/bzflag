@@ -394,7 +394,7 @@ void parsePermissionString(const std::string &permissionString, std::bitset<Play
 
   while (permStream >> word) {
     makeupper(word);
-    if (word[0] != '#') {
+    if (word[0] != '*') {
       // regular permission
       PlayerAccessInfo::AccessPerm perm = permFromName(word);
       if (perm != PlayerAccessInfo::lastPerm) {
