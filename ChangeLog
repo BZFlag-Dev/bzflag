@@ -11,7 +11,7 @@ BZFlag 1.12.0  (was 1.11.x)
 * Added anti perm for pollkick, pollban, kick, ban, deregister - Sean Morrison
 * Added antipoll bzfs anti perm to protect against poll kick/bans - Andrew Heyn
 * Server Start Menu now allows selection between Rabbit Chase styles - Ian Agar
-* Tabbed Message Panel - Scott Wichser
+* Tabbed Message Panel - Scott Wichser, Sean Morrison
 * Fonts settable via BZDB - Daniel Remenak
 * New font management system and fonts - Daniel Remenak, Jeff Myers
 * Reduce client and server network utilization via tolerance tweaking
