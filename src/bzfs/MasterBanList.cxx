@@ -63,23 +63,30 @@ const std::string& MasterBanList::get ( const std::string URL )
   // get all up on the internet and go get the thing
 #ifdef HAVE_CURL
   CURLcode result;
-  if (!easyHandle)
-    return "";
+  if (!easyHandle) {
+    data = "";
+    return data;
+  }
   result = curl_easy_setopt(easyHandle, CURLOPT_URL, URL.c_str());
-  if (result)
+  if (result) {
     std::cout << "Something wrong with CURL; Error: " << result << std::endl;
+  }
   result = curl_easy_perform(easyHandle);
-  if (result == CURLOPT_ERRORBUFFER) {
+
+  if (result == (CURLcode)CURLOPT_ERRORBUFFER) {
     std::cout << "Error: server reported: " << data << std::endl;
-    return "";
+    data = "";
+    return data;
   }
   if (result) {
     std::cout << "Something wrong with CURL; Error: " << result << std::endl;
-    return "";
+    data = "";
+    return data;
   }
   result = curl_easy_setopt(easyHandle, CURLOPT_URL, NULL);
-  if (result)
+  if (result) {
     std::cout << "Something wrong with CURL; Error: " << result << std::endl;
+  }
 #endif
   return data;
 }

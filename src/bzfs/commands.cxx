@@ -681,7 +681,7 @@ void handleBanCmd(GameKeeper::Player *playerData, const char *message)
       if ((durationInt > 0) && 
           ((specifiedDuration > durationInt) || (specifiedDuration <= 0)) &&
           !playerData->accessInfo.hasPerm(PlayerAccessInfo::ban)) {
-        sendMessage (ServerPlayer, t, "You only have SHORTBAN privileges,"\
+        sendMessage (ServerPlayer, t, "You only have SHORTBAN privileges,"
                                       " using default ban time");
       } else {
         durationInt = specifiedDuration;
@@ -760,7 +760,7 @@ void handleHostBanCmd(GameKeeper::Player *playerData, const char *message)
       if ((durationInt > 0) && 
           ((specifiedDuration > durationInt) || (specifiedDuration <= 0)) &&
           !playerData->accessInfo.hasPerm(PlayerAccessInfo::ban)) {
-        sendMessage (ServerPlayer, t, "You only have SHORTBAN privileges,"\
+        sendMessage (ServerPlayer, t, "You only have SHORTBAN privileges,"
                                       " using default ban time");
       } else {
         durationInt = specifiedDuration;
