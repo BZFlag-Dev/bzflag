@@ -181,14 +181,18 @@ void TrackMarks::render()
   
   while (it != TrackList.end()) {  
     std::list<TrackEntry>::iterator next = it;
+    next++;
     TrackEntry& te = *it;
+    // sanity checks
+    if (nowTime <= te.startTime || te.startTime.getSeconds() <= 0)
+      continue;
     float timeDiff = nowTime - te.startTime;
     if (timeDiff > TrackFadeTime) {
       TrackList.erase(it);
-      it = ++next;
+      it = next;
       continue;
     }
-    it = ++next;
+    it = next;
     
     if (te.type == treads) {
       drawTreads(te, timeDiff);
