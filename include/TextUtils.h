@@ -148,6 +148,7 @@ inline bool isWhitespace(const char c)
 inline bool isPunctuation(const char c)
 {
   if (( c > 32 && c < 48) ||
+      ( c > 57 && c < 65) ||
       ( c > 90 && c < 97) ||
       ( c > 122 && c < 127)) {
     return true;
