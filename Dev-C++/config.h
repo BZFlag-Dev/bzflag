@@ -59,8 +59,4 @@
 #define _WIN32_WINNT 0x0400
 #include <Windows.h>
 
-// Debug trace - used for -debug output
-#include <iostream>
-inline void W32_DEBUG_TRACE (const char* buffer) {std::cout << buffer;}
-
 #endif //_DEVCPP_CONFIG
