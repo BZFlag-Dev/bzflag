@@ -6472,6 +6472,18 @@ void			startPlaying(BzfDisplay* _display,
 					StartupInfo* _info)
 {
   int i;
+
+    // set default DB entries
+  for (unsigned int gi = 0; gi < countof(globalDBItems); ++gi) {
+    assert(globalDBItems[gi].name != NULL);
+    if (globalDBItems[gi].value != NULL) {
+      BZDB->set(globalDBItems[gi].name, globalDBItems[gi].value);
+      BZDB->setDefault(globalDBItems[gi].name, globalDBItems[gi].value);
+    }
+    BZDB->setPersistent(globalDBItems[gi].name, globalDBItems[gi].persistent);
+    BZDB->setPermission(globalDBItems[gi].name, globalDBItems[gi].permission);
+  }
+  
   // initalization
   display = _display;
   sceneRenderer = &renderer;
@@ -6754,17 +6766,6 @@ void			startPlaying(BzfDisplay* _display,
   }
   else {
     HUDDialogStack::get()->push(mainMenu);
-  }
-
-    // set default DB entries
-  for (unsigned int gi = 0; gi < countof(globalDBItems); ++gi) {
-    assert(globalDBItems[gi].name != NULL);
-    if (globalDBItems[gi].value != NULL) {
-      BZDB->set(globalDBItems[gi].name, globalDBItems[gi].value);
-      BZDB->setDefault(globalDBItems[gi].name, globalDBItems[gi].value);
-    }
-    BZDB->setPersistent(globalDBItems[gi].name, globalDBItems[gi].persistent);
-    BZDB->setPermission(globalDBItems[gi].name, globalDBItems[gi].permission);
   }
 
   // start game loop
