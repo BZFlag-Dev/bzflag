@@ -235,7 +235,7 @@ PlayerId CursesUI::getTarget() const {
 
 
 void CursesUI::handleResize(int lines, int cols) {
-  resize_term(lines, cols);
+  resizeterm(lines, cols);
   mvwin(targetWin, lines - 2, 0);
   wresize(targetWin, 1, cols);
   mvwin(cmdWin, lines - 1, 0);
