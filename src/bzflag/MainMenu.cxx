@@ -121,25 +121,20 @@ HUDuiDefaultKey*	MainMenu::getDefaultKey()
 
 void			MainMenu::execute()
 {
-  std::vector<HUDuiControl*>& list = getControls();
   HUDuiControl* focus = HUDui::getFocus();
   if (focus == join) {
     if (!joinMenu) joinMenu = new JoinMenu;
     HUDDialogStack::get()->push(joinMenu);
-  }
-  else if (focus == options) {
+  } else if (focus == options) {
     if (!optionsMenu) optionsMenu = new OptionsMenu;
     HUDDialogStack::get()->push(optionsMenu);
-  }
-  else if (focus == help) {
+  } else if (focus == help) {
     HUDDialogStack::get()->push(HelpMenu::getHelpMenu());
-  }
-  else if (focus == leave) {
+  } else if (focus == leave) {
     leaveGame();
     // myTank should be NULL now, recreate menu
     createControls();
-  }
-  else if (focus == quit) {
+  } else if (focus == quit) {
     if (!quitMenu) quitMenu = new QuitMenu;
     HUDDialogStack::get()->push(quitMenu);
   }
