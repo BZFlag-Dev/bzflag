@@ -141,11 +141,12 @@ static bool realPlayer(const PlayerId& id)
   return playerData && playerData->player.isPlaying();
 }
 
-static void pwrite(GameKeeper::Player &playerData, const void *b, int l)
+static int pwrite(GameKeeper::Player &playerData, const void *b, int l)
 {
   int result = playerData.netHandler->pwrite(b, l);
   if (result == -1)
     removePlayer(playerData.getIndex(), "ECONNRESET/EPIPE", false);
+  return result;
 }
 
 static char sMsgBuf[MaxPacketLen];
@@ -3692,6 +3693,43 @@ static std::string cmdReset(const std::string&, const CommandManager::ArgList& a
 }
 
 
+static void doStuffOnPlayer(GameKeeper::Player &playerData)
+{
+  int p = playerData.getIndex();
+
+  // send delayed packets
+  void *data;
+  int length;
+  if (playerData.delayq.getPacket(&length, &data)) {
+    int result = pwrite(playerData, data, length);
+    free(data);
+    if (result == -1)
+      return;
+  }
+
+  // kick idle players
+  if (clOptions->idlekickthresh > 0) {
+    if (playerData.player.isTooMuchIdling(clOptions->idlekickthresh)) {
+      char message[MessageLen]
+	= "You were kicked because you were idle too long";
+      sendMessage(ServerPlayer, p,  message);
+      removePlayer(p, "idling");
+      return;
+    }
+  }
+
+  // update notResponding
+  if (playerData.player.hasStartedToNotRespond()) {
+    // if player is the rabbit, anoint a new one
+    if (p == rabbitIndex)
+      anointNewRabbit();
+    // if player is holding a flag, drop it
+    for (int j = 0; j < numFlags; j++)
+      if (FlagInfo::get(j)->player == p)
+	dropFlag(p, lastState[p].pos);
+  }
+}
+
 /** main parses command line options and then enters an event and activity
  * dependant main loop.  once inside the main loop, the server is up and
  * running and should be ready to process connections and activity.
@@ -4094,61 +4132,20 @@ int main(int argc, char **argv)
     }
 #endif
 
-    // send delayed packets
-    for (int p = 0; p < curMaxPlayers; p++) {
-      GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(p);
-      if (!playerData)
-	continue;
-
-      void *data;
-      int length;
-      if (playerData->delayq.getPacket(&length, &data)) {
-        pwrite(*playerData, data, length);
-        free (data);
-      }
-    }
-
     // send replay packets
     if (Replay::playing()) {
       Replay::sendPackets ();
     }
 
 
-    // kick idle players
-    if (clOptions->idlekickthresh > 0) {
-      for (int i = 0; i < curMaxPlayers; i++) {
-	GameKeeper::Player *otherData
-	  = GameKeeper::Player::getPlayerByIndex(i);
-	if (otherData
-	    && otherData->player.isTooMuchIdling(clOptions->idlekickthresh)) {
-	  char message[MessageLen]
-	    = "You were kicked because you were idle too long";
-	  sendMessage(ServerPlayer, i,  message);
-	  removePlayer(i, "idling");
-	}
-      }
+    for (int p = 0; p < curMaxPlayers; p++) {
+      GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(p);
+      if (!playerData)
+	continue;
+      doStuffOnPlayer(*playerData);
     }
 
-    // update notResponding
     int h;
-    for (h = 0; h < curMaxPlayers; h++) {
-      GameKeeper::Player *otherData = GameKeeper::Player::getPlayerByIndex(h);
-      if (otherData == NULL) {
-        continue;
-      }
-      if (otherData->player.hasStartedToNotRespond()) {
-	// if player is the rabbit, anoint a new one
-	if (h == rabbitIndex)
-	  anointNewRabbit();
-	// if player is holding a flag, drop it
-	for (int j = 0; j < numFlags; j++) {
-	  if (FlagInfo::get(j)->player == h) {
-	    dropFlag(h, lastState[h].pos);
-	  }
-	}
-      }
-    }
-
     NetHandler::updateHandlers();
     for (h = 0; h < curMaxPlayers; h++) {
       NetHandler *handler = NetHandler::getHandler(h);
