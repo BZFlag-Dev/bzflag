@@ -10,6 +10,8 @@ bzfs_SOURCES = \
 	TextChunkManager.h \
 	WorldInfo.cxx \
 	WorldInfo.h \
+	Permissions.cxx \
+	Permissions.h \
 	bzfs.cxx
 
 LDADD = ../net/libNet.a ../common/libCommon.a
