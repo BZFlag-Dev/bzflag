@@ -16,9 +16,10 @@ AC_DEFINE(BZ_PROTO_VERSION, "109a", [Server Protocol version])
 AC_DEFINE_UNQUOTED(BZ_MAJOR_VERSION, 1, [Bzflag Major Version Number])
 AC_DEFINE_UNQUOTED(BZ_MINOR_VERSION, 9, [Bzflag Minor Version Number])
 AC_DEFINE_UNQUOTED(BZ_REV, 0, [Bzflag Revision Number])
-AC_DEFINE(BZ_BUILD_SOURCE, "Undefined", [Bzflag Build Environment])
+AC_DEFINE(BZ_BUILD_SOURCE, "CVS", [Bzflag Build Environment])
 AC_DEFINE_UNQUOTED(BZ_BUILD_OS, "$host_os", [Bzflag System Environment])
 AC_DEFINE_UNQUOTED(BZ_BUILD_DATE, `date +%Y%m%d`, [Bzflag Build Date])
+AC_DEFINE_UNQUOTED(BZ_BUILD_USER, "`whoami`", [User who compiled Bzflag])
 
 #Checks for programs.
 AC_PROG_MAKE_SET
