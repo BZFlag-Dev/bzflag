@@ -586,6 +586,7 @@ static DefaultDBItem		defaultDBItems[] = {
 	{ "displayRadarRange",	NULL,		false, StateDatabase::ReadWrite, NULL },
 	{ "displayScore",		NULL,		false, StateDatabase::ReadWrite, NULL },
 	{ "displayView",		"normal",	true,  StateDatabase::ReadWrite, NULL },
+	{ "displayPWR",			NULL,		true,  StateDatabase::ReadWrite, NULL },
 	{ "featuresAudio",		"1",		false, StateDatabase::ReadOnly,  NULL },
 	{ "featuresGamma",		"1",		false, StateDatabase::ReadOnly,  NULL },
 	{ "featuresResolutions",	"",		false, StateDatabase::ReadOnly,  NULL },

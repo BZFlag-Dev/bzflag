@@ -21,6 +21,7 @@ CXXFILES =				\
 					\
 	ViewItems.cxx			\
 	ViewItemHUD.cxx			\
+	ViewItemPWR.cxx			\
 	ViewItemRadar.cxx		\
 	ViewItemPlayerScene.cxx		\
 	ViewItemScoreboard.cxx		\

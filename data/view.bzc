@@ -63,6 +63,19 @@
 		</viewport>
 	</if>
 
+	<!-- shot indicator -->
+	<if name="displayPWR">
+		<viewport x="68%" y="40%" w="2%" h="40%">
+			<pwr type="shots"/>
+		</viewport>
+	</if>
+	<!-- bad flag indicator -->
+	<if name="displayPWR">
+		<viewport x="93%" y="4%" w="2%" h="50%">
+			<pwr type="badflags"/>
+		</viewport>
+	</if>
+
 	<!--  messages.  timeout is 5 seconds;  each line is shown that long. -->
 	<viewport x="4p" y="-80p" w="50%" h="50%">
 		<align h="left" v="top" />

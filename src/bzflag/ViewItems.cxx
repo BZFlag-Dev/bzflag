@@ -12,6 +12,7 @@
 
 #include "ViewItems.h"
 #include "ViewItemHUD.h"
+#include "ViewItemPWR.h"
 #include "ViewItemPlayerScene.h"
 #include "ViewItemRadar.h"
 #include "ViewItemScoreboard.h"
@@ -27,6 +28,7 @@ void					ViewItems::init()
 	VIEWMGR->addReader("scene", new ViewItemPlayerSceneReader);
 	VIEWMGR->addReader("radar", new ViewItemRadarReader);
 	VIEWMGR->addReader("hud", new ViewItemHUDReader);
+	VIEWMGR->addReader("pwr", new ViewItemPWRReader);
 	VIEWMGR->addReader("score", new ViewItemScoreboardReader);
 }
 
@@ -36,6 +38,7 @@ void					ViewItems::fini()
 	VIEWMGR->removeReader("scene");
 	VIEWMGR->removeReader("radar");
 	VIEWMGR->removeReader("hud");
+	VIEWMGR->removeReader("pwr");
 	VIEWMGR->removeReader("score");
 }
 // ex: shiftwidth=4 tabstop=4
