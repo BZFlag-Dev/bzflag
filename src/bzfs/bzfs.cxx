@@ -4711,6 +4711,7 @@ static void shotFired(int playerIndex, void *buf, int len)
   switch (firingInfo.flag) {
     case ShockWaveFlag:
       shotSpeed = 0.0f;
+      tankSpeed = 0.0f;
       break;
     case VelocityFlag:
       tankSpeed *= VelocityAd;
