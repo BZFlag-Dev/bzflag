@@ -62,8 +62,7 @@ class WallSceneNode : public SceneNode {
 
     void		copyStyle(WallSceneNode*);
 
-	void		setZFlip ( bool flip );
-
+    void                setUseColorTexture(bool use){useColorTexture=use;}
   protected:
     int			getNumLODs() const;
     void		setNumLODs(int, float* elementAreas);
@@ -98,7 +97,8 @@ class WallSceneNode : public SceneNode {
     bool		lightedTransparent;
     bool		lightedModulateTransparent;
     OpenGLGState	gstate;
-	bool		ZFlip;
+    bool		ZFlip;
+    bool                useColorTexture;
 };
 
 //

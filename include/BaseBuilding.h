@@ -47,7 +47,8 @@ class BaseBuilding : public Obstacle {
     ObstacleSceneNodeGenerator* newSceneNodeGenerator() const;
     void		getCorner(int index, float *pos) const;
     int			getTeam() const;
-  private:
+    std::string	        userTextures[2];
+ private:
     static std::string	typeName;
     int team;
 };

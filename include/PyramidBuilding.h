@@ -49,6 +49,7 @@ class PyramidBuilding : public Obstacle {
 
     void		getCorner(int index, float* pos) const;
 
+    std::string	        userTextures[1];
 
   protected:
     // compute minimum shrinking for height between z and z + height
@@ -56,7 +57,6 @@ class PyramidBuilding : public Obstacle {
 
   private:
     static std::string	typeName;
-	std::string userTextures[2];
 };
 
 class PyramidSceneNodeGenerator : public ObstacleSceneNodeGenerator {

@@ -42,6 +42,7 @@ class WallObstacle : public Obstacle {
 				float* normal) const;
 
     ObstacleSceneNodeGenerator*	newSceneNodeGenerator() const;
+    std::string	        userTextures[1];
 
   private:
     float		plane[4];

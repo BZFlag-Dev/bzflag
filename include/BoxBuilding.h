@@ -55,10 +55,9 @@ class BoxBuilding : public Obstacle {
     void		getCorner(int index, float* pos) const;
 
     static std::string	typeName;
-
+    std::string	userTextures[2];
  private:
-    bool noNodes;
-	std::string	userTextures[2];
+   bool noNodes;
 };
 
 class BoxSceneNodeGenerator : public ObstacleSceneNodeGenerator {

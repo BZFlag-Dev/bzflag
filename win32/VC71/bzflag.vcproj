@@ -769,7 +769,7 @@ copy debug\*.pdb ..\..\*.pdb
 				RelativePath="..\..\src\bzflag\callbacks.h">
 			</File>
 			<File
-				RelativePath="..\include\CommandsStandard.h">
+				RelativePath="..\..\include\CommandsStandard.h">
 			</File>
 			<File
 				RelativePath="..\..\src\bzflag\ControlPanel.h">
@@ -802,7 +802,7 @@ copy debug\*.pdb ..\..\*.pdb
 				RelativePath="..\..\src\bzflag\playing.h">
 			</File>
 			<File
-				RelativePath="..\include\Protocol.h">
+				RelativePath="..\..\include\Protocol.h">
 			</File>
 			<File
 				RelativePath="..\..\src\bzflag\RadarRenderer.h">
@@ -820,7 +820,7 @@ copy debug\*.pdb ..\..\*.pdb
 				RelativePath="..\..\src\bzflag\SceneBuilder.h">
 			</File>
 			<File
-				RelativePath="..\include\SceneRenderer.h">
+				RelativePath="..\..\include\SceneRenderer.h">
 			</File>
 			<File
 				RelativePath="..\..\src\bzflag\ServerLink.h">
@@ -850,10 +850,10 @@ copy debug\*.pdb ..\..\*.pdb
 				RelativePath="..\..\include\TextureManager.h">
 			</File>
 			<File
-				RelativePath="..\include\TextUtils.h">
+				RelativePath="..\..\include\TextUtils.h">
 			</File>
 			<File
-				RelativePath="..\include\version.h">
+				RelativePath="..\..\include\version.h">
 			</File>
 			<File
 				RelativePath="..\..\src\bzflag\World.h">

@@ -36,6 +36,7 @@ WallSceneNode::WallSceneNode() : numLODs(0),
   setLightedColor(1.0f, 1.0f, 1.0f);
   setLightedModulateColor(1.0f, 1.0f, 1.0f);
   ZFlip = false;
+  useColorTexture = false;
 }
 
 WallSceneNode::~WallSceneNode()
@@ -309,11 +310,15 @@ void			WallSceneNode::copyStyle(WallSceneNode* node)
 
 void			WallSceneNode::setColor()
 {
-  switch (style) {
-    case 0: myColor4fv(color); break;
-    case 1: myColor4fv(lightedColor); break;
-    case 2: myColor4fv(modulateColor); break;
-    case 3: myColor4fv(lightedModulateColor); break;
+  if (useColorTexture)
+      glColor4f(1,1,1,1);
+  else {
+    switch (style) {
+      case 0: myColor4fv(color); break;
+      case 1: myColor4fv(lightedColor); break;
+      case 2: myColor4fv(modulateColor); break;
+      case 3: myColor4fv(lightedModulateColor); break;
+    }
   }
 }
 
