@@ -21,6 +21,7 @@
 #include <stack>
 #include <stdexcept>
 #include <iostream>
+#include <math.h>
 
 //
 // StateDatabase::Item
