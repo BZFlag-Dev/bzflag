@@ -22,5 +22,5 @@ CONFIG	= linux-i386
 #
 # platform adjustments
 #
-ACOPTS   = -m486
-ACXXOPTS = -m486
+ACOPTS   = -mcpu=i486
+ACXXOPTS = -mcpu=i486

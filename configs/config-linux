@@ -85,8 +85,8 @@ MKDEPFILE = .depend
 #
 # search paths
 #
-PCINCS   = -I/usr/include -I/usr/X11R6/include
-PCXXINCS = -I/usr/include -I/usr/X11R6/include
+PCINCS   = -I/usr/X11R6/include
+PCXXINCS = -I/usr/X11R6/include
 
 #
 # linker options
