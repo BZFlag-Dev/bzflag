@@ -1,6 +1,11 @@
 recent bugs
 ------------
 
+- void			OpenGLTexFont::draw(const char* string, int length,
+				float x, float y, float z) const
+  (OpenGLTexFont.cxx line 549)
+  appears to be whacked as regards to glBegin/glEnd pairs
+
 - taking a full-screen snapshot take too long to complete. That's happening
   since we are saving in png.
 
