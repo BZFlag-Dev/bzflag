@@ -3278,6 +3278,19 @@ static void		setRobotTarget(RobotPlayer* robot)
 	player[j]->isAlive() &&
 	((robot->getTeam() == RogueTeam && !World::getWorld()->allowRabbit())
 	 || player[j]->getTeam() != robot->getTeam())) {
+
+      if((player[j]->getFlag() == Flags::PhantomZone && player[j]->isFlagActive()))
+        continue;
+
+      if (World::getWorld()->allowTeamFlags() && 
+      	  (robot->getTeam() == RedTeam && player[j]->getFlag() == Flags::RedTeam) ||
+      	  (robot->getTeam() == GreenTeam && player[j]->getFlag() == Flags::GreenTeam) ||
+      	  (robot->getTeam() == BlueTeam && player[j]->getFlag() == Flags::BlueTeam) ||
+	  (robot->getTeam() == PurpleTeam && player[j]->getFlag() == Flags::PurpleTeam)) {
+	bestTarget = player[j];
+	break;
+      }
+
       const float priority = robot->getTargetPriority(player[j]);
       if (priority > bestPriority) {
 	bestTarget = player[j];
