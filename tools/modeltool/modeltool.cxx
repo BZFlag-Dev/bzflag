@@ -167,7 +167,7 @@ void readMTL ( CModel &model, std::string file )
 	std::string fileText = pData;
 	free(pData);
 
-	TextUtils::replace_all(fileText,std::string("\r"),std::string(""));
+	fileText = TextUtils::replace_all(fileText,std::string("\r"),std::string(""));
 
 	std::vector<std::string> lines = TextUtils::tokenize(fileText, lineTerminator);
 
@@ -282,7 +282,7 @@ void readOBJ ( CModel &model, std::string file )
 	std::string fileText = pData;
 	free(pData);
 
-	TextUtils::replace_all(fileText,std::string("\r"),std::string(""));
+	fileText = TextUtils::replace_all(fileText,std::string("\r"),std::string(""));
 
 	std::vector<std::string> lines = TextUtils::tokenize(fileText,lineTerminator);
 
