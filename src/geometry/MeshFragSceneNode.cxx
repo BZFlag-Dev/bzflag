@@ -192,8 +192,6 @@ MeshFragSceneNode::MeshFragSceneNode(int _faceCount, const MeshFace** _faces)
     arrayCount = arrayCount + (face->getVertexCount() - 2);
   }
   
-//  printf ("arrayCount = %i (triangles)\n", arrayCount); //FIXME
-  
   // make the lists
   const int vertexCount = (arrayCount * 3);
   normals = new GLfloat[vertexCount * 3];
@@ -227,9 +225,6 @@ MeshFragSceneNode::MeshFragSceneNode(int _faceCount, const MeshFace** _faces)
         } else {
           vIndex = (j + k) % face->getVertexCount();
         }
-        
-//        printf ("aIndex = %i, tcount = %i, faces = %i, vIndex = %i\n",
-//                aIndex, tcount, face->getVertexCount(), vIndex); //FIXME
         
         // get the vertices
         memcpy(&vertices[aIndex * 3], face->getVertex(vIndex), sizeof(float[3]));
