@@ -39,6 +39,7 @@ public:
 
   PlayerId		getId() const;
   TeamColor		getTeam() const;
+  void			setTeam(TeamColor);
   const char*		getCallSign() const;
   const char*		getEmailAddress() const;
   const PlayerType    getPlayerType() const;
@@ -194,6 +195,11 @@ inline PlayerId		Player::getId() const
 inline TeamColor	Player::getTeam() const
 {
   return team;
+}
+
+inline void		Player::setTeam(TeamColor _team) 
+{
+  team = _team;
 }
 
 inline const char*	Player::getCallSign() const
