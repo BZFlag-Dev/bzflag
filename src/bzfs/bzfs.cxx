@@ -370,21 +370,26 @@ public:
 		  char *pMsg = banlistmessage;
 		  in_addr mask = banList[i];
 
-		  for (int j = 0; j < 4; j++) {
-			unsigned char b = (unsigned char)mask.s_addr;
+		  sprintf( pMsg, "%d.", ((unsigned char)(ntohl(mask.s_addr) >> 24)));
+		  pMsg+=strlen(pMsg);
 
-			if (b == 0xFF)
-				*(pMsg++) = '*';
+		  if ((ntohl(mask.s_addr) & 0x00ffffff) == 0x00ffffff)
+			strcat( pMsg, "*.*.*" );
+		  else {
+			sprintf( pMsg, "%d.", ((unsigned char)(ntohl(mask.s_addr) >> 16)));
+			pMsg+=strlen(pMsg);
+			if ((ntohl(mask.s_addr) & 0x0000ffff) == 0x0000ffff)
+				strcat( pMsg, "*.*" );
 			else {
-			  sprintf( pMsg, "%d", b );
-			  pMsg += strlen(pMsg);
+				sprintf( pMsg, "%d.", ((unsigned char)(ntohl(mask.s_addr) >> 8)));
+				pMsg+=strlen(pMsg);
+				if ((ntohl(mask.s_addr) & 0x000000ff) == 0x000000ff)
+					strcat( pMsg, "*" );
+				else
+					sprintf( pMsg, "%d", ((unsigned char)ntohl(mask.s_addr)));
 			}
-			*(pMsg++) = '.';
-			mask.s_addr >>= 8;
 		  }
 
-		  pMsg--;
-		  *pMsg = 0;
 		  sendMessage(playerIndex, id, teamColor, banlistmessage);
 	  }
   }
