@@ -4,6 +4,7 @@
 BZFlag 1.11.x (development)
 ---------------------------
 
+* Communicate autopilot state, display in scoreboard - Frank Thilo
 * Observer counts and match times added to game queries - David Vuorio
 * Central authentication - Tim Riker
 * Avoid transfer flag cheat - Alfredo Tupone
