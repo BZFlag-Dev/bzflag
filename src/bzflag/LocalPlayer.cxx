@@ -315,7 +315,6 @@ LocalPlayer::LocalPlayer(const PlayerId& id,
   desiredSpeed(0.0f),
   desiredAngVel(0.0f),
   lastSpeed(0.0f),
-  dodgeCount(0),
   insideBuilding(NULL),
   anyShotActive(false),
   target(NULL),
@@ -993,7 +992,6 @@ void			LocalPlayer::restart(const float* pos, float _azimuth)
   static const float zero[3] = { 0.0f, 0.0f, 0.0f };
   location = (pos[2] > 0.0f) ? OnBuilding : OnGround;
   lastSpeed = 0.0f;
-  dodgeCount = 0;
   desiredSpeed = 0.0f;
   desiredAngVel = 0.0f;
   move(pos, _azimuth);
