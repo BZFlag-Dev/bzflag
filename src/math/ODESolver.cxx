@@ -50,7 +50,7 @@ private:
 // ODESolver
 //
 
-static const Real		s_minTimeStep(1.0e-7);
+static const Real		s_minTimeStep((Real)1.0e-7);
 
 void					ODESolver::solve(
 								VectorN& y,
