@@ -1296,14 +1296,14 @@ saveStates ()
 static bool
 saveTeamsState ()
 {
-  int i;
+  u16 i;
   char bufStart[MaxPacketLen];
   void *buf;
   
   buf = nboPackUByte (bufStart, CtfTeams);
   for (i = 0; i < CtfTeams; i++) {
-    // ubyte for the team number, 3 ushort for scores
-    buf = team[i].team.pack(buf);
+    buf = nboPackUShort (buf, i);
+    buf = team[i].team.pack(buf); // 3 ushorts: size, won, lost
   }
   
   routePacket (MsgTeamUpdate, 
