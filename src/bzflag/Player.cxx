@@ -570,7 +570,7 @@ void            Player::setLanded(float velocity)
   float k = 0.1f / (2.0f * gravity * gravity);
   k = k * squishiness;
   if (flagType == Flags::Bouncy) {
-    k = k * 3.0f;
+    k = k * 4.0f;
   }
   dimensionsScale[2] = 1.0f / (1.0f + (k * (velocity * velocity)));
   

@@ -1073,8 +1073,10 @@ void			LocalPlayer::jump()
   newVelocity[1] = oldVelocity[1];
   if (getFlag() == Flags::Wings)
     newVelocity[2] = BZDB.eval(StateDatabase::BZDB_WINGSJUMPVELOCITY);
-  else if (getFlag() == Flags::Bouncy)
-    newVelocity[2] = (float)(bzfrand() * BZDB.eval(StateDatabase::BZDB_JUMPVELOCITY));
+  else if (getFlag() == Flags::Bouncy) {
+    const float factor = 0.25f + (bzfrand() * 0.75f);
+    newVelocity[2] = factor * BZDB.eval(StateDatabase::BZDB_JUMPVELOCITY);
+  }
   else
     newVelocity[2] = BZDB.eval(StateDatabase::BZDB_JUMPVELOCITY);
   setVelocity(newVelocity);
