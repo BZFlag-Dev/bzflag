@@ -261,9 +261,17 @@ void TankSceneNode::addRenderNodes(SceneRenderer& renderer)
 
   // set the tank's scaling size
   tankRenderNode.setTankSize(tankSize);
+  
+  bool narrow = false;
+  if ((tankSize == Narrow) && 
+      (!useDimensions || (dimensions[1] < 0.01f)) &&
+      (mode == HighTankLOD) && BZDBCache::zbuffer) {
+    narrow = true;
+  }
+  tankRenderNode.setNarrowWithDepth(narrow);
 
   // if drawing in sorted order then decide which order
-  if (sort || transparent) {
+  if (sort || transparent || narrow) {
     const GLfloat* eye = view.getEye();
     GLfloat dx = eye[0] - sphere[0];
     GLfloat dy = eye[1] - sphere[1];
@@ -764,6 +772,7 @@ TankSceneNode::TankRenderNode::TankRenderNode(const TankSceneNode* _sceneNode) :
 				sceneNode(_sceneNode), isShadow(false),
 				above(false), towards(false)
 {
+  narrowWithDepth = false;
   drawLOD = LowTankLOD;
   drawSize = Normal;
   return;
@@ -789,6 +798,13 @@ void TankSceneNode::TankRenderNode::sortOrder(
   above = _above;
   towards = _towards;
   left = _left;
+  return;
+}
+
+
+void TankSceneNode::TankRenderNode::setNarrowWithDepth(bool narrow)
+{
+  narrowWithDepth = narrow;
   return;
 }
 
@@ -865,6 +881,9 @@ void TankSceneNode::TankRenderNode::render()
       renderParts();
     }
   }
+  else if (narrowWithDepth) {
+    renderNarrowWithDepth();
+  }
   else {
     // any old order is fine.  if exploding then draw both sides.
     if (isExploding) {
@@ -924,20 +943,6 @@ void TankSceneNode::TankRenderNode::render()
 }
 
 
-void TankSceneNode::TankRenderNode::renderTopParts()
-{
-  if (towards) {
-    renderPart(Turret);
-    renderPart(Barrel);
-  }
-  else {
-    renderPart(Barrel);
-    renderPart(Turret);
-  }
-  return;
-}
-
-
 void TankSceneNode::TankRenderNode::renderLeftParts()
 {
   renderPart(LeftCasing);
@@ -967,6 +972,74 @@ void TankSceneNode::TankRenderNode::renderRightParts()
       renderPart((TankPart)(RightWheel0 + i));
     }
     renderPart(RightTread);
+  }
+  return;
+}
+
+
+void TankSceneNode::TankRenderNode::renderNarrowWithDepth()
+{
+  // render the middle stuff
+  renderPart(Body);
+  renderPart(Turret);
+  renderPart(Barrel);
+
+  // use a fill depth buffer offset to avoid flickering
+  GLboolean usingPolyOffset;
+  GLfloat factor, units;
+  glGetBooleanv(GL_POLYGON_OFFSET_FILL, &usingPolyOffset);
+  if (usingPolyOffset == GL_TRUE) {
+    glGetFloatv(GL_POLYGON_OFFSET_FACTOR, &factor);
+    glGetFloatv(GL_POLYGON_OFFSET_UNITS, &units);
+  } else {
+    glEnable(GL_POLYGON_OFFSET_FILL);
+  }
+
+  glPolygonOffset(0.0f, -2.0f);
+  if (left) {
+    renderPart(LeftCasing);
+  } else {
+    renderPart(RightCasing);
+  }
+
+  glPolygonOffset(0.0f, -4.0f);
+  for (int i = 0; i < 4; i++) {
+    if (isShadow && ((i == 1) || (i == 2)) && !isExploding) {
+      continue;
+    }
+    if (left) {
+      renderPart((TankPart)(LeftWheel0 + i));
+    } else {
+      renderPart((TankPart)(RightWheel0 + i));
+    }
+  }
+
+  glPolygonOffset(0.0f, -6.0f);
+  if (left) {
+    renderPart(LeftTread);
+  } else {
+    renderPart(RightTread);
+  }
+  
+  if (usingPolyOffset) {
+    glPolygonOffset(factor, units);
+  } else {
+    glDisable(GL_POLYGON_OFFSET_FILL);
+  }
+  
+  return;
+}
+
+
+void TankSceneNode::TankRenderNode::renderTopParts()
+{
+  if (towards) {
+    renderPart(Turret);
+    renderPart(Barrel);
+  }
+  else {
+    renderPart(Barrel);
+    renderPart(Turret);
   }
   return;
 }

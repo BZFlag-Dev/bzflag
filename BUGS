@@ -1,6 +1,9 @@
 recent bugs
 ------------
 
+- Burrowed tank shadows should be ground clipped
+  (the shadow perspective matrix messes with the clip plane?)
+
 - if you start the client windowed on a multidisplay system, and then
   move the window to a secondary monitor, you cannot control the
   brightness of the (SDL) window since it presently modifying the

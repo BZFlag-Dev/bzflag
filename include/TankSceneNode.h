@@ -119,6 +119,7 @@ class TankSceneNode : public SceneNode {
 	void		setTankLOD(TankGeometryEnums::TankLOD);
 	void		setTankSize(TankGeometryEnums::TankSize);
 	void		sortOrder(bool above, bool towards, bool left);
+	void		setNarrowWithDepth(bool narrow);
 	void		render();
 	const GLfloat*	getPosition() const { return sceneNode->getSphere(); }
 
@@ -127,6 +128,7 @@ class TankSceneNode : public SceneNode {
 	void		renderTopParts();
 	void		renderLeftParts();
 	void		renderRightParts();
+	void		renderNarrowWithDepth();
 	void		renderLights();
 	void		renderJumpJets();
 	void		setupPartColor(TankGeometryEnums::TankPart part);
@@ -143,6 +145,7 @@ class TankSceneNode : public SceneNode {
 	bool		above;
 	bool		towards;
 	bool		isExploding;
+	bool		narrowWithDepth;
 	GLfloat		explodeFraction;
   	static const GLfloat centerOfGravity[TankGeometryEnums::LastTankPart][3];
     };
