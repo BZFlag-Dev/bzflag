@@ -153,9 +153,9 @@ void CustomCone::writeToGroupDef(GroupDefinition *groupdef) const
     const float zAxis[3] = {0.0f, 0.0f, 1.0f};
     const float origin[3] = {0.0f, 0.0f, 0.0f};
     MeshTransform xform;
-    if (flipz) {
-      const float flipScale[3] = {1.0f, -1.0f, -1.0f};
-      const float flipShift[3] = {0.0f, 0.0f, size[2]};
+    if (flipz || (size[2] < 0.0f)) {
+      const float flipScale[3] = {1.0f, 1.0f, -1.0f};
+      const float flipShift[3] = {0.0f, 0.0f, -size[2]};
       xform.addScale(flipScale);
       xform.addShift(flipShift);
     }
@@ -165,7 +165,7 @@ void CustomCone::writeToGroupDef(GroupDefinition *groupdef) const
     float newSize[3];
     newSize[0] = (float)(size[0] * M_SQRT2);
     newSize[1] = (float)(size[1] * M_SQRT2);
-    newSize[2] = size[2];
+    newSize[2] = fabsf(size[2]);
     cone = new ConeObstacle(xform, origin, newSize, (float)(M_PI * 0.25), angle,
 			    texsize, useNormals, divisions, mats, phydrv,
 			    smoothBounce, driveThrough, shootThrough);
