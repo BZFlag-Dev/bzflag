@@ -95,12 +95,16 @@ noinst_HEADERS =			\
 	SceneDatabase.h			\
 	SceneNode.h			\
 	SceneRenderer.h			\
+	ServerItem.h			\
+	ServerList.h			\
+	ServerListCache.h		\
 	ShellSceneNode.h		\
 	ShotSceneNode.h			\
 	ShotUpdate.h			\
 	Singleton.h			\
 	SphereObstacle.h		\
 	SphereSceneNode.h		\
+	StartupInfo.h			\
 	StateDatabase.h			\
 	TankGeometryMgr.h		\
 	TankSceneNode.h			\
