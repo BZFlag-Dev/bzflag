@@ -19,9 +19,11 @@ values would be preferred.
 
 * player ids are now in lockstep on server and all clients.
 
-* special player numbers. 0 = server, 255 = everyone, 254 = invalid 253 = rogue team,
-249-252 = colored teams, 1-maxplayers = normal players. Note that maxplayers in
-this context includes observers as well as proper players.
+* special player numbers. 255 = invalid, 254 = everyone, 253 = server, 252 =
+observers, 251 = unused, 250 = rogue team, 249-... = colored teams,
+0-maxplayers = normal players. Note that maxplayers includes observers as well
+as proper players. Conversion to teamid is (250 - playerid) for values between
+maxplayers and 250.
 
 * should msglength just be a u8? Only very few messages are larger than 255
 bytes (MsgGetWorld, maybe MsgAddPlayer, MsgMessage). Could also indicate
