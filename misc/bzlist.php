@@ -61,18 +61,16 @@ function query ($hostport) {
     fclose($fp);
     return $server;
   }
-  # MsgQueryGame
+  # MsgQueryGame + MsgQueryPlayers
   $request = pack("n2", 0, 0x7167);
+  $request .= pack("n2", 0, 0x7170);
   //var_dump($request);
   fwrite($fp, $request);
   $buffer=fread($fp, 40);
   //var_dump($buffer);
   $server += unpack("nlen/ncode/nstyle/nmaxPlayers/nmaxShots/nrogueSize/nredSize/ngreenSize/nblueSize/npurpleSize/nrogueMax/nredMax/ngreenMax/nblueMax/npurpleMax/nshakeWins/nshakeTimeout/nmaxPlayerScore/nmaxTeamScore/nmaxTime", $buffer);
 
-  # MsgQueryPlayers
-  $request = pack("n2", 0, 0x7170);
-  //var_dump($request);
-  fwrite($fp, $request);
+  # MsgQueryPlayers reply
   $buffer=fread($fp, 8);
   //var_dump(unpack("c8", $buffer));
   $server += unpack("nlen/ncode/nnumTotalTeams/nnumPlayers", $buffer);
