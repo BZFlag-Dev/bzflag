@@ -1080,8 +1080,8 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
 
   if (options.gameStyle & int(RabbitChaseGameStyle)) {
     for (int i = RedTeam; i <= PurpleTeam; i++) {
-      if (options.maxTeam[i] > 0)
-      	std::cout << "only rogues are allowed in Rabbit Style; zeroing out other teams" << std::endl;
+      if (options.maxTeam[i] > 0 && options.maxTeam[RogueTeam] != maxRealPlayers)
+      	std::cout << "only rogues are allowed in Rabbit Style; zeroing out " << Team::getName((TeamColor) i) << std::endl;
       options.maxTeam[i] = 0;
   	}
   }
