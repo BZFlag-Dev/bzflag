@@ -653,7 +653,7 @@ bool Replay::skip(int playerIndex, int seconds)
     return false;
   }
 
-  if (ReplayFile == NULL) {
+  if ((ReplayFile == NULL) || (ReplayPos == NULL)) {
     sendMessage (ServerPlayer, playerIndex, "No replay file loaded");
     return false;
   }
@@ -672,14 +672,20 @@ bool Replay::skip(int playerIndex, int seconds)
         }
         p = p->next;
       }
+      if (p == NULL) {
+        p = ReplayBuf.head;
+      }
     }
     else {
-      while (p != ReplayBuf.tail) {
+      while (p != NULL) {
         if ((p->timestamp <= target) && 
             (p->mode && (p->code == MsgTeamUpdate))) { // start on an update
           break;
         }
         p = p->prev;
+      }
+      if (p == NULL) {
+        p = ReplayBuf.tail;
       }
     }
   }
@@ -843,7 +849,7 @@ void Replay::sendHelp (int playerIndex)
 // The goal is to save all of the states, such that if 
 // the packets are simply sent to a clean-state client,
 // the client's state will end up looking like the state
-// at the time which this function was called.
+// at the time which these functions were called.
 
 static bool
 saveTeamStates ()
@@ -1282,6 +1288,7 @@ getCRtime ()
   now = (CRtime)tv.tv_sec * (CRtime)1000000;
   now = now + (CRtime)tv.tv_usec;
 #else //_WIN32
+  // FIXME - this will roll every (2^32/1000) seconds (49.71 days)
   now = (CRtime)timeGetTime() * (CRtime)1000;
 #endif //_WIN32
   
@@ -1314,8 +1321,6 @@ badFilename (const char *name)
 
 
 /****************************************************************************/
-
-// FIXME - DMR - for debugging
 
 static const char *
 print_msg_code (u16 code)

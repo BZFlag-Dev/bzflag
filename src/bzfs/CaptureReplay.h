@@ -17,11 +17,11 @@
 
 const int ReplayObservers = 16;
 
-typedef enum {
+enum ReplayPacketMode {
   RealPacket   = 0,
   FakePacket   = 1,
   HiddenPacket = 2
-} ReplayPacketMode;
+};
 
 namespace Capture {
   extern bool init ();

@@ -223,7 +223,7 @@ BZFlag 1.7g2 "Steely Eyed Banana" (was 1.7g1)
 * OSX Fixes - Sean Morrison, David Wollner
 * server list cache - Michael Hoffman
 * E-mail field fixes - Lars Luthman
-* colorized console - Dave R (Trepan), David Trowbridge
+* colorized console - Dave Rodgers, David Trowbridge
 * automake/autoconf - Tupone Alfredo, David Trowbridge, Tim Riker
 * check for unknown message types - Frank Thilo
 * check incoming TCP for oversized messages and dump player - Frank Thilo
