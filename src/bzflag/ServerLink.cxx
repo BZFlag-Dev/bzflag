@@ -675,13 +675,6 @@ void					ServerLink::sendPlayerUpdate(const Player* player)
 	send(MsgPlayerUpdate, sizeof(msg), msg);
 }
 
-void					ServerLink::sendCaptureFlag(TeamColor team)
-{
-	char msg[2];
-	nboPackUShort(msg, uint16_t(team));
-	send(MsgCaptureFlag, sizeof(msg), msg);
-}
-
 void					ServerLink::sendGrabFlag(int flagIndex)
 {
 	char msg[2];

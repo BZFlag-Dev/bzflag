@@ -104,7 +104,7 @@ static char				messageMessage[2 * PlayerIdPLen + MessageLen];
 
 static void				restartPlaying();
 static void				setTarget();
-static void				handleFlagDropped(Player* tank);
+static void				handleFlagDropped(Player* tank, int reason);
 static void				handlePlayerMessage(uint16_t, uint16_t, void*);
 TeamColor  				PlayerIdToTeam(PlayerId id);
 PlayerId				TeamToPlayerId(TeamColor team);
@@ -632,7 +632,7 @@ static std::string	cmdDrop(const std::string&,
 			serverLink->sendDropFlag(DropReasonDropped, myTank->getPosition());
 			// changed: on windows it may happen the MsgDropFlag
 			// never comes back to us, so we drop it right away
-			handleFlagDropped(myTank);
+			handleFlagDropped(myTank, DropReasonDropped);
 		}
 	}
 
@@ -1371,73 +1371,10 @@ static void				handleServerMessage(bool human, uint16_t code,
 			Player* tank = lookupPlayer(id);
 			if (!tank)
 				break;
-			handleFlagDropped(tank);
-			break;
-		}
+			handleFlagDropped(tank, reason);
 
-		case MsgCaptureFlag: {
-			PlayerId id;
-			uint16_t flagIndex, team;
-			msg = nboUnpackUByte(msg, id);
-			msg = nboUnpackUShort(msg, flagIndex);
-			msg = nboUnpackUShort(msg, team);
-			Player* capturer = lookupPlayer(id);
-			int capturedTeam = int(world->getFlag(int(flagIndex)).id);
-
-			// player no longer has flag
-			if (capturer) {
-				capturer->setFlag(NoFlag);
-				if (capturer == myTank) {
-					updateFlag();
-				}
-
-				// add message
-				if (int(capturer->getTeam()) == capturedTeam) {
-					std::string message("took my flag into ");
-					message += Team::getName(TeamColor(team));
-					message += " territory";
-					addMessage(capturer, message);
-				}
-				else {
-					std::string message("captured ");
-					message += Team::getName(TeamColor(capturedTeam));
-					message += "'s flag";
-					addMessage(capturer, message);
-				}
-			}
-
-			// play sound -- if my team is same as captured flag then my team lost,
-			// but if I'm on the same team as the capturer then my team won.
-			if (capturedTeam == int(myTank->getTeam()))
-				playLocalSound(SFX_LOSE);
-			else if (capturer->getTeam() == myTank->getTeam())
-				playLocalSound(SFX_CAPTURE);
-
-			// blow up if my team flag captured
-			if (capturedTeam == int(myTank->getTeam())) {
-				gotBlowedUp(myTank, GotCaptured, id);
-				restartOnBase = true;
-			}
-
-			// everybody who's alive on capture team will be blowing up
-			// but we're not going to get an individual notification for
-			// each of them, so add an explosion for each now.  don't
-			// include me, though;  I already blew myself up.
-			for (int i = 0; i < maxPlayers; i++) {
-				if (player[i] &&
-					player[i]->isAlive() &&
-					player[i]->getTeam() == capturedTeam) {
-					const float* pos = player[i]->getPosition();
-					playWorldSound(SFX_EXPLOSION, pos[0], pos[1], pos[2], false);
-					float explodePos[3];
-					explodePos[0] = pos[0];
-					explodePos[1] = pos[1];
-					explodePos[2] = pos[2] + MuzzleHeight;
-					addTankExplosion(explodePos);
-				}
-			}
-
-			checkScores = true;
+			if (reason == DropReasonCaptured)
+					checkScores = true;
 			break;
 		}
 
@@ -1947,22 +1884,75 @@ static void				updateExplosions(float dt)
 	}
 }
 
-static void				handleFlagDropped(Player* tank)
+static void				handleFlagDropped(Player* tank, int reason)
 {
 	// skip it if player doesn't actually have a flag
 	if (tank->getFlag() == NoFlag)
 		return;
 
-	// add message
-	std::string message("dropped ");
-	message += Flag::getName(tank->getFlag());
-	message += " flag";
-	addMessage(tank, message);
+	if (reason == DropReasonCaptured) {
+		int capturedTeam = int(tank->getFlag());
 
-	// player no longer has flag
-	tank->setFlag(NoFlag);
+		// player no longer has flag
+		tank->setFlag(NoFlag);
 
-	// update display and play sound effects
+		// add message
+		if (int(tank->getTeam()) == capturedTeam) {
+			std::string message("took my flag into ");
+			message += "enemy territory";
+			addMessage(tank, message);
+		}
+		else {
+			std::string message("captured ");
+			message += Team::getName(TeamColor(capturedTeam));
+			message += "'s flag";
+			addMessage(tank, message);
+		}
+
+		// play sound -- if my team is same as captured flag then my team lost,
+		// but if I'm on the same team as the capturer then my team won.
+		if (capturedTeam == int(myTank->getTeam()))
+			playLocalSound(SFX_LOSE);
+		else if (tank->getTeam() == myTank->getTeam())
+			playLocalSound(SFX_CAPTURE);
+
+		// blow up if my team flag captured
+		if (capturedTeam == int(myTank->getTeam())) {
+			gotBlowedUp(myTank, GotCaptured, tank->getId());
+			restartOnBase = true;
+		}
+
+		// everybody who's alive on capture team will be blowing up
+		// but we're not going to get an individual notification for
+		// each of them, so add an explosion for each now.  don't
+		// include me, though;  I already blew myself up.
+		for (int i = 0; i < maxPlayers; i++) {
+			if (player[i] &&
+				player[i]->isAlive() &&
+				player[i]->getTeam() == capturedTeam) {
+				const float* pos = player[i]->getPosition();
+				playWorldSound(SFX_EXPLOSION, pos[0], pos[1], pos[2], false);
+				float explodePos[3];
+				explodePos[0] = pos[0];
+				explodePos[1] = pos[1];
+				explodePos[2] = pos[2] + MuzzleHeight;
+				addTankExplosion(explodePos);
+			}
+		}
+	}
+	else {
+		// add message
+		std::string message("dropped ");
+		message += Flag::getName(tank->getFlag());
+		message += " flag";
+		addMessage(tank, message);
+	
+		// player no longer has flag
+		tank->setFlag(NoFlag);
+	
+		// update display and play sound effects
+	}
+
 	if (tank == myTank) {
 		playLocalSound(SFX_DROP_FLAG);
 		updateFlag();
@@ -1984,7 +1974,7 @@ static bool				gotBlowedUp(BaseLocalPlayer* tank,
 		lookupServer(tank)->sendDropFlag(DropReasonKilled, tank->getPosition());
 
 		// drop it
-		handleFlagDropped(tank);
+		handleFlagDropped(tank, DropReasonKilled);
 	}
 
 	// take care of explosion business -- don't want to wait for
@@ -2049,7 +2039,7 @@ static void				checkEnvironment()
 		if ((base != NoTeam) &&
 		((int(flagId) == int(team) && base != team) ||
 		(int(flagId) != int(team) && base == team)))
-			serverLink->sendCaptureFlag(base);
+			serverLink->sendDropFlag(DropReasonCaptured, myTank->getPosition());
 	}
 	else if (flagId == NoFlag && (myTank->getLocation() == LocalPlayer::OnGround ||
 		myTank->getLocation() == LocalPlayer::OnBuilding)) {

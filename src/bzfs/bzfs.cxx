@@ -3339,7 +3339,7 @@ static void dropFlag(PlayerId playerId, FlagDropReason reason, float pos[3])
 	sendFlagUpdate(flagIndex);
 }
 
-static void captureFlag(PlayerId playerId, TeamColor teamCaptured)
+static void captureFlag(PlayerId playerId, float pos[3])
 {
 	// player captured a flag.  can either be enemy flag in player's own
 	// team base, or player's own flag in enemy base.
@@ -3353,12 +3353,13 @@ static void captureFlag(PlayerId playerId, TeamColor teamCaptured)
 	player[playerId].flag = -1;
 	resetFlag(flagIndex);
 
-	// send MsgCaptureFlag
+	// send MsgDropFlag
 	void *buf, *bufStart = getDirectMessageBuffer();
-	buf = nboPackUByte(bufStart, playerId);
+	buf = nboPackUByte(bufStart, DropReasonCaptured);
+	buf = nboPackUByte(buf, playerId);
 	buf = nboPackUShort(buf, uint16_t(flagIndex));
-	buf = nboPackUShort(buf, uint16_t(teamCaptured));
-	broadcastMessage(MsgCaptureFlag, (char*)buf-(char*)bufStart, bufStart);
+	buf = flag[flagIndex].flag.pack(buf);
+	broadcastMessage(MsgDropFlag, (char*)buf-(char*)bufStart, bufStart);
 
 	// everyone on losing team is dead
 	for (PlayerId i = 0; i < maxPlayers; i++)
@@ -3667,16 +3668,10 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
 			float pos[3];
 			buf = nboUnpackUByte(buf, reason);
 			buf = nboUnpackVector(buf, pos);
-			dropFlag(t, (FlagDropReason)reason, pos);
-			break;
-		}
-
-		// player has captured a flag
-		case MsgCaptureFlag: {
-			// data: team whose territory flag was brought to
-			uint16_t team;
-			buf = nboUnpackUShort(buf, team);
-			captureFlag(t, TeamColor(team));
+			if (reason == DropReasonCaptured)
+				captureFlag(t, pos);
+			else
+				dropFlag(t, (FlagDropReason)reason, pos);
 			break;
 		}
 

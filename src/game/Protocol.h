@@ -50,7 +50,6 @@ const uint16_t			MsgNull = 0x0000;
 const uint16_t			MsgAccept = 0x6163;						// 'ac'
 const uint16_t			MsgAlive = 0x616c;						// 'al'
 const uint16_t			MsgAddPlayer = 0x6170;					// 'ap'
-const uint16_t			MsgCaptureFlag = 0x6366;				// 'cf'
 const uint16_t			MsgDropFlag = 0x6466;					// 'df'
 const uint16_t			MsgEnter = 0x656e;						// 'en'
 const uint16_t			MsgExit = 0x6578;						// 'ex'
