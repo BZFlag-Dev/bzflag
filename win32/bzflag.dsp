@@ -176,10 +176,6 @@ SOURCE=..\src\bzflag\RemotePlayer.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\src\bzflag\RenderNode.cxx
-# End Source File
-# Begin Source File
-
 SOURCE=..\src\bzflag\RobotPlayer.cxx
 # End Source File
 # Begin Source File

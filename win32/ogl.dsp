@@ -109,6 +109,10 @@ SOURCE=..\src\ogl\OpenGLTexFont.cxx
 
 SOURCE=..\src\ogl\OpenGLTexture.cxx
 # End Source File
+# Begin Source File
+
+SOURCE=..\src\ogl\RenderNode.cxx
+# End Source File
 # End Group
 # Begin Group "Header Files"
 
