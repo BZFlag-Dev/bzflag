@@ -2,6 +2,8 @@
 
 			     BZFlag release notes
 
+* Changed version numbers to be xx.xx.xx and display with BuildOS and Build Date - Jeff Myers,others for auto tools
+* Added voting booth for servers - Sean Morrison
 * Added bzadmin - Lars Luthman
 * Munitions now bounce off buildings/ground in z direction - Dave Brosius
 * World object and -worldsize paramaters - Jeff Myers
