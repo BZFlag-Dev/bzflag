@@ -93,8 +93,7 @@ SceneRenderer::SceneRenderer(MainWindow& _window) :
 				canUseHiddenLine(false),
 				exposed(true),
 				lastFrame(true),
-				sameFrame(false),
-				showFlagHelp(false)
+				sameFrame(false)
 {
   instance = this;
 
@@ -270,16 +269,6 @@ void			SceneRenderer::setWireframe(bool on)
 bool			SceneRenderer::useWireframe() const
 {
   return useWireframeOn;
-}
-
-bool			SceneRenderer::getShowFlagHelp() const
-{
-  return showFlagHelp;
-}
-
-void			SceneRenderer::setShowFlagHelp(bool _showFlagHelp)
-{
-  showFlagHelp = _showFlagHelp;
 }
 
 void			SceneRenderer::setHiddenLine(bool on)

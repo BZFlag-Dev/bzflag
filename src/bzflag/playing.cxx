@@ -107,15 +107,15 @@ static MainMenu*	mainMenu;
 static ServerLink*	serverLink = NULL;
 static PlayerLink*	playerLink = NULL;
 static World*		world = NULL;
-static LocalPlayer*	myTank = NULL;
+LocalPlayer*		myTank = NULL;
 static BzfDisplay*	display = NULL;
 static MainWindow*	mainWindow = NULL;
 static SceneRenderer*	sceneRenderer = NULL;
 static SceneDatabase*	zScene = NULL;
 static SceneDatabase*	bspScene = NULL;
-ControlPanel*	controlPanel = NULL;
+ControlPanel*		controlPanel = NULL;
 static RadarRenderer*	radar = NULL;
-static HUDRenderer*	hud = NULL;
+HUDRenderer*		hud = NULL;
 static SceneDatabaseBuilder* sceneBuilder = NULL;
 static Team*		teams = NULL;
 static int		maxPlayers = 0;		// not including me
@@ -1720,15 +1720,6 @@ static void		doKeyPlaying(const BzfKeyEvent& key, bool pressed)
     }
   }
 
-  else if (keymap.isMappedTo(BzfKeyMap::FlagHelp, key)) {
-    // toggle flag help
-    if (pressed) {
-      sceneRenderer->setShowFlagHelp(!sceneRenderer->getShowFlagHelp());
-      if (!sceneRenderer->getShowFlagHelp()) hud->setFlagHelp(Flags::Null, 0.0);
-      else hud->setFlagHelp(myTank->getFlag(), FlagHelpDuration);
-    }
-  }
-
   else if (keymap.isMappedTo(BzfKeyMap::ShortRange, key)) {
     // smallest radar range
     if (pressed) radar->setRange(RadarLowRangeFactor*WorldSize);
@@ -2486,7 +2477,7 @@ static void		updateFlag(FlagDesc* flag)
     hud->setAlert(2, flag->flagName, 3.0f, flag->flagType == FlagSticky);
   }
 
-  if (sceneRenderer->getShowFlagHelp())
+  if (BZDB->isTrue("displayFlagHelp"))
     hud->setFlagHelp(flag, FlagHelpDuration);
 
   if (!radar && !myTank || !World::getWorld()) return;

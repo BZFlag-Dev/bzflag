@@ -48,7 +48,6 @@
 #include "menus.h"
 #include "ConfigFileManager.h"
 #include "CommandsStandard.h"
-
 #include "BzfDisplay.h"
 #include "BzfVisual.h"
 #include "BzfWindow.h"
@@ -59,6 +58,7 @@
 #include "StateDatabase.h"
 #include "FileManager.h"
 #include "CommandManager.h"
+#include "callbacks.h"
 
 extern std::vector<std::string>& getSilenceList();
 const char*		argv0;
@@ -74,7 +74,6 @@ ResourceDatabase	db;
 static BzfDisplay*	display = NULL;
 
 float		WorldSize =	DEFAULT_WORLD;					// meters
-
 
 // default database entries
 struct DefaultDBItem {
@@ -107,7 +106,8 @@ static DefaultDBItem	defaultDBItems[] = {
   { "displayMainFlags",		"1",			true,	StateDatabase::ReadWrite,	NULL },
   { "displayBinoculars",	"0",			false,	StateDatabase::ReadWrite,	NULL },
   { "displayScore",		"1",			true,	StateDatabase::ReadWrite,	NULL },
-  { "displayZoom",		"1",			true,	StateDatabase::ReadWrite,	NULL }
+  { "displayZoom",		"1",			true,	StateDatabase::ReadWrite,	NULL },
+  { "displayFlagHelp",		"1",			true,	StateDatabase::ReadWrite,	setFlagHelp }
 };
 
 // default key bindings
@@ -163,7 +163,8 @@ static const char*	bindingList[] = {
   "bind F10 up \"roam zoom stop\"",
   "bind F11 down \"roam zoom normal\"",
   "bind F11 up \"roam zoom stop\"",
-  "bind O down servercommand"
+  "bind O down servercommand",
+  "bind F down \"toggle displayFlagHelp\""
 };
 
 #ifdef ROBOT
@@ -756,7 +757,6 @@ void			dumpResources(BzfDisplay* display,
     }
   }
   BZDB->set("startcode", ServerStartMenu::getSettings());
-  BZDB->set("showflaghelp", renderer.getShowFlagHelp() ? "1" : "0");
 
   BZDB->set("panelopacity", string_util::format("%f", renderer.getPanelOpacity()));
 
@@ -878,6 +878,7 @@ int			main(int argc, char** argv)
     }
     BZDB->setPersistent(defaultDBItems[i].name, defaultDBItems[i].persistent);
     BZDB->setPermission(defaultDBItems[i].name, defaultDBItems[i].permission);
+    BZDB->addCallback(defaultDBItems[i].name, defaultDBItems[i].callback, NULL);
   }
 
   // read resources
@@ -1222,8 +1223,6 @@ int			main(int argc, char** argv)
 
     if (BZDB->isSet("startcode"))
       ServerStartMenu::setSettings(BZDB->get("startcode").c_str());
-    if (BZDB->isSet("showflaghelp"))
-      renderer.setShowFlagHelp(BZDB->isTrue("showflaghelp"));
 
     if (BZDB->isSet("panelopacity"))
       renderer.setPanelOpacity(BZDB->eval("panelopacity"));
