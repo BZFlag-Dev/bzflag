@@ -236,13 +236,16 @@ class WorldInfo {
 	float pos[3];
 	float rotation;
 	float size[3];
+      ObstacleLocation &operator=( const ObstacleLocation &ol )
+      {
+	memcpy(pos, ol.pos, sizeof(float) * 3);
+	rotation = ol.rotation;
+	memcpy(size, ol.size, sizeof(float) * 3);
+      }
     };
 
-    struct Teleporter {
+    struct Teleporter : public ObstacleLocation {
       public:
-	float pos[3];
-	float rotation;
-	float size[3];
 	float border;
 	int to[2];
     };
@@ -793,9 +796,7 @@ int WorldInfo::inBuilding(WorldInfo::ObstacleLocation **location, float x, float
 	teleporters[i].pos[2] < (z + flagHeight) &&
 	(teleporters[i].pos[2] + teleporters[i].size[2]) > z) {
       static ObstacleLocation __teleporter;
-      __teleporter.pos = teleporters[i].pos;
-      __teleporter.rotation = teleporters[i].rotation;
-      __teleporter.size = teleporters[i].size;
+      __teleporter = teleporters[i];
       if (location != NULL)
 	*location = &__teleporter;
       return 3;
@@ -3735,7 +3736,7 @@ static void dropFlag(int playerIndex, float pos[3])
   if (flag[flagIndex].flag.status == FlagGoing) {
     flag[flagIndex].flag.landingPosition[0] = pos[0];
     flag[flagIndex].flag.landingPosition[1] = pos[1];
-    flag[flagIndex].flag.landingPosition[2] = 0.0f;
+    flag[flagIndex].flag.landingPosition[2] = pos[2];
   }
   else if (int(flag[flagIndex].flag.id) >= int(FirstTeamFlag) &&
       int(flag[flagIndex].flag.id) <= int(LastTeamFlag) &&
@@ -3779,7 +3780,7 @@ static void dropFlag(int playerIndex, float pos[3])
       ShieldFlight * FlagAltitude : FlagAltitude;
   const float maxAltitude = pos[2] + TankHeight + thrownAltitude;
   const float upTime = sqrtf(-2.0f * thrownAltitude / Gravity);
-  const float downTime = sqrtf(-2.0f * maxAltitude / Gravity);
+  const float downTime = sqrtf(-2.0f * (maxAltitude - pos[2]) / Gravity);
   const float flightTime = upTime + downTime;
 
   // set flight info
