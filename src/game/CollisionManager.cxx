@@ -127,7 +127,7 @@ bool CollisionManager::needReload () const
 {
   int newDepth = BZDB.evalInt (StateDatabase::BZDB_COLDETDEPTH);
   int newElements = BZDB.evalInt (StateDatabase::BZDB_COLDETELEMENTS);
-  float newWorldSize = BZDB.evalInt (StateDatabase::BZDB_WORLDSIZE);
+  float newWorldSize = (float)BZDB.evalInt (StateDatabase::BZDB_WORLDSIZE);
   if ((newDepth != maxDepth) || (newElements != minElements) ||
       (newWorldSize != WorldSize)) {
     return true;
@@ -239,8 +239,8 @@ void CollisionManager::load (std::vector<BoxBuilding>     &boxes,
   minElements = BZDB.evalInt (StateDatabase::BZDB_COLDETELEMENTS);
   
   // determine the total number of obstacles
-  int fullCount = boxes.size() + bases.size() +pyrs.size() +
-                  tetras.size() + teles.size();
+  int fullCount = (int)(boxes.size() + bases.size() + pyrs.size() +
+                  tetras.size() + teles.size());
                    
   // get the memory for the full list and the scratch pad
   FullPad.list = new Obstacle*[fullCount];
@@ -284,19 +284,19 @@ void CollisionManager::load (std::vector<BoxBuilding>     &boxes,
   // setup the split list
   Obstacle** listPtr = FullList.list;
   SplitList.named.boxes.list = listPtr;
-  SplitList.named.boxes.count = boxes.size();
+  SplitList.named.boxes.count = (int)boxes.size();
   listPtr = listPtr + boxes.size();
   SplitList.named.bases.list = listPtr;
-  SplitList.named.bases.count = bases.size();
+  SplitList.named.bases.count = (int)bases.size();
   listPtr = listPtr + bases.size();
   SplitList.named.pyrs.list = listPtr;
-  SplitList.named.pyrs.count = pyrs.size();
+  SplitList.named.pyrs.count = (int)pyrs.size();
   listPtr = listPtr + pyrs.size();
   SplitList.named.tetras.list = listPtr;
-  SplitList.named.tetras.count = tetras.size();
+  SplitList.named.tetras.count = (int)tetras.size();
   listPtr = listPtr + tetras.size();
   SplitList.named.teles.list = listPtr;
-  SplitList.named.teles.count = teles.size();
+  SplitList.named.teles.count = (int)teles.size();
 
   return;
 }
