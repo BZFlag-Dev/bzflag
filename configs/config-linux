@@ -65,7 +65,7 @@ PCXXDEFS = -D_BSD_SOURCE -D_POSIX_SOURCE -DHALF_RATE_AUDIO $(XEXT_DEF)
 PCOPTS   = -Wall -W -ansi $(ACOPTS)
 PCXXOPTS = -Wall -W -fno-exceptions -fno-rtti $(ACXXOPTS)
 COPT     = -DNDEBUG -O2
-CXXOPT   = -DNDEBUG -O2 -ffast-math -fomit-frame-pointer -fnonnull-objects \
+CXXOPT   = -DNDEBUG -O2 -ffast-math -fomit-frame-pointer \
 		-fexpensive-optimizations
 CDEBUG   = -DDEBUG -g -Werror
 CXXDEBUG = -DDEBUG -g -Werror -Wno-deprecated
@@ -75,8 +75,8 @@ CXXWOFF  =
 #
 # search paths
 #
-PCINCS   = -I/usr/include -I/usr/X11R6/include
-PCXXINCS = -I/usr/include -I/usr/X11R6/include
+PCINCS   = -I/usr/X11R6/include
+PCXXINCS = -I/usr/X11R6/include
 
 #
 # linker options
