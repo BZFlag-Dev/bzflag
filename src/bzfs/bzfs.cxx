@@ -4510,10 +4510,6 @@ int main(int argc, char **argv)
   // ditto
   bzSignal(SIGTERM, SIG_PF(terminateServer));
 
-  // don't die on broken pipe
-  if (SIGPIPE != SIGINT) // we are claiming they are on win32
-		bzSignal(SIGPIPE, SIG_IGN);
-
   // initialize
 #if defined(_WIN32)
   {
@@ -4533,6 +4529,8 @@ int main(int argc, char **argv)
       return 1;
     }
   }
+#else
+  bzSignal(SIGPIPE, SIG_IGN);
 #endif /* defined(_WIN32) */
 
   bzfsrand(time(0));
