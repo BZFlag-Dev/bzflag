@@ -3619,7 +3619,7 @@ static void handleCommand(int t, const void *rawbuf)
 
     // unknown msg type
     default:
-      printf("Player [%d] sent unknown packet type (%x), \
+      DEBUG1("Player [%d] sent unknown packet type (%x), \
 possible attack from %s\n",
 	     t, code, handler->getTargetIP());
   }
