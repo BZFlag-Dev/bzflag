@@ -4573,7 +4573,7 @@ static void annointNewRabbit()
   if (rabbitIndex == oldRabbit) {
     // nobody, or no other than old rabbit to choose from
     for (i = 0; i < maxPlayers; i++) {
-      if (i != rabbitIndex && player[i].state > PlayerInLimbo && !player[i].Observer) {
+      if (player[i].state > PlayerInLimbo && !player[i].Observer) {
 	float ratio = (player[i].wins - player[i].losses) * player[i].wins;
 	if (ratio > topRatio) {
 	  topRatio = ratio;
