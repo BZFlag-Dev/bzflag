@@ -5077,8 +5077,12 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
       if (!player[t].Observer) {
 	unsigned short shotFlag;
 	nboUnpackUShort(&(((byte *)buf)[ShotUpdatePLen]), shotFlag);
-	if ((shotFlag == 0) || ((player[t].flag != -1) && (shotFlag == flag[player[t].flag].flag.id)))
-		shotFired(t, buf, int(len));
+	if (shotFlag != 0) {
+	  int flagIndex = player[t].flag;
+	  if ((flagIndex == -1) || (shotFlag != flag[flagIndex].flag.id))
+	    nboPackUShort(&(((byte *)buf)[ShotUpdatePLen]), NullFlag);
+	}
+	shotFired(t, buf, int(len));
       }
       break;
 
