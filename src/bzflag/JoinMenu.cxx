@@ -19,6 +19,7 @@
 #include "PlatformFactory.h"
 #include "Protocol.h"
 #include "ServerList.h"
+#include "StartupInfo.h"
 #include "TimeKeeper.h"
 
 /* local implementation headers */
@@ -27,7 +28,6 @@
 #include "MenuDefaultKey.h"
 #include "ServerMenu.h"
 #include "ServerStartMenu.h"
-#include "StartupInfo.h"
 
 
 /* from playing.h */
@@ -223,10 +223,10 @@ void JoinMenu::execute()
     if ((info->token[0] == '\0') && (info->password[0] != '\0')) {
       BzfMedia* media = PlatformFactory::getMedia();
       ServerList* serverList = new ServerList;
-      serverList->startServerPings();
+      serverList->startServerPings(info);
       // wait no more than 10 seconds for a token
       for (int i = 0; i < 40; i++) {
-	serverList->checkEchos();
+	serverList->checkEchos(getStartupInfo());
 	if (info->token[0] != '\0') break;
 	media->sleep(0.25f);
       }

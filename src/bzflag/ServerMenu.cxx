@@ -22,18 +22,18 @@
 #include <string>
 
 /* common implementation headers */
-#include "version.h"
-#include "bzsignal.h"
+#include "FontManager.h"
 #include "Ping.h"
 #include "Protocol.h"
-#include "TimeKeeper.h"
+#include "ServerListCache.h"
+#include "StartupInfo.h"
 #include "TextUtils.h"
-#include "FontManager.h"
+#include "TimeKeeper.h"
+#include "bzsignal.h"
+#include "version.h"
 
 /* local implementation headers */
-#include "ServerListCache.h"
 #include "MainMenu.h"
-#include "StartupInfo.h"
 #include "HUDDialogStack.h"
 #include "ErrorHandler.h"
 #include "HUDui.h"
@@ -446,7 +446,8 @@ void			ServerMenu::show()
   // *** NOTE *** start ping here
   // listen for echos
   addPlayingCallback(&playingCB, this);
-  serverList.startServerPings();
+  serverList.startServerPings(getStartupInfo());
+
 }
 
 void			ServerMenu::execute()
@@ -566,7 +567,7 @@ void			ServerMenu::updateStatus() {
 
 void			ServerMenu::playingCB(void* _self)
 {
-  ((ServerMenu*)_self)->serverList.checkEchos();
+  ((ServerMenu*)_self)->serverList.checkEchos(getStartupInfo());
 
   ((ServerMenu*)_self)->updateStatus();
 }
