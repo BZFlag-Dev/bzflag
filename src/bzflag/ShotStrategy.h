@@ -76,107 +76,8 @@ class ShotStrategy {
 
 // TEMP - until classes below are broken out
 #include "ShotPathSegment.h"
+#include "SegmentedShotStrategy.h"
 
-
-class SegmentedShotStrategy : public ShotStrategy {
-  public:
-			SegmentedShotStrategy(ShotPath*, bool transparent);
-			~SegmentedShotStrategy();
-
-    void		update(float dt);
-    float		checkHit(const BaseLocalPlayer*, float[3]) const;
-    void		addShot(SceneDatabase*, bool colorblind);
-    void		radarRender() const;
-    TeamColor	team;
-
-  protected:
-    enum ObstacleEffect {
-			Stop = 0,
-			Through = 1,
-			Reflect = 2
-    };
-    void		makeSegments(ObstacleEffect = Stop);
-    const std::vector<ShotPathSegment>&	getSegments() const;
-
-    void		setCurrentTime(const TimeKeeper&);
-    const TimeKeeper&	getLastTime() const;
-
-    bool		isOverlapping(const float (*bbox1)[3],
-				const float (*bbox2)[3]) const;
-
-    void		setCurrentSegment(int segment);
-
-  private:
-    TimeKeeper		prevTime;
-    TimeKeeper		currentTime;
-    TimeKeeper		lastTime;
-    int			segment, lastSegment;
-    std::vector<ShotPathSegment>	segments;
-    BoltSceneNode*	boltSceneNode;
-    float		bbox[2][3];
-    int			firstSegment;
-};
-
-class NormalShotStrategy : public SegmentedShotStrategy {
-  public:
-			NormalShotStrategy(ShotPath*);
-			~NormalShotStrategy();
-};
-
-class RapidFireStrategy : public SegmentedShotStrategy {
-  public:
-			RapidFireStrategy(ShotPath*);
-			~RapidFireStrategy();
-};
-
-class ThiefStrategy : public SegmentedShotStrategy {
-  public:
-			ThiefStrategy(ShotPath*);
-			~ThiefStrategy();
-    void		update(float dt);
-    bool		isStoppedByHit() const;
-    void		addShot(SceneDatabase*, bool colorblind);
-    void		radarRender() const;
-
-  private:
-    float		cumTime;
-    float		endTime;
-    LaserSceneNode**	thiefNodes;
-};
-
-class MachineGunStrategy : public SegmentedShotStrategy {
-  public:
-			MachineGunStrategy(ShotPath*);
-			~MachineGunStrategy();
-};
-
-class LaserStrategy : public SegmentedShotStrategy {
-  public:
-			LaserStrategy(ShotPath*);
-			~LaserStrategy();
-
-    void		update(float dt);
-    bool		isStoppedByHit() const;
-    void		addShot(SceneDatabase*, bool colorblind);
-    void		radarRender() const;
-
-  private:
-    float		cumTime;
-    float		endTime;
-    LaserSceneNode**	laserNodes;
-};
-
-class RicochetStrategy : public SegmentedShotStrategy {
-  public:
-			RicochetStrategy(ShotPath*);
-			~RicochetStrategy();
-};
-
-class SuperBulletStrategy : public SegmentedShotStrategy {
-  public:
-			SuperBulletStrategy(ShotPath*);
-			~SuperBulletStrategy();
-};
 
 class GuidedMissileStrategy : public ShotStrategy {
   public:
@@ -237,10 +138,9 @@ inline const ShotPath&	ShotStrategy::getPath() const
 #endif // BZF_SHOT_STRATEGY_H
 
 // Local Variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

@@ -67,6 +67,8 @@ bzflag_SOURCES =			\
 	SceneBuilder.cxx		\
 	SceneBuilder.h			\
 	SceneRenderer.cxx		\
+	SegmentedShotStrategy.cxx	\
+	SegmentedShotStrategy.h		\
 	ServerCommandKey.cxx		\
 	ServerCommandKey.h		\
 	ServerItem.cxx			\
