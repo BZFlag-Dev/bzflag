@@ -187,23 +187,23 @@ void			RadarRenderer::render(SceneRenderer& renderer,
 //  glColor3f(0.25, 0.5, 0.5);
   glColor3f(teamColor[0], teamColor[1], teamColor[2] );
   glBegin(GL_LINE_LOOP); {
-    glVertex2f((float) x,	    (float) y);
-    glVertex2f((float) x,	    (float) (y + h + 1));
-    glVertex2f((float) (x + w + 1), (float) (y + h + 1));
-    glVertex2f((float) (x + w + 1), (float) y);
+    glVertex2f((float) x - 1, (float) y - 1);
+    glVertex2f((float) x - 1, (float) (y + h));
+    glVertex2f((float) (x + w), (float) (y + h));
+    glVertex2f((float) (x + w), (float) y - 1);
   } glEnd();
   // some versions miss the corners.
   glBegin(GL_POINTS); {
-    glVertex2f((float) x,	(float) y);
-    glVertex2f((float) x,	(float) (y + h + 1));
-    glVertex2f((float) (x + w + 1), (float) (y + h + 1));
-    glVertex2f((float) (x + w + 1), (float) y);
+    glVertex2f((float) x - 1, (float) y - 1);
+    glVertex2f((float) x - 1, (float) (y + h));
+    glVertex2f((float) (x + w), (float) (y + h));
+    glVertex2f((float) (x + w), (float) y - 1);
   } glEnd();
 
   if(blank)
     return;
 
-  glScissor(ox + x + 1, oy + y + 1, w, h);
+  glScissor(ox + x, oy + y, w, h);
   // prepare transforms
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
