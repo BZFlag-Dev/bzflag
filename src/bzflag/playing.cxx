@@ -1734,7 +1734,7 @@ static void		doMotion()
 		  if (shot == NULL)
 		    continue;
 		  const float* shotPos = shot->getPosition();
-		  if (abs(shotPos[2] - apPos[2]) > BZDB->eval(StateDatabase::BZDB_TANKHEIGHT))
+		  if (fabs(shotPos[2] - apPos[2]) > BZDB->eval(StateDatabase::BZDB_TANKHEIGHT))
 		    continue;
 		  float dist = hypot(shotPos[0] - apPos[0], shotPos[1] - apPos[1]);
 		  if (dist < BZDB->eval(StateDatabase::BZDB_TANKLENGTH) * 2.0f) {
@@ -6091,7 +6091,7 @@ static void		playingLoop()
 	if (radar) radar->render(*sceneRenderer, blankRadar);
 
 	// set up view for right eye
-	glColorMask(GL_FALSE, GL_TRUE, GL_TRUE, GL_FALSE);
+	glColorMask(GL_FALSE, GL_FALSE, GL_TRUE, GL_FALSE);
 	sceneRenderer->getViewFrustum().setOffset(-EyeDisplacement, FocalPlane);
 
 	// draw right eye's view
