@@ -3047,7 +3047,7 @@ static void addClient(int acceptSocket)
   if (gameOver) {
     int count = 0;
     for (int i = 0; i < maxPlayers; i++)
-      if (player[i].state > PlayerInLimbo)
+      if (player[i].state >= PlayerInLimbo)
 	count++;
     if (count == 1) {
       gameOver = False;
