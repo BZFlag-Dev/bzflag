@@ -767,6 +767,7 @@ void			dumpResources(BzfDisplay* display,
 {
   // collect new configuration
   BZDB.set("callsign", startupInfo.callsign);
+  BZDB.set("password", startupInfo.password);
   BZDB.set("team", Team::getName(startupInfo.team));
   BZDB.set("server", startupInfo.serverName);
   if (startupInfo.serverPort != ServerPort) {
@@ -1000,7 +1001,13 @@ int			main(int argc, char** argv)
 					sizeof(startupInfo.callsign) - 1);
       startupInfo.callsign[sizeof(startupInfo.callsign) - 1] = '\0';
     }
-    if (BZDB.isSet("team")) {
+	if (BZDB.isSet("password")) {
+      strncpy(startupInfo.password, BZDB.get("password").c_str(),
+					sizeof(startupInfo.password) - 1);
+      startupInfo.callsign[sizeof(startupInfo.password) - 1] = '\0';
+    }
+
+	if (BZDB.isSet("team")) {
       std::string value = BZDB.get("team");
       for (int i = 0; i < NumTeams; i++) {
 	if (value == Team::getName((TeamColor)i)) {
