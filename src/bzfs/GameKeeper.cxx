@@ -36,7 +36,9 @@ GameKeeper::Player::Player(int _playerIndex,
 
 GameKeeper::Player::~Player()
 {
+#ifdef NETWORK_STATS
   bool wasPlaying = player->isPlaying();
+#endif
   player->removePlayer();
   flagHistory.clear();
   delete lagInfo;
