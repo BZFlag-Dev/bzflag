@@ -213,7 +213,7 @@ copy debug\*.pdb ..\..\*.pdb
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\src\bzflag\client_commands.cxx">
+				RelativePath="..\..\src\bzflag\clientCommands.cxx">
 			</File>
 			<File
 				RelativePath="..\..\src\bzflag\ControlPanel.cxx">
