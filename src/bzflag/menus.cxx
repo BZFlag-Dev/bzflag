@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright 1993-1999, Chris Schoeneman
+ * Copyright (c) 1993 - 2000 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -1862,10 +1862,10 @@ Help9Menu::Help9Menu() : HelpMenu("Credits")
   list.append(createLabel("Adam Rosen, Erin Shaw", ""));
   list.append(createLabel("Ben Trumbore, Don Greenberg", ""));
   list.append(createLabel("", ""));
-  list.append(createLabel("http://bzflag.sourceforge.net/",
+  list.append(createLabel("http://BZFlag.SourceForge.net/",
 						"BZFLAG Home Page:"));
   list.append(createLabel("", ""));
-  list.append(createLabel("Chris Schoeneman", "Copyright 1993-1999"));
+  list.append(createLabel("Tim Riker", "Copyright (c) 1993 - 2000"));
 }
 
 float			Help9Menu::getLeftSide(int width, int height)

@@ -1,5 +1,5 @@
-bzflag License
-Copyright (c) 1999 Chris Schoeneman
+BZFlag License
+Copyright (c) 1993 - 2000 Tim Riker
 
 Redistribution and use in source and binary forms are permitted
 provided that the following conditions are met:

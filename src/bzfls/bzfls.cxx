@@ -1,5 +1,5 @@
 /* bzfls
- * Copyright 1999, Chris Schoeneman
+ * Copyright (c) 1993 - 2000 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -10,7 +10,7 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-static const char	copyright[] = "Copyright 1999, Chris Schoeneman";
+static const char	copyright[] = "Copyright (c) 1993 - 2000 Tim Riker";
 
 // must be before windows.h
 #include "network.h"

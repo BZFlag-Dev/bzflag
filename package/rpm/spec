@@ -1,5 +1,5 @@
 # bzflag
-# Copyright 1993-1999, Chris Schoeneman
+# Copyright (c) 1993 - 2000 Tim Riker
 #
 # This package is free software;  you can redistribute it and/or
 # modify it under the terms of the license found in the file
@@ -16,9 +16,6 @@
 #   we can also get RPM to put files in an alternate location by
 #   using an external rpmrc file.
 #
-# thanks to Tim Riker <Tim@Rikers.org> for improvements
-# to this spec file.
-#
 
 %define name bzflag
 %define version 1.7e.000
@@ -34,9 +31,9 @@ name:		%{name}
 version:	%{version}
 release:	%{release}
 group:		Recreation/Action
-copyright:	Chris Schoeneman 1993-1999
-packager:	Chris Schoeneman <crs23@bigfoot.com>
-url:		http://bzflag.sourceforge.net/
+copyright:	1993 - 2000 Tim Riker
+packager:	Tim Riker <Tim@Rikers.org>
+url:		http://BZFlag.SourceForge.net/
 summary:	multiplayer 3D tank battle game
 source:		http://download.sourceforge.net/bzflag/%{name}-%{version}.src.tar.gz
 buildroot:	/var/tmp/%{name}-%{version}-%{release}-root
