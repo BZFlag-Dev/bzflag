@@ -4776,11 +4776,13 @@ static void parseCommand(const char *message, int t)
 
       /* make sure the requested player is actually here */
       bool foundPlayer=false;
+      std::string playerIP = "";
       for (int v = 0; v < curMaxPlayers; v++) {
 	sprintf(reply,"DEBUG: comparing %s == %s", voteplayer, player[v].callSign);
 	sendMessage(ServerPlayer, t, reply, true);
 
 	if (strncmp(player[v].callSign, voteplayer, 256)==0) {
+	  playerIP = player[v].peer.getDotNotation().c_str();
 	  foundPlayer=true;
 	  break;
 	}
@@ -4795,14 +4797,9 @@ static void parseCommand(const char *message, int t)
 	return;
       }
 
-      /* player found */
-      sprintf(reply, "%s %s", command, voteplayer);
-
-      /* !!! this is not working quite right */
-
       /* create and announce the new poll */
       if (strncmp(command, "ban", 3) == 0) {
-	if (arbiter->pollToBan(voteplayer, player[t].callSign) == false) {
+	if (arbiter->pollToBan(voteplayer, player[t].callSign, playerIP) == false) {
 	  sprintf(reply,"You are not able to request a ban poll right now, %s", player[t].callSign);
 	  sendMessage(ServerPlayer, t, reply, true);
 	} else {
@@ -5849,8 +5846,29 @@ int main(int argc, char **argv)
 	    sprintf(message, "DEBUG: voting poll result is to %s %s", action.c_str(), person.c_str());
 	    sendMessage(ServerPlayer, AllPlayers, message, true);
 
-	    // !!! perform the actual action (unimplemented)
-	    
+	    /* regardless of whether or not the player was found, if the poll
+             * is a ban poll, ban the weenie
+             */
+	    if (action == "ban") {
+	      clOptions->acl.ban(votingarbiter->getPollPlayerIP().c_str(), 10);
+	    }
+
+	    // lookup the player id
+	    bool foundPlayer=false;
+	    int v;
+	    for (v = 0; v < curMaxPlayers; v++) {
+	      if (strncmp(player[v].callSign, person.c_str(), 256)==0) {
+		foundPlayer=true;
+		break;
+	      }
+	    }
+	    if (foundPlayer) {
+	      // notify the player
+	      sprintf(message, "You have been %s due to sufficient votes to have you removed", action == "ban" ? "banned" : "kicked");
+	      sendMessage(ServerPlayer, v, message, true);
+	      sprintf(message, "/poll %s", action.c_str());
+	      removePlayer(v, message);
+	    }
 
 	    // get ready for the next poll
 	    votingarbiter->forgetPoll();
@@ -5867,6 +5885,10 @@ int main(int argc, char **argv)
 	    // close the poll since we have enough votes
 	    votingarbiter->closePoll();
 
+	    /* XXX this section is a duplicate of the previous up above.
+	     * needs to be functionified.
+	     */
+
 	    // perform the action of the poll, if any
             std::string person = votingarbiter->getPollPlayer();
             std::string action = votingarbiter->getPollAction();
@@ -5875,9 +5897,30 @@ int main(int argc, char **argv)
 	    sprintf(message, "DEBUG: voting poll result is to %s %s", action.c_str(), person.c_str());
 	    sendMessage(ServerPlayer, AllPlayers, message, true);
 
-	    // !!! perform the actual action (unimplemented)
-	    
+	    /* regardless of whether or not the player was found, if the poll
+             * is a ban poll, ban the weenie
+             */
+	    if (action == "ban") {
+	      clOptions->acl.ban(votingarbiter->getPollPlayerIP().c_str(), 10);
+	    }
 
+	    // lookup the player id
+	    bool foundPlayer=false;
+	    int v;
+	    for (v = 0; v < curMaxPlayers; v++) {
+	      if (strncmp(player[v].callSign, person.c_str(), 256)==0) {
+		foundPlayer=true;
+		break;
+	      }
+	    }
+	    if (foundPlayer) {
+	      // notify the player
+	      sprintf(message, "You have been %s due to sufficient votes to have you removed", action == "ban" ? "banned" : "kicked");
+	      sendMessage(ServerPlayer, v, message, true);
+	      sprintf(message, "/poll %s", action.c_str());
+	      removePlayer(v, message);
+	    }
+	    
 	    votingarbiter->forgetPoll();
 	    announcedClosure = false;
 	  } // the poll is over
@@ -6131,10 +6174,11 @@ int main(int argc, char **argv)
   serverStop();
 
   // free misc stuff
-  delete clOptions;
+  delete clOptions; clOptions = NULL;
   delete[] flag;  flag = NULL;
-  delete world;
-  delete[] worldDatabase;
+  delete world; world = NULL;
+  delete[] worldDatabase; worldDatabase = NULL;
+  delete votingarbiter; votingarbiter = NULL;
 #if defined(_WIN32)
   WSACleanup();
 #endif /* defined(_WIN32) */
