@@ -18,9 +18,6 @@
 #endif  // _MSC_VER
 
 
-
-
-
 // Type Definitions
 // ----------------
 
@@ -29,15 +26,15 @@ typedef uint16_t u16;
 #ifndef _WIN32
 typedef int64_t CRtime;
 #else
-	#include <time.h>
-	#include <sys/types.h>
-	#include <sys/stat.h>
-	#include <stdio.h>
-	#include <direct.h>
-	typedef __int64 CRtime;
-	#ifndef S_ISDIR // for _WIN32
-		# define S_ISDIR(m) ((m) & _S_IFDIR)
-	#endif
+#  include <time.h>
+#  include <sys/types.h>
+#  include <sys/stat.h>
+#  include <stdio.h>
+#  include <direct.h>
+typedef __int64 CRtime;
+#  ifndef S_ISDIR // for _WIN32
+#    define S_ISDIR(m) ((m) & _S_IFDIR)
+#  endif
 #endif
 
 typedef enum {
@@ -73,11 +70,19 @@ typedef struct {
 } CRbuffer;
 
 typedef struct {
-  unsigned int magic;   // automatic for saves
-  unsigned int version; // automatic for saves
-  unsigned int seconds; // automatic for saves
-  char worldhash[64];   // automatic for saves
-  char padding[1024-(3*sizeof(unsigned int)+64)];
+  unsigned int magic;           // capture file type identifier
+  unsigned int version;         // capture file version
+  unsigned int offset;          // length of the header
+  unsigned int seconds;         // number of seconds in the file
+  unsigned int player;          // player that saved this log
+  char callSign[CallSignLen];   // player's callsign
+  char email[EmailLen];         // player's email
+  char serverVersion[8];        // BZFS server version
+  char appVersion[MessageLen];  // application version
+  char realHash[64];            // hash of worldDatabase
+  char fakeHash[64];            // hash of worldDatabase, maxPlayers adjusted
+  unsigned int worldSize;       // size of world database 
+  char *world;                  // the world
 } ReplayHeader;
 
 // Local Variables
@@ -134,13 +139,11 @@ static void initCRpacket (u16 mode, u16 code, int len, const void *data,
 
 static bool saveCRpacket (CRpacket *p, FILE *f);
 static CRpacket *loadCRpacket (FILE *f); // makes a new packet
-static bool saveHeader (ReplayHeader *h, FILE *f);
+static bool saveHeader (int playerIndex, FILE *f);
 static bool loadHeader (ReplayHeader *h, FILE *f);
-
 static FILE *openFile (const char *filename, const char *mode);
 static FILE *openWriteFile (int playerIndex, const char *filename);
 static bool makeDirExist (int playerIndex);
-
 static bool badFilename (const char *name);
 
 static CRtime getCRtime ();
@@ -158,7 +161,9 @@ extern FlagInfo *flag;
 extern PlayerInfo player[MaxPlayers + ReplayObservers];
 extern u16 curMaxPlayers;
 extern TeamInfo team[NumTeams];
-extern bool getReplayMD5 (std::string& hash);
+extern char *worldDatabase;
+extern uint32_t worldDatabaseSize;
+
 extern char *getDirectMessageBuffer(void);
 extern void directMessage(int playerIndex, u16 code, 
                           int len, const void *msg);
@@ -280,7 +285,6 @@ bool Capture::sendStats (int playerIndex)
 
 bool Capture::saveFile (int playerIndex, const char *filename)
 {
-  ReplayHeader header;
   char buffer[MessageLen];
   
   if (ReplayMode) {
@@ -306,7 +310,7 @@ bool Capture::saveFile (int playerIndex, const char *filename)
     return false;
   }
   
-  if (!saveHeader (&header, CaptureFile)) {
+  if (!saveHeader (playerIndex, CaptureFile)) {
     Capture::init();
     snprintf (buffer, MessageLen, "Could not save header: %s", filename);
     sendMessage (ServerPlayer, playerIndex, buffer, true);
@@ -329,7 +333,6 @@ bool Capture::saveFile (int playerIndex, const char *filename)
 
 bool Capture::saveBuffer (int playerIndex, const char *filename)
 {
-  ReplayHeader header;
   CRpacket *p;
   char buffer[MessageLen];
   
@@ -357,7 +360,7 @@ bool Capture::saveBuffer (int playerIndex, const char *filename)
     return false;
   }
   
-  if (!saveHeader (&header, CaptureFile)) {
+  if (!saveHeader (playerIndex, CaptureFile)) {
     Capture::init();
     snprintf (buffer, MessageLen, "Could not save header: %s", filename);
     sendMessage (ServerPlayer, playerIndex, buffer, true);
@@ -553,6 +556,7 @@ bool Replay::loadFile(int playerIndex, const char *filename)
   if (!loadHeader (&header, ReplayFile)) {
     snprintf (buffer, MessageLen, "Could not open header: %s", filename);
     sendMessage (ServerPlayer, playerIndex, buffer, true);
+    fclose (ReplayFile);
     ReplayFile = NULL;
     return false;
   }
@@ -565,7 +569,7 @@ bool Replay::loadFile(int playerIndex, const char *filename)
     return false;
   }
 
-  if (strncmp (header.worldhash, hexDigest, 50) != 0) {
+  if (strncmp (header.realHash, hexDigest, 50) != 0) {
     // issue a warning, and then continue on
     sendMessage (ServerPlayer, playerIndex, 
                  "Warning: replay file contains different map");
@@ -581,6 +585,8 @@ bool Replay::loadFile(int playerIndex, const char *filename)
       addCRpacket (&ReplayBuf, p);
     }
   }
+
+  ReplayPos = ReplayBuf.tail; // setup the initial position
 
   if (ReplayBuf.tail == NULL) {
     snprintf (buffer, MessageLen, "No valid data: %s", filename);
@@ -634,11 +640,10 @@ bool Replay::play(int playerIndex)
     sendMessage (ServerPlayer, playerIndex, "No replay file loaded");
     return false;
   }
-
+  
   DEBUG3 ("Replay::play()\n");
   
   Replaying = true;
-  ReplayPos = ReplayBuf.tail;
   if (ReplayPos != NULL) {
     ReplayOffset = getCRtime () - ReplayBuf.tail->timestamp;
   }
@@ -720,7 +725,7 @@ bool Replay::skip(int playerIndex, int seconds)
   ReplayPos = p;
   
   char buffer[MessageLen];
-  sprintf (buffer, "Skipping %f seconds (asked %i)", (float)diff/1000000.0f, seconds);
+  sprintf (buffer, "Skipping %.3f seconds (asked %i)", (float)diff/1000000.0f, seconds);
   sendMessage (ServerPlayer, playerIndex, buffer);
   
   return true;
@@ -743,6 +748,7 @@ bool Replay::sendPackets () {
     if (p == NULL) {
       resetStates ();
       Replaying = false;
+      ReplayPos = ReplayBuf.tail;
       sendMessage (ServerPlayer, AllPlayers, "Replay Finished");
       return false;
     }
@@ -802,6 +808,7 @@ bool Replay::sendPackets () {
   if (ReplayPos == NULL) {
     resetStates ();
     Replaying = false;
+    ReplayPos = ReplayBuf.tail;
     sendMessage (ServerPlayer, AllPlayers, "Replay Finished");
     return false;
   }
@@ -810,7 +817,7 @@ bool Replay::sendPackets () {
     CRtime diff = (ReplayPos->timestamp - ReplayPos->prev->timestamp);
     if (diff > (10 * 1000000)) {
       char buffer[MessageLen];
-      sprintf (buffer, "No activity for the next %f seconds", 
+      sprintf (buffer, "No activity for the next %.3f seconds", 
                (float)diff / 1000000.0f);
       sendMessage (ServerPlayer, AllPlayers, buffer);
     }
@@ -1006,9 +1013,11 @@ saveCRpacket (CRpacket *p, FILE *f)
   buf = nboPackUInt (buf, CaptureFilePrevLen);
   buf = nboPackUInt (buf, (unsigned int) (p->timestamp >> 32));        // msb
   buf = nboPackUInt (buf, (unsigned int) (p->timestamp & 0xFFFFFFFF)); // lsb
-  fwrite (bufStart, CRpacketHdrLen, 1, f);
 
-  fwrite (p->data, p->len, 1, f);
+  if ((fwrite (bufStart, CRpacketHdrLen, 1, f) == 0) ||
+      (fwrite (p->data, p->len, 1, f) == 0)) {
+    return false;
+  }
 
   fflush (f);//FIXME
   
@@ -1068,28 +1077,47 @@ loadCRpacket (FILE *f)
 
 
 static bool
-saveHeader (ReplayHeader *h, FILE *f)
+saveHeader (int p, FILE *f)
 {
-  const int bufsize = sizeof(ReplayHeader);
-  char buffer[bufsize];
-  int hashlen = strlen (hexDigest) + 1;
+  const int hdrsize = sizeof(ReplayHeader) - sizeof (char*);
+  char buffer[hdrsize];
   void *buf;
-  
-  h = h;  // FIXME - avoid warnings
+  ReplayHeader hdr;
   
   if (f == NULL) {
     return false;
   }
 
+  // setup the data  
+  memset (&hdr, 0, sizeof (hdr));
+  strncpy (hdr.callSign, player[p].getCallSign(), sizeof (hdr.callSign));
+  strncpy (hdr.email, player[p].getEMail(), sizeof (hdr.email));
+  strncpy (hdr.serverVersion, getServerVersion(), sizeof (hdr.serverVersion));
+  strncpy (hdr.appVersion, getAppVersion(), sizeof (hdr.appVersion));
+  strncpy (hdr.realHash, hexDigest, sizeof (hdr.realHash));
+  strncpy (hdr.fakeHash, hexDigest, sizeof (hdr.fakeHash)); //FIXME
+
+  // pack the data
   buf = nboPackUInt (buffer, ReplayMagic);
   buf = nboPackUInt (buf, ReplayVersion);
-  buf = nboPackUInt (buf, 0);       // place holder for seconds
-  buf = nboPackString (buf, hexDigest, hashlen);
-  buf = (char*)buf + (sizeof (h->worldhash) - hashlen);
+  buf = nboPackUInt (buf, hdrsize + worldDatabaseSize);
+  buf = nboPackUInt (buf, 0); // place holder for seconds
+  buf = nboPackUInt (buf, p); // player index
+  buf = nboPackUInt (buf, worldDatabaseSize);
+  buf = nboPackString (buf, hdr.callSign, sizeof (hdr.callSign));
+  buf = nboPackString (buf, hdr.email, sizeof (hdr.email));
+  buf = nboPackString (buf, hdr.serverVersion, sizeof (hdr.serverVersion));
+  buf = nboPackString (buf, hdr.appVersion, sizeof (hdr.appVersion));
+  buf = nboPackString (buf, hdr.realHash, sizeof (hdr.realHash));
+  buf = nboPackString (buf, hdr.fakeHash, sizeof (hdr.fakeHash));
+
+  // store the data  
+  if ((fwrite (buffer, hdrsize, 1, f) == 0) ||
+      (fwrite (worldDatabase, worldDatabaseSize, 1, f) == 0)) {
+    return false;
+  }
   
-  fwrite (buffer, bufsize, 1, f);
-  
-  CaptureFileBytes += bufsize;
+  CaptureFileBytes += hdrsize + worldDatabaseSize;
   
   return true;
 }
@@ -1098,23 +1126,36 @@ saveHeader (ReplayHeader *h, FILE *f)
 static bool
 loadHeader (ReplayHeader *h, FILE *f)
 {
-  const int bufsize = sizeof(ReplayHeader);
-  char buffer[bufsize];
+  const int hdrsize = sizeof(ReplayHeader) - sizeof (char*);
+  char buffer[hdrsize];
   void *buf;
   
-  if (f == NULL) {
-    return false;
-  }
-
-  if (fread (buffer, bufsize, 1, f) <= 0) {
-    fclose (f);
+  if (fread (buffer, hdrsize, 1, f) <= 0) {
     return false;
   }
   
   buf = nboUnpackUInt (buffer, h->magic);
   buf = nboUnpackUInt (buf, h->version);
+  buf = nboUnpackUInt (buf, h->offset);
   buf = nboUnpackUInt (buf, h->seconds);
-  memcpy (h->worldhash, buf, sizeof (h->worldhash));
+  buf = nboUnpackUInt (buf, h->player);
+  buf = nboUnpackUInt (buf, h->worldSize);
+  buf = nboUnpackString (buf, h->callSign, sizeof (h->callSign));
+  buf = nboUnpackString (buf, h->email, sizeof (h->email));
+  buf = nboUnpackString (buf, h->serverVersion, sizeof (h->serverVersion));
+  buf = nboUnpackString (buf, h->appVersion, sizeof (h->appVersion));
+  buf = nboUnpackString (buf, h->realHash, sizeof (h->realHash));
+  buf = nboUnpackString (buf, h->fakeHash, sizeof (h->fakeHash));
+  
+  //FIXME - make sure this doesn't leak anywhere
+  h->world = (char*) malloc (h->worldSize);
+  if (h->world == NULL) {
+    return false;
+  }
+
+  if (fread (h->world, h->worldSize, 1, f) <= 0) {
+    return false;
+  }
   
   return true;
 }
@@ -1145,22 +1186,22 @@ openWriteFile (int playerIndex, const char *filename)
   return openFile (filename, "wb");
 }
 
-int bzStat ( const char* dir, struct stat & buf )
+static inline int osStat ( const char* dir, struct stat & buf )
 {
 #ifdef _WIN32
-	return _stat(dir, (struct _stat*)(&buf));
+  return _stat(dir, (struct _stat*)(&buf));
 #else
-	return stat (dir, &buf);
+  return stat (dir, &buf);
 #endif
 }
 
-int bzMKDir ( const char* dir, int mode )
+static inline int osMkDir ( const char* dir, int mode )
 {
-	#ifdef _WIN32
-	return mkdir(dir);
-	#else
-	return mkdir (dir, mode);
-	#endif
+#ifdef _WIN32
+  return mkdir(dir);
+#else
+  return mkdir (dir, mode);
+#endif
 }
 
 static bool
@@ -1168,9 +1209,9 @@ makeDirExist (int playerIndex)
 {
   struct stat statbuf;
 
-	if (bzStat (ReplayDir, statbuf) < 0) {
+	if (osStat (ReplayDir, statbuf) < 0) {
     // try to make the directory
-    if (bzMKDir (ReplayDir, 0755) < 0) {
+    if (osMkDir (ReplayDir, 0755) < 0) {
       sendMessage (ServerPlayer, playerIndex, 
                    "Could not create default directory");
       return false;
@@ -1187,6 +1228,28 @@ makeDirExist (int playerIndex)
   }
 
   return true;  
+}
+
+
+static bool
+badFilename (const char *name)
+{
+  while (name[0] != '\0') {
+    switch (name[0]) {
+      case '/':
+      case ':':
+      case '\\': {
+        return true;
+      }
+      case '.': {
+        if (name[1] == '.') {
+          return true;
+        }
+      }
+    }
+    name++;
+  }
+  return false;
 }
 
 
@@ -1316,25 +1379,64 @@ getCRtime ()
 
 /****************************************************************************/
 
-static bool
-badFilename (const char *name)
+bool modifyWorldDatabase ()
 {
-  while (name[0] != '\0') {
-    switch (name[0]) {
-      case '/':
-      case ':':
-      case '\\': {
-        return true;
-      }
-      case '.': {
-        if (name[1] == '.') {
-          return true;
-        }
-      }
-    }
-    name++;
+  // for capture files, use a different MD5 hash.
+  // data that is modified for replay mode is ignored.
+  
+  unsigned short max_players, num_flags;
+  unsigned int   timestamp;
+  char *buf;
+
+  // zero maxPlayers, numFlags, and the timestamp
+  
+  if (worldDatabase == NULL) {
+    return false;
   }
-  return false;
+  else {
+    buf = worldDatabase;
+  }
+  
+  buf += sizeof (unsigned short) * 4 + sizeof (float);     // at maxPlayers
+  buf = (char*)nboUnpackUShort (buf, max_players);
+  buf -= sizeof (unsigned short);      // rewind
+  buf = (char*)nboPackUShort (buf, 0); // clear
+  
+  buf += sizeof (unsigned short);                          // at numFlags
+  buf = (char*)nboUnpackUShort (buf, num_flags);
+  buf -= sizeof (unsigned short);      // rewind
+  buf = (char*)nboPackUShort (buf, 0); // clear
+
+  buf += sizeof (unsigned short) * 2 + sizeof (float) * 2; // at timestamp
+  buf = (char*)nboUnpackUInt (buf, timestamp);
+  buf -= sizeof (unsigned int);        // rewind
+  buf = (char*)nboPackUInt (buf, 0);   // clear
+  
+  // calculate the hash
+  
+  MD5 md5;
+  md5.update ((unsigned char *)worldDatabase, worldDatabaseSize);
+  md5.finalize ();
+  //if (clOptions->worldFile == NULL)
+  //result = "t";
+  //else
+  //result = "p";
+  //result += md5.hexdigest();
+
+  // put them back the way they were
+  
+  buf = worldDatabase;
+  
+  buf += sizeof (unsigned short) * 4 + sizeof (float);     // at maxPlayers
+  buf = (char*)nboPackUShort (buf, max_players);
+  
+  buf += sizeof (unsigned short);                          // at numFlags
+  buf = (char*)nboPackUShort (buf, num_flags);
+
+  buf += sizeof (unsigned short) * 2 + sizeof (float) * 2; // at timestamp
+  buf = (char*)nboPackUInt (buf, timestamp);
+
+  return true;
 }
 
 
@@ -1351,6 +1453,7 @@ print_msg_code (u16 code)
       STRING_CASE (MsgNull);
       STRING_CASE (MsgAccept);
       STRING_CASE (MsgAlive);
+      STRING_CASE (MsgAdminInfo);
       STRING_CASE (MsgAddPlayer);
       STRING_CASE (MsgAudio);
       STRING_CASE (MsgCaptureFlag);
@@ -1370,6 +1473,7 @@ print_msg_code (u16 code)
       STRING_CASE (MsgQueryGame);
       STRING_CASE (MsgQueryPlayers);
       STRING_CASE (MsgReject);
+      STRING_CASE (MsgReplayReset);
       STRING_CASE (MsgRemovePlayer);
       STRING_CASE (MsgShotBegin);
       STRING_CASE (MsgScore);
@@ -1391,7 +1495,7 @@ print_msg_code (u16 code)
 
     default:
       static char buf[32];
-      sprintf (buf, "MagUnknown: 0x%04X", code);
+      sprintf (buf, "MsgUnknown: 0x%04X", code);
       return buf;
   }
 }
