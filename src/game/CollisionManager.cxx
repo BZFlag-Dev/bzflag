@@ -602,7 +602,7 @@ ColDetNode::ColDetNode(unsigned char _depth,
 	fullList.list[fullList.count] = obs;
 	fullList.count++;
       }
-    } else {
+    } else if (testExts.touches(obs->getExtents())) {
       // add a mesh if any of its faces are in the node,
       // or if it passes the 'point containment' test.
       MeshObstacle* mesh = (MeshObstacle*) obs;
