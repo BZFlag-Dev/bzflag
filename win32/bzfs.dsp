@@ -99,6 +99,10 @@ PostBuild_Cmds=copy ..\src\bzfs\debug\*.pdb ..\*.pdb	copy ..\src\bzfs\debug\*.ex
 # PROP Default_Filter "cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
 # Begin Source File
 
+SOURCE=..\src\bzfs\AccessControlList.cxx
+# End Source File
+# Begin Source File
+
 SOURCE=..\src\bzfs\bzfs.cxx
 # End Source File
 # Begin Source File
@@ -109,6 +113,10 @@ SOURCE=..\src\bzfs\TextChunkManager.cxx
 # Begin Group "Header Files"
 
 # PROP Default_Filter "h;hpp;hxx;hm;inl"
+# Begin Source File
+
+SOURCE=..\src\bzfs\AccessControlList.h
+# End Source File
 # Begin Source File
 
 SOURCE=..\include\Address.h
