@@ -508,7 +508,7 @@ captain_macgyver 155 +- 0ms  12% lost/ooo
 .TP
 .B /idlestats
 Displays the idle time in seconds for each player. A player is idle when
-he is dead.
+he is dead and has not respawned yet.
 
 .ft CW
 .nf
@@ -527,6 +527,15 @@ Lists what flags players have grabbed in the past. Example:
 MrApathyCream: (<-) (->) (O) (CB) (M) (B) (JM) (WA)
 Gerbol: (L) (GM) (L) (GM) (CL) (ST) (GM) (L)
 captain_macgyver: (SB) (SW)
+.ft R
+
+.TP
+.B /time, /date
+Responds with the current server time. /date and /time are the exact same. Example:
+.ft CW
+.nf
+.ne 1
+Tuesday September 08 06:45:54 2004
 .ft R
 
 .TP
@@ -554,13 +563,13 @@ MrApathyCream: Version: BZFlag 1.11.6-20040729-gnu-linux-SDL
 Write a message to the server administrator. Example:
 .ft CW
 .nf
-.ne 2
+.ne 1
 /report I like this map!
 .ft R
 
 .TP
 .B /part {message}
-Leave the game with a goodbye message (similar to irc's /part)
+Leave the game with a goodbye message (similar to IRC's /part)
 .ft CW
 .nf
 .ne 2
