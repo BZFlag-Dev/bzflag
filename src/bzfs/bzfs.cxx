@@ -2390,8 +2390,8 @@ static bool defineWorld()
    // package up world
   world->packDatabase();
   // now get world packaged for network transmission
-  worldDatabaseSize = 4 + WorldCodeHeaderSize + 
-			world->getDatabaseSize() + 
+  worldDatabaseSize = 4 + WorldCodeHeaderSize +
+			world->getDatabaseSize() +
 			4 + WorldCodeEndSize;
   if (clOptions->gameStyle & TeamFlagGameStyle)
     worldDatabaseSize += 4 * (4 + WorldCodeBaseSize);
@@ -2746,7 +2746,7 @@ static void addPlayer(int playerIndex)
     } else {
       filtered = clOptions->filter.filter(cs, false);
     }
-    if (filtered) { 
+    if (filtered) {
       rejectPlayer(playerIndex, RejectBadCallsign);
       return ;
     }
@@ -3506,14 +3506,14 @@ static void playerKilled(int victimIndex, int killerIndex, int reason,
 	  player[killerIndex].wins++;
       }
 
-      buf = nboPackUByte(bufStart, 2); 
+      buf = nboPackUByte(bufStart, 2);
       buf = nboPackUByte(buf, killerIndex);
       buf = nboPackUShort(buf, player[killerIndex].wins);
       buf = nboPackUShort(buf, player[killerIndex].losses);
       buf = nboPackUShort(buf, player[killerIndex].tks);
     }
     else {
-      buf = nboPackUByte(bufStart, 1); 
+      buf = nboPackUByte(bufStart, 1);
     }
 
     buf = nboPackUByte(buf, victimIndex);
@@ -3780,7 +3780,7 @@ static void captureFlag(int playerIndex, TeamColor teamCaptured)
   // everyone on losing team is dead
   for (int i = 0; i < curMaxPlayers; i++)
     if (player[i].fd != NotConnected &&
-	flag[flagIndex].flag.desc->flagTeam == int(player[i].team) && 
+	flag[flagIndex].flag.desc->flagTeam == int(player[i].team) &&
 	player[i].state == PlayerAlive) {
       player[i].state = PlayerDead;
     }
@@ -4000,7 +4000,7 @@ static void parseCommand(const char *message, int t)
         sendMessage(ServerPlayer, t, "Wrong Password!");
       }
     }
-      
+
   // set sets a world configuration variable that gets sent to all clients
   } else if ((hasPerm(t, setVar) || hasPerm(t, setAll)) && strncmp( message + 1, "set", 3) == 0) {
     sendMessage( ServerPlayer, t, CMDMGR->run(message+1).c_str());
@@ -4643,7 +4643,7 @@ static void parseCommand(const char *message, int t)
 
       sprintf(reply,"DEBUG: poll command section entered");
       sendMessage(ServerPlayer, t, reply, true);
-      
+
       /* make sure that there is not an existing poll */
       if (BZDB->isEmpty("poll")) {
 	char command[5];
@@ -4673,10 +4673,10 @@ static void parseCommand(const char *message, int t)
 
 	sprintf(reply,"DEBUG: command is [%s] with strlen %d", command, (int)commandLength);
 	sendMessage(ServerPlayer, t, reply, true);
-	
+
 	/* find the start of any arguments */
 	size_t argStart = 0;
-	while ((argStart < (messageLength - 5 - nextChar - commandLength)) && 
+	while ((argStart < (messageLength - 5 - nextChar - commandLength)) &&
 	       (*(message+5+nextChar+commandLength+argStart) != '\0') &&
 	       (!isAlphanumeric(*(message+5+nextChar+commandLength+argStart)))) {
 	  argStart++;
@@ -4685,28 +4685,28 @@ static void parseCommand(const char *message, int t)
 
 	sprintf(reply,"DEBUG: callsign is [%s] with nextChar %d and callsign at %d", message+argStartOffset, (int)nextChar, (int)argStartOffset);
 	sendMessage(ServerPlayer, t, reply, true);
-	
+
 	/* see if the action is kick/ban/vote/veto and is valid */
 	char voteplayer[256];
 	memset(voteplayer, 0, 256);
-	
+
 	if ((strncmp(command, "ban", 3) == 0) ||
 	    (strncmp(command, "kick", 4) == 0)) {
-	  	  
+
 	  sprintf(reply,"DEBUG: poll %s command section entered", command);
 	  sendMessage(ServerPlayer, t, reply, true);
-	  
+
 	  if (!isPrintable(*(message+argStartOffset))) {
 	    /* if there was no callsign, or bad data was fed -- barf */
 	      sprintf(reply,"%s, you need to provide a playername", player[t].callSign);
 	      sendMessage(ServerPlayer, t, reply, true);
 	      sprintf(reply,"Usage: /poll %s [playername]", command);
 	      sendMessage(ServerPlayer, t, reply, true);
-	    
+
 	  } else if (*(message+argStartOffset) == '"') {
 	    /* if the callsign is quoted -- strip off the quote */
 	    size_t secondQuoteOffset=0;
-	    while ((message[messageLength-1-secondQuoteOffset] != '"') && 
+	    while ((message[messageLength-1-secondQuoteOffset] != '"') &&
 		   (secondQuoteOffset<messageLength-8)) {
 	      secondQuoteOffset++;
 	    }
@@ -4717,14 +4717,14 @@ static void parseCommand(const char *message, int t)
 	      sprintf(reply,"Usage: /poll %s [playername]", command);
 	      sendMessage(ServerPlayer, t, reply, true);
 	    } else {
-	      strncpy(voteplayer, message+argStartOffset+1, 
+	      strncpy(voteplayer, message+argStartOffset+1,
 		      messageLength-1-argStartOffset-secondQuoteOffset);
 	    }
 	  } else {
 	    /* unquoted -- so just copy username if one was given*/
 	    strncpy(voteplayer, message+argStartOffset, messageLength-argStartOffset);
 	  }
-	  
+
 	  /* trim off any trailing whitespace */
 	  for (int i = messageLength-argStartOffset-1; i >= 0; i--) {
 	    if (isAlphanumeric(voteplayer[i])) {
@@ -4733,7 +4733,7 @@ static void parseCommand(const char *message, int t)
 	      voteplayer[i]='\0';
 	    }
 	  }
-	  
+
 	  sprintf(reply,"DEBUG: %s callsign is [%s]", command, voteplayer);
 	  sendMessage(ServerPlayer, t, reply, true);
 
@@ -4781,57 +4781,57 @@ static void parseCommand(const char *message, int t)
               } else {
                 sprintf(reply,"A poll to %s %s has been requested by %s", command, voteplayer, player[t].callSign);
               }
-                  
+
               sendMessage(ServerPlayer, AllPlayers, reply, true);
 
 	    } /* end check if vote player is present */
 	  } /* end check if a player name was given */
 
-	  
+
 	} else if (strncmp(command, "vote", 4) == 0) {
-	  
+
 	  sprintf(reply,"DEBUG: poll vote command section entered");
 	  sendMessage(ServerPlayer, t, reply, true);
-	  
+
 	  if (hasPerm(t, vote)) {
 	    /* !!! needs to be handled by the /vote command  */
 	    sprintf(reply,"%s, your vote has been recorded -- unimplemented", player[t].callSign);
 	    sendMessage(ServerPlayer, t, reply, true);
-	    
+
 	  } else {
-	    
+
 	    sprintf(reply,"%s, you do not presently have permission to vote (must /identify first)", player[t].callSign);
 	    sendMessage(ServerPlayer, t, reply, true);
-	    
+
 	  }
-	  
+
 	} else if (strncmp(command, "veto", 4) == 0) {
 
 	  sprintf(reply,"DEBUG: poll veto command section entered");
 	  sendMessage(ServerPlayer, t, reply, true);
-	  
+
 	  if (hasPerm(t, veto)) {
 	    /* !!! needs to be handled by the /veto command  */
 	    sprintf(reply,"%s, you have aborted the poll -- unimplemented", player[t].callSign);
 	    sendMessage(ServerPlayer, t, reply, true);
-	    
+
 	  } else {
-	    
+
 	    sprintf(reply,"%s, you do not have permission to veto the poll", player[t].callSign);
 	    sendMessage(ServerPlayer, t, reply, true);
-	    
+
 	  }
-	  
+
 	} else {
-	  
+
 	  sprintf(reply,"Invalid option to the poll command");
 	  sendMessage(ServerPlayer, t, reply, true);
 	  sprintf(reply,"Usage: /poll ban|kick [playername]");
 	  sendMessage(ServerPlayer, t, reply, true);
 	  memset(command, 0, 5);
-	  
+
 	} /* end handling of poll subcommands */
-	
+
       } else {
 	VotingBooth *booth = (VotingBooth *)BZDB->getPointer("poll");
 	const std::string pollname = booth->getPollName();
@@ -4840,9 +4840,9 @@ static void parseCommand(const char *message, int t)
         sendMessage(ServerPlayer, t, reply, true);
 	sprintf(reply,"Unable to start a new poll until the current one is over");
 	sendMessage(ServerPlayer, t, reply, true);
-        
+
       }
-      
+
     } else {
       /* permission denied for /poll */
       sprintf(reply,"%s, you are presently not authorized to run /poll", player[t].callSign);
@@ -4855,19 +4855,19 @@ static void parseCommand(const char *message, int t)
       size_t messageLength = (int)strlen(message);
       sprintf(reply,"DEBUG: vote command section entered");
       sendMessage(ServerPlayer, t, reply, true);
-      
+
       /* make sure that there is a poll active to vote on */
       if (! BZDB->isEmpty("poll") ) {
-	
+
 	/* find the start of the vote answer */
 	size_t nextChar = 0;
 	while ((nextChar < messageLength - 5) && (!isAlphanumeric(*(message+5+nextChar)))) {
 	  nextChar++;
 	}
-	
+
 	char answer[8];
 	memset(answer, 0, 8);
-	
+
 	for (unsigned int i=0; (i < messageLength - 5 - nextChar) && (i < 31); i++) {
 	  answer[i] = tolower(*(message + 5 + nextChar + i));
 	}
@@ -4876,10 +4876,10 @@ static void parseCommand(const char *message, int t)
 	    answer[a] = '\0';
 	  }
 	}
-	
+
 	sprintf(reply,"DEBUG: vote of %s was provided", answer);
 	sendMessage(ServerPlayer, t, reply, true);
-	
+
 	int vote=-1;
 	if (strncmp(answer, "y", 1) == 0) {
 	  vote=1;
@@ -4923,7 +4923,7 @@ static void parseCommand(const char *message, int t)
 	  /* portuguese */
 	  vote=0;
 	}
-	
+
 	if (vote==-1) {
 	  if (strlen(answer) == 0) {
 	    sprintf(reply,"%s, you did not provide a vote answer", player[t].callSign);
@@ -4936,22 +4936,21 @@ static void parseCommand(const char *message, int t)
 	    sprintf(reply,"Usage: /vote yes|no|1|0|yea|nay|si|ja|nein|oui|non|sim|nao");
 	    sendMessage(ServerPlayer, t, reply, true);
 	  }
-	  
 	} else {
 	  VotingBooth *booth = (VotingBooth *)BZDB->getPointer("poll");
 	  bool cast = booth->vote(player[t].callSign, (vote_t)vote);
-	  
+
 	  if (cast) {
 	    if (vote) {
 	      /* player voted yes */
 	      sprintf(reply,"%s, your vote in favor of the poll has been recorded", player[t].callSign);
 	      sendMessage(ServerPlayer, t, reply, true);
-	      
+
 	    } else {
 	      /* player voted no */
 	      sprintf(reply,"%s, your vote in opposition of the poll has been recorded", player[t].callSign);
 	      sendMessage(ServerPlayer, t, reply, true);
-	      
+
 	    }
 	  } else {
 	    /* player was unable to cast their vote; probably already voted */
@@ -4962,13 +4961,12 @@ static void parseCommand(const char *message, int t)
 #if 0
 	  for (int i = 0; i < curMaxPlayers; i++) {
 	    if (player[i].state > PlayerInLimbo && player[i].team != ObserverTeam) {
-	      sprintf(reply,"DEBUG: player %s %s voted ", player[i].callSign,	
+	      sprintf(reply,"DEBUG: player %s %s voted ", player[i].callSign,
 		      player[i].accessInfo.verified ? "(registered)" : "(not registered)");
 	      sendMessage(ServerPlayer, t, reply, true);
 	    }
 	}
 #endif
-	  
 	}
 
       } else {
@@ -4987,7 +4985,7 @@ static void parseCommand(const char *message, int t)
     if (hasPerm(t, veto)) {
       sprintf(reply,"DEBUG: veto command section entered");
       sendMessage(ServerPlayer, t, reply, true);
-      
+
       /* make sure that there is a poll active to abort */
       if (! BZDB->isEmpty("poll") ) {
 	VotingBooth *booth = (VotingBooth *)BZDB->getPointer("poll");
@@ -4995,7 +4993,7 @@ static void parseCommand(const char *message, int t)
 	sprintf(pollName, "%s", booth->getPollName().c_str());
 	delete booth;
 	BZDB->unset("poll");
-	
+
 	sprintf(reply,"%s, you have cancelled the poll to %s", player[t].callSign, pollName);
 	sendMessage(ServerPlayer, t, reply, true);
 
@@ -5010,7 +5008,7 @@ static void parseCommand(const char *message, int t)
       /* permission denied for /veto */
       sprintf(reply,"%s, you are presently not authorized to run /veto", player[t].callSign);
       sendMessage(ServerPlayer, t, reply, true);
-    }      
+    }
 
   } else {
     sprintf(reply, "Unknown command [%s]", message+1);
@@ -5550,7 +5548,7 @@ int main(int argc, char **argv)
     CFGMGR->read(clOptions->bzdbVars);
   }
 
-  
+
   /* load the bad word filter if it was set */
   if (clOptions->filterFilename.length() != 0) {
     if (clOptions->filterChat || clOptions->filterCallsigns) {
@@ -5567,7 +5565,7 @@ int main(int argc, char **argv)
     }
   }
 
-  
+
   if (clOptions->pingInterface)
     serverAddress = Address::getHostAddress(clOptions->pingInterface);
 // TimR use 0.0.0.0 by default, multicast will need to have a -i specified for now.
@@ -5789,7 +5787,7 @@ int main(int argc, char **argv)
       }
       counter++;
     }
-    
+
     // periodic advertising broadcast
     static const std::vector<std::string>* adLines = clOptions->textChunker.getTextChunk("admsg");
     if (clOptions->advertisemsg || adLines != NULL) {
@@ -5849,7 +5847,7 @@ int main(int argc, char **argv)
     if (clOptions->gameStyle & TeamFlagGameStyle) {
       for (i = 0; i < CtfTeams; ++i) {
 	if (team[i].flagTimeout - tm < 0 && team[i].team.activeSize == 0 &&
-	    flag[i - 1].flag.status != FlagNoExist && 
+	    flag[i - 1].flag.status != FlagNoExist &&
 	    flag[i - 1].player == -1) {
 	  DEBUG1("Flag timeout for team %d\n", i);
 	  zapFlag(i - 1);
