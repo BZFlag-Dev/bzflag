@@ -90,47 +90,6 @@ int main(int argc, char** argv) {
   if (!op.parse(argc, argv))
     return 1;
 
-  // check that we have callsign and host in the right format and extract them
-  int atPos;
-  std::string name = "", password = "", host = "";
-  if (!(op.getParameters().size() > 0 &&
-	(atPos = op.getParameters()[0].find('@')) > 0)) {
-    // input callsign and host interactively
-    std::cout << "No callsign@host specified.  Please input them" << std::endl;
-    std::cout << "Callsign: ";
-    std::getline(std::cin, name);
-    if (name.size() <= 1) {
-      std::cerr << "You must specify a callsign.  Exiting." << std::endl;
-      return 1;
-    }
-    std::cout << "Password (optional): ";
-    std::getline(std::cin, password);
-    if (password.size() <= 1) {
-      std::cerr << "Not using central login" << std::endl;
-    }
-    std::cout << "Server to connect to: ";
-    std::getline(std::cin, host);
-    if (host.size() <= 1) {
-      std::cerr << "You must specify a host name to connect to.  Exiting." << std::endl;
-      return 1;
-    }
-  } else { // callsign/host on command line
-    name = op.getParameters()[0].substr(0, atPos);
-    host = op.getParameters()[0].substr(atPos + 1);
-  }
-  int port = ServerPort;
-  int cPos = host.find(':');
-  if (cPos != -1) {
-    port = atoi(host.substr(cPos + 1).c_str());
-    host = host.substr(0, cPos);
-  }
-  cPos = name.find(':');
-  if (cPos != -1) {
-    password = atoi(name.substr(cPos + 1).c_str());
-    name = name.substr(0, cPos);
-  }
-  std::cerr << "Connecting to " << name << ":" << password << "@" << host << ":" << port << std::endl;
-
   // check that the ui is valid
   uiIter = UIMap::instance().find(uiName);
   if (uiIter == UIMap::instance().end()) {
@@ -138,8 +97,58 @@ int main(int argc, char** argv) {
     return 1;
   }
 
+  // check that we have callsign and host in the right format and extract them
+  {
+    int atPos;
+    std::string callsign = "", password = "", serverName = "";
+    if (!(op.getParameters().size() > 0 &&
+	  (atPos = op.getParameters()[0].find('@')) > 0)) {
+      // input callsign and host interactively
+      std::cout << "No callsign@host specified.  Please input them" << std::endl;
+      std::cout << "Callsign: ";
+      std::getline(std::cin, callsign);
+      if (callsign.size() <= 1) {
+	std::cerr << "You must specify a callsign.  Exiting." << std::endl;
+	return 1;
+      }
+      std::cout << "Password (optional): ";
+      std::getline(std::cin, password);
+      if (password.size() <= 1) {
+	std::cerr << "Not using central login" << std::endl;
+      }
+      std::cout << "Server to connect to: ";
+      std::getline(std::cin, serverName);
+      if (serverName.size() <= 1) {
+	std::cerr << "You must specify a host name to connect to.  Exiting." << std::endl;
+	return 1;
+      }
+    } else { // callsign/host on command line
+      callsign = op.getParameters()[0].substr(0, atPos);
+      serverName = op.getParameters()[0].substr(atPos + 1);
+    }
+    startupInfo.serverPort = ServerPort;
+    int cPos = serverName.find(':');
+    if (cPos != -1) {
+      startupInfo.serverPort = atoi(serverName.substr(cPos + 1).c_str());
+      serverName = serverName.substr(0, cPos);
+    }
+    cPos = callsign.find(':');
+    if (cPos != -1) {
+      password = atoi(callsign.substr(cPos + 1).c_str());
+      callsign = callsign.substr(0, cPos);
+    }
+    strncpy(startupInfo.callsign, callsign.c_str(), sizeof(startupInfo.callsign) - 1);
+    strncpy(startupInfo.password, password.c_str(), sizeof(startupInfo.password) - 1);
+    strncpy(startupInfo.serverName, serverName.c_str(), sizeof(startupInfo.serverName) - 1);
+  }
+  std::cerr << "Connecting to " <<
+    startupInfo.callsign << ":" <<
+    startupInfo.password << "@" <<
+    startupInfo.serverName << ":" <<
+    startupInfo.serverPort << std::endl;
+
   // try to connect
-  BZAdminClient client(name, password, host, port);
+  BZAdminClient client(startupInfo.callsign, startupInfo.password, startupInfo.serverName, startupInfo.serverPort);
   if (!client.isValid())
     return 1;
 
