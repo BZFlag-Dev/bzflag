@@ -4,6 +4,8 @@
 BZFlag 1.12.0  (was 1.11.x)
 ---------------------------
 
+* Fonts settable via BZDB - Daniel Remenak
+* New font management system and fonts - Daniel Remenak, Jeff Myers
 * Reduce client and server network utilization via tolerance tweaking
 	- Alfredo Tupone, Sean Morrison
 * WorldWeapons and EntryZones are saved client-side - Dave Rodgers
