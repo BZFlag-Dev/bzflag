@@ -59,6 +59,10 @@
 #  define __END_DECLS
 #endif
 
+/* ugly hack to make non-MS windows compilers work */
+#if defined(_WIN32) && !defined(_MSC_VER)
+typedef long off_t;
+#endif
 
 /* types */
 typedef off_t regoff_t;
