@@ -2677,14 +2677,15 @@ static void anointNewRabbit(int killerId = NoPlayer)
     if (killerId != oldRabbit && !player[killerId].paused && !player[killerId].notResponding && (player[killerId].state == PlayerAlive) && player[killerId].team != ObserverTeam)
       rabbitIndex = killerId;
 
-  if (rabbitIndex == NoPlayer)
-  for (i = 0; i < curMaxPlayers; i++) {
-    if (i != oldRabbit && !player[i].paused && !player[i].notResponding && (player[i].state == PlayerAlive) && (player[i].team != ObserverTeam)) {
-      float ratio = rabbitRank(player[i]);
-      if (ratio > topRatio) {
-	topRatio = ratio;
-	rabbitIndex = i;
-	DEBUG3("rabbitIndex is set to %d\n", rabbitIndex);
+  if (rabbitIndex == NoPlayer) {
+    for (i = 0; i < curMaxPlayers; i++) {
+      if (i != oldRabbit && !player[i].paused && !player[i].notResponding && (player[i].state == PlayerAlive) && (player[i].team != ObserverTeam)) {
+	float ratio = rabbitRank(player[i]);
+	if (ratio > topRatio) {
+	  topRatio = ratio;
+	  rabbitIndex = i;
+	  DEBUG3("rabbitIndex is set to %d\n", rabbitIndex);
+	}
       }
     }
   }
