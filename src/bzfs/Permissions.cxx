@@ -41,7 +41,7 @@ PlayerAccessInfo::PlayerAccessInfo()
   : verified(false), loginTime(TimeKeeper::getCurrent()), loginAttempts (0),
     Admin(false), passwordAttempts(0)
 {
-  groups.push_back("DEFAULT");
+  groups.push_back("EVERYONE");
 }
 
 void PlayerAccessInfo::setName(const char* callSign) {

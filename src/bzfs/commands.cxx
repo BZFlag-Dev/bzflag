@@ -131,7 +131,6 @@ void handleServerQueryCmd(GameKeeper::Player *playerData, const char *)
   sendMessage(ServerPlayer, t,
 	      TextUtils::format("BZFS Version: %s", getAppVersion()).c_str());
   return;
-
 }
 
 
@@ -665,8 +664,8 @@ void handleBanCmd(GameKeeper::Player *playerData, const char *message)
       reason = argv[3];
     }
 
-	// reload the banlist in case anyone else has added
-	clOptions->acl.load();
+    // reload the banlist in case anyone else has added
+    clOptions->acl.load();
 
     if (clOptions->acl.ban(ip, playerData->player.getCallSign(), durationInt,
 			   reason.c_str())) {
@@ -1364,6 +1363,10 @@ void handleGrouppermsCmd(GameKeeper::Player *playerData, const char *)
 void handleSetgroupCmd(GameKeeper::Player *playerData, const char *message)
 {
   int t = playerData->getIndex();
+  if (!userDatabaseFile.size()) {
+    sendMessage(ServerPlayer, t, "/setgroup command disabled");
+    return;
+  }
   char *p1 = (char*)strchr(message + 1, '\"');
   char *p2 = 0;
   if (p1) p2 = strchr(p1 + 1, '\"');
@@ -1409,6 +1412,10 @@ void handleSetgroupCmd(GameKeeper::Player *playerData, const char *message)
 void handleRemovegroupCmd(GameKeeper::Player *playerData, const char *message)
 {
   int t = playerData->getIndex();
+  if (!userDatabaseFile.size()) {
+    sendMessage(ServerPlayer, t, "/removegroup command disabled");
+    return;
+  }
   char *p1 = (char*)strchr(message + 1, '\"');
   char *p2 = 0;
   if (p1) p2 = strchr(p1 + 1, '\"');
@@ -1468,7 +1475,7 @@ void handleReloadCmd(GameKeeper::Player *playerData, const char *)
     PlayerAccessInfo::readGroupsFile(groupsFile);
   // make sure that the 'admin' & 'default' groups exist
   // FIXME same code is in bzfs to init groups on start
-  PlayerAccessMap::iterator itr = groupAccess.find("DEFAULT");
+  PlayerAccessMap::iterator itr = groupAccess.find("EVERYONE");
   if (itr == groupAccess.end()) {
     PlayerAccessInfo info;
     info.explicitAllows[PlayerAccessInfo::idleStats] = true;
@@ -1478,7 +1485,7 @@ void handleReloadCmd(GameKeeper::Player *playerData, const char *)
     info.explicitAllows[PlayerAccessInfo::actionMessage] = true;
     info.explicitAllows[PlayerAccessInfo::privateMessage] = true;
     info.explicitAllows[PlayerAccessInfo::adminMessageSend] = true;
-    groupAccess["DEFAULT"] = info;
+    groupAccess["EVERYONE"] = info;
   }
   itr = groupAccess.find("VERIFIED");
   if (itr == groupAccess.end()) {

@@ -4430,7 +4430,7 @@ int main(int argc, char **argv)
   if(groupsFile.size())
     PlayerAccessInfo::readGroupsFile(groupsFile);
   // make sure that the 'admin' & 'default' groups exist
-  PlayerAccessMap::iterator itr = groupAccess.find("DEFAULT");
+  PlayerAccessMap::iterator itr = groupAccess.find("EVERYONE");
   if (itr == groupAccess.end()) {
     PlayerAccessInfo info;
     info.explicitAllows[PlayerAccessInfo::idleStats] = true;
@@ -4440,7 +4440,7 @@ int main(int argc, char **argv)
     info.explicitAllows[PlayerAccessInfo::actionMessage] = true;
     info.explicitAllows[PlayerAccessInfo::privateMessage] = true;
     info.explicitAllows[PlayerAccessInfo::adminMessageSend] = true;
-    groupAccess["DEFAULT"] = info;
+    groupAccess["EVERYONE"] = info;
   }
   itr = groupAccess.find("VERIFIED");
   if (itr == groupAccess.end()) {

@@ -290,7 +290,7 @@
       is in the ADMIN group.  Some servers may choose to <quote>open
       up</quote> the voting system to unregistered players; this may
       be done by placing the POLL and VOTE permissions into the
-      DEFAULT group.  Likewise, it may be useful to place VETO into a
+      EVERYONE group.  Likewise, it may be useful to place VETO into a
       COPS group if one has been defined for <quote>power
       users</quote>.</para>
 
