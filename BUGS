@@ -1,13 +1,14 @@
 recent bugs
 ------------
 
+- players can get autokicked for jumping too high when the admin changes
+  the gravity to something more negative after a player has jumped.
+  e.g. gravity is at -1, player jumps, admin sets to -9.8
+
 - bzfs should re-resolve the list server IP if it can't reach it for an update
 
 - OS X client gamma on a secondary display set as main display uses the wrong
   gamma (very very dark); brightness is set incorrectly.
-
-- the high jump cheat check doesn't work very well with varying or positive
-  gravity - this might be fixed as of 9/27
 
 - votingarbiter is confused by a player name with an embedded space
 
