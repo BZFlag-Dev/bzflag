@@ -441,8 +441,8 @@ void			World::freeInsideNodes()
 void			World::initFlag(int index)
 {
   // set color of flag (opaque)
-  const float* color = flags[index].type->getColor();
-  flagNodes[index]->setColor(color[0], color[1], color[2]);
+  const GLfloat* color = flags[index].type->getColor();
+  flagNodes[index]->setColor(color[0], color[1], color[2], color[3]);
 
   // if coming or going then position warp
   Flag& flag = flags[index];
