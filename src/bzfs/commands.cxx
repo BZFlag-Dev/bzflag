@@ -214,7 +214,7 @@ void handleFlagCmd(int t, const char *message)
 
   } else if (strncmp(message + 6, "up", 2) == 0) {
     for (int i = 0; i < numFlags; i++) {
-      if (flag[i].flag.desc->flagTeam != ::NoTeam) {
+      if (flag[i].flag.type->flagTeam != ::NoTeam) {
 	// see if someone had grabbed flag.  tell 'em to drop it.
 	const int playerIndex = flag[i].player;
 	if (playerIndex != -1) {
@@ -231,7 +231,7 @@ void handleFlagCmd(int t, const char *message)
 	}
 	flag[i].flag.status = FlagGoing;
 	if (!flag[i].required)
-	  flag[i].flag.desc = Flags::Null;
+	  flag[i].flag.type = Flags::Null;
 	sendFlagUpdate(i);
       }
     }
@@ -240,7 +240,7 @@ void handleFlagCmd(int t, const char *message)
     for (int i = 0; i < numFlags; i++) {
       char message[MessageLen];
       sprintf(message, "%d p:%d r:%d g:%d i:%s s:%d p:%3.1fx%3.1fx%3.1f", i, flag[i].player,
-	      flag[i].required, flag[i].grabs, flag[i].flag.desc->flagAbbv,
+	      flag[i].required, flag[i].grabs, flag[i].flag.type->flagAbbv,
 	      flag[i].flag.status,
 	      flag[i].flag.position[0],
 	      flag[i].flag.position[1],

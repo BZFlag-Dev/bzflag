@@ -1012,9 +1012,9 @@ void parse(int argc, char **argv, CmdLineOptions &options)
 
   // prep flags
   for (i = 0; i < numFlags; i++) {
-    flag[i].flag.desc = Flags::Null;
+    flag[i].flag.type = Flags::Null;
     flag[i].flag.status = FlagNoExist;
-    flag[i].flag.type = FlagNormal;
+    flag[i].flag.endurance = FlagNormal;
     flag[i].flag.owner = 0;
     flag[i].flag.position[0] = 0.0f;
     flag[i].flag.position[1] = 0.0f;
@@ -1035,17 +1035,17 @@ void parse(int argc, char **argv, CmdLineOptions &options)
   f = 0;
   if (options.gameStyle & TeamFlagGameStyle) {
     flag[0].required = true;
-    flag[0].flag.desc = Flags::RedTeam;
-    flag[0].flag.type = FlagNormal;
+    flag[0].flag.type = Flags::RedTeam;
+    flag[0].flag.endurance = FlagNormal;
     flag[1].required = true;
-    flag[1].flag.desc = Flags::GreenTeam;
-    flag[1].flag.type = FlagNormal;
+    flag[1].flag.type = Flags::GreenTeam;
+    flag[1].flag.endurance = FlagNormal;
     flag[2].required = true;
-    flag[2].flag.desc = Flags::BlueTeam;
-    flag[2].flag.type = FlagNormal;
+    flag[2].flag.type = Flags::BlueTeam;
+    flag[2].flag.endurance = FlagNormal;
     flag[3].required = true;
-    flag[3].flag.desc = Flags::PurpleTeam;
-    flag[3].flag.type = FlagNormal;
+    flag[3].flag.type = Flags::PurpleTeam;
+    flag[3].flag.endurance = FlagNormal;
     f = 4;
   }
 

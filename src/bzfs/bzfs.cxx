@@ -2828,7 +2828,7 @@ static void addFlag(int flagIndex)
   flag[flagIndex].dropDone += flightTime;
 
   // how times will it stick around
-  if (flag[flagIndex].flag.type == FlagSticky)
+  if (flag[flagIndex].flag.endurance == FlagSticky)
     flag[flagIndex].grabs = 1;
   else
     flag[flagIndex].grabs = int(floor(4.0f * (float)bzfrand())) + 1;
@@ -2843,7 +2843,7 @@ static void randomFlag(int flagIndex)
   }
 
   // pick a random flag
-  flag[flagIndex].flag.desc = allowedFlags[(int)(allowedFlags.size() * (float)bzfrand())];
+  flag[flagIndex].flag.type = allowedFlags[(int)(allowedFlags.size() * (float)bzfrand())];
   addFlag(flagIndex);
 }
 
@@ -2865,11 +2865,11 @@ void resetFlag(int flagIndex)
 
   // if it's a random flag, reset flag id
   if (flagIndex >= numFlags - clOptions->numExtraFlags)
-    pFlagInfo->flag.desc = Flags::Null;
+    pFlagInfo->flag.type = Flags::Null;
 
   // reposition flag
-  if (pFlagInfo->flag.desc->flagTeam != ::NoTeam) {
-    int teamIndex = pFlagInfo->flag.desc->flagTeam;
+  if (pFlagInfo->flag.type->flagTeam != ::NoTeam) {
+    int teamIndex = pFlagInfo->flag.type->flagTeam;
     pFlagInfo->flag.position[0] = basePos[teamIndex][0];
     pFlagInfo->flag.position[1] = basePos[teamIndex][1];
     pFlagInfo->flag.position[2] = basePos[teamIndex][2];
@@ -2879,7 +2879,7 @@ void resetFlag(int flagIndex)
   } else {
     // random position (not in a building)
     float r = BZDB->eval(StateDatabase::BZDB_TANKRADIUS);
-    if (pFlagInfo->flag.desc == Flags::Obesity)
+    if (pFlagInfo->flag.type == Flags::Obesity)
       r *= 2.0f * BZDB->eval(StateDatabase::BZDB_OBESEFACTOR);
     WorldInfo::ObstacleLocation *obj;
     float worldSize = BZDB->eval(StateDatabase::BZDB_WORLDSIZE);
@@ -2908,13 +2908,13 @@ void resetFlag(int flagIndex)
 
   // required flags mustn't just disappear
   if (pFlagInfo->required) {
-    if (pFlagInfo->flag.desc->flagTeam != ::NoTeam) {
-      if (team[pFlagInfo->flag.desc->flagTeam].team.activeSize == 0)
+    if (pFlagInfo->flag.type->flagTeam != ::NoTeam) {
+      if (team[pFlagInfo->flag.type->flagTeam].team.activeSize == 0)
 	pFlagInfo->flag.status = FlagNoExist;
       else
 	pFlagInfo->flag.status = FlagOnGround;
     }
-    else if (pFlagInfo->flag.desc == Flags::Null)
+    else if (pFlagInfo->flag.type == Flags::Null)
       randomFlag(flagIndex);
     else
       addFlag(flagIndex);
@@ -3108,7 +3108,7 @@ void removePlayer(int playerIndex, const char *reason, bool notify)
     if (flagid >= 0) {
       // do not simply zap team flag
       Flag &carriedflag = flag[flagid].flag;
-      if (carriedflag.desc->flagTeam != ::NoTeam) {
+      if (carriedflag.type->flagTeam != ::NoTeam) {
 	dropFlag(playerIndex, player[playerIndex].lastState.pos);
       }
       else {
@@ -3327,7 +3327,7 @@ static void playerKilled(int victimIndex, int killerIndex, int reason,
   if (flagid >= 0) {
     // do not simply zap team flag
     Flag &carriedflag=flag[flagid].flag;
-    if (carriedflag.desc->flagTeam != ::NoTeam) {
+    if (carriedflag.type->flagTeam != ::NoTeam) {
       dropFlag(victimIndex, carriedflag.position);
     }
     else {
@@ -3458,7 +3458,7 @@ static void grabFlag(int playerIndex, int flagIndex)
   std::vector<FlagType*> *pFH = &player[playerIndex].flagHistory;
   if (pFH->size() >= MAX_FLAG_HISTORY)
     pFH->erase(pFH->begin());
-  pFH->push_back(flag[flagIndex].flag.desc );
+  pFH->push_back(flag[flagIndex].flag.type );
 }
 
 static void dropFlag(int playerIndex, float pos[3])
@@ -3479,7 +3479,7 @@ static void dropFlag(int playerIndex, float pos[3])
   // okay, go ahead and drop it
   drpFlag.player = -1;
   drpFlag.numShots = 0;
-  if (drpFlag.flag.type == FlagNormal && --drpFlag.grabs > 0)
+  if (drpFlag.flag.endurance == FlagNormal && --drpFlag.grabs > 0)
     drpFlag.flag.status = FlagInAir;
   else
     drpFlag.flag.status = FlagGoing;
@@ -3514,7 +3514,7 @@ static void dropFlag(int playerIndex, float pos[3])
 				 (topmosttype == NOT_IN_BUILDING ? pos[2] :
 				  topmost->pos[2] + topmost->size[2] + 0.01f));
 
-  int flagTeam = drpFlag.flag.desc->flagTeam;
+  int flagTeam = drpFlag.flag.type->flagTeam;
   bool isTeamFlag = flagTeam != ::NoTeam;
 
   if (drpFlag.flag.status == FlagGoing) {
@@ -3579,7 +3579,7 @@ static void dropFlag(int playerIndex, float pos[3])
   // compute flight info -- flight time depends depends on start and end
   // altitudes and desired height above start altitude
   const float flagAltitude = BZDB->eval(StateDatabase::BZDB_FLAGALTITUDE);
-  const float thrownAltitude = (drpFlag.flag.desc == Flags::Shield) ?
+  const float thrownAltitude = (drpFlag.flag.type == Flags::Shield) ?
      BZDB->eval(StateDatabase::BZDB_SHIELDFLIGHT) * flagAltitude : flagAltitude;
   const float maxAltitude = pos[2] + thrownAltitude;
   const float upTime = sqrtf(-2.0f * thrownAltitude / BZDB->eval(StateDatabase::BZDB_GRAVITY));
@@ -3613,7 +3613,7 @@ static void captureFlag(int playerIndex, TeamColor teamCaptured)
   // player captured a flag.  can either be enemy flag in player's own
   // team base, or player's own flag in enemy base.
   int flagIndex = int(player[playerIndex].flag);
-  if (flagIndex < 0 || (flag[flagIndex].flag.desc->flagTeam != ::NoTeam))
+  if (flagIndex < 0 || (flag[flagIndex].flag.type->flagTeam != ::NoTeam))
     return;
 
   // player no longer has flag and put flag back at it's base
@@ -3630,20 +3630,20 @@ static void captureFlag(int playerIndex, TeamColor teamCaptured)
   // everyone on losing team is dead
   for (int i = 0; i < curMaxPlayers; i++)
     if (player[i].fd != NotConnected &&
-	flag[flagIndex].flag.desc->flagTeam == int(player[i].team) &&
+	flag[flagIndex].flag.type->flagTeam == int(player[i].team) &&
 	player[i].state == PlayerAlive) {
       player[i].state = PlayerDead;
     }
 
   // update score (rogues can't capture flags)
   int winningTeam = (int)NoTeam;
-  if (int(flag[flagIndex].flag.desc->flagTeam) != int(player[playerIndex].team)) {
+  if (int(flag[flagIndex].flag.type->flagTeam) != int(player[playerIndex].team)) {
     // player captured enemy flag
     winningTeam = int(player[playerIndex].team);
     team[winningTeam].team.won++;
   }
-  team[int(flag[flagIndex].flag.desc->flagTeam)].team.lost++;
-  sendTeamUpdate(-1, winningTeam, int(flag[flagIndex].flag.desc->flagTeam));
+  team[int(flag[flagIndex].flag.type->flagTeam)].team.lost++;
+  sendTeamUpdate(-1, winningTeam, int(flag[flagIndex].flag.type->flagTeam));
 #ifdef PRINTSCORE
   dumpScore();
 #endif
@@ -3674,9 +3674,9 @@ static void shotFired(int playerIndex, void *buf, int len)
   }
 
   // verify player flag
-  if ((firingInfo.flagType != Flags::Null) && (firingInfo.flagType != flag[shooter.flag].flag.desc)) {
+  if ((firingInfo.flagType != Flags::Null) && (firingInfo.flagType != flag[shooter.flag].flag.type)) {
     DEBUG2("Player %s [%d] shot flag mismatch %s %s\n", shooter.callSign,
-	   playerIndex, firingInfo.flagType->flagAbbv, flag[shooter.flag].flag.desc->flagAbbv);
+	   playerIndex, firingInfo.flagType->flagAbbv, flag[shooter.flag].flag.type->flagAbbv);
     firingInfo.flagType = Flags::Null;
     repack = true;
   }
@@ -3761,7 +3761,7 @@ static void shotFired(int playerIndex, void *buf, int len)
     FlagInfo & fInfo = flag[shooter.flag];
     fInfo.numShots++; // increase the # shots fired
 
-    int limit = clOptions->flagLimit[fInfo.flag.desc];
+    int limit = clOptions->flagLimit[fInfo.flag.type];
     if (limit != -1){ // if there is a limit for players flag
       int shotsLeft = limit -  fInfo.numShots;
       if (shotsLeft > 0) { //still have some shots left
@@ -4347,9 +4347,9 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
 
 	    // if tank is not driving cannot be sure it didn't toss (V) in flight
 	    // if tank is not alive cannot be sure it didn't just toss (V)
-  	    if (flag[player[t].flag].flag.desc == Flags::Velocity)
+  	    if (flag[player[t].flag].flag.type == Flags::Velocity)
 	      maxPlanarSpeedSqr *= BZDB->eval(StateDatabase::BZDB_VELOCITYAD)*BZDB->eval(StateDatabase::BZDB_VELOCITYAD);
-	    else if (flag[player[t].flag].flag.desc == Flags::Thief)
+	    else if (flag[player[t].flag].flag.type == Flags::Thief)
 	      maxPlanarSpeedSqr *= BZDB->eval(StateDatabase::BZDB_THIEFVELAD) * BZDB->eval(StateDatabase::BZDB_THIEFVELAD);
 	    else {
 	      // If player is moving vertically, or not alive the speed checks seem to be problematic
@@ -5013,7 +5013,7 @@ int main(int argc, char **argv)
       if ((float)bzfrand() > t) {
 	// find an empty slot for an extra flag
 	for (i = numFlags - clOptions->numExtraFlags; i < numFlags; i++)
-	  if (flag[i].flag.desc == Flags::Null)
+	  if (flag[i].flag.type == Flags::Null)
 	    break;
 	if (i != numFlags)
 	  randomFlag(i);

@@ -126,9 +126,9 @@ class Flag {
     static FlagType*	getDescFromAbbreviation(const char* abbreviation);
 
   public:
-    FlagType*		desc;
+    FlagType*		type;
     FlagStatus		status;
-    FlagEndurance	type;
+    FlagEndurance	endurance;
     PlayerId		owner;			// who has flag
     float		position[3];		// position on ground
     float		launchPosition[3];	// position flag launched from

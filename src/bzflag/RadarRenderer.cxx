@@ -449,10 +449,10 @@ void			RadarRenderer::render(SceneRenderer& renderer,
         const Flag& flag = world.getFlag(i);
         if (flag.status == FlagNoExist || flag.status == FlagOnTank)
 	  continue;
-        if (flag.desc->flagTeam != NoTeam)
+        if (flag.type->flagTeam != NoTeam)
 	  continue;
         const float cs = colorScale(flag.position[2], muzzleHeight, BZDBCache::enhancedRadar);
-        const float *flagcolor = flag.desc->getColor();
+        const float *flagcolor = flag.type->getColor();
         glColor3f(flagcolor[0] * cs, flagcolor[1] * cs, flagcolor[2] * cs);
         drawFlag(flag.position[0], flag.position[1], flag.position[2]);
       }
@@ -462,11 +462,11 @@ void			RadarRenderer::render(SceneRenderer& renderer,
       const Flag& flag = world.getFlag(i);
       if (flag.status == FlagNoExist || flag.status == FlagOnTank)
 	continue;
-      if (flag.desc->flagTeam == NoTeam)
+      if (flag.type->flagTeam == NoTeam)
 	continue;
       // Flags change color by height
       const float cs = colorScale(flag.position[2], muzzleHeight, BZDBCache::enhancedRadar);
-      const float *flagcolor = flag.desc->getColor();
+      const float *flagcolor = flag.type->getColor();
       glColor3f(flagcolor[0] * cs, flagcolor[1] * cs, flagcolor[2] * cs);
       // always draw team flags
       drawFlag(flag.position[0], flag.position[1], flag.position[2]);

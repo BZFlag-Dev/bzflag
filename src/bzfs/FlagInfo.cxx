@@ -31,7 +31,7 @@ FlagInfo *flag = NULL;
 bool setRequiredFlag(FlagInfo& flag, FlagType *desc)
 {
   flag.required = true;
-  flag.flag.desc = desc;
+  flag.flag.type = desc;
   return true;
 }
 

@@ -156,12 +156,12 @@ void* FlagType::pack(void* buf) const
   return buf;
 }
 
-void* FlagType::unpack(void* buf, FlagType* &desc)
+void* FlagType::unpack(void* buf, FlagType* &type)
 {
   unsigned char abbv[3] = {0,0,0};
   buf = nboUnpackUByte(buf, abbv[0]);
   buf = nboUnpackUByte(buf, abbv[1]);
-  desc = Flag::getDescFromAbbreviation((const char *)abbv);
+  type = Flag::getDescFromAbbreviation((const char *)abbv);
   return buf;
 }
 
@@ -172,9 +172,9 @@ std::map<std::string, FlagType*>& FlagType::getFlagMap() {
 
 void*			Flag::pack(void* buf) const
 {
-  buf = desc->pack(buf);
+  buf = type->pack(buf);
   buf = nboPackUShort(buf, uint16_t(status));
-  buf = nboPackUShort(buf, uint16_t(type));
+  buf = nboPackUShort(buf, uint16_t(endurance));
   buf = nboPackUByte(buf, owner);
   buf = nboPackVector(buf, position);
   buf = nboPackVector(buf, launchPosition);
@@ -189,9 +189,9 @@ void*			Flag::unpack(void* buf)
 {
   uint16_t data;
 
-  buf = FlagType::unpack(buf, desc);
+  buf = FlagType::unpack(buf, type);
   buf = nboUnpackUShort(buf, data); status = FlagStatus(data);
-  buf = nboUnpackUShort(buf, data); type = FlagEndurance(data);
+  buf = nboUnpackUShort(buf, data); endurance = FlagEndurance(data);
   buf = nboUnpackUByte(buf, owner);
   buf = nboUnpackVector(buf, position);
   buf = nboUnpackVector(buf, launchPosition);
