@@ -975,9 +975,21 @@ void			HUDRenderer::renderTankLabels(SceneRenderer& renderer)
       hudSColor3fv(Team::getRadarColor(pl->getTeam()));
       gluProject(pl->getPosition()[0], pl->getPosition()[1],
 		 pl->getPosition()[2], model, proj, view, &x, &y, &z);
-      if (z >= 0.0 && z <= 1.0)
+      if (z >= 0.0 && z <= 1.0) {
 	labelsFont.draw(name, len, float(x) - labelsFont.getWidth(name) / 2,
 			float(y) + offset - labelsFont.getHeight());
+
+        FlagType* flag = pl->getFlag();
+	if (flag != Flags::Null) {
+          std::string flagStr = "(";
+          flagStr += flag->endurance == FlagNormal ? flag->flagName : flag->flagAbbv;
+          flagStr += ")";
+          const char *fname = flagStr.c_str();
+	  len = strlen (fname);
+	  labelsFont.draw(fname, len, float(x) - labelsFont.getWidth(fname) / 2,
+			  float(y) + offset - (2 * labelsFont.getHeight()));
+	}
+      }
     }
   }
 }
