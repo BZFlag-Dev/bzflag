@@ -159,6 +159,8 @@ const uint16_t		RejectRepeatCallsign = 0x0007;
 const uint16_t		RejectRejoinWaitTime = 0x0008;
 
 // death by obstacle
+// FIXME: really a killed reason, NOT a message type.
+// should not be here at all, should be in BlowedUpReason
 const uint16_t		PhysicsDriverDeath = 0x7064;		// 'pd'
 
 

@@ -3624,54 +3624,54 @@ possible attack from %s\n",
 
     // player has transferred flag to another tank
     case MsgTransferFlag: {
-	PlayerId from, to;
+      PlayerId from, to;
 
-	buf = nboUnpackUByte(buf, from);
-	if (from != t) {
-	  DEBUG1("Kicking Player %s [%d] Player trying to transfer flag\n",
-		 playerData->player.getCallSign(), t);
-	  removePlayer(t, "Player shot mismatch");
-	  break;
-	}
-	buf = nboUnpackUByte(buf, to);
-
-	GameKeeper::Player *fromData = playerData;
-
-	int flagIndex = fromData->player.getFlag();
-	if (to == ServerPlayer) {
-	  if (flagIndex >= 0)
-	    zapFlag (*FlagInfo::get(flagIndex));
-	  return;
-	}
-
-	// Sanity check
-	if (to >= curMaxPlayers)
-	  return;
-
-	if (flagIndex == -1)
-	  return;
-
-	GameKeeper::Player *toData
-	  = GameKeeper::Player::getPlayerByIndex(to);
-	if (!toData)
-	  return;
-
-	int oFlagIndex = toData->player.getFlag();
-	if (oFlagIndex >= 0)
-	  zapFlag (*FlagInfo::get(oFlagIndex));
-
-	void *bufStart = getDirectMessageBuffer();
-	void *buf = nboPackUByte(bufStart, from);
-	buf = nboPackUByte(buf, to);
-	FlagInfo &flag = *FlagInfo::get(flagIndex);
-	flag.flag.owner = to;
-	flag.player = to;
-	toData->player.resetFlag();
-	toData->player.setFlag(flagIndex);
-	fromData->player.resetFlag();
-	buf = flag.pack(buf);
-	broadcastMessage(MsgTransferFlag, (char*)buf - (char*)bufStart, bufStart);
+      buf = nboUnpackUByte(buf, from);
+      if (from != t) {
+	DEBUG1("Kicking Player %s [%d] Player trying to transfer flag\n",
+	       playerData->player.getCallSign(), t);
+	removePlayer(t, "Player shot mismatch");
 	break;
+      }
+      buf = nboUnpackUByte(buf, to);
+
+      GameKeeper::Player *fromData = playerData;
+
+      int flagIndex = fromData->player.getFlag();
+      if (to == ServerPlayer) {
+	if (flagIndex >= 0)
+	  zapFlag (*FlagInfo::get(flagIndex));
+	return;
+      }
+
+      // Sanity check
+      if (to >= curMaxPlayers)
+	return;
+
+      if (flagIndex == -1)
+	return;
+
+      GameKeeper::Player *toData
+	= GameKeeper::Player::getPlayerByIndex(to);
+      if (!toData)
+	return;
+
+      int oFlagIndex = toData->player.getFlag();
+      if (oFlagIndex >= 0)
+	zapFlag (*FlagInfo::get(oFlagIndex));
+
+      void *bufStart = getDirectMessageBuffer();
+      void *buf = nboPackUByte(bufStart, from);
+      buf = nboPackUByte(buf, to);
+      FlagInfo &flag = *FlagInfo::get(flagIndex);
+      flag.flag.owner = to;
+      flag.player = to;
+      toData->player.resetFlag();
+      toData->player.setFlag(flagIndex);
+      fromData->player.resetFlag();
+      buf = flag.pack(buf);
+      broadcastMessage(MsgTransferFlag, (char*)buf - (char*)bufStart, bufStart);
+      break;
     }
 
     case MsgUDPLinkEstablished:
@@ -3920,8 +3920,7 @@ possible attack from %s\n",
 
     // unknown msg type
     default:
-      DEBUG1("Player [%d] sent unknown packet type (%x), \
-possible attack from %s\n",
+      DEBUG1("Player [%d] sent unknown packet type (%x), possible attack from %s\n",
 	     t, code, handler->getTargetIP());
   }
 }

@@ -195,6 +195,7 @@ enum BlowedUpReason {
   LastReason,
   DeathTouch = PhysicsDriverDeath
 };
+
 static const char*	blowedUpMessage[] = {
   NULL,
   "Got shot by ",
