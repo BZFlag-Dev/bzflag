@@ -903,7 +903,8 @@ void			HUDRenderer::renderScoreboard(void)
   bool drewMyScore = false;
   for (i = 0; i < plrCount; i++) {
     RemotePlayer* player = World::getWorld()->getPlayer(players[i]);
-    if (!drewMyScore && myTank->getScore() > player->getScore()) {
+    if (!drewMyScore && myTank->getScore() > player->getScore() &&
+	myTank->getCallSign()[0] != '@') {
       // if i have greater score than remote player draw my name here
       drawPlayerScore(myTank, x1, x2, x3, (float)y);
       drewMyScore = true;
