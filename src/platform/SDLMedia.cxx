@@ -368,7 +368,8 @@ void			SDLMedia::audioSleep(bool, double endTime)
 
 // Setting Audio Driver
 void        SDLMedia::setDriver(std::string driverName) {
-  setenv("SDL_AUDIODRIVER", driverName.c_str(), 0);
+  std::string envVar = "SDL_AUDIODRIVER=" + driverName;
+  putenv(envVar.c_str());
 };
 
 // Setting Audio Device
