@@ -2836,7 +2836,7 @@ static void acceptClient()
 	char buffer[9];
 	memcpy(buffer, ServerVersion, 8);
 	// send 0xff if list is full
-	buffer[8] = 0xff;
+	buffer[8] = (char)0xff;
 
 	PlayerId playerIndex;
 	// find open slot in players list
