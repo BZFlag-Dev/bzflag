@@ -3,13 +3,14 @@
 # version number: aabbccddd, aa=major, bb=minor, cc=revision, ddd=build.
 # increase build number for every potentially released build.
 # must change this in MSDev project, too.
-AC_INIT(bzflag, 10707001)
+
+AC_INIT(src/bzflag/bzflag.cxx)
+AM_INIT_AUTOMAKE(bzflag, 10707001)
+AM_CONFIG_HEADER(include/config.h)
+
 VERSIONID=1.7g1
 AC_SUBST(VERSIONID)
-
-AM_INIT_AUTOMAKE
-AM_CONFIG_HEADER(include/config.h)
-AC_CONFIG_SRCDIR(src/bzflag/bzflag.cxx)
+PACKAGE_VERSION=10707001
 
 #Checks for programs.
 AC_PROG_MAKE_SET
@@ -136,12 +137,12 @@ AC_SUBST(INSTALL_DATA_DIR)
 
 CPPFLAGS="-DVERSION=$PACKAGE_VERSION"
 
-AC_ARG_ENABLE(timebomb, AC_HELP_STRING([--enable-timebomb], [build exp Date]))
+AC_ARG_ENABLE(timebomb, [  --enable-timebomb       build exp Date], enable_timebomb=yes)
 if test x$enable_timebomb = xyes; then
    CPPFLAGS="$CPPFLAGS -DTIME_BOMB=\"3/13/1998\"";
 fi
 
-AC_ARG_ENABLE(debug, AC_HELP_STRING([--enable-debug], [Turn on debugging]))
+AC_ARG_ENABLE(debug, [  --enable-debug          turn on debugging], enable_debug=yes)
 AM_CONDITIONAL(DEBUG, test x$enable_debug = xyes)
 
 if test x$enable_debug = xyes; then
@@ -151,8 +152,7 @@ fi
 #
 # comment to disable robot tanks
 #
-AC_ARG_ENABLE(robots, AC_HELP_STRING([--enable-robots], [Enable Robots]), [],
-				    [enable_robots=yes])
+AC_ARG_ENABLE(robots, [  --enable-robots         enable robots], enable_robots=yes)
 if test x$enable_robots = xyes; then
    CPPFLAGS="$CPPFLAGS -DROBOT"
 fi
@@ -165,7 +165,7 @@ case $host_os in
 	CPPFLAGS="$CPPFLAGS -DHALF_RATE_AUDIO -DXF86VIDMODE_EXT -DXIJOYSTICK";
 	CPPFLAGS="$CPPFLAGS -Wall -W"
 	CFLAGS="$CFLAGS -ansi";
-	CXXFLAGS="$CXXFLAGS -fno-exceptions -fno-rtti";
+	CXXFLAGS="$CXXFLAGS -fno-exceptions";
 	case $host_vendor in
 	     pc)  CPPFLAGS="$CPPFLAGS -mcpu=i486";;
 	     ppc) CPPFLAGS="$CPPFLAGS -mcpu=603";;
@@ -175,12 +175,12 @@ case $host_os in
         CPPFLAGS="$CPPFLAGS -DHALF_RATE_AUDIO -DXF86VIDMODE_EXT -DXIJOYSTICK";
 	CPPFLAGS="$CPPFLAGS -Wall -W -mcpu=i486"
 	CFLAGS="$CFLAGS -ansi";
-	CXXFLAGS="$CXXFLAGS -fno-exceptions -fno-rtti";;
+	CXXFLAGS="$CXXFLAGS -fno-exceptions";;
      mingw32)
         CPPFLAGS="$CPPFLAGS -D_POSIX_SOURCE";
 	CPPFLAGS="$CPPFLAGS -DHALF_RATE_AUDIO -Wall -W -mcpu=i486";
 	CFLAGS="$CFLAGS -ansi";
-	CXXFLAGS="$CXXFLAGS -fno-exceptions -fno-rtti";;
+	CXXFLAGS="$CXXFLAGS -fno-exceptions";;
      solaris*)
 	CPPFLAGS="$CPPFLAGS -DSUN_OGL_NO_VERTEX_MACROS";
 	if test sun_wspro; then
@@ -188,13 +188,13 @@ case $host_os in
 	elif test sun_cc; then
 	   CPPFLAGS="$CPPFLAGS -fast"
 	elif test sun_gcc; then
-	   CXXFLAGS="$CXXFLAGS -fno-exceptions -fno-rtti"
+	   CXXFLAGS="$CXXFLAGS -fno-exceptions"
 	fi;;
      macos|darwin*)
 	CPPFLAGS="$CPPFLAGS -D_MACOSX_ -D_BSD_SOCKLEN_T_=int";
 	CPPFLAGS="$CPPFLAGS -Wall -W";
 	CFLAGS="$CFLAGS -ansi";
-	CXXFLAGS="$CXXFLAGS -fno-exceptions -fno-rtti";;
+	CXXFLAGS="$CXXFLAGS -fno-exceptions";;
      windows**)
 	CPPFLAGS="$CPPFLAGS /D \"WIN32\" /D \"_MBCS\"";
 	CPPFLAGS="$CPPFLAGS /I \"$(top_srcdir)/include\" /nologo /W3";;
@@ -274,46 +274,45 @@ fi;
 LIBDIR="\$(top_srcdir)/lib"
 AC_SUBST(LIBDIR)
 
-AC_CONFIG_FILES(Makefile
-                src/Makefile
-                src/net/Makefile
-                src/common/Makefile
-                src/obstacle/Makefile
-                src/platform/Makefile
-                src/ogl/Makefile
-                src/scene/Makefile
-                src/geometry/Makefile
-                src/bzflag/Makefile
-                src/bzfs/Makefile
-                src/bzfls/Makefile
-                src/bzfrelay/Makefile
-                man/Makefile
-                package/Makefile
-		data/Makefile
-		data/l10n/Makefile
-		bzwtransform/Makefile
-		debian/Makefile
-		misc/Makefile
-		win32/Makefile
-		doc/Makefile
-		include/Makefile
-		package/linux/Makefile
-		package/rpm/Makefile
-		package/irix/Makefile
-		package/mac/Makefile
-		package/mac/notes/Makefile
-		package/mac/platform/Makefile
-		package/mac/src/Makefile
-		package/win32/Makefile
-		package/win32/include/Makefile
-		package/win32/nsis/Makefile
-		package/win32/src/Makefile
-		package/win32/src/bzfinst/Makefile
-		package/win32/src/bzfuinst/Makefile
-		package/win32/src/makedb/Makefile
-		src/geometry/models/Makefile
-		src/geometry/models/hitank/Makefile
-		src/geometry/models/lowtank/Makefile
-		src/geometry/models/medtank/Makefile
-		src/platform/MacBZFlag.pbproj/Makefile)
-AC_OUTPUT
+AC_OUTPUT(Makefile
+          src/Makefile
+          src/net/Makefile
+          src/common/Makefile
+          src/obstacle/Makefile
+          src/platform/Makefile
+          src/ogl/Makefile
+          src/scene/Makefile
+          src/geometry/Makefile
+          src/bzflag/Makefile
+          src/bzfs/Makefile
+          src/bzfls/Makefile
+          src/bzfrelay/Makefile
+          man/Makefile
+          package/Makefile
+          data/Makefile
+          data/l10n/Makefile
+          bzwtransform/Makefile
+          debian/Makefile
+          misc/Makefile
+          win32/Makefile
+          doc/Makefile
+          include/Makefile
+          package/linux/Makefile
+          package/rpm/Makefile
+          package/irix/Makefile
+          package/mac/Makefile
+          package/mac/notes/Makefile
+          package/mac/platform/Makefile
+          package/mac/src/Makefile
+          package/win32/Makefile
+          package/win32/include/Makefile
+          package/win32/nsis/Makefile
+          package/win32/src/Makefile
+          package/win32/src/bzfinst/Makefile
+          package/win32/src/bzfuinst/Makefile
+          package/win32/src/makedb/Makefile
+          src/geometry/models/Makefile
+          src/geometry/models/hitank/Makefile
+          src/geometry/models/lowtank/Makefile
+          src/geometry/models/medtank/Makefile
+          src/platform/MacBZFlag.pbproj/Makefile)
