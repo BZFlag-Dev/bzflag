@@ -378,6 +378,7 @@ void updateConfigFile(void)
     KEYMGR.unbindCommand("roam rotate right");
     KEYMGR.unbindCommand("roam rotate up");
     KEYMGR.unbindCommand("roam rotate down");
+    KEYMGR.unbindCommand("roam rotate stop");
 
     // add new default keybindings if there's no conflict
     
@@ -412,15 +413,14 @@ void updateConfigFile(void)
       KEYMGR.bind(key, true, "messagepanel misc");
     }
 
-    // TODO - any other breaking changes from 1.10 to 1.12
+    // TODO - any other breaking changes from 1.10 to 2.0
 
   case 1: // 1.11.20
     if (KEYMGR.stringToKeyEvent("Tab", key)
 	&& (KEYMGR.get(key, false) == ""))
       KEYMGR.bind(key, false, "jump");
-    break; // no action, current version
 
-  case 2: // 1.12
+  case 2: // 2.0
     break; // no action, current version
 
   default: // hm, we don't know about this one...

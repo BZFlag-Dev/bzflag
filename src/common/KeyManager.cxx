@@ -184,7 +184,7 @@ void			KeyManager::unbindCommand(const char* command)
     if (index->second == command) {
       deleteme = index;
       index++;
-      unbind(deleteme->first, true);
+      unbind(deleteme->first, false);
     } else {
       index++;
     }
