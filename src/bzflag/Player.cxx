@@ -26,6 +26,7 @@
 #include "ShotStatistics.h"
 #include "CollisionManager.h"
 #include "Obstacle.h"
+#include "TrackMarks.h"
 
 
 // for dead reckoning
@@ -99,6 +100,8 @@ Player::Player(const PlayerId& _id, TeamColor _team,
   alpha = 1.0f;
   alphaRate = 0.0f;
   alphaTarget = 1.0f;
+  
+  lastTrackDraw = TimeKeeper::getCurrent();
   
   return;
 }
@@ -249,6 +252,29 @@ void Player::updateTank(float dt, bool local)
   updateDimensions(dt, local);
   updateTreads(dt);
   updateTranslucency(dt);
+  
+  if (isAlive() && ((state.status & PlayerState::Falling) == 0)) {
+    if ((TimeKeeper::getCurrent() - lastTrackDraw) > 0.050f) {
+      bool drawMark = true;
+      float markPos[3];
+      markPos[2] = state.pos[2];
+      if (inputSpeed > +0.001f) {
+        // draw the mark at the back of the treads
+        markPos[0] = state.pos[0] - (forward[0] * dimensions[0]);
+        markPos[1] = state.pos[1] - (forward[1] * dimensions[0]);
+      } else if (inputSpeed < -0.001f) {
+        // draw the mark at the front of the treads
+        markPos[0] = state.pos[0] + (forward[0] * dimensions[0]);
+        markPos[1] = state.pos[1] + (forward[1] * dimensions[0]);
+      } else {
+        drawMark = false;
+      }
+      if (drawMark) {
+        TrackMarks::addMark(markPos, dimensionsScale[1], state.azimuth);
+        lastTrackDraw = TimeKeeper::getCurrent();
+      }
+    }
+  }
   return;
 }
 
@@ -293,7 +319,7 @@ void Player::updateDimensions(float dt, bool local)
 
   // do not resize if it will cause a collision
   // only checked for the local player, remote is computationally expensive
-  if (local || true) { // FIXME - testing
+  if (local) {
     // also do not bother with collision checking if we are not resizing
     if (resizing && hitObstacleResizing()) {
       // copy the old information

@@ -4367,7 +4367,8 @@ void			drawFrame(const float dt)
     if (myTank) {
       const ViewFrustum& vf = sceneRenderer->getViewFrustum();
       // using NearPlane is only really valid for perpendicular entrances
-      if (world->inBuilding(vf.getEye(), NearPlane, 0.0f) != NULL) {
+      const float np = NearPlane;
+      if (world->hitBuilding(vf.getEye(), 0.0f, np, np, 0.0f) != NULL) {
         insideDim = true;
       }
     }

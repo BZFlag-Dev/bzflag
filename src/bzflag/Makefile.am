@@ -135,9 +135,11 @@ bzflag_SOURCES =			\
 	StartupInfo.h			\
 	TargetingUtils.cxx		\
 	TargetingUtils.h		\
+	TrackMarks.cxx			\
+	TrackMarks.h			\
 	Weapon.h			\
 	WeatherRenderer.h		\
-	WeatherRenderer.cxx	\
+	WeatherRenderer.cxx		\
 	World.cxx			\
 	World.h				\
 	WorldBuilder.cxx		\

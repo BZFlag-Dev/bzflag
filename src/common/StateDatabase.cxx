@@ -179,6 +179,7 @@ const std::string StateDatabase::BZDB_THIEFTINYFACTOR   = std::string("_thiefTin
 const std::string StateDatabase::BZDB_THIEFVELAD        = std::string("_thiefVelAd");
 const std::string StateDatabase::BZDB_THIEFDROPTIME     = std::string("_thiefDropTime");
 const std::string StateDatabase::BZDB_TINYFACTOR        = std::string("_tinyFactor");
+const std::string StateDatabase::BZDB_TRACKFADE         = std::string("_trackFade");
 const std::string StateDatabase::BZDB_UPDATETHROTTLERATE= std::string("_updateThrottleRate");
 const std::string StateDatabase::BZDB_VELOCITYAD        = std::string("_velocityAd");
 const std::string StateDatabase::BZDB_WALLHEIGHT        = std::string("_wallHeight");

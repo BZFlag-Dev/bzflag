@@ -291,6 +291,7 @@ public:
   static const std::string	BZDB_THIEFADLIFE;
   static const std::string	BZDB_THIEFDROPTIME;
   static const std::string	BZDB_TINYFACTOR;
+  static const std::string	BZDB_TRACKFADE;
   static const std::string	BZDB_UPDATETHROTTLERATE;
   static const std::string	BZDB_VELOCITYAD;
   static const std::string	BZDB_WALLHEIGHT;

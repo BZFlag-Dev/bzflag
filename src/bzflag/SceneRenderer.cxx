@@ -45,6 +45,7 @@
 #include "LocalPlayer.h"
 #include "daylight.h"
 #include "World.h"
+#include "TrackMarks.h"
 
 
 #ifdef GL_ABGR_EXT
@@ -126,6 +127,10 @@ SceneRenderer::SceneRenderer() :
   lights = new OpenGLLight*[lightsSize];
   lightsCount = 0;
   dynamicLights = 0;
+  
+  // init the track manager
+  TrackMarks::init();
+  
   return;
 }
 
@@ -205,6 +210,9 @@ SceneRenderer::~SceneRenderer()
   
   // free lights list
   delete[] lights;
+
+  // kill the track manager
+  TrackMarks::kill();
 }
 
 
@@ -936,10 +944,13 @@ void SceneRenderer::doRender()
   // now draw each render node list
   OpenGLGState::renderLists();
 
+  // render the tank tracks  
+  TrackMarks::render();
+
   // render the environmental conditions
   if (background) {
     background->renderEnvironment(*this);
-  } 
+  }
 
   // finally draw all the stuff in the ordered list.  turn
   // off depth buffer updates for potentially transparent stuff.

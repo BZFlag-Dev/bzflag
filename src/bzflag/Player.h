@@ -172,6 +172,7 @@ private:
   static int            tankTexture;
   static int            tankOverideTexture;
   TeamColor		lastVisualTeam;
+  TimeKeeper	lastTrackDraw;
 
   // permanent data
   TeamColor		team;			// my team

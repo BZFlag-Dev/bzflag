@@ -132,6 +132,7 @@ const struct GlobalDBItem globalDBItems[] = {
   { "_thiefVelAd",		"1.67",				false, StateDatabase::Locked},
   { "_thiefDropTime",		"_reloadTime * 0.5",		false, StateDatabase::Locked},
   { "_tinyFactor",		"0.4",				false, StateDatabase::Locked},
+  { "_trackFade",		"5.0",				false, StateDatabase::Locked},
   { "_updateThrottleRate",	"30.0",				false, StateDatabase::Locked},
   { "_useLineRain",		"none",				false, StateDatabase::Locked},
   { "_useRainPuddles",		"none",				false, StateDatabase::Locked},
