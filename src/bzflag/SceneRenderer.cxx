@@ -658,6 +658,7 @@ void			SceneRenderer::render(
     background->setInvert(invert);
     background->renderSkyAndGround(*this, fullWindow);
   }
+  
 
   // prepare the other lights but don't turn them on yet --
   // we may need to turn them on when drawing the background.
@@ -690,6 +691,21 @@ void			SceneRenderer::render(
 
     doRender();
 
+    float deadUnder = BZDB.eval(StateDatabase::BZDB_DEADUNDER);
+    if (deadUnder > 0.0f) {
+      glEnable(GL_BLEND);
+      glColor4f (1.0f, 0.0f, 0.0f, bzfrand()*0.25f+0.5f);
+      glBegin (GL_QUADS);
+      glNormal3f (0.0f, 0.0f, 1.0f);
+      const float Dist = 1000.0f;
+      glVertex3f (-Dist, -Dist, deadUnder);
+      glVertex3f (+Dist, -Dist, deadUnder);
+      glVertex3f (+Dist, +Dist, deadUnder);
+      glVertex3f (-Dist, +Dist, deadUnder);
+      glEnd ();
+      glDisable(GL_BLEND);
+    }
+    
     if (useHiddenLineOn) {
 #if defined(GL_VERSION_1_1)
       glDisable(GL_POLYGON_OFFSET_FILL);

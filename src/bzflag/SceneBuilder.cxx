@@ -339,9 +339,9 @@ void			SceneDatabaseBuilder::addPyramid(SceneDatabase* db,
   useColorTexture = pyramidTexture >= 0;
 
   // Using boxTexHeight since it's (currently) the same and it's already available
-  float texutureFactor = BZDB.eval("pryWallTexRepeat");
+  float texutureFactor = BZDB.eval("pyrWallTexRepeat");
   if (BZDB.eval("useQuality")>=3)
-    texutureFactor = BZDB.eval("pryWallHighResTexRepeat");
+    texutureFactor = BZDB.eval("pyrWallHighResTexRepeat");
 
   while ((node = nodeGen->getNextNode(-texutureFactor * boxTexHeight,
 				-texutureFactor * boxTexHeight,
