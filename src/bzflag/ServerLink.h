@@ -81,7 +81,7 @@ class ServerLink {
 					   const krb5_data *ticket);
 #endif
     void		sendKilled(const PlayerId&, int reason,
-                                   int shotId, FlagType* flag, int phydrv);
+                                   int shotId, const FlagType* flag, int phydrv);
   // FIXME -- This is very ugly, but required to build bzadmin with gcc 2.9.5.
   //	  It should be changed to something cleaner.
 #ifndef BUILDING_BZADMIN

@@ -618,24 +618,22 @@ void			ServerLink::sendDropFlag(const float* position)
 
 void			ServerLink::sendKilled(const PlayerId& killer,
 					       int reason, int shotId,
-					       FlagType* flag, int phydrv)
+					       const FlagType* flagType,
+					       int phydrv)
 {
-  char msg[PlayerIdPLen + 2 + 2 + 2 + 4];
+  char msg[PlayerIdPLen + 2 + 2 + FlagType::packSize + 4];
   void* buf = msg;
-
+  
   buf = nboPackUByte(buf, killer);
   buf = nboPackUShort(buf, int16_t(reason));
   buf = nboPackShort(buf, int16_t(shotId));
-  buf = flag->pack(buf);
-
-  int msgLen = PlayerIdPLen + (sizeof(int16_t) * 2);
+  buf = flagType->pack(buf);
 
   if (reason == PhysicsDriverDeath) {
     buf = nboPackInt(buf, phydrv);
-    msgLen += sizeof(int);
   }
 
-  send(MsgKilled, msgLen, msg);
+  send(MsgKilled, (char*)buf - (char*)msg, msg);
 }
 
 

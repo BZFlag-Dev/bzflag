@@ -2492,7 +2492,7 @@ static void checkTeamScore(int playerIndex, int teamIndex)
 //   It is taken by killerIndex when autocalled, but only if != -1
 // killer could be InvalidPlayer or a number within [0 curMaxPlayer)
 static void playerKilled(int victimIndex, int killerIndex, int reason,
-			int16_t shotIndex, FlagType* flagType, int phydrv)
+			int16_t shotIndex, const FlagType* flagType, int phydrv)
 {
   GameKeeper::Player *killerData = NULL;
   GameKeeper::Player *victimData
@@ -2544,6 +2544,7 @@ static void playerKilled(int victimIndex, int killerIndex, int reason,
     buf = nboPackInt(buf, phydrv);
   }
   broadcastMessage(MsgKilled, (char*)buf-(char*)bufStart, bufStart);
+
 
   // zap flag player was carrying.  clients should send a drop flag
   // message before sending a killed message, so this shouldn't happen.
@@ -3471,6 +3472,7 @@ possible attack from %s\n",
 	  break;
       }
       playerKilled(t, lookupPlayer(killer), reason, shot, flagType, phydrv);
+
       break;
     }
 
