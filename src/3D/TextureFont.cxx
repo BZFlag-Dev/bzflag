@@ -263,12 +263,11 @@ float TextureFont::getStrLength(float scale, const char *str)
 
       if (charToUse == 0) {
 	if (i == 0)
-	  thisPassLen += fontMetrics[charToUse].initialDist + fontMetrics[charToUse].charWidth+fontMetrics[charToUse].whiteSpaceDist;
+	  thisPassLen += fontMetrics[charToUse].initialDist + fontMetrics[charToUse].charWidth + fontMetrics[charToUse].whiteSpaceDist;
 	else
-	  thisPassLen += fontMetrics[lastCharacter].whiteSpaceDist + fontMetrics[charToUse].whiteSpaceDist+fontMetrics[charToUse].initialDist + fontMetrics[charToUse].charWidth;
-      } else {
-	float fFontX = (float)fontMetrics[charToUse].endX - fontMetrics[charToUse].startX;
-	thisPassLen += fFontX + (float)fontMetrics[charToUse].initialDist;
+	  thisPassLen += fontMetrics[lastCharacter].whiteSpaceDist + fontMetrics[charToUse].whiteSpaceDist + fontMetrics[charToUse].initialDist + fontMetrics[charToUse].charWidth;
+      } else {	
+	thisPassLen += fontMetrics[charToUse].endX - fontMetrics[charToUse].startX + fontMetrics[charToUse].initialDist;
       }
     }
     if (thisPassLen > totalLen)
