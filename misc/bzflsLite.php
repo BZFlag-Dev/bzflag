@@ -42,9 +42,15 @@ header("Content-type: text/plain");
 #  -- LIST --
 # Same as LIST in the old bzfls
 if (!array_key_exists("action", $_GET) || $action == "LIST" ) {
-  $result = sqlite_unbuffered_query($servdb,
-				    "SELECT nameport,version,gameinfo,"
-				    . "ipaddr,title FROM servers");
+  if ($version)
+    $result = sqlite_unbuffered_query($servdb,
+				      "SELECT nameport,version,gameinfo,"
+				      . "ipaddr,title FROM servers "
+				      . "WHERE version = '$version'");
+  else
+    $result = sqlite_unbuffered_query($servdb,
+				      "SELECT nameport,version,gameinfo,"
+				      . "ipaddr,title FROM servers");
   while (TRUE) {
     $row = sqlite_fetch_array($result, SQLITE_ASSOC);
     if (!$row)

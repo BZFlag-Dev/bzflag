@@ -47,9 +47,14 @@ header("Content-type: text/plain");
 #  -- LIST --
 # Same as LIST in the old bzfls
 if (!array_key_exists("action", $_GET) || $action == "LIST" ) {
-  $result = mysql_query("SELECT nameport,version,gameinfo,ipaddr,title "
-			. " FROM servers")
-    or die ("Invalid query: ". mysql_error());
+  if ($version)
+    $result = mysql_query("SELECT nameport,version,gameinfo,ipaddr,title "
+			  . " FROM servers WHERE version = '$version'")
+      or die ("Invalid query: ". mysql_error());
+  else
+    $result = mysql_query("SELECT nameport,version,gameinfo,ipaddr,title "
+			  . " FROM servers")
+      or die ("Invalid query: ". mysql_error());
   while (TRUE) {
     $row = mysql_fetch_row($result);
     if (!$row)
