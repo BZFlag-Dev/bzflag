@@ -4786,15 +4786,19 @@ int main(int argc, char **argv)
     // kick idle players
     if (clOptions->idlekickthresh > 0) {
       for (int i=0;i<curMaxPlayers;i++) {
-	if (player[i].team != ObserverTeam && player[i].state == PlayerDead &&
-	    (tm - player[i].lastupdate >
+        if (player[i].team != ObserverTeam) {
+          int idletime = tm - player[i].lastupdate;
+          if (player[i].paused && tm - player[i].pausedSince > idletime)
+            idletime = tm - player[i].pausedSince;
+          if (idletime >
 	      (tm - player[i].lastmsg < clOptions->idlekickthresh ?
-	       3 * clOptions->idlekickthresh : clOptions->idlekickthresh))) {
-	  DEBUG1("kicking Player %s [%d] idle %d\n", player[i].callSign, i,
-		 int(tm - player[i].lastupdate));
-	  char message[MessageLen] = "You were kicked because of idling too long";
-	  sendMessage(ServerPlayer, i,  message, true);
-	  removePlayer(i, "idling");
+	       3 * clOptions->idlekickthresh : clOptions->idlekickthresh)) {
+            DEBUG1("kicking Player %s [%d] idle %d\n", player[i].callSign, i,
+                   int(tm - player[i].lastupdate));
+            char message[MessageLen] = "You were kicked because of idling too long";
+            sendMessage(ServerPlayer, i,  message, true);
+            removePlayer(i, "idling");
+          }
 	}
       }
     }
