@@ -203,6 +203,10 @@ SOURCE=..\include\Pack.h
 # End Source File
 # Begin Source File
 
+SOURCE=..\src\bzfs\PackVars.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\src\bzfs\Permissions.h
 # End Source File
 # Begin Source File
