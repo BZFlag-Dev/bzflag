@@ -153,7 +153,7 @@ bool			BoxBuilding::isCrossing(const float* p, float a,
 bool			BoxBuilding::getHitNormal(
 				const float* pos1, float azimuth1,
 				const float* pos2, float azimuth2,
-				float width, float breadth,
+				float width, float breadth, float,
 				float* normal) const
 {
   return Obstacle::getHitNormal(pos1, azimuth1, pos2, azimuth2, width, breadth,

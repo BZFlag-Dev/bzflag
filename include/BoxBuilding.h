@@ -47,6 +47,7 @@ class BoxBuilding : public Obstacle {
 				const float* pos1, float azimuth1,
 				const float* pos2, float azimuth2,
 				float halfWidth, float halfBreadth,
+				float height,
 				float* normal) const;
 
     ObstacleSceneNodeGenerator*	newSceneNodeGenerator() const;

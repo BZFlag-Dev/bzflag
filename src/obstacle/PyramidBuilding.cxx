@@ -210,11 +210,58 @@ bool			PyramidBuilding::isCrossing(const float* p, float a,
 
 bool			PyramidBuilding::getHitNormal(
 				const float* pos1, float,
-				const float*, float,
-				float, float,
+				const float* pos2, float,
+				float, float, float height,
 				float* normal) const
 {
-  getNormal(pos1, normal);
+  // pyramids height, top, bottom and flipping
+  float oHeight = getHeight();
+  float oBottom = getPosition()[2];
+  float oTop    = oBottom;
+  bool  flip    = getZFlip();
+  if (flip)
+    oHeight = -oHeight;
+  if (oHeight < 0) {
+    flip    = !flip;
+    oHeight = -oHeight;
+  }
+  if (flip)
+    oBottom += oHeight;
+  else
+    oTop    += oHeight;
+
+  float objHigh = pos1[2];
+  float objLow  = pos2[2];
+  if (objHigh < objLow) {
+    float temp = objHigh;
+    objHigh    = objLow;
+    objLow     = temp;
+  }
+
+  normal[0] = normal[1] = 0;
+  if (objHigh > oTop) {
+      normal[2] = 1;
+      return true;
+  } else if (objLow + height < oBottom) {
+    normal[2] = -1;
+    return true;
+  }    
+
+  // get normal in z = const plane
+  const float s = shrinkFactor(pos1[2], height);
+
+  getNormalRect(pos1, getPosition(), getRotation(),
+		s * getWidth(), s * getBreadth(), normal);
+
+  // now angle it due to slope of wall
+  // FIXME -- this assumes the pyramid has a square base!
+  const float h = 1.0f / hypotf(oHeight, getWidth());
+  normal[0] *= h * oHeight;
+  normal[1] *= h * oHeight;
+  normal[2]  = h * getWidth();
+
+  if (flip)
+    normal[2] = -normal[2];
   return true;
 }
 

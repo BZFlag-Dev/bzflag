@@ -303,7 +303,7 @@ void			Teleporter::getPointWRT(const Teleporter& t2,
 bool			Teleporter::getHitNormal(
 				const float* pos1, float azimuth1,
 				const float* pos2, float azimuth2,
-				float width, float breadth,
+				float width, float breadth, float,
 				float* normal) const
 {
   return Obstacle::getHitNormal(pos1, azimuth1,

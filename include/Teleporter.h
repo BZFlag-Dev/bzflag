@@ -44,6 +44,7 @@ class Teleporter : public Obstacle {
 				const float* pos1, float azimuth1,
 				const float* pos2, float azimuth2,
 				float halfWidth, float halfBreadth,
+				float height,
 				float* normal) const;
 
     float		isTeleported(const Ray&, int& face) const;

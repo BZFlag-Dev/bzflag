@@ -151,7 +151,7 @@ bool			BaseBuilding::isCrossing(const float *p, float angle,
 
 bool			BaseBuilding::getHitNormal(const float *pos1, float azimuth1,
 			const float *pos2, float azimuth2,
-			float halfWidth, float halfBreadth,
+		        float halfWidth, float halfBreadth, float,
 			float *normal) const
 {
   return Obstacle::getHitNormal(pos1, azimuth1, pos2, azimuth2, halfWidth, halfBreadth,

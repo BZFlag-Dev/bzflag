@@ -58,6 +58,7 @@ class Obstacle {
 				const float* pos1, float azimuth1,
 				const float* pos2, float azimuth2,
 				float halfWidth, float halfBreadth,
+				float height,
 				float* normal) const = 0;
 
     virtual ObstacleSceneNodeGenerator*	newSceneNodeGenerator() const = 0;

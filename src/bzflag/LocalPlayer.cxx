@@ -923,7 +923,8 @@ bool			LocalPlayer::getHitNormal(const Obstacle* o,
     width = 0.0f;
   }
 
-  return o->getHitNormal(pos1, azimuth1, pos2, azimuth2, length, width, normal);
+  return o->getHitNormal(pos1, azimuth1, pos2, azimuth2,
+			 length, width, BZDBCache::tankHeight, normal);
 }
 
 float			LocalPlayer::getReloadTime() const

@@ -96,7 +96,7 @@ bool			WallObstacle::isInside(const float* p, float angle,
 bool			WallObstacle::getHitNormal(
 				const float*, float,
 				const float*, float,
-				float, float,
+				float, float, float,
 				float* normal) const
 {
   getNormal(NULL, normal);
