@@ -29,11 +29,11 @@ class SceneNodeTransform;
 class BaseLocalPlayer : public Player {
 public:
 	BaseLocalPlayer(PlayerId,
-										const char* name, const char* email);
+						const char* name, const char* email);
 	~BaseLocalPlayer();
 
-	void				update();
-	Ray				getLastMotion() const;
+	void					update();
+	Ray						getLastMotion() const;
 #ifdef __MWERKS__
     const float				(*getLastMotionBBox() )[3] const;
 #else
@@ -45,17 +45,17 @@ public:
 							const ShotPath*& hit, float& minTime) const = 0;
 
 protected:
-	int					getSalt();
+	int						getSalt();
 	virtual void			doUpdate(float dt) = 0;
 	virtual void			doUpdateMotion(float dt) = 0;
 
 protected:
-	TimeKeeper			lastTime;
-	float				lastPosition[3];
-	float				bbox[2][3];				// bbox of last motion
+	TimeKeeper				lastTime;
+	float					lastPosition[3];
+	float					bbox[2][3];				// bbox of last motion
 
 private:
-	int					salt;
+	int						salt;
 };
 
 class LocalPlayer : public BaseLocalPlayer {
@@ -87,96 +87,96 @@ public:
 	LocalPlayer(PlayerId, const char* name, const char* email);
 	~LocalPlayer();
 
-	Location			getLocation() const;
+	Location				getLocation() const;
 	FiringStatus			getFiringStatus() const;
-	float				getReloadTime() const;
-	float				getFlagShakingTime() const;
-	int				getFlagShakingWins() const;
+	float					getReloadTime() const;
+	float					getFlagShakingTime() const;
+	int						getFlagShakingWins() const;
 	const float*			getAntidoteLocation() const;
-	ShotPath*			getShot(int index) const;
+	ShotPath*				getShot(int index) const;
 	const Player*			getTarget() const;
 	const Obstacle*			getContainingBuilding() const;
 
-	void				setTeam(TeamColor);
-	void				setDesiredSpeed(float fracOfMaxSpeed);
-	void				setDesiredAngVel(float fracOfMaxAngVel);
-	void				setPause(bool = true);
-	bool				fireShot();
-	void				explodeTank();
-	void				jump();
-	void				setTarget(const Player*);
+	void					setTeam(TeamColor);
+	void					setDesiredSpeed(float fracOfMaxSpeed);
+	void					setDesiredAngVel(float fracOfMaxAngVel);
+	void					setPause(bool = true);
+	bool					fireShot();
+	void					explodeTank();
+	void					jump();
+	void					setTarget(const Player*);
 
-	void				setNemesis(const Player*);
+	void					setNemesis(const Player*);
 	const Player*			getNemesis() const;
 
-	void				restart(const float* pos, float azimuth);
-	bool				checkHit(const Player* source, const ShotPath*& hit,
+	void					restart(const float* pos, float azimuth);
+	bool					checkHit(const Player* source, const ShotPath*& hit,
 								float& minTime) const;
 
-	void				setFlag(FlagId);
-	void				changeScore(short deltaWins, short deltaLosses);
+	void					setFlag(FlagId);
+	void					changeScore(short deltaWins, short deltaLosses);
 
-	void				addAntidoteSceneNode(SceneNodeGroup*);
+	void					addAntidoteSceneNode(SceneNodeGroup*);
 
-	bool				isKeyboardMoving() const;
-	void				setKeyboardMoving(bool status);
-	void 				setKeyboardSpeed(float speed);
-	void 				setKeyboardAngVel(float angVel);
-	float 				getKeyboardSpeed() const;
-	float 				getKeyboardAngVel() const;
-	void 				setKey(int button, bool pressed);
-	bool				getKeyPressed() const;
-	int 				getKeyButton() const;
-	void				resetKey();
-	void				setSlowKeyboard(bool slow);
-	bool				hasSlowKeyboard() const;
+	bool					isKeyboardMoving() const;
+	void					setKeyboardMoving(bool status);
+	void 					setKeyboardSpeed(float speed);
+	void 					setKeyboardAngVel(float angVel);
+	float 					getKeyboardSpeed() const;
+	float 					getKeyboardAngVel() const;
+	void 					setKey(int button, bool pressed);
+	bool					getKeyPressed() const;
+	int 					getKeyButton() const;
+	void					resetKey();
+	void					setSlowKeyboard(bool slow);
+	bool					hasSlowKeyboard() const;
 
 	static LocalPlayer*		getMyTank();
-	static void			setMyTank(LocalPlayer*);
+	static void				setMyTank(LocalPlayer*);
 
-	std::string			getRoamingStatus(RemotePlayer** players, World* world);
+	std::string				getRoamingStatus(RemotePlayer** players, World* world);
 
 	// observer roaming
-	int				roamTrackTank, roamTrackFlag;
-	Vec3				roamPos, roamDPos;
-	float				roamTheta, roamDTheta;
-	float				roamPhi, roamDPhi;
-	float				roamZoom, roamDZoom;
+	int						roamTrackTank, roamTrackFlag;
+	Vec3					roamPos, roamDPos;
+	float					roamTheta, roamDTheta;
+	float					roamPhi, roamDPhi;
+	float					roamZoom, roamDZoom;
 
 protected:
-	bool				doEndShot(int index, bool isHit, float* pos);
-	void				doUpdate(float dt);
-	void				doUpdateMotion(float dt);
-	void				doMomentum(float dt, float& speed, float& angVel);
-	void				doForces(float dt, float* velocity, float& angVel);
+	bool					doEndShot(int index, bool isHit, float* pos);
+	void					doUpdate(float dt);
+	void					doUpdateMotion(float dt);
+	void					doMomentum(float dt, float& speed, float& angVel);
+	void					doForces(float dt, float* velocity, float& angVel);
 	const Obstacle*			getHitBuilding(const float* pos, float angle,
 							bool phased, bool& expel) const;
-	bool				getHitNormal(const Obstacle* o,
-							const float* pos1, float azimuth1,
-							const float* pos2, float azimuth2,
-							float* normal) const;
+	bool					getHitNormal(const Obstacle* o,
+								const float* pos1, float azimuth1,
+								const float* pos2, float azimuth2,
+								float* normal) const;
 
 private:
-	Location			location;
+	Location				location;
 	FiringStatus			firingStatus;
-	float				flagShakingTime;
-	int				flagShakingWins;
-	float				flagAntidotePos[3];
+	float					flagShakingTime;
+	int						flagShakingWins;
+	float					flagAntidotePos[3];
 	SceneNodeTransform*		antidoteFlag;
-	float				desiredSpeed;
-	float				desiredAngVel;
-	float				lastSpeed;
+	float					desiredSpeed;
+	float					desiredAngVel;
+	float					lastSpeed;
 	const Obstacle*			insideBuilding;
-	float				crossingPlane[4];
+	float					crossingPlane[4];
 	LocalShotPath**			shots;
-	bool				anyShotActive;
+	bool					anyShotActive;
 	const Player*			target;
 	const Player*			nemesis;
 	static LocalPlayer*		mainPlayer;
-	bool				keyboardMoving;
-	float				keyboardSpeed;
-	float				keyboardAngVel;
-	int 				keyButton;
+	bool					keyboardMoving;
+	float					keyboardSpeed;
+	float					keyboardAngVel;
+	int 					keyButton;
 	bool            		keyPressed;
 	bool            		slowKeyboard;
 };

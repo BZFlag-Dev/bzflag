@@ -35,26 +35,26 @@ public:
 class ServerLink {
 public:
 	enum State {
-						Okay = 0,
-						SocketError = 1,
-						Rejected = 2,
-						BadVersion = 3,
-						Hungup = 4,				// only used by Winsock
-						CrippledVersion = 5
+					Okay = 0,
+					SocketError = 1,
+					Rejected = 2,
+					BadVersion = 3,
+					Hungup = 4,				// only used by Winsock
+					CrippledVersion = 5
 	};
 
 	ServerLink(const Address& serverAddress, int port = ServerPort);
 	~ServerLink();
 
 	State				getState() const;
-	int				getSocket() const;		// file descriptor actually
-	const PlayerId&			getId() const;
+	int					getSocket() const;		// file descriptor actually
+	const PlayerId&		getId() const;
 	const char*			getVersion() const;
 	void				enableUDPCon();
 
 	void				send(uint16_t code, uint16_t len, const void* msg);
 	// if millisecondsToBlock < 0 then block forever
-	int				read(uint16_t& code, uint16_t& len, void* msg,
+	int					read(uint16_t& code, uint16_t& len, void* msg,
 							int millisecondsToBlock = 0);
 
 	void				sendEnter(PlayerType, TeamColor,
@@ -77,7 +77,7 @@ public:
 	void* 				assembleCDPacket(uint32_t* length);
 	void 				disassemblePacket(void *msg, int *numpackets);
 
-	static ServerLink*		getServer(); // const
+	static ServerLink*	getServer(); // const
 	static void			setServer(ServerLink*);
 
 	void				sendClientVersion();

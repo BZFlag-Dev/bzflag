@@ -365,7 +365,7 @@ static const CommandListItem commandList[] = {
 	{ "unset",	&cmdUnset,	"unset <name>:  unset a variable" },
 	{ "toggle",	&cmdToggle,	"toggle <name>:  toggle truth value of a variable" },
 	{ "add",	&cmdAdd,	"add <name> <value>:  add an amount to a variable" },
-	{ "mult",	&cmdMult,	"add <name> <value>:  add an amount to a variable" },
+	{ "mult",	&cmdMult,	"mult <name> <value>:  multiply a variable by an amount" },
 	{ "bind",	&cmdBind,	"bind [<button-name> {up|down} <command> <args>...]:  bind a key/button to a command or print all bindings" },
 	{ "unbind",	&cmdUnbind,	"unbind <button-name> {up|down}:  unbind a key/button from a command" },
 	{ "menu",	&cmdMenu,	"menu {push <name>|pop}:  push a menu onto the menu stack or pop the top menu" },

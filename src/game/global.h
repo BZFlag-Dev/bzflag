@@ -27,20 +27,20 @@ const int				MessageLen = 128;		// including terminating NUL
 
 // types of things we can be
 enum PlayerType {
-					TankPlayer,
-					JAFOPlayer,
-					ComputerPlayer
+						TankPlayer,
+						JAFOPlayer,
+						ComputerPlayer
 };
 
 // team info
-const unsigned int			NumTeams = 5;
+const unsigned int		NumTeams = 5;
 enum TeamColor {
-					NoTeam = -1,
-					RogueTeam = 0,
-					RedTeam = 1,
-					GreenTeam = 2,
-					BlueTeam = 3,
-					PurpleTeam = 4
+						NoTeam = -1,
+						RogueTeam = 0,
+						RedTeam = 1,
+						GreenTeam = 2,
+						BlueTeam = 3,
+						PurpleTeam = 4
 };
 
 // epsilon and very far for ray intersections
@@ -102,23 +102,23 @@ const float				FlagAltitude =	11.0f;				// meters
 const float				FlagRadius =	2.5f;				// meters
 
 // readout stuff
-const int				MaxMessages =	20;				// msg. history length
-const int				MaxMessageLen =	80;				// length of message
-const float				FlashOnTime = 	1.0f;			// seconds
-const float				FlashOffTime =	0.2f;			// seconds
+const int				MaxMessages =	20;					// msg. history length
+const int				MaxMessageLen =	80;					// length of message
+const float				FlashOnTime = 	1.0f;				// seconds
+const float				FlashOffTime =	0.2f;				// seconds
 
 // game styles
 enum GameStyle {
-					PlainGameStyle =		0x0000,
-					TeamFlagGameStyle =		0x0001,	// capture the flag
-					SuperFlagGameStyle =		0x0002,	// superflags allowed
-					RoguesGameStyle =		0x0004,	// rogues allowed
-					JumpingGameStyle =		0x0008,	// jumping allowed
-					InertiaGameStyle =		0x0010,	// momentum for all
-					RicochetGameStyle =		0x0020,	// all shots ricochet
-					ShakableGameStyle =		0x0040,	// can drop bad flags
-					AntidoteGameStyle =		0x0080,	// anti-bad flags
-					TimeSyncGameStyle =		0x0100	// time sync'd to srvr
+						PlainGameStyle =		0x0000,
+						TeamFlagGameStyle =		0x0001,		// capture the flag
+						SuperFlagGameStyle =	0x0002,		// superflags allowed
+						RoguesGameStyle =		0x0004,		// rogues allowed
+						JumpingGameStyle =		0x0008,		// jumping allowed
+						InertiaGameStyle =		0x0010,		// momentum for all
+						RicochetGameStyle =		0x0020,		// all shots ricochet
+						ShakableGameStyle =		0x0040,		// can drop bad flags
+						AntidoteGameStyle =		0x0080,		// anti-bad flags
+						TimeSyncGameStyle =		0x0100		// time sync'd to srvr
 };
 
 // flag stuff
@@ -205,14 +205,13 @@ enum FlagId {
 						DeathFlag,				// die the instant you grab it
 						PossessionFlag,			// control another tank's motion
 						ThiefFlag,				// can steal another's flag
-
-Kamikazi,		// large destruct radius when dropped
-Suicide,		// high speed, fast shots, die at first kill
-ECM,				// disable radars of nearby tanks (not teammates)
-InterdimensionalTeleport,		// teleport (to random teleporter) when dropped
-SmartBomb,		// drop, gets to apex, large radius of destruction
-				// (including player who dropped it)
-TurboBoost,		// quick burst of acceleration
+						Kamikazi,				// large destruct radius when dropped
+						Suicide,				// high speed, fast shots, die at first kill
+						ECM,					// disable radars of nearby tanks (not teammates)
+						InterdimensionalTeleport,		// teleport (to random teleporter) when dropped
+						SmartBomb,				// drop, gets to apex, large radius of destruction
+												// (including player who dropped it)
+						TurboBoost,				// quick burst of acceleration
 
 
 						// special flags for size of team and super-flag sets

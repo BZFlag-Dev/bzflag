@@ -83,31 +83,31 @@ static LocalPlayer*			myTank = NULL;
 static BzfDisplay*			display = NULL;
 static BzfWindow*			mainWindow = NULL;
 static Team*				teams = NULL;
-static int				maxPlayers = 0;				// not including me
-static RemotePlayer**			player = NULL;
-static int				numFlags = 0;
-static bool				serverError = false;
-static bool				serverDied = false;
-static bool				fireButton = false;
-static bool				restartOnBase = false;
-static bool				firstLife = false;
-static bool				pausedByUnmap = false;
-static bool				unmapped = false;
+static int					maxPlayers = 0;				// not including me
+static RemotePlayer**		player = NULL;
+static int					numFlags = 0;
+static bool					serverError = false;
+static bool					serverDied = false;
+static bool					fireButton = false;
+static bool					restartOnBase = false;
+static bool					firstLife = false;
+static bool					pausedByUnmap = false;
+static bool					unmapped = false;
 static float				pauseCountdown = 0.0f;
-bool					gameOver = false;
+bool						gameOver = false;
 static SceneNode*			explosion = NULL;
-static ExplosionList			explosions;
+static ExplosionList		explosions;
 static float				wallClock;
 static CallbackList<PlayingCallback>	playingCallbacks;
 
-static char				messageMessage[2 * PlayerIdPLen + MessageLen];
+static char					messageMessage[2 * PlayerIdPLen + MessageLen];
 
-static void				restartPlaying();
-static void				setTarget();
-static void				handleFlagDropped(Player* tank, int reason);
-static void				handlePlayerMessage(uint16_t, uint16_t, void*);
-TeamColor  				PlayerIdToTeam(PlayerId id);
-PlayerId				TeamToPlayerId(TeamColor team);
+static void					restartPlaying();
+static void					setTarget();
+static void					handleFlagDropped(Player* tank, int reason);
+static void					handlePlayerMessage(uint16_t, uint16_t, void*);
+TeamColor  					PlayerIdToTeam(PlayerId id);
+PlayerId					TeamToPlayerId(TeamColor team);
 
 static const float			warningColor[] = { 1.0f, 0.0f, 0.0f };
 static const float			whiteColor[] = { 1.0f, 1.0f, 1.0f };
@@ -116,23 +116,23 @@ static const float			greenColor[] = { 0.0f, 1.0f, 0.0f };
 static const float			yellowColor[] = { 1.0f, 1.0f, 0.0f };
 
 enum BlowedUpReason {
-					GotKilledMsg,
-					GotShot,
-					GotRunOver,
-					GotCaptured,
-					GenocideEffect
+							GotKilledMsg,
+							GotShot,
+							GotRunOver,
+							GotCaptured,
+							GenocideEffect
 };
 static const char*			blowedUpMessage[] = {
-						NULL,
-						"Got hit by shot",
-						"Got run over by Steamroller",
-						"Team flag was captured",
-						"Teammate hit by Genocide"
+							NULL,
+							"Got hit by shot",
+							"Got run over by Steamroller",
+							"Team flag was captured",
+							"Teammate hit by Genocide"
 					};
 static bool				gotBlowedUp(BaseLocalPlayer* tank,
-								BlowedUpReason reason,
-								PlayerId killer,
-								int shotId = -1);
+							BlowedUpReason reason,
+							PlayerId killer,
+							int shotId = -1);
 
 //
 // playing callbacks
