@@ -175,6 +175,10 @@ SOURCE=..\..\src\bzfs\FlagHistory.cxx
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\src\bzfs\GameKeeper.cxx
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\src\bzfs\LagInfo.cxx
 # End Source File
 # Begin Source File
@@ -348,6 +352,10 @@ SOURCE=..\..\src\bzfs\FlagInfo.h
 # Begin Source File
 
 SOURCE=..\..\src\bzfs\FlagHistory.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\bzfs\GameKeeper.h
 # End Source File
 # Begin Source File
 
