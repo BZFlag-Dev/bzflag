@@ -10,82 +10,22 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-// system headers
-#if !defined(__APPLE__)
-#include <malloc.h>
-#endif
-#include <stdio.h>
-#include <stdlib.h>
-#include <ctype.h>
-#include <string.h>
-#include <time.h>
-
-// class headers
-#include "common.h"
-#include "bzfgl.h"
-#include "global.h"
+/* interface header */
 #include "HUDRenderer.h"
-#include "SceneRenderer.h"
-#include "MainWindow.h"
-#include "BzfDisplay.h"
-#include "BzfWindow.h"
-#include "LocalPlayer.h"
-#include "RemotePlayer.h"
-#include "World.h"
-#include "BundleMgr.h"
-#include "Bundle.h"
-#include "Flag.h"
-#include "OpenGLGState.h"
-#include "StateDatabase.h"
+
+/* system implementation headers */
+
+/* common implementation headers */
 #include "texture.h"
+#include "StateDatabase.h"
+#include "BundleMgr.h"
+#include "Team.h"
 
+/* local implementation headers */
+#include "LocalPlayer.h"
+#include "World.h"
+#include "RemotePlayer.h"
 
-//
-// FlashClock
-//	keeps track of time for something that flashes
-//
-
-FlashClock::FlashClock() : duration(0.0f), onDuration(0.0f), flashDuration(0.0f)
-{
-  // do nothing
-}
-
-FlashClock::~FlashClock()
-{
-  // do nothing
-}
-
-void			FlashClock::setClock(float _duration)
-{
-  setClock(_duration, 0.0f, 0.0f);
-}
-
-void			FlashClock::setClock(float _duration,
-						float onTime, float offTime)
-{
-  startTime = TimeKeeper::getTick();
-  duration = _duration;
-  if (onTime <= 0.0f || offTime <= 0.0f) {
-    onDuration = 0.0f;
-    flashDuration = 0.0f;
-  }
-  else {
-    onDuration = onTime;
-    flashDuration = onTime + offTime;
-  }
-}
-
-bool			FlashClock::isOn()
-{
-  if (duration == 0.0f) return false;
-  const float dt = TimeKeeper::getTick() - startTime;
-  if (duration > 0.0f && dt >= duration) {
-    duration = 0.0f;
-    return false;
-  }
-  if (flashDuration == 0.0f) return true;
-  return (fmodf(dt, flashDuration) < onDuration);
-}
 
 //
 // HUDRenderer

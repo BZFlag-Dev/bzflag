@@ -84,6 +84,7 @@ static const char copyright[] = "Copyright (c) 1993 - 2004 Tim Riker";
 #include "SilenceDefaultKey.h"
 #include "ServerCommandKey.h"
 #include "Roster.h"
+#include "FlashClock.h"
 #include "../zlib/zconf.h"
 #include "../zlib/zlib.h"
 
