@@ -1161,10 +1161,10 @@ bool			LocalPlayer::fireShot()
     firingInfo.shot.vel[2] = 0.0f;
   }
   else {
-    // comment following line if you want shots to have the same vertical
-    // velocity as the tank when fired.  keeping shots moving horizontally
-    // makes the game more playable, though.
-    // firingInfo.shot.vel[2] = 0.0f;
+    // Set _shotsKeepVerticalVelocity on the server if you want shots 
+    // to have the same vertical velocity as the tank when fired.  
+    // keeping shots moving horizontally makes the game more playable.
+    if (!BZDB.isTrue(StateDatabase::BZDB_SHOTSKEEPVERTICALV)) firingInfo.shot.vel[2] = 0.0f;
   }
 
   // make shot and put it in the table

@@ -70,6 +70,7 @@ const GlobalDBItem				globalDBItems[] = {
 	{ "_shotTailLength",		"4.0",				false, StateDatabase::Locked},
 	{ "_shotRange",			"350.0",			false, StateDatabase::Locked},
 	{ "_shotSpeed",			"100.0",			false, StateDatabase::Locked},
+	{ "_shotsKeepVerticalVelocity",	"0",				false, StateDatabase::Locked},
 	{ "_srRadiusMult",		"2.0",				false, StateDatabase::Locked},
 	{ "_syncTime",			"0",				false, StateDatabase::Locked},
 	{ "_tankExplosionSize",		"3.5 * _tankLength", 		false, StateDatabase::Locked},
