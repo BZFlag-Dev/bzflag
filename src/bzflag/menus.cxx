@@ -1673,6 +1673,7 @@ void			OptionsMenu::callback(HUDuiControl* w, void* data)
 
     case '3':
       BZDB->set("smooth", list->getIndex() ? "1" : "0");
+      sceneRenderer->notifyStyleChange();
       break;
 
     case '4':
@@ -1698,6 +1699,7 @@ void			OptionsMenu::callback(HUDuiControl* w, void* data)
 
     case '7':
       BZDB->set("shadows", list->getIndex() ? "1" : "0");
+      sceneRenderer->notifyStyleChange();
       break;
 
     case '8':
