@@ -4,6 +4,7 @@
 BZFlag 1.10.4
 -------------
 
+* bots now fully handle collision check - Tupone Alfredo
 * Server sends warning to sender of privmsg to an invalid target - Lars Luthman
 * -filterCallsigns filters email too now - Lars Luthman
 * allow multiple team flags per team thru -c 5 - Dave Brosius
