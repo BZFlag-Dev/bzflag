@@ -18,6 +18,10 @@ AC_PROG_CXX
 CXXFLAGS=
 AC_PROG_RANLIB
 
+# Just for kicks
+echo -n "checking for artificial intelligence for robots..."
+echo " warning: not found"
+
 #Checks for types
 #AM_CHECK_TYPES(socklen_t)
 AC_TRY_COMPILE([#include <unistd.h>
