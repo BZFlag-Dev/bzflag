@@ -973,20 +973,19 @@ static void		doAutoPilot(float &rotation, float &speed)
 
 		float zCross = shotUnitVec[0]*trueVec[1] - shotUnitVec[1]*trueVec[0];
 
+		if (zCross > 0.0f) //i am to the left of the shot from shooter pov
+		  rotation = rotation1;
+		else
+		  rotation = rotation2;
+		speed = 1.0f;
+/*		  
 		if (fabs(rotation1) < fabs(rotation2)) {
 		  rotation = rotation1; //i'm rotating to the left of the shot from shooter pov
-		  if (zCross > 0.0f) // am i to the left of the shot from shooter pov
-		    speed = 1.0f; // yes, so keep going
-	          else
-		    speed = -0.5f;//no so backup
 		}
 		else {
 		  rotation = rotation2; //i'm rotating to the right of the shot from shooter pov
-		  if (zCross < 0.0f) // i'm to the right of the shot from shooter pov
-		    speed = 1.0f; // yes, so keep going
-	          else
-		    speed = -0.5f;// no, so back up
 		}
+*/
 	      }
 	    }
 	  }
