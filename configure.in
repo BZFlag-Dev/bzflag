@@ -140,6 +140,7 @@ fi
 AC_LANG_RESTORE
 AC_CHECK_HEADERS( \
 	GL/glx.h \
+	SDL/SDL.h \
 	X11/Xlib.h \
 	bstring.h \
 	linux/input.h \
