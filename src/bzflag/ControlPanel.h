@@ -69,9 +69,6 @@ class ControlPanel {
     int			changedMessage;
     RadarRenderer*	radarRenderer;
 
-    int			panelWidth;
-    int			panelHeight;
-
     OpenGLTexFont	messageFont;
     float		du, dv;
     int			radarAreaPixels[4];

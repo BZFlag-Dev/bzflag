@@ -72,7 +72,6 @@ class RadarRenderer {
     int			w, h;
     float		ps;
     float		range;
-    GLfloat		background[4];
     boolean		blend;
     boolean		smooth;
     boolean		jammed;

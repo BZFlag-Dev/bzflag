@@ -95,12 +95,14 @@ void			ControlPanel::setControlColor(const GLfloat *color)
 void			ControlPanel::render(SceneRenderer& renderer)
 {
   if (!resized) resize();
+  if (!changedMessage && renderer.getPanelOpacity() == 1.0f)
+    return;
 
   int i, j;
   const int x = window.getOriginX();
   const int y = window.getOriginY();
   const int w = window.getWidth();
-  const int h = window.getHeight() / 3;
+
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
   glOrtho(0.0, (double)w, 0.0, window.getHeight(), -1.0, 1.0);
@@ -108,11 +110,9 @@ void			ControlPanel::render(SceneRenderer& renderer)
   glPushMatrix();
   glLoadIdentity();
   OpenGLGState::resetState();
-  glScissor(x, y, w, h);
 
   const float lineHeight = messageFont.getSpacing();
   const float margin = lineHeight / 4.0f;
-
 
   if (changedMessage || renderer.getPanelOpacity() < 1.0f) {
     if (changedMessage > 0) {
@@ -151,7 +151,7 @@ void			ControlPanel::render(SceneRenderer& renderer)
     //  maxScrollPages       = This number * maxLines is the total maximum
     //                         lines of messages (and scrollback)
     // The font is fixed, so getWidth() returns the same for any char.
-    const int lineCharWidth=(int)(messageAreaPixels[2] / (messageFont.getWidth("-")));
+    const int lineCharWidth = (int)(messageAreaPixels[2] / (messageFont.getWidth("-")));
   
     i = messages.getLength() - 1;
     if (messagesOffset>0) {
@@ -178,11 +178,11 @@ void			ControlPanel::render(SceneRenderer& renderer)
         // how many characters will fit?
         int n = lineLen;
         if (n > lineCharWidth)
-      n = lineCharWidth;
+          n = lineCharWidth;
   
         // only draw message if inside message area
         if (j + msgy < maxLines)
-      messageFont.draw(msg, n, fx, fy + msgy * lineHeight);
+          messageFont.draw(msg, n, fx, fy + msgy * lineHeight);
   
         // account for portion drawn (or skipped)
         msg += n;
@@ -225,6 +225,35 @@ void			ControlPanel::render(SceneRenderer& renderer)
        	(float) (y + messageAreaPixels[1] - 1 + messageAreaPixels[3] + 1));
   } glEnd();
 
+  // border for radar
+  glScissor(x + radarAreaPixels[0] - 1,
+      y + radarAreaPixels[1] - 1,
+      radarAreaPixels[2] + 2,
+      radarAreaPixels[3] + 2);
+  OpenGLGState::resetState();
+
+  // nice border
+  glColor3f(teamColor[0], teamColor[1], teamColor[2] );
+  glBegin(GL_LINE_LOOP); {
+    glVertex2f((float) (x + radarAreaPixels[0] - 1),
+	(float) (y + radarAreaPixels[1] - 1));
+    glVertex2f((float) (x + radarAreaPixels[0] - 1 + radarAreaPixels[2] + 1),
+	(float) (y + radarAreaPixels[1] - 1));
+    glVertex2f((float) (x + radarAreaPixels[0] - 1 + radarAreaPixels[2] + 1),
+	(float) (y + radarAreaPixels[1] - 1 + radarAreaPixels[3] + 1));
+    glVertex2f((float) (x + radarAreaPixels[0] - 1),
+	(float) (y + radarAreaPixels[1] - 1 + radarAreaPixels[3] + 1));
+  } glEnd();
+  glBegin(GL_POINTS); {
+    glVertex2f((float) (x + radarAreaPixels[0] - 1),
+	(float) (y + radarAreaPixels[1] - 1));
+    glVertex2f((float) (x + radarAreaPixels[0] - 1 + radarAreaPixels[2] + 1),
+	(float) (y + radarAreaPixels[1] - 1));
+    glVertex2f((float) (x + radarAreaPixels[0] - 1 + radarAreaPixels[2] + 1),
+	(float) (y + radarAreaPixels[1] - 1 + radarAreaPixels[3] + 1));
+    glVertex2f((float) (x + radarAreaPixels[0] - 1),
+       	(float) (y + radarAreaPixels[1] - 1 + radarAreaPixels[3] + 1));
+  } glEnd();
   glPopMatrix();
 }
 
@@ -232,13 +261,18 @@ void			ControlPanel::resize()
 {
   float radarSpace, radarSize;
   // get important metrics
-  float w = (float)window.getWidth();
+  const float w = (float)window.getWidth();
   const float h = (float)window.getHeight();
-  radarSize = h / 4.0f;
-  if (SceneRenderer::getInstance()->getPanelOpacity() == 1.0f)
+  const float opacity = SceneRenderer::getInstance()->getPanelOpacity();
+  radarSize = float(window.getHeight() - window.getViewHeight());
+  if (opacity == 1.0f) {
+    radarSize = float(window.getHeight() - window.getViewHeight());
     radarSpace = 0.0f;
-  else
+  }
+  else {
+    radarSize = h / 4.0f;
     radarSpace = 3.0f * w / MinY;
+  }
 
   // compute areas in pixels x,y,w,h
   // leave off 1 pixel for the border

@@ -41,9 +41,6 @@ RadarRenderer::RadarRenderer(const SceneRenderer& renderer,
 				noise(NULL)
 {
   setControlColor();
-  background[0] = 0.0f;
-  background[1] = 0.0f;
-  background[2] = 0.0f;
 
   blend = renderer.useBlending();
   smooth = True;
@@ -183,42 +180,33 @@ void			RadarRenderer::render(SceneRenderer& renderer,
 							boolean blank)
 {
   const boolean smoothingOn = smooth && renderer.useSmoothing();
-  background[3] = renderer.getPanelOpacity();
 
-  // if opaque then clear
   const int ox = renderer.getWindow().getOriginX();
   const int oy = renderer.getWindow().getOriginY();
-  glScissor(ox + x - 2, oy + y - 2, w + 4, h + 4);
+  float opacity = renderer.getPanelOpacity();
 
-  // draw nice blended background
-  if(renderer.useBlending() && (background[3] != 1.0f))
-    glEnable(GL_BLEND);
-  glColor4fv(background);
-  glRectf((float) x, (float) y, (float)(x + w), (float)(y + h));
-  if(renderer.useBlending() && (background[3] != 1.0f))
-    glDisable(GL_BLEND);
-  // draw nice border
-  OpenGLGState::resetState();
-//  glColor3f(0.25, 0.5, 0.5);
-  glColor3f(teamColor[0], teamColor[1], teamColor[2] );
-  glBegin(GL_LINE_LOOP); {
-    glVertex2f((float) x - 1, (float) y - 1);
-    glVertex2f((float) x - 1, (float) (y + h));
-    glVertex2f((float) (x + w), (float) (y + h));
-    glVertex2f((float) (x + w), (float) y - 1);
-  } glEnd();
-  // some versions miss the corners.
-  glBegin(GL_POINTS); {
-    glVertex2f((float) x - 1, (float) y - 1);
-    glVertex2f((float) x - 1, (float) (y + h));
-    glVertex2f((float) (x + w), (float) (y + h));
-    glVertex2f((float) (x + w), (float) y - 1);
-  } glEnd();
+  if (opacity < 1.0f) {
+    glScissor(ox + x - 2, oy + y - 2, w + 4, h + 4);
+  
+    // draw nice blended background
+    if(renderer.useBlending() && opacity < 1.0f)
+      glEnable(GL_BLEND);
+    glColor4f(0.0f, 0.0f, 0.0f, opacity);
+    glRectf((float) x, (float) y, (float)(x + w), (float)(y + h));
+    if(renderer.useBlending() && opacity < 1.0f)
+      glDisable(GL_BLEND);
+  }
+
+  glScissor(ox + x, oy + y, w, h);
+
+  if (opacity == 1.0f) {
+   glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+   glClear(GL_COLOR_BUFFER_BIT);
+  }
 
   if(blank)
     return;
 
-  glScissor(ox + x, oy + y, w, h);
   // prepare transforms
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
