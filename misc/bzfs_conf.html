@@ -330,7 +330,16 @@
 						}
 					}
 					d.writeln("<br/><br/>");
+
+					d.writeln("#Flag Shot Limits<br/>");
 	
+					for (var i = 0; i < flags.length; i++) {
+						var el = flags[i].toLowerCase() + "_limit_flag";
+						if (mainform.elements[el].value.length > 0) {
+							d.write("-sl " + flags[i] + " " + mainform.elements[el].value + " ");
+						}
+					}
+					d.writeln("<br/><br/>");
 	
 					d.writeln("</p></body></html>");
 	
@@ -678,6 +687,52 @@
 						</tr>
 						<tr>
 							<td align="right">(WA)</td><td><input type="checkbox" name="wa_forbid_flag" title="Wide Angle"/></td>
+						</tr>
+					</table>
+				</fieldset>
+				<fieldset>
+					<legend>Flag Shot Limits</legend>
+					<table width="100%">
+						<tr>
+							<td align="right">(V)</td><td><input type="text" name="v_limit_flag" title="High Speed"/></td>
+							<td align="right">(A)</td><td><input type="text" name="a_limit_flag" title="Quick Turn"/></td>
+							<td align="right">(OO)</td><td><input type="text" name="oo_limit_flag" title="Oscillating Overthruster"/></td>
+							<td align="right">(F)</td><td><input type="text" name="f_limit_flag" title="Rapid Shot"/></td>
+							<td align="right">(MG)</td><td><input type="text" name="mg_limit_flag" title="Machine Gun"/></td>
+							<td align="right">(GM)</td><td><input type="text" name="gm_limit_flag" title="Guided Missile"/></td>
+						</tr>
+						<tr>
+							<td align="right">(L)</td><td><input type="text" name="l_limit_flag" title="Laser"/></td>
+							<td align="right">(R)</td><td><input type="text" name="r_limit_flag" title="Richochet"/></td>
+							<td align="right">(SB)</td><td><input type="text" name="sb_limit_flag" title="Super Bullet"/></td>
+							<td align="right">(IB)</td><td><input type="text" name="ib_limit_flag" title="Invisible Bullet"/></td>
+							<td align="right">(ST)</td><td><input type="text" name="st_limit_flag" title="Stealth"/></td>
+							<td align="right">(T)</td><td><input type="text" name="t_limit_flag" title="Tiny"/></td>
+						</tr>
+						<tr>
+							<td align="right">(N)</td><td><input type="text" name="n_limit_flag" title="Narrow"/></td>
+							<td align="right">(SH)</td><td><input type="text" name="sh_limit_flag" title="Shield"/></td>
+							<td align="right">(SR)</td><td><input type="text" name="sr_limit_flag" title="Steam Roller"/></td>
+							<td align="right">(SW)</td><td><input type="text" name="sw_limit_flag" title="Shock Wave"/></td>
+							<td align="right">(PZ)</td><td><input type="text" name="pz_limit_flag" title="Phantom Zone"/></td>
+							<td align="right">(G)</td><td><input type="text" name="g_limit_flag" title="Genocide"/></td>
+						</tr>
+						<tr>
+							<td align="right">(JP)</td><td><input type="text" name="jp_limit_flag" title="Jumping"/></td>
+							<td align="right">(ID)</td><td><input type="text" name="id_limit_flag" title="Identify"/></td>
+							<td align="right">(CL)</td><td><input type="text" name="cl_limit_flag" title="Cloaking"/></td>
+						</tr>
+						<tr>
+						<tr>
+							<td align="right">(CB)</td><td><input type="text" name="cb_limit_flag" title="Colorblind"/></td>
+							<td align="right">(&lt;-)</td><td><input type="text" name="lt_limit_flag" title="Left turn only"/></td>
+							<td align="right">(-&gt;)</td><td><input type="text" name="gt_limit_flag" title="Right turn only"/></td>
+							<td align="right">(M)</td><td><input type="text" name="m_limit_flag" title="Momentum"/></td>
+							<td align="right">(B)</td><td><input type="text" name="b_limit_flag" title="Blindness"/></td>
+							<td align="right">(JM)</td><td><input type="text" name="jm_limit_flag" title="Jamming"/></td>
+						</tr>
+						<tr>
+							<td align="right">(WA)</td><td><input type="text" name="wa_limit_flag" title="Wide Angle"/></td>
 						</tr>
 					</table>
 				</fieldset>
