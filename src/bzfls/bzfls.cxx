@@ -1291,8 +1291,7 @@ static void printVersion(FILE* out)
 {
   fprintf(out, "%s\n", copyright);
 
-  fprintf(out, "BZFlag server, version %d.%d.%d-%s%s%d\n",
-		BZ_MAJOR_VERSION,BZ_MINOR_VERSION,BZ_REV,BZ_BUILD_OS,BZ_BUILD_SOURCE,BZ_BUILD_DATE);
+  fprintf(out, "BZFlag server, version %s\n",getAppVersion());
 
   fprintf(out, "  protocol %s\n", getProtocolVersion());
 
