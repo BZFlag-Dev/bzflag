@@ -450,10 +450,14 @@ WallSceneNode*		PyramidSceneNodeGenerator::getNextNode(
 	  isSquare = false;
       break;
     case 5:
-      pyramid->getCorner(0, base);
-      pyramid->getCorner(3, sCorner);
-      pyramid->getCorner(1, tCorner);
-	  isSquare = true;
+      if ((pyramid->getPosition()[2] > 0.0) || pyramid->getZFlip()) {
+        pyramid->getCorner(0, base);
+        pyramid->getCorner(3, sCorner);
+        pyramid->getCorner(1, tCorner);
+	isSquare = true;
+      }
+      else
+	return NULL;
       break;
   }
   }

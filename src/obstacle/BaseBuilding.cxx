@@ -246,9 +246,13 @@ WallSceneNode*	BaseSceneNodeGenerator::getNextNode(float uRepeats, float vRepeat
 	base->getCorner(6, tCorner);
 	break;
       case 6:
-	base->getCorner(3, bPoint);
-	base->getCorner(0, sCorner);
-	base->getCorner(7, tCorner);
+	if (base->getPosition()[2] > 0.0f) {
+	  base->getCorner(3, bPoint);
+	  base->getCorner(0, sCorner);
+	  base->getCorner(7, tCorner);
+	}
+	else
+	  return NULL;
 	break;
     }
   }
