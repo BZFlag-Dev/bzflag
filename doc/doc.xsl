@@ -53,7 +53,7 @@
 				<xsl:attribute name="width"><xsl:value-of select="$chapWidth"/>%</xsl:attribute>
 				<xsl:variable name="divid"><xsl:value-of select="@id"/></xsl:variable>
 				<xsl:element name="a">
-					<xsl:attribute name="href">&apos;javascript:switchDiv(&quot;<xsl:value-of select="$divid"/>&quot;)&apos;</xsl:attribute>
+					<xsl:attribute name="href">javascript:switchDiv(&quot;<xsl:value-of select="$divid"/>&quot;)</xsl:attribute>
 					<xsl:value-of select="title"/>
 				</xsl:element>
 			</xsl:element>
@@ -65,13 +65,15 @@
 <xsl:template name="chapters">
 	<table border = "0" width="100%">
 		<xsl:for-each select="chapter">
-			<div id="@id" style="display:none;">
+			<xsl:element name="div">
+				<xsl:attribute name="id"><xsl:value-of select="@id"/></xsl:attribute>
+				<xsl:attribute name="style">display:none;</xsl:attribute>
 				<xsl:for-each select="para">
 					<tr><td>
 						<xsl:value-of select="."/>
 					</td></tr>
 				</xsl:for-each>
-			</div>
+			</xsl:element>
 		</xsl:for-each>
 	</table>
 	<script language="JavaScript">
