@@ -794,7 +794,7 @@ SOURCE=..\..\src\bzflag\HUDuiList.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\src\bzflag\HUDuiTextureLabel.hx
+SOURCE=..\..\src\bzflag\HUDuiTextureLabel.h
 # End Source File
 # Begin Source File
 
