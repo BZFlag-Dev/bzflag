@@ -160,7 +160,8 @@ std::string nameFromPerm(AccessPerm perm)
     case setPassword: return "setPassword";
     case setPerms: return "setPerms";
     case setAll: return "setAll";
-    default: return NULL;
+    case setVar: return "setVar";
+  default: return NULL;
   };
 }
 
@@ -186,6 +187,7 @@ AccessPerm permFromName(const std::string &name)
   if (name == "REMOVEPERMS") return removePerms;
   if (name == "SETPASSWORD") return setPassword;
   if (name == "SETPERMS") return setPerms;
+  if (name == "SETVAR") return setVar;
   if (name == "SETALL") return setAll;
   return lastPerm;
 }
