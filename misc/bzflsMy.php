@@ -33,9 +33,9 @@ $link = mysql_connect($dbhost, $dbuname, $dbpass)
 if (!mysql_select_db($dbname)) {
   mysql_create_db($dbname) or die("Could not create db: " . mysql_error());
 }
-$result = mysql_query("SELECT * FROM servers");
 
 # If the servers table does not exist, create it.
+$result = mysql_query("SELECT 1 FROM servers");
 if (!$result) {
   mysql_query("CREATE TABLE servers " .
 	      "(nameport varchar(60) NOT NULL, " .
@@ -48,6 +48,7 @@ if (!$result) {
 	      " PRIMARY KEY (nameport))")
     or die ("Could not create table: " . mysql_error());
 }
+
 # remove all inactive servers from the table
 $timeout = 1800;    # timeout in seconds
 $staletime = time() - $timeout;
