@@ -93,6 +93,7 @@
 				7B7749F705C5BE910018EA21,
 				7B774A3905C5BFAA0018EA21,
 				7B774AD005C5C17D0018EA21,
+				7BBD620605D9C7F60063FD3C,
 			);
 			isa = PBXGroup;
 			name = Products;
@@ -134,6 +135,7 @@
 				7B7749C405C5BDC30018EA21,
 				7B7749F605C5BE910018EA21,
 				7B774A3805C5BFAA0018EA21,
+				7BBD620505D9C7F60063FD3C,
 			);
 		};
 		20286C29FDCF999611CA2CEA = {
@@ -1201,9 +1203,9 @@
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.c;
 			name = bzfrelay.c;
-			path = /Users/dbw/Source/bzflag/bzflag/src/bzfrelay/bzfrelay.c;
-			refType = 0;
-			sourceTree = "<absolute>";
+			path = ../../bzfrelay/bzfrelay.c;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		7B7747F005C5AC270018EA21 = {
 			fileRef = 7B7747EF05C5AC270018EA21;
@@ -1302,198 +1304,198 @@
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.cpp.cpp;
 			name = Bundle.cxx;
-			path = /Users/dbw/Source/bzflag/bzflag/src/common/Bundle.cxx;
-			refType = 0;
-			sourceTree = "<absolute>";
+			path = ../../common/Bundle.cxx;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		7B7747FA05C5ACF70018EA21 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.cpp.cpp;
 			name = BundleMgr.cxx;
-			path = /Users/dbw/Source/bzflag/bzflag/src/common/BundleMgr.cxx;
-			refType = 0;
-			sourceTree = "<absolute>";
+			path = ../../common/BundleMgr.cxx;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		7B7747FB05C5ACF70018EA21 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.cpp.cpp;
 			name = BZDBCache.cxx;
-			path = /Users/dbw/Source/bzflag/bzflag/src/common/BZDBCache.cxx;
-			refType = 0;
-			sourceTree = "<absolute>";
+			path = ../../common/BZDBCache.cxx;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		7B7747FC05C5ACF70018EA21 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.cpp.cpp;
 			name = bzfio.cxx;
-			path = /Users/dbw/Source/bzflag/bzflag/src/common/bzfio.cxx;
-			refType = 0;
-			sourceTree = "<absolute>";
+			path = ../../common/bzfio.cxx;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		7B7747FD05C5ACF70018EA21 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.c;
 			name = bzsignal.c;
-			path = /Users/dbw/Source/bzflag/bzflag/src/common/bzsignal.c;
-			refType = 0;
-			sourceTree = "<absolute>";
+			path = ../../common/bzsignal.c;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		7B7747FE05C5ACF70018EA21 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.cpp.cpp;
 			name = CommandManager.cxx;
-			path = /Users/dbw/Source/bzflag/bzflag/src/common/CommandManager.cxx;
-			refType = 0;
-			sourceTree = "<absolute>";
+			path = ../../common/CommandManager.cxx;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		7B7747FF05C5ACF70018EA21 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.cpp.cpp;
 			name = ConfigFileManager.cxx;
-			path = /Users/dbw/Source/bzflag/bzflag/src/common/ConfigFileManager.cxx;
-			refType = 0;
-			sourceTree = "<absolute>";
+			path = ../../common/ConfigFileManager.cxx;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		7B77480005C5ACF70018EA21 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.cpp.cpp;
 			name = ErrorHandler.cxx;
-			path = /Users/dbw/Source/bzflag/bzflag/src/common/ErrorHandler.cxx;
-			refType = 0;
-			sourceTree = "<absolute>";
+			path = ../../common/ErrorHandler.cxx;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		7B77480105C5ACF70018EA21 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.cpp.cpp;
 			name = FileManager.cxx;
-			path = /Users/dbw/Source/bzflag/bzflag/src/common/FileManager.cxx;
-			refType = 0;
-			sourceTree = "<absolute>";
+			path = ../../common/FileManager.cxx;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		7B77480205C5ACF70018EA21 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.cpp.cpp;
 			name = Flag.cxx;
-			path = /Users/dbw/Source/bzflag/bzflag/src/common/Flag.cxx;
-			refType = 0;
-			sourceTree = "<absolute>";
+			path = ../../common/Flag.cxx;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		7B77480305C5ACF70018EA21 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.cpp.cpp;
 			name = global.cxx;
-			path = /Users/dbw/Source/bzflag/bzflag/src/common/global.cxx;
-			refType = 0;
-			sourceTree = "<absolute>";
+			path = ../../common/global.cxx;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		7B77480405C5ACF70018EA21 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.cpp.cpp;
 			name = KeyManager.cxx;
-			path = /Users/dbw/Source/bzflag/bzflag/src/common/KeyManager.cxx;
-			refType = 0;
-			sourceTree = "<absolute>";
+			path = ../../common/KeyManager.cxx;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		7B77480505C5ACF70018EA21 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.cpp.cpp;
 			name = md5.cxx;
-			path = /Users/dbw/Source/bzflag/bzflag/src/common/md5.cxx;
-			refType = 0;
-			sourceTree = "<absolute>";
+			path = ../../common/md5.cxx;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		7B77480605C5ACF70018EA21 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.cpp.cpp;
 			name = OSFile.cxx;
-			path = /Users/dbw/Source/bzflag/bzflag/src/common/OSFile.cxx;
-			refType = 0;
-			sourceTree = "<absolute>";
+			path = ../../common/OSFile.cxx;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		7B77480705C5ACF70018EA21 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.cpp.cpp;
 			name = PlayerState.cxx;
-			path = /Users/dbw/Source/bzflag/bzflag/src/common/PlayerState.cxx;
-			refType = 0;
-			sourceTree = "<absolute>";
+			path = ../../common/PlayerState.cxx;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		7B77480805C5ACF70018EA21 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.cpp.cpp;
 			name = ShotUpdate.cxx;
-			path = /Users/dbw/Source/bzflag/bzflag/src/common/ShotUpdate.cxx;
-			refType = 0;
-			sourceTree = "<absolute>";
+			path = ../../common/ShotUpdate.cxx;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		7B77480905C5ACF70018EA21 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.cpp.cpp;
 			name = StateDatabase.cxx;
-			path = /Users/dbw/Source/bzflag/bzflag/src/common/StateDatabase.cxx;
-			refType = 0;
-			sourceTree = "<absolute>";
+			path = ../../common/StateDatabase.cxx;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		7B77480A05C5ACF70018EA21 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.cpp.cpp;
 			name = Team.cxx;
-			path = /Users/dbw/Source/bzflag/bzflag/src/common/Team.cxx;
-			refType = 0;
-			sourceTree = "<absolute>";
+			path = ../../common/Team.cxx;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		7B77480B05C5ACF70018EA21 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.cpp.cpp;
 			name = TimeBomb.cxx;
-			path = /Users/dbw/Source/bzflag/bzflag/src/common/TimeBomb.cxx;
-			refType = 0;
-			sourceTree = "<absolute>";
+			path = ../../common/TimeBomb.cxx;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		7B77480C05C5ACF70018EA21 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.cpp.cpp;
 			name = TimeKeeper.cxx;
-			path = /Users/dbw/Source/bzflag/bzflag/src/common/TimeKeeper.cxx;
-			refType = 0;
-			sourceTree = "<absolute>";
+			path = ../../common/TimeKeeper.cxx;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		7B77480D05C5ACF70018EA21 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.cpp.cpp;
 			name = VotingBooth.cxx;
-			path = /Users/dbw/Source/bzflag/bzflag/src/common/VotingBooth.cxx;
-			refType = 0;
-			sourceTree = "<absolute>";
+			path = ../../common/VotingBooth.cxx;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		7B77480E05C5ACF70018EA21 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.cpp.cpp;
 			name = WordFilter.cxx;
-			path = /Users/dbw/Source/bzflag/bzflag/src/common/WordFilter.cxx;
-			refType = 0;
-			sourceTree = "<absolute>";
+			path = ../../common/WordFilter.cxx;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		7B77480F05C5ACF70018EA21 = {
 			fileRef = 7B7747F905C5ACF70018EA21;
@@ -1834,6 +1836,7 @@
 			dependencies = (
 				7B77492305C5B14B0018EA21,
 				7B77492505C5B14B0018EA21,
+				7BBD620C05D9C9E80063FD3C,
 			);
 			isa = PBXNativeTarget;
 			name = bzfs;
@@ -1889,8 +1892,6 @@
 				7B77486605C5AFE50018EA21,
 				7B77486705C5AFE50018EA21,
 				7B77486805C5AFE50018EA21,
-				7B77486905C5AFE50018EA21,
-				7B77486A05C5AFE50018EA21,
 				7B77486B05C5AFE50018EA21,
 				7B77486C05C5AFE50018EA21,
 				7B77486D05C5AFE50018EA21,
@@ -2198,7 +2199,7 @@
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.cpp.cpp;
 			name = VotingArbiter.cxx;
-			path = ../../bzfs/VotingArbiter.cxx;
+			path = ../../game/VotingArbiter.cxx;
 			refType = 2;
 			sourceTree = SOURCE_ROOT;
 		};
@@ -2207,7 +2208,7 @@
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.h;
 			name = VotingArbiter.h;
-			path = ../../bzfs/VotingArbiter.h;
+			path = ../../../include/VotingArbiter.h;
 			refType = 2;
 			sourceTree = SOURCE_ROOT;
 		};
@@ -3518,6 +3519,7 @@
 				7B7749E705C5BE380018EA21,
 				7B7749E905C5BE380018EA21,
 				7B7749F105C5BE5C0018EA21,
+				7BBD61FE05D9C3030063FD3C,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -4568,49 +4570,104 @@
 			children = (
 				7B774A5405C5C0220018EA21,
 				7B774A5505C5C0220018EA21,
+				7BBA6D5105D9D2C9008D1AA8,
+				7BBA6D5205D9D2C9008D1AA8,
 				7B774A5605C5C0220018EA21,
 				7B774A5705C5C0220018EA21,
+				7BBA6D5905D9D349008D1AA8,
+				7BBA6D5A05D9D349008D1AA8,
 				7B774A5805C5C0220018EA21,
 				7B774A5905C5C0220018EA21,
 				7B774A5A05C5C0220018EA21,
 				7B774A5B05C5C0220018EA21,
+				7BBA6D5B05D9D349008D1AA8,
+				7BBA6D5C05D9D349008D1AA8,
 				7B774A5C05C5C0220018EA21,
 				7B774A5D05C5C0220018EA21,
 				7B774A5E05C5C0220018EA21,
 				7B774A5F05C5C0220018EA21,
+				7BBA6D5D05D9D349008D1AA8,
+				7BBA6D5E05D9D349008D1AA8,
+				7BBA6D5F05D9D349008D1AA8,
+				7BBA6D6005D9D349008D1AA8,
+				7BBA6D6105D9D349008D1AA8,
+				7BBA6D6205D9D349008D1AA8,
+				7BBA6D6305D9D349008D1AA8,
+				7BBA6D6405D9D349008D1AA8,
 				7B774A6005C5C0220018EA21,
 				7B774A6105C5C0220018EA21,
+				7BBA6D7505D9D410008D1AA8,
+				7BBA6D7605D9D410008D1AA8,
 				7B774A6205C5C0220018EA21,
 				7B774A6305C5C0220018EA21,
 				7B774A6405C5C0220018EA21,
 				7B774A6505C5C0220018EA21,
+				7BBA6D7705D9D410008D1AA8,
+				7BBA6D7805D9D410008D1AA8,
+				7BBA6D7905D9D410008D1AA8,
+				7BBA6D7A05D9D410008D1AA8,
+				7BBA6D7B05D9D410008D1AA8,
+				7BBA6D7C05D9D410008D1AA8,
+				7BBA6D7D05D9D410008D1AA8,
 				7B774A6605C5C0220018EA21,
 				7B774A6705C5C0220018EA21,
+				7BBA6D7E05D9D410008D1AA8,
+				7BBA6D7F05D9D410008D1AA8,
 				7B774A6805C5C0220018EA21,
 				7B774A6905C5C0220018EA21,
-				7B774A6A05C5C0220018EA21,
-				7B774A6B05C5C0220018EA21,
+				7BBA6D8F05D9D4F7008D1AA8,
+				7BBA6D9005D9D4F7008D1AA8,
+				7BBA6D9105D9D4F7008D1AA8,
+				7BBA6D9205D9D4F7008D1AA8,
 				7B774A6C05C5C0220018EA21,
 				7B774A6D05C5C0220018EA21,
 				7B774A6E05C5C0220018EA21,
 				7B774A6F05C5C0220018EA21,
+				7BBA6D9305D9D4F7008D1AA8,
+				7BBA6D9405D9D4F7008D1AA8,
+				7BBA6D9505D9D4F7008D1AA8,
+				7BBA6D9605D9D4F7008D1AA8,
 				7B774A7005C5C0220018EA21,
 				7B774A7105C5C0220018EA21,
 				7B774A7205C5C0220018EA21,
 				7B774A7305C5C0220018EA21,
+				7BBA6D9705D9D4F7008D1AA8,
+				7BBA6D9805D9D4F7008D1AA8,
 				7B774A7405C5C0220018EA21,
 				7B774A7505C5C0220018EA21,
 				7B774A7605C5C0220018EA21,
 				7B774A7705C5C0220018EA21,
+				7BBA6D9905D9D4F7008D1AA8,
+				7BBA6D9A05D9D4F7008D1AA8,
+				7BBA6D9B05D9D4F7008D1AA8,
+				7BBA6D9C05D9D4F7008D1AA8,
 				7B774A7805C5C0220018EA21,
 				7B774A7905C5C0220018EA21,
 				7B774A7A05C5C0220018EA21,
+				7BBA6D9D05D9D4F7008D1AA8,
+				7BBA6D9E05D9D4F7008D1AA8,
+				7BBA6D9F05D9D4F7008D1AA8,
+				7BBA6DA005D9D4F7008D1AA8,
+				7BBA6DA105D9D4F7008D1AA8,
+				7BBA6DA205D9D4F7008D1AA8,
 				7B774A7B05C5C0220018EA21,
 				7B774A7C05C5C0220018EA21,
 				7B774A7D05C5C0220018EA21,
 				7B774A7E05C5C0220018EA21,
+				7BBA6DA305D9D4F7008D1AA8,
+				7BBA6DA405D9D4F7008D1AA8,
+				7BBA6DA505D9D4F7008D1AA8,
+				7BBA6DA605D9D4F7008D1AA8,
+				7BBA6DA705D9D4F7008D1AA8,
+				7BBA6DA805D9D4F7008D1AA8,
 				7B774A7F05C5C0220018EA21,
 				7B774A8005C5C0220018EA21,
+				7BBA6DC905D9D5C7008D1AA8,
+				7BBA6DCA05D9D5C7008D1AA8,
+				7BBA6DCB05D9D5C7008D1AA8,
+				7BBA6DCC05D9D5C7008D1AA8,
+				7BBA6DCD05D9D5C7008D1AA8,
+				7BBA6DCE05D9D5C7008D1AA8,
 				7B774A8105C5C0220018EA21,
 				7B774A8205C5C0220018EA21,
 				7B774A8305C5C0220018EA21,
@@ -4824,24 +4881,6 @@
 			lastKnownFileType = sourcecode.c.h;
 			name = MainWindow.h;
 			path = ../../bzflag/MainWindow.h;
-			refType = 2;
-			sourceTree = SOURCE_ROOT;
-		};
-		7B774A6A05C5C0220018EA21 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.cpp.cpp;
-			name = menus.cxx;
-			path = ../../bzflag/menus.cxx;
-			refType = 2;
-			sourceTree = SOURCE_ROOT;
-		};
-		7B774A6B05C5C0220018EA21 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.c.h;
-			name = menus.h;
-			path = ../../bzflag/menus.h;
 			refType = 2;
 			sourceTree = SOURCE_ROOT;
 		};
@@ -5155,7 +5194,6 @@
 				7B774AE705C5C1D60018EA21,
 				7B774AE905C5C1D60018EA21,
 				7B774AEB05C5C1D60018EA21,
-				7B774AED05C5C1D60018EA21,
 				7B774AEF05C5C1D60018EA21,
 				7B774AF105C5C1D60018EA21,
 				7B774AF305C5C1D60018EA21,
@@ -5172,6 +5210,35 @@
 				7B774B0905C5C1D60018EA21,
 				7B774B0C05C5C1D60018EA21,
 				7B774B0E05C5C1D60018EA21,
+				7BBA6D5405D9D2C9008D1AA8,
+				7BBA6D6605D9D349008D1AA8,
+				7BBA6D6805D9D349008D1AA8,
+				7BBA6D6A05D9D349008D1AA8,
+				7BBA6D6C05D9D349008D1AA8,
+				7BBA6D6E05D9D349008D1AA8,
+				7BBA6D7005D9D349008D1AA8,
+				7BBA6D8105D9D410008D1AA8,
+				7BBA6D8305D9D410008D1AA8,
+				7BBA6D8505D9D410008D1AA8,
+				7BBA6D8705D9D410008D1AA8,
+				7BBA6D8805D9D410008D1AA8,
+				7BBA6D8A05D9D410008D1AA8,
+				7BBA6DAA05D9D4F7008D1AA8,
+				7BBA6DAC05D9D4F7008D1AA8,
+				7BBA6DAE05D9D4F7008D1AA8,
+				7BBA6DB005D9D4F7008D1AA8,
+				7BBA6DB205D9D4F7008D1AA8,
+				7BBA6DB405D9D4F7008D1AA8,
+				7BBA6DB605D9D4F7008D1AA8,
+				7BBA6DB805D9D4F7008D1AA8,
+				7BBA6DBA05D9D4F7008D1AA8,
+				7BBA6DBC05D9D4F7008D1AA8,
+				7BBA6DBE05D9D4F7008D1AA8,
+				7BBA6DC005D9D4F7008D1AA8,
+				7BBA6DC205D9D4F7008D1AA8,
+				7BBA6DD005D9D5C7008D1AA8,
+				7BBA6DD205D9D5C7008D1AA8,
+				7BBA6DD405D9D5C7008D1AA8,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -5192,7 +5259,6 @@
 				7B774AE605C5C1D60018EA21,
 				7B774AE805C5C1D60018EA21,
 				7B774AEA05C5C1D60018EA21,
-				7B774AEC05C5C1D60018EA21,
 				7B774AEE05C5C1D60018EA21,
 				7B774AF005C5C1D60018EA21,
 				7B774AF205C5C1D60018EA21,
@@ -5210,6 +5276,34 @@
 				7B774B0A05C5C1D60018EA21,
 				7B774B0B05C5C1D60018EA21,
 				7B774B0D05C5C1D60018EA21,
+				7BBA6D5305D9D2C9008D1AA8,
+				7BBA6D6505D9D349008D1AA8,
+				7BBA6D6705D9D349008D1AA8,
+				7BBA6D6905D9D349008D1AA8,
+				7BBA6D6B05D9D349008D1AA8,
+				7BBA6D6D05D9D349008D1AA8,
+				7BBA6D6F05D9D349008D1AA8,
+				7BBA6D8005D9D410008D1AA8,
+				7BBA6D8205D9D410008D1AA8,
+				7BBA6D8405D9D410008D1AA8,
+				7BBA6D8605D9D410008D1AA8,
+				7BBA6D8905D9D410008D1AA8,
+				7BBA6DA905D9D4F7008D1AA8,
+				7BBA6DAB05D9D4F7008D1AA8,
+				7BBA6DAD05D9D4F7008D1AA8,
+				7BBA6DAF05D9D4F7008D1AA8,
+				7BBA6DB105D9D4F7008D1AA8,
+				7BBA6DB305D9D4F7008D1AA8,
+				7BBA6DB505D9D4F7008D1AA8,
+				7BBA6DB705D9D4F7008D1AA8,
+				7BBA6DB905D9D4F7008D1AA8,
+				7BBA6DBB05D9D4F7008D1AA8,
+				7BBA6DBD05D9D4F7008D1AA8,
+				7BBA6DBF05D9D4F7008D1AA8,
+				7BBA6DC105D9D4F7008D1AA8,
+				7BBA6DCF05D9D5C7008D1AA8,
+				7BBA6DD105D9D5C7008D1AA8,
+				7BBA6DD305D9D5C7008D1AA8,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -5326,10 +5420,9 @@
 		7B774AD205C5C17E0018EA21 = {
 			isa = PBXFileReference;
 			lastKnownFileType = text.plist.xml;
-			name = "BZFlag-Info.plist";
-			path = "/Users/dbw/Source/bzflag/bzflag/src/platform/MacOSX/BZFlag-Info.plist";
-			refType = 0;
-			sourceTree = "<absolute>";
+			path = "BZFlag-Info.plist";
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		7B774AD605C5C1D60018EA21 = {
 			fileRef = 7B774A5405C5C0220018EA21;
@@ -5459,18 +5552,6 @@
 		};
 		7B774AEB05C5C1D60018EA21 = {
 			fileRef = 7B774A6905C5C0220018EA21;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		7B774AEC05C5C1D60018EA21 = {
-			fileRef = 7B774A6A05C5C0220018EA21;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		7B774AED05C5C1D60018EA21 = {
-			fileRef = 7B774A6B05C5C0220018EA21;
 			isa = PBXBuildFile;
 			settings = {
 			};
@@ -6420,9 +6501,10 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = text;
-			path = "ISO-639-2_values_8bits.txt";
-			refType = 4;
-			sourceTree = "<group>";
+			name = "ISO-639-2_values_8bits.txt";
+			path = "../../../data/l10n/ISO-639-2_values_8bits.txt";
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		7B774FB505C5CA380018EA21 = {
 			isa = PBXFileReference;
@@ -6920,9 +7002,9 @@
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.cpp.cpp;
 			name = TextureManager.cxx;
-			path = /Users/dbw/Source/bzflag/bzflag/src/3D/TextureManager.cxx;
-			refType = 0;
-			sourceTree = "<absolute>";
+			path = ../../3D/TextureManager.cxx;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		7B9DCC7205C5A56A0063B49D = {
 			fileRef = 7B9DCC7105C5A56A0063B49D;
@@ -6932,6 +7014,7 @@
 		};
 		7B9DCC7305C5A57B0063B49D = {
 			children = (
+				7BBD620705D9C80E0063FD3C,
 				7B774A5105C5BFFB0018EA21,
 				7B774A3A05C5BFB40018EA21,
 				7B7749F805C5BE9C0018EA21,
@@ -6966,9 +7049,9 @@
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.h;
 			name = TextureManager.h;
-			path = /Users/dbw/Source/bzflag/bzflag/include/TextureManager.h;
-			refType = 0;
-			sourceTree = "<absolute>";
+			path = ../../../include/TextureManager.h;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		7B9DCC7805C5A5EC0063B49D = {
 			fileRef = 7B9DCC7705C5A5EC0063B49D;
@@ -6978,6 +7061,8 @@
 		};
 		7B9DCC7905C5A5F20063B49D = {
 			children = (
+				7B77486A05C5AFE50018EA21,
+				7BBD61FD05D9C3030063FD3C,
 				7B77475D05C5A87B0018EA21,
 				7B77475E05C5A87B0018EA21,
 				7B77475F05C5A87B0018EA21,
@@ -7126,6 +7211,960 @@
 		};
 		7BAD11EB05C5F59E00A62E43 = {
 			fileRef = 20286C33FDCF999611CA2CEA;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		7BBA6D5105D9D2C9008D1AA8 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			name = AudioMenu.cxx;
+			path = ../../bzflag/AudioMenu.cxx;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		7BBA6D5205D9D2C9008D1AA8 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = AudioMenu.h;
+			path = ../../bzflag/AudioMenu.h;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		7BBA6D5305D9D2C9008D1AA8 = {
+			fileRef = 7BBA6D5105D9D2C9008D1AA8;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		7BBA6D5405D9D2C9008D1AA8 = {
+			fileRef = 7BBA6D5205D9D2C9008D1AA8;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		7BBA6D5905D9D349008D1AA8 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			name = BaseLocalPlayer.cxx;
+			path = ../../bzflag/BaseLocalPlayer.cxx;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		7BBA6D5A05D9D349008D1AA8 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = BaseLocalPlayer.h;
+			path = ../../bzflag/BaseLocalPlayer.h;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		7BBA6D5B05D9D349008D1AA8 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			name = ComposeDefaultKey.cxx;
+			path = ../../bzflag/ComposeDefaultKey.cxx;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		7BBA6D5C05D9D349008D1AA8 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = ComposeDefaultKey.h;
+			path = ../../bzflag/ComposeDefaultKey.h;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		7BBA6D5D05D9D349008D1AA8 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			name = FormatMenu.cxx;
+			path = ../../bzflag/FormatMenu.cxx;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		7BBA6D5E05D9D349008D1AA8 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = FormatMenu.h;
+			path = ../../bzflag/FormatMenu.h;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		7BBA6D5F05D9D349008D1AA8 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			name = GuidedMissleStrategy.cxx;
+			path = ../../bzflag/GuidedMissleStrategy.cxx;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		7BBA6D6005D9D349008D1AA8 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = GuidedMissleStrategy.h;
+			path = ../../bzflag/GuidedMissleStrategy.h;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		7BBA6D6105D9D349008D1AA8 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			name = GUIOptionsMenu.cxx;
+			path = ../../bzflag/GUIOptionsMenu.cxx;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		7BBA6D6205D9D349008D1AA8 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = GUIOptionsMenu.h;
+			path = ../../bzflag/GUIOptionsMenu.h;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		7BBA6D6305D9D349008D1AA8 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			name = HelpMenu.cxx;
+			path = ../../bzflag/HelpMenu.cxx;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		7BBA6D6405D9D349008D1AA8 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = HelpMenu.h;
+			path = ../../bzflag/HelpMenu.h;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		7BBA6D6505D9D349008D1AA8 = {
+			fileRef = 7BBA6D5905D9D349008D1AA8;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		7BBA6D6605D9D349008D1AA8 = {
+			fileRef = 7BBA6D5A05D9D349008D1AA8;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		7BBA6D6705D9D349008D1AA8 = {
+			fileRef = 7BBA6D5B05D9D349008D1AA8;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		7BBA6D6805D9D349008D1AA8 = {
+			fileRef = 7BBA6D5C05D9D349008D1AA8;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		7BBA6D6905D9D349008D1AA8 = {
+			fileRef = 7BBA6D5D05D9D349008D1AA8;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		7BBA6D6A05D9D349008D1AA8 = {
+			fileRef = 7BBA6D5E05D9D349008D1AA8;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		7BBA6D6B05D9D349008D1AA8 = {
+			fileRef = 7BBA6D5F05D9D349008D1AA8;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		7BBA6D6C05D9D349008D1AA8 = {
+			fileRef = 7BBA6D6005D9D349008D1AA8;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		7BBA6D6D05D9D349008D1AA8 = {
+			fileRef = 7BBA6D6105D9D349008D1AA8;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		7BBA6D6E05D9D349008D1AA8 = {
+			fileRef = 7BBA6D6205D9D349008D1AA8;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		7BBA6D6F05D9D349008D1AA8 = {
+			fileRef = 7BBA6D6305D9D349008D1AA8;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		7BBA6D7005D9D349008D1AA8 = {
+			fileRef = 7BBA6D6405D9D349008D1AA8;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		7BBA6D7505D9D410008D1AA8 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			name = HUDDialogStack.cxx;
+			path = ../../bzflag/HUDDialogStack.cxx;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		7BBA6D7605D9D410008D1AA8 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = HUDDialogStack.h;
+			path = ../../bzflag/HUDDialogStack.h;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		7BBA6D7705D9D410008D1AA8 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			name = InputMenu.cxx;
+			path = ../../bzflag/InputMenu.cxx;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		7BBA6D7805D9D410008D1AA8 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = InputMenu.h;
+			path = ../../bzflag/InputMenu.h;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		7BBA6D7905D9D410008D1AA8 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			name = JoinMenu.cxx;
+			path = ../../bzflag/JoinMenu.cxx;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		7BBA6D7A05D9D410008D1AA8 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = JoinMenu.h;
+			path = ../../bzflag/JoinMenu.h;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		7BBA6D7B05D9D410008D1AA8 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			name = KeyboardMapMenu.cxx;
+			path = ../../bzflag/KeyboardMapMenu.cxx;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		7BBA6D7C05D9D410008D1AA8 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = KeyboardMapMenu.h;
+			path = ../../bzflag/KeyboardMapMenu.h;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		7BBA6D7D05D9D410008D1AA8 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = ListServer.h;
+			path = ../../bzflag/ListServer.h;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		7BBA6D7E05D9D410008D1AA8 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			name = MainMenu.cxx;
+			path = ../../bzflag/MainMenu.cxx;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		7BBA6D7F05D9D410008D1AA8 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = MainMenu.h;
+			path = ../../bzflag/MainMenu.h;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		7BBA6D8005D9D410008D1AA8 = {
+			fileRef = 7BBA6D7505D9D410008D1AA8;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		7BBA6D8105D9D410008D1AA8 = {
+			fileRef = 7BBA6D7605D9D410008D1AA8;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		7BBA6D8205D9D410008D1AA8 = {
+			fileRef = 7BBA6D7705D9D410008D1AA8;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		7BBA6D8305D9D410008D1AA8 = {
+			fileRef = 7BBA6D7805D9D410008D1AA8;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		7BBA6D8405D9D410008D1AA8 = {
+			fileRef = 7BBA6D7905D9D410008D1AA8;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		7BBA6D8505D9D410008D1AA8 = {
+			fileRef = 7BBA6D7A05D9D410008D1AA8;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		7BBA6D8605D9D410008D1AA8 = {
+			fileRef = 7BBA6D7B05D9D410008D1AA8;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		7BBA6D8705D9D410008D1AA8 = {
+			fileRef = 7BBA6D7C05D9D410008D1AA8;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		7BBA6D8805D9D410008D1AA8 = {
+			fileRef = 7BBA6D7D05D9D410008D1AA8;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		7BBA6D8905D9D410008D1AA8 = {
+			fileRef = 7BBA6D7E05D9D410008D1AA8;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		7BBA6D8A05D9D410008D1AA8 = {
+			fileRef = 7BBA6D7F05D9D410008D1AA8;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		7BBA6D8F05D9D4F7008D1AA8 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			name = MenuDefaultKey.cxx;
+			path = ../../bzflag/MenuDefaultKey.cxx;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		7BBA6D9005D9D4F7008D1AA8 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = MenuDefaultKey.h;
+			path = ../../bzflag/MenuDefaultKey.h;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		7BBA6D9105D9D4F7008D1AA8 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			name = OptionsMenu.cxx;
+			path = ../../bzflag/OptionsMenu.cxx;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		7BBA6D9205D9D4F7008D1AA8 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = OptionsMenu.h;
+			path = ../../bzflag/OptionsMenu.h;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		7BBA6D9305D9D4F7008D1AA8 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			name = QuickKeysMenu.cxx;
+			path = ../../bzflag/QuickKeysMenu.cxx;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		7BBA6D9405D9D4F7008D1AA8 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = QuickKeysMenu.h;
+			path = ../../bzflag/QuickKeysMenu.h;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		7BBA6D9505D9D4F7008D1AA8 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			name = QuitMenu.cxx;
+			path = ../../bzflag/QuitMenu.cxx;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		7BBA6D9605D9D4F7008D1AA8 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = QuitMenu.h;
+			path = ../../bzflag/QuitMenu.h;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		7BBA6D9705D9D4F7008D1AA8 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			name = RegionPriorityQueue.cxx;
+			path = ../../bzflag/RegionPriorityQueue.cxx;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		7BBA6D9805D9D4F7008D1AA8 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = RegionPriorityQueue.h;
+			path = ../../bzflag/RegionPriorityQueue.h;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		7BBA6D9905D9D4F7008D1AA8 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			name = Roster.cxx;
+			path = ../../bzflag/Roster.cxx;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		7BBA6D9A05D9D4F7008D1AA8 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = Roster.h;
+			path = ../../bzflag/Roster.h;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		7BBA6D9B05D9D4F7008D1AA8 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			name = SaveWorldMenu.cxx;
+			path = ../../bzflag/SaveWorldMenu.cxx;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		7BBA6D9C05D9D4F7008D1AA8 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = SaveWorldMenu.h;
+			path = ../../bzflag/SaveWorldMenu.h;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		7BBA6D9D05D9D4F7008D1AA8 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			name = SegmentedShotStrategy.cxx;
+			path = ../../bzflag/SegmentedShotStrategy.cxx;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		7BBA6D9E05D9D4F7008D1AA8 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = SegmentedShotStrategy.h;
+			path = ../../bzflag/SegmentedShotStrategy.h;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		7BBA6D9F05D9D4F7008D1AA8 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			name = ServerCommandKey.cxx;
+			path = ../../bzflag/ServerCommandKey.cxx;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		7BBA6DA005D9D4F7008D1AA8 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = ServerCommandKey.h;
+			path = ../../bzflag/ServerCommandKey.h;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		7BBA6DA105D9D4F7008D1AA8 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			name = ServerItem.cxx;
+			path = ../../bzflag/ServerItem.cxx;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		7BBA6DA205D9D4F7008D1AA8 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = ServerItem.h;
+			path = ../../bzflag/ServerItem.h;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		7BBA6DA305D9D4F7008D1AA8 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			name = ServerMenu.cxx;
+			path = ../../bzflag/ServerMenu.cxx;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		7BBA6DA405D9D4F7008D1AA8 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = ServerMenu.h;
+			path = ../../bzflag/ServerMenu.h;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		7BBA6DA505D9D4F7008D1AA8 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			name = ServerStartMenu.cxx;
+			path = ../../bzflag/ServerStartMenu.cxx;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		7BBA6DA605D9D4F7008D1AA8 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = ServerStartMenu.h;
+			path = ../../bzflag/ServerStartMenu.h;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		7BBA6DA705D9D4F7008D1AA8 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			name = ShockWaveStrategy.cxx;
+			path = ../../bzflag/ShockWaveStrategy.cxx;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		7BBA6DA805D9D4F7008D1AA8 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = ShockWaveStrategy.h;
+			path = ../../bzflag/ShockWaveStrategy.h;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		7BBA6DA905D9D4F7008D1AA8 = {
+			fileRef = 7BBA6D8F05D9D4F7008D1AA8;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		7BBA6DAA05D9D4F7008D1AA8 = {
+			fileRef = 7BBA6D9005D9D4F7008D1AA8;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		7BBA6DAB05D9D4F7008D1AA8 = {
+			fileRef = 7BBA6D9105D9D4F7008D1AA8;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		7BBA6DAC05D9D4F7008D1AA8 = {
+			fileRef = 7BBA6D9205D9D4F7008D1AA8;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		7BBA6DAD05D9D4F7008D1AA8 = {
+			fileRef = 7BBA6D9305D9D4F7008D1AA8;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		7BBA6DAE05D9D4F7008D1AA8 = {
+			fileRef = 7BBA6D9405D9D4F7008D1AA8;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		7BBA6DAF05D9D4F7008D1AA8 = {
+			fileRef = 7BBA6D9505D9D4F7008D1AA8;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		7BBA6DB005D9D4F7008D1AA8 = {
+			fileRef = 7BBA6D9605D9D4F7008D1AA8;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		7BBA6DB105D9D4F7008D1AA8 = {
+			fileRef = 7BBA6D9705D9D4F7008D1AA8;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		7BBA6DB205D9D4F7008D1AA8 = {
+			fileRef = 7BBA6D9805D9D4F7008D1AA8;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		7BBA6DB305D9D4F7008D1AA8 = {
+			fileRef = 7BBA6D9905D9D4F7008D1AA8;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		7BBA6DB405D9D4F7008D1AA8 = {
+			fileRef = 7BBA6D9A05D9D4F7008D1AA8;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		7BBA6DB505D9D4F7008D1AA8 = {
+			fileRef = 7BBA6D9B05D9D4F7008D1AA8;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		7BBA6DB605D9D4F7008D1AA8 = {
+			fileRef = 7BBA6D9C05D9D4F7008D1AA8;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		7BBA6DB705D9D4F7008D1AA8 = {
+			fileRef = 7BBA6D9D05D9D4F7008D1AA8;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		7BBA6DB805D9D4F7008D1AA8 = {
+			fileRef = 7BBA6D9E05D9D4F7008D1AA8;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		7BBA6DB905D9D4F7008D1AA8 = {
+			fileRef = 7BBA6D9F05D9D4F7008D1AA8;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		7BBA6DBA05D9D4F7008D1AA8 = {
+			fileRef = 7BBA6DA005D9D4F7008D1AA8;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		7BBA6DBB05D9D4F7008D1AA8 = {
+			fileRef = 7BBA6DA105D9D4F7008D1AA8;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		7BBA6DBC05D9D4F7008D1AA8 = {
+			fileRef = 7BBA6DA205D9D4F7008D1AA8;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		7BBA6DBD05D9D4F7008D1AA8 = {
+			fileRef = 7BBA6DA305D9D4F7008D1AA8;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		7BBA6DBE05D9D4F7008D1AA8 = {
+			fileRef = 7BBA6DA405D9D4F7008D1AA8;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		7BBA6DBF05D9D4F7008D1AA8 = {
+			fileRef = 7BBA6DA505D9D4F7008D1AA8;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		7BBA6DC005D9D4F7008D1AA8 = {
+			fileRef = 7BBA6DA605D9D4F7008D1AA8;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		7BBA6DC105D9D4F7008D1AA8 = {
+			fileRef = 7BBA6DA705D9D4F7008D1AA8;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		7BBA6DC205D9D4F7008D1AA8 = {
+			fileRef = 7BBA6DA805D9D4F7008D1AA8;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		7BBA6DC905D9D5C7008D1AA8 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			name = ShotPathSegment.cxx;
+			path = ../../bzflag/ShotPathSegment.cxx;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		7BBA6DCA05D9D5C7008D1AA8 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = ShotPathSegment.h;
+			path = ../../bzflag/ShotPathSegment.h;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		7BBA6DCB05D9D5C7008D1AA8 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			name = SilenceDefaultKey.cxx;
+			path = ../../bzflag/SilenceDefaultKey.cxx;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		7BBA6DCC05D9D5C7008D1AA8 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = SilenceDefaultKey.h;
+			path = ../../bzflag/SilenceDefaultKey.h;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		7BBA6DCD05D9D5C7008D1AA8 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			name = stars.cxx;
+			path = ../../bzflag/stars.cxx;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		7BBA6DCE05D9D5C7008D1AA8 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = StartupInfo.h;
+			path = ../../bzflag/StartupInfo.h;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		7BBA6DCF05D9D5C7008D1AA8 = {
+			fileRef = 7BBA6DC905D9D5C7008D1AA8;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		7BBA6DD005D9D5C7008D1AA8 = {
+			fileRef = 7BBA6DCA05D9D5C7008D1AA8;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		7BBA6DD105D9D5C7008D1AA8 = {
+			fileRef = 7BBA6DCB05D9D5C7008D1AA8;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		7BBA6DD205D9D5C7008D1AA8 = {
+			fileRef = 7BBA6DCC05D9D5C7008D1AA8;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		7BBA6DD305D9D5C7008D1AA8 = {
+			fileRef = 7BBA6DCD05D9D5C7008D1AA8;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		7BBA6DD405D9D5C7008D1AA8 = {
+			fileRef = 7BBA6DCE05D9D5C7008D1AA8;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		7BBD61FD05D9C3030063FD3C = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = bzfSDL.h;
+			path = ../../../include/bzfSDL.h;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		7BBD61FE05D9C3030063FD3C = {
+			fileRef = 7BBD61FD05D9C3030063FD3C;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		7BBD620305D9C7F60063FD3C = {
+			buildActionMask = 2147483647;
+			files = (
+				7BBD621405D9CB100063FD3C,
+			);
+			isa = PBXHeadersBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		7BBD620405D9C7F60063FD3C = {
+			buildActionMask = 2147483647;
+			files = (
+				7BBD621305D9CAFB0063FD3C,
+			);
+			isa = PBXSourcesBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		7BBD620505D9C7F60063FD3C = {
+			buildPhases = (
+				7BBD620305D9C7F60063FD3C,
+				7BBD620405D9C7F60063FD3C,
+			);
+			buildRules = (
+			);
+			buildSettings = {
+				GCC_WARN_FOUR_CHARACTER_CONSTANTS = NO;
+				GCC_WARN_UNKNOWN_PRAGMAS = NO;
+				INSTALL_PATH = /usr/local/lib;
+				LIBRARY_STYLE = STATIC;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = game;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = "-Wmost";
+			};
+			dependencies = (
+			);
+			isa = PBXNativeTarget;
+			name = game;
+			productName = game;
+			productReference = 7BBD620605D9C7F60063FD3C;
+			productType = "com.apple.product-type.library.static";
+		};
+		7BBD620605D9C7F60063FD3C = {
+			explicitFileType = archive.ar;
+			includeInIndex = 0;
+			isa = PBXFileReference;
+			path = libgame.a;
+			refType = 3;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		7BBD620705D9C80E0063FD3C = {
+			children = (
+				7B77486905C5AFE50018EA21,
+			);
+			isa = PBXGroup;
+			name = game;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		7BBD620B05D9C9E80063FD3C = {
+			containerPortal = 20286C28FDCF999611CA2CEA;
+			isa = PBXContainerItemProxy;
+			proxyType = 1;
+			remoteGlobalIDString = 7BBD620505D9C7F60063FD3C;
+			remoteInfo = game;
+		};
+		7BBD620C05D9C9E80063FD3C = {
+			isa = PBXTargetDependency;
+			target = 7BBD620505D9C7F60063FD3C;
+			targetProxy = 7BBD620B05D9C9E80063FD3C;
+		};
+		7BBD621305D9CAFB0063FD3C = {
+			fileRef = 7B77486905C5AFE50018EA21;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		7BBD621405D9CB100063FD3C = {
+			fileRef = 7B77486A05C5AFE50018EA21;
 			isa = PBXBuildFile;
 			settings = {
 			};
@@ -7650,105 +8689,118 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = text;
-			path = bzflag_cs_CZ.po;
-			refType = 4;
-			sourceTree = "<group>";
+			name = bzflag_cs_CZ.po;
+			path = ../../../data/l10n/bzflag_cs_CZ.po;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		7BC041BB05C5CCD70095DD69 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = text;
-			path = bzflag_da.po;
-			refType = 4;
-			sourceTree = "<group>";
+			name = bzflag_da.po;
+			path = ../../../data/l10n/bzflag_da.po;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		7BC041BC05C5CCD70095DD69 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = text;
-			path = bzflag_de.po;
-			refType = 4;
-			sourceTree = "<group>";
+			name = bzflag_de.po;
+			path = ../../../data/l10n/bzflag_de.po;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		7BC041BD05C5CCD70095DD69 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = text;
-			path = bzflag_en_US_l33t.po;
-			refType = 4;
-			sourceTree = "<group>";
+			name = bzflag_en_US_l33t.po;
+			path = ../../../data/l10n/bzflag_en_US_l33t.po;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		7BC041BE05C5CCD70095DD69 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = text;
-			path = bzflag_en_US_redneck.po;
-			refType = 4;
-			sourceTree = "<group>";
+			name = bzflag_en_US_redneck.po;
+			path = ../../../data/l10n/bzflag_en_US_redneck.po;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		7BC041BF05C5CCD70095DD69 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = text;
-			path = bzflag_es.po;
-			refType = 4;
-			sourceTree = "<group>";
+			name = bzflag_es.po;
+			path = ../../../data/l10n/bzflag_es.po;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		7BC041C005C5CCD70095DD69 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = text;
-			path = bzflag_fr.po;
-			refType = 4;
-			sourceTree = "<group>";
+			name = bzflag_fr.po;
+			path = ../../../data/l10n/bzflag_fr.po;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		7BC041C105C5CCD70095DD69 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = text;
-			path = bzflag_it.po;
-			refType = 4;
-			sourceTree = "<group>";
+			name = bzflag_it.po;
+			path = ../../../data/l10n/bzflag_it.po;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		7BC041C205C5CCD70095DD69 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = text;
-			path = bzflag_kg.po;
-			refType = 4;
-			sourceTree = "<group>";
+			name = bzflag_kg.po;
+			path = ../../../data/l10n/bzflag_kg.po;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		7BC041C305C5CCD70095DD69 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = text;
-			path = bzflag_nl.po;
-			refType = 4;
-			sourceTree = "<group>";
+			name = bzflag_nl.po;
+			path = ../../../data/l10n/bzflag_nl.po;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		7BC041C405C5CCD70095DD69 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = text;
-			path = bzflag_pt.po;
-			refType = 4;
-			sourceTree = "<group>";
+			name = bzflag_pt.po;
+			path = ../../../data/l10n/bzflag_pt.po;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		7BC041C505C5CCD70095DD69 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = text;
-			path = bzflag_sv.po;
-			refType = 4;
-			sourceTree = "<group>";
+			name = bzflag_sv.po;
+			path = ../../../data/l10n/bzflag_sv.po;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		7BC041C605C5CCD70095DD69 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = text;
-			path = bzflag_xx.po;
-			refType = 4;
-			sourceTree = "<group>";
+			name = bzflag_xx.po;
+			path = ../../../data/l10n/bzflag_xx.po;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		7BC041C705C5CCE20095DD69 = {
 			fileRef = 7BC041BA05C5CCD70095DD69;
@@ -7958,8 +9010,8 @@
 			isa = PBXFileReference;
 			lastKnownFileType = image.icns;
 			path = MacBZFlag.icns;
-			refType = 4;
-			sourceTree = "<group>";
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		7BC041FF05C5D7560095DD69 = {
 			containerPortal = 20286C28FDCF999611CA2CEA;
