@@ -245,10 +245,10 @@ void			ControlPanel::render(SceneRenderer& renderer)
     const float margin = lineHeight / 4.0f;
     float fx = messageAreaPixels[0] + margin;
     float fy = messageAreaPixels[1] + margin + messageFont.getDescent() + 1.0f;
-  glScissor(x + messageAreaPixels[0] + 0,
-	    y + messageAreaPixels[1] + 0,
-	    messageAreaPixels[2] - (int)margin + 2,
-	    messageAreaPixels[3] - (int)margin + 2);
+  glScissor(x + messageAreaPixels[0] + 1,
+	    y + messageAreaPixels[1] + 1,
+	    messageAreaPixels[2] - (int)margin - 1,
+	    messageAreaPixels[3] - (int)margin - 1);
 
   OpenGLGState::resetState();
   // nice blended messages background

@@ -187,17 +187,17 @@ void			RadarRenderer::render(SceneRenderer& renderer,
 //  glColor3f(0.25, 0.5, 0.5);
   glColor3f(teamColor[0], teamColor[1], teamColor[2] );
   glBegin(GL_LINE_LOOP); {
-    glVertex2f((float) x,		(float) y);
-    glVertex2f((float) x,		(float) (y + h));
-    glVertex2f((float) (x + w), (float) (y + h));
-    glVertex2f((float) (x + w), (float) y);
+    glVertex2f((float) x,	    (float) y);
+    glVertex2f((float) x,	    (float) (y + h + 1));
+    glVertex2f((float) (x + w + 1), (float) (y + h + 1));
+    glVertex2f((float) (x + w + 1), (float) y);
   } glEnd();
   // some versions miss the corners.
   glBegin(GL_POINTS); {
-    glVertex2f((float) x,		(float) y);
-    glVertex2f((float) x,		(float) (y + h));
-    glVertex2f((float) (x + w), (float) (y + h));
-    glVertex2f((float) (x + w), (float) y);
+    glVertex2f((float) x,	(float) y);
+    glVertex2f((float) x,	(float) (y + h + 1));
+    glVertex2f((float) (x + w + 1), (float) (y + h + 1));
+    glVertex2f((float) (x + w + 1), (float) y);
   } glEnd();
 
   if(blank)
