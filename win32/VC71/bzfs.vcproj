@@ -405,7 +405,7 @@ copy ..\..\src\bzfs\debug\*.exe ..\..\*.exe
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\src\bzfs\DelayQueue.cxx">
+				RelativePath="..\..\src\game\DelayQueue.cxx">
 			</File>
 			<File
 				RelativePath="..\..\src\bzfs\EntryZones.cxx">
@@ -451,6 +451,9 @@ copy ..\..\src\bzfs\debug\*.exe ..\..\*.exe
 				</FileConfiguration>
 			</File>
 			<File
+				RelativePath="..\..\src\bzfs\GameKeeper.cxx">
+			</File>
+			<File
 				RelativePath="..\..\src\bzfs\LagInfo.cxx">
 			</File>
 			<File
@@ -477,7 +480,7 @@ copy ..\..\src\bzfs\debug\*.exe ..\..\*.exe
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\src\bzfs\PlayerInfo.cxx">
+				RelativePath="..\..\src\game\PlayerInfo.cxx">
 			</File>
 			<File
 				RelativePath="..\..\src\bzfs\RecordReplay.cxx">
@@ -663,7 +666,7 @@ copy ..\..\src\bzfs\debug\*.exe ..\..\*.exe
 				RelativePath="..\..\src\bzfs\CustomZone.h">
 			</File>
 			<File
-				RelativePath="..\..\src\bzfs\DelayQueue.h">
+				RelativePath="..\..\include\DelayQueue.h">
 			</File>
 			<File
 				RelativePath="..\..\src\bzfs\EntryZones.h">
@@ -676,6 +679,9 @@ copy ..\..\src\bzfs\debug\*.exe ..\..\*.exe
 			</File>
 			<File
 				RelativePath="..\..\src\bzfs\FlagInfo.h">
+			</File>
+			<File
+				RelativePath="..\..\src\bzfs\GameKeeper.h">
 			</File>
 			<File
 				RelativePath="..\include\global.h">
@@ -705,7 +711,7 @@ copy ..\..\src\bzfs\debug\*.exe ..\..\*.exe
 				RelativePath="..\include\Ping.h">
 			</File>
 			<File
-				RelativePath="..\..\src\bzfs\PlayerInfo.h">
+				RelativePath="..\..\include\PlayerInfo.h">
 			</File>
 			<File
 				RelativePath="..\include\PlayerState.h">
