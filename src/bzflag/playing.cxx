@@ -5670,7 +5670,7 @@ static void		playingLoop()
       SceneDatabase* scene = sceneRenderer->getSceneDatabase();
       if (scene && myTank) {
 	// add my tank
-	myTank->addPlayer(scene, false, false);
+	myTank->addPlayer(scene, 0, false);
 	if (myTank->getFlag() == CloakingFlag) {
 	  // and make it invisible
 	  myTank->setInvisible();
