@@ -259,8 +259,9 @@ void			OpenGLGStateState::Unsorted::reset()
   hasBlending = false;
   hasStipple = false;
   hasSmoothing = false;
-  hasCulling = true;
   hasShading = false;
+  hasAlphaFunc = false;
+  hasCulling = true;
   culling = GL_BACK;
 }
 

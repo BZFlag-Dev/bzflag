@@ -545,7 +545,6 @@ static void setup()
   }
   gb.reset();
   gb.setShading(GL_FLAT);
-  gb.setAlphaFunc(GL_GEQUAL, 0.1f);
   gb.setBlending(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
   gb.enableMaterial(false); // no lighting
   if (smokeTexId >= 0) {
@@ -555,7 +554,6 @@ static void setup()
 
   gb.reset();
   gb.setShading(GL_FLAT);
-  gb.setAlphaFunc(GL_GEQUAL, 0.1f);
   gb.setBlending(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
   gb.enableMaterial(false); // no lighting
   treadsGState = gb.getState();
