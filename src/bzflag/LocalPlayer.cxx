@@ -313,6 +313,11 @@ void			LocalPlayer::doUpdateMotion(float dt)
     doJump();
     if (!wantJump) {
       newVelocity[2] = oldVelocity[2];
+      if ((lastObstacle != NULL) && !lastObstacle->isFlatTop()
+          && BZDB.isTrue(StateDatabase::BZDB_NOCLIMB)) {
+        newVelocity[0] = 0.0f;
+        newVelocity[1] = 0.0f;
+      }
     }
   }
   

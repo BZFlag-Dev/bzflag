@@ -1021,9 +1021,10 @@ void			SceneRenderer::doRender()
   // now draw each render node list
   OpenGLGState::renderLists();
 
-	if (background) {
-		background->renderEnvironment(*this);
-	} 
+  // render the environmental conditions
+  if (background) {
+    background->renderEnvironment(*this);
+  } 
 
   // finally draw all the stuff in the ordered list.  turn
   // off depth buffer updates for potentially transparent stuff.
