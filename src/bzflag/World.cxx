@@ -618,7 +618,6 @@ bool			World::writeWorld(std::string filename)
       out << "\t-sw " << getFlagShakeWins() << std::endl;
     }
 
- 		out << "\t-s " << getMaxFlags() << std::endl;
     out << "\t-ms " << getMaxShots() << std::endl;
     
     // Write BZDB server variables that aren't defaults
