@@ -21,11 +21,10 @@ class Occluder {
   private:
     SceneNode* sceneNode;
     unsigned int cullScore;
-    // FIXME - MeshPolySceneNode can have more then 4 vertices
-    int planeCount;  // 4 or 5 planes
-    int vertexCount; // 3 or 4 vertices
-    float planes[5][4];
-    float vertices[4][3];
+    int planeCount;  // one more then the vertex count
+    int vertexCount; // vertex count of the occluding plane
+    float (*planes)[4];
+    float (*vertices)[3];
     static const bool DrawEdges;
     static const bool DrawNormals;
     static const bool DrawVertices;

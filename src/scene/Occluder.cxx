@@ -273,35 +273,26 @@ const bool Occluder::DrawVertices = true;
 Occluder::Occluder(SceneNode* node)
 {
   sceneNode = node;
+  planes = NULL;
+  vertices = NULL;
   cullScore = 0;
-  vertexCount = 0;
 
   vertexCount = node->getVertexCount();
-  if ((vertexCount < 3) || (vertexCount > 4)) {
+  if ((vertexCount < 3) || (node->getPlane() == NULL)) {
+    vertexCount = 0; // used to flag a bad occluder
     return;
   }
+  vertices = new float[vertexCount][3];
+
   planeCount = vertexCount + 1; // the occluder's plane normal
+  planes = new float[planeCount][4];
 
   // counter-clockwise order as viewed from the front face
-  if (planeCount == 4) {
-    for (int i = 0; i < vertexCount; i++) {
-      const float* vertex = node->getVertex(i);
-      vertices[i][0] = vertex[0];
-      vertices[i][1] = vertex[1];
-      vertices[i][2] = vertex[2];
-    }
-  }
-  else if (planeCount == 5) {
-    for (int i = 0; i < vertexCount; i++) {
-      const float* vertex = node->getVertex(i);
-      vertices[i][0] = vertex[0];
-      vertices[i][1] = vertex[1];
-      vertices[i][2] = vertex[2];
-    }
-  }
-  else {
-    printf ("Program error in Occluder::Occluder()\n");
-    exit (1);
+  for (int i = 0; i < vertexCount; i++) {
+    const float* vertex = node->getVertex(i);
+    vertices[i][0] = vertex[0];
+    vertices[i][1] = vertex[1];
+    vertices[i][2] = vertex[2];
   }
 
   return;
@@ -311,6 +302,8 @@ Occluder::Occluder(SceneNode* node)
 Occluder::~Occluder()
 {
   // do nothing
+  delete[] planes;
+  delete[] vertices;
 }
 
 
@@ -382,20 +375,11 @@ bool Occluder::makePlanes(const Frustum* frustum)
   planes[0][3] = -plane[3];
 
   // make the edges planes
-  if (vertexCount == 3) {
-    if (!makePlane (vertices[0], vertices[2], eye, planes[1]) ||
-        !makePlane (vertices[1], vertices[0], eye, planes[2]) ||
-        !makePlane (vertices[2], vertices[1], eye, planes[3])) {
+  for (int i = 0; i < vertexCount; i++) {
+    int second = (i + vertexCount - 1) % vertexCount;
+    if (!makePlane (vertices[i], vertices[second], eye, planes[i + 1])) {
       return false;
-    }
-  }
-  else if (vertexCount == 4) {
-    if (!makePlane (vertices[0], vertices[3], eye, planes[1]) ||
-        !makePlane (vertices[1], vertices[0], eye, planes[2]) ||
-        !makePlane (vertices[2], vertices[1], eye, planes[3]) ||
-        !makePlane (vertices[3], vertices[2], eye, planes[4])) {
-      return false;
-    }
+    } 
   }
 
   return true;
@@ -453,7 +437,7 @@ void Occluder::draw() const
         outwards[a] = midpoint[a] - (length * planes[vn + 1][a]);
       }
       glBegin (GL_LINES);
-      glColor4fv (colors[v + 1]);
+      glColor4fv (colors[(v % 4) + 1]);
       if (DrawEdges) {
         glVertex3fv (vertices[v]);
         glVertex3fv (vertices[vn]);
@@ -470,7 +454,7 @@ void Occluder::draw() const
   if (DrawVertices) {
     for (v = 0; v < vertexCount; v++) {
       glBegin (GL_POINTS);
-      glColor4fv (colors[v + 1]);
+      glColor4fv (colors[(v % 4) + 1]);
       glVertex3fv (vertices[v]);
       glEnd();
     }
