@@ -245,7 +245,7 @@ BZAdminClient::ServerCode BZAdminClient::checkMessage() {
 	vbuf = nboUnpackUShort(vbuf, team);
 	it = players.find(id);
 	victimName = (it != players.end() ? it->second.name : "<unknown>");
-	if (team == (uint16_t)NoTeam) {
+	if (team != (uint16_t)NoTeam) {
 	  Team temp;
 	  victimName = temp.getName((TeamColor)team);
 	}
