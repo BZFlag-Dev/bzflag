@@ -90,13 +90,16 @@ class FlagDesc {
       flagTeam = team;
       
       flagSets[flagQuality].insert(this);
-      flagMap[flagAbbv] = this;
+      getFlagMap()[flagAbbv] = this;
       flagCount++;
     }
 
     const float*	getColor();
     void* FlagDesc::pack(void* buf) const;
     static void* FlagDesc::unpack(void* buf, FlagDesc* &desc);
+    /** Static wrapper function that makes sure that the flag map is
+	initialized before it's used. */
+    static std::map<std::string, FlagDesc*>& getFlagMap();
 
     const char*         flagName;
     const char*         flagAbbv;
@@ -107,7 +110,6 @@ class FlagDesc {
     TeamColor           flagTeam;
 
     typedef std::set<FlagDesc*> FlagSet;
-    static std::map<std::string, FlagDesc*> flagMap;
     static int	        flagCount;
     static FlagSet      flagSets[NumQualities];
 };

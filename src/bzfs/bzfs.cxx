@@ -186,8 +186,8 @@ struct CmdLineOptions
     teamKillerDies(true), printScore(false), publicizeServer(false), publicizedAddressGiven(false), debug(0)
   {
     int i;
-    for (std::map<std::string, FlagDesc*>::iterator it = FlagDesc::flagMap.begin(); 
-	 it != FlagDesc::flagMap.end(); ++it) {
+    for (std::map<std::string, FlagDesc*>::iterator it = FlagDesc::getFlagMap().begin(); 
+	 it != FlagDesc::getFlagMap().end(); ++it) {
 	flagCount[it->second] = 0;
 	flagLimit[it->second] = -1;
 	flagDisallowed[it->second] = false;
@@ -5129,7 +5129,8 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
 	}
 
 	/* Compare them to the flags this game might need, generating a list of missing flags */
-	for (it = FlagDesc::flagMap.begin(); it != FlagDesc::flagMap.end(); ++it) {
+	for (it = FlagDesc::getFlagMap().begin(); 
+	     it != FlagDesc::getFlagMap().end(); ++it) {
 		if (!hasFlag[it->second]) {
 		   if (clOptions.flagCount[it->second] > 0)
 		     missingFlags.insert(it->second);
@@ -5595,7 +5596,7 @@ static void extraUsage(const char *pname)
   printVersion();
   printf("\nUsage: %s %s\n", pname, usageString);
   printf("\n%s\nFlag codes:\n", extraUsageString);
-  for (std::map<std::string, FlagDesc*>::iterator it = FlagDesc::flagMap.begin(); it != FlagDesc::flagMap.end(); ++it)
+  for (std::map<std::string, FlagDesc*>::iterator it = FlagDesc::getFlagMap().begin(); it != FlagDesc::getFlagMap().end(); ++it)
     printf("\t%2.2s %s\n", (*it->second).flagAbbv, (*it->second).flagName);
   exit(0);
 }
@@ -6391,7 +6392,7 @@ static void parse(int argc, char **argv, CmdLineOptions &options)
   // make table of allowed extra flags
   if (options.numExtraFlags > 0) {
     // now count how many aren't disallowed
-    for (std::map<std::string,FlagDesc*>::iterator it = FlagDesc::flagMap.begin(); it != FlagDesc::flagMap.end(); ++it)
+    for (std::map<std::string,FlagDesc*>::iterator it = FlagDesc::getFlagMap().begin(); it != FlagDesc::getFlagMap().end(); ++it)
       if (!options.flagDisallowed[it->second])
 	options.numAllowedFlags++;
 
@@ -6403,7 +6404,7 @@ static void parse(int argc, char **argv, CmdLineOptions &options)
     // otherwise make table of allowed flags
     else {
       allowedFlags.clear();
-      for (std::map<std::string,FlagDesc*>::iterator it = FlagDesc::flagMap.begin(); it != FlagDesc::flagMap.end(); ++it)
+      for (std::map<std::string,FlagDesc*>::iterator it = FlagDesc::getFlagMap().begin(); it != FlagDesc::getFlagMap().end(); ++it)
 	if (!options.flagDisallowed[it->second])
 	  allowedFlags.insert(it->second);
     }
@@ -6414,8 +6415,8 @@ static void parse(int argc, char **argv, CmdLineOptions &options)
   // rogues don't get a flag
   if (options.gameStyle & TeamFlagGameStyle)
     numFlags += NumTeams - 1;
-  for (std::map<std::string, FlagDesc*>::iterator it = FlagDesc::flagMap.begin(); 
-       it != FlagDesc::flagMap.end(); ++it) {
+  for (std::map<std::string, FlagDesc*>::iterator it = FlagDesc::getFlagMap().begin(); 
+       it != FlagDesc::getFlagMap().end(); ++it) {
     numFlags += options.flagCount[it->second];
   }
 
@@ -6461,8 +6462,8 @@ static void parse(int argc, char **argv, CmdLineOptions &options)
   }
 
 
-  for (std::map<std::string, FlagDesc*>::iterator it = FlagDesc::flagMap.begin(); 
-       it != FlagDesc::flagMap.end(); ++it) {
+  for (std::map<std::string, FlagDesc*>::iterator it = FlagDesc::getFlagMap().begin(); 
+       it != FlagDesc::getFlagMap().end(); ++it) {
     if (options.flagCount[it->second] > 0) {
 	  for (int j = 0; j < options.flagCount[it->second]; j++) {
 		  if (setRequiredFlag(flag[f], it->second))

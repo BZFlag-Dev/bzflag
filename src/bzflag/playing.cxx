@@ -4660,7 +4660,8 @@ static bool negotiateFlags(ServerLink* serverLink)
   /* Send MsgNegotiateFlags to the server with
    * the abbreviations for all the flags we support.
    */
-  for (i = FlagDesc::flagMap.begin(); i != FlagDesc::flagMap.end(); i++) {
+  for (i = FlagDesc::getFlagMap().begin(); 
+       i != FlagDesc::getFlagMap().end(); i++) {
     buf = (char*) i->second->pack(buf);
   }
   serverLink->send( MsgNegotiateFlags, buf - msg, msg );

@@ -20,7 +20,6 @@
 #include "Flag.h"
 #include "Pack.h"
 
-std::map<std::string, FlagDesc*> FlagDesc::flagMap;
 int FlagDesc::flagCount = 0;
 FlagSet FlagDesc::flagSets[NumQualities];
 
@@ -118,6 +117,11 @@ void* FlagDesc::unpack(void* buf, FlagDesc* &desc)
   return buf;
 }
 
+std::map<std::string, FlagDesc*>& FlagDesc::getFlagMap() {
+  static std::map<std::string, FlagDesc*> flagMap;
+  return flagMap;
+}
+
 void*			Flag::pack(void* buf) const
 {
   buf = desc->pack(buf);
@@ -161,8 +165,8 @@ FlagDesc* Flag::getDescFromAbbreviation(const char* abbreviation)
     abbreviation++;
   }
 
-  i = FlagDesc::flagMap.find(abbvString);
-  if (i == FlagDesc::flagMap.end())
+  i = FlagDesc::getFlagMap().find(abbvString);
+  if (i == FlagDesc::getFlagMap().end())
     /* Not found, return the Null flag */
     return Flags::Null;
   else
