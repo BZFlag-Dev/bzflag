@@ -402,10 +402,10 @@ void			ControlPanel::render(SceneRenderer& renderer)
     j += numLines;
     fy += int(lineHeight * numLines);
   }
-  glScissor(x + messageAreaPixels[0] - 1,
-	    y + messageAreaPixels[1] - 1,
-	    messageAreaPixels[2] + 2,
-	    messageAreaPixels[3] + 32);
+  glScissor(x + messageAreaPixels[0] - 2,
+	    y + messageAreaPixels[1] - 2,
+	    messageAreaPixels[2] + 3,
+	    messageAreaPixels[3] + 33);
   OpenGLGState::resetState();
 
   // draw the lines around the console panel
@@ -421,7 +421,7 @@ void			ControlPanel::render(SceneRenderer& renderer)
     glVertex2f((float) xpos, (float) ypos);
 
     // bottom right
-    xpos += messageAreaPixels[2] + 1;
+    xpos += messageAreaPixels[2] + 2;
     glVertex2f((float) xpos, (float) ypos);
 
     // top right
@@ -455,32 +455,41 @@ void			ControlPanel::render(SceneRenderer& renderer)
     }
 
     // over from panel on right
-    if (tabsOnRight) {
-      xpos = x + messageAreaPixels[0];
+    //    if (tabsOnRight) {
+      xpos = x + messageAreaPixels[0] - 1;
       glVertex2f((float) xpos, (float) ypos);
-    }
+      //    }
 
   } glEnd();
 
   // some engines miss the corners
-  /*
-    glBegin(GL_POINTS); {
-    glVertex2f((float) (x + messageAreaPixels[0] - 0.9f),
-    (float) (y + messageAreaPixels[1] - 1));
-    glVertex2f((float) (x + messageAreaPixels[0] - 1 + messageAreaPixels[2] + 1.1f),
-    (float) (y + messageAreaPixels[1] - 1));
-    glVertex2f((float) (x + messageAreaPixels[0] - 1 + messageAreaPixels[2] + 1.1f),
-    (float) (y + messageAreaPixels[1] - 1 + messageAreaPixels[3] + 1.1f));
-    if (ay != 0) {
-    glVertex2f((float) (x + messageAreaPixels[0] - 1 + 200 + 0.9f),
-    (float) (y + messageAreaPixels[1] - 1 + int(lineHeight + 4)
-    + messageAreaPixels[3] + 1.1f));
-    glVertex2f((float) (x + messageAreaPixels[0] - 0.9f),
-    (float) (y + messageAreaPixels[1] - 1 + int(lineHeight + 4)
-    + messageAreaPixels[3] + 1.1f));
+  glBegin(GL_POINTS); {
+    glVertex2f((float) (x + messageAreaPixels[0] - 1.05),
+	       (float) (y + messageAreaPixels[1] - .95));
+    glVertex2f((float) (x + messageAreaPixels[0] + messageAreaPixels[2] + 1),
+	       (float) (y + messageAreaPixels[1] - .95));
+    glVertex2f((float) (x + messageAreaPixels[0] + messageAreaPixels[2] + 1),
+	       (float) (y + messageAreaPixels[1] + messageAreaPixels[3] + .95));
+    glVertex2f((float) (x + messageAreaPixels[0] - 1.05),
+	       (float) (y + messageAreaPixels[1] + messageAreaPixels[3] + .95));
+    long int tabPosition = 0;
+    for (int tab = 0; tab < (int)tabs->size(); tab++) {
+      if (messageMode == MessageModes(tab)) {
+	if (tabsOnRight) {
+	  glVertex2f((float) (x + messageAreaPixels[0] + messageAreaPixels[2] - totalTabWidth + tabPosition + 1),
+		     (float) (y + messageAreaPixels[1] + messageAreaPixels[3] + ay + .95));
+	  glVertex2f((float) (x + messageAreaPixels[0] + messageAreaPixels[2] - totalTabWidth + tabPosition + long(tabTextWidth[tab]) + 1),
+		     (float) (y + messageAreaPixels[1] + messageAreaPixels[3] + ay + .95));
+	} else {
+	  glVertex2f((float) (x + messageAreaPixels[0] + tabPosition),
+		     (float) (y + messageAreaPixels[1] + messageAreaPixels[3] + ay + .95));
+	  glVertex2f((float) (x + messageAreaPixels[0] + tabPosition + long(tabTextWidth[tab])),
+		     (float) (y + messageAreaPixels[1] + messageAreaPixels[3] + ay + .95));
+	}
+      }
+      tabPosition += long(tabTextWidth[tab]);
     }
-    } glEnd();
-  */
+  } glEnd();
 
   // border for radar
   if (!BZDB.isTrue(StateDatabase::BZDB_NORADAR)) {
