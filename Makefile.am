@@ -1,5 +1,5 @@
 SUBDIRS = data doc include man package src
-DIST_SUBDIRS = $(SUBDIRS) debian misc win32 Dev-C++
+DIST_SUBDIRS = $(SUBDIRS) debian misc win32 Dev-C++ BZFlag.xcode
 
 package: FORCE
 	cd package && $(MAKE) targets

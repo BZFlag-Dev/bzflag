@@ -677,6 +677,7 @@ AC_SUBST(LIBDIR)
 
 AC_OUTPUT(bzflag.info
 	bzflag.lsm
+	BZFlag.xcode/Makefile
 	Dev-C++/Makefile
 	Makefile
 	bzflag.spec
