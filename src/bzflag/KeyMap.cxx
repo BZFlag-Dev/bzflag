@@ -36,9 +36,9 @@ const BzfKeyEvent	BzfKeyMap::defaults1[] = {
 
 			};
 const BzfKeyEvent	BzfKeyMap::defaults2[] = {
-				{ 0, 0, 0 },
+				{ '\r', 0, 0 },
 				{ ' ', 0, 0 },
-				{ 0, 0, 0 },
+				{ 'l', 0, 0 },
 				{ 0, 0, 0 },
 				{ 0, 0, 0 },
 				{ 0, 0, 0 },
