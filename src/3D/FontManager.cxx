@@ -278,7 +278,7 @@ void FontManager::drawString(float x, float y, float z, int faceID, float size, 
     if (endSend - startSend > 0) {
       tmpText = text.substr(startSend, (endSend - startSend));
       // get substr width, we may need it a couple times
-      width = getStrLength(faceID, size, tmpText);
+      width = getStrLength(faceID, size, tmpText, true);
       glPushMatrix();
       glTranslatef(x, y, z);
       GLboolean depthMask;
@@ -367,7 +367,7 @@ void FontManager::drawString(float x, float y, float z, std::string face, float 
   drawString(x, y, z, getFaceID(face), size, text);
 }
 
-float FontManager::getStrLength(int faceID, float size, std::string text)
+float FontManager::getStrLength(int faceID, float size, std::string text, bool alreadyStripped)
 {
   if (text.size() == 0)
     return 0;
@@ -390,12 +390,16 @@ float FontManager::getStrLength(int faceID, float size, std::string text)
 
   float scale = size / (float)pFont->getSize();
 
-  return pFont->getStrLength(scale, stripAnsiCodes(text).c_str());
+  // don't include ansi codes in the length, but allow outside funcs to skip this step
+  if (!alreadyStripped)
+    text = stripAnsiCodes(text);
+
+  return pFont->getStrLength(scale, text.c_str());
 }
 
-float FontManager::getStrLength(std::string face, float size, std::string text)
+float FontManager::getStrLength(std::string face, float size, std::string text, bool alreadyStripped)
 {
-  return getStrLength(getFaceID(face), size, text);
+  return getStrLength(getFaceID(face), size, text, alreadyStripped);
 }
 
 float FontManager::getStrHeight(int faceID, float size, std::string text)
