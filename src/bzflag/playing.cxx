@@ -1488,7 +1488,7 @@ static void		doKeyNotPlaying(const BzfKeyEvent& key, bool pressed)
 static void		doKeyPlaying(const BzfKeyEvent& key, bool pressed)
 {
   static ServerCommandKey serverCommandKeyHandler;
-
+  
   if (HUDui::getFocus())
     if ((pressed && HUDui::keyPress(key)) ||
 	(!pressed && HUDui::keyRelease(key))) {
