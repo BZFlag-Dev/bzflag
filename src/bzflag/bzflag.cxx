@@ -972,7 +972,7 @@ int			main(int argc, char** argv)
     /*else*/ {
       setSize = True;
       if (w < 256) w = 256;
-      if (h < 192) h = 292;
+      if (h < 192) h = 192;
       if (count == 6) {
 	if (xs == '-') x = display->getWidth() - x - w;
 	if (ys == '-') y = display->getHeight() - y - h;
