@@ -274,9 +274,7 @@ void BackgroundRenderer::setupGroundMaterials()
   if (bzmat == NULL) {
     // default ground material
     memcpy (groundColor, defaultGroundColor, sizeof(GLfloat[4][4]));
-    if (groundTextureID < 0) {
-      groundTextureID = tm.getTextureID(BZDB.get("stdGroundTexture").c_str(), true);
-    }
+    groundTextureID = tm.getTextureID(BZDB.get("stdGroundTexture").c_str(), true);
   }
   else {
     // map specified material 
@@ -284,10 +282,15 @@ void BackgroundRenderer::setupGroundMaterials()
       memcpy (groundColor[i], bzmat->getDiffuse(), sizeof(GLfloat[4]));
     }
     if (bzmat->getTextureCount() > 0) {
+      groundTextureID = tm.getTextureID(bzmat->getTexture(0).c_str(), false);
       if (groundTextureID < 0) {
-        groundTextureID = tm.getTextureID(bzmat->getTexture(0).c_str(), false);
+        // use the default as a backup (default color too)
+        memcpy (groundColor, defaultGroundColor, sizeof(GLfloat[4][4]));
+        groundTextureID = tm.getTextureID(BZDB.get("stdGroundTexture").c_str(), true);
+      } else {
+        // only apply the texture matrix is the texture is valid
+        groundTextureMatrixID = bzmat->getTextureMatrix(0);
       }
-      groundTextureMatrixID = bzmat->getTextureMatrix(0);
     }
   }
 
