@@ -997,7 +997,10 @@ void handleShowgroupCmd(int t, const char *message)
 	line += " ";
 	itr++;
       }
-      // FIXME let's hope that line is not too long (> MessageLen)
+      while (line.size() > MessageLen) {
+        sendMessage(ServerPlayer, t, getUpTo(line, MessageLen).c_str());
+      	line.erase(line.begin(), line.begin() + (MessageLen - 1));
+			}
       sendMessage(ServerPlayer, t, line.c_str());
     } else {
       sendMessage(ServerPlayer, t, "There is no user by that name");
