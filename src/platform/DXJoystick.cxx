@@ -333,8 +333,8 @@ void	      DXJoystick::ffRumble(int count, float delay, float duration,
   /*
    * Build the actual effect
    */
-  DWORD axes[3] = {DIJOFS_X, DIJOFS_Y, DIJOFS_Z};
-  LONG  dir[3] = {1, 1, 1};
+  DWORD axes[2] = {DIJOFS_X, DIJOFS_Y};
+  LONG  dir[2] = {1, 1};
 
   LPDIRECTINPUTEFFECT createdEffect;
 
@@ -349,8 +349,8 @@ void	      DXJoystick::ffRumble(int count, float delay, float duration,
   effect.dwGain = DI_FFNOMINALMAX;
   effect.dwTriggerButton = DIEB_NOTRIGGER;
   effect.dwTriggerRepeatInterval = 0;
-  // all axes
-  effect.cAxes = 3;
+  // x and y axes
+  effect.cAxes = 2;
   effect.rgdwAxes = &axes[0];
   // direction doesn't matter
   effect.rglDirection = &dir[0];
