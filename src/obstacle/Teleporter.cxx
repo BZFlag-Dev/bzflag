@@ -235,9 +235,54 @@ void			Teleporter::getPointWRT(const Teleporter& t2,
   const float c = cosf(a), s = sinf(a);
   const float x2 = c * x1 - s * y1;
   const float y2 = c * y1 + s * x1;
-  pOut[0] = x2 + t2.getPosition()[0];
-  pOut[1] = y2 + t2.getPosition()[1];
-  pOut[2] = pIn[2] + t2.getPosition()[2] - getPosition()[2];
+
+  /*
+	Here's what the next statements do:
+
+  In order to account for different-size teleporters, each of the dimensions
+  is expressed a a ratio of the length of the transporter in the dimension
+  divided by position of the tank relative to the transporter in that dimension, and
+  is proportional to the width of the target teleporter in that dimension.
+  Here is the formula, with example lengths:
+
+  W1/W2 = T1/T2
+
+
+  |--------|	Tank Pos (T1)
+  |----------------------------------------------------------|	Transport width (W1)
+
+
+  |-|	New tank Pos (T2)
+  |---------|	New Transport width (W2)
+
+  We are looking for T2, and simple algebra tells us that T2 = (W2 * T1) / W1
+
+  Now, we can correctly position the tank.
+  
+  Note that this is only the position relative to the transporter, to get the real position,
+  it is added to the rest.  Since I'm not 100% sure of my work, I am leaving the old code
+  commented above.
+  */
+  
+  //T1 = x2 and y2
+  //W2 = t2.getWidth()
+  //W1 = getWidth()
+  
+  //pOut[0] = x2 + t2.getPosition()[0];
+  //pOut[1] = y2 + t2.getPosition()[1];
+  pOut[0] = t2.getPosition()[0] + (x2 * t2.getWidth()) / getWidth();
+  pOut[1] = t2.getPosition()[1] + (y2 * t2.getWidth()) / getWidth();
+
+  //T1 = pIn[2] - getPosition()[2]
+  //W2 = t2.getHeight()
+  //W1 = getHeight
+  
+  //(t2.getPosition()[2] - getPosition()[2]) adds the height differences between the
+  //teleporters so that teleporters can be off of the ground at different heights.
+  
+  //pOut[2] = pIn[2] + t2.getPosition()[2] - getPosition()[2];
+  pOut[2] = pIn[2] + t2.getPosition()[2] - getPosition()[2]
+	  + ((pIn[2] - getPosition()[2]) * t2.getHeight())/getHeight();
 
   if (dOut && dIn) {
     const float dx = dIn[0];
