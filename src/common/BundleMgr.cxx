@@ -14,7 +14,7 @@ BundleMgr::BundleMgr(const std::string &path, const std::string &name)
 
 BundleMgr::BundleMgr(const BundleMgr &xBundleMgr)
 {
-	throw new exception("Operation not supported");
+//	throw new exception("Operation not supported");
 }
 
 BundleMgr::~BundleMgr()
@@ -26,8 +26,8 @@ BundleMgr::~BundleMgr()
 
 BundleMgr& BundleMgr::operator=(const BundleMgr &xBundleMgr)
 {
-	if (this != &xBundleMgr)
-		throw new exception("Operation not supported");
+//	if (this != &xBundleMgr)
+//		throw new exception("Operation not supported");
 
 	return *this;
 }
