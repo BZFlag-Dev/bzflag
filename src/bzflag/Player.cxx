@@ -189,10 +189,10 @@ void Player::move(const float* _pos, float _azimuth)
 
   // limit angle
   if (state.azimuth < 0.0f) {
-    state.azimuth = (2.0f * M_PI) - fmodf(-state.azimuth, (2.0f * M_PI));
+    state.azimuth = (float)((2.0 * M_PI) - fmodf(-state.azimuth, (float)(2.0 * M_PI)));
   }
   else if (state.azimuth >= (2.0f * M_PI)) {
-    state.azimuth = fmodf(state.azimuth, (2.0f * M_PI));
+    state.azimuth = fmodf(state.azimuth, (float)(2.0 * M_PI));
   }
 
   // update forward vector (always in horizontal plane)

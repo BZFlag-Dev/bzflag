@@ -33,8 +33,8 @@ static const float treadThickness = 0.15f;
 static const float treadWidth = treadOutside - treadInside;
 static const float treadRadius = 0.5f * treadHeight;
 static const float treadYCenter = treadInside + (0.5f * treadWidth);
-static const float treadLength = ((fullLength - treadHeight) * 2.0f) +
-				 (M_PI * treadHeight);
+static const float treadLength = (float)(((fullLength - treadHeight) * 2.0) +
+				 (M_PI * treadHeight));
 static const float treadTexCoordLen = (float)treadCount;
 
 static const float wheelRadius = treadRadius - (0.7f * treadThickness);
@@ -51,7 +51,7 @@ static const float wheelOutsideTexRad = 0.5f;
 float TankGeometryUtils::getWheelScale()
 {
   // degrees / meter
-  return 360.0f / (treadHeight * M_PI);
+  return (float)(360.0 / (treadHeight * M_PI));
 }
 
 float TankGeometryUtils::getTreadScale()
@@ -117,7 +117,7 @@ static void buildTread(float Yoffset, int divisions)
   int i;
   const float divs = (float)((divisions / 2) * 2); // even number
   const float divScale = 2.0f / divs;
-  const float astep = (M_PI * 2.0f) / divs;
+  const float astep = (float)((M_PI * 2.0) / divs);
   const float yLeft = Yoffset + (0.5f * treadWidth);
   const float yRight = Yoffset - (0.5f * treadWidth);
   float x, z;
@@ -125,9 +125,9 @@ static void buildTread(float Yoffset, int divisions)
   // setup some basic texture coordinates
   const float txScale = treadTexCoordLen / treadLength;
   const float tx0 = 0.0f;
-  const float tx1 = txScale * (treadRadius * M_PI);
-  const float tx2 = txScale * ((treadRadius * M_PI) + (fullLength - treadHeight));
-  const float tx3 = txScale * ((treadHeight * M_PI) + (fullLength - treadHeight));
+  const float tx1 = (float)(txScale * (treadRadius * M_PI));
+  const float tx2 = (float)(txScale * ((treadRadius * M_PI) + (fullLength - treadHeight)));
+  const float tx3 = (float)(txScale * ((treadHeight * M_PI) + (fullLength - treadHeight)));
   const float tx4 = treadTexCoordLen;
   const float tyScale = 1.0f / (2.0f * (treadWidth + treadThickness));
   const float ty0 = 0.0f;
@@ -141,7 +141,7 @@ static void buildTread(float Yoffset, int divisions)
   {
     // first curve
     for (i = 0; i < ((divisions / 2) + 1); i++) {
-      const float ang = (astep * (float)i) - (M_PI / 2.0f);
+      const float ang = (float)((astep * (double)i) - (M_PI / 2.0));
       const float cos_val = cosf(ang);
       const float sin_val = sinf(ang);
       doNormal3f(cos_val, 0.0f, sin_val);
@@ -163,7 +163,7 @@ static void buildTread(float Yoffset, int divisions)
     doVertex3f(x, yLeft, z);
     // second curve
     for (i = 0; i < ((divisions / 2) + 1); i++) {
-      const float ang = (astep * (float)i) + (M_PI / 2.0f);
+      const float ang = (float)((astep * (double)i) + (M_PI / 2.0));
       const float cos_val = cosf(ang);
       const float sin_val = sinf(ang);
       doNormal3f(cos_val, 0.0f, sin_val);
@@ -191,7 +191,7 @@ static void buildTread(float Yoffset, int divisions)
   {
     // first curve
     for (i = 0; i < ((divisions / 2) + 1); i++) {
-      const float ang = (astep * (float)i) - (M_PI / 2.0f);
+      const float ang = (float)((astep * (double)i) - (M_PI / 2.0));
       const float cos_val = cosf(ang);
       const float sin_val = sinf(ang);
       doNormal3f(-cos_val, 0.0f, -sin_val);
@@ -213,7 +213,7 @@ static void buildTread(float Yoffset, int divisions)
     doVertex3f(x, yRight, z);
     // second curve
     for (i = 0; i < ((divisions / 2) + 1); i++) {
-      const float ang = (astep * (float)i) + (M_PI / 2.0f);
+      const float ang = (float)((astep * (double)i) + (M_PI / 2.0));
       const float cos_val = cosf(ang);
       const float sin_val = sinf(ang);
       doNormal3f(-cos_val, 0.0f, -sin_val);
@@ -244,7 +244,7 @@ static void buildTread(float Yoffset, int divisions)
     {
       // first outside curve
       for (i = 0; i < ((divisions / 2) + 1); i++) {
-	const float ang = (astep * (float)i) - (M_PI / 2.0f);
+	const float ang = (float)((astep * (double)i) - (M_PI / 2.0));
 	const float cos_val = cosf(ang);
 	const float sin_val = sinf(ang);
 	tx = tx0 + ((tx1 - tx0) * ((float)i * divScale));
@@ -267,7 +267,7 @@ static void buildTread(float Yoffset, int divisions)
       doVertex3f(x, yRight, z);
       // second outside curve
       for (i = 0; i < ((divisions / 2) + 1); i++) {
-	const float ang = (astep * (float)i) + (M_PI / 2.0f);
+	const float ang = (float)((astep * (double)i) + (M_PI / 2.0));
 	const float cos_val = cosf(ang);
 	const float sin_val = sinf(ang);
 	tx = tx2 + ((tx3 - tx2) * ((float)i * divScale));
@@ -297,7 +297,7 @@ static void buildTread(float Yoffset, int divisions)
     {
       // first outside curve
       for (i = 0; i < ((divisions / 2) + 1); i++) {
-	const float ang = (astep * (float)i) - (M_PI / 2.0f);
+	const float ang = (float)((astep * (double)i) - (M_PI / 2.0));
 	const float cos_val = cosf(ang);
 	const float sin_val = sinf(ang);
 	tx = tx0 + ((tx1 - tx0) * ((float)i * divScale));
@@ -320,7 +320,7 @@ static void buildTread(float Yoffset, int divisions)
       doVertex3f(x, yLeft, z);
       // second outside curve
       for (i = 0; i < ((divisions / 2) + 1); i++) {
-	const float ang = (astep * (float)i) + (M_PI / 2.0f);
+	const float ang = (float)((astep * (double)i) + (M_PI / 2.0));
 	const float cos_val = cosf(ang);
 	const float sin_val = sinf(ang);
 	tx = tx2 + ((tx3 - tx2) * ((float)i * divScale));
@@ -354,7 +354,7 @@ static void buildWheel(const float pos[3], float angle, int divisions)
 {
   int i;
   const float divs = (float)divisions;
-  const float astep = (M_PI * 2.0f) / (float)divs;
+  const float astep = (float)((M_PI * 2.0) / (double)divs);
   const float yLeft = pos[1] + (0.5f * wheelWidth);
   const float yRight = pos[1] - (0.5f * wheelWidth);
   float x, z;

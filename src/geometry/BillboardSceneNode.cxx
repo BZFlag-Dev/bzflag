@@ -278,7 +278,7 @@ void			BillboardSceneNode::move(const GLfloat pos[3])
 
 void			BillboardSceneNode::setAngle(GLfloat _angle)
 {
-  angle = 180.0f / M_PI * _angle;
+  angle = (float)(180.0 / M_PI * _angle);
 }
 
 void			BillboardSceneNode::addLight(

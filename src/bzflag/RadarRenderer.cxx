@@ -312,7 +312,7 @@ void			RadarRenderer::render(SceneRenderer& renderer,
     glEnd();
 
     glPushMatrix();
-    glRotatef(90.0f - angle * 180.0f / M_PI, 0.0f, 0.0f, 1.0f);
+    glRotatef((float)(90.0 - angle * 180.0 / M_PI), 0.0f, 0.0f, 1.0f);
     glPushMatrix();
     glTranslatef(-pos[0], -pos[1], 0.0f);
 
@@ -716,10 +716,10 @@ void			RadarRenderer::makeList(bool smoothingOn, SceneRenderer&)
 	const float r = hypotf(base[4], base[5]);
 	glVertex2f(base[0] + r * cosf(base[3] + beta),
 		   base[1] + r * sinf(base[3] + beta));
-	glVertex2f(base[0] + r * cosf(base[3] - beta + M_PI),
-		   base[1] + r * sinf(base[3] - beta + M_PI));
-	glVertex2f(base[0] + r * cosf(base[3] + beta + M_PI),
-		   base[1] + r * sinf(base[3] + beta + M_PI));
+	glVertex2f(base[0] + r * cosf((float)(base[3] - beta + M_PI)),
+		   base[1] + r * sinf((float)(base[3] - beta + M_PI)));
+	glVertex2f(base[0] + r * cosf((float)(base[3] + beta + M_PI)),
+		   base[1] + r * sinf((float)(base[3] + beta + M_PI)));
 	glVertex2f(base[0] + r * cosf(base[3] - beta),
 		   base[1] + r * sinf(base[3] - beta));
 	glEnd();

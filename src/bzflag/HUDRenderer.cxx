@@ -319,7 +319,7 @@ void			HUDRenderer::setTeamHasHighScore(bool hasHigh)
 
 void			HUDRenderer::setHeading(float angle)
 {
-  heading = 90.0f - 180.0f * angle / M_PI;
+  heading = (float)(90.0 - 180.0 * angle / M_PI);
   while (heading < 0.0f) heading += 360.0f;
   while (heading >= 360.0f) heading -= 360.0f;
 }
