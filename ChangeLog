@@ -1,5 +1,28 @@
 
 			     BZFlag release notes
+
+BZFlag 1.10.2
+* Stop infinite spawn loop caused by complex worlds with large coverage by pyramids 
+* Misc Swear processing fixes 
+* Allow banfile to be empty or not exist 
+* Don't let zoned tanks flatten Burrowed tanks 
+* Don't spawn in multiple locations based on multiple r-clicks 
+* Don't get speed kicked ejecting from buildings due to expansion 
+* Fix game style menu position 
+* Take flipz collisions in account for pyramids 
+* Fix Respawning after non-shot kills (Geno, Self Destruct, etc) 
+* More caching of BZBD vars 
+* ServerList uses strict http/1.1 
+* Fix playercounts in rabbit mode 
+* GM now tracks player in slot 0 
+* Relax kick tolerances and soften kick messages 
+* Better lag stats 
+* Autoteam happens on the server now 
+* Remove bad lite effects with Thief steal 
+* Protect against crashes due to bad shot ids 
+* Better key binding 
+* Relax flag drop time for speed checking 
+* Better unresponsive player removal messages 
 * added kill messages as an option to bzadmin - Lars Luthman
 * let genocided players spawn again - Lars Luthman
 * auto team is now handled solely in the server - Frank Thilo
