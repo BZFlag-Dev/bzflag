@@ -2956,13 +2956,6 @@ static void addPlayer(int playerIndex)
   // send update of info for team just joined
   sendTeamUpdate(teamIndex);
 
-  // if there is no rabbit yet we will become rabbit
-  if (rabbitIndex == NoPlayer && (clOptions->gameStyle & int(RabbitChaseGameStyle)) &&
-       player[playerIndex].team != ObserverTeam) {
-    rabbitIndex = playerIndex;
-    player[playerIndex].team = RabbitTeam;
-  }
-
   // send rabbit information
   if (clOptions->gameStyle & int(RabbitChaseGameStyle)) {
     void *buf, *bufStart = getDirectMessageBuffer();
