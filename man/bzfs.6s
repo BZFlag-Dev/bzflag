@@ -298,57 +298,138 @@ a multicast route between them with fewer hops than the default TTL
 to a server beyond the multicast TTL.  Clients can also find servers
 advertised using \fI-public\fR by querying \fBbzfls\fR servers.
 .PP
-Some communication between clients, such as position and orientation
-information, is normally sent directly via multicast UDP packets.  Other
-data, like flag grab and kill messages, are sent to the server via TCP
-which then turns around and broadcasts it to all players via TCP.  Since
-being in a game implies connection to the server, all players are
-guaranteed to get all messages sent via TCP.  But the multicast UDP
-packets may be routed differently.  If other players can see your tank in
-the game but it never appears to move and shots go through it, chances
-are high that your multicast packets are not getting routed correctly.
-.PP
-BZFlag will, upon connecting to a server, attempt to contact the server
-via multicast.  If it gets a reply then multicasting is used for the
-duration of the game.  If it receives no reply then it falls back to
-using the TCP server connection to transmit player-to-player packets.
-The server will broadcast these packets to the other players and send
-any multicast player-to-player packets to the player via TCP.  This
-normally solves any communication problems at the expense of higher
-network traffic.  However, there still may be problems if you can
-multicast to the server but not to some other players.
-.PP
-The first thing to check is that multicast packets are being sent on
-the right interface.  By default, multicast packets are sent on the
-first multicast capable interface.  This is normally the right choice,
-but if your system has more than one network interface (other than the
-loopback interface), then you may have to use a different interface.
-A typical scenario of this situation is a remote system connected via
-ISDN to a main network.  Use \fBnetstat -i\fR to list your interfaces,
-then use the \fB-interface\fR \fIinterface\fR option to \fBbzflag\fR,
-replacing \fIinterface\fR with the correct interface IP address.
-.PP
-The next thing to check is the TTL (time-to-live) on the client.  By
-default it is 8.  This means all other players must be no more than
-8 hops (multicast routers) away.  You can use a TTL as high as 255.
-Since sites are recommended to not forward multicast packets with TTL's
-below 32 outside the site, you cannot normally play BZFlag across the
-Internet unless you set the TTL above 32.  If any player joins the
-game using a TTL greater than everyone else, then the server and all
-clients automatically begin using the higher TTL.  This helps ensure
-that everyone can see everyone else, but, due the nature of the network
-geometry, this cannot be guaranteed.
-.PP
-If the TTL is high enough, check the multicast network.  You must have
-a multicast router between all subnets from your subnet to every other
-subnet with a player.  If all players are on the same subnet then no
-multicast router is required.  Since multicast routers connecting a
-site to the Internet normally prevent packets with TTL's below 32 from
-going out onto the Internet, you can't normally play BZFlag across the
-Internet if the TTL not above 32.  However, you may be able to create
-a multicast tunnel, a virtual point-to-point link between any two
-subnets on the Internet.  You'll need to run a tunneling router at both
-ends of the tunnel.  See \fBmrouted\fR for more information about a
-multicast router.
+Game information is relayed through the server. Some communication between
+clients, such as position and orientation information, is normally sent via UDP
+packets.  Other data, like flag grab and kill messages, are sent to the server
+via TCP. The setver then turns around and broadcasts these packets  to all
+players. Since being in a game implies connection to the server, all players
+are guaranteed to get all messages sent via TCP.  But the multicast UDP
+packets may be discarded.  If other players can see your tank in the game but
+it never appears to move and shots go through it, chances are high that your
+UDP connection is not working. Try using TCP only on servers that allow it.
+
+.SH GENERAL SERVER COMMANDS
+
+.TP
+.B /lagstats
+Lists network delays by player. Example:
+.ft CW
+.nf
+.ne 3
+MrApathyCream 335ms (5)
+Gerbol 210ms (8)
+captain_macgyver 155ms (12)
+.ft R
+
+.TP
+.B /flaghistory
+Lists what flags players have grabbed in the past. Example:
+.ft CW
+.nf
+.ne 3
+MrApathyCream: (<-) (->) (O) (CB) (M) (B) (JM) (WA)
+Gerbol: (L) (GM) (L) (GM) (CL) (ST) (GM) (L)
+captain_macgyver: (SB) (SW)
+.ft R
+
+.TP
+.B /password {password}
+Attempt to gain administrator status Example:
+.ft CW
+.nf
+.ne 2
+/password supersecretpassword
+You are now an administrator!
+.ft R
+
+.SH SERVER ADMINISTRATIVE COMMANDS
+
+.TP
+.B /shutdownserver
+Stop serving BZFlag on this server
+.TP
+.B /superkill
+Kick all players off the server
+.TP
+.B /gameover
+Ends the current game
+.TP
+.B /flag reset
+Removes flags from all players
+.TP
+.B /flag up
+Removes all flags from the game
+.TP
+.B /flag show
+Shows all flags with information Example:
+.ft CW
+.nf
+.ne 2
+0: p:-1 r:1 g:1 1:V s:1 p:159.1x43.2x0.0
+1: p:2 r:1 g:1 1:SW s:1 p:209.1x143.2x10.0
+2: p:-1 r:1 g:3 1:L s:1 p:-29.1x301.2x0.0
+.ft R
+
+.TP
+.B /kick {playerName}
+Kick a named player off the server.Example:
+.ft CW
+.nf
+.ne 2
+/kick Gerbol
+You were kicked off the server by MrApathyCream
+.ft R
+
+.TP
+.B /playerlist
+List player names and IP addresses. Example:
+.ft CW
+.nf
+.ne 4
+/playerlist
+[0]MrApathyCream: 35.23.65.44:4808 udp id
+[1]Gerbol: 130.123.1.55:4909 udp id
+[2]captain_macgyver: 15.32.122.51:3201 udp id
+.ft R
+
+.TP
+.B /ban {ipList} {mins}
+
+Ban players using the specified IPs for certain length of time from using this server. Example:
+.ft CW
+.nf
+.ne 4
+/ban 35.23.43.66 2
+bans player with specific ip for 2 minutes
+/ban 35.23.*.*,47.23.17.*
+bans all ips in this range forever
+.ft R
+
+.TP
+.B /banlist
+List all of the IPs currently banned from this server. Example:
+.ft CW
+.nf
+.ne 5
+/banlist
+IP Ban List
+------------
+35.23.43.66
+47.23.17.*
+.ft R
+
+.TP
+.B /countdown
+Starts the countdown sequence for a timed game. Example:
+
+/countdown
+
+.TP
+.B /lagwarn
+
+Dynamic change the maximum allowed lag time. Example:
+
+/lagwarn 300
+
 .SH SEE ALSO
 bzflag(6), bzfls(6), bzfrelay(6), mrouted(1)
