@@ -440,7 +440,7 @@ bool Record::saveFile (int playerIndex, const char *filename)
 
 bool Record::saveBuffer (int playerIndex, const char *filename, int seconds)
 {
-  RRpacket *p;
+  RRpacket *p = (RRpacket *)NULL;
   char buffer[MessageLen];
   std::string name = RecordDir;
   name += filename;
