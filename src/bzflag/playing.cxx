@@ -1654,7 +1654,7 @@ static void		doAutoPilot(float &rotation, float &speed)
 	        if (targetRotation > 1.0f * M_PI) targetRotation -= 2.0f * M_PI;
 
 	        if ((fabs(targetRotation) < errorLimit)
-	        ||  ((distance < 50.0f) && (fabs(targetRotation) < closeErrorLimit))) {
+		||  ((distance < (2.0f * BZDB->eval(StateDatabase::BZDB_SHOTSPEED))) && (fabs(targetRotation) < closeErrorLimit))) {
 		  float d = hypotf(tp[0] - pos[0], tp[1] - pos[1]);
 		  const Obstacle *building = NULL;
 		  if (myTank->getFlag() != Flags::SuperBullet)
@@ -1684,7 +1684,7 @@ static void		doAutoPilot(float &rotation, float &speed)
 	  if (fpos[2] == pos[2]) {
 	    const float dist = (pos[0] - fpos[0]) * (pos[0] - fpos[0]) +
 			       (pos[1] - fpos[1]) * (pos[1] - fpos[1]);
-	    if ((dist < 2000.0f) && (dist < minDist)) {
+	    if ((dist < (5.0f * BZDBCache::flagRadius)) && (dist < minDist)) {
 	      minDist = dist;
 	      closestFlag = i;
 	    }
@@ -1731,19 +1731,23 @@ static void		doAutoPilot(float &rotation, float &speed)
 	  if ((myTank->getFlag() != Flags::SuperBullet) && (velocity[0] > 3.0f) || (velocity[1] > 3.0f))
 	    building = ShotStrategy::getFirstBuilding(tankRay, -0.5f, d);
 	  if (building) {
-	    if ((d > 20.f) && (d < 50.0f) && (building->getType() == BoxBuilding::typeName)) {
+	    //Never did good in math, he should really see if he can reach the building
+	    //based on jumpvel and gravity, but settles for assuming 20-50 is a good range
+	    if ((d > 20.0f) && (d < 50.0f) && (building->getType() == BoxBuilding::typeName)) {
 	      float jumpVel = BZDB->eval(StateDatabase::BZDB_JUMPVELOCITY);
 	      float maxJump = (jumpVel * jumpVel) / (2 * -BZDB->eval(StateDatabase::BZDB_GRAVITY));
 
-	      if (((building->getPosition()[2] - pos[2] + building->getHeight()) ) < maxJump)
+	      if (((building->getPosition()[2] - pos[2] + building->getHeight()) ) < maxJump) {
+		speed = d / 50.0f;
 	        myTank->jump();
+	      }
 	    }
 	  }
 	}
 
 	// weave towards the player
 	const Player *target = myTank->getTarget();
-	if (distance > 50.0f) {
+	if (distance > (BZDB->eval(StateDatabase::BZDB_SHOTSPEED) /2.0f)) {
 	  float enemyUnitVec[2] = { cos(enemyAzimuth), sin(enemyAzimuth) };
 	  float myUnitVec[2] = { cos(myAzimuth), sin(myAzimuth) };
 	  float dotProd = (myUnitVec[0]*enemyUnitVec[0] + myUnitVec[1]*enemyUnitVec[1]);
