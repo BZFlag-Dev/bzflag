@@ -71,7 +71,7 @@ ShotPath *findWorstBullet(float &minDistance)
 
   WorldPlayer *wp = World::getWorld()->getWorldWeapons();
   for (int w = 0; w < wp->getMaxShots(); w++) {
-    ShotPath* shot = player[t]->getShot(w);
+    ShotPath* shot = wp->getShot(w);
     if (!shot || shot->isExpired())
       continue;
 
@@ -172,9 +172,13 @@ bool	avoidBullet(float &rotation, float &speed)
 bool	stuckOnWall(float &rotation, float &speed)
 {
   TimeKeeper lastStuckTime;
+  static float stuckRot = 0.0f, stuckSpeed = 0.0f;
 
-  if ((TimeKeeper::getCurrent() - lastStuckTime) < 1.0f)
+  if ((TimeKeeper::getCurrent() - lastStuckTime) < 1.0f) {
+    rotation = stuckRot;
+    speed = stuckSpeed;
     return true;
+  }
 
   LocalPlayer *myTank = LocalPlayer::getMyTank();
   const float *pos = myTank->getPosition();
@@ -190,16 +194,18 @@ bool	stuckOnWall(float &rotation, float &speed)
       // Every once in a while, do something nuts
       speed = bzfrand() * 1.5f - 0.5f;
       rotation = bzfrand() * 2.0f - 1.0f;
-      return true;
     }
-
-    float leftDistance = TargetingUtils::getOpenDistance( pos, myAzimuth + (M_PI/4.0f));
-    float rightDistance = TargetingUtils::getOpenDistance( pos, myAzimuth - (M_PI/4.0f));
-    if (leftDistance > rightDistance)
-      rotation = 1.0f;
-    else
-      rotation = -1.0f;
-    speed = -0.5f;
+    else {
+      float leftDistance = TargetingUtils::getOpenDistance( pos, myAzimuth + (M_PI/4.0f));
+      float rightDistance = TargetingUtils::getOpenDistance( pos, myAzimuth - (M_PI/4.0f));
+      if (leftDistance > rightDistance)
+        rotation = 1.0f;
+      else
+        rotation = -1.0f;
+      speed = -0.5f;
+    }
+    stuckRot = rotation;
+    stuckSpeed = speed;
     return true;
   }
   return false;
@@ -388,9 +394,13 @@ bool lookForFlag( float &rotation, float &speed)
 bool navigate( float &rotation, float &speed)
 {
   static TimeKeeper lastNavChange;
+  static float navRot = 0.0f, navSpeed = 0.0f;
 
-  if ((TimeKeeper::getCurrent() - lastNavChange) < 1.0f)
+  if ((TimeKeeper::getCurrent() - lastNavChange) < 1.0f) {
+    rotation = navRot;
+    speed = navSpeed;
     return true;
+  }
 
   LocalPlayer *myTank = LocalPlayer::getMyTank();
   const float *pos = myTank->getPosition();
@@ -412,6 +422,8 @@ bool navigate( float &rotation, float &speed)
       rotation = 0.0f;
   }
   speed = 1.0f;
+  navRot = rotation;
+  navSpeed = speed;
   lastNavChange = TimeKeeper::getCurrent();
   return true;
 }
