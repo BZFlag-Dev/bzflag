@@ -1471,6 +1471,21 @@ OptionsMenu::OptionsMenu() : formatMenu(NULL), keyboardMapMenu(NULL),
 
   option = new HUDuiList;
   option->setFont(MainMenu::getFont());
+  option->setLabel("Texturing:");
+  option->setCallback(callback, (void*)"5");
+  options = &option->getList();
+  options->push_back(std::string("Off"));
+  options->push_back(std::string("Nearest"));
+  options->push_back(std::string("Linear"));
+  options->push_back(std::string("Nearest Mipmap Nearest"));
+  options->push_back(std::string("Linear Mipmap Nearest"));
+  options->push_back(std::string("Nearest Mipmap Linear"));
+  options->push_back(std::string("Linear Mipmap Linear"));
+  option->update();
+  list.push_back(option);
+
+  option = new HUDuiList;
+  option->setFont(MainMenu::getFont());
   option->setLabel("Quality:");
   option->setCallback(callback, (void*)"6");
   options = &option->getList();
@@ -1739,11 +1754,13 @@ void			OptionsMenu::resize(int width, int height)
   // load current settings
   SceneRenderer* renderer = getSceneRenderer();
   if (renderer) {
+    HUDuiList* tex;
     int i = 1;
     ((HUDuiList*)list[i++])->setIndex(BZDB.isTrue("dither"));
     ((HUDuiList*)list[i++])->setIndex(BZDB.isTrue("blend"));
     ((HUDuiList*)list[i++])->setIndex(BZDB.isTrue("smooth"));
     ((HUDuiList*)list[i++])->setIndex(BZDB.isTrue("lighting"));
+    tex = (HUDuiList*)list[i++];
     ((HUDuiList*)list[i++])->setIndex(renderer->useQuality());
     ((HUDuiList*)list[i++])->setIndex(BZDB.isTrue("shadows"));
     ((HUDuiList*)list[i++])->setIndex(BZDB.isTrue("zbuffer"));
@@ -1770,6 +1787,10 @@ void			OptionsMenu::resize(int width, int height)
     // mind the ++i !
     ((HUDuiList*)list[i++])->setIndex(info->useUDPconnection ? 1 : 0);
 
+    if (!BZDB.isTrue("texture"))
+      tex->setIndex(0);
+    else
+      tex->setIndex(OpenGLTexture::getFilter());
 
     // server cache age
     int index = 0;
@@ -1821,22 +1842,19 @@ void			OptionsMenu::callback(HUDuiControl* w, void* data)
       sceneRenderer->notifyStyleChange();
       break;
 
+    case '5':
+      OpenGLTexture::setFilter((OpenGLTexture::Filter)list->getIndex());
+      BZDB.set("texture", OpenGLTexture::getFilterName());
+      sceneRenderer->notifyStyleChange();
+      break;
+
     case '6':
-      {
       sceneRenderer->setQuality(list->getIndex());
 
-      int filter = 0;
-      if (list->getIndex()>=BZDB.eval("qualityForTexture"))
-	filter = (int)BZDB.eval("textureFilterMode");
-
-      OpenGLTexture::setFilter((OpenGLTexture::Filter)filter);
-      BZDB.set("texture", OpenGLTexture::getFilterName());
-
       BZDB.set("_texturereplace", (!BZDB.isTrue("lighting") &&
-		sceneRenderer->useQuality() < 2) ? "1" : "0");
+        sceneRenderer->useQuality() < 2) ? "1" : "0");
       BZDB.setPersistent("_texturereplace", false);
       sceneRenderer->notifyStyleChange();
-      }
       break;
 
     case '7':

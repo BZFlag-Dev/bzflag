@@ -232,7 +232,7 @@ void			SceneRenderer::setQuality(int value)
   else if (value > BZDB.eval("maxQuality")) value = (int)BZDB.eval("maxQuality");
   useQualityValue = value;
   notifyStyleChange();
-  if (useQualityValue >= BZDB.eval("qualityForNice")) {
+  if (useQualityValue >= 2) {
     glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
     glHint(GL_POINT_SMOOTH_HINT, GL_NICEST);
   }
