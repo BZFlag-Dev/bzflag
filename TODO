@@ -1,6 +1,9 @@
 to do list for bzflag
 ---------------------
 
+* configure should detect missing GL/GLU headers then
+  warn and disable the client compile
+
 * build a prototype(4) for bsd, solaris
 
 * fix up irix idb
