@@ -170,8 +170,7 @@ void *GameKeeper::Player::packPlayerUpdate(void *buf)
   return buf;
 }
 
-std::vector<int> GameKeeper::Player::allowed(PlayerAccessInfo::AccessPerm
-					     right,
+std::vector<int> GameKeeper::Player::allowed(PlayerAccessInfo::AccessPerm right,
 					     int targetPlayer)
 {
   std::vector<int> receivers;
