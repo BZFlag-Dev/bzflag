@@ -60,9 +60,6 @@
 
 const int udpBufSize = 128000;
 
-// (2000m / 2^16) = 3.05 cm resolution
-const float smallWorldSize = 2000.0f;
-
 // every ListServerReAddTime server add ourself to the list
 // server again.  this is in case the list server has reset
 // or dropped us for some reason.
