@@ -5422,7 +5422,8 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
 
       float maxPlanarSpeedSqr = TankSpeed*TankSpeed;
 
-      if (flag[player[t].flag].flag.id == VelocityFlag)
+      // if tank not on ground cannot be sure if it didn't have HighSpeed before
+      if (flag[player[t].flag].flag.id == VelocityFlag || state.pos[2] > 0.0f)
 	maxPlanarSpeedSqr *= VelocityAd*VelocityAd;
       
       if (curPlanarSpeedSqr > (1.0 + maxPlanarSpeedSqr)) {
