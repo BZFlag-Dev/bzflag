@@ -262,8 +262,8 @@ case $host_os in
 
 	AC_CHECK_LIB(Xext, XextAddDisplay, [GLIBS="-lXext $GLIBS"], [], $GLIBS)
 
-	if test $host_os = linux-gnu; then
-	  AC_CHECK_LIB(Xxf86vm, XF86VidModeGetAllModeLines, [GLIBS="-lXxf86vm $GLIBS"], [], $GLIBS)
+	if test x$host_os = xlinux-gnu -o x$host_os = xlinux ; then
+gnu	  AC_CHECK_LIB(Xxf86vm, XF86VidModeGetAllModeLines, [GLIBS="-lXxf86vm $GLIBS"], [], $GLIBS)
 	  AC_CHECK_LIB(Xi, XListInputDevices, [GLIBS="-lXi $GLIBS"], [], $GLIBS)
 	fi
     ;;
@@ -469,7 +469,7 @@ AC_DEFINE_UNQUOTED(INSTALL_DATA_DIR, "$INSTALL_DATA_DIR",
 [Data file directory])
 
 case $host_os in
-     linux-gnu)
+     linux*)
 	AC_DEFINE(HALF_RATE_AUDIO, 1, [Half rate Audio])
 	AC_DEFINE(XF86VIDMODE_EXT, 1, [XFree86 Video Mode Extension])
 	# FIXME see XIJoystick.cxx
@@ -514,7 +514,7 @@ if test x$enable_debug = xyes; then
    CFLAGS="$CFLAGS -O0";
    CXXFLAGS="$CXXFLAGS -O0";
    case $host_os in
-     linux-gnu|cygwin|mingw32)
+     linux*|cygwin|mingw32)
 	CPPFLAGS="$CPPFLAGS -Werror";
 	CXXFLAGS="$CXXFLAGS -Wno-deprecated";
 	if test x$enable_profiling = xyes; then
@@ -532,7 +532,7 @@ if test x$enable_debug = xyes; then
     AC_DEFINE(DEBUG, 1, [Debugging enabled])
 else
     case $host_os in
-	 linux-gnu|cygwin|mingw32)
+	 linux*|cygwin|mingw32)
 		CXXFLAGS="$CXXFLAGS -ffast-math -fno-exceptions";;
 	 solaris*)
 		CFLAGS="$CFLAGS -O";
