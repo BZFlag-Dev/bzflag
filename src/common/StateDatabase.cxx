@@ -203,8 +203,12 @@ std::string		StateDatabase::get(const std::string& name) const
     return index->second.value;
 }
 
-float			StateDatabase::eval(const std::string& name) const
+float			StateDatabase::eval(const std::string& name)
 {
+  EvalMap::const_iterator cit = evalCache.find(name);
+  if (cit != evalCache.end())
+    return cit->second;
+
   static std::vector<std::string> variables;
   // ugly hack, since gcc 2.95 doesn't have <limits>
   float NaN;
@@ -225,6 +229,8 @@ float			StateDatabase::eval(const std::string& name) const
   pre = infixToPrefix(inf);
   float retn = evaluate(pre);
   variables.pop_back();
+
+  evalCache[name] = retn;
   return retn;
 }
 
@@ -280,6 +286,10 @@ StateDatabase::Map::iterator
 
 void			StateDatabase::notify(Map::iterator index)
 {
+  EvalMap::iterator cit = evalCache.find(index->first);
+  if (cit != evalCache.end())
+    evalCache.erase(cit);
+
   index->second.callbacks.iterate(&onCallback, const_cast<void*>(reinterpret_cast<const void*>(&index->first)));
 }
 

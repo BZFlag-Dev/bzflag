@@ -92,7 +92,7 @@ public:
 
   // get the value as a floating point number. this will evaluate
   // the string as an expression
-  float				eval(const std::string& name) const;
+  float				eval(const std::string& name);
 
   // return true if the value associated with a name indicates
   // logical true, which is when the value is not empty and not
@@ -241,6 +241,8 @@ private:
 private:
   static Expression		infixToPrefix(const Expression &infix);
   float				evaluate(Expression e) const;
+  typedef std::map<std::string,float> EvalMap;
+  EvalMap			evalCache;
 };
 
 std::istream& operator >> (std::istream& src, StateDatabase::Expression& dst);
