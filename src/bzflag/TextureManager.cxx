@@ -190,7 +190,7 @@ void TextureManager::loadBigTexture(TextureType type, FileTextureInit &init)
       int dx = subwidth;
       if (n == numTextures - 1)
 	dx += width % numTextures;
-    
+
       // copy subimage
       const unsigned char* src = image + 4 * n * subwidth;
       unsigned char* dst = subimage + 4;
@@ -205,7 +205,7 @@ void TextureManager::loadBigTexture(TextureType type, FileTextureInit &init)
 	src += 4 * width;
 	dst += 4 * minWidth;
       }
-    
+
       // copy left border
       if (n == 0)
 	src = image + 4 * (width - 1);

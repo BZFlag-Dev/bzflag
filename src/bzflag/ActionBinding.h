@@ -37,7 +37,7 @@ class ActionBinding : public Singleton<ActionBinding> {
  protected:
   friend class Singleton<ActionBinding>;
  private:
-  /** WayToBindAction is a map from an action to the key pressure bindings 
+  /** WayToBindAction is a map from an action to the key pressure bindings
    */
   enum PressStatusBind {press, release, both};
   typedef std::map<std::string, PressStatusBind>  WayToBindActions;

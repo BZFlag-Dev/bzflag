@@ -72,7 +72,7 @@ public:
     const char* getFileTitle ();
 
     const char* getExtension ();
-  
+
     const char* getFullOSPath ();
 
     bool isOpen ();

@@ -23,7 +23,7 @@ UIAdder CursesUI::uiAdder("curses", &CursesUI::creator);
 
 CursesUI::CursesUI(const std::map<PlayerId, std::string>& p, PlayerId m) :
   players(p), me(m), maxHistory(20), currentHistory(0) {
-  
+
   // initialize ncurses
   initscr();
   nonl();
@@ -106,7 +106,7 @@ bool CursesUI::checkCommand(std::string& str) {
   int i;
   int c = wgetch(cmdWin);
   switch (c) {
-  
+
   case KEY_RESIZE:
     handleResize(LINES, COLS);
     return false;

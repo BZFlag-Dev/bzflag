@@ -211,13 +211,13 @@ public:
       It only returns @c false if the file exist but is not in the correct
       format, otherwise @c true is returned. */
   bool load() {
-  
+
     // try to open the ban file
     std::ifstream is(banFile.c_str());
-    if (!is.good()) 
+    if (!is.good())
       // file does not exist, but that's OK, we'll create it later if needed
       return true;
-  
+
     // try to read ban entries
     std::string ipAddress, bannedBy, reason, tmp;
     long banEnd;
@@ -269,7 +269,7 @@ public:
     }
     banList_t::const_iterator it;
     for (it = banList.begin(); it != banList.end(); ++it) {
-    
+
       // print address
       in_addr mask = it->addr;
       os<<((ntohl(mask.s_addr) >> 24) % 256)<<'.';
@@ -288,7 +288,7 @@ public:
 	}
       }
       os<<'\n';
-    
+
       // print ban end, banner, and reason
       if (it->banEnd.getSeconds() ==
 	  TimeKeeper::getSunExplodeTime().getSeconds()) {

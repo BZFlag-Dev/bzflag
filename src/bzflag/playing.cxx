@@ -3060,7 +3060,7 @@ static void		handleServerMessage(bool human, uint16_t code,
     msg = nboUnpackVector(msg, pos);
     msg = nboUnpackFloat(msg, forward);
     int playerIndex = lookupPlayerIndex(id);
-  
+
     if ((playerIndex >= 0) || (playerIndex == -2)) {
       static const float zero[3] = { 0.0f, 0.0f, 0.0f };
       Player* tank = getPlayerByIndex(playerIndex);
@@ -4277,7 +4277,7 @@ static void		checkEnvironment()
     for (i = 0; i < curMaxPlayers; i++)
       if (player[i] && !player[i]->isPaused() &&
 	  (player[i]->getFlag() == Flags::Steamroller ||
-	   (myPos[2] < 0.0f && player[i]->isAlive() && 
+	   (myPos[2] < 0.0f && player[i]->isAlive() &&
 	    player[i]->getFlag() != Flags::PhantomZone))) {
 	const float* pos = player[i]->getPosition();
 	if (pos[2] < 0.0f) continue;
@@ -4673,7 +4673,7 @@ static void		checkEnvironment(RobotPlayer* tank)
     bool dead = false;
     const float* myPos = tank->getPosition();
     const float myRadius = tank->getRadius();
-    if (((myTank->getFlag() == Flags::Steamroller) || 
+    if (((myTank->getFlag() == Flags::Steamroller) ||
 	 ((tank->getFlag() == Flags::Burrow) && myTank->isAlive() &&
 	  myTank->getFlag() != Flags::PhantomZone)) && !myTank->isPaused()) {
       const float* pos = myTank->getPosition();
@@ -4687,7 +4687,7 @@ static void		checkEnvironment(RobotPlayer* tank)
     }
     for (i = 0; !dead && i < curMaxPlayers; i++)
       if (player[i] && !player[i]->isPaused() &&
-	  ((player[i]->getFlag() == Flags::Steamroller) || 
+	  ((player[i]->getFlag() == Flags::Steamroller) ||
 	   ((tank->getFlag() == Flags::Burrow) && player[i]->isAlive()) &&
 	   player[i]->getFlag() != Flags::PhantomZone)) {
 	const float* pos = player[i]->getPosition();

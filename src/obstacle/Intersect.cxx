@@ -369,7 +369,7 @@ float			timeRayHitsPyramids(const Ray& r,
 					    float dx, float dy, float dz,
 					    bool flipZ)
 {
-  
+
   const float epsilon = 1.0e-5f;
   // get names for ray info
   int i;
@@ -390,7 +390,7 @@ float			timeRayHitsPyramids(const Ray& r,
   db[0] = c * d[0] - s * d[1];
   db[1] = c * d[1] + s * d[0];
   db[2] = d[2];
-  
+
   if (dx < 0)
     dx = - dx;
   if (dy < 0)

@@ -23,7 +23,7 @@
 // IF YOU HAVE THE NEW PLAT SDK COMMOENT THIS OUT
 // VC5 and VC6 standard need it
 // AND David don't you DARE COMMIT a change to put this back.
-#define socklen_t int 
+#define socklen_t int
 
 /* Time Bomb expiration */
 /* #undef TIME_BOMB */

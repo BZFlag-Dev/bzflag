@@ -512,7 +512,7 @@ float			OpenGLTexFont::getWidth(const std::string& str) const
   float dx = 0.0f;
 
   const char* s = str.c_str();
- 
+
   int length = rawStrlen (s, str.size());
 
   for (int i = 0; i < length; i++) {

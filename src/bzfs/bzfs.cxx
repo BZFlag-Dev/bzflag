@@ -2218,7 +2218,7 @@ static void addPlayer(int playerIndex)
     if ((clOptions->autoTeam && t < (int)ObserverTeam) || t == AutomaticTeam) {
       std::vector<TeamColor> minIndex;
       int sizeOfSmallestTeam = maxRealPlayers;
-  
+
       for (int i = (int)RogueTeam; i < (int)ObserverTeam; i++) {
         const int teamsize = team[i].team.size;
         // if the team is not full and the smallest
@@ -2230,7 +2230,7 @@ static void addPlayer(int playerIndex)
           minIndex.push_back((TeamColor)i);
         }
       } // end iteration over teams
-  
+
       // reassign the team if
       if (minIndex.size() == 0) {
         // all teams are all full, try observer
@@ -2240,7 +2240,7 @@ static void addPlayer(int playerIndex)
         t = player[playerIndex].team = minIndex[0];
       } else {
         // multiple equally unfilled teams, choose the one sucking most
-  
+
         // see if the player's choice was a weak team
         bool foundTeam = false;
         for (int i = 0; i < (int) minIndex.size(); i++) {
@@ -4160,7 +4160,7 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
 	      maxPlanarSpeedSqr *= BZDB.eval(StateDatabase::BZDB_THIEFVELAD) * BZDB.eval(StateDatabase::BZDB_THIEFVELAD);
 	    else {
 	      // If player is moving vertically, or not alive the speed checks
-	      // seem to be problematic. If this happens, just log it for now, 
+	      // seem to be problematic. If this happens, just log it for now,
 	      // but don't actually kick
 	      if ((player[t].lastState.pos[2] != state.pos[2])
 	      ||  (player[t].lastState.velocity[2] != state.velocity[2])

@@ -380,7 +380,7 @@ void			LocalPlayer::doUpdate(float dt)
       ServerLink::getServer()->sendDropFlag(getPosition());
       pauseTime = TimeKeeper::getSunExplodeTime();
     }
-  
+
   } else {
     pauseTime = TimeKeeper::getNullTime();
     wasPaused = false;

@@ -40,9 +40,9 @@ sub serverlist(%) {
   my $response;
   my $ua = new LWP::UserAgent;
   $ua->proxy('http', $proxy) if defined($proxy);
-  
+
   $ua->timeout(5);
-  
+
   my $req = HTTP::Request->new('GET', $self->listserver);
   my $res = $ua->request($req);
   my %servers;
@@ -73,8 +73,8 @@ sub serverlist(%) {
   }
 
   return ($response);
-  
-}    
+
+}
 
 sub queryserver(%) {
   my $self = shift;
@@ -93,19 +93,19 @@ sub queryserver(%) {
   my $response;
   my ($servername, $port) = split(/:/, $hostandport);
   $port = 5155 unless $port;
-  
+
   # socket define
   my $sockaddr = 'S n a4 x8';
-  
+
   # port to port number
   my ($name,$aliases,$proto) = getprotobyname('tcp');
   ($name,$aliases,$port)  = getservbyname($port,'tcp') unless $port =~ /^\d+$/;
-  
+
   # get server address
   my ($type,$len,$serveraddr);
   ($name,$aliases,$type,$len,$serveraddr) = gethostbyname($servername);
   $server = pack($sockaddr, AF_INET, $port, $serveraddr);
-  
+
   # connect
   unless (socket(S1, AF_INET, SOCK_STREAM, $proto)) {
     $self->{error} = 'errSocketError';
@@ -116,10 +116,10 @@ sub queryserver(%) {
     $self->{error} = "errCouldNotConnect: $servername:$port";
     return undef;
   }
-  
+
   # don't buffer
   select(S1); $| = 1; select(STDOUT);
-  
+
   # get hello
   my $buffer;
   unless (read(S1, $buffer, 10) == 10) {
@@ -130,7 +130,7 @@ sub queryserver(%) {
   # parse reply
   my ($magic,$major,$minor,$revision);
   ($magic,$major,$minor,$revision,$port) = unpack("a4 a1 a2 a1 n", $buffer);
-  
+
   # quit if version isn't valid
   if ($magic ne "BZFS") {
     $self->{error} = 'errNotABzflagServer';
@@ -142,14 +142,14 @@ sub queryserver(%) {
     $self->{error} = 'errIncompatibleVersion';
     return undef;
   }
-  
+
   # quit if rejected
   if ($port == 0) {
     $self->{error} = 'errRejectedByServer';
     return undef;
   }
-  
-  
+
+
   # reconnect on new port
   $server = pack($sockaddr, AF_INET, $port, $serveraddr);
   unless (socket(S, AF_INET, SOCK_STREAM, $proto)) {
@@ -163,13 +163,13 @@ sub queryserver(%) {
   }
 
   select(S); $| = 1; select(STDOUT);
-  
+
   # close first socket
   close(S1);
-  
+
   # send game request
   print S pack("n2", 0, 0x7167);
-  
+
   # get reply
   unless (read(S, $buffer, 40) == 40) {
     $self->{error} = 'errServerReadError';
@@ -188,7 +188,7 @@ sub queryserver(%) {
 
   # send players request
   print S pack("n2", 0, 0x7170);
-  
+
   # get number of teams and players we'll be receiving
   unless (read(S, $buffer, 8) == 8) {
     $self->{error} = 'errCountReadError';
@@ -220,19 +220,19 @@ sub queryserver(%) {
     $response->{teams}->{$teamName[$team]}->{score}  = $score;
     $response->{teams}->{$teamName[$team]}->{wins}   = $wins;
     $response->{teams}->{$teamName[$team]}->{losses} = $losses;
-    
+
   }
-  
+
   # get the players
   for (1..$numPlayers) {
     next if read(S, $buffer, 180) == 18;
     my ($playerlen,$playercode,$pAddr,$pPort,$pNum,$type,$team,$wins,$losses,$sign,$email) =
-	unpack("n2Nn2 n4A32A128", $buffer);	
+	unpack("n2Nn2 n4A32A128", $buffer);
     unless ($playercode == 0x6170) {
       $self->{error} = 'errBadPlayerData';
       return undef;
     }
-    
+
     my $score = $wins - $losses;
 
     $response->{players}->{$sign}->{team}   = $teamName[$team];
@@ -247,10 +247,10 @@ sub queryserver(%) {
     $self->{error} = 'errNoPlayers';
     return undef;
   }
-  
+
   # close socket
   close(S);
-  
+
   return $response;
 
 }

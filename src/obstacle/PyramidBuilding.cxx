@@ -46,7 +46,7 @@ std::string		PyramidBuilding::getClassName() // const
 float			PyramidBuilding::intersect(const Ray& r) const
 {
   return timeRayHitsPyramids(r, getPosition(), getRotation(),
-			     getWidth(), getBreadth(), getHeight(), 
+			     getWidth(), getBreadth(), getHeight(),
 			     getZFlip());
 }
 
@@ -246,7 +246,7 @@ bool			PyramidBuilding::getHitNormal(
     // top of lower object is below the base
     normal[2] = -1;
     return true;
-  }  
+  }
 
   // get normal in z = const plane
   const float s = shrinkFactor(pos1[2], height);

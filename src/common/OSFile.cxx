@@ -141,7 +141,7 @@ typedef struct OSFile::OSFileInfo
 	useGlobalPath = true;
 	fp = NULL;
     }
-  
+
     const OSFileInfo& operator=( const OSFileInfo &xInfo )
     {
 	stdName = xInfo.stdName;
@@ -150,7 +150,7 @@ typedef struct OSFile::OSFileInfo
 	useGlobalPath = xInfo.useGlobalPath;
 	fp = NULL;
     }
-  
+
     std::string        stdName;
     std::string        osName;
     std::string        title;
@@ -178,7 +178,7 @@ OSFile::OSFile ( const char *name )
 OSFile::OSFile ( const OSFile &r)
 {
     info = new OSFileInfo;
-    info->fp = r.info->fp;  
+    info->fp = r.info->fp;
     info->osName = r.info->osName;
     info->stdName = r.info->stdName;
     info->title = r.info->title;
@@ -191,9 +191,9 @@ OSFile& OSFile::operator = (const OSFile &r)
     if (this != &r) {
 	if (info)
 	    delete (info);
-  
+
 	info = new OSFileInfo;
-	info->fp = r.info->fp;  
+	info->fp = r.info->fp;
 	info->osName = r.info->osName;
 	info->stdName = r.info->stdName;
 	info->title = r.info->title;
@@ -205,7 +205,7 @@ OSFile& OSFile::operator = (const OSFile &r)
 OSFile::OSFile ( const char *name, const char *mode   )
 {
     info = new OSFileInfo;
-    info->fp = NULL;  
+    info->fp = NULL;
     info->useGlobalPath = true;
 
     open(name,mode);
@@ -239,7 +239,7 @@ bool OSFile::open ( const char *mode )
 	strcpy(modeToUse,mode);
 
     std::string    fileName;
-  
+
     if (info->useGlobalPath)
 	fileName = osBaseDir;
     fileName += info->osName;
@@ -288,7 +288,7 @@ unsigned char  OSFile::readChar ( void )
 const char* OSFile::readLine ( void )
 {
     static std::string line;
-  
+
     line = "";
     char c = readChar();
     while (c != 0 && c != '/n' && c != 10) {
@@ -310,7 +310,7 @@ const char* OSFile::scanStr ( )
 {
     if (!isOpen())
 	return 0;
-  
+
     static char temp[1024] = {0};
     if (fscanf(info->fp,"%s",temp)!=1)
 	return NULL;
@@ -364,7 +364,7 @@ unsigned int OSFile::size ( void )
     fseek(info->fp,0,SEEK_END);
     unsigned int len = ftell(info->fp);
     fseek(info->fp,pos, SEEK_SET);
-  
+
     return len;
 }
 
@@ -414,7 +414,7 @@ const char* OSFile::getFileTitle ()
     else {
       title.resize(title.size() - strlen(getExtension()) - 1);
     }
-  
+
 
     return title.c_str();
 }
@@ -435,7 +435,7 @@ const char* OSFile::getExtension()
 const char* OSFile::getFullOSPath ( void )
 {
     static std::string    szPath;
-  
+
     szPath.empty();
     szPath = osBaseDir;
     szPath += info->osName;
@@ -593,7 +593,7 @@ bool OSDir::getNextFile ( OSFile &oFile, const char* fileMask, bool recursive )
 	realMask = fileMask;
 
     getUpperName((char*)realMask.c_str());
-  
+
     std::string theFileExt;
     if (info->namePos == -1) {
 	info->nameList.clear();
@@ -602,7 +602,7 @@ bool OSDir::getNextFile ( OSFile &oFile, const char* fileMask, bool recursive )
 
 	info->namePos = 0;
     }
-  
+
     unsigned int size = info->nameList.size();
     if (info->namePos >= size) {
 	info->namePos = -1;
@@ -627,7 +627,7 @@ bool OSDir::windowsAddFileStack ( const char *szPathName, const char* fileMask, 
 {
 #ifdef _WIN32
     struct _finddata_t fileInfo;
-  
+
     long        hFile;
     std::string searchstr;
 
@@ -738,7 +738,7 @@ static int match_multi (const char **mask, const char **string)
 		msk++;
 		str++;
 		if ((*msk == '\0') &amp;&amp; (*str != '\0'))    /* advanced check */
-		{                                      
+		{
 		    str++;
 		    strtop++;
 		    str = strtop;

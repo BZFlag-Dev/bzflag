@@ -26,7 +26,7 @@ THESE ARE LOWER PRIORITY
   - open group registration. one nick is master for each group
   - karma see http://bzflag.org/wiki/KarmaSystem
 
-* Try to build bzadmin on Win32 using PDCurses (it almost works with 
+* Try to build bzadmin on Win32 using PDCurses (it almost works with
   the X11 version of PDCurses). It currently works with stdin/stdout.
 
 * add ability to capture a screenshot to a gamma-corrected png from

@@ -65,7 +65,7 @@ recent bugs
   un aided. Now stop yourself. Now alt doesn't work. Bagheera reports he gets
   into situations where movement is out of control. This is because the player
   might release the control or alt key before it releases the arrow key, so
-  the keymanager would see it as an arrow key release, and not a 
+  the keymanager would see it as an arrow key release, and not a
   ctrl+arrow key or alt+arrow key release. Should probably use other (single)
   keys for observer control.
 

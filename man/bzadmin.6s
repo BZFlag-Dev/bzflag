@@ -40,7 +40,7 @@ is a player).
 Show a simple help text.
 .TP
 .B -showkills
-Show a message whenever a player is killed, like in the message box in 
+Show a message whenever a player is killed, like in the message box in
 BZFlag. This is not done by default.
 .TP
 \fB\-ui \fR{\fIcurses\fR | \fIstdboth\fR | \fIstdin\fR | \fIstdout\fR}
