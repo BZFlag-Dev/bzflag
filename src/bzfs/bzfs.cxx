@@ -5495,9 +5495,14 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
 		if (fID != NullFlag)
 			hasFlag[fID-FirstFlag] = true;
 	}
-	for (i = FirstFlag; i <= LastFlag; i++)
-		if (!hasFlag[i-FirstFlag])
-			break;
+	for (i = FirstFlag; i <= LastFlag; i++) {
+		if (!hasFlag[i-FirstFlag]) {
+		   if (clOptions.flagCount[i] > 0)
+		     break;
+		   if ((clOptions.numExtraFlags > 0) && !clOptions.flagDisallowed[i])
+		     break;
+		}
+	}
 
 	delete hasFlag;
 	if (i <= LastFlag) {
