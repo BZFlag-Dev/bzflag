@@ -354,8 +354,7 @@ float			RobotPlayer::getTargetPriority(const
 							Player* _target) const
 {
   // don't target teammates or myself
-  if (_target == this ||
-	(_target->getTeam() == getTeam() && getTeam() != RogueTeam))
+  if (!this->validTeamTarget(_target))
     return 0.0f;
 
   // go after closest player
