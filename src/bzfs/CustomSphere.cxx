@@ -136,7 +136,7 @@ void CustomSphere::write(WorldInfo *world) const
         vertices.push_back(v);
         // normal
         n[2] = -n[2];
-        normals.push_back(v);
+        normals.push_back(n);
         // texcoord
         t[1] = 1.0f - t[1];
         texcoords.push_back(t);
