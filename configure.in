@@ -217,7 +217,7 @@ INSTALL_DATA_DIR=`eval echo $datadir/bzflag`
 AC_SUBST(INSTALL_DATA_DIR)
 
 # do we want bzadmin?
-AC_ARG_ENABLE(bzadmin, [  --disable-bzadmin        do not build text client])
+AC_ARG_ENABLE(bzadmin, [  --disable-bzadmin       do not build text client])
 AM_CONDITIONAL(BZADMIN_INCLUDED, test x$enable_bzadmin != xno)
 if test x$enable_bzadmin != xno; then
    MP_WITH_CURSES
