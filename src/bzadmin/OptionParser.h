@@ -111,19 +111,25 @@ protected:
 /** This is a specialization for @c std::vector<std::string> variables.
     It splits the parameter at ',' characters and puts the tokens in the
     vector. */
-template<>
-class VariableParser<std::vector<std::string> > : public Parser {
+template<class T>
+class VariableParser<std::vector<T> > : public Parser {
 public:
-  VariableParser(std::vector<std::string>& variable, 
+  VariableParser(std::vector<T>& variable, 
 		 const std::string& usageText,
 		 const std::string& helpText)
     : Parser(usageText, helpText), var(variable) { }
   virtual int parse(char** argv) {
-    var = string_util::tokenize(argv[0], ",");
+    std::vector<std::string> tmpVector = string_util::tokenize(argv[0], ",");
+    T t;
+    for (unsigned i = 0; i < tmpVector.size(); ++i) {
+      std::istringstream iss(tmpVector[i]);
+      iss>>t;
+      var.push_back(t);
+    }
     return 1;
   }
 protected:
-  std::vector<std::string>& var;
+  std::vector<T>& var;
 };
 
 

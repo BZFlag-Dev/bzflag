@@ -58,7 +58,7 @@ int main(int argc, char** argv) {
   // command line options
   std::string uiName("curses");
   bool showKills(false);
-
+  
   // no curses, use stdboth as default instead
   const UIMap& interfaces = UIMap::instance();
   if (interfaces.find("curses") == interfaces.end())
@@ -81,7 +81,7 @@ int main(int argc, char** argv) {
 		      "show a message when a player is killed");
   if (!op.parse(argc, argv))
     return 1;
-
+  
   // check that we have callsign and host in the right format and extract them
   int atPos;
   if (!(op.getParameters().size() > 0 &&
