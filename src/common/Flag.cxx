@@ -46,7 +46,7 @@ namespace Flags {
 					    "rapid Fire (+F):  Shoots more often.  Shells go faster but not as far." );
   FlagDesc *MachineGun              = new FlagDesc( "Machine Gun", "MG", FlagUnstable, SpecialShot, FlagGood, NoTeam,
 					    "Machine Gun (+MG):  Very fast reload and very short range." );
-  FlagDesc *GuidedMissle            = new FlagDesc( "Guided Missile", "GM", FlagUnstable, SpecialShot, FlagGood, NoTeam,
+  FlagDesc *GuidedMissile           = new FlagDesc( "Guided Missile", "GM", FlagUnstable, SpecialShot, FlagGood, NoTeam,
 					    "Guided Missile (+GM):  Shots track a target.  Lock on with right button.  Can lock on or retarget after firing." );
   FlagDesc *Laser                   = new FlagDesc( "Laser", "L", FlagUnstable, SpecialShot, FlagGood, NoTeam,
 					    "Laser (+L):  Shoots a laser.  Infinite speed and range but long reload time.");
@@ -88,10 +88,10 @@ namespace Flags {
 					    "ColorBlindness (-CB):  Can't tell team colors.  Don't shoot teammates!");
   FlagDesc *Obesity                 = new FlagDesc( "Obesity", "O", FlagSticky, NormalShot, FlagBad, NoTeam,
 					    "Obesity (-O):  Tank becomes very large.  Can't fit through teleporters.");
-  FlagDesc *LeftTurnOnly            = new FlagDesc( "Left Turn Only", "<-", FlagSticky, NormalShot, FlagBad, NoTeam,
-					    "left turn only (- <-):  Can't turn right.");
-  FlagDesc *RightTurnOnly           = new FlagDesc( "Right Turn Only", "->", FlagSticky, NormalShot, FlagBad, NoTeam,
-					    "right turn only (- ->):  Can't turn left.");
+  FlagDesc *LeftTurnOnly            = new FlagDesc( "Left Turn Only", "LT", FlagSticky, NormalShot, FlagBad, NoTeam,
+					    "Left Turn only (-LT):  Can't turn right.");
+  FlagDesc *RightTurnOnly           = new FlagDesc( "Right Turn Only", "RT", FlagSticky, NormalShot, FlagBad, NoTeam,
+					    "Right Turn only (-RT):  Can't turn left.");
   FlagDesc *Momentum                = new FlagDesc( "Momentum", "M", FlagSticky, NormalShot, FlagBad, NoTeam,
 					    "Momentum (-M):  Tank has inertia.  Acceleration is limited.");
   FlagDesc *Blindness               = new FlagDesc( "Blindness", "B", FlagSticky, NormalShot, FlagBad, NoTeam,
