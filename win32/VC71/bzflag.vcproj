@@ -448,6 +448,9 @@ copy debug\*.pdb ..\..\*.pdb
 				</FileConfiguration>
 			</File>
 			<File
+				RelativePath="..\..\src\bzflag\RoofTops.cxx">
+			</File>
+			<File
 				RelativePath="..\..\src\bzflag\ServerLink.cxx">
 				<FileConfiguration
 					Name="Debug|Win32">
@@ -1495,6 +1498,9 @@ copy debug\*.pdb ..\..\*.pdb
 			</File>
 			<File
 				RelativePath="..\..\src\bzflag\RobotPlayer.h">
+			</File>
+			<File
+				RelativePath="..\..\src\bzflag\RoofTops.h">
 			</File>
 			<File
 				RelativePath="..\..\src\bzflag\Roster.h">
