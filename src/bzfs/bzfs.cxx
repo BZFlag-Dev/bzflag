@@ -3000,7 +3000,10 @@ static void shotFired(int playerIndex, void *buf, int len)
       if (shotsLeft > 0) { //still have some shots left
 	// give message each shot below 5, each 5th shot & at start
 	if (shotsLeft % 5 == 0 || shotsLeft <= 3 || shotsLeft == limit-1){
-	  sprintf(message,"%d shots left",shotsLeft);
+	  if (shotsLeft > 1)
+	    sprintf(message,"%d shots left",shotsLeft);
+	  else
+	    strcpy(message,"1 shot left");
 	  sendMessage(ServerPlayer, playerIndex, message);
 	}
       } else { // no shots left
