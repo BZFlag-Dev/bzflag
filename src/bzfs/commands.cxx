@@ -1456,20 +1456,8 @@ void handleRemovegroupCmd(GameKeeper::Player *playerData, const char *message)
   return;
 }
 
-void handleReloadCmd(GameKeeper::Player *playerData, const char *)
+void initGroups()
 {
-  int t = playerData->getIndex();
-  if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::setAll)) {
-    sendMessage(ServerPlayer, t, "You do not have permission to run the reload command");
-    return;
-  }
-
-  // reload the banlist
-  clOptions->acl.load();
-
-  groupAccess.clear();
-  userDatabase.clear();
-  passwordDatabase.clear();
   // reload the databases
   if (groupsFile.size())
     PlayerAccessInfo::readGroupsFile(groupsFile);
@@ -1502,6 +1490,23 @@ void handleReloadCmd(GameKeeper::Player *playerData, const char *)
     info.explicitAllows[PlayerAccessInfo::hideAdmin ] = false;
     groupAccess["LOCAL.ADMIN"] = info;
   }
+}
+
+void handleReloadCmd(GameKeeper::Player *playerData, const char *)
+{
+  int t = playerData->getIndex();
+  if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::setAll)) {
+    sendMessage(ServerPlayer, t, "You do not have permission to run the reload command");
+    return;
+  }
+
+  // reload the banlist
+  clOptions->acl.load();
+
+  groupAccess.clear();
+  userDatabase.clear();
+  passwordDatabase.clear();
+  initGroups();
   if (passFile.size())
     readPassFile(passFile);
   if (userDatabaseFile.size())

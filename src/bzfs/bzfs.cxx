@@ -4427,36 +4427,7 @@ int main(int argc, char **argv)
   const float flagExp = -logf(0.5f) / FlagHalfLife;
 
   // load up the access permissions & stuff
-  if(groupsFile.size())
-    PlayerAccessInfo::readGroupsFile(groupsFile);
-  // make sure that the 'admin' & 'default' groups exist
-  PlayerAccessMap::iterator itr = groupAccess.find("EVERYONE");
-  if (itr == groupAccess.end()) {
-    PlayerAccessInfo info;
-    info.explicitAllows[PlayerAccessInfo::idleStats] = true;
-    info.explicitAllows[PlayerAccessInfo::lagStats] = true;
-    info.explicitAllows[PlayerAccessInfo::date] = true;
-    info.explicitAllows[PlayerAccessInfo::flagHistory] = true;
-    info.explicitAllows[PlayerAccessInfo::actionMessage] = true;
-    info.explicitAllows[PlayerAccessInfo::privateMessage] = true;
-    info.explicitAllows[PlayerAccessInfo::adminMessageSend] = true;
-    groupAccess["EVERYONE"] = info;
-  }
-  itr = groupAccess.find("VERIFIED");
-  if (itr == groupAccess.end()) {
-    PlayerAccessInfo info;
-    info.explicitAllows[PlayerAccessInfo::vote] = true;
-    info.explicitAllows[PlayerAccessInfo::poll] = true;
-    groupAccess["VERIFIED"] = info;
-  }
-  itr = groupAccess.find("LOCAL.ADMIN");
-  if (itr == groupAccess.end()) {
-    PlayerAccessInfo info;
-    for (int i = 0; i < PlayerAccessInfo::lastPerm; i++)
-      info.explicitAllows[i] = true;
-    info.explicitAllows[PlayerAccessInfo::hideAdmin ] = false;
-    groupAccess["LOCAL.ADMIN"] = info;
-  }
+  initGroups();
   if (passFile.size())
     readPassFile(passFile);
   if (userDatabaseFile.size())
