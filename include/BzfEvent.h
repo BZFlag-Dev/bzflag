@@ -96,6 +96,7 @@ class BzfKeyEvent {
 class BzfEvent {
   public:
     enum Type {
+			Unset,
 			Quit,
 			Redraw,
 			Resize,
@@ -118,6 +119,12 @@ class BzfEvent {
 	BzfKeyEvent	keyUp;
 	BzfKeyEvent	keyDown;
     };
+    BzfEvent() :
+        type(Unset),
+        window((BzfWindow*)NULL)
+    {
+        mouseMove.x=mouseMove.y=resize.width=resize.height=keyUp.ascii=keyUp.button=keyUp.shift=0;
+    }
 };
 
 #endif /* BZF_EVENT_H */
