@@ -4,6 +4,7 @@
 BZFlag 1.12.0  (was 1.11.x)
 ---------------------------
 
+* Added animated effects for T, N, TH, O, and CL flags - Dave Rodgers
 * BZAdmin now tells more specific reasons why it could not connect - Ian Agar
 * Client shows a MessageOfTheDay from the master server on launch
    for announcements and release notifications - Jeff Myers

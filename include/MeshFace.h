@@ -110,12 +110,15 @@ class MeshFace : public Obstacle {
                      // not currently used for anything
                      
     enum {
-      RegPlane  = 0,
-      UpPlane   = 1,
-      DownPlane = 2
-    } PlaneType;
+      XPlane    = (1 << 0),
+      YPlane    = (1 << 1),
+      ZPlane    = (1 << 2),
+      UpPlane   = (1 << 3),
+      DownPlane = (1 << 4),
+      WallPlane = (1 << 5)
+    } PlaneBits;
 
-    char planeType;
+    char planeBits;
     
     
     enum {

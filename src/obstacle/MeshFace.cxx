@@ -132,14 +132,25 @@ void MeshFace::finalize()
   }
   
   // set the plane type
-  if (plane[3] > (1.0f - 1.0e-5f)) {
-    planeType = UpPlane;
+  planeBits = 0;
+  const float fudge = 1.0e-5f;
+  if ((fabsf(plane[2]) + fudge) >= 1.0f) {
+    planeBits |= ZPlane;
+    if (plane[2] > 0.0f) {
+      planeBits |= UpPlane;
+    } else {
+      planeBits |= DownPlane;
+    }
   }
-  else if (plane[3] < -(1.0f - 1.0e-5f)) {
-    planeType = DownPlane;
+  else if ((fabsf(plane[0]) + fudge) >= 1.0f) {
+    planeBits |= XPlane;
   }
-  else {
-    planeType = RegPlane;
+  else if ((fabsf(plane[1]) + fudge) >= 1.0f) {
+    planeBits |= YPlane;
+  }
+
+  if (fabsf(plane[2]) < fudge) {
+    planeBits |= WallPlane;
   }
 
   // make the edge planes

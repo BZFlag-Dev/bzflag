@@ -81,6 +81,24 @@ Player::Player(const PlayerId& _id, TeamColor _team,
     pausedSphere->setColor(0.0f, 0.0f, 0.0f, 0.5f);
   }
 
+  // setup the dimension properties
+  dimensions[0] = 0.5f * BZDB.eval(StateDatabase::BZDB_TANKWIDTH);
+  dimensions[1] = 0.5f * BZDB.eval(StateDatabase::BZDB_TANKLENGTH);
+  dimensions[2] = BZDB.eval(StateDatabase::BZDB_TANKHEIGHT);
+  memcpy (oldDimensions, dimensions, sizeof(float[3]));
+  for (int i = 0; i < 3; i++) {  
+    dimensionsRate[i] = 0.0f;
+    dimensionsScale[i] = 1.0f;
+    dimensionsTarget[i] = 1.0f;
+  }
+  useDimensions = false;
+  
+  // setup alpha properties
+  alpha = 1.0f;
+  alphaRate = 0.0f;
+  alphaTarget = 1.0f;
+  
+  return;
 }
 
 Player::~Player()
@@ -113,10 +131,18 @@ short		Player::getRabbitScore() const
 float			Player::getRadius() const
 {
   float tankRadius = BZDBCache::tankRadius;
-  if (flagType == Flags::Obesity) return tankRadius * BZDB.eval(StateDatabase::BZDB_OBESEFACTOR);
-  if (flagType == Flags::Tiny)    return tankRadius * BZDB.eval(StateDatabase::BZDB_TINYFACTOR);
-  if (flagType == Flags::Thief)   return tankRadius * BZDB.eval(StateDatabase::BZDB_THIEFTINYFACTOR);
-  return tankRadius;
+  if (flagType == Flags::Obesity) {
+    return tankRadius * BZDB.eval(StateDatabase::BZDB_OBESEFACTOR);
+  }
+  else if (flagType == Flags::Tiny) {
+    return tankRadius * BZDB.eval(StateDatabase::BZDB_TINYFACTOR);
+  }
+  else if (flagType == Flags::Thief) {
+    return tankRadius * BZDB.eval(StateDatabase::BZDB_THIEFTINYFACTOR);
+  }
+  else {
+    return tankRadius;
+  }
 }
 
 void			Player::getMuzzle(float* m) const
@@ -198,6 +224,79 @@ void			Player::setTeleport(const TimeKeeper& t,
   setStatus(getStatus() | short(PlayerState::Teleporting));
 }
 
+void			Player::updateFlagProperties(float dt)
+{
+  // copy the current dimensions to the old dimensions
+  memcpy (oldDimensions, dimensions, sizeof(float[3]));
+
+  // update the dimensions
+  for (int i = 0; i < 3; i++) {
+    if (dimensionsRate[i] != 0.0f) {
+      dimensionsScale[i] += dt * dimensionsRate[i];
+      if (dimensionsRate[i] < 0.0f) {
+        if (dimensionsScale[i] < dimensionsTarget[i]) {
+          dimensionsScale[i] = dimensionsTarget[i];
+          dimensionsRate[i] = 0.0f;
+        }
+      } else {
+        if (dimensionsScale[i] > dimensionsTarget[i]) {
+          dimensionsScale[i] = dimensionsTarget[i];
+          dimensionsRate[i] = 0.0f;
+        }
+      }
+    }
+  }
+  
+  // check if the dimensions are at a steady state
+  if ((dimensionsScale[0] == dimensionsTarget[0]) &&
+      (dimensionsScale[1] == dimensionsTarget[1]) &&
+      (dimensionsScale[2] == dimensionsTarget[2])) {
+    useDimensions = false;
+  } else {
+    useDimensions = true;
+  }
+  
+  // set the actual dimensions based on the scale
+  dimensions[0] = dimensionsScale[0] * 
+                  0.5f * BZDB.eval(StateDatabase::BZDB_TANKWIDTH);
+  dimensions[1] = dimensionsScale[1] *
+                  0.5f * BZDB.eval(StateDatabase::BZDB_TANKLENGTH);
+  dimensions[2] = dimensionsScale[2] *
+                  BZDB.eval(StateDatabase::BZDB_TANKHEIGHT);
+                  
+  // update the alpha value
+  if (alphaRate != 0.0f) {
+    alpha += dt * alphaRate;
+    if (alphaRate < 0.0f) {
+      if (alpha < alphaTarget) {
+        alpha = alphaTarget;
+        alphaRate = 0.0f;
+      }
+    } else {
+      if (alpha > alphaTarget) {
+        alpha = alphaTarget;
+        alphaRate = 0.0f;
+      }
+    }
+  }
+    
+  // set the tankNode color
+  if ((flagType == Flags::PhantomZone) && isFlagActive()) {
+    color[3] = 0.25f; // barely visible, regardless of teleporter proximity
+  } 
+  else if (alpha == 0.0f) {
+    color[3] = 0.0f;
+  }
+  else {
+    teleporterProximity =
+      World::getWorld()->getProximity(state.pos, BZDBCache::tankRadius);
+    color[3] = alpha * (1.0f - (0.75f * teleporterProximity));
+  } 
+  tankNode->setColor(color);
+
+  return;
+}
+
 void			Player::changeScore(short deltaWins, short deltaLosses, short deltaTeamKills)
 {
   wins += deltaWins;
@@ -214,7 +313,58 @@ void			Player::changeLocalScore(short dWins, short dLosses, short dTeamKills)
 
 void			Player::setFlag(FlagType* _flag)
 {
+  // set the type
   flagType = _flag;
+  
+  float FlagEffectTime = BZDB.eval(StateDatabase::BZDB_FLAGEFFECTTIME);
+  if (FlagEffectTime <= 0.0f) {
+    FlagEffectTime = 0.001f; // safety
+  }
+  
+  // set the dimension targets
+  dimensionsTarget[0] = 1.0f;
+  dimensionsTarget[1] = 1.0f;
+  dimensionsTarget[2] = 1.0f;
+  if (flagType == Flags::Obesity) {
+    const float factor = BZDB.eval(StateDatabase::BZDB_OBESEFACTOR);
+    dimensionsTarget[0] = factor * 2.0f;
+    dimensionsTarget[1] = factor;
+  }
+  else if (flagType == Flags::Tiny) {
+    const float factor = BZDB.eval(StateDatabase::BZDB_TINYFACTOR);
+    dimensionsTarget[0] = factor * 2.0f;
+    dimensionsTarget[1] = factor;
+  }
+  else if (flagType == Flags::Thief) {
+    const float factor = BZDB.eval(StateDatabase::BZDB_THIEFTINYFACTOR);
+    dimensionsTarget[0] = factor * 2.0f;
+    dimensionsTarget[1] = factor;
+  }
+  else if (flagType == Flags::Narrow) {
+    dimensionsTarget[0] = 0.001f;
+  }
+  
+  // set the dimension rates
+  for (int i = 0; i < 3; i++) {
+    if (dimensionsTarget[i] != dimensionsScale[i]) {
+      dimensionsRate[i] = dimensionsTarget[i] - dimensionsScale[i];
+      dimensionsRate[i] = dimensionsRate[i] / FlagEffectTime;
+    }
+  }
+
+  // set the alpha target
+  if (flagType == Flags::Cloaking) {
+    alphaTarget = 0.0f;
+  } else {
+    alphaTarget = 1.0f;
+  }
+
+  // set the alpha rate
+  if (alphaTarget != alpha) {
+    alphaRate = (alphaTarget - alpha) / FlagEffectTime;
+  }
+  
+  return;
 }
 
 void			Player::endShot(int index,
@@ -223,28 +373,6 @@ void			Player::endShot(int index,
   float pos[3];
   if (doEndShot(index, isHit, pos) && showExplosion)
     addShotExplosion(pos);
-}
-
-void			Player::updateSparks(float /*dt*/)
-{
-  if (flagType != Flags::PhantomZone || !isFlagActive()) {
-    teleporterProximity = World::getWorld()
-      ->getProximity(state.pos, BZDBCache::tankRadius);
-    if (teleporterProximity == 0.0f) {
-      color[3] = 1.0f;
-      tankNode->setColor(color);
-      return;
-    }
-  }
-
-  if (flagType == Flags::PhantomZone && isFlagActive()) {
-    // almost totally transparent
-    color[3] = 0.25f;
-  } else {
-    // transparency depends on proximity
-    color[3] = 1.0f - 0.75f * teleporterProximity;
-  }
-  tankNode->setColor(color);
 }
 
 void			Player::setVisualTeam (TeamColor visualTeam)
@@ -322,15 +450,28 @@ void			Player::addToScene(SceneDatabase* scene,
 					  TeamColor effectiveTeam,
 					  bool showIDL)
 {
-  if (!isAlive() && !isExploding()) return;
+  if (!isAlive() && !isExploding()) {
+    return;
+  }
+
   tankNode->move(state.pos, forward);
   setVisualTeam(effectiveTeam);
+  
   if (isAlive()) {
     if (flagType == Flags::Obesity) tankNode->setObese();
     else if (flagType == Flags::Tiny) tankNode->setTiny();
     else if (flagType == Flags::Narrow) tankNode->setNarrow();
     else if (flagType == Flags::Thief) tankNode->setThief();
     else tankNode->setNormal();
+    // only use dimensions if we aren't at steady state.
+    // this is done because it's more expensive to use
+    // GL_NORMALIZE then to use precalculated normals.
+    if (useDimensions) {
+      tankNode->setDimensions(dimensionsScale);
+    } else {
+      tankNode->ignoreDimensions();
+    }
+    
     tankNode->setExplodeFraction(0.0f);
     scene->addDynamicNode(tankNode);
 
@@ -380,11 +521,13 @@ void			Player::addToScene(SceneDatabase* scene,
     tankNode->setExplodeFraction(t);
     scene->addDynamicNode(tankNode);
   }
+  
   if (isAlive() && (isPaused() || isNotResponding())) {
     pausedSphere->move(state.pos, 1.5f * BZDBCache::tankRadius);
     scene->addDynamicSphere(pausedSphere);
   }
 }
+
 
 void			Player::setHidden(bool hidden)
 {

@@ -101,6 +101,7 @@ const std::string StateDatabase::BZDB_DISABLEBOTS       = std::string("_disableB
 const std::string StateDatabase::BZDB_EXPLODETIME       = std::string("_explodeTime");
 const std::string StateDatabase::BZDB_FAKELAG           = std::string("_fakeLag");
 const std::string StateDatabase::BZDB_FLAGALTITUDE      = std::string("_flagAltitude");
+const std::string StateDatabase::BZDB_FLAGEFFECTTIME    = std::string("_flagEffectTime");
 const std::string StateDatabase::BZDB_FLAGHEIGHT        = std::string("_flagHeight");
 const std::string StateDatabase::BZDB_FLAGPOLEWIDTH     = std::string("_flagPoleWidth");
 const std::string StateDatabase::BZDB_FLAGPOLESIZE      = std::string("_flagPoleSize");

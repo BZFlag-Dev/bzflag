@@ -4257,7 +4257,6 @@ void			drawFrame(const float dt)
       // add other tanks and shells
       for (i = 0; i < curMaxPlayers; i++)
 	if (player[i]) {
-	  player[i]->updateSparks(dt);
 	  player[i]->addShots(scene, colorblind);
 	  overrideTeam = RogueTeam;
 	  if (!colorblind){
@@ -4876,18 +4875,31 @@ static void		playingLoop()
     // reposition flags
     updateFlags(dt);
 
+    // adjust properties based on flags (dimensions, cloaking, etc...)
+    if (myTank) {
+      myTank->updateFlagProperties(dt);
+    }
+    for (i = 0; i < curMaxPlayers; i++) {
+      if (player[i]) {
+        player[i]->updateFlagProperties(dt);
+      }
+    }
+
     // update explosion animations
     updateExplosions(dt);
 
     // update other tank's shots
-    for (i = 0; i < curMaxPlayers; i++)
-      if (player[i])
+    for (i = 0; i < curMaxPlayers; i++) {
+      if (player[i]) {
 	player[i]->updateShots(dt);
+      }
+    }
 
     World *world = World::getWorld();
     // update servers shots
-    if (world)
+    if (world) {
       world->getWorldWeapons()->updateShots(dt);
+    }
 
     // draw the frame
     drawFrame(dt);
@@ -4899,11 +4911,14 @@ static void		playingLoop()
     if (myTank) {
       if (myTank->isAlive() && !myTank->isPaused()) {
 	doMotion();
-	if (hud->getHunting()) setHuntTarget(); //spot hunt target
+	if (hud->getHunting()) {
+	  setHuntTarget(); //spot hunt target
+        }
 	if (myTank->getTeam() != ObserverTeam &&
 	    ((fireButton && myTank->getFlag() == Flags::MachineGun) ||
-	     (myTank->getFlag() == Flags::TriggerHappy)))
+	     (myTank->getFlag() == Flags::TriggerHappy))) {
 	  myTank->fireShot();
+        }
       } else {
 	int mx, my;
 	mainWindow->getMousePosition(mx, my);

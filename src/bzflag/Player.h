@@ -37,6 +37,7 @@ class SphereSceneNode;
 const int PlayerUpdatePLen = PlayerIdPLen + 42;
 const int PlayerUpdateSmallPLen = PlayerUpdatePLen - 16;
 
+
 class Player {
 public:
   Player(const PlayerId&, TeamColor,
@@ -47,6 +48,7 @@ public:
   PlayerId	getId() const;
   TeamColor	getTeam() const;
   void		setTeam(TeamColor);
+  void		updateFlagProperties(float dt);
   const char*	getCallSign() const;
   const char*	getEmailAddress() const;
   PlayerType	getPlayerType() const;
@@ -64,6 +66,8 @@ public:
   short		getLosses() const;
   short		getTeamKills() const;
   short		getScore() const;
+  const float*	getDimensions() const;
+  const float*	getOldDimensions() const;
   short		getRabbitScore() const;
   short		getLocalWins() const;
   short		getLocalLosses() const;
@@ -116,7 +120,6 @@ public:
   void		setStatus(short);
   void		setExplode(const TimeKeeper&);
   void		setTeleport(const TimeKeeper&, short from, short to);
-  void		updateSparks(float dt);
   void		endShot(int index, bool isHit = false,
 			bool showExplosion = false);
 
@@ -167,9 +170,18 @@ private:
   char			callSign[CallSignLen];	// my pseudonym
   char			email[EmailLen];	// my email address
   PlayerType		type;                   // Human/Computer
-
+  
   // relatively stable data
   FlagType*		flagType;		// flag type I'm holding
+  float			dimensions[3];		// current tank dimensions
+  float			oldDimensions[3];	// old tank dimensions
+  float			dimensionsScale[3];	// use to scale the dimensions
+  float			dimensionsRate[3];	 // relative to scale
+  float			dimensionsTarget[3]; // relative to scale
+  bool			useDimensions;		// use the varying dimensions for gfx
+  float			alpha;			// current tank translucency
+  float			alphaRate;		// current tank translucency
+  float			alphaTarget;	// current tank translucency
   TimeKeeper		explodeTime;		// time I started exploding
   TimeKeeper		teleportTime;		// time I started teleporting
   short			fromTeleporter;		// teleporter I entered
@@ -196,7 +208,7 @@ private:
   int			inputStatus;		// tank status
   mutable float		inputPos[3];		// tank position
   float			inputSpeed;		// tank horizontal speed
-  mutable float	inputZSpeed;		// tank vertical speed
+  mutable float	inputZSpeed;			// tank vertical speed
   float			inputAzimuth;		// direction tank is pointing
   float			inputSpeedAzimuth;	// direction of speed
   float			inputAngVel;		// tank turn rate
@@ -269,6 +281,16 @@ inline const float*	Player::getPosition() const
 inline float		Player::getAngle() const
 {
   return state.azimuth;
+}
+
+inline const float*	Player::getDimensions() const
+{
+  return dimensions;
+}
+
+inline const float*	Player::getOldDimensions() const
+{
+  return oldDimensions;
 }
 
 inline const float*	Player::getForward() const

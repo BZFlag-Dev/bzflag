@@ -80,11 +80,11 @@ public:
 };
 bool TankFactors::callbackAdded = false;
 GLfloat TankFactors::styleFactors[5][3] = {
-			{ 1.0f, 1.0f, 1.0f },
-			{ 1.0f, 1.0f, 1.0f },
-			{ 1.0f, 1.0f, 1.0f },
-			{ 1.0f, 0.001f, 1.0f },
-			{ 1.0f, 1.0f, 1.0f }
+			{ 1.0f, 1.0f, 1.0f },   // Normal
+			{ 1.0f, 1.0f, 1.0f },   // Obese
+			{ 1.0f, 1.0f, 1.0f },   // Tiny
+			{ 1.0f, 0.001f, 1.0f }, // Narrow
+			{ 1.0f, 1.0f, 1.0f }    // Thief
 		};
 
 // parts: body, turret, barrel, left tread, right tread
@@ -93,6 +93,7 @@ const int		TankSceneNode::numLOD = 3;
 int			TankSceneNode::maxLevel = numLOD;
 
 TankSceneNode::TankSceneNode(const GLfloat pos[3], const GLfloat forward[3]) :
+                                useDimensions(false),
 				useOverride(false),
 				hidden(false),
 				invisible(false),
@@ -143,6 +144,19 @@ void			TankSceneNode::setColor(const GLfloat* rgba)
   color[2] = rgba[2];
   color[3] = rgba[3];
   transparent = (color[3] != 1.0f);
+}
+
+void			TankSceneNode::setDimensions(const float dims[3])
+{
+  memcpy (dimensions, dims, sizeof(float[3]));
+  useDimensions = true;
+  return;
+}
+
+void			TankSceneNode::ignoreDimensions()
+{
+  useDimensions = false;
+  return;
 }
 
 void			TankSceneNode::setMaterial(const OpenGLMaterial& mat)
@@ -200,7 +214,7 @@ void			TankSceneNode::addRenderNodes(
   // don't draw hidden tanks.  this is mainly to avoid drawing player's
   // tank when player is using view from tank.  can't simply not include
   // player, though, cos then we wouldn't get the tank's shadow.
-  if (hidden || invisible) return;
+  if (hidden || (invisible && (color[3] == 0.0f))) return;
 
   // pick level of detail
   TankRenderNode* node;
@@ -236,7 +250,7 @@ void			TankSceneNode::addRenderNodes(
 void			TankSceneNode::addShadowNodes(
 				SceneRenderer& renderer)
 {
-  if (invisible) return;
+  if (invisible && (color[3] == 0.0f)) return;
   renderer.addShadowNode(&shadowRenderNode);
 }
 
@@ -615,7 +629,11 @@ void			TankSceneNode::TankRenderNode::sortOrder(
 
 void			TankSceneNode::TankRenderNode::render()
 {
-  base = getParts(sceneNode->style);
+  if (!sceneNode->useDimensions) {
+    base = getParts(sceneNode->style);
+  } else {
+    base = getParts(Normal);
+  }
   explodeFraction = sceneNode->explodeFraction;
   isExploding = (explodeFraction != 0.0f);
   color = sceneNode->color;
@@ -632,6 +650,11 @@ void			TankSceneNode::TankRenderNode::render()
     glTranslatef(sphere[0], sphere[1], sphere[2]);
     glRotatef(sceneNode->azimuth, 0.0f, 0.0f, 1.0f);
     glRotatef(sceneNode->elevation, 0.0f, 1.0f, 0.0f);
+    if (sceneNode->useDimensions) {
+      const float* dims = sceneNode->dimensions;
+      glScalef(dims[0], dims[1], dims[2]);
+      glEnable(GL_NORMALIZE);
+    }
 
     if (!isShadow && (sceneNode->sort || sceneNode->transparent)) {
       // draw is some sorted order
@@ -658,6 +681,9 @@ void			TankSceneNode::TankRenderNode::render()
       if (isExploding) glEnable(GL_CULL_FACE);
     }
 
+    if (sceneNode->useDimensions) {
+      glDisable(GL_NORMALIZE);
+    }
   glPopMatrix();
 
   if (!isExploding && !isShadow) {

@@ -224,14 +224,6 @@ const ObsList* CollisionManager::movingBoxTest (
 }
 
 
-static int compareRayNodes (const void *a, const void *b)
-{
-  const ColDetNode* nodeA = *((ColDetNode**)a);
-  const ColDetNode* nodeB = *((ColDetNode**)b);
-  return (nodeA->getInTime() > nodeB->getInTime());
-}
-
-
 const ObsList* CollisionManager::rayTest (const Ray* ray, float timeLeft) const
 {
   FullPad.count = 0;
@@ -241,20 +233,20 @@ const ObsList* CollisionManager::rayTest (const Ray* ray, float timeLeft) const
   // get the list
   root->rayTest (ray, timeLeft + 0.1f);
   
-  // sort the list of node
-  printf ("RayList:\n");
-  qsort (RayList.list, RayList.count, sizeof(ColDetNode*), compareRayNodes);
-  for (int x = 0; x < RayList.count; x++) {
-    printf ("  in: %-8.6f  out: %-8.6f\n",
-            RayList.list[x]->getInTime(), RayList.list[x]->getOutTime());
-  }
-
   // clear the collisionState on the obstacles
   for (int i = 0; i < FullPad.count; i++) {
     FullPad.list[i]->collisionState = false;
   }
 
   return &FullPad;
+}
+
+
+static int compareRayNodes (const void *a, const void *b)
+{
+  const ColDetNode* nodeA = *((ColDetNode**)a);
+  const ColDetNode* nodeB = *((ColDetNode**)b);
+  return (nodeA->getInTime() > nodeB->getInTime());
 }
 
 

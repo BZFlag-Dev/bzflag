@@ -103,6 +103,9 @@ class TankSceneNode : public SceneNode {
     void		addRenderNodes(SceneRenderer&);
     void		addShadowNodes(SceneRenderer&);
 
+    void		setDimensions(const float size[3]);
+    void		ignoreDimensions();
+    
     void		setNormal();
     void		setObese();
     void		setTiny();
@@ -226,6 +229,8 @@ class TankSceneNode : public SceneNode {
   private:
     GLfloat		azimuth, elevation;
     GLfloat		baseRadius;
+    float		dimensions[3]; // tank dimensions
+    bool		useDimensions;
     bool		useOverride, hidden, invisible;
     bool		transparent, sort;
     float		explodeFraction;

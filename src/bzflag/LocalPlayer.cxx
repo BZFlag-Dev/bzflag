@@ -678,34 +678,14 @@ void			LocalPlayer::doUpdateMotion(float dt)
   }
 }
 
-const Obstacle*		LocalPlayer::getHitBuilding(const float* p, float a,
-						    bool phased, bool& expelled) const
+
+const Obstacle* LocalPlayer::getHitBuilding(const float* p, float a,
+                                            bool phased, bool& expelled) const
 {
-  float length = 0.5f * BZDB.eval(StateDatabase::BZDB_TANKLENGTH);
-  float width = 0.5f * BZDB.eval(StateDatabase::BZDB_TANKWIDTH);
-  float factor;
-
-  if (getFlag() == Flags::Obesity) {
-    factor = BZDB.eval(StateDatabase::BZDB_OBESEFACTOR);
-    length *= factor;
-    width *= 2.0f * factor;
-  }
-  else if (getFlag() == Flags::Tiny) {
-    factor = BZDB.eval(StateDatabase::BZDB_TINYFACTOR);
-    length *= factor;
-    width *= 2.0f * factor;
-  }
-  else if (getFlag() == Flags::Thief) {
-    factor = BZDB.eval(StateDatabase::BZDB_THIEFTINYFACTOR);
-    length *= factor;
-    width *= 2.0f * factor;
-  }
-  else if (getFlag() == Flags::Narrow) {
-    width = 0.0f;
-  }
-
-  const Obstacle* obstacle = World::getWorld()->
-    hitBuilding(p, a, length, width, BZDBCache::tankHeight);
+  const float* dims = getDimensions();
+  const Obstacle* obstacle =
+    World::getWorld()->hitBuilding(p, a, dims[0], dims[1], dims[2]);
+    
   expelled = (obstacle != NULL);
   if (expelled && phased)
     expelled = (obstacle->getType() == WallObstacle::getClassName() ||
@@ -715,36 +695,15 @@ const Obstacle*		LocalPlayer::getHitBuilding(const float* p, float a,
   return obstacle;
 }
 
-const Obstacle*		LocalPlayer::getHitBuilding(
-						    const float* oldP, float oldA,
-						    const float* p, float a,
-						    bool phased, bool& expelled) const
+
+const Obstacle* LocalPlayer::getHitBuilding(const float* oldP, float oldA,
+					    const float* p, float a,
+					    bool phased, bool& expelled) const
 {
-  float length = 0.5f * BZDB.eval(StateDatabase::BZDB_TANKLENGTH);
-  float width = 0.5f * BZDB.eval(StateDatabase::BZDB_TANKWIDTH);
-  float factor;
-
-  if (getFlag() == Flags::Obesity) {
-    factor = BZDB.eval(StateDatabase::BZDB_OBESEFACTOR);
-    length *= factor;
-    width *= 2.0f * factor;
-  }
-  else if (getFlag() == Flags::Tiny) {
-    factor = BZDB.eval(StateDatabase::BZDB_TINYFACTOR);
-    length *= factor;
-    width *= 2.0f * factor;
-  }
-  else if (getFlag() == Flags::Thief) {
-    factor = BZDB.eval(StateDatabase::BZDB_THIEFTINYFACTOR);
-    length *= factor;
-    width *= 2.0f * factor;
-  }
-  else if (getFlag() == Flags::Narrow) {
-    width = 0.0f;
-  }
-
+  const float* dims = getDimensions();
   const Obstacle* obstacle = World::getWorld()->
-    hitBuilding(oldP, oldA, p, a, length, width, BZDBCache::tankHeight);
+    hitBuilding(oldP, oldA, p, a, dims[0], dims[1], dims[2]);
+  
   expelled = (obstacle != NULL);
   if (expelled && phased)
     expelled = (obstacle->getType() == WallObstacle::getClassName() ||
@@ -754,36 +713,17 @@ const Obstacle*		LocalPlayer::getHitBuilding(
   return obstacle;
 }
 
-bool			LocalPlayer::getHitNormal(const Obstacle* o,
-						  const float* pos1, float azimuth1,
-						  const float* pos2, float azimuth2,
-						  float* normal) const
-{
-  float length = 0.5f * BZDB.eval(StateDatabase::BZDB_TANKLENGTH);
-  float width = 0.5f * BZDB.eval(StateDatabase::BZDB_TANKWIDTH);
-  float factor;
-  if (getFlag() == Flags::Obesity) {
-    factor = BZDB.eval(StateDatabase::BZDB_OBESEFACTOR);
-    length *= factor;
-    width *= 2.0f * factor;
-  }
-  else if (getFlag() == Flags::Tiny) {
-    factor = BZDB.eval(StateDatabase::BZDB_TINYFACTOR);
-    length *= factor;
-    width *= 2.0f * factor;
-  }
-  else if (getFlag() == Flags::Thief) {
-    factor = BZDB.eval(StateDatabase::BZDB_THIEFTINYFACTOR);
-    length *= factor;
-    width *= 2.0f * factor;
-  }
-  else if (getFlag() == Flags::Narrow) {
-    width = 0.0f;
-  }
 
+bool LocalPlayer::getHitNormal(const Obstacle* o,
+                               const float* pos1, float azimuth1,
+                               const float* pos2, float azimuth2,
+                               float* normal) const
+{
+  const float* dims = getDimensions();
   return o->getHitNormal(pos1, azimuth1, pos2, azimuth2,
-			 length, width, BZDBCache::tankHeight, normal);
-}
+			 dims[0], dims[1], dims[2], normal);
+}			
+
 
 float			LocalPlayer::getReloadTime() const
 {
