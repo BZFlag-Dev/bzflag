@@ -46,7 +46,7 @@ Ray			rayMinusRay(const Ray& r1, float t1,
 // return t at which ray passes through sphere at origin of given radius
 float			rayAtDistanceFromOrigin(const Ray& r, float radius);
 
-// return t at which ray intersects box (size 2dx x 2dy x 2dz)
+// return t at which ray intersects box (size 2dx x 2dy x dz)
 // (-1 if never, 0 if starts inside).
 float			timeRayHitsBlock(const Ray& r, const float* boxPos,
 					float boxAngle, float dx,
