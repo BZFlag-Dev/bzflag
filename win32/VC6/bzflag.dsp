@@ -600,6 +600,10 @@ SOURCE=..\..\src\bzflag\stars.h
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\src\bzflag\StartupInfo.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\include\StateDatabase.h
 # End Source File
 # Begin Source File
