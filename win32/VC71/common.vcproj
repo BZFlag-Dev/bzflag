@@ -157,6 +157,9 @@
 				</FileConfiguration>
 			</File>
 			<File
+				RelativePath="..\..\src\common\bz_Locale.cxx">
+			</File>
+			<File
 				RelativePath="..\..\src\common\BZDBCache.cxx">
 				<FileConfiguration
 					Name="Debug|Win32">
@@ -238,6 +241,9 @@
 						AdditionalIncludeDirectories=""
 						PreprocessorDefinitions=""/>
 				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\src\common\Country.cxx">
 			</File>
 			<File
 				RelativePath="..\..\src\common\ErrorHandler.cxx">
@@ -338,6 +344,9 @@
 						AdditionalIncludeDirectories=""
 						PreprocessorDefinitions=""/>
 				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\src\common\Language.cxx">
 			</File>
 			<File
 				RelativePath="..\..\src\common\md5.cxx">
@@ -533,6 +542,9 @@
 				RelativePath="..\..\include\BundleMgr.h">
 			</File>
 			<File
+				RelativePath="..\..\include\bz_Locale.h">
+			</File>
+			<File
 				RelativePath="..\..\include\BZDBCache.h">
 			</File>
 			<File
@@ -557,6 +569,9 @@
 				RelativePath="..\..\include\ConfigFileManager.h">
 			</File>
 			<File
+				RelativePath="..\..\include\Country.h">
+			</File>
+			<File
 				RelativePath="..\..\include\ErrorHandler.h">
 			</File>
 			<File
@@ -570,6 +585,9 @@
 			</File>
 			<File
 				RelativePath="..\..\include\KeyManager.h">
+			</File>
+			<File
+				RelativePath="..\..\include\Language.h">
 			</File>
 			<File
 				RelativePath="..\..\include\md5.h">

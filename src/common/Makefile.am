@@ -4,6 +4,7 @@ libCommon_a_SOURCES  =			\
 	Bundle.cxx			\
 	BundleMgr.cxx			\
 	BZDBCache.cxx			\
+	bz_Locale.cxx			\
 	CommandManager.cxx		\
 	ConfigFileManager.cxx		\
 	Country.cxx			\
@@ -16,7 +17,6 @@ libCommon_a_SOURCES  =			\
 	TimeBomb.cxx			\
 	TimeKeeper.cxx			\
 	Language.cxx			\
-	Locale.cxx			\
 	PlayerState.cxx			\
 	StateDatabase.cxx		\
 	WordFilter.cxx			\

@@ -10,7 +10,7 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#include "Locale.h"
+#include "bz_Locale.h"
 
 // implementation-specific headers
 #include "Language.h"

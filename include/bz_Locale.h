@@ -53,7 +53,7 @@ class Locale
 
 
 #else
-class Locale;
+class BZLocale;
 #endif
 
 // Local Variables: ***
