@@ -130,6 +130,7 @@ ShotPath::ShotPath(const FiringInfo& info) :
 		case BurrowFlag:
 		case WideAngleFlag:
 		case NoJumpingFlag:
+		case UselessFlag:
 			strategy = new NormalShotStrategy(this);
 			break;
 		case LongReloadFlag:

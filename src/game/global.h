@@ -183,10 +183,13 @@ enum FlagId {
 						NoJumpingFlag,			// tank cannot jump
 						LongReloadFlag,			// tank takes twice as long to reload
 
+						// the goofy super flags
+						UselessFlag,			// you'll have to figure it out for yourself
 
 						// special flags for size of team and super-flag sets
 						FirstFlag =			RedFlag,
-						LastFlag =			LongReloadFlag,
+						LastBadFlag =		LongReloadFlag,
+						LastFlag =			UselessFlag,
 						FirstTeamFlag =		RedFlag,
 						LastTeamFlag =		PurpleFlag,
 						FirstSuperFlag =	VelocityFlag,

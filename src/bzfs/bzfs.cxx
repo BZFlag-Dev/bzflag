@@ -3266,6 +3266,9 @@ static void parse(int argc, char **argv)
 				flagCount[BurrowFlag]++;
 				flagCount[SeerFlag]++;
 			}
+			else if (strcmp(argv[i], "goofy") == 0) {
+				flagCount[UselessFlag]++;
+			}
 			else {
 				if ((f = lookupFlag(argv[i])) == int(NoFlag)) {
 					std::cerr << "invalid flag `" << argv[i] << "'" << std::endl;

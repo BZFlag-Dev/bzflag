@@ -54,7 +54,8 @@ const char*				Flag::flagName[] = {
 								"Jamming",
 								"Wide Angle",
 								"No Jumping",
-								"Long Reload"
+								"Long Reload",
+								"USeless flag"
 						};
 
 const char*				Flag::flagAbbv[] = {
@@ -97,7 +98,8 @@ const char*				Flag::flagAbbv[] = {
 								"JM",						// jamming
 								"WA",						// wide angle
 								"NJ",						// no jumping
-								"LR"						// long reload
+								"LR",						// long reload
+								"US"						// useless flag
 						};
 
 const char*				Flag::flagHelp[] = {
@@ -154,7 +156,8 @@ const char*				Flag::flagHelp[] = {
 "JaMming (-JM):  Radar doesn't work.  Can still see.",
 "Wide Angle (-WA):  Fish-eye lens distorts view.",
 "No Jumping (-NJ):  Tank cannot jump.",
-"Long Reload (-LR):  Tank takes twice as long to reload."
+"Long Reload (-LR):  Tank takes twice as long to reload.",
+"You have found the useless flag. Use it wisely"
 						};
 
 void*					Flag::pack(void* buf) const

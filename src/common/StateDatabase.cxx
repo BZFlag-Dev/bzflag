@@ -20,6 +20,7 @@
 #include <ctype.h>
 #include <stack>
 #include <stdexcept>
+#include <iostream>
 
 const std::string StateDatabase::BZDB_GRAVITY = std::string("_gravity");
 const std::string StateDatabase::BZDB_TANKWIDTH = std::string("_tankWidth");
