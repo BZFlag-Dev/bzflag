@@ -41,3 +41,6 @@ rrlog:  rrlog.cxx
 	  ../src/game/libGame.a		\
 	  ../src/net/libNet.a		\
 	  ../src/common/libCommon.a
+
+3ds2bzw:	3ds2bzw.c
+	$(CC) $(CFLAGS) -o 3ds2bzw 3ds2bzw.c -l3ds -lm
