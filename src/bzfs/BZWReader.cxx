@@ -91,7 +91,7 @@ bool BZWReader::readWorldStream(std::vector<WorldFileObject*>& wlist)
 
   bool gotWorld = false;
 
-  while (!input->eof())
+  while (!input->eof() && !input->fail() && input->good())
   {
     // watch out for starting a new object when one is already in progress
     if (newObject) {
