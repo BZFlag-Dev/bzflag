@@ -2213,6 +2213,15 @@ static std::string cmdJump(const std::string&, const CommandManager::ArgList& ar
   return std::string();
 }
 
+static std::string cmdFire(const std::string&, const CommandManager::ArgList& args)
+{
+  if (args.size() != 0)
+    return "usage: fire";
+  if (myTank != NULL && myTank->isAlive())
+    myTank->fireShot();
+  return std::string();
+}
+
 struct CommandListItem {
   const char* name;
   CommandManager::CommandFunction func;
@@ -2220,6 +2229,7 @@ struct CommandListItem {
 };
 
 static const CommandListItem commandList[] = {
+  { "fire",	&cmdFire,	"fire:  fire a shot" },
   { "jump",	&cmdJump,	"jump:  make player jump" }
 };
 
@@ -6293,8 +6303,9 @@ void			startPlaying(BzfDisplay* _display,
   mainWindow = &sceneRenderer->getWindow();
   
   // register some commands
-  for (unsigned int j = 0; j < countof(commandList); ++j)
-    CMDMGR->add(commandList[i].name, commandList[i].func, commandList[i].help);
+  for (unsigned int j = 0; j < countof(commandList); ++j) {
+    CMDMGR->add(commandList[j].name, commandList[j].func, commandList[j].help);
+  }
 
   // make control panel
   ControlPanel _controlPanel(*mainWindow, *sceneRenderer);
