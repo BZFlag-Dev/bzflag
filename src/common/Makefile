@@ -21,6 +21,8 @@ CXXFILES =				\
 	TimeBomb.cxx			\
 	TimeKeeper.cxx			\
 	md5.cxx				\
+	BundleMgr.cxx		\
+	Bundle.cxx			\
 	$(NULL)
 
 CFILES =				\
