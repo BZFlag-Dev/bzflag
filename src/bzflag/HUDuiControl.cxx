@@ -150,7 +150,7 @@ void			HUDuiControl::setLabel(const std::string& _label)
   label = _label;
   if (fontFace >= 0) {
     FontManager &fm = FontManager::instance();
-    trueLabelWidth = fm.getStrLength(fontFace, fontSize, getLabel());
+    trueLabelWidth = fm.getStrLength(fontFace, fontSize, getLabel() + "99");
   }
 }
 
@@ -189,7 +189,7 @@ void			HUDuiControl::onSetFont()
   if (fontFace >= 0) {
     FontManager &fm = FontManager::instance();
     fontHeight = fm.getStrHeight(fontFace, fontSize, label);
-    trueLabelWidth = fm.getStrLength(fontFace, fontSize, label);
+    trueLabelWidth = fm.getStrLength(fontFace, fontSize, label + "99");
   } else {
     fontHeight = 11.0f;
     trueLabelWidth = 0.0f;
@@ -280,8 +280,6 @@ void			HUDuiControl::renderLabel()
   std::string theLabel = getLabel();
   if (theLabel.length() > 0 && fontFace >= 0) {
     FontManager &fm = FontManager::instance();
-    trueLabelWidth = fm.getStrLength(fontFace, fontSize, theLabel) +
-		     fm.getStrLength(fontFace, fontSize, "99");
     const float dx = (desiredLabelWidth > trueLabelWidth)
       ? desiredLabelWidth : trueLabelWidth;
     fm.drawString(x - dx, y, 0, fontFace, fontSize, theLabel);
