@@ -27,7 +27,7 @@ $nameport = $_GET['nameport'];
 
 # For ADD
 $build    = $_GET['build'];
-$version  = $_GET['version'];
+$version  = $_GET['version']; # also on LIST
 $gameinfo = $_GET['gameinfo'];
 $title    = $_GET['title'];
 
@@ -40,7 +40,6 @@ $conntime = $_GET['conntime'];
 # For karma
 $target   = $_GET['target'];    # urlencoded
 $karma    = $_GET['karma'];
-
 
 # where to send debug printing
 $enableDebug	= 0;
@@ -136,7 +135,7 @@ if (!$result) {
 
   mysql_query("CREATE TABLE servers " .
               "(nameport varchar(60) NOT NULL, " .
-              " build varchar(20), " .
+              " build varchar(60), " .
               " version varchar(9) NOT NULL, " .
               " gameinfo varchar(73) NOT NULL, " .
               " ipaddr varchar(17) NOT NULL, " .
@@ -146,6 +145,7 @@ if (!$result) {
     or die ("Could not create table: " . mysql_error());
 }
 
+# FIXME don't do this check on every LIST
 # if the registered players table does not exist, create .
 # FIXME something quicker to test for the table?
 $result = mysql_query("SELECT * FROM players", $link);
@@ -199,11 +199,12 @@ if ($action == "LIST" ) {
 
   if ($version)
     $result = mysql_query("SELECT nameport,version,gameinfo,ipaddr,title "
-			  . " FROM servers WHERE version = '$version'", $link)
+			  . " FROM servers WHERE version = '$version'"
+			  . " ORDER BY `nameport` ASC", $link)
       or die ("Invalid query: ". mysql_error());
   else
     $result = mysql_query("SELECT nameport,version,gameinfo,ipaddr,title "
-			  . " FROM servers", $link)
+			  . " FROM servers ORDER BY `nameport` ASC", $link)
       or die ("Invalid query: ". mysql_error());
   while (TRUE) {
     $row = mysql_fetch_row($result);
@@ -442,6 +443,7 @@ if ($action == "LIST" ) {
   print_r($row);
 } else {
   print "Unknown command: '$action'\n";
+  # TODO dump the default form here but still close the database connection
 }
 
 # make sure the connection to mysql is severed
