@@ -5635,7 +5635,9 @@ static void		findFastConfiguration()
 
 static void		defaultErrorCallback(const char* msg)
 {
-  controlPanel->addMessage(msg);
+  std::string message = ColorStrings[RedColor];
+  message += msg;
+  controlPanel->addMessage(message);
 }
 
 static void		startupErrorCallback(const char* msg)
@@ -5650,7 +5652,7 @@ static void		startupErrorCallback(const char* msg)
 
 void			startPlaying(BzfDisplay* _display,
 				     SceneRenderer& renderer)
-			{
+{
   // initalization
   display = _display;
   sceneRenderer = &renderer;
