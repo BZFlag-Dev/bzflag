@@ -3491,7 +3491,20 @@ static std::string	getCacheDirectoryName()
   return name;
 
 #elif defined(macintosh)
-  return "";
+  std::string cacheName;
+  ::FSRef libraryFolder;
+  ::OSErr err;
+  err = ::FSFindFolder(::kUserDomain, ::kApplicationSupportFolderType, true, &libraryFolder);
+  if(err == ::noErr) {
+    char buff[1024];
+    err = ::FSRefMakePath(libraryFolder, (UInt8*)buff, sizeof(buff));
+    if(err == ::noErr) {
+      std::strcat(buff, "/BZFlag/cache");
+      fprintf(stderr, "cache dir is \"%s\"\n", buff);
+      cacheName = buff;
+    }
+  }
+  return cachename;
 #else
   std::string name;
   struct passwd *pwent = getpwuid(getuid());

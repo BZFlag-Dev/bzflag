@@ -87,8 +87,8 @@
 			);
 			isa = PBXGroup;
 			name = data;
-			path = /Volumes/Home/rae/dev/bzflag/data;
-			refType = 0;
+			path = ../../data;
+			refType = 4;
 		};
 		01128F5B03C2CCC300A80110 = {
 			isa = PBXFileReference;
@@ -748,8 +748,8 @@
 			);
 			isa = PBXGroup;
 			name = bzflag;
-			path = /Volumes/Home/rae/dev/bzflag/src/bzflag;
-			refType = 0;
+			path = src/bzflag;
+			refType = 4;
 		};
 		017F06DD03C297E000A80110 = {
 			fileEncoding = 30;
@@ -1451,8 +1451,8 @@
 			);
 			isa = PBXGroup;
 			name = common;
-			path = /Volumes/Home/rae/dev/bzflag/src/common;
-			refType = 0;
+			path = src/common;
+			refType = 4;
 		};
 		017F079003C2980100A80110 = {
 			fileEncoding = 30;
@@ -1507,8 +1507,8 @@
 			);
 			isa = PBXGroup;
 			name = ogl;
-			path = /Volumes/Home/rae/dev/bzflag/src/ogl;
-			refType = 0;
+			path = src/ogl;
+			refType = 4;
 		};
 		017F07A203C2980100A80110 = {
 			fileEncoding = 30;
@@ -1558,8 +1558,8 @@
 			);
 			isa = PBXGroup;
 			name = obstacle;
-			path = /Volumes/Home/rae/dev/bzflag/src/obstacle;
-			refType = 0;
+			path = src/obstacle;
+			refType = 4;
 		};
 		017F07AF03C2980100A80110 = {
 			fileEncoding = 30;
@@ -1629,8 +1629,8 @@
 			);
 			isa = PBXGroup;
 			name = geometry;
-			path = /Volumes/Home/rae/dev/bzflag/src/geometry;
-			refType = 0;
+			path = src/geometry;
+			refType = 4;
 		};
 		017F07BF03C2980100A80110 = {
 			fileEncoding = 30;
@@ -1769,8 +1769,8 @@
 			);
 			isa = PBXGroup;
 			name = net;
-			path = /Volumes/Home/rae/dev/bzflag/src/net;
-			refType = 0;
+			path = src/net;
+			refType = 4;
 		};
 		017F07FE03C2980100A80110 = {
 			fileEncoding = 30;
@@ -2115,8 +2115,8 @@
 			);
 			isa = PBXGroup;
 			name = platform;
-			path = /Volumes/Home/rae/dev/bzflag/src/platform;
-			refType = 0;
+			path = src/platform;
+			refType = 4;
 		};
 		017F087F03C2983700A80110 = {
 			fileEncoding = 30;
@@ -2249,8 +2249,8 @@
 			);
 			isa = PBXGroup;
 			name = scene;
-			path = /Volumes/Home/rae/dev/bzflag/src/scene;
-			refType = 0;
+			path = src/scene;
+			refType = 4;
 		};
 		017F08D003C2983800A80110 = {
 			fileEncoding = 30;
@@ -2482,9 +2482,8 @@
 				017F096F03C29D2F00A80110,
 			);
 			isa = PBXGroup;
-			name = include;
-			path = /Volumes/Home/rae/dev/bzflag/include;
-			refType = 0;
+			path = include;
+			refType = 4;
 		};
 		017F092D03C29D2F00A80110 = {
 			fileEncoding = 30;
@@ -3343,18 +3342,16 @@
 			fileEncoding = 30;
 			indentWidth = 8;
 			isa = PBXFileReference;
-			name = Bundle.cxx;
-			path = /Volumes/Home/rae/dev/tmp/bzflag/src/common/Bundle.cxx;
-			refType = 0;
+			path = Bundle.cxx;
+			refType = 4;
 			tabWidth = 8;
 			usesTabs = 1;
 		};
 		01BBF1FE03D009A700A80110 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
-			name = BundleMgr.cxx;
-			path = /Volumes/Home/rae/dev/tmp/bzflag/src/common/BundleMgr.cxx;
-			refType = 0;
+			path = BundleMgr.cxx;
+			refType = 4;
 		};
 		01BBF1FF03D009A700A80110 = {
 			fileRef = 01BBF1FD03D009A700A80110;
@@ -3371,16 +3368,14 @@
 		01BBF20103D00AD400A80110 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
-			name = ShotUpdate.cxx;
-			path = /Volumes/Home/rae/dev/tmp/bzflag/src/common/ShotUpdate.cxx;
-			refType = 0;
+			path = ShotUpdate.cxx;
+			refType = 4;
 		};
 		01BBF20203D00AD400A80110 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
-			name = PlayerState.cxx;
-			path = /Volumes/Home/rae/dev/tmp/bzflag/src/common/PlayerState.cxx;
-			refType = 0;
+			path = PlayerState.cxx;
+			refType = 4;
 		};
 		01BBF20303D00AD400A80110 = {
 			fileRef = 01BBF20103D00AD400A80110;
@@ -3552,9 +3547,9 @@
 				017F08CF03C2983800A80110,
 			);
 			isa = PBXGroup;
-			name = Sources;
-			path = "";
-			refType = 4;
+			name = bzflag;
+			path = ../..;
+			refType = 2;
 		};
 		20286C2CFDCF999611CA2CEA = {
 			children = (
