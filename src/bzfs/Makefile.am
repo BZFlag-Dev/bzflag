@@ -25,6 +25,9 @@ bzfs_SOURCES = \
 	bzfs.cxx \
 	bzfs.h
 
+#	commands.cxx \
+#	commands.h \
+
 LDADD = \
 	../net/libNet.a		\
 	../common/libCommon.a
