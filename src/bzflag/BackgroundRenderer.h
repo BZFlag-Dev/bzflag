@@ -35,6 +35,7 @@ class BackgroundRenderer {
 
     void		renderSkyAndGround(SceneRenderer&, bool fullWindow);
     void		render(SceneRenderer&);
+	void		renderEnvironment(SceneRenderer&);
 
     void                resize();
 

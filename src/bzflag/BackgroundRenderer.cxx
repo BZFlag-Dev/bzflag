@@ -505,6 +505,15 @@ void			BackgroundRenderer::render(SceneRenderer& renderer)
 }
 
 
+// hook for drawing stuff AFTER the world but before the HUD.
+// draw in world space
+void			BackgroundRenderer::renderEnvironment(SceneRenderer& renderer)
+{
+	if (!blank) {
+		// do your drawing here
+	}
+}
+
 void BackgroundRenderer::resizeSky() {
   // sky pyramid must fit inside far clipping plane
   const GLfloat skySize = 1.3f * BZDB.eval(StateDatabase::BZDB_WORLDSIZE);
