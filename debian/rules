@@ -14,17 +14,9 @@ build-stamp:
 
 	# Add here commands to compile the package.
 ifneq (,$(findstring debug,$(DEB_BUILD_OPTIONS)))
-	case $(DEB_BUILD_ARCH) in \
-		i386) $(MAKE) linux-i386;; \
-		powerpc) $(MAKE) linux-ppc;; \
-		*) $(MAKE) linux;; \
-	esac
+	./configure --enable-debug
 else
-	case $(DEB_BUILD_ARCH) in \
-		i386) $(MAKE) linux-i386-debug;; \
-		powerpc) $(MAKE) linux-ppc-debug;; \
-		*) $(MAKE) linux-debug;; \
-	esac
+	./configure --enable-debug
 endif
 	$(MAKE) INSTALL_DATA_DIR=/usr/share/bzflag all
 

@@ -13,8 +13,13 @@ else
 fi
 date=`date --rfc-822`
 arch=$(dpkg-architecture -qDEB_HOST_ARCH)
-make linux
-make pristine
+aclocal
+touch NEWS
+autoheader
+automake --add-missing
+autoconf
+#make linux
+#make pristine
 sed -e "s/@VERSION@/$version/g" -e "s/@DATE@/$date/g" < debian/changelog.in > debian/changelog
 chmod +x debian/rules misc/tar
 
