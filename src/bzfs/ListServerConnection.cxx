@@ -252,7 +252,7 @@ void ListServerLink::openLink()
       }
     } else {
       // shouldn't arrive here. Just in case, clean
-      DEBUG3("list server connect and close?");
+      DEBUG3("list server connect and close?\n");
       closeLink();
     }
   }
