@@ -1,5 +1,9 @@
 recent bugs
 ------------
+- shots that are sped up via Agility are rejected by the server
+
+- time limiter does not take jumping into consideration when holding Agility
+
 - shooting straight shots with the Agility flag while just having accelerated
   forward (common tactic to shoot "fast shots") will miss targets that are
   rather stationary and directly in the shot's path.
