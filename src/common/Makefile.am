@@ -23,5 +23,10 @@ libCommon_a_SOURCES  =			\
 	global.cxx			\
 	md5.cxx
 
+if BUILD_REGEX
+libCommon_a_LIBADD = \
+	../regex/libregex.a
+endif
+
 MAINTAINERCLEANFILES = \
 	Makefile.in
