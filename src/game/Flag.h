@@ -59,6 +59,30 @@ public:
 	static FlagId		getIDFromName(const char*);
 	static FlagId		getIDFromAbbreviation(const char*);
 
+    class FlagTable {
+	  public:
+	    FlagTable(char* _name = 0, char* _abbv = 0, 
+				  FlagType _type = FlagUnstable, char* _help = 0):
+	      name(_name),
+	      abbv(_abbv),
+	      type(_type),
+		  help(_help) { }
+	    FlagTable(FlagTable& _ft) :
+	      name(_ft.name),
+	      abbv(_ft.abbv),
+	      type(_ft.type),
+		  help(_ft.help) { }
+	    inline const char* getname() const { return name; }
+	    inline const char* getabbv() const { return abbv; }
+	    inline const FlagType gettype() const { return type; }
+		inline const char* gethelp() const { return help; }
+	  private:
+		char* name;
+		char* abbv;
+		FlagType type;
+		char* help;
+	};
+
 public:
 	FlagId				id;
 	FlagStatus			status;
@@ -72,9 +96,7 @@ public:
 	float				initialVelocity;		// initial launch velocity
 
 private:
-	static const char*	flagName[];
-	static const char*	flagAbbv[];
-	static const char*	flagHelp[];
+	static const FlagTable flagTable[];
 };
 
 #endif // BZF_FLAG_H
