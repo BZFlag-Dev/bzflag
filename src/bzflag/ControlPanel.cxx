@@ -274,7 +274,7 @@ void			ControlPanel::render(SceneRenderer& renderer)
 
   glScissor(x + messageAreaPixels[0] - 1,
       y + messageAreaPixels[1],
-      messageAreaPixels[2],
+      messageAreaPixels[2] + 1,
       messageAreaPixels[3] + ay);
   OpenGLGState::resetState();
 
@@ -440,7 +440,7 @@ void			ControlPanel::render(SceneRenderer& renderer)
     glVertex2f((float) xpos, (float) ypos);
 
     // bottom right
-    xpos += messageAreaPixels[2] + 2;
+    xpos += messageAreaPixels[2] + 1;
     glVertex2f((float) xpos, (float) ypos);
 
     // top right
