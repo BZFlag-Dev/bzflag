@@ -33,8 +33,8 @@ extern int numFlags;
 extern std::string passFile;
 extern std::string groupsFile;
 extern std::string userDatabaseFile;
-extern uint16_t softmaxPlayers;
 extern uint16_t maxPlayers;
+extern uint16_t maxRealPlayers;
 extern std::vector<FlagType*> allowedFlags;
 
 const char *usageString =
@@ -210,13 +210,13 @@ static bool parsePlayerCount(const char *argv, CmdLineOptions &options)
       return false;
     }
 
-    // reset the counts
-    // no players by default if teams are specified
-    // ctf teams plus observers
+    // no team size limit by default for real teams, set it to max players
     int i;
-    for (i = 0; i < CtfTeams + 1; i++) {
-      options.maxTeam[i] = 0;
+    for (i = 0; i < CtfTeams ; i++) {
+      options.maxTeam[i] = maxRealPlayers;
     }
+    // allow 5 Observers by default
+    options.maxTeam[ObserverTeam] = 5;
 
     // now get the new counts
 
@@ -233,14 +233,16 @@ static bool parsePlayerCount(const char *argv, CmdLineOptions &options)
 	if (count < 0) {
 	  options.maxTeam[i] = 0;
 	} else {
-	  if (count > MaxPlayers) {
-	    options.maxTeam[i] = MaxPlayers;
+          if (count > maxRealPlayers) {
+            if (i == ObserverTeam && count > MaxPlayers)
+              options.maxTeam[i] = MaxPlayers;
+            else
+              options.maxTeam[i] = maxRealPlayers;
 	  } else {
 	    options.maxTeam[i] = uint8_t(count);
 	  }
-	}
+        }
       } // end if tail != scan
-
       while (*tail && *tail != ',') tail++;
       scan = tail + 1;
     } // end iteration over teams
@@ -256,16 +258,16 @@ static bool parsePlayerCount(const char *argv, CmdLineOptions &options)
       options.maxTeam[RogueTeam] = MaxPlayers;
     }
 
-    // if all counts explicitly listed then add 'em up and set maxPlayers
-    if (countCount == CtfTeams + 1) {
-      softmaxPlayers = 0;
-      for (i = 0; i < CtfTeams + 1; i++) {
-	softmaxPlayers += options.maxTeam[i];
+    // if all counts explicitly listed then add 'em up and set maxRealPlayers
+    // (unless max total players was explicitly set)
+    if (countCount >= CtfTeams && maxRealPlayers == MaxPlayers) {
+      maxRealPlayers = 0;
+      for (i = 0; i < CtfTeams ; i++) {
+	maxRealPlayers += options.maxTeam[i];
       }
     }
 
   } else {
-
     /* single number was provided instead of comma-separated */
     char *tail;
     long count = strtol(argv, &tail, 10);
@@ -274,17 +276,22 @@ static bool parsePlayerCount(const char *argv, CmdLineOptions &options)
       return false;
     }
     if (count < 1) {
-      softmaxPlayers = 1;
+      maxRealPlayers = 1;
     } else {
       if (count > MaxPlayers) {
-	softmaxPlayers = MaxPlayers;
+	maxRealPlayers = MaxPlayers;
       } else {
-       softmaxPlayers = uint8_t(count);
+       maxRealPlayers = uint8_t(count);
       }
+    }
+    // limit max team size to max players
+    for (int i = 0; i < CtfTeams ; i++) {
+      if (options.maxTeam[i] > maxRealPlayers)
+        options.maxTeam[i] = maxRealPlayers;
     }
   } // end check if comm-separated list
 
-  maxPlayers = softmaxPlayers;
+  maxPlayers = maxRealPlayers + options.maxTeam[ObserverTeam];
   if (maxPlayers > MaxPlayers) {
     maxPlayers = MaxPlayers;
   }

@@ -55,8 +55,6 @@ static PingPacket pingReply;
 static int maxFileDescriptor;
 // players list FIXME should be resized based on maxPlayers
 PlayerInfo player[MaxPlayers];
-// players + observers
-uint16_t softmaxPlayers = MaxPlayers;
 // team info
 TeamInfo team[NumTeams];
 // num flags in flag list
@@ -66,9 +64,13 @@ static int numFlagsInAir;
 std::vector<FlagType*> allowedFlags;
 bool done = false;
 // true if hit time/score limit
- bool gameOver = true;
+bool gameOver = true;
 static int exitCode = 0;
+// "real" players, i.e. do not count observers
+uint16_t maxRealPlayers = MaxPlayers;
+// players + observers
 uint16_t maxPlayers = MaxPlayers;
+// highest active id
 uint16_t curMaxPlayers = 0;
 // max simulataneous per player
 bool hasBase[CtfTeams] = { false };
@@ -2199,84 +2201,77 @@ static void addPlayer(int playerIndex)
 
   TeamColor t = player[playerIndex].team;
 
-  int numplayers=0;
-  for (i=0;i<NumTeams;i++)
-  {
-    numplayers+=team[i].team.size;
-  }
+  // count current number of players and players+observers
+  int numplayers = 0;
+  for (i = 0; i < int(ObserverTeam); i++)
+    numplayers += team[i].team.size;
+  const int numplayersobs = numplayers + team[ObserverTeam].team.size;
 
-  // automatically assign the player's team
-  if (((clOptions->autoTeam) && (t < (int)ObserverTeam)) ||
-      (t == AutomaticTeam)) {
-    std::vector<TeamColor> minIndex;
-    int sizeOfSmallestTeam = softmaxPlayers;
-
-    for (int i = (int)RogueTeam; i < (int)ObserverTeam; i++) {
-      // if the team is valid and not full
-      if ((clOptions->maxTeam[i] > 0) &&
-	  (team[i].team.size < softmaxPlayers) &&
-	  (team[i].team.size <= sizeOfSmallestTeam)) {
-	if (team[i].team.size < sizeOfSmallestTeam) {
-	  minIndex.clear();
-	  sizeOfSmallestTeam = team[i].team.size;
-	}
-	minIndex.push_back((TeamColor)i);
-      }
-    } // end iteration over teams
-
-#if 0
-    std::cout << "Found " << minIndex.size() << " equally empty (" << sizeOfSmallestTeam << ") teams; softmax is " << softmaxPlayers << std::endl;
-    for (int i = 0; i < minIndex.size(); i++) {
-      std::cout << "  Team " << minIndex[i] << " has maxteam of " << clOptions->maxTeam[i] << std::endl;
-    }
-#endif
-
-    // reassign the team if
-    if (minIndex.size() == 0) {
-      // all teams are all full, try observer
-      t = player[playerIndex].team = ObserverTeam;
-    } else if (minIndex.size() == 1) {
-      // only one team has a slot open anyways
-      t = player[playerIndex].team = minIndex[0];
-    } else {
-      // multiple equally unfilled teams, choose the one sucking most
-
-      // see if the player's choice was a weak team
-      bool foundTeam = false;
-      for (int i = 0; i < (int) minIndex.size(); i++) {
-	if (minIndex[i] == (TeamColor)t) {
-	  foundTeam = true;
-	  break;
-	}
-      }
-      if (!foundTeam) {
-	// FIXME -- should pick the team with the least average player kills
-	// for now, pick random
-	t = player[playerIndex].team = minIndex[rand() % minIndex.size()];
+  // no player slots open -> try observer
+  if (numplayers == maxRealPlayers) {
+    t = player[playerIndex].team = ObserverTeam;
+  } else {
+    // automatically assign the player's team
+    if ((clOptions->autoTeam && t < (int)ObserverTeam) || t == AutomaticTeam) {
+      std::vector<TeamColor> minIndex;
+      int sizeOfSmallestTeam = maxRealPlayers;
+  
+      for (int i = (int)RogueTeam; i < (int)ObserverTeam; i++) {
+        const int teamsize = team[i].team.size;
+        // if the team is not full and the smallest
+        if (teamsize < clOptions->maxTeam[i] && teamsize <= sizeOfSmallestTeam) {
+          if (teamsize < sizeOfSmallestTeam) {
+            minIndex.clear();
+            sizeOfSmallestTeam = team[i].team.size;
+          }
+          minIndex.push_back((TeamColor)i);
+        }
+      } // end iteration over teams
+  
+      // reassign the team if
+      if (minIndex.size() == 0) {
+        // all teams are all full, try observer
+        t = player[playerIndex].team = ObserverTeam;
+      } else if (minIndex.size() == 1) {
+        // only one team has a slot open anyways
+        t = player[playerIndex].team = minIndex[0];
+      } else {
+        // multiple equally unfilled teams, choose the one sucking most
+  
+        // see if the player's choice was a weak team
+        bool foundTeam = false;
+        for (int i = 0; i < (int) minIndex.size(); i++) {
+          if (minIndex[i] == (TeamColor)t) {
+            foundTeam = true;
+            break;
+          }
+        }
+        if (!foundTeam) {
+          // FIXME -- should pick the team with the least average player kills
+          // for now, pick random
+          t = player[playerIndex].team = minIndex[rand() % minIndex.size()];
+        }
       }
     }
   }
 
   // reject player if asks for bogus team or rogue and rogues aren't allowed
-  // or if the team is full.
-   if (player[playerIndex].type != TankPlayer &&
-       player[playerIndex].type != ComputerPlayer) {
-     rejectPlayer(playerIndex, RejectBadType);
-	 return;
-   } else if (t == NoTeam) {
-     rejectPlayer(playerIndex, RejectBadTeam);
-	 return;
-   } else if (team[int(t)].team.size >= clOptions->maxTeam[int(t)]) {
-     for (int i = RogueTeam; i < NumTeams; i++) {
-       if (team[i].team.size < clOptions->maxTeam[i]) {
-	 rejectPlayer(playerIndex, RejectTeamFull);
-	 return ;
-       }
-     }
-     // if team is full then check if server is full
-     rejectPlayer(playerIndex, RejectServerFull);
-     return;
-   }
+  // or if the team is full or if the server is full
+  if (player[playerIndex].type != TankPlayer &&
+      player[playerIndex].type != ComputerPlayer) {
+    rejectPlayer(playerIndex, RejectBadType);
+        return;
+  } else if (t == NoTeam) {
+    rejectPlayer(playerIndex, RejectBadTeam);
+        return;
+  } else if (numplayersobs == maxPlayers) {
+    // server is full
+    rejectPlayer(playerIndex, RejectServerFull);
+    return;
+  } else if (team[int(t)].team.size >= clOptions->maxTeam[int(t)]) {
+      rejectPlayer(playerIndex, RejectTeamFull);
+      return ;
+  }
 
   player[playerIndex].wasRabbit = false;
   player[playerIndex].toBeKicked = false;
@@ -4412,7 +4407,7 @@ int main(int argc, char **argv)
   pingReply.serverId.port = htons(clOptions->wksPort);
   pingReply.serverId.number = 0;
   pingReply.gameStyle = clOptions->gameStyle;
-  pingReply.maxPlayers = (uint8_t)maxPlayers;
+  pingReply.maxPlayers = (uint8_t)maxRealPlayers;
   pingReply.maxShots = clOptions->maxShots;
   pingReply.rogueMax = (uint8_t)clOptions->maxTeam[0];
   pingReply.redMax = (uint8_t)clOptions->maxTeam[1];
