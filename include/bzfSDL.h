@@ -16,14 +16,13 @@
 /** this file contains headers necessary for SDL */
 
 #ifdef HAVE_SDL
-
-#ifdef WIN32
-#include <SDL.h>
-#include <SDL_thread.h>
-#else // cus linux is wierd
-#include "SDL.h"
-#include "SDL_thread.h"
-#endif //_WIN32
+#  ifdef _WIN32
+#    include <SDL.h>
+#    include <SDL_thread.h>
+#  else // cus linux is wierd
+#    include "SDL.h"
+#    include "SDL_thread.h"
+#  endif //_WIN32
 #endif //HAVE_SDL
 
 #endif /* __BZFSDL_H__ */
