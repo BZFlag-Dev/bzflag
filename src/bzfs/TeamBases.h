@@ -19,12 +19,12 @@
 
 class TeamBases;
 
-typedef std::map<int, TeamBases*> BasesList;
+typedef std::map<int, TeamBases> BasesList;
 
 class TeamBases
 {
 public:
-  TeamBases(TeamColor team, bool initDefault = false);
+  TeamBases(TeamColor team = RedTeam, bool initDefault = false);
   void addBase( const float *position, const float *size, float rotation, const float *safetyZone );
   int size() const;
   TeamColor getTeam() const;
@@ -40,6 +40,8 @@ public:
 private:
   struct TeamBase
   {
+    TeamBase() {}
+    TeamBase(const float *pos, const float *siz, float rot, const float *safety);
     float position[3];
     float size[3];
     float rotation;

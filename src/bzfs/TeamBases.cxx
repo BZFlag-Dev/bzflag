@@ -76,13 +76,8 @@ TeamBases::TeamBases(TeamColor team, bool initDefault)
 
 void TeamBases::addBase( const float *position, const float *size, float rotation, const float *safetyZone )
 {
-  TeamBase base;
-  memcpy( &base.position, position, sizeof( base.position ));
-  memcpy( &base.size, size, sizeof( base.size ));
-  memcpy( &base.safetyZone, safetyZone, sizeof( base.safetyZone ));
-  base.rotation = rotation;
-
-  teamBases.push_back( base );
+  TeamBase base(position, size, rotation, safetyZone);
+  teamBases.push_back(base);
 }
 
 int TeamBases::size() const
@@ -169,4 +164,13 @@ void TeamBases::getSafetyZone( float &x, float &y, float &z ) const
   x = base.safetyZone[0];
   y = base.safetyZone[1];
   z = base.safetyZone[2];
+}
+
+
+TeamBases::TeamBase::TeamBase(const float *pos, const float *siz, float rot, const float *safety)
+{
+  memcpy(&position, pos, sizeof position);
+  memcpy(&size, siz, sizeof size);
+  memcpy(&safetyZone, safety, sizeof safetyZone);
+  rotation = rot;
 }
