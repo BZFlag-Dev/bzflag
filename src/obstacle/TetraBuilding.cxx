@@ -474,7 +474,9 @@ void TetraBuilding::print(std::ostream& out, const std::string& indent) const
 				     << texcoord[2] << std::endl;
       }
     }
+    out << "\tmatref ";
     MATERIALMGR.printReference(out, materials[i]);
+    out << std::endl;
   }
 
   // write the regular stuff
