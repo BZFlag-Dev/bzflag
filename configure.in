@@ -299,11 +299,11 @@ case $host_os in
 	CXXFLAGS="$CXXFLAGS";;
      solaris*)
 	AC_DEFINE(SUN_OGL_NO_VERTEX_MACROS, [], [Sun OpenGL No Macro Vertex])
-	if test sun_wspro; then
+	if $sun_wspro; then
 	   CPPFLAGS="$CPPFLAGS -KPIC"
-	elif test sun_cc; then
+	elif $sun_cc; then
 	   CPPFLAGS="$CPPFLAGS -fast"
-	elif test sun_gcc; then
+	elif $sun_gcc; then
 	   CXXFLAGS="$CXXFLAGS"
 	CPPFLAGS="$CPPFLAGS -I\$(top_srcdir)/include"
 	fi;;
