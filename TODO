@@ -1,7 +1,7 @@
 to do list for bzflag
 ---------------------
 
-These should happen before the next release:
+THESE SHOULD HAPPEN BEFORE THE NEXT RELEASE:
 
 * version as strings as in 1.9.0-cvs20030604
 
@@ -11,7 +11,11 @@ These should happen before the next release:
 
 * support gameinfo requests as one time udp packets (if udp)
 
-These are lower priority
+THESE ARE LOWER PRIORITY
+
+* Create a new MsgThrottle message sent from client to server
+  to inform server to throttle MsgPlayerUpdates from other clients
+  to X. X is set in bzflag.bzc. To help laggy players
 
 * create new 64x64, 48x48, 32x32, 16x16 official bzflag icons.
   Should feature the BZFlag tank. The large ones should include
