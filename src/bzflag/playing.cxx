@@ -3775,7 +3775,7 @@ static void		handleServerMessage(bool human, uint16_t code,
 
       // direct message to or from me
       if (dstPlayer) {
-	if (true || fromServer && (origText == "You are now an administrator!"
+	if (fromServer && (origText == "You are now an administrator!"
 			   || origText == "Password Accepted, welcome back."))
 	  admin = true;
 	// talking to myself? that's strange
