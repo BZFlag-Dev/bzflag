@@ -5912,19 +5912,19 @@ static void parse(int argc, char **argv, CmdLineOptions &options)
       options.randomCTF = true;
       // capture the flag style
       options.gameStyle |= int(TeamFlagGameStyle);
-      if (options.gameStyle | int(RabbitChaseGameStyle)) {
+      if (options.gameStyle & int(RabbitChaseGameStyle)) {
 	options.gameStyle &= ~int(RabbitChaseGameStyle);
-	fprintf(stderr, "Capture the flag incompatible with Rabbit Chase");
-	fprintf(stderr, "Capture the flag assumed");
+	fprintf(stderr, "Capture the flag incompatible with Rabbit Chase\n");
+	fprintf(stderr, "Capture the flag assumed\n");
       }
     }
     else if (strcmp(argv[i], "-c") == 0) {
       // capture the flag style
       options.gameStyle |= int(TeamFlagGameStyle);
-      if (options.gameStyle | int(RabbitChaseGameStyle)) {
+      if (options.gameStyle & int(RabbitChaseGameStyle)) {
 	options.gameStyle &= ~int(RabbitChaseGameStyle);
-	fprintf(stderr, "Capture the flag incompatible with Rabbit Chase");
-	fprintf(stderr, "Capture the flag assumed");
+	fprintf(stderr, "Capture the flag incompatible with Rabbit Chase\n");
+	fprintf(stderr, "Capture the flag assumed\n");
       }
     }
     else if (strncmp(argv[i], "-d", 2) == 0) {
@@ -6125,7 +6125,7 @@ static void parse(int argc, char **argv, CmdLineOptions &options)
       if (options.gameStyle & int(TeamFlagGameStyle)) {
 	options.gameStyle &= ~int(TeamFlagGameStyle);
 	fprintf(stderr, "Rabbit Chase incompatible with Capture the flag\n");
-	fprintf(stderr, "Rabbit Chase assumedi\n");
+	fprintf(stderr, "Rabbit Chase assumed\n");
       }
 
     }
