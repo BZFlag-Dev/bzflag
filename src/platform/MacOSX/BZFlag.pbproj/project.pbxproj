@@ -2720,6 +2720,7 @@
 				4E030DD9048EB3820009E055,
 				149184D5051575A100A80164,
 				17587328FF379C6511CA2CBB,
+				7BE2CA4E051D096C00FEBA07,
 			);
 			isa = PBXGroup;
 			name = Products;
@@ -2762,6 +2763,7 @@
 				4E030DD8048EB3820009E055,
 				149184D4051575A100A80164,
 				29B97326FDCFA39411CA2CEA,
+				7BE2CA4D051D096C00FEBA07,
 			);
 		};
 		29B97314FDCFA39411CA2CEA = {
@@ -2866,6 +2868,7 @@
 				4EDCB31704998F85001DADFE,
 				29B9732DFDCFA39411CA2CEA,
 				4EDCB32E049A4879001DADFE,
+				7BE2CA53051D0AE100FEBA07,
 			);
 			buildSettings = {
 				FRAMEWORK_SEARCH_PATHS = "";
@@ -2893,6 +2896,7 @@
 				4ED190010495317C000CE899,
 				4ED190020495317E000CE899,
 				14C1C1D304B6406100A80164,
+				7BE2CA54051D0BF000FEBA07,
 			);
 			isa = PBXApplicationTarget;
 			name = BZFlag;
@@ -2908,7 +2912,7 @@
 	<key>CFBundleExecutable</key>
 	<string>BZFlag</string>
 	<key>CFBundleGetInfoString</key>
-	<string>BZFlag version 1.9a0, 1993-2003 Tim Riker, Chris Schoeneman</string>
+	<string>BZFlag version VERSION, 1993-2003 Tim Riker, Chris Schoeneman</string>
 	<key>CFBundleIconFile</key>
 	<string>MacBZFlag.icns</string>
 	<key>CFBundleIdentifier</key>
@@ -2920,11 +2924,11 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>1.9</string>
+	<string>VERSION</string>
 	<key>CFBundleSignature</key>
 	<string>BZfl</string>
 	<key>CFBundleVersion</key>
-	<string>1.9a0</string>
+	<string>VERSION</string>
 	<key>CSResourcesFileMapped</key>
 	<true/>
 	<key>NSMainNibFile</key>
@@ -6287,6 +6291,7 @@
 		};
 		4E030CC0048E70E80009E055 = {
 			children = (
+				7BE2CA50051D099000FEBA07,
 				4E030CDA048E70E80009E055,
 				4E030CDC048E70E80009E055,
 				4E030CDD048E70E80009E055,
@@ -9349,6 +9354,101 @@
 			isa = PBXBuildFile;
 			settings = {
 			};
+		};
+		7BE2CA49051D096C00FEBA07 = {
+			buildActionMask = 2147483647;
+			files = (
+				7BE2CA52051D09EA00FEBA07,
+			);
+			isa = PBXHeadersBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		7BE2CA4A051D096C00FEBA07 = {
+			buildActionMask = 2147483647;
+			files = (
+				7BE2CA51051D099000FEBA07,
+			);
+			isa = PBXSourcesBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		7BE2CA4B051D096C00FEBA07 = {
+			buildActionMask = 2147483647;
+			files = (
+			);
+			isa = PBXFrameworksBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		7BE2CA4C051D096C00FEBA07 = {
+			buildActionMask = 2147483647;
+			files = (
+			);
+			isa = PBXRezBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		7BE2CA4D051D096C00FEBA07 = {
+			buildPhases = (
+				7BE2CA49051D096C00FEBA07,
+				7BE2CA4A051D096C00FEBA07,
+				7BE2CA4B051D096C00FEBA07,
+				7BE2CA4C051D096C00FEBA07,
+			);
+			buildSettings = {
+				OPTIMIZATION_CFLAGS = "";
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = mkplist;
+				REZ_EXECUTABLE = YES;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = "-Wmost -Wno-four-char-constants -Wno-unknown-pragmas";
+			};
+			dependencies = (
+			);
+			isa = PBXToolTarget;
+			name = mkplist;
+			productInstallPath = /usr/local/bin;
+			productName = mkplist;
+			productReference = 7BE2CA4E051D096C00FEBA07;
+		};
+		7BE2CA4E051D096C00FEBA07 = {
+			isa = PBXExecutableFileReference;
+			path = mkplist;
+			refType = 3;
+		};
+		7BE2CA50051D099000FEBA07 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = mkplist.cxx;
+			refType = 4;
+		};
+		7BE2CA51051D099000FEBA07 = {
+			fileRef = 7BE2CA50051D099000FEBA07;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		7BE2CA52051D09EA00FEBA07 = {
+			fileRef = 14667DD0051A5AE500A80164;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		7BE2CA53051D0AE100FEBA07 = {
+			buildActionMask = 2147483647;
+			files = (
+			);
+			generatedFileNames = (
+			);
+			isa = PBXShellScriptBuildPhase;
+			neededFileNames = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "${TARGET_BUILD_DIR}/mkplist ${TARGET_BUILD_DIR}/BZFlag.app/Contents/Info.plist";
+		};
+		7BE2CA54051D0BF000FEBA07 = {
+			isa = PBXTargetDependency;
+			target = 7BE2CA4D051D096C00FEBA07;
 		};
 	};
 	rootObject = 29B97313FDCFA39411CA2CEA;
