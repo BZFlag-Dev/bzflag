@@ -14,24 +14,30 @@
  * Multicast socket utility functions
  */
 
-#ifndef	BZF_MULTICAST_H
-#define	BZF_MULITCAST_H
+#ifndef	__MULTICAST_H__
+#define	__MULITCAST_H__
 
+#include "common.h"
+
+/* system headers */
 #include <sys/types.h>
-#include "common.h"
+
+/* common headers */
 #include "network.h"
-#include "common.h"
 #include "Address.h"
 
-/* openBroadcast:
+
+/** openBroadcast:
  *	port:		port number
  *	service:	name of service (overrides port if not NULL)
  *	addr:		resulting address of socket
  * return value:
  *	file descriptor of socket if successful
  *	-1 if failed
- *
- * openMulticast:
+ */
+int			openBroadcast(int port, const char* service,
+					struct sockaddr_in* addr);
+/** openMulticast:
  *	address:	multicast group address
  *	port:		port number
  *	service:	name of service (overrides port if not NULL)
@@ -42,18 +48,13 @@
  * return value:
  *	file descriptor of socket if successful
  *	-1 if failed
- *
- * multicast functions other than openMulticast() and setMulticastTTL()
- * also work on broadcast sockets.
  */
-
-int			openBroadcast(int port, const char* service,
-					struct sockaddr_in* addr);
 int			openMulticast(const Address& address, int port,
 					const char* service, int ttl,
 					const char* net_interface,
 					const char* mode,
 					struct sockaddr_in* addr);
+
 int			closeMulticast(int fd);
 int			setMulticastTTL(int fd, int ttl);
 int			sendMulticast(int fd, const void* buffer,
@@ -61,13 +62,12 @@ int			sendMulticast(int fd, const void* buffer,
 int			recvMulticast(int fd, void* buffer,
 				int bufferLength, struct sockaddr_in*);
 
-#endif // BZF_MULTICAST_H
+#endif  // __MULTICAST_H__
 
 // Local Variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-
