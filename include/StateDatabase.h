@@ -17,10 +17,10 @@
 #include "common.h"
 
 // system headers
-#include <string>
 #include <vector>
 #include <map>
 #include <iostream>
+#include <string>
 
 // implementation headers
 #include "CallbackList.h"
