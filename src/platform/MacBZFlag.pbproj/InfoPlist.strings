@@ -1,5 +1,0 @@
-/* Localized versions of Info.plist keys */
-
-CFBundleName = "BZFlag";
-CFBundleShortVersionString = "BZFlag version 1.7g0r6";
-CFBundleGetInfoString = "BZFlag version 1.7g0r6, © 1993-2003 Tim Riker, Chris Schoeneman";
