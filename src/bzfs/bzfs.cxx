@@ -5463,7 +5463,6 @@ static const char *usageString =
 "[-helpmsg <file> <name>]"
 "[-i interface] "
 "[-j] "
-"[-rabbit] "
 "[-lagdrop <num>] "
 "[-lagwarn <time/ms>] "
 "[-maxidle <time/s>] "
@@ -5484,6 +5483,7 @@ static const char *usageString =
 "[-q] "
 "[+r] "
 "[-r] "
+"[-rabbit] "
 "[-reportfile <filename>] "
 "[-reportpipe <filename>] "
 "[-requireudp] "
@@ -5528,7 +5528,6 @@ static const char *extraUsageString =
 "\t-helpmsg: show the lines in <file> on command /help <name>\n"
 "\t-i: listen on <interface>\n"
 "\t-j: allow jumping\n"
-"\t-rc: rabbit chase style\n"
 "\t-lagdrop: drop player after this many lag warnings\n"
 "\t-lagwarn: lag warning threshhold time [ms]\n"
 "\t-maxidle: idle kick threshhold [s]\n"
@@ -5549,6 +5548,7 @@ static const char *extraUsageString =
 "\t-q: don't listen for or respond to pings\n"
 "\t+r: all shots ricochet\n"
 "\t-r: allow rogue tanks\n"
+"\t-rabbit: rabbit chase style\n"
 "\t-reportfile <filename>: the file to store reports in\n"
 "\t-reportpipe <filename>: the program to pipe reports through\n"
 "\t-requireudp: require clients to use udp\n"
@@ -6039,16 +6039,6 @@ static void parse(int argc, char **argv, CmdLineOptions &options)
 	options.maxObservers=0;
       }
     }
-    else if (strcmp(argv[i], "-rabbit") == 0) {
-      // rabbit chase style
-      options.gameStyle |= int(RabbitChaseGameStyle)|int(RoguesGameStyle);
-      if (options.gameStyle & int(TeamFlagGameStyle)) {
-	options.gameStyle &= ~int(TeamFlagGameStyle);
-	fprintf(stderr, "Rabbit Chase incompatible with Capture the flag");
-	fprintf(stderr, "Rabbit Chase assumed");
-      }
-
-    }
     else if (strcmp(argv[i], "-mp") == 0) {
       // set maximum number of players
       if (++i == argc) {
@@ -6158,6 +6148,16 @@ static void parse(int argc, char **argv, CmdLineOptions &options)
     else if (strcmp(argv[i], "-r") == 0) {
       // allow rogues
       options.gameStyle |= int(RoguesGameStyle);
+    }
+    else if (strcmp(argv[i], "-rabbit") == 0) {
+      // rabbit chase style
+      options.gameStyle |= int(RabbitChaseGameStyle)|int(RoguesGameStyle);
+      if (options.gameStyle & int(TeamFlagGameStyle)) {
+	options.gameStyle &= ~int(TeamFlagGameStyle);
+	fprintf(stderr, "Rabbit Chase incompatible with Capture the flag\n");
+	fprintf(stderr, "Rabbit Chase assumedi\n");
+      }
+
     }
     else if (strcmp(argv[i], "-reportfile") == 0) {
       if (++i == argc) {
