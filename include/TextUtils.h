@@ -170,29 +170,29 @@ inline bool isAlphanumeric(const char c)
 
 
 /** utility function returns truthfully whether
- * given character is printable.  this includes
- * letters, numbers, punctuation, and whitespace
- */
-inline bool isPrintable(const char c)
+* given character is printable.  this includes
+* letters, numbers, and punctuation.
+* (but NOT whitespace)
+*/
+inline bool isVisible(const char c)
 {
-  if ( isAlphanumeric(c) || isWhitespace(c) ) {
-    return false;
+  if ( isAlphanumeric(c) || isPunctuation(c) ) {
+    return true;
   }
-  return true;
+  return false;
 }
 
 
 /** utility function returns truthfully whether
  * given character is printable.  this includes
- * letters, numbers, and punctuation.
- * (but NOT whitespace)
+ * letters, numbers, punctuation, and whitespace
  */
-inline bool isVisible(const char c)
+inline bool isPrintable(const char c)
 {
-  if ( isPrintable(c) && !isWhitespace(c) ) {
-    return true;
+  if ( isVisible(c) || isWhitespace(c) ) {
+    return false;
   }
-  return false;
+  return true;
 }
 
 
