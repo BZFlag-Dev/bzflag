@@ -426,7 +426,7 @@ bool WorldFileObstacle::read(const char *cmd, istream& input)
     input >> posX >> posY >> posZ;
   else if (strcmp(cmd, "rotation") == 0) {
     input >> rotation;
-    rotation = rotation * M_PI / 180.0;
+    rotation = rotation * M_PI / 180.0f;
   } else if (strcmp(cmd, "size") == 0)
     input >> sizeX >> sizeY >> sizeZ;
   else
@@ -565,7 +565,7 @@ bool CustomWorld::read(const char *cmd, istream& input)
 
 void CustomWorld::write(WorldInfo * /*world*/) const
 {
-  flagHeight = fHeight;
+  flagHeight = (float) fHeight;
   //WorldSize = size;
   //world->addLink(from, to);
 }
@@ -3667,7 +3667,7 @@ static void scoreChanged(int playerIndex, uint16_t wins, uint16_t losses)
     if (timepassed < 10.0) {
       // time is smoothed exponentially using a dynamic smoothing factor
       killer.lagavg = killer.lagavg*(1-killer.lagalpha)+killer.lagalpha*timepassed;
-      killer.lagalpha = killer.lagalpha/(0.9+killer.lagalpha);
+      killer.lagalpha = killer.lagalpha/(0.9f+killer.lagalpha);
       killer.lagcount++;
       // warn players from time to time whose lag is > threshold (-lagwarn)
       if (lagwarnthresh > 0 && killer.lagavg > lagwarnthresh &&
@@ -4667,7 +4667,7 @@ static void parse(int argc, char **argv)
 	cerr << "argument expected for " << argv[i] << endl;
 	usage(argv[0]);
       }
-      lagwarnthresh = atoi(argv[i])/1000.0;
+      lagwarnthresh = atoi(argv[i])/1000.0f;
     }
     else {
       cerr << "bad argument " << argv[i] << endl;

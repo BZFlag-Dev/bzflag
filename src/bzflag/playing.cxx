@@ -856,11 +856,11 @@ static void		doMotion()
       speed = getKeyValue(myTank->getKeyPressed());
       break;
     case BzfKeyEvent::Down:
-      speed = - getKeyValue(myTank->getKeyPressed()) / 2.0;
+      speed = - getKeyValue(myTank->getKeyPressed()) / 2.0f;
       break;
     }
     if (myTank->getMagnify())
-      rotationModifier = 0.2;
+      rotationModifier = 0.2f;
 
     myTank->setKeyboardAngVel(rotation);
     myTank->setKeyboardSpeed(speed);
@@ -895,7 +895,7 @@ static void		doMotion()
             ev.button = button_map[j];
             ev.ascii = 0;
             ev.shift = 0;
-            doKeyPlaying(ev, new_buttons&(1<<j));
+            doKeyPlaying(ev, (new_buttons&(1<<j)) != 0);
           } 
       old_buttons = new_buttons;
     } else

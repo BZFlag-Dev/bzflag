@@ -187,16 +187,16 @@ void			RadarRenderer::render(SceneRenderer& renderer,
       static float np[] =
           { 0, 0, 1, 1,
             1, 1, 0, 0,
-            0.5 , 0.5, 1.5, 1.5,
-            1.5, 1.5, 0.5, 0.5,
-            0.25, 0.25, 1.25, 1.25,
-            1.25, 1.25, 0.25, 0.25,
-            0, 0.5, 1, 1.5,
-            1, 1.5, 0, 0.5,
-            0.5, 0, 1.5, 1,
-            1.4, 1, 0.5, 0,
-            0.75, 0.75, 1.75, 1.75,
-            1.75, 1.75, 0.75, 0.75,
+            0.5f, 0.5f, 1.5f, 1.5f,
+            1.5f, 1.5f, 0.5f, 0.5f,
+            0.25f, 0.25f, 1.25f, 1.25f,
+            1.25f, 1.25f, 0.25f, 0.25f,
+            0, 0.5f, 1, 1.5f,
+            1, 1.5f, 0, 0.5f,
+            0.5f, 0, 1.5f, 1,
+            1.4f, 1, 0.5f, 0,
+            0.75f, 0.75f, 1.75f, 1.75f,
+            1.75f, 1.75f, 0.75f, 0.75f,
           };
 
       int noisePattern = 4 * int(floor(sequences * bzfrand()));
@@ -325,7 +325,7 @@ void			RadarRenderer::render(SceneRenderer& renderer,
 	glColor3fv(Team::getRadarColor(RogueTeam));
       else {
 	if (player->isPaused() || player->isNotResponding()) {
-	  const float dimfactor=0.4;
+	  const float dimfactor=0.4f;
 	  const float *color = Team::getRadarColor(myTank->getFlag() == 
 	    ColorblindnessFlag ? RogueTeam : player->getTeam());
 	  float dimmedcolor[3];
