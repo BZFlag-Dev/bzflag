@@ -120,7 +120,7 @@ void TankGeometryMgr::deleteLists()
 }
 
 
-void TankGeometryMgr::setupScales(const std::string& /*name*/, void */*data*/)
+void TankGeometryMgr::setupScales(const std::string& /*name*/, void * /*data*/)
 {
   float scale;
 
@@ -159,7 +159,7 @@ void TankGeometryMgr::setupScales(const std::string& /*name*/, void */*data*/)
 }
 
 
-void TankGeometryMgr::initContext(void */*data*/)
+void TankGeometryMgr::initContext(void * /*data*/)
 {
   TANKGEOMMGR.rebuildLists();
   return;
