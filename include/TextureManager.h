@@ -22,6 +22,17 @@ struct FileTextureInit
   OpenGLTexture::Filter	filter;
 };
 
+
+typedef  struct 
+{
+  int   id;
+  int   x;
+  int   y;
+  bool  alpha;
+  OpenGLTexture *texture;
+  std::string   name;
+}ImageInfo;
+
 class TextureManager;
 
 struct ProcTextureInit
@@ -32,14 +43,21 @@ struct ProcTextureInit
   OpenGLTexture::Filter	        filter;
 };
 
-
-typedef std::map<std::string, OpenGLTexture*> TextureNameMap;
+typedef std::map<std::string, ImageInfo> TextureNameMap;
+typedef std::map<int, ImageInfo*> TextureIDMap;
 
 class TextureManager : public Singleton<TextureManager>
 {
 public:
   OpenGLTexture* getTexture( const char* name, bool reportFail = true );
-  int addTexture( const char*, OpenGLTexture *texture );
+  int getTextureID( const char* name, bool reportFail = true );
+  int addTexture( const char*, OpenGLTexture *texture  );
+  
+  bool bind ( int id );
+  bool bind ( const char* name );
+
+  const ImageInfo& getInfo ( int id );
+  const ImageInfo& getInfo ( const char* name );
 
   int newTexture ( const char* name, int x, int y, unsigned char* data, OpenGLTexture::Filter filter );
 protected:
@@ -53,8 +71,10 @@ private:
 
   OpenGLTexture* loadTexture( FileTextureInit &init, bool reportFail = true  );
 
-
-  TextureNameMap m_Textures;
+  int            lastImageID;
+  int            lastBoundID;
+  TextureIDMap   textureIDs;
+  TextureNameMap textureNames;
 };
 
 

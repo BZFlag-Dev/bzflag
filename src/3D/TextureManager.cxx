@@ -39,7 +39,10 @@ TextureManager::TextureManager()
   procLoader[0].name = "noise";
   procLoader[0].filter = OpenGLTexture::Nearest;
   procLoader[0].proc = noiseProc;
-		
+
+  lastImageID = -1;
+  lastBoundID = -1;
+
   int i, numTextures;
   numTextures = countof(procLoader);
   for (i = 0; i < numTextures; i++)
@@ -52,13 +55,14 @@ TextureManager::TextureManager()
 TextureManager::~TextureManager()
 {
   // we are done remove all textures
-  for( TextureNameMap::iterator it = m_Textures.begin(); it != m_Textures.end(); ++it) {
-    OpenGLTexture* tex = it->second;
-    if (tex != NULL) {
-      delete tex;
+  for( TextureNameMap::iterator it = textureNames.begin(); it != textureNames.end(); ++it) {
+    ImageInfo &tex = it->second;
+    if (tex.texture != NULL) {
+      delete tex.texture;
     }
   }
-  m_Textures.clear();
+  textureNames.clear();
+  textureIDs.clear();
 }
 
 OpenGLTexture* TextureManager::getTexture( const char* name, bool reportFail )
@@ -67,36 +71,121 @@ OpenGLTexture* TextureManager::getTexture( const char* name, bool reportFail )
   	return NULL;
   std::string texName = name;
   // see if we have the texture
-  TextureNameMap::iterator it = m_Textures.find(texName);
-  if (it != m_Textures.end())
-    return it->second;
+  TextureNameMap::iterator it = textureNames.find(texName);
+  if (it != textureNames.end())
+    return it->second.texture;
   else { // we don't have it so try and load it
 	  FileTextureInit	file;
 	  file.filter = OpenGLTexture::LinearMipmapLinear;
 	  file.name = texName;
-	  OpenGLTexture* tex = loadTexture(file,reportFail);
-	  if (!tex) // well crap it failed, give them nothing
-		  return NULL;
-	  addTexture(name,tex);
-	  return tex;
+          ImageInfo info;
+          int   id = addTexture(name,loadTexture(file,reportFail));
+	  if (id >=0)
+	    return textureIDs[id]->texture;
   }  
   return NULL;
 }
 
+int TextureManager::getTextureID( const char* name, bool reportFail )
+{
+  if (!name)
+    return -1;
+
+  std::string texName = name;
+  // see if we have the texture
+  TextureNameMap::iterator it = textureNames.find(texName);
+  if (it != textureNames.end())
+    return it->second.id;
+  else { // we don't have it so try and load it
+    FileTextureInit	file;
+    file.filter = OpenGLTexture::LinearMipmapLinear;
+    file.name = texName;
+    ImageInfo info;
+    return addTexture(name,loadTexture(file,reportFail));
+  }  
+  return -1;
+}
+
+bool TextureManager::bind ( int id )
+{
+  TextureIDMap::iterator it = textureIDs.find(id);
+  if (it == textureIDs.end())
+    return false;
+
+ if (id != lastBoundID)
+ {
+    it->second->texture->execute();
+    lastBoundID = id;
+ }
+  return true;
+}
+
+bool TextureManager::bind ( const char* name )
+{
+  std::string nameStr = name;
+
+  TextureNameMap::iterator it = textureNames.find(nameStr);
+  if (it == textureNames.end())
+    return false;
+
+  int id = it->second.id;
+  if (id != lastBoundID)
+  {
+    it->second.texture->execute();
+    lastBoundID = id;
+  }
+  return true;
+}
+
+const ImageInfo& TextureManager::getInfo ( int id )
+{
+ static ImageInfo   crapInfo;
+  crapInfo.id = -1;
+  TextureIDMap::iterator it = textureIDs.find(id);
+  if (it == textureIDs.end())
+    return crapInfo;
+
+  return *(it->second);
+}
+const ImageInfo& TextureManager::getInfo ( const char* name )
+{
+  static ImageInfo   crapInfo;
+  crapInfo.id = -1;
+  std::string nameStr = name;
+
+  TextureNameMap::iterator it = textureNames.find(nameStr);
+  if (it == textureNames.end())
+    return crapInfo;
+
+  return it->second;
+}
+
+
 int TextureManager::addTexture( const char* name, OpenGLTexture *texture )
 {
-  if (!name || !texture)
+  if (!name || !texture || !texture->isValid())
     return -1;
 
    // if the texture allready exists kill it
    // this is why IDs are way better then objects for this stuff
-   TextureNameMap::iterator it = m_Textures.find(name);
-   if (it != m_Textures.end())
-     delete it->second;
+   TextureNameMap::iterator it = textureNames.find(name);
+   if (it != textureNames.end())
+   {
+     textureIDs.erase(textureIDs.find(it->second.id));
+     delete it->second.texture;
+   }
+   ImageInfo info;
+   info.name = name;
+   info.texture = texture;
+   info.id = ++lastImageID;
+   info.alpha = texture->hasAlpha();
+   info.x = texture->getWidth();
+   info.y = texture->getHeight();
+   
+   textureNames[name] = info;
+   textureIDs[info.id] = &textureNames[name];
 
-   m_Textures[name] = texture;
-
-   return 0;
+   return info.id;
 }
 
 OpenGLTexture* TextureManager::loadTexture(FileTextureInit &init, bool reportFail)
@@ -145,7 +234,8 @@ int TextureManager::newTexture ( const char* name, int x, int y, unsigned char* 
 
 int noiseProc(ProcTextureInit &init)
 {
-  const int size = 4 * 128 * 128;
+  int noizeSize = 128;
+  const int size = 4 * noizeSize * noizeSize;
   unsigned char* noise = new unsigned char[size];
   for (int i = 0; i < size; i += 4 ) {
     unsigned char n = (unsigned char)floor(256.0 * bzfrand());
@@ -154,7 +244,7 @@ int noiseProc(ProcTextureInit &init)
     noise[i+2] = n;
     noise[i+3] = n;
   }
-  int texture = init.manager->newTexture(init.name.c_str(),128,128,noise,init.filter);
+  int texture = init.manager->newTexture(init.name.c_str(),noizeSize,noizeSize,noise,init.filter);
   delete noise;
   return texture;
 }
