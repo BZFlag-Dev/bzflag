@@ -654,8 +654,8 @@ void					SceneDatabaseBuilder::addTeleporter(const Teleporter& o)
 	const float dz = o.getHeight();
 	const float db = o.getBorder();
 
-	const float yo = dy + db;
-	const float yi = dy;
+	const float yo = dy;
+	const float yi = dy - db;
 
 	Matrix m;
 	prepMatrix(o, 0.0f, m);
