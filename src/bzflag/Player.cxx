@@ -205,9 +205,16 @@ void			Player::changeTeam(TeamColor _team)
     color[2] = 1.0f;
   }
   else {
-    color[0] = _color[0];
-    color[1] = _color[1];
-    color[2] = _color[2];
+	  if (!World::getWorld()->allowRabbit() || ( World::getWorld()->allowRabbit() && (team == RabbitTeam ))){
+		color[0] = _color[0];
+		color[1] = _color[1];
+		color[2] = _color[2];
+	  }
+	  else { // we are the hunter, we are orange.. TODO this is cheap, just untill a "hunter" team is made
+		color[0] = 1.0f;
+		color[1] = 0.5f;
+		color[2] = 0.0f;
+	  }
   }
   color[3] = 1.0f;
   tankNode->setColor(color);
