@@ -1,4 +1,4 @@
-# bzflag
+# BZFlag
 # Copyright (c) 1993 - 2001 Tim Riker
 #
 # This package is free software;  you can redistribute it and/or

@@ -1,6 +1,6 @@
 .TH bzfs 6
 .SH NAME
-bzfs \- bzflag game server
+bzfs \- BZFlag game server
 .SH SYNOPSIS
 .sS
 .B bzfs
@@ -36,7 +36,7 @@ bzfs \- bzflag game server
 [\fB\-ttl \fIttl\fR]
 [\fB\-version\fR]
 .SH DESCRIPTION
-\fBBzfs\fR is the server for \fBbzflag\fR,
+\fBBzfs\fR is the server for \fBBZFlag\fR,
 and it must be running to play.  It can be run on any system on the
 network (including a player's system or one without graphics).
 Terminating the server terminates the game in progress.
@@ -129,7 +129,7 @@ should use to access this server.
 \fB-publiclist\fI url\fR
 Advertise this server on the \fBbzfls\fR servers listed at \fIurl\fR.
 Only has an effect when used with \fB-public\fR.
-A built-in url is used by default.  The \fBbzflag\fR clients use the
+A built-in url is used by default.  The \fBBZFlag\fR clients use the
 same built-in url so, by default, clients will see public servers
 automatically.  See \fBbzfls\fR for a description of the format of
 \fIurl\fR.
@@ -226,7 +226,7 @@ Communication between the server and clients (i.e. between \fBbzfs\fR and
 \fBbzflag\fR) during a game is via TCP.  Use the \fB-help\fR option to get
 the server's default port.  If there's a firewall between the server and
 client, the firewall must accept connections from the client to this port
-and forward them to the server.  See \fBbzfrelay\fR for a bzflag firewall
+and forward them to the server.  See \fBbzfrelay\fR for a BZFlag firewall
 relay.
 .PP
 Clients can search for servers by sending and receiving multicast UDP
@@ -271,7 +271,7 @@ The next thing to check is the TTL (time-to-live) on the client.  By
 default it is 8.  This means all other players must be no more than
 8 hops (multicast routers) away.  You can use a TTL as high as 255.
 Since sites are recommended to not forward multicast packets with TTL's
-below 32 outside the site, you cannot normally play bzflag across the
+below 32 outside the site, you cannot normally play BZFlag across the
 Internet unless you set the TTL above 32.  If any player joins the
 game using a TTL greater than everyone else, then the server and all
 clients automatically begin using the higher TTL.  This helps ensure
@@ -283,7 +283,7 @@ a multicast router between all subnets from your subnet to every other
 subnet with a player.  If all players are on the same subnet then no
 multicast router is required.  Since multicast routers connecting a
 site to the Internet normally prevent packets with TTL's below 32 from
-going out onto the Internet, you can't normally play bzflag across the
+going out onto the Internet, you can't normally play BZFlag across the
 Internet if the TTL not above 32.  However, you may be able to create
 a multicast tunnel, a virtual point-to-point link between any two
 subnets on the Internet.  You'll need to run a tunneling router at both
