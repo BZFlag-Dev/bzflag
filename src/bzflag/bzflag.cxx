@@ -67,6 +67,7 @@
 // invoke incessant rebuilding for build versioning
 #include "version.h"
 
+int beginendCount=0;
 
 extern std::vector<std::string>& getSilenceList();
 const char*		argv0;
@@ -90,6 +91,7 @@ struct DefaultDBItem {
 };
 static DefaultDBItem	defaultDBItems[] = {
   { "udpnet",			"1",			true,	StateDatabase::ReadWrite,	NULL },
+  { "email",			"default",		true,	StateDatabase::ReadWrite,	NULL },
   { "team",			"Rogue",		true,	StateDatabase::ReadWrite,	NULL },
   { "list",			DefaultListServerURL,	true,	StateDatabase::ReadWrite,	NULL },
   { "volume",			"10",			true,	StateDatabase::ReadWrite,	NULL },
@@ -915,11 +917,13 @@ int			main(int argc, char** argv)
   }
 
   // get email address if not anonymous
-  std::string email;
+  std::string email = "default";
   if (!anonymous) {
     if (BZDB.isSet("email")) {
       email = BZDB.get("email");
-    } else {
+    } 
+
+    if (email == "default") {
       email = anonymousName;
       const char* hostname = Address::getHostName();
 #if defined(_WIN32)
