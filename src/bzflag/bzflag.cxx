@@ -978,6 +978,7 @@ int			main(int argc, char** argv)
   if (db.hasValue("locale")) {
     std::string locale = db.getValue("locale");
     World::setLocale(locale);
+    bm->getBundle(locale);
   }
 
   bool setPosition = false, setSize = false;
@@ -1200,6 +1201,7 @@ int			main(int argc, char** argv)
   closeSound();
   delete display;
   delete platformFactory;
+  delete bm;
 
   return 0;
 }

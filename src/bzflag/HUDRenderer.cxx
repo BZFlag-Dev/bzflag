@@ -21,6 +21,7 @@
 #include "RemotePlayer.h"
 #include "DeadPlayer.h"
 #include "World.h"
+#include "BundleMgr.h"
 #include "Bundle.h"
 #include "OpenGLGState.h"
 #include "texture.h"
@@ -173,7 +174,7 @@ HUDRenderer::HUDRenderer(const BzfDisplay* _display,
 {
   int i;
 
-  bdl = World::getBundleMgr()->getBundle(World::getLocale());
+  bdl = BundleMgr::getCurrentBundle();
 
   // initialize colors
   hudColor[0] = 1.0f;

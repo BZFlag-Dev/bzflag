@@ -16,6 +16,7 @@
 #include "HUDui.h"
 #include "World.h"
 #include "texture.h"
+#include "BundleMgr.h"
 
 static const char*	arrowFile = "ybolt";
 static const GLfloat	dimTextColor[3] = { 0.7f, 0.7f, 0.7f };
@@ -105,7 +106,7 @@ HUDuiControl::HUDuiControl() : showingFocus(true),
 				prev(this), next(this),
 				cb(NULL), userData(NULL)
 {
-  bdl = World::getBundleMgr()->getBundle(World::getLocale());
+  bdl = BundleMgr::getCurrentBundle();
   if (totalCount == 0) {
     // load arrow texture
     arrow = new OpenGLTexture;

@@ -16,6 +16,7 @@
 #include "ErrorHandler.h"
 #include "PlatformFactory.h"
 #include "BzfMedia.h"
+#include "BundleMgr.h"
 #include "Bundle.h"
 #include "World.h"
 
@@ -24,7 +25,7 @@ void			printFatalError(const char* fmt, ...);
 unsigned char*		getTextureImage(const std::string& file,
 				int& width, int& height, int& depth)
 {
-  Bundle *bdl = World::getBundleMgr()->getBundle(World::getLocale());
+  Bundle *bdl = BundleMgr::getCurrentBundle();
 
   if (file.length() == 0) return NULL;
   std::vector<std::string> args;
@@ -36,7 +37,7 @@ unsigned char*		getTextureImage(const std::string& file,
 unsigned char*		getTextImage(const std::string& file,
 				int& width, int& height)
 {
-  Bundle *bdl = World::getBundleMgr()->getBundle(World::getLocale());
+  Bundle *bdl = BundleMgr::getCurrentBundle();
 
   if (file.length() == 0) return NULL;
   std::vector<std::string> args;

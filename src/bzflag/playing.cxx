@@ -5294,7 +5294,7 @@ void			startPlaying(BzfDisplay* _display,
 {
   int i;
 
-  bdl = World::getBundleMgr()->getBundle(World::getLocale());
+  bdl = BundleMgr::getCurrentBundle();
   // initalization
   display = _display;
   sceneRenderer = &renderer;
