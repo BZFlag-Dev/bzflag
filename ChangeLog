@@ -5,6 +5,7 @@
 BZFlag 1.11
 -----------
 
+* SDL interface to audio/video/input - Tupone Alfredo
 * Tanks can drive over bumps - Dave Brosius
 * Remove Building scene nodes that are laying on the ground (or lower) - Dave Brosius
 * Bots drive around corners faster - Frank Thilo
