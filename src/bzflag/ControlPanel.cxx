@@ -76,15 +76,14 @@ void ControlPanelMessage::breakLines(float maxLength, int fontFace, float fontSi
     if (fm.getStrLength(fontFace, fontSize, msg) <= maxLength) {
       n = lineLen;
     } else {
-      int r = 0;
       n = 0;
       while ((n < lineLen) &&
 	     (fm.getStrLength(fontFace, fontSize, std::string(msg).substr(0, n)) < maxLength)) {
 	if (msg[n] == ESC_CHAR) {
 	  // clear the cumulative codes when we hit a reset
 	  // the reset itself will start the new cumulative string.
-	  if (strncmp(msg + n, ANSI_STR_RESET, strlen(ANSI_STR_RESET))
-	      || strncmp(msg + n, ANSI_STR_RESET_FINAL, strlen(ANSI_STR_RESET_FINAL)))
+	  if ((strncmp(msg + n, ANSI_STR_RESET, strlen(ANSI_STR_RESET)) == 0)
+	      || (strncmp(msg + n, ANSI_STR_RESET_FINAL, strlen(ANSI_STR_RESET_FINAL)) == 0))
 	    cumulativeANSICodes = "";
 	  // add this code to our cumulative string
 	  cumulativeANSICodes += msg[n];
@@ -103,9 +102,6 @@ void ControlPanelMessage::breakLines(float maxLength, int fontFace, float fontSi
 	      n++;
 	    }
 	  }
-	} else if ((msg[n] >= 32) && (msg[n] < 127)) {
-	  n++;
-	  r++;
 	} else {
 	  n++;
 	}
@@ -353,13 +349,15 @@ void			ControlPanel::render(SceneRenderer& renderer)
       i = 0;
   }
   for (j = 0; i >= 0 && j < maxLines; i--) {
-    GLfloat whiteColor[3] = {1.0f, 1.0f, 1.0f};
-    glColor3fv(whiteColor);
-
     // draw each line of text
     int numLines = messages[messageMode][i].lines.size();
     int msgy = numLines - 1;
     int msgx = 0;
+
+    // default to drawing text in white
+    GLfloat whiteColor[3] = {1.0f, 1.0f, 1.0f};
+    glColor3fv(whiteColor);
+
     for (int l = 0; l < numLines; l++)  {
       assert(msgy >= 0);
 
