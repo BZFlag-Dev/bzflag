@@ -1,6 +1,9 @@
 recent bugs
 ------------
 
+- bzadmin exits when the curses interface is used (both ncurses and pdcurses)
+  and the terminal size is changed
+
 - new list server takes way too long (3-5 seconds) to respond.
   Taking some measurement from receiving request to sending result:
   bzfls.pl on Tim's     : 1.8 sec
