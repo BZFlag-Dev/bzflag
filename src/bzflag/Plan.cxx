@@ -158,7 +158,7 @@ void WeavePlan::execute()
  */
 
 HuntPlayerPlan::HuntPlayerPlan()
-	:Plan(MAXFLOAT)
+	:Plan(300.0f)
 {
 	//Pick a player ID to hunt
 	playerID = 0;
@@ -210,7 +210,7 @@ void HuntPlayerPlan::execute()
  */
 
 HuntTeamFlagPlan::HuntTeamFlagPlan()
-:Plan(MAXFLOAT)
+:Plan(300.0f)
 {
 }
 
@@ -238,7 +238,7 @@ void HuntTeamFlagPlan::execute()
  */
 
 CaptureFlagPlan::CaptureFlagPlan()
-	:Plan(MAXFLOAT)
+	:Plan(1200.0f)
 {
 }
 
@@ -249,7 +249,7 @@ bool CaptureFlagPlan::isValid()
 
 bool CaptureFlagPlan::usesSubPlan()
 {
-	return false;
+	return true;
 }
 
 Plan *CaptureFlagPlan::createSubPlan()
