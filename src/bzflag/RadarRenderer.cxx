@@ -755,13 +755,17 @@ void			RadarRenderer::makeList(bool smoothingOn, SceneRenderer&)
 		const float* pos = tele.getPosition();
 		glVertex2f(pos[0] - wx - hx, pos[1] - wy - hy);
 		glVertex2f(pos[0] + wx - hx, pos[1] + wy - hy);
-		glVertex2f(pos[0] + wx + hx, pos[1] + wy + hy);
-		glVertex2f(pos[0] - wx + hx, pos[1] - wy + hy);
-		glVertex2f(pos[0] - wx - hx, pos[1] - wy - hy);
-		glVertex2f(pos[0] - wx - hx, pos[1] - wy - hy);
-		glVertex2f(pos[0] - wx + hx, pos[1] - wy + hy);
-		glVertex2f(pos[0] + wx + hx, pos[1] + wy + hy);
+
 		glVertex2f(pos[0] + wx - hx, pos[1] + wy - hy);
+		glVertex2f(pos[0] + wx + hx, pos[1] + wy + hy);
+
+		glVertex2f(pos[0] + wx + hx, pos[1] + wy + hy);
+		glVertex2f(pos[0] - wx + hx, pos[1] - wy + hy);
+
+		glVertex2f(pos[0] - wx + hx, pos[1] - wy + hy);
+		glVertex2f(pos[0] - wx - hx, pos[1] - wy - hy);
+
+		glVertex2f(pos[0] - wx - hx, pos[1] - wy - hy);
 		glVertex2f(pos[0] - wx - hx, pos[1] - wy - hy);
 	} else {
 		const float z = tele.getPosition()[2];
