@@ -20,6 +20,7 @@
 #include "sound.h"
 #include "Flag.h"
 #include "BzfEvent.h"
+#include "CommandManager.h"
 
 //
 // BaseLocalPlayer
@@ -256,6 +257,8 @@ void			LocalPlayer::doUpdateMotion(float dt)
 	if (dt < 0.0f) dt = 0.0f;
 	setStatus(PlayerState::DeadStatus);
 	location = Dead;
+	if (isAutoPilot())
+	  CMDMGR->run("restart");
       }
 
       // can't control explosion motion
