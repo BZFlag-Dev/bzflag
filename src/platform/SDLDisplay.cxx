@@ -240,9 +240,9 @@ bool SDLDisplay::getEvent(BzfEvent& _event) const
 
 void SDLDisplay::getModState(bool &shift, bool &ctrl, bool &alt) {
   SDLMod mode = SDL_GetModState();
-  shift       = (mode & KMOD_SHIFT);
-  ctrl        = (mode & KMOD_CTRL);
-  alt         = (mode & KMOD_ALT);
+  shift       = ((mode & KMOD_SHIFT) != 0);
+  ctrl        = ((mode & KMOD_CTRL) != 0);
+  alt         = ((mode & KMOD_ALT) != 0);
 }
 
 bool SDLDisplay::getKey(const SDL_Event& sdlEvent, BzfKeyEvent& key) const
