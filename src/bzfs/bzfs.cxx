@@ -570,7 +570,7 @@ bool CustomBase::read(const char *cmd, istream& input) {
     input >> color;
   else {
     WorldFileObstacle::read(cmd, input);
-    if(!flagsOnBuildings) {
+    if(!flagsOnBuildings && (pos[2] != 0)) {
       cerr << "Dropping team base down to 0 because -fb not set\n";
       pos[2] = 0;
     }
