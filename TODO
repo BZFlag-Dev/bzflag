@@ -1,6 +1,8 @@
 to do list for bzflag
 ---------------------
 
+* need thief sound 'thief.wav'
+
 * server should pick client enter position
 
 * flags should all be nullflags from client view until
