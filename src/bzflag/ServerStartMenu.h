@@ -13,13 +13,17 @@
 #ifndef __SERVERSTARTMENU_H__
 #define __SERVERSTARTMENU_H__
 
+#include "common.h"
+
+/* interface header */
+#include "HUDDialog.h"
+
 /* system interface headers */
 #include <vector>
 #include <string>
 #include <map>
 
 /* local interface headers */
-#include "HUDDialog.h"
 #include "HUDuiDefaultKey.h"
 #include "HUDuiList.h"
 #include "HUDuiLabel.h"
