@@ -148,7 +148,7 @@ if test "$ac_cv_search_glBegin" != no; then
     AC_DEFINE(BEOS_USE_GL2, 1, [Use new GL Kit for BeOS])
   fi
 
-  LIBS="-framework Opengl $ac_func_search_save_LIBS"
+  LIBS="-framework OpenGL $ac_func_search_save_LIBS"
   AC_TRY_LINK([#include <OpenGL/glu.h>],
               [gluScaleImage(GL_RED,0,0,GL_INT,0,0,0,GL_INT,0)],
               [ac_cv_search_gluScaleImage="-framework OpenGL"])
