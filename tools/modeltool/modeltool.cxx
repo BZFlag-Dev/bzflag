@@ -22,8 +22,11 @@
 
 // globals/
 
-static const char VersionString[] = "modeltool v1.2";
+static const char VersionString[] =
+  "ModelTool v1.3  (WaveFront OBJ to BZFlag BZW converter)";
 
+static std::string texdir = "";
+static std::string groupName = "";
 static bool useMaterials = true;
 static bool useAmbient = true;
 static bool useDiffuse = true;
@@ -33,6 +36,7 @@ static bool useNormals = true;
 static bool useTexcoords = true;
 static bool flipYZ = false;
 static bool useSmoothBounce = false;
+static float shineFactor = 1.0f;
 
 static const float maxShineExponent = 128.0f; // OpenGL minimum shininess
 
@@ -75,8 +79,9 @@ public:
 			return x;
 		case eYAxis:
 			return y;
+		default:
+			return z;
 		}
-		return z;
 	}
 
 	void translate ( float val, teModelAxis axis )
@@ -86,12 +91,12 @@ public:
 		case eXAxis:
 			x += val;
 			return;
-
 		case eYAxis:
 			y += val;
 			return;
+		case eZAxis:
+			z += val;
 		}
-		z += val;
 	}
 
 	bool same ( const CVertex &v )
@@ -341,7 +346,7 @@ static void readMTL ( CModel &model, std::string file )
 						} else if (shine > 1.0f) {
 						  shine = 1.0f;
 						}
-						model.materials[matName].shine = (shine * maxShineExponent);
+						model.materials[matName].shine = (shine * maxShineExponent * shineFactor);
 					}
 				}
 				if (TextUtils::tolower(tag) == "map_kd")
@@ -574,11 +579,20 @@ static void writeBZW  ( CModel &model, std::string file )
 		{
 			CMaterial &material = materialItr->second;
 			fprintf (fp,"material\n  name %s\n",materialItr->first.c_str());
-			if ( material.texture.size())
-				fprintf (fp,"  texture %s\n", material.texture.c_str());
-			else
+			if ( material.texture.size()) {
+			  std::string texName = texdir + material.texture;
+				// change the extension to png
+				char *p = strrchr(texName.c_str(), '.');
+				if (p) {
+					texName.resize(p - texName.c_str());
+					texName += ".png";
+				} else {
+				  texName += ".png";
+				}
+			  fprintf (fp,"  texture %s\n", texName.c_str());
+			} else {
 				fprintf (fp,"  notextures\n");
-
+			}
 			if (useAmbient)
 				fprintf (fp,"  ambient %f %f %f %f\n", material.ambient[0], material.ambient[1], material.ambient[2], material.ambient[3]);
 			if (useDiffuse)
@@ -593,6 +607,10 @@ static void writeBZW  ( CModel &model, std::string file )
 			materialItr++;
 		}
 		fprintf (fp,"\n");
+	}
+
+	if (groupName.size() > 0) {
+	  fprintf (fp, "define %s\n", groupName.c_str());
 	}
 
 	tvMeshList::iterator	meshItr = model.meshes.begin();
@@ -676,6 +694,11 @@ static void writeBZW  ( CModel &model, std::string file )
 		fprintf (fp,"end\n\n");
 		meshItr++;
 	}
+
+	if (groupName.size() > 0) {
+	  fprintf (fp, "enddef # %s\n", groupName.c_str());
+	}
+	
 	fclose(fp);
 }
 
@@ -684,15 +707,18 @@ static int  dumpUsage ( char *exeName, const char* reason )
 	printf("\n%s\n\n", VersionString);
 	printf("error: %s\n\n",reason);
 	printf("usage: %s <input_file_name> [options]\n\n", exeName);
-	printf("       -sm : use the smoothbounce property\n");
-	printf("       -yz : flip y and z coordinates\n");
-	printf("       -n  : disable normals\n");
-	printf("       -t  : disable texture cooridnates\n");
-	printf("       -m  : disable materials\n");
-	printf("       -a  : disable ambient coloring\n");
-	printf("       -d  : disable diffuse coloring\n");
-	printf("       -s  : disable specular coloring\n");
-	printf("       -sh : disable shininess\n\n");
+	printf("       -g <name>  : use group definition\n");
+	printf("       -tx <dir>  : set texture prefix\n");
+	printf("       -sm        : use the smoothbounce property\n");
+	printf("       -yz        : flip y and z coordinates\n");
+	printf("       -n         : disable normals\n");
+	printf("       -t         : disable texture cooridnates\n");
+	printf("       -m         : disable materials\n");
+	printf("       -a         : disable ambient coloring\n");
+	printf("       -d         : disable diffuse coloring\n");
+	printf("       -s         : disable specular coloring\n");
+	printf("       -sh        : disable shininess\n");
+	printf("       -sf <val>  : shine multiplier\n\n");
 	return 1;
 }
 
@@ -734,6 +760,25 @@ int main(int argc, char* argv[])
 		if (command == "-yz") {
 			flipYZ = true;
 		}
+		else if (command == "-g") {
+		  if ((i + 1) < argc) {
+			  i++;
+			  groupName = argv[i];
+			} else {
+			  printf ("missing -g argument\n");
+			}
+		}
+		else if (command == "-tx") {
+		  if ((i + 1) < argc) {
+			  i++;
+			  texdir = argv[i];
+			  if (texdir[texdir.size()] != '/') {
+			    texdir += '/';
+				}
+			} else {
+			  printf ("missing -tx argument\n");
+			}
+		}
 		else if (command == "-sm") {
 			useSmoothBounce = true;
 		}
@@ -757,6 +802,14 @@ int main(int argc, char* argv[])
 		}
 		else if (command == "-sh") {
 			useShininess = false;
+		}
+		else if (command == "-sf") {
+		  if ((i + 1) < argc) {
+			  i++;
+			  shineFactor = atof(argv[i]);
+			} else {
+			  printf ("missing -sf argument\n");
+			}
 		}
 	}
 	// make a model
