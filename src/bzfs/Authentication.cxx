@@ -84,8 +84,8 @@ void Authentication::init(const char *address, int port, const char *password)
   if (!retval && (retval = krb5_cc_store_cred(context, cc, &my_creds)))
     com_err("bzfs:", retval, "storing credential in cache");
 
-  if (retval)
-    authentication = false;
+  if (!retval)
+    authentication = true;
 }
 #else
 void Authentication::init(const char *, int , const char *)
