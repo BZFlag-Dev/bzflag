@@ -2525,9 +2525,6 @@ void resetFlag(int flagIndex)
     pFlagInfo->flag.position[0] = basePos[teamIndex][0];
     pFlagInfo->flag.position[1] = basePos[teamIndex][1];
     pFlagInfo->flag.position[2] = basePos[teamIndex][2];
-    if(basePos[teamIndex][2] > 0) {
-      pFlagInfo->flag.position[2] += 1;
-    }
   } else {
     // random position (not in a building)
     float r = BZDB->eval(StateDatabase::BZDB_TANKRADIUS);
