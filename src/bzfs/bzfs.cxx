@@ -4459,7 +4459,13 @@ int main(int argc, char **argv)
   parse(argc, argv, *clOptions);
 
   if (clOptions->bzdbVars.length() > 0) {
-    CFGMGR.read(clOptions->bzdbVars);
+    DEBUG1("Loading variables from %s\n", clOptions->bzdbVars.c_str());
+    bool success = CFGMGR.read(clOptions->bzdbVars);
+    if (success) {
+      DEBUG1("Successfully loaded variable(s)\n");
+    } else {
+      DEBUG1("WARNING: unable to load the variable file\n");
+    }
   }
 
   /* load the bad word filter if it was set */
