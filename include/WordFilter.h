@@ -194,13 +194,13 @@ class WordFilter
   /** utility method that returns the position of the
    * first non-printable character from a string
    */
-  int firstNonprintable(const std::string &input) const;
+  inline int firstNonprintable(const std::string &input) const;
 
   /** utility method performs an actual replacement of
    * characters in an input character ray within a specified
    * range.
    */
-  int filterCharacters(char *input, unsigned int start, size_t length, bool filterSpaces) const;
+  inline int filterCharacters(char *input, unsigned int start, size_t length, bool filterSpaces) const;
 
  protected:
 
@@ -327,7 +327,7 @@ inline int WordFilter::firstPrintable(const std::string &input) const
 /** utility method that returns the position of the
 * first non-printable character from a string
 */
-int WordFilter::firstNonprintable(const std::string &input) const
+inline int WordFilter::firstNonprintable(const std::string &input) const
 {
   if (input.size() == 0) {
     return -1;
@@ -345,7 +345,7 @@ int WordFilter::firstNonprintable(const std::string &input) const
 * characters in an input character ray within a specified
 * range.
 */
-int WordFilter::filterCharacters(char *input, unsigned int start, size_t length, bool filterSpaces=false) const
+inline int WordFilter::filterCharacters(char *input, unsigned int start, size_t length, bool filterSpaces=false) const
 {
   if (input == NULL) {
     return -1;
