@@ -566,6 +566,10 @@ SOURCE=..\..\include\bzfio.h
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\include\BzfJoystick.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\bzflag.ico
 # End Source File
 # Begin Source File
@@ -603,6 +607,10 @@ SOURCE=..\..\include\CommandManager.h
 # Begin Source File
 
 SOURCE=..\..\src\bzflag\commands.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\include\CommandsStandard.h
 # End Source File
 # Begin Source File
 
@@ -711,6 +719,10 @@ SOURCE=..\..\include\KeyManager.h
 # Begin Source File
 
 SOURCE=..\..\include\LaserSceneNode.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\bzflag\ListServer.h
 # End Source File
 # Begin Source File
 
