@@ -20,11 +20,12 @@
 
 // class interface header
 #include "URLManager.h"
+
+// system headers
+#include <winsock2.h>
 #ifdef HAVE_CURL
 #include <curl/curl.h>
 #endif
-
-// system headers
 #include <iostream>
 
 // common implementation headers
