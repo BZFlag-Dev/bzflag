@@ -47,6 +47,7 @@ class Address {
     bool		operator==(const Address&) const;
     bool		operator!=(const Address&) const;
     bool		isAny() const;
+    bool		isPrivate() const;
     std::string		getDotNotation() const;
     uint8_t		getIPVersion() const;
 
@@ -55,10 +56,10 @@ class Address {
 
     static Address	getHostAddress(const std::string hostname = std::string(""));
     static std::string	getHostByAddress(InAddr);
-    static const std::string	getHostName(const std::string hostname = std::string(""));
+    static const std::string getHostName(const std::string hostname = std::string(""));
 
   private:
-    std::vector <InAddr>      addr;
+    std::vector <InAddr> addr;
     static Address	localAddress;
 };
 
