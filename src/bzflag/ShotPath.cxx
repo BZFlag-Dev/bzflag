@@ -173,8 +173,7 @@ void			LocalShotPath::update(float dt)
   updateShot(dt);
 
   // send updates if necessary
-  if (PlayerLink::getMulticast())
-    getStrategy()->sendUpdate(getFiringInfo());
+  getStrategy()->sendUpdate(getFiringInfo());
 }
 
 //

@@ -266,8 +266,6 @@ struct PlayerInfo {
     int flag;
     // player's score
     int wins, losses, tks;
-    // if player can't multicast
-    bool multicastRelay;
 
     // Last known position, vel, etc
     PlayerState lastState;
@@ -396,7 +394,6 @@ static int relayOutSocket;
 static struct sockaddr_in relayOutAddr;
 static int playerTTL = DefaultTTL;
 static bool handlePings = true;
-static bool noMulticastRelay = false;
 static PingPacket pingReply;
 // highest fd used
 static int maxFileDescriptor;
@@ -1755,7 +1752,7 @@ static void serverStop()
 static bool startPlayerPacketRelay(int playerIndex)
 {
   // return true if already started
-  if (noMulticastRelay || (relayInSocket != -1 && relayOutSocket != -1))
+  if ((relayInSocket != -1 && relayOutSocket != -1))
     return true;
 
   Address multicastAddress(BroadcastAddress);
@@ -1767,21 +1764,6 @@ static bool startPlayerPacketRelay(int playerIndex)
 	clOptions->pingTTL, clOptions->pingInterface, "w", &relayOutAddr);
   if (relayInSocket == -1 || relayOutSocket == -1) {
     stopPlayerPacketRelay();
-
-    // can't multicast.  can't just reject the player requesting
-    // relaying because then it would be impossible for a server
-    // that can't multicast to serve a game unless all players
-    // could multicast.  since many platforms don't support
-    // multicasting yet, we'll have to do it the hard way -- when
-    // we can't multicast and a player wants relaying we must
-    // force all players to start relaying.
-    for (int i = 0; i < curMaxPlayers; i++)
-      if (i != playerIndex &&
-	  player[i].state > PlayerInLimbo && !player[i].multicastRelay) {
-	directMessage(i, MsgNetworkRelay, 0, getDirectMessageBuffer());
-	player[i].multicastRelay = true;
-      }
-    noMulticastRelay = true;
 
     return true;
   }
@@ -1796,7 +1778,6 @@ static void stopPlayerPacketRelay()
   closeMulticast(relayOutSocket);
   relayInSocket = -1;
   relayOutSocket = -1;
-  noMulticastRelay = false;
 }
 
 static void relayPlayerPacket()
@@ -1821,8 +1802,7 @@ static void relayPlayerPacket()
 
   // relay packet to all players needing multicast relay
   for (int i = 0; i < curMaxPlayers; i++)
-    if (player[i].multicastRelay)
-      pwrite(i, buffer, msglen);
+    pwrite(i, buffer, msglen);
 }
 
 static void relayPlayerPacket(int index, uint16_t len, const void *rawbuf)
@@ -1833,7 +1813,7 @@ static void relayPlayerPacket(int index, uint16_t len, const void *rawbuf)
 
   // relay packet to all players needing multicast relay
   for (int i = 0; i < curMaxPlayers; i++)
-    if (i != index && player[i].multicastRelay)
+    if (i != index)
       pwrite(i, rawbuf, len + 4);
 }
 
@@ -2747,7 +2727,6 @@ static void acceptClient()
   player[playerIndex].fd = fd;
   player[playerIndex].state = PlayerInLimbo;
   player[playerIndex].peer = Address(player[playerIndex].taddr);
-  player[playerIndex].multicastRelay = false;
   player[playerIndex].tcplen = 0;
   player[playerIndex].udplen = 0;
   assert(player[playerIndex].outmsg == NULL);
@@ -3035,12 +3014,6 @@ static void addPlayer(int playerIndex)
   // send MsgAddPlayer to everybody -- this concludes MsgEnter response
   // to joining player
   sendPlayerUpdate(playerIndex, playerIndex);
-
-  // if necessary force multicast relaying
-  if (noMulticastRelay) {
-    directMessage(playerIndex, MsgNetworkRelay, 0, getDirectMessageBuffer());
-    player[playerIndex].multicastRelay = true;
-  }
 
   // send update of info for team just joined
   sendTeamUpdate(-1, teamIndex);
@@ -3376,17 +3349,6 @@ static void removePlayer(int playerIndex, char *reason, bool notify)
   player[playerIndex].outmsgSize = 0;
 
   player[playerIndex].flagHistory.clear();
-
-  // can we turn off relaying now?
-  if (player[playerIndex].multicastRelay) {
-    player[playerIndex].multicastRelay = false;
-    int i;
-    for (i = 0; i < curMaxPlayers; i++)
-      if (player[i].state > PlayerInLimbo && player[i].multicastRelay)
-	break;
-    if (i == curMaxPlayers)
-      stopPlayerPacketRelay();
-  }
 
   // player is outta here.  if player never joined a team then
   // don't count as a player.
@@ -4825,20 +4787,7 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
       break;
     }
 
-    // player can't use multicast;  we must relay
-    case MsgNetworkRelay:
-      if (startPlayerPacketRelay(t)) {
-	player[t].multicastRelay = true;
-	void *buf, *bufStart = getDirectMessageBuffer();
-	buf = nboPackUByte(bufStart, t);
-	directMessage(t, MsgAccept, (char*)buf-(char*)bufStart, bufStart);
-      }
-      else {
-	directMessage(t, MsgReject, 0, getDirectMessageBuffer());
-      }
-      break;
-
-      case MsgNegotiateFlags: {
+    case MsgNegotiateFlags: {
 	void *bufStart;
 	std::map<std::string,FlagDesc*>::iterator it;
 	std::set<FlagDesc*>::iterator m_it;
@@ -5194,12 +5143,13 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
 
     //Fall thru
     case MsgGMUpdate:
+	    if (code == MsgGMUpdate)
+	      int i = 0;
     case MsgAudio:
     case MsgVideo:
       if (player[t].team == ObserverTeam)
 	break;
-      if (player[t].multicastRelay)
-	relayPlayerPacket(t, len, rawbuf);
+      relayPlayerPacket(t, len, rawbuf);
       break;
 
     // unknown msg type
@@ -6811,7 +6761,7 @@ int main(int argc, char **argv)
 	  // simple ruleset, if player sends a MsgShotBegin over TCP
 	  // and player is not using multicast
 	  // he/she must not be using the UDP link
-	  if (clOptions->requireUDP && player[i].multicastRelay && (player[i].type != ComputerPlayer)) {
+	  if (clOptions->requireUDP && (player[i].type != ComputerPlayer)) {
 	    if (code == MsgShotBegin) {
 	      player[i].toBeKicked = true;
 	    }

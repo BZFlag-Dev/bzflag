@@ -104,7 +104,6 @@ ServerItem x;
 static StartupInfo	startupInfo;
 static MainMenu*	mainMenu;
 static ServerLink*	serverLink = NULL;
-static PlayerLink*	playerLink = NULL;
 static World*		world = NULL;
 LocalPlayer*		myTank = NULL;
 static BzfDisplay*	display = NULL;
@@ -2647,13 +2646,7 @@ static void		handleServerMessage(bool human, uint16_t code,
 	  sprintf(buf,"%d", portNo);
 	  args.push_back(buf);
 	  printError("Server sent downlink endpoint information, port {1}",&args);
-#if ROBOT
-	  // robots code use to change relay between human and robots;
-	  // setPortForUPD update fields, used by human player, on the relay;
-	  // so we are setting relay for the human
-	  playerLink->setRelay(serverLink);
-#endif
-	  playerLink->setPortForUPD(portNo);
+	  serverLink->setUDPRemotePort(portNo);
       break;
 
     case MsgSuperKill:
@@ -2715,21 +2708,6 @@ static void		handleServerMessage(bool human, uint16_t code,
       for (int i = 0; i < numRobots; i++)
 	robots[i]->explodeTank();
 #endif
-      break;
-    }
-
-    case MsgSetTTL: {
-      uint16_t ttl;
-      nboUnpackUShort(msg, ttl);
-      if ((int)ttl > playerLink->getTTL())
-	playerLink->setTTL((int)ttl);
-      break;
-    }
-
-    case MsgNetworkRelay: {
-      // server is telling us that we must use multicast relaying
-      playerLink->setUseRelay();
-      printError("Now using server as relay");
       break;
     }
 
@@ -3516,7 +3494,7 @@ static void		handlePlayerMessage(uint16_t code, uint16_t,
 
     // just echo lag ping message
     case MsgLagPing:
-      playerLink->send(MsgLagPing,2,msg);
+      serverLink->send(MsgLagPing,2,msg);
       break;
   }
 }
@@ -3549,16 +3527,6 @@ static void		doMessages()
 	handleServerMessage(false, code, len, msg);
   }
 #endif
-
-  // handle player messages
-  if (playerLink) {
-    while ((e = playerLink->read(code, len, msg, 0)) == 1)
-      handlePlayerMessage(code, len, msg);
-    if (e == -2) {
-      printError("Player communication error");
-      return;
-    }
-  }
 }
 
 //
@@ -4562,12 +4530,11 @@ static void		sendRobotUpdates()
 {
   for (int i = 0; i < numRobots; i++)
     if (robots[i]->isDeadReckoningWrong()) {
-      playerLink->setRelay(robotServer[i]);
-      playerLink->sendPlayerUpdate(robots[i]);
+      serverLink->sendPlayerUpdate(robots[i]);
     }
 }
 
-static void		addRobots(bool useMulticastRelay)
+static void		addRobots()
 {
   uint16_t code, len;
   char msg[MaxPacketLen];
@@ -4599,17 +4566,6 @@ static void		addRobots(bool useMulticastRelay)
       delete robotServer[j];
       robotServer[j] = robotServer[--numRobots];
       continue;
-    }
-
-    // use multicast relay if required
-    if (useMulticastRelay) {
-      robotServer[j]->send(MsgNetworkRelay, 0, NULL);
-      if (robotServer[j]->read(code, len, msg, 1000) <= 0 || code == MsgReject) {
-	delete robots[j];
-	delete robotServer[j];
-	robotServer[j] = robotServer[--numRobots];
-	continue;
-      }
     }
 
     j++;
@@ -5031,8 +4987,7 @@ static bool		enterServer(ServerLink* serverLink, World* world,
 	goto failed;
   }
   while (code == MsgAddPlayer || code == MsgTeamUpdate ||
-	 code == MsgFlagUpdate || code == MsgNetworkRelay ||
-	 code == MsgUDPLinkRequest) {
+	 code == MsgFlagUpdate || code == MsgUDPLinkRequest) {
     void* buf = msg;
     switch (code) {
       case MsgAddPlayer: {
@@ -5072,12 +5027,6 @@ static bool		enterServer(ServerLink* serverLink, World* world,
 	buf = nboUnpackUShort(buf, flag);
 	buf = world->getFlag(int(flag)).unpack(buf);
 	world->initFlag(int(flag));
-	break;
-      }
-      case MsgNetworkRelay: {
-	playerLink->setUseRelay();
-	playerLink->setRelay(serverLink);
-	printError("Using server as relay");
 	break;
       }
       case MsgUDPLinkRequest:
@@ -5163,11 +5112,6 @@ static void		leaveGame()
   hud->setMarker(0, false);
   hud->setMarker(1, false);
 
-  // shut down player channel
-  PlayerLink::setMulticast(NULL);
-  delete playerLink;
-  playerLink = NULL;
-
   // shut down server connection
   if (sayGoodbye) serverLink->send(MsgExit, 0, NULL);
   ServerLink::setServer(NULL);
@@ -5194,8 +5138,7 @@ static void		leaveGame()
 }
 
 static bool		joinGame(const StartupInfo* info,
-				ServerLink* _serverLink,
-				PlayerLink* _playerLink)
+				ServerLink* _serverLink)
 {
   // assume everything's okay for now
   serverDied = false;
@@ -5203,9 +5146,8 @@ static bool		joinGame(const StartupInfo* info,
   admin = false;
 
   serverLink = _serverLink;
-  playerLink = _playerLink;
 
-  if (!serverLink || !playerLink) {
+  if (!serverLink) {
     printError("Memory error");
     leaveGame();
     return false;
@@ -5273,7 +5215,6 @@ static bool		joinGame(const StartupInfo* info,
   }
 
   ServerLink::setServer(serverLink);
-  PlayerLink::setMulticast(playerLink);
   World::setWorld(world);
 
   // prep teams
@@ -5319,84 +5260,11 @@ static bool		joinGame(const StartupInfo* info,
     return false;
   }
 
-  // check multicast `connection' to server.  if we get no response then
-  // we have to assume the network can't do multicasting.  fall back to
-  // using the server as a relay.
-  bool multicastOkay = false;
-  /* FIXME - commented out by davidtrowbridge for ubyte playerid
-   * id.port is the issue
-  if (playerLink->getState() == PlayerLink::Okay) {
-    // send 5 pings, one every 2/10ths of a second.  wait up to two
-    // seconds after the last ping for a reply.  that's kinda long but
-    // let's be generous.  first open the sockets.
-    Address multicastAddress(BroadcastAddress);
-    struct sockaddr_in pingOutAddr, pingInAddr;
-    const int pingOutSocket = openMulticast(multicastAddress,
-				ServerPort, NULL,
-				info->ttl, info->multicastInterface,
-				"w", &pingOutAddr);
-    const int pingInSocket = openMulticast(multicastAddress,
-				ServerPort, NULL,
-				info->ttl, info->multicastInterface,
-				"r", &pingInAddr);
-    if (pingOutSocket != -1 && pingInSocket != -1) {
-      Address myAddress("");
-
-      // now send pings and wait for an echo
-      int count = 5;
-      PingPacket ping;
-      while (count-- > 0) {
-	// send another ping
-	ping.sendRequest(pingOutSocket, &pingOutAddr, info->ttl);
-
-	// wait for a response.  if the ping didn't originate with me
-	// or if it's for a server on a different port than the server
-	// I want then ignore.  should check server's address but the
-	// server could be multihomed so we might not get the address
-	// we expect.  problems can only occur if another process on
-	// this host is trying to contact another server using the
-	// same port at the same time we are.
-	if (ping.waitForReply(pingInSocket, myAddress, 200) &&
-	    ping.serverId.port == htons(info->serverPort)) {
-	  multicastOkay = true;
-	  break;
-	}
-      }
-
-      // if no reply yet, wait another couple of seconds
-      if (!multicastOkay)
-	multicastOkay = ping.waitForReply(pingInSocket, myAddress, 2000) &&
-		ping.serverId.port == htons(info->serverPort);
-    }
-
-    // close sockets
-    closeMulticast(pingOutSocket);
-    closeMulticast(pingInSocket);
-  }*/
-
-  // if multicast isn't okay then ask server if it can relay for us.
-  // give up after waiting for one second.  if we don't get a valid
-  // reply or our request is rejected then quit game because we won't
-  // be able to talk to other players.
-  if (!multicastOkay && playerLink->getState() != PlayerLink::ServerRelay) {
-    char msgbuf[MaxPacketLen];
-    uint16_t code, len;
-    serverLink->send(MsgNetworkRelay, 0, NULL);
-    if (serverLink->read(code, len, msgbuf, 1000) <= 0 || code == MsgReject) {
-      printError("Couldn't make inter-player connection");
-      leaveGame();
-      return false;
-    }
-
-    // prepare player link to use the server as a relay
-    playerLink->setUseRelay();
-    playerLink->setRelay(serverLink);
-    printError("Using multicast relay");
-  }
+  printError("Using multicast relay");
 
   // use parallel UDP if desired and using server relay
-  if (startupInfo.useUDPconnection && (playerLink->getState() == PlayerLink::ServerRelay))
-    playerLink->enableUDPConIfRelayed();
+  if (startupInfo.useUDPconnection)
+    serverLink->enableUDPCon();
   else
     printError("No UDP connection, see Options to enable.");
 
@@ -5407,13 +5275,8 @@ static bool		joinGame(const StartupInfo* info,
 
   // add robot tanks
 #if defined(ROBOT)
-  addRobots(!multicastOkay);
+  addRobots();
 #endif
-
-  // tell server what ttl I need
-  char msg[2];
-  nboPackUShort(msg, playerLink->getTTL());
-  serverLink->send(MsgSetTTL, sizeof(msg), msg);
 
   // decide how start for first time
   restartOnBase = world->allowTeamFlags() && myTank->getTeam() != RogueTeam &&
@@ -5464,7 +5327,7 @@ static bool		joinInternetGame(const StartupInfo* info)
   numRobots = j;
 #endif
 
-  return joinGame(info, serverLink, playerLink);
+  return joinGame(info, serverLink);
 }
 
 static bool		joinGame()
@@ -6270,9 +6133,8 @@ static void		playingLoop()
 #endif
 
     // send my data
-    if (playerLink && myTank->isDeadReckoningWrong() && myTank->getTeam() != ObserverTeam) {
-      playerLink->setRelay(serverLink);
-      playerLink->sendPlayerUpdate(myTank);
+    if (myTank && myTank->isDeadReckoningWrong() && myTank->getTeam() != ObserverTeam) {
+      serverLink->sendPlayerUpdate(myTank);
     }
 
 #ifdef ROBOT

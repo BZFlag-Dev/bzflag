@@ -49,15 +49,10 @@ class PlayerLink {
     int			getTTL() const { return ttl; }
     void		setTTL(int ttl);
 
-    void		send(uint16_t code, uint16_t len, const void* msg);
     // if millisecondsToBlock < 0 then block forever
     int			read(uint16_t& code, uint16_t& len, void* msg,
 						int millisecondsToBlock = 0);
 
-    void		sendPlayerUpdate(Player*);
-
-    void		setUseRelay();
-    void		setRelay(ServerLink*);
 
     static PlayerLink*	getMulticast(); // const
     static void		setMulticast(PlayerLink*);
@@ -70,8 +65,6 @@ class PlayerLink {
     int			fdOut;
     struct sockaddr_in	inAddr;
     struct sockaddr_in	outAddr;
-    bool		useRelay;
-    ServerLink*		relay;
     static PlayerLink*	multicast;
 };
 

@@ -46,9 +46,7 @@ PlayerLink*		PlayerLink::multicast = NULL;
 
 PlayerLink::PlayerLink(const Address& multicastAddress, int port,
 					int _ttl, const char* net_interface) :
-					ttl(_ttl),
-					useRelay(false),
-					relay(NULL)
+					ttl(_ttl)
 {
   fdIn = openMulticast(multicastAddress, port, NULL,
 					ttl, net_interface, "r", &inAddr);
@@ -101,56 +99,11 @@ PlayerLink::~PlayerLink()
 #endif
 }
 
-void			PlayerLink::setUseRelay()
-{
-  useRelay = true;
-}
-
-void			PlayerLink::setRelay(ServerLink* _relay)
-{
-  // only use it if we've been instructed to do so
-  if (!useRelay) return;
-
-  // no going back once we set the relay
-  if (state == Okay) {
-    closeMulticast(fdIn);
-    closeMulticast(fdOut);
-    fdIn = -1;
-    fdOut = -1;
-  }
-
-  // set the relay.  we're in error state if no relay or relay in error.
-  relay = _relay;
-  if (relay && relay->getState() == ServerLink::Okay)
-    state = ServerRelay;
-  else
-    state = SocketError;
-}
-
 void			PlayerLink::setTTL(int _ttl)
 {
   ttl = _ttl;
   if (state == Okay)
     setMulticastTTL(fdOut, ttl);
-}
-
-void			PlayerLink::send(uint16_t code, uint16_t len,
-							const void* msg)
-{
-  if (state == Okay) {
-    char msgbuf[MaxPacketLen];
-    void* buf = msgbuf;
-    buf = nboPackUShort(buf, len);
-    buf = nboPackUShort(buf, code);
-    if (msg && len != 0) buf = nboPackString(buf, msg, len);
-    sendMulticast(fdOut, msgbuf, len + 4, &outAddr);
-#if defined(NETWORK_STATS)
-    bytesSent += len + 4;
-    packetsSent++;
-#endif
-  } else if (state == ServerRelay) {
-    relay->send(code, len, msg);
-  }
 }
 
 int			PlayerLink::read(uint16_t& code, uint16_t& len,
@@ -222,16 +175,6 @@ int			PlayerLink::read(uint16_t& code, uint16_t& len,
   return -1;
 }
 
-void			PlayerLink::sendPlayerUpdate(Player* player)
-{
-  if (state == SocketError) return;
-  char msg[PlayerUpdatePLen];
-  void* buf = msg;
-  buf = nboPackUByte(buf, player->getId());
-  buf = player->pack(buf);
-  send(MsgPlayerUpdate, sizeof(msg), msg);
-}
-
 PlayerLink*		PlayerLink::getMulticast() // const
 {
   return multicast;
@@ -240,18 +183,6 @@ PlayerLink*		PlayerLink::getMulticast() // const
 void			PlayerLink::setMulticast(PlayerLink* _multicast)
 {
   multicast = _multicast;
-}
-
-void			PlayerLink::setPortForUPD(unsigned short port)
-{
-  if (state == ServerRelay)
-     relay->setUDPRemotePort(port);
-}
-
-void			PlayerLink::enableUDPConIfRelayed()
-{
-  if (state == ServerRelay)
-     relay->enableUDPCon();
 }
 
 // ex: shiftwidth=2 tabstop=8

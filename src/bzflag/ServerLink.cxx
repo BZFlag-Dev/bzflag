@@ -492,6 +492,15 @@ void			ServerLink::sendKilled(const PlayerId& killer, int reason,
   send(MsgKilled, sizeof(msg), msg);
 }
 
+void			ServerLink::sendPlayerUpdate(Player* player)
+{
+  char msg[PlayerUpdatePLen];
+  void* buf = msg;
+  buf = nboPackUByte(buf, player->getId());
+  buf = player->pack(buf);
+  send(MsgPlayerUpdate, sizeof(msg), msg);
+}
+
 void			ServerLink::sendBeginShot(const FiringInfo& info)
 {
   char msg[FiringInfoPLen];

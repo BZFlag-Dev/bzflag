@@ -76,7 +76,6 @@ const uint16_t		MsgKilled = 0x6b6c;			// 'kl'
 const uint16_t		MsgMessage = 0x6d67;			// 'mg'
 const uint16_t		MsgNewRabbit = 0x6e52;			// 'nR'
 const uint16_t		MsgNegotiateFlags = 0x6e66;		// 'nf'
-const uint16_t		MsgNetworkRelay = 0x6e72;		// 'nr'
 const uint16_t		MsgPause = 0x7061;			// 'pa'
 const uint16_t		MsgQueryGame = 0x7167;			// 'qg'
 const uint16_t		MsgQueryPlayers = 0x7170;		// 'qp'
@@ -187,9 +186,6 @@ player to server messages:
   MsgMessage		player is sending a message
 			--> /id,/ target-id/team-id, message string
 			<== MsgMessage
-  MsgNetworkRelay	player can't use multicast, server must relay
-			--> <none>
-			<-- MsgAccept or MsgReject
   MsgWantWHash		(player wants md5 of world file
 			-->
   MsgNegotiateFlags     -->flagCount/[flagabbv]
