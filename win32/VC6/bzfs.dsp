@@ -171,6 +171,10 @@ SOURCE=..\..\src\bzfs\FlagInfo.cxx
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\src\bzfs\FlagHistory.cxx
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\src\bzfs\LagInfo.cxx
 # End Source File
 # Begin Source File
@@ -184,6 +188,10 @@ SOURCE=..\..\src\bzfs\Permissions.cxx
 # Begin Source File
 
 SOURCE=..\..\src\bzfs\PlayerInfo.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\bzfs\RejoinList.cxx
 # End Source File
 # Begin Source File
 
@@ -335,6 +343,10 @@ SOURCE=..\..\src\bzfs\FlagInfo.h
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\src\bzfs\FlagHistory.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\include\global.h
 # End Source File
 # Begin Source File
@@ -376,6 +388,10 @@ SOURCE=..\..\include\PlayerInfo.h
 # Begin Source File
 
 SOURCE=..\..\include\PlayerState.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\bzfs\RejoinList.h
 # End Source File
 # Begin Source File
 
