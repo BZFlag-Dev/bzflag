@@ -173,6 +173,20 @@ void handleUptimeCmd(GameKeeper::Player *playerData, const char *)
   sendMessage(ServerPlayer,t, reply);
 }
 
+void handleServerQueryCmd(GameKeeper::Player *playerData, const char *)
+{
+  int t = playerData->getIndex();
+  DEBUG2("Server query requested by %s [%d]\n",
+	 playerData->player.getCallSign(), t);
+
+  sendMessage(ServerPlayer, t,
+              TextUtils::format("BZFS Version: %s", getAppVersion()).c_str());
+  return;
+ 
+}  
+  
+
+  
 void handlePartCmd(GameKeeper::Player *playerData, const char *message)
 {
   std::string message2;

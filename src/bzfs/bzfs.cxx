@@ -3048,6 +3048,10 @@ static void parseCommand(const char *message, int t)
   } else if (strncmp(message + 1, "msg", 3) == 0) {
     handleMsgCmd(playerData, message);
 
+  } else if (strncmp(message + 1, "serverquery", 11) == 0) {
+    handleServerQueryCmd(playerData, message);
+  
+
   } else if (strncmp(message + 1, "part ", 5) == 0) {
     handlePartCmd(playerData, message);
 

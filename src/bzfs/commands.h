@@ -16,7 +16,12 @@
 // implementation-specific bzflag headers
 #include "GameKeeper.h"
 
-
+/* quit command hook function
+ *
+ * /quit
+ */ 
+void handleServerQueryCmd(GameKeeper::Player *playerData, const char *);
+ 
 /* uptime command hook function
  *
  * /uptime prints current server running time.
