@@ -320,7 +320,8 @@ struct CmdLineOptions
     flagsOnBuildings(false), oneGameOnly(false), randomHeights(false), useTeleporters(false), 
     teamKillerDies(true), printScore(false), publicizeServer(false), publicizedAddressGiven(false), debug(0) 
   {
-    for (int i = int(FirstFlag); i <= int(LastFlag); i++) {
+    int i;
+    for (i = int(FirstFlag); i <= int(LastFlag); i++) {
 	flagCount[i] = 0;
 	flagDisallowed[i] = false;
     }
