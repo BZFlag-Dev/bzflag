@@ -229,11 +229,11 @@ const std::string Address::getHostName(const std::string hostname) // const
       name = std::string(myname);
   }
   if (name.length() <= 0) {
-    return std::string("");
+    return std::string();
   }
   struct hostent* hent = gethostbyname(name.c_str());
   if (!hent) {
-    return std::string("");
+    return std::string();
   }
   return std::string(hent->h_name);
 }

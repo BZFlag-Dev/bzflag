@@ -133,7 +133,7 @@ bool PlayerInfo::unpackEnter(void *buf, uint16_t &rejectCode, char *rejectMsg)
 
   // spoof filter holds "SERVER" for robust name comparisons
   if (serverSpoofingFilter.wordCount() == 0) {
-    serverSpoofingFilter.addToFilter(std::string("SERVER"), std::string(""));
+    serverSpoofingFilter.addToFilter("SERVER", "");
   }
 
   // don't allow empty callsign
