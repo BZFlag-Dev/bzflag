@@ -127,6 +127,8 @@ public:
   void		setRegistered(bool = true);
   bool		isVerified() const;
   void		setVerified(bool = true);
+  bool		hasPlayerList() const;
+  void		setPlayerList(bool = true);
 
   bool		validTeamTarget(const Player *possibleTarget) const;
 
@@ -203,6 +205,7 @@ private:
   bool			admin;
   bool			registered;
   bool			verified;
+  bool			playerList;
 
   // data use for drawing
   TankSceneNode*	tankNode;
@@ -539,6 +542,16 @@ inline bool		Player::isVerified() const
 inline void		Player::setVerified(bool _verified)
 {
   verified = _verified;
+}
+
+inline bool		Player::hasPlayerList() const
+{
+  return playerList;
+}
+
+inline void		Player::setPlayerList(bool _playerList)
+{
+  playerList = _playerList;
 }
 
 inline void*		Player::pack(void* buf, uint16_t& code)
