@@ -4,6 +4,7 @@
 BZFlag 1.10.4
 -------------
 
+* Use cyan for observer messages in old console color mode - Frank Thilo
 * Config file based autoidentification - Tupone Alfredo, Sean Morrison, Frank Thilo
 * List Server check ip of requesting server - Tupone Alfredo
 * AutoPilot does not bases his path on stealth echo anymore - Dave Brosius
