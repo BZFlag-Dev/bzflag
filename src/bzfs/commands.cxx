@@ -323,8 +323,6 @@ int getSlotNumber(std::string player) {
     slot = GameKeeper::Player::getPlayerIDByName(player);
   }
   
-  if ((slot >= curMaxPlayers) || (slot < 0))
-    slot = -1; // invalid, out of range
   GameKeeper::Player *p = GameKeeper::Player::getPlayerByIndex(slot);
   if (!p)
     slot = -1; // not a player
