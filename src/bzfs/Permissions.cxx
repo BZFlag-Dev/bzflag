@@ -291,6 +291,7 @@ std::string nameFromPerm(PlayerAccessInfo::AccessPerm perm)
     case PlayerAccessInfo::viewReports: return "viewReports";
     case PlayerAccessInfo::date: return "date";
     case PlayerAccessInfo::vote: return "vote";
+    case PlayerAccessInfo::shortBan: return "shortBan";
     default: return "";
   };
 }
