@@ -1481,7 +1481,7 @@ msgstr "Laser e Onda d'Urto). il tuo tank e' sempre visto al centro, il davanti 
 msgid "None"
 msgstr "Nessuno"
 
-msgid "Blinking"
+msgid "Pulsating"
 msgstr "Lampeggio"
 
 msgid "Underline"

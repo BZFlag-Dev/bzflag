@@ -1469,7 +1469,7 @@ msgstr "Je tank is altijd in het midden en voorwaarste is altijd omhoog op de ra
 #msgid "None"
 #msgstr ""
 
-#msgid "Blinking"
+#msgid "Pulsating"
 #msgstr ""
 
 #msgid "Underline"

@@ -1483,7 +1483,7 @@ msgstr "thE d15+@NC3 4w4y FRoM tH3 $m4LL BoXor DE+3rMine5 +h3 5PE3D."
 #msgid "None"
 #msgstr ""
 
-#msgid "Blinking"
+#msgid "Pulsating"
 #msgstr ""
 
 #msgid "Underline"

@@ -1468,7 +1468,7 @@ msgstr "flags is in th' team colo', superflags is white, an' th' antidote flag"
 #msgid "None"
 #msgstr ""
 
-#msgid "Blinking"
+#msgid "Pulsating"
 #msgstr ""
 
 #msgid "Underline"

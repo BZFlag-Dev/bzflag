@@ -1468,7 +1468,7 @@ msgstr "ondas choque, respectivamente). Seu tanque é sempre centro e para diante
 #msgid "None"
 #msgstr ""
 
-#msgid "Blinking"
+#msgid "Pulsating"
 #msgstr ""
 
 #msgid "Underline"

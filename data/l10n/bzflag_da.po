@@ -1467,7 +1467,7 @@ msgstr "Din egen tank er altid i centrum og fremad er altid op"
 #msgid "None"
 #msgstr ""
 
-#msgid "Blinking"
+#msgid "Pulsating"
 #msgstr ""
 
 #msgid "Underline"

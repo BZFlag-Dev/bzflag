@@ -1674,8 +1674,8 @@ msgstr "Zvyrazneni tanku, ktery zabil:"
 msgid "None"
 msgstr "Zadne"
 
-msgid "Blinking"
-msgstr "Blikani"
+msgid "Pulsating"
+msgstr "Pulsani"
 
 msgid "Underline"
 msgstr "Podtrzeni"
