@@ -2553,6 +2553,12 @@ static void dropFlag(int playerIndex, float pos[3])
     }
   }
 
+  float deadUnder = BZDB.eval(StateDatabase::BZDB_DEADUNDER);
+  float obstacleTop = 0.0f;
+  if (topmosttype != NOT_IN_BUILDING) {
+    obstacleTop = topmost->pos[2] + topmost->size[2];
+  }
+
   // figure out landing spot -- if flag in a Bad Place
   // when dropped, move to safety position or make it going
   TeamColor teamBase = whoseBase(pos[0], pos[1],
@@ -2567,22 +2573,28 @@ static void dropFlag(int playerIndex, float pos[3])
   else if (isTeamFlag && (teamBase == flagTeam) && (topmosttype == IN_BASE)) {
     drpFlag.flag.landingPosition[0] = pos[0];
     drpFlag.flag.landingPosition[1] = pos[1];
-    drpFlag.flag.landingPosition[2] = topmost->pos[2] + topmost->size[2];
+    drpFlag.flag.landingPosition[2] = obstacleTop;
   }
-  else if (isTeamFlag && (teamBase != NoTeam) && (teamBase != flagTeam) && (bases.find(teamBase) != bases.end())) {
-    bases[teamBase].getSafetyZone( drpFlag.flag.landingPosition[0],
-                                   drpFlag.flag.landingPosition[1],
-                                   drpFlag.flag.landingPosition[2] );
+  else if (isTeamFlag && (teamBase != NoTeam) && (teamBase != flagTeam)
+           && (bases.find(teamBase) != bases.end())) {
+    std::string teamName = Team::getName ((TeamColor) flagTeam);
+    if (!world->getSafetyPoint(teamName, pos, drpFlag.flag.landingPosition)) {
+      bases[teamBase].getSafetyZone( drpFlag.flag.landingPosition[0],
+                                     drpFlag.flag.landingPosition[1],
+                                     drpFlag.flag.landingPosition[2] );
+    }
   }
-  else if (topmosttype == NOT_IN_BUILDING) {
+  else if ((topmosttype == NOT_IN_BUILDING) && (deadUnder <= 0.0f)) {
     drpFlag.flag.landingPosition[0] = pos[0];
     drpFlag.flag.landingPosition[1] = pos[1];
     drpFlag.flag.landingPosition[2] = 0.0f;
   }
-  else if (clOptions->flagsOnBuildings && (topmosttype == IN_BOX_NOTDRIVETHROUGH || topmosttype == IN_BASE)) {
+  else if (clOptions->flagsOnBuildings
+           && (topmosttype == IN_BOX_NOTDRIVETHROUGH || topmosttype == IN_BASE)
+           && (obstacleTop > deadUnder)) {
     drpFlag.flag.landingPosition[0] = pos[0];
     drpFlag.flag.landingPosition[1] = pos[1];
-    drpFlag.flag.landingPosition[2] = topmost->pos[2] + topmost->size[2];
+    drpFlag.flag.landingPosition[2] = obstacleTop;
   }
   else if (isTeamFlag) {
     // people were cheating by dropping their flag above the nearest
@@ -2594,7 +2606,7 @@ static void dropFlag(int playerIndex, float pos[3])
   				     0.0f, 0.0f, 0.0f,
 				     BZDB.eval(StateDatabase::BZDB_TANKRADIUS),
 				     BZDB.eval(StateDatabase::BZDB_FLAGHEIGHT));
-      if (topmosttype == NOT_IN_BUILDING) {
+      if ((topmosttype == NOT_IN_BUILDING) && (deadUnder <= 0.0f)) {
         drpFlag.flag.landingPosition[0] = 0.0f;
 	drpFlag.flag.landingPosition[1] = 0.0f;
 	drpFlag.flag.landingPosition[2] = 0.0f;
@@ -2608,8 +2620,9 @@ static void dropFlag(int playerIndex, float pos[3])
       }
     }
   }
-  else
+  else {
     drpFlag.flag.status = FlagGoing;
+  }
 
   // if it is a team flag, check if there are any players left in that team -
   // if not, start the flag timeout
