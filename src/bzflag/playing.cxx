@@ -3061,6 +3061,8 @@ static void		handleServerMessage(bool human, uint16_t code,
       Player *rabbit = lookupPlayer(id);
 
       for (int i = 0; i < curMaxPlayers; i++) {
+	if (player[i])
+	  player[i]->setHunted(false);
         if (i != id && player[i] && player[i]->getTeam() != RogueTeam) {
 	   player[i]->changeTeam(RogueTeam);
 	}
@@ -3073,8 +3075,12 @@ static void		handleServerMessage(bool human, uint16_t code,
 	    serverLink->sendNewRabbit();
 	  else
 	    hud->setAlert(0, "You are now the rabbit.", 10.0f, false);
+	  hud->setHunting(false);
 	} else {
 	  myTank->changeTeam(RogueTeam);
+	  rabbit->setHunted(true);
+	  hud->setHunting(true);
+
 	}
       }
       break;
