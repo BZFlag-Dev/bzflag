@@ -3069,7 +3069,10 @@ static void		handleServerMessage(bool human, uint16_t code,
       if (rabbit != NULL) {
 	rabbit->changeTeam(RabbitTeam);
 	if (rabbit == myTank) {
-	  hud->setAlert(0, "You are now the rabbit.", 10.0f, false);
+	  if (myTank->isPaused())
+	    serverLink->sendNewRabbit();
+	  else
+	    hud->setAlert(0, "You are now the rabbit.", 10.0f, false);
 	} else {
 	  myTank->changeTeam(RogueTeam);
 	}
@@ -5465,11 +5468,7 @@ static void		playingLoop()
 	if (flagId >= FirstTeamFlag && flagId <= LastTeamFlag)
 	  serverLink->sendDropFlag(myTank->getPosition());
 
-        // FIXME - this is not quite working; when we pause, we'll request
-        // that a new tank is chosen rabbit. But after that rabbit dies,
-        // server might choose us as new rabbit,although we're still paused
-        // (server doesn't know pause status)
-	if (World::getWorld()->allowRabbit())
+	if (World::getWorld()->allowRabbit() && (myTank->getTeam() == RabbitTeam))
 	  serverLink->sendNewRabbit();
 
 	// now actually pause
