@@ -10,7 +10,10 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
+// class-interface header
 #include "WorldWeapons.h"
+
+// common-interface headers
 #include "ShotUpdate.h"
 #include "Protocol.h"
 #include "Address.h"
