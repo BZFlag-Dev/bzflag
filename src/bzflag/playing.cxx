@@ -4583,7 +4583,7 @@ static void		playingLoop()
 	targetPoint[2] = eyePoint[2] + myTankDir[2];
 #else
 	setRoamingLabel(false);
-	if ((roamView != roamViewFree) && player[roamTrackWinner]) {
+	if (player && (roamView != roamViewFree) && player[roamTrackWinner]) {
 	  RemotePlayer *target = player[roamTrackWinner];
 	  const float *targetTankDir = target->getForward();
 	  hud->setAltitude(-1.0f);
