@@ -390,17 +390,7 @@ void			ControlPanel::setMessagesOffset(int offset, int whence)
 
 void			ControlPanel::addMessage(const std::string& line)
 {
-  std::string finalline;
-  if (!renderer->getConsoleColorization()) {
-    char *tmpstr;
-    tmpstr = strdup(line.c_str());
-    OpenGLTexFont::stripAnsiCodes(tmpstr, strlen(tmpstr));
-    finalline = tmpstr;
-    delete [] tmpstr;
-  }
-  else
-    finalline = line;
-  ControlPanelMessage item(finalline);
+  ControlPanelMessage item(line);
 
   if ((int)messages.size() < maxLines * maxScrollPages) {
     // not full yet so just append it

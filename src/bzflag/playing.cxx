@@ -155,7 +155,7 @@ static void		handleFlagDropped(Player* tank);
 static void		handlePlayerMessage(uint16_t, uint16_t, void*);
 static Player*		getPlayerByName( const char* name );
 static void		addMessage(const Player* player, const std::string& msg,
-                                   bool highlight=false);
+                                   bool highlight=false, const char* oldColor=NULL);
 extern void		dumpResources(BzfDisplay*, SceneRenderer&);
 
 enum BlowedUpReason {
@@ -2275,36 +2275,61 @@ static ServerLink*	lookupServer(const Player* player)
 }
 
 static void		addMessage(const Player* player,
-				const std::string& msg, bool highlight)
+				const std::string& msg, bool highlight,
+				const char* oldColor)
 {
   std::string fullMessage;
 
-  if (player) {
-    if (highlight) {
-      if (killerHighlight == 0)
-	fullMessage += ColorStrings[BlinkColor];
-      else if (killerHighlight == 1)
-	fullMessage += ColorStrings[UnderlineColor];
+  if (sceneRenderer->getConsoleColorization()) {
+    if (player) {
+      if (highlight) {
+        if (killerHighlight == 0)
+          fullMessage += ColorStrings[BlinkColor];
+        else if (killerHighlight == 1)
+         fullMessage += ColorStrings[UnderlineColor];
+      }
+      int color = player->getTeam();
+      if (color < 0 || color > 4) color = 5;
+
+      fullMessage += ColorStrings[player->getTeam()];
+      fullMessage += player->getCallSign();
+
+      if (highlight)
+        fullMessage += ColorStrings[ResetColor];
+#ifdef BWSUPPORT
+      fullMessage += " (";
+      fullMessage += Team::getName(player->getTeam());
+      fullMessage += ")";
+#endif
+      fullMessage += ColorStrings[DefaultColor];
+      fullMessage += ": ";
+
+      fullMessage += msg;
     }
+  } else {
+    std::string cleanMsg;
+    char *tmpstr;
 
-    int color = player->getTeam();
-    if (color < 0 || color > 4) color = 5;
+    tmpstr = strdup(msg.c_str());
+    OpenGLTexFont::stripAnsiCodes(tmpstr, strlen(tmpstr));
+    cleanMsg = tmpstr;
+    delete [] tmpstr;
 
-    fullMessage += ColorStrings[player->getTeam()];
-    fullMessage += player->getCallSign();
+    if (oldColor != NULL)
+      fullMessage = oldColor;
 
-    if (highlight)
-      fullMessage += ColorStrings[ResetColor];
+    if (player) {
+      fullMessage += player->getCallSign();
 
 #ifdef BWSUPPORT
-    fullMessage += " (";
-    fullMessage += Team::getName(player->getTeam());
-    fullMessage += ")";
+      fullMessage += " (";
+      fullMessage += Team::getName(player->getTeam());
+      fullMessage += ")";
 #endif
-    fullMessage += ColorStrings[DefaultColor];
-    fullMessage += ": ";
+      fullMessage += ": ";
+    }
+    fullMessage += cleanMsg;
   }
-  fullMessage += msg;
   controlPanel->addMessage(fullMessage);
 }
 
@@ -3176,13 +3201,13 @@ static void		handleServerMessage(bool human, uint16_t code,
 	buf = nboPackUShort( buf, uint16_t(RogueTeam));
 	nboPackString(buf, messageBuffer, MessageLen);
 	serverLink->send(MsgMessage, sizeof(response), response);
-	const GLfloat* msgColor;
-	if (int(team) == int(RogueTeam) || srcPlayer->getTeam() == NoTeam)
-	  msgColor = Team::getRadarColor(RogueTeam);
-	else
-	  msgColor = Team::getRadarColor(srcPlayer->getTeam());
+	const char *oldcolor = NULL;
+        if (int(team) == int(RogueTeam) || srcPlayer->getTeam() == NoTeam)
+          oldcolor = ColorStrings [RogueTeam];
+        else
+          oldcolor = ColorStrings [srcPlayer->getTeam()];
 
-	addMessage(srcPlayer,"[Sent versioninfo per request]");
+        addMessage(srcPlayer,"[Sent versioninfo per request]", false, oldcolor);
 	break;
       }
 
@@ -3254,7 +3279,12 @@ static void		handleServerMessage(bool human, uint16_t code,
 	  fullMsg += ColorStrings[CyanColor];
 	  fullMsg += text;
 	}
-	addMessage(NULL, fullMsg);
+        const char *oldcolor = NULL;
+        if (srcPlayer && srcPlayer->getTeam() != NoTeam)
+          oldcolor = ColorStrings [srcPlayer->getTeam()];
+        else
+          oldcolor = ColorStrings [RogueTeam];
+        addMessage(NULL, fullMsg, false, oldcolor);
 
 	if (!srcPlayer || srcPlayer!=myTank)
 	  hud->setAlert(0, fullMsg.c_str(), 3.0f, false);
