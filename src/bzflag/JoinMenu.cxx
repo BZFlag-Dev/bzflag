@@ -156,6 +156,7 @@ void JoinMenu::show()
 
   // set fields
   callsign->setString(info->callsign);
+  password->setString(info->password);
   setTeam(info->team);
 
   server->setString(info->serverName);
@@ -179,6 +180,7 @@ void JoinMenu::loadInfo()
   // load startup info with current settings
   StartupInfo* info = getStartupInfo();
   strcpy(info->callsign, callsign->getString().c_str());
+  strcpy(info->password, password->getString().c_str());
   info->team = getTeam();
   strcpy(info->serverName, server->getString().c_str());
   info->serverPort = atoi(port->getString().c_str());
