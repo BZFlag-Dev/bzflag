@@ -3,7 +3,8 @@
 
 BZFlag 1.12.0  (was 1.11.x)
 ---------------------------
-
+* Update old configs to unbind roaming commands so they arn't busted - Daniel Remenak
+* New per version config for all versions, with update copy and hook from old versions - Jeff Myers
 * Faster tank and shot collision detection using an octree - Dave Rodgers
 * Configurable font size for control panel and scoreboard - Daniel Remenak
 * TextureManager reloads all textures on a mode change, for optimal quality - Jeff Myers
