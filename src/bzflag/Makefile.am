@@ -44,6 +44,8 @@ bzflag_SOURCES =			\
 	ShotPath.h			\
 	ShotStrategy.cxx		\
 	ShotStrategy.h			\
+	TargetingUtils.cxx		\
+	TargetingUtils.h
 	TextureManager.cxx		\
 	World.cxx			\
 	World.h				\
@@ -61,9 +63,7 @@ bzflag_SOURCES =			\
 	sound.cxx			\
 	sound.h				\
 	stars.h				\
-	texture.cxx			\
-	TargetingUtils.cxx		\
-	TargetingUtils.h
+	texture.cxx			
 
 if WIN32
 RESOURCE = bzflag.res
