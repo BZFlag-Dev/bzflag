@@ -3333,17 +3333,6 @@ void			ServerStartMenu::execute()
 	// add 256 for flags room
     char serverCmd[PATH_MAX + 256];
     strcpy(serverCmd, argv0);
-#ifdef _MACOSX_
-	/* this should be in a header file somewhere */
-	extern char *GetMacOSXDataPath();
-	//rae
-	// the bzfs server is in the same "Resource" directory as
-	// all the images. Perhaps it should be elsewhere?
-	string serverPath(GetMacOSXDataPath());
-	serverPath += "/";
-	serverPath += serverApp;
-	strcpy(serverCmd, serverPath.c_str());
-#else /* _MACOSX_ */
     char* base = strrchr(serverCmd, '/');
 #if defined(_WIN32)
     char* base2 = strrchr(serverCmd, '\\');
@@ -3353,8 +3342,6 @@ void			ServerStartMenu::execute()
     if (!base) base = serverCmd;
     else base++;
     strcpy(base, serverApp);
-
-#endif
 
     // prepare arguments for starting server
     const char* args[30];

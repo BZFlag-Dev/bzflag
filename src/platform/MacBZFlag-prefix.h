@@ -9,10 +9,19 @@
  * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
-#include <cstdint>
+
 #include <cstdio>
 #include <Carbon/Carbon.h>
 #include <CoreServices/CoreServices.h>
+
+/* so that socklen_t is defined in bzfrelay.c */
+#define _BSD_SOCKLEN_T_
+/* BZFlag version */
+#define VERSION	10707001
+/* enable robots (but they don't work?)
+#define ROBOT
+/* We are MacOS X */
+#define _MACOSX_
 
 #undef TCP_NODELAY
 #undef TCP_MAXSEG
