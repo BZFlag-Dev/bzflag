@@ -287,7 +287,6 @@ void FontManager::drawString(float x, float y, float z, int faceID, float size,
    * ANSI code interpretation is somewhat limited, we only accept values
    * which have been defined in AnsiCodes.h
    */
-
   bool doneLastSection = false;
   int startSend = 0;
   int endSend = (int)text.find("\033[", startSend);
@@ -298,6 +297,7 @@ void FontManager::drawString(float x, float y, float z, int faceID, float size,
     endSend = (int)text.size();
     doneLastSection = true;
   }
+
   // split string into parts based on the embedded ANSI codes, render each separately
   // there has got to be a faster way to do this
   while (endSend >= 0) {
@@ -335,13 +335,13 @@ void FontManager::drawString(float x, float y, float z, int faceID, float size,
       x += width;
     }
     if (!doneLastSection) {
-      startSend = (int)text.find("m", endSend) + 1;
+      startSend = (int)text.find('m', endSend) + 1;
     }
     // we stopped sending text at an ANSI code, find out what it is
     // and do something about it
     if (endSend != (int)text.size()) {
       tookCareOfANSICode = false;
-      std::string tmpText = text.substr(endSend, (text.find("m", endSend) - endSend) + 1);
+      std::string tmpText = text.substr(endSend, (text.find('m', endSend) - endSend) + 1);
       // colors
       for (int i = 0; i < 8; i++) {
 	if (tmpText == ColorStrings[i]) {
