@@ -35,6 +35,7 @@ private:
 	bool expand();
 
 	static unsigned char			PNGHEADER[8];
+	static const unsigned char		MAX_COMPONENTS;
 	static const unsigned char		FILTER_NONE;
 	static const unsigned char		FILTER_SUB;
 	static const unsigned char		FILTER_UP;

@@ -31,6 +31,8 @@
 
 unsigned char		PNGImageFile::PNGHEADER[8] = { 137, 80, 78, 71, 13, 10, 26, 10 };
 
+const unsigned char PNGImageFile::MAX_COMPONENTS = 4;
+
 const unsigned char PNGImageFile::FILTER_NONE = 0;
 const unsigned char PNGImageFile::FILTER_SUB = 1;
 const unsigned char PNGImageFile::FILTER_UP = 2;
@@ -74,35 +76,36 @@ PNGImageFile::PNGImageFile(std::istream* stream) : ImageFile(stream), palette(NU
 	int channels;
 	switch (colorDepth) {
 		case 0:
-			lineBufferSize = ((width * bitDepth)/8)+1;
+			lineBufferSize = (((width * bitDepth + ((bitDepth < 8) ? (bitDepth+1) : 0)))/8)+1;
 			channels = 1;
 		break;
 
 		case 2:
-			lineBufferSize = ((3 * width * bitDepth)/8)+1;
+			lineBufferSize = (((3 * width * bitDepth + ((bitDepth < 8) ? (bitDepth-1) : 0)))/8)+1;
 			channels = 3;
 		break;
 
 		case 3:
-			lineBufferSize = ((width * bitDepth)/8)+1;
+			lineBufferSize = (((width * bitDepth + ((bitDepth < 8) ? (bitDepth-1) : 0)))/8)+1;
 			channels = 3;
 		break;
 
 		case 4:
-			lineBufferSize = ((2 * width * bitDepth)/8)+1;
+			lineBufferSize = (((2 * width * bitDepth + ((bitDepth < 8) ? (bitDepth-1) : 0)))/8)+1;
 			channels = 2;
 		break;
 
 		case 6:
-			lineBufferSize = ((4 * width * bitDepth)/8)+1;
+			lineBufferSize = (((4 * width * bitDepth + ((bitDepth < 8) ? (bitDepth-1) : 0)))/8)+1;
 			channels = 4;
 		break;
 	}
 
 	realBufferSize = channels * width + 1;
-	int allocSize = realBufferSize > lineBufferSize ? realBufferSize : lineBufferSize;
+	int allocSize = ((realBufferSize > lineBufferSize) ? realBufferSize : lineBufferSize) + MAX_COMPONENTS;
 	lineBuffers[0] = new unsigned char[allocSize];
 	lineBuffers[1] = new unsigned char[allocSize];
+	memset(lineBuffers[0], 0, MAX_COMPONENTS);
 	memset(lineBuffers[1], 0, allocSize);
 	activeBufferIndex = 0;
 
@@ -258,7 +261,7 @@ unsigned char *PNGImageFile::getLineBuffer(bool active)
 
 unsigned char *PNGImageFile::getLineBuffer(bool active)
 {
-	return lineBuffers[active ? activeBufferIndex : (1 - activeBufferIndex)];
+	return MAX_COMPONENTS + lineBuffers[active ? activeBufferIndex : (1 - activeBufferIndex)];
 }
 
 /* 
@@ -370,33 +373,31 @@ bool PNGImageFile::filter()
 
 		case FILTER_SUB:
 		{
-			unsigned char last[4] = {0, 0, 0, 0};
 			int channels = getNumChannels();
-			for (int i = 1; i < lineBufferSize; i++) {
-				*(pData+i) += last[i%channels];
-				last[i%channels] = *(pData+i);
-			}
+			for (int i = 1; i < lineBufferSize; i++, pData++)
+				*pData += *(pData-channels);
 			return true;
 			break;
 		}
 
 		case FILTER_UP:
 		{
-			unsigned char *up = getLineBuffer(false);
-			for (int i = 1; i < lineBufferSize; i++)
-				*(pData+i) += *(up+i);
+			unsigned char *pUp = getLineBuffer(false);
+			for (int i = 1; i < lineBufferSize; i++, pData++, pUp++)
+				*pData += *pUp;
 			return true;
 			break;
 		}
 
 		case FILTER_AVERAGE:
 		{
-			unsigned char last[4] = {0, 0, 0, 0};
-			unsigned char *up = getLineBuffer(false);
+			unsigned char *pUp = getLineBuffer(false);
 			int channels = getNumChannels();
-			for (int i = 1; i < lineBufferSize; i++) {
-				*(pData+i) += (last[i%channels] + *(up+i))/2;
-				last[i%channels] = *(pData+i);
+			for (int i = 1; i < lineBufferSize; i++, pData++, pUp++) {
+				int last = *(pData-channels);
+				int up = *pUp;
+
+				*pData += (last + up)/2;
 			}
 			return true;
 			break;
@@ -404,26 +405,20 @@ bool PNGImageFile::filter()
 
 		case FILTER_PAETH:
 		{
-			unsigned char last[4] = {0, 0, 0, 0};
-			unsigned char prevLast[4] = {0, 0, 0, 0};
-			unsigned char *up = getLineBuffer(false);
+			unsigned char *pUp = getLineBuffer(false);
 			int channels = getNumChannels();
-			for (int i = 1; i < lineBufferSize; i++) {
-				int estimate = last[i%channels] + *(up+i) - prevLast[i%channels];
-				int lastError = abs(estimate - last[i%channels]);
-				int upError = abs(estimate - *(up+i));
-				int lastUpError = abs(estimate - prevLast[i%channels]);
-				int value;
-				if ((lastError <= upError) && (lastError <= lastUpError))
-					value = lastError;
-				else if (upError <= lastUpError)
-					value = upError;
-				else
-					value = lastUpError;
+			for (int i = 1; i < lineBufferSize; i++, pData++, pUp++) {
+				int a = *(pData-channels);
+				int b = *pUp;
+				int c = *(pUp-channels);
 
-				*(pData+i) += value;
-				last[i%channels] = value;
-				prevLast[i%channels] = *(up+i);
+				int p = b - c;
+				int pc = a - c;
+				int pa = abs(p);
+				int pb = abs(pc);
+				pc = abs(p + pc);
+
+				*pData += (pa <= pb && pa <= pc) ? a : (pb <= pc) ? b : c;
 			}
 			return true;
 			break;
