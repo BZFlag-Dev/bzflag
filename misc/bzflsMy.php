@@ -87,7 +87,6 @@ if (!array_key_exists("action", $_GET)) {
 </head>
 <body>
   <h1>BZFlag db server</h1>
-  <p>
   <form action="" method="get">
     action:<input type="text" name="action" value="LIST" size="80"><br>
     actions: LIST<br>
@@ -105,11 +104,9 @@ if (!array_key_exists("action", $_GET)) {
     actions: SETKARMA GETKARMA<br>
     target:<input type="text" name="target" size="80"><br>
     karma:<input type="text" name="karma" size="80"><br>
-    <br>
     <input type="submit" value="Post entry">
     <input type="reset" value="Clear form">
-</form>
-</p>
+  </form>
 </body>
 </html>');
 }
@@ -158,7 +155,6 @@ if (!$result) {
               " callsign varchar(32) NOT NULL, " .
               " password varchar(16) NOT NULL, " .
               " karma TINYINT NOT NULL DEFAULT '0', " .
-              " provisional BOOL NOT NULL DEFAULT '1', " .
               " assignments TEXT, " .
               " playtime BIGINT UNSIGNED NOT NULL DEFAULT '0', " .
               " lastmod INT NOT NULL, " .
@@ -398,7 +394,7 @@ if ($action == "LIST" ) {
                         ", playtime=playtime+$conntime WHERE callsign='$callsign'", $link)
     or die ("Invalid query: " . mysql_error());
 } elseif ($action == "SETKARMA") {
-  #  -- KARMA_ADJ --
+  #  -- SETKARMA --
   # Set's a player's karma
   $result = mysql_query("SELECT assignments FROM players WHERE callsign='$callsign' " .
                         "AND password='$password'", $link)
@@ -436,9 +432,9 @@ if ($action == "LIST" ) {
     }
   }
 } elseif ($action == "GETKARMA") {
-  #  -- KARMA_LIST --
+  #  -- GETKARMA --
   # Views the karma for a particular player
-  $result = mysql_query("SELECT karma,provisional FROM players WHERE callsign='$callsign'", $link)
+  $result = mysql_query("SELECT karma FROM players WHERE callsign='$callsign'", $link)
     or die ("Invalid query: " . mysql_error());
   $row = mysql_fetch_row($result);
   print_r($row);
