@@ -10,8 +10,6 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#include "common.h"
-
 /* interface header */
 #include "ServerStartMenu.h"
 
@@ -38,14 +36,14 @@
 #endif
 
 /* common implementation headers */
-#include "TextUtils.h"
 #include "DirectoryNames.h"
 #include "FontManager.h"
+#include "StartupInfo.h"
+#include "TextUtils.h"
 
 /* local implementation headers */
 #include "MenuDefaultKey.h"
 #include "MainMenu.h"
-#include "StartupInfo.h"
 #include "HUDuiControl.h"
 #include "HUDuiLabel.h"
 #include "HUDuiList.h"
