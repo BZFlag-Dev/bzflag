@@ -94,6 +94,10 @@ ServerStartMenu::ServerStartMenu()
   items->push_back("3");
   items->push_back("4");
   items->push_back("5");
+  items->push_back("8");
+  items->push_back("10");
+  items->push_back("15");
+  items->push_back("20");
   list->update();
   controls.push_back(list);
 
@@ -416,7 +420,7 @@ void ServerStartMenu::execute()
     args[arg++] = numPlayers[((HUDuiList*)list[2])->getIndex()];
 
     // max shots
-    static const char* numShots[] = { "1", "2", "3", "4", "5" };
+    static const char* numShots[] = { "1", "2", "3", "4", "5", "8", "10", "15", "20" };
     args[arg++] = "-ms";
     args[arg++] = numShots[((HUDuiList*)list[3])->getIndex()];
 
