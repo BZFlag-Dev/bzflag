@@ -4451,6 +4451,7 @@ int main(int argc, char **argv)
     info.explicitAllows[PlayerAccessInfo::flagHistory] = true;
     info.explicitAllows[PlayerAccessInfo::actionMessage] = true;
     info.explicitAllows[PlayerAccessInfo::privateMessage] = true;
+    info.explicitAllows[PlayerAccessInfo::adminMessageSend] = true;
     groupAccess["DEFAULT"] = info;
   }
   itr = groupAccess.find("VERIFIED");
