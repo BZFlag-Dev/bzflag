@@ -10,15 +10,27 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#include "common.h"
+/* interface header */
 #include "ComposeDefaultKey.h"
-#include "LocalPlayer.h"
-#include "RemotePlayer.h"
-#include "Roster.h"
-#include "KeyManager.h"
-#include "HUDRenderer.h"
 
-#include "playing.h" // THIS IS TEMPORARY... WILL BE REMOVED... BABY STEPS
+/* common implementation headers */
+#include "RemotePlayer.h"
+#include "KeyManager.h"
+
+/* local implementation headers */
+#include "LocalPlayer.h"
+#include "World.h"
+#include "HUDRenderer.h"
+#include "Roster.h"
+
+/* FIXME -- pulled from player.h */
+void addMessage(const Player* player, const std::string& msg, bool highlight=false, const char* oldColor=NULL);
+extern char messageMessage[PlayerIdPLen + MessageLen];
+#define MAX_MESSAGE_HISTORY (20)
+extern HUDRenderer *hud;
+extern ServerLink*	serverLink;
+void selectNextRecipient (bool forward, bool robotIn);
+
 
 MessageQueue	messageHistory;
 unsigned int	messageHistoryIndex = 0;
@@ -179,3 +191,11 @@ bool			ComposeDefaultKey::keyRelease(const BzfKeyEvent& key)
   }
   return keyPress(key);
 }
+
+// Local Variables: ***
+// mode: C++ ***
+// tab-width: 8 ***
+// c-basic-offset: 2 ***
+// indent-tabs-mode: t ***
+// End: ***
+// ex: shiftwidth=2 tabstop=8

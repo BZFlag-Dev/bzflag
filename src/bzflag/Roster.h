@@ -10,18 +10,22 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
- #ifndef __ROSTER_H__
- #define __ROSTER_H__
+#ifndef __ROSTER_H__
+#define __ROSTER_H__
 
+/* system interface headers */
 #include <vector>
 #include <string>
-#include "Address.h"
+
+/* common interface headers */
+#include "global.h"
 #include "Team.h"
 
-class RemotePlayer;
-class Player;
-class BaseLocalPlayer;
-class RobotPlayer;
+/* local interface headers */
+#include "RobotPlayer.h"
+#include "BaseLocalPlayer.h"
+#include "RemotePlayer.h"
+
 
 //
 // misc utility routines
@@ -29,21 +33,29 @@ class RobotPlayer;
 
 typedef std::vector<std::string> NameList;
 
-extern int				curMaxPlayers;
-extern RemotePlayer**	player;
-extern RobotPlayer*		robots[MAX_ROBOTS];
-extern int				numRobots;
+extern int curMaxPlayers;
+extern RemotePlayer** player;
+extern RobotPlayer* robots[MAX_ROBOTS];
+extern int numRobots;
 
-extern NameList			silencePlayers;
+extern NameList silencePlayers;
 
 
-Player*				lookupPlayer(PlayerId id);
-int					lookupPlayerIndex(PlayerId id);
-Player*				getPlayerByIndex(int index);
-Player*				getPlayerByName(const char* name);
+Player*			lookupPlayer(PlayerId id);
+int			lookupPlayerIndex(PlayerId id);
+Player*			getPlayerByIndex(int index);
+Player*			getPlayerByName(const char* name);
 BaseLocalPlayer*	getLocalPlayer(PlayerId id);
-TeamColor			PlayerIdToTeam(PlayerId id);
-PlayerId			TeamToPlayerId(TeamColor team);
+TeamColor		PlayerIdToTeam(PlayerId id);
+PlayerId		TeamToPlayerId(TeamColor team);
 
 
- #endif
+#endif /* __ROSTER_H__ */
+
+// Local Variables: ***
+// mode: C++ ***
+// tab-width: 8 ***
+// c-basic-offset: 2 ***
+// indent-tabs-mode: t ***
+// End: ***
+// ex: shiftwidth=2 tabstop=8

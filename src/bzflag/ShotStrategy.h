@@ -21,11 +21,18 @@
 #define __SHOTSTRATEGY_H__
 
 #include "common.h"
-#include "ShotPath.h"
+
+/* common interface headers */
+#include "Ray.h"
 #include "Obstacle.h"
 #include "Teleporter.h"
-#include "Ray.h"
+#include "SceneDatabase.h"
 
+/* local interface headers */
+#include "BaseLocalPlayer.h"
+#include "ShotPath.h"
+
+class ShotPath;
 
 class ShotStrategy {
   public:

@@ -10,27 +10,22 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#include "common.h"
+/* interface header */
 #include "Roster.h"
-#include "RemotePlayer.h"
-#include "LocalPlayer.h"
+
+/* local implementation headers */
 #include "World.h"
-#include "RobotPlayer.h"
 #include "WorldPlayer.h"
 
- //
-// misc utility routines
-//
 
-NameList			silencePlayers;
-int					curMaxPlayers = 0;
-RemotePlayer**		player = NULL;
-RobotPlayer*		robots[MAX_ROBOTS];
-int					numRobots = 0;
+NameList silencePlayers;
+int curMaxPlayers = 0;
+RemotePlayer** player = NULL;
+RobotPlayer* robots[MAX_ROBOTS];
+int numRobots = 0;
 
 
-
-Player*			lookupPlayer(PlayerId id)
+Player* lookupPlayer(PlayerId id)
 {
   // check my tank first
 
@@ -48,7 +43,7 @@ Player*			lookupPlayer(PlayerId id)
   return NULL;
 }
 
-int		lookupPlayerIndex(PlayerId id)
+int lookupPlayerIndex(PlayerId id)
 {
   // check my tank first
   
@@ -65,7 +60,7 @@ int		lookupPlayerIndex(PlayerId id)
   return -1;
 }
 
-Player*		getPlayerByIndex(int index)
+Player* getPlayerByIndex(int index)
 {
   if (index == -2)
     return LocalPlayer::getMyTank();
@@ -76,7 +71,7 @@ Player*		getPlayerByIndex(int index)
   return player[index];
 }
 
-Player*		getPlayerByName(const char* name)
+Player* getPlayerByName(const char* name)
 {
   for (int i = 0; i < curMaxPlayers; i++)
     if (player[i] && strcmp( player[i]->getCallSign(), name ) == 0)
@@ -87,7 +82,7 @@ Player*		getPlayerByName(const char* name)
   return NULL;
 }
 
-BaseLocalPlayer*	getLocalPlayer(PlayerId id)
+BaseLocalPlayer* getLocalPlayer(PlayerId id)
 {
   LocalPlayer *myTank = LocalPlayer::getMyTank();
   if (myTank->getId() == id) return myTank;
@@ -99,7 +94,7 @@ BaseLocalPlayer*	getLocalPlayer(PlayerId id)
   return NULL;
 }
 
-TeamColor	PlayerIdToTeam(PlayerId id)
+TeamColor PlayerIdToTeam(PlayerId id)
 {
   if (id >= 244 && id<=250)
     return TeamColor(250 - id);
@@ -107,10 +102,19 @@ TeamColor	PlayerIdToTeam(PlayerId id)
     return NoTeam;
 }
 
-PlayerId		TeamToPlayerId(TeamColor team)
+PlayerId TeamToPlayerId(TeamColor team)
 {
   if (team == NoTeam)
     return NoPlayer;
   else
     return 250-team;
 }
+
+
+// Local Variables: ***
+// mode: C++ ***
+// tab-width: 8 ***
+// c-basic-offset: 2 ***
+// indent-tabs-mode: t ***
+// End: ***
+// ex: shiftwidth=2 tabstop=8

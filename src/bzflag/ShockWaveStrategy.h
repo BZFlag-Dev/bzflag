@@ -21,7 +21,7 @@
 #include "SphereSceneNode.h"
 
 /* local interface headers */
-#include "LocalPlayer.h"
+#include "BaseLocalPlayer.h"
 #include "ShotPath.h"
 
 

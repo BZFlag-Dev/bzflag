@@ -26,7 +26,7 @@
 #include "Address.h"
 
 /* local interface headers */
-#include "LocalPlayer.h"
+#include "BaseLocalPlayer.h"
 #include "ShotPathSegment.h"
 
 

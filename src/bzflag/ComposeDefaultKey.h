@@ -13,8 +13,14 @@
 #ifndef __COMPOSEDEFAULTKEY_H__
 #define __COMPOSEDEFAULTKEY_H__
 
+/* system interface headers */
 #include <deque>
+#include <string>
+
+/* common interface headers */
 #include "HUDui.h"
+#include "BzfEvent.h"
+
 
 typedef std::deque<std::string> MessageQueue;
 
@@ -29,3 +35,11 @@ public:
 
 
 #endif
+
+// Local Variables: ***
+// mode: C++ ***
+// tab-width: 8 ***
+// c-basic-offset: 2 ***
+// indent-tabs-mode: t ***
+// End: ***
+// ex: shiftwidth=2 tabstop=8

@@ -10,51 +10,25 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifndef	BZF_LOCAL_PLAYER_H
-#define	BZF_LOCAL_PLAYER_H
+#ifndef __LOCALPLAYER_H__
+#define __LOCALPLAYER_H__
 
-#include "common.h"
-#include "Player.h"
-#include "ShotPath.h"
+/* interface header */
+#include "BaseLocalPlayer.h"
+
+/* system interface headers */
+#include <string>
+
+/* common interface headers */
+#include "Obstacle.h"
+#include "TimeKeeper.h"
 #include "FlagSceneNode.h"
-#include "Ray.h"
 #include "BzfEvent.h"
-#include "World.h"
+
+/* local interface headers */
+#include "Player.h"
 #include "ServerLink.h"
 
-class Obstacle;
-
-// FIXME -- clean this up (needed for the robot tanks)
-class BaseLocalPlayer : public Player {
-public:
-  BaseLocalPlayer(const PlayerId&,
-		  const char* name, const char* email);
-  ~BaseLocalPlayer();
-
-  void		update();
-  Ray			getLastMotion() const;
-#ifdef __MWERKS__
-  const float	(*getLastMotionBBox() )[3] const;
-#else
-  const float		(*getLastMotionBBox() const)[3];
-#endif
-
-  virtual void	explodeTank() = 0;
-  virtual bool	checkHit(const Player* source,
-			 const ShotPath*& hit, float& minTime) const = 0;
-protected:
-  int			getSalt();
-  virtual void	doUpdate(float dt) = 0;
-  virtual void	doUpdateMotion(float dt) = 0;
-
-protected:
-  TimeKeeper		lastTime;
-  float		lastPosition[3];
-  float		bbox[2][3];		// bbox of last motion
-
-private:
-  int			salt;
-};
 
 class LocalPlayer : public BaseLocalPlayer {
 public:
@@ -83,13 +57,13 @@ public:
 	      const char* name, const char* email);
   ~LocalPlayer();
 
-  Location		getLocation() const;
+  Location	getLocation() const;
   FiringStatus	getFiringStatus() const;
   float		getReloadTime() const;
   float		getFlagShakingTime() const;
-  int			getFlagShakingWins() const;
-  const GLfloat*	getAntidoteLocation() const;
-  ShotPath*		getShot(int index) const;
+  int		getFlagShakingWins() const;
+  const float*	getAntidoteLocation() const;
+  ShotPath*	getShot(int index) const;
   const Player*	getTarget() const;
   const Obstacle*	getContainingBuilding() const;
 
@@ -127,7 +101,7 @@ public:
   float		getKeyboardAngVel() const;
   void		setKey(int button, bool pressed);
   bool		getKeyPressed() const;
-  int			getKeyButton() const;
+  int		getKeyButton() const;
   void		resetKey();
   bool		isSpawning();
   void		setSpawning( bool spawn );
@@ -157,18 +131,18 @@ protected:
   ServerLink*	server;
 
 private:
-  Location		location;
+  Location	location;
   FiringStatus	firingStatus;
   TimeKeeper	jamTime;
   float		flagShakingTime;
-  int			flagShakingWins;
+  int		flagShakingWins;
   float		flagAntidotePos[3];
   FlagSceneNode*	antidoteFlag;
   float		desiredSpeed;
   float		desiredAngVel;
   float		lastSpeed;
   const Obstacle*	insideBuilding;
-  GLfloat		crossingPlane[4];
+  float		crossingPlane[4];
   bool		anyShotActive;
   const Player*	target;
   const Player*	nemesis;
@@ -183,36 +157,33 @@ private:
   bool		spawning;
 };
 
-//
-// LocalPlayer
-//
 
-inline LocalPlayer::Location		LocalPlayer::getLocation() const
+inline LocalPlayer::Location LocalPlayer::getLocation() const
 {
   return location;
 }
 
-inline LocalPlayer::FiringStatus	LocalPlayer::getFiringStatus() const
+inline LocalPlayer::FiringStatus LocalPlayer::getFiringStatus() const
 {
   return firingStatus;
 }
 
-inline const Player*	LocalPlayer::getTarget() const
+inline const Player* LocalPlayer::getTarget() const
 {
   return target;
 }
 
-inline const Player*	LocalPlayer::getNemesis() const
+inline const Player* LocalPlayer::getNemesis() const
 {
   return nemesis;
 }
 
-inline const Player*	LocalPlayer::getRecipient() const
+inline const Player* LocalPlayer::getRecipient() const
 {
   return recipient;
 }
 
-inline const Obstacle*	LocalPlayer::getContainingBuilding() const
+inline const Obstacle* LocalPlayer::getContainingBuilding() const
 {
   return insideBuilding;
 }
@@ -288,13 +259,13 @@ inline void LocalPlayer::setSpawning( bool spawn )
   spawning = spawn;
 }
 
-#endif // BZF_LOCAL_PLAYER_H
+
+#endif /* __LOCALPLAYER_H__ */
 
 // Local Variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

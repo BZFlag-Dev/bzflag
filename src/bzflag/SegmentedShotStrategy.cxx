@@ -21,9 +21,13 @@
 #include "BZDBCache.h"
 #include "LaserSceneNode.h"
 #include "Intersect.h"
+#include "Team.h"
+#include "WallObstacle.h"
 
 /* local implementation headers */
 #include "sound.h"
+#include "LocalPlayer.h"
+#include "World.h"
 
 /* FIXME -- declarations from player.h */
 Player* lookupPlayer(PlayerId id);

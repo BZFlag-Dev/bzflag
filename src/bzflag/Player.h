@@ -10,25 +10,28 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifndef	BZF_PLAYER_H
-#define	BZF_PLAYER_H
+#ifndef	__PLAYER_H__
+#define	__PLAYER_H__
 
 #include "common.h"
+
+/* common interface headers */
 #include "global.h"
 #include "TimeKeeper.h"
 #include "Address.h"
-#include "ShotPath.h"
 #include "OpenGLTexture.h"
-#include "PlayerState.h"
 #include "Flag.h"
+#include "PlayerState.h"
 
+/* local interface headers */
 class ShotPath;
 class SceneDatabase;
 class TankSceneNode;
 class TankIDLSceneNode;
 class SphereSceneNode;
 
-const int		PlayerUpdatePLen = PlayerIdPLen + 42;
+
+const int PlayerUpdatePLen = PlayerIdPLen + 42;
 
 class Player {
 public:
@@ -387,13 +390,13 @@ inline void*		Player::pack(void* buf)
   return state.pack(buf);
 }
 
-#endif // BZF_PLAYER_H
+
+#endif /* __PLAYER_H__ */
 
 // Local Variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

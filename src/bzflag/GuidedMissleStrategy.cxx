@@ -19,6 +19,10 @@
 #include "TextureManager.h"
 #include "Intersect.h"
 
+/* local implementation headers */
+#include "LocalPlayer.h"
+#include "World.h"
+
 /* FIXME - from player.h */
 void addShotExplosion(const float* pos);
 Player* lookupPlayer(PlayerId id);

@@ -21,6 +21,8 @@
 #include "OpenGLMaterial.h"
 #include "BZDBCache.h"
 #include "TextureManager.h"
+#include "ShotPath.h"
+
 
 // for dead reckoning
 static const float	MaxUpdateTime = 1.0f;		// seconds

@@ -15,6 +15,10 @@
 
 /* common implementation headers */
 #include "StateDatabase.h"
+#include "Team.h"
+
+/* local implementation headers */
+#include "LocalPlayer.h"
 
 /* FIXME - from playing.h */
 Player* lookupPlayer(PlayerId id);
