@@ -5142,7 +5142,10 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
 	}
 
 	// allow a 5% tolerance level for speed
-	maxPlanarSpeedSqr *= speedTolerance;
+    float realtol=1.0f;
+    if(speedTolerance>1.0f)
+     realtol = speedTolerance;
+	maxPlanarSpeedSqr *= realtol;
 	if (curPlanarSpeedSqr > maxPlanarSpeedSqr) {
 	  if (logOnly) {
 	    DEBUG1("Logging Player %s [%d]: tank too fast (tank: %f, allowed: %f){Dead or v[z] != 0}\n",
@@ -5324,7 +5327,7 @@ static const char *extraUsageString =
 "\t-ttl: time-to-live for pings (default=8)\n"
 "\t-version: print version and exit\n"
 "\t-world: world file to load\n"
-"\t-speedtol: percent over normal speed to auto kick at\n"
+"\t-speedtol: multiplyers over normal speed to auto kick at. defaults to 1.25, should not be less then 1.0\n"
 "\t-passdb: file to read for user passwords\n"
 "\t-groupdb: file to read for group permissions\n"
 "\t-userdb: file to read for user access permissions\n";

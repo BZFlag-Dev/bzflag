@@ -268,7 +268,7 @@ Antidote flags are provided for players with bad flags.
 Restrict flag \fIid\fR to \fInum\R shots.
 .TP
 \fB\-speedtol \fIfactor\fR
-Override the default speed auto kick factor. The factor should not be less then 1.0.
+Override the default speed auto kick factor. The factor should not be less then 1.0. The factor is a multiplyer.
 .TP
 \fB\-srvmsg \fImessage\fR
 Define a server welcome message.
