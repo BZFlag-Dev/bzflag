@@ -1227,7 +1227,7 @@ void			HUDRenderer::drawPlayerScore(const Player* player,
 #else
   char email[EmailLen + 25];
   const PlayerId& id = player->getId();
-  sprintf(email, " %s:%04x-%1x(%s)", inet_ntoa(id.serverHost),
+  sprintf(email, " %s:%d-%1x(%s)", inet_ntoa(id.serverHost),
       ntohs(id.port), ntohs(id.number), player->getEmailAddress());
 #endif  
   sprintf(score, "%d (%d-%d)", player->getScore(),

@@ -4260,10 +4260,11 @@ static void parseCommand(const char *message, int t)
     for (int i = 0; i < maxPlayers; i++)
       if (player[i].fd != NotConnected) {
 	char reply[MessageLen];
-	sprintf(reply,"[%d]%-12s:%4dms(%d) %s:%d%s",i,player[i].callSign,
+	sprintf(reply,"[%d]%-12s:%4dms(%d) %s:%d%s%s",i,player[i].callSign,
 		int(player[i].lagavg*1000),player[i].lagcount,
 		inet_ntoa(player[i].id.serverHost), ntohs(player[i].id.port),
-		player[i].ulinkup ? " udp" : "");
+		player[i].ulinkup ? " udp" : "",
+		player[i].knowId ? " id" : "");
 	sendMessage(t,player[t].id,player[t].team,reply);
       }
   }
