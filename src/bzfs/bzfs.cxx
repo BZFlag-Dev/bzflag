@@ -3984,23 +3984,76 @@ static void parseCommand(const char *message, int t)
   }
   // /ban command allows operator to ban players based on ip
   else if (hasPerm(t, PlayerAccessInfo::ban) && strncmp(message+1, "ban", 3) == 0) {
-    char *ips = (char *) (message + 5);
-    char *time = strchr(ips, ' ');
-    int period = 0;
-    if (time != NULL)
-	period = atoi(time);
-    if (clOptions->acl.ban(ips, period))
-      strcpy(reply, "IP pattern added to banlist");
-    else
-      strcpy(reply, "malformed address");
-    sendMessage(ServerPlayer, t, reply, true);
-    char kickmessage[MessageLen];
-    for (int i = 0; i < curMaxPlayers; i++) {
-      if ((player[i].fd != NotConnected) && (!clOptions->acl.validate(player[i].taddr.sin_addr))) {
-	sprintf(kickmessage,"Your were banned from this server by %s", player[t].callSign);
-	sendMessage(ServerPlayer, i, kickmessage, true);
-	removePlayer(i, "/ban");
+    // /ban <ip> [duration] ...
+    // any text after duration is considered as the reason for banning.
+    
+    std::string msg = message;
+    std::vector<std::string> argv = string_util::tokenize( msg, " \t", 4 );
+
+//    for(int i = 0; i < argc; i++)
+//      printf("argv[%d] = %s\n", i, argv[i] );
+
+    if( argv.size() < 2 ){
+      strcpy(reply, "Syntax: /ban <ip> [duration] [reason]");
+      sendMessage(ServerPlayer, t, reply, true);
+      strcpy(reply, "        Please keep in mind that reason is displayed to the user.");
+      sendMessage(ServerPlayer, t, reply, true);
+    }
+    else {
+      int durationInt;
+      std::string ip = argv[1];
+      std::string reason;
+
+      if( argv.size() >= 3 ) {
+	// read and parses ducations like: 1d3m -> one day, 3 mins
+	// supports: week(w),day(d),hour(h),min(m)
+	durationInt = 0;
+	int t = 0;
+	for(int i=0; i < (int)argv[2].size(); i++) {
+	  if( isdigit(argv[2][i]) ) {
+	    t = t * 10 + (argv[2][i] - '0');
+	  }
+	  else if( argv[2][i] == 'h' || argv[2][i] == 'H' ) { 
+	    durationInt += (t * 60); 
+	    t = 0;
+	  }
+	  else if( argv[2][i] == 'd' || argv[2][i] == 'D' ) {
+	    durationInt += (t * 1440);
+	    t = 0;
+	  }
+	  else if( argv[2][i] == 'w' || argv[2][i] == 'w' ) {
+	    durationInt += (t * 10080);
+	    t = 0;
+	  }
+	} 
+	durationInt += t;
       }
+      else {
+	durationInt = 0;
+      }
+	
+      if( argv.size() == 4 )
+	reason = argv[3];
+
+      if (clOptions->acl.ban(ip, player[t].callSign, durationInt, reason.c_str())){
+	strcpy(reply, "IP pattern added to banlist");
+	char kickmessage[MessageLen];
+	for (int i = 0; i < curMaxPlayers; i++) {
+	  if ((player[i].fd != NotConnected) && (!clOptions->acl.validate(player[i].taddr.sin_addr))) {
+	    sprintf(kickmessage,"Your were banned from this server by %s", player[t].callSign);
+	    sendMessage(ServerPlayer, i, kickmessage, true);
+	    if( reason.length() > 0 ){ 
+	      sprintf(kickmessage,"Reason given: %s", reason.c_str()); 
+	      sendMessage(ServerPlayer, i, kickmessage, true);
+	    }
+	    removePlayer(i, "/ban");
+	  }
+	} 
+      }
+      else {
+	strcpy(reply, "malformed address");
+      } 
+      sendMessage(ServerPlayer, t, reply, true);
     }
   }
   // /unban command allows operator to remove ips from the banlist
@@ -5332,7 +5385,7 @@ int main(int argc, char **argv)
 	       * is a ban poll, ban the weenie
 	       */
 	      if (action == "ban") {
-		clOptions->acl.ban(votingarbiter->getPollPlayerIP().c_str(), 10);
+		clOptions->acl.ban(votingarbiter->getPollPlayerIP().c_str(), person.c_str(), 10);
 	      }
 
 	      // lookup the player id

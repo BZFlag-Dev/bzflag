@@ -32,8 +32,10 @@ extern void sendMessage(int playerIndex, PlayerId targetPlayer, const char *mess
 
 struct BanInfo
 {
-  BanInfo( in_addr &banAddr, int period = 0 ) {
+  BanInfo( in_addr &banAddr, const char *bannedBy = NULL, int period = 0 ) {
     memcpy( &addr, &banAddr, sizeof( in_addr ));
+    if( bannedBy )
+       this->bannedBy = bannedBy;
     if (period == 0) {
       banEnd = TimeKeeper::getSunExplodeTime();
     } else {
@@ -48,6 +50,8 @@ struct BanInfo
 
   in_addr	addr;
   TimeKeeper	banEnd;
+  std::string	bannedBy;	// Who did perform the ban
+  std::string	reason;		// reason for banning
 };
 
 /* FIXME the AccessControlList assumes that 255 is a wildcard. it "should"
@@ -57,8 +61,9 @@ struct BanInfo
 class AccessControlList
 {
 public:
-  void ban(in_addr &ipAddr, int period = 0) {
-    BanInfo toban(ipAddr, period);
+  void ban(in_addr &ipAddr, const char *bannedBy, int period = 0, const char *reason=NULL ) {
+    BanInfo toban(ipAddr, bannedBy, period);
+    if( reason ) toban.reason = reason;
     banList_t::iterator oldit = std::find(banList.begin(), banList.end(), toban);
     if (oldit != banList.end()) // IP already in list? -> replace
       *oldit = toban;
@@ -66,11 +71,11 @@ public:
       banList.push_back(toban);
   }
 
-  bool ban(std::string &ipList, int period = 0) {
-    return ban(ipList.c_str(), period);
+  bool ban(std::string &ipList, const char *bannedBy=NULL, int period = 0, const char *reason=NULL) {
+    return ban(ipList.c_str(), bannedBy, period, reason);
   }
 
-  bool ban(const char *ipList, int period = 0) {
+  bool ban(const char *ipList, const char *bannedBy=NULL, int period = 0, const char *reason=NULL) {
     char *buf = strdup(ipList);
     char *pStart = buf;
     char *pSep;
@@ -80,14 +85,14 @@ public:
     while ((pSep = strchr(pStart, ',')) != NULL) {
       *pSep = 0;
       if (convert(pStart, mask)) {
-	ban(mask, period);
+	ban(mask, bannedBy, period);
 	added = true;
       }
       *pSep = ',';
       pStart = pSep + 1;
     }
     if (convert(pStart, mask)) {
-      ban(mask, period);
+      ban(mask,bannedBy,period,reason);
       added = true;
     }
     free(buf);
@@ -180,8 +185,17 @@ public:
       double duration = it->banEnd - TimeKeeper::getCurrent();
       if (duration < 365.0f * 24 * 3600)
 	sprintf(pMsg + strlen(pMsg)," (%.1f minutes)", duration / 60);
+      if( it->bannedBy.length() )
+	sprintf(pMsg + strlen(pMsg), " banned by: %s", it->bannedBy.c_str());
 
       sendMessage(ServerPlayer, id, banlistmessage, true);
+
+      // add reason, if any
+      if( it->reason.size() ) { 
+	char *pMsg = banlistmessage;
+	sprintf(pMsg, "   reason: %s", it->reason.c_str() );
+	sendMessage(ServerPlayer, id, banlistmessage, true );
+      }
     }
   }
 
