@@ -5216,7 +5216,7 @@ static bool		enterServer(ServerLink* serverLink, World* world,
 	break;
       }
       case MsgUDPLinkRequest:
-	printError("*** Received UDP Link Granted");
+	printError("*** Received UDP Link Request");
 	// internally
 	break;
       case MsgSetVar: {
