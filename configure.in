@@ -167,6 +167,7 @@ AC_CHECK_HEADERS( \
 	X11/Xlib.h \
 	bstring.h \
 	linux/input.h \
+	stdint.h \
 	sys/param.h \
 	unistd.h \
 	values.h \
