@@ -19,9 +19,8 @@
 // system headers
 #include <vector>
 #include <string>
-#if defined(USE_THREADS) && defined(HAVE_SDL)
-#include "SDL.h"
-#include "SDL_thread.h"
+#if defined(USE_THREADS)
+#include <pthread.h>
 #endif
 
 // common interface headers
@@ -76,7 +75,7 @@ public:
     void           close();
     static void    clean();
     void           handleTcpPacket(fd_set *set);
-#if defined(USE_THREADS) && defined(HAVE_SDL)
+#if defined(USE_THREADS)
     void           handleTcpPacketT();
 #endif
     static void    passTCPMutex();
@@ -104,9 +103,9 @@ public:
     int               playerIndex;
     bool              closed;
     tcpCallback       clientCallback;
-#if defined(USE_THREADS) && defined(HAVE_SDL)
-    SDL_Thread        *thread;
-    static SDL_mutex  *mutex;
+#if defined(USE_THREADS)
+    pthread_t         thread;
+    static pthread_mutex_t mutex;
 #endif
     int               refCount;
   };
@@ -131,12 +130,27 @@ inline GameKeeper::Player *GameKeeper::Player::getPlayerByIndex(int
   return playerList[_playerIndex];
 }
 
-#if defined(USE_THREADS) && defined(HAVE_SDL)
+#if defined(USE_THREADS)
 inline void GameKeeper::Player::handleTcpPacket(fd_set *) {;};
-#else
-inline void GameKeeper::Player::passTCPMutex() {;};
-inline void GameKeeper::Player::freeTCPMutex() {;};
 #endif
+
+inline void GameKeeper::Player::passTCPMutex()
+{
+#if defined(USE_THREADS)
+  int result = pthread_mutex_lock(&mutex);
+  if (result)
+    std::cerr << "Could not lock mutex" << std::endl;
+#endif
+}
+
+inline void GameKeeper::Player::freeTCPMutex()
+{
+#if defined(USE_THREADS)
+  int result = pthread_mutex_unlock(&mutex);
+  if (result)
+    std::cerr << "Could not unlock mutex" << std::endl;
+#endif
+}
 
 #endif
 

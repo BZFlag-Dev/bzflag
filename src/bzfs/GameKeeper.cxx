@@ -22,13 +22,13 @@ extern PlayerState      lastState[PlayerSlot];
 
 GameKeeper::Player *GameKeeper::Player::playerList[PlayerSlot] = {NULL};
 
-#if defined(USE_THREADS) && defined(HAVE_SDL)
-SDL_mutex *GameKeeper::Player::mutex = SDL_CreateMutex();
+#if defined(USE_THREADS)
+pthread_mutex_t GameKeeper::Player::mutex = PTHREAD_MUTEX_INITIALIZER;
 
-static int tcpRx(void* arg) {
+static void *tcpRx(void* arg) {
   GameKeeper::Player *playerData = (GameKeeper::Player *)arg;
   playerData->handleTcpPacketT();
-  return 0;
+  return NULL;
 }
 #endif
 
@@ -43,8 +43,10 @@ GameKeeper::Player::Player(int _playerIndex,
 
   lastState->order = 0;
   netHandler       = new NetHandler(&player, clientAddr, playerIndex, fd);
-#if defined(USE_THREADS) && defined(HAVE_SDL)
-  thread           = SDL_CreateThread(tcpRx, (void *)this);
+#if defined(USE_THREADS)
+  int result = pthread_create(&thread, NULL, tcpRx, (void *)this);
+  if (result)
+    std::cerr << "Could not create thread" << std::endl;
 #endif
   refCount         = 1;
 }
@@ -53,8 +55,10 @@ GameKeeper::Player::~Player()
 {
   flagHistory.clear();
   delete netHandler;
-#if defined(USE_THREADS) && defined(HAVE_SDL)
-  SDL_WaitThread(thread, NULL);
+#if defined(USE_THREADS)
+  int result = pthread_join(thread, NULL);
+  if (result)
+    std::cerr << "Could not join thread" << std::endl;
 #endif
 
   playerList[playerIndex] = NULL;
@@ -252,32 +256,18 @@ int GameKeeper::Player::getFreeIndex(int min, int max)
   return max;
 }
 
-#if defined(USE_THREADS) && defined(HAVE_SDL)
+#if defined(USE_THREADS)
 void GameKeeper::Player::handleTcpPacketT()
 {
   while (!closed) {
     const RxStatus e = netHandler->tcpReceive();
     if (e == ReadPart)
       continue;
-    if (SDL_mutexP(mutex) == -1)
-      std::cerr << "Could not lock mutex" << std::endl;
+    passTCPMutex();
     clientCallback(*netHandler, playerIndex, e);
-    if (SDL_mutexV(mutex) == -1)
-      std::cerr << "Could not unlock mutex" << std::endl;
+    freeTCPMutex();
   }
   refCount = 0;
-}
-
-void GameKeeper::Player::passTCPMutex()
-{
-  if (SDL_mutexP(mutex) == -1)
-    std::cerr << "Could not lock mutex" << std::endl;
-}
-
-void GameKeeper::Player::freeTCPMutex()
-{
-  if (SDL_mutexV(mutex) == -1)
-    std::cerr << "Could not unlock mutex" << std::endl;
 }
 #else
 void GameKeeper::Player::handleTcpPacket(fd_set *set)
