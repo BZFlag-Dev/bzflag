@@ -467,19 +467,6 @@ static void		parse(int argc, char** argv,
 		ServerVersion[4],
 		atoi(ServerVersion + 5),
 		ServerVersion[7]);
-#if 0
-      cout << "BZFlag client, version " <<
-		(VERSION / 10000000) % 100 << "." <<
-		(VERSION / 100000) % 100 <<
-		(char)('a' - 1 + (VERSION / 1000) % 100) <<
-		<< VERSION % 1000 <<
-		endl;
-
-      cout << "  protocol " << ServerVersion[4] << ".";
-      if (ServerVersion[5] != '0') cout << ServerVersion[5];
-      cout << ServerVersion[6] << (char)tolower(ServerVersion[7]) << endl;
-#endif
-
       exit(0);
     }
     else if (strcmp(argv[i], "-window") == 0) {
@@ -969,19 +956,21 @@ int			main(int argc, char** argv)
 				(ys != '-' && ys != '+'))) {
       db.removeValue("geometry");
     }
-    /*else*/ {
-      setSize = True;
-      if (w < 256) w = 256;
-      if (h < 192) h = 192;
-      if (count == 6) {
-	if (xs == '-') x = display->getWidth() - x - w;
-	if (ys == '-') y = display->getHeight() - y - h;
-	setPosition = True;
-      }
+    setSize = True;
+    if (w < 256)
+      w = 256;
+    if (h < 192)
+      h = 192;
+    if (count == 6) {
+      if (xs == '-')
+	x = display->getWidth() - x - w;
+      if (ys == '-')
+	y = display->getHeight() - y - h;
+      setPosition = True;
+    }
 
       // must call this before setFullscreen() is called
       display->setPassthroughSize(w, h);
-    }
   }
 
   // set window size (we do it here because the OpenGL context isn't yet
