@@ -13,10 +13,12 @@ THESE ARE LOWER PRIORITY
   - add option for public-servers to not use global logins? or only
     use global logins (no /register)?
 
-* bzbb login names are used for global authentication. This can cause problems
-  if a user changes his name there (which is possible) and another user takes
-  up the old name. Internal bzbb IDs are unique, though, maybe somehow move
-  to those. The implications are not quite clear yet.
+* bzbb login names are used for global authentication. If the user changes
+  bzbb login names (which is possible), this can cause problems Another user
+  can take up the old name and get that user's permissions. Internal bzbb IDs
+  are unique, though, maybe somehow move to those. This would fix some issues
+  and create others. All the implications are not quite clear yet. Best
+  practice at the moment: Don't change your bzbb login name.
 
 * fix the misalignment between the selected server and the one that
   is joined when the Server List Cache is enabled.
