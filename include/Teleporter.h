@@ -32,6 +32,9 @@ class Teleporter : public Obstacle {
 			~Teleporter();
 
     Obstacle*	copyWithTransform(const MeshTransform&) const;
+    
+    void		setName(const std::string& name);
+    const std::string&	getName() const;
 
     const char*	getType() const;
     static const char*	getClassName(); // const
@@ -87,6 +90,8 @@ class Teleporter : public Obstacle {
   private:
     static const char*	typeName;
 
+    std::string name;
+
     float border;
     bool horizontal;
     float origSize[3];
@@ -122,6 +127,17 @@ inline const MeshFace* Teleporter::getBackLink() const
 inline const MeshFace* Teleporter::getFrontLink() const
 {
   return frontLink;
+}
+
+inline const std::string& Teleporter::getName() const
+{
+  return name;
+}
+
+inline void Teleporter::setName(const std::string& _name)
+{
+  name = _name;
+  return;
 }
 
 

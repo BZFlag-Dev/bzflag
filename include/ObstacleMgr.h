@@ -95,8 +95,7 @@ class GroupDefinition {
     void clear(); // delete the list and the obstacles
     void tighten(); // reduce memory usage
     void makeGroups(const MeshTransform& xform,
-		    const ObstacleModifier& obsMod,
-		    GroupDefinition* world) const;
+		    const ObstacleModifier& obsMod) const;
     void replaceBasesWithBoxes();
 
     enum ObstacleTypes {
@@ -122,6 +121,9 @@ class GroupDefinition {
     void *unpack(void*);
 
     void print(std::ostream& out, const std::string& indent) const;
+    
+  public:
+    static void clearDepthName();
 
   private:
     Obstacle* newObstacle(int type);
@@ -133,6 +135,9 @@ class GroupDefinition {
     std::vector<GroupInstance*>		groups;
 
     mutable bool active; // for recursion checking
+
+  private:
+    static std::string depthName;
 };
 
 inline const std::string& GroupDefinition::getName() const

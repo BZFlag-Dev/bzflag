@@ -50,6 +50,9 @@ void CustomGate::writeToGroupDef(GroupDefinition *groupdef) const
     new Teleporter(pos, rotation,
 		   fabsf(size[0]), fabsf(size[1]), fabsf(size[2]),
 		   border, horizontal, driveThrough, shootThrough);
+
+  tele->setName(name);
+  
   groupdef->addObstacle(tele);
 }
 

@@ -215,6 +215,9 @@ void GroupInstance::print(std::ostream& out, const std::string& indent) const
 // - defines an obstacle group
 //
 
+std::string GroupDefinition::depthName;
+
+
 GroupDefinition::GroupDefinition(const std::string& _name)
 {
   name = _name;
@@ -325,8 +328,7 @@ static MeshObstacle* getContainedMesh(int type, Obstacle* obs)
 
 
 void GroupDefinition::makeGroups(const MeshTransform& xform,
-				 const ObstacleModifier& obsMod,
-				 GroupDefinition* world ) const
+				 const ObstacleModifier& obsMod) const
 {
   if (active) {
     DEBUG1("warning: avoided recursion, groupdef \"%s\"\n", name.c_str());
@@ -335,21 +337,23 @@ void GroupDefinition::makeGroups(const MeshTransform& xform,
 
   active = true;
 
-  for (int type = 0; type < ObstacleTypeCount; type++) {
-    const ObstacleList& list = lists[type];
-    for (unsigned int i = 0; i < list.size(); i++) {
-      Obstacle* obs = list[i]->copyWithTransform(xform);
-      if (obs->isValid()) {
-        obs->setSource(Obstacle::GroupDefSource);
-        obsMod.execute(obs);
-        world->addObstacle(obs);
-        // generate contained meshes
-        MeshObstacle* mesh = getContainedMesh(type, obs);
-        if ((mesh != NULL) && mesh->isValid()) {
-          mesh->setSource(Obstacle::GroupDefSource |
-                          Obstacle::ContainerSource);
-          obsMod.execute(mesh);
-          world->addObstacle(mesh);
+  if (this != OBSTACLEMGR.getWorld()) {
+    for (int type = 0; type < ObstacleTypeCount; type++) {
+      const ObstacleList& list = lists[type];
+      for (unsigned int i = 0; i < list.size(); i++) {
+        Obstacle* obs = list[i]->copyWithTransform(xform);
+        if (obs->isValid()) {
+          obs->setSource(Obstacle::GroupDefSource);
+          obsMod.execute(obs);
+          OBSTACLEMGR.addWorldObstacle(obs);
+          // generate contained meshes
+          MeshObstacle* mesh = getContainedMesh(type, obs);
+          if ((mesh != NULL) && mesh->isValid()) {
+            mesh->setSource(Obstacle::GroupDefSource |
+                            Obstacle::ContainerSource);
+            obsMod.execute(mesh);
+            OBSTACLEMGR.addWorldObstacle(mesh);
+          }
         }
       }
     }
@@ -363,7 +367,7 @@ void GroupDefinition::makeGroups(const MeshTransform& xform,
       ObstacleModifier newObsMod(obsMod, *group);
       MeshTransform tmpXform = xform;
       tmpXform.prepend(group->getTransform());
-      groupDef->makeGroups(tmpXform, newObsMod, world);
+      groupDef->makeGroups(tmpXform, newObsMod);
     } else {
       DEBUG1("warning: group definition \"%s\" is missing\n",
              group->getGroupDef().c_str());
@@ -545,6 +549,13 @@ void GroupDefinition::print(std::ostream& out,
 }
 
 
+void GroupDefinition::clearDepthName()
+{
+  depthName = "";
+  return;
+}
+
+
 //////////////////////////////////////////////////////////////////////////////
 //
 // Group Definition Manager
@@ -589,33 +600,13 @@ void GroupDefinitionMgr::tighten()
 
 void GroupDefinitionMgr::makeWorld()
 {
-  for (int type = 0; type < GroupDefinition::ObstacleTypeCount; type++) {
-    const ObstacleList& list = world.getList(type);
-    for (unsigned int i = 0; i < list.size(); i++) {
-      Obstacle* obs = list[i];
-      MeshObstacle* mesh = getContainedMesh(type, obs);
-      if (mesh != NULL) {
-	mesh->setSource(Obstacle::ContainerSource);
-	world.addObstacle(mesh);
-      }
-    }
-  }
+  GroupDefinition::clearDepthName();
 
-  const std::vector<GroupInstance*>& groups = world.getGroups();
-  for (unsigned int i = 0; i < groups.size(); i++) {
-    const GroupInstance* group = groups[i];
-    const GroupDefinition* groupDef =
-      OBSTACLEMGR.findGroupDef(group->getGroupDef());
-    if (groupDef != NULL) {
-      ObstacleModifier noMods;
-      ObstacleModifier newObsMod(noMods, *group);
-      groupDef->makeGroups(group->getTransform(), newObsMod, &world);
-    } else {
-      DEBUG1("warning: group definition \"%s\" is missing\n",
-             group->getGroupDef().c_str());
-    }
-  }
-
+  MeshTransform noXform;
+  ObstacleModifier noMods;
+  
+  world.makeGroups(noXform, noMods);
+  
   return;
 }
 

@@ -13,6 +13,9 @@
 /* interface header */
 #include "WorldInfo.h"
 
+/* system headers */
+#include <ctype.h>
+
 /* common implementation headers */
 #include "global.h"
 #include "Pack.h"
@@ -80,6 +83,65 @@ void WorldInfo::addLink(int from, int to)
     setTeleporterTarget (from, to);
   }
 }
+
+
+int WorldInfo::findTeleFaceByName(const std::string& name)
+{
+  if ((name == "random") || (name == "-1")) {
+    return -1;
+  }
+  
+  if ((name[0] >= '0') && (name[0] <= '9')) {
+    // old-style numeric value
+    return atoi(name.c_str());
+  }
+
+  if ((name.size() < 3) || (name[name.size() - 2] != ':')) {
+    return -2;
+  }
+
+  char lastChar = tolower(name[name.size() - 1]);
+  int face;
+  if (lastChar == 'f') {
+    face = 0;
+  } else if (lastChar == 'b') {
+    face = 1;
+  } else {
+    return -2;
+  }
+    
+  std::string shortName = name;
+  shortName.resize(shortName.size() - 2);
+  const ObstacleList& teles = OBSTACLEMGR.getTeles();
+  for (unsigned int i = 0; i < teles.size(); i++) {
+    const Teleporter* tele = (const Teleporter*) teles[i];
+    if (shortName == tele->getName()) {
+      return ((int)(i * 2) + face);
+    }
+  }
+
+  return -2;
+}
+
+void WorldInfo::addLink(const std::string& from, const std::string& to)
+{
+  int fromFace, toFace;
+  fromFace = findTeleFaceByName(from);
+  toFace = findTeleFaceByName(to);
+  // discard links to/from teleporters that don't exist
+  // note that -1 "to" means the client picks one at random
+  const ObstacleList& teles = OBSTACLEMGR.getTeles();
+  if ((unsigned(fromFace) >= (teles.size() * 2)) ||
+     ((unsigned(toFace) >= (teles.size() * 2)) && (toFace != -1))) {
+    DEBUG1("Warning: bad teleporter link dropped:  "
+           "from = \"%s\", to = \"%s\"\n", from.c_str(), to.c_str());
+  } else {
+    setTeleporterTarget (fromFace, toFace);
+    DEBUG4("linking %i to %i  (%i,%i  to  %i,%i)\n", fromFace, toFace,
+           (fromFace / 2), (fromFace % 2), (toFace / 2), (toFace % 2));
+  }
+}
+
 
 void WorldInfo::addZone(const CustomZone *zone)
 {

@@ -20,6 +20,7 @@
 
 /* system interface headers */
 #include <iostream>
+#include <string>
 
 /* local interface headers */
 #include "WorldInfo.h"
@@ -33,8 +34,8 @@ class CustomLink : public WorldFileObject {
     virtual bool usesGroupDef() { return false; }
 
   protected:
-    int from;
-    int to;
+    std::string from;
+    std::string to;
 };
 
 #endif  /* __CUSTOMLINK_H__ */

@@ -69,6 +69,7 @@ public:
 
   void addWall(float x, float y, float z, float r, float w, float h);
   void addLink(int from, int to);
+  void addLink(const std::string& from, const std::string& to);
 
   void addZone(const CustomZone *zone);
   void addEntryZone( QualifierList &qualifiers, WorldFileLocation *zone );
@@ -108,6 +109,7 @@ private:
   void loadCollisionManager();
   InBuildingType classifyHit (const Obstacle* obstacle) const;
   void makeWaterMaterial();
+  int findTeleFaceByName(const std::string& name);
 
 public:
 

@@ -108,7 +108,7 @@ bool CustomArc::read(const char *cmd, std::istream& input)
       return false;
     }
     phydrv = PHYDRVMGR.findDriver(drvname);
-    if (phydrv == -1) {
+    if ((phydrv == -1) && (drvname != "-1")) {
       std::cout << "couldn't find PhysicsDriver: " << drvname << std::endl;
     }
   }
