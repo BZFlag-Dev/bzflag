@@ -13,9 +13,9 @@ bzfs \- BZFlag game server
 [\fB\-banfile \fIfilename\fR]
 [\fB\-c [numteamflags]\fR]
 [\fB\-conf \fIconfigfile\fR]
-[\fB\-cr \fR[\fIdensity\fR]]
+[\fB\-cr \fR[\fIdensity\fR]
 [\fB\-d\fR]
-[\fB\+f \fR{\fIgood\fR|\fIbad\fR|\fIflag-id\fR}[\fI{count}\fR]]
+[\fB\+f \fR{\fIgood\fR|\fIbad\fR|\fIflag-id\fR}[\fI{count}\fR]
 [\fB\-f \fR{\fIgood\fR|\fIbad\fR|\fIflag-id\fR}]
 [\fB\-fb\fR]
 [\fB\-filterCallsigns\fR]
@@ -40,11 +40,11 @@ bzfs \- BZFlag game server
 [\fB\-passwd \fIpassword\fR]
 [\fB\-printscore\fR]
 [\fB\-public \fIdescription\fR]
-[\fB\-publicaddr \fIaddress\fR[\fI:port\fR]]
+[\fB\-publicaddr \fIaddress\fR[\fI:port\fR]
 [\fB\-publiclist \fIurl\fR]
 [\fB\-q\fR]
 [\fB\+r\fR]
-[\fB\-rabbit [\fBscore\fR|\fBkiller\fR|\fBrandom\fR]]
+[\fB\-rabbit [\fBscore\fR|\fBkiller\fR|\fBrandom\fR]
 [\fB\-reportfile \fIfilename\fR]
 [\fB\-reportpipe \fIcommand\fR]
 [\fB\-requireudp\fR]
@@ -124,7 +124,7 @@ style is used.
 Specifies the name of a configuration file to be used to set all of the
 bzfs options, rather than setting them on the command line.
 .TP
-.B -cr
+.B -cr \fR[\fIdensity\fR]
 Enables the capture-the-flag style game with random map.  You can
 optionally specify a building density by providing an number (default
 is 5).  By default, the free-for-all style is used.
