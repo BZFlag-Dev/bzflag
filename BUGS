@@ -13,8 +13,6 @@ recent bugs
 
 - /poll kick sometimes(?) crashes the server
 
-- /poll set doesn't work, even though it claims to
-
 - Windows VC71 client crashes sometimes if you leave it paused for a while
   with no useful trace information (looks like a double free maybe).
 
