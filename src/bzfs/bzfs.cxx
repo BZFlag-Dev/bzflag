@@ -3634,7 +3634,7 @@ static void shutdownAcceptClient(int playerIndex)
   while ((playerIndex >= 0)
       && (playerIndex+1 == curMaxPlayers)
       && (player[playerIndex].state == PlayerNoExist)
-      && (player[playerIndex].fd = NotConnected))
+      && (player[playerIndex].fd == NotConnected))
   {
      playerIndex--;
      curMaxPlayers--;
@@ -4111,7 +4111,7 @@ static void removePlayer(int playerIndex)
     while ((playerIndex >= 0)
 	&& (playerIndex+1 == curMaxPlayers)
 	&& (player[playerIndex].state == PlayerNoExist)
-        && (player[playerIndex].fd = NotConnected))
+        && (player[playerIndex].fd == NotConnected))
     {
 	playerIndex--;
 	curMaxPlayers--;
@@ -4174,7 +4174,7 @@ static void removePlayer(int playerIndex)
   while ((playerIndex >= 0)
       && (playerIndex+1 == curMaxPlayers)
       && (player[playerIndex].state == PlayerNoExist)
-      && (player[playerIndex].fd = NotConnected))
+      && (player[playerIndex].fd == NotConnected))
   {
      playerIndex--;
      curMaxPlayers--;
