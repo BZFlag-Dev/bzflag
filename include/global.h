@@ -210,23 +210,6 @@ enum FlagId {
 			WideAngleFlag,		// fish eye view (sounds good
 						// but isn't)
 
-			// the rest are not yet implemented
-			MagnetFlag,		// draws shots toward you
-			KamikaziFlag,		// self destruct big time
-			HeatSeekerFlag,		// aims at strongest heat source
-			DeathFlag,		// die the instant you grab it
-			PossessionFlag,		// control another tank's motion
-			ThiefFlag,		// can steal another's flag
-
-Kamikazi,	// large destruct radius when dropped
-Suicide,	// high speed, fast shots, die at first kill
-ECM,		// disable radars of nearby tanks (not teammates)
-InterdimensionalTeleport,	// teleport (to random teleporter) when dropped
-SmartBomb,	// drop, gets to apex, large radius of destruction
-		// (including player who dropped it)
-TurboBoost,	// quick burst of acceleration
-
-
 			// special flags for size of team and super-flag sets
 			FirstFlag = RedFlag,
 			LastFlag = WideAngleFlag,
@@ -261,7 +244,6 @@ const float		ObeseFactor =	2.5f;		// 250% normal size
 const float		WideAngleAng =	M_PI / 1.8f;	// 100 degree fov
 const float		MomentumLinAcc=	1.0f;		//
 const float		MomentumAngAcc=	1.0f;		//
-const float		MagnetPower =	0.0f;		// off
 
 #endif // BZF_GLOBAL_H
 // ex: shiftwidth=2 tabstop=8
