@@ -22,46 +22,6 @@
 MessageQueue	messageHistory;
 unsigned int	messageHistoryIndex = 0;
 
-// try to select the next recipient in the specified direction
-// eventually avoiding robots
-void selectNextRecipient (bool forward, bool robotIn)
-{
-  LocalPlayer *myTank = LocalPlayer::getMyTank();
-  const Player *recipient = myTank->getRecipient();
-  int rindex;
-  if (!recipient) {
-    rindex = - 1;
-    forward = true;
-  } else {
-    const PlayerId id = recipient->getId();
-    rindex = lookupPlayerIndex(id);
-  }
-  int i = rindex;
-  while (true) {
-    if (forward) {
-      i++;
-      if (i == curMaxPlayers)
-	// if no old rec id we have just ended our search
-	if (recipient == NULL)
-	  break;
-	else
-	  // wrap around
-	  i = 0;
-    } else {
-      if (i == 0)
-	// wrap around
-	i = curMaxPlayers;
-      i--;
-    }
-    if (i == rindex)
-      break;
-    if (player[i] && (robotIn || player[i]->getPlayerType() == TankPlayer)) {
-      myTank->setRecipient(player[i]);
-      break;
-    }
-  }
-}
-
 void printout(const std::string& name, void*)
 {
   std::cout << name << " = " << BZDB.get(name) << std::endl;

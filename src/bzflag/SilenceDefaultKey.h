@@ -10,22 +10,18 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifndef __COMPOSEDEFAULTKEY_H__
-#define __COMPOSEDEFAULTKEY_H__
 
-#include <deque>
+#ifndef __SILENCEDEFAULTKEY_H__
+#define __SILENCEDEFAULTKEY_H__
+
 #include "HUDui.h"
 
-typedef std::deque<std::string> MessageQueue;
 
-extern MessageQueue messageHistory;
-extern unsigned int	messageHistoryIndex;
-
-class ComposeDefaultKey : public HUDuiDefaultKey {
+class SilenceDefaultKey : public HUDuiDefaultKey {
 public:
+  SilenceDefaultKey();
   bool		keyPress(const BzfKeyEvent&);
   bool		keyRelease(const BzfKeyEvent&);
 };
-
 
 #endif

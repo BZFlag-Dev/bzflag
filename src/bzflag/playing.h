@@ -80,6 +80,7 @@ void			updateEvents();
 void			addMessage(const Player* player, const std::string& msg,
 				   bool highlight=false, const char* oldColor=NULL);
 
+void selectNextRecipient (bool forward, bool robotIn);
 
 extern HUDRenderer	*hud;
 extern char		messageMessage[PlayerIdPLen + MessageLen];
