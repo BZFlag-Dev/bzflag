@@ -41,6 +41,7 @@ class Player {
     const char*		getCallSign() const;
     const char*		getEmailAddress() const;
     FlagDesc*		getFlag() const;
+    long		getOrder() const;
     short		getStatus() const;
     const float*	getPosition() const;
     float		getAngle() const;
@@ -206,6 +207,11 @@ inline const char*	Player::getEmailAddress() const
 inline FlagDesc*	Player::getFlag() const
 {
   return flag;
+}
+
+inline long		Player::getOrder() const
+{
+  return state.order;
 }
 
 inline short		Player::getStatus() const
