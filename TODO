@@ -13,6 +13,10 @@ THESE SHOULD HAPPEN BEFORE THE NEXT RELEASE:
 
 THESE ARE LOWER PRIORITY
 
+* move to perl/php based bzfls http://bzflag.org/wiki/DbServers and add
+  - player/password registration
+  - open group registration. one nick is master for each group
+
 * remove UDP client setting. code should figure that out now.
 
 * Try to build bzadmin on Win32 using PDCurses (it works with the X11
