@@ -25,7 +25,9 @@
 
 /* public: */
 
-VotingBooth::VotingBooth(void)
+VotingBooth::VotingBooth(std::string question) 
+  : _question(question),
+    _responsesAdded(0)
 {
   return;
 }
@@ -35,25 +37,43 @@ VotingBooth::~VotingBooth(void)
   return;
 }
 
-vote_t VotingBooth::addOption(std::string option)
+vote_t VotingBooth::addResponse(const std::string response)
 {
-  vote_t id;
+  /* make sure there is enough room for the new response */
+  if (_responsesAdded + 1 >= MAX_VOTE_RESPONSES) {
+    return -1;
+  }
 
-  return id;
+  for (vote_t i=0; i < _responsesAdded; i++) {
+    if (this->compare_nocase(_response[i], response, _response[i].size()) == 0) {
+      return i;
+    }
+  }
+  _response[_responsesAdded] = response;
+
+  _responsesAdded++;
+
+  return _responsesAdded - 1;
 }
 
-vote_t VotingBooth::getOptionIDFromString(std::string name)
+vote_t VotingBooth::getResponseIDFromString(const std::string response) const
 {
-  vote_t id;
+  for (vote_t id = 0; id < _responsesAdded; id++) {
+    if (VotingBooth::compare_nocase(_response[id], response, _response[id].size()) == 0) {
+      return id;
+    }
+  }
 
-  return id;
+  return -1;
 }
 
-std::string VotingBooth::getStringFromOptionID(vote_t id)
+const std::string *VotingBooth::getStringFromResponseID(vote_t id) const
 {
-  std::string option;
+  if ((id >= 0) && (id < _responsesAdded)) {
+    return &_response[id];
+  }
 
-  return option;
+  return (std::string *) NULL;
 }
 
 bool VotingBooth::vote(std::string name, vote_t id)
@@ -75,18 +95,18 @@ int main (int argc, char *argv[])
   poll.vote("blah3", 1);
   poll.vote("blah1", 2);
   poll.vote("blah2", 3);
-  vote_t newOption = poll.addOption("maybe");
-  std::cout << "new option maybe has id: " << newOption << std::endl;
+  vote_t newResponse = poll.addResponse("maybe");
+  std::cout << "new response maybe has id: " << newResponse << std::endl;
   poll.vote("blah", 2);
   poll.vote("blah", 3);
 
-  std::cout << "optionID for no is " << getOptionIDFromString("no") << std::endl;
-  std::cout << "optionID for yes is " << getOptionIDFromString("yes") << std::endl;
-  std::cout << "optionID for maybe is " << getOptionIDFromString("maybe") << std::endl;
+  std::cout << "responseID for no is " << poll.getResponseIDFromString("no") << std::endl;
+  std::cout << "responseID for yes is " << poll.getResponseIDFromString("yes") << std::endl;
+  std::cout << "responseID for maybe is " << poll.getResponseIDFromString("maybe") << std::endl;
   
-  std::string *option;
+  std::string *response;
   for (int i=0; i < 9; i++) {
-    std::cout << "option " << i << " is " << poll.getStringFromOptionID(i) << std::endl;    
+    std::cout << "response " << i << " is " << poll.getStringFromResponseID(i) << std::endl;    
   }
 
   return 0;

@@ -13,9 +13,8 @@
 #ifndef __VOTINGBOOTH_H__
 #define __VOTINGBOOTH_H__
 
+#include <ctype.h>
 #include <string>
-#include <vector>
-#include <set>
 
 // work around an ugly STL bug in BeOS
 // FIXME someone test whether it is still needed
@@ -27,14 +26,13 @@
 #undef private
 #endif
 
-#include <fstream>
 #include <iostream>
 
-/* vote 0 is no; vote 1 is yes; */
-typedef unsigned short int vote_t;
+/* positive vote is an index; non-positive is an error */
+typedef long int vote_t;
 
-/* max number of potential poll options */
-static const unsigned short int MAX_VOTE_ANSWERS=255;
+/* max number of potential poll responses */
+static const unsigned short int MAX_VOTE_RESPONSES=32;
 
 /** VotingBooth is a means to create and track a vote.  A single booth
  * will track and allow voting on a poll.
@@ -50,37 +48,66 @@ class VotingBooth
    */
   std::string _question;
 
-  /** array of potential poll responses; first two entries are "no" and
-   * "yes" respectively; additionally added options follow.
+  /** array of potential poll responses
    */
-  std::string _option[MAX_VOTE_ANSWERS];
+  std::string _response[MAX_VOTE_RESPONSES];
 
-  /** how many options have been manually added
+  /** how many responses have been manually added
    */
-  unsigned short int _optionsAdded;
+  unsigned short int _responsesAdded;
 
  protected:
+
+  /* strait from stroustrup; with added  */
+  inline static int compare_nocase(const std::string& s1, const std::string &s2, int maxlength=4096)
+  {
+    std::string::const_iterator p1 = s1.begin();
+    std::string::const_iterator p2 = s2.begin();
+    int i=0;
+    while (p1 != s1.end() && p2 != s2.end()) {
+      if (i >= maxlength) {
+	return 0;
+      }
+      if (tolower(*p1) != tolower(*p2)) {
+	return (tolower(*p1) < tolower(*p2)) ? -1 : 1;
+      }
+      ++p1;
+      ++p2;
+      ++i;
+    }
+    return (s2.size() == s1.size()) ? 0 : (s1.size() < s2.size()) ? -1 : 1; // size is unsigned
+  }
   
  public:
   
-  VotingBooth(void);
+  VotingBooth(std::string question = "");
   ~VotingBooth(void);
 
-  /** add an option to vote upon
+  /** add an response to vote upon
    */
-  vote_t addOption(std::string option);
+  vote_t addResponse(const std::string response);
 
-  /** lookup the id of a vote option
+  /** lookup the id of a vote response
    */
-  vote_t getOptionIDFromString(std::string name);
-  std::string getStringFromOptionID(vote_t id);
+  vote_t getResponseIDFromString(const std::string name) const;
+  const std::string *getStringFromResponseID(vote_t id) const;
 
   /** a given user id/name responds and votes to a particular poll
-   * option.
+   * response.
    */
-  bool vote(std::string name, vote_t id);
+  bool vote(const std::string name, vote_t id);
 };
 
+
+VotingBooth *getYesNoVotingBooth(std::string question)
+{
+  VotingBooth *poll = new VotingBooth(question);
+
+  poll->addResponse("yes");
+  poll->addResponse("no");
+
+  return poll;
+}
 
 #else
 class VotingBooth;
