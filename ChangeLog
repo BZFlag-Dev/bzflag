@@ -30,9 +30,9 @@ BZFlag 1.12.0  (was 1.11.x)
 * Add generic URL retreval class - Jeff Myers, Alfredo Tupone
 * Windows Multimedia and DirectInput joystick support - Daniel Remenak
 * bzfs can now announce to multiple public list servers - Sean Morrison
-* shared server bans via a master list - Jeff Myersm Alfredo Tupone, Daniel Remenak, Sean Morrison, Bryan Jennings
+* shared server bans via a master list - Jeff Myers, Alfredo Tupone, Daniel Remenak, Sean Morrison, Bryan Jennings
 * Linux event device joystick and force feedback support - Micah Dowty
-* Inform banned users of reason, originator, source on login, ban originator - Jeff Myers
+* Inform banned users of reason, originator, and source on login - Jeff Myers
 * Added the SHORTBAN bzfs priviledge - Anonymous, Daniel Leeds
 * Added /date and /time to request server date and time - Ian Agar
 * Added arc, cone, and sphere map objects - Anonymous
@@ -64,7 +64,7 @@ BZFlag 1.12.0  (was 1.11.x)
 * Shot accuracy statistics dialog - Daniel Remenak
 * Faster zbuffer graphics using octree and dynamic occluders - Anonymous
 * Faster startup times by making the SceneDatabase on the fly - Anonymous
-* Auto-completion for commands & callsigns (like in bzadmin) - Ian Agar, Frank Thilo
+* Auto-completion for commands & callsigns (ala bzadmin) - Ian Agar, Frank Thilo
 * /clientquery can now be requested on single individuals - Ian Agar
 * Added support for irc-like /me actions and /msg messages - Sean Morrison
 * Seer flag now can see Invisible Bullets - Anonymous
