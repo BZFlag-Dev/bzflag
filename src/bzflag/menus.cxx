@@ -4309,10 +4309,14 @@ class JoinMenu : public HUDDialog {
   private:
     float		center;
     HUDuiTypeIn*	callsign;
+    HUDuiTypeIn*	email;
     HUDuiList*		team;
     HUDuiTypeIn*	server;
     HUDuiTypeIn*	port;
     HUDuiLabel*		status;
+    HUDuiLabel*		startServer;
+    HUDuiLabel*		findServer;
+    HUDuiLabel*		connectLabel;
     HUDuiLabel*		failedMessage;
     ErrorCallback	oldErrorCallback;
     ServerStartMenu*	serverStartMenu;
@@ -4334,12 +4338,12 @@ JoinMenu::JoinMenu() : oldErrorCallback(NULL),
   label->setString("Join Game");
   list.push_back(label);
 
-  HUDuiLabel* findServer = new HUDuiLabel;
+  findServer = new HUDuiLabel;
   findServer->setFont(MainMenu::getFont());
   findServer->setString("Find Server");
   list.push_back(findServer);
 
-  HUDuiLabel* connectLabel = new HUDuiLabel;
+  connectLabel = new HUDuiLabel;
   connectLabel->setFont(MainMenu::getFont());
   connectLabel->setString("Connect");
   list.push_back(connectLabel);
@@ -4384,7 +4388,14 @@ JoinMenu::JoinMenu() : oldErrorCallback(NULL),
   port->setString(buffer);
   list.push_back(port);
 
-  HUDuiLabel* startServer = new HUDuiLabel;
+  email = new HUDuiTypeIn;
+  email->setFont(MainMenu::getFont());
+  email->setLabel("Email:");
+  email->setMaxLength(EmailLen - 1);
+  email->setString(info->email);
+  list.push_back(email);
+
+  startServer = new HUDuiLabel;
   startServer->setFont(MainMenu::getFont());
   startServer->setString("Start Server");
   list.push_back(startServer);
@@ -4442,23 +4453,24 @@ void			JoinMenu::loadInfo()
   info->team = getTeam();
   strcpy(info->serverName, server->getString().c_str());
   info->serverPort = atoi(port->getString().c_str());
+  strcpy(info->email, email->getString().c_str());
 }
 
 void			JoinMenu::execute()
 {
   std::vector<HUDuiControl*>& list = getControls();
   HUDuiControl* focus = HUDui::getFocus();
-  if (focus == list[7]) {
+  if (focus == startServer) {
     if (!serverStartMenu) serverStartMenu = new ServerStartMenu;
     HUDDialogStack::get()->push(serverStartMenu);
   }
 
-  else if (focus == list[1]) {
+  else if (focus == findServer) {
     if (!serverMenu) serverMenu = new ServerMenu;
     HUDDialogStack::get()->push(serverMenu);
   }
 
-  else if (focus == list[2]) {
+  else if (focus == connectLabel) {
     // load startup info
     loadInfo();
 
@@ -4573,7 +4585,7 @@ void			JoinMenu::resize(int width, int height)
     list[i]->setFontSize(fontWidth, fontHeight);
     list[i]->setPosition(x, y);
     y -= 1.0f * h;
-    if (i <= 2 || i == 6) y -= 0.5f * h;
+    if (i <= 2 || i == 7) y -= 0.5f * h;
   }
 }
 
