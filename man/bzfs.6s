@@ -6,6 +6,7 @@ bzfs \- BZFlag game server
 .B bzfs
 [\fB\-a \fIvelocity\fR \fIrotation\fR]
 [\fB\-admsg \fImessage\fR]
+[\fB\-autoTeam\fR]
 [\fB\-b\fR]
 [\fB\-badwords \fIbadwordfile\fR]
 [\fB\-ban \fIaddress\fR[,...]]
@@ -72,6 +73,7 @@ bzfs \- BZFlag game server
 [\fB\-voteTime \fIseconds\fR]
 [\fB\-world \fIworld-file\fR]
 [\fB\-worldsize \fIworld size\fR]
+
 .SH DESCRIPTION
 \fBBzfs\fR is the server for \fBBZFlag\fR,
 and it must be running to play.  It can be run on any system on the
@@ -88,6 +90,13 @@ yield greater inertia.
 .TP 15
 \fB\-admsg \fImessage\fR
 Define a message which will be broadcast to all players every 15 minutes.
+.TP
+.B -autoTeam
+Automatically assign players to teams when they connect so that there
+are an equal number of players on all available teams.  Players are
+placed on teams that have the fewest players, otherrwise they will be
+placed on the weakest team.  Weakest team is the team with the lowest
+combined kill ratio.
 .TP
 .B -b
 When \fB-c\fR is supplied, this option randomly rotates the buildings.
