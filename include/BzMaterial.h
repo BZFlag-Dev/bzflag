@@ -188,7 +188,7 @@ class BzMaterialManager {
     const BzMaterial* getMaterial(int id) const;
     int getIndex(const BzMaterial* material) const;
 
-    typedef struct std::set<std::string> TextureSet;
+    typedef std::set<std::string> TextureSet;
     void makeTextureList(TextureSet& set, bool referenced) const;
     void setTextureLocal(const std::string& url, const std::string& local);
 
