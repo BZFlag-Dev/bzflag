@@ -2593,17 +2593,6 @@ static void playerKilled(int victimIndex, int killerIndex, int reason,
     teamkill = !foe && !rabbitinvolved;
   }
 
-  // update tk-score
-  if ((victimIndex != killerIndex) && teamkill) {
-    killerData->score.tK();
-    if (killerData->score.isTK()) {
-      char message[MessageLen];
-      strcpy(message, "You have been automatically kicked for team killing" );
-      sendMessage(ServerPlayer, killerIndex, message);
-      removePlayer(killerIndex, "teamkilling");
-    }
-  }
-
   // send MsgKilled
   void *buf, *bufStart = getDirectMessageBuffer();
   buf = nboPackUByte(bufStart, victimIndex);
@@ -2616,6 +2605,16 @@ static void playerKilled(int victimIndex, int killerIndex, int reason,
   }
   broadcastMessage(MsgKilled, (char*)buf-(char*)bufStart, bufStart);
 
+  // update tk-score
+  if ((victimIndex != killerIndex) && teamkill) {
+    killerData->score.tK();
+    if (killerData->score.isTK()) {
+      char message[MessageLen];
+      strcpy(message, "You have been automatically kicked for team killing" );
+      sendMessage(ServerPlayer, killerIndex, message);
+      removePlayer(killerIndex, "teamkilling");
+    }
+  }
 
   // zap flag player was carrying.  clients should send a drop flag
   // message before sending a killed message, so this shouldn't happen.
