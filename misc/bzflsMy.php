@@ -332,13 +332,14 @@ if ($action == "LIST" ) {
   srand(microtime());
   for ( $i = 0; $i < 8; $i++ )
     $randtext .= $alphanum{rand(0,35)};
+  # FIXME remove `` etc from email
   $to = urldecode($email);
   mail($to, "BZFlag player registration",
        "You have just registered a BZFlag player account with\n" .
        "    callsign: $callsign\n" .
        "    password: $password\n" .
        "To activate this account, please go to the following URL:\n\n" .
-       "http://db.bzflag.org/bzflsMyTest.php?action=REG_CONF&email=$email&password=$randtext\n")
+       "http://db.bzflag.org/bzflsMyTest.php?action=CONFIRM&email=$email&password=$randtext\n")
     or die ("Could not send mail");
   $result = mysql_query("INSERT INTO players "
                       . "(email, callsign, password, lastmod, randtext) VALUES "
