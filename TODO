@@ -13,6 +13,8 @@ THESE SHOULD HAPPEN BEFORE THE NEXT RELEASE:
 
 THESE ARE LOWER PRIORITY
 
+* remove UDP client setting. code should figure that out now.
+
 * Try to build bzadmin on Win32 using PDCurses (it works with the X11
   version of PDCurses)
 
