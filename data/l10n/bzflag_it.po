@@ -574,20 +574,8 @@ msgstr "Pag {1} di {2}"
 #msgid "openBroadcast: No udp service {1}"
 #msgstr ""
 
-#msgid "openMulticast: No udp service {1}"
-#msgstr ""
-
-msgid "openMulticast: Invalid port {1}"
-msgstr "openMulticast: Porta invalida {1}"
-
-#msgid "openMulticast: Can't get address of {1}"
-#msgstr ""
-
 msgid "joystick '{1}' not supported..."
 msgstr "joystick '{1}' non supportato..."
-
-#msgid "Using multicast relay"
-#msgstr ""
 
 msgid "Server did send endpoint information, UDP connection up"
 msgstr "Il server ha attivato la connessione UDP"

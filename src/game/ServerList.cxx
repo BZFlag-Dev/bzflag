@@ -566,8 +566,8 @@ void ServerList::_shutDown() {
     }
   numListServers = 0;
 
-  // close input multicast socket
-  closeMulticast(pingBcastSocket);
+  // close broadcast socket
+  closeBroadcast(pingBcastSocket);
   pingBcastSocket = -1;
 }
 

@@ -558,18 +558,6 @@ msgstr "p@g3 {1} 0f {2}"
 msgid "openBroadcast: No udp service {1}"
 msgstr "op3nbR04DC45T: NO udp 53rviCE {1}"
 
-msgid "openMulticast: No udp service {1}"
-msgstr "opEnmUL+1C4$+: NO UdP $3RviC3 {1}"
-
-msgid "openMulticast: Invalid port {1}"
-msgstr "Op3nmuLTiC4$T: 1nVAL1d p0R+ {1}"
-
-msgid "openMulticast: Can't get address of {1}"
-msgstr "0PENMuL+1c45t: C4n'T 9E+ @DDRe5$ 0pH {1}"
-
-msgid "Using multicast relay"
-msgstr "U5in9 mUl+1C4$t R3l@Y"
-
 msgid "Server did send endpoint information, UDP connection up"
 msgstr "5ERvER dID 53ND ENDp0in+ 1NpHOrM@+Ion, uDp c0NN3CTi0n uP"
 

@@ -555,22 +555,10 @@ msgstr "Laddar om (%.1f)"
 #msgid "openBroadcast: No udp service {1}"
 #msgstr ""
 
-#msgid "openMulticast: No udp service {1}"
-#msgstr ""
-
-#msgid "openMulticast: Invalid port {1}"
-#msgstr ""
-
-#msgid "openMulticast: Can't get address of {1}"
-#msgstr ""
-
 #msgid "joystick '{1}' not supported..."
 #msgstr ""
 
 #msgid "Ignoring Finder argument '{1}'"
-#msgstr ""
-
-#msgid "Using multicast relay"
 #msgstr ""
 
 #msgid "Server did send endpoint information, UDP connection up"

@@ -583,20 +583,9 @@ msgstr "Puslapis {1} iš {2}"
 msgid "openBroadcast: No udp service {1}"
 msgstr ""
 
-msgid "openMulticast: No udp service {1}"
-msgstr ""
-
-msgid "openMulticast: Invalid port {1}"
-msgstr ""
-
-msgid "openMulticast: Can't get address of {1}"
-msgstr ""
-
 msgid "joystick '{1}' not supported..."
 msgstr ""
 
-# sgid "Using multicast relay"
-# sgstr ""
 # sgid "Server did send endpoint information, UDP connection up"
 # sgstr ""
 #, fuzzy

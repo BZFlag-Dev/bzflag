@@ -220,9 +220,8 @@ file is (can be) used by clients of the library.
 
 UDP added by Frank Siegert, frank@this.net, frank@bzflag.de
 
-BZFlag now implements UDP unicast relay networking. This provides much
-better timing and stability compared to just TCP. Multicast is no
-longer supported.
+BZFlag implements UDP unicast relay networking. This provides much
+better timing and stability compared to just TCP.
 
 UDP does not work, why?
 

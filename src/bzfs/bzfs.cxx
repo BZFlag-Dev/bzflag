@@ -4310,7 +4310,7 @@ int main(int argc, char **argv)
     serverAddress = Address::getHostAddress(clOptions->pingInterface);
   }
 
-// TimR use 0.0.0.0 by default, multicast will need to have a -i specified for now.
+// TimR use 0.0.0.0 by default to listen on all interfaces
 //  if (!pingInterface)
 //    pingInterface = serverAddress.getHostName();
 

@@ -57,10 +57,9 @@
     communication.</para>
 
     <para>BZFlag uses two distinct transport protocols to communicate
-    with the server and with other players. Server communication uses
-    TCP/IP for reliability. Player communication uses UDP multicast
-    for speed and efficiency. See the other pages for more
-    details.</para>
+    with the server. Server communication uses TCP/IP for reliability.
+    Live game data communication uses UDP for speed and efficiency.
+    See the other pages for more details.</para>
 
   </chapter>
 
@@ -113,11 +112,10 @@
     necessarily suffer from the same drawbacks.</para>
 
     <para>There are some instances where client/server communication
-    doesn't use TCP/IP. These all involve client attempts to locate
-    servers on the network. Clients send broadcast and multicast
-    `pings' which the servers listen for and respond to in kind. These
-    messages are not part of normal game communication, which all
-    takes place using TCP/IP.</para>
+    doesn't use TCP/IP. One example is client attempts to locate
+    servers on the network. Clients send broadcast `pings' which
+    the servers listen for and respond to in kind. These
+    messages are not part of normal game communication.</para>
 
   </chapter>
 
@@ -162,23 +160,10 @@
     only clients on the same subnet of the same local area network
     could play together.</para>
 
-    <para>And finally, the technique BZFlag actually uses, is
-    multicasting. Multicast is similar to broadcast in that a packet
-    is sent once and delivered to multiple computers. However,
-    multicast messages can be routed, and routed
-    efficiently. Multicast routers communicate with each other to
-    ensure that multicast traffic is only delivered to those subnets
-    with at least one computer interested in that traffic. Note that
-    multicast in a subnet is automatic, being equivalent to
-    broadcast.</para>
-
-    <para>Unfortunately, multicast routers aren't widespread yet. So
-    BZFlag must have a fallback. It uses the second technique, using
-    the server as a relay system. The server uses multicast as much as
-    possible, and uses the regular client/server connection to send
-    client traffic that can't be delivered via multicast. It would be
-    better to use UDP for this, but the client/server connection was
-    already there and I was lazy.</para>
+    <para>BZFlag uses the second technique, using the server as a
+    relay system. The server uses the TCP client/server connection to send
+    client traffic that must be reliable and UDP for information that
+    must be timely but does not need to be reliable.</para>
 
   </chapter>
 
@@ -609,7 +594,6 @@ only receive the following kinds of messages:
 	MsgFlagUpdate
 	MsgTeamUpdate
 	MsgAddPlayer
-	MsgNetworkRelay
 
 Players of type ComputerPlayer are not sent team or flag updates and only get the
 MsgAddPlayer for themselves.  This probably wasn't a good idea, but there it is.
@@ -663,37 +647,6 @@ enters a game.  Clients must be prepared to handle them in any order.
 
 	If `team id' is NoTeam then `player id' indicates which player has won.
 	Otherwise `team id' indicates which team won.
-
-  MsgSetTTL
-  &lt;--   +----+----+----+----+----+----+
-	| 00 | 02 | 74 | 74 | new TTL |
-	+----+----+----+----+----+----+
-	Should a client join with a larger TTL than any other client, the server
-	notifies all the clients of the new minimum TTL.  The TTL is the time-
-	to-live for the multicast player-to-player packets.  Upon receipt of this
-	message a client should change the TTL of outgoing multicast packets to
-	at least `new TTL.'
-
-  MsgNetworkRelay
-  &lt;--   +----+----+----+----+
-	| 00 | 00 | 6e | 72 |
-	+----+----+----+----+
-	This message means that the client must start sending messages normally
-	sent via multicast directly to the server.  The server will send the
-	messages to each client.  The server may send this when a client first
-	enters a game or later when another client requests multicast-over-tcp
-	relaying.  If the server itself cannot do multicasting then it must
-	force all clients to do multicast-over-tcp.
-
-  --&gt;   +----+----+----+----+
-	| 00 | 00 | 6e | 72 |
-	+----+----+----+----+
-	When a client can't do multicasting it notifies the server of that fact
-	and the server begins listening for multicast traffic on behalf of the
-	client and forwarding it to that client via tcp.  It also sends messages
-	from that client via multicast to other clients.  Send this message to
-	the server soon after connecting if you cannot contact the server via
-	multicast so you don't miss messages from other players.
 
   MsgAddPlayer
   &lt;--   +----+----+----+----+----+----+----+----+
@@ -1104,8 +1057,7 @@ enters a game.  Clients must be prepared to handle them in any order.
 		  | angular velocity  |
 	+----+----+----+----+----+----+
 	Sent by players to notify other players of changes in its status,
-	position, or velocity.  This message may be received directly from
-	other players via multicast or from the server.
+	position, or velocity.
 
 	`Status' is the tank's current status.  See PlayerStatus for the
 	meaning of the bitfield's bits.  The FlagActive bit indicates whether
@@ -1153,8 +1105,7 @@ enters a game.  Clients must be prepared to handle them in any order.
 		  |
 	+----+----+
 	Sent by players with active guided missiles to notify other players
-	of changes to the motion of the guided missile.  This message may be
-	received directly from other players via multicast or from the server.
+	of changes to the motion of the guided missile.
 
 	See MsgShotBegin for the meaning of most items.  `Time' is the current
 	age of the shot (the time since being fired).  `Target id' is the

@@ -69,7 +69,7 @@ bool			PingPacket::read(int fd, struct sockaddr_in* addr)
   uint16_t len, code;
 
   // get packet
-  int n = recvMulticast(fd, buffer, sizeof(buffer), addr);
+  int n = recvBroadcast(fd, buffer, sizeof(buffer), addr);
   if (n < 4)
     return false;
 
@@ -137,7 +137,7 @@ bool			PingPacket::write(int fd,
   buf = nboPackUShort(buf, PacketSize - 4);
   buf = nboPackUShort(buf, MsgPingCodeReply);
   buf = pack(buf, getServerVersion());
-  return sendMulticast(fd, buffer, sizeof(buffer), addr) == sizeof(buffer);
+  return sendBroadcast(fd, buffer, sizeof(buffer), addr) == sizeof(buffer);
 }
 
 bool			PingPacket::isRequest(int fd,
@@ -147,7 +147,7 @@ bool			PingPacket::isRequest(int fd,
   char buffer[6];
   void *msg = buffer;
   uint16_t len, code;
-  int size = recvMulticast(fd, buffer, sizeof(buffer), addr);
+  int size = recvBroadcast(fd, buffer, sizeof(buffer), addr);
   if (size < 2) return false;
   msg = nboUnpackUShort(msg, len);
   msg = nboUnpackUShort(msg, code);
@@ -163,7 +163,7 @@ bool			PingPacket::sendRequest(int fd,
   msg = nboPackUShort(msg, 2);
   msg = nboPackUShort(msg, MsgPingCodeRequest);
   msg = nboPackUShort(msg, (uint16_t) 0);
-  return sendMulticast(fd, buffer, sizeof(buffer), addr) == sizeof(buffer);
+  return sendBroadcast(fd, buffer, sizeof(buffer), addr) == sizeof(buffer);
 }
 
 void*			PingPacket::unpack(void* buf, char* version)

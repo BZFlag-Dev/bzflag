@@ -43,10 +43,6 @@ const char* const	DefaultListServerURL = "http://my.BZFlag.org/db/";
 const char* const	DefaultMasterBanURL = "http://bzflag.org/master-bans.txt";
 const char* const	DefaultMOTDServer = "http://bzflag.org/motd.php";
 
-// multicast ttl's
-const int		DefaultTTL = 8;
-const int		MaximumTTL = 255;
-
 // maximum size of any message (including header and length fields)
 const int		MaxPacketLen = 1024;
 

@@ -179,7 +179,7 @@ team Last
 team name (see -team).
 
 interface
-Last multicast interface (see -interface).
+Interface to use (see -interface).
 
 startcode
 Used for start server menu. Use the GUI to modify this.

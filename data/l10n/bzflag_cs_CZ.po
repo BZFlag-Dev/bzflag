@@ -764,15 +764,6 @@ msgstr "Maximalni skore hrace: {1}"
 msgid "openBroadcast: No udp service {1}"
 msgstr "openBroadcast: Zadna UDP sluzba {1}"
 
-msgid "openMulticast: No udp service {1}"
-msgstr "openMulticast: Zadna UDP sluzba {1}"
-
-msgid "openMulticast: Invalid port {1}"
-msgstr "openMulticast: Spatny port {1}"
-
-msgid "openMulticast: Can't get address of {1}"
-msgstr "openMulticast: Nemohu ziskat adresu {1}"
-
 msgid "joystick '{1}' not supported..."
 msgstr "joystick '{1}' nepodporovan..."
 
@@ -796,9 +787,6 @@ msgstr "Konfiguracni soubor: Chyba na radku {1}: Radek je prilis dlouhy"
 
 msgid "Network: Created local UDP downlink port {1}"
 msgstr "Sit: Vytvoren lokalni UDP downlink port {1}"
-
-msgid "Using multicast relay"
-msgstr "Pouzivam multicast prenos"
 
 msgid "Server did send endpoint information, UDP connection up"
 msgstr "Server zaslal informaci o koncovem bode, UDP spojeni zapnuto"
