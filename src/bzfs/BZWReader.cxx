@@ -60,6 +60,12 @@ BZWReader::BZWReader(std::string filename) : location(filename), input(NULL)
     input = new std::ifstream(filename.c_str(), std::ios::in);
   }
 
+  // .BZW is the official worldfile extension, warn for others
+  if ((filename.length() > 4) && 
+  (strcasecmp(filename.substr(filename.length() - 4, 4).c_str(), ".bzw") != 0))  {
+    errorHandler->warning(std::string("world file extension is not .bzw, trying to load anyway"), 0);
+  }
+
   if (input->peek() == EOF) {
     errorHandler->fatalError(std::string("could not find bzflag world file"), 0);
   }
