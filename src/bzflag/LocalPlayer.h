@@ -125,6 +125,9 @@ class LocalPlayer : public BaseLocalPlayer {
 
     const Obstacle*	getHitBuilding(const float* pos, float angle,
 				bool phased, bool& expel) const;
+    const Obstacle*	getHitBuilding(const float* oldPos, float oldAngle,
+				       const float* pos, float angle,
+				       bool phased, bool& expel) const;
     bool		getHitNormal(const Obstacle* o,
 				const float* pos1, float azimuth1,
 				const float* pos2, float azimuth2,

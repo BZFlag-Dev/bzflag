@@ -279,6 +279,68 @@ const Obstacle*		World::hitBuilding(const float* pos, float angle,
   return NULL;
 }
 
+const Obstacle*		World::hitBuilding(const float* oldPos, float oldAngle,
+					   const float* pos, float angle,
+					   float dx, float dy) const
+{
+  // check walls
+  std::vector<WallObstacle>::const_iterator wallScan = walls.begin();
+  while (wallScan != walls.end()) {
+    const WallObstacle& wall = *wallScan;
+	if (!wall.isDriveThrough()){
+    if (wall.isInside(pos, angle, dx, dy))
+      return &wall;
+	}
+    wallScan++;
+  }
+
+  // check teleporters
+  std::vector<Teleporter>::const_iterator teleporterScan = teleporters.begin();
+  while (teleporterScan != teleporters.end()) {
+    const Teleporter& teleporter = *teleporterScan;
+	if (!teleporter.isDriveThrough()){
+    if (teleporter.isInside(pos, angle, dx, dy))
+      return &teleporter;
+	}
+    teleporterScan++;
+  }
+
+  // strike one -- check boxes
+  std::vector<BoxBuilding>::const_iterator boxScan = boxes.begin();
+  while (boxScan != boxes.end()) {
+    const BoxBuilding& box = *boxScan;
+	if (!box.isDriveThrough()){
+    if (box.isInside(oldPos, oldAngle, pos, angle, dx, dy))
+      return &box;
+	}
+    boxScan++;
+  }
+
+  // strike two -- check pyramids
+  std::vector<PyramidBuilding>::const_iterator pyramidScan = pyramids.begin();
+  while (pyramidScan != pyramids.end()) {
+    const PyramidBuilding& pyramid = *pyramidScan;
+	if (!pyramid.isDriveThrough()){
+    if (pyramid.isInside(pos, angle, dx, dy))
+      return &pyramid;
+	}
+    pyramidScan++;
+  }
+
+  // strike three -- check bases
+  std::vector<BaseBuilding>::const_iterator baseScan = basesR.begin();
+  while (baseScan != basesR.end()) {
+    const BaseBuilding &base = *baseScan;
+	if (!base.isDriveThrough()){
+    if(base.isInside(pos, angle, dx, dy))
+      return &base;
+	}
+    baseScan++;
+  }
+  // strike four -- you're out
+  return NULL;
+}
+
 bool			World::crossingTeleporter(const float* pos,
 					float angle, float dx, float dy,
 					float* plane) const

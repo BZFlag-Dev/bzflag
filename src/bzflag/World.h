@@ -92,6 +92,9 @@ class World {
     const Obstacle*	hitBuilding(const float* pos, float angle,
 					float tankWidth,
 					float tankBreadth) const;
+    const Obstacle*	hitBuilding(const float* oldPos, float oldAngle,
+				    const float* pos, float angle,
+				    float tankWidth, float tankBreadth) const;
     bool		crossingTeleporter(const float* oldPos, float angle,
 					float tankWidth, float tankBreadth,
 					float* plane) const;

@@ -358,7 +358,8 @@ void			LocalPlayer::doUpdateMotion(float dt)
     if (newPos[2]<groundLimit && newVelocity[2]<0) newPos[2] = groundLimit;
 
     // see if we hit anything.  if not then we're done.
-    obstacle = getHitBuilding(newPos, newAzimuth, phased, expelled);
+    obstacle = getHitBuilding(tmpPos, tmpAzimuth, newPos, newAzimuth, phased,
+			      expelled);
     if (!obstacle || !expelled) break;
 
     // record position when hitting
@@ -383,7 +384,8 @@ void			LocalPlayer::doUpdateMotion(float dt)
       // see if we hit anything
       bool searchExpelled;
       const Obstacle* searchObstacle =
-		getHitBuilding(newPos, newAzimuth, phased, searchExpelled);
+		getHitBuilding(tmpPos, tmpAzimuth, newPos, newAzimuth, phased,
+			       searchExpelled);
 
       // if no hit then search latter half of time step
       if (!searchObstacle || !searchExpelled) searchTime = t;
@@ -621,6 +623,45 @@ const Obstacle*		LocalPlayer::getHitBuilding(const float* p, float a,
 		obstacle->getType() == Teleporter::getClassName() ||
 		(getFlag() == Flags::OscillationOverthruster && desiredSpeed < 0.0f &&
 		 p[2] == 0.0f));
+  return obstacle;
+}
+
+const Obstacle*		LocalPlayer::getHitBuilding(
+				const float* oldP, float oldA,
+				const float* p, float a,
+				bool phased, bool& expelled) const
+{
+  float length = 0.5f * BZDB->eval(StateDatabase::BZDB_TANKLENGTH);
+  float width = 0.5f * BZDB->eval(StateDatabase::BZDB_TANKWIDTH);
+  float factor;
+
+  if (getFlag() == Flags::Obesity) {
+    factor = BZDB->eval(StateDatabase::BZDB_OBESEFACTOR);
+    length *= factor;
+    width *= 2.0f * factor;
+  }
+  else if (getFlag() == Flags::Tiny) {
+    factor = BZDB->eval(StateDatabase::BZDB_TINYFACTOR);
+    length *= factor;
+    width *= 2.0f * factor;
+  }
+  else if (getFlag() == Flags::Thief) {
+    factor = BZDB->eval(StateDatabase::BZDB_THIEFTINYFACTOR);
+    length *= factor;
+    width *= 2.0f * factor;
+  }
+  else if (getFlag() == Flags::Narrow) {
+    width = 0.0f;
+  }
+
+  const Obstacle* obstacle = World::getWorld()->
+    hitBuilding(oldP, oldA, p, a, length, width);
+  expelled = (obstacle != NULL);
+  if (expelled && phased)
+    expelled = (obstacle->getType() == WallObstacle::getClassName() ||
+		obstacle->getType() == Teleporter::getClassName() ||
+		(getFlag() == Flags::OscillationOverthruster &&
+		 desiredSpeed < 0.0f && p[2] == 0.0f));
   return obstacle;
 }
 
