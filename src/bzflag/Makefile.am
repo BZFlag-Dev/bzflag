@@ -106,6 +106,8 @@ bzflag_SOURCES =			\
 	TargetingUtils.h		\
 	World.cxx			\
 	World.h				\
+	WorldBuilder.cxx		\
+	WorldBuilder.h			\
 	WorldPlayer.cxx			\
 	WorldPlayer.h			\
 	bzflag.cxx			\
