@@ -7,7 +7,7 @@
 ;
 
 !define VER_MAJOR 1.7
-!define VER_MINOR e8
+!define VER_MINOR g0
 
 ; Main Installer Options
 Name "BZFlag"
@@ -60,7 +60,7 @@ Section "BZFlag (required)"
 	File ..\license.txt
 
 	; Write the installation path into the registry
-	WriteRegStr HKLM SOFTWARE\BZFlag1_7e8 "Install_Dir" "$INSTDIR"
+	WriteRegStr HKLM SOFTWARE\BZFlag1_7g0 "Install_Dir" "$INSTDIR"
 
 	; Write the uninstall keys for Windows
 	WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\BZFlag${VER_MAJOR}${VER_MINOR}" "DisplayName" "BZFLag(remove only)"
