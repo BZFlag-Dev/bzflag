@@ -408,6 +408,14 @@ void			OpenGLTexture::execute() const
   lastRep = rep;
 }
 
+float			OpenGLTexture::getAspectRatio() const
+{
+  if (rep)
+    return ((float) rep->height) / ((float) rep->width);
+  else
+    return 1.0f;
+}
+
 void			OpenGLTexture::ref()
 {
   if (rep) ++rep->refCount;

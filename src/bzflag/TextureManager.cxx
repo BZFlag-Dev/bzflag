@@ -54,6 +54,12 @@ FileTextureInit fileLoader[] =
 
 	{ TX_TANK, NO_VARIANT, "flage", OpenGLTexture::LinearMipmapLinear },
 	{ TX_FLAG, NO_VARIANT, "flag", OpenGLTexture::Max },
+
+	{ TX_WALL, NO_VARIANT, "wall", OpenGLTexture::LinearMipmapLinear },
+	{ TX_BOX, NO_VARIANT, "boxwall", OpenGLTexture::LinearMipmapLinear },
+	{ TX_ROOF, NO_VARIANT, "roof", OpenGLTexture::LinearMipmapLinear },
+	{ TX_PYRAMID, NO_VARIANT, "pyrwall", OpenGLTexture::LinearMipmapLinear },
+	{ TX_CAUTION, NO_VARIANT, "caution", OpenGLTexture::LinearMipmapLinear },
 };
 
 ProcTextureInit procLoader[] = 

@@ -76,6 +76,8 @@ class OpenGLTexture {
 
     void		execute() const;
 
+    float		getAspectRatio() const;
+
     static Filter	getFilter();
     static std::string	getFilterName();
     static void		setFilter(std::string name);
@@ -115,6 +117,7 @@ class OpenGLTexture {
 	int			maxFilter;
 	static const GLenum	minifyFilter[];
 	static const GLenum	magnifyFilter[];
+	friend class OpenGLTexture;
     };
 
     void		ref();

@@ -54,24 +54,19 @@ class SceneDatabaseBuilder {
     const SceneRenderer	*renderer;
 
     OpenGLMaterial	wallMaterial;
-    OpenGLTexture	wallTexture;
     float		wallTexWidth, wallTexHeight;
     bool		wallLOD;
 
     OpenGLMaterial	boxMaterial;
-    OpenGLTexture	boxTexture;
-    OpenGLTexture	boxTopTexture;
     float		boxTexWidth, boxTexHeight;
     bool		boxLOD;
 
     OpenGLMaterial	pyramidMaterial;
-    OpenGLTexture	pyramidTexture;
     bool		pyramidLOD;
 
     bool		baseLOD;
 
     OpenGLMaterial	teleporterMaterial;
-    OpenGLTexture	teleporterTexture;
     bool		teleporterLOD;
 
     static const GLfloat wallColors[4][4];

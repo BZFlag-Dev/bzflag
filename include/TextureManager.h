@@ -18,7 +18,8 @@
 
 typedef enum TextureType { TX_BOLT, TX_TRANSBOLT, TX_LASER, TX_THIEF, TX_MISSILE,
                            TX_GROUND, TX_CLOUDS, TX_MOUNTAIN, TX_EXPLOSION,
-			   TX_TANK, TX_FLAG, TX_NOISE
+			   TX_TANK, TX_FLAG, TX_WALL, TX_BOX, TX_ROOF, TX_PYRAMID,
+			   TX_CAUTION, TX_NOISE
 			};
 
 struct FileTextureInit
