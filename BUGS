@@ -1,6 +1,11 @@
 recent bugs
 ------------
 
+- There is no OnBase status. Should there be? Box tops are assumed to be
+  greater than 0. But bases, which act in the code like buildings, often 
+  are not. This causes Burrow tanks to get stuck on bases, because they
+  don't release they are on a building and shouldn't fall.
+
 - Observer controls get confused sometimes. To see, push control and arrows
   to spin. While keys are down, push alt. Now release all. You continue spinning
   un aided. Now stop yourself. Now alt doesn't work. Bagheera reports he gets
