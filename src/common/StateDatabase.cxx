@@ -148,6 +148,14 @@ std::string				StateDatabase::get(const std::string& name) const
 
 float					StateDatabase::eval(std::string name) const
 {
+	static std::vector<std::string> variables;
+
+	for (std::vector<std::string>::iterator i = variables.begin(); i != variables.end(); i++)
+		if (*i == name)
+			throw std::runtime_error("circular reference in eval(" + name + ")\n");
+	
+	variables.push_back(name);
+
 	Map::const_iterator index = items.find(name);
 	if (index == items.end() || !index->second.isSet)
 		throw std::runtime_error("BZDB:" + name + " not found\n");
@@ -156,7 +164,9 @@ float					StateDatabase::eval(std::string name) const
 	std::string value = index->second.value;
 	value >> inf;
 	pre = infixToPrefix(inf);
-	return evaluate(pre);
+	float retn = evaluate(pre);
+	variables.pop_back();
+	return retn;
 }
 
 bool					StateDatabase::isTrue(const std::string& name) const
