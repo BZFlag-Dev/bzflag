@@ -1811,9 +1811,8 @@ static void addPlayer(int playerIndex)
 
   // look if there is as name clash, we won't allow this
   int i;
-  for (i = 0; i < curMaxPlayers; i++)
-  {
-    if (i == playerIndex || player[i].state <= PlayerInLimbo)
+  for (i = 0; i < curMaxPlayers; i++) {
+    if (i == playerIndex || !player[i].isPlaying())
       continue;
     if (strcasecmp(player[i].callSign,player[playerIndex].callSign) == 0) {
       rejectPlayer(playerIndex, RejectRepeatCallsign);
