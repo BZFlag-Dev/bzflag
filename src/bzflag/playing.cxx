@@ -4191,6 +4191,17 @@ static void joinInternetGame()
 }
 
 
+static void addVarToAutoComplete(const std::string& name, void* /*userData*/)
+{
+  if ((name.size() <= 0) || (name[0] != '_')) {
+    return; // we're skipping "poll"
+  }
+  if (BZDB.getPermission(name) == StateDatabase::Server) {
+    completer.registerWord(name);
+  }
+  return;
+}
+
 static void joinInternetGame2()
 {
   justJoined = true;
@@ -4203,8 +4214,11 @@ static void joinInternetGame2()
 
   // prep players
   curMaxPlayers = 0;
-  completer.setDefaults();
   player = world->getPlayers();
+
+  // reset the autocompleter
+  completer.setDefaults();
+  BZDB.iterate(addVarToAutoComplete, NULL);
 
   // prep flags
   numFlags = world->getMaxFlags();
