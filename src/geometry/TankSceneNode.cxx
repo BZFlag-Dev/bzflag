@@ -831,7 +831,7 @@ void TankSceneNode::TankRenderNode::render()
     myStipple(alpha);
   }
 
-  if (sceneNode->clip) {
+  if (sceneNode->clip && !isShadow) {
     glClipPlane(GL_CLIP_PLANE0, sceneNode->clipPlane);
     glEnable(GL_CLIP_PLANE0);
   }
@@ -851,7 +851,8 @@ void TankSceneNode::TankRenderNode::render()
   }
 
   // disable the dynamic lights, if it might help
-  const bool switchLights = BZDBCache::lighting && (drawLOD == HighTankLOD);
+  const bool switchLights = BZDBCache::lighting &&
+                            !isShadow && (drawLOD == HighTankLOD);
   if (switchLights) {
     RENDERER.disableLights(sceneNode->extents.mins, sceneNode->extents.maxs);
   }
@@ -872,6 +873,11 @@ void TankSceneNode::TankRenderNode::render()
   }
   else if (narrowWithDepth) {
     renderNarrowWithDepth();
+  }
+  else if (isShadow && (sphere[2] < 0.0f)) {
+    // burrowed or burrowing tank, just render the top shadows
+    renderPart(Turret);
+    renderPart(Barrel);
   }
   else {
     // any old order is fine.  if exploding then draw both sides.

@@ -85,9 +85,9 @@ extern GLuint bzGenLists(GLsizei count);
 extern void   bzGenTextures(GLsizei count, GLuint *textures);
 extern void   bzDeleteLists(GLuint base, GLsizei count);
 extern void   bzDeleteTextures(GLsizei count, const GLuint *textures);
-extern void bzPushMatrix();
-extern void bzPopMatrix();
-extern void bzMatrixMode(GLenum mode);
+extern void   bzPushMatrix();
+extern void   bzPopMatrix();
+extern void   bzMatrixMode(GLenum mode);
 
 
 #endif /* __BZFGL_H__ */
