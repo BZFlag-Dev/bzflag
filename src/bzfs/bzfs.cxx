@@ -1525,12 +1525,12 @@ void sendFilteredMessage(int sendingPlayer, PlayerId recipientPlayer, const char
     GameKeeper::Player *recipientData = GameKeeper::Player::getPlayerByIndex(recipientPlayer);
 
     // don't care if they're real, just care if they're an admin
-    if (recipientData) {
-      if (recipientData->accessInfo.isAdmin() || 
-	  recipientPlayer == AdminPlayers) {
+    if (recipientData && recipientData->accessInfo.isAdmin()) {
 	sendMessage(sendingPlayer, recipientPlayer, msg);
 	return;
-      }
+    } else if (recipientPlayer == AdminPlayers) {
+	sendMessage(sendingPlayer, recipientPlayer, msg);
+	return;
     }
 
     sendMessage(ServerPlayer, sendingPlayer, "We're sorry, your not allowed to talk!");
