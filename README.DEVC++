@@ -48,6 +48,11 @@ and due to the project files not being updated yet for new BZFlag source files. 
 also have the latest Dev-C++ files from CVS. If you are using release source code, it most likely
 is due to the library (.a) files of your compiler. Make sure you have properly installed your compiler,
 and have the correct library files in the correct place, and of the correct version that matches your compiler.
+Also, your Dev-C++ configuration and setup (more specifically, that of MinGW32/GCC) may be the problem. If
+you have updated ANY part of your MinGW32/GCC from the version(s) that shipped with the original Dev-C++ release
+package that you originally downloaded, this may be it. If you get linker errors regarding undefined things that relate
+to C++, rather than BZFlag (you can usually tell by the names listed in the errors), then your compiler setup and files
+are the cause. Try reinstalling Dev-C++ or using the original compiler files that shipped with Dev-C++.
 
 If you want to use the given project file to compile BZAdmin using
 PDCurses (http://pdcurses.sf.net) or NCurses, or any other Curses interface, make sure your
