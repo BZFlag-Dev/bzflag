@@ -35,7 +35,8 @@ public:
 private:
   // functions for internal use
   void readToken(char *buffer, int n);
-  bool readWorldStream(std::vector<WorldFileObject*>& wlist);
+  bool readWorldStream(std::vector<WorldFileObject*>& wlist,
+                       class GroupDefinition* groupDef);
 
   // stream to open
   std::string location;

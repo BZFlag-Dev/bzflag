@@ -1511,7 +1511,6 @@ void bzMatrixMode(GLenum mode)
 #    include <AGL/agl.h>
 #    define GET_CURRENT_CONTEXT aglGetCurrentContext
 #  else
-#    include <X11/Xlib.h>
 #    include <GL/glx.h>
 #    define GET_CURRENT_CONTEXT glXGetCurrentContext
 #  endif
@@ -1519,7 +1518,7 @@ void bzMatrixMode(GLenum mode)
 
 // NOTE: if you're compiler croaks here, then you might want
 //       to find an alternative method for OpenGL context 
-//       detection on our system.
+//       detection on your system.
 
 #ifndef GET_CURRENT_CONTEXT
 #  error ERROR: Do not know how to get the current OpenGL context on this system

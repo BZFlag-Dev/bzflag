@@ -780,7 +780,7 @@ void			World::addFlags(SceneDatabase* scene, bool seerView)
 
     if (flags[i].status == FlagNoExist) continue;
     // skip flag on a tank that isn't alive. also skip
-    // Cloaking flags on if we don't have a seer flag.
+    // Cloaking flag on a tank if we don't have a Seer flag.
     if (flags[i].status == FlagOnTank) {
       if ((flags[i].type == Flags::Cloaking) && !seerView) {
         continue;

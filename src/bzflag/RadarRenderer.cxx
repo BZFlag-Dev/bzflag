@@ -644,6 +644,12 @@ void RadarRenderer::renderBoxPyrMeshFast(bool smoothingOn, float range)
   int gradientTexId = -1;
   TextureManager &tm = TextureManager::instance();
   gradientTexId = tm.getTextureID("radar", false);
+  
+  // safety: no texture, no service
+  if (gradientTexId < 0) {
+    renderBoxPyrMesh(smoothingOn);
+    return;
+  }
 
   // GL state
   OpenGLGStateBuilder gb;

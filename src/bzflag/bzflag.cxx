@@ -1432,7 +1432,7 @@ int			main(int argc, char** argv)
     exit(1);
 
   } else {
-    DEBUG3("Using the following GL_RENDERER: %s", glRenderer);
+    DEBUG3("Using the following GL_RENDERER: %s\n", glRenderer);
   }
 
   // add the zbuffer callback here, after the OpenGL context is initialized
