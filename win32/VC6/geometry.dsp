@@ -245,6 +245,10 @@ SOURCE=..\..\src\geometry\LaserSceneNode.cxx
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\src\geometry\MeshPolySceneNode.cxx
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\src\geometry\PolyWallSceneNode.cxx
 # End Source File
 # Begin Source File
@@ -358,6 +362,10 @@ SOURCE=..\..\include\global.h
 # Begin Source File
 
 SOURCE=..\..\include\LaserSceneNode.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\include\MeshPolySceneNode.h
 # End Source File
 # Begin Source File
 

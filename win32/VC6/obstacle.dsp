@@ -161,6 +161,18 @@ SOURCE=..\..\src\obstacle\EmptySceneNodeGenerator.cxx
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\src\obstacle\MeshFace.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\obstacle\MeshObstacle.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\obstacle\MeshSceneNodeGenerator.cxx
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\src\obstacle\Obstacle.cxx
 # End Source File
 # Begin Source File
@@ -257,6 +269,18 @@ SOURCE=..\..\include\Intersect.h
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\include\MeshFace.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\include\MeshObstacle.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\include\MeshSceneNodeGenerator.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\include\Obstacle.h
 # End Source File
 # Begin Source File
@@ -318,6 +342,10 @@ SOURCE=..\..\include\TetraSceneNodeGenerator.h
 # Begin Source File
 
 SOURCE=..\..\include\TriWallSceneNode.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\include\vectors.h
 # End Source File
 # Begin Source File
 

@@ -154,6 +154,10 @@ SOURCE=..\..\src\game\DirectoryNames.cxx
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\src\game\DynamicColor.cxx
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\src\game\Frustum.cxx
 # End Source File
 # Begin Source File
@@ -166,6 +170,10 @@ SOURCE=..\..\src\game\LagInfo.cxx
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\src\game\MeshMaterial.cxx
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\src\game\NetHandler.cxx
 # End Source File
 # Begin Source File
@@ -175,6 +183,10 @@ SOURCE=..\..\src\game\PlayerInfo.cxx
 # Begin Source File
 
 SOURCE=..\..\src\game\Ray.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\game\TextureMatrix.cxx
 # End Source File
 # Begin Source File
 
@@ -198,6 +210,10 @@ SOURCE=..\..\include\DirectoryNames.h
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\include\DynamicColor.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\include\Frustum.h
 # End Source File
 # Begin Source File
@@ -210,11 +226,19 @@ SOURCE=..\..\include\LagInfo.h
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\include\MeshMaterial.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\include\NetHandler.h
 # End Source File
 # Begin Source File
 
 SOURCE=..\..\include\PlayerInfo.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\include\TextureMatrix.h
 # End Source File
 # Begin Source File
 
