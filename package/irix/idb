@@ -48,7 +48,6 @@ f 444 demos demos usr/freeware/share/bzflag/lock.wav ./data/lock.wav SOUNDS
 f 444 demos demos usr/freeware/share/bzflag/missile.rgb ./data/missile.rgb TEXTURES
 f 444 demos demos usr/freeware/share/bzflag/missile.wav ./data/missile.wav SOUNDS
 f 444 demos demos usr/freeware/share/bzflag/mountain.rgb ./data/mountain.rgb TEXTURES
-f 444 demos demos usr/freeware/share/bzflag/panel.rgb ./data/panel.rgb REQDATA
 f 444 demos demos usr/freeware/share/bzflag/pbolt.rgb ./data/pbolt.rgb TEXTURES
 f 444 demos demos usr/freeware/share/bzflag/phantom.wav ./data/phantom.wav SOUNDS
 f 444 demos demos usr/freeware/share/bzflag/plaser.rgb ./data/plaser.rgb TEXTURES

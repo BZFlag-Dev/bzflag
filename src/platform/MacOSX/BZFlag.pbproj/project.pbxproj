@@ -228,13 +228,6 @@
 			refType = 4;
 			sourceTree = "<group>";
 		};
-		1401FC8C04B564EB00A80164 = {
-			expectedFileType = image.png;
-			isa = PBXFileReference;
-			path = panel.png;
-			refType = 4;
-			sourceTree = "<group>";
-		};
 		1401FC8D04B564EB00A80164 = {
 			expectedFileType = image.png;
 			isa = PBXFileReference;

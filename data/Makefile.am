@@ -20,7 +20,6 @@ EXTRA_DIST = \
 	helvbr.png	\
 	missile.png	\
 	mountain.png	\
-	panel.png	\
 	pbolt.png	\
 	plaser.png	\
 	ptbolt.png	\
