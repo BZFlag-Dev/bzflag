@@ -24,6 +24,7 @@
 #include "Bundle.h"
 #include "Team.h"
 #include "FontManager.h"
+#include "BZDBCache.h"
 
 /* local implementation headers */
 #include "LocalPlayer.h"
@@ -1571,7 +1572,7 @@ void			HUDRenderer::drawPlayerScore(const Player* player,
   }
   fm.drawString(x3, y, 0, minorFontFace, minorFontSize, player->getCallSign());
   fm.drawString(x3 + callSignWidth, y, 0, minorFontFace, minorFontSize, email);
-  if (BZDB.isTrue("colorful")) {
+  if (BZDBCache::colorful) {
     if ((flagd == Flags::ShockWave)   ||
 	(flagd == Flags::Genocide)    ||
 	(flagd == Flags::Laser)       ||
