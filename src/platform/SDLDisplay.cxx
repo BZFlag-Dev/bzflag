@@ -223,9 +223,11 @@ bool SDLDisplay::getEvent(BzfEvent& _event) const
     break;
 
   case SDL_ACTIVEEVENT:
-    if (event.active.state == SDL_APPACTIVE)
+    if (event.active.state & SDL_APPACTIVE)
       if (event.active.gain == 0) {
 	_event.type = BzfEvent::Unmap;
+      } else {
+	_event.type = BzfEvent::Map;
       };
     break;
 
