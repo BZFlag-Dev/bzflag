@@ -33,6 +33,7 @@ class StartupInfo
   TeamColor team;
   char callsign[CallSignLen];
   char password[PasswordLen];
+  char token[TokenLen];
   char email[EmailLen];
   std::string listServerURL;
   int listServerPort;

@@ -52,7 +52,6 @@ public:
   void		updateTank(float dt, bool local);
   const char*	getCallSign() const;
   const char*	getEmailAddress() const;
-  const char*	getToken() const;
   PlayerType	getPlayerType() const;
   FlagType*	getFlag() const;
   long		getOrder() const;
@@ -182,7 +181,6 @@ private:
 
   char			callSign[CallSignLen];	// my pseudonym
   char			email[EmailLen];	// my email address
-  char			token[TokenLen];	// token I got from list server
   PlayerType		type;			// Human/Computer
 
   // relatively stable data
@@ -266,11 +264,6 @@ inline const char*	Player::getCallSign() const
 inline const char*	Player::getEmailAddress() const
 {
   return email;
-}
-
-inline const char*	Player::getToken() const
-{
-  return token;
 }
 
 inline PlayerType	Player::getPlayerType() const

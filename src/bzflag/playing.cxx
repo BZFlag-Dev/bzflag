@@ -4106,7 +4106,7 @@ static void joinInternetGame2()
   serverLink->sendEnter(TankPlayer, myTank->getTeam(),
 			myTank->getCallSign(),
 			myTank->getEmailAddress(),
-			myTank->getToken());
+			startupInfo.token);
 }
 
 static void		renderDialog()
