@@ -27,6 +27,12 @@ THESE ARE LOWER PRIORITY
   type that would be be called during ObstacleMgr::makeWorld()  (including
   materials, physics drivers, texture matrices, transforms, and dynamic
   colors).
+   * TimRiker asks what the point of this is? The server is already open
+     source. If you want a new object, add it to the source, no? Is this just
+     to allow compound referenced objects in world files? I'd say that a script
+     to generate the full world file might be a better approach. A way to read
+     a world file from stdin might be nice so that you could pipe the script
+     to bzfs on start up.
 
 * Teach Roger how to avoid driving into the water on maps that have
   waterlevels set.  Probably needs to know not to drive into deadly
