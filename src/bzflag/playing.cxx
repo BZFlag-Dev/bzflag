@@ -1505,10 +1505,10 @@ static void		doKeyPlaying(const BzfKeyEvent& key, bool pressed)
       return;
     }
 
-  if (doKeyCommon(key, pressed)) return;
+  bool haveBinding = doKeyCommon(key, pressed);
 
 #if defined(FREEZING)
-  if (key.ascii == '`' && pressed) {
+  if (key.ascii == '`' && pressed && !haveBinding) {
     // toggle motion freeze
     motionFreeze = !motionFreeze;
   }
@@ -1519,7 +1519,7 @@ static void		doKeyPlaying(const BzfKeyEvent& key, bool pressed)
       key.button >= BzfKeyEvent::F1 &&
       key.button <= BzfKeyEvent::F10 &&
       (key.shift & (BzfKeyEvent::ControlKey +
-		    BzfKeyEvent::AltKey)) != 0) {
+		    BzfKeyEvent::AltKey)) != 0 && !haveBinding) {
     // [Ctrl]-[Fx] is message to team
     // [Alt]-[Fx] is message to all
     if (pressed) {

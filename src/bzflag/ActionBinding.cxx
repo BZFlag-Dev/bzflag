@@ -44,6 +44,9 @@ ActionBinding::ActionBinding() {
   wayToBindActions.insert(std::make_pair(std::string("silence"), press));
   wayToBindActions.insert(std::make_pair(std::string("toggle displayLabels"), press));
   wayToBindActions.insert(std::make_pair(std::string("destruct"), press));
+
+  wayToBindActions.insert(std::make_pair(std::string("roam rotate stop"),
+					 release));
   wayToBindActions.insert(std::make_pair(std::string("roam rotate left"), both));
   wayToBindActions.insert(std::make_pair(std::string("roam rotate right"), both));
   wayToBindActions.insert(std::make_pair(std::string("roam rotate up"), both));
@@ -99,6 +102,15 @@ ActionBinding::ActionBinding() {
   defaultBinding.insert(std::make_pair(std::string("K"), std::string("silence")));
   defaultBinding.insert(std::make_pair(std::string("L"), std::string("toggle displayLabels")));
   defaultBinding.insert(std::make_pair(std::string("Delete"), std::string("destruct")));
+
+  defaultBinding.insert(std::make_pair(std::string("Left Arrow"),
+				       std::string("roam rotate stop")));
+  defaultBinding.insert(std::make_pair(std::string("Right Arrow"),
+				       std::string("roam rotate stop")));
+  defaultBinding.insert(std::make_pair(std::string("Up Arrow"),
+				       std::string("roam rotate stop")));
+  defaultBinding.insert(std::make_pair(std::string("Down Arrow"),
+				       std::string("roam rotate stop")));
 
   defaultBinding.insert(std::make_pair(std::string("Ctrl+Left Arrow"), std::string("roam rotate left")));
   defaultBinding.insert(std::make_pair(std::string("Ctrl+Right Arrow"),
