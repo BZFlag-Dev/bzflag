@@ -61,7 +61,7 @@
 
 // define our OS
 #ifndef BZ_BUILD_OS
-  #if defined(__linux)
+  #if defined(__linux) //Dev-C++ for Linux is not usable (8/2004), but for the future
     #ifdef DEBUG
       #define BZ_BUILD_OS			"linux-DevC++-gccD"
     #else
