@@ -549,7 +549,11 @@ void			LocalPlayer::doUpdateMotion(float dt)
   bool expelled;
   const Obstacle* obstacle;
   float timeStep = dt;
-  if (location != Dead && location != Exploding) location = OnGround;
+  if (location != Dead && location != Exploding) {
+    location = OnGround;
+
+    // anti-stuck code is usefule only when alive
+    // then only any 100 frames while stucked, take an action
 
   // try to see if we are stuck on a building
   obstacle = getHitBuilding(newPos, newAzimuth, newPos, newAzimuth, phased,
@@ -582,6 +586,7 @@ void			LocalPlayer::doUpdateMotion(float dt)
     newPos[2] += newVelocity[2];
     // compute time for all other kind of movements
     timeStep -= deltaTime;
+  }
   }
 
   for (int numSteps = 0; numSteps < MaxSteps; numSteps++) {
