@@ -22,30 +22,20 @@ GameKeeper::Player::Player(int _playerIndex,
 			   const struct sockaddr_in &clientAddr, int fd):
   player(&_player),
   lastState(&::lastState[_playerIndex]),
-  playerIndex(_playerIndex)
+  playerIndex(_playerIndex),
+  _player(_playerIndex)
 {
   playerList[playerIndex] = this;
 
-  player->initPlayer(playerIndex);
   lastState->order       = 0;
   lagInfo                = new LagInfo(player);
-  player->setLastMsg("");
-  player->setSpamWarns();
   netHandler             = new NetHandler(player, clientAddr, playerIndex, fd);
 }
 
 GameKeeper::Player::~Player()
 {
-#ifdef NETWORK_STATS
-  bool wasPlaying = player->isPlaying();
-#endif
-  player->removePlayer();
   flagHistory.clear();
   delete lagInfo;
-#ifdef NETWORK_STATS
-  if (wasPlaying)
-    netHandler->dumpMessageStats();
-#endif
   delete netHandler;
 
   playerList[playerIndex] = NULL;

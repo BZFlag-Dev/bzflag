@@ -22,9 +22,11 @@
 // implementation-specific bzflag headers
 #include "TextUtils.h"
 
-PlayerInfo::PlayerInfo() {
-  state = PlayerNoExist;
-  tracker = 0;
+PlayerInfo::PlayerInfo(int _playerIndex) :
+  playerIndex(_playerIndex), state(PlayerInLimbo), flag(-1),
+  spamWarns(0), lastMsgTime(TimeKeeper::getCurrent()), paused(false),
+  pausedSince(TimeKeeper::getNullTime()), tracker(0)
+{
 }
 
 std::string PlayerInfo::getLastMsg() {
@@ -43,22 +45,9 @@ void PlayerInfo::incSpamWarns() {
   ++spamWarns;
 }
 
-void PlayerInfo::setSpamWarns() {
-  spamWarns = 0;
-}
-
 void PlayerInfo::setLastMsg(std::string msg) {
   lastMsgSent = msg;
   lastMsgTime = TimeKeeper::getCurrent();
-}
-
-void PlayerInfo::initPlayer(int _playerIndex) {
-  playerIndex      = _playerIndex;
-
-  state = PlayerInLimbo;
-  paused = false;
-  pausedSince = TimeKeeper::getNullTime();
-  flag        = -1;
 }
 
 void PlayerInfo::resetPlayer(bool ctf) {
@@ -74,13 +63,6 @@ void PlayerInfo::resetPlayer(bool ctf) {
 #endif
 
   restartOnBase = ctf;
-}
-
-void PlayerInfo::removePlayer() {
-
-  callSign[0] = 0;
-
-  state = PlayerNoExist;
 }
 
 void PlayerInfo::setRestartOnBase(bool on) {

@@ -61,14 +61,13 @@ public:
 
 class PlayerInfo {
 public:
-  PlayerInfo();
+  PlayerInfo(int _playerIndex);
+
   void	      setLastMsg(std::string msg);
-  void	      setSpamWarns();
   std::string getLastMsg();
   TimeKeeper  getLastMsgTime();
   void 	      incSpamWarns();
   int	      getSpamWarns();
-  void        initPlayer(int _playerIndex);
   void        resetPlayer(bool ctf);
   void        removePlayer();
   void        setRestartOnBase(bool on);

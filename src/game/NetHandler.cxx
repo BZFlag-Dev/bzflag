@@ -226,6 +226,10 @@ NetHandler::NetHandler(PlayerInfo* _info, const struct sockaddr_in &clientAddr,
 }
 
 NetHandler::~NetHandler() {
+#ifdef NETWORK_STATS
+  if (info->isPlaying())
+    dumpMessageStats();
+#endif
   // shutdown TCP socket
   shutdown(fd, 2);
   close(fd);

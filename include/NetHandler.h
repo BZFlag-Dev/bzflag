@@ -123,9 +123,6 @@ public:
   int         pwrite(const void *b, int l);
   int         pflush(fd_set *set);
   std::string reasonToKick();
-#ifdef NETWORK_STATS
-  void        dumpMessageStats();
-#endif
   void        getPlayerList(char *list); 
   const char *getTargetIP();
   int         sizeOfIP();
@@ -148,6 +145,7 @@ private:
   RxStatus    receive(size_t length);
 #ifdef NETWORK_STATS
   void        countMessage(uint16_t code, int len, int direction);
+  void        dumpMessageStats();
 #endif
 #ifdef HAVE_ADNS_H
   AdnsHandler *adns;
