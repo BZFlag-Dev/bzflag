@@ -48,17 +48,22 @@ struct CmdLineOptions
 {
   CmdLineOptions()
   : wksPort(ServerPort), gameStyle(PlainGameStyle), servermsg(NULL),
-    advertisemsg(NULL), worldFile(NULL), pingInterface(NULL), publicizedTitle(NULL),
-    listServerURL(DefaultListServerURL), password(NULL), maxShots(1), maxTeamScore(0), maxPlayerScore(0),
-    maxObservers(3), numExtraFlags(0), teamKillerKickRatio(0), numAllowedFlags(0), shakeWins(0), shakeTimeout(0), teamFlagTimeout(30),
-    maxlagwarn(10000), lagwarnthresh(-1.0), idlekickthresh(-1.0), timeLimit(0.0f),
-    timeElapsed(0.0f), linearAcceleration(0.0f), angularAcceleration(0.0f), useGivenPort(false),
-    useFallbackPort(false), requireUDP(false), randomBoxes(false), randomCTF(false),
-    flagsOnBuildings(false), oneGameOnly(false), timeManualStart(false), randomHeights(false), useTeleporters(false),
+    advertisemsg(NULL), worldFile(NULL), pingInterface(NULL), 
+    publicizedTitle(NULL), listServerURL(DefaultListServerURL), password(NULL),
+    maxShots(1), maxTeamScore(0), maxPlayerScore(0),
+    maxObservers(3), numExtraFlags(0), teamKillerKickRatio(0),
+    numAllowedFlags(0), shakeWins(0), shakeTimeout(0),
+    teamFlagTimeout(30), maxlagwarn(10000), lagwarnthresh(-1.0),
+    idlekickthresh(-1.0), timeLimit(0.0f), timeElapsed(0.0f),
+    linearAcceleration(0.0f), angularAcceleration(0.0f), useGivenPort(false),
+    useFallbackPort(false), requireUDP(false), randomBoxes(false), 
+    randomCTF(false), flagsOnBuildings(false), oneGameOnly(false),
+    timeManualStart(false), randomHeights(false), useTeleporters(false),
     teamKillerDies(true), printScore(false), publicizeServer(false),
-    publicizedAddressGiven(false),
-    filterFilename(""), filterCallsigns(false), filterChat(false), filterSimple(false),
-    voteTime(60), vetoTime(20), votesRequired(3), votePercentage(50.1f), voteRepeatTime(300),
+    publicizedAddressGiven(false), filterFilename(""), filterCallsigns(false),
+    filterChat(false), filterSimple(false), voteTime(60), 
+    vetoTime(20), votesRequired(3), votePercentage(50.1f),
+    voteRepeatTime(300), autoTeam(false),
     debug(0)
   {
     int i;
@@ -146,6 +151,9 @@ struct CmdLineOptions
   std::string		reportPipe;
 
   std::string		bzdbVars;
+
+  /* team balancing options */
+  bool			autoTeam;
 
   int			debug;
 };

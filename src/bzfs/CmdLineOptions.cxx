@@ -40,6 +40,7 @@ extern std::vector<FlagType*> allowedFlags;
 const char *usageString =
 "[-a <vel> <rot>] "
 "[-admsg <text>] "
+"[-autoTeam] "
 "[-b] "
 "[-badwords <filename>] "
 "[-ban ip{,ip}*] "
@@ -113,6 +114,7 @@ const char *usageString =
 const char *extraUsageString =
 "\t-a: maximum acceleration settings\n"
 "\t-admsg: specify a <msg> which will be broadcast every 15 minutes\n"
+"\t-autoTeam: automatically assign players to teams when they join\n"
 "\t-b: randomly oriented buildings\n"
 "\t-badwords: bad-world file\n"
 "\t-ban ip{,ip}*: ban players based on ip address\n"
@@ -396,6 +398,8 @@ void parse(int argc, char **argv, CmdLineOptions &options)
 	 usage(argv[0]);
        }
        options.advertisemsg = argv[i];
+    } else if (strcmp(argv[i], "-autoTeam") == 0) {
+      options.autoTeam = true;
     } else if (strcmp(argv[i], "-b") == 0) {
       // random rotation to boxes in capture-the-flag game
       options.randomBoxes = true;
