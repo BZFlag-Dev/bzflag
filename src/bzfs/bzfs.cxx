@@ -135,7 +135,10 @@ static RejoinList rejoinList;
 static TimeKeeper lastWorldParmChange;
 static bool       isIdentifyFlagIn = false;
 
-void sendMessage(int playerIndex, PlayerId targetPlayer, const char *message);
+void sendMessage(int playerIndex, PlayerId dstPlayer, const char *message);
+void sendFilteredMessage(int playerIndex, PlayerId dstPlayer, const char *message);
+void sendPlayerMessage(GameKeeper::Player* playerData, PlayerId dstPlayer,
+                       const char *message);
 
 void removePlayer(int playerIndex, const char *reason, bool notify=true);
 void resetFlag(FlagInfo &flag);
@@ -1469,7 +1472,64 @@ static void respondToPing(Address addr)
 }
 
 
-void sendFilteredMessage(int playerIndex, PlayerId targetPlayer, const char *message)
+void sendPlayerMessage(GameKeeper::Player *playerData, PlayerId dstPlayer,
+                       const char *message)
+{
+  const PlayerId srcPlayer = playerData->getIndex();
+  bool isAction = false;
+  std::string actionMsg;
+
+  // reformat any '/me' action messages
+  if ((message[0] == '/') &&
+      (tolower(message[1]) == 'm') && (tolower(message[2]) == 'e')) {
+    isAction = true;
+    
+    actionMsg = TextUtils::format("* %s %s\t*", playerData->player.getCallSign(),
+                                  message + 4);
+    message = actionMsg.c_str();
+  }
+
+  // check for a server command
+  if (!isAction && (message[0] == '/') && (message[1] != '/')) {
+    // make commands case insensitive for user-friendlyness
+    std::string lower = TextUtils::tolower(std::string(message));
+    message = lower.c_str();
+    // record server commands    
+    if (Record::enabled()) {
+      void *buf, *bufStart = getDirectMessageBuffer();
+      buf = nboPackUByte (bufStart, srcPlayer);
+      buf = nboPackUByte (buf, dstPlayer);
+      buf = nboPackString (buf, message, strlen(message) + 1);
+      Record::addPacket (MsgMessage, (char*)buf - (char*)bufStart, bufStart,
+                         HiddenPacket);
+    }
+    parseServerCommand(message, srcPlayer);
+    return; // bail out
+  }
+  
+  // check if the player has permission to use the admin channel
+  if ((dstPlayer == AdminPlayers) &&
+      !playerData->accessInfo.hasPerm(PlayerAccessInfo::adminMessageSend)) {
+    sendMessage(ServerPlayer, srcPlayer,
+                "You do not have permission to speak on the admin channel.");
+    return; // bail out
+  }
+  
+  // check for bogus targets
+  if ((dstPlayer < LastRealPlayer) && !realPlayer(dstPlayer)) {
+    sendMessage(ServerPlayer, srcPlayer,
+                "The player you tried to talk to does not exist!");
+    return; // bail out
+  }
+
+  // filter the message, and send it
+  sendFilteredMessage(srcPlayer, dstPlayer, message);
+
+  return;
+}
+
+
+void sendFilteredMessage(int playerIndex, PlayerId dstPlayer, const char *message)
 {
   const char* msg = message;
 
@@ -1484,11 +1544,11 @@ void sendFilteredMessage(int playerIndex, PlayerId targetPlayer, const char *mes
     msg = filtered;
   }
   
-  sendMessage(playerIndex, targetPlayer, msg);
+  sendMessage(playerIndex, dstPlayer, msg);
 }
 
 
-void sendMessage(int playerIndex, PlayerId targetPlayer, const char *message)
+void sendMessage(int playerIndex, PlayerId dstPlayer, const char *message)
 {
   long int msglen = strlen(message) + 1; // include null terminator
   const char *msg = message;
@@ -1504,7 +1564,7 @@ void sendMessage(int playerIndex, PlayerId targetPlayer, const char *message)
 
   void *buf, *bufStart = getDirectMessageBuffer();
   buf = nboPackUByte(bufStart, playerIndex);
-  buf = nboPackUByte(buf, targetPlayer);
+  buf = nboPackUByte(buf, dstPlayer);
   buf = nboPackString(buf, msg, msglen);
 
   ((char*)bufStart)[MessageLen - 1] = '\0'; // always terminate
@@ -1512,14 +1572,14 @@ void sendMessage(int playerIndex, PlayerId targetPlayer, const char *message)
   int len = 2 + msglen;
   bool broadcast = false;
 
-  if (targetPlayer <= LastRealPlayer) {
-    directMessage(targetPlayer, MsgMessage, len, bufStart);
-    if (playerIndex <= LastRealPlayer && targetPlayer != playerIndex)
+  if (dstPlayer <= LastRealPlayer) {
+    directMessage(dstPlayer, MsgMessage, len, bufStart);
+    if (playerIndex <= LastRealPlayer && dstPlayer != playerIndex)
       directMessage(playerIndex, MsgMessage, len, bufStart);
   }
   // FIXME this teamcolor <-> player id conversion is in several files now
-  else if (targetPlayer >= 244 && targetPlayer <= 250) {
-    TeamColor team = TeamColor(250 - targetPlayer);
+  else if (dstPlayer >= 244 && dstPlayer <= 250) {
+    TeamColor team = TeamColor(250 - dstPlayer);
     // send message to all team members only
     GameKeeper::Player *playerData;
     for (int i = 0; i < curMaxPlayers; i++)
@@ -1527,7 +1587,7 @@ void sendMessage(int playerIndex, PlayerId targetPlayer, const char *message)
 	  && playerData->player.isPlaying()
 	  && playerData->player.isTeam(team))
 	directMessage(i, MsgMessage, len, bufStart);
-  } else if (targetPlayer == AdminPlayers){
+  } else if (dstPlayer == AdminPlayers){
     // admin messages
     std::vector<int> admins
       = GameKeeper::Player::allowed(PlayerAccessInfo::adminMessageReceive);
@@ -3066,170 +3126,6 @@ static void sendTeleport(int playerIndex, uint16_t from, uint16_t to)
 }
 
 
-// parse player comands (messages with leading /)
-static void parseCommand(const char *message, int t)
-{
-  if (!message) {
-    std::cerr << "WARNING: parseCommand was given a null message?!" << std::endl;
-    return;
-  }
-
-  GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(t);
-  if (!playerData)
-    return;
-
-  if (strncmp(message + 1, "me ", 3) == 0) {
-    handleMeCmd(playerData, message);
-
-  } else if (strncmp(message + 1, "msg", 3) == 0) {
-    handleMsgCmd(playerData, message);
-
-  } else if (strncmp(message + 1, "serverquery", 11) == 0) {
-    handleServerQueryCmd(playerData, message);
-
-  } else if (strncmp(message + 1, "part", 4) == 0) {
-    handlePartCmd(playerData, message);
-
-  } else if (strncmp(message + 1, "quit", 4) == 0) {
-    handleQuitCmd(playerData, message);
-
-  } else if (strncmp(message + 1, "uptime", 6) == 0) {
-    handleUptimeCmd(playerData, message);
-
-  } else if (strncmp(message + 1, "password", 8) == 0) {
-    handlePasswordCmd(playerData, message);
-
-  } else if (strncmp(message + 1, "set ", 4) == 0) {
-    handleSetCmd(playerData, message);
-
-  } else if (strncmp(message + 1, "reset", 5) == 0) {
-    handleResetCmd(playerData, message);
-
-  } else if (strncmp(message + 1, "shutdownserver", 8) == 0) {
-    handleShutdownserverCmd(playerData, message);
-
-  } else if (strncmp(message + 1, "superkill", 8) == 0) {
-    handleSuperkillCmd(playerData, message);
-
-  } else if (strncmp(message + 1, "gameover", 8) == 0) {
-    handleGameoverCmd(playerData, message);
-
-  } else if (strncmp(message + 1, "countdown", 9) == 0) {
-    handleCountdownCmd(playerData, message);
-
-  } else if (strncmp(message + 1, "flag ", 5) == 0) {
-    handleFlagCmd(playerData,message);
-
-  } else if (strncmp(message + 1, "kick", 4) == 0) {
-    handleKickCmd(playerData, message);
-
-  } else if (strncmp(message+1, "banlist", 7) == 0) {
-    handleBanlistCmd(playerData, message);
-
-  } else if (strncmp(message+1, "hostbanlist", 11) == 0) {
-    handleHostBanlistCmd(playerData, message);
-
-  } else if (strncmp(message+1, "ban", 3) == 0) {
-    handleBanCmd(playerData, message);
-
-  } else if (strncmp(message+1, "hostban", 7) == 0) {
-    handleHostBanCmd(playerData, message);
-
-  } else if (strncmp(message+1, "unban", 5) == 0) {
-    handleUnbanCmd(playerData, message);
-
-  } else if (strncmp(message+1, "hostunban", 9) == 0) {
-    handleHostUnbanCmd(playerData, message);
-
-  } else if (strncmp(message+1, "lagwarn",7) == 0) {
-    handleLagwarnCmd(playerData, message);
-
-  } else if (strncmp(message+1, "lagstats",8) == 0) {
-    handleLagstatsCmd(playerData, message);
-
-  } else if (strncmp(message+1, "idlestats",9) == 0) {
-    handleIdlestatsCmd(playerData, message);
-
-  } else if (strncmp(message+1, "flaghistory", 11 ) == 0) {
-    handleFlaghistoryCmd(playerData, message);
-
-  } else if (strncmp(message+1, "playerlist", 10) == 0) {
-    handlePlayerlistCmd(playerData, message);
-
-  } else if (strncmp(message+1, "report", 6) == 0) {
-    handleReportCmd(playerData, message);
-
-  } else if (strncmp(message+1, "help", 4) == 0) {
-    handleHelpCmd(playerData, message);
-
-  } else if (strncmp(message + 1, "identify", 8) == 0) {
-    handleIdentifyCmd(playerData, message);
-
-  } else if (strncmp(message + 1, "register", 8) == 0) {
-    handleRegisterCmd(playerData, message);
-
-  } else if (strncmp(message + 1, "ghost", 5) == 0) {
-    handleGhostCmd(playerData, message);
-
-  } else if (strncmp(message + 1, "deregister", 10) == 0) {
-    handleDeregisterCmd(playerData, message);
-
-  } else if (strncmp(message + 1, "setpass", 7) == 0) {
-    handleSetpassCmd(playerData, message);
-
-  } else if (strncmp(message + 1, "grouplist", 9) == 0) {
-    handleGrouplistCmd(playerData, message);
-
-  } else if (strncmp(message + 1, "showgroup", 9) == 0) {
-    handleShowgroupCmd(playerData, message);
-
-  } else if (strncmp(message + 1, "groupperms", 10) == 0) {
-    handleGrouppermsCmd(playerData, message);
-
-  } else if (strncmp(message + 1, "setgroup", 8) == 0) {
-    handleSetgroupCmd(playerData, message);
-
-  } else if (strncmp(message + 1, "removegroup", 11) == 0) {
-    handleRemovegroupCmd(playerData, message);
-
-  } else if (strncmp(message + 1, "reload", 6) == 0) {
-    handleReloadCmd(playerData, message);
-
-  } else if (strncmp(message + 1, "poll", 4) == 0) {
-    handlePollCmd(playerData, message);
-
-  } else if (strncmp(message + 1, "vote", 4) == 0) {
-    handleVoteCmd(playerData, message);
-
-  } else if (strncmp(message + 1, "veto", 4) == 0) {
-    handleVetoCmd(playerData, message);
-
-  } else if (strncmp(message + 1, "viewreports", 11) == 0) {
-    handleViewReportsCmd(playerData, message);
-
-  } else if (strncmp(message + 1, "clientquery", 11) == 0) {
-    handleClientqueryCmd(playerData, message);
-
-  } else if (strncmp(message + 1, "date", 4) == 0 || strncmp(message + 1, "time", 4) == 0) {
-    handleDateCmd(playerData, message);
-
-  } else if (strncmp(message + 1, "record", 6) == 0) {
-    handleRecordCmd(playerData, message);
-
-  } else if (strncmp(message + 1, "replay", 6) == 0) {
-    handleReplayCmd(playerData, message);
-
-  } else if (strncmp(message + 1, "masterban", 9) == 0) {
-    handleMasterBanCmd(playerData, message);
-
-  } else {
-    char reply[MessageLen];
-    snprintf(reply, MessageLen, "Unknown command [%s]", message + 1);
-    sendMessage(ServerPlayer, t, reply);
-  }
-}
-
-
 /** observers and paused players should not be sending updates.. punish the
  * ones that are paused since they are probably cheating.
  */
@@ -3577,46 +3473,17 @@ possible attack from %s\n",
     // player sending a message
     case MsgMessage: {
       // data: target player/team, message string
-      PlayerId targetPlayer;
+      PlayerId dstPlayer;
       char message[MessageLen];
-      buf = nboUnpackUByte(buf, targetPlayer);
+      buf = nboUnpackUByte(buf, dstPlayer);
       buf = nboUnpackString(buf, message, sizeof(message));
       message[MessageLen - 1] = '\0';
       playerData->player.hasSent(message);
       // check for spamming
       if (checkSpam(message, playerData, t))
 	break;
-      // check for command
-      if (message[0] == '/' && message[1] != '/') {
-	// make commands case insensitive for user-friendlyness
-	unsigned int pos = 1;
-	while ((pos < strlen(message)) && (TextUtils::isAlphanumeric(message[pos]))) {
-	  message[pos] = tolower((int)message[pos]);
-	  pos++;
-	}
-	if (Record::enabled()) {
-	  void *buf, *bufStart = getDirectMessageBuffer();
-	  buf = nboPackUByte (bufStart, t);       // the src player
-	  buf = nboPackUByte (buf, targetPlayer); // the dst player
-	  buf = nboPackString (buf, message, strlen(message) + 1);
-	  Record::addPacket (MsgMessage, (char*)buf - (char*)bufStart, bufStart,
-			     HiddenPacket);
-	}
-	parseCommand(message, t);
-      } else if (targetPlayer == AdminPlayers) {
-	if (playerData->accessInfo.hasPerm(PlayerAccessInfo::adminMessageSend)) {
-	  sendMessage (t, AdminPlayers, message);
-	} else {
-	  sendFilteredMessage(ServerPlayer, t,
-		      "You do not have permission to speak on the admin channel.");
-	}
-      } else if ((targetPlayer < LastRealPlayer) && !realPlayer(targetPlayer)) {
-	// check for bogus targets
-	sendFilteredMessage(ServerPlayer, t, "The player you tried to talk to does not exist!");
-      } else {
-	// most messages should come here
-	sendFilteredMessage(t, targetPlayer, message);
-      }
+	
+      sendPlayerMessage (playerData, dstPlayer, message);
       break;
     }
 
@@ -4165,6 +4032,44 @@ static void doStuffOnPlayer(GameKeeper::Player &playerData)
   }
 
 }
+
+
+void initGroups()
+{
+  // reload the databases
+  if (groupsFile.size())
+    PlayerAccessInfo::readGroupsFile(groupsFile);
+  // make sure that the 'admin' & 'default' groups exist
+  // FIXME same code is in bzfs to init groups on start
+  PlayerAccessMap::iterator itr = groupAccess.find("EVERYONE");
+  if (itr == groupAccess.end()) {
+    PlayerAccessInfo info;
+    info.explicitAllows[PlayerAccessInfo::idleStats] = true;
+    info.explicitAllows[PlayerAccessInfo::lagStats] = true;
+    info.explicitAllows[PlayerAccessInfo::date] = true;
+    info.explicitAllows[PlayerAccessInfo::flagHistory] = true;
+    info.explicitAllows[PlayerAccessInfo::actionMessage] = true;
+    info.explicitAllows[PlayerAccessInfo::privateMessage] = true;
+    info.explicitAllows[PlayerAccessInfo::adminMessageSend] = true;
+    groupAccess["EVERYONE"] = info;
+  }
+  itr = groupAccess.find("VERIFIED");
+  if (itr == groupAccess.end()) {
+    PlayerAccessInfo info;
+    info.explicitAllows[PlayerAccessInfo::vote] = true;
+    info.explicitAllows[PlayerAccessInfo::poll] = true;
+    groupAccess["VERIFIED"] = info;
+  }
+  itr = groupAccess.find("LOCAL.ADMIN");
+  if (itr == groupAccess.end()) {
+    PlayerAccessInfo info;
+    for (int i = 0; i < PlayerAccessInfo::lastPerm; i++)
+      info.explicitAllows[i] = true;
+    info.explicitAllows[PlayerAccessInfo::hideAdmin ] = false;
+    groupAccess["LOCAL.ADMIN"] = info;
+  }
+}
+
 
 /** main parses command line options and then enters an event and activity
  * dependant main loop.  once inside the main loop, the server is up and

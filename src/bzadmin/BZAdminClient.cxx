@@ -548,22 +548,37 @@ std::string BZAdminClient::formatMessage(const std::string& msg, PlayerId src,
 				"(UNKNOWN)"));
   const std::string dstName = (players.count(dst) ? players[dst].name :
 			       "(UNKNOWN)");
-
+  
+  // display action messages differently
+  bool isAction = false;
+  std::string message;
+  if ((msg[0] == '*') && (msg[1] == ' ') &&
+      (msg[msg.size () - 1] == '*') && (msg[msg.size () - 2] == '\t')) {
+    isAction = true;
+    message = msg.substr(2, msg.size() - 4);
+  } else {
+    message = msg;
+  }
+  
   // direct message to or from me
   if (dst == me || players.count(dst)) {
     if (!(src == me && dst == me)) {
-      formatted += "[";
       if (src == me) {
-	formatted += "->";
-	formatted += dstName;
+        if (isAction) {
+          formatted += "[->" + message + "]";
+        } else {
+	  formatted += "[->" + dstName + "] " + message;
+        }
+      } else {
+        if (isAction) {
+          formatted += "[" + message + "->]";
+        } else {
+	  formatted += "[" + srcName + "->] " + message;
+        }
       }
-      else {
-	formatted += srcName;
-	formatted += "->";
-      }
-      formatted += "] ";
+    } else {
+      formatted += message;
     }
-    formatted += msg;
   }
 
   // public or admin or team message
@@ -573,16 +588,11 @@ std::string BZAdminClient::formatMessage(const std::string& msg, PlayerId src,
     else if (dstTeam != NoTeam)
       formatted += "[Team] ";
       
-    // action messages are formatted differently
-    if ((msg[0] == '*') && (msg[1] == ' ') &&
-        (msg[msg.size() - 1] == '*') &&
-        (msg[msg.size() - 2] == '\t')) {
-      formatted += msg.substr(2, msg.size() - 4);
-    } else {
+    if (!isAction) {
       formatted += srcName;
       formatted += ": ";
-      formatted += msg;
     }
+    formatted += message;
   }
 
   return formatted;

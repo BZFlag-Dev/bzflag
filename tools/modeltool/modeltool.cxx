@@ -374,7 +374,7 @@ void readOBJ ( CModel &model, std::string file )
 					{
 						std::string section = lineParts[i];
 						std::vector<std::string>	vertItems = TextUtils::tokenize(section,std::string("/"));
-						if (vertItems.size() > 1)
+						if (vertItems.size() == 3)
 						{
 							std::string vertPart = vertItems[0];
 							std::string uvPart = vertItems[1];
@@ -383,6 +383,10 @@ void readOBJ ( CModel &model, std::string file )
 							face.verts.push_back(atoi(vertPart.c_str())-1);
 							face.texCoords.push_back(atoi(uvPart.c_str())-1);
 							face.normals.push_back(atoi(normPart.c_str())-1);
+						}
+						else
+						{
+							printf ("bad face triplet specification: %s\n", section.c_str());
 						}
 					}	
 					mesh.faces.push_back(face);

@@ -2415,24 +2415,47 @@ static void		handleServerMessage(bool human, uint16_t code,
 
 	fullMsg += colorStr;
 
+        // display action messages differently
+        bool isAction = false;
+        if ((text[0] == '*') && (text[1] == ' ') &&
+            (text[text.size() - 1] == '*') &&
+            (text[text.size() - 2] == '\t')) {
+          isAction = true;
+          text = text.substr(2, text.size() - 4);
+        }
+
 	// direct message to or from me
 	if (dstPlayer) {
 	  //if (fromServer && (origText == "You are now an administrator!"
-	//		     || origText == "Password Accepted, welcome back."))
-	    //admin = true;
+	  //		     || origText == "Password Accepted, welcome back."))
+	  //admin = true;
+	  
 	  // talking to myself? that's strange
 	  if (dstPlayer == myTank && srcPlayer == myTank) {
 	    fullMsg = text;
 	  } else {
 	    if (BZDB.get("killerhighlight") == "1")
 	      fullMsg += ColorStrings[PulsatingColor];
-	    else if (BZDB.get("killerhighlight") == "2")
+            else if (BZDB.get("killerhighlight") == "2")
 	      fullMsg += ColorStrings[UnderlineColor];
-	    fullMsg += "[";
+
 	    if (srcPlayer == myTank) {
-	      fullMsg += "->" + dstName + colorStr;
+              if (isAction) {
+                fullMsg += "[->" + text + "]";
+              } else {
+                fullMsg += "[->" + dstName + "]";
+                fullMsg += ColorStrings[ResetColor] + " ";
+                fullMsg += ColorStrings[CyanColor] + text;
+              }
 	    } else {
-	      fullMsg += srcName + colorStr + "->";
+              if (isAction) {
+                fullMsg += "[" + text + "->]";
+              } else {
+                fullMsg += "[" + srcName + "->]";
+                fullMsg += ColorStrings[ResetColor] + " ";
+                fullMsg += ColorStrings[CyanColor] + text;
+              }
+
 	      if (srcPlayer)
 		myTank->setRecipient(srcPlayer);
 
@@ -2444,7 +2467,6 @@ static void		handleServerMessage(bool human, uint16_t code,
 		lastMsg = TimeKeeper::getTick();
 	      }
 	    }
-	    fullMsg += "]" + ColorStrings[ResetColor] + " " + ColorStrings[CyanColor] + text;
 	  }
 	} else {
 	  // team / admin message
@@ -2480,15 +2502,13 @@ static void		handleServerMessage(bool human, uint16_t code,
 	  }
 
 	  // display action messages differently
-	  if ((text[0] == '*') &&
-	      (text[1] == ' ') &&
-	      (text[text.size() - 1] == '*') &&
-	      (text[text.size() - 2] == '\t')) {
-	    fullMsg += text.substr(2, text.size() - 4);
+	  if (isAction) {
+	    fullMsg += text;
 	  } else {
 	    fullMsg += srcName + colorStr + ": " + ColorStrings[CyanColor] + text;
 	  }
 	}
+	
 	std::string oldcolor = "";
 	if (!srcPlayer || srcPlayer->getTeam() == NoTeam)
 	  oldcolor = ColorStrings[RogueTeam];

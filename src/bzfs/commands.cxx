@@ -60,9 +60,13 @@
 
 // FIXME -- need to pull communication out of bzfs.cxx...
 
+// extern to initialize permission groups
+extern void initGroups();
+
 // externs that poll, veto, vote, and clientquery require
-extern void sendMessage(int playerIndex, PlayerId targetPlayer, const char *message);
-extern void sendFilteredMessage(int playerIndex, PlayerId targetPlayer, const char *message);
+extern void sendMessage(int playerIndex, PlayerId dstPlayer, const char *message);
+extern void sendPlayerMessage(GameKeeper::Player *playerData, PlayerId dstPlayer,
+                              const char *message);
 extern CmdLineOptions *clOptions;
 extern uint16_t curMaxPlayers;
 extern int NotConnected;
@@ -112,7 +116,8 @@ int getTarget(const char *victimname) {
   return i;
 }
 
-void handleUptimeCmd(GameKeeper::Player *playerData, const char *)
+
+static void handleUptimeCmd(GameKeeper::Player *playerData, const char *)
 {
   float rawTime;
   int t = playerData->getIndex();
@@ -123,7 +128,7 @@ void handleUptimeCmd(GameKeeper::Player *playerData, const char *)
   sendMessage(ServerPlayer, t, reply);
 }
 
-void handleServerQueryCmd(GameKeeper::Player *playerData, const char *)
+static void handleServerQueryCmd(GameKeeper::Player *playerData, const char *)
 {
   int t = playerData->getIndex();
   DEBUG2("Server query requested by %s [%d]\n",
@@ -135,7 +140,7 @@ void handleServerQueryCmd(GameKeeper::Player *playerData, const char *)
 }
 
 
-void handlePartCmd(GameKeeper::Player *playerData, const char *message)
+static void handlePartCmd(GameKeeper::Player *playerData, const char *message)
 {
   std::string byeStatement = "";
 
@@ -164,7 +169,7 @@ void handlePartCmd(GameKeeper::Player *playerData, const char *message)
 }
 
 
-void handleQuitCmd(GameKeeper::Player *playerData, const char *message)
+static void handleQuitCmd(GameKeeper::Player *playerData, const char *message)
 {
   std::string byeStatement = "";
 
@@ -193,27 +198,7 @@ void handleQuitCmd(GameKeeper::Player *playerData, const char *message)
 }
 
 
-void handleMeCmd(GameKeeper::Player *playerData, const char *message)
-{
-  int t = playerData->getIndex();
-  std::string message2;
-
-  if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::actionMessage)) {
-    char reply[MessageLen] = {0};
-    sprintf(reply,"%s, you are not presently authorized to perform /me actions", playerData->player.getCallSign());
-    sendMessage(ServerPlayer, t, reply);
-    return;
-  }
-
-  /* wrap the action using "* blah\t*" for effect.  the \t prevents
-   * unauthoized players from using the command or spoofing actions.
-   */
-  message2 = TextUtils::format("* %s %s\t*", playerData->player.getCallSign(), message + 4);
-  sendFilteredMessage(t, AllPlayers, message2.c_str());
-}
-
-
-void handleMsgCmd(GameKeeper::Player *playerData, const char *message)
+static void handleMsgCmd(GameKeeper::Player *playerData, const char *message)
 {
   int from = playerData->getIndex();
   int to;
@@ -313,12 +298,12 @@ void handleMsgCmd(GameKeeper::Player *playerData, const char *message)
   }
 
   // send the message
-  sendMessage(from, to, arguments.c_str() + messageStart + 1);
+  sendPlayerMessage(playerData, to, arguments.c_str() + messageStart + 1);
   return;
 }
 
 
-void handlePasswordCmd(GameKeeper::Player *playerData, const char *message)
+static void handlePasswordCmd(GameKeeper::Player *playerData, const char *message)
 {
   int t = playerData->getIndex();
   if (playerData->accessInfo.passwordAttemptsMax()) {
@@ -339,7 +324,7 @@ void handlePasswordCmd(GameKeeper::Player *playerData, const char *message)
 }
 
 
-void handleSetCmd(GameKeeper::Player *playerData, const char *message)
+static void handleSetCmd(GameKeeper::Player *playerData, const char *message)
 {
   int t = playerData->getIndex();
   char message2[MessageLen];
@@ -360,7 +345,7 @@ void handleSetCmd(GameKeeper::Player *playerData, const char *message)
 }
 
 
-void handleResetCmd(GameKeeper::Player *playerData, const char *message)
+static void handleResetCmd(GameKeeper::Player *playerData, const char *message)
 {
   int t = playerData->getIndex();
   if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::setVar)
@@ -377,7 +362,7 @@ void handleResetCmd(GameKeeper::Player *playerData, const char *message)
 }
 
 
-void handleShutdownserverCmd(GameKeeper::Player *playerData, const char *)
+static void handleShutdownserverCmd(GameKeeper::Player *playerData, const char *)
 {
   int t = playerData->getIndex();
   if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::shutdownServer)) {
@@ -389,7 +374,7 @@ void handleShutdownserverCmd(GameKeeper::Player *playerData, const char *)
 }
 
 
-void handleSuperkillCmd(GameKeeper::Player *playerData, const char *)
+static void handleSuperkillCmd(GameKeeper::Player *playerData, const char *)
 {
   int t = playerData->getIndex();
   if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::superKill)) {
@@ -405,7 +390,7 @@ void handleSuperkillCmd(GameKeeper::Player *playerData, const char *)
 }
 
 
-void handleGameoverCmd(GameKeeper::Player *playerData, const char *)
+static void handleGameoverCmd(GameKeeper::Player *playerData, const char *)
 {
   int t = playerData->getIndex();
   if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::endGame)) {
@@ -430,7 +415,7 @@ static void zapAllFlags()
     zapFlag(*FlagInfo::get(i));
 }
 
-void handleCountdownCmd(GameKeeper::Player *playerData, const char *message)
+static void handleCountdownCmd(GameKeeper::Player *playerData, const char *message)
 {
   // /countdown starts timed game, if start is manual, everyone is allowed to
   int t = playerData->getIndex();
@@ -507,7 +492,7 @@ void handleCountdownCmd(GameKeeper::Player *playerData, const char *message)
 }
 
 
-void handleFlagCmd(GameKeeper::Player *playerData, const char *message)
+static void handleFlagCmd(GameKeeper::Player *playerData, const char *message)
 {
   int t = playerData->getIndex();
   if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::flagMod)) {
@@ -552,7 +537,7 @@ void handleFlagCmd(GameKeeper::Player *playerData, const char *message)
 }
 
 
-void handleKickCmd(GameKeeper::Player *playerData, const char *message)
+static void handleKickCmd(GameKeeper::Player *playerData, const char *message)
 {
   int t = playerData->getIndex();
   if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::kick)) {
@@ -603,7 +588,7 @@ void handleKickCmd(GameKeeper::Player *playerData, const char *message)
 }
 
 
-void handleBanlistCmd(GameKeeper::Player *playerData, const char *)
+static void handleBanlistCmd(GameKeeper::Player *playerData, const char *)
 {
   int t = playerData->getIndex();
   if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::banlist)) {
@@ -615,7 +600,7 @@ void handleBanlistCmd(GameKeeper::Player *playerData, const char *)
 }
 
 
-void handleHostBanlistCmd(GameKeeper::Player *playerData, const char *)
+static void handleHostBanlistCmd(GameKeeper::Player *playerData, const char *)
 {
   int t = playerData->getIndex();
   if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::banlist)) {
@@ -627,7 +612,7 @@ void handleHostBanlistCmd(GameKeeper::Player *playerData, const char *)
 }
 
 
-void handleBanCmd(GameKeeper::Player *playerData, const char *message)
+static void handleBanCmd(GameKeeper::Player *playerData, const char *message)
 {
   int t = playerData->getIndex();
   if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::ban) &&
@@ -713,7 +698,7 @@ void handleBanCmd(GameKeeper::Player *playerData, const char *message)
 }
 
 
-void handleHostBanCmd(GameKeeper::Player *playerData, const char *message)
+static void handleHostBanCmd(GameKeeper::Player *playerData, const char *message)
 {
   int t = playerData->getIndex();
   if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::ban) &&
@@ -799,7 +784,7 @@ void handleHostBanCmd(GameKeeper::Player *playerData, const char *message)
 }
 
 
-void handleUnbanCmd(GameKeeper::Player *playerData, const char *message)
+static void handleUnbanCmd(GameKeeper::Player *playerData, const char *message)
 {
   int t = playerData->getIndex();
   if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::unban)) {
@@ -816,7 +801,7 @@ void handleUnbanCmd(GameKeeper::Player *playerData, const char *message)
   return;
 }
 
-void handleHostUnbanCmd(GameKeeper::Player *playerData, const char *message)
+static void handleHostUnbanCmd(GameKeeper::Player *playerData, const char *message)
 {
   int t = playerData->getIndex();
   if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::unban)) {
@@ -834,7 +819,7 @@ void handleHostUnbanCmd(GameKeeper::Player *playerData, const char *message)
 }
 
 
-void handleLagwarnCmd(GameKeeper::Player *playerData, const char *message)
+static void handleLagwarnCmd(GameKeeper::Player *playerData, const char *message)
 {
   int t = playerData->getIndex();
   if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::lagwarn)) {
@@ -861,7 +846,7 @@ bool lagCompare(const GameKeeper::Player *a, const GameKeeper::Player *b)
   return a->lagInfo.getLag() < b->lagInfo.getLag();
 }
 
-void handleLagstatsCmd(GameKeeper::Player *playerData, const char *)
+static void handleLagstatsCmd(GameKeeper::Player *playerData, const char *)
 {
   int t = playerData->getIndex();
   if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::lagStats)) {
@@ -889,7 +874,7 @@ void handleLagstatsCmd(GameKeeper::Player *playerData, const char *)
 }
 
 
-void handleIdlestatsCmd(GameKeeper::Player *playerData, const char *)
+static void handleIdlestatsCmd(GameKeeper::Player *playerData, const char *)
 {
   int t = playerData->getIndex();
   if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::idleStats)) {
@@ -911,7 +896,7 @@ void handleIdlestatsCmd(GameKeeper::Player *playerData, const char *)
 }
 
 
-void handleFlaghistoryCmd(GameKeeper::Player *playerData, const char *)
+static void handleFlaghistoryCmd(GameKeeper::Player *playerData, const char *)
 {
   int t = playerData->getIndex();
   if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::flagHistory)) {
@@ -931,7 +916,7 @@ void handleFlaghistoryCmd(GameKeeper::Player *playerData, const char *)
 }
 
 
-void handlePlayerlistCmd(GameKeeper::Player *playerData, const char *)
+static void handlePlayerlistCmd(GameKeeper::Player *playerData, const char *)
 {
   int t = playerData->getIndex();
   if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::playerList)) {
@@ -953,7 +938,7 @@ void handlePlayerlistCmd(GameKeeper::Player *playerData, const char *)
 }
 
 
-void handleReportCmd(GameKeeper::Player *playerData, const char *message)
+static void handleReportCmd(GameKeeper::Player *playerData, const char *message)
 {
   int t = playerData->getIndex();
 
@@ -1012,7 +997,7 @@ void handleReportCmd(GameKeeper::Player *playerData, const char *message)
 }
 
 
-void handleHelpCmd(GameKeeper::Player *playerData, const char *message)
+static void handleHelpCmd(GameKeeper::Player *playerData, const char *message)
 {
   int t = playerData->getIndex();
   char reply[MessageLen] = {0};
@@ -1047,7 +1032,7 @@ void handleHelpCmd(GameKeeper::Player *playerData, const char *message)
 }
 
 
-void handleIdentifyCmd(GameKeeper::Player *playerData, const char *message)
+static void handleIdentifyCmd(GameKeeper::Player *playerData, const char *message)
 {
   int t = playerData->getIndex();
   if (!passFile.size()){
@@ -1086,7 +1071,7 @@ void handleIdentifyCmd(GameKeeper::Player *playerData, const char *message)
 }
 
 
-void handleRegisterCmd(GameKeeper::Player *playerData, const char *message)
+static void handleRegisterCmd(GameKeeper::Player *playerData, const char *message)
 {
   int t = playerData->getIndex();
   if (!passFile.size()){
@@ -1114,7 +1099,7 @@ void handleRegisterCmd(GameKeeper::Player *playerData, const char *message)
 }
 
 
-void handleGhostCmd(GameKeeper::Player *playerData, const char *message)
+static void handleGhostCmd(GameKeeper::Player *playerData, const char *message)
 {
   int t = playerData->getIndex();
   if (!passFile.size()){
@@ -1158,7 +1143,7 @@ void handleGhostCmd(GameKeeper::Player *playerData, const char *message)
 }
 
 
-void handleDeregisterCmd(GameKeeper::Player *playerData, const char *message)
+static void handleDeregisterCmd(GameKeeper::Player *playerData, const char *message)
 {
   int t = playerData->getIndex();
   if (!passFile.size()){
@@ -1215,7 +1200,7 @@ void handleDeregisterCmd(GameKeeper::Player *playerData, const char *message)
 }
 
 
-void handleSetpassCmd(GameKeeper::Player *playerData, const char *message)
+static void handleSetpassCmd(GameKeeper::Player *playerData, const char *message)
 {
   int t = playerData->getIndex();
   if (!passFile.size()){
@@ -1244,7 +1229,7 @@ void handleSetpassCmd(GameKeeper::Player *playerData, const char *message)
 }
 
 
-void handleGrouplistCmd(GameKeeper::Player *playerData, const char *)
+static void handleGrouplistCmd(GameKeeper::Player *playerData, const char *)
 {
   int t = playerData->getIndex();
   sendMessage(ServerPlayer, t, "Group List:");
@@ -1257,7 +1242,7 @@ void handleGrouplistCmd(GameKeeper::Player *playerData, const char *)
 }
 
 
-void handleShowgroupCmd(GameKeeper::Player *playerData, const char *message)
+static void handleShowgroupCmd(GameKeeper::Player *playerData, const char *message)
 {
   int t = playerData->getIndex();
   std::string settie;
@@ -1335,7 +1320,7 @@ void handleShowgroupCmd(GameKeeper::Player *playerData, const char *message)
 }
 
 
-void handleGrouppermsCmd(GameKeeper::Player *playerData, const char *)
+static void handleGrouppermsCmd(GameKeeper::Player *playerData, const char *)
 {
   int t = playerData->getIndex();
   sendMessage(ServerPlayer, t, "Group List:");
@@ -1358,7 +1343,7 @@ void handleGrouppermsCmd(GameKeeper::Player *playerData, const char *)
 }
 
 
-void handleSetgroupCmd(GameKeeper::Player *playerData, const char *message)
+static void handleSetgroupCmd(GameKeeper::Player *playerData, const char *message)
 {
   int t = playerData->getIndex();
   if (!userDatabaseFile.size()) {
@@ -1407,7 +1392,7 @@ void handleSetgroupCmd(GameKeeper::Player *playerData, const char *message)
 }
 
 
-void handleRemovegroupCmd(GameKeeper::Player *playerData, const char *message)
+static void handleRemovegroupCmd(GameKeeper::Player *playerData, const char *message)
 {
   int t = playerData->getIndex();
   if (!userDatabaseFile.size()) {
@@ -1454,43 +1439,8 @@ void handleRemovegroupCmd(GameKeeper::Player *playerData, const char *message)
   return;
 }
 
-void initGroups()
-{
-  // reload the databases
-  if (groupsFile.size())
-    PlayerAccessInfo::readGroupsFile(groupsFile);
-  // make sure that the 'admin' & 'default' groups exist
-  // FIXME same code is in bzfs to init groups on start
-  PlayerAccessMap::iterator itr = groupAccess.find("EVERYONE");
-  if (itr == groupAccess.end()) {
-    PlayerAccessInfo info;
-    info.explicitAllows[PlayerAccessInfo::idleStats] = true;
-    info.explicitAllows[PlayerAccessInfo::lagStats] = true;
-    info.explicitAllows[PlayerAccessInfo::date] = true;
-    info.explicitAllows[PlayerAccessInfo::flagHistory] = true;
-    info.explicitAllows[PlayerAccessInfo::actionMessage] = true;
-    info.explicitAllows[PlayerAccessInfo::privateMessage] = true;
-    info.explicitAllows[PlayerAccessInfo::adminMessageSend] = true;
-    groupAccess["EVERYONE"] = info;
-  }
-  itr = groupAccess.find("VERIFIED");
-  if (itr == groupAccess.end()) {
-    PlayerAccessInfo info;
-    info.explicitAllows[PlayerAccessInfo::vote] = true;
-    info.explicitAllows[PlayerAccessInfo::poll] = true;
-    groupAccess["VERIFIED"] = info;
-  }
-  itr = groupAccess.find("LOCAL.ADMIN");
-  if (itr == groupAccess.end()) {
-    PlayerAccessInfo info;
-    for (int i = 0; i < PlayerAccessInfo::lastPerm; i++)
-      info.explicitAllows[i] = true;
-    info.explicitAllows[PlayerAccessInfo::hideAdmin ] = false;
-    groupAccess["LOCAL.ADMIN"] = info;
-  }
-}
 
-void handleReloadCmd(GameKeeper::Player *playerData, const char *)
+static void handleReloadCmd(GameKeeper::Player *playerData, const char *)
 {
   int t = playerData->getIndex();
   if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::setAll)) {
@@ -1516,7 +1466,174 @@ void handleReloadCmd(GameKeeper::Player *playerData, const char *)
 }
 
 
-void handlePollCmd(GameKeeper::Player *playerData, const char *message)
+static void handleVoteCmd(GameKeeper::Player *playerData, const char *message)
+{
+  int t = playerData->getIndex();
+  char reply[MessageLen] = {0};
+  std::string callsign = std::string(playerData->player.getCallSign());
+
+  if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::vote)) {
+    /* permission denied for /vote */
+    sprintf(reply,"%s, you are presently not authorized to run /vote", callsign.c_str());
+    sendMessage(ServerPlayer, t, reply);
+    return;
+  }
+
+  /* make sure that there is a poll arbiter */
+  if (BZDB.isEmpty("poll")) {
+    sendMessage(ServerPlayer, t, "ERROR: the poll arbiter has disappeared (this should never happen)");
+    return;
+  }
+
+  // only need to get this once
+  static VotingArbiter *arbiter = (VotingArbiter *)BZDB.getPointer("poll");
+
+  /* make sure that there is a poll to vote upon */
+  if ((arbiter != NULL) && !arbiter->knowsPoll()) {
+    sendMessage(ServerPlayer, t, "A poll is not presently in progress.  There is nothing to vote on");
+    return;
+  }
+
+  std::string voteCmd = &message[5];
+  std::string answer;
+
+  /* find the start of the vote answer */
+  size_t startPosition = 0;
+  while ((startPosition < voteCmd.size()) &&
+	 (isspace(voteCmd[startPosition]))) {
+    startPosition++;
+  }
+
+  /* stash the answer ('yes', 'no', etc) in lowercase to simplify comparison */
+  for (size_t i = startPosition;  i < voteCmd.size() && !isspace(voteCmd[i]); i++) {
+    answer += tolower(voteCmd[i]);
+  }
+
+  std::vector<std::string> yesAnswers;
+  yesAnswers.push_back("y");
+  yesAnswers.push_back("1");
+  yesAnswers.push_back("yes");
+  yesAnswers.push_back("yea");
+  yesAnswers.push_back("si"); // spanish+
+  yesAnswers.push_back("ja");  // german
+  yesAnswers.push_back("oui"); // french
+  yesAnswers.push_back("sim"); // portuguese
+  yesAnswers.push_back("tak"); // polish
+
+  std::vector<std::string> noAnswers;
+  noAnswers.push_back("n");
+  noAnswers.push_back("0");
+  noAnswers.push_back("no");
+  noAnswers.push_back("nay");
+  noAnswers.push_back("nein"); // german
+  noAnswers.push_back("nien"); // german misspelled
+  noAnswers.push_back("non"); // french
+  noAnswers.push_back("nao"); // portuguese
+  noAnswers.push_back("nie"); // polish
+
+  // see if the vote response is a valid yes or no answer
+  int vote = -1;
+  unsigned int maxAnswerCount = noAnswers.size() > yesAnswers.size() ? noAnswers.size() : yesAnswers.size();
+  for (unsigned int v = 0; v < maxAnswerCount; v++) {
+    if (v < yesAnswers.size()) {
+      if (answer == yesAnswers[v]) {
+	vote = 1;
+	break;
+      }
+    }
+    if (v < noAnswers.size()) {
+      if (answer == noAnswers[v]) {
+	vote = 0;
+	break;
+      }
+    }
+  }
+
+  // cast the vote or complain
+  bool cast = false;
+  if (vote == 0) {
+    if ((cast = arbiter->voteNo(callsign)) == true) {
+      /* player voted no */
+      sprintf(reply,"%s, your vote in opposition of the %s has been recorded", callsign.c_str(), arbiter->getPollAction().c_str());
+      sendMessage(ServerPlayer, t, reply);
+    }
+  } else if (vote == 1) {
+    if ((cast = arbiter->voteYes(callsign)) == true) {
+      /* player voted yes */
+      sprintf(reply,"%s, your vote in favor of the %s has been recorded", callsign.c_str(), arbiter->getPollAction().c_str());
+      sendMessage(ServerPlayer, t, reply);
+    }
+  } else {
+    if (answer.length() == 0) {
+      sprintf(reply,"%s, you did not provide a vote answer", callsign.c_str());
+      sendMessage(ServerPlayer, t, reply);
+    } else {
+      sprintf(reply,"%s, you did not vote in favor or in opposition", callsign.c_str());
+      sendMessage(ServerPlayer, t, reply);
+    }
+    sendMessage(ServerPlayer, t, "Usage: /vote yes|no|y|n|1|0|yea|nay|si|ja|nein|oui|non|sim|nao");
+    return;
+  }
+
+  if (!cast) {
+    /* player was unable to cast their vote; probably already voted */
+    sprintf(reply,"%s, you have already voted on the poll to %s %s", callsign.c_str(), arbiter->getPollAction().c_str(), arbiter->getPollTarget().c_str());
+    sendMessage(ServerPlayer, t, reply);
+    return;
+  }
+
+  return;
+}
+
+
+static void handleVetoCmd(GameKeeper::Player *playerData, const char * /*message*/)
+{
+  int t = playerData->getIndex();
+  if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::veto)) {
+    /* permission denied for /veto */
+    sendMessage(ServerPlayer, t,
+		TextUtils::format
+		("%s, you are presently not authorized to run /veto",
+		 playerData->player.getCallSign()).c_str());
+    return;
+  }
+
+  /* make sure that there is a poll arbiter */
+  if (BZDB.isEmpty("poll")) {
+    sendMessage(ServerPlayer, t, "ERROR: the poll arbiter has disappeared (this should never happen)");
+    return;
+  }
+
+  // only need to do this once
+  static VotingArbiter *arbiter = (VotingArbiter *)BZDB.getPointer("poll");
+
+  /* make sure there is an unexpired poll */
+  if ((arbiter != NULL) && !arbiter->knowsPoll()) {
+    sendMessage(ServerPlayer, t,
+		TextUtils::format
+		("%s, there is presently no active poll to veto",
+		 playerData->player.getCallSign()).c_str());
+    return;
+  }
+
+  sendMessage(ServerPlayer, t,
+	      TextUtils::format("%s, you have cancelled the poll to %s %s",
+				  playerData->player.getCallSign(),
+				  arbiter->getPollAction().c_str(),
+				  arbiter->getPollTarget().c_str()).c_str());
+
+  /* poof */
+  arbiter->forgetPoll();
+
+  sendMessage(ServerPlayer, AllPlayers,
+	      TextUtils::format("The poll was cancelled by %s",
+				  playerData->player.getCallSign()).c_str());
+
+  return;
+}
+
+
+static void handlePollCmd(GameKeeper::Player *playerData, const char *message)
 {
   int t = playerData->getIndex();
   char reply[MessageLen] = {0};
@@ -1812,173 +1929,7 @@ void handlePollCmd(GameKeeper::Player *playerData, const char *message)
 }
 
 
-void handleVoteCmd(GameKeeper::Player *playerData, const char *message)
-{
-  int t = playerData->getIndex();
-  char reply[MessageLen] = {0};
-  std::string callsign = std::string(playerData->player.getCallSign());
-
-  if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::vote)) {
-    /* permission denied for /vote */
-    sprintf(reply,"%s, you are presently not authorized to run /vote", callsign.c_str());
-    sendMessage(ServerPlayer, t, reply);
-    return;
-  }
-
-  /* make sure that there is a poll arbiter */
-  if (BZDB.isEmpty("poll")) {
-    sendMessage(ServerPlayer, t, "ERROR: the poll arbiter has disappeared (this should never happen)");
-    return;
-  }
-
-  // only need to get this once
-  static VotingArbiter *arbiter = (VotingArbiter *)BZDB.getPointer("poll");
-
-  /* make sure that there is a poll to vote upon */
-  if ((arbiter != NULL) && !arbiter->knowsPoll()) {
-    sendMessage(ServerPlayer, t, "A poll is not presently in progress.  There is nothing to vote on");
-    return;
-  }
-
-  std::string voteCmd = &message[5];
-  std::string answer;
-
-  /* find the start of the vote answer */
-  size_t startPosition = 0;
-  while ((startPosition < voteCmd.size()) &&
-	 (isspace(voteCmd[startPosition]))) {
-    startPosition++;
-  }
-
-  /* stash the answer ('yes', 'no', etc) in lowercase to simplify comparison */
-  for (size_t i = startPosition;  i < voteCmd.size() && !isspace(voteCmd[i]); i++) {
-    answer += tolower(voteCmd[i]);
-  }
-
-  std::vector<std::string> yesAnswers;
-  yesAnswers.push_back("y");
-  yesAnswers.push_back("1");
-  yesAnswers.push_back("yes");
-  yesAnswers.push_back("yea");
-  yesAnswers.push_back("si"); // spanish+
-  yesAnswers.push_back("ja");  // german
-  yesAnswers.push_back("oui"); // french
-  yesAnswers.push_back("sim"); // portuguese
-  yesAnswers.push_back("tak"); // polish
-
-  std::vector<std::string> noAnswers;
-  noAnswers.push_back("n");
-  noAnswers.push_back("0");
-  noAnswers.push_back("no");
-  noAnswers.push_back("nay");
-  noAnswers.push_back("nein"); // german
-  noAnswers.push_back("nien"); // german misspelled
-  noAnswers.push_back("non"); // french
-  noAnswers.push_back("nao"); // portuguese
-  noAnswers.push_back("nie"); // polish
-
-  // see if the vote response is a valid yes or no answer
-  int vote = -1;
-  unsigned int maxAnswerCount = noAnswers.size() > yesAnswers.size() ? noAnswers.size() : yesAnswers.size();
-  for (unsigned int v = 0; v < maxAnswerCount; v++) {
-    if (v < yesAnswers.size()) {
-      if (answer == yesAnswers[v]) {
-	vote = 1;
-	break;
-      }
-    }
-    if (v < noAnswers.size()) {
-      if (answer == noAnswers[v]) {
-	vote = 0;
-	break;
-      }
-    }
-  }
-
-  // cast the vote or complain
-  bool cast = false;
-  if (vote == 0) {
-    if ((cast = arbiter->voteNo(callsign)) == true) {
-      /* player voted no */
-      sprintf(reply,"%s, your vote in opposition of the %s has been recorded", callsign.c_str(), arbiter->getPollAction().c_str());
-      sendMessage(ServerPlayer, t, reply);
-    }
-  } else if (vote == 1) {
-    if ((cast = arbiter->voteYes(callsign)) == true) {
-      /* player voted yes */
-      sprintf(reply,"%s, your vote in favor of the %s has been recorded", callsign.c_str(), arbiter->getPollAction().c_str());
-      sendMessage(ServerPlayer, t, reply);
-    }
-  } else {
-    if (answer.length() == 0) {
-      sprintf(reply,"%s, you did not provide a vote answer", callsign.c_str());
-      sendMessage(ServerPlayer, t, reply);
-    } else {
-      sprintf(reply,"%s, you did not vote in favor or in opposition", callsign.c_str());
-      sendMessage(ServerPlayer, t, reply);
-    }
-    sendMessage(ServerPlayer, t, "Usage: /vote yes|no|y|n|1|0|yea|nay|si|ja|nein|oui|non|sim|nao");
-    return;
-  }
-
-  if (!cast) {
-    /* player was unable to cast their vote; probably already voted */
-    sprintf(reply,"%s, you have already voted on the poll to %s %s", callsign.c_str(), arbiter->getPollAction().c_str(), arbiter->getPollTarget().c_str());
-    sendMessage(ServerPlayer, t, reply);
-    return;
-  }
-
-  return;
-}
-
-
-void handleVetoCmd(GameKeeper::Player *playerData, const char * /*message*/)
-{
-  int t = playerData->getIndex();
-  if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::veto)) {
-    /* permission denied for /veto */
-    sendMessage(ServerPlayer, t,
-		TextUtils::format
-		("%s, you are presently not authorized to run /veto",
-		 playerData->player.getCallSign()).c_str());
-    return;
-  }
-
-  /* make sure that there is a poll arbiter */
-  if (BZDB.isEmpty("poll")) {
-    sendMessage(ServerPlayer, t, "ERROR: the poll arbiter has disappeared (this should never happen)");
-    return;
-  }
-
-  // only need to do this once
-  static VotingArbiter *arbiter = (VotingArbiter *)BZDB.getPointer("poll");
-
-  /* make sure there is an unexpired poll */
-  if ((arbiter != NULL) && !arbiter->knowsPoll()) {
-    sendMessage(ServerPlayer, t,
-		TextUtils::format
-		("%s, there is presently no active poll to veto",
-		 playerData->player.getCallSign()).c_str());
-    return;
-  }
-
-  sendMessage(ServerPlayer, t,
-	      TextUtils::format("%s, you have cancelled the poll to %s %s",
-				  playerData->player.getCallSign(),
-				  arbiter->getPollAction().c_str(),
-				  arbiter->getPollTarget().c_str()).c_str());
-
-  /* poof */
-  arbiter->forgetPoll();
-
-  sendMessage(ServerPlayer, AllPlayers,
-	      TextUtils::format("The poll was cancelled by %s",
-				  playerData->player.getCallSign()).c_str());
-
-  return;
-}
-
-void handleViewReportsCmd(GameKeeper::Player *playerData, const char *)
+static void handleViewReportsCmd(GameKeeper::Player *playerData, const char *)
 {
   int t = playerData->getIndex();
   std::string line;
@@ -2000,7 +1951,7 @@ void handleViewReportsCmd(GameKeeper::Player *playerData, const char *)
 }
 
 
-void handleClientqueryCmd(GameKeeper::Player *playerData, const char * message)
+static void handleClientqueryCmd(GameKeeper::Player *playerData, const char * message)
 {
   int t = playerData->getIndex();
   DEBUG2("Clientquery requested by %s [%d]\n",
@@ -2042,7 +1993,17 @@ void handleClientqueryCmd(GameKeeper::Player *playerData, const char * message)
 }
 
 
-void handleRecordCmd(GameKeeper::Player *playerData, const char * message)
+/** /record command
+ *
+ *  /record start	       # start buffering
+ *  /record stop		# stop buffering (or saving to file)
+ *  /record size <Mbytes>       # set the buffer size, and truncate
+ *  /record rate <secs>	 # set the state capture rate
+ *  /record stats	       # display buffer time and memory information
+ *  /record file [filename]     # begin capturing straight to file, flush buffer
+ *  /record save [filename]     # save buffer to file (or default filename)
+ */
+static void handleRecordCmd(GameKeeper::Player *playerData, const char * message)
 {
   int t = playerData->getIndex();
   const char *buf = message + 8;
@@ -2128,7 +2089,14 @@ void handleRecordCmd(GameKeeper::Player *playerData, const char * message)
 }
 
 
-void handleReplayCmd(GameKeeper::Player *playerData, const char * message)
+/** /replay command
+ *
+ *  /replay list		# list available replay files
+ *  /replay load [filename]     # set the replay file (or load the default)
+ *  /replay play		# began playing
+ *  /replay skip <secs>	 # fast foward or rewind in time
+ */
+static void handleReplayCmd(GameKeeper::Player *playerData, const char * message)
 {
   int t = playerData->getIndex();
   const char *buf = message + 7;
@@ -2180,7 +2148,7 @@ void handleReplayCmd(GameKeeper::Player *playerData, const char * message)
 }
 
 
-void handleDateCmd(GameKeeper::Player *playerData, const char * /*message*/)
+static void handleDateCmd(GameKeeper::Player *playerData, const char * /*message*/)
 {
   int t = playerData->getIndex();
   if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::date)) {
@@ -2193,7 +2161,14 @@ void handleDateCmd(GameKeeper::Player *playerData, const char * /*message*/)
   sendMessage(ServerPlayer, t, timeStr);
 }
 
-void handleMasterBanCmd(GameKeeper::Player *playerData, const char *message)
+
+/** /masterban command
+ *
+ * /masterban flush	     # remove all master ban entries from this server
+ * /masterban reload	    # reread and reload all master ban entries
+ * /masterban list	      # output a list of who is banned
+ */
+static void handleMasterBanCmd(GameKeeper::Player *playerData, const char *message)
 {
   int t = playerData->getIndex();
   std::string callsign = std::string(playerData->player.getCallSign());
@@ -2302,6 +2277,167 @@ void handleMasterBanCmd(GameKeeper::Player *playerData, const char *message)
   }
 
   return;
+}
+
+
+// parse server comands
+void parseServerCommand(const char *message, int t)
+{
+  if (!message) {
+    std::cerr << "WARNING: parseCommand was given a null message?!" << std::endl;
+    return;
+  }
+
+  GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(t);
+  if (!playerData)
+    return;
+
+  if (strncmp(message + 1, "msg", 3) == 0) {
+    handleMsgCmd(playerData, message);
+
+  } else if (strncmp(message + 1, "serverquery", 11) == 0) {
+    handleServerQueryCmd(playerData, message);
+
+  } else if (strncmp(message + 1, "part", 4) == 0) {
+    handlePartCmd(playerData, message);
+
+  } else if (strncmp(message + 1, "quit", 4) == 0) {
+    handleQuitCmd(playerData, message);
+
+  } else if (strncmp(message + 1, "uptime", 6) == 0) {
+    handleUptimeCmd(playerData, message);
+
+  } else if (strncmp(message + 1, "password", 8) == 0) {
+    handlePasswordCmd(playerData, message);
+
+  } else if (strncmp(message + 1, "set ", 4) == 0) {
+    handleSetCmd(playerData, message);
+
+  } else if (strncmp(message + 1, "reset", 5) == 0) {
+    handleResetCmd(playerData, message);
+
+  } else if (strncmp(message + 1, "shutdownserver", 8) == 0) {
+    handleShutdownserverCmd(playerData, message);
+
+  } else if (strncmp(message + 1, "superkill", 8) == 0) {
+    handleSuperkillCmd(playerData, message);
+
+  } else if (strncmp(message + 1, "gameover", 8) == 0) {
+    handleGameoverCmd(playerData, message);
+
+  } else if (strncmp(message + 1, "countdown", 9) == 0) {
+    handleCountdownCmd(playerData, message);
+
+  } else if (strncmp(message + 1, "flag ", 5) == 0) {
+    handleFlagCmd(playerData,message);
+
+  } else if (strncmp(message + 1, "kick", 4) == 0) {
+    handleKickCmd(playerData, message);
+
+  } else if (strncmp(message+1, "banlist", 7) == 0) {
+    handleBanlistCmd(playerData, message);
+
+  } else if (strncmp(message+1, "hostbanlist", 11) == 0) {
+    handleHostBanlistCmd(playerData, message);
+
+  } else if (strncmp(message+1, "ban", 3) == 0) {
+    handleBanCmd(playerData, message);
+
+  } else if (strncmp(message+1, "hostban", 7) == 0) {
+    handleHostBanCmd(playerData, message);
+
+  } else if (strncmp(message+1, "unban", 5) == 0) {
+    handleUnbanCmd(playerData, message);
+
+  } else if (strncmp(message+1, "hostunban", 9) == 0) {
+    handleHostUnbanCmd(playerData, message);
+
+  } else if (strncmp(message+1, "lagwarn",7) == 0) {
+    handleLagwarnCmd(playerData, message);
+
+  } else if (strncmp(message+1, "lagstats",8) == 0) {
+    handleLagstatsCmd(playerData, message);
+
+  } else if (strncmp(message+1, "idlestats",9) == 0) {
+    handleIdlestatsCmd(playerData, message);
+
+  } else if (strncmp(message+1, "flaghistory", 11 ) == 0) {
+    handleFlaghistoryCmd(playerData, message);
+
+  } else if (strncmp(message+1, "playerlist", 10) == 0) {
+    handlePlayerlistCmd(playerData, message);
+
+  } else if (strncmp(message+1, "report", 6) == 0) {
+    handleReportCmd(playerData, message);
+
+  } else if (strncmp(message+1, "help", 4) == 0) {
+    handleHelpCmd(playerData, message);
+
+  } else if (strncmp(message + 1, "identify", 8) == 0) {
+    handleIdentifyCmd(playerData, message);
+
+  } else if (strncmp(message + 1, "register", 8) == 0) {
+    handleRegisterCmd(playerData, message);
+
+  } else if (strncmp(message + 1, "ghost", 5) == 0) {
+    handleGhostCmd(playerData, message);
+
+  } else if (strncmp(message + 1, "deregister", 10) == 0) {
+    handleDeregisterCmd(playerData, message);
+
+  } else if (strncmp(message + 1, "setpass", 7) == 0) {
+    handleSetpassCmd(playerData, message);
+
+  } else if (strncmp(message + 1, "grouplist", 9) == 0) {
+    handleGrouplistCmd(playerData, message);
+
+  } else if (strncmp(message + 1, "showgroup", 9) == 0) {
+    handleShowgroupCmd(playerData, message);
+
+  } else if (strncmp(message + 1, "groupperms", 10) == 0) {
+    handleGrouppermsCmd(playerData, message);
+
+  } else if (strncmp(message + 1, "setgroup", 8) == 0) {
+    handleSetgroupCmd(playerData, message);
+
+  } else if (strncmp(message + 1, "removegroup", 11) == 0) {
+    handleRemovegroupCmd(playerData, message);
+
+  } else if (strncmp(message + 1, "reload", 6) == 0) {
+    handleReloadCmd(playerData, message);
+
+  } else if (strncmp(message + 1, "poll", 4) == 0) {
+    handlePollCmd(playerData, message);
+
+  } else if (strncmp(message + 1, "vote", 4) == 0) {
+    handleVoteCmd(playerData, message);
+
+  } else if (strncmp(message + 1, "veto", 4) == 0) {
+    handleVetoCmd(playerData, message);
+
+  } else if (strncmp(message + 1, "viewreports", 11) == 0) {
+    handleViewReportsCmd(playerData, message);
+
+  } else if (strncmp(message + 1, "clientquery", 11) == 0) {
+    handleClientqueryCmd(playerData, message);
+
+  } else if (strncmp(message + 1, "date", 4) == 0 || strncmp(message + 1, "time", 4) == 0) {
+    handleDateCmd(playerData, message);
+
+  } else if (strncmp(message + 1, "record", 6) == 0) {
+    handleRecordCmd(playerData, message);
+
+  } else if (strncmp(message + 1, "replay", 6) == 0) {
+    handleReplayCmd(playerData, message);
+
+  } else if (strncmp(message + 1, "masterban", 9) == 0) {
+    handleMasterBanCmd(playerData, message);
+
+  } else {
+    char reply[MessageLen];
+    snprintf(reply, MessageLen, "Unknown command [%s]", message + 1);
+    sendMessage(ServerPlayer, t, reply);
+  }
 }
 
 
