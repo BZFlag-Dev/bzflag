@@ -1023,8 +1023,8 @@ void parse(int argc, char **argv, CmdLineOptions &options)
     options.flagCount[Flags::Jumping] = 0;
     options.flagDisallowed[Flags::Jumping] = true;
   } else {
-    options.flagCount[Flags::Wings] = 0;
-    options.flagDisallowed[Flags::Wings] = true;
+    options.flagCount[Flags::NoJumping] = 0;
+    options.flagDisallowed[Flags::NoJumping] = true;
   }
   if (options.gameStyle & RicochetGameStyle) {
     options.flagCount[Flags::Ricochet] = 0;
