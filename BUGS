@@ -118,6 +118,10 @@ recent bugs
 
 - bzfs should re-resolve the list server IP if it can't reach it for an update
 
+- make distcheck does not work unless bzflag is configured the same day you
+  do make distcheck. Cause is the different version of the two, for the date
+  things
+
 - make maintainer-clean does not enter DIST_SUBDIRS
   so all Makefile.in and Makefile files are not removed correctly
   (this is probably a bug in automake 1.4, not in our files)
