@@ -1,5 +1,7 @@
 recent bugs
 ------------
+- Machine gun fires non-stop when you pick it up
+
 - The new explode code? LocalPlayer 1.9.8 (i think) is causing too high kicks
   To dup: play in a completely empty world. (no buildings)
   with no jumping. When you explode, you will be kicked
