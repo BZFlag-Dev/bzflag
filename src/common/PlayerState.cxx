@@ -189,7 +189,9 @@ void*	PlayerState::unpack(void* buf, uint16_t code)
   }
 
   if ((inStatus & OnDriver) != 0) {
-    buf = nboUnpackInt(buf, phydrv);
+    int32_t inPhyDrv;
+    buf = nboUnpackInt(buf, inPhyDrv);
+    phydrv = int(inPhyDrv);
   } else {
     phydrv = -1;
   }
