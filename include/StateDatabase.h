@@ -231,6 +231,7 @@ public:
   static const std::string	BZDB_POSITIONTOLERANCE;
   static const std::string      BZDB_PYRBASE;
   static const std::string      BZDB_PYRHEIGHT;
+  static const std::string	BZDB_REJOINTIME;
   static const std::string	BZDB_RELOADTIME;
   static const std::string	BZDB_RFIREADVEL;
   static const std::string	BZDB_RFIREADRATE;

@@ -121,6 +121,7 @@ const std::string StateDatabase::BZDB_PAUSEDROPTIME	= std::string("_pauseDropTim
 const std::string StateDatabase::BZDB_POSITIONTOLERANCE = std::string("_positionTolerance");
 const std::string StateDatabase::BZDB_PYRBASE           = std::string("_pyrBase");
 const std::string StateDatabase::BZDB_PYRHEIGHT         = std::string("_pyrHeight");
+const std::string StateDatabase::BZDB_REJOINTIME        = std::string("_rejoinTime");
 const std::string StateDatabase::BZDB_RELOADTIME        = std::string("_reloadTime");
 const std::string StateDatabase::BZDB_RFIREADVEL        = std::string("_rFireAdVel");
 const std::string StateDatabase::BZDB_RFIREADRATE       = std::string("_rFireAdRate");

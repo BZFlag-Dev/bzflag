@@ -133,6 +133,7 @@ const uint16_t		RejectTeamFull = 0x0004;
 const uint16_t		RejectServerFull = 0x0005;
 const uint16_t		RejectBadCallsign = 0x0006;
 const uint16_t		RejectRepeatCallsign = 0x0007;
+const uint16_t		RejectRejoinWaitTime = 0x0008;
 
 // request for additional UDP link
 const uint16_t		MsgUDPLinkRequest = 0x6f66;		// 'of'

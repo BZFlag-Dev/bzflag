@@ -65,6 +65,7 @@ const struct GlobalDBItem globalDBItems[] = {
   { "_positionTolerance",	"0.01",				false, StateDatabase::Locked},
   { "_pyrBase",			"4.0*_tankHeight",		false, StateDatabase::Locked},
   { "_pyrHeight",		"5.0*_tankHeight",		false, StateDatabase::Locked},
+  { "_rejoinTime",		"10.0",	                        false, StateDatabase::Locked},
   { "_reloadTime",		"_shotRange / _shotSpeed",	false, StateDatabase::Locked},
   { "_rFireAdLife",		"1.0 / _rFireAdRate",		false, StateDatabase::Locked},
   { "_rFireAdRate",		"2.0",				false, StateDatabase::Locked},

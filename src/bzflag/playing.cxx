@@ -3523,36 +3523,13 @@ static bool		enterServer(ServerLink* serverLink, World* world,
     return false;
   }
   if (code == MsgReject) {
-    uint16_t rejectCode;
-    nboUnpackUShort(msg, rejectCode);
-    switch (rejectCode) {
-    default:
-    case RejectBadRequest:
-    case RejectBadTeam:
-    case RejectBadType:
-      printError("Communication error joining game [Rejected].");
-      break;
-
-    case RejectTeamFull:
-      printError("This team is full.  Try another team.");
-      break;
-
-    case RejectServerFull:
-      printError("This game is full.  Try again later.");
-      break;
-      
-    case RejectBadCallsign:
-      printError("The callsign was rejected.  Try a different callsign.");
-      break;
-
-    case RejectRepeatCallsign:
-      printError("The callsign specified is already in use.");
-      break;
-
-    case RejectBadEmail:
-      printError("The e-mail was rejected.  Try a different e-mail.");
-      break;
-    }
+    void *buf;
+    char buffer[MessageLen];
+    uint16_t code;
+    buf = nboUnpackUShort (msg, code); // filler for now
+    buf = nboUnpackString (buf, buffer, MessageLen);
+    buffer[MessageLen-1] = '\0';
+    printError(buffer);
     return false;
   }
 

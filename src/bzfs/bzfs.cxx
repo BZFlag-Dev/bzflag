@@ -13,6 +13,7 @@
 #include "NetHandler.h"
 #include "LagInfo.h"
 #include "DelayQueue.h"
+#include "RejoinList.h"
 #include "FlagHistory.h"
 
 const int udpBufSize = 128000;
@@ -100,6 +101,8 @@ BasesList bases;
 uint8_t rabbitIndex = NoPlayer;
 
 WorldWeapons  wWeapons;
+
+static RejoinList rejoinList;
 
 static TimeKeeper lastWorldParmChange;
 
@@ -1412,11 +1415,12 @@ void sendMessage(int playerIndex, PlayerId targetPlayer, const char *message, bo
 }
 
 
-static void rejectPlayer(int playerIndex, uint16_t code)
+static void rejectPlayer(int playerIndex, uint16_t code, const char *reason)
 {
   void *buf, *bufStart = getDirectMessageBuffer();
   buf = nboPackUShort(bufStart, code);
-  directMessage(playerIndex, MsgReject, (char*)buf-(char*)bufStart, bufStart);
+  buf = nboPackString(buf, reason, strlen(reason) + 1);
+  directMessage(playerIndex, MsgReject, sizeof (uint16_t) + MessageLen, bufStart);
   return;
 }
 
@@ -1439,8 +1443,11 @@ static void fixTeamCount() {
 static void addPlayer(int playerIndex)
 {
   // don't allow empty callsign
-  if (player[playerIndex].getCallSign()[0] == '\0')
-    rejectPlayer(playerIndex, RejectBadCallsign);
+  if (player[playerIndex].getCallSign()[0] == '\0') {
+    rejectPlayer(playerIndex, RejectBadCallsign,
+                 "The callsign was rejected.  Try a different callsign.");
+    return;
+  }
 
   // look if there is as name clash, we won't allow this
   int i;
@@ -1449,14 +1456,16 @@ static void addPlayer(int playerIndex)
       continue;
     if (strcasecmp(player[i].getCallSign(),
 		   player[playerIndex].getCallSign()) == 0) {
-      rejectPlayer(playerIndex, RejectRepeatCallsign);
+      rejectPlayer(playerIndex, RejectRepeatCallsign,
+                   "The callsign specified is already in use.");
       return;
     }
   }
   
   // no spoofing the server name
   if (strcasecmp (player[playerIndex].getCallSign(), "SERVER") == 0) {
-     rejectPlayer(playerIndex, RejectRepeatCallsign);
+     rejectPlayer(playerIndex, RejectRepeatCallsign,
+                  "The callsign specified is already in use.");
      return;
   }
 
@@ -1468,7 +1477,8 @@ static void addPlayer(int playerIndex)
     memcpy(cs, player[playerIndex].getCallSign(), sizeof(char) * CallSignLen);
     filtered = clOptions->filter.filter(cs, clOptions->filterSimple);
     if (filtered) {
-      rejectPlayer(playerIndex, RejectBadCallsign);
+      rejectPlayer(playerIndex, RejectBadCallsign,
+                   "The callsign was rejected.  Try a different callsign.");
       return ;
     }
   }
@@ -1476,7 +1486,9 @@ static void addPlayer(int playerIndex)
   if (!player[playerIndex].isCallSignReadable()) {
     DEBUG2("rejecting unreadable callsign: %s\n",
 	   player[playerIndex].getCallSign());
-    rejectPlayer(playerIndex, RejectBadCallsign);
+    rejectPlayer(playerIndex, RejectBadCallsign,
+                 "The callsign was rejected.  Try a different callsign.");
+    return;
   }
 
   // make sure the email is not obscene/filtered
@@ -1486,7 +1498,8 @@ static void addPlayer(int playerIndex)
     memcpy(em, player[playerIndex].getEMail(), sizeof(char) * EmailLen);
     bool filtered = clOptions->filter.filter(em, clOptions->filterSimple);
     if (filtered) {
-      rejectPlayer(playerIndex, RejectBadEmail);
+      rejectPlayer(playerIndex, RejectBadEmail,
+                   "The e-mail was rejected.  Try a different e-mail.");
       return ;
     }
   }
@@ -1495,7 +1508,24 @@ static void addPlayer(int playerIndex)
     DEBUG2("rejecting unreadable player email: %s (%s)\n", 
 	   player[playerIndex].getCallSign(),
 	   player[playerIndex].getEMail());
-    rejectPlayer(playerIndex, RejectBadEmail);
+    rejectPlayer(playerIndex, RejectBadEmail,
+                 "The e-mail was rejected.  Try a different e-mail.");
+    return;
+  }
+
+
+  // no quick rejoining, make 'em wait
+  in_addr playerIP = NetHandler::getHandler(playerIndex)->getIPAddress();
+  float waitTime = rejoinList.waitTime (playerIndex);
+  if (waitTime > 0.0f) {
+    char buffer[MessageLen];
+    DEBUG3 ("Rejoin wait %.1f seconds for %s\n",
+            waitTime, player[playerIndex].getCallSign());
+    sprintf (buffer, "Can't rejoin for %.1f seconds\n", waitTime);
+    rejectPlayer(playerIndex, RejectRejoinWaitTime, buffer);
+    return ;
+  } else {
+    rejoinList.add (playerIndex);
   }
 
 
@@ -1562,20 +1592,25 @@ static void addPlayer(int playerIndex)
   // reject player if asks for bogus team or rogue and rogues aren't allowed
   // or if the team is full or if the server is full
   if (!player[playerIndex].isHuman() && !player[playerIndex].isBot()) {
-    rejectPlayer(playerIndex, RejectBadType);
+    rejectPlayer(playerIndex, RejectBadType,
+                 "Communication error joining game [Rejected].");
     return;
   } else if (t == NoTeam) {
-    rejectPlayer(playerIndex, RejectBadTeam);
+    rejectPlayer(playerIndex, RejectBadTeam,
+                 "Communication error joining game [Rejected].");
     return;
   } else if (t == ObserverTeam && player[playerIndex].isBot()) {
-    rejectPlayer(playerIndex, RejectServerFull);
+    rejectPlayer(playerIndex, RejectServerFull,
+                 "This game is full.  Try again later.");
     return;
   } else if (numplayersobs == maxPlayers) {
     // server is full
-    rejectPlayer(playerIndex, RejectServerFull);
+    rejectPlayer(playerIndex, RejectServerFull,
+                 "This game is full.  Try again later.");
     return;
   } else if (team[int(t)].team.size >= clOptions->maxTeam[int(t)]) {
-    rejectPlayer(playerIndex, RejectTeamFull);
+    rejectPlayer(playerIndex, RejectTeamFull,
+                 "This team is full.  Try another team.");
     return ;
   }
   accessInfo[playerIndex].reset(player[playerIndex].getCallSign());
@@ -2040,6 +2075,7 @@ void removePlayer(int playerIndex, const char *reason, bool notify)
 #endif
     delete netPlayer;
     delete lagInfo[playerIndex];
+    lagInfo[playerIndex] = NULL;
   }
 
   // player is outta here.  if player never joined a team then
