@@ -114,7 +114,7 @@ const uint16_t		WorldCodeWeapon = 0x7765;		// 'we'
 const uint16_t		WorldCodeZone = 0x7A6e;			// 'zn'
 
 // world database sizes
-const uint16_t		WorldCodeHeaderSize = 30;
+const uint16_t		WorldCodeHeaderSize = 38;
 const uint16_t		WorldCodeEpochOffset = 4+26; // huge hack, someone fix!!
 const uint16_t		WorldCodeBaseSize = 42;
 const uint16_t		WorldCodeWallSize = 24;

@@ -75,11 +75,17 @@ REGEX = \
 	../regex/libregex.a
 endif
 
+if BUILDZLIB
+ZLIB = ../zlib/libz.a
+else
+ZLIB = -lz
+endif
+
 LDADD = \
 	../obstacle/libObstacle.a	\
 	../game/libGame.a	\
 	../net/libNet.a		\
 	../common/libCommon.a	\
-	$(REGEX)
+	$(REGEX) $(ZLIB)
 
 bzfs_LDFLAGS = ../date/buildDate.o

@@ -26,7 +26,7 @@
  */
 // TODO make this sucker an int when we change BZFS stuff
 #ifndef BZ_PROTO_VERSION
-#define BZ_PROTO_VERSION	"1118"
+#define BZ_PROTO_VERSION	"1119"
 #endif
 
 #ifndef BZ_MAJOR_VERSION
@@ -38,7 +38,7 @@
 #endif
 
 #ifndef BZ_REV
-#define BZ_REV                  8
+#define BZ_REV                  9
 #endif
 
 // DEVEL | STABLE | MAINT

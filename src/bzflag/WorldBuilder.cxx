@@ -24,6 +24,10 @@
 #include "EighthDTetraSceneNode.h"
 #include "TetraBuilding.h"
 
+/* compression library header */
+#include "../zlib/zlib.h"
+
+
 WorldBuilder::WorldBuilder()
 {
   world = new World;
@@ -72,9 +76,24 @@ void* WorldBuilder::unpack(void* buf)
   buf = nboUnpackUInt(buf, epochOffset);
   setEpochOffset(epochOffset);
 
+  // decompress
+  uint32_t compressedSize, uncompressedSize;
+  buf = nboUnpackUInt (buf, uncompressedSize);
+  buf = nboUnpackUInt (buf, compressedSize);
+  uLongf destLen = uncompressedSize;
+  char *uncompressedWorld = new char[destLen];
+  char *compressedWorld = (char*) buf;
+  if (uncompress ((Bytef*)uncompressedWorld, &destLen,
+                  (Bytef*)compressedWorld, compressedSize) != Z_OK) {
+    delete[] uncompressedWorld;
+    return NULL;
+  }
+  buf = uncompressedWorld;
+  
   // read geometry
   buf = nboUnpackUShort(buf, len);
   buf = nboUnpackUShort(buf, code);
+
   while (code != WorldCodeEnd) {
     switch (code) {
       case WorldCodeBox: {
@@ -312,10 +331,18 @@ void* WorldBuilder::unpack(void* buf)
       default:
 	return NULL;
     }
+
+    // switch back to the original buffer
+    // for the WorldCodeEnd stuff
+    if ((char*)buf >= (uncompressedWorld + uncompressedSize)) {
+      buf = compressedWorld + compressedSize;
+    }
+    
     buf = nboUnpackUShort(buf, len);
     buf = nboUnpackUShort(buf, code);
   }
   
+  delete[] uncompressedWorld;
   world->loadCollisionManager();
 
   return buf;

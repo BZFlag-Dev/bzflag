@@ -19,6 +19,9 @@
 #include "Protocol.h"
 #include "Intersect.h"
 
+/* compression library header */
+#include "../zlib/zlib.h"
+
 
 WorldInfo::WorldInfo() :
   maxHeight(0),
@@ -469,6 +472,26 @@ int WorldInfo::packDatabase()
   
   databasePtr = worldWeapons.pack (databasePtr);
   databasePtr = entryZones.pack (databasePtr);
+  
+  // compress the map database
+  uLongf gzDBlen = databaseSize + (databaseSize/512) + 12;
+  char* gzDB = new char[gzDBlen];
+  int code = compress2 ((Bytef*)gzDB, &gzDBlen, 
+                        (Bytef*)database, databaseSize, 9);
+  if (code != Z_OK) {
+    printf ("Could not create compressed world database: %i\n", code);
+    exit (1);
+  }
+  
+  // switch to the compressed map database
+  uncompressedSize = databaseSize;
+  databaseSize = gzDBlen;
+  char *oldDB = database;
+  database = gzDB;
+  delete[] oldDB; 
+
+  DEBUG1 ("Map size: uncompressed = %i, compressed = %i\n", 
+           uncompressedSize, databaseSize);
 
   return 1;
 }
@@ -481,6 +504,11 @@ void *WorldInfo::getDatabase() const
 int WorldInfo::getDatabaseSize() const
 {
   return databaseSize;
+}
+
+int WorldInfo::getUncompressedSize() const
+{
+  return uncompressedSize;
 }
 
 // Local Variables: ***

@@ -1182,6 +1182,8 @@ static bool defineWorld()
     for (BasesList::iterator it = bases.begin(); it != bases.end(); ++it)
       buf = it->second.pack(buf);
   }
+  buf = nboPackUInt(buf, world->getUncompressedSize());
+  buf = nboPackUInt(buf, world->getDatabaseSize());
   buf = nboPackString(buf, world->getDatabase(), world->getDatabaseSize());
   buf = nboPackUShort(buf, WorldCodeEndSize);
   buf = nboPackUShort(buf, WorldCodeEnd);

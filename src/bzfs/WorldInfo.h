@@ -68,6 +68,7 @@ public:
   int packDatabase();
   void *getDatabase() const;
   int getDatabaseSize() const;
+  int getUncompressedSize() const;
   WorldWeapons& getWorldWeapons();
 
 private:
@@ -134,6 +135,7 @@ private:
 
   char *database;
   int databaseSize;
+  int uncompressedSize;
 };
 
 
