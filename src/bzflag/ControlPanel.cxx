@@ -318,8 +318,30 @@ void			ControlPanel::render(SceneRenderer& renderer)
 	drawnTabWidth += long(tabTextWidth[tab]);
       } // end iteration over tabs
     }
+    
     if (BZDBCache::blend && renderer.getPanelOpacity() < 1.0f)
       glDisable(GL_BLEND);
+  }
+
+  // show scroll indicator if not at end
+  if (messagesOffset > 0 && messageMode >= 0)
+  {
+    int lines = int(messages[messageMode].size());
+    if (lines > 0) {
+
+      const float size = std_max(float(maxLines) / lines, 0.02f);
+      const float offset = float(messagesOffset) / lines;
+      const int maxTop = messageAreaPixels[1] + messageAreaPixels[3];
+      int top = messageAreaPixels[1] + int((offset + size) * (float)messageAreaPixels[3]);
+      if (top > maxTop) {
+        top = maxTop;
+      }
+      glColor3f(0.7f, 0.7f, 0.7f);
+      glRecti(messageAreaPixels[0],
+              messageAreaPixels[1] + int(offset * (float)messageAreaPixels[3]),
+              messageAreaPixels[0] + 2, top);
+
+    }
   }
 
   // Draw tab labels
@@ -348,26 +370,6 @@ void			ControlPanel::render(SceneRenderer& renderer)
 		      0.0f, fontFace, (float)fontSize, (*tabs)[tab]);
       }
       drawnTabWidth += long(tabTextWidth[tab]);
-    }
-  }
-
-  // show scroll indicator if not at end
-  if (messagesOffset > 0 && messageMode >= 0)
-  {
-    int lines = int(messages[messageMode].size());
-    if (lines > 0) {
-
-	  const float size = std_max(float(maxLines) / lines, 0.02f);
-      const float offset = float(messagesOffset) / lines;
-      const int maxTop = messageAreaPixels[1] + messageAreaPixels[3];
-      int top = messageAreaPixels[1] + int((offset + size) * (float)messageAreaPixels[3]);
-      if (top > maxTop) {
-        top = maxTop;
-      }
-      glColor3f(0.7f, 0.7f, 0.7f);
-      glRecti(messageAreaPixels[0],
-              messageAreaPixels[1] + int(offset * (float)messageAreaPixels[3]),
-              messageAreaPixels[0] + 2, top);
     }
   }
 
