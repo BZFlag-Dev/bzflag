@@ -29,7 +29,7 @@
 #endif /* defined(_WIN32) */
 #include <stdarg.h>
 #ifdef HAVE_SDL
-#include "SDL.h"
+#include <SDL\SDL.h>
 #endif
 #include "bzfio.h"
 #include <fstream>

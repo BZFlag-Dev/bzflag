@@ -27,7 +27,11 @@ PlatformFactory*	PlatformFactory::getInstance()
   return instance;
 }
 
+#ifdef HAVE_SDL
+SDLWindow*		WinPlatformFactory::window = NULL;
+#else
 WinWindow*		WinPlatformFactory::window = NULL;
+#endif
 
 WinPlatformFactory::WinPlatformFactory()
 {

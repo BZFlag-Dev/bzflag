@@ -17,6 +17,11 @@
 #ifndef BZF_COMMON_H
 #define	BZF_COMMON_H
 
+//Uncomment to use SDL instead of platform-native code
+//#ifndef HAVE_SDL
+//#define HAVE_SDL 1
+//#endif
+
 // this should always be the very FIRST header
 #include "config.h"
 
@@ -29,7 +34,7 @@
 #include <vector>
 #include <stdarg.h>
 #include <stdio.h>
-#include <stdlib.h>
+#include <stdlib.h> //needed for bzfrand
 
 extern int debugLevel;
 // Like verbose debug messages?

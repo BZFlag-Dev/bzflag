@@ -41,7 +41,7 @@ RSC=rc.exe
 # PROP Intermediate_Dir "..\..\src\3D\Release"
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_MBCS" /D "_LIB" /YX /FD /c
-# ADD CPP /nologo /MT /W3 /GX /O2 /I "./" /I "../../include" /D "WIN32" /D "NDEBUG" /D "_MBCS" /D "_LIB" /YX /FD /c
+# ADD CPP /nologo /MD /W3 /GX /O2 /I "./" /I "../../include" /D "WIN32" /D "NDEBUG" /D "_MBCS" /D "_LIB" /YX /FD /c
 # ADD BASE RSC /l 0x409 /d "NDEBUG"
 # ADD RSC /l 0x409 /d "NDEBUG"
 BSC32=bscmake.exe
@@ -87,6 +87,14 @@ LIB32=link.exe -lib
 
 SOURCE=..\..\src\3D\TextureManager.cxx
 # End Source File
+# Begin Source File
+
+SOURCE=..\..\src\3D\DisplayListManager.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\3D\DrawablesManager.cxx
+# End Source File
 # End Group
 # Begin Group "Header Files"
 
@@ -118,6 +126,14 @@ SOURCE=.\config.h
 # Begin Source File
 
 SOURCE=..\..\include\ErrorHandler.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\include\DisplayListManager.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\include\DrawablesManager.h
 # End Source File
 # Begin Source File
 
