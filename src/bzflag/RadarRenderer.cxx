@@ -98,25 +98,51 @@ void			RadarRenderer::drawShot(const ShotPath* shot)
   glEnd();
 }
 
-void RadarRenderer::drawTank(float x, float y, float z)
+void RadarRenderer::drawTank(float x, float y, float z, bool realSize)
 {
   // Does not change with height.
-  float tankRadius = BZDBCache::tankRadius;
-  float boxHeight = BZDB.eval(StateDatabase::BZDB_BOXHEIGHT);
-  GLfloat s = tankRadius > 1.5f + 2.0f * ps ? tankRadius : 1.5f + 2.0f * ps;
-  if (z < 0.0f)
-    s = 0.5f;
-  glRectf(x - s, y - s, x + s, y + s);
+  const float boxHeight = BZDB.eval(StateDatabase::BZDB_BOXHEIGHT);
+  const float tankRadius = BZDBCache::tankRadius;
 
+  // 'ps' is pixel scale, see below
+  float minSize = 1.5f + (2.0f * ps);
+  GLfloat size;
+  if (tankRadius < minSize) {
+    size = minSize;
+  } else {
+    size = tankRadius;
+  }
+
+  // draw the marker
+  if (z < 0.0f) {
+    size = 0.5f;
+    glRectf(x - size, y - size, x + size, y + size);
+  }
+  else if (realSize) {
+    float halfWidth = 0.5f * BZDBCache::tankWidth;
+    float halfLength = 0.5f * BZDBCache::tankLength;
+    if (halfWidth < minSize) {
+      halfWidth = minSize;
+    }
+    if (halfLength < minSize) {
+      halfLength = minSize;
+    }
+    glRectf(x - halfWidth, y - halfLength, x + halfWidth, y + halfLength);
+  }
+  else {
+    glRectf(x - size, y - size, x + size, y + size);
+  }
+    
   // Changes with height.
-  s = s * (z / 2.0f + boxHeight) / boxHeight;
+  size = size * (z / 2.0f + boxHeight) / boxHeight;
 
+  // draw the height box
   glBegin(GL_LINE_STRIP);
-  glVertex2f(x - s, y);
-  glVertex2f(x, y - s);
-  glVertex2f(x + s, y);
-  glVertex2f(x, y + s);
-  glVertex2f(x - s, y);
+  glVertex2f(x - size, y);
+  glVertex2f(x, y - size);
+  glVertex2f(x + size, y);
+  glVertex2f(x, y + size);
+  glVertex2f(x - size, y);
   glEnd();
 }
 
@@ -474,7 +500,7 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank)
 	  flashTank.setClock(0.2f);
 	}
       }
-      drawTank(x, y, z);
+      drawTank(x, y, z, false);
     }
 
     bool coloredShot = BZDB.isTrue("coloredradarshots");
@@ -561,7 +587,7 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank)
 
     // my tank
     glColor3f(1.0f, 1.0f, 1.0f);
-    drawTank(0.0f, 0.0f, myTank->getPosition()[2]);
+    drawTank(0.0f, 0.0f, myTank->getPosition()[2], true);
 
     // my flag
     if (myTank->getFlag() != Flags::Null) {

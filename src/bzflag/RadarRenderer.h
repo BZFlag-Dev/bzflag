@@ -60,7 +60,7 @@ class RadarRenderer {
     RadarRenderer&	operator=(const RadarRenderer&);
 
     void		drawShot(const ShotPath*);
-    void		drawTank(float x, float y, float z);
+    void		drawTank(float x, float y, float z, bool realSize);
     void		drawFlag(float x, float y, float z);
     void		drawFlagOnTank(float x, float y, float z);
 
