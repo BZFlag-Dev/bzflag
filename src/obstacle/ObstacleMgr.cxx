@@ -337,23 +337,30 @@ void GroupDefinition::makeGroups(const MeshTransform& xform,
 
   active = true;
 
-  if (this != OBSTACLEMGR.getWorld()) {
-    for (int type = 0; type < ObstacleTypeCount; type++) {
-      const ObstacleList& list = lists[type];
-      for (unsigned int i = 0; i < list.size(); i++) {
-        Obstacle* obs = list[i]->copyWithTransform(xform);
-        if (obs->isValid()) {
+  for (int type = 0; type < ObstacleTypeCount; type++) {
+    const ObstacleList& list = lists[type];
+    for (unsigned int i = 0; i < list.size(); i++) {
+      Obstacle* obs;
+      const bool inWorld = (this == OBSTACLEMGR.getWorld());
+      if (inWorld) {
+        obs = list[i];
+      } else {
+        obs = list[i]->copyWithTransform(xform);
+      }
+      if (obs->isValid()) {
+        if (!inWorld) {
+          // add it to the world
           obs->setSource(Obstacle::GroupDefSource);
           obsMod.execute(obs);
           OBSTACLEMGR.addWorldObstacle(obs);
-          // generate contained meshes
-          MeshObstacle* mesh = getContainedMesh(type, obs);
-          if ((mesh != NULL) && mesh->isValid()) {
-            mesh->setSource(Obstacle::GroupDefSource |
-                            Obstacle::ContainerSource);
-            obsMod.execute(mesh);
-            OBSTACLEMGR.addWorldObstacle(mesh);
-          }
+        }
+        // generate contained meshes
+        MeshObstacle* mesh = getContainedMesh(type, obs);
+        if ((mesh != NULL) && mesh->isValid()) {
+          mesh->setSource(Obstacle::GroupDefSource |
+                          Obstacle::ContainerSource);
+          obsMod.execute(mesh);
+          OBSTACLEMGR.addWorldObstacle(mesh);
         }
       }
     }
@@ -367,6 +374,7 @@ void GroupDefinition::makeGroups(const MeshTransform& xform,
       ObstacleModifier newObsMod(obsMod, *group);
       MeshTransform tmpXform = xform;
       tmpXform.prepend(group->getTransform());
+      // recurse
       groupDef->makeGroups(tmpXform, newObsMod);
     } else {
       DEBUG1("warning: group definition \"%s\" is missing\n",
