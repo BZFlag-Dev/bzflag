@@ -167,7 +167,7 @@ BoxSceneNodeGenerator::~BoxSceneNodeGenerator()
 WallSceneNode*		BoxSceneNodeGenerator::getNextNode(
 				float uRepeats, float vRepeats, boolean lod)
 {
-  if (getNodeNumber() == 5) return NULL;
+  if (getNodeNumber() == 6) return NULL;
 
   GLfloat base[3], sCorner[3], tCorner[3];
   switch (incNodeNumber()) {
@@ -191,10 +191,15 @@ WallSceneNode*		BoxSceneNodeGenerator::getNextNode(
       box->getCorner(0, sCorner);
       box->getCorner(7, tCorner);
       break;
-    case 5:
+    case 5:							//This is the top polygon
       box->getCorner(4, base);
       box->getCorner(5, sCorner);
       box->getCorner(7, tCorner);
+      break;
+    case 6:							//This is the bottom polygon
+      box->getCorner(0, base);
+      box->getCorner(3, sCorner);
+      box->getCorner(1, tCorner);
       break;
   }
 

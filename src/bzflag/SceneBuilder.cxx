@@ -63,54 +63,62 @@ const GLfloat		SceneDatabaseBuilder::wallLightedModulateColors[1][4] = {
 				{ 0.5f, 0.5f, 0.5f, 1.0f }
 			};
 
-const GLfloat		SceneDatabaseBuilder::boxColors[5][4] = {
+const GLfloat		SceneDatabaseBuilder::boxColors[6][4] = {
 				{ 0.75f, 0.25f, 0.25f, 1.0f },
 				{ 0.63f, 0.25f, 0.25f, 1.0f },
 				{ 0.75f, 0.25f, 0.25f, 1.0f },
 				{ 0.75f, 0.375f, 0.375f, 1.0f },
-				{ 0.875f, 0.5f, 0.5f, 1.0f }
+				{ 0.875f, 0.5f, 0.5f, 1.0f },
+				{ 0.275f, 0.2f, 0.2f, 1.0f }
 			};
-const GLfloat		SceneDatabaseBuilder::boxModulateColors[5][4] = {
+const GLfloat		SceneDatabaseBuilder::boxModulateColors[6][4] = {
 				{ 0.75f, 0.75f, 0.75f, 1.0f },
 				{ 0.63f, 0.63f, 0.63f, 1.0f },
 				{ 0.75f, 0.75f, 0.75f, 1.0f },
 				{ 0.69f, 0.69f, 0.69f, 1.0f },
-				{ 0.875f, 0.875f, 0.875f, 1.0f }
+				{ 0.875f, 0.875f, 0.875f, 1.0f },
+				{ 0.375f, 0.375f, 0.375f, 1.0f }
 			};
-const GLfloat		SceneDatabaseBuilder::boxLightedColors[5][4] = {
+const GLfloat		SceneDatabaseBuilder::boxLightedColors[6][4] = {
 				{ 0.75f, 0.25f, 0.25f, 1.0f },
 				{ 0.75f, 0.25f, 0.25f, 1.0f },
 				{ 0.75f, 0.25f, 0.25f, 1.0f },
 				{ 0.75f, 0.25f, 0.25f, 1.0f },
+				{ 0.875f, 0.5f, 0.5f, 1.0f },
 				{ 0.875f, 0.5f, 0.5f, 1.0f }
 			};
-const GLfloat		SceneDatabaseBuilder::boxLightedModulateColors[5][4] = {
+const GLfloat		SceneDatabaseBuilder::boxLightedModulateColors[6][4] = {
 				{ 0.75f, 0.75f, 0.75f, 1.0f },
 				{ 0.75f, 0.75f, 0.75f, 1.0f },
 				{ 0.75f, 0.75f, 0.75f, 1.0f },
 				{ 0.75f, 0.75f, 0.75f, 1.0f },
+				{ 0.875f, 0.875f, 0.875f, 1.0f },
 				{ 0.875f, 0.875f, 0.875f, 1.0f }
 			};
 
-const GLfloat		SceneDatabaseBuilder::pyramidColors[4][4] = {
+const GLfloat		SceneDatabaseBuilder::pyramidColors[5][4] = {
 				{ 0.25f, 0.25f, 0.63f, 1.0f },
 				{ 0.13f, 0.13f, 0.51f, 1.0f },
 				{ 0.25f, 0.25f, 0.63f, 1.0f },
-				{ 0.375f, 0.375f, 0.75f, 1.0f }
+				{ 0.375f, 0.375f, 0.75f, 1.0f },
+				{ 0.175f, 0.175f, 0.35f, 1.0f }
 			};
-const GLfloat		SceneDatabaseBuilder::pyramidModulateColors[4][4] = {
+const GLfloat		SceneDatabaseBuilder::pyramidModulateColors[5][4] = {
 				{ 0.25f, 0.25f, 0.63f, 1.0f },
 				{ 0.13f, 0.13f, 0.51f, 1.0f },
 				{ 0.25f, 0.25f, 0.63f, 1.0f },
-				{ 0.375f, 0.375f, 0.75f, 1.0f }
+				{ 0.375f, 0.375f, 0.75f, 1.0f },
+				{ 0.175f, 0.175f, 0.35f, 1.0f }
 			};
-const GLfloat		SceneDatabaseBuilder::pyramidLightedColors[4][4] = {
+const GLfloat		SceneDatabaseBuilder::pyramidLightedColors[5][4] = {
+				{ 0.25f, 0.25f, 0.63f, 1.0f },
 				{ 0.25f, 0.25f, 0.63f, 1.0f },
 				{ 0.25f, 0.25f, 0.63f, 1.0f },
 				{ 0.25f, 0.25f, 0.63f, 1.0f },
 				{ 0.25f, 0.25f, 0.63f, 1.0f }
 			};
-const GLfloat		SceneDatabaseBuilder::pyramidLightedModulateColors[4][4] = {
+const GLfloat		SceneDatabaseBuilder::pyramidLightedModulateColors[5][4] = {
+				{ 0.25f, 0.25f, 0.63f, 1.0f },
 				{ 0.25f, 0.25f, 0.63f, 1.0f },
 				{ 0.25f, 0.25f, 0.63f, 1.0f },
 				{ 0.25f, 0.25f, 0.63f, 1.0f },
@@ -238,12 +246,12 @@ void			SceneDatabaseBuilder::addWall(SceneDatabase* db,
 void			SceneDatabaseBuilder::addBox(SceneDatabase* db,
 						const BoxBuilding& o)
 {
-  // this assumes boxes have five parts:  four sides then a roof
+  // this assumes boxes have six parts:  four sides, a roof, and a bottom.
   int part = 0;
   WallSceneNode* node;
   ObstacleSceneNodeGenerator* nodeGen = o.newSceneNodeGenerator();
 
-  while ((node = ((part != 4) ? nodeGen->getNextNode(
+  while ((node = ((part != 5) ? nodeGen->getNextNode(
 				o.getBreadth() / boxTexWidth,
 				o.getHeight() / boxTexHeight, boxLOD) :
 				nodeGen->getNextNode(
@@ -254,11 +262,11 @@ void			SceneDatabaseBuilder::addBox(SceneDatabase* db,
     node->setLightedColor(boxLightedColors[part]);
     node->setLightedModulateColor(boxLightedModulateColors[part]);
     node->setMaterial(boxMaterial);
-    if (part != 4) node->setTexture(boxTexture);
+    if (part < 4) node->setTexture(boxTexture);
     else node->setTexture(boxTopTexture);
 
     db->addStaticNode(node);
-    part = (part + 1) % 5;
+    part = (part + 1) % 6;
   }
   delete nodeGen;
 }
@@ -282,7 +290,7 @@ void			SceneDatabaseBuilder::addPyramid(SceneDatabase* db,
     node->setTexture(pyramidTexture);
 
     db->addStaticNode(node);
-    part = (part + 1) % 4;
+    part = (part + 1) % 5;
   }
   delete nodeGen;
 }

@@ -14,6 +14,7 @@
 #include "PyramidBuilding.h"
 #include "Intersect.h"
 #include "TriWallSceneNode.h"
+#include "QuadWallSceneNode.h"
 
 BzfString		PyramidBuilding::typeName("PyramidBuilding");
 
@@ -200,7 +201,10 @@ PyramidSceneNodeGenerator::~PyramidSceneNodeGenerator()
 WallSceneNode*		PyramidSceneNodeGenerator::getNextNode(
 				float uRepeats, float vRepeats, boolean lod)
 {
-  if (getNodeNumber() == 4) return NULL;
+
+	bool isSquare = false;
+
+	if (getNodeNumber() == 5) return NULL;
 
   GLfloat base[3], sCorner[3], tCorner[3];
   switch (incNodeNumber()) {
@@ -208,21 +212,31 @@ WallSceneNode*		PyramidSceneNodeGenerator::getNextNode(
       pyramid->getCorner(0, base);
       pyramid->getCorner(1, sCorner);
       pyramid->getCorner(4, tCorner);
+	  isSquare = false;
       break;
     case 2:
       pyramid->getCorner(1, base);
       pyramid->getCorner(2, sCorner);
       pyramid->getCorner(4, tCorner);
+	  isSquare = false;
       break;
     case 3:
       pyramid->getCorner(2, base);
       pyramid->getCorner(3, sCorner);
       pyramid->getCorner(4, tCorner);
+	  isSquare = false;
       break;
     case 4:
       pyramid->getCorner(3, base);
       pyramid->getCorner(0, sCorner);
       pyramid->getCorner(4, tCorner);
+	  isSquare = false;
+      break;
+    case 5:
+      pyramid->getCorner(0, base);
+      pyramid->getCorner(3, sCorner);
+      pyramid->getCorner(1, tCorner);
+	  isSquare = true;
       break;
   }
 
@@ -234,5 +248,10 @@ WallSceneNode*		PyramidSceneNodeGenerator::getNextNode(
   tEdge[0] = tCorner[0] - base[0];
   tEdge[1] = tCorner[1] - base[1];
   tEdge[2] = tCorner[2] - base[2];
-  return new TriWallSceneNode(base, sEdge, tEdge, uRepeats, vRepeats, lod);
+  
+  if(isSquare != true)
+	return new TriWallSceneNode(base, sEdge, tEdge, uRepeats, vRepeats, lod);
+  else
+	return new QuadWallSceneNode(base, sEdge, tEdge, uRepeats, vRepeats, lod);
+
 }
