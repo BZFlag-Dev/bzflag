@@ -679,7 +679,8 @@ void*			WorldBuilder::unpack(void* buf)
 	buf = nboUnpackFloat(buf, data[5]);
 	buf = nboUnpackFloat(buf, data[6]);
 	buf = nboUnpackUByte(buf, tempflags);
-	BoxBuilding box(data, data[3], data[4], data[5], data[6],(tempflags & _DRIVE_THRU)==0,(tempflags & _SHOOT_THRU)==0);
+	BoxBuilding box(data, data[3], data[4], data[5], data[6],
+			(tempflags & _DRIVE_THRU)!=0, (tempflags & _SHOOT_THRU)!=0);
 	append(box);
 	break;
       }
@@ -695,8 +696,9 @@ void*			WorldBuilder::unpack(void* buf)
 	buf = nboUnpackFloat(buf, data[6]);
 	buf = nboUnpackUByte(buf, tempflags);
 
-	PyramidBuilding pyr(data, data[3], data[4], data[5], data[6],(tempflags & _DRIVE_THRU)==0,(tempflags & _SHOOT_THRU)==0);
-	if ((tempflags & _FLIP_Z)==0)
+	PyramidBuilding pyr(data, data[3], data[4], data[5], data[6],
+			    (tempflags & _DRIVE_THRU)!=0, (tempflags & _SHOOT_THRU)!=0);
+	if (tempflags & _FLIP_Z)
 		pyr.setZFlip();
 
 	append(pyr);
@@ -714,7 +716,8 @@ void*			WorldBuilder::unpack(void* buf)
 	buf = nboUnpackFloat(buf, data[6]);
 	buf = nboUnpackFloat(buf, data[7]);
 	buf = nboUnpackUByte(buf, tempflags);
-	Teleporter tele(data, data[3], data[4], data[5], data[6],data[7],(tempflags & _DRIVE_THRU)==0,(tempflags & _SHOOT_THRU)==0);
+	Teleporter tele(data, data[3], data[4], data[5], data[6],data[7],
+			(tempflags & _DRIVE_THRU)!=0, (tempflags & _SHOOT_THRU)!=0);
 	append(tele);
 	break;
       }
