@@ -113,7 +113,7 @@ BzfJoystick*		WinPlatformFactory::createJoystick()
 {
 #if defined(HAVE_SDL)
   return new SDLJoystick();
-#elif defined(DIRECTINPUT_HEADER_VERSION) && (DIRECTINPUT_HEADER_VERSION >= 0x0700)
+#elif defined(USE_DINPUT)
   return new DXJoystick();
 #else
   return new WinJoystick();

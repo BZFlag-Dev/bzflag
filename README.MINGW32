@@ -40,7 +40,7 @@ Any way you got these files, you should copy either on the MinGW installation,
 under the include directory or, if you don't like to clutter the MinGW
 installation, just put under src/platform.
 
-The files in question are dsound.h, d3dtypes.h and ddraw.h.
+The files in question are dsound.h, dinput.h and ddraw.h.
 
 To get the needed DirectX header files from the Microsoft DirectX SDK:
     * Go to http://msdn.microsoft.com/downloads/
@@ -48,17 +48,9 @@ To get the needed DirectX header files from the Microsoft DirectX SDK:
     * Click on the Download link on the right
     * This is a 227 MB file!
     * Run the downloaded program
-    * click Unzip to extract it to the default location (C:\mssdk\temp)
+    * Click Unzip to extract it to the default location (C:\mssdk\temp)
     * Click "OK" and "Close" when the program finishes extracting the files
     * Copy ddraw.h, dinput.h and dsound.h from the SDK's include directory
-
-With current versions of MingW (as of 9/2004) the build will fail when built
-with DirectX, because the libs shipped with MingW are for DirectX 6 but the
-code uses DirectX 7 if the headers say it's available.  There are three possible
-ways around this issue.  One is to wait until the MingW people update thier 
-libs, another is to try to use the Microsoft DirectX libs, which may or may not
-work, the other is to find a copy of the DirectX 6 or older SDK and use the
-headers from it.
 
 Note that we cannot redistribute these files separate of the entire SDK.
 

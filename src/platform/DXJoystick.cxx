@@ -16,6 +16,9 @@
 /* interface header */
 #include "DXJoystick.h"
 
+// Don't try compile this if we don't have an up-to-date DX
+#if defined(USE_DINPUT)
+
 /* system headers */
 #include <vector>
 #include <string>
@@ -422,6 +425,8 @@ BOOL CALLBACK DXJoystick::deviceEnumCallback(LPCDIDEVICEINSTANCE device, void* /
 
   return DIENUM_CONTINUE;
 }
+
+#endif
 
 
 // Local Variables: ***

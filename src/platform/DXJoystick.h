@@ -24,6 +24,13 @@
 #define DIRECTINPUT_VERSION 0x0700
 #include <dinput.h>
 
+// Don't try compile this if we don't have an up-to-date DX
+#if defined(DIRECTINPUT_HEADER_VERSION) && (DIRECTINPUT_HEADER_VERSION >= 0x0700) && !defined(BROKEN_DINPUT)
+#define USE_DINPUT 1
+#endif
+
+#if defined(USE_DINPUT)
+
 #include <vector>
 #include <string>
 
@@ -60,6 +67,7 @@ class DXJoystick : public BzfJoystick {
     static BOOL CALLBACK deviceEnumCallback(LPCDIDEVICEINSTANCE device, void*);
 };
 
+#endif // USE_DINPUT
 
 #endif // BZF_DXJOY_H
 
