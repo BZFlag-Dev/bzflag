@@ -5622,6 +5622,10 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
     case MsgServerControl:
       break;
 
+    // player is sending client version, ignore for now
+    case MsgClientVersion:
+      break;
+
     case MsgLagPing:
     {
       uint16_t pingseqno;
@@ -5636,7 +5640,7 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
       break;
     }
 
-    // player is sending multicast data
+    // player is sending his position/speed (bulk data)
     case MsgPlayerUpdate: {
       player[t].lastupdate = TimeKeeper::getCurrent();
       PlayerId id;
@@ -5672,7 +5676,7 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
 	  }
 		  
 
-      // check for highspeec cheat; if inertia is enabled, skip test for now
+      // check for highspeed cheat; if inertia is enabled, skip test for now
       if (clOptions.linearAcceleration == 0.0f) {
 	// Doesn't account for going fast backwards, or jumping/falling
 	float curPlanarSpeedSqr = state.velocity[0]*state.velocity[0] +
@@ -5728,6 +5732,13 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
       if (player[t].multicastRelay)
 	relayPlayerPacket(t, len, rawbuf);
       break;
+
+    // unknown msg type
+    default:
+      DEBUG1("Player [%d] sent unknown packet type (%x), possible attack from %s\n",
+             t,code,player[t].peer.getDotNotation().c_str());
+//      removePlayer(t, "unknown packet type", false);
+
   }
 }
 
@@ -7201,7 +7212,6 @@ int main(int argc, char **argv)
 
       // now check messages from connected players and send queued messages
       for (i = 0; i < curMaxPlayers; i++) {
-
 	if (player[i].fd != NotConnected && FD_ISSET(player[i].fd, &write_set)) {
 	  pflush(i);
 	}
@@ -7221,6 +7231,12 @@ int main(int argc, char **argv)
 	  void *buf = player[i].tcpmsg;
 	  buf = nboUnpackUShort(buf, len);
 	  buf = nboUnpackUShort(buf, code);
+	  if (len>MaxPacketLen) {
+	    DEBUG1("Player [%d] sent huge packet length (len=%d), possible attack from %s\n",
+		   i,len,player[i].peer.getDotNotation().c_str());
+	    removePlayer(i, "large packet recvd", false);
+	    continue;
+	  }
 	  if (player[i].tcplen < 4 + (int)len) {
 	    pread(i, 4 + (int)len - player[i].tcplen);
 

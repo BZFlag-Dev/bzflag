@@ -3,6 +3,8 @@
 
 * add new updates here without heading until a release
 
+* check for unknown message types and dump player just in case - Frank Thilo 
+* check incoming TCP for oversized messages - Frank Thilo
 * resize mouse boxes - Frank Thilo
 * choose [un]silence - Michael Hoffman, Tim Riker
 * flag on radar/view on/off - Michael Hoffman, Tim Riker
