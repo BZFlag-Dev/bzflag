@@ -51,8 +51,6 @@ class RadarRenderer {
     RadarRenderer(const RadarRenderer&);
     RadarRenderer&	operator=(const RadarRenderer&);
 
-    bool		makeNoise();
-    void		makeNoiseTexture();
     void		drawShot(const ShotPath*);
     void		drawTank(float x, float y, float z);
     void		drawFlag(float x, float y, float z);
@@ -76,8 +74,6 @@ class RadarRenderer {
     double		decay;
     GLuint		list;
     GLfloat		teamColor[3];
-    unsigned char	*noise;
-    OpenGLTexture	*noiseTexture;
     static const float	colorFactor;
 };
 

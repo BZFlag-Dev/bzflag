@@ -29,6 +29,7 @@
 #include "HUDRenderer.h"
 #include "StateDatabase.h"
 #include "BZDBCache.h"
+#include "TextureManager.h"
 
 FlashClock flashTank;
 static bool toggleTank = false;
@@ -44,8 +45,7 @@ RadarRenderer::RadarRenderer(const SceneRenderer&,
 				h(0),
 				jammed(false),
 				decay(0.01),
-				list(0),
-				noise(NULL)
+				list(0)
 {
   setControlColor();
 
@@ -59,16 +59,12 @@ RadarRenderer::RadarRenderer(const SceneRenderer&,
 
   // watch for context recreation
   OpenGLGState::registerContextInitializer(initContext, (void*)this);
-  if (makeNoise()==true)
-    makeNoiseTexture();
-  else noiseTexture=0;
 }
 
 RadarRenderer::~RadarRenderer()
 {
   OpenGLGState::unregisterContextInitializer(initContext, (void*)this);
   freeList();
-  delete[] noise;
 }
 
 void			RadarRenderer::setControlColor(const GLfloat *color)
@@ -86,7 +82,6 @@ void			RadarRenderer::setShape(int _x, int _y, int _w, int _h)
   y = _y;
   w = _w;
   h = _h;
-  makeNoise();
 }
 
 void			RadarRenderer::setJammed(bool _jammed)
@@ -100,27 +95,6 @@ void			RadarRenderer::freeList()
   if (list == 0) return;
   glDeleteLists(list, 2);
   list = 0;
-}
-
-bool			RadarRenderer::makeNoise()
-{
-  delete[] noise;
-  const int size = 4 * 128 * 128;
-  noise = new unsigned char[size];
-  if (!noise) return false;
-  for (int i = 0; i < size; i += 4 ) {
-    unsigned char n = (unsigned char)floor(256.0 * bzfrand());
-    noise[i+0] = n;
-    noise[i+1] = n;
-    noise[i+2] = n;
-    noise[i+3] = n;
-  }
-  return true;
-}
-
-void			RadarRenderer::makeNoiseTexture()
-{
-  noiseTexture = new OpenGLTexture(128,128,noise,OpenGLTexture::Nearest);
 }
 
 void			RadarRenderer::drawShot(const ShotPath* shot)
@@ -241,12 +215,15 @@ void			RadarRenderer::render(SceneRenderer& renderer,
   glLoadIdentity();
   OpenGLGState::resetState();
 
+  TextureManager &tm = TextureManager::instance();
+  OpenGLTexture *noiseTexture = tm.getTexture( TX_NOISE );
+
   // if jammed then draw white noise.  occasionally draw a good frame.
   if (jammed && bzfrand() > decay) {
 
     glColor3f(1.0,1.0,1.0);
 
-    if (noiseTexture != 0 && renderer.useQuality()>0) {
+    if (noiseTexture != NULL && renderer.useQuality()>0) {
 
       const int sequences = 10;
 
@@ -284,7 +261,7 @@ void			RadarRenderer::render(SceneRenderer& renderer,
       glDisable(GL_TEXTURE_2D);
     }
 
-    else if (noiseTexture != 0 && BZDB.isTrue("texture") &&
+    else if (noiseTexture != NULL && BZDB.isTrue("texture") &&
 	renderer.useQuality()==0) {
       glEnable(GL_TEXTURE_2D);
       noiseTexture->execute();

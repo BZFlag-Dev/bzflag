@@ -33,7 +33,7 @@ struct ProcTextureInit
 {
   TextureType		type;
   int			variant;
-  OpenGLTexture*	(*proc)();
+  OpenGLTexture*	(*proc)(ProcTextureInit &init);
   OpenGLTexture::Filter	filter;
 };
 

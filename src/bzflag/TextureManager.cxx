@@ -56,7 +56,7 @@ FileTextureInit fileLoader[] =
 	{ TX_FLAG, NO_VARIANT, "flag", OpenGLTexture::Max },
 };
 
-OpenGLTexture *noiseProc();
+OpenGLTexture *noiseProc(ProcTextureInit &init);
 
 ProcTextureInit procLoader[] = 
 {
@@ -74,7 +74,7 @@ TextureManager::TextureManager()
 
   numTextures = sizeof( procLoader ) / sizeof( ProcTextureInit );
   for (i = 0; i < numTextures; i++)
-    addTexture( procLoader[i].type, procLoader[i].variant, procLoader[i].proc() );
+    addTexture( procLoader[i].type, procLoader[i].variant, procLoader[i].proc( procLoader[i] ));
 }
 
 TextureManager::~TextureManager()
@@ -123,9 +123,21 @@ OpenGLTexture* TextureManager::loadTexture( FileTextureInit &init )
 
 /* --- Procs --- */
 
-OpenGLTexture *noiseProc()
+OpenGLTexture *noiseProc(ProcTextureInit &init)
 {
-	return new OpenGLTexture();
+  const int size = 4 * 128 * 128;
+  unsigned char* noise = new unsigned char[size];
+  for (int i = 0; i < size; i += 4 ) {
+    unsigned char n = (unsigned char)floor(256.0 * bzfrand());
+    noise[i+0] = n;
+    noise[i+1] = n;
+    noise[i+2] = n;
+    noise[i+3] = n;
+  }
+
+  OpenGLTexture *texture = new OpenGLTexture(128,128,noise,init.filter);
+  delete noise;
+  return texture;
 }
 
 
