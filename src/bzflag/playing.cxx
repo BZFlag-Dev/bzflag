@@ -3526,7 +3526,7 @@ static void		playingLoop()
         targetPoint[0] = eyePoint[0] + myTankDir[0];
         targetPoint[1] = eyePoint[1] + myTankDir[1];
         targetPoint[2] = eyePoint[2] + myTankDir[2];
-#endif
+#else
 	float dir[3];
 	dir[0] = cosf(roamPhi * M_PI / 180.0f) * cosf(roamTheta * M_PI / 180.0f);
 	dir[1] = cosf(roamPhi * M_PI / 180.0f) * sinf(roamTheta * M_PI / 180.0f);
