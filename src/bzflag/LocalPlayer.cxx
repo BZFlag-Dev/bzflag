@@ -1083,7 +1083,7 @@ void			LocalPlayer::setPause(bool pause)
 
 bool			LocalPlayer::fireShot()
 {
-  if (firingStatus != FiringStatus::Ready)
+  if (firingStatus != Ready)
     return false;
 
   // find an empty slot
