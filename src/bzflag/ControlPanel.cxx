@@ -567,6 +567,7 @@ void			ControlPanel::addMessage(const BzfString& line,
   extern boolean echoToConsole;
   if (echoToConsole)
     fprintf(stdout, "%s\n", (const char*)line);
+    fflush(stdout);
 
   changedMessage = numBuffers;
 }
