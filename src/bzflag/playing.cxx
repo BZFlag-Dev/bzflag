@@ -3224,7 +3224,8 @@ static void		handleServerMessage(bool human, uint16_t code,
       for (int i = 0; i < curMaxPlayers; i++) {
 	if (player[i])
 	  player[i]->setHunted(false);
-        if (i != id && player[i] && player[i]->getTeam() != RogueTeam) {
+        if (i != id && player[i] && player[i]->getTeam() != RogueTeam
+	    && player[i]->getTeam() != ObserverTeam) {
 	   player[i]->changeTeam(RogueTeam);
 	}
       }
@@ -3239,7 +3240,7 @@ static void		handleServerMessage(bool human, uint16_t code,
             playLocalSound(SFX_HUNT_SELECT);
           }
 	  hud->setHunting(false);
-	} else {
+	} else if (myTank->getTeam() != ObserverTeam) {
 	  myTank->changeTeam(RogueTeam);
 	  rabbit->setHunted(true);
 	  hud->setHunting(true);
