@@ -579,10 +579,11 @@ int Teleporter::packSize() const
 
 void Teleporter::print(std::ostream& out, const std::string& indent) const
 {
-  out << indent << "teleporter" << std::endl;
+  out << indent << "teleporter";
   if (name.size() > 0) {
-    out << indent << "  name " << name << std::endl;
+    out << " " << name;
   }
+  out << std::endl;
   const float *pos = getPosition();
   out << indent << "  position " << pos[0] << " " << pos[1] << " "
 				 << pos[2] << std::endl;
