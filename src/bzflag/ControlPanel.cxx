@@ -297,9 +297,9 @@ void			ControlPanel::resize()
     messageFont = TextureFont::getTextureFont(TextureFont::Fixed, true);
   messageFont.setSize(fontSize, fontSize);
 
-  maxLines = messageAreaPixels[3] / fontSize;
+  maxLines = int(messageAreaPixels[3] / fontSize);
 
-	   // note that we've been resized at least once
+  // note that we've been resized at least once
   resized = true;
   expose();
 }
@@ -368,7 +368,7 @@ void			ControlPanel::addMessage(const std::string& line,
 {
   ControlPanelMessage item(line, color);
 
-  if (messages.size() < maxLines * maxScrollPages) {
+  if ((int)messages.size() < maxLines * maxScrollPages) {
     // not full yet so just append it
     messages.push_back(item);
   }
