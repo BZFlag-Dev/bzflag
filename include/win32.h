@@ -47,8 +47,8 @@ typedef unsigned int	uint32_t;
 #endif
 
 // there is no sigpipe in Windows
-#ifndef SIGINT
-#define SIGPIPE SIGINT
+#ifdef SIGPIPE
+#define SIGPIPE SIGLOST
 #endif
 
 /* stuff specific to visual studio */
