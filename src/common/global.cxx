@@ -68,7 +68,7 @@ const struct GlobalDBItem globalDBItems[] = {
   { "_mGunAdVel",		"1.5",				false, StateDatabase::Locked},
   { "_muzzleFront",		"_tankRadius + 0.1",		false, StateDatabase::Locked},
   { "_muzzleHeight",		"1.57",				false, StateDatabase::Locked},
-  { "_noClimb",			"0",				false, StateDatabase::Locked},
+  { "_noClimb",			"1",				false, StateDatabase::Locked},
   { "_noRadar",			"0",				false, StateDatabase::Locked},
   { "_noShadows",		"0",				false, StateDatabase::Locked},
   { "_noSmallPackets",		"0",				false, StateDatabase::Locked},
