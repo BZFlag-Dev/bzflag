@@ -143,6 +143,12 @@ bool URLManager::getFileTime(const std::string& URL, time_t& t)
     retcode = false;
   }
   
+  result = curl_easy_setopt((CURL*)easyHandle, CURLOPT_HTTPGET, 1);
+  if (result) {
+    DEBUG1("Something wrong with CURL; Error: %d\n", result);
+    retcode = false;
+  }
+  
   return retcode;
 }
 
