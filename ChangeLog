@@ -1,9 +1,11 @@
 
+
 			     BZFlag release notes
 
 BZFlag 1.10.4
 -------------
 
+* Allow user to define quickMessages via the menu system - Frank Thilo
 * Configfile options equal to the defaults are written to bzc but commented out - Dave Brosius
 * Added -show and -hide options to bzadmin to tell it which messages to show - Lars Luthman
 * Added support for more message types to bzadmin - lan56 @ SF, Lars Luthman
