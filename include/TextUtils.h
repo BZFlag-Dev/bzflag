@@ -21,6 +21,7 @@
 
 /* system interface headers */
 #include <algorithm>
+#include <ctype.h>
 #include <string>
 #include <stdarg.h>
 #include <vector>
@@ -38,9 +39,8 @@ namespace TextUtils {
   {
     std::string trans = s;
 
-    std::transform(trans.begin(), trans.end(), // source
-               trans.begin(),    // destination
-               ::tolower);
+    for (std::string::iterator i=trans.begin(), end=trans.end(); i!=end; ++i)
+      *i = ::tolower(*i);
     return trans;
   }
 
@@ -49,9 +49,8 @@ namespace TextUtils {
   inline std::string toupper(const std::string& s)
   {
     std::string trans = s;
-    std::transform (trans.begin(), trans.end(), // source
-               trans.begin(),    // destination
-               ::toupper);
+    for (std::string::iterator i=trans.begin(), end=trans.end(); i!=end; ++i)
+      *i = ::toupper(*i);
     return trans;
   }
 
