@@ -202,6 +202,15 @@ private:
   MessageCountMap msg[2];
 #endif
 };
+
+inline NetHandler *NetHandler::getHandler(int _playerIndex) {
+  if (_playerIndex < 0)
+    return NULL;
+  if (_playerIndex >= maxHandlers)
+    return NULL;
+  return netPlayer[_playerIndex];
+}
+
 #endif
 
 // Local Variables: ***

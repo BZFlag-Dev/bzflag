@@ -78,10 +78,6 @@ bool PlayerInfo::shouldRestartAtBase() {
   return restartOnBase;
 };
 
-bool PlayerInfo::isPlaying() {
-  return state > PlayerInLimbo;
-};
-
 void PlayerInfo::signingOn() {
   state = PlayerDead;
 };
@@ -109,10 +105,6 @@ bool PlayerInfo::isPaused() {
 
 bool PlayerInfo::isBot() {
   return type == ComputerPlayer;
-};
-
-bool PlayerInfo::isHuman() {
-  return type == TankPlayer;
 };
 
 void *PlayerInfo::packUpdate(void *buf) {
@@ -296,13 +288,6 @@ bool PlayerInfo::isARabbitKill(PlayerInfo &victim) {
 void PlayerInfo::resetFlag() {
   flag = -1;
   lastFlagDropTime = now;
-};
-
-bool PlayerInfo::haveFlag() const {
-  return flag >= 0;
-}
-int PlayerInfo::getFlag() const {
-  return flag;
 };
 
 void PlayerInfo::setFlag(int _flag) {

@@ -367,6 +367,11 @@ private:
   bool                          debug;
 };
 
+inline bool StateDatabase::getDebug() const
+{
+  return debug;
+}
+
 std::istream& operator >> (std::istream& src, StateDatabase::Expression& dst);
 std::string& operator >> (std::string& src, StateDatabase::Expression& dst);
 std::ostream& operator << (std::ostream& dst, const StateDatabase::Expression& src);

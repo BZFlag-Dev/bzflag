@@ -250,14 +250,6 @@ bool NetHandler::exists(int _playerIndex) {
   return netPlayer[_playerIndex] != NULL;
 }
 
-NetHandler *NetHandler::getHandler(int _playerIndex) {
-  if (_playerIndex < 0)
-    return NULL;
-  if (_playerIndex >= maxHandlers)
-    return NULL;
-  return netPlayer[_playerIndex];
-}
-
 bool NetHandler::isFdSet(fd_set *set) {
   if (FD_ISSET(fd, set)) {
     return true;

@@ -489,9 +489,6 @@ void                     StateDatabase::setDebug(bool print) {
   debug = print;
 }
 
-bool                     StateDatabase::getDebug() const {
-  return debug;
-}
 
 
 StateDatabase::ExpressionToken::ExpressionToken()

@@ -173,6 +173,25 @@ private:
   static WordFilter serverSpoofingFilter;
 };
 
+inline bool PlayerInfo::isPlaying()
+{
+  return state > PlayerInLimbo;
+}
+
+inline bool PlayerInfo::isHuman()
+{
+  return type == TankPlayer;
+}
+
+inline bool PlayerInfo::haveFlag() const
+{
+  return flag >= 0;
+}
+
+inline int PlayerInfo::getFlag() const
+{
+  return flag;
+}
 
 #endif
 
