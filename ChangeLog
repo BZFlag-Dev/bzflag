@@ -13,8 +13,8 @@ BZFlag 1.10.4
 * Killed player stop drifting & clean dirty tank pieces - Tupone Alfredo
 * Rabbit score changed and values displayed on HUD  - Tupone Alfredo
 * Sound samples are resampled since bzflag doesn't - Tupone Alfredo
-* Client unclean disconnection recognized earlier - Tupone Alfredo
-* Improved communication between bzfs and list server - Tupone Alfredo, 
+* Unclean client disconnects are recognized earlier - Tupone Alfredo
+* Async communication between bzfs and list server - Tupone Alfredo
 * Added bzfs -rabbit option selection algorithm support - Nils McCarthy
 * Added the REQUIREIDENTIFY permission - Nils McCarthy
 * Added bzfs option to deny clients that do not identify - Nils McCarthy
@@ -28,7 +28,7 @@ BZFlag 1.10.4
 * Ground Texture Repeat added to BZDB, default increased to 0.1  - Jeff Myers
 * Added ability to have and use per-team colored textures - Jeff Myers
 * Added support for colored and zoned ground textures - Jeff Meyers
-* Hutner tanks try to use "hunter" texture if found - Jeff Myers
+* Hunter tanks try to use "hunter" texture if found - Jeff Myers
 * Hunter tanks are colored orange color if not using a texture - Jeff Myers
 * Menu uses it's own image for the arrow, menu_arrow.png - Jeff Myers
 * Rename team based datafiles to have the team in the name - Jeff Myers
