@@ -1275,11 +1275,11 @@ void handlePollCmd(int t, const char *message)
     /* create and announce the new poll */
     bool canDo = false;
     if (cmd == "ban") {
-      canDo = (arbiter->pollToBan(target.c_str(), player[t].callSign, parameter));
+      canDo = (arbiter->pollToBan(target, std::string(player[t].callSign), parameter));
     } else if (cmd == "kick") {
-      canDo = (arbiter->pollToKick(target.c_str(), player[t].callSign));
+      canDo = (arbiter->pollToKick(target, std::string(player[t].callSign)));
     } else if (cmd == "set") {
-      canDo = (arbiter->pollToSet(target.c_str(), player[t].callSign));
+      canDo = (arbiter->pollToSet(target, std::string(player[t].callSign)));
     }
 
     if (!canDo) {
@@ -1302,14 +1302,14 @@ void handlePollCmd(int t, const char *message)
     for (int j = 0; j < curMaxPlayers; j++) {
       // any registered/known users on the server (including observers) are eligible to vote
       if ((player[j].fd != NotConnected) && userExists(player[j].regName)) {
-	arbiter->grantSuffrage(player[j].callSign);
+	arbiter->grantSuffrage(std::string(player[j].callSign));
       }
     }
 
     // automatically place a vote for the player requesting the poll
     DEBUG2("Attempting to automatically place a vote for [%s]\n", player[t].callSign);
 
-    bool voted = arbiter->voteYes(player[t].callSign);
+    bool voted = arbiter->voteYes(std::string(player[t].callSign));
     if (!voted) {
       sendMessage(ServerPlayer, t, "Unable to automatically place your vote for some unknown reason", true);
       DEBUG2("Unable to automatically place a vote for [%s]\n", player[t].callSign);
@@ -1424,13 +1424,13 @@ void handleVoteCmd(int t, const char *message)
   // cast the vote or complain
   bool cast = false;
   if (vote == 0) {
-    if ((cast = arbiter->voteNo(player[t].callSign)) == true) {
+    if ((cast = arbiter->voteNo(std::string(player[t].callSign))) == true) {
       /* player voted no */
       sprintf(reply,"%s, your vote in opposition of the %s has been recorded", player[t].callSign, arbiter->getPollAction().c_str());
       sendMessage(ServerPlayer, t, reply, true);
     }
   } else if (vote == 1) {
-    if ((cast = arbiter->voteYes(player[t].callSign)) == true) {
+    if ((cast = arbiter->voteYes(std::string(player[t].callSign))) == true) {
       /* player voted yes */
       sprintf(reply,"%s, your vote in favor of the %s has been recorded", player[t].callSign, arbiter->getPollAction().c_str());
       sendMessage(ServerPlayer, t, reply, true);

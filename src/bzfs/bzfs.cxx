@@ -2599,7 +2599,7 @@ void removePlayer(int playerIndex, const char *reason, bool notify)
   // if there is an active poll, cancel any vote this player may have made
   static VotingArbiter *arbiter = (VotingArbiter *)BZDB.getPointer("poll");
   if ((arbiter != NULL) && (arbiter->knowsPoll())) {
-    arbiter->retractVote(player[playerIndex].callSign);
+    arbiter->retractVote(std::string(player[playerIndex].callSign));
   }
 
   if (clOptions->gameStyle & int(RabbitChaseGameStyle))
