@@ -19,10 +19,11 @@
 
 #define HAVE_PROTO
 #ifdef HAVE_XCURSES_H
-#define XCURSES
-#include <xcurses.h>
+#  define XCURSES
+#  include <xcurses.h>
 #else
-#include <curses.h>
+#  define NOMACROS
+#  include <curses.h>
 #endif
 
 

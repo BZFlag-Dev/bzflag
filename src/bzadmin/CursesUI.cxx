@@ -28,7 +28,9 @@ CursesUI::CursesUI(const PlayerIdMap& p, PlayerId m) :
   // initialize ncurses
   initscr();
   start_color();
+#ifdef HAVE_NCURSES_H
   use_default_colors();
+#endif
   init_pair(Default, -1, -1);
   init_pair(White, COLOR_WHITE, -1);
   init_pair(Red, COLOR_RED, -1);
@@ -133,9 +135,11 @@ bool CursesUI::checkCommand(std::string& str) {
   // get a character and do checks that are always needed
   int c = wgetch(cmdWin);
   switch (c) {
+#ifdef HAVE_NCURSES_H
    case KEY_RESIZE:
      handleResize(LINES, COLS);
      return false;
+#endif
   case KEY_F(2):
     toggleMenu();
     return false;
@@ -308,13 +312,19 @@ PlayerId CursesUI::getTarget() const {
 
 
 void CursesUI::handleResize(int lines, int cols) {
+#ifdef HAVE_NCURSES_H
   resizeterm(lines, cols);
   wresize(mainWin, lines - 2, cols);
+#endif
   updateMainWinFromBuffer(lines - 2);
   mvwin(targetWin, lines - 2, 0);
+#ifdef HAVE_NCURSES_H
   wresize(targetWin, 1, cols);
+#endif
   mvwin(cmdWin, lines - 1, 0);
+#ifdef HAVE_NCURSES_H
   wresize(cmdWin, 1, cols);
+#endif
   updateTargetWin();
   updateCmdWin();
   wrefresh(mainWin);
@@ -362,7 +372,9 @@ void CursesUI::toggleMenu() {
     menuState = 1;
     curs_set(0);
     const int menuWinSize = (LINES - 2) / 2;
+#ifdef HAVE_NCURSES_H
     wresize(mainWin, LINES - 2 - menuWinSize, COLS);
+#endif
     mvwin(mainWin, menuWinSize, 0);
     updateMainWinFromBuffer(LINES - 2 - menuWinSize);
     menuWin = newwin(menuWinSize, 0, 0, 0);
@@ -377,7 +389,9 @@ void CursesUI::toggleMenu() {
     menuState = 0;
     menu.setWindow(NULL);
     delwin(menuWin);
+#ifdef HAVE_NCURSES_H
     wresize(mainWin, LINES - 2, COLS);
+#endif
     mvwin(mainWin, 0, 0);
     updateMainWinFromBuffer(LINES - 2);
   }

@@ -22,13 +22,16 @@
 
 // which curses?
 #ifdef HAVE_CURSES_H
-#include <curses.h>
+#  define NOMACROS
+#  define bool int
+#  include <curses.h>
+#  undef bool
 #else
-#ifdef HAVE_NCURSES_H
-#include <ncurses.h>
-#else
-#include "pdcurses_adapter.h"
-#endif
+#  ifdef HAVE_NCURSES_H
+#    include <ncurses.h>
+#  else
+#    include "pdcurses_adapter.h"
+#  endif
 #endif
 
 
