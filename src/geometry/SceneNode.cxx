@@ -38,6 +38,7 @@ SceneNode::SceneNode() : octreeState(OctreeCulled), noPlane(true),
 
   setCenter(0.0f, 0.0f, 0.0f);
   setRadius(0.0f);
+  eyeDistance = 0;
 }
 
 SceneNode::~SceneNode()
@@ -146,9 +147,30 @@ void			SceneNode::setSphere(const GLfloat _sphere[4])
   sphere[3] = _sphere[3];
 }
 
+GLfloat	SceneNode::getPlaneDistance(const GLfloat*) const
+{
+  return 1.0;
+}
+
 void			SceneNode::getRenderNodes(SceneRenderer& renderer)
 {
-  if (!cull(renderer.getViewFrustum())) {
+  const float eyeMove = renderer.getViewFrustum().getEyeMove();
+  bool recompute      = false;
+  if (eyeDistance >= 0) {
+    eyeDistance -= eyeMove;
+    if (eyeDistance < 0)
+      recompute = true;
+  } else {
+    eyeDistance += eyeMove;
+    if (eyeDistance >= 0)
+      recompute = true;
+  }
+  if (recompute) {
+    const GLfloat* eye = renderer.getViewFrustum().getEye();
+    eyeDistance = getPlaneDistance(eye);
+  }
+  // cull if eye is behind (or on) plane
+  if (eyeDistance >= 0 && !cull(renderer.getViewFrustum())) {
     if (!renderer.testAndSetStyle(styleMailbox)) {
       notifyStyleChange(renderer);
     }

@@ -37,6 +37,7 @@ class WallSceneNode : public SceneNode {
     const GLfloat*	getLightedColor() const { return lightedColor; }
     const GLfloat*	getLightedModulateColor() const
 				{ return lightedModulateColor; }
+    virtual GLfloat	getPlaneDistance(const GLfloat* eye) const;
     GLfloat		getDistance(const GLfloat*) const;
     virtual void        getExtents (float* mins, float* maxs) const;
     virtual bool        inAxisBox (const float* mins, const float* maxs) const;

@@ -66,6 +66,7 @@ class SceneNode {
     virtual bool	isTranslucent() const;
 
     const GLfloat*      getPlane() const;
+    virtual GLfloat	getPlaneDistance(const GLfloat* eye) const;
     virtual GLfloat	getDistance(const GLfloat* eye) const;
     virtual bool	cull(const ViewFrustum&) const;
     virtual void	addLight(SceneRenderer&);
@@ -125,6 +126,10 @@ class SceneNode {
 			SceneNode(const SceneNode&);
     SceneNode&		operator=(const SceneNode&);
 
+  // last evaluated distance between eye and object. If negative
+  // object should be culled.  After being evaluated, is approximated
+  // by eye movement, until we choose to recompute again
+    float               eyeDistance;
 
 
 #ifndef __MINGW32__
