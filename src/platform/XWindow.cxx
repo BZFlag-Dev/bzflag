@@ -44,6 +44,7 @@ XWindow::XWindow(const XDisplay* _display, XVisual* _visual) :
 				prev(NULL),
 				next(NULL),
 				colormapPixels(NULL),
+				xsh(XAllocSizeHints()),
 				gammaVal(1.0)
 #ifdef XIJOYSTICK
 				,device(NULL)
@@ -171,6 +172,7 @@ XWindow::~XWindow()
   if (first == this) first = next;
 
   display->unref();
+  XFree(xsh);
 }
 
 bool			XWindow::isValid() const
@@ -228,12 +230,11 @@ void			XWindow::setTitle(const char* title)
 void			XWindow::setPosition(int x, int y)
 {
   long dummy;
-  XSizeHints xsh;
-  XGetWMNormalHints(display->getDisplay(), window, &xsh, &dummy);
-  xsh.x = x;
-  xsh.y = y;
-  xsh.flags |= USPosition | PPosition;
-  XSetWMNormalHints(display->getDisplay(), window, &xsh);
+  XGetWMNormalHints(display->getDisplay(), window, xsh, &dummy);
+  xsh->x = x;
+  xsh->y = y;
+  xsh->flags |= USPosition | PPosition;
+  XSetWMNormalHints(display->getDisplay(), window, xsh);
   XMoveWindow(display->getDisplay(), window, x, y);
   XSync(display->getDisplay(), false);
 }
@@ -241,12 +242,11 @@ void			XWindow::setPosition(int x, int y)
 void			XWindow::setSize(int width, int height)
 {
   long dummy;
-  XSizeHints xsh;
-  XGetWMNormalHints(display->getDisplay(), window, &xsh, &dummy);
-  xsh.base_width = width;
-  xsh.base_height = height;
-  xsh.flags |= PBaseSize;
-  XSetWMNormalHints(display->getDisplay(), window, &xsh);
+  XGetWMNormalHints(display->getDisplay(), window, xsh, &dummy);
+  xsh->base_width = width;
+  xsh->base_height = height;
+  xsh->flags |= PBaseSize;
+  XSetWMNormalHints(display->getDisplay(), window, xsh);
   XResizeWindow(display->getDisplay(), window, width, height);
   XSync(display->getDisplay(), false);
 }
@@ -254,17 +254,16 @@ void			XWindow::setSize(int width, int height)
 void			XWindow::setMinSize(int width, int height)
 {
   long dummy;
-  XSizeHints xsh;
-  XGetWMNormalHints(display->getDisplay(), window, &xsh, &dummy);
+  XGetWMNormalHints(display->getDisplay(), window, xsh, &dummy);
   if (width < 1 || height < 1) {
-    xsh.flags &= ~PMinSize;
+    xsh->flags &= ~PMinSize;
   }
   else {
-    xsh.min_width = width;
-    xsh.min_height = height;
-    xsh.flags |= PMinSize;
+    xsh->min_width = width;
+    xsh->min_height = height;
+    xsh->flags |= PMinSize;
   }
-  XSetWMNormalHints(display->getDisplay(), window, &xsh);
+  XSetWMNormalHints(display->getDisplay(), window, xsh);
 }
 
 void			XWindow::setFullscreen()
@@ -354,13 +353,12 @@ void			XWindow::setFullscreen()
 
   // now set position and size
   long dummy;
-  XSizeHints xsh;
-  XGetWMNormalHints(display->getDisplay(), window, &xsh, &dummy);
-  xsh.x = 0;
-  xsh.y = 0;
-  xsh.base_width = getDisplay()->getWidth();
-  xsh.base_height = getDisplay()->getHeight();
-  xsh.flags |= USPosition | PPosition | PBaseSize;
+  XGetWMNormalHints(display->getDisplay(), window, xsh, &dummy);
+  xsh->x = 0;
+  xsh->y = 0;
+  xsh->base_width = getDisplay()->getWidth();
+  xsh->base_height = getDisplay()->getHeight();
+  xsh->flags |= USPosition | PPosition | PBaseSize;
 
 #if defined(USE_XF86VIDMODE_EXT)
   {
@@ -371,8 +369,8 @@ void			XWindow::setFullscreen()
       XF86VidModeModeLine modeline;
 
       XF86VidModeGetModeLine(display->getDisplay(), display->getScreen(), &dotclock, &modeline);
-      xsh.base_width=modeline.hdisplay;
-      xsh.base_height=modeline.vdisplay;
+      xsh->base_width=modeline.hdisplay;
+      xsh->base_height=modeline.vdisplay;
       if (modeline.c_private)
 	XFree(modeline.c_private);
     }
@@ -385,8 +383,8 @@ void			XWindow::setFullscreen()
 
     env=getenv("MESA_GLX_FX");
     if (env && *env != tolower('w')) { // Full screen Mesa mode
-      xsh.base_width=getDisplay()->getPassthroughWidth();
-      xsh.base_height=getDisplay()->getPassthroughHeight();
+      xsh->base_width=getDisplay()->getPassthroughWidth();
+      xsh->base_height=getDisplay()->getPassthroughHeight();
     }
   }
 #endif
@@ -404,9 +402,9 @@ void			XWindow::setFullscreen()
     XChangeWindowAttributes(display->getDisplay(),
 				window, CWOverrideRedirect, &attr);
   }
-  XSetWMNormalHints(display->getDisplay(), window, &xsh);
-  XMoveResizeWindow(display->getDisplay(), window, xsh.x, xsh.y,
-			xsh.base_width, xsh.base_height);
+  XSetWMNormalHints(display->getDisplay(), window, xsh);
+  XMoveResizeWindow(display->getDisplay(), window, xsh->x, xsh->y,
+			xsh->base_width, xsh->base_height);
   if (!noWM) {
     XSetWindowAttributes attr;
     attr.override_redirect = false;
