@@ -4800,7 +4800,10 @@ void drawFrame(const float dt)
 
     // so observers can have enhanced radar
     if (roaming && myTank && !devDriving) {
-      myTank->setZpos(roamPos[2]);
+      if (roamView == roamViewFP && player[roamTrackWinner])
+        myTank->setZpos(player[roamTrackWinner]->getPosition()[2]);
+      else
+        myTank->setZpos(roamPos[2]);
     }
 
     // draw frame
