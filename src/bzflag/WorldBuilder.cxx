@@ -207,6 +207,7 @@ void* WorldBuilder::unpack(void* buf)
       }
       case WorldCodeTeleporter: {
 	float data[8];
+	unsigned char horizontal;
 	unsigned char tempflags;
 
 	if (len != WorldCodeTeleporterSize) {
@@ -223,8 +224,9 @@ void* WorldBuilder::unpack(void* buf)
 	buf = nboUnpackFloat(buf, data[5]);
 	buf = nboUnpackFloat(buf, data[6]);
 	buf = nboUnpackFloat(buf, data[7]);
+	buf = nboUnpackUByte(buf, horizontal);
 	buf = nboUnpackUByte(buf, tempflags);
-	Teleporter tele(data, data[3], data[4], data[5], data[6],data[7],
+	Teleporter tele(data, data[3], data[4], data[5], data[6],data[7],horizontal != 0,
 			(tempflags & _DRIVE_THRU)!=0, (tempflags & _SHOOT_THRU)!=0);
         if (tele.isValid()) {
 	  append(tele);

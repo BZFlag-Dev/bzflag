@@ -19,9 +19,9 @@
 const char*		Teleporter::typeName = "Teleporter";
 
 Teleporter::Teleporter(const float* p, float a, float w,
-				float b, float h,float _border, bool drive, bool shoot) :
-				Obstacle(p, a, w, b + 2 * _border, h + _border,drive,shoot),
-				border(_border)
+				float b, float h,float _border, bool _horizontal, bool drive, bool shoot) :
+				Obstacle(p, a, w, horizontal ? b : b + 2 * _border, horizontal ? h : h + _border,drive,shoot),
+				border(_border), horizontal(_horizontal)
 {
   // do nothing
 }

@@ -840,18 +840,18 @@ static WorldInfo *defineTeamWorld()
 	linked[i / teamFactor][0] = linked[i / teamFactor][1] = 0;
 	if (redGreen) {
 	  world->addTeleporter(x, y, 0.0f, rotation, 0.5f * teleWidth,
-	      teleBreadth, 2.0f * teleHeight, teleWidth);
+	      teleBreadth, 2.0f * teleHeight, teleWidth, false);
 	  world->addTeleporter(-x, -y, 0.0f, rotation + M_PI, 0.5f * teleWidth,
-	      teleBreadth, 2.0f * teleHeight, teleWidth);
+	      teleBreadth, 2.0f * teleHeight, teleWidth, false);
 	  i += 2;
 	}
 	if (bluePurple) {
 	  world->addTeleporter(y, -x, 0.0f, rotation + M_PI / 2,
 			       0.5f * teleWidth, teleBreadth, 2.0f * teleWidth,
-			       teleWidth);
+			       teleWidth, false);
 	  world->addTeleporter(-y, x, 0.0f, rotation + M_PI * 3 / 2,
 			       0.5f * teleWidth, teleBreadth, 2.0f * teleWidth,
-			       teleWidth);
+			       teleWidth, false);
 	  i += 2;
 	}
       }
@@ -973,21 +973,21 @@ static WorldInfo *defineTeamWorld()
       const float xoff = boxBase + 0.5f * avenueSize;
       const float yoff = boxBase + 0.5f * avenueSize;
       world->addTeleporter( xmin - xoff,  ymin - yoff, 0.0f, 1.25f * M_PI,
-			   0.5f * teleWidth, teleBreadth, 2.0f * teleHeight, teleWidth);
+			   0.5f * teleWidth, teleBreadth, 2.0f * teleHeight, teleWidth, false);
       world->addTeleporter( xmin - xoff, -ymin + yoff, 0.0f, 0.75f * M_PI,
-			   0.5f * teleWidth, teleBreadth, 2.0f * teleHeight, teleWidth);
+			   0.5f * teleWidth, teleBreadth, 2.0f * teleHeight, teleWidth, false);
       world->addTeleporter(-xmin + xoff,  ymin - yoff, 0.0f, 1.75f * M_PI,
-			   0.5f * teleWidth, teleBreadth, 2.0f * teleHeight, teleWidth);
+			   0.5f * teleWidth, teleBreadth, 2.0f * teleHeight, teleWidth, false);
       world->addTeleporter(-xmin + xoff, -ymin + yoff, 0.0f, 0.25f * M_PI,
-			   0.5f * teleWidth, teleBreadth, 2.0f * teleHeight, teleWidth);
+			   0.5f * teleWidth, teleBreadth, 2.0f * teleHeight, teleWidth, false);
       world->addTeleporter(-3.5f * teleBreadth, -3.5f * teleBreadth, 0.0f, 1.25f * M_PI,
-			   0.5f * teleWidth, teleBreadth, 2.0f * teleHeight, teleWidth);
+			   0.5f * teleWidth, teleBreadth, 2.0f * teleHeight, teleWidth, false);
       world->addTeleporter(-3.5f * teleBreadth,  3.5f * teleBreadth, 0.0f, 0.75f * M_PI,
-			   0.5f * teleWidth, teleBreadth, 2.0f * teleHeight, teleWidth);
+			   0.5f * teleWidth, teleBreadth, 2.0f * teleHeight, teleWidth, false);
       world->addTeleporter( 3.5f * teleBreadth, -3.5f * teleBreadth, 0.0f, 1.75f * M_PI,
-			   0.5f * teleWidth, teleBreadth, 2.0f * teleHeight, teleWidth);
+			   0.5f * teleWidth, teleBreadth, 2.0f * teleHeight, teleWidth, false);
       world->addTeleporter( 3.5f * teleBreadth,  3.5f * teleBreadth, 0.0f, 0.25f * M_PI,
-			   0.5f * teleWidth, teleBreadth, 2.0f * teleHeight, teleWidth);
+			   0.5f * teleWidth, teleBreadth, 2.0f * teleHeight, teleWidth, false);
 //
       world->addLink(0, 14);
       world->addLink(1, 7);
@@ -1090,7 +1090,7 @@ static WorldInfo *defineRandomWorld()
 	continue;
 
       world->addTeleporter(x, y, 0.0f, rotation,
-	  0.5f*teleWidth, teleBreadth, 2.0f*teleHeight, teleWidth);
+	  0.5f*teleWidth, teleBreadth, 2.0f*teleHeight, teleWidth, false);
       linked[i][0] = linked[i][1] = 0;
       i++;
     }

@@ -627,32 +627,50 @@ void			SceneDatabaseBuilder::addTeleporter(SceneDatabase* db,
 
   useColorTexture = teleporterTexture >= 0;
 
+  int numParts = o.isHorizontal() ? 18 : 14;
+
   while ((node = nodeGen->getNextNode(1.0, o.getHeight() / o.getBreadth(),
 							teleporterLOD))) {
-    if (part >= 0 && part <= 1) {
-      node->setColor(teleporterColors[0]);
-      node->setModulateColor(teleporterModulateColors[0]);
-      node->setLightedColor(teleporterLightedColors[0]);
-      node->setLightedModulateColor(teleporterLightedModulateColors[0]);
-      node->setMaterial(teleporterMaterial);
-      node->setTexture(teleporterTexture);
-      node->setUseColorTexture(useColorTexture);
-    } else if (part >= 2 && part <= 11) {
-      node->setColor(teleporterColors[1]);
-      node->setModulateColor(teleporterModulateColors[1]);
-      node->setLightedColor(teleporterLightedColors[1]);
-      node->setLightedModulateColor(teleporterLightedModulateColors[1]);
-      node->setMaterial(teleporterMaterial);
-      node->setTexture(teleporterTexture);
-      node->setUseColorTexture(useColorTexture);
-    } else {
-      node->setColor(teleporterColors[2]);
-      node->setLightedColor(teleporterLightedColors[2]);
-      node->setTexture(-1); // disable texturing
-    }
+	if (o.isHorizontal()) {
+		if (part >= 0 && part <= 15) {
+			node->setColor(teleporterColors[0]);
+			node->setModulateColor(teleporterModulateColors[0]);
+			node->setLightedColor(teleporterLightedColors[0]);
+			node->setLightedModulateColor(teleporterLightedModulateColors[0]);
+			node->setMaterial(teleporterMaterial);
+			node->setTexture(teleporterTexture);
+			node->setUseColorTexture(useColorTexture);
+		} else {
+			node->setColor(teleporterColors[2]);
+			node->setLightedColor(teleporterLightedColors[2]);
+			node->setTexture(-1); // disable texturing
+		}
+	} else {
+		if (part >= 0 && part <= 1) {
+			node->setColor(teleporterColors[0]);
+			node->setModulateColor(teleporterModulateColors[0]);
+			node->setLightedColor(teleporterLightedColors[0]);
+			node->setLightedModulateColor(teleporterLightedModulateColors[0]);
+			node->setMaterial(teleporterMaterial);
+			node->setTexture(teleporterTexture);
+			node->setUseColorTexture(useColorTexture);
+		} else if (part >= 2 && part <= 11) {
+			node->setColor(teleporterColors[1]);
+			node->setModulateColor(teleporterModulateColors[1]);
+			node->setLightedColor(teleporterLightedColors[1]);
+			node->setLightedModulateColor(teleporterLightedModulateColors[1]);
+			node->setMaterial(teleporterMaterial);
+			node->setTexture(teleporterTexture);
+			node->setUseColorTexture(useColorTexture);
+		} else {
+			node->setColor(teleporterColors[2]);
+			node->setLightedColor(teleporterLightedColors[2]);
+			node->setTexture(-1); // disable texturing
+		}
+	}
 
     db->addStaticNode(node);
-    part = (part + 1) % 14;
+    part = (part + 1) % numParts;
   }
   delete nodeGen;
 }

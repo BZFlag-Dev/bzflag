@@ -743,18 +743,40 @@ void			RadarRenderer::makeList(bool smoothingOn, SceneRenderer&)
   glBegin(GL_LINES);
   for (i = 0; i < count; i++) {
     const Teleporter& tele = teleporters[i];
-    const float z = tele.getPosition()[2];
-    const float h = tele.getHeight();
-    const float cs = colorScale(z, h);
-    glColor4f(1.0f * cs, 1.0f * cs, 0.25f * cs, transScale(z, h));
-    const float w = tele.getBreadth();
-    const float c = w * cosf(tele.getRotation());
-    const float s = w * sinf(tele.getRotation());
-    const float* pos = tele.getPosition();
-    glVertex2f(pos[0] - s, pos[1] + c);
-    glVertex2f(pos[0] + s, pos[1] - c);
-    glVertex2f(pos[0] + s, pos[1] - c);
-    glVertex2f(pos[0] - s, pos[1] + c);
+	if (tele.isHorizontal()) {
+		const float z = tele.getPosition()[2];
+		const float h = tele.getHeight();
+		const float cs = colorScale(z, h);
+		glColor4f(1.0f * cs, 1.0f * cs, 0.25f * cs, transScale(z, h));
+		const float c = cosf(tele.getRotation());
+		const float s = sinf(tele.getRotation());
+		const float wx = c * tele.getWidth(), wy = s * tele.getWidth();
+		const float hx = -s * tele.getBreadth(), hy = c * tele.getBreadth();
+		const float* pos = tele.getPosition();
+		glVertex2f(pos[0] - wx - hx, pos[1] - wy - hy);
+		glVertex2f(pos[0] + wx - hx, pos[1] + wy - hy);
+		glVertex2f(pos[0] + wx + hx, pos[1] + wy + hy);
+		glVertex2f(pos[0] - wx + hx, pos[1] - wy + hy);
+		glVertex2f(pos[0] - wx - hx, pos[1] - wy - hy);
+		glVertex2f(pos[0] - wx - hx, pos[1] - wy - hy);
+		glVertex2f(pos[0] - wx + hx, pos[1] - wy + hy);
+		glVertex2f(pos[0] + wx + hx, pos[1] + wy + hy);
+		glVertex2f(pos[0] + wx - hx, pos[1] + wy - hy);
+		glVertex2f(pos[0] - wx - hx, pos[1] - wy - hy);
+	} else {
+		const float z = tele.getPosition()[2];
+		const float h = tele.getHeight();
+		const float cs = colorScale(z, h);
+		glColor4f(1.0f * cs, 1.0f * cs, 0.25f * cs, transScale(z, h));
+		const float w = tele.getBreadth();
+		const float c = w * cosf(tele.getRotation());
+		const float s = w * sinf(tele.getRotation());
+		const float* pos = tele.getPosition();
+		glVertex2f(pos[0] - s, pos[1] + c);
+		glVertex2f(pos[0] + s, pos[1] - c);
+		glVertex2f(pos[0] + s, pos[1] - c);
+		glVertex2f(pos[0] - s, pos[1] + c);
+	}
   }
   glEnd();
 

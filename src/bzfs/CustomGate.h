@@ -33,6 +33,7 @@ class CustomGate : public WorldFileObstacle {
 
   protected:
     float border;
+	bool horizontal;
 };
 
 #endif  /* __CUSTOMGATE_H__ */

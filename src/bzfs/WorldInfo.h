@@ -63,7 +63,7 @@ public:
   void addWall(float x, float y, float z, float r, float w, float h);
   void addBox(float x, float y, float z, float r, float w, float d, float h, bool drive = false, bool shoot = false);
   void addPyramid(float x, float y, float z, float r, float w, float d, float h, bool drive = false, bool shoot = false, bool flipZ = false);
-  void addTeleporter(float x, float y, float z, float r, float w, float d, float h, float b, bool drive = false, bool shoot = false);
+  void addTeleporter(float x, float y, float z, float r, float w, float d, float h, float b, bool horizontal, bool drive = false, bool shoot = false);
   void addTetra(const float vertices[4][3], const bool visible[4],
                 const bool useColor[4], const float colors[4][4],
                 const bool useNormals[4], const float normals[4][3][3],

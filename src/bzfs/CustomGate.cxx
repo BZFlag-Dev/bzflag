@@ -26,6 +26,7 @@ CustomGate::CustomGate()
   size[1] = BZDB.eval(StateDatabase::BZDB_TELEBREADTH);
   size[2] = 2.0f * BZDB.eval(StateDatabase::BZDB_TELEHEIGHT);
   border = size[0] * 2.0f;
+  horizontal = false;
 }
 
 
@@ -33,6 +34,8 @@ bool CustomGate::read(const char *cmd, std::istream& input)
 {
   if (strcmp(cmd, "border") == 0)
     input >> border;
+  else if (strcmp(cmd, "horizontal") == 0)
+    horizontal = true;
   else
     return WorldFileObstacle::read(cmd, input);
   return true;
@@ -41,7 +44,7 @@ bool CustomGate::read(const char *cmd, std::istream& input)
 
 void CustomGate::write(WorldInfo *world) const
 {
-  world->addTeleporter(pos[0], pos[1], pos[2], rotation, fabs(size[0]), fabs(size[1]), fabs(size[2]), border,driveThrough,shootThrough);
+  world->addTeleporter(pos[0], pos[1], pos[2], rotation, fabs(size[0]), fabs(size[1]), fabs(size[2]), border,horizontal, driveThrough,shootThrough);
 }
 
 // Local variables: ***

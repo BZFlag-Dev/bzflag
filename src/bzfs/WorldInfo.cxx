@@ -96,13 +96,13 @@ void WorldInfo::addTetra(const float vertices[4][3], const bool visible[4],
   }
 }
 
-void WorldInfo::addTeleporter(float x, float y, float z, float r, float w, float d, float h, float b, bool drive, bool shoot)
+void WorldInfo::addTeleporter(float x, float y, float z, float r, float w, float d, float h, float b, bool horizontal, bool drive, bool shoot)
 {
   if ((z + h) > maxHeight)
     maxHeight = z+h;
 
   const float pos[3] = {x, y, z};
-  Teleporter tele (pos, r, w, d, h, b, drive, shoot);
+  Teleporter tele (pos, r, w, d, h, b, horizontal, drive, shoot);
   teleporters.push_back (tele);
 
   // default to passthru linkage
@@ -599,6 +599,7 @@ int WorldInfo::packDatabase(const BasesList* baseList)
     databasePtr = nboPackFloat(databasePtr, tele.getRotation());
     databasePtr = nboPackVector(databasePtr, tele.getSize());
     databasePtr = nboPackFloat(databasePtr, tele.getBorder());
+	databasePtr = nboPackUByte(databasePtr, tele.isHorizontal());
     bitMask = 0;
     if (tele.isDriveThrough())
       bitMask |= _DRIVE_THRU;

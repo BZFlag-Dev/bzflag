@@ -25,7 +25,7 @@ class Teleporter : public Obstacle {
   public:
 			Teleporter(const float* pos, float rotation,
 				float width, float breadth, float height,
-				float borderSize = 1.0f, bool drive = false, bool shoot = false);
+				float borderSize = 1.0f, bool horizontal = false, bool drive = false, bool shoot = false);
 			~Teleporter();
 
     const char*		getType() const;
@@ -33,6 +33,7 @@ class Teleporter : public Obstacle {
     void                getExtents(float* mins, float* maxs) const;
 
     float		getBorder() const;
+	bool		isHorizontal() const;
 
     float		intersect(const Ray&) const;
     void		getNormal(const float* p, float* n) const;
@@ -65,6 +66,7 @@ class Teleporter : public Obstacle {
     std::string	        userTextures[1];
   private:
     float		border;
+	bool		horizontal;
     static const char*	typeName;
 };
 
@@ -77,6 +79,11 @@ const int randomTeleporter = (unsigned short)(-1);
 inline float		Teleporter::getBorder() const
 {
   return border;
+}
+
+inline bool			Teleporter::isHorizontal() const
+{
+  return horizontal;
 }
 
 #endif // BZF_TELEPORTER_H
