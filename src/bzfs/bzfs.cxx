@@ -5422,8 +5422,11 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
 
       float maxPlanarSpeedSqr = TankSpeed*TankSpeed;
 
-      // if tank is not driving cannot be sure it didn't toss flag in flight
-      if ((flag[player[t].flag].flag.id == VelocityFlag) || (player[t].lastState.pos[2] != state.pos[2]))
+      // if tank is not driving cannot be sure it didn't toss (V) in flight
+      // if tank is not alive cannot be sure it didn't just toss (V)
+      if ((flag[player[t].flag].flag.id == VelocityFlag) 
+      ||  (player[t].lastState.pos[2] != state.pos[2])
+      ||  ((state.status & PlayerState::Alive) == 0))
 	maxPlanarSpeedSqr *= VelocityAd*VelocityAd;
       
       if (curPlanarSpeedSqr > (1.0 + maxPlanarSpeedSqr)) {
