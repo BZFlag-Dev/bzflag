@@ -4439,9 +4439,10 @@ void drawFrame(const float dt)
     if (scene && myTank) {
 
       // add my tank if required
-      const bool inCockpit = (!devDriving || (roamView != roamViewFP));
-      const bool showTreads = (BZDB.isTrue("showTreads") && inCockpit);
       const bool cloaked = (myTank->getFlag() == Flags::Cloaking);
+      const bool inCockpit = (!devDriving || (roamView != roamViewFP));
+      const bool showTreads = (BZDB.isTrue("showTreads") ||
+                               (devDriving && (roamView != roamViewFP)));
       if (myTank->needsToBeRendered(cloaked, showTreads)) {
         myTank->addToScene(scene, myTank->getTeam(), inCockpit, showTreads);
       }
