@@ -420,14 +420,8 @@ void			StateDatabase::write(Callback callback, void* userData) const
   assert(callback != NULL);
 
   for (Map::const_iterator index = items.begin(); index != items.end(); ++index) {
-    if (index->first == "email") {
-      std::cout << "email isset is [" <<index->second.isSet << "]" << std::endl;
-      std::cout << "save is [" <<index->second.save << "]" << std::endl;
-      std::cout << "value is [" <<index->second.value << "]" << std::endl;
-      std::cout << "defValue is [" <<index->second.defValue << "]" << std::endl;
-    }
-    if (index->second.isSet && index->second.save) {
-      //	index->second.value != index->second.defValue) {
+    if (index->second.isSet && index->second.save &&
+	index->second.value != index->second.defValue) {
       (*callback)(index->first, userData);
     }
   }
