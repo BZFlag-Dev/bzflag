@@ -4056,7 +4056,7 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
 
           if (state.pos[2] > maxTankHeight) {
 	    char message[MessageLen];
-	    DEBUG1("kicking Player %s [%d] jump too high\n", player[t].callSign, t);
+	    DEBUG1("kicking Player %s [%d] jump too high [max: %f height: %f]\n", player[t].callSign, t, maxTankHeight, state.pos[2]);
 	    strcpy(message, "Autokick: Out of world bounds, Jump too high, Update your client." );
 	    sendMessage(ServerPlayer, t, message, true);
 	    removePlayer(t, "too high");
