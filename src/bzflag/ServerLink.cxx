@@ -189,7 +189,7 @@ ServerLink::ServerLink(const Address& serverAddress, int port, int) :
   if (!okay)
     goto done;
 
-  // get server version and verify (last digit in version is ignored)
+  // get server version and verify
 #if !defined(_WIN32)
   FD_ZERO(&read_set);
   FD_SET(query, &read_set);
