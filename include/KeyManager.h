@@ -43,7 +43,7 @@ public:
   void			unbind(const BzfKeyEvent&, bool press);
 
   // unbind all keys bound to a specific command
-  void			unbindCommand(std::string& command);
+  void			unbindCommand(const char* command);
 
   // get the command for a key event press or release
   std::string		get(const BzfKeyEvent&, bool press) const;

@@ -350,16 +350,16 @@ void updateConfigFile ( void )
   case 0: // 1.10-1.12
     // update from old unversioned config
     // roaming fixes - remove keys bound to "roam translate *" and "roam rotate *"
-    KEYMGR.unbindCommand(std::string("roam translate left"));
-    KEYMGR.unbindCommand(std::string("roam translate right"));
-    KEYMGR.unbindCommand(std::string("roam translate up"));
-    KEYMGR.unbindCommand(std::string("roam translate down"));
-    KEYMGR.unbindCommand(std::string("roam translate forward"));
-    KEYMGR.unbindCommand(std::string("roam translate backward"));
-    KEYMGR.unbindCommand(std::string("roam rotate left"));
-    KEYMGR.unbindCommand(std::string("roam rotate right"));
-    KEYMGR.unbindCommand(std::string("roam rotate up"));
-    KEYMGR.unbindCommand(std::string("roam rotate down"));
+    KEYMGR.unbindCommand("roam translate left");
+    KEYMGR.unbindCommand("roam translate right");
+    KEYMGR.unbindCommand("roam translate up");
+    KEYMGR.unbindCommand("roam translate down");
+    KEYMGR.unbindCommand("roam translate forward");
+    KEYMGR.unbindCommand("roam translate backward");
+    KEYMGR.unbindCommand("roam rotate left");
+    KEYMGR.unbindCommand("roam rotate right");
+    KEYMGR.unbindCommand("roam rotate up");
+    KEYMGR.unbindCommand("roam rotate down");
 
     // add new default keybindings if there's no conflict
     // iconify
