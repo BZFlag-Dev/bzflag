@@ -11,10 +11,6 @@
  */
 
 /*
- * FiringInfo:
- *	Encapsulates info needed to create RemoteShotPath.
- *	Can be packed for transmission on the net.
- *
  * ShotPath:
  *	Encapsulates the path a shot follows.  Most paths can
  *	be computed at the instant of firing (though they may
@@ -40,20 +36,6 @@
 class ShotStrategy;
 class BaseLocalPlayer;
 class SceneDatabase;
-
-struct FiringInfo {
-  public:
-			FiringInfo();
-			FiringInfo(const BaseLocalPlayer&, int id);
-
-    void*		pack(void*) const;
-    void*		unpack(void*);
-
-  public:
-    ShotUpdate		shot;
-    FlagId		flag;			// flag when fired
-    float		lifetime;		// lifetime of shot (s)
-};
 
 class ShotPath {
   public:

@@ -309,16 +309,16 @@ private:
 
 struct CmdLineOptions
 {
-  CmdLineOptions() 
-  : wksPort(ServerPort), reconnectPort(ServerPort+1), gameStyle(PlainGameStyle), servermsg(NULL), 
-    advertisemsg(NULL), worldFile(NULL), pingInterface(NULL), publicizedTitle(NULL), 
-    listServerURL(DefaultListServerURL), password(NULL), maxShots(1), maxTeamScore(0), maxPlayerScore(0), 
-    maxObservers(3), numExtraFlags(0), teamKillerKickRatio(0), numAllowedFlags(0), shakeWins(0), shakeTimeout(0), 
-    pingTTL(DefaultTTL), maxlagwarn(10000), lagwarnthresh(-1.0), idlekickthresh(-1.0), timeLimit(0.0f), 
-    timeElapsed(0.0f), linearAcceleration(0.0f), angularAcceleration(0.0f), useGivenPort(false), 
-    useFallbackPort(false), alsoUDP(true), requireUDP(false), randomBoxes(false), randomCTF(false), 
-    flagsOnBuildings(false), oneGameOnly(false), randomHeights(false), useTeleporters(false), 
-    teamKillerDies(true), printScore(false), publicizeServer(false), publicizedAddressGiven(false), debug(0) 
+  CmdLineOptions()
+  : wksPort(ServerPort), reconnectPort(ServerPort+1), gameStyle(PlainGameStyle), servermsg(NULL),
+    advertisemsg(NULL), worldFile(NULL), pingInterface(NULL), publicizedTitle(NULL),
+    listServerURL(DefaultListServerURL), password(NULL), maxShots(1), maxTeamScore(0), maxPlayerScore(0),
+    maxObservers(3), numExtraFlags(0), teamKillerKickRatio(0), numAllowedFlags(0), shakeWins(0), shakeTimeout(0),
+    pingTTL(DefaultTTL), maxlagwarn(10000), lagwarnthresh(-1.0), idlekickthresh(-1.0), timeLimit(0.0f),
+    timeElapsed(0.0f), linearAcceleration(0.0f), angularAcceleration(0.0f), useGivenPort(false),
+    useFallbackPort(false), alsoUDP(true), requireUDP(false), randomBoxes(false), randomCTF(false),
+    flagsOnBuildings(false), oneGameOnly(false), randomHeights(false), useTeleporters(false),
+    teamKillerDies(true), printScore(false), publicizeServer(false), publicizedAddressGiven(false), debug(0)
   {
     int i;
     for (i = int(FirstFlag); i <= int(LastFlag); i++) {
@@ -380,7 +380,7 @@ struct CmdLineOptions
   bool			publicizedAddressGiven;
 
   int			debug;
-  
+
   uint16_t		maxTeam[NumTeams];
   int			flagCount[LastFlag + 1];//
   bool			flagDisallowed[LastFlag + 1];//
@@ -3782,7 +3782,7 @@ static void addPlayer(int playerIndex)
     else if (t == RogueTeam && !(clOptions.gameStyle & RoguesGameStyle))
       code = RejectNoRogues;
     else if (!player[playerIndex].Observer && numplayers >= softmaxPlayers ||
-	     player[playerIndex].Observer && numobservers >= clOptions.maxObservers)   
+	     player[playerIndex].Observer && numobservers >= clOptions.maxObservers)
       code = RejectServerFull;
     else if (team[int(t)].team.activeSize >= clOptions.maxTeam[int(t)]) {
       // if team is full then check if server is full
@@ -4350,7 +4350,7 @@ static void playerKilled(int victimIndex, int killerIndex,
       (player[victimIndex].team != RogueTeam)) {
      player[killerIndex].tks++;
      if ((player[killerIndex].tks >= 3) && (clOptions.teamKillerKickRatio > 0) && // arbitrary 3
-	 ((player[killerIndex].wins == 0) || 
+	 ((player[killerIndex].wins == 0) ||
 	  ((player[killerIndex].tks * 100) / player[killerIndex].wins) > clOptions.teamKillerKickRatio)) {
 	 char message[MessageLen];
 	 strcpy( message, "You have been automatically kicked for team killing" );
@@ -4395,8 +4395,8 @@ static void playerKilled(int victimIndex, int killerIndex,
   if (victimIndex != InvalidPlayer) {
     player[victimIndex].losses++;
     if (killerIndex != InvalidPlayer) {
-      if (victimIndex != killerIndex) { 
-	if ((player[victimIndex].team != RogueTeam) 
+      if (victimIndex != killerIndex) {
+	if ((player[victimIndex].team != RogueTeam)
 	    && (player[victimIndex].team == player[killerIndex].team)) {
 	  if (clOptions.teamKillerDies)
 	    playerKilled(killerIndex, killerIndex, -1);
@@ -4405,7 +4405,7 @@ static void playerKilled(int victimIndex, int killerIndex,
 	} else
 	  player[killerIndex].wins++;
       }
- 
+
       void *buf, *bufStart = getDirectMessageBuffer();
       buf = player[killerIndex].id.pack(bufStart);
       buf = nboPackUShort(buf, player[killerIndex].wins);
@@ -4649,8 +4649,64 @@ static void captureFlag(int playerIndex, TeamColor teamCaptured)
     checkTeamScore(playerIndex, winningTeam);
 }
 
-static void shotFired(int /*playerIndex*/, const void *buf, int len)
+static void shotFired(int playerIndex, void *buf, int len)
 {
+  bool repack = false;
+  if (player[playerIndex].Observer)
+    return;
+  FiringInfo firingInfo;
+  firingInfo.unpack(buf);
+
+  // verify playerId
+  if (firingInfo.shot.player != player[playerIndex].id)
+    return;
+
+  // verify player flag
+  if ((firingInfo.flag != NullFlag) && (firingInfo.flag != player[playerIndex].flag)) {
+    firingInfo.flag = NullFlag;
+    repack = true;
+  }
+
+  // FIXME, wrong byte order? verify shot number
+  //if (firingInfo.shot.id > clOptions.maxShots) {
+  //  return;
+
+  float shotSpeed = ShotSpeed;
+  float lifetime = ReloadTime;
+  switch (firingInfo.flag) {
+    case LaserFlag:
+      shotSpeed *= LaserAdVel;
+      lifetime *= LaserAdLife;
+      break;
+    case MachineGunFlag:
+      shotSpeed *= MGunAdVel;
+      lifetime *= MGunAdLife;
+      break;
+    case RapidFireFlag:
+      shotSpeed *= RFireAdVel;
+      lifetime *= RFireAdLife;
+      break;
+    case ShockWaveFlag:
+      shotSpeed = 0.0f;
+      lifetime *= ShockAdLife;
+      break;
+    default:
+      break;
+  }
+
+  // verify lifetime
+  if (firingInfo.lifetime != lifetime)
+    return;
+
+  // verify velocity
+  if (hypotf(firingInfo.shot.vel[0], hypotf(firingInfo.shot.vel[1], firingInfo.shot.vel[2])) != shotSpeed)
+    return;
+
+  // FIXME verify position
+
+  // repack if changed
+  if (repack)
+    firingInfo.pack(buf);
   // player has fired shot -- send MsgShotBegin
   broadcastMessage(MsgShotBegin, len, buf);
 }
@@ -4992,7 +5048,7 @@ static void parseCommand(const char *message, int t)
 	char flag[MessageLen];
 	sprintf(reply,"%-16s : ",player[i].callSign );
 	std::vector<int>::iterator fhIt = player[i].flagHistory.begin();
-   
+
 	while (fhIt != player[i].flagHistory.end()) {
 	  FlagId fID = (FlagId)(*fhIt);
 	  if (Flag::getType(fID) == FlagNormal)
@@ -5185,17 +5241,7 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
 
     // shot fired
     case MsgShotBegin:
-      
-      if (!player[t].Observer) {
-	unsigned short shotFlag;
-	nboUnpackUShort(&(((unsigned char *)buf)[ShotUpdatePLen]), shotFlag);
-	if (shotFlag != 0) {
-	  int flagIndex = player[t].flag;
-	  if ((flagIndex == -1) || (shotFlag != flag[flagIndex].flag.id))
-	    nboPackUShort(&(((unsigned char *)buf)[ShotUpdatePLen]), NullFlag);
-	}
-	shotFired(t, buf, int(len));
-      }
+      shotFired(t, buf, int(len));
       break;
 
     // shot ended prematurely
@@ -5313,7 +5359,7 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
     }
 
     // player is sending multicast data
-    case MsgPlayerUpdate:
+    case MsgPlayerUpdate: // FIXME verify velocity etc.
       player[t].lastupdate = TimeKeeper::getCurrent();
     case MsgGMUpdate:
     case MsgAudio:
@@ -5753,7 +5799,7 @@ static void parse(int argc, char **argv, CmdLineOptions &options)
 		av = parseConfFile(argv[i], ac);
 		// Theoretically we could merge the options specified in the conf file after parsing
 		// the cmd line options. But for now just overright them on the spot
-	        //	parse(ac, av, confOptions); 
+	        //	parse(ac, av, confOptions);
 		parse(ac, av, options);
 
 		//for (int i = 0; i < ac; i++) // These strings need to stick around for -world, -servermsg, etc

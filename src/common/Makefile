@@ -15,14 +15,15 @@ include $(DEPTH)/Make-common
 TARGETS  = $(LIBDIR)/libCommon.a
 
 CXXFILES =				\
+	Bundle.cxx			\
+	BundleMgr.cxx			\
 	ErrorHandler.cxx		\
 	Flag.cxx			\
+	md5.cxx				\
+	ShotUpdate.cxx			\
 	Team.cxx			\
 	TimeBomb.cxx			\
 	TimeKeeper.cxx			\
-	md5.cxx				\
-	BundleMgr.cxx		\
-	Bundle.cxx			\
 	$(NULL)
 
 CFILES =				\

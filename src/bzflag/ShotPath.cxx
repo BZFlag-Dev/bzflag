@@ -18,37 +18,8 @@
 #include "playing.h"
 
 //
-// ShotUpdate
+// FiringInfo (with BaseLocalPlayer)
 //
-
-void*			ShotUpdate::pack(void* buf) const
-{
-  buf = player.pack(buf);
-  buf = nboPackUShort(buf, id);
-  buf = nboPackVector(buf, pos);
-  buf = nboPackVector(buf, vel);
-  buf = nboPackFloat(buf, dt);
-  return buf;
-}
-
-void*			ShotUpdate::unpack(void* buf)
-{
-  buf = player.unpack(buf);
-  buf = nboUnpackUShort(buf, id);
-  buf = nboUnpackVector(buf, pos);
-  buf = nboUnpackVector(buf, vel);
-  buf = nboUnpackFloat(buf, dt);
-  return buf;
-}
-
-//
-// FiringInfo
-//
-
-FiringInfo::FiringInfo()
-{
-  // do nothing -- must be prepared before use by unpack() or assignment
-}
 
 FiringInfo::FiringInfo(const BaseLocalPlayer& tank, int id)
 {
@@ -63,24 +34,6 @@ FiringInfo::FiringInfo(const BaseLocalPlayer& tank, int id)
   shot.dt = 0.0f;
   flag = tank.getFlag();
   lifetime = ReloadTime;
-}
-
-void*			FiringInfo::pack(void* buf) const
-{
-  buf = shot.pack(buf);
-  buf = nboPackUShort(buf, uint16_t(flag));
-  buf = nboPackFloat(buf, lifetime);
-  return buf;
-}
-
-void*			FiringInfo::unpack(void* buf)
-{
-  uint16_t _flag;
-  buf = shot.unpack(buf);
-  buf = nboUnpackUShort(buf, _flag);
-  flag = FlagId(_flag);
-  buf = nboUnpackFloat(buf, lifetime);
-  return buf;
 }
 
 //

@@ -14,13 +14,22 @@
  * ShotUpdate:
  *	Encapsulates info needed to update a shot on remote
  *	hosts. Can be packed for transmission on the net.
+ *
+ * FiringInfo:
+ *	Encapsulates info needed to create RemoteShotPath.
+ *	Can be packed for transmission on the net.
  */
 
 #ifndef	BZF_SHOT_UPDATE_H
 #define	BZF_SHOT_UPDATE_H
 
+#include "Address.h"
+#include "Flag.h"
+
 const int		ShotUpdatePLen = PlayerIdPLen + 30;
 const int		FiringInfoPLen = ShotUpdatePLen + 6;
+
+class BaseLocalPlayer;
 
 struct ShotUpdate {
   public:
@@ -33,6 +42,20 @@ struct ShotUpdate {
     float		pos[3];			// shot position
     float		vel[3];			// shot velocity
     float		dt;			// time shot has existed
+};
+
+struct FiringInfo {
+  public:
+			FiringInfo();
+			FiringInfo(const BaseLocalPlayer&, int id);
+
+    void*		pack(void*) const;
+    void*		unpack(void*);
+
+  public:
+    ShotUpdate		shot;
+    FlagId		flag;			// flag when fired
+    float		lifetime;		// lifetime of shot (s)
 };
 
 #endif // BZF_SHOT_UPDATE_H
