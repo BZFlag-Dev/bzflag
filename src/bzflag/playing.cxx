@@ -765,7 +765,7 @@ static void		doKeyPlaying(const BzfKeyEvent& key, bool pressed)
 	  (strncmp(player[c]->getCallSign(), name.c_str(), name.size()) == 0) &&
 	  (hud->getTabCompletionRotation() != c))
 	break;
-    if (c < curMaxPlayers) {
+    if (c <= curMaxPlayers) {
       hud->setTabCompletionRotation(c);
       hud->setComposeString((temp + player[c]->getCallSign()));
     }
