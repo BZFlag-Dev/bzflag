@@ -285,6 +285,7 @@ void			ServerLink::send(uint16_t code, uint16_t len,
 	case MsgGMUpdate:
 	case MsgAudio:
 	case MsgVideo:
+        case MsgUDPLinkEstablished:
 		needForSpeed=true;
 		break;
   }
