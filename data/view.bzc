@@ -202,12 +202,12 @@ tests for:
 <view id="anaglyph-stereo">
 	<viewport x="0%" y="0%" w="100%" h="100%">
 		<colormask red="true" green="false" blue="false" alpha="true">
-			<scene x="-0.7" y="0.0" z="30.0" fov="1.0" theta="0" phi="0" />
+			<scene x="0.7" y="0.0" z="30.0" fov="1.0" theta="0" phi="0" />
 		</colormask>
 	</viewport>
 	<viewport x="0%" y="0%" w="100%" h="100%">
 		<colormask red="false" green="true" blue="true" alpha="true">
-			<scene x="0.7" y="0.0" z="30.0" fov="1.0" theta="0" phi="0" />
+			<scene x="-0.7" y="0.0" z="30.0" fov="1.0" theta="0" phi="0" />
 		</colormask>
 	</viewport>
 	<viewport x="0%" y="0%" w="100%" h="100%">
@@ -217,12 +217,12 @@ tests for:
 <view id="anaglyph-split">
 	<viewport x="0%" y="0%" w="50%" h="100%">
 		<colormask red="true" green="false" blue="false" alpha="true">
-			<scene x="-0.7" y="0.0" z="30.0" fov="1.0" theta="0" phi="0" />
+			<scene x="0.7" y="0.0" z="30.0" fov="1.0" theta="0" phi="0" />
 		</colormask>
 	</viewport>
 	<viewport x="50%" y="0%" w="50%" h="100%">
 		<colormask red="false" green="true" blue="true" alpha="true">
-			<scene x="0.7" y="0.0" z="30.0" fov="1.0" theta="0" phi="0" />
+			<scene x="-0.7" y="0.0" z="30.0" fov="1.0" theta="0" phi="0" />
 		</colormask>
 	</viewport>
 	<viewport x="0%" y="0%" w="100%" h="100%">
