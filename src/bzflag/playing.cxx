@@ -1843,6 +1843,11 @@ static void		doMotion()
   float rotation = 0.0f, speed = 1.0f;
   bool pressed = myTank->getKeyPressed();
 
+  // mouse is default steering method; query mouse pos always, not doing so
+  // can lead to stuttering movement with X and software rendering (uncertain why)
+  int mx, my;
+  mainWindow->getMousePosition(mx, my);
+
 #if defined(FREEZING)
   if (motionFreeze) return;
 #endif
@@ -1890,8 +1895,6 @@ static void		doMotion()
     }
   }
   else {
-    // get mouse position
-    int mx, my;
     if (mainWindow->joystick()) {
       mainWindow->getJoyPosition(mx, my);
 
@@ -1930,8 +1933,7 @@ static void		doMotion()
           }
         }
       old_buttons = new_buttons;
-    } else
-      mainWindow->getMousePosition(mx, my);
+    }
 
     // calculate desired rotation
     const int noMotionSize = hud->getNoMotionSize();
