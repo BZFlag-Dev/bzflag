@@ -54,10 +54,8 @@ the standard in stream.
 .TP
 \fIcallsign@hostname\fR[\fI:port\fR]
 Specifies the callsign that you want your client to use, and the
-hostname where the BZFlag server is. bzadmin always joins as an
-observer, but don't add '@' in the beginning of the callsign - it
-will be added automatically. The port number is optional, and the
-default value is 5154.
+hostname where the BZFlag server is. The port number is optional, 
+and the default value is 5154.
 .TP
 \fIcommand\fR
 You can specify messages and commands to send to the server on the
@@ -70,7 +68,7 @@ an user interface.
 .TP 15
 \fBbzadmin admin@localhost:5154\fR
 .br
-Join the game on localhost, port 5154, using the callsign '@admin'.
+Join the game on localhost, port 5154, using the callsign 'admin'.
 .TP
 \fBbzadmin admin@localhost '/passwd secretpass' '/ban 192.168.0.2'
 .br
