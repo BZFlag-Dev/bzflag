@@ -73,7 +73,7 @@ BZAdminClient::ServerCode BZAdminClient::getServerString(std::string& str) {
       vbuf = nboUnpackString(vbuf, email, EmailLen);
       players[p].resize(0);
       players[p].append(callsign);
-      if (p != sLink.getId() && ui != NULL)
+      if (ui != NULL)
 	ui->addedPlayer(p);
       str = str + "*** '" + callsign + "' joined the game.";
       return GotMessage;
