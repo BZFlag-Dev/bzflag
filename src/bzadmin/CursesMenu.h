@@ -25,6 +25,8 @@
 
 
 class CursesMenu;
+class BZAdminClient;
+
 
 /** Callbacks of this type are used by CursesMenu when it needs to be
     updated. */
@@ -159,6 +161,26 @@ class BoolCMItem : public CursesMenuItem {
 };
 
 
+/** This menu item type displays the filter status of a message type and
+    lets the user toggle it. */
+class FilterCMItem : public CursesMenuItem {
+ public:
+  /** This creates a FilterCMItem which displays and edits the filter status
+      of the message type @c msgType in the client @c client. */
+  FilterCMItem(const std::string& msgType, BZAdminClient& c);
+  /** This function displays the name of the message type and it's status. */
+  virtual void showItem(WINDOW* menuWin, int line, int col, int width, 
+			bool selected);
+  /** This function handles key presses from the user. Space toggles the
+      variable value, any other key is ignored. */
+  virtual bool handleKey(int c, std::string& str, CursesMenu& menu);
+ protected:
+  std::string messageType;
+  BZAdminClient& client;
+  uint16_t numMsgType;
+};
+
+
 /** This menu item type displays the value of a BZDB variable and lets
     the user edit it. It doesn't know if the player has permission to 
     edit the values, but if not the server will complain. */
@@ -211,7 +233,7 @@ public:
   /** CursesUI is our friend. (ugly, should be done differently) */
   friend class CursesUI;
   
-  CursesMenu(const PlayerIdMap& p);  
+  CursesMenu(BZAdminClient& c);  
   
   /** This is needed to delete the dynamically allocated 
       CursesMenuItem objects. */
@@ -256,6 +278,7 @@ protected:
   int selection;
   WINDOW* window;
   MenuCallback rebuilder;
+  BZAdminClient& client;
   const PlayerIdMap& players;
   bool dirty;
 };

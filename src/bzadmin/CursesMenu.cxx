@@ -10,6 +10,7 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
+#include "BZAdminClient.h"
 #include "CursesMenu.h"
 #include "StateDatabase.h"
 #include "TextUtils.h"
@@ -137,6 +138,48 @@ bool BoolCMItem::handleKey(int c, std::string&, CursesMenu&) {
 }
 
 
+FilterCMItem::FilterCMItem(const std::string& msgType, BZAdminClient& c) : 
+  messageType(msgType), client(c), 
+  numMsgType(c.getMessageTypeMap().find(msgType)->second) {
+    
+}
+
+
+void FilterCMItem::showItem(WINDOW* menuWin, int line, int col, int width, 
+			    bool selected) {
+  /* print the name of the message type to the left of the center and the
+     status to the right, use reverse video if it is selected */
+  std::string text = "Show message type '";
+  text += messageType;
+  text += "':";
+  wmove(menuWin, line, col);
+  if (selected)
+    wattron(menuWin, A_REVERSE);
+  for (unsigned int i = 0; i < width / 2 - text.size() - 1; ++i)
+    waddstr(menuWin, " ");
+  waddstr(menuWin, text.c_str());
+  wmove(menuWin, line, col + width / 2 + 1);
+  std::string value = (client.getFilterStatus(numMsgType) ? "yes" : "no");
+  waddstr(menuWin, value.c_str());
+  for (int i = width / 2 + 1 + value.size(); i < width; ++i)
+    waddstr(menuWin, " ");
+  if (selected)
+    wattroff(menuWin, A_REVERSE);
+}
+
+
+bool FilterCMItem::handleKey(int c, std::string&, CursesMenu&) {
+  if (c == ' ') {
+    if (client.getFilterStatus(numMsgType))
+      client.ignoreMessageType(numMsgType);
+    else
+      client.showMessageType(messageType);
+    return true;
+  }
+  return false;
+}
+
+
 BZDBCMItem::BZDBCMItem(const std::string& variable) 
   : CursesMenuItem(variable), editing(false) {
   
@@ -260,8 +303,8 @@ void PlayerCMItem::showItem(WINDOW* menuWin, int line, int col, int width,
 }
 
 
-CursesMenu::CursesMenu(const PlayerIdMap& p)
-  : players(p), dirty(true) {
+CursesMenu::CursesMenu(BZAdminClient& c)
+  : client(c), players(c.getPlayers()), dirty(true) {
   
 }
 

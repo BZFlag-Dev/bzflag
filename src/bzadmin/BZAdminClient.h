@@ -93,7 +93,7 @@ public:
       This is done by sending a private message to ourself and waiting until we
       receive it from the server. */
   void waitForServer();
-
+  
   /** This function tells the client to ignore messages of this type. If
       getServerString() is called and a message of this type is received,
       the function will just ignore that message and wait for the next one.
@@ -121,6 +121,14 @@ public:
       message still won't be shown if bzadmin does not know how to handle
       it - for example, player position updates won't be shown. */
   void showMessageType(std::string type);
+  
+  /** This function returns a const reference to the mapping from message type
+      names to message type codes. */
+  const std::map<std::string, uint16_t>& getMessageTypeMap() const;
+  
+  /** This function returns the filter status of the message type 
+      @c msgType, @c true means "show" and @c false means "hide". */
+  bool getFilterStatus(uint16_t msgType) const;
 
 protected:
 

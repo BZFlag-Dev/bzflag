@@ -545,6 +545,20 @@ void BZAdminClient::listSetVars(const std::string& name, void* thisObject) {
 }
 
 
+const std::map<std::string, uint16_t>& BZAdminClient::getMessageTypeMap() const
+{
+  return msgTypeMap;
+}
+  
+bool BZAdminClient::getFilterStatus(uint16_t msgType) const {
+  std::map<uint16_t, bool>::const_iterator iter = messageMask.find(msgType);
+  if (iter == messageMask.end())
+    return false;
+  else 
+    return iter->second;
+}
+
+
 // Local Variables: ***
 // mode:C++ ***
 // tab-width: 8 ***

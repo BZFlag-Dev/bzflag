@@ -23,7 +23,7 @@ UIAdder CursesUI::uiAdder("curses", &CursesUI::creator);
 
 CursesUI::CursesUI(BZAdminClient& c) :
   BZAdminUI(c),
-  menuState(NoMenu), menu(c.getPlayers()), client(c), players(c.getPlayers()), 
+  menuState(NoMenu), menu(c), client(c), players(c.getPlayers()), 
   me(c.getMyId()), maxHistory(20), currentHistory(0), 
   maxBufferSize(300), scrollOffset(0) {
 
@@ -418,8 +418,8 @@ void CursesUI::initMainMenu(CursesMenu& menu) {
   //				  &CursesUI::initBanMenu));
   menu.addItem(new SubmenuCMItem("Edit server variables", 
 				  &CursesUI::initServerVarMenu));
-  //menu.addItem(new SubmenuCMItem("Edit message filter",
-  //				 &CursesUI::initFilterMenu));
+  menu.addItem(new SubmenuCMItem("Edit message filter",
+  				 &CursesUI::initFilterMenu));
 }
 
 
@@ -460,6 +460,10 @@ void CursesUI::addBZDBCMItem(const std::string& name, void* menu) {
 void CursesUI::initFilterMenu(CursesMenu& menu) {
   menu.setHeader("MESSAGE FILTER EDITOR");
   menu.clear();
+  std::map<std::string, uint16_t>::const_iterator iter;
+  for (iter = menu.client.getMessageTypeMap().begin();
+       iter != menu.client.getMessageTypeMap().end(); ++iter)
+    menu.addItem(new FilterCMItem(iter->first, menu.client));
   menu.addItem(new SubmenuCMItem("Back to main menu",
 				 &CursesUI::initMainMenu));
 }
