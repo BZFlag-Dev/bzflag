@@ -231,6 +231,9 @@ void			LocalPlayer::doUpdateMotion(float dt)
       newVelocity[1] = speed * sinf(oldAzimuth + 0.5f * dt * newAngVel);
       newVelocity[2] = 0.0f;
 
+      // now friction, if any
+      doFriction(dt, oldVelocity, newVelocity);
+
       if ((oldPosition[2] < 0.0f) && (getFlag() == Flags::Burrow))
 	newVelocity[2] += 4 * BZDB.eval(StateDatabase::BZDB_GRAVITY) * dt;
       else if (oldPosition[2] > groundLimit)
@@ -243,9 +246,6 @@ void			LocalPlayer::doUpdateMotion(float dt)
       newVelocity[2] += BZDB.eval(StateDatabase::BZDB_GRAVITY) * dt;
       newAngVel = oldAngVel;
     }
-
-    // now friction, if any
-    doFriction(dt, oldVelocity, newVelocity);
 
     // now apply outside forces
     doForces(dt, newVelocity, newAngVel);
@@ -1078,14 +1078,17 @@ void			LocalPlayer::doFriction(float dt,
     BZDB.eval(StateDatabase::BZDB_FRICTION);
 
   if (friction > 0.0f) {
-    // limit xy acceleration
-    float acc = (newVelocity[0] - oldVelocity[0]) / dt;
-    if (acc > 20.0f * friction) newVelocity[0] = oldVelocity[0] + dt * 20.0f*friction;
-    else if (acc < -20.0f * friction) newVelocity[0] = oldVelocity[0] - dt * 20.0f*friction;
+    // limit vector acceleration
 
-    acc = (newVelocity[1] - oldVelocity[1]) / dt;
-    if (acc > 20.0f * friction) newVelocity[1] = oldVelocity[1] + dt * 20.0f*friction;
-    else if (acc < -20.0f * friction) newVelocity[1] = oldVelocity[1] - dt * 20.0f*friction;
+	float delta[2] = {newVelocity[0] - oldVelocity[0], newVelocity[1] - oldVelocity[1]};
+	float acc2 = (delta[0] * delta[0] + delta[1] * delta[1]) / (dt*dt);
+	float accLimit = 20.0f * friction;
+
+	if (acc2 > accLimit*accLimit) {
+		float ratio = accLimit / sqrtf(acc2);
+		newVelocity[0] = oldVelocity[0] + delta[0]*ratio;
+		newVelocity[1] = oldVelocity[1] + delta[1]*ratio;
+	}
   }
 }
 
