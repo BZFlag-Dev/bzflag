@@ -4,15 +4,16 @@ to do list for BZFlag
 THESE SHOULD HAPPEN BEFORE THE NEXT RELEASE:
 
 * fix TCP/UDP negotiation for fw'ed clients to handle:
-   to server works, from does not
-   from server works, to does not
-
+   to and from both do not work - working?
+   to server works, from does not - needs work
+   to and from both work - working?
+   from server works, to does not - would NOT work with NAT
 
 THESE ARE LOWER PRIORITY
 
 * server should pick client enter position.
   - Server has no idea about players shots, this is a key to picking a safe
-    entry location. This isn't a simple change. 
+    entry location. This isn't a simple change.
   - However, it should be changed soon even if the server does a poor job
     fixing the effectiveness can be done later without changing the clients
   - Perhaps we could just pick a location without regard to other tanks,
