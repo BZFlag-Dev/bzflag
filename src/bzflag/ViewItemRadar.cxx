@@ -24,6 +24,9 @@
 #include "bzfgl.h"
 #include <assert.h>
 #include <stdio.h>
+#ifdef WIN32
+#include <xutility>
+#endif
 
 //
 // ViewItemRadar
@@ -334,7 +337,11 @@ void					ViewItemRadar::drawTank(float x, float y, float z, float minsize)
 	}
 
 	// Does not change with height.
+#ifdef WIN32
+	s = std::_cpp_max(TankRadius, minsize);
+#else
 	s = std::max(TankRadius, minsize);
+#endif
 	glRectf(x - s, y - s, x + s, y + s);
 }
 

@@ -11,6 +11,7 @@
  */
 
 #include <iostream>
+#include <fstream>
 #include "OggAudioFile.h"
 
 OggAudioFile::OggAudioFile(std::istream* in) : AudioFile(in)
@@ -24,7 +25,7 @@ OggAudioFile::OggAudioFile(std::istream* in) : AudioFile(in)
 	cb.tell_func = OAFTell;
 
 	if(ov_open_callbacks(in, &file, NULL, 0, cb) < 0) {
-		cout << "OggAudioFile() failed: call to ov_open_callbacks failed\n";
+		std::cout << "OggAudioFile() failed: call to ov_open_callbacks failed\n";
 	}
 	else {
 		info = ov_info(&file, -1);
@@ -90,7 +91,7 @@ int		OAFClose(void* datasource)
 {
 	// technically we should close here, but this is handled outside
 
-	std::istream *in = (std::istream*) datasource;
+	std::ifstream *in = (std::ifstream*) datasource;
 	in->close();
 	return 0;
 }

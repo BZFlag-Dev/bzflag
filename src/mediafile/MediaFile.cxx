@@ -239,8 +239,8 @@ float*					MediaFile::readSound(
 		int numFrames   = file->getNumFrames();
 		int sampleWidth = file->getSampleWidth();
 
-		cout << filename << endl;
-		cout << "numFrames   = " << numFrames << endl;
+		std::cout << filename << std::endl;
+		std::cout << "numFrames   = " << numFrames << std::endl;
 
 		// make a buffer to read into
 		unsigned char* raw = new unsigned char[numFrames *
