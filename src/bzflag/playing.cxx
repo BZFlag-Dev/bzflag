@@ -16,6 +16,12 @@ static const char copyright[] = "Copyright (c) 1993 - 2004 Tim Riker";
 #pragma warning( 4 : 4786 )
 #endif
 
+#ifdef _WIN32
+#include "win32.h"
+#endif
+
+#include "common.h"
+
 // system includes
 #include <deque>
 #include <stdio.h>
@@ -26,7 +32,6 @@ static const char copyright[] = "Copyright (c) 1993 - 2004 Tim Riker";
 #include <sys/types.h>
 #include <time.h>
 #ifdef _WIN32
-#define _WINSOCKAPI_
 #include <shlobj.h>
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -43,7 +48,6 @@ static const char copyright[] = "Copyright (c) 1993 - 2004 Tim Riker";
 #endif
 
 // yikes! that's a lotsa includes!
-#include "common.h"
 #include "global.h"
 #include "Address.h"
 #include "BzfEvent.h"

@@ -10,6 +10,11 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
+#ifdef _WIN32
+#include "win32.h"
+#endif
+
+#include "common.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -17,7 +22,6 @@
 #include <time.h>
 #include <sys/types.h>
 #if defined(_WIN32)
-#define _WINSOCKAPI_
 #include <shlobj.h>
 #include <sys/types.h>
 #include <sys/stat.h>
