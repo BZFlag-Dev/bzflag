@@ -195,6 +195,10 @@ SOURCE=..\..\src\bzfs\RejoinList.cxx
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\src\bzfs\Score.cxx
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\src\bzfs\SpawnPosition.cxx
 # End Source File
 # Begin Source File
@@ -392,6 +396,10 @@ SOURCE=..\..\include\PlayerState.h
 # Begin Source File
 
 SOURCE=..\..\src\bzfs\RejoinList.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\bzfs\Score.h
 # End Source File
 # Begin Source File
 
