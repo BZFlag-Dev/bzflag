@@ -3259,7 +3259,7 @@ possible attack from %s\n",
   }
 
   switch (code) {
-  	// player joining
+    // player joining
     case MsgEnter: {
       uint16_t rejectCode;
       char     rejectMsg[128];
@@ -3271,28 +3271,24 @@ possible attack from %s\n",
 	     playerData->player.getToken());
       if (result) {
       	addPlayer(t);
-      }
-      else if(playerData->player.getToken()[0] != '\0' 
-         && strcmp(playerData->player.getToken(),"badtoken") ){
+      } else if (playerData->player.getToken()[0] != '\0' 
+         && strcmp(playerData->player.getToken(), "badtoken")) {
          
          // Find the user already logged on and kick
          // them if someone else is trying to log on
          // and has globally authenticated.	
-         for(int i = 0; i < curMaxPlayers; i++){
-           
+         for (int i = 0; i < curMaxPlayers; i++) {  
            GameKeeper::Player *otherPlayer = GameKeeper::Player::getPlayerByIndex(i);
-
-	       if(strcasecmp(otherPlayer->player.getCallSign(), playerData->player.getCallSign()) == 0){
-	       	 sendMessage(ServerPlayer,i,"Another client has demonstrated ownership of your callsign with the correct password.  You have been ghosted.");
-	         removePlayer(i, "Ghost");
-	         break;
-	       }
-	     }
-	     
-	     addPlayer(t);
-      }
-      else{
-	    rejectPlayer(t, rejectCode, rejectMsg);
+	   if (!otherPlayer) continue;
+	   if (strcasecmp(otherPlayer->player.getCallSign(), playerData->player.getCallSign()) == 0){
+	     sendMessage(ServerPlayer,i,"Another client has demonstrated ownership of your callsign with the correct password.  You have been ghosted.");
+	     removePlayer(i, "Ghost");
+	     break;
+	   }
+	}	     
+	addPlayer(t);
+      } else {
+	rejectPlayer(t, rejectCode, rejectMsg);
       }
       break;
     }
