@@ -399,13 +399,11 @@ bool readGroupsFile(const std::string &filename)
     return false;
   in.unsetf(ios::skipws);
   bool done = false;
-  std::string name;
-  std::string perm;
 
   char c;
   while (!done) {
-    name.erase(name.begin(), name.end());
-    perm.erase(perm.begin(), perm.end());
+    std::string name;
+    std::string perm;
     while ((in >> c) && (!in.eof()) && (c != ':'))
       name += c;
     while ((in >> c) && (!in.eof()) && (c != '\n'))
