@@ -51,7 +51,7 @@ bool WorldFileLocation::read(const char *cmd, std::istream& input)
       return false;
     }
     // convert to radians
-    rotation = rotation * (M_PI / 180.0f);
+    rotation = (float)(rotation * (M_PI / 180.0));
   }
 
   //

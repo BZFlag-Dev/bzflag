@@ -336,7 +336,7 @@ void DynamicColor::update (float t)
     
     // sequence rules over the clamps
     const sequenceParams& seq = channel.sequence;
-    const unsigned int seqSize = seq.list.size();
+    const unsigned int seqSize = (const unsigned int)seq.list.size();
     if (seqSize > 0) {
       const float fullPeriod = (float)seqSize * seq.period;
       float indexTime = (t - seq.offset);
@@ -539,7 +539,7 @@ int DynamicColor::packSize() const
     fullSize += sizeof(unsigned int);
     if (channels[c].sequence.list.size() > 0) {
       fullSize += sizeof(float) * 2; // period and offset
-      fullSize += channels[c].sequence.list.size() * sizeof(char);
+      fullSize += (int)channels[c].sequence.list.size() * sizeof(char);
     }
   }
   return fullSize;

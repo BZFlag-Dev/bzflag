@@ -154,14 +154,14 @@ void CustomArc::writeToGroupDef(GroupDefinition *groupdef) const
     const float zAxis[3] = {0.0f, 0.0f, 1.0f};
     const float origin[3] = {0.0f, 0.0f, 0.0f};
     MeshTransform xform;
-    xform.addSpin(rotation * (180.0f / M_PI), zAxis);
+    xform.addSpin((float)(rotation * (180.0 / M_PI)), zAxis);
     xform.addShift(pos);
     xform.append(transform);
     float newSize[3];
-    newSize[0] = size[0] * M_SQRT2;
-    newSize[1] = size[1] * M_SQRT2;
+    newSize[0] = (float)(size[0] * M_SQRT2);
+    newSize[1] = (float)(size[1] * M_SQRT2);
     newSize[2] = size[2];
-    arc = new ArcObstacle(xform, origin, newSize, M_PI * 0.25f, angle, ratio,
+    arc = new ArcObstacle(xform, origin, newSize, (float)(M_PI * 0.25), angle, ratio,
                           texsize, useNormals, divisions, mats, phydrv,
                           smoothBounce, driveThrough, shootThrough);
   }

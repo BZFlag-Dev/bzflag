@@ -29,7 +29,7 @@
 // FIXME (SceneRenderer.cxx is in src/bzflag)
 #include "SceneRenderer.h"
 
-#define	ShellRadius1_2	(M_SQRT1_2 * ShellRadius)
+#define	ShellRadius1_2	((float)(M_SQRT1_2 * ShellRadius))
 
 const GLfloat		TracerSceneNode::TailLength = 10.0f;
 const GLfloat		TracerSceneNode::tailVertex[9][3] = {
@@ -70,8 +70,8 @@ void			TracerSceneNode::move(const GLfloat pos[3],
   const GLfloat d = 1.0f / sqrtf(forward[0] * forward[0] +
 				forward[1] * forward[1] +
 				forward[2] * forward[2]);
-  azimuth = 180.0f / M_PI * atan2f(forward[1], forward[0]);
-  elevation = -180.0f / M_PI * atan2f(forward[2], hypotf(forward[0],forward[1]));
+  azimuth = (GLfloat)(180.0 / M_PI * atan2f(forward[1], forward[0]));
+  elevation = (GLfloat)(-180.0 / M_PI * atan2f(forward[2], hypotf(forward[0],forward[1])));
   setCenter(pos[0] - 0.5f * TailLength * d * forward[0],
 	    pos[1] - 0.5f * TailLength * d * forward[1],
 	    pos[2] - 0.5f * TailLength * d * forward[2]);

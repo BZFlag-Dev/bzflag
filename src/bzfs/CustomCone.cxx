@@ -160,14 +160,14 @@ void CustomCone::writeToGroupDef(GroupDefinition *groupdef) const
       xform.addScale(flipScale);
       xform.addShift(flipShift);
     }
-    xform.addSpin(rotation * (180.0f / M_PI), zAxis);
+    xform.addSpin((float)(rotation * (180.0 / M_PI)), zAxis);
     xform.addShift(pos);
     xform.append(transform);
     float newSize[3];
-    newSize[0] = size[0] * M_SQRT2;
-    newSize[1] = size[1] * M_SQRT2;
+    newSize[0] = (float)(size[0] * M_SQRT2);
+    newSize[1] = (float)(size[1] * M_SQRT2);
     newSize[2] = size[2];
-    cone = new ConeObstacle(xform, origin, newSize, M_PI * 0.25f, angle,
+    cone = new ConeObstacle(xform, origin, newSize, (float)(M_PI * 0.25), angle,
                             texsize, useNormals, divisions, mats, phydrv,
                             smoothBounce, driveThrough, shootThrough);
   }
