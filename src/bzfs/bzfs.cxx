@@ -70,6 +70,7 @@ const int udpBufSize = 128000;
 #include "multicast.h"
 #include "Ping.h"
 #include "TimeBomb.h"
+#include "md5.h"
 #include "ShotUpdate.h"
 
 static void sendMessage(int playerIndex, const PlayerId& targetPlayer, TeamColor targetTeam, const char *message);
@@ -614,6 +615,8 @@ static int maxPlayerScore = 0;
 static int maxTeamScore = 0;
 static int debug = 0;
 static boolean hasBase[NumTeams] = { false };
+
+static char hexDigest[50];
 
 // True if only new clients allowed
 static boolean requireUDP;
@@ -1635,6 +1638,7 @@ static void patchMessage(PlayerId fromId, PlayerId toId, const void *msg)
     case MsgEnter:
     case MsgExit:
     case MsgGetWorld:
+    case MsgWantWHash:
     case MsgNetworkRelay:
     case MsgReject:
     case MsgSetTTL:
@@ -3374,6 +3378,8 @@ static boolean defineWorld()
   if (gameStyle & TeamFlagGameStyle)
     worldDatabaseSize += 4 * (4 + 9 * 4);
   worldDatabase = new char[worldDatabaseSize];
+  memset( worldDatabase, 0, worldDatabaseSize );
+
   void *buf = worldDatabase;
   buf = nboPackUShort(buf, WorldCodeStyle);
   buf = nboPackUShort(buf, 24);
@@ -3402,6 +3408,17 @@ static boolean defineWorld()
   }
   buf = nboPackString(buf, world->getDatabase(), world->getDatabaseSize());
   buf = nboPackUShort(buf, WorldCodeEnd);
+
+  MD5 md5;
+  md5.update( (unsigned char *)worldDatabase, worldDatabaseSize );
+  md5.finalize();
+  if (worldFile == NULL)
+    strcpy(hexDigest,"t");
+  else
+    strcpy(hexDigest, "p");
+  char *digest = md5.hex_digest();
+  strcat( hexDigest, md5.hex_digest());
+  delete[] digest;
 
   // reset other stuff
   int i;
@@ -4169,7 +4186,7 @@ static void removePlayer(int playerIndex)
       done = True;
       exitCode = 0;
     }
-    else if (!defineWorld()) {
+    else if ((!worldFile) && (!defineWorld())) {
       done = True;
       exitCode = 1;
     }
@@ -5040,6 +5057,10 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
       sendWorld(t, int(ptr));
       break;
     }
+
+    case MsgWantWHash:
+      directMessage(t, MsgWantWHash, strlen(hexDigest)+1, hexDigest);
+      break;
 
     case MsgQueryGame:
       sendQueryGame(t);

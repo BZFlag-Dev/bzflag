@@ -91,6 +91,7 @@ const uint16_t		MsgTimeUpdate = 0x746f;			// 'to'
 const uint16_t		MsgTeleport = 0x7470;			// 'tp'
 const uint16_t		MsgSetTTL = 0x7474;			// 'tt'
 const uint16_t		MsgTeamUpdate = 0x7475;			// 'tu'
+const uint16_t		MsgWantWHash = 0x7768;			// 'wh'
 
 // world database codes
 const uint16_t		WorldCodeBase = 0x6261;			// 'ba'
@@ -201,6 +202,8 @@ player to server messages:
   MsgNetworkRelay	player can't use multicast, server must relay
 			--> <none>
 			<-- MsgAccept or MsgReject
+  MsgWantWHash		(player wants md5 of world file
+			-->
 
 server to player messages:
   MsgSuperKill		player must disconnect from server
@@ -249,6 +252,8 @@ server to player messages:
 			<== id
   MsgQueryGame		game status
   MsgQueryPlayers	list of players
+  MsgWantWHash		md5 digest of world file
+			<== temp|perm, digest
 */
 
 #endif // BZF_PROTOCOL_H

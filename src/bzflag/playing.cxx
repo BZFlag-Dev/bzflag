@@ -19,6 +19,19 @@ static const char copyright[] = "Copyright (c) 1993 - 2002 Tim Riker";
 #include <ctype.h>
 #include <sys/types.h>
 #include <time.h>
+#ifdef _WIN32
+#define _WINSOCKAPI_
+#include <shlobj.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <direct.h>
+#else
+#include <pwd.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <dirent.h>
+#include <utime.h>
+#endif
 
 // yikes! that's a lotsa includes!
 #include "playing.h"
@@ -3378,47 +3391,244 @@ static void		addRobots(boolean useMulticastRelay)
 
 #endif
 
+static BzfString	getCacheDirectoryName()
+{
+#if defined(_WIN32)
+  BzfString name("C:");
+  char dir[MAX_PATH];
+  ITEMIDLIST* idl;
+  if (SUCCEEDED(SHGetSpecialFolderLocation(NULL, CSIDL_PERSONAL, &idl))) {
+    if (SHGetPathFromIDList(idl, dir)) {
+      struct stat statbuf;
+      if (stat(dir, &statbuf) == 0 && (statbuf.st_mode & _S_IFDIR) != 0)
+	name = dir;
+    }
+
+    IMalloc* shalloc;
+    if (SUCCEEDED(SHGetMalloc(&shalloc))) {
+      shalloc->Free(idl);
+      shalloc->Release();
+    }
+  }
+
+  name += "\\bzflag-cache";
+  mkdir(name.getString());
+  return name;
+
+#elif defined(macintosh)
+  return "";
+#else
+  BzfString name;
+  struct passwd *pwent = getpwuid(getuid());
+  if (pwent && pwent->pw_dir) {
+    name += BzfString(pwent->pw_dir);
+    name += "/";
+  }
+  name += ".bzflag-cache";
+
+  // add in hostname on UNIX
+  if (getenv("HOST")) {
+    name += ".";
+    name += getenv("HOST");
+  }
+
+  struct stat statbuf;
+  if (!(stat(name.getString(), &statbuf) == 0 && (S_ISDIR(statbuf.st_mode)))) {
+    if(mkdir(name.getString(), 0777) != 0) {
+      return "bzflag-cache";
+    }
+  }
+
+  return name;
+#endif
+}
+
+static void cleanWorldCache()
+{
+  char buffer[10];
+  int cacheLimit = 100L * 1024L;
+  if (resources->hasValue("worldCacheLimit"))
+    cacheLimit = atoi(resources->getValue("worldCacheLimit"));
+  else {
+#ifndef _WIN32
+    snprintf(buffer, 10, "%d", cacheLimit);
+#else
+    sprintf(buffer, "%d", cacheLimit);
+#endif
+    resources->addValue("worldCacheLimit", buffer);
+  }
+
+  BzfString worldPath = getCacheDirectoryName();
+
+  char *oldestFile = NULL;
+  int totalSize = 0;
+
+#ifdef _WIN32
+  BzfString pattern = worldPath + "/*.bwc";
+
+  WIN32_FIND_DATA findData;
+  HANDLE h = FindFirstFile(pattern, &findData);
+  if (h != INVALID_HANDLE_VALUE) {
+    FILETIME oldestTime = findData.ftLastAccessTime;
+    oldestFile = strdup(findData.cFileName);
+    totalSize = findData.nFileSizeLow;
+
+    while (FindNextFile(h, &findData)) {
+	if (CompareFileTime( &oldestTime, &findData.ftLastAccessTime ) > 0) {
+	  oldestTime = findData.ftLastAccessTime;
+	  if (oldestFile)
+	    free(oldestFile);
+	  oldestFile = strdup(findData.cFileName);
+	}
+	totalSize += findData.nFileSizeLow;
+    }
+    FindClose(h);
+
+    if (totalSize < cacheLimit)
+	oldestFile = NULL;
+  }
+#else
+  DIR *directory = opendir(worldPath);
+  if (directory) {
+    struct dirent* contents;
+    struct stat statbuf;
+    time_t oldestTime = time(NULL);
+    while ((contents = readdir(directory))) {
+      stat((worldPath + "/") + contents->d_name, &statbuf);
+      if (statbuf.st_atime < oldestTime) {
+	if (oldestFile)
+	  free(oldestFile);
+	oldestFile = strdup(contents->d_name);
+      }
+      totalSize += statbuf.st_size;
+    }
+    closedir(directory);
+
+  }
+#endif
+
+  if (totalSize < cacheLimit) {
+    if (oldestFile != NULL) {
+	free(oldestFile);
+	oldestFile = NULL;
+    }
+  }
+
+  if (oldestFile != NULL)
+    remove((getCacheDirectoryName() + "/") + oldestFile);
+
+  if (oldestFile != NULL)
+    free(oldestFile);
+}
+
+static void markOld(BzfString &fileName)
+{
+#ifdef _WIN32
+  FILETIME ft;
+  HANDLE h = CreateFile(fileName, FILE_WRITE_ATTRIBUTES|FILE_WRITE_EA, 0, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+  if (h != INVALID_HANDLE_VALUE) {
+
+    SYSTEMTIME st;
+    memset( &st, 0, sizeof(st));
+    st.wYear = 1900;
+    st.wMonth = 1;
+    st.wDay = 1;
+    SystemTimeToFileTime( &st, &ft );
+    BOOL b = SetFileTime(h, &ft, &ft, &ft);
+    int i = GetLastError();
+    CloseHandle(h);
+  }
+#else
+  struct utimbuf times;
+  times.actime = 0;
+  times.modtime = 0;
+  utime(fileName, &times);
+#endif
+}
+
 //
 // join/leave a game
 //
 
 static World*		makeWorld(ServerLink* serverLink)
 {
+  FILE *cachedWorld = NULL;
   uint16_t code, len, size;
   char msg[MaxPacketLen];
+  BzfString worldPath;
+  bool isTemp = false; 
 
-  // ask for world and wait for it (ignoring all other messages)
-  nboPackUShort(msg, 0);
-  serverLink->send(MsgGetWorld, 2, msg);
-  if (serverLink->read(code, len, msg, 5000) <= 0) return NULL;
-  if (code == MsgNull || code == MsgSuperKill) return NULL;
-  if (code != MsgGetWorld) return NULL;
+  //ask for the hash of the world (ignoring all other messages)
+  serverLink->send( MsgWantWHash, 0, NULL );
+  if (serverLink->read(code, len, msg, 5000) > 0) {
+	  if (code != MsgWantWHash) return NULL;
 
-  // get size of entire world database and make space
-  nboUnpackUShort(msg, size);
-  char* worldDatabase = new char[size];
+	  char *hexDigest = new char[len];
+	  nboUnpackString( msg, hexDigest, len );
+	  isTemp = hexDigest[0] == 't';
 
-  // get world database
-  uint16_t ptr = 0, bytesLeft = size;
-  while (bytesLeft != 0) {
-    // get bytes left
-    void* buf = msg;
-    buf = nboUnpackUShort(buf, bytesLeft);
+	  worldPath = getCacheDirectoryName();
+	  worldPath += "/";
+	  worldPath += hexDigest;
+	  worldPath += ".bwc";
+	  cachedWorld = fopen( worldPath.getString(), "rb" );
+  }
 
-    // add chunk to database so far
-    ::memcpy(worldDatabase + int(ptr), buf, len - 2);
+  char* worldDatabase;
+  if (cachedWorld == NULL) {
+	  // ask for world and wait for it (ignoring all other messages)
+	  nboPackUShort(msg, 0);
+	  serverLink->send(MsgGetWorld, 2, msg);
+	  if (serverLink->read(code, len, msg, 5000) <= 0) return NULL;
+	  if (code == MsgNull || code == MsgSuperKill) return NULL;
+	  if (code != MsgGetWorld) return NULL;
 
-    // increment pointer
-    ptr += len - 2;
+	  // get size of entire world database and make space
+	  nboUnpackUShort(msg, size);
+	  worldDatabase = new char[size];
 
-	// ask and wait for next chunk
-	nboPackUShort(msg, ptr);
-	serverLink->send(MsgGetWorld, 2, msg);
-	if (serverLink->read(code, len, msg, 5000) < 0 ||
-	code == MsgNull || code == MsgSuperKill) {
-	  delete[] worldDatabase;
-	  return NULL;
-	}
+	  // get world database
+	  uint16_t ptr = 0, bytesLeft = size;
+	  while (bytesLeft != 0) {
+		// get bytes left
+		void* buf = msg;
+		buf = nboUnpackUShort(buf, bytesLeft);
+
+		// add chunk to database so far
+		::memcpy(worldDatabase + int(ptr), buf, len - 2);
+
+		// increment pointer
+		ptr += len - 2;
+		// ask and wait for next chunk
+		nboPackUShort(msg, ptr);
+		serverLink->send(MsgGetWorld, 2, msg);
+		if (serverLink->read(code, len, msg, 5000) < 0 ||
+		code == MsgNull || code == MsgSuperKill) {
+		  delete[] worldDatabase;
+		  return NULL;
+		}
+	  }
+
+	  if (worldPath.getLength() > 0) {
+		  cleanWorldCache();
+		  cachedWorld = fopen(worldPath.getString(), "wb");
+		  if (cachedWorld != NULL) {
+			  fwrite(worldDatabase, size, 1, cachedWorld);
+			  fclose(cachedWorld);
+			  if (isTemp)
+			    markOld(worldPath);
+		  }
+	  }
+  }
+  else
+  {
+
+	  fseek( cachedWorld, 0, SEEK_END );
+	  long size = ftell( cachedWorld );
+	  fseek( cachedWorld, 0, SEEK_SET );
+	  worldDatabase = new char[size];
+	  fread( worldDatabase, size, 1, cachedWorld );
+	  fclose( cachedWorld );
   }
 
   // make world

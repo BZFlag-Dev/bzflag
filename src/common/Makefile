@@ -22,6 +22,7 @@ CXXFILES =				\
 	Team.cxx			\
 	TimeBomb.cxx			\
 	TimeKeeper.cxx			\
+	md5.cxx				\
 	$(NULL)
 
 CFILES =				\
