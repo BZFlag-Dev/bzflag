@@ -281,12 +281,12 @@ bool PNGImageFile::expand()
 		case 1:
 		{
 			for (int i = width-1; i >= 0; i--) {
-				int byteOffset = i/8;
+				int byteOffset = i/8 + 1;
 				int bit = 7 - i%8;
 				if (*(pData+byteOffset) & bit)
-					*(pData+i) = 0xFF;
+					*(pData+i+1) = 0xFF;
 				else
-					*(pData+i) = 0x00;
+					*(pData+i+1) = 0x00;
 			}
 		}
 		break;
@@ -294,9 +294,9 @@ bool PNGImageFile::expand()
 		case 2:
 		{
 			for (int i = width-1; i >= 0; i--) {
-				int byteOffset = i/4;
+				int byteOffset = i/4 + 1;
 				int bitShift = 6-2*(i%4);
-				*(pData+i) = (((*(pData+byteOffset)) >> bitShift) & 0x03) << 6;
+				*(pData+i+1) = (((*(pData+byteOffset)) >> bitShift) & 0x03) << 6;
 			}
 		}
 		break;
@@ -304,9 +304,9 @@ bool PNGImageFile::expand()
 		case 4:
 		{
 			for (int i = width-1; i >= 0; i--) {
-				int byteOffset = i/2;
+				int byteOffset = i/2+1;
 				int bitShift = 4-4*(i%2);
-				*(pData+i) = (((*(pData+byteOffset)) >> bitShift) & 0x0F) << 4;
+				*(pData+i+1) = (((*(pData+byteOffset)) >> bitShift) & 0x0F) << 4;
 			}
 		}
 		break;
@@ -314,7 +314,7 @@ bool PNGImageFile::expand()
 		case 16:
 		{
 			for (int i = 0; i < width; i++) {
-				*(pData+i) = (*pData + 2*i);
+				*(pData+i+1) = (*pData + 2*i + 1);
 			}
 		}
 		break;
@@ -329,9 +329,9 @@ bool PNGImageFile::expand()
 
 		for (int i = width-1; i >= 0; i--) {
 			PNGRGB &rgb = palette->get(*(pData+i));
-			*(pData + width*3) = rgb.red;
-			*(pData + width*3 + 1) = rgb.green;
-			*(pData + width*3 + 2) = rgb.blue;
+			*(pData + width*3 + 1) = rgb.red;
+			*(pData + width*3 + 2) = rgb.green;
+			*(pData + width*3 + 3) = rgb.blue;
 		}
 	}
 
@@ -370,6 +370,46 @@ bool PNGImageFile::filter()
 			unsigned char *up = getLineBuffer(false);
 			for (int i = 1; i < lineBufferSize; i++)
 				*(pData+i) += *(up+i);
+			return true;
+			break;
+		}
+
+		case FILTER_AVERAGE:
+		{
+			unsigned char last[4] = {0, 0, 0, 0};
+			unsigned char *up = getLineBuffer(false);
+			int channels = getNumChannels();
+			for (int i = 1; i < lineBufferSize; i++) {
+				*(pData+i) += (last[i%channels] + *(up+i))/2;
+				last[i%channels] = *(pData+i);
+			}
+			return true;
+			break;
+		}
+
+		case FILTER_PAETH:
+		{
+			unsigned char last[4] = {0, 0, 0, 0};
+			unsigned char prevLast[4] = {0, 0, 0, 0};
+			unsigned char *up = getLineBuffer(false);
+			int channels = getNumChannels();
+			for (int i = 1; i < lineBufferSize; i++) {
+				int estimate = last[i%channels] + *(up+i) - prevLast[i%channels];
+				int lastError = abs(estimate - last[i%channels]);
+				int upError = abs(estimate - *(up+i));
+				int lastUpError = abs(estimate - prevLast[i%channels]);
+				int value;
+				if ((lastError <= upError) && (lastError <= lastUpError))
+					value = lastError;
+				else if (upError <= lastUpError)
+					value = upError;
+				else
+					value = lastUpError;
+
+				*(pData+i) += value;
+				last[i%channels] = value;
+				prevLast[i%channels] = *(up+i);
+			}
 			return true;
 			break;
 		}
