@@ -52,7 +52,8 @@ Section "BZFlag (required)"
 	SetOutPath $INSTDIR\data
 	File ..\..\..\data\*.*	
 	File ..\..\..\misc\hix.bzw
-	File ..\..\..\misc\bzfs.conf	
+	File ..\..\..\misc\bzfs.conf
+	File ..\..\..\misc\bzfs_conf.html	
 
 	; make the l10n dir
 	SetOutPath $INSTDIR\data\l10n
@@ -89,7 +90,7 @@ Section "Start Menu Shortcuts"
 	CreateShortCut "$SMPROGRAMS\BZFlag${VER_MAJOR}${VER_MINOR}\Server\Start Server( HIX [Public] FFA ).lnk" "$INSTDIR\bzfs.exe" '-p 5156 -pr 5157 -j -tkkr 80 -fb -ms 3 -s 32 +s 16 -world HIX.bzw -public "My HIX FFA Server"' "$INSTDIR\bzflag.exe" 0 
 	CreateShortCut "$SMPROGRAMS\BZFlag${VER_MAJOR}${VER_MINOR}\Server\Start Server( HIX [Public] CTF ).lnk" "$INSTDIR\bzfs.exe" '-p 5156 -pr 5157 -c -j -fb -world HIX.bzw -public "My HIX CTF Server"' "$INSTDIR\bzflag.exe" 0 
 	CreateShortCut "$SMPROGRAMS\BZFlag${VER_MAJOR}${VER_MINOR}\Server\Data Folder.lnk" "$INSTDIR\data" "" "" 0 
-
+	CreateShortCut "$SMPROGRAMS\BZFlag${VER_MAJOR}${VER_MINOR}\Server\BZFS Configuration Builder.lnk" "$INSTDIR\data\bzfs_conf.html" "" "" 0 
 	SetOutPath $INSTDIR\doc
 	CreateDirectory "$SMPROGRAMS\BZFlag${VER_MAJOR}${VER_MINOR}\Doc"
 	CreateShortCut "$SMPROGRAMS\BZFlag${VER_MAJOR}${VER_MINOR}\Doc\BZFlag [game] Manual Pages( HTML ).lnk" "$INSTDIR\doc\bzflag.html" "" "" 0 
