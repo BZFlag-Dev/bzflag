@@ -138,17 +138,28 @@ void handleServerQueryCmd(GameKeeper::Player *playerData, const char *)
 
 void handlePartCmd(GameKeeper::Player *playerData, const char *message)
 {
+  std::string byeStatement = "";
+
+  if (strlen(message) > 5) {
+    if (!TextUtils::isWhitespace(*(message+5))) {
+      char reply[MessageLen] = {0};
+      sprintf(reply,"Unknown command [%s]", message);
+      sendMessage(ServerPlayer, playerData->getIndex(), reply);
+      return;
+    }    
+    byeStatement = message + 6;
+  }
+
   std::string message2;
-
   message2 = TextUtils::format("%s has quit (\"%s\") ",
-				 playerData->player.getCallSign(),  message + 6);
+				 playerData->player.getCallSign(),  byeStatement.c_str());
 
-  DEBUG2("%s has quit with the message \"%s\"\n", playerData->player.getCallSign(), message + 6);
+  DEBUG2("%s has quit with the message \"%s\"\n", playerData->player.getCallSign(), byeStatement.c_str());
   sendMessage(ServerPlayer, AllPlayers, message2.c_str());
 
   // now to kick the player
   int t = playerData->getIndex();
-  removePlayer(t, message + 6);
+  removePlayer(t, byeStatement.c_str());
 }
 
 
