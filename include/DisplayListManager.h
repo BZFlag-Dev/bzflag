@@ -27,7 +27,7 @@ typedef struct
 {
   GLuint  list;
   DisplayListBuilder *builder;
-}displayListItem;
+} displayListItem;
 
 typedef std::map<int, displayListItem> displayListMap;
 
