@@ -2708,7 +2708,7 @@ static void dropFlag(GameKeeper::Player &playerData, float pos[3])
   if (waterLevel > minZ) {
     minZ = waterLevel;
   }
-  float maxZ = MAXFLOAT;
+  const float maxZ = MAXFLOAT;
 
   float landing[3] = {pos[0], pos[1], pos[2]};
   bool safelyDropped =
@@ -2721,7 +2721,7 @@ static void dropFlag(GameKeeper::Player &playerData, float pos[3])
   } else if (--drpFlag.grabs <= 0) {
     vanish = true;
     drpFlag.grabs = 0;
-  } else if (pos[2] > 0 && !clOptions->flagsOnBuildings) {
+  } else if (!clOptions->flagsOnBuildings && (pos[2] > 0.0f)) {
     vanish = true;
   } else {
     vanish = !safelyDropped;
