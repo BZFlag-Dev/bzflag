@@ -311,6 +311,58 @@ float			timeRayHitsBlock(const Ray& r, const float* p1,
   return timeRayHitsOrigBox(pb, db, dx, dy, dz);
 }
 
+/** Computing ray travel time to the plane described by 3 points
+ */
+float			timeRayHitsPlane(const float pb[3],
+					 const float db[3],
+					 const float x1[3],
+					 const float x2[3],
+					 const float x3[3])
+{
+  float u[3], v[3], d[3];
+
+  // Compute the 2 vectors describing the plane
+  for (int i = 0; i < 3; i++) {
+    u[i] = x2[i] - x1[i];
+  }
+  for (int i = 0; i < 3; i++) {
+    v[i] = x3[i] - x1[i];
+  }
+  // Thats a distance vector: a vector from the plane to the ray beginning
+  for (int i = 0; i < 3; i++) {
+    d[i] = x1[i] - pb[i];
+  }
+
+  // plane versor unnormalized
+  float n[3];
+  n[0] = u[1] * v[2] - u[2] * v[1];
+  n[1] = u[2] * v[0] - u[0] * v[2];
+  n[2] = u[0] * v[1] - u[1] * v[0];
+
+  // computing unnormalized distance projecting the distance on versor 
+  float distance = 0.0;
+  for (int i = 0; i < 3; i++) {
+    distance += n[i] * d[i];
+  }
+
+  // if distance is negative, plane is already passed
+  if (distance <= 0.0f)
+    return 0.0f;
+
+  // project velocity vector on the plan versor unnormalized
+  float velocity = 0.0f;
+  for (int i = 0; i < 3; i++) {
+    velocity += n[i] * db[i];
+  }
+  
+  // if velocity is greater than 0 no way to trespass the plane
+  if (velocity > 0.0f)
+    return -1.0f;
+
+  // time is ... that is normalized
+  return distance / velocity;
+}
+
 float			timeRayHitsPyramids(const Ray& r,
 					    const float* p1, float angle,
 					    float dx, float dy, float dz)
@@ -334,121 +386,84 @@ float			timeRayHitsPyramids(const Ray& r,
   db[1] = c * d[1] + s * d[0];
   db[2] = d[2];
 
-  if (dx == 0.0f || dy == 0.0f || dz == 0.0f)
-    return timeRayHitsOrigBox(pb, db, dx, dy, dz);
+  if (dx < 0)
+    dx = - dx;
+  if (dy < 0)
+    dy = - dy;
 
-  pb[0] /= dx;
-  db[0] /= dx;
-  pb[1] /= dy;
-  db[1] /= dy;
-  pb[2] /= dz;
-  db[2] /= dz;
-
-  if (pb[0] < 0.0f) {
-    pb[0] = - pb[0];
-    db[0] = - db[0];
+  if (dz < 0) {
+    pb[2] = - pb[2];
+    db[2] = - db[2];
+    dz    = - dz;
   }
-  if (pb[1] < 0.0f) {
-    pb[1] = - pb[1];
-    db[1] = - db[1];
-  }
-
-  float maxXY = pb[0] > pb[1] ? pb[0] : pb[1];
-  if (maxXY <= 1.0f && pb[2] >= 0.0 && pb[2] <= 1 - maxXY)
-    return 0.0f;					 // inside
 
   float residualTime = 0.0f;
 
-  if (pb[0] >= 1.0f) {
-    float residualTemp = 0.0f;
-    if (db[0] >= 0.0f) {
-      return -1.0f;
-    } else {
-      residualTemp = (pb[0] - 1.0f) / (- db[0]);
-      pb[0]  = 1.0f;
-      pb[1] += residualTemp * db[1];
-      pb[2] += residualTemp * db[2];
-    }
-    residualTime += residualTemp;
+  float x1[3], x2[3], x3[3];
+  float residualTemp;
+  
+  x1[2] = 0.0f;
+  x2[2] = 0.0f;
+  x3[0] = 0.0f;
+  x3[1] = 0.0f;
+  x3[2] = dz;
+
+  // trying to get to the pyramid removing half space at time
+  // start with the 4 faces, and end with the base
+  x1[0] = - dx;
+  x1[1] = - dy;
+  x2[0] =   dx;
+  x2[1] = - dy;
+  residualTemp = timeRayHitsPlane(pb, db, x1, x2, x3);
+  if (residualTemp < 0.5f)
+    return residualTemp;
+  for (int i = 0; i < 3; i++) {
+    pb[i] += residualTemp * db[i];
   }
+  residualTime += residualTemp;
 
-  if (pb[1] >= 1.0f) {
-    float residualTemp = 0.0f;
-    if (db[1] >= 0.0f) {
-      return -1.0f;
-    } else {
-      residualTemp = (pb[1] - 1.0f) / (- db[1]);
-      pb[0] += residualTemp * db[0];
-      pb[1]  = 1.0f;
-      pb[2] += residualTemp * db[2];
-    }
-    residualTime += residualTemp;
+  x1[0] = - x1[0];
+  x1[1] = - x1[1];
+  residualTemp = timeRayHitsPlane(pb, db, x2, x1, x3);
+  if (residualTemp < 0.5f)
+    return residualTemp;
+  for (int i = 0; i < 3; i++) {
+    pb[i] += residualTemp * db[i];
   }
+  residualTime += residualTemp;
 
-  if (pb[2] >= 1.0f) {
-    float residualTemp = 0.0f;
-    if (db[2] >= 0.0f) {
-      return -1.0f;
-    } else {
-      residualTemp = (pb[2] - 1.0f) / (- db[2]);
-      pb[0] += residualTemp * db[0];
-      pb[1] += residualTemp * db[1];
-      pb[2]  = 1.0f;
-    }
-    residualTime += residualTemp;
-  } else if (pb[2] <= 0.0f) {
-    float residualTemp = 0.0f;
-    if (db[2] <= 0.0f) {
-      return -1.0f;
-    } else {
-      residualTemp = - pb[2] / db[2];
-      pb[0] += residualTemp * db[0];
-      pb[1] += residualTemp * db[1];
-      pb[2]  = 0.0f;
-    }
-    residualTime += residualTemp;
+  x2[0] = - x2[0];
+  x2[1] = - x2[1];
+  residualTemp = timeRayHitsPlane(pb, db, x1, x2, x3);
+  if (residualTemp < 0.5f)
+    return residualTemp;
+  for (int i = 0; i < 3; i++) {
+    pb[i] += residualTemp * db[i];
   }
+  residualTime += residualTemp;
 
-  if (db[2] == 0.0f)
-    return residualTime;
-    
-  float t11, t12, t21, t22;
-  float tMin = 1.0e+6;
-
-  float delta;
-
-  delta = db[2] - db[0];
-  if (delta != 0.0f) {
-    t11 = (1 - (pb[2] - pb[0])) / delta;
-    if (t11 < tMin)
-      tMin = t11;
+  x1[0] = - x1[0];
+  x1[1] = - x1[1];
+  residualTemp = timeRayHitsPlane(pb, db, x2, x1, x3);
+  if (residualTemp < 0.5f)
+    return residualTemp;
+  for (int i = 0; i < 3; i++) {
+    pb[i] += residualTemp * db[i];
   }
-
-  delta = db[2] + db[0];
-  if (delta != 0.0f) {
-    t12 = (1 - (pb[2] + pb[0])) / delta;
-    if (t12 < tMin)
-      tMin = t12;
+  residualTime += residualTemp;
+  
+  x3[0] = dx;
+  x3[1] = dy;
+  x3[2] = 0.0f;
+  residualTemp = timeRayHitsPlane(pb, db, x1, x2, x3);
+  if (residualTemp < 0.5f)
+    return residualTemp;
+  for (int i = 0; i < 3; i++) {
+    pb[i] += residualTemp * db[i];
   }
+  residualTime += residualTemp;
 
-  delta = db[2] - db[1];
-  if (delta != 0.0f) {
-    t21 = (1 - (pb[2] - pb[1])) / delta;
-    if (t21 < tMin)
-      tMin = t21;
-  }
-
-  delta = db[2] + db[1];
-  if (delta != 0.0f) {
-    t22 = (1 - (pb[2] + pb[1])) / delta;
-    if (t22 < tMin)
-      tMin = t22;
-  }
-
-  if (tMin == 1.0e6)
-    return -1.0f;
-  else
-    return residualTime + tMin;
+  return residualTime;
 }
 
 // rect covers interval x=[-dx,dx], y=[-dy,dy]
