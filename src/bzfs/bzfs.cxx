@@ -2101,8 +2101,10 @@ void removePlayer(int playerIndex, const char *reason, bool notify)
     DEBUG1("Player %s [%d] removed: %s\n",
 	   player[playerIndex].getCallSign(), playerIndex, reason);
     wasPlaying = player[playerIndex].removePlayer();
+#ifdef NETWORK_STATS
     if (wasPlaying)
       netPlayer[playerIndex]->dumpMessageStats();
+#endif
     delete netPlayer[playerIndex];
     netPlayer[playerIndex] = NULL;
   }
