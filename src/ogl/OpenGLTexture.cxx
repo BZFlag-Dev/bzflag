@@ -110,6 +110,7 @@ void OpenGLTexture::static_initContext(void *that)
 
 void OpenGLTexture::freeContext()
 {
+  glBindTexture(GL_TEXTURE_2D, 0);
   if (list != INVALID_GL_TEXTURE_ID) {
     glDeleteTextures(1, &list);
     list = INVALID_GL_TEXTURE_ID;
