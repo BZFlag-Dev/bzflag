@@ -4744,7 +4744,7 @@ static World*		makeWorld(ServerLink* serverLink)
 
 	  // get size of entire world database and make space
 	  void *buf = nboUnpackUInt(msg, size);
-	  worldDatabase = new char[size];
+	  worldDatabase = new char[size + len];
 
 	  // get world database
 	  uint32_t ptr = 0, bytesLeft = size;
