@@ -90,6 +90,12 @@ void WorldWeapons::add(const FlagType *type, const float *origin, float directio
   weapons.push_back(w);
 }
 
+unsigned int WorldWeapons::count(void)
+{
+  return weapons.size();
+}
+
+
 // Local variables: ***
 // mode:C++ ***
 // tab-width: 8 ***

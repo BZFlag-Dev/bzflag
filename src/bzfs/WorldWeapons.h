@@ -21,6 +21,8 @@
 #include "Flag.h"
 #include "TimeKeeper.h"
 
+/** WorldWeapons is a container class that holds weapons
+ */
 class WorldWeapons
 {
 public:
@@ -28,6 +30,10 @@ public:
   ~WorldWeapons();
   void fire();
   void add( const FlagType *type, const float *origin, float direction, float initdelay, const std::vector<float> &delay, TimeKeeper &sync);
+
+  /** returns how many world weapons exist */
+  unsigned int count();
+
 private:
   struct Weapon
   {

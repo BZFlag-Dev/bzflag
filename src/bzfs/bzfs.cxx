@@ -4517,6 +4517,11 @@ int main(int argc, char **argv)
 	waitTime = player[p].nextping - tm;
     }
 
+    // if there are world weapons, update much more frequently
+    if (wWeapons.count() > 0) {
+      waitTime *= 0.1f;  // a tenth of what we would have waited
+    }
+
     // minmal waitTime
     if (waitTime < 0.0f)
       waitTime = 0.0f;
