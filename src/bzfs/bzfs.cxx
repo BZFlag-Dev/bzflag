@@ -1015,7 +1015,7 @@ static WorldInfo *defineTeamWorld()
       const float *pos  = bases[t].getBasePosition(0);
       const float  size = BZDB.eval(StateDatabase::BZDB_BASESIZE);
       world->addBase(pos[0], pos[1], pos[2], 0.0f,
-		     size, size, 0.0f, false, false);
+		     size, size, 0.0f, t, false, false);
     }
   }
 
@@ -2538,9 +2538,8 @@ static void dropFlag(int playerIndex, float pos[3])
     if (topmosttype == IN_BASE) {
       // figure out landing spot -- if flag in a Bad Place
       // when dropped, move to safety position or make it going
-      TeamColor teamBase
-	= whoseBase(pos[0], pos[1], (topmost->getPosition()[2]
-				     + topmost->getSize()[2] + 0.01f));
+      BaseBuilding *landingBase = (BaseBuilding *)topmost;
+      TeamColor     teamBase    = (TeamColor)landingBase->getTeam();
       if (teamBase != flagTeam) {
 	std::string teamName = Team::getName((TeamColor) flagTeam);
 	if (!world->getSafetyPoint(teamName, pos, landingPos)) {

@@ -83,7 +83,7 @@ void WorldInfo::addTeleporter(float x, float y, float z, float r, float w, float
 }
 
 void WorldInfo::addBase(float x, float y, float z, float r,
-                        float w, float d, float h,
+                        float w, float d, float h, int color,
                         bool /* drive */, bool /* shoot */)
 {
   if ((z + h) > maxHeight)
@@ -91,7 +91,7 @@ void WorldInfo::addBase(float x, float y, float z, float r,
 
   const float pos[3] = {x, y, z};
   const float size[3] = {w, d, h};
-  BaseBuilding base (pos, r, size, 0 /* fake the team */);
+  BaseBuilding base (pos, r, size, color);
   bases.push_back (base);
 }
 

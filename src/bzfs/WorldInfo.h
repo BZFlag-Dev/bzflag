@@ -49,7 +49,8 @@ public:
   void addBox(float x, float y, float z, float r, float w, float d, float h, bool drive = false, bool shoot = false);
   void addPyramid(float x, float y, float z, float r, float w, float d, float h, bool drive = false, bool shoot = false, bool flipZ = false);
   void addTeleporter(float x, float y, float z, float r, float w, float d, float h, float b, bool drive = false, bool shoot = false);
-  void addBase(float x, float y, float z, float r, float w, float d, float h, bool drive = false, bool shoot = false);
+  void addBase(float x, float y, float z, float r, float w, float d, float h,
+	       int color, bool drive = false, bool shoot = false);
   void addLink(int from, int to);
   void addZone(const CustomZone *zone);
   void addEntryZone( QualifierList &qualifiers, WorldFileLocation *zone );
