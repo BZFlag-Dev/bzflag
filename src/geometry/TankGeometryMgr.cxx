@@ -162,6 +162,16 @@ void TankGeometryMgr::setupScales(const std::string& /*name*/, void * /*data*/)
 
 void TankGeometryMgr::initContext(void * /*data*/)
 {
+  // initialize the lists to invalid
+  for (int shadow = 0; shadow < LastTankShadow; shadow++) {
+    for (int lod = 0; lod < LastTankLOD; lod++) {
+      for (int size = 0; size < LastTankSize; size++) {
+        for (int part = 0; part < LastTankPart; part++) {
+          displayLists[shadow][lod][size][part] = InvalidList;
+        }
+      }
+    }
+  }
   TANKGEOMMGR.rebuildLists();
   return;
 }
