@@ -2383,6 +2383,9 @@ static void				checkEnvironment()
 				warningColor : NULL);
 		}
 	}
+	else if (flagId == TriggerHappyFlag) {
+		myTank->fireShot();
+	}
 
 	bool iAmBurrowing = myTank->getFlag() == BurrowFlag;
 

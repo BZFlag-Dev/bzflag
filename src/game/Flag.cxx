@@ -56,6 +56,7 @@ const char*				Flag::flagName[] = {
 								"No Jumping",
 								"Long Reload",
 								"Antagonize",
+								"Trigger Happy",
 								"USeless flag",
 						};
 
@@ -101,6 +102,7 @@ const char*				Flag::flagAbbv[] = {
 								"NJ",						// no jumping
 								"LR",						// long reload
 								"AN",						// antagonize
+								"TR",						// trigger happy
 								"US",						// useless flag
 						};
 
@@ -160,6 +162,7 @@ const char*				Flag::flagHelp[] = {
 "No Jumping (-NJ):  Tank cannot jump.",
 "Long Reload (-LR):  Tank takes twice as long to reload.",
 "Antagonize (-AN): Tank sends taunts to other players involuntarily",
+"TRigger happy (-TR): Tank fires shots as soon as they are available",
 "You have found the useless flag. Use it wisely",
 						};
 
@@ -229,6 +232,7 @@ FlagType				Flag::getType(FlagId id)
 		case NoJumpingFlag:
 		case LongReloadFlag:
 		case AntagonizeFlag:
+		case TriggerHappyFlag:
 			return FlagSticky;
 		default:
 			return FlagUnstable;

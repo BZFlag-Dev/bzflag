@@ -131,6 +131,7 @@ ShotPath::ShotPath(const FiringInfo& info) :
 		case WideAngleFlag:
 		case NoJumpingFlag:
 		case AntagonizeFlag:
+		case TriggerHappyFlag:
 		case UselessFlag:
 			strategy = new NormalShotStrategy(this);
 			break;

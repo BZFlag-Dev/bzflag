@@ -3348,6 +3348,7 @@ static void parse(int argc, char **argv)
 				flagDisallowed[NoJumpingFlag] = true;
 				flagDisallowed[LongReloadFlag] = true;
 				flagDisallowed[AntagonizeFlag] = true;
+				flagDisallowed[TriggerHappyFlag] = true;
 			}
 			else {
 				if ((f = lookupFlag(argv[i])) == int(NoFlag)) {
