@@ -314,7 +314,7 @@ void			DisplayMenu::callback(HUDuiControl* w, void* data) {
   case '5':
 #ifdef _MSC_VER
     // Suppose Pat want to remind himself
-    { int patlabor_get_tm_to_set_texture; }
+    { int somebody_get_tm_to_set_texture; }
 #endif
     /*
       OpenGLTexture::setFilter((OpenGLTexture::Filter)list->getIndex());

@@ -5143,7 +5143,7 @@ static void		timeConfigurations()
   BZDB.set("enhancedradar", "0");
 #ifdef _MSC_VER
   // Suppose Pat want to remind himself
-  { int patlabor_get_tm_to_set_texture; }
+  { int somebody_get_tm_to_set_texture; }
 #endif
 //  OpenGLTexture::setFilter(OpenGLTexture::Off);
   timeConfiguration(true);
@@ -5195,7 +5195,7 @@ static void		timeConfigurations()
   // lowest quality and return.
 #ifdef _MSC_VER
   // Suppose Pat want to remind himself
-{ int patlabor_get_tm_to_set_texture; }
+{ int somebody_get_tm_to_set_texture; }
 #endif
 //  OpenGLTexture::setFilter(OpenGLTexture::Nearest);
   BZDB.set("texture", OpenGLTexture::getFilterName());
@@ -5206,7 +5206,7 @@ static void		timeConfigurations()
     BZDB.set("texture", "0");
 #ifdef _MSC_VER
     // Suppose Pat want to remind himself
-    { int patlabor_get_tm_to_set_texture; }
+    { int somebody_get_tm_to_set_texture; }
 #endif
 //    OpenGLTexture::setFilter(OpenGLTexture::Off);
     sceneRenderer->setQuality(0);
@@ -5220,7 +5220,7 @@ static void		timeConfigurations()
   BZDB.set("lighting", "1");
 #ifdef _MSC_VER
   // Suppose Pat want to remind himself
-{ int patlabor_get_tm_to_set_texture; }
+{ int somebody_get_tm_to_set_texture; }
 #endif
 //  OpenGLTexture::setFilter(OpenGLTexture::LinearMipmapLinear);
   BZDB.set("texture", OpenGLTexture::getFilterName());
@@ -5250,7 +5250,7 @@ static void		timeConfigurations()
   printError("  nearest texturing");
 #ifdef _MSC_VER
             // Suppose Pat want to remind himself
-{ int patlabor_get_tm_to_set_texture; }
+{ int somebody_get_tm_to_set_texture; }
 #endif
 //  OpenGLTexture::setFilter(OpenGLTexture::Nearest);
   if (timeConfiguration(true) < MaxFrameTime) return;
@@ -5261,7 +5261,7 @@ static void		timeConfigurations()
   BZDB.set("texture", "0");
 #ifdef _MSC_VER
             // Suppose Pat want to remind himself
-{ int patlabor_get_tm_to_set_texture; }
+{ int somebody_get_tm_to_set_texture; }
 #endif
 //  OpenGLTexture::setFilter(OpenGLTexture::Off);
   if (timeConfiguration(true) < MaxFrameTime) return;
@@ -5418,7 +5418,7 @@ void			startPlaying(BzfDisplay* _display,
     BZDB.set("enhancedradar", "0");
 #ifdef _MSC_VER
             // Suppose Pat want to remind himself
-{ int patlabor_get_tm_to_set_texture; }
+{ int somebody_get_tm_to_set_texture; }
 #endif
 //    OpenGLTexture::setFilter(OpenGLTexture::Off);
   }

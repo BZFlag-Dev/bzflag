@@ -95,7 +95,7 @@ copy debug\*.pdb ..\..\*.pdb
 				AdditionalIncludeDirectories="..\..\include,..\..\win32,.\"
 				PreprocessorDefinitions="_WINDOWS;WIN32;NDEBUG"
 				StringPooling="TRUE"
-				RuntimeLibrary="0"
+				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="TRUE"
 				PrecompiledHeaderFile=".\Release/bzflag.pch"
 				AssemblerListingLocation=".\Release/"
@@ -213,7 +213,7 @@ copy debug\*.pdb ..\..\*.pdb
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\src\bzflag\commands.cxx">
+				RelativePath="..\..\src\bzflag\client_commands.cxx">
 			</File>
 			<File
 				RelativePath="..\..\src\bzflag\ControlPanel.cxx">

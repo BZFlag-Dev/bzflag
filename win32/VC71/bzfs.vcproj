@@ -25,7 +25,7 @@
 				AdditionalIncludeDirectories="..\..\include,..\..\win32,.\"
 				PreprocessorDefinitions="_CONSOLE;WIN32;NDEBUG"
 				StringPooling="TRUE"
-				RuntimeLibrary="0"
+				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="TRUE"
 				PrecompiledHeaderFile=".\Release/bzfs.pch"
 				AssemblerListingLocation=".\Release/"
@@ -548,10 +548,10 @@ copy ..\..\src\bzfs\debug\*.exe ..\..\*.exe
 				RelativePath="..\..\src\bzfs\bzfs.h">
 			</File>
 			<File
-				RelativePath="..\..\src\bzfs\BZWReader.h">
+				RelativePath="..\include\BzfString.h">
 			</File>
 			<File
-				RelativePath="..\include\BzfString.h">
+				RelativePath="..\..\src\bzfs\BZWReader.h">
 			</File>
 			<File
 				RelativePath="..\include\CallbackList.h">

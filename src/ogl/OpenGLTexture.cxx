@@ -81,7 +81,7 @@ OpenGLTexture::OpenGLTexture(int _width, int _height,
 
 #ifdef _MSC_VER
   // Suppose Pat want to remind himself
-  { int patlabor_remove_this_once_tm_does_this; }
+  { int somebody_remove_this_once_tm_does_this; }
 #endif
   setFilter(std::string("linearmipmaplinear"));
   initContext();

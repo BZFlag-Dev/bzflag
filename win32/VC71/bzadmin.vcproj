@@ -87,7 +87,7 @@
 				AdditionalIncludeDirectories="..\..\win32,..\..\include,..\..\src\bzflag,.\"
 				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE"
 				StringPooling="TRUE"
-				RuntimeLibrary="0"
+				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="TRUE"
 				UsePrecompiledHeader="2"
 				PrecompiledHeaderFile=".\..\..\src\bzadmin/bzadmin.pch"

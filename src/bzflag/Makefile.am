@@ -114,7 +114,7 @@ bzflag_SOURCES =			\
 	bzflag.cxx			\
 	callbacks.cxx			\
 	callbacks.h			\
-	commands.cxx			\
+	clientCommands.cxx			\
 	commands.h			\
 	daylight.cxx			\
 	daylight.h			\
