@@ -4,6 +4,7 @@ EXTRA_DIST = \
 	bzfs_conf.html	\
 	bzlist.php	\
 	bzwcvt.pl	\
+	checkam		\
 	groups.conf	\
 	hix.bzw	\
 	man2html.c	\
