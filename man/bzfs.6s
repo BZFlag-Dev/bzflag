@@ -1502,4 +1502,4 @@ Specifies a certain range in the world, and what attributes that range has.
 
 
 .SH SEE ALSO
-bzflag(6), bzfls(6)
+bzflag(6), bzadmin(6)

@@ -104,7 +104,6 @@ Uses \fIlatitude\fR when computing celestial object positions.
 \fB-list\fI url\fR
 Look for \fBbzfls\fR servers using \fIurl\fR.  A built-in url is
 used by default (the same url is the default for \fBbzfs\fR).
-See \fBbzfls\fR for a description of the format of \fIurl\fR.
 If \fIurl\fR is \fIdefault\fR then the url is reset to the built-in
 url (the url is remembered across invocations of \fBbzflag\fR).
 \fBBzfls\fR servers keep a list of \fBbzfs\fR servers accessible
@@ -654,4 +653,4 @@ Stores options between game sessions.  Used when HOST is not defined.
 ~/.bzf/<version>/config.cfg.${HOST}
 Stores options between game sessions.  Used when HOST is defined.
 .SH SEE ALSO
-bzfls(6), bzfs(6)
+bzadmin(6), bzfs(6)
