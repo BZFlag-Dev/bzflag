@@ -4255,6 +4255,8 @@ int main(int argc, char **argv)
   // parse arguments
   parse(argc, argv, *clOptions);
 
+  setDebugTimestamp (clOptions->timestampLog, clOptions->timestampMicros);
+
   if (clOptions->bzdbVars.length() > 0) {
     DEBUG1("Loading variables from %s\n", clOptions->bzdbVars.c_str());
     bool success = CFGMGR.read(clOptions->bzdbVars);
