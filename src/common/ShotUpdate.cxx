@@ -40,8 +40,9 @@ void*			ShotUpdate::unpack(void* buf)
   buf = nboUnpackVector(buf, pos);
   buf = nboUnpackVector(buf, vel);
   buf = nboUnpackFloat(buf, dt);
-  short temp = team;
+  short temp;
   buf = nboUnpackShort(buf, temp);
+  team = (TeamColor)temp;
   return buf;
 }
 
