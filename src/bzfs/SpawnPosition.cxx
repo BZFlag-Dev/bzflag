@@ -213,7 +213,7 @@ const bool SpawnPosition::isImminentlyDangerous() const
 const float SpawnPosition::enemyProximityCheck(float &enemyAngle) const
 {
   float worstDist = 1e12f; // huge number
-  bool  noEnemy   = true;
+  bool noEnemy    = true;
 
   for (int i = 0; i < curMaxPlayers; i++) {
     if (player[i].isAlive() && areFoes(player[i].getTeam(), team)) {
@@ -223,7 +223,7 @@ const float SpawnPosition::enemyProximityCheck(float &enemyAngle) const
         float y = enemyPos[1] - testPos[1];
         float distSq = x * x + y * y;
         if (distSq < worstDist) {
-          worstDist = distSq;
+          worstDist  = distSq;
 	  enemyAngle = lastState[i].azimuth;
 	  noEnemy    = false;
 	}

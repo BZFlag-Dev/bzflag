@@ -330,7 +330,7 @@ PlayerAccessInfo::AccessPerm permFromName(const std::string &name)
   if (name == "VETO") return PlayerAccessInfo::veto;
   if (name == "REQUIREIDENTIFY") return PlayerAccessInfo::requireIdentify;
   if (name == "VIEWREPORTS") return PlayerAccessInfo::viewReports;
-	if (name == "ADMINMESSAGES") return PlayerAccessInfo::adminMessages;
+  if (name == "ADMINMESSAGES") return PlayerAccessInfo::adminMessages;
   return PlayerAccessInfo::lastPerm;
 }
 

@@ -1272,6 +1272,7 @@ prevStatePacket ()
   
   return p;
 
+  // FIXME - the above return statement mean these never get executed 
   nextStatePacket ();
   prevStatePacket ();
 }

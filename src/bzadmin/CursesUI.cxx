@@ -176,6 +176,7 @@ bool CursesUI::checkCommand(std::string& str) {
     cmd = "";
     updateCmdWin();
     currentHistory = history.size();
+    return false;
 
     // delete last character
   case KEY_BACKSPACE:

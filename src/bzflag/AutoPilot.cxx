@@ -292,9 +292,10 @@ RemotePlayer *findBestTarget()
         if ((player[t]->getFlag() != Flags::Stealth)
 	||  (myTank->getFlag() == Flags::Seer)
         ||  ((!isObscured) &&  
-	     (TargetingUtils::getTargetAngleDifference(pos, myAzimuth, player[t]->getPosition()) <= 30.0f)))
+	     (TargetingUtils::getTargetAngleDifference(pos, myAzimuth, player[t]->getPosition()) <= 30.0f))) {
 	  target = player[t];
 	  distance = d;
+	}
       }
     }
   }

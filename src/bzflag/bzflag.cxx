@@ -1249,7 +1249,9 @@ int			main(int argc, char** argv)
   CFGMGR.write(getConfigFileName());
 
   // shut down
-  if (filter != NULL) delete filter; filter = NULL;
+  if (filter != NULL)
+    delete filter;
+  filter = NULL;
   display->setDefaultResolution();
   delete pmainWindow;
   delete window;

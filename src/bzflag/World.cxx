@@ -377,9 +377,10 @@ float			World::getProximity(const float* p, float r) const
   float bestProximity = 0.0;
   std::vector<Teleporter>::const_iterator teleporterScan = teleporters.begin();
   while (teleporterScan != teleporters.end()) {
-	const float proximity = teleporterScan->getProximity(p, r);
-	if (proximity > bestProximity) bestProximity = proximity;
-		teleporterScan++;
+    const float proximity = teleporterScan->getProximity(p, r);
+    if (proximity > bestProximity)
+      bestProximity = proximity;
+    teleporterScan++;
   }
   return bestProximity;
 }

@@ -229,7 +229,7 @@ bool SDLDisplay::getEvent(BzfEvent& _event) const
 	_event.type = BzfEvent::Unmap;
       } else {
 	_event.type = BzfEvent::Map;
-      };
+      }
     break;
 
   default:

@@ -3169,7 +3169,7 @@ static void		checkEnvironment(RobotPlayer* tank)
       if (player[i] && !player[i]->isPaused() &&
 	  ((player[i]->getFlag() == Flags::Steamroller) ||
 	   ((tank->getFlag() == Flags::Burrow) && player[i]->isAlive()) &&
-	   player[i]->getFlag() != Flags::PhantomZone)) {
+	    (player[i]->getFlag() != Flags::PhantomZone))) {
 	const float* pos = player[i]->getPosition();
 	if (pos[2] < 0.0f) continue;
 	const float radius = myRadius + BZDB.eval(StateDatabase::BZDB_SRRADIUSMULT) * player[i]->getRadius();

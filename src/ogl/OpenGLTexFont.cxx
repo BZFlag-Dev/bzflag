@@ -579,7 +579,7 @@ void			OpenGLTexFont::draw(const char* string, int length,
     if (!bitmapRep)
       ((OpenGLTexFont*)this)->bitmapRep =
 			BitmapRep::getBitmapRep(rep, (int)width, (int)height);
-      OpenGLTexFont::BitmapRep::setState();
+    OpenGLTexFont::BitmapRep::setState();
   }
 
   float blinkTime = TimeKeeper::getCurrent().getSeconds();

@@ -590,7 +590,7 @@ static void		receiverMoved(float* data)
   lastYRight = lastY - 0.5f * InterAuralDistance * leftY;
 
   for (int i = 0; i < MaxEvents; i++)
-    if (events[i].busy && events[i].flags & SEF_WORLD)
+    if (events[i].busy && (events[i].flags & SEF_WORLD))
       recalcEventDistance(events + i);
 }
 

@@ -860,8 +860,8 @@ float StateDatabase::evaluate(Expression e) const
 	  case ExpressionToken::subtract:
 	    if (unary)
 	      tok.setNumber(-rvalue.getNumber());
-	  else
-	    tok.setNumber(lvalue.getNumber() - rvalue.getNumber());
+	    else
+	      tok.setNumber(lvalue.getNumber() - rvalue.getNumber());
 	    evaluationStack.push(tok);
 	    break;
 	  case ExpressionToken::multiply:

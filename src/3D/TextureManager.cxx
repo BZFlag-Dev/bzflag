@@ -28,7 +28,7 @@
 template <>
 TextureManager* Singleton<TextureManager>::_instance = (TextureManager*)0;
 
-static int noiseProc( ProcTextureInit &init );
+static int noiseProc(ProcTextureInit &init);
 
 
 ProcTextureInit procLoader[1];
@@ -45,10 +45,9 @@ TextureManager::TextureManager()
 
   int i, numTextures;
   numTextures = countof(procLoader);
-  for (i = 0; i < numTextures; i++)
-  {
+  for (i = 0; i < numTextures; i++) {
     procLoader[i].manager = this;
-    procLoader[i].proc( procLoader[i] );
+    procLoader[i].proc(procLoader[i]);
   }
 }
 
@@ -86,7 +85,7 @@ int TextureManager::getTextureID( const char* name, bool reportFail )
       return -1;
     }
     return addTexture(name,image);
-  }  
+  }
   return -1;
 }
 
@@ -145,7 +144,7 @@ const ImageInfo& TextureManager::getInfo ( int id )
 }
 const ImageInfo& TextureManager::getInfo ( const char* name )
 {
-  static ImageInfo   crapInfo;
+  static ImageInfo crapInfo;
   crapInfo.id = -1;
   std::string nameStr = name;
 
@@ -162,26 +161,26 @@ int TextureManager::addTexture( const char* name, OpenGLTexture *texture )
   if (!name || !texture)
     return -1;
 
-   // if the texture already exists kill it
-   // this is why IDs are way better than objects for this stuff
-   TextureNameMap::iterator it = textureNames.find(name);
-   if (it != textureNames.end()) {
-     DEBUG4("Texture %s already exists, overwriting\n", name);
-     textureIDs.erase(textureIDs.find(it->second.id));
-     delete it->second.texture;
-   }
-   ImageInfo info;
-   info.name = name;
-   info.texture = texture;
-   info.id = ++lastImageID;
-   info.alpha = texture->hasAlpha();
-   info.x = texture->getWidth();
-   info.y = texture->getHeight();
-   
-   textureNames[name] = info;
-   textureIDs[info.id] = &textureNames[name];
+  // if the texture already exists kill it
+  // this is why IDs are way better than objects for this stuff
+  TextureNameMap::iterator it = textureNames.find(name);
+  if (it != textureNames.end()) {
+   DEBUG4("Texture %s already exists, overwriting\n", name);
+   textureIDs.erase(textureIDs.find(it->second.id));
+   delete it->second.texture;
+  }
+  ImageInfo info;
+  info.name = name;
+  info.texture = texture;
+  info.id = ++lastImageID;
+  info.alpha = texture->hasAlpha();
+  info.x = texture->getWidth();
+  info.y = texture->getHeight();
 
-   return info.id;
+  textureNames[name] = info;
+  textureIDs[info.id] = &textureNames[name];
+
+  return info.id;
 }
 
 OpenGLTexture* TextureManager::loadTexture(FileTextureInit &init, bool reportFail)
@@ -192,14 +191,14 @@ OpenGLTexture* TextureManager::loadTexture(FileTextureInit &init, bool reportFai
   if (BZDB.isSet( "altImageDir" )) {
     nameToTry = BZDB.get( "altImageDir" );
 #ifdef WIN32
-   nameToTry += '\\';
+    nameToTry += '\\';
 #else
-   nameToTry += '/';
+    nameToTry += '/';
 #endif
-   nameToTry += init.name;
-  }
-  else
+    nameToTry += init.name;
+  } else {
     nameToTry = init.name;
+  }
   unsigned char* image = NULL;
   if (nameToTry.size() && nameToTry.c_str())
     image = MediaFile::readImage( nameToTry, &width, &height);

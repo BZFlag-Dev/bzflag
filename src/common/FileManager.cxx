@@ -197,21 +197,16 @@ std::string			FileManager::catPath(
   if (b.empty())
     return a;
 
+  std::string c = a;
 #if defined(_WIN32)
-  std::string c = a;
   c += "\\";
-  c += b;
-  return c;
 #elif defined(macintosh)
-  std::string c = a;
   c += ':';
-  c += b;
 #else
-  std::string c = a;
   c += "/";
+#endif
   c += b;
   return c;
-#endif
 }
 
 // Local Variables: ***

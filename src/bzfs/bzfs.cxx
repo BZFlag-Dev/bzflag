@@ -925,32 +925,34 @@ static WorldInfo *defineTeamWorld()
     const float xmin = -0.5f * ((2.0f * boxBase + avenueSize) * (actCitySize - 1));
     const float ymin = -0.5f * ((2.0f * boxBase + avenueSize) * (actCitySize - 1));
     const float boxHeight = BZDB.eval(StateDatabase::BZDB_BOXHEIGHT);
-    for (int j = 0; j <= actCitySize / 2; j++)
-      for (int i = 0; i < actCitySize / 2; i++)
-    if (i != actCitySize / 2 || j != actCitySize / 2) {
-      float h = boxHeight;
-      if (clOptions->randomHeights)
-	h *= 2.0f * (float)bzfrand() + 0.5f;
-      world->addBox(
-	  xmin + float(i) * (2.0f * boxBase + avenueSize),
-	  ymin + float(j) * (2.0f * boxBase + avenueSize), 0.0f,
-	  clOptions->randomBoxes ? (0.5f * M_PI * ((float)bzfrand() - 0.5f)) : 0.0f,
-	  boxBase, boxBase, h);
-      world->addBox(
-	  -1.0f * (xmin + float(i) * (2.0f * boxBase + avenueSize)),
-	  -1.0f * (ymin + float(j) * (2.0f * boxBase + avenueSize)), 0.0f,
-	  clOptions->randomBoxes ? (0.5f * M_PI * ((float)bzfrand() - 0.5f)) : 0.0f,
-	  boxBase, boxBase, h);
-      world->addBox(
-	  -1.0f * (ymin + float(j) * (2.0f * boxBase + avenueSize)),
-	  xmin + float(i) * (2.0f * boxBase + avenueSize), 0.0f,
-	  clOptions->randomBoxes ? (0.5f * M_PI * ((float)bzfrand() - 0.5f)) : 0.0f,
-	  boxBase, boxBase, h);
-      world->addBox(
-	  ymin + float(j) * (2.0f * boxBase + avenueSize),
-	  -1.0f * (xmin + float(i) * (2.0f * boxBase + avenueSize)), 0.0f,
-	  clOptions->randomBoxes ? (0.5f * M_PI * ((float)bzfrand() - 0.5f)) : 0.0f,
-	  boxBase, boxBase, h);
+    for (int j = 0; j <= actCitySize / 2; j++) {
+      for (int i = 0; i < actCitySize / 2; i++) {
+	if (i != actCitySize / 2 || j != actCitySize / 2) {
+	  float h = boxHeight;
+	  if (clOptions->randomHeights)
+	    h *= 2.0f * (float)bzfrand() + 0.5f;
+	  world->addBox(
+	      xmin + float(i) * (2.0f * boxBase + avenueSize),
+	      ymin + float(j) * (2.0f * boxBase + avenueSize), 0.0f,
+	      clOptions->randomBoxes ? (0.5f * M_PI * ((float)bzfrand() - 0.5f)) : 0.0f,
+	      boxBase, boxBase, h);
+	  world->addBox(
+	      -1.0f * (xmin + float(i) * (2.0f * boxBase + avenueSize)),
+	      -1.0f * (ymin + float(j) * (2.0f * boxBase + avenueSize)), 0.0f,
+	      clOptions->randomBoxes ? (0.5f * M_PI * ((float)bzfrand() - 0.5f)) : 0.0f,
+	      boxBase, boxBase, h);
+	  world->addBox(
+	      -1.0f * (ymin + float(j) * (2.0f * boxBase + avenueSize)),
+	      xmin + float(i) * (2.0f * boxBase + avenueSize), 0.0f,
+	      clOptions->randomBoxes ? (0.5f * M_PI * ((float)bzfrand() - 0.5f)) : 0.0f,
+	      boxBase, boxBase, h);
+	  world->addBox(
+	      ymin + float(j) * (2.0f * boxBase + avenueSize),
+	      -1.0f * (xmin + float(i) * (2.0f * boxBase + avenueSize)), 0.0f,
+	      clOptions->randomBoxes ? (0.5f * M_PI * ((float)bzfrand() - 0.5f)) : 0.0f,
+	      boxBase, boxBase, h);
+	}
+      }
     }
     // add teleporters
     if (clOptions->useTeleporters) {
@@ -1032,10 +1034,10 @@ static WorldInfo *defineRandomWorld()
   for (i = 0; i < numBoxes; i++) {
     if (clOptions->randomHeights)
       h = boxHeight * ( 2.0f * (float)bzfrand() + 0.5f);
-      world->addBox(worldSize * ((float)bzfrand() - 0.5f),
-	  worldSize * ((float)bzfrand() - 0.5f),
-	  0.0f, 2.0f * M_PI * (float)bzfrand(),
-	  boxBase, boxBase, h);
+    world->addBox(worldSize * ((float)bzfrand() - 0.5f),
+	worldSize * ((float)bzfrand() - 0.5f),
+	0.0f, 2.0f * M_PI * (float)bzfrand(),
+	boxBase, boxBase, h);
   }
 
   // make pyramids
@@ -1046,10 +1048,10 @@ static WorldInfo *defineRandomWorld()
   for (i = 0; i < numPyrs; i++) {
     if (clOptions->randomHeights)
       h = pyrHeight * ( 2.0f * (float)bzfrand() + 0.5f);
-      world->addPyramid(worldSize * ((float)bzfrand() - 0.5f),
-	  worldSize * ((float)bzfrand() - 0.5f),
-	  0.0f, 2.0f * M_PI * (float)bzfrand(),
-	  pyrBase, pyrBase, h);
+    world->addPyramid(worldSize * ((float)bzfrand() - 0.5f),
+	worldSize * ((float)bzfrand() - 0.5f),
+	0.0f, 2.0f * M_PI * (float)bzfrand(),
+	pyrBase, pyrBase, h);
   }
 
   if (clOptions->useTeleporters) {
@@ -1750,8 +1752,8 @@ static void addFlag(int flagIndex)
   flag[flagIndex].dropDone = TimeKeeper::getCurrent();
   flag[flagIndex].dropDone += flightTime;
 	
-	// decide how sticky the flag will be
-	if (flag[flagIndex].flag.type->flagQuality == FlagBad)
+  // decide how sticky the flag will be
+  if (flag[flagIndex].flag.type->flagQuality == FlagBad)
     flag[flagIndex].flag.endurance = FlagSticky;
   else
     flag[flagIndex].flag.endurance = FlagUnstable;
