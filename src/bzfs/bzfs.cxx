@@ -4153,7 +4153,7 @@ static void parseCommand(const char *message, int t)
     }
   // set sets a world configuration variable that gets sent to all clients
   } else if ((hasPerm(t, setVar) || hasPerm(t, setAll)) && strncmp( message + 1, "set", 3) == 0) {
-    CMDMGR->run(message + 1);
+    sendMessage( ServerPlayer, t, CMDMGR->run(message+1).c_str());
   // /shutdownserver terminates the server
   } else if (hasPerm(t, shutdownServer) &&
 	    strncmp(message + 1, "shutdownserver", 8) == 0) {
@@ -5452,7 +5452,7 @@ static std::string cmdSet(const std::string&, const CommandManager::ArgList& arg
     case 2:
       if (BZDB->isSet(args[0])) {
         BZDB->set(args[0], args[1], StateDatabase::Server);
-        return std::string();
+        return args[0] + " set";
       }
       else
 	return "variable " + args[0] + " does not exist";
