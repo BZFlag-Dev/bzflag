@@ -84,6 +84,24 @@ Player::~Player()
   }
 }
 
+// Take into account the quality of player wins/(wins+loss)
+// Try to penalize winning casuality 
+static float rabbitRank (int wins, int losses) {
+  // otherwise do score-based ranking
+  int sum = wins + losses;
+  if (sum == 0)
+    return 0.5;
+  float average = (float)wins/(float)sum;
+  // IIRC that is how wide is the gaussian
+  float penalty = (1.0f - 0.5f / sqrt((float)sum));
+  return average * penalty;
+}
+
+short		Player::getRabbitScore() const
+{
+  return (int)(rabbitRank(wins, losses) * 100.0);
+}
+
 float			Player::getRadius() const
 {
   float tankRadius = BZDBCache::tankRadius;

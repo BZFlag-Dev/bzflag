@@ -57,6 +57,7 @@ public:
   short		getLosses() const;
   short		getTeamKills() const;
   short		getScore() const;
+  short		getRabbitScore() const;
   short		getLocalWins() const;
   short		getLocalLosses() const;
   short		getLocalTeamKills() const;

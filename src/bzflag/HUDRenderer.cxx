@@ -830,8 +830,10 @@ int HUDRenderer::tankScoreCompare(const void* _a, const void* _b)
 {
   RemotePlayer* a = World::getWorld()->getPlayer(*(int*)_a);
   RemotePlayer* b = World::getWorld()->getPlayer(*(int*)_b);
-
-  return b->getScore() - a->getScore();
+  if (World::getWorld()->allowRabbit())
+    return b->getRabbitScore() - a->getRabbitScore();
+  else
+    return b->getScore() - a->getScore();
 }
 
 int HUDRenderer::teamScoreCompare(const void* _c, const void* _d)
@@ -1555,8 +1557,14 @@ void			HUDRenderer::drawPlayerScore(const Player* player,
     sprintf(email, " (%s)", player->getEmailAddress());
   else
     email[0] = '\0';
-  sprintf(score, "%d (%d-%d)[%d]", player->getScore(),
-      player->getWins(), player->getLosses(), player->getTeamKills());
+  if (World::getWorld()->allowRabbit())
+    sprintf(score, "%2d%% %d(%d-%d)[%d]", 
+	    player->getRabbitScore(),
+	    player->getScore(),
+	    player->getWins(), player->getLosses(), player->getTeamKills());
+  else
+    sprintf(score, "%d (%d-%d)[%d]", player->getScore(),
+	    player->getWins(), player->getLosses(), player->getTeamKills());
   if (LocalPlayer::getMyTank() != player)
     sprintf(kills, "%d/%d", player->getLocalWins(), player->getLocalLosses());
   else
