@@ -266,6 +266,10 @@ SOURCE=..\include\Team.h
 # End Source File
 # Begin Source File
 
+SOURCE=..\include\TextUtils.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\include\TimeBomb.h
 # End Source File
 # Begin Source File
