@@ -446,7 +446,7 @@ bool PlayerAccessInfo::readPermsFile(const std::string &filename)
     std::istringstream groupstream(groupline);
     std::string group;
     while (groupstream >> group) {
-      if (!hasGroup(group)) {
+      if (!info.hasGroup(group)) {
 	info.groups.push_back(group);
       }
     }
