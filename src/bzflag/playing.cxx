@@ -4431,6 +4431,11 @@ static void		addObstacle(std::vector<BzfRegion*>& rgnList, const Obstacle& obsta
 {
   float p[4][2];
   const float* c = obstacle.getPosition();
+  const float tankHeight = BZDB->eval(StateDatabase::BZDB_TANKHEIGHT);
+
+  if (tankHeight < c[2])
+    return;
+
   const float a = obstacle.getRotation();
   // FIXME -- this is too generous;  robots will be able to come within
   //	0.49*TankWidth of a building at any orientation which means they
