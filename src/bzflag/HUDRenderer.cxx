@@ -310,7 +310,7 @@ int			HUDRenderer::getMaxMotionSize() const
 
 void			HUDRenderer::setBigFontSize(int, int height)
 {
-  const float s = (float)height / 10.0f;
+  const float s = (float)height / 15.0f;
   bigFont.setSize(s, s);
 
   restartLabelWidth = bigFont.getWidth(restartLabel);
@@ -320,7 +320,7 @@ void			HUDRenderer::setBigFontSize(int, int height)
 
 void			HUDRenderer::setAlertFontSize(int, int height)
 {
-  const float s = (float)height / 16.0f;
+  const float s = (float)height / 24.0f;
   alertFont.setSize(s, s);
 
   for (int i = 0; i < MaxAlerts; i++)
@@ -332,7 +332,7 @@ void			HUDRenderer::setAlertFontSize(int, int height)
 
 void			HUDRenderer::setMajorFontSize(int, int height)
 {
-  const float s = (float)height / 16.0f;
+  const float s = (float)height / 24.0f;
   majorFont.setSize(s, s);
 
   alertY = -majorFont.getSpacing() +
@@ -341,7 +341,7 @@ void			HUDRenderer::setMajorFontSize(int, int height)
 
 void			HUDRenderer::setMinorFontSize(int, int height)
 {
-  const float s = (float)height / 28.0f;
+  const float s = (float)height / 42.0f;
   minorFont.setSize(s, s);
 
   scoreLabelWidth = minorFont.getWidth(scoreSpacingLabel);
@@ -363,7 +363,7 @@ void			HUDRenderer::setMinorFontSize(int, int height)
 
 void			HUDRenderer::setHeadingFontSize(int, int height)
 {
-  const float s = (float)height / 64.0f;
+  const float s = (float)height / 96.0f;
   headingFont.setSize(s, s);
 
   // compute heading labels and (half) widths
@@ -381,7 +381,7 @@ void			HUDRenderer::setHeadingFontSize(int, int height)
 
 void			HUDRenderer::setComposeFontSize(int, int height)
 {
-  const float s = (float)height / 32.0f;
+  const float s = (float)height / 48.0f;
   composeTypeIn->setFontSize(s, s);
 }
 
