@@ -1746,7 +1746,7 @@ static void addPlayer(int playerIndex)
     = GameKeeper::Player::getPlayerByIndex(playerIndex);
   if (!playerData)
     return;
-
+  
   int filterIndex = 0;
   Filter::Action filterAction = filter.check(*playerData, filterIndex);
   if (filterAction == Filter::DROP) {
@@ -1755,9 +1755,10 @@ static void addPlayer(int playerIndex)
   }
   
   // check against ban lists
+  bool playerIsAntiBanned = playerData->accessInfo.hasPerm(PlayerAccessInfo::antiban);
   in_addr playerIP = playerData->netHandler->getIPAddress();
   BanInfo info(playerIP);
-  if (!clOptions->acl.validate(playerIP,&info)) {
+  if (!clOptions->acl.validate(playerIP,&info) && !playerIsAntiBanned) {
 
       std::string rejectionMessage;
 
@@ -1786,7 +1787,8 @@ static void addPlayer(int playerIndex)
     const char *hostname = playerData->netHandler->getHostname();
   
     HostBanInfo hostInfo("*");
-    if (hostname && !clOptions->acl.hostValidate(hostname,&hostInfo)) {
+    if (hostname && !clOptions->acl.hostValidate(hostname,&hostInfo) &&
+    !playerIsAntiBanned) {
       std::string reason = "bannedhost for: ";
       if (hostInfo.reason.size())
         reason += hostInfo.reason;
