@@ -59,7 +59,7 @@ void PlayerInfo::signingOn() {
   state = PlayerDead;
 };
 
-inline bool PlayerInfo::isAlive() {
+bool PlayerInfo::isAlive() {
   return state == PlayerAlive;
 };
 
@@ -221,15 +221,15 @@ void *PlayerInfo::packVirtualFlagCapture(void *buf) {
   return buf;
 };
 
-inline bool PlayerInfo::isTeam(TeamColor _team) const {
+bool PlayerInfo::isTeam(TeamColor _team) const {
   return team == _team;
 };
 
-inline bool PlayerInfo::isObserver() const {
+bool PlayerInfo::isObserver() const {
   return team == ObserverTeam;
 };
 
-inline TeamColor PlayerInfo::getTeam() {
+TeamColor PlayerInfo::getTeam() {
   return team;
 };
 
