@@ -55,6 +55,7 @@ MainWindow::MainWindow(BzfWindow* _window, BzfJoystick* _joystick) :
 MainWindow::~MainWindow()
 {
   window->removeResizeCallback(resizeCB, this);
+  window->removeResizeCallback(initContextCB, this);
 }
 
 void			MainWindow::setZoomFactor(int _zoomFactor)
