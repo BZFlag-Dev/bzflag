@@ -39,11 +39,11 @@ const int udpBufSize = 128000;
 // messes up fstreams.  luckily, we don't need to call the close() method
 // on any fstream.
 #include "bzfio.h"
-#include <fstream.h>
+#include <fstream>
 
 // must be before windows.h
 #include "network.h"
-#include <iomanip.h>
+#include <iomanip>
 
 #if defined(_WIN32)
 #include <windows.h>

@@ -28,7 +28,7 @@
 #endif /* defined(_WIN32) */
 #include <stdarg.h>
 #include "bzfio.h"
-#include <fstream.h>
+#include <fstream>
 #include "bzfgl.h"
 #include "ErrorHandler.h"
 #include "OpenGLGState.h"

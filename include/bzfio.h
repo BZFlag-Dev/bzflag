@@ -28,7 +28,7 @@
 using namespace std;
 #endif
 
-#include <iostream.h>
+#include <iostream>
 
 #endif
 

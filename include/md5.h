@@ -40,8 +40,8 @@ documentation and/or software.
 */
 
 #include <stdio.h>
-#include <fstream.h>
-#include <iostream.h>
+#include <fstream>
+#include <iostream>
 
 class MD5 {
 
@@ -68,7 +68,7 @@ public:
 // methods to acquire finalized result
   unsigned char    *raw_digest ();  // digest as a 16-byte binary array
   char *            hex_digest ();  // digest as a 33-byte ascii-hex string
-  friend ostream&   operator<< (ostream&, MD5 context);
+  friend std::ostream&   operator<< (std::ostream&, MD5 context);
 
 
 
