@@ -15,6 +15,9 @@
 
 /* system implementation headers */
 #include <sys/types.h>
+#if !defined(_WIN32)
+#include <errno.h>
+#endif
 
 /* common implementation headers */
 #include "version.h"
@@ -29,10 +32,6 @@
 #include "MainMenu.h"
 #include "StartupInfo.h"
 #include "HUDDialogStack.h"
-
-#if !defined(_WIN32)
-#include <errno.h>
-#endif
 
 /* from playing.h */
 StartupInfo* getStartupInfo();
