@@ -188,7 +188,7 @@ BZAdminClient::getServerString(std::string& str, ColorCode& colorCode) {
       players.erase(p);
       break;
 
-    case MsgAdminInfo:
+    case MsgAdminInfo: {
       uint8_t numIPs;
       uint8_t dummy;
       vbuf = nboUnpackUByte(vbuf, numIPs);
@@ -203,6 +203,7 @@ BZAdminClient::getServerString(std::string& str, ColorCode& colorCode) {
       returnString = returnString + "*** IP update received, " + 
 	string_util::format("%d", numIPs) + " IP" + (numIPs == 1 ? "" : "s") +
 	" updated.";
+      }
       break;
 
     case MsgKilled:
