@@ -425,7 +425,7 @@ public:
       os<<"banner: "<<it->bannedBy<<'\n';
       os<<"reason: "<<it->reason<<'\n';
     }
-    for (hostBanList_t::const_iterator it2 = hostBanList.begin(); it2 != hostBanList.end(); ++it) {
+    for (hostBanList_t::const_iterator it2 = hostBanList.begin(); it2 != hostBanList.end(); ++it2) {
       // print address
       os<<"host: "<<it2->hostpat<<'\n';
 
