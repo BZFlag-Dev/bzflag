@@ -66,8 +66,8 @@ PCOPTS   = -Wall -W -ansi $(ACOPTS)
 PCXXOPTS = -Wall -W $(ACXXOPTS)
 COPT     = -DNDEBUG -O2
 CXXOPT   = -DNDEBUG -O2 -ffast-math -fexpensive-optimizations
-CDEBUG   = -DDEBUG -g
-CXXDEBUG = -DDEBUG -g
+CDEBUG   = -DDEBUG -g -Werror
+CXXDEBUG = -DDEBUG -g -Werror
 CWOFF    =
 CXXWOFF  =
 
@@ -78,7 +78,7 @@ MKDEP     = $(DEPTH)/tools/depconv
 MKDEPOPT  = -MD
 MKDEPPRE  =
 MKDEPPOST = $(MKDEP) -f $(MKDEPFILE) $*.d; $(RM) $*.d
-MKDEPFILE = Makedepend
+MKDEPFILE = .depend
 
 #
 # search paths

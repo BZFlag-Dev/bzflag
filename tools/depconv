@@ -2,7 +2,7 @@
 #
 # add dependency info from files on command line to $depfile
 
-depfile="Makedepends"
+depfile=".depend"
 
 dependencies=""
 targets="^$"
