@@ -101,10 +101,10 @@ static const float	FlagHelpDuration = 60.0f;
 static StartupInfo	startupInfo;
 static MainMenu*	mainMenu;
 ServerLink*		serverLink = NULL;
-static World*		world = NULL;
+World*		world = NULL;
 LocalPlayer*		myTank = NULL;
 static BzfDisplay*	display = NULL;
-static MainWindow*	mainWindow = NULL;
+MainWindow*	mainWindow = NULL;
 static SceneRenderer*	sceneRenderer = NULL;
 static SceneDatabase*	zScene = NULL;
 static SceneDatabase*	bspScene = NULL;
@@ -119,26 +119,26 @@ static void*		joinGameUserData = NULL;
 bool			admin = false; // am I an admin?
 static bool		serverError = false;
 static bool		serverDied = false;
-static bool		fireButton = false;
-static bool             roamButton = false;
+bool		fireButton = false;
+bool             roamButton = false;
 static bool		firstLife = false;
 static bool		showFPS = false;
 static bool		showDrawTime = false;
-static bool		pausedByUnmap = false;
+bool		pausedByUnmap = false;
 static bool		unmapped = false;
 static int		preUnmapFormat = -1;
 static double		epochOffset;
 static double		lastEpochOffset;
-static float		clockAdjust = 0.0f;
-static float		pauseCountdown = 0.0f;
-static float		destructCountdown = 0.0f;
+float		clockAdjust = 0.0f;
+float		pauseCountdown = 0.0f;
+float		destructCountdown = 0.0f;
 static float		testVideoFormatTimer = 0.0f;
 static int		testVideoPrevFormat = -1;
 static std::vector<PlayingCallbackItem>	playingCallbacks;
 bool			gameOver = false;
 static std::vector<BillboardSceneNode*>	explosions;
 static std::vector<BillboardSceneNode*>	prototypeExplosions;
-static int		savedVolume = -1;
+int		savedVolume = -1;
 static bool		grabMouseAlways = false;
 FlashClock		pulse;
 static bool             wasRabbit = false;
@@ -146,10 +146,10 @@ static bool             wasRabbit = false;
 char		messageMessage[PlayerIdPLen + MessageLen];
 
 
-static void		setTarget();
+void		setTarget();
 static void		setHuntTarget();
 static void*		handleMsgSetVars(void *msg);
-static void		handleFlagDropped(Player* tank);
+void		handleFlagDropped(Player* tank);
 static void		handlePlayerMessage(uint16_t, uint16_t, void*);
 static void		handleFlagTransferred(Player* fromTank, Player* toTank, int flagIndex);
 extern void		dumpResources(BzfDisplay*, SceneRenderer&);
@@ -253,7 +253,7 @@ static void		setGrabMouse(bool grab)
   grabMouseAlways = grab;
 }
 
-static bool		shouldGrabMouse()
+bool		shouldGrabMouse()
 {
   return grabMouseAlways && !unmapped &&
     (myTank == NULL || !myTank->isPaused() || myTank->isAutoPilot());
@@ -420,7 +420,7 @@ static ServerLink*	lookupServer(const Player* player)
 #if defined(FREEZING)
 static bool		motionFreeze = false;
 #endif
-static bool		roaming = false;
+bool		roaming = false;
 enum roamingView {
   roamViewFree = 0,
   roamViewTrack,
@@ -429,14 +429,14 @@ enum roamingView {
   roamViewFlag,
   roamViewCount
 } roamView = roamViewFP;
-static int		roamTrackTank = -1, roamTrackWinner = -1, roamTrackFlag = 0;
-static float		roamPos[3] = { 0.0f, 0.0f, 1.57f },  /* MuzzleHeight */
+int		roamTrackTank = -1, roamTrackWinner = -1, roamTrackFlag = 0;
+float		roamPos[3] = { 0.0f, 0.0f, 1.57f },  /* MuzzleHeight */
   roamDPos[3] = {0.0f, 0.0f, 0.0f};
-static float		roamTheta = 0.0f, roamDTheta = 0.0f;
-static float		roamPhi = 0.0f, roamDPhi = 0.0f;
-static float		roamZoom = 60.0f, roamDZoom = 0.0f;
+float		roamTheta = 0.0f, roamDTheta = 0.0f;
+float		roamPhi = 0.0f, roamDPhi = 0.0f;
+float		roamZoom = 60.0f, roamDZoom = 0.0f;
 
-static void setRoamingLabel(bool force)
+void setRoamingLabel(bool force)
 {
   if (!player)
     return;
@@ -1076,621 +1076,6 @@ static void		doMotion()
   myTank->setDesiredSpeed(speed);
 }
 
-static std::string cmdJump(const std::string&, const CommandManager::ArgList& args)
-{
-  if (args.size() != 0)
-    return "usage: jump";
-  if (myTank != NULL)
-    myTank->jump();
-  return std::string();
-}
-
-static std::string cmdFire(const std::string&, const CommandManager::ArgList& args)
-{
-  if (args.size() != 0)
-    return "usage: fire";
-  if (fireButton && myTank != NULL && myTank->isAlive()
-      && myTank->getTeam() != ObserverTeam)
-    myTank->fireShot();
-  return std::string();
-}
-
-static std::string cmdDrop(const std::string&, const CommandManager::ArgList& args)
-{
-  if (args.size() != 0)
-    return "usage: drop";
-  if (myTank != NULL) {
-    FlagType* flag = myTank->getFlag();
-    if (flag != Flags::Null && !myTank->isPaused() &&
-	flag->endurance != FlagSticky &&
-	!(flag == Flags::PhantomZone && myTank->isFlagActive()) &&
-	!(flag == Flags::OscillationOverthruster &&
-	  myTank->getLocation() == LocalPlayer::InBuilding)) {
-      serverLink->sendDropFlag(myTank->getPosition());
-      // changed: on windows it may happen the MsgDropFlag
-      // never comes back to us, so we drop it right away
-      handleFlagDropped(myTank);
-    }
-  }
-  return std::string();
-}
-
-static std::string cmdIdentify(const std::string&, const CommandManager::ArgList& args)
-{
-  if (args.size() != 0)
-    return "usage: identify";
-  if (myTank != NULL)
-    if (myTank->isAlive() && !myTank->isPaused())
-      setTarget();
-  return std::string();
-}
-
-static std::string cmdRestart(const std::string&, const CommandManager::ArgList& args)
-{
-  if (args.size() != 0)
-    return "usage: restart";
-  if (myTank != NULL)
-    if (!gameOver && !myTank->isSpawning() && (myTank->getTeam() != ObserverTeam) && !myTank->isAlive() && !myTank->isExploding()) {
-      serverLink->sendAlive();
-      myTank->setSpawning(true);
-    }
-
-  return std::string();
-}
-
-static std::string cmdDestruct(const std::string&, const CommandManager::ArgList& args)
-{
-  if (args.size() != 0)
-    return "usage: destruct";
-  if (myTank != NULL) {
-    if (destructCountdown > 0.0f) {
-      destructCountdown = 0.0f;
-      hud->setAlert(1, "Self Destruct cancelled", 1.5f, true);
-    } else {
-      destructCountdown = 5.0f;
-      char msgBuf[40];
-      sprintf(msgBuf, "Self Destructing in %d", (int)(destructCountdown + 0.99f));
-      hud->setAlert(1, msgBuf, 1.0f, false);
-    }
-  }
-  return std::string();
-}
-
-static std::string cmdPause(const std::string&, const CommandManager::ArgList& args)
-{
-  if (args.size() != 0)
-    return "usage: pause";
-
-  if (!pausedByUnmap && myTank->isAlive() && !myTank->isAutoPilot()) {
-    if (myTank->isPaused()) {
-      // already paused, so unpause
-      myTank->setPause(false);
-      controlPanel->addMessage("Resumed");
-
-      // restore the sound
-      if (savedVolume != -1) {
-	setSoundVolume(savedVolume);
-	savedVolume = -1;
-      }
-
-      // grab mouse
-      if (shouldGrabMouse())
-	mainWindow->grabMouse();
-
-    } else if (pauseCountdown > 0.0f) {
-      // player aborted pause
-      pauseCountdown = 0.0f;
-      hud->setAlert(1, "Pause cancelled", 1.5f, true);
-
-    } else if (myTank->getLocation() == LocalPlayer::InBuilding) {
-      // custom message when trying to pause while in a building
-      // (could get stuck on un-pause if flag is taken)
-      hud->setAlert(1, "Can't pause while inside a building", 1.0f, false);
-
-    } else if (myTank->getLocation() == LocalPlayer::InAir) {
-      // custom message when trying to pause when jumping/falling
-      hud->setAlert(1, "Can't pause when you are in the air", 1.0f, false);
-
-    } else if (myTank->getLocation() != LocalPlayer::OnGround &&
-	       myTank->getLocation() != LocalPlayer::OnBuilding) {
-      // catch-all message when trying to pause when you should not
-      hud->setAlert(1, "Unable to pause right now", 1.0f, false);
-
-    } else {
-      // update the pause alert message
-      pauseCountdown = 5.0f;
-      char msgBuf[40];
-      sprintf(msgBuf, "Pausing in %d", (int) (pauseCountdown + 0.99f));
-      hud->setAlert(1, msgBuf, 1.0f, false);
-    }
-  }
-  return std::string();
-}
-
-static std::string	cmdAutoPilot(const std::string&, const CommandManager::ArgList& args)
-{
-  if (args.size() != 0)
-    return "usage: autopilot";
-
-  char messageBuffer[MessageLen];
-  memset(messageBuffer, 0, MessageLen);
-
-  if (myTank != NULL && myTank->getTeam() != ObserverTeam) {
-    if (myTank->isAutoPilot()) {
-      myTank->setAutoPilot(false);
-      hud->setAlert(0, "autopilot disabled", 1.0f, true);
-      strcpy(messageBuffer, "[ROGER] Releasing Controls of " );
-
-      // grab mouse
-      if (shouldGrabMouse()) mainWindow->grabMouse();
-    }
-    else {
-      myTank->setAutoPilot(true);
-      hud->setAlert(0, "autopilot enabled", 1.0f, true);
-      strcpy(messageBuffer, "[ROGER] Taking Controls of " );
-
-      // ungrab mouse
-      mainWindow->ungrabMouse();
-    }
-
-    strcat(messageBuffer, myTank->getCallSign());
-    void* buf = messageMessage;
-    buf = nboPackUByte(buf, AllPlayers);
-    buf = nboPackString(buf, messageBuffer, MessageLen);
-    serverLink->send(MsgMessage, sizeof(messageMessage), messageMessage);
-
-  }
-
-  return std::string();
-}
-
-static std::string cmdSend(const std::string&, const CommandManager::ArgList& args)
-{
-  static ComposeDefaultKey composeKeyHandler;
-  if (args.size() != 1)
-    return "usage: send {all|team|nemesis|recipient}";
-  std::string composePrompt;
-  if (args[0] == "all") {
-    void* buf = messageMessage;
-    buf = nboPackUByte(buf, AllPlayers);
-    composePrompt = "Send to all: ";
-  } else if (args[0] == "team") {
-    void* buf = messageMessage;
-    buf = nboPackUByte(buf, TeamToPlayerId(myTank->getTeam()));
-    composePrompt = "Send to teammates: ";
-  } else if (args[0] == "nemesis") {
-    const Player* nemesis = myTank->getNemesis();
-    if (!nemesis) return std::string();
-
-    void* buf = messageMessage;
-    buf = nboPackUByte(buf, nemesis->getId());
-    composePrompt = "Send to ";
-    composePrompt += nemesis->getCallSign();
-    composePrompt += ": ";
-  } else if (args[0] == "recipient") {
-    const Player* recipient = myTank->getRecipient();
-    if (!recipient) {
-      for (int i = 0; i < curMaxPlayers; i++) {
-	if (player[i]) {
-	  myTank->setRecipient(player[i]);
-	  break;
-	}
-      }
-    }
-    recipient = myTank->getRecipient();
-    if (recipient) {
-      void* buf = messageMessage;
-      buf = nboPackUByte(buf, recipient->getId());
-      composePrompt = "Send to ";
-      composePrompt += recipient->getCallSign();
-      composePrompt += ": ";
-    }
-  } else {
-    return "usage: send {all|team|nemesis|recipient}";
-  }
-  messageHistoryIndex = 0;
-  hud->setComposing(composePrompt);
-  HUDui::setDefaultKey(&composeKeyHandler);
-  return std::string();
-}
-
-#ifdef SNAPPING
-static std::string cmdScreenshot(const std::string&, const CommandManager::ArgList& args)
-{
-  static int snap = 0;
-  if (args.size() != 0)
-    return "usage: screenshot";
-
-  std::fstream f;
-  std::string filename = string_util::format("bzfi%04d.png", snap++);
-  f.open(filename.c_str(), std::ios::out | std::ios::binary);
-  if (f.is_open()) {
-    int w = mainWindow->getWidth(), h = mainWindow->getHeight();
-    unsigned char* b = new unsigned char[h * w * 3 + h];  //screen of pixels + column for filter type required by PNG
-
-    //Prepare gamma table
-    unsigned char gammaTable[256];
-    if (BZDB.isSet("gamma")) {
-      float gamma = (float) atof(BZDB.get("gamma").c_str());
-      for(int i = 0; i < 256; i++) {
-	float lum = ((float) i) / 256.0f;
-	float lumadj = pow(lum, 1.0f / gamma);
-	gammaTable[i] = (unsigned char) (lumadj * 256);
-      }
-    }
-
-    /* Write a PNG stream.
-    FIXME: Note that there are several issues with this code, altho it produces perfectly fine PNGs.
-    1. We do no filtering.  Sub filters would probably work great on BZFlag screenshots.
-    2. Gamma-correction is preapplied by BZFlag's gamma table.  This ignores the PNG gAMA chunk, but so do many viewers (including Mozilla)
-    3. Timestamp (tIME) chunk is not added to the file, but would be a good idea.
-    */
-    int temp = 0; //temporary values for binary file writing
-    char tempByte = 0;
-    int crc = 0;  //used for running CRC values
-
-    // Write PNG headers
-    f << "\211PNG\r\n\032\n";
-#define PNGTAG(t_) ((((int)t_[0]) << 24) | \
-		   (((int)t_[1]) << 16) | \
-		   (((int)t_[2]) <<  8) | \
-		   (int)t_[3])
-
-    // IHDR chunk
-    temp = htonl((int) 13);       //(length) IHDR is always 13 bytes long
-    f.write((char*) &temp, 4);
-    temp = htonl(PNGTAG("IHDR")); //(tag) IHDR
-    f.write((char*) &temp, 4);
-    crc = crc32(crc, (unsigned char*) &temp, 4);
-    temp = htonl(w);              //(data) Image width
-    f.write((char*) &temp, 4);
-    crc = crc32(crc, (unsigned char*) &temp, 4);
-    temp = htonl(h);              //(data) Image height
-    f.write((char*) &temp, 4);
-    crc = crc32(crc, (unsigned char*) &temp, 4);
-    tempByte = 8;                 //(data) Image bitdepth (8 bits/sample = 24 bits/pixel)
-    f.write(&tempByte, 1);
-    crc = crc32(crc, (unsigned char*) &tempByte, 1);
-    tempByte = 2;                 //(data) Color type: RGB = 2
-    f.write(&tempByte, 1);
-    crc = crc32(crc, (unsigned char*) &tempByte, 1);
-    tempByte = 0;
-    int i;
-    for (i = 0; i < 3; i++) { //(data) Last three tags are compression (only 0 allowed), filtering (only 0 allowed), and interlacing (we don't use it, so it's 0)
-      f.write(&tempByte, 1);
-      crc = crc32(crc, (unsigned char*) &tempByte, 1);
-    }
-    crc = htonl(crc);
-    f.write((char*) &crc, 4);    //(crc) write crc
-
-    // IDAT chunk
-    for (i = h - 1; i >= 0; i--) {
-      b[(h - (i + 1)) * (w * 3 + 1)] = 0;  //filter type byte at the beginning of each scanline (0 = no filter)
-      glReadPixels(0, i, w, 1, GL_RGB, GL_UNSIGNED_BYTE, b + (h - (i + 1)) * (w * 3 + 1) + 1);
-      // apply gamma correction if necessary
-      if (BZDB.isSet("gamma")) {
-	unsigned char *ptr = b + (h - (i + 1)) * (w * 3 + 1) + 1;
-	for(int i = 0; i < w * 3; i++) {
-	  *ptr = gammaTable[*ptr];
-	  ptr++;
-	}
-      }
-    }
-    unsigned char* bz = new unsigned char[h * w * 3 + h + 15];  //just like b, but compressed; might get bigger, so give it room
-    unsigned long zlength = h * w * 3 + h + 15;     //length of bz[], will be changed by zlib to the length of the compressed string contained therein
-    //compress b into bz with some compression
-    compress2(bz, &zlength, b, h * w * 3 + h, 5);
-    temp = htonl(zlength);                          //(length) IDAT length after compression
-    f.write((char*) &temp, 4);
-    temp = htonl(PNGTAG("IDAT"));                   //(tag) IDAT
-    f.write((char*) &temp, 4);
-    crc = crc32(crc = 0, (unsigned char*) &temp, 4);
-    f.write(reinterpret_cast<char*>(bz), zlength);  //(data) This line of pixels, compressed
-    crc = htonl(crc32(crc, bz, zlength));
-    f.write((char*) &crc, 4);                       //(crc) write crc
-
-    // tEXt chunk containing bzflag build/version
-    temp = htonl((int) 9 + strlen(getAppVersion()));//(length) tEXt is 9 + strlen(getAppVersion())
-    f.write((char*) &temp, 4);
-    temp = htonl(PNGTAG("tEXt"));                   //(tag) tEXt
-    f.write((char*) &temp, 4);
-    crc = crc32(crc = 0, (unsigned char*) &temp, 4);
-    strcpy(reinterpret_cast<char*>(b), "Software"); //(data) Keyword
-    f.write(reinterpret_cast<char*>(b), strlen(reinterpret_cast<const char*>(b)));
-    crc = crc32(crc, b, strlen(reinterpret_cast<const char*>(b)));
-    tempByte = 0;			            //(data) Null character separator
-    f.write(&tempByte, 1);
-    crc = crc32(crc, (unsigned char*) &tempByte, 1);
-    strcpy((char*) b, getAppVersion());             //(data) Text contents (build/version)
-    f.write(reinterpret_cast<char*>(b), strlen(reinterpret_cast<const char*>(b)));
-    crc = htonl(crc32(crc, b, strlen(reinterpret_cast<const char*>(b))));
-    f.write((char*) &crc, 4);                       //(crc) write crc
-
-    // IEND chunk
-    temp = htonl((int) 0);        //(length) IEND is always 0 bytes long
-    f.write((char*) &temp, 4);
-    temp = htonl(PNGTAG("IEND")); //(tag) IEND
-    f.write((char*) &temp, 4);
-    crc = htonl(crc32(crc = 0, (unsigned char*) &temp, 4));
-				  //(data) IEND has no data field
-    f.write((char*) &crc, 4);     //(crc) write crc
-    crc = 0;
-    delete [] bz;
-    delete [] b;
-    f.close();
-    char notify[128];
-#ifdef _WIN32
-    _snprintf(notify, 128, "%s: %dx%d", filename.c_str(), w, h);
-#else
-    snprintf(notify, 128, "%s: %dx%d", filename.c_str(), w, h);
-#endif
-    controlPanel->addMessage(notify);
-  }
-  return std::string();
-}
-#endif
-
-static std::string cmdTime(const std::string&, const CommandManager::ArgList& args)
-{
-  // FIXME - time should be moved into BZDB
-  if (args.size() != 1)
-    return "usage: time {forward|backward}";
-  if (args[0] == "forward") {
-    clockAdjust += 5.0f * 60.0f;
-  } else if (args[0] == "backward") {
-    clockAdjust -= 5.0f * 60.0f;
-  } else {
-    return "usage: time {forward|backward}";
-  }
-  return std::string();
-}
-
-static std::string cmdRoam(const std::string&, const CommandManager::ArgList& args)
-{
-  if (args.size() == 0)
-    return "usage: roam {rotate|translate|zoom|cycle} <args>";
-  if (!roaming)
-    return std::string();
-  if (args[0] == "rotate") {
-    if (args.size() != 2)
-      return "usage: roam rotate {left|right|up|down|stop}";
-    if (!roamButton || args[1] == "stop") {
-      roamDTheta  = 0.0f;
-      roamDPhi    = 0.0f;
-      roamDPos[0] = 0.0f;
-      roamDPos[1] = 0.0f;
-      roamDPos[2] = 0.0f;
-    } else if (args[1] == "left") {
-      roamDTheta = 90.0f * (roamZoom / 90.0f);
-    } else if (args[1] == "right") {
-      roamDTheta = -90.0f * (roamZoom / 90.0f);
-    } else if (args[1] == "up") {
-      roamDPhi = -60.0f * (roamZoom / 90.0f);
-    } else if (args[1] == "down") {
-      roamDPhi = 60.0f * (roamZoom / 90.0f);
-    } else {
-      return "usage: roam rotate {left|right|up|down|stop}";
-    }
-  } else if (args[0] == "translate") {
-    if (args.size() != 2)
-      return "usage: roam translate {left|right|forward|backward|up|down|stop}";
-    if (!roamButton || args[1] == "stop") {
-      roamDTheta  = 0.0f;
-      roamDPhi    = 0.0f;
-      roamDPos[0] = 0.0f;
-      roamDPos[1] = 0.0f;
-      roamDPos[2] = 0.0f;
-    } else if (args[1] == "left") {
-      roamDPos[1] = 4.0f * BZDB.eval(StateDatabase::BZDB_TANKSPEED);
-    } else if (args[1] == "right") {
-      roamDPos[1] = -4.0f * BZDB.eval(StateDatabase::BZDB_TANKSPEED);
-    } else if (args[1] == "forward") {
-      roamDPos[0] = 4.0f * BZDB.eval(StateDatabase::BZDB_TANKSPEED);
-    } else if (args[1] == "backward") {
-      roamDPos[0] = -4.0f * BZDB.eval(StateDatabase::BZDB_TANKSPEED);
-    } else if (args[1] == "up") {
-      roamDPos[2] = 4.0f * BZDB.eval(StateDatabase::BZDB_TANKSPEED);
-    } else if (args[1] == "down") {
-      roamDPos[2] = -4.0f * BZDB.eval(StateDatabase::BZDB_TANKSPEED);
-    } else {
-      return "usage: roam translate {left|right|forward|backward|up|down|stop}";
-    }
-  } else if (args[0] == "zoom") {
-    if (args.size() != 2)
-      return "usage: roam zoom {in|out|normal|stop}";
-    if (!roamButton || args[1] == "stop") {
-      roamDZoom = 0.0f;
-    } else if (args[1] == "in") {
-      roamDZoom = 50.0f;
-    } else if (args[1] == "out") {
-      roamDZoom = -50.0f;
-    } else if (args[1] == "normal") {
-      roamZoom = 60.0f;
-    } else {
-      return "usage: roam zoom {in|out|normal|stop}";
-    }
-  } else if (args[0] == "cycle") {
-    if (args.size() != 3)
-      return "usage: roam cycle {type|subject} {forward|backward}";
-    if (args[1] == "type") {
-      if (args[2] == "forward") {
-	roamView = roamingView((roamView + 1) % roamViewCount);
-	if (roamView == roamViewFlag) {
-	  const int maxFlags = world->getMaxFlags();
-	  bool found = false;
-	  for (int i = 0; i < maxFlags; i++) {
-	    const Flag& flag = world->getFlag(i);
-	    if (flag.type->flagTeam != NoTeam) {
-	      roamTrackFlag = i;
-	      found = true;
-	      break;
-	    }
-	  }
-	  if (!found)
-	    roamView = roamViewFree;
-	} else if ((roamTrackTank != -1) && (roamView == roamViewTrack || roamView == roamViewFollow || roamView == roamViewFP)) {
-	  if ((player[roamTrackTank] != NULL) && (!player[roamTrackTank]->isAlive())) {
-	    bool found = false;
-	    for (int i = 0; i < curMaxPlayers; i++) {
-	      if (player[i] && player[i]->isAlive()) {
-		roamTrackTank = roamTrackWinner = i;
-		found = true;
-		break;
-	      }
-	    }
-	    if (!found)
-	      roamTrackTank = -1;
-	  }
-	}
-	setRoamingLabel(true);
-      } else if (args[2] == "backward") {
-	// FIXME
-      } else {
-	return "usage: roam cycle {type|subject} {forward|backward}";
-      }
-    } else if (args[1] == "subject") {
-      if (args[2] == "forward") {
-	if (roamView == roamViewFree) {
-	  // do nothing
-	} else if (roamView == roamViewFlag) {
-	  const int maxFlags = world->getMaxFlags();
-	  for (int i = 1; i < maxFlags; i++) {
-	    int j = (roamTrackFlag + i) % maxFlags;
-	    const Flag& flag = world->getFlag(j);
-	    if (flag.type->flagTeam != NoTeam) {
-	      roamTrackFlag = j;
-	      break;
-	    }
-	  }
-	} else {
-	  int i, j;
-	  for (i = 2; i <= curMaxPlayers; i++) {
-	    j = (roamTrackTank + i) % (curMaxPlayers + 1) - 1;
-	    if ((j == -1) || (player[j] && player[j]->isAlive())) {
-	      roamTrackTank = roamTrackWinner = j;
-	      break;
-	    }
-	  }
-	}
-	setRoamingLabel(true);
-      } else if (args[2] == "backward") {
-	if (roamView == roamViewFree) {
-	  // do nothing
-	} else if (roamView == roamViewFlag) {
-	  const int maxFlags = world->getMaxFlags();
-	  for (int i = 1; i < maxFlags; i++) {
-	    int j = (roamTrackFlag - i + maxFlags) % maxFlags;
-	    const Flag& flag = world->getFlag(j);
-	    if (flag.type->flagTeam != NoTeam) {
-	      roamTrackFlag = j;
-	      break;
-	    }
-	  }
-	} else {
-	  for (int i = 2; i <= curMaxPlayers; i++) {
-	    int j = (roamTrackTank - i + curMaxPlayers) % (curMaxPlayers + 1) - 1;
-	    if ((j == -1) || (player[j] && player[j]->isAlive())) {
-	      roamTrackTank = roamTrackWinner = j;
-	      break;
-	    }
-	  }
-	}
-	setRoamingLabel(true);
-      } else {
-	return "usage: roam cycle {type|subject} {forward|backward}";
-      }
-    } else {
-      return "usage: roam cycle {type|subject} {forward|backward}";
-    }
-  } else {
-    return "usage: roam {rotate|translate|zoom|cycle} <args>";
-  }
-  return std::string();
-}
-
-static std::string cmdSilence(const std::string&, const CommandManager::ArgList& args)
-{
-  static SilenceDefaultKey silenceKeyHandler;
-  if (args.size() != 0)
-    return "usage: silence";
-  messageHistoryIndex = 0;
-  hud->setComposing("[Un]Silence: ");
-  HUDui::setDefaultKey(&silenceKeyHandler);
-  return std::string();
-}
-
-static std::string cmdServerCommand(const std::string&, const CommandManager::ArgList& args)
-{
-  static ServerCommandKey serverCommandKeyHandler;
-  if (args.size() != 0)
-    return "usage: servercommand";
-  static bool prevAdmin = admin;
-  if (prevAdmin == false && admin == true) serverCommandKeyHandler.adminInit();
-  if (prevAdmin == true && admin == false) serverCommandKeyHandler.nonAdminInit();
-  prevAdmin = admin;
-
-  messageHistoryIndex = 0;
-  serverCommandKeyHandler.init();
-  HUDui::setDefaultKey(&serverCommandKeyHandler);
-  return std::string();
-}
-
-static std::string cmdScrollPanel(const std::string&, const CommandManager::ArgList& args)
-{
-  if (args.size() != 1)
-    return "usage: scrollpanel {up|down}\n";
-  if (args[0] == "up") {
-    controlPanel->setMessagesOffset(2,1);
-  } else if (args[0] == "down") {
-    controlPanel->setMessagesOffset(-2,1);
-  } else {
-    return "usage: scrollpanel {up|down}\n";
-  }
-  return std::string();
-}
-
-static std::string cmdHunt(const std::string&, const CommandManager::ArgList& args)
-{
-  if (args.size() != 0)
-    return "usage: hunt";
-  if (hud->getHunting()) {
-    hud->setHunting(false);
-  } else {
-    playLocalSound(SFX_HUNT);
-    hud->setHunt(!hud->getHunt());
-    hud->setHuntPosition(0);
-    if (!BZDB.isTrue("displayScore"))
-      BZDB.set("displayScore", "1");
-  }
-  return std::string();
-}
-
-struct CommandListItem {
-  const char* name;
-  CommandManager::CommandFunction func;
-  const char* help;
-};
-
-static const CommandListItem commandList[] = {
-  { "fire",	&cmdFire,	"fire:  fire a shot" },
-  { "jump",	&cmdJump,	"jump:  make player jump" },
-  { "drop",	&cmdDrop,	"drop:  drop the current flag" },
-  { "identify",	&cmdIdentify,	"identify:  identify/lock-on-to player in view" },
-  { "restart",	&cmdRestart,	"restart:  restart playing" },
-  { "destruct", &cmdDestruct,	"destruct:  self destruct" },
-  { "pause",	&cmdPause,	"pause:  pause/resume" },
-  { "send",	&cmdSend,	"send {all|team|nemesis|recipient}:  start composing a message" },
-#ifdef SNAPPING
-  { "screenshot", &cmdScreenshot, "screenshot:  take a screenshot" },
-#endif
-  { "time",	&cmdTime,	"time {forward|backward}:  adjust the current time" },
-  { "roam",	&cmdRoam,	"roam {rotate|translate|zoom|cycle} <args>:  roam around" },
-  { "silence",	&cmdSilence,	"silence:  silence/unsilence a player" },
-  { "servercommand",	&cmdServerCommand,	"servercommand:  quick admin" },
-  { "scrollpanel",	&cmdScrollPanel,	"scrollpanel {up|down}:  scroll message panel" },
-  { "hunt",	&cmdHunt,	"hunt:  hunt a specific player" },
-  { "autopilot",&cmdAutoPilot,	"autopilot:  set/unset autopilot bot code" },
-};
 
 static void		doEvent(BzfDisplay* display)
 {
@@ -3258,7 +2643,7 @@ static void *handleMsgSetVars(void *msg)
   return msg;
 }
 
-static void		handleFlagDropped(Player* tank)
+void handleFlagDropped(Player* tank)
 {
   // skip it if player doesn't actually have a flag
   if (tank->getFlag() == Flags::Null) return;
@@ -3550,7 +2935,7 @@ static void		checkEnvironment()
   }
 }
 
-static void		setTarget()
+void setTarget()
 {
   // get info about my tank
   const float c = cosf(-myTank->getAngle());
