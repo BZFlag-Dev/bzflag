@@ -1597,7 +1597,7 @@ void handleReplayCmd(int t, const char * message)
     buf++;
   }
 
-  if (strncmp (buf, "listfiles", 9) == 0) {
+  if (strncmp (buf, "list", 4) == 0) {
     Replay::sendFileList (t);
   }
   else if (strncmp (buf, "load", 4) == 0) {

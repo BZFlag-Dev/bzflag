@@ -264,7 +264,7 @@ void handleRecordCmd(int t, const char *);
 
 /** /replay command hook function
  *
- *  /replay listfiles           # list available replay file (*.bzr)
+ *  /replay list                # list available replay files
  *  /replay load [filename]     # set the replay file (or load the default)
  *  /replay play                # began playing
  *  /replay skip <secs>         # fast foward or rewind in time

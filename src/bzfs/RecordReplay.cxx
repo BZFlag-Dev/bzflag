@@ -20,12 +20,10 @@
 #endif  // _MSC_VER
 
 #ifndef _WIN32
-#  define  DIRECTORY_SEPARATOR '/'
 #  include <sys/types.h>
 #  include <sys/stat.h>
 typedef int64_t s64;
 #else
-#  define  DIRECTORY_SEPARATOR '\\'
 #  include <time.h>
 #  include <sys/types.h>
 #  include <sys/stat.h>
@@ -221,7 +219,7 @@ bool Record::start (int playerIndex)
     sendMessage(ServerPlayer, playerIndex, "Couldn't start capturing");
     return false;
   }
-  if (makeDirExistMsg (RecordDir.c_str(), playerIndex) == false) {
+  if (!makeDirExistMsg (RecordDir.c_str(), playerIndex)) {
     return false;
   }    
   Recording = true;
@@ -243,7 +241,7 @@ bool Record::stop (int playerIndex)
   
   Recording = false;
   if (RecordMode == StraightToFile) {
-    Record::init();
+    recordReset();
   }
 
   return true;
@@ -254,11 +252,11 @@ bool Record::setDirectory (const char *dirname)
 {
   int len = strlen (dirname);
   RecordDir = dirname;
-  if (dirname[len - 2] != DIRECTORY_SEPARATOR) {
-    RecordDir += DIRECTORY_SEPARATOR;
+  if (dirname[len - 2] != DirectorySeparator) {
+    RecordDir += DirectorySeparator;
   }
   
-  if (makeDirExist (RecordDir.c_str()) == false) {
+  if (!makeDirExist (RecordDir.c_str())) {
     // you've been warned, leave it at that
     printf ("Could not open or create record directory: %s\n",
             RecordDir.c_str());
@@ -330,27 +328,27 @@ bool Record::saveFile (int playerIndex, const char *filename)
     return false;
   }
   
-  Record::init();
+  recordReset();
   Recording = true;
   RecordMode = StraightToFile;
 
   RecordFile = openWriteFile (playerIndex, filename);
   if (RecordFile == NULL) {
-    Record::init();
+    recordReset();
     snprintf (buffer, MessageLen, "Could not open for writing: %s", name.c_str());
     sendMessage (ServerPlayer, playerIndex, buffer, true);
     return false;
   }
   
   if (!saveHeader (playerIndex, RecordFile)) {
-    Record::init();
+    recordReset();
     snprintf (buffer, MessageLen, "Could not save header: %s", name.c_str());
     sendMessage (ServerPlayer, playerIndex, buffer, true);
     return false;
   }
   
   if (!saveStates ()) {
-    Record::init();
+    recordReset();
     snprintf (buffer, MessageLen, "Could not save states: %s", name.c_str());
     sendMessage (ServerPlayer, playerIndex, buffer, true);
     return false;
@@ -419,14 +417,14 @@ bool Record::saveBuffer (int playerIndex, const char *filename, int seconds)
   
   RecordFile = openWriteFile (playerIndex, filename);
   if (RecordFile == NULL) {
-    Record::init();
+    recordReset();
     snprintf (buffer, MessageLen, "Could not open for writing: %s", name.c_str());
     sendMessage (ServerPlayer, playerIndex, buffer, true);
     return false;
   }
   
   if (!saveHeader (playerIndex, RecordFile)) {
-    Record::init();
+    recordReset();
     snprintf (buffer, MessageLen, "Could not save header: %s", name.c_str());
     sendMessage (ServerPlayer, playerIndex, buffer, true);
     return false;
@@ -609,7 +607,7 @@ bool Replay::loadFile(int playerIndex, const char *filename)
     return false;
   }
   
-  Replay::init();
+  replayReset();
   
   ReplayFile = openFile (filename, "rb");
   if (ReplayFile == NULL) {
@@ -667,13 +665,46 @@ bool Replay::loadFile(int playerIndex, const char *filename)
 }
 
 
+static bool isRecordFile (const char *filename)
+{
+  unsigned int magic;
+  char buffer[sizeof(magic)];
+  bool retval = true;
+  
+  FILE *file = fopen (filename, "rb");
+  if (file == NULL) {
+    return false;
+  }
+  else {
+    if (fread (buffer, sizeof(magic), 1, file) <= 0) {
+      retval = false;
+    }
+    else {
+      nboUnpackUInt (buffer, magic);
+      if (magic != ReplayMagic) {
+        retval = false;
+      }
+    }
+  }  
+  fclose (file);
+  return retval;
+}
+
+
 bool Replay::sendFileList(int playerIndex)
 {
-#ifndef _MSC_VER //FIXME
+  int count = 0;
+  char buffer[MessageLen];
+
+  snprintf (buffer, MessageLen, "dir:   %s",RecordDir.c_str());
+  sendMessage (ServerPlayer, playerIndex, buffer, true);
+    
+#ifndef _MSC_VER
+
   DIR *dir;
   struct dirent *de;
   
-  if (makeDirExistMsg (RecordDir.c_str(), playerIndex) == false) {
+  if (!makeDirExistMsg (RecordDir.c_str(), playerIndex)) {
     return false;
   }
   
@@ -683,13 +714,44 @@ bool Replay::sendFileList(int playerIndex)
   }
   
   while ((de = readdir (dir)) != NULL) {
-    sendMessage (ServerPlayer, playerIndex, de->d_name);
+    std::string name = RecordDir;
+    name += de->d_name;
+    if (isRecordFile (name.c_str())) {
+      snprintf (buffer, MessageLen, "file:  %s", de->d_name);
+      sendMessage (ServerPlayer, playerIndex, buffer, true);
+      count++;
+    }
   }
   
   closedir (dir);
-#else
-  sendMessage (ServerPlayer, playerIndex, "/replay listfiles doesn't work on Windows VC builds yet");
+
+#else  // _MSC_VER
+
+  if (!makeDirExistMsg (RecordDir.c_str(), playerIndex)) {
+    return false;
+  }
+
+  WIN32_FIND_DATA findData;
+  HANDLE h = FindFirstFile("*", &findData);
+  if (h != INVALID_HANDLE_VALUE) {
+    do {
+      std::string name = RecordDir;
+      name += findData.cFileName;
+      if (isRecordFile (name.c_str())) {
+        snprintf (buffer, MessageLen, "file:  %s", findData.cFileName);
+        sendMessage (ServerPlayer, playerIndex, buffer, true);
+        count++;
+      }
+    } while (FindNextFile(h, &findData));
+
+    FindClose(h);
+  }
+  
 #endif // _MSC_VER
+
+  if (count == 0) {
+    sendMessage (ServerPlayer, playerIndex, "*** no record files found ***");
+  }
     
   return true;
 }
@@ -919,7 +981,7 @@ bool Replay::playing ()
 void Replay::sendHelp (int playerIndex)
 {
   sendMessage(ServerPlayer, playerIndex, "usage:");
-  sendMessage(ServerPlayer, playerIndex, "  /replay listfiles");
+  sendMessage(ServerPlayer, playerIndex, "  /replay list");
   sendMessage(ServerPlayer, playerIndex, "  /replay load <filename>");
   sendMessage(ServerPlayer, playerIndex, "  /replay play");
   sendMessage(ServerPlayer, playerIndex, "  /replay skip [+/-seconds]");
@@ -1148,7 +1210,7 @@ loadRRpacket (FILE *f)
   if (p->len > (MaxPacketLen - ((int)sizeof(u16) * 2))) {
     fprintf (stderr, "loadRRpacket: ERROR, packtlen = %i\n", p->len);
     free (p);
-    Replay::init();
+    replayReset();
     return NULL;
   }
 
@@ -1255,7 +1317,7 @@ static FILE *
 openFile (const char *filename, const char *mode)
 {
   std::string name = RecordDir.c_str();
-  name += DIRECTORY_SEPARATOR;
+  name += DirectorySeparator;
   name += filename;
   
   return fopen (name.c_str(), mode);
@@ -1265,7 +1327,7 @@ openFile (const char *filename, const char *mode)
 static FILE *
 openWriteFile (int playerIndex, const char *filename)
 {
-  if (makeDirExistMsg (RecordDir.c_str(), playerIndex) == false) {
+  if (!makeDirExistMsg (RecordDir.c_str(), playerIndex)) {
     return NULL;
   }
   
@@ -1314,7 +1376,7 @@ makeDirExist (const char *dirname)
 static bool
 makeDirExistMsg (const char *dirname, int playerIndex)
 {
-  if (makeDirExist (dirname) == false) {
+  if (!makeDirExist (dirname)) {
     char buffer[MessageLen];
     sendMessage (ServerPlayer, playerIndex,
                  "Could not open or create record directory:");

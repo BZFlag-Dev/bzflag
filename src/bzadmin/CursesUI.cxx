@@ -102,7 +102,7 @@ CursesUI::CursesUI(BZAdminClient& c) :
   comp.registerWord("/reload");
   comp.registerWord("/removegroup ");
   comp.registerWord("/replay ");
-  comp.registerWord("listfiles");
+  comp.registerWord("list");
   comp.registerWord("load");
   comp.registerWord("play");
   comp.registerWord("skip");
