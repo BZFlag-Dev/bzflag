@@ -11,19 +11,12 @@
  */
 
 /* this config is just for Dev-C++ since it doesn't use automake */
-
 #ifndef _DEVCPP_CONFIG
 #define _DEVCPP_CONFIG
-
-//a lot of things aren't declared if strict ansi is on, so just skip it
-#ifdef __STRICT_ANSI__
-#   undef __STRICT_ANSI__
-#endif
 
 #if defined(WIN32) && !defined(_WIN32)
 #define _WIN32
 #endif
-
 //__GNUC_PATCHLEVEL__ was introduced with GCC 3.x, so ifndef, this thing is old!
 #ifndef __GNUC_PATCHLEVEL__
 #   warning It is recommended that you update MinGW32 to the latest version of GCC.
@@ -55,11 +48,6 @@
 
 /* Enable score dumping for BZFS */
 #define PRINTSCORE 1
-
-/* On windows, strcasecmp is really stricmp */
-#ifdef _WIN32
-#define HAVE_STRICMP 1
-#endif
 
 /* find a matching function for count() */
 #define HAVE_STD_COUNT 1
@@ -119,4 +107,6 @@
   #include <Windows.h>
 #endif //WIN32
 
-#endif //_DEVCPP_CONFIG
+#include <math.h>
+
+#endif

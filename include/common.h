@@ -18,7 +18,11 @@
 #define	BZF_COMMON_H
 
 // this should always be the very FIRST header
-#include "config.h"
+#ifdef _DEVCPP //the Dev-C++ build is acting very stubborn; this is (hopefully) -temporary-
+# include_next "config.h"
+#else
+# include "config.h"
+#endif
 
 #ifdef _WIN32
 #include "win32.h"

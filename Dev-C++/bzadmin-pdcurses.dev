@@ -5,13 +5,13 @@ UnitCount=38
 Type=1
 Ver=1
 ObjFiles=
-Includes=..\include;..\src\bzflag;.
+Includes=..\Dev-C++;..\src\bzflag;..\include
 Libs=
 PrivateResource=
 ResourceIncludes=
 MakeIncludes=
-Compiler=-Wall -W_@@_
-CppCompiler=-DHAVE_HYPOTF -DHAVE_ASINF -DHAVE_ATAN2F -DHAVE_ATANF -DHAVE_COSF -DHAVE_EXPF -DHAVE_FABSF -DHAVE_FLOORF -DHAVE_FMODF -DHAVE_LOGF -DHAVE_POWF -DHAVE_SINF -DHAVE_SQRTF -DHAVE_TANF -Wall -W_@@_
+Compiler=-D_DEVCPP=1 -Wall -W_@@_
+CppCompiler=-D_DEVCPP=1 -Wall -W_@@_
 Linker=-lstdc++ -lwsock32 -lwinmm -lcurses_@@_
 IsCpp=1
 Icon=
