@@ -163,6 +163,7 @@
 		</Configuration>
 		<Configuration
 			Name="KRB5 Release|Win32"
+			IntermediateDirectory="$(ConfigurationName)"
 			ConfigurationType="1">
 			<Tool
 				Name="VCCLCompilerTool"/>
@@ -198,6 +199,9 @@
 		<Filter
 			Name="Source Files"
 			Filter="cpp;c;cxx;rc;def;r;odl;idl;hpj;bat">
+			<File
+				RelativePath="..\..\src\obstacle\ArcObstacle.cxx">
+			</File>
 			<File
 				RelativePath="..\..\src\obstacle\BaseBuilding.cxx">
 				<FileConfiguration
@@ -255,6 +259,9 @@
 						PreprocessorDefinitions=""
 						BasicRuntimeChecks="3"/>
 				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\src\obstacle\ConeObstacle.cxx">
 			</File>
 			<File
 				RelativePath="..\..\src\obstacle\MeshFace.cxx">
@@ -322,6 +329,9 @@
 						PreprocessorDefinitions=""
 						BasicRuntimeChecks="3"/>
 				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\src\obstacle\SphereObstacle.cxx">
 			</File>
 			<File
 				RelativePath="..\..\src\obstacle\Teleporter.cxx">
@@ -417,6 +427,9 @@
 			Name="Header Files"
 			Filter="h;hpp;hxx;hm;inl">
 			<File
+				RelativePath="..\..\include\ArcObstacle.h">
+			</File>
+			<File
 				RelativePath="..\..\include\BaseBuilding.h">
 			</File>
 			<File
@@ -441,7 +454,13 @@
 				RelativePath="..\..\include\common.h">
 			</File>
 			<File
+				RelativePath="..\..\include\ConeObstacle.h">
+			</File>
+			<File
 				RelativePath="..\..\src\obstacle\EmptySceneNodeGenerator.h">
+			</File>
+			<File
+				RelativePath="..\..\src\obstacle\MeshUtils.h">
 			</File>
 			<File
 				RelativePath="..\..\include\Obstacle.h">
@@ -466,6 +485,9 @@
 			</File>
 			<File
 				RelativePath="..\..\include\SceneNode.h">
+			</File>
+			<File
+				RelativePath="..\..\include\SphereObstacle.h">
 			</File>
 			<File
 				RelativePath="..\..\include\Teleporter.h">

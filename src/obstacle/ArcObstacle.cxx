@@ -11,6 +11,7 @@
  */
 
 #include <math.h>
+#include <assert.h>
 #include "common.h"
 #include "global.h"
 #include "Pack.h"

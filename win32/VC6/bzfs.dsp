@@ -155,6 +155,10 @@ SOURCE=..\..\src\bzfs\CustomLink.cxx
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\src\bzfs\CustomMaterial.cxx
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\src\bzfs\CustomMesh.cxx
 # End Source File
 # Begin Source File
@@ -367,6 +371,10 @@ SOURCE=..\..\src\bzfs\CustomLink.h
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\src\bzfs\CustomMaterial.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\src\bzfs\CustomMesh.h
 # End Source File
 # Begin Source File
@@ -448,10 +456,6 @@ SOURCE=..\..\src\bzfs\MasterBanList.h
 # Begin Source File
 
 SOURCE=..\..\include\md5.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\include\MeshUtils.h
 # End Source File
 # Begin Source File
 

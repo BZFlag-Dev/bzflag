@@ -202,6 +202,7 @@ copy ..\..\src\bzfs\debug\*.exe ..\..\*.exe
 		</Configuration>
 		<Configuration
 			Name="KRB5 Release|Win32"
+			IntermediateDirectory="$(ConfigurationName)"
 			ConfigurationType="1">
 			<Tool
 				Name="VCCLCompilerTool"
@@ -517,6 +518,9 @@ copy ..\..\src\bzfs\debug\*.exe ..\..\*.exe
 						PreprocessorDefinitions=""
 						BasicRuntimeChecks="3"/>
 				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\src\bzfs\CustomMaterial.cxx">
 			</File>
 			<File
 				RelativePath="..\..\src\bzfs\CustomMesh.cxx">
@@ -993,6 +997,9 @@ copy ..\..\src\bzfs\debug\*.exe ..\..\*.exe
 			</File>
 			<File
 				RelativePath="..\..\src\bzfs\CustomLink.h">
+			</File>
+			<File
+				RelativePath="..\..\src\bzfs\CustomMaterial.h">
 			</File>
 			<File
 				RelativePath="..\..\src\bzfs\CustomPyramid.h">

@@ -138,6 +138,10 @@ LIB32=link.exe -lib
 # PROP Default_Filter "c;cxx"
 # Begin Source File
 
+SOURCE=..\..\src\game\BzMaterial.cxx
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\src\game\CommandsStandard.cxx
 # End Source File
 # Begin Source File
@@ -170,10 +174,6 @@ SOURCE=..\..\src\game\LagInfo.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\src\game\MeshMaterial.cxx
-# End Source File
-# Begin Source File
-
 SOURCE=..\..\src\game\NetHandler.cxx
 # End Source File
 # Begin Source File
@@ -196,6 +196,10 @@ SOURCE=..\..\src\game\VotingArbiter.cxx
 # Begin Group "Header Files"
 
 # PROP Default_Filter "h"
+# Begin Source File
+
+SOURCE=..\..\include\BzMaterial.h
+# End Source File
 # Begin Source File
 
 SOURCE=..\..\src\game\CommandsStandard.h
@@ -223,10 +227,6 @@ SOURCE=..\..\include\Intersect.h
 # Begin Source File
 
 SOURCE=..\..\include\LagInfo.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\include\MeshMaterial.h
 # End Source File
 # Begin Source File
 

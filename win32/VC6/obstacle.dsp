@@ -141,6 +141,10 @@ LIB32=link.exe -lib
 # PROP Default_Filter "cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
 # Begin Source File
 
+SOURCE=..\..\src\obstacle\ArcObstacle.cxx
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\src\obstacle\BaseBuilding.cxx
 # End Source File
 # Begin Source File
@@ -154,6 +158,10 @@ SOURCE=..\..\src\obstacle\BoxBuilding.cxx
 # Begin Source File
 
 SOURCE=..\..\src\obstacle\BoxSceneNodeGenerator.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\obstacle\ConeObstacle.cxx
 # End Source File
 # Begin Source File
 
@@ -205,6 +213,10 @@ SOURCE=..\..\src\obstacle\TetraSceneNodeGenerator.cxx
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\src\obstacle\SphereObstacle.cxx
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\src\obstacle\WallObstacle.cxx
 # End Source File
 # Begin Source File
@@ -215,6 +227,10 @@ SOURCE=..\..\src\obstacle\WallSceneNodeGenerator.cxx
 # Begin Group "Header Files"
 
 # PROP Default_Filter "h;hpp;hxx;hm;inl"
+# Begin Source File
+
+SOURCE=..\..\include\ArcObstacle.h
+# End Source File
 # Begin Source File
 
 SOURCE=..\..\include\BaseBuilding.h
@@ -246,6 +262,10 @@ SOURCE=..\..\include\bzfio.h
 # Begin Source File
 
 SOURCE=..\..\include\CallbackList.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\include\ConeObstacle.h
 # End Source File
 # Begin Source File
 
@@ -318,6 +338,10 @@ SOURCE=..\..\include\SceneNode.h
 # Begin Source File
 
 SOURCE=..\..\include\Singleton.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\include\SphereObstacle.h
 # End Source File
 # Begin Source File
 
