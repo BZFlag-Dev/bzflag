@@ -115,6 +115,10 @@ bool			WallSceneNode::cull(const ViewFrustum& frustum) const
 int			WallSceneNode::pickLevelOfDetail(
 					const SceneRenderer& renderer) const
 {
+  if (!BZDBCache::tesselation) {
+    return 0;
+  }
+
   int bestLOD = 0;
 
   const GLfloat* sphere = getSphere();

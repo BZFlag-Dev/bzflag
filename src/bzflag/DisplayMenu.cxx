@@ -89,8 +89,9 @@ DisplayMenu::DisplayMenu() : formatMenu(NULL)
   option->setLabel("Lighting:");
   option->setCallback(callback, (void*)"4");
   options = &option->getList();
-  options->push_back(std::string("Off"));
-  options->push_back(std::string("On"));
+  options->push_back(std::string("None"));
+  options->push_back(std::string("Fast"));
+  options->push_back(std::string("Best"));
   option->update();
   list.push_back(option);
 
@@ -272,7 +273,15 @@ void			DisplayMenu::resize(int width, int height)
     ((HUDuiList*)list[i++])->setIndex(BZDB.isTrue("dither"));
     ((HUDuiList*)list[i++])->setIndex(BZDBCache::blend);
     ((HUDuiList*)list[i++])->setIndex(BZDB.isTrue("smooth"));
-    ((HUDuiList*)list[i++])->setIndex(BZDB.isTrue("lighting"));
+    if (BZDB.isTrue("lighting")) {
+      if (BZDB.isTrue("tesselation")) {
+        ((HUDuiList*)list[i++])->setIndex(2);
+      } else {
+        ((HUDuiList*)list[i++])->setIndex(1);
+      }
+    } else {
+      ((HUDuiList*)list[i++])->setIndex(0);
+    }
     tex = (HUDuiList*)list[i++];
     ((HUDuiList*)list[i++])->setIndex(renderer->useQuality());
     ((HUDuiList*)list[i++])->setIndex(BZDB.isTrue("shadows"));
@@ -325,13 +334,18 @@ void			DisplayMenu::callback(HUDuiControl* w, void* data) {
     BZDB.set("smooth", list->getIndex() ? "1" : "0");
     sceneRenderer->notifyStyleChange();
     break;
-  case '4':
-    BZDB.set("lighting", list->getIndex() ? "1" : "0");
-    BZDB.set("_texturereplace", (!BZDB.isTrue("lighting") &&
-				 sceneRenderer->useQuality() < 2) ? "1" : "0");
-    BZDB.setPersistent("_texturereplace", false);
-    sceneRenderer->notifyStyleChange();
+  case '4': {
+    bool oldLighting = BZDB.isTrue("lighting");
+    BZDB.set("lighting", list->getIndex() == 0 ? "0" : "1");
+    BZDB.set("tesselation", list->getIndex() == 2 ? "1" : "0");
+    if (oldLighting != BZDB.isTrue("lighting")) {
+      BZDB.set("_texturereplace", (!BZDB.isTrue("lighting") &&
+				   sceneRenderer->useQuality() < 2) ? "1" : "0");
+      BZDB.setPersistent("_texturereplace", false);
+      sceneRenderer->notifyStyleChange();
+    }
     break;
+  }
   case '5':
 #ifdef _MSC_VER
     // Suppose Pat want to remind himself

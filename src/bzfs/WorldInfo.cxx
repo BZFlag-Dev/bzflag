@@ -68,9 +68,10 @@ void WorldInfo::addPyramid(float x, float y, float z, float r, float w, float d,
 }
 
 void WorldInfo::addTetra(const float (*vertices)[3], const bool *visible,
+                         const bool *colored, const float (*colors)[4],
                          bool drive, bool shoot)
 {
-  TetraBuilding tetra (vertices, visible, drive, shoot);
+  TetraBuilding tetra (vertices, visible, colored, colors, drive, shoot);
   tetras.push_back (tetra);
 }
 
@@ -405,20 +406,31 @@ int WorldInfo::packDatabase()
   for (std::vector<TetraBuilding>::iterator tetra_it = tetras.begin();
        tetra_it != tetras.end(); ++tetra_it) {
     TetraBuilding &tetra = *tetra_it;
-    unsigned char visible = 0;
-    // bit 0 is for plane 0, etc...
-    for (int v = 0; v < 4; v++) {
-      if (tetra.getVisibility(v)) {
-        visible = visible | (1 << v);
+    unsigned char planeflags = 0;   // 0-3 are visibility, 4-7 are colored
+    unsigned char bytecolors[4][4]; // pack the colors into a 32bit format
+    int v, c;
+    for (v = 0; v < 4; v++) {
+      if (tetra.isVisiblePlane(v)) {
+        planeflags = planeflags | (1 << v);
+      }
+      if (tetra.isColoredPlane(v)) {
+        planeflags = planeflags | (1 << (v + 4));
+      }
+      for (c = 0; c < 4; c++) {
+        bytecolors[v][c] = (unsigned char) tetra.getPlaneColor(v)[c];
       }
     }
     databasePtr = nboPackUShort(databasePtr, WorldCodeTetraSize);
     databasePtr = nboPackUShort(databasePtr, WorldCodeTetra);
-    databasePtr = nboPackVector(databasePtr, tetra.getVertex(0));
-    databasePtr = nboPackVector(databasePtr, tetra.getVertex(1));
-    databasePtr = nboPackVector(databasePtr, tetra.getVertex(2));
-    databasePtr = nboPackVector(databasePtr, tetra.getVertex(3));
-    databasePtr = nboPackUByte(databasePtr, visible);
+    for (v = 0; v < 4; v++) {
+      databasePtr = nboPackVector(databasePtr, tetra.getVertex(v));
+    }
+    for (v = 0; v < 4; v++) {
+      for (c = 0; c < 4; c++) {
+        databasePtr = nboPackUByte(databasePtr, bytecolors[v][c]);
+      }
+    }
+    databasePtr = nboPackUByte(databasePtr, planeflags);
     bitMask = 0;
     if (tetra.isDriveThrough())
       bitMask |= _DRIVE_THRU;

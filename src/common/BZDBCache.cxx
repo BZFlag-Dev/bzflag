@@ -23,6 +23,7 @@ bool  BZDBCache::blend;
 bool  BZDBCache::texture;
 bool  BZDBCache::shadows;
 bool  BZDBCache::zbuffer;
+bool  BZDBCache::tesselation;
 
 float BZDBCache::flagPoleSize;
 float BZDBCache::flagPoleWidth;
@@ -41,6 +42,7 @@ void BZDBCache::init()
   BZDB.addCallback("texture", clientCallback, NULL);
   BZDB.addCallback("shadows", clientCallback, NULL);
   BZDB.addCallback("zbuffer", clientCallback, NULL);
+  BZDB.addCallback("tesselation", clientCallback, NULL);
 
   BZDB.addCallback(StateDatabase::BZDB_MAXLOD, serverCallback, NULL);
   BZDB.addCallback(StateDatabase::BZDB_TANKHEIGHT, serverCallback, NULL);
@@ -70,6 +72,8 @@ void BZDBCache::clientCallback(const std::string& name, void *)
     shadows = BZDB.isTrue("shadows");
   else if (name == "zbuffer")
     zbuffer = BZDB.isTrue("zbuffer");
+  else if (name == "tesselation")
+    tesselation = BZDB.isTrue("tesselation");
 }
 
 void BZDBCache::serverCallback(const std::string& name, void *)

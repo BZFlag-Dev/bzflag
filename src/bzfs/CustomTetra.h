@@ -29,6 +29,8 @@ class CustomTetra : public WorldFileObject {
     int vertexCount;
     bool visible[4];
     float vertices[4][3];
+    bool colored[4];
+    float colors[4][4];
     
     bool driveThrough; //FIXME
     bool shootThrough; //FIXME

@@ -409,7 +409,6 @@ void			SceneDatabaseBuilder::addTetra(SceneDatabase* db,
 						const TetraBuilding& o)
 {
   // this assumes tetras have four parts:  four sides
-  int part = 0;
   WallSceneNode* node;
   ObstacleSceneNodeGenerator* nodeGen = new TetraSceneNodeGenerator(&o);
 
@@ -430,19 +429,37 @@ void			SceneDatabaseBuilder::addTetra(SceneDatabase* db,
   if (BZDB.eval("useQuality") >= 3)
     textureFactor = BZDB.eval("tetraWallHighResTexRepeat");
 
+  int part = 0;
+  int realPart = 0;
   while ((node = nodeGen->getNextNode(-textureFactor * boxTexHeight,
 				      -textureFactor * boxTexHeight,
                                       tetraLOD))) {
-    node->setColor(tetraColors[part]);
-    node->setModulateColor(tetraModulateColors[part]);
-    node->setLightedColor(tetraLightedColors[part]);
-    node->setLightedModulateColor(tetraLightedModulateColors[part]);
+                                      
+    while (!o.isVisiblePlane(realPart)) {
+      realPart = (realPart + 1) % 4;
+    }
+    
+    if (!o.isColoredPlane(realPart)) {
+      node->setColor(tetraColors[part]);
+      node->setModulateColor(tetraModulateColors[part]);
+      node->setLightedColor(tetraLightedColors[part]);
+      node->setLightedModulateColor(tetraLightedModulateColors[part]);
+      node->setUseColorTexture(useColorTexture);
+    }
+    else {
+      const float* color = o.getPlaneColor(realPart);
+      node->setColor(color);
+      node->setModulateColor(color);
+      node->setLightedColor(color);
+      node->setLightedModulateColor(color);
+      node->setUseColorTexture(false);
+    }
     node->setMaterial(tetraMaterial);
     node->setTexture(tetraTexture);
-    node->setUseColorTexture(useColorTexture);
 
     db->addStaticNode(node);
     part = (part + 1) % 4;
+    realPart = (realPart + 1) % 4;
   }
   delete nodeGen;
 }

@@ -125,15 +125,29 @@ void* WorldBuilder::unpack(void* buf)
       case WorldCodeTetra: {
         float vertices[4][3];
         bool visible[4];
+        bool colored[4];
+        float colors[4][4];
+        unsigned char bytecolor;
 	unsigned char planeflags, tempflags;
+	int v, c;
 
 	if (len != WorldCodeTetraSize)
 	  return NULL;
 
-        buf = nboUnpackVector(buf, vertices[0]);
-        buf = nboUnpackVector(buf, vertices[1]);
-        buf = nboUnpackVector(buf, vertices[2]);
-        buf = nboUnpackVector(buf, vertices[3]);
+        for (v = 0; v < 4; v++) {
+          buf = nboUnpackVector(buf, vertices[v]);
+        }
+        for (v = 0; v < 4; v++) {
+          for (c = 0; c < 4; c++) {
+            buf = nboUnpackUByte(buf, bytecolor);
+            if (bytecolor == 0xFF) {
+              colors[v][c] = 1.0f; // no rounding errors here,
+                                   // likely isn't a real problem
+            } else {
+              colors[v][c] = ((float)bytecolor) / 255.0f;
+            }
+          }
+        }
 	buf = nboUnpackUByte(buf, planeflags);
 	buf = nboUnpackUByte(buf, tempflags);
 	
@@ -143,11 +157,16 @@ void* WorldBuilder::unpack(void* buf)
           } else {
             visible[p] = false;
           }
+	  if (planeflags & (1 << (p + 4))) {
+            colored[p] = true;
+          } else {
+            colored[p] = false;
+          }
         }
           
-	TetraBuilding tetra(vertices, visible,
-			    (tempflags & _DRIVE_THRU)!=0, (tempflags & _SHOOT_THRU)!=0);
-
+	TetraBuilding tetra(vertices, visible, colored, colors,
+			    (tempflags & _DRIVE_THRU) != 0,
+			    (tempflags & _SHOOT_THRU) != 0);
 	append(tetra);
 	break;
       }

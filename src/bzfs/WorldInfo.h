@@ -51,7 +51,9 @@ public:
   void addBox(float x, float y, float z, float r, float w, float d, float h, bool drive = false, bool shoot = false);
   void addPyramid(float x, float y, float z, float r, float w, float d, float h, bool drive = false, bool shoot = false, bool flipZ = false);
   void addTeleporter(float x, float y, float z, float r, float w, float d, float h, float b, bool drive = false, bool shoot = false);
-  void addTetra(const float (*vertices)[3], const bool *visible, bool drive = false, bool shoot = false);
+  void addTetra(const float (*vertices)[3], const bool *visible, 
+                const bool *colored, const float (*colors)[4],
+                bool drive = false, bool shoot = false);
   void addBase(float x, float y, float z, float r, float w, float d, float h,
 	       int color, bool drive = false, bool shoot = false);
   void addLink(int from, int to);

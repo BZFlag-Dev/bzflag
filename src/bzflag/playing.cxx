@@ -5249,16 +5249,17 @@ void			startPlaying(BzfDisplay* _display,
     BZDB.set("blend", "0");
     BZDB.set("smooth", "0");
     BZDB.set("lighting", "0");
+    BZDB.set("tesselation", "1");  // lighting set to 0 overrides
     BZDB.set("texture", "0");
     sceneRenderer->setQuality(0);
     BZDB.set("dither", "0");
     BZDB.set("shadows", "0");
     BZDB.set("enhancedradar", "0");
 #ifdef _MSC_VER
-            // Suppose Pat want to remind himself
-{ int somebody_get_tm_to_set_texture; }
+    // Suppose Pat want to remind himself
+    { int somebody_get_tm_to_set_texture; }
 #endif
-//    OpenGLTexture::setFilter(OpenGLTexture::Off);
+    // OpenGLTexture::setFilter(OpenGLTexture::Off);
   }
 
   // should we grab the mouse?  yes if fullscreen.

@@ -23,7 +23,8 @@
 
 class TetraBuilding : public Obstacle {
   public:
-			TetraBuilding(const float (*vertices)[3], const bool *visible, 
+			TetraBuilding(const float (*vertices)[3], const bool *visible,
+			              const bool *colored, const float (*colors)[4],
 			              bool drive = false, bool shoot = false);
 			~TetraBuilding();
 
@@ -55,18 +56,22 @@ class TetraBuilding : public Obstacle {
     
     const float*   getPlane(int plane) const;
     const float*   getVertex(int vertex) const;
-    bool           getVisibility(int plane) const;
     const float  (*getPlanes() const)[4];
     const float  (*getVertices() const)[3];
+    bool           isVisiblePlane(int plane) const;
+    bool           isColoredPlane(int plane) const;
+    const float*   getPlaneColor(int plane) const;
 
     std::string	        userTextures[1];
 
   private:
     static const char*	typeName;
     float vertices[4][3];
-    float planes[4][4];
     bool visible[4];      // is this plane visible?
-                          // plane are numbered to the opposite vertex
+    bool colored[4];      // is this plane colored?
+    float colors[4][4];   // RGBA color specifications per plane
+    float planes[4][4];
+                          // planes are numbered to the opposite vertex
 };  
 
 
@@ -80,9 +85,19 @@ inline const float *TetraBuilding::getVertex(int vertex) const
   return vertices[vertex];
 }
 
-inline bool TetraBuilding::getVisibility(int plane) const
+inline bool TetraBuilding::isVisiblePlane(int plane) const
 {
   return visible[plane];
+}
+
+inline bool TetraBuilding::isColoredPlane(int plane) const
+{
+  return colored[plane];
+}
+
+inline const float *TetraBuilding::getPlaneColor(int plane) const
+{
+  return colors[plane];
 }
 
 inline const float (*TetraBuilding::getPlanes() const)[4]

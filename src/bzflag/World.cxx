@@ -727,19 +727,29 @@ bool			World::writeWorld(std::string filename)
       for (int v = 0; v < 4; v++) {
         const float* vertex = tetra.getVertex(v);
         out << "\tvertex " << vertex[0] << " " << vertex[1] << " " << vertex[2] << std::endl;
+        if (tetra.isColoredPlane (v)) {
+          const float* color = tetra.getPlaneColor(v);
+          unsigned int bytecolor[4];
+          for (int c = 0; c < 4; c++) {
+            bytecolor[c] = (unsigned char)(color[c] * 255.5f);
+          }
+          out << "\tcolor " << bytecolor[0] << " " << bytecolor[1] << " "
+                            << bytecolor[2] << " " << bytecolor[3] << std::endl;
+        }
       }
       // write the plane visibility
+      int p;
       bool allVisible = true;
-      for (int p = 0; p < 4; p++) {
-        if (!tetra.getVisibility(p)) {
+      for (p = 0; p < 4; p++) {
+        if (!tetra.isVisiblePlane(p)) {
           allVisible = false;
           break;
         }
       }
       if (!allVisible) {
         out << "\tvisible";
-        for (int p = 0; p < 4; p++) {
-          if (tetra.getVisibility(p)) {
+        for (p = 0; p < 4; p++) {
+          if (tetra.isVisiblePlane(p)) {
             out << " 1";
           } else {
             out << " 0";

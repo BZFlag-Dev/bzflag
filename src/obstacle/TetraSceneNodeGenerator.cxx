@@ -34,7 +34,7 @@ TetraSceneNodeGenerator::~TetraSceneNodeGenerator()
 WallSceneNode*		TetraSceneNodeGenerator::getNextNode(
 				float uRepeats, float vRepeats, bool lod)
 {
-  while ((getNodeNumber() < 4) && !tetra->getVisibility(getNodeNumber())) {
+  while ((getNodeNumber() < 4) && !tetra->isVisiblePlane(getNodeNumber())) {
     incNodeNumber();
   }
 

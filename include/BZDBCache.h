@@ -28,6 +28,7 @@ public:
 	static bool  texture;
 	static bool  shadows;
 	static bool  zbuffer;
+	static bool  tesselation;
 
 	static float maxLOD;
 	static float tankHeight;

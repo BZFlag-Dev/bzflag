@@ -29,6 +29,10 @@ CustomTetra::CustomTetra()
   // make all of the planes visible
   for (int i = 0; i < 4; i++) {
     visible[i] = true;
+    colored[i] = false;
+    for (int j = 0; j < 4; j++) {
+      colors[j][i] = 1.0f;
+    }
   }
   
   // FIXME - can't use WorldFileObstable as the base
@@ -42,15 +46,49 @@ bool CustomTetra::read(const char *cmd, std::istream& input)
   if (strcasecmp(cmd, "vertex") == 0) {
     if (vertexCount >= 4) {
       std::cout << "Extra tetrahedron vertex" << std::endl;
-      return true; // keep on chugging
+      // keep on chugging
     }
-    float* vertex = vertices[vertexCount];
-    input >> vertex[0] >> vertex[1] >> vertex[2];
-    
-    vertexCount++;
+    else {
+      float* vertex = vertices[vertexCount];
+      input >> vertex[0] >> vertex[1] >> vertex[2];
+      vertexCount++;
+    }
   }
   else if (strcasecmp(cmd, "visible") == 0) {
     input >> visible[0] >> visible[1] >> visible[2] >> visible[3];
+  }
+  else if (strcasecmp(cmd, "color") == 0) {
+    unsigned int bytecolor[4];
+    if (vertexCount < 1) {
+      // assign to all planes
+      input >> bytecolor[0] >> bytecolor[1] 
+            >> bytecolor[2] >> bytecolor[3];
+      printf ("%i %i %i %i\n", // FIXME
+              bytecolor[0], bytecolor[1], bytecolor[2], bytecolor[3]);
+      for (int v = 0; v < 4; v++) {
+        colored[v] = true;
+        for (int c = 0; c < 4; c++) {
+          colors[v][c] = (float)bytecolor[c];
+        }
+      }
+    }
+    else if (vertexCount > 4) {
+      std::cout << "Tetrahedron color for extra vertex" << std::endl;
+      // keep on chugging
+    }
+    else if (colored[vertexCount - 1]) {
+      std::cout << "Extra tetrahedron color" << std::endl;
+      // keep on chugging
+    }
+    else { 
+      input >> bytecolor[0] >> bytecolor[1]
+            >> bytecolor[2] >> bytecolor[3];
+      colored[vertexCount - 1] = true;
+      float* color = colors[vertexCount - 1];
+      for (int c = 0; c < 4; c++) {
+        color[c] = (float)bytecolor[c];
+      }
+    }
   }
   else if (strcasecmp(cmd, "drivethrough") == 0) {
     driveThrough = true;
@@ -78,7 +116,7 @@ void CustomTetra::write(WorldInfo *world) const
     return;
   }
   
-  world->addTetra(vertices, visible, driveThrough, shootThrough);
+  world->addTetra(vertices, visible, colored, colors, driveThrough, shootThrough);
 }
 
 // Local variables: ***

@@ -22,12 +22,15 @@ const char*		TetraBuilding::typeName = "TetraBuilding";
 static bool makePlane (const float* p1, const float* p2, const float* pc, float* r);
 
 
-TetraBuilding::TetraBuilding(const float (*_vertices)[3], const bool *_visible, 
-                             bool drive, bool shoot) :
+TetraBuilding::TetraBuilding(const float (*_vertices)[3], const bool *_visible,
+			                 const bool *_colored, const float (*_colors)[4],
+			                 bool drive, bool shoot) :
                              Obstacle(_vertices[0], 0.0f, 50.0f, 50.0f, 50.0f, drive, shoot) //FIXME
 {
   memcpy (vertices, _vertices, 4 * sizeof (float[3]));
   memcpy (visible, _visible, 4 * sizeof (bool));
+  memcpy (colored, _colored, 4 * sizeof (bool));
+  memcpy (colors, _colors, 4 * sizeof (float[4]));
   
   // make sure the the planes are facing outwards
   float edge[3][3]; // edges from vertex 0
