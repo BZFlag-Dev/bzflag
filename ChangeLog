@@ -4,6 +4,8 @@
 BZFlag 1.10.4
 -------------
 
+* Added support for more message types to bzadmin - lan56 @ SF, Lars Luthman
+* Added menu with BZDB editor and playerlist to bzadmin's curses UI - Lars Luthman
 * can freeze time-of-day if allowed, via set fixedTime hh:mm:ss
 * Allow variable number of team flags per team thru +f B*{2} or +f team{3} - Dave Brosius
 * Added private and team chat sounds - Sean Morrison
