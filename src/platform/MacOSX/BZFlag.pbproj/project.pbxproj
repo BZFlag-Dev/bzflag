@@ -1252,6 +1252,12 @@
 			isa = PBXTargetDependency;
 			target = 4E030DD8048EB3820009E055;
 		};
+		14667DD0051A5AE500A80164 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = version.h;
+			refType = 4;
+		};
 		146B71FB04E6BA2300A80164 = {
 			fileRef = 4E030E13048ED2DB0009E055;
 			isa = PBXBuildFile;
@@ -3561,6 +3567,7 @@
 				7B79F0B104BA74F400FEBA07,
 				14D0ED6404F8911100A80164,
 				149184E90515776B00A80164,
+				14667DD0051A5AE500A80164,
 			);
 			isa = PBXGroup;
 			name = include;
