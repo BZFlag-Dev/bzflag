@@ -146,27 +146,35 @@ int main(int argc, char** argv) {
   // main loop
   string str;
   PlayerId me = sLink.getId();
-  while (true) {
-    while (getServerString(sLink, str, *ui))
-      ui->outputMessage(str);
-    if (ui->checkCommand(str)) {
-      if (str == "/quit")
-	break;
-      sendMessage(sLink, str, ui->getTarget());
-      // private messages to other players aren't sent back to us, print here
-      if (players.count(ui->getTarget()))
-	ui->outputMessage(formatMessage(str, me, ui->getTarget(), NoTeam, me));
+  try {
+    while (true) {
+      while (getServerString(sLink, str, *ui))
+	ui->outputMessage(str);
+      if (ui->checkCommand(str)) {
+	if (str == "/quit")
+	  break;
+	sendMessage(sLink, str, ui->getTarget());
+	// private messages to other players aren't sent back to us, print here
+	if (players.count(ui->getTarget()))
+	  ui->outputMessage(formatMessage(str, me, 
+					  ui->getTarget(), NoTeam, me));
+      }
+    }
+    
+    // we need to know that the server has processed all our messages
+    // send a private message to ourself and wait for it to come back
+    // this assumes that the order of messages isn't changed along the way
+    if (sLink.getState() == ServerLink::Okay) {
+      sendMessage(sLink, "bzadminping", me);
+      string expected = formatMessage("bzadminping", me, me, NoTeam, me);
+      do {
+	getServerString(sLink, str, *ui);
+      } while (str != expected);
     }
   }
-  
-  // we need to know that the server has processed all our messages
-  // send a private message to ourself and wait for it to come back
-  // this assumes that the order of messages isn't changed along the way
-  sendMessage(sLink, "bzadminping", me);
-  string expected = formatMessage("bzadminping", me, me, NoTeam, me);
-  do {
-    getServerString(sLink, str, *ui);
-  } while (str != expected);
+  catch (const string& error) {
+    ui->outputMessage(string("--- ERROR: ") + error);
+  }
   delete ui;
 
   return 0;
@@ -179,7 +187,7 @@ bool getServerString(ServerLink& sLink, string& str, BZAdminUI& ui) {
   int e;
   std::string dstName, srcName;
   str = "";
-
+  
   /* read until we have a package that we want, or until there are no more
      packages for 100 ms */
   while ((e = sLink.read(code, len, inbuf, 100)) == 1) {
@@ -238,13 +246,12 @@ bool getServerString(ServerLink& sLink, string& str, BZAdminUI& ui) {
 	}
       }
     }
-
-    if (e == -2) {
-      cerr<<"Server communication error!"<<endl;
-      exit(0);
-    }
   }
-
+  
+  if (e == -1) {
+    throw string("Server communication error");
+  }
+  
   return false;
 }
 
