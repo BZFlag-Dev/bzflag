@@ -4,6 +4,7 @@
 BZFlag 1.12.0  (was 1.11.x)
 ---------------------------
 
+* Faster tank and shot collision detection using an octree - Dave Rodgers
 * Configurable font size for control panel and scoreboard - Daniel Remenak
 * TextureManager reloads all textures on a mode change, for optimal quality - Jeff Myers
 * Autoteam changed to improve team-play - Alfredo Tupone
@@ -24,7 +25,6 @@ BZFlag 1.12.0  (was 1.11.x)
 * Shot accuracy statistics dialog - Daniel Remenak
 * Faster zbuffer graphics using octree and dynamic occluders - Dave Rodgers
 * Faster startup times by making the SceneDatabase on the fly - Dave Rodgers
-* Faster collision detection using a precalculated  grid - Dave Rodgers
 * Auto-completion for the first few given letters of a callsign - Ian Agar
 * /clientquery can now be requested on single individuals - Ian Agar
 * Added support for irc-like /me actions and /msg messages - Sean Morrison
