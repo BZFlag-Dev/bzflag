@@ -401,7 +401,7 @@ bool readGroupsFile(const std::string &filename)
   bool done = false;
   std::string name;
   std::string perm;
-  bool perms[lastPerm];
+
   char c;
   while (!done) {
     name.erase(name.begin(), name.end());
@@ -411,7 +411,6 @@ bool readGroupsFile(const std::string &filename)
     while ((in >> c) && (!in.eof()) && (c != '\n'))
       perm += c;
 
-    memset(perms, 0, sizeof(perms));
     if (name.size() == 0 || perm.size() == 0)
       done = true;
     else {
