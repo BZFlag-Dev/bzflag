@@ -188,53 +188,6 @@ void broadcastMessage(uint16_t code, int len, const void *msg)
   return;
 }
 
-static void computeMaxVel ()
-{
-  static const std::string *adjName[] = {
-    &StateDatabase::BZDB_VELOCITYAD,
-    &StateDatabase::BZDB_AGILITYADVEL,
-    &StateDatabase::BZDB_BURROWSPEEDAD,
-    &StateDatabase::BZDB_THIEFVELAD
-  };
-  static int nameCount = sizeof(adjName) / sizeof(adjName[0]);
-  int i;
-  float normal = BZDB.eval(StateDatabase::BZDB_TANKSPEED);
-  float maxVel = normal;
-  for (i=0; i<nameCount; i++) {
-    float curVel = normal * BZDB.eval(*adjName[i]);
-    if (curVel > maxVel) {
-      maxVel= curVel;
-    }
-  }
-  if (maxVel != BZDB.eval(StateDatabase::BZDB_MAXVEL)) {
-    // recurses the onGlobalChange() callback
-    BZDB.setFloat(StateDatabase::BZDB_MAXVEL, maxVel, StateDatabase::Locked);
-  }
-  
-  return ;
-}    
-
-static void computeMaxAngVel ()
-{
-  static const std::string *adjName[] = {
-    &StateDatabase::BZDB_ANGULARAD,
-    &StateDatabase::BZDB_BURROWANGULARAD
-  };
-  static int nameCount = sizeof(adjName) / sizeof(adjName[0]);
-  int i;
-  float normal = BZDB.eval(StateDatabase::BZDB_TANKANGVEL);
-  float maxAngVel = normal;
-  for (i=0; i<nameCount; i++) {
-    float curAngVel = normal * BZDB.eval(*adjName[i]);
-    if (curAngVel > maxAngVel) {
-      maxAngVel= curAngVel;
-    }
-  }
-  if (maxAngVel != BZDB.eval(StateDatabase::BZDB_MAXANGVEL)) {
-    // recurses the onGlobalChange() callback
-    BZDB.setFloat(StateDatabase::BZDB_MAXANGVEL, maxAngVel, StateDatabase::Locked);
-  }
-}
 
 //
 // global variable callback
@@ -253,20 +206,6 @@ static void onGlobalChanged(const std::string& msg, void*)
   buf = nboPackUByte(buf, value.length());
   buf = nboPackString(buf, value.c_str(), value.length());
   broadcastMessage(MsgSetVar, (char*)buf - (char*)bufStart, bufStart);
- 
-  // just in case something was adjusted
-  if (name != StateDatabase::BZDB_MAXVEL) {
-    computeMaxVel();
-  }
-  if (name != StateDatabase::BZDB_MAXANGVEL) {
-    computeMaxAngVel();
-  }
-  if (name != StateDatabase::BZDB_NOSMALLPACKETS) {
-    if (BZDB.eval(StateDatabase::BZDB_WORLDSIZE) > smallWorldSize) {
-      BZDB.set(StateDatabase::BZDB_NOSMALLPACKETS, "1", StateDatabase::Locked);
-    }
-  }
-    
 }
 
 
@@ -1220,15 +1159,6 @@ static bool defineWorld()
     return false;
 
   maxWorldHeight = world->getMaxWorldHeight();
-  float worldSize = BZDB.eval(StateDatabase::BZDB_WORLDSIZE);
-  if (maxWorldHeight > (0.25f * worldSize)) {
-    BZDB.set(StateDatabase::BZDB_NOSMALLPACKETS, "1", StateDatabase::Locked);
-    DEBUG1 ("Warning: max obstacle is too high for small update packets.\n");
-  }
-  if (worldSize > smallWorldSize) {
-    BZDB.set(StateDatabase::BZDB_NOSMALLPACKETS, "1", StateDatabase::Locked);
-    DEBUG1 ("Warning: world size is too large for small update packets.\n");
-  }
     
   int numBases = 0;
   for (BasesList::iterator it = bases.begin(); it != bases.end(); ++it)
