@@ -345,11 +345,14 @@ void ListServerLink::addMe(PingPacket pingInfo,
   }
   // *groups=GROUP0%0D%0AGROUP1%0D%0A
   msg += "&groups=";
-  std::vector<std::string>::iterator itr = clOptions->remoteGroups.begin();
-  for ( ; itr != clOptions->remoteGroups.end(); itr++) {
-    if (*itr != "ADMIN") {
-      msg += *itr;
-      msg += "%0D%0A";
+  PlayerAccessMap::iterator itr = groupAccess.begin();
+  for ( ; itr != groupAccess.end(); itr++) {
+    std::vector<std::string>::iterator nitr = clOptions->nonRemoteGroups.begin();
+    for ( ; nitr != clOptions->nonRemoteGroups.end(); nitr++) {
+      if (itr->first != *nitr) {
+	msg += itr->first.c_str();
+	msg += "%0D%0A";
+      }
     }
   }
 
