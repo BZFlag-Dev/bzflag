@@ -58,6 +58,7 @@ public:
 				 uint16_t &rejectCode,
 				 char *rejectMsg);
     void          *packAdminInfo(void *buf);
+    void          *packPlayerUpdate(void *buf);
     void           signingOn(bool ctf);
 
     // players 

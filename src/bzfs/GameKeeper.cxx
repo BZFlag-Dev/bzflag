@@ -136,6 +136,15 @@ void *GameKeeper::Player::packAdminInfo(void *buf)
   return buf;
 }
 
+void *GameKeeper::Player::packPlayerUpdate(void *buf)
+{
+  buf = nboPackUByte(buf, playerIndex);
+  buf = player.packUpdate(buf);
+  buf = score.pack(buf);
+  buf = player.packId(buf);
+  return buf;
+}
+
 std::vector<int> GameKeeper::Player::allowed(PlayerAccessInfo::AccessPerm
 					     right,
 					     int targetPlayer)

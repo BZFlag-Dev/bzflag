@@ -343,12 +343,8 @@ static void sendPlayerUpdate(int playerIndex, int index)
   if (!playerData)
     return;
 
-  void *buf, *bufStart = getDirectMessageBuffer();
-  PlayerInfo *pPlayer = &playerData->player;
-  buf = nboPackUByte(bufStart, playerIndex);
-  buf = pPlayer->packUpdate(buf);
-  buf = playerData->score.pack(buf);
-  buf = pPlayer->packId(buf);
+  void *bufStart = getDirectMessageBuffer();
+  void *buf      = playerData->packPlayerUpdate(bufStart);
   
   if (playerIndex == index) {
     // send all players info about player[playerIndex]
