@@ -10,7 +10,7 @@ BZFlag 1.10.4
 * Added -show and -hide options to bzadmin to tell it which messages to show - Lars Luthman
 * Added support for more message types to bzadmin - lan56 @ SF, Lars Luthman
 * Added menu with BZDB editor and playerlist to bzadmin's curses UI - Lars Luthman
-* can freeze time-of-day if allowed, via set fixedTime hh:mm:ss
+* can freeze tod in client, if allowed, via -time hh:mm:ss - Tupone Alfredo
 * Allow variable number of team flags per team thru +f B*{2} or +f team{3} - Dave Brosius
 * Added private and team chat sounds - Sean Morrison
 * Specify a world file on the Start Server menu gui - Sean Morrison
