@@ -1,9 +1,12 @@
 SUBDIRS = l10n
 
 EXTRA_DIST = \
+	blue_basetop.png	\
+	blue_basewall.png	\
 	blue_bolt.png	\
 	blue_laser.png	\
 	blue_super_bolt.png	\
+	blue_tank.png	\
 	boom.wav	\
 	boxwall.png	\
 	burrow.wav	\
@@ -20,14 +23,17 @@ EXTRA_DIST = \
 	flag_grab.wav	\
 	flag_lost.wav	\
 	flag_won.wav	\
+	green_basetop.png	\
+	green_basewall.png	\
 	green_bolt.png	\
 	green_laser.png	\
 	green_super_bolt.png	\
-	ground.png	\
+	green_tank.png	\
 	helvbi.png	\
 	helvbr.png	\
 	hunt.wav	\
 	hunt_select.wav	\
+	hunter_tank.png	\
 	jump.wav	\
 	killteam.wav	\
 	land.wav	\
@@ -41,24 +47,32 @@ EXTRA_DIST = \
 	mountain3.png	\
 	phantom.wav	\
 	pop.wav		\
+	purple_basetop.png	\
+	purple_basewall.png	\
 	purple_bolt.png	\
 	purple_laser.png	\
 	purple_super_bolt.png	\
+	purple_tank.png	\
 	pyrwall.png	\
 	rabbit_bolt.png	\
 	rabbit_laser.png	\
 	rabbit_super_bolt.png	\
+	rabbit_tank.png	\
+	red_basetop.png	\
+	red_basewall.png	\
 	red_bolt.png	\
 	red_laser.png	\
 	red_super_bolt.png	\
+	red_tank.png	\
 	ricochet.wav	\
 	roof.png	\
 	rogue_bolt.png	\
 	rogue_laser.png	\
 	rogue_super_bolt.png	\
+	rogue_tank.png	\
 	shock.wav	\
+	std_ground.png	\
 	steamroller.wav	\
-	tank.png	\
 	teamgrab.wav	\
 	teleport.wav	\
 	thief.png	\
@@ -66,7 +80,8 @@ EXTRA_DIST = \
 	timesbi.png	\
 	timesbr.png	\
 	title.png	\
-	wall.png
+	wall.png	\
+	zone_ground.png
 
 MAINTAINERCLEANFILES = \
 	Makefile.in

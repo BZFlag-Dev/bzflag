@@ -1,6 +1,6 @@
 EXTRA_DIST =	\
 	BZFlag.nsi	\
-	BZFlag_High_res.nsi	\
+	BZFlag_high_res.nsi	\
 	DisableCheck.bmp	\
 	EnableCheck.bmp
 
