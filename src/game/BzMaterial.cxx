@@ -584,7 +584,7 @@ void BzMaterial::setShininess(const float shine)
 }
 
 
-void BzMaterial::addTexture(const std::string& name)
+void BzMaterial::addTexture(const std::string& texname)
 {
   textureCount++;
   TextureInfo* tmpinfo = new TextureInfo[textureCount];
@@ -595,7 +595,7 @@ void BzMaterial::addTexture(const std::string& name)
   textures = tmpinfo;
 
   TextureInfo* texinfo = &textures[textureCount - 1];
-  texinfo->name = name;
+  texinfo->name = texname;
   texinfo->matrix = -1;
   texinfo->combineMode = decal;
   texinfo->useAlpha = true;
@@ -605,12 +605,12 @@ void BzMaterial::addTexture(const std::string& name)
   return;
 }
 
-void BzMaterial::setTexture(const std::string& name)
+void BzMaterial::setTexture(const std::string& texname)
 {
   if (textureCount <= 0) {
-    addTexture(name);
+    addTexture(texname);
   } else {
-    textures[textureCount - 1].name = name;
+    textures[textureCount - 1].name = texname;
   }
 
   return;
@@ -666,12 +666,12 @@ void BzMaterial::clearTextures()
 }
 
 
-void BzMaterial::setShader(const std::string& name)
+void BzMaterial::setShader(const std::string& shadername)
 {
   if (shaderCount <= 0) {
-    addShader(name);
+    addShader(shadername);
   } else {
-    shaders[shaderCount - 1].name = name;
+    shaders[shaderCount - 1].name = shadername;
   }
 
   return;

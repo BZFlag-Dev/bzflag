@@ -18,6 +18,25 @@
 #include <vector>
 #include <iostream>
 
+typedef struct sequenceList {
+  float period;
+  float offset;
+  char* list;
+  unsigned int count;
+} sequenceParams;
+
+typedef struct {
+  float period;
+  float offset;
+  float weight;
+} sinusoidParams;
+
+typedef struct {
+  float period;
+  float offset;
+  float width;
+} clampParams;
+
 class DynamicColor {
   public:
     DynamicColor();
@@ -55,25 +74,6 @@ class DynamicColor {
 
     std::string name;
     float color[4];
-
-    typedef struct sequenceList {
-      float period;
-      float offset;
-      char* list;
-      unsigned int count;
-    } sequenceParams;
-
-    typedef struct {
-      float period;
-      float offset;
-      float weight;
-    } sinusoidParams;
-
-    typedef struct {
-      float period;
-      float offset;
-      float width;
-    } clampParams;
 
     typedef struct {
       float minValue, maxValue;
