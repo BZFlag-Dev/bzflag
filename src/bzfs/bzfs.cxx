@@ -2160,7 +2160,7 @@ void sendMessage(int playerIndex, PlayerId targetPlayer, const char *message, bo
       directMessage(playerIndex, MsgMessage, len, bufStart);
   }
   // FIXME this teamcolor <-> player id conversion is in several files now
-  else if (targetPlayer >= 244 && targetPlayer <= 250) {
+  else if (targetPlayer <= 250) {
     TeamColor team = TeamColor(250 - targetPlayer);
     // send message to all team members only
     for (int i = 0; i < curMaxPlayers; i++)
@@ -2170,8 +2170,8 @@ void sendMessage(int playerIndex, PlayerId targetPlayer, const char *message, bo
     // admin messages
     for (int i = 0; i < curMaxPlayers; i++){
       if (player[i].state > PlayerInLimbo &&
-	hasPerm(i,PlayerAccessInfo::adminMessages)){
-	 directMessage(i, MsgMessage,len, bufStart);
+	  hasPerm(i, PlayerAccessInfo::adminMessages)) {
+	directMessage(i, MsgMessage, len, bufStart);
       }
     }
   } else
