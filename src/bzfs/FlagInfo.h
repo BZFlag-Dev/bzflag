@@ -35,8 +35,6 @@ public:
 
   static FlagInfo *flagList;
 
-  int    flagIndex;
-
     // flag info
     Flag flag;
     // player index who has flag
@@ -49,6 +47,10 @@ public:
     TimeKeeper dropDone;
     // number of shots on this flag
     int numShots;
+
+private:
+  int flagIndex;
+
 };
 #else
 class FlagInfo;
