@@ -381,8 +381,6 @@ void			ControlPanel::render(SceneRenderer& renderer)
     bool isTab = false;
 
     for (int l = 0; l < numStrings; l++)  {
-      assert(msgy >= 0);
-
       const std::string &msg = messages[messageMode][i].lines[l];
 
       // Tab chars move horizontally instead of vertically
@@ -396,6 +394,8 @@ void			ControlPanel::render(SceneRenderer& renderer)
       } else {
 	msgx = 0;
       }
+
+      assert(msgy >= 0);
 
       // only draw message if inside message area
       if (j + msgy < maxLines)
