@@ -9,7 +9,7 @@
 * -badword server support - Dave Brosius
 * resize radar/msg area - Frank Thilo
 * Drop team flags where player last was on exit - Dave Brosius
-* tanks driving to fast are kicked - Dave Brosius
+* tanks driving too fast are kicked - Dave Brosius
 * remove non-printable characters in callsign in server - Frank Thilo
 * +f sw{5} syntax to add a bunch of flags - Dave Brosius
 * tanks which jump too high get kicked - Dave Brosius
