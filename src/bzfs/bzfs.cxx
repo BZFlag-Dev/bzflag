@@ -805,7 +805,7 @@ static void sendMessageToListServerForReal(int index)
   if (link.socket == NotConnected)
     return;
 
-  char msg[1024];
+  char msg[2048];
   if (strcmp(link.nextMessage, "ADD") == 0) {
     // update player counts in ping reply.  pretend there are no players
     // if the game is over.
@@ -829,30 +829,65 @@ static void sendMessageToListServerForReal(int index)
     pingReply.packHex(gameInfo);
 
     // send ADD message
-    sprintf(msg, "%s %s %s %s %.*s %.256s\n\n", link.nextMessage,
-	clOptions->publicizedAddress.c_str(),
-	getAppVersion(),
-	getServerVersion(),
-	PingPacketHexPackedSize, gameInfo,
-	clOptions->publicizedTitle);
+    if (clOptions->http) {
+      char myGameInfo[1024];
+      strncpy(myGameInfo, gameInfo, 1024);
+      int myGameInfoLen = strlen(myGameInfo);
+      myGameInfo[myGameInfoLen -2] = 0;
+      sprintf(msg, "GET %s?action=ADD&nameport=%s&version=%s&gameinfo=%s&title=%s\n", 
+	      "http://db.bzflag.org/db/",
+	      clOptions->publicizedAddress.c_str(),
+	      getServerVersion(),
+	      myGameInfo,
+	      clOptions->publicizedTitle);
+    } else {
+      sprintf(msg, "%s %s %s %s %.*s %.256s\n\n", link.nextMessage,
+	      clOptions->publicizedAddress.c_str(),
+	      getAppVersion(),
+	      getServerVersion(),
+	      PingPacketHexPackedSize, gameInfo,
+	      clOptions->publicizedTitle);
+    }
   }
   else if (strcmp(link.nextMessage, "REMOVE") == 0) {
     // send REMOVE
-    sprintf(msg, "%s %s\n\n", link.nextMessage,
-	clOptions->publicizedAddress.c_str());
+    if (clOptions->http) {
+      sprintf(msg, "GET %s?action=REMOVE&nameport=%s\n", 
+	      "http://db.bzflag.org/db/",
+	      clOptions->publicizedAddress.c_str());
+    } else {
+      sprintf(msg, "%s %s\n\n", link.nextMessage,
+	      clOptions->publicizedAddress.c_str());
+    }
   }
   else if (strcmp(link.nextMessage, "SETNUM") == 0) {
     // pretend there are no players if the game is over
-    if (gameOver)
-      sprintf(msg, "%s %s 0 0 0 0 0\n\n", link.nextMessage, clOptions->publicizedAddress.c_str());
-    else
-      sprintf(msg, "%s %s %d %d %d %d %d\n\n", link.nextMessage,
-	  clOptions->publicizedAddress.c_str(),
-	  team[0].team.size,
-	  team[1].team.size,
-	  team[2].team.size,
-	  team[3].team.size,
-	  team[4].team.size);
+    if (clOptions->http) {
+      if (gameOver)
+	sprintf(msg, "GET %s?action=SETNUM&nameport=%s&players=0:0:0:0:0\n", 
+		"http://db.bzflag.org/db/",
+		clOptions->publicizedAddress.c_str());
+      else
+	sprintf(msg, "GET %s?action=SETNUM&nameport=%s&players=%d:%d:%d:%d:%d\n", 
+		"http://db.bzflag.org/db/",
+		clOptions->publicizedAddress.c_str(),
+		team[0].team.size,
+		team[1].team.size,
+		team[2].team.size,
+		team[3].team.size,
+		team[4].team.size);
+    } else {
+      if (gameOver)
+	sprintf(msg, "%s %s 0 0 0 0 0\n\n", link.nextMessage, clOptions->publicizedAddress.c_str());
+      else
+	sprintf(msg, "%s %s %d %d %d %d %d\n\n", link.nextMessage,
+		clOptions->publicizedAddress.c_str(),
+		team[0].team.size,
+		team[1].team.size,
+		team[2].team.size,
+		team[3].team.size,
+		team[4].team.size);
+    }
   }
   DEBUG3("%s",msg);
   send(link.socket, msg, strlen(msg), 0);

@@ -55,7 +55,8 @@ struct CmdLineOptions
     timeElapsed(0.0f), linearAcceleration(0.0f), angularAcceleration(0.0f), useGivenPort(false),
     useFallbackPort(false), requireUDP(false), randomBoxes(false), randomCTF(false),
     flagsOnBuildings(false), oneGameOnly(false), timeManualStart(false), randomHeights(false), useTeleporters(false),
-    teamKillerDies(true), printScore(false), publicizeServer(false), publicizedAddressGiven(false),
+    teamKillerDies(true), printScore(false), publicizeServer(false),
+    publicizedAddressGiven(false), http(false),
     filterFilename(""), filterCallsigns(false), filterChat(false), filterSimple(false),
     voteTime(60), vetoTime(20), votesRequired(3), votePercentage(50.1f), voteRepeatTime(300),
     debug(0)
@@ -118,6 +119,7 @@ struct CmdLineOptions
   bool			printScore;
   bool			publicizeServer;
   bool			publicizedAddressGiven;
+  bool			http;
 
   uint16_t		maxTeam[NumTeams];
   std::map<FlagType*,int> flagCount;
