@@ -2833,7 +2833,7 @@ static void sendMessageToListServerForReal(int index)
     // send ADD message
     sprintf(msg, "%s %s %d %s %.*s %.256s\n\n", link.nextMessage,
 	clOptions.publicizedAddress.c_str(),
-	VERSION % 1000,
+	BZVERSION % 1000,
 	ServerVersion,
 	PingPacketHexPackedSize, gameInfo,
 	clOptions.publicizedTitle);
@@ -4563,8 +4563,8 @@ static void addPlayer(int playerIndex)
 
 #ifdef SERVERLOGINMSG
   sprintf(message,"BZFlag server %d.%d%c%d, http://BZFlag.org/",
-      (VERSION / 10000000) % 100, (VERSION / 100000) % 100,
-      (char)('a' - 1 + (VERSION / 1000) % 100), VERSION % 1000);
+      (BZVERSION / 10000000) % 100, (BZVERSION / 100000) % 100,
+      (char)('a' - 1 + (BZVERSION / 1000) % 100), BZVERSION % 1000);
   sendMessage(playerIndex, player[playerIndex].id, player[playerIndex].team, message, true);
   
   if (clOptions.servermsg && (strlen(clOptions.servermsg) > 0)) {
@@ -6755,10 +6755,10 @@ static const char *extraUsageString =
 static void printVersion()
 {
   printf("BZFlag server %d.%d%c%d (protocol %d.%d%c) http://BZFlag.org/\n",
-      (VERSION / 10000000) % 100, (VERSION / 100000) % 100,
-      (char)('a' - 1 + (VERSION / 1000) % 100), VERSION % 1000,
-      (VERSION / 10000000) % 100, (VERSION / 100000) % 100,
-      (char)('a' - 1 + (VERSION / 1000) % 100));
+      (BZVERSION / 10000000) % 100, (BZVERSION / 100000) % 100,
+      (char)('a' - 1 + (BZVERSION / 1000) % 100), BZVERSION % 1000,
+      (BZVERSION / 10000000) % 100, (BZVERSION / 100000) % 100,
+      (char)('a' - 1 + (BZVERSION / 1000) % 100));
   printf("%s\n", copyright);
 }
 
@@ -7729,8 +7729,8 @@ int main(int argc, char **argv)
     char bombMessage[80];
     fprintf(stderr, "This release will expire on %s.\n", timeBombString());
     sprintf(bombMessage, "Version %d.%d%c%d",
-	(VERSION / 10000000) % 100, (VERSION / 100000) % 100,
-	(char)('a' - 1 + (VERSION / 1000) % 100), VERSION % 1000);
+	(BZVERSION / 10000000) % 100, (BZVERSION / 100000) % 100,
+	(char)('a' - 1 + (BZVERSION / 1000) % 100), BZVERSION % 1000);
     fprintf(stderr, "%s\n", bombMessage);
   }
 

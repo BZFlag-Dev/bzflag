@@ -17,6 +17,7 @@
 #ifndef BZF_COMMON_H
 #define	BZF_COMMON_H
 
+#include <config.h>
 #include <string>
 #include <sstream>
 #include <vector>

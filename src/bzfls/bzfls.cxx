@@ -1059,10 +1059,10 @@ static bool startReplyClient(int index)
 				"Content-Type: text/plain\r\n"
 				"\r\n",
 				date,
-				(VERSION / 10000000) % 100,
-				(VERSION / 100000) % 100,
-				(char)('a' - 1 + (VERSION / 1000) % 100),
-				VERSION % 1000,
+				(BZVERSION / 10000000) % 100,
+				(BZVERSION / 100000) % 100,
+				(char)('a' - 1 + (BZVERSION / 1000) % 100),
+				BZVERSION % 1000,
 				modified);
     client[index].offset = 0;
     client[index].length = strlen(client[index].buffer);
@@ -1294,10 +1294,10 @@ static void printVersion(FILE* out)
   fprintf(out, "%s\n", copyright);
 
   fprintf(out, "BZFlag server, version %d.%d%c%d\n",
-		(VERSION / 10000000) % 100,
-		(VERSION / 100000) % 100,
-		(char)('a' - 1 + (VERSION / 1000) % 100),
-		VERSION % 1000);
+		(BZVERSION / 10000000) % 100,
+		(BZVERSION / 100000) % 100,
+		(char)('a' - 1 + (BZVERSION / 1000) % 100),
+		BZVERSION % 1000);
 
   fprintf(out, "  protocol %c.%d%c\n", ServerVersion[4],
 				(ServerVersion[5] != '0') ?
@@ -1365,8 +1365,8 @@ int main(int argc, char** argv)
   if (timeBombString()) {
     fprintf(stderr, "This release will expire on %s.\n", timeBombString());
     fprintf(stderr, "Version %d.%d%c%d\n",
-		(VERSION / 10000000) % 100, (VERSION / 100000) % 100,
-		(char)('a' - 1 + (VERSION / 1000) % 100), VERSION % 1000);
+		(BZVERSION / 10000000) % 100, (BZVERSION / 100000) % 100,
+		(char)('a' - 1 + (BZVERSION / 1000) % 100), BZVERSION % 1000);
   }
 
   // trap some signals
