@@ -780,14 +780,6 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
 	options.voteRepeatTime = (unsigned short int)atoi(args[1].c_str());
       } else if (compare_nocase(args[0], "votesrequired") == 0) {
 	options.votesRequired = (unsigned short int)atoi(args[1].c_str());
-      } else if (compare_nocase(args[0], "disableSet")==0) {
-	options.disableSet = 1;
-      } else if (compare_nocase(args[0], "disableFlagReset")==0) {
-        options.disableFlagReset = 1;
-      } else if (compare_nocase(args[0], "disableBan")==0) {
-        options.disableBan = 1;
-      } else if (compare_nocase(args[0], "disableKick")==0) {
-        options.disableKick = 1;
       } else if (compare_nocase(args[0], "votetime") == 0) {
 	options.voteTime = (unsigned short int)atoi(args[1].c_str());
       } else {
