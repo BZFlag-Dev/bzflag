@@ -6,6 +6,8 @@ recent bugs
   day close to sunrise, as soon as the rabbit becomes visible in 3D view,
   all buildings will turn to shiny-white. As soon as rabbit is killed,
   it turns back to normal. Also normal, when I switch off lighting.
+  Would someone PLEASE buy chestal a graphics card? his doesn't handle
+  the emissive property.
 
 - Server handles MsgKilled correctly, but client displays it as 'killed by                       
   unknown>'; killer id is -1=InvalidPlayer, why not ServerPlayer? 
