@@ -46,6 +46,13 @@ on the ground and any that are dropped while he has the flag. The client could
 send MsgFlagUpdate queries for any flags that are in range that it has not asked
 about before. Probably more complication than value.
 
+* Players should inform the server when they see a kill on thier view of the
+world. The server should killa player if it confirms the player sent kill. This
+might be complicated as the server might have to track player position for the
+previous lag * 2 timeframe. ugh. Other options would be to have the server
+track the players all the time as precisely as the players do now and calculate
+all the kills.
+
 layers
 ------
 

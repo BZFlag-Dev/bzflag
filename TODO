@@ -22,6 +22,15 @@ to do / idea list for bzflag
    cheaters get bad karma. Servers can be set up to require a minum
    karma level.
 
+* bzfls should only speak http
+   initial url should handle redirection via http redirects. web
+   proxy should be supported for the request. Response should be
+   in xml removing bitfields.
+
+* bzfls should require server admin email in order to list a server.
+   This data should not be published. Admins should be encouraged,
+   as they are now, to add the email to the comments as well.
+
 * client-side world cache to speed up joining;
    could be based on MD5 hashes (+ size?)
 
