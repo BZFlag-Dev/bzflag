@@ -731,8 +731,10 @@ bool Replay::sendFileList(int playerIndex)
     return false;
   }
 
+  std::string pattern = RecordDir;
+  pattern += "*";
   WIN32_FIND_DATA findData;
-  HANDLE h = FindFirstFile("*", &findData);
+  HANDLE h = FindFirstFile(pattern.c_str(), &findData);
   if (h != INVALID_HANDLE_VALUE) {
     do {
       std::string name = RecordDir;
@@ -1337,7 +1339,18 @@ openWriteFile (int playerIndex, const char *filename)
 static inline int osStat (const char *dir, struct stat *buf)
 {
 #ifdef _WIN32
-  return _stat(dir, (struct _stat *) buf);
+  // Windows sucks yet again, if there is a trailing  "\"
+  // at the end of the filename, _stat will return -1.
+  int retval;
+  char *dirname = strdup (dir);
+  char *str = dirname + (strlen (dirname) - 1);
+  while (*str == '\\') {
+    *str = '\0';
+    str--;
+  }
+  retval = _stat(dirname, (struct _stat *) buf);
+  free (dirname);  
+  return retval;
 #else
   return stat (dir, buf);
 #endif
