@@ -1,7 +1,7 @@
 //
 // 3DS2BZW
 //
-// Author: Dave Rodgers (bzaka: trepan)
+// Author: Anonymous
 // Date: Aug 26, 2004
 //
 // Utility program to convert 3DS model

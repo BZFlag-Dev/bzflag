@@ -1,12 +1,12 @@
-			     BZFlag Release Notes
+ 			     BZFlag Release Notes
 			     ====================
 
 BZFlag 1.12.0  (was 1.11.x)
 ---------------------------
 
 * Added shot mismatch cheat auto-kicking - Julio Jimenez
-* Improved double-jump response - Dave Rodgers
-* Added physics drivers - Dave Rodgers
+* Improved double-jump response - Anonymous
+* Added physics drivers - Anonymous
 * Unlimited altimeter height - Steve Krenzel
 * Added /uptime command to print elapsed running time - Angelina Carlton
 * Countdown command now shows players 10 sec countdown - Angelina Carlton
@@ -14,9 +14,9 @@ BZFlag 1.12.0  (was 1.11.x)
 * Adding ability to load world from url (http, ftp, file) - Alfredo Tupone
 * Reduce network load by buffering UDP packet (no delay) - Alfredo Tupone
 * Allow server to control lat and long (-synclocation) - Daniel Remenak
-* Added tank spawn expansion effect - Dave Rodgers
-* Added tank squishiness - Dave Rodgers, Dave Brosius
-* Added animated effects for T, N, TH, O, and CL flags - Dave Rodgers
+* Added tank spawn expansion effect - Anonymous
+* Added tank squishiness - Anonymous, Dave Brosius
+* Added animated effects for T, N, TH, O, and CL flags - Anonymous
 * BZAdmin now tells more specific reasons why it could not connect - Ian Agar
 * Client shows a MessageOfTheDay from the master server on launch
    for announcements and release notifications - Jeff Myers
@@ -28,17 +28,17 @@ BZFlag 1.12.0  (was 1.11.x)
 * Linux event device joystick and force feedback support - Micah Dowty
 * Inform users when they are banned on login, and send the ban reason,
 	ban originator, and source of the ban to the client - Jeff Myers
-* Added the SHORTBAN bzfs priviledge - Dave Rodgers, Daniel Leeds
+* Added the SHORTBAN bzfs priviledge - Anonymous, Daniel Leeds
 * Added /date and /time to request server date and time - Ian Agar
-* Added arc, cone, and sphere map objects - Dave Rodgers
-* Added user specified dynamic colors - Dave Rodgers
-* Added user specified texture matrices - Dave Rodgers
-* Improved BSP splitting algorithm - Dave Rodgers
+* Added arc, cone, and sphere map objects - Anonymous
+* Added user specified dynamic colors - Anonymous
+* Added user specified texture matrices - Anonymous
+* Improved BSP splitting algorithm - Anonymous
 * Added /part command for disconnecting from server - Angelina Carlton
 * Show status while trying to connect & download world - Daniel Remenak
 * Update old configs to avoid broken keybindings - Daniel Remenak
 * Config files are stored per-version, using older when needed - Jeff Myers
-* Faster tank and shot collision detection using an octree - Dave Rodgers
+* Faster tank and shot collision detection using an octree - Anonymous
 * Better linewrapping for control panel - Daniel Remenak
 * Configurable font size for control panel and scoreboard - Daniel Remenak
 * Textures are now reloaded on a mode change for optimal quality - Jeff Myers
@@ -52,20 +52,20 @@ BZFlag 1.12.0  (was 1.11.x)
 * ColorBlindness now disable hunt flashing on radar - Alfredo Tupone
 * SDL is made default platform, static and shared linkage - Alfredo Tupone
 * Fixed bug where players get stuck on flipped pyramids - Alfredo Tupone
-* Compressed map data going over the network and into caches - Dave Rodgers
+* Compressed map data going over the network and into caches - Anonymous
 * Options to disable certain /poll's entirely on a server - Simon Richard Grint
-* Lighting menu option now has "None / Fast / Best" - Dave Rodgers
+* Lighting menu option now has "None / Fast / Best" - Anonymous
 * Dev-C++ project files - Ian Agar, Daniel Remenak, Jeff Myers
 * Shot accuracy statistics dialog - Daniel Remenak
-* Faster zbuffer graphics using octree and dynamic occluders - Dave Rodgers
-* Faster startup times by making the SceneDatabase on the fly - Dave Rodgers
+* Faster zbuffer graphics using octree and dynamic occluders - Anonymous
+* Faster startup times by making the SceneDatabase on the fly - Anonymous
 * Auto-completion for commands & callsigns (like in bzadmin) - Ian Agar, Frank Thilo
 * /clientquery can now be requested on single individuals - Ian Agar
 * Added support for irc-like /me actions and /msg messages - Sean Morrison
-* Seer flag now can see Invisible Bullets - Dave Rodgers
+* Seer flag now can see Invisible Bullets - Anonymous
 * Added admin message sounds - Cameron Mandrake, Sean Morrison
-* Better shot reflections for non-square pyramids - Dave Rodgers
-* Fixed collision detection impalement problem - Dave Rodgers
+* Better shot reflections for non-square pyramids - Anonymous
+* Fixed collision detection impalement problem - Anonymous
 * Added anti perm for pollkick, pollban, kick, ban, deregister - Sean Morrison
 * Added antipoll bzfs anti perm to protect against poll kick/bans - Andrew Heyn
 * Server Start Menu now allows selection between Rabbit Chase styles - Ian Agar
@@ -74,15 +74,15 @@ BZFlag 1.12.0  (was 1.11.x)
 * New font management system and fonts - Daniel Remenak, Jeff Myers
 * Reduce client and server network utilization via tolerance tweaking
 	- Alfredo Tupone, Sean Morrison
-* WorldWeapons and EntryZones are saved client-side - Dave Rodgers
-* Improved client map saves using map 'options' - Dave Rodgers
+* WorldWeapons and EntryZones are saved client-side - Anonymous
+* Improved client map saves using map 'options' - Anonymous
 * Autopilot is now capable of playing CTF - Ian Agar
 * bzadmin can now send and receive team and admin messages - Lars Luthman
-* Added waterLevel (water-like feature for maps) - Dave Rodgers
-* Added _noShadows (to disable shadows on a server) - Dave Rodgers
+* Added waterLevel (water-like feature for maps) - Anonymous
+* Added _noShadows (to disable shadows on a server) - Anonymous
 * bzadmin's curses menu will now update automagically - Lars Luthman
 * Added message filter editor for bzadmin using menu or cmds - Lars Luthman
-* Added team flag safety zones - Dave Rodgers
+* Added team flag safety zones - Anonymous
 * Added MsgScoreOver and MsgTimeUpdate to BZAdmin - Ian Agar
 * Have BZAdmin allow whitespace in callsign and host - Ian Agar
 * Prevent message flooding/spamming - Ian Agar
@@ -92,13 +92,13 @@ BZFlag 1.12.0  (was 1.11.x)
 * Fixing cross-correlation between driving keys - Alfredo Tupone
 * Added configuration of driving keys - Alfredo Tupone
 * Server is now valgrind-happy - Alfredo Tupone, Daniel Remenak, Sean Morrison
-* Limit quick rejoins - Dave Rodgers
-* Added 'options' section to world maps - Dave Rodgers
-* Added the '-set <name> <value>' option to bzfs - Dave Rodgers
+* Limit quick rejoins - Anonymous
+* Added 'options' section to world maps - Anonymous
+* Added the '-set <name> <value>' option to bzfs - Anonymous
 * Throw away bad or early links in world files - Tim Riker
-* Added Record/Replay feature - Dave Rodgers
-* Added Random teleporter destinations - Dave Rodgers
-* Added Lag bad flag - Dave Rodgers
+* Added Record/Replay feature - Anonymous
+* Added Random teleporter destinations - Anonymous
+* Added Lag bad flag - Anonymous
 * Poll to reset flags and Poll-cheating prevention - Ian Agar
 * Flag and Tank Entry Zones - Dave Brosius
 * Spawn improvements - Dave Brosius, Daniel Remenak
@@ -326,7 +326,7 @@ BZFlag 1.7g2  "Steely Eyed Banana" (was 1.7g1)
 * OSX Fixes - Sean Morrison, David Wollner
 * server list cache - Michael Hoffman
 * E-mail field fixes - Lars Luthman
-* colorized console - Dave Rodgers, David Trowbridge
+* colorized console - Anonymous, David Trowbridge
 * automake/autoconf - Tupone Alfredo, David Trowbridge, Tim Riker
 * check for unknown message types - Frank Thilo
 * check incoming TCP for oversized messages and dump player - Frank Thilo
