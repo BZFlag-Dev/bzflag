@@ -624,7 +624,11 @@ void			BackgroundRenderer::drawGround()
   } else {
     if (BZDBCache::texture)
       glColor3f(1, 1, 1);
-    else
+		else if (BZDB.isSet("GroundOverideColor")){
+			float color[3];
+			sscanf(BZDB.get("GroundOverideColor").c_str(),"%f %f %f",&color[0],&color[1],&color[2]);
+			glColor3fv(color);
+		}else
       glColor3fv(groundColor[styleIndex]);
     groundGState[styleIndex].setState();
   }
