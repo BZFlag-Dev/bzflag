@@ -25,7 +25,7 @@
  * broke it
  */
 #ifndef BZ_PROTO_VERSION
-#define BZ_PROTO_VERSION	"0004"
+#define BZ_PROTO_VERSION	"0005"
 #endif
 
 #ifndef BZ_MAJOR_VERSION
@@ -37,7 +37,7 @@
 #endif
 
 #ifndef BZ_REV
-#define BZ_REV                  14
+#define BZ_REV                  15
 #endif
 
 #ifndef BZ_CONFIG_DIR_VERSION
