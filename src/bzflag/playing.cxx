@@ -4017,7 +4017,6 @@ static void cleanWorldCache()
       time_t oldestTime = time(NULL);
       while ((contents = readdir(directory))) {
         const std::string filename = contents->d_name;
-        printf ("\n");
 	stat((worldPath + "/" + filename).c_str(), &statbuf);
 	if ((filename.size() > 4) &&
             (filename.substr(filename.size() - 4) == ".bwc") &&
