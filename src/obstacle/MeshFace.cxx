@@ -371,21 +371,95 @@ bool MeshFace::inCylinder(const float* p,float radius, float height) const
 
 
 bool MeshFace::inBox(const float* p, float angle,
-                          float dx, float dy, float height) const
+                     float dx, float dy, float height) const
 {
-  if ((mins[0] > (p[0] + dx)) || (maxs[0] < (p[0] - dx)) ||
-      (mins[1] > (p[1] + dy)) || (maxs[1] < (p[1] - dy)) ||
-      (mins[2] > (p[2] + height)) || (maxs[2] < p[2])) {
+  int i;
+  
+  // Z axis separation test
+  if ((mins[2] > (p[2] + height)) || (maxs[2] < p[2])) {
     return false;
   }
-  angle = angle; //FIXME
-  return true;
+  
+  // translate the face so that the box is an origin box
+  // centered at 0,0,0  (this assumes that it is cheaper
+  // to move the polygon then the box, tris and quads will
+  // probably be the dominant polygon types).
+
+  float pln[4]; // translated plane
+  fvec3* v = new fvec3[vertexCount]; // translated vertices
+  const float cos_val = cos(-angle);
+  const float sin_val = sin(-angle);
+  for (i = 0; i < vertexCount; i++) {
+    float h[2];
+    h[0] = vertices[i][0] - p[0];
+    h[1] = vertices[i][1] - p[1];
+    v[i][0] = (cos_val * h[0]) - (sin_val * h[1]);
+    v[i][1] = (cos_val * h[1]) + (sin_val * h[0]);
+    v[i][2] = vertices[i][2] - p[2];
+  }
+  pln[0] = (cos_val * plane[0]) - (sin_val * plane[1]);
+  pln[1] = (cos_val * plane[1]) + (sin_val * plane[0]);
+  pln[2] = plane[2];
+  pln[3] = plane[3] + vec3dot(plane, p);
+  
+  // testPolygonInAxisBox() expects us to have already done all of the
+  // separation tests with respect to the box planes. we could not do
+  // the X and Y axis tests until we'd found the translated vertices,
+  // so we will do them now.
+
+  // X axis test
+  float min, max;
+  min = +MAXFLOAT;
+  max = -MAXFLOAT;
+  for (i = 0; i < vertexCount; i++) {
+    if (v[i][0] < min) {
+      min = v[i][0];
+    }
+    if (v[i][0] > max) {
+      max = v[i][0];
+    }
+  }
+  if ((min > dx) || (max < -dx)) {
+    delete[] v;
+    return false;
+  }
+
+  // Y axis test
+  min = +MAXFLOAT;
+  max = -MAXFLOAT;
+  for (i = 0; i < vertexCount; i++) {
+    if (v[i][1] < min) {
+      min = v[i][1];
+    }
+    if (v[i][1] > max) {
+      max = v[i][1];
+    }
+  }
+  if ((min > dy) || (max < -dy)) {
+    delete[] v;
+    return false;
+  }
+
+  // FIXME: do not use testPolygonInAxisBox()
+  float boxMins[3];
+  boxMins[0] = -dx;
+  boxMins[1] = -dy;
+  boxMins[2] = 0.0f;
+  float boxMaxs[3];
+  boxMaxs[0] = +dx;
+  boxMaxs[1] = +dy;
+  boxMaxs[2] = height;
+
+  bool hit = testPolygonInAxisBox(vertexCount, v, pln, boxMins, boxMaxs);
+  
+  delete[] v;
+  return hit;
 }
 
 
 bool MeshFace::inMovingBox(const float*, float,
-                                const float* p, float angle,
-                                float dx, float dy, float height) const
+                           const float* p, float angle,
+                           float dx, float dy, float height) const
 {
   return inBox(p, angle, dx, dy, height);
 }
@@ -397,14 +471,14 @@ bool MeshFace::inMovingBox(const float*, float,
 // As a note, some of the info from the original collision test might
 // be handy here.
 bool MeshFace::isCrossing(const float* p, float angle,
-                               float dx, float dy, float height,
-                               float* plane) const
+                          float dx, float dy, float height,
+                          float* plane) const
 {
   p = p;
   angle = angle;
   dx = dy = height;
   plane = plane;
-  return false;
+  return true;
 }
 
 

@@ -124,8 +124,6 @@ recent bugs
 - Mac OS X client outputs an Info.plist file with the permissions set
   incorrectly if building an application bundle via XCode.
 
-- Spawn code sometimes spawns you mid-air
-
 - doc/guide/NetworkProtocol.xml is not up to date
 
 - Shift+Tab seems to be bound to jump without being bound to jump
