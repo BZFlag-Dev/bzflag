@@ -179,6 +179,7 @@ public:
   static const std::string	BZDB_EXPLODETIME;
   static const std::string	BZDB_FLAGALTITUDE;
   static const std::string	BZDB_FLAGHEIGHT;
+  static const std::string	BZDB_FLAGPOLEWIDTH; 
   static const std::string	BZDB_FLAGPOLESIZE;
   static const std::string	BZDB_FLAGRADIUS;
   static const std::string	BZDB_GMISSILEANG;

@@ -43,6 +43,7 @@
 
 #include "stars.h"
 
+static     bool         useMoonTexture = false;
 
 static const GLfloat	squareShape[4][2] =
 				{ {  1.0f,  1.0f }, { -1.0f,  1.0f },
@@ -168,6 +169,12 @@ BackgroundRenderer::BackgroundRenderer(const SceneRenderer&) :
   gstate.setCulling((GLenum)GL_NONE);
   sunShadowsGState = gstate.getState();
 
+ /* useMoonTexture = BZDB.isTrue("texture") && (BZDB.eval("useQuality")>2);
+  OpenGLTexture *moonTexture = NULL;
+  if (useMoonTexture){
+    moonTexture = tm.getTexture( "moon" );
+    useMoonTexture = moonTexture && moonTexture->isValid();
+  }*/
   // sky stuff
   gstate.reset();
   gstate.setShading();
@@ -176,8 +183,12 @@ BackgroundRenderer::BackgroundRenderer(const SceneRenderer&) :
   sunGState = gstate.getState();
   gstate.reset();
   gstate.setBlending((GLenum)GL_ONE, (GLenum)GL_ONE);
+ // if (useMoonTexture)
+ //   gstate.setTexture(*moonTexture);
   moonGState[0] = gstate.getState();
   gstate.reset();
+ // if (useMoonTexture)
+ //   gstate.setTexture(*moonTexture);
   moonGState[1] = gstate.getState();
   gstate.reset();
   starGState[0] = gstate.getState();
@@ -369,6 +380,8 @@ void			BackgroundRenderer::setCelestial(
   sun2[1] = sunDir[1] * cosf(moonAzimuth) - sunDir[0] * sinf(moonAzimuth);
   sun2[2] = sunDir[2] * cosf(moonAltitude) - sun2[0] * sinf(moonAltitude);
   const float limbAngle = atan2f(sun2[2], sun2[1]);
+
+  int moonSegements = (int)BZDB.eval("moonSegments");
   moonList.begin();
     glPushMatrix();
     glRotatef(atan2f(moonDirection[1], moonDirection[0]) * 180.0f / M_PI,
@@ -376,15 +389,20 @@ void			BackgroundRenderer::setCelestial(
     glRotatef(asinf(moonDirection[2]) * 180.0f / M_PI, 0.0f, -1.0f, 0.0f);
     glRotatef(limbAngle * 180.0f / M_PI, 1.0f, 0.0f, 0.0f);
     glBegin(GL_TRIANGLE_STRIP);
-      glVertex3f(2.0f * worldSize, 0.0f, -moonRadius);
-      for (int i = 0; i < 11; i++) {
-	const float angle = 0.5f * M_PI * float(i-5) / 6.0f;
-	glVertex3f(2.0f * worldSize, coverage * moonRadius * cosf(angle),
-					moonRadius * sinf(angle));
-	glVertex3f(2.0f * worldSize, moonRadius * cosf(angle),
-					moonRadius * sinf(angle));
+ //    glTexCoord2f(0,-1);
+     glVertex3f(2.0f * worldSize, 0.0f, -moonRadius);
+      for (int i = 0; i < moonSegements-1; i++) {
+	const float angle = 0.5f * M_PI * float(i-(moonSegements/2)-1) / (moonSegements/2.0f);
+        float sinAngle = sinf(angle);
+        float cosAngle = cosf(angle);
+     //   glTexCoord2f(coverage*cosAngle,sinAngle);
+	glVertex3f(2.0f * worldSize, coverage * moonRadius * cosAngle,moonRadius * sinAngle);
+
+    //    glTexCoord2f(cosAngle,sinAngle);
+	glVertex3f(2.0f * worldSize, moonRadius * cosAngle,moonRadius * sinAngle);
       }
-      glVertex3f(2.0f * worldSize, 0.0f, moonRadius);
+  //  glTexCoord2f(0,1);
+    glVertex3f(2.0f * worldSize, 0.0f, moonRadius);
     glEnd();
     glPopMatrix();
   moonList.end();
@@ -465,7 +483,7 @@ void			BackgroundRenderer::render(SceneRenderer& renderer)
   // the ground or is drawn back to front and is occluded by everything
   // drawn after it.  also use projection with very far clipping plane.
 
-  if (BZDB.eval("useQuality") < 3)
+  if (renderer.useQuality() < 3)
     drawGroundGrid(renderer);
 
   if (!blank) {
@@ -605,6 +623,8 @@ void			BackgroundRenderer::drawSky(SceneRenderer& renderer)
   if (moonDirection[2] > -0.009f) {
     moonGState[doStars ? 1 : 0].setState();
     glColor3f(1.0f, 1.0f, 1.0f);
+ //   if (useMoonTexture)
+ //     glEnable(GL_TEXTURE_2D);
     moonList.execute();
   }
 

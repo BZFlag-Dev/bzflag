@@ -248,6 +248,20 @@ void			SceneRenderer::setQuality(int value)
   else
     TankSceneNode::setMaxLOD(2);
 
+  if (useQualityValue == 3)
+    BZDB.set("flagChunks","32");
+  else if (useQualityValue >= 2)
+    BZDB.set("flagChunks","12");
+  else
+    BZDB.set("flagChunks","8");
+
+  if (useQualityValue == 3)
+    BZDB.set("moonSegments","64");
+  else if (useQualityValue >= 2)
+    BZDB.set("moonSegments","24");
+  else
+    BZDB.set("moonSegments","12");
+
   BZDB.set("useQuality",string_util::format("%d",value));
 }
 

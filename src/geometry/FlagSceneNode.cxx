@@ -23,7 +23,9 @@
 #include "OpenGLTexture.h"
 #include "StateDatabase.h"
 
-static const int	Chunks = 8;		// draw flag as 8 quads
+int	                flagChunks = 8;		// draw flag as 8 quads
+bool                    geoPole = false;        // draw the pole as quads
+
 const float		FlagSceneNode::RippleSpeed1 = 2.4f * M_PI;
 const float		FlagSceneNode::RippleSpeed2 = 1.724f * M_PI;
 const float		FlagSceneNode::DroopFactor = 0.0f;
@@ -45,6 +47,7 @@ FlagSceneNode::FlagSceneNode(const GLfloat pos[3]) :
   setRadius(6.0f * Unit * Unit);
   ripple1 = 2.0f * M_PI * (float)bzfrand();
   ripple2 = 2.0f * M_PI * (float)bzfrand();
+  geoPole = false;
 }
 
 FlagSceneNode::~FlagSceneNode()
@@ -131,6 +134,9 @@ void			FlagSceneNode::notifyStyleChange(
   if (billboard) builder.setCulling(GL_BACK);
   else builder.setCulling(GL_NONE);
   gstate = builder.getState();
+
+  flagChunks = (int)BZDB.eval("flagChunks");
+  geoPole = (int)BZDB.eval("useQuality")>2.0f;
 }
 
 void			FlagSceneNode::addRenderNodes(
@@ -164,6 +170,8 @@ FlagSceneNode::FlagRenderNode::~FlagRenderNode()
 void			FlagSceneNode::FlagRenderNode::render()
 {
   float base = BZDB.eval( StateDatabase::BZDB_FLAGPOLESIZE );
+  float poleWidth = BZDB.eval( StateDatabase::BZDB_FLAGPOLEWIDTH );
+
   const GLfloat* sphere = sceneNode->getSphere();
   glPushMatrix();
     glTranslatef(sphere[0], sphere[1], sphere[2]);
@@ -175,8 +183,8 @@ void			FlagSceneNode::FlagRenderNode::render()
     if (sceneNode->billboard) {
       SceneRenderer::getInstance()->getViewFrustum().executeBillboard();
       glBegin(GL_QUAD_STRIP);
-	for (int i = 0; i <= Chunks; i++) {
-	  const float x = float(i) / float(Chunks);
+	for (int i = 0; i <= flagChunks; i++) {
+	  const float x = float(i) / float(flagChunks);
 	  const float angle1 = sceneNode->ripple1 - 4.0f * M_PI * x;
 	  const float damp = 0.1f * x;
 	  const float shift1 = damp * sinf(angle1);
@@ -211,10 +219,22 @@ void			FlagSceneNode::FlagRenderNode::render()
 
     myColor4f(0.0f, 0.0f, 0.0f, sceneNode->color[3]);
     if (sceneNode->texturing) glDisable(GL_TEXTURE_2D);
+
+    if (geoPole){
+      glBegin(GL_QUADS);
+        glVertex3f(-poleWidth, 0.0f, 0.0f);
+        glVertex3f(poleWidth, 0.0f, 0.0f);
+       glVertex3f(poleWidth, base + Height, 0.0f);
+       glVertex3f(-poleWidth, base + Height, 0.0f);
+      glEnd();
+
+    }
+    else{
     glBegin(GL_LINE_STRIP);
       glVertex3f(0.0f, 0.0f, 0.0f);
       glVertex3f(0.0f, base + Height, 0.0f);
     glEnd();
+    }
     if (sceneNode->texturing) glEnable(GL_TEXTURE_2D);
 
     if (!sceneNode->blending && sceneNode->transparent)

@@ -39,7 +39,7 @@ BZFlag 1.10.4
 * Start of better spawn positions based on tanks - Dave Brosius
 * PNG image writing for screenshots - Daniel Remenak
 * Texture Manager only loads textures when needed - Jeff Myers
-* Renamed and reorganized texture resources - Jeff Mey
+* Renamed and reorganized texture resources - Jeff Myers
 * BZDB alternate image dir added - Jeff Myers
 * Improved transparent proxy support - Alfredo Tupone, Sean Morrison
 * Ground Texture Repeat added to BZDB, default increased to 0.1  - Jeff Myers
@@ -59,6 +59,10 @@ BZFlag 1.10.4
 * Add experimental quality setting for enhanced effects- Jeff Myers
 * Tunf off tank LOD, and ground grid for experimental quality - Jeff Myers
 * Add sides to the body of the hightank model - Jeff Myers
+* Increase flag segementation slightly for high quality, increase masivly for experimental quality - Jeff Myers
+* Increase moon segments for exp. quality - Jeff Myers
+* Replace flag texture with one from pyBZFlag - Jeff Myers
+* Use a geometry based flagpole in exp. quality with a setable width from BZDB - Jeff Myers
 
 BZFlag 1.10.2
 -------------
