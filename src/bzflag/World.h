@@ -54,6 +54,7 @@ class World {
     bool		allowShakeTimeout() const;
     bool		allowShakeWins() const;
     bool		allowTimeOfDayAdjust() const;
+    bool		allowKing() const;
     float		getLinearAcceleration() const;
     float		getAngularAcceleration() const;
     float		getFlagShakeTimeout() const;
@@ -251,6 +252,11 @@ inline bool		World::allowShakeWins() const
 inline bool		World::allowTimeOfDayAdjust() const
 {
   return (gameStyle & short(TimeSyncGameStyle)) == 0;
+}
+
+inline bool		World::allowKing() const
+{
+  return (gameStyle * short(KingOfTheHillGameStyle)) == 0;
 }
 
 inline float		World::getLinearAcceleration() const

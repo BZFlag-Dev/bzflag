@@ -74,6 +74,7 @@ class ServerLink {
     void		sendAlive(const float* pos, const float* fwd);
     void		sendTeleport(int from, int to);
     void		sendNewScore(int wins, int losses);
+    void		sendNewKing();
     void                sendUDPlinkRequest();
     void		enableUDPCon();
 

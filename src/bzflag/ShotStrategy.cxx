@@ -65,16 +65,19 @@ void			ShotStrategy::init()
   *boltTexture[GreenTeam] = getTexture("gbolt", OpenGLTexture::Linear);
   *boltTexture[BlueTeam] = getTexture("bbolt", OpenGLTexture::Linear);
   *boltTexture[PurpleTeam] = getTexture("pbolt", OpenGLTexture::Linear);
+  *boltTexture[KingTeam] = getTexture("wbolt", OpenGLTexture::Linear);
   *tboltTexture[RogueTeam] = getTexture("ytbolt", OpenGLTexture::Linear);
   *tboltTexture[RedTeam] = getTexture("rtbolt", OpenGLTexture::Linear);
   *tboltTexture[GreenTeam] = getTexture("gtbolt", OpenGLTexture::Linear);
   *tboltTexture[BlueTeam] = getTexture("btbolt", OpenGLTexture::Linear);
   *tboltTexture[PurpleTeam] = getTexture("ptbolt", OpenGLTexture::Linear);
+  *tboltTexture[KingTeam] = getTexture("wtbolt", OpenGLTexture::Linear);
   *laserTexture[RogueTeam] = getTexture("ylaser", OpenGLTexture::Max);
   *laserTexture[RedTeam] = getTexture("rlaser", OpenGLTexture::Max);
   *laserTexture[GreenTeam] = getTexture("glaser", OpenGLTexture::Max);
   *laserTexture[BlueTeam] = getTexture("blaser", OpenGLTexture::Max);
   *laserTexture[PurpleTeam] = getTexture("plaser", OpenGLTexture::Max);
+  *laserTexture[KingTeam] = getTexture("wlaser", OpenGLTexture::Max);
   *gmTexture = getTexture("missile", OpenGLTexture::Max);
 }
 

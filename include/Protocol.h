@@ -75,6 +75,7 @@ const uint16_t		MsgGrabFlag = 0x6766;			// 'gf'
 const uint16_t		MsgGetWorld = 0x6777;			// 'gw'
 const uint16_t		MsgKilled = 0x6b6c;			// 'kl'
 const uint16_t		MsgMessage = 0x6d67;			// 'mg'
+const uint16_t		MsgNewKing = 0x6e6b;			// 'nk'
 const uint16_t		MsgNegotiateFlags = 0x6e66;		// 'nf'
 const uint16_t		MsgNetworkRelay = 0x6e72;		// 'nr'
 const uint16_t		MsgQueryGame = 0x7167;			// 'qg'
@@ -166,6 +167,7 @@ player to server messages:
   MsgKilled		player says he's been killed
 			--> /id,/ killer-id, reason, killer-shot-id
 			<== MsgKilled
+  MsgNewKing		player is relinquishing kingship
   MsgGrabFlag		player wants to grab flag
 			--> /id,/ flag
 			<== MsgGrabFlag
@@ -252,7 +254,9 @@ server to player messages:
   MsgQueryPlayers	list of players
   MsgWantWHash		md5 digest of world file
 			<== temp|perm, digest
-  MsgNegotiateFlags	<==flagCount/[flagabbv]
+  MsgNegotiateFlags	<== flagCount/[flagabbv]
+  MsgNewKing		a new king of the hill has been anointed
+  			<== id
 */
 
 #endif // BZF_PROTOCOL_H

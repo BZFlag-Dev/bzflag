@@ -2787,7 +2787,7 @@ static void		handleServerMessage(bool human, uint16_t code,
 	}
 	if (victimPlayer && killerLocal != victimPlayer) {
 	  if (victimPlayer->getTeam() == killerLocal->getTeam() &&
-	      killerLocal->getTeam() != RogueTeam) {
+		  ((killerLocal->getTeam() != RogueTeam) || (World::getWorld()->allowKing()))) {
 	    if (killerLocal == myTank) {
 		 hud->setAlert(1, "Don't shoot teammates!!!", 3.0f, true);
 		 playLocalSound( SFX_KILL_TEAM );
@@ -2800,6 +2800,10 @@ static void		handleServerMessage(bool human, uint16_t code,
 	    killerLocal->changeScore(1, 0);
 	}
       }
+
+      if (World::getWorld()->allowKing())
+	victimPlayer->changeTeam( RogueTeam );
+
       // handle my personal score against other players
       if ((killerPlayer == myTank || victimPlayer == myTank) &&
 	 !(killerPlayer == myTank && victimPlayer == myTank)) {
@@ -3310,6 +3314,30 @@ static void		handleServerMessage(bool human, uint16_t code,
     case MsgLagPing:
       handlePlayerMessage(code, 0, msg);
       break;
+
+    case MsgNewKing: {
+      PlayerId id;
+      msg = nboUnpackUByte(msg, id);
+      Player *king = lookupPlayer(id);
+
+      for (int i = 0; i < maxPlayers; i++) {
+	if (!player[i] || (player[i]->getTeam() == RogueTeam)) continue;
+
+	if (player[i] != king) {
+	   player[i]->changeTeam(RogueTeam);
+	}
+      }
+
+      if (king != NULL) {
+	king->changeTeam(KingTeam);
+	if (king == myTank) {
+	  hud->setAlert(0, "You are the King of the Hill", 10.0f, false);
+	} else {
+	  myTank->changeTeam(RogueTeam);
+	}
+      }
+      break;
+    }
   }
 
   if (checkScores) updateHighScores();
@@ -3769,6 +3797,9 @@ static bool		gotBlowedUp(BaseLocalPlayer* tank,
 {
   if (Observer || !tank->isAlive())
     return false;
+
+  if (World::getWorld()->allowKing())
+	tank->changeTeam( RogueTeam );
 
   // you can't take it with you
   const FlagId flag = tank->getFlag();
@@ -5441,6 +5472,9 @@ static void		playingLoop()
 	const FlagId flagId = myTank->getFlag();
 	if (flagId >= FirstTeamFlag && flagId <= LastTeamFlag)
 	  serverLink->sendDropFlag(myTank->getPosition());
+
+	if (World::getWorld()->allowKing())
+	  serverLink->sendNewKing();
 
 	// now actually pause
 	myTank->setPause(true);

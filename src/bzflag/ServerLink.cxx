@@ -709,6 +709,11 @@ void			ServerLink::sendTeleport(int from, int to)
   send(MsgTeleport, sizeof(msg), msg);
 }
 
+void			ServerLink::sendNewKing()
+{
+  send(MsgNewKing, 0, NULL);
+}
+
 void			ServerLink::sendUDPlinkRequest()
 {
   char msg[2];

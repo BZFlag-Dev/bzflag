@@ -150,14 +150,12 @@ void			Player::changeTeam(TeamColor _team)
 {
   static const GLfloat	tankSpecular[3] = { 0.1f, 0.1f, 0.1f };
   static const GLfloat	tankEmissive[3] = { 0.0f, 0.0f, 0.0f };
-  static const float	rogueColor[3] = { 0.25f, 0.25f, 0.25f };
 
   // set team
   team = _team;
 
   // change color of tank
-  const float* _color = (team == RogueTeam) ? rogueColor :
-						Team::getTankColor(team);
+  const float* _color = Team::getTankColor(team);
   color[0] = _color[0];
   color[1] = _color[1];
   color[2] = _color[2];

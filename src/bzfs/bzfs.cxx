@@ -1206,6 +1206,9 @@ static float baseRotation[NumTeams];
 static float baseSize[NumTeams][3];
 static float safetyBasePos[NumTeams][3];
 
+// first player is playerid = 1
+static int kingIndex = 1;
+
 static void stopPlayerPacketRelay();
 static void removePlayer(int playerIndex, char *reason, bool notify=true);
 static void resetFlag(int flagIndex);
@@ -2230,6 +2233,10 @@ static void pwrite(int playerIndex, const void *b, int l)
       case MsgGMUpdate:
       case MsgLagPing:
 	puwrite(playerIndex,b,l);
+	return;
+      case MsgNewKing:
+        DEBUG3("sending MsgNewKing (= %d) via puwrite() to %d\n", kingIndex, playerIndex);
+	puwrite(playerIndex, b, l);
 	return;
     }
   }
@@ -4308,6 +4315,15 @@ static void addPlayer(int playerIndex)
   // send update of info for team just joined
   sendTeamUpdate(teamIndex);
 
+  // send king information
+  if (clOptions.gameStyle & int(KingOfTheHillGameStyle)) {
+    char msg[PlayerIdPLen];
+    void *buf = msg;
+    buf = nboPackUByte(buf, kingIndex);
+    directMessage(playerIndex, MsgNewKing, sizeof(msg), msg);
+    DEBUG3("sending king (= %d) information to new player\n", kingIndex);
+  }
+
 #ifdef TIMELIMIT
   // send time update to new player if we're counting down
   if (countdownActive && clOptions.timeLimit > 0.0f && player[playerIndex].type != ComputerPlayer) {
@@ -4526,6 +4542,42 @@ static void zapFlag(int flagIndex)
   resetFlag(flagIndex);
 }
 
+static void annointNewKing()
+{
+  float topRatio = -100000.0f;
+  kingIndex = 0;
+  int i;
+
+  for (i = 0; i < maxPlayers; i++) {
+    if ((i != kingIndex) && (player[i].fd != NotConnected) &&
+        (player[i].state == PlayerAlive)) {
+      float ratio = (player[i].wins - player[i].losses) * (player[i].wins / 10.0f);
+      if (ratio > topRatio) {
+	topRatio = ratio;
+	kingIndex = i;
+      }
+    }
+  }
+  if (kingIndex == 0) {
+    // if nobody is alive
+    topRatio = -100000.0f;
+    for (i = 0; i < maxPlayers; i++) {
+      if ((i != kingIndex) && (player[i].fd != NotConnected)) {
+	float ratio = (player[i].wins - player[i].losses) * (player[i].wins / 10.0f);
+	if (ratio > topRatio) {
+	  topRatio = ratio;
+	  kingIndex = i;
+	}
+      }
+    }
+  }
+  char msg[PlayerIdPLen];
+  void *buf = msg;
+  buf = nboPackUByte(buf, kingIndex);
+  broadcastMessage(MsgNewKing, sizeof(msg), msg);
+  DEBUG3("annointing a new king (= %d)\n", kingIndex);
+}
+
 static void removePlayer(int playerIndex, char *reason, bool notify)
 {
   // player is signing off or sent a bad packet.  since the
@@ -4598,6 +4650,10 @@ static void removePlayer(int playerIndex, char *reason, bool notify)
     if (i == curMaxPlayers)
       stopPlayerPacketRelay();
   }
+
+  if (clOptions.gameStyle & int(KingOfTheHillGameStyle))
+    if (playerIndex == kingIndex)
+      annointNewKing();
 
   // player is outta here.  if player never joined a team then
   // don't count as a player.
@@ -4891,33 +4947,38 @@ static void playerKilled(int victimIndex, int killerIndex, int reason,
     }
   }
 
-  // change the team scores -- rogues don't have team scores.  don't
-  // change team scores for individual player's kills in capture the
-  // flag mode.
-  int winningTeam = (int)NoTeam;
-  if (!(clOptions.gameStyle & TeamFlagGameStyle)) {
-    if (player[victimIndex].team == player[killerIndex].team) {
-      if (player[killerIndex].team != RogueTeam)
-	if (killerIndex == victimIndex)
-	  team[int(player[victimIndex].team)].team.lost += 1;
-	else
-	  team[int(player[victimIndex].team)].team.lost += 2;
-    } else {
-      if (player[killerIndex].team != RogueTeam) {
-	winningTeam = int(player[killerIndex].team);
-	team[winningTeam].team.won++;
+  if (clOptions.gameStyle & int(KingOfTheHillGameStyle)) {
+    if (victimIndex == kingIndex)
+      annointNewKing();
+  } else {
+    // change the team scores -- rogues don't have team scores.  don't
+    // change team scores for individual player's kills in capture the
+    // flag mode.
+    int winningTeam = (int)NoTeam;
+    if (!(clOptions.gameStyle & TeamFlagGameStyle)) {
+      if (player[victimIndex].team == player[killerIndex].team) {
+        if (player[killerIndex].team != RogueTeam)
+          if (killerIndex == victimIndex)
+            team[int(player[victimIndex].team)].team.lost += 1;
+          else
+            team[int(player[victimIndex].team)].team.lost += 2;
+      } else {
+        if (player[killerIndex].team != RogueTeam) {
+          winningTeam = int(player[killerIndex].team);
+          team[winningTeam].team.won++;
+        }
+        if (player[victimIndex].team != RogueTeam)
+          team[int(player[victimIndex].team)].team.lost++;
+        sendTeamUpdate(int(player[killerIndex].team));
       }
-      if (player[victimIndex].team != RogueTeam)
-	team[int(player[victimIndex].team)].team.lost++;
-      sendTeamUpdate(int(player[killerIndex].team));
+      sendTeamUpdate(int(player[victimIndex].team));
     }
-    sendTeamUpdate(int(player[victimIndex].team));
-  }
 #ifdef PRINTSCORE
-  dumpScore();
+    dumpScore();
 #endif
-  if (winningTeam != (int)NoTeam)
-    checkTeamScore(killerIndex, winningTeam);
+    if (winningTeam != (int)NoTeam)
+      checkTeamScore(killerIndex, winningTeam);
+  }
 }
 
 static void grabFlag(int playerIndex, int flagIndex)
@@ -6295,6 +6356,13 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
       break;
     }
 
+    case MsgNewKing: 
+    {
+      DEBUG3("recieved MsgNewKing\n");
+      annointNewKing();
+      break;
+    }
+
     // player is sending a Server Control Message not implemented yet
     case MsgServerControl:
       break;
@@ -6400,6 +6468,7 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
 
       player[t].lastState = state;
     }
+
     //Fall thru
     case MsgGMUpdate:
     case MsgAudio:
@@ -6443,6 +6512,7 @@ static const char *usageString =
 "[-helpmsg <file> <name>]"
 "[-i interface] "
 "[-j] "
+"[-king] "
 "[-lagdrop <num>] "
 "[-lagwarn <time/ms>] "
 "[-maxidle <time/s>] "
@@ -6507,6 +6577,7 @@ static const char *extraUsageString =
 "\t-helpmsg: show the lines in <file> on command /help <name>\n"
 "\t-i: listen on <interface>\n"
 "\t-j: allow jumping\n"
+"\t-k: king of the hill style\n"
 "\t-lagdrop: drop player after this many lag warnings\n"
 "\t-lagwarn: lag warning threshhold time [ms]\n"
 "\t-maxidle: idle kick threshhold [s]\n"
@@ -6922,10 +6993,20 @@ static void parse(int argc, char **argv, CmdLineOptions &options)
       options.randomCTF = true;
       // capture the flag style
       options.gameStyle |= int(TeamFlagGameStyle);
+      if (options.gameStyle | int(KingOfTheHillGameStyle)) {
+	options.gameStyle &= ~int(KingOfTheHillGameStyle);
+	fprintf(stderr, "Capture the flag incompatible with King of the Hill");
+	fprintf(stderr, "Capture the flag assumed");
+      }
     }
     else if (strcmp(argv[i], "-c") == 0) {
       // capture the flag style
       options.gameStyle |= int(TeamFlagGameStyle);
+      if (options.gameStyle | int(KingOfTheHillGameStyle)) {
+	options.gameStyle &= ~int(KingOfTheHillGameStyle);
+	fprintf(stderr, "Capture the flag incompatible with King of the Hill");
+	fprintf(stderr, "Capture the flag assumed");
+      }
     }
     else if (strncmp(argv[i], "-d", 2) == 0) {
       // increase debug level
@@ -7007,6 +7088,16 @@ static void parse(int argc, char **argv, CmdLineOptions &options)
 	printf("allowing 0 observers\n");
 	options.maxObservers=0;
       }
+    }
+    else if (strcmp(argv[i], "-king") == 0) {
+      // king of the hill style
+      options.gameStyle |= int(KingOfTheHillGameStyle)|int(RoguesGameStyle);
+      if (options.gameStyle & int(TeamFlagGameStyle)) {
+	options.gameStyle &= ~int(TeamFlagGameStyle);
+	fprintf(stderr, "King of the Hill incompatible with Capture the flag");
+	fprintf(stderr, "King of the Hill assumed");
+      }
+
     }
     else if (strcmp(argv[i], "-mp") == 0) {
       // set maximum number of players
@@ -7233,13 +7324,13 @@ static void parse(int argc, char **argv, CmdLineOptions &options)
     }
     else if (strcmp(argv[i], "-tkkr") == 0) {
       if (++i == argc) {
-	cerr << "argument expected for -tkkr" << endl;
+	fprintf(stderr, "argument expected for -tkkr");
 	usage(argv[0]);
       }
       options.teamKillerKickRatio = atoi(argv[i]);
       if (options.teamKillerKickRatio < 0) {
 	 options.teamKillerKickRatio = 0;
-	 cerr << "disabling team killer kick ratio" << endl;
+	 fprintf(stderr, "disabling team killer kick ratio");
       }
     }
     else if (strcmp(argv[i], "-ttl") == 0) {
@@ -7369,6 +7460,12 @@ static void parse(int argc, char **argv, CmdLineOptions &options)
     options.flagDisallowed[int(ColorblindnessFlag)] = true;
   }
 
+  if (options.gameStyle & int(KingOfTheHillGameStyle)) {
+      for (int i = 0; i < NumTeams; i++)
+	      options.maxTeam[i] = 0;
+      options.maxTeam[RogueTeam] = maxPlayers;
+  }
+
   // make table of allowed extra flags
   if (options.numExtraFlags > 0) {
     // now count how many aren't disallowed
@@ -7459,6 +7556,8 @@ static void parse(int argc, char **argv, CmdLineOptions &options)
     fprintf(stderr, "style: %x\n", options.gameStyle);
     if (options.gameStyle & int(TeamFlagGameStyle))
       fprintf(stderr, "  capture the flag\n");
+    if (options.gameStyle & int(KingOfTheHillGameStyle))
+      fprintf(stderr, "  king of the kill\n");
     if (options.gameStyle & int(SuperFlagGameStyle))
       fprintf(stderr, "  super flags allowed\n");
     if (options.gameStyle & int(RoguesGameStyle))
