@@ -2578,7 +2578,9 @@ static bool defineWorld()
    // package up world
   world->packDatabase();
   // now get world packaged for network transmission
-  worldDatabaseSize = 4 + 30 + world->getDatabaseSize() + 2;
+  worldDatabaseSize = 4 + WorldCodeHeaderSize + 
+			world->getDatabaseSize() + 
+			4 + WorldCodeEndSize;
   if (clOptions->gameStyle & TeamFlagGameStyle)
     worldDatabaseSize += 4 * (4 + WorldCodeBaseSize);
 
@@ -2588,8 +2590,8 @@ static bool defineWorld()
   memset( worldDatabase, 0, worldDatabaseSize );
 
   void *buf = worldDatabase;
-  buf = nboPackUShort(buf, WorldCodeStyle);
-  buf = nboPackUShort(buf, MapHeaderSize);// size of the header
+  buf = nboPackUShort(buf, WorldCodeHeaderSize);
+  buf = nboPackUShort(buf, WorldCodeHeader);
   buf = nboPackUShort(buf, mapVersion);
   buf = nboPackFloat(buf, WorldSize);
   buf = nboPackUShort(buf, clOptions->gameStyle);
@@ -2605,8 +2607,8 @@ static bool defineWorld()
   if (clOptions->gameStyle & TeamFlagGameStyle) {
     for (int i = 1; i < CtfTeams; i++) {
       if (!clOptions->randomCTF || (clOptions->maxTeam[i] > 0)) {
-	buf = nboPackUShort(buf, WorldCodeBase);
 	buf = nboPackUShort(buf, WorldCodeBaseSize);
+	buf = nboPackUShort(buf, WorldCodeBase);
 	buf = nboPackUShort(buf, uint16_t(i));
 	buf = nboPackVector(buf, basePos[i]);
 	buf = nboPackFloat(buf, baseRotation[i]);
@@ -2617,6 +2619,7 @@ static bool defineWorld()
     }
   }
   buf = nboPackString(buf, world->getDatabase(), world->getDatabaseSize());
+  buf = nboPackUShort(buf, WorldCodeEndSize);
   buf = nboPackUShort(buf, WorldCodeEnd);
 
   MD5 md5;
@@ -4895,7 +4898,7 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
       if (ptr == 0) {
 	// update time of day in world database
 	const uint32_t epochOffset = (uint32_t)time(NULL);
-	void *epochPtr = ((char*)worldDatabase) + 30;
+	void *epochPtr = ((char*)worldDatabase) + WorldCodeEpochOffset;
 	nboPackUInt(epochPtr, epochOffset);
       }
       sendWorld(t, ptr);

@@ -591,10 +591,9 @@ void*			WorldBuilder::unpack(void* buf)
   // read style header
   uint16_t code, len;
   void* tmpBuf = buf;
-  buf = nboUnpackUShort(buf, code);
-  if (code != WorldCodeStyle) return tmpBuf;
   buf = nboUnpackUShort(buf, len);
-  tmpBuf = (void*)((char*)buf + len);
+  buf = nboUnpackUShort(buf, code);
+  if (code != WorldCodeHeader) return NULL;
 
   // read style
   uint16_t gameStyle, maxPlayers, maxShots, maxFlags,serverMapVersion;
@@ -623,17 +622,15 @@ void*			WorldBuilder::unpack(void* buf)
   setEpochOffset(epochOffset);
 
   // read geometry
-  buf = tmpBuf;
+  buf = nboUnpackUShort(buf, len);
   buf = nboUnpackUShort(buf, code);
   while (code != WorldCodeEnd) {
-    uint16_t length;
-    buf = nboUnpackUShort(buf, length);
     switch (code) {
       case WorldCodeBox: {
 	float data[7];
 	unsigned char tempflags;
 
-	if (length != WorldCodeBoxSize)
+	if (len != WorldCodeBoxSize)
 	  return NULL;
 
 	memset(data, 0, sizeof(float) * 7);
@@ -654,7 +651,7 @@ void*			WorldBuilder::unpack(void* buf)
 	float data[7];
 	unsigned char tempflags;
 
-	if (length != WorldCodePyramidSize)
+	if (len != WorldCodePyramidSize)
 	  return NULL;
 
 	buf = nboUnpackFloat(buf, data[0]);
@@ -678,7 +675,7 @@ void*			WorldBuilder::unpack(void* buf)
 	float data[8];
 	unsigned char tempflags;
 
-	if (length != WorldCodeTeleporterSize)
+	if (len != WorldCodeTeleporterSize)
 	  return NULL;
 
 	buf = nboUnpackFloat(buf, data[0]);
@@ -698,7 +695,7 @@ void*			WorldBuilder::unpack(void* buf)
       case WorldCodeLink: {
 	uint16_t data[2];
 
-	if (length != WorldCodeLinkSize)
+	if (len != WorldCodeLinkSize)
 	  return NULL;
 
 	buf = nboUnpackUShort(buf, data[0]);
@@ -709,7 +706,7 @@ void*			WorldBuilder::unpack(void* buf)
       case WorldCodeWall: {
 	float data[6];
 
-	if (length != WorldCodeWallSize)
+	if (len != WorldCodeWallSize)
 	  return NULL;
 
 	buf = nboUnpackFloat(buf, data[0]);
@@ -726,7 +723,7 @@ void*			WorldBuilder::unpack(void* buf)
 	uint16_t team;
 	float data[9];
 
-	if (length != WorldCodeBaseSize)
+	if (len != WorldCodeBaseSize)
 	  return NULL;
 
 	buf = nboUnpackUShort(buf, team);
@@ -744,7 +741,11 @@ void*			WorldBuilder::unpack(void* buf)
 	setBase(TeamColor(team), data, data[3], data[4], data[5], data + 6);
 	break;
       }
+
+      default:
+	return NULL;
     }
+    buf = nboUnpackUShort(buf, len);
     buf = nboUnpackUShort(buf, code);
   }
 

@@ -92,20 +92,22 @@ const uint16_t		MsgVideo = 0x7669;			// 'vi'
 const uint16_t		MsgWantWHash = 0x7768;			// 'wh'
 
 // world database codes
+const uint16_t		WorldCodeHeader = 0x6865;		// 'he'
 const uint16_t		WorldCodeBase = 0x6261;			// 'ba'
 const uint16_t		WorldCodeBox = 0x6278;			// 'bx'
 const uint16_t		WorldCodeEnd = 0x6564;			// 'ed'
 const uint16_t		WorldCodeLink = 0x6c6e;			// 'ln'
 const uint16_t		WorldCodePyramid = 0x7079;		// 'py'
-const uint16_t		WorldCodeStyle = 0x7374;		// 'st'
 const uint16_t		WorldCodeTeleporter = 0x7465;		// 'te'
 const uint16_t		WorldCodeWall = 0x776c;			// 'wl'
 
 // world database sizes
-const uint16_t		MapHeaderSize = 30;
+const uint16_t		WorldCodeHeaderSize = 30;
+const uint16_t		WorldCodeEpochOffset = 4+26; // huge hack, someone fix!!
 const uint16_t		WorldCodeBaseSize = 38;
 const uint16_t		WorldCodeWallSize = 24;
 const uint16_t		WorldCodeBoxSize = 29;
+const uint16_t		WorldCodeEndSize = 0;
 const uint16_t		WorldCodePyramidSize = 29;
 const uint16_t		WorldCodeTeleporterSize = 33;
 const uint16_t		WorldCodeLinkSize = 4;
