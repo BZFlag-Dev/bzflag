@@ -21,6 +21,7 @@ int			openBroadcast(int port, const char* service,
 {
 #if defined(_WIN32)
   const BOOL optOn = TRUE;
+	#define socklen_t int
 #else
   const int optOn = 1;
 #endif

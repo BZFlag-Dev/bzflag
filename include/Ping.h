@@ -18,6 +18,10 @@
 #ifndef	BZF_PING_H
 #define	BZF_PING_H
 
+#if defined(_WIN32)
+	#pragma warning(disable: 4786)
+#endif
+
 #include "Address.h"
 #include "Pack.h"
 #include "multicast.h"

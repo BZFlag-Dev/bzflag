@@ -9,6 +9,9 @@
  * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
+#if defined(_WIN32)
+	#pragma warning(disable: 4786)
+#endif
 
 #include <string.h>
 #include <sys/types.h>
@@ -21,6 +24,10 @@
 #include "network.h"
 
 #define INTERNALVERSION 0x17a0
+
+#if defined(_WIN32)
+#define socklen_t int
+#endif
 
 #if !defined(_WIN32)
 #include <unistd.h>
