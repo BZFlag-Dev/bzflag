@@ -24,7 +24,8 @@
 #include "Roster.h"
 
 /* FIXME -- pulled from player.h */
-void addMessage(const Player* player, const std::string& msg, bool highlight=false, const char* oldColor=NULL);
+void addMessage(const Player* player, const std::string& msg, int mode = 3,
+		bool highlight=false, const char* oldColor=NULL);
 extern char messageMessage[PlayerIdPLen + MessageLen];
 #define MAX_MESSAGE_HISTORY (20)
 extern HUDRenderer *hud;
@@ -46,7 +47,7 @@ void listSetVars(const std::string& name, void*)
 
   if (BZDB.getPermission(name) == StateDatabase::Locked) {
     sprintf(message, "/set %s %f", name.c_str(), BZDB.eval(name));
-    addMessage(LocalPlayer::getMyTank(), message, false, NULL);
+    addMessage(LocalPlayer::getMyTank(), message, 2);
   }
 }
 

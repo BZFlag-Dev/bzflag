@@ -31,9 +31,9 @@ typedef struct CommandListItem {
 /* FIXME -- gcc is not liking array type with sizeof() without size
  * for some reason */
 #ifdef SNAPPING
-extern const CmdListItem commandList[19];
+extern const CmdListItem commandList[20];
 #else
-extern const CmdListItem commandList[18];
+extern const CmdListItem commandList[19];
 #endif
 
 /** jump
@@ -67,6 +67,11 @@ std::string cmdDestruct(const std::string&, const CommandManager::ArgList& args)
 /** pause
  */
 std::string cmdPause(const std::string&, const CommandManager::ArgList& args);
+
+/** select tabbed message
+ */
+std::string cmdMessagePanel(const std::string&,
+			    const CommandManager::ArgList& args);
 
 /** toggle auto-pilot
  */

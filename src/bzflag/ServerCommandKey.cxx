@@ -329,7 +329,7 @@ bool			ServerCommandKey::keyPress(const BzfKeyEvent& key)
     if (sendMsg != "") {
       displayMsg = "-> \"" + sendMsg + "\"";
       if (sendMsg.find("/password", 0) == std::string::npos)
-	addMessage(NULL, displayMsg);
+	addMessage(NULL, displayMsg, 2);
 
       void* buf = messageMessage;
       buf = nboPackUByte(buf, ServerPlayer);

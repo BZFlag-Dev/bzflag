@@ -100,6 +100,8 @@ const struct CommandListItem commandList[] = {
   { "iconify",  &cmdIconify,	"iconify: iconify & pause bzflag" },
   { "fullscreen", &cmdToggleFS, "fullscreen: toggle fullscreen mode" },
   { "autopilot",&cmdAutoPilot,	"autopilot:  set/unset autopilot bot code" },
+  { "messagepanel", &cmdMessagePanel,
+    "messagespanel {all|chat|server|misc}:  set message tab" },
   { "toggleFlags", &cmdToggleFlags, "toggleFlags {main|radar}:  turn off on field radar flags"}
 };
 
@@ -325,6 +327,26 @@ std::string cmdAutoPilot(const std::string&, const CommandManager::ArgList& args
     serverLink->send(MsgMessage, sizeof(messageMessage), messageMessage);
 
   }
+
+  return std::string();
+}
+
+std::string cmdMessagePanel(const std::string&,
+			    const CommandManager::ArgList& args)
+{
+  if (args.size() != 1)
+    return "usage: autopilot {all|chat|server|misc}";
+
+  if (args[0] == "all")
+    controlPanel->setMessagesMode(0);
+  else if (args[0] == "chat")
+    controlPanel->setMessagesMode(1);
+  else if (args[0] == "server")
+    controlPanel->setMessagesMode(2);
+  else if (args[0] == "misc")
+    controlPanel->setMessagesMode(3);
+  else
+    return "usage: autopilot {all|chat|server|misc}";
 
   return std::string();
 }

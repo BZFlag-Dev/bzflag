@@ -46,8 +46,9 @@ class ControlPanel {
 
     void		setNumberOfFrameBuffers(int);
 
-    void		addMessage(const std::string&);
+    void		addMessage(const std::string&, const int mode = 3);
     void		setMessagesOffset(int offset, int whence);
+    void		setMessagesMode(int _messageMode);
     void		setStatus(const char*);
     void		setRadarRenderer(RadarRenderer*);
 
@@ -76,7 +77,14 @@ class ControlPanel {
     float		du, dv;
     int			radarAreaPixels[4];
     int			messageAreaPixels[4];
-    std::vector<ControlPanelMessage>	messages;
+    std::vector<ControlPanelMessage>	messages[4];
+    enum MessageModes {
+      MessageAll = 0,
+      MessageChat = 1,
+      MessageServer = 2,
+      MessageMisc = 3
+    };
+    int messageMode;
     GLfloat		teamColor[3];
     static int		messagesOffset;
     static const int	maxScrollPages;

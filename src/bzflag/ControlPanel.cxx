@@ -53,7 +53,8 @@ ControlPanel::ControlPanel(MainWindow& _mainWindow, SceneRenderer& renderer) :
 				resized(false),
 				numBuffers(2),
 				radarRenderer(NULL),
-				renderer(&renderer)
+				renderer(&renderer),
+				messageMode(MessageAll)
 {
   setControlColor();
   // make sure we're notified when MainWindow resizes or is exposed
@@ -104,6 +105,7 @@ void			ControlPanel::render(SceneRenderer& renderer)
   const int x = window.getOriginX();
   const int y = window.getOriginY();
   const int w = window.getWidth();
+  const bool showTabs = BZDB.isTrue("showtabs");
 
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
@@ -122,10 +124,11 @@ void			ControlPanel::render(SceneRenderer& renderer)
   }
   float fx = messageAreaPixels[0] + margin;
   float fy = messageAreaPixels[1] + margin + 1.0f;
+  int   ay = (renderer.getPanelOpacity() == 1.0f || !showTabs) ? 0 : 30;
   glScissor(x + messageAreaPixels[0],
       y + messageAreaPixels[1],
       messageAreaPixels[2],
-      messageAreaPixels[3]);
+      messageAreaPixels[3] + ay);
 
   OpenGLGState::resetState();
   if (renderer.getPanelOpacity() > 0.0f) {
@@ -134,11 +137,65 @@ void			ControlPanel::render(SceneRenderer& renderer)
       glEnable(GL_BLEND);
     glColor4f(0.0f, 0.0f, 0.0f, renderer.getPanelOpacity());
     glRecti(messageAreaPixels[0],
-    messageAreaPixels[1],
-    messageAreaPixels[0] + messageAreaPixels[2],
-    messageAreaPixels[1] + messageAreaPixels[3]);
+	    messageAreaPixels[1],
+	    messageAreaPixels[0] + messageAreaPixels[2],
+	    messageAreaPixels[1] + messageAreaPixels[3]);
+    if (showTabs) {
+      if (messageMode < MessageChat || messageMode > MessageMisc)
+	glColor4f(0.0f, 0.0f, 0.0f, renderer.getPanelOpacity());
+      else
+	glColor4f(0.15f, 0.15f, 0.15f, renderer.getPanelOpacity());
+      glRecti(messageAreaPixels[0],
+	      messageAreaPixels[1] + messageAreaPixels[3] - 30 + ay,
+	      messageAreaPixels[0] + 75,
+	      messageAreaPixels[1] + messageAreaPixels[3] + ay);
+
+      if (messageMode == MessageChat)
+	glColor4f(0.0f, 0.0f, 0.0f, renderer.getPanelOpacity());
+      else
+	glColor4f(0.15f, 0.15f, 0.15f, renderer.getPanelOpacity());
+      glRecti(messageAreaPixels[0] +75,
+	      messageAreaPixels[1] + messageAreaPixels[3] - 30 + ay,
+	      messageAreaPixels[0] + 150,
+	      messageAreaPixels[1] + messageAreaPixels[3] + ay);
+
+      if (messageMode == MessageServer)
+	glColor4f(0.0f, 0.0f, 0.0f, renderer.getPanelOpacity());
+      else
+	glColor4f(0.15f, 0.15f, 0.15f, renderer.getPanelOpacity());
+      glRecti(messageAreaPixels[0] + 150,
+	      messageAreaPixels[1] + messageAreaPixels[3] - 30 + ay,
+	      messageAreaPixels[0] + 225,
+	      messageAreaPixels[1] + messageAreaPixels[3] + ay);
+
+      if (messageMode == MessageMisc)
+	glColor4f(0.0f, 0.0f, 0.0f, renderer.getPanelOpacity());
+      else
+	glColor4f(0.15f, 0.15f, 0.15f, renderer.getPanelOpacity());
+      glRecti(messageAreaPixels[0] + 225,
+	      messageAreaPixels[1] + messageAreaPixels[3] - 30 + ay,
+	      messageAreaPixels[0] + 300,
+	      messageAreaPixels[1] + messageAreaPixels[3] + ay);
+    }
     if (BZDBCache::blend && renderer.getPanelOpacity() < 1.0f)
       glDisable(GL_BLEND);
+  }
+
+  if (showTabs) {
+    // Draw tab labels
+    glColor3f(1.0f, 1.0f, 1.0f);
+    fm.drawString(messageAreaPixels[0] + 30,
+		  messageAreaPixels[1] + messageAreaPixels[3] - 20 + ay,
+		  0, fontFace, fontSize, "All");
+    fm.drawString(messageAreaPixels[0] + 100,
+		  messageAreaPixels[1] + messageAreaPixels[3] - 20 + ay,
+		  0, fontFace, fontSize, "Chat");
+    fm.drawString(messageAreaPixels[0] + 170,
+		  messageAreaPixels[1] + messageAreaPixels[3] - 20 + ay,
+		  0, fontFace, fontSize, "Server");
+    fm.drawString(messageAreaPixels[0] + 250,
+		  messageAreaPixels[1] + messageAreaPixels[3] - 20 + ay,
+		  0, fontFace, fontSize, "Misc");
   }
 
   // draw messages
@@ -158,7 +215,12 @@ void			ControlPanel::render(SceneRenderer& renderer)
   const int lineCharWidth = (int)(messageAreaPixels[2] / 
 			     (fm.getStrLength(fontFace, fontSize, "-")));
 
-  i = messages.size() - 1;
+  glScissor(x + messageAreaPixels[0],
+	    y + messageAreaPixels[1],
+	    messageAreaPixels[2],
+	    messageAreaPixels[3] - (showTabs ? 30 : 0) + ay);
+
+  i = messages[messageMode].size() - 1;
   if (messagesOffset > 0) {
     if (i - messagesOffset > 0)
       i -= messagesOffset;
@@ -170,11 +232,12 @@ void			ControlPanel::render(SceneRenderer& renderer)
     glColor3fv(whiteColor);
 
     // get message and its length
-    const char* msg = messages[i].string.c_str();
-    int lineLen = messages[i].string.length();
+    const char* msg = messages[messageMode][i].string.c_str();
+    int lineLen     = messages[messageMode][i].string.length();
 
     // compute lines in message
-    const int numLines = (messages[i].rawLength + lineCharWidth - 1) / lineCharWidth;
+    const int numLines = (messages[messageMode][i].rawLength + lineCharWidth
+			  - 1) / lineCharWidth;
 
     // draw each line
     int msgy = numLines - 1;
@@ -226,9 +289,9 @@ void			ControlPanel::render(SceneRenderer& renderer)
     fy += (lineHeight * numLines);
   }
   glScissor(x + messageAreaPixels[0] - 1,
-      y + messageAreaPixels[1] - 1,
-      messageAreaPixels[2] + 2,
-      messageAreaPixels[3] + 2);
+	    y + messageAreaPixels[1] - 1,
+	    messageAreaPixels[2] + 2,
+	    messageAreaPixels[3] + 32);
   OpenGLGState::resetState();
 
   // nice border
@@ -240,8 +303,17 @@ void			ControlPanel::render(SceneRenderer& renderer)
 	(float) (y + messageAreaPixels[1] - 1));
     glVertex2f((float) (x + messageAreaPixels[0] - 1 + messageAreaPixels[2] + 1.1f),
 	(float) (y + messageAreaPixels[1] - 1 + messageAreaPixels[3] + 1.1f));
+    glVertex2f((float) (x + messageAreaPixels[0] - 1 + 300),
+	       (float) (y + messageAreaPixels[1] - 1 + messageAreaPixels[3]
+			+ 1.1f));
+    if (ay != 0) {
+      glVertex2f((float) (x + messageAreaPixels[0] - 0.9f + 300),
+		 (float) (y + messageAreaPixels[1] - 1 + 30
+			  + messageAreaPixels[3] + 1.1f));
+    }
     glVertex2f((float) (x + messageAreaPixels[0] - 0.9f),
-	(float) (y + messageAreaPixels[1] - 1 + messageAreaPixels[3] + 1.1f));
+	       (float) (y + messageAreaPixels[1] - 1 + ay
+			+ messageAreaPixels[3] + 1.1f));
   } glEnd();
   // some engines miss the corners
   glBegin(GL_POINTS); {
@@ -251,8 +323,14 @@ void			ControlPanel::render(SceneRenderer& renderer)
 	(float) (y + messageAreaPixels[1] - 1));
     glVertex2f((float) (x + messageAreaPixels[0] - 1 + messageAreaPixels[2] + 1.1f),
 	(float) (y + messageAreaPixels[1] - 1 + messageAreaPixels[3] + 1.1f));
-    glVertex2f((float) (x + messageAreaPixels[0] - 0.9f),
-	(float) (y + messageAreaPixels[1] - 1 + messageAreaPixels[3] + 1.1f));
+    if (ay != 0) {
+      glVertex2f((float) (x + messageAreaPixels[0] - 1 + 300 + 0.9f),
+		 (float) (y + messageAreaPixels[1] - 1 + 30
+			  + messageAreaPixels[3] + 1.1f));
+      glVertex2f((float) (x + messageAreaPixels[0] - 0.9f),
+		 (float) (y + messageAreaPixels[1] - 1 + 30
+			  + messageAreaPixels[3] + 1.1f));
+    }
   } glEnd();
 
   // border for radar
@@ -365,17 +443,17 @@ void			ControlPanel::setMessagesOffset(int offset, int whence)
   // whence = 0, 1, or 2 (akin to SEEK_SET, SEEK_CUR, SEEK_END)
   switch (whence) {
     case 0:
-      if (offset < (int)messages.size())
+      if (offset < (int)messages[messageMode].size())
 	messagesOffset = offset;
       else
-	messagesOffset = messages.size() - 1;
+	messagesOffset = messages[messageMode].size() - 1;
       break;
     case 1:
       if (offset > 0) {
-	if (messagesOffset + offset < (int)messages.size())
+	if (messagesOffset + offset < (int)messages[messageMode].size())
 	  messagesOffset += offset;
 	else
-	  messagesOffset = messages.size() - 1;
+	  messagesOffset = messages[messageMode].size() - 1;
       } else if (offset < 0) {
 	if (messagesOffset + offset >= 0)
 	  messagesOffset += offset;
@@ -385,7 +463,7 @@ void			ControlPanel::setMessagesOffset(int offset, int whence)
       break;
     case 2:
       if (offset < 0) {
-	if ((int)messages.size() >= offset)
+	if ((int)messages[messageMode].size() >= offset)
 	  messagesOffset += offset;
 	else
 	  messagesOffset = 0;
@@ -395,17 +473,37 @@ void			ControlPanel::setMessagesOffset(int offset, int whence)
   changedMessage = numBuffers;
 }
 
-void			ControlPanel::addMessage(const std::string& line)
+void			ControlPanel::setMessagesMode(int _messageMode)
+{
+  messageMode = _messageMode;
+  changedMessage = numBuffers;
+}
+
+void			ControlPanel::addMessage(const std::string& line,
+						 const int mode)
 {
   ControlPanelMessage item(line);
 
-  if ((int)messages.size() < maxLines * maxScrollPages) {
+  // Add to "All" tab
+  if ((int)messages[MessageAll].size() < maxLines * maxScrollPages) {
     // not full yet so just append it
-    messages.push_back(item);
+    messages[MessageAll].push_back(item);
   } else {
     // rotate list and replace oldest (in newest position after rotate)
-    messages.erase(messages.begin());
-    messages.push_back(item);
+    messages[MessageAll].erase(messages[MessageAll].begin());
+    messages[MessageAll].push_back(item);
+  }
+
+  // Add to other tab
+  if (mode >= MessageChat && mode <= MessageMisc) {
+    if ((int)messages[mode].size() < maxLines * maxScrollPages) {
+      // not full yet so just append it
+      messages[mode].push_back(item);
+    } else {
+      // rotate list and replace oldest (in newest position after rotate)
+      messages[mode].erase(messages[mode].begin());
+      messages[mode].push_back(item);
+    }
   }
 
   // this stuff has no effect on win32 (there's no console)

@@ -77,8 +77,11 @@ void			removePlayingCallback(PlayingCallback, void* data);
 void			joinGame(JoinGameCallback, void* userData);
 std::vector<std::string>& getSilenceList();
 void			updateEvents();
-void			addMessage(const Player* player, const std::string& msg,
-				   bool highlight=false, const char* oldColor=NULL);
+void			addMessage(const Player* player,
+				   const std::string& msg,
+				   int mode = 3,
+				   bool highlight = false,
+				   const char* oldColor = NULL);
 
 void selectNextRecipient (bool forward, bool robotIn);
 void handleFlagDropped(Player* tank);

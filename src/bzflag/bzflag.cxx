@@ -110,6 +110,8 @@ static DefaultDBItem	defaultDBItems[] = {
   { "mouseboxsize",		"5",			true,	StateDatabase::ReadWrite,	NULL },
   { "bigfont",			"0",			true,	StateDatabase::ReadWrite,	NULL },
   { "colorful",			"1",			true,	StateDatabase::ReadWrite,	NULL },
+  { "showtabs",			"1",			true,
+    StateDatabase::ReadWrite,	NULL },
   { "underlineColor",		"cyan",			true,	StateDatabase::ReadWrite,	NULL },
   { "zbuffer",			"1",			true,	StateDatabase::ReadWrite,	NULL },
   { "killerhighlight",		"0",			true,	StateDatabase::ReadWrite,	NULL },

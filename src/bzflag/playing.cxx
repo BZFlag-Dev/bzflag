@@ -957,9 +957,8 @@ static void		doEvent(BzfDisplay* display)
   }
 }
 
-void		addMessage(const Player* player,
-				   const std::string& msg, bool highlight,
-				   const char* oldColor)
+void		addMessage(const Player* player, const std::string& msg,
+			   int mode, bool highlight, const char* oldColor)
 {
   std::string fullMessage;
 
@@ -1004,7 +1003,7 @@ void		addMessage(const Player* player,
     }
     fullMessage += stripAnsiCodes(msg);
   }
-  controlPanel->addMessage(fullMessage);
+  controlPanel->addMessage(fullMessage, mode);
 }
 
 static void		updateNumPlayers()
@@ -1645,7 +1644,7 @@ static void		handleServerMessage(bool human, uint16_t code,
 	  message += "killed by ";
 	  message += playerStr;
 	}
-	addMessage(victimPlayer, message, killerPlayer==myTank);
+	addMessage(victimPlayer, message, 3, killerPlayer==myTank);
       }
     }
 
@@ -1851,7 +1850,7 @@ static void		handleServerMessage(bool human, uint16_t code,
 	hud->setHunting(true);
       }
 
-      addMessage(rabbit, "is now the rabbit", true);
+      addMessage(rabbit, "is now the rabbit", 3, true);
     }
 
 #ifdef ROBOT
@@ -2037,7 +2036,8 @@ static void		handleServerMessage(bool human, uint16_t code,
         for (size_t i = 0; i < countof(passwdKeys); i++) {
           if (BZDB.isSet(passwdKeys[i])) {
             std::string passwdResponse = "/identify " + BZDB.get(passwdKeys[i]);
-            addMessage(0, ("Autoidentifying with password stored for " + passwdKeys[i]).c_str(), false);
+            addMessage(0, ("Autoidentifying with password stored for "
+			   + passwdKeys[i]).c_str(), 2, false);
             void *buf = messageMessage;
             buf = nboPackUByte(buf, ServerPlayer);
             nboPackString(buf, (void*) passwdResponse.c_str(), MessageLen);
@@ -2143,7 +2143,10 @@ static void		handleServerMessage(bool human, uint16_t code,
         oldcolor = ColorStrings[CyanColor];
       else
         oldcolor = ColorStrings[srcPlayer->getTeam()];
-      addMessage(NULL, fullMsg, false, oldcolor.c_str());
+      if (fromServer)
+	addMessage(NULL, fullMsg, 2, false, oldcolor.c_str());
+      else
+	addMessage(NULL, fullMsg, 1, false, oldcolor.c_str());
 
       if (!srcPlayer || srcPlayer!=myTank)
 	hud->setAlert(0, fullMsg.c_str(), 3.0f, false);
@@ -3633,7 +3636,7 @@ static bool		enterServer(ServerLink* serverLink, World* world,
 	if (myTank->getTeam() != (TeamColor)team) {
 	  myTank->setTeam((TeamColor)team);
 	  hud->setAlert(1, teamMsg.c_str(), 8.0f, (TeamColor)team==ObserverTeam?true:false);
-	  addMessage(NULL, teamMsg.c_str(), true);
+	  addMessage(NULL, teamMsg.c_str(), 3, true);
 	}
 	controlPanel->setControlColor(Team::getRadarColor(myTank->getTeam()));
 	radar->setControlColor(Team::getRadarColor(myTank->getTeam()));
