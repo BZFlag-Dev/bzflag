@@ -9,7 +9,7 @@ CppCompiler=-DBUILD_REGEX=1 -D__GNUWIN32__ -D_CONSOLE -DWIN32 -D_MBCS_@@_ -Wall 
 Includes=..\include;..\win32;.
 Linker=-lstdc++ -lws2_32 -lwinmm -lkernel32 -luser32 -lgdi32 -lwinspool -lcomdlg32 -ladvapi32 -lshell32 -lole32 -loleaut32 -luuid_@@_
 Libs=
-UnitCount=180
+UnitCount=193
 Folders="Header Files","Header Files/bzfs","Header Files/common","Header Files/game","Header Files/net","Header Files/regex","Resource Files","Source Files","Source Files/bzfs","Source Files/common","Source Files/date","Source Files/game","Source Files/Net","Source Files/regex","Source Files/zlib"
 ObjFiles=
 PrivateResource=
@@ -1841,6 +1841,136 @@ BuildCmd=
 FileName=..\src\zlib\zutil.c
 CompileCpp=0
 Folder=Source Files/zlib
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit181]
+FileName=..\src\bzfs\ParseMaterial.cxx
+CompileCpp=1
+Folder=Source Files/bzfs
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit182]
+FileName=..\src\bzfs\CustomArc.cxx
+CompileCpp=1
+Folder=Source Files/bzfs
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit183]
+FileName=..\src\bzfs\CustomMesh.cxx
+CompileCpp=1
+Folder=Source Files/bzfs
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit184]
+FileName=..\src\bzfs\CustomMeshFace.cxx
+CompileCpp=1
+Folder=Source Files/bzfs
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit185]
+FileName=..\src\bzfs\CustomSphere.cxx
+CompileCpp=1
+Folder=Source Files/bzfs
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit186]
+FileName=..\src\bzfs\CustomTextureMatrix.cxx
+CompileCpp=1
+Folder=Source Files/bzfs
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit187]
+FileName=..\src\bzfs\CustomWaterLevel.cxx
+CompileCpp=1
+Folder=Source Files/bzfs
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit188]
+FileName=..\src\game\DynamicColor.cxx
+CompileCpp=1
+Folder=Source Files/bzfs
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit189]
+FileName=..\src\game\MeshMaterial.cxx
+CompileCpp=1
+Folder=Source Files/bzfs
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit190]
+FileName=..\src\game\TextureMatrix.cxx
+CompileCpp=1
+Folder=Source Files/bzfs
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit191]
+FileName=..\src\obstacle\MeshObstacle.cxx
+CompileCpp=1
+Folder=Source Files/bzfs
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit192]
+FileName=..\src\obstacle\MeshFace.cxx
+CompileCpp=1
+Folder=Source Files/bzfs
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit193]
+FileName=..\src\bzfs\CustomDynamicColor.cxx
+CompileCpp=1
+Folder=Source Files/bzfs
 Compile=1
 Link=1
 Priority=1000

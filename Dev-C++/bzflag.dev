@@ -9,7 +9,7 @@ CppCompiler=-DHAVE_SDL=1 -DBUILD_REGEX=1 -D__GNUWIN32__ -D_WINDOWS -DWIN32 -D_MB
 Includes=..\include;..\win32;.
 Linker=-lmingw32 -lstdc++ -lsdl -lws2_32 -ldsound -lwinmm -lglu32 -lopengl32 -lkernel32 -luser32 -lgdi32 -lwinspool -lcomdlg32 -ladvapi32 -lshell32 -lole32 -loleaut32 -luuid -lodbc32 -lodbccp32_@@_
 Libs=
-UnitCount=314
+UnitCount=321
 Folders="Header Files","Header Files/common","Header Files/net","Header Files/regex","Header Files/zlib","Resource Files","Source Files","Source Files/common","Source Files/models","Source Files/net","Source Files/regex","Source Files/zlib"
 ObjFiles=
 PrivateResource=bzflag_private.rc
@@ -3098,9 +3098,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit315]
-FileName=..\src\bzflag\ShotStatistics.h
+FileName=..\src\geometry\MeshPolySceneNode.cxx
 CompileCpp=1
-Folder=Header Files
+Folder=Source Files/common
 Compile=1
 Link=1
 Priority=1000
@@ -3108,9 +3108,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit316]
-FileName=..\include\bzfSDL.h
+FileName=..\src\game\MeshMaterial.cxx
 CompileCpp=1
-Folder=Header Files/common
+Folder=Source Files/common
 Compile=1
 Link=1
 Priority=1000
@@ -3118,9 +3118,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit317]
-FileName=..\src\geometry\TracerSceneNode.cxx
+FileName=..\src\obstacle\MeshFace.cxx
 CompileCpp=1
-Folder=Source Files
+Folder=Source Files/common
 Compile=1
 Link=1
 Priority=1000
@@ -3128,9 +3128,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit318]
-FileName=..\src\geometry\TriWallSceneNode.cxx
+FileName=..\src\obstacle\MeshObstacle.cxx
 CompileCpp=1
-Folder=Source Files
+Folder=Source Files/common
 Compile=1
 Link=1
 Priority=1000
@@ -3138,9 +3138,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit319]
-FileName=..\src\geometry\ViewFrustum.cxx
+FileName=..\src\obstacle\MeshSceneNodeGenerator.cxx
 CompileCpp=1
-Folder=Source Files
+Folder=Source Files/common
 Compile=1
 Link=1
 Priority=1000
@@ -3148,9 +3148,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit320]
-FileName=..\src\platform\PlatformFactory.cxx
+FileName=..\src\game\DynamicColor.cxx
 CompileCpp=1
-Folder=Source Files
+Folder=Source Files/common
 Compile=1
 Link=1
 Priority=1000
@@ -3158,9 +3158,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit321]
-FileName=..\src\game\DirectoryNames.cxx
+FileName=..\src\game\TextureMatrix.cxx
 CompileCpp=1
-Folder=Source Files
+Folder=Source Files/common
 Compile=1
 Link=1
 Priority=1000
