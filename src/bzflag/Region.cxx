@@ -184,25 +184,31 @@ BzfRegion*		BzfRegion::orphanSplitRegion(const float e1[2],
   const float dy = e2[1] - e1[1];
   const float d = dy * e1[0] - dx * e1[1];
   const float* p1 = corners[0].get();
-  float lastDistance = dy * p1[0] - dx * p1[1];
+
+  // Vector Product between splitter and corner : to know if right or left
+  float lastPVect = d - dy * p1[0] + dx * p1[1];
+  // keep sign of PVector, too risky to recompute
+  bool lastSign = (lastPVect >= 0);
+  // Sign (Left or Right) of first corner and hence first transition
+  bool fistCornerRight = lastSign;
   for (i = 0; split < 2 && i < count; i++) {
     const float* p2 = corners[(i + 1) % count].get();
-    const float distance = dy * p2[0] - dx * p2[1];
+    const float pVect = d - dy * p2[0] + dx * p2[1];
+    const bool newSign = (pVect >= 0);
 
     // if both ends of region edge are on same side of cutting edge then
     // can't intersect the edge.
-    if (lastDistance >= d && distance < d || lastDistance < d && distance >= d){
+    if (lastSign != newSign) {
+      const float delta = lastPVect - pVect;
       // compute distance along region edge where intersection occurs
-      tsplit[split] = (d - lastDistance) / (distance - lastDistance);
-      if (tsplit[split] >= 0.0 && tsplit[split] <= 1.0) {
-	edge[split] = i;
-	etsplit[split] = ((p1[1] - p2[1]) * (p1[0] - e1[0]) +
-			(p2[0] - p1[0]) * (p1[1] - e1[1])) /
-			(distance - lastDistance);
-	split++;
-      }
+      tsplit[split] = lastPVect / delta;
+      edge[split] = i;
+      etsplit[split] = ((p1[1] - p2[1]) * (p1[0] - e1[0]) +
+			(p2[0] - p1[0]) * (p1[1] - e1[1])) / delta;
+      split++;
     }
-    lastDistance = distance;
+    lastPVect = pVect;
+    lastSign = newSign;
     p1 = p2;
   }
 
@@ -226,14 +232,8 @@ BzfRegion*		BzfRegion::orphanSplitRegion(const float e1[2],
   // add sides to new region and remove them from me.  the new region
   // must be to the right of the edge.  see if the corner after the
   // split on the first split edge is to the right or left of the
-  // cutting edge.  if ambiguous, scan around until it's not.
-  float t = 0.0;
-  for (i = edge[0] + 1; fabs(t) < 1.0e-5 && i <= edge[1]; i++) {
-    p1 = corners[i].get();
-    t = dy * (e1[0] - p1[0]) - dx * (e1[1] - p1[1]);
-  }
-
-  if (dy * (e1[0] - p1[0]) - dx * (e1[1] - p1[1]) < 0.0) {
+  // cutting edge.
+  if (fistCornerRight) {
     // corner is to right of cutting edge -- new region between edge 0 and 1
     // add sides to new region
     newRegion->addSide(n1, neighbors[edge[0]]);
