@@ -166,6 +166,9 @@ int			openMulticast(const Address& address, int port,
 					const char* mode,
 					struct sockaddr_in* addr)
 {
+  // Multicast is broken
+  return -1;
+
   struct ip_mreq mreq;
   struct in_addr ifaddr;
   int fd;
