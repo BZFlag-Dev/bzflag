@@ -743,8 +743,11 @@ void			HUDRenderer::renderStatus(void)
 	break;
 
       case LocalPlayer::Loading:
-	statusColor = redColor;
-	sprintf(buffer, bdl->getLocalString("Reloaded in %.1f").c_str(), player->getReloadTime());
+	// don't show loading status with Trigger Happy
+	if (flag != Flags::TriggerHappy) {
+	  statusColor = redColor;
+	  sprintf(buffer, bdl->getLocalString("Reloaded in %.1f").c_str(), player->getReloadTime());
+	}
 	break;
 
       case LocalPlayer::Sealed:
