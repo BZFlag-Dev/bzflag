@@ -1365,18 +1365,16 @@ static void		handleServerMessage(boolean human, uint16_t code,
 	  // terminate the shot
 	  killerLocal->endShot(shotId, True);
 	}
-	if (victimPlayer != myTank) {
-	  if (victimPlayer->getTeam() == killerLocal->getTeam() &&
-				killerLocal->getTeam() != RogueTeam) {
-	    if (killerLocal == myTank)
-	      hud->setAlert(1, "Don't shoot teammates!!!", 3.0f, True);
-	    killerLocal->changeScore(0, 1);		// teammate
-	  }
-	  else
-	    killerLocal->changeScore(1, 0);		// enemy
+	if (victimPlayer->getTeam() == killerLocal->getTeam() && killerLocal->getTeam() != RogueTeam) {
+	  if (killerLocal == myTank && victimPlayer != myTank)
+	    hud->setAlert(1, "Don't shoot teammates!!!", 3.0f, True);
+	  // teammate
+	  killerLocal->changeScore(0, 1);
 	}
+	else
+	  // enemy
+	  killerLocal->changeScore(1, 0);
       }
-
       // handle my personal score against other players
       if ((killerPlayer == myTank || victimPlayer == myTank) &&
 	 !(killerPlayer == myTank && victimPlayer == myTank)) {

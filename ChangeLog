@@ -10,6 +10,7 @@ BZFlag 1.7e1
 * Explosions are larger - frank
 * Scrollback and Line wrap (use pageup/down keys) - Digit1
 * radar tank dots are larger - frank
+* robots score when killing 'owner' - chestal <thilo@unix-ag.org>
 
 
 BZFlag 1.7e release 000
