@@ -33,6 +33,8 @@ const std::string StateDatabase::BZDB_SHOTRADIUS	= std::string("_shotRadius");
 const std::string StateDatabase::BZDB_SHOTLENGTH	= std::string("_shotLength");
 const std::string StateDatabase::BZDB_SHOTTAILLENGTH	= std::string("_shotTailLength");
 const std::string StateDatabase::BZDB_LOCKONANGLE	= std::string("_lockOnAngle");
+const std::string StateDatabase::BZDB_TARGETINGANGLE	= std::string("_targetingAngle");
+const std::string StateDatabase::BZDB_EXPLODETIME       = std::string("_explodeTime");
 
 //
 // StateDatabase::Item

@@ -289,7 +289,7 @@ void			Player::addPlayer(SceneDatabase* scene,
     }
   }
   else if (isExploding()) {
-    float t = (TimeKeeper::getTick() - explodeTime) / ExplodeTime;
+    float t = (TimeKeeper::getTick() - explodeTime) / BZDB->eval(StateDatabase::BZDB_EXPLODETIME);
     if (t > 1.0f) {
 // FIXME
 //      setStatus(DeadStatus);

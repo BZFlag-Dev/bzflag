@@ -101,7 +101,6 @@ const int		CitySize =	5;
 const float		AvenueSize =	2.0f * BoxBase;	// meters
 
 // other game info
-const float		ExplodeTime =	5.0f;		// seconds
 const float		TeleportTime =	1.0f;		// seconds
 const float		FlagAltitude =	11.0f;		// meters
 const float		FlagRadius =	2.5f;		// meters
@@ -181,7 +180,7 @@ struct GlobalDBItem {
     bool			persistent;
     StateDatabase::Permission	permission;
 };
-extern GlobalDBItem		globalDBItems[5];
+extern GlobalDBItem		globalDBItems[7];
 
 #endif // BZF_GLOBAL_H
 // ex: shiftwidth=2 tabstop=8

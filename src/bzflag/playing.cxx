@@ -4160,7 +4160,7 @@ static void		setTarget()
       bestDistance = d;
       lockedOn = true;
     }
-    else if (a < 0.3f &&				// about 17 degrees
+    else if (a < BZDB->eval(StateDatabase::BZDB_TARGETINGANGLE) &&				// about 17 degrees
 	((player[i]->getFlag() != Flags::Stealth) || (myTank->getFlag() == Flags::Seer)) &&	// can't "see" stealth unless have seer
 	d < bestDistance && !lockedOn) {		// is it better?
       bestTarget = player[i];
@@ -4254,7 +4254,7 @@ static void		setHuntTarget()
       bestDistance = d;
       lockedOn = true;
     }
-    else if (a < 0.3f &&				// about 17 degrees
+    else if (a < BZDB->eval(StateDatabase::BZDB_TARGETINGANGLE) &&				// about 17 degrees
 	((player[i]->getFlag() != Flags::Stealth) || (myTank->getFlag() == Flags::Seer)) &&	// can't "see" stealth unless have seer
 	d < bestDistance && !lockedOn) {		// is it better?
       bestTarget = player[i];

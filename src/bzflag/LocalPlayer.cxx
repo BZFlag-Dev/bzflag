@@ -258,8 +258,8 @@ void			LocalPlayer::doUpdateMotion(float dt)
     }
     else if (location == Exploding) {
       // see if explosing time has expired
-      if (lastTime - getExplodeTime() >= ExplodeTime) {
-	dt -= (lastTime - getExplodeTime()) - ExplodeTime;
+      if (lastTime - getExplodeTime() >= BZDB->eval(StateDatabase::BZDB_EXPLODETIME)) {
+	dt -= (lastTime - getExplodeTime()) - BZDB->eval(StateDatabase::BZDB_EXPLODETIME);
 	if (dt < 0.0f) dt = 0.0f;
 	setStatus(PlayerState::DeadStatus);
 	location = Dead;
@@ -906,7 +906,7 @@ void			LocalPlayer::explodeTank()
   float newVelocity[3];
   newVelocity[0] = oldVelocity[0];
   newVelocity[1] = oldVelocity[1];
-  newVelocity[2] = -0.5f * BZDB->eval(StateDatabase::BZDB_GRAVITY) * ExplodeTime;
+  newVelocity[2] = -0.5f * BZDB->eval(StateDatabase::BZDB_GRAVITY) * BZDB->eval(StateDatabase::BZDB_EXPLODETIME);
   setVelocity(newVelocity);
   location = Exploding;
   target = NULL;		// lose lock when dead

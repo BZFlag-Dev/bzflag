@@ -192,7 +192,7 @@ void			RobotPlayer::doUpdateMotion(float dt)
     }
   }
   else if (isExploding()) {
-    if (lastTime - getExplodeTime() >= ExplodeTime)
+    if (lastTime - getExplodeTime() >= BZDB->eval(StateDatabase::BZDB_EXPLODETIME))
       setStatus(PlayerState::DeadStatus);
   }
 
@@ -282,7 +282,7 @@ void			RobotPlayer::explodeTank()
   float newVelocity[3];
   newVelocity[0] = oldVelocity[0];
   newVelocity[1] = oldVelocity[1];
-  newVelocity[2] = -0.5f * BZDB->eval(StateDatabase::BZDB_GRAVITY) * ExplodeTime;
+  newVelocity[2] = -0.5f * BZDB->eval(StateDatabase::BZDB_GRAVITY) * BZDB->eval(StateDatabase::BZDB_EXPLODETIME);
   setVelocity(newVelocity);
   target = NULL;
   path.clear();

@@ -13,10 +13,12 @@
 #include "global.h"
 
 
-GlobalDBItem globalDBItems[5] = {
+GlobalDBItem globalDBItems[7] = {
   { "_gravity",		"-9.81",	false,	StateDatabase::Locked },
   { "_tankLength",	"6.0",		false,	StateDatabase::Locked },
   { "_tankWidth",	"2.8",		false,	StateDatabase::Locked },
   { "_tankSpeed",       "25.0",         false,  StateDatabase::Locked },
-  { "_lockOnAngle",     "0.15",         false,  StateDatabase::Locked }
+  { "_lockOnAngle",     "0.15",         false,  StateDatabase::Locked },
+  { "_targetingAngle",  "0.3",          false,  StateDatabase::Locked },
+  { "_explodeTime",     "5.0",          false,  StateDatabase::Locked }
 };
