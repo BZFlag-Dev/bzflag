@@ -39,9 +39,7 @@ THESE ARE LOWER PRIORITY
   ObstacleMgr::makeWorld()  (including materials, physics drivers,
   texture matrices, transforms, and dynamic colors).
 
-* Teach Roger how to avoid driving into the water on maps that have
-  waterlevels set.  Probably needs to know not to drive into deadly
-  physics drivers too.
+* Teach Roger not to drive into deadly physics drivers.
 
 * if libcurl is going to be the path forward:
   * convert to multi from simple
