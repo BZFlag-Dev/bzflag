@@ -4772,21 +4772,6 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
       removePlayer(t, "left", false);
       break;
 
-    // player requesting new ttl
-    case MsgSetTTL: {
-      // data: ttl
-      uint16_t ttl;
-      nboUnpackUShort(buf, ttl);
-      if (ttl > (uint16_t)MaximumTTL) ttl = (uint16_t)MaximumTTL;
-      if ((int)ttl > playerTTL) {
-	void *buf, *bufStart = getDirectMessageBuffer();
-	buf = nboPackUShort(bufStart, ttl);
-	broadcastMessage(MsgSetTTL, (char*)buf-(char*)bufStart, bufStart);
-	playerTTL = (int)ttl;
-      }
-      break;
-    }
-
     case MsgNegotiateFlags: {
 	void *bufStart;
 	std::map<std::string,FlagDesc*>::iterator it;

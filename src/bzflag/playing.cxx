@@ -59,7 +59,6 @@ static const char copyright[] = "Copyright (c) 1993 - 2003 Tim Riker";
 #include "Protocol.h"
 #include "Pack.h"
 #include "ServerLink.h"
-#include "PlayerLink.h"
 #include "SceneRenderer.h"
 #include "SceneBuilder.h"
 #include "SceneDatabase.h"
@@ -5189,15 +5188,6 @@ static bool		joinGame(const StartupInfo* info,
     return false;
   }
 
-  // check inter-player connection
-/* NOTE -- this will be handled later when we try to fallback to TCP
-  if (playerLink->getState() == PlayerLink::SocketError) {
-    printError("Couldn't make inter-player connection");
-    leaveGame();
-    return false;
-  }
-*/
-
   // set tank textures
   Player::setTexture(*tankTexture);
 
@@ -5310,8 +5300,6 @@ static bool		joinInternetGame(const StartupInfo* info)
   ServerLink* serverLink = new ServerLink(serverAddress, info->serverPort);
 
   Address multicastAddress(BroadcastAddress);
-  PlayerLink* playerLink = new PlayerLink(multicastAddress, BroadcastPort,
-				info->ttl, info->multicastInterface);
 
 #if defined(ROBOT)
   extern int numRobotTanks;

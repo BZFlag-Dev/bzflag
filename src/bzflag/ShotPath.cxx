@@ -15,7 +15,6 @@
 #include "ShotStrategy.h"
 #include "LocalPlayer.h"
 #include "Protocol.h"
-#include "PlayerLink.h"
 #include "playing.h"
 #include "Flag.h"
 

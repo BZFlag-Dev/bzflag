@@ -45,8 +45,6 @@ bzflag_SOURCES =			\
 	RobotPlayer.h			\
 	ServerLink.cxx			\
 	ServerLink.h			\
-	PlayerLink.cxx			\
-	PlayerLink.h			\
 	callbacks.h			\
 	callbacks.cxx			\
 	daylight.cxx			\

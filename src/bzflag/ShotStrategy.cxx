@@ -25,7 +25,6 @@
 #include "OpenGLTexture.h"
 #include "texture.h"
 #include "playing.h"
-#include "PlayerLink.h"
 #include "Team.h"
 #include "SceneRenderer.h"
 #include "StateDatabase.h"

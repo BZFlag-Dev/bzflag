@@ -160,10 +160,6 @@ SOURCE=..\src\bzflag\Player.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\src\bzflag\PlayerLink.cxx
-# End Source File
-# Begin Source File
-
 SOURCE=..\src\bzflag\playing.cxx
 # End Source File
 # Begin Source File
@@ -282,10 +278,6 @@ SOURCE=..\src\bzflag\menus.h
 # Begin Source File
 
 SOURCE=..\src\bzflag\Player.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\src\bzflag\PlayerLink.h
 # End Source File
 # Begin Source File
 
