@@ -5,3 +5,8 @@ build-stamp
 work
 *patch
 *diff
+aclocal.m4
+config.cache
+config.log
+config.status
+configure
