@@ -286,7 +286,7 @@ By default, a server will respond to broadcast or multicast queries,
 allowing clients to find servers on the local subnet or accessible
 through multicast routers.  However, this doesn't allow clients to
 find servers not accessible via multicast.  The \fB-public\fR option
-causes the server to register itself with a \fBbzfls\fR server, which
+causes the server to register itself with a list server, which
 clients can query to get a list of \fBbzfs\fR servers.
 .TP
 \fB-publicaddr\fI address\fR[:\fIport\fR]
@@ -299,7 +299,7 @@ Translation).  Use this option to specify the address and/or port
 that internet users should use to access this server.
 .TP
 \fB-publiclist\fI url\fR
-Advertise this server on the \fBbzfls\fR servers listed at \fIurl\fR.
+Advertise this server on the list servers listed at \fIurl\fR.
 Only has an effect when used with \fB-public\fR.
 A built-in url is used by default.  The \fBBZFlag\fR clients use the
 same built-in url so, by default, clients will see public servers
@@ -496,7 +496,7 @@ and forward them to the server.
 Clients can search for servers by sending broadcast UDP
 packets.  But they must be on the same local area network for this to work.
 Clients can also find servers
-advertised using \fI-public\fR by querying \fBbzfls\fR servers.
+advertised using \fI-public\fR by querying list servers.
 .PP
 Game information is relayed through the server. Some communication between
 clients, such as position and orientation information, is normally sent via UDP

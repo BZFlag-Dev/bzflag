@@ -714,7 +714,7 @@ void			ServerLink::sendPaused(bool paused)
 void			ServerLink::sendUDPlinkRequest()
 {
   if ((server_abilities & CanDoUDP) != CanDoUDP)
-    return; // server does not support udp (future bzfls test)
+    return; // server does not support udp (future list server test)
 
   char msg[1];
   unsigned short localPort;

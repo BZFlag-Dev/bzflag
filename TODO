@@ -127,8 +127,9 @@ THESE ARE LOWER PRIORITY
   unpublished by default. Perhaps a central username, probably without password
 
 * support gameinfo requests as one time udp packets and include all the
-  same information that bzfls tracks.  We should allow server info, player and
-  score lists over udp from any udp address, not just a "connected" player.
+  same information that the central list server tracks.  We should allow server
+  info, player and score lists over udp from any udp address, not just a
+  "connected" player.
 
 * Make bcast traffic and serverlist traffic less blocking. (ie: same select() call)
 

@@ -3949,34 +3949,6 @@
 			settings = {
 			};
 		};
-		14CC68A5055D2EA100A80164 = {
-			fallbackIsa = PBXFileReference;
-			fileEncoding = 30;
-			isa = PBXExecutableFileReference;
-			lastKnownFileType = text.script.perl;
-			name = bzfls.pl;
-			path = ../../../misc/bzfls.pl;
-			refType = 2;
-			sourceTree = SOURCE_ROOT;
-		};
-		14CC68A6055D2EA100A80164 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = text.script.php;
-			name = bzflsLite.php;
-			path = ../../../misc/bzflsLite.php;
-			refType = 2;
-			sourceTree = SOURCE_ROOT;
-		};
-		14CC68A7055D2EA100A80164 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = text.script.php;
-			name = bzflsMy.php;
-			path = ../../../misc/bzflsMy.php;
-			refType = 2;
-			sourceTree = SOURCE_ROOT;
-		};
 		14CC68A8055D2EA100A80164 = {
 			fallbackIsa = PBXFileReference;
 			fileEncoding = 30;
@@ -5832,14 +5804,6 @@
 			isa = PBXFileReference;
 			lastKnownFileType = text;
 			path = bzflag.6s;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		4E030B88048E70E70009E055 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = text;
-			path = bzfls.6s;
 			refType = 4;
 			sourceTree = "<group>";
 		};

@@ -1,4 +1,4 @@
-/* bzfls
+/* bzflag
  * Copyright (c) 1993 - 2004 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or

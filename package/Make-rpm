@@ -41,8 +41,8 @@ targets: binprep rpmprep
 # prepare binaries
 #
 binprep:
+	strip $(TARGETDIR)/bzadmin
 	strip $(TARGETDIR)/bzflag
-	strip $(TARGETDIR)/bzfls
 	strip $(TARGETDIR)/bzfs
 
 #

@@ -82,8 +82,8 @@ important that the karma system is balanced and robust against abuse.
 
 == player database / authentication ==
 
- * The player database should probably be located in the list server
- bzfls, because this is a central service already.
+ * The player database will be located in the central list server because this
+ is a central service already.
 
  * Authentication can be done by using a simple public key scheme. A
  player must be able to create an identity, i.e. a unique callsign and
