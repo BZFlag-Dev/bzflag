@@ -7,6 +7,9 @@ THESE SHOULD HAPPEN BEFORE THE NEXT RELEASE:
   (apparently this needs a better explanation)
 
 * server should pick client enter position
+  ## Server has no idea about players shots, this is a 
+     key to picking a safe entry location. This isn't 
+     a simple change. ##
 
 * support gameinfo requests as one time udp packets (if udp)
   This should function like the old broadcast server locator
