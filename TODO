@@ -1,6 +1,12 @@
 to do list for bzflag
 ---------------------
 
+* remove reconnect from server and client
+
+* make server udp/tcp port the same
+
+* support gameinfo requests as one time udp packets (if udp)
+
 * remove flipz from pyr net code and replace with neg height.
 
 * remove shoothrough/drivethrough and replace with one flag
