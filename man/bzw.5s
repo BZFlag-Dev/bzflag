@@ -1149,7 +1149,7 @@ transform :=
 .br
 	| "shear" 3dpoint
 .br
-	| "spin" 3dpoint
+	| "spin" angle 3dpoint
 .br
 	| "xform" <transform_name>
 .br
