@@ -24,9 +24,11 @@ SUBDIRS =				\
 	geometry			\
 	net				\
 	obstacle			\
-	scene				\
 	game				\
 	bzfs				\
+	bzfls				\
+	bzfrelay			\
+	scene				\
 	ogl				\
 	ui				\
 	view				\
@@ -34,8 +36,6 @@ SUBDIRS =				\
 	bzflag				\
 					\
 	bzgview				\
-	bzfls				\
-	bzfrelay			\
 	$(NULL)
 
 targets:
