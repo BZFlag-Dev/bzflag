@@ -36,6 +36,9 @@ bzadmin_SOURCES = \
 	UIMap.cxx \
 	bzadmin.cxx
 
+noinst_HEADERS = \
+	buildDate.cc
+
 # ugly hack
 #all-local: ServerLink.cxx
 #
@@ -43,3 +46,9 @@ ServerLink.cxx: ../bzflag/ServerLink.cxx
 	cp -a ../bzflag/ServerLink.cxx .
 
 LDADD = ../net/libNet.a ../common/libCommon.a @CURSES_LIB@
+
+bzadmin$(EXEEXT): $(bzadmin_OBJECTS) $(bzadmin_DEPENDENCIES) 
+	@rm -f bzadmin$(EXEEXT)
+	$(CXX) -o buildDate.o -c $(srcdir)/buildDate.cc
+	$(CXXLINK) $(bzadmin_LDFLAGS) $(bzadmin_OBJECTS) buildDate.o \
+	$(bzadmin_LDADD) $(LIBS)
