@@ -14,6 +14,7 @@
 #include <string.h>
 #include <assert.h>
 #include "common.h"
+#include "bzfio.h" // for DEBUG1
 #include "OpenGLGState.h"
 #include "TextureManager.h"
 #include "TextureMatrix.h"
@@ -1155,6 +1156,8 @@ void OpenGLGState::unregisterContextInitializer(
 
 void OpenGLGState::initContext()
 {
+  DEBUG1("OpenGLGState::initContext() called\n");
+
   // call all of the freeing functions first
   ContextInitializer::executeFreeFuncs();
   

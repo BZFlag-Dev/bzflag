@@ -53,11 +53,12 @@ GUIOptionsMenu::GUIOptionsMenu()
 
   HUDuiList* option = new HUDuiList;
   option->setFontFace(fontFace);
-  option->setLabel("Enhanced radar:");
+  option->setLabel("Radar Style:");
   option->setCallback(callback, (void*)"e");
   std::vector<std::string>* options = &option->getList();
-  options->push_back(std::string("Off"));
-  options->push_back(std::string("On"));
+  options->push_back(std::string("Normal"));
+  options->push_back(std::string("Fast"));
+  options->push_back(std::string("Enhanced"));
   option->update();
   list.push_back(option);
 
@@ -293,7 +294,7 @@ void			GUIOptionsMenu::resize(int width, int height)
   SceneRenderer* renderer = getSceneRenderer();
   if (renderer) {
     int i = 1;
-    ((HUDuiList*)list[i++])->setIndex(BZDBCache::enhancedRadar ? 1 : 0);
+    ((HUDuiList*)list[i++])->setIndex(BZDBCache::radarStyle);
     ((HUDuiList*)list[i++])->setIndex(static_cast<int>(BZDB.eval("scorefontsize")));
     ((HUDuiList*)list[i++])->setIndex(static_cast<int>(BZDB.eval("cpanelfontsize")));
     ((HUDuiList*)list[i++])->setIndex((int)(10.0f * renderer->getPanelOpacity() + 0.5));
@@ -334,7 +335,7 @@ void			GUIOptionsMenu::callback(HUDuiControl* w, void* data)
   SceneRenderer* sceneRenderer = getSceneRenderer();
   switch (((const char*)data)[0]) {
     case 'e':
-      BZDB.set("enhancedradar", list->getIndex() ? "1" : "0");
+      BZDB.setInt("radarStyle", list->getIndex());
       break;
 
     case 'C':

@@ -25,6 +25,8 @@
 #include <string>
 #include <vector>
 
+#define MAX_TEXTURE_FONT_CHARS	(128)
+
 typedef struct {
   int initialDist;
   int charWidth;
@@ -59,8 +61,8 @@ private:
   void preLoadLists(void);
   bool fmtRead(OSFile &file, std::string expectedLeft, std::string &retval);
 
-  unsigned int	listIDs[128];
-  trFontMetrics	fontMetrics[128];
+  unsigned int	listIDs[MAX_TEXTURE_FONT_CHARS];
+  trFontMetrics	fontMetrics[MAX_TEXTURE_FONT_CHARS];
 
   std::string faceName;
   std::string texture;

@@ -23,7 +23,7 @@
 
 TextureFont::TextureFont()
 {
-  for (int i = 0; i < 128; i++) {
+  for (int i = 0; i < MAX_TEXTURE_FONT_CHARS; i++) {
     listIDs[i] = INVALID_GL_LIST_ID;
     fontMetrics[i].charWidth = -1;
   }
@@ -39,7 +39,7 @@ TextureFont::TextureFont()
 
 TextureFont::~TextureFont()
 {
-  for (int i = 0; i < 128; i++) {
+  for (int i = 0; i < MAX_TEXTURE_FONT_CHARS; i++) {
     if (listIDs[i] != INVALID_GL_LIST_ID) {
       glDeleteLists(listIDs[i], 1);
       listIDs[i] = INVALID_GL_LIST_ID;
@@ -108,6 +108,13 @@ bool TextureFont::load(OSFile &file)
   sscanf(tmpBuf.c_str(), " %d", &textureYSize);
   if (!fmtRead(file, "TextZStep", tmpBuf)) return false;
   sscanf(tmpBuf.c_str(), " %d", &textureZStep);
+  
+  // clamp the maximum char count
+  if (numberOfCharacters > MAX_TEXTURE_FONT_CHARS) {
+    DEBUG1("Too many characters (%i) in %s.\n",
+           numberOfCharacters, file.getFileName());
+    numberOfCharacters = MAX_TEXTURE_FONT_CHARS;
+  }
 
   int i;
   for (i = 0; i < numberOfCharacters; i++) {
@@ -201,9 +208,9 @@ void TextureFont::preLoadLists(void)
       glDeleteLists(listIDs[i], 1);
       listIDs[i] = INVALID_GL_LIST_ID; // make it a habit
     }
-    listIDs[i] = glGenLists(1);
     glLoadIdentity();
 
+    listIDs[i] = glGenLists(1);
     glNewList(listIDs[i], GL_COMPILE);
 
     glTranslatef((float)fontMetrics[i].initialDist, 0, 0);
@@ -212,21 +219,25 @@ void TextureFont::preLoadLists(void)
     float fFontX = (float)fontMetrics[i].endX - fontMetrics[i].startX;
 
     glBegin(GL_QUADS);
-      glNormal3f(0, 0, 1);
-      glTexCoord2f((float)fontMetrics[i].startX / (float)textureXSize, 1.0f - (float)fontMetrics[i].startY / (float)textureYSize);
-      glVertex3f(0, fFontY, 0);
+      glNormal3f(0.0f, 0.0f, 1.0f);
+      glTexCoord2f((float)fontMetrics[i].startX / (float)textureXSize,
+                   1.0f - (float)fontMetrics[i].startY / (float)textureYSize);
+      glVertex3f(0.0f, fFontY, 0.0f);
 
-      glTexCoord2f((float)fontMetrics[i].startX / (float)textureXSize, 1.0f - (float)fontMetrics[i].endY / (float)textureYSize);
-      glVertex3f(0, 0, 0);
+      glTexCoord2f((float)fontMetrics[i].startX / (float)textureXSize,
+                   1.0f - (float)fontMetrics[i].endY / (float)textureYSize);
+      glVertex3f(0.0f, 0.0f, 0.0f);
 
-      glTexCoord2f((float)fontMetrics[i].endX / (float)textureXSize, 1.0f - (float)fontMetrics[i].endY / (float)textureYSize);
-      glVertex3f(fFontX, 0, 0);
+      glTexCoord2f((float)fontMetrics[i].endX / (float)textureXSize,
+                   1.0f - (float)fontMetrics[i].endY / (float)textureYSize);
+      glVertex3f(fFontX, 0.0f, 0.0f);
 
-      glTexCoord2f((float)fontMetrics[i].endX / (float)textureXSize, 1.0f - (float)fontMetrics[i].startY / (float)textureYSize);
-      glVertex3f(fFontX, fFontY, 0);
+      glTexCoord2f((float)fontMetrics[i].endX / (float)textureXSize,
+                   1.0f - (float)fontMetrics[i].startY / (float)textureYSize);
+      glVertex3f(fFontX, fFontY, 0.0f);
     glEnd();
 
-    glTranslatef(fFontX, 0, 0);
+    glTranslatef(fFontX, 0.0f, 0.0f);
 
     glEndList();
   }

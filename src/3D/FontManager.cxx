@@ -158,9 +158,6 @@ void FontManager::clear(void)	// clear all the lists
       faceItr++;
     }
     fontFaces.clear();
-
-    // create all the fonts anew
-    loadAll(fontDirectory);
   }
   return;
 }

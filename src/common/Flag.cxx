@@ -178,6 +178,58 @@ namespace Flags {
     Lag		     = new FlagType( "Lag", "LG", FlagSticky, NormalShot, FlagBad, NoTeam,
 					    "Player sees extra lag.");
   }
+
+  void kill()
+  {
+    delete Null;
+    delete RedTeam;
+    delete GreenTeam;
+    delete BlueTeam;
+    delete PurpleTeam;
+    delete Velocity;
+    delete QuickTurn;
+    delete OscillationOverthruster;
+    delete RapidFire;
+    delete MachineGun;
+    delete GuidedMissile;
+    delete Laser;
+    delete Ricochet;
+    delete SuperBullet;
+    delete InvisibleBullet;
+    delete Stealth;
+    delete Tiny;
+    delete Narrow;
+    delete Shield;
+    delete Steamroller;
+    delete ShockWave;
+    delete PhantomZone;
+    delete Genocide;
+    delete Jumping;
+    delete Identify;
+    delete Cloaking;
+    delete Useless;
+    delete Masquerade;
+    delete Seer;
+    delete Thief;
+    delete Burrow;
+    delete Wings;
+    delete Agility;
+    delete ReverseControls;
+    delete Colorblindness;
+    delete Obesity;
+    delete LeftTurnOnly;
+    delete RightTurnOnly;
+    delete ForwardOnly;
+    delete ReverseOnly;
+    delete Momentum;
+    delete Blindness;
+    delete Jamming;
+    delete WideAngle;
+    delete NoJumping;
+    delete TriggerHappy;
+    delete Bouncy;
+    delete Lag;
+  }
 }
 
 void* FlagType::pack(void* buf) const

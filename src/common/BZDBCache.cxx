@@ -18,7 +18,6 @@
 #include "BZDBCache.h"
 
 bool  BZDBCache::displayMainFlags;
-bool  BZDBCache::enhancedRadar;
 bool  BZDBCache::blend;
 bool  BZDBCache::texture;
 bool  BZDBCache::shadows;
@@ -29,6 +28,9 @@ bool  BZDBCache::smooth;
 bool  BZDBCache::colorful;
 bool  BZDBCache::animatedTreads;
 bool  BZDBCache::leadingShotLine;
+int   BZDBCache::radarStyle;
+int   BZDBCache::linedRadarShots;
+int   BZDBCache::sizedRadarShots;
 
 float BZDBCache::worldSize;
 float BZDBCache::gravity;
@@ -41,13 +43,11 @@ float BZDBCache::flagRadius;
 float BZDBCache::flagPoleSize;
 float BZDBCache::flagPoleWidth;
 float BZDBCache::maxLOD;
-int   BZDBCache::linedRadarShots;
-int   BZDBCache::sizedRadarShots;
 
 void BZDBCache::init()
 {
   BZDB.addCallback("displayMainFlags", clientCallback, NULL);
-  BZDB.addCallback("enhancedradar", clientCallback, NULL);
+  BZDB.addCallback("radarStyle", clientCallback, NULL);
   BZDB.addCallback("blend", clientCallback, NULL);
   BZDB.addCallback("texture", clientCallback, NULL);
   BZDB.addCallback("shadows", clientCallback, NULL);
@@ -91,8 +91,6 @@ void BZDBCache::clientCallback(const std::string& name, void *)
     blend = BZDB.isTrue("blend");
   else if (name == "displayMainFlags")
     displayMainFlags = BZDB.isTrue("displayMainFlags");
-  else if (name == "enhancedradar")
-    enhancedRadar = BZDB.isTrue("enhancedradar");
   else if (name == "texture")
     texture = BZDB.isTrue("texture");
   else if (name == "shadows")
@@ -107,6 +105,8 @@ void BZDBCache::clientCallback(const std::string& name, void *)
     smooth = BZDB.isTrue("smooth");
   else if (name == "colorful")
     colorful = BZDB.isTrue("colorful");
+  else if (name == "radarStyle")
+    radarStyle = BZDB.evalInt("radarStyle");
   else if (name == "animatedTreads")
     animatedTreads = BZDB.isTrue("animatedTreads");
   else if (name == "leadingShotLine")

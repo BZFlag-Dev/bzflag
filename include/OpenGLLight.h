@@ -84,6 +84,7 @@ class OpenGLLight {
     GLuint*		list;
     GLuint		mailbox;
     static GLint	maxLights;
+    GLuint		lightList;
     static OpenGLLightDLStack oldLists;
 };
 

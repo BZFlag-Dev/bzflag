@@ -5090,6 +5090,7 @@ int main(int argc, char **argv)
 
   Record::kill();
   Replay::kill();
+  Flags::kill();
 
 #if defined(_WIN32)
   WSACleanup();

@@ -59,6 +59,8 @@ OpenGLMaterial::Rep::Rep(const GLfloat* _specular,
   next = head;
   head = this;
   if (next) next->prev = this;
+  
+  list = INVALID_GL_LIST_ID;
 
   specular[0] = _specular[0];
   specular[1] = _specular[1];
@@ -69,7 +71,6 @@ OpenGLMaterial::Rep::Rep(const GLfloat* _specular,
   emissive[2] = _emissive[2];
   emissive[3] = 1.0f;
 
-  list = glGenLists(1);
   OpenGLGState::registerContextInitializer(freeContext,
                                            initContext, (void*)this);
 }
@@ -104,12 +105,15 @@ void			OpenGLMaterial::Rep::unref()
 void			OpenGLMaterial::Rep::execute()
 {
   if (!init) {
-    glNewList(list, GL_COMPILE);
-    glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, specular);
-    glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, emissive);
-    glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, shininess);
-    glEndList();
     init = true;
+    list = glGenLists(1);
+    glNewList(list, GL_COMPILE);
+    {
+      glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, specular);
+      glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, emissive);
+      glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, shininess);
+    }
+    glEndList();
   }
   glCallList(list);
 }
@@ -122,14 +126,15 @@ void OpenGLMaterial::Rep::freeContext(void* self)
     glDeleteLists(list, 1);
     list = INVALID_GL_LIST_ID;
   }
-  
+  ((Rep*)self)->init = false;
   return;
 }
 
 
 void OpenGLMaterial::Rep::initContext(void* self)
 {
-  ((Rep*)self)->init = false; // the next execute() call will rebuild
+  // setup so that the next execute() call will rebuild the list
+  ((Rep*)self)->init = false;
   return;
 }
 

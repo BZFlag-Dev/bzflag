@@ -86,6 +86,17 @@ BackgroundRenderer::BackgroundRenderer(const SceneRenderer&) :
   OpenGLMaterial rainMaterial(white, white, 0.0f);
 
   int i;
+  
+  sunList = INVALID_GL_LIST_ID; 
+  moonList = INVALID_GL_LIST_ID; 
+  starList = INVALID_GL_LIST_ID; 
+  cloudsList = INVALID_GL_LIST_ID;
+  sunXFormList = INVALID_GL_LIST_ID;
+  starXFormList = INVALID_GL_LIST_ID;
+  simpleGroundList[0] = INVALID_GL_LIST_ID;
+  simpleGroundList[1] = INVALID_GL_LIST_ID;
+  simpleGroundList[2] = INVALID_GL_LIST_ID;
+  simpleGroundList[3] = INVALID_GL_LIST_ID;
 
   // initialize global to class stuff
   if (!init) {
@@ -260,13 +271,14 @@ BackgroundRenderer::BackgroundRenderer(const SceneRenderer&) :
 
       // prepare each texture
       mountainsGState = new OpenGLGState[numMountainTextures];
+      mountainsList = new GLuint[numMountainTextures];
       for (i = 0; i < numMountainTextures; i++) {
 	char text[256];
 	sprintf (text, "mountain%d", i + 1);
 	gstate.setTexture (tm.getTextureID (text));
 	mountainsGState[i] = gstate.getState ();
+	mountainsList[i] = INVALID_GL_LIST_ID;
       }
-      mountainsList = new GLuint[numMountainTextures];
     }
   }
 

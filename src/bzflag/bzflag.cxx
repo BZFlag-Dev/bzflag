@@ -115,7 +115,7 @@ static DefaultDBItem	defaultDBItems[] = {
   { "volume",			"10",			true,	StateDatabase::ReadWrite,	NULL },
   { "latitude",			"37.5",			true,	StateDatabase::ReadWrite,	NULL },
   { "longitude",		"122",			true,	StateDatabase::ReadWrite,	NULL },
-  { "enhancedradar",		"1",			true,	StateDatabase::ReadWrite,	NULL },
+  { "radarStyle",		"2",			true,	StateDatabase::ReadWrite,	NULL },
   { "coloredradarshots",	"1",			true,	StateDatabase::ReadWrite,	NULL },
   { "linedradarshots",		"0",			true,	StateDatabase::ReadWrite,	NULL },
   { "sizedradarshots",		"0",			true,	StateDatabase::ReadWrite,	NULL },
@@ -1561,6 +1561,7 @@ int			main(int argc, char** argv)
   delete display;
   delete platformFactory;
   delete bm;
+  Flags::kill();
 
 #ifdef _WIN32
   // clean up

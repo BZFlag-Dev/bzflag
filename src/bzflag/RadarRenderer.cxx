@@ -161,8 +161,7 @@ void			RadarRenderer::render(SceneRenderer& renderer,
 
   const bool smoothingOn = smooth && BZDBCache::smooth;
 
-  const bool textureRadar = BZDB.isTrue("textureRadar") &&
-                            !BZDBCache::enhancedRadar && BZDBCache::zbuffer;
+  const bool fastRadar = ((BZDBCache::radarStyle == 1) && BZDBCache::zbuffer);
 
   const int ox = renderer.getWindow().getOriginX();
   const int oy = renderer.getWindow().getOriginY();
@@ -212,7 +211,7 @@ void			RadarRenderer::render(SceneRenderer& renderer,
   const double yCenter = double(y) + 0.5 * double(h);
   const double xUnit = 2.0 * range / double(w);
   const double yUnit = 2.0 * range / double(h);
-  if (textureRadar) {
+  if (fastRadar) {
     const double maxHeight = (double) COLLISIONMGR.getWorldExtents().maxs[2];
     glOrtho(-xCenter * xUnit, (xSize - xCenter) * xUnit,
             -yCenter * yUnit, (ySize - yCenter) * yUnit,
@@ -328,12 +327,15 @@ void			RadarRenderer::render(SceneRenderer& renderer,
     glPushMatrix();
     glTranslatef(-pos[0], -pos[1], 0.0f);
 
-    // Redraw buildings
-    if (textureRadar) {
-      renderTextureObstacles(smoothingOn, range);
-    } else {
-      renderObstacles(smoothingOn);
+
+    // setup the blending function
+    if (smoothingOn) {
+      glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     }
+    
+    // Redraw buildings
+    renderObstacles(smoothingOn, fastRadar, range);
+
 
     // antialiasing on for lines and points unless we're multisampling,
     // in which case it's automatic and smoothing makes them look worse.
@@ -341,7 +343,6 @@ void			RadarRenderer::render(SceneRenderer& renderer,
       glEnable(GL_BLEND);
       glEnable(GL_LINE_SMOOTH);
       glEnable(GL_POINT_SMOOTH);
-      glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     }
 
     // draw my shots
@@ -522,7 +523,7 @@ void			RadarRenderer::render(SceneRenderer& renderer,
 float RadarRenderer::colorScale(const float z, const float h)
 {
   float scaleColor;
-  if (BZDBCache::enhancedRadar == true) {
+  if (BZDBCache::radarStyle > 0) {
     const LocalPlayer* myTank = LocalPlayer::getMyTank();
 
     // Scale color so that objects that are close to tank's level are opaque
@@ -567,38 +568,43 @@ float RadarRenderer::transScale(const float z, const float h)
 }
 
 
-void RadarRenderer::renderTextureObstacles(bool smoothingOn, float range)
+void RadarRenderer::renderObstacles(bool smoothingOn,
+                                    bool fastRadar, float range)
 {
-  // FIXME - This is hack code at the moment, but even when
-  //         rendering the full world, it draws the aztec map
-  //         3X faster (the culling algo is actually slows us
-  //         down in that case)
-  //       - need a better default gradient texture
-  //         (better colors, and tied in to show max jump height?)
-  //       - build a procedural texture if default is missing
-  //       - use a GL_TEXTURE_1D
-  //       - setup the octree to return Z sorted elements
-  //       - add a renderClass() member to SceneNode (also for coloring)
-  //       - also add a renderShadow() member (they don't need sorting,
-  //         and if you don't have double-buffering, you shouldn't be
-  //         using shadows)
-  //       - vertex shaders would be faster
-  //       - it would probably be a better approach to attach a radar
-  //         rendering object to each obstacle... no time
-
-  // draw the walls normally
   if (smoothingOn) {
     glEnable(GL_BLEND);
     glEnable(GL_LINE_SMOOTH);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
   }
 
+  // draw the walls
+  renderWalls();
+  
+  // draw the boxes, pyramids, and meshes  
+  if (!fastRadar) {
+    renderBoxPyrMesh(smoothingOn);
+  } else {
+    renderBoxPyrMeshFast(smoothingOn, range);
+  }
+
+  // draw the team bases and teleporters
+  renderBasesAndTeles();
+  
+  if (smoothingOn) {
+    glDisable(GL_BLEND);
+    glDisable(GL_LINE_SMOOTH);
+  }
+  
+  return;
+}    
+
+
+void RadarRenderer::renderWalls()
+{
   const ObstacleList& walls = OBSTACLEMGR.getWalls();
   int count = walls.size();
   glColor3f(0.25f, 0.5f, 0.5f);
   glBegin(GL_LINES);
-  int i;
-  for (i = 0; i < count; i++) {
+  for (int i = 0; i < count; i++) {
     const WallObstacle& wall = *((const WallObstacle*) walls[i]);
     const float w = wall.getBreadth();
     const float c = w * cosf(wall.getRotation());
@@ -608,12 +614,29 @@ void RadarRenderer::renderTextureObstacles(bool smoothingOn, float range)
     glVertex2f(pos[0] + s, pos[1] - c);
   }
   glEnd();
+  
+  return;
+}
 
-  if (smoothingOn) {
-    glDisable(GL_LINE_SMOOTH);
-    glDisable(GL_BLEND);
-    glEnable(GL_POLYGON_SMOOTH); // NOTE: enabling polygon smoothing
-  }
+
+void RadarRenderer::renderBoxPyrMeshFast(bool smoothingOn, float range)
+{
+  // FIXME - This is hack code at the moment, but even when
+  //         rendering the full world, it draws the aztec map
+  //         3X faster (the culling algo is actually slows us
+  //         down in that case)
+  //       - need a better default gradient texture
+  //         (better colors, and tied in to show max jump height?)
+  //       - build a procedural texture if default is missing
+  //       - use a GL_TEXTURE_1D
+  //       - setup the octree to return Z sorted elements (partially done)
+  //       - add a renderClass() member to SceneNode (also for coloring)
+  //       - also add a renderShadow() member (they don't need sorting,
+  //         and if you don't have double-buffering, you shouldn't be
+  //         using shadows)
+  //       - vertex shaders would be faster
+  //       - it would probably be a better approach to attach a radar
+  //         rendering object to each obstacle... no time
 
   // get the texture
   int gradientTexId = -1;
@@ -624,9 +647,15 @@ void RadarRenderer::renderTextureObstacles(bool smoothingOn, float range)
   OpenGLGStateBuilder gb;
   gb.setTexture(gradientTexId);
   gb.setShading(GL_FLAT);
+  gb.setCulling(GL_BACK);
   gb.setBlending(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
   OpenGLGState gs = gb.getState();
   gs.setState();
+
+  if (smoothingOn) {
+    // do this after the GState setting
+    glEnable(GL_POLYGON_SMOOTH); // do this after setting the GState
+  }
 
   // setup the texturing mapping
   const float hf = 50.0f; // height factor, goes from 0.0 to 1.0 in texcoords
@@ -640,7 +669,7 @@ void RadarRenderer::renderTextureObstacles(bool smoothingOn, float range)
   glEnable(GL_TEXTURE_GEN_S);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
 
-  // 
+  // set the color
   glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 
   ViewFrustum radarClipper;
@@ -652,7 +681,6 @@ void RadarRenderer::renderTextureObstacles(bool smoothingOn, float range)
   glDisable(GL_TEXTURE_GEN_S);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 
-  // restore smoothing
   if (smoothingOn) {
     glDisable(GL_POLYGON_SMOOTH);
   }
@@ -663,39 +691,18 @@ void RadarRenderer::renderTextureObstacles(bool smoothingOn, float range)
 }
   
   
-void RadarRenderer::renderObstacles(bool smoothingOn)
+void RadarRenderer::renderBoxPyrMesh(bool smoothingOn)
 {
-  // antialias if smoothing is on.
-  if (smoothingOn) {
-    glEnable(GL_BLEND);
-    glEnable(GL_LINE_SMOOTH);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-  }
-
-  // draw walls.  walls are flat so a line will do.
-  const ObstacleList& walls = OBSTACLEMGR.getWalls();
-  int count = walls.size();
-  glColor3f(0.25f, 0.5f, 0.5f);
-  glBegin(GL_LINES);
   int i;
-  for (i = 0; i < count; i++) {
-    const WallObstacle& wall = *((const WallObstacle*) walls[i]);
-    const float w = wall.getBreadth();
-    const float c = w * cosf(wall.getRotation());
-    const float s = w * sinf(wall.getRotation());
-    const float* pos = wall.getPosition();
-    glVertex2f(pos[0] - s, pos[1] + c);
-    glVertex2f(pos[0] + s, pos[1] - c);
-  }
-  glEnd();
-
+  
   // don't blend the polygons if enhanced radar disabled
-  if (smoothingOn && BZDBCache::enhancedRadar == false) glDisable(GL_BLEND);
+  if (smoothingOn && (BZDBCache::radarStyle <= 0)) {
+    glDisable(GL_BLEND);
+  }
 
   // draw box buildings.
-
   const ObstacleList& boxes = OBSTACLEMGR.getBoxes();
-  count = boxes.size();
+  int count = boxes.size();
   glBegin(GL_QUADS);
   for (i = 0; i < count; i++) {
     const BoxBuilding& box = *((const BoxBuilding*) boxes[i]);
@@ -773,7 +780,7 @@ void RadarRenderer::renderObstacles(bool smoothingOn)
 
   // now draw antialiased outlines around the polygons
   if (smoothingOn) {
-    glEnable(GL_BLEND);
+    glEnable(GL_BLEND); // NOTE: revert from the enhanced setting
     count = boxes.size();
     for (i = 0; i < count; i++) {
       const BoxBuilding& box = *((const BoxBuilding*) boxes[i]);
@@ -817,6 +824,14 @@ void RadarRenderer::renderObstacles(bool smoothingOn)
     }
   }
 
+  return;
+}
+
+
+void RadarRenderer::renderBasesAndTeles()
+{
+  int i;
+  
   // draw team bases
   if(world.allowTeamFlags()) {
     for(i = 1; i < NumTeams; i++) {
@@ -848,7 +863,7 @@ void RadarRenderer::renderObstacles(bool smoothingOn)
   // direction (which degrades the antialiasing).  Newport graphics
   // is one system that doesn't do correct filtering.
   const ObstacleList& teleporters = OBSTACLEMGR.getTeles();
-  count = teleporters.size();
+  int count = teleporters.size();
   glColor3f(1.0f, 1.0f, 0.25f);
   glBegin(GL_LINES);
   for (i = 0; i < count; i++) {
@@ -895,11 +910,9 @@ void RadarRenderer::renderObstacles(bool smoothingOn)
   }
   glEnd();
 
-  if (smoothingOn) {
-    glDisable(GL_BLEND);
-    glDisable(GL_LINE_SMOOTH);
-  }
+  return;
 }
+
 
 // Local Variables: ***
 // mode:C++ ***

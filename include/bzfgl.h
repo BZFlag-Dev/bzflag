@@ -61,7 +61,8 @@ extern int __beginendCount;
 
 
 /* Protect us from ourselves. Warn when these
- * are called outside of executeFreeContext()
+ * are called inside of the wrong context code
+ * sections (freeing and initializing).
  */
 #ifdef DEBUG
 #  define glGenLists(count)			bzGenLists((count))

@@ -5312,7 +5312,7 @@ static void		timeConfigurations()
   sceneRenderer->setQuality(0);
   BZDB.set("dither", "1");
   BZDB.set("shadows", "0");
-  BZDB.set("enhancedradar", "0");
+  BZDB.set("radarStyle", "0");
   TextureManager::instance().setMaxFilter(Off);
   timeConfiguration(true);
 
@@ -5383,7 +5383,7 @@ static void		timeConfigurations()
   sceneRenderer->setQuality(2);
   BZDB.set("dither", "1");
   BZDB.set("shadows", "1");
-  BZDB.set("enhancedradar", "1");
+  BZDB.set("radarStyle", "2");
   if (timeConfiguration(true) < MaxFrameTime) return;
   if (timeConfiguration(false) < MaxFrameTime) return;
 
@@ -5568,7 +5568,7 @@ void			startPlaying(BzfDisplay* _display,
     sceneRenderer->setQuality(0);
     BZDB.set("dither", "0");
     BZDB.set("shadows", "0");
-    BZDB.set("enhancedradar", "0");
+    BZDB.set("radarStyle", "0");
     TextureManager::instance().setMaxFilter(Off);
   }
 

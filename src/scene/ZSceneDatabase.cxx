@@ -267,7 +267,7 @@ void ZSceneDatabase::renderRadarNodes(const ViewFrustum& vf)
 
     // FIXME: - this helps the look of things, but it takes too much time
     //        * it may be reasonable now
-    if (BZDB.isTrue("textureRadarSort")) {
+    if (BZDB.isTrue("radarSort")) {
       qsort(culledList, culledCount, sizeof(SceneNode*), compareZExtents);
     }
   }

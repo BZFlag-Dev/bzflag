@@ -112,7 +112,6 @@ void OpenGLTexture::static_initContext(void *that)
 
 void OpenGLTexture::freeContext()
 {
-  // nuke 'em
   if (list != INVALID_GL_TEXTURE_ID) {
     glDeleteTextures(1, &list);
     list = INVALID_GL_TEXTURE_ID;
@@ -178,7 +177,9 @@ void OpenGLTexture::initContext()
   // compute next mipmap from current mipmap to save time.
   setFilter(getFilter());
   glBindTexture(GL_TEXTURE_2D, list);
-  gluBuild2DMipmaps(GL_TEXTURE_2D,internalFormat,scaledWidth,scaledHeight,GL_RGBA,GL_UNSIGNED_BYTE,data);
+  gluBuild2DMipmaps(GL_TEXTURE_2D, internalFormat,
+                    scaledWidth, scaledHeight,
+                    GL_RGBA, GL_UNSIGNED_BYTE, data);
   glBindTexture(GL_TEXTURE_2D, 0);
   delete[] origData;
   delete[] origScaledData;

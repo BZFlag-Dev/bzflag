@@ -23,7 +23,6 @@ public:
 	static void init();
 
 	static bool  displayMainFlags;
-	static bool  enhancedRadar;
 	static bool  blend;
 	static bool  texture;
 	static bool  shadows;
@@ -33,7 +32,10 @@ public:
 	static bool  smooth;
 	static bool  colorful;
 	static bool  animatedTreads;
+	static int   radarStyle;
 	static bool  leadingShotLine;
+	static int   linedRadarShots;
+	static int   sizedRadarShots;
 
 	static float maxLOD;
 	static float worldSize;
@@ -46,8 +48,6 @@ public:
 	static float flagRadius;
 	static float flagPoleSize;
 	static float flagPoleWidth;
-	static int   linedRadarShots;
-	static int   sizedRadarShots;
 
 public:
   /** public method to update cached variable

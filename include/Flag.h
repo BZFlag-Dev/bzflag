@@ -238,6 +238,7 @@ namespace Flags {
   /** This function initializes all the FlagType objects in the Flags
       namespace. */
   void init();
+  void kill();
 }
 
 #endif // BZF_FLAG_H
