@@ -769,27 +769,20 @@ void handleSetpassCmd(int t, const char *message)
     return;
   }
 
-  std::string pass;
-  if (strlen(message) < 10) {
+  size_t startPosition = 7;
+  /* skip any leading whitespace */
+  while (isspace(message[++startPosition]))
+    ;
+  if (startPosition == strlen(message) || !isspace(message[8])) {
     sendMessage(ServerPlayer, t, "Not enough parameters: usage /setpass PASSWORD");
-  } else {
-    size_t startPosition = 9;
-    /* skip any leading whitespace */
-    while ((startPosition < strlen(message)) &&
-	   (isspace(message[startPosition]))) {
-      startPosition++;
-    }
-    /* sanity -- make sure it was not /setpasss */
-    if (startPosition == 9) {
-      sendMessage(ServerPlayer, t, "Invalid format: usage /setpass PASSWORD");
-    }
-    pass = message + startPosition;
-    setUserPassword(player[t].regName.c_str(), pass);
-    updateDatabases();
-    char text[MessageLen];
-    sprintf(text, "Your password is now set to \"%s\"", pass.c_str());
-    sendMessage(ServerPlayer, t, text, true);
+    return;
   }
+  std::string pass = message + startPosition;
+  setUserPassword(player[t].regName.c_str(), pass);
+  updateDatabases();
+  char text[MessageLen];
+  sprintf(text, "Your password is now set to \"%s\"", pass.c_str());
+  sendMessage(ServerPlayer, t, text, true);
   return;
 }
 
