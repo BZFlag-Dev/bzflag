@@ -5,41 +5,45 @@ BZFlag 1.10.4
 -------------
 
 * Use cyan for observer messages in old console color mode - Frank Thilo
-* Config file based autoidentification - Tupone Alfredo, Sean Morrison, Frank Thilo
-* List Server check ip of requesting server - Tupone Alfredo
-* AutoPilot does not bases his path on stealth echo anymore - Dave Brosius
-* Alt-Tab & resolution changes does not mess the screen - Tupone Alfredo
-* No shootin if loosing OO flag in a building - Tupone Alfredo
+* Config file based auto-identify - Tupone Alfredo, Sean Morrison, Frank Thilo
+* List Server checks ip of requesting server - Tupone Alfredo
+* AutoPilot does not base path on stealth echo anymore - Dave Brosius
+* Alt-Tab & resolution changes does not mess up the screen - Tupone Alfredo
+* No shooting allowed if OO flag is lost in a building - Tupone Alfredo
 * Killed player stop drifting & clean dirty tank pieces - Tupone Alfredo
 * Rabbit score changed and values displayed on HUD  - Tupone Alfredo
-* Sound samples are resampled, as bzflag don't do it - Tupone Alfredo
+* Sound samples are resampled since bzflag doesn't - Tupone Alfredo
 * Client unclean disconnection recognized earlier - Tupone Alfredo
-* Improved communication between bzfs and list server - Tupone Alfredo
-* Add score, killer, or random selection algorithms to -rabbit flag - Nils McCarthy
-* Add the REQUIREIDENTIFY permission so people who are using registered callsigns without identifying can be prevented from spawning - Nils McCarthy
+* Improved communication between bzfs and list server - Tupone Alfredo, 
+* Added bzfs -rabbit option selection algorithm support - Nils McCarthy
+* Added the REQUIREIDENTIFY permission - Nils McCarthy
+* Added bzfs option to deny clients that do not identify - Nils McCarthy
 * Color carried team flags according to their team - Sean Morrison
 * Start of better spawn positions based on tanks - Dave Brosius
-* PNG image grabbing - Daniel Remenak
-* Texture Manager only loads textures when needed, reorg of textures to make more sense - Jeff Myers
+* PNG image writing for screenshots - Daniel Remenak
+* Texture Manager only loads textures when needed - Jeff Myers
+* Renamed and reorganized texture resources - Jeff Mey
 * BZDB alternate image dir added - Jeff Myers
-* Ground Texture Repeat added to BZDB, deafault increased to 0.1  - Jeff Myers
-* Tanks will search for colored team textures and use them if found. - Jeff Myers
-* Ground will search for colored std and zone textures and use them if found. - Jeff Myers
-* Non rabbit tanks will try to use "hunter" texture if found. - Jeff Myers
-* Non rabbit tanks will be forced to use orange color if not using an overide texture - Jeff Myers
-* Menu uses it's own image for the arrow, menu_arrow.png. - Jeff Myers
-* Rename team based datafiles to have the team in the name. - Jeff Myers
-* Map objects will search for colored textures and use them if found. - Jeff Myers
-* Bases will search for colored team textures and use them if found. - Jeff Myers
-* Tanks and map objects will use an object specified texture if one is present when the object is instanced. - Jeff Myers
-* Menu Arrow support animations. - Jeff Myers
+* Improved transparent proxy support - Alfredo Tupone, Sean Morrison
+* Ground Texture Repeat added to BZDB, default increased to 0.1  - Jeff Myers
+* Added ability to have and use per-team colored textures - Jeff Myers
+* Added support for colored and zoned ground textures - Jeff Meyers
+* Hutner tanks try to use "hunter" texture if found - Jeff Myers
+* Hunter tanks are colored orange color if not using a texture - Jeff Myers
+* Menu uses it's own image for the arrow, menu_arrow.png - Jeff Myers
+* Rename team based datafiles to have the team in the name - Jeff Myers
+* Map objects search for colored textures and use them if found - Jeff Myers
+* Bases search for colored team textures and use them if found - Jeff Myers
+* Added object-specified texture support for tanks & maps - Jeff Myers
+* Menu Arrow supports animations - Jeff Myers
 
 
 BZFlag 1.10.2
 -------------
 
-* Stop infinite spawn loop caused by complex worlds with large coverage by pyramids
-* Misc Swear processing fixes
+* improved transparent proxy support for server - Frank Thilo, Alfredo Tupone
+* Stop infinite spawn loop with complex worlds containing big pyramids
+* Misc Swear processing fixes - Sean Morrison
 * Allow banfile to be empty or not exist
 * Don't let zoned tanks flatten Burrowed tanks
 * Don't spawn in multiple locations based on multiple r-clicks
@@ -47,17 +51,17 @@ BZFlag 1.10.2
 * Fix game style menu position
 * Take flipz collisions in account for pyramids
 * Fix Respawning after non-shot kills (Geno, Self Destruct, etc)
-* More caching of BZBD vars
-* ServerList uses strict http/1.1
+* More caching of BZBD vars - Frank Thilo
+* ServerList uses strict http/1.1 - Frank Thilo
 * Fix playercounts in rabbit mode
 * GM now tracks player in slot 0
-* Relax kick tolerances and soften kick messages
-* Better lag stats
-* Autoteam happens on the server now
+* Relax kick tolerances and soften kick messages - Sean Morrison
+* Better lag stats - Frank Thilo
+* Server-side Autoteam - Sean Morrison, Tupone Alfredo, Frank Thilo
 * Remove bad lite effects with Thief steal
 * Protect against crashes due to bad shot ids
-* Better key binding
-* Relax flag drop time for speed checking
+* Better key binding - Tupone Alfredo, Dave Brosius
+* Relax flag drop time for speed checking - Sean Morrison
 * Better unresponsive player removal messages
 * added kill messages as an option to bzadmin - Lars Luthman
 * let genocided players spawn again - Lars Luthman
@@ -71,31 +75,37 @@ BZFlag 1.10.0 "Break the world" (was 1.9.x)
 * control spawn on buildings with -sb - Frank Thilo
 * Initial Docbook documentation - Sean Morrison
 * Persistent bans with -banfile <filename> - Lars Luthman
-* Stream Rolling collision detection is now compressed in height - Alfredo Tupone
+* Streamroll collision detection is now compressed in height - Alfredo Tupone
 * Rendering options are actuated immediately - Alfredo Tupone
-* Height of base goes through the wire (base thickness defined on world files) - Alfredo Tupone
-* Fixed collision for various things (falling through floor when lagging, being stuck when tank expands, shot going into the ground, collision with pyramids) - Alfredo Tupone
+* Height of base thickness (in world files) goes over the wire - Alfredo Tupone
+* Fixed collision-detection for many cases - Alfredo Tupone
+	falling through floor when lagging
+	being stuck when tank expands
+	shot going into the ground
+	collision with pyramids 
 * Avoiding stuck on connection - Alfredo Tupone
 * Web/Database based list server - Alfredo Tupone, ...
-* Fixed some documentation bugs in the bzfs manual and the bzfs help output - KR (through Lars Luthman)
+* Fixed bugs in the bzfs manual and the bzfs help output - KR (through Lars)
 * Save world files from the client - Dave Brosius
 * Drop flags on pause after timeout - Sean Morrison
 * Set size of shots on radar - Sean Morrison
 * Server spawn positions - Dave Brosius
 * Added client-side automatic team selection - Alfredo Tupone, Sean Morrison
-* Calc jitter based on client timestamps in MsgPlayerUpdate packets - Frank Thilo
+* Calc jitter based on client timestamps in MsgPlayerUpdate - Frank Thilo
 * Add /reset var server cmd - Dave Brosius
 * Add /set var value server cmd - Dave Brosius
 * improved /ban /banlist added reason and time parsing - Dennis Pedersen
 * Shortened GM to 0.95 normal shot (tuneable) - Tim Riker
 * tarball now supports "rpm -tb <foo>.tar.gz" - Tim Riker
-* bzfs use only 1 port instead of 2 (by default IANA assigned: 5154) - Alfredo Tupone
+* bzfs uses 1 port instead of 2 - Alfredo Tupone
+* bzflag is officially assigned port 5154 as default - IANA, Tim Riker
 * bots (-solo) game is by far more playable - Alfredo Tupone
 * Added client-side chat filtering - Sean Morrison
 * Configuration files and cache is stored in ~/.bzf/ on *IX - Lars Luthman
 * Added team ID to shots for TK reasons (1.9.2) - Jeff Myers
-* Changed version numbers to be xx.xx.xx and display with BuildOS and Build Date ( 1.9.0) - Jeff Myers & others for auto tools
-* Added voting sytem with /poll, /vote, and /veto commands (1.9.0) - Sean Morrison
+* Changed version numbers to be xx.xx.xx and display the build OS & Date
+	- Jeff Myers & others for auto tools
+* Added voting sytem with /poll, /vote, and /veto commands - Sean Morrison
 * Added bzadmin - Lars Luthman
 * Munitions now bounce off buildings/ground in z direction - Dave Brosius
 * World object and -worldsize paramaters - Jeff Myers
@@ -107,7 +117,8 @@ BZFlag 1.10.0 "Break the world" (was 1.9.x)
 * Thief Flag - Dave Brosius
 * MsgPlayerUpdate now has order, reject ooo packets - Dave Brosius
 * Removed old UDP queueing code and headers - Micah Dowty
-* Convert closed FlagIds to flexible FlagType's - Micah Dowty, Dave Brosius, Tim Riker
+* Convert closed FlagIds to flexible FlagType's 
+	- Micah Dowty, Dave Brosius, Tim Riker
 * Add back PNG support from 1.8 - Dave Brosius, Sean Morrison
 * Add back BZDB from 1.8 - David Trowbridge, Dave Brosius
 * Seer, Masquerade Flags - Dave Brosius
@@ -164,7 +175,8 @@ BZFlag 1.7g2 "Steely Eyed Banana" (was 1.7g1)
 * remove non-printable characters in callsign in server - Frank Thilo
 * +f sw{5} syntax to add a bunch of flags - Dave Brosius
 * tanks which jump too high get kicked - Dave Brosius
-* server drops bogus shots (anti cheating) - Tim Riker, Dave Brosius, Frank Thilo
+* server drops bogus shots (anti cheating) 
+	- Tim Riker, Dave Brosius, Frank Thilo
 * i18n support in client - Dave Brosius, Isak Styf
 * Optional config file interface for bzfs settings - Dave Brosius
 * inline editing of text fields (<- ->) Dave Brosius, Frank Thilo
