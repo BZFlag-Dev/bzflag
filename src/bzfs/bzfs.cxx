@@ -708,7 +708,8 @@ static void relayPlayerPacket(int index, uint16_t len, const void *rawbuf, uint1
       if ((code == MsgPlayerUpdate) && pi.haveFlag() && 
           (flag[pi.getFlag()].flag.type == Flags::Lag)) {
         // delay sending to this player
-        pi.delayq.addPacket (len+4, rawbuf, BZDB.eval (StateDatabase::BZDB_FAKELAG));
+        pi.delayQueueAddPacket(len+4, rawbuf,
+			       BZDB.eval(StateDatabase::BZDB_FAKELAG));
       } 
       else {
         // send immediately
@@ -1463,10 +1464,7 @@ static void acceptClient()
 #endif
 
 
-  player[playerIndex].pausedSince = TimeKeeper::getNullTime();
-#ifdef NETWORK_STATS
-  player[playerIndex].initNetworkStatistics();
-#endif
+  player[playerIndex].initStatistics();
 
   // if game was over and this is the first player then game is on
   if (gameOver) {
@@ -2092,15 +2090,13 @@ static void anointNewRabbit(int killerId = NoPlayer)
 
   if (clOptions->rabbitSelection == KillerRabbitSelection)
     // check to see if the rabbit was just killed by someone; if so, make them the rabbit if they're still around.
-    if (killerId != oldRabbit && realPlayer(killerId) && !player[killerId].paused
-	&& !player[killerId].notResponding && player[killerId].isAlive()
-	&& !player[killerId].isObserver())
+    if (killerId != oldRabbit && realPlayer(killerId)
+	&& player[killerId].canBeRabbit())
       rabbitIndex = killerId;
   
   if (rabbitIndex == NoPlayer) {
     for (i = 0; i < curMaxPlayers; i++) {
-      if (i != oldRabbit && !player[i].paused && !player[i].notResponding
-	  && player[i].isAlive() && !player[i].isObserver()) {
+      if (i != oldRabbit && player[i].canBeRabbit()) {
 	float ratio = rabbitRank(player[i]);
 	if (ratio > topRatio) {
 	  topRatio = ratio;
@@ -2112,8 +2108,7 @@ static void anointNewRabbit(int killerId = NoPlayer)
   }
   if (rabbitIndex == NoPlayer) {
     for (i = 0; i < curMaxPlayers; i++) {
-      if (player[i].isPlaying() && !player[i].paused
-	  && !player[i].notResponding && !player[i].isObserver()) {
+      if (player[i].canBeRabbit(true)) {
 	float ratio = rabbitRank(player[i]);
 	if (ratio > topRatio) {
 	  topRatio = ratio;
@@ -2141,8 +2136,7 @@ static void anointNewRabbit(int killerId = NoPlayer)
 
 static void pausePlayer(int playerIndex, bool paused)
 {
-  player[playerIndex].paused = paused;
-  player[playerIndex].pausedSince = TimeKeeper::getCurrent();
+  player[playerIndex].setPaused(paused);
   if (clOptions->gameStyle & int(RabbitChaseGameStyle)) {
     if (paused && (rabbitIndex == playerIndex)) {
       anointNewRabbit();
@@ -2914,7 +2908,7 @@ static void dropFlag(int playerIndex, float pos[3])
   drpFlag.flag.initialVelocity = -BZDB.eval(StateDatabase::BZDB_GRAVITY) * upTime;
   
   // removed any delayed packets (in case it was a "Lag Flag")
-  player[playerIndex].delayq.dequeuePackets();
+  player[playerIndex].delayQueueDequeuePackets();
 
   // player no longer has flag -- send MsgDropFlag
   player[playerIndex].resetFlag();
@@ -3430,13 +3424,7 @@ static void handleCommand(int t, uint16_t code, uint16_t len,
 
     // player sent version string
     case MsgVersion: {
-      char *versionString = new char[len];
-      buf = nboUnpackString(buf, versionString, len);
-      player[t].clientVersion = std::string(versionString);
-      delete[] versionString;
-
-      DEBUG2("Player %s [%d] sent version string: %s\n", 
-	player[t].getCallSign(), t, player[t].clientVersion.c_str());
+      buf = player[t].setClientVersion(t, len, buf);
       break;
     }
 
@@ -4196,7 +4184,7 @@ int main(int argc, char **argv)
     // get time for next delayed packet (Lag Flag)
     for (p = 0; p < curMaxPlayers; p++) {
       if (player[p].isPlaying()) {
-        float nextTime = player[p].delayq.nextPacketTime();
+        float nextTime = player[p].delayQueueNextPacketTime();
         if (nextTime < waitTime) {
           waitTime = nextTime;
         }
@@ -4250,7 +4238,7 @@ int main(int argc, char **argv)
     for (p = 0; p < curMaxPlayers; p++) {
       void *data;
       int length;
-      if (player[p].delayq.getPacket(&length, &data)) {
+      if (player[p].delayQueueGetPacket(&length, &data)) {
         pwrite (p, data, length);
         free (data);
       }
@@ -4259,21 +4247,11 @@ int main(int argc, char **argv)
     // kick idle players
     if (clOptions->idlekickthresh > 0) {
       for (int i = 0; i < curMaxPlayers; i++) {
-        if (player[i].isPlaying() && !player[i].isObserver()) {
-          int idletime = (int)(tm - player[i].lastupdate);
-	  int pausetime = 0;
-          if (player[i].paused && tm - player[i].pausedSince > idletime)
-            pausetime = (int)(tm - player[i].pausedSince);
-	  idletime = idletime > pausetime ? idletime : pausetime;
-          if (idletime >
-	      (tm - player[i].lastmsg < clOptions->idlekickthresh ?
-	       3 * clOptions->idlekickthresh : clOptions->idlekickthresh)) {
-            DEBUG1("Kicking player %s [%d] idle %d\n", player[i].getCallSign(),
-		   i, idletime);
-            char message[MessageLen] = "You were kicked because you were idle too long";
-            sendMessage(ServerPlayer, i,  message, true);
-            removePlayer(i, "idling");
-          }
+	if (player[i].isTooMuchIdling(tm, clOptions->idlekickthresh, i)) {
+	  char message[MessageLen]
+	    = "You were kicked because you were idle too long";
+	  sendMessage(ServerPlayer, i,  message, true);
+	  removePlayer(i, "idling");
 	}
       }
     }

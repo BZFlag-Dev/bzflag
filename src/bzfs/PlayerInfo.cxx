@@ -19,6 +19,9 @@
 /* system implementation headers */
 #include <assert.h>
 
+// implementation-specific bzflag headers
+#include "TextUtils.h"
+
 void PlayerInfo::initPlayer(const struct sockaddr_in& clientAddr, int _fd) {
   AddrLen addr_len = sizeof(clientAddr);
 
@@ -249,8 +252,10 @@ uint8_t PlayerInfo::getPlayerProperties() {
   return result;
 };
 
+void PlayerInfo::initStatistics() {
+
+  pausedSince = TimeKeeper::getNullTime();
 #ifdef NETWORK_STATS
-void PlayerInfo::initNetworkStatistics() {
   int i;
   struct MessageCount *statMsg;
   int direction;
@@ -268,8 +273,10 @@ void PlayerInfo::initNetworkStatistics() {
     perSecondCurrentBytes[direction] = 0;
     perSecondMaxBytes[direction] = 0;
   }
+#endif
 };
 
+#ifdef NETWORK_STATS
 void PlayerInfo::dumpMessageStats() {
   int i;
   struct MessageCount *msgStats;
@@ -914,6 +921,78 @@ int PlayerInfo::pflush(int playerIndex, fd_set *set) {
   else
     return 0;
 };
+
+void PlayerInfo::delayQueueAddPacket(int length, const void *data,
+				     float time) {
+  delayq.addPacket(length, data, time);
+};
+
+bool PlayerInfo::delayQueueGetPacket(int *length, void **data) {
+  return delayq.getPacket(length, data);
+};
+
+void PlayerInfo::delayQueueDequeuePackets() {
+  delayq.dequeuePackets();
+};
+
+float PlayerInfo::delayQueueNextPacketTime() {
+  return delayq.nextPacketTime();
+};
+
+const char *PlayerInfo::getClientVersion() {
+  return clientVersion.c_str();
+};
+
+void *PlayerInfo::setClientVersion(int playerIndex, size_t length, void *buf) {
+  char *versionString = new char[length];
+  buf = nboUnpackString(buf, versionString, length);
+  clientVersion = std::string(versionString);
+  delete[] versionString;
+  DEBUG2("Player %s [%d] sent version string: %s\n", 
+	 callSign, playerIndex, clientVersion.c_str());
+  return buf;
+}
+
+std::string PlayerInfo::getIdleStat() {
+  TimeKeeper now = TimeKeeper::getCurrent();
+  std::string reply;
+  if ((state > PlayerInLimbo) && (team != ObserverTeam)) {
+    reply = string_util::format("%-16s : %4ds", callSign,
+				int(now - lastupdate));
+    if (paused) {
+      reply += string_util::format("  paused %4ds", int(now - pausedSince));
+    }
+  }
+  return reply;
+};
+
+bool PlayerInfo::canBeRabbit(bool relaxing) {
+  if (paused || notResponding || (team != ObserverTeam))
+    return false;
+  return relaxing ? (state > PlayerInLimbo) : (state == PlayerAlive);
+};
+
+void PlayerInfo::setPaused(bool _paused) {
+  paused = _paused;
+  pausedSince = TimeKeeper::getCurrent();
+};
+
+bool PlayerInfo::isTooMuchIdling(TimeKeeper tm, float kickThresh, int index) {
+  bool idling = false;
+  if ((state > PlayerInLimbo) && (team != ObserverTeam)) {
+    int idletime = (int)(tm - lastupdate);
+    int pausetime = 0;
+    if (paused && tm - pausedSince > idletime)
+      pausetime = (int)(tm - pausedSince);
+    idletime = idletime > pausetime ? idletime : pausetime;
+    if (idletime > (tm - lastmsg < kickThresh ? 3 * kickThresh : kickThresh)) {
+      DEBUG1("Kicking player %s [%d] idle %d\n", callSign, index, idletime);
+      idling = true;
+    }
+  }
+  return idling;
+};
+
 // Local Variables: ***
 // mode:C++ ***
 // tab-width: 8 ***

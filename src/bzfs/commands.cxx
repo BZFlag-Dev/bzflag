@@ -555,18 +555,11 @@ void handleIdlestatsCmd(int t, const char *)
     return;
   }
 
-  TimeKeeper now = TimeKeeper::getCurrent();
   std::string reply;
   for (int i = 0; i < curMaxPlayers; i++) {
-    if (player[i].isPlaying() && !player[i].isObserver()) {
-      reply = string_util::format("%-16s : %4ds", player[i].getCallSign(), 
-				  int(now - player[i].lastupdate));
-      if (player[i].paused) {
-	reply += string_util::format("  paused %4ds",
-				     int(now - player[i].pausedSince));
-      }
+    reply = player[i].getIdleStat();
+    if (reply != "")
       sendMessage(ServerPlayer, t, reply.c_str(), true);
-    }
   }
   return;
 }
@@ -1508,7 +1501,7 @@ void handleClientqueryCmd(int t, const char * /*message*/)
   // send all players' version strings
   // is faking a message from the remote client rude? did that so that /clientquery and CLIENTQUERY look about the same.
   for (int i = 0; i < curMaxPlayers;i++) {
-    sendMessage(i, t, string_util::format("Version: %s", player[i].clientVersion.c_str()).c_str());
+    sendMessage(i, t, string_util::format("Version: %s", player[i].getClientVersion()).c_str());
   }
   return;
 }

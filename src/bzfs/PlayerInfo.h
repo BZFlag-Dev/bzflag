@@ -109,8 +109,8 @@ public:
   uint8_t     getPlayerProperties();
   void        storeInfo(const char* pwd);
   void        setPassword(const std::string& pwd);
+  void        initStatistics();
 #ifdef NETWORK_STATS
-  void        initNetworkStatistics();
   void        dumpMessageStats();
 #endif
   bool        isConnected();
@@ -185,6 +185,16 @@ public:
   void       *getTcpBuffer();
   void        cleanTcp();
   in_addr     getIPAddress();
+  void        delayQueueAddPacket(int length, const void *data, float time);
+  bool        delayQueueGetPacket(int *length, void **data);
+  void        delayQueueDequeuePackets();
+  float       delayQueueNextPacketTime();
+  const char *getClientVersion();
+  void       *setClientVersion(int playerIndex, size_t length, void *buf);
+  std::string getIdleStat();
+  bool        canBeRabbit(bool relaxing = false);
+  void        setPaused(bool pauses);
+  bool        isTooMuchIdling(TimeKeeper tm, float kickThresh, int index);
 private:
   void        udpSend(int udpSocket, const void *b, size_t l);
   int         send(const void *buffer, size_t length);
@@ -249,7 +259,6 @@ private:
     // TCP connection
     struct sockaddr_in taddr;
 
-public:
     // UDP message queue
     struct PacketQueue *uqueue;
     struct PacketQueue *dqueue;
@@ -264,6 +273,7 @@ public:
     bool paused;
     TimeKeeper pausedSince;
 
+public:
     bool notResponding;
     bool toBeKicked;
     std::string toBeKickedReason;
