@@ -206,7 +206,7 @@ server to player messages:
   MsgRemovePlayer	player has exited the server
 			<== id
   MsgFlagUpdate		update of flag info
-			<== flag, flag-info
+			<== count, [flag, flag-info]*
   MsgTeamUpdate		update of team info
 			<== teamcount, [team, team-info]
   MsgGetWorld		chunk of world database

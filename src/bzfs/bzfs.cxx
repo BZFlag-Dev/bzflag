@@ -1312,15 +1312,51 @@ static int pread(int playerIndex, int l)
   return e;
 }
 
-static void sendFlagUpdate(int flagIndex, int index = -1)
+static void sendFlagUpdate(int flagIndex = -1, int playerIndex = -1)
 {
   void *buf, *bufStart = getDirectMessageBuffer();
-  buf = nboPackUShort(bufStart, flagIndex);
-  buf = flag[flagIndex].flag.pack(buf);
-  if (index == -1)
-    broadcastMessage(MsgFlagUpdate, (char*)buf - (char*)bufStart, bufStart);
-  else
-    directMessage(index, MsgFlagUpdate, (char*)buf - (char*)bufStart, bufStart);
+
+  if (flagIndex != -1) {
+    buf = nboPackUShort(bufStart,1);
+    buf = nboPackUShort(buf, flagIndex);
+    buf = flag[flagIndex].flag.pack(buf);
+    if (playerIndex == -1)
+      broadcastMessage(MsgFlagUpdate, (char*)buf - (char*)bufStart, bufStart);
+    else
+      directMessage(playerIndex, MsgFlagUpdate, (char*)buf - (char*)bufStart, bufStart);
+  }
+  else {
+    buf = nboPackUShort(bufStart,0); //placeholder
+    int cnt = 0;
+    int length = sizeof(uint16_t);
+    for (flagIndex = 0; flagIndex < numFlags; flagIndex++) {
+        if (flag[flagIndex].flag.status != FlagNoExist) {
+          if ((length + sizeof(uint16_t) + FlagPLen) > MaxPacketLen - 2*sizeof(uint16_t)) {
+	      nboPackUShort(bufStart, cnt);
+              if (playerIndex == -1)
+                broadcastMessage(MsgFlagUpdate, (char*)buf - (char*)bufStart, bufStart);
+              else
+                directMessage(playerIndex, MsgFlagUpdate, (char*)buf - (char*)bufStart, bufStart);
+	      cnt = 0;
+	      length = sizeof(uint16_t);
+	      buf = nboPackUShort(bufStart,0); //placeholder
+	  }
+
+	  buf = nboPackUShort(buf, flagIndex);
+	  buf = flag[flagIndex].flag.pack(buf);
+	  length += sizeof(uint16_t)+FlagPLen;
+	  cnt++;
+	}
+    }
+
+    if (cnt > 0) {
+	nboPackUShort(bufStart, cnt);
+        if (playerIndex == -1)
+          broadcastMessage(MsgFlagUpdate, (char*)buf - (char*)bufStart, bufStart);
+        else
+          directMessage(playerIndex, MsgFlagUpdate, (char*)buf - (char*)bufStart, bufStart);
+    }
+  }
 }
 
 static void sendTeamUpdate(int playerIndex = -1, int teamIndex1 = -1, int teamIndex2 = -1)
@@ -3000,11 +3036,10 @@ static void addPlayer(int playerIndex)
   // because of an error.
   if (player[playerIndex].type != ComputerPlayer) {
     int i;
-    if (player[playerIndex].fd != NotConnected) 
+    if (player[playerIndex].fd != NotConnected) {
       sendTeamUpdate(playerIndex);
-    for (i = 0; i < numFlags && player[playerIndex].fd != NotConnected; i++)
-      if (flag[i].flag.status != FlagNoExist)
-	sendFlagUpdate(i, playerIndex);
+      sendFlagUpdate(-1, playerIndex);
+    }
     for (i = 0; i < curMaxPlayers && player[playerIndex].fd != NotConnected; i++)
       if (player[i].state > PlayerInLimbo && i != playerIndex)
 	sendPlayerUpdate(i, playerIndex);

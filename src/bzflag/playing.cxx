@@ -2784,10 +2784,14 @@ static void		handleServerMessage(bool human, uint16_t code,
     }
 
     case MsgFlagUpdate: {
+      uint16_t count;
       uint16_t flagIndex;
-      msg = nboUnpackUShort(msg, flagIndex);
-      msg = world->getFlag(int(flagIndex)).unpack(msg);
-      world->initFlag(int(flagIndex));
+      msg = nboUnpackUShort(msg, count);
+      for (int i = 0; i < count; i++) {
+        msg = nboUnpackUShort(msg, flagIndex);
+        msg = world->getFlag(int(flagIndex)).unpack(msg);
+        world->initFlag(int(flagIndex));
+      }
       break;
     }
 
@@ -5063,10 +5067,14 @@ static bool		enterServer(ServerLink* serverLink, World* world,
 	break;
       }
       case MsgFlagUpdate: {
+	uint16_t count;
 	uint16_t flag;
-	buf = nboUnpackUShort(buf, flag);
-	buf = world->getFlag(int(flag)).unpack(buf);
-	world->initFlag(int(flag));
+	buf = nboUnpackUShort(buf, count);
+	for (int i = 0; i < count; i++) {
+	  buf = nboUnpackUShort(buf, flag);
+	  buf = world->getFlag(int(flag)).unpack(buf);
+	  world->initFlag(int(flag));
+	}
 	break;
       }
       case MsgUDPLinkRequest:
