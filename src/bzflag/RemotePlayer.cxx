@@ -10,9 +10,12 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#include "common.h"
+/* interface header */
 #include "RemotePlayer.h"
+
+/* common implementation headers */
 #include "World.h"
+
 
 RemotePlayer::RemotePlayer(const PlayerId& id, TeamColor team,
 					const char* name, const char* email,
