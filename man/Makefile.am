@@ -7,3 +7,8 @@ man_MANS = bzflag.6 bzfls.6 bzfrelay.6 bzfs.6
 	cat $< | sed -e "s'INSTALL_DATA_DIR'$(INSTALL_DATA_DIR)'g" >$@
 
 EXTRA_DIST = bzflag.6s bzfrelay.6s bzfs.6s bzfls.6s
+
+DISTCLEANFILES = bzflag.6 bzfrelay.6 bzfs.6 bzfls.6
+
+MAINTAINERCLEANFILES = \
+	Makefile.in

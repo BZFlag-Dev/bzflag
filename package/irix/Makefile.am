@@ -1,1 +1,4 @@
 EXTRA_DIST = idb spec-irix-mips2 spec-irix-mips3
+
+MAINTAINERCLEANFILES = \
+	Makefile.in

@@ -1,5 +1,8 @@
 noinst_LIBRARIES = libObstacle.a
 
+MAINTAINERCLEANFILES = \
+	Makefile.in
+
 libObstacle_a_SOURCES =		 	\
 	Intersect.cxx			\
 	Obstacle.cxx			\

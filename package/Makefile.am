@@ -2,6 +2,9 @@ SUBDIRS = linux rpm irix mac win32
 TARGETDIR  = $(top_srcdir)/bin
 PACKAGEDIR = $(top_srcdir)/dist
 
+MAINTAINERCLEANFILES = \
+	Makefile.in
+
 #
 # tools
 #

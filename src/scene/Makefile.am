@@ -5,3 +5,5 @@ libSceneDB_a_SOURCES = 			\
 	ZSceneDatabase.cxx		\
 	BSPSceneDatabase.cxx		
 
+MAINTAINERCLEANFILES = \
+	Makefile.in

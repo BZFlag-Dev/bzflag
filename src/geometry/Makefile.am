@@ -1,5 +1,8 @@
 SUBDIRS = models
 
+MAINTAINERCLEANFILES = \
+	Makefile.in
+
 noinst_LIBRARIES = libGeometry.a
 
 libGeometry_a_SOURCES  =		\

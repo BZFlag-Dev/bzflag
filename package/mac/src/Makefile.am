@@ -1,1 +1,4 @@
 EXTRA_DIST = $(wildcard [a-z]*.*) $(wildcard FinderLaunch.*)
+
+MAINTAINERCLEANFILES = \
+	Makefile.in

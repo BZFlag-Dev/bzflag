@@ -1,12 +1,15 @@
 bin_PROGRAMS = bzflag
 
+MAINTAINERCLEANFILES = \
+	Makefile.in
+
 bzflag_SOURCES = 			\
 	MainWindow.cxx			\
 	MainWindow.h			\
 	ControlPanel.cxx		\
 	ControlPanel.h			\
 	World.cxx			\
-	World.h			\
+	World.h				\
 	SceneBuilder.cxx		\
 	SceneBuilder.h			\
 	SceneRenderer.cxx		\

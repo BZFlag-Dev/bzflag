@@ -14,3 +14,6 @@ libCommon_a_SOURCES  =		 	\
 	bzsignal.c
 
 EXTRA_DIST = Ping.cxx 
+
+MAINTAINERCLEANFILES = \
+	Makefile.in

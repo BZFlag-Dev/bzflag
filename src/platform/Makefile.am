@@ -156,3 +156,6 @@ EXTRA_libPlatform_a_SOURCES = 		\
  	WinMedia.h
 
 EXTRA_DIST = MacBZFlag.icns MacBZFlag-prefix.h NewMedia.cxx NewMedia.h
+
+MAINTAINERCLEANFILES = \
+	Makefile.in

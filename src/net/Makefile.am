@@ -1,5 +1,8 @@
 noinst_LIBRARIES = libNet.a
 
+MAINTAINERCLEANFILES = \
+	Makefile.in
+
 libNet_a_SOURCES =	 		\
 	Address.cxx			\
 	Pack.cxx			\
