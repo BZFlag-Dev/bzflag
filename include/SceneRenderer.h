@@ -138,9 +138,6 @@ public:
   void		render(bool lastFrame = true,
 		       bool sameFrame = false,
 		       bool fullWindow = false);
-  bool		testAndSetStyle(int& _style) const
-  { if (_style == style) return true;
-  _style = style; return false; }
   void		notifyStyleChange();
   void		addRenderNode(RenderNode* node, const OpenGLGState*);
   void		addShadowNode(RenderNode* node);
@@ -192,7 +189,6 @@ private:
   RenderNodeList	shadowList;
   RenderNodeGStateList orderedList;
   bool		inOrder;
-  int			style;
   SceneIterator*	sceneIterator;
   int			depthRange;
   int			numDepthRanges;
@@ -202,6 +198,7 @@ private:
   bool		exposed;
   bool		lastFrame;
   bool		sameFrame;
+  bool		needStyleUpdate;
   std::vector<FlareLight>	flareLightList;
 
 };

@@ -26,8 +26,7 @@ void			(__stdcall *SceneNode::color4fv)(const GLfloat*);
 #endif
 void			(*SceneNode::stipple)(GLfloat);
 
-SceneNode::SceneNode() : octreeState(OctreeCulled), noPlane(true),
-			 styleMailbox(0)
+SceneNode::SceneNode() : octreeState(OctreeCulled), noPlane(true)
 {
   static bool init = false;
   if (!init) {
@@ -99,11 +98,6 @@ void			SceneNode::setColorOverride(bool on)
   }
 }
 
-const GLfloat*		SceneNode::getSphere() const
-{
-  return sphere;
-}
-
 void		        SceneNode::getExtents(float* mins, float* maxs) const
 {
   const float radius = sqrtf (sphere[3]);
@@ -149,21 +143,13 @@ void			SceneNode::setSphere(const GLfloat _sphere[4])
 void			SceneNode::getRenderNodes(SceneRenderer& renderer)
 {
   if (!cull(renderer.getViewFrustum())) {
-    if (!renderer.testAndSetStyle(styleMailbox)) {
-      notifyStyleChange(renderer);
-    }
     addRenderNodes(renderer);
   }
   // reset the cull state
   octreeState = OctreeCulled;
 }
 
-void			SceneNode::forceNotifyStyleChange()
-{
-  styleMailbox--;
-}
-
-void			SceneNode::notifyStyleChange(const SceneRenderer&)
+void			SceneNode::notifyStyleChange()
 {
   // do nothing
 }

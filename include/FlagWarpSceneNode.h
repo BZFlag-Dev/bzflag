@@ -31,7 +31,7 @@ class FlagWarpSceneNode : public SceneNode {
     GLfloat		getDistance(const GLfloat*) const;
     void		move(const GLfloat pos[3]);
 
-    void		notifyStyleChange(const SceneRenderer&);
+    void		notifyStyleChange();
     void		addRenderNodes(SceneRenderer&);
 
   protected:

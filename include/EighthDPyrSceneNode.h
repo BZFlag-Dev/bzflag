@@ -27,7 +27,7 @@ class EighthDPyrSceneNode : public EighthDimSceneNode {
 					const float size[3], float rotation);
 			~EighthDPyrSceneNode();
 
-    void		notifyStyleChange(const SceneRenderer&);
+    void		notifyStyleChange();
     void		addRenderNodes(SceneRenderer&);
 
   protected:

@@ -37,7 +37,7 @@ class FlagSceneNode : public SceneNode {
     void		setColor(const GLfloat* rgba);
     void		setTexture(const int);
 
-    void		notifyStyleChange(const SceneRenderer&);
+    void		notifyStyleChange();
     void		addRenderNodes(SceneRenderer&);
     void		addShadowNodes(SceneRenderer&);
 

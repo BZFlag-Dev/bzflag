@@ -251,6 +251,8 @@ BackgroundRenderer::BackgroundRenderer(const SceneRenderer&) :
 
   // recreate display lists when context is recreated
   OpenGLGState::registerContextInitializer(initDisplayLists, (void*)this);
+  
+  notifyStyleChange();
 }
 
 BackgroundRenderer::~BackgroundRenderer()
@@ -260,22 +262,21 @@ BackgroundRenderer::~BackgroundRenderer()
   delete[] mountainsList;
 }
 
-void			BackgroundRenderer::notifyStyleChange(
-				SceneRenderer& renderer)
+void			BackgroundRenderer::notifyStyleChange()
 {
-  if (renderer.testAndSetStyle(style)) return;
-
-  if (BZDBCache::texture)
+  if (BZDBCache::texture) {
     if (BZDB.isTrue("lighting"))
       styleIndex = 3;
     else
       styleIndex = 2;
-  else
+  }
+  else {
     if (BZDB.isTrue("lighting"))
       styleIndex = 1;
     else
       styleIndex = 0;
-
+  }
+      
   // some stuff is drawn only for certain states
   cloudsVisible = (styleIndex >= 2 && cloudsAvailable && BZDBCache::blend);
   mountainsVisible = (styleIndex >= 2 && mountainsAvailable);
@@ -412,8 +413,6 @@ void			BackgroundRenderer::addCloudDrift(GLfloat uDrift,
 void			BackgroundRenderer::renderSkyAndGround(
 				SceneRenderer& renderer, bool fullWindow)
 {
-  notifyStyleChange(renderer);
-
   if (renderer.useQuality() > 0) {
     drawSky(renderer);
     drawGround();

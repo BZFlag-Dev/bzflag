@@ -88,7 +88,6 @@ void			FlagSceneNode::setBillboard(bool _billboard)
 {
   if (billboard == _billboard) return;
   billboard = _billboard;
-  forceNotifyStyleChange();
 }
 
 void			FlagSceneNode::setColor(
@@ -98,9 +97,7 @@ void			FlagSceneNode::setColor(
   color[1] = g;
   color[2] = b;
   color[3] = a;
-  const bool oldTransparent = transparent;
   transparent = (color[3] != 1.0f);
-  if (oldTransparent != transparent) forceNotifyStyleChange();
 }
 
 void			FlagSceneNode::setColor(const GLfloat* rgba)
@@ -109,9 +106,7 @@ void			FlagSceneNode::setColor(const GLfloat* rgba)
   color[1] = rgba[1];
   color[2] = rgba[2];
   color[3] = rgba[3];
-  const bool oldTransparent = transparent;
   transparent = (color[3] != 1.0f);
-  if (oldTransparent != transparent) forceNotifyStyleChange();
 }
 
 void			FlagSceneNode::setTexture(const int texture)
@@ -120,11 +115,9 @@ void			FlagSceneNode::setTexture(const int texture)
   builder.setTexture(texture);
   builder.enableTexture(texture>=0);
   gstate = builder.getState();
-  forceNotifyStyleChange();
 }
 
-void			FlagSceneNode::notifyStyleChange(
-				const SceneRenderer&)
+void			FlagSceneNode::notifyStyleChange()
 {
   texturing = BZDBCache::texture && BZDBCache::blend;
   OpenGLGStateBuilder builder(gstate);

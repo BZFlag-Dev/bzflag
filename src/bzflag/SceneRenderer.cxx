@@ -107,7 +107,6 @@ SceneRenderer::SceneRenderer() :
 				useFogHack(false),
 				viewType(Normal),
 				inOrder(false),
-				style(0),
 				sceneIterator(NULL),
 				depthRange(0),
 				numDepthRanges(1),
@@ -116,7 +115,8 @@ SceneRenderer::SceneRenderer() :
 				canUseHiddenLine(false),
 				exposed(true),
 				lastFrame(true),
-				sameFrame(false)
+				sameFrame(false),
+				needStyleUpdate(true)
 {
 }
 
@@ -421,6 +421,7 @@ void			SceneRenderer::setSceneDatabase(SceneDatabase* db)
 
   scene = db;
   if (scene) {
+    needStyleUpdate = true;
     sceneIterator = scene->getRenderIterator();
     inOrder = scene->isOrdered();
     if (sceneIterator) {
@@ -555,6 +556,17 @@ void			SceneRenderer::render(
 
   lastFrame = _lastFrame;
   sameFrame = _sameFrame;
+  
+  // update the SceneNode and Background styles
+  if (needStyleUpdate) {
+    if (scene) {
+      scene->updateNodeStyles();
+    }
+    if (background) {
+      background->notifyStyleChange();
+    }
+    needStyleUpdate = false;
+  }
 
   // update the dynamic colors
   DYNCOLORMGR.update();
@@ -569,7 +581,9 @@ void			SceneRenderer::render(
   // chance we're waiting on the vertical retrace.
 
   // set the view frustum
-  if (sceneIterator) sceneIterator->resetFrustum(&frustum);
+  if (sceneIterator) {
+    sceneIterator->resetFrustum(&frustum);
+  }
 
   // get the important lights in the scene
   int i;
@@ -580,8 +594,9 @@ void			SceneRenderer::render(
       // add lights
       sceneIterator->reset();
       SceneNode* node;
-      while ((node = sceneIterator->getNextLight()) != NULL)
+      while ((node = sceneIterator->getNextLight()) != NULL) {
 	node->addLight(*this);
+      }
       numLights = lights.size();
 
       // pick maxLights most important light sources
@@ -617,8 +632,9 @@ void			SceneRenderer::render(
     if (sceneIterator) {
       sceneIterator->reset();
       SceneNode* node;
-      while ((node = sceneIterator->getNext()) != NULL)
+      while ((node = sceneIterator->getNext()) != NULL) {
 	node->getRenderNodes(*this);
+      }
     }
 
     // sort ordered list in reverse depth order
@@ -628,8 +644,9 @@ void			SceneRenderer::render(
   else {
     sceneIterator->reset();
     SceneNode* node;
-    while ((node = sceneIterator->getNext()) != NULL)
+    while ((node = sceneIterator->getNext()) != NULL) {
       node->getRenderNodes(*this);
+    }
   }
 
   // add the shadow rendering nodes
@@ -862,8 +879,7 @@ void			SceneRenderer::render(
 
 void			SceneRenderer::notifyStyleChange()
 {
-  style++;
-
+  needStyleUpdate = true;
 /* FIXME
   // fixup my gstates
   OpenGLGStateBuilder builder(flareGState);

@@ -129,24 +129,20 @@ TankSceneNode::~TankSceneNode()
 void			TankSceneNode::setColor(
 				GLfloat r, GLfloat g, GLfloat b, GLfloat a)
 {
-  const bool oldTransparent = (color[3] != 1.0f);
   color[0] = r;
   color[1] = g;
   color[2] = b;
   color[3] = a;
   transparent = (color[3] != 1.0f);
-  if (transparent != oldTransparent) forceNotifyStyleChange();
 }
 
 void			TankSceneNode::setColor(const GLfloat* rgba)
 {
-  const bool oldTransparent = (color[3] != 1.0f);
   color[0] = rgba[0];
   color[1] = rgba[1];
   color[2] = rgba[2];
   color[3] = rgba[3];
   transparent = (color[3] != 1.0f);
-  if (transparent != oldTransparent) forceNotifyStyleChange();
 }
 
 void			TankSceneNode::setMaterial(const OpenGLMaterial& mat)
@@ -154,7 +150,6 @@ void			TankSceneNode::setMaterial(const OpenGLMaterial& mat)
   OpenGLGStateBuilder builder(gstate);
   builder.setMaterial(mat);
   gstate = builder.getState();
-  forceNotifyStyleChange();
 }
 
 void			TankSceneNode::setTexture(const int texture)
@@ -162,7 +157,6 @@ void			TankSceneNode::setTexture(const int texture)
   OpenGLGStateBuilder builder(gstate);
   builder.setTexture(texture);
   gstate = builder.getState();
-  forceNotifyStyleChange();
 }
 
 void			TankSceneNode::move(const GLfloat pos[3],
@@ -173,8 +167,7 @@ void			TankSceneNode::move(const GLfloat pos[3],
   setCenter(pos);
 }
 
-void			TankSceneNode::notifyStyleChange(
-				const SceneRenderer&)
+void			TankSceneNode::notifyStyleChange()
 {
   sort = !BZDB.isTrue("zbuffer");
   OpenGLGStateBuilder builder(gstate);
@@ -356,8 +349,7 @@ void			TankIDLSceneNode::move(const GLfloat _plane[4])
 	    s[2] + 1.5f * BZDB.eval(StateDatabase::BZDB_TANKLENGTH) * plane[2]);
 }
 
-void			TankIDLSceneNode::notifyStyleChange(
-				const SceneRenderer&)
+void			TankIDLSceneNode::notifyStyleChange()
 {
   OpenGLGStateBuilder builder(gstate);
   if (BZDBCache::blend) {

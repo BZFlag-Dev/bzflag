@@ -56,9 +56,7 @@ void			SphereSceneNode::setColor(
   color[1] = g;
   color[2] = b;
   color[3] = a;
-  const bool oldTransparent = transparent;
   transparent = (color[3] != 1.0f);
-  if (oldTransparent != transparent) forceNotifyStyleChange();
 }
 
 void			SphereSceneNode::setColor(const GLfloat* rgba)
@@ -67,9 +65,7 @@ void			SphereSceneNode::setColor(const GLfloat* rgba)
   color[1] = rgba[1];
   color[2] = rgba[2];
   color[3] = rgba[3];
-  const bool oldTransparent = transparent;
   transparent = (color[3] != 1.0f);
-  if (oldTransparent != transparent) forceNotifyStyleChange();
 }
 
 void			SphereSceneNode::move(const GLfloat pos[3],
@@ -103,8 +99,7 @@ SceneNode**		SphereSceneNode::getParts(int& numParts)
   return (SceneNode**)parts;
 }
 
-void			SphereSceneNode::notifyStyleChange(
-				const SceneRenderer&)
+void			SphereSceneNode::notifyStyleChange()
 {
   lighting = BZDB.isTrue("lighting");
   OpenGLGStateBuilder builder(gstate);

@@ -52,6 +52,7 @@ class BackgroundRenderer {
 					const float sunDirection[3],
 					const float moonDirection[3]);
     void		addCloudDrift(GLfloat uDrift, GLfloat vDrift);
+    void		notifyStyleChange();
 
     std::string		userTextures[2];
   protected:
@@ -63,7 +64,6 @@ class BackgroundRenderer {
     void		drawGroundReceivers(SceneRenderer&);
     void		drawMountains(void);
 
-    void		notifyStyleChange(SceneRenderer&);
 
   private:
 			BackgroundRenderer(const BackgroundRenderer&);

@@ -68,9 +68,9 @@ EighthDBaseSceneNode::~EighthDBaseSceneNode()
   // do nothing
 }
 
-void EighthDBaseSceneNode::notifyStyleChange(const SceneRenderer& renderer)
+void EighthDBaseSceneNode::notifyStyleChange()
 {
-  EighthDimSceneNode::notifyStyleChange(renderer);
+  EighthDimSceneNode::notifyStyleChange();
 
   OpenGLGStateBuilder builder(gstate);
   if (BZDB.isTrue("smooth")) {

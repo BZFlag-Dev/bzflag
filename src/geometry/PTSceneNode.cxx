@@ -60,8 +60,7 @@ void			PhotonTorpedoSceneNode::addLight(
   renderer.addLight(light);
 }
 
-void			PhotonTorpedoSceneNode::notifyStyleChange(
-				const SceneRenderer&)
+void			PhotonTorpedoSceneNode::notifyStyleChange()
 {
   OpenGLGStateBuilder builder(gstate);
   if (BZDBCache::blend) {

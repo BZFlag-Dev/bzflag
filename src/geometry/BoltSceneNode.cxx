@@ -100,7 +100,6 @@ void			BoltSceneNode::setTexture(const int texture)
   builder.setTexture(texture);
   builder.enableTexture(texture>=0);
   gstate = builder.getState();
-  forceNotifyStyleChange();
 }
 
 void			BoltSceneNode::setTextureAnimation(int cu, int cv)
@@ -121,8 +120,7 @@ void			BoltSceneNode::addLight(
   renderer.addLight(light);
 }
 
-void			BoltSceneNode::notifyStyleChange(
-				const SceneRenderer&)
+void			BoltSceneNode::notifyStyleChange()
 {
   texturing = BZDBCache::texture && BZDBCache::blend;
   OpenGLGStateBuilder builder(gstate);

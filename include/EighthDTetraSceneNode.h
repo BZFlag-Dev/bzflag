@@ -27,7 +27,7 @@ class EighthDTetraSceneNode : public EighthDimSceneNode {
 			                      const float (*planes)[4]);
 			~EighthDTetraSceneNode();
 
-    void		notifyStyleChange(const SceneRenderer&);
+    void		notifyStyleChange();
     void		addRenderNodes(SceneRenderer&);
 
   protected:

@@ -31,7 +31,7 @@ class TracerSceneNode : public ShotSceneNode {
     void		addLight(SceneRenderer&);
     void		move(const GLfloat pos[3], const GLfloat forward[3]);
 
-    void		notifyStyleChange(const SceneRenderer&);
+    void		notifyStyleChange();
     void		addRenderNodes(SceneRenderer&);
 
   protected:

@@ -26,7 +26,7 @@ class EighthDBaseSceneNode : public EighthDimSceneNode {
 			EighthDBaseSceneNode(const float pos[3],
 					const float size[3], float rotation);
 			~EighthDBaseSceneNode();
-    void		notifyStyleChange(const SceneRenderer&);
+    void		notifyStyleChange();
     void		addRenderNodes(SceneRenderer&);
   protected:
     class EighthDBaseRenderNode : public RenderNode {

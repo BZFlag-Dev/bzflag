@@ -43,7 +43,7 @@ class BoltSceneNode : public ShotSceneNode {
     void		move(const GLfloat pos[3], const GLfloat forward[3]);
     void		addLight(SceneRenderer&);
 
-    void		notifyStyleChange(const SceneRenderer&);
+    void		notifyStyleChange();
     void		addRenderNodes(SceneRenderer&);
 
   protected:

@@ -71,10 +71,9 @@ EighthDPyrSceneNode::~EighthDPyrSceneNode()
   // do nothing
 }
 
-void			EighthDPyrSceneNode::notifyStyleChange(
-				const SceneRenderer& renderer)
+void			EighthDPyrSceneNode::notifyStyleChange()
 {
-  EighthDimSceneNode::notifyStyleChange(renderer);
+  EighthDimSceneNode::notifyStyleChange();
 
   OpenGLGStateBuilder builder(gstate);
   if (BZDB.isTrue("smooth")) {

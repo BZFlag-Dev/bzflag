@@ -240,7 +240,6 @@ void			BillboardSceneNode::setTexture(
   builder.setTexture(texture);
   builder.enableTexture(hasTexture);
   gstate = builder.getState();
-  forceNotifyStyleChange();
 }
 
 void			BillboardSceneNode::
@@ -270,8 +269,7 @@ void			BillboardSceneNode::addLight(
     renderer.addLight(light);
 }
 
-void			BillboardSceneNode::notifyStyleChange(
-				const SceneRenderer&)
+void			BillboardSceneNode::notifyStyleChange()
 {
   show = hasTexture && BZDBCache::texture &&
 	(!hasAlpha || BZDBCache::blend);

@@ -65,8 +65,7 @@ GLfloat			FlagWarpSceneNode::getDistance(const GLfloat* eye) const
 	 (eye[2] - sphere[2] + 0.2f) * (eye[2] - sphere[2] + 0.2f);
 }
 
-void			FlagWarpSceneNode::notifyStyleChange(
-				const SceneRenderer&)
+void			FlagWarpSceneNode::notifyStyleChange()
 {
   OpenGLGStateBuilder builder(gstate);
   if (BZDBCache::blend) {

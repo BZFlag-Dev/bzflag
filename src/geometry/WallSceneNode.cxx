@@ -176,12 +176,10 @@ GLfloat			WallSceneNode::getDistance(const GLfloat* eye) const
 void			WallSceneNode::setColor(
 				GLfloat r, GLfloat g, GLfloat b, GLfloat a)
 {
-  const bool oldTransparent = (color[3] != 1.0f);
   color[0] = r;
   color[1] = g;
   color[2] = b;
   color[3] = a;
-  if (oldTransparent != (color[3] != 1.0f)) forceNotifyStyleChange();
 }
 
 void			WallSceneNode::setDynamicColor(const GLfloat* rgba)
@@ -192,88 +190,68 @@ void			WallSceneNode::setDynamicColor(const GLfloat* rgba)
 
 void			WallSceneNode::setBlending(bool blend)
 {
-  const bool oldWantBlending = wantBlending;
   wantBlending = blend;
-  if (oldWantBlending != wantBlending) {
-    forceNotifyStyleChange();
-  }
   return;
 }
 
 void			WallSceneNode::setColor(const GLfloat* rgba)
 {
-  const bool oldTransparent = (color[3] != 1.0f);
   color[0] = rgba[0];
   color[1] = rgba[1];
   color[2] = rgba[2];
   color[3] = rgba[3];
-  if (oldTransparent != (color[3] != 1.0f)) forceNotifyStyleChange();
 }
 
 void			WallSceneNode::setModulateColor(
 				GLfloat r, GLfloat g, GLfloat b, GLfloat a)
 {
-  const bool oldTransparent = (modulateColor[3] != 1.0f);
   modulateColor[0] = r;
   modulateColor[1] = g;
   modulateColor[2] = b;
   modulateColor[3] = a;
-  if (oldTransparent != (modulateColor[3] != 1.0f)) forceNotifyStyleChange();
 }
 
 void			WallSceneNode::setModulateColor(const GLfloat* rgba)
 {
-  const bool oldTransparent = (modulateColor[3] != 1.0f);
   modulateColor[0] = rgba[0];
   modulateColor[1] = rgba[1];
   modulateColor[2] = rgba[2];
   modulateColor[3] = rgba[3];
-  if (oldTransparent != (modulateColor[3] != 1.0f)) forceNotifyStyleChange();
 }
 
 void			WallSceneNode::setLightedColor(
 				GLfloat r, GLfloat g, GLfloat b, GLfloat a)
 {
-  const bool oldTransparent = (lightedColor[3] != 1.0f);
   lightedColor[0] = r;
   lightedColor[1] = g;
   lightedColor[2] = b;
   lightedColor[3] = a;
-  if (oldTransparent != (lightedColor[3] != 1.0f)) forceNotifyStyleChange();
 }
 
 void			WallSceneNode::setLightedColor(const GLfloat* rgba)
 {
-  const bool oldTransparent = (lightedColor[3] != 1.0f);
   lightedColor[0] = rgba[0];
   lightedColor[1] = rgba[1];
   lightedColor[2] = rgba[2];
   lightedColor[3] = rgba[3];
-  if (oldTransparent != (lightedColor[3] != 1.0f)) forceNotifyStyleChange();
 }
 
 void			WallSceneNode::setLightedModulateColor(
 				GLfloat r, GLfloat g, GLfloat b, GLfloat a)
 {
-  const bool oldTransparent = (lightedModulateColor[3] != 1.0f);
   lightedModulateColor[0] = r;
   lightedModulateColor[1] = g;
   lightedModulateColor[2] = b;
   lightedModulateColor[3] = a;
-  if (oldTransparent != (lightedModulateColor[3] != 1.0f))
-    forceNotifyStyleChange();
 }
 
 void			WallSceneNode::setLightedModulateColor(
 				const GLfloat* rgba)
 {
-  const bool oldTransparent = (lightedModulateColor[3] != 1.0f);
   lightedModulateColor[0] = rgba[0];
   lightedModulateColor[1] = rgba[1];
   lightedModulateColor[2] = rgba[2];
   lightedModulateColor[3] = rgba[3];
-  if (oldTransparent != (lightedModulateColor[3] != 1.0f))
-    forceNotifyStyleChange();
 }
 
 bool			WallSceneNode::isTranslucent() const
@@ -286,7 +264,6 @@ void			WallSceneNode::setMaterial(const OpenGLMaterial& mat)
   OpenGLGStateBuilder builder(gstate);
   builder.setMaterial(mat);
   gstate = builder.getState();
-  forceNotifyStyleChange();
 }
 
 void			WallSceneNode::setTexture(const int tex)
@@ -294,7 +271,6 @@ void			WallSceneNode::setTexture(const int tex)
   OpenGLGStateBuilder builder(gstate);
   builder.setTexture(tex);
   gstate = builder.getState();
-  forceNotifyStyleChange();
 }
 
 void			WallSceneNode::setTextureMatrix(const int texmat)
@@ -302,11 +278,9 @@ void			WallSceneNode::setTextureMatrix(const int texmat)
   OpenGLGStateBuilder builder(gstate);
   builder.setTextureMatrix(texmat);
   gstate = builder.getState();
-  forceNotifyStyleChange();
 }
 
-void			WallSceneNode::notifyStyleChange(
-				const SceneRenderer&)
+void			WallSceneNode::notifyStyleChange()
 {
   float alpha;
   bool lighted = (BZDB.isTrue("lighting") && gstate.isLighted());
@@ -352,7 +326,6 @@ void			WallSceneNode::copyStyle(WallSceneNode* node)
   setModulateColor(node->modulateColor);
   setLightedColor(node->lightedColor);
   setLightedModulateColor(node->lightedModulateColor);
-  forceNotifyStyleChange();
 }
 
 void			WallSceneNode::setColor()

@@ -63,7 +63,7 @@ class WallSceneNode : public SceneNode {
     void		setColor();
 
     bool		cull(const ViewFrustum&) const;
-    void		notifyStyleChange(const SceneRenderer& renderer);
+    void		notifyStyleChange();
 
     void		copyStyle(WallSceneNode*);
 

@@ -36,8 +36,7 @@ bool			EighthDimSceneNode::cull(const ViewFrustum&) const
   return false;
 }
 
-void			EighthDimSceneNode::notifyStyleChange(
-				const SceneRenderer&)
+void			EighthDimSceneNode::notifyStyleChange()
 {
   OpenGLGStateBuilder builder(gstate);
   builder.setCulling(GL_NONE);

@@ -49,7 +49,6 @@ void			LaserSceneNode::setTexture(const int texture)
   builder.setTexture(texture);
   builder.enableTexture(texture>=0);
   gstate = builder.getState();
-  forceNotifyStyleChange();
 }
 
 bool			LaserSceneNode::cull(const ViewFrustum&) const
@@ -58,8 +57,7 @@ bool			LaserSceneNode::cull(const ViewFrustum&) const
   return false;
 }
 
-void			LaserSceneNode::notifyStyleChange(
-				const SceneRenderer&)
+void			LaserSceneNode::notifyStyleChange()
 {
   texturing = BZDBCache::texture && BZDBCache::blend;
   OpenGLGStateBuilder builder(gstate);

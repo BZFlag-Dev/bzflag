@@ -73,8 +73,7 @@ void			TracerSceneNode::addLight(SceneRenderer& renderer)
   renderer.addLight(light);
 }
 
-void			TracerSceneNode::notifyStyleChange(
-				const SceneRenderer&)
+void			TracerSceneNode::notifyStyleChange()
 {
   OpenGLGStateBuilder builder(gstate);
   if (BZDBCache::blend) {

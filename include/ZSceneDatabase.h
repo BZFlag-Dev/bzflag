@@ -33,6 +33,7 @@ class ZSceneDatabase : public SceneDatabase {
     void		removeDynamicNodes();
     void		removeAllNodes();
     bool		isOrdered();
+    void		updateNodeStyles();
 
     SceneIterator*	getRenderIterator();
 

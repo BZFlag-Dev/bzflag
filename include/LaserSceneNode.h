@@ -30,7 +30,7 @@ class LaserSceneNode : public SceneNode {
 
     bool		cull(const ViewFrustum&) const;
 
-    void		notifyStyleChange(const SceneRenderer&);
+    void		notifyStyleChange();
     void		addRenderNodes(SceneRenderer&);
 
   protected:

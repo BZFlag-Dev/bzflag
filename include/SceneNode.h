@@ -64,6 +64,7 @@ class SceneNode {
     virtual int         getVertexCount () const;
     virtual const GLfloat* getVertex (int vertex) const;
     virtual bool	isTranslucent() const;
+    virtual void	notifyStyleChange();
 
     const GLfloat*      getPlane() const;
     virtual GLfloat	getDistance(const GLfloat* eye) const;
@@ -117,8 +118,6 @@ class SceneNode {
     void		setCenter(const GLfloat center[3]);
     void		setCenter(GLfloat x, GLfloat y, GLfloat z);
     void		setSphere(const GLfloat sphere[4]);
-    void		forceNotifyStyleChange();
-    virtual void	notifyStyleChange(const SceneRenderer&);
     virtual void	addRenderNodes(SceneRenderer&);
 
   private:
@@ -139,7 +138,6 @@ class SceneNode {
     GLfloat		plane[4];	// unit normal, distance to origin
     bool                noPlane;
   private:
-    int			styleMailbox;
     GLfloat		sphere[4];
 #ifdef __MINGW32__
     static bool         colorOverride;
@@ -158,6 +156,12 @@ inline const GLfloat*   SceneNode::getPlane() const
     return NULL;
   return plane;
 }
+
+inline const GLfloat*	SceneNode::getSphere() const
+{
+  return sphere;
+}
+
 
 typedef GLfloat		GLfloat2[2];
 typedef GLfloat		GLfloat3[3];

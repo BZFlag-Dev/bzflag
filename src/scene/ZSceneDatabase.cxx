@@ -34,6 +34,7 @@ ZSceneDatabase::ZSceneDatabase() :
   // do nothing
 }
 
+
 ZSceneDatabase::~ZSceneDatabase()
 {
   // free static nodes
@@ -46,7 +47,8 @@ ZSceneDatabase::~ZSceneDatabase()
   delete[] dynamicList;
 }
 
-void			ZSceneDatabase::addStaticNode(SceneNode* object)
+
+void ZSceneDatabase::addStaticNode(SceneNode* object)
 {
   if (staticCount == staticSize) {
     if (staticSize == 0) staticSize = 15;
@@ -60,8 +62,10 @@ void			ZSceneDatabase::addStaticNode(SceneNode* object)
   staticList[staticCount++] = object;
 }
 
-void			ZSceneDatabase::addDynamicNode(SceneNode* object)
+
+void ZSceneDatabase::addDynamicNode(SceneNode* object)
 {
+  object->notifyStyleChange();
   if (dynamicCount == dynamicSize) {
     if (dynamicSize == 0) dynamicSize = 15;
     else dynamicSize += dynamicSize + 1;
@@ -74,13 +78,15 @@ void			ZSceneDatabase::addDynamicNode(SceneNode* object)
   dynamicList[dynamicCount++] = object;
 }
 
-void			ZSceneDatabase::addDynamicSphere(SphereSceneNode* n)
+
+void ZSceneDatabase::addDynamicSphere(SphereSceneNode* n)
 {
   // just add sphere -- don't need to break it up for hidden surfaces
   addDynamicNode(n);
 }
 
-void			ZSceneDatabase::addShadowNodes(SceneRenderer& renderer)
+
+void ZSceneDatabase::addShadowNodes(SceneRenderer& renderer)
 {
   int i;
   for (i = 0; i < staticCount; i++) {
@@ -92,25 +98,37 @@ void			ZSceneDatabase::addShadowNodes(SceneRenderer& renderer)
 }
 
 
-void			ZSceneDatabase::removeDynamicNodes()
+void ZSceneDatabase::removeDynamicNodes()
 {
   dynamicCount = 0;
 }
 
-void			ZSceneDatabase::removeAllNodes()
+
+void ZSceneDatabase::removeAllNodes()
 {
   staticCount = 0;
   dynamicCount = 0;
 }
 
-bool			ZSceneDatabase::isOrdered()
+
+bool ZSceneDatabase::isOrdered()
 {
   return false;
 }
 
-SceneIterator*		ZSceneDatabase::getRenderIterator()
+
+SceneIterator* ZSceneDatabase::getRenderIterator()
 {
   return new ZSceneIterator(this);
+}
+
+
+void ZSceneDatabase::updateNodeStyles()
+{
+  for (int i = 0; i < staticCount; i++) {
+    staticList[i]->notifyStyleChange();
+  }
+  return;
 }
 
 
@@ -135,6 +153,7 @@ ZSceneIterator::ZSceneIterator(const ZSceneDatabase* _db) :
   reset();
 }
 
+
 ZSceneIterator::~ZSceneIterator()
 {
   delete octree;
@@ -143,7 +162,8 @@ ZSceneIterator::~ZSceneIterator()
   }
 }
 
-void			ZSceneIterator::makeCuller()
+
+void ZSceneIterator::makeCuller()
 {
   delete octree;
   octree = new Octree;
@@ -162,7 +182,8 @@ void			ZSceneIterator::makeCuller()
   culledList = new SceneNode*[db->staticCount];
 }
 
-void			ZSceneIterator::resetFrustum(const ViewFrustum* frustum)
+
+void ZSceneIterator::resetFrustum(const ViewFrustum* frustum)
 {
   const int currentDepth = BZDB.evalInt(StateDatabase::BZDB_CULLDEPTH);
   const int currentElements = BZDB.evalInt(StateDatabase::BZDB_CULLELEMENTS);
@@ -194,7 +215,8 @@ void			ZSceneIterator::resetFrustum(const ViewFrustum* frustum)
   }
 }
 
-void			ZSceneIterator::reset()
+
+void ZSceneIterator::reset()
 {
   culledIndex = 0;
   culledDone = (culledCount == culledIndex);
@@ -202,7 +224,8 @@ void			ZSceneIterator::reset()
   dynamicDone = (db->dynamicCount == dynamicIndex);
 }
 
-SceneNode*		ZSceneIterator::getNext()
+
+SceneNode* ZSceneIterator::getNext()
 {
   if (!culledDone) {
     SceneNode* node = culledList[culledIndex++];
@@ -217,6 +240,7 @@ SceneNode*		ZSceneIterator::getNext()
   return NULL;
 }
 
+
 SceneNode* ZSceneIterator::getNextLight()
 {
   // Currently static nodes does not own light
@@ -228,7 +252,8 @@ SceneNode* ZSceneIterator::getNextLight()
   return NULL;
 }
 
-void  		ZSceneIterator::drawCuller()
+
+void ZSceneIterator::drawCuller()
 {
   if (octree) {
     octree->draw ();

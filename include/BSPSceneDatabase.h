@@ -39,6 +39,7 @@ class BSPSceneDatabase : public SceneDatabase {
     void		removeDynamicNodes();
     void		removeAllNodes();
     bool		isOrdered();
+    void		updateNodeStyles();
 
     SceneIterator*	getRenderIterator();
 
@@ -63,6 +64,7 @@ class BSPSceneDatabase : public SceneDatabase {
     void		free(Node*);
     void		release(Node*);
     void		setDepth(int newDepth);
+    void		setNodeStyle(Node*);
 
   private:
     Node*		root;

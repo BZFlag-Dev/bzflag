@@ -20,6 +20,15 @@
 #include "Pack.h"
 
 
+// NOTE: Here are some extra features that might be worth implementing:
+// 
+// - CLAMPS, CLAMPT: allow texture clamps
+// - GL_REPLACE: already implemented in the scene node files
+// - glTexGen() modes (sphere, object_linear, eye_linear, reflection)
+// - glTexSubImage2D() - would be handy to have this in TextureManager
+// 
+
+
 //
 // Texture Matrix Manager
 //

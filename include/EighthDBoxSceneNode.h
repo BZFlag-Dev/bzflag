@@ -27,7 +27,7 @@ class EighthDBoxSceneNode : public EighthDimSceneNode {
 					const float size[3], float rotation);
 			~EighthDBoxSceneNode();
 
-    void		notifyStyleChange(const SceneRenderer&);
+    void		notifyStyleChange();
     void		addRenderNodes(SceneRenderer&);
 
   protected:

@@ -50,7 +50,7 @@ class TankIDLSceneNode : public SceneNode {
 
     void		move(const GLfloat plane[4]);
 
-    void		notifyStyleChange(const SceneRenderer&);
+    void		notifyStyleChange();
     void		addRenderNodes(SceneRenderer&);
 
   // Irix 7.2.1 and solaris compilers appear to have a bug.  if the
@@ -99,7 +99,7 @@ class TankSceneNode : public SceneNode {
     void		setMaterial(const OpenGLMaterial&);
     void		setTexture(const int);
 
-    void		notifyStyleChange(const SceneRenderer&);
+    void		notifyStyleChange();
     void		addRenderNodes(SceneRenderer&);
     void		addShadowNodes(SceneRenderer&);
 

@@ -35,6 +35,7 @@ BSPSceneDatabase::Node::Node(bool _dynamic, SceneNode* _node):
   // do nothing
 }
 
+
 void BSPSceneDatabase::Node::addShadowNodes(SceneRenderer& renderer)
 {
   // dive into the child BSP nodes
@@ -50,6 +51,7 @@ void BSPSceneDatabase::Node::addShadowNodes(SceneRenderer& renderer)
   }
 }
 
+
 //
 // BSPSceneDatabase
 //
@@ -61,12 +63,14 @@ BSPSceneDatabase::BSPSceneDatabase() :
   memset(eye, 0, sizeof(GLfloat) * 3);
 }
 
+
 BSPSceneDatabase::~BSPSceneDatabase()
 {
   free(root);
 }
 
-void			BSPSceneDatabase::addStaticNode(SceneNode* node)
+
+void BSPSceneDatabase::addStaticNode(SceneNode* node)
 {
   // make sure node has a definite plane for splitting
   assert(node->getPlane());
@@ -80,8 +84,10 @@ void			BSPSceneDatabase::addStaticNode(SceneNode* node)
   }
 }
 
-void			BSPSceneDatabase::addDynamicNode(SceneNode* node)
+
+void BSPSceneDatabase::addDynamicNode(SceneNode* node)
 {
+  node->notifyStyleChange();
   // insert dynamic node
   if (!root) {
     root = new Node(true, node);
@@ -91,7 +97,8 @@ void			BSPSceneDatabase::addDynamicNode(SceneNode* node)
   }
 }
 
-void			BSPSceneDatabase::addDynamicSphere(SphereSceneNode* n)
+
+void BSPSceneDatabase::addDynamicSphere(SphereSceneNode* n)
 {
   // add each part of sphere separately
   int numParts;
@@ -105,12 +112,14 @@ void			BSPSceneDatabase::addDynamicSphere(SphereSceneNode* n)
   }
 }
 
-void			BSPSceneDatabase::addShadowNodes(SceneRenderer& renderer)
+
+void BSPSceneDatabase::addShadowNodes(SceneRenderer& renderer)
 {
   root->addShadowNodes(renderer);
 }
 
-void			BSPSceneDatabase::removeDynamicNodes()
+
+void BSPSceneDatabase::removeDynamicNodes()
 {
   // scan tree removing dynamic nodes
   if (root && root->dynamic) {
@@ -121,19 +130,22 @@ void			BSPSceneDatabase::removeDynamicNodes()
   }
 }
 
-void			BSPSceneDatabase::removeAllNodes()
+
+void BSPSceneDatabase::removeAllNodes()
 {
   free(root);
   root = NULL;
   depth = 0;
 }
 
-bool			BSPSceneDatabase::isOrdered()
+
+bool BSPSceneDatabase::isOrdered()
 {
   return true;
 }
 
-void			BSPSceneDatabase::free(Node* node)
+
+void BSPSceneDatabase::free(Node* node)
 {
   if (!node) return;
   delete node->node;
@@ -142,7 +154,8 @@ void			BSPSceneDatabase::free(Node* node)
   delete node;
 }
 
-void			BSPSceneDatabase::release(Node* node)
+
+void BSPSceneDatabase::release(Node* node)
 {
   if (!node) return;
   release(node->front);
@@ -150,7 +163,8 @@ void			BSPSceneDatabase::release(Node* node)
   delete node;
 }
 
-void			BSPSceneDatabase::insertStatic(int level,
+
+void BSPSceneDatabase::insertStatic(int level,
 						Node* root, SceneNode* node)
 {
   // dynamic nodes should only be inserted after all static nodes
@@ -199,7 +213,8 @@ void			BSPSceneDatabase::insertStatic(int level,
   }
 }
 
-void			BSPSceneDatabase::insertDynamic(int level, Node* root,
+
+void BSPSceneDatabase::insertDynamic(int level, Node* root,
 								SceneNode* node)
 {
   GLfloat d;
@@ -228,7 +243,8 @@ void			BSPSceneDatabase::insertDynamic(int level, Node* root,
   }
 }
 
-void			BSPSceneDatabase::removeDynamic(Node* node)
+
+void BSPSceneDatabase::removeDynamic(Node* node)
 {
   if (!node) return;
   if (node->front && node->front->dynamic) {
@@ -245,15 +261,42 @@ void			BSPSceneDatabase::removeDynamic(Node* node)
   }
 }
 
-void			BSPSceneDatabase::setDepth(int newDepth)
+
+void BSPSceneDatabase::setDepth(int newDepth)
 {
-  if (newDepth <= depth) return;
+  if (newDepth <= depth) {
+    return;
+  }
   depth = newDepth;
 }
 
-SceneIterator*		BSPSceneDatabase::getRenderIterator()
+
+SceneIterator* BSPSceneDatabase::getRenderIterator()
 {
   return new BSPSceneIterator(this);
+}
+
+
+void BSPSceneDatabase::setNodeStyle(Node *node)
+{
+  if (!node) {
+    return;
+  }
+  SceneNode* sceneNode = node->node;
+  if (sceneNode) {
+    sceneNode->notifyStyleChange();
+  }
+  setNodeStyle(node->front);
+  setNodeStyle(node->back);
+  
+  return;
+}
+
+
+void BSPSceneDatabase::updateNodeStyles()
+{
+  setNodeStyle(root);
+  return;
 }
 
 
@@ -270,12 +313,14 @@ BSPSceneIterator::BSPSceneIterator(const BSPSceneDatabase* _db) :
   eye[2] = 0.0f;
 }
 
+
 BSPSceneIterator::~BSPSceneIterator()
 {
   // do nothing
 }
 
-void			BSPSceneIterator::resetFrustum(
+
+void BSPSceneIterator::resetFrustum(
 				const ViewFrustum* frustum)
 {
   const GLfloat* _eye = frustum->getEye();
@@ -284,7 +329,8 @@ void			BSPSceneIterator::resetFrustum(
   eye[2] = _eye[2];
 }
 
-void			BSPSceneIterator::reset()
+
+void BSPSceneIterator::reset()
 {
   stack.clear();
   if (db->root != NULL) {
@@ -292,7 +338,8 @@ void			BSPSceneIterator::reset()
   }
 }
 
-SceneNode*		BSPSceneIterator::getNext()
+
+SceneNode* BSPSceneIterator::getNext()
 {
 restart:
   if (stack.size() == 0) return NULL;
@@ -358,10 +405,12 @@ restart:
   return NULL;
 }
 
-void  		BSPSceneIterator::drawCuller()
+
+void BSPSceneIterator::drawCuller()
 {
   return;
 }
+
 
 // Local Variables: ***
 // mode:C++ ***

@@ -101,10 +101,9 @@ EighthDTetraSceneNode::~EighthDTetraSceneNode()
   // do nothing
 }
 
-void			EighthDTetraSceneNode::notifyStyleChange(
-				const SceneRenderer& renderer)
+void			EighthDTetraSceneNode::notifyStyleChange()
 {
-  EighthDimSceneNode::notifyStyleChange(renderer);
+  EighthDimSceneNode::notifyStyleChange();
 
   OpenGLGStateBuilder builder(gstate);
   if (BZDB.isTrue("smooth")) {

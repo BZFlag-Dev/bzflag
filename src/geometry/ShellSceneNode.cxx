@@ -71,8 +71,7 @@ void			ShellSceneNode::move(const GLfloat pos[3],
   elevation = -180.0f / M_PI*atan2f(forward[2], hypotf(forward[0],forward[1]));
 }
 
-void			ShellSceneNode::notifyStyleChange(
-				const SceneRenderer&)
+void			ShellSceneNode::notifyStyleChange()
 {
   OpenGLGStateBuilder builder(gstate);
   const bool lighting = BZDB.isTrue("lighting");

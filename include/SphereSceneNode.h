@@ -78,7 +78,7 @@ class SphereSceneNode : public SceneNode {
     void		setColor(const GLfloat* rgba);
     void		move(const GLfloat pos[3], GLfloat radius);
 
-    void		notifyStyleChange(const SceneRenderer&);
+    void		notifyStyleChange();
     void		addRenderNodes(SceneRenderer&);
     void		addShadowNodes(SceneRenderer&);
 

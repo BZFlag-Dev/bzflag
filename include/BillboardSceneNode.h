@@ -55,7 +55,7 @@ class BillboardSceneNode : public SceneNode {
     void		setAngle(GLfloat);
     void		addLight(SceneRenderer&);
 
-    void		notifyStyleChange(const SceneRenderer&);
+    void		notifyStyleChange();
     void		addRenderNodes(SceneRenderer&);
 
   protected:
