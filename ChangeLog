@@ -11,6 +11,8 @@ BZFlag 1.7e3
 * new (faster?) radar jamming code - Mathias Gumz
 * sort by score - Colin Bayer
 * world file rad -> deg - TimR
+* add player flag display to HUD - TimR (prompted by Colin Bayer)
+* random height pyramids too - TimR
 
 BZFlag 1.7e2
 ------------

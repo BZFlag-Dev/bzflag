@@ -2475,10 +2475,10 @@ static WorldInfo *defineRandomWorld()
 
   // make boxes
   int i;
+  float h = BoxHeight;
   for (i = 0; i < CitySize * CitySize; i++) {
-    float h = BoxHeight;
     if (randomHeights)
-      h *= 2.0f * (float)bzfrand() + 0.5f;
+      h = BoxHeight * 2.0f * (float)bzfrand() + 0.5f;
     world->addBox(WorldSize * ((float)bzfrand() - 0.5f),
 	WorldSize * ((float)bzfrand() - 0.5f),
 	0.0f, 2.0f * M_PI * (float)bzfrand(),
@@ -2486,11 +2486,15 @@ static WorldInfo *defineRandomWorld()
   }
 
   // make pyramids
-  for (i = 0; i < CitySize * CitySize; i++)
+  h = PyrHeight;
+  for (i = 0; i < CitySize * CitySize; i++) {
+    if (randomHeights)
+      h = PyrHeight * 2.0f * (float)bzfrand() + 0.5f;
     world->addPyramid(WorldSize * ((float)bzfrand() - 0.5f),
 	WorldSize * ((float)bzfrand() - 0.5f),
 	0.0f, 2.0f * M_PI * (float)bzfrand(),
-	PyrBase, PyrBase, PyrHeight);
+	PyrBase, PyrBase, h);
+  }
 
   if (useTeleporters) {
     // make teleporters

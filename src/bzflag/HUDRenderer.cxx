@@ -1226,16 +1226,17 @@ void			HUDRenderer::drawPlayerScore(const Player* player,
 {
   char score[40], kills[40];
 #ifndef DEBUG
-  char email[EmailLen + 4];
-  sprintf(email, " (%s)", player->getEmailAddress());
+  char email[EmailLen + 6];
+  sprintf(email, " (%s)%s", player->getEmailAddress(),Flag::getAbbreviation(player->getFlag()));
 #else
-  char email[EmailLen + 25];
+  char email[EmailLen + 27];
   const PlayerId& id = player->getId();
-  sprintf(email, " %s:%04x-%1x(%s)", inet_ntoa(id.serverHost),
-      ntohs(id.port), ntohs(id.number), player->getEmailAddress());
+  sprintf(email, " %s:%04x-%1x(%s)%s", inet_ntoa(id.serverHost),
+      ntohs(id.port), ntohs(id.number), player->getEmailAddress(),
+      Flag::getAbbreviation(player->getFlag()));
 #endif  
   sprintf(score, "%d (%d-%d)", player->getScore(),
-			player->getWins(), player->getLosses());
+      player->getWins(), player->getLosses());
   if (LocalPlayer::getMyTank() != player)
     sprintf(kills, "%d/%d", player->getLocalWins(), player->getLocalLosses());
   else
