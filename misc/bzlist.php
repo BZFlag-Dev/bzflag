@@ -36,7 +36,9 @@ function query ($hostport) {
      echo 'Invalid Protocol';
      return $server;
   }
-  if (!ctype_digit($server['port'])) {
+  if (!$server['port']) {
+    $server['port'] = 5154;
+  } elseif (!ctype_digit($server['port'])) {
     $server['port'] = getservbyname($server['port'], $protocol);
   }
   $server['ip'] = gethostbyname($server['host']);
