@@ -34,6 +34,8 @@ static const char copyright[] = "Copyright (c) 1993 - 2004 Tim Riker";
 #if defined(__APPLE__)
 #include <CoreServices/CoreServices.h>
 #endif
+#include "../zlib/zconf.h"
+#include "../zlib/zlib.h"
 
 // yikes! that's a lotsa includes!
 #include "global.h"
@@ -75,7 +77,6 @@ static const char copyright[] = "Copyright (c) 1993 - 2004 Tim Riker";
 #include "QuadWallSceneNode.h"
 #include "BillboardSceneNode.h"
 #include "Intersect.h"
-#include "CommandsStandard.h"
 #include "BZDBCache.h"
 #include "WordFilter.h"
 #include "TextUtils.h"
@@ -86,9 +87,8 @@ static const char copyright[] = "Copyright (c) 1993 - 2004 Tim Riker";
 #include "ServerCommandKey.h"
 #include "Roster.h"
 #include "FlashClock.h"
-#include "../zlib/zconf.h"
-#include "../zlib/zlib.h"
-
+#include "CommandsStandard.h"
+#include "commands.h"
 
 // versioning that makes us recompile every time
 #include "version.h"
@@ -5325,6 +5325,7 @@ static void		startupErrorCallback(const char* msg)
   controlPanel->render(*sceneRenderer);
   mainWindow->getWindow()->swapBuffers();
 }
+
 
 void			startPlaying(BzfDisplay* _display,
 				     SceneRenderer& renderer,
