@@ -1,6 +1,10 @@
 recent bugs
 ------------
 
+- When sending a private message and cycling through possible targets,
+  world weapons appear in the list, too. After switching forth and back,
+  client crashes.
+
 - Sound is broken, at least when compiling in DEBUG mode. Not sure if that
   really makes a difference. Tupone said using -ffast-math fixes it for him.
   Symptom: Sounds are cut off, instead a clicking noise is heard now and
