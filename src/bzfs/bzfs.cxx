@@ -2209,13 +2209,13 @@ static void playerAlive(int playerIndex)
       (!clOptions->respawnOnBuildings) || (player[playerIndex].isBot()),
        clOptions->gameStyle & TeamFlagGameStyle);
   // update last position immediately
-  lastState[playerIndex].pos[0] = spawnPosition->pos[0];
-  lastState[playerIndex].pos[1] = spawnPosition->pos[1];
-  lastState[playerIndex].pos[2] = spawnPosition->pos[2];
+  lastState[playerIndex].pos[0] = spawnPosition->getX();
+  lastState[playerIndex].pos[1] = spawnPosition->getY();
+  lastState[playerIndex].pos[2] = spawnPosition->getZ();
   void *buf, *bufStart = getDirectMessageBuffer();
   buf = nboPackUByte(bufStart, playerIndex);
-  buf = nboPackVector(buf, spawnPosition->pos);
-  buf = nboPackFloat(buf, spawnPosition->azimuth);
+  buf = nboPackVector(buf, lastState[playerIndex].pos);
+  buf = nboPackFloat(buf, spawnPosition->getAzimuth());
   broadcastMessage(MsgAlive, (char*)buf - (char*)bufStart, bufStart);
   delete spawnPosition;
 

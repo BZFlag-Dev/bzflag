@@ -12,6 +12,9 @@
 
 // object that creates and contains a spawn position
 
+#ifndef __SPAWNPOSITION_H__
+#define __SPAWNPOSITION_H__
+
 #include "PlayerInfo.h"
 
 class SpawnPosition {
@@ -21,8 +24,10 @@ public:
 			       bool notNearEdges);
   SpawnPosition::~SpawnPosition();
 
-  float       pos[3];
-  float	      azimuth;
+  const float getX() const;
+  const float getY() const;
+  const float getZ() const;
+  const float getAzimuth() const;
 
 private:
   const float enemyProximityCheck(float &enemyAngle) const;
@@ -31,6 +36,9 @@ private:
   const bool  isFacing(const float *enemyPos, const float enemyAzimuth, 
 		       const float deviation) const;
   
+  float	      azimuth;
+  float       pos[3];
+
   TeamColor   team;
   float       testPos[3];
   int	      curMaxPlayers;
@@ -39,3 +47,24 @@ private:
   float	      safeDistance;
 
 };
+
+inline const float SpawnPosition::getX() const
+{
+  return pos[0];
+}
+
+inline const float SpawnPosition::getY() const
+{
+  return pos[1];
+}
+
+inline const float SpawnPosition::getZ() const
+{
+  return pos[2];
+}
+
+inline const float SpawnPosition::getAzimuth() const
+{
+  return azimuth;
+}
+#endif  //__SPAWNPOSITION_H__
