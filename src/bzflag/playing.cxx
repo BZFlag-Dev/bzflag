@@ -1606,7 +1606,7 @@ static void		doAutoPilot(float &rotation, float &speed)
     for (t = 0; t < curMaxPlayers; t++) {
       if (t != myTank->getId() && player[t] &&
 	  player[t]->isAlive() && !player[t]->isPaused() &&
-	  !player[t]->isNotResponding() &&
+	  !player[t]->isNotResponding() && player[t]->getFlag() != Flags::Stealth &&
 	  myTank->validTeamTarget(player[t])) {
 	const float *tp = player[t]->getPosition();
 	float d = hypotf(tp[0] - pos[0], tp[1] - pos[1]);
