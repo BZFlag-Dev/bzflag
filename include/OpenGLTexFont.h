@@ -25,6 +25,10 @@
 #define ESC_CHAR	((char) 0x1B)
 #define FONT_CODES	12
 
+/* up to this many colors can be stored internally.
+ */
+static const unsigned short int STORED_COLORS = 16;
+
 typedef enum ColorCodes {
   // the first 5 codes line up with the TeamColor enum from global.h
   RogueColor		= 0,	// team (yellow)
@@ -58,6 +62,7 @@ class OpenGLTexFont {
     OpenGLTexFont&	operator=(const OpenGLTexFont&);
 
     void		setSize(float width, float height);
+    void		setColor(unsigned short int index, const float* color);
 
     bool		isValid() const;
     float		getAscent() const;
@@ -75,6 +80,7 @@ class OpenGLTexFont {
 				float x, float y, float z = 0.0f) const;
     void		draw(const char* string, int length,
 				float x, float y, float z = 0.0f) const;
+    
 
     /** Strips all ansi control codes from a string.
      strips the ansi codes from an input string for
@@ -189,6 +195,7 @@ class OpenGLTexFont {
     BitmapRep*		bitmapRep;
     float		width, height;
     static int		underlineColor;
+    GLfloat	storedColor[STORED_COLORS][3];
 };
 
 #endif // BZF_OPENGLTEXFONT_H

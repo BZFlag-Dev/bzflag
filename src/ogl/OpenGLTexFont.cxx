@@ -14,18 +14,13 @@
 #pragma warning( 4:4786)
 #endif
 
+#include <iostream>
 #include <string>
 #include <string.h>
 #include <math.h>
 #include "common.h"
 #include "OpenGLTexFont.h"
-#include "global.h"		// for TeamColor enum
-/* XXX there is a symbol dependancy on libcommon due to only two
- * lines (Team::radarColor and TimeKeeper::getTick().  should consider
- * a way to decouple the libraries.
- */
-#include "Team.h"		// for TeamColor colors
-#include "TimeKeeper.h"	// for blinking timer
+//#include "global.h"		// for TeamColor enum
 #include "common.h"		// for bool type
 
 
@@ -400,23 +395,41 @@ int OpenGLTexFont::underlineColor = CyanColor;
 
 OpenGLTexFont::OpenGLTexFont() : bitmapRep(NULL), width(1.0f), height(1.0f)
 {
+  const float color[3] = {1.0, 1.0, 1.0};
+
   rep = new Rep;
+
+  for (unsigned int i=0; i < STORED_COLORS; i++) {    
+    setColor(i, color);
+  }
 }
 
 OpenGLTexFont::OpenGLTexFont(int dx, int dy, const unsigned char* pixels) :
 				bitmapRep(NULL), width(1.0f), height(1.0f)
 {
+  const float color[3] = {1.0, 1.0, 1.0};
+
   rep = new Rep(dx, dy, pixels);
+
+  for (unsigned int i=0; i < STORED_COLORS; i++) {    
+    setColor(i, color);
+  }
 }
 
 OpenGLTexFont::OpenGLTexFont(const OpenGLTexFont& f)
 {
+  const float color[3] = {1.0, 1.0, 1.0};
+
   rep = f.rep;
   rep->ref();
   bitmapRep = f.bitmapRep;
   if (bitmapRep) bitmapRep->ref();
   width = f.width;
   height = f.height;
+
+  for (unsigned int i=0; i < STORED_COLORS; i++) {    
+    setColor(i, color);
+  }
 }
 
 OpenGLTexFont::~OpenGLTexFont()
@@ -462,6 +475,17 @@ void			OpenGLTexFont::setSize(float _width, float _height)
 						(int)width, (int)height);
   if (bitmapRep != newBitmapRep && bitmapRep) bitmapRep->unref();
   bitmapRep = newBitmapRep;
+}
+
+void OpenGLTexFont::setColor(unsigned short int index, const float *color) {
+  if (index >= STORED_COLORS) {
+    std::cout << "Color index [" << index << "] is out of range (max is " << STORED_COLORS << ")" << std::endl;
+    return;
+  }
+
+  storedColor[index][0] = color[0];
+  storedColor[index][1] = color[1];
+  storedColor[index][2] = color[2];
 }
 
 float			OpenGLTexFont::getAscent() const
@@ -534,7 +558,6 @@ void			OpenGLTexFont::draw(const char* s,
 void			OpenGLTexFont::draw(const char* string, int length,
 				float x, float y, float z) const
 {
-  TimeKeeper basetime;
   bool blinking = false;
   bool underline = false;
   bool textures = false;
@@ -563,8 +586,7 @@ void			OpenGLTexFont::draw(const char* string, int length,
     if (blinking) {
       float	blinkFactor;
 
-      /* XXX dependancy on libcommon */
-      blinkFactor = TimeKeeper::getTick() - basetime;
+      blinkFactor = (int)time(NULL);
       blinkFactor = fmodf(blinkFactor, BLINK_RATE) - BLINK_RATE/2.0f;
       blinkFactor = fabsf (blinkFactor) / (BLINK_RATE/2.0f);
       blinkFactor = BLINK_DEPTH * blinkFactor + (1.0f - BLINK_DEPTH);
@@ -726,9 +748,13 @@ void			OpenGLTexFont::draw(const char* string, int length,
           underline = uline_tmp;
 
           if (color_tmp != -1) {
-            if (color_tmp < 5) {
-              /* XXX dependancy on libcommon */
-              color = Team::radarColor[color_tmp];
+            /* we could check up to the number of stored colors,
+             * but we don't need that many
+             */
+            if ((color_tmp < 5) && (color_tmp >= 0)) {
+              color[0] = storedColor[color_tmp][0];
+              color[1] = storedColor[color_tmp][1];
+              color[2] = storedColor[color_tmp][2];
             }
             else if (color_tmp == GreyColor) {
               color = grey_color;
@@ -738,6 +764,8 @@ void			OpenGLTexFont::draw(const char* string, int length,
             }
             else if (color_tmp == CyanColor) {
               color = cyan_color;
+            } else {
+              std::cout << "Unknown color encountered in " << __FILE__ << " on line " << __LINE__ << std::endl;
             }
           }
           glColor3fv (color);
