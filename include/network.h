@@ -72,7 +72,7 @@
 #define SSOType		void*
 #endif
 
-#if defined(__FreeBSD__) || defined(sun)
+#if defined(__FreeBSD__) || defined(sun) || defined(__NetBSD__)
 #define AddrLen		socklen_t
 #endif
 
