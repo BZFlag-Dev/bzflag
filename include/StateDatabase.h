@@ -153,6 +153,8 @@ public:
    */
   float				eval(const std::string& name);
   int				evalInt(const std::string& name);
+  bool				evalTriplet(const std::string& name, float *data);
+  bool				evalPair(const std::string& name, float *data);
 
   /** return true if the value associated with a name indicates
    * logical true, which is when the value is not empty and not

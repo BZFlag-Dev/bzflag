@@ -398,6 +398,24 @@ int			StateDatabase::evalInt(const std::string& name)
   return (int)eval(name);
 }
 
+bool		StateDatabase::evalTriplet(const std::string& name, float *data)
+{
+	if (!isSet(name) || !data)
+		return false;
+	if (sscanf(get(name).c_str(), "%f %f %f", data, data+1, data+2) != 3)
+	 return false;
+	return true;
+}
+
+bool		StateDatabase::evalPair(const std::string& name, float *data)
+{
+	if (!isSet(name) || !data)
+		return false;
+	if (sscanf(get(name).c_str(), "%f %f", data, data+1) != 2)
+	 return false;
+	return true;
+}
+
 bool			StateDatabase::isTrue(const std::string& name) const
 {
   debugLookups(name);
