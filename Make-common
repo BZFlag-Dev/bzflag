@@ -105,7 +105,7 @@ SUBDIR_MAKERULE= \
 	fi
 
 SUBDIRS_MAKERULE= \
-	@for d in $(SUBDIRS); do $(SUBDIR_MAKERULE); done
+	for d in $(SUBDIRS); do if $(SUBDIR_MAKERULE) ; then true ; else exit $1 ; fi ; done
 
 #
 # default target.  makefiles must define a target named `targets'.
