@@ -131,7 +131,7 @@ bool WordFilter::aggressiveFilter(char *input) const
    * e.g. "bzstring" will match a prefix of "bz" and make "s" get added
    * as a bin to check for during matching.
    */
-  for (ExpCompareSet::iterator i = prefixes.begin(); i != prefixes.end(); ++i) {
+  for (ExpCompareSet::const_iterator i = prefixes.begin(); i != prefixes.end(); ++i) {
     if (regexec(i->compiled, sInput.c_str(), 1, match, 0) == 0) {
       if ( (match[0].rm_eo < inputLength) && isalpha(sInput[match[0].rm_eo]) ) {
 	/* do not forget to make sure this is a true prefix */
@@ -157,7 +157,7 @@ bool WordFilter::aggressiveFilter(char *input) const
     /* look at all of the filters that start with the letter wordIndices[j]
      */
     const unsigned int firstchar = (unsigned char)wordIndices[j];
-    for (ExpCompareSet::iterator i = filters[firstchar].begin();
+    for (ExpCompareSet::const_iterator i = filters[firstchar].begin();
 	 i != filters[firstchar].end(); ++i) {
 
       /* the big kahuna burger processing goes on here */
