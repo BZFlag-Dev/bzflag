@@ -591,11 +591,11 @@ void			Player::setDeadReckoning(float timestamp)
   float alpha;
   if (deadReckoningState == 0) {
     // Initialization
-    alpha     = 1.0;
+    alpha     = 1.0f;
   } else if (deadReckoningState == 1) {
-    alpha     = 0.5;
+    alpha     = 0.5f;
   } else {
-    alpha     = (float)0.1;
+    alpha     = 0.1f;
   }
   // alpha filtering
   deltaTime = deltaTime + offset * alpha;
@@ -603,7 +603,7 @@ void			Player::setDeadReckoning(float timestamp)
   // that average is really smoothed
   if (deadReckoningState == 0) {
     deadReckoningState = 1;
-    offset    = 0.0;
+    offset    = 0.0f;
   } else if (deadReckoningState == 1) {
     deadReckoningState = 2;
   }
