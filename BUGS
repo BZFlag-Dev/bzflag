@@ -1,10 +1,16 @@
 recent bugs
 ------------
+
+- In a non jump world, if you drive into a pyramid and building at the same
+  time, your tank will make a small jump (hop) backwards (in air). Probably
+  do to the unsticky fix. Perhaps we can live with this.
+
 - Player continues to see the locked on me message after death until 
   shooter locked onto a different target. (Nidhoggr reported this)
 
-- Tanks spawn-in multiple times, in rapid fire, sometimes.  see MAC, I'm not
-  always crazy -- I reencountered the psycho machine gun behavior again, if
+- Tanks spawn-in multiple times, in rapid fire, sometimes.  
+
+- Sean: I'm not always crazy -- I reencountered the psycho machine gun behavior again, if
   that's what is meant by rapid fire.
 
 - Killed tanks continue drifting and leave tank bits floating around on the
