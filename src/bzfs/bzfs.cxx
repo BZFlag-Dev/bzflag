@@ -5079,6 +5079,8 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
 	}
       }
 
+      if (state.order <= player[t].lastState.order)
+	 break;
       player[t].lastState = state;
     }
 

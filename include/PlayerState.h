@@ -30,9 +30,10 @@ public:
     };
 
     PlayerState();
-    void*		pack(void*) const;
+    void*		pack(void*);
     void*		unpack(void*);
 
+    long		order;			// packet ordering
     short		status;			// see PStatus enum
     float		pos[3];			// position of tank
     float		velocity[3];		// velocity of tank

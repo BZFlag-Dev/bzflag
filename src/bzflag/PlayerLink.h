@@ -54,7 +54,7 @@ class PlayerLink {
     int			read(uint16_t& code, uint16_t& len, void* msg,
 						int millisecondsToBlock = 0);
 
-    void		sendPlayerUpdate(const Player*);
+    void		sendPlayerUpdate(Player*);
 
     void		setUseRelay();
     void		setRelay(ServerLink*);

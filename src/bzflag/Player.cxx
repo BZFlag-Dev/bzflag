@@ -319,7 +319,7 @@ void			Player::addShots(SceneDatabase* scene,
   }
 }
 
-void*			Player::pack(void* buf) const
+void*			Player::pack(void* buf)
 {
   ((Player*)this)->setDeadReckoning();
   return state.pack(buf);

@@ -28,7 +28,7 @@ class TankSceneNode;
 class TankIDLSceneNode;
 class SphereSceneNode;
 
-const int		PlayerUpdatePLen = PlayerIdPLen + 34;
+const int		PlayerUpdatePLen = PlayerIdPLen + 38;
 
 class Player {
   public:
@@ -106,7 +106,7 @@ class Player {
     void		endShot(int index, bool isHit = false,
 				bool showExplosion = false);
 
-    void*		pack(void*) const;
+    void*		pack(void*);
     void*		unpack(void*);
 
     void		setDeadReckoning();

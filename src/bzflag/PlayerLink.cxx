@@ -222,7 +222,7 @@ int			PlayerLink::read(uint16_t& code, uint16_t& len,
   return -1;
 }
 
-void			PlayerLink::sendPlayerUpdate(const Player* player)
+void			PlayerLink::sendPlayerUpdate(Player* player)
 {
   if (state == SocketError) return;
   char msg[PlayerUpdatePLen];
