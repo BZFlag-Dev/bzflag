@@ -13,6 +13,9 @@ recent bugs
   no longer do, due to the move to BZDB. We need to add callbacks for these
   in BZDB
 
+- make maintainer-clean does not enter DIST_SUBDIRS
+  so all Makefile.in and Makefile files are not removed correctly
+
 older bugs in BZFlag
 --------------------
 
