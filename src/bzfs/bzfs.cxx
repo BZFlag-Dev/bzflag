@@ -5426,7 +5426,7 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
       
       if (curPlanarSpeedSqr > (1.0 + maxPlanarSpeedSqr)) {
 	char message[MessageLen];
-	strcpy( message, "Autokick: Tank moving to fast, Update your client." );
+	strcpy( message, "Autokick: Tank moving too fast, Update your client." );
         sendMessage(t, player[t].id, player[t].team, message);
 	directMessage(t, MsgSuperKill, 0, getDirectMessageBuffer());
 	break;
