@@ -56,6 +56,7 @@ const char *usageString =
 "[-cr] "
 "[-d] "
 "[-density <num>] "
+"[-disableBots] "
 "[+f {good|<id>}] "
 "[-f {bad|<id>}] "
 "[-fb] "
@@ -83,7 +84,6 @@ const char *usageString =
 #ifdef PRINTSCORE
 "[-printscore] "
 #endif
-"[-disableBots] "
 "[-public <server-description>] "
 "[-publicaddr <server-hostname>[:<server-port>]] "
 "[-publiclist <list-server-url>] "
@@ -139,6 +139,7 @@ const char *extraUsageString =
 "\t-cr: capture-the-flag style game with random world\n"
 "\t-d: increase debugging level\n"
 "\t-density: specify building density for random worlds (default is 5)\n"
+"\t-disableBots: disallow clients from using autopilot or robots\n"
 "\t+f: always have flag <id> available\n"
 "\t-f: never randomly generate flag <id>\n"
 "\t-fb: allow flags on box buildings\n"
@@ -166,7 +167,6 @@ const char *extraUsageString =
 #ifdef PRINTSCORE
 "\t-printscore: write score to stdout whenever it changes\n"
 #endif
-"\t-disableBots: disallow clients from using autopilot or robots\n"
 "\t-public <server-description>\n"
 "\t-publicaddr <effective-server-hostname>[:<effective-server-port>]\n"
 "\t-publiclist <list-server-url>\n"
