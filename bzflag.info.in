@@ -12,7 +12,7 @@
 
 Package: bzflag
 Version: @VERSION@
-Revision: 11
+Revision: 1
 License: LGPL
 HomePage: http://BZFlag.org
 Maintainer: Christopher Sean Morrison <fink@bzflag.bz>
@@ -38,7 +38,7 @@ Have fun, play fair. ;)
 Source: mirror:sourceforge:%n/%n-%v.tar.bz2
 Source-MD5: 8e3e5fbef3cfa21079eb06269e6b3d8b
 Source2: mirror:sourceforge:%n/%n-%v.tar.gz
-Source-MD5: aa52a5f19cb52f073ce3301303fb9c6f
+Source2-MD5: aa52a5f19cb52f073ce3301303fb9c6f
 
 # Dependancies
 Depends: libpng3-shlibs
@@ -46,7 +46,7 @@ BuildDepends: autoconf | autoconf2.5, automake1.4 | automake1.5 | automake1.6 | 
 
 # Build
 GCC: 3.3
-ConfigureParams: --prefix=/sw --without-x --with-regex CPPFLAGS="-I/sw/include" LDFLAGS="-L/sw/lib -lpng"
+ConfigureParams: --prefix=%p --without-x --with-regex CPPFLAGS="-I%p/include" LDFLAGS="-L%p/lib -lpng"
 CompileScript: <<
 ./autogen.sh
 ./configure %c
@@ -55,7 +55,7 @@ make
 
 # Install
 DocFiles: AUTHORS BUGS COPYING ChangeLog README README.MacOSX README.UNIX
-InstallScript: make install
+InstallScript: make install prefix=%i
 DescUsage: <<
 ---[ Installation ]---------------------------------------------------
 
