@@ -88,6 +88,10 @@ bool WordFilter::aggressiveFilter(char *input) const
   
   char characterIndex;
 
+  /* clear memory for arrays */
+  memset(matchPair, 0, MAX_WORDS * 2 * sizeof(int));
+  memset(wordIndices, 0, MAX_WORDS * sizeof(char));
+
   /* iterate over all the words start position in the input and keep track
    * of the starting character of each word (we only need to check those)
    * XXX could consider replacing with a single regexp call
@@ -141,13 +145,11 @@ bool WordFilter::aggressiveFilter(char *input) const
       counter++;
       
       if ( regCode == 0 ) {
-	/* only consider matches from the beginning */
-	if (match[0].rm_so == 0) {
-	  matchPair[matchCount * 2] = match[0].rm_so; /* position */
-	  matchPair[(matchCount * 2) + 1] = match[0].rm_eo - match[0].rm_so; /* length */
-	  matchCount++;
-	  filtered = true;
-	}
+	/* !!! need to handle multiple matches */
+	matchPair[matchCount * 2] = match[0].rm_so; /* position */
+	matchPair[(matchCount * 2) + 1] = match[0].rm_eo - match[0].rm_so; /* length */
+	matchCount++;
+	filtered = true;
       } else if ( regCode == REG_NOMATCH ) {
 	// do nothing
 	//			continue;
@@ -227,10 +229,11 @@ std::string WordFilter::expressionFromString(const std::string &word) const
     if ( c[0] == 'l' ) {
       c[1] = 'i';
       c[2] = '1';
-      c[3] = '|';
-      c[4] = '/';
-      c[5] = '\\';
-      //      c[6] = '\\';
+      c[4] = '!';
+      c[5] = '|';
+      c[6] = '/';
+      c[7] = '\\';
+      //      c[8] = '\\';
     } else if ( c[0] == 'i' ) {
       c[1] = 'l';
       c[2] = '|';
@@ -644,8 +647,9 @@ int main (int argc, char *argv[])
   }
   
   WordFilter filter;
-  filter.addToFilter("fuck", true);
+  //  filter.addToFilter("fuck", true);
   filter.addToFilter("test", false);
+#if 0
   filter.addToFilter("a");
   filter.addToFilter("b");
   filter.addToFilter("c");
@@ -672,20 +676,23 @@ int main (int argc, char *argv[])
   filter.addToFilter("x");
   filter.addToFilter("y");
   filter.addToFilter("z");
-
-  //  filter.outputWords();
-  //  filter.outputFilter();
+#endif
 
   char message[1024] = " This test is a fucKing simple test; you're NOT a beezee b i t c h!! ";
   std::cout << "PRE  SIMPLE " << message << std::endl;
   filter.filter(message, true);
   std::cout << "POST SIMPLE " << message << std::endl;
 
+  filter.addToFilter("fuking");
+
   std::cout << "Loading file" << std::endl;
   filter.loadFromFile(argv[1]);
   std::cout << "Number of words in filter: " << filter.wordCount() << std::endl;
   filter.addToFilter("test", true);
   std::cout << "Number of words in filter: " << filter.wordCount() << std::endl;
+
+  //  filter.outputWords();
+  //  filter.outputFilter();
 
   char message2[1024] = "f  u  c  k  !  fuuukking test ; you're NOT a beezeecun+y!!  Phuck you b1tch! ";
   char message3[1024] = "f  u  c  k  !  fuuukking test ; you're NOT a beezeecun+y!!  Phuck you b1tch! ";
