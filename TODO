@@ -24,7 +24,11 @@ THESE SHOULD HAPPEN BEFORE THE NEXT RELEASE:
 * benchmark calls to BZDB to insure there are close to 0 per
   frame redraw. Convert any existing to callbacks.
 
+* shorten laser to like 1.25 normal shot
+
 THESE ARE LOWER PRIORITY
+
+* server should send less frequent updates for "distant" players
 
 * server should pick client enter position
   ## Server has no idea about players shots, this is a
