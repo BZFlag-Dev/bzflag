@@ -1776,7 +1776,12 @@ void			OptionsMenu::resize(int width, int height)
     ((HUDuiList*)list[i++])->setIndex(BZDB.isTrue("dither"));
     ((HUDuiList*)list[i++])->setIndex(BZDB.isTrue("blend"));
     ((HUDuiList*)list[i++])->setIndex(BZDB.isTrue("smooth"));
+#if defined(__APPLE__)
+    /* FIXME */
+    ((HUDuiList*)list[i++])->setIndex(0);
+#else
     ((HUDuiList*)list[i++])->setIndex(BZDB.isTrue("lighting"));
+#endif
     tex = (HUDuiList*)list[i++];
     ((HUDuiList*)list[i++])->setIndex(renderer->useQuality());
     ((HUDuiList*)list[i++])->setIndex(BZDB.isTrue("shadows"));
@@ -1851,7 +1856,12 @@ void			OptionsMenu::callback(HUDuiControl* w, void* data)
       break;
 
     case '4':
+#if defined(__APPLE__)
+      /* FIXME */
+      BZDB.set("lighting", "0");
+#else
       BZDB.set("lighting", list->getIndex() ? "1" : "0");
+#endif
 
       BZDB.set("_texturereplace", (!BZDB.isTrue("lighting") &&
 		sceneRenderer->useQuality() < 2) ? "1" : "0");
@@ -3585,7 +3595,7 @@ void			ServerMenu::checkEchos()
 #else
 	    snprintf(url, sizeof(url),
 #endif
-		     "GET %s?action=LIST&version=%s HTTP/1.1\r\nHost: %s\r\n\r\n",
+		     "GET %s?action=LIST&version=%s HTTP/1.1\r\nHost: %s\r\nCache-control: no-cache\r\n\r\n",
 		     listServer.pathname.c_str(), getServerVersion(),
 		     listServer.hostname.c_str());
 	    errorSending = send(listServer.socket, url, strlen(url), 0)
