@@ -268,7 +268,7 @@ bool WorldInfo::getZonePoint(const std::string &qualifier, float *pt)
   if (type == NOT_IN_BUILDING)
     pt[2] = 0.0f;
   else
-    pt[2] = loc->pos[2];
+    pt[2] = loc->pos[2] + loc->size[2];
   return true;
 }
 
@@ -284,7 +284,7 @@ bool WorldInfo::getSafetyPoint(const std::string &qualifier, const float *pos, f
   if (type == NOT_IN_BUILDING)
     pt[2] = 0.0f;
   else
-    pt[2] = loc->pos[2];
+    pt[2] = loc->pos[2] + loc->size[2];
   return true;
 }
 
