@@ -1171,14 +1171,8 @@ void handleDeregisterCmd(GameKeeper::Player *playerData, const char *message)
 
   if (strlen(message) == 11) {
     // removing own callsign
-    PasswordMap::iterator itr1
-      = passwordDatabase.find(playerData->accessInfo.getName());
-    PlayerAccessMap::iterator itr2
-      = userDatabase.find(playerData->accessInfo.getName());
-    if (itr1 != passwordDatabase.end())
-			passwordDatabase.erase(itr1);
-    if (itr2 != userDatabase.end())
-			userDatabase.erase(itr2);
+    passwordDatabase.erase(playerData->accessInfo.getName());
+    userDatabase.erase(playerData->accessInfo.getName());
     PlayerAccessInfo::updateDatabases();
     sendMessage(ServerPlayer, t, "Your callsign has been deregistered");
   } else if (strlen(message) > 12
@@ -1202,12 +1196,8 @@ void handleDeregisterCmd(GameKeeper::Player *playerData, const char *message)
 	}
       }
 
-      PasswordMap::iterator itr1 = passwordDatabase.find(name);
-      PlayerAccessMap::iterator itr2 = userDatabase.find(name);
-      if (itr1 != passwordDatabase.end())
-				passwordDatabase.erase(itr1);
-			if (itr2 != userDatabase.end())
-			 userDatabase.erase(itr2);
+      passwordDatabase.erase(name);
+      userDatabase.erase(name);
       PlayerAccessInfo::updateDatabases();
 
       sprintf(reply, "%s has been deregistered", name.c_str());
