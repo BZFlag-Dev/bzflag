@@ -47,7 +47,7 @@ class WinJoystick : public BzfJoystick {
       float max;
     };
 
-    std::vector<WinJoystick::AxisInfo> axes;
+    std::vector<AxisInfo> axes;
 
     int xIndex;
     int yIndex;
