@@ -335,9 +335,14 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
       (myTank->getPosition()[2] < 0.0f)) {
     maxRange = radarLimit / 4.0f;
   }
-  if (maxRange < range) {
+  if (range > maxRange) {
     range = maxRange;
-    BZDB.set("displayRadarRange", "1.0");
+    // only clamp the user's desired range if it's actually
+    // greater then 1. otherwise, we may be resetting it due
+    // to burrow radar limiting.
+    if (BZDB.eval("displayRadarRange") > 1.0f) {
+      BZDB.set("displayRadarRange", "1.0");
+    }
   }
   
   // prepare projection matrix
