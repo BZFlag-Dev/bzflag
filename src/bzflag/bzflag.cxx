@@ -144,6 +144,7 @@ static DefaultDBItem	defaultDBItems[] = {
   { "pulseDepth",		"0.4",			true,	StateDatabase::ReadWrite,	NULL },
   { "pulseRate",		"1.0",			true,	StateDatabase::ReadWrite,	NULL },
   { "showTreads",		"0",			true,	StateDatabase::ReadWrite,	NULL },
+  { "scrollPages",		"20",			true,	StateDatabase::ReadWrite,	NULL },
 
   // default texture names
   { "stdGroundTexture",		"std_ground",		true,	StateDatabase::ReadWrite,	NULL },

@@ -4789,15 +4789,18 @@ static void		playingLoop()
       roamPos[1] += dt * (c * roamDPos[1] + s * roamDPos[0]);
       roamPos[2] += dt * roamDPos[2];
       float muzzleHeight = BZDB.eval(StateDatabase::BZDB_MUZZLEHEIGHT);
-      if (roamPos[2] < muzzleHeight)
+      if (roamPos[2] < muzzleHeight) {
 	roamPos[2] = muzzleHeight;
+      }
       roamTheta  += dt * roamDTheta;
       roamPhi    += dt * roamDPhi;
       roamZoom   += dt * roamDZoom;
-      if (roamZoom < BZDB.eval("roamZoomMin"))
+      if (roamZoom < BZDB.eval("roamZoomMin")) {
 	roamZoom = BZDB.eval("roamZoomMin");
-      else if (roamZoom > BZDB.eval("roamZoomMax"))
+      }
+      else if (roamZoom > BZDB.eval("roamZoomMax")) {
 	roamZoom = BZDB.eval("roamZoomMax");
+      }
     }
     setRoamingLabel(false);
 

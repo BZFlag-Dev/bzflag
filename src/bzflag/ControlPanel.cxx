@@ -131,7 +131,6 @@ void ControlPanelMessage::breakLines(float maxLength, int fontFace, float fontSi
 //
 // ControlPanel
 //
-const int		ControlPanel::maxScrollPages = 10;
 int			ControlPanel::messagesOffset = 0;
 
 ControlPanel::ControlPanel(MainWindow& _mainWindow, SceneRenderer& renderer) :
@@ -334,7 +333,8 @@ void			ControlPanel::render(SceneRenderer& renderer)
   //  messageAreaPixels[2] = Width of Message Window in Pixels
   //  maxLines             = Max messages lines that can be displayed
   //  maxScrollPages       = This number * maxLines is the total maximum
-  //                         lines of messages (and scrollback)
+  //                         lines of messages (and scrollback). It is
+  //                         stored as a BZDB parameter.
 
   glScissor(x + messageAreaPixels[0],
 	    y + messageAreaPixels[1],
@@ -633,6 +633,12 @@ void			ControlPanel::addMessage(const std::string& line,
 {
   ControlPanelMessage item(line);
   item.breakLines(messageAreaPixels[2] - 2 * margin, fontFace, fontSize);
+  
+  int maxScrollPages = BZDB.evalInt("scrollPages");
+  if (maxScrollPages <= 0) {
+    BZDB.setInt("scrollPages", atoi(BZDB.getDefault("scrollPages").c_str()));
+    maxScrollPages = 1;
+  }
 
   // Add to "All" tab
   if ((int)messages[MessageAll].size() < maxLines * maxScrollPages) {
