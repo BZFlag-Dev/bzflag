@@ -71,6 +71,9 @@ private:
   std::string _polleeIP;
   pollAction_t _action;
   std::string _pollRequestor;
+
+  /* names of players who are allowed to vote */
+  std::deque<std::string> _suffraged;
   
  protected:
     
@@ -150,11 +153,15 @@ private:
   /** set the number of available voters
     */
   bool setAvailableVoters(unsigned short int count);
+
+  /** grant a player the right to vote
+    */
+  bool grantSuffrage(std::string player);
   
   /** returns whether truthfully whether a certain player is permitted
    * to vote; a player should check their right to vote before voting.
    */
-  bool allowSuffrage(std::string player) const;
+  bool hasSuffrage(std::string player) const;
 
   /** apply a yes vote; returns true if the vote could be made
    */
@@ -210,10 +217,12 @@ inline VotingArbiter::VotingArbiter(const VotingArbiter& arbiter)
     _votesRequired(arbiter._votesRequired),
     _votePercentage(arbiter._votePercentage),
     _voteRepeatTime(arbiter._voteRepeatTime),
+    _pollers(arbiter._pollers),
     _pollee(arbiter._pollee),
     _polleeIP(arbiter._polleeIP),
     _action(arbiter._action),
-    _pollRequestor(arbiter._pollRequestor)
+    _pollRequestor(arbiter._pollRequestor),
+    _suffraged(arbiter._suffraged)
 {
   return;
 }

@@ -61,6 +61,10 @@ bool VotingArbiter::forgetPoll(void)
   _polleeIP = "";
   _action = UNDEFINED;
   _pollRequestor = "nobody";
+
+  /* poof */
+  _suffraged.clear();
+
   return true;
 }
 
@@ -138,10 +142,33 @@ bool VotingArbiter::setAvailableVoters(unsigned short int count)
   return true;
 }
 
-bool VotingArbiter::allowSuffrage(std::string player) const
+bool VotingArbiter::grantSuffrage(std::string player)
+{
+  for (unsigned int i = 0; i < _suffraged.size(); i++) {
+    if (_suffraged[i] == player) {
+      return true;
+    }
+  }
+  _suffraged.push_front(player);
+  return true;
+}
+
+bool VotingArbiter::hasSuffrage(std::string player) const
 {
   // is there a poll to vote on?
   if (!this->isPollOpen()) {
+    return false;
+  }
+
+  // was this player granted the right to vote?
+  bool foundPlayer = false;
+  for (unsigned int i = 0; i < _suffraged.size(); i++) {
+    if (_suffraged[i] == player) {
+      foundPlayer = true;
+      break;
+    }
+  }
+  if (!foundPlayer) {
     return false;
   }
 
@@ -150,6 +177,7 @@ bool VotingArbiter::allowSuffrage(std::string player) const
     return false;
   }
 
+  // are there too many votes somehow (sanity)
   if (_votingBooth->getTotalVotes() >= _maxVotes) {
     return false;
   }
@@ -163,7 +191,8 @@ bool VotingArbiter::voteYes(std::string player)
     return false;
   }
 
-  if (_votingBooth->getTotalVotes() >= _maxVotes) {
+  // allowed to vote?
+  if (!hasSuffrage(player)) {
     return false;
   }
 
@@ -176,7 +205,8 @@ bool VotingArbiter::voteNo(std::string player)
     return false;
   }
 
-  if (_votingBooth->getTotalVotes() >= _maxVotes) {
+  // allowed to vote?
+  if (!hasSuffrage(player)) {
     return false;
   }
 
