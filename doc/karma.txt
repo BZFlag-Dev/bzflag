@@ -79,6 +79,8 @@ a) player database / authentication
   E.g., let's say a well-reputed player registered as 'GrimReaper',
   authenticates himself when joining a server who requires a high karma
   value, but is visible to the other players as 'Bozo'.
+  - they still would not be allowed to use another registered nickname
+    as their callsign.
 
 * The data that is stored for each player in the database could include:
   - callsign (required)
@@ -175,6 +177,25 @@ Basic rules for karma adjustment:
    c) Player age - long-time players will have more influence
    d) Playing time - people who spend their lives in BZFlag
       should have more power
+
+Possible implementation
+-----------------------
+This is proton's idea:
+
+Store the entire karma network as a weighted directed graph. Weights along
+the edges should go from -5 to 5 or some other range specifying the karma
+adjustment from one player to another. Each node would also have a weight,
+calculated from the other factors listed above (age, time, etc). When a
+karma adjustment is made, a walk of the graph is done, computing everbody's
+new karma (if someone near the root gets modded up, it could have repercussions
+through the entire tree, strengthening the adjustments they themselves
+have made). Nodes furthest from the root (note: the 'root' would be someone
+completely trusted, like Tim Riker) have the lowest karma.
+
+With this scheme, bad accounts could be deleted by the same type of
+algorithm as used for Advogato's trust metric, setting up a supersink
+and cutting away all bad nodes, thus preventing abuse.
+
 
 Well, probably a whole bunch of stuff is still missing. Feel free to add
 anything.
