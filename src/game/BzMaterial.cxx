@@ -445,8 +445,8 @@ void* BzMaterial::unpack(void* buf)
   textures = new TextureInfo[textureCount];
   for (i = 0; i < textureCount; i++) {
     TextureInfo* texinfo = &textures[i];
-
     buf = nboUnpackStdString(buf, texinfo->name);
+    texinfo->localname = texinfo->name;
     buf = nboUnpackInt(buf, inTmp);
     texinfo->matrix = int(inTmp);
     buf = nboUnpackInt(buf, inTmp);
