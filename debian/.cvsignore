@@ -1,6 +1,0 @@
-bzflag-server
-bzflag-server.postinst.debhelper
-bzflag-server.prerm.debhelper
-bzflag-server.substvars
-changelog
-files
