@@ -32,11 +32,11 @@
 //
 
 BaseLocalPlayer::BaseLocalPlayer(const PlayerId& id,
-				const char* name, const char* email) :
-				Player(id, RogueTeam, name, email, TankPlayer),
-				restartOnBase(false),
-				lastTime(TimeKeeper::getTick()),
-				salt(0)
+				 const char* name, const char* email) :
+  Player(id, RogueTeam, name, email, TankPlayer),
+  restartOnBase(false),
+  lastTime(TimeKeeper::getTick()),
+  salt(0)
 {
   lastPosition[0] = 0.0f;
   lastPosition[1] = 0.0f;
@@ -110,9 +110,9 @@ Ray			BaseLocalPlayer::getLastMotion() const
 }
 
 #ifdef __MWERKS__
-  const float		(*BaseLocalPlayer::getLastMotionBBox() )[3] const
+const float		(*BaseLocalPlayer::getLastMotionBBox() )[3] const
 #else
-  const float		(*BaseLocalPlayer::getLastMotionBBox() const)[3]
+const float		(*BaseLocalPlayer::getLastMotionBBox() const)[3]
 #endif
 {
   return bbox;
@@ -144,11 +144,11 @@ static float		minSafeRange(float angleCosOffBoresight)
 }
 
 void			BaseLocalPlayer::startingLocation
-                        (float bestStartPoint[3],
-			 float &startAzimuth,
-			 World *world,
-			 Player *player[],
-			 int curMaxPlayers)
+(float bestStartPoint[3],
+ float &startAzimuth,
+ World *world,
+ Player *player[],
+ int curMaxPlayers)
 {
   // check for valid starting (no unfair advantage to player or enemies)
   // should find a good location in a few tries... locateCount is a safety
@@ -237,8 +237,8 @@ void			BaseLocalPlayer::startingLocation
 	// larger than the actual tank size to give some leeway.
 	const Ray ray(shot->getPosition(), shot->getVelocity());
 	const float t = timeRayHitsBlock(ray, startPoint, startAzimuth,
-				4.0f * tankLength, 4.0f * tankWidth,
-				2.0f * BZDBCache::tankHeight);
+					 4.0f * tankLength, 4.0f * tankWidth,
+					 2.0f * BZDBCache::tankHeight);
 	if (t >= 0.0f && t < MinShotImpact) {
 	  located = false;
 	  break;
@@ -253,9 +253,9 @@ void			BaseLocalPlayer::startingLocation
       // compute enemy position in my local coordinate system
       const float* enemyPos = player[i]->getPosition();
       const float enemyX = myCos * (enemyPos[0] - startPoint[0]) -
-			   mySin * (enemyPos[1] - startPoint[1]);
+	mySin * (enemyPos[1] - startPoint[1]);
       const float enemyY = mySin * (enemyPos[0] - startPoint[0]) +
-			   myCos * (enemyPos[1] - startPoint[1]);
+	myCos * (enemyPos[1] - startPoint[1]);
 
       // get distance and angle of enemy from boresight
       const float enemyDist = hypotf(enemyX, enemyY);
@@ -271,9 +271,9 @@ void			BaseLocalPlayer::startingLocation
       // cos = enemyUnitVect[0], sin = enemyUnitVect[1]
       const float* enemyUnitVect = player[i]->getForward();
       const float myX = enemyUnitVect[0] * (startPoint[0] - enemyPos[0]) -
-			enemyUnitVect[1] * (startPoint[1] - enemyPos[1]);
+	enemyUnitVect[1] * (startPoint[1] - enemyPos[1]);
       const float myY = enemyUnitVect[1] * (startPoint[0] - enemyPos[0]) +
-			enemyUnitVect[0] * (startPoint[1] - enemyPos[1]);
+	enemyUnitVect[0] * (startPoint[1] - enemyPos[1]);
 
       // get distance and angle of enemy from boresight
       const float myDist = hypotf(myX, myY);
@@ -303,21 +303,21 @@ void			BaseLocalPlayer::startingLocation
 LocalPlayer*		LocalPlayer::mainPlayer = NULL;
 
 LocalPlayer::LocalPlayer(const PlayerId& id,
-				const char* name, const char* email) :
-				BaseLocalPlayer(id, name, email),
-				location(Dead),
-				firingStatus(Deceased),
-				flagShakingTime(0.0f),
-				flagShakingWins(0),
-				antidoteFlag(NULL),
-				desiredSpeed(0.0f),
-				desiredAngVel(0.0f),
-				lastSpeed(0.0f),
-				insideBuilding(NULL),
-				anyShotActive(false),
-				target(NULL),
-				nemesis(NULL),
-				recipient(NULL)
+			 const char* name, const char* email) :
+  BaseLocalPlayer(id, name, email),
+  location(Dead),
+  firingStatus(Deceased),
+  flagShakingTime(0.0f),
+  flagShakingWins(0),
+  antidoteFlag(NULL),
+  desiredSpeed(0.0f),
+  desiredAngVel(0.0f),
+  lastSpeed(0.0f),
+  insideBuilding(NULL),
+  anyShotActive(false),
+  target(NULL),
+  nemesis(NULL),
+  recipient(NULL)
 {
   // initialize shots array to no shots fired
   const int numShots = World::getWorld()->getMaxShots();
@@ -423,8 +423,8 @@ void			LocalPlayer::doUpdateMotion(float dt)
 
   // phased means we can pass through buildings
   const bool phased = (location == Dead || location == Exploding ||
-			(getFlag() == Flags::OscillationOverthruster) ||
-			(getFlag() == Flags::PhantomZone && isFlagActive()));
+		       (getFlag() == Flags::OscillationOverthruster) ||
+		       (getFlag() == Flags::PhantomZone && isFlagActive()));
 
   float groundLimit = 0.0f;
   if (getFlag() == Flags::Burrow)
@@ -552,7 +552,7 @@ void			LocalPlayer::doUpdateMotion(float dt)
     // find the latest time before the collision
     float searchTime = 0.0f, searchStep = 0.5f * timeStep;
     for (int i = 0; searchStep > MinSearchStep && i < MaxSearchSteps;
-						searchStep *= 0.5f, i++) {
+	 searchStep *= 0.5f, i++) {
       // get intermediate position
       const float t = searchTime + searchStep;
       newAzimuth = tmpAzimuth + t * newAngVel;
@@ -564,8 +564,8 @@ void			LocalPlayer::doUpdateMotion(float dt)
       // see if we hit anything
       bool searchExpelled;
       const Obstacle* searchObstacle =
-		getHitBuilding(tmpPos, tmpAzimuth, newPos, newAzimuth, phased,
-			       searchExpelled);
+	getHitBuilding(tmpPos, tmpAzimuth, newPos, newAzimuth, phased,
+		       searchExpelled);
 
       // if no hit then search latter half of time step
       if (!searchObstacle || !searchExpelled) searchTime = t;
@@ -614,7 +614,7 @@ void			LocalPlayer::doUpdateMotion(float dt)
       if (!NEAR_ZERO(normal[2], ZERO_TOLERANCE)) {
 	// if going down then stop falling
 	if (newVelocity[2] < 0.0f && newVelocity[2] -
-		(mag + normal[2] * newVelocity[2]) * normal[2] > 0.0f)
+	    (mag + normal[2] * newVelocity[2]) * normal[2] > 0.0f)
 	  newVelocity[2] = 0.0f;
 
 	// normalize force magnitude in horizontal plane
@@ -656,14 +656,14 @@ void			LocalPlayer::doUpdateMotion(float dt)
   // see if we're crossing a wall
   if (location == InBuilding && getFlag() == Flags::OscillationOverthruster) {
     if (insideBuilding->isCrossing(newPos, newAzimuth,
-			0.5f * BZDB->eval(StateDatabase::BZDB_TANKLENGTH), 0.5f * BZDB->eval(StateDatabase::BZDB_TANKWIDTH), NULL))
+				   0.5f * BZDB->eval(StateDatabase::BZDB_TANKLENGTH), 0.5f * BZDB->eval(StateDatabase::BZDB_TANKWIDTH), NULL))
       setStatus(getStatus() | int(PlayerState::CrossingWall));
     else
       setStatus(getStatus() & ~int(PlayerState::CrossingWall));
   }
   else if (World::getWorld()->crossingTeleporter(newPos, newAzimuth,
-			0.5f * BZDB->eval(StateDatabase::BZDB_TANKLENGTH), 0.5f * BZDB->eval(StateDatabase::BZDB_TANKWIDTH), crossingPlane)) {
-	  setStatus(getStatus() | int(PlayerState::CrossingWall));
+						 0.5f * BZDB->eval(StateDatabase::BZDB_TANKLENGTH), 0.5f * BZDB->eval(StateDatabase::BZDB_TANKWIDTH), crossingPlane)) {
+    setStatus(getStatus() | int(PlayerState::CrossingWall));
   }
   else {
     setStatus(getStatus() & ~int(PlayerState::CrossingWall));
@@ -680,7 +680,7 @@ void			LocalPlayer::doUpdateMotion(float dt)
   // see if we teleported
   int face;
   const Teleporter* teleporter = (const Teleporter*)(!isAlive() ? NULL :
-	World::getWorld()->crossesTeleporter(oldPosition, newPos, face));
+						     World::getWorld()->crossesTeleporter(oldPosition, newPos, face));
   if (teleporter) {
     if (getFlag() == Flags::PhantomZone) {
       // change zoned state
@@ -693,10 +693,10 @@ void			LocalPlayer::doUpdateMotion(float dt)
       const int target = World::getWorld()->getTeleportTarget(source);
       int outFace;
       const Teleporter* outPort = World::getWorld()->
-					getTeleporter(target, outFace);
+	getTeleporter(target, outFace);
       teleporter->getPointWRT(*outPort, face, outFace,
-					newPos, newVelocity, newAzimuth,
-					newPos, newVelocity, &newAzimuth);
+			      newPos, newVelocity, newAzimuth,
+			      newPos, newVelocity, &newAzimuth);
 
       // save teleport info
       setTeleport(lastTime, source, target);
@@ -713,28 +713,28 @@ void			LocalPlayer::doUpdateMotion(float dt)
 
   // set falling status
   if (location == OnGround || location == OnBuilding ||
-	(location == InBuilding && newPos[2] == 0.0f))
+      (location == InBuilding && newPos[2] == 0.0f))
     setStatus(getStatus() & ~short(PlayerState::Falling));
   else if (location == InAir || location == InBuilding)
     setStatus(getStatus() | short(PlayerState::Falling));
 
   // compute firing status
   switch (location) {
-    case Dead:
-    case Exploding:
-      firingStatus = Deceased;
-      break;
-    case InBuilding:
-      firingStatus = (getFlag() == Flags::PhantomZone) ? Zoned : Sealed;
-      break;
-    default:
-      if (getFlag() == Flags::PhantomZone && isFlagActive())
-	firingStatus = Zoned;
-      else if (getReloadTime() > 0.0f)
-	firingStatus = Loading;
-      else
-	firingStatus = Ready;
-      break;
+  case Dead:
+  case Exploding:
+    firingStatus = Deceased;
+    break;
+  case InBuilding:
+    firingStatus = (getFlag() == Flags::PhantomZone) ? Zoned : Sealed;
+    break;
+  default:
+    if (getFlag() == Flags::PhantomZone && isFlagActive())
+      firingStatus = Zoned;
+    else if (getReloadTime() > 0.0f)
+      firingStatus = Loading;
+    else
+      firingStatus = Ready;
+    break;
   }
 
   // move tank
@@ -746,9 +746,9 @@ void			LocalPlayer::doUpdateMotion(float dt)
   // see if I'm over my antidote
   if (antidoteFlag && location == OnGround) {
     float dist = (flagAntidotePos[0] - newPos[0]) *
-		(flagAntidotePos[0] - newPos[0]) +
-		(flagAntidotePos[1] - newPos[1]) *
-		(flagAntidotePos[1] - newPos[1]);
+      (flagAntidotePos[0] - newPos[0]) +
+      (flagAntidotePos[1] - newPos[1]) *
+      (flagAntidotePos[1] - newPos[1]);
     if (dist < (getRadius() + BZDBCache::flagRadius) * (getRadius() + BZDBCache::flagRadius))
       ServerLink::getServer()->sendDropFlag(getPosition());
   }
@@ -757,19 +757,19 @@ void			LocalPlayer::doUpdateMotion(float dt)
     antidoteFlag->waveFlag(dt, 0.0f);
 
   if (oldPosition[0] != newPos[0] || oldPosition[1] != newPos[1] ||
-	oldPosition[2] != newPos[2] || oldAzimuth != newAzimuth)
+      oldPosition[2] != newPos[2] || oldAzimuth != newAzimuth)
     moveSoundReceiver(newPos[0], newPos[1], newPos[2], newAzimuth,
-	(NEAR_ZERO(dt, ZERO_TOLERANCE) || teleporter != NULL && getFlag() != Flags::PhantomZone));
+		      (NEAR_ZERO(dt, ZERO_TOLERANCE) || teleporter != NULL && getFlag() != Flags::PhantomZone));
   if (NEAR_ZERO(dt, ZERO_TOLERANCE))
     speedSoundReceiver(newVelocity[0], newVelocity[1], newVelocity[2]);
   else
     speedSoundReceiver((newPos[0] - oldPosition[0]) / dt,
-			(newPos[1] - oldPosition[1]) / dt,
-			(newPos[2] - oldPosition[2]) / dt);
+		       (newPos[1] - oldPosition[1]) / dt,
+		       (newPos[2] - oldPosition[2]) / dt);
 }
 
 const Obstacle*		LocalPlayer::getHitBuilding(const float* p, float a,
-				bool phased, bool& expelled) const
+						    bool phased, bool& expelled) const
 {
   float length = 0.5f * BZDB->eval(StateDatabase::BZDB_TANKLENGTH);
   float width = 0.5f * BZDB->eval(StateDatabase::BZDB_TANKWIDTH);
@@ -795,7 +795,7 @@ const Obstacle*		LocalPlayer::getHitBuilding(const float* p, float a,
   }
 
   const Obstacle* obstacle = World::getWorld()->
-				hitBuilding(p, a, length, width);
+    hitBuilding(p, a, length, width);
   expelled = (obstacle != NULL);
   if (expelled && phased)
     expelled = (obstacle->getType() == WallObstacle::getClassName() ||
@@ -806,9 +806,9 @@ const Obstacle*		LocalPlayer::getHitBuilding(const float* p, float a,
 }
 
 const Obstacle*		LocalPlayer::getHitBuilding(
-				const float* oldP, float oldA,
-				const float* p, float a,
-				bool phased, bool& expelled) const
+						    const float* oldP, float oldA,
+						    const float* p, float a,
+						    bool phased, bool& expelled) const
 {
   float length = 0.5f * BZDB->eval(StateDatabase::BZDB_TANKLENGTH);
   float width = 0.5f * BZDB->eval(StateDatabase::BZDB_TANKWIDTH);
@@ -845,9 +845,9 @@ const Obstacle*		LocalPlayer::getHitBuilding(
 }
 
 bool			LocalPlayer::getHitNormal(const Obstacle* o,
-				const float* pos1, float azimuth1,
-				const float* pos2, float azimuth2,
-				float* normal) const
+						  const float* pos1, float azimuth1,
+						  const float* pos2, float azimuth2,
+						  float* normal) const
 {
   float length = 0.5f * BZDB->eval(StateDatabase::BZDB_TANKLENGTH);
   float width = 0.5f * BZDB->eval(StateDatabase::BZDB_TANKWIDTH);
@@ -885,10 +885,10 @@ float			LocalPlayer::getReloadTime() const
 
   // look for the shot fired least recently
   float minTime = shots[0]->getReloadTime() -
-		(shots[0]->getCurrentTime() - shots[0]->getStartTime());
+    (shots[0]->getCurrentTime() - shots[0]->getStartTime());
   for (i = 1; i < numShots; i++) {
     const float t = shots[i]->getReloadTime() -
-		(shots[i]->getCurrentTime() - shots[i]->getStartTime());
+      (shots[i]->getCurrentTime() - shots[i]->getStartTime());
     if (t < minTime) minTime = t;
   }
   if (minTime < 0.0f) minTime = 0.0f;
@@ -970,7 +970,7 @@ void			LocalPlayer::setDesiredSpeed(float fracOfMaxSpeed)
 
   // oscillation overthruster tank in building can't back up
   if (fracOfMaxSpeed < 0.0f && getLocation() == InBuilding &&
-				getFlag() == Flags::OscillationOverthruster)
+      getFlag() == Flags::OscillationOverthruster)
     fracOfMaxSpeed = 0.0f;
 
   // boost speed for certain flags
@@ -1033,7 +1033,7 @@ bool			LocalPlayer::fireShot()
 
   // make sure we're allowed to shoot
   if (!isAlive() || isPaused() || location == InBuilding ||
-	(getFlag() == Flags::PhantomZone && isFlagActive()))
+      (getFlag() == Flags::PhantomZone && isFlagActive()))
     return false;
 
   // prepare shot
@@ -1074,8 +1074,43 @@ bool			LocalPlayer::fireShot()
   return true;
 }
 
-bool			LocalPlayer::doEndShot(
-				int id, bool isHit, float* pos)
+
+void LocalPlayer::forceReload(float time)
+{
+  const int numShots = World::getWorld()->getMaxShots();
+  int i;
+  FiringInfo firingInfo(*this, i + getSalt());
+  firingInfo.shot.team = getTeam();
+  firingInfo.flagType = Flags::Null;
+  firingInfo.lifetime = time;
+
+  // move shot origin way above tank and make it stationary
+  const float* pos = getPosition();
+  firingInfo.shot.pos[0] = pos[0];
+  firingInfo.shot.pos[1] = pos[1] + 10.0;
+  firingInfo.shot.pos[2] = pos[2] + 1000000.0;
+  firingInfo.shot.vel[0] = 0.0f;
+  firingInfo.shot.vel[1] = 0.0f;
+  firingInfo.shot.vel[2] = 0.0f;
+
+  for (i=0; i < numShots; i++) {
+    // expire any existing shots
+    if (shots[i]) {
+      delete shots[i];
+      shots[i] = NULL;
+    }
+    
+    // create shots that must timeout for "time" seconds
+    shots[i] = new LocalShotPath(firingInfo);
+    /*    shots[i]->boostReloadTime(-(shots[i]->getLifetime()));
+	  shots[i]->boostReloadTime(time);
+    */
+  }
+  firingStatus = Loading;
+}
+
+
+bool			LocalPlayer::doEndShot(int id, bool isHit, float* pos)
 {
   const int index = id & 255;
   const int salt = (id >> 8) & 127;
@@ -1146,13 +1181,13 @@ void			LocalPlayer::setTarget(const Player* _target)
 void			LocalPlayer::setNemesis(const Player* _nemesis)
 {
   if ((_nemesis == NULL) || _nemesis->getPlayerType() == TankPlayer)
-	nemesis = _nemesis;
+    nemesis = _nemesis;
 }
 
 void			LocalPlayer::setRecipient(const Player* _recipient)
 {
   if ((_recipient == NULL) || (_recipient->getId() <= LastRealPlayer))
-	recipient = _recipient;
+    recipient = _recipient;
 }
 
 void			LocalPlayer::explodeTank()
@@ -1173,10 +1208,10 @@ void			LocalPlayer::doMomentum(float dt,
 						float& speed, float& angVel)
 {
   // get maximum linear and angular accelerations
-	const float linearAcc = (getFlag() == Flags::Momentum) ? BZDB->eval(StateDatabase::BZDB_MOMENTUMLINACC) :
-				World::getWorld()->getLinearAcceleration();
-	const float angularAcc = (getFlag() == Flags::Momentum) ? BZDB->eval(StateDatabase::BZDB_MOMENTUMANGACC) :
-				World::getWorld()->getAngularAcceleration();
+  const float linearAcc = (getFlag() == Flags::Momentum) ? BZDB->eval(StateDatabase::BZDB_MOMENTUMLINACC) :
+    World::getWorld()->getLinearAcceleration();
+  const float angularAcc = (getFlag() == Flags::Momentum) ? BZDB->eval(StateDatabase::BZDB_MOMENTUMANGACC) :
+    World::getWorld()->getAngularAcceleration();
 
   // limit linear acceleration
   if (linearAcc > 0.0f) {
@@ -1195,8 +1230,8 @@ void			LocalPlayer::doMomentum(float dt,
 }
 
 void			LocalPlayer::doForces(float /*dt*/,
-						float* /*velocity*/,
-						float& /*angVel*/)
+					      float* /*velocity*/,
+					      float& /*angVel*/)
 {
   // apply external forces
   // do nothing -- no external forces right now
@@ -1204,7 +1239,7 @@ void			LocalPlayer::doForces(float /*dt*/,
 
 // NOTE -- minTime should be initialized to Infinity by the caller
 bool			LocalPlayer::checkHit(const Player* source,
-				const ShotPath*& hit, float& minTime) const
+					      const ShotPath*& hit, float& minTime) const
 {
   bool goodHit = false;
 
@@ -1224,7 +1259,7 @@ bool			LocalPlayer::checkHit(const Player* source,
     // only superbullet or shockwave can kill zoned dude
     const FlagType* shotFlag = shot->getFlag();
     if (getFlag() == Flags::PhantomZone && isFlagActive() &&
-		shotFlag != Flags::SuperBullet && shotFlag != Flags::ShockWave)
+	shotFlag != Flags::SuperBullet && shotFlag != Flags::ShockWave)
       continue;
     // laser can't hit a cloaked tank
     if (getFlag() == Flags::Cloaking && shotFlag == Flags::Laser)
@@ -1238,8 +1273,8 @@ bool			LocalPlayer::checkHit(const Player* source,
     // test if shot hit a part of my tank that's through a teleporter.
     // hit is no good if hit point is behind crossing plane.
     if (isCrossingWall() && position[0] * crossingPlane[0] +
-		position[1] * crossingPlane[1] +
-		position[2] * crossingPlane[2] + crossingPlane[3] < 0.0)
+	position[1] * crossingPlane[1] +
+	position[2] * crossingPlane[2] + crossingPlane[3] < 0.0)
       continue;
 
     // okay, shot hit
@@ -1289,12 +1324,12 @@ void			LocalPlayer::setFlag(FlagType* flag)
 }
 
 void			LocalPlayer::changeScore(short deltaWins,
-						short deltaLosses,
-						short deltaTks)
+						 short deltaLosses,
+						 short deltaTks)
 {
   Player::changeScore(deltaWins, deltaLosses, deltaTks);
   if (deltaWins > 0 && World::getWorld()->allowShakeWins() &&
-						flagShakingWins > 0) {
+      flagShakingWins > 0) {
     flagShakingWins -= deltaWins;
     if (flagShakingWins <= 0) {
       flagShakingWins = 0;
