@@ -5,6 +5,12 @@
 BZFlag 1.10.6
 -------------
 
+* Fixing the little hop on spawn at some site - Alfredo Tupone
+* Player are not allowed add/removing from his group (unless enabled) - Alfredo Tupone
+* Curing ghost/duplicated/ungetable flag - Alfredo Tupone
+* Fixing 0 height Flag, no more being inside building - Alfredo Tupone
+* Observers see Masquerade tank with their true color - Alfredo Tupone
+* Callsign non-alpha char handled in password file - Alfredo Tupone
 * Support for building BZAdmin with PDCurses on Windows - Daniel Remenak
 * Correctly read PNG textures with multiple IDAT chunks - Daniel Remenak
 * Add support for aggressive filtering on more platforms - Sean Morrison
