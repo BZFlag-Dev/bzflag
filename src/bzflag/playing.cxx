@@ -101,6 +101,7 @@ static const char copyright[] = "Copyright (c) 1993 - 2004 Tim Riker";
 #include "md5.h"
 #include "FlagSceneNode.h"
 #include "PhysicsDriver.h"
+#include "FlagSceneNode.h"
 
 // versioning that makes us recompile every time
 #include "version.h"
@@ -5264,6 +5265,8 @@ static void		playingLoop()
       sendRobotUpdates();
     }
 #endif
+
+    FlagSceneNode::freeFlag();
   }
 
   // restore the sound.  if we don't do this then we'll save the

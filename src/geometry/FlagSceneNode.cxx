@@ -36,6 +36,8 @@ bool		    geoPole = false;	// draw the pole as quads
 static const GLfloat	Unit = 0.8f;		// meters
 const GLfloat		FlagSceneNode::Width = 1.5f * Unit;
 const GLfloat		FlagSceneNode::Height = Unit;
+static const GLfloat	Width = 1.5f * Unit;
+static const GLfloat	Height = Unit;
 
 class WaveGeometry {
 public:
@@ -46,10 +48,9 @@ public:
   void unrefer() { refCount--; };
 
   void waveFlag(float dt);
+  void freeFlag();
 
-  float	wave0[maxChunks];
-  float	wave1[maxChunks];
-  float	wave2[maxChunks];
+  GLuint glList;
 private:
   int                   refCount;
   float	                ripple1, ripple2;
@@ -71,11 +72,16 @@ void WaveGeometry::waveFlag(float dt)
   if (!refCount)
     return;
   ripple1 += dt * RippleSpeed1;
-  if (ripple1 >= 2.0f * M_PI) ripple1 -= 2.0f * M_PI;
+  if (ripple1 >= 2.0f * M_PI)
+    ripple1 -= 2.0f * M_PI;
   ripple2 += dt * RippleSpeed2;
-  if (ripple2 >= 2.0f * M_PI) ripple2 -= 2.0f * M_PI;
+  if (ripple2 >= 2.0f * M_PI)
+    ripple2 -= 2.0f * M_PI;
   float sinRipple2  = sinf(ripple2);
   float sinRipple2S = sinf(ripple2 + 1.16f * M_PI);
+  float	wave0[maxChunks];
+  float	wave1[maxChunks];
+  float	wave2[maxChunks];
   for (int i = 0; i <= flagChunks; i++) {
     const float x      = float(i) / float(flagChunks);
     const float damp   = 0.1f * x;
@@ -86,6 +92,33 @@ void WaveGeometry::waveFlag(float dt)
     wave1[i] = damp * (sinf(angle2) + sinRipple2S);
     wave2[i] = wave0[i] + damp * sinRipple2;
   }
+  float base = BZDBCache::flagPoleSize;
+  glList     = glGenLists(1);
+  glNewList(glList, GL_COMPILE);
+  glBegin(GL_QUAD_STRIP);
+  for (int i = 0; i <= flagChunks; i++) {
+    const float x      = float(i) / float(flagChunks);
+    const float shift1 = wave0[i];
+    GLfloat v1[3], v2[3];
+    v1[0] = v2[0] = Width * x;
+    v1[1] = base + Height - shift1;
+    v2[1] = base - shift1;
+    v1[2] = wave1[i];
+    v2[2] = wave2[i];
+    glTexCoord2f(x, 1.0f);
+    glVertex3fv(v1);
+    glTexCoord2f(x, 0.0f);
+    glVertex3fv(v2);
+  }
+  glEnd();
+  glEndList();
+}
+
+void WaveGeometry::freeFlag()
+{ 
+  if (!refCount)
+    return;
+  glDeleteLists(glList, 1);
 }
 
 WaveGeometry allWaves[8];
@@ -112,6 +145,13 @@ void			FlagSceneNode::waveFlag(float dt)
 {
   for (int i = 0; i < 8; i++) {
     allWaves[i].waveFlag(dt);
+  }
+}
+
+void			FlagSceneNode::freeFlag()
+{
+  for (int i = 0; i < 8; i++) {
+    allWaves[i].freeFlag();
   }
 }
 
@@ -207,9 +247,6 @@ FlagSceneNode::FlagRenderNode::FlagRenderNode(
   if (waveReference >= 8)
     waveReference = 7;
   allWaves[waveReference].refer();
-  wave0 = allWaves[waveReference].wave0;
-  wave1 = allWaves[waveReference].wave1;
-  wave2 = allWaves[waveReference].wave2;
 }
 
 FlagSceneNode::FlagRenderNode::~FlagRenderNode()
@@ -234,22 +271,7 @@ void			FlagSceneNode::FlagRenderNode::render()
 
     if (sceneNode->billboard) {
       RENDERER.getViewFrustum().executeBillboard();
-      glBegin(GL_QUAD_STRIP);
-	for (int i = 0; i <= flagChunks; i++) {
-	  const float x = float(i) / float(flagChunks);
-	  const float shift1 = wave0[i];
-	  GLfloat v1[3], v2[3];
-	  v1[0] = v2[0] = Width * x;
-	  v1[1] = base + Height - shift1;
-	  v2[1] = base - shift1;
-	  v1[2] = wave1[i];
-	  v2[2] = wave2[i];
-	  glTexCoord2f(x, 1.0f);
-	  glVertex3fv(v1);
-	  glTexCoord2f(x, 0.0f);
-	  glVertex3fv(v2);
-	}
-      glEnd();
+      glCallList(allWaves[waveReference].glList);
     } else {
       glRotatef(sceneNode->angle + 180.0f, 0.0f, 0.0f, 1.0f);
       glRotatef(90.0f, 1.0f, 0.0f, 0.0f);
