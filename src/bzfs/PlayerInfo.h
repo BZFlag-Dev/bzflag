@@ -75,8 +75,64 @@ struct TeamInfo {
 };
 
 
-struct PlayerInfo {
-  public:
+class PlayerInfo {
+public:
+  void        initPlayer(struct sockaddr_in clientAddr, int _fd);
+  void        resetPlayer();
+  bool        isAccessVerified() const;
+  void        resetAccess();
+  bool        gotAccessFailure();
+  void        setLoginFail();
+  void        reloadInfo();
+  void        setPermissionRights();
+  bool        hasSetGroupPermission(std::string group);
+  bool        hasPermission(PlayerAccessInfo::AccessPerm right);
+  void        setGroup(std::string group);
+  void        resetGroup(std::string group);
+  void        setAdmin();
+  void        setRestartOnBase(bool on);
+  bool        shouldRestartAtBase();
+  std::string getName();
+  bool        isRegistered() const;
+  bool        isExisting();
+  bool        isIdentifyRequired();
+  bool        isAllowedToEnter();
+  bool        isPasswordMatching(const char* pwd);
+  uint8_t     getPlayerProperties();
+  void        storeInfo(const char* pwd);
+  void        setPassword(std::string pwd);
+#ifdef NETWORK_STATS
+  void        initNetworkStatistics();
+  void        dumpMessageStats();
+#endif
+  bool        isConnected();
+  int         send(const void *buffer, size_t length);
+  int         receive(size_t lenght);
+  void        resetComm();
+  void        closeComm();
+  void        dropUnconnected();
+  void        debugRemove(const char *reason, int index);
+  void        debugAdd(int index);
+  void        fdSet(fd_set *read_set, fd_set *write_set, int &maxFile);
+  bool        fdIsSet(fd_set *set);
+  void        debugPwdTries(); 
+  void        getPlayerList(char *list, int index); 
+  const char *getTargetIP();
+  int         sizeOfIP();
+  void       *packAdminInfo(void *buf, int index);
+  void        debugUnknownPacket(int index, int code);
+  bool        isAtIP(std::string IP);
+  void        debugHugePacket(int index, int length);
+  bool        isPlaying();
+  bool        exist();
+  void        signingOn();
+  bool        isAlive();
+  bool        isInLimbo();
+  void        remove();
+  bool        isDead();
+  void        setAlive();
+  void        setDead();
+private:
     // player access
     PlayerAccessInfo accessInfo;
     bool Admin;
@@ -98,6 +154,7 @@ struct PlayerInfo {
 #endif
     // current state of player
     ClientState state;
+public:
     // type of player
     PlayerType type;
     // player's pseudonym
