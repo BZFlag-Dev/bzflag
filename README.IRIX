@@ -5,25 +5,43 @@ Building on IRIX will work with either the SGI MIPS compiler or the
 GNU gcc3 compiler.  The GNU compiler is available for download from
 SGI freeware.  BZFlag is not presently tested in 64bit-compilation
 mode, and -o32 mode is no longer supported; the default -n32 is
-supported and functional.
+supported and functional.  The -o32 mode "should" work by simply
+changing the -DEFAULT option to be abi=o32 instead of abi=n32; best
+of luck regardless.
 
 Note that the gcc-3.2.2 version picked up some 6.5.18-isms, so you may
-need to track down the older 3.1 release (or compile 3.2 yourself)
+need to track down the older 3.1 release (or compile 3.2 yourself) if
+you are using gcc to compile.
 
 If both the GNU compiler and the SGI MIPS compiler are installed on
 the same system, the GNU compiler will be used by default.  To use the
 SGI MIPS compiler, you will need to inform the configuration script of
 your preference.  You will need to set and export two environment
-variables:
+variables.  For simplicity, the example below also smashes in the
+CFLAGS and CXXFLAGS as the compiler "name"..
 
 # for a bourne-shell environment:
-./configure CC="cc -OPT:Olimit=65536 -DEFAULT:abi=n32:isa=mips4:proc=r10k -LANG:std -J2 -FE:template_in_elf_section -no_auto_include" CXX="CC -OPT:Olimit=65536 -DEFAULT:abi=n32:isa=mips4:proc=r10k -LANG:std -J2 -FE:template_in_elf_section -no_auto_include"
+./configure CC="cc -OPT:Olimit=65536 -DEFAULT:abi=n32:isa=mips4:proc=r10k -LANG:std -FE:template_in_elf_section -no_auto_include" CXX="CC -OPT:Olimit=65536 -DEFAULT:abi=n32:isa=mips4:proc=r10k -LANG:std -FE:template_in_elf_section -no_auto_include"
 make
 
 # for a c-shell environment
-./configure CC="cc -OPT:Olimit=65536 -DEFAULT:abi=n32:isa=mips4:proc=r10k -LANG:std -J2 -FE:template_in_elf_section -no_auto_include" CXX="CC -OPT:Olimit=65536 -DEFAULT:abi=n32:isa=mips4:proc=r10k -LANG:std -J2 -FE:template_in_elf_section -no_auto_include"
+./configure CC="cc -OPT:Olimit=65536 -DEFAULT:abi=n32:isa=mips4:proc=r10k -LANG:std -FE:template_in_elf_section -no_auto_include" CXX="CC -OPT:Olimit=65536 -DEFAULT:abi=n32:isa=mips4:proc=r10k -LANG:std -FE:template_in_elf_section -no_auto_include"
 make
 
+During the build, it is very likely that the build will hang when it
+gets to src/net/multicast.cxx.  This appears to be an optimization bug
+in the MIPSPro 7.3 compiler.  To get around this problem, abort the
+hung compilation and:
+
+cd src/net/
+CC -OPT:Olimit=32768 -DEFAULT:abi=o32:isa=mips3:proc=r5k -LANG:std -FE:template_in_elf_section -no_auto_include -DHAVE_CONFIG_H -I. -I../../include -c -o multicast.o `test -f 'multicast.cxx' || echo './'`multicast.cxx
+cd ../..
+make
+
+You should then be compiling again.  You may have similar issues with
+other files..  Repeat the above example compile line for those files
+by replacing multicast with the corresponding file name.  Some files
+will simply take a very long time to compile, so be patient. ;)
 
 See the generic install instructions in README for more details.
 
