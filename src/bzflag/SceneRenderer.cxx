@@ -577,7 +577,6 @@ void			SceneRenderer::render(
 
   // set scissor
   
-  LocalPlayer *myTank = LocalPlayer::getMyTank();
   glScissor(window.getOriginX(), window.getOriginY() + window.getHeight() - window.getViewHeight(),
       window.getWidth(), window.getViewHeight());
 
