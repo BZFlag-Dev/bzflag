@@ -815,10 +815,9 @@ void handleLagwarnCmd(GameKeeper::Player *playerData, const char *message)
 }
 
 
-int lagCompare(const void* _a, const void* _b)
+bool lagCompare(const GameKeeper::Player *a, const GameKeeper::Player *b)
 {
-  return (*(GameKeeper::Player **)_a)->lagInfo.getLag()
-    - (*(GameKeeper::Player **)_b)->lagInfo.getLag();
+  return a->lagInfo.getLag() < b->lagInfo.getLag();
 }
 
 void handleLagstatsCmd(GameKeeper::Player *playerData, const char *)
@@ -837,7 +836,7 @@ void handleLagstatsCmd(GameKeeper::Player *playerData, const char *)
       sortedPlayer[j++] = p;
     }
   }
-  qsort(sortedPlayer, j, sizeof(GameKeeper::Player *), lagCompare);
+  std::sort(sortedPlayer, sortedPlayer + j, lagCompare);
 
   char reply[MessageLen];
   for (i = 0; i < j; i++) {
