@@ -32,9 +32,16 @@ void handleUptimeCmd(GameKeeper::Player *playerData, const char *);
 
 /** part command hook function
  *
- * /part <message> quits game with a goodbye message
+ * /part <message> leaves game with a goodbye message
  */
 void handlePartCmd(GameKeeper::Player *playerData, const char *message);
+
+
+/** quit command hook function
+ *
+ * /quit <message> quits game with a goodbye message
+ */
+void handleQuitCmd(GameKeeper::Player *playerData, const char *message);
 
 
 /** me command hook function

@@ -26,6 +26,7 @@
 #include "BZDBCache.h"
 #include "AnsiCodes.h"
 #include "TextUtils.h"
+#include "CommandsStandard.h"
 
 /* local implementation headers */
 #include "LocalPlayer.h"
@@ -71,7 +72,7 @@ void listSetVars(const std::string& name, void*)
 }
 
 bool			ComposeDefaultKey::keyPress(const BzfKeyEvent& key)
-{
+{ 
   bool sendIt;
   LocalPlayer *myTank = LocalPlayer::getMyTank();
   if (myTank && KEYMGR.get(key, true) == "jump") {
@@ -113,7 +114,6 @@ bool			ComposeDefaultKey::keyPress(const BzfKeyEvent& key)
 
   if (sendIt) {
     std::string message = hud->getComposeString();
-
     if (message.length() > 0) {
       const char* cmd = message.c_str();
       if (strncmp(cmd, "SILENCE", 7) == 0) {
@@ -172,6 +172,16 @@ bool			ComposeDefaultKey::keyPress(const BzfKeyEvent& key)
 	  }
 	}
 #endif
+      } else if (strncmp(message.c_str(), "/quit", 5) == 0 ) {
+	
+	char messageBuffer[MessageLen]; // send message 
+	memset(messageBuffer, 0, MessageLen);
+	strncpy(messageBuffer, message.c_str(), MessageLen);
+	nboPackString(messageMessage + PlayerIdPLen, messageBuffer, MessageLen);
+	serverLink->send(MsgMessage, sizeof(messageMessage), messageMessage);
+
+	CommandsStandard::quit(); // kill client
+
       } else if (serverLink) {
 	int i, mhLen = messageHistory.size();
 	for (i = 0; i < mhLen; i++) {

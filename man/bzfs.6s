@@ -587,12 +587,22 @@ Write a message to the server administrator. Example:
 
 .TP
 .B /part {message}
-Leave the game with a goodbye message (similar to IRC's /part)
+Leave the server with a goodbye message (similar to IRC's /part)
 .ft CW
 .nf
 .ne 2
 /part Gotta go! bye everyone!
 .ft R
+
+.TP
+.B /quit {message}
+Quit the game with a goodbye message (similar to IRC's /quit)
+.ft CW
+.nf
+.ne 2
+/quit Gotta go! bye everyone!
+.ft R
+
 
 .SH SERVER ADMINISTRATIVE COMMANDS
 

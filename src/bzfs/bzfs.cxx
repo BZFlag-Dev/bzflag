@@ -3072,9 +3072,11 @@ static void parseCommand(const char *message, int t)
   } else if (strncmp(message + 1, "serverquery", 11) == 0) {
     handleServerQueryCmd(playerData, message);
 
-
   } else if (strncmp(message + 1, "part", 4) == 0) {
     handlePartCmd(playerData, message);
+
+  } else if (strncmp(message + 1, "quit", 4) == 0) {
+    handleQuitCmd(playerData, message);
 
   } else if (strncmp(message + 1, "uptime", 6) == 0) {
     handleUptimeCmd(playerData, message);
