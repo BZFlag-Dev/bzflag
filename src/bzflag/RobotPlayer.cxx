@@ -474,28 +474,17 @@ float			RobotPlayer::getRegionExitPoint(
   d[0] = p2[0] - p1[0];
   d[1] = p2[1] - p1[1];
 
-  // safe value in mid
-  mid[0]   = p1[0];
-  mid[1]   = p1[1];
-  priority = 1.0e6;
+  float vect = d[0] * b[1] - d[1] * b[0];
+  float t    = 0.0f;  // safe value
+  if (fabs(vect) > 1.0e-6) {
+    // compute intersection along (p1,d) with (a,b)
+    t = (a[0] * b[1] - a[1] * b[0] - p1[0] * b[1] + p1[1] * b[0]) / vect;
+    if (t > 1.0f)
+      t = 1.0f;
+    else if (t < 0.0f)
+      t = 0.0f;
+  }
 
-  if (!d[0] && !d[1])
-    return 1.0e6;
-    
-  // restrict exit zone avoiding tankRadius each side. 
-  // there are possibly obstacles at both end points
-  const float tankRadius = BZDB->eval(StateDatabase::BZDB_TANKRADIUS);
-  const float minT = tankRadius / hypotf(d[0], d[1]);
-  const float maxT = 1.0f - minT;
-
-  if (minT > maxT)
-    return 1.0e6;
-
-  // compute intersection along (p1,d) with (a,b)
-  float t = (a[0] * b[1] - a[1] * b[0] - p1[0] * b[1] + p1[1] * b[0]) /
-		(d[0] * b[1] - d[1] * b[0]);
-  if (t > maxT) t = maxT;
-  else if (t < minT) t = minT;
   mid[0] = p1[0] + t * d[0];
   mid[1] = p1[1] + t * d[1];
 

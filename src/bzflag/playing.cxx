@@ -4428,13 +4428,14 @@ static void		addObstacle(std::vector<BzfRegion*>& rgnList, const Obstacle& obsta
   float p[4][2];
   const float* c = obstacle.getPosition();
   const float tankHeight = BZDB->eval(StateDatabase::BZDB_TANKHEIGHT);
+  const float tankRadius = BZDB->eval(StateDatabase::BZDB_TANKRADIUS);
 
   if (tankHeight < c[2])
     return;
 
   const float a = obstacle.getRotation();
-  const float w = obstacle.getWidth();
-  const float h = obstacle.getBreadth();
+  const float w = obstacle.getWidth() + tankRadius;
+  const float h = obstacle.getBreadth() + tankRadius;
   const float xx =  w * cosf(a);
   const float xy =  w * sinf(a);
   const float yx = -h * sinf(a);
@@ -4486,6 +4487,7 @@ static void		addObstacle(std::vector<BzfRegion*>& rgnList, const Obstacle& obsta
 
 static void		makeObstacleList()
 {
+  const float tankRadius = BZDB->eval(StateDatabase::BZDB_TANKRADIUS);
   int i;
   const int count = obstacleList.size();
   for (i = 0; i < count; i++)
@@ -4495,14 +4497,14 @@ static void		makeObstacleList()
   // FIXME -- shouldn't hard code game area
   float gameArea[4][2];
   float worldSize = BZDB->eval(StateDatabase::BZDB_WORLDSIZE);
-  gameArea[0][0] = -0.5f * worldSize;
-  gameArea[0][1] = -0.5f * worldSize;
-  gameArea[1][0] =  0.5f * worldSize;
-  gameArea[1][1] = -0.5f * worldSize;
-  gameArea[2][0] =  0.5f * worldSize;
-  gameArea[2][1] =  0.5f * worldSize;
-  gameArea[3][0] = -0.5f * worldSize;
-  gameArea[3][1] =  0.5f * worldSize;
+  gameArea[0][0] = -0.5f * worldSize + tankRadius;
+  gameArea[0][1] = -0.5f * worldSize + tankRadius;
+  gameArea[1][0] =  0.5f * worldSize - tankRadius;
+  gameArea[1][1] = -0.5f * worldSize + tankRadius;
+  gameArea[2][0] =  0.5f * worldSize - tankRadius;
+  gameArea[2][1] =  0.5f * worldSize - tankRadius;
+  gameArea[3][0] = -0.5f * worldSize + tankRadius;
+  gameArea[3][1] =  0.5f * worldSize - tankRadius;
   obstacleList.push_back(new BzfRegion(4, gameArea));
 
   const std::vector<BoxBuilding>& boxes = World::getWorld()->getBoxes();
