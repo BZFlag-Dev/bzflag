@@ -86,10 +86,10 @@ if ( not defined $action or $action eq "LIST" ) {
 elsif ( $action eq "ADD" ) {
   # Filter out badly formatted or buggy versions
   exit unless (
-    $version =~ /^BZFS/         and
-    $version ne "BZFS1906"
+    $version =~ /^BZFS/
+#        and $version ne "BZFS1906"
   );
-  
+
   # Test to see whether nameport is valid by attempting to establish a
   # connection to it
   my ($servname, $servport) = split /:/, $nameport;
@@ -127,7 +127,7 @@ elsif ( $action eq "ADD" ) {
   else {
     $servdb->do(
       "UPDATE servers SET
-          lastmod = $curtime 
+          lastmod = $curtime
           WHERE nameport = '$nameport'"
     );
   }
