@@ -467,6 +467,9 @@
 				</FileConfiguration>
 			</File>
 			<File
+				RelativePath="..\..\src\geometry\MeshFragSceneNode.cxx">
+			</File>
+			<File
 				RelativePath="..\..\src\geometry\MeshPolySceneNode.cxx">
 			</File>
 			<File
@@ -882,6 +885,9 @@
 			</File>
 			<File
 				RelativePath="..\..\include\LaserSceneNode.h">
+			</File>
+			<File
+				RelativePath="..\..\include\MeshFragSceneNode.h">
 			</File>
 			<File
 				RelativePath="..\..\include\OpenGLGState.h">
