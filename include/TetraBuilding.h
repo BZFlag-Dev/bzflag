@@ -67,11 +67,12 @@ class TetraBuilding : public Obstacle {
   private:
     static const char*	typeName;
     float vertices[4][3];
+    float planes[4][4];   // planes are numbered to the opposite vertex
+    float mins[3];        // minimum extents
+    float maxs[3];        // maximum extents
     bool visible[4];      // is this plane visible?
     bool colored[4];      // is this plane colored?
     float colors[4][4];   // RGBA color specifications per plane
-    float planes[4][4];
-                          // planes are numbered to the opposite vertex
 };  
 
 

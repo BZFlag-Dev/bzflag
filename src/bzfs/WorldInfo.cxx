@@ -341,9 +341,18 @@ void WorldInfo::finishWorld()
   loadCollisionManager ();
 }
 
-int WorldInfo::packDatabase()
+int WorldInfo::packDatabase(const BasesList* baseList)
 {
-  databaseSize =
+  int numBases = 0;
+  BasesList::const_iterator base_it;
+  if (baseList != NULL) {
+    for (base_it = baseList->begin(); base_it != baseList->end(); ++base_it) {
+      numBases += base_it->second.size();
+    }
+  }
+  
+  databaseSize = 
+    (2 + 2 + WorldCodeBaseSize) * numBases +
     (2 + 2 + WorldCodeWallSize) * walls.size() +
     (2 + 2 + WorldCodeBoxSize) * boxes.size() +
     (2 + 2 + WorldCodePyramidSize) * pyramids.size() +
@@ -351,10 +360,18 @@ int WorldInfo::packDatabase()
     (2 + 2 + WorldCodeTeleporterSize) * teleporters.size() +
     (2 + 2 + WorldCodeLinkSize) * 2 * teleporters.size() +
     worldWeapons.packSize() + entryZones.packSize();
+
   database = new char[databaseSize];
   void *databasePtr = database;
 
   unsigned char	bitMask;
+  
+  // add bases
+  if (baseList != NULL) {
+    for (base_it = baseList->begin(); base_it != baseList->end(); ++base_it) {
+      databasePtr = base_it->second.pack(databasePtr);
+    }
+  }
 
   // add walls  
   for (std::vector<WallObstacle>::iterator wall_it = walls.begin();
@@ -469,7 +486,7 @@ int WorldInfo::packDatabase()
     databasePtr = nboPackUShort(databasePtr, uint16_t(i * 2 + 1));
     databasePtr = nboPackUShort(databasePtr, uint16_t(teleportTargets[i * 2 + 1]));
   }
-  
+
   databasePtr = worldWeapons.pack (databasePtr);
   databasePtr = entryZones.pack (databasePtr);
   

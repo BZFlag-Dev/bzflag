@@ -23,10 +23,11 @@ static bool makePlane (const float* p1, const float* p2, const float* pc, float*
 
 
 TetraBuilding::TetraBuilding(const float (*_vertices)[3], const bool *_visible,
-			                 const bool *_colored, const float (*_colors)[4],
-			                 bool drive, bool shoot) :
-                             Obstacle(_vertices[0], 0.0f, 50.0f, 50.0f, 50.0f, drive, shoot) //FIXME
+                             const bool *_colored, const float (*_colors)[4],
+			     bool drive, bool shoot)
 {
+  int v, a;
+
   memcpy (vertices, _vertices, 4 * sizeof (float[3]));
   memcpy (visible, _visible, 4 * sizeof (bool));
   memcpy (colored, _colored, 4 * sizeof (bool));
@@ -34,8 +35,8 @@ TetraBuilding::TetraBuilding(const float (*_vertices)[3], const bool *_visible,
   
   // make sure the the planes are facing outwards
   float edge[3][3]; // edges from vertex 0
-  for (int v = 0; v < 3; v++) {
-    for (int a = 0; a < 3; a++) {
+  for (v = 0; v < 3; v++) {
+    for (a = 0; a < 3; a++) {
       edge[v][a] = vertices[v+1][a] - vertices[0][a];
     }
   }
@@ -60,6 +61,33 @@ TetraBuilding::TetraBuilding(const float (*_vertices)[3], const bool *_visible,
   makePlane (vertices[0], vertices[1], vertices[3], planes[2]);
   makePlane (vertices[0], vertices[2], vertices[1], planes[3]);
   
+  // setup the extents
+  mins[0] = mins[1] = mins[2] = +Infinity;
+  maxs[0] = maxs[1] = maxs[2] = -Infinity;
+  for (v = 0; v < 4; v++) {
+    const float* vertex = vertices[v];
+    for (a = 0; a < 3; a++) {
+      if (vertex[a] < mins[a]) {
+        mins[a] = vertex[a];
+      }
+      if (vertex[a] > maxs[a]) {
+        maxs[a] = vertex[a];
+      }
+    }
+  }
+
+  // setup the basic obstacle parameters
+  pos[0] = 0.5f * (maxs[0] + mins[0]);
+  pos[1] = 0.5f * (maxs[1] + mins[1]);
+  pos[2] = mins[2];
+  size[0] = 0.5f * (maxs[0] - mins[0]);
+  size[1] = 0.5f * (maxs[1] - mins[1]);
+  size[2] = maxs[2] - mins[2];
+  angle = 0.0f;
+  driveThrough = drive;
+  shootThrough = shoot;
+  ZFlip = false;
+  
   return;
 }                             
 
@@ -71,20 +99,19 @@ TetraBuilding::~TetraBuilding()
 }
 
 
-const char*		TetraBuilding::getType() const
+const char* TetraBuilding::getType() const
 {
   return typeName;
 }
 
 
-const char*		TetraBuilding::getClassName() // const
+const char* TetraBuilding::getClassName() // const
 {
   return typeName;
 }
 
 
-void			TetraBuilding::getCorner(int index,
-						float* pos) const
+void TetraBuilding::getCorner(int index, float* pos) const
 {
   memcpy (pos, vertices[index], 3 * sizeof(float));
   return;
@@ -122,7 +149,7 @@ static bool makePlane (const float* p1, const float* p2, const float* pc,
 }                       
 
 
-float			TetraBuilding::intersect(const Ray& ray) const
+float TetraBuilding::intersect(const Ray& ray) const
 {
   // NOTE: i'd use a quick test here first, but the
   //       plan is to use an octree for the collision
@@ -215,7 +242,7 @@ float			TetraBuilding::intersect(const Ray& ray) const
 }
 
 
-void			TetraBuilding::get3DNormal(const float* p, float* n) const
+void TetraBuilding::get3DNormal(const float* p, float* n) const
 {
   // FIXME: this is silly, we should just use the computations in
   // intersect() to pull out this information, maybe have intersect
@@ -237,14 +264,15 @@ void			TetraBuilding::get3DNormal(const float* p, float* n) const
 }
 
 
+
+
 /////////////////////////////////////////////////////////////
 //  FIXME - everything after this point is currently JUNK! //
 /////////////////////////////////////////////////////////////
 
 
 
-void			TetraBuilding::getNormal(const float* p,
-							float* n) const
+void TetraBuilding::getNormal(const float* p, float* n) const
 {
   p = p;
   n[0] = 0.0f;
@@ -253,11 +281,10 @@ void			TetraBuilding::getNormal(const float* p,
 }
 
 
-bool			TetraBuilding::getHitNormal(
-				const float* pos1, float,
-				const float* pos2, float,
-				float, float, float height,
-				float* normal) const
+bool TetraBuilding::getHitNormal(const float* pos1, float,
+				 const float* pos2, float,
+				 float, float, float height,
+				 float* normal) const
 {
   pos1 = pos1;
   pos2 = pos2;
@@ -269,52 +296,41 @@ bool			TetraBuilding::getHitNormal(
 }
 
 
-bool			TetraBuilding::inCylinder(const float* p,
-						float radius, float height) const
+bool TetraBuilding::inCylinder(const float* p,
+                               float radius, float height) const
 {
-  p = p;
-  radius = height;
-  if ((fabsf(p[0] - vertices[0][0]) < 10.0f) &&
-      (fabsf(p[1] - vertices[0][1]) < 10.0f)) {
-    return true;
+  if (((p[0] + radius) < mins[0]) || ((p[0] - radius) > maxs[0]) ||
+      ((p[1] + radius) < mins[1]) || ((p[1] - radius) > maxs[1]) ||
+      ((p[2] + height) < mins[2]) || (p[2] > maxs[2])) {
+    return false;
   }
-  return false;
+  return true;
 }
 
 
-bool			TetraBuilding::inBox(const float* p, float a,
-						float dx, float dy, float height) const
+bool TetraBuilding::inBox(const float* p, float angle,
+                          float dx, float dy, float height) const
 {
-  p = p;
-  dx = dy = a = height;
-  if ((fabsf(p[0] - vertices[0][0]) < 10.0f) &&
-      (fabsf(p[1] - vertices[0][1]) < 10.0f)) {
-    return true;
-  }
-  return false;
+  angle = sqrtf ((dx * dx) + (dy * dy));
+  return inCylinder (p, angle, height);
 }
 
 
-bool			TetraBuilding::inMovingBox(const float*, float,
-                                             const float* p, float angle,
-                                             float dx, float dy, float dz) const
+bool TetraBuilding::inMovingBox(const float*, float,
+                                const float* p, float angle,
+                                float dx, float dy, float height) const
 {
-  p = p;
-  dx = dy;
-  dz = angle;
-  if ((fabsf(p[0] - vertices[0][0]) < 10.0f) &&
-      (fabsf(p[1] - vertices[0][1]) < 10.0f)) {
-    return true;
-  }
-  return false;
+  angle = sqrtf ((dx * dx) + (dy * dy));
+  return inCylinder (p, angle, height);
 }                                          
 
 
-bool			TetraBuilding::isCrossing(const float* p, float a,
-					float dx, float dy, float height, float* plane) const
+bool TetraBuilding::isCrossing(const float* p, float angle,
+                               float dx, float dy, float height,
+                               float* plane) const
 {
   p = p;
-  dx = dy = a = height;
+  dx = dy = angle = height;
   if ((fabsf(p[0] - vertices[0][0]) < 10.0f) &&
       (fabsf(p[1] - vertices[0][1]) < 10.0f)) {
     if (plane != NULL) {

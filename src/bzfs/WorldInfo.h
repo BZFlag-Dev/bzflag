@@ -20,6 +20,7 @@
 #include <string>
 #include "EntryZones.h"
 #include "WorldWeapons.h"
+#include "TeamBases.h"
 
 #include "BoxBuilding.h"
 #include "PyramidBuilding.h"
@@ -65,7 +66,7 @@ public:
   bool getZonePoint(const std::string &qualifier, float *pt);
   bool getSafetyPoint(const std::string &qualifier, const float *pos, float *pt);
   void finishWorld();
-  int packDatabase();
+  int packDatabase(const BasesList* baseList);
   void *getDatabase() const;
   int getDatabaseSize() const;
   int getUncompressedSize() const;

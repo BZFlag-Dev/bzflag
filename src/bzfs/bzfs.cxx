@@ -1145,17 +1145,16 @@ static bool defineWorld()
 
   maxWorldHeight = world->getMaxWorldHeight();
     
-  int numBases = 0;
-  for (BasesList::iterator it = bases.begin(); it != bases.end(); ++it)
-    numBases += it->second.size();
-
   // package up world
-  world->packDatabase();
+  if (clOptions->gameStyle & TeamFlagGameStyle) {
+    world->packDatabase(&bases);
+  } else {
+    world->packDatabase(NULL);
+  }
+  
   // now get world packaged for network transmission
   worldDatabaseSize = 4 + WorldCodeHeaderSize +
       world->getDatabaseSize() + 4 + WorldCodeEndSize;
-  if (clOptions->gameStyle & TeamFlagGameStyle)
-    worldDatabaseSize += numBases * (4 + WorldCodeBaseSize);
 
   worldDatabase = new char[worldDatabaseSize];
   // this should NOT happen but it does sometimes
@@ -1176,12 +1175,7 @@ static bool defineWorld()
   buf = nboPackFloat(buf, clOptions->angularAcceleration);
   buf = nboPackUShort(buf, clOptions->shakeTimeout);
   buf = nboPackUShort(buf, clOptions->shakeWins);
-  // time-of-day will go here
-  buf = nboPackUInt(buf, 0);
-  if (clOptions->gameStyle & TeamFlagGameStyle) {
-    for (BasesList::iterator it = bases.begin(); it != bases.end(); ++it)
-      buf = it->second.pack(buf);
-  }
+  buf = nboPackUInt(buf, 0); // time-of-day will go here
   buf = nboPackUInt(buf, world->getUncompressedSize());
   buf = nboPackUInt(buf, world->getDatabaseSize());
   buf = nboPackString(buf, world->getDatabase(), world->getDatabaseSize());
