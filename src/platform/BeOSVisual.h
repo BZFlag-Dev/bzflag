@@ -22,36 +22,36 @@
 
 class BeOSVisual : public BzfVisual {
 public:
-	BeOSVisual(const BeOSDisplay*);
-//	BeOSVisual(const BeOSVisual&);
-	~BeOSVisual();
+  BeOSVisual(const BeOSDisplay*);
+//  BeOSVisual(const BeOSVisual&);
+  ~BeOSVisual();
 
-	void				setLevel(int level);
-	void				setDoubleBuffer(bool);
-	void				setIndex(int minDepth);
-	void				setRGBA(int minRed, int minGreen,
+  void				setLevel(int level);
+  void				setDoubleBuffer(bool);
+  void				setIndex(int minDepth);
+  void				setRGBA(int minRed, int minGreen,
 							int minBlue, int minAlpha);
-	void				setDepth(int minDepth);
-	void				setStencil(int minDepth);
-	void				setAccum(int minRed, int minGreen,
+  void				setDepth(int minDepth);
+  void				setStencil(int minDepth);
+  void				setAccum(int minRed, int minGreen,
 							int minBlue, int minAlpha);
-	void				setStereo(bool);
-	void				setMultisample(int minSamples);
+  void				setStereo(bool);
+  void				setMultisample(int minSamples);
 
-	bool				build();
+  bool				build();
 
-	// for other BeOS stuff
+  // for other BeOS stuff
 
 private:
-	const BeOSDisplay*	display;
+  const BeOSDisplay*		display;
 friend class BeOSWindow;
-	uint32			color;
-	uint32			depth;
-	uint32			stencil;
-	uint32			accum;
-	uint32			flags;
-	bool			doubleBuffer;
+  uint32			color;
+  uint32			depth;
+  uint32			stencil;
+  uint32			accum;
+  uint32			flags;
+  bool				doubleBuffer;
 };
 
 #endif // BZF_BEOSVISUAL_H
-// ex: shiftwidth=4 tabstop=4
+// ex: shiftwidth=2 tabstop=8

@@ -31,75 +31,74 @@
 
 class MyGLWindow : public BDirectGLWindow {
 public:
-	MyGLWindow(BeOSWindow		*beosWindow,
-					BRect		frame,
-					const char	*title, 
-					window_type	type,
-					uint32		flags,
-					uint32		workspace = B_CURRENT_WORKSPACE);
+  MyGLWindow(BeOSWindow		*beosWindow,
+				BRect		frame,
+				const char	*title, 
+				window_type	type,
+				uint32		flags,
+				uint32		workspace = B_CURRENT_WORKSPACE);
 
-	virtual bool QuitRequested(void);
-	virtual void MessageReceived(BMessage *msg);
-	virtual void FrameResized(float width, float height);
-	virtual void DeviceInfo(uint32 device_id, uint32 monitor, const char *name, bool depth, bool stencil, bool accum);
+  virtual bool QuitRequested(void);
+  virtual void MessageReceived(BMessage *msg);
+  virtual void FrameResized(float width, float height);
+  virtual void DeviceInfo(uint32 device_id, uint32 monitor, const char *name, bool depth, bool stencil, bool accum);
 
-	void PostBzfEvent(void);
+  void PostBzfEvent(void);
 
 private:
-	BzfEvent		bzfEvent;
-	BeOSWindow		*ref;
+  BzfEvent		bzfEvent;
+  BeOSWindow		*ref;
 };
 
 MyGLWindow::MyGLWindow(BeOSWindow *beosWindow, BRect frame, const char *title, window_type type, uint32 flags, uint32 workspace)
 	: BDirectGLWindow(frame, title, type, flags, workspace)
 {
-	ref = beosWindow;
-	bzfEvent.window = ref;
+  ref = beosWindow;
+  bzfEvent.window = ref;
 }
 
 bool MyGLWindow::QuitRequested(void)
 {
-	bzfEvent.type = BzfEvent::Quit;
-	PostBzfEvent();
-	// Let the application close us.
-//	be_app->PostMessage(B_QUIT_REQUESTED);
-	return false;
+  bzfEvent.type = BzfEvent::Quit;
+  PostBzfEvent();
+  // Let the application close us.
+//  be_app->PostMessage(B_QUIT_REQUESTED);
+  return false;
 }
 
 void MyGLWindow::MessageReceived(BMessage *msg)
 {
-	BPoint p;
-	int32 raw_char;
-	int32 buttons;
-	int32 modifiers;
+  BPoint p;
+  int32 raw_char;
+  int32 buttons;
+  int32 modifiers;
 //printf("MyGLWindow::MessageReceived()\n");
 //msg->PrintToStream();
-	switch (msg->what) {
-	
-	case B_MOUSE_MOVED:
-		msg->FindPoint("where", &p);
-		bzfEvent.type = BzfEvent::MouseMove;
-		bzfEvent.mouseMove.x = (int)p.x;
-		bzfEvent.mouseMove.y = (int)p.y;
-		break;
-	case B_MOUSE_DOWN:
-		msg->FindInt32("buttons", &buttons);
-		msg->FindInt32("modifiers", &modifiers);
-		bzfEvent.type = BzfEvent::KeyDown;
-		bzfEvent.keyDown.ascii = 0;
-		bzfEvent.keyDown.button = (buttons == B_PRIMARY_MOUSE_BUTTON)?(BzfKeyEvent::LeftMouse):(BzfKeyEvent::RightMouse);
-		bzfEvent.keyDown.shift = 0;
-		break;
-	case B_MOUSE_UP:
-		msg->FindInt32("buttons", &buttons);
-		msg->FindInt32("modifiers", &modifiers);
-		bzfEvent.type = BzfEvent::KeyUp;
-		bzfEvent.keyUp.ascii = 0;
-		bzfEvent.keyUp.button = (buttons == B_PRIMARY_MOUSE_BUTTON)?(BzfKeyEvent::LeftMouse):(BzfKeyEvent::RightMouse);
-		bzfEvent.keyUp.shift = 0;
-		break;
-	case B_KEY_DOWN:
-	{
+  switch (msg->what) {
+    case B_MOUSE_MOVED:
+      msg->FindPoint("where", &p);
+      bzfEvent.type = BzfEvent::MouseMove;
+      bzfEvent.mouseMove.x = (int)p.x;
+      bzfEvent.mouseMove.y = (int)p.y;
+      break;
+    case B_MOUSE_DOWN:
+      msg->FindInt32("buttons", &buttons);
+      msg->FindInt32("modifiers", &modifiers);
+      bzfEvent.type = BzfEvent::KeyDown;
+      bzfEvent.keyDown.ascii = 0;
+      bzfEvent.keyDown.button = (buttons == B_PRIMARY_MOUSE_BUTTON)?(BzfKeyEvent::LeftMouse):(BzfKeyEvent::RightMouse);
+      bzfEvent.keyDown.shift = 0;
+      break;
+    case B_MOUSE_UP:
+      msg->FindInt32("buttons", &buttons);
+      msg->FindInt32("modifiers", &modifiers);
+      bzfEvent.type = BzfEvent::KeyUp;
+      bzfEvent.keyUp.ascii = 0;
+      bzfEvent.keyUp.button = (buttons == B_PRIMARY_MOUSE_BUTTON)?(BzfKeyEvent::LeftMouse):(BzfKeyEvent::RightMouse);
+      bzfEvent.keyUp.shift = 0;
+      break;
+    case B_KEY_DOWN:
+    {
 		int byteslen;
 		msg->FindInt32("modifiers", &modifiers);
 		msg->FindInt32("raw_char", &raw_char);
@@ -423,4 +422,4 @@ printf("BeOSWindow::freeContext()\n");
 	bWindow->ReleaseCurrent();
 }
 
-// ex: shiftwidth=4 tabstop=4
+// ex: shiftwidth=2 tabstop=8

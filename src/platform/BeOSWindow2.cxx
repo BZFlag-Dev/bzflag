@@ -423,4 +423,4 @@ printf("BeOSWindow::freeContext()\n");
 	bWindow->ReleaseCurrent();
 }
 
-// ex: shiftwidth=4 tabstop=4
+// ex: shiftwidth=2 tabstop=8

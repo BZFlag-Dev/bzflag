@@ -27,29 +27,29 @@ class BeOSWindow;
 
 class BeOSDisplay : public BzfDisplay {
 public:
-	BeOSDisplay(const char* displayName, const char* videoFormat);
-	~BeOSDisplay();
+  BeOSDisplay(const char* displayName, const char* videoFormat);
+  ~BeOSDisplay();
 
-	bool				isValid() const;
-	bool				isEventPending() const;
-	bool				getEvent(BzfEvent&) const;
+  bool				isValid() const;
+  bool				isEventPending() const;
+  bool				getEvent(BzfEvent&) const;
 
-	void				postBzfEvent(BzfEvent&);
-
-private:
-	BeOSDisplay(const BeOSDisplay&);
-	BeOSDisplay&			operator=(const BeOSDisplay&);
-
-	bool				doSetResolution(int);
-	bool				doSetDefaultResolution();
+  void				postBzfEvent(BzfEvent&);
 
 private:
-	BScreen				*bScreen;
-	/* Event stuff */
-	port_id				eventPort;
+  BeOSDisplay(const BeOSDisplay&);
+  BeOSDisplay&			operator=(const BeOSDisplay&);
+
+  bool				doSetResolution(int);
+  bool				doSetDefaultResolution();
+
+private:
+  BScreen				*bScreen;
+  /* Event stuff */
+  port_id				eventPort;
 public: //XXX
-	BeOSWindow			*beosWin;
+  BeOSWindow			*beosWin;
 };
 
 #endif // BZF_BEOSDISPLAY_H
-// ex: shiftwidth=4 tabstop=4
+// ex: shiftwidth=2 tabstop=8
