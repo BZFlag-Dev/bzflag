@@ -288,7 +288,8 @@ RemotePlayer *findBestTarget()
     &&  (!player[t]->isNotResponding()) 
     &&  (myTank->validTeamTarget(player[t]))) {
 
-      if((player[t]->getFlag() == Flags::PhantomZone && player[t]->isFlagActive()))
+      if((player[t]->getFlag() == Flags::PhantomZone && player[t]->isFlagActive()) ||
+    		 (player[t]->getFlag() == Flags::Cloaking && myTank->getFlag() == Flags::Laser))
         continue;
 
       float d = TargetingUtils::getTargetDistance( pos, player[t]->getPosition());
