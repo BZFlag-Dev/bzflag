@@ -324,6 +324,7 @@ regex_t *WordFilter::getCompiledExpression(const std::string &word) const
 
   if ( regcomp(compiledReg, word.c_str(), REG_EXTENDED | REG_ICASE) != 0 ) {
     std::cerr << "Warning: unable to compile regular expression for [" << word << "]" << std::endl;
+    free(compiledReg);
     return (regex_t *)NULL;
   }
   return compiledReg;
