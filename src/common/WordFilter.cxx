@@ -206,11 +206,15 @@ bool WordFilter::aggressiveFilter(char *input) const
 
   /* finally filter the input.  only filter actual alphanumerics. */
   for (int i=0; i < matchCount; i++) {
-    //			std::cout << "i: " << i << "  " << matchPair[i*2] << " for " << matchPair[(i*2)+1] << std::endl;
-
+    char tmp[256] = {0};
+    strncpy(tmp, input + matchPair[i*2], matchPair[(i*2)+1]);
+    //    std::cout << "i: " << i << "  " << matchPair[i*2] << " for " << matchPair[(i*2)+1] << std::endl;
+    std::cout << "Matched: [" << tmp << "]" << std::endl;
+    
     if (filterCharacters(input, matchPair[i*2], matchPair[(i*2)+1]) <= 0) {
       // XXX with multiple matching, we will be unable to filter overlapping matches
       //      std::cerr << "Unable to filter characters" << std::endl;
+      continue;
     }
   }
 

@@ -68,6 +68,8 @@
 #include "KeyManager.h"
 #include "ServerListCache.h"
 #include "BZDBCache.h"
+#include "TextUtils.h"
+
 
 // cause persistent rebuilding for build versioning
 #include "version.h"

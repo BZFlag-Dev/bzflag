@@ -89,6 +89,7 @@ static const char copyright[] = "Copyright (c) 1993 - 2003 Tim Riker";
 #include "ConfigFileManager.h"
 #include "CommandManager.h"
 #include "BZDBCache.h"
+#include "TextUtils.h"
 
 /* bzfs class specific headers */
 #include "TextChunkManager.h"

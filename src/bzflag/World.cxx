@@ -35,6 +35,7 @@
 #include "StateDatabase.h"
 #include "Flag.h"
 #include "BZDBCache.h"
+#include "TextUtils.h"
 
 static OpenGLTexture*	flagTexture = NULL;
 

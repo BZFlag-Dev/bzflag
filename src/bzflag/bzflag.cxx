@@ -61,6 +61,7 @@
 #include "ServerListCache.h"
 #include "BZDBCache.h"
 #include "WordFilter.h"
+#include "TextUtils.h"
 
 // invoke incessant rebuilding for build versioning
 #include "version.h"

@@ -10,9 +10,13 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#include "CommandManager.h"
+// system headers
 #include <ctype.h>
 #include <stdio.h>
+
+// class-specific headers
+#include "CommandManager.h"
+#include "TextUtils.h"
 
 CommandManager*			CommandManager::mgr = NULL;
 

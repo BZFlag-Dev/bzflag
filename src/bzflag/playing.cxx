@@ -88,6 +88,8 @@ static const char copyright[] = "Copyright (c) 1993 - 2003 Tim Riker";
 #include "CommandsStandard.h"
 #include "BZDBCache.h"
 #include "WordFilter.h"
+#include "TextUtils.h"
+
 
 // versioning that makes us recompile every time
 #include "version.h"

@@ -10,13 +10,19 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-/* no header other than VotingBooth.h should be included here */
-
 #ifdef _WIN32
 #pragma warning( 4:4786)
 #endif
 
+// implementation-specific system headers
+#include <iostream>
+
+// this classes interface
 #include "VotingBooth.h"
+
+// implementation-specific bzheaders
+#include "TextUtils.h"
+
 
 
 /* private */
@@ -82,7 +88,7 @@ vote_t VotingBooth::addResponse(const std::string response)
   }
 
   for (vote_t i=0; i < _responseCount; i++) {
-    if (this->compare_nocase(_response[i], response, _response[i].size()) == 0) {
+    if (compare_nocase(_response[i], response, _response[i].size()) == 0) {
       return i;
     }
   }
@@ -99,7 +105,7 @@ vote_t VotingBooth::getResponseIDFromString(const std::string response) const
     return ERROR_VOTE;
   }
   for (vote_t id = 0; id < _responseCount; id++) {
-    if (VotingBooth::compare_nocase(_response[id], response, _response[id].size()) == 0) {
+    if (compare_nocase(_response[id], response, _response[id].size()) == 0) {
       return id;
     }
   }
@@ -124,7 +130,7 @@ bool VotingBooth::hasVoted(const std::string name) const
     return false;
   }
   for (int i = 0; i < _voterCount; i++) {
-    if (VotingBooth::compare_nocase(_voter[i], name, name.size()) == 0) {
+    if (compare_nocase(_voter[i], name, name.size()) == 0) {
       return true;
     }
   }
@@ -161,7 +167,7 @@ bool VotingBooth::vote(std::string voter, vote_t id)
 bool VotingBooth::retractVote(const std::string name)
 {
   for (int i = 0; i < _voterCount; i++) {
-    if (VotingBooth::compare_nocase(_voter[i], name, name.size()) == 0) {
+    if (compare_nocase(_voter[i], name, name.size()) == 0) {
       _vote[i] = RETRACTED_VOTE;
       return true;
     }
@@ -187,7 +193,7 @@ unsigned long int VotingBooth::getVoteCount(const std::string response) const
     return 0;
   }
   for (vote_t id = 0; id < _responseCount; id++) {
-    if (VotingBooth::compare_nocase(_response[id], response, _response[id].size()) == 0) {
+    if (compare_nocase(_response[id], response, _response[id].size()) == 0) {
       return this->getVoteCount(id);
     }
   }

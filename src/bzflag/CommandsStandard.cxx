@@ -10,12 +10,16 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
+// system includes
+#include <stdio.h>
+#include <ctype.h>
+
+// private includes
 #include "CommandsStandard.h"
 #include "CommandManager.h"
 #include "StateDatabase.h"
 #include "KeyManager.h"
-#include <stdio.h>
-#include <ctype.h>
+#include "TextUtils.h"
 
 static bool			quitFlag = false;
 
