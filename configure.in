@@ -21,6 +21,18 @@ AC_DEFINE_UNQUOTED(BZ_BUILD_USER, "`whoami`", [User who compiled BZFlag])
 AC_PROG_MAKE_SET
 AC_PROG_CC
 AC_PROG_CXX
+
+dnl On SGI systems, figure out if we are using MIPSPro compiler
+if test "$build_vendor" = "sgi" ; then
+    AC_MSG_CHECKING([whether we are using the MIPSPro compiler])
+    using_mipspro=no
+    AC_LINK_IFELSE([#if defined(sgi) && !defined(__GNUC__) && defined(_COMPILER_VERSION)
+abcdefghijklmnopqrstuvwxyz;
+#endif
+    ], [using_mipspro=no], [using_mipspro=yes])
+    AC_MSG_RESULT([$using_mipspro])
+fi
+
 AC_PROG_LN_S
 AC_PROG_RANLIB
 AC_CHECK_PROG(HASPOD2MAN, pod2man, yes, no)
@@ -31,9 +43,8 @@ AM_CONDITIONAL(HASPOD2MAN, test $HASPOD2MAN = yes)
 AC_ISC_POSIX
 
 # Just for kicks
-echo -n "checking for artificial intelligence for robots..." 1>&6
-echo " warning: not found" 1>&6
-
+AC_MSG_CHECKING([checking for artificial intelligence for robots])
+AC_MSG_RESULT([warning: not found])
 
 #Checks for headers
 AC_STDC_HEADERS
@@ -93,28 +104,27 @@ esac
 
 AM_CONDITIONAL(MACOS, $macos)
 
-#CONFIG is only used for irix packaging
-case $host_os in
-   irix*)
-	CONFIG=irix-mips3;
-        AC_SUBST(CONFIG)
-        ;;
-esac
-
 AC_PATH_XTRA
+
 
 LDFLAGS="$LDFLAGS $X_LIBS"
 case $host_os in
   solaris*)
-    GLIBS="-lresolv -laudio $GLIBS";
-    LIBS="-lsocket -lnsl -lresolv";
-    LDFLAGS="$LDFLAGS -L/usr/demo/SOUND/lib";;
+    GLIBS="-lresolv -laudio $GLIBS"
+    LIBS="-lsocket -lnsl -lresolv"
+    LDFLAGS="$LDFLAGS -L/usr/demo/SOUND/lib"
+    ;;
   irix*)
-    GLIBS="-lXsgivc -lX11 -laudio $GLIBS";;
+    CONFIG=irix-mips3
+    AC_SUBST(CONFIG)
+    AM_CONDITIONAL(BUGGY_MIPSPRO, test "x$using_mipspro" = "xyes")
+    GLIBS="-lXsgivc -lX11 -laudio $GLIBS"
+    ;;
   beos)
-    GLIBS=" -lmedia -lgame $GLIBS";
-#    LIBS="-lbind -lsocket -lbe";;
-    LIBS="-lbe";;
+    GLIBS=" -lmedia -lgame $GLIBS"
+#    LIBS="-lbind -lsocket -lbe"
+    LIBS="-lbe"
+    ;;
 esac;
 
 
