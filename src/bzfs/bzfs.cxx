@@ -6004,7 +6004,7 @@ static const char *extraUsageString =
 "\t-lagdrop: drop player after this many lag warnings\n"
 "\t-lagwarn: lag warning threshhold time [ms]\n"
 "\t-maxidle: idle kick threshhold [s]\n"
-"\t-mo: maximum number of additional observers allowed\n"
+"\t-mo: maximum number of additional observers allowed (default=3)\n"
 "\t-mp: maximum players total or per team\n"
 "\t-mps: set player score limit on each game\n"
 "\t-ms: maximum simultaneous shots per player\n"
@@ -6044,7 +6044,7 @@ static const char *extraUsageString =
 "\t-ttl: time-to-live for pings (default=8)\n"
 "\t-version: print version and exit\n"
 "\t-world: world file to load\n"
-"\t-speedtol: percent over normal speed to auto kick at\n";
+"\t-speedtol: percent over normal speed to at which player is auto kicked (default=112.5)\n";
 
 
 static void printVersion()
