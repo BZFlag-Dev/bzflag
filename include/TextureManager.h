@@ -76,7 +76,8 @@ public:
 
   float GetAspectRatio ( int id );
 
-  int newTexture ( const char* name, int x, int y, unsigned char* data, eTextureFilter filter, bool repeat = true, int format = 0 );
+  int newTexture (const char* name, int x, int y, unsigned char* data,
+                  eTextureFilter filter, bool repeat = true, int format = 0);
 protected:
   friend class Singleton<TextureManager>;
 

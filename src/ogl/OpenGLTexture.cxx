@@ -12,6 +12,7 @@
 
 #include "common.h"
 #include <string>
+#include "bzfio.h"
 #include "bzfgl.h"
 #include "OpenGLTexture.h"
 #include "OpenGLGState.h"
@@ -127,32 +128,72 @@ void OpenGLTexture::initContext()
   // make texture map object/list
   glGenTextures(1, &list);
 
-  // set size
-  int tmpWidth = width;
-  int tmpHeight = height;
+  // just making sure when don't change these
+  // values accidentally in this function call
+  const int tmpWidth = width;
+  const int tmpHeight = height;
+
+  GLint scaledWidth = 1, scaledHeight = 1;
+
+  // align to a 2^N value
+  while (scaledWidth < tmpWidth) {
+    scaledWidth <<= 1;
+  }
+  while (scaledHeight < tmpHeight) {
+    scaledHeight <<= 1;
+  }
+  
+  // hard limit, some drivers have problems with sizes greater
+  // then this (espeically if you are using glTexSubImage2D)
+  const GLint bzMaxTexSize = 512;
 
   // get minimum valid size for texture (boost to 2^m x 2^n)
-  GLint scaledWidth = 1, scaledHeight = 1;
   GLint maxTextureSize;
   glGetIntegerv(GL_MAX_TEXTURE_SIZE, &maxTextureSize);
-  if (maxTextureSize > 512)
-    maxTextureSize = 512;
-  while (scaledWidth < tmpWidth)
-    scaledWidth <<= 1;
-  while (scaledHeight < tmpHeight)
-    scaledHeight <<= 1;
-  if (scaledWidth > maxTextureSize)
+  if (maxTextureSize > bzMaxTexSize) {
+    maxTextureSize = bzMaxTexSize;
+  }
+  
+  if (scaledWidth > maxTextureSize) {
     scaledWidth = maxTextureSize;
-  if (scaledHeight > maxTextureSize)
+  }
+  if (scaledHeight > maxTextureSize) {
     scaledHeight = maxTextureSize;
-  const int copyWidth = (scaledWidth > tmpWidth) ? scaledWidth : tmpWidth;
-  const int copyHeight = (scaledHeight > tmpHeight) ? scaledHeight : tmpHeight;
+  }
 
-  // make buffers for copied and scaled data
-  GLubyte* origData = new GLubyte[4 * copyWidth * copyHeight + 4];
-  GLubyte* data = (GLubyte*)(((unsigned long)origData & ~3) + 4);
-  GLubyte* origScaledData = new GLubyte[4 * scaledWidth * scaledHeight + 4];
-  ::memcpy(data, image, 4 * tmpWidth * tmpHeight);
+  // NOTE: why these are 4-byte aligned is beyond me...
+  
+  // copy the data into a 4-byte aligned buffer
+  GLubyte* unaligned = new GLubyte[4 * tmpWidth * tmpHeight + 4];
+  GLubyte* aligned = (GLubyte*)(((unsigned long)unaligned & ~3) + 4);
+  ::memcpy(aligned, image, 4 * tmpWidth * tmpHeight);
+
+  // scale the image if required
+  if ((scaledWidth != tmpWidth) || (scaledHeight != tmpHeight)) {
+    GLubyte* unalignedScaled = new GLubyte[4 * scaledWidth * scaledHeight + 4];
+    GLubyte* alignedScaled = (GLubyte*)(((unsigned long)unalignedScaled & ~3) + 4);
+
+    gluScaleImage (GL_RGBA, tmpWidth, tmpHeight, GL_UNSIGNED_BYTE, aligned,
+		   scaledWidth, scaledHeight, GL_UNSIGNED_BYTE, alignedScaled);
+		   
+    delete[] unaligned;
+    unaligned = unalignedScaled;
+    aligned = alignedScaled;
+    DEBUG1("Scaling texture from %iX%i to %iX%i\n",
+           tmpWidth, tmpHeight, scaledWidth, scaledHeight);
+  }
+
+  // now make texture map display list (compute all mipmaps, if requested).
+  // compute next mipmap from current mipmap to save time.
+  setFilter(getFilter());
+  glBindTexture(GL_TEXTURE_2D, list);
+  gluBuild2DMipmaps(GL_TEXTURE_2D, internalFormat,
+		    scaledWidth, scaledHeight,
+		    GL_RGBA, GL_UNSIGNED_BYTE, aligned);
+  glBindTexture(GL_TEXTURE_2D, 0);
+
+  // free the real unaligned pointer
+  delete[] unaligned;
 
   // note if internal format uses alpha
   switch (internalFormat) {
@@ -175,17 +216,7 @@ void OpenGLTexture::initContext()
       alpha = false;
       break;
   }
-  // now make texture map display list (compute all mipmaps, if requested).
-  // compute next mipmap from current mipmap to save time.
-  setFilter(getFilter());
-  glBindTexture(GL_TEXTURE_2D, list);
-  gluBuild2DMipmaps(GL_TEXTURE_2D, internalFormat,
-		    scaledWidth, scaledHeight,
-		    GL_RGBA, GL_UNSIGNED_BYTE, data);
-  glBindTexture(GL_TEXTURE_2D, 0);
-  delete[] origData;
-  delete[] origScaledData;
-
+  
   return;
 }
 
