@@ -1257,12 +1257,12 @@ static void		doMotion()
       static const BzfKeyEvent::Button button_map[] = { BzfKeyEvent::LeftMouse,
 				BzfKeyEvent::MiddleMouse,
 				BzfKeyEvent::RightMouse,
-				BzfKeyEvent::Button4,
-				BzfKeyEvent::Button5,
-				BzfKeyEvent::Button6,
-				BzfKeyEvent::Button7,
-				BzfKeyEvent::Button8,
-				BzfKeyEvent::Button9,
+				BzfKeyEvent::BZ_Mouse_Button_4,
+				BzfKeyEvent::BZ_Mouse_Button_5,
+				BzfKeyEvent::BZ_Mouse_Button_6,
+				BzfKeyEvent::BZ_Mouse_Button_7,
+				BzfKeyEvent::BZ_Mouse_Button_8,
+				BzfKeyEvent::BZ_Mouse_Button_9,
 				BzfKeyEvent::F1,
 				BzfKeyEvent::F2,
 				BzfKeyEvent::F3,
@@ -3496,21 +3496,33 @@ static std::string	getCacheDirectoryName()
   mkdir(name.c_str());
   return name;
 
-#elif defined(macintosh)
+#elif defined(_MACOSX_)
   std::string cacheName;
   ::FSRef libraryFolder;
   ::OSErr err;
   err = ::FSFindFolder(::kUserDomain, ::kApplicationSupportFolderType, true, &libraryFolder);
   if(err == ::noErr) {
     char buff[1024];
-    err = ::FSRefMakePath(libraryFolder, (UInt8*)buff, sizeof(buff));
+    err = ::FSRefMakePath(&libraryFolder, (UInt8*)buff, sizeof(buff));
     if(err == ::noErr) {
-      std::strcat(buff, "/BZFlag/cache");
+      std::strcat(buff, "/BZFlag");
+      struct stat statbuf;
+      if (!(stat(buff, &statbuf) == 0 && (S_ISDIR(statbuf.st_mode)))) {
+        if(mkdir(buff, 0777) != 0) {
+	  return NULL;
+	}
+      }
+      std::strcat(buff, "/cache");
+      if (!(stat(buff, &statbuf) == 0 && (S_ISDIR(statbuf.st_mode)))) {
+        if(mkdir(buff, 0777) != 0) {
+	  return NULL;
+	}
+      }
       fprintf(stderr, "cache dir is \"%s\"\n", buff);
       cacheName = buff;
     }
   }
-  return cachename;
+  return cacheName;
 #else
   std::string name;
   struct passwd *pwent = getpwuid(getuid());
