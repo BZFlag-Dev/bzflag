@@ -69,8 +69,7 @@ struct CmdLineOptions
     publicizeServer(false), replayServer(false), startRecording(false),
     filterFilename(""), filterCallsigns(false), filterChat(false), filterSimple(false),
     banTime(300), voteTime(60), vetoTime(2), votesRequired(2),
-    votePercentage(50.1f), voteRepeatTime(300), disableSet(false),
-    disableFlagReset(false), disableBan(false), disableKick(false),
+    votePercentage(50.1f), voteRepeatTime(300),
     autoTeam(false), citySize(5), cacheURL(""), cacheOut("")
   {
     int i;
@@ -170,11 +169,6 @@ struct CmdLineOptions
   unsigned short int votesRequired;
   float votePercentage;
   unsigned short int voteRepeatTime;
-
-  bool disableSet;
-  bool disableFlagReset;
-  bool disableBan;
-  bool disableKick;
 
   std::string		reportFile;
   std::string		reportPipe;

@@ -1732,7 +1732,7 @@ static void handlePollCmd(GameKeeper::Player *playerData, const char *message)
       startPosition++;
     }
     // do not include a starting quote, if given
-    if ( arguments[startPosition] == '"' ) {
+    if (arguments[startPosition] == '"') {
       startPosition++;
     }
 
@@ -1745,7 +1745,7 @@ static void handlePollCmd(GameKeeper::Player *playerData, const char *message)
       endPosition--;
     }
     // do not include a trailing quote, if given
-    if ( arguments[endPosition] == '"' ) {
+    if (arguments[endPosition] == '"') {
       endPosition--;
     }
 
@@ -1762,26 +1762,30 @@ static void handlePollCmd(GameKeeper::Player *playerData, const char *message)
       sendMessage(ServerPlayer, t, reply);
       return;
     }
-    // Make sure the specific poll type is allowed
 
-    if ((cmd == "set") && (clOptions->disableSet)) {
-      sprintf(reply,"%s, /poll set is not available on this server", callsign.c_str());
+    // Make sure the specific poll type is allowed
+    if ((cmd == "set") && (!playerData->accessInfo.hasPerm(PlayerAccessInfo::pollSet))) {
+      sprintf(reply, "%s, you may not /poll set on this server", callsign.c_str());
       sendMessage(ServerPlayer, t, reply);
+      DEBUG3("Player %s is not allowed to /poll set\n", callsign.c_str());
       return;
     }
-    if ((cmd == "flagreset") && (clOptions->disableFlagReset)) {
-      sprintf(reply,"%s, /poll flagreset is not available on this server", callsign.c_str());
+    if ((cmd == "flagreset") && (!playerData->accessInfo.hasPerm(PlayerAccessInfo::pollFlagReset))) {
+      sprintf(reply, "%s, you may not /poll flagreset on this server", callsign.c_str());
       sendMessage(ServerPlayer, t, reply);
+      DEBUG3("Player %s is not allowed to /poll flagreset\n", callsign.c_str());
       return;
     }
-    if ((cmd == "ban") && (clOptions->disableBan)) {
-      sprintf(reply,"%s, /poll ban is not available on this server", callsign.c_str());
+    if ((cmd == "ban") && (!playerData->accessInfo.hasPerm(PlayerAccessInfo::pollBan))) {
+      sprintf(reply, "%s, you may not /poll ban on this server", callsign.c_str());
       sendMessage(ServerPlayer, t, reply);
+      DEBUG3("Player %s is not allowed to /poll ban\n", callsign.c_str());
       return;
     }
-    if ((cmd == "kick") && (clOptions->disableKick)) {
-      sprintf(reply,"%s, /poll kick is not available on this server", callsign.c_str());
+    if ((cmd == "kick") && (!playerData->accessInfo.hasPerm(PlayerAccessInfo::pollKick))) {
+      sprintf(reply, "%s, you may not /poll kick on this server", callsign.c_str());
       sendMessage(ServerPlayer, t, reply);
+      DEBUG3("Player %s is not allowed to /poll kick\n", callsign.c_str());
       return;
     }
 
@@ -1896,13 +1900,13 @@ static void handlePollCmd(GameKeeper::Player *playerData, const char *message)
   } else {
     sendMessage(ServerPlayer, t, "Invalid option to the poll command");
     sendMessage(ServerPlayer, t, "Usage: /poll vote yes|no");
-    if (!clOptions->disableBan)
+    if (playerData->accessInfo.hasPerm(PlayerAccessInfo::pollBan))
       sendMessage(ServerPlayer, t, "    or /poll ban playername");
-    if (!clOptions->disableKick)
+    if (playerData->accessInfo.hasPerm(PlayerAccessInfo::pollKick))
       sendMessage(ServerPlayer, t, "    or /poll kick playername");
-    if (!clOptions->disableSet)
+    if (playerData->accessInfo.hasPerm(PlayerAccessInfo::pollSet))
       sendMessage(ServerPlayer, t, "    or /poll set variable value");
-    if (!clOptions->disableFlagReset)
+    if (playerData->accessInfo.hasPerm(PlayerAccessInfo::pollFlagReset))
       sendMessage(ServerPlayer, t, "    or /poll flagreset");
 
   } /* end handling of poll subcommands */

@@ -310,6 +310,10 @@ std::string nameFromPerm(PlayerAccessInfo::AccessPerm perm)
     case PlayerAccessInfo::masterBan: return "masterban";
     case PlayerAccessInfo::playerList: return "playerList";
     case PlayerAccessInfo::poll: return "poll";
+    case PlayerAccessInfo::pollBan: return "pollBan";
+    case PlayerAccessInfo::pollKick: return "pollKick";
+    case PlayerAccessInfo::pollSet: return "pollSet";
+    case PlayerAccessInfo::pollFlagReset: return "pollFlagReset";
     case PlayerAccessInfo::privateMessage: return "privateMessage";
     case PlayerAccessInfo::record: return "record";
     case PlayerAccessInfo::rejoin: return "rejoin";
@@ -362,6 +366,10 @@ PlayerAccessInfo::AccessPerm permFromName(const std::string &name)
   if (name == "MASTERBAN") return PlayerAccessInfo::masterBan;
   if (name == "PLAYERLIST") return PlayerAccessInfo::playerList;
   if (name == "POLL") return PlayerAccessInfo::poll;
+  if (name == "POLLBAN") return PlayerAccessInfo::pollBan;
+  if (name == "POLLKICK") return PlayerAccessInfo::pollKick;
+  if (name == "POLLSET") return PlayerAccessInfo::pollSet;
+  if (name == "POLLFLAGRESET") return PlayerAccessInfo::pollFlagReset;
   if (name == "PRIVATEMESSAGE") return PlayerAccessInfo::privateMessage;
   if (name == "RECORD") return PlayerAccessInfo::record;
   if (name == "REJOIN") return PlayerAccessInfo::rejoin;

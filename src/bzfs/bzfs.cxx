@@ -4086,6 +4086,10 @@ void initGroups()
   if (itr == groupAccess.end()) {
     PlayerAccessInfo info;
     info.explicitAllows[PlayerAccessInfo::poll] = true;
+    info.explicitAllows[PlayerAccessInfo::pollBan] = true;
+    info.explicitAllows[PlayerAccessInfo::pollKick] = true;
+    info.explicitAllows[PlayerAccessInfo::pollSet] = true;
+    info.explicitAllows[PlayerAccessInfo::pollFlagReset] = true;
     info.explicitAllows[PlayerAccessInfo::vote] = true;
     groupAccess["VERIFIED"] = info;
   }
