@@ -2587,10 +2587,8 @@ static void sendPlayerUpdate(int playerIndex, int index)
   if (playerIndex == index) {
     // send all players info about player[playerIndex]
     for (int i = 0; i < curMaxPlayers; i++)
-      if (player[i].state > PlayerInLimbo && i != playerIndex)
+      if (player[i].state > PlayerInLimbo)
 	directMessage(i, MsgAddPlayer, (char*)buf - (char*)bufStart - PlayerIdPLen, bufStart);
-    // append playerid which will not be mangled so new clients can adapt
-    directMessage(index, MsgAddPlayer, (char*)buf - (char*)bufStart, bufStart);
   } else
     directMessage(index, MsgAddPlayer, (char*)buf - (char*)bufStart - PlayerIdPLen, bufStart);
 }
