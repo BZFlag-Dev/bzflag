@@ -2950,7 +2950,7 @@ static Player*		addPlayer(PlayerId id, void* msg, int showMessage)
 #ifdef ROBOT
   if (PlayerType(type) == ComputerPlayer)
     for (int i = 0; i < numRobots; i++)
-      if (!strncmp(robots[i]->getCallSign(), callsign, CallSignLen)) {
+      if (robots[i] && !strncmp(robots[i]->getCallSign(), callsign, CallSignLen)) {
 	robots[i]->setTeam(TeamColor(team));
 	break;
       }
@@ -5314,7 +5314,7 @@ static bool		enterServer(ServerLink* serverLink, World* world,
     }
     }
 
-    if (time(0)>timeout) goto failed;
+//    if (time(0)>timeout) goto failed;
 
     if (serverLink->read(code, len, msg, -1) < 0) goto failed;
   }

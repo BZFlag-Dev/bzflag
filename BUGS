@@ -1,9 +1,6 @@
 recent bugs
 ------------
 
-- Joining with bots fails if there is already another player with bots joined.
-  Crashed inside of addPlayer during enterServer performing a strncmp.
-
 - Spawn code sometimes spawns you mid-air
 
 - Performing a saveworld of a map with a size set in the bzw doesn't save the
