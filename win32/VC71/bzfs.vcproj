@@ -288,6 +288,9 @@ copy ..\..\src\bzfs\debug\*.exe ..\..\*.exe
 				</FileConfiguration>
 			</File>
 			<File
+				RelativePath="..\..\src\bzfs\CustomCone.cxx">
+			</File>
+			<File
 				RelativePath="..\..\src\bzfs\CustomDynamicColor.cxx">
 			</File>
 			<File
@@ -685,6 +688,9 @@ copy ..\..\src\bzfs\debug\*.exe ..\..\*.exe
 			</File>
 			<File
 				RelativePath="..\..\src\bzfs\CustomBox.h">
+			</File>
+			<File
+				RelativePath="..\..\src\bzfs\CustomCone.h">
 			</File>
 			<File
 				RelativePath="..\..\src\bzfs\CustomGate.h">
