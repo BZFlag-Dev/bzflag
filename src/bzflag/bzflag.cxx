@@ -1312,6 +1312,11 @@ int			main(int argc, char** argv)
   // to be bound for the first time.
   MainWindow* pmainWindow = new MainWindow(window, joystick);
   MainWindow& mainWindow = *pmainWindow;
+  if (mainWindow.isInFault()) {
+    printFatalError("Error creating window - Exiting");
+    return 1;
+  }
+    
   std::string videoFormat;
   int format = -1;
   if (BZDB.isSet("resolution")) {

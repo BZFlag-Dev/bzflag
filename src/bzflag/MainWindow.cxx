@@ -43,7 +43,8 @@ MainWindow::MainWindow(BzfWindow* _window, BzfJoystick* _joystick) :
 				zoomFactor(1),
 				width(0),
 				minWidth(MinX),
-				minHeight(MinY)
+				minHeight(MinY),
+				faulting(false)
 {
   window->addResizeCallback(resizeCB, this);
   resize();
@@ -233,7 +234,8 @@ void			MainWindow::resize()
 {
   window->getSize(trueWidth, trueHeight);
   window->makeCurrent();
-  window->create();
+  if (!window->create())
+    faulting = true;
   setQuadrant(quadrant);
 }
 

@@ -471,7 +471,7 @@ bool SDLDisplay::getKey(const SDL_Event& sdlEvent, BzfKeyEvent& key) const
   return true;
 }
 
-void SDLDisplay::createWindow() {
+bool SDLDisplay::createWindow() {
   int    width;
   int    height;
   Uint32 flags = SDL_OPENGL;
@@ -485,14 +485,18 @@ void SDLDisplay::createWindow() {
   // if they are the same, don't bother building a new window
   if ((width == oldWidth) && (height == oldHeight)
       && (fullScreen == oldFullScreen))
-    return;
+    return true;
   // save the values for the next
   oldWidth      = width;
   oldHeight     = height;
   oldFullScreen = fullScreen;
   // Set the video mode and hope for no errors
-  if (!SDL_SetVideoMode(width, height, 0, flags))
+  if (!SDL_SetVideoMode(width, height, 0, flags)) {
     printf("Could not set Video Mode: %s.\n", SDL_GetError());
+    return false;
+  } else {
+    return true;
+  }
 };
 
 void SDLDisplay::setFullscreen(bool on) {
@@ -645,12 +649,14 @@ void SDLWindow::swapBuffers() {
   SDL_GL_SwapBuffers();
 };
 
-void SDLWindow::create(void) {
-  ((SDLDisplay *)getDisplay())->createWindow();
+bool SDLWindow::create(void) {
+  if (!((SDLDisplay *)getDisplay())->createWindow())
+    return false;
   // reload context data
   if (!GLContextInited)
     OpenGLGState::initContext();
   GLContextInited = true;
+  return true;
 };
 
 void SDLWindow::enableGrabMouse(bool on) {

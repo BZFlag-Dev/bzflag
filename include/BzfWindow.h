@@ -52,7 +52,7 @@ class BzfWindow {
     virtual void	setFullscreen() {;};
     virtual void	setFullscreen(bool);
     virtual void	iconify(void) {;};
-    virtual void	create(void) {;};
+    virtual bool	create(void) {return true;};
 
     virtual void	warpMouse(int x, int y) = 0;
     virtual void	getMouse(int& x, int& y) const = 0;

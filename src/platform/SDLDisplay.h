@@ -27,7 +27,7 @@ class SDLDisplay : public BzfDisplay {
  public:
   SDLDisplay();
   ~SDLDisplay();
-  void createWindow();
+  bool createWindow();
   bool isValid() const {return true;};
   bool isEventPending() const;
   bool getEvent(BzfEvent&) const;
@@ -98,7 +98,7 @@ class SDLWindow : public BzfWindow {
   void  swapBuffers();
   void  makeContext() {;};
   void  freeContext() {;};
-  void  create(void);
+  bool  create(void);
  private:
   int	  x;
   int	  y;
