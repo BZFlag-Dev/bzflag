@@ -77,7 +77,7 @@ public:
 
   /** compute the distance between two tracked items given their tokens.
    */
-  double distanceBetween(unsigned short int from, unsigned short int to, std::string fromGroup=std::string(""), std::string toGroup=std::string(""));
+  double distanceBetween(unsigned short int from, unsigned short int to, std::string fromGroup=std::string(""), std::string toGroup=std::string("")) const;
 
 };
 

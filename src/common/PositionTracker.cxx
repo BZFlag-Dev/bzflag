@@ -116,12 +116,15 @@ bool PositionTracker::forget(unsigned short int token, const std::string id, std
   return true;
 }
 
-double PositionTracker::distanceBetween(unsigned short int from, unsigned short int to, std::string fromGroup, std::string toGroup)
+double PositionTracker::distanceBetween(unsigned short int from, unsigned short int to, std::string fromGroup, std::string toGroup) const
 {
   std::cout << from << to << fromGroup << toGroup;
 
-  TrackedItemVector& fromSet = _trackedItem[fromGroup];
-  TrackedItemVector& toSet = _trackedItem[toGroup];
+  // this indirection nastiness is needed to maintain constness
+  std::map <std::string, TrackedItemVector>::const_iterator fromIterator = _trackedItem.find(fromGroup);
+  std::map <std::string, TrackedItemVector>::const_iterator toIterator = _trackedItem.find(toGroup);
+  const TrackedItemVector& fromSet = (*fromIterator).second;
+  const TrackedItemVector& toSet = (*toIterator).second;
 
   if ((from > fromSet.size()) ||
       (to > toSet.size()) ||
