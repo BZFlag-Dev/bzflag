@@ -228,8 +228,9 @@ void			LocalPlayer::doUpdateMotion(float dt)
       doMomentum(dt, speed, newAngVel);
 
       // compute velocity so far
-      newVelocity[0] = speed * cosf(oldAzimuth + 0.5f * dt * newAngVel);
-      newVelocity[1] = speed * sinf(oldAzimuth + 0.5f * dt * newAngVel);
+      const float angle = oldAzimuth + 0.5f * dt * newAngVel;
+      newVelocity[0] = speed * cosf(angle);
+      newVelocity[1] = speed * sinf(angle);
       newVelocity[2] = 0.0f;
 
       // now friction, if any
@@ -267,8 +268,9 @@ void			LocalPlayer::doUpdateMotion(float dt)
 	  newAngVel = desiredAngVel;
 	}
         // compute velocity so far
-        newVelocity[0] = speed * cosf(oldAzimuth + 0.5f * dt * newAngVel);
-        newVelocity[1] = speed * sinf(oldAzimuth + 0.5f * dt * newAngVel);
+	const float angle = oldAzimuth + 0.5f * dt * newAngVel;
+        newVelocity[0] = speed * cosf(angle);
+        newVelocity[1] = speed * sinf(angle);
         newVelocity[2] += BZDB.eval(StateDatabase::BZDB_WINGSGRAVITY) * dt;
         lastSpeed = speed;
       }
@@ -527,10 +529,11 @@ void			LocalPlayer::doUpdateMotion(float dt)
 
   // compute actual velocities.  do this before teleportation.
   if (!NEAR_ZERO(dt, ZERO_TOLERANCE)) {
-    newAngVel = (newAzimuth - oldAzimuth) / dt;
-    newVelocity[0] = (newPos[0] - oldPosition[0]) / dt;
-    newVelocity[1] = (newPos[1] - oldPosition[1]) / dt;
-    newVelocity[2] = (newPos[2] - oldPosition[2]) / dt;
+    const float oodt = 1.0f / dt;
+    newAngVel = (newAzimuth - oldAzimuth) * oodt;
+    newVelocity[0] = (newPos[0] - oldPosition[0]) * oodt;
+    newVelocity[1] = (newPos[1] - oldPosition[1]) * oodt;
+    newVelocity[2] = (newPos[2] - oldPosition[2]) * oodt;
   }
 
   // see if we teleported
