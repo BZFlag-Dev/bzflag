@@ -2,8 +2,9 @@
 
 			     BZFlag release notes
 
-* Changed version numbers to be xx.xx.xx and display with BuildOS and Build Date - Jeff Myers,others for auto tools
-* Added voting booth for servers - Sean Morrison
+* Added team ID to shots for TK reasons (1.9.2) - Jeff Myers
+* Changed version numbers to be xx.xx.xx and display with BuildOS and Build Date ( 1.9.0) - Jeff Myers & others for auto tools
+* Added voting booth for servers (1.9.0) - Sean Morrison
 * Added bzadmin - Lars Luthman
 * Munitions now bounce off buildings/ground in z direction - Dave Brosius
 * World object and -worldsize paramaters - Jeff Myers

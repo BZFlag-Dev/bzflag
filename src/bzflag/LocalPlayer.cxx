@@ -815,6 +815,7 @@ bool			LocalPlayer::fireShot()
 
   // prepare shot
   FiringInfo firingInfo(*this, i + getSalt());
+  firingInfo.shot.team = getTeam();
   if (firingInfo.flag == Flags::ShockWave) {
     // move shot origin under tank and make it stationary
     const float* pos = getPosition();

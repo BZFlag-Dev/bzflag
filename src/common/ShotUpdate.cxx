@@ -24,6 +24,7 @@ void*			ShotUpdate::pack(void* buf) const
   buf = nboPackVector(buf, pos);
   buf = nboPackVector(buf, vel);
   buf = nboPackFloat(buf, dt);
+  buf = nboPackShort(buf, team);
   return buf;
 }
 
@@ -34,6 +35,8 @@ void*			ShotUpdate::unpack(void* buf)
   buf = nboUnpackVector(buf, pos);
   buf = nboUnpackVector(buf, vel);
   buf = nboUnpackFloat(buf, dt);
+  short temp = team;
+  buf = nboUnpackShort(buf, temp);
   return buf;
 }
 
@@ -59,6 +62,6 @@ void*			FiringInfo::unpack(void* buf)
   buf = shot.unpack(buf);
   buf = FlagDesc::unpack(buf, flag);
   buf = nboUnpackFloat(buf, lifetime);
-  return buf;
+ return buf;
 }
 

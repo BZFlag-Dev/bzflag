@@ -184,7 +184,7 @@ static const char*	blowedUpMessage[] = {
 static bool		gotBlowedUp(BaseLocalPlayer* tank,
 					BlowedUpReason reason,
 					PlayerId killer,
-					int shotId = -1);
+					const ShotPath *hit = NULL);
 
 #ifdef ROBOT
 static void		handleMyTankKilled(int reason);
@@ -4030,10 +4030,14 @@ static void	handleFlagTransferred( Player *fromTank, Player *toTank, int flagInd
 static bool		gotBlowedUp(BaseLocalPlayer* tank,
 					BlowedUpReason reason,
 					PlayerId killer,
-					int shotId)
+					const ShotPath* hit)
 {
   if (tank->getTeam() == ObserverTeam || !tank->isAlive())
     return false;
+
+  int shotId = -1;
+  if(hit)
+	  shotId = hit->getShotId();
 
   // you can't take it with you
   const FlagDesc* flag = tank->getFlag();
@@ -4103,7 +4107,10 @@ static bool		gotBlowedUp(BaseLocalPlayer* tank,
       // 1-4 are messages sent when the player dies because of someone else
       if (reason >= GotShot && reason <= GenocideEffect) {
 	// matching the team-display style of other kill messages
-	if (myTank->getTeam() == lookupPlayer(killer)->getTeam() && myTank->getTeam() != RogueTeam) {
+	TeamColor team = lookupPlayer(killer)->getTeam();
+	if (hit)
+		team = ((ShotPath*)hit)->getTeam();
+	if (myTank->getTeam() == team && team != RogueTeam) {
 	  blowedUpNotice += "teammate " ;
 	  blowedUpNotice += lookupPlayer(killer)->getCallSign();
 	}
@@ -4224,7 +4231,7 @@ static void		checkEnvironment()
       stopShot = true;
     }
     else {
-      stopShot = gotBlowedUp(myTank, GotShot, hit->getPlayer(), hit->getShotId());
+      stopShot = gotBlowedUp(myTank, GotShot, hit->getPlayer(), hit);
     }
 
     if (stopShot || hit->isStoppedByHit()) {
@@ -4615,7 +4622,7 @@ static void		checkEnvironment(RobotPlayer* tank)
 	stopShot = true;
     }
     else {
-        stopShot = gotBlowedUp(tank, GotShot, hit->getPlayer(), hit->getShotId());
+        stopShot = gotBlowedUp(tank, GotShot, hit->getPlayer(), hit);
     }
 
     if (stopShot || hit->isStoppedByHit()) {

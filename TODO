@@ -14,12 +14,7 @@ THESE SHOULD HAPPEN BEFORE THE NEXT RELEASE:
   ( learner is looking at this )
 
 THESE SHOULD HAPPEN BEFORE THE NEXT RELEASE BUT NOONE WILL STEP UP FOR THEM
-
-* perhaps add a team id to shots, so that if i die while i have
-  bullets live, and I change teams because of my death, i don't
-  get penalized for team killing.
-  ( Jeff Myers will look at )
-
+  
 * support gameinfo requests as one time udp packets (if udp)
   This should function like the old broadcast server locator
   and include all the same information that bzfls tracks.
