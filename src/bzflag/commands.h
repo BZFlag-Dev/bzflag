@@ -22,15 +22,19 @@
 #include "CommandManager.h"
 
 
-struct CommandListItem {
+typedef struct CommandListItem {
   const char* name;
   CommandManager::CommandFunction func;
   const char* help;
-};
+} CmdListItem;
 
-/* organize the commands together with help */
-extern const CommandListItem commandList[];
-
+/* FIXME -- gcc is not liking array type with sizeof() without size
+ * for some reason */
+#ifdef SNAPPING
+extern const CmdListItem commandList[16];
+#else
+extern const CmdListItem commandList[15];
+#endif
 
 /** jump
  */

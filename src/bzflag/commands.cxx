@@ -45,17 +45,17 @@ extern float destructCountdown;
 extern HUDRenderer* hud;
 extern bool pausedByUnmap;
 #include "ControlPanel.h"
-ControlPanel* controlPanel;
+extern ControlPanel* controlPanel;
 extern int savedVolume;
 bool shouldGrabMouse();
 #include "MainWindow.h"
-MainWindow* mainWindow;
+extern MainWindow* mainWindow;
 extern float pauseCountdown;
 #include "Address.h"
 extern char messageMessage[PlayerIdPLen + MessageLen];
 extern float clockAdjust;
 extern bool roaming;
-enum roamingView {
+extern enum roamingView {
   roamViewFree = 0,
   roamViewTrack,
   roamViewFollow,
@@ -75,7 +75,7 @@ void setRoamingLabel(bool force);
 extern bool admin;
 
 
-const CommandListItem commandList[] = {
+const struct CommandListItem commandList[] = {
   { "fire",	&cmdFire,	"fire:  fire a shot" },
   { "jump",	&cmdJump,	"jump:  make player jump" },
   { "drop",	&cmdDrop,	"drop:  drop the current flag" },
@@ -93,7 +93,7 @@ const CommandListItem commandList[] = {
   { "servercommand",	&cmdServerCommand,	"servercommand:  quick admin" },
   { "scrollpanel",	&cmdScrollPanel,	"scrollpanel {up|down}:  scroll message panel" },
   { "hunt",	&cmdHunt,	"hunt:  hunt a specific player" },
-  { "autopilot",&cmdAutoPilot,	"autopilot:  set/unset autopilot bot code" },
+  { "autopilot",&cmdAutoPilot,	"autopilot:  set/unset autopilot bot code" }
 };
 
 
