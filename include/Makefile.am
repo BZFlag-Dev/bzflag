@@ -17,6 +17,8 @@ noinst_HEADERS =		\
 	BzfWindow.h		\
 	bzsignal.h		\
 	CallbackList.h		\
+	CommandManager.h	\
+	CommandsStandard.h	\
 	common.h		\
 	EighthDBaseSceneNode.h	\
 	EighthDBoxSceneNode.h	\
