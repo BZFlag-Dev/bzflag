@@ -5443,11 +5443,19 @@ void			startPlaying(BzfDisplay* _display,
   bzSignal(SIGUSR2, SIG_IGN);
 #endif /* !defined(_WIN32) */
 
+  std::string videoFormat;
+  int format;
+  if (BZDB.isSet("resolution")) {
+    videoFormat = BZDB.get("resolution");
+    if (videoFormat.length() != 0) {
+      format = display->findResolution(videoFormat.c_str());
+      if (format >= 0)
+	display->setFullScreenFormat(format);
+    }
+  };
   // set the resolution (only if in full screen mode)
   if (!BZDB.isSet("_window") && BZDB.isSet("resolution")) {
-    std::string videoFormat = BZDB.get("resolution");
     if (videoFormat.length() != 0) {
-      const int format = display->findResolution(videoFormat.c_str());
       if (display->isValidResolution(format) &&
 	  display->getResolution() != format &&
 	  display->setResolution(format)) {
