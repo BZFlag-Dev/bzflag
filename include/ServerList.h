@@ -23,10 +23,12 @@
 #include "Protocol.h"
 #include "version.h"
 #include "ListServer.h"
+#include "StartupInfo.h"
 
 /* local interface headers */
 #include "ServerItem.h"
 #include "ServerListCache.h"
+
 
 /** The ServerList class contains links to the list server as well as
  * any fetched list of servers.  The list handles cacheing of those
@@ -38,12 +40,12 @@ public:
   ServerList();
   virtual ~ServerList();
 
-  void readServerList(int index);
+  void readServerList(int index, StartupInfo *info);
   void addToList(ServerItem&, bool doCache=false);
   void addToListWithLookup(ServerItem&);
-  void checkEchos();
+  void checkEchos(StartupInfo *info);
   void addCacheToList();
-  void startServerPings();
+  void startServerPings(const StartupInfo *info);
   bool searchActive();
   const std::vector<ServerItem>& getServers();
   std::vector<ServerItem>::size_type size();

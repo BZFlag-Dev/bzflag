@@ -13,6 +13,9 @@
 /* interface header */
 #include "ServerListCache.h"
 
+/* system headers */
+#include <fstream>
+
 // invoke persistent rebuilding for build versioning
 #include "version.h"
 

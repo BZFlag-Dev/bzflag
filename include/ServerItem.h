@@ -13,6 +13,8 @@
 #ifndef  __SERVERITEM_H__
 #define  __SERVERITEM_H__
 
+#include "common.h"
+
 /* system interface headers */
 #include <iostream>
 #include <string>
@@ -23,6 +25,7 @@
 
 
 class ServerItem {
+
 public:
   void		writeToFile(std::ostream& out) const; // serialize out
   bool		readFromFile(std::istream& in); // serialize in

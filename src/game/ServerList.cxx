@@ -35,13 +35,6 @@
 #include "StartupInfo.h"
 
 
-/* from playing.h */
-StartupInfo* getStartupInfo();
-typedef void (*PlayingCallback)(void*);
-void addPlayingCallback(PlayingCallback, void* data);
-void removePlayingCallback(PlayingCallback, void* data);
-
-
 ServerList::ServerList() :
 	numListServers(0),
 	phase(-1),
@@ -54,12 +47,11 @@ ServerList::~ServerList() {
   _shutDown();
 }
 
-void ServerList::startServerPings() {
+void ServerList::startServerPings(const StartupInfo *info) {
 
   // schedule lookup of server list url.  dereference URL chain every
   // time instead of only first time just in case one of the pointers
   // has changed.
-  const StartupInfo* info = getStartupInfo();
   if (info->listServerURL.size() == 0)
     phase = -1;
   else
@@ -72,7 +64,7 @@ void ServerList::startServerPings() {
 
 }
 
-void ServerList::readServerList(int index)
+void ServerList::readServerList(int index, StartupInfo *info)
 {
   ListServer& listServer = listServers[index];
 
@@ -100,14 +92,12 @@ void ServerList::readServerList(int index)
       // look for TOKEN: and save token if found
       // also look for NOTOK: and record "badtoken" into the token string and print an error
       if (strncmp(base, tokenIdentifier, strlen(tokenIdentifier)) == 0) {
-	StartupInfo* info = getStartupInfo();
 	printError("got token:");
 	strncpy(info->token, (char *)(base + strlen(tokenIdentifier)), TokenLen);
 	printError(info->token);
 	base = scan;
 	continue;
       } else if (strncmp(base, noTokenIdentifier, strlen(noTokenIdentifier)) == 0) {
-	StartupInfo* info = getStartupInfo();
 	printError("ERROR: did not get token:");
 	printError(base);
 	strcpy(info->token, "badtoken\0");
@@ -272,7 +262,7 @@ void ServerList::addToList(ServerItem& info, bool doCache)
   }
 }
 
-void			ServerList::checkEchos()
+void			ServerList::checkEchos(StartupInfo *info)
 {
   // *** NOTE *** searching spinner update was here
 
@@ -281,7 +271,7 @@ void			ServerList::checkEchos()
     int i;
 
     std::vector<std::string> urls;
-    urls.push_back(getStartupInfo()->listServerURL);
+    urls.push_back(info->listServerURL);
 
     // check urls for validity
     numListServers = 0;
@@ -357,8 +347,8 @@ void			ServerList::checkEchos()
       addr.sin_addr = listServer.address;
       if (connect(listServer.socket, (CNCTType*)&addr, sizeof(addr)) < 0) {
 #if defined(_WIN32)
-#undef EINPROGRESS
-#define EINPROGRESS EWOULDBLOCK
+#  undef EINPROGRESS
+#  define EINPROGRESS EWOULDBLOCK
 #endif
 	if (getErrno() != EINPROGRESS) {
 	  printError("Can't connect list server socket");
@@ -432,7 +422,7 @@ void			ServerList::checkEchos()
       if (listServer.socket != -1) {
 	// read more data from server
 	if (FD_ISSET(listServer.socket, &read_set)) {
-	  readServerList(i);
+	  readServerList(i, info);
 	}
 
 	// send list request
@@ -443,7 +433,6 @@ void			ServerList::checkEchos()
 #endif
 	  bool errorSending;
 	  {
-	    const StartupInfo* info = getStartupInfo();
 	    char url[1024];
 	    snprintf(url, sizeof(url),
 		     "GET %s?action=LIST&version=%s&callsign=%s&password=%s HTTP/1.1\r\nHost: %s\r\nCache-control: no-cache\r\n\r\n",
