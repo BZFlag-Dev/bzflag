@@ -151,7 +151,7 @@ bool			PyramidBuilding::inCylinder(const float* p,
 						float radius, float height) const
 {
   // really rough -- doesn't decrease size with height
-  return (p[2] <= getHeight())
+  return (p[2] < (getPosition()[2] + getHeight()))
   &&     ((p[2]+height) >= getPosition()[2])
   &&     testRectCircle(getPosition(), getRotation(), getWidth(), getBreadth(), p, radius);
 }
