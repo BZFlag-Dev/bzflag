@@ -1701,24 +1701,6 @@ static void		doKeyPlaying(const BzfKeyEvent& key, bool pressed)
 	}
 	break;
 
-      case BzfKeyEvent::F9:
-	if (pressed)
-	  roamDZoom =  50.0;
-	else
-	  roamDZoom = 0.0;
-	break;
-
-      case BzfKeyEvent::F10:
-	if (pressed)
-	  roamDZoom = -50.0;
-	else
-	  roamDZoom = 0.0;
-	break;
-
-      case BzfKeyEvent::F11:
-	if (pressed)
-	  roamZoom = 60.0;
-
       default:
 	roamingkey = false;
 	break;
@@ -2218,6 +2200,20 @@ static std::string cmdRoam(const std::string&, const CommandManager::ArgList& ar
       roamDPos[2] = 0.0f;
     } else {
       return "usage: roam translate {left|right|forward|backward|up|down|stop}";
+    }
+  } else if (args[0] == "zoom") {
+    if (args.size() != 2)
+      return "usage: roam zoom {in|out|normal|stop}";
+    if (args[1] == "in") {
+      roamDZoom = 50.0f;
+    } else if (args[1] == "out") {
+      roamDZoom = -50.0f;
+    } else if (args[1] == "normal") {
+      roamZoom = 60.0f;
+    } else if (args[1] == "stop") {
+      roamDZoom = 0.0f;
+    } else {
+      return "usage: roam zoom {in|out|normal|stop}";
     }
   } else {
     return "usage: roam {rotate|translate|zoom|cycle} <args>";

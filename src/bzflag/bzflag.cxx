@@ -150,7 +150,13 @@ static const char*	bindingList[] = {
   "bind \"Alt+Up Arrow\" down \"roam translate up\"",
   "bind \"Alt+Up Arrow\" up \"roam translate stop\"",
   "bind \"Alt+Down Arrow\" down \"roam translate down\"",
-  "bind \"Alt+Down Arrow\" up \"roam translate stop\""
+  "bind \"Alt+Down Arrow\" up \"roam translate stop\"",
+  "bind F9 down \"roam zoom in\"",
+  "bind F9 up \"roam zoom stop\"",
+  "bind F10 down \"roam zoom out\"",
+  "bind F10 up \"roam zoom stop\"",
+  "bind F11 down \"roam zoom normal\"",
+  "bind F11 up \"roam zoom stop\""
 };
 
 #ifdef ROBOT
