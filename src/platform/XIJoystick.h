@@ -17,7 +17,7 @@
 #ifndef BZF_XIJOY_H
 #define	BZF_XIJOY_H
 
-#include "XIJoystick.h"
+#include "BzfJoystick.h"
 #include <X11/extensions/XInput.h>
 
 class XIJoystick : public BzfJoystick {

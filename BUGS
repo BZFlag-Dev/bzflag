@@ -1,5 +1,6 @@
 recent bugs
 ------------
+- XIJoystick does not compile
 - time limiter does not take jumping into consideration when holding Agility
 
 - shooting straight shots with the Agility flag while just having accelerated
