@@ -2004,6 +2004,26 @@ static void pausePlayer(int playerIndex, bool paused)
   broadcastMessage(MsgPause, (char*)buf-(char*)bufStart, bufStart);
 }
 
+static void zapFlagByPlayer(int playerIndex)
+{
+  GameKeeper::Player *playerData
+    = GameKeeper::Player::getPlayerByIndex(playerIndex);
+  if (!playerData)
+    return;
+
+  int flagid = playerData->player.getFlag();
+  if (flagid < 0)
+    return;
+
+  FlagInfo &flag = FlagInfo::flagList[flagid];
+  // do not simply zap team flag
+  Flag &carriedflag = flag.flag;
+  if (carriedflag.type->flagTeam != ::NoTeam) {
+    dropFlag(playerIndex, playerData->lastState->pos);
+  } else {
+    zapFlag(flag);
+  }
+}
 
 void removePlayer(int playerIndex, const char *reason, bool notify)
 {
@@ -2046,17 +2066,7 @@ void removePlayer(int playerIndex, const char *reason, bool notify)
   bool wasPlaying = playerData->player.isPlaying();
   playerData->netHandler->closing();
 
-  int flagid = playerData->player.getFlag();
-  if (flagid >= 0) {
-    FlagInfo &flag = FlagInfo::flagList[flagid];
-    // do not simply zap team flag
-    Flag &carriedflag = flag.flag;
-    if (carriedflag.type->flagTeam != ::NoTeam) {
-      dropFlag(playerIndex, playerData->lastState->pos);
-    } else {
-      zapFlag(flag);
-    }
-  }
+  zapFlagByPlayer(playerIndex);
 
   // player is outta here.  if player never joined a team then
   // don't count as a player.
@@ -2342,18 +2352,7 @@ static void playerKilled(int victimIndex, int killerIndex, int reason,
 
   // zap flag player was carrying.  clients should send a drop flag
   // message before sending a killed message, so this shouldn't happen.
-  int flagid = victim->getFlag();
-  if (flagid >= 0) {
-    FlagInfo &flag = FlagInfo::flagList[flagid];
-    // do not simply zap team flag
-    Flag &carriedflag = flag.flag;
-    if (carriedflag.type->flagTeam != ::NoTeam) {
-      dropFlag(victimIndex, carriedflag.position);
-    }
-    else {
-      zapFlag(flag);
-    }
-  }
+  zapFlagByPlayer(victimIndex);
 
   victimData = GameKeeper::Player::getPlayerByIndex(victimIndex);
   // change the player score
