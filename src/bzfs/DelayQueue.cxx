@@ -45,6 +45,9 @@ void DelayQueue::dequeuePackets ()
     dn = dn->next;
     delete tmp;
   }
+  
+  input = NULL;
+  output = NULL;
 }
 
 

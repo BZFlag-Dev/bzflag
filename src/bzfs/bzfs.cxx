@@ -934,6 +934,7 @@ static bool serverStart()
   for (int i = 0; i < MaxPlayers; i++) {	// no connections
     player[i].fd = NotConnected;
     player[i].state = PlayerNoExist;
+    player[i].delayq.init();
     player[i].outmsg = NULL;
     player[i].outmsgSize = 0;
     player[i].outmsgOffset = 0;
@@ -991,7 +992,6 @@ static void relayPlayerPacket(int index, uint16_t len, const void *rawbuf, uint1
           (flag[pi.flag].flag.type == Flags::Lag)) {
         // delay sending to this player
         pi.delayq.addPacket (len+4, rawbuf, BZDB.eval (StateDatabase::BZDB_FAKELAG));
-        return;
       } 
       else {
         // send immediately
@@ -2050,7 +2050,7 @@ static void addPlayer(int playerIndex)
   player[playerIndex].uqueue = NULL;
   player[playerIndex].dqueue = NULL;
 
-  player[playerIndex].delayq.init();
+  player[playerIndex].delayq.dequeuePackets();
 
   player[playerIndex].lagavg = 0;
   player[playerIndex].lagcount = 0;
@@ -3299,6 +3299,9 @@ static void dropFlag(int playerIndex, float pos[3])
   drpFlag.flag.flightTime = 0.0f;
   drpFlag.flag.flightEnd = flightTime;
   drpFlag.flag.initialVelocity = -BZDB.eval(StateDatabase::BZDB_GRAVITY) * upTime;
+  
+  // removed any delayed packets (in case it was a "Lag Flag")
+  player[playerIndex].delayq.dequeuePackets();
 
   // player no longer has flag -- send MsgDropFlag
   player[playerIndex].flag = -1;
@@ -4642,7 +4645,7 @@ int main(int argc, char **argv)
     }
 #endif
 
-    // send delayed packets  ???
+    // send delayed packets
     for (p = 0; p < curMaxPlayers; p++) {
       void *data;
       int length;
