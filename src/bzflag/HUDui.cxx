@@ -411,7 +411,7 @@ bool			HUDuiList::doKeyPress(const BzfKeyEvent& key)
       break;
 
     default:
-      return true;
+      return false;
   }
 
   return true;
