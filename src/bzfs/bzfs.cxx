@@ -4554,14 +4554,15 @@ static void sendWorld(int playerIndex, int ptr)
   // send another small chunk of the world database
   assert(world != NULL && worldDatabase != NULL);
   void *buf, *bufStart = getDirectMessageBuffer();
-  int size = 256, left = worldDatabaseSize - ptr;
+  uint32_t size = MaxPacketLen - 2*sizeof(uint16_t) - sizeof(uint32_t), left = worldDatabaseSize - ptr;
   if (ptr >= worldDatabaseSize) {
     size = 0;
     left = 0;
-  } else
-    if (ptr + size >= worldDatabaseSize)
+  } else if (ptr + size >= worldDatabaseSize) {
       size = worldDatabaseSize - ptr;
-  buf = nboPackUShort(bufStart, uint16_t(left));
+      left = 0;
+  }
+  buf = nboPackUInt(bufStart, uint32_t(left));
   buf = nboPackString(buf, (char*)worldDatabase + ptr, size);
   directMessage(playerIndex, MsgGetWorld, (char*)buf-(char*)bufStart, bufStart);
 }
@@ -5937,9 +5938,8 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
     // player wants more of world database
     case MsgGetWorld: {
       // data: count (bytes read so far)
-      // worlds shouldn't be too big, 64k is plenty (famous last words)
-      uint16_t ptr;
-      buf = nboUnpackUShort(buf, ptr);
+      uint32_t ptr;
+      buf = nboUnpackUInt(buf, ptr);
       if (ptr == 0) {
 	// update time of day in world database
 	const uint32_t epochOffset = (uint32_t)time(NULL);

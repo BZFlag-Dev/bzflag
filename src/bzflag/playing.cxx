@@ -4652,7 +4652,8 @@ static bool negotiateFlags(ServerLink* serverLink)
 static World*		makeWorld(ServerLink* serverLink)
 {
   FILE *cachedWorld = NULL;
-  uint16_t code, len, size;
+  uint16_t code, len;
+  uint32_t size;
   char msg[MaxPacketLen];
   std::string worldPath;
   bool isTemp = false;
@@ -4676,37 +4677,37 @@ static World*		makeWorld(ServerLink* serverLink)
   char* worldDatabase;
   if (cachedWorld == NULL) {
 	  // ask for world and wait for it (ignoring all other messages)
-	  nboPackUShort(msg, 0);
-	  serverLink->send(MsgGetWorld, 2, msg);
+	  nboPackUInt(msg, 0);
+	  serverLink->send(MsgGetWorld, sizeof(uint32_t), msg);
 	  if (serverLink->read(code, len, msg, 5000) <= 0) return NULL;
 	  if (code == MsgNull || code == MsgSuperKill) return NULL;
 	  if (code != MsgGetWorld) return NULL;
 
 	  // get size of entire world database and make space
-	  nboUnpackUShort(msg, size);
+	  void *buf = nboUnpackUInt(msg, size);
 	  worldDatabase = new char[size];
 
 	  // get world database
-	  uint16_t ptr = 0, bytesLeft = size;
+	  uint32_t ptr = 0, bytesLeft = size;
 	  while (bytesLeft != 0) {
-		// get bytes left
-		void* buf = msg;
-		buf = nboUnpackUShort(buf, bytesLeft);
-
 		// add chunk to database so far
-		::memcpy(worldDatabase + int(ptr), buf, len - 2);
+		::memcpy(worldDatabase + int(ptr), buf, len - sizeof(uint32_t));
 
 		// increment pointer
-		ptr += len - 2;
+		ptr += len - sizeof(uint32_t);
 		// ask and wait for next chunk
-		nboPackUShort(msg, ptr);
-		serverLink->send(MsgGetWorld, 2, msg);
+		nboPackUInt(msg, ptr);
+		serverLink->send(MsgGetWorld, sizeof(uint32_t), msg);
 		if (serverLink->read(code, len, msg, 5000) < 0 ||
 		code == MsgNull || code == MsgSuperKill) {
 		  delete[] worldDatabase;
 		  return NULL;
 		}
+		// get bytes left
+		buf = nboUnpackUInt(msg, bytesLeft);
 	  }
+	  //add final chunk
+	  ::memcpy(worldDatabase + int(ptr), buf, len - sizeof(uint32_t));
 
 	  if (worldPath.length() > 0) {
 		  cleanWorldCache();
