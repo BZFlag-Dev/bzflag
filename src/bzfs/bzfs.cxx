@@ -3281,8 +3281,11 @@ static void handleCommand(int t, const void *rawbuf)
       for (int c = 0; c <= (int)tempmsg.size() - 1; c++)
 	if (isspace(tempmsg[c]))
       	  tempmsg.erase(tempmsg.begin() + c);
-      if (strcasecmp(tempmsg.c_str(),
-		     playerData->player.getLastMsg().c_str()) == 0 &&
+      if (playerData->player.getLastMsg().size() > 0 &&
+          strncasecmp(tempmsg.c_str(),
+		     playerData->player.getLastMsg().c_str(),
+         playerData->player.getLastMsg().size() > tempmsg.size() ? tempmsg.size() :
+          playerData->player.getLastMsg().size()) == 0 &&
 	  TimeKeeper::getCurrent() - playerData->player.getLastMsgTime()
 	  <= clOptions->msgTimer) {
 	playerData->player.incSpamWarns();
