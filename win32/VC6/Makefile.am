@@ -5,7 +5,6 @@ EXTRA_DIST =	\
 	bzfs.dsp	\
 	bzwtransform.dsp	\
 	common.dsp	\
-	config.h	\
 	geometry.dsp	\
 	installer.dsp	\
 	makehtml.dsp	\

@@ -1,7 +1,5 @@
 EXTRA_DIST =	\
-	bzflag.ico	\
-	bzflag.rc	\
-	config.h	\
-
+	bzflag.sln	\
+	
 MAINTAINERCLEANFILES = \
 	Makefile.in
