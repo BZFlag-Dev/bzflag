@@ -1095,12 +1095,14 @@ void handlePollCmd(int t, const char *message)
   } else if (cmd == "vote") {
     std::string voteCmd = "/vote ";
     voteCmd += arguments;
-    return handleVoteCmd(t, voteCmd.c_str());
+    handleVoteCmd(t, voteCmd.c_str());
+    return;
 
   } else if (cmd == "veto") {
     std::string vetoCmd = "/veto ";
     vetoCmd += arguments;
-    return handleVetoCmd(t, vetoCmd.c_str());
+    handleVetoCmd(t, vetoCmd.c_str());
+    return;
 
   } else {
     sprintf(reply,"Invalid option to the poll command");
