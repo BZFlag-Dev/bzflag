@@ -196,7 +196,6 @@ class World {
     FlagSceneNode**	flagNodes;
     FlagWarpSceneNode**	flagWarpNodes;
     EighthDimSceneNode** boxInsideNodes;
-    EighthDimSceneNode** tetraInsideNodes;
     EighthDimSceneNode** pyramidInsideNodes;
     EighthDimSceneNode** baseInsideNodes;
     static World*	playingField;

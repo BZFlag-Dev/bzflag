@@ -102,24 +102,6 @@ void* WorldBuilder::unpack(void* buf)
   while (code != WorldCodeEnd) {
     switch (code) {
 
-      case WorldCodeTetra: {
-
-        // a good double check, but a bogus length
-	if (len != WorldCodeTetraSize) {
-          delete[] uncompressedWorld;
-          DEBUG1 ("WorldBuilder::unpack() bad tetra size\n");
-	  return NULL;
-        }
-
-	TetraBuilding* tetra = new TetraBuilding;
-	buf = tetra->unpack(buf);
-        if (tetra->isValid()) {
-	  world->tetras.push_back(tetra);
-        } else {
-          delete tetra;
-        }
-	break;
-      }
       case WorldCodeMesh: {
 
         // a good double check, but a bogus length
@@ -188,6 +170,25 @@ void* WorldBuilder::unpack(void* buf)
           delete sphere;
         }
         break;
+      }
+      case WorldCodeTetra: {
+        // a good double check, but a bogus length
+	if (len != WorldCodeTetraSize) {
+          delete[] uncompressedWorld;
+          DEBUG1 ("WorldBuilder::unpack() bad tetra size\n");
+	  return NULL;
+        }
+
+	TetraBuilding* tetra = new TetraBuilding;
+	buf = tetra->unpack(buf);
+        if (tetra->isValid()) {
+	  world->tetras.push_back(tetra);
+	  world->meshes.push_back(tetra->getMesh());
+	  printf ("ADDED TETRA MESH!!!\n");
+        } else {
+          delete tetra;
+        }
+	break;
       }
       case WorldCodeBox: {
 	float data[7];
@@ -538,13 +539,6 @@ void WorldBuilder::preGetWorld()
     obstacleSize[2] = o.getHeight();
     world->pyramidInsideNodes[i] = new EighthDPyrSceneNode(o.getPosition(),
 							   obstacleSize, o.getRotation());
-  }
-  const int numTetras = world->tetras.size();
-  world->tetraInsideNodes = new EighthDimSceneNode*[numTetras];
-  for (i = 0; i < numTetras; i++) {
-    const TetraBuilding& o = *world->tetras[i];
-    world->tetraInsideNodes[i] = new EighthDTetraSceneNode(o.getVertices(),
-                                                           o.getPlanes());
   }
   const int numBases = world->basesR.size();
   world->baseInsideNodes = new EighthDimSceneNode*[numBases];

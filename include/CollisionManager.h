@@ -24,7 +24,6 @@
 #include "MeshObstacle.h"
 #include "BoxBuilding.h"
 #include "PyramidBuilding.h"
-#include "TetraBuilding.h"
 #include "BaseBuilding.h"
 #include "Teleporter.h"
 
@@ -35,13 +34,14 @@ typedef struct {
 } ObsList;
 
 typedef union {
-  ObsList array[5];
+  ObsList array[6];
   struct {
     ObsList boxes;
     ObsList bases;
     ObsList pyrs;
-    ObsList tetras;
     ObsList teles;
+    ObsList faces;
+    ObsList meshes;
   } named;
 } SplitObsList;
 
@@ -66,7 +66,6 @@ class CollisionManager {
                std::vector<BoxBuilding*>     &boxes,
                std::vector<BaseBuilding*>    &bases,
                std::vector<PyramidBuilding*> &pyrs,
-               std::vector<TetraBuilding*>   &tetras,
                std::vector<Teleporter*>      &teles);
 
     // some basics

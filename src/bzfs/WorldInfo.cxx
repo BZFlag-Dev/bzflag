@@ -107,25 +107,6 @@ void WorldInfo::addPyramid(float x, float y, float z, float r, float w, float d,
   pyramids.push_back (pyr);
 }
 
-void WorldInfo::addTetra(const float vertices[4][3], const bool visible[4],
-                         const bool useColor[4], const float colors[4][4],
-                         const bool useNormals[4], const float normals[4][3][3],
-                         const bool useTexCoords[4], const float texCoords[4][3][2],
-                         const int textureMatrices[4], const std::string textures[4],
-                         bool drive, bool shoot)
-{
-  TetraBuilding* tetra = 
-    new TetraBuilding(vertices, visible, useColor, colors,
-                      useNormals, normals, useTexCoords, texCoords,
-                      textureMatrices, textures, drive, shoot);
-  tetras.push_back (tetra);
-
-  float tetraHeight = tetra->getPosition()[2] + tetra->getHeight();
-  if (tetraHeight > maxHeight) {
-    maxHeight = tetraHeight;
-  }
-}
-
 void WorldInfo::addTeleporter(float x, float y, float z, float r, float w, float d, float h, float b, bool horizontal, bool drive, bool shoot)
 {
   if ((z + h) > maxHeight)
@@ -212,6 +193,18 @@ void WorldInfo::addSphere(SphereObstacle* sphere)
   meshes.push_back(sphere->getMesh());
 }
 
+void WorldInfo::addTetra(TetraBuilding* tetra)
+{
+  float mins[3], maxs[3];
+  tetra->getMesh()->getExtents(mins, maxs);
+  if (maxs[2] > maxHeight) {
+    maxHeight = maxs[2];
+  }
+  tetras.push_back(tetra);
+  tetra->getMesh()->setIsLocal(true);
+  meshes.push_back(tetra->getMesh());
+}
+
 void WorldInfo::addZone(const CustomZone *zone)
 {
   entryZones.addZone( zone );
@@ -279,7 +272,7 @@ WorldWeapons& WorldInfo::getWorldWeapons()
 
 void                    WorldInfo::loadCollisionManager()
 {
-  collisionManager.load(meshes, boxes, bases, pyramids, tetras, teleporters);
+  collisionManager.load(meshes, boxes, bases, pyramids, teleporters);
   return;
 }
 
@@ -287,7 +280,7 @@ void                    WorldInfo::checkCollisionManager()
 {
   if (collisionManager.needReload()) {
     // reload the collision grid
-    collisionManager.load(meshes, boxes, bases, pyramids, tetras, teleporters);
+    collisionManager.load(meshes, boxes, bases, pyramids, teleporters);
   }
   return;
 }

@@ -20,19 +20,20 @@
 #include "common.h"
 #include <string>
 #include "Obstacle.h"
+#include "MeshObstacle.h"
+#include "BzMaterial.h"
 
 class TetraBuilding : public Obstacle {
   public:
 
     TetraBuilding();
-    TetraBuilding(const float vertices[4][3], const bool visible[4],
-                  const bool useColor[4], const float colors[4][4],
-                  const bool useNormals[4], const float normals[4][3][3],
-                  const bool useTexCoords[4], const float texCoords[4][3][2],
-                  const int textureMatrices[4], const std::string textures[4],
+    TetraBuilding(const float vertices[4][3], const float normals[4][3][3],
+                  const float texCoords[4][3][2], const bool useNormals[4],
+                  const bool useTexCoords[4], const BzMaterial* materials[4],
                   bool drive = false, bool shoot = false);
     ~TetraBuilding();
-
+    MeshObstacle* getMesh();
+    
     void		finalize();
 
     const char*		getType() const;
@@ -63,102 +64,27 @@ class TetraBuilding : public Obstacle {
 
     void		getCorner(int index, float* pos) const;
 
-    const float*   getPlane(int plane) const;
-    const float*   getVertex(int vertex) const;
-    const float  (*getPlanes() const)[4];
-    const float  (*getVertices() const)[3];
-    bool           isVisiblePlane(int plane) const;
-    bool           isColoredPlane(int plane) const;
-    const float*   getPlaneColor(int plane) const;
-    int            getTextureMatrix(int plane) const;
-    const float*   getTexCoords(int plane, int vertex) const;
-    const float*   getNormals(int plane, int vertex) const;
-
     void *pack(void*);
     void *unpack(void*);
     int packSize();
 
-    bool useNormals[4];
-    float normals[4][3][3];
-    bool useTexCoords[4];
-    float texCoords[4][3][2];
-    int textureMatrices[4];
-    std::string	textures[4];
-
+    void print(std::ostream& out, int level);
+    
+  private:
+    void checkVertexOrder();
+  
   private:
     static const char*	typeName;
+
+    MeshObstacle* mesh;
+    
     float vertices[4][3];
-    float planes[4][4];   // planes are numbered to the opposite vertex
-    float mins[3];        // minimum extents
-    float maxs[3];        // maximum extents
-    bool visible[4];      // is this plane visible?
-    bool useColor[4];      // is this plane colored?
-    float colors[4][4];   // RGBA color specifications per plane
-
-    mutable unsigned char lastPlaneShot;
-
-    /** return true if test[testNumber] was a separation axis */
-    bool checkTest(int testNumber) const;
-
-    // static data for tank collision tests
-    typedef struct {
-      float normal[3];
-      float boxDist;
-      float tetraDists[4];
-    } planeTest;
-    static planeTest axisTests[25];
+    float normals[4][3][3];
+    float texcoords[4][3][2];
+    bool useNormals[4];
+    bool useTexcoords[4];
+    const BzMaterial* materials[4];
 };
-
-
-inline const float *TetraBuilding::getPlane(int plane) const
-{
-  return planes[plane];
-}
-
-inline const float *TetraBuilding::getVertex(int vertex) const
-{
-  return vertices[vertex];
-}
-
-inline bool TetraBuilding::isVisiblePlane(int plane) const
-{
-  return visible[plane];
-}
-
-inline bool TetraBuilding::isColoredPlane(int plane) const
-{
-  return useColor[plane];
-}
-
-inline const float *TetraBuilding::getPlaneColor(int plane) const
-{
-  return colors[plane];
-}
-
-inline const float (*TetraBuilding::getPlanes() const)[4]
-{
-  return planes;
-}
-
-inline const float (*TetraBuilding::getVertices() const)[3]
-{
-  return vertices;
-}
-
-inline int TetraBuilding::getTextureMatrix(int plane) const
-{
-  return textureMatrices[plane];
-}
-
-inline const float* TetraBuilding::getTexCoords(int plane, int vertex) const
-{
-  return texCoords[plane][vertex];
-}
-
-inline const float* TetraBuilding::getNormals(int plane, int vertex) const
-{
-  return normals[plane][vertex];
-}
 
 
 #endif // BZF_TETRA_BUILDING_H

@@ -36,7 +36,6 @@ noinst_HEADERS =			\
 	EighthDBaseSceneNode.h		\
 	EighthDBoxSceneNode.h		\
 	EighthDPyrSceneNode.h		\
-	EighthDTetraSceneNode.h		\
 	EighthDimSceneNode.h		\
 	EmptySceneNodeGenerator.h	\
 	ErrorHandler.h			\
@@ -95,7 +94,6 @@ noinst_HEADERS =			\
 	Teleporter.h			\
 	TeleporterSceneNodeGenerator.h	\
 	TetraBuilding.h			\
-	TetraSceneNodeGenerator.h	\
 	TextUtils.h			\
 	TextureManager.h		\
 	TextureMatrix.h			\

@@ -291,7 +291,6 @@ void CollisionManager::load (std::vector<MeshObstacle*>    &meshes,
                              std::vector<BoxBuilding*>     &boxes,
                              std::vector<BaseBuilding*>    &bases,
                              std::vector<PyramidBuilding*> &pyrs,
-                             std::vector<TetraBuilding*>   &tetras,
                              std::vector<Teleporter*>      &teles)
 {
   // clean out the cell lists
@@ -310,8 +309,7 @@ void CollisionManager::load (std::vector<MeshObstacle*>    &meshes,
     fullCount = fullCount + mesh->getFaceCount();
   }
   fullCount = fullCount + (int)(boxes.size() + bases.size() +
-                                pyrs.size() + tetras.size() +
-                                (teles.size() * 3)); // 2 MeshFace links
+                                pyrs.size() + (teles.size() * 3)); // 2 MeshFace links
 
   // get the memory for the full list and the scratch pad
   FullPad.list = new Obstacle*[fullCount];
@@ -336,10 +334,6 @@ void CollisionManager::load (std::vector<MeshObstacle*>    &meshes,
   for (std::vector<PyramidBuilding*>::iterator it_pyr = pyrs.begin();
        it_pyr != pyrs.end(); it_pyr++) {
     addToFullList((Obstacle*) (*it_pyr));
-  }
-  for (std::vector<TetraBuilding*>::iterator it_tetra = tetras.begin();
-       it_tetra != tetras.end(); it_tetra++) {
-    addToFullList((Obstacle*) (*it_tetra));
   }
   for (std::vector<Teleporter*>::iterator it_tele = teles.begin();
        it_tele != teles.end(); it_tele++) {
@@ -388,9 +382,6 @@ void CollisionManager::load (std::vector<MeshObstacle*>    &meshes,
   SplitList.named.pyrs.list = listPtr;
   SplitList.named.pyrs.count = (int)pyrs.size();
   listPtr = listPtr + pyrs.size();
-  SplitList.named.tetras.list = listPtr;
-  SplitList.named.tetras.count = (int)tetras.size();
-  listPtr = listPtr + tetras.size();
   SplitList.named.teles.list = listPtr;
   SplitList.named.teles.count = (int)teles.size();
 

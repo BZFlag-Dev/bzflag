@@ -13,7 +13,6 @@ libObstacle_a_SOURCES =			\
 	EmptySceneNodeGenerator.cxx	\
 	ObstacleSceneNodeGenerator.cxx  \
 	PyramidSceneNodeGenerator.cxx	\
-	TetraSceneNodeGenerator.cxx	\
 	TeleporterSceneNodeGenerator.cxx\
 	WallSceneNodeGenerator.cxx	\
 	MeshSceneNodeGenerator.cxx	\

@@ -761,6 +761,11 @@ bool testPolygonInAxisBox(int pointCount, const float (*points)[3],
       cross[0] = (edge[1] * axis[2]) - (edge[2] * axis[1]);
       cross[1] = (edge[2] * axis[0]) - (edge[0] * axis[2]);
       cross[2] = (edge[0] * axis[1]) - (edge[1] * axis[0]);
+      const float length = 
+        (cross[0] * cross[0]) + (cross[1] * cross[1]) + (cross[2] * cross[2]);
+      if (length < 0.001f) {
+        continue;
+      }
       // find the projected distances
       float boxMinDist, boxMaxDist;
       float polyMinDist, polyMaxDist;

@@ -22,7 +22,6 @@ libGeometry_a_SOURCES  =		\
 	EighthDBaseSceneNode.cxx	\
 	EighthDBoxSceneNode.cxx		\
 	EighthDPyrSceneNode.cxx		\
-	EighthDTetraSceneNode.cxx	\
 	ShellSceneNode.cxx		\
 	TracerSceneNode.cxx		\
 	PTSceneNode.cxx			\

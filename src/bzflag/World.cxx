@@ -52,7 +52,6 @@ World::World() :
   flagNodes(NULL),
   flagWarpNodes(NULL),
   boxInsideNodes(NULL),
-  tetraInsideNodes(NULL),
   pyramidInsideNodes(NULL),
   baseInsideNodes(NULL)
 {
@@ -83,6 +82,15 @@ World::~World()
       delete meshes[u];
     }
   }
+  for (u = 0; u < arcs.size(); u++) {
+    delete arcs[u];
+  }
+  for (u = 0; u < cones.size(); u++) {
+    delete cones[u];
+  }
+  for (u = 0; u < spheres.size(); u++) {
+    delete spheres[u];
+  }
   for (u = 0; u < tetras.size(); u++) {
     delete tetras[u];
   }
@@ -97,15 +105,6 @@ World::~World()
   }
   for (u = 0; u < teleporters.size(); u++) {
     delete teleporters[u];
-  }
-  for (u = 0; u < arcs.size(); u++) {
-    delete arcs[u];
-  }
-  for (u = 0; u < cones.size(); u++) {
-    delete cones[u];
-  }
-  for (u = 0; u < spheres.size(); u++) {
-    delete spheres[u];
   }
 }
 
@@ -123,7 +122,7 @@ void			World::done()
 
 void                    World::loadCollisionManager()
 {
-  collisionManager.load(meshes, boxes, basesR, pyramids, tetras, teleporters);
+  collisionManager.load(meshes, boxes, basesR, pyramids, teleporters);
   return;
 }
 
@@ -131,7 +130,7 @@ void                    World::checkCollisionManager()
 {
   if (collisionManager.needReload()) {
     // reload the collision grid
-    collisionManager.load(meshes, boxes, basesR, pyramids, tetras, teleporters);
+    collisionManager.load(meshes, boxes, basesR, pyramids, teleporters);
   }
   return;
 }
@@ -193,10 +192,6 @@ EighthDimSceneNode*	World::getInsideSceneNode(const Obstacle* o) const
   for (i = 0; i < numPyramids; i++)
     if (pyramids[i] == o)
       return pyramidInsideNodes[i];
-  const int numTetras = tetras.size();
-  for (i = 0; i < numTetras; i++)
-    if (tetras[i] == o)
-      return tetraInsideNodes[i];
   return NULL;
 }
 
@@ -433,13 +428,6 @@ void			World::freeInsideNodes()
       delete pyramidInsideNodes[i];
     delete[] pyramidInsideNodes;
     pyramidInsideNodes = NULL;
-  }
-  if (tetraInsideNodes) {
-    const int numTetras = tetras.size();
-    for (int i = 0; i < numTetras; i++)
-      delete tetraInsideNodes[i];
-    delete[] tetraInsideNodes;
-    tetraInsideNodes = NULL;
   }
   if (baseInsideNodes) {
     const int numBases = basesR.size();
@@ -815,6 +803,14 @@ bool			World::writeWorld(std::string filename)
     }
   }
 
+  // Write tetras
+  {
+    for (std::vector<TetraBuilding*>::iterator it = tetras.begin(); it != tetras.end(); ++it) {
+      TetraBuilding* tetra = *it;
+      tetra->print(out, 1);
+    }
+  }
+
   // Write bases
   {
     for (std::vector<BaseBuilding*>::iterator it = basesR.begin(); it != basesR.end(); ++it) {
@@ -881,59 +877,6 @@ bool			World::writeWorld(std::string filename)
         if (pyr.isDriveThrough())
 	  out << "\tdrivethrough" << std::endl;
         if (pyr.isShootThrough())
-	  out << "\tshootthrough" << std::endl;
-      }
-      out << "end" << std::endl << std::endl;
-    }
-  }
-
-  // Write tetrahedrons
-  {
-    for (std::vector<TetraBuilding*>::iterator it = tetras.begin();
-	 it != tetras.end(); ++it) {
-      TetraBuilding tetra  = **it;
-      out << "tetra" << std::endl;
-      // write the vertices
-      for (int v = 0; v < 4; v++) {
-        const float* vertex = tetra.getVertex(v);
-        out << "\tvertex " << vertex[0] << " " << vertex[1] << " " << vertex[2] << std::endl;
-        if (tetra.isColoredPlane (v)) {
-          const float* color = tetra.getPlaneColor(v);
-          unsigned int bytecolor[4];
-          for (int c = 0; c < 4; c++) {
-            bytecolor[c] = (unsigned char)(color[c] * 255.5f);
-          }
-          out << "\tcolor " << bytecolor[0] << " " << bytecolor[1] << " "
-                            << bytecolor[2] << " " << bytecolor[3] << std::endl;
-        }
-      }
-      // write the plane visibility
-      int p;
-      bool allVisible = true;
-      for (p = 0; p < 4; p++) {
-        if (!tetra.isVisiblePlane(p)) {
-          allVisible = false;
-          break;
-        }
-      }
-      if (!allVisible) {
-        out << "\tvisible";
-        for (p = 0; p < 4; p++) {
-          if (tetra.isVisiblePlane(p)) {
-            out << " 1";
-          } else {
-            out << " 0";
-          }
-        }
-        out << std::endl;
-      }
-      // write the regular stuff
-      if (tetra.isDriveThrough() && tetra.isShootThrough())
-        out << "\tpassable" << std::endl;
-      else{
-        if (tetra.isDriveThrough())
-	  out << "\tdrivethrough" << std::endl;
-        if (tetra.isShootThrough())
 	  out << "\tshootthrough" << std::endl;
       }
       out << "end" << std::endl << std::endl;

@@ -68,12 +68,6 @@ public:
   void addBox(float x, float y, float z, float r, float w, float d, float h, bool drive = false, bool shoot = false);
   void addPyramid(float x, float y, float z, float r, float w, float d, float h, bool drive = false, bool shoot = false, bool flipZ = false);
   void addTeleporter(float x, float y, float z, float r, float w, float d, float h, float b, bool horizontal, bool drive = false, bool shoot = false);
-  void addTetra(const float vertices[4][3], const bool visible[4],
-                const bool useColor[4], const float colors[4][4],
-                const bool useNormals[4], const float normals[4][3][3],
-                const bool useTexCoords[4], const float texCoords[4][3][2],
-                const int textureMatrices[4], const std::string textures[4],
-                bool drive = false, bool shoot = false);
   void addBase(float x, float y, float z, float r, float w, float d, float h,
 	       int color, bool drive = false, bool shoot = false);
   void addLink(int from, int to);
@@ -81,6 +75,7 @@ public:
   void addArc(ArcObstacle* arc);
   void addCone(ConeObstacle* cone);
   void addSphere(SphereObstacle* sphere);
+  void addTetra(TetraBuilding *tetra);
   void addZone(const CustomZone *zone);
   void addEntryZone( QualifierList &qualifiers, WorldFileLocation *zone );
   void addWeapon(const FlagType *type, const float *origin, float direction,
