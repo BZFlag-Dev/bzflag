@@ -15,6 +15,7 @@
 
 <!ENTITY Blindness SYSTEM "Flags/Blindness.xml">
 <!ENTITY BlueTeam SYSTEM "Flags/BlueTeam.xml">
+<!ENTITY Bouncy SYSTEM "Flags/Bouncy.xml">
 <!ENTITY Burrow SYSTEM "Flags/Burrow.xml">
 <!ENTITY Cloaking SYSTEM "Flags/Cloaking.xml">
 <!ENTITY Colorblindness SYSTEM "Flags/Colorblindness.xml">
@@ -79,6 +80,7 @@
 
   &Blindness;
   &BlueTeam;
+  &Bouncy;
   &Burrow;
   &Cloaking;
   &Colorblindness;
