@@ -25,6 +25,8 @@ const int		TeamPLen = 10;
 
 struct Team {
   public:
+    Team();
+
     void*		pack(void*) const;
     void*		unpack(void*);
 

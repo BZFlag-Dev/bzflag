@@ -39,6 +39,13 @@ float			Team::radarColor[NumTeams][3] = {
 //                                { 1.0, 0.5, 1.0 }     // purple
 //                        };
 
+Team::Team()
+{
+  size = 0;
+  activeSize = 0;
+  won = 0;
+  lost = 0;
+}
 
 void*			Team::pack(void* buf) const
 {
