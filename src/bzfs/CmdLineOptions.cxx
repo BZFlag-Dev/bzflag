@@ -266,10 +266,9 @@ static bool parsePlayerCount(const char *argv, CmdLineOptions &options)
 
 void printVersion()
 {
-  printf("BZFlag server %s (protocol %d.%d%c) http://BZFlag.org/\n",
-      VERSION,
-      (BZVERSION / 10000000) % 100, (BZVERSION / 100000) % 100,
-      (char)('a' - 1 + (BZVERSION / 1000) % 100));
+  printf("BZFlag server %s (protocol %s) http://BZFlag.org/\n",
+      getAppVersion(),
+      getProtocolVersion());
   printf("%s\n", copyright);
 }
 

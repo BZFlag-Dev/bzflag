@@ -88,7 +88,7 @@ bool			PingPacket::read(int fd, struct sockaddr_in* addr)
   // compare version against my version.  ignore last character of
   // version number.  that's only used to indicate compatible
   // client-side changes.
-  return (strncmp(serverVersion, ServerVersion, 7) == 0);
+  return (strncmp(serverVersion, getServerVersion(), 7) == 0);
 }
 
 bool			PingPacket::waitForReply(int fd,
@@ -141,7 +141,7 @@ bool			PingPacket::write(int fd,
   void* buf = buffer;
   buf = nboPackUShort(buf, PacketSize - 4);
   buf = nboPackUShort(buf, PingCodeReply);
-  buf = pack(buf, ServerVersion);
+  buf = pack(buf, getServerVersion());
   return sendMulticast(fd, buffer, sizeof(buffer), addr) == sizeof(buffer);
 }
 
@@ -358,7 +358,7 @@ void			 PingPacket::writeToFile (ofstream& out) const
   void* buf = buffer;
   buf = nboPackUShort(buf, PingPacket::PacketSize - 4);
   buf = nboPackUShort(buf, PingCodeReply);
-  buf = pack(buf, ServerVersion);
+  buf = pack(buf, getServerVersion());
   out.write(buffer,sizeof(buffer));
 }
 
@@ -393,5 +393,5 @@ bool			 PingPacket::readFromFile(ifstream& in)
   // compare version against my version.  ignore last character of
   // version number.  that's only used to indicate compatible
   // client-side changes.
-  return (strncmp(serverVersion, ServerVersion, 7) == 0);
+  return (strncmp(serverVersion, getServerVersion(), 7) == 0);
 }

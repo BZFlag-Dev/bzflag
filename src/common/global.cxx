@@ -78,3 +78,35 @@ GlobalDBItem				globalDBItems[] = {
 	{ "_worldSize",			"800.0",			false, StateDatabase::Locked},
 };
 
+
+// just a place to put the version stuff, as there was no where else
+// version strings
+char	serverVersion[16] = {0};
+char	protVersion[16] = {0};
+char	appVersion[24] = {0};
+
+const char*			getServerVersion()
+{
+	if (!serverVersion[0])
+		sprintf(serverVersion,"BZFS%s",getProtocolVersion());
+
+	return serverVersion;
+}
+
+const char*			getProtocolVersion()
+{
+	if (!protVersion[0])
+		sprintf(protVersion,"%s",BZ_PROTO_VERSION);
+
+	return protVersion;
+}
+
+const char*		getAppVersion()
+{
+	if (!appVersion[0])
+		sprintf(appVersion,"%d.%d.%d-%s-%s%d",BZ_MAJOR_VERSION,BZ_MINOR_VERSION,BZ_REV,BZ_BUILD_OS,BZ_BUILD_SOURCE,BZ_BUILD_DATE);
+
+	return appVersion;
+}
+
+

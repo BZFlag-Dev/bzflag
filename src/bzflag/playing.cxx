@@ -3443,7 +3443,7 @@ static void		handleServerMessage(bool human, uint16_t code,
       if (!strncmp((char*)msg,"CLIENTQUERY",strlen("CLIENTQUERY"))) {
 	char messageBuffer[MessageLen];
 	memset(messageBuffer, 0, MessageLen);
-	sprintf(messageBuffer,"Version %s", VERSION);
+	sprintf(messageBuffer,"Version %s", getAppVersion());
 	if (startupInfo.useUDPconnection)
 	  strcat(messageBuffer,"+UDP");
 
@@ -6807,7 +6807,7 @@ void			startPlaying(BzfDisplay* _display,
   // print version
   {
     char bombMessage[80];
-    sprintf(bombMessage, "BZFlag version %s", VERSION);
+    sprintf(bombMessage, "BZFlag version %s", getAppVersion());
     controlPanel->addMessage("");
     tmpString = ColorStrings[RedColor];
     tmpString += (const char *) bombMessage;

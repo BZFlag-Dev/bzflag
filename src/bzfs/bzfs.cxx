@@ -1336,10 +1336,10 @@ static void sendMessageToListServerForReal(int index)
     pingReply.packHex(gameInfo);
 
     // send ADD message
-    sprintf(msg, "%s %s %d %s %.*s %.256s\n\n", link.nextMessage,
+    sprintf(msg, "%s %s %s %s %.*s %.256s\n\n", link.nextMessage,
 	clOptions->publicizedAddress.c_str(),
-	BZVERSION % 1000,
-	ServerVersion,
+	getAppVersion(),
+	getServerVersion(),
 	PingPacketHexPackedSize, gameInfo,
 	clOptions->publicizedTitle);
   }
@@ -2540,7 +2540,7 @@ static void acceptClient()
 
   // send server version and playerid
   char buffer[9];
-  memcpy(buffer, ServerVersion, 8);
+  memcpy(buffer, getServerVersion(), 8);
   // send 0xff if list is full
   buffer[8] = (char)0xff;
 
@@ -2946,7 +2946,7 @@ static void addPlayer(int playerIndex)
   char message[MessageLen];
 
 #ifdef SERVERLOGINMSG
-  sprintf(message,"BZFlag server %s, http://BZFlag.org/", VERSION);
+  sprintf(message,"BZFlag server %s, http://BZFlag.org/", getAppVersion());
   sendMessage(ServerPlayer, playerIndex, message, true);
 
   if (clOptions->servermsg && (strlen(clOptions->servermsg) > 0)) {
@@ -4520,6 +4520,23 @@ static void parseCommand(const char *message, int t)
       }
       itr++;
     }
+  }else if (strncmp(message + 1, "groupperms", 10) == 0) {
+    sendMessage(ServerPlayer, t, "Group List:");
+    std::map<std::string, PlayerAccessInfo>::iterator itr = groupAccess.begin();
+    std::string line;
+    while (itr != groupAccess.end()) {
+      line = itr->first + ":   ";
+      sendMessage(ServerPlayer, t, line.c_str());
+
+      for (int i = 0; i < lastPerm; i++) {
+	if (itr->second.explicitAllows.test(i)) {
+	  line = "     ";
+	  line += nameFromPerm((AccessPerm)i);
+	  sendMessage(ServerPlayer, t, line.c_str());
+	}
+      }
+      itr++;
+    }
   } else if ((hasPerm(t, setPerms) || hasPerm(t, setAll)) &&
 	     strncmp(message + 1, "setgroup", 8) == 0) {
     char *p1 = strchr(message + 1, '\"');
@@ -4788,9 +4805,10 @@ static void parseCommand(const char *message, int t)
 	/* unquoted -- so just copy username if one was given*/
 	strncpy(voteplayer, message+argStartOffset, messageLength-argStartOffset);
       }
-
+     
+	  int i = 0;
       /* trim off any trailing whitespace */
-      for (int i = messageLength-argStartOffset-1; i >= 0; i--) {
+      for (i = messageLength-argStartOffset-1; i >= 0; i--) {
 	if (isAlphanumeric(voteplayer[i])) {
 	  break;
 	} else {
@@ -4860,8 +4878,9 @@ static void parseCommand(const char *message, int t)
       // set the number of available voters
       arbiter->setAvailableVoters(available);
 
+
       // keep track of who is allowed to vote
-      for (int i=0; i < curMaxPlayers; i++) {
+      for (i=0; i < curMaxPlayers; i++) {
 	// anyone on the server (even observers) are eligible to vote
 	if (player[i].fd != NotConnected) {
 	  arbiter->grantSuffrage(player[i].callSign);
@@ -5580,7 +5599,7 @@ int main(int argc, char **argv)
   if (timeBombString()) {
     char bombMessage[80];
     fprintf(stderr, "This release will expire on %s.\n", timeBombString());
-    sprintf(bombMessage, "Version %s", VERSION);
+    sprintf(bombMessage, "Version %s", getAppVersion());
     fprintf(stderr, "%s\n", bombMessage);
   }
 

@@ -228,6 +228,23 @@ class string_util {
 #endif
 #define countof(__x)   (sizeof(__x) / sizeof(__x[0]))
 
+// all versions are generated using the version macros in config.h
+// version strings
+const char* getServerVersion();			// returns "BZFS109a" and the like
+const char* getProtocolVersion();		// return  "109a" and the like
+const char* getAppVersion();			// returns "1.9.0-OS-BUILD-DATE"
+
+/* config.h needs to define the folowing
+
+#define BZ_PROTO_VERSION	"109a"		// the version of the network engine
+#define BZ_MAJOR_VERSION	1			// the major version
+#define BZ_MINOR_VERSION	9			// the minor version
+#define BZ_REV				0			// the revision
+#define BZ_BUILD_SOURCE		"CVS"		// what built it, CVS, RELEASE, TEST, ETC...
+#define BZ_BUILD_OS			"W32"		// what OS build it, W32, OSX, LINUX, IRIX
+#define BZ_BUILD_DATE		20039999	// the year, month and day of the build
+*/
+
 #endif // BZF_COMMON_H
 
 // ex: shiftwidth=2 tabstop=8

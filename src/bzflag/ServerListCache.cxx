@@ -71,7 +71,7 @@ void			ServerListCache::saveCache()
   // allows separation of server caches by version
   std::string fileName = getCacheDirectoryName();
   if (fileName == "") return;
-  std::string verString = ServerVersion;
+  std::string verString = getServerVersion();
   verString = verString.substr(0,7);
   fileName = fileName + "/" + verString + "Servers.bzs";
 
@@ -112,7 +112,7 @@ void			ServerListCache::loadCache()
   // allows separation of server caches by version
   std::string fileName = getCacheDirectoryName();
   if (fileName == "") return;
-  std::string verString = ServerVersion;
+  std::string verString = getServerVersion();
   verString = verString.substr(0,7);
   fileName = fileName + "/" + verString + "Servers.bzs";
 

@@ -556,11 +556,9 @@ static void		parse(int argc, char** argv)
 	     strcmp(argv[i], "-version") == 0 ||
 	     strcmp(argv[i], "--version") == 0) {
       printFatalError("BZFlag client, version %s\n"
-		"  protocol %c.%d%c",
-		VERSION,
-		ServerVersion[4],
-		atoi(ServerVersion + 5),
-		ServerVersion[7]);
+		"  protocol %s",
+		getAppVersion(),
+		getProtocolVersion());
       exit(0);
     } else if (strcmp(argv[i], "-window") == 0) {
       BZDB->set("_window", "1");

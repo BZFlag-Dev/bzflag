@@ -23,11 +23,34 @@
 #define HAVE_SOCKELEN_T
 #endif
 
-/* Version number of package */
-#define VERSION "1.9a0"
+// protocoll version
+#ifndef BZ_PROTO_VERSION
+#define BZ_PROTO_VERSION "109a"
+#endif //BZ_PROTO_VERSION
 
-/* Bzflag internal version */
-#define BZVERSION 10901000
+#ifndef BZ_MAJOR_VERSION
+#define BZ_MAJOR_VERSION	1
+#endif
+
+#ifndef BZ_MINOR_VERSION
+#define BZ_MINOR_VERSION	9
+#endif
+
+#ifndef BZ_REV
+#define BZ_REV				0
+#endif
+
+#ifndef BZ_BUILD_SOURCE
+#define BZ_BUILD_SOURCE		"VC"
+#endif
+
+#ifndef BZ_BUILD_OS
+#define BZ_BUILD_OS			"W32"
+#endif
+
+#ifndef BZ_BUILD_DATE
+#define BZ_BUILD_DATE		20039999
+#endif
 
 /* Time Bomb expiration */
 /* #undef TIME_BOMB */

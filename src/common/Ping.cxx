@@ -70,7 +70,7 @@ bool			PingPacket::read(int fd, struct sockaddr_in* addr)
   // last character of version number.  that's only used to indicate
   // compatible client-side changes.
   buf = nboUnpackString(buf, serverVersion, 8);
-  if (strncmp(serverVersion, ServerVersion, 7))
+  if (strncmp(serverVersion, getServerVersion(), 7))
     return false;				// different version
 
   buf = serverId.unpack(buf);
@@ -146,7 +146,7 @@ bool			PingPacket::write(int fd,
   void* buf = buffer;
   buf = nboPackUShort(buf, PacketSize);
   buf = nboPackUShort(buf, PingCodeReply);
-  buf = nboPackString(buf, ServerVersion, 8);
+  buf = nboPackString(buf, getServerVersion(), 8);
   buf = serverId.pack(buf);
   buf = sourceAddr.pack(buf);
   buf = nboPackUShort(buf, gameStyle);

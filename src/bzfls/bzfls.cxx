@@ -1060,7 +1060,7 @@ static bool startReplyClient(int index)
 				"Content-Type: text/plain\r\n"
 				"\r\n",
 				date,
-				VERSION,
+				getAppVersion(),
 				modified);
     client[index].offset = 0;
     client[index].length = strlen(client[index].buffer);
@@ -1291,17 +1291,11 @@ static void printVersion(FILE* out)
 {
   fprintf(out, "%s\n", copyright);
 
-  fprintf(out, "BZFlag server, version %d.%d%c%d\n",
-		(BZVERSION / 10000000) % 100,
-		(BZVERSION / 100000) % 100,
-		(char)('a' - 1 + (BZVERSION / 1000) % 100),
-		BZVERSION % 1000);
+  fprintf(out, "BZFlag server, version %d.%d.%d-%s%s%d\n",
+		BZ_MAJOR_VERSION,BZ_MINOR_VERSION,BZ_REV,BZ_BUILD_OS,BZ_BUILD_SOURCE,BZ_BUILD_DATE);
 
-  fprintf(out, "  protocol %c.%d%c\n", ServerVersion[4],
-				(ServerVersion[5] != '0') ?
-					atoi(ServerVersion + 5) :
-					atoi(ServerVersion + 6),
-				(char)tolower(ServerVersion[7]));
+  fprintf(out, "  protocol %s\n", &(getServerVersion()[4]));
+
 }
 
 static void usage(const char* pname)
@@ -1362,9 +1356,9 @@ int main(int argc, char** argv)
   // print expiration date
   if (timeBombString()) {
     fprintf(stderr, "This release will expire on %s.\n", timeBombString());
-    fprintf(stderr, "Version %d.%d%c%d\n",
-		(BZVERSION / 10000000) % 100, (BZVERSION / 100000) % 100,
-		(char)('a' - 1 + (BZVERSION / 1000) % 100), BZVERSION % 1000);
+
+	fprintf(stderr, "Version %s\n",
+		getAppVersion());
   }
 
   // trap some signals
