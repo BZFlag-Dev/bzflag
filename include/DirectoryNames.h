@@ -13,7 +13,6 @@
 #ifndef __DIRECTORY_NAMES_H__
 #define __DIRECTORY_NAMES_H__
 
-#include "common.h"
 
 /* interface system headers */
 #include <string>

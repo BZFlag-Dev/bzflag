@@ -4,7 +4,7 @@
 BZFlag 1.11
 -----------
 
-* Capture/Replay feature - Dave Rodgers
+* Record/Replay feature - Dave Rodgers
 * Random teleporter destinations - Dave Rodgers
 * Added Lag bad flag - Dave Rodgers
 * Support for building BZAdmin with PDCurses on Windows - Daniel Remenak

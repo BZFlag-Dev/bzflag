@@ -11,7 +11,6 @@
  */
 #include "bzfs.h"
 #include "NetHandler.h"
-#include "RecordReplay.h"
 
 const int udpBufSize = 128000;
 
@@ -3652,6 +3651,11 @@ int main(int argc, char **argv)
     } else {
       DEBUG1("Bad word filter specified without -filterChat or -filterCallsigns\n");
     }
+  }
+  
+  // enable replay server mode
+  if (clOptions->replayServer) {
+    Replay::init();
   }
 
   /* initialize the poll arbiter for voting if necessary */

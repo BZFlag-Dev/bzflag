@@ -13,7 +13,8 @@
 #ifndef __CAPTURE_REPLAY_H__
 #define __CAPTURE_REPLAY_H__
 
-#include "bzfs.h"
+
+#include "common.h"
 
 const int ReplayObservers = 16;
 

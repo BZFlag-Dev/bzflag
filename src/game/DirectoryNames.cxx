@@ -95,9 +95,9 @@ extern std::string		getCacheDirName()
   if (getenv("HOST")) {
     name += ".";
     name += getenv("HOST");
-    name += "/";
   }
 #endif
+  name += DirectorySeparator;
   return name;
 }
 

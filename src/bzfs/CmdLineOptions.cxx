@@ -18,7 +18,6 @@
  * to the class implementation (such as version.h)
  */
 #include "CmdLineOptions.h"
-#include "RecordReplay.h"
 
 // invoke persistent recompilation of this for build versioning
 #include "version.h"
@@ -722,7 +721,7 @@ void parse(int argc, char **argv, CmdLineOptions &options)
       checkArgc("", i, argc, argv[i]);
       Record::setDirectory (argv[i]);
     } else if (strcmp(argv[i], "-replay") == 0) {
-      Replay::init ();
+      options.replayServer = true;
     } else if (strcmp(argv[i], "-reportfile") == 0) {
 	checkArgc("", i, argc, argv[i]);
       options.reportFile = argv[i];

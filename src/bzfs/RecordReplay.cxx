@@ -9,31 +9,40 @@
  * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
- 
-#include "bzfs.h"
+
+
+// interface header 
 #include "RecordReplay.h"
-#include "DirectoryNames.h"
-#include "NetHandler.h"
 
-#ifndef _MSC_VER
-# include <dirent.h>
-#endif  // _MSC_VER
-
+// implementation-specific system headers
+#include <stdio.h>
+#include <stdlib.h>
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <time.h>
 #ifndef _WIN32
-#  include <sys/types.h>
-#  include <sys/stat.h>
+#  include <sys/time.h>
+#  include <unistd.h>
 typedef int64_t s64;
 #else
-#  include <time.h>
-#  include <sys/types.h>
-#  include <sys/stat.h>
-#  include <stdio.h>
 #  include <direct.h>
 typedef __int64 s64;
-#  ifndef S_ISDIR // for _WIN32
+#  ifndef S_ISDIR
 #    define S_ISDIR(m) ((m) & _S_IFDIR)
 #  endif
 #endif
+#ifndef _MSC_VER
+#  include <dirent.h>
+#endif
+
+// implementation-specific bzflag headers
+#include "global.h"
+
+// implementation-specific bzfs-specific headers
+#include "DirectoryNames.h"
+#include "NetHandler.h"
+#include "CmdLineOptions.h"
+#include "md5.h"
 
 
 // Type Definitions
@@ -58,8 +67,8 @@ typedef struct RRpacket {
   RRtime timestamp;
   void *data;
 } RRpacket;
-static const int RRpacketHdrLen = sizeof (RRpacket) - 
-                                  (2 * sizeof (RRpacket*) - sizeof (void *));
+static const int RRpacketHdrSize = sizeof(RRpacket) - 
+                                   (2 * sizeof(RRpacket*) - sizeof(void*));
 typedef struct {
   u32 byteCount;
   u32 packetCount;
@@ -80,10 +89,13 @@ typedef struct {
   char serverVersion[8];        // BZFS protocol version
   char appVersion[MessageLen];  // BZFS application version
   char realHash[64];            // hash of worldDatabase
-  char fakeHash[64];            // hash of worldDatabase, maxPlayers adjusted
+  char fakeHash[64];            // hash of worldDatabase
+  u32 flagsSize;                // size of the flags data
   u32 worldSize;                // size of world database 
+  char *flags;                  // a list of the flags types
   char *world;                  // the world
 } ReplayHeader;
+static const int ReplayHeaderSize = sizeof(ReplayHeader) - (2 * sizeof(char*));
 
 
 // Local Variables
@@ -94,7 +106,7 @@ static const u32 ReplayVersion     = 0x0001;
 static const u32 DefaultMaxBytes   = (16 * 1024 * 1024); // 16 Mbytes
 static const u32 DefaultUpdateRate = (10 * 1000000); // seconds
 
-static std::string RecordDir;
+static std::string RecordDir = getRecordDirName();
 
 static bool Recording = false;
 static RecordType RecordMode = BufferedRecord;
@@ -126,12 +138,8 @@ static bool saveStates ();
 static bool saveTeamStates ();
 static bool saveFlagStates ();
 static bool savePlayerStates ();
+static bool saveVariableStates ();
 static bool resetStates ();
-
-static bool saveVars (FILE *f); // FIXME - need to go into the state updates,
-static bool loadVars (FILE *f); // or just at the beginning? (use dirty bits?)
-static bool saveFlagTypes (FILE *f);
-static bool loadFlagTypes (FILE *f);
 
 // saves straight to a file, or into the buffer
 static bool routePacket (u16 code, int len, const void * data, u16 mode);
@@ -146,10 +154,6 @@ static void initRRpacket (u16 mode, u16 code, int len, const void *data,
 static bool saveRRpacket (RRpacket *p, FILE *f);
 static RRpacket *loadRRpacket (FILE *f);            // makes a new packet
 
-static bool saveHeader (int playerIndex, FILE *f);
-static bool loadHeader (ReplayHeader *h, FILE *f);
-static bool matchWorldDatabase (ReplayHeader *h);
-
 static FILE *openFile (const char *filename, const char *mode);
 static FILE *openWriteFile (int playerIndex, const char *filename);
 
@@ -157,9 +161,16 @@ static bool badFilename (const char *name);
 static bool makeDirExist (const char *dirname);
 static bool makeDirExistMsg (const char *dirname, int playerIndex);
 
+static bool saveHeader (int playerIndex, FILE *f);
+static bool loadHeader (ReplayHeader *h, FILE *f);
+static bool replaceFlagTypes (ReplayHeader *h);
+static bool replaceWorldDatabase (ReplayHeader *h);
+static bool flagIsActive (FlagType *type);
+static bool packFlagTypes (char *flags, u32 *flagsSize);
+
 static RRtime getRRtime ();
 
-static const char *print_msg_code (u16 code);
+static const char *msgString (u16 code);
 
 
 // External Dependencies   (from bzfs.cxx)
@@ -175,6 +186,7 @@ extern u16 curMaxPlayers;
 extern TeamInfo team[NumTeams];
 extern char *worldDatabase;
 extern uint32_t worldDatabaseSize;
+extern CmdLineOptions *clOptions;
 
 extern char *getDirectMessageBuffer(void);
 extern void directMessage(int playerIndex, u16 code, 
@@ -208,6 +220,7 @@ static bool recordReset ()
 
 bool Record::init ()
 {
+  // FIXME - why even bother? it's all done at the top
   RecordDir = getRecordDirName();
   RecordMaxBytes = DefaultMaxBytes;
   RecordUpdateRate = DefaultUpdateRate;
@@ -503,7 +516,7 @@ routePacket (u16 code, int len, const void * data, u16 mode)
     p->timestamp = getRRtime();
     addRRpacket (&RecordBuf, p);
     DEBUG4 ("routeRRpacket(): mode = %i, len = %4i, code = %s, data = %p\n",
-            (int)p->mode, p->len, print_msg_code (p->code), p->data);
+            (int)p->mode, p->len, msgString (p->code), p->data);
 
     if (RecordBuf.byteCount > RecordMaxBytes) {
       RRpacket *p;
@@ -521,7 +534,7 @@ routePacket (u16 code, int len, const void * data, u16 mode)
     initRRpacket (mode, code, len, data, &p);
     saveRRpacket (&p, RecordFile);
     DEBUG4 ("routeRRpacket(): mode = %i, len = %4i, code = %s, data = %p\n",
-            (int)p.mode, p.len, print_msg_code (p.code), p.data);
+            (int)p.mode, p.len, msgString (p.code), p.data);
   }
   
   return true; 
@@ -643,12 +656,6 @@ bool Replay::loadFile(int playerIndex, const char *filename)
     return false;
   }
 
-  if (strncmp (header.realHash, hexDigest, 50) != 0) {
-    // issue a warning, and then continue on
-    sendMessage (ServerPlayer, playerIndex, 
-                 "Warning: replay file contains different map");
-  }
-
   // preload the buffer 
   // FIXME - this should be a moving window, for big files, mmap() ?
   while (ReplayBuf.byteCount < RecordMaxBytes) {
@@ -671,71 +678,6 @@ bool Replay::loadFile(int playerIndex, const char *filename)
 
   snprintf (buffer, MessageLen, "Loaded file: %s", name.c_str());
   sendMessage (ServerPlayer, playerIndex, buffer, true);
-  
-  return true;
-}
-
-
-static bool
-matchWorldDatabase (ReplayHeader *h)
-{
-  matchWorldDatabase (h); //FIXME
-
-  // Ok, this is where it gets a bit borked. The bzflag client
-  // has dynamic arrays for some of its objects (players, flags, 
-  // shots, etc...) If the client array is too small, there will
-  // be memory overruns. The maxPlayers problem is already dealt
-  // with, because it is set to (MaxPlayers + ReplayObservers)
-  // as soon as the -replay flag is used. The rest of them are 
-  // still an issue.
-  //
-  // Here are a few of options:
-  //
-  // 1) make the command line option  -replay <filename>, and
-  //    only allow loading of world DB's that match the one
-  //    from the command line file. This is probably how this
-  //    feature will get used for the most part anyways.
-  //
-  // 2) kick all observers off of the server if an incompatible
-  //    record file is loaded (with an appropriate warning). 
-  //    then they can reload with the original DB upon rejoining
-  //    (DB with modified maxPlayers).
-  //
-  // 3) make fixed sized arrays on the client side
-  //    (but what if someone really needs 1000 flags?)
-  //
-  // 4) implement a world reload feature on the client side, 
-  //    so that if the server sends a MsgGetWorld to the client
-  //    when it isn't expecting one, it reaquires and regenerates
-  //    its world DB. this would be the slick way to do it.
-  //
-  // 5) implement a resizing command, but that's icky.
-  // 
-  // 6) leave it be, and let clients fall where they may.
-  //
-
-  // maxPlayers [from WorldBuilder.cxx]
-  //   world->players = new RemotePlayer*[world->maxPlayers];
-  
-  // maxFlags [from WorldBuilder.cxx]
-  //   world->flags = new Flag[world->maxFlags];
-  //   world->flagNodes = new FlagSceneNode*[world->maxFlags];
-  //   world->flagWarpNodes = new FlagWarpSceneNode*[world->maxFlags];  
-
-  // maxShots [from RemotePlayer.cxx]
-  //   numShots = World::getWorld()->getMaxShots();
-  //   shots = new RemoteShotPath*[numShots];
-    
-  
-  // probably a different map, or a different gameStyle
-  if (h->worldSize != worldDatabaseSize) {
-    return false;
-  }
-  
-  // compare the whole world, options and all
-  if (memcmp (h->world, worldDatabase, h->worldSize) != 0) {
-    return false;
-  }
   
   return true;
 }
@@ -961,7 +903,7 @@ bool Replay::sendPackets () {
     }
     
     DEBUG4 ("sendPackets(): mode = %i, len = %4i, code = %s, data = %p\n",
-            (int)p->mode, p->len, print_msg_code (p->code), p->data);
+            (int)p->mode, p->len, msgString (p->code), p->data);
 
     if (p->mode != HiddenPacket) {
       // send message to all replay observers
@@ -1186,6 +1128,7 @@ saveStates ()
   saveTeamStates ();
   saveFlagStates ();
   savePlayerStates ();
+  saveVariableStates ();
   
   RecordUpdateTime = getRRtime ();
   
@@ -1223,35 +1166,9 @@ resetStates ()
 
 
 static bool
-saveVars (FILE *f)
+saveVariableStates ()
 {
   //FIXME
-  loadVars (f);
-  return true;
-}
-
-static bool
-loadVars (FILE *f)
-{
-  //FIXME
-  saveVars (f);
-  return true;
-}
-
-static bool
-saveFlagTypes (FILE *f)
-{
-  //FIXME
-  loadFlagTypes (f);
-  return true;
-}
-
-
-static bool
-loadFlagTypes (FILE *f)
-{
-  //FIXME
-  saveFlagTypes (f);
   return true;
 }
 
@@ -1266,7 +1183,7 @@ loadFlagTypes (FILE *f)
 static bool
 saveRRpacket (RRpacket *p, FILE *f)
 {
-  char bufStart[RRpacketHdrLen];
+  char bufStart[RRpacketHdrSize];
   void *buf;
 
   if (f == NULL) {
@@ -1280,14 +1197,14 @@ saveRRpacket (RRpacket *p, FILE *f)
   buf = nboPackUInt (buf, (u32) (p->timestamp >> 32));        // msb
   buf = nboPackUInt (buf, (u32) (p->timestamp & 0xFFFFFFFF)); // lsb
 
-  if ((fwrite (bufStart, RRpacketHdrLen, 1, f) == 0) ||
+  if ((fwrite (bufStart, RRpacketHdrSize, 1, f) == 0) ||
       (fwrite (p->data, p->len, 1, f) == 0)) {
     return false;
   }
 
-  // fflush (f); // FIXME (implment as a command, flush on ::kill())
+  // fflush (f); // FIXME (implement as a command, flush on ::kill()?)
   
-  RecordFileBytes += p->len + RRpacketHdrLen;
+  RecordFileBytes += p->len + RRpacketHdrSize;
   RecordFilePackets++;
   RecordFilePrevLen = p->len;
 
@@ -1299,7 +1216,7 @@ static RRpacket *
 loadRRpacket (FILE *f)
 {
   RRpacket *p;
-  char bufStart[RRpacketHdrLen];
+  char bufStart[RRpacketHdrSize];
   void *buf;
   u32 timeMsb, timeLsb;
   
@@ -1309,7 +1226,7 @@ loadRRpacket (FILE *f)
   
   p = (RRpacket *) malloc (sizeof (RRpacket));
 
-  if (fread (bufStart, RRpacketHdrLen, 1, f) <= 0) {
+  if (fread (bufStart, RRpacketHdrSize, 1, f) <= 0) {
     free (p);
     return NULL;
   }
@@ -1336,97 +1253,12 @@ loadRRpacket (FILE *f)
   }
   
   DEBUG4 ("loadRRpacket(): mode = %i, len = %4i, code = %s, data = %p\n",
-          (int)p->mode, p->len, print_msg_code (p->code), p->data);
+          (int)p->mode, p->len, msgString (p->code), p->data);
 
   return p;  
 }
 
 
-static bool
-saveHeader (int p, FILE *f)
-{
-  const int hdrsize = sizeof(ReplayHeader) - sizeof (char*);
-  char buffer[hdrsize];
-  void *buf;
-  ReplayHeader hdr;
-  
-  if (f == NULL) {
-    return false;
-  }
-
-  // setup the data  
-  memset (&hdr, 0, sizeof (hdr));
-  strncpy (hdr.callSign, player[p].getCallSign(), sizeof (hdr.callSign));
-  strncpy (hdr.email, player[p].getEMail(), sizeof (hdr.email));
-  strncpy (hdr.serverVersion, getServerVersion(), sizeof (hdr.serverVersion));
-  strncpy (hdr.appVersion, getAppVersion(), sizeof (hdr.appVersion));
-  strncpy (hdr.realHash, hexDigest, sizeof (hdr.realHash));
-  strncpy (hdr.fakeHash, hexDigest, sizeof (hdr.fakeHash)); //FIXME
-
-  // pack the data
-  buf = nboPackUInt (buffer, ReplayMagic);
-  buf = nboPackUInt (buf, ReplayVersion);
-  buf = nboPackUInt (buf, hdrsize + worldDatabaseSize);
-  buf = nboPackUInt (buf, 0); // place holder for seconds
-  buf = nboPackUInt (buf, p); // player index
-  buf = nboPackUInt (buf, worldDatabaseSize);
-  buf = nboPackString (buf, hdr.callSign, sizeof (hdr.callSign));
-  buf = nboPackString (buf, hdr.email, sizeof (hdr.email));
-  buf = nboPackString (buf, hdr.serverVersion, sizeof (hdr.serverVersion));
-  buf = nboPackString (buf, hdr.appVersion, sizeof (hdr.appVersion));
-  buf = nboPackString (buf, hdr.realHash, sizeof (hdr.realHash));
-  buf = nboPackString (buf, hdr.fakeHash, sizeof (hdr.fakeHash));
-
-  // store the data  
-  if ((fwrite (buffer, hdrsize, 1, f) == 0) ||
-      (fwrite (worldDatabase, worldDatabaseSize, 1, f) == 0)) {
-    return false;
-  }
-  
-  RecordFileBytes += hdrsize + worldDatabaseSize;
-  
-  return true;
-}
-
-
-static bool
-loadHeader (ReplayHeader *h, FILE *f)
-{
-  const int hdrsize = sizeof(ReplayHeader) - sizeof (char*);
-  char buffer[hdrsize];
-  void *buf;
-  
-  if (fread (buffer, hdrsize, 1, f) <= 0) {
-    return false;
-  }
-  
-  buf = nboUnpackUInt (buffer, h->magic);
-  buf = nboUnpackUInt (buf, h->version);
-  buf = nboUnpackUInt (buf, h->offset);
-  buf = nboUnpackUInt (buf, h->seconds);
-  buf = nboUnpackUInt (buf, h->player);
-  buf = nboUnpackUInt (buf, h->worldSize);
-  buf = nboUnpackString (buf, h->callSign, sizeof (h->callSign));
-  buf = nboUnpackString (buf, h->email, sizeof (h->email));
-  buf = nboUnpackString (buf, h->serverVersion, sizeof (h->serverVersion));
-  buf = nboUnpackString (buf, h->appVersion, sizeof (h->appVersion));
-  buf = nboUnpackString (buf, h->realHash, sizeof (h->realHash));
-  buf = nboUnpackString (buf, h->fakeHash, sizeof (h->fakeHash));
-  
-  // FIXME - make sure this doesn't leak anywhere
-  h->world = new char [h->worldSize]; // use new, as defineWorld() does
-  if (h->world == NULL) {
-    return false;
-  }
-
-  if (fread (h->world, h->worldSize, 1, f) <= 0) {
-    return false;
-  }
-  
-  return true;
-}
-                         
-                          
 static FILE *
 openFile (const char *filename, const char *mode)
 {
@@ -1535,6 +1367,283 @@ badFilename (const char *name)
 }
 
 
+static bool
+saveHeader (int p, FILE *f)
+{
+  char buffer[ReplayHeaderSize];
+  char flagsBuf[MaxPacketLen]; // for the FlagType's
+  void *buf;
+  ReplayHeader hdr;
+  
+  if (f == NULL) {
+    return false;
+  }
+
+  // setup the data  
+  memset (&hdr, 0, sizeof (hdr));
+  strncpy (hdr.callSign, player[p].getCallSign(), sizeof (hdr.callSign));
+  strncpy (hdr.email, player[p].getEMail(), sizeof (hdr.email));
+  strncpy (hdr.serverVersion, getServerVersion(), sizeof (hdr.serverVersion));
+  strncpy (hdr.appVersion, getAppVersion(), sizeof (hdr.appVersion));
+  strncpy (hdr.realHash, hexDigest, sizeof (hdr.realHash));
+  strncpy (hdr.fakeHash, hexDigest, sizeof (hdr.fakeHash)); //FIXME
+  packFlagTypes (flagsBuf, &hdr.flagsSize);
+  hdr.flags = flagsBuf;
+
+  int totalSize = ReplayHeaderSize + worldDatabaseSize + hdr.flagsSize;
+
+  // pack the data
+  buf = nboPackUInt (buffer, ReplayMagic);
+  buf = nboPackUInt (buf, ReplayVersion);
+  buf = nboPackUInt (buf, totalSize);
+  buf = nboPackUInt (buf, 0); // place holder for seconds
+  buf = nboPackUInt (buf, p); // player index
+  buf = nboPackUInt (buf, hdr.flagsSize);
+  buf = nboPackUInt (buf, worldDatabaseSize);
+  buf = nboPackString (buf, hdr.callSign, sizeof (hdr.callSign));
+  buf = nboPackString (buf, hdr.email, sizeof (hdr.email));
+  buf = nboPackString (buf, hdr.serverVersion, sizeof (hdr.serverVersion));
+  buf = nboPackString (buf, hdr.appVersion, sizeof (hdr.appVersion));
+  buf = nboPackString (buf, hdr.realHash, sizeof (hdr.realHash));
+  buf = nboPackString (buf, hdr.fakeHash, sizeof (hdr.fakeHash));
+
+  // store the data  
+  if ((fwrite (buffer, ReplayHeaderSize, 1, f) == 0) ||
+      (fwrite (hdr.flags, hdr.flagsSize, 1, f) == 0) ||
+      (fwrite (worldDatabase, worldDatabaseSize, 1, f) == 0)) {
+    return false;
+  }
+  
+  RecordFileBytes += totalSize;
+  
+  return true;
+}
+
+
+static bool
+loadHeader (ReplayHeader *h, FILE *f)
+{
+  char buffer[ReplayHeaderSize];
+  void *buf;
+  
+  if (fread (buffer, ReplayHeaderSize, 1, f) <= 0) {
+    return false;
+  }
+  
+  buf = nboUnpackUInt (buffer, h->magic);
+  buf = nboUnpackUInt (buf, h->version);
+  buf = nboUnpackUInt (buf, h->offset);
+  buf = nboUnpackUInt (buf, h->seconds);
+  buf = nboUnpackUInt (buf, h->player);
+  buf = nboUnpackUInt (buf, h->flagsSize);
+  buf = nboUnpackUInt (buf, h->worldSize);
+  buf = nboUnpackString (buf, h->callSign, sizeof (h->callSign));
+  buf = nboUnpackString (buf, h->email, sizeof (h->email));
+  buf = nboUnpackString (buf, h->serverVersion, sizeof (h->serverVersion));
+  buf = nboUnpackString (buf, h->appVersion, sizeof (h->appVersion));
+  buf = nboUnpackString (buf, h->realHash, sizeof (h->realHash));
+  buf = nboUnpackString (buf, h->fakeHash, sizeof (h->fakeHash));
+  
+  // FIXME - make sure these don't leak anywhere
+  h->flags = new char [h->flagsSize];
+  h->world = new char [h->worldSize]; // use new, as defineWorld() does
+  if ((h->flags == NULL) || (h->world == NULL)) {
+    return false;
+  }
+
+  if ((fread (h->flags, h->flagsSize, 1, f) <= 0) ||
+      (fread (h->world, h->worldSize, 1, f) <= 0)) {
+    return false;
+  }
+
+  bool replaced = false;  
+  if (replaceFlagTypes (h)) {
+    replaced = true;
+  }
+  if (replaceWorldDatabase (h)) {
+    replaced = true;
+  }
+
+  if (replaced) {  
+    // FIXME - PRINT A BIG WARNING HERE? KICK EVERYONE?
+  }
+  
+  return true;
+}
+                         
+                          
+static bool
+replaceFlagTypes (ReplayHeader *h)
+{
+  bool replace = false;
+  void *buf = h->flags;
+  FlagOptionMap headerFlag;
+  FlagTypeMap::iterator it;
+
+  // Unpack the stored list of flags from the header
+  while (buf < (h->flags + h->flagsSize)) {
+    FlagType *type;
+    buf = FlagType::unpack(buf, type);
+    headerFlag[type] = false;
+    if (type != Flags::Null) {
+      headerFlag[type] = true;
+    }
+  }
+  
+  // we're done with this
+  delete[] h->flags;
+  
+  // See if all of the flags required by the header are currently active
+  for (it = FlagType::getFlagMap().begin();
+       it != FlagType::getFlagMap().end(); ++it) {
+    FlagType* &type = it->second;
+    if ((type != Flags::Null) && 
+        (headerFlag[type]) && !flagIsActive(type)) {
+      replace = true; // this flag type isn't currently active
+    }
+  }
+
+  if (replace) {
+    // replace the flags
+    DEBUG3 ("Replay: replacing Flag Types\n");
+    clOptions->numExtraFlags = 0;
+    for (it = FlagType::getFlagMap().begin();
+         it != FlagType::getFlagMap().end(); ++it) {
+      FlagType* &type = it->second;
+      if (headerFlag[type]) {
+        clOptions->flagCount[type] = 1;
+      }
+      clOptions->flagDisallowed[type] = false;
+    }
+    return true; // flag types were replaced 
+  } 
+
+  return false;  // flag types were not replaced
+}
+
+
+/* 
+ * Ok, this is where it gets a bit borked. The bzflag client
+ * has dynamic arrays for some of its objects (players, flags, 
+ * shots, etc...) If the client array is too small, there will
+ * be memory overruns. The maxPlayers problem is already dealt
+ * with, because it is set to (MaxPlayers + ReplayObservers)
+ * as soon as the -replay flag is used. The rest of them are 
+ * still an issue.
+ *
+ * Here are a few of options:
+ *
+ * 1) make the command line option  -replay <filename>, and
+ *    only allow loading of world DB's that match the one
+ *    from the command line file. This is probably how this
+ *    feature will get used for the most part anyways.
+ *
+ * 2) kick all observers off of the server if an incompatible
+ *    record file is loaded (with an appropriate warning). 
+ *    then they can reload with the original DB upon rejoining
+ *    (DB with modified maxPlayers).
+ *
+ * 3) make fixed sized arrays on the client side
+ *    (but what if someone really needs 1000 flags?)
+ *
+ * 4) implement a world reload feature on the client side, 
+ *    so that if the server sends a MsgGetWorld to the client
+ *    when it isn't expecting one, it reaquires and regenerates
+ *    its world DB. this would be the slick way to do it.
+ *
+ * 5) implement a resizing command, but that's icky.
+ * 
+ * 6) leave it be, and let clients fall where they may.
+ *
+ * 7) MAC: get to the client to use STL, so segv's aren't a problem
+ *         (and kick 'em anyways, to force a map reload)
+ *
+ *
+ * maxPlayers [from WorldBuilder.cxx]
+ *   world->players = new RemotePlayer*[world->maxPlayers];
+ *
+ * maxFlags [from WorldBuilder.cxx]
+ *   world->flags = new Flag[world->maxFlags];
+ *   world->flagNodes = new FlagSceneNode*[world->maxFlags];
+ *   world->flagWarpNodes = new FlagWarpSceneNode*[world->maxFlags];  
+ *
+ * maxShots [from RemotePlayer.cxx]
+ *   numShots = World::getWorld()->getMaxShots();
+ *   shots = new RemoteShotPath*[numShots];
+ */
+static bool
+replaceWorldDatabase (ReplayHeader *h)
+{
+  // FIXME - modify the world first
+  // copy the current timestamp into
+  // the header world, and change the
+  // header maxPlayers to 216...
+  
+  //FIXME - forgot the hash
+
+
+  if ((h->worldSize != worldDatabaseSize) ||
+      (memcmp (h->world, worldDatabase, h->worldSize) != 0)) {
+    //
+    // they don't match, replace the world
+    //
+    char *tmp = worldDatabase;
+
+    DEBUG3 ("Replay: replacing World Database\n");
+    
+    worldDatabase = h->world;
+    worldDatabaseSize = h->worldSize;
+    
+    MD5 md5;
+    md5.update ((unsigned char *)worldDatabase, worldDatabaseSize);
+    md5.finalize();
+    
+    memset (hexDigest, 0, 50); // FIXME
+
+    delete[] tmp;
+    return true;   // the world was replaced
+  }
+
+  delete[] h->world;
+  return false;    // the world was not replaced
+}
+
+
+static bool
+flagIsActive (FlagType *type)
+{
+  if ((clOptions->flagCount[type] > 0) ||
+      ((clOptions->numExtraFlags > 0) &&
+       !clOptions->flagDisallowed[type])) {
+    return true;
+  }
+  return false;
+}    
+
+
+static bool
+packFlagTypes (char *flags, u32 *flagsSize)
+{
+  // Please see the MsgNegotiateFlags code in [bzfs.cxx]
+  // to see what it is that we are trying to fake.
+	
+  void *buf = flags;
+  FlagTypeMap::iterator it;
+  
+  for (it = FlagType::getFlagMap().begin();
+       it != FlagType::getFlagMap().end(); ++it) {
+    FlagType* &type = it->second;
+    if ((type != Flags::Null) && flagIsActive (type)) {
+      buf = type->pack(buf);
+    }
+  }
+
+  *flagsSize = (char*)buf - flags;
+
+  return true;
+}
+
+
 /****************************************************************************/
 
 // Buffer Functions
@@ -1581,7 +1690,7 @@ addRRpacket (RRbuffer *b, RRpacket *p)
   p->next = NULL;
   b->head = p;
   
-  b->byteCount = b->byteCount + (p->len + RRpacketHdrLen);
+  b->byteCount = b->byteCount + (p->len + RRpacketHdrSize);
   b->packetCount++;
   
   return;
@@ -1597,7 +1706,7 @@ delRRpacket (RRbuffer *b)
     return NULL;
   }
   
-  b->byteCount = b->byteCount - (p->len + RRpacketHdrLen);
+  b->byteCount = b->byteCount - (p->len + RRpacketHdrSize);
   b->packetCount--;
 
   b->tail = p->next;
@@ -1725,7 +1834,7 @@ bool modifyWorldDatabase ()
 /****************************************************************************/
 
 static const char *
-print_msg_code (u16 code)
+msgString (u16 code)
 {
 
 #define STRING_CASE(x)  \

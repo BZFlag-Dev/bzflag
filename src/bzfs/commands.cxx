@@ -16,7 +16,6 @@
 
 // interface header
 #include "commands.h"
-#include "RecordReplay.h"
 
 // implementation-specific system headers
 #include <string>
@@ -41,6 +40,7 @@
 #include "CmdLineOptions.h"
 #include "PlayerInfo.h"
 #include "NetHandler.h"
+#include "RecordReplay.h"
 
 // FIXME -- need to pull communication out of bzfs.cxx...
 
