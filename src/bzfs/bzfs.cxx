@@ -5379,7 +5379,7 @@ int main(int argc, char **argv)
     for (int h = 0; h < curMaxPlayers; h++) {
       if (player[h].state > PlayerInLimbo) {
 	bool oldnr = player[h].notResponding;
-	player[h].notResponding = ((TimeKeeper::getCurrent().getSeconds() - player[h].lastupdate.getSeconds()) > notRespondingTime);
+	player[h].notResponding = ((TimeKeeper::getCurrent() - player[h].lastupdate) > notRespondingTime);
 	// if player is the rabbit, anoint a new one
 	if (!oldnr && player[h].notResponding && h == rabbitIndex)
 	  anointNewRabbit();
