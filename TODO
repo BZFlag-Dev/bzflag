@@ -3,16 +3,18 @@ to do list for bzflag
 
 THESE SHOULD HAPPEN BEFORE THE NEXT RELEASE:
 * version as strings as in 1.9.0-cvs20030604
-  (apparently this needs a better explanation)
-  ( put all calls to all version numbers into funcs
-    from commom, version strings are now built up from
-    sub vars in config.h. )
   (needs some more tweaking for platforms with odd __DATE__ formats)
 
 * .bzf/ on *ix should be a directory with db and cache/ entries
 
 * benchmark calls to BZDB to insure there are close to 0 per
   frame redraw. Convert any existing to callbacks.
+
+* Make world filter work on client side as well as server side
+  using a local world filter, search user dir for word filter first.
+  then search app dir for global filter. This will help people who 
+  want stricter lists then some servers have, and parents who can not
+  monitor what server there children log into.
 
 * shorten laser to like 1.25 normal shot
 
