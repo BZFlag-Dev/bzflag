@@ -74,8 +74,8 @@ bzflag: build
 #	dh_installmanpages -p$@
 	dh_installinfo -p$@
 #	dh_undocumented -p$@
-	dh_installchangelogs -p$@
-ifneq (,$(findstring debug,$(DEB_BUILD_OPTIONS)))
+	dh_installchangelogs -p$@ ChangeLog
+ifneq (nostrip,$(findstring nostrip,$(DEB_BUILD_OPTIONS)))
 	dh_strip -p$@
 endif
 	dh_link -p$@
@@ -112,7 +112,7 @@ bzflag-server: build
 	dh_installinfo -p$@
 #	dh_undocumented -p$@ bzfquery.pl.6
 	dh_installchangelogs -p$@
-ifneq (,$(findstring debug,$(DEB_BUILD_OPTIONS)))
+ifneq (nostrip,$(findstring nostrip,$(DEB_BUILD_OPTIONS)))
 	dh_strip -p$@
 endif
 	dh_link -p$@
