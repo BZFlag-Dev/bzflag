@@ -45,6 +45,10 @@ class SDLDisplay : public BzfDisplay {
   int  min_height;
   int  x;
   int  y;
+  // to avoid flashing we memorize the old values used to build the window
+  bool oldFullScreen;
+  int  oldWidth;
+  int  oldHeight;
 };
 
 class SDLVisual : public BzfVisual {

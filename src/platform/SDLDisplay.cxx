@@ -21,7 +21,8 @@ static int mx = 0;
 static int my = 0;
 
 SDLDisplay::SDLDisplay() : fullScreen(false), base_width(640),
-			   base_height(480)
+			   base_height(480), oldFullScreen(false),
+			   oldWidth(0), oldHeight(0)
 {
   if (SDL_InitSubSystem(SDL_INIT_VIDEO) == -1) {
     printf("Could not initialize SDL Video subsystem: %s.\n", SDL_GetError());
@@ -402,14 +403,29 @@ bool SDLDisplay::getKey(const SDL_Event& sdlEvent, BzfKeyEvent& key) const
 }
 
 void SDLDisplay::createWindow() {
-  SDL_Surface *surface;
-  if (fullScreen)
-    surface = SDL_SetVideoMode(getWidth(), getHeight(), 0,
-			       SDL_OPENGL | SDL_FULLSCREEN);
-  else
-    surface = SDL_SetVideoMode(base_width, base_height, 0,
-			       SDL_OPENGL | SDL_RESIZABLE);
-  if (!surface)
+  int    width;
+  int    height;
+  Uint32 flags = SDL_OPENGL;
+  // getting width, height & flags for SetVideoMode
+  if (fullScreen) {
+    width  = getWidth();
+    height = getHeight();
+    flags |= SDL_FULLSCREEN;
+  } else {
+    width  = base_width;
+    height = base_height;
+    flags |= SDL_RESIZABLE;
+  }
+  // if they are the same, don't bother building a new window
+  if ((width == oldWidth) && (height == oldHeight)
+      && (fullScreen == oldFullScreen))
+    return;
+  // save the values for the next
+  oldWidth      = width;
+  oldHeight     = height;
+  oldFullScreen = fullScreen;
+  // Set the video mode and hope for no errors
+  if (!SDL_SetVideoMode(width, height, 0, flags))
     printf("Could not set Video Mode: %s.\n", SDL_GetError());
 };
 
