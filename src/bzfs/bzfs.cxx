@@ -2792,14 +2792,15 @@ static void captureFlag(int playerIndex, TeamColor teamCaptured)
 			       lastState[playerIndex].pos[2]);
     if ((teamIndex == playerData->player.getTeam() &&
 	 base == playerData->player.getTeam()))	{
-      DEBUG1("Player %s [%d] sent MsgCaptureFlag for taking its own flag onto its own base\n",
+      DEBUG1("Player %s [%d] might have sent MsgCaptureFlag for taking their own "
+             "flag onto their own base\n",
 	     playerData->player.getCallSign(), playerIndex);
-      return; //sanity check
+      //return; //sanity check
     }
     if ((teamIndex != playerData->player.getTeam() &&
 	 base != playerData->player.getTeam())) {
-      DEBUG1("Player %s [%d] (%s) tried to capture %s flag without reaching its own base."
-	     " (Player position: %f %f %f)\n",
+      DEBUG1("Player %s [%d] (%s) might have tried to capture %s flag without "
+	     "reaching their own base. (Player position: %f %f %f)\n",
 	     playerData->player.getCallSign(), playerIndex,
 	     Team::getName(playerData->player.getTeam()),
 	     Team::getName((TeamColor)teamIndex),
@@ -2809,7 +2810,7 @@ static void captureFlag(int playerIndex, TeamColor teamCaptured)
       //strcpy(message, "Autokick: Tried to capture opponent flag without landing on your base");
       //sendMessage(ServerPlayer, playerIndex, message);
       //removePlayer(playerIndex, "capturecheat"); //FIXME: kicks honest players at times
-      return;
+      //return;
     }
   }
 
