@@ -115,7 +115,7 @@ void TextureManager::addTexture( TextureType type, int variant, OpenGLTexture *t
 OpenGLTexture* TextureManager::loadTexture( FileTextureInit &init )
 {
   OpenGLTexture *texture = new OpenGLTexture();
-  *texture = ::getTexture( init.fileName, init.filter);
+  *texture = ::getTexture(init.fileName, NULL, NULL, init.filter);
   return texture;
 }
 

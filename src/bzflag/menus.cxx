@@ -4573,7 +4573,8 @@ MainMenu::MainMenu() : HUDDialog(), joinMenu(NULL),
   mainFont = &font;
 
   // load title
-  title = getTexture(titleFile, OpenGLTexture::Linear, false, true);
+  title = getTexture(titleFile, NULL, NULL,
+		     OpenGLTexture::Linear, false, true);
 
   // add controls
   std::vector<HUDuiControl*>& list = getControls();

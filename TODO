@@ -3,16 +3,13 @@ to do list for BZFlag
 
 THESE SHOULD HAPPEN BEFORE THE NEXT RELEASE:
 
-* Probably worthwhile to consolidate the two getTexture() funcs in texture.cxx, 
-  removing the second one on line 70.  
-
 * Need to use different, clearly disjoint numbering system on bzfs.  perhaps just
   start from 0001 when 1.10 is released.  otherwise it gets unnecessarily bumped to
   match the client version.  it's a separate communication protocol version.
 
-* Test, Test
+* Test
 
-* Name the version
+* Name the version Psyche
 
 * Ship it.
 

@@ -67,14 +67,6 @@ OpenGLTexture		getTexture(const std::string& file,
   return tex;
 }
 
-OpenGLTexture		getTexture(const std::string& file,
-				OpenGLTexture::Filter filter,
-				bool repeat,
-				bool noError)
-{
-  return getTexture(file, NULL, NULL, filter, repeat, noError);
-}
-
 void			printMissingDataDirectoryError(const char* msg)
 {
   char buffer[4096];

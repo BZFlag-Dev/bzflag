@@ -31,10 +31,6 @@ OpenGLTexture		getTexture(const std::string& file,
 				OpenGLTexture::Filter = OpenGLTexture::Max,
 				bool repeat = true,
 				bool noError = false);
-OpenGLTexture		getTexture(const std::string& file,
-				OpenGLTexture::Filter = OpenGLTexture::Max,
-				bool repeat = true,
-				bool noError = false);
 
 class TextureFont {
   public:
