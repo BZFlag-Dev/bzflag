@@ -2847,7 +2847,7 @@ static void randomFlag(int flagIndex)
   if (flag[flagIndex].flag.type->flagQuality == FlagBad)
     flag[flagIndex].flag.endurance = FlagSticky;
   else
-    flag[flagIndex].flag.endurance = FlagNormal;
+    flag[flagIndex].flag.endurance = FlagUnstable;
   addFlag(flagIndex);
 }
 
@@ -3479,18 +3479,18 @@ static void dropFlag(int playerIndex, float pos[3])
   FlagInfo &drpFlag = flag[flagIndex];
   if (drpFlag.flag.status != FlagOnTank)
     return;
+  int flagTeam = drpFlag.flag.type->flagTeam;
+  bool isTeamFlag = (flagTeam != ::NoTeam);
 
   // okay, go ahead and drop it
   drpFlag.player = -1;
   drpFlag.numShots = 0;
-  if ((drpFlag.flag.endurance == FlagNormal) || (drpFlag.flag.endurance == FlagSticky)) {
-    // note: sticky/bad flags should always have grabs=1
-    if ((drpFlag.flag.type->flagTeam != NoTeam) || (--drpFlag.grabs > 0))
-      drpFlag.flag.status = FlagInAir;
-    else
-      drpFlag.flag.status = FlagGoing;
-    numFlagsInAir++;
-  }
+  numFlagsInAir++;
+  // note: sticky/bad flags should always have grabs=1
+  if (isTeamFlag || (--drpFlag.grabs > 0))
+    drpFlag.flag.status = FlagInAir;
+  else
+    drpFlag.flag.status = FlagGoing;
 
   topmosttype = world->inBuilding(&container, pos[0], pos[1], pos[2], 0);
 
@@ -3520,9 +3520,6 @@ static void dropFlag(int playerIndex, float pos[3])
   TeamColor teamBase = whoseBase(pos[0], pos[1],
 				 (topmosttype == NOT_IN_BUILDING ? pos[2] :
 				  topmost->pos[2] + topmost->size[2] + 0.01f));
-
-  int flagTeam = drpFlag.flag.type->flagTeam;
-  bool isTeamFlag = (flagTeam != ::NoTeam);
 
   if (drpFlag.flag.status == FlagGoing) {
     drpFlag.flag.landingPosition[0] = pos[0];
@@ -3562,7 +3559,7 @@ static void dropFlag(int playerIndex, float pos[3])
     else {// oh well, whatcha gonna do?
 	drpFlag.flag.landingPosition[0] = basePos[flagTeam][0];
 	drpFlag.flag.landingPosition[1] = basePos[flagTeam][1];
-	drpFlag.flag.landingPosition[2] = basePos[flagTeam][2] + 
+	drpFlag.flag.landingPosition[2] = basePos[flagTeam][2] +
 	  (baseSize[flagTeam][2] > 0 ? 1 : 0);
     }
   }
@@ -3612,7 +3609,6 @@ static void dropFlag(int playerIndex, float pos[3])
   sendFlagUpdate(flagIndex);
 
   player[playerIndex].lastFlagDropTime = TimeKeeper::getCurrent();
-
 }
 
 static void captureFlag(int playerIndex, TeamColor teamCaptured)
