@@ -67,6 +67,7 @@
 #include "ActionBinding.h"
 #include "ServerStartMenu.h"
 #include "FontManager.h"
+#include "OSFile.h"
 
 // invoke incessant rebuilding for build versioning
 #include "version.h"
@@ -350,8 +351,8 @@ static void		parse(int argc, char** argv)
       checkArgc(i, argc, argv[i]);
       if (strlen(argv[i]) == 0)
 	BZDB.unset("directory");
-      else
-	BZDB.set("directory", argv[i]);
+	  else
+		BZDB.set("directory", argv[i]);
     } else if (strcmp(argv[i], "-e") == 0 || strcmp(argv[i], "-echo") == 0) {
       echoToConsole = true;
     } else if (strcmp(argv[i], "-ea") == 0 || strcmp(argv[i], "-echoAnsi") == 0) {
@@ -875,6 +876,11 @@ int			main(int argc, char** argv)
 
   // parse arguments
   parse(argc, argv);
+
+  //Convert to unix paths so that escaping isn't an issue
+  std::string directory = BZDB.get("directory");
+  OSFileOSToStdDir((char *)directory.c_str()); //ok this is quasi-cheating
+  BZDB.set("directory", directory);
 
   if (debugLevel >= 4)
     BZDB.setDebug(true);

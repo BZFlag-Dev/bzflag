@@ -45,6 +45,7 @@ typedef enum
 }teFilePos;
 
 void setOSFileBaseDir ( const char *szDir );
+void OSFileOSToStdDir ( char *dir );
 
 class OSFile
 {

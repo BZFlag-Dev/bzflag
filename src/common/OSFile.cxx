@@ -70,9 +70,9 @@ void OSFileStdToOSDir ( char *dir )
 void OSFileOSToStdDir ( char *dir )
 {
 	if (!dir) return;
-#ifndef _WIN32
-	return;
-#else
+//#ifndef _WIN32
+//	return;
+//#else
 	char *p = dir;
 
 	while ( *p != '\0' )
@@ -82,7 +82,7 @@ void OSFileOSToStdDir ( char *dir )
 
 		p++;
 	}
-#endif//WIN32
+//#endif//WIN32
 }
 
 // Windows specific make path
