@@ -5,14 +5,14 @@ is quite easy.
    directory. Note that each project uses an individual project file,
    so no two can be combined.
 
-2. Let the opened project compile
+2. Let the opened project compile (this may take several minutes, depending on your computer).
 
 3. The binary should be in each project's corresponding main source
    directory, such as src/bzflag/ for BZFlag client.
 
-Latest CVS project files are maintained using Dev-C++ 4.9.9.1
+Project files were maintained using Dev-C++ 4.9.9.1
 
-The latest version of Dev-C++ has been used to create and maintain these project
+The latest version of Dev-C++ (at this time) has been used to create and maintain these project
 files, so older versions may not necessarily work (but they may, but it is best just
 to get the latest or the above version). The version of MinGW32 that Dev-C++
 uses shouldn't matter as long as it is reasonably up to date (at this time, 3.2.x is
@@ -43,6 +43,12 @@ rather than launching the project file itself (double-clicking the project file'
 Explorer, on Windows), it will fail to create a makefile and therefore cannot compile.
 This bug may not happen all the time, but it is present.
 
+If compilation includes linking errors, and you are using CVS source code, it may be temporary
+and due to the project files not being updated yet for new BZFlag source files. Make sure you
+also have the latest Dev-C++ files from CVS. If you are using release source code, it most likely
+is due to the library (.a) files of your compiler. Make sure you have properly installed your compiler,
+and have the correct library files in the correct place, and of the correct version that matches your compiler.
+
 If you want to use the given project file to compile BZAdmin using
 PDCurses (http://pdcurses.sf.net) or NCurses, or any other Curses interface, make sure your
 Curses lib file is named "libcurses.a" so it links correctly (named exactly like the ncurses lib).
@@ -57,3 +63,19 @@ this does not work, try doing a "clean compile" (rebuild the entire BZFlag proje
 works. If it still looks messed up, it may be a current issue in CVS or your release. Get the latest code
 and try again. If it still does not work, you most likely are a victim of poor hardware. Mention it on BZBB
 for further help.
+
+For further information and help regarding:
+
+Dev-C++:
+    *http://www.bloodshed.net
+    *http://sf.net/projects/dev-cpp
+
+MinGW32:
+    *http://www.mingw.org
+    *http://sf.net/projects/mingw32
+
+GCC:
+    *http://gcc.gnu.org
+
+SDL:
+    *http://libsdl.org
