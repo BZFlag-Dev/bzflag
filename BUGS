@@ -27,6 +27,9 @@ critical bugs
 recent bugs
 ------------
 
+- issuing a /set command in bzflag with no arguments does not provide a list
+  of settable variables.
+
 - thief sound is too dang loud.  the players are all gonna go deaf if someone
   doesn't tone that puppy down a bit.
 
