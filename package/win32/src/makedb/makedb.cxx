@@ -236,6 +236,9 @@ int			parseCommand(char* cmd, char** cmdArgs, int* numArgs)
 	if (*cmd == 0)
 	    break;
 
+	if (*cmd == '#')
+		return -1;
+
 	// starts with a quote?
 	const bool quoted = (*cmd == '\"');
 	if (quoted)
@@ -390,7 +393,10 @@ int main(int argc, char** argv)
     while (fgets(cmd, sizeof(cmd), inFile)) {
 	// parse command line
 	int numArgs = sizeof(cmdArgs) / sizeof(cmdArgs[0]);
-	if (parseCommand(cmd, cmdArgs, &numArgs) != 0)
+	int pcInfo = parseCommand(cmd, cmdArgs, &numArgs);
+	if (pcInfo < 0)
+		continue;
+	if (pcInfo > 0)
 	    return 1;
 
 	// execute

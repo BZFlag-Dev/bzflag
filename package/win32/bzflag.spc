@@ -1,6 +1,6 @@
 -file ../../bin/bzflag.exe bzflag.exe
 -file ../../bin/bzfs.exe bzfs.exe
--file ../../bin/bzfls.exe bzfls.exe
+#-file ../../bin/bzfls.exe bzfls.exe
 -file bin/bzfuinst.exe bzfuinst.exe
 -pushdir data
 -file ../../data/bbolt.rgb bbolt.rgb
@@ -18,7 +18,7 @@
 -file ../../data/helvbr.rgb helvbr.rgb
 -file ../../data/laser.rgb laser.rgb
 -file ../../data/missile.rgb missile.rgb
--file ../../data/mountain.rgb mountain.rgb
+#-file ../../data/mountain.rgb mountain.rgb
 -file ../../data/panel.rgb panel.rgb
 -file ../../data/pbolt.rgb pbolt.rgb
 -file ../../data/pyrwall.rgb pyrwall.rgb
