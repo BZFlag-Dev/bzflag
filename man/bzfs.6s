@@ -126,7 +126,7 @@ not kicked. If a player uttered a word recently, he will be kicked after
 thrice the given time.
 .TP
 \fB\-mo \fIobserver-count\fR
-Sets the maximum number of observers. If not set, no observers are allowed.
+Sets the maximum number of observers; defaults to 3
 .TP
 \fB-mp\fR {\fIcount\fR|[\fIrogue\fR]\fB,\fR[\fIred\fR]\fB,\fR[\fIgreen\fR]\fB,\fR[\fIblue\fR]\fB,\fR[\fIpurple\fR]}
 Sets the maximum number of players, total or per team.  A single value sets

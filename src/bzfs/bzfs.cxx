@@ -568,7 +568,7 @@ static int maxFileDescriptor;
 static PlayerInfo player[MaxPlayers];
 // players + observers
 static uint16_t softmaxPlayers = MaxPlayers;
-static int maxObservers = 0;
+static int maxObservers = 3;
 // team info
 static TeamInfo team[NumTeams];
 // flags list

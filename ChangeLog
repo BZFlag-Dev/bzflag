@@ -1,8 +1,9 @@
 
 			     BZFlag release notes
 * add new updates here without heading until a release
+* max. number of observers now defaults to 3 instead of 0 - Frank Thilo
 * Use high water marks for player cnts to reduce looping - Dave Brosius
-* new bzfs option -tk: team killers do not die
+* new bzfs option -tk: team killers do not die - Frank Thilo
 * misc @observer mode fixes - Andrew Greig
 * Improved Mac OS X support - Kevin Avila
 * disallow dud flags (eg jump in a jump world) - Dave Brosius
