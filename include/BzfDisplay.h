@@ -30,6 +30,10 @@ class BzfDisplay {
     virtual bool	isEventPending() const = 0;
     virtual bool	getEvent(BzfEvent&) const = 0;
 
+    virtual bool        hasGetKeyMode() {return false;};
+    virtual void        getModState(bool &shift, bool &control, bool &alt) {
+      shift = false; control = false; alt = false;};
+
     int			getWidth() const;
     int			getHeight() const;
     void                setFullScreenFormat(int);

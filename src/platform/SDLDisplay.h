@@ -37,6 +37,8 @@ class SDLDisplay : public BzfDisplay {
   void getWindowSize(int& width, int& height);
   void doSetVideoMode();
   void enableGrabMouse(bool);
+  bool hasGetKeyMode() {return true;};
+  void getModState(bool &shift, bool &control, bool &alt);
  private:
   bool fullScreen;
   bool doSetResolution(int) {return true;};

@@ -238,6 +238,13 @@ bool SDLDisplay::getEvent(BzfEvent& _event) const
   return true;
 };
 
+void SDLDisplay::getModState(bool &shift, bool &ctrl, bool &alt) {
+  SDLMod mode = SDL_GetModState();
+  shift       = (mode & KMOD_SHIFT);
+  ctrl        = (mode & KMOD_CTRL);
+  alt         = (mode & KMOD_ALT);
+}
+
 bool SDLDisplay::getKey(const SDL_Event& sdlEvent, BzfKeyEvent& key) const
 {
   Uint16 unicode = sdlEvent.key.keysym.unicode;
