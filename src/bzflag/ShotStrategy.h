@@ -106,6 +106,7 @@ class SegmentedShotStrategy : public ShotStrategy {
     float		checkHit(const BaseLocalPlayer*, float[3]) const;
     void		addShot(SceneDatabase*, boolean colorblind);
     void		radarRender() const;
+    TeamColor	team;
 
   protected:
     enum ObstacleEffect {
@@ -132,7 +133,6 @@ class SegmentedShotStrategy : public ShotStrategy {
     int			segment, lastSegment;
     ShotPathSegments	segments;
     BoltSceneNode*	boltSceneNode;
-    TeamColor		team;
     float		bbox[2][3];
     int			firstSegment;
 };

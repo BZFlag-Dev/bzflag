@@ -28,7 +28,7 @@
 #include "Team.h"
 
 static OpenGLTexture*	boltTexture[NumTeams];
-static OpenGLTexture*	laserTexture;
+static OpenGLTexture*	laserTexture[NumTeams];
 static OpenGLTexture*	gmTexture;
 
 //
@@ -48,9 +48,11 @@ ShotStrategy::~ShotStrategy()
 
 void			ShotStrategy::init()
 {
-  for (int i = 0; i < (int)(sizeof(boltTexture) / sizeof(boltTexture[0])); i++)
+  int i;
+  for (i = 0; i < (int)(sizeof(boltTexture) / sizeof(boltTexture[0])); i++)
     boltTexture[i] = new OpenGLTexture;
-  laserTexture = new OpenGLTexture;
+  for (i = 0; i < (int)(sizeof(laserTexture) / sizeof(laserTexture[0])); i++)
+    laserTexture[i] = new OpenGLTexture;
   gmTexture = new OpenGLTexture;
 
   *boltTexture[RogueTeam] = getTexture("ybolt", OpenGLTexture::Linear);
@@ -58,19 +60,27 @@ void			ShotStrategy::init()
   *boltTexture[GreenTeam] = getTexture("gbolt", OpenGLTexture::Linear);
   *boltTexture[BlueTeam] = getTexture("bbolt", OpenGLTexture::Linear);
   *boltTexture[PurpleTeam] = getTexture("pbolt", OpenGLTexture::Linear);
-  *laserTexture = getTexture("laser", OpenGLTexture::Max);
+  *laserTexture[RogueTeam] = getTexture("ylaser", OpenGLTexture::Max);
+  *laserTexture[RedTeam] = getTexture("rlaser", OpenGLTexture::Max);
+  *laserTexture[GreenTeam] = getTexture("glaser", OpenGLTexture::Max);
+  *laserTexture[BlueTeam] = getTexture("blaser", OpenGLTexture::Max);
+  *laserTexture[PurpleTeam] = getTexture("plaser", OpenGLTexture::Max);
   *gmTexture = getTexture("missile", OpenGLTexture::Max);
 }
 
 void			ShotStrategy::done()
 {
+  int i;
   delete gmTexture;
-  delete laserTexture;
   gmTexture = NULL;
-  laserTexture = NULL;
-  for (int i = 0; i < (int)(sizeof(boltTexture) / sizeof(boltTexture[0])); i++) {
+
+  for (i = 0; i < (int)(sizeof(boltTexture) / sizeof(boltTexture[0])); i++) {
     delete boltTexture[i];
     boltTexture[i] = NULL;
+  }
+  for (i = 0; i < (int)(sizeof(laserTexture) / sizeof(laserTexture[0])); i++) {
+    delete laserTexture[i];
+    laserTexture[i] = NULL;
   }
 }
 
@@ -801,8 +811,8 @@ LaserStrategy::LaserStrategy(ShotPath* path) :
     dir[1] = t * rawdir[1];
     dir[2] = t * rawdir[2];
     laserNodes[i] = new LaserSceneNode(ray.getOrigin(), dir);
-    if (laserTexture && laserTexture->isValid())
-      laserNodes[i]->setTexture(*laserTexture);
+    if (laserTexture[team] && laserTexture[team]->isValid())
+      laserNodes[i]->setTexture(*laserTexture[team]);
   }
   setCurrentSegment(numSegments - 1);
 }
