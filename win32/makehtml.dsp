@@ -71,8 +71,8 @@ OutDir=.\Release
 ProjDir=.
 InputPath=..\man\bzflag.6s
 
-"$(ProjDir)\..\dist\bzflag.html" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	$(OutDir)\man2html < $(InputPath) > $(ProjDir)\..\dist\bzflag.html
+"$(ProjDir)\..\doc\bzflag.html" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+	$(OutDir)\man2html < $(InputPath) > $(ProjDir)\..\doc\bzflag.html
 
 # End Custom Build
 
@@ -84,8 +84,8 @@ OutDir=.\Debug
 ProjDir=.
 InputPath=..\man\bzflag.6s
 
-"$(ProjDir)\..\dist\bzflag.html" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	$(OutDir)\man2html < $(InputPath) > $(ProjDir)\..\dist\bzflag.html
+"$(ProjDir)\..\doc\bzflag.html" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+	$(OutDir)\man2html < $(InputPath) > $(ProjDir)\..\doc\bzflag.html
 
 # End Custom Build
 
@@ -103,8 +103,8 @@ OutDir=.\Release
 ProjDir=.
 InputPath=..\man\bzfls.6s
 
-"$(ProjDir)\..\dist\bzfls.html" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	$(OutDir)\man2html < $(InputPath) > $(ProjDir)\..\dist\bzfls.html
+"$(ProjDir)\..\doc\bzfls.html" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+	$(OutDir)\man2html < $(InputPath) > $(ProjDir)\..\doc\bzfls.html
 
 # End Custom Build
 
@@ -115,39 +115,8 @@ OutDir=.\Debug
 ProjDir=.
 InputPath=..\man\bzfls.6s
 
-"$(ProjDir)\..\dist\bzfls.html" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	$(OutDir)\man2html < $(InputPath) > $(ProjDir)\..\dist\bzfls.html
-
-# End Custom Build
-
-!ENDIF 
-
-# End Source File
-# Begin Source File
-
-SOURCE=..\man\bzfrelay.6s
-
-!IF  "$(CFG)" == "makehtml - Win32 Release"
-
-# Begin Custom Build - Running $(OutDir)\man2html on $(InputPath)
-OutDir=.\Release
-ProjDir=.
-InputPath=..\man\bzfrelay.6s
-
-"$(ProjDir)\..\dist\bzfrelay.html" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	$(OutDir)\man2html < $(InputPath) > $(ProjDir)\..\dist\bzfrelay.html
-
-# End Custom Build
-
-!ELSEIF  "$(CFG)" == "makehtml - Win32 Debug"
-
-# Begin Custom Build - Running $(OutDir)\man2html on $(InputPath)
-OutDir=.\Debug
-ProjDir=.
-InputPath=..\man\bzfrelay.6s
-
-"$(ProjDir)\..\dist\bzfrelay.html" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	$(OutDir)\man2html < $(InputPath) > $(ProjDir)\..\dist\bzfrelay.html
+"$(ProjDir)\..\doc\bzfls.html" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+	$(OutDir)\man2html < $(InputPath) > $(ProjDir)\..\doc\bzfls.html
 
 # End Custom Build
 
@@ -165,8 +134,8 @@ OutDir=.\Release
 ProjDir=.
 InputPath=..\man\bzfs.6s
 
-"$(ProjDir)\..\dist\bzfs.html" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	$(OutDir)\man2html < $(InputPath) > $(ProjDir)\..\dist\bzfs.html
+"$(ProjDir)\..\doc\bzfs.html" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+	$(OutDir)\man2html < $(InputPath) > $(ProjDir)\..\doc\bzfs.html
 
 # End Custom Build
 
@@ -177,8 +146,8 @@ OutDir=.\Debug
 ProjDir=.
 InputPath=..\man\bzfs.6s
 
-"$(ProjDir)\..\dist\bzfs.html" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	$(OutDir)\man2html < $(InputPath) > $(ProjDir)\..\dist\bzfs.html
+"$(ProjDir)\..\doc\bzfs.html" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+	$(OutDir)\man2html < $(InputPath) > $(ProjDir)\..\doc\bzfs.html
 
 # End Custom Build
 
