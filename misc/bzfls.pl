@@ -19,35 +19,34 @@ use Socket;
 
 # Common to all
 my $action   = param("action");
-my $nameport = param("nameport");
 
 # For ADD
+my $nameport = param("nameport");
 my $build    = param("build");
 my $version  = param("version");
 my $gameinfo = param("gameinfo");
 my $title    = param("title");
+$title =~ s/'/''/g;
 
 ###############################################################################
 
 # Connect to the server database.
-my $dbpath = "servers.dat";
+my $dbpath = "bzflag.sqlite";
 my $dbexist = stat $dbpath;
-my $servdb = DBI->connect ("dbi:SQLite:$dbpath", "", "",
-                {RaiseError => 1, AutoCommit => 1});
+my $servdb = DBI->connect ("dbi:SQLite:$dbpath", "", "", {RaiseError => 1, AutoCommit => 1});
 
 # If the servers table doesn't exist, create it.
 if ( not $dbexist ) {
   $servdb->do (
-    "CREATE TABLE servers (
-      id INTEGER PRIMARY KEY,
-      nameport,
-      build,
-      version,
-      gameinfo,
-      ipaddr,
-      title,
-      lastmod
-    )"
+      "CREATE TABLE servers ( " .
+      "nameport varchar(60) NOT NULL, ".
+      "build varchar(20), ".
+      "version varchar(9) NOT NULL, ".
+      "gameinfo varchar(73) NOT NULL, ".
+      "ipaddr varchar(17) NOT NULL, ".
+      "title varchar(80), ".
+      "lastmod INT NOT NULL DEFAULT '0', ".
+      "PRIMARY KEY (nameport))"
   );
 }
 # If the table already exists, then remove all inactive servers from the table
@@ -66,7 +65,7 @@ print header(-type=>'text/plain');
 # Same as LIST in the old bzfls
 if ( not defined $action or $action eq "LIST" ) {
   my $all = $servdb->selectall_arrayref
-    ("SELECT nameport,version,gameinfo,ipaddr,title FROM servers");
+      ("SELECT nameport,version,gameinfo,ipaddr,title FROM servers");
   foreach my $row (@$all) {
     my $line = join ' ', @$row;
     print "$line\n";
@@ -80,14 +79,14 @@ elsif ( $action eq "ADD" ) {
   print "trying ADD $nameport $version $gameinfo $title\n";
   exit unless (
     $version =~ /^BZFS/
-#        and $version ne "BZFS1906"
+# and $version ne "BZFS1906"
   );
 
   my $curtime = time;
 
   # Server does not already exist in DB so try connect and insert into DB
   if ( not defined $servdb->selectrow_array
-          ("SELECT id FROM servers WHERE nameport = '$nameport'") ) {
+      ("SELECT nameport FROM servers WHERE nameport = '$nameport'") ) {
     # Test to see whether nameport is valid by attempting to establish a
     # connection to it
     my ($servname, $servport) = split /:/, $nameport;
@@ -104,15 +103,14 @@ elsif ( $action eq "ADD" ) {
     close SH;
 
     $servdb->do(
-      "INSERT INTO servers VALUES (
-          NULL,
-          '$nameport',
-          '$build',
-          '$version',
-          '$gameinfo',
-          '$servip',
-          '$title',
-          $curtime
+	"INSERT INTO servers VALUES (
+	'$nameport',
+	'$build',
+	'$version',
+	'$gameinfo',
+	'$servip',
+	'$title',
+	$curtime
        )"
     );
   }
@@ -121,15 +119,14 @@ elsif ( $action eq "ADD" ) {
   # else should remain the same as before
   else {
     # don't change nameport or servip
-    # FIXME should not have to retest connect if existing entry
-    print $servdb->do(
-      "UPDATE servers SET " .
-	  "build = '$build', " .
-	  "version = '$version', " .
-	  "gameinfo = '$gameinfo', " .
-	  "lastmod = $curtime " .
-	  "WHERE nameport = '$nameport'"
-    );
+    $servdb->do(
+	"UPDATE servers SET " .
+	"build = '$build', " .
+	"version = '$version', " .
+	"gameinfo = '$gameinfo', " .
+	"title = '$title', " .
+	"lastmod = $curtime " .
+	"WHERE nameport = '$nameport'");
   }
   print "ADD complete\n";
 }
@@ -139,7 +136,9 @@ elsif ( $action eq "REMOVE" ) {
   $servdb->do("DELETE FROM servers WHERE nameport = '$nameport'");
 }
 # Unknown command ....
-else { print "Unknown command: '$action'\n"; }
+else {
+  print "Unknown command: '$action'\n";
+}
 
 # Local Variables: ***
 # mode:Perl ***
