@@ -114,7 +114,6 @@ public:
   uint8_t     getPlayerProperties();
   void        storeInfo(const char* pwd);
   void        setPassword(const std::string& pwd);
-  void        initStatistics();
   bool        isConnected();
   int         pflush(fd_set *set);
   RxStatus    receive(size_t length);
@@ -209,6 +208,8 @@ public:
 #ifdef HAVE_ADNS_H
   // return true if host is resolved
   bool        checkDNSResolution();
+  const char *getHostname();
+  static void startupResolver();
 #endif
 private:
   void        cleanCallSign();
@@ -235,7 +236,6 @@ private:
     int fd;
     // peer's network address
     Address peer;
-public:
 #ifdef HAVE_ADNS_H
     // peer's network hostname (malloc/free'd)
     char *hostname;
@@ -243,7 +243,6 @@ public:
     adns_query adnsQuery;
   static adns_state adnsState;
 #endif
-private:
     // current state of player
     ClientState state;
     // type of player

@@ -53,6 +53,39 @@ void PlayerInfo::initPlayer(const struct sockaddr_in& clientAddr, int _fd,
     adns_cancel(adnsQuery);
     adnsQuery = NULL;
   }
+  // launch the asynchronous query to look up this hostname
+  if (adns_submit_reverse
+      (adnsState, (struct sockaddr *)&clientAddr,
+       adns_r_ptr,
+       (adns_queryflags)(adns_qf_quoteok_cname|adns_qf_cname_loose), 0,
+       &adnsQuery) != 0) {
+    DEBUG1("Player [%d] failed to submit reverse resolve query: errno %d\n",
+	   playerIndex, getErrno());
+    adnsQuery = NULL;
+  } else {
+    DEBUG2("Player [%d] submitted reverse resolve query\n", playerIndex);
+  }
+#endif
+
+  pausedSince = TimeKeeper::getNullTime();
+#ifdef NETWORK_STATS
+  int i;
+  struct MessageCount *statMsg;
+  int direction;
+
+  for (direction = 0; direction <= 1; direction++) {
+    statMsg = msg[direction];
+    for (i = 0; i < MessageTypes && statMsg[i].code != 0; i++) {
+      statMsg[i].count = 0;
+      statMsg[i].code = 0;
+    }
+    msgBytes[direction] = 0;
+    perSecondTime[direction] = time;
+    perSecondCurrentMsg[direction] = 0;
+    perSecondMaxMsg[direction] = 0;
+    perSecondCurrentBytes[direction] = 0;
+    perSecondMaxBytes[direction] = 0;
+  }
 #endif
 };
 
@@ -281,30 +314,6 @@ uint8_t PlayerInfo::getPlayerProperties() {
   if (Admin)
     result |= IsAdmin;
   return result;
-};
-
-void PlayerInfo::initStatistics() {
-
-  pausedSince = TimeKeeper::getNullTime();
-#ifdef NETWORK_STATS
-  int i;
-  struct MessageCount *statMsg;
-  int direction;
-
-  for (direction = 0; direction <= 1; direction++) {
-    statMsg = msg[direction];
-    for (i = 0; i < MessageTypes && statMsg[i].code != 0; i++) {
-      statMsg[i].count = 0;
-      statMsg[i].code = 0;
-    }
-    msgBytes[direction] = 0;
-    perSecondTime[direction] = time;
-    perSecondCurrentMsg[direction] = 0;
-    perSecondMaxMsg[direction] = 0;
-    perSecondCurrentBytes[direction] = 0;
-    perSecondMaxBytes[direction] = 0;
-  }
-#endif
 };
 
 #ifdef NETWORK_STATS
@@ -1252,6 +1261,18 @@ bool PlayerInfo::checkDNSResolution() {
   free(answer);
   adnsQuery = NULL;
   return true;
+}
+
+const char *PlayerInfo::getHostname() {
+  return hostname;
+}
+
+void PlayerInfo::startupResolver() {
+  /* start up our resolver if we have ADNS */
+  if (adns_init(&adnsState, adns_if_nosigpipe, 0) < 0) {
+    perror("ADNS init failed");
+    exit(1);
+  }
 }
 #endif
 

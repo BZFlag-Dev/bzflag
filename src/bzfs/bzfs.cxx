@@ -1391,23 +1391,6 @@ static void acceptClient()
   player[playerIndex].initPlayer(clientAddr, fd, playerIndex);
   lastState[playerIndex].order = 0;
 
-#ifdef HAVE_ADNS_H
-  // launch the asynchronous query to look up this hostname
-  if (adns_submit_reverse
-      (PlayerInfo::adnsState, (struct sockaddr *)&clientAddr,
-       adns_r_ptr,
-       (adns_queryflags)(adns_qf_quoteok_cname|adns_qf_cname_loose),
-       0, &player[playerIndex].adnsQuery) != 0) {
-    DEBUG1("Player [%d] failed to submit reverse resolve query: errno %d\n", playerIndex, getErrno());
-    player[playerIndex].adnsQuery = NULL;
-  } else {
-    DEBUG2("Player [%d] submitted reverse resolve query\n", playerIndex);
-  }
-#endif
-
-
-  player[playerIndex].initStatistics();
-
   // if game was over and this is the first player then game is on
   if (gameOver) {
     int count = 0;
@@ -3841,11 +3824,7 @@ int main(int argc, char **argv)
   }
 
 #ifdef HAVE_ADNS_H
-  /* start up our resolver if we have ADNS */
-  if (adns_init(&PlayerInfo::adnsState, adns_if_nosigpipe, 0) < 0) {
-    perror("ADNS init failed");
-    exit(1);
-  }
+  PlayerInfo::startupResolver();
 #endif
 
   /* initialize the poll arbiter for voting if necessary */
@@ -4129,7 +4108,7 @@ int main(int argc, char **argv)
     for (int h = 0; h < curMaxPlayers; h++) {
       if (player[h].checkDNSResolution()) {
 	// check against ban lists
-	if (!clOptions->acl.hostValidate(player[h].hostname)) {
+	if (!clOptions->acl.hostValidate(player[h].getHostname())) {
 	  removePlayer(h, "bannedhost");
 	}
       }
