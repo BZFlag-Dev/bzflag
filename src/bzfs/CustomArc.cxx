@@ -63,17 +63,24 @@ bool CustomArc::read(const char *cmd, std::istream& input)
   MeshMaterial modedMat;
 
   if (strcasecmp(cmd, "divisions") == 0) {
-    input >> divisions;
+    if (!(input >> divisions)) {
+      return false;
+    }
   }
   else if (strcasecmp(cmd, "angle") == 0) {
-    input >> angle;
+    if (!(input >> angle)) {
+      return false;
+    }
   }
   else if (strcasecmp(cmd, "ratio") == 0) {
-    input >> ratio;
+    if (!(input >> ratio)) {
+      return false;
+    }
   }
   else if (strcasecmp(cmd, "texsize") == 0) {
-    input >> texsize[0] >> texsize[1] >> texsize[2] >> texsize[3];
-    printf ("%f %f %f %f\n", texsize[0], texsize[1], texsize[2], texsize[3]);
+    if (!(input >> texsize[0] >> texsize[1] >> texsize[2] >> texsize[3])) {
+      return false;
+    }
   }
   else if (strcasecmp(cmd, "flatshading") == 0) {
     useNormals = false;

@@ -40,17 +40,24 @@ bool CustomTextureMatrix::read(const char *cmd, std::istream& input)
 {
   if (strcasecmp ("shift", cmd) == 0) {
     float uFreq, vFreq;
-    input >> uFreq >> vFreq;
+    if (!(input >> uFreq >> vFreq)) {
+      return false;
+    }
     texmat->setShiftParams (uFreq, vFreq);
   }
   else if (strcasecmp ("rotate", cmd) == 0) {
     float freq, uCenter, vCenter;
-    input >> freq >> uCenter >> vCenter;
+    if (!(input >> freq >> uCenter >> vCenter)) {
+      return false;
+    }
     texmat->setRotateParams (freq, uCenter, vCenter);
   }
   else if (strcasecmp ("scale", cmd) == 0) {
     float uFreq, vFreq, uCenter, vCenter, uScale, vScale;
-    input >> uFreq >> vFreq >> uCenter >> vCenter >> uScale >> vScale;
+    if (!(input >> uFreq >> vFreq >> uCenter >> vCenter
+                >> uScale >> vScale)) {
+      return false;
+    }
     texmat->setScaleParams (uFreq, vFreq, uCenter, vCenter, uScale, vScale);
   }
   else {

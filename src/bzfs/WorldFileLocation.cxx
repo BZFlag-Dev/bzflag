@@ -35,9 +35,13 @@ bool WorldFileLocation::read(const char *cmd, std::istream& input)
 {
   if ((strcasecmp(cmd, "pos") == 0) ||
       (strcasecmp(cmd, "position") == 0)) {
-    input >> pos[0] >> pos[1] >> pos[2];
+    if (!(input >> pos[0] >> pos[1] >> pos[2])) {
+      return false;
+    }
   } else if (strcasecmp(cmd, "size") == 0){
-    input >> size[0] >> size[1] >> size[2];
+    if (!(input >> size[0] >> size[1] >> size[2])) {
+      return false;
+    }
   }
   else if ((strcasecmp(cmd, "rot") == 0) ||
            (strcasecmp(cmd, "rotation") == 0)) {

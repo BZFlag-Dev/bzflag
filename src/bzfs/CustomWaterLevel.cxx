@@ -50,7 +50,9 @@ bool CustomWaterLevel::read(const char *cmd, std::istream& input)
   bool materror;
 
   if (strcasecmp ("height", cmd) == 0) {
-    input >> height;
+    if (!(input >> height)) {
+      return false;
+    }
   }
   else if (parseMaterial(cmd, input, material, materror)) {
     if (materror) {

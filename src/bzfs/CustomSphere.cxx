@@ -51,15 +51,21 @@ bool CustomSphere::read(const char *cmd, std::istream& input)
   bool materror;
 
   if (strcasecmp(cmd, "divisions") == 0) {
-    input >> divisions;
+    if (!(input >> divisions)) {
+      return false;
+    }
   }
   else if (strcasecmp(cmd, "radius") == 0) {
     float radius;
-    input >> radius;
+    if (!(input >> radius)) {
+      return false;
+    }
     size[0] = size[1] = size[2] = radius;
   }
   else if (strcasecmp(cmd, "texsize") == 0) {
-    input >> texsize[0] >> texsize[1];
+    if (!(input >> texsize[0] >> texsize[1])) {
+      return false;
+    }
   }
   else if (strcasecmp(cmd, "flatshading") == 0) {
     useNormals = false;

@@ -69,29 +69,39 @@ bool CustomMesh::read(const char *cmd, std::istream& input)
   }
   else if (strcasecmp(cmd, "inside") == 0) {
     cfvec3 inside;
-    input >> inside[0] >> inside[1] >> inside[2];
+    if (!(input >> inside[0] >> inside[1] >> inside[2])) {
+      return false;
+    }
     checkTypes.push_back(MeshObstacle::CheckInside);
     checkPoints.push_back(inside);
   }
   else if (strcasecmp(cmd, "outside") == 0) {
     cfvec3 outside;
-    input >> outside[0] >> outside[1] >> outside[2];
+    if (!(input >> outside[0] >> outside[1] >> outside[2])) {
+      return false;
+    }
     checkTypes.push_back(MeshObstacle::CheckOutside);
     checkPoints.push_back(outside);
   }
   else if (strcasecmp(cmd, "vertex") == 0) {
     cfvec3 vertex;
-    input >> vertex[0] >> vertex[1] >> vertex[2];
+    if (!(input >> vertex[0] >> vertex[1] >> vertex[2])) {
+      return false;
+    }
     vertices.push_back(vertex);
   }
   else if (strcasecmp(cmd, "normal") == 0) {
     cfvec3 normal;
-    input >> normal[0] >> normal[1] >> normal[2];
+    if (!(input >> normal[0] >> normal[1] >> normal[2])) {
+      return false;
+    }
     normals.push_back(normal);
   }
   else if (strcasecmp(cmd, "texcoord") == 0) {
     cfvec2 texcoord;
-    input >> texcoord[0] >> texcoord[1];
+    if (!(input >> texcoord[0] >> texcoord[1])) {
+      return false;
+    }
     texcoords.push_back(texcoord);
   }
   else if (parseMaterial(cmd, input, material, materror)) {

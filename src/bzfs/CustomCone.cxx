@@ -60,13 +60,19 @@ bool CustomCone::read(const char *cmd, std::istream& input)
   MeshMaterial modedMat;
 
   if (strcasecmp(cmd, "divisions") == 0) {
-    input >> divisions;
+    if (!(input >> divisions)) {
+      return false;
+    }
   }
   else if (strcasecmp(cmd, "angle") == 0) {
-    input >> angle;
+    if (!(input >> angle)) {
+      return false;
+    }
   }
   else if (strcasecmp(cmd, "texsize") == 0) {
-    input >> texsize[0] >> texsize[1];
+    if (!(input >> texsize[0] >> texsize[1])) {
+      return false;
+    }
   }
   else if (strcasecmp(cmd, "flatshading") == 0) {
     useNormals = false;

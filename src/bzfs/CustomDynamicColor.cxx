@@ -76,7 +76,7 @@ bool CustomDynamicColor::read(const char *cmd, std::istream& input)
 
   if (strcasecmp (command.c_str(), "limits") == 0) {
     float min, max;
-    if (!((parms >> min) && (parms >> max))) {
+    if (!(parms >> min >> max)) {
       std::cout << "missing limits for " << cmd << " channel" << std::endl;
       return false;
     }
@@ -84,7 +84,7 @@ bool CustomDynamicColor::read(const char *cmd, std::istream& input)
   }
   else if (strcasecmp (command.c_str(), "sinusoid") == 0) {
     float data[3];
-    if (!((parms >> data[0]) && (parms >> data[1]) && (parms >> data[2]))) {
+    if (!(parms >> data[0] >> data[1] >> data[2])) {
       std::cout << "missing sinusoid parameters for " << cmd << " channel"
                 << std::endl;
       return false;
@@ -93,7 +93,7 @@ bool CustomDynamicColor::read(const char *cmd, std::istream& input)
   }
   else if (strcasecmp (command.c_str(), "clampup") == 0) {
     float data[3];
-    if (!((parms >> data[0]) && (parms >> data[1]) && (parms >> data[2]))) {
+    if (!(parms >> data[0] >> data[1] >> data[2])) {
       std::cout << "missing clampup parameters for " << cmd << " channel"
                 << std::endl;
       return false;
@@ -102,7 +102,7 @@ bool CustomDynamicColor::read(const char *cmd, std::istream& input)
   }
   else if (strcasecmp (command.c_str(), "clampdown") == 0) {
     float data[3];
-    if (!((parms >> data[0]) && (parms >> data[1]) && (parms >> data[2]))) {
+    if (!(parms >> data[0] >> data[1] >> data[2])) {
       std::cout << "missing clampdown parameters for " << cmd << " channel"
                 << std::endl;
       return false;
