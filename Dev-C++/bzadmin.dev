@@ -1,5 +1,5 @@
 [Project]
-FileName=BZADMIN.DEV
+FileName=bzadmin.dev
 Name=bzadmin
 UnitCount=42
 Type=1
@@ -12,7 +12,7 @@ ResourceIncludes=
 MakeIncludes=
 Compiler=
 CppCompiler=
-Linker=
+Linker=-lwsock32_@@_
 IsCpp=1
 Icon=
 ExeOutput=..\src\bzadmin
@@ -27,7 +27,7 @@ CustomMakefile=
 IncludeVersionInfo=0
 SupportXPThemes=0
 CompilerSet=0
-CompilerSettings=0000010000000000000000
+CompilerSettings=0000010001010000000000
 
 [Unit1]
 FileName=..\src\bzadmin\UIMap.cxx
