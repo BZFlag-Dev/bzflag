@@ -136,6 +136,8 @@ Section "Uninstall"
 	Delete $INSTDIR\bzfs.exe
 	Delete $INSTDIR\bzadmin.exe
 	Delete $INSTDIR\libcurl.dll
+	Delete $INSTDIR\msvcr71.dll
+	Delete $INSTDIR\msvcp71.dll
 	Delete $INSTDIR\doc\*.*
 	Delete $INSTDIR\data\fonts\*.*
 	Delete $INSTDIR\data\*.*
