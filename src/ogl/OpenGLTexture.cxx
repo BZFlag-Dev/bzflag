@@ -130,7 +130,6 @@ void OpenGLTexture::initContext()
   GLubyte* origData = new GLubyte[4 * copyWidth * copyHeight + 4];
   GLubyte* data = (GLubyte*)(((unsigned long)origData & ~3) + 4);
   GLubyte* origScaledData = new GLubyte[4 * scaledWidth * scaledHeight + 4];
-  GLubyte* scaledData = (GLubyte*)(((unsigned long)origScaledData & ~3) + 4);
   ::memcpy(data, image, 4 * tmpWidth * tmpHeight);
 
   // note if internal format uses alpha
