@@ -9,7 +9,6 @@ Package: bzflag
 Architecture: any
 Depends: ${shlibs:Depends}
 Suggests: bzflag-server
-Description: a 3D first person tank battle game
 Description: Internet multiplayer 3D tank battle game
  BZFlag is a 3D multi-player multiplatform tank battle game
  that allows users to play against each other in a network
