@@ -125,8 +125,8 @@ bool TargetingUtils::getFirstCollisionPoint( const float *src, const float *targ
   if (building == NULL)
 	  return false;
 
-  collisionPt[0] = src[0] + (dir[0] - src[0]) * t;
-  collisionPt[1] = src[1] + (dir[1] - src[1]) * t;
-  collisionPt[2] = src[2] + (dir[2] - src[2]) * t;
+  collisionPt[0] = src[0] + dir[0] * t;
+  collisionPt[1] = src[1] + dir[1] * t;
+  collisionPt[2] = src[2] + dir[2] * t;
   return true;
 }

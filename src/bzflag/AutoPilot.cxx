@@ -168,10 +168,13 @@ bool	avoidDeathFall(float &rotation, float &speed)
   pos1[2] += 10.0f * BZDBCache::tankHeight;
   float azimuth = myTank->getAngle();
   if (speed < 0.0f)
-	  azimuth += (float)M_PI;
-  pos2[0] += 2.f * BZDBCache::tankHeight * cosf(azimuth);
-  pos2[1] += 2.0f * BZDBCache::tankHeight * sinf(azimuth);
-  pos2[2] += 0.01;
+	  azimuth = fmodf(float(azimuth + M_PI), float(2.0 * M_PI));
+  else
+	  azimuth = fmodf(float(azimuth), float(2.0 * M_PI));
+
+  pos2[0] += 8.0f * BZDBCache::tankHeight * cosf(azimuth);
+  pos2[1] += 8.0f * BZDBCache::tankHeight * sinf(azimuth);
+  pos2[2] += 0.01f;
 
   float collisionPt[3];
   if (TargetingUtils::getFirstCollisionPoint( pos1, pos2, collisionPt )) {
