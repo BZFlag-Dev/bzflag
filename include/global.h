@@ -122,7 +122,7 @@ struct GlobalDBItem {
     StateDatabase::Permission	permission;
 };
 // why is this fixed length?
-extern GlobalDBItem		globalDBItems[63];
+extern GlobalDBItem		globalDBItems[64];
 
 #endif // BZF_GLOBAL_H
 

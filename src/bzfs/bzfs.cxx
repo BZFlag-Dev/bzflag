@@ -2459,7 +2459,7 @@ static void addFlag(int flagIndex)
   ||  (flag[flagIndex].flag.type == Flags::Thief))
     flag[flagIndex].grabs = 1;
   else
-    flag[flagIndex].grabs = int(floor(4.0f * (float)bzfrand())) + 1;
+    flag[flagIndex].grabs = int(floor(BZDB->eval(StateDatabase::BZDB_MAXFLAGGRABS) * (float)bzfrand())) + 1;
   sendFlagUpdate(flagIndex);
 }
 

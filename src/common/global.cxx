@@ -38,6 +38,7 @@ GlobalDBItem				globalDBItems[] = {
 	{ "_laserAdVel",		"1000.0",			false, StateDatabase::Locked},
 	{ "_lockOnAngle",		"0.15",				false, StateDatabase::Locked},
 	{ "_lRAdRate",			"0.5",				false, StateDatabase::Locked},
+	{ "_maxFlagGrabs",		"4.0",				false, StateDatabase::Locked},
 	{ "_maxLOD",			"32767.0",			false, StateDatabase::Locked},
 	{ "_momentumAngAcc",		"1.0",				false, StateDatabase::Locked},
 	{ "_momentumLinAcc",		"1.0",				false, StateDatabase::Locked},

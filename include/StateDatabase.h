@@ -184,6 +184,7 @@ public:
   static const std::string	BZDB_LASERADLIFE;
   static const std::string	BZDB_LOCKONANGLE;
   static const std::string	BZDB_LRADRATE;
+  static const std::string	BZDB_MAXFLAGGRABS;
   static const std::string	BZDB_MAXLOD;
   static const std::string	BZDB_MOMENTUMLINACC;
   static const std::string	BZDB_MOMENTUMANGACC;
