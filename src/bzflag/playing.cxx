@@ -869,7 +869,7 @@ static void				doEvent(BzfDisplay* display)
 // misc utility routines
 //
 
-boolean					isRemotePlayer(PlayerId id)
+bool					isRemotePlayer(PlayerId id)
 {
 	return (id != NoPlayer) && (id != myTank->getId());
 }
