@@ -285,8 +285,8 @@ std::string nameFromPerm(PlayerAccessInfo::AccessPerm perm)
 {
   switch (perm) {
     case PlayerAccessInfo::actionMessage: return "actionMessage";
-    case PlayerAccessInfo::adminMessageSend: return "adminMessageSend";
     case PlayerAccessInfo::adminMessageReceive: return "adminMessageReceive";
+    case PlayerAccessInfo::adminMessageSend: return "adminMessageSend";
     case PlayerAccessInfo::antiban : return "antiban";
     case PlayerAccessInfo::antideregister : return "antideregister";
     case PlayerAccessInfo::antikick : return "antikick";
@@ -296,6 +296,7 @@ std::string nameFromPerm(PlayerAccessInfo::AccessPerm perm)
     case PlayerAccessInfo::ban: return "ban";
     case PlayerAccessInfo::banlist: return "banlist";
     case PlayerAccessInfo::countdown: return "countdown";
+    case PlayerAccessInfo::date: return "date";
     case PlayerAccessInfo::endGame: return "endGame";
     case PlayerAccessInfo::flagHistory: return "flagHistory";
     case PlayerAccessInfo::flagMod: return "flagMod";
@@ -321,15 +322,14 @@ std::string nameFromPerm(PlayerAccessInfo::AccessPerm perm)
     case PlayerAccessInfo::setPerms: return "setPerms";
     case PlayerAccessInfo::setVar: return "setVar";
     case PlayerAccessInfo::showOthers: return "showOthers";
+    case PlayerAccessInfo::shortBan: return "shortBan";
     case PlayerAccessInfo::shutdownServer: return "shutdownServer";
     case PlayerAccessInfo::spawn: return "spawn";
     case PlayerAccessInfo::superKill: return "superKill";
     case PlayerAccessInfo::unban: return "unban";
     case PlayerAccessInfo::veto: return "veto";
     case PlayerAccessInfo::viewReports: return "viewReports";
-    case PlayerAccessInfo::date: return "date";
     case PlayerAccessInfo::vote: return "vote";
-    case PlayerAccessInfo::shortBan: return "shortBan";
     default: return TextUtils::format("UNKNOWN_PERMISSION: %d", (int)perm).c_str();
   };
 }
@@ -337,8 +337,8 @@ std::string nameFromPerm(PlayerAccessInfo::AccessPerm perm)
 PlayerAccessInfo::AccessPerm permFromName(const std::string &name)
 {
   if (name == "ACTIONMESSAGE") return PlayerAccessInfo::actionMessage;
-  if (name == "ADMINMESSAGESEND") return PlayerAccessInfo::adminMessageSend;
   if (name == "ADMINMESSAGERECEIVE") return PlayerAccessInfo::adminMessageReceive;
+  if (name == "ADMINMESSAGESEND") return PlayerAccessInfo::adminMessageSend;
   if (name == "ANTIBAN") return PlayerAccessInfo::antiban;
   if (name == "ANTIDEREGISTER") return PlayerAccessInfo::antideregister;
   if (name == "ANTIKICK") return PlayerAccessInfo::antikick;
@@ -348,6 +348,7 @@ PlayerAccessInfo::AccessPerm permFromName(const std::string &name)
   if (name == "BAN") return PlayerAccessInfo::ban;
   if (name == "BANLIST") return PlayerAccessInfo::banlist;
   if (name == "COUNTDOWN") return PlayerAccessInfo::countdown;
+  if (name == "DATE") return PlayerAccessInfo::date;
   if (name == "ENDGAME") return PlayerAccessInfo::endGame;
   if (name == "FLAGHISTORY") return PlayerAccessInfo::flagHistory;
   if (name == "FLAGMOD") return PlayerAccessInfo::flagMod;
@@ -355,7 +356,6 @@ PlayerAccessInfo::AccessPerm permFromName(const std::string &name)
   if (name == "IDLESTATS") return PlayerAccessInfo::idleStats;
   if (name == "INFO") return PlayerAccessInfo::info;
   if (name == "KICK") return PlayerAccessInfo::kick;
-  if (name == "DATE") return PlayerAccessInfo::date;
   if (name == "LAGSTATS") return PlayerAccessInfo::lagStats;
   if (name == "LAGWARN") return PlayerAccessInfo::lagwarn;
   if (name == "LISTPERMS") return PlayerAccessInfo::listPerms;

@@ -41,8 +41,8 @@ public:
   enum AccessPerm
     {
       actionMessage = 0,
-      adminMessageSend,
       adminMessageReceive,
+      adminMessageSend,
       antiban,
       antideregister,
       antikick,
@@ -52,9 +52,9 @@ public:
       ban,
       banlist,
       countdown,
+      date,
       endGame,
       flagHistory,
-      date,
       flagMod,
       hideAdmin,
       idleStats,
@@ -86,9 +86,10 @@ public:
       veto,
       viewReports,
       vote,
-      lastPerm	// just so we know how many rights there
-		// are this dosn't do anything really, just
-		// make sure it's the last real right
+      // just so we know how many rights there
+      // are this dosn't do anything really, just
+      // make sure it's the last real right
+      lastPerm
     };
 
   void	setName(const char* callSign);

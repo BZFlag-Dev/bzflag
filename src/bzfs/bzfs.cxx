@@ -2493,24 +2493,19 @@ static void playerAlive(int playerIndex)
 
   // make sure the user identifies themselves if required.
   if (!playerData->accessInfo.isAllowedToEnter()) {
-    sendMessage(ServerPlayer, playerIndex, "This callsign is registered.  You must identify yourself before playing or use a different callsign.");
+    sendMessage(ServerPlayer, playerIndex, "This callsign is registered.  You must identify yourself");
+    sendMessage(ServerPlayer, playerIndex, "before playing or use a different callsign.");
     removePlayer(playerIndex, "unidentified");
     return;
   }
 
-  // make sure the user identifies if required, don't kick them, just don't let them spawn
-  if (!playerData->accessInfo.isVerified() && clOptions->requireIdentify) {
-    sendMessage(ServerPlayer, playerIndex, "This server requires identification before you can join");
+  if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::spawn)) {
+    sendMessage(ServerPlayer, playerIndex, "You do not have permission to spawn on this server.");
+    sendMessage(ServerPlayer, playerIndex, "This server may require identification before you can join.");
     sendMessage(ServerPlayer, playerIndex, "Please use /identify, or /register if you have not registerd your callsign or");
     sendMessage(ServerPlayer, playerIndex, "register on http://my.BZFlag.org/bb/ and use that callsign/password.");
     // client won't send another enter so kick em =(
-    removePlayer(playerIndex, "unidentified");
-    return;
-  }
-  
-  if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::spawn)) {
-	  sendMessage(ServerPlayer, playerIndex, "You do not have permission to spawn on this server.");
-	  removePlayer(playerIndex, "Not allowed to spawn");
+    removePlayer(playerIndex, "Not allowed to spawn");
   }
 
   if (playerData->player.isBot()
@@ -4076,21 +4071,21 @@ void initGroups()
   PlayerAccessMap::iterator itr = groupAccess.find("EVERYONE");
   if (itr == groupAccess.end()) {
     PlayerAccessInfo info;
-    info.explicitAllows[PlayerAccessInfo::idleStats] = true;
-    info.explicitAllows[PlayerAccessInfo::lagStats] = true;
+    info.explicitAllows[PlayerAccessInfo::actionMessage] = true;
+    info.explicitAllows[PlayerAccessInfo::adminMessageSend] = true;
     info.explicitAllows[PlayerAccessInfo::date] = true;
     info.explicitAllows[PlayerAccessInfo::flagHistory] = true;
-    info.explicitAllows[PlayerAccessInfo::actionMessage] = true;
+    info.explicitAllows[PlayerAccessInfo::idleStats] = true;
+    info.explicitAllows[PlayerAccessInfo::lagStats] = true;
     info.explicitAllows[PlayerAccessInfo::privateMessage] = true;
-    info.explicitAllows[PlayerAccessInfo::adminMessageSend] = true;
     info.explicitAllows[PlayerAccessInfo::spawn] = true;
     groupAccess["EVERYONE"] = info;
   }
   itr = groupAccess.find("VERIFIED");
   if (itr == groupAccess.end()) {
     PlayerAccessInfo info;
-    info.explicitAllows[PlayerAccessInfo::vote] = true;
     info.explicitAllows[PlayerAccessInfo::poll] = true;
+    info.explicitAllows[PlayerAccessInfo::vote] = true;
     groupAccess["VERIFIED"] = info;
   }
   itr = groupAccess.find("LOCAL.ADMIN");

@@ -4,6 +4,7 @@
 BZFlag 2.0.1
 ------------
 
+* add SPAWN permission, remove -requireidentify -  Steve Krenzel, Tim Riker
 * A /say command for server messages - Julio Jimenez, Frank Evers
 * rejoin permission for avoiding _rejoinTime limit - Frank Evers, Julio Jimenez
 * A player will auto ghost if they use global authentication - Steve Krenzel
@@ -19,7 +20,7 @@ BZFlag 2.0.1
 * Fixed lag warning counted twice - Alfredo Tupone
 * Allow user to select which physical joystick axes to use - Daniel Remenak
 * Fix a number of server crash bugs - Daniel Remenak
-* ctf make restarting on base even when dead - Anonymous 
+* ctf make restarting on base even when dead - Anonymous
 * Fixed weirdness on Console Panel when disabling chat display - Alfredo Tupone
 * Fixed a segfault with SDL and no audio - Alfredo Tupone
 * bzadmin wipes argv to hide possible password - Tim Riker
