@@ -7,8 +7,6 @@ THESE SHOULD HAPPEN BEFORE THE NEXT RELEASE:
 
 THESE ARE LOWER PRIORITY
 
-* report player kills in bzadmin
-
 * do ansi color in curses bzadmin
 
 * Need to use different, clearly disjoint numbering system on bzfs.  perhaps just
@@ -28,8 +26,8 @@ THESE ARE LOWER PRIORITY
   - open group registration. one nick is master for each group
   - karma see http://bzflag.org/wiki/KarmaSystem
 
-* Try to build bzadmin on Win32 using PDCurses (it works with the X11
-  version of PDCurses). It currently works with stdin/stdout.
+* Try to build bzadmin on Win32 using PDCurses (it almost works with 
+  the X11 version of PDCurses). It currently works with stdin/stdout.
 
 * add ability to capture a screenshot to a gamma-corrected png from
   inside the game.
