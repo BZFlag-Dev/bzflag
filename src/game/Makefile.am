@@ -20,8 +20,13 @@ libGame_a_SOURCES =			\
 	PhysicsDriver.cxx		\
 	PlayerInfo.cxx			\
 	Ray.cxx				\
+	ServerItem.cxx			\
+	ServerList.cxx			\
+	ServerListCache.cxx		\
+	StartupInfo.cxx			\
 	TextureMatrix.cxx		\
 	VotingArbiter.cxx
+
 
 EXTRA_DIST = \
 	README
