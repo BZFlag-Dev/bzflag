@@ -10,12 +10,16 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
+#ifdef WIN32
+#pragma warning( 4: 4786)
+#endif
+
 #include "TextChunkManager.h"
 
 bool TextChunkManager::parseFile(const std::string &fileName, const std::string &chunkName)
 {
 	char buffer[MessageLen];
-	ifstream in(fileName.c_str());
+	std::ifstream in(fileName.c_str());
 	if (!in) return false;
 	
 	StringVector strings;
