@@ -1,15 +1,3 @@
-current bugs
-------------
-- When a rabbit pauses and no other players are in the game, the server will
-  choose the pauser as the rabbit again. Then the player will again request
-  that the server choose a different player, thus leading to a happy
-  ping-pong of messages until player unpauses or another player joins.
-
-- describe rabbit hunt in man page (and in-game help?)
-
-- doc/protocol is not up to date
-
-
 to do list for bzflag
 ---------------------
 
