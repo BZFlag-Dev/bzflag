@@ -146,7 +146,8 @@ bool PlayerInfo::unpackEnter(void *buf, uint16_t &rejectCode, char *rejectMsg)
     return false;
   }
   // no spoofing the server name
-  if (strcasecmp(callSign, "SERVER") == 0) {
+  if (strcasecmp(callSign, "SERVER") == 0 || strcasecmp(callSign, "[SERVER->]") == 0 ||
+		  strcasecmp(callSign, "[->SERVER]") == 0 || strcasecmp(callSign, "[SERVER]") == 0) {
     rejectCode   = RejectRepeatCallsign;
     strcpy(rejectMsg, "The callsign specified is already in use.");
     return false;
