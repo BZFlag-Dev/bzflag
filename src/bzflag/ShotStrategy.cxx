@@ -1085,6 +1085,7 @@ GuidedMissileStrategy::GuidedMissileStrategy(ShotPath* _path) :
 
   // get initial shot info
   FiringInfo& f = getFiringInfo(_path);
+  f.lifetime *= BZDB->eval(StateDatabase::BZDB_GMISSILEADLIFE);
   const float* vel = getPath().getVelocity();
   const float d = 1.0f / hypotf(vel[0], hypotf(vel[1], vel[2]));
   float dir[3];

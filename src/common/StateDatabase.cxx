@@ -78,6 +78,7 @@ const std::string StateDatabase::BZDB_FLAGALTITUDE      = std::string("_flagAlti
 const std::string StateDatabase::BZDB_FLAGHEIGHT        = std::string("_flagHeight");
 const std::string StateDatabase::BZDB_FLAGRADIUS        = std::string("_flagRadius");
 const std::string StateDatabase::BZDB_GMISSILEANG	= std::string("_gMissileAng");
+const std::string StateDatabase::BZDB_GMISSILEADLIFE    = std::string("_gMissileAdLife");
 const std::string StateDatabase::BZDB_GRAVITY		= std::string("_gravity");
 const std::string StateDatabase::BZDB_IDENTIFYRANGE	= std::string("_identifyRange");
 const std::string StateDatabase::BZDB_JUMPVELOCITY	= std::string("_jumpVelocity");

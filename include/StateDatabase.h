@@ -175,6 +175,7 @@ public:
   static const std::string	BZDB_FLAGHEIGHT;
   static const std::string	BZDB_FLAGRADIUS;
   static const std::string	BZDB_GMISSILEANG;
+  static const std::string	BZDB_GMISSILEADLIFE;
   static const std::string	BZDB_GRAVITY;
   static const std::string	BZDB_IDENTIFYRANGE;
   static const std::string	BZDB_JUMPVELOCITY;
