@@ -45,6 +45,8 @@ World*			World::playingField = NULL;
 BundleMgr*		World::bundleMgr;
 std::string		World::locale("");
 
+bool			World::displayMainFlags = true;
+
 World::World() : gameStyle(PlainGameStyle),
 				linearAcceleration(0.0f),
 				angularAcceleration(0.0f),
@@ -73,6 +75,8 @@ World::World() : gameStyle(PlainGameStyle),
     bases[i][7] = 0.0f;
     bases[i][8] = 0.0f;
   }
+
+  BZDB->addCallback("displayMainFlags", callback, NULL);
 }
 
 World::~World()
@@ -84,6 +88,12 @@ World::~World()
     delete players[i];
   delete[] players;
   delete worldWeapons;
+}
+
+void			World::callback(const std::string &name, void *userData)
+{
+  if (name == "displayMainFlags")
+    displayMainFlags = BZDB->isTrue("displayMainFlags");
 }
 
 void			World::init()
@@ -541,7 +551,7 @@ void			World::addFlags(SceneDatabase* scene)
   if (!flagNodes) return;
   for (int i = 0; i < maxFlags; i++) {
     // if not showing flags, only allow FlagOnTank through
-    if (flags[i].status != FlagOnTank && !BZDB->isTrue("displayMainFlags")) {
+    if (flags[i].status != FlagOnTank && !displayMainFlags) {
       continue;
     }
 

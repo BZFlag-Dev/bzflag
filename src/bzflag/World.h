@@ -117,6 +117,7 @@ class World {
     static void		done();
     static void		setFlagTexture(FlagSceneNode*);
 
+
   private:
     // disallow copy and assignment
 			World(const World&);
@@ -124,6 +125,9 @@ class World {
 
     void		freeFlags();
     void		freeInsideNodes();
+
+    static void		callback(const std::string& name, void* userData);
+    static bool		displayMainFlags; //BZDB cache
 
   private:
     short		gameStyle;
