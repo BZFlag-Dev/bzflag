@@ -22,6 +22,7 @@ bzflag		-- the BZFlag client
 bzfls		-- the BZFlag meta-server (i.e. the list of servers server)
 bzfs		-- the BZFlag server
 bzfrelay	-- the BZFlag relay (for relaying to servers)
+bzadmin		-- the BZFlag admin tool and chat client
 
 Note that only a few directories contain code directly related to the game
 BZFlag.  In particular: bzflag, bzfls, and bzfs. (And obstacle, but that will
