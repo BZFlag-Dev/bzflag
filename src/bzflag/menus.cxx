@@ -733,8 +733,20 @@ bool			KeyboardMapMenu::isEditing() const
   return editing != -1;
 }
 
-void			KeyboardMapMenu::setKey(const BzfKeyEvent&/* event*/)
+void			KeyboardMapMenu::setKey(const BzfKeyEvent& event)
 {
+  if (editing == -1)
+    return;
+  std::map<std::string, keymap>::iterator it;
+  for (it = mappable.begin(); it != mappable.end(); it++)
+    if (it->second.index == editing)
+      break;
+  if ((KEYMGR->keyEventToString(event) == it->second.key1 && it->second.key2.empty()) || (KEYMGR->keyEventToString(event) == it->second.key2))
+    return;
+  KEYMGR->unbind(event, true);
+  KEYMGR->bind(event, true, it->first);
+  editing = -1;
+  update();
 }
 
 void			KeyboardMapMenu::execute()
@@ -750,6 +762,14 @@ void			KeyboardMapMenu::execute()
     for (it = mappable.begin(); it != mappable.end(); it++) {
       if (list[it->second.index] == focus) {
 	editing = it->second.index;
+        if (!it->second.key1.empty() && !it->second.key2.empty()) {
+          // gotta kill the old values
+          BzfKeyEvent ev;
+          KEYMGR->stringToKeyEvent(it->second.key1, ev);
+          KEYMGR->unbind(ev, true);
+          KEYMGR->stringToKeyEvent(it->second.key2, ev);
+          KEYMGR->unbind(ev, true);
+        }
       }
     }
   }
