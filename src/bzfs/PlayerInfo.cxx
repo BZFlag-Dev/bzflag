@@ -400,7 +400,7 @@ std::string PlayerInfo::getIdleStat() {
 };
 
 bool PlayerInfo::canBeRabbit(bool relaxing) {
-  if (paused || notResponding || (team != ObserverTeam))
+  if (paused || notResponding || (team == ObserverTeam))
     return false;
   return relaxing ? (state > PlayerInLimbo) : (state == PlayerAlive);
 };
