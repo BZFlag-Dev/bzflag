@@ -554,6 +554,13 @@ bool			ComposeDefaultKey::keyPress(const BzfKeyEvent& key)
 	    }
 	  }
 	}
+      } else if (strncmp(silence, "SAVEWORLD", 9) == 0) {
+	std::string path = silence + 10;
+	if (World::getWorld()->writeWorld(path)) {
+	  addMessage(NULL, "World Saved");
+	} else {
+	  addMessage(NULL, "Invalid file name specified");
+	}
       } else if (message == "/set") {
 	BZDB->iterate(listSetVars, NULL);
       } else {
