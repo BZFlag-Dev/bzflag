@@ -37,16 +37,7 @@ bzadmin_SOURCES = \
 	bzadmin.cxx \
 	pdcurses_adapter.h
 
-noinst_HEADERS = \
-	buildDate.cxx
-
 ServerLink.cxx: @top_srcdir@/src/bzflag/ServerLink.cxx
 	cp -a @top_srcdir@/src/bzflag/ServerLink.cxx .
 
-LDADD = ../net/libNet.a ../common/libCommon.a @CURSES_LIB@
-
-bzadmin$(EXEEXT): $(bzadmin_OBJECTS) $(bzadmin_DEPENDENCIES) 
-	@rm -f bzadmin$(EXEEXT)
-	$(CXX) -o buildDate.o -c $(srcdir)/buildDate.cxx
-	$(CXXLINK) $(bzadmin_LDFLAGS) $(bzadmin_OBJECTS) buildDate.o \
-	$(bzadmin_LDADD) $(LIBS)
+LDADD = ../date/libDate.a ../net/libNet.a ../common/libCommon.a @CURSES_LIB@

@@ -63,7 +63,6 @@ bzflag_SOURCES =			\
 	bzflag.ico
 
 noinst_HEADERS = \
-	buildDate.cxx	\
 	stars.cxx
 
 if WIN32
@@ -74,6 +73,7 @@ endif
 
 if MACOS
 LDADD =	\
+	../date/libDate.a		\
 	../net/libNet.a			\
 	../common/libCommon.a		\
 	../obstacle/libObstacle.a	\
@@ -90,6 +90,7 @@ LDADD =	\
 #	$(ALIBS)
 else
 LDADD =	\
+	../date/libDate.a		\
 	../net/libNet.a			\
 	../common/libCommon.a		\
 	../obstacle/libObstacle.a	\
@@ -110,9 +111,3 @@ AM_CPPFLAGS = $(X_CFLAGS)
 
 bzflag.res: bzflag.rc bzflag.ico
 	windres -i bzflag.rc -o bzflag.res -O coff
-
-bzflag$(EXEEXT): $(bzflag_OBJECTS) $(bzflag_DEPENDENCIES) 
-	@rm -f bzflag$(EXEEXT)
-	$(CXX) -o buildDate.o -c $(srcdir)/buildDate.cxx
-	$(CXXLINK) $(bzflag_LDFLAGS) $(bzflag_OBJECTS) buildDate.o \
-	$(bzflag_LDADD) $(LIBS)

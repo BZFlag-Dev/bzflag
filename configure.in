@@ -421,6 +421,7 @@ AC_OUTPUT(bzflag.spec
 	win32/Makefile
 	src/Makefile
 	src/bzfrelay/Makefile
+	src/date/Makefile
 	src/common/Makefile
 	src/net/Makefile
 	src/bzfs/Makefile
