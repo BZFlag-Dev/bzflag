@@ -50,7 +50,8 @@ class BzfWindow {
     virtual void	setPosition(int x, int y) = 0;
     virtual void	setSize(int width, int height) = 0;
     virtual void	setMinSize(int width, int height) = 0;
-    virtual void	setFullscreen() = 0;
+    virtual void	setFullscreen() {;};
+    virtual void	setFullscreen(bool);
     virtual void	iconify(void) {;};
     virtual void	create(void) {;};
 

@@ -32,7 +32,7 @@ class SDLDisplay : public BzfDisplay {
   bool isEventPending() const;
   bool getEvent(BzfEvent&) const;
   bool getKey(const SDL_Event& sdlEvent, BzfKeyEvent& key) const;
-  void setFullscreen();
+  void setFullscreen(bool);
   void setWindowSize(int width, int height);
   void getWindowSize(int& width, int& height) const;
   void doSetVideoMode();
@@ -74,7 +74,7 @@ class SDLWindow : public BzfWindow {
   void  setTitle(const char * title);
   void  setPosition(int, int) {;};
   void  setMinSize(int, int) {;};
-  void  setFullscreen();
+  void  setFullscreen(bool);
   void  iconify(void);
   void  warpMouse(int x, int y);
   void  getMouse(int& x, int& y) const;

@@ -31,6 +31,11 @@ BzfWindow::~BzfWindow()
 #endif
 }
 
+void BzfWindow::setFullscreen(bool on) {
+  if (on)
+    setFullscreen();
+}
+
 void			BzfWindow::callExposeCallbacks() const
 {
   const int count = exposeCallbacks.size();

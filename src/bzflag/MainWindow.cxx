@@ -105,9 +105,14 @@ bool			MainWindow::getFullscreen()
 
 void			MainWindow::setFullscreen()
 {
-  isFullscreen = true;
-  window->setFullscreen();
-  window->create();
+  isFullscreen = false;
+  toggleFullscreen();
+}
+
+void			MainWindow::toggleFullscreen()
+{
+  isFullscreen = !isFullscreen;
+  window->setFullscreen(isFullscreen);
   resize();
 }
 

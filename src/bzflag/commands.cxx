@@ -94,9 +94,20 @@ const struct CommandListItem commandList[] = {
   { "scrollpanel",	&cmdScrollPanel,	"scrollpanel {up|down}:  scroll message panel" },
   { "hunt",	&cmdHunt,	"hunt:  hunt a specific player" },
   { "iconify",  &cmdIconify,	"iconify: iconify & pause bzflag" },
+  { "fullscreen", &cmdToggleFS, "fullscreen: toggle fullscreen mode" },
   { "autopilot",&cmdAutoPilot,	"autopilot:  set/unset autopilot bot code" }
 };
 
+
+std::string cmdToggleFS(const std::string&,
+			const CommandManager::ArgList& args)
+{
+  if (args.size() != 0)
+    return "usage: fullscreen";
+  mainWindow->toggleFullscreen();
+  mainWindow->getWindow()->callResizeCallbacks();
+  return std::string();
+}
 
 std::string cmdIconify(const std::string&, const CommandManager::ArgList& args)
 {

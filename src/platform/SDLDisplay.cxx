@@ -341,8 +341,8 @@ void SDLDisplay::createWindow() {
     printf("Could not set Video Mode: %s.\n", SDL_GetError());
 };
 
-void SDLDisplay::setFullscreen() {
-  fullScreen = true;
+void SDLDisplay::setFullscreen(bool on) {
+  fullScreen = on;
 }
 
 void SDLDisplay::setWindowSize(int _width, int _height) {
@@ -393,8 +393,8 @@ void SDLWindow::setTitle(const char * title) {
   SDL_WM_SetCaption(title, title);
 };
 
-void SDLWindow::setFullscreen() {
-  ((SDLDisplay *)getDisplay())->setFullscreen();
+void SDLWindow::setFullscreen(bool on) {
+  ((SDLDisplay *)getDisplay())->setFullscreen(on);
 };
 
 void SDLWindow::iconify(void) {
