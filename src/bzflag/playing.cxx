@@ -4188,6 +4188,7 @@ static void		playingLoop()
 	  myTank->move(virtPos, roamViewAngle * M_PI / 180.0f);
 #endif
 	fov = roamZoom * M_PI / 180.0f;
+	moveSoundReceiver(eyePoint[0], eyePoint[1], eyePoint[2], 0.0, False);
       }
       sceneRenderer->getViewFrustum().setProjection(fov,
 	  1.1f, 1.5f * WorldSize,
