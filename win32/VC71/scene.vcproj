@@ -139,6 +139,9 @@
 				</FileConfiguration>
 			</File>
 			<File
+				RelativePath="..\..\src\scene\Occluder.cxx">
+			</File>
+			<File
 				RelativePath="..\..\src\scene\Octree.cxx">
 			</File>
 			<File
@@ -193,6 +196,9 @@
 			</File>
 			<File
 				RelativePath="..\include\common.h">
+			</File>
+			<File
+				RelativePath="..\..\src\scene\Occluder.h">
 			</File>
 			<File
 				RelativePath="..\..\src\scene\Octree.h">
