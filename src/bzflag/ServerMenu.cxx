@@ -548,7 +548,7 @@ void			ServerMenu::setStatus(const char* msg, const std::vector<std::string> *pa
 }
 
 void			ServerMenu::updateStatus() {
-  if (serverList.searchActive()) {
+  if (!serverList.serverFound()) {
     setStatus("Searching");
   } else if (serversFound < serverList.size()) {
     std::vector<std::string> args;
