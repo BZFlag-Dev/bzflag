@@ -4071,6 +4071,11 @@ static void		playingLoop()
 
     // handle incoming packets
     doMessages();
+    
+    // see if the world collision grid needs to be updated
+    if (world) {
+      world->checkCollisionGrid();
+    }
 
     mainWindow->getWindow()->yieldCurrent();
 

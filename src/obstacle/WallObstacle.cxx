@@ -94,6 +94,17 @@ bool			WallObstacle::isInside(const float* p, float angle,
   return false;
 }
 
+bool			WallObstacle::isInside(const float* oldP, float oldAngle,
+                                       const float* p, float angle,
+                                       float halfWidth, float halfBreadth) const
+
+{
+  oldP = oldP; // remove warnings
+  oldAngle = oldAngle;
+  
+  return isInside (p, angle, halfWidth, halfBreadth);
+}
+
 bool			WallObstacle::getHitNormal(
 				const float*, float,
 				const float*, float,

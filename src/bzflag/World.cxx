@@ -78,6 +78,22 @@ void			World::done()
   flagTexture = 0;
 }
 
+void                    World::loadCollisionGrid()
+{
+  collisionGrid.load(boxes, pyramids, teleporters, basesR);
+  return;
+}
+
+void                    World::checkCollisionGrid()
+{
+  float worldSize = BZDB.eval(StateDatabase::BZDB_WORLDSIZE);
+  if (worldSize != collisionGrid.getWorldSize()) {
+    // reload the collision grid
+    collisionGrid.load(boxes, pyramids, teleporters, basesR);
+  }
+  return;
+}
+
 void			World::setFlagTexture(FlagSceneNode* flag)
 {
   flag->setTexture(flagTexture);
@@ -165,43 +181,21 @@ TeamColor		World::whoseBase(const float* pos) const
 
 const Obstacle*		World::inBuilding(const float* pos, float radius) const
 {
-  // check boxes
-  std::vector<BoxBuilding>::const_iterator boxScan = boxes.begin();
-  while (boxScan != boxes.end()) {
-    const BoxBuilding& box = *boxScan;
-    if (box.isInside(pos, radius))
-      return &box;
-    boxScan++;
+  CellList list = collisionGrid.getCells (pos, radius);
+  
+  for (CellList::const_iterator cit = list.begin(); cit != list.end(); cit++) {
+    const CollisionCell* cell = (*cit);
+    
+    std::vector<const Obstacle*>::const_iterator obs_it = cell->objs.begin();
+    while (obs_it != cell->objs.end()) {
+      const Obstacle& obs = *(*obs_it);
+      if (obs.isInside(pos, radius)) {
+        return &obs;
+      }
+      obs_it++;
+    }
   }
 
-  // check pyramids
-  std::vector<PyramidBuilding>::const_iterator pyramidScan = pyramids.begin();
-  while (pyramidScan != pyramids.end()) {
-    const PyramidBuilding& pyramid = *pyramidScan;
-    if (pyramid.isInside(pos, radius))
-      return &pyramid;
-    pyramidScan++;
-  }
-
-  // check bases
-  std::vector<BaseBuilding>::const_iterator baseScan = basesR.begin();
-  while (baseScan != basesR.end()) {
-    const BaseBuilding &base = *baseScan;
-    if(base.isInside(pos, radius))
-      return &base;
-    baseScan++;
-  }
-
-  // check teleporters
-  std::vector<Teleporter>::const_iterator teleporterScan = teleporters.begin();
-  while (teleporterScan != teleporters.end()) {
-    const Teleporter& teleporter = *teleporterScan;
-    if (teleporter.isInside(pos, radius))
-      return &teleporter;
-    teleporterScan++;
-  }
-
-  // nope
   return NULL;
 }
 
@@ -219,50 +213,21 @@ const Obstacle*		World::hitBuilding(const float* pos, float angle,
     wallScan++;
   }
 
-  // check teleporters
-  std::vector<Teleporter>::const_iterator teleporterScan = teleporters.begin();
-  while (teleporterScan != teleporters.end()) {
-    const Teleporter& teleporter = *teleporterScan;
-	if (!teleporter.isDriveThrough()){
-    if (teleporter.isInside(pos, angle, dx, dy))
-      return &teleporter;
-	}
-    teleporterScan++;
+  CellList list = collisionGrid.getCells (pos, angle, dx, dy);
+  
+  for (CellList::const_iterator cit = list.begin(); cit != list.end(); cit++) {
+    const CollisionCell* cell = (*cit);
+    
+    std::vector<const Obstacle*>::const_iterator obs_it = cell->objs.begin();
+    while (obs_it != cell->objs.end()) {
+      const Obstacle& obs = *(*obs_it);
+      if (!obs.isDriveThrough() && obs.isInside(pos, angle, dx, dy)) {
+        return &obs;
+      }
+      obs_it++;
+    }
   }
 
-  // strike one -- check boxes
-  std::vector<BoxBuilding>::const_iterator boxScan = boxes.begin();
-  while (boxScan != boxes.end()) {
-    const BoxBuilding& box = *boxScan;
-	if (!box.isDriveThrough()){
-    if (box.isInside(pos, angle, dx, dy))
-      return &box;
-	}
-    boxScan++;
-  }
-
-  // strike two -- check pyramids
-  std::vector<PyramidBuilding>::const_iterator pyramidScan = pyramids.begin();
-  while (pyramidScan != pyramids.end()) {
-    const PyramidBuilding& pyramid = *pyramidScan;
-	if (!pyramid.isDriveThrough()){
-    if (pyramid.isInside(pos, angle, dx, dy))
-      return &pyramid;
-	}
-    pyramidScan++;
-  }
-
-  // strike three -- check bases
-  std::vector<BaseBuilding>::const_iterator baseScan = basesR.begin();
-  while (baseScan != basesR.end()) {
-    const BaseBuilding &base = *baseScan;
-	if (!base.isDriveThrough()){
-    if(base.isInside(pos, angle, dx, dy))
-      return &base;
-	}
-    baseScan++;
-  }
-  // strike four -- you're out
   return NULL;
 }
 
@@ -281,50 +246,20 @@ const Obstacle*		World::hitBuilding(const float* oldPos, float oldAngle,
     wallScan++;
   }
 
-  // check teleporters
-  std::vector<Teleporter>::const_iterator teleporterScan = teleporters.begin();
-  while (teleporterScan != teleporters.end()) {
-    const Teleporter& teleporter = *teleporterScan;
-	if (!teleporter.isDriveThrough()){
-    if (teleporter.isInside(pos, angle, dx, dy))
-      return &teleporter;
-	}
-    teleporterScan++;
+  CellList list = collisionGrid.getCells (oldPos, oldAngle, pos, angle, dx, dy);
+  
+  for (CellList::const_iterator cit = list.begin(); cit != list.end(); cit++) {
+    const CollisionCell* cell = (*cit);
+    std::vector<const Obstacle*>::const_iterator obs_it = cell->objs.begin();
+    while (obs_it != cell->objs.end()) {
+      const Obstacle& obs = *(*obs_it);
+      if (!obs.isDriveThrough() && obs.isInside(oldPos, oldAngle, pos, angle, dx, dy)) {
+        return &obs;
+      }
+      obs_it++;
+    }
   }
 
-  // strike one -- check boxes
-  std::vector<BoxBuilding>::const_iterator boxScan = boxes.begin();
-  while (boxScan != boxes.end()) {
-    const BoxBuilding& box = *boxScan;
-	if (!box.isDriveThrough()){
-    if (box.isInside(oldPos, oldAngle, pos, angle, dx, dy))
-      return &box;
-	}
-    boxScan++;
-  }
-
-  // strike two -- check pyramids
-  std::vector<PyramidBuilding>::const_iterator pyramidScan = pyramids.begin();
-  while (pyramidScan != pyramids.end()) {
-    const PyramidBuilding& pyramid = *pyramidScan;
-	if (!pyramid.isDriveThrough()){
-    if (pyramid.isInside(pos, angle, dx, dy))
-      return &pyramid;
-	}
-    pyramidScan++;
-  }
-
-  // strike three -- check bases
-  std::vector<BaseBuilding>::const_iterator baseScan = basesR.begin();
-  while (baseScan != basesR.end()) {
-    const BaseBuilding &base = *baseScan;
-	if (!base.isDriveThrough()){
-    if(base.isInside(oldPos, oldAngle, pos, angle, dx, dy))
-      return &base;
-	}
-    baseScan++;
-  }
-  // strike four -- you're out
   return NULL;
 }
 

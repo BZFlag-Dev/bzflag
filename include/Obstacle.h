@@ -99,6 +99,13 @@ class Obstacle {
   virtual bool isInside(const float* p, float angle,
 			 float halfWidth, float halfBreadth) const = 0;
   
+  /** This function checks if a tank, approximated as a box rotated around its
+      Z axis, intersects this obstacle. It also factors in the difference 
+      between the old Z location and the new Z location */
+  virtual bool isInside(const float* oldP, float oldAngle,
+                        const float* p, float angle,
+			            float halfWidth, float halfBreadth) const = 0;
+			            
   /** This function checks if a horizontal rectangle crosses the surface of
       this obstacle.
       @param p           The position of the centre of the rectangle

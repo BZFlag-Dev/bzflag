@@ -23,7 +23,6 @@ bool  BZDBCache::blend;
 bool  BZDBCache::texture;
 bool  BZDBCache::shadows;
 
-
 float BZDBCache::flagPoleSize;
 float BZDBCache::flagPoleWidth;
 float BZDBCache::maxLOD;

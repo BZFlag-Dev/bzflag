@@ -265,6 +265,8 @@ void* WorldBuilder::unpack(void* buf)
     buf = nboUnpackUShort(buf, len);
     buf = nboUnpackUShort(buf, code);
   }
+  
+  world->loadCollisionGrid();
 
   return buf;
 }

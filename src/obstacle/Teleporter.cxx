@@ -102,6 +102,16 @@ bool			Teleporter::isInside(const float* p, float a,
   return false;
 }
 
+bool			Teleporter::isInside(const float *oldP, float oldAngle,
+                                     const float* p, float a,
+						             float dx, float dy) const
+{
+  oldP = oldP; // remove warnings
+  oldAngle = oldAngle;
+  
+  return isInside (p, a, dx, dy);
+}
+
 bool			Teleporter::isCrossing(const float* p, float a,
 					float dx, float dy, float* plane) const
 {

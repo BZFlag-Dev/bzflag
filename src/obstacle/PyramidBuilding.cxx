@@ -169,6 +169,16 @@ bool			PyramidBuilding::isInside(const float* p, float a,
 		      s * getWidth(), s * getBreadth(), p, a, dx, dy);
 }
 
+bool			PyramidBuilding::isInside(const float* oldP, float oldAngle,
+                                          const float* p, float angle,
+                                          float halfWidth, float halfBreadth) const
+{
+  oldP = oldP; // remove warnings
+  oldAngle = oldAngle;
+  
+  return isInside (p, angle, halfWidth, halfBreadth);
+}                                          
+
 bool			PyramidBuilding::isCrossing(const float* p, float a,
 					float dx, float dy, float* plane) const
 {

@@ -34,6 +34,9 @@ class WallObstacle : public Obstacle {
     bool		isInside(const float* p, float radius) const;
     bool		isInside(const float* p, float angle,
 				float halfWidth, float halfBreadth) const;
+    bool		isInside(const float* oldP, float oldAngle,
+                         const float* p, float angle,
+				         float halfWidth, float halfBreadth) const;
     bool		getHitNormal(
 				const float* pos1, float azimuth1,
 				const float* pos2, float azimuth2,
