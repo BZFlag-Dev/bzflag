@@ -135,6 +135,10 @@ SOURCE=..\..\src\bzfs\CustomBox.cxx
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\src\bzfs\CustomCone.cxx
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\src\bzfs\CustomDynamicColor.cxx
 # End Source File
 # Begin Source File
@@ -332,6 +336,10 @@ SOURCE=..\..\src\bzfs\CustomBase.h
 # Begin Source File
 
 SOURCE=..\..\src\bzfs\CustomBox.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\bzfs\CustomCone.h
 # End Source File
 # Begin Source File
 
