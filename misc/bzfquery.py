@@ -246,7 +246,7 @@ def getAndPrintStat( hostname , port ) :
 			player[ 'score' ] , player[ 'won' ] , player[ 'lost' ] , \
 			player[ 'email' ]
 		try :
-			type = playerType[ player[ 'tks' ] ]
+			type = playerType[ player[ 'type' ] ]
 		except :
 			type = 'Unknown player type %s' % player.get( 'tks' )
 		name = sign
