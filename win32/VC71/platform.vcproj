@@ -395,61 +395,61 @@
 			Name="Header Files"
 			Filter="h;hpp;hxx;hm;inl">
 			<File
-				RelativePath="..\include\BzfDisplay.h">
+				RelativePath="..\..\include\BzfDisplay.h">
 			</File>
 			<File
-				RelativePath="..\include\BzfEvent.h">
+				RelativePath="..\..\include\BzfEvent.h">
 			</File>
 			<File
-				RelativePath="..\include\bzfgl.h">
+				RelativePath="..\..\include\bzfgl.h">
 			</File>
 			<File
-				RelativePath="..\include\bzfio.h">
+				RelativePath="..\..\include\bzfio.h">
 			</File>
 			<File
-				RelativePath="..\include\BzfJoystick.h">
+				RelativePath="..\..\include\BzfJoystick.h">
 			</File>
 			<File
-				RelativePath="..\include\BzfMedia.h">
+				RelativePath="..\..\include\BzfMedia.h">
 			</File>
 			<File
-				RelativePath="..\include\BzfString.h">
+				RelativePath="..\..\include\BzfString.h">
 			</File>
 			<File
-				RelativePath="..\include\BzfVisual.h">
+				RelativePath="..\..\include\BzfVisual.h">
 			</File>
 			<File
-				RelativePath="..\include\BzfWindow.h">
+				RelativePath="..\..\include\BzfWindow.h">
 			</File>
 			<File
-				RelativePath="..\include\common.h">
+				RelativePath="..\..\include\common.h">
 			</File>
 			<File
 				RelativePath="..\..\src\platform\DXJoystick.h">
 			</File>
 			<File
-				RelativePath="..\include\ErrorHandler.h">
+				RelativePath="..\..\include\ErrorHandler.h">
 			</File>
 			<File
 				RelativePath="..\..\src\platform\EvdevJoystick.h">
 			</File>
 			<File
-				RelativePath="..\include\OpenGLGState.h">
+				RelativePath="..\..\include\OpenGLGState.h">
 			</File>
 			<File
-				RelativePath="..\include\Pack.h">
+				RelativePath="..\..\include\Pack.h">
 			</File>
 			<File
-				RelativePath="..\include\PlatformFactory.h">
+				RelativePath="..\..\include\PlatformFactory.h">
 			</File>
 			<File
-				RelativePath="..\include\resource.h">
+				RelativePath="..\..\include\resource.h">
 			</File>
 			<File
 				RelativePath="..\..\src\platform\SDLJoystick.h">
 			</File>
 			<File
-				RelativePath="..\include\TimeKeeper.h">
+				RelativePath="..\..\include\TimeKeeper.h">
 			</File>
 			<File
 				RelativePath="..\..\src\platform\wave.h">
