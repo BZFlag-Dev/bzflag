@@ -13,22 +13,7 @@
 #include "WorldInfo.h"
 
 WorldInfo::WorldInfo() :
-  numWalls(0),
-  numBases(0),
-  numBoxes(0),
-  numPyramids(0),
-  numTeleporters(0),
-  sizeWalls(0),
-  sizeBoxes(0),
-  sizePyramids(0),
-  sizeTeleporters(0),
-  sizeBases(0),
   maxHeight(0),
-  walls(NULL),
-  boxes(NULL),
-  bases(NULL),
-  pyramids(NULL),
-  teleporters(NULL),
   database(NULL)
 {
   size[0] = 400.0f;
@@ -38,12 +23,6 @@ WorldInfo::WorldInfo() :
 
 WorldInfo::~WorldInfo()
 {
-  free(walls);
-  free(boxes);
-  free(pyramids);
-  free(teleporters);
-  if(bases != NULL)
-    free(bases);
   delete[] database;
 }
 
@@ -52,19 +31,16 @@ void WorldInfo::addWall(float x, float y, float z, float r, float w, float h)
   if ((z + h) > maxHeight)
     maxHeight = z+h;
 
-  if (numWalls >= sizeWalls) {
-    sizeWalls = (sizeWalls == 0) ? 16 : 2 * sizeWalls;
-    walls = (ObstacleLocation *)realloc(walls, sizeof(ObstacleLocation) * sizeWalls);
-  }
-  walls[numWalls].pos[0] = x;
-  walls[numWalls].pos[1] = y;
-  walls[numWalls].pos[2] = z;
-  walls[numWalls].rotation = r;
-  walls[numWalls].size[0] = w;
+  int i = walls.size();
+  walls.resize(i+1);
+  walls[i].pos[0] = x;
+  walls[i].pos[1] = y;
+  walls[i].pos[2] = z;
+  walls[i].rotation = r;
+  walls[i].size[0] = w;
   // no depth to walls
-  walls[numWalls].size[1] = 0.0f;
-  walls[numWalls].size[2] = h;
-  numWalls++;
+  walls[i].size[1] = 0.0f;
+  walls[i].size[2] = h;
 }
 
 void WorldInfo::addBox(float x, float y, float z, float r, float w, float d, float h, bool drive, bool shoot)
@@ -72,20 +48,17 @@ void WorldInfo::addBox(float x, float y, float z, float r, float w, float d, flo
   if ((z + h) > maxHeight)
     maxHeight = z+h;
 
-  if (numBoxes >= sizeBoxes) {
-    sizeBoxes = (sizeBoxes == 0) ? 16 : 2 * sizeBoxes;
-    boxes = (ObstacleLocation *)realloc(boxes, sizeof(ObstacleLocation) * sizeBoxes);
-  }
-  boxes[numBoxes].pos[0] = x;
-  boxes[numBoxes].pos[1] = y;
-  boxes[numBoxes].pos[2] = z;
-  boxes[numBoxes].rotation = r;
-  boxes[numBoxes].size[0] = w;
-  boxes[numBoxes].size[1] = d;
-  boxes[numBoxes].size[2] = h;
-  boxes[numBoxes].driveThrough = drive;
-  boxes[numBoxes].shootThrough = shoot;
-  numBoxes++;
+  int i = boxes.size();
+  boxes.resize(i+1);
+  boxes[i].pos[0] = x;
+  boxes[i].pos[1] = y;
+  boxes[i].pos[2] = z;
+  boxes[i].rotation = r;
+  boxes[i].size[0] = w;
+  boxes[i].size[1] = d;
+  boxes[i].size[2] = h;
+  boxes[i].driveThrough = drive;
+  boxes[i].shootThrough = shoot;
 }
 
 void WorldInfo::addPyramid(float x, float y, float z, float r, float w, float d, float h, bool drive, bool shoot, bool flipZ)
@@ -93,21 +66,18 @@ void WorldInfo::addPyramid(float x, float y, float z, float r, float w, float d,
   if ((z + h) > maxHeight)
     maxHeight = z+h;
 
-  if (numPyramids >= sizePyramids) {
-    sizePyramids = (sizePyramids == 0) ? 16 : 2 * sizePyramids;
-    pyramids = (ObstacleLocation *)realloc(pyramids, sizeof(ObstacleLocation) * sizePyramids);
-  }
-  pyramids[numPyramids].pos[0] = x;
-  pyramids[numPyramids].pos[1] = y;
-  pyramids[numPyramids].pos[2] = z;
-  pyramids[numPyramids].rotation = r;
-  pyramids[numPyramids].size[0] = w;
-  pyramids[numPyramids].size[1] = d;
-  pyramids[numPyramids].size[2] = h;
-  pyramids[numPyramids].driveThrough = drive;
-  pyramids[numPyramids].shootThrough = shoot;
-  pyramids[numPyramids].flipZ = flipZ;
-numPyramids++;
+  int i = pyramids.size();
+  pyramids.resize(i+1);
+  pyramids[i].pos[0] = x;
+  pyramids[i].pos[1] = y;
+  pyramids[i].pos[2] = z;
+  pyramids[i].rotation = r;
+  pyramids[i].size[0] = w;
+  pyramids[i].size[1] = d;
+  pyramids[i].size[2] = h;
+  pyramids[i].driveThrough = drive;
+  pyramids[i].shootThrough = shoot;
+  pyramids[i].flipZ = flipZ;
 }
 
 void WorldInfo::addTeleporter(float x, float y, float z, float r, float w, float d, float h, float b, bool drive, bool shoot)
@@ -115,24 +85,21 @@ void WorldInfo::addTeleporter(float x, float y, float z, float r, float w, float
   if ((z + h) > maxHeight)
     maxHeight = z+h;
 
-  if (numTeleporters >= sizeTeleporters) {
-    sizeTeleporters = (sizeTeleporters == 0) ? 16 : 2 * sizeTeleporters;
-    teleporters = (Teleporter *)realloc(teleporters, sizeof(Teleporter) * sizeTeleporters);
-  }
-  teleporters[numTeleporters].pos[0] = x;
-  teleporters[numTeleporters].pos[1] = y;
-  teleporters[numTeleporters].pos[2] = z;
-  teleporters[numTeleporters].rotation = r;
-  teleporters[numTeleporters].size[0] = w;
-  teleporters[numTeleporters].size[1] = d;
-  teleporters[numTeleporters].size[2] = h;
-  teleporters[numTeleporters].driveThrough = drive;
-  teleporters[numTeleporters].shootThrough = shoot;
-  teleporters[numTeleporters].border = b;
+  int i = teleporters.size();
+  teleporters.resize(i+1);
+  teleporters[i].pos[0] = x;
+  teleporters[i].pos[1] = y;
+  teleporters[i].pos[2] = z;
+  teleporters[i].rotation = r;
+  teleporters[i].size[0] = w;
+  teleporters[i].size[1] = d;
+  teleporters[i].size[2] = h;
+  teleporters[i].driveThrough = drive;
+  teleporters[i].shootThrough = shoot;
+  teleporters[i].border = b;
   // default link through
-  teleporters[numTeleporters].to[0] = numTeleporters * 2 + 1;
-  teleporters[numTeleporters].to[1] = numTeleporters * 2;
-  numTeleporters++;
+  teleporters[i].to[0] = i * 2 + 1;
+  teleporters[i].to[1] = i * 2;
 }
 
 void WorldInfo::addBase(float x, float y, float z, float r, float w, float d, float h, bool drive, bool shoot)
@@ -140,26 +107,23 @@ void WorldInfo::addBase(float x, float y, float z, float r, float w, float d, fl
   if ((z + h) > maxHeight)
     maxHeight = z+h;
 
-  if(numBases >= sizeBases) {
-    sizeBases = (sizeBases == 0) ? 16 : 2 * sizeBases;
-    bases = (ObstacleLocation *) realloc(bases, sizeof(ObstacleLocation) * sizeBases);
-  }
-  bases[numBases].pos[0] = x;
-  bases[numBases].pos[1] = y;
-  bases[numBases].pos[2] = z;
-  bases[numBases].rotation = r;
-  bases[numBases].size[0] = w;
-  bases[numBases].size[1] = d;
-  bases[numBases].size[2] = h;
-  bases[numBases].driveThrough = drive;
-  bases[numBases].shootThrough = shoot;
-  numBases++;
+  int i = bases.size();
+  bases.resize(i+1);
+  bases[i].pos[0] = x;
+  bases[i].pos[1] = y;
+  bases[i].pos[2] = z;
+  bases[i].rotation = r;
+  bases[i].size[0] = w;
+  bases[i].size[1] = d;
+  bases[i].size[2] = h;
+  bases[i].driveThrough = drive;
+  bases[i].shootThrough = shoot;
 }
 
 void WorldInfo::addLink(int from, int to)
 {
   // silently discard links from teleporters that don't exist
-  if (from <= numTeleporters * 2 + 1) {
+  if (from <= teleporters.size() * 2 + 1) {
     teleporters[from / 2].to[from % 2] = to;
   }
 }
@@ -216,47 +180,56 @@ bool WorldInfo::inRect(const float *p1, float angle, const float *size, float x,
   return rectHitCirc(size[0], size[1], pb, r);
 }
 
-InBuildingType WorldInfo::inBuilding(WorldInfo::ObstacleLocation **location,
+InBuildingType WorldInfo::inBuilding(ObstacleLocation **location,
 				     float x, float y, float z, float r,
-				     float height) const
+				     float height)
 {
-  int i;
-  for (i = 0; i < numBases; i++) {
-    if ((bases[i].pos[2] < (z + height))
-	&& ((bases[i].pos[2] + bases[i].size[2]) > z)
-	&&	(inRect(bases[i].pos, bases[i].rotation, bases[i].size, x, y, r))) {
+  ObstacleLocationList::iterator it;
+  TeleporterList::iterator telit;
+
+  for (it = bases.begin(); it != bases.end(); ++it) {
+    ObstacleLocation &base = *it;
+    if ((base.pos[2] < (z + height))
+	&& ((base.pos[2] + base.size[2]) > z)
+	&&	(inRect(base.pos, base.rotation, base.size, x, y, r))) {
       if(location != NULL)
-	*location = &bases[i];
+	*location = &base;
       return IN_BASE;
     }
   }
-  for (i = 0; i < numBoxes; i++)
-    if ((boxes[i].pos[2] < (z + height))
-	&& ((boxes[i].pos[2] + boxes[i].size[2]) > z)
-	&&	(inRect(boxes[i].pos, boxes[i].rotation, boxes[i].size, x, y, r))) {
+  for (it = boxes.begin(); it != boxes.end(); ++it) {
+    ObstacleLocation &box = *it;
+    if ((box.pos[2] < (z + height))
+	&& ((box.pos[2] + box.size[2]) > z)
+	&&	(inRect(box.pos, box.rotation, box.size, x, y, r))) {
       if (location != NULL)
-	*location = &boxes[i];
+	*location = &box;
       return IN_BOX;
     }
-  for (i = 0; i < numPyramids; i++) {
-    if ((pyramids[i].pos[2] < (z + height))
-	&& ((pyramids[i].pos[2] + pyramids[i].size[2]) > z)
-	&&	(inRect(pyramids[i].pos, pyramids[i].rotation, pyramids[i].size,x,y,r))) {
+  }
+  for (it = pyramids.begin(); it != pyramids.end(); ++it) {
+    ObstacleLocation &pyr = *it;
+    if ((pyr.pos[2] < (z + height))
+	&& ((pyr.pos[2] + pyr.size[2]) > z)
+	&&	(inRect(pyr.pos, pyr.rotation, pyr.size,x,y,r))) {
       if (location != NULL)
-	*location = &pyramids[i];
+	*location = &pyr;
       return IN_PYRAMID;
     }
   }
-  for (i = 0; i < numTeleporters; i++)
-    if ((teleporters[i].pos[2] < (z + height))
-	&& ((teleporters[i].pos[2] + teleporters[i].size[2]) > z)
-	&&	(inRect(teleporters[i].pos, teleporters[i].rotation, teleporters[i].size, x, y, r))) {
+  for (telit = teleporters.begin(); telit != teleporters.end(); ++telit) {
+    Teleporter &tele = *telit;
+    if ((tele.pos[2] < (z + height))
+	&& ((tele.pos[2] + tele.size[2]) > z)
+	&&	(inRect(tele.pos, tele.rotation, tele.size, x, y, r))) {
       static ObstacleLocation __teleporter;
-      __teleporter = teleporters[i];
+      __teleporter = tele;
       if (location != NULL)
 	*location = &__teleporter;
       return IN_TELEPORTER;
     }
+  }
+
   if (location != NULL)
     *location = (ObstacleLocation *)NULL;
   return NOT_IN_BUILDING;
@@ -265,88 +238,89 @@ InBuildingType WorldInfo::inBuilding(WorldInfo::ObstacleLocation **location,
 int WorldInfo::packDatabase()
 {
   databaseSize =
-    (2 + 2 + WorldCodeWallSize) * numWalls +
-    (2 + 2 + WorldCodeBoxSize) * numBoxes +
-    (2 + 2 + WorldCodePyramidSize) * numPyramids +
-    (2 + 2 + WorldCodeTeleporterSize) * numTeleporters +
-    (2 + 2 + WorldCodeLinkSize) * 2 * numTeleporters;
+    (2 + 2 + WorldCodeWallSize) * walls.size() +
+    (2 + 2 + WorldCodeBoxSize) * boxes.size() +
+    (2 + 2 + WorldCodePyramidSize) * pyramids.size() +
+    (2 + 2 + WorldCodeTeleporterSize) * teleporters.size() +
+    (2 + 2 + WorldCodeLinkSize) * 2 * teleporters.size();
   database = new char[databaseSize];
   void *databasePtr = database;
 
   // define i out here so we avoid the loop variable scope debates
-  int i;
+  ObstacleLocationList::iterator it;
   unsigned char	bitMask;
 
-  // add walls
-  ObstacleLocation *pWall;
-  for (i = 0, pWall = walls ; i < numWalls ; i++, pWall++) {
+  // add walls  
+  for (it = walls.begin(); it != walls.end(); ++it) {
+    ObstacleLocation &wall = *it;
     databasePtr = nboPackUShort(databasePtr, WorldCodeWallSize);
     databasePtr = nboPackUShort(databasePtr, WorldCodeWall);
-    databasePtr = nboPackVector(databasePtr, pWall->pos);
-    databasePtr = nboPackFloat(databasePtr, pWall->rotation);
-    databasePtr = nboPackFloat(databasePtr, pWall->size[0]);
+    databasePtr = nboPackVector(databasePtr, wall.pos);
+    databasePtr = nboPackFloat(databasePtr, wall.rotation);
+    databasePtr = nboPackFloat(databasePtr, wall.size[0]);
     // walls have no depth
-    databasePtr = nboPackFloat(databasePtr, pWall->size[2]);
+    databasePtr = nboPackFloat(databasePtr, wall.size[2]);
   }
 
   // add boxes
-  ObstacleLocation *pBox;
-  for (i = 0, pBox = boxes ; i < numBoxes ; i++, pBox++) {
+  for (it = boxes.begin(); it != boxes.end(); ++it) {
+    ObstacleLocation &box = *it;
     databasePtr = nboPackUShort(databasePtr, WorldCodeBoxSize);
     databasePtr = nboPackUShort(databasePtr, WorldCodeBox);
-    databasePtr = nboPackVector(databasePtr, pBox->pos);
-    databasePtr = nboPackFloat(databasePtr, pBox->rotation);
-    databasePtr = nboPackVector(databasePtr, pBox->size);
+    databasePtr = nboPackVector(databasePtr, box.pos);
+    databasePtr = nboPackFloat(databasePtr, box.rotation);
+    databasePtr = nboPackVector(databasePtr, box.size);
 	bitMask = 0;
-	if (pBox->driveThrough)
+	if (box.driveThrough)
 		bitMask |= _DRIVE_THRU;
- 	if (pBox->shootThrough)
+ 	if (box.shootThrough)
 		bitMask |= _SHOOT_THRU;
 	databasePtr = nboPackUByte(databasePtr, bitMask);
  }
 
   // add pyramids
-  ObstacleLocation *pPyramid;
-  for (i = 0, pPyramid = pyramids ; i < numPyramids ; i++, pPyramid++) {
+  for (it = pyramids.begin(); it != pyramids.end(); ++it) {
+    ObstacleLocation &pyr = *it;
     databasePtr = nboPackUShort(databasePtr, WorldCodePyramidSize);
     databasePtr = nboPackUShort(databasePtr, WorldCodePyramid);
-    databasePtr = nboPackVector(databasePtr, pPyramid->pos);
-    databasePtr = nboPackFloat(databasePtr, pPyramid->rotation);
-    databasePtr = nboPackVector(databasePtr, pPyramid->size);
+    databasePtr = nboPackVector(databasePtr, pyr.pos);
+    databasePtr = nboPackFloat(databasePtr, pyr.rotation);
+    databasePtr = nboPackVector(databasePtr, pyr.size);
 	bitMask = 0;
-	if (pPyramid->driveThrough)
+	if (pyr.driveThrough)
 		bitMask |= _DRIVE_THRU;
- 	if (pPyramid->shootThrough)
+ 	if (pyr.shootThrough)
 		bitMask |= _SHOOT_THRU;
- 	if (pPyramid->flipZ)
+ 	if (pyr.flipZ)
 		bitMask |= _FLIP_Z;
 	databasePtr = nboPackUByte(databasePtr, bitMask);
   }
 
   // add teleporters
-  Teleporter *pTeleporter;
-  for (i = 0, pTeleporter = teleporters ; i < numTeleporters ; i++, pTeleporter++) {
+  int i = 0;
+  for (TeleporterList::iterator telit = teleporters.begin(); telit != teleporters.end(); ++telit, i++) {
+    Teleporter &tele = *telit;
     databasePtr = nboPackUShort(databasePtr, WorldCodeTeleporterSize);
     databasePtr = nboPackUShort(databasePtr, WorldCodeTeleporter);
-    databasePtr = nboPackVector(databasePtr, pTeleporter->pos);
-    databasePtr = nboPackFloat(databasePtr, pTeleporter->rotation);
-    databasePtr = nboPackVector(databasePtr, pTeleporter->size);
-    databasePtr = nboPackFloat(databasePtr, pTeleporter->border);
+    databasePtr = nboPackVector(databasePtr, tele.pos);
+    databasePtr = nboPackFloat(databasePtr, tele.rotation);
+    databasePtr = nboPackVector(databasePtr, tele.size);
+    databasePtr = nboPackFloat(databasePtr, tele.border);
  	bitMask = 0;
-	if (pTeleporter->driveThrough)
+	if (tele.driveThrough)
 		bitMask |= _DRIVE_THRU;
- 	if (pTeleporter->shootThrough)
+ 	if (tele.shootThrough)
 		bitMask |= _SHOOT_THRU;
 	databasePtr = nboPackUByte(databasePtr, bitMask);
    // and each link
     databasePtr = nboPackUShort(databasePtr, WorldCodeLinkSize);
     databasePtr = nboPackUShort(databasePtr, WorldCodeLink);
     databasePtr = nboPackUShort(databasePtr, uint16_t(i * 2));
-    databasePtr = nboPackUShort(databasePtr, uint16_t(pTeleporter->to[0]));
+    databasePtr = nboPackUShort(databasePtr, uint16_t(tele.to[0]));
     databasePtr = nboPackUShort(databasePtr, WorldCodeLinkSize);
     databasePtr = nboPackUShort(databasePtr, WorldCodeLink);
     databasePtr = nboPackUShort(databasePtr, uint16_t(i * 2 + 1));
-    databasePtr = nboPackUShort(databasePtr, uint16_t(pTeleporter->to[1]));
+    databasePtr = nboPackUShort(databasePtr, uint16_t(tele.to[1]));
   }
 
   return 1;

@@ -31,6 +31,39 @@
 
 typedef enum { NOT_IN_BUILDING, IN_BASE, IN_BOX, IN_PYRAMID, IN_TELEPORTER } InBuildingType;
 
+  struct ObstacleLocation {
+    public:
+    float pos[3];
+    float rotation;
+    float size[3];
+    bool shootThrough;
+    bool driveThrough;
+    bool flipZ;
+    ObstacleLocation &operator=(const ObstacleLocation &ol)
+    {
+      memcpy(pos, ol.pos, sizeof(float) * 3);
+      rotation = ol.rotation;
+      memcpy(size, ol.size, sizeof(float) * 3);
+      shootThrough = ol.shootThrough;
+      driveThrough = ol.driveThrough;
+      flipZ = ol.flipZ;
+      return *this;
+    }
+  };
+
+  typedef std::vector<ObstacleLocation> ObstacleLocationList;
+
+  struct Teleporter : public ObstacleLocation {
+    public:
+    float border;
+    int to[2];
+  };
+
+  typedef std::vector<Teleporter> TeleporterList;
+
+
+
+
 class WorldInfo {
 
  public:
@@ -57,32 +90,6 @@ class WorldInfo {
 
  public:
 
-  struct ObstacleLocation {
-    public:
-    float pos[3];
-    float rotation;
-    float size[3];
-    bool shootThrough;
-    bool driveThrough;
-    bool flipZ;
-    ObstacleLocation &operator=(const ObstacleLocation &ol)
-    {
-      memcpy(pos, ol.pos, sizeof(float) * 3);
-      rotation = ol.rotation;
-      memcpy(size, ol.size, sizeof(float) * 3);
-      shootThrough = ol.shootThrough;
-      driveThrough = ol.driveThrough;
-      flipZ = ol.flipZ;
-      return *this;
-    }
-  };
-
-  struct Teleporter : public ObstacleLocation {
-    public:
-    float border;
-    int to[2];
-  };
-
   /** check collision between world object and a cylinder.
     * return value is kind of collision.
     * location will return a pointer to the world colliding object
@@ -90,7 +97,7 @@ class WorldInfo {
     */
   InBuildingType inBuilding(ObstacleLocation **location,
 			    float x, float y, float z,
-			    float radius, float height = 0.0f) const;
+			    float radius, float height = 0.0f);
   /** check collision between a rectangle and a circle
     */
   bool inRect(const float *p1, float angle, const float *size, float x, float y, float radius) const;
@@ -99,22 +106,12 @@ class WorldInfo {
 
   float size[2];
   float gravity;
-  int numWalls;
-  int numBases;
-  int numBoxes;
-  int numPyramids;
-  int numTeleporters;
-  int sizeWalls;
-  int sizeBoxes;
-  int sizePyramids;
-  int sizeTeleporters;
-  int sizeBases;
   float maxHeight;
-  ObstacleLocation *walls;
-  ObstacleLocation *boxes;
-  ObstacleLocation *bases;
-  ObstacleLocation *pyramids;
-  Teleporter *teleporters;
+  ObstacleLocationList walls;
+  ObstacleLocationList boxes;
+  ObstacleLocationList bases;
+  ObstacleLocationList pyramids;
+  TeleporterList       teleporters;
   char *database;
   int databaseSize;
 };

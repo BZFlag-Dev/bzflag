@@ -2654,7 +2654,7 @@ void resetFlag(int flagIndex)
     float r = BZDB.eval(StateDatabase::BZDB_TANKRADIUS);
     if (pFlagInfo->flag.type == Flags::Obesity)
       r *= 2.0f * BZDB.eval(StateDatabase::BZDB_OBESEFACTOR);
-    WorldInfo::ObstacleLocation *obj;
+    ObstacleLocation *obj;
     float worldSize = BZDB.eval(StateDatabase::BZDB_WORLDSIZE);
     pFlagInfo->flag.position[0] = (worldSize - BaseSize) * ((float)bzfrand() - 0.5f);
     pFlagInfo->flag.position[1] = (worldSize - BaseSize) * ((float)bzfrand() - 0.5f);
@@ -3045,7 +3045,7 @@ static void getSpawnLocation(int playerId, float* spawnpos, float *azimuth)
   else {
     bool onGroundOnly = (!clOptions->respawnOnBuildings) || (player[playerId].type == ComputerPlayer);
     const float size = BZDB.eval(StateDatabase::BZDB_WORLDSIZE);
-    WorldInfo::ObstacleLocation *building;
+    ObstacleLocation *building;
 
     // keep track of how much time we spend searching for a location
     TimeKeeper start = TimeKeeper::getCurrent();
@@ -3468,9 +3468,9 @@ static void dropFlag(int playerIndex, float pos[3])
     pos[2] = 0.0;
 
   assert(world != NULL);
-  WorldInfo::ObstacleLocation* container;
+  ObstacleLocation* container;
   int topmosttype = NOT_IN_BUILDING;
-  WorldInfo::ObstacleLocation* topmost = 0;
+  ObstacleLocation* topmost = 0;
   // player wants to drop flag.  we trust that the client won't tell
   // us to drop a sticky flag until the requirements are satisfied.
   const int flagIndex = player[playerIndex].flag;
