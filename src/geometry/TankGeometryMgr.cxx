@@ -247,7 +247,7 @@ const float* TankGeometryMgr::getScaleFactor(TankSize size)
 // ---------------
 
 
-static void bzdbCallback(const std::string& name, void */*data*/)
+static void bzdbCallback(const std::string& name, void * /*data*/)
 {
   deleteLists();
   buildLists();
