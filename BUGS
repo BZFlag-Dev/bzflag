@@ -1,6 +1,8 @@
 recent bugs
 ------------
 
+- sending bzfs a single byte udp packet sends bzfs into lala land. (trepan)
+
 - bzfrelay is probably broken for current net protocol. Should be just
   forwarding TCP and UDP packets on a single port.
 
