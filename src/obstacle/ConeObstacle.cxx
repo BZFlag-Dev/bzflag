@@ -184,7 +184,7 @@ MeshObstacle* ConeObstacle::makeMesh()
     v[0] = pos[0] + (cosf(dir) * sz[0] * 0.25f);
     v[1] = pos[1] + (sinf(dir) * sz[1] * 0.25f);
   }
-  v[2] = pos[2] + (0.5f * size[2]);
+  v[2] = pos[2] + (0.5f * sz[2]);
   checkPoints.push_back(v);
   checkTypes.push_back(MeshObstacle::CheckInside);
 

@@ -236,7 +236,7 @@ MeshObstacle* ArcObstacle::makePie(bool isCircle, float a, float r,
     v[0] = pos[0] + (cosf(dir) * radius * 0.5f);
     v[1] = pos[1] + (sinf(dir) * radius * 0.5f * squish);
   }
-  v[2] = pos[2] + (0.5f * size[2]);
+  v[2] = pos[2] + (0.5f * fabsf(size[2]));
   checkPoints.push_back(v);
   checkTypes.push_back(MeshObstacle::CheckInside);
 
@@ -401,27 +401,28 @@ MeshObstacle* ArcObstacle::makeRing(bool isCircle, float a, float r,
   // add the checkpoints (very wasteful)
   v[0] = pos[0];
   v[1] = pos[1];
+  const float height = fabsf(size[2]);
   if (pos[2] > 0.0f) {
     // down
-    v[2] = pos[2] - (1.0f * size[2]);
+    v[2] = pos[2] - (1.0f * height);
     checkPoints.push_back(v);
     checkTypes.push_back(MeshObstacle::CheckOutside);
     // up
-    v[2] = pos[2] + (2.0f * size[2]);
+    v[2] = pos[2] + (2.0f * height);
     checkPoints.push_back(v);
     checkTypes.push_back(MeshObstacle::CheckOutside);
   } else {
     // up
-    v[2] = pos[2] + (2.0f * size[2]);
+    v[2] = pos[2] + (2.0f * height);
     checkPoints.push_back(v);
     checkTypes.push_back(MeshObstacle::CheckOutside);
     // down
-    v[2] = pos[2] - (1.0f * size[2]);
+    v[2] = pos[2] - (1.0f * height);
     checkPoints.push_back(v);
     checkTypes.push_back(MeshObstacle::CheckOutside);
   }
   // east
-  v[2] = pos[2] + (0.5f * size[2]);
+  v[2] = pos[2] + (0.5f * height);
   v[0] = pos[0] + (outrad * 2.0f);
   checkPoints.push_back(v);
   checkTypes.push_back(MeshObstacle::CheckOutside);

@@ -161,7 +161,7 @@ MeshObstacle* SphereObstacle::makeMesh()
   v[1] = pos[1];
   v[2] = pos[2];
   if (hemisphere) {
-    v[2] = v[2] + (0.5f * size[2]);
+    v[2] = v[2] + (0.5f * fabsf(size[2]));
   }
   checkPoints.push_back(v);
   checkTypes.push_back(MeshObstacle::CheckInside);
