@@ -82,7 +82,7 @@ inline std::string stripAnsiCodes(std::string text)
 {
   std::string str = "";
 
-  int length = text.size();
+  int length = (int)text.size();
   for (int i = 0; i < length; i++) {
     if (text[i] == ESC_CHAR) {
       i++;

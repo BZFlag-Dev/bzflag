@@ -252,13 +252,13 @@ void FontManager::drawString(float x, float y, float z, int faceID, float size, 
 
   bool doneLastSection = false;
   int startSend = 0;
-  int endSend = text.find("\033[", startSend);
+  int endSend = (int)text.find("\033[", startSend);
   std::string tmpText;
   bool tookCareOfANSICode = false;
   float width = 0;
   // run at least once
   if (endSend == -1) {
-    endSend = text.size();
+    endSend = (int)text.size();
     doneLastSection = true;
   }
   // split string into parts based on the embedded ANSI codes, render each separately
@@ -295,7 +295,7 @@ void FontManager::drawString(float x, float y, float z, int faceID, float size, 
       x += width;
     }
     if (!doneLastSection) {
-      startSend = text.find("m", endSend) + 1;
+      startSend = (int)text.find("m", endSend) + 1;
     }
     // we stopped sending text at an ANSI code, find out what it is and do something about it
     if (endSend != (int)text.size()) {
@@ -347,9 +347,9 @@ void FontManager::drawString(float x, float y, float z, int faceID, float size, 
 	}
       }
     }
-    endSend = text.find("\033[", startSend);
+    endSend = (int)text.find("\033[", startSend);
     if ((endSend == -1) && !doneLastSection) {
-      endSend = text.size();
+      endSend = (int)text.size();
       doneLastSection = true;
     }
   }
@@ -389,7 +389,7 @@ float FontManager::getStrHeight(int /*faceID*/, float size, std::string text)
 {
   int lines = 1;
 
-  int len = text.size();
+  int len = (int)text.size();
 
   for (int i = 0; i < len; i++) {
     if (text[i] == '\n')
