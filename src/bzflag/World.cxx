@@ -15,6 +15,7 @@
 
 /* system implementation headers */
 #include <fstream>
+#include <time.h>
 
 /* common implementation headers */
 #include "StateDatabase.h"
@@ -638,13 +639,55 @@ bool			World::writeWorld(std::string filename)
   if (!out)
     return false;
     
-  // Write BZDB server variables that aren't defaults
-  out << "options" << std::endl;
-  BZDB.iterate (writeBZDBvar, &out);
-  out << "end" << std::endl;
-  out << std::endl;
+  time_t nowTime = time (NULL);
+  out << "# BZFlag client: saved world on " << ctime(&nowTime) << std::endl;
 
-  // Write World
+  // Write the Server Options    
+  {
+    out << "options" << std::endl;
+    
+    // FIXME - would be nice to get a few other thing
+    //         -fb, -sb, a real -mp, etc... (also, flags?)
+
+    if (allowTeamFlags()) {
+      out << "\t-c" << std::endl;
+      out << "\t-mp 2,";
+      for (int i = RedTeam; i <= PurpleTeam; i++) {
+        if (getBase(i,0) != NULL)
+          out << "2,";
+        else
+          out << "0,";
+      }
+      out << "2" << std::endl;
+    }
+    if (allowRabbit())
+      out << "\t-rabbit killer" << std::endl; // FIXME
+    if (allowJumping())
+      out << "\t-j" << std::endl;
+    if (allShotsRicochet())
+      out << "\t+r" << std::endl;
+    if (allowHandicap())
+      out << "\t-handicap" << std::endl;
+    if (allowInertia()) {
+      out << "\t-a " << getLinearAcceleration() << " " 
+                     << getAngularAcceleration() << std::endl;
+    }
+    if (allowAntidote()) {
+      out << "\t-sa" << std::endl;
+      out << "\t-st " << getFlagShakeTimeout() << std::endl;
+      out << "\t-sw " << getFlagShakeWins() << std::endl;
+    }
+
+    out << "\t-ms " << getMaxShots() << std::endl;
+    
+    // Write BZDB server variables that aren't defaults
+    BZDB.iterate (writeBZDBvar, &out);
+
+    out << "end" << std::endl;
+    out << std::endl;
+  }
+
+  // Write World object
   {
     float worldSize = BZDB.eval(StateDatabase::BZDB_WORLDSIZE);
     float flagHeight = BZDB.eval(StateDatabase::BZDB_FLAGHEIGHT);
@@ -688,7 +731,6 @@ bool			World::writeWorld(std::string filename)
   }
 
   // Write boxes
-
   {
     for (std::vector<BoxBuilding>::iterator it = boxes.begin(); it != boxes.end(); ++it) {
       BoxBuilding box = *it;
@@ -711,7 +753,6 @@ bool			World::writeWorld(std::string filename)
   }
 
   // Write pyramids
-
   {
     for (std::vector<PyramidBuilding>::iterator it = pyramids.begin();
 	 it != pyramids.end(); ++it) {
@@ -741,7 +782,6 @@ bool			World::writeWorld(std::string filename)
   }
 
   // Write Teleporters
-
   {
     for (std::vector<Teleporter>::iterator it = teleporters.begin(); it != teleporters.end(); ++it) {
       Teleporter tele = *it;
@@ -757,7 +797,6 @@ bool			World::writeWorld(std::string filename)
   }
 
   // Write links
-
   {
     int from = 0;
     for (std::vector<int>::iterator it = teleportTargets.begin(); it != teleportTargets.end(); ++it, ++from) {
