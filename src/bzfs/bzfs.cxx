@@ -2802,7 +2802,7 @@ static void playerKilled(int victimIndex, int killerIndex, int reason,
 
   //update tk-score
   if ((victimIndex != killerIndex) && teamkill) {
-    bool isTk = killer->setAndTestTK(clOptions->teamKillerKickRatio);
+    bool isTk = killer->setAndTestTK((float)clOptions->teamKillerKickRatio);
     if (isTk) {
        char message[MessageLen];
        strcpy(message, "You have been automatically kicked for team killing" );
