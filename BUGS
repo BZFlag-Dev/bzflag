@@ -1,6 +1,11 @@
 recent bugs
 ------------
+
+- server does not compensate for no response to lag updates from clients
+  leaving their lagstat at zero instead of gravitating towards infinity
+
 - XIJoystick does not compile
+
 - time limiter does not take jumping into consideration when holding Agility
 
 - shooting straight shots with the Agility flag while just having accelerated

@@ -3,6 +3,9 @@ to do list for BZFlag
 
 THESE SHOULD HAPPEN BEFORE THE NEXT RELEASE:
 
+* server should gravitate lag towards infinity if players do not 
+  respond with a lag update instead of leaving it at zero.
+
 * the players have spoken, and hold-the-flag is wanted
 
 * add language translations for the new flags
