@@ -19,6 +19,7 @@ THESE ARE LOWER PRIORITY
     it to two central groups that represent the two leagues.
   * removing SPAWN from EVERYONE and putting in on VERIFIED would replace
     the current -requireidentify
+  * bzfs should error out if no users or groups have SPAWN
 
 * bzbb login names are used for global authentication. If the user changes
   bzbb login names (which is possible), this can cause problems Another user
