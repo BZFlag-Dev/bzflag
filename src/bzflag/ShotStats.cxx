@@ -68,11 +68,13 @@ ShotStats::ShotStats() : HUDDialog()
 
   // my statistics first
   LocalPlayer* myTank = LocalPlayer::getMyTank();
-  addStats((Player*)myTank, list);
+  if (myTank->getTeam() != ObserverTeam) {
+    addStats((Player*)myTank, list);
+  }
 
   // add statistics for each player
   for (int i = 0; i < curMaxPlayers; ++i) {
-    if (player[i]) {
+    if (player[i] && (player[i]->getTeam() != ObserverTeam)) {
       addStats((Player*)player[i], list);
     }
   }
