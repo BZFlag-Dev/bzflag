@@ -52,6 +52,13 @@ class FlashClock {
     float		flashDuration;
 };
 
+class Marker {
+public:
+	float		heading;
+	GLfloat		color[3];
+};
+typedef std::vector<Marker> MarkerList;
+
 class HUDRenderer {
   public:
 			HUDRenderer(const BzfDisplay*,
@@ -142,13 +149,6 @@ class HUDRenderer {
     static void		resizeCallback(void*);
     static int		tankScoreCompare(const void* _a, const void* _b);
     static int		teamScoreCompare(const void* _a, const void* _b);
-
-    class Marker {
-      public:
-	float		heading;
-	GLfloat		color[3];
-    };
-    typedef std::vector<Marker> MarkerList;
 
   private:
     const BzfDisplay*	display;
