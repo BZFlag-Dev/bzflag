@@ -69,8 +69,8 @@ bool isFlagUseful(FlagType *type)
 
 float normalizeAngle(float ang)
 {
-  if (ang < -1.0f * M_PI) ang += 2.0f * M_PI;
-  if (ang > 1.0f * M_PI) ang -= 2.0f * M_PI;
+  if (ang < -1.0f * M_PI) ang += (float)(2.0 * M_PI);
+  if (ang > 1.0f * M_PI) ang -= (float)(2.0 * M_PI);
   return ang;
 }
 
@@ -197,9 +197,9 @@ bool	avoidBullet(float &rotation, float &speed)
   } else if (dotProd > 0.96f) {
     speed = 1.0;
     float myAzimuth = myTank->getAngle();
-    float rotation1 = normalizeAngle((shotAngle + M_PI/2.0f) - myAzimuth);
+    float rotation1 = normalizeAngle((float)((shotAngle + M_PI/2.0) - myAzimuth));
 
-    float rotation2 = normalizeAngle((shotAngle - M_PI/2.0f) - myAzimuth);
+    float rotation2 = normalizeAngle((float)((shotAngle - M_PI/2.0) - myAzimuth));
 
     float zCross = shotUnitVec[0]*trueVec[1] - shotUnitVec[1]*trueVec[0];
 
@@ -255,8 +255,8 @@ bool	stuckOnWall(float &rotation, float &speed)
       speed = (float)(bzfrand() * 1.5f - 0.5f);
       rotation = (float)(bzfrand() * 2.0f - 1.0f);
     } else {
-      float leftDistance = TargetingUtils::getOpenDistance( pos, myAzimuth + (M_PI/4.0f));
-      float rightDistance = TargetingUtils::getOpenDistance( pos, myAzimuth - (M_PI/4.0f));
+      float leftDistance = TargetingUtils::getOpenDistance( pos, (float)(myAzimuth + (M_PI/4.0)));
+      float rightDistance = TargetingUtils::getOpenDistance( pos, (float)(myAzimuth - (M_PI/4.0)));
       if (leftDistance > rightDistance)
 	rotation = 1.0f;
       else
@@ -369,13 +369,13 @@ bool chasePlayer(float &rotation, float &speed)
         (myTank->getFlag() != Flags::OscillationOverthruster)) {
       //If roger can drive around it, just do that
 
-      float leftDistance = TargetingUtils::getOpenDistance( pos, myAzimuth + (M_PI/6.0f));
+      float leftDistance = TargetingUtils::getOpenDistance( pos, (float)(myAzimuth + (M_PI/6.0)));
       if (leftDistance > (2.0f * d)) {
 	speed = 0.5f;
 	rotation = -0.5f;
 	return true;
       }
-      float rightDistance = TargetingUtils::getOpenDistance( pos, myAzimuth - (M_PI/6.0f));
+      float rightDistance = TargetingUtils::getOpenDistance( pos, (float)(myAzimuth - (M_PI/6.0)));
       if (rightDistance > (2.0f * d)) {
 	speed = 0.5f;
 	rotation = 0.5f;
@@ -407,11 +407,11 @@ bool chasePlayer(float &rotation, float &speed)
     float dotProd = (myUnitVec[0] * enemyUnitVec[0] + myUnitVec[1] * enemyUnitVec[1]);
     if (dotProd < 0.866f) {
       //if target is more than 30 degrees away, turn as fast as you can
-      rotation *= M_PI / (2.0f * fabs(rotation));
+      rotation *= (float)M_PI / (2.0f * fabs(rotation));
       speed = dotProd; //go forward inverse rel to how much you need to turn
     } else {
       int period = int(TimeKeeper::getTick().getSeconds());
-      float absBias = M_PI/20.0f * (distance / 100.0f);
+      float absBias = (float)(M_PI/20.0 * (distance / 100.0));
       float bias = ((period % 4) < 2) ? absBias : -absBias;
       rotation += bias;
       rotation = normalizeAngle(rotation);
@@ -419,7 +419,7 @@ bool chasePlayer(float &rotation, float &speed)
     }
   } else if (target->getFlag() != Flags::Burrow) {
     speed = -0.5f;
-    rotation *= M_PI / (2.0f * fabs(rotation));
+    rotation *= (float)(M_PI / (2.0 * fabs(rotation)));
   }
 
   return true;
@@ -477,7 +477,7 @@ bool lookForFlag(float &rotation, float &speed)
     float myAzimuth = myTank->getAngle();
     float flagAzimuth = TargetingUtils::getTargetAzimuth(pos, fpos);
     rotation = TargetingUtils::getTargetRotation(myAzimuth, flagAzimuth);
-    speed = M_PI/2.0f - fabs(rotation);
+    speed = (float)(M_PI/2.0 - fabs(rotation));
     return true;
   }
 
@@ -503,9 +503,9 @@ bool navigate(float &rotation, float &speed)
     pos[2] = 0.01f;
   float myAzimuth = myTank->getAngle();
 
-  float leftDistance = TargetingUtils::getOpenDistance(pos, myAzimuth + (M_PI/4.0f));
+  float leftDistance = TargetingUtils::getOpenDistance(pos, (float)(myAzimuth + (M_PI/4.0)));
   float centerDistance = TargetingUtils::getOpenDistance(pos, myAzimuth);
-  float rightDistance = TargetingUtils::getOpenDistance(pos, myAzimuth - (M_PI/4.0f));
+  float rightDistance = TargetingUtils::getOpenDistance(pos, (float)(myAzimuth - (M_PI/4.0)));
   if (leftDistance > rightDistance) {
     if (leftDistance > centerDistance)
       rotation = 0.75f;
@@ -533,7 +533,7 @@ bool navigate(float &rotation, float &speed)
     } else {
       float baseAzimuth = TargetingUtils::getTargetAzimuth(pos, temp);
       rotation = TargetingUtils::getTargetRotation(myAzimuth, baseAzimuth);
-      speed = M_PI/2.0f - fabs(rotation);
+      speed = (float)(M_PI/2.0 - fabs(rotation));
     }
   } else {
     speed = 1.0f;
