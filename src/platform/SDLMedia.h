@@ -41,6 +41,8 @@ class SDLMedia : public BzfMedia {
     void		audioSleep(bool checkLowWater, double maxTime);
     void                setDriver(std::string driverName);
     void                setDevice(std::string deviceName);
+    float*	        doReadSound(const char* filename,
+				    int& numFrames, int& rate) const;
 
   private:
     void                fillAudio (Uint8 *, int);

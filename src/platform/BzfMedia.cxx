@@ -397,6 +397,12 @@ bool			BzfMedia::doReadRLE(FILE* file,
   return true;
 }
 
+#ifdef HAVE_SDL
+float*			BzfMedia::doReadSound(const char*, int&, int&) const
+{
+  return NULL;
+};
+#else
 float*			BzfMedia::doReadSound(const char* filename,
 				int& numFrames, int& rate) const
 {
@@ -464,6 +470,7 @@ float*			BzfMedia::doReadSound(const char* filename,
   delete [] rawdata;
   return data;
 }
+#endif
 
 // Setting Audio Driver
 void        BzfMedia::setDriver(std::string) {

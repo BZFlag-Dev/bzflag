@@ -384,6 +384,47 @@ void        SDLMedia::setDevice(std::string deviceName) {
   putenv(envAssign);
 };
 
+float*	    SDLMedia::doReadSound(const char* filename, int &numFrames,
+				  int &rate) const
+{
+  SDL_AudioSpec wav_spec;
+  Uint32        wav_length;
+  Uint8        *wav_buffer;
+  int           ret;
+  SDL_AudioCVT  wav_cvt;
+  int16_t      *cvt16;
+  int           i;
+
+  float        *data = NULL;
+  rate        = defaultAudioRate;
+  if (SDL_LoadWAV(filename, &wav_spec, &wav_buffer, &wav_length)) {
+    /* Build AudioCVT */
+    ret = SDL_BuildAudioCVT(&wav_cvt,
+			    wav_spec.format, wav_spec.channels, wav_spec.freq,
+			    AUDIO_S16SYS, 2, defaultAudioRate);
+    /* Check that the convert was built */
+    if (ret == -1) {
+      printFatalError("Could not build converter for Wav file %s: %s.\n",
+		      filename, SDL_GetError());
+    } else {
+      /* Setup for conversion */
+      wav_cvt.buf = (Uint8*)malloc(wav_length * wav_cvt.len_mult);
+      wav_cvt.len = wav_length;
+      memcpy(wav_cvt.buf, wav_buffer, wav_length);
+      /* And now we're ready to convert */
+      SDL_ConvertAudio(&wav_cvt);
+      numFrames = (int)(wav_length * wav_cvt.len_ratio / 4);
+      cvt16     = (int16_t *)wav_cvt.buf;
+      data      = new float[numFrames * 2];
+      for (i = 0; i < numFrames * 2; i++)
+	data[i] = cvt16[i];
+      free(wav_cvt.buf);
+    }
+    SDL_FreeWAV(wav_buffer);
+  }
+  return data;
+}
+
 #endif //HAVE_SDL
 // Local Variables: ***
 // mode:C++ ***
