@@ -17,6 +17,8 @@
 #ifndef BZF_MYIO
 #define BZF_MYIO
 
+void formatDebug(const char* fmt, ...);
+
 /* egcs headers on linux define NULL as (void*)0.  that's a no no in C++. */
 #if defined(NULL)
 #undef NULL
@@ -29,6 +31,7 @@
 #include <iostream>
 
 #endif
+
 
 
 /*

@@ -3,13 +3,13 @@ noinst_LIBRARIES = libCommon.a
 libCommon_a_SOURCES  =			\
 	Bundle.cxx			\
 	BundleMgr.cxx			\
+	BZDBCache.cxx			\
 	CommandManager.cxx		\
 	ConfigFileManager.cxx		\
 	ErrorHandler.cxx		\
 	FileManager.cxx			\
 	Flag.cxx			\
 	KeyManager.cxx			\
-	md5.cxx				\
 	ShotUpdate.cxx			\
 	Team.cxx			\
 	TimeBomb.cxx			\
@@ -19,8 +19,9 @@ libCommon_a_SOURCES  =			\
 	WordFilter.cxx			\
 	VotingBooth.cxx			\
 	bzsignal.c			\
-	BZDBCache.cxx			\
-	global.cxx
+	bzfio.cxx			\
+	global.cxx			\
+	md5.cxx
 
 MAINTAINERCLEANFILES = \
 	Makefile.in

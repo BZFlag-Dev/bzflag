@@ -7,7 +7,7 @@ BZFlag \- a tank battle game
 [\fB\-3dfx\fR]
 [\fB\-no3dfx\fR]
 [\fB\-anonymous\fR]
-[\fB\-dbg\fR]
+[\fB\-debug\fR]
 [\fB\-directory \fIdirectory\fR]
 [\fB\-echo\fR]
 [\fB\-echoAnsi\fR]
@@ -78,8 +78,8 @@ directory named \fIdata\fR in the current directory.  If not found
 there, the game looks for data files in the current directory, then
 in the default installation location \fIINSTALL_DATA_DIR\fR.
 .TP
-.B -dbg
-Increase debugging level. More -dbg are use, more debugging info are obtained
+.B -debug
+Increase debugging level. More -debug are use, more debugging info are obtained
 .TP
 .B -echo
 Copies all message window output to the shell.

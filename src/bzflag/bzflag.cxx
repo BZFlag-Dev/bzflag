@@ -349,7 +349,7 @@ static void		parse(int argc, char** argv)
 	BZDB.unset("directory");
       else
 	BZDB.set("directory", argv[i]);
-    } else if (strcmp(argv[i], "-dbg") == 0) {
+    } else if (strcmp(argv[i], "-debug") == 0) {
       debugLevel++;
     } else if (strcmp(argv[i], "-e") == 0 || strcmp(argv[i], "-echo") == 0) {
       echoToConsole = true;
