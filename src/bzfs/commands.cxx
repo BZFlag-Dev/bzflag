@@ -537,16 +537,8 @@ void handleLagstatsCmd(int t, const char *)
 
   for (int i = 0; i < curMaxPlayers; i++) {
     if (player[i].state > PlayerInLimbo && player[i].type == TankPlayer) {
-      int lag = int(player[i].lagavg * 1000);
-      if (player[i].pingpending) {
-	float timepassed = TimeKeeper::getCurrent() - player[i].lastping;
-	int lastLag      = int((player[i].lagavg * (1 - player[i].lagalpha)
-				+ player[i].lagalpha * timepassed) * 1000);
-	if (lastLag > lag)
-	  lag = lastLag;
-      }
       sprintf(reply,"%-16s : %3d +- %2dms %s", player[i].callSign,
-	      lag,
+	      int(player[i].lagavg*1000),
 	      int(player[i].jitteravg*1000),
 	      player[i].accessInfo.verified ? "(R)" : "");
       if (player[i].lostavg>=0.01f)
