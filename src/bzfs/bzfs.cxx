@@ -5519,29 +5519,32 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
 	break;
       }
 
-      // Doesn't account for going fast backwards, or jumping/falling
-      float curPlanarSpeedSqr = state.velocity[0]*state.velocity[0] +
-				state.velocity[1]*state.velocity[1];
-
-      float maxPlanarSpeedSqr = TankSpeed*TankSpeed;
-
-      // if tank is not driving cannot be sure it didn't toss (V) in flight
-      // if tank is not alive cannot be sure it didn't just toss (V)
-      if ((flag[player[t].flag].flag.id == VelocityFlag)
-      ||  (player[t].lastState.pos[2] != state.pos[2])
-      ||  ((state.status & PlayerState::Alive) == 0))
-	maxPlanarSpeedSqr *= VelocityAd*VelocityAd;
-
-      // tanks can get faster than allowed, probably due to floating point
-      if (curPlanarSpeedSqr > (10.0f + maxPlanarSpeedSqr)) {
-        char message[MessageLen];
-        DEBUG1("kicking Player %s [%d]: tank too fast (tank: %f,allowed> %f)\n",
-               player[t].callSign, t,
-               sqrt(curPlanarSpeedSqr), sqrt(maxPlanarSpeedSqr));
-	strcpy( message, "Autokick: Tank moving too fast, Update your client." );
-        sendMessage(t, player[t].id, player[t].team, message);
-	directMessage(t, MsgSuperKill, 0, getDirectMessageBuffer());
-	break;
+      // check for highspeec cheat; if inertia is enabled, skip test for now
+      if (clOptions.linearAcceleration == 0.0f) {
+        // Doesn't account for going fast backwards, or jumping/falling
+        float curPlanarSpeedSqr = state.velocity[0]*state.velocity[0] +
+                                  state.velocity[1]*state.velocity[1];
+  
+        float maxPlanarSpeedSqr = TankSpeed*TankSpeed;
+  
+        // if tank is not driving cannot be sure it didn't toss (V) in flight
+        // if tank is not alive cannot be sure it didn't just toss (V)
+        if ((flag[player[t].flag].flag.id == VelocityFlag)
+        ||  (player[t].lastState.pos[2] != state.pos[2])
+        ||  ((state.status & PlayerState::Alive) == 0))
+          maxPlanarSpeedSqr *= VelocityAd*VelocityAd;
+  
+        // tanks can get faster than allowed, probably due to floating point
+        if (curPlanarSpeedSqr > (10.0f + maxPlanarSpeedSqr)) {
+          char message[MessageLen];
+          DEBUG1("kicking Player %s [%d]: tank too fast (tank: %f,allowed> %f)\n",
+                 player[t].callSign, t,
+                 sqrt(curPlanarSpeedSqr), sqrt(maxPlanarSpeedSqr));
+          strcpy( message, "Autokick: Tank moving too fast, Update your client." );
+          sendMessage(t, player[t].id, player[t].team, message);
+          directMessage(t, MsgSuperKill, 0, getDirectMessageBuffer());
+          break;
+        }
       }
 
       player[t].lastState = state;
