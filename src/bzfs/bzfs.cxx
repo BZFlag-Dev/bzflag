@@ -3077,33 +3077,30 @@ static void checkTeamScore(int playerIndex, int teamIndex)
 
 // FIXME - needs extra checks for killerIndex=ServerPlayer (world weapons)
 // (was broken before); it turns out that killerIndex=-1 for world weapon?
+// No need to check on victimIndex.
+//   It is taken as the index of the udp table when called by incoming message
+//   It is taken by killerIndex when autocalled, but only if != -1
+// killer could be InvalidPlayer or a number within [0 curMaxPlayer)
 static void playerKilled(int victimIndex, int killerIndex, int reason,
 			int16_t shotIndex)
 {
-  // Sanity check
-  if (killerIndex < 0 || killerIndex >= curMaxPlayers ||
-      victimIndex < 0 || victimIndex >= curMaxPlayers)
-    return;
-
   // aliases for convenience
+  // Warning: killer should not be used when killerIndex == InvalidPlayer
   PlayerInfo &killer = player[killerIndex],
              &victim = player[victimIndex];
 
   // victim was already dead. keep score.
   if (victim.state != PlayerAlive) return;
 
-  if (killerIndex != ServerPlayer) {
-    int si = (shotIndex == -1 ? -1 : shotIndex & 0x00FF);
-    if ((si < -1) || (si >= clOptions->maxShots))
-      return;
-  }
-
   victim.state = PlayerDead;
 
   // killing rabbit or killing anything when I am a dead ex-rabbit is allowed
-  const bool rabbitinvolved = killer.wasRabbit || victim.team == RabbitTeam;
-  const bool foe = areFoes(victim.team, killer.team);
-  const bool teamkill = !foe && !rabbitinvolved;
+  bool teamkill = false;
+  if (killerIndex != InvalidPlayer) {
+    const bool rabbitinvolved = killer.wasRabbit || victim.team == RabbitTeam;
+    const bool foe = areFoes(victim.team, killer.team);
+    teamkill = !foe && !rabbitinvolved;
+  }
 
   //update tk-score
   if ((victimIndex != killerIndex) && teamkill) {
@@ -3173,6 +3170,7 @@ static void playerKilled(int victimIndex, int killerIndex, int reason,
 
     // see if the player reached the score limit
     if (clOptions->maxPlayerScore != 0
+	&& killerIndex != InvalidPlayer
 	&& killer.wins - killer.losses >= clOptions->maxPlayerScore) {
       void *buf, *bufStart = getDirectMessageBuffer();
       buf = nboPackUByte(bufStart, killerIndex);
@@ -3189,24 +3187,25 @@ static void playerKilled(int victimIndex, int killerIndex, int reason,
     // change the team scores -- rogues don't have team scores.  don't
     // change team scores for individual player's kills in capture the
     // flag mode.
-
-    int killerTeam = -1;
+    // Team score is even not used on RabbitChase
     int winningTeam = (int)NoTeam;
-    if (!(clOptions->gameStyle & TeamFlagGameStyle)) {
-      if (victim.team == killer.team) {
-	if ((killer.team != RogueTeam) || (clOptions->gameStyle & int(RabbitChaseGameStyle)))
+    if (!(clOptions->gameStyle & (TeamFlagGameStyle | RabbitChaseGameStyle))) {
+      int killerTeam = -1;
+      if (killerIndex != InvalidPlayer && victim.team == killer.team) {
+	if (killer.team != RogueTeam)
 	  if (killerIndex == victimIndex)
 	    team[int(victim.team)].team.lost += 1;
 	  else
 	    team[int(victim.team)].team.lost += 2;
       } else {
-	if (killer.team != RogueTeam || (clOptions->gameStyle & int(RabbitChaseGameStyle))) {
+	if (killerIndex != InvalidPlayer && killer.team != RogueTeam) {
 	  winningTeam = int(killer.team);
 	  team[winningTeam].team.won++;
 	}
 	if (victim.team != RogueTeam)
 	  team[int(victim.team)].team.lost++;
-	killerTeam = killer.team;
+	if (killerIndex != InvalidPlayer)
+	  killerTeam = killer.team;
       }
       sendTeamUpdate(-1,int(victim.team), killerTeam);
     }
@@ -3925,6 +3924,13 @@ static void handleCommand(int t, uint16_t code, uint16_t len, void *rawbuf)
       buf = nboUnpackUByte(buf, killer);
       buf = nboUnpackShort(buf, reason);
       buf = nboUnpackShort(buf, shot);
+
+      // Sanity check on shot: Here we have the killer
+      if (killer != ServerPlayer) {
+	int si = (shot == -1 ? -1 : shot & 0x00FF);
+	if ((si < -1) || (si >= clOptions->maxShots))
+	  break;
+      }
       playerKilled(t, lookupPlayer(killer), reason, shot);
       break;
     }
