@@ -1,8 +1,8 @@
 recent bugs
 ------------
 
-- MsgKilled is not handled correctly in the server when killer is a world
-  weapon (see playerKilled())
+- Server handles MsgKilled correctly, but client displays it as 'killed by
+  unknown>; killer id is -1=InvalidPlayer, why not ServerPlayer?
 
 - doc/guide/NetworkProtocol.xml is not up to date
 
