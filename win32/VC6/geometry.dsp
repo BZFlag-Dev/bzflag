@@ -229,6 +229,10 @@ SOURCE=..\..\src\geometry\EighthDimSceneNode.cxx
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\src\geometry\EighthDimShellNode.cxx
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\src\geometry\EighthDPyrSceneNode.cxx
 # End Source File
 # Begin Source File
@@ -346,6 +350,10 @@ SOURCE=..\..\include\EighthDBoxSceneNode.h
 # Begin Source File
 
 SOURCE=..\..\include\EighthDimSceneNode.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\include\EighthDimShellNode.h
 # End Source File
 # Begin Source File
 

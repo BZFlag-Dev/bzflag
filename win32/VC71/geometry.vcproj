@@ -348,6 +348,9 @@
 				</FileConfiguration>
 			</File>
 			<File
+				RelativePath="..\..\src\geometry\EighthDimShellNode.cxx">
+			</File>
+			<File
 				RelativePath="..\..\src\geometry\EighthDPyrSceneNode.cxx">
 				<FileConfiguration
 					Name="Release|Win32">
@@ -864,6 +867,9 @@
 			</File>
 			<File
 				RelativePath="..\..\include\EighthDimSceneNode.h">
+			</File>
+			<File
+				RelativePath="..\..\include\EighthDimShellNode.h">
 			</File>
 			<File
 				RelativePath="..\..\include\EighthDPyrSceneNode.h">
