@@ -121,6 +121,23 @@ class GLContext
       if (settings.VBL_Synch)
 	SetVBLSynch(true);
 
+      // spit out OpenGL capabilities
+      fprintf(stderr, "----------------------------------------------------------------\n");
+      fprintf(stderr, "Vendor:     \"%s\"\n", glGetString(GL_VENDOR));
+      fprintf(stderr, "Renderer:   \"%s\"\n", glGetString(GL_RENDERER));
+      fprintf(stderr, "Version:    \"%s\"\n", glGetString(GL_VERSION));
+      fprintf(stderr, "Extensions:\n");
+      const GLubyte * extensions = glGetString(GL_EXTENSIONS);
+      char * tmp = new char[strlen((const char *)extensions)+2];
+      strcpy(tmp, (const char *)extensions);
+      char * word;
+      char * sep = " \t";
+      for(word = strtok(tmp, sep); word != NULL; word = strtok(NULL, sep)) {
+        fprintf(stderr, "\t%s\n", word);
+      }
+      delete [] tmp;
+      tmp = NULL;
+      fprintf(stderr, "----------------------------------------------------------------\n");
       return true;
     }
 
@@ -416,9 +433,7 @@ MacWindow::~MacWindow() {
 
 bool MacWindow::isValid() const { return true; }
 
-void MacWindow::showWindow(bool show) {
-  hideMouse();
-}
+void MacWindow::showWindow(bool show) { }
 
 void MacWindow::getPosition(int &x, int &y) { x = 0, y = 0; }
 
@@ -463,8 +478,20 @@ void MacWindow::getMouse(int &x, int &y) const {
   SetPort(savedPort);
 }
 
-void MacWindow::grabMouse() { gMouseGrabbed = true;  }
-void MacWindow::ungrabMouse() { gMouseGrabbed = false; }
+void MacWindow::grabMouse()
+{
+	// CGAssociateMouseAndMouseCursorPosition() does not have the
+	// expected effect. Comment out for now.
+//	CGAssociateMouseAndMouseCursorPosition(false);
+	gMouseGrabbed = true;
+}
+void MacWindow::ungrabMouse()
+{
+	// CGAssociateMouseAndMouseCursorPosition() does not have the
+	// expected effect. Comment out for now.
+//	CGAssociateMouseAndMouseCursorPosition(true);
+	gMouseGrabbed = false;
+}
 void MacWindow::showMouse() { ShowCursor(); }
 void MacWindow::hideMouse() { HideCursor(); }
 

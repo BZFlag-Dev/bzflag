@@ -6,18 +6,14 @@ bool     MacDisplay::pending;
 CGrafPtr    MacDisplay::window;
 CGLContextObj  MacDisplay::context;
 
-//extern bool gInBackground;
-//extern int  gSleepTime;
-//extern bool gMouseGrabbed;
-
 MacDisplay::MacDisplay() {
   pending = true;
 
-  this->setPassthroughSize(CGDisplayPixelsWide(kCGDirectMainDisplay),
+  setPassthroughSize(CGDisplayPixelsWide(kCGDirectMainDisplay),
       CGDisplayPixelsHigh(kCGDirectMainDisplay));
 }
 
-MacDisplay::MacDisplay(const char *name, const char *videoFormat) {
+MacDisplay::MacDisplay(const char *, const char *) {
 #pragma unused (name, videoFormat)
   is_valid      = true;
   pending       = false;
@@ -35,102 +31,194 @@ MacDisplay::MacDisplay(const char *name, const char *videoFormat) {
   initResolutions(resInfo, 1, 0);
 }
 
-static int           event_cnt = 0;
+bool MacDisplay::isEventPending() const
+{
+  ::OSStatus	status		= ::noErr;
+  ::EventRef	eventRef	= 0;
+
+  status = ::ReceiveNextEvent(0, NULL, 0, false, &eventRef);
+  return (status == ::noErr) ? true : false;
+}
 
 bool MacDisplay::getEvent (BzfEvent &bzf_event) const {
-
-  EventRecord eventRec;
-  int         gotEvent = false;
+  ::EventRef			eventRef		= 0;
+  ::OSStatus			status			= ::noErr;
+  ::UInt32				eventClass		= 0;
+  ::UInt32				eventKind		= 0;
+  ::EventTime			eventTime		= 0;
+  ::HIPoint				eventLocation	= {0, 0};
+  ::HIPoint				eventDelta		= {0, 0};
+  ::UInt32				eventModifiers	= 0;
+  ::EventMouseButton	eventButtons	= 0;
+  char					eventChar		= 0;
+  ::UInt32				eventKeyCode	= 0;
+  ::WindowRef			eventWindow		= NULL;
+  const ::Boolean		removeEventFromQueue = true;
 
   bzf_event.type = (BzfEvent::Type)-1;
 
-  gotEvent = WaitNextEvent(everyEvent, &eventRec, 0, cursor_region);
+  status = ::ReceiveNextEvent(0, NULL, 0, removeEventFromQueue, &eventRef);
+  if(status != ::noErr) {
+    return false;
+  }
 
-  if (gotEvent) {
-    switch (eventRec.what) {
-      case mouseDown:
+  eventTime = ::GetEventTime(eventRef);
+  eventClass = ::GetEventClass(eventRef);
+  eventKind = ::GetEventKind(eventRef);
+
+  switch(eventClass) {
+    case ::kEventClassMouse:
+	  status = GetEventParameter(eventRef,
+								 ::kEventParamWindowMouseLocation,
+								 ::typeHIPoint,
+								 NULL,
+								 sizeof(::HIPoint),
+								 NULL,
+								 &eventLocation);
+	  status = GetEventParameter(eventRef,
+								 ::kEventParamKeyModifiers,
+								 ::typeUInt32,
+								 NULL,
+								 sizeof(::UInt32),
+								 NULL,
+								 &eventModifiers);
+	
+	  status = GetEventParameter(eventRef,
+								 ::kEventParamMouseButton,
+								 ::typeMouseButton,
+								 NULL,
+								 sizeof(::EventMouseButton),
+								 NULL,
+								 &eventButtons);
+	
+	  status = GetEventParameter(eventRef,
+								 ::kEventParamMouseDelta,
+								 ::typeHIPoint,
+								 NULL,
+								 sizeof(::HIPoint),
+								 NULL,
+								 &eventDelta);
+	
+	  switch(eventKind) {
+		case ::kEventMouseDown:
+		case ::kEventMouseUp:
+		  if(eventKind == ::kEventMouseDown) {
 	bzf_event.type = BzfEvent::KeyDown;
+		  } else {
+		    bzf_event.type = BzfEvent::KeyUp;
+		  }
 	bzf_event.keyDown.ascii = 0;
 	bzf_event.keyDown.shift = 0;
+		  if(eventButtons > 9) {
+		  	// bzflag only handles 9 buttons for now
+		  	eventButtons = 9;
+		  }
 
-	// Emulate a 3-button mouse with modifier keys
-
-	if (eventRec.modifiers      & controlKey)
-	  bzf_event.keyDown.button = BzfKeyEvent::RightMouse;
-	else if (eventRec.modifiers & optionKey)
-	  bzf_event.keyDown.button = BzfKeyEvent::RightMouse;
-	else
-	  bzf_event.keyDown.button = BzfKeyEvent::LeftMouse;
-
+		  switch(eventButtons) {
+		    case ::kEventMouseButtonSecondary: bzf_event.keyDown.button = BzfKeyEvent::RightMouse;	break;
+		    case ::kEventMouseButtonTertiary: bzf_event.keyDown.button = BzfKeyEvent::MiddleMouse;	break;
+		    default: bzf_event.keyDown.button = BzfKeyEvent::LeftMouse + eventButtons - 1;			break;
+		  }
 	break;
 
-      case mouseUp:
-	bzf_event.type = BzfEvent::KeyUp;
-	bzf_event.keyUp.ascii = 0;
-	bzf_event.keyUp.shift = 0;
+		case ::kEventMouseMoved:
+		  bzf_event.type = BzfEvent::MouseMove;
+		  bzf_event.mouseMove.x = static_cast<int>(eventDelta.x);
+		  bzf_event.mouseMove.y = static_cast<int>(eventDelta.y);
+		break;
 
-	if (eventRec.modifiers      & controlKey)
-	  bzf_event.keyUp.button = BzfKeyEvent::MiddleMouse;
-	else if (eventRec.modifiers & optionKey)
-	  bzf_event.keyUp.button = BzfKeyEvent::RightMouse;
-	else
-	  bzf_event.keyUp.button = BzfKeyEvent::LeftMouse;
+		case ::kEventMouseWheelMoved:
+		break;
+	  }
 	break;
 
-	  case keyDown:
+    case ::kEventClassKeyboard:
+	  status = GetEventParameter(eventRef,
+								 ::kEventParamKeyMacCharCodes,
+								 ::typeChar,
+								 NULL,
+								 sizeof(char),
+								 NULL,
+								 &eventChar);
+	  status = GetEventParameter(eventRef,
+								 ::kEventParamKeyCode,
+								 ::typeUInt32,
+								 NULL,
+								 sizeof(char),
+								 NULL,
+								 &eventKeyCode);
+	  switch(eventKind) {
+		case ::kEventRawKeyDown:
+		case ::kEventRawKeyRepeat:
+		  if((eventModifiers & ::cmdKeyBit) && eventChar == 'q') {
+			  // somehow force app to quit on cmd-Q -- but how do we get our hands
+			  // on MainWindow to call setQuit()?
+		  }
 	bzf_event.type = BzfEvent::KeyDown;
-	getKey (bzf_event.keyDown, eventRec);
+		  getKey(bzf_event.keyDown, eventChar, eventKeyCode);
 	break;
 
-      case keyUp:
+		case ::kEventRawKeyUp:
 	bzf_event.type = BzfEvent::KeyUp;
-	getKey (bzf_event.keyUp, eventRec);
+		  getKey(bzf_event.keyDown, eventChar, eventKeyCode);
+	break;
+	  }
 	break;
 
-      case autoKey:
-	bzf_event.type = BzfEvent::KeyDown;
-	getKey (bzf_event.keyDown, eventRec);
+    case ::kEventClassApplication:
+	  switch(eventKind) {
+		case ::kEventAppQuit:
+		break;
+	  }
 	break;
 
-      case updateEvt:
-	bzf_event.type = BzfEvent::Redraw;
-	BeginUpdate((WindowPtr)eventRec.message);
-	EndUpdate((WindowPtr)eventRec.message);
-	break;
-
-      //case diskEvt:
-      //  break;
-      //case activateEvt:
-      //  break;
-
-
-      case osEvt:
-	switch( (eventRec.message >> 24) & 0x000000FF) {
-	  case suspendResumeMessage:
-//             gInBackground = (eventRec.message & resumeFlag) != 1;
-//             gSleepTime = gInBackground ? MAC_BG_SLEEP : MAC_FG_SLEEP;
-//             gMouseGrabbed = !gInBackground;
-//             if (!gInBackground)
-//              SetCursor (&qd.arrow);
+    case ::kEventClassWindow:
+	  status = GetEventParameter(eventRef,
+								 ::kEventParamDirectObject,
+								 ::typeWindowRef,
+								 NULL,
+								 sizeof(::WindowRef),
+								 NULL,
+								 &eventWindow);
+	  switch(eventKind) {
+	    case ::kEventWindowUpdate:
+	    case ::kEventWindowDrawContent:
+		  bzf_event.type = BzfEvent::Redraw;
+		  BeginUpdate(eventWindow);
+		  EndUpdate(eventWindow);
 	    break;
 	}
 	break;
 
-      case kHighLevelEvent:
-	AEProcessAppleEvent(&eventRec);
+    case ::kEventClassCommand:
+	  switch(eventKind) {
+	  }
 	break;
     }
-
-    //SIOUXHandleOneEvent (&eventRec);
+  ReleaseEvent(eventRef);
     return true;
   }
 
-  return false;
-}
-
-void MacDisplay::getKey (BzfKeyEvent &bzf_key, EventRecord &event_rec) const {
+void MacDisplay::getKey (BzfKeyEvent &bzf_key, char char_code, ::UInt32 keycode) const {
+  enum {
+	  kF1KeyCode	 = 0x7A,	// Undo
+	  kF2KeyCode	 = 0x78,	// Cut
+	  kF3KeyCode	 = 0x63,	// Copy
+	  kF4KeyCode	 = 0x76,	// Paste
+	  kF5KeyCode	 = 0x60,
+	  kF6KeyCode	 = 0x61,
+	  kF7KeyCode	 = 0x62,
+	  kF8KeyCode	 = 0x64,
+	  kF9KeyCode	 = 0x65,
+	  kF10KeyCode	 = 0x6D,
+	  kF11KeyCode	 = 0x67,
+	  kF12KeyCode	 = 0x6F,
+	  kF13KeyCode	 = 0x69,	// Print Screen
+	  kF14KeyCode	 = 0x6B,	// Scroll Lock
+	  kF15KeyCode	 = 0x71,	// Pause
+  };
   bzf_key.ascii = 0;
-  char char_code = event_rec.message & charCodeMask;
+  bzf_key.button = BzfKeyEvent::NoButton;
   switch (char_code) {
     case kUpArrowCharCode   : bzf_key.button = BzfKeyEvent::Up;       break;
     case kDownArrowCharCode : bzf_key.button = BzfKeyEvent::Down;     break;
@@ -143,88 +231,57 @@ void MacDisplay::getKey (BzfKeyEvent &bzf_key, EventRecord &event_rec) const {
     case kHelpCharCode      : bzf_key.button = BzfKeyEvent::Insert;   break;
     case kDeleteCharCode    : bzf_key.button = BzfKeyEvent::Delete;   break;
     case kFunctionKeyCharCode  :
-
-    switch ( (event_rec.message << 16) >> 24 ) {
+    switch((keycode << 16) >> 24) {
       // These are the f-key codes on my apple extended keyboard
-      case 113: // F15
-	bzf_key.button = BzfKeyEvent::Pause;
-	break;
-      //case 107: // F14
-      //case 105: // F13
-      case 111: // F12
-	bzf_key.button = BzfKeyEvent::F12;
-	break;
-      case 103: // F11
-	bzf_key.button = BzfKeyEvent::F11;
-	break;
-      case 109: // F10
-	bzf_key.button = BzfKeyEvent::F10;
-	break;
-      case 101: // F9
-	bzf_key.button = BzfKeyEvent::F9;
-	break;
-      case 100: // F8
-	bzf_key.button = BzfKeyEvent::F8;
-	break;
-      case 98: // F7
-	bzf_key.button = BzfKeyEvent::F7;
-	break;
-      case 97: // F6
-	bzf_key.button = BzfKeyEvent::F6;
-	break;
-      case 96: // F5
-	bzf_key.button = BzfKeyEvent::F5;
-	break;
-      case 118: // F4
-	bzf_key.button = BzfKeyEvent::F4;
-	break;
-      case 99: // F3
-	bzf_key.button = BzfKeyEvent::F3;
-	break;
-      case 120: // F2
-	bzf_key.button = BzfKeyEvent::F2;
-	break;
-      case 122: // F1
-	bzf_key.button = BzfKeyEvent::F1;
+      case kF15KeyCode:	bzf_key.button = BzfKeyEvent::Pause; break;
+      case kF12KeyCode:	bzf_key.button = BzfKeyEvent::F12;	break;
+      case kF11KeyCode:	bzf_key.button = BzfKeyEvent::F11;	break;
+      case kF10KeyCode:	bzf_key.button = BzfKeyEvent::F10;	break;
+      case kF9KeyCode:	bzf_key.button = BzfKeyEvent::F9;	break;
+      case kF8KeyCode:	bzf_key.button = BzfKeyEvent::F8;	break;
+      case kF7KeyCode:	bzf_key.button = BzfKeyEvent::F7;	break;
+      case kF6KeyCode:	bzf_key.button = BzfKeyEvent::F6;	break;
+      case kF5KeyCode:	bzf_key.button = BzfKeyEvent::F5;	break;
+      case kF4KeyCode:	bzf_key.button = BzfKeyEvent::F4;	break;
+      case kF3KeyCode:	bzf_key.button = BzfKeyEvent::F3;	break;
+      case kF2KeyCode:	bzf_key.button = BzfKeyEvent::F2;	break;
+      case kF1KeyCode:	bzf_key.button = BzfKeyEvent::F1;	break;
+	  default:
+		fprintf(stderr, "Uknown function key code: 0x%X\n", ((keycode << 16) >> 24));
 	break;
     }
     break;
 
     default:
+	  fprintf(stderr, "Standard key: 0x%X ['%c']\n", char_code, char_code);
       bzf_key.ascii  = char_code;
-      bzf_key.button = BzfKeyEvent::NoButton;
+	break;
   }
 }
-
 
 // if -directory is not used, this function is used to get the default path
 // to the data directory which is located in the same directory as the
 // application bundle
 char *GetMacOSXDataPath(void)
 {
-  CFStringRef CFstring;
-  const char *string;
-  char basePath[2048] = {NULL};
-  Boolean bah = false;
-  OSStatus err = fnfErr;
-  CFURLRef pathURL;
+  ::CFStringRef	coreString		= NULL;
+  ::CFBundleRef	appBundle		= NULL;
+  ::CFURLRef	resourceURL		= NULL;
+  char *		string			= NULL;
+  static char	basePath[2048]	= "<undefined resource path>";
 
-  CFBundleRef myAppsBundle = CFBundleGetMainBundle();
-  if (myAppsBundle == NULL)
+  if ((appBundle = ::CFBundleGetMainBundle()) == NULL
+  || (resourceURL = ::CFBundleCopyResourcesDirectoryURL(appBundle)) == NULL) {
     return NULL;
+  }
+  if(!::CFURLGetFileSystemRepresentation(resourceURL,
+					true, reinterpret_cast<UInt8 *>(basePath), sizeof(basePath))) {
+	string = NULL;
+  } else {
+	string = basePath;
+  }
+  ::CFRelease(resourceURL);
 
-  CFURLRef myBundleURL = CFBundleCopyBundleURL(myAppsBundle);
-  if (myBundleURL == NULL)
-    return NULL;
-
-  pathURL = CFURLCreateCopyDeletingLastPathComponent(kCFAllocatorDefault, myBundleURL);
-  CFstring = CFURLCopyStrictPath(pathURL, &bah);
-  string = CFStringGetCStringPtr(CFstring, CFStringGetSystemEncoding());
-  sprintf(basePath,"/%sdata/", string);
-
-  CFRelease(myBundleURL);
-  CFRelease(pathURL);
-
-  return basePath;
+  return string;
 }
 // ex: shiftwidth=2 tabstop=8

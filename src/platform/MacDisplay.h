@@ -22,10 +22,7 @@ class MacDisplay : public BzfDisplay {
     ~MacDisplay() {};
 
     bool isValid() const { return is_valid;   }
-    bool isEventPending() const {
-      EventRecord eventRec;
-      return EventAvail(everyEvent, &eventRec);
-    }
+    bool isEventPending() const;
 
     bool getEvent(BzfEvent&) const;
     //void    setPending (bool val) const { pending = val; }
@@ -47,7 +44,7 @@ class MacDisplay : public BzfDisplay {
 
     bool doSetResolution(int) { return false; }
 
-    void getKey(BzfKeyEvent &bzf_event, EventRecord &event_rec) const;
+    void getKey(BzfKeyEvent &bzf_event, char key, ::UInt32 code) const;
 
     //ResInfo *res_info;
     int screen_width;
