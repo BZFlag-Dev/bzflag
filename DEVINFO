@@ -9,6 +9,7 @@ applications
 src/bzflag	- the BZFlag client
 src/bzfs	- the BZFlag server
 src/bzadmin	- the BZFlag admin tool and chat client
+tools/		- various helper tools
 
 game dependent libraries
 ------------------------
@@ -23,9 +24,12 @@ src/obstacle	- collision detection
 src/scene	- scene graph
 src/ogl		- wrapper classes for OpenGL
 src/mediafile	- sound and image file support
+src/regex	- BSD regular expression library
+src/zlib	- Zlib compression library
 
 game independent, platform dependent libraries
 ----------------------------------------------
+src/date	- build dates and versioning
 src/net		- networking
 src/platform	- general platform dependent code
 
