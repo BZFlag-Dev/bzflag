@@ -46,7 +46,8 @@ public:
   void checkEchos(StartupInfo *info);
   void addCacheToList();
   void startServerPings(const StartupInfo *info);
-  bool searchActive();
+  bool searchActive() const;
+  bool serverFound() const;
   const std::vector<ServerItem>& getServers();
   std::vector<ServerItem>::size_type size();
   int updateFromCache();

@@ -178,11 +178,13 @@ void ServerList::readServerList(int index, StartupInfo *info)
     // remove parsed replies
     listServer.bufferSize -= int(base - listServer.buffer);
     memmove(listServer.buffer, base, listServer.bufferSize);
+
   } else if (n == 0) {
     // server hungup
     close(listServer.socket);
     listServer.socket = -1;
     listServer.phase = 4;
+
   } else if (n < 0) {
     close(listServer.socket);
     listServer.socket = -1;
@@ -297,9 +299,10 @@ void			ServerList::checkEchos(StartupInfo *info)
       listServers[numListServers].address = address;
       listServers[numListServers].hostname = hostname;
       listServers[numListServers].pathname = path;
-      listServers[numListServers].port    = port;
-      listServers[numListServers].socket  = -1;
-      listServers[numListServers].phase   = 2;
+      listServers[numListServers].port = port;
+      listServers[numListServers].socket = -1;
+      listServers[numListServers].phase = 2;
+      listServers[numListServers].failures = 0;
       numListServers++;
     }
 
@@ -401,6 +404,20 @@ void			ServerList::checkEchos(StartupInfo *info)
     const int nfound = select(fdMax+1, (fd_set*)&read_set,
 					(fd_set*)&write_set, 0, &timeout);
     if (nfound <= 0) {
+      int minPhase = 4;
+      for (i = 0; i < numListServers; i++) {
+	ListServer& listServer = listServers[i];
+	if ((listServer.socket != -1) && 
+	    (listServer.phase >= 3) &&
+	    (listServer.failures++ > 3)) {
+	  if (minPhase > listServer.phase) {
+	    minPhase = listServer.phase;
+	  }
+	}
+      }
+      if (minPhase == 3) {
+	phase = 4;
+      }
       break;
     }
 
@@ -458,10 +475,12 @@ void			ServerList::checkEchos(StartupInfo *info)
 #if !defined(_WIN32)
 	  bzSignal(SIGPIPE, oldPipeHandler);
 #endif
+	} else {
+	  // it aint read or write..
 	}
-      }
-    }
-  }
+      } // end check if socket errored
+    } // end loop over list servers
+  } // end loop waiting for input/output on any list server
 }
 
 void			ServerList::addToListWithLookup(ServerItem& info)
@@ -522,8 +541,12 @@ int ServerList::updateFromCache() {
   return numItemsAdded;
 }
 
-bool ServerList::searchActive() {
-  return ((phase < 2) ? true : false);
+bool ServerList::searchActive() const {
+  return (phase < 4) ? true : false;
+}
+
+bool ServerList::serverFound() const {
+  return (phase >= 2) ? true : false;
 }
 
 void ServerList::_shutDown() {
