@@ -31,30 +31,12 @@
 #include "MainWindow.h"
 #include "SceneRenderer.h"
 #include "Player.h"
+#include "StartupInfo.h"
 
 #define MAX_MESSAGE_HISTORY (20)
 
 
 class SceneRenderer;
-
-struct StartupInfo {
-  public:
-			StartupInfo();
-
-  public:
-    bool		hasConfiguration;
-    bool		autoConnect;
-    char		serverName[80];
-    int			serverPort;
-    bool		useUDPconnection;
-    TeamColor		team;
-    char		callsign[CallSignLen];
-    char		email[EmailLen];
-    std::string		listServerURL;
-    int			listServerPort;
-    bool		joystick;
-    std::string		joystickName;
-};
 
 typedef void		(*JoinGameCallback)(bool success, void* data);
 typedef void		(*PlayingCallback)(void*);
