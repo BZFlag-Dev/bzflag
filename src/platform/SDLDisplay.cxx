@@ -634,9 +634,7 @@ void SDLWindow::create(void) {
   // reload context data
   if (!GLContextInited)
     OpenGLGState::initContext();
-#ifdef _WIN32
   GLContextInited = true;
-#endif
 };
 
 void SDLWindow::enableGrabMouse(bool on) {
