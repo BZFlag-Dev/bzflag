@@ -85,12 +85,11 @@ void handlePasswordCmd(int t, const char *message)
 {
   if (player[t].passwordAttempts >= 5) {  // see how many times they have tried, you only get 5
     sendMessage(ServerPlayer, t, "Too many attempts");
-    DEBUG1("%s (%s) has attempted too many /password tries\n", player[t].callSign, player[t].peer.getDotNotation().c_str());
+    player[t].debugPwdTries();
   } else {
     player[t].passwordAttempts++;
     if (clOptions->password && strncmp(message + 10, clOptions->password, strlen(clOptions->password)) == 0){
-      player[t].passwordAttempts = 0;
-      player[t].Admin = true;
+      player[t].setAdmin();
       sendIPUpdate(t, -1);
       sendMessage(ServerPlayer, t, "You are now an administrator!");
     } else {
@@ -203,7 +202,7 @@ void handleCountdownCmd(int t, const char *)
   if (clOptions->gameStyle & int(TeamFlagGameStyle)) {
     // get someone to can do virtual capture
     for (j = 0; j < curMaxPlayers; j++) {
-      if (player[j].state > PlayerInLimbo)
+      if (player[j].isPlaying())
 	break;
     }
     if (j < curMaxPlayers) {
@@ -318,7 +317,7 @@ void handleKickCmd(int t, const char *message)
   const char *victimname = argv[1].c_str();
 
   for (i = 0; i < curMaxPlayers; i++) {
-    if (player[i].fd != NotConnected && strcasecmp(player[i].callSign, victimname) == 0) {
+    if (player[i].isConnected() && strcasecmp(player[i].callSign, victimname) == 0) {
       break;
     }
   }
@@ -395,7 +394,8 @@ void handleBanCmd(int t, const char *message)
       strcpy(reply, "IP pattern added to banlist");
       char kickmessage[MessageLen];
       for (int i = 0; i < curMaxPlayers; i++) {
-	if ((player[i].fd != NotConnected) && (!clOptions->acl.validate(player[i].taddr.sin_addr))) {
+	if (player[i].isConnected()
+	    && !clOptions->acl.validate(player[i].taddr.sin_addr)) {
 	  sprintf(kickmessage,"You were banned from this server by %s", player[t].callSign);
 	  sendMessage(ServerPlayer, i, kickmessage, true);
 	  if (reason.length() > 0) {
@@ -536,11 +536,11 @@ void handleLagstatsCmd(int t, const char *)
   char reply[MessageLen] = {0};
 
   for (int i = 0; i < curMaxPlayers; i++) {
-    if (player[i].state > PlayerInLimbo && player[i].type == TankPlayer) {
+    if (player[i].isPlaying() && player[i].type == TankPlayer) {
       sprintf(reply,"%-16s : %3d +- %2dms %s", player[i].callSign,
 	      int(player[i].lagavg * 1000),
 	      int(player[i].jitteravg * 1000),
-	      player[i].accessInfo.verified ? "(R)" : "");
+	      player[i].isAccessVerified() ? "(R)" : "");
       if (player[i].lostavg >= 0.01f)
 	sprintf(reply + strlen(reply), " %d%% lost/ooo", int(player[i].lostavg * 100));
       sendMessage(ServerPlayer, t, reply, true);
@@ -560,7 +560,7 @@ void handleIdlestatsCmd(int t, const char *)
   TimeKeeper now = TimeKeeper::getCurrent();
   std::string reply;
   for (int i = 0; i < curMaxPlayers; i++) {
-    if (player[i].state > PlayerInLimbo && player[i].team != ObserverTeam) {
+    if (player[i].isPlaying() && player[i].team != ObserverTeam) {
       reply = string_util::format("%-16s : %4ds", player[i].callSign, 
 				  int(now - player[i].lastupdate));
       if (player[i].paused) {
@@ -584,7 +584,7 @@ void handleFlaghistoryCmd(int t, const char *)
   char reply[MessageLen] = {0};
 
   for (int i = 0; i < curMaxPlayers; i++)
-    if (player[i].state > PlayerInLimbo && player[i].team != ObserverTeam) {
+    if (player[i].isPlaying() && player[i].team != ObserverTeam) {
       char flag[MessageLen];
       sprintf(reply,"%-16s : ", player[i].callSign );
       std::vector<FlagType*>::iterator fhIt = player[i].flagHistory.begin();
@@ -614,18 +614,8 @@ void handlePlayerlistCmd(int t, const char *)
   char reply[MessageLen] = {0};
 
   for (int i = 0; i < curMaxPlayers; i++) {
-    if (player[i].state > PlayerInLimbo) {
-      sprintf(reply, "[%d]%-16s: %s%s%s%s%s%s", i, player[i].callSign,
-	      player[i].peer.getDotNotation().c_str(),
-#ifdef HAVE_ADNS_H
-	      player[i].hostname ? " (" : "",
-	      player[i].hostname ? player[i].hostname : "",
-	      player[i].hostname ? ")" : "",
-#else
-	      "", "", "",
-#endif
-	      player[i].udpin ? " udp" : "",
-	      player[i].udpout ? "+" : "");
+    if (player[i].isPlaying()) {
+      player[i].getPlayerList(reply, i);
       sendMessage(ServerPlayer, t, reply, true);
     }
   }
@@ -707,34 +697,28 @@ void handleHelpCmd(int t, const char *message)
 void handleIdentifyCmd(int t, const char *message)
 {
   // player is trying to send an ID
-  if (player[t].accessInfo.verified) {
+  if (player[t].isAccessVerified()) {
     sendMessage(ServerPlayer, t, "You have already identified");
-  } else if (player[t].accessInfo.loginAttempts >= 5) {
+  } else if (player[t].gotAccessFailure()) {
     sendMessage(ServerPlayer, t, "You have attempted to identify too many times");
-    DEBUG1("Too Many Identifys %s\n",player[t].regName.c_str());
+    DEBUG1("Too Many Identifys %s\n",player[t].getName().c_str());
   } else {
     // get their info
-    if (!userExists(player[t].regName)) {
+    if (!player[t].isRegistered()) {
       // not in DB, tell them to reg
       sendMessage(ServerPlayer, t, "This callsign is not registered,"
 		  " please register it with a /register command");
     } else {
-      if (verifyUserPassword(player[t].regName.c_str(), message + 10)) {
+      if (player[t].isPasswordMatching(message + 10)) {
 	sendMessage(ServerPlayer, t, "Password Accepted, welcome back.");
-	player[t].accessInfo.verified = true;
 	
 	// get their real info
-	PlayerAccessInfo &info = getUserInfo(player[t].regName);
-	player[t].accessInfo.explicitAllows = info.explicitAllows;
-	player[t].accessInfo.explicitDenys = info.explicitDenys;
-	player[t].accessInfo.groups = info.groups;
+	player[t].setPermissionRights();
 	
 	// if they have the PLAYERLIST permission, send the IP list
 	sendIPUpdate(t, -1);
-	
-	DEBUG1("Identify %s\n", player[t].regName.c_str());
       } else {
-	player[t].accessInfo.loginAttempts++;
+	player[t].setLoginFail();
 	sendMessage(ServerPlayer, t, "Identify Failed, please make sure"
 		    " your password was correct");
       }
@@ -746,26 +730,18 @@ void handleIdentifyCmd(int t, const char *message)
 
 void handleRegisterCmd(int t, const char *message)
 {
-  if (player[t].accessInfo.verified) {
+  if (player[t].isAccessVerified()) {
     sendMessage(ServerPlayer, t, "You have already registered and"
 		" identified this callsign");
   } else {
-    if (userExists(player[t].regName)) {
+    if (player[t].isRegistered()) {
       sendMessage(ServerPlayer, t, "This callsign is already registered,"
 		  " if it is yours /identify to login");
     } else {
       if (strlen(message) > 12) {
-	PlayerAccessInfo info;
-	info.groups.push_back("DEFAULT");
-	info.groups.push_back("REGISTERED");
-	std::string pass = message + 10;
-	setUserPassword(player[t].regName.c_str(), pass.c_str());
-	setUserInfo(player[t].regName, info);
-	DEBUG1("Register %s %s\n",player[t].regName.c_str(),pass.c_str());
-
+	player[t].storeInfo(message + 10);
 	sendMessage(ServerPlayer, t, "Callsign registration confirmed,"
 		    " please /identify to login");
-	updateDatabases();
       } else {
 	sendMessage(ServerPlayer, t, "Your password must be 3 or more characters");
       }
@@ -815,15 +791,15 @@ void handleGhostCmd(int t, const char *message)
 
 void handleDeregisterCmd(int t, const char *message)
 {
-  if (!player[t].accessInfo.verified) {
+  if (!player[t].isAccessVerified()) {
     sendMessage(ServerPlayer, t, "You must be registered and verified to run the deregister command");
     return;
   }
 
   if (strlen(message) == 11) {
     // removing own callsign
-    PasswordMap::iterator itr1 = passwordDatabase.find(player[t].regName);
-    PlayerAccessMap::iterator itr2 = userDatabase.find(player[t].regName);
+    PasswordMap::iterator itr1 = passwordDatabase.find(player[t].getName());
+    PlayerAccessMap::iterator itr2 = userDatabase.find(player[t].getName());
     passwordDatabase.erase(itr1);
     userDatabase.erase(itr2);
     updateDatabases();
@@ -856,7 +832,7 @@ void handleDeregisterCmd(int t, const char *message)
 
 void handleSetpassCmd(int t, const char *message)
 {
-  if (!player[t].accessInfo.verified) {
+  if (!player[t].isAccessVerified()) {
     sendMessage(ServerPlayer, t, "You must be registered and verified to run the setpass command");
     return;
   }
@@ -870,8 +846,7 @@ void handleSetpassCmd(int t, const char *message)
     return;
   }
   std::string pass = message + startPosition;
-  setUserPassword(player[t].regName.c_str(), pass);
-  updateDatabases();
+  player[t].setPassword(pass);
   char text[MessageLen];
   snprintf(text, MessageLen, "Your password is now set to \"%s\"", pass.c_str());
   sendMessage(ServerPlayer, t, text, true);
@@ -896,8 +871,8 @@ void handleShowgroupCmd(int t, const char *message)
   std::string settie;
 
   if (strlen(message) == 10) {	 // show own groups
-    if (player[t].accessInfo.verified) {
-      settie = player[t].regName;
+    if (player[t].isAccessVerified()) {
+      settie = player[t].getName();
     } else {
       sendMessage(ServerPlayer, t, "You are not identified");
     }
@@ -979,7 +954,7 @@ void handleSetgroupCmd(int t, const char *message)
     if (userExists(settie)) {
       bool canset = true;
       if (!hasPerm(t, PlayerAccessInfo::setAll) && !hasPerm(t, PlayerAccessInfo::setPerms)) {
-	canset = hasGroup(player[t].accessInfo, group.c_str());
+	canset = player[t].hasSetGroupPermission(group);
       }
       if (!canset) {
 	sendMessage(ServerPlayer, t, "You do not have permission to set this group");
@@ -993,7 +968,7 @@ void handleSetgroupCmd(int t, const char *message)
 	    char temp[MessageLen];
 	    sprintf(temp, "you have been added to the %s group, by %s", group.c_str(), player[t].callSign);
 	    sendMessage(ServerPlayer, getID, temp, true);
-	    addGroup(player[getID].accessInfo, group);
+	    player[getID].setGroup(group);
 	  }
 	  updateDatabases();
 	} else {
@@ -1024,7 +999,7 @@ void handleRemovegroupCmd(int t, const char *message)
     if (userExists(settie)) {
       bool canset = true;
       if (!hasPerm(t, PlayerAccessInfo::setAll) && !hasPerm(t, PlayerAccessInfo::setPerms)) {
-	canset = hasGroup(player[t].accessInfo, group.c_str());
+	canset = player[t].hasSetGroupPermission(group);
       }
       if (!canset) {
 	sendMessage(ServerPlayer, t, "You do not have permission to remove this group");
@@ -1038,7 +1013,7 @@ void handleRemovegroupCmd(int t, const char *message)
 	    char temp[MessageLen];
 	    sprintf(temp, "You have been removed from the %s group, by %s", group.c_str(), player[t].callSign);
 	    sendMessage(ServerPlayer, getID, temp, true);
-	    removeGroup(player[getID].accessInfo, group);
+	    player[getID].resetGroup(group);
 	  }
 	  updateDatabases();
 	} else {
@@ -1096,10 +1071,7 @@ void handleReloadCmd(int t, const char *)
   if (userDatabaseFile.size())
     readPermsFile(userDatabaseFile);
   for (int p = 0; p < curMaxPlayers; p++) {
-    if (player[p].accessInfo.verified && userExists(player[p].regName)) {
-      player[p].accessInfo = getUserInfo(player[p].regName);
-      player[p].accessInfo.verified = true;
-    }
+    player[p].reloadInfo();
   }
   sendMessage(ServerPlayer, t, "Databases reloaded");
 
@@ -1150,7 +1122,7 @@ void handlePollCmd(int t, const char *message)
   unsigned short int available = 0;
   for (int i = 0; i < curMaxPlayers; i++) {
     // any registered/known users on the server (including observers) are eligible to vote
-    if ((player[i].fd != NotConnected) && userExists(player[i].regName)) {
+    if (player[i].isExisting()) {
       available++;
     }
   }
@@ -1259,7 +1231,7 @@ void handlePollCmd(int t, const char *message)
       bool foundPlayer = false;
       for (int v = 0; v < curMaxPlayers; v++) {
 	if (strncasecmp(target.c_str(), callsign.c_str(), 256) == 0) {
-	  targetIP = player[v].peer.getDotNotation().c_str();
+	  targetIP = player[v].getTargetIP();
 	  foundPlayer = true;
 	  break;
 	}
@@ -1304,7 +1276,7 @@ void handlePollCmd(int t, const char *message)
     // keep track of who is allowed to vote
     for (int j = 0; j < curMaxPlayers; j++) {
       // any registered/known users on the server (including observers) are eligible to vote
-      if ((player[j].fd != NotConnected) && userExists(player[j].regName)) {
+      if (player[j].isExisting()) {
 	arbiter->grantSuffrage(callsign);
       }
     }
