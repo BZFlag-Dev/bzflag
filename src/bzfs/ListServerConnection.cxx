@@ -32,7 +32,6 @@
 #include "CmdLineOptions.h"
 
 // FIXME remove externs!
-extern Address serverAddress;
 extern PingPacket getTeamCounts();
 extern uint16_t curMaxPlayers;
 extern int getTarget(const char *victimname);
@@ -76,6 +75,8 @@ ListServerLink::ListServerLink(std::string listServerURL, std::string publicized
   this->hostname   = hostname;
   this->linkSocket = NotConnected;
 
+  if (clOptions->pingInterface != "")
+    this->localAddress	     = Address::getHostAddress(clOptions->pingInterface);
   this->publicizeAddress     = publicizedAddress;
   this->publicizeDescription = publicizedTitle;
   this->publicizeServer	     = true;  //if this c'tor is called, it's safe to publicize
@@ -265,7 +266,7 @@ void ListServerLink::openLink()
     struct sockaddr_in addr;
     memset(&addr, 0, sizeof(addr));
     addr.sin_family = AF_INET;
-    addr.sin_addr = serverAddress;
+    addr.sin_addr = localAddress;
 
     // assign the address to the socket
     if (bind(linkSocket, (CNCTType*)&addr, sizeof(addr)) < 0) {

@@ -62,6 +62,7 @@ private:
     void closeLink();
 
     // local server information
+    Address localAddress;
     bool publicizeServer;
     std::string publicizeAddress;
     std::string publicizeDescription;
