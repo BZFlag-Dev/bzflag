@@ -180,10 +180,10 @@ void ListServerLink::read()
 	  if (!playerData->accessInfo.isRegistered())
 	    playerData->accessInfo.storeInfo(NULL);
 	  playerData->accessInfo.setPermissionRights();
+	  // TODO walk list in *group and add user to the ones we care about
 	  DEBUG3("Got: \"%s\" \"%s\" %d\n", callsign, group, getTarget(callsign));
 	  sendMessage(ServerPlayer, playerIndex, "Global login approved!");
 	}
-	//TODO see what groups we got back
       }
       // next reply
       base = scan;
@@ -289,11 +289,7 @@ void ListServerLink::addMe(PingPacket pingInfo,
   char gameInfo[PingPacketHexPackedSize + 1];
   pingInfo.packHex(gameInfo);
 
-  // TODO loop through and send any player tokens that need approval
-  // &checktokens=CallSign0%3D01234567%0D%0ACallSign1%3D90abcdef%0D%0A
-  // TODO loop through groups we are interested and request those
-  // *groups=GROUP0%0D%0AGROUP1%0D%0A
-  // TODO we probably should convert to a POST instead. List server now allows either
+  // TODO we probably should convert to a POST. List server now allows either
   // send ADD message (must send blank line)
   msg = TextUtils::format("GET %s?action=ADD&nameport=%s&version=%s&gameinfo=%s&build=%s",
     pathname.c_str(), publicizedAddress.c_str(),
@@ -309,6 +305,9 @@ void ListServerLink::addMe(PingPacket pingInfo,
       msg += "%0D%0A";
     }
   }
+  // TODO loop through groups we are interested in and request them
+  // *groups=GROUP0%0D%0AGROUP1%0D%0A
+  // see handleGrouplistCmd()
   msg += TextUtils::format("&title=%s HTTP/1.1\r\n"
       "User-Agent: bzfs %s\r\n"
       "Host: %s\r\n"
