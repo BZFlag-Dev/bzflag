@@ -1,11 +1,15 @@
 DIST_SUBDIRS = \
 	TextTool_W32 \
-	bzwtransform
+	bzwtransform \
+	modeltool
 
 TextTool_W32:
 	@cd $@ && $(MAKE) $(AM_MAKEFLAGS)
 
 bzwtransform:
+	@cd $@ && $(MAKE) $(AM_MAKEFLAGS)
+
+modeltool:
 	@cd $@ && $(MAKE) $(AM_MAKEFLAGS)
 
 
