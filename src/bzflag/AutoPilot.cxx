@@ -95,11 +95,10 @@ ShotPath *findWorstBullet(float &minDistance)
       if (shot->getFlag() == Flags::InvisibleBullet)
         continue; //Theoretically Roger could triangulate the sound
       if (player[t]->getFlag() == Flags::PhantomZone && player[t]->isFlagActive() &&
-      		(myTank->getFlag() == Flags::PhantomZone && !myTank->isFlagActive()) ||
-      		(myTank->getFlag() != Flags::PhantomZone))
-    	continue;
+      		!(myTank->getFlag() == Flags::PhantomZone && myTank->isFlagActive()))
+    		continue;
       if (shot->getFlag() == Flags::Laser && myTank->getFlag() == Flags::Cloaking)
-	continue; //cloaked tanks can't die from lasers
+				continue; //cloaked tanks can't die from lasers
 
       const float* shotPos = shot->getPosition();
       if ((fabs(shotPos[2] - pos[2]) > BZDBCache::tankHeight) && (shot->getFlag() != Flags::GuidedMissile))
@@ -287,7 +286,8 @@ RemotePlayer *findBestTarget()
     &&  (myTank->validTeamTarget(player[t]))) {
 
       if((player[t]->getFlag() == Flags::PhantomZone && player[t]->isFlagActive() &&
-					(myTank->getFlag() != Flags::ShockWave || myTank->getFlag() != Flags::SuperBullet)) ||
+      		(!(myTank->getFlag() == Flags::PhantomZone && myTank->isFlagActive()) ||
+					(myTank->getFlag() != Flags::ShockWave && myTank->getFlag() != Flags::SuperBullet))) ||
     		 (player[t]->getFlag() == Flags::Cloaking && myTank->getFlag() == Flags::Laser))
         continue;
 
@@ -567,7 +567,9 @@ bool fireAtTank()
 	    !player[t]->isNotResponding()) {
 
 	  if ((player[t]->getFlag() == Flags::PhantomZone) 
-	  &&  (player[t]->isFlagActive()))
+	  &&  (player[t]->isFlagActive()) &&
+      	(!(myTank->getFlag() == Flags::PhantomZone && myTank->isFlagActive()) ||
+					(myTank->getFlag() != Flags::ShockWave && myTank->getFlag() != Flags::SuperBullet)))
 	    continue;
 
 	  const float *tp = player[t]->getPosition();
@@ -580,12 +582,11 @@ bool fireAtTank()
           enemyPos[2] += 0.3f * tv[2];
 	  if (enemyPos[2] < 0.0f)
 	    enemyPos[2] = 0.0f;
-
-          float dist = TargetingUtils::getTargetDistance( pos, enemyPos );
-          if (dist <= BZDB.eval(StateDatabase::BZDB_SHOCKOUTRADIUS)) {
-            if (!myTank->validTeamTarget(player[t])) {
-              hasSWTarget = false;
-              t = curMaxPlayers;
+			float dist = TargetingUtils::getTargetDistance( pos, enemyPos );
+      if (dist <= BZDB.eval(StateDatabase::BZDB_SHOCKOUTRADIUS)) {
+        if (!myTank->validTeamTarget(player[t])) {
+          hasSWTarget = false;
+          	t = curMaxPlayers;
 	    } else {
 	      hasSWTarget = true;
 	    }
@@ -632,7 +633,6 @@ bool fireAtTank()
 	  if ((myTank->getFlag() == Flags::GuidedMissile) || (fabs(pos[2] - enemyPos[2]) < 2.0f * BZDBCache::tankHeight)) {
 
 	    float targetDiff = TargetingUtils::getTargetAngleDifference(pos, myAzimuth, enemyPos );
-
 	    if ((targetDiff < errorLimit)
 	    ||  ((dist < (2.0f * BZDB.eval(StateDatabase::BZDB_SHOTSPEED))) && (targetDiff < closeErrorLimit))) {
 	      bool isTargetObscured;
@@ -663,7 +663,7 @@ void    dropHardFlags()
   FlagType *type = myTank->getFlag();
   if ((type == Flags::Useless)
   ||  (type == Flags::MachineGun)
-  ||  (type == Flags::PhantomZone)
+  ||  (type == Flags::PhantomZone && !myTank->isFlagActive())
   ||  (type == Flags::Identify)) {
     serverLink->sendDropFlag(myTank->getPosition());
     handleFlagDropped(myTank);
