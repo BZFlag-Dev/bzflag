@@ -9,7 +9,7 @@ CppCompiler=-DHAVE_HYPOTF -DHAVE_ASINF -DHAVE_ATAN2F -DHAVE_ATANF -DHAVE_COSF -D
 Includes=..\include;..\win32;.
 Linker=-lstdc++ -lws2_32 -lwinmm -lkernel32 -luser32 -lgdi32 -lwinspool -lcomdlg32 -ladvapi32 -lshell32 -lole32 -loleaut32 -luuid_@@_
 Libs=
-UnitCount=197
+UnitCount=202
 Folders="Header Files","Header Files/bzfs","Header Files/common","Header Files/game","Header Files/net","Header Files/regex","Resource Files","Source Files","Source Files/bzfs","Source Files/common","Source Files/date","Source Files/game","Source Files/Net","Source Files/regex","Source Files/zlib"
 ObjFiles=
 PrivateResource=
@@ -2018,9 +2018,49 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit198]
-FileName=..\src\common\TextUtils.cxx
+FileName=..\src\game\BzMaterial.cxx
 CompileCpp=1
-Folder=Source Files/common
+Folder=bzfs/Source Files/common
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit199]
+FileName=..\src\obstacle\SphereObstacle.cxx
+CompileCpp=1
+Folder=bzfs/Source Files/common
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit200]
+FileName=..\src\obstacle\ArcObstacle.cxx
+CompileCpp=1
+Folder=bzfs/Source Files/common
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit201]
+FileName=..\src\obstacle\ConeObstacle.cxx
+CompileCpp=1
+Folder=bzfs/Source Files/common
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit202]
+FileName=..\src\bzfs\CustomMaterial.cxx
+CompileCpp=1
+Folder=bzfs/Source Files/common
 Compile=1
 Link=1
 Priority=1000

@@ -9,7 +9,7 @@ CppCompiler=-DHAVE_HYPOTF -DHAVE_STD_COUNT -DHAVE_ASINF -DHAVE_ATAN2F -DHAVE_ATA
 Includes=..\include;..\win32;.
 Linker=-lmingw32 -lstdc++ -lsdl -lws2_32 -ldsound -lwinmm -lglu32 -lopengl32 -lkernel32 -luser32 -lgdi32 -lwinspool -lcomdlg32 -ladvapi32 -lshell32 -lole32 -loleaut32 -luuid -lodbc32 -lodbccp32_@@_
 Libs=
-UnitCount=329
+UnitCount=333
 Folders="Header Files","Header Files/bzflag","Header Files/common","Header Files/net","Header Files/regex","Header Files/zlib","Resource Files","Source Files","Source Files/bzflag","Source Files/common","Source Files/models","Source Files/net","Source Files/regex","Source Files/zlib"
 ObjFiles=
 PrivateResource=bzflag_private.rc
@@ -3228,9 +3228,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit330]
-FileName=..\src\common\AutoCompleter.cxx
+FileName=..\src\game\BzMaterial.cxx
 CompileCpp=1
-Folder=Source Files/common
+Folder=Source Files/bzflag
 Compile=1
 Link=1
 Priority=1000
@@ -3248,9 +3248,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit333]
-FileName=..\src\geometry\models\tank\medium_barrel.cxx
+FileName=..\src\obstacle\ConeObstacle.cxx
 CompileCpp=1
-Folder=Source Files
+Folder=Source Files/common
 Compile=1
 Link=1
 Priority=1000
@@ -3308,9 +3308,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit331]
-FileName=..\src\geometry\models\tank\low_rtread.cxx
+FileName=..\src\obstacle\SphereObstacle.cxx
 CompileCpp=1
-Folder=Source Files
+Folder=Source Files/common
 Compile=1
 Link=1
 Priority=1000
@@ -3318,9 +3318,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit332]
-FileName=..\src\geometry\models\tank\low_turret.cxx
+FileName=..\src\obstacle\ArcObstacle.cxx
 CompileCpp=1
-Folder=Source Files
+Folder=Source Files/common
 Compile=1
 Link=1
 Priority=1000
