@@ -617,11 +617,7 @@ static bool		doKeyCommon(const BzfKeyEvent& key, bool pressed)
     keyboardMovement = Down;
   }
 
-  // if we don't have a tank, the key commands don't apply
-  if (!myTank) {
-    return false;
-  }
-
+  if (myTank)
   switch (keyboardMovement) {
     case Left:
       myTank->setKey(BzfKeyEvent::Left, pressed);
@@ -648,7 +644,13 @@ static bool		doKeyCommon(const BzfKeyEvent& key, bool pressed)
 	std::cerr << result << std::endl;
     }
     return true;
-  } else {
+  }
+
+  // if we don't have a tank, the following key commands don't apply
+  if (!myTank)
+    return false;
+
+  {
     // built-in unchangeable keys.  only perform if not masked.
     switch (key.ascii) {
       case 'T':
