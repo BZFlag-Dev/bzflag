@@ -15,7 +15,11 @@
 // std::unary_function<> so use unary_function and a typedef.  This requires
 // coding for the broken systems and emulating the broken behavior on the good
 // ones with the typedef.
+#ifdef WIN32
+using std::unary_function;
+#elif
 typedef std::unary_function unary_function;
+#endif
 #endif
 
 
