@@ -18,6 +18,8 @@
 
 #include "FlagInfo.h"
 
+// implementation-specific bzflag headers
+#include "BZDBCache.h"
 
 /* private */
 
@@ -102,6 +104,33 @@ void *FlagInfo::pack(void *buf)
   return buf;
 }
 
+void FlagInfo::dropFlag(float pos[3])
+{
+  flag.position[0]       = flag.landingPosition[0];
+  flag.position[1]       = flag.landingPosition[1];
+  flag.position[2]       = flag.landingPosition[2];
+  flag.launchPosition[0] = pos[0];
+  flag.launchPosition[1] = pos[1];
+  flag.launchPosition[2] = pos[2] + BZDBCache::tankHeight;
+
+  // compute flight info -- flight time depends depends on start and end
+  // altitudes and desired height above start altitude
+  const float flagAltitude   = BZDB.eval(StateDatabase::BZDB_FLAGALTITUDE);
+  const float thrownAltitude = (flag.type == Flags::Shield) ?
+    BZDB.eval(StateDatabase::BZDB_SHIELDFLIGHT) * flagAltitude : flagAltitude;
+  const float maxAltitude    = pos[2] + thrownAltitude;
+  const float upTime         = sqrtf(-2.0f * thrownAltitude
+				     / BZDB.eval(StateDatabase::BZDB_GRAVITY));
+  const float downTime       = sqrtf(-2.0f * (maxAltitude - pos[2])
+				     / BZDB.eval(StateDatabase::BZDB_GRAVITY));
+  const float flightTime     = upTime + downTime;
+
+  dropDone             = TimeKeeper::getCurrent();
+  dropDone            += flightTime;
+  flag.flightTime      = 0.0f;
+  flag.flightEnd       = flightTime;
+  flag.initialVelocity = -BZDB.eval(StateDatabase::BZDB_GRAVITY) * upTime;
+}
 // Local Variables: ***
 // mode:C++ ***
 // tab-width: 8 ***
