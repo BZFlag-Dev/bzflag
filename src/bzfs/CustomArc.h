@@ -31,8 +31,6 @@ class CustomArc : public WorldFileObstacle {
     virtual void write(WorldInfo*) const;
 
   private:
-    bool parseSideMaterials(const char* cmd, std::istream& input,
-                            bool& error);
     void makePie(bool isCircle, float angle, float rot, float height,
                  float radius, float squish, float texsz[4],
                  WorldInfo* world) const;
@@ -48,6 +46,7 @@ class CustomArc : public WorldFileObstacle {
       EndFace,
       MaterialCount
     };
+    static const char* sideNames[MaterialCount];
 
     int divisions;
     float angle;

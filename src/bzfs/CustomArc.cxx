@@ -27,6 +27,16 @@
 #include "ParseMaterial.h"
 
 
+const char* CustomArc::sideNames[MaterialCount] = {
+  "top",
+  "bottom",
+  "inside",
+  "outside",
+  "startside",
+  "endside"
+};
+    
+
 CustomArc::CustomArc()
 {
   // default to a (radius=10, height=10) cylinder
@@ -104,7 +114,8 @@ bool CustomArc::read(const char *cmd, std::istream& input)
       return false;
     }
   }
-  else if (parseSideMaterials(cmd, input, materror)) {
+  else if (parseMaterialsByName(cmd, input, materials, sideNames,
+                                MaterialCount, materror)) {
     if (materror) {
       return false;
     }
@@ -114,41 +125,6 @@ bool CustomArc::read(const char *cmd, std::istream& input)
   }
 
   return true;
-}
-
-
-bool CustomArc::parseSideMaterials(const char* cmd, std::istream& input,
-                                   bool& error)
-{
-  // NOTE: "end" can not be used because it will be picked-off
-  //       as a block terminator at the BZWReader level.
-  const char* sideNames[MaterialCount] =
-    { "top", "bottom", "inside", "outside", "startside", "endside" };
-
-  error = false;
-
-  for (int n = 0; n < MaterialCount; n++) {
-    if (strcasecmp (cmd, sideNames[n]) == 0) {
-      std::string line, matcmd;
-      std::getline(input, line);
-      std::istringstream parms(line);
-      if (!(parms >> matcmd)) {
-        error = true;
-      } else {
-        // put the material command string back into the stream
-        for (int i = 0; i < (int)(line.size() - matcmd.size()); i++) {
-          input.putback(line[line.size() - i]);
-        }
-        if (!parseMaterials(matcmd.c_str(), input, &materials[n], 1, error)) {
-          error = true;
-        }
-      }
-      input.putback('\n');
-      return true;
-    }
-  }
-
-  return false;
 }
 
 

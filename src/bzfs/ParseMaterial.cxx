@@ -14,6 +14,9 @@
 #include "BzMaterial.h"
 #include "ParseMaterial.h"
 
+/* system headers */
+#include <sstream>
+
 /* common implementation headers */
 #include "TextureMatrix.h"
 #include "DynamicColor.h"
@@ -28,6 +31,7 @@ bool parseMaterials(const char* cmd, std::istream& input,
   if (strcasecmp(cmd, "refmat") == 0) {
     std::string name;
     if (!(input >> name)) {
+      std::cout << "missing " << cmd << " parameters" << std::endl;
       error = true;
     }
     const BzMaterial* matref = MATERIALMGR.findMaterial(name);
@@ -47,6 +51,7 @@ bool parseMaterials(const char* cmd, std::istream& input,
   else if (strcasecmp(cmd, "dyncol") == 0) {
     std::string dyncol;
     if (!(input >> dyncol)) {
+      std::cout << "missing " << cmd << " parameters" << std::endl;
       error = true;
     }
     int dynamicColor = DYNCOLORMGR.findColor(dyncol);
@@ -60,6 +65,7 @@ bool parseMaterials(const char* cmd, std::istream& input,
   else if (strcasecmp(cmd, "ambient") == 0) {
     float ambient[4];
     if (!(input >> ambient[0] >> ambient[1] >> ambient[2] >> ambient[3])) {
+      std::cout << "missing " << cmd << " parameters" << std::endl;
       error = true;
     }
     for (i = 0; i < materialCount; i++) {
@@ -70,6 +76,7 @@ bool parseMaterials(const char* cmd, std::istream& input,
            (strcasecmp(cmd, "color") == 0)) {
     float diffuse[4];
     if (!(input >> diffuse[0] >> diffuse[1] >> diffuse[2] >> diffuse[3])) {
+      std::cout << "missing " << cmd << " parameters" << std::endl;
       error = true;
     }
     for (i = 0; i < materialCount; i++) {
@@ -80,6 +87,7 @@ bool parseMaterials(const char* cmd, std::istream& input,
     float specular[4];
     if (!(input >> specular[0] >> specular[1]
                 >> specular[2] >> specular[3])) {
+      std::cout << "missing " << cmd << " parameters" << std::endl;
       error = true;
     }
     for (i = 0; i < materialCount; i++) {
@@ -90,6 +98,7 @@ bool parseMaterials(const char* cmd, std::istream& input,
     float emission[4];
     if (!(input >> emission[0] >> emission[1]
                 >> emission[2] >> emission[3])) {
+      std::cout << "missing " << cmd << " parameters" << std::endl;
       error = true;
     }
     for (i = 0; i < materialCount; i++) {
@@ -99,6 +108,7 @@ bool parseMaterials(const char* cmd, std::istream& input,
   else if (strcasecmp(cmd, "shininess") == 0) {
     float shininess;
     if (!(input >> shininess)) {
+      std::cout << "missing " << cmd << " parameters" << std::endl;
       error = true;
     }
     for (i = 0; i < materialCount; i++) {
@@ -108,6 +118,7 @@ bool parseMaterials(const char* cmd, std::istream& input,
   else if (strcasecmp(cmd, "texture") == 0) {
     std::string name;
     if (!(input >> name)) {
+      std::cout << "missing " << cmd << " parameters" << std::endl;
       error = true;
     }
     for (i = 0; i < materialCount; i++) {
@@ -122,6 +133,7 @@ bool parseMaterials(const char* cmd, std::istream& input,
   else if (strcasecmp(cmd, "addtexture") == 0) {
     std::string name;
     if (!(input >> name)) {
+      std::cout << "missing " << cmd << " parameters" << std::endl;
       error = true;
     }
     for (i = 0; i < materialCount; i++) {
@@ -131,6 +143,7 @@ bool parseMaterials(const char* cmd, std::istream& input,
   else if (strcasecmp(cmd, "texmat") == 0) {
     std::string texmat;
     if (!(input >> texmat)) {
+      std::cout << "missing " << cmd << " parameters" << std::endl;
       error = true;
     }
     int textureMatrix = TEXMATRIXMGR.findMatrix(texmat);
@@ -159,6 +172,7 @@ bool parseMaterials(const char* cmd, std::istream& input,
   else if (strcasecmp(cmd, "shader") == 0) {
     std::string name;
     if (!(input >> name)) {
+      std::cout << "missing " << cmd << " parameters" << std::endl;
       error = true;
     }
     for (i = 0; i < materialCount; i++) {
@@ -168,6 +182,7 @@ bool parseMaterials(const char* cmd, std::istream& input,
   else if (strcasecmp(cmd, "addshader") == 0) {
     std::string name;
     if (!(input >> name)) {
+      std::cout << "missing " << cmd << " parameters" << std::endl;
       error = true;
     }
     for (i = 0; i < materialCount; i++) {
@@ -184,6 +199,36 @@ bool parseMaterials(const char* cmd, std::istream& input,
   }
 
   return true;
+}
+
+
+bool parseMaterialsByName(const char* cmd, std::istream& input,
+                          BzMaterial* materials, const char** names,
+                          int materialCount, bool& error)
+{
+  error = false;
+
+  for (int n = 0; n < materialCount; n++) {
+    if (strcasecmp (cmd, names[n]) == 0) {
+      std::string line, matcmd;
+      std::getline(input, line);
+      std::istringstream parms(line);
+      if (!(parms >> matcmd)) {
+        error = true;
+      } else {
+        // put the material command string back into the stream
+        for (int i = 0; i < (int)(line.size() - matcmd.size()); i++) {
+          input.putback(line[line.size() - i]);
+        }
+        if (!parseMaterials(matcmd.c_str(), input, &materials[n], 1, error)) {
+          error = true;
+        }
+      }
+      return true;
+    }
+  }
+
+  return false;
 }
 
 

@@ -31,14 +31,12 @@ class CustomSphere : public WorldFileObstacle {
     virtual void write(WorldInfo*) const;
 
   private:
-    bool parseSideMaterials(const char* cmd, std::istream& input,
-                            bool& error);
-                            
     enum {
       Edge,
       Bottom,
       MaterialCount
     };
+    static const char* sideNames[MaterialCount];
     
     int divisions;
     float texsize[2];
